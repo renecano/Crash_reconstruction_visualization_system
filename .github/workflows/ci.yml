@@ -67,7 +67,6 @@ jobs:
       - uses: astral-sh/setup-uv@v10.3.0
         with:
           enable-cache: true
-          python-version-file: .python-version
       - run: uv sync --all-packages --all-groups --locked
       - run: uv run ruff check .
       - run: uv run ruff format --check .
