@@ -158,7 +158,9 @@ def download(
         last_modified=last_modified,
     )
     (dest_dir / "manifest.json").write_text(
-        json.dumps(asdict(record), indent=2, ensure_ascii=False) + "\n", encoding="utf-8"
+        json.dumps(asdict(record), indent=2, ensure_ascii=False) + "\n",
+        encoding="utf-8",
+        newline="\n",
     )
     return record
 
