@@ -1,0 +1,28 @@
+{
+  "name": "croquis",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Reconstrucción 3D de percances viales a partir del relato de quien los vivió.",
+  "license": "MIT",
+  "packageManager": "pnpm@12.11.2",
+  "engines": {
+    "node": ">=24.0.0",
+    "pnpm": ">=12.0.0"
+  },
+  "scripts": {
+    "dev": "pnpm --filter @croquis/web dev",
+    "build": "pnpm -r build",
+    "lint": "pnpm -r --workspace-concurrency=2 lint",
+    "typecheck": "pnpm -r --workspace-concurrency=2 typecheck",
+    "test": "pnpm -r --workspace-concurrency=2 test",
+    "format": "prettier --write .",
+    "format:check": "prettier --check ."
+  },
+  "devDependencies": {
+    "@eslint/js": "catalog:",
+    "eslint": "catalog:",
+    "prettier": "catalog:",
+    "typescript": "catalog:",
+    "typescript-eslint": "catalog:"
+  }
+}

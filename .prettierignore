@@ -1,0 +1,17 @@
+node_modules
+.next
+dist
+coverage
+pnpm-lock.yaml
+.venv
+__pycache__
+data/raw
+data/processed
+eval/results
+*.gltf
+*.glb
+.vitest
+playwright-report
+test-results
+CLAUDE.md
+PLAN.md

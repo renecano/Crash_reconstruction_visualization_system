@@ -1,0 +1,51 @@
+# Dependencias
+node_modules/
+.pnp
+.pnp.*
+
+# Next.js
+.next/
+out/
+next-env.d.ts
+
+# Compilados
+dist/
+build/
+*.tsbuildinfo
+
+# Pruebas
+coverage/
+.vitest/
+playwright-report/
+test-results/
+.pytest_cache/
+.hypothesis/
+.ruff_cache/
+.mypy_cache/
+.coverage
+htmlcov/
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+*.egg-info/
+
+# Datos crudos: se descargan con los scripts de data/scripts (ver data/SOURCES.md)
+data/raw/*
+!data/raw/.gitkeep
+!data/raw/README.md
+
+# Secretos
+.env
+.env.*
+!.env.example
+
+# Despliegue
+.vercel
+cdk.out/
+
+# Sistema
+.DS_Store
+Thumbs.db
+*.log
