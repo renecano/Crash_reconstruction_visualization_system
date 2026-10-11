@@ -1,0 +1,117 @@
+anio,clave,accidentes,muertos,heridos
+1997,Accidente en camino rural,5656,692,2682
+1997,Accidente en carretera estatal,13107,1229,9202
+1997,Accidentes en otro camino,5767,231,1902
+1997,Sin accidente en esta zona,223584,3887,84649
+1998,Accidente en camino rural,20381,1134,6797
+1998,Accidente en carretera estatal,20098,1400,12270
+1998,Accidentes en otro camino,7277,337,2224
+1998,Sin accidente en esta zona,214931,2115,77947
+1999,Accidente en camino rural,44717,1063,12288
+1999,Accidente en carretera estatal,16198,1509,11150
+1999,Accidentes en otro camino,13458,585,5148
+1999,Sin accidente en esta zona,211121,2368,75198
+2000,Accidente en camino rural,2716,284,1997
+2000,Accidente en carretera estatal,11932,1254,10296
+2000,Accidentes en otro camino,2270,228,1643
+2000,Sin accidente en esta zona,295020,3497,102566
+2001,Accidente en camino rural,3547,365,2379
+2001,Accidente en carretera estatal,11794,1204,9556
+2001,Accidentes en otro camino,1967,218,1414
+2001,Sin accidente en esta zona,347561,3189,113357
+2002,Accidente en camino rural,3016,354,2170
+2002,Accidente en carretera estatal,12577,1279,10018
+2002,Accidentes en otro camino,2046,151,1243
+2002,Sin accidente en esta zona,381363,3306,121220
+2003,Accidente en camino rural,3255,311,2273
+2003,Accidente en carretera estatal,13897,1450,11417
+2003,Accidentes en otro camino,1804,162,1204
+2003,Sin accidente en esta zona,405534,3479,124170
+2004,Accidente en camino rural,4222,301,2433
+2004,Accidente en carretera estatal,15309,1455,11134
+2004,Accidentes en otro camino,1951,125,1052
+2004,Sin accidente en esta zona,422125,3206,113814
+2005,Accidente en camino rural,4348,346,2515
+2005,Accidente en carretera estatal,17733,1471,11729
+2005,Accidentes en otro camino,2223,136,1223
+2005,Sin accidente en esta zona,427929,3120,131259
+2006,Accidente en camino rural,5044,518,3197
+2006,Accidente en carretera estatal,17190,1353,10560
+2006,Accidentes en otro camino,4825,156,1717
+2006,Sin accidente en esta zona,444213,3515,133866
+2007,Accidente en camino rural,6538,504,3723
+2007,Accidente en carretera estatal,16680,1496,11183
+2007,Accidentes en otro camino,3981,213,1619
+2007,Sin accidente en esta zona,449080,4041,142685
+2008,Accidente en camino rural,7563,592,4075
+2008,Accidente en carretera estatal,19414,1649,10958
+2008,Accidentes en otro camino,1972,142,1151
+2008,Sin accidente en esta zona,437486,5072,138989
+2009,Accidente en camino rural,6769,627,4423
+2009,Accidente en carretera estatal,20842,1797,11740
+2009,Accidentes en otro camino,2072,124,1352
+2009,Sin accidente en esta zona,398784,5087,136375
+2010,Accidente en camino rural,6455,638,4376
+2010,Accidente en carretera estatal,20357,1737,10497
+2010,Accidentes en otro camino,2364,187,1439
+2010,Sin accidente en esta zona,398091,4582,127721
+2011,Accidente en camino rural,5556,513,3603
+2011,Accidente en carretera estatal,22268,1708,12662
+2011,Accidentes en otro camino,3172,190,1816
+2011,Sin accidente en esta zona,356189,5583,117654
+2012,Accidente en camino rural,4628,419,3192
+2012,Accidente en carretera estatal,20549,1494,11657
+2012,Accidentes en otro camino,3349,230,1851
+2012,Sin accidente en esta zona,361885,3326,112249
+2013,Accidente en camino rural,4277,351,2860
+2013,Accidente en carretera estatal,18917,1504,11275
+2013,Accidentes en otro camino,4045,275,2494
+2013,Sin accidente en esta zona,358533,2928,106221
+2014,Accidente en camino rural,3883,351,2707
+2014,Accidente en carretera estatal,18646,1392,11334
+2014,Accidentes en otro camino,3807,232,2066
+2014,Sin accidente en esta zona,354237,2804,102081
+2015,Accidente en camino rural,3676,290,2237
+2015,Accidente en carretera estatal,19133,1404,10585
+2015,Accidentes en otro camino,4044,272,2214
+2015,Sin accidente en esta zona,355213,2670,92166
+2016,Accidente en camino rural,4931,322,2906
+2016,Accidente en carretera estatal,17856,1384,9953
+2016,Accidentes en otro camino,3948,271,2295
+2016,Sin accidente en esta zona,333316,2582,82460
+2017,Accidente en camino rural,4932,315,2594
+2017,Accidente en carretera estatal,16895,1223,8845
+2017,Accidentes en otro camino,3970,236,1983
+2017,Sin accidente en esta zona,341992,2620,77735
+2018,Accidente en camino rural,4395,234,2140
+2018,Accidente en carretera estatal,19453,1248,9519
+2018,Accidentes en otro camino,4166,239,1885
+2018,Sin accidente en esta zona,337267,2506,75676
+2019,Accidente en camino rural,4538,244,2113
+2019,Accidente en carretera estatal,18759,1166,9820
+2019,Accidentes en otro camino,4435,233,2176
+2019,Sin accidente en esta zona,334997,2484,77652
+2020,Accidente en camino rural,4441,234,2072
+2020,Accidente en carretera estatal,16830,1060,7793
+2020,Accidentes en otro camino,3866,239,1774
+2020,Sin accidente en esta zona,276541,2293,60296
+2021,Accidente en camino rural,5628,272,2434
+2021,Accidente en carretera estatal,19703,1260,9572
+2021,Accidentes en otro camino,4761,286,2193
+2021,Sin accidente en esta zona,310323,2583,68267
+2022,Accidente en camino rural,6199,311,2570
+2022,Accidente en carretera estatal,22925,1535,10480
+2022,Accidentes en otro camino,5135,378,2431
+2022,Sin accidente en esta zona,342972,2957,76020
+2023,Accidente en camino rural,4924,242,1926
+2023,Accidente en carretera estatal,25864,1389,11437
+2023,Accidentes en otro camino,5523,336,2395
+2023,Sin accidente en esta zona,344737,2836,74742
+2024,Accidente en camino rural,4184,208,1789
+2024,Accidente en carretera estatal,20107,1121,8329
+2024,Accidentes en otro camino,5224,220,2083
+2024,Sin accidente en esta zona,345434,3107,73779
+2025,Accidente en camino rural,2729,149,1244
+2025,Accidente en carretera estatal,18295,1031,7681
+2025,Accidentes en otro camino,6204,222,2045
+2025,Sin accidente en esta zona,353163,3169,75986

@@ -5,20 +5,20 @@ Reglas de trabajo: `CLAUDE.md`. Especificación: `PLAN.md`.
 
 ## Estado actual
 
-- **Fase actual:** F0 — Fundaciones (en curso).
-- **Siguiente paso concreto:** terminar la ingesta de INEGI ATUS (localizar los archivos de datos abiertos de 2024 y 2025, descargar, calcular cifras con script y escribir `data/SOURCES.md`), correr todo en verde localmente, primer push y CI verde.
-- **Rama:** `main` todavía sin commits; el primer commit será el esqueleto de F0.
+- **Fase actual:** F0 — Fundaciones (cerrando: falta CI verde y merge).
+- **Siguiente paso concreto:** CI verde en el PR #1 (`feat/f0-fundaciones` → `main`), merge, y arrancar **F1 — Contrato y croquis** (`escena.schema.json` v1, generación Zod/Pydantic, 10 escenas canónicas, editor 2D con ida y vuelta al JSON).
+- **Rama de trabajo:** `feat/f0-fundaciones`. PR: https://github.com/renecano/Crash_reconstruction_visualization_system/pull/1
 
 ### Bloqueado — necesita a René
 
-| Qué                                                                                                                                                                                                                             | Para qué                                                                                  | Estado         |
-| ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------- | -------------- |
-| `ANTHROPIC_API_KEY`                                                                                                                                                                                                             | F6 (extracción con Claude) y E1. CI usa respuestas grabadas, así que no bloquea hasta F6. | Pendiente      |
-| Credenciales AWS (cuenta/rol para CDK) y proyecto Vercel                                                                                                                                                                        | F11 despliegue dev/prod. Mientras tanto todo corre local.                                 | Pendiente      |
-| Licencia académica BeamNG.tech                                                                                                                                                                                                  | F10 y E5                                                                                  | Pendiente      |
-| Confirmar licencia MIT del código y el nombre _Croquis_                                                                                                                                                                         | Se usan los valores por defecto de PLAN §16 (ADR 0002)                                    | Usando default |
-| Pruebas con ≥ 5 personas reales (E9)                                                                                                                                                                                            | F11                                                                                       | Pendiente      |
-| Confirmar que el repositorio remoto correcto es `renecano/Crash_reconstruction_visualization_system` (público, creado el 2026-10-10 y vacío). Se eligió por nombre y fecha; se puede cambiar con `git remote set-url origin …`. | Push y CI                                                                                 | Asumido        |
+| Qué                                                                                                                                                                                                                                 | Para qué                                                                                  | Estado              |
+| ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------- | ------------------- |
+| `ANTHROPIC_API_KEY`                                                                                                                                                                                                                 | F6 (extracción con Claude) y E1. CI usa respuestas grabadas, así que no bloquea hasta F6. | Pendiente           |
+| Credenciales AWS (cuenta/rol para CDK) y proyecto Vercel                                                                                                                                                                            | F11 despliegue dev/prod. Mientras tanto todo corre local.                                 | Pendiente           |
+| Licencia académica BeamNG.tech                                                                                                                                                                                                      | F10 y E5                                                                                  | Pendiente           |
+| Confirmar licencia MIT del código y el nombre _Croquis_                                                                                                                                                                             | Se usan los valores por defecto de PLAN §16 (ADR 0002)                                    | Usando default      |
+| Pruebas con ≥ 5 personas reales (E9)                                                                                                                                                                                                | F11                                                                                       | Pendiente           |
+| Confirmar que el repositorio remoto correcto es `renecano/Crash_reconstruction_visualization_system` (público, lo creó René vacío el 2026-10-10). Se eligió por nombre y fecha; se puede cambiar con `git remote set-url origin …`. | Push y CI                                                                                 | Asumido y ya en uso |
 
 ## Entorno de desarrollo (verificado 2026-10-10)
 
@@ -40,6 +40,7 @@ Recomendación para René: cerrar Docker Desktop mientras se trabaja en Croquis 
 
 - `npm install -g pnpm@latest` → pnpm 12.11.2.
 - `uv self update` → uv 0.13.0.
+- Chromium de Playwright (1248) descargado a `D:\dev-cache\ms-playwright`.
 - Cachés movidos a D: para no llenar C: — `pnpm config set store-dir D:\dev-cache\pnpm-store --global`, `npm config set cache D:\dev-cache\npm-cache`, variables de usuario `UV_CACHE_DIR=D:\dev-cache\uv-cache` y `PLAYWRIGHT_BROWSERS_PATH=D:\dev-cache\ms-playwright`. **Las terminales abiertas antes de este cambio no ven las variables**; abre una nueva o expórtalas a mano.
 
 ## F0 — Fundaciones
@@ -50,11 +51,11 @@ Archivos: monorepo pnpm (`apps/web` Next.js 16, `packages/{scene-schema,solver-t
 
 Pruebas: Vitest en cada paquete TS (incluye `fast-check`), Playwright e2e de la portada, pytest + Hypothesis en cada paquete Python, ruff y pyright estricto, ESLint con reglas tipadas, Prettier.
 
-Riesgos: (1) TypeScript 7 rompe typescript-eslint → se usa TS 6.0.3 (ADR 0003). (2) Los archivos anuales de ATUS 2024/2025 no están en la URL histórica; la pestaña "Datos abiertos" del INEGI se renderiza con JavaScript → se localizan con un navegador headless. (3) RAM: no correr `next dev` y pytest con Hypothesis pesado a la vez.
+Riesgos: (1) TypeScript 7 rompe typescript-eslint → se usa TS 6.0.3 (ADR 0003). (2) Los archivos anuales de ATUS no están en la URL histórica; la pestaña "Datos abiertos" del INEGI se renderiza con JavaScript → se localizaron con Chromium headless y la API de descarga masiva. (3) RAM: no correr `next dev` y pytest con Hypothesis pesado a la vez.
 
 ### Hecho
 
-- Esqueleto completo del monorepo (ver estructura en PLAN §3.2) con primeros módulos reales y sus pruebas:
+- Esqueleto completo del monorepo (PLAN §3.2) con primeros módulos reales y sus pruebas:
   - `packages/solver-ts/src/units.ts` ↔ `solver/croquis_solver/units.py` (primer par de paridad).
   - `packages/viewer/src/quality.ts` (niveles de calidad con histéresis, PLAN §7.8).
   - `packages/croquis-2d/src/geometry.ts` (vectores 2D y caja orientada).
@@ -62,25 +63,44 @@ Riesgos: (1) TypeScript 7 rompe typescript-eslint → se usa TS 6.0.3 (ADR 0003)
   - `services/api` con `/health` y configuración por entorno (tope de gasto y límite de peticiones, PLAN §16.4).
   - `extraction/croquis_extraction/hashing.py` (hash estable del relato para la leyenda).
   - `eval/croquis_eval/results.py` (escritura uniforme de resultados con commit, fecha y semilla).
-- `.github/workflows/ci.yml` con tres trabajos: web (format, lint, tipos, pruebas, build), e2e (Playwright) y python (ruff, pyright, pytest) en Ubuntu y Windows.
+- **Ingesta de INEGI ATUS 1997–2025** (`data/croquis_data/atus.py`): descarga con verificación de tamaño y SHA-256, agregación anual con polars en streaming (un año a la vez), exclusión de "Certificado cero", compatibilidad con nombres de columna antiguos. Salidas: `data/processed/atus/*.csv` (12 tablas, ≈125 KB) y `eval/results/atus_summary.json`.
+- `.github/workflows/ci.yml` con tres trabajos: web (format, lint, tipos, pruebas, build), e2e (Playwright) y python (ruff, pyright, pytest) en Ubuntu y Windows. Dependabot semanal (npm, uv) y mensual (actions).
 - ADR 0001 (stack con versiones), 0002 (decisiones abiertas §16), 0003 (TypeScript 6 vs 7).
+- README con la sección "Problema" alimentada por `eval/results/atus_summary.json`; `data/SOURCES.md` con la fila de ATUS.
 
-### En curso
+### Evidencia (local, Windows, 2026-10-10)
 
-- Ingesta ATUS: ver "Siguiente paso concreto".
-- Instalación de dependencias y primera corrida local de todo.
+| Comando                                               | Resultado                                                                                             |
+| ----------------------------------------------------- | ----------------------------------------------------------------------------------------------------- |
+| `pnpm lint`                                           | 5 paquetes sin errores (ESLint 10 + typescript-eslint tipado; eslint-config-next)                     |
+| `pnpm typecheck`                                      | `next typegen && tsc --noEmit` en web y `tsc` en 4 paquetes: 0 errores                                |
+| `pnpm test`                                           | Vitest: web 3, croquis-2d 2, scene-schema 3, solver-ts 3 (fast-check), viewer 4 → 15 pruebas en verde |
+| `pnpm --filter @croquis/web build`                    | Next.js 16.4 (Turbopack) compila; 2 rutas estáticas                                                   |
+| `pnpm --filter @croquis/web test:e2e`                 | Playwright 1 prueba en verde contra `next build && next start`                                        |
+| `uv run ruff check . && uv run ruff format --check .` | All checks passed; 32 archivos formateados                                                            |
+| `uv run pyright`                                      | 0 errors (modo strict)                                                                                |
+| `uv run pytest`                                       | 16 pruebas en verde (Hypothesis incluida)                                                             |
+| `uv run croquis-data atus process`                    | 29 años en 2 min 54 s; p. ej. `2025: 380391 accidentes, 4571 muertos`                                 |
 
-### Evidencia
-
-Se llena al cerrar la fase con los comandos y sus salidas.
+Cifras medidas (de `eval/results/atus_summary.json`): 2025 = 380,391 accidentes, 4,571 fallecidos en el lugar, 86,956 heridos; 2024 = 374,949 / 4,656 / 85,980. Estado de México primer lugar en fallecidos (460). Colisiones con motocicleta +10.73 % y volcaduras +15.26 % respecto a 2024. Peatones fallecidos **bajaron** 13.87 % (901 → 776) y pasajeros subieron 3.29 % (972 → 1,004): el PLAN §1 decía que ambos subieron; el README reporta lo que dice el archivo. 2021 = 340,415, idéntico a la cifra del plan.
 
 ### Pendientes registrados
 
 - Instalar Blender y FFmpeg cuando empiece F3 (pipeline de assets) y F9 (video).
 - `turbo` no se adoptó en F0 (pnpm `-r` basta); reconsiderar si el CI pasa de ~10 min.
+- La advertencia de peers de pnpm (eslint-plugin-import/jsx-a11y/react declaran eslint ≤ 9 aunque funcionan con 10) se vigila; si rompe, bajar `apps/web` a ESLint 9 con nota en ADR 0001.
+- Prettier reformateó `CLAUDE.md` y `PLAN.md` una vez (solo espacios y alineación de tablas); ambos quedaron en `.prettierignore` para no volver a tocarlos.
 
 ### Decisiones
 
-- Repositorio remoto: `renecano/Crash_reconstruction_visualization_system` (ver bloqueados).
-- Cache Components de Next.js desactivado al crear la app (`--no-cache-components`): el producto es mayormente cliente (visor 3D) y así se evita fricción en F0; se puede activar después sin cambiar la estructura.
-- Python 3.14 (y no 3.12 como decía PLAN §3.1): es la versión estable vigente, hay ruedas `cp314` para numpy, scipy, pydantic-core, pyarrow y pandas en Windows (verificado en PyPI el 2026-10-10).
+- Repositorio remoto: `renecano/Crash_reconstruction_visualization_system`. `main` nace con un commit raíz vacío para que la primera fase también entre por PR con CI.
+- Cache Components de Next.js desactivado al crear la app (`--no-cache-components`): el producto es mayormente cliente (visor 3D); se puede activar después sin cambiar la estructura.
+- Python 3.14 (y no 3.12 como decía PLAN §3.1): versión estable vigente con ruedas `cp314` para numpy, scipy, pydantic-core, pyarrow, pandas y polars en Windows (verificado en PyPI el 2026-10-10).
+- `pytest --import-mode=importlib` y carpetas `tests/` sin `__init__.py` para que cinco paquetes convivan en un solo `pytest`.
+- Las dimensiones `SEXO`, `ALIENTO`, `CINTURON` y `CAUSAACCI` de ATUS no se agregan (describen al "presunto responsable"; PLAN §10).
+
+### Resumen para René (F0)
+
+- **Qué quedó:** el repo completo con CI, los primeros módulos con pruebas y la ingesta real de ATUS con cifras verificables.
+- **Cómo probarlo:** `pnpm install && uv sync --all-packages --all-groups`, luego `pnpm dev` (web), `uv run pytest`, `pnpm test`. Para regenerar las cifras: `uv run croquis-data atus download`, `uv run croquis-data atus process`, `uv run croquis-eval atus-summary`.
+- **Qué necesito de ti:** nada para seguir a F1–F5. Para F6 la `ANTHROPIC_API_KEY`; para F10 la licencia de BeamNG.tech; para F11 credenciales de AWS/Vercel y las 5 personas de E9. Y confirmar el remoto de GitHub si no es el que asumí.

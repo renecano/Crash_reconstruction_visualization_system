@@ -149,7 +149,9 @@ def download(
                 client.close()
     record = DownloadRecord(
         url=url,
-        path=str(target.relative_to(DATA_DIR)) if target.is_relative_to(DATA_DIR) else str(target),
+        path=(
+            target.relative_to(DATA_DIR) if target.is_relative_to(DATA_DIR) else target
+        ).as_posix(),
         size=target.stat().st_size,
         sha256=sha256_of(target),
         downloaded_at=datetime.now(UTC).isoformat(timespec="seconds"),

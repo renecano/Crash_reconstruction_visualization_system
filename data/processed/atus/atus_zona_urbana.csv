@@ -1,0 +1,88 @@
+anio,clave,accidentes,muertos,heridos
+1997,Accidente en intersección,146232,2446,56182
+1997,Accidente en no intersección,77352,1441,28467
+1997,Sin accidente en esta zona,24530,2152,13786
+1998,Accidente en intersección,132942,1099,49045
+1998,Accidente en no intersección,81989,1016,28902
+1998,Sin accidente en esta zona,47756,2871,21291
+1999,Accidente en intersección,155929,1431,54230
+1999,Accidente en no intersección,55192,937,20968
+1999,Sin accidente en esta zona,74373,3157,28586
+2000,Accidente en intersección,201940,1981,73277
+2000,Accidente en no intersección,93080,1516,29289
+2000,Sin accidente en esta zona,16918,1766,13936
+2001,Accidente en intersección,248370,1929,84153
+2001,Accidente en no intersección,99191,1260,29204
+2001,Sin accidente en esta zona,17308,1787,13349
+2002,Accidente en intersección,289463,2035,89477
+2002,Accidente en no intersección,91900,1271,31743
+2002,Sin accidente en esta zona,17639,1784,13431
+2003,Accidente en intersección,310269,2081,93375
+2003,Accidente en no intersección,95265,1398,30795
+2003,Sin accidente en esta zona,18956,1923,14894
+2004,Accidente en intersección,316033,1866,81243
+2004,Accidente en no intersección,106092,1340,32571
+2004,Sin accidente en esta zona,21482,1881,14619
+2005,Accidente en intersección,312764,1765,92098
+2005,Accidente en no intersección,115165,1355,39161
+2005,Sin accidente en esta zona,24304,1953,15467
+2006,Accidente en intersección,319220,1952,91650
+2006,Accidente en no intersección,124993,1563,42216
+2006,Sin accidente en esta zona,27059,2027,15474
+2007,Accidente en intersección,332773,2414,102012
+2007,Accidente en no intersección,116307,1627,40673
+2007,Sin accidente en esta zona,27199,2213,16525
+2008,Accidente en intersección,341937,3617,107031
+2008,Accidente en no intersección,95549,1455,31958
+2008,Sin accidente en esta zona,28949,2383,16184
+2009,Accidente en intersección,312725,3480,105079
+2009,Accidente en no intersección,86059,1607,31296
+2009,Sin accidente en esta zona,29683,2548,17515
+2010,Accidente en intersección,305146,3047,98436
+2010,Accidente en no intersección,92945,1535,29285
+2010,Sin accidente en esta zona,29176,2562,16312
+2011,Accidente en intersección,270575,3655,87500
+2011,Accidente en no intersección,85614,1928,30154
+2011,Sin accidente en esta zona,30996,2411,18081
+2012,Accidente en intersección,271637,1927,80166
+2012,Accidente en no intersección,90248,1399,32083
+2012,Sin accidente en esta zona,28526,2143,16700
+2013,Accidente en intersección,267180,1672,74101
+2013,Accidente en no intersección,91353,1256,32120
+2013,Sin accidente en esta zona,27239,2130,16629
+2014,Accidente en intersección,269546,1653,73149
+2014,Accidente en no intersección,84691,1151,28932
+2014,Sin accidente en esta zona,26336,1975,16107
+2015,Accidente en intersección,272901,1598,66107
+2015,Accidente en no intersección,82312,1072,26059
+2015,Sin accidente en esta zona,26853,1966,15036
+2016,Accidente en intersección,312116,2386,77542
+2016,Accidente en no intersección,21200,196,4918
+2016,Sin accidente en esta zona,26735,1977,15154
+2017,Accidente en intersección,324055,2435,73963
+2017,Accidente en no intersección,17937,185,3772
+2017,Sin accidente en esta zona,25797,1774,13422
+2018,Accidente en intersección,317290,2336,71839
+2018,Accidente en no intersección,19977,170,3837
+2018,Sin accidente en esta zona,28014,1721,13544
+2019,Accidente en intersección,319765,2319,74194
+2019,Accidente en no intersección,15232,165,3458
+2019,Sin accidente en esta zona,27732,1643,14109
+2020,Accidente en intersección,256122,2006,55526
+2020,Accidente en no intersección,20419,287,4770
+2020,Sin accidente en esta zona,25137,1533,11639
+2021,Accidente en intersección,283159,2243,61122
+2021,Accidente en no intersección,27164,340,7145
+2021,Sin accidente en esta zona,30092,1818,14199
+2022,Accidente en intersección,307882,2594,67527
+2022,Accidente en no intersección,35090,363,8493
+2022,Sin accidente en esta zona,34259,2224,15481
+2023,Accidente en intersección,286247,2126,60704
+2023,Accidente en no intersección,58490,710,14038
+2023,Sin accidente en esta zona,36311,1967,15758
+2024,Accidente en intersección,259153,1778,52122
+2024,Accidente en no intersección,86281,1329,21657
+2024,Sin accidente en esta zona,29515,1549,12201
+2025,Accidente en intersección,257149,1806,51876
+2025,Accidente en no intersección,96014,1363,24110
+2025,Sin accidente en esta zona,27228,1402,10970
