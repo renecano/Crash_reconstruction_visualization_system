@@ -259,6 +259,12 @@ importers:
 
   apps/web:
     dependencies:
+      '@croquis/croquis-2d':
+        specifier: workspace:*
+        version: link:../../packages/croquis-2d
+      '@croquis/scene-schema':
+        specifier: workspace:*
+        version: link:../../packages/scene-schema
       next:
         specifier: 16.4.0
         version: 16.4.0(@babel/core@7.29.7)(@playwright/test@1.64.0)(@types/node@24.19.2)(react-dom@19.3.0(react@19.3.0))(react@19.3.0)
@@ -313,7 +319,14 @@ importers:
         version: 5.0.3(@types/node@24.19.2)(jsdom@30.1.2)(vite@8.3.4(@types/node@24.19.2)(esbuild@0.28.2)(jiti@2.7.0)(tsx@4.23.15))
 
   packages/croquis-2d:
+    dependencies:
+      '@croquis/scene-schema':
+        specifier: workspace:*
+        version: link:../scene-schema
     devDependencies:
+      '@testing-library/react':
+        specifier: 'catalog:'
+        version: 16.3.3(@testing-library/dom@10.4.2)(@types/react-dom@19.3.0(@types/react@19.3.0))(@types/react@19.3.0)(react-dom@19.3.0(react@19.3.0))(react@19.3.0)
       '@types/node':
         specifier: 'catalog:'
         version: 24.19.2
@@ -323,9 +336,18 @@ importers:
       '@types/react-dom':
         specifier: 'catalog:'
         version: 19.3.0(@types/react@19.3.0)
+      '@vitejs/plugin-react':
+        specifier: 'catalog:'
+        version: 6.1.2(vite@8.3.4(@types/node@24.19.2)(esbuild@0.28.2)(jiti@2.7.0)(tsx@4.23.15))
       eslint:
         specifier: 'catalog:'
         version: 10.12.0(jiti@2.7.0)
+      fast-check:
+        specifier: 'catalog:'
+        version: 4.10.2
+      jsdom:
+        specifier: 'catalog:'
+        version: 30.1.2
       react:
         specifier: 'catalog:'
         version: 19.3.0
@@ -335,6 +357,9 @@ importers:
       typescript:
         specifier: 'catalog:'
         version: 6.0.3
+      vite:
+        specifier: 'catalog:'
+        version: 8.3.4(@types/node@24.19.2)(esbuild@0.28.2)(jiti@2.7.0)(tsx@4.23.15)
       vitest:
         specifier: 'catalog:'
         version: 5.0.3(@types/node@24.19.2)(jsdom@30.1.2)(vite@8.3.4(@types/node@24.19.2)(esbuild@0.28.2)(jiti@2.7.0)(tsx@4.23.15))

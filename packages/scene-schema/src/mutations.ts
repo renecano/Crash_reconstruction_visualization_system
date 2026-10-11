@@ -3,7 +3,7 @@
  * través de `fixtures/invalid/cases.json`).
  */
 export interface MutationCase {
-  nombre: string;
+  nombre?: string;
   op: "remove" | "set" | "repeat";
   ruta: string;
   valor?: unknown;

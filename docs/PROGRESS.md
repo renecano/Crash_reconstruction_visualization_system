@@ -5,9 +5,10 @@ Reglas de trabajo: `CLAUDE.md`. Especificación: `PLAN.md`.
 
 ## Estado actual
 
-- **Fase actual:** F0 — Fundaciones (cerrando: falta CI verde y merge).
-- **Siguiente paso concreto:** CI verde en el PR #1 (`feat/f0-fundaciones` → `main`), merge, y arrancar **F1 — Contrato y croquis** (`escena.schema.json` v1, generación Zod/Pydantic, 10 escenas canónicas, editor 2D con ida y vuelta al JSON).
-- **Rama de trabajo:** `feat/f0-fundaciones`. PR: https://github.com/renecano/Crash_reconstruction_visualization_system/pull/1
+- **Fase actual:** F1 — Contrato y croquis (en curso, rama `feat/f1-contrato`).
+- **Hecho en F1:** `escena.schema.json` v1 (48 definiciones), generadores Zod (propio) y Pydantic (datamodel-code-generator) con verificación en CI, 10 escenas canónicas con relato y evidencias verificadas, validador semántico con paridad TS ↔ Python (18 casos compartidos), editor 2D en SVG (`@croquis/croquis-2d`) con ediciones puras y prueba de propiedad de ida y vuelta, página `/croquis` con JSON bidireccional y revisión de la escena.
+- **Siguiente paso concreto:** cerrar F1: (1) tabla de rangos por clase de vehículo con fuentes (`data/vehicles/models_raw.json` → `packages/scene-schema/vehicle_classes.json`) y conectarla al validador por defecto; (2) módulo de migraciones v1→vN con pruebas; (3) correr e2e de `/croquis`, PR, CI verde y merge; (4) actualizar README/ADR 0004.
+- **F0 cerrado** el 2026-10-10 (PR #1).
 
 ### Bloqueado — necesita a René
 

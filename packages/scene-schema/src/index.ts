@@ -6,6 +6,20 @@
  */
 export * from "./generated/escena.zod";
 export {
+  CONFIANZA_BAJA,
+  boxesOverlap,
+  checkEscena,
+  erroresDe,
+  longitudM,
+  masaKg,
+  velocidadKmh,
+  type CheckOptions,
+  type Problema,
+  type RangoClase,
+  type Severidad,
+  type TablaClases,
+} from "./check";
+export {
   FIXTURE_NAMES,
   RAW_FIXTURES,
   fixtureTitle,
@@ -19,4 +33,5 @@ export {
   validateEscena,
   type ValidationResult,
 } from "./validate";
+export { MIGRATIONS, migrateEscena, type Migration, type MigrationResult } from "./migrate";
 export { compareSchemaVersions, parseSemver } from "./version";
