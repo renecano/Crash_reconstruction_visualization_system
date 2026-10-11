@@ -1,0 +1,751 @@
+{
+  "meta": {
+    "id": "fx-lateral-interseccion",
+    "version_esquema": "1.0.0",
+    "idioma": "es-MX",
+    "semilla": 102,
+    "creado": "2026-10-10T18:05:00-06:00",
+    "titulo": "Choque lateral en cruce con semáforo (Toluca centro)",
+    "origen_relato": "precargado",
+    "sintetico": true,
+    "relato": "Yo iba por Benito Juárez hacia el oriente en mi March rojo, como a 45, con el semáforo en verde. En el cruce con Hidalgo una pickup blanca que venía de sur a norte se pasó el alto y le pegué de frente en su lado del conductor, a la altura de las puertas. Los dos carros giraron y la pickup quedó atravesada. Mi esposa iba de copiloto, los dos con cinturón. Quedaron vidrios regados en todo el cruce."
+  },
+  "lugar": {
+    "nombre_via": {
+      "valor": "Benito Juárez",
+      "fuente": "relato",
+      "confianza": 0.95,
+      "evidencia": [
+        {
+          "inicio": 11,
+          "fin": 24,
+          "texto": "Benito Juárez"
+        }
+      ]
+    },
+    "nombre_via_secundaria": {
+      "valor": "Hidalgo",
+      "fuente": "relato",
+      "confianza": 0.9,
+      "evidencia": [
+        {
+          "inicio": 113,
+          "fin": 120,
+          "texto": "Hidalgo"
+        }
+      ]
+    },
+    "tipo_via": {
+      "valor": "interseccion_x",
+      "fuente": "relato",
+      "confianza": 0.9,
+      "evidencia": [
+        {
+          "inicio": 97,
+          "fin": 120,
+          "texto": "En el cruce con Hidalgo"
+        }
+      ]
+    },
+    "carriles_por_sentido": {
+      "valor": 2,
+      "fuente": "default",
+      "confianza": 0.5
+    },
+    "carriles_por_sentido_secundaria": {
+      "valor": 1,
+      "fuente": "default",
+      "confianza": 0.5
+    },
+    "ancho_carril": {
+      "valor": 3.3,
+      "unidad": "m",
+      "fuente": "default",
+      "confianza": 0.5
+    },
+    "sentidos": {
+      "valor": "un_sentido",
+      "fuente": "default",
+      "confianza": 0.5,
+      "nota": "Calles del centro de Toluca suelen ser de un sentido."
+    },
+    "banquetas": {
+      "valor": true,
+      "fuente": "default",
+      "confianza": 0.7
+    },
+    "guarniciones": {
+      "valor": true,
+      "fuente": "default",
+      "confianza": 0.7
+    },
+    "superficie": {
+      "valor": "asfalto",
+      "fuente": "default",
+      "confianza": 0.7
+    },
+    "estado_superficie": {
+      "valor": "seco",
+      "fuente": "default",
+      "confianza": 0.6
+    },
+    "friccion": {
+      "valor": 0.75,
+      "rango": [0.65, 0.85],
+      "fuente": "default",
+      "confianza": 0.6
+    },
+    "dispositivos": [
+      {
+        "id": "semaforo-benito-juarez",
+        "tipo": "semaforo",
+        "posicion": {
+          "x": 6,
+          "y": -5
+        },
+        "aplica_a": ["veh-a"],
+        "fases": [
+          {
+            "movimiento": "veh-a",
+            "color": "verde"
+          }
+        ],
+        "procedencia": {
+          "fuente": "relato",
+          "confianza": 0.85,
+          "evidencia": [
+            {
+              "inicio": 71,
+              "fin": 95,
+              "texto": "con el semáforo en verde"
+            }
+          ]
+        }
+      },
+      {
+        "id": "semaforo-hidalgo",
+        "tipo": "semaforo",
+        "posicion": {
+          "x": -5,
+          "y": -6
+        },
+        "aplica_a": ["veh-b"],
+        "fases": [
+          {
+            "movimiento": "veh-b",
+            "color": "rojo"
+          }
+        ],
+        "procedencia": {
+          "fuente": "relato",
+          "confianza": 0.6,
+          "evidencia": [
+            {
+              "inicio": 164,
+              "fin": 179,
+              "texto": "se pasó el alto"
+            }
+          ],
+          "nota": "Afirmación del narrador; se registra como su versión, no como hecho."
+        }
+      }
+    ]
+  },
+  "entorno": {
+    "clima": {
+      "valor": "despejado",
+      "fuente": "default",
+      "confianza": 0.5
+    },
+    "iluminacion": {
+      "valor": "dia",
+      "fuente": "default",
+      "confianza": 0.5
+    },
+    "objetos": [
+      {
+        "id": "esquina-sureste",
+        "tipo": "muro",
+        "posicion": {
+          "x": 8,
+          "y": -8
+        },
+        "rumbo_deg": 0,
+        "largo": {
+          "valor": 12,
+          "unidad": "m",
+          "fuente": "default",
+          "confianza": 0.4
+        },
+        "ancho": {
+          "valor": 0.4,
+          "unidad": "m",
+          "fuente": "default",
+          "confianza": 0.4
+        },
+        "alto": {
+          "valor": 4,
+          "unidad": "m",
+          "fuente": "default",
+          "confianza": 0.4
+        },
+        "material": "mamposteria",
+        "procedencia": {
+          "fuente": "default",
+          "confianza": 0.4,
+          "nota": "Fachada en la esquina; relevante para la visibilidad entre A y B."
+        }
+      }
+    ]
+  },
+  "vehiculos": [
+    {
+      "id": "veh-a",
+      "rol": "A",
+      "clase": {
+        "valor": "hatchback",
+        "fuente": "relato",
+        "confianza": 0.9,
+        "evidencia": [
+          {
+            "inicio": 45,
+            "fin": 58,
+            "texto": "mi March rojo"
+          }
+        ]
+      },
+      "marca": {
+        "valor": "Nissan",
+        "fuente": "relato",
+        "confianza": 0.9,
+        "evidencia": [
+          {
+            "inicio": 48,
+            "fin": 53,
+            "texto": "March"
+          }
+        ]
+      },
+      "modelo": {
+        "valor": "March",
+        "fuente": "relato",
+        "confianza": 0.9,
+        "evidencia": [
+          {
+            "inicio": 48,
+            "fin": 53,
+            "texto": "March"
+          }
+        ]
+      },
+      "color": {
+        "nombre": {
+          "valor": "rojo",
+          "fuente": "relato",
+          "confianza": 0.9,
+          "evidencia": [
+            {
+              "inicio": 54,
+              "fin": 58,
+              "texto": "rojo"
+            }
+          ]
+        },
+        "hex": "#b3121b"
+      },
+      "masa": {
+        "valor": 960,
+        "unidad": "kg",
+        "rango": [900, 1050],
+        "fuente": "default",
+        "confianza": 0.6
+      },
+      "largo": {
+        "valor": 3.83,
+        "unidad": "m",
+        "fuente": "default",
+        "confianza": 0.6
+      },
+      "ancho": {
+        "valor": 1.67,
+        "unidad": "m",
+        "fuente": "default",
+        "confianza": 0.6
+      },
+      "alto": {
+        "valor": 1.53,
+        "unidad": "m",
+        "fuente": "default",
+        "confianza": 0.6
+      },
+      "distancia_entre_ejes": {
+        "valor": 2.45,
+        "unidad": "m",
+        "fuente": "default",
+        "confianza": 0.6
+      },
+      "maniobra": {
+        "valor": "recto",
+        "fuente": "relato",
+        "confianza": 0.9,
+        "evidencia": [
+          {
+            "inicio": 3,
+            "fin": 41,
+            "texto": "iba por Benito Juárez hacia el oriente"
+          }
+        ]
+      },
+      "velocidad_previa": {
+        "valor": 45,
+        "unidad": "km/h",
+        "rango": [35, 55],
+        "fuente": "relato",
+        "confianza": 0.7,
+        "evidencia": [
+          {
+            "inicio": 60,
+            "fin": 69,
+            "texto": "como a 45"
+          }
+        ]
+      },
+      "frenado": {
+        "aplico": {
+          "valor": false,
+          "fuente": "supuesto",
+          "confianza": 0.4,
+          "nota": "No menciona frenar; se preguntará."
+        }
+      },
+      "carril": {
+        "valor": 1,
+        "fuente": "default",
+        "confianza": 0.4
+      },
+      "posicion_inicial": {
+        "x": -25,
+        "y": 0,
+        "rumbo_deg": 0,
+        "procedencia": {
+          "fuente": "supuesto",
+          "confianza": 0.5
+        }
+      },
+      "posicion_final": {
+        "x": 3.5,
+        "y": 2.0,
+        "rumbo_deg": 40,
+        "procedencia": {
+          "fuente": "relato",
+          "confianza": 0.5,
+          "evidencia": [
+            {
+              "inicio": 255,
+              "fin": 277,
+              "texto": "Los dos carros giraron"
+            }
+          ]
+        }
+      },
+      "ocupantes": ["per-a1", "per-a2"]
+    },
+    {
+      "id": "veh-b",
+      "rol": "B",
+      "clase": {
+        "valor": "pickup",
+        "fuente": "relato",
+        "confianza": 0.9,
+        "evidencia": [
+          {
+            "inicio": 121,
+            "fin": 138,
+            "texto": "una pickup blanca"
+          }
+        ]
+      },
+      "color": {
+        "nombre": {
+          "valor": "blanco",
+          "fuente": "relato",
+          "confianza": 0.9,
+          "evidencia": [
+            {
+              "inicio": 132,
+              "fin": 138,
+              "texto": "blanca"
+            }
+          ]
+        },
+        "hex": "#f4f4f4"
+      },
+      "masa": {
+        "valor": 1850,
+        "unidad": "kg",
+        "rango": [1650, 2100],
+        "fuente": "default",
+        "confianza": 0.5
+      },
+      "largo": {
+        "valor": 5.26,
+        "unidad": "m",
+        "fuente": "default",
+        "confianza": 0.5
+      },
+      "ancho": {
+        "valor": 1.85,
+        "unidad": "m",
+        "fuente": "default",
+        "confianza": 0.5
+      },
+      "alto": {
+        "valor": 1.82,
+        "unidad": "m",
+        "fuente": "default",
+        "confianza": 0.5
+      },
+      "distancia_entre_ejes": {
+        "valor": 3.15,
+        "unidad": "m",
+        "fuente": "default",
+        "confianza": 0.5
+      },
+      "maniobra": {
+        "valor": "recto",
+        "fuente": "relato",
+        "confianza": 0.85,
+        "evidencia": [
+          {
+            "inicio": 143,
+            "fin": 163,
+            "texto": "venía de sur a norte"
+          }
+        ]
+      },
+      "velocidad_previa": {
+        "valor": 40,
+        "unidad": "km/h",
+        "rango": [25, 60],
+        "fuente": "supuesto",
+        "confianza": 0.3,
+        "nota": "El narrador no estima la velocidad de B; es la primera pregunta por sensibilidad."
+      },
+      "carril": {
+        "valor": 1,
+        "fuente": "default",
+        "confianza": 0.4
+      },
+      "posicion_inicial": {
+        "x": 0,
+        "y": -22,
+        "rumbo_deg": 90,
+        "procedencia": {
+          "fuente": "supuesto",
+          "confianza": 0.5
+        }
+      },
+      "posicion_final": {
+        "x": 4.0,
+        "y": 3.5,
+        "rumbo_deg": 35,
+        "procedencia": {
+          "fuente": "relato",
+          "confianza": 0.5,
+          "evidencia": [
+            {
+              "inicio": 280,
+              "fin": 306,
+              "texto": "la pickup quedó atravesada"
+            }
+          ]
+        }
+      },
+      "ocupantes": ["per-b1"]
+    }
+  ],
+  "personas": [
+    {
+      "id": "per-a1",
+      "rol": {
+        "valor": "conductor",
+        "fuente": "relato",
+        "confianza": 1,
+        "evidencia": [
+          {
+            "inicio": 0,
+            "fin": 24,
+            "texto": "Yo iba por Benito Juárez"
+          }
+        ]
+      },
+      "vehiculo_id": "veh-a",
+      "asiento": {
+        "valor": "conductor",
+        "fuente": "supuesto",
+        "confianza": 1
+      },
+      "cinturon": {
+        "valor": true,
+        "fuente": "relato",
+        "confianza": 0.9,
+        "evidencia": [
+          {
+            "inicio": 335,
+            "fin": 355,
+            "texto": "los dos con cinturón"
+          }
+        ]
+      }
+    },
+    {
+      "id": "per-a2",
+      "rol": {
+        "valor": "pasajero",
+        "fuente": "relato",
+        "confianza": 1,
+        "evidencia": [
+          {
+            "inicio": 308,
+            "fin": 333,
+            "texto": "Mi esposa iba de copiloto"
+          }
+        ]
+      },
+      "vehiculo_id": "veh-a",
+      "asiento": {
+        "valor": "copiloto",
+        "fuente": "relato",
+        "confianza": 1,
+        "evidencia": [
+          {
+            "inicio": 322,
+            "fin": 333,
+            "texto": "de copiloto"
+          }
+        ]
+      },
+      "cinturon": {
+        "valor": true,
+        "fuente": "relato",
+        "confianza": 0.9,
+        "evidencia": [
+          {
+            "inicio": 335,
+            "fin": 355,
+            "texto": "los dos con cinturón"
+          }
+        ]
+      }
+    },
+    {
+      "id": "per-b1",
+      "rol": {
+        "valor": "conductor",
+        "fuente": "supuesto",
+        "confianza": 0.9
+      },
+      "vehiculo_id": "veh-b",
+      "asiento": {
+        "valor": "conductor",
+        "fuente": "supuesto",
+        "confianza": 0.9
+      }
+    }
+  ],
+  "eventos": [
+    {
+      "id": "ev-impacto",
+      "orden": 0,
+      "tipo": "impacto_vehiculo_vehiculo",
+      "actores": ["veh-a", "veh-b"],
+      "t": {
+        "valor": 0,
+        "unidad": "s",
+        "fuente": "default",
+        "confianza": 1
+      },
+      "zonas_impacto": [
+        {
+          "vehiculo_id": "veh-a",
+          "cdc": {
+            "lado": "F",
+            "zona_horizontal": "D",
+            "zona_vertical": "E",
+            "extension": 4
+          },
+          "pdof_horas": {
+            "valor": 12,
+            "fuente": "supuesto",
+            "confianza": 0.6
+          }
+        },
+        {
+          "vehiculo_id": "veh-b",
+          "cdc": {
+            "lado": "L",
+            "zona_horizontal": "P",
+            "zona_vertical": "E",
+            "extension": 3
+          },
+          "pdof_horas": {
+            "valor": 9,
+            "fuente": "supuesto",
+            "confianza": 0.6
+          }
+        }
+      ],
+      "punto_impacto": {
+        "x": 0,
+        "y": 0
+      },
+      "descripcion": "Frente de A contra el costado izquierdo de B a la altura de las puertas.",
+      "procedencia": {
+        "fuente": "relato",
+        "confianza": 0.9,
+        "evidencia": [
+          {
+            "inicio": 182,
+            "fin": 253,
+            "texto": "le pegué de frente en su lado del conductor, a la altura de las puertas"
+          }
+        ]
+      }
+    },
+    {
+      "id": "ev-giro",
+      "orden": 1,
+      "tipo": "giro",
+      "actores": ["veh-a", "veh-b"],
+      "procedencia": {
+        "fuente": "relato",
+        "confianza": 0.8,
+        "evidencia": [
+          {
+            "inicio": 255,
+            "fin": 277,
+            "texto": "Los dos carros giraron"
+          }
+        ]
+      }
+    },
+    {
+      "id": "ev-reposo",
+      "orden": 2,
+      "tipo": "reposo",
+      "actores": ["veh-a", "veh-b"],
+      "procedencia": {
+        "fuente": "relato",
+        "confianza": 0.7,
+        "evidencia": [
+          {
+            "inicio": 280,
+            "fin": 306,
+            "texto": "la pickup quedó atravesada"
+          }
+        ]
+      }
+    }
+  ],
+  "danos_declarados": [
+    {
+      "vehiculo_id": "veh-a",
+      "zona": {
+        "lado": "F",
+        "zona_horizontal": "D",
+        "zona_vertical": "E",
+        "extension": 4
+      },
+      "severidad": "severo",
+      "vidrios": "estrellados",
+      "bolsas_aire": {
+        "valor": true,
+        "fuente": "supuesto",
+        "confianza": 0.5
+      },
+      "piezas_desprendidas": ["defensa", "faro"],
+      "procedencia": {
+        "fuente": "supuesto",
+        "confianza": 0.5,
+        "nota": "El narrador no describe su daño; se infiere de un impacto frontal a 45 km/h."
+      }
+    },
+    {
+      "vehiculo_id": "veh-b",
+      "zona": {
+        "lado": "L",
+        "zona_horizontal": "P",
+        "zona_vertical": "E",
+        "extension": 3
+      },
+      "severidad": "severo",
+      "vidrios": "rotos",
+      "piezas_desprendidas": ["espejo", "puerta"],
+      "procedencia": {
+        "fuente": "relato",
+        "confianza": 0.7,
+        "evidencia": [
+          {
+            "inicio": 357,
+            "fin": 398,
+            "texto": "Quedaron vidrios regados en todo el cruce"
+          }
+        ]
+      }
+    }
+  ],
+  "evidencias": [
+    {
+      "id": "evid-vidrios",
+      "tipo": "vidrios",
+      "puntos": [
+        {
+          "x": -2,
+          "y": -1
+        },
+        {
+          "x": 3,
+          "y": 2
+        },
+        {
+          "x": 1,
+          "y": 4
+        }
+      ],
+      "descripcion": "Vidrios regados alrededor del punto de impacto.",
+      "procedencia": {
+        "fuente": "relato",
+        "confianza": 0.8,
+        "evidencia": [
+          {
+            "inicio": 366,
+            "fin": 398,
+            "texto": "vidrios regados en todo el cruce"
+          }
+        ]
+      }
+    },
+    {
+      "id": "evid-final-b",
+      "tipo": "posicion_final",
+      "vehiculo_id": "veh-b",
+      "puntos": [
+        {
+          "x": 4.0,
+          "y": 3.5
+        }
+      ],
+      "procedencia": {
+        "fuente": "relato",
+        "confianza": 0.5,
+        "evidencia": [
+          {
+            "inicio": 290,
+            "fin": 306,
+            "texto": "quedó atravesada"
+          }
+        ]
+      }
+    }
+  ]
+}

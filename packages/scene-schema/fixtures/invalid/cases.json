@@ -1,0 +1,84 @@
+{
+  "_descripcion": "Mutaciones de la escena 'alcance' que DEBEN ser rechazadas por el JSON Schema en TypeScript (Ajv) y en Python (jsonschema). Cada caso aplica una operación sobre una ruta JSON Pointer.",
+  "casos": [
+    { "nombre": "sin_meta", "op": "remove", "ruta": "/meta" },
+    {
+      "nombre": "version_distinta",
+      "op": "set",
+      "ruta": "/meta/version_esquema",
+      "valor": "0.9.0"
+    },
+    { "nombre": "semilla_negativa", "op": "set", "ruta": "/meta/semilla", "valor": -1 },
+    {
+      "nombre": "creado_sin_zona_horaria",
+      "op": "set",
+      "ruta": "/meta/creado",
+      "valor": "2026-10-10T18:00:00"
+    },
+    {
+      "nombre": "fuente_desconocida",
+      "op": "set",
+      "ruta": "/vehiculos/0/velocidad_previa/fuente",
+      "valor": "testigo"
+    },
+    {
+      "nombre": "confianza_mayor_a_uno",
+      "op": "set",
+      "ruta": "/vehiculos/0/velocidad_previa/confianza",
+      "valor": 1.5
+    },
+    {
+      "nombre": "velocidad_negativa",
+      "op": "set",
+      "ruta": "/vehiculos/0/velocidad_previa/valor",
+      "valor": -5
+    },
+    {
+      "nombre": "unidad_de_velocidad_invalida",
+      "op": "set",
+      "ruta": "/vehiculos/0/velocidad_previa/unidad",
+      "valor": "mph"
+    },
+    { "nombre": "propiedad_extra", "op": "set", "ruta": "/vehiculos/0/placas", "valor": "ABC-123" },
+    { "nombre": "id_con_mayusculas", "op": "set", "ruta": "/vehiculos/0/id", "valor": "Veh-A" },
+    { "nombre": "rol_largo", "op": "set", "ruta": "/vehiculos/0/rol", "valor": "AB" },
+    {
+      "nombre": "clase_desconocida",
+      "op": "set",
+      "ruta": "/vehiculos/0/clase/valor",
+      "valor": "trailer"
+    },
+    { "nombre": "color_hex_corto", "op": "set", "ruta": "/vehiculos/0/color/hex", "valor": "#fff" },
+    {
+      "nombre": "rango_de_tres",
+      "op": "set",
+      "ruta": "/vehiculos/0/velocidad_previa/rango",
+      "valor": [1, 2, 3]
+    },
+    {
+      "nombre": "evidencia_fin_cero",
+      "op": "set",
+      "ruta": "/vehiculos/0/clase/evidencia/0/fin",
+      "valor": 0
+    },
+    {
+      "nombre": "pose_sin_procedencia",
+      "op": "remove",
+      "ruta": "/vehiculos/0/posicion_inicial/procedencia"
+    },
+    {
+      "nombre": "cdc_lado_invalido",
+      "op": "set",
+      "ruta": "/danos_declarados/0/zona/lado",
+      "valor": "X"
+    },
+    { "nombre": "evento_sin_actores", "op": "set", "ruta": "/eventos/0/actores", "valor": [] },
+    { "nombre": "demasiados_vehiculos", "op": "repeat", "ruta": "/vehiculos", "veces": 9 },
+    {
+      "nombre": "tipo_via_invalido",
+      "op": "set",
+      "ruta": "/lugar/tipo_via/valor",
+      "valor": "avenida"
+    }
+  ]
+}

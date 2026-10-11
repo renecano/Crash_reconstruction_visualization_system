@@ -1,0 +1,336 @@
+{
+  "_descripcion": "Casos de paridad del validador semántico. Cada caso parte de una escena canónica, aplica mutaciones (JSON Pointer) que el JSON Schema acepta y espera exactamente estos pares codigo+ruta de error (las advertencias se comparan aparte en 'advertencias'). TS y Python deben coincidir.",
+  "clases_de_prueba": {
+    "sedan_compacto": {
+      "masa_kg": [900, 1400],
+      "largo_m": [3.9, 4.7],
+      "ancho_m": [1.6, 1.85],
+      "alto_m": [1.35, 1.6],
+      "distancia_entre_ejes_m": [2.4, 2.75],
+      "velocidad_max_kmh": 200,
+      "tipico": {
+        "masa_kg": 1100,
+        "largo_m": 4.4,
+        "ancho_m": 1.7,
+        "alto_m": 1.5,
+        "distancia_entre_ejes_m": 2.6
+      }
+    },
+    "suv_compacta": {
+      "masa_kg": [1100, 1700],
+      "largo_m": [4.1, 4.7],
+      "ancho_m": [1.7, 1.9],
+      "alto_m": [1.5, 1.75],
+      "distancia_entre_ejes_m": [2.5, 2.8],
+      "velocidad_max_kmh": 200,
+      "tipico": {
+        "masa_kg": 1350,
+        "largo_m": 4.35,
+        "ancho_m": 1.78,
+        "alto_m": 1.62,
+        "distancia_entre_ejes_m": 2.63
+      }
+    }
+  },
+  "casos": [
+    {
+      "nombre": "escena_limpia",
+      "base": "alcance",
+      "mutaciones": [],
+      "errores": [],
+      "advertencias": []
+    },
+    {
+      "nombre": "id_duplicado_persona",
+      "base": "alcance",
+      "mutaciones": [
+        {
+          "op": "set",
+          "ruta": "/personas/1/id",
+          "valor": "per-a1"
+        }
+      ],
+      "errores": [
+        ["E001", "/personas/1/id"],
+        ["E012", "/personas/1/vehiculo_id"],
+        ["E002", "/vehiculos/1/ocupantes/0"]
+      ],
+      "advertencias": []
+    },
+    {
+      "nombre": "referencia_rota_ocupante",
+      "base": "alcance",
+      "mutaciones": [
+        {
+          "op": "set",
+          "ruta": "/vehiculos/0/ocupantes/0",
+          "valor": "per-x"
+        }
+      ],
+      "errores": [
+        ["E002", "/vehiculos/0/ocupantes/0"],
+        ["E012", "/personas/0/vehiculo_id"]
+      ],
+      "advertencias": []
+    },
+    {
+      "nombre": "relato_sin_evidencia",
+      "base": "alcance",
+      "mutaciones": [
+        {
+          "op": "set",
+          "ruta": "/vehiculos/0/velocidad_previa/evidencia",
+          "valor": []
+        }
+      ],
+      "errores": [["E003", "/vehiculos/0/velocidad_previa"]],
+      "advertencias": []
+    },
+    {
+      "nombre": "evidencia_no_coincide",
+      "base": "alcance",
+      "mutaciones": [
+        {
+          "op": "set",
+          "ruta": "/vehiculos/0/velocidad_previa/evidencia/0/texto",
+          "valor": "como a 90"
+        }
+      ],
+      "errores": [["E004", "/vehiculos/0/velocidad_previa/evidencia/0"]],
+      "advertencias": []
+    },
+    {
+      "nombre": "valor_fuera_de_su_rango",
+      "base": "alcance",
+      "mutaciones": [
+        {
+          "op": "set",
+          "ruta": "/vehiculos/0/velocidad_previa/rango",
+          "valor": [60, 70]
+        }
+      ],
+      "errores": [["E005", "/vehiculos/0/velocidad_previa/valor"]],
+      "advertencias": []
+    },
+    {
+      "nombre": "rango_invertido",
+      "base": "alcance",
+      "mutaciones": [
+        {
+          "op": "set",
+          "ruta": "/vehiculos/0/velocidad_previa/rango",
+          "valor": [60, 40]
+        }
+      ],
+      "errores": [["E005", "/vehiculos/0/velocidad_previa/rango"]],
+      "advertencias": []
+    },
+    {
+      "nombre": "masa_de_camion_en_sedan",
+      "base": "alcance",
+      "mutaciones": [
+        {
+          "op": "set",
+          "ruta": "/vehiculos/0/masa",
+          "valor": {
+            "valor": 8,
+            "unidad": "t",
+            "fuente": "usuario",
+            "confianza": 1
+          }
+        }
+      ],
+      "errores": [["E006", "/vehiculos/0/masa/valor"]],
+      "advertencias": []
+    },
+    {
+      "nombre": "largo_en_centimetros_fuera_de_clase",
+      "base": "alcance",
+      "mutaciones": [
+        {
+          "op": "set",
+          "ruta": "/vehiculos/0/largo",
+          "valor": {
+            "valor": 620,
+            "unidad": "cm",
+            "fuente": "usuario",
+            "confianza": 1
+          }
+        }
+      ],
+      "errores": [["E007", "/vehiculos/0/largo/valor"]],
+      "advertencias": []
+    },
+    {
+      "nombre": "velocidad_imposible_en_m_s",
+      "base": "alcance",
+      "mutaciones": [
+        {
+          "op": "set",
+          "ruta": "/vehiculos/0/velocidad_previa",
+          "valor": {
+            "valor": 70,
+            "unidad": "m/s",
+            "fuente": "usuario",
+            "confianza": 1
+          }
+        }
+      ],
+      "errores": [["E008", "/vehiculos/0/velocidad_previa/valor"]],
+      "advertencias": []
+    },
+    {
+      "nombre": "vehiculos_encimados",
+      "base": "alcance",
+      "mutaciones": [
+        {
+          "op": "set",
+          "ruta": "/vehiculos/0/posicion_inicial",
+          "valor": {
+            "x": 1.5,
+            "y": 0.5,
+            "rumbo_deg": 20,
+            "procedencia": {
+              "fuente": "usuario",
+              "confianza": 1
+            }
+          }
+        }
+      ],
+      "errores": [["E009", "/vehiculos/1/posicion_inicial"]],
+      "advertencias": []
+    },
+    {
+      "nombre": "vehiculos_casi_tocandose_no_es_error",
+      "base": "alcance",
+      "mutaciones": [
+        {
+          "op": "set",
+          "ruta": "/vehiculos/0/posicion_inicial",
+          "valor": {
+            "x": -4.6,
+            "y": 0,
+            "rumbo_deg": 0,
+            "procedencia": {
+              "fuente": "usuario",
+              "confianza": 1
+            }
+          }
+        }
+      ],
+      "errores": [],
+      "advertencias": []
+    },
+    {
+      "nombre": "conductor_sin_vehiculo",
+      "base": "alcance",
+      "mutaciones": [
+        {
+          "op": "remove",
+          "ruta": "/personas/1/vehiculo_id"
+        }
+      ],
+      "errores": [
+        ["E010", "/personas/1/vehiculo_id"],
+        ["E012", "/vehiculos/1/ocupantes/0"]
+      ],
+      "advertencias": []
+    },
+    {
+      "nombre": "peaton_a_bordo",
+      "base": "peaton_cruce",
+      "mutaciones": [
+        {
+          "op": "set",
+          "ruta": "/personas/1/vehiculo_id",
+          "valor": "veh-a"
+        }
+      ],
+      "errores": [
+        ["E011", "/personas/1/vehiculo_id"],
+        ["E012", "/personas/1/vehiculo_id"]
+      ],
+      "advertencias": []
+    },
+    {
+      "nombre": "orden_de_eventos_repetido",
+      "base": "alcance",
+      "mutaciones": [
+        {
+          "op": "set",
+          "ruta": "/eventos/2/orden",
+          "valor": 1
+        }
+      ],
+      "errores": [["E013", "/eventos/2/orden"]],
+      "advertencias": []
+    },
+    {
+      "nombre": "impacto_con_un_solo_vehiculo",
+      "base": "alcance",
+      "mutaciones": [
+        {
+          "op": "set",
+          "ruta": "/eventos/1/actores",
+          "valor": ["veh-a"]
+        }
+      ],
+      "errores": [
+        ["E014", "/eventos/1/actores"],
+        ["E015", "/eventos/1/zonas_impacto/1/vehiculo_id"]
+      ],
+      "advertencias": []
+    },
+    {
+      "nombre": "confianza_baja_en_velocidad",
+      "base": "alcance",
+      "mutaciones": [
+        {
+          "op": "set",
+          "ruta": "/vehiculos/1/velocidad_previa/confianza",
+          "valor": 0.2
+        }
+      ],
+      "errores": [],
+      "advertencias": [["W001", "/vehiculos/1/velocidad_previa/confianza"]]
+    },
+    {
+      "nombre": "sin_vehiculos",
+      "base": "alcance",
+      "mutaciones": [
+        {
+          "op": "set",
+          "ruta": "/vehiculos",
+          "valor": []
+        },
+        {
+          "op": "set",
+          "ruta": "/personas",
+          "valor": []
+        },
+        {
+          "op": "set",
+          "ruta": "/eventos",
+          "valor": []
+        },
+        {
+          "op": "set",
+          "ruta": "/danos_declarados",
+          "valor": []
+        },
+        {
+          "op": "set",
+          "ruta": "/evidencias",
+          "valor": []
+        },
+        {
+          "op": "set",
+          "ruta": "/lugar/dispositivos",
+          "valor": []
+        }
+      ],
+      "errores": [],
+      "advertencias": [["W003", "/vehiculos"]]
+    }
+  ]
+}

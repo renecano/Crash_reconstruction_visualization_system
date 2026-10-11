@@ -1,0 +1,746 @@
+{
+  "meta": {
+    "id": "fx-nocturno-lluvia-combi",
+    "version_esquema": "1.0.0",
+    "idioma": "es-MX",
+    "semilla": 109,
+    "creado": "2026-10-10T18:40:00-06:00",
+    "titulo": "Cierre de combi de noche con lluvia fuerte",
+    "origen_relato": "precargado",
+    "sintetico": true,
+    "relato": "Era de noche y llovía durísimo, casi no se veía. Iba por Tollocan en mi Civic gris por el carril de la izquierda, como a 55. Una combi blanca de la ruta que iba en el carril de en medio se me cerró de golpe para pararse a subir pasaje y le pegué con mi frente del lado derecho en su parte de atrás, del lado del chofer. El piso estaba encharcado y no alcancé a frenar. En la combi iban el chofer y como seis pasajeros; a uno que iba parado se le fue la cabeza contra el tubo. Yo iba solo, con cinturón."
+  },
+  "lugar": {
+    "nombre_via": {
+      "valor": "Paseo Tollocan",
+      "fuente": "relato",
+      "confianza": 0.95,
+      "evidencia": [
+        {
+          "inicio": 53,
+          "fin": 65,
+          "texto": "por Tollocan"
+        }
+      ]
+    },
+    "tipo_via": {
+      "valor": "recta",
+      "fuente": "supuesto",
+      "confianza": 0.6
+    },
+    "carriles_por_sentido": {
+      "valor": 3,
+      "fuente": "relato",
+      "confianza": 0.8,
+      "evidencia": [
+        {
+          "inicio": 164,
+          "fin": 185,
+          "texto": "el carril de en medio"
+        }
+      ]
+    },
+    "ancho_carril": {
+      "valor": 3.5,
+      "unidad": "m",
+      "fuente": "default",
+      "confianza": 0.5
+    },
+    "sentidos": {
+      "valor": "doble_sentido",
+      "fuente": "default",
+      "confianza": 0.6
+    },
+    "camellon": {
+      "valor": true,
+      "fuente": "default",
+      "confianza": 0.6
+    },
+    "banquetas": {
+      "valor": true,
+      "fuente": "default",
+      "confianza": 0.6
+    },
+    "superficie": {
+      "valor": "asfalto",
+      "fuente": "default",
+      "confianza": 0.7
+    },
+    "estado_superficie": {
+      "valor": "encharcado",
+      "fuente": "relato",
+      "confianza": 0.9,
+      "evidencia": [
+        {
+          "inicio": 320,
+          "fin": 345,
+          "texto": "El piso estaba encharcado"
+        }
+      ]
+    },
+    "friccion": {
+      "valor": 0.4,
+      "rango": [0.3, 0.55],
+      "fuente": "default",
+      "confianza": 0.5
+    },
+    "dispositivos": [
+      {
+        "id": "parada",
+        "tipo": "otro",
+        "posicion": {
+          "x": 20,
+          "y": -6
+        },
+        "procedencia": {
+          "fuente": "relato",
+          "confianza": 0.6,
+          "evidencia": [
+            {
+              "inicio": 212,
+              "fin": 234,
+              "texto": "pararse a subir pasaje"
+            }
+          ],
+          "nota": "Parada informal de transporte público."
+        }
+      }
+    ]
+  },
+  "entorno": {
+    "clima": {
+      "valor": "lluvia_fuerte",
+      "fuente": "relato",
+      "confianza": 0.95,
+      "evidencia": [
+        {
+          "inicio": 15,
+          "fin": 30,
+          "texto": "llovía durísimo"
+        }
+      ]
+    },
+    "visibilidad": {
+      "valor": 60,
+      "unidad": "m",
+      "rango": [30, 100],
+      "fuente": "relato",
+      "confianza": 0.6,
+      "evidencia": [
+        {
+          "inicio": 32,
+          "fin": 47,
+          "texto": "casi no se veía"
+        }
+      ]
+    },
+    "iluminacion": {
+      "valor": "noche_con_alumbrado",
+      "fuente": "relato",
+      "confianza": 0.8,
+      "evidencia": [
+        {
+          "inicio": 0,
+          "fin": 12,
+          "texto": "Era de noche"
+        }
+      ],
+      "nota": "Tollocan tiene alumbrado; se asume encendido."
+    },
+    "alumbrado_publico": {
+      "valor": true,
+      "fuente": "default",
+      "confianza": 0.6
+    },
+    "objetos": []
+  },
+  "vehiculos": [
+    {
+      "id": "veh-a",
+      "rol": "A",
+      "clase": {
+        "valor": "sedan_mediano",
+        "fuente": "relato",
+        "confianza": 0.9,
+        "evidencia": [
+          {
+            "inicio": 69,
+            "fin": 82,
+            "texto": "mi Civic gris"
+          }
+        ]
+      },
+      "marca": {
+        "valor": "Honda",
+        "fuente": "relato",
+        "confianza": 0.9,
+        "evidencia": [
+          {
+            "inicio": 72,
+            "fin": 77,
+            "texto": "Civic"
+          }
+        ]
+      },
+      "modelo": {
+        "valor": "Civic",
+        "fuente": "relato",
+        "confianza": 0.9,
+        "evidencia": [
+          {
+            "inicio": 72,
+            "fin": 77,
+            "texto": "Civic"
+          }
+        ]
+      },
+      "color": {
+        "nombre": {
+          "valor": "gris",
+          "fuente": "relato",
+          "confianza": 0.9,
+          "evidencia": [
+            {
+              "inicio": 78,
+              "fin": 82,
+              "texto": "gris"
+            }
+          ]
+        },
+        "hex": "#8e9094"
+      },
+      "masa": {
+        "valor": 1350,
+        "unidad": "kg",
+        "rango": [1250, 1500],
+        "fuente": "default",
+        "confianza": 0.6
+      },
+      "largo": {
+        "valor": 4.67,
+        "unidad": "m",
+        "fuente": "default",
+        "confianza": 0.6
+      },
+      "ancho": {
+        "valor": 1.8,
+        "unidad": "m",
+        "fuente": "default",
+        "confianza": 0.6
+      },
+      "alto": {
+        "valor": 1.41,
+        "unidad": "m",
+        "fuente": "default",
+        "confianza": 0.6
+      },
+      "distancia_entre_ejes": {
+        "valor": 2.73,
+        "unidad": "m",
+        "fuente": "default",
+        "confianza": 0.6
+      },
+      "maniobra": {
+        "valor": "recto",
+        "fuente": "relato",
+        "confianza": 0.9,
+        "evidencia": [
+          {
+            "inicio": 49,
+            "fin": 112,
+            "texto": "Iba por Tollocan en mi Civic gris por el carril de la izquierda"
+          }
+        ]
+      },
+      "velocidad_previa": {
+        "valor": 55,
+        "unidad": "km/h",
+        "rango": [45, 65],
+        "fuente": "relato",
+        "confianza": 0.7,
+        "evidencia": [
+          {
+            "inicio": 114,
+            "fin": 123,
+            "texto": "como a 55"
+          }
+        ]
+      },
+      "frenado": {
+        "aplico": {
+          "valor": false,
+          "fuente": "relato",
+          "confianza": 0.8,
+          "evidencia": [
+            {
+              "inicio": 348,
+              "fin": 367,
+              "texto": "no alcancé a frenar"
+            }
+          ]
+        }
+      },
+      "luces_encendidas": {
+        "valor": true,
+        "fuente": "supuesto",
+        "confianza": 0.8
+      },
+      "carril": {
+        "valor": 1,
+        "fuente": "relato",
+        "confianza": 0.9,
+        "evidencia": [
+          {
+            "inicio": 87,
+            "fin": 112,
+            "texto": "el carril de la izquierda"
+          }
+        ]
+      },
+      "posicion_inicial": {
+        "x": -30,
+        "y": 0,
+        "rumbo_deg": 0,
+        "procedencia": {
+          "fuente": "supuesto",
+          "confianza": 0.5,
+          "nota": "Carril izquierdo (y = 0); el carril de en medio está en y = -3.5."
+        }
+      },
+      "posicion_final": {
+        "x": 3,
+        "y": 0.4,
+        "rumbo_deg": 8,
+        "procedencia": {
+          "fuente": "supuesto",
+          "confianza": 0.4
+        }
+      },
+      "ocupantes": ["per-a1"]
+    },
+    {
+      "id": "veh-b",
+      "rol": "B",
+      "clase": {
+        "valor": "microbus_combi",
+        "fuente": "relato",
+        "confianza": 0.95,
+        "evidencia": [
+          {
+            "inicio": 125,
+            "fin": 152,
+            "texto": "Una combi blanca de la ruta"
+          }
+        ]
+      },
+      "color": {
+        "nombre": {
+          "valor": "blanco",
+          "fuente": "relato",
+          "confianza": 0.9,
+          "evidencia": [
+            {
+              "inicio": 135,
+              "fin": 141,
+              "texto": "blanca"
+            }
+          ]
+        },
+        "hex": "#f0f0ec"
+      },
+      "masa": {
+        "valor": 2900,
+        "unidad": "kg",
+        "rango": [2400, 3500],
+        "fuente": "default",
+        "confianza": 0.5,
+        "nota": "Con pasaje a bordo."
+      },
+      "largo": {
+        "valor": 5.9,
+        "unidad": "m",
+        "fuente": "default",
+        "confianza": 0.5
+      },
+      "ancho": {
+        "valor": 1.99,
+        "unidad": "m",
+        "fuente": "default",
+        "confianza": 0.5
+      },
+      "alto": {
+        "valor": 2.6,
+        "unidad": "m",
+        "fuente": "default",
+        "confianza": 0.5
+      },
+      "distancia_entre_ejes": {
+        "valor": 3.67,
+        "unidad": "m",
+        "fuente": "default",
+        "confianza": 0.5
+      },
+      "maniobra": {
+        "valor": "cambio_carril_izquierda",
+        "fuente": "relato",
+        "confianza": 0.85,
+        "evidencia": [
+          {
+            "inicio": 186,
+            "fin": 206,
+            "texto": "se me cerró de golpe"
+          }
+        ],
+        "nota": "“Se me cerró” en el relato describe que invadió el carril de A hacia su izquierda."
+      },
+      "velocidad_previa": {
+        "valor": 35,
+        "unidad": "km/h",
+        "rango": [20, 50],
+        "fuente": "supuesto",
+        "confianza": 0.3,
+        "nota": "Iba desacelerando para detenerse."
+      },
+      "frenado": {
+        "aplico": {
+          "valor": true,
+          "fuente": "relato",
+          "confianza": 0.7,
+          "evidencia": [
+            {
+              "inicio": 207,
+              "fin": 234,
+              "texto": "para pararse a subir pasaje"
+            }
+          ]
+        }
+      },
+      "luces_encendidas": {
+        "valor": true,
+        "fuente": "supuesto",
+        "confianza": 0.6
+      },
+      "carril": {
+        "valor": 2,
+        "fuente": "relato",
+        "confianza": 0.9,
+        "evidencia": [
+          {
+            "inicio": 164,
+            "fin": 185,
+            "texto": "el carril de en medio"
+          }
+        ]
+      },
+      "posicion_inicial": {
+        "x": -8,
+        "y": -3.5,
+        "rumbo_deg": 0,
+        "procedencia": {
+          "fuente": "supuesto",
+          "confianza": 0.5
+        }
+      },
+      "posicion_final": {
+        "x": 6,
+        "y": -1.8,
+        "rumbo_deg": -20,
+        "procedencia": {
+          "fuente": "supuesto",
+          "confianza": 0.4
+        }
+      },
+      "ocupantes": ["per-b1", "per-b2", "per-b3"]
+    }
+  ],
+  "personas": [
+    {
+      "id": "per-a1",
+      "rol": {
+        "valor": "conductor",
+        "fuente": "relato",
+        "confianza": 1,
+        "evidencia": [
+          {
+            "inicio": 476,
+            "fin": 501,
+            "texto": "Yo iba solo, con cinturón"
+          }
+        ]
+      },
+      "vehiculo_id": "veh-a",
+      "asiento": {
+        "valor": "conductor",
+        "fuente": "supuesto",
+        "confianza": 1
+      },
+      "cinturon": {
+        "valor": true,
+        "fuente": "relato",
+        "confianza": 0.95,
+        "evidencia": [
+          {
+            "inicio": 489,
+            "fin": 501,
+            "texto": "con cinturón"
+          }
+        ]
+      }
+    },
+    {
+      "id": "per-b1",
+      "rol": {
+        "valor": "conductor",
+        "fuente": "relato",
+        "confianza": 0.95,
+        "evidencia": [
+          {
+            "inicio": 381,
+            "fin": 395,
+            "texto": "iban el chofer"
+          }
+        ]
+      },
+      "vehiculo_id": "veh-b",
+      "asiento": {
+        "valor": "conductor",
+        "fuente": "supuesto",
+        "confianza": 0.95
+      },
+      "cinturon": {
+        "valor": false,
+        "fuente": "supuesto",
+        "confianza": 0.4
+      }
+    },
+    {
+      "id": "per-b2",
+      "rol": {
+        "valor": "pasajero",
+        "fuente": "relato",
+        "confianza": 0.9,
+        "evidencia": [
+          {
+            "inicio": 398,
+            "fin": 417,
+            "texto": "como seis pasajeros"
+          }
+        ]
+      },
+      "vehiculo_id": "veh-b",
+      "asiento": {
+        "valor": "otro",
+        "fuente": "relato",
+        "confianza": 0.8,
+        "evidencia": [
+          {
+            "inicio": 421,
+            "fin": 439,
+            "texto": "uno que iba parado"
+          }
+        ]
+      },
+      "postura": {
+        "valor": "de_pie",
+        "fuente": "relato",
+        "confianza": 0.9,
+        "evidencia": [
+          {
+            "inicio": 429,
+            "fin": 439,
+            "texto": "iba parado"
+          }
+        ]
+      },
+      "cinturon": {
+        "valor": false,
+        "fuente": "relato",
+        "confianza": 0.9,
+        "evidencia": [
+          {
+            "inicio": 429,
+            "fin": 439,
+            "texto": "iba parado"
+          }
+        ]
+      }
+    },
+    {
+      "id": "per-b3",
+      "rol": {
+        "valor": "pasajero",
+        "fuente": "relato",
+        "confianza": 0.9,
+        "evidencia": [
+          {
+            "inicio": 398,
+            "fin": 417,
+            "texto": "como seis pasajeros"
+          }
+        ]
+      },
+      "vehiculo_id": "veh-b",
+      "asiento": {
+        "valor": "trasero_izquierdo",
+        "fuente": "supuesto",
+        "confianza": 0.4
+      },
+      "cinturon": {
+        "valor": false,
+        "fuente": "supuesto",
+        "confianza": 0.5,
+        "nota": "Representa a los demás pasajeros sentados; el número exacto se preguntará."
+      }
+    }
+  ],
+  "eventos": [
+    {
+      "id": "ev-cierre",
+      "orden": 0,
+      "tipo": "derrape",
+      "actores": ["veh-b"],
+      "t": {
+        "valor": -1.0,
+        "unidad": "s",
+        "rango": [-1.5, -0.6],
+        "fuente": "supuesto",
+        "confianza": 0.4
+      },
+      "descripcion": "B cambia al carril izquierdo mientras frena para detenerse.",
+      "procedencia": {
+        "fuente": "relato",
+        "confianza": 0.85,
+        "evidencia": [
+          {
+            "inicio": 186,
+            "fin": 234,
+            "texto": "se me cerró de golpe para pararse a subir pasaje"
+          }
+        ]
+      }
+    },
+    {
+      "id": "ev-impacto",
+      "orden": 1,
+      "tipo": "impacto_vehiculo_vehiculo",
+      "actores": ["veh-a", "veh-b"],
+      "t": {
+        "valor": 0,
+        "unidad": "s",
+        "fuente": "default",
+        "confianza": 1
+      },
+      "zonas_impacto": [
+        {
+          "vehiculo_id": "veh-a",
+          "cdc": {
+            "lado": "F",
+            "zona_horizontal": "R",
+            "zona_vertical": "E",
+            "extension": 3
+          },
+          "pdof_horas": {
+            "valor": 1,
+            "fuente": "supuesto",
+            "confianza": 0.5
+          }
+        },
+        {
+          "vehiculo_id": "veh-b",
+          "cdc": {
+            "lado": "L",
+            "zona_horizontal": "B",
+            "zona_vertical": "E",
+            "extension": 2
+          },
+          "pdof_horas": {
+            "valor": 8,
+            "fuente": "supuesto",
+            "confianza": 0.5
+          }
+        }
+      ],
+      "punto_impacto": {
+        "x": 0,
+        "y": -1.2
+      },
+      "descripcion": "Frente derecho de A contra la parte trasera izquierda de B.",
+      "procedencia": {
+        "fuente": "relato",
+        "confianza": 0.9,
+        "evidencia": [
+          {
+            "inicio": 237,
+            "fin": 318,
+            "texto": "le pegué con mi frente del lado derecho en su parte de atrás, del lado del chofer"
+          }
+        ]
+      }
+    },
+    {
+      "id": "ev-reposo",
+      "orden": 2,
+      "tipo": "reposo",
+      "actores": ["veh-a", "veh-b"],
+      "procedencia": {
+        "fuente": "supuesto",
+        "confianza": 0.4
+      }
+    }
+  ],
+  "danos_declarados": [
+    {
+      "vehiculo_id": "veh-a",
+      "zona": {
+        "lado": "F",
+        "zona_horizontal": "R",
+        "zona_vertical": "E",
+        "extension": 3
+      },
+      "severidad": "moderado",
+      "vidrios": "intactos",
+      "piezas_desprendidas": ["faro", "defensa"],
+      "procedencia": {
+        "fuente": "supuesto",
+        "confianza": 0.5
+      }
+    },
+    {
+      "vehiculo_id": "veh-b",
+      "zona": {
+        "lado": "L",
+        "zona_horizontal": "B",
+        "zona_vertical": "E",
+        "extension": 2
+      },
+      "severidad": "moderado",
+      "vidrios": "estrellados",
+      "piezas_desprendidas": ["calavera", "moldura"],
+      "procedencia": {
+        "fuente": "supuesto",
+        "confianza": 0.5
+      }
+    }
+  ],
+  "evidencias": [
+    {
+      "id": "evid-restos",
+      "tipo": "restos",
+      "puntos": [
+        {
+          "x": 1,
+          "y": -1.5
+        },
+        {
+          "x": 4,
+          "y": -2
+        }
+      ],
+      "descripcion": "Plástico de faro y calavera.",
+      "procedencia": {
+        "fuente": "supuesto",
+        "confianza": 0.4
+      }
+    }
+  ]
+}

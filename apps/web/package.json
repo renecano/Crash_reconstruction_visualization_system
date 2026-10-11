@@ -13,6 +13,8 @@
     "test:e2e": "playwright test"
   },
   "dependencies": {
+    "@croquis/croquis-2d": "workspace:*",
+    "@croquis/scene-schema": "workspace:*",
     "next": "16.4.0",
     "react": "catalog:",
     "react-dom": "catalog:"

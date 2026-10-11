@@ -1,6 +1,8 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
+  // Las reglas para agentes viven en CLAUDE.md; no generar AGENTS.md.
+  agentRules: false,
   // Los paquetes del monorepo se consumen como fuente TypeScript (sin paso de build).
   transpilePackages: [
     "@croquis/scene-schema",

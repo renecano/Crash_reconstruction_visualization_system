@@ -1,0 +1,45 @@
+{
+  "_descripcion": "Documento sintético en una versión hipotética 0.9.0 (campo 'velocidad' en vez de 'velocidad_previa' y sin 'sentidos'). Sirve para probar el motor de migraciones en TS y Python con la misma migración de prueba; no es una versión que haya existido.",
+  "meta": {
+    "id": "fx-migracion-0-9-0",
+    "version_esquema": "0.9.0",
+    "idioma": "es-MX",
+    "semilla": 1,
+    "creado": "2026-10-10T18:00:00-06:00",
+    "sintetico": true
+  },
+  "lugar": {
+    "tipo_via": { "valor": "recta", "fuente": "default", "confianza": 0.5 },
+    "carriles_por_sentido": { "valor": 2, "fuente": "default", "confianza": 0.5 },
+    "ancho_carril": { "valor": 3.5, "unidad": "m", "fuente": "default", "confianza": 0.5 },
+    "superficie": { "valor": "asfalto", "fuente": "default", "confianza": 0.5 },
+    "estado_superficie": { "valor": "seco", "fuente": "default", "confianza": 0.5 }
+  },
+  "entorno": {
+    "clima": { "valor": "despejado", "fuente": "default", "confianza": 0.5 },
+    "iluminacion": { "valor": "dia", "fuente": "default", "confianza": 0.5 }
+  },
+  "vehiculos": [
+    {
+      "id": "veh-a",
+      "rol": "A",
+      "clase": { "valor": "sedan_compacto", "fuente": "default", "confianza": 0.5 },
+      "color": {
+        "nombre": { "valor": "gris", "fuente": "default", "confianza": 0.5 },
+        "hex": "#888888"
+      },
+      "maniobra": { "valor": "recto", "fuente": "default", "confianza": 0.5 },
+      "velocidad": { "valor": 40, "unidad": "km/h", "fuente": "default", "confianza": 0.5 },
+      "posicion_inicial": {
+        "x": -20,
+        "y": 0,
+        "rumbo_deg": 0,
+        "procedencia": { "fuente": "default", "confianza": 0.5 }
+      }
+    }
+  ],
+  "personas": [],
+  "eventos": [],
+  "danos_declarados": [],
+  "evidencias": []
+}

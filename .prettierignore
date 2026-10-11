@@ -15,3 +15,5 @@ playwright-report
 test-results
 CLAUDE.md
 PLAN.md
+packages/scene-schema/vehicle_classes.json
+data/vehicles/

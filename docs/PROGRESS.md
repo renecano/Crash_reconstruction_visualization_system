@@ -5,9 +5,9 @@ Reglas de trabajo: `CLAUDE.md`. Especificación: `PLAN.md`.
 
 ## Estado actual
 
-- **Fase actual:** F0 — Fundaciones (cerrando: falta CI verde y merge).
-- **Siguiente paso concreto:** CI verde en el PR #1 (`feat/f0-fundaciones` → `main`), merge, y arrancar **F1 — Contrato y croquis** (`escena.schema.json` v1, generación Zod/Pydantic, 10 escenas canónicas, editor 2D con ida y vuelta al JSON).
-- **Rama de trabajo:** `feat/f0-fundaciones`. PR: https://github.com/renecano/Crash_reconstruction_visualization_system/pull/1
+- **Fase actual:** F1 — Contrato y croquis (cerrando: PR abierto, falta CI verde y merge).
+- **Siguiente paso concreto:** CI verde en el PR de `feat/f1-contrato`, merge a `main` y arrancar **F2 — Solver de referencia** (módulos 6.1.1–6.1.5 y 6.1.7 en `solver/croquis_solver`, propiedades con Hypothesis, casos analíticos, primera corrida de E2 con la base de pruebas de choque de NHTSA).
+- **F0 cerrado** el 2026-10-10 (PR #1).
 
 ### Bloqueado — necesita a René
 
@@ -104,3 +104,59 @@ Cifras medidas (de `eval/results/atus_summary.json`): 2025 = 380,391 accidentes,
 - **Qué quedó:** el repo completo con CI, los primeros módulos con pruebas y la ingesta real de ATUS con cifras verificables.
 - **Cómo probarlo:** `pnpm install && uv sync --all-packages --all-groups`, luego `pnpm dev` (web), `uv run pytest`, `pnpm test`. Para regenerar las cifras: `uv run croquis-data atus download`, `uv run croquis-data atus process`, `uv run croquis-eval atus-summary`.
 - **Qué necesito de ti:** nada para seguir a F1–F5. Para F6 la `ANTHROPIC_API_KEY`; para F10 la licencia de BeamNG.tech; para F11 credenciales de AWS/Vercel y las 5 personas de E9. Y confirmar el remoto de GitHub si no es el que asumí.
+
+## F1 — Contrato y croquis
+
+### Plan
+
+Archivos: `packages/scene-schema/escena.schema.json` + generadores (`scripts/generate.ts` → Zod; `croquis_scene_schema_codegen` → Pydantic), 10 fixtures con relato, validador semántico en TS y Python, módulo de migraciones, tabla de clases de vehículo con fuentes, `packages/croquis-2d` (layout, ediciones puras, componente SVG), página `/croquis` y e2e.
+
+Pruebas: Ajv ↔ Zod bajo mutaciones (fast-check), casos inválidos compartidos, casos semánticos compartidos (paridad TS ↔ Python), propiedad "editar y volver al JSON no pierde datos", pruebas de componente con Testing Library, Playwright sobre `/croquis`, generadores y tabla verificados en CI.
+
+Riesgos: (1) `json-schema-to-zod` no resuelve `$ref` → generador propio (ADR 0004). (2) Las fichas técnicas de fabricantes son irregulares (autobuses sin tara, tractocamiones sin dimensiones) → rangos de respaldo marcados `supuesto`. (3) jsdom no implementa `getScreenCTM` → el editor convierte coordenadas con `getBoundingClientRect` + viewBox para poder probarse.
+
+### Hecho
+
+- **Contrato v1** (`escena.schema.json`, draft 2020-12, 48 definiciones): meta (semilla, hash del relato), lugar (vía, carriles, superficie, fricción, dispositivos con fases de semáforo, ubicación real), entorno (clima, iluminación, objetos con diámetro de tronco), vehículos (clase, color, masa y dimensiones con rango, maniobra, velocidad, frenado, poses), personas (sin nombres; rol, asiento, cinturón, casco, postura), eventos (CDC SAE J224 y PDOF), daños declarados, evidencias físicas. Todo escalar envuelto con `fuente`/`confianza`/`evidencia`.
+- **Generación**: Zod (`src/generated/escena.zod.ts`, 628 líneas) y Pydantic (`croquis_scene_schema/generated.py`, 1000 líneas); `generate:check` y `--check` en CI.
+- **10 escenas canónicas** con relato sintético y 100 % de evidencias con offsets reales (`scripts/fix_offsets.py`); validan con Ajv, Zod, jsonschema y Pydantic; ida y vuelta sin pérdida en ambos lados.
+- **Validador semántico** (`check.ts` / `check.py`): E001–E015 y W001–W003 (ids, referencias, evidencia, rangos declarados, masa/dimensiones por clase, velocidad implausible, superposición con SAT, roles/ocupantes, orden y actores de eventos); 18 casos compartidos de paridad; mensajes sin culpa.
+- **Tabla de clases** `vehicle_classes.json` generada desde 47 fichas técnicas (`data/vehicles/models_raw.json`, 43 oficiales), con `origen` por campo y respaldos `supuesto` documentados; `croquis-data vehicles build --check` en CI.
+- **Migraciones** (`migrate.ts` / `migrate.py`): motor encadenado con fixture 0.9.0 compartido; registro vacío mientras solo exista 1.0.0.
+- **Croquis 2D** (`@croquis/croquis-2d`): plantillas de vía por `tipo_via` (recta, curva, X, T, glorieta, incorporación, retorno, estacionamiento, carretera, autopista), vehículos a escala real, personas, objetos, dispositivos, evidencias y puntos de impacto; arrastre y giro; cada edición marca `fuente: usuario`, `confianza: 1`.
+- **Web** `/croquis`: selector de escena, editor, JSON bidireccional ("Aplicar JSON" valida contra el contrato), descarga, lista de problemas, leyenda ilustrativa con semilla.
+- Docs: ADR 0004, `data/SOURCES.md` (fichas), `docs/data.md`, `docs/physics.md` (rangos de plausibilidad), README.
+
+### Evidencia (local, Windows, 2026-10-10)
+
+| Comando                                                                                                                                            | Resultado                                                                                                                    |
+| -------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------- |
+| `pnpm test`                                                                                                                                        | scene-schema 113, croquis-2d 34, web 3, solver-ts 3, viewer 4 → **157 pruebas** en verde                                     |
+| `uv run pytest`                                                                                                                                    | **48 pruebas** en verde (incluye paridad semántica, codegen y tabla al día)                                                  |
+| `pnpm lint` / `pnpm typecheck`                                                                                                                     | 5 paquetes sin errores                                                                                                       |
+| `uv run ruff check . && uv run ruff format --check . && uv run pyright`                                                                            | limpio (pyright strict)                                                                                                      |
+| `pnpm --filter @croquis/web test:e2e`                                                                                                              | 3 pruebas Playwright en verde (portada + 2 de `/croquis`: arrastre sin pérdida de datos; JSON a mano y errores del contrato) |
+| `pnpm --filter @croquis/scene-schema generate:check`, `uv run croquis-scene-schema-generate --check`, `uv run croquis-data vehicles build --check` | al día                                                                                                                       |
+| `pnpm --filter @croquis/web build`                                                                                                                 | rutas `/`, `/croquis` estáticas                                                                                              |
+
+Criterio de aceptación F1 (PLAN §13): las 10 escenas validan en ambos lados ✔; editar en el croquis y volver al JSON no pierde datos ✔ (prueba de propiedad con 40 secuencias aleatorias por escena + e2e).
+
+### Pendientes registrados
+
+- Normalización completa de unidades a SI (`normalizar(spec)`) se implementa con el solver en F2 (hoy `check` convierte localmente).
+- Snapshots visuales del croquis: se harán junto con los del visor 3D en F3 (misma infraestructura de Playwright).
+- Exportar el croquis como SVG/PNG/PDF tipo parte de tránsito (PLAN §7.7) queda para F9 con el resto de exportaciones.
+- Clases con rangos `supuesto` (autobús, tractocamión, bicicleta, scooter): buscar fichas con tara/dimensiones cuando aparezcan; el formato ya lo soporta.
+- La tabla de clases usa márgenes fijos (masa ×0.75/×1.35 o PBV; dimensiones ×0.9/×1.1); revisar cuando E2/E3 den datos reales de masas de prueba.
+
+### Decisiones
+
+- Ver ADR 0004 (sin `allOf`, generador Zod propio, procedencia compartida en compuestos, tabla de clases generada, migraciones).
+- `check` recibe la tabla por parámetro y usa `vehicle_classes.json` por defecto; `{}` la desactiva (pruebas de paridad usan una tabla pequeña explícita).
+- Los campos `SEXO`, `ALIENTO`, `CINTURON` del "presunto responsable" de ATUS y cualquier noción de culpa quedan fuera del contrato y de los mensajes.
+
+### Resumen para René (F1)
+
+- **Qué quedó:** el contrato completo con tipos generados en los dos lenguajes, diez escenas listas para la demo, un validador que explica en lenguaje llano qué no cuadra, y el croquis editable en `/croquis` sincronizado con el JSON.
+- **Cómo probarlo:** `pnpm dev` y abre http://localhost:3000/croquis; cambia de escena, arrastra el vehículo A y mira cómo cambia el JSON (y cómo la posición queda marcada como tuya); pega un JSON roto y verás los errores del contrato. Pruebas: `pnpm test`, `uv run pytest`, `pnpm --filter @croquis/web test:e2e`.
+- **Qué necesito de ti:** nada para F2. Sigue pendiente lo de la lista de bloqueados (llave de API para F6, BeamNG para F10, AWS/Vercel y personas para F11).

@@ -4,6 +4,7 @@ version = "0.1.0"
 description = "API FastAPI de Croquis: extracción, validación e informes"
 requires-python = ">=3.14"
 dependencies = [
+  "croquis-scene-schema",
   "fastapi>=0.143,<1",
   "uvicorn[standard]>=0.54,<1",
   "pydantic>=2.14,<3",
@@ -16,6 +17,7 @@ dependencies = [
 dev = ["httpx>=0.28,<1"]
 
 [tool.uv.sources]
+croquis-scene-schema = { workspace = true }
 croquis-solver = { workspace = true }
 croquis-extraction = { workspace = true }
 

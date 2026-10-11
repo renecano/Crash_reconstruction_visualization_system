@@ -1,0 +1,742 @@
+{
+  "meta": {
+    "id": "fx-volcadura-autopista",
+    "version_esquema": "1.0.0",
+    "idioma": "es-MX",
+    "semilla": 108,
+    "creado": "2026-10-10T18:35:00-06:00",
+    "titulo": "Volcadura de SUV grande en la autopista México-Toluca",
+    "origen_relato": "precargado",
+    "sintetico": true,
+    "relato": "Íbamos en la Tahoe negra por la México-Toluca, como a 90, en el carril de en medio. Un coche se me metió y me cambié al carril de la derecha de golpe; la camioneta se ladeó, pegó con la guarnición del acotamiento y dio dos vueltas. Quedó de cabeza como a 35 metros. Íbamos tres: yo manejando, mi hermano de copiloto y mi mamá atrás, todos con cinturón. Había marcas de llanta en el acotamiento y pedazos de la camioneta regados."
+  },
+  "lugar": {
+    "nombre_via": {
+      "valor": "Autopista México-Toluca",
+      "fuente": "relato",
+      "confianza": 0.95,
+      "evidencia": [
+        {
+          "inicio": 25,
+          "fin": 45,
+          "texto": "por la México-Toluca"
+        }
+      ]
+    },
+    "tipo_via": {
+      "valor": "autopista",
+      "fuente": "relato",
+      "confianza": 0.9,
+      "evidencia": [
+        {
+          "inicio": 29,
+          "fin": 45,
+          "texto": "la México-Toluca"
+        }
+      ]
+    },
+    "carriles_por_sentido": {
+      "valor": 3,
+      "fuente": "relato",
+      "confianza": 0.8,
+      "evidencia": [
+        {
+          "inicio": 58,
+          "fin": 82,
+          "texto": "en el carril de en medio"
+        }
+      ]
+    },
+    "ancho_carril": {
+      "valor": 3.5,
+      "unidad": "m",
+      "fuente": "default",
+      "confianza": 0.6
+    },
+    "sentidos": {
+      "valor": "doble_sentido",
+      "fuente": "default",
+      "confianza": 0.7
+    },
+    "camellon": {
+      "valor": true,
+      "fuente": "default",
+      "confianza": 0.7
+    },
+    "acotamiento": {
+      "valor": true,
+      "fuente": "relato",
+      "confianza": 0.95,
+      "evidencia": [
+        {
+          "inicio": 183,
+          "fin": 212,
+          "texto": "la guarnición del acotamiento"
+        }
+      ]
+    },
+    "ancho_acotamiento": {
+      "valor": 2.5,
+      "unidad": "m",
+      "fuente": "default",
+      "confianza": 0.5
+    },
+    "guarniciones": {
+      "valor": true,
+      "fuente": "relato",
+      "confianza": 0.95,
+      "evidencia": [
+        {
+          "inicio": 174,
+          "fin": 196,
+          "texto": "pegó con la guarnición"
+        }
+      ]
+    },
+    "superficie": {
+      "valor": "asfalto",
+      "fuente": "default",
+      "confianza": 0.7
+    },
+    "estado_superficie": {
+      "valor": "seco",
+      "fuente": "default",
+      "confianza": 0.6
+    },
+    "friccion": {
+      "valor": 0.75,
+      "rango": [0.65, 0.85],
+      "fuente": "default",
+      "confianza": 0.6
+    },
+    "dispositivos": [
+      {
+        "id": "limite",
+        "tipo": "limite_velocidad",
+        "posicion": {
+          "x": -80,
+          "y": -6
+        },
+        "limite_velocidad": {
+          "valor": 95,
+          "unidad": "km/h",
+          "fuente": "default",
+          "confianza": 0.5
+        },
+        "procedencia": {
+          "fuente": "default",
+          "confianza": 0.5
+        }
+      }
+    ]
+  },
+  "entorno": {
+    "clima": {
+      "valor": "despejado",
+      "fuente": "default",
+      "confianza": 0.5
+    },
+    "iluminacion": {
+      "valor": "dia",
+      "fuente": "default",
+      "confianza": 0.5
+    },
+    "objetos": []
+  },
+  "vehiculos": [
+    {
+      "id": "veh-a",
+      "rol": "A",
+      "clase": {
+        "valor": "suv_grande",
+        "fuente": "relato",
+        "confianza": 0.95,
+        "evidencia": [
+          {
+            "inicio": 10,
+            "fin": 24,
+            "texto": "la Tahoe negra"
+          }
+        ]
+      },
+      "marca": {
+        "valor": "Chevrolet",
+        "fuente": "relato",
+        "confianza": 0.9,
+        "evidencia": [
+          {
+            "inicio": 13,
+            "fin": 18,
+            "texto": "Tahoe"
+          }
+        ]
+      },
+      "modelo": {
+        "valor": "Tahoe",
+        "fuente": "relato",
+        "confianza": 0.9,
+        "evidencia": [
+          {
+            "inicio": 13,
+            "fin": 18,
+            "texto": "Tahoe"
+          }
+        ]
+      },
+      "color": {
+        "nombre": {
+          "valor": "negro",
+          "fuente": "relato",
+          "confianza": 0.9,
+          "evidencia": [
+            {
+              "inicio": 19,
+              "fin": 24,
+              "texto": "negra"
+            }
+          ]
+        },
+        "hex": "#101012"
+      },
+      "masa": {
+        "valor": 2600,
+        "unidad": "kg",
+        "rango": [2400, 2900],
+        "fuente": "default",
+        "confianza": 0.6
+      },
+      "largo": {
+        "valor": 5.35,
+        "unidad": "m",
+        "fuente": "default",
+        "confianza": 0.6
+      },
+      "ancho": {
+        "valor": 2.06,
+        "unidad": "m",
+        "fuente": "default",
+        "confianza": 0.6
+      },
+      "alto": {
+        "valor": 1.93,
+        "unidad": "m",
+        "fuente": "default",
+        "confianza": 0.6
+      },
+      "distancia_entre_ejes": {
+        "valor": 3.07,
+        "unidad": "m",
+        "fuente": "default",
+        "confianza": 0.6
+      },
+      "maniobra": {
+        "valor": "cambio_carril_derecha",
+        "fuente": "relato",
+        "confianza": 0.95,
+        "evidencia": [
+          {
+            "inicio": 107,
+            "fin": 149,
+            "texto": "me cambié al carril de la derecha de golpe"
+          }
+        ]
+      },
+      "velocidad_previa": {
+        "valor": 90,
+        "unidad": "km/h",
+        "rango": [80, 105],
+        "fuente": "relato",
+        "confianza": 0.7,
+        "evidencia": [
+          {
+            "inicio": 47,
+            "fin": 56,
+            "texto": "como a 90"
+          }
+        ]
+      },
+      "frenado": {
+        "aplico": {
+          "valor": false,
+          "fuente": "supuesto",
+          "confianza": 0.4
+        }
+      },
+      "carril": {
+        "valor": 2,
+        "fuente": "relato",
+        "confianza": 0.9,
+        "evidencia": [
+          {
+            "inicio": 58,
+            "fin": 82,
+            "texto": "en el carril de en medio"
+          }
+        ]
+      },
+      "posicion_inicial": {
+        "x": -60,
+        "y": 0,
+        "rumbo_deg": 0,
+        "procedencia": {
+          "fuente": "supuesto",
+          "confianza": 0.5,
+          "nota": "Carril central; el acotamiento está a la derecha (y negativo)."
+        }
+      },
+      "posicion_final": {
+        "x": 35,
+        "y": -8.5,
+        "rumbo_deg": 160,
+        "procedencia": {
+          "fuente": "relato",
+          "confianza": 0.6,
+          "evidencia": [
+            {
+              "inicio": 232,
+              "fin": 264,
+              "texto": "Quedó de cabeza como a 35 metros"
+            }
+          ]
+        }
+      },
+      "ocupantes": ["per-a1", "per-a2", "per-a3"]
+    },
+    {
+      "id": "veh-b",
+      "rol": "B",
+      "clase": {
+        "valor": "sedan_compacto",
+        "fuente": "supuesto",
+        "confianza": 0.4,
+        "evidencia": [
+          {
+            "inicio": 84,
+            "fin": 104,
+            "texto": "Un coche se me metió"
+          }
+        ],
+        "nota": "Vehículo que motivó la maniobra; no hubo contacto y se retiró."
+      },
+      "color": {
+        "nombre": {
+          "valor": "desconocido",
+          "fuente": "supuesto",
+          "confianza": 0.2
+        },
+        "hex": "#9a9a9a"
+      },
+      "maniobra": {
+        "valor": "cambio_carril_derecha",
+        "fuente": "relato",
+        "confianza": 0.7,
+        "evidencia": [
+          {
+            "inicio": 93,
+            "fin": 104,
+            "texto": "se me metió"
+          }
+        ]
+      },
+      "velocidad_previa": {
+        "valor": 80,
+        "unidad": "km/h",
+        "rango": [60, 100],
+        "fuente": "supuesto",
+        "confianza": 0.3
+      },
+      "carril": {
+        "valor": 1,
+        "fuente": "supuesto",
+        "confianza": 0.5
+      },
+      "posicion_inicial": {
+        "x": -58,
+        "y": 3.5,
+        "rumbo_deg": 0,
+        "procedencia": {
+          "fuente": "supuesto",
+          "confianza": 0.4
+        }
+      },
+      "ocupantes": []
+    }
+  ],
+  "personas": [
+    {
+      "id": "per-a1",
+      "rol": {
+        "valor": "conductor",
+        "fuente": "relato",
+        "confianza": 1,
+        "evidencia": [
+          {
+            "inicio": 279,
+            "fin": 291,
+            "texto": "yo manejando"
+          }
+        ]
+      },
+      "vehiculo_id": "veh-a",
+      "asiento": {
+        "valor": "conductor",
+        "fuente": "supuesto",
+        "confianza": 1
+      },
+      "cinturon": {
+        "valor": true,
+        "fuente": "relato",
+        "confianza": 0.95,
+        "evidencia": [
+          {
+            "inicio": 333,
+            "fin": 351,
+            "texto": "todos con cinturón"
+          }
+        ]
+      }
+    },
+    {
+      "id": "per-a2",
+      "rol": {
+        "valor": "pasajero",
+        "fuente": "relato",
+        "confianza": 1,
+        "evidencia": [
+          {
+            "inicio": 293,
+            "fin": 315,
+            "texto": "mi hermano de copiloto"
+          }
+        ]
+      },
+      "vehiculo_id": "veh-a",
+      "asiento": {
+        "valor": "copiloto",
+        "fuente": "relato",
+        "confianza": 1,
+        "evidencia": [
+          {
+            "inicio": 304,
+            "fin": 315,
+            "texto": "de copiloto"
+          }
+        ]
+      },
+      "cinturon": {
+        "valor": true,
+        "fuente": "relato",
+        "confianza": 0.95,
+        "evidencia": [
+          {
+            "inicio": 333,
+            "fin": 351,
+            "texto": "todos con cinturón"
+          }
+        ]
+      }
+    },
+    {
+      "id": "per-a3",
+      "rol": {
+        "valor": "pasajero",
+        "fuente": "relato",
+        "confianza": 1,
+        "evidencia": [
+          {
+            "inicio": 318,
+            "fin": 331,
+            "texto": "mi mamá atrás"
+          }
+        ]
+      },
+      "vehiculo_id": "veh-a",
+      "asiento": {
+        "valor": "trasero_derecho",
+        "fuente": "supuesto",
+        "confianza": 0.5,
+        "evidencia": [
+          {
+            "inicio": 326,
+            "fin": 331,
+            "texto": "atrás"
+          }
+        ]
+      },
+      "edad_aprox": {
+        "valor": 60,
+        "rango": [50, 75],
+        "fuente": "supuesto",
+        "confianza": 0.3
+      },
+      "cinturon": {
+        "valor": true,
+        "fuente": "relato",
+        "confianza": 0.95,
+        "evidencia": [
+          {
+            "inicio": 333,
+            "fin": 351,
+            "texto": "todos con cinturón"
+          }
+        ]
+      }
+    }
+  ],
+  "eventos": [
+    {
+      "id": "ev-maniobra",
+      "orden": 0,
+      "tipo": "derrape",
+      "actores": ["veh-a"],
+      "t": {
+        "valor": -2.0,
+        "unidad": "s",
+        "rango": [-3, -1.5],
+        "fuente": "supuesto",
+        "confianza": 0.4
+      },
+      "descripcion": "Cambio brusco de carril; la camioneta se ladea.",
+      "procedencia": {
+        "fuente": "relato",
+        "confianza": 0.9,
+        "evidencia": [
+          {
+            "inicio": 151,
+            "fin": 172,
+            "texto": "la camioneta se ladeó"
+          }
+        ]
+      }
+    },
+    {
+      "id": "ev-tropiezo",
+      "orden": 1,
+      "tipo": "impacto_vehiculo_objeto",
+      "actores": ["veh-a"],
+      "t": {
+        "valor": 0,
+        "unidad": "s",
+        "fuente": "default",
+        "confianza": 1
+      },
+      "zonas_impacto": [
+        {
+          "vehiculo_id": "veh-a",
+          "cdc": {
+            "lado": "R",
+            "zona_horizontal": "D",
+            "zona_vertical": "L",
+            "extension": 1
+          },
+          "pdof_horas": {
+            "valor": 3,
+            "fuente": "supuesto",
+            "confianza": 0.5
+          }
+        }
+      ],
+      "punto_impacto": {
+        "x": 0,
+        "y": -7.0
+      },
+      "descripcion": "Las llantas derechas golpean la guarnición del acotamiento (tropiezo que inicia la volcadura).",
+      "procedencia": {
+        "fuente": "relato",
+        "confianza": 0.9,
+        "evidencia": [
+          {
+            "inicio": 174,
+            "fin": 212,
+            "texto": "pegó con la guarnición del acotamiento"
+          }
+        ]
+      }
+    },
+    {
+      "id": "ev-volcadura",
+      "orden": 2,
+      "tipo": "volcadura",
+      "actores": ["veh-a"],
+      "t": {
+        "valor": 0.1,
+        "unidad": "s",
+        "fuente": "supuesto",
+        "confianza": 0.5
+      },
+      "descripcion": "Dos vueltas completas sobre el eje longitudinal.",
+      "procedencia": {
+        "fuente": "relato",
+        "confianza": 0.9,
+        "evidencia": [
+          {
+            "inicio": 215,
+            "fin": 230,
+            "texto": "dio dos vueltas"
+          }
+        ]
+      }
+    },
+    {
+      "id": "ev-reposo",
+      "orden": 3,
+      "tipo": "reposo",
+      "actores": ["veh-a"],
+      "t": {
+        "valor": 3.0,
+        "unidad": "s",
+        "rango": [2, 4.5],
+        "fuente": "supuesto",
+        "confianza": 0.4
+      },
+      "descripcion": "Queda sobre el techo.",
+      "procedencia": {
+        "fuente": "relato",
+        "confianza": 0.8,
+        "evidencia": [
+          {
+            "inicio": 232,
+            "fin": 247,
+            "texto": "Quedó de cabeza"
+          }
+        ]
+      }
+    }
+  ],
+  "danos_declarados": [
+    {
+      "vehiculo_id": "veh-a",
+      "zona": {
+        "lado": "T",
+        "zona_horizontal": "D",
+        "zona_vertical": "A",
+        "extension": 3
+      },
+      "severidad": "perdida_total",
+      "vidrios": "rotos",
+      "bolsas_aire": {
+        "valor": true,
+        "fuente": "supuesto",
+        "confianza": 0.7,
+        "nota": "Bolsas de cortina esperadas en volcadura; se preguntará."
+      },
+      "piezas_desprendidas": ["espejo", "moldura", "faro", "calavera", "llanta"],
+      "procedencia": {
+        "fuente": "relato",
+        "confianza": 0.8,
+        "evidencia": [
+          {
+            "inicio": 396,
+            "fin": 427,
+            "texto": "pedazos de la camioneta regados"
+          }
+        ]
+      }
+    }
+  ],
+  "evidencias": [
+    {
+      "id": "evid-marcas-acotamiento",
+      "tipo": "marcas_derrape",
+      "vehiculo_id": "veh-a",
+      "longitud": {
+        "valor": 18,
+        "unidad": "m",
+        "rango": [10, 25],
+        "fuente": "supuesto",
+        "confianza": 0.4
+      },
+      "puntos": [
+        {
+          "x": -18,
+          "y": -3.2
+        },
+        {
+          "x": -8,
+          "y": -5.5
+        },
+        {
+          "x": 0,
+          "y": -7
+        }
+      ],
+      "procedencia": {
+        "fuente": "relato",
+        "confianza": 0.8,
+        "evidencia": [
+          {
+            "inicio": 353,
+            "fin": 393,
+            "texto": "Había marcas de llanta en el acotamiento"
+          }
+        ]
+      }
+    },
+    {
+      "id": "evid-restos",
+      "tipo": "restos",
+      "vehiculo_id": "veh-a",
+      "puntos": [
+        {
+          "x": 8,
+          "y": -8
+        },
+        {
+          "x": 18,
+          "y": -9.5
+        },
+        {
+          "x": 27,
+          "y": -8
+        }
+      ],
+      "procedencia": {
+        "fuente": "relato",
+        "confianza": 0.8,
+        "evidencia": [
+          {
+            "inicio": 396,
+            "fin": 427,
+            "texto": "pedazos de la camioneta regados"
+          }
+        ]
+      }
+    },
+    {
+      "id": "evid-final",
+      "tipo": "posicion_final",
+      "vehiculo_id": "veh-a",
+      "longitud": {
+        "valor": 35,
+        "unidad": "m",
+        "rango": [28, 42],
+        "fuente": "relato",
+        "confianza": 0.6,
+        "evidencia": [
+          {
+            "inicio": 248,
+            "fin": 264,
+            "texto": "como a 35 metros"
+          }
+        ]
+      },
+      "puntos": [
+        {
+          "x": 35,
+          "y": -8.5
+        }
+      ],
+      "procedencia": {
+        "fuente": "relato",
+        "confianza": 0.6,
+        "evidencia": [
+          {
+            "inicio": 232,
+            "fin": 264,
+            "texto": "Quedó de cabeza como a 35 metros"
+          }
+        ]
+      }
+    }
+  ]
+}

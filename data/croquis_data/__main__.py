@@ -33,7 +33,21 @@ def main(argv: list[str] | None = None) -> int:
     p_pr.add_argument("--out", type=Path, default=atus.PROCESSED_DIR)
     p_pr.add_argument("--years", type=int, nargs="*", help="Años a procesar (todos por defecto)")
 
+    p_veh = sub.add_parser("vehicles", help="Tabla de rangos por clase de vehículo")
+    veh_sub = p_veh.add_subparsers(dest="command", required=True)
+    p_vb = veh_sub.add_parser("build", help="Escribe packages/scene-schema/vehicle_classes.json")
+    p_vb.add_argument("--check", action="store_true", help="Solo verifica que esté al día")
+
     args = parser.parse_args(argv)
+    if args.source == "vehicles" and args.command == "build":
+        from croquis_data import vehicle_classes as vc
+
+        if args.check:
+            ok = vc.check()
+            print("vehicle_classes.json al día" if ok else "vehicle_classes.json DESACTUALIZADO")
+            return 0 if ok else 1
+        print(f"Escrito {vc.write()}")
+        return 0
     if args.command == "download":
         rec = atus.download(args.dest, force=args.force)
         print(f"{rec.path}: {rec.size} bytes, sha256 {rec.sha256}")

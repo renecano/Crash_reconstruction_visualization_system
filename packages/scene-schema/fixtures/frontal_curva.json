@@ -1,0 +1,807 @@
+{
+  "meta": {
+    "id": "fx-frontal-curva",
+    "version_esquema": "1.0.0",
+    "idioma": "es-MX",
+    "semilla": 103,
+    "creado": "2026-10-10T18:10:00-06:00",
+    "titulo": "Choque de frente en curva de carretera a Temoaya",
+    "origen_relato": "precargado",
+    "sintetico": true,
+    "relato": "Veníamos de Temoaya por la carretera, es de un carril por sentido. En una curva a la izquierda, bajando, yo iba como a 70 en mi Jetta azul y de frente venía una Urvan blanca que se abrió de más y se pasó a mi carril. Frené y me pegué a la derecha pero nos dimos de frente, ella con su esquina del lado del chofer y yo con la mía. La Urvan dejó una marca de frenado larga, como de 15 metros. Yo iba solo con cinturón; en la Urvan iban el chofer y dos pasajeros."
+  },
+  "lugar": {
+    "nombre_via": {
+      "valor": "Carretera Toluca-Temoaya",
+      "fuente": "relato",
+      "confianza": 0.7,
+      "evidencia": [
+        {
+          "inicio": 0,
+          "fin": 36,
+          "texto": "Veníamos de Temoaya por la carretera"
+        }
+      ]
+    },
+    "tipo_via": {
+      "valor": "carretera_dos_carriles",
+      "fuente": "relato",
+      "confianza": 0.9,
+      "evidencia": [
+        {
+          "inicio": 38,
+          "fin": 65,
+          "texto": "es de un carril por sentido"
+        }
+      ]
+    },
+    "carriles_por_sentido": {
+      "valor": 1,
+      "fuente": "relato",
+      "confianza": 0.95,
+      "evidencia": [
+        {
+          "inicio": 44,
+          "fin": 65,
+          "texto": "un carril por sentido"
+        }
+      ]
+    },
+    "ancho_carril": {
+      "valor": 3.5,
+      "unidad": "m",
+      "fuente": "default",
+      "confianza": 0.5
+    },
+    "sentidos": {
+      "valor": "doble_sentido",
+      "fuente": "relato",
+      "confianza": 0.95,
+      "evidencia": [
+        {
+          "inicio": 141,
+          "fin": 166,
+          "texto": "de frente venía una Urvan"
+        }
+      ]
+    },
+    "acotamiento": {
+      "valor": true,
+      "fuente": "default",
+      "confianza": 0.5
+    },
+    "ancho_acotamiento": {
+      "valor": 1,
+      "unidad": "m",
+      "fuente": "default",
+      "confianza": 0.4
+    },
+    "pendiente": {
+      "valor": -4,
+      "unidad": "%",
+      "rango": [-6, -2],
+      "fuente": "relato",
+      "confianza": 0.5,
+      "evidencia": [
+        {
+          "inicio": 96,
+          "fin": 103,
+          "texto": "bajando"
+        }
+      ]
+    },
+    "radio_curva": {
+      "valor": 120,
+      "unidad": "m",
+      "rango": [80, 200],
+      "fuente": "supuesto",
+      "confianza": 0.4,
+      "evidencia": [
+        {
+          "inicio": 67,
+          "fin": 94,
+          "texto": "En una curva a la izquierda"
+        }
+      ],
+      "nota": "Curva a la izquierda para A; radio típico de carretera estatal de montaña."
+    },
+    "superficie": {
+      "valor": "asfalto",
+      "fuente": "default",
+      "confianza": 0.7
+    },
+    "estado_superficie": {
+      "valor": "seco",
+      "fuente": "default",
+      "confianza": 0.6
+    },
+    "friccion": {
+      "valor": 0.7,
+      "rango": [0.6, 0.8],
+      "fuente": "default",
+      "confianza": 0.6
+    },
+    "dispositivos": [
+      {
+        "id": "linea-central",
+        "tipo": "linea_continua",
+        "posicion": {
+          "x": 0,
+          "y": 0
+        },
+        "procedencia": {
+          "fuente": "default",
+          "confianza": 0.5,
+          "nota": "Línea central continua esperada en curva."
+        }
+      }
+    ]
+  },
+  "entorno": {
+    "clima": {
+      "valor": "despejado",
+      "fuente": "default",
+      "confianza": 0.5
+    },
+    "iluminacion": {
+      "valor": "dia",
+      "fuente": "default",
+      "confianza": 0.5
+    },
+    "objetos": [
+      {
+        "id": "arboles-ladera",
+        "tipo": "arbol",
+        "posicion": {
+          "x": -15,
+          "y": 9
+        },
+        "alto": {
+          "valor": 7,
+          "unidad": "m",
+          "fuente": "default",
+          "confianza": 0.4
+        },
+        "diametro_tronco": {
+          "valor": 0.3,
+          "unidad": "m",
+          "fuente": "default",
+          "confianza": 0.4
+        },
+        "material": "vegetal",
+        "procedencia": {
+          "fuente": "default",
+          "confianza": 0.4,
+          "nota": "Vegetación en el interior de la curva; limita la visibilidad."
+        }
+      }
+    ]
+  },
+  "vehiculos": [
+    {
+      "id": "veh-a",
+      "rol": "A",
+      "clase": {
+        "valor": "sedan_mediano",
+        "fuente": "relato",
+        "confianza": 0.9,
+        "evidencia": [
+          {
+            "inicio": 125,
+            "fin": 138,
+            "texto": "mi Jetta azul"
+          }
+        ]
+      },
+      "marca": {
+        "valor": "Volkswagen",
+        "fuente": "relato",
+        "confianza": 0.9,
+        "evidencia": [
+          {
+            "inicio": 128,
+            "fin": 133,
+            "texto": "Jetta"
+          }
+        ]
+      },
+      "modelo": {
+        "valor": "Jetta",
+        "fuente": "relato",
+        "confianza": 0.9,
+        "evidencia": [
+          {
+            "inicio": 128,
+            "fin": 133,
+            "texto": "Jetta"
+          }
+        ]
+      },
+      "color": {
+        "nombre": {
+          "valor": "azul",
+          "fuente": "relato",
+          "confianza": 0.9,
+          "evidencia": [
+            {
+              "inicio": 134,
+              "fin": 138,
+              "texto": "azul"
+            }
+          ]
+        },
+        "hex": "#1f3f8f"
+      },
+      "masa": {
+        "valor": 1350,
+        "unidad": "kg",
+        "rango": [1250, 1500],
+        "fuente": "default",
+        "confianza": 0.6
+      },
+      "largo": {
+        "valor": 4.7,
+        "unidad": "m",
+        "fuente": "default",
+        "confianza": 0.6
+      },
+      "ancho": {
+        "valor": 1.8,
+        "unidad": "m",
+        "fuente": "default",
+        "confianza": 0.6
+      },
+      "alto": {
+        "valor": 1.46,
+        "unidad": "m",
+        "fuente": "default",
+        "confianza": 0.6
+      },
+      "distancia_entre_ejes": {
+        "valor": 2.69,
+        "unidad": "m",
+        "fuente": "default",
+        "confianza": 0.6
+      },
+      "maniobra": {
+        "valor": "recto",
+        "fuente": "relato",
+        "confianza": 0.8,
+        "evidencia": [
+          {
+            "inicio": 225,
+            "fin": 246,
+            "texto": "me pegué a la derecha"
+          }
+        ],
+        "nota": "Siguió su carril, cargándose a la derecha."
+      },
+      "velocidad_previa": {
+        "valor": 70,
+        "unidad": "km/h",
+        "rango": [60, 80],
+        "fuente": "relato",
+        "confianza": 0.7,
+        "evidencia": [
+          {
+            "inicio": 112,
+            "fin": 121,
+            "texto": "como a 70"
+          }
+        ]
+      },
+      "frenado": {
+        "aplico": {
+          "valor": true,
+          "fuente": "relato",
+          "confianza": 0.9,
+          "evidencia": [
+            {
+              "inicio": 217,
+              "fin": 222,
+              "texto": "Frené"
+            }
+          ]
+        }
+      },
+      "carril": {
+        "valor": 1,
+        "fuente": "supuesto",
+        "confianza": 0.9
+      },
+      "posicion_inicial": {
+        "x": -40,
+        "y": -1.9,
+        "rumbo_deg": 8,
+        "procedencia": {
+          "fuente": "supuesto",
+          "confianza": 0.5,
+          "nota": "Entrando a la curva a la izquierda por su carril."
+        }
+      },
+      "posicion_final": {
+        "x": -2.5,
+        "y": -2.2,
+        "rumbo_deg": -10,
+        "procedencia": {
+          "fuente": "supuesto",
+          "confianza": 0.4
+        }
+      },
+      "ocupantes": ["per-a1"]
+    },
+    {
+      "id": "veh-b",
+      "rol": "B",
+      "clase": {
+        "valor": "van",
+        "fuente": "relato",
+        "confianza": 0.9,
+        "evidencia": [
+          {
+            "inicio": 157,
+            "fin": 173,
+            "texto": "una Urvan blanca"
+          }
+        ]
+      },
+      "marca": {
+        "valor": "Nissan",
+        "fuente": "relato",
+        "confianza": 0.9,
+        "evidencia": [
+          {
+            "inicio": 333,
+            "fin": 338,
+            "texto": "Urvan"
+          }
+        ]
+      },
+      "modelo": {
+        "valor": "Urvan",
+        "fuente": "relato",
+        "confianza": 0.9,
+        "evidencia": [
+          {
+            "inicio": 333,
+            "fin": 338,
+            "texto": "Urvan"
+          }
+        ]
+      },
+      "color": {
+        "nombre": {
+          "valor": "blanco",
+          "fuente": "relato",
+          "confianza": 0.9,
+          "evidencia": [
+            {
+              "inicio": 167,
+              "fin": 173,
+              "texto": "blanca"
+            }
+          ]
+        },
+        "hex": "#f5f5f5"
+      },
+      "masa": {
+        "valor": 2200,
+        "unidad": "kg",
+        "rango": [2000, 2600],
+        "fuente": "default",
+        "confianza": 0.5
+      },
+      "largo": {
+        "valor": 5.23,
+        "unidad": "m",
+        "fuente": "default",
+        "confianza": 0.5
+      },
+      "ancho": {
+        "valor": 1.88,
+        "unidad": "m",
+        "fuente": "default",
+        "confianza": 0.5
+      },
+      "alto": {
+        "valor": 2.28,
+        "unidad": "m",
+        "fuente": "default",
+        "confianza": 0.5
+      },
+      "distancia_entre_ejes": {
+        "valor": 3.31,
+        "unidad": "m",
+        "fuente": "default",
+        "confianza": 0.5
+      },
+      "maniobra": {
+        "valor": "cambio_carril_izquierda",
+        "fuente": "relato",
+        "confianza": 0.7,
+        "evidencia": [
+          {
+            "inicio": 178,
+            "fin": 215,
+            "texto": "se abrió de más y se pasó a mi carril"
+          }
+        ],
+        "nota": "Invasión parcial del carril contrario en la curva, según el narrador."
+      },
+      "velocidad_previa": {
+        "valor": 60,
+        "unidad": "km/h",
+        "rango": [45, 80],
+        "fuente": "supuesto",
+        "confianza": 0.3
+      },
+      "frenado": {
+        "aplico": {
+          "valor": true,
+          "fuente": "relato",
+          "confianza": 0.9,
+          "evidencia": [
+            {
+              "inicio": 330,
+              "fin": 370,
+              "texto": "La Urvan dejó una marca de frenado larga"
+            }
+          ]
+        },
+        "distancia_antes_impacto": {
+          "valor": 15,
+          "unidad": "m",
+          "rango": [12, 18],
+          "fuente": "relato",
+          "confianza": 0.6,
+          "evidencia": [
+            {
+              "inicio": 372,
+              "fin": 389,
+              "texto": "como de 15 metros"
+            }
+          ]
+        }
+      },
+      "carril": {
+        "valor": 1,
+        "fuente": "supuesto",
+        "confianza": 0.8
+      },
+      "posicion_inicial": {
+        "x": 38,
+        "y": 1.2,
+        "rumbo_deg": 184,
+        "procedencia": {
+          "fuente": "supuesto",
+          "confianza": 0.5,
+          "nota": "Viene en sentido contrario, ya desplazada hacia el carril de A."
+        }
+      },
+      "posicion_final": {
+        "x": 2.8,
+        "y": -0.8,
+        "rumbo_deg": 170,
+        "procedencia": {
+          "fuente": "supuesto",
+          "confianza": 0.4
+        }
+      },
+      "ocupantes": ["per-b1", "per-b2", "per-b3"]
+    }
+  ],
+  "personas": [
+    {
+      "id": "per-a1",
+      "rol": {
+        "valor": "conductor",
+        "fuente": "relato",
+        "confianza": 1,
+        "evidencia": [
+          {
+            "inicio": 391,
+            "fin": 415,
+            "texto": "Yo iba solo con cinturón"
+          }
+        ]
+      },
+      "vehiculo_id": "veh-a",
+      "asiento": {
+        "valor": "conductor",
+        "fuente": "supuesto",
+        "confianza": 1
+      },
+      "cinturon": {
+        "valor": true,
+        "fuente": "relato",
+        "confianza": 0.95,
+        "evidencia": [
+          {
+            "inicio": 398,
+            "fin": 415,
+            "texto": "solo con cinturón"
+          }
+        ]
+      }
+    },
+    {
+      "id": "per-b1",
+      "rol": {
+        "valor": "conductor",
+        "fuente": "relato",
+        "confianza": 0.95,
+        "evidencia": [
+          {
+            "inicio": 429,
+            "fin": 459,
+            "texto": "iban el chofer y dos pasajeros"
+          }
+        ]
+      },
+      "vehiculo_id": "veh-b",
+      "asiento": {
+        "valor": "conductor",
+        "fuente": "supuesto",
+        "confianza": 0.95
+      },
+      "cinturon": {
+        "valor": true,
+        "fuente": "supuesto",
+        "confianza": 0.4
+      }
+    },
+    {
+      "id": "per-b2",
+      "rol": {
+        "valor": "pasajero",
+        "fuente": "relato",
+        "confianza": 0.9,
+        "evidencia": [
+          {
+            "inicio": 446,
+            "fin": 459,
+            "texto": "dos pasajeros"
+          }
+        ]
+      },
+      "vehiculo_id": "veh-b",
+      "asiento": {
+        "valor": "copiloto",
+        "fuente": "supuesto",
+        "confianza": 0.5
+      },
+      "cinturon": {
+        "valor": false,
+        "fuente": "supuesto",
+        "confianza": 0.4
+      }
+    },
+    {
+      "id": "per-b3",
+      "rol": {
+        "valor": "pasajero",
+        "fuente": "relato",
+        "confianza": 0.9,
+        "evidencia": [
+          {
+            "inicio": 446,
+            "fin": 459,
+            "texto": "dos pasajeros"
+          }
+        ]
+      },
+      "vehiculo_id": "veh-b",
+      "asiento": {
+        "valor": "trasero_derecho",
+        "fuente": "supuesto",
+        "confianza": 0.4
+      },
+      "cinturon": {
+        "valor": false,
+        "fuente": "supuesto",
+        "confianza": 0.4
+      }
+    }
+  ],
+  "eventos": [
+    {
+      "id": "ev-frenado-b",
+      "orden": 0,
+      "tipo": "inicio_frenado",
+      "actores": ["veh-b"],
+      "t": {
+        "valor": -1.2,
+        "unidad": "s",
+        "rango": [-1.6, -0.8],
+        "fuente": "supuesto",
+        "confianza": 0.4
+      },
+      "procedencia": {
+        "fuente": "relato",
+        "confianza": 0.8,
+        "evidencia": [
+          {
+            "inicio": 339,
+            "fin": 370,
+            "texto": "dejó una marca de frenado larga"
+          }
+        ]
+      }
+    },
+    {
+      "id": "ev-frenado-a",
+      "orden": 1,
+      "tipo": "inicio_frenado",
+      "actores": ["veh-a"],
+      "t": {
+        "valor": -0.8,
+        "unidad": "s",
+        "rango": [-1.2, -0.4],
+        "fuente": "supuesto",
+        "confianza": 0.4
+      },
+      "procedencia": {
+        "fuente": "relato",
+        "confianza": 0.8,
+        "evidencia": [
+          {
+            "inicio": 217,
+            "fin": 246,
+            "texto": "Frené y me pegué a la derecha"
+          }
+        ]
+      }
+    },
+    {
+      "id": "ev-impacto",
+      "orden": 2,
+      "tipo": "impacto_vehiculo_vehiculo",
+      "actores": ["veh-a", "veh-b"],
+      "t": {
+        "valor": 0,
+        "unidad": "s",
+        "fuente": "default",
+        "confianza": 1
+      },
+      "zonas_impacto": [
+        {
+          "vehiculo_id": "veh-a",
+          "cdc": {
+            "lado": "F",
+            "zona_horizontal": "Y",
+            "zona_vertical": "E",
+            "extension": 5
+          },
+          "pdof_horas": {
+            "valor": 11,
+            "fuente": "supuesto",
+            "confianza": 0.6
+          }
+        },
+        {
+          "vehiculo_id": "veh-b",
+          "cdc": {
+            "lado": "F",
+            "zona_horizontal": "Y",
+            "zona_vertical": "E",
+            "extension": 4
+          },
+          "pdof_horas": {
+            "valor": 11,
+            "fuente": "supuesto",
+            "confianza": 0.6
+          }
+        }
+      ],
+      "punto_impacto": {
+        "x": 0,
+        "y": -0.6
+      },
+      "descripcion": "Impacto frontal desfasado: esquina izquierda contra esquina izquierda.",
+      "procedencia": {
+        "fuente": "relato",
+        "confianza": 0.9,
+        "evidencia": [
+          {
+            "inicio": 252,
+            "fin": 328,
+            "texto": "nos dimos de frente, ella con su esquina del lado del chofer y yo con la mía"
+          }
+        ]
+      }
+    },
+    {
+      "id": "ev-reposo",
+      "orden": 3,
+      "tipo": "reposo",
+      "actores": ["veh-a", "veh-b"],
+      "procedencia": {
+        "fuente": "supuesto",
+        "confianza": 0.4
+      }
+    }
+  ],
+  "danos_declarados": [
+    {
+      "vehiculo_id": "veh-a",
+      "zona": {
+        "lado": "F",
+        "zona_horizontal": "Y",
+        "zona_vertical": "E",
+        "extension": 5
+      },
+      "severidad": "severo",
+      "vidrios": "estrellados",
+      "bolsas_aire": {
+        "valor": true,
+        "fuente": "supuesto",
+        "confianza": 0.6
+      },
+      "piezas_desprendidas": ["defensa", "faro", "cofre"],
+      "fugas": ["anticongelante"],
+      "procedencia": {
+        "fuente": "supuesto",
+        "confianza": 0.5,
+        "nota": "Daño inferido de un frontal desfasado a velocidad de cierre alta."
+      }
+    },
+    {
+      "vehiculo_id": "veh-b",
+      "zona": {
+        "lado": "F",
+        "zona_horizontal": "Y",
+        "zona_vertical": "E",
+        "extension": 4
+      },
+      "severidad": "severo",
+      "vidrios": "estrellados",
+      "piezas_desprendidas": ["defensa", "faro"],
+      "procedencia": {
+        "fuente": "supuesto",
+        "confianza": 0.5
+      }
+    }
+  ],
+  "evidencias": [
+    {
+      "id": "evid-frenado-b",
+      "tipo": "marcas_frenado",
+      "vehiculo_id": "veh-b",
+      "longitud": {
+        "valor": 15,
+        "unidad": "m",
+        "rango": [12, 18],
+        "fuente": "relato",
+        "confianza": 0.6,
+        "evidencia": [
+          {
+            "inicio": 372,
+            "fin": 389,
+            "texto": "como de 15 metros"
+          }
+        ]
+      },
+      "puntos": [
+        {
+          "x": 17,
+          "y": 0.6
+        },
+        {
+          "x": 2,
+          "y": -0.4
+        }
+      ],
+      "procedencia": {
+        "fuente": "relato",
+        "confianza": 0.7,
+        "evidencia": [
+          {
+            "inicio": 348,
+            "fin": 389,
+            "texto": "marca de frenado larga, como de 15 metros"
+          }
+        ]
+      }
+    }
+  ]
+}
