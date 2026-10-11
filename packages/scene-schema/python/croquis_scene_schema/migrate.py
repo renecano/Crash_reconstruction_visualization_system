@@ -9,8 +9,8 @@ from __future__ import annotations
 import copy
 import re
 from collections.abc import Callable
-from dataclasses import dataclass, field
-from typing import Any
+from dataclasses import dataclass
+from typing import Any, cast
 
 from croquis_scene_schema import SCHEMA_VERSION
 
@@ -48,15 +48,15 @@ class MigrationResult:
     doc: JsonObj
     desde: str
     hasta: str
-    aplicadas: list[str] = field(default_factory=list)
+    aplicadas: list[str]
 
 
 def _version_of(doc: object) -> str:
     if not isinstance(doc, dict):
         msg = "El documento no es un objeto."
         raise ValueError(msg)
-    meta = doc.get("meta")  # pyright: ignore[reportUnknownMemberType]
-    v = meta.get("version_esquema") if isinstance(meta, dict) else None  # pyright: ignore[reportUnknownMemberType, reportUnknownVariableType]
+    meta = cast(JsonObj, doc).get("meta")
+    v = cast(JsonObj, meta).get("version_esquema") if isinstance(meta, dict) else None
     if not isinstance(v, str):
         msg = "El documento no declara meta.version_esquema."
         raise ValueError(msg)
@@ -90,7 +90,7 @@ def migrate_escena(
             msg = f"No hay migración registrada desde la versión {version}."
             raise ValueError(msg)
         current = step.aplicar(copy.deepcopy(current))
-        meta = dict(current.get("meta", {}))
+        meta: JsonObj = dict(cast(JsonObj, current.get("meta", {})))
         meta["version_esquema"] = step.hasta
         current["meta"] = meta
         aplicadas.append(f"{step.desde}→{step.hasta}")

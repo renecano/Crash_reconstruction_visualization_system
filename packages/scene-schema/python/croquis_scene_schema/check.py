@@ -11,7 +11,7 @@ import math
 from dataclasses import dataclass
 from typing import Any, Literal, cast
 
-from croquis_scene_schema import SCHEMA_VERSION
+from croquis_scene_schema import SCHEMA_VERSION, load_vehicle_classes
 
 Severidad = Literal["error", "advertencia"]
 Vec = tuple[float, float]
@@ -86,7 +86,11 @@ def _is_campo(o: object) -> bool:
 
 
 def check_escena(spec: JsonObj, clases: dict[str, JsonObj] | None = None) -> list[Problema]:
-    """Devuelve los problemas semánticos de una escena ya válida contra el JSON Schema."""
+    """Problemas semánticos de una escena ya válida contra el JSON Schema.
+
+    ``clases``: rangos por clase; por defecto ``vehicle_classes.json``; pasa ``{}`` para omitirlos.
+    """
+    tabla = load_vehicle_classes() if clases is None else clases
     problemas: list[Problema] = []
 
     def err(codigo: str, ruta: str, mensaje: str) -> None:
@@ -235,7 +239,7 @@ def check_escena(spec: JsonObj, clases: dict[str, JsonObj] | None = None) -> lis
     for i, v in enumerate(vehiculos):
         base = f"/vehiculos/{i}"
         clase_nombre = cast(str, cast(JsonObj, v["clase"])["valor"])
-        clase = (clases or {}).get(clase_nombre)
+        clase = tabla.get(clase_nombre)
         if clase is not None:
             if "masa" in v:
                 m = masa_kg(cast(JsonObj, v["masa"]))

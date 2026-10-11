@@ -39,7 +39,8 @@ describe("sceneLayout", () => {
     expect(vehicleDims(alcance.vehiculos[0]!)).toEqual({ largo: 4.5, ancho: 1.7 });
     const volcadura = loadFixture("volcadura");
     const sinMedidas = volcadura.vehiculos.find((v) => v.id === "veh-b")!;
-    expect(vehicleDims(sinMedidas)).toEqual(DEFAULT_DIMS.sedan_compacto);
+    expect(vehicleDims(sinMedidas, {})).toEqual(DEFAULT_DIMS.sedan_compacto);
+    expect(vehicleDims(sinMedidas).largo).toBeGreaterThan(4);
     expect(
       vehicleDims(sinMedidas, {
         sedan_compacto: {

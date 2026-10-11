@@ -26,6 +26,10 @@
 | 11  | Monte Carlo                                                                     | F7    | pendiente |
 | 12  | Consistencia (banderas en lenguaje llano)                                       | F7    | pendiente |
 
+## Rangos de plausibilidad por clase (F1)
+
+El validador semántico (`check.ts` / `check.py`) marca masas, dimensiones y velocidades fuera de los rangos de `packages/scene-schema/vehicle_classes.json` (E006–E008). Los rangos de masa y dimensiones salen de fichas técnicas (`data/SOURCES.md`); los topes de velocidad por clase son constantes de diseño (p. ej. 220 km/h para un sedán compacto, 70 km/h para una bicicleta) pensados para detectar relatos físicamente imposibles, no para describir el desempeño de un modelo.
+
 ## Pruebas del solver (PLAN §6.2)
 
 - Propiedades con Hypothesis / fast-check: conservación de momento lineal y angular (error relativo < 1e-9), energía cinética después ≤ antes, ΔV coherente con masas, simetría al intercambiar vehículos.

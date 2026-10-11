@@ -110,18 +110,17 @@ function opArbitrary(spec: EscenaSpec): fc.Arbitrary<EditOp> {
     );
   const evs = spec.evidencias.filter((e) => (e.puntos?.length ?? 0) > 0);
   if (evs.length) {
+    const evArb = fc.constantFrom(...evs);
     arbs.push(
-      fc
-        .constantFrom(...evs)
-        .chain((e) =>
-          fc.record({
-            kind: fc.constant("move_evidence_point" as const),
-            id: fc.constant(e.id),
-            index: fc.nat({ max: (e.puntos?.length ?? 1) - 1 }),
-            x: coord,
-            y: coord,
-          }),
-        ),
+      evArb.chain((e) =>
+        fc.record({
+          kind: fc.constant("move_evidence_point" as const),
+          id: fc.constant(e.id),
+          index: fc.nat({ max: (e.puntos?.length ?? 1) - 1 }),
+          x: coord,
+          y: coord,
+        }),
+      ),
     );
   }
   const evtIds = spec.eventos.filter((e) => e.punto_impacto).map((e) => e.id);

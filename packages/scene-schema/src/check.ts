@@ -7,6 +7,7 @@
  */
 import type { EscenaSpec, Pose2D } from "./generated/escena.zod";
 import { SCHEMA_VERSION } from "./generated/escena.zod";
+import { DEFAULT_CLASES } from "./vehicle-classes";
 
 export type Severidad = "error" | "advertencia";
 
@@ -37,7 +38,7 @@ export interface RangoClase {
 export type TablaClases = Record<string, RangoClase>;
 
 export interface CheckOptions {
-  /** Rangos por clase de vehículo; si falta una clase, se omiten sus comprobaciones. */
+  /** Rangos por clase de vehículo. Por defecto, `vehicle_classes.json`; pasa `{}` para omitirlos. */
   clases?: TablaClases;
 }
 
@@ -244,7 +245,7 @@ export function checkEscena(spec: EscenaSpec, options: CheckOptions = {}): Probl
   const boxes: { i: number; corners: Vec[] }[] = [];
   spec.vehiculos.forEach((v, i) => {
     const base = `/vehiculos/${i}`;
-    const clase = options.clases?.[v.clase.valor];
+    const clase = (options.clases ?? DEFAULT_CLASES)[v.clase.valor];
     const dims: {
       key: "largo" | "ancho" | "alto" | "distancia_entre_ejes";
       rango: keyof RangoClase;

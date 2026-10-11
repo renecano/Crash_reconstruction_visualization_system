@@ -18,16 +18,19 @@ from jsonschema.exceptions import ValidationError
 from croquis_scene_schema.generated import EscenaSpec
 
 SCHEMA_PATH = Path(__file__).resolve().parents[2] / "escena.schema.json"
+VEHICLE_CLASSES_PATH = Path(__file__).resolve().parents[2] / "vehicle_classes.json"
 FIXTURES_DIR = Path(__file__).resolve().parents[2] / "fixtures"
 
 __all__ = [
     "FIXTURES_DIR",
     "SCHEMA_PATH",
     "SCHEMA_VERSION",
+    "VEHICLE_CLASSES_PATH",
     "EscenaSpec",
     "list_fixtures",
     "load_fixture",
     "load_schema",
+    "load_vehicle_classes",
     "schema_errors",
     "validate_dict",
 ]
@@ -68,6 +71,14 @@ def validate_dict(data: Any) -> EscenaSpec:
         msg = "EscenaSpec inválida:\n" + "\n".join(errors[:20])
         raise ValueError(msg)
     return EscenaSpec.model_validate(data)
+
+
+@cache
+def load_vehicle_classes() -> dict[str, dict[str, Any]]:
+    """Tabla de rangos por clase (generada por `croquis-data vehicles build`)."""
+    doc: dict[str, Any] = json.loads(VEHICLE_CLASSES_PATH.read_text(encoding="utf-8"))
+    clases: dict[str, dict[str, Any]] = doc["clases"]
+    return clases
 
 
 def list_fixtures() -> list[str]:

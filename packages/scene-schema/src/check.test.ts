@@ -53,7 +53,7 @@ describe("checkEscena", () => {
       ruta: "/vehiculos/0/masa",
       valor: { valor: 8, unidad: "t", fuente: "usuario", confianza: 1 },
     });
-    const problemas = checkEscena(EscenaSpecSchema.parse(doc));
+    const problemas = checkEscena(EscenaSpecSchema.parse(doc), { clases: {} });
     expect(problemas.map((p) => p.codigo)).not.toContain("E006");
   });
 });

@@ -12,7 +12,8 @@
 5. **Pydantic se genera con datamodel-code-generator 0.83** (`croquis_scene_schema_codegen`), Pydantic v2, `extra="forbid"`, literales para los enums, `AwareDatetime` para `creado`. El código generado se formatea con la configuración de ruff del repo y se verifica en CI (`--check`).
 6. **Fixtures canónicas con relato.** Las 10 escenas traen `meta.relato` sintético y cada `evidencia` cita offsets reales; una herramienta (`scripts/fix_offsets.py`) los rellena y las pruebas los verifican. Lo que no tiene fragmento literal se marca `supuesto`, nunca `relato`.
 7. **Ediciones del croquis marcan `fuente: usuario`, `confianza: 1`** y conservan la nota; la prueba de propiedad garantiza que solo cambian las rutas editadas y la escena sigue válida.
-8. **Versionado.** `meta.version_esquema` es `const` en el esquema; cambiar el contrato implica nueva versión, migración y fixtures regenerados.
+8. **Tabla de clases generada, no escrita.** `vehicle_classes.json` se construye desde `data/vehicles/models_raw.json` con reglas explícitas (márgenes, PBV como tope, respaldos marcados `supuesto`) y CI verifica que esté al día. El validador la usa por defecto; `{}` la desactiva.
+9. **Versionado.** `meta.version_esquema` es `const` en el esquema; cambiar el contrato implica nueva versión, migración y fixtures regenerados.
 
 ## Consecuencias
 

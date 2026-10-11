@@ -3,7 +3,7 @@
  * No muta la escena. Coordenadas: X al este, Y al norte, rumbo en grados antihorario desde +X.
  */
 import type { EscenaSpec, Pose2D, TablaClases } from "@croquis/scene-schema";
-import { longitudM } from "@croquis/scene-schema";
+import { DEFAULT_CLASES, longitudM } from "@croquis/scene-schema";
 import { orientedBox, type Vec2 } from "./geometry";
 
 export interface LaneStrip {
@@ -117,7 +117,7 @@ export function vehicleDims(
   v: EscenaSpec["vehiculos"][number],
   clases?: TablaClases,
 ): { largo: number; ancho: number } {
-  const clase = clases?.[v.clase.valor];
+  const clase = (clases ?? DEFAULT_CLASES)[v.clase.valor];
   const fallback = DEFAULT_DIMS[v.clase.valor] ?? { largo: 4.4, ancho: 1.8 };
   return {
     largo: v.largo ? longitudM(v.largo) : (clase?.tipico.largo_m ?? fallback.largo),

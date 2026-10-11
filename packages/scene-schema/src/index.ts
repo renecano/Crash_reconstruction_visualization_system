@@ -34,4 +34,11 @@ export {
   type ValidationResult,
 } from "./validate";
 export { MIGRATIONS, migrateEscena, type Migration, type MigrationResult } from "./migrate";
+export {
+  DEFAULT_CLASES,
+  VEHICLE_CLASSES,
+  VEHICLE_CLASSES_META,
+  type OrigenRango,
+  type VehicleClassEntry,
+} from "./vehicle-classes";
 export { compareSchemaVersions, parseSemver } from "./version";

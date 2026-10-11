@@ -1,0 +1,643 @@
+{
+  "_generado_por": "uv run croquis-data vehicles build (data/croquis_data/vehicle_classes.py)",
+  "_fuente": "data/vehicles/models_raw.json — fichas técnicas de fabricantes; ver data/SOURCES.md",
+  "_nota": "Rangos de plausibilidad para el validador semántico, no especificaciones. 'origen' indica por campo si sale de fichas ('ficha'/'secundaria'), si solo se conoce el PBV ('derivado_pbv') o si es un supuesto documentado ('supuesto'). velocidad_max_kmh es siempre un tope de diseño.",
+  "generado": "2026-10-10",
+  "clases": {
+    "sedan_compacto": {
+      "masa_kg": [
+        830,
+        1700
+      ],
+      "largo_m": [
+        4.04,
+        5.02
+      ],
+      "ancho_m": [
+        1.53,
+        1.93
+      ],
+      "alto_m": [
+        1.32,
+        1.64
+      ],
+      "distancia_entre_ejes_m": [
+        2.3,
+        2.92
+      ],
+      "velocidad_max_kmh": 220,
+      "tipico": {
+        "masa_kg": 1180,
+        "largo_m": 4.5,
+        "ancho_m": 1.74,
+        "alto_m": 1.49,
+        "distancia_entre_ejes_m": 2.62
+      },
+      "origen": {
+        "masa_kg": "ficha",
+        "largo_m": "ficha",
+        "ancho_m": "ficha",
+        "alto_m": "ficha",
+        "distancia_entre_ejes_m": "ficha",
+        "velocidad_max_kmh": "supuesto"
+      },
+      "n_modelos": 3,
+      "n_modelos_completos": 2,
+      "modelos": [
+        "Nissan Versa Sense TM 2026",
+        "Volkswagen Virtus Trendline 2026",
+        "Chevrolet Aveo Sedán LS TM 2026"
+      ]
+    },
+    "sedan_mediano": {
+      "masa_kg": [
+        960,
+        1910
+      ],
+      "largo_m": [
+        4.17,
+        5.19
+      ],
+      "ancho_m": [
+        1.6,
+        2.0
+      ],
+      "alto_m": [
+        1.27,
+        1.61
+      ],
+      "distancia_entre_ejes_m": [
+        2.42,
+        3.01
+      ],
+      "velocidad_max_kmh": 240,
+      "tipico": {
+        "masa_kg": 1400,
+        "largo_m": 4.67,
+        "ancho_m": 1.8,
+        "alto_m": 1.46,
+        "distancia_entre_ejes_m": 2.7
+      },
+      "origen": {
+        "masa_kg": "ficha",
+        "largo_m": "ficha",
+        "ancho_m": "ficha",
+        "alto_m": "ficha",
+        "distancia_entre_ejes_m": "ficha",
+        "velocidad_max_kmh": "supuesto"
+      },
+      "n_modelos": 4,
+      "n_modelos_completos": 3,
+      "modelos": [
+        "Nissan Sentra Sense 2026",
+        "Volkswagen Jetta (Trendline/Comfortline/Sportline) 2027",
+        "Honda Civic Sedán i-Style 2026",
+        "Toyota Corolla Base/LE CVT 2025"
+      ]
+    },
+    "hatchback": {
+      "masa_kg": [
+        740,
+        1530
+      ],
+      "largo_m": [
+        3.44,
+        4.59
+      ],
+      "ancho_m": [
+        1.5,
+        1.93
+      ],
+      "alto_m": [
+        1.32,
+        1.68
+      ],
+      "distancia_entre_ejes_m": [
+        2.2,
+        2.82
+      ],
+      "velocidad_max_kmh": 220,
+      "tipico": {
+        "masa_kg": 1030,
+        "largo_m": 4.08,
+        "ancho_m": 1.7,
+        "alto_m": 1.49,
+        "distancia_entre_ejes_m": 2.55
+      },
+      "origen": {
+        "masa_kg": "ficha",
+        "largo_m": "ficha",
+        "ancho_m": "ficha",
+        "alto_m": "ficha",
+        "distancia_entre_ejes_m": "ficha",
+        "velocidad_max_kmh": "supuesto"
+      },
+      "n_modelos": 3,
+      "n_modelos_completos": 2,
+      "modelos": [
+        "Nissan March Sense TM 2026",
+        "Volkswagen Polo Track 2026",
+        "Chevrolet Aveo HB LS TM 2026"
+      ]
+    },
+    "suv_compacta": {
+      "masa_kg": [
+        880,
+        1890
+      ],
+      "largo_m": [
+        3.9,
+        4.91
+      ],
+      "ancho_m": [
+        1.61,
+        2.01
+      ],
+      "alto_m": [
+        1.46,
+        1.81
+      ],
+      "distancia_entre_ejes_m": [
+        2.35,
+        2.92
+      ],
+      "velocidad_max_kmh": 210,
+      "tipico": {
+        "masa_kg": 1380,
+        "largo_m": 4.36,
+        "ancho_m": 1.8,
+        "alto_m": 1.64,
+        "distancia_entre_ejes_m": 2.64
+      },
+      "origen": {
+        "masa_kg": "ficha",
+        "largo_m": "ficha",
+        "ancho_m": "ficha",
+        "alto_m": "ficha",
+        "distancia_entre_ejes_m": "ficha",
+        "velocidad_max_kmh": "supuesto"
+      },
+      "n_modelos": 3,
+      "n_modelos_completos": 3,
+      "modelos": [
+        "Nissan Kicks 2026",
+        "Hyundai Creta GL TM 2027",
+        "Toyota Corolla Cross LE 2026"
+      ]
+    },
+    "suv_grande": {
+      "masa_kg": [
+        1580,
+        3580
+      ],
+      "largo_m": [
+        4.5,
+        5.9
+      ],
+      "ancho_m": [
+        1.78,
+        2.28
+      ],
+      "alto_m": [
+        1.62,
+        2.18
+      ],
+      "distancia_entre_ejes_m": [
+        2.61,
+        3.41
+      ],
+      "velocidad_max_kmh": 210,
+      "tipico": {
+        "masa_kg": 2380,
+        "largo_m": 5.31,
+        "ancho_m": 2.04,
+        "alto_m": 1.9,
+        "distancia_entre_ejes_m": 3.0
+      },
+      "origen": {
+        "masa_kg": "ficha",
+        "largo_m": "ficha",
+        "ancho_m": "ficha",
+        "alto_m": "ficha",
+        "distancia_entre_ejes_m": "ficha",
+        "velocidad_max_kmh": "supuesto"
+      },
+      "n_modelos": 4,
+      "n_modelos_completos": 2,
+      "modelos": [
+        "Toyota Sequoia HEV Limited 2WD 2025",
+        "Nissan Pathfinder 2026",
+        "Chevrolet Tahoe RST 2026",
+        "Ford Expedition Active 2026"
+      ]
+    },
+    "pickup": {
+      "masa_kg": [
+        1240,
+        3100
+      ],
+      "largo_m": [
+        4.79,
+        5.89
+      ],
+      "ancho_m": [
+        1.61,
+        2.27
+      ],
+      "alto_m": [
+        1.58,
+        2.12
+      ],
+      "distancia_entre_ejes_m": [
+        2.78,
+        3.6
+      ],
+      "velocidad_max_kmh": 200,
+      "tipico": {
+        "masa_kg": 1890,
+        "largo_m": 5.34,
+        "ancho_m": 1.86,
+        "alto_m": 1.85,
+        "distancia_entre_ejes_m": 3.18
+      },
+      "origen": {
+        "masa_kg": "ficha",
+        "largo_m": "ficha",
+        "ancho_m": "ficha",
+        "alto_m": "ficha",
+        "distancia_entre_ejes_m": "ficha",
+        "velocidad_max_kmh": "supuesto"
+      },
+      "n_modelos": 4,
+      "n_modelos_completos": 3,
+      "modelos": [
+        "Nissan NP300 Pick-Up (gasolina) 2026",
+        "Toyota Hilux Doble Cabina SR 2.7 gasolina 2025",
+        "Chevrolet Silverado Cabina Regular V8 4x2 2026",
+        "Ford Ranger XL Gasolina 4x2 2026"
+      ]
+    },
+    "van": {
+      "masa_kg": [
+        1390,
+        3500
+      ],
+      "largo_m": [
+        4.71,
+        6.53
+      ],
+      "ancho_m": [
+        1.69,
+        2.22
+      ],
+      "alto_m": [
+        2.05,
+        2.66
+      ],
+      "distancia_entre_ejes_m": [
+        2.65,
+        4.25
+      ],
+      "velocidad_max_kmh": 180,
+      "tipico": {
+        "masa_kg": 2260,
+        "largo_m": 5.92,
+        "ancho_m": 1.95,
+        "alto_m": 2.28,
+        "distancia_entre_ejes_m": 3.66
+      },
+      "origen": {
+        "masa_kg": "ficha",
+        "largo_m": "ficha",
+        "ancho_m": "ficha",
+        "alto_m": "ficha",
+        "distancia_entre_ejes_m": "ficha",
+        "velocidad_max_kmh": "supuesto"
+      },
+      "n_modelos": 3,
+      "n_modelos_completos": 3,
+      "modelos": [
+        "Toyota Hiace Panel 2.8 diésel 2024",
+        "Mercedes-Benz Sprinter Furgón 314 CDI 3665 techo normal 2026",
+        "Nissan Urvan Panel Cargo 2.5 2023"
+      ]
+    },
+    "microbus_combi": {
+      "masa_kg": [
+        1930,
+        4100
+      ],
+      "largo_m": [
+        4.71,
+        6.53
+      ],
+      "ancho_m": [
+        1.69,
+        2.22
+      ],
+      "alto_m": [
+        2.05,
+        3.1
+      ],
+      "distancia_entre_ejes_m": [
+        2.65,
+        4.25
+      ],
+      "velocidad_max_kmh": 150,
+      "tipico": {
+        "masa_kg": 2580,
+        "largo_m": 5.92,
+        "ancho_m": 1.95,
+        "alto_m": 2.28,
+        "distancia_entre_ejes_m": 3.66
+      },
+      "origen": {
+        "masa_kg": "ficha",
+        "largo_m": "ficha",
+        "ancho_m": "ficha",
+        "alto_m": "ficha",
+        "distancia_entre_ejes_m": "ficha",
+        "velocidad_max_kmh": "supuesto"
+      },
+      "n_modelos": 3,
+      "n_modelos_completos": 1,
+      "modelos": [
+        "Toyota Hiace 12 Pasajeros 3.5 V6 2024",
+        "Mercedes-Benz Sprinter Combi 414 CDI 3665 15+1 2026",
+        "Nissan Urvan 14 Pasajeros (ancha) 2026"
+      ]
+    },
+    "autobus": {
+      "masa_kg": [
+        8000,
+        16000
+      ],
+      "largo_m": [
+        9.27,
+        11.88
+      ],
+      "ancho_m": [
+        2.27,
+        2.78
+      ],
+      "alto_m": [
+        2.84,
+        3.46
+      ],
+      "distancia_entre_ejes_m": [
+        4.37,
+        6.66
+      ],
+      "velocidad_max_kmh": 120,
+      "tipico": {
+        "masa_kg": 12000,
+        "largo_m": 10.56,
+        "ancho_m": 2.52,
+        "alto_m": 3.15,
+        "distancia_entre_ejes_m": 6.0
+      },
+      "origen": {
+        "masa_kg": "derivado_pbv",
+        "largo_m": "ficha",
+        "ancho_m": "ficha",
+        "alto_m": "ficha",
+        "distancia_entre_ejes_m": "ficha",
+        "velocidad_max_kmh": "supuesto"
+      },
+      "n_modelos": 3,
+      "n_modelos_completos": 0,
+      "modelos": [
+        "Mercedes-Benz OF 1421/48 + carrocería Torino MD (urbano) 2024",
+        "Mercedes-Benz MBO 1421/60 + carrocería Boxer (urbano) 2024",
+        "DINA Runner Águila (urbano, carrocería integral) 2024"
+      ]
+    },
+    "camion_unitario": {
+      "masa_kg": [
+        1630,
+        16000
+      ],
+      "largo_m": [
+        4.25,
+        8.56
+      ],
+      "ancho_m": [
+        1.63,
+        2.85
+      ],
+      "alto_m": [
+        2.04,
+        3.03
+      ],
+      "distancia_entre_ejes_m": [
+        2.23,
+        5.53
+      ],
+      "velocidad_max_kmh": 130,
+      "tipico": {
+        "masa_kg": 3700,
+        "largo_m": 5.98,
+        "ancho_m": 2.26,
+        "alto_m": 2.35,
+        "distancia_entre_ejes_m": 3.85
+      },
+      "origen": {
+        "masa_kg": "ficha",
+        "largo_m": "ficha",
+        "ancho_m": "ficha",
+        "alto_m": "ficha",
+        "distancia_entre_ejes_m": "ficha",
+        "velocidad_max_kmh": "supuesto"
+      },
+      "n_modelos": 4,
+      "n_modelos_completos": 3,
+      "modelos": [
+        "Isuzu ELF 300 chasis cabina E (DEE corta) 2026",
+        "Isuzu ELF 500 chasis cabina H 2026",
+        "Freightliner M2 Plus cabina de día (PBV 25K) 2025",
+        "Hino 500 Serie 1628 versión J (chasis cabina) 2027"
+      ]
+    },
+    "tractocamion": {
+      "masa_kg": [
+        6000,
+        12000
+      ],
+      "largo_m": [
+        6.0,
+        9.0
+      ],
+      "ancho_m": [
+        2.16,
+        2.64
+      ],
+      "alto_m": [
+        3.3,
+        4.2
+      ],
+      "distancia_entre_ejes_m": [
+        4.0,
+        6.3
+      ],
+      "velocidad_max_kmh": 130,
+      "tipico": {
+        "masa_kg": 9000,
+        "largo_m": 7.5,
+        "ancho_m": 2.4,
+        "alto_m": 3.75,
+        "distancia_entre_ejes_m": 5.15
+      },
+      "origen": {
+        "masa_kg": "supuesto",
+        "largo_m": "supuesto",
+        "ancho_m": "ficha",
+        "alto_m": "supuesto",
+        "distancia_entre_ejes_m": "supuesto",
+        "velocidad_max_kmh": "supuesto"
+      },
+      "n_modelos": 2,
+      "n_modelos_completos": 0,
+      "modelos": [
+        "Freightliner Cascadia (tractocamión 4x2/6x2/6x4) 2025",
+        "Kenworth T680 Next Gen 2024"
+      ]
+    },
+    "motocicleta": {
+      "masa_kg": [
+        70,
+        180
+      ],
+      "largo_m": [
+        1.73,
+        2.3
+      ],
+      "ancho_m": [
+        0.67,
+        0.94
+      ],
+      "alto_m": [
+        0.86,
+        1.27
+      ],
+      "distancia_entre_ejes_m": [
+        1.11,
+        1.5
+      ],
+      "velocidad_max_kmh": 230,
+      "tipico": {
+        "masa_kg": 130,
+        "largo_m": 2.04,
+        "ancho_m": 0.8,
+        "alto_m": 1.08,
+        "distancia_entre_ejes_m": 1.35
+      },
+      "origen": {
+        "masa_kg": "ficha",
+        "largo_m": "ficha",
+        "ancho_m": "ficha",
+        "alto_m": "ficha",
+        "distancia_entre_ejes_m": "ficha",
+        "velocidad_max_kmh": "supuesto"
+      },
+      "n_modelos": 5,
+      "n_modelos_completos": 5,
+      "modelos": [
+        "Honda GL150 Cargo 2026",
+        "Honda XR150L 2026",
+        "Italika FT150 2025",
+        "Italika DM150 2026",
+        "Italika 250Z 2026"
+      ]
+    },
+    "bicicleta": {
+      "masa_kg": [
+        10,
+        20
+      ],
+      "largo_m": [
+        1.6,
+        1.95
+      ],
+      "ancho_m": [
+        0.5,
+        0.75
+      ],
+      "alto_m": [
+        0.9,
+        1.25
+      ],
+      "distancia_entre_ejes_m": [
+        0.95,
+        1.2
+      ],
+      "velocidad_max_kmh": 70,
+      "tipico": {
+        "masa_kg": 10,
+        "largo_m": 1.78,
+        "ancho_m": 0.62,
+        "alto_m": 1.08,
+        "distancia_entre_ejes_m": 1.08
+      },
+      "origen": {
+        "masa_kg": "secundaria",
+        "largo_m": "supuesto",
+        "ancho_m": "supuesto",
+        "alto_m": "supuesto",
+        "distancia_entre_ejes_m": "supuesto",
+        "velocidad_max_kmh": "supuesto"
+      },
+      "n_modelos": 2,
+      "n_modelos_completos": 0,
+      "modelos": [
+        "Trek Marlin 5 Gen 3 (MTB 29\") 2026",
+        "Specialized Rockhopper Sport 29 (MTB) 2024"
+      ]
+    },
+    "scooter": {
+      "masa_kg": [
+        10,
+        150
+      ],
+      "largo_m": [
+        1.03,
+        2.17
+      ],
+      "ancho_m": [
+        0.43,
+        0.76
+      ],
+      "alto_m": [
+        1.06,
+        1.39
+      ],
+      "distancia_entre_ejes_m": [
+        1.22,
+        1.5
+      ],
+      "velocidad_max_kmh": 120,
+      "tipico": {
+        "masa_kg": 20,
+        "largo_m": 1.18,
+        "ancho_m": 0.57,
+        "alto_m": 1.21,
+        "distancia_entre_ejes_m": 1.36
+      },
+      "origen": {
+        "masa_kg": "ficha",
+        "largo_m": "ficha",
+        "ancho_m": "ficha",
+        "alto_m": "ficha",
+        "distancia_entre_ejes_m": "ficha",
+        "velocidad_max_kmh": "supuesto"
+      },
+      "n_modelos": 4,
+      "n_modelos_completos": 1,
+      "modelos": [
+        "Xiaomi Electric Scooter 4 2024",
+        "Segway-Ninebot KickScooter MAX G2 2024",
+        "Segway-Ninebot KickScooter F2 2024",
+        "Italika DS150 (motoneta 150 cc) 2024"
+      ]
+    }
+  }
+}

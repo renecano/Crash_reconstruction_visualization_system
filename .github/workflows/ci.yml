@@ -70,6 +70,7 @@ jobs:
           enable-cache: true
       - run: uv sync --all-packages --all-groups --locked
       - run: uv run croquis-scene-schema-generate --check
+      - run: uv run croquis-data vehicles build --check
       - run: uv run ruff check .
       - run: uv run ruff format --check .
       - run: uv run pyright

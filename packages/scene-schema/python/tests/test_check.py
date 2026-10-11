@@ -72,7 +72,8 @@ def test_casos_compartidos_coinciden_con_typescript(case: JsonObj) -> None:
 def test_sin_tabla_de_clases_omite_comprobaciones_por_clase() -> None:
     doc = load_fixture("alcance")
     doc["vehiculos"][0]["masa"] = {"valor": 8, "unidad": "t", "fuente": "usuario", "confianza": 1}
-    assert "E006" not in {p.codigo for p in check_escena(doc)}
+    assert "E006" in {p.codigo for p in check_escena(doc)}  # tabla por defecto
+    assert "E006" not in {p.codigo for p in check_escena(doc, {})}
 
 
 def _box(x: float, y: float, length: float, w: float, deg: float) -> list[tuple[float, float]]:
