@@ -1,0 +1,68 @@
+[project]
+name = "croquis"
+version = "0.1.0"
+description = "Espacio de trabajo Python de Croquis: solver de referencia, API, extracción, datos y evaluación"
+readme = "README.md"
+requires-python = ">=3.14"
+license = "MIT"
+dependencies = [
+  "croquis-solver",
+  "croquis-api",
+  "croquis-extraction",
+  "croquis-data",
+  "croquis-eval",
+]
+
+[tool.uv.sources]
+croquis-solver = { workspace = true }
+croquis-api = { workspace = true }
+croquis-extraction = { workspace = true }
+croquis-data = { workspace = true }
+croquis-eval = { workspace = true }
+
+[tool.uv.workspace]
+members = ["solver", "services/api", "extraction", "data", "eval"]
+
+[dependency-groups]
+dev = [
+  "pytest>=9.1,<10",
+  "pytest-cov>=7.1,<8",
+  "hypothesis>=6.168,<7",
+  "ruff>=0.17,<0.18",
+  "pyright>=1.1.414,<2",
+]
+
+[tool.pytest.ini_options]
+testpaths = ["solver/tests", "services/api/tests", "extraction/tests", "data/tests", "eval/tests"]
+addopts = "-q --strict-markers --strict-config --import-mode=importlib"
+xfail_strict = true
+filterwarnings = ["error"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py314"
+extend-exclude = ["data/raw", "data/processed", "eval/results", "node_modules", ".venv"]
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I", "B", "UP", "N", "SIM", "RUF", "C4", "PT", "ARG", "PIE", "RET", "T20"]
+ignore = ["RUF001", "RUF002", "RUF003"]
+
+[tool.ruff.lint.per-file-ignores]
+"**/tests/**" = ["ARG", "PT011"]
+"**/scripts/**" = ["T20"]
+"**/__main__.py" = ["T20"]
+
+[tool.ruff.lint.isort]
+known-first-party = ["croquis_solver", "croquis_api", "croquis_extraction", "croquis_data", "croquis_eval"]
+
+[tool.ruff.format]
+quote-style = "double"
+
+[tool.pyright]
+pythonVersion = "3.14"
+typeCheckingMode = "strict"
+include = ["solver", "services/api", "extraction", "data", "eval"]
+exclude = ["**/node_modules", "**/__pycache__", "**/.venv", "data/raw", "data/processed", "eval/results"]
+venvPath = "."
+venv = ".venv"
+reportMissingModuleSource = "warning"

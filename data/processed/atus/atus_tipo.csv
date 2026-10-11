@@ -1,0 +1,349 @@
+anio,clave,accidentes,muertos,heridos
+1997,Caída de pasajero,1659,125,1980
+1997,Colisión con animal,1096,58,439
+1997,Colisión con ciclista,4600,219,3912
+1997,Colisión con ferrocarril,341,30,201
+1997,Colisión con motocicleta,4098,85,3273
+1997,Colisión con objeto fijo,24317,515,6745
+1997,Colisión con peatón (atropellamiento),20192,1908,22296
+1997,Colisión con vehículo automotor,176863,2075,51998
+1997,Incendio,452,5,68
+1997,Otro,4504,51,980
+1997,Salida del camino,4266,248,1891
+1997,Volcadura,5726,720,4652
+1998,Caída de pasajero,4061,100,4676
+1998,Colisión con animal,1317,23,207
+1998,Colisión con ciclista,5087,185,3997
+1998,Colisión con ferrocarril,135,7,94
+1998,Colisión con motocicleta,6368,117,3817
+1998,Colisión con objeto fijo,19452,369,5609
+1998,Colisión con peatón (atropellamiento),19957,1278,21694
+1998,Colisión con vehículo automotor,188235,1704,49765
+1998,Incendio,508,23,120
+1998,Otro,2601,30,660
+1998,Salida del camino,5676,316,2589
+1998,Volcadura,9290,834,6010
+1999,Caída de pasajero,2738,176,3434
+1999,Colisión con animal,601,25,187
+1999,Colisión con ciclista,5710,241,4211
+1999,Colisión con ferrocarril,154,10,108
+1999,Colisión con motocicleta,9707,272,4809
+1999,Colisión con objeto fijo,18591,362,5364
+1999,Colisión con peatón (atropellamiento),28196,1443,30938
+1999,Colisión con vehículo automotor,189349,1641,41392
+1999,Incendio,1139,62,429
+1999,Otro,2382,43,741
+1999,Salida del camino,15954,584,6155
+1999,Volcadura,10973,666,6016
+2000,Caída de pasajero,2011,93,2637
+2000,Colisión con animal,778,27,197
+2000,Colisión con ciclista,5674,251,4405
+2000,Colisión con ferrocarril,181,28,129
+2000,Colisión con motocicleta,6929,88,4834
+2000,Colisión con objeto fijo,23606,358,6847
+2000,Colisión con peatón (atropellamiento),27004,1422,29057
+2000,Colisión con vehículo automotor,225848,1930,57340
+2000,Incendio,284,12,72
+2000,Otro,2753,57,929
+2000,Salida del camino,5476,264,3147
+2000,Volcadura,11394,733,6908
+2001,Caída de pasajero,2150,67,2634
+2001,Colisión con animal,1101,34,261
+2001,Colisión con ciclista,6863,289,5494
+2001,Colisión con ferrocarril,173,22,108
+2001,Colisión con motocicleta,8398,107,5731
+2001,Colisión con objeto fijo,30006,366,7734
+2001,Colisión con peatón (atropellamiento),32209,1426,34784
+2001,Colisión con vehículo automotor,261034,1553,58846
+2001,Incendio,266,7,49
+2001,Otro,2831,31,869
+2001,Salida del camino,5969,320,2937
+2001,Volcadura,13869,754,7259
+2002,Caída de pasajero,2482,73,2944
+2002,Colisión con animal,1898,41,398
+2002,Colisión con ciclista,7797,269,6351
+2002,Colisión con ferrocarril,362,14,216
+2002,Colisión con motocicleta,9989,147,6961
+2002,Colisión con objeto fijo,40647,507,9579
+2002,Colisión con peatón (atropellamiento),25379,1321,27680
+2002,Colisión con vehículo automotor,290573,1523,69969
+2002,Incendio,302,0,61
+2002,Otro,5256,34,1134
+2002,Salida del camino,6050,321,3204
+2002,Volcadura,8267,840,6154
+2003,Caída de pasajero,2280,69,2744
+2003,Colisión con animal,2530,93,610
+2003,Colisión con ciclista,8005,259,6033
+2003,Colisión con ferrocarril,391,17,182
+2003,Colisión con motocicleta,12430,117,7566
+2003,Colisión con objeto fijo,47562,419,9263
+2003,Colisión con peatón (atropellamiento),32308,1559,34882
+2003,Colisión con vehículo automotor,288631,1437,66249
+2003,Incendio,564,12,57
+2003,Otro,11519,50,951
+2003,Salida del camino,6641,378,3708
+2003,Volcadura,11629,992,6819
+2004,Caída de pasajero,2504,48,2543
+2004,Colisión con animal,2311,104,579
+2004,Colisión con ciclista,8157,281,5580
+2004,Colisión con ferrocarril,304,40,75
+2004,Colisión con motocicleta,14487,232,8195
+2004,Colisión con objeto fijo,50641,429,8999
+2004,Colisión con peatón (atropellamiento),21765,1312,21546
+2004,Colisión con vehículo automotor,315652,1354,70305
+2004,Incendio,180,6,33
+2004,Otro,11951,54,1225
+2004,Salida del camino,7691,392,3446
+2004,Volcadura,7964,835,5907
+2005,Caída de pasajero,2580,37,2701
+2005,Colisión con animal,2141,78,561
+2005,Colisión con ciclista,8257,276,6311
+2005,Colisión con ferrocarril,233,54,85
+2005,Colisión con motocicleta,17022,233,10455
+2005,Colisión con objeto fijo,50618,460,10867
+2005,Colisión con peatón (atropellamiento),24491,1139,24542
+2005,Colisión con vehículo automotor,320922,1415,79232
+2005,Incendio,313,6,59
+2005,Otro,9570,42,1979
+2005,Salida del camino,7894,384,3744
+2005,Volcadura,8192,949,6190
+2006,Caída de pasajero,2355,40,2439
+2006,Colisión con animal,1972,37,383
+2006,Colisión con ciclista,7937,243,6512
+2006,Colisión con ferrocarril,217,46,73
+2006,Colisión con motocicleta,20111,308,13078
+2006,Colisión con objeto fijo,54271,586,12124
+2006,Colisión con peatón (atropellamiento),19708,1185,19713
+2006,Colisión con vehículo automotor,339857,1593,82659
+2006,Incendio,186,0,25
+2006,Otro,7657,58,2048
+2006,Salida del camino,8632,447,3951
+2006,Volcadura,8369,999,6335
+2007,Caída de pasajero,2782,34,2871
+2007,Colisión con animal,2453,47,392
+2007,Colisión con ciclista,7280,253,5931
+2007,Colisión con ferrocarril,238,36,76
+2007,Colisión con motocicleta,23219,444,15880
+2007,Colisión con objeto fijo,55321,581,12804
+2007,Colisión con peatón (atropellamiento),20953,1099,21030
+2007,Colisión con vehículo automotor,338481,2253,87207
+2007,Incendio,199,1,18
+2007,Otro,6041,57,1743
+2007,Salida del camino,9720,518,4381
+2007,Volcadura,9592,931,6877
+2008,Caída de pasajero,3261,40,3355
+2008,Colisión con animal,1613,55,324
+2008,Colisión con ciclista,6930,265,5757
+2008,Colisión con ferrocarril,235,12,88
+2008,Colisión con motocicleta,23641,507,17085
+2008,Colisión con objeto fijo,51498,785,11818
+2008,Colisión con peatón (atropellamiento),18954,1154,19037
+2008,Colisión con vehículo automotor,331363,2747,84037
+2008,Incendio,274,10,34
+2008,Otro,5572,69,1777
+2008,Salida del camino,13011,696,4791
+2008,Volcadura,10083,1115,7070
+2009,Caída de pasajero,2867,54,3190
+2009,Colisión con animal,1614,51,342
+2009,Colisión con ciclista,6528,299,5245
+2009,Colisión con ferrocarril,184,17,70
+2009,Colisión con motocicleta,23325,425,17338
+2009,Colisión con objeto fijo,47736,744,12067
+2009,Colisión con peatón (atropellamiento),17967,1487,18490
+2009,Colisión con vehículo automotor,304309,2837,83956
+2009,Incendio,295,10,21
+2009,Otro,3913,55,1204
+2009,Salida del camino,10264,597,4643
+2009,Volcadura,9465,1059,7324
+2010,Caída de pasajero,3108,63,3320
+2010,Colisión con animal,1697,32,341
+2010,Colisión con ciclista,5727,241,4476
+2010,Colisión con ferrocarril,202,20,80
+2010,Colisión con motocicleta,21189,389,15335
+2010,Colisión con objeto fijo,48708,681,10995
+2010,Colisión con peatón (atropellamiento),17752,1482,18031
+2010,Colisión con vehículo automotor,304764,2556,79434
+2010,Incendio,316,1,34
+2010,Otro,4756,61,1393
+2010,Salida del camino,9811,621,4202
+2010,Volcadura,9237,997,6392
+2011,Caída de pasajero,2856,68,3162
+2011,Colisión con animal,1609,54,319
+2011,Colisión con ciclista,5627,226,4531
+2011,Colisión con ferrocarril,227,18,108
+2011,Colisión con motocicleta,21105,491,15303
+2011,Colisión con objeto fijo,44404,690,10365
+2011,Colisión con peatón (atropellamiento),15872,1326,16125
+2011,Colisión con vehículo automotor,274022,3403,74698
+2011,Incendio,302,4,27
+2011,Otro,3700,72,1440
+2011,Salida del camino,8840,622,3604
+2011,Volcadura,8621,1020,6053
+2012,Caída de pasajero,2837,48,3050
+2012,Colisión con animal,1706,42,283
+2012,Colisión con ciclista,5916,241,5138
+2012,Colisión con ferrocarril,250,10,104
+2012,Colisión con motocicleta,25688,451,17535
+2012,Colisión con objeto fijo,43728,663,9905
+2012,Colisión con peatón (atropellamiento),15668,1231,15950
+2012,Colisión con vehículo automotor,274310,1356,66249
+2012,Incendio,335,2,38
+2012,Otro,4259,77,1857
+2012,Salida del camino,8010,464,3433
+2012,Volcadura,7704,884,5407
+2013,Caída de pasajero,2924,56,3368
+2013,Colisión con animal,1472,49,464
+2013,Colisión con ciclista,6001,210,4983
+2013,Colisión con ferrocarril,228,17,165
+2013,Colisión con motocicleta,28939,489,19228
+2013,Colisión con objeto fijo,44537,566,9389
+2013,Colisión con peatón (atropellamiento),15610,1150,16123
+2013,Colisión con vehículo automotor,264199,1223,58165
+2013,Incendio,346,6,73
+2013,Otro,4854,76,1721
+2013,Salida del camino,8567,452,3469
+2013,Volcadura,8095,764,5702
+2014,Caída de pasajero,2789,56,3092
+2014,Colisión con animal,1380,35,375
+2014,Colisión con ciclista,5897,230,4564
+2014,Colisión con ferrocarril,234,19,176
+2014,Colisión con motocicleta,30616,476,20250
+2014,Colisión con objeto fijo,45582,614,9305
+2014,Colisión con peatón (atropellamiento),15637,1079,16260
+2014,Colisión con vehículo automotor,256337,1076,52971
+2014,Incendio,306,4,74
+2014,Otro,5479,57,1759
+2014,Salida del camino,8083,389,3532
+2014,Volcadura,8233,744,5830
+2015,Caída de pasajero,2570,67,2786
+2015,Colisión con animal,1260,30,339
+2015,Colisión con ciclista,5644,194,4033
+2015,Colisión con ferrocarril,241,14,104
+2015,Colisión con motocicleta,32019,525,19595
+2015,Colisión con objeto fijo,48279,591,8234
+2015,Colisión con peatón (atropellamiento),14621,1064,15359
+2015,Colisión con vehículo automotor,255863,977,46152
+2015,Incendio,358,5,91
+2015,Otro,4913,74,1610
+2015,Salida del camino,7930,421,3012
+2015,Volcadura,8368,674,5887
+2016,Caída de pasajero,2137,57,2316
+2016,Colisión con animal,1352,38,275
+2016,Colisión con ciclista,5107,197,3770
+2016,Colisión con ferrocarril,270,36,178
+2016,Colisión con motocicleta,32892,539,19547
+2016,Colisión con objeto fijo,47220,559,7978
+2016,Colisión con peatón (atropellamiento),13362,1033,13884
+2016,Colisión con vehículo automotor,235998,940,39372
+2016,Incendio,309,6,56
+2016,Otro,4859,79,1712
+2016,Salida del camino,7998,366,2854
+2016,Volcadura,8547,709,5672
+2017,Caída de pasajero,1930,42,2171
+2017,Colisión con animal,1079,34,308
+2017,Colisión con ciclista,4963,168,3586
+2017,Colisión con ferrocarril,298,42,154
+2017,Colisión con motocicleta,34910,599,19871
+2017,Colisión con objeto fijo,47396,526,7303
+2017,Colisión con peatón (atropellamiento),13153,935,13496
+2017,Colisión con vehículo automotor,241285,963,34510
+2017,Incendio,235,3,16
+2017,Otro,5353,75,1843
+2017,Salida del camino,8554,374,2702
+2017,Volcadura,8633,633,5197
+2018,Caída de pasajero,1679,43,1888
+2018,Colisión con animal,929,29,278
+2018,Colisión con ciclista,4566,179,3229
+2018,Colisión con ferrocarril,285,39,170
+2018,Colisión con motocicleta,37094,549,20659
+2018,Colisión con objeto fijo,46900,520,6383
+2018,Colisión con peatón (atropellamiento),12884,989,13112
+2018,Colisión con vehículo automotor,238225,905,33949
+2018,Incendio,225,1,4
+2018,Otro,4900,70,1793
+2018,Salida del camino,8934,384,2833
+2018,Volcadura,8660,519,4922
+2019,Caída de pasajero,1881,47,2149
+2019,Colisión con animal,1004,39,346
+2019,Colisión con ciclista,4577,135,2882
+2019,Colisión con ferrocarril,256,40,103
+2019,Colisión con motocicleta,42667,608,22922
+2019,Colisión con objeto fijo,46086,476,6861
+2019,Colisión con peatón (atropellamiento),12780,888,13116
+2019,Colisión con vehículo automotor,230445,886,33332
+2019,Incendio,286,4,19
+2019,Otro,4445,82,1720
+2019,Salida del camino,9473,393,3337
+2019,Volcadura,8829,529,4974
+2020,Caída de pasajero,1408,53,1529
+2020,Colisión con animal,932,15,301
+2020,Colisión con ciclista,3680,150,2219
+2020,Colisión con ferrocarril,198,24,74
+2020,Colisión con motocicleta,40753,597,20110
+2020,Colisión con objeto fijo,42243,516,5732
+2020,Colisión con peatón (atropellamiento),9432,773,9475
+2020,Colisión con vehículo automotor,179696,749,23332
+2020,Incendio,243,3,18
+2020,Otro,5791,87,1994
+2020,Salida del camino,8827,337,2660
+2020,Volcadura,8475,522,4491
+2021,Caída de pasajero,1616,54,1779
+2021,Colisión con animal,935,22,306
+2021,Colisión con ciclista,3879,125,2372
+2021,Colisión con ferrocarril,235,12,80
+2021,Colisión con motocicleta,46575,696,23477
+2021,Colisión con objeto fijo,46260,617,6288
+2021,Colisión con peatón (atropellamiento),10217,836,10349
+2021,Colisión con vehículo automotor,206004,983,27658
+2021,Incendio,288,1,27
+2021,Otro,4419,110,1933
+2021,Salida del camino,9941,383,2968
+2021,Volcadura,10046,562,5229
+2022,Caída de pasajero,1784,70,1968
+2022,Colisión con animal,1022,36,318
+2022,Colisión con ciclista,4048,141,2442
+2022,Colisión con ferrocarril,268,29,161
+2022,Colisión con motocicleta,53629,902,27342
+2022,Colisión con objeto fijo,47033,716,6840
+2022,Colisión con peatón (atropellamiento),11066,968,11200
+2022,Colisión con vehículo automotor,229940,1082,29135
+2022,Incendio,348,8,29
+2022,Otro,6325,111,2494
+2022,Salida del camino,10857,466,3338
+2022,Volcadura,10911,652,6234
+2023,Caída de pasajero,1947,66,2114
+2023,Colisión con animal,1026,31,356
+2023,Colisión con ciclista,3928,138,2396
+2023,Colisión con ferrocarril,264,32,86
+2023,Colisión con motocicleta,57421,987,28546
+2023,Colisión con objeto fijo,44233,623,6089
+2023,Colisión con peatón (atropellamiento),11853,890,12125
+2023,Colisión con vehículo automotor,232509,916,27257
+2023,Incendio,381,6,14
+2023,Otro,5805,115,2050
+2023,Salida del camino,10232,381,3004
+2023,Volcadura,11449,618,6463
+2024,Caída de pasajero,2153,77,2321
+2024,Colisión con animal,884,29,322
+2024,Colisión con ciclista,4033,139,2222
+2024,Colisión con ferrocarril,292,34,153
+2024,Colisión con motocicleta,61869,993,28939
+2024,Colisión con objeto fijo,43119,653,5956
+2024,Colisión con peatón (atropellamiento),11052,861,11244
+2024,Colisión con vehículo automotor,224720,849,23943
+2024,Incendio,455,1,8
+2024,Otro,2934,46,457
+2024,Salida del camino,10067,366,2668
+2024,Volcadura,13371,608,7747
+2025,Caída de pasajero,2142,76,2306
+2025,Colisión con animal,936,18,349
+2025,Colisión con ciclista,3999,127,2293
+2025,Colisión con ferrocarril,284,29,82
+2025,Colisión con motocicleta,68505,1093,30879
+2025,Colisión con objeto fijo,43336,613,5867
+2025,Colisión con peatón (atropellamiento),10612,740,10832
+2025,Colisión con vehículo automotor,222241,766,22609
+2025,Incendio,419,3,11
+2025,Otro,2505,17,242
+2025,Salida del camino,10000,350,2555
+2025,Volcadura,15412,739,8931

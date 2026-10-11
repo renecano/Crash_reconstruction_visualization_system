@@ -1,0 +1,60 @@
+# ADR 0001 — Stack y versiones
+
+- **Estado:** aceptado (2026-10-10)
+- **Contexto:** PLAN §3.1 fija las tecnologías pero pide usar la versión estable vigente al instalar y registrarla aquí. Las versiones se verificaron contra los registros oficiales (npm, PyPI) y la documentación oficial el 2026-10-10. Los archivos de bloqueo (`pnpm-lock.yaml`, `uv.lock`) son la fuente exacta; esta tabla registra la versión elegida y el porqué.
+
+## JavaScript / TypeScript (pnpm catalog en `pnpm-workspace.yaml`)
+
+| Paquete                                                      | Versión                            | Notas de verificación                                                                                                     |
+| ------------------------------------------------------------ | ---------------------------------- | ------------------------------------------------------------------------------------------------------------------------- |
+| Node.js                                                      | 24.12.0 (LTS)                      | Next 16 requiere ≥ 20.9; Vitest 5 requiere ≥ 22.12                                                                        |
+| pnpm                                                         | 12.11.2                            | Reescrito en Rust; `--frozen-lockfile` sin valor; claves desconocidas en `pnpm-workspace.yaml` fallan (blog oficial 12.0) |
+| next                                                         | 16.4.0                             | Turbopack por defecto; `next build` ya no ejecuta ESLint; mínimo TS 5.1                                                   |
+| react / react-dom                                            | 19.3.0                             | R3F 9 exige `>=19 <19.4`                                                                                                  |
+| typescript                                                   | 6.0.3                              | Ver ADR 0003 (TS 7.0.2 no trae API programática)                                                                          |
+| eslint / eslint-config-next / typescript-eslint / @eslint/js | 10.12.0 / 16.4.0 / 8.71.1 / 10.0.1 | `eslint-config-next` acepta eslint ≥ 9; typescript-eslint acepta eslint ^10 y TS < 6.1                                    |
+| prettier                                                     | 3.9.10                             |                                                                                                                           |
+| tailwindcss / @tailwindcss/turbopack                         | 4.3.3                              | Config CSS-first, sin `tailwind.config`                                                                                   |
+| vitest / vite / @vitejs/plugin-react                         | 5.0.3 / 8.3.4 / 6.1.2              | Vitest 5: `vite` es peer, `clearMocks` true por defecto, `vi.mock` solo a nivel de módulo                                 |
+| @playwright/test                                             | 1.64.0                             | Navegadores en `D:\dev-cache\ms-playwright`                                                                               |
+| jsdom / @testing-library/react                               | 30.1.2 / 16.3.3                    |                                                                                                                           |
+| zod                                                          | 4.6.5                              | Zod se **genera** desde `escena.schema.json` (F1)                                                                         |
+| fast-check                                                   | 4.10.2                             | Propiedades en TS (análogo de Hypothesis)                                                                                 |
+| @types/node / @types/react / @types/react-dom                | 24.19.2 / 19.3.0 / 19.3.0          |                                                                                                                           |
+| three / @types/three                                         | 0.186.1 / 0.186.0                  | Se instalan en F3 (`three/webgpu`, `three/tsl`)                                                                           |
+| @react-three/fiber                                           | 9.8.1                              | `gl` asíncrono para `WebGPURenderer` (guía de migración v9) — F3                                                          |
+| @react-three/drei                                            | 10.7.9                             | peer R3F ^9 — F3                                                                                                          |
+| @react-three/rapier                                          | 2.2.0                              | Trae `@dimforge/rapier3d-compat` 0.19.2 fijado; `timeStep` fijo para determinismo — F3/F5                                 |
+| @anthropic-ai/sdk                                            | 0.133.0                            | Solo si la web llama directo; por defecto la API Python media — F6                                                        |
+| aws-cdk-lib / aws-cdk                                        | 2.273.0 / 2.1145.0                 | F11                                                                                                                       |
+
+## Python (uv workspace en `pyproject.toml`)
+
+| Paquete                          | Rango declarado           | Notas                                                                                                     |
+| -------------------------------- | ------------------------- | --------------------------------------------------------------------------------------------------------- |
+| Python                           | ≥ 3.14 (3.14.0 instalado) | Ruedas `cp314` win_amd64 disponibles para numpy, scipy, pydantic-core, pyarrow, pandas (PyPI, 2026-10-10) |
+| uv                               | 0.13.0                    | Workspace con `[tool.uv.workspace] members` y `{ workspace = true }`                                      |
+| numpy / scipy                    | ≥ 2.5 / ≥ 1.18            | Solver de referencia                                                                                      |
+| pydantic / pydantic-settings     | ≥ 2.14 / ≥ 2.15           | Modelos **generados** con datamodel-code-generator (F1)                                                   |
+| fastapi / uvicorn                | ≥ 0.143 / ≥ 0.54          | API                                                                                                       |
+| anthropic                        | ≥ 1.13                    | Salida estructurada (F6)                                                                                  |
+| jsonschema                       | ≥ 4.26                    | Validación del contrato en Python                                                                         |
+| polars                           | ≥ 2.0                     | Ingesta ATUS con `scan_csv` perezoso (memoria acotada en 8 GB)                                            |
+| httpx                            | ≥ 0.28                    | Descargas y `TestClient`                                                                                  |
+| pytest / pytest-cov / hypothesis | ≥ 9.1 / ≥ 7.1 / ≥ 6.168   | `filterwarnings = error`, `xfail_strict`                                                                  |
+| ruff                             | ≥ 0.17                    | lint + format; `target-version = py314`                                                                   |
+| pyright                          | ≥ 1.1.414                 | modo `strict` (elegido sobre mypy por velocidad y soporte de Pydantic v2)                                 |
+| datamodel-code-generator         | ≥ 0.83                    | F1: `--input-file-type jsonschema --output-model-type pydantic_v2.BaseModel`                              |
+
+## Decisiones de estructura
+
+- **Paquetes TS sin paso de build:** `exports` apunta a `src/index.ts`; Next los compila con `transpilePackages`; Vitest y tsc los leen directo. Menos piezas móviles en una laptop de 8 GB.
+- **Una configuración ESLint por ámbito:** `apps/web/eslint.config.mjs` (eslint-config-next) y `eslint.config.mjs` raíz (typescript-eslint con reglas tipadas) para `packages/*`.
+- **Sin Turborepo en F0:** `pnpm -r` basta; se reconsidera si el CI supera ~10 min.
+- **Layout Python plano** (`solver/croquis_solver`) como en PLAN §3.2, con `hatchling`.
+- **Cachés en D:** ver `docs/PROGRESS.md` (C: tiene < 9 GB libres).
+
+## Consecuencias
+
+- Las actualizaciones mayores (TS 7, Node 26) se evalúan en un ADR nuevo; Dependabot abre PRs semanales (npm, uv) y mensuales (actions).
+- Cualquier versión que se cambie aquí debe cambiarse en el catálogo pnpm o en los `pyproject.toml` y viceversa.

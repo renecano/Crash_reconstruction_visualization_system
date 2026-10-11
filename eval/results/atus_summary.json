@@ -1,0 +1,394 @@
+{
+  "name": "atus_summary",
+  "generated_at": "2026-10-11T00:41:57+00:00",
+  "git_commit": "4a342c2",
+  "seed": null,
+  "fuente": {
+    "nombre": "INEGI, Accidentes de Tránsito Terrestre en Zonas Urbanas y Suburbanas (ATUS), datos abiertos 1997–2025",
+    "url": "https://www.inegi.org.mx/contenidos/programas/accidentes/datosabiertos/conjunto_de_datos_atus_anual_csv.zip",
+    "licencia": "https://www.inegi.org.mx/inegi/terminos.html",
+    "nota": "Se excluyen los registros 'Certificado cero'. 'Muertos' son fallecidos en el lugar del accidente, como define ATUS."
+  },
+  "anios": {
+    "primero": 1997,
+    "ultimo": 2025,
+    "n": 29
+  },
+  "ultimo_anio": {
+    "anio": 2025,
+    "accidentes": 380391,
+    "muertos": 4571,
+    "heridos": 86956,
+    "cambio_accidentes_vs_anterior_pct": 1.45,
+    "cambio_muertos_vs_anterior_pct": -1.83
+  },
+  "anio_anterior": {
+    "anio": 2024,
+    "accidentes": 374949,
+    "muertos": 4656,
+    "heridos": 85980
+  },
+  "serie_anual": [
+    {
+      "anio": 1997,
+      "accidentes": 248114,
+      "muertos": 6039,
+      "heridos": 98435
+    },
+    {
+      "anio": 1998,
+      "accidentes": 262687,
+      "muertos": 4986,
+      "heridos": 99238
+    },
+    {
+      "anio": 1999,
+      "accidentes": 285494,
+      "muertos": 5525,
+      "heridos": 103784
+    },
+    {
+      "anio": 2000,
+      "accidentes": 311938,
+      "muertos": 5263,
+      "heridos": 116502
+    },
+    {
+      "anio": 2001,
+      "accidentes": 364869,
+      "muertos": 4976,
+      "heridos": 126706
+    },
+    {
+      "anio": 2002,
+      "accidentes": 399002,
+      "muertos": 5090,
+      "heridos": 134651
+    },
+    {
+      "anio": 2003,
+      "accidentes": 424490,
+      "muertos": 5402,
+      "heridos": 139064
+    },
+    {
+      "anio": 2004,
+      "accidentes": 443607,
+      "muertos": 5087,
+      "heridos": 128433
+    },
+    {
+      "anio": 2005,
+      "accidentes": 452233,
+      "muertos": 5073,
+      "heridos": 146726
+    },
+    {
+      "anio": 2006,
+      "accidentes": 471272,
+      "muertos": 5542,
+      "heridos": 149340
+    },
+    {
+      "anio": 2007,
+      "accidentes": 476279,
+      "muertos": 6254,
+      "heridos": 159210
+    },
+    {
+      "anio": 2008,
+      "accidentes": 466435,
+      "muertos": 7455,
+      "heridos": 155173
+    },
+    {
+      "anio": 2009,
+      "accidentes": 428467,
+      "muertos": 7635,
+      "heridos": 153890
+    },
+    {
+      "anio": 2010,
+      "accidentes": 427267,
+      "muertos": 7144,
+      "heridos": 144033
+    },
+    {
+      "anio": 2011,
+      "accidentes": 387185,
+      "muertos": 7994,
+      "heridos": 135735
+    },
+    {
+      "anio": 2012,
+      "accidentes": 390411,
+      "muertos": 5469,
+      "heridos": 128949
+    },
+    {
+      "anio": 2013,
+      "accidentes": 385772,
+      "muertos": 5058,
+      "heridos": 122850
+    },
+    {
+      "anio": 2014,
+      "accidentes": 380573,
+      "muertos": 4779,
+      "heridos": 118188
+    },
+    {
+      "anio": 2015,
+      "accidentes": 382066,
+      "muertos": 4636,
+      "heridos": 107202
+    },
+    {
+      "anio": 2016,
+      "accidentes": 360051,
+      "muertos": 4559,
+      "heridos": 97614
+    },
+    {
+      "anio": 2017,
+      "accidentes": 367789,
+      "muertos": 4394,
+      "heridos": 91157
+    },
+    {
+      "anio": 2018,
+      "accidentes": 365281,
+      "muertos": 4227,
+      "heridos": 89220
+    },
+    {
+      "anio": 2019,
+      "accidentes": 362729,
+      "muertos": 4127,
+      "heridos": 91761
+    },
+    {
+      "anio": 2020,
+      "accidentes": 301678,
+      "muertos": 3826,
+      "heridos": 71935
+    },
+    {
+      "anio": 2021,
+      "accidentes": 340415,
+      "muertos": 4401,
+      "heridos": 82466
+    },
+    {
+      "anio": 2022,
+      "accidentes": 377231,
+      "muertos": 5181,
+      "heridos": 91501
+    },
+    {
+      "anio": 2023,
+      "accidentes": 381048,
+      "muertos": 4803,
+      "heridos": 90500
+    },
+    {
+      "anio": 2024,
+      "accidentes": 374949,
+      "muertos": 4656,
+      "heridos": 85980
+    },
+    {
+      "anio": 2025,
+      "accidentes": 380391,
+      "muertos": 4571,
+      "heridos": 86956
+    }
+  ],
+  "distribucion_tipo_ultimo_anio": [
+    {
+      "tipo": "Colisión con vehículo automotor",
+      "accidentes": 222241,
+      "muertos": 766,
+      "participacion": 0.5842
+    },
+    {
+      "tipo": "Colisión con motocicleta",
+      "accidentes": 68505,
+      "muertos": 1093,
+      "participacion": 0.1801
+    },
+    {
+      "tipo": "Colisión con objeto fijo",
+      "accidentes": 43336,
+      "muertos": 613,
+      "participacion": 0.1139
+    },
+    {
+      "tipo": "Volcadura",
+      "accidentes": 15412,
+      "muertos": 739,
+      "participacion": 0.0405
+    },
+    {
+      "tipo": "Colisión con peatón (atropellamiento)",
+      "accidentes": 10612,
+      "muertos": 740,
+      "participacion": 0.0279
+    },
+    {
+      "tipo": "Salida del camino",
+      "accidentes": 10000,
+      "muertos": 350,
+      "participacion": 0.0263
+    },
+    {
+      "tipo": "Colisión con ciclista",
+      "accidentes": 3999,
+      "muertos": 127,
+      "participacion": 0.0105
+    },
+    {
+      "tipo": "Otro",
+      "accidentes": 2505,
+      "muertos": 17,
+      "participacion": 0.0066
+    },
+    {
+      "tipo": "Caída de pasajero",
+      "accidentes": 2142,
+      "muertos": 76,
+      "participacion": 0.0056
+    },
+    {
+      "tipo": "Colisión con animal",
+      "accidentes": 936,
+      "muertos": 18,
+      "participacion": 0.0025
+    },
+    {
+      "tipo": "Incendio",
+      "accidentes": 419,
+      "muertos": 3,
+      "participacion": 0.0011
+    },
+    {
+      "tipo": "Colisión con ferrocarril",
+      "accidentes": 284,
+      "muertos": 29,
+      "participacion": 0.0007
+    }
+  ],
+  "entidades_por_muertos_ultimo_anio": [
+    {
+      "clave": 15,
+      "entidad": "México",
+      "muertos": 460,
+      "accidentes": 25032
+    },
+    {
+      "clave": 14,
+      "entidad": "Jalisco",
+      "muertos": 391,
+      "accidentes": 17400
+    },
+    {
+      "clave": 21,
+      "entidad": "Puebla",
+      "muertos": 291,
+      "accidentes": 12221
+    },
+    {
+      "clave": 8,
+      "entidad": "Chihuahua",
+      "muertos": 271,
+      "accidentes": 26626
+    },
+    {
+      "clave": 9,
+      "entidad": "Ciudad de México",
+      "muertos": 269,
+      "accidentes": 5276
+    },
+    {
+      "clave": 19,
+      "entidad": "Nuevo León",
+      "muertos": 260,
+      "accidentes": 71308
+    },
+    {
+      "clave": 11,
+      "entidad": "Guanajuato",
+      "muertos": 210,
+      "accidentes": 19875
+    },
+    {
+      "clave": 16,
+      "entidad": "Michoacán de Ocampo",
+      "muertos": 207,
+      "accidentes": 16829
+    },
+    {
+      "clave": 26,
+      "entidad": "Sonora",
+      "muertos": 204,
+      "accidentes": 21780
+    },
+    {
+      "clave": 25,
+      "entidad": "Sinaloa",
+      "muertos": 200,
+      "accidentes": 5139
+    }
+  ],
+  "estado_de_mexico": {
+    "lugar_por_muertos_ultimo_anio": 1,
+    "muertos_ultimo_anio": 460,
+    "accidentes_ultimo_anio": 25032
+  },
+  "tendencias": {
+    "colision_con_motocicleta": {
+      "ultimo": 68505,
+      "anterior": 61869,
+      "cambio_pct": 10.73
+    },
+    "volcadura": {
+      "ultimo": 15412,
+      "anterior": 13371,
+      "cambio_pct": 15.26
+    },
+    "colision_con_peaton": {
+      "ultimo": 10612,
+      "anterior": 11052,
+      "cambio_pct": -3.98
+    },
+    "colision_con_ciclista": {
+      "ultimo": 3999,
+      "anterior": 4033,
+      "cambio_pct": -0.84
+    },
+    "peatones_muertos": {
+      "ultimo": 776,
+      "anterior": 901,
+      "cambio_pct": -13.87
+    },
+    "pasajeros_muertos": {
+      "ultimo": 1004,
+      "anterior": 972,
+      "cambio_pct": 3.29
+    },
+    "conductores_muertos": {
+      "ultimo": 2630,
+      "anterior": 2614,
+      "cambio_pct": 0.61
+    },
+    "ciclistas_muertos": {
+      "ultimo": 127,
+      "anterior": 142,
+      "cambio_pct": -10.56
+    }
+  },
+  "referencia_plan": {
+    "nota": "PLAN §1 citaba 340,415 accidentes en 2021; aquí la cifra recalculada desde el archivo vigente.",
+    "accidentes_2021": 340415
+  }
+}

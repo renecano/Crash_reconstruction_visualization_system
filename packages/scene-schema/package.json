@@ -1,0 +1,24 @@
+{
+  "name": "@croquis/scene-schema",
+  "version": "0.1.0",
+  "private": true,
+  "description": "EscenaSpec: JSON Schema (fuente única), Zod generado y fixtures canónicas",
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "scripts": {
+    "lint": "eslint .",
+    "typecheck": "tsc -p tsconfig.json",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "zod": "catalog:"
+  },
+  "devDependencies": {
+    "@types/node": "catalog:",
+    "eslint": "catalog:",
+    "typescript": "catalog:",
+    "vitest": "catalog:"
+  }
+}
