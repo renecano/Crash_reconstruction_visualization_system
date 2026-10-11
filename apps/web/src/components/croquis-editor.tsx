@@ -89,7 +89,11 @@ export function CroquisEditor({ initial = "alcance" }: { initial?: FixtureName }
             </select>
           </label>
           <label className="flex items-center gap-2 text-sm">
-            <input type="checkbox" checked={showFinal} onChange={(e) => setShowFinal(e.target.checked)} />
+            <input
+              type="checkbox"
+              checked={showFinal}
+              onChange={(e) => setShowFinal(e.target.checked)}
+            />
             Mostrar posiciones finales
           </label>
           <button
@@ -102,11 +106,17 @@ export function CroquisEditor({ initial = "alcance" }: { initial?: FixtureName }
           </button>
         </div>
         <div className="overflow-hidden rounded-lg border border-neutral-300 dark:border-neutral-700">
-          <Croquis spec={spec} onChange={applySpec} showFinal={showFinal} selectedId={selected} onSelect={setSelected} />
+          <Croquis
+            spec={spec}
+            onChange={applySpec}
+            showFinal={showFinal}
+            selectedId={selected}
+            onSelect={setSelected}
+          />
         </div>
         <p className="text-sm text-neutral-600 dark:text-neutral-400">
-          Arrastra vehículos, personas, objetos y marcas; gira un vehículo con el asa naranja. Cada cambio queda marcado
-          como <code>fuente: usuario</code> en el JSON.
+          Arrastra vehículos, personas, objetos y marcas; gira un vehículo con el asa naranja. Cada
+          cambio queda marcado como <code>fuente: usuario</code> en el JSON.
         </p>
         <Legend seed={spec.meta.semilla} inputHash={spec.meta.hash_relato} />
       </section>
@@ -140,13 +150,19 @@ export function CroquisEditor({ initial = "alcance" }: { initial?: FixtureName }
           onChange={(e) => setJsonText(e.target.value)}
         />
         {jsonErrors.length > 0 && (
-          <ul data-testid="json-errors" className="list-disc space-y-1 pl-5 text-sm text-red-700 dark:text-red-400">
+          <ul
+            data-testid="json-errors"
+            className="list-disc space-y-1 pl-5 text-sm text-red-700 dark:text-red-400"
+          >
             {jsonErrors.slice(0, 12).map((e, i) => (
               <li key={i}>{e}</li>
             ))}
           </ul>
         )}
-        <div data-testid="problemas" className="rounded border border-neutral-300 p-3 text-sm dark:border-neutral-700">
+        <div
+          data-testid="problemas"
+          className="rounded border border-neutral-300 p-3 text-sm dark:border-neutral-700"
+        >
           <h3 className="font-semibold">Revisión de la escena</h3>
           {problemas.length === 0 ? (
             <p data-testid="sin-problemas" className="text-green-700 dark:text-green-400">
@@ -158,7 +174,8 @@ export function CroquisEditor({ initial = "alcance" }: { initial?: FixtureName }
                 <ul className="mt-2 list-disc space-y-1 pl-5 text-red-700 dark:text-red-400">
                   {errores.map((p) => (
                     <li key={`${p.codigo}${p.ruta}`}>
-                      <code>{p.codigo}</code> {p.mensaje} <span className="text-neutral-500">({p.ruta})</span>
+                      <code>{p.codigo}</code> {p.mensaje}{" "}
+                      <span className="text-neutral-500">({p.ruta})</span>
                     </li>
                   ))}
                 </ul>

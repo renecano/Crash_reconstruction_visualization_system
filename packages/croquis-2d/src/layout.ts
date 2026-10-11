@@ -113,7 +113,10 @@ export const DEFAULT_DIMS: Record<string, { largo: number; ancho: number }> = {
   hatchback: { largo: 4.0, ancho: 1.7 },
 };
 
-export function vehicleDims(v: EscenaSpec["vehiculos"][number], clases?: TablaClases): { largo: number; ancho: number } {
+export function vehicleDims(
+  v: EscenaSpec["vehiculos"][number],
+  clases?: TablaClases,
+): { largo: number; ancho: number } {
   const clase = clases?.[v.clase.valor];
   const fallback = DEFAULT_DIMS[v.clase.valor] ?? { largo: 4.4, ancho: 1.8 };
   return {
@@ -129,7 +132,11 @@ export function roadLayout(lugar: EscenaSpec["lugar"]): RoadLayout {
   const laneW = longitudM(lugar.ancho_carril);
   const lanes = Math.max(1, lugar.carriles_por_sentido.valor);
   const dos = lugar.sentidos.valor === "doble_sentido";
-  const median = lugar.camellon?.valor ? (lugar.ancho_camellon ? longitudM(lugar.ancho_camellon) : 1.5) : 0;
+  const median = lugar.camellon?.valor
+    ? lugar.ancho_camellon
+      ? longitudM(lugar.ancho_camellon)
+      : 1.5
+    : 0;
   const widthMain = laneW * lanes * (dos ? 2 : 1) + median;
   const lanesSec = Math.max(1, lugar.carriles_por_sentido_secundaria?.valor ?? lanes);
   const widthSec = laneW * lanesSec * (dos ? 2 : 1);
@@ -156,7 +163,10 @@ export function roadLayout(lugar: EscenaSpec["lugar"]): RoadLayout {
     case "interseccion_t":
       return {
         tipo,
-        strips: [main, { ...secondary, center: { x: 0, y: -ROAD_LENGTH / 4 }, length: ROAD_LENGTH / 2 }],
+        strips: [
+          main,
+          { ...secondary, center: { x: 0, y: -ROAD_LENGTH / 4 }, length: ROAD_LENGTH / 2 },
+        ],
         rings: [],
         arcs: [],
       };
@@ -164,22 +174,61 @@ export function roadLayout(lugar: EscenaSpec["lugar"]): RoadLayout {
       return {
         tipo,
         strips: [
-          { ...main, center: { x: 0, y: -(radius + widthMain / 2 + ROAD_LENGTH / 4) }, length: ROAD_LENGTH / 2, heading: 90 },
-          { ...main, center: { x: 0, y: radius + widthMain / 2 + ROAD_LENGTH / 4 }, length: ROAD_LENGTH / 2, heading: 90 },
-          { ...main, center: { x: -(radius + widthMain / 2 + ROAD_LENGTH / 4), y: 0 }, length: ROAD_LENGTH / 2 },
-          { ...main, center: { x: radius + widthMain / 2 + ROAD_LENGTH / 4, y: 0 }, length: ROAD_LENGTH / 2 },
+          {
+            ...main,
+            center: { x: 0, y: -(radius + widthMain / 2 + ROAD_LENGTH / 4) },
+            length: ROAD_LENGTH / 2,
+            heading: 90,
+          },
+          {
+            ...main,
+            center: { x: 0, y: radius + widthMain / 2 + ROAD_LENGTH / 4 },
+            length: ROAD_LENGTH / 2,
+            heading: 90,
+          },
+          {
+            ...main,
+            center: { x: -(radius + widthMain / 2 + ROAD_LENGTH / 4), y: 0 },
+            length: ROAD_LENGTH / 2,
+          },
+          {
+            ...main,
+            center: { x: radius + widthMain / 2 + ROAD_LENGTH / 4, y: 0 },
+            length: ROAD_LENGTH / 2,
+          },
         ],
-        rings: [{ center: { x: 0, y: radius + widthMain / 2 }, innerRadius: radius - widthMain / 2, outerRadius: radius + widthMain / 2 }],
+        rings: [
+          {
+            center: { x: 0, y: radius + widthMain / 2 },
+            innerRadius: radius - widthMain / 2,
+            outerRadius: radius + widthMain / 2,
+          },
+        ],
         arcs: [],
       };
     case "curva": {
       const r = Math.max(radius, widthMain);
-      return { tipo, strips: [], rings: [], arcs: [{ center: { x: 0, y: -r }, radius: r, width: widthMain, from: 60, to: 120 }] };
+      return {
+        tipo,
+        strips: [],
+        rings: [],
+        arcs: [{ center: { x: 0, y: -r }, radius: r, width: widthMain, from: 60, to: 120 }],
+      };
     }
     case "incorporacion":
       return {
         tipo,
-        strips: [main, { center: { x: -30, y: -(widthMain / 2 + laneW) }, length: 60, width: laneW, heading: 10, lanes: 1, median: 0 }],
+        strips: [
+          main,
+          {
+            center: { x: -30, y: -(widthMain / 2 + laneW) },
+            length: 60,
+            width: laneW,
+            heading: 10,
+            lanes: 1,
+            median: 0,
+          },
+        ],
         rings: [],
         arcs: [],
       };
@@ -187,13 +236,37 @@ export function roadLayout(lugar: EscenaSpec["lugar"]): RoadLayout {
       return {
         tipo,
         strips: [main],
-        rings: [{ center: { x: 20, y: 0 }, innerRadius: Math.max(1, median / 2), outerRadius: widthMain / 2 }],
+        rings: [
+          {
+            center: { x: 20, y: 0 },
+            innerRadius: Math.max(1, median / 2),
+            outerRadius: widthMain / 2,
+          },
+        ],
         arcs: [],
       };
     case "estacionamiento":
-      return { tipo, strips: [{ center: { x: 0, y: 0 }, length: 60, width: 36, heading: 0, lanes: 1, median: 0 }], rings: [], arcs: [] };
+      return {
+        tipo,
+        strips: [
+          { center: { x: 0, y: 0 }, length: 60, width: 36, heading: 0, lanes: 1, median: 0 },
+        ],
+        rings: [],
+        arcs: [],
+      };
     case "autopista":
-      return { tipo, strips: [{ ...main, width: widthMain + 2 * (lugar.ancho_acotamiento ? longitudM(lugar.ancho_acotamiento) : 2.5) }], rings: [], arcs: [] };
+      return {
+        tipo,
+        strips: [
+          {
+            ...main,
+            width:
+              widthMain + 2 * (lugar.ancho_acotamiento ? longitudM(lugar.ancho_acotamiento) : 2.5),
+          },
+        ],
+        rings: [],
+        arcs: [],
+      };
     case "carretera_dos_carriles":
     case "recta":
     default:
@@ -213,12 +286,22 @@ export function sceneLayout(spec: EscenaSpec, clases?: TablaClases): SceneLayout
       ancho,
       inicial: v.posicion_inicial,
       final: v.posicion_final,
-      corners: orientedBox({ x: v.posicion_inicial.x, y: v.posicion_inicial.y }, largo, ancho, (v.posicion_inicial.rumbo_deg * Math.PI) / 180),
+      corners: orientedBox(
+        { x: v.posicion_inicial.x, y: v.posicion_inicial.y },
+        largo,
+        ancho,
+        (v.posicion_inicial.rumbo_deg * Math.PI) / 180,
+      ),
     };
   });
   const people: PersonGlyph[] = spec.personas
     .filter((p) => p.posicion_inicial || p.posicion_final)
-    .map((p) => ({ id: p.id, rol: p.rol.valor, inicial: p.posicion_inicial, final: p.posicion_final }));
+    .map((p) => ({
+      id: p.id,
+      rol: p.rol.valor,
+      inicial: p.posicion_inicial,
+      final: p.posicion_final,
+    }));
   const objects: ObjectGlyph[] = (spec.entorno.objetos ?? []).map((o) => ({
     id: o.id,
     tipo: o.tipo,

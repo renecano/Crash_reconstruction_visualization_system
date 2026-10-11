@@ -16,4 +16,11 @@ export {
   type SceneLayout,
   type VehicleGlyph,
 } from "./layout";
-export { clientToWorld, makeViewport, svgToWorld, worldToSvg, type Viewport, type ViewBox } from "./viewport";
+export {
+  clientToWorld,
+  makeViewport,
+  svgToWorld,
+  worldToSvg,
+  type Viewport,
+  type ViewBox,
+} from "./viewport";

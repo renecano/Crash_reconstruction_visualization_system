@@ -17,7 +17,9 @@ describe("sceneLayout", () => {
         expect(v.corners).toHaveLength(4);
       }
       expect(layout.road.tipo).toBe(spec.lugar.tipo_via.valor);
-      expect(layout.road.strips.length + layout.road.rings.length + layout.road.arcs.length).toBeGreaterThan(0);
+      expect(
+        layout.road.strips.length + layout.road.rings.length + layout.road.arcs.length,
+      ).toBeGreaterThan(0);
     });
   }
 
@@ -38,7 +40,19 @@ describe("sceneLayout", () => {
     const volcadura = loadFixture("volcadura");
     const sinMedidas = volcadura.vehiculos.find((v) => v.id === "veh-b")!;
     expect(vehicleDims(sinMedidas)).toEqual(DEFAULT_DIMS.sedan_compacto);
-    expect(vehicleDims(sinMedidas, { sedan_compacto: { masa_kg: [1, 2], largo_m: [1, 2], ancho_m: [1, 2], alto_m: [1, 2], distancia_entre_ejes_m: [1, 2], velocidad_max_kmh: 1, tipico: { masa_kg: 1, largo_m: 4.1, ancho_m: 1.65, alto_m: 1, distancia_entre_ejes_m: 1 } } })).toEqual({ largo: 4.1, ancho: 1.65 });
+    expect(
+      vehicleDims(sinMedidas, {
+        sedan_compacto: {
+          masa_kg: [1, 2],
+          largo_m: [1, 2],
+          ancho_m: [1, 2],
+          alto_m: [1, 2],
+          distancia_entre_ejes_m: [1, 2],
+          velocidad_max_kmh: 1,
+          tipico: { masa_kg: 1, largo_m: 4.1, ancho_m: 1.65, alto_m: 1, distancia_entre_ejes_m: 1 },
+        },
+      }),
+    ).toEqual({ largo: 4.1, ancho: 1.65 });
   });
 
   it("incluye peatones, objetos, dispositivos, evidencias y eventos", () => {
@@ -46,7 +60,10 @@ describe("sceneLayout", () => {
     expect(l.people.map((p) => p.id)).toEqual(["per-peaton"]);
     expect(l.objects.map((o) => o.tipo)).toEqual(["vehiculo_estacionado"]);
     expect(l.devices.map((d) => d.tipo)).toEqual(["paso_peatonal"]);
-    expect(l.evidence.map((e) => e.tipo).sort()).toEqual(["distancia_proyeccion", "marcas_frenado"]);
+    expect(l.evidence.map((e) => e.tipo).sort()).toEqual([
+      "distancia_proyeccion",
+      "marcas_frenado",
+    ]);
     expect(l.events.map((e) => e.id)).toEqual(["ev-impacto"]);
   });
 });

@@ -5,13 +5,20 @@
  * asa frontal. Todo cambio pasa por `applyEdit` y vuelve como una escena nueva en `onChange`.
  */
 import type { EscenaSpec, TablaClases } from "@croquis/scene-schema";
-import { useCallback, useMemo, useRef, useState, type PointerEvent as ReactPointerEvent } from "react";
+import {
+  useCallback,
+  useMemo,
+  useRef,
+  useState,
+  type PointerEvent as ReactPointerEvent,
+} from "react";
 import { applyEdit, type EditOp, type PoseKind } from "./edit";
 import type { Vec2 } from "./geometry";
 import { sceneLayout, type LaneStrip } from "./layout";
 import { clientToWorld, makeViewport, worldToSvg, type Viewport } from "./viewport";
 
-export const CROQUIS_LEGEND = "Reconstrucción ilustrativa generada a partir de un relato. No es un peritaje.";
+export const CROQUIS_LEGEND =
+  "Reconstrucción ilustrativa generada a partir de un relato. No es un peritaje.";
 
 export interface CroquisProps {
   spec: EscenaSpec;
@@ -57,7 +64,10 @@ export function Croquis({
   const [drag, setDrag] = useState<DragTarget | null>(null);
   const [preview, setPreview] = useState<EscenaSpec | null>(null);
   const shown = preview ?? spec;
-  const shownLayout = useMemo(() => (preview ? sceneLayout(preview, clases) : layout), [preview, clases, layout]);
+  const shownLayout = useMemo(
+    () => (preview ? sceneLayout(preview, clases) : layout),
+    [preview, clases, layout],
+  );
 
   const pointerWorld = useCallback(
     (e: ReactPointerEvent): Vec2 => {
@@ -79,11 +89,28 @@ export function Croquis({
   const opFor = (t: DragTarget, w: Vec2): EditOp => {
     switch (t.kind) {
       case "vehicle":
-        return { kind: "move_vehicle", id: t.id, pose: t.pose, x: w.x - t.offset.x, y: w.y - t.offset.y };
+        return {
+          kind: "move_vehicle",
+          id: t.id,
+          pose: t.pose,
+          x: w.x - t.offset.x,
+          y: w.y - t.offset.y,
+        };
       case "rotate":
-        return { kind: "rotate_vehicle", id: t.id, pose: t.pose, rumbo_deg: (Math.atan2(w.y - t.center.y, w.x - t.center.x) * 180) / Math.PI };
+        return {
+          kind: "rotate_vehicle",
+          id: t.id,
+          pose: t.pose,
+          rumbo_deg: (Math.atan2(w.y - t.center.y, w.x - t.center.x) * 180) / Math.PI,
+        };
       case "person":
-        return { kind: "move_person", id: t.id, pose: t.pose, x: w.x - t.offset.x, y: w.y - t.offset.y };
+        return {
+          kind: "move_person",
+          id: t.id,
+          pose: t.pose,
+          x: w.x - t.offset.x,
+          y: w.y - t.offset.y,
+        };
       case "object":
         return { kind: "move_object", id: t.id, x: w.x - t.offset.x, y: w.y - t.offset.y };
       case "device":
@@ -154,7 +181,16 @@ export function Croquis({
         </g>
       ))}
       {shownLayout.objects.map((o) => (
-        <ObjectGlyphView key={o.id} o={o} vp={vp} readOnly={readOnly} selected={selectedId === o.id} onDown={(e) => begin(e, { kind: "object", id: o.id, offset: sub(pointerWorld(e), o.posicion) })} />
+        <ObjectGlyphView
+          key={o.id}
+          o={o}
+          vp={vp}
+          readOnly={readOnly}
+          selected={selectedId === o.id}
+          onDown={(e) =>
+            begin(e, { kind: "object", id: o.id, offset: sub(pointerWorld(e), o.posicion) })
+          }
+        />
       ))}
       {shownLayout.devices.map((d) => (
         <g
@@ -162,7 +198,9 @@ export function Croquis({
           data-testid={`device-${d.id}`}
           transform={`translate(${P(d.posicion).x} ${P(d.posicion).y}) rotate(${-d.orientacion})`}
           cursor={readOnly ? "default" : "move"}
-          onPointerDown={(e) => begin(e, { kind: "device", id: d.id, offset: sub(pointerWorld(e), d.posicion) })}
+          onPointerDown={(e) =>
+            begin(e, { kind: "device", id: d.id, offset: sub(pointerWorld(e), d.posicion) })
+          }
         >
           <DeviceIcon tipo={d.tipo} m={m} />
         </g>
@@ -171,10 +209,61 @@ export function Croquis({
         shownLayout.vehicles
           .filter((v) => v.final)
           .map((v) => (
-            <VehicleShape key={`${v.id}-final`} id={v.id} pose="final" rol={v.rol} color={v.colorHex} largo={v.largo} ancho={v.ancho} x={v.final!.x} y={v.final!.y} heading={v.final!.rumbo_deg} vp={vp} ghost readOnly={readOnly} selected={false} onDown={(e) => begin(e, { kind: "vehicle", id: v.id, pose: "final", offset: sub(pointerWorld(e), v.final!) })} onRotate={(e) => begin(e, { kind: "rotate", id: v.id, pose: "final", center: v.final! })} />
+            <VehicleShape
+              key={`${v.id}-final`}
+              id={v.id}
+              pose="final"
+              rol={v.rol}
+              color={v.colorHex}
+              largo={v.largo}
+              ancho={v.ancho}
+              x={v.final!.x}
+              y={v.final!.y}
+              heading={v.final!.rumbo_deg}
+              vp={vp}
+              ghost
+              readOnly={readOnly}
+              selected={false}
+              onDown={(e) =>
+                begin(e, {
+                  kind: "vehicle",
+                  id: v.id,
+                  pose: "final",
+                  offset: sub(pointerWorld(e), v.final!),
+                })
+              }
+              onRotate={(e) =>
+                begin(e, { kind: "rotate", id: v.id, pose: "final", center: v.final! })
+              }
+            />
           ))}
       {shownLayout.vehicles.map((v) => (
-        <VehicleShape key={v.id} id={v.id} pose="inicial" rol={v.rol} color={v.colorHex} largo={v.largo} ancho={v.ancho} x={v.inicial.x} y={v.inicial.y} heading={v.inicial.rumbo_deg} vp={vp} readOnly={readOnly} selected={selectedId === v.id} onDown={(e) => begin(e, { kind: "vehicle", id: v.id, pose: "inicial", offset: sub(pointerWorld(e), v.inicial) })} onRotate={(e) => begin(e, { kind: "rotate", id: v.id, pose: "inicial", center: v.inicial })} />
+        <VehicleShape
+          key={v.id}
+          id={v.id}
+          pose="inicial"
+          rol={v.rol}
+          color={v.colorHex}
+          largo={v.largo}
+          ancho={v.ancho}
+          x={v.inicial.x}
+          y={v.inicial.y}
+          heading={v.inicial.rumbo_deg}
+          vp={vp}
+          readOnly={readOnly}
+          selected={selectedId === v.id}
+          onDown={(e) =>
+            begin(e, {
+              kind: "vehicle",
+              id: v.id,
+              pose: "inicial",
+              offset: sub(pointerWorld(e), v.inicial),
+            })
+          }
+          onRotate={(e) =>
+            begin(e, { kind: "rotate", id: v.id, pose: "inicial", center: v.inicial })
+          }
+        />
       ))}
       {shownLayout.people.flatMap((p) =>
         (["inicial", "final"] as const)
@@ -183,8 +272,28 @@ export function Croquis({
             const pose = p[k]!;
             const c = P(pose);
             return (
-              <g key={`${p.id}-${k}`} data-testid={`person-${p.id}-${k}`} opacity={k === "final" ? 0.5 : 1} cursor={readOnly ? "default" : "move"} onPointerDown={(e) => begin(e, { kind: "person", id: p.id, pose: k, offset: sub(pointerWorld(e), pose) })}>
-                <circle cx={c.x} cy={c.y} r={m(0.45)} fill="#f2c14e" stroke="#1f1f1f" strokeWidth={m(0.08)} />
+              <g
+                key={`${p.id}-${k}`}
+                data-testid={`person-${p.id}-${k}`}
+                opacity={k === "final" ? 0.5 : 1}
+                cursor={readOnly ? "default" : "move"}
+                onPointerDown={(e) =>
+                  begin(e, {
+                    kind: "person",
+                    id: p.id,
+                    pose: k,
+                    offset: sub(pointerWorld(e), pose),
+                  })
+                }
+              >
+                <circle
+                  cx={c.x}
+                  cy={c.y}
+                  r={m(0.45)}
+                  fill="#f2c14e"
+                  stroke="#1f1f1f"
+                  strokeWidth={m(0.08)}
+                />
                 <circle cx={c.x} cy={c.y} r={m(0.18)} fill="#1f1f1f" />
               </g>
             );
@@ -193,14 +302,39 @@ export function Croquis({
       {shownLayout.events.map((ev) => {
         const c = P(ev.punto);
         return (
-          <g key={ev.id} data-testid={`event-${ev.id}`} cursor={readOnly ? "default" : "move"} onPointerDown={(e) => begin(e, { kind: "event", id: ev.id })}>
-            <line x1={c.x - m(0.7)} y1={c.y - m(0.7)} x2={c.x + m(0.7)} y2={c.y + m(0.7)} stroke="#c0392b" strokeWidth={m(0.18)} />
-            <line x1={c.x - m(0.7)} y1={c.y + m(0.7)} x2={c.x + m(0.7)} y2={c.y - m(0.7)} stroke="#c0392b" strokeWidth={m(0.18)} />
+          <g
+            key={ev.id}
+            data-testid={`event-${ev.id}`}
+            cursor={readOnly ? "default" : "move"}
+            onPointerDown={(e) => begin(e, { kind: "event", id: ev.id })}
+          >
+            <line
+              x1={c.x - m(0.7)}
+              y1={c.y - m(0.7)}
+              x2={c.x + m(0.7)}
+              y2={c.y + m(0.7)}
+              stroke="#c0392b"
+              strokeWidth={m(0.18)}
+            />
+            <line
+              x1={c.x - m(0.7)}
+              y1={c.y + m(0.7)}
+              x2={c.x + m(0.7)}
+              y2={c.y - m(0.7)}
+              stroke="#c0392b"
+              strokeWidth={m(0.18)}
+            />
           </g>
         );
       })}
       <NorthArrow vp={vp} />
-      <text x={m(1)} y={vp.viewBox.height - m(0.8)} fontSize={m(1.1)} fill="#333" fontFamily="system-ui, sans-serif">
+      <text
+        x={m(1)}
+        y={vp.viewBox.height - m(0.8)}
+        fontSize={m(1.1)}
+        fill="#333"
+        fontFamily="system-ui, sans-serif"
+      >
         {CROQUIS_LEGEND} · semilla {shown.meta.semilla}
       </text>
     </svg>
@@ -219,10 +353,21 @@ function Road({ layout, vp }: { layout: ReturnType<typeof sceneLayout>; vp: View
       {layout.road.arcs.map((a, i) => {
         const c = P(a.center);
         const r = m(a.radius);
-        const toXY = (deg: number) => ({ x: c.x + r * Math.cos((deg * Math.PI) / 180), y: c.y - r * Math.sin((deg * Math.PI) / 180) });
+        const toXY = (deg: number) => ({
+          x: c.x + r * Math.cos((deg * Math.PI) / 180),
+          y: c.y - r * Math.sin((deg * Math.PI) / 180),
+        });
         const s = toXY(a.from);
         const e = toXY(a.to);
-        return <path key={i} d={`M ${s.x} ${s.y} A ${r} ${r} 0 0 0 ${e.x} ${e.y}`} fill="none" stroke={ROAD_FILL} strokeWidth={m(a.width)} />;
+        return (
+          <path
+            key={i}
+            d={`M ${s.x} ${s.y} A ${r} ${r} 0 0 0 ${e.x} ${e.y}`}
+            fill="none"
+            stroke={ROAD_FILL}
+            strokeWidth={m(a.width)}
+          />
+        );
       })}
       {layout.road.rings.map((r, i) => {
         const c = P(r.center);
@@ -255,9 +400,21 @@ function Strip({ s, vp }: { s: LaneStrip; vp: Viewport }) {
   return (
     <g transform={`translate(${c.x} ${c.y}) rotate(${-s.heading})`}>
       <rect x={-l / 2} y={-w / 2} width={l} height={w} fill={ROAD_FILL} />
-      {s.median > 0 && <rect x={-l / 2} y={-m(s.median) / 2} width={l} height={m(s.median)} fill={MEDIAN_FILL} />}
+      {s.median > 0 && (
+        <rect x={-l / 2} y={-m(s.median) / 2} width={l} height={m(s.median)} fill={MEDIAN_FILL} />
+      )}
       {lines.map((off, i) => (
-        <line key={i} x1={-l / 2} y1={m(off)} x2={l / 2} y2={m(off)} stroke={LINE_STROKE} strokeWidth={m(0.12)} strokeDasharray={`${m(3)} ${m(3)}`} opacity={0.8} />
+        <line
+          key={i}
+          x1={-l / 2}
+          y1={m(off)}
+          x2={l / 2}
+          y2={m(off)}
+          stroke={LINE_STROKE}
+          strokeWidth={m(0.12)}
+          strokeDasharray={`${m(3)} ${m(3)}`}
+          opacity={0.8}
+        />
       ))}
     </g>
   );
@@ -281,26 +438,96 @@ interface VehicleShapeProps {
   onRotate: (e: ReactPointerEvent) => void;
 }
 
-function VehicleShape({ id, pose, rol, color, largo, ancho, x, y, heading, vp, ghost, readOnly, selected, onDown, onRotate }: VehicleShapeProps) {
+function VehicleShape({
+  id,
+  pose,
+  rol,
+  color,
+  largo,
+  ancho,
+  x,
+  y,
+  heading,
+  vp,
+  ghost,
+  readOnly,
+  selected,
+  onDown,
+  onRotate,
+}: VehicleShapeProps) {
   const m = (v: number) => v * vp.scale;
   const c = worldToSvg(vp, { x, y });
   const L = m(largo);
   const W = m(ancho);
   return (
-    <g data-testid={`vehicle-${id}-${pose}`} transform={`translate(${c.x} ${c.y}) rotate(${-heading})`} opacity={ghost ? 0.45 : 1}>
-      <rect x={-L / 2} y={-W / 2} width={L} height={W} rx={m(0.25)} fill={color} stroke={selected ? "#ff8800" : "#111"} strokeWidth={m(selected ? 0.2 : 0.1)} cursor={readOnly ? "default" : "move"} onPointerDown={onDown} />
-      <rect x={L / 2 - m(Math.min(1.1, largo * 0.25))} y={-W / 2 + m(0.15)} width={m(Math.min(0.5, largo * 0.1))} height={W - m(0.3)} fill="#111" opacity={0.6} pointerEvents="none" />
-      <text x={0} y={m(0.35)} textAnchor="middle" fontSize={m(1)} fontWeight={700} fill={isDark(color) ? "#fff" : "#111"} fontFamily="system-ui, sans-serif" pointerEvents="none">
+    <g
+      data-testid={`vehicle-${id}-${pose}`}
+      transform={`translate(${c.x} ${c.y}) rotate(${-heading})`}
+      opacity={ghost ? 0.45 : 1}
+    >
+      <rect
+        x={-L / 2}
+        y={-W / 2}
+        width={L}
+        height={W}
+        rx={m(0.25)}
+        fill={color}
+        stroke={selected ? "#ff8800" : "#111"}
+        strokeWidth={m(selected ? 0.2 : 0.1)}
+        cursor={readOnly ? "default" : "move"}
+        onPointerDown={onDown}
+      />
+      <rect
+        x={L / 2 - m(Math.min(1.1, largo * 0.25))}
+        y={-W / 2 + m(0.15)}
+        width={m(Math.min(0.5, largo * 0.1))}
+        height={W - m(0.3)}
+        fill="#111"
+        opacity={0.6}
+        pointerEvents="none"
+      />
+      <text
+        x={0}
+        y={m(0.35)}
+        textAnchor="middle"
+        fontSize={m(1)}
+        fontWeight={700}
+        fill={isDark(color) ? "#fff" : "#111"}
+        fontFamily="system-ui, sans-serif"
+        pointerEvents="none"
+      >
         {rol}
       </text>
       {!readOnly && !ghost && (
-        <circle data-testid={`vehicle-${id}-${pose}-rotate`} cx={L / 2 + m(0.9)} cy={0} r={m(0.4)} fill="#ff8800" stroke="#fff" strokeWidth={m(0.08)} cursor="grab" onPointerDown={onRotate} />
+        <circle
+          data-testid={`vehicle-${id}-${pose}-rotate`}
+          cx={L / 2 + m(0.9)}
+          cy={0}
+          r={m(0.4)}
+          fill="#ff8800"
+          stroke="#fff"
+          strokeWidth={m(0.08)}
+          cursor="grab"
+          onPointerDown={onRotate}
+        />
       )}
     </g>
   );
 }
 
-function ObjectGlyphView({ o, vp, readOnly, selected, onDown }: { o: ReturnType<typeof sceneLayout>["objects"][number]; vp: Viewport; readOnly: boolean; selected: boolean; onDown: (e: ReactPointerEvent) => void }) {
+function ObjectGlyphView({
+  o,
+  vp,
+  readOnly,
+  selected,
+  onDown,
+}: {
+  o: ReturnType<typeof sceneLayout>["objects"][number];
+  vp: Viewport;
+  readOnly: boolean;
+  selected: boolean;
+  onDown: (e: ReactPointerEvent) => void;
+}) {
   const m = (v: number) => v * vp.scale;
   const c = worldToSvg(vp, o.posicion);
   const stroke = selected ? "#ff8800" : "#2b2b2b";
@@ -308,7 +535,15 @@ function ObjectGlyphView({ o, vp, readOnly, selected, onDown }: { o: ReturnType<
   if (o.tipo === "arbol") {
     return (
       <g data-testid={`object-${o.id}`} cursor={cursor} onPointerDown={onDown}>
-        <circle cx={c.x} cy={c.y} r={m(2.2)} fill="#5f9a4b" opacity={0.75} stroke={stroke} strokeWidth={m(0.08)} />
+        <circle
+          cx={c.x}
+          cy={c.y}
+          r={m(2.2)}
+          fill="#5f9a4b"
+          opacity={0.75}
+          stroke={stroke}
+          strokeWidth={m(0.08)}
+        />
         <circle cx={c.x} cy={c.y} r={m(Math.max(0.15, (o.diametro ?? 0.3) / 2))} fill="#5a3a1a" />
       </g>
     );
@@ -316,16 +551,41 @@ function ObjectGlyphView({ o, vp, readOnly, selected, onDown }: { o: ReturnType<
   if (o.tipo === "poste" || o.tipo === "senal") {
     return (
       <g data-testid={`object-${o.id}`} cursor={cursor} onPointerDown={onDown}>
-        <circle cx={c.x} cy={c.y} r={m(Math.max(0.2, (o.diametro ?? 0.3) / 2) + 0.1)} fill="#9aa0a6" stroke={stroke} strokeWidth={m(0.1)} />
+        <circle
+          cx={c.x}
+          cy={c.y}
+          r={m(Math.max(0.2, (o.diametro ?? 0.3) / 2) + 0.1)}
+          fill="#9aa0a6"
+          stroke={stroke}
+          strokeWidth={m(0.1)}
+        />
       </g>
     );
   }
   const L = m(o.largo);
   const W = m(o.ancho);
-  const fill = o.tipo === "vehiculo_estacionado" ? "#a9b4c2" : o.tipo === "muro" || o.tipo === "barda" ? "#8c7b6b" : "#b8a98a";
+  const fill =
+    o.tipo === "vehiculo_estacionado"
+      ? "#a9b4c2"
+      : o.tipo === "muro" || o.tipo === "barda"
+        ? "#8c7b6b"
+        : "#b8a98a";
   return (
-    <g data-testid={`object-${o.id}`} transform={`translate(${c.x} ${c.y}) rotate(${-o.rumbo})`} cursor={cursor} onPointerDown={onDown}>
-      <rect x={-L / 2} y={-W / 2} width={L} height={W} fill={fill} stroke={stroke} strokeWidth={m(0.1)} />
+    <g
+      data-testid={`object-${o.id}`}
+      transform={`translate(${c.x} ${c.y}) rotate(${-o.rumbo})`}
+      cursor={cursor}
+      onPointerDown={onDown}
+    >
+      <rect
+        x={-L / 2}
+        y={-W / 2}
+        width={L}
+        height={W}
+        fill={fill}
+        stroke={stroke}
+        strokeWidth={m(0.1)}
+      />
     </g>
   );
 }
@@ -342,21 +602,48 @@ function DeviceIcon({ tipo, m }: { tipo: string; m: (v: number) => number }) {
         </g>
       );
     case "alto":
-      return <polygon points={octagon(m(0.7))} fill="#c62828" stroke="#fff" strokeWidth={m(0.08)} />;
+      return (
+        <polygon points={octagon(m(0.7))} fill="#c62828" stroke="#fff" strokeWidth={m(0.08)} />
+      );
     case "ceda_el_paso":
-      return <polygon points={`0,${m(0.8)} ${-m(0.75)},${-m(0.5)} ${m(0.75)},${-m(0.5)}`} fill="#fff" stroke="#c62828" strokeWidth={m(0.15)} />;
+      return (
+        <polygon
+          points={`0,${m(0.8)} ${-m(0.75)},${-m(0.5)} ${m(0.75)},${-m(0.5)}`}
+          fill="#fff"
+          stroke="#c62828"
+          strokeWidth={m(0.15)}
+        />
+      );
     case "paso_peatonal":
       return (
         <g>
           {[-2, -1, 0, 1, 2].map((i) => (
-            <rect key={i} x={m(i * 0.8) - m(0.25)} y={-m(2)} width={m(0.5)} height={m(4)} fill="#f4f1e6" opacity={0.9} />
+            <rect
+              key={i}
+              x={m(i * 0.8) - m(0.25)}
+              y={-m(2)}
+              width={m(0.5)}
+              height={m(4)}
+              fill="#f4f1e6"
+              opacity={0.9}
+            />
           ))}
         </g>
       );
     case "tope":
       return <rect x={-m(0.3)} y={-m(3)} width={m(0.6)} height={m(6)} fill="#f2c14e" />;
     default:
-      return <rect x={-m(0.4)} y={-m(0.4)} width={m(0.8)} height={m(0.8)} fill="#3949ab" stroke="#fff" strokeWidth={m(0.08)} />;
+      return (
+        <rect
+          x={-m(0.4)}
+          y={-m(0.4)}
+          width={m(0.8)}
+          height={m(0.8)}
+          fill="#3949ab"
+          stroke="#fff"
+          strokeWidth={m(0.08)}
+        />
+      );
   }
 }
 
@@ -374,7 +661,10 @@ function NorthArrow({ vp }: { vp: Viewport }) {
   return (
     <g data-testid="north" fontFamily="system-ui, sans-serif">
       <line x1={x} y1={y + m(1.5)} x2={x} y2={y - m(1.5)} stroke="#333" strokeWidth={m(0.15)} />
-      <polygon points={`${x},${y - m(2)} ${x - m(0.5)},${y - m(1)} ${x + m(0.5)},${y - m(1)}`} fill="#333" />
+      <polygon
+        points={`${x},${y - m(2)} ${x - m(0.5)},${y - m(1)} ${x + m(0.5)},${y - m(1)}`}
+        fill="#333"
+      />
       <text x={x} y={y + m(2.8)} textAnchor="middle" fontSize={m(1)} fill="#333">
         N
       </text>

@@ -27,9 +27,13 @@ export interface MigrationResult {
 }
 
 function versionOf(doc: unknown): string {
-  if (!doc || typeof doc !== "object" || Array.isArray(doc)) throw new Error("El documento no es un objeto.");
+  if (!doc || typeof doc !== "object" || Array.isArray(doc))
+    throw new Error("El documento no es un objeto.");
   const meta = (doc as Record<string, unknown>).meta;
-  const v = meta && typeof meta === "object" ? (meta as Record<string, unknown>).version_esquema : undefined;
+  const v =
+    meta && typeof meta === "object"
+      ? (meta as Record<string, unknown>).version_esquema
+      : undefined;
   if (typeof v !== "string") throw new Error("El documento no declara meta.version_esquema.");
   parseSemver(v);
   return v;
@@ -40,10 +44,16 @@ function versionOf(doc: unknown): string {
  * resultado: eso lo hace `validateEscena`. Lanza si la versión es desconocida o más nueva que la
  * soportada.
  */
-export function migrateEscena(doc: unknown, registry: Migration[] = MIGRATIONS, target: string = SCHEMA_VERSION): MigrationResult {
+export function migrateEscena(
+  doc: unknown,
+  registry: Migration[] = MIGRATIONS,
+  target: string = SCHEMA_VERSION,
+): MigrationResult {
   const desde = versionOf(doc);
   if (compareSchemaVersions(desde, target) > 0) {
-    throw new Error(`La escena usa la versión ${desde}, más nueva que la soportada (${target}). Actualiza Croquis.`);
+    throw new Error(
+      `La escena usa la versión ${desde}, más nueva que la soportada (${target}). Actualiza Croquis.`,
+    );
   }
   let current = structuredClone(doc) as Record<string, unknown>;
   let version = desde;

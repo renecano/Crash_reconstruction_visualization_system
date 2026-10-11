@@ -2,26 +2,11 @@
   "_descripcion": "Casos de paridad del validador semántico. Cada caso parte de una escena canónica, aplica mutaciones (JSON Pointer) que el JSON Schema acepta y espera exactamente estos pares codigo+ruta de error (las advertencias se comparan aparte en 'advertencias'). TS y Python deben coincidir.",
   "clases_de_prueba": {
     "sedan_compacto": {
-      "masa_kg": [
-        900,
-        1400
-      ],
-      "largo_m": [
-        3.9,
-        4.7
-      ],
-      "ancho_m": [
-        1.6,
-        1.85
-      ],
-      "alto_m": [
-        1.35,
-        1.6
-      ],
-      "distancia_entre_ejes_m": [
-        2.4,
-        2.75
-      ],
+      "masa_kg": [900, 1400],
+      "largo_m": [3.9, 4.7],
+      "ancho_m": [1.6, 1.85],
+      "alto_m": [1.35, 1.6],
+      "distancia_entre_ejes_m": [2.4, 2.75],
       "velocidad_max_kmh": 200,
       "tipico": {
         "masa_kg": 1100,
@@ -32,26 +17,11 @@
       }
     },
     "suv_compacta": {
-      "masa_kg": [
-        1100,
-        1700
-      ],
-      "largo_m": [
-        4.1,
-        4.7
-      ],
-      "ancho_m": [
-        1.7,
-        1.9
-      ],
-      "alto_m": [
-        1.5,
-        1.75
-      ],
-      "distancia_entre_ejes_m": [
-        2.5,
-        2.8
-      ],
+      "masa_kg": [1100, 1700],
+      "largo_m": [4.1, 4.7],
+      "ancho_m": [1.7, 1.9],
+      "alto_m": [1.5, 1.75],
+      "distancia_entre_ejes_m": [2.5, 2.8],
       "velocidad_max_kmh": 200,
       "tipico": {
         "masa_kg": 1350,
@@ -81,18 +51,9 @@
         }
       ],
       "errores": [
-        [
-          "E001",
-          "/personas/1/id"
-        ],
-        [
-          "E012",
-          "/personas/1/vehiculo_id"
-        ],
-        [
-          "E002",
-          "/vehiculos/1/ocupantes/0"
-        ]
+        ["E001", "/personas/1/id"],
+        ["E012", "/personas/1/vehiculo_id"],
+        ["E002", "/vehiculos/1/ocupantes/0"]
       ],
       "advertencias": []
     },
@@ -107,14 +68,8 @@
         }
       ],
       "errores": [
-        [
-          "E002",
-          "/vehiculos/0/ocupantes/0"
-        ],
-        [
-          "E012",
-          "/personas/0/vehiculo_id"
-        ]
+        ["E002", "/vehiculos/0/ocupantes/0"],
+        ["E012", "/personas/0/vehiculo_id"]
       ],
       "advertencias": []
     },
@@ -128,12 +83,7 @@
           "valor": []
         }
       ],
-      "errores": [
-        [
-          "E003",
-          "/vehiculos/0/velocidad_previa"
-        ]
-      ],
+      "errores": [["E003", "/vehiculos/0/velocidad_previa"]],
       "advertencias": []
     },
     {
@@ -146,12 +96,7 @@
           "valor": "como a 90"
         }
       ],
-      "errores": [
-        [
-          "E004",
-          "/vehiculos/0/velocidad_previa/evidencia/0"
-        ]
-      ],
+      "errores": [["E004", "/vehiculos/0/velocidad_previa/evidencia/0"]],
       "advertencias": []
     },
     {
@@ -161,18 +106,10 @@
         {
           "op": "set",
           "ruta": "/vehiculos/0/velocidad_previa/rango",
-          "valor": [
-            60,
-            70
-          ]
+          "valor": [60, 70]
         }
       ],
-      "errores": [
-        [
-          "E005",
-          "/vehiculos/0/velocidad_previa/valor"
-        ]
-      ],
+      "errores": [["E005", "/vehiculos/0/velocidad_previa/valor"]],
       "advertencias": []
     },
     {
@@ -182,18 +119,10 @@
         {
           "op": "set",
           "ruta": "/vehiculos/0/velocidad_previa/rango",
-          "valor": [
-            60,
-            40
-          ]
+          "valor": [60, 40]
         }
       ],
-      "errores": [
-        [
-          "E005",
-          "/vehiculos/0/velocidad_previa/rango"
-        ]
-      ],
+      "errores": [["E005", "/vehiculos/0/velocidad_previa/rango"]],
       "advertencias": []
     },
     {
@@ -211,12 +140,7 @@
           }
         }
       ],
-      "errores": [
-        [
-          "E006",
-          "/vehiculos/0/masa/valor"
-        ]
-      ],
+      "errores": [["E006", "/vehiculos/0/masa/valor"]],
       "advertencias": []
     },
     {
@@ -234,12 +158,7 @@
           }
         }
       ],
-      "errores": [
-        [
-          "E007",
-          "/vehiculos/0/largo/valor"
-        ]
-      ],
+      "errores": [["E007", "/vehiculos/0/largo/valor"]],
       "advertencias": []
     },
     {
@@ -257,12 +176,7 @@
           }
         }
       ],
-      "errores": [
-        [
-          "E008",
-          "/vehiculos/0/velocidad_previa/valor"
-        ]
-      ],
+      "errores": [["E008", "/vehiculos/0/velocidad_previa/valor"]],
       "advertencias": []
     },
     {
@@ -283,12 +197,7 @@
           }
         }
       ],
-      "errores": [
-        [
-          "E009",
-          "/vehiculos/1/posicion_inicial"
-        ]
-      ],
+      "errores": [["E009", "/vehiculos/1/posicion_inicial"]],
       "advertencias": []
     },
     {
@@ -322,14 +231,8 @@
         }
       ],
       "errores": [
-        [
-          "E010",
-          "/personas/1/vehiculo_id"
-        ],
-        [
-          "E012",
-          "/vehiculos/1/ocupantes/0"
-        ]
+        ["E010", "/personas/1/vehiculo_id"],
+        ["E012", "/vehiculos/1/ocupantes/0"]
       ],
       "advertencias": []
     },
@@ -344,14 +247,8 @@
         }
       ],
       "errores": [
-        [
-          "E011",
-          "/personas/1/vehiculo_id"
-        ],
-        [
-          "E012",
-          "/personas/1/vehiculo_id"
-        ]
+        ["E011", "/personas/1/vehiculo_id"],
+        ["E012", "/personas/1/vehiculo_id"]
       ],
       "advertencias": []
     },
@@ -365,12 +262,7 @@
           "valor": 1
         }
       ],
-      "errores": [
-        [
-          "E013",
-          "/eventos/2/orden"
-        ]
-      ],
+      "errores": [["E013", "/eventos/2/orden"]],
       "advertencias": []
     },
     {
@@ -380,20 +272,12 @@
         {
           "op": "set",
           "ruta": "/eventos/1/actores",
-          "valor": [
-            "veh-a"
-          ]
+          "valor": ["veh-a"]
         }
       ],
       "errores": [
-        [
-          "E014",
-          "/eventos/1/actores"
-        ],
-        [
-          "E015",
-          "/eventos/1/zonas_impacto/1/vehiculo_id"
-        ]
+        ["E014", "/eventos/1/actores"],
+        ["E015", "/eventos/1/zonas_impacto/1/vehiculo_id"]
       ],
       "advertencias": []
     },
@@ -408,12 +292,7 @@
         }
       ],
       "errores": [],
-      "advertencias": [
-        [
-          "W001",
-          "/vehiculos/1/velocidad_previa/confianza"
-        ]
-      ]
+      "advertencias": [["W001", "/vehiculos/1/velocidad_previa/confianza"]]
     },
     {
       "nombre": "sin_vehiculos",
@@ -451,12 +330,7 @@
         }
       ],
       "errores": [],
-      "advertencias": [
-        [
-          "W003",
-          "/vehiculos"
-        ]
-      ]
+      "advertencias": [["W003", "/vehiculos"]]
     }
   ]
 }

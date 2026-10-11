@@ -32,8 +32,12 @@ describe("checkEscena", () => {
       expect(isValidEscena(doc)).toBe(true); // el esquema acepta; la semántica decide
       const spec = EscenaSpecSchema.parse(doc);
       const problemas = checkEscena(spec, { clases });
-      const errores = problemas.filter((p) => p.severidad === "error").map((p) => [p.codigo, p.ruta]);
-      const advertencias = problemas.filter((p) => p.severidad === "advertencia").map((p) => [p.codigo, p.ruta]);
+      const errores = problemas
+        .filter((p) => p.severidad === "error")
+        .map((p) => [p.codigo, p.ruta]);
+      const advertencias = problemas
+        .filter((p) => p.severidad === "advertencia")
+        .map((p) => [p.codigo, p.ruta]);
       expect(errores).toEqual([...c.errores].sort(byRutaCodigo));
       expect(advertencias).toEqual([...c.advertencias].sort(byRutaCodigo));
       for (const p of problemas) {
@@ -44,7 +48,11 @@ describe("checkEscena", () => {
 
   it("sin tabla de clases omite las comprobaciones por clase", () => {
     let doc: unknown = RAW_FIXTURES.alcance;
-    doc = applyMutation(doc, { op: "set", ruta: "/vehiculos/0/masa", valor: { valor: 8, unidad: "t", fuente: "usuario", confianza: 1 } });
+    doc = applyMutation(doc, {
+      op: "set",
+      ruta: "/vehiculos/0/masa",
+      valor: { valor: 8, unidad: "t", fuente: "usuario", confianza: 1 },
+    });
     const problemas = checkEscena(EscenaSpecSchema.parse(doc));
     expect(problemas.map((p) => p.codigo)).not.toContain("E006");
   });

@@ -16,7 +16,9 @@ async function readSpec(page: Page): Promise<SpecLite> {
   return JSON.parse(text) as SpecLite;
 }
 
-test("editar en el croquis actualiza el JSON sin perder datos y sigue siendo coherente", async ({ page }) => {
+test("editar en el croquis actualiza el JSON sin perder datos y sigue siendo coherente", async ({
+  page,
+}) => {
   await page.goto("/croquis");
   await expect(page.getByRole("heading", { level: 1 })).toHaveText("Croquis 2D");
   await expect(page.getByTestId("sin-problemas")).toBeVisible();
@@ -39,23 +41,33 @@ test("editar en el croquis actualiza el JSON sin perder datos y sigue siendo coh
   const a1 = after.vehiculos[0]!;
   expect(a1.posicion_inicial.x).toBeGreaterThan(a0.posicion_inicial.x);
   expect(a1.posicion_inicial.y).toBeLessThan(a0.posicion_inicial.y);
-  expect(a1.posicion_inicial.procedencia).toEqual({ fuente: "usuario", confianza: 1, nota: a0.posicion_inicial.procedencia["nota" as keyof typeof a0.posicion_inicial.procedencia] });
+  expect(a1.posicion_inicial.procedencia).toEqual({
+    fuente: "usuario",
+    confianza: 1,
+    nota: a0.posicion_inicial.procedencia["nota" as keyof typeof a0.posicion_inicial.procedencia],
+  });
   expect(a1.masa).toEqual(a0.masa);
   expect(after.vehiculos[1]).toEqual(before.vehiculos[1]);
   await expect(page.getByTestId("sin-problemas")).toBeVisible();
 });
 
-test("el JSON editado a mano vuelve al croquis y los errores del contrato se muestran", async ({ page }) => {
+test("el JSON editado a mano vuelve al croquis y los errores del contrato se muestran", async ({
+  page,
+}) => {
   await page.goto("/croquis");
   await page.getByTestId("scene-select").selectOption("peaton_cruce");
   await expect(page.getByTestId("vehicle-veh-a-inicial")).toBeVisible();
   await expect(page.getByTestId("person-per-peaton-inicial")).toBeVisible();
 
-  const spec = JSON.parse(await page.getByTestId("json").inputValue()) as { vehiculos: { posicion_inicial: Pose }[] };
+  const spec = JSON.parse(await page.getByTestId("json").inputValue()) as {
+    vehiculos: { posicion_inicial: Pose }[];
+  };
   spec.vehiculos[0]!.posicion_inicial.x = -40;
   await page.getByTestId("json").fill(JSON.stringify(spec, null, 2));
   await page.getByTestId("apply-json").click();
-  const moved = JSON.parse(await page.getByTestId("json").inputValue()) as { vehiculos: { posicion_inicial: Pose }[] };
+  const moved = JSON.parse(await page.getByTestId("json").inputValue()) as {
+    vehiculos: { posicion_inicial: Pose }[];
+  };
   expect(moved.vehiculos[0]!.posicion_inicial.x).toBe(-40);
 
   await page.getByTestId("json").fill(JSON.stringify({ ...spec, meta: undefined }));

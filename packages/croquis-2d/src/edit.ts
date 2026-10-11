@@ -30,7 +30,10 @@ export function normalizeHeading(deg: number): number {
   return Object.is(d, -0) ? 0 : d;
 }
 
-function withPose(prev: Pose2D | undefined, patch: Partial<Pick<Pose2D, "x" | "y" | "rumbo_deg">>): Pose2D {
+function withPose(
+  prev: Pose2D | undefined,
+  patch: Partial<Pick<Pose2D, "x" | "y" | "rumbo_deg">>,
+): Pose2D {
   const base = prev ?? { x: 0, y: 0, rumbo_deg: 0, procedencia: USER };
   return { ...base, ...patch, procedencia: { ...USER, nota: base.procedencia.nota } };
 }
@@ -48,7 +51,10 @@ export function applyEdit(spec: EscenaSpec, op: EditOp): EscenaSpec {
       const v = next.vehiculos.find((x) => x.id === op.id);
       if (!v) throw new Error(`Vehículo inexistente: ${op.id}`);
       const key = poseKey(op.pose);
-      const patch = op.kind === "move_vehicle" ? { x: snap(op.x), y: snap(op.y) } : { rumbo_deg: normalizeHeading(snap(op.rumbo_deg, 0.5)) };
+      const patch =
+        op.kind === "move_vehicle"
+          ? { x: snap(op.x), y: snap(op.y) }
+          : { rumbo_deg: normalizeHeading(snap(op.rumbo_deg, 0.5)) };
       v[key] = withPose(v[key], patch);
       return next;
     }
@@ -75,7 +81,8 @@ export function applyEdit(spec: EscenaSpec, op: EditOp): EscenaSpec {
     }
     case "move_evidence_point": {
       const e = next.evidencias.find((x) => x.id === op.id);
-      if (!e?.puntos?.[op.index]) throw new Error(`Punto de evidencia inexistente: ${op.id}[${op.index}]`);
+      if (!e?.puntos?.[op.index])
+        throw new Error(`Punto de evidencia inexistente: ${op.id}[${op.index}]`);
       e.puntos[op.index] = { x: snap(op.x), y: snap(op.y) };
       e.procedencia = { ...USER, nota: e.procedencia.nota };
       return next;

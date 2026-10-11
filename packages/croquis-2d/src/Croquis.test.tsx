@@ -7,7 +7,17 @@ import { makeViewport, worldToSvg } from "./viewport";
 
 function mockRect(svg: Element, width: number, height: number) {
   Object.defineProperty(svg, "getBoundingClientRect", {
-    value: () => ({ left: 0, top: 0, width, height, right: width, bottom: height, x: 0, y: 0, toJSON: () => ({}) }),
+    value: () => ({
+      left: 0,
+      top: 0,
+      width,
+      height,
+      right: width,
+      bottom: height,
+      x: 0,
+      y: 0,
+      toJSON: () => ({}),
+    }),
     configurable: true,
   });
 }

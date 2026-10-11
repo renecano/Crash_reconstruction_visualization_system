@@ -24,10 +24,18 @@
       "id": "veh-a",
       "rol": "A",
       "clase": { "valor": "sedan_compacto", "fuente": "default", "confianza": 0.5 },
-      "color": { "nombre": { "valor": "gris", "fuente": "default", "confianza": 0.5 }, "hex": "#888888" },
+      "color": {
+        "nombre": { "valor": "gris", "fuente": "default", "confianza": 0.5 },
+        "hex": "#888888"
+      },
       "maniobra": { "valor": "recto", "fuente": "default", "confianza": 0.5 },
       "velocidad": { "valor": 40, "unidad": "km/h", "fuente": "default", "confianza": 0.5 },
-      "posicion_inicial": { "x": -20, "y": 0, "rumbo_deg": 0, "procedencia": { "fuente": "default", "confianza": 0.5 } }
+      "posicion_inicial": {
+        "x": -20,
+        "y": 0,
+        "rumbo_deg": 0,
+        "procedencia": { "fuente": "default", "confianza": 0.5 }
+      }
     }
   ],
   "personas": [],
