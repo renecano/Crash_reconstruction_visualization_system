@@ -256,14 +256,18 @@ name = "croquis-eval"
 version = "0.1.0"
 source = { editable = "eval" }
 dependencies = [
+    { name = "croquis-data" },
     { name = "croquis-solver" },
     { name = "numpy" },
+    { name = "polars" },
 ]
 
 [package.metadata]
 requires-dist = [
+    { name = "croquis-data", editable = "data" },
     { name = "croquis-solver", editable = "solver" },
     { name = "numpy", specifier = ">=2.5,<3" },
+    { name = "polars", specifier = ">=2.0,<3" },
 ]
 
 [[package]]

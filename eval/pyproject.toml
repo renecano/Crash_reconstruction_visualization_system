@@ -5,11 +5,17 @@ description = "Evaluaciones E1–E9: scripts reproducibles cuyas salidas version
 requires-python = ">=3.14"
 dependencies = [
   "croquis-solver",
+  "croquis-data",
   "numpy>=2.5,<3",
+  "polars>=2.0,<3",
 ]
 
 [tool.uv.sources]
 croquis-solver = { workspace = true }
+croquis-data = { workspace = true }
+
+[project.scripts]
+croquis-eval = "croquis_eval.__main__:main"
 
 [build-system]
 requires = ["hatchling"]
