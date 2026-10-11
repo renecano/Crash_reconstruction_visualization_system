@@ -21,6 +21,11 @@ def main(argv: list[str] | None = None) -> int:
 
         print(run())
         return 0
+    if args.command == "e2-barrier":
+        from croquis_eval.e2_barrier import main as run_e2
+
+        print(run_e2())
+        return 0
     return 2
 
 

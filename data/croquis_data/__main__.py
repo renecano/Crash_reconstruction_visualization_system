@@ -38,7 +38,29 @@ def main(argv: list[str] | None = None) -> int:
     p_vb = veh_sub.add_parser("build", help="Escribe packages/scene-schema/vehicle_classes.json")
     p_vb.add_argument("--check", action="store_true", help="Solo verifica que esté al día")
 
+    p_nh = sub.add_parser("nhtsa", help="NHTSA Vehicle Crash Test Database (API pública)")
+    nh_sub = p_nh.add_subparsers(dest="command", required=True)
+    p_nd = nh_sub.add_parser(
+        "download", help="Descarga pruebas vehículo-contra-barrera a data/raw/nhtsa"
+    )
+    p_nd.add_argument("--workers", type=int, default=4)
+    p_nd.add_argument("--limit", type=int, default=None, help="Solo las primeras N pruebas")
+    nh_sub.add_parser("process", help="Escribe data/processed/nhtsa/vtb_tests.csv")
+
     args = parser.parse_args(argv)
+    if args.source == "nhtsa":
+        from croquis_data import nhtsa_ctd
+
+        if args.command == "download":
+            st = nhtsa_ctd.download(workers=args.workers, limit=args.limit, log=print)
+            print(
+                f"listadas {st.listed}, nuevas {st.fetched}, "
+                f"en caché {st.cached}, fallidas {st.failed}"
+            )
+            return 1 if st.failed else 0
+        n = nhtsa_ctd.process()
+        print(f"{nhtsa_ctd.CSV_PATH}: {n} filas")
+        return 0
     if args.source == "vehicles" and args.command == "build":
         from croquis_data import vehicle_classes as vc
 
