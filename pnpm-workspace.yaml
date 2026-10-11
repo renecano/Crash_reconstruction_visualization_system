@@ -3,6 +3,7 @@ packages:
   - packages/*
 
 allowBuilds:
+  esbuild: true
   sharp: false
   unrs-resolver: false
 
@@ -28,6 +29,11 @@ catalog:
   vite: 8.3.4
   vitest: 5.0.3
   zod: 4.6.5
+
+  ajv: 8.20.0
+  ajv-formats: 3.0.1
+  json-schema-to-zod: 2.8.1
+  tsx: 4.23.15
 
 minimumReleaseAgeExclude:
   - prettier@3.9.10

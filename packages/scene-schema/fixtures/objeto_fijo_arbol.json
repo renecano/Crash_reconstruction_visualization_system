@@ -1,0 +1,623 @@
+{
+  "meta": {
+    "id": "fx-objeto-fijo-arbol",
+    "version_esquema": "1.0.0",
+    "idioma": "es-MX",
+    "semilla": 106,
+    "creado": "2026-10-10T18:25:00-06:00",
+    "titulo": "Salida del camino y choque contra árbol en curva",
+    "origen_relato": "precargado",
+    "sintetico": true,
+    "relato": "Venía por la carretera a Zinacantepec en mi Hilux gris, como a 80. En una curva a la derecha había grava suelta en la orilla, se me fue la camioneta de atrás, frené y derrapé como veinte metros hasta salirme del camino. Le pegué a un árbol grueso con la esquina delantera izquierda. Se abrieron las bolsas de aire. Íbamos dos, los dos con cinturón."
+  },
+  "lugar": {
+    "nombre_via": {
+      "valor": "Carretera Toluca-Zinacantepec",
+      "fuente": "relato",
+      "confianza": 0.7,
+      "evidencia": [
+        {
+          "inicio": 10,
+          "fin": 37,
+          "texto": "la carretera a Zinacantepec"
+        }
+      ]
+    },
+    "tipo_via": {
+      "valor": "curva",
+      "fuente": "relato",
+      "confianza": 0.9,
+      "evidencia": [
+        {
+          "inicio": 67,
+          "fin": 92,
+          "texto": "En una curva a la derecha"
+        }
+      ]
+    },
+    "carriles_por_sentido": {
+      "valor": 1,
+      "fuente": "default",
+      "confianza": 0.5
+    },
+    "ancho_carril": {
+      "valor": 3.5,
+      "unidad": "m",
+      "fuente": "default",
+      "confianza": 0.5
+    },
+    "sentidos": {
+      "valor": "doble_sentido",
+      "fuente": "default",
+      "confianza": 0.6
+    },
+    "acotamiento": {
+      "valor": true,
+      "fuente": "relato",
+      "confianza": 0.6,
+      "evidencia": [
+        {
+          "inicio": 112,
+          "fin": 124,
+          "texto": "en la orilla"
+        }
+      ]
+    },
+    "ancho_acotamiento": {
+      "valor": 1.2,
+      "unidad": "m",
+      "fuente": "default",
+      "confianza": 0.4
+    },
+    "radio_curva": {
+      "valor": 90,
+      "unidad": "m",
+      "rango": [60, 150],
+      "fuente": "supuesto",
+      "confianza": 0.4
+    },
+    "superficie": {
+      "valor": "asfalto",
+      "fuente": "default",
+      "confianza": 0.7
+    },
+    "estado_superficie": {
+      "valor": "grava_suelta",
+      "fuente": "relato",
+      "confianza": 0.85,
+      "evidencia": [
+        {
+          "inicio": 93,
+          "fin": 124,
+          "texto": "había grava suelta en la orilla"
+        }
+      ]
+    },
+    "friccion": {
+      "valor": 0.45,
+      "rango": [0.35, 0.6],
+      "fuente": "default",
+      "confianza": 0.5,
+      "nota": "Asfalto con grava suelta; se refina en F2 con tabla de fricción referenciada."
+    },
+    "dispositivos": []
+  },
+  "entorno": {
+    "clima": {
+      "valor": "despejado",
+      "fuente": "default",
+      "confianza": 0.5
+    },
+    "iluminacion": {
+      "valor": "dia",
+      "fuente": "default",
+      "confianza": 0.5
+    },
+    "objetos": [
+      {
+        "id": "arbol-impacto",
+        "tipo": "arbol",
+        "posicion": {
+          "x": 0,
+          "y": 0
+        },
+        "alto": {
+          "valor": 10,
+          "unidad": "m",
+          "rango": [7, 14],
+          "fuente": "supuesto",
+          "confianza": 0.4
+        },
+        "diametro_tronco": {
+          "valor": 0.5,
+          "unidad": "m",
+          "rango": [0.35, 0.7],
+          "fuente": "relato",
+          "confianza": 0.6,
+          "evidencia": [
+            {
+              "inicio": 231,
+              "fin": 246,
+              "texto": "un árbol grueso"
+            }
+          ]
+        },
+        "material": "vegetal",
+        "procedencia": {
+          "fuente": "relato",
+          "confianza": 0.95,
+          "evidencia": [
+            {
+              "inicio": 220,
+              "fin": 246,
+              "texto": "Le pegué a un árbol grueso"
+            }
+          ]
+        }
+      }
+    ]
+  },
+  "vehiculos": [
+    {
+      "id": "veh-a",
+      "rol": "A",
+      "clase": {
+        "valor": "pickup",
+        "fuente": "relato",
+        "confianza": 0.95,
+        "evidencia": [
+          {
+            "inicio": 41,
+            "fin": 54,
+            "texto": "mi Hilux gris"
+          }
+        ]
+      },
+      "marca": {
+        "valor": "Toyota",
+        "fuente": "relato",
+        "confianza": 0.9,
+        "evidencia": [
+          {
+            "inicio": 44,
+            "fin": 49,
+            "texto": "Hilux"
+          }
+        ]
+      },
+      "modelo": {
+        "valor": "Hilux",
+        "fuente": "relato",
+        "confianza": 0.9,
+        "evidencia": [
+          {
+            "inicio": 44,
+            "fin": 49,
+            "texto": "Hilux"
+          }
+        ]
+      },
+      "color": {
+        "nombre": {
+          "valor": "gris",
+          "fuente": "relato",
+          "confianza": 0.9,
+          "evidencia": [
+            {
+              "inicio": 50,
+              "fin": 54,
+              "texto": "gris"
+            }
+          ]
+        },
+        "hex": "#7d7f82"
+      },
+      "masa": {
+        "valor": 1900,
+        "unidad": "kg",
+        "rango": [1700, 2150],
+        "fuente": "default",
+        "confianza": 0.6
+      },
+      "largo": {
+        "valor": 5.33,
+        "unidad": "m",
+        "fuente": "default",
+        "confianza": 0.6
+      },
+      "ancho": {
+        "valor": 1.86,
+        "unidad": "m",
+        "fuente": "default",
+        "confianza": 0.6
+      },
+      "alto": {
+        "valor": 1.82,
+        "unidad": "m",
+        "fuente": "default",
+        "confianza": 0.6
+      },
+      "distancia_entre_ejes": {
+        "valor": 3.09,
+        "unidad": "m",
+        "fuente": "default",
+        "confianza": 0.6
+      },
+      "maniobra": {
+        "valor": "recto",
+        "fuente": "relato",
+        "confianza": 0.8,
+        "evidencia": [
+          {
+            "inicio": 0,
+            "fin": 22,
+            "texto": "Venía por la carretera"
+          }
+        ]
+      },
+      "velocidad_previa": {
+        "valor": 80,
+        "unidad": "km/h",
+        "rango": [70, 95],
+        "fuente": "relato",
+        "confianza": 0.7,
+        "evidencia": [
+          {
+            "inicio": 56,
+            "fin": 65,
+            "texto": "como a 80"
+          }
+        ]
+      },
+      "frenado": {
+        "aplico": {
+          "valor": true,
+          "fuente": "relato",
+          "confianza": 0.9,
+          "evidencia": [
+            {
+              "inicio": 159,
+              "fin": 174,
+              "texto": "frené y derrapé"
+            }
+          ]
+        },
+        "distancia_antes_impacto": {
+          "valor": 20,
+          "unidad": "m",
+          "rango": [15, 25],
+          "fuente": "relato",
+          "confianza": 0.6,
+          "evidencia": [
+            {
+              "inicio": 175,
+              "fin": 193,
+              "texto": "como veinte metros"
+            }
+          ]
+        },
+        "bloqueo_llantas": {
+          "valor": true,
+          "fuente": "relato",
+          "confianza": 0.7,
+          "evidencia": [
+            {
+              "inicio": 167,
+              "fin": 174,
+              "texto": "derrapé"
+            }
+          ]
+        }
+      },
+      "carril": {
+        "valor": 1,
+        "fuente": "default",
+        "confianza": 0.5
+      },
+      "posicion_inicial": {
+        "x": -45,
+        "y": 6,
+        "rumbo_deg": -15,
+        "procedencia": {
+          "fuente": "supuesto",
+          "confianza": 0.5,
+          "nota": "Entrando a la curva a la derecha; el árbol está en el exterior de la curva."
+        }
+      },
+      "posicion_final": {
+        "x": -1.8,
+        "y": 1.1,
+        "rumbo_deg": -40,
+        "procedencia": {
+          "fuente": "relato",
+          "confianza": 0.5,
+          "evidencia": [
+            {
+              "inicio": 220,
+              "fin": 281,
+              "texto": "Le pegué a un árbol grueso con la esquina delantera izquierda"
+            }
+          ]
+        }
+      },
+      "ocupantes": ["per-a1", "per-a2"]
+    }
+  ],
+  "personas": [
+    {
+      "id": "per-a1",
+      "rol": {
+        "valor": "conductor",
+        "fuente": "relato",
+        "confianza": 1,
+        "evidencia": [
+          {
+            "inicio": 0,
+            "fin": 49,
+            "texto": "Venía por la carretera a Zinacantepec en mi Hilux"
+          }
+        ]
+      },
+      "vehiculo_id": "veh-a",
+      "asiento": {
+        "valor": "conductor",
+        "fuente": "supuesto",
+        "confianza": 1
+      },
+      "cinturon": {
+        "valor": true,
+        "fuente": "relato",
+        "confianza": 0.9,
+        "evidencia": [
+          {
+            "inicio": 327,
+            "fin": 347,
+            "texto": "los dos con cinturón"
+          }
+        ]
+      }
+    },
+    {
+      "id": "per-a2",
+      "rol": {
+        "valor": "pasajero",
+        "fuente": "relato",
+        "confianza": 0.95,
+        "evidencia": [
+          {
+            "inicio": 315,
+            "fin": 325,
+            "texto": "Íbamos dos"
+          }
+        ]
+      },
+      "vehiculo_id": "veh-a",
+      "asiento": {
+        "valor": "copiloto",
+        "fuente": "supuesto",
+        "confianza": 0.7
+      },
+      "cinturon": {
+        "valor": true,
+        "fuente": "relato",
+        "confianza": 0.9,
+        "evidencia": [
+          {
+            "inicio": 327,
+            "fin": 347,
+            "texto": "los dos con cinturón"
+          }
+        ]
+      }
+    }
+  ],
+  "eventos": [
+    {
+      "id": "ev-derrape",
+      "orden": 0,
+      "tipo": "derrape",
+      "actores": ["veh-a"],
+      "t": {
+        "valor": -1.6,
+        "unidad": "s",
+        "rango": [-2.2, -1.1],
+        "fuente": "supuesto",
+        "confianza": 0.4
+      },
+      "procedencia": {
+        "fuente": "relato",
+        "confianza": 0.9,
+        "evidencia": [
+          {
+            "inicio": 126,
+            "fin": 157,
+            "texto": "se me fue la camioneta de atrás"
+          }
+        ]
+      }
+    },
+    {
+      "id": "ev-frenado",
+      "orden": 1,
+      "tipo": "inicio_frenado",
+      "actores": ["veh-a"],
+      "t": {
+        "valor": -1.4,
+        "unidad": "s",
+        "rango": [-2, -1],
+        "fuente": "supuesto",
+        "confianza": 0.4
+      },
+      "procedencia": {
+        "fuente": "relato",
+        "confianza": 0.9,
+        "evidencia": [
+          {
+            "inicio": 159,
+            "fin": 164,
+            "texto": "frené"
+          }
+        ]
+      }
+    },
+    {
+      "id": "ev-impacto",
+      "orden": 2,
+      "tipo": "impacto_vehiculo_objeto",
+      "actores": ["veh-a", "arbol-impacto"],
+      "t": {
+        "valor": 0,
+        "unidad": "s",
+        "fuente": "default",
+        "confianza": 1
+      },
+      "zonas_impacto": [
+        {
+          "vehiculo_id": "veh-a",
+          "cdc": {
+            "lado": "F",
+            "zona_horizontal": "L",
+            "zona_vertical": "E",
+            "extension": 5
+          },
+          "pdof_horas": {
+            "valor": 11,
+            "fuente": "supuesto",
+            "confianza": 0.6
+          }
+        }
+      ],
+      "punto_impacto": {
+        "x": -0.25,
+        "y": 0.1
+      },
+      "descripcion": "Esquina delantera izquierda contra el tronco.",
+      "procedencia": {
+        "fuente": "relato",
+        "confianza": 0.95,
+        "evidencia": [
+          {
+            "inicio": 247,
+            "fin": 281,
+            "texto": "con la esquina delantera izquierda"
+          }
+        ]
+      }
+    },
+    {
+      "id": "ev-reposo",
+      "orden": 3,
+      "tipo": "reposo",
+      "actores": ["veh-a"],
+      "t": {
+        "valor": 0.2,
+        "unidad": "s",
+        "fuente": "supuesto",
+        "confianza": 0.5
+      },
+      "procedencia": {
+        "fuente": "supuesto",
+        "confianza": 0.5,
+        "nota": "Un árbol grueso detiene la camioneta casi en el punto de impacto."
+      }
+    }
+  ],
+  "danos_declarados": [
+    {
+      "vehiculo_id": "veh-a",
+      "zona": {
+        "lado": "F",
+        "zona_horizontal": "L",
+        "zona_vertical": "E",
+        "extension": 5
+      },
+      "severidad": "severo",
+      "profundidad_aplastamiento": {
+        "valor": 0.6,
+        "unidad": "m",
+        "rango": [0.4, 0.8],
+        "fuente": "supuesto",
+        "confianza": 0.4
+      },
+      "ancho_danado": {
+        "valor": 0.8,
+        "unidad": "m",
+        "rango": [0.6, 1.0],
+        "fuente": "supuesto",
+        "confianza": 0.4
+      },
+      "vidrios": "estrellados",
+      "bolsas_aire": {
+        "valor": true,
+        "fuente": "relato",
+        "confianza": 0.95,
+        "evidencia": [
+          {
+            "inicio": 283,
+            "fin": 313,
+            "texto": "Se abrieron las bolsas de aire"
+          }
+        ]
+      },
+      "piezas_desprendidas": ["defensa", "faro"],
+      "fugas": ["anticongelante"],
+      "procedencia": {
+        "fuente": "relato",
+        "confianza": 0.8,
+        "evidencia": [
+          {
+            "inicio": 220,
+            "fin": 281,
+            "texto": "Le pegué a un árbol grueso con la esquina delantera izquierda"
+          }
+        ]
+      }
+    }
+  ],
+  "evidencias": [
+    {
+      "id": "evid-derrape",
+      "tipo": "marcas_derrape",
+      "vehiculo_id": "veh-a",
+      "longitud": {
+        "valor": 20,
+        "unidad": "m",
+        "rango": [15, 25],
+        "fuente": "relato",
+        "confianza": 0.6,
+        "evidencia": [
+          {
+            "inicio": 167,
+            "fin": 193,
+            "texto": "derrapé como veinte metros"
+          }
+        ]
+      },
+      "puntos": [
+        {
+          "x": -22,
+          "y": 4.5
+        },
+        {
+          "x": -12,
+          "y": 3.2
+        },
+        {
+          "x": -3,
+          "y": 1.6
+        }
+      ],
+      "procedencia": {
+        "fuente": "relato",
+        "confianza": 0.7,
+        "evidencia": [
+          {
+            "inicio": 167,
+            "fin": 218,
+            "texto": "derrapé como veinte metros hasta salirme del camino"
+          }
+        ]
+      }
+    }
+  ]
+}

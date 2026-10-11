@@ -1,0 +1,697 @@
+{
+  "meta": {
+    "id": "fx-glorieta-incorporacion",
+    "version_esquema": "1.0.0",
+    "idioma": "es-MX",
+    "semilla": 110,
+    "creado": "2026-10-10T18:45:00-06:00",
+    "titulo": "Incorporación a glorieta sin ceder el paso",
+    "origen_relato": "precargado",
+    "sintetico": true,
+    "relato": "Yo ya iba dentro de la glorieta de la Normal en mi Versa gris, como a 30, por el carril de afuera. Una Seltos azul entró a la glorieta sin frenar, como a 25, y me pegó en mi lado derecho, entre la puerta de adelante y la de atrás. Mi carro giró y quedó mirando al centro de la glorieta. Yo iba solo con cinturón; en la Seltos iban dos. El espejo derecho quedó tirado donde chocamos."
+  },
+  "lugar": {
+    "nombre_via": {
+      "valor": "Glorieta de la Normal",
+      "fuente": "relato",
+      "confianza": 0.9,
+      "evidencia": [
+        {
+          "inicio": 20,
+          "fin": 44,
+          "texto": "la glorieta de la Normal"
+        }
+      ]
+    },
+    "tipo_via": {
+      "valor": "glorieta",
+      "fuente": "relato",
+      "confianza": 0.95,
+      "evidencia": [
+        {
+          "inicio": 10,
+          "fin": 31,
+          "texto": "dentro de la glorieta"
+        }
+      ]
+    },
+    "carriles_por_sentido": {
+      "valor": 2,
+      "fuente": "relato",
+      "confianza": 0.8,
+      "evidencia": [
+        {
+          "inicio": 74,
+          "fin": 97,
+          "texto": "por el carril de afuera"
+        }
+      ]
+    },
+    "ancho_carril": {
+      "valor": 3.5,
+      "unidad": "m",
+      "fuente": "default",
+      "confianza": 0.5
+    },
+    "sentidos": {
+      "valor": "un_sentido",
+      "fuente": "default",
+      "confianza": 0.9,
+      "nota": "Las glorietas circulan en un solo sentido (antihorario)."
+    },
+    "radio_curva": {
+      "valor": 25,
+      "unidad": "m",
+      "rango": [18, 35],
+      "fuente": "supuesto",
+      "confianza": 0.4
+    },
+    "banquetas": {
+      "valor": true,
+      "fuente": "default",
+      "confianza": 0.6
+    },
+    "superficie": {
+      "valor": "asfalto",
+      "fuente": "default",
+      "confianza": 0.7
+    },
+    "estado_superficie": {
+      "valor": "seco",
+      "fuente": "default",
+      "confianza": 0.6
+    },
+    "friccion": {
+      "valor": 0.75,
+      "rango": [0.65, 0.85],
+      "fuente": "default",
+      "confianza": 0.6
+    },
+    "dispositivos": [
+      {
+        "id": "ceda-entrada-sur",
+        "tipo": "ceda_el_paso",
+        "posicion": {
+          "x": 0,
+          "y": -6
+        },
+        "orientacion_deg": 90,
+        "aplica_a": ["veh-b"],
+        "procedencia": {
+          "fuente": "default",
+          "confianza": 0.6,
+          "nota": "Las entradas a glorieta llevan ceda el paso; el narrador dice que B entró sin frenar."
+        }
+      }
+    ]
+  },
+  "entorno": {
+    "clima": {
+      "valor": "despejado",
+      "fuente": "default",
+      "confianza": 0.5
+    },
+    "iluminacion": {
+      "valor": "dia",
+      "fuente": "default",
+      "confianza": 0.5
+    },
+    "objetos": [
+      {
+        "id": "arboles-centro",
+        "tipo": "arbol",
+        "posicion": {
+          "x": -14,
+          "y": 20
+        },
+        "alto": {
+          "valor": 8,
+          "unidad": "m",
+          "fuente": "default",
+          "confianza": 0.4
+        },
+        "diametro_tronco": {
+          "valor": 0.35,
+          "unidad": "m",
+          "fuente": "default",
+          "confianza": 0.4
+        },
+        "material": "vegetal",
+        "procedencia": {
+          "fuente": "default",
+          "confianza": 0.4,
+          "nota": "Arbolado típico de la isleta central."
+        }
+      }
+    ]
+  },
+  "vehiculos": [
+    {
+      "id": "veh-a",
+      "rol": "A",
+      "clase": {
+        "valor": "sedan_compacto",
+        "fuente": "relato",
+        "confianza": 0.9,
+        "evidencia": [
+          {
+            "inicio": 48,
+            "fin": 61,
+            "texto": "mi Versa gris"
+          }
+        ]
+      },
+      "marca": {
+        "valor": "Nissan",
+        "fuente": "relato",
+        "confianza": 0.9,
+        "evidencia": [
+          {
+            "inicio": 51,
+            "fin": 56,
+            "texto": "Versa"
+          }
+        ]
+      },
+      "modelo": {
+        "valor": "Versa",
+        "fuente": "relato",
+        "confianza": 0.9,
+        "evidencia": [
+          {
+            "inicio": 51,
+            "fin": 56,
+            "texto": "Versa"
+          }
+        ]
+      },
+      "color": {
+        "nombre": {
+          "valor": "gris",
+          "fuente": "relato",
+          "confianza": 0.9,
+          "evidencia": [
+            {
+              "inicio": 57,
+              "fin": 61,
+              "texto": "gris"
+            }
+          ]
+        },
+        "hex": "#8a8d91"
+      },
+      "masa": {
+        "valor": 1120,
+        "unidad": "kg",
+        "rango": [1050, 1250],
+        "fuente": "default",
+        "confianza": 0.6
+      },
+      "largo": {
+        "valor": 4.5,
+        "unidad": "m",
+        "fuente": "default",
+        "confianza": 0.6
+      },
+      "ancho": {
+        "valor": 1.7,
+        "unidad": "m",
+        "fuente": "default",
+        "confianza": 0.6
+      },
+      "alto": {
+        "valor": 1.5,
+        "unidad": "m",
+        "fuente": "default",
+        "confianza": 0.6
+      },
+      "distancia_entre_ejes": {
+        "valor": 2.6,
+        "unidad": "m",
+        "fuente": "default",
+        "confianza": 0.6
+      },
+      "maniobra": {
+        "valor": "recto",
+        "fuente": "relato",
+        "confianza": 0.85,
+        "evidencia": [
+          {
+            "inicio": 3,
+            "fin": 31,
+            "texto": "ya iba dentro de la glorieta"
+          }
+        ],
+        "nota": "Circulando por el anillo exterior (trayectoria curva)."
+      },
+      "velocidad_previa": {
+        "valor": 30,
+        "unidad": "km/h",
+        "rango": [22, 38],
+        "fuente": "relato",
+        "confianza": 0.7,
+        "evidencia": [
+          {
+            "inicio": 63,
+            "fin": 72,
+            "texto": "como a 30"
+          }
+        ]
+      },
+      "frenado": {
+        "aplico": {
+          "valor": false,
+          "fuente": "supuesto",
+          "confianza": 0.4
+        }
+      },
+      "carril": {
+        "valor": 2,
+        "fuente": "relato",
+        "confianza": 0.9,
+        "evidencia": [
+          {
+            "inicio": 74,
+            "fin": 97,
+            "texto": "por el carril de afuera"
+          }
+        ]
+      },
+      "posicion_inicial": {
+        "x": -12,
+        "y": -3,
+        "rumbo_deg": 15,
+        "procedencia": {
+          "fuente": "supuesto",
+          "confianza": 0.5,
+          "nota": "Sobre el anillo exterior, llegando a la entrada sur desde el oeste."
+        }
+      },
+      "posicion_final": {
+        "x": 3.5,
+        "y": 3,
+        "rumbo_deg": 110,
+        "procedencia": {
+          "fuente": "relato",
+          "confianza": 0.5,
+          "evidencia": [
+            {
+              "inicio": 247,
+              "fin": 285,
+              "texto": "quedó mirando al centro de la glorieta"
+            }
+          ]
+        }
+      },
+      "ocupantes": ["per-a1"]
+    },
+    {
+      "id": "veh-b",
+      "rol": "B",
+      "clase": {
+        "valor": "suv_compacta",
+        "fuente": "relato",
+        "confianza": 0.9,
+        "evidencia": [
+          {
+            "inicio": 99,
+            "fin": 114,
+            "texto": "Una Seltos azul"
+          }
+        ]
+      },
+      "marca": {
+        "valor": "Kia",
+        "fuente": "relato",
+        "confianza": 0.9,
+        "evidencia": [
+          {
+            "inicio": 319,
+            "fin": 325,
+            "texto": "Seltos"
+          }
+        ]
+      },
+      "modelo": {
+        "valor": "Seltos",
+        "fuente": "relato",
+        "confianza": 0.9,
+        "evidencia": [
+          {
+            "inicio": 319,
+            "fin": 325,
+            "texto": "Seltos"
+          }
+        ]
+      },
+      "color": {
+        "nombre": {
+          "valor": "azul",
+          "fuente": "relato",
+          "confianza": 0.9,
+          "evidencia": [
+            {
+              "inicio": 110,
+              "fin": 114,
+              "texto": "azul"
+            }
+          ]
+        },
+        "hex": "#1d4ea1"
+      },
+      "masa": {
+        "valor": 1350,
+        "unidad": "kg",
+        "rango": [1250, 1500],
+        "fuente": "default",
+        "confianza": 0.6
+      },
+      "largo": {
+        "valor": 4.37,
+        "unidad": "m",
+        "fuente": "default",
+        "confianza": 0.6
+      },
+      "ancho": {
+        "valor": 1.8,
+        "unidad": "m",
+        "fuente": "default",
+        "confianza": 0.6
+      },
+      "alto": {
+        "valor": 1.62,
+        "unidad": "m",
+        "fuente": "default",
+        "confianza": 0.6
+      },
+      "distancia_entre_ejes": {
+        "valor": 2.63,
+        "unidad": "m",
+        "fuente": "default",
+        "confianza": 0.6
+      },
+      "maniobra": {
+        "valor": "incorporacion",
+        "fuente": "relato",
+        "confianza": 0.95,
+        "evidencia": [
+          {
+            "inicio": 115,
+            "fin": 145,
+            "texto": "entró a la glorieta sin frenar"
+          }
+        ]
+      },
+      "velocidad_previa": {
+        "valor": 25,
+        "unidad": "km/h",
+        "rango": [18, 35],
+        "fuente": "relato",
+        "confianza": 0.6,
+        "evidencia": [
+          {
+            "inicio": 147,
+            "fin": 156,
+            "texto": "como a 25"
+          }
+        ]
+      },
+      "frenado": {
+        "aplico": {
+          "valor": false,
+          "fuente": "relato",
+          "confianza": 0.8,
+          "evidencia": [
+            {
+              "inicio": 135,
+              "fin": 145,
+              "texto": "sin frenar"
+            }
+          ]
+        }
+      },
+      "carril": {
+        "valor": 1,
+        "fuente": "default",
+        "confianza": 0.5
+      },
+      "posicion_inicial": {
+        "x": 0,
+        "y": -14,
+        "rumbo_deg": 80,
+        "procedencia": {
+          "fuente": "supuesto",
+          "confianza": 0.5,
+          "nota": "Entrando desde el sur hacia el anillo."
+        }
+      },
+      "posicion_final": {
+        "x": 1.0,
+        "y": -2.5,
+        "rumbo_deg": 70,
+        "procedencia": {
+          "fuente": "supuesto",
+          "confianza": 0.4
+        }
+      },
+      "ocupantes": ["per-b1", "per-b2"]
+    }
+  ],
+  "personas": [
+    {
+      "id": "per-a1",
+      "rol": {
+        "valor": "conductor",
+        "fuente": "relato",
+        "confianza": 1,
+        "evidencia": [
+          {
+            "inicio": 287,
+            "fin": 311,
+            "texto": "Yo iba solo con cinturón"
+          }
+        ]
+      },
+      "vehiculo_id": "veh-a",
+      "asiento": {
+        "valor": "conductor",
+        "fuente": "supuesto",
+        "confianza": 1
+      },
+      "cinturon": {
+        "valor": true,
+        "fuente": "relato",
+        "confianza": 0.95,
+        "evidencia": [
+          {
+            "inicio": 294,
+            "fin": 311,
+            "texto": "solo con cinturón"
+          }
+        ]
+      }
+    },
+    {
+      "id": "per-b1",
+      "rol": {
+        "valor": "conductor",
+        "fuente": "relato",
+        "confianza": 0.95,
+        "evidencia": [
+          {
+            "inicio": 313,
+            "fin": 334,
+            "texto": "en la Seltos iban dos"
+          }
+        ]
+      },
+      "vehiculo_id": "veh-b",
+      "asiento": {
+        "valor": "conductor",
+        "fuente": "supuesto",
+        "confianza": 0.95
+      }
+    },
+    {
+      "id": "per-b2",
+      "rol": {
+        "valor": "pasajero",
+        "fuente": "relato",
+        "confianza": 0.95,
+        "evidencia": [
+          {
+            "inicio": 326,
+            "fin": 334,
+            "texto": "iban dos"
+          }
+        ]
+      },
+      "vehiculo_id": "veh-b",
+      "asiento": {
+        "valor": "copiloto",
+        "fuente": "supuesto",
+        "confianza": 0.6
+      }
+    }
+  ],
+  "eventos": [
+    {
+      "id": "ev-impacto",
+      "orden": 0,
+      "tipo": "impacto_vehiculo_vehiculo",
+      "actores": ["veh-b", "veh-a"],
+      "t": {
+        "valor": 0,
+        "unidad": "s",
+        "fuente": "default",
+        "confianza": 1
+      },
+      "zonas_impacto": [
+        {
+          "vehiculo_id": "veh-b",
+          "cdc": {
+            "lado": "F",
+            "zona_horizontal": "D",
+            "zona_vertical": "E",
+            "extension": 2
+          },
+          "pdof_horas": {
+            "valor": 12,
+            "fuente": "supuesto",
+            "confianza": 0.6
+          }
+        },
+        {
+          "vehiculo_id": "veh-a",
+          "cdc": {
+            "lado": "R",
+            "zona_horizontal": "P",
+            "zona_vertical": "E",
+            "extension": 3
+          },
+          "pdof_horas": {
+            "valor": 3,
+            "fuente": "supuesto",
+            "confianza": 0.6
+          }
+        }
+      ],
+      "punto_impacto": {
+        "x": 0,
+        "y": -2.6
+      },
+      "descripcion": "Frente de B contra el costado derecho de A, entre puertas.",
+      "procedencia": {
+        "fuente": "relato",
+        "confianza": 0.95,
+        "evidencia": [
+          {
+            "inicio": 160,
+            "fin": 229,
+            "texto": "me pegó en mi lado derecho, entre la puerta de adelante y la de atrás"
+          }
+        ]
+      }
+    },
+    {
+      "id": "ev-giro-a",
+      "orden": 1,
+      "tipo": "giro",
+      "actores": ["veh-a"],
+      "procedencia": {
+        "fuente": "relato",
+        "confianza": 0.85,
+        "evidencia": [
+          {
+            "inicio": 231,
+            "fin": 244,
+            "texto": "Mi carro giró"
+          }
+        ]
+      }
+    },
+    {
+      "id": "ev-reposo",
+      "orden": 2,
+      "tipo": "reposo",
+      "actores": ["veh-a", "veh-b"],
+      "procedencia": {
+        "fuente": "relato",
+        "confianza": 0.7,
+        "evidencia": [
+          {
+            "inicio": 247,
+            "fin": 285,
+            "texto": "quedó mirando al centro de la glorieta"
+          }
+        ]
+      }
+    }
+  ],
+  "danos_declarados": [
+    {
+      "vehiculo_id": "veh-a",
+      "zona": {
+        "lado": "R",
+        "zona_horizontal": "P",
+        "zona_vertical": "E",
+        "extension": 3
+      },
+      "severidad": "moderado",
+      "vidrios": "estrellados",
+      "piezas_desprendidas": ["espejo"],
+      "procedencia": {
+        "fuente": "relato",
+        "confianza": 0.8,
+        "evidencia": [
+          {
+            "inicio": 336,
+            "fin": 366,
+            "texto": "El espejo derecho quedó tirado"
+          }
+        ]
+      }
+    },
+    {
+      "vehiculo_id": "veh-b",
+      "zona": {
+        "lado": "F",
+        "zona_horizontal": "D",
+        "zona_vertical": "E",
+        "extension": 2
+      },
+      "severidad": "leve",
+      "vidrios": "intactos",
+      "piezas_desprendidas": ["defensa"],
+      "procedencia": {
+        "fuente": "supuesto",
+        "confianza": 0.5
+      }
+    }
+  ],
+  "evidencias": [
+    {
+      "id": "evid-espejo",
+      "tipo": "restos",
+      "vehiculo_id": "veh-a",
+      "puntos": [
+        {
+          "x": 0.3,
+          "y": -2.2
+        }
+      ],
+      "descripcion": "Espejo derecho de A en el punto de impacto.",
+      "procedencia": {
+        "fuente": "relato",
+        "confianza": 0.85,
+        "evidencia": [
+          {
+            "inicio": 336,
+            "fin": 381,
+            "texto": "El espejo derecho quedó tirado donde chocamos"
+          }
+        ]
+      }
+    }
+  ]
+}

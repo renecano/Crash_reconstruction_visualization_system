@@ -1,0 +1,585 @@
+{
+  "meta": {
+    "id": "fx-poste-noche",
+    "version_esquema": "1.0.0",
+    "idioma": "es-MX",
+    "semilla": 107,
+    "creado": "2026-10-10T18:30:00-06:00",
+    "titulo": "Choque contra poste de concreto de noche con piso mojado",
+    "origen_relato": "precargado",
+    "sintetico": true,
+    "relato": "Era de noche, como a las once, acababa de llover. Iba por Alfredo del Mazo en mi Polo rojo a unos 60. Un perro se me atravesó, di un volantazo a la derecha y el carro se fue de lado; me subí a la banqueta y le pegué de frente a un poste de luz de concreto. Se rompió el parabrisas, se abrió la bolsa de aire y el motor quedó metido. Iba solo con cinturón. Había alumbrado en la avenida."
+  },
+  "lugar": {
+    "nombre_via": {
+      "valor": "Alfredo del Mazo",
+      "fuente": "relato",
+      "confianza": 0.95,
+      "evidencia": [
+        {
+          "inicio": 58,
+          "fin": 74,
+          "texto": "Alfredo del Mazo"
+        }
+      ]
+    },
+    "tipo_via": {
+      "valor": "recta",
+      "fuente": "supuesto",
+      "confianza": 0.6
+    },
+    "carriles_por_sentido": {
+      "valor": 3,
+      "fuente": "default",
+      "confianza": 0.5
+    },
+    "ancho_carril": {
+      "valor": 3.4,
+      "unidad": "m",
+      "fuente": "default",
+      "confianza": 0.5
+    },
+    "sentidos": {
+      "valor": "doble_sentido",
+      "fuente": "default",
+      "confianza": 0.6
+    },
+    "camellon": {
+      "valor": true,
+      "fuente": "default",
+      "confianza": 0.6
+    },
+    "banquetas": {
+      "valor": true,
+      "fuente": "relato",
+      "confianza": 0.95,
+      "evidencia": [
+        {
+          "inicio": 183,
+          "fin": 204,
+          "texto": "me subí a la banqueta"
+        }
+      ]
+    },
+    "guarniciones": {
+      "valor": true,
+      "fuente": "relato",
+      "confianza": 0.8,
+      "evidencia": [
+        {
+          "inicio": 183,
+          "fin": 204,
+          "texto": "me subí a la banqueta"
+        }
+      ]
+    },
+    "superficie": {
+      "valor": "asfalto",
+      "fuente": "default",
+      "confianza": 0.7
+    },
+    "estado_superficie": {
+      "valor": "mojado",
+      "fuente": "relato",
+      "confianza": 0.9,
+      "evidencia": [
+        {
+          "inicio": 31,
+          "fin": 48,
+          "texto": "acababa de llover"
+        }
+      ]
+    },
+    "friccion": {
+      "valor": 0.5,
+      "rango": [0.4, 0.6],
+      "fuente": "default",
+      "confianza": 0.5
+    },
+    "dispositivos": []
+  },
+  "entorno": {
+    "fecha_hora": {
+      "valor": "23:00",
+      "fuente": "relato",
+      "confianza": 0.7,
+      "evidencia": [
+        {
+          "inicio": 14,
+          "fin": 29,
+          "texto": "como a las once"
+        }
+      ]
+    },
+    "clima": {
+      "valor": "nublado",
+      "fuente": "relato",
+      "confianza": 0.6,
+      "evidencia": [
+        {
+          "inicio": 31,
+          "fin": 48,
+          "texto": "acababa de llover"
+        }
+      ],
+      "nota": "Ya no llovía al momento del percance."
+    },
+    "visibilidad": {
+      "valor": 150,
+      "unidad": "m",
+      "rango": [80, 250],
+      "fuente": "supuesto",
+      "confianza": 0.4
+    },
+    "iluminacion": {
+      "valor": "noche_con_alumbrado",
+      "fuente": "relato",
+      "confianza": 0.95,
+      "evidencia": [
+        {
+          "inicio": 356,
+          "fin": 385,
+          "texto": "Había alumbrado en la avenida"
+        }
+      ]
+    },
+    "alumbrado_publico": {
+      "valor": true,
+      "fuente": "relato",
+      "confianza": 0.95,
+      "evidencia": [
+        {
+          "inicio": 356,
+          "fin": 371,
+          "texto": "Había alumbrado"
+        }
+      ]
+    },
+    "objetos": [
+      {
+        "id": "poste-impacto",
+        "tipo": "poste",
+        "posicion": {
+          "x": 0,
+          "y": 0
+        },
+        "alto": {
+          "valor": 9,
+          "unidad": "m",
+          "fuente": "default",
+          "confianza": 0.5
+        },
+        "diametro_tronco": {
+          "valor": 0.3,
+          "unidad": "m",
+          "rango": [0.25, 0.4],
+          "fuente": "default",
+          "confianza": 0.5
+        },
+        "material": "concreto",
+        "procedencia": {
+          "fuente": "relato",
+          "confianza": 0.95,
+          "evidencia": [
+            {
+              "inicio": 228,
+              "fin": 255,
+              "texto": "un poste de luz de concreto"
+            }
+          ]
+        }
+      }
+    ]
+  },
+  "vehiculos": [
+    {
+      "id": "veh-a",
+      "rol": "A",
+      "clase": {
+        "valor": "hatchback",
+        "fuente": "relato",
+        "confianza": 0.9,
+        "evidencia": [
+          {
+            "inicio": 78,
+            "fin": 90,
+            "texto": "mi Polo rojo"
+          }
+        ]
+      },
+      "marca": {
+        "valor": "Volkswagen",
+        "fuente": "relato",
+        "confianza": 0.9,
+        "evidencia": [
+          {
+            "inicio": 81,
+            "fin": 85,
+            "texto": "Polo"
+          }
+        ]
+      },
+      "modelo": {
+        "valor": "Polo",
+        "fuente": "relato",
+        "confianza": 0.9,
+        "evidencia": [
+          {
+            "inicio": 81,
+            "fin": 85,
+            "texto": "Polo"
+          }
+        ]
+      },
+      "color": {
+        "nombre": {
+          "valor": "rojo",
+          "fuente": "relato",
+          "confianza": 0.9,
+          "evidencia": [
+            {
+              "inicio": 86,
+              "fin": 90,
+              "texto": "rojo"
+            }
+          ]
+        },
+        "hex": "#a4151c"
+      },
+      "masa": {
+        "valor": 1100,
+        "unidad": "kg",
+        "rango": [1000, 1250],
+        "fuente": "default",
+        "confianza": 0.6
+      },
+      "largo": {
+        "valor": 4.07,
+        "unidad": "m",
+        "fuente": "default",
+        "confianza": 0.6
+      },
+      "ancho": {
+        "valor": 1.75,
+        "unidad": "m",
+        "fuente": "default",
+        "confianza": 0.6
+      },
+      "alto": {
+        "valor": 1.46,
+        "unidad": "m",
+        "fuente": "default",
+        "confianza": 0.6
+      },
+      "distancia_entre_ejes": {
+        "valor": 2.56,
+        "unidad": "m",
+        "fuente": "default",
+        "confianza": 0.6
+      },
+      "maniobra": {
+        "valor": "cambio_carril_derecha",
+        "fuente": "relato",
+        "confianza": 0.85,
+        "evidencia": [
+          {
+            "inicio": 127,
+            "fin": 155,
+            "texto": "di un volantazo a la derecha"
+          }
+        ]
+      },
+      "velocidad_previa": {
+        "valor": 60,
+        "unidad": "km/h",
+        "rango": [50, 70],
+        "fuente": "relato",
+        "confianza": 0.7,
+        "evidencia": [
+          {
+            "inicio": 91,
+            "fin": 100,
+            "texto": "a unos 60"
+          }
+        ]
+      },
+      "frenado": {
+        "aplico": {
+          "valor": true,
+          "fuente": "supuesto",
+          "confianza": 0.4,
+          "nota": "No lo dice; se preguntará."
+        }
+      },
+      "luces_encendidas": {
+        "valor": true,
+        "fuente": "supuesto",
+        "confianza": 0.8,
+        "nota": "De noche; se asume luces encendidas."
+      },
+      "carril": {
+        "valor": 3,
+        "fuente": "default",
+        "confianza": 0.5
+      },
+      "posicion_inicial": {
+        "x": -35,
+        "y": -4.5,
+        "rumbo_deg": 0,
+        "procedencia": {
+          "fuente": "supuesto",
+          "confianza": 0.5,
+          "nota": "Carril derecho; el poste está sobre la banqueta."
+        }
+      },
+      "posicion_final": {
+        "x": -2.0,
+        "y": -0.3,
+        "rumbo_deg": 15,
+        "procedencia": {
+          "fuente": "relato",
+          "confianza": 0.6,
+          "evidencia": [
+            {
+              "inicio": 207,
+              "fin": 236,
+              "texto": "le pegué de frente a un poste"
+            }
+          ]
+        }
+      },
+      "ocupantes": ["per-a1"]
+    }
+  ],
+  "personas": [
+    {
+      "id": "per-a1",
+      "rol": {
+        "valor": "conductor",
+        "fuente": "relato",
+        "confianza": 1,
+        "evidencia": [
+          {
+            "inicio": 333,
+            "fin": 354,
+            "texto": "Iba solo con cinturón"
+          }
+        ]
+      },
+      "vehiculo_id": "veh-a",
+      "asiento": {
+        "valor": "conductor",
+        "fuente": "supuesto",
+        "confianza": 1
+      },
+      "cinturon": {
+        "valor": true,
+        "fuente": "relato",
+        "confianza": 0.95,
+        "evidencia": [
+          {
+            "inicio": 342,
+            "fin": 354,
+            "texto": "con cinturón"
+          }
+        ]
+      }
+    }
+  ],
+  "eventos": [
+    {
+      "id": "ev-volantazo",
+      "orden": 0,
+      "tipo": "derrape",
+      "actores": ["veh-a"],
+      "t": {
+        "valor": -1.5,
+        "unidad": "s",
+        "rango": [-2.5, -1],
+        "fuente": "supuesto",
+        "confianza": 0.4
+      },
+      "descripcion": "Volantazo a la derecha para esquivar un perro; el auto pierde adherencia en piso mojado.",
+      "procedencia": {
+        "fuente": "relato",
+        "confianza": 0.9,
+        "evidencia": [
+          {
+            "inicio": 127,
+            "fin": 181,
+            "texto": "di un volantazo a la derecha y el carro se fue de lado"
+          }
+        ]
+      }
+    },
+    {
+      "id": "ev-impacto",
+      "orden": 1,
+      "tipo": "impacto_vehiculo_objeto",
+      "actores": ["veh-a", "poste-impacto"],
+      "t": {
+        "valor": 0,
+        "unidad": "s",
+        "fuente": "default",
+        "confianza": 1
+      },
+      "zonas_impacto": [
+        {
+          "vehiculo_id": "veh-a",
+          "cdc": {
+            "lado": "F",
+            "zona_horizontal": "C",
+            "zona_vertical": "E",
+            "extension": 5
+          },
+          "pdof_horas": {
+            "valor": 12,
+            "fuente": "supuesto",
+            "confianza": 0.7
+          }
+        }
+      ],
+      "punto_impacto": {
+        "x": -0.15,
+        "y": 0
+      },
+      "descripcion": "Impacto frontal centrado contra poste de concreto (barrera estrecha).",
+      "procedencia": {
+        "fuente": "relato",
+        "confianza": 0.95,
+        "evidencia": [
+          {
+            "inicio": 207,
+            "fin": 255,
+            "texto": "le pegué de frente a un poste de luz de concreto"
+          }
+        ]
+      }
+    },
+    {
+      "id": "ev-reposo",
+      "orden": 2,
+      "tipo": "reposo",
+      "actores": ["veh-a"],
+      "t": {
+        "valor": 0.15,
+        "unidad": "s",
+        "fuente": "supuesto",
+        "confianza": 0.6
+      },
+      "procedencia": {
+        "fuente": "supuesto",
+        "confianza": 0.6
+      }
+    }
+  ],
+  "danos_declarados": [
+    {
+      "vehiculo_id": "veh-a",
+      "zona": {
+        "lado": "F",
+        "zona_horizontal": "C",
+        "zona_vertical": "E",
+        "extension": 5
+      },
+      "severidad": "severo",
+      "profundidad_aplastamiento": {
+        "valor": 0.7,
+        "unidad": "m",
+        "rango": [0.5, 0.9],
+        "fuente": "relato",
+        "confianza": 0.5,
+        "evidencia": [
+          {
+            "inicio": 310,
+            "fin": 331,
+            "texto": "el motor quedó metido"
+          }
+        ]
+      },
+      "ancho_danado": {
+        "valor": 0.5,
+        "unidad": "m",
+        "rango": [0.4, 0.7],
+        "fuente": "supuesto",
+        "confianza": 0.5
+      },
+      "vidrios": "rotos",
+      "bolsas_aire": {
+        "valor": true,
+        "fuente": "relato",
+        "confianza": 0.95,
+        "evidencia": [
+          {
+            "inicio": 282,
+            "fin": 307,
+            "texto": "se abrió la bolsa de aire"
+          }
+        ]
+      },
+      "piezas_desprendidas": ["defensa", "faro", "cofre"],
+      "fugas": ["anticongelante", "aceite"],
+      "descripcion": "Parabrisas roto, bolsa desplegada, motor desplazado.",
+      "procedencia": {
+        "fuente": "relato",
+        "confianza": 0.9,
+        "evidencia": [
+          {
+            "inicio": 257,
+            "fin": 331,
+            "texto": "Se rompió el parabrisas, se abrió la bolsa de aire y el motor quedó metido"
+          }
+        ]
+      }
+    }
+  ],
+  "evidencias": [
+    {
+      "id": "evid-final",
+      "tipo": "posicion_final",
+      "vehiculo_id": "veh-a",
+      "puntos": [
+        {
+          "x": -2.0,
+          "y": -0.3
+        }
+      ],
+      "descripcion": "El auto queda sobre la banqueta, contra el poste.",
+      "procedencia": {
+        "fuente": "relato",
+        "confianza": 0.7,
+        "evidencia": [
+          {
+            "inicio": 183,
+            "fin": 236,
+            "texto": "me subí a la banqueta y le pegué de frente a un poste"
+          }
+        ]
+      }
+    },
+    {
+      "id": "evid-derrape",
+      "tipo": "marcas_derrape",
+      "vehiculo_id": "veh-a",
+      "puntos": [
+        {
+          "x": -20,
+          "y": -4.5
+        },
+        {
+          "x": -10,
+          "y": -3
+        },
+        {
+          "x": -4,
+          "y": -1
+        }
+      ],
+      "descripcion": "Huellas de derrape curvas hacia la banqueta (supuestas; piso mojado deja poca marca).",
+      "procedencia": {
+        "fuente": "supuesto",
+        "confianza": 0.3
+      }
+    }
+  ]
+}

@@ -26,6 +26,7 @@ jobs:
           cache: pnpm
       - run: pnpm install --frozen-lockfile
       - run: pnpm format:check
+      - run: pnpm --filter @croquis/scene-schema generate:check
       - run: pnpm lint
       - run: pnpm typecheck
       - run: pnpm test
@@ -68,6 +69,7 @@ jobs:
         with:
           enable-cache: true
       - run: uv sync --all-packages --all-groups --locked
+      - run: uv run croquis-scene-schema-generate --check
       - run: uv run ruff check .
       - run: uv run ruff format --check .
       - run: uv run pyright

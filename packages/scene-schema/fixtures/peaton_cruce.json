@@ -1,0 +1,683 @@
+{
+  "meta": {
+    "id": "fx-peaton-cruce",
+    "version_esquema": "1.0.0",
+    "idioma": "es-MX",
+    "semilla": 104,
+    "creado": "2026-10-10T18:15:00-06:00",
+    "titulo": "Atropellamiento en paso peatonal al atardecer",
+    "origen_relato": "precargado",
+    "sintetico": true,
+    "relato": "Iba por la avenida Las Torres en mi Kicks negra, como a 40, ya estaba oscureciendo. Un señor cruzó por el paso de cebra de derecha a izquierda, salió de atrás de un camión estacionado y no lo vi hasta que ya estaba enfrente. Frené a fondo, dejé unos cinco metros de marca, pero lo alcancé a golpear con la parte de enfrente. Cayó como a doce metros adelante. Se me estrelló el parabrisas y se abolló el cofre. Yo iba solo, con cinturón."
+  },
+  "lugar": {
+    "nombre_via": {
+      "valor": "Avenida Las Torres",
+      "fuente": "relato",
+      "confianza": 0.95,
+      "evidencia": [
+        {
+          "inicio": 8,
+          "fin": 29,
+          "texto": "la avenida Las Torres"
+        }
+      ]
+    },
+    "tipo_via": {
+      "valor": "recta",
+      "fuente": "supuesto",
+      "confianza": 0.6
+    },
+    "carriles_por_sentido": {
+      "valor": 2,
+      "fuente": "default",
+      "confianza": 0.5
+    },
+    "ancho_carril": {
+      "valor": 3.4,
+      "unidad": "m",
+      "fuente": "default",
+      "confianza": 0.5
+    },
+    "sentidos": {
+      "valor": "doble_sentido",
+      "fuente": "default",
+      "confianza": 0.6
+    },
+    "camellon": {
+      "valor": true,
+      "fuente": "default",
+      "confianza": 0.5
+    },
+    "banquetas": {
+      "valor": true,
+      "fuente": "default",
+      "confianza": 0.7
+    },
+    "superficie": {
+      "valor": "asfalto",
+      "fuente": "default",
+      "confianza": 0.7
+    },
+    "estado_superficie": {
+      "valor": "seco",
+      "fuente": "default",
+      "confianza": 0.6
+    },
+    "friccion": {
+      "valor": 0.7,
+      "rango": [0.6, 0.8],
+      "fuente": "default",
+      "confianza": 0.6
+    },
+    "dispositivos": [
+      {
+        "id": "paso-peatonal",
+        "tipo": "paso_peatonal",
+        "posicion": {
+          "x": 0,
+          "y": 0
+        },
+        "orientacion_deg": 90,
+        "procedencia": {
+          "fuente": "relato",
+          "confianza": 0.9,
+          "evidencia": [
+            {
+              "inicio": 99,
+              "fin": 119,
+              "texto": "por el paso de cebra"
+            }
+          ]
+        }
+      }
+    ]
+  },
+  "entorno": {
+    "clima": {
+      "valor": "despejado",
+      "fuente": "default",
+      "confianza": 0.5
+    },
+    "iluminacion": {
+      "valor": "atardecer",
+      "fuente": "relato",
+      "confianza": 0.85,
+      "evidencia": [
+        {
+          "inicio": 60,
+          "fin": 82,
+          "texto": "ya estaba oscureciendo"
+        }
+      ]
+    },
+    "alumbrado_publico": {
+      "valor": true,
+      "fuente": "default",
+      "confianza": 0.5
+    },
+    "objetos": [
+      {
+        "id": "camion-estacionado",
+        "tipo": "vehiculo_estacionado",
+        "posicion": {
+          "x": -6,
+          "y": -5.2
+        },
+        "rumbo_deg": 0,
+        "largo": {
+          "valor": 7.5,
+          "unidad": "m",
+          "fuente": "default",
+          "confianza": 0.5
+        },
+        "ancho": {
+          "valor": 2.4,
+          "unidad": "m",
+          "fuente": "default",
+          "confianza": 0.5
+        },
+        "alto": {
+          "valor": 3.2,
+          "unidad": "m",
+          "fuente": "default",
+          "confianza": 0.5
+        },
+        "clase_vehiculo": {
+          "valor": "camion_unitario",
+          "fuente": "relato",
+          "confianza": 0.7,
+          "evidencia": [
+            {
+              "inicio": 162,
+              "fin": 183,
+              "texto": "un camión estacionado"
+            }
+          ]
+        },
+        "procedencia": {
+          "fuente": "relato",
+          "confianza": 0.8,
+          "evidencia": [
+            {
+              "inicio": 144,
+              "fin": 183,
+              "texto": "salió de atrás de un camión estacionado"
+            }
+          ]
+        }
+      }
+    ]
+  },
+  "vehiculos": [
+    {
+      "id": "veh-a",
+      "rol": "A",
+      "clase": {
+        "valor": "suv_compacta",
+        "fuente": "relato",
+        "confianza": 0.9,
+        "evidencia": [
+          {
+            "inicio": 33,
+            "fin": 47,
+            "texto": "mi Kicks negra"
+          }
+        ]
+      },
+      "marca": {
+        "valor": "Nissan",
+        "fuente": "relato",
+        "confianza": 0.9,
+        "evidencia": [
+          {
+            "inicio": 36,
+            "fin": 41,
+            "texto": "Kicks"
+          }
+        ]
+      },
+      "modelo": {
+        "valor": "Kicks",
+        "fuente": "relato",
+        "confianza": 0.9,
+        "evidencia": [
+          {
+            "inicio": 36,
+            "fin": 41,
+            "texto": "Kicks"
+          }
+        ]
+      },
+      "color": {
+        "nombre": {
+          "valor": "negro",
+          "fuente": "relato",
+          "confianza": 0.9,
+          "evidencia": [
+            {
+              "inicio": 42,
+              "fin": 47,
+              "texto": "negra"
+            }
+          ]
+        },
+        "hex": "#141414"
+      },
+      "masa": {
+        "valor": 1200,
+        "unidad": "kg",
+        "rango": [1100, 1350],
+        "fuente": "default",
+        "confianza": 0.6
+      },
+      "largo": {
+        "valor": 4.3,
+        "unidad": "m",
+        "fuente": "default",
+        "confianza": 0.6
+      },
+      "ancho": {
+        "valor": 1.76,
+        "unidad": "m",
+        "fuente": "default",
+        "confianza": 0.6
+      },
+      "alto": {
+        "valor": 1.59,
+        "unidad": "m",
+        "fuente": "default",
+        "confianza": 0.6
+      },
+      "distancia_entre_ejes": {
+        "valor": 2.62,
+        "unidad": "m",
+        "fuente": "default",
+        "confianza": 0.6
+      },
+      "maniobra": {
+        "valor": "recto",
+        "fuente": "relato",
+        "confianza": 0.9,
+        "evidencia": [
+          {
+            "inicio": 0,
+            "fin": 29,
+            "texto": "Iba por la avenida Las Torres"
+          }
+        ]
+      },
+      "velocidad_previa": {
+        "valor": 40,
+        "unidad": "km/h",
+        "rango": [30, 50],
+        "fuente": "relato",
+        "confianza": 0.7,
+        "evidencia": [
+          {
+            "inicio": 49,
+            "fin": 58,
+            "texto": "como a 40"
+          }
+        ]
+      },
+      "frenado": {
+        "aplico": {
+          "valor": true,
+          "fuente": "relato",
+          "confianza": 0.95,
+          "evidencia": [
+            {
+              "inicio": 225,
+              "fin": 238,
+              "texto": "Frené a fondo"
+            }
+          ]
+        },
+        "distancia_antes_impacto": {
+          "valor": 5,
+          "unidad": "m",
+          "rango": [3, 7],
+          "fuente": "relato",
+          "confianza": 0.6,
+          "evidencia": [
+            {
+              "inicio": 245,
+              "fin": 271,
+              "texto": "unos cinco metros de marca"
+            }
+          ]
+        },
+        "bloqueo_llantas": {
+          "valor": true,
+          "fuente": "supuesto",
+          "confianza": 0.5
+        }
+      },
+      "luces_encendidas": {
+        "valor": true,
+        "fuente": "supuesto",
+        "confianza": 0.5
+      },
+      "carril": {
+        "valor": 1,
+        "fuente": "default",
+        "confianza": 0.5
+      },
+      "posicion_inicial": {
+        "x": -28,
+        "y": -1.7,
+        "rumbo_deg": 0,
+        "procedencia": {
+          "fuente": "supuesto",
+          "confianza": 0.5,
+          "nota": "Carril derecho, junto al camión estacionado."
+        }
+      },
+      "posicion_final": {
+        "x": 2.5,
+        "y": -1.7,
+        "rumbo_deg": 0,
+        "procedencia": {
+          "fuente": "supuesto",
+          "confianza": 0.4
+        }
+      },
+      "ocupantes": ["per-a1"]
+    }
+  ],
+  "personas": [
+    {
+      "id": "per-a1",
+      "rol": {
+        "valor": "conductor",
+        "fuente": "relato",
+        "confianza": 1,
+        "evidencia": [
+          {
+            "inicio": 410,
+            "fin": 435,
+            "texto": "Yo iba solo, con cinturón"
+          }
+        ]
+      },
+      "vehiculo_id": "veh-a",
+      "asiento": {
+        "valor": "conductor",
+        "fuente": "supuesto",
+        "confianza": 1
+      },
+      "cinturon": {
+        "valor": true,
+        "fuente": "relato",
+        "confianza": 0.95,
+        "evidencia": [
+          {
+            "inicio": 423,
+            "fin": 435,
+            "texto": "con cinturón"
+          }
+        ]
+      }
+    },
+    {
+      "id": "per-peaton",
+      "rol": {
+        "valor": "peaton",
+        "fuente": "relato",
+        "confianza": 1,
+        "evidencia": [
+          {
+            "inicio": 84,
+            "fin": 98,
+            "texto": "Un señor cruzó"
+          }
+        ]
+      },
+      "edad_aprox": {
+        "valor": 50,
+        "rango": [35, 70],
+        "fuente": "supuesto",
+        "confianza": 0.3,
+        "evidencia": [
+          {
+            "inicio": 84,
+            "fin": 92,
+            "texto": "Un señor"
+          }
+        ]
+      },
+      "estatura": {
+        "valor": 1.68,
+        "unidad": "m",
+        "rango": [1.55, 1.8],
+        "fuente": "default",
+        "confianza": 0.4
+      },
+      "masa": {
+        "valor": 72,
+        "unidad": "kg",
+        "rango": [55, 95],
+        "fuente": "default",
+        "confianza": 0.4
+      },
+      "postura": {
+        "valor": "cruzando",
+        "fuente": "relato",
+        "confianza": 0.95,
+        "evidencia": [
+          {
+            "inicio": 93,
+            "fin": 142,
+            "texto": "cruzó por el paso de cebra de derecha a izquierda"
+          }
+        ]
+      },
+      "direccion_movimiento": {
+        "valor": 90,
+        "unidad": "deg",
+        "fuente": "relato",
+        "confianza": 0.8,
+        "evidencia": [
+          {
+            "inicio": 120,
+            "fin": 142,
+            "texto": "de derecha a izquierda"
+          }
+        ],
+        "nota": "Desde el punto de vista del conductor (rumbo este), su derecha es el sur: cruza hacia el norte."
+      },
+      "velocidad": {
+        "valor": 5,
+        "unidad": "km/h",
+        "rango": [3, 7],
+        "fuente": "default",
+        "confianza": 0.4
+      },
+      "posicion_inicial": {
+        "x": 0,
+        "y": -3.5,
+        "rumbo_deg": 90,
+        "procedencia": {
+          "fuente": "supuesto",
+          "confianza": 0.5
+        }
+      },
+      "posicion_final": {
+        "x": 12,
+        "y": -1.2,
+        "rumbo_deg": 90,
+        "procedencia": {
+          "fuente": "relato",
+          "confianza": 0.6,
+          "evidencia": [
+            {
+              "inicio": 325,
+              "fin": 357,
+              "texto": "Cayó como a doce metros adelante"
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "eventos": [
+    {
+      "id": "ev-frenado",
+      "orden": 0,
+      "tipo": "inicio_frenado",
+      "actores": ["veh-a"],
+      "t": {
+        "valor": -0.5,
+        "unidad": "s",
+        "rango": [-0.8, -0.3],
+        "fuente": "supuesto",
+        "confianza": 0.4
+      },
+      "procedencia": {
+        "fuente": "relato",
+        "confianza": 0.9,
+        "evidencia": [
+          {
+            "inicio": 225,
+            "fin": 238,
+            "texto": "Frené a fondo"
+          }
+        ]
+      }
+    },
+    {
+      "id": "ev-impacto",
+      "orden": 1,
+      "tipo": "impacto_vehiculo_persona",
+      "actores": ["veh-a", "per-peaton"],
+      "t": {
+        "valor": 0,
+        "unidad": "s",
+        "fuente": "default",
+        "confianza": 1
+      },
+      "zonas_impacto": [
+        {
+          "vehiculo_id": "veh-a",
+          "cdc": {
+            "lado": "F",
+            "zona_horizontal": "C",
+            "zona_vertical": "H",
+            "extension": 1
+          },
+          "pdof_horas": {
+            "valor": 12,
+            "fuente": "supuesto",
+            "confianza": 0.6
+          }
+        }
+      ],
+      "punto_impacto": {
+        "x": 0,
+        "y": -1.7
+      },
+      "descripcion": "El frente de A golpea al peatón; contacto con cofre y parabrisas.",
+      "procedencia": {
+        "fuente": "relato",
+        "confianza": 0.9,
+        "evidencia": [
+          {
+            "inicio": 278,
+            "fin": 323,
+            "texto": "lo alcancé a golpear con la parte de enfrente"
+          }
+        ]
+      }
+    },
+    {
+      "id": "ev-reposo",
+      "orden": 2,
+      "tipo": "reposo",
+      "actores": ["veh-a", "per-peaton"],
+      "procedencia": {
+        "fuente": "relato",
+        "confianza": 0.6,
+        "evidencia": [
+          {
+            "inicio": 325,
+            "fin": 357,
+            "texto": "Cayó como a doce metros adelante"
+          }
+        ]
+      }
+    }
+  ],
+  "danos_declarados": [
+    {
+      "vehiculo_id": "veh-a",
+      "zona": {
+        "lado": "F",
+        "zona_horizontal": "C",
+        "zona_vertical": "H",
+        "extension": 1
+      },
+      "severidad": "leve",
+      "vidrios": "estrellados",
+      "bolsas_aire": {
+        "valor": false,
+        "fuente": "supuesto",
+        "confianza": 0.7
+      },
+      "descripcion": "Parabrisas estrellado y cofre abollado.",
+      "procedencia": {
+        "fuente": "relato",
+        "confianza": 0.9,
+        "evidencia": [
+          {
+            "inicio": 359,
+            "fin": 408,
+            "texto": "Se me estrelló el parabrisas y se abolló el cofre"
+          }
+        ]
+      }
+    }
+  ],
+  "evidencias": [
+    {
+      "id": "evid-frenado",
+      "tipo": "marcas_frenado",
+      "vehiculo_id": "veh-a",
+      "longitud": {
+        "valor": 5,
+        "unidad": "m",
+        "rango": [3, 7],
+        "fuente": "relato",
+        "confianza": 0.6,
+        "evidencia": [
+          {
+            "inicio": 250,
+            "fin": 271,
+            "texto": "cinco metros de marca"
+          }
+        ]
+      },
+      "puntos": [
+        {
+          "x": -7.2,
+          "y": -1.7
+        },
+        {
+          "x": -2.2,
+          "y": -1.7
+        }
+      ],
+      "procedencia": {
+        "fuente": "relato",
+        "confianza": 0.7,
+        "evidencia": [
+          {
+            "inicio": 240,
+            "fin": 271,
+            "texto": "dejé unos cinco metros de marca"
+          }
+        ]
+      }
+    },
+    {
+      "id": "evid-proyeccion",
+      "tipo": "distancia_proyeccion",
+      "persona_id": "per-peaton",
+      "longitud": {
+        "valor": 12,
+        "unidad": "m",
+        "rango": [9, 15],
+        "fuente": "relato",
+        "confianza": 0.6,
+        "evidencia": [
+          {
+            "inicio": 330,
+            "fin": 357,
+            "texto": "como a doce metros adelante"
+          }
+        ]
+      },
+      "puntos": [
+        {
+          "x": 0,
+          "y": -1.7
+        },
+        {
+          "x": 12,
+          "y": -1.2
+        }
+      ],
+      "procedencia": {
+        "fuente": "relato",
+        "confianza": 0.6,
+        "evidencia": [
+          {
+            "inicio": 325,
+            "fin": 357,
+            "texto": "Cayó como a doce metros adelante"
+          }
+        ]
+      }
+    }
+  ]
+}
