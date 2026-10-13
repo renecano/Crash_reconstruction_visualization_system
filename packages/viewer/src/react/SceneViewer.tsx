@@ -38,6 +38,9 @@ import { toThree } from "../coords";
 import { environmentFor, type EnvironmentSettings } from "../environment";
 import { QUALITY_PROFILES, type QualityLevel } from "../quality";
 import { attachDebris } from "../debris-scene";
+import { attachRollovers } from "../rollover-scene";
+import { BODY_BASE_URL, loadBodies } from "../body-assets";
+import { attachPeople, variantsFor, type PeopleAttachment } from "../people-scene";
 import { buildSceneGraph } from "../scene-graph";
 import { seatHeight } from "../vehicle-geometry";
 
@@ -60,6 +63,10 @@ export interface SceneViewerProps {
   onRendererInfo?: (info: RendererInfo) => void;
   onError?: (error: Error) => void;
   className?: string;
+  /** Carpeta de los cuerpos de MakeHuman (`personas.json` y los .glb). */
+  bodiesBaseUrl?: string;
+  /** Resultado del montaje de personas (ragdolls calibrados, indicadores). */
+  onPeople?: (people: PeopleAttachment) => void;
 }
 
 /** Muestras de tiempo por cuadro para E6, expuestas en `window.__croquisPerf`. */
@@ -76,6 +83,8 @@ declare global {
     __croquisReady?: boolean;
     /** Restos horneados y agregados a la escena. */
     __croquisDebrisReady?: boolean;
+    __croquisPeopleReady?: boolean;
+    __croquisPeople?: PeopleAttachment;
     /** `performance.now()` del primer cuadro listo (E6: tiempo hasta interactivo). */
     __croquisReadyAt?: number;
   }
@@ -102,6 +111,8 @@ function SceneContent({
   driverVehicleId,
   quality,
   env,
+  bodiesBaseUrl,
+  onPeople,
 }: Omit<SceneViewerProps, "renderer" | "onRendererInfo" | "onError" | "className"> & {
   env: EnvironmentSettings;
 }): ReactElement {
@@ -115,7 +126,7 @@ function SceneContent({
   useEffect(() => {
     let alive = true;
     window.__croquisDebrisReady = false;
-    attachDebris(spec, resultado, graph)
+    Promise.all([attachDebris(spec, resultado, graph), attachRollovers(resultado, graph)])
       .then(() => {
         if (alive) window.__croquisDebrisReady = true;
       })
@@ -127,6 +138,28 @@ function SceneContent({
       alive = false;
     };
   }, [spec, resultado, graph]);
+
+  // Personas: cuerpos de MakeHuman, ocupantes y ragdolls calibrados (se hornean al cargar).
+  useEffect(() => {
+    let alive = true;
+    window.__croquisPeopleReady = false;
+    loadBodies(variantsFor(spec), bodiesBaseUrl ?? BODY_BASE_URL)
+      .then((templates) => attachPeople(spec, resultado, graph, templates))
+      .then((people) => {
+        if (!alive) return;
+        window.__croquisPeople = people;
+        onPeople?.(people);
+        window.__croquisPeopleReady = true;
+      })
+      .catch((err: unknown) => {
+        // Sin cuerpos (p. ej. sin red) quedan los maniquíes del grafo de escena.
+        console.error("No se pudieron cargar los cuerpos", err);
+        if (alive) window.__croquisPeopleReady = true;
+      });
+    return () => {
+      alive = false;
+    };
+  }, [spec, resultado, graph, bodiesBaseUrl, onPeople]);
 
   const { scene, camera: cam, gl } = useThree();
   const bounds = useMemo(() => actionBounds(resultado), [resultado]);
@@ -290,7 +323,7 @@ function PerfProbe({ backend }: { backend: () => RendererInfo["backend"] | undef
       perf.triangles = info.render?.triangles;
       info.reset?.();
     }
-    if (!window.__croquisDebrisReady) return;
+    if (!window.__croquisDebrisReady || !window.__croquisPeopleReady) return;
     if (!window.__croquisReady) window.__croquisReadyAt = performance.now();
     window.__croquisReady = true;
   });

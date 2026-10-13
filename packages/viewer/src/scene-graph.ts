@@ -79,8 +79,11 @@ export interface SceneGraph {
   persons: PersonNode[];
   /** Coloca la escena en el instante t (s, relativo al impacto). */
   update(t: number): void;
-  /** Registra una actualización adicional (p. ej. restos horneados que llegan después). */
-  addUpdater(fn: (t: number) => void): void;
+  /**
+   * Registra una actualización adicional (p. ej. restos horneados que llegan después). Con
+   * `after`, corre después de colocar los vehículos (p. ej. la volcadura que los sobrescribe).
+   */
+  addUpdater(fn: (t: number) => void, opts?: { after?: boolean }): void;
   /** Último instante aplicado. */
   readonly time: number;
   dispose(): void;
@@ -325,6 +328,7 @@ export function buildSceneGraph(
   const objGroup = new Group();
   objGroup.name = "objetos";
   const seedText = String(spec.meta.semilla);
+  const solverObjects = new Map((resultado.objetos ?? []).map((g) => [g.id, g]));
   let trees = 0;
   for (const o of spec.entorno.objetos ?? []) {
     const g = new Group();
@@ -334,17 +338,19 @@ export function buildSceneGraph(
     const alto = o.alto ? longitudM(o.alto) : undefined;
     if (o.tipo === "arbol") {
       if (trees++ >= opts.quality.maxTrees) continue;
+      // Geometría del solver (la misma del análisis de visibilidad); sin ella, la del hash.
+      const geo = solverObjects.get(o.id);
       const d = o.diametro_tronco ? longitudM(o.diametro_tronco) : 0.35;
       const u = hash01(`${seedText}:${o.id}`);
-      const h = 3.5 + 2.5 * u;
+      const h = geo?.copa?.tronco_alto_m ?? 3.5 + 2.5 * u;
       const trunk = new Mesh(new CylinderGeometry(d / 2, (d / 2) * 1.15, h, 12), mats.trunk);
       trunk.name = "tronco";
       trunk.position.y = h / 2;
       trunk.userData.radius = d / 2;
-      const crownR = 1.8 + 1.6 * u + 2 * d;
+      const crownR = geo?.copa?.radio_m ?? 1.8 + 1.6 * u + 2 * d;
       const crown = new Mesh(new IcosahedronGeometry(crownR, 1), mats.crown);
       crown.name = "copa";
-      crown.position.y = h + crownR * 0.7;
+      crown.position.y = geo?.copa?.centro_m ?? h + crownR * 0.7;
       crown.rotation.y = 2 * Math.PI * u;
       for (const m of [trunk, crown]) m.castShadow = true;
       g.add(trunk, crown);
@@ -606,6 +612,7 @@ export function buildSceneGraph(
   const vehicleNodes = new Map(vehicles.map((n) => [n.id, n]));
 
   const extraUpdaters: ((t: number) => void)[] = [];
+  const postUpdaters: ((t: number) => void)[] = [];
   let lastT = resultado.t_inicio;
 
   function update(t: number): void {
@@ -620,7 +627,8 @@ export function buildSceneGraph(
       const pose = sampleVehicle(n.track, t);
       const [x, y, z] = toThree(pose.x, pose.y, 0);
       n.group.position.set(x, y, z);
-      n.group.rotation.y = pose.yaw;
+      // Rotación completa: la volcadura (actualización posterior) puede dejar alabeo y cabeceo.
+      n.group.rotation.set(0, pose.yaw, 0);
       const { i, f } = bracket(n.track.t, t);
       const s =
         (n.distance[i] ?? 0) +
@@ -638,7 +646,9 @@ export function buildSceneGraph(
         n.group.position.set(x, y, z);
         n.group.rotation.y = pose.yaw;
         const fase = phaseAt(data.fases, t);
-        const posture = (fase?.fase ?? "de_pie") as Posture;
+        const posture = (
+          fase?.fase === "montado" ? "sentado" : (fase?.fase ?? "de_pie")
+        ) as Posture;
         const progress =
           fase && fase.t_fin > fase.t_inicio
             ? (t - fase.t_inicio) / (fase.t_fin - fase.t_inicio)
@@ -660,6 +670,7 @@ export function buildSceneGraph(
         applyPosture(n.group, "sentado");
       }
     }
+    for (const fn of postUpdaters) fn(t);
   }
 
   update(resultado.t_inicio);
@@ -679,9 +690,9 @@ export function buildSceneGraph(
     vehicles,
     persons,
     update,
-    addUpdater(fn: (t: number) => void) {
-      extraUpdaters.push(fn);
-      fn(lastT);
+    addUpdater(fn: (t: number) => void, o?: { after?: boolean }) {
+      (o?.after ? postUpdaters : extraUpdaters).push(fn);
+      update(lastT);
     },
     get time() {
       return lastT;
