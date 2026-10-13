@@ -5,9 +5,9 @@ Reglas de trabajo: `CLAUDE.md`. Especificación: `PLAN.md`.
 
 ## Estado actual
 
-- **Fase actual:** F3 — Visor base (cerrando: PR #5 de `feat/f3-visor`, falta CI verde y merge).
-- **Siguiente paso concreto:** merge del PR #5 y arrancar **F4 — Daño** (PLAN §7.3: deformación desde el perfil C1–C6 del solver sobre las piezas nombradas de los vehículos procedurales, vidrios, piezas desprendidas, transferencia de pintura, bolsas de aire y marcas en el piso; prueba numérica de que el perfil del visor coincide con el del solver).
-- **F0** cerrado el 2026-10-10 (PR #1), **F1** el 2026-10-10 (PR #3), **F2** el 2026-10-13 (PR #4).
+- **Fase actual:** F4 — Daño (cerrando: PR #6 de `feat/f4-dano`, falta CI verde y merge).
+- **Siguiente paso concreto:** merge del PR #6 y arrancar **F5 — Personas y visibilidad** (PLAN §7.4 y módulos 6.1.6–6.1.9: cuerpos articulados con ragdoll Rapier, ocupantes, volcadura ilustrativa, análisis de visibilidad; criterio: proyección del ragdoll dentro de los límites de Searle en ≥ 95 % de corridas con semilla, E4 corrido, visibilidad probada en la escena del árbol).
+- **F0** cerrado el 2026-10-10 (PR #1), **F1** el 2026-10-10 (PR #3), **F2** el 2026-10-13 (PR #4), **F3** el 2026-10-13 (PR #5).
 
 ### Bloqueado — necesita a René
 
@@ -283,3 +283,66 @@ Criterio de aceptación F3 (PLAN §13): las 10 escenas se ven ✔ (e2e); captura
 - **Qué quedó:** las diez escenas se ven en 3D en `/visor`, con línea de tiempo, cámaras y la tabla de resultados; el solver ahora coloca bien el contacto entre vehículos y la geometría de las escenas es coherente con cada relato.
 - **Cómo probarlo:** `pnpm dev` y abre http://localhost:3000/visor; cambia de escena y de cámara, reproduce en cámara lenta y salta a los eventos. Para medir el rendimiento: `pnpm --filter @croquis/web build` y `node eval/e6_performance.mjs`.
 - **Qué necesito de ti:** nada para F4–F5.
+
+## F4 — Daño
+
+### Plan
+
+Archivos: `dano.centro_m` en el resultado (esquema 1.1.0), carrocerías densas por secciones (`loft.ts`), campo de deformación y medición del perfil (`damage.ts`), materiales de daño en TSL (`damage-material.ts`), rig de daño por vehículo (`damage-rig.ts`), bolsas de aire (`airbag.ts`), marcas en el piso (`ground-marks.ts`), restos con Rapier (`debris.ts`, `debris-scene.ts`), cámara de acercamiento al daño, panel con bolsas de aire, capturas de daño, ADR 0007.
+
+Pruebas: perfil C1–C6 medido sobre la malla deformada contra el del solver en las 10 escenas; propiedad de compresión sin pliegues; umbrales del IIHS; reglas de faros, parabrisas y bolsas en escenas reales; marcas por tiempo; horneado de Rapier reproducible; capturas de daño por escena en Linux.
+
+Riesgos: (1) mallas sin vértices interiores → loft denso. (2) convención de C1 → fijada en el esquema y probada con un perfil asimétrico. (3) costo del daño en GPU integrada → E6 repetido.
+
+### Hecho
+
+- **Deformación plástica** desde el perfil del solver, horneada como morph target y animada en los 0.12 s de contacto; llantas que se recorren si el aplastamiento las alcanza.
+- **Superficie** en TSL: transferencia de pintura en vetas, rayones con metal expuesto y abolladuras finas.
+- **Vidrios:** parabrisas agrietado en telaraña (cabeza del peatón o frente aplastado ≥ 0.3 m), vidrios laterales que estallan, faros rotos con astillas.
+- **Piezas desprendidas y restos** con Rapier determinista horneado (defensas, espejos, plásticos en el punto de impacto).
+- **Bolsas de aire** con umbrales del IIHS (ΔV como sustituto de la velocidad equivalente contra barrera), visibles en la escena y explicadas en el panel.
+- **Marcas en el piso** desde las trayectorias: frenado sin ABS, derrape y guiñada después del impacto, charcos de radiador.
+- **Cámara** «Acercamiento al daño» y noches legibles (luz ambiental de alumbrado o de luna).
+
+### Evidencia (local, Windows, 2026-10-13)
+
+| Comando                               | Resultado                                                                                                        |
+| ------------------------------------- | ---------------------------------------------------------------------------------------------------------------- |
+| `uv run pytest`                       | **244 pruebas** en verde                                                                                         |
+| `pnpm test`                           | **311 pruebas** en verde (visor 139)                                                                             |
+| `pnpm --filter @croquis/web test:e2e` | 16 pruebas en verde en Windows; en CI (Linux) corren las 36, incluidas 20 capturas (10 del impacto y 10 de daño) |
+| `node eval/e6_performance.mjs`        | `eval/results/e6_performance.json` (con daño)                                                                    |
+
+Prueba numérica de F4: en las 10 escenas, el perfil medido sobre la malla de cada vehículo dañado coincide con el C1–C6 del solver dentro de 2 cm o 6 % (motos y bicis excluidas: su deformación es ilustrativa).
+
+E6 con daño (`eval/results/e6_performance.json`, mejor de 2 corridas por configuración, 1920×1080, cámara en movimiento, sin tope de vsync):
+
+| Backend | Calidad | fps mínimo entre escenas | fps mediana | Escena más lenta     |
+| ------- | ------- | -----------------------: | ----------: | -------------------- |
+| WebGPU  | baja    |                     92.5 |       147.4 | lateral_interseccion |
+| WebGPU  | media   |                     39.2 |        66.4 | frontal_curva        |
+| WebGPU  | alta    |                     24.1 |        30.1 | glorieta             |
+| WebGL 2 | baja    |                    174.2 |       242.8 | glorieta             |
+| WebGL 2 | media   |                     69.4 |        79.2 | peaton_cruce         |
+| WebGL 2 | alta    |                       33 |        42.6 | glorieta             |
+
+Con la política automática por escena (WebGPU si alcanza 60 fps; si no, el más rápido): calidad media **64.4 fps** mínimo (WebGL 2 y WebGPU; escena más lenta lateral_interseccion); alta **33 fps** (WebGL 2); carga inicial máxima **2.36 MB** (incluye el WASM de Rapier). Presupuesto: media ≥ 60 ✔, alta ≥ 30 ✔, ≤ 8 MB ✔.
+
+Criterio de aceptación F4 (PLAN §13): capturas de daño por escena ✔; perfil C1–C6 del visor coincide con el del solver (prueba numérica sobre la malla) ✔.
+
+### Pendientes registrados
+
+- Calibrar las reglas ilustrativas (faros, parabrisas, piezas, vidrios, bolsas) con E5/BeamNG en F10.
+- Colisiones de restos con banquetas elevadas (hoy el piso de colisión es plano).
+- Deformación de motos y bicis con su propio modelo (hoy ilustrativa) cuando el solver tenga rigideces para dos ruedas.
+- Fluidos distintos del radiador y marcas de arrastre de volcadura: F5 (volcadura).
+
+### Decisiones
+
+- Ver ADR 0007: deformación en CPU horneada como morph target (probada numéricamente, exportable a glTF) y efectos de superficie en TSL; reglas ilustrativas declaradas; umbrales de bolsas del IIHS; restos con Rapier determinista horneado.
+
+### Resumen para René (F4)
+
+- **Qué quedó:** cada choque deja el daño que calculó el solver: carrocería hundida con la forma y la profundidad del perfil C1–C6, pintura transferida, vidrios rotos, piezas en el piso, bolsas de aire y marcas.
+- **Cómo probarlo:** `pnpm dev`, abre http://localhost:3000/visor, elige «Acercamiento al daño» y recorre la línea de tiempo alrededor de 0 en cámara lenta.
+- **Qué necesito de ti:** nada para F5.
