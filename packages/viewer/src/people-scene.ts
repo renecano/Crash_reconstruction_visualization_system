@@ -9,12 +9,12 @@
  */
 import type { EscenaSpec, Resultado } from "@croquis/scene-schema";
 import {
-  DoubleSide,
   Group,
-  Mesh,
+  InstancedMesh,
+  Matrix4,
   MeshBasicMaterial,
+  type Object3D,
   Quaternion,
-  RingGeometry,
   TorusGeometry,
   Vector3,
   type Material,
@@ -160,22 +160,56 @@ export function staticColliders(resultado: Resultado): StaticCollider[] {
   return out;
 }
 
-function markerMesh(mats: Material[], radius = 0.09): Group {
-  const g = new Group();
-  g.name = "indicador_contacto";
-  const ringMat = new MeshBasicMaterial({ color: MARKER_COLOR, transparent: true, opacity: 0.85 });
-  const discMat = new MeshBasicMaterial({
+/** Un indicador de contacto: su marco local en un vehículo y su escala en el tiempo. */
+interface MarkerSpec {
+  parent: Object3D;
+  position: Vector3;
+  normal: Vector3;
+  radius: number;
+  scaleAt(t: number): number;
+}
+
+/**
+ * Todos los aros neutros de la escena en una sola `InstancedMesh` (una llamada de dibujo): el
+ * renderer está limitado por CPU por objeto (E6). Cada aro sigue a su vehículo; los que todavía
+ * no aparecen quedan con escala cero.
+ */
+function markerBatch(specs: MarkerSpec[], root: Object3D, mats: Material[]): (t: number) => void {
+  const mat = new MeshBasicMaterial({
     color: MARKER_COLOR,
     transparent: true,
-    opacity: 0.25,
-    side: DoubleSide,
+    opacity: 0.85,
     depthWrite: false,
   });
-  mats.push(ringMat, discMat);
-  const ring = new Mesh(new TorusGeometry(radius, radius * 0.13, 8, 32), ringMat);
-  const disc = new Mesh(new RingGeometry(0, radius, 32), discMat);
-  g.add(ring, disc);
-  return g;
+  mats.push(mat);
+  const mesh = new InstancedMesh(new TorusGeometry(1, 0.16, 8, 32), mat, Math.max(1, specs.length));
+  mesh.name = "indicadores_contacto";
+  mesh.count = specs.length;
+  mesh.frustumCulled = false;
+  root.add(mesh);
+  const locals = specs.map((sp) => {
+    const q = new Quaternion().setFromUnitVectors(
+      new Vector3(0, 0, 1),
+      sp.normal.clone().normalize(),
+    );
+    return { q, p: sp.position.clone() };
+  });
+  const m = new Matrix4();
+  const local = new Matrix4();
+  const inv = new Matrix4();
+  const scale = new Vector3();
+  return (t) => {
+    root.updateWorldMatrix(true, false);
+    inv.copy(root.matrixWorld).invert();
+    specs.forEach((sp, i) => {
+      const k = sp.scaleAt(t) * sp.radius;
+      sp.parent.updateWorldMatrix(true, false);
+      local.compose(locals[i]!.p, locals[i]!.q, scale.setScalar(Math.max(k, 0)));
+      m.multiplyMatrices(inv, sp.parent.matrixWorld).multiply(local);
+      mesh.setMatrixAt(i, m);
+    });
+    mesh.instanceMatrix.needsUpdate = true;
+  };
 }
 
 interface SeatPlacement {
@@ -442,7 +476,7 @@ export async function attachPeople(
   graph.root.add(group);
   const mats: Material[] = [];
   const reports: RagdollReport[] = [];
-  let markers = 0;
+  const markerSpecs: MarkerSpec[] = [];
   const statics = staticColliders(resultado);
   const updaters: ((t: number) => void)[] = [];
 
@@ -480,33 +514,43 @@ export async function attachPeople(
         .multiplyScalar(stature)
         .applyAxisAngle(Y, BODY_TO_HEADING);
       container.position.copy(seat.hip).sub(hipBody);
+      // Dentro de un vehículo cerrado la sombra la da la carrocería: el cuerpo no la proyecta
+      // (ahorra un pase de sombras con piel por ocupante sin cambio visible).
+      inst.mesh.castShadow = false;
       node.group.add(container);
       const variantData =
         data.ocupante.variantes.find(
           (v) => v.cinturon === (data.ocupante?.cinturon_declarado ?? true),
         ) ?? data.ocupante.variantes[0]!;
       const torso = 0.3 * stature;
-      let marker: Group | undefined;
+      const tContactOcc = variantData.contacto?.t_s ?? Infinity;
       if (variantData.contacto) {
-        marker = markerMesh(mats, 0.08);
-        marker.position.copy(
-          contactZonePosition(variantData.contacto.zona, seat.hip, veh.dimensiones.ancho_m),
-        );
-        marker.lookAt(marker.position.clone().add(new Vector3(-1, 0, 0)));
-        marker.scale.setScalar(1e-4);
-        node.group.add(marker);
-        markers++;
+        markerSpecs.push({
+          parent: node.group,
+          position: contactZonePosition(
+            variantData.contacto.zona,
+            seat.hip,
+            veh.dimensiones.ancho_m,
+          ),
+          normal: new Vector3(-1, 0, 0),
+          radius: 0.08,
+          scaleAt: (t) => {
+            const since = t - tContactOcc;
+            return since < 0 ? 0 : since < 0.6 ? 1 + 0.15 * Math.sin(8 * since) : 1;
+          },
+        });
       }
-      const tContact = variantData.contacto?.t_s ?? Infinity;
+      const tLast = variantData.t[variantData.t.length - 1] ?? 0;
+      // La postura solo cambia durante el pulso: se recalcula cuando cambia el instante (1 ms).
+      let lastKey = NaN;
       updaters.push((t) => {
-        const tau = Math.max(0, t);
-        const dx = t < 0 ? 0 : sampleSeries(variantData.t, variantData.dx, tau);
-        const dy = t < 0 ? 0 : sampleSeries(variantData.t, variantData.dy, tau);
-        applyPose(inst.bones, poseFromDirections(bones, occupantLean(base, dx, dy, torso)));
-        if (marker) {
-          const on = t >= tContact;
-          const pulse = on ? 1 + 0.15 * Math.sin(8 * (t - tContact)) : 1e-4;
-          marker.scale.setScalar(pulse);
+        const key = t < 0 ? -1 : Math.round(Math.min(t, tLast) * 1000);
+        if (key !== lastKey) {
+          lastKey = key;
+          const tau = Math.min(Math.max(0, t), tLast);
+          const dx = t < 0 ? 0 : sampleSeries(variantData.t, variantData.dx, tau);
+          const dy = t < 0 ? 0 : sampleSeries(variantData.t, variantData.dy, tau);
+          applyPose(inst.bones, poseFromDirections(bones, occupantLean(base, dx, dy, torso)));
         }
       });
     } else if (data.proyeccion) {
@@ -530,7 +574,15 @@ export async function attachPeople(
         iterations: result.iterations,
         uncalibrated: result.uncalibrated,
       });
+      // Después del reposo del ragdoll la pose ya no cambia.
+      const tHold = result.bake.t0 + (result.bake.steps - 1) * result.bake.dt;
+      let lastRagKey = NaN;
       updaters.push((t) => {
+        if (t >= 0) {
+          const key = Math.round(Math.min(t, tHold) * 1000);
+          if (key === lastRagKey) return;
+          lastRagKey = key;
+        } else lastRagKey = NaN;
         if (t < 0) {
           const pl = placementAt(data, veh, bones, stature, t);
           if (pl) {
@@ -546,7 +598,7 @@ export async function attachPeople(
         }
       });
       // Indicadores de contacto en el frente del vehículo que golpea a la persona peatona.
-      if (setup.kind === "peaton") markers += addPedestrianMarkers(resultado, data, graph, mats);
+      if (setup.kind === "peaton") markerSpecs.push(...pedestrianMarkers(resultado, data, graph));
     } else if (veh && twoWheel) {
       // Jinete que no sale proyectado: montado toda la escena.
       group.add(container);
@@ -587,30 +639,33 @@ export async function attachPeople(
   graph.addUpdater((t) => {
     for (const fn of updaters) fn(t);
   });
+  // Los aros siguen a los vehículos ya colocados: actualización posterior.
+  if (markerSpecs.length > 0)
+    graph.addUpdater(markerBatch(markerSpecs, graph.root, mats), { after: true });
+  const markers = markerSpecs.length;
   return { bodies: group.children.length + markers, ragdolls: reports, markers };
 }
 
 /** Aros neutros donde la defensa, el borde del cofre y la cabeza tocan a la persona peatona. */
-function addPedestrianMarkers(
+function pedestrianMarkers(
   resultado: Resultado,
   data: PersonaResultado,
   graph: SceneGraph,
-  mats: Material[],
-): number {
+): MarkerSpec[] {
   const ev = resultado.eventos.find(
     (e) => e.tipo === "impacto_vehiculo_persona" && e.actores.includes(data.id),
   );
   const vid = ev?.actores.find((a) => a !== data.id);
   const v = vid ? resultado.vehiculos.find((x) => x.id === vid) : undefined;
   const node = vid ? graph.vehicles.find((n) => n.id === vid) : undefined;
-  if (!v || !node || !data.proyeccion) return 0;
+  if (!v || !node || !data.proyeccion) return [];
   const c = data.proyeccion.contacto;
   const L = v.dimensiones.largo_m;
   const H = v.dimensiones.alto_m;
   // Desplazamiento lateral de la persona respecto al eje del vehículo en el impacto.
   const pv = sampleVehicle(v.trayectoria, 0);
   const pp = samplePerson(data.trayectoria, 0);
-  const lateral = pp ? -(-(pp.x - pv.x) * Math.sin(pv.yaw) + (pp.y - pv.y) * Math.cos(pv.yaw)) : 0;
+  const lateral = pp ? (pp.x - pv.x) * Math.sin(pv.yaw) - (pp.y - pv.y) * Math.cos(pv.yaw) : 0;
   const z = Math.max(
     -v.dimensiones.ancho_m / 2 + 0.1,
     Math.min(v.dimensiones.ancho_m / 2 - 0.1, lateral),
@@ -619,26 +674,18 @@ function addPedestrianMarkers(
   if (c.defensa)
     spots.push({ pos: new Vector3(L / 2 + 0.01, 0.32 * H, z), normal: new Vector3(1, 0, 0) });
   if (c.borde_cofre)
-    spots.push({
-      pos: new Vector3(L / 2 - 0.03, 0.55 * H, z),
-      normal: new Vector3(1, 0.5, 0).normalize(),
-    });
+    spots.push({ pos: new Vector3(L / 2 - 0.03, 0.55 * H, z), normal: new Vector3(1, 0.5, 0) });
   if (c.cabeza === "cofre")
     spots.push({ pos: new Vector3(L / 2 - 0.45, 0.6 * H, z), normal: Y.clone() });
   else if (c.cabeza === "parabrisas")
-    spots.push({
-      pos: new Vector3(L / 2 - 0.3 * L, 0.78 * H, z),
-      normal: new Vector3(0.6, 1, 0).normalize(),
-    });
+    spots.push({ pos: new Vector3(L / 2 - 0.3 * L, 0.78 * H, z), normal: new Vector3(0.6, 1, 0) });
   else if (c.cabeza === "techo")
     spots.push({ pos: new Vector3(0, H + 0.01, z), normal: Y.clone() });
-  for (const s of spots) {
-    const m = markerMesh(mats, 0.1);
-    m.position.copy(s.pos);
-    m.lookAt(s.pos.clone().add(s.normal));
-    m.scale.setScalar(1e-4);
-    node.group.add(m);
-    graph.addUpdater((t) => m.scale.setScalar(t >= 0 ? 1 : 1e-4));
-  }
-  return spots.length;
+  return spots.map((sp) => ({
+    parent: node.group,
+    position: sp.pos,
+    normal: sp.normal,
+    radius: 0.1,
+    scaleAt: (t: number) => (t >= 0 ? 1 : 0),
+  }));
 }

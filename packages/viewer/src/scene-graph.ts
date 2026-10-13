@@ -27,6 +27,8 @@ import {
   PlaneGeometry,
   RingGeometry,
 } from "three";
+import { attribute, color, float, mix } from "three/tsl";
+import { MeshStandardNodeMaterial } from "three/webgpu";
 import { toThree } from "./coords";
 import type { EnvironmentSettings } from "./environment";
 import { applyPosture, buildMannequin, CG_HEIGHT_FACTOR } from "./person-geometry";
@@ -135,6 +137,16 @@ function sceneMaterials(opts: SceneGraphOptions) {
   };
 }
 
+/** Llanta y rin con un solo material: el atributo `_parte` elige entre ambos (ver `wheelMesh`). */
+function wheelMaterial(): MeshStandardNodeMaterial {
+  const k = attribute("_parte", "float");
+  const m = new MeshStandardNodeMaterial();
+  m.colorNode = mix(color("#141414"), color("#b9bcc0"), k);
+  m.roughnessNode = mix(float(0.95), float(0.3), k);
+  m.metalnessNode = mix(float(0), float(0.8), k);
+  return m;
+}
+
 function vehicleMaterials(color: string, night: boolean): Record<PartRole, Material> {
   return {
     pintura: new MeshPhysicalMaterial({
@@ -153,6 +165,7 @@ function vehicleMaterials(color: string, night: boolean): Record<PartRole, Mater
     }),
     llanta: std("#141414", 0.95),
     rin: std("#b9bcc0", 0.3, 0.8),
+    rueda: wheelMaterial(),
     faro: std("#f5f3e8", 0.2, 0, {
       emissive: new Color(night ? "#fff6d5" : "#000000"),
       emissiveIntensity: night ? 3 : 0,
@@ -213,6 +226,17 @@ export function mesh2DToGeometry(m: Mesh2D, height: number): BufferGeometry {
 }
 
 /** Hash determinista de una cadena a [0, 1) (FNV-1a), para variar árboles con semilla. */
+/**
+ * ¿La pieza proyecta sombra? El renderer está limitado por CPU por objeto (E6), y cada malla en el
+ * pase de sombras cuesta lo mismo que en el principal. Rines (su sombra cae dentro de la de la
+ * llanta), faros y calaveras (dentro de la silueta de la carrocería) y vidrios (transparentes: no
+ * deberían dar sombra opaca) no la proyectan; la carrocería, llantas, defensas y espejos sí.
+ */
+export function castsShadow(m: { userData: Record<string, unknown> }): boolean {
+  const role = m.userData.role as PartRole | undefined;
+  return role !== "rin" && role !== "faro" && role !== "calavera" && role !== "vidrio";
+}
+
 export function hash01(s: string): number {
   let h = 0x811c9dc5;
   for (let i = 0; i < s.length; i++) {
@@ -492,7 +516,7 @@ export function buildSceneGraph(
     group.traverse((m) => {
       if (m instanceof Mesh) {
         m.material = vm[m.userData.role as PartRole] ?? vm.plastico;
-        m.castShadow = opts.quality.shadows;
+        m.castShadow = opts.quality.shadows && castsShadow(m);
       }
     });
     const rig = buildDamageRig(group, v, dims, glyphs.get(v.id)?.colorHex ?? "#9aa0a6", {
@@ -503,7 +527,7 @@ export function buildSceneGraph(
     });
     disposables.push(...rig.materials);
     group.traverse((m) => {
-      if (m instanceof Mesh) m.castShadow = opts.quality.shadows;
+      if (m instanceof Mesh) m.castShadow = opts.quality.shadows && castsShadow(m);
     });
     const wheels = wheelNames(group).flatMap((n) => {
       const obj = group.getObjectByName(n);

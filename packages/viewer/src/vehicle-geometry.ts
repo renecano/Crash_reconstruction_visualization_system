@@ -11,7 +11,15 @@
  * Marco local: origen en el centro de la planta (punto que sigue el solver) a nivel del piso,
  * +x al frente, +y arriba, −z a la izquierda (consistente con `coords.ts`).
  */
-import { BoxGeometry, BufferGeometry, CylinderGeometry, Group, Mesh, TorusGeometry } from "three";
+import {
+  BoxGeometry,
+  BufferGeometry,
+  CylinderGeometry,
+  Float32BufferAttribute,
+  Group,
+  Mesh,
+  TorusGeometry,
+} from "three";
 import { mergeGeometries } from "three/examples/jsm/utils/BufferGeometryUtils.js";
 import { loftGeometry, stationsAlong } from "./loft";
 
@@ -24,7 +32,16 @@ function ramp(x: number, a: number, b: number): number {
 }
 
 export type PartRole =
-  "pintura" | "vidrio" | "llanta" | "rin" | "faro" | "calavera" | "plastico" | "cromo" | "carga";
+  | "pintura"
+  | "vidrio"
+  | "llanta"
+  | "rin"
+  | "rueda"
+  | "faro"
+  | "calavera"
+  | "plastico"
+  | "cromo"
+  | "carga";
 
 export interface VehicleDimensions {
   length: number;
@@ -238,19 +255,27 @@ function box(
   return m;
 }
 
+/**
+ * Llanta y rin en una sola malla (rol `rueda`): el atributo `_parte` (0 llanta, 1 rin) elige color,
+ * rugosidad y metalicidad en el material. Una llamada de dibujo por rueda en lugar de dos (E6).
+ */
+export function wheelMesh(name: string, tire: BufferGeometry, rim: BufferGeometry): Mesh {
+  const tag = (g: BufferGeometry, v: number): BufferGeometry => {
+    const n = g.getAttribute("position").count;
+    g.setAttribute("_parte", new Float32BufferAttribute(new Float32Array(n).fill(v), 1));
+    return g;
+  };
+  const merged = mergeGeometries([tag(tire, 0), tag(rim, 1)], false);
+  return part(`${name}_rueda`, merged, "rueda");
+}
+
 function wheel(name: string, r: number, width: number, x: number, z: number): Group {
   const g = new Group();
   g.name = name;
   g.position.set(x, r, z);
-  const tire = part(`${name}_tire`, new CylinderGeometry(r, r, width, 20), "llanta");
-  tire.rotation.x = Math.PI / 2;
-  const rim = part(
-    `${name}_rim`,
-    new CylinderGeometry(r * 0.62, r * 0.62, width * 1.02, 12),
-    "rin",
-  );
-  rim.rotation.x = Math.PI / 2;
-  g.add(tire, rim);
+  const tire = new CylinderGeometry(r, r, width, 20).rotateX(Math.PI / 2);
+  const rim = new CylinderGeometry(r * 0.62, r * 0.62, width * 1.02, 12).rotateX(Math.PI / 2);
+  g.add(wheelMesh(name, tire, rim));
   g.userData.radius = r;
   return g;
 }
@@ -491,18 +516,11 @@ function buildTwoWheel(p: TwoWheelProfile, d: VehicleDimensions): Group {
     const w = new Group();
     w.name = name;
     w.position.set(x, r, 0);
-    const tire = part(
-      `${name}_tire`,
-      new TorusGeometry(r - p.tireWidth / 2, p.tireWidth / 2, 8, 24),
-      "llanta",
-    );
-    const hub = part(
-      `${name}_rim`,
-      new CylinderGeometry(r * 0.25, r * 0.25, p.tireWidth, 8),
-      "rin",
-    );
-    hub.rotation.x = Math.PI / 2;
-    w.add(tire, hub);
+    const tire = new TorusGeometry(r - p.tireWidth / 2, p.tireWidth / 2, 8, 24).toNonIndexed();
+    const hub = new CylinderGeometry(r * 0.25, r * 0.25, p.tireWidth, 8)
+      .rotateX(Math.PI / 2)
+      .toNonIndexed();
+    w.add(wheelMesh(name, tire, hub));
     w.userData.radius = r;
     return w;
   };

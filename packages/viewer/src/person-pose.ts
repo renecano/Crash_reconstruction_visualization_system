@@ -127,6 +127,18 @@ export function gaitFrequency(speed: number, stature: number): number {
 const tmpQ = new Quaternion();
 const tmpV = new Vector3();
 
+const restCache = new WeakMap<BoneSpec, Vector3>();
+
+/** Dirección de reposo de un hueso (calculada una vez por hueso). */
+function restDirectionCached(b: BoneSpec): Vector3 {
+  let v = restCache.get(b);
+  if (!v) {
+    v = restDirection(b);
+    restCache.set(b, v);
+  }
+  return v;
+}
+
 export function restDirection(b: BoneSpec): Vector3 {
   return new Vector3(
     b.punta[0] - b.cabeza[0],
@@ -150,7 +162,7 @@ export function poseFromDirections(
     const target = dirs[b.nombre as BoneName];
     let local = new Quaternion();
     if (target) {
-      const rest = restDirection(b);
+      const rest = restDirectionCached(b);
       const localTarget = tmpV
         .copy(target)
         .normalize()
