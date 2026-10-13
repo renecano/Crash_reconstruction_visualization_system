@@ -176,7 +176,7 @@ async function autoChoice(browser, base) {
   });
   const page = await context.newPage();
   await page.goto(
-    `${base}/visor?escena=lateral_interseccion&calidad=media&camara=cinematica&auto=1&bucle=1`,
+    `${base}/visor?escena=lateral_interseccion&calidad=media&camara=cinematica&auto=1&bucle=1&pantalla=completa`,
   );
   await page.waitForFunction(() => window.__croquisReady === true, null, { timeout: 120_000 });
   await page.waitForFunction(
@@ -245,10 +245,17 @@ async function main() {
         };
       }
     }
-    // El modo automático se queda con el backend más rápido: se elige por la mediana en media.
-    const med = (r) => summary[`${r}/media`]?.fps_mediana_entre_escenas ?? 0;
-    const elegido = RENDERERS.reduce((a, b) => (med(b) > med(a) ? b : a), RENDERERS[0]);
-    const auto = (q) => summary[`${elegido}/${q}`];
+    // Misma política que el visor (backend-choice.ts): WebGPU si alcanza 60 fps; si no, el más
+    // rápido. Se aplica por calidad con el peor caso entre escenas.
+    const elegidoPara = (q) => {
+      const gpu = summary[`webgpu/${q}`];
+      const gl = summary[`webgl/${q}`];
+      if (gpu && (!gl || gpu.fps_min_entre_escenas >= 60)) return "webgpu";
+      if (!gpu) return "webgl";
+      return gl.fps_mediana_entre_escenas >= gpu.fps_mediana_entre_escenas ? "webgl" : "webgpu";
+    };
+    const elegido = Object.fromEntries(QUALITIES.map((q) => [q, elegidoPara(q)]));
+    const auto = (q) => summary[`${elegido[q]}/${q}`];
     const doc = {
       name: "e6_performance",
       generated_at: new Date().toISOString().replace(/\.\d+Z$/, "+00:00"),

@@ -162,7 +162,7 @@ export function environmentFor(input: EnvironmentInput): EnvironmentSettings {
   const sun = sunPosition(time.date, lat, lon);
   const declaredNight = (input.iluminacion ?? "").startsWith("noche");
   const night = declaredNight || sun.elevation < -4;
-  const twilight = !night && sun.elevation < 8;
+  const twilight = !night && sun.elevation < 15;
   const clima = input.clima ?? "despejado";
   const rain = clima === "lluvia_ligera" || clima === "lluvia_fuerte" || clima === "granizo";
   const overcast = rain || clima === "nublado" || clima === "niebla";
@@ -188,10 +188,10 @@ export function environmentFor(input: EnvironmentInput): EnvironmentSettings {
         ? 0.35
         : 0.15
       : twilight
-        ? 1.1
+        ? 1.25
         : overcast
-          ? 0.9
-          : 0.6,
+          ? 0.95
+          : 0.85,
     skyColor: night ? "#0b1020" : twilight ? "#cdbbb0" : overcast ? "#9aa3ad" : "#8fc1ea",
     groundColor: night ? "#141812" : "#5d6b4a",
     fogDensity,
