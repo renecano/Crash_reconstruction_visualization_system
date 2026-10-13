@@ -5,6 +5,7 @@ import {
   axlePositions,
   buildVehicle,
   PROFILES,
+  SEPARATE_PARTS,
   seatHeight,
   wheelNames,
   type VehicleDimensions,
@@ -147,8 +148,12 @@ describe("fusión de piezas", () => {
     const fused = visible.filter((n) => n.startsWith("fusion_"));
     expect(fused.length).toBeLessThanOrEqual(7);
     expect(
-      visible.filter((n) => !n.startsWith("fusion_")).every((n) => n.startsWith("wheel_")),
+      visible
+        .filter((n) => !n.startsWith("fusion_"))
+        .every((n) => n.startsWith("wheel_") || SEPARATE_PARTS.has(n)),
     ).toBe(true);
+    expect(visible).toContain("windshield");
+    expect(visible).toContain("bumper_front");
     const hood = g.getObjectByName("hood");
     expect(hood?.parent?.name).toBe("piezas");
     expect(hood?.parent?.visible).toBe(false);

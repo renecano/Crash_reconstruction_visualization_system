@@ -9,6 +9,7 @@ allowBuilds:
 
 # Versiones compartidas del monorepo. Fuente de verdad: docs/adr/0001-stack.md
 catalog:
+  "@dimforge/rapier3d-deterministic-compat": 0.21.0
   "@eslint/js": 10.0.1
   "@react-three/fiber": 9.8.1
   "@types/three": 0.186.0

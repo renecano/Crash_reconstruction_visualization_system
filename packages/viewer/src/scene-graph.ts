@@ -31,6 +31,14 @@ import { toThree } from "./coords";
 import type { EnvironmentSettings } from "./environment";
 import { applyPosture, buildMannequin, CG_HEIGHT_FACTOR, type Posture } from "./person-geometry";
 import type { QualityProfile } from "./quality";
+import { buildDamageRig, type DamageRig } from "./damage-rig";
+import {
+  computeGroundMarks,
+  puddleRadius,
+  visibleCount,
+  type GroundMarks,
+  type TimedQuad,
+} from "./ground-marks";
 import { buildRoadGeometry, type Mesh2D } from "./road-geometry";
 import { phaseAt, samplePerson, sampleVehicle, bracket } from "./sample";
 import {
@@ -53,6 +61,8 @@ export interface VehicleNode {
   /** Distancia acumulada recorrida (m) en cada muestra de la trayectoria. */
   distance: number[];
   track: Resultado["vehiculos"][number]["trayectoria"];
+  /** Daño animado (deformación, materiales, faros, parabrisas, llantas, bolsas de aire). */
+  rig: DamageRig;
 }
 
 export interface PersonNode {
@@ -69,6 +79,10 @@ export interface SceneGraph {
   persons: PersonNode[];
   /** Coloca la escena en el instante t (s, relativo al impacto). */
   update(t: number): void;
+  /** Registra una actualización adicional (p. ej. restos horneados que llegan después). */
+  addUpdater(fn: (t: number) => void): void;
+  /** Último instante aplicado. */
+  readonly time: number;
   dispose(): void;
   stats: { meshes: number; triangles: number };
 }
@@ -152,6 +166,28 @@ function vehicleMaterials(color: string, night: boolean): Record<PartRole, Mater
 // ---------------------------------------------------------------------------------------------
 // Utilidades
 // ---------------------------------------------------------------------------------------------
+
+/** Cuadriláteros con tiempo (marcas) en una sola malla plana, en orden de aparición. */
+export function quadsToGeometry(quads: readonly TimedQuad[], height: number): BufferGeometry {
+  const pos = new Float32Array(quads.length * 12);
+  const nor = new Float32Array(quads.length * 12);
+  const idx: number[] = [];
+  quads.forEach((q, k) => {
+    for (let c = 0; c < 4; c++) {
+      const [x, y, z] = toThree(q.corners[2 * c] ?? 0, q.corners[2 * c + 1] ?? 0, height);
+      pos.set([x, y, z], 12 * k + 3 * c);
+      nor.set([0, 1, 0], 12 * k + 3 * c);
+    }
+    const b = 4 * k;
+    // Esquinas en orden antihorario visto desde arriba en el mundo (ver mesh2DToGeometry).
+    idx.push(b, b + 2, b + 1, b, b + 3, b + 2);
+  });
+  const g = new BufferGeometry();
+  g.setAttribute("position", new BufferAttribute(pos, 3));
+  g.setAttribute("normal", new BufferAttribute(nor, 3));
+  g.setIndex(idx);
+  return g;
+}
 
 /** Malla plana a partir de triángulos del mundo, a la altura dada (y de three). */
 export function mesh2DToGeometry(m: Mesh2D, height: number): BufferGeometry {
@@ -452,6 +488,16 @@ export function buildSceneGraph(
         m.castShadow = opts.quality.shadows;
       }
     });
+    const rig = buildDamageRig(group, v, dims, glyphs.get(v.id)?.colorHex ?? "#9aa0a6", {
+      spec,
+      resultado,
+      colorOf: (id) => glyphs.get(id)?.colorHex,
+      seed: Math.trunc(spec.meta.semilla) * 31 + resultado.vehiculos.indexOf(v),
+    });
+    disposables.push(...rig.materials);
+    group.traverse((m) => {
+      if (m instanceof Mesh) m.castShadow = opts.quality.shadows;
+    });
     const wheels = wheelNames(group).flatMap((n) => {
       const obj = group.getObjectByName(n);
       return obj instanceof Group ? [{ obj, radius: obj.userData.radius as number }] : [];
@@ -463,7 +509,66 @@ export function buildSceneGraph(
       wheels,
       distance: cumulativeDistance(v.trayectoria),
       track: v.trayectoria,
+      rig,
     });
+  }
+
+  // Marcas en el piso desde las trayectorias del solver.
+  const reposo = new Map(
+    resultado.eventos.filter((e) => e.tipo === "reposo").map((e) => [e.actores[0], e.t]),
+  );
+  const frenadoT = new Map(
+    resultado.eventos.filter((e) => e.tipo === "inicio_frenado").map((e) => [e.actores[0], e.t]),
+  );
+  const marks = computeGroundMarks(
+    resultado.vehiculos.map((v) => {
+      const sv = specVehicles.get(v.id);
+      return {
+        id: v.id,
+        clase: v.clase,
+        dims: {
+          length: v.dimensiones.largo_m,
+          width: v.dimensiones.ancho_m,
+          height: v.dimensiones.alto_m,
+          wheelbase: v.dimensiones.distancia_entre_ejes_m,
+        },
+        track: v.trayectoria,
+        tFrenado: frenadoT.get(v.id),
+        abs: sv?.frenado?.abs?.valor ?? false,
+        bloqueadas: sv?.frenado?.aplico?.valor ?? false,
+        aplastamientoFrontal: (v.dano.cdc?.lado ?? "F") === "F" ? Math.max(...v.dano.perfil_m) : 0,
+        tReposo: v.involucrado ? reposo.get(v.id) : undefined,
+      };
+    }),
+  );
+  const markMeshes: { mesh: Mesh; quads: TimedQuad[] }[] = [];
+  for (const [name, quads, opacity] of [
+    ["marcas_frenado", marks.frenado, 0.8],
+    ["marcas_derrape", marks.derrape, 0.6],
+  ] as const) {
+    if (quads.length === 0) continue;
+    const mat = std("#121212", 0.95, 0, { transparent: true, opacity, depthWrite: false });
+    disposables.push(mat);
+    const mesh = new Mesh(quadsToGeometry(quads, 0.018), mat);
+    mesh.name = name;
+    mesh.renderOrder = 1;
+    root.add(mesh);
+    markMeshes.push({ mesh, quads: [...quads] });
+  }
+  const puddles: { mesh: Mesh; spec: GroundMarks["charcos"][number] }[] = [];
+  if (marks.charcos.length > 0) {
+    const mat = std("#1b1e1d", 0.15, 0.1, { transparent: true, opacity: 0.75, depthWrite: false });
+    disposables.push(mat);
+    for (const c of marks.charcos) {
+      const mesh = new Mesh(new CircleGeometry(1, 24), mat);
+      mesh.name = "charco";
+      mesh.rotation.x = -Math.PI / 2;
+      const [x, y, z] = toThree(c.x, c.y, 0.02);
+      mesh.position.set(x, y, z);
+      mesh.scale.setScalar(0);
+      root.add(mesh);
+      puddles.push({ mesh, spec: c });
+    }
   }
 
   // Personas.
@@ -500,7 +605,17 @@ export function buildSceneGraph(
   const personData = new Map(resultado.personas.map((p) => [p.id, p]));
   const vehicleNodes = new Map(vehicles.map((n) => [n.id, n]));
 
+  const extraUpdaters: ((t: number) => void)[] = [];
+  let lastT = resultado.t_inicio;
+
   function update(t: number): void {
+    lastT = t;
+    for (const fn of extraUpdaters) fn(t);
+    for (const m of markMeshes) m.mesh.geometry.setDrawRange(0, visibleCount(m.quads, t) * 6);
+    for (const p of puddles) {
+      const r = puddleRadius(p.spec, t);
+      p.mesh.scale.setScalar(Math.max(r, 1e-4));
+    }
     for (const n of vehicles) {
       const pose = sampleVehicle(n.track, t);
       const [x, y, z] = toThree(pose.x, pose.y, 0);
@@ -511,6 +626,7 @@ export function buildSceneGraph(
         (n.distance[i] ?? 0) +
         ((n.distance[i + 1] ?? n.distance[i] ?? 0) - (n.distance[i] ?? 0)) * f;
       for (const w of n.wheels) w.obj.rotation.z = -s / w.radius;
+      n.rig.update(t);
     }
     for (const n of persons) {
       const data = personData.get(n.id);
@@ -563,6 +679,13 @@ export function buildSceneGraph(
     vehicles,
     persons,
     update,
+    addUpdater(fn: (t: number) => void) {
+      extraUpdaters.push(fn);
+      fn(lastT);
+    },
+    get time() {
+      return lastT;
+    },
     dispose() {
       root.traverse((o) => {
         if (o instanceof Mesh) (o.geometry as BufferGeometry).dispose();

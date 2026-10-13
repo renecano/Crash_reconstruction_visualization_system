@@ -6,7 +6,7 @@
 import { toThree, type Vec3 } from "./coords";
 import { sampleVehicle, type VehicleTrack } from "./sample";
 
-export type CameraMode = "libre" | "cenital" | "conductor" | "cinematica";
+export type CameraMode = "libre" | "cenital" | "conductor" | "cinematica" | "dano";
 
 export interface CameraPose {
   position: Vec3;
@@ -23,11 +23,13 @@ export interface CameraVehicle {
   involucrado: boolean;
   dimensiones: { largo_m: number; ancho_m: number; alto_m: number };
   trayectoria: VehicleTrack;
+  dano?: { perfil_m: readonly number[]; cdc?: { lado: string } };
 }
 
 export interface CameraScene {
   t_inicio: number;
   t_fin: number;
+  eventos?: readonly { tipo: string }[];
   punto_impacto?: { x: number; y: number };
   vehiculos: readonly CameraVehicle[];
 }
@@ -141,6 +143,49 @@ export function cinematicCamera(scene: CameraScene, t: number, fov = 38): Camera
   return {
     position: toThree(x, y, dist * Math.sin(el)),
     target: toThree(gx, gy, 0.5),
+    fov,
+    up: UP_Y,
+  };
+}
+
+/** Vehículo con más aplastamiento (para la cámara de acercamiento al daño). */
+export function mostDamaged(scene: CameraScene): CameraVehicle | undefined {
+  let best: CameraVehicle | undefined;
+  let crush = 0;
+  for (const v of scene.vehiculos) {
+    const c = Math.max(0, ...(v.dano?.perfil_m ?? [0]));
+    if (c > crush) {
+      crush = c;
+      best = v;
+    }
+  }
+  return best ?? scene.vehiculos.find((v) => v.involucrado) ?? scene.vehiculos[0];
+}
+
+/**
+ * Acercamiento al daño: órbita fija frente a la cara golpeada del vehículo más deformado, a 60°
+ * de la normal de esa cara (lo que golpeó queda justo enfrente y no debe tapar) y 32° de elevación, a una distancia que encuadra el vehículo.
+ */
+export function damageCamera(scene: CameraScene, t: number, fov = 40): CameraPose {
+  const v = mostDamaged(scene);
+  if (!v) return freeCameraStart(scene, fov);
+  const p = sampleVehicle(v.trayectoria, t);
+  const lado = v.dano?.cdc?.lado ?? "F";
+  const faceAngle = { F: 0, B: Math.PI, L: Math.PI / 2, R: -Math.PI / 2 }[lado] ?? 0;
+  // Lo que golpeó (otro vehículo u objeto) queda justo frente a la cara: la cámara se abre 60°.
+  const az = p.yaw + faceAngle + (60 * Math.PI) / 180;
+  const el = (32 * Math.PI) / 180;
+  const dist = Math.max(5.5, 1.7 * v.dimensiones.largo_m);
+  const tx = p.x;
+  const ty = p.y;
+  const h = 0.5 * v.dimensiones.alto_m;
+  return {
+    position: toThree(
+      tx + dist * Math.cos(el) * Math.cos(az),
+      ty + dist * Math.cos(el) * Math.sin(az),
+      h + dist * Math.sin(el),
+    ),
+    target: toThree(tx, ty, h),
     fov,
     up: UP_Y,
   };

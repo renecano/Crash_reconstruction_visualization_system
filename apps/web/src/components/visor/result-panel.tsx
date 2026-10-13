@@ -1,4 +1,5 @@
-import type { Resultado } from "@croquis/scene-schema";
+import type { EscenaSpec, Resultado } from "@croquis/scene-schema";
+import { AIRBAG_SOURCE, airbagForVehicle, PROFILES } from "@croquis/viewer";
 
 const CLASE: Record<string, string> = {
   sedan_compacto: "sedán compacto",
@@ -48,9 +49,11 @@ const fmt = (v: number, d = 0) =>
 export function ResultPanel({
   resultado,
   supuestosEntorno,
+  spec,
 }: {
   resultado: Resultado;
   supuestosEntorno: string[];
+  spec?: EscenaSpec;
 }) {
   return (
     <section className="flex flex-col gap-4 text-sm" aria-label="Resultados de la reconstrucción">
@@ -64,7 +67,8 @@ export function ResultPanel({
               <th className="py-1 pr-3">Cambio de velocidad (ΔV)</th>
               <th className="py-1 pr-3">Dirección de la fuerza</th>
               <th className="py-1 pr-3">Energía de deformación</th>
-              <th className="py-1">Rigidez usada</th>
+              <th className="py-1 pr-3">Rigidez usada</th>
+              {spec ? <th className="py-1">Bolsas de aire (ilustrativo)</th> : null}
             </tr>
           </thead>
           <tbody>
@@ -87,12 +91,32 @@ export function ResultPanel({
                       ? "supuesto"
                       : "—"}
                 </td>
+                {spec ? (
+                  <td className="py-1 text-xs">
+                    {
+                      airbagForVehicle(
+                        {
+                          id: v.id,
+                          delta_v_kmh: v.delta_v_kmh,
+                          pdof_horas: v.pdof_horas,
+                          dosRuedas: PROFILES[v.clase]?.kind === "two_wheel",
+                        },
+                        {
+                          personas: spec.personas,
+                          objetos: spec.entorno.objetos ?? [],
+                          eventos: resultado.eventos,
+                        },
+                      ).motivo
+                    }
+                  </td>
+                ) : null}
               </tr>
             ))}
           </tbody>
         </table>
         <p className="mt-1 text-xs text-neutral-600 dark:text-neutral-400">
           Valores nominales del modelo físico. La incertidumbre se mostrará como rango.
+          {spec ? ` Bolsas de aire: regla ilustrativa con umbrales de ${AIRBAG_SOURCE}` : ""}
         </p>
       </div>
       {resultado.banderas.length > 0 ? (

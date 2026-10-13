@@ -83,12 +83,39 @@ test.describe("capturas visuales", () => {
     "Las referencias visuales se generan y comparan en Linux",
   );
   test.use({ viewport: { width: 1280, height: 900 } });
+  // Render por software en CI: compilar sombreadores y hornear restos tarda más que 30 s.
+  test.setTimeout(120_000);
   for (const escena of ESCENAS) {
     test(`${escena} en el impacto`, async ({ page }) => {
       await page.goto(`/visor?escena=${escena}&t=0&camara=libre&calidad=media&renderer=webgl`);
       await waitReady(page);
       await page.waitForTimeout(1500);
       await expect(page.getByTestId("visor-3d")).toHaveScreenshot(`${escena}.png`, {
+        maxDiffPixelRatio: 0.02,
+        timeout: 30_000,
+      });
+    });
+  }
+});
+
+/**
+ * Capturas de daño (PLAN §13, F4): 1.5 s después del impacto, con el acercamiento al daño. Se ven
+ * la deformación, la pintura transferida, vidrios, piezas desprendidas, marcas y bolsas de aire.
+ */
+test.describe("capturas de daño", () => {
+  test.skip(
+    process.platform !== "linux",
+    "Las referencias visuales se generan y comparan en Linux",
+  );
+  test.use({ viewport: { width: 1280, height: 900 } });
+  // Render por software en CI: compilar sombreadores y hornear restos tarda más que 30 s.
+  test.setTimeout(120_000);
+  for (const escena of ESCENAS) {
+    test(`${escena} con daño`, async ({ page }) => {
+      await page.goto(`/visor?escena=${escena}&t=1.5&camara=dano&calidad=media&renderer=webgl`);
+      await waitReady(page);
+      await page.waitForTimeout(1500);
+      await expect(page.getByTestId("visor-3d")).toHaveScreenshot(`${escena}-dano.png`, {
         maxDiffPixelRatio: 0.02,
         timeout: 30_000,
       });

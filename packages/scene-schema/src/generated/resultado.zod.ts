@@ -2,8 +2,8 @@
 // Regenera con `pnpm --filter @croquis/scene-schema generate`.
 import { z } from "zod";
 
-export const RESULTADO_SCHEMA_ID = "https://croquis.local/schema/resultado/1.0.0";
-export const RESULT_VERSION = "1.0.0" as const;
+export const RESULTADO_SCHEMA_ID = "https://croquis.local/schema/resultado/1.1.0";
+export const RESULT_VERSION = "1.1.0" as const;
 
 /** Zonas probables de contacto con el frente del vehículo, como indicadores neutros (sin diagnóstico de lesiones). */
 export const Contacto = z.strictObject({
@@ -21,7 +21,7 @@ export const ZonaCDC = z.strictObject({
 });
 export type ZonaCDC = z.infer<typeof ZonaCDC>;
 
-/** Perfil de aplastamiento CRASH3 de 6 puntos sobre el ancho dañado, energía absorbida y origen de la rigidez usada. */
+/** Perfil de aplastamiento CRASH3 de 6 puntos sobre el ancho dañado (centrado en centro_m a lo largo de la cara), energía absorbida y origen de la rigidez usada. */
 export const Dano = z.strictObject({
   perfil_m: z.tuple([
     z.number().min(0),
@@ -32,6 +32,7 @@ export const Dano = z.strictObject({
     z.number().min(0),
   ]),
   ancho_m: z.number().min(0),
+  centro_m: z.number(),
   energia_j: z.number().min(0),
   origen_rigidez: z.enum(["nhtsa", "supuesto", "sin impacto"]),
   cdc: ZonaCDC.optional(),
@@ -177,7 +178,7 @@ export type VehiculoResultado = z.infer<typeof VehiculoResultado>;
 
 /** Reconstrucción producida por el solver a partir de una EscenaSpec: trayectorias, impulsos, daños, personas, eventos, banderas y parámetros con su fuente. Unidades SI; tiempo con t = 0 en el impacto principal; rumbos en radianes antihorario desde +X. */
 export const ResultadoSchema = z.strictObject({
-  version_resultado: z.literal("1.0.0"),
+  version_resultado: z.literal("1.1.0"),
   escena_id: Id,
   semilla: z.int().min(0),
   dt: z.number().max(1).gt(0),
