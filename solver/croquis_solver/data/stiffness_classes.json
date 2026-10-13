@@ -1,0 +1,88 @@
+{
+  "_generado_por": "uv run croquis-eval e2-barrier (eval/croquis_eval/e2_barrier.py)",
+  "_fuente": "NHTSA Vehicle Crash Test Database vía data/processed/nhtsa/vtb_tests.csv; ver data/SOURCES.md",
+  "_nota": "Solo zona frontal. Lateral y trasera usan el respaldo marcado 'supuesto' en el solver.",
+  "parametros": {
+    "b0_kmh": 8.0,
+    "restitucion": 0.1,
+    "velocidad_kmh": [
+      40.0,
+      65.0
+    ],
+    "anio_minimo": 1995
+  },
+  "clases": {
+    "camion_unitario": {
+      "frontal": {
+        "a_n_m": 81131.1,
+        "b_n_m2": 1185173.7,
+        "origen": "nhtsa",
+        "n_tests": 5,
+        "nota": "Mediana de pruebas frontales a 0° contra barrera rígida (E2)."
+      }
+    },
+    "hatchback": {
+      "frontal": {
+        "a_n_m": 74197.6,
+        "b_n_m2": 1209076.1,
+        "origen": "nhtsa",
+        "n_tests": 93,
+        "nota": "Mediana de pruebas frontales a 0° contra barrera rígida (E2)."
+      }
+    },
+    "pickup": {
+      "frontal": {
+        "a_n_m": 87716.3,
+        "b_n_m2": 1185167.6,
+        "origen": "nhtsa",
+        "n_tests": 158,
+        "nota": "Mediana de pruebas frontales a 0° contra barrera rígida (E2)."
+      }
+    },
+    "sedan_compacto": {
+      "frontal": {
+        "a_n_m": 63881.7,
+        "b_n_m2": 970074.9,
+        "origen": "nhtsa",
+        "n_tests": 155,
+        "nota": "Mediana de pruebas frontales a 0° contra barrera rígida (E2)."
+      }
+    },
+    "sedan_mediano": {
+      "frontal": {
+        "a_n_m": 73795.7,
+        "b_n_m2": 1125339.6,
+        "origen": "nhtsa",
+        "n_tests": 386,
+        "nota": "Mediana de pruebas frontales a 0° contra barrera rígida (E2)."
+      }
+    },
+    "suv_compacta": {
+      "frontal": {
+        "a_n_m": 84045.7,
+        "b_n_m2": 1364674.5,
+        "origen": "nhtsa",
+        "n_tests": 248,
+        "nota": "Mediana de pruebas frontales a 0° contra barrera rígida (E2)."
+      }
+    },
+    "suv_grande": {
+      "frontal": {
+        "a_n_m": 89344.3,
+        "b_n_m2": 1286438.0,
+        "origen": "nhtsa",
+        "n_tests": 201,
+        "nota": "Mediana de pruebas frontales a 0° contra barrera rígida (E2)."
+      }
+    },
+    "van": {
+      "frontal": {
+        "a_n_m": 80463.8,
+        "b_n_m2": 1136602.5,
+        "origen": "nhtsa",
+        "n_tests": 70,
+        "nota": "Mediana de pruebas frontales a 0° contra barrera rígida (E2)."
+      }
+    }
+  }
+}

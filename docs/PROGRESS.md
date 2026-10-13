@@ -5,9 +5,9 @@ Reglas de trabajo: `CLAUDE.md`. Especificación: `PLAN.md`.
 
 ## Estado actual
 
-- **Fase actual:** F1 — Contrato y croquis (cerrando: PR abierto, falta CI verde y merge).
-- **Siguiente paso concreto:** CI verde en el PR de `feat/f1-contrato`, merge a `main` y arrancar **F2 — Solver de referencia** (módulos 6.1.1–6.1.5 y 6.1.7 en `solver/croquis_solver`, propiedades con Hypothesis, casos analíticos, primera corrida de E2 con la base de pruebas de choque de NHTSA).
-- **F0 cerrado** el 2026-10-10 (PR #1).
+- **Fase actual:** F2 — Solver de referencia (cerrando: PR de `feat/f2-solver`, falta CI verde y merge).
+- **Siguiente paso concreto:** merge del PR de F2 y arrancar **F3 — Visor 3D** (`packages/viewer` con three.js WebGPU + R3F, carga de `Reconstruction`, línea de tiempo, cámaras, niveles de calidad; instalar Blender y FFmpeg con winget para el pipeline de assets; snapshots visuales con Playwright).
+- **F0 cerrado** el 2026-10-10 (PR #1). **F1 cerrado** el 2026-10-10 (PR #3).
 
 ### Bloqueado — necesita a René
 
@@ -160,3 +160,66 @@ Criterio de aceptación F1 (PLAN §13): las 10 escenas validan en ambos lados �
 - **Qué quedó:** el contrato completo con tipos generados en los dos lenguajes, diez escenas listas para la demo, un validador que explica en lenguaje llano qué no cuadra, y el croquis editable en `/croquis` sincronizado con el JSON.
 - **Cómo probarlo:** `pnpm dev` y abre http://localhost:3000/croquis; cambia de escena, arrastra el vehículo A y mira cómo cambia el JSON (y cómo la posición queda marcada como tuya); pega un JSON roto y verás los errores del contrato. Pruebas: `pnpm test`, `uv run pytest`, `pnpm --filter @croquis/web test:e2e`.
 - **Qué necesito de ti:** nada para F2. Sigue pendiente lo de la lista de bloqueados (llave de API para F6, BeamNG para F10, AWS/Vercel y personas para F11).
+
+## F2 — Solver de referencia
+
+### Plan
+
+Archivos: `solver/croquis_solver/{models,impact,crash3,friction,preimpact,postimpact,fixed_object,pedestrian,stiffness,reconstruct}.py`, `data/friction.json`, cliente de la Vehicle Crash Test Database de NHTSA (`data/croquis_data/nhtsa_ctd.py`), E2 (`eval/croquis_eval/e2_barrier.py`), `docs/physics.md`, ADR 0005.
+
+Pruebas: propiedades con Hypothesis (conservación de momento lineal y angular, energía no creciente, simetría), casos con solución cerrada (choque central, barrera, derrape, CRASH3 uniforme, cotas de Searle), reconstrucción de las 10 escenas con determinismo bit a bit, E2 con CSV sintético y reproducción byte a byte de la tabla de rigidez.
+
+Riesgos: (1) restitución de Newton + Coulomb puede ganar energía (paradoja de Kane) → candidatos que nunca la ganan. (2) La API de NHTSA es lenta y devuelve 404 con `sortBy` → descarga reanudable por prueba, sin ordenar. (3) Sin pruebas de barrera rígida para lateral y trasera → respaldo marcado `supuesto`.
+
+### Hecho
+
+- Módulos 6.1.1 (pre-impacto), 6.1.2 (impacto por impulso), 6.1.3 (CRASH3), 6.1.4 (objetos fijos), 6.1.5 (post-impacto 3 GDL) y 6.1.7 (Searle, Wood, zonas de contacto) con ecuaciones y referencias en `docs/physics.md`.
+- Orquestador `reconstruct(spec)` → `Reconstruction` (trayectorias, ΔV, PDOF, perfiles de daño, proyección de peatón, eventos y banderas) para las 10 escenas canónicas.
+- Descarga completa de las pruebas vehículo contra barrera de NHTSA (3388 pruebas, 0 fallidas) y E2 con dejar-uno-fuera por clase. La tabla `solver/croquis_solver/data/stiffness_classes.json` sale de E2.
+- `data/SOURCES.md` (NHTSA y derivados), `docs/data.md` (filtros y límites de E2), README con resultados medidos, ADR 0005.
+
+### Evidencia (local, Windows, 2026-10-13)
+
+| Comando                                                                 | Resultado                                                               |
+| ----------------------------------------------------------------------- | ----------------------------------------------------------------------- |
+| `uv run pytest`                                                         | **195 pruebas** en verde (solver 73, eval y data 17, resto de paquetes) |
+| `uv run ruff check . && uv run ruff format --check . && uv run pyright` | limpio (pyright strict)                                                 |
+| `pnpm format:check && pnpm lint && pnpm typecheck && pnpm test`         | limpio; 157 pruebas TS en verde                                         |
+| `uv run croquis-data nhtsa download --workers 4`                        | `listadas 3388, nuevas 3388, en caché 0, fallidas 0`                    |
+| `uv run croquis-eval e2-barrier`                                        | 1316 pruebas usadas de 3388; salida en `eval/results/e2_barrier.json`   |
+
+E2 (de `eval/results/e2_barrier.json`), error absoluto medio dejando una prueba fuera:
+
+| Clase           | Pruebas | A (kgf/cm) | B (kgf/cm²) | Error velocidad (km/h) | Recta global (km/h) |
+| --------------- | ------: | ---------: | ----------: | ---------------------: | ------------------: |
+| camion_unitario |       5 |      82.73 |       12.09 |                  10.55 |                9.22 |
+| hatchback       |      93 |      75.66 |       12.33 |                   8.69 |                 9.9 |
+| pickup          |     158 |      89.45 |       12.09 |                   8.76 |               10.14 |
+| sedan_compacto  |     155 |      65.14 |        9.89 |                   7.94 |                8.28 |
+| sedan_mediano   |     386 |      75.25 |       11.48 |                   7.77 |                8.51 |
+| suv_compacta    |     248 |       85.7 |       13.92 |                   8.37 |                9.71 |
+| suv_grande      |     201 |      91.11 |       13.12 |                    8.2 |                9.27 |
+| van             |      70 |      82.05 |       11.59 |                   6.63 |                6.71 |
+
+Global: **8.1 km/h** contra 9.03 km/h de la recta global y 27.74 km/h de la regla de Emori. En aplastamiento: 75.4 mm contra 74.4 mm (sin mejora).
+
+Criterio de aceptación F2 (PLAN §13): conservación < 1e-9 ✔ (Hypothesis, 400 configuraciones); E2 con error reportado contra la línea base ✔.
+
+### Pendientes registrados
+
+- Rigidez lateral y trasera medida: buscar pruebas de barrera deformable móvil o coeficientes publicados (hoy `supuesto`).
+- E2 no mejora la predicción de aplastamiento frente a la recta global; revisar en F7 si un b0 por clase o la forma del perfil reducen el error.
+- Usar el tiempo de percepción-reacción para ubicar el inicio de frenado cuando el relato no lo da (hoy 0.6 s fijos con bandera); entra con la inversión de F7.
+- Inercia de guiñada medida por clase (hoy placa rectangular).
+- Port TS del solver y paridad (E7): F9, como marca PLAN §13.
+
+### Decisiones
+
+- Ver ADR 0005 (Python con `math` para facilitar el port, candidatos anti-Kane, t = 0 en el impacto, arrastre post-impacto 0.35 μ, tabla de rigidez generada y verificada).
+- E2 acepta `LOAD CELL BARRIER` además de `FLAT BARRIER`: ambas son barreras planas rígidas (la primera con celdas de carga). Con ambas quedan 1316 pruebas; los descartes por criterio están en `conteos`.
+
+### Resumen para René (F2)
+
+- **Qué quedó:** el solver físico que convierte una escena en trayectorias, daños y tiempos, y la primera evidencia medida: con rigidez por clase sacada de pruebas reales de NHTSA, la velocidad de impacto se estima con 8.1 km/h de error medio.
+- **Cómo probarlo:** `uv run pytest solver` y `uv run croquis-eval e2-barrier`. Para regenerar todo desde cero: `uv run croquis-data nhtsa download` y `uv run croquis-data nhtsa process`.
+- **Qué necesito de ti:** nada para F3–F5.

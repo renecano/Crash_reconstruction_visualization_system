@@ -102,3 +102,23 @@ def test_filtros_y_evaluacion_con_csv_sintetico(tmp_path: Path) -> None:
     payload = json.loads(result.read_text(encoding="utf-8"))
     assert payload["name"] == "e2_barrier"
     assert len(payload["pruebas_usadas"]) == 6
+
+
+def test_tabla_de_rigidez_versionada_se_reproduce_desde_el_csv(tmp_path: Path) -> None:
+    """La tabla que usa el solver sale exactamente de E2 sobre el CSV versionado."""
+    tests, _ = e2.load_tests(e2.CSV_PATH)
+    out = e2.write_stiffness_table(e2.evaluate(tests), tmp_path / "stiffness.json")
+    assert out.read_bytes() == e2.STIFFNESS_PATH.read_bytes()
+
+
+def test_el_solver_usa_la_rigidez_medida() -> None:
+    from croquis_solver.stiffness import stiffness_for
+
+    doc = json.loads(e2.STIFFNESS_PATH.read_text(encoding="utf-8"))
+    for clase, zonas in doc["clases"].items():
+        entry = stiffness_for(clase, "frontal")
+        assert entry.origen == "nhtsa"
+        assert entry.n_tests == zonas["frontal"]["n_tests"] >= e2.MIN_TESTS_PER_CLASS
+        assert math.isclose(entry.stiffness.a, zonas["frontal"]["a_n_m"])
+    assert stiffness_for("sedan_mediano", "lateral").origen == "supuesto"
+    assert stiffness_for("motocicleta", "frontal").origen == "supuesto"

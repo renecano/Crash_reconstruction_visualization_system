@@ -125,7 +125,11 @@ def load_tests(csv_path: Path = CSV_PATH) -> tuple[list[BarrierTest], dict[str, 
             if (row.get("barrier_rigid") or "").upper() != "RIGID":
                 drop("barrera_no_rigida")
                 continue
-            if "FLAT" not in (row.get("barrier_shape") or "").upper():
+            shape = (row.get("barrier_shape") or "").upper()
+            is_flat = ("FLAT" in shape or "LOAD CELL" in shape) and not any(
+                k in shape for k in ("OFFSET", "ANGLED", "POLE")
+            )
+            if not is_flat:
                 drop("barrera_no_plana")
                 continue
             if (_f(row, "barrier_angle_deg") or 0.0) != 0.0 or (
@@ -354,7 +358,8 @@ def main(
         },
         "filtros": {
             "configuracion": (
-                "VTB, barrera rígida plana, ángulo 0°, sin desplazamiento, vehículo de producción"
+                "VTB, barrera rígida plana (FLAT o LOAD CELL, sin OFFSET/ANGLED/POLE), ángulo 0°, "
+                "sin desplazamiento, vehículo de producción"
             ),
             "velocidad_kmh": list(SPEED_RANGE_KMH),
             "anio_modelo_minimo": MIN_MODEL_YEAR,

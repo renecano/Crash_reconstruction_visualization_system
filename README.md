@@ -5,7 +5,7 @@
 
 Croquis toma lo que una persona cuenta ("iba por Tollocan, el de la camioneta gris se me cerró…"), lo convierte con un LLM en una escena estructurada donde cada dato está ligado a la frase que lo respalda o marcado como supuesto, lo deja corregir en un croquis 2D, reconstruye la física con un solver propio y lo muestra en 3D en el navegador. **La IA traduce, la física decide y el visor muestra.**
 
-Estado: **F1 — Contrato y croquis** (ver `docs/PROGRESS.md`). Este README se completa fase por fase siguiendo el estándar de PLAN §15; toda cifra que aparece aquí sale de un script en `eval/` con su salida en `eval/results/`.
+Estado: **F2 — Solver de referencia** (ver `docs/PROGRESS.md`). Este README se completa fase por fase siguiendo el estándar de PLAN §15; toda cifra que aparece aquí sale de un script en `eval/` con su salida en `eval/results/`.
 
 ## Problema
 
@@ -33,6 +33,7 @@ Después de un percance, quien lo vivió tiene que explicarlo (a su aseguradora,
 - **Diez escenas canónicas** con relato (alcance, lateral en intersección, frontal en curva, peatón en cruce, motociclista, árbol, poste, volcadura, nocturno con lluvia, glorieta) que validan en TypeScript y en Python.
 - **Un validador semántico** con paridad TS ↔ Python: referencias rotas, evidencia faltante, rangos declarados, masas y dimensiones fuera de la clase (tabla construida desde 47 fichas técnicas), velocidades implausibles, vehículos encimados, roles y eventos incoherentes. Los mensajes nunca asignan culpa.
 - **El croquis 2D** (`/croquis`): arrastra y gira vehículos, personas, objetos y marcas; el JSON y el dibujo son la misma escena y lo que la persona mueve queda marcado como suyo.
+- **El solver de referencia** (`solver/croquis_solver`): impacto por impulso entre cuerpos rígidos planos, energía de deformación CRASH3 con rigidez por clase medida en pruebas de NHTSA, frenado y trayectorias previas, movimiento posterior hasta el reposo, objetos fijos y proyección de peatones (Searle). Reconstruye las diez escenas de forma determinista; la conservación de momento se prueba con Hypothesis.
 
 ## Cómo probarlo
 
@@ -55,7 +56,17 @@ Pendiente de F11 (despliegue dev y prod).
 
 ## Resultados medidos
 
-Pendiente. Tabla E1–E9 con enlaces a `eval/results/` conforme se corra cada evaluación (PLAN §8).
+Cada evaluación tiene un script en `eval/`, su salida versionada en `eval/results/` y una alternativa simple contra la que se compara (PLAN §8).
+
+| ID        | Qué se mide                                                                                                                                                      | Croquis                                       | Alternativa simple                                                                                 |
+| --------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------- | -------------------------------------------------------------------------------------------------- |
+| E2        | Velocidad de impacto a partir del aplastamiento, contra barrera rígida frontal; coeficientes CRASH3 por clase, dejar-uno-fuera (1316 pruebas de NHTSA, 8 clases) | error absoluto medio **8.1 km/h**             | recta global ΔV = c·C̄ sin clase ni masa: 9.03 km/h; regla de Emori (1 mph por pulgada): 27.74 km/h |
+| E2        | Aplastamiento medio a partir de la velocidad, mismas pruebas                                                                                                     | error absoluto medio **75.4 mm**              | recta global: 74.4 mm                                                                              |
+| E1, E3–E9 | Extracción, CISS/EDR, peatones, deformación BeamNG, rendimiento, paridad, determinismo, usabilidad                                                               | pendientes (F6, F7, F5, F10, F3, F9, F9, F11) |                                                                                                    |
+
+Script: `uv run croquis-eval e2-barrier` → [`eval/results/e2_barrier.json`](eval/results/e2_barrier.json).
+
+Lectura honesta de E2: separar por clase y normalizar por masa y ancho mejora la estimación de velocidad frente a la mejor recta global, pero no la de aplastamiento. La dispersión de rigidez dentro de cada clase domina el error (desviación mediana por clase en `e2_barrier.json`). Por eso el solver reportará rangos en F7 y marca el origen de cada coeficiente.
 
 ## Mapa del repo
 

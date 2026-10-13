@@ -16,4 +16,5 @@ test-results
 CLAUDE.md
 PLAN.md
 packages/scene-schema/vehicle_classes.json
+solver/croquis_solver/data/stiffness_classes.json
 data/vehicles/

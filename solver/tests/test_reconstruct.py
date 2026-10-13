@@ -90,10 +90,15 @@ def test_arbol_detiene_y_poste_concentra() -> None:
     arbol = reconstruct(load_fixture("objeto_fijo_arbol"))
     va = arbol.vehiculos[0]
     assert va.delta_v_kmh > 40
-    assert va.crush_width_m < 1.86
+    # Tronco de 0.5 m a alta velocidad: el daño se propaga a 45° y puede abarcar todo el frente,
+    # pero sigue concentrado al centro (forma de poste).
+    assert va.crush_width_m <= 1.86
     assert max(va.crush_profile_m) > 0.2
+    assert va.crush_profile_m[2] == va.crush_profile_m[3] == max(va.crush_profile_m)
+    assert va.crush_profile_m[0] < 0.1 * max(va.crush_profile_m)
     poste = reconstruct(load_fixture("poste"))
     vp = poste.vehiculos[0]
+    assert vp.crush_width_m < 1.86  # poste delgado: ancho dañado menor que el frente
     assert vp.crush_profile_m[2] == max(vp.crush_profile_m)  # forma de poste, centrada
 
 

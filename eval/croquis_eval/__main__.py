@@ -15,6 +15,7 @@ def main(argv: list[str] | None = None) -> int:
     sub.add_parser(
         "atus-summary", help="Escribe eval/results/atus_summary.json desde data/processed/atus"
     )
+    sub.add_parser("e2-barrier", help="E2: rigidez CRASH3 por clase desde pruebas de NHTSA")
     args = parser.parse_args(argv)
     if args.command == "atus-summary":
         from croquis_eval.atus_summary import main as run
