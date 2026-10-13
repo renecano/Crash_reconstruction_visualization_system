@@ -97,6 +97,14 @@ $$D = \frac{v^2 (\cos\theta + \mu \sin\theta)^2}{2 \mu g} + \mu h \quad\Longrigh
 
 Pruebas (`test_reconstruct.py`, `test_road.py`, `test_results_io.py`): en t = 0 el punto de contacto de cada vehículo coincide con el de impacto (< 0.3 m), el impacto excéntrico genera giro, cada vehículo arranca sobre su carril, ninguna escena tiene zonas inalcanzables, la trayectoria del peatón recorre exactamente la distancia de Searle, los resultados versionados cumplen su esquema y coinciden con el solver; además las 10 escenas canónicas se reconstruyen, trayectorias continuas y finitas, reposo de los involucrados, determinismo bit a bit del JSON, impulsos iguales y opuestos ($m_A \Delta V_A = m_B \Delta V_B$ exacto), PDOF 12/6 en el alcance, árbol/poste concentran el daño, proyección del peatón dentro de las cotas de Searle.
 
+## Del perfil del solver al daño visual (F4)
+
+El visor no calcula daño: traduce el perfil CRASH3 del solver (`dano.perfil_m`, `ancho_m`, `centro_m` y zona CDC) a una deformación por vértice:
+
+$$\vec d(\vec p) = \hat n_{in}\, c(u)\, m(y)\, w(\delta),\qquad w(\delta) = 1 - \mathrm{smoothstep}(0,\, 1.6c + 0.3,\, \delta)$$
+
+con $u$ la posición a lo largo de la cara golpeada (C1 a la izquierda en frente y atrás, adelante en los costados), $c(u)$ el perfil interpolado con 15 cm de caída fuera del ancho dañado, $m(y)$ la máscara vertical de la zona CDC y $\delta$ la profundidad detrás de la cara. La cara se desplaza exactamente $c(u)$ y el material de atrás se comprime sin plegarse (la pendiente de $w$ es menor que $1/c$). Una prueba mide el perfil sobre la malla deformada y exige coincidencia con el del solver dentro de 2 cm o 6 % en todas las escenas canónicas. Las reglas que no salen del solver (faros, parabrisas, piezas desprendidas, vidrios, charcos y bolsas de aire con umbrales del IIHS) son ilustrativas y están en ADR 0007.
+
 ## Rangos de plausibilidad por clase (F1)
 
 El validador semántico (`check.ts` / `check.py`) marca masas, dimensiones y velocidades fuera de los rangos de `packages/scene-schema/vehicle_classes.json` (E006–E008). Los rangos de masa y dimensiones salen de fichas técnicas (`data/SOURCES.md`); los topes de velocidad por clase son constantes de diseño pensados para detectar relatos físicamente imposibles.
@@ -121,5 +129,6 @@ El validador semántico (`check.ts` / `check.py`) marca masas, dimensiones y vel
 - Wood, D. P. "Application of a pedestrian impact model to the determination of impact speed", SAE 910814, 1991; Wood 1988 según Spinu, A. et al., IOP Conf. Ser.: Mater. Sci. Eng. 444 (2018) 072017.
 - Olson, P. L. y Sivak, M. "Perception-response time to unexpected roadway hazards", _Human Factors_ 28(1), 1986; Green, M. "How long does it take to stop?", _Transportation Human Factors_ 2(3), 2000.
 - Knoblauch, R. L., Pietrucha, M. T. y Nitzburg, M. "Field studies of pedestrian walking speed and start-up time", _Transportation Research Record_ 1538, 1996 (velocidad al caminar).
+- IIHS (Insurance Institute for Highway Safety), "Airbags", https://www.iihs.org/research-areas/airbags (consultado el 2026-10-13): umbrales de despliegue de bolsas frontales y laterales.
 - Heydinger, G. J. et al. "Measured vehicle inertial parameters — NHTSA's data through November 1998", SAE 1999-01-1336.
 - Watson et al., SAE 2023-01-5043 y SAE 2022-01-5069 (CISS vs EDR; E3 en F7).
