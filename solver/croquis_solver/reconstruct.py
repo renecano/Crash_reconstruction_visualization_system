@@ -51,7 +51,7 @@ from croquis_solver.units import ms_to_kmh
 
 JsonObj = dict[str, Any]
 
-RESULT_VERSION = "1.0.0"
+RESULT_VERSION = "1.1.0"
 DT_OUT = 0.02
 T_PRE_MAX = 6.0
 T_PRE_MIN = 3.0  # contexto mínimo antes del impacto para el visor
@@ -122,6 +122,7 @@ class VehicleOutcome:
     crush_profile_m: list[float]
     crush_width_m: float
     crush_energy_j: float
+    crush_center_m: float
     stiffness_origen: str
     cdc: JsonObj | None
     stopped: bool
@@ -224,6 +225,7 @@ def _vehicle_dict(v: VehicleOutcome) -> JsonObj:
     dano: JsonObj = {
         "perfil_m": [_r(c) for c in v.crush_profile_m],
         "ancho_m": _r(v.crush_width_m),
+        "centro_m": _r(v.crush_center_m),
         "energia_j": _r(v.crush_energy_j, 3),
         "origen_rigidez": v.stiffness_origen,
     }
@@ -483,6 +485,26 @@ def _crush_shape_and_width(cdc: JsonObj | None, body: Body2D) -> tuple[list[floa
     if zona_h in {"R", "B"}:
         return TRIANGULAR_SHAPES["derecha"], 0.4 * side_len
     return TRIANGULAR_SHAPES["centro"], 0.4 * side_len
+
+
+_ALONG_FRONT_BACK = {"L": 1 / 3, "C": 0.0, "R": -1 / 3, "Y": 1 / 6, "Z": -1 / 6, "D": 0.0}
+_ALONG_SIDE = {"F": 1 / 3, "P": 0.0, "B": -1 / 3, "Y": 1 / 6, "Z": -1 / 6, "D": 0.0}
+
+
+def _crush_center(cdc: JsonObj | None, body: Body2D, width: float) -> float:
+    """Centro del ancho dañado a lo largo de la cara (m; + = izquierda en F/B, adelante en L/R).
+
+    Mismas fracciones que `contact.contact_offset`; se acota para que la franja dañada no se
+    salga de la cara.
+    """
+    lado = str((cdc or {}).get("lado", "F"))
+    zona = str((cdc or {}).get("zona_horizontal", "D"))
+    if lado in {"L", "R"}:
+        side, frac = body.length, _ALONG_SIDE.get(zona, 0.0)
+    else:
+        side, frac = body.width, _ALONG_FRONT_BACK.get(zona, 0.0)
+    limit = max(0.0, (side - width) / 2)
+    return max(-limit, min(limit, frac * side))
 
 
 def _normal_from_cdc(cdc: JsonObj | None, state: State2D) -> Vec | None:
@@ -1052,6 +1074,7 @@ def reconstruct(spec: JsonObj, *, dt: float = DT_OUT) -> Reconstruction:
                 crush_profile_m=prof,
                 crush_width_m=width,
                 crush_energy_j=e,
+                crush_center_m=_crush_center(zonas.get(m.id), m.body, width),
                 stiffness_origen=origen,
                 cdc=zonas.get(m.id),
                 stopped=stopped,

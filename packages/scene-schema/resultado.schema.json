@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://croquis.local/schema/resultado/1.0.0",
+  "$id": "https://croquis.local/schema/resultado/1.1.0",
   "title": "Resultado",
   "description": "Reconstrucción producida por el solver a partir de una EscenaSpec: trayectorias, impulsos, daños, personas, eventos, banderas y parámetros con su fuente. Unidades SI; tiempo con t = 0 en el impacto principal; rumbos en radianes antihorario desde +X.",
   "type": "object",
@@ -19,53 +19,106 @@
     "parametros"
   ],
   "properties": {
-    "version_resultado": { "const": "1.0.0" },
-    "escena_id": { "$ref": "#/$defs/Id" },
-    "semilla": { "type": "integer", "minimum": 0 },
-    "dt": { "type": "number", "exclusiveMinimum": 0, "maximum": 1 },
-    "t_inicio": { "type": "number", "maximum": 0 },
-    "t_fin": { "type": "number", "minimum": 0 },
-    "punto_impacto": { "$ref": "#/$defs/Punto" },
+    "version_resultado": {
+      "const": "1.1.0"
+    },
+    "escena_id": {
+      "$ref": "#/$defs/Id"
+    },
+    "semilla": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "dt": {
+      "type": "number",
+      "exclusiveMinimum": 0,
+      "maximum": 1
+    },
+    "t_inicio": {
+      "type": "number",
+      "maximum": 0
+    },
+    "t_fin": {
+      "type": "number",
+      "minimum": 0
+    },
+    "punto_impacto": {
+      "$ref": "#/$defs/Punto"
+    },
     "vehiculos": {
       "type": "array",
-      "items": { "$ref": "#/$defs/VehiculoResultado" },
+      "items": {
+        "$ref": "#/$defs/VehiculoResultado"
+      },
       "maxItems": 8
     },
     "personas": {
       "type": "array",
-      "items": { "$ref": "#/$defs/PersonaResultado" },
+      "items": {
+        "$ref": "#/$defs/PersonaResultado"
+      },
       "maxItems": 24
     },
     "eventos": {
       "type": "array",
-      "items": { "$ref": "#/$defs/EventoResultado" },
+      "items": {
+        "$ref": "#/$defs/EventoResultado"
+      },
       "maxItems": 64
     },
     "banderas": {
       "type": "array",
-      "items": { "type": "string", "minLength": 1, "maxLength": 400 },
+      "items": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 400
+      },
       "maxItems": 64,
       "description": "Avisos en lenguaje llano sobre supuestos fuertes o inconsistencias. Nunca asignan culpa."
     },
-    "parametros": { "$ref": "#/$defs/Parametros" }
+    "parametros": {
+      "$ref": "#/$defs/Parametros"
+    }
   },
   "$defs": {
-    "Id": { "type": "string", "pattern": "^[a-z0-9][a-z0-9_-]{0,63}$" },
-    "Numeros": { "type": "array", "items": { "type": "number" }, "maxItems": 20000 },
+    "Id": {
+      "type": "string",
+      "pattern": "^[a-z0-9][a-z0-9_-]{0,63}$"
+    },
+    "Numeros": {
+      "type": "array",
+      "items": {
+        "type": "number"
+      },
+      "maxItems": 20000
+    },
     "Punto": {
       "type": "object",
       "additionalProperties": false,
       "required": ["x", "y"],
-      "properties": { "x": { "type": "number" }, "y": { "type": "number" } }
+      "properties": {
+        "x": {
+          "type": "number"
+        },
+        "y": {
+          "type": "number"
+        }
+      }
     },
     "Pose": {
       "type": "object",
       "additionalProperties": false,
       "required": ["x", "y", "rumbo_deg"],
       "properties": {
-        "x": { "type": "number" },
-        "y": { "type": "number" },
-        "rumbo_deg": { "type": "number" }
+        "x": {
+          "type": "number"
+        },
+        "y": {
+          "type": "number"
+        },
+        "rumbo_deg": {
+          "type": "number"
+        }
       }
     },
     "Dimensiones": {
@@ -73,11 +126,26 @@
       "additionalProperties": false,
       "required": ["largo_m", "ancho_m", "alto_m", "distancia_entre_ejes_m", "masa_kg"],
       "properties": {
-        "largo_m": { "type": "number", "exclusiveMinimum": 0 },
-        "ancho_m": { "type": "number", "exclusiveMinimum": 0 },
-        "alto_m": { "type": "number", "exclusiveMinimum": 0 },
-        "distancia_entre_ejes_m": { "type": "number", "exclusiveMinimum": 0 },
-        "masa_kg": { "type": "number", "exclusiveMinimum": 0 }
+        "largo_m": {
+          "type": "number",
+          "exclusiveMinimum": 0
+        },
+        "ancho_m": {
+          "type": "number",
+          "exclusiveMinimum": 0
+        },
+        "alto_m": {
+          "type": "number",
+          "exclusiveMinimum": 0
+        },
+        "distancia_entre_ejes_m": {
+          "type": "number",
+          "exclusiveMinimum": 0
+        },
+        "masa_kg": {
+          "type": "number",
+          "exclusiveMinimum": 0
+        }
       }
     },
     "TrayectoriaVehiculo": {
@@ -86,13 +154,27 @@
       "additionalProperties": false,
       "required": ["t", "x", "y", "rumbo", "vx", "vy", "vel_angular"],
       "properties": {
-        "t": { "$ref": "#/$defs/Numeros" },
-        "x": { "$ref": "#/$defs/Numeros" },
-        "y": { "$ref": "#/$defs/Numeros" },
-        "rumbo": { "$ref": "#/$defs/Numeros" },
-        "vx": { "$ref": "#/$defs/Numeros" },
-        "vy": { "$ref": "#/$defs/Numeros" },
-        "vel_angular": { "$ref": "#/$defs/Numeros" }
+        "t": {
+          "$ref": "#/$defs/Numeros"
+        },
+        "x": {
+          "$ref": "#/$defs/Numeros"
+        },
+        "y": {
+          "$ref": "#/$defs/Numeros"
+        },
+        "rumbo": {
+          "$ref": "#/$defs/Numeros"
+        },
+        "vx": {
+          "$ref": "#/$defs/Numeros"
+        },
+        "vy": {
+          "$ref": "#/$defs/Numeros"
+        },
+        "vel_angular": {
+          "$ref": "#/$defs/Numeros"
+        }
       }
     },
     "ZonaCDC": {
@@ -100,31 +182,60 @@
       "additionalProperties": false,
       "required": ["lado"],
       "properties": {
-        "lado": { "type": "string", "enum": ["F", "B", "L", "R", "T", "U"] },
+        "lado": {
+          "type": "string",
+          "enum": ["F", "B", "L", "R", "T", "U"]
+        },
         "zona_horizontal": {
           "type": "string",
           "enum": ["L", "C", "R", "Y", "Z", "D", "F", "P", "B"]
         },
-        "zona_vertical": { "type": "string", "enum": ["A", "E", "G", "H", "L", "M", "W"] },
-        "extension": { "type": "integer", "minimum": 1, "maximum": 9 }
+        "zona_vertical": {
+          "type": "string",
+          "enum": ["A", "E", "G", "H", "L", "M", "W"]
+        },
+        "extension": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 9
+        }
       }
     },
     "Dano": {
       "type": "object",
-      "description": "Perfil de aplastamiento CRASH3 de 6 puntos sobre el ancho dañado, energía absorbida y origen de la rigidez usada.",
+      "description": "Perfil de aplastamiento CRASH3 de 6 puntos sobre el ancho dañado (centrado en centro_m a lo largo de la cara), energía absorbida y origen de la rigidez usada.",
       "additionalProperties": false,
-      "required": ["perfil_m", "ancho_m", "energia_j", "origen_rigidez"],
+      "required": ["perfil_m", "ancho_m", "centro_m", "energia_j", "origen_rigidez"],
       "properties": {
         "perfil_m": {
           "type": "array",
-          "items": { "type": "number", "minimum": 0 },
+          "items": {
+            "type": "number",
+            "minimum": 0
+          },
           "minItems": 6,
-          "maxItems": 6
+          "maxItems": 6,
+          "description": "C1 a C6 equiespaciados sobre el ancho dañado: de izquierda a derecha del vehículo en el frente y en la parte trasera, de adelante hacia atrás en los costados (convención CRASH3)."
         },
-        "ancho_m": { "type": "number", "minimum": 0 },
-        "energia_j": { "type": "number", "minimum": 0 },
-        "origen_rigidez": { "type": "string", "enum": ["nhtsa", "supuesto", "sin impacto"] },
-        "cdc": { "$ref": "#/$defs/ZonaCDC" }
+        "ancho_m": {
+          "type": "number",
+          "minimum": 0
+        },
+        "centro_m": {
+          "type": "number",
+          "description": "Centro del ancho dañado a lo largo de la cara golpeada (m): positivo hacia la izquierda en el frente o la parte trasera, hacia adelante en los costados."
+        },
+        "energia_j": {
+          "type": "number",
+          "minimum": 0
+        },
+        "origen_rigidez": {
+          "type": "string",
+          "enum": ["nhtsa", "supuesto", "sin impacto"]
+        },
+        "cdc": {
+          "$ref": "#/$defs/ZonaCDC"
+        }
       }
     },
     "VehiculoResultado": {
@@ -145,19 +256,53 @@
         "distancia_post_m"
       ],
       "properties": {
-        "id": { "$ref": "#/$defs/Id" },
-        "rol": { "type": "string", "pattern": "^[A-H]$" },
-        "clase": { "type": "string", "minLength": 1, "maxLength": 40 },
-        "involucrado": { "type": "boolean" },
-        "dimensiones": { "$ref": "#/$defs/Dimensiones" },
-        "trayectoria": { "$ref": "#/$defs/TrayectoriaVehiculo" },
-        "v_impacto_kmh": { "type": "number", "minimum": 0 },
-        "delta_v_kmh": { "type": "number", "minimum": 0 },
-        "pdof_horas": { "type": "number", "minimum": 0, "maximum": 12 },
-        "dano": { "$ref": "#/$defs/Dano" },
-        "en_reposo": { "type": "boolean" },
-        "pose_final": { "$ref": "#/$defs/Pose" },
-        "distancia_post_m": { "type": "number", "minimum": 0 }
+        "id": {
+          "$ref": "#/$defs/Id"
+        },
+        "rol": {
+          "type": "string",
+          "pattern": "^[A-H]$"
+        },
+        "clase": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 40
+        },
+        "involucrado": {
+          "type": "boolean"
+        },
+        "dimensiones": {
+          "$ref": "#/$defs/Dimensiones"
+        },
+        "trayectoria": {
+          "$ref": "#/$defs/TrayectoriaVehiculo"
+        },
+        "v_impacto_kmh": {
+          "type": "number",
+          "minimum": 0
+        },
+        "delta_v_kmh": {
+          "type": "number",
+          "minimum": 0
+        },
+        "pdof_horas": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 12
+        },
+        "dano": {
+          "$ref": "#/$defs/Dano"
+        },
+        "en_reposo": {
+          "type": "boolean"
+        },
+        "pose_final": {
+          "$ref": "#/$defs/Pose"
+        },
+        "distancia_post_m": {
+          "type": "number",
+          "minimum": 0
+        }
       }
     },
     "TrayectoriaPersona": {
@@ -166,11 +311,21 @@
       "additionalProperties": false,
       "required": ["t", "x", "y", "z", "rumbo"],
       "properties": {
-        "t": { "$ref": "#/$defs/Numeros" },
-        "x": { "$ref": "#/$defs/Numeros" },
-        "y": { "$ref": "#/$defs/Numeros" },
-        "z": { "$ref": "#/$defs/Numeros" },
-        "rumbo": { "$ref": "#/$defs/Numeros" }
+        "t": {
+          "$ref": "#/$defs/Numeros"
+        },
+        "x": {
+          "$ref": "#/$defs/Numeros"
+        },
+        "y": {
+          "$ref": "#/$defs/Numeros"
+        },
+        "z": {
+          "$ref": "#/$defs/Numeros"
+        },
+        "rumbo": {
+          "$ref": "#/$defs/Numeros"
+        }
       }
     },
     "Fase": {
@@ -182,8 +337,12 @@
           "type": "string",
           "enum": ["de_pie", "caminando", "vuelo", "deslizamiento", "reposo"]
         },
-        "t_inicio": { "type": "number" },
-        "t_fin": { "type": "number" }
+        "t_inicio": {
+          "type": "number"
+        },
+        "t_fin": {
+          "type": "number"
+        }
       }
     },
     "Contacto": {
@@ -192,9 +351,18 @@
       "additionalProperties": false,
       "required": ["defensa", "borde_cofre", "cabeza"],
       "properties": {
-        "defensa": { "type": "string", "maxLength": 40 },
-        "borde_cofre": { "type": "string", "maxLength": 40 },
-        "cabeza": { "type": "string", "maxLength": 40 }
+        "defensa": {
+          "type": "string",
+          "maxLength": 40
+        },
+        "borde_cofre": {
+          "type": "string",
+          "maxLength": 40
+        },
+        "cabeza": {
+          "type": "string",
+          "maxLength": 40
+        }
       }
     },
     "Proyeccion": {
@@ -208,16 +376,29 @@
         "contacto"
       ],
       "properties": {
-        "velocidad_lanzamiento_kmh": { "type": "number", "minimum": 0 },
-        "distancia_m": { "type": "number", "minimum": 0 },
+        "velocidad_lanzamiento_kmh": {
+          "type": "number",
+          "minimum": 0
+        },
+        "distancia_m": {
+          "type": "number",
+          "minimum": 0
+        },
         "rango_m": {
           "type": "array",
-          "items": { "type": "number", "minimum": 0 },
+          "items": {
+            "type": "number",
+            "minimum": 0
+          },
           "minItems": 2,
           "maxItems": 2
         },
-        "posicion_reposo": { "$ref": "#/$defs/Punto" },
-        "contacto": { "$ref": "#/$defs/Contacto" }
+        "posicion_reposo": {
+          "$ref": "#/$defs/Punto"
+        },
+        "contacto": {
+          "$ref": "#/$defs/Contacto"
+        }
       }
     },
     "PersonaResultado": {
@@ -225,16 +406,34 @@
       "additionalProperties": false,
       "required": ["id", "rol", "estatura_m", "trayectoria", "fases"],
       "properties": {
-        "id": { "$ref": "#/$defs/Id" },
+        "id": {
+          "$ref": "#/$defs/Id"
+        },
         "rol": {
           "type": "string",
           "enum": ["conductor", "pasajero", "peaton", "ciclista", "motociclista"]
         },
-        "estatura_m": { "type": "number", "exclusiveMinimum": 0, "maximum": 2.5 },
-        "vehiculo_id": { "$ref": "#/$defs/Id" },
-        "trayectoria": { "$ref": "#/$defs/TrayectoriaPersona" },
-        "fases": { "type": "array", "items": { "$ref": "#/$defs/Fase" }, "maxItems": 16 },
-        "proyeccion": { "$ref": "#/$defs/Proyeccion" }
+        "estatura_m": {
+          "type": "number",
+          "exclusiveMinimum": 0,
+          "maximum": 2.5
+        },
+        "vehiculo_id": {
+          "$ref": "#/$defs/Id"
+        },
+        "trayectoria": {
+          "$ref": "#/$defs/TrayectoriaPersona"
+        },
+        "fases": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/Fase"
+          },
+          "maxItems": 16
+        },
+        "proyeccion": {
+          "$ref": "#/$defs/Proyeccion"
+        }
       }
     },
     "DetalleEvento": {
@@ -243,22 +442,52 @@
       "properties": {
         "impulso_ns": {
           "type": "array",
-          "items": { "type": "number" },
+          "items": {
+            "type": "number"
+          },
           "minItems": 2,
           "maxItems": 2
         },
-        "adherencia": { "type": "boolean" },
-        "friccion_contacto_usada": { "type": "number", "minimum": 0 },
-        "energia_disipada_j": { "type": "number", "minimum": 0 },
-        "velocidad_cierre_kmh": { "type": "number", "minimum": 0 },
-        "objeto": { "type": "string", "maxLength": 40 },
-        "rigido": { "type": "boolean" },
-        "energia_objeto_j": { "type": "number", "minimum": 0 },
-        "aplastamiento_max_m": { "type": "number", "minimum": 0 },
-        "distancia_proyeccion_m": { "type": "number", "minimum": 0 },
+        "adherencia": {
+          "type": "boolean"
+        },
+        "friccion_contacto_usada": {
+          "type": "number",
+          "minimum": 0
+        },
+        "energia_disipada_j": {
+          "type": "number",
+          "minimum": 0
+        },
+        "velocidad_cierre_kmh": {
+          "type": "number",
+          "minimum": 0
+        },
+        "objeto": {
+          "type": "string",
+          "maxLength": 40
+        },
+        "rigido": {
+          "type": "boolean"
+        },
+        "energia_objeto_j": {
+          "type": "number",
+          "minimum": 0
+        },
+        "aplastamiento_max_m": {
+          "type": "number",
+          "minimum": 0
+        },
+        "distancia_proyeccion_m": {
+          "type": "number",
+          "minimum": 0
+        },
         "rango_m": {
           "type": "array",
-          "items": { "type": "number", "minimum": 0 },
+          "items": {
+            "type": "number",
+            "minimum": 0
+          },
           "minItems": 2,
           "maxItems": 2
         }
@@ -269,7 +498,10 @@
       "additionalProperties": false,
       "required": ["id", "tipo", "t", "actores"],
       "properties": {
-        "id": { "type": "string", "pattern": "^[a-z0-9][a-z0-9_-]{0,79}$" },
+        "id": {
+          "type": "string",
+          "pattern": "^[a-z0-9][a-z0-9_-]{0,79}$"
+        },
         "tipo": {
           "type": "string",
           "enum": [
@@ -280,14 +512,20 @@
             "reposo"
           ]
         },
-        "t": { "type": "number" },
+        "t": {
+          "type": "number"
+        },
         "actores": {
           "type": "array",
-          "items": { "$ref": "#/$defs/Id" },
+          "items": {
+            "$ref": "#/$defs/Id"
+          },
           "minItems": 1,
           "maxItems": 8
         },
-        "detalle": { "$ref": "#/$defs/DetalleEvento" }
+        "detalle": {
+          "$ref": "#/$defs/DetalleEvento"
+        }
       }
     },
     "Parametro": {
@@ -296,9 +534,21 @@
       "additionalProperties": false,
       "required": ["valor", "tipo"],
       "properties": {
-        "valor": { "type": "number" },
-        "rango": { "type": "array", "items": { "type": "number" }, "minItems": 2, "maxItems": 2 },
-        "fuente": { "type": "string", "maxLength": 300 },
+        "valor": {
+          "type": "number"
+        },
+        "rango": {
+          "type": "array",
+          "items": {
+            "type": "number"
+          },
+          "minItems": 2,
+          "maxItems": 2
+        },
+        "fuente": {
+          "type": "string",
+          "maxLength": 300
+        },
         "tipo": {
           "type": "string",
           "enum": ["primaria", "secundaria", "supuesto", "relato", "medido"]
@@ -317,13 +567,27 @@
         "aproximacion_previa_s"
       ],
       "properties": {
-        "friccion_llanta": { "$ref": "#/$defs/Parametro" },
-        "restitucion_vehiculo_vehiculo": { "$ref": "#/$defs/Parametro" },
-        "relacion_impulso_tangencial": { "$ref": "#/$defs/Parametro" },
-        "arrastre_post_impacto": { "$ref": "#/$defs/Parametro" },
-        "factor_abs": { "$ref": "#/$defs/Parametro" },
-        "aproximacion_previa_s": { "$ref": "#/$defs/Parametro" },
-        "velocidad_peaton": { "$ref": "#/$defs/Parametro" }
+        "friccion_llanta": {
+          "$ref": "#/$defs/Parametro"
+        },
+        "restitucion_vehiculo_vehiculo": {
+          "$ref": "#/$defs/Parametro"
+        },
+        "relacion_impulso_tangencial": {
+          "$ref": "#/$defs/Parametro"
+        },
+        "arrastre_post_impacto": {
+          "$ref": "#/$defs/Parametro"
+        },
+        "factor_abs": {
+          "$ref": "#/$defs/Parametro"
+        },
+        "aproximacion_previa_s": {
+          "$ref": "#/$defs/Parametro"
+        },
+        "velocidad_peaton": {
+          "$ref": "#/$defs/Parametro"
+        }
       }
     }
   }

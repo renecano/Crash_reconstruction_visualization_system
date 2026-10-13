@@ -11,17 +11,17 @@
  * Marco local: origen en el centro de la planta (punto que sigue el solver) a nivel del piso,
  * +x al frente, +y arriba, −z a la izquierda (consistente con `coords.ts`).
  */
-import {
-  BoxGeometry,
-  BufferGeometry,
-  CylinderGeometry,
-  ExtrudeGeometry,
-  Group,
-  Mesh,
-  Shape,
-  TorusGeometry,
-} from "three";
+import { BoxGeometry, BufferGeometry, CylinderGeometry, Group, Mesh, TorusGeometry } from "three";
 import { mergeGeometries } from "three/examples/jsm/utils/BufferGeometryUtils.js";
+import { loftGeometry, stationsAlong } from "./loft";
+
+/** Paso de segmentación de las cajas y de las estaciones del loft (m). */
+const SEGMENT_M = 0.08;
+const LOFT_SPACING_M = 0.06;
+
+function ramp(x: number, a: number, b: number): number {
+  return Math.min(1, Math.max(0, (x - a) / (b - a)));
+}
 
 export type PartRole =
   "pintura" | "vidrio" | "llanta" | "rin" | "faro" | "calavera" | "plastico" | "cromo" | "carga";
@@ -231,36 +231,11 @@ function box(
   y: number,
   z = 0,
 ): Mesh {
-  const m = part(name, new BoxGeometry(sx, sy, sz), role);
+  // Segmentada cada ~8 cm para que F4 pueda deformarla.
+  const seg = (v: number): number => Math.max(1, Math.min(48, Math.ceil(v / SEGMENT_M)));
+  const m = part(name, new BoxGeometry(sx, sy, sz, seg(sx), seg(sy), seg(sz)), role);
   m.position.set(x, y, z);
   return m;
-}
-
-/** Prisma a partir de un perfil lateral (x adelante, y arriba), centrado en z, de ancho w. */
-function extruded(
-  name: string,
-  role: PartRole,
-  pts: [number, number][],
-  w: number,
-  bevel: number,
-): Mesh {
-  const shape = new Shape();
-  const first = pts[0] ?? [0, 0];
-  shape.moveTo(first[0], first[1]);
-  for (const [x, y] of pts.slice(1)) shape.lineTo(x, y);
-  shape.closePath();
-  const depth = Math.max(0.01, w - 2 * bevel);
-  const g = new ExtrudeGeometry(shape, {
-    depth,
-    steps: 1,
-    bevelEnabled: bevel > 0,
-    bevelThickness: bevel,
-    bevelSize: bevel,
-    bevelSegments: 2,
-    curveSegments: 4,
-  });
-  g.translate(0, 0, -depth / 2);
-  return part(name, g, role);
 }
 
 function wheel(name: string, r: number, width: number, x: number, z: number): Group {
@@ -305,20 +280,24 @@ function buildCar(p: CarProfile, d: VehicleDimensions): Group {
   const belt = Math.max(clr + 0.25, p.belt * H);
   const bevel = Math.min(0.05, 0.03 * W);
 
-  // Carrocería baja: de la altura libre a la cintura, con nariz y cola inclinadas.
+  // Carrocería baja (loft denso): de la altura libre a la cintura, con nariz y cola inclinadas.
   const nose = Math.min(0.12 * L, 0.35);
   const tail = Math.min(0.06 * L, 0.2);
-  const lower: [number, number][] = [
-    [xR, clr + 0.1],
-    [xR + 0.08, clr],
-    [xF - 0.08, clr],
-    [xF, clr + 0.12],
-    [xF, belt - 0.12],
-    [xF - nose, belt],
-    [xR + tail, belt],
-    [xR, belt - 0.06],
-  ];
-  g.add(extruded("body", "pintura", lower, W, bevel));
+  const lower = stationsAlong(xR, xF, LOFT_SPACING_M, (x) => {
+    const front = ramp(x, xF - 0.1, xF);
+    const rear = 1 - ramp(x, xR, xR + 0.1);
+    let y1 = belt;
+    if (x > xF - nose) y1 = belt - 0.12 * ramp(x, xF - nose, xF);
+    if (x < xR + tail) y1 = belt - 0.06 * (1 - ramp(x, xR, xR + tail));
+    return { y0: clr + 0.12 * front + 0.1 * rear, y1, w0: W / 2, w1: W / 2 - 0.015 };
+  });
+  g.add(
+    part(
+      "body",
+      loftGeometry(lower, { step: LOFT_SPACING_M, radius: bevel, capRings: 8 }),
+      "pintura",
+    ),
+  );
 
   // Habitáculo (vidrio) y techo.
   const roofY = H - 0.04;
@@ -342,13 +321,20 @@ function buildCar(p: CarProfile, d: VehicleDimensions): Group {
   const rwTop = rwBase + p.rearRun * L;
   // La caja de carga del camión da su altura total; la cabina es más baja.
   const cabinTop = p.style === "truck" ? Math.min(roofY, belt + 1.25) : roofY;
-  const cabin: [number, number][] = [
-    [rwBase, belt - 0.01],
-    [wsBase, belt - 0.01],
-    [wsTop, cabinTop],
-    [rwTop, cabinTop],
-  ];
-  g.add(extruded("greenhouse", "vidrio", cabin, cabinW, 0.02));
+  const cabin = stationsAlong(rwBase, wsBase, LOFT_SPACING_M, (x) => {
+    let top = cabinTop;
+    if (x < rwTop) top = belt + (cabinTop - belt) * ramp(x, rwBase, rwTop);
+    if (x > wsTop) top = cabinTop - (cabinTop - belt) * ramp(x, wsTop, wsBase);
+    const y0 = belt - 0.01;
+    return { y0, y1: Math.max(y0 + 0.02, top), w0: cabinW / 2, w1: cabinW / 2 - 0.05 };
+  });
+  g.add(
+    part(
+      "greenhouse",
+      loftGeometry(cabin, { step: LOFT_SPACING_M, radius: 0.03, capRings: 4 }),
+      "vidrio",
+    ),
+  );
   const roofLen = Math.max(0.2, wsTop - rwTop);
   g.add(
     box(
@@ -559,6 +545,17 @@ function buildTwoWheel(p: TwoWheelProfile, d: VehicleDimensions): Group {
  * Las piezas originales se conservan, ocultas, en el subgrupo `piezas`: F4 las deforma por
  * nombre y las pruebas las inspeccionan. Las llantas quedan aparte porque giran.
  */
+/** Piezas que no se fusionan: se agrietan, se rompen o se desprenden por separado (F4). */
+export const SEPARATE_PARTS = new Set([
+  "windshield",
+  "bumper_front",
+  "bumper_rear",
+  "mirror_l",
+  "mirror_r",
+  "headlight_l",
+  "headlight_r",
+]);
+
 export function fuseStaticParts(g: Group): void {
   g.updateMatrixWorld(true);
   const byRole = new Map<PartRole, BufferGeometry[]>();
@@ -567,7 +564,7 @@ export function fuseStaticParts(g: Group): void {
   parts.name = "piezas";
   parts.visible = false;
   for (const child of [...g.children]) {
-    if (!(child instanceof Mesh)) continue;
+    if (!(child instanceof Mesh) || SEPARATE_PARTS.has(child.name)) continue;
     const role = child.userData.role as PartRole;
     const geo = (child.geometry as BufferGeometry).clone();
     geo.applyMatrix4(child.matrix);
