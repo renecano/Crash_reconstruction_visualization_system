@@ -5,9 +5,9 @@ Reglas de trabajo: `CLAUDE.md`. Especificación: `PLAN.md`.
 
 ## Estado actual
 
-- **Fase actual:** F4 — Daño (cerrando: PR #6 de `feat/f4-dano`, falta CI verde y merge).
-- **Siguiente paso concreto:** merge del PR #6 y arrancar **F5 — Personas y visibilidad** (PLAN §7.4 y módulos 6.1.6–6.1.9: cuerpos articulados con ragdoll Rapier, ocupantes, volcadura ilustrativa, análisis de visibilidad; criterio: proyección del ragdoll dentro de los límites de Searle en ≥ 95 % de corridas con semilla, E4 corrido, visibilidad probada en la escena del árbol).
-- **F0** cerrado el 2026-10-10 (PR #1), **F1** el 2026-10-10 (PR #3), **F2** el 2026-10-13 (PR #4), **F3** el 2026-10-13 (PR #5).
+- **Fase actual:** F5 — Personas y visibilidad (rama `feat/f5-personas`).
+- **Siguiente paso concreto:** ver el plan de F5 al final de este archivo; avanzar en el orden indicado ahí.
+- **F0** cerrado el 2026-10-10 (PR #1), **F1** el 2026-10-10 (PR #3), **F2** el 2026-10-13 (PR #4), **F3** el 2026-10-13 (PR #5), **F4** el 2026-10-13 (PR #6).
 
 ### Bloqueado — necesita a René
 
@@ -346,3 +346,22 @@ Criterio de aceptación F4 (PLAN §13): capturas de daño por escena ✔; perfil
 - **Qué quedó:** cada choque deja el daño que calculó el solver: carrocería hundida con la forma y la profundidad del perfil C1–C6, pintura transferida, vidrios rotos, piezas en el piso, bolsas de aire y marcas.
 - **Cómo probarlo:** `pnpm dev`, abre http://localhost:3000/visor, elige «Acercamiento al daño» y recorre la línea de tiempo alrededor de 0 en cámara lenta.
 - **Qué necesito de ti:** nada para F5.
+
+## F5 — Personas y visibilidad
+
+Criterio de aceptación (PLAN §13): proyección del ragdoll dentro de los límites de Searle en ≥ 95 % de corridas con semilla; E4 corrido; análisis de visibilidad con prueba en la escena del árbol.
+
+### Plan (orden de trabajo)
+
+1. **Solver, peatón y jinete (6.1.7).** Banda de distancias de Searle para una velocidad y un rango de fricción; proyección de motociclistas y ciclistas en choques vehículo–vehículo (hoy solo se proyecta al peatón).
+2. **Solver, ocupantes (6.1.8).** Cinemática relativa al habitáculo con y sin cinturón: pulso de choque desde ΔV y aplastamiento, desplazamiento hacia el punto de impacto y zona de contacto probable. Sin predicción de lesiones (§10, §16.2).
+3. **Solver, visibilidad (6.1.9).** Línea de vista 2.5D desde el ojo de cada conductor (alturas AASHTO) hacia cada actor en el tiempo. Oclusores: árboles (tronco y copa), postes, muros, vehículos estacionados y en movimiento. Límites: noche (alcance y cono de faros, alumbrado), lluvia o niebla (`entorno.visibilidad`). Responde desde cuándo y a qué distancia se podía ver.
+4. **Solver, volcadura (6.1.6).** Criterio de inicio por velocidad lateral contra la velocidad crítica de deslizamiento (SSF); la secuencia 3D va en Rapier en el visor, etiquetada como ilustrativa.
+5. **Contrato del resultado 1.2.0.** `personas[].ocupante`, proyección de jinetes, `visibilidad` y `vehiculos[].volcadura`; regenerar los fixtures.
+6. **Cuerpos.** Pipeline en Python sobre la malla base, los targets y el rig de MakeHuman (CC0, `LICENSE.ASSETS.md` del repositorio oficial): variantes por edad y sexo, complexión como _morph target_, esqueleto reducido para animar y para el ragdoll, glTF cuantizado. Ropa neutra por regiones, sin anatomía.
+7. **Visor.** Animaciones de caminar, estar de pie, manejar y montar; ragdoll Rapier con límites articulares, calibrado contra la banda de Searle (horneado con semilla); ocupantes con su movimiento y marcadores neutros de contacto; volcadura en Rapier; cámara de conductor con la visibilidad sobrepuesta; panel de visibilidad y ocupantes.
+8. **Evaluaciones.** E4 (proyección de peatón contra datos publicados accesibles; alternativa: Searle sola), tasa de éxito del ragdoll con semillas y E6 de nuevo con personas.
+9. **Pruebas.** Hypothesis para las propiedades de ocupantes y visibilidad, prueba de visibilidad en `objeto_fijo_arbol`, `peaton_cruce` (camión estacionado) y casos sintéticos, pruebas del ragdoll y capturas visuales nuevas.
+
+Riesgos: rendimiento con mallas con piel en GPU integrada (se mide con E6; hay LOD si hace falta); datos públicos de E4 escasos (se documenta cuál se usó y su licencia).
+
