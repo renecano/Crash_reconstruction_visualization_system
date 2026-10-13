@@ -1,4 +1,4 @@
-"""Contrato EscenaSpec en Python.
+"""Contrato EscenaSpec (entrada) y esquema del resultado del solver (salida) en Python.
 
 ``escena.schema.json`` es la única fuente de verdad. ``generated.py`` se produce con
 ``uv run croquis-scene-schema-generate``; ``validate_dict`` valida contra el JSON Schema
@@ -23,14 +23,21 @@ FIXTURES_DIR = Path(__file__).resolve().parents[2] / "fixtures"
 
 __all__ = [
     "FIXTURES_DIR",
+    "RESULTS_DIR",
+    "RESULT_SCHEMA_PATH",
+    "RESULT_VERSION",
     "SCHEMA_PATH",
     "SCHEMA_VERSION",
     "VEHICLE_CLASSES_PATH",
     "EscenaSpec",
     "list_fixtures",
+    "list_results",
     "load_fixture",
+    "load_result",
+    "load_result_schema",
     "load_schema",
     "load_vehicle_classes",
+    "result_errors",
     "schema_errors",
     "validate_dict",
 ]
@@ -87,4 +94,45 @@ def list_fixtures() -> list[str]:
 
 def load_fixture(name: str) -> dict[str, Any]:
     data: dict[str, Any] = json.loads((FIXTURES_DIR / f"{name}.json").read_text(encoding="utf-8"))
+    return data
+
+
+# ----------------------------------------------------------------------------------------------
+# Resultado del solver (`resultado.schema.json`)
+# ----------------------------------------------------------------------------------------------
+
+RESULT_SCHEMA_PATH = Path(__file__).resolve().parents[2] / "resultado.schema.json"
+RESULTS_DIR = FIXTURES_DIR / "resultados"
+
+
+@cache
+def load_result_schema() -> dict[str, Any]:
+    data: dict[str, Any] = json.loads(RESULT_SCHEMA_PATH.read_text(encoding="utf-8"))
+    return data
+
+
+RESULT_VERSION: str = load_result_schema()["properties"]["version_resultado"]["const"]
+
+
+@cache
+def _result_validator() -> Draft202012Validator:
+    schema = load_result_schema()
+    Draft202012Validator.check_schema(schema)
+    return Draft202012Validator(schema, format_checker=FormatChecker())
+
+
+def result_errors(data: Any) -> list[str]:
+    """Errores del documento de resultado contra su JSON Schema, como ``ruta: mensaje``."""
+    found: list[ValidationError] = list(_result_validator().iter_errors(data))  # pyright: ignore[reportUnknownMemberType]
+    return [
+        f"/{'/'.join(str(p) for p in e.path)}: {e.message}" for e in sorted(found, key=_sort_key)
+    ]
+
+
+def list_results() -> list[str]:
+    return sorted(p.stem for p in RESULTS_DIR.glob("*.json"))
+
+
+def load_result(name: str) -> dict[str, Any]:
+    data: dict[str, Any] = json.loads((RESULTS_DIR / f"{name}.json").read_text(encoding="utf-8"))
     return data

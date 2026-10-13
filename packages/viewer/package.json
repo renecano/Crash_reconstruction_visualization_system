@@ -5,12 +5,19 @@
   "description": "Componentes React Three Fiber del visor 3D (vía, vehículos, daño, personas, clima)",
   "type": "module",
   "exports": {
-    ".": "./src/index.ts"
+    ".": "./src/index.ts",
+    "./react": "./src/react/index.ts"
   },
   "scripts": {
     "lint": "eslint .",
     "typecheck": "tsc -p tsconfig.json",
     "test": "vitest run"
+  },
+  "dependencies": {
+    "@croquis/croquis-2d": "workspace:*",
+    "@croquis/scene-schema": "workspace:*",
+    "@react-three/fiber": "catalog:",
+    "three": "catalog:"
   },
   "peerDependencies": {
     "react": "catalog:",
@@ -20,6 +27,11 @@
     "@types/node": "catalog:",
     "@types/react": "catalog:",
     "@types/react-dom": "catalog:",
+    "@types/three": "catalog:",
+    "@testing-library/react": "catalog:",
+    "@vitejs/plugin-react": "catalog:",
+    "fast-check": "catalog:",
+    "jsdom": "catalog:",
     "eslint": "catalog:",
     "react": "catalog:",
     "react-dom": "catalog:",

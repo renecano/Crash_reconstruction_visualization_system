@@ -92,8 +92,8 @@
         "id": "ceda-entrada-sur",
         "tipo": "ceda_el_paso",
         "posicion": {
-          "x": 0,
-          "y": -6
+          "x": 5.0,
+          "y": -5
         },
         "orientacion_deg": 90,
         "aplica_a": ["veh-b"],
@@ -278,9 +278,9 @@
         ]
       },
       "posicion_inicial": {
-        "x": -12,
-        "y": -3,
-        "rumbo_deg": 15,
+        "x": -18.78,
+        "y": 9.45,
+        "rumbo_deg": -44.6,
         "procedencia": {
           "fuente": "supuesto",
           "confianza": 0.5,
@@ -288,9 +288,9 @@
         }
       },
       "posicion_final": {
-        "x": 3.5,
-        "y": 3,
-        "rumbo_deg": 110,
+        "x": 4.5,
+        "y": 2.55,
+        "rumbo_deg": 95,
         "procedencia": {
           "fuente": "relato",
           "confianza": 0.5,
@@ -436,9 +436,9 @@
         "confianza": 0.5
       },
       "posicion_inicial": {
-        "x": 0,
+        "x": 1.75,
         "y": -14,
-        "rumbo_deg": 80,
+        "rumbo_deg": 90,
         "procedencia": {
           "fuente": "supuesto",
           "confianza": 0.5,
@@ -446,9 +446,9 @@
         }
       },
       "posicion_final": {
-        "x": 1.0,
-        "y": -2.5,
-        "rumbo_deg": 70,
+        "x": 1.95,
+        "y": -1.7,
+        "rumbo_deg": 85,
         "procedencia": {
           "fuente": "supuesto",
           "confianza": 0.4
@@ -577,8 +577,8 @@
         }
       ],
       "punto_impacto": {
-        "x": 0,
-        "y": -2.6
+        "x": 1.75,
+        "y": 0.9
       },
       "descripcion": "Frente de B contra el costado derecho de A, entre puertas.",
       "procedencia": {
@@ -676,8 +676,8 @@
       "vehiculo_id": "veh-a",
       "puntos": [
         {
-          "x": 0.3,
-          "y": -2.2
+          "x": 1.75,
+          "y": 0.3
         }
       ],
       "descripcion": "Espejo derecho de A en el punto de impacto.",

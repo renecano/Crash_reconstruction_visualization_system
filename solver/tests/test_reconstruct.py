@@ -6,7 +6,9 @@ import math
 import pytest
 
 from croquis_scene_schema import list_fixtures, load_fixture
+from croquis_solver.contact import contact_offset
 from croquis_solver.crash3 import crush_energy
+from croquis_solver.models import rot
 from croquis_solver.reconstruct import reconstruct
 from croquis_solver.stiffness import stiffness_for
 
@@ -104,7 +106,7 @@ def test_arbol_detiene_y_poste_concentra() -> None:
 
 def test_peaton_proyeccion_en_rango_de_searle() -> None:
     r = reconstruct(load_fixture("peaton_cruce"))
-    p = r.personas[0]
+    p = next(x for x in r.personas if x.throw is not None)
     assert p.throw_distance_m is not None
     assert p.throw_range_m is not None
     lo, hi = p.throw_range_m
@@ -133,3 +135,61 @@ def test_perfil_de_dano_reporta_su_energia() -> None:
         e = crush_energy(v.crush_profile_m, v.crush_width_m, k)
         assert math.isclose(e, v.crush_energy_j, rel_tol=1e-6, abs_tol=1e-6)
         assert v.stiffness_origen in {"nhtsa", "supuesto"}
+
+
+VV_SCENES = [
+    n
+    for n in FIXTURES
+    if any(e["tipo"] == "impacto_vehiculo_vehiculo" for e in load_fixture(n)["eventos"])
+]
+
+
+@pytest.mark.parametrize("name", VV_SCENES)
+def test_zonas_cdc_se_tocan_en_el_impacto(name: str) -> None:
+    """En t = 0 el punto de contacto de cada vehículo coincide con el punto de impacto."""
+    spec = load_fixture(name)
+    r = reconstruct(spec)
+    assert r.punto_impacto is not None
+    ev = next(e for e in spec["eventos"] if e["tipo"] == "impacto_vehiculo_vehiculo")
+    zonas = {z["vehiculo_id"]: z.get("cdc") for z in ev.get("zonas_impacto", [])}
+    for vid in ev["actores"][:2]:
+        v = next(x for x in r.vehiculos if x.id == vid)
+        tr = v.trajectory
+        i0 = tr.t.index(0.0)
+        off = rot(contact_offset(zonas.get(vid), v.length, v.width), tr.yaw[i0])
+        cx, cy = tr.x[i0] + off[0], tr.y[i0] + off[1]
+        gap = math.hypot(cx - r.punto_impacto[0], cy - r.punto_impacto[1])
+        assert gap < 0.3, (name, vid, gap)
+
+
+def test_impacto_excentrico_genera_giro() -> None:
+    r = reconstruct(load_fixture("lateral_interseccion"))
+    for v in r.vehiculos:
+        i0 = v.trajectory.t.index(0.0)
+        assert abs(v.trajectory.yaw_rate[i0 + 1]) > 0.05, v.id
+
+
+def test_trayectoria_del_peaton_es_coherente_con_searle() -> None:
+    r = reconstruct(load_fixture("peaton_cruce"))
+    p = next(x for x in r.personas if x.throw is not None)
+    assert p.throw is not None
+    tr = p.track
+    assert r.punto_impacto is not None
+    i0 = tr.t.index(0.0)
+    assert math.isclose(tr.x[i0], r.punto_impacto[0], abs_tol=1e-9)
+    assert math.isclose(tr.y[i0], r.punto_impacto[1], abs_tol=1e-9)
+    moved = math.hypot(tr.x[-1] - tr.x[i0], tr.y[-1] - tr.y[i0])
+    assert math.isclose(moved, p.throw.throw_distance_m, rel_tol=1e-6)
+    assert math.isclose(tr.x[-1], p.throw.rest_position[0], abs_tol=1e-6)
+    fases = [f.fase for f in tr.fases]
+    assert fases[-3:] == ["vuelo", "deslizamiento", "reposo"]
+    assert tr.t[0] == pytest.approx(r.t_inicio)
+    assert tr.t[-1] == pytest.approx(r.t_fin)
+    assert all(z >= 0 for z in tr.z)
+
+
+def test_ocupantes_van_a_bordo_sin_trayectoria_propia() -> None:
+    r = reconstruct(load_fixture("alcance"))
+    a_bordo = [p for p in r.personas if p.vehiculo_id is not None]
+    assert a_bordo
+    assert all(len(p.track) == 0 for p in a_bordo)

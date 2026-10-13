@@ -67,4 +67,25 @@ describe("sceneLayout", () => {
     ]);
     expect(l.events.map((e) => e.id)).toEqual(["ev-impacto"]);
   });
+
+  it("comparte con el solver el modelo de curva y glorieta (ADR 0006)", () => {
+    const curva = roadLayout(loadFixture("frontal_curva").lugar);
+    expect(curva.strips).toHaveLength(0);
+    const arc = curva.arcs[0];
+    expect(arc?.center).toEqual({ x: 0, y: -120 });
+    expect(arc?.radius).toBe(120);
+    // El arco cruza el origen tangente a +X: 90° está dentro del intervalo.
+    expect(arc?.from).toBeLessThan(90);
+    expect(arc?.to).toBeGreaterThan(90);
+    const g = roadLayout(loadFixture("glorieta").lugar);
+    const ring = g.rings[0];
+    expect(ring).toBeDefined();
+    if (!ring) return;
+    // Borde exterior por el origen: centro en (0, R + W/2).
+    expect(ring.center.x).toBe(0);
+    expect(ring.center.y).toBeCloseTo(ring.outerRadius, 9);
+    // El acceso sur llega al origen.
+    const south = g.strips[0];
+    expect(south?.center.y ?? 0).toBeCloseTo(-(south?.length ?? 0) / 2, 9);
+  });
 });

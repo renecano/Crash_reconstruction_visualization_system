@@ -1,14 +1,20 @@
 """Proyección de peatones y ciclistas: distancia de lanzamiento ↔ velocidad.
 
 Searle (SAE 831622, 1983; SAE 930659, 1993): un cuerpo lanzado con velocidad v y ángulo θ que
-cae desde una altura h y desliza con fricción μ hasta detenerse a distancia D cumple
+sale desde una altura h (centro de masa), vuela, pierde al aterrizar la velocidad vertical y
+μ veces esa velocidad en la horizontal, y desliza con fricción μ hasta detenerse a distancia D,
+cumple
 
-    v(θ) = √(2 μ g (D + μ h)) / (cos θ + μ sin θ)
+    D = v² (cos θ + μ sin θ)² / (2 μ g) + μ h,
+    es decir   v(θ) = √(2 μ g (D − μ h)) / (cos θ + μ sin θ)
+
+(válida mientras la velocidad horizontal tras el aterrizaje no se anule; `throw_kinematics`
+integra el modelo completo y las pruebas verifican que coincide con la forma cerrada).
 
 El mínimo sobre θ (tan θ = μ) y el máximo (θ = 0) acotan la velocidad de lanzamiento para
 ángulos de lanzamiento en [0, 2·atan μ] (los físicamente plausibles; fuera de ese dominio la
 fórmula crece de nuevo porque se desperdicia energía hacia arriba):
-    v_min = √(2 μ g (D + μ h) / (1 + μ²)),   v_max = √(2 μ g (D + μ h)).
+    v_min = √(2 μ g (D − μ h) / (1 + μ²)),   v_max = √(2 μ g (D − μ h)).
 
 Wood (1988), según lo reproduce Spinu et al. 2018 (IOP Conf. Ser. 444 072017, ec. 2), corrige por
 las masas del vehículo y el peatón: v = √(2 μ g (D − μ h)) · (m_v + m_p) / m_v.
@@ -46,13 +52,13 @@ def searle_speed(
     if denom <= 0:
         msg = "Ángulo de lanzamiento fuera del dominio"
         raise ValueError(msg)
-    return math.sqrt(2.0 * mu * G * (throw_m + mu * cg_height_m)) / denom
+    return math.sqrt(2.0 * mu * G * max(throw_m - mu * cg_height_m, 0.0)) / denom
 
 
 def searle_range(throw_m: float, mu: float, cg_height_m: float = 0.0) -> ThrowSpeedRange:
     """Cotas mínima y máxima de la velocidad de lanzamiento (Searle)."""
     _check(throw_m, mu)
-    base = 2.0 * mu * G * (throw_m + mu * cg_height_m)
+    base = 2.0 * mu * G * max(throw_m - mu * cg_height_m, 0.0)
     return ThrowSpeedRange(
         v_min=math.sqrt(base / (1.0 + mu * mu)),
         v_max=math.sqrt(base),
@@ -68,14 +74,46 @@ def searle_max_angle_deg(mu: float) -> float:
 def searle_throw(
     v_launch: float, mu: float, launch_angle_deg: float, cg_height_m: float = 0.0
 ) -> float:
-    """Inversa: distancia de lanzamiento para una velocidad y ángulo dados."""
-    if v_launch < 0:
+    """Inversa: distancia de lanzamiento para una velocidad y ángulo dados.
+
+    Integra el modelo completo (`throw_kinematics`); coincide con la forma cerrada
+    v² (cos θ + μ sin θ)² / (2 μ g) + μ h mientras el deslizamiento arranca con velocidad.
+    """
+    return throw_kinematics(v_launch, launch_angle_deg, cg_height_m, mu).total_distance
+
+
+@dataclass(frozen=True)
+class ThrowKinematics:
+    flight_time: float
+    flight_distance: float
+    landing_speed: float  # velocidad horizontal tras el impulso de aterrizaje
+    slide_time: float
+    slide_distance: float
+
+    @property
+    def total_distance(self) -> float:
+        return self.flight_distance + self.slide_distance
+
+    @property
+    def total_time(self) -> float:
+        return self.flight_time + self.slide_time
+
+
+def throw_kinematics(v: float, theta_deg: float, cg_height: float, mu: float) -> ThrowKinematics:
+    """Modelo de Searle completo: vuelo balístico, impulso de aterrizaje y deslizamiento."""
+    if v < 0:
         msg = "La velocidad no puede ser negativa"
         raise ValueError(msg)
-    th = math.radians(launch_angle_deg)
-    denom = math.cos(th) + mu * math.sin(th)
-    d = (v_launch * denom) ** 2 / (2.0 * mu * G) - mu * cg_height_m
-    return max(d, 0.0)
+    if mu <= 0 or cg_height < 0:
+        msg = "μ debe ser positivo y la altura no negativa"
+        raise ValueError(msg)
+    th = math.radians(theta_deg)
+    vx, vz = v * math.cos(th), v * math.sin(th)
+    t_f = (vz + math.sqrt(vz * vz + 2.0 * G * cg_height)) / G
+    vz_land = vz - G * t_f
+    u = max(0.0, vx - mu * abs(vz_land))
+    t_s = u / (mu * G)
+    return ThrowKinematics(t_f, vx * t_f, u, t_s, u * u / (2.0 * mu * G))
 
 
 def wood_speed(

@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { Legend } from "@/components/legend";
 
 export default function Page() {
@@ -8,6 +9,17 @@ export default function Page() {
         Reconstrucción 3D de percances viales a partir del relato de quien los vivió. La IA traduce,
         la física decide y el visor muestra.
       </p>
+      <nav aria-label="Secciones" className="flex flex-wrap gap-3">
+        <Link
+          href="/visor"
+          className="rounded bg-neutral-900 px-4 py-2 font-medium text-white dark:bg-neutral-100 dark:text-neutral-900"
+        >
+          Ver las escenas en 3D
+        </Link>
+        <Link href="/croquis" className="rounded border border-neutral-400 px-4 py-2 font-medium">
+          Editar el croquis 2D
+        </Link>
+      </nav>
       <Legend />
     </main>
   );

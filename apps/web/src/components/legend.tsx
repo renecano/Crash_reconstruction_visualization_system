@@ -8,14 +8,18 @@ export const LEGEND_TEXT =
 export interface LegendProps {
   seed?: number | string;
   inputHash?: string;
+  /** "clara" para fondos oscuros (sobre el visor 3D). */
+  tone?: "normal" | "clara";
 }
 
-export function Legend({ seed, inputHash }: LegendProps) {
+export function Legend({ seed, inputHash, tone = "normal" }: LegendProps) {
   return (
     <p
       role="note"
       aria-label="Leyenda de reconstrucción ilustrativa"
-      className="text-sm text-neutral-600 dark:text-neutral-400"
+      className={
+        tone === "clara" ? "text-sm text-white" : "text-sm text-neutral-600 dark:text-neutral-400"
+      }
     >
       {LEGEND_TEXT}
       {seed !== undefined ? <span className="ml-2 font-mono">semilla {String(seed)}</span> : null}

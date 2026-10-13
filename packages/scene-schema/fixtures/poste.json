@@ -161,7 +161,7 @@
         "tipo": "poste",
         "posicion": {
           "x": 0,
-          "y": 0
+          "y": -11.6
         },
         "alto": {
           "valor": 9,
@@ -324,7 +324,7 @@
       },
       "posicion_inicial": {
         "x": -35,
-        "y": -4.5,
+        "y": -5.85,
         "rumbo_deg": 0,
         "procedencia": {
           "fuente": "supuesto",
@@ -333,9 +333,9 @@
         }
       },
       "posicion_final": {
-        "x": -2.0,
-        "y": -0.3,
-        "rumbo_deg": 15,
+        "x": -2.19,
+        "y": -11.6,
+        "rumbo_deg": 8,
         "procedencia": {
           "fuente": "relato",
           "confianza": 0.6,
@@ -441,7 +441,7 @@
       ],
       "punto_impacto": {
         "x": -0.15,
-        "y": 0
+        "y": -11.6
       },
       "descripcion": "Impacto frontal centrado contra poste de concreto (barrera estrecha).",
       "procedencia": {
@@ -540,8 +540,8 @@
       "vehiculo_id": "veh-a",
       "puntos": [
         {
-          "x": -2.0,
-          "y": -0.3
+          "x": -2.19,
+          "y": -11.6
         }
       ],
       "descripcion": "El auto queda sobre la banqueta, contra el poste.",
@@ -564,15 +564,15 @@
       "puntos": [
         {
           "x": -20,
-          "y": -4.5
+          "y": -5.9
         },
         {
           "x": -10,
-          "y": -3
+          "y": -8.6
         },
         {
           "x": -4,
-          "y": -1
+          "y": -10.8
         }
       ],
       "descripcion": "Huellas de derrape curvas hacia la banqueta (supuestas; piso mojado deja poca marca).",

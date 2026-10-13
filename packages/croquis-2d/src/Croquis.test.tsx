@@ -59,7 +59,7 @@ describe("<Croquis />", () => {
     const next = onChange.mock.calls[0]![0];
     const moved = next.vehiculos[0]!.posicion_inicial;
     expect(moved.x).toBeCloseTo(-30 + 2.5, 5);
-    expect(moved.y).toBeCloseTo(0 + 1.0, 5);
+    expect(moved.y).toBeCloseTo(-6 + 1.0, 5);
     expect(moved.procedencia.fuente).toBe("usuario");
     expect(next.vehiculos[1]).toEqual(spec.vehiculos[1]); // B intacto
   });

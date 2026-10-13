@@ -1,0 +1,311 @@
+/**
+ * Geometría de la vía para el visor a partir del mismo `roadLayout` del croquis 2D, así el 3D
+ * y el croquis coinciden (ADR 0006). Devuelve datos puros (triángulos en el plano del mundo,
+ * metros); la capa React los convierte en `BufferGeometry`.
+ *
+ * Incluye calzada (franjas, arcos y anillos), banquetas, rayas (orilla continua, división de
+ * sentidos doble y separación de carriles discontinua) y pasos peatonales. Las rayas no cruzan
+ * el área de una intersección. El patrón de raya discontinua (3 m de trazo y 6 m de espacio) es
+ * una elección visual, no una cita de norma.
+ */
+import type { Vec2 } from "@croquis/croquis-2d";
+import type { LaneStrip, Ring, RoadLayout } from "@croquis/croquis-2d";
+
+export interface Mesh2D {
+  /** Vértices (x, y) en metros, marco del mundo. */
+  positions: number[];
+  /** Índices de triángulos (antihorario visto desde arriba). */
+  indices: number[];
+}
+
+export interface RoadGeometry {
+  pavement: Mesh2D;
+  sidewalk: Mesh2D;
+  whiteLines: Mesh2D;
+  yellowLines: Mesh2D;
+  crosswalks: Mesh2D;
+  /** Caja envolvente de la calzada [minX, minY, maxX, maxY]. */
+  bounds: [number, number, number, number];
+}
+
+export interface RoadOptions {
+  dobleSentido: boolean;
+  banquetas: boolean;
+  /** Pasos peatonales: centro del cruce en el mundo y rumbo de la vía que cruzan (grados). */
+  crosswalks?: { center: Vec2; roadHeading: number; roadWidth: number }[];
+}
+
+export const LINE_WIDTH = 0.12;
+export const DASH = 3;
+export const GAP = 6;
+export const SIDEWALK_WIDTH = 2.5;
+const ARC_SEGMENT_M = 2;
+
+function emptyMesh(): Mesh2D {
+  return { positions: [], indices: [] };
+}
+
+function pushQuad(m: Mesh2D, a: Vec2, b: Vec2, c: Vec2, d: Vec2): void {
+  const base = m.positions.length / 2;
+  m.positions.push(a.x, a.y, b.x, b.y, c.x, c.y, d.x, d.y);
+  m.indices.push(base, base + 1, base + 2, base, base + 2, base + 3);
+}
+
+/** Rectángulo orientado: centro, largo sobre el rumbo, ancho a lo transversal. */
+function orientedQuad(m: Mesh2D, c: Vec2, along: Vec2, length: number, width: number): void {
+  const n = { x: -along.y, y: along.x };
+  const hl = length / 2;
+  const hw = width / 2;
+  const p = (s: number, w: number): Vec2 => ({
+    x: c.x + along.x * s + n.x * w,
+    y: c.y + along.y * s + n.y * w,
+  });
+  pushQuad(m, p(-hl, -hw), p(hl, -hw), p(hl, hw), p(-hl, hw));
+}
+
+function dir(headingDeg: number): Vec2 {
+  const r = (headingDeg * Math.PI) / 180;
+  return { x: Math.cos(r), y: Math.sin(r) };
+}
+
+/** Sector de corona circular entre radios y ángulos (grados), en segmentos de ~2 m. */
+function annulus(
+  m: Mesh2D,
+  center: Vec2,
+  rIn: number,
+  rOut: number,
+  from: number,
+  to: number,
+): void {
+  const span = ((to - from) * Math.PI) / 180;
+  const n = Math.max(8, Math.ceil((Math.abs(span) * rOut) / ARC_SEGMENT_M));
+  for (let i = 0; i < n; i++) {
+    const a0 = (from * Math.PI) / 180 + (span * i) / n;
+    const a1 = (from * Math.PI) / 180 + (span * (i + 1)) / n;
+    const pt = (r: number, a: number): Vec2 => ({
+      x: center.x + r * Math.cos(a),
+      y: center.y + r * Math.sin(a),
+    });
+    pushQuad(m, pt(rIn, a0), pt(rOut, a0), pt(rOut, a1), pt(rIn, a1));
+  }
+}
+
+/** ¿Está el punto dentro del rectángulo de una franja (con margen)? */
+function insideStrip(p: Vec2, s: LaneStrip, margin = 0): boolean {
+  const d = dir(s.heading);
+  const rel = { x: p.x - s.center.x, y: p.y - s.center.y };
+  const along = rel.x * d.x + rel.y * d.y;
+  const across = -rel.x * d.y + rel.y * d.x;
+  return Math.abs(along) <= s.length / 2 + margin && Math.abs(across) <= s.width / 2 + margin;
+}
+
+function insideRing(p: Vec2, r: Ring): boolean {
+  return Math.hypot(p.x - r.center.x, p.y - r.center.y) <= r.outerRadius;
+}
+
+/** Desplazamientos transversales de las rayas de una franja. */
+export function stripLineOffsets(
+  s: LaneStrip,
+  dobleSentido: boolean,
+): { edges: number[]; center: number[]; dashed: number[] } {
+  const half = s.width / 2;
+  const edges = [-half + LINE_WIDTH, half - LINE_WIDTH];
+  const lanesTotal = Math.max(1, s.lanes);
+  if (dobleSentido) {
+    const perSide = Math.max(1, Math.round(lanesTotal / 2));
+    const laneW = (s.width - s.median) / (2 * perSide);
+    const m = s.median / 2;
+    const center = s.median > 0 ? [-m, m] : [-0.1, 0.1];
+    const dashed: number[] = [];
+    for (let k = 1; k < perSide; k++) dashed.push(m + k * laneW, -(m + k * laneW));
+    return { edges, center, dashed };
+  }
+  const laneW = s.width / lanesTotal;
+  const dashed: number[] = [];
+  for (let k = 1; k < lanesTotal; k++) dashed.push(-half + k * laneW);
+  return { edges, center: [], dashed };
+}
+
+function lineAlongStrip(
+  m: Mesh2D,
+  s: LaneStrip,
+  offset: number,
+  dashed: boolean,
+  exclude: (p: Vec2) => boolean,
+): void {
+  const d = dir(s.heading);
+  const n = { x: -d.y, y: d.x };
+  const step = dashed ? DASH + GAP : 1;
+  const segLen = dashed ? DASH : 1;
+  for (let a = -s.length / 2; a < s.length / 2 - 1e-9; a += step) {
+    const len = Math.min(segLen, s.length / 2 - a);
+    const mid = a + len / 2;
+    const c = {
+      x: s.center.x + d.x * mid + n.x * offset,
+      y: s.center.y + d.y * mid + n.y * offset,
+    };
+    if (exclude(c)) continue;
+    orientedQuad(m, c, d, len, LINE_WIDTH);
+  }
+}
+
+function lineAlongArc(
+  m: Mesh2D,
+  center: Vec2,
+  radius: number,
+  from: number,
+  to: number,
+  dashed: boolean,
+): void {
+  const total = (Math.abs(to - from) * Math.PI * radius) / 180;
+  const step = dashed ? DASH + GAP : ARC_SEGMENT_M;
+  const segLen = dashed ? DASH : ARC_SEGMENT_M;
+  for (let s = 0; s < total - 1e-9; s += step) {
+    const len = Math.min(segLen, total - s);
+    const a0 = from + (s / total) * (to - from);
+    const a1 = from + ((s + len) / total) * (to - from);
+    annulus(m, center, radius - LINE_WIDTH / 2, radius + LINE_WIDTH / 2, a0, a1);
+  }
+}
+
+export function buildRoadGeometry(layout: RoadLayout, opts: RoadOptions): RoadGeometry {
+  const pavement = emptyMesh();
+  const sidewalk = emptyMesh();
+  const white = emptyMesh();
+  const yellow = emptyMesh();
+  const crosswalks = emptyMesh();
+  let minX = Infinity;
+  let minY = Infinity;
+  let maxX = -Infinity;
+  let maxY = -Infinity;
+  const grow = (p: Vec2): void => {
+    minX = Math.min(minX, p.x);
+    minY = Math.min(minY, p.y);
+    maxX = Math.max(maxX, p.x);
+    maxY = Math.max(maxY, p.y);
+  };
+
+  const inIntersection =
+    (owner: LaneStrip) =>
+    (p: Vec2): boolean =>
+      layout.strips.some((o) => o !== owner && insideStrip(p, o, 0.5)) ||
+      layout.rings.some((r) => insideRing(p, r));
+
+  for (const s of layout.strips) {
+    const d = dir(s.heading);
+    orientedQuad(pavement, s.center, d, s.length, s.width);
+    const n = { x: -d.y, y: d.x };
+    for (const sl of [-1, 1]) {
+      for (const sa of [-1, 1]) {
+        grow({
+          x: s.center.x + (d.x * (sa * s.length)) / 2 + (n.x * (sl * s.width)) / 2,
+          y: s.center.y + (d.y * (sa * s.length)) / 2 + (n.y * (sl * s.width)) / 2,
+        });
+      }
+    }
+    if (opts.banquetas) {
+      for (const side of [-1, 1]) {
+        const off = side * (s.width / 2 + SIDEWALK_WIDTH / 2);
+        const len = s.length;
+        const step = 2;
+        for (let a = -len / 2; a < len / 2 - 1e-9; a += step) {
+          const l = Math.min(step, len / 2 - a);
+          const c = {
+            x: s.center.x + d.x * (a + l / 2) + n.x * off,
+            y: s.center.y + d.y * (a + l / 2) + n.y * off,
+          };
+          // La banqueta se interrumpe donde otra vía (o el anillo) ocupa el espacio.
+          if (layout.strips.some((o) => o !== s && insideStrip(c, o, SIDEWALK_WIDTH / 2))) continue;
+          if (layout.rings.some((r) => insideRing(c, r))) continue;
+          orientedQuad(sidewalk, c, d, l, SIDEWALK_WIDTH);
+        }
+      }
+    }
+    const offsets = stripLineOffsets(s, opts.dobleSentido);
+    const excl = inIntersection(s);
+    for (const o of offsets.edges) lineAlongStrip(white, s, o, false, excl);
+    for (const o of offsets.center) lineAlongStrip(yellow, s, o, false, excl);
+    for (const o of offsets.dashed) lineAlongStrip(white, s, o, true, excl);
+  }
+
+  for (const a of layout.arcs) {
+    const rIn = a.radius - a.width / 2;
+    const rOut = a.radius + a.width / 2;
+    annulus(pavement, a.center, rIn, rOut, a.from, a.to);
+    for (const ang of [a.from, a.to, (a.from + a.to) / 2]) {
+      for (const r of [rIn, rOut]) {
+        grow({
+          x: a.center.x + r * Math.cos((ang * Math.PI) / 180),
+          y: a.center.y + r * Math.sin((ang * Math.PI) / 180),
+        });
+      }
+    }
+    grow({ x: a.center.x, y: a.center.y + rOut });
+    if (opts.banquetas) {
+      annulus(sidewalk, a.center, rOut, rOut + SIDEWALK_WIDTH, a.from, a.to);
+      annulus(sidewalk, a.center, Math.max(0, rIn - SIDEWALK_WIDTH), rIn, a.from, a.to);
+    }
+    lineAlongArc(white, a.center, rIn + LINE_WIDTH, a.from, a.to, false);
+    lineAlongArc(white, a.center, rOut - LINE_WIDTH, a.from, a.to, false);
+    if (opts.dobleSentido) {
+      lineAlongArc(yellow, a.center, a.radius - 0.1, a.from, a.to, false);
+      lineAlongArc(yellow, a.center, a.radius + 0.1, a.from, a.to, false);
+    }
+  }
+
+  for (const r of layout.rings) {
+    annulus(pavement, r.center, r.innerRadius, r.outerRadius, 0, 360);
+    grow({ x: r.center.x - r.outerRadius, y: r.center.y - r.outerRadius });
+    grow({ x: r.center.x + r.outerRadius, y: r.center.y + r.outerRadius });
+    lineAlongArc(white, r.center, r.innerRadius + LINE_WIDTH, 0, 360, false);
+    const mid = (r.innerRadius + r.outerRadius) / 2;
+    lineAlongArc(white, r.center, mid, 0, 360, true);
+    // Isla central como banqueta (camellón elevado).
+    annulus(sidewalk, r.center, 0, r.innerRadius, 0, 360);
+  }
+
+  for (const cw of opts.crosswalks ?? []) {
+    // Franjas de 0.5 m paralelas a la vía, separadas 0.5 m, a lo ancho de la calzada.
+    const d = dir(cw.roadHeading);
+    const n = { x: -d.y, y: d.x };
+    const stripes = Math.floor(cw.roadWidth / 1.0);
+    for (let k = 0; k < stripes; k++) {
+      const off = -cw.roadWidth / 2 + 0.5 + k * 1.0;
+      const c = { x: cw.center.x + n.x * off, y: cw.center.y + n.y * off };
+      orientedQuad(crosswalks, c, d, 3.0, 0.5);
+    }
+  }
+
+  if (!Number.isFinite(minX)) {
+    minX = -10;
+    minY = -10;
+    maxX = 10;
+    maxY = 10;
+  }
+  return {
+    pavement,
+    sidewalk,
+    whiteLines: white,
+    yellowLines: yellow,
+    crosswalks,
+    bounds: [minX, minY, maxX, maxY],
+  };
+}
+
+/** Área total de una malla 2D (para pruebas). */
+export function meshArea(m: Mesh2D): number {
+  let area = 0;
+  for (let i = 0; i < m.indices.length; i += 3) {
+    const a = m.indices[i] ?? 0;
+    const b = m.indices[i + 1] ?? 0;
+    const c = m.indices[i + 2] ?? 0;
+    const ax = m.positions[2 * a] ?? 0;
+    const ay = m.positions[2 * a + 1] ?? 0;
+    const bx = m.positions[2 * b] ?? 0;
+    const by = m.positions[2 * b + 1] ?? 0;
+    const cx = m.positions[2 * c] ?? 0;
+    const cy = m.positions[2 * c + 1] ?? 0;
+    area += ((bx - ax) * (cy - ay) - (cx - ax) * (by - ay)) / 2;
+  }
+  return area;
+}

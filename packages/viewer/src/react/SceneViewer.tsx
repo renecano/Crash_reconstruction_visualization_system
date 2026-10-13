@@ -1,0 +1,323 @@
+"use client";
+/**
+ * Visor 3D (React Three Fiber v9 + three.js WebGPURenderer).
+ *
+ * El renderer es `WebGPURenderer`: usa WebGPU si el navegador lo ofrece y, si no, su backend
+ * WebGL 2. `renderer="webgl"` fuerza el respaldo para medirlo (PLAN §7.8). Toda la escena sale
+ * de `buildSceneGraph` (probado sin GPU); aquí solo se monta, se ilumina y se anima con el reloj.
+ */
+import type { EscenaSpec, Resultado } from "@croquis/scene-schema";
+import { Canvas, useFrame, useThree } from "@react-three/fiber";
+import { useEffect, useMemo, useRef, type ReactElement } from "react";
+import {
+  Color,
+  CubeCamera,
+  DirectionalLight,
+  FogExp2,
+  HemisphereLight,
+  Object3D,
+  PerspectiveCamera,
+  Scene,
+  Vector3,
+} from "three";
+import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
+import { SkyMesh } from "three/examples/jsm/objects/SkyMesh.js";
+import { CubeRenderTarget } from "three/webgpu";
+import {
+  actionBounds,
+  cinematicCamera,
+  driverCamera,
+  freeCameraStart,
+  overheadCamera,
+  type CameraMode,
+  type CameraPose,
+} from "../cameras";
+import type { ViewerClock } from "../clock";
+import { toThree } from "../coords";
+import { environmentFor, type EnvironmentSettings } from "../environment";
+import { QUALITY_PROFILES, type QualityLevel } from "../quality";
+import { buildSceneGraph } from "../scene-graph";
+import { seatHeight } from "../vehicle-geometry";
+
+export type RendererPreference = "auto" | "webgpu" | "webgl";
+
+export interface RendererInfo {
+  backend: "webgpu" | "webgl2";
+  preference: RendererPreference;
+}
+
+export interface SceneViewerProps {
+  spec: EscenaSpec;
+  resultado: Resultado;
+  clock: ViewerClock;
+  camera: CameraMode;
+  /** Vehículo para la cámara del conductor. */
+  driverVehicleId?: string;
+  quality: QualityLevel;
+  renderer?: RendererPreference;
+  onRendererInfo?: (info: RendererInfo) => void;
+  onError?: (error: Error) => void;
+  className?: string;
+}
+
+/** Muestras de tiempo por cuadro para E6, expuestas en `window.__croquisPerf`. */
+export interface PerfSample {
+  frameMs: number[];
+  backend?: "webgpu" | "webgl2";
+  drawCalls?: number;
+  triangles?: number;
+}
+
+declare global {
+  interface Window {
+    __croquisPerf?: PerfSample;
+    __croquisReady?: boolean;
+    /** `performance.now()` del primer cuadro listo (E6: tiempo hasta interactivo). */
+    __croquisReadyAt?: number;
+  }
+}
+
+function environmentOf(spec: EscenaSpec): EnvironmentSettings {
+  const e = spec.entorno;
+  const u = spec.lugar.ubicacion_real;
+  return environmentFor({
+    fechaHora: e.fecha_hora?.valor,
+    iluminacion: e.iluminacion?.valor,
+    clima: e.clima?.valor,
+    alumbrado: e.alumbrado_publico?.valor,
+    lat: u?.lat,
+    lon: u?.lon,
+  });
+}
+
+function SceneContent({
+  spec,
+  resultado,
+  clock,
+  camera,
+  driverVehicleId,
+  quality,
+  env,
+}: Omit<SceneViewerProps, "renderer" | "onRendererInfo" | "onError" | "className"> & {
+  env: EnvironmentSettings;
+}): ReactElement {
+  const profile = QUALITY_PROFILES[quality];
+  const graph = useMemo(
+    () => buildSceneGraph(spec, resultado, { quality: profile, env }),
+    [spec, resultado, profile, env],
+  );
+  useEffect(() => () => graph.dispose(), [graph]);
+
+  const { scene, camera: cam, gl } = useThree();
+  const bounds = useMemo(() => actionBounds(resultado), [resultado]);
+
+  // Cielo, niebla y luces.
+  const lights = useMemo(() => {
+    const group = new Object3D();
+    const hemi = new HemisphereLight(env.skyColor, env.groundColor, env.ambientIntensity);
+    const sun = new DirectionalLight(env.night ? "#b8c6ff" : "#fff4e0", env.sunIntensity);
+    const [dx, dy, dz] = env.lightDirection;
+    const center = toThree(bounds.cx, bounds.cy, 0);
+    const dist = 120;
+    sun.position.set(center[0] + dx * dist, Math.max(8, dz * dist), center[2] - dy * dist);
+    sun.target.position.set(center[0], 0, center[2]);
+    sun.castShadow = profile.shadows;
+    const extent = Math.max(18, 0.75 * bounds.size);
+    sun.shadow.camera.left = -extent;
+    sun.shadow.camera.right = extent;
+    sun.shadow.camera.top = extent;
+    sun.shadow.camera.bottom = -extent;
+    sun.shadow.camera.near = 1;
+    sun.shadow.camera.far = 400;
+    sun.shadow.mapSize.set(profile.shadowMapSize, profile.shadowMapSize);
+    sun.shadow.bias = -0.0004;
+    group.add(hemi, sun, sun.target);
+    return group;
+  }, [env, bounds, profile]);
+
+  const sky = useMemo(() => {
+    if (env.night) return null;
+    const s = new SkyMesh();
+    s.scale.setScalar(4000);
+    s.turbidity.value = env.turbidity;
+    s.rayleigh.value = env.turbidity > 5 ? 0.6 : 1.4;
+    s.cloudSpeed.value = 0; // sin animación: capturas deterministas
+    s.cloudCoverage.value = env.turbidity > 5 ? 0.8 : 0.25;
+    const [dx, dy, dz] = env.lightDirection;
+    s.sunPosition.value.set(dx, dz, -dy);
+    return s;
+  }, [env]);
+
+  // El cielo físico (con nubes) se hornea una vez en un mapa cúbico: dibujarlo en cada cuadro
+  // cuesta un cálculo por píxel que en GPU integrada no cabe en el presupuesto de E6.
+  useEffect(() => {
+    scene.fog = new FogExp2(env.skyColor, env.fogDensity);
+    scene.background = new Color(env.skyColor);
+    let target: CubeRenderTarget | null = null;
+    if (sky) {
+      target = new CubeRenderTarget(256);
+      const cubeCamera = new CubeCamera(1, 10_000, target);
+      const skyScene = new Scene();
+      skyScene.add(sky);
+      cubeCamera.update(gl, skyScene);
+      scene.background = target.texture;
+    }
+    return () => {
+      scene.fog = null;
+      scene.background = null;
+      target?.dispose();
+    };
+  }, [scene, env, sky, gl]);
+
+  // Cámaras.
+  const controls = useRef<OrbitControls | null>(null);
+  useEffect(() => {
+    const persp = cam as PerspectiveCamera;
+    persp.far = 5000;
+    persp.near = 0.1;
+    if (camera !== "libre") return undefined;
+    const start = freeCameraStart(resultado);
+    applyPose(persp, start);
+    const oc = new OrbitControls(persp, gl.domElement);
+    oc.target.set(...start.target);
+    oc.maxPolarAngle = Math.PI / 2 - 0.03;
+    oc.enableDamping = true;
+    oc.update();
+    controls.current = oc;
+    return () => {
+      oc.dispose();
+      controls.current = null;
+    };
+  }, [camera, cam, gl, resultado]);
+
+  const driver = useMemo(() => {
+    const v = resultado.vehiculos.find((x) => x.id === driverVehicleId) ?? resultado.vehiculos[0];
+    if (!v) return undefined;
+    const eye =
+      seatHeight(v.clase, {
+        length: v.dimensiones.largo_m,
+        width: v.dimensiones.ancho_m,
+        height: v.dimensiones.alto_m,
+        wheelbase: v.dimensiones.distancia_entre_ejes_m,
+      }) + 0.62;
+    return { v, eye };
+  }, [resultado, driverVehicleId]);
+
+  useFrame((_, delta) => {
+    clock.tick(Math.min(delta, 0.1), performance.now());
+    const t = clock.get().t;
+    graph.update(t);
+    const persp = cam as PerspectiveCamera;
+    if (camera === "libre") controls.current?.update();
+    else if (camera === "cenital") applyPose(persp, overheadCamera(resultado));
+    else if (camera === "conductor" && driver)
+      applyPose(persp, driverCamera(driver.v, t, driver.eye));
+    else if (camera === "cinematica") applyPose(persp, cinematicCamera(resultado, t));
+  });
+
+  return (
+    <>
+      <primitive object={graph.root} />
+      <primitive object={lights} />
+    </>
+  );
+}
+
+function applyPose(cam: PerspectiveCamera, pose: CameraPose): void {
+  cam.position.set(...pose.position);
+  cam.up.set(...pose.up);
+  if (cam.fov !== pose.fov) {
+    cam.fov = pose.fov;
+    cam.updateProjectionMatrix();
+  }
+  cam.lookAt(new Vector3(...pose.target));
+}
+
+function PerfProbe({ backend }: { backend: () => RendererInfo["backend"] | undefined }): null {
+  const { gl } = useThree();
+  const last = useRef<number | null>(null);
+  useEffect(() => {
+    window.__croquisPerf = { frameMs: [] };
+    return () => {
+      window.__croquisPerf = undefined;
+      window.__croquisReady = false;
+    };
+  }, []);
+  useFrame(() => {
+    const now = performance.now();
+    const perf = window.__croquisPerf;
+    if (!perf) return;
+    if (last.current !== null) {
+      perf.frameMs.push(now - last.current);
+      if (perf.frameMs.length > 4000) perf.frameMs.splice(0, perf.frameMs.length - 4000);
+    }
+    last.current = now;
+    perf.backend = backend();
+    // Contadores del cuadro anterior: el reinicio automático se desactiva y se reinicia aquí.
+    const info = (
+      gl as unknown as {
+        info?: {
+          autoReset?: boolean;
+          reset?: () => void;
+          render?: { drawCalls?: number; triangles?: number };
+        };
+      }
+    ).info;
+    if (info) {
+      info.autoReset = false;
+      perf.drawCalls = info.render?.drawCalls;
+      perf.triangles = info.render?.triangles;
+      info.reset?.();
+    }
+    if (!window.__croquisReady) window.__croquisReadyAt = performance.now();
+    window.__croquisReady = true;
+  });
+  return null;
+}
+
+export function SceneViewer(props: SceneViewerProps): ReactElement {
+  const { renderer = "auto", onRendererInfo, onError, quality, className, ...rest } = props;
+  const env = useMemo(() => environmentOf(props.spec), [props.spec]);
+  const profile = QUALITY_PROFILES[quality];
+  const backendRef = useRef<RendererInfo["backend"] | undefined>(undefined);
+  const dpr =
+    typeof window === "undefined"
+      ? 1
+      : Math.min(2, window.devicePixelRatio || 1) * profile.pixelRatio;
+  return (
+    <div className={className} data-testid="visor-3d">
+      <Canvas
+        key={`${renderer}-${quality}`}
+        dpr={dpr}
+        shadows={profile.shadows ? "percentage" : false}
+        camera={{ fov: 45, near: 0.1, far: 5000, position: [30, 30, 30] }}
+        gl={async (defaults) => {
+          try {
+            const { WebGPURenderer: Renderer, UnsignedByteType } = await import("three/webgpu");
+            const r = new Renderer({
+              canvas: defaults.canvas as HTMLCanvasElement,
+              antialias: profile.antialias,
+              alpha: false,
+              forceWebGL: renderer === "webgl",
+              // Búfer de 8 bits en baja y media: menos ancho de banda en GPU integrada (E6).
+              ...(profile.level === "alta" ? {} : { outputBufferType: UnsignedByteType }),
+            });
+            await r.init();
+            const backend = (r.backend as { isWebGPUBackend?: boolean }).isWebGPUBackend
+              ? "webgpu"
+              : "webgl2";
+            backendRef.current = backend;
+            onRendererInfo?.({ backend, preference: renderer });
+            return r;
+          } catch (err) {
+            onError?.(err instanceof Error ? err : new Error(String(err)));
+            throw err;
+          }
+        }}
+      >
+        <SceneContent {...rest} quality={quality} env={env} />
+        <PerfProbe backend={() => backendRef.current} />
+      </Canvas>
+    </div>
+  );
+}

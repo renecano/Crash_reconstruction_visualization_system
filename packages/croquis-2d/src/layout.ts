@@ -127,6 +127,17 @@ export function vehicleDims(
 
 const ROAD_LENGTH = 120;
 
+/**
+ * Curva de radio R con centro en (0, −R): en el origen la vía es tangente a +X (curva a la
+ * derecha para quien avanza hacia +X). El arco cubre ROAD_LENGTH sobre el eje, hasta 160°.
+ * Mismo modelo que solver/croquis_solver/road.py (ADR 0006).
+ */
+export function curveArc(radius: number, width: number): RoadLayout["arcs"][number] {
+  const r = Math.max(radius, width);
+  const half = Math.min((ROAD_LENGTH / 2 / r) * (180 / Math.PI), 80);
+  return { center: { x: 0, y: -r }, radius: r, width, from: 90 - half, to: 90 + half };
+}
+
 export function roadLayout(lugar: EscenaSpec["lugar"]): RoadLayout {
   const tipo = lugar.tipo_via.valor;
   const laneW = longitudM(lugar.ancho_carril);
@@ -170,51 +181,31 @@ export function roadLayout(lugar: EscenaSpec["lugar"]): RoadLayout {
         rings: [],
         arcs: [],
       };
-    case "glorieta":
+    case "glorieta": {
+      // Anillo con centro (0, R + W/2): su borde exterior pasa por el origen (entrada sur).
+      // Mismo modelo que solver/croquis_solver/road.py (ADR 0006).
+      const cy = radius + widthMain / 2;
+      const reach = radius + widthMain / 2 + ROAD_LENGTH / 4;
       return {
         tipo,
         strips: [
-          {
-            ...main,
-            center: { x: 0, y: -(radius + widthMain / 2 + ROAD_LENGTH / 4) },
-            length: ROAD_LENGTH / 2,
-            heading: 90,
-          },
-          {
-            ...main,
-            center: { x: 0, y: radius + widthMain / 2 + ROAD_LENGTH / 4 },
-            length: ROAD_LENGTH / 2,
-            heading: 90,
-          },
-          {
-            ...main,
-            center: { x: -(radius + widthMain / 2 + ROAD_LENGTH / 4), y: 0 },
-            length: ROAD_LENGTH / 2,
-          },
-          {
-            ...main,
-            center: { x: radius + widthMain / 2 + ROAD_LENGTH / 4, y: 0 },
-            length: ROAD_LENGTH / 2,
-          },
+          { ...main, center: { x: 0, y: -ROAD_LENGTH / 4 }, length: ROAD_LENGTH / 2, heading: 90 },
+          { ...main, center: { x: 0, y: cy + reach }, length: ROAD_LENGTH / 2, heading: 90 },
+          { ...main, center: { x: -reach, y: cy }, length: ROAD_LENGTH / 2 },
+          { ...main, center: { x: reach, y: cy }, length: ROAD_LENGTH / 2 },
         ],
         rings: [
           {
-            center: { x: 0, y: radius + widthMain / 2 },
+            center: { x: 0, y: cy },
             innerRadius: radius - widthMain / 2,
             outerRadius: radius + widthMain / 2,
           },
         ],
         arcs: [],
       };
-    case "curva": {
-      const r = Math.max(radius, widthMain);
-      return {
-        tipo,
-        strips: [],
-        rings: [],
-        arcs: [{ center: { x: 0, y: -r }, radius: r, width: widthMain, from: 60, to: 120 }],
-      };
     }
+    case "curva":
+      return { tipo, strips: [], rings: [], arcs: [curveArc(radius, widthMain)] };
     case "incorporacion":
       return {
         tipo,
@@ -254,20 +245,18 @@ export function roadLayout(lugar: EscenaSpec["lugar"]): RoadLayout {
         rings: [],
         arcs: [],
       };
-    case "autopista":
-      return {
-        tipo,
-        strips: [
-          {
-            ...main,
-            width:
-              widthMain + 2 * (lugar.ancho_acotamiento ? longitudM(lugar.ancho_acotamiento) : 2.5),
-          },
-        ],
-        rings: [],
-        arcs: [],
-      };
+    case "autopista": {
+      const shoulders = 2 * (lugar.ancho_acotamiento ? longitudM(lugar.ancho_acotamiento) : 2.5);
+      if (lugar.radio_curva) {
+        return { tipo, strips: [], rings: [], arcs: [curveArc(radius, widthMain + shoulders)] };
+      }
+      return { tipo, strips: [{ ...main, width: widthMain + shoulders }], rings: [], arcs: [] };
+    }
     case "carretera_dos_carriles":
+      if (lugar.radio_curva) {
+        return { tipo, strips: [], rings: [], arcs: [curveArc(radius, widthMain)] };
+      }
+      return { tipo, strips: [main], rings: [], arcs: [] };
     case "recta":
     default:
       return { tipo, strips: [main], rings: [], arcs: [] };

@@ -5,9 +5,9 @@ Reglas de trabajo: `CLAUDE.md`. Especificación: `PLAN.md`.
 
 ## Estado actual
 
-- **Fase actual:** F2 — Solver de referencia (cerrando: PR de `feat/f2-solver`, falta CI verde y merge).
-- **Siguiente paso concreto:** merge del PR de F2 y arrancar **F3 — Visor 3D** (`packages/viewer` con three.js WebGPU + R3F, carga de `Reconstruction`, línea de tiempo, cámaras, niveles de calidad; instalar Blender y FFmpeg con winget para el pipeline de assets; snapshots visuales con Playwright).
-- **F0 cerrado** el 2026-10-10 (PR #1). **F1 cerrado** el 2026-10-10 (PR #3).
+- **Fase actual:** F3 — Visor base (cerrando: PR #5 de `feat/f3-visor`, falta CI verde y merge).
+- **Siguiente paso concreto:** merge del PR #5 y arrancar **F4 — Daño** (PLAN §7.3: deformación desde el perfil C1–C6 del solver sobre las piezas nombradas de los vehículos procedurales, vidrios, piezas desprendidas, transferencia de pintura, bolsas de aire y marcas en el piso; prueba numérica de que el perfil del visor coincide con el del solver).
+- **F0** cerrado el 2026-10-10 (PR #1), **F1** el 2026-10-10 (PR #3), **F2** el 2026-10-13 (PR #4).
 
 ### Bloqueado — necesita a René
 
@@ -223,3 +223,63 @@ Criterio de aceptación F2 (PLAN §13): conservación < 1e-9 ✔ (Hypothesis, 40
 - **Qué quedó:** el solver físico que convierte una escena en trayectorias, daños y tiempos, y la primera evidencia medida: con rigidez por clase sacada de pruebas reales de NHTSA, la velocidad de impacto se estima con 8.1 km/h de error medio.
 - **Cómo probarlo:** `uv run pytest solver` y `uv run croquis-eval e2-barrier`. Para regenerar todo desde cero: `uv run croquis-data nhtsa download` y `uv run croquis-data nhtsa process`.
 - **Qué necesito de ti:** nada para F3–F5.
+
+## F3 — Visor base
+
+### Plan
+
+Archivos: contrato del resultado (`packages/scene-schema/resultado.schema.json`, Zod generado, resultados versionados de las 10 escenas), `packages/viewer` (módulos puros: geometría de vía, vehículos procedurales, maniquí, muestreo, línea de tiempo, reloj, sol, cámaras, grafo de escena, elección de backend; componente React Three Fiber), página `/visor`, e2e y capturas visuales, E6 (`eval/e6_performance.mjs`), ADR 0006.
+
+Pruebas: unitarias y de propiedades del visor sin GPU (el grafo de escena se prueba en Node), componentes de interfaz con Testing Library, Playwright sobre las 10 escenas, capturas visuales en Linux, E6 en la laptop de referencia.
+
+Riesgos: (1) el visor mostraría choques sin sentido si el solver no coloca bien los vehículos → se corrigió el contacto (zonas CDC) y la geometría de los fixtures. (2) WebGPU en GPU integrada → se mide y se elige backend. (3) Capturas visuales que difieren entre sistemas → se generan y comparan en Linux.
+
+### Hecho
+
+- **Correcciones del solver que el visor dejó a la vista:** el punto de contacto de cada vehículo (zona CDC) llega al impacto, ya no su centro de masa (antes los autos se encimaban y el choque no generaba giro); vueltas de 90° con recta posterior; seguimiento de carril en curva y glorieta; desvío inferido marcado como bandera; superficies planas con la normal de la superficie; **signo del término de altura de Searle** (D − μh, como Wood); trayectorias de peatones coherentes con Searle; rejilla alineada a t = 0.
+- **Modelo de vía compartido** solver ↔ croquis ↔ visor (curva con centro en (0, −R), glorieta con borde por el origen); fixtures corregidos para que cada vehículo arranque en su carril y los objetos queden fuera de la calzada; los accesos de la glorieta del croquis ya conectan con el anillo.
+- **Contrato del resultado** con Zod generado, validación en Python y TS, equivalencia Ajv↔Zod con mutaciones y resultados versionados verificados en CI con tolerancia numérica (Linux y Windows coinciden).
+- **Visor 3D** `/visor`: vía, banquetas, rayas y pasos peatonales; vehículos genéricos de 14 clases con dimensiones reales y piezas nombradas; maniquí neutro; objetos y dispositivos básicos; evidencias declaradas; sol por fecha, hora y lugar; cielo físico horneado; cámaras libre, cenital, del conductor y cinematográfica; línea de tiempo con cámara lenta, cuadro por cuadro y marcadores; tabla de resultados con fuentes; leyenda ilustrativa sobre el lienzo; calidad y backend automáticos por medición; modo pantalla completa y bucle por URL.
+
+### Evidencia (local, Windows, 2026-10-13)
+
+| Comando                                     | Resultado                                                                                       |
+| ------------------------------------------- | ----------------------------------------------------------------------------------------------- |
+| `uv run pytest`                             | **244 pruebas** en verde                                                                        |
+| `pnpm test`                                 | **273 pruebas** en verde (visor 102)                                                            |
+| `pnpm --filter @croquis/web test:e2e`       | 16 pruebas en verde en Windows; en CI (Linux) corren las 26, incluidas las 10 capturas visuales |
+| `uv run croquis-solver reconstruct --check` | resultados al día (también en CI Ubuntu y Windows)                                              |
+| `node eval/e6_performance.mjs`              | `eval/results/e6_performance.json`                                                              |
+
+E6 (de `eval/results/e6_performance.json`; Intel(R) Core(TM) i5-10210U CPU @ 1.60GHz, 7.8 GB, GPU ANGLE (Intel, Intel(R) UHD Graphics (0x00009B41) Direct3D11 vs_5_0 ps_5_0, D3D11)), 1920×1080 a pantalla completa, cámara en movimiento, sin tope de vsync:
+
+| Backend | Calidad | fps mínimo entre escenas | fps mediana | Escena más lenta | Carga inicial máx. (MB) |
+| ------- | ------- | -----------------------: | ----------: | ---------------- | ----------------------: |
+| WebGPU  | baja    |                    145.3 |       197.8 | glorieta         |                    0.77 |
+| WebGPU  | media   |                     61.9 |        81.3 | glorieta         |                    0.77 |
+| WebGPU  | alta    |                     28.3 |          35 | glorieta         |                    0.77 |
+| WebGL 2 | baja    |                    211.4 |       324.5 | motociclista     |                    0.77 |
+| WebGL 2 | media   |                     76.4 |        85.6 | frontal_curva    |                    0.77 |
+| WebGL 2 | alta    |                     36.2 |        43.8 | peaton_cruce     |                    0.77 |
+
+Presupuesto §7.8 con el backend que elige el modo automático en esta laptop (media: webgpu, alta: webgl; verificación en el visor a pantalla completa: «WebGPU · elegido por medición (WebGPU 108 fps)»): media ≥ 60 fps → ✔; alta ≥ 30 fps → ✔; carga inicial ≤ 8 MB → ✔.
+
+Criterio de aceptación F3 (PLAN §13): las 10 escenas se ven ✔ (e2e); capturas visuales ✔ (10 referencias en Linux, comparadas en CI); E6 dentro de presupuesto ✔.
+
+### Pendientes registrados
+
+- Volcadura, ragdoll de peatones y ocupantes visibles: F5 (hoy el vehículo de la volcadura derrapa sin volcar y el maniquí no se articula).
+- Texturas PBR (Poly Haven) para asfalto y pasto, alumbrado y faros con luz real, fases de semáforo: F8.
+- Pipeline de Blender (§7.2) para assets de entorno o mallas más densas si F4 lo necesita; hoy los vehículos son procedurales (ADR 0006).
+- El backend WebGPU de three.js rinde menos que WebGL 2 en Intel UHD; en calidad media WebGPU apenas pasa los 60 fps en la glorieta (margen estrecho; si una sesión mide menos, el modo automático cambia a WebGL 2). Revisar en cada actualización de three.js con E6.
+- R3F 9 usa `THREE.Clock` (aviso de obsolescencia en consola); se va con la próxima versión de R3F.
+
+### Decisiones
+
+- Ver ADR 0006. Destacan: contrato del resultado separado del de entrada, modelo de vía compartido sin cambiar el contrato, vehículos procedurales, `WebGPURenderer` con elección de backend por medición, grafo de escena probado sin GPU, capturas generadas en Linux por CI.
+
+### Resumen para René (F3)
+
+- **Qué quedó:** las diez escenas se ven en 3D en `/visor`, con línea de tiempo, cámaras y la tabla de resultados; el solver ahora coloca bien el contacto entre vehículos y la geometría de las escenas es coherente con cada relato.
+- **Cómo probarlo:** `pnpm dev` y abre http://localhost:3000/visor; cambia de escena y de cámara, reproduce en cámara lenta y salta a los eventos. Para medir el rendimiento: `pnpm --filter @croquis/web build` y `node eval/e6_performance.mjs`.
+- **Qué necesito de ti:** nada para F4–F5.

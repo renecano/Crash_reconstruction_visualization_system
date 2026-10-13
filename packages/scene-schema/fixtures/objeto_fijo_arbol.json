@@ -118,8 +118,8 @@
         "id": "arbol-impacto",
         "tipo": "arbol",
         "posicion": {
-          "x": 0,
-          "y": 0
+          "x": -8.4,
+          "y": 8.33
         },
         "alto": {
           "valor": 10,
@@ -315,9 +315,9 @@
         "confianza": 0.5
       },
       "posicion_inicial": {
-        "x": -45,
-        "y": 6,
-        "rumbo_deg": -15,
+        "x": -45.0,
+        "y": -14.09,
+        "rumbo_deg": 30.7,
         "procedencia": {
           "fuente": "supuesto",
           "confianza": 0.5,
@@ -325,9 +325,9 @@
         }
       },
       "posicion_final": {
-        "x": -1.8,
-        "y": 1.1,
-        "rumbo_deg": -40,
+        "x": -10.59,
+        "y": 6.31,
+        "rumbo_deg": 10.7,
         "procedencia": {
           "fuente": "relato",
           "confianza": 0.5,
@@ -488,8 +488,8 @@
         }
       ],
       "punto_impacto": {
-        "x": -0.25,
-        "y": 0.1
+        "x": -8.4,
+        "y": 8.33
       },
       "descripcion": "Esquina delantera izquierda contra el tronco.",
       "procedencia": {
@@ -595,16 +595,16 @@
       },
       "puntos": [
         {
-          "x": -22,
-          "y": 4.5
+          "x": -29.52,
+          "y": -4.91
         },
         {
-          "x": -12,
-          "y": 3.2
+          "x": -20.91,
+          "y": 0.19
         },
         {
-          "x": -3,
-          "y": 1.6
+          "x": -13.17,
+          "y": 4.78
         }
       ],
       "procedencia": {
