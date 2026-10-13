@@ -1,0 +1,558 @@
+{
+  "name": "e4_pedestrian",
+  "generated_at": "2026-10-13T21:37:09+00:00",
+  "git_commit": "8f2773e",
+  "seed": null,
+  "descripcion": "E4: velocidad desde la distancia de proyección y distancia desde la velocidad, contra 18 casos publicados (Becker et al. 2016; Eubanks y Haight 1992 y Randles et al. 2001 vía Batista 2008). Alternativa: Searle sola.",
+  "datos": "data/e4/throw_cases.csv",
+  "parametros": {
+    "factor_proyeccion": [
+      0.9,
+      1.0
+    ],
+    "angulo_lanzamiento_deg": 10.0,
+    "altura_cg_fraccion_estatura": 0.57,
+    "friccion_sin_medir": [
+      0.66,
+      0.55,
+      0.75
+    ],
+    "masa_vehiculo_por_omision_kg": 1500.0
+  },
+  "resumen": {
+    "casos": 18,
+    "casos_en_dominio": 17,
+    "velocidad_desde_distancia_kmh": {
+      "croquis": {
+        "mae": 5.215,
+        "sesgo": 3.125,
+        "rmse": 6.697,
+        "mape_pct": 16.92,
+        "max_abs": 13.871,
+        "cobertura_intervalo": 0.6471,
+        "ancho_medio_intervalo": 12.685
+      },
+      "searle_sola": {
+        "mae": 5.813,
+        "sesgo": -3.592,
+        "rmse": 7.062,
+        "mape_pct": 14.73,
+        "max_abs": 13.599,
+        "cobertura_intervalo": 0.2353,
+        "ancho_medio_intervalo": 5.831
+      },
+      "wood": {
+        "mae": 6.156,
+        "sesgo": 3.652,
+        "rmse": 7.799,
+        "mape_pct": 19.79,
+        "max_abs": 15.455
+      }
+    },
+    "distancia_desde_velocidad_m": {
+      "croquis": {
+        "mae": 2.543,
+        "sesgo": -0.92,
+        "rmse": 3.204,
+        "mape_pct": 21.73,
+        "max_abs": 6.446,
+        "cobertura_banda": 0.4706
+      },
+      "searle_sola": {
+        "mae": 2.912,
+        "sesgo": -0.318,
+        "rmse": 3.637,
+        "mape_pct": 23.55,
+        "max_abs": 6.875
+      }
+    },
+    "fuera_de_dominio": [
+      {
+        "fuente": "eubanks1992",
+        "caso": "69",
+        "v_medida_kmh": 64.4,
+        "d_medida_m": 61.9,
+        "en_dominio": false,
+        "croquis_v_kmh": 102.456,
+        "croquis_intervalo_kmh": [
+          81.159,
+          119.99
+        ],
+        "searle_v_kmh": 84.61,
+        "searle_intervalo_kmh": [
+          84.61,
+          101.377
+        ],
+        "wood_v_kmh": 106.308,
+        "croquis_d_m": 24.843,
+        "croquis_banda_m": [
+          18.348,
+          31.831
+        ],
+        "searle_d_m": 25.361
+      }
+    ],
+    "por_fuente": {
+      "becker2016_iptm": {
+        "casos": 7,
+        "croquis_mae_kmh": 2.501,
+        "searle_mae_kmh": 8.549
+      },
+      "eubanks1992": {
+        "casos": 4,
+        "croquis_mae_kmh": 5.058,
+        "searle_mae_kmh": 4.229
+      },
+      "randles2001": {
+        "casos": 6,
+        "croquis_mae_kmh": 8.485,
+        "searle_mae_kmh": 3.677
+      }
+    },
+    "calibracion_factor_proyeccion": {
+      "factor_actual": 0.9,
+      "mae_factor_actual_kmh": 5.215,
+      "factor_optimo_en_muestra": 0.92,
+      "mae_en_muestra_kmh": 5.086,
+      "mae_dejando_uno_fuera_kmh": 6.5,
+      "factores_ajustados": [
+        0.92,
+        0.99
+      ]
+    }
+  },
+  "casos": [
+    {
+      "fuente": "becker2016_iptm",
+      "caso": "1",
+      "v_medida_kmh": 38.46,
+      "d_medida_m": 10.607,
+      "en_dominio": true,
+      "croquis_v_kmh": 37.468,
+      "croquis_intervalo_kmh": [
+        32.236,
+        40.223
+      ],
+      "searle_v_kmh": 32.236,
+      "searle_intervalo_kmh": [
+        32.236,
+        36.201
+      ],
+      "wood_v_kmh": 36.737,
+      "croquis_d_m": 11.148,
+      "croquis_banda_m": [
+        9.742,
+        12.15
+      ],
+      "searle_d_m": 11.905
+    },
+    {
+      "fuente": "becker2016_iptm",
+      "caso": "2",
+      "v_medida_kmh": 39.27,
+      "d_medida_m": 11.339,
+      "en_dominio": true,
+      "croquis_v_kmh": 38.803,
+      "croquis_intervalo_kmh": [
+        33.385,
+        41.657
+      ],
+      "searle_v_kmh": 33.385,
+      "searle_intervalo_kmh": [
+        33.385,
+        37.491
+      ],
+      "wood_v_kmh": 38.046,
+      "croquis_d_m": 11.601,
+      "croquis_banda_m": [
+        10.134,
+        12.646
+      ],
+      "searle_d_m": 12.39
+    },
+    {
+      "fuente": "becker2016_iptm",
+      "caso": "3",
+      "v_medida_kmh": 43.61,
+      "d_medida_m": 14.783,
+      "en_dominio": true,
+      "croquis_v_kmh": 44.552,
+      "croquis_intervalo_kmh": [
+        38.331,
+        47.829
+      ],
+      "searle_v_kmh": 38.331,
+      "searle_intervalo_kmh": [
+        38.331,
+        43.046
+      ],
+      "wood_v_kmh": 43.683,
+      "croquis_d_m": 14.186,
+      "croquis_banda_m": [
+        12.377,
+        15.474
+      ],
+      "searle_d_m": 15.159
+    },
+    {
+      "fuente": "becker2016_iptm",
+      "caso": "4",
+      "v_medida_kmh": 34.12,
+      "d_medida_m": 9.053,
+      "en_dominio": true,
+      "croquis_v_kmh": 34.462,
+      "croquis_intervalo_kmh": [
+        29.65,
+        36.996
+      ],
+      "searle_v_kmh": 29.65,
+      "searle_intervalo_kmh": [
+        29.65,
+        33.297
+      ],
+      "wood_v_kmh": 33.789,
+      "croquis_d_m": 8.884,
+      "croquis_banda_m": [
+        7.777,
+        9.673
+      ],
+      "searle_d_m": 9.48
+    },
+    {
+      "fuente": "becker2016_iptm",
+      "caso": "5",
+      "v_medida_kmh": 55.04,
+      "d_medida_m": 17.526,
+      "en_dominio": true,
+      "croquis_v_kmh": 48.647,
+      "croquis_intervalo_kmh": [
+        41.854,
+        52.225
+      ],
+      "searle_v_kmh": 41.854,
+      "searle_intervalo_kmh": [
+        41.854,
+        47.002
+      ],
+      "wood_v_kmh": 47.698,
+      "croquis_d_m": 22.29,
+      "croquis_banda_m": [
+        19.409,
+        24.342
+      ],
+      "searle_d_m": 23.84
+    },
+    {
+      "fuente": "becker2016_iptm",
+      "caso": "6",
+      "v_medida_kmh": 61.16,
+      "d_medida_m": 24.75,
+      "en_dominio": true,
+      "croquis_v_kmh": 58.066,
+      "croquis_intervalo_kmh": [
+        49.958,
+        62.337
+      ],
+      "searle_v_kmh": 49.958,
+      "searle_intervalo_kmh": [
+        49.958,
+        56.103
+      ],
+      "wood_v_kmh": 56.933,
+      "croquis_d_m": 27.401,
+      "croquis_banda_m": [
+        23.844,
+        29.935
+      ],
+      "searle_d_m": 29.315
+    },
+    {
+      "fuente": "becker2016_iptm",
+      "caso": "7",
+      "v_medida_kmh": 64.86,
+      "d_medida_m": 26.03,
+      "en_dominio": true,
+      "croquis_v_kmh": 59.58,
+      "croquis_intervalo_kmh": [
+        51.261,
+        63.962
+      ],
+      "searle_v_kmh": 51.261,
+      "searle_intervalo_kmh": [
+        51.261,
+        57.566
+      ],
+      "wood_v_kmh": 58.418,
+      "croquis_d_m": 30.752,
+      "croquis_banda_m": [
+        26.751,
+        33.602
+      ],
+      "searle_d_m": 32.905
+    },
+    {
+      "fuente": "eubanks1992",
+      "caso": "65",
+      "v_medida_kmh": 32.2,
+      "d_medida_m": 7.9,
+      "en_dominio": true,
+      "croquis_v_kmh": 35.272,
+      "croquis_intervalo_kmh": [
+        28.12,
+        41.089
+      ],
+      "searle_v_kmh": 29.128,
+      "searle_intervalo_kmh": [
+        29.128,
+        34.901
+      ],
+      "wood_v_kmh": 36.598,
+      "croquis_d_m": 6.69,
+      "croquis_banda_m": [
+        5.132,
+        8.357
+      ],
+      "searle_d_m": 6.82
+    },
+    {
+      "fuente": "eubanks1992",
+      "caso": "67",
+      "v_medida_kmh": 48.3,
+      "d_medida_m": 13.4,
+      "en_dominio": true,
+      "croquis_v_kmh": 46.76,
+      "croquis_intervalo_kmh": [
+        37.163,
+        54.615
+      ],
+      "searle_v_kmh": 38.616,
+      "searle_intervalo_kmh": [
+        38.616,
+        46.268
+      ],
+      "wood_v_kmh": 48.519,
+      "croquis_d_m": 14.254,
+      "croquis_banda_m": [
+        10.639,
+        18.138
+      ],
+      "searle_d_m": 14.545
+    },
+    {
+      "fuente": "eubanks1992",
+      "caso": "68",
+      "v_medida_kmh": 48.3,
+      "d_medida_m": 17.4,
+      "en_dominio": true,
+      "croquis_v_kmh": 53.591,
+      "croquis_intervalo_kmh": [
+        42.549,
+        62.644
+      ],
+      "searle_v_kmh": 44.256,
+      "searle_intervalo_kmh": [
+        44.256,
+        53.026
+      ],
+      "wood_v_kmh": 55.606,
+      "croquis_d_m": 14.254,
+      "croquis_banda_m": [
+        10.639,
+        18.138
+      ],
+      "searle_d_m": 14.545
+    },
+    {
+      "fuente": "eubanks1992",
+      "caso": "69",
+      "v_medida_kmh": 64.4,
+      "d_medida_m": 61.9,
+      "en_dominio": false,
+      "croquis_v_kmh": 102.456,
+      "croquis_intervalo_kmh": [
+        81.159,
+        119.99
+      ],
+      "searle_v_kmh": 84.61,
+      "searle_intervalo_kmh": [
+        84.61,
+        101.377
+      ],
+      "wood_v_kmh": 106.308,
+      "croquis_d_m": 24.843,
+      "croquis_banda_m": [
+        18.348,
+        31.831
+      ],
+      "searle_d_m": 25.361
+    },
+    {
+      "fuente": "eubanks1992",
+      "caso": "72",
+      "v_medida_kmh": 48.3,
+      "d_medida_m": 20.7,
+      "en_dominio": true,
+      "croquis_v_kmh": 58.629,
+      "croquis_intervalo_kmh": [
+        46.526,
+        68.563
+      ],
+      "searle_v_kmh": 48.418,
+      "searle_intervalo_kmh": [
+        48.418,
+        58.012
+      ],
+      "wood_v_kmh": 60.834,
+      "croquis_d_m": 14.254,
+      "croquis_banda_m": [
+        10.639,
+        18.138
+      ],
+      "searle_d_m": 14.545
+    },
+    {
+      "fuente": "randles2001",
+      "caso": "1",
+      "v_medida_kmh": 26.99,
+      "d_medida_m": 10.38,
+      "en_dominio": true,
+      "croquis_v_kmh": 40.854,
+      "croquis_intervalo_kmh": [
+        32.51,
+        47.665
+      ],
+      "searle_v_kmh": 33.738,
+      "searle_intervalo_kmh": [
+        33.738,
+        40.424
+      ],
+      "wood_v_kmh": 42.445,
+      "croquis_d_m": 4.891,
+      "croquis_banda_m": [
+        3.822,
+        6.03
+      ],
+      "searle_d_m": 4.982
+    },
+    {
+      "fuente": "randles2001",
+      "caso": "3",
+      "v_medida_kmh": 25.13,
+      "d_medida_m": 5.42,
+      "en_dominio": true,
+      "croquis_v_kmh": 28.621,
+      "croquis_intervalo_kmh": [
+        22.903,
+        33.236
+      ],
+      "searle_v_kmh": 23.636,
+      "searle_intervalo_kmh": [
+        23.636,
+        28.319
+      ],
+      "wood_v_kmh": 29.735,
+      "croquis_d_m": 4.325,
+      "croquis_banda_m": [
+        3.41,
+        5.299
+      ],
+      "searle_d_m": 4.404
+    },
+    {
+      "fuente": "randles2001",
+      "caso": "4",
+      "v_medida_kmh": 20.19,
+      "d_medida_m": 7.41,
+      "en_dominio": true,
+      "croquis_v_kmh": 34.061,
+      "croquis_intervalo_kmh": [
+        27.169,
+        39.661
+      ],
+      "searle_v_kmh": 28.128,
+      "searle_intervalo_kmh": [
+        28.128,
+        33.702
+      ],
+      "wood_v_kmh": 35.387,
+      "croquis_d_m": 3.018,
+      "croquis_banda_m": [
+        2.459,
+        3.609
+      ],
+      "searle_d_m": 3.069
+    },
+    {
+      "fuente": "randles2001",
+      "caso": "10",
+      "v_medida_kmh": 20.28,
+      "d_medida_m": 4.73,
+      "en_dominio": true,
+      "croquis_v_kmh": 26.475,
+      "croquis_intervalo_kmh": [
+        21.225,
+        30.695
+      ],
+      "searle_v_kmh": 21.863,
+      "searle_intervalo_kmh": [
+        21.863,
+        26.196
+      ],
+      "wood_v_kmh": 27.506,
+      "croquis_d_m": 3.04,
+      "croquis_banda_m": [
+        2.474,
+        3.637
+      ],
+      "searle_d_m": 3.091
+    },
+    {
+      "fuente": "randles2001",
+      "caso": "11",
+      "v_medida_kmh": 27.85,
+      "d_medida_m": 8.52,
+      "en_dominio": true,
+      "croquis_v_kmh": 36.747,
+      "croquis_intervalo_kmh": [
+        29.279,
+        42.828
+      ],
+      "searle_v_kmh": 30.347,
+      "searle_intervalo_kmh": [
+        30.347,
+        36.36
+      ],
+      "wood_v_kmh": 38.178,
+      "croquis_d_m": 5.166,
+      "croquis_banda_m": [
+        4.022,
+        6.386
+      ],
+      "searle_d_m": 5.263
+    },
+    {
+      "fuente": "randles2001",
+      "caso": "14",
+      "v_medida_kmh": 32.13,
+      "d_medida_m": 8.51,
+      "en_dominio": true,
+      "croquis_v_kmh": 36.724,
+      "croquis_intervalo_kmh": [
+        29.261,
+        42.8
+      ],
+      "searle_v_kmh": 30.327,
+      "searle_intervalo_kmh": [
+        30.327,
+        36.337
+      ],
+      "wood_v_kmh": 38.154,
+      "croquis_d_m": 6.664,
+      "croquis_banda_m": [
+        5.113,
+        8.323
+      ],
+      "searle_d_m": 6.793
+    }
+  ]
+}
