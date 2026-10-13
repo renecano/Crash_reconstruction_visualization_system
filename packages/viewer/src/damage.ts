@@ -324,9 +324,8 @@ export function bakeMeshDamage(
     delta[3 * i + 2] = dv.z;
     dano[i] = Math.min(1, mag / 0.25);
     if (input.otherColor && mag > 0.005) {
-      p.fromBufferAttribute(pos, i).applyMatrix4(toVehicle);
-      const n = 0.5 + 0.5 * valueNoise(p.x * 12, p.y * 12, p.z * 12, input.seed + 7);
-      transfer[i] = Math.min(1, (weight[id] ?? 0) * 1.4) * (n > 0.45 ? 1 : 0.25);
+      // Máscara suave; el patrón de vetas se dibuja en el sombreador (damage-material.ts).
+      transfer[i] = Math.min(1, (weight[id] ?? 0) * 1.4);
     }
   }
   geo.morphAttributes.position = [new BufferAttribute(delta, 3)];

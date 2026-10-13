@@ -3,6 +3,8 @@ import { describe, expect, it } from "vitest";
 import {
   actionBounds,
   cinematicCamera,
+  damageCamera,
+  mostDamaged,
   driverCamera,
   freeCameraStart,
   overheadCamera,
@@ -57,5 +59,21 @@ describe("cámaras", () => {
     const pa = fromThree(a.position);
     const ta = fromThree(a.target);
     expect(Math.hypot(pa.x - ta.x, pa.y - ta.y, pa.height - ta.height)).toBeGreaterThan(13);
+  });
+
+  it("el acercamiento al daño mira la cara golpeada del vehículo más deformado", async () => {
+    const r = await loadResultado("objeto_fijo_arbol");
+    const v = mostDamaged(r);
+    expect(v?.id).toBe("veh-a");
+    if (!v) return;
+    const cam = damageCamera(r, 1);
+    const p = sampleVehicle(v.trayectoria, 1);
+    const pos = fromThree(cam.position);
+    const dx = pos.x - p.x;
+    const dy = pos.y - p.y;
+    // Golpe frontal contra un árbol: la cámara queda adelante, abierta a 55° de su rumbo.
+    const rel = Math.atan2(dy, dx) - p.yaw;
+    expect(Math.abs(Math.atan2(Math.sin(rel), Math.cos(rel)))).toBeCloseTo((55 * Math.PI) / 180, 6);
+    expect(Math.hypot(dx, dy)).toBeLessThan(15);
   });
 });

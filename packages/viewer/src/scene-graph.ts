@@ -31,6 +31,7 @@ import { toThree } from "./coords";
 import type { EnvironmentSettings } from "./environment";
 import { applyPosture, buildMannequin, CG_HEIGHT_FACTOR, type Posture } from "./person-geometry";
 import type { QualityProfile } from "./quality";
+import { buildDamageRig, type DamageRig } from "./damage-rig";
 import { buildRoadGeometry, type Mesh2D } from "./road-geometry";
 import { phaseAt, samplePerson, sampleVehicle, bracket } from "./sample";
 import {
@@ -53,6 +54,8 @@ export interface VehicleNode {
   /** Distancia acumulada recorrida (m) en cada muestra de la trayectoria. */
   distance: number[];
   track: Resultado["vehiculos"][number]["trayectoria"];
+  /** Daño animado (deformación, materiales, faros, parabrisas, llantas, bolsas de aire). */
+  rig: DamageRig;
 }
 
 export interface PersonNode {
@@ -452,6 +455,16 @@ export function buildSceneGraph(
         m.castShadow = opts.quality.shadows;
       }
     });
+    const rig = buildDamageRig(group, v, dims, glyphs.get(v.id)?.colorHex ?? "#9aa0a6", {
+      spec,
+      resultado,
+      colorOf: (id) => glyphs.get(id)?.colorHex,
+      seed: Math.trunc(spec.meta.semilla) * 31 + resultado.vehiculos.indexOf(v),
+    });
+    disposables.push(...rig.materials);
+    group.traverse((m) => {
+      if (m instanceof Mesh) m.castShadow = opts.quality.shadows;
+    });
     const wheels = wheelNames(group).flatMap((n) => {
       const obj = group.getObjectByName(n);
       return obj instanceof Group ? [{ obj, radius: obj.userData.radius as number }] : [];
@@ -463,6 +476,7 @@ export function buildSceneGraph(
       wheels,
       distance: cumulativeDistance(v.trayectoria),
       track: v.trayectoria,
+      rig,
     });
   }
 
@@ -511,6 +525,7 @@ export function buildSceneGraph(
         (n.distance[i] ?? 0) +
         ((n.distance[i + 1] ?? n.distance[i] ?? 0) - (n.distance[i] ?? 0)) * f;
       for (const w of n.wheels) w.obj.rotation.z = -s / w.radius;
+      n.rig.update(t);
     }
     for (const n of persons) {
       const data = personData.get(n.id);

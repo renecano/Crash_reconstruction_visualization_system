@@ -476,6 +476,7 @@ function buildCar(p: CarProfile, d: VehicleDimensions): Group {
     g.add(wheel("wheel_rl2", r, tireW, xr + 2.2 * r, -zw));
     g.add(wheel("wheel_rr2", r, tireW, xr + 2.2 * r, zw));
   }
+  g.userData.layout = { wsBase, rwBase, belt, cabinTop, cabinW, clr, xf, xr };
   return g;
 }
 
@@ -588,6 +589,18 @@ export function fuseStaticParts(g: Group): void {
 }
 
 /** Modelo completo de un vehículo con sus dimensiones reales. */
+/** Cotas del habitáculo (marco del vehículo) que dejan los autos para colocar bolsas de aire. */
+export interface CarLayout {
+  wsBase: number;
+  rwBase: number;
+  belt: number;
+  cabinTop: number;
+  cabinW: number;
+  clr: number;
+  xf: number;
+  xr: number;
+}
+
 export function buildVehicle(
   clase: string,
   dims: VehicleDimensions,

@@ -98,6 +98,7 @@ const CAMARAS: { value: CameraMode; label: string }[] = [
   { value: "libre", label: "Libre (arrastra para girar)" },
   { value: "cenital", label: "Cenital" },
   { value: "cinematica", label: "Cinematográfica" },
+  { value: "dano", label: "Acercamiento al daño" },
 ];
 
 const noopSubscribe = () => () => undefined;
@@ -204,7 +205,9 @@ export function VisorApp() {
   const [mode, driverId] = params.camara.startsWith("conductor-")
     ? (["conductor", params.camara.slice("conductor-".length)] as const)
     : ([params.camara as CameraMode, undefined] as const);
-  const cameraMode: CameraMode = ["libre", "cenital", "conductor", "cinematica"].includes(mode)
+  const cameraMode: CameraMode = ["libre", "cenital", "conductor", "cinematica", "dano"].includes(
+    mode,
+  )
     ? mode
     : "libre";
 

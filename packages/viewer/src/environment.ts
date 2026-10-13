@@ -139,6 +139,8 @@ export interface EnvironmentSettings {
   sunIntensity: number;
   ambientIntensity: number;
   skyColor: string;
+  /** Color de la luz ambiental (de noche no es el del cielo: alumbrado o luna). */
+  ambientSkyColor: string;
   groundColor: string;
   fogDensity: number;
   night: boolean;
@@ -182,18 +184,27 @@ export function environmentFor(input: EnvironmentInput): EnvironmentSettings {
   return {
     sun,
     lightDirection,
-    sunIntensity: night ? 0.12 : twilight ? 2.2 : overcast ? 1.4 : 2.8,
+    sunIntensity: night ? 0.45 : twilight ? 2.2 : overcast ? 1.4 : 2.8,
     ambientIntensity: night
       ? input.alumbrado
-        ? 0.35
-        : 0.15
+        ? 0.9
+        : 0.45
       : twilight
         ? 1.25
         : overcast
           ? 0.95
           : 0.85,
-    skyColor: night ? "#0b1020" : twilight ? "#cdbbb0" : overcast ? "#9aa3ad" : "#8fc1ea",
-    groundColor: night ? "#141812" : "#5d6b4a",
+    skyColor: night ? "#18223d" : twilight ? "#cdbbb0" : overcast ? "#9aa3ad" : "#8fc1ea",
+    ambientSkyColor: night
+      ? input.alumbrado
+        ? "#c8b48c"
+        : "#7184ad"
+      : twilight
+        ? "#cdbbb0"
+        : overcast
+          ? "#9aa3ad"
+          : "#8fc1ea",
+    groundColor: night ? "#2a3326" : "#5d6b4a",
     fogDensity,
     night,
     wet: rain || (input.clima ?? "").includes("lluvia"),

@@ -26,6 +26,7 @@ import { CubeRenderTarget } from "three/webgpu";
 import {
   actionBounds,
   cinematicCamera,
+  damageCamera,
   driverCamera,
   freeCameraStart,
   overheadCamera,
@@ -114,7 +115,7 @@ function SceneContent({
   // Cielo, niebla y luces.
   const lights = useMemo(() => {
     const group = new Object3D();
-    const hemi = new HemisphereLight(env.skyColor, env.groundColor, env.ambientIntensity);
+    const hemi = new HemisphereLight(env.ambientSkyColor, env.groundColor, env.ambientIntensity);
     const sun = new DirectionalLight(env.night ? "#b8c6ff" : "#fff4e0", env.sunIntensity);
     const [dx, dy, dz] = env.lightDirection;
     const center = toThree(bounds.cx, bounds.cy, 0);
@@ -213,6 +214,7 @@ function SceneContent({
     else if (camera === "conductor" && driver)
       applyPose(persp, driverCamera(driver.v, t, driver.eye));
     else if (camera === "cinematica") applyPose(persp, cinematicCamera(resultado, t));
+    else if (camera === "dano") applyPose(persp, damageCamera(resultado, t));
   });
 
   return (
