@@ -90,7 +90,7 @@
         "tipo": "otro",
         "posicion": {
           "x": 20,
-          "y": -6
+          "y": -12.5
         },
         "procedencia": {
           "fuente": "relato",
@@ -299,7 +299,7 @@
       },
       "posicion_inicial": {
         "x": -30,
-        "y": 0,
+        "y": -6.0,
         "rumbo_deg": 0,
         "procedencia": {
           "fuente": "supuesto",
@@ -309,7 +309,7 @@
       },
       "posicion_final": {
         "x": 3,
-        "y": 0.4,
+        "y": -5.6,
         "rumbo_deg": 8,
         "procedencia": {
           "fuente": "supuesto",
@@ -434,7 +434,7 @@
       },
       "posicion_inicial": {
         "x": -8,
-        "y": -3.5,
+        "y": -9.5,
         "rumbo_deg": 0,
         "procedencia": {
           "fuente": "supuesto",
@@ -443,7 +443,7 @@
       },
       "posicion_final": {
         "x": 6,
-        "y": -1.8,
+        "y": -7.8,
         "rumbo_deg": -20,
         "procedencia": {
           "fuente": "supuesto",
@@ -662,7 +662,7 @@
       ],
       "punto_impacto": {
         "x": 0,
-        "y": -1.2
+        "y": -7.2
       },
       "descripcion": "Frente derecho de A contra la parte trasera izquierda de B.",
       "procedencia": {
@@ -729,11 +729,11 @@
       "puntos": [
         {
           "x": 1,
-          "y": -1.5
+          "y": -7.5
         },
         {
           "x": 4,
-          "y": -2
+          "y": -8.0
         }
       ],
       "descripcion": "Plástico de faro y calavera.",

@@ -325,7 +325,7 @@
       },
       "posicion_inicial": {
         "x": -25,
-        "y": 0,
+        "y": -1.65,
         "rumbo_deg": 0,
         "procedencia": {
           "fuente": "supuesto",
@@ -333,8 +333,8 @@
         }
       },
       "posicion_final": {
-        "x": 3.5,
-        "y": 2.0,
+        "x": 4.3,
+        "y": 0.8,
         "rumbo_deg": 40,
         "procedencia": {
           "fuente": "relato",
@@ -437,7 +437,7 @@
         "confianza": 0.4
       },
       "posicion_inicial": {
-        "x": 0,
+        "x": 1.65,
         "y": -22,
         "rumbo_deg": 90,
         "procedencia": {
@@ -446,8 +446,8 @@
         }
       },
       "posicion_final": {
-        "x": 4.0,
-        "y": 3.5,
+        "x": 4.8,
+        "y": 2.3,
         "rumbo_deg": 35,
         "procedencia": {
           "fuente": "relato",
@@ -596,8 +596,8 @@
         }
       ],
       "punto_impacto": {
-        "x": 0,
-        "y": 0
+        "x": 0.72,
+        "y": -1.65
       },
       "descripcion": "Frente de A contra el costado izquierdo de B a la altura de las puertas.",
       "procedencia": {
@@ -700,16 +700,16 @@
       "tipo": "vidrios",
       "puntos": [
         {
-          "x": -2,
-          "y": -1
+          "x": -1.2,
+          "y": -2.2
         },
         {
-          "x": 3,
-          "y": 2
+          "x": 3.8,
+          "y": 0.8
         },
         {
-          "x": 1,
-          "y": 4
+          "x": 1.8,
+          "y": 2.8
         }
       ],
       "descripcion": "Vidrios regados alrededor del punto de impacto.",
@@ -731,8 +731,8 @@
       "vehiculo_id": "veh-b",
       "puntos": [
         {
-          "x": 4.0,
-          "y": 3.5
+          "x": 4.8,
+          "y": 2.3
         }
       ],
       "procedencia": {

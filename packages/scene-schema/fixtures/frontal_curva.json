@@ -127,7 +127,7 @@
         "tipo": "linea_continua",
         "posicion": {
           "x": 0,
-          "y": 0
+          "y": 5.0
         },
         "procedencia": {
           "fuente": "default",
@@ -310,9 +310,9 @@
         "confianza": 0.9
       },
       "posicion_inicial": {
-        "x": -40,
-        "y": -1.9,
-        "rumbo_deg": 8,
+        "x": 40.0,
+        "y": -5.01,
+        "rumbo_deg": 160.8,
         "procedencia": {
           "fuente": "supuesto",
           "confianza": 0.5,
@@ -320,9 +320,9 @@
         }
       },
       "posicion_final": {
-        "x": -2.5,
-        "y": -2.2,
-        "rumbo_deg": -10,
+        "x": 2.0,
+        "y": 2.15,
+        "rumbo_deg": 168,
         "procedencia": {
           "fuente": "supuesto",
           "confianza": 0.4
@@ -469,9 +469,9 @@
         "confianza": 0.8
       },
       "posicion_inicial": {
-        "x": 38,
-        "y": 1.2,
-        "rumbo_deg": 184,
+        "x": -38.0,
+        "y": -8.02,
+        "rumbo_deg": 18.7,
         "procedencia": {
           "fuente": "supuesto",
           "confianza": 0.5,
@@ -479,9 +479,9 @@
         }
       },
       "posicion_final": {
-        "x": 2.8,
-        "y": -0.8,
-        "rumbo_deg": 170,
+        "x": -2.2,
+        "y": 1.45,
+        "rumbo_deg": 12,
         "procedencia": {
           "fuente": "supuesto",
           "confianza": 0.4
@@ -695,7 +695,7 @@
       ],
       "punto_impacto": {
         "x": 0,
-        "y": -0.6
+        "y": 1.75
       },
       "descripcion": "Impacto frontal desfasado: esquina izquierda contra esquina izquierda.",
       "procedencia": {
@@ -783,12 +783,12 @@
       },
       "puntos": [
         {
-          "x": 17,
-          "y": 0.6
+          "x": -15,
+          "y": 0.52
         },
         {
-          "x": 2,
-          "y": -0.4
+          "x": -1,
+          "y": 1.45
         }
       ],
       "procedencia": {

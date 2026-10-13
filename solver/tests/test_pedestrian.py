@@ -3,7 +3,7 @@ from __future__ import annotations
 import math
 
 import pytest
-from hypothesis import given, settings
+from hypothesis import assume, given, settings
 from hypothesis import strategies as st
 
 from croquis_solver.models import G
@@ -42,6 +42,10 @@ def test_cotas_de_searle_acotan_toda_velocidad_de_lanzamiento(
 def test_searle_ida_y_vuelta(d: float, m: float, hh: float, frac: float) -> None:
     th = frac * searle_max_angle_deg(m)
     v = searle_speed(d, m, th, hh)
+    from croquis_solver.pedestrian import throw_kinematics
+
+    # La forma cerrada vale mientras el deslizamiento arranca con velocidad (Searle 1993).
+    assume(d > m * hh and throw_kinematics(v, th, hh, m).landing_speed > 1e-6)
     assert math.isclose(searle_throw(v, m, th, hh), d, rel_tol=1e-9, abs_tol=1e-9)
 
 
@@ -85,3 +89,43 @@ def test_zonas_de_contacto_por_altura_y_estatura() -> None:
     assert suv.bumper_on_body in {"muslo", "cadera"}
     assert suv.head_contact == "cofre"
     assert contact_zones(1.7, 0.48, 0.78, 1.0, wad_factor=0.4).head_contact == "ninguno"
+
+
+@settings(max_examples=300, deadline=None)
+@given(
+    v=st.floats(1.0, 30.0),
+    theta=st.floats(0.0, 25.0),
+    h=st.floats(0.0, 1.3),
+    mu=st.floats(0.4, 0.9),
+)
+def test_cinematica_de_searle_coincide_con_la_forma_cerrada(
+    v: float, theta: float, h: float, mu: float
+) -> None:
+    from croquis_solver.pedestrian import throw_kinematics
+
+    k = throw_kinematics(v, theta, h, mu)
+    assume(k.landing_speed > 1e-6)  # la forma cerrada vale si el deslizamiento arranca
+    th = math.radians(theta)
+    closed = (v * (math.cos(th) + mu * math.sin(th))) ** 2 / (2 * mu * G) + mu * h
+    assert math.isclose(k.total_distance, closed, rel_tol=1e-9, abs_tol=1e-9)
+    # Y la inversa recupera la velocidad con el término de altura restando.
+    assert math.isclose(searle_speed(k.total_distance, mu, theta, h), v, rel_tol=1e-9)
+
+
+def test_lanzar_desde_mas_alto_llega_mas_lejos() -> None:
+    from croquis_solver.pedestrian import throw_kinematics
+
+    bajo = throw_kinematics(10.0, 10.0, 0.5, 0.66).total_distance
+    alto = throw_kinematics(10.0, 10.0, 1.0, 0.66).total_distance
+    assert alto > bajo
+    # Para una misma distancia, un centro de masa más alto exige menos velocidad.
+    assert searle_speed(15.0, 0.66, 10.0, 1.0) < searle_speed(15.0, 0.66, 10.0, 0.5)
+
+
+def test_velocidad_cero_no_avanza() -> None:
+    from croquis_solver.pedestrian import throw_kinematics
+
+    k = throw_kinematics(0.0, 10.0, 1.0, 0.66)
+    assert k.total_distance == 0.0
+    assert k.landing_speed == 0.0
+    assert k.flight_time > 0

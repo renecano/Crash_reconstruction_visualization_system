@@ -8,6 +8,7 @@ Las muestras son deterministas: paso fijo y aritmética en doble precisión.
 
 from __future__ import annotations
 
+import bisect
 import math
 from dataclasses import dataclass
 
@@ -224,3 +225,78 @@ def simulate(
             )
         )
     return traj
+
+
+@dataclass(frozen=True)
+class CurvedLanePath(Path):
+    """Sigue un carril circular (centro, radio inicial) y opcionalmente cambia de carril.
+
+    El desplazamiento lateral (positivo = a la izquierda del sentido de marcha) sigue el mismo
+    perfil coseno que `LaneChangePath` a lo largo de `change_length` m del carril original.
+    La longitud de arco real se obtiene integrando la curva en una tabla fina, así que `s` es
+    distancia recorrida exacta (a la resolución de la tabla).
+    """
+
+    center: tuple[float, float]
+    r0: float
+    phi0: float  # ángulo polar inicial (rad)
+    ccw: bool
+    length: float
+    lateral: float = 0.0
+    change_length: float = 40.0
+    samples: int = 4000
+
+    def _radius(self, u: float) -> float:
+        if self.lateral == 0.0:
+            return self.r0
+        d = (
+            0.5
+            * self.lateral
+            * (1.0 - math.cos(math.pi * min(max(u, 0.0), self.change_length) / self.change_length))
+        )
+        # A la izquierda: hacia el centro si gira antihorario, hacia afuera si gira horario.
+        return self.r0 - d if self.ccw else self.r0 + d
+
+    def _point(self, u: float) -> tuple[float, float]:
+        phi = self.phi0 + (u / self.r0 if self.ccw else -u / self.r0)
+        r = self._radius(u)
+        return (self.center[0] + r * math.cos(phi), self.center[1] + r * math.sin(phi))
+
+    def _table(self) -> tuple[list[float], list[float]]:
+        cache: dict[str, tuple[list[float], list[float]]] = self.__dict__.setdefault("_cache", {})
+        if "t" not in cache:
+            u_max = 1.2 * self.length + abs(self.lateral)
+            us = [u_max * i / self.samples for i in range(self.samples + 1)]
+            ss = [0.0]
+            prev = self._point(0.0)
+            for u in us[1:]:
+                p = self._point(u)
+                ss.append(ss[-1] + math.hypot(p[0] - prev[0], p[1] - prev[1]))
+                prev = p
+            cache["t"] = (us, ss)
+        return cache["t"]
+
+    def _u_at(self, s: float) -> float:
+        us, ss = self._table()
+        s = min(max(s, 0.0), ss[-1])
+        i = bisect.bisect_left(ss, s)
+        if i <= 0:
+            return 0.0
+        f = (s - ss[i - 1]) / (ss[i] - ss[i - 1]) if ss[i] > ss[i - 1] else 0.0
+        return us[i - 1] + f * (us[i] - us[i - 1])
+
+    def pose(self, s: float) -> Pose:
+        s = min(max(s, 0.0), self.length)
+        u = self._u_at(s)
+        h = 1e-3
+        p0 = self._point(u - h)
+        p1 = self._point(u + h)
+        heading = math.atan2(p1[1] - p0[1], p1[0] - p0[0])
+        q0 = self._point(u - 2 * h)
+        q1 = self._point(u + 2 * h)
+        h0 = math.atan2(self._point(u)[1] - q0[1], self._point(u)[0] - q0[0])
+        h1 = math.atan2(q1[1] - self._point(u)[1], q1[0] - self._point(u)[0])
+        dist = math.hypot(q1[0] - q0[0], q1[1] - q0[1])
+        dh = math.atan2(math.sin(h1 - h0), math.cos(h1 - h0))
+        x, y = self._point(u)
+        return Pose(x, y, heading, dh / (dist / 2) if dist > 0 else 0.0)

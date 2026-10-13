@@ -85,7 +85,7 @@
         "tipo": "semaforo",
         "posicion": {
           "x": 12,
-          "y": 5
+          "y": -12.5
         },
         "aplica_a": ["veh-a", "veh-b"],
         "fases": [
@@ -280,7 +280,7 @@
       },
       "posicion_inicial": {
         "x": -30,
-        "y": 0,
+        "y": -6.0,
         "rumbo_deg": 0,
         "procedencia": {
           "fuente": "supuesto",
@@ -290,7 +290,7 @@
       },
       "posicion_final": {
         "x": -4.6,
-        "y": 0,
+        "y": -6.0,
         "rumbo_deg": 0,
         "procedencia": {
           "fuente": "supuesto",
@@ -398,7 +398,7 @@
       },
       "posicion_inicial": {
         "x": 0,
-        "y": 0,
+        "y": -6.0,
         "rumbo_deg": 0,
         "procedencia": {
           "fuente": "supuesto",
@@ -408,7 +408,7 @@
       },
       "posicion_final": {
         "x": 1.2,
-        "y": 0,
+        "y": -6.0,
         "rumbo_deg": 0,
         "procedencia": {
           "fuente": "supuesto",
@@ -563,7 +563,7 @@
       ],
       "punto_impacto": {
         "x": 0,
-        "y": 0
+        "y": -6.0
       },
       "descripcion": "A alcanza a B detenida; contacto frontal derecho de A contra la parte trasera de B.",
       "procedencia": {
@@ -672,11 +672,11 @@
       "puntos": [
         {
           "x": -12.6,
-          "y": 0
+          "y": -6.0
         },
         {
           "x": -4.6,
-          "y": 0
+          "y": -6.0
         }
       ],
       "procedencia": {

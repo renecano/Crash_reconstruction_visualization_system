@@ -115,7 +115,7 @@
         "tipo": "limite_velocidad",
         "posicion": {
           "x": -80,
-          "y": -6
+          "y": -14.75
         },
         "limite_velocidad": {
           "valor": 95,
@@ -276,7 +276,7 @@
       },
       "posicion_inicial": {
         "x": -60,
-        "y": 0,
+        "y": -6.0,
         "rumbo_deg": 0,
         "procedencia": {
           "fuente": "supuesto",
@@ -286,7 +286,7 @@
       },
       "posicion_final": {
         "x": 35,
-        "y": -8.5,
+        "y": -15.25,
         "rumbo_deg": 160,
         "procedencia": {
           "fuente": "relato",
@@ -352,7 +352,7 @@
       },
       "posicion_inicial": {
         "x": -58,
-        "y": 3.5,
+        "y": -2.5,
         "rumbo_deg": 0,
         "procedencia": {
           "fuente": "supuesto",
@@ -538,7 +538,7 @@
       ],
       "punto_impacto": {
         "x": 0,
-        "y": -7.0
+        "y": -13.75
       },
       "descripcion": "Las llantas derechas golpean la guarnición del acotamiento (tropiezo que inicia la volcadura).",
       "procedencia": {
@@ -649,15 +649,15 @@
       "puntos": [
         {
           "x": -18,
-          "y": -3.2
+          "y": -9.2
         },
         {
           "x": -8,
-          "y": -5.5
+          "y": -11.5
         },
         {
           "x": 0,
-          "y": -7
+          "y": -13.75
         }
       ],
       "procedencia": {
@@ -679,15 +679,15 @@
       "puntos": [
         {
           "x": 8,
-          "y": -8
+          "y": -14.0
         },
         {
           "x": 18,
-          "y": -9.5
+          "y": -15.5
         },
         {
           "x": 27,
-          "y": -8
+          "y": -14.0
         }
       ],
       "procedencia": {
@@ -723,7 +723,7 @@
       "puntos": [
         {
           "x": 35,
-          "y": -8.5
+          "y": -15.25
         }
       ],
       "procedencia": {

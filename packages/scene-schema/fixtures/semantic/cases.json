@@ -188,7 +188,7 @@
           "ruta": "/vehiculos/0/posicion_inicial",
           "valor": {
             "x": 1.5,
-            "y": 0.5,
+            "y": -5.5,
             "rumbo_deg": 20,
             "procedencia": {
               "fuente": "usuario",
