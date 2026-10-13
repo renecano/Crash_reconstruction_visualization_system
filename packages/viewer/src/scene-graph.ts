@@ -40,6 +40,7 @@ import {
   type TimedQuad,
 } from "./ground-marks";
 import { buildRoadGeometry, type Mesh2D } from "./road-geometry";
+import { rollsOver } from "./rollover-scene";
 import { phaseAt, samplePerson, sampleVehicle, bracket } from "./sample";
 import {
   buildVehicle,
@@ -544,6 +545,7 @@ export function buildSceneGraph(
         bloqueadas: sv?.frenado?.aplico?.valor ?? false,
         aplastamientoFrontal: (v.dano.cdc?.lado ?? "F") === "F" ? Math.max(...v.dano.perfil_m) : 0,
         tReposo: v.involucrado ? reposo.get(v.id) : undefined,
+        volcado: rollsOver(resultado, v.id),
       };
     }),
   );

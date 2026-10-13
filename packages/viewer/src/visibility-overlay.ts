@@ -13,6 +13,9 @@ import {
   Group,
   LineBasicMaterial,
   LineSegments,
+  Mesh,
+  MeshBasicMaterial,
+  TorusGeometry,
   type Material,
 } from "three";
 import { toThree } from "./coords";
@@ -79,6 +82,19 @@ export function buildVisibilityOverlay(resultado: Resultado, graph: SceneGraph):
     depthTest: false,
   });
   mats.push(visibleMat, blockedMat);
+  const ringGeo = new TorusGeometry(0.7, 0.05, 6, 40);
+  geos.push(ringGeo);
+  const visibleRingMat = new MeshBasicMaterial({
+    color: SIGHT_VISIBLE,
+    depthTest: false,
+    transparent: true,
+  });
+  const blockedRingMat = new MeshBasicMaterial({
+    color: SIGHT_BLOCKED,
+    depthTest: false,
+    transparent: true,
+  });
+  mats.push(visibleRingMat, blockedRingMat);
   const vehicles = new Map(resultado.vehiculos.map((v) => [v.id, v]));
   const persons = new Map(resultado.personas.map((p) => [p.id, p]));
   const objects = new Map((resultado.objetos ?? []).map((o) => [o.id, o]));
@@ -92,7 +108,14 @@ export function buildVisibilityOverlay(resultado: Resultado, graph: SceneGraph):
     line.renderOrder = 10;
     line.frustumCulled = false;
     group.add(line);
-    return { pair, line, geo };
+    // Aro en el suelo alrededor del objetivo: desde la cámara del conductor la línea de vista se
+    // ve casi de frente, así que el color del aro es lo que se lee.
+    const ring = new Mesh(ringGeo, visibleRingMat);
+    ring.name = `objetivo_${pair.objetivo}`;
+    ring.rotation.x = Math.PI / 2;
+    ring.renderOrder = 10;
+    group.add(ring);
+    return { pair, line, geo, ring };
   });
   // Contorno del oclusor (caja de su huella y su altura).
   const outlineMat = new LineBasicMaterial({ color: SIGHT_BLOCKED, depthTest: false });
@@ -122,9 +145,10 @@ export function buildVisibilityOverlay(resultado: Resultado, graph: SceneGraph):
   graph.addUpdater(
     (t) => {
       outline.visible = false;
-      for (const { pair, line, geo } of lines) {
+      for (const { pair, line, geo, ring } of lines) {
         const on = observer !== undefined && pair.observador === observer && t <= 0;
         line.visible = on;
+        ring.visible = on;
         if (!on) continue;
         const v = vehicles.get(pair.observador)!;
         const s = sampleVehicle(v.trayectoria, t);
@@ -135,11 +159,14 @@ export function buildVisibilityOverlay(resultado: Resultado, graph: SceneGraph):
         const target = targetPoint(pair, t);
         if (!target) {
           line.visible = false;
+          ring.visible = false;
           continue;
         }
         const k = sampleIndex(pair, t);
         const seen = pair.visible[k] ?? true;
         line.material = seen ? visibleMat : blockedMat;
+        ring.material = seen ? visibleRingMat : blockedRingMat;
+        ring.position.set(target[0], 0.05, target[2]);
         const pos = geo.getAttribute("position") as BufferAttribute;
         pos.setXYZ(0, eye[0], eye[1], eye[2]);
         pos.setXYZ(1, target[0], target[1], target[2]);

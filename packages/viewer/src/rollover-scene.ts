@@ -46,6 +46,16 @@ export function minimumRollRate(
   return Math.sqrt((2 * 9.80665 * dz) / (k2 + h * h + half * half));
 }
 
+/** ¿Se simula la volcadura de este vehículo? (criterio del solver o volcadura declarada). */
+export function rollsOver(resultado: Resultado, vehicleId: string): boolean {
+  const v = resultado.vehiculos.find((x) => x.id === vehicleId);
+  if (!v?.volcadura) return false;
+  const declared = resultado.eventos.some(
+    (e) => e.tipo === "volcadura" && e.actores.includes(vehicleId),
+  );
+  return v.volcadura.inicia || declared;
+}
+
 export async function bakeRollover(
   resultado: Resultado,
   vehicleId: string,
@@ -53,10 +63,7 @@ export async function bakeRollover(
   const v = resultado.vehiculos.find((x) => x.id === vehicleId);
   const roll = v?.volcadura;
   if (!v || !roll) return null;
-  const declared = resultado.eventos.some(
-    (e) => e.tipo === "volcadura" && e.actores.includes(vehicleId),
-  );
-  if (!roll.inicia && !declared) return null;
+  if (!rollsOver(resultado, vehicleId)) return null;
   const L = v.dimensiones.largo_m;
   const W = v.dimensiones.ancho_m;
   const H = v.dimensiones.alto_m;

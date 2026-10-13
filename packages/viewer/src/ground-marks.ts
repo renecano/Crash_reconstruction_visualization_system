@@ -9,7 +9,8 @@
  * - Fluidos: charco bajo el frente del vehículo en reposo cuando el aplastamiento frontal alcanza
  *   el radiador (≥ 0.25 m, ilustrativo), que crece durante 3 s.
  *
- * Cada segmento lleva su instante, así el visor los muestra conforme ocurren.
+ * Cada segmento lleva su instante, así el visor los muestra conforme ocurren. Un vehículo que se
+ * vuelca no deja marcas posteriores desde la trayectoria plana (su pose sale de Rapier).
  */
 import { axlePositions, profileFor, type VehicleDimensions } from "./vehicle-geometry";
 
@@ -45,6 +46,8 @@ export interface MarkVehicle {
   bloqueadas: boolean;
   aplastamientoFrontal: number;
   tReposo?: number;
+  /** Se vuelca: después del tropiezo su pose sale de Rapier, no de la trayectoria plana. */
+  volcado?: boolean;
 }
 
 export const MARK_WIDTH_M = 0.2;
@@ -113,7 +116,7 @@ export function computeGroundMarks(vehicles: readonly MarkVehicle[]): GroundMark
         const speed = Math.hypot(vcx, vcy);
         const lateral = Math.abs(-vcx * s + vcy * c);
         const braking = v.tFrenado !== undefined && !v.abs && t >= v.tFrenado && t < 0;
-        const post = t > 0 && (v.tReposo === undefined || t <= v.tReposo + 1e-9);
+        const post = !v.volcado && t > 0 && (v.tReposo === undefined || t <= v.tReposo + 1e-9);
         const sliding = post && (v.bloqueadas ? speed > SLIDE_SPEED_MS : lateral > LATERAL_SLIP_MS);
         const marking = (braking && speed > SLIDE_SPEED_MS) || sliding;
         if (marking && prev) {
@@ -123,7 +126,7 @@ export function computeGroundMarks(vehicles: readonly MarkVehicle[]): GroundMark
         prev = marking ? { x: px, y: py } : null;
       }
     }
-    if (v.aplastamientoFrontal >= RADIATOR_CRUSH_M && v.tReposo !== undefined) {
+    if (v.aplastamientoFrontal >= RADIATOR_CRUSH_M && v.tReposo !== undefined && !v.volcado) {
       const i = tr.t.length - 1;
       const yaw = tr.rumbo[i] ?? 0;
       const ahead = 0.3 * v.dims.length;
