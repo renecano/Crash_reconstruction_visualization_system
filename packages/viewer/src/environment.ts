@@ -182,17 +182,17 @@ export function environmentFor(input: EnvironmentInput): EnvironmentSettings {
   return {
     sun,
     lightDirection,
-    sunIntensity: night ? 0.12 : twilight ? 1.6 : overcast ? 1.4 : 2.8,
+    sunIntensity: night ? 0.12 : twilight ? 2.2 : overcast ? 1.4 : 2.8,
     ambientIntensity: night
       ? input.alumbrado
         ? 0.35
         : 0.15
       : twilight
-        ? 0.85
+        ? 1.1
         : overcast
           ? 0.9
           : 0.6,
-    skyColor: night ? "#0b1020" : twilight ? "#b9a8a0" : overcast ? "#9aa3ad" : "#8fc1ea",
+    skyColor: night ? "#0b1020" : twilight ? "#cdbbb0" : overcast ? "#9aa3ad" : "#8fc1ea",
     groundColor: night ? "#141812" : "#5d6b4a",
     fogDensity,
     night,

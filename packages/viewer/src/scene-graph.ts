@@ -112,8 +112,8 @@ function sceneMaterials(opts: SceneGraphOptions) {
       emissiveIntensity: night ? 2 : 0,
     }),
     impact: std("#f0b429", 0.5, 0, { transparent: true, opacity: 0.9, side: DoubleSide }),
-    person: std("#8a8f99", 0.8),
-    personHead: std("#a3a8b0", 0.8),
+    person: std("#b7bcc6", 0.8),
+    personHead: std("#cfd3da", 0.8),
   };
 }
 
