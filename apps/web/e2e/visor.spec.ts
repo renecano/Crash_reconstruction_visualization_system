@@ -18,6 +18,9 @@ async function waitReady(page: Page): Promise<void> {
 }
 
 test.describe("visor 3D", () => {
+  // Antes de estar listo el visor carga los cuerpos y hornea restos y ragdolls (F5); con render
+  // por software o pruebas en paralelo eso supera el límite de 30 s por omisión.
+  test.describe.configure({ timeout: 120_000 });
   for (const escena of ESCENAS) {
     test(`${escena}: carga, renderiza y muestra la leyenda`, async ({ page }) => {
       const errors: string[] = [];
@@ -64,6 +67,33 @@ test.describe("visor 3D", () => {
       .getByLabel("Cámara", { exact: true })
       .selectOption({ label: "Vista del conductor A" });
     await expect(page).toHaveURL(/camara=conductor-veh-a/);
+  });
+
+  test("personas: ragdoll dentro de la banda de Searle, panel y cámara de persona", async ({
+    page,
+  }) => {
+    await page.goto("/visor?escena=peaton_cruce&t=0.5&camara=persona");
+    await waitReady(page);
+    const ragdolls = await page.evaluate(
+      () =>
+        (window as unknown as { __croquisPeople?: { ragdolls: { inBand: boolean }[] } })
+          .__croquisPeople?.ragdolls ?? [],
+    );
+    expect(ragdolls).toHaveLength(1);
+    expect(ragdolls[0]?.inBand).toBe(true);
+    await expect(page.getByLabel("Cámara", { exact: true })).toHaveValue("persona");
+    await expect(page.getByTestId("personas")).toContainText("Proyección (Searle)");
+    await expect(page.getByTestId("personas")).toContainText("dentro de la banda");
+    await expect(page.getByTestId("visibilidad")).toContainText("el vehículo estacionado");
+  });
+
+  test("volcadura: el criterio de tropiezo se explica y la secuencia es ilustrativa", async ({
+    page,
+  }) => {
+    await page.goto("/visor?escena=volcadura&t=1");
+    await waitReady(page);
+    await expect(page.getByTestId("volcadura")).toContainText("ilustrativa");
+    await expect(page.getByTestId("personas")).toContainText("Sentado al volante");
   });
 
   test("forzar WebGL 2 usa el respaldo", async ({ page }) => {

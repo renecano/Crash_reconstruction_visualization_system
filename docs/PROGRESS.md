@@ -364,4 +364,3 @@ Criterio de aceptación (PLAN §13): proyección del ragdoll dentro de los lími
 9. **Pruebas.** Hypothesis para las propiedades de ocupantes y visibilidad, prueba de visibilidad en `objeto_fijo_arbol`, `peaton_cruce` (camión estacionado) y casos sintéticos, pruebas del ragdoll y capturas visuales nuevas.
 
 Riesgos: rendimiento con mallas con piel en GPU integrada (se mide con E6; hay LOD si hace falta); datos públicos de E4 escasos (se documenta cuál se usó y su licencia).
-
