@@ -69,7 +69,7 @@ describe("fecha y hora de la escena", () => {
     expect(soloHora.date.toISOString()).toBe("2025-03-21T05:00:00.000Z");
     expect(soloHora.supuestos.join(" ")).toContain("Fecha no declarada");
     const nada = parseSceneTime(undefined, "atardecer");
-    expect(nada.supuestos.join(" ")).toContain("18:45");
+    expect(nada.supuestos.join(" ")).toContain("18:10");
   });
 
   it("de noche hay poca luz, alumbrado si se declara y los supuestos se reportan", () => {
@@ -88,5 +88,11 @@ describe("fecha y hora de la escena", () => {
     expect(d.night).toBe(false);
     expect(d.sun.elevation).toBeGreaterThan(40);
     expect(d.fogDensity).toBeLessThan(environmentFor({ clima: "niebla" }).fogDensity);
+  });
+
+  it("la luz de día nunca queda rasante aunque el sol esté bajo", () => {
+    const e = environmentFor({ fechaHora: "18:40", iluminacion: "atardecer" });
+    expect(e.night).toBe(false);
+    expect(e.lightDirection[2]).toBeGreaterThanOrEqual(Math.sin((6 * Math.PI) / 180) - 1e-12);
   });
 });

@@ -28,7 +28,8 @@ function bodyBox(clase: string, d: VehicleDimensions): Box3 {
   g.updateMatrixWorld(true);
   const box = new Box3();
   g.traverse((o) => {
-    if (o instanceof Mesh && !o.name.startsWith("mirror") && !o.name.startsWith("handlebar")) {
+    const skip = ["fusion_", "mirror", "handlebar"].some((p) => o.name.startsWith(p));
+    if (o instanceof Mesh && !skip) {
       box.expandByObject(o);
     }
   });
@@ -133,5 +134,27 @@ describe("vehículos procedurales", () => {
       expect(seat).toBeLessThan(1.0);
     }
     expect(seatHeight("autobus", typicalDims("autobus"))).toBeGreaterThan(1.0);
+  });
+});
+
+describe("fusión de piezas", () => {
+  it("dibuja cada vehículo con una malla por material más las llantas y conserva las piezas", () => {
+    const g = buildVehicle("sedan_mediano", typicalDims("sedan_mediano"));
+    const visible: string[] = [];
+    g.traverseVisible((o) => {
+      if (o instanceof Mesh) visible.push(o.name);
+    });
+    const fused = visible.filter((n) => n.startsWith("fusion_"));
+    expect(fused.length).toBeLessThanOrEqual(7);
+    expect(
+      visible.filter((n) => !n.startsWith("fusion_")).every((n) => n.startsWith("wheel_")),
+    ).toBe(true);
+    const hood = g.getObjectByName("hood");
+    expect(hood?.parent?.name).toBe("piezas");
+    expect(hood?.parent?.visible).toBe(false);
+    const paint = g.getObjectByName("fusion_pintura");
+    expect(paint?.userData.parts).toContain("hood");
+    const plain = buildVehicle("sedan_mediano", typicalDims("sedan_mediano"), { fuse: false });
+    expect(plain.getObjectByName("piezas")).toBeUndefined();
   });
 });

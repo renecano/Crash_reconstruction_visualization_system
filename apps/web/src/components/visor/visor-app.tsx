@@ -14,6 +14,11 @@ import {
   environmentFor,
   eventMarkers,
   nextQualityLevel,
+  recentFps,
+  recordTrial,
+  startTrial,
+  type Backend,
+  type BackendTrial,
   seek,
   setSpeed,
   step,
@@ -67,6 +72,26 @@ function parseParams(sp: URLSearchParams): VisorParams {
     completa: sp.get("pantalla") === "completa",
     bucle: sp.get("bucle") === "1",
   };
+}
+
+const BACKEND_KEY = "croquis.backend";
+
+/** Preferencia de backend recordada en este navegador (puede no existir o no estar disponible). */
+function readBackend(): Backend | null {
+  try {
+    const v = window.localStorage.getItem(BACKEND_KEY);
+    return v === "webgpu" || v === "webgl" ? v : null;
+  } catch {
+    return null;
+  }
+}
+
+function saveBackend(b: Backend): void {
+  try {
+    window.localStorage.setItem(BACKEND_KEY, b);
+  } catch {
+    /* almacenamiento no disponible: se vuelve a medir la próxima vez */
+  }
 }
 
 const CAMARAS: { value: CameraMode; label: string }[] = [
@@ -123,18 +148,37 @@ export function VisorApp() {
   }, [r, params.t, params.auto, params.bucle]);
   const state = useClockState(clock);
 
-  // Calidad automática con histéresis según los fps medidos (PLAN §7.8).
+  // Backend automático por medición (ADR 0006): WebGPU primero; si no llega a 60 fps se prueba
+  // WebGL 2 y se queda el más rápido. La decisión se recuerda en este navegador.
+  const [trial, setTrial] = useState<BackendTrial>(() => startTrial(readBackend()));
+  const effectiveRenderer: RendererPreference =
+    params.renderer === "auto" ? trial.current : params.renderer;
   useEffect(() => {
-    if (params.calidad !== "auto") return undefined;
+    if (params.renderer !== "auto" || trial.decided || !info) return undefined;
     const id = window.setInterval(() => {
       const perf = window.__croquisPerf;
-      if (!perf || perf.frameMs.length < 90) return;
-      const recent = perf.frameMs.slice(-90);
-      const fps = 1000 / (recent.reduce((a, b) => a + b, 0) / recent.length);
-      setAutoCalidad((q) => nextQualityLevel(q, fps));
+      if (!perf || perf.frameMs.length < 240) return;
+      const fps = recentFps(perf.frameMs, 120);
+      if (!Number.isFinite(fps)) return;
+      setTrial((t) => {
+        const next = recordTrial(t, fps, info.backend);
+        if (next.decided) saveBackend(next.current);
+        return next;
+      });
+    }, 1000);
+    return () => window.clearInterval(id);
+  }, [params.renderer, trial.decided, info]);
+
+  // Calidad automática con histéresis según los fps medidos (PLAN §7.8), una vez elegido el backend.
+  useEffect(() => {
+    if (params.calidad !== "auto" || (params.renderer === "auto" && !trial.decided))
+      return undefined;
+    const id = window.setInterval(() => {
+      const fps = recentFps(window.__croquisPerf?.frameMs ?? [], 90);
+      if (Number.isFinite(fps)) setAutoCalidad((q) => nextQualityLevel(q, fps));
     }, 3000);
     return () => window.clearInterval(id);
-  }, [params.calidad]);
+  }, [params.calidad, params.renderer, trial.decided]);
 
   const env = useMemo(
     () =>
@@ -235,7 +279,8 @@ export function VisorApp() {
             className="rounded border border-neutral-400 bg-transparent px-2 py-1"
             aria-label="Render"
           >
-            <option value="auto">Automático (WebGPU si está disponible)</option>
+            <option value="auto">Automático (elige el más rápido)</option>
+            <option value="webgpu">Forzar WebGPU</option>
             <option value="webgl">Forzar WebGL 2</option>
           </select>
         </label>
@@ -245,6 +290,11 @@ export function VisorApp() {
             data-testid="backend"
           >
             {info.backend === "webgpu" ? "WebGPU" : "WebGL 2"}
+            {params.renderer === "auto" && trial.decided && Object.keys(trial.measured).length > 0
+              ? ` · elegido por medición (${Object.entries(trial.measured)
+                  .map(([k, v]) => `${k === "webgpu" ? "WebGPU" : "WebGL 2"} ${Math.round(v)} fps`)
+                  .join(", ")})`
+              : ""}
           </span>
         ) : null}
       </div>
@@ -268,7 +318,7 @@ export function VisorApp() {
             camera={cameraMode}
             driverVehicleId={driverId}
             quality={calidad}
-            renderer={params.renderer}
+            renderer={effectiveRenderer}
             onRendererInfo={setInfo}
             onError={() =>
               setError(

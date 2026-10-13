@@ -11,15 +11,18 @@ import { Canvas, useFrame, useThree } from "@react-three/fiber";
 import { useEffect, useMemo, useRef, type ReactElement } from "react";
 import {
   Color,
+  CubeCamera,
   DirectionalLight,
   FogExp2,
   HemisphereLight,
   Object3D,
   PerspectiveCamera,
+  Scene,
   Vector3,
 } from "three";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
 import { SkyMesh } from "three/examples/jsm/objects/SkyMesh.js";
+import { CubeRenderTarget } from "three/webgpu";
 import {
   actionBounds,
   cinematicCamera,
@@ -69,6 +72,8 @@ declare global {
   interface Window {
     __croquisPerf?: PerfSample;
     __croquisReady?: boolean;
+    /** `performance.now()` del primer cuadro listo (E6: tiempo hasta interactivo). */
+    __croquisReadyAt?: number;
   }
 }
 
@@ -117,17 +122,14 @@ function SceneContent({
     sun.position.set(center[0] + dx * dist, Math.max(8, dz * dist), center[2] - dy * dist);
     sun.target.position.set(center[0], 0, center[2]);
     sun.castShadow = profile.shadows;
-    const extent = Math.max(30, bounds.size);
+    const extent = Math.max(18, 0.75 * bounds.size);
     sun.shadow.camera.left = -extent;
     sun.shadow.camera.right = extent;
     sun.shadow.camera.top = extent;
     sun.shadow.camera.bottom = -extent;
     sun.shadow.camera.near = 1;
     sun.shadow.camera.far = 400;
-    sun.shadow.mapSize.set(
-      profile.level === "alta" ? 4096 : 2048,
-      profile.level === "alta" ? 4096 : 2048,
-    );
+    sun.shadow.mapSize.set(profile.shadowMapSize, profile.shadowMapSize);
     sun.shadow.bias = -0.0004;
     group.add(hemi, sun, sun.target);
     return group;
@@ -146,13 +148,26 @@ function SceneContent({
     return s;
   }, [env]);
 
+  // El cielo físico (con nubes) se hornea una vez en un mapa cúbico: dibujarlo en cada cuadro
+  // cuesta un cálculo por píxel que en GPU integrada no cabe en el presupuesto de E6.
   useEffect(() => {
-    scene.background = new Color(env.skyColor);
     scene.fog = new FogExp2(env.skyColor, env.fogDensity);
+    scene.background = new Color(env.skyColor);
+    let target: CubeRenderTarget | null = null;
+    if (sky) {
+      target = new CubeRenderTarget(256);
+      const cubeCamera = new CubeCamera(1, 10_000, target);
+      const skyScene = new Scene();
+      skyScene.add(sky);
+      cubeCamera.update(gl, skyScene);
+      scene.background = target.texture;
+    }
     return () => {
       scene.fog = null;
+      scene.background = null;
+      target?.dispose();
     };
-  }, [scene, env]);
+  }, [scene, env, sky, gl]);
 
   // Cámaras.
   const controls = useRef<OrbitControls | null>(null);
@@ -204,7 +219,6 @@ function SceneContent({
     <>
       <primitive object={graph.root} />
       <primitive object={lights} />
-      {sky ? <primitive object={sky} /> : null}
     </>
   );
 }
@@ -239,13 +253,23 @@ function PerfProbe({ backend }: { backend: () => RendererInfo["backend"] | undef
     }
     last.current = now;
     perf.backend = backend();
+    // Contadores del cuadro anterior: el reinicio automático se desactiva y se reinicia aquí.
     const info = (
       gl as unknown as {
-        info?: { render?: { drawCalls?: number; calls?: number; triangles?: number } };
+        info?: {
+          autoReset?: boolean;
+          reset?: () => void;
+          render?: { drawCalls?: number; triangles?: number };
+        };
       }
     ).info;
-    perf.drawCalls = info?.render?.drawCalls ?? info?.render?.calls;
-    perf.triangles = info?.render?.triangles;
+    if (info) {
+      info.autoReset = false;
+      perf.drawCalls = info.render?.drawCalls;
+      perf.triangles = info.render?.triangles;
+      info.reset?.();
+    }
+    if (!window.__croquisReady) window.__croquisReadyAt = performance.now();
     window.__croquisReady = true;
   });
   return null;
@@ -269,12 +293,14 @@ export function SceneViewer(props: SceneViewerProps): ReactElement {
         camera={{ fov: 45, near: 0.1, far: 5000, position: [30, 30, 30] }}
         gl={async (defaults) => {
           try {
-            const { WebGPURenderer: Renderer } = await import("three/webgpu");
+            const { WebGPURenderer: Renderer, UnsignedByteType } = await import("three/webgpu");
             const r = new Renderer({
               canvas: defaults.canvas as HTMLCanvasElement,
-              antialias: profile.level !== "baja",
+              antialias: profile.antialias,
               alpha: false,
               forceWebGL: renderer === "webgl",
+              // Búfer de 8 bits en baja y media: menos ancho de banda en GPU integrada (E6).
+              ...(profile.level === "alta" ? {} : { outputBufferType: UnsignedByteType }),
             });
             await r.init();
             const backend = (r.backend as { isWebGPUBackend?: boolean }).isWebGPUBackend

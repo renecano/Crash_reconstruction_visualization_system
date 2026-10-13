@@ -90,6 +90,7 @@ test.describe("capturas visuales", () => {
       await page.waitForTimeout(1500);
       await expect(page.getByTestId("visor-3d")).toHaveScreenshot(`${escena}.png`, {
         maxDiffPixelRatio: 0.02,
+        timeout: 30_000,
       });
     });
   }

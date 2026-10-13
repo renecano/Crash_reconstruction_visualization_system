@@ -7,6 +7,7 @@ export * from "./coords";
 export * from "./sample";
 export * from "./timeline";
 export * from "./clock";
+export * from "./backend-choice";
 export * from "./cameras";
 export * from "./environment";
 export {

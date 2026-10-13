@@ -13,11 +13,13 @@
 export const TOLUCA = { lat: 19.2826, lon: -99.6557 } as const;
 export const DEFAULT_DATE = "2025-03-20";
 export const MEXICO_CENTRAL_OFFSET_MIN = -360;
+/** Elevación mínima de la luz direccional de día (ajuste visual). */
+export const MIN_LIGHT_ELEVATION_DEG = 6;
 
 const HOUR_BY_LIGHT: Record<string, string> = {
   dia: "12:30",
-  amanecer: "07:10",
-  atardecer: "18:45",
+  amanecer: "07:25",
+  atardecer: "18:10",
   noche_con_alumbrado: "22:00",
   noche_sin_alumbrado: "22:00",
 };
@@ -173,7 +175,10 @@ export function environmentFor(input: EnvironmentInput): EnvironmentSettings {
           ? 0.008
           : 0.0015;
   const moon: [number, number, number] = [-0.3, 0.4, 0.86];
-  const lightDirection = night ? moon : sunDirection(sun);
+  // Con el sol muy bajo la luz directa rasante deja la escena a oscuras: para iluminar la escena
+  // (no para calcular nada) la luz direccional se eleva al menos 6° sobre el horizonte.
+  const lit = { ...sun, elevation: Math.max(sun.elevation, MIN_LIGHT_ELEVATION_DEG) };
+  const lightDirection = night ? moon : sunDirection(lit);
   return {
     sun,
     lightDirection,

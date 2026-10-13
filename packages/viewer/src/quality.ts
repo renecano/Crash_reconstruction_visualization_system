@@ -12,12 +12,40 @@ export interface QualityProfile {
   /** Número máximo de instancias de árboles. */
   maxTrees: number;
   postprocessing: boolean;
+  /** MSAA (4 muestras) en el renderer. */
+  antialias: boolean;
+  /** Lado del mapa de sombras del sol (texeles). */
+  shadowMapSize: number;
 }
 
 export const QUALITY_PROFILES: Record<QualityLevel, QualityProfile> = {
-  baja: { level: "baja", pixelRatio: 0.75, shadows: false, maxTrees: 60, postprocessing: false },
-  media: { level: "media", pixelRatio: 1, shadows: true, maxTrees: 200, postprocessing: false },
-  alta: { level: "alta", pixelRatio: 1.5, shadows: true, maxTrees: 600, postprocessing: true },
+  baja: {
+    level: "baja",
+    pixelRatio: 0.75,
+    shadows: false,
+    maxTrees: 60,
+    postprocessing: false,
+    antialias: false,
+    shadowMapSize: 0,
+  },
+  media: {
+    level: "media",
+    pixelRatio: 1,
+    shadows: true,
+    maxTrees: 200,
+    postprocessing: false,
+    antialias: true,
+    shadowMapSize: 1024,
+  },
+  alta: {
+    level: "alta",
+    pixelRatio: 1.5,
+    shadows: true,
+    maxTrees: 600,
+    postprocessing: true,
+    antialias: true,
+    shadowMapSize: 2048,
+  },
 };
 
 const ORDER: readonly QualityLevel[] = ["baja", "media", "alta"];

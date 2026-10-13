@@ -21,6 +21,7 @@ import {
   Shape,
   TorusGeometry,
 } from "three";
+import { mergeGeometries } from "three/examples/jsm/utils/BufferGeometryUtils.js";
 
 export type PartRole =
   "pintura" | "vidrio" | "llanta" | "rin" | "faro" | "calavera" | "plastico" | "cromo" | "carga";
@@ -553,13 +554,54 @@ function buildTwoWheel(p: TwoWheelProfile, d: VehicleDimensions): Group {
   return g;
 }
 
+/**
+ * Fusiona las piezas fijas por rol (material) para dibujar cada vehículo con pocas llamadas.
+ * Las piezas originales se conservan, ocultas, en el subgrupo `piezas`: F4 las deforma por
+ * nombre y las pruebas las inspeccionan. Las llantas quedan aparte porque giran.
+ */
+export function fuseStaticParts(g: Group): void {
+  g.updateMatrixWorld(true);
+  const byRole = new Map<PartRole, BufferGeometry[]>();
+  const names = new Map<PartRole, string[]>();
+  const parts = new Group();
+  parts.name = "piezas";
+  parts.visible = false;
+  for (const child of [...g.children]) {
+    if (!(child instanceof Mesh)) continue;
+    const role = child.userData.role as PartRole;
+    const geo = (child.geometry as BufferGeometry).clone();
+    geo.applyMatrix4(child.matrix);
+    const flat = geo.index ? geo.toNonIndexed() : geo;
+    flat.clearGroups();
+    for (const key of Object.keys(flat.attributes)) {
+      if (key !== "position" && key !== "normal") flat.deleteAttribute(key);
+    }
+    byRole.set(role, [...(byRole.get(role) ?? []), flat]);
+    names.set(role, [...(names.get(role) ?? []), child.name]);
+    parts.add(child);
+  }
+  for (const [role, geos] of byRole) {
+    const merged = mergeGeometries(geos, false);
+    if (!merged) continue;
+    const m = part(`fusion_${role}`, merged, role);
+    m.userData.parts = names.get(role);
+    g.add(m);
+  }
+  g.add(parts);
+}
+
 /** Modelo completo de un vehículo con sus dimensiones reales. */
-export function buildVehicle(clase: string, dims: VehicleDimensions): Group {
+export function buildVehicle(
+  clase: string,
+  dims: VehicleDimensions,
+  opts: { fuse?: boolean } = {},
+): Group {
   const p = profileFor(clase);
   const g = p.kind === "car" ? buildCar(p, dims) : buildTwoWheel(p, dims);
   g.name = `vehiculo_${clase}`;
   g.userData.clase = clase;
   g.userData.dims = dims;
+  if (opts.fuse ?? true) fuseStaticParts(g);
   return g;
 }
 

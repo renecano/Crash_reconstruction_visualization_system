@@ -220,7 +220,8 @@ export function buildSceneGraph(
   ground.name = "suelo";
   ground.rotation.x = -Math.PI / 2;
   ground.position.y = -0.03;
-  ground.receiveShadow = true;
+  // El pasto no recibe sombras: cubre casi toda la pantalla y las sombras importan en la calzada (E6).
+  ground.receiveShadow = false;
   root.add(ground);
 
   const lugar = spec.lugar;
