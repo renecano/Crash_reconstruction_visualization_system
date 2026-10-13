@@ -95,3 +95,26 @@ test.describe("capturas visuales", () => {
     });
   }
 });
+
+/**
+ * Capturas de daño (PLAN §13, F4): 1.5 s después del impacto, con el acercamiento al daño. Se ven
+ * la deformación, la pintura transferida, vidrios, piezas desprendidas, marcas y bolsas de aire.
+ */
+test.describe("capturas de daño", () => {
+  test.skip(
+    process.platform !== "linux",
+    "Las referencias visuales se generan y comparan en Linux",
+  );
+  test.use({ viewport: { width: 1280, height: 900 } });
+  for (const escena of ESCENAS) {
+    test(`${escena} con daño`, async ({ page }) => {
+      await page.goto(`/visor?escena=${escena}&t=1.5&camara=dano&calidad=media&renderer=webgl`);
+      await waitReady(page);
+      await page.waitForTimeout(1500);
+      await expect(page.getByTestId("visor-3d")).toHaveScreenshot(`${escena}-dano.png`, {
+        maxDiffPixelRatio: 0.02,
+        timeout: 30_000,
+      });
+    });
+  }
+});

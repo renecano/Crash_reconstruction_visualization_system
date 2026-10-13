@@ -104,3 +104,38 @@ export function airbagScale(t: number): number {
   }
   return Math.max(0.55, 1 - 0.45 * Math.min(1, Math.max(0, (t - 0.15) / 1.5)));
 }
+
+/** Datos mínimos de la escena y del resultado para decidir las bolsas de un vehículo. */
+export interface AirbagSceneData {
+  personas: readonly {
+    vehiculo_id?: string;
+    rol: { valor: string };
+    cinturon?: { valor: boolean };
+  }[];
+  objetos: readonly { id: string; tipo: string }[];
+  eventos: readonly { tipo: string; actores: readonly string[] }[];
+}
+
+/** Decisión de bolsas de aire de un vehículo del resultado (misma regla en escena y panel). */
+export function airbagForVehicle(
+  v: { id: string; delta_v_kmh: number; pdof_horas?: number; dosRuedas: boolean },
+  data: AirbagSceneData,
+  thresholds: AirbagThresholds = IIHS_THRESHOLDS,
+): AirbagDecision {
+  const driver = data.personas.find((p) => p.vehiculo_id === v.id && p.rol.valor === "conductor");
+  const objetos = new Map(data.objetos.map((o) => [o.id, o]));
+  const ev = data.eventos.find((e) => e.tipo.startsWith("impacto_"));
+  const narrow =
+    ev?.tipo === "impacto_vehiculo_objeto" &&
+    ev.actores.some((a) => ["arbol", "poste"].includes(objetos.get(a)?.tipo ?? ""));
+  return airbagDecision(
+    {
+      deltaVKmh: v.delta_v_kmh,
+      pdofHoras: v.pdof_horas,
+      cinturon: driver?.cinturon?.valor,
+      objetoEstrecho: narrow,
+      dosRuedas: v.dosRuedas,
+    },
+    thresholds,
+  );
+}

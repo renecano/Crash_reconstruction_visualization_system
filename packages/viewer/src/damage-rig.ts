@@ -14,7 +14,7 @@ import {
   SphereGeometry,
   Vector3,
 } from "three";
-import { airbagDecision, airbagScale, type AirbagDecision } from "./airbag";
+import { airbagForVehicle, airbagScale, type AirbagDecision } from "./airbag";
 import {
   applyVehicleDamage,
   crushAt,
@@ -157,21 +157,15 @@ export function buildDamageRig(
     );
   }
 
-  // Bolsas de aire.
-  const driver = ctx.spec.personas.find(
-    (p) => p.vehiculo_id === v.id && p.rol.valor === "conductor",
+  // Bolsas de aire (misma regla que el panel).
+  const airbag = airbagForVehicle(
+    { id: v.id, delta_v_kmh: v.delta_v_kmh, pdof_horas: v.pdof_horas, dosRuedas: twoWheel },
+    {
+      personas: ctx.spec.personas,
+      objetos: ctx.spec.entorno.objetos ?? [],
+      eventos: ctx.resultado.eventos,
+    },
   );
-  const objetos = new Map((ctx.spec.entorno.objetos ?? []).map((o) => [o.id, o]));
-  const narrow =
-    ev?.tipo === "impacto_vehiculo_objeto" &&
-    ev.actores.some((a) => ["arbol", "poste"].includes(objetos.get(a)?.tipo ?? ""));
-  const airbag = airbagDecision({
-    deltaVKmh: v.delta_v_kmh,
-    pdofHoras: v.pdof_horas,
-    cinturon: driver?.cinturon?.valor,
-    objetoEstrecho: narrow,
-    dosRuedas: twoWheel,
-  });
   const bags: Mesh[] = [];
   const layout = group.userData.layout as CarLayout | undefined;
   if (layout && (airbag.frontal || airbag.lateral)) {

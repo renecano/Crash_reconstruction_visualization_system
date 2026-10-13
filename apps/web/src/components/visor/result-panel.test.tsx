@@ -28,4 +28,12 @@ describe("<ResultPanel />", () => {
     expect(clockHour(11.8)).toBe("a las 12");
     expect(clockHour(9.4)).toBe("a las 9");
   });
+
+  it("con la escena muestra la decisión de bolsas de aire y su fuente", async () => {
+    const { loadFixture } = await import("@croquis/scene-schema");
+    const r = await loadResultado("frontal_curva");
+    render(<ResultPanel resultado={r} supuestosEntorno={[]} spec={loadFixture("frontal_curva")} />);
+    expect(screen.getAllByText(/Frontal (desplegada|sin desplegar)/).length).toBeGreaterThan(0);
+    expect(screen.getByText(/IIHS/)).toBeDefined();
+  });
 });

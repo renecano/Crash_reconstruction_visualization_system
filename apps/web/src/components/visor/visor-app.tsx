@@ -351,7 +351,7 @@ export function VisorApp() {
         />
       ) : null}
 
-      {r ? <ResultPanel resultado={r} supuestosEntorno={env.supuestos} /> : null}
+      {r ? <ResultPanel resultado={r} supuestosEntorno={env.supuestos} spec={spec} /> : null}
     </div>
   );
 }

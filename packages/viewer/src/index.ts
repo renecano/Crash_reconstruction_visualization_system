@@ -38,3 +38,19 @@ export {
   type SceneGraphOptions,
   type VehicleNode,
 } from "./scene-graph";
+export * from "./airbag";
+export {
+  applyVehicleDamage,
+  CONTACT_DURATION_S,
+  crushAt,
+  damageInfluence,
+  displacementField,
+  measureCrushProfile,
+  type DamageInput,
+  type DamageSide,
+  type VehicleDamage,
+} from "./damage";
+export { buildDamageRig, type DamageRig } from "./damage-rig";
+export { computeGroundMarks, puddleRadius, visibleCount, type GroundMarks } from "./ground-marks";
+export { bakeDebris, debrisPoseAt, mulberry32, type DebrisBake, type DebrisSpec } from "./debris";
+export { attachDebris, planDebris, type DebrisAttachment, type DebrisPlan } from "./debris-scene";
