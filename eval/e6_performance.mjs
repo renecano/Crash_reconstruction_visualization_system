@@ -103,7 +103,10 @@ async function gpuInfo(browser, base) {
 }
 
 async function measure(browser, base, scene, quality, renderer) {
-  const context = await browser.newContext({ viewport: { width: 1920, height: 1080 }, deviceScaleFactor: 1 });
+  const context = await browser.newContext({
+    viewport: { width: 1920, height: 1080 },
+    deviceScaleFactor: 1,
+  });
   const page = await context.newPage();
   const cdp = await context.newCDPSession(page);
   await cdp.send("Network.enable");
@@ -167,12 +170,20 @@ async function measure(browser, base, scene, quality, renderer) {
 
 /** Abre el visor en modo automático y lee qué backend eligió por medición. */
 async function autoChoice(browser, base) {
-  const context = await browser.newContext({ viewport: { width: 1920, height: 1080 }, deviceScaleFactor: 1 });
+  const context = await browser.newContext({
+    viewport: { width: 1920, height: 1080 },
+    deviceScaleFactor: 1,
+  });
   const page = await context.newPage();
-  await page.goto(`${base}/visor?escena=lateral_interseccion&calidad=media&camara=cinematica&auto=1&bucle=1`);
+  await page.goto(
+    `${base}/visor?escena=lateral_interseccion&calidad=media&camara=cinematica&auto=1&bucle=1`,
+  );
   await page.waitForFunction(() => window.__croquisReady === true, null, { timeout: 120_000 });
   await page.waitForFunction(
-    () => document.querySelector("[data-testid=backend]")?.textContent?.includes("elegido por medición") ?? false,
+    () =>
+      document
+        .querySelector("[data-testid=backend]")
+        ?.textContent?.includes("elegido por medición") ?? false,
     null,
     { timeout: 120_000 },
   );
@@ -183,15 +194,24 @@ async function autoChoice(browser, base) {
 
 async function main() {
   const base = `http://localhost:${PORT}`;
-  const server = spawn(process.execPath, [join(WEB, "node_modules", "next", "dist", "bin", "next"), "start", "-p", String(PORT)], {
-    cwd: WEB,
-    stdio: "ignore",
-  });
+  const server = spawn(
+    process.execPath,
+    [join(WEB, "node_modules", "next", "dist", "bin", "next"), "start", "-p", String(PORT)],
+    {
+      cwd: WEB,
+      stdio: "ignore",
+    },
+  );
   try {
     await waitForServer(`${base}/visor`, 60_000);
     const browser = await chromium.launch({
       headless: false,
-      args: ["--enable-unsafe-webgpu", "--ignore-gpu-blocklist", "--disable-gpu-vsync", "--disable-frame-rate-limit"],
+      args: [
+        "--enable-unsafe-webgpu",
+        "--ignore-gpu-blocklist",
+        "--disable-gpu-vsync",
+        "--disable-frame-rate-limit",
+      ],
     });
     const gpu = await gpuInfo(browser, base);
     const runs = [];
@@ -200,7 +220,9 @@ async function main() {
         for (const scene of SCENES) {
           const r = await measure(browser, base, scene, quality, renderer);
           runs.push(r);
-          console.log(`${renderer}/${quality}/${scene}: ${r.backend} ${r.fps_promedio} fps (p1 ${r.fps_p1_bajo}), ${r.carga_inicial_mb} MB, ${r.tiempo_hasta_listo_ms} ms, ${r.llamadas_dibujo} llamadas`);
+          console.log(
+            `${renderer}/${quality}/${scene}: ${r.backend} ${r.fps_promedio} fps (p1 ${r.fps_p1_bajo}), ${r.carga_inicial_mb} MB, ${r.tiempo_hasta_listo_ms} ms, ${r.llamadas_dibujo} llamadas`,
+          );
         }
       }
     }
@@ -214,7 +236,10 @@ async function main() {
         summary[`${renderer}/${quality}`] = {
           backend: [...new Set(sel.map((r) => r.backend))].join(","),
           fps_min_entre_escenas: round(Math.min(...fps), 1),
-          fps_mediana_entre_escenas: round([...fps].sort((a, b) => a - b)[Math.floor(fps.length / 2)], 1),
+          fps_mediana_entre_escenas: round(
+            [...fps].sort((a, b) => a - b)[Math.floor(fps.length / 2)],
+            1,
+          ),
           escena_mas_lenta: sel.find((r) => r.fps_promedio === Math.min(...fps))?.escena ?? null,
           carga_inicial_max_mb: round(Math.max(...sel.map((r) => r.carga_inicial_mb ?? 0)), 2),
         };
@@ -252,7 +277,8 @@ async function main() {
       cumple: {
         media_60fps: (auto("media")?.fps_min_entre_escenas ?? 0) >= BUDGET.fpsMedia,
         alta_30fps: (auto("alta")?.fps_min_entre_escenas ?? 0) >= BUDGET.fpsAlta,
-        carga_inicial_8mb: Math.max(...runs.map((r) => r.carga_inicial_mb ?? 0)) <= BUDGET.initialLoadMB,
+        carga_inicial_8mb:
+          Math.max(...runs.map((r) => r.carga_inicial_mb ?? 0)) <= BUDGET.initialLoadMB,
       },
       resumen: summary,
       corridas: runs,
