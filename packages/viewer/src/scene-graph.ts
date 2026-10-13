@@ -286,6 +286,9 @@ export function buildSceneGraph(
   ground.position.y = -0.03;
   // El pasto no recibe sombras: cubre casi toda la pantalla y las sombras importan en la calzada (E6).
   ground.receiveShadow = false;
+  // Se dibuja después de la vía, los vehículos y los objetos: la prueba de profundidad descarta
+  // los pixeles de pasto que quedan tapados y no se sombrean dos veces (E6, limitado por relleno).
+  ground.renderOrder = 2;
   root.add(ground);
 
   const lugar = spec.lugar;

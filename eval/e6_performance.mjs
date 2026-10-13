@@ -13,7 +13,7 @@
  * `pnpm --filter @croquis/web build`. Cada configuración se mide `--repeats` veces (2 por omisión)
  * y se reporta la mejor: la laptop comparte recursos con otras aplicaciones y la variación entre
  * corridas llega a ±15 %. Uso: `node eval/e6_performance.mjs [--seconds 6]
- * [--warmup 2] [--scenes a,b] [--qualities media,alta] [--renderers webgpu,webgl]`.
+ * [--warmup 2] [--repeats 2] [--cooldown 8] [--scenes a,b] [--qualities media,alta] [--renderers webgpu,webgl]`.
  * Salida: eval/results/e6_performance.json.
  */
 import { execFileSync, spawn } from "node:child_process";
@@ -55,6 +55,8 @@ const RENDERERS = arg("renderers", "webgpu,webgl").split(",");
 const PORT = Number(arg("port", "3200"));
 /** Repeticiones por configuración: se reporta la mejor (la máquina comparte recursos con otras apps). */
 const REPEATS = Number(arg("repeats", "2"));
+/** Pausa entre mediciones (s) para que el equipo no acumule calor entre escenas. */
+const COOLDOWN_S = Number(arg("cooldown", "8"));
 
 function percentile(sorted, p) {
   if (sorted.length === 0) return NaN;
@@ -219,14 +221,23 @@ async function main() {
     });
     const gpu = await gpuInfo(browser, base);
     const runs = [];
+    // Cada repetición recorre todas las escenas, en orden directo e inverso alternados, con una
+    // pausa entre mediciones: la laptop se calienta durante la corrida y, sin esto, las escenas
+    // del final de cada calidad se medirían siempre con el equipo más caliente.
     for (const renderer of RENDERERS) {
       for (const quality of QUALITIES) {
+        const reps = new Map(SCENES.map((sc) => [sc, []]));
+        for (let k = 0; k < REPEATS; k++) {
+          const order = k % 2 === 0 ? SCENES : [...SCENES].reverse();
+          for (const scene of order) {
+            reps.get(scene).push(await measure(browser, base, scene, quality, renderer));
+            await new Promise((resolve) => setTimeout(resolve, COOLDOWN_S * 1000));
+          }
+        }
         for (const scene of SCENES) {
-          const reps = [];
-          for (let k = 0; k < REPEATS; k++)
-            reps.push(await measure(browser, base, scene, quality, renderer));
-          const r = reps.reduce((a, b) => ((b.fps_promedio ?? 0) > (a.fps_promedio ?? 0) ? b : a));
-          r.repeticiones_fps = reps.map((x) => x.fps_promedio);
+          const list = reps.get(scene);
+          const r = list.reduce((a, b) => ((b.fps_promedio ?? 0) > (a.fps_promedio ?? 0) ? b : a));
+          r.repeticiones_fps = list.map((x) => x.fps_promedio);
           runs.push(r);
           console.log(
             `${renderer}/${quality}/${scene}: ${r.backend} ${r.fps_promedio} fps (p1 ${r.fps_p1_bajo}), ${r.carga_inicial_mb} MB, ${r.tiempo_hasta_listo_ms} ms, ${r.llamadas_dibujo} llamadas`,
@@ -294,7 +305,7 @@ async function main() {
         calentamiento_s: WARMUP,
         vsync: "desactivado (--disable-gpu-vsync --disable-frame-rate-limit) para medir capacidad",
         navegador: "Chromium de Playwright con interfaz y GPU real",
-        repeticiones: `${REPEATS} por configuración; se reporta la de mayor fps promedio (todas en repeticiones_fps)`,
+        repeticiones: `${REPEATS} por configuración, cada una recorre las escenas en orden alterno (directo e inverso) con ${COOLDOWN_S} s de pausa entre mediciones; se reporta la de mayor fps promedio (todas en repeticiones_fps)`,
       },
       presupuesto: BUDGET,
       modo_automatico: automatico,
