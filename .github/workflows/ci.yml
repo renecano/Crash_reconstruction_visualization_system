@@ -89,6 +89,10 @@ jobs:
       - run: uv run croquis-scene-schema-generate --check
       - run: uv run croquis-data vehicles build --check
       - run: uv run croquis-solver reconstruct --check
+      - name: Cuerpos de MakeHuman reproducibles (descarga fijada y reconstrucción byte a byte)
+        run: |
+          uv run croquis-assets humans download
+          uv run croquis-assets humans check
       - run: uv run ruff check .
       - run: uv run ruff format --check .
       - run: uv run pyright
