@@ -1,7 +1,9 @@
 /**
- * Genera `src/generated/escena.zod.ts` a partir de `escena.schema.json`.
+ * Genera Zod a partir de los esquemas JSON del paquete:
+ *  - `escena.schema.json` → `src/generated/escena.zod.ts` (contrato de entrada, EscenaSpec).
+ *  - `resultado.schema.json` → `src/generated/resultado.zod.ts` (salida del solver, ADR 0006).
  *
- * `escena.schema.json` es el único contrato; este archivo NO interpreta todo JSON Schema,
+ * Los esquemas JSON son la fuente de verdad; este archivo NO interpreta todo JSON Schema,
  * solo el subconjunto que usa el contrato (objetos cerrados, arreglos, enums, const, cadenas
  * con patrón/longitud/formato date-time, números con cotas, enteros, booleanos y `$ref` a
  * `#/$defs`). Si el esquema usa algo nuevo, el generador falla a propósito.
@@ -9,7 +11,7 @@
  * Uso: `pnpm generate` (escribe) · `pnpm generate:check` (falla si el archivo generado no está al día).
  */
 import { mkdirSync, readFileSync, writeFileSync } from "node:fs";
-import { dirname, resolve } from "node:path";
+import { basename, dirname, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import * as prettier from "prettier";
 
@@ -40,8 +42,33 @@ interface Schema {
 }
 
 const here = dirname(fileURLToPath(import.meta.url));
-const SCHEMA_PATH = resolve(here, "../escena.schema.json");
-const OUT_PATH = resolve(here, "../src/generated/escena.zod.ts");
+
+interface Target {
+  schema: string;
+  out: string;
+  /** Nombre del tipo raíz exportado (`<root>Schema` y `type <root>`). */
+  root: string;
+  /** Constante de versión exportada y de dónde se lee en el esquema. */
+  versionConst: string;
+  version: (schema: Schema) => Json | undefined;
+}
+
+export const TARGETS: Target[] = [
+  {
+    schema: resolve(here, "../escena.schema.json"),
+    out: resolve(here, "../src/generated/escena.zod.ts"),
+    root: "EscenaSpec",
+    versionConst: "SCHEMA_VERSION",
+    version: (s) => s.$defs?.Meta?.properties?.version_esquema?.const,
+  },
+  {
+    schema: resolve(here, "../resultado.schema.json"),
+    out: resolve(here, "../src/generated/resultado.zod.ts"),
+    root: "Resultado",
+    versionConst: "RESULT_VERSION",
+    version: (s) => s.properties?.version_resultado?.const,
+  },
+];
 
 function refName(ref: string): string {
   const prefix = "#/$defs/";
@@ -55,8 +82,8 @@ function collectRefs(s: Schema, out: Set<string>): void {
   for (const p of Object.values(s.properties ?? {})) collectRefs(p, out);
 }
 
-function emit(s: Schema): string {
-  if (s.$ref) return refName(s.$ref);
+function emit(s: Schema, rename: (name: string) => string = (n) => n): string {
+  if (s.$ref) return rename(refName(s.$ref));
   if (s.const !== undefined) return `z.literal(${JSON.stringify(s.const)})`;
   if (s.enum) {
     if (!s.enum.every((v) => typeof v === "string")) {
@@ -87,7 +114,7 @@ function emit(s: Schema): string {
       return "z.boolean()";
     case "array": {
       if (!s.items) throw new Error("Arreglo sin items");
-      const item = emit(s.items);
+      const item = emit(s.items, rename);
       if (s.minItems !== undefined && s.minItems === s.maxItems) {
         return `z.tuple([${Array.from({ length: s.minItems }, () => item).join(", ")}])`;
       }
@@ -100,7 +127,7 @@ function emit(s: Schema): string {
       const required = new Set(s.required ?? []);
       const props = Object.entries(s.properties ?? {}).map(([k, v]) => {
         const key = /^[A-Za-z_$][A-Za-z0-9_$]*$/.test(k) ? k : JSON.stringify(k);
-        return `${key}: ${emit(v)}${required.has(k) ? "" : ".optional()"}`;
+        return `${key}: ${emit(v, rename)}${required.has(k) ? "" : ".optional()"}`;
       });
       const body = `{ ${props.join(", ")} }`;
       if (s.additionalProperties !== false) {
@@ -135,40 +162,49 @@ function topoOrder(defs: Record<string, Schema>): string[] {
   return order;
 }
 
-export async function generate(): Promise<string> {
-  const schema = JSON.parse(readFileSync(SCHEMA_PATH, "utf8")) as Schema;
+export async function generate(target: Target = TARGETS[0] as Target): Promise<string> {
+  const schema = JSON.parse(readFileSync(target.schema, "utf8")) as Schema;
   const defs = schema.$defs ?? {};
-  const version = (defs.Meta?.properties?.version_esquema?.const ?? null) as string | null;
-  if (!version) throw new Error("El esquema debe fijar meta.version_esquema con const");
+  const version = target.version(schema);
+  if (typeof version !== "string") {
+    throw new Error(`El esquema ${target.schema} debe fijar su versión con const`);
+  }
+  const source = basename(target.schema);
   const lines: string[] = [
-    "// Generado por scripts/generate.ts a partir de escena.schema.json. NO EDITAR A MANO.",
+    `// Generado por scripts/generate.ts a partir de ${source}. NO EDITAR A MANO.`,
     "// Regenera con `pnpm --filter @croquis/scene-schema generate`.",
     'import { z } from "zod";',
     "",
-    `export const SCHEMA_ID = ${JSON.stringify(schema.$id ?? "")};`,
-    `export const SCHEMA_VERSION = ${JSON.stringify(version)} as const;`,
-    "",
   ];
+  if (target.root === "EscenaSpec") {
+    lines.push(`export const SCHEMA_ID = ${JSON.stringify(schema.$id ?? "")};`);
+  } else {
+    lines.push(
+      `export const ${target.root.toUpperCase()}_SCHEMA_ID = ${JSON.stringify(schema.$id ?? "")};`,
+    );
+  }
+  lines.push(`export const ${target.versionConst} = ${JSON.stringify(version)} as const;`, "");
+  const rename = (name: string): string => name;
   for (const name of topoOrder(defs)) {
     const def = defs[name];
     if (!def) continue;
     if (def.description) lines.push(`/** ${def.description.replaceAll("*/", "* /")} */`);
-    lines.push(`export const ${name} = ${emit(def)};`);
-    lines.push(`export type ${name} = z.infer<typeof ${name}>;`, "");
+    lines.push(`export const ${rename(name)} = ${emit(def, rename)};`);
+    lines.push(`export type ${rename(name)} = z.infer<typeof ${rename(name)}>;`, "");
   }
   const { $defs: _defs, ...root } = schema;
   void _defs;
   lines.push(`/** ${(root.description ?? "").replaceAll("*/", "* /")} */`);
-  lines.push(`export const EscenaSpecSchema = ${emit(root)};`);
-  lines.push("export type EscenaSpec = z.infer<typeof EscenaSpecSchema>;", "");
+  lines.push(`export const ${target.root}Schema = ${emit(root, rename)};`);
+  lines.push(`export type ${target.root} = z.infer<typeof ${target.root}Schema>;`, "");
   const code = lines.join("\n");
-  const config = (await prettier.resolveConfig(OUT_PATH)) ?? {};
-  return prettier.format(code, { ...config, parser: "typescript", filepath: OUT_PATH });
+  const config = (await prettier.resolveConfig(target.out)) ?? {};
+  return prettier.format(code, { ...config, parser: "typescript", filepath: target.out });
 }
 
-function readCurrent(): string {
+function readCurrent(path: string): string {
   try {
-    return readFileSync(OUT_PATH, "utf8").replaceAll("\r\n", "\n");
+    return readFileSync(path, "utf8").replaceAll("\r\n", "\n");
   } catch {
     return "";
   }
@@ -176,21 +212,23 @@ function readCurrent(): string {
 
 async function main(): Promise<void> {
   const check = process.argv.includes("--check");
-  const code = await generate();
-  if (check) {
-    if (readCurrent() !== code) {
-      console.error(
-        `Desactualizado: ${OUT_PATH}. Corre \`pnpm --filter @croquis/scene-schema generate\`.`,
-      );
-      process.exitCode = 1;
-      return;
+  for (const target of TARGETS) {
+    const code = await generate(target);
+    if (check) {
+      if (readCurrent(target.out) !== code) {
+        console.error(
+          `Desactualizado: ${target.out}. Corre \`pnpm --filter @croquis/scene-schema generate\`.`,
+        );
+        process.exitCode = 1;
+        continue;
+      }
+      console.log(`Zod generado al día: ${basename(target.out)}`);
+      continue;
     }
-    console.log("Zod generado al día.");
-    return;
+    mkdirSync(dirname(target.out), { recursive: true });
+    writeFileSync(target.out, code, "utf8");
+    console.log(`Escrito ${target.out}`);
   }
-  mkdirSync(dirname(OUT_PATH), { recursive: true });
-  writeFileSync(OUT_PATH, code, "utf8");
-  console.log(`Escrito ${OUT_PATH}`);
 }
 
 if (process.argv[1] && resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {

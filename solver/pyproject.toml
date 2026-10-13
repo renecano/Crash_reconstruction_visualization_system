@@ -9,6 +9,9 @@ dependencies = [
   "scipy>=1.18,<2",
 ]
 
+[project.scripts]
+croquis-solver = "croquis_solver.__main__:main"
+
 [tool.uv.sources]
 croquis-scene-schema = { workspace = true }
 

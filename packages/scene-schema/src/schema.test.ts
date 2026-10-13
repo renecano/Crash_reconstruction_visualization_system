@@ -5,6 +5,7 @@ import { describe, expect, it } from "vitest";
 import invalidCases from "../fixtures/invalid/cases.json";
 import { FIXTURE_NAMES, RAW_FIXTURES, loadFixture } from "./fixtures";
 import { EscenaSpecSchema, SCHEMA_VERSION } from "./generated/escena.zod";
+import { leafPaths, mutate } from "./fuzz";
 import { applyMutation, type MutationCase } from "./mutations";
 import { escenaSchema, isValidEscena, schemaErrors, validateEscena } from "./validate";
 
@@ -116,48 +117,6 @@ describe("casos inválidos compartidos con Python", () => {
 });
 
 describe("equivalencia Ajv ↔ Zod bajo mutaciones aleatorias", () => {
-  type Path = (string | number)[];
-  const leafPaths = (node: unknown, prefix: Path = []): Path[] => {
-    if (Array.isArray(node)) return node.flatMap((v, i) => leafPaths(v, [...prefix, i]));
-    if (node && typeof node === "object") {
-      return Object.entries(node as Record<string, unknown>).flatMap(([k, v]) =>
-        leafPaths(v, [...prefix, k]),
-      );
-    }
-    return [prefix];
-  };
-
-  const mutate = (doc: unknown, path: Path, kind: number, payload: number): unknown => {
-    const copy = structuredClone(doc) as Record<string, unknown>;
-    let node: unknown = copy;
-    for (const p of path.slice(0, -1)) node = (node as Record<string | number, unknown>)[p];
-    const parent = node as Record<string | number, unknown>;
-    const key = path.at(-1);
-    if (key === undefined) return copy;
-    switch (kind % 6) {
-      case 0:
-        if (Array.isArray(parent)) parent.splice(Number(key), 1);
-        else delete parent[key];
-        break;
-      case 1:
-        parent[key] = payload * 1000 - 500;
-        break;
-      case 2:
-        parent[key] = "valor_inesperado";
-        break;
-      case 3:
-        parent[key] = payload > 0.5;
-        break;
-      case 4:
-        parent[key] = null;
-        break;
-      default:
-        if (!Array.isArray(parent)) parent[`extra_${Math.floor(payload * 100)}`] = 1;
-        break;
-    }
-    return copy;
-  };
-
   it("ambos validadores coinciden en 300 documentos mutados", () => {
     const fixtures = FIXTURE_NAMES.map((n) => RAW_FIXTURES[n]);
     const paths = fixtures.map((f) => leafPaths(f));

@@ -1,0 +1,330 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://croquis.local/schema/resultado/1.0.0",
+  "title": "Resultado",
+  "description": "Reconstrucción producida por el solver a partir de una EscenaSpec: trayectorias, impulsos, daños, personas, eventos, banderas y parámetros con su fuente. Unidades SI; tiempo con t = 0 en el impacto principal; rumbos en radianes antihorario desde +X.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "version_resultado",
+    "escena_id",
+    "semilla",
+    "dt",
+    "t_inicio",
+    "t_fin",
+    "vehiculos",
+    "personas",
+    "eventos",
+    "banderas",
+    "parametros"
+  ],
+  "properties": {
+    "version_resultado": { "const": "1.0.0" },
+    "escena_id": { "$ref": "#/$defs/Id" },
+    "semilla": { "type": "integer", "minimum": 0 },
+    "dt": { "type": "number", "exclusiveMinimum": 0, "maximum": 1 },
+    "t_inicio": { "type": "number", "maximum": 0 },
+    "t_fin": { "type": "number", "minimum": 0 },
+    "punto_impacto": { "$ref": "#/$defs/Punto" },
+    "vehiculos": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/VehiculoResultado" },
+      "maxItems": 8
+    },
+    "personas": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/PersonaResultado" },
+      "maxItems": 24
+    },
+    "eventos": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/EventoResultado" },
+      "maxItems": 64
+    },
+    "banderas": {
+      "type": "array",
+      "items": { "type": "string", "minLength": 1, "maxLength": 400 },
+      "maxItems": 64,
+      "description": "Avisos en lenguaje llano sobre supuestos fuertes o inconsistencias. Nunca asignan culpa."
+    },
+    "parametros": { "$ref": "#/$defs/Parametros" }
+  },
+  "$defs": {
+    "Id": { "type": "string", "pattern": "^[a-z0-9][a-z0-9_-]{0,63}$" },
+    "Numeros": { "type": "array", "items": { "type": "number" }, "maxItems": 20000 },
+    "Punto": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["x", "y"],
+      "properties": { "x": { "type": "number" }, "y": { "type": "number" } }
+    },
+    "Pose": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["x", "y", "rumbo_deg"],
+      "properties": {
+        "x": { "type": "number" },
+        "y": { "type": "number" },
+        "rumbo_deg": { "type": "number" }
+      }
+    },
+    "Dimensiones": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["largo_m", "ancho_m", "alto_m", "distancia_entre_ejes_m", "masa_kg"],
+      "properties": {
+        "largo_m": { "type": "number", "exclusiveMinimum": 0 },
+        "ancho_m": { "type": "number", "exclusiveMinimum": 0 },
+        "alto_m": { "type": "number", "exclusiveMinimum": 0 },
+        "distancia_entre_ejes_m": { "type": "number", "exclusiveMinimum": 0 },
+        "masa_kg": { "type": "number", "exclusiveMinimum": 0 }
+      }
+    },
+    "TrayectoriaVehiculo": {
+      "type": "object",
+      "description": "Muestras del centro de masa en una rejilla de paso dt alineada a t = 0. Todos los arreglos tienen la misma longitud.",
+      "additionalProperties": false,
+      "required": ["t", "x", "y", "rumbo", "vx", "vy", "vel_angular"],
+      "properties": {
+        "t": { "$ref": "#/$defs/Numeros" },
+        "x": { "$ref": "#/$defs/Numeros" },
+        "y": { "$ref": "#/$defs/Numeros" },
+        "rumbo": { "$ref": "#/$defs/Numeros" },
+        "vx": { "$ref": "#/$defs/Numeros" },
+        "vy": { "$ref": "#/$defs/Numeros" },
+        "vel_angular": { "$ref": "#/$defs/Numeros" }
+      }
+    },
+    "ZonaCDC": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["lado"],
+      "properties": {
+        "lado": { "type": "string", "enum": ["F", "B", "L", "R", "T", "U"] },
+        "zona_horizontal": {
+          "type": "string",
+          "enum": ["L", "C", "R", "Y", "Z", "D", "F", "P", "B"]
+        },
+        "zona_vertical": { "type": "string", "enum": ["A", "E", "G", "H", "L", "M", "W"] },
+        "extension": { "type": "integer", "minimum": 1, "maximum": 9 }
+      }
+    },
+    "Dano": {
+      "type": "object",
+      "description": "Perfil de aplastamiento CRASH3 de 6 puntos sobre el ancho dañado, energía absorbida y origen de la rigidez usada.",
+      "additionalProperties": false,
+      "required": ["perfil_m", "ancho_m", "energia_j", "origen_rigidez"],
+      "properties": {
+        "perfil_m": {
+          "type": "array",
+          "items": { "type": "number", "minimum": 0 },
+          "minItems": 6,
+          "maxItems": 6
+        },
+        "ancho_m": { "type": "number", "minimum": 0 },
+        "energia_j": { "type": "number", "minimum": 0 },
+        "origen_rigidez": { "type": "string", "enum": ["nhtsa", "supuesto", "sin impacto"] },
+        "cdc": { "$ref": "#/$defs/ZonaCDC" }
+      }
+    },
+    "VehiculoResultado": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "rol",
+        "clase",
+        "involucrado",
+        "dimensiones",
+        "trayectoria",
+        "v_impacto_kmh",
+        "delta_v_kmh",
+        "dano",
+        "en_reposo",
+        "pose_final",
+        "distancia_post_m"
+      ],
+      "properties": {
+        "id": { "$ref": "#/$defs/Id" },
+        "rol": { "type": "string", "pattern": "^[A-H]$" },
+        "clase": { "type": "string", "minLength": 1, "maxLength": 40 },
+        "involucrado": { "type": "boolean" },
+        "dimensiones": { "$ref": "#/$defs/Dimensiones" },
+        "trayectoria": { "$ref": "#/$defs/TrayectoriaVehiculo" },
+        "v_impacto_kmh": { "type": "number", "minimum": 0 },
+        "delta_v_kmh": { "type": "number", "minimum": 0 },
+        "pdof_horas": { "type": "number", "minimum": 0, "maximum": 12 },
+        "dano": { "$ref": "#/$defs/Dano" },
+        "en_reposo": { "type": "boolean" },
+        "pose_final": { "$ref": "#/$defs/Pose" },
+        "distancia_post_m": { "type": "number", "minimum": 0 }
+      }
+    },
+    "TrayectoriaPersona": {
+      "type": "object",
+      "description": "Centro de masa de la persona (z = altura). Vacía si va a bordo de un vehículo.",
+      "additionalProperties": false,
+      "required": ["t", "x", "y", "z", "rumbo"],
+      "properties": {
+        "t": { "$ref": "#/$defs/Numeros" },
+        "x": { "$ref": "#/$defs/Numeros" },
+        "y": { "$ref": "#/$defs/Numeros" },
+        "z": { "$ref": "#/$defs/Numeros" },
+        "rumbo": { "$ref": "#/$defs/Numeros" }
+      }
+    },
+    "Fase": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["fase", "t_inicio", "t_fin"],
+      "properties": {
+        "fase": {
+          "type": "string",
+          "enum": ["de_pie", "caminando", "vuelo", "deslizamiento", "reposo"]
+        },
+        "t_inicio": { "type": "number" },
+        "t_fin": { "type": "number" }
+      }
+    },
+    "Contacto": {
+      "type": "object",
+      "description": "Zonas probables de contacto con el frente del vehículo, como indicadores neutros (sin diagnóstico de lesiones).",
+      "additionalProperties": false,
+      "required": ["defensa", "borde_cofre", "cabeza"],
+      "properties": {
+        "defensa": { "type": "string", "maxLength": 40 },
+        "borde_cofre": { "type": "string", "maxLength": 40 },
+        "cabeza": { "type": "string", "maxLength": 40 }
+      }
+    },
+    "Proyeccion": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "velocidad_lanzamiento_kmh",
+        "distancia_m",
+        "rango_m",
+        "posicion_reposo",
+        "contacto"
+      ],
+      "properties": {
+        "velocidad_lanzamiento_kmh": { "type": "number", "minimum": 0 },
+        "distancia_m": { "type": "number", "minimum": 0 },
+        "rango_m": {
+          "type": "array",
+          "items": { "type": "number", "minimum": 0 },
+          "minItems": 2,
+          "maxItems": 2
+        },
+        "posicion_reposo": { "$ref": "#/$defs/Punto" },
+        "contacto": { "$ref": "#/$defs/Contacto" }
+      }
+    },
+    "PersonaResultado": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "rol", "estatura_m", "trayectoria", "fases"],
+      "properties": {
+        "id": { "$ref": "#/$defs/Id" },
+        "rol": {
+          "type": "string",
+          "enum": ["conductor", "pasajero", "peaton", "ciclista", "motociclista"]
+        },
+        "estatura_m": { "type": "number", "exclusiveMinimum": 0, "maximum": 2.5 },
+        "vehiculo_id": { "$ref": "#/$defs/Id" },
+        "trayectoria": { "$ref": "#/$defs/TrayectoriaPersona" },
+        "fases": { "type": "array", "items": { "$ref": "#/$defs/Fase" }, "maxItems": 16 },
+        "proyeccion": { "$ref": "#/$defs/Proyeccion" }
+      }
+    },
+    "DetalleEvento": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "impulso_ns": {
+          "type": "array",
+          "items": { "type": "number" },
+          "minItems": 2,
+          "maxItems": 2
+        },
+        "adherencia": { "type": "boolean" },
+        "friccion_contacto_usada": { "type": "number", "minimum": 0 },
+        "energia_disipada_j": { "type": "number", "minimum": 0 },
+        "velocidad_cierre_kmh": { "type": "number", "minimum": 0 },
+        "objeto": { "type": "string", "maxLength": 40 },
+        "rigido": { "type": "boolean" },
+        "energia_objeto_j": { "type": "number", "minimum": 0 },
+        "aplastamiento_max_m": { "type": "number", "minimum": 0 },
+        "distancia_proyeccion_m": { "type": "number", "minimum": 0 },
+        "rango_m": {
+          "type": "array",
+          "items": { "type": "number", "minimum": 0 },
+          "minItems": 2,
+          "maxItems": 2
+        }
+      }
+    },
+    "EventoResultado": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "tipo", "t", "actores"],
+      "properties": {
+        "id": { "type": "string", "pattern": "^[a-z0-9][a-z0-9_-]{0,79}$" },
+        "tipo": {
+          "type": "string",
+          "enum": [
+            "inicio_frenado",
+            "impacto_vehiculo_vehiculo",
+            "impacto_vehiculo_objeto",
+            "impacto_vehiculo_persona",
+            "reposo"
+          ]
+        },
+        "t": { "type": "number" },
+        "actores": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/Id" },
+          "minItems": 1,
+          "maxItems": 8
+        },
+        "detalle": { "$ref": "#/$defs/DetalleEvento" }
+      }
+    },
+    "Parametro": {
+      "type": "object",
+      "description": "Valor usado por el solver con su rango, fuente y tipo (de literatura primaria o secundaria, supuesto, del relato o medido).",
+      "additionalProperties": false,
+      "required": ["valor", "tipo"],
+      "properties": {
+        "valor": { "type": "number" },
+        "rango": { "type": "array", "items": { "type": "number" }, "minItems": 2, "maxItems": 2 },
+        "fuente": { "type": "string", "maxLength": 300 },
+        "tipo": {
+          "type": "string",
+          "enum": ["primaria", "secundaria", "supuesto", "relato", "medido"]
+        }
+      }
+    },
+    "Parametros": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "friccion_llanta",
+        "restitucion_vehiculo_vehiculo",
+        "relacion_impulso_tangencial",
+        "arrastre_post_impacto",
+        "factor_abs",
+        "aproximacion_previa_s"
+      ],
+      "properties": {
+        "friccion_llanta": { "$ref": "#/$defs/Parametro" },
+        "restitucion_vehiculo_vehiculo": { "$ref": "#/$defs/Parametro" },
+        "relacion_impulso_tangencial": { "$ref": "#/$defs/Parametro" },
+        "arrastre_post_impacto": { "$ref": "#/$defs/Parametro" },
+        "factor_abs": { "$ref": "#/$defs/Parametro" },
+        "aproximacion_previa_s": { "$ref": "#/$defs/Parametro" },
+        "velocidad_peaton": { "$ref": "#/$defs/Parametro" }
+      }
+    }
+  }
+}

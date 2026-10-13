@@ -42,3 +42,14 @@ export {
   type VehicleClassEntry,
 } from "./vehicle-classes";
 export { compareSchemaVersions, parseSemver } from "./version";
+export * as resultado from "./generated/resultado.zod";
+export type { Resultado } from "./generated/resultado.zod";
+export { RESULT_VERSION, ResultadoSchema } from "./generated/resultado.zod";
+export {
+  RESULT_LOADERS,
+  loadResultado,
+  resultadoErrors,
+  resultadoSchema,
+  validateResultado,
+  type ResultadoValidation,
+} from "./resultado";
