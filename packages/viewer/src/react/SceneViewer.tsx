@@ -27,6 +27,7 @@ import {
   actionBounds,
   cinematicCamera,
   damageCamera,
+  personCamera,
   driverCamera,
   freeCameraStart,
   overheadCamera,
@@ -39,6 +40,7 @@ import { environmentFor, type EnvironmentSettings } from "../environment";
 import { QUALITY_PROFILES, type QualityLevel } from "../quality";
 import { attachDebris } from "../debris-scene";
 import { attachRollovers } from "../rollover-scene";
+import { buildVisibilityOverlay, eyeHeightFor } from "../visibility-overlay";
 import { BODY_BASE_URL, loadBodies } from "../body-assets";
 import { attachPeople, variantsFor, type PeopleAttachment } from "../people-scene";
 import { buildSceneGraph } from "../scene-graph";
@@ -246,7 +248,9 @@ function SceneContent({
   const driver = useMemo(() => {
     const v = resultado.vehiculos.find((x) => x.id === driverVehicleId) ?? resultado.vehiculos[0];
     if (!v) return undefined;
+    // Altura del ojo del análisis de visibilidad del solver; sin él, asiento + 0.62 m.
     const eye =
+      eyeHeightFor(resultado, v.id) ??
       seatHeight(v.clase, {
         length: v.dimensiones.largo_m,
         width: v.dimensiones.ancho_m,
@@ -255,6 +259,13 @@ function SceneContent({
       }) + 0.62;
     return { v, eye };
   }, [resultado, driverVehicleId]);
+
+  // Líneas de vista del conductor (solo en su cámara).
+  const overlay = useMemo(() => buildVisibilityOverlay(resultado, graph), [resultado, graph]);
+  useEffect(() => () => overlay.dispose(), [overlay]);
+  useEffect(() => {
+    overlay.setObserver(camera === "conductor" ? driver?.v.id : undefined);
+  }, [overlay, camera, driver]);
 
   useFrame((_, delta) => {
     clock.tick(Math.min(delta, 0.1), performance.now());
@@ -267,6 +278,7 @@ function SceneContent({
       applyPose(persp, driverCamera(driver.v, t, driver.eye));
     else if (camera === "cinematica") applyPose(persp, cinematicCamera(resultado, t));
     else if (camera === "dano") applyPose(persp, damageCamera(resultado, t));
+    else if (camera === "persona") applyPose(persp, personCamera(resultado, t));
   });
 
   return (

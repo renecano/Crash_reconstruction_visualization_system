@@ -156,7 +156,7 @@ export function rolloverPoseAt(
   );
   outQuat
     .set(F[a + 3]!, F[a + 4]!, F[a + 5]!, F[a + 6]!)
-    .slerp(new Quaternion(F[c + 3]!, F[c + 4]!, F[c + 5]!, F[c + 6]!), f);
+    .slerp(new Quaternion(F[c + 3], F[c + 4], F[c + 5], F[c + 6]), f);
 }
 
 /** Simula y aplica las volcaduras de la escena (desde t = 0 la pose sale del horneado). */

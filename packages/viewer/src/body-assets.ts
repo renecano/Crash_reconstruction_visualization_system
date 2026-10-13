@@ -85,7 +85,8 @@ function hash01(s: string): number {
 }
 
 const SKIN = ["#f1c9a5", "#e0ac83", "#c68e63", "#a26b45", "#7c4f32", "#5a3826"];
-const SHIRT = ["#5c6f86", "#7a8b6f", "#8a6f5c", "#6b6f78", "#8c8f94", "#4f6a74", "#9a8467"];
+// Sin tonos cafés ni beige: la camisa no debe confundirse con la piel.
+const SHIRT = ["#5c6f86", "#7a8b6f", "#6b6f78", "#8c8f94", "#4f6a74", "#7d4b55", "#3f5f8a"];
 const PANTS = ["#2f3742", "#3b3f45", "#4a4f57", "#55503f", "#2b2e33"];
 const HAIR = ["#241c17", "#3a2a1f", "#1a1716", "#4a3628"];
 const HAIR_OLD = ["#b9b7b2", "#d6d3cc", "#8f8c86"];

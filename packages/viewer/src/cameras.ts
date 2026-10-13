@@ -4,9 +4,10 @@
  * devuelven posición, objetivo y campo de visión en coordenadas de three.js.
  */
 import { toThree, type Vec3 } from "./coords";
-import { sampleVehicle, type VehicleTrack } from "./sample";
+import { samplePerson, sampleVehicle, type PersonTrackData, type VehicleTrack } from "./sample";
+import { eyeOffset } from "./visibility-overlay";
 
-export type CameraMode = "libre" | "cenital" | "conductor" | "cinematica" | "dano";
+export type CameraMode = "libre" | "cenital" | "conductor" | "cinematica" | "dano" | "persona";
 
 export interface CameraPose {
   position: Vec3;
@@ -19,6 +20,7 @@ export interface CameraPose {
 
 export interface CameraVehicle {
   id: string;
+  clase?: string;
   rol: string;
   involucrado: boolean;
   dimensiones: { largo_m: number; ancho_m: number; alto_m: number };
@@ -32,6 +34,7 @@ export interface CameraScene {
   eventos?: readonly { tipo: string }[];
   punto_impacto?: { x: number; y: number };
   vehiculos: readonly CameraVehicle[];
+  personas?: readonly { id: string; trayectoria: PersonTrackData; proyeccion?: unknown }[];
 }
 
 /** Ventana de tiempo alrededor del impacto que se encuadra (s). */
@@ -101,13 +104,16 @@ export function freeCameraStart(scene: CameraScene, fov = 45): CameraPose {
   };
 }
 
-/** Ojos del conductor: asiento izquierdo, a la altura de los ojos, mirando 25 m al frente. */
+/** Ojos del conductor (posición y altura del análisis de visibilidad), mirando 25 m al frente. */
 export function driverCamera(v: CameraVehicle, t: number, eyeHeight: number, fov = 70): CameraPose {
   const p = sampleVehicle(v.trayectoria, t);
   const c = Math.cos(p.yaw);
   const s = Math.sin(p.yaw);
-  const fwd = -0.05 * v.dimensiones.largo_m;
-  const left = 0.22 * v.dimensiones.ancho_m;
+  const [fwd, left] = eyeOffset(
+    v.clase ?? "sedan_compacto",
+    v.dimensiones.largo_m,
+    v.dimensiones.ancho_m,
+  );
   const ex = p.x + c * fwd - s * left;
   const ey = p.y + s * fwd + c * left;
   return {
@@ -186,6 +192,42 @@ export function damageCamera(scene: CameraScene, t: number, fov = 40): CameraPos
       h + dist * Math.sin(el),
     ),
     target: toThree(tx, ty, h),
+    fov,
+    up: UP_Y,
+  };
+}
+
+/**
+ * Sigue a la persona proyectada (o, si no hay, a la primera que camina) desde un costado de su
+ * recorrido, a una distancia que encuadra el vuelo y el deslizamiento.
+ */
+export function personCamera(scene: CameraScene, t: number, fov = 40): CameraPose {
+  const ps = scene.personas ?? [];
+  const p =
+    ps.find((x) => x.proyeccion && x.trayectoria.t.length > 0) ??
+    ps.find((x) => x.trayectoria.t.length > 0);
+  if (!p) return damageCamera(scene, t, fov);
+  const tr = p.trayectoria;
+  const a = samplePerson(tr, Math.max(tr.t[0] ?? 0, FRAME_WINDOW[0]))!;
+  const b = samplePerson(tr, tr.t[tr.t.length - 1] ?? 0)!;
+  const now = samplePerson(tr, t)!;
+  let dx = b.x - a.x;
+  let dy = b.y - a.y;
+  const len = Math.hypot(dx, dy);
+  if (len < 1e-6) {
+    dx = Math.cos(now.yaw);
+    dy = Math.sin(now.yaw);
+  } else {
+    dx /= len;
+    dy /= len;
+  }
+  const dist = Math.max(6, 0.45 * len);
+  // A la derecha del recorrido y un poco atrás de su punto medio.
+  const mx = (a.x + b.x) / 2 - 0.2 * len * dx;
+  const my = (a.y + b.y) / 2 - 0.2 * len * dy;
+  return {
+    position: toThree(mx + dist * dy, my - dist * dx, 2.4),
+    target: toThree(now.x, now.y, Math.max(0.6, now.z)),
     fov,
     up: UP_Y,
   };

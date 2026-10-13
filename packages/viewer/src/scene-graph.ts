@@ -29,7 +29,7 @@ import {
 } from "three";
 import { toThree } from "./coords";
 import type { EnvironmentSettings } from "./environment";
-import { applyPosture, buildMannequin, CG_HEIGHT_FACTOR, type Posture } from "./person-geometry";
+import { applyPosture, buildMannequin, CG_HEIGHT_FACTOR } from "./person-geometry";
 import type { QualityProfile } from "./quality";
 import { buildDamageRig, type DamageRig } from "./damage-rig";
 import {
@@ -646,9 +646,7 @@ export function buildSceneGraph(
         n.group.position.set(x, y, z);
         n.group.rotation.y = pose.yaw;
         const fase = phaseAt(data.fases, t);
-        const posture = (
-          fase?.fase === "montado" ? "sentado" : (fase?.fase ?? "de_pie")
-        ) as Posture;
+        const posture = fase?.fase === "montado" ? "sentado" : (fase?.fase ?? "de_pie");
         const progress =
           fase && fase.t_fin > fase.t_inicio
             ? (t - fase.t_inicio) / (fase.t_fin - fase.t_inicio)
