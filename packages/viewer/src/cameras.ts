@@ -32,7 +32,13 @@ export interface CameraScene {
   vehiculos: readonly CameraVehicle[];
 }
 
-/** Caja que contiene las trayectorias de los vehículos involucrados (o de todos). */
+/** Ventana de tiempo alrededor del impacto que se encuadra (s). */
+export const FRAME_WINDOW: readonly [number, number] = [-1.2, 2];
+
+/**
+ * Caja que encuadra la acción: posiciones de los vehículos involucrados (o de todos) entre
+ * 1.2 s antes y 2 s después del impacto, centrada en el punto de impacto cuando existe.
+ */
 export function actionBounds(scene: CameraScene): { cx: number; cy: number; size: number } {
   const vs = scene.vehiculos.some((v) => v.involucrado)
     ? scene.vehiculos.filter((v) => v.involucrado)
@@ -44,6 +50,8 @@ export function actionBounds(scene: CameraScene): { cx: number; cy: number; size
   for (const v of vs) {
     const tr = v.trayectoria;
     for (let i = 0; i < tr.t.length; i++) {
+      const t = tr.t[i] ?? 0;
+      if (t < FRAME_WINDOW[0] || t > FRAME_WINDOW[1]) continue;
       const x = tr.x[i] ?? 0;
       const y = tr.y[i] ?? 0;
       minX = Math.min(minX, x);
@@ -57,7 +65,7 @@ export function actionBounds(scene: CameraScene): { cx: number; cy: number; size
   // Se centra en el impacto cuando existe: es lo que más importa ver.
   const cx = p ? p.x : (minX + maxX) / 2;
   const cy = p ? p.y : (minY + maxY) / 2;
-  const half = Math.max(maxX - cx, cx - minX, maxY - cy, cy - minY, 8);
+  const half = Math.max(maxX - cx, cx - minX, maxY - cy, cy - minY, 5);
   return { cx, cy, size: 2 * half };
 }
 
@@ -68,7 +76,7 @@ export function overheadCamera(scene: CameraScene, fov = 40): CameraPose {
   const b = actionBounds(scene);
   const h = (b.size * 0.6) / Math.tan((fov * Math.PI) / 360);
   return {
-    position: toThree(b.cx, b.cy, Math.max(25, h)),
+    position: toThree(b.cx, b.cy, Math.max(18, h)),
     target: toThree(b.cx, b.cy, 0),
     fov,
     up: [0, 0, -1],
@@ -78,7 +86,7 @@ export function overheadCamera(scene: CameraScene, fov = 40): CameraPose {
 /** Vista inicial de la cámara libre: desde el suroeste a 35° de elevación. */
 export function freeCameraStart(scene: CameraScene, fov = 45): CameraPose {
   const b = actionBounds(scene);
-  const dist = Math.max(18, (b.size * 0.75) / Math.tan((fov * Math.PI) / 360));
+  const dist = Math.max(12, (b.size * 0.5) / Math.tan((fov * Math.PI) / 360));
   const el = (35 * Math.PI) / 180;
   const az = (-135 * Math.PI) / 180;
   const x = b.cx + dist * Math.cos(el) * Math.cos(az);
@@ -125,7 +133,7 @@ export function cinematicCamera(scene: CameraScene, t: number, fov = 38): Camera
   // Objetivo a medio camino entre el impacto y el centro de los vehículos: suaviza el encuadre.
   const gx = (tx + b.cx) / 2;
   const gy = (ty + b.cy) / 2;
-  const dist = Math.max(16, (b.size * 0.55) / Math.tan((fov * Math.PI) / 360));
+  const dist = Math.max(14, (b.size * 0.5) / Math.tan((fov * Math.PI) / 360));
   const az = (-120 * Math.PI) / 180 + 0.12 * (t - scene.t_inicio);
   const el = (24 * Math.PI) / 180;
   const x = gx + dist * Math.cos(el) * Math.cos(az);

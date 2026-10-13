@@ -5,7 +5,8 @@
   "description": "Componentes React Three Fiber del visor 3D (vía, vehículos, daño, personas, clima)",
   "type": "module",
   "exports": {
-    ".": "./src/index.ts"
+    ".": "./src/index.ts",
+    "./react": "./src/react/index.ts"
   },
   "scripts": {
     "lint": "eslint .",

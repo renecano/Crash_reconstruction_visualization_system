@@ -24,7 +24,7 @@ describe("cámaras", () => {
       const tgt = fromThree(top.target);
       expect(pos.x).toBeCloseTo(tgt.x, 9);
       expect(pos.y).toBeCloseTo(tgt.y, 9);
-      expect(pos.height).toBeGreaterThanOrEqual(25);
+      expect(pos.height).toBeGreaterThanOrEqual(18);
       const free = fromThree(freeCameraStart(r).position);
       expect(free.x).toBeLessThan(b.cx);
       expect(free.y).toBeLessThan(b.cy);
@@ -56,6 +56,6 @@ describe("cámaras", () => {
     expect(b.position).not.toEqual(a.position);
     const pa = fromThree(a.position);
     const ta = fromThree(a.target);
-    expect(Math.hypot(pa.x - ta.x, pa.y - ta.y, pa.height - ta.height)).toBeGreaterThan(15);
+    expect(Math.hypot(pa.x - ta.x, pa.y - ta.y, pa.height - ta.height)).toBeGreaterThan(13);
   });
 });

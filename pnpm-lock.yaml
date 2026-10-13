@@ -274,6 +274,9 @@ importers:
       '@croquis/scene-schema':
         specifier: workspace:*
         version: link:../../packages/scene-schema
+      '@croquis/viewer':
+        specifier: workspace:*
+        version: link:../../packages/viewer
       next:
         specifier: 16.4.0
         version: 16.4.0(@babel/core@7.29.7)(@playwright/test@1.64.0)(@types/node@24.19.2)(react-dom@19.3.0(react@19.3.0))(react@19.3.0)
