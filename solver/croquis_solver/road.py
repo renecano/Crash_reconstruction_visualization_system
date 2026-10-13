@@ -52,6 +52,16 @@ def main_width(lugar: dict[str, Any]) -> float:
     return lane * lanes * (2 if dos else 1) + median
 
 
+def secondary_width(lugar: dict[str, Any]) -> float:
+    """Ancho de la vía secundaria (norte-sur) en intersecciones, igual que `roadLayout`."""
+    lane = _len(lugar.get("ancho_carril"), 3.5)
+    lanes_main = max(1, int(lugar["carriles_por_sentido"]["valor"]))
+    sec: dict[str, Any] = lugar.get("carriles_por_sentido_secundaria") or {}
+    lanes = max(1, int(sec.get("valor", lanes_main)))
+    dos = lugar["sentidos"]["valor"] == "doble_sentido"
+    return lane * lanes * (2 if dos else 1)
+
+
 def road_axis(lugar: dict[str, Any]) -> RoadAxis:
     tipo = str(lugar["tipo_via"]["valor"])
     width = main_width(lugar)

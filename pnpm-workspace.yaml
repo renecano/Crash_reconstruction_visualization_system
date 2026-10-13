@@ -10,6 +10,9 @@ allowBuilds:
 # Versiones compartidas del monorepo. Fuente de verdad: docs/adr/0001-stack.md
 catalog:
   "@eslint/js": 10.0.1
+  "@react-three/fiber": 9.8.1
+  "@types/three": 0.186.0
+  three: 0.186.1
   "@playwright/test": 1.64.0
   "@tailwindcss/turbopack": 4.3.3
   "@testing-library/react": 16.3.3

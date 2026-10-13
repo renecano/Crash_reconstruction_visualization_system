@@ -7,7 +7,7 @@ import pytest
 from croquis_scene_schema import list_fixtures, load_fixture
 from croquis_solver.preimpact import CurvedLanePath
 from croquis_solver.reconstruct import reconstruct
-from croquis_solver.road import lane_following_path, road_axis
+from croquis_solver.road import lane_following_path, road_axis, secondary_width
 
 FIXTURES = list_fixtures()
 
@@ -25,10 +25,12 @@ def test_vehiculos_de_las_escenas_arrancan_sobre_su_carril(name: str) -> None:
         if axis.kind == "recta":
             if abs(math.sin(h)) > 0.7:  # vía secundaria norte-sur
                 right = x if math.sin(h) > 0 else -x
+                lim = secondary_width(lugar) / 2
             else:
                 right = -y if math.cos(h) > 0 else y
-            lo = 0.0 if dos else -half
-            assert lo < right <= half + 1e-9, (name, v["id"], right)
+                lim = half
+            lo = 0.0 if dos else -lim
+            assert lo < right < lim, (name, v["id"], right, lim)
         else:
             r = math.hypot(x - axis.center[0], y - axis.center[1])
             on_ring = abs(r - axis.radius) <= half + 1e-9

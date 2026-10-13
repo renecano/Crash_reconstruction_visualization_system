@@ -12,6 +12,12 @@
     "typecheck": "tsc -p tsconfig.json",
     "test": "vitest run"
   },
+  "dependencies": {
+    "@croquis/croquis-2d": "workspace:*",
+    "@croquis/scene-schema": "workspace:*",
+    "@react-three/fiber": "catalog:",
+    "three": "catalog:"
+  },
   "peerDependencies": {
     "react": "catalog:",
     "react-dom": "catalog:"
@@ -20,6 +26,11 @@
     "@types/node": "catalog:",
     "@types/react": "catalog:",
     "@types/react-dom": "catalog:",
+    "@types/three": "catalog:",
+    "@testing-library/react": "catalog:",
+    "@vitejs/plugin-react": "catalog:",
+    "fast-check": "catalog:",
+    "jsdom": "catalog:",
     "eslint": "catalog:",
     "react": "catalog:",
     "react-dom": "catalog:",

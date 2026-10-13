@@ -3,6 +3,7 @@ export { applyEdit, applyEdits, normalizeHeading, snap, type EditOp, type PoseKi
 export * from "./geometry";
 export {
   DEFAULT_DIMS,
+  curveArc,
   roadLayout,
   sceneLayout,
   vehicleDims,
@@ -12,6 +13,7 @@ export {
   type LaneStrip,
   type ObjectGlyph,
   type PersonGlyph,
+  type Ring,
   type RoadLayout,
   type SceneLayout,
   type VehicleGlyph,
