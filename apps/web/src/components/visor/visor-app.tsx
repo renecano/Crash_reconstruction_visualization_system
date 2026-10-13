@@ -45,6 +45,9 @@ interface VisorParams {
   renderer: RendererPreference;
   t: number | undefined;
   auto: boolean;
+  /** Visor a pantalla completa (demos y medición de E6 a 1080p). */
+  completa: boolean;
+  bucle: boolean;
 }
 
 function parseParams(sp: URLSearchParams): VisorParams {
@@ -61,6 +64,8 @@ function parseParams(sp: URLSearchParams): VisorParams {
     renderer: renderer === "webgl" || renderer === "webgpu" ? renderer : "auto",
     t: t !== null && Number.isFinite(Number(t)) ? Number(t) : undefined,
     auto: sp.get("auto") === "1",
+    completa: sp.get("pantalla") === "completa",
+    bucle: sp.get("bucle") === "1",
   };
 }
 
@@ -112,9 +117,10 @@ export function VisorApp() {
       createTimeline(r.t_inicio, r.t_fin, r.dt, {
         t: params.t ?? r.t_inicio,
         playing: params.auto,
+        loop: params.bucle,
       }),
     );
-  }, [r, params.t, params.auto]);
+  }, [r, params.t, params.auto, params.bucle]);
   const state = useClockState(clock);
 
   // Calidad automática con histéresis según los fps medidos (PLAN §7.8).
@@ -243,7 +249,13 @@ export function VisorApp() {
         ) : null}
       </div>
 
-      <div className="relative h-[60vh] min-h-[360px] w-full overflow-hidden rounded-lg border border-neutral-300 bg-neutral-900 dark:border-neutral-700">
+      <div
+        className={
+          params.completa
+            ? "fixed inset-0 z-50 bg-neutral-900"
+            : "relative h-[60vh] min-h-[360px] w-full overflow-hidden rounded-lg border border-neutral-300 bg-neutral-900 dark:border-neutral-700"
+        }
+      >
         {error ? (
           <p role="alert" className="grid h-full place-items-center p-6 text-center text-white">
             {error}
