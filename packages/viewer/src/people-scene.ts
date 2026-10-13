@@ -26,11 +26,12 @@ import {
   paletteFor,
   variantForAge,
   type BodyInstance,
+  type BodyManifestEntry,
   type BodyTemplate,
   type BodyVariant,
 } from "./body-assets";
 import { toThree } from "./coords";
-import type { KinematicBox, StaticCollider } from "./debris";
+import { mulberry32, type KinematicBox, type StaticCollider } from "./debris";
 import {
   applyPose,
   drivingDirections,
@@ -41,10 +42,17 @@ import {
   ridingDirections,
   standingDirections,
   walkingDirections,
+  STEP_LENGTH_FACTOR,
+  type BoneName,
   type BoneSpec,
   type Pose,
 } from "./person-pose";
-import { calibrateRagdoll, ragdollPoseAt, type RagdollResult } from "./person-ragdoll";
+import {
+  calibrateRagdoll,
+  ragdollPoseAt,
+  type RagdollInput,
+  type RagdollResult,
+} from "./person-ragdoll";
 import { phaseAt, samplePerson, sampleVehicle } from "./sample";
 import type { SceneGraph } from "./scene-graph";
 import { profileFor, seatHeight } from "./vehicle-geometry";
@@ -250,20 +258,142 @@ function cumulative(tr: PersonaResultado["trayectoria"]): number[] {
   return out;
 }
 
+/** Direcciones de los segmentos según la fase del solver en t (marcha, de pie o montado). */
+function directionsForPhase(
+  data: PersonaResultado,
+  dist: number[],
+  t: number,
+): Partial<Record<BoneName, Vector3>> {
+  const fase = phaseAt(data.fases, t)?.fase ?? "de_pie";
+  if (fase === "caminando") {
+    const d = sampleSeries(data.trayectoria.t, dist, t);
+    const stride = 2 * STEP_LENGTH_FACTOR * data.estatura_m;
+    return walkingDirections(d / stride);
+  }
+  if (fase === "montado") return ridingDirections();
+  return standingDirections();
+}
+
 function poseForPhase(
   bones: readonly BoneSpec[],
   data: PersonaResultado,
   dist: number[],
   t: number,
 ): Pose {
-  const fase = phaseAt(data.fases, t)?.fase ?? "de_pie";
-  if (fase === "caminando") {
-    const d = sampleSeries(data.trayectoria.t, dist, t);
-    const stride = 2 * 0.415 * data.estatura_m;
-    return poseFromDirections(bones, walkingDirections(d / stride));
+  return poseFromDirections(bones, directionsForPhase(data, dist, t));
+}
+
+/** Lugar y orientación del contenedor del cuerpo en t (marco de three.js), o null sin datos. */
+export function placementAt(
+  data: PersonaResultado,
+  veh: Resultado["vehiculos"][number] | undefined,
+  bones: readonly BoneSpec[],
+  stature: number,
+  t: number,
+): { position: Vector3; yaw: number } | null {
+  const pose = samplePerson(data.trayectoria, t);
+  if (!pose) return null;
+  const [x, , z] = toThree(pose.x, pose.y, 0);
+  const fase = phaseAt(data.fases, t)?.fase;
+  const seatY =
+    fase === "montado" && veh
+      ? Math.max(
+          0.3,
+          seatHeight(veh.clase, {
+            length: veh.dimensiones.largo_m,
+            width: veh.dimensiones.ancho_m,
+            height: veh.dimensiones.alto_m,
+            wheelbase: veh.dimensiones.distancia_entre_ejes_m,
+          }) -
+            bones[0]!.cabeza[1] * stature,
+        )
+      : 0;
+  return { position: new Vector3(x, seatY, z), yaw: pose.yaw + BODY_TO_HEADING };
+}
+
+export interface RagdollSetup {
+  input: RagdollInput;
+  target: number;
+  band: [number, number];
+  kind: "peaton" | "jinete";
+}
+
+/** Variaciones con semilla del arranque del ragdoll (postura, dirección y giro). */
+export const SEED_POSE_JITTER_DEG = 6;
+export const SEED_HEADING_JITTER_DEG = 3;
+export const SEED_SPIN_JITTER = 0.25;
+
+/**
+ * Entrada del ragdoll de una persona proyectada: pose en t = 0, velocidad de lanzamiento del
+ * solver, fricción cuerpo–suelo, vehículos y objetos con los que puede chocar, y objetivo y banda
+ * de Searle. Con `seed`, varía la postura (±6° por segmento), la dirección (±3°) y el giro
+ * inicial (±25 %); sin ella, la semilla sale de la escena y la persona.
+ */
+export function ragdollSetup(
+  spec: EscenaSpec,
+  resultado: Resultado,
+  data: PersonaResultado,
+  entry: BodyManifestEntry,
+  opts: { massKg: number; statics?: StaticCollider[]; seed?: number },
+): RagdollSetup {
+  const proj = data.proyeccion;
+  if (!proj) throw new Error(`La persona ${data.id} no tiene proyección`);
+  const bones = entry.huesos;
+  const stature = data.estatura_m;
+  const veh = data.vehiculo_id
+    ? resultado.vehiculos.find((v) => v.id === data.vehiculo_id)
+    : undefined;
+  const twoWheel = veh ? profileFor(veh.clase).kind === "two_wheel" : false;
+  const seed = opts.seed ?? seedFor(spec, data.id);
+  const rng = mulberry32(seed ^ 0x9e3779b9);
+  const jitter = (a: number): number => (2 * rng() - 1) * a;
+  const placement = placementAt(data, veh, bones, stature, 0)!;
+  const dist = cumulative(data.trayectoria);
+  const dirs = directionsForPhase(data, dist, 0);
+  const DEGR = Math.PI / 180;
+  for (const key of Object.keys(dirs) as (keyof typeof dirs)[]) {
+    const d = dirs[key];
+    if (!d) continue;
+    const axis = new Vector3(rng() - 0.5, rng() - 0.5, rng() - 0.5).normalize();
+    dirs[key] = d.clone().applyAxisAngle(axis, jitter(SEED_POSE_JITTER_DEG) * DEGR);
   }
-  if (fase === "montado") return poseFromDirections(bones, ridingDirections());
-  return poseFromDirections(bones, standingDirections());
+  const joints = posedJoints(bones, poseFromDirections(bones, dirs));
+  const rot = new Quaternion().setFromAxisAngle(Y, placement.yaw);
+  const initial = new Map<string, { head: Vector3; world: Quaternion }>();
+  for (const [name, j] of joints) {
+    initial.set(name, {
+      head: j.head.clone().multiplyScalar(stature).applyQuaternion(rot).add(placement.position),
+      world: rot.clone().multiply(j.world),
+    });
+  }
+  const h = (proj.rumbo_deg + jitter(SEED_HEADING_JITTER_DEG)) * DEGR;
+  const th = proj.angulo_lanzamiento_deg * DEGR;
+  const v = proj.velocidad_lanzamiento_kmh / 3.6;
+  const dir = new Vector3(Math.cos(h) * Math.cos(th), Math.sin(th), -Math.sin(h) * Math.cos(th));
+  const horiz = new Vector3(Math.cos(h), 0, -Math.sin(h));
+  const omega = horiz
+    .clone()
+    .cross(Y)
+    .multiplyScalar(((0.8 * v) / stature) * (1 + jitter(SEED_SPIN_JITTER)));
+  return {
+    input: {
+      bones,
+      stature,
+      massKg: opts.massKg,
+      initial,
+      velocity: dir.multiplyScalar(v),
+      angularVelocity: omega,
+      mu: proj.friccion_cuerpo.valor,
+      vehicles: kinematicVehicles(resultado, eventVehicles(resultado, data.id, veh?.id)),
+      statics: opts.statics ?? staticColliders(resultado),
+      t0: 0,
+      tEnd: resultado.t_fin,
+      seed,
+    },
+    target: proj.distancia_m,
+    band: [proj.banda_searle_m[0], proj.banda_searle_m[1]],
+    kind: twoWheel ? "jinete" : "peaton",
+  };
 }
 
 const tmpQ = new Quaternion();
@@ -383,76 +513,15 @@ export async function attachPeople(
       // Peatón golpeado o jinete proyectado: camina o va montado hasta el impacto; después,
       // ragdoll calibrado contra la banda de Searle.
       group.add(container);
-      const proj = data.proyeccion;
       const dist = cumulative(data.trayectoria);
-      const placeAt = (t: number): void => {
-        const pose = samplePerson(data.trayectoria, t);
-        if (!pose) return;
-        const [x, , z] = toThree(pose.x, pose.y, 0);
-        const fase = phaseAt(data.fases, t)?.fase;
-        const seatY =
-          fase === "montado" && veh
-            ? Math.max(
-                0.3,
-                seatHeight(veh.clase, {
-                  length: veh.dimensiones.largo_m,
-                  width: veh.dimensiones.ancho_m,
-                  height: veh.dimensiones.alto_m,
-                  wheelbase: veh.dimensiones.distancia_entre_ejes_m,
-                }) -
-                  bones[0]!.cabeza[1] * stature,
-              )
-            : 0;
-        container.position.set(x, seatY, z);
-        container.rotation.set(0, pose.yaw + BODY_TO_HEADING, 0);
-      };
-      // Pose inicial del ragdoll: la de t = 0.
-      placeAt(0);
-      const pose0 = poseForPhase(bones, data, dist, 0);
-      const joints = posedJoints(bones, pose0);
-      const rot = new Quaternion().setFromAxisAngle(Y, container.rotation.y);
-      const initial = new Map<string, { head: Vector3; world: Quaternion }>();
-      for (const [name, j] of joints) {
-        initial.set(name, {
-          head: j.head.clone().multiplyScalar(stature).applyQuaternion(rot).add(container.position),
-          world: rot.clone().multiply(j.world),
-        });
-      }
-      const h = (proj.rumbo_deg * Math.PI) / 180;
-      const th = (proj.angulo_lanzamiento_deg * Math.PI) / 180;
-      const v = proj.velocidad_lanzamiento_kmh / 3.6;
-      const dir = new Vector3(
-        Math.cos(h) * Math.cos(th),
-        Math.sin(th),
-        -Math.sin(h) * Math.cos(th),
-      );
-      const horiz = new Vector3(Math.cos(h), 0, -Math.sin(h));
-      const omega = horiz
-        .clone()
-        .cross(Y)
-        .multiplyScalar((0.8 * v) / stature);
-      const kind = twoWheel ? "jinete" : "peaton";
-      const result = await calibrateRagdoll(
-        {
-          bones,
-          stature,
-          massKg: massDecl ?? defaultMass(variant, stature),
-          initial,
-          velocity: dir.multiplyScalar(v),
-          angularVelocity: omega,
-          mu: proj.friccion_cuerpo.valor,
-          vehicles: kinematicVehicles(resultado, eventVehicles(resultado, data.id, veh?.id)),
-          statics,
-          t0: 0,
-          tEnd: resultado.t_fin,
-          seed: seedFor(spec, data.id),
-        },
-        proj.distancia_m,
-        [proj.banda_searle_m[0], proj.banda_searle_m[1]],
-      );
+      const setup = ragdollSetup(spec, resultado, data, template.entry, {
+        massKg: massDecl ?? defaultMass(variant, stature),
+        statics,
+      });
+      const result = await calibrateRagdoll(setup.input, setup.target, setup.band);
       reports.push({
         personId: data.id,
-        kind,
+        kind: setup.kind,
         target: result.target,
         band: result.band,
         distance: result.distance,
@@ -463,7 +532,11 @@ export async function attachPeople(
       });
       updaters.push((t) => {
         if (t < 0) {
-          placeAt(t);
+          const pl = placementAt(data, veh, bones, stature, t);
+          if (pl) {
+            container.position.copy(pl.position);
+            container.rotation.set(0, pl.yaw, 0);
+          }
           inst.bones.get(bones[0]!.nombre)?.position.set(...bones[0]!.cabeza);
           applyPose(inst.bones, poseForPhase(bones, data, dist, t));
         } else {
@@ -473,7 +546,7 @@ export async function attachPeople(
         }
       });
       // Indicadores de contacto en el frente del vehículo que golpea a la persona peatona.
-      if (kind === "peaton") markers += addPedestrianMarkers(resultado, data, graph, mats);
+      if (setup.kind === "peaton") markers += addPedestrianMarkers(resultado, data, graph, mats);
     } else if (veh && twoWheel) {
       // Jinete que no sale proyectado: montado toda la escena.
       group.add(container);

@@ -1,0 +1,25 @@
+{
+  "name": "@croquis/eval-js",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Evaluaciones en TypeScript que usan el visor (ragdoll) y el port del solver",
+  "type": "module",
+  "scripts": {
+    "ragdoll": "tsx ragdoll_searle.ts",
+    "typecheck": "tsc -p tsconfig.json",
+    "lint": "eslint ."
+  },
+  "dependencies": {
+    "@croquis/scene-schema": "workspace:*",
+    "@croquis/solver-ts": "workspace:*",
+    "@croquis/viewer": "workspace:*",
+    "three": "catalog:"
+  },
+  "devDependencies": {
+    "@types/node": "catalog:",
+    "@types/three": "catalog:",
+    "eslint": "catalog:",
+    "tsx": "catalog:",
+    "typescript": "catalog:"
+  }
+}

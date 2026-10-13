@@ -1,0 +1,7797 @@
+{
+  "name": "ragdoll_searle",
+  "generated_at": "2026-10-13T21:42:56Z",
+  "git_commit": "ab2117f",
+  "criterio": "Proyección del ragdoll dentro de los límites de Searle en ≥ 95 % de corridas con semilla (PLAN §13, F5)",
+  "maquina": {
+    "cpu": "Intel(R) Core(TM) i5-10210U CPU @ 1.60GHz",
+    "nucleos": 8,
+    "memoria_gb": 7.8
+  },
+  "parametros": {
+    "semillas_canonicas": 50,
+    "semillas_sinteticas": 20,
+    "velocidades_kmh": [
+      20,
+      30,
+      40,
+      50,
+      60,
+      70
+    ],
+    "cuerpos": [
+      {
+        "variant": "nino",
+        "stature": 1.2
+      },
+      {
+        "variant": "adulto",
+        "stature": 1.7
+      },
+      {
+        "variant": "mayor",
+        "stature": 1.6
+      }
+    ],
+    "friccion_cuerpo_suelo": {
+      "rango": [
+        0.55,
+        0.75
+      ],
+      "nominal": 0.66,
+      "fuente": "searle",
+      "tipo": "primaria"
+    },
+    "factor_proyeccion": 0.9,
+    "angulo_lanzamiento_deg": 10
+  },
+  "resumen": {
+    "corridas": 460,
+    "tasa_en_banda": 1,
+    "tasa_en_banda_sin_calibrar": 0.9457,
+    "canonicas": {
+      "corridas": 100,
+      "tasa_en_banda": 1
+    },
+    "sinteticas": {
+      "corridas": 360,
+      "tasa_en_banda": 1
+    },
+    "iteraciones_media": 2.14,
+    "k": {
+      "min": 0.8574,
+      "p50": 0.9527,
+      "max": 1
+    },
+    "cumple": true,
+    "segundos": 62.4
+  },
+  "e4_fisica_sola": {
+    "descripcion": "Distancia del ragdoll sin calibrar (k = 1, media de 5 semillas) con la velocidad medida, frente a la distancia medida; y la del solver (Searle, θ = 10°) para comparar.",
+    "casos": 17,
+    "mae_ragdoll_m": 2.423,
+    "mae_solver_m": 2.543,
+    "detalle": [
+      {
+        "fuente": "becker2016_iptm",
+        "caso": "1",
+        "v": 38.46,
+        "d": 10.607,
+        "ragdoll": 12.4733,
+        "solver": 11.1484
+      },
+      {
+        "fuente": "becker2016_iptm",
+        "caso": "2",
+        "v": 39.27,
+        "d": 11.339,
+        "ragdoll": 12.7391,
+        "solver": 11.6009
+      },
+      {
+        "fuente": "becker2016_iptm",
+        "caso": "3",
+        "v": 43.61,
+        "d": 14.783,
+        "ragdoll": 15.5434,
+        "solver": 14.186
+      },
+      {
+        "fuente": "becker2016_iptm",
+        "caso": "4",
+        "v": 34.12,
+        "d": 9.053,
+        "ragdoll": 10.0651,
+        "solver": 8.8845
+      },
+      {
+        "fuente": "becker2016_iptm",
+        "caso": "5",
+        "v": 55.04,
+        "d": 17.526,
+        "ragdoll": 22.9527,
+        "solver": 22.2898
+      },
+      {
+        "fuente": "becker2016_iptm",
+        "caso": "6",
+        "v": 61.16,
+        "d": 24.75,
+        "ragdoll": 28.3199,
+        "solver": 27.4008
+      },
+      {
+        "fuente": "becker2016_iptm",
+        "caso": "7",
+        "v": 64.86,
+        "d": 26.03,
+        "ragdoll": 31.6001,
+        "solver": 30.7519
+      },
+      {
+        "fuente": "eubanks1992",
+        "caso": "65",
+        "v": 32.2,
+        "d": 7.9,
+        "ragdoll": 8.2585,
+        "solver": 6.6905
+      },
+      {
+        "fuente": "eubanks1992",
+        "caso": "67",
+        "v": 48.3,
+        "d": 13.4,
+        "ragdoll": 15.7323,
+        "solver": 14.2541
+      },
+      {
+        "fuente": "eubanks1992",
+        "caso": "68",
+        "v": 48.3,
+        "d": 17.4,
+        "ragdoll": 15.7323,
+        "solver": 14.2541
+      },
+      {
+        "fuente": "eubanks1992",
+        "caso": "72",
+        "v": 48.3,
+        "d": 20.7,
+        "ragdoll": 15.7323,
+        "solver": 14.2541
+      },
+      {
+        "fuente": "randles2001",
+        "caso": "1",
+        "v": 26.99,
+        "d": 10.38,
+        "ragdoll": 5.9731,
+        "solver": 4.8908
+      },
+      {
+        "fuente": "randles2001",
+        "caso": "3",
+        "v": 25.13,
+        "d": 5.42,
+        "ragdoll": 5.3268,
+        "solver": 4.325
+      },
+      {
+        "fuente": "randles2001",
+        "caso": "4",
+        "v": 20.19,
+        "d": 7.41,
+        "ragdoll": 3.4584,
+        "solver": 3.0185
+      },
+      {
+        "fuente": "randles2001",
+        "caso": "10",
+        "v": 20.28,
+        "d": 4.73,
+        "ragdoll": 3.4506,
+        "solver": 3.0397
+      },
+      {
+        "fuente": "randles2001",
+        "caso": "11",
+        "v": 27.85,
+        "d": 8.52,
+        "ragdoll": 6.2695,
+        "solver": 5.166
+      },
+      {
+        "fuente": "randles2001",
+        "caso": "14",
+        "v": 32.13,
+        "d": 8.51,
+        "ragdoll": 8.233,
+        "solver": 6.6642
+      }
+    ]
+  },
+  "por_caso": [
+    {
+      "caso": "peaton_cruce/per-peaton",
+      "corridas": 50,
+      "tasa_en_banda": 1,
+      "tasa_sin_calibrar": 0.92,
+      "k": {
+        "min": 0.8999,
+        "p50": 0.9586,
+        "max": 1
+      }
+    },
+    {
+      "caso": "motociclista/per-b1",
+      "corridas": 50,
+      "tasa_en_banda": 1,
+      "tasa_sin_calibrar": 1,
+      "k": {
+        "min": 0.8873,
+        "p50": 0.9506,
+        "max": 1
+      }
+    },
+    {
+      "caso": "nino/20kmh",
+      "corridas": 20,
+      "tasa_en_banda": 1,
+      "tasa_sin_calibrar": 0.95,
+      "k": {
+        "min": 0.8988,
+        "p50": 0.9258,
+        "max": 0.9577
+      }
+    },
+    {
+      "caso": "nino/30kmh",
+      "corridas": 20,
+      "tasa_en_banda": 1,
+      "tasa_sin_calibrar": 0.95,
+      "k": {
+        "min": 0.8892,
+        "p50": 0.9176,
+        "max": 0.9381
+      }
+    },
+    {
+      "caso": "nino/40kmh",
+      "corridas": 20,
+      "tasa_en_banda": 1,
+      "tasa_sin_calibrar": 1,
+      "k": {
+        "min": 0.9244,
+        "p50": 0.9485,
+        "max": 0.9616
+      }
+    },
+    {
+      "caso": "nino/50kmh",
+      "corridas": 20,
+      "tasa_en_banda": 1,
+      "tasa_sin_calibrar": 1,
+      "k": {
+        "min": 0.9449,
+        "p50": 0.9702,
+        "max": 1
+      }
+    },
+    {
+      "caso": "nino/60kmh",
+      "corridas": 20,
+      "tasa_en_banda": 1,
+      "tasa_sin_calibrar": 1,
+      "k": {
+        "min": 0.9542,
+        "p50": 0.9731,
+        "max": 0.9902
+      }
+    },
+    {
+      "caso": "nino/70kmh",
+      "corridas": 20,
+      "tasa_en_banda": 1,
+      "tasa_sin_calibrar": 1,
+      "k": {
+        "min": 0.9678,
+        "p50": 0.9807,
+        "max": 1
+      }
+    },
+    {
+      "caso": "adulto/20kmh",
+      "corridas": 20,
+      "tasa_en_banda": 1,
+      "tasa_sin_calibrar": 0.9,
+      "k": {
+        "min": 0.8916,
+        "p50": 0.94,
+        "max": 1
+      }
+    },
+    {
+      "caso": "adulto/30kmh",
+      "corridas": 20,
+      "tasa_en_banda": 1,
+      "tasa_sin_calibrar": 0.7,
+      "k": {
+        "min": 0.8777,
+        "p50": 0.9009,
+        "max": 0.9366
+      }
+    },
+    {
+      "caso": "adulto/40kmh",
+      "corridas": 20,
+      "tasa_en_banda": 1,
+      "tasa_sin_calibrar": 1,
+      "k": {
+        "min": 0.8806,
+        "p50": 0.9167,
+        "max": 0.9413
+      }
+    },
+    {
+      "caso": "adulto/50kmh",
+      "corridas": 20,
+      "tasa_en_banda": 1,
+      "tasa_sin_calibrar": 1,
+      "k": {
+        "min": 0.8849,
+        "p50": 0.9525,
+        "max": 1
+      }
+    },
+    {
+      "caso": "adulto/60kmh",
+      "corridas": 20,
+      "tasa_en_banda": 1,
+      "tasa_sin_calibrar": 1,
+      "k": {
+        "min": 0.9538,
+        "p50": 0.977,
+        "max": 1
+      }
+    },
+    {
+      "caso": "adulto/70kmh",
+      "corridas": 20,
+      "tasa_en_banda": 1,
+      "tasa_sin_calibrar": 1,
+      "k": {
+        "min": 0.9734,
+        "p50": 0.9815,
+        "max": 1
+      }
+    },
+    {
+      "caso": "mayor/20kmh",
+      "corridas": 20,
+      "tasa_en_banda": 1,
+      "tasa_sin_calibrar": 0.95,
+      "k": {
+        "min": 0.8867,
+        "p50": 0.948,
+        "max": 1
+      }
+    },
+    {
+      "caso": "mayor/30kmh",
+      "corridas": 20,
+      "tasa_en_banda": 1,
+      "tasa_sin_calibrar": 0.5,
+      "k": {
+        "min": 0.8574,
+        "p50": 0.9036,
+        "max": 0.9344
+      }
+    },
+    {
+      "caso": "mayor/40kmh",
+      "corridas": 20,
+      "tasa_en_banda": 1,
+      "tasa_sin_calibrar": 1,
+      "k": {
+        "min": 0.8983,
+        "p50": 0.9235,
+        "max": 0.9437
+      }
+    },
+    {
+      "caso": "mayor/50kmh",
+      "corridas": 20,
+      "tasa_en_banda": 1,
+      "tasa_sin_calibrar": 1,
+      "k": {
+        "min": 0.9262,
+        "p50": 0.9568,
+        "max": 1
+      }
+    },
+    {
+      "caso": "mayor/60kmh",
+      "corridas": 20,
+      "tasa_en_banda": 1,
+      "tasa_sin_calibrar": 1,
+      "k": {
+        "min": 0.9503,
+        "p50": 0.9723,
+        "max": 1
+      }
+    },
+    {
+      "caso": "mayor/70kmh",
+      "corridas": 20,
+      "tasa_en_banda": 1,
+      "tasa_sin_calibrar": 1,
+      "k": {
+        "min": 0.9632,
+        "p50": 0.9811,
+        "max": 1
+      }
+    }
+  ],
+  "corridas": [
+    {
+      "grupo": "canonica",
+      "caso": "peaton_cruce/per-peaton",
+      "semilla": 1000,
+      "objetivo_m": 4.7775,
+      "banda_m": [
+        3.7363,
+        5.8873
+      ],
+      "distancia_m": 4.5941,
+      "en_banda": true,
+      "sin_calibrar_m": 5.6612,
+      "sin_calibrar_en_banda": true,
+      "k": 0.9186,
+      "iteraciones": 2
+    },
+    {
+      "grupo": "canonica",
+      "caso": "peaton_cruce/per-peaton",
+      "semilla": 1001,
+      "objetivo_m": 4.7775,
+      "banda_m": [
+        3.7363,
+        5.8873
+      ],
+      "distancia_m": 4.4522,
+      "en_banda": true,
+      "sin_calibrar_m": 5.3545,
+      "sin_calibrar_en_banda": true,
+      "k": 0.9446,
+      "iteraciones": 2
+    },
+    {
+      "grupo": "canonica",
+      "caso": "peaton_cruce/per-peaton",
+      "semilla": 1002,
+      "objetivo_m": 4.7775,
+      "banda_m": [
+        3.7363,
+        5.8873
+      ],
+      "distancia_m": 4.9881,
+      "en_banda": true,
+      "sin_calibrar_m": 4.9881,
+      "sin_calibrar_en_banda": true,
+      "k": 1,
+      "iteraciones": 2
+    },
+    {
+      "grupo": "canonica",
+      "caso": "peaton_cruce/per-peaton",
+      "semilla": 1003,
+      "objetivo_m": 4.7775,
+      "banda_m": [
+        3.7363,
+        5.8873
+      ],
+      "distancia_m": 4.9833,
+      "en_banda": true,
+      "sin_calibrar_m": 5.1445,
+      "sin_calibrar_en_banda": true,
+      "k": 0.9637,
+      "iteraciones": 2
+    },
+    {
+      "grupo": "canonica",
+      "caso": "peaton_cruce/per-peaton",
+      "semilla": 1004,
+      "objetivo_m": 4.7775,
+      "banda_m": [
+        3.7363,
+        5.8873
+      ],
+      "distancia_m": 4.5965,
+      "en_banda": true,
+      "sin_calibrar_m": 5.4846,
+      "sin_calibrar_en_banda": true,
+      "k": 0.9333,
+      "iteraciones": 2
+    },
+    {
+      "grupo": "canonica",
+      "caso": "peaton_cruce/per-peaton",
+      "semilla": 1005,
+      "objetivo_m": 4.7775,
+      "banda_m": [
+        3.7363,
+        5.8873
+      ],
+      "distancia_m": 4.921,
+      "en_banda": true,
+      "sin_calibrar_m": 4.9959,
+      "sin_calibrar_en_banda": true,
+      "k": 0.9779,
+      "iteraciones": 2
+    },
+    {
+      "grupo": "canonica",
+      "caso": "peaton_cruce/per-peaton",
+      "semilla": 1006,
+      "objetivo_m": 4.7775,
+      "banda_m": [
+        3.7363,
+        5.8873
+      ],
+      "distancia_m": 4.4353,
+      "en_banda": true,
+      "sin_calibrar_m": 6.0037,
+      "sin_calibrar_en_banda": false,
+      "k": 0.9275,
+      "iteraciones": 3
+    },
+    {
+      "grupo": "canonica",
+      "caso": "peaton_cruce/per-peaton",
+      "semilla": 1007,
+      "objetivo_m": 4.7775,
+      "banda_m": [
+        3.7363,
+        5.8873
+      ],
+      "distancia_m": 4.8147,
+      "en_banda": true,
+      "sin_calibrar_m": 5.0963,
+      "sin_calibrar_en_banda": true,
+      "k": 0.9682,
+      "iteraciones": 2
+    },
+    {
+      "grupo": "canonica",
+      "caso": "peaton_cruce/per-peaton",
+      "semilla": 1008,
+      "objetivo_m": 4.7775,
+      "banda_m": [
+        3.7363,
+        5.8873
+      ],
+      "distancia_m": 4.9444,
+      "en_banda": true,
+      "sin_calibrar_m": 5.0326,
+      "sin_calibrar_en_banda": true,
+      "k": 0.9743,
+      "iteraciones": 2
+    },
+    {
+      "grupo": "canonica",
+      "caso": "peaton_cruce/per-peaton",
+      "semilla": 1009,
+      "objetivo_m": 4.7775,
+      "banda_m": [
+        3.7363,
+        5.8873
+      ],
+      "distancia_m": 4.8717,
+      "en_banda": true,
+      "sin_calibrar_m": 5.289,
+      "sin_calibrar_en_banda": true,
+      "k": 0.9504,
+      "iteraciones": 2
+    },
+    {
+      "grupo": "canonica",
+      "caso": "peaton_cruce/per-peaton",
+      "semilla": 1010,
+      "objetivo_m": 4.7775,
+      "banda_m": [
+        3.7363,
+        5.8873
+      ],
+      "distancia_m": 5.054,
+      "en_banda": true,
+      "sin_calibrar_m": 5.8996,
+      "sin_calibrar_en_banda": false,
+      "k": 0.8999,
+      "iteraciones": 2
+    },
+    {
+      "grupo": "canonica",
+      "caso": "peaton_cruce/per-peaton",
+      "semilla": 1011,
+      "objetivo_m": 4.7775,
+      "banda_m": [
+        3.7363,
+        5.8873
+      ],
+      "distancia_m": 4.8566,
+      "en_banda": true,
+      "sin_calibrar_m": 5.1231,
+      "sin_calibrar_en_banda": true,
+      "k": 0.9657,
+      "iteraciones": 2
+    },
+    {
+      "grupo": "canonica",
+      "caso": "peaton_cruce/per-peaton",
+      "semilla": 1012,
+      "objetivo_m": 4.7775,
+      "banda_m": [
+        3.7363,
+        5.8873
+      ],
+      "distancia_m": 4.7821,
+      "en_banda": true,
+      "sin_calibrar_m": 4.9742,
+      "sin_calibrar_en_banda": true,
+      "k": 0.98,
+      "iteraciones": 2
+    },
+    {
+      "grupo": "canonica",
+      "caso": "peaton_cruce/per-peaton",
+      "semilla": 1013,
+      "objetivo_m": 4.7775,
+      "banda_m": [
+        3.7363,
+        5.8873
+      ],
+      "distancia_m": 4.4243,
+      "en_banda": true,
+      "sin_calibrar_m": 5.4838,
+      "sin_calibrar_en_banda": true,
+      "k": 0.9334,
+      "iteraciones": 2
+    },
+    {
+      "grupo": "canonica",
+      "caso": "peaton_cruce/per-peaton",
+      "semilla": 1014,
+      "objetivo_m": 4.7775,
+      "banda_m": [
+        3.7363,
+        5.8873
+      ],
+      "distancia_m": 5.0914,
+      "en_banda": true,
+      "sin_calibrar_m": 5.2817,
+      "sin_calibrar_en_banda": true,
+      "k": 0.9511,
+      "iteraciones": 2
+    },
+    {
+      "grupo": "canonica",
+      "caso": "peaton_cruce/per-peaton",
+      "semilla": 1015,
+      "objetivo_m": 4.7775,
+      "banda_m": [
+        3.7363,
+        5.8873
+      ],
+      "distancia_m": 4.8074,
+      "en_banda": true,
+      "sin_calibrar_m": 5.0358,
+      "sin_calibrar_en_banda": true,
+      "k": 0.974,
+      "iteraciones": 2
+    },
+    {
+      "grupo": "canonica",
+      "caso": "peaton_cruce/per-peaton",
+      "semilla": 1016,
+      "objetivo_m": 4.7775,
+      "banda_m": [
+        3.7363,
+        5.8873
+      ],
+      "distancia_m": 4.8226,
+      "en_banda": true,
+      "sin_calibrar_m": 4.9688,
+      "sin_calibrar_en_banda": true,
+      "k": 0.9806,
+      "iteraciones": 2
+    },
+    {
+      "grupo": "canonica",
+      "caso": "peaton_cruce/per-peaton",
+      "semilla": 1017,
+      "objetivo_m": 4.7775,
+      "banda_m": [
+        3.7363,
+        5.8873
+      ],
+      "distancia_m": 4.7342,
+      "en_banda": true,
+      "sin_calibrar_m": 5.3202,
+      "sin_calibrar_en_banda": true,
+      "k": 0.9476,
+      "iteraciones": 2
+    },
+    {
+      "grupo": "canonica",
+      "caso": "peaton_cruce/per-peaton",
+      "semilla": 1018,
+      "objetivo_m": 4.7775,
+      "banda_m": [
+        3.7363,
+        5.8873
+      ],
+      "distancia_m": 4.5375,
+      "en_banda": true,
+      "sin_calibrar_m": 5.3398,
+      "sin_calibrar_en_banda": true,
+      "k": 0.9459,
+      "iteraciones": 2
+    },
+    {
+      "grupo": "canonica",
+      "caso": "peaton_cruce/per-peaton",
+      "semilla": 1019,
+      "objetivo_m": 4.7775,
+      "banda_m": [
+        3.7363,
+        5.8873
+      ],
+      "distancia_m": 4.5132,
+      "en_banda": true,
+      "sin_calibrar_m": 6.1988,
+      "sin_calibrar_en_banda": false,
+      "k": 0.918,
+      "iteraciones": 3
+    },
+    {
+      "grupo": "canonica",
+      "caso": "peaton_cruce/per-peaton",
+      "semilla": 1020,
+      "objetivo_m": 4.7775,
+      "banda_m": [
+        3.7363,
+        5.8873
+      ],
+      "distancia_m": 4.8128,
+      "en_banda": true,
+      "sin_calibrar_m": 4.8128,
+      "sin_calibrar_en_banda": true,
+      "k": 1,
+      "iteraciones": 2
+    },
+    {
+      "grupo": "canonica",
+      "caso": "peaton_cruce/per-peaton",
+      "semilla": 1021,
+      "objetivo_m": 4.7775,
+      "banda_m": [
+        3.7363,
+        5.8873
+      ],
+      "distancia_m": 4.6999,
+      "en_banda": true,
+      "sin_calibrar_m": 4.9882,
+      "sin_calibrar_en_banda": true,
+      "k": 0.9787,
+      "iteraciones": 2
+    },
+    {
+      "grupo": "canonica",
+      "caso": "peaton_cruce/per-peaton",
+      "semilla": 1022,
+      "objetivo_m": 4.7775,
+      "banda_m": [
+        3.7363,
+        5.8873
+      ],
+      "distancia_m": 4.9066,
+      "en_banda": true,
+      "sin_calibrar_m": 5.4893,
+      "sin_calibrar_en_banda": true,
+      "k": 0.9329,
+      "iteraciones": 2
+    },
+    {
+      "grupo": "canonica",
+      "caso": "peaton_cruce/per-peaton",
+      "semilla": 1023,
+      "objetivo_m": 4.7775,
+      "banda_m": [
+        3.7363,
+        5.8873
+      ],
+      "distancia_m": 4.6485,
+      "en_banda": true,
+      "sin_calibrar_m": 5.0645,
+      "sin_calibrar_en_banda": true,
+      "k": 0.9713,
+      "iteraciones": 2
+    },
+    {
+      "grupo": "canonica",
+      "caso": "peaton_cruce/per-peaton",
+      "semilla": 1024,
+      "objetivo_m": 4.7775,
+      "banda_m": [
+        3.7363,
+        5.8873
+      ],
+      "distancia_m": 4.6586,
+      "en_banda": true,
+      "sin_calibrar_m": 5.3565,
+      "sin_calibrar_en_banda": true,
+      "k": 0.9444,
+      "iteraciones": 2
+    },
+    {
+      "grupo": "canonica",
+      "caso": "peaton_cruce/per-peaton",
+      "semilla": 1025,
+      "objetivo_m": 4.7775,
+      "banda_m": [
+        3.7363,
+        5.8873
+      ],
+      "distancia_m": 4.708,
+      "en_banda": true,
+      "sin_calibrar_m": 5.017,
+      "sin_calibrar_en_banda": true,
+      "k": 0.9758,
+      "iteraciones": 2
+    },
+    {
+      "grupo": "canonica",
+      "caso": "peaton_cruce/per-peaton",
+      "semilla": 1026,
+      "objetivo_m": 4.7775,
+      "banda_m": [
+        3.7363,
+        5.8873
+      ],
+      "distancia_m": 4.6872,
+      "en_banda": true,
+      "sin_calibrar_m": 5.3862,
+      "sin_calibrar_en_banda": true,
+      "k": 0.9418,
+      "iteraciones": 2
+    },
+    {
+      "grupo": "canonica",
+      "caso": "peaton_cruce/per-peaton",
+      "semilla": 1027,
+      "objetivo_m": 4.7775,
+      "banda_m": [
+        3.7363,
+        5.8873
+      ],
+      "distancia_m": 4.5464,
+      "en_banda": true,
+      "sin_calibrar_m": 5.3415,
+      "sin_calibrar_en_banda": true,
+      "k": 0.9457,
+      "iteraciones": 2
+    },
+    {
+      "grupo": "canonica",
+      "caso": "peaton_cruce/per-peaton",
+      "semilla": 1028,
+      "objetivo_m": 4.7775,
+      "banda_m": [
+        3.7363,
+        5.8873
+      ],
+      "distancia_m": 4.9495,
+      "en_banda": true,
+      "sin_calibrar_m": 5.5446,
+      "sin_calibrar_en_banda": true,
+      "k": 0.9283,
+      "iteraciones": 2
+    },
+    {
+      "grupo": "canonica",
+      "caso": "peaton_cruce/per-peaton",
+      "semilla": 1029,
+      "objetivo_m": 4.7775,
+      "banda_m": [
+        3.7363,
+        5.8873
+      ],
+      "distancia_m": 4.696,
+      "en_banda": true,
+      "sin_calibrar_m": 5.1029,
+      "sin_calibrar_en_banda": true,
+      "k": 0.9676,
+      "iteraciones": 2
+    },
+    {
+      "grupo": "canonica",
+      "caso": "peaton_cruce/per-peaton",
+      "semilla": 1030,
+      "objetivo_m": 4.7775,
+      "banda_m": [
+        3.7363,
+        5.8873
+      ],
+      "distancia_m": 4.7918,
+      "en_banda": true,
+      "sin_calibrar_m": 5.192,
+      "sin_calibrar_en_banda": true,
+      "k": 0.9593,
+      "iteraciones": 2
+    },
+    {
+      "grupo": "canonica",
+      "caso": "peaton_cruce/per-peaton",
+      "semilla": 1031,
+      "objetivo_m": 4.7775,
+      "banda_m": [
+        3.7363,
+        5.8873
+      ],
+      "distancia_m": 4.8652,
+      "en_banda": true,
+      "sin_calibrar_m": 5.1612,
+      "sin_calibrar_en_banda": true,
+      "k": 0.9621,
+      "iteraciones": 2
+    },
+    {
+      "grupo": "canonica",
+      "caso": "peaton_cruce/per-peaton",
+      "semilla": 1032,
+      "objetivo_m": 4.7775,
+      "banda_m": [
+        3.7363,
+        5.8873
+      ],
+      "distancia_m": 5.0093,
+      "en_banda": true,
+      "sin_calibrar_m": 5.0093,
+      "sin_calibrar_en_banda": true,
+      "k": 1,
+      "iteraciones": 2
+    },
+    {
+      "grupo": "canonica",
+      "caso": "peaton_cruce/per-peaton",
+      "semilla": 1033,
+      "objetivo_m": 4.7775,
+      "banda_m": [
+        3.7363,
+        5.8873
+      ],
+      "distancia_m": 4.7593,
+      "en_banda": true,
+      "sin_calibrar_m": 5.1987,
+      "sin_calibrar_en_banda": true,
+      "k": 0.9586,
+      "iteraciones": 2
+    },
+    {
+      "grupo": "canonica",
+      "caso": "peaton_cruce/per-peaton",
+      "semilla": 1034,
+      "objetivo_m": 4.7775,
+      "banda_m": [
+        3.7363,
+        5.8873
+      ],
+      "distancia_m": 4.6756,
+      "en_banda": true,
+      "sin_calibrar_m": 5.5508,
+      "sin_calibrar_en_banda": true,
+      "k": 0.9277,
+      "iteraciones": 2
+    },
+    {
+      "grupo": "canonica",
+      "caso": "peaton_cruce/per-peaton",
+      "semilla": 1035,
+      "objetivo_m": 4.7775,
+      "banda_m": [
+        3.7363,
+        5.8873
+      ],
+      "distancia_m": 4.498,
+      "en_banda": true,
+      "sin_calibrar_m": 5.488,
+      "sin_calibrar_en_banda": true,
+      "k": 0.933,
+      "iteraciones": 2
+    },
+    {
+      "grupo": "canonica",
+      "caso": "peaton_cruce/per-peaton",
+      "semilla": 1036,
+      "objetivo_m": 4.7775,
+      "banda_m": [
+        3.7363,
+        5.8873
+      ],
+      "distancia_m": 5.0062,
+      "en_banda": true,
+      "sin_calibrar_m": 5.4385,
+      "sin_calibrar_en_banda": true,
+      "k": 0.9373,
+      "iteraciones": 2
+    },
+    {
+      "grupo": "canonica",
+      "caso": "peaton_cruce/per-peaton",
+      "semilla": 1037,
+      "objetivo_m": 4.7775,
+      "banda_m": [
+        3.7363,
+        5.8873
+      ],
+      "distancia_m": 4.8387,
+      "en_banda": true,
+      "sin_calibrar_m": 4.9724,
+      "sin_calibrar_en_banda": true,
+      "k": 0.9802,
+      "iteraciones": 2
+    },
+    {
+      "grupo": "canonica",
+      "caso": "peaton_cruce/per-peaton",
+      "semilla": 1038,
+      "objetivo_m": 4.7775,
+      "banda_m": [
+        3.7363,
+        5.8873
+      ],
+      "distancia_m": 4.8451,
+      "en_banda": true,
+      "sin_calibrar_m": 5.0039,
+      "sin_calibrar_en_banda": true,
+      "k": 0.9771,
+      "iteraciones": 2
+    },
+    {
+      "grupo": "canonica",
+      "caso": "peaton_cruce/per-peaton",
+      "semilla": 1039,
+      "objetivo_m": 4.7775,
+      "banda_m": [
+        3.7363,
+        5.8873
+      ],
+      "distancia_m": 4.6959,
+      "en_banda": true,
+      "sin_calibrar_m": 5.1985,
+      "sin_calibrar_en_banda": true,
+      "k": 0.9587,
+      "iteraciones": 2
+    },
+    {
+      "grupo": "canonica",
+      "caso": "peaton_cruce/per-peaton",
+      "semilla": 1040,
+      "objetivo_m": 4.7775,
+      "banda_m": [
+        3.7363,
+        5.8873
+      ],
+      "distancia_m": 4.7852,
+      "en_banda": true,
+      "sin_calibrar_m": 5.2468,
+      "sin_calibrar_en_banda": true,
+      "k": 0.9542,
+      "iteraciones": 2
+    },
+    {
+      "grupo": "canonica",
+      "caso": "peaton_cruce/per-peaton",
+      "semilla": 1041,
+      "objetivo_m": 4.7775,
+      "banda_m": [
+        3.7363,
+        5.8873
+      ],
+      "distancia_m": 4.5781,
+      "en_banda": true,
+      "sin_calibrar_m": 5.6146,
+      "sin_calibrar_en_banda": true,
+      "k": 0.9501,
+      "iteraciones": 3
+    },
+    {
+      "grupo": "canonica",
+      "caso": "peaton_cruce/per-peaton",
+      "semilla": 1042,
+      "objetivo_m": 4.7775,
+      "banda_m": [
+        3.7363,
+        5.8873
+      ],
+      "distancia_m": 4.923,
+      "en_banda": true,
+      "sin_calibrar_m": 5.1378,
+      "sin_calibrar_en_banda": true,
+      "k": 0.9643,
+      "iteraciones": 2
+    },
+    {
+      "grupo": "canonica",
+      "caso": "peaton_cruce/per-peaton",
+      "semilla": 1043,
+      "objetivo_m": 4.7775,
+      "banda_m": [
+        3.7363,
+        5.8873
+      ],
+      "distancia_m": 4.9598,
+      "en_banda": true,
+      "sin_calibrar_m": 5.0273,
+      "sin_calibrar_en_banda": true,
+      "k": 0.9748,
+      "iteraciones": 2
+    },
+    {
+      "grupo": "canonica",
+      "caso": "peaton_cruce/per-peaton",
+      "semilla": 1044,
+      "objetivo_m": 4.7775,
+      "banda_m": [
+        3.7363,
+        5.8873
+      ],
+      "distancia_m": 4.8607,
+      "en_banda": true,
+      "sin_calibrar_m": 5.1528,
+      "sin_calibrar_en_banda": true,
+      "k": 0.9629,
+      "iteraciones": 2
+    },
+    {
+      "grupo": "canonica",
+      "caso": "peaton_cruce/per-peaton",
+      "semilla": 1045,
+      "objetivo_m": 4.7775,
+      "banda_m": [
+        3.7363,
+        5.8873
+      ],
+      "distancia_m": 4.76,
+      "en_banda": true,
+      "sin_calibrar_m": 5.5059,
+      "sin_calibrar_en_banda": true,
+      "k": 0.9587,
+      "iteraciones": 3
+    },
+    {
+      "grupo": "canonica",
+      "caso": "peaton_cruce/per-peaton",
+      "semilla": 1046,
+      "objetivo_m": 4.7775,
+      "banda_m": [
+        3.7363,
+        5.8873
+      ],
+      "distancia_m": 4.409,
+      "en_banda": true,
+      "sin_calibrar_m": 6.0431,
+      "sin_calibrar_en_banda": false,
+      "k": 0.9253,
+      "iteraciones": 3
+    },
+    {
+      "grupo": "canonica",
+      "caso": "peaton_cruce/per-peaton",
+      "semilla": 1047,
+      "objetivo_m": 4.7775,
+      "banda_m": [
+        3.7363,
+        5.8873
+      ],
+      "distancia_m": 4.5921,
+      "en_banda": true,
+      "sin_calibrar_m": 5.5025,
+      "sin_calibrar_en_banda": true,
+      "k": 0.9318,
+      "iteraciones": 2
+    },
+    {
+      "grupo": "canonica",
+      "caso": "peaton_cruce/per-peaton",
+      "semilla": 1048,
+      "objetivo_m": 4.7775,
+      "banda_m": [
+        3.7363,
+        5.8873
+      ],
+      "distancia_m": 4.5072,
+      "en_banda": true,
+      "sin_calibrar_m": 5.5687,
+      "sin_calibrar_en_banda": true,
+      "k": 0.9262,
+      "iteraciones": 2
+    },
+    {
+      "grupo": "canonica",
+      "caso": "peaton_cruce/per-peaton",
+      "semilla": 1049,
+      "objetivo_m": 4.7775,
+      "banda_m": [
+        3.7363,
+        5.8873
+      ],
+      "distancia_m": 4.6165,
+      "en_banda": true,
+      "sin_calibrar_m": 5.6402,
+      "sin_calibrar_en_banda": true,
+      "k": 0.9203,
+      "iteraciones": 2
+    },
+    {
+      "grupo": "canonica",
+      "caso": "motociclista/per-b1",
+      "semilla": 1000,
+      "objetivo_m": 15.2828,
+      "banda_m": [
+        11.4095,
+        19.4437
+      ],
+      "distancia_m": 15.7381,
+      "en_banda": true,
+      "sin_calibrar_m": 16.1691,
+      "sin_calibrar_en_banda": true,
+      "k": 0.9722,
+      "iteraciones": 2
+    },
+    {
+      "grupo": "canonica",
+      "caso": "motociclista/per-b1",
+      "semilla": 1001,
+      "objetivo_m": 15.2828,
+      "banda_m": [
+        11.4095,
+        19.4437
+      ],
+      "distancia_m": 15.467,
+      "en_banda": true,
+      "sin_calibrar_m": 16.9407,
+      "sin_calibrar_en_banda": true,
+      "k": 0.9498,
+      "iteraciones": 2
+    },
+    {
+      "grupo": "canonica",
+      "caso": "motociclista/per-b1",
+      "semilla": 1002,
+      "objetivo_m": 15.2828,
+      "banda_m": [
+        11.4095,
+        19.4437
+      ],
+      "distancia_m": 15.9953,
+      "en_banda": true,
+      "sin_calibrar_m": 16.9107,
+      "sin_calibrar_en_banda": true,
+      "k": 0.9506,
+      "iteraciones": 2
+    },
+    {
+      "grupo": "canonica",
+      "caso": "motociclista/per-b1",
+      "semilla": 1003,
+      "objetivo_m": 15.2828,
+      "banda_m": [
+        11.4095,
+        19.4437
+      ],
+      "distancia_m": 15.7473,
+      "en_banda": true,
+      "sin_calibrar_m": 17.1559,
+      "sin_calibrar_en_banda": true,
+      "k": 0.9438,
+      "iteraciones": 2
+    },
+    {
+      "grupo": "canonica",
+      "caso": "motociclista/per-b1",
+      "semilla": 1004,
+      "objetivo_m": 15.2828,
+      "banda_m": [
+        11.4095,
+        19.4437
+      ],
+      "distancia_m": 15.6445,
+      "en_banda": true,
+      "sin_calibrar_m": 17.006,
+      "sin_calibrar_en_banda": true,
+      "k": 0.948,
+      "iteraciones": 2
+    },
+    {
+      "grupo": "canonica",
+      "caso": "motociclista/per-b1",
+      "semilla": 1005,
+      "objetivo_m": 15.2828,
+      "banda_m": [
+        11.4095,
+        19.4437
+      ],
+      "distancia_m": 14.765,
+      "en_banda": true,
+      "sin_calibrar_m": 17.8909,
+      "sin_calibrar_en_banda": true,
+      "k": 0.9242,
+      "iteraciones": 2
+    },
+    {
+      "grupo": "canonica",
+      "caso": "motociclista/per-b1",
+      "semilla": 1006,
+      "objetivo_m": 15.2828,
+      "banda_m": [
+        11.4095,
+        19.4437
+      ],
+      "distancia_m": 15.5776,
+      "en_banda": true,
+      "sin_calibrar_m": 16.7997,
+      "sin_calibrar_en_banda": true,
+      "k": 0.9538,
+      "iteraciones": 2
+    },
+    {
+      "grupo": "canonica",
+      "caso": "motociclista/per-b1",
+      "semilla": 1007,
+      "objetivo_m": 15.2828,
+      "banda_m": [
+        11.4095,
+        19.4437
+      ],
+      "distancia_m": 16.1612,
+      "en_banda": true,
+      "sin_calibrar_m": 16.5807,
+      "sin_calibrar_en_banda": true,
+      "k": 0.9601,
+      "iteraciones": 2
+    },
+    {
+      "grupo": "canonica",
+      "caso": "motociclista/per-b1",
+      "semilla": 1008,
+      "objetivo_m": 15.2828,
+      "banda_m": [
+        11.4095,
+        19.4437
+      ],
+      "distancia_m": 15.7732,
+      "en_banda": true,
+      "sin_calibrar_m": 17.1368,
+      "sin_calibrar_en_banda": true,
+      "k": 0.9444,
+      "iteraciones": 2
+    },
+    {
+      "grupo": "canonica",
+      "caso": "motociclista/per-b1",
+      "semilla": 1009,
+      "objetivo_m": 15.2828,
+      "banda_m": [
+        11.4095,
+        19.4437
+      ],
+      "distancia_m": 15.9644,
+      "en_banda": true,
+      "sin_calibrar_m": 15.9644,
+      "sin_calibrar_en_banda": true,
+      "k": 1,
+      "iteraciones": 2
+    },
+    {
+      "grupo": "canonica",
+      "caso": "motociclista/per-b1",
+      "semilla": 1010,
+      "objetivo_m": 15.2828,
+      "banda_m": [
+        11.4095,
+        19.4437
+      ],
+      "distancia_m": 14.1484,
+      "en_banda": true,
+      "sin_calibrar_m": 17.1688,
+      "sin_calibrar_en_banda": true,
+      "k": 0.8873,
+      "iteraciones": 4
+    },
+    {
+      "grupo": "canonica",
+      "caso": "motociclista/per-b1",
+      "semilla": 1011,
+      "objetivo_m": 15.2828,
+      "banda_m": [
+        11.4095,
+        19.4437
+      ],
+      "distancia_m": 15.5576,
+      "en_banda": true,
+      "sin_calibrar_m": 18.3829,
+      "sin_calibrar_en_banda": true,
+      "k": 0.9118,
+      "iteraciones": 2
+    },
+    {
+      "grupo": "canonica",
+      "caso": "motociclista/per-b1",
+      "semilla": 1012,
+      "objetivo_m": 15.2828,
+      "banda_m": [
+        11.4095,
+        19.4437
+      ],
+      "distancia_m": 16.4614,
+      "en_banda": true,
+      "sin_calibrar_m": 17.0437,
+      "sin_calibrar_en_banda": true,
+      "k": 0.9469,
+      "iteraciones": 2
+    },
+    {
+      "grupo": "canonica",
+      "caso": "motociclista/per-b1",
+      "semilla": 1013,
+      "objetivo_m": 15.2828,
+      "banda_m": [
+        11.4095,
+        19.4437
+      ],
+      "distancia_m": 16.3444,
+      "en_banda": true,
+      "sin_calibrar_m": 17.114,
+      "sin_calibrar_en_banda": true,
+      "k": 0.934,
+      "iteraciones": 6
+    },
+    {
+      "grupo": "canonica",
+      "caso": "motociclista/per-b1",
+      "semilla": 1014,
+      "objetivo_m": 15.2828,
+      "banda_m": [
+        11.4095,
+        19.4437
+      ],
+      "distancia_m": 15.9786,
+      "en_banda": true,
+      "sin_calibrar_m": 17.4586,
+      "sin_calibrar_en_banda": true,
+      "k": 0.9356,
+      "iteraciones": 2
+    },
+    {
+      "grupo": "canonica",
+      "caso": "motociclista/per-b1",
+      "semilla": 1015,
+      "objetivo_m": 15.2828,
+      "banda_m": [
+        11.4095,
+        19.4437
+      ],
+      "distancia_m": 16.1212,
+      "en_banda": true,
+      "sin_calibrar_m": 18.7469,
+      "sin_calibrar_en_banda": true,
+      "k": 0.9029,
+      "iteraciones": 2
+    },
+    {
+      "grupo": "canonica",
+      "caso": "motociclista/per-b1",
+      "semilla": 1016,
+      "objetivo_m": 15.2828,
+      "banda_m": [
+        11.4095,
+        19.4437
+      ],
+      "distancia_m": 15.4227,
+      "en_banda": true,
+      "sin_calibrar_m": 16.6092,
+      "sin_calibrar_en_banda": true,
+      "k": 0.9592,
+      "iteraciones": 2
+    },
+    {
+      "grupo": "canonica",
+      "caso": "motociclista/per-b1",
+      "semilla": 1017,
+      "objetivo_m": 15.2828,
+      "banda_m": [
+        11.4095,
+        19.4437
+      ],
+      "distancia_m": 16.108,
+      "en_banda": true,
+      "sin_calibrar_m": 16.2616,
+      "sin_calibrar_en_banda": true,
+      "k": 0.9694,
+      "iteraciones": 2
+    },
+    {
+      "grupo": "canonica",
+      "caso": "motociclista/per-b1",
+      "semilla": 1018,
+      "objetivo_m": 15.2828,
+      "banda_m": [
+        11.4095,
+        19.4437
+      ],
+      "distancia_m": 15.978,
+      "en_banda": true,
+      "sin_calibrar_m": 15.978,
+      "sin_calibrar_en_banda": true,
+      "k": 1,
+      "iteraciones": 2
+    },
+    {
+      "grupo": "canonica",
+      "caso": "motociclista/per-b1",
+      "semilla": 1019,
+      "objetivo_m": 15.2828,
+      "banda_m": [
+        11.4095,
+        19.4437
+      ],
+      "distancia_m": 15.9484,
+      "en_banda": true,
+      "sin_calibrar_m": 16.1331,
+      "sin_calibrar_en_banda": true,
+      "k": 0.9733,
+      "iteraciones": 2
+    },
+    {
+      "grupo": "canonica",
+      "caso": "motociclista/per-b1",
+      "semilla": 1020,
+      "objetivo_m": 15.2828,
+      "banda_m": [
+        11.4095,
+        19.4437
+      ],
+      "distancia_m": 15.3346,
+      "en_banda": true,
+      "sin_calibrar_m": 17.6422,
+      "sin_calibrar_en_banda": true,
+      "k": 0.9307,
+      "iteraciones": 2
+    },
+    {
+      "grupo": "canonica",
+      "caso": "motociclista/per-b1",
+      "semilla": 1021,
+      "objetivo_m": 15.2828,
+      "banda_m": [
+        11.4095,
+        19.4437
+      ],
+      "distancia_m": 14.5915,
+      "en_banda": true,
+      "sin_calibrar_m": 18.561,
+      "sin_calibrar_en_banda": true,
+      "k": 0.9074,
+      "iteraciones": 2
+    },
+    {
+      "grupo": "canonica",
+      "caso": "motociclista/per-b1",
+      "semilla": 1022,
+      "objetivo_m": 15.2828,
+      "banda_m": [
+        11.4095,
+        19.4437
+      ],
+      "distancia_m": 15.1144,
+      "en_banda": true,
+      "sin_calibrar_m": 17.5242,
+      "sin_calibrar_en_banda": true,
+      "k": 0.9339,
+      "iteraciones": 2
+    },
+    {
+      "grupo": "canonica",
+      "caso": "motociclista/per-b1",
+      "semilla": 1023,
+      "objetivo_m": 15.2828,
+      "banda_m": [
+        11.4095,
+        19.4437
+      ],
+      "distancia_m": 15.9943,
+      "en_banda": true,
+      "sin_calibrar_m": 17.6588,
+      "sin_calibrar_en_banda": true,
+      "k": 0.9303,
+      "iteraciones": 2
+    },
+    {
+      "grupo": "canonica",
+      "caso": "motociclista/per-b1",
+      "semilla": 1024,
+      "objetivo_m": 15.2828,
+      "banda_m": [
+        11.4095,
+        19.4437
+      ],
+      "distancia_m": 14.9579,
+      "en_banda": true,
+      "sin_calibrar_m": 16.5516,
+      "sin_calibrar_en_banda": true,
+      "k": 0.9609,
+      "iteraciones": 2
+    },
+    {
+      "grupo": "canonica",
+      "caso": "motociclista/per-b1",
+      "semilla": 1025,
+      "objetivo_m": 15.2828,
+      "banda_m": [
+        11.4095,
+        19.4437
+      ],
+      "distancia_m": 15.8477,
+      "en_banda": true,
+      "sin_calibrar_m": 16.6476,
+      "sin_calibrar_en_banda": true,
+      "k": 0.9581,
+      "iteraciones": 2
+    },
+    {
+      "grupo": "canonica",
+      "caso": "motociclista/per-b1",
+      "semilla": 1026,
+      "objetivo_m": 15.2828,
+      "banda_m": [
+        11.4095,
+        19.4437
+      ],
+      "distancia_m": 15.3506,
+      "en_banda": true,
+      "sin_calibrar_m": 16.9425,
+      "sin_calibrar_en_banda": true,
+      "k": 0.9498,
+      "iteraciones": 2
+    },
+    {
+      "grupo": "canonica",
+      "caso": "motociclista/per-b1",
+      "semilla": 1027,
+      "objetivo_m": 15.2828,
+      "banda_m": [
+        11.4095,
+        19.4437
+      ],
+      "distancia_m": 15.0324,
+      "en_banda": true,
+      "sin_calibrar_m": 17.2847,
+      "sin_calibrar_en_banda": true,
+      "k": 0.9403,
+      "iteraciones": 2
+    },
+    {
+      "grupo": "canonica",
+      "caso": "motociclista/per-b1",
+      "semilla": 1028,
+      "objetivo_m": 15.2828,
+      "banda_m": [
+        11.4095,
+        19.4437
+      ],
+      "distancia_m": 14.5334,
+      "en_banda": true,
+      "sin_calibrar_m": 16.4993,
+      "sin_calibrar_en_banda": true,
+      "k": 0.9624,
+      "iteraciones": 2
+    },
+    {
+      "grupo": "canonica",
+      "caso": "motociclista/per-b1",
+      "semilla": 1029,
+      "objetivo_m": 15.2828,
+      "banda_m": [
+        11.4095,
+        19.4437
+      ],
+      "distancia_m": 16.3086,
+      "en_banda": true,
+      "sin_calibrar_m": 16.8178,
+      "sin_calibrar_en_banda": true,
+      "k": 0.9533,
+      "iteraciones": 2
+    },
+    {
+      "grupo": "canonica",
+      "caso": "motociclista/per-b1",
+      "semilla": 1030,
+      "objetivo_m": 15.2828,
+      "banda_m": [
+        11.4095,
+        19.4437
+      ],
+      "distancia_m": 15.5097,
+      "en_banda": true,
+      "sin_calibrar_m": 16.7991,
+      "sin_calibrar_en_banda": true,
+      "k": 0.9538,
+      "iteraciones": 2
+    },
+    {
+      "grupo": "canonica",
+      "caso": "motociclista/per-b1",
+      "semilla": 1031,
+      "objetivo_m": 15.2828,
+      "banda_m": [
+        11.4095,
+        19.4437
+      ],
+      "distancia_m": 15.249,
+      "en_banda": true,
+      "sin_calibrar_m": 17.0765,
+      "sin_calibrar_en_banda": true,
+      "k": 0.946,
+      "iteraciones": 2
+    },
+    {
+      "grupo": "canonica",
+      "caso": "motociclista/per-b1",
+      "semilla": 1032,
+      "objetivo_m": 15.2828,
+      "banda_m": [
+        11.4095,
+        19.4437
+      ],
+      "distancia_m": 16.0724,
+      "en_banda": true,
+      "sin_calibrar_m": 17.7665,
+      "sin_calibrar_en_banda": true,
+      "k": 0.9275,
+      "iteraciones": 2
+    },
+    {
+      "grupo": "canonica",
+      "caso": "motociclista/per-b1",
+      "semilla": 1033,
+      "objetivo_m": 15.2828,
+      "banda_m": [
+        11.4095,
+        19.4437
+      ],
+      "distancia_m": 15.5891,
+      "en_banda": true,
+      "sin_calibrar_m": 17.1158,
+      "sin_calibrar_en_banda": true,
+      "k": 0.9449,
+      "iteraciones": 2
+    },
+    {
+      "grupo": "canonica",
+      "caso": "motociclista/per-b1",
+      "semilla": 1034,
+      "objetivo_m": 15.2828,
+      "banda_m": [
+        11.4095,
+        19.4437
+      ],
+      "distancia_m": 15.9795,
+      "en_banda": true,
+      "sin_calibrar_m": 17.145,
+      "sin_calibrar_en_banda": true,
+      "k": 0.9441,
+      "iteraciones": 2
+    },
+    {
+      "grupo": "canonica",
+      "caso": "motociclista/per-b1",
+      "semilla": 1035,
+      "objetivo_m": 15.2828,
+      "banda_m": [
+        11.4095,
+        19.4437
+      ],
+      "distancia_m": 16.2914,
+      "en_banda": true,
+      "sin_calibrar_m": 16.3226,
+      "sin_calibrar_en_banda": true,
+      "k": 0.9676,
+      "iteraciones": 2
+    },
+    {
+      "grupo": "canonica",
+      "caso": "motociclista/per-b1",
+      "semilla": 1036,
+      "objetivo_m": 15.2828,
+      "banda_m": [
+        11.4095,
+        19.4437
+      ],
+      "distancia_m": 15.786,
+      "en_banda": true,
+      "sin_calibrar_m": 16.9848,
+      "sin_calibrar_en_banda": true,
+      "k": 0.9486,
+      "iteraciones": 2
+    },
+    {
+      "grupo": "canonica",
+      "caso": "motociclista/per-b1",
+      "semilla": 1037,
+      "objetivo_m": 15.2828,
+      "banda_m": [
+        11.4095,
+        19.4437
+      ],
+      "distancia_m": 15.8793,
+      "en_banda": true,
+      "sin_calibrar_m": 17.8201,
+      "sin_calibrar_en_banda": true,
+      "k": 0.9261,
+      "iteraciones": 2
+    },
+    {
+      "grupo": "canonica",
+      "caso": "motociclista/per-b1",
+      "semilla": 1038,
+      "objetivo_m": 15.2828,
+      "banda_m": [
+        11.4095,
+        19.4437
+      ],
+      "distancia_m": 15.0922,
+      "en_banda": true,
+      "sin_calibrar_m": 18.3952,
+      "sin_calibrar_en_banda": true,
+      "k": 0.9115,
+      "iteraciones": 2
+    },
+    {
+      "grupo": "canonica",
+      "caso": "motociclista/per-b1",
+      "semilla": 1039,
+      "objetivo_m": 15.2828,
+      "banda_m": [
+        11.4095,
+        19.4437
+      ],
+      "distancia_m": 15.9176,
+      "en_banda": true,
+      "sin_calibrar_m": 16.7716,
+      "sin_calibrar_en_banda": true,
+      "k": 0.9546,
+      "iteraciones": 2
+    },
+    {
+      "grupo": "canonica",
+      "caso": "motociclista/per-b1",
+      "semilla": 1040,
+      "objetivo_m": 15.2828,
+      "banda_m": [
+        11.4095,
+        19.4437
+      ],
+      "distancia_m": 16.0467,
+      "en_banda": true,
+      "sin_calibrar_m": 16.4077,
+      "sin_calibrar_en_banda": true,
+      "k": 0.9651,
+      "iteraciones": 2
+    },
+    {
+      "grupo": "canonica",
+      "caso": "motociclista/per-b1",
+      "semilla": 1041,
+      "objetivo_m": 15.2828,
+      "banda_m": [
+        11.4095,
+        19.4437
+      ],
+      "distancia_m": 14.6229,
+      "en_banda": true,
+      "sin_calibrar_m": 16.7186,
+      "sin_calibrar_en_banda": true,
+      "k": 0.9561,
+      "iteraciones": 2
+    },
+    {
+      "grupo": "canonica",
+      "caso": "motociclista/per-b1",
+      "semilla": 1042,
+      "objetivo_m": 15.2828,
+      "banda_m": [
+        11.4095,
+        19.4437
+      ],
+      "distancia_m": 16.4596,
+      "en_banda": true,
+      "sin_calibrar_m": 16.6777,
+      "sin_calibrar_en_banda": true,
+      "k": 0.9573,
+      "iteraciones": 2
+    },
+    {
+      "grupo": "canonica",
+      "caso": "motociclista/per-b1",
+      "semilla": 1043,
+      "objetivo_m": 15.2828,
+      "banda_m": [
+        11.4095,
+        19.4437
+      ],
+      "distancia_m": 16.2038,
+      "en_banda": true,
+      "sin_calibrar_m": 17.0757,
+      "sin_calibrar_en_banda": true,
+      "k": 0.946,
+      "iteraciones": 2
+    },
+    {
+      "grupo": "canonica",
+      "caso": "motociclista/per-b1",
+      "semilla": 1044,
+      "objetivo_m": 15.2828,
+      "banda_m": [
+        11.4095,
+        19.4437
+      ],
+      "distancia_m": 16.0663,
+      "en_banda": true,
+      "sin_calibrar_m": 16.7054,
+      "sin_calibrar_en_banda": true,
+      "k": 0.9565,
+      "iteraciones": 2
+    },
+    {
+      "grupo": "canonica",
+      "caso": "motociclista/per-b1",
+      "semilla": 1045,
+      "objetivo_m": 15.2828,
+      "banda_m": [
+        11.4095,
+        19.4437
+      ],
+      "distancia_m": 15.4645,
+      "en_banda": true,
+      "sin_calibrar_m": 15.9167,
+      "sin_calibrar_en_banda": true,
+      "k": 0.9799,
+      "iteraciones": 2
+    },
+    {
+      "grupo": "canonica",
+      "caso": "motociclista/per-b1",
+      "semilla": 1046,
+      "objetivo_m": 15.2828,
+      "banda_m": [
+        11.4095,
+        19.4437
+      ],
+      "distancia_m": 15.8051,
+      "en_banda": true,
+      "sin_calibrar_m": 15.8051,
+      "sin_calibrar_en_banda": true,
+      "k": 1,
+      "iteraciones": 2
+    },
+    {
+      "grupo": "canonica",
+      "caso": "motociclista/per-b1",
+      "semilla": 1047,
+      "objetivo_m": 15.2828,
+      "banda_m": [
+        11.4095,
+        19.4437
+      ],
+      "distancia_m": 15.5675,
+      "en_banda": true,
+      "sin_calibrar_m": 16.1933,
+      "sin_calibrar_en_banda": true,
+      "k": 0.9715,
+      "iteraciones": 2
+    },
+    {
+      "grupo": "canonica",
+      "caso": "motociclista/per-b1",
+      "semilla": 1048,
+      "objetivo_m": 15.2828,
+      "banda_m": [
+        11.4095,
+        19.4437
+      ],
+      "distancia_m": 15.4836,
+      "en_banda": true,
+      "sin_calibrar_m": 15.4836,
+      "sin_calibrar_en_banda": true,
+      "k": 1,
+      "iteraciones": 3
+    },
+    {
+      "grupo": "canonica",
+      "caso": "motociclista/per-b1",
+      "semilla": 1049,
+      "objetivo_m": 15.2828,
+      "banda_m": [
+        11.4095,
+        19.4437
+      ],
+      "distancia_m": 15.5557,
+      "en_banda": true,
+      "sin_calibrar_m": 16.18,
+      "sin_calibrar_en_banda": true,
+      "k": 0.9719,
+      "iteraciones": 2
+    },
+    {
+      "grupo": "sintetico",
+      "caso": "nino/20kmh",
+      "semilla": 6940,
+      "objetivo_m": 2.7858,
+      "banda_m": [
+        2.2125,
+        3.3948
+      ],
+      "distancia_m": 2.8986,
+      "en_banda": true,
+      "sin_calibrar_m": 3.3891,
+      "sin_calibrar_en_banda": true,
+      "k": 0.9066,
+      "iteraciones": 2
+    },
+    {
+      "grupo": "sintetico",
+      "caso": "nino/20kmh",
+      "semilla": 6941,
+      "objetivo_m": 2.7858,
+      "banda_m": [
+        2.2125,
+        3.3948
+      ],
+      "distancia_m": 2.7197,
+      "en_banda": true,
+      "sin_calibrar_m": 3.329,
+      "sin_calibrar_en_banda": true,
+      "k": 0.9148,
+      "iteraciones": 2
+    },
+    {
+      "grupo": "sintetico",
+      "caso": "nino/20kmh",
+      "semilla": 6942,
+      "objetivo_m": 2.7858,
+      "banda_m": [
+        2.2125,
+        3.3948
+      ],
+      "distancia_m": 2.8694,
+      "en_banda": true,
+      "sin_calibrar_m": 3.0739,
+      "sin_calibrar_en_banda": true,
+      "k": 0.952,
+      "iteraciones": 2
+    },
+    {
+      "grupo": "sintetico",
+      "caso": "nino/20kmh",
+      "semilla": 6943,
+      "objetivo_m": 2.7858,
+      "banda_m": [
+        2.2125,
+        3.3948
+      ],
+      "distancia_m": 2.7762,
+      "en_banda": true,
+      "sin_calibrar_m": 3.1593,
+      "sin_calibrar_en_banda": true,
+      "k": 0.939,
+      "iteraciones": 2
+    },
+    {
+      "grupo": "sintetico",
+      "caso": "nino/20kmh",
+      "semilla": 6944,
+      "objetivo_m": 2.7858,
+      "banda_m": [
+        2.2125,
+        3.3948
+      ],
+      "distancia_m": 2.8677,
+      "en_banda": true,
+      "sin_calibrar_m": 3.0988,
+      "sin_calibrar_en_banda": true,
+      "k": 0.9481,
+      "iteraciones": 2
+    },
+    {
+      "grupo": "sintetico",
+      "caso": "nino/20kmh",
+      "semilla": 6945,
+      "objetivo_m": 2.7858,
+      "banda_m": [
+        2.2125,
+        3.3948
+      ],
+      "distancia_m": 2.6351,
+      "en_banda": true,
+      "sin_calibrar_m": 3.1234,
+      "sin_calibrar_en_banda": true,
+      "k": 0.8988,
+      "iteraciones": 4
+    },
+    {
+      "grupo": "sintetico",
+      "caso": "nino/20kmh",
+      "semilla": 6946,
+      "objetivo_m": 2.7858,
+      "banda_m": [
+        2.2125,
+        3.3948
+      ],
+      "distancia_m": 2.8074,
+      "en_banda": true,
+      "sin_calibrar_m": 3.4205,
+      "sin_calibrar_en_banda": false,
+      "k": 0.9025,
+      "iteraciones": 2
+    },
+    {
+      "grupo": "sintetico",
+      "caso": "nino/20kmh",
+      "semilla": 6947,
+      "objetivo_m": 2.7858,
+      "banda_m": [
+        2.2125,
+        3.3948
+      ],
+      "distancia_m": 2.7387,
+      "en_banda": true,
+      "sin_calibrar_m": 2.9262,
+      "sin_calibrar_en_banda": true,
+      "k": 0.9042,
+      "iteraciones": 4
+    },
+    {
+      "grupo": "sintetico",
+      "caso": "nino/20kmh",
+      "semilla": 6948,
+      "objetivo_m": 2.7858,
+      "banda_m": [
+        2.2125,
+        3.3948
+      ],
+      "distancia_m": 2.6636,
+      "en_banda": true,
+      "sin_calibrar_m": 3.3426,
+      "sin_calibrar_en_banda": true,
+      "k": 0.9129,
+      "iteraciones": 2
+    },
+    {
+      "grupo": "sintetico",
+      "caso": "nino/20kmh",
+      "semilla": 6949,
+      "objetivo_m": 2.7858,
+      "banda_m": [
+        2.2125,
+        3.3948
+      ],
+      "distancia_m": 2.6551,
+      "en_banda": true,
+      "sin_calibrar_m": 3.1601,
+      "sin_calibrar_en_banda": true,
+      "k": 0.9014,
+      "iteraciones": 4
+    },
+    {
+      "grupo": "sintetico",
+      "caso": "nino/20kmh",
+      "semilla": 6950,
+      "objetivo_m": 2.7858,
+      "banda_m": [
+        2.2125,
+        3.3948
+      ],
+      "distancia_m": 2.9058,
+      "en_banda": true,
+      "sin_calibrar_m": 3.3522,
+      "sin_calibrar_en_banda": true,
+      "k": 0.9116,
+      "iteraciones": 2
+    },
+    {
+      "grupo": "sintetico",
+      "caso": "nino/20kmh",
+      "semilla": 6951,
+      "objetivo_m": 2.7858,
+      "banda_m": [
+        2.2125,
+        3.3948
+      ],
+      "distancia_m": 2.989,
+      "en_banda": true,
+      "sin_calibrar_m": 3.29,
+      "sin_calibrar_en_banda": true,
+      "k": 0.9202,
+      "iteraciones": 2
+    },
+    {
+      "grupo": "sintetico",
+      "caso": "nino/20kmh",
+      "semilla": 6952,
+      "objetivo_m": 2.7858,
+      "banda_m": [
+        2.2125,
+        3.3948
+      ],
+      "distancia_m": 2.6651,
+      "en_banda": true,
+      "sin_calibrar_m": 3.3113,
+      "sin_calibrar_en_banda": true,
+      "k": 0.9172,
+      "iteraciones": 2
+    },
+    {
+      "grupo": "sintetico",
+      "caso": "nino/20kmh",
+      "semilla": 6953,
+      "objetivo_m": 2.7858,
+      "banda_m": [
+        2.2125,
+        3.3948
+      ],
+      "distancia_m": 2.5758,
+      "en_banda": true,
+      "sin_calibrar_m": 3.2449,
+      "sin_calibrar_en_banda": true,
+      "k": 0.9266,
+      "iteraciones": 2
+    },
+    {
+      "grupo": "sintetico",
+      "caso": "nino/20kmh",
+      "semilla": 6954,
+      "objetivo_m": 2.7858,
+      "banda_m": [
+        2.2125,
+        3.3948
+      ],
+      "distancia_m": 2.9827,
+      "en_banda": true,
+      "sin_calibrar_m": 3.1181,
+      "sin_calibrar_en_banda": true,
+      "k": 0.9452,
+      "iteraciones": 2
+    },
+    {
+      "grupo": "sintetico",
+      "caso": "nino/20kmh",
+      "semilla": 6955,
+      "objetivo_m": 2.7858,
+      "banda_m": [
+        2.2125,
+        3.3948
+      ],
+      "distancia_m": 2.8897,
+      "en_banda": true,
+      "sin_calibrar_m": 3.2224,
+      "sin_calibrar_en_banda": true,
+      "k": 0.9298,
+      "iteraciones": 2
+    },
+    {
+      "grupo": "sintetico",
+      "caso": "nino/20kmh",
+      "semilla": 6956,
+      "objetivo_m": 2.7858,
+      "banda_m": [
+        2.2125,
+        3.3948
+      ],
+      "distancia_m": 2.9046,
+      "en_banda": true,
+      "sin_calibrar_m": 3.2503,
+      "sin_calibrar_en_banda": true,
+      "k": 0.9258,
+      "iteraciones": 2
+    },
+    {
+      "grupo": "sintetico",
+      "caso": "nino/20kmh",
+      "semilla": 6957,
+      "objetivo_m": 2.7858,
+      "banda_m": [
+        2.2125,
+        3.3948
+      ],
+      "distancia_m": 2.804,
+      "en_banda": true,
+      "sin_calibrar_m": 3.2153,
+      "sin_calibrar_en_banda": true,
+      "k": 0.9308,
+      "iteraciones": 2
+    },
+    {
+      "grupo": "sintetico",
+      "caso": "nino/20kmh",
+      "semilla": 6958,
+      "objetivo_m": 2.7858,
+      "banda_m": [
+        2.2125,
+        3.3948
+      ],
+      "distancia_m": 2.8839,
+      "en_banda": true,
+      "sin_calibrar_m": 3.0555,
+      "sin_calibrar_en_banda": true,
+      "k": 0.9548,
+      "iteraciones": 2
+    },
+    {
+      "grupo": "sintetico",
+      "caso": "nino/20kmh",
+      "semilla": 6959,
+      "objetivo_m": 2.7858,
+      "banda_m": [
+        2.2125,
+        3.3948
+      ],
+      "distancia_m": 2.9718,
+      "en_banda": true,
+      "sin_calibrar_m": 3.1999,
+      "sin_calibrar_en_banda": true,
+      "k": 0.9577,
+      "iteraciones": 3
+    },
+    {
+      "grupo": "sintetico",
+      "caso": "nino/30kmh",
+      "semilla": 7910,
+      "objetivo_m": 5.7038,
+      "banda_m": [
+        4.3369,
+        7.168
+      ],
+      "distancia_m": 5.8765,
+      "en_banda": true,
+      "sin_calibrar_m": 6.5074,
+      "sin_calibrar_en_banda": true,
+      "k": 0.9362,
+      "iteraciones": 2
+    },
+    {
+      "grupo": "sintetico",
+      "caso": "nino/30kmh",
+      "semilla": 7911,
+      "objetivo_m": 5.7038,
+      "banda_m": [
+        4.3369,
+        7.168
+      ],
+      "distancia_m": 5.5081,
+      "en_banda": true,
+      "sin_calibrar_m": 6.9529,
+      "sin_calibrar_en_banda": true,
+      "k": 0.9057,
+      "iteraciones": 2
+    },
+    {
+      "grupo": "sintetico",
+      "caso": "nino/30kmh",
+      "semilla": 7912,
+      "objetivo_m": 5.7038,
+      "banda_m": [
+        4.3369,
+        7.168
+      ],
+      "distancia_m": 5.9634,
+      "en_banda": true,
+      "sin_calibrar_m": 6.5945,
+      "sin_calibrar_en_banda": true,
+      "k": 0.93,
+      "iteraciones": 2
+    },
+    {
+      "grupo": "sintetico",
+      "caso": "nino/30kmh",
+      "semilla": 7913,
+      "objetivo_m": 5.7038,
+      "banda_m": [
+        4.3369,
+        7.168
+      ],
+      "distancia_m": 5.999,
+      "en_banda": true,
+      "sin_calibrar_m": 6.7035,
+      "sin_calibrar_en_banda": true,
+      "k": 0.9224,
+      "iteraciones": 2
+    },
+    {
+      "grupo": "sintetico",
+      "caso": "nino/30kmh",
+      "semilla": 7914,
+      "objetivo_m": 5.7038,
+      "banda_m": [
+        4.3369,
+        7.168
+      ],
+      "distancia_m": 5.4696,
+      "en_banda": true,
+      "sin_calibrar_m": 6.4262,
+      "sin_calibrar_en_banda": true,
+      "k": 0.8892,
+      "iteraciones": 4
+    },
+    {
+      "grupo": "sintetico",
+      "caso": "nino/30kmh",
+      "semilla": 7915,
+      "objetivo_m": 5.7038,
+      "banda_m": [
+        4.3369,
+        7.168
+      ],
+      "distancia_m": 5.5797,
+      "en_banda": true,
+      "sin_calibrar_m": 7.1595,
+      "sin_calibrar_en_banda": true,
+      "k": 0.8926,
+      "iteraciones": 2
+    },
+    {
+      "grupo": "sintetico",
+      "caso": "nino/30kmh",
+      "semilla": 7916,
+      "objetivo_m": 5.7038,
+      "banda_m": [
+        4.3369,
+        7.168
+      ],
+      "distancia_m": 5.7128,
+      "en_banda": true,
+      "sin_calibrar_m": 6.7521,
+      "sin_calibrar_en_banda": true,
+      "k": 0.9191,
+      "iteraciones": 2
+    },
+    {
+      "grupo": "sintetico",
+      "caso": "nino/30kmh",
+      "semilla": 7917,
+      "objetivo_m": 5.7038,
+      "banda_m": [
+        4.3369,
+        7.168
+      ],
+      "distancia_m": 6.1206,
+      "en_banda": true,
+      "sin_calibrar_m": 6.8774,
+      "sin_calibrar_en_banda": true,
+      "k": 0.9107,
+      "iteraciones": 2
+    },
+    {
+      "grupo": "sintetico",
+      "caso": "nino/30kmh",
+      "semilla": 7918,
+      "objetivo_m": 5.7038,
+      "banda_m": [
+        4.3369,
+        7.168
+      ],
+      "distancia_m": 6.0022,
+      "en_banda": true,
+      "sin_calibrar_m": 6.4815,
+      "sin_calibrar_en_banda": true,
+      "k": 0.9381,
+      "iteraciones": 2
+    },
+    {
+      "grupo": "sintetico",
+      "caso": "nino/30kmh",
+      "semilla": 7919,
+      "objetivo_m": 5.7038,
+      "banda_m": [
+        4.3369,
+        7.168
+      ],
+      "distancia_m": 5.9062,
+      "en_banda": true,
+      "sin_calibrar_m": 6.5823,
+      "sin_calibrar_en_banda": true,
+      "k": 0.9309,
+      "iteraciones": 2
+    },
+    {
+      "grupo": "sintetico",
+      "caso": "nino/30kmh",
+      "semilla": 7920,
+      "objetivo_m": 5.7038,
+      "banda_m": [
+        4.3369,
+        7.168
+      ],
+      "distancia_m": 5.4746,
+      "en_banda": true,
+      "sin_calibrar_m": 6.5571,
+      "sin_calibrar_en_banda": true,
+      "k": 0.8954,
+      "iteraciones": 4
+    },
+    {
+      "grupo": "sintetico",
+      "caso": "nino/30kmh",
+      "semilla": 7921,
+      "objetivo_m": 5.7038,
+      "banda_m": [
+        4.3369,
+        7.168
+      ],
+      "distancia_m": 5.6821,
+      "en_banda": true,
+      "sin_calibrar_m": 6.6891,
+      "sin_calibrar_en_banda": true,
+      "k": 0.9234,
+      "iteraciones": 2
+    },
+    {
+      "grupo": "sintetico",
+      "caso": "nino/30kmh",
+      "semilla": 7922,
+      "objetivo_m": 5.7038,
+      "banda_m": [
+        4.3369,
+        7.168
+      ],
+      "distancia_m": 5.8018,
+      "en_banda": true,
+      "sin_calibrar_m": 7.1932,
+      "sin_calibrar_en_banda": false,
+      "k": 0.8905,
+      "iteraciones": 2
+    },
+    {
+      "grupo": "sintetico",
+      "caso": "nino/30kmh",
+      "semilla": 7923,
+      "objetivo_m": 5.7038,
+      "banda_m": [
+        4.3369,
+        7.168
+      ],
+      "distancia_m": 5.4337,
+      "en_banda": true,
+      "sin_calibrar_m": 6.9735,
+      "sin_calibrar_en_banda": true,
+      "k": 0.9044,
+      "iteraciones": 2
+    },
+    {
+      "grupo": "sintetico",
+      "caso": "nino/30kmh",
+      "semilla": 7924,
+      "objetivo_m": 5.7038,
+      "banda_m": [
+        4.3369,
+        7.168
+      ],
+      "distancia_m": 5.9775,
+      "en_banda": true,
+      "sin_calibrar_m": 6.4843,
+      "sin_calibrar_en_banda": true,
+      "k": 0.9189,
+      "iteraciones": 5
+    },
+    {
+      "grupo": "sintetico",
+      "caso": "nino/30kmh",
+      "semilla": 7925,
+      "objetivo_m": 5.7038,
+      "banda_m": [
+        4.3369,
+        7.168
+      ],
+      "distancia_m": 5.5195,
+      "en_banda": true,
+      "sin_calibrar_m": 6.9799,
+      "sin_calibrar_en_banda": true,
+      "k": 0.904,
+      "iteraciones": 2
+    },
+    {
+      "grupo": "sintetico",
+      "caso": "nino/30kmh",
+      "semilla": 7926,
+      "objetivo_m": 5.7038,
+      "banda_m": [
+        4.3369,
+        7.168
+      ],
+      "distancia_m": 5.6191,
+      "en_banda": true,
+      "sin_calibrar_m": 6.8861,
+      "sin_calibrar_en_banda": true,
+      "k": 0.9101,
+      "iteraciones": 2
+    },
+    {
+      "grupo": "sintetico",
+      "caso": "nino/30kmh",
+      "semilla": 7927,
+      "objetivo_m": 5.7038,
+      "banda_m": [
+        4.3369,
+        7.168
+      ],
+      "distancia_m": 6.0046,
+      "en_banda": true,
+      "sin_calibrar_m": 6.7741,
+      "sin_calibrar_en_banda": true,
+      "k": 0.9176,
+      "iteraciones": 2
+    },
+    {
+      "grupo": "sintetico",
+      "caso": "nino/30kmh",
+      "semilla": 7928,
+      "objetivo_m": 5.7038,
+      "banda_m": [
+        4.3369,
+        7.168
+      ],
+      "distancia_m": 5.5958,
+      "en_banda": true,
+      "sin_calibrar_m": 6.8438,
+      "sin_calibrar_en_banda": true,
+      "k": 0.9129,
+      "iteraciones": 2
+    },
+    {
+      "grupo": "sintetico",
+      "caso": "nino/30kmh",
+      "semilla": 7929,
+      "objetivo_m": 5.7038,
+      "banda_m": [
+        4.3369,
+        7.168
+      ],
+      "distancia_m": 5.8285,
+      "en_banda": true,
+      "sin_calibrar_m": 6.5278,
+      "sin_calibrar_en_banda": true,
+      "k": 0.9348,
+      "iteraciones": 2
+    },
+    {
+      "grupo": "sintetico",
+      "caso": "nino/40kmh",
+      "semilla": 8880,
+      "objetivo_m": 9.7889,
+      "banda_m": [
+        7.3111,
+        12.4506
+      ],
+      "distancia_m": 10.2999,
+      "en_banda": true,
+      "sin_calibrar_m": 10.7374,
+      "sin_calibrar_en_banda": true,
+      "k": 0.9548,
+      "iteraciones": 2
+    },
+    {
+      "grupo": "sintetico",
+      "caso": "nino/40kmh",
+      "semilla": 8881,
+      "objetivo_m": 9.7889,
+      "banda_m": [
+        7.3111,
+        12.4506
+      ],
+      "distancia_m": 9.6191,
+      "en_banda": true,
+      "sin_calibrar_m": 11.4351,
+      "sin_calibrar_en_banda": true,
+      "k": 0.9252,
+      "iteraciones": 2
+    },
+    {
+      "grupo": "sintetico",
+      "caso": "nino/40kmh",
+      "semilla": 8882,
+      "objetivo_m": 9.7889,
+      "banda_m": [
+        7.3111,
+        12.4506
+      ],
+      "distancia_m": 10.2517,
+      "en_banda": true,
+      "sin_calibrar_m": 10.6173,
+      "sin_calibrar_en_banda": true,
+      "k": 0.9602,
+      "iteraciones": 2
+    },
+    {
+      "grupo": "sintetico",
+      "caso": "nino/40kmh",
+      "semilla": 8883,
+      "objetivo_m": 9.7889,
+      "banda_m": [
+        7.3111,
+        12.4506
+      ],
+      "distancia_m": 9.4631,
+      "en_banda": true,
+      "sin_calibrar_m": 11.0143,
+      "sin_calibrar_en_banda": true,
+      "k": 0.9427,
+      "iteraciones": 2
+    },
+    {
+      "grupo": "sintetico",
+      "caso": "nino/40kmh",
+      "semilla": 8884,
+      "objetivo_m": 9.7889,
+      "banda_m": [
+        7.3111,
+        12.4506
+      ],
+      "distancia_m": 9.8483,
+      "en_banda": true,
+      "sin_calibrar_m": 10.7768,
+      "sin_calibrar_en_banda": true,
+      "k": 0.9531,
+      "iteraciones": 2
+    },
+    {
+      "grupo": "sintetico",
+      "caso": "nino/40kmh",
+      "semilla": 8885,
+      "objetivo_m": 9.7889,
+      "banda_m": [
+        7.3111,
+        12.4506
+      ],
+      "distancia_m": 10.0994,
+      "en_banda": true,
+      "sin_calibrar_m": 11.1168,
+      "sin_calibrar_en_banda": true,
+      "k": 0.9384,
+      "iteraciones": 2
+    },
+    {
+      "grupo": "sintetico",
+      "caso": "nino/40kmh",
+      "semilla": 8886,
+      "objetivo_m": 9.7889,
+      "banda_m": [
+        7.3111,
+        12.4506
+      ],
+      "distancia_m": 9.8588,
+      "en_banda": true,
+      "sin_calibrar_m": 10.8471,
+      "sin_calibrar_en_banda": true,
+      "k": 0.95,
+      "iteraciones": 2
+    },
+    {
+      "grupo": "sintetico",
+      "caso": "nino/40kmh",
+      "semilla": 8887,
+      "objetivo_m": 9.7889,
+      "banda_m": [
+        7.3111,
+        12.4506
+      ],
+      "distancia_m": 9.6705,
+      "en_banda": true,
+      "sin_calibrar_m": 10.957,
+      "sin_calibrar_en_banda": true,
+      "k": 0.9452,
+      "iteraciones": 2
+    },
+    {
+      "grupo": "sintetico",
+      "caso": "nino/40kmh",
+      "semilla": 8888,
+      "objetivo_m": 9.7889,
+      "banda_m": [
+        7.3111,
+        12.4506
+      ],
+      "distancia_m": 9.369,
+      "en_banda": true,
+      "sin_calibrar_m": 11.2164,
+      "sin_calibrar_en_banda": true,
+      "k": 0.9342,
+      "iteraciones": 2
+    },
+    {
+      "grupo": "sintetico",
+      "caso": "nino/40kmh",
+      "semilla": 8889,
+      "objetivo_m": 9.7889,
+      "banda_m": [
+        7.3111,
+        12.4506
+      ],
+      "distancia_m": 10.0285,
+      "en_banda": true,
+      "sin_calibrar_m": 11.0317,
+      "sin_calibrar_en_banda": true,
+      "k": 0.942,
+      "iteraciones": 2
+    },
+    {
+      "grupo": "sintetico",
+      "caso": "nino/40kmh",
+      "semilla": 8890,
+      "objetivo_m": 9.7889,
+      "banda_m": [
+        7.3111,
+        12.4506
+      ],
+      "distancia_m": 9.5787,
+      "en_banda": true,
+      "sin_calibrar_m": 10.8006,
+      "sin_calibrar_en_banda": true,
+      "k": 0.952,
+      "iteraciones": 2
+    },
+    {
+      "grupo": "sintetico",
+      "caso": "nino/40kmh",
+      "semilla": 8891,
+      "objetivo_m": 9.7889,
+      "banda_m": [
+        7.3111,
+        12.4506
+      ],
+      "distancia_m": 9.81,
+      "en_banda": true,
+      "sin_calibrar_m": 10.7608,
+      "sin_calibrar_en_banda": true,
+      "k": 0.9538,
+      "iteraciones": 2
+    },
+    {
+      "grupo": "sintetico",
+      "caso": "nino/40kmh",
+      "semilla": 8892,
+      "objetivo_m": 9.7889,
+      "banda_m": [
+        7.3111,
+        12.4506
+      ],
+      "distancia_m": 9.2417,
+      "en_banda": true,
+      "sin_calibrar_m": 11.455,
+      "sin_calibrar_en_banda": true,
+      "k": 0.9244,
+      "iteraciones": 2
+    },
+    {
+      "grupo": "sintetico",
+      "caso": "nino/40kmh",
+      "semilla": 8893,
+      "objetivo_m": 9.7889,
+      "banda_m": [
+        7.3111,
+        12.4506
+      ],
+      "distancia_m": 9.7999,
+      "en_banda": true,
+      "sin_calibrar_m": 10.5854,
+      "sin_calibrar_en_banda": true,
+      "k": 0.9616,
+      "iteraciones": 2
+    },
+    {
+      "grupo": "sintetico",
+      "caso": "nino/40kmh",
+      "semilla": 8894,
+      "objetivo_m": 9.7889,
+      "banda_m": [
+        7.3111,
+        12.4506
+      ],
+      "distancia_m": 10.2446,
+      "en_banda": true,
+      "sin_calibrar_m": 10.9818,
+      "sin_calibrar_en_banda": true,
+      "k": 0.9441,
+      "iteraciones": 2
+    },
+    {
+      "grupo": "sintetico",
+      "caso": "nino/40kmh",
+      "semilla": 8895,
+      "objetivo_m": 9.7889,
+      "banda_m": [
+        7.3111,
+        12.4506
+      ],
+      "distancia_m": 9.9641,
+      "en_banda": true,
+      "sin_calibrar_m": 11.0947,
+      "sin_calibrar_en_banda": true,
+      "k": 0.9393,
+      "iteraciones": 2
+    },
+    {
+      "grupo": "sintetico",
+      "caso": "nino/40kmh",
+      "semilla": 8896,
+      "objetivo_m": 9.7889,
+      "banda_m": [
+        7.3111,
+        12.4506
+      ],
+      "distancia_m": 9.8128,
+      "en_banda": true,
+      "sin_calibrar_m": 10.787,
+      "sin_calibrar_en_banda": true,
+      "k": 0.9526,
+      "iteraciones": 2
+    },
+    {
+      "grupo": "sintetico",
+      "caso": "nino/40kmh",
+      "semilla": 8897,
+      "objetivo_m": 9.7889,
+      "banda_m": [
+        7.3111,
+        12.4506
+      ],
+      "distancia_m": 9.7843,
+      "en_banda": true,
+      "sin_calibrar_m": 10.678,
+      "sin_calibrar_en_banda": true,
+      "k": 0.9575,
+      "iteraciones": 2
+    },
+    {
+      "grupo": "sintetico",
+      "caso": "nino/40kmh",
+      "semilla": 8898,
+      "objetivo_m": 9.7889,
+      "banda_m": [
+        7.3111,
+        12.4506
+      ],
+      "distancia_m": 10.1262,
+      "en_banda": true,
+      "sin_calibrar_m": 10.8815,
+      "sin_calibrar_en_banda": true,
+      "k": 0.9485,
+      "iteraciones": 2
+    },
+    {
+      "grupo": "sintetico",
+      "caso": "nino/40kmh",
+      "semilla": 8899,
+      "objetivo_m": 9.7889,
+      "banda_m": [
+        7.3111,
+        12.4506
+      ],
+      "distancia_m": 9.4099,
+      "en_banda": true,
+      "sin_calibrar_m": 11.0525,
+      "sin_calibrar_en_banda": true,
+      "k": 0.9411,
+      "iteraciones": 2
+    },
+    {
+      "grupo": "sintetico",
+      "caso": "nino/50kmh",
+      "semilla": 9850,
+      "objetivo_m": 15.0412,
+      "banda_m": [
+        11.135,
+        19.2424
+      ],
+      "distancia_m": 15.4282,
+      "en_banda": true,
+      "sin_calibrar_m": 16.0611,
+      "sin_calibrar_en_banda": true,
+      "k": 0.9677,
+      "iteraciones": 2
+    },
+    {
+      "grupo": "sintetico",
+      "caso": "nino/50kmh",
+      "semilla": 9851,
+      "objetivo_m": 15.0412,
+      "banda_m": [
+        11.135,
+        19.2424
+      ],
+      "distancia_m": 15.2512,
+      "en_banda": true,
+      "sin_calibrar_m": 16.3285,
+      "sin_calibrar_en_banda": true,
+      "k": 0.9598,
+      "iteraciones": 2
+    },
+    {
+      "grupo": "sintetico",
+      "caso": "nino/50kmh",
+      "semilla": 9852,
+      "objetivo_m": 15.0412,
+      "banda_m": [
+        11.135,
+        19.2424
+      ],
+      "distancia_m": 14.8411,
+      "en_banda": true,
+      "sin_calibrar_m": 16.7309,
+      "sin_calibrar_en_banda": true,
+      "k": 0.9482,
+      "iteraciones": 2
+    },
+    {
+      "grupo": "sintetico",
+      "caso": "nino/50kmh",
+      "semilla": 9853,
+      "objetivo_m": 15.0412,
+      "banda_m": [
+        11.135,
+        19.2424
+      ],
+      "distancia_m": 15.1143,
+      "en_banda": true,
+      "sin_calibrar_m": 15.9788,
+      "sin_calibrar_en_banda": true,
+      "k": 0.9702,
+      "iteraciones": 2
+    },
+    {
+      "grupo": "sintetico",
+      "caso": "nino/50kmh",
+      "semilla": 9854,
+      "objetivo_m": 15.0412,
+      "banda_m": [
+        11.135,
+        19.2424
+      ],
+      "distancia_m": 14.953,
+      "en_banda": true,
+      "sin_calibrar_m": 16.2429,
+      "sin_calibrar_en_banda": true,
+      "k": 0.9623,
+      "iteraciones": 2
+    },
+    {
+      "grupo": "sintetico",
+      "caso": "nino/50kmh",
+      "semilla": 9855,
+      "objetivo_m": 15.0412,
+      "banda_m": [
+        11.135,
+        19.2424
+      ],
+      "distancia_m": 15.2693,
+      "en_banda": true,
+      "sin_calibrar_m": 16.0522,
+      "sin_calibrar_en_banda": true,
+      "k": 0.968,
+      "iteraciones": 2
+    },
+    {
+      "grupo": "sintetico",
+      "caso": "nino/50kmh",
+      "semilla": 9856,
+      "objetivo_m": 15.0412,
+      "banda_m": [
+        11.135,
+        19.2424
+      ],
+      "distancia_m": 16.0523,
+      "en_banda": true,
+      "sin_calibrar_m": 16.2688,
+      "sin_calibrar_en_banda": true,
+      "k": 0.9615,
+      "iteraciones": 2
+    },
+    {
+      "grupo": "sintetico",
+      "caso": "nino/50kmh",
+      "semilla": 9857,
+      "objetivo_m": 15.0412,
+      "banda_m": [
+        11.135,
+        19.2424
+      ],
+      "distancia_m": 15.4639,
+      "en_banda": true,
+      "sin_calibrar_m": 16.0087,
+      "sin_calibrar_en_banda": true,
+      "k": 0.9693,
+      "iteraciones": 2
+    },
+    {
+      "grupo": "sintetico",
+      "caso": "nino/50kmh",
+      "semilla": 9858,
+      "objetivo_m": 15.0412,
+      "banda_m": [
+        11.135,
+        19.2424
+      ],
+      "distancia_m": 15.435,
+      "en_banda": true,
+      "sin_calibrar_m": 15.648,
+      "sin_calibrar_en_banda": true,
+      "k": 0.9804,
+      "iteraciones": 2
+    },
+    {
+      "grupo": "sintetico",
+      "caso": "nino/50kmh",
+      "semilla": 9859,
+      "objetivo_m": 15.0412,
+      "banda_m": [
+        11.135,
+        19.2424
+      ],
+      "distancia_m": 15.2968,
+      "en_banda": true,
+      "sin_calibrar_m": 15.5432,
+      "sin_calibrar_en_banda": true,
+      "k": 0.9837,
+      "iteraciones": 2
+    },
+    {
+      "grupo": "sintetico",
+      "caso": "nino/50kmh",
+      "semilla": 9860,
+      "objetivo_m": 15.0412,
+      "banda_m": [
+        11.135,
+        19.2424
+      ],
+      "distancia_m": 15.2481,
+      "en_banda": true,
+      "sin_calibrar_m": 15.2481,
+      "sin_calibrar_en_banda": true,
+      "k": 1,
+      "iteraciones": 2
+    },
+    {
+      "grupo": "sintetico",
+      "caso": "nino/50kmh",
+      "semilla": 9861,
+      "objetivo_m": 15.0412,
+      "banda_m": [
+        11.135,
+        19.2424
+      ],
+      "distancia_m": 15.245,
+      "en_banda": true,
+      "sin_calibrar_m": 15.6669,
+      "sin_calibrar_en_banda": true,
+      "k": 0.9798,
+      "iteraciones": 2
+    },
+    {
+      "grupo": "sintetico",
+      "caso": "nino/50kmh",
+      "semilla": 9862,
+      "objetivo_m": 15.0412,
+      "banda_m": [
+        11.135,
+        19.2424
+      ],
+      "distancia_m": 14.9634,
+      "en_banda": true,
+      "sin_calibrar_m": 15.8122,
+      "sin_calibrar_en_banda": true,
+      "k": 0.9753,
+      "iteraciones": 2
+    },
+    {
+      "grupo": "sintetico",
+      "caso": "nino/50kmh",
+      "semilla": 9863,
+      "objetivo_m": 15.0412,
+      "banda_m": [
+        11.135,
+        19.2424
+      ],
+      "distancia_m": 15.0774,
+      "en_banda": true,
+      "sin_calibrar_m": 16.8469,
+      "sin_calibrar_en_banda": true,
+      "k": 0.9449,
+      "iteraciones": 2
+    },
+    {
+      "grupo": "sintetico",
+      "caso": "nino/50kmh",
+      "semilla": 9864,
+      "objetivo_m": 15.0412,
+      "banda_m": [
+        11.135,
+        19.2424
+      ],
+      "distancia_m": 14.5668,
+      "en_banda": true,
+      "sin_calibrar_m": 16.4249,
+      "sin_calibrar_en_banda": true,
+      "k": 0.957,
+      "iteraciones": 2
+    },
+    {
+      "grupo": "sintetico",
+      "caso": "nino/50kmh",
+      "semilla": 9865,
+      "objetivo_m": 15.0412,
+      "banda_m": [
+        11.135,
+        19.2424
+      ],
+      "distancia_m": 15.5373,
+      "en_banda": true,
+      "sin_calibrar_m": 15.9275,
+      "sin_calibrar_en_banda": true,
+      "k": 0.9718,
+      "iteraciones": 2
+    },
+    {
+      "grupo": "sintetico",
+      "caso": "nino/50kmh",
+      "semilla": 9866,
+      "objetivo_m": 15.0412,
+      "banda_m": [
+        11.135,
+        19.2424
+      ],
+      "distancia_m": 14.8786,
+      "en_banda": true,
+      "sin_calibrar_m": 15.82,
+      "sin_calibrar_en_banda": true,
+      "k": 0.9751,
+      "iteraciones": 2
+    },
+    {
+      "grupo": "sintetico",
+      "caso": "nino/50kmh",
+      "semilla": 9867,
+      "objetivo_m": 15.0412,
+      "banda_m": [
+        11.135,
+        19.2424
+      ],
+      "distancia_m": 15.3482,
+      "en_banda": true,
+      "sin_calibrar_m": 15.9376,
+      "sin_calibrar_en_banda": true,
+      "k": 0.9715,
+      "iteraciones": 2
+    },
+    {
+      "grupo": "sintetico",
+      "caso": "nino/50kmh",
+      "semilla": 9868,
+      "objetivo_m": 15.0412,
+      "banda_m": [
+        11.135,
+        19.2424
+      ],
+      "distancia_m": 15.1332,
+      "en_banda": true,
+      "sin_calibrar_m": 16.0956,
+      "sin_calibrar_en_banda": true,
+      "k": 0.9667,
+      "iteraciones": 2
+    },
+    {
+      "grupo": "sintetico",
+      "caso": "nino/50kmh",
+      "semilla": 9869,
+      "objetivo_m": 15.0412,
+      "banda_m": [
+        11.135,
+        19.2424
+      ],
+      "distancia_m": 15.3688,
+      "en_banda": true,
+      "sin_calibrar_m": 15.6337,
+      "sin_calibrar_en_banda": true,
+      "k": 0.9809,
+      "iteraciones": 2
+    },
+    {
+      "grupo": "sintetico",
+      "caso": "nino/60kmh",
+      "semilla": 10820,
+      "objetivo_m": 21.4607,
+      "banda_m": [
+        15.8087,
+        27.5435
+      ],
+      "distancia_m": 21.693,
+      "en_banda": true,
+      "sin_calibrar_m": 22.7456,
+      "sin_calibrar_en_banda": true,
+      "k": 0.9713,
+      "iteraciones": 2
+    },
+    {
+      "grupo": "sintetico",
+      "caso": "nino/60kmh",
+      "semilla": 10821,
+      "objetivo_m": 21.4607,
+      "banda_m": [
+        15.8087,
+        27.5435
+      ],
+      "distancia_m": 20.4016,
+      "en_banda": true,
+      "sin_calibrar_m": 23.572,
+      "sin_calibrar_en_banda": true,
+      "k": 0.9542,
+      "iteraciones": 2
+    },
+    {
+      "grupo": "sintetico",
+      "caso": "nino/60kmh",
+      "semilla": 10822,
+      "objetivo_m": 21.4607,
+      "banda_m": [
+        15.8087,
+        27.5435
+      ],
+      "distancia_m": 20.9861,
+      "en_banda": true,
+      "sin_calibrar_m": 22.8217,
+      "sin_calibrar_en_banda": true,
+      "k": 0.9697,
+      "iteraciones": 2
+    },
+    {
+      "grupo": "sintetico",
+      "caso": "nino/60kmh",
+      "semilla": 10823,
+      "objetivo_m": 21.4607,
+      "banda_m": [
+        15.8087,
+        27.5435
+      ],
+      "distancia_m": 21.4895,
+      "en_banda": true,
+      "sin_calibrar_m": 22.338,
+      "sin_calibrar_en_banda": true,
+      "k": 0.9802,
+      "iteraciones": 2
+    },
+    {
+      "grupo": "sintetico",
+      "caso": "nino/60kmh",
+      "semilla": 10824,
+      "objetivo_m": 21.4607,
+      "banda_m": [
+        15.8087,
+        27.5435
+      ],
+      "distancia_m": 21.0986,
+      "en_banda": true,
+      "sin_calibrar_m": 21.8872,
+      "sin_calibrar_en_banda": true,
+      "k": 0.9902,
+      "iteraciones": 2
+    },
+    {
+      "grupo": "sintetico",
+      "caso": "nino/60kmh",
+      "semilla": 10825,
+      "objetivo_m": 21.4607,
+      "banda_m": [
+        15.8087,
+        27.5435
+      ],
+      "distancia_m": 21.5582,
+      "en_banda": true,
+      "sin_calibrar_m": 22.7256,
+      "sin_calibrar_en_banda": true,
+      "k": 0.9718,
+      "iteraciones": 2
+    },
+    {
+      "grupo": "sintetico",
+      "caso": "nino/60kmh",
+      "semilla": 10826,
+      "objetivo_m": 21.4607,
+      "banda_m": [
+        15.8087,
+        27.5435
+      ],
+      "distancia_m": 20.7844,
+      "en_banda": true,
+      "sin_calibrar_m": 22.7465,
+      "sin_calibrar_en_banda": true,
+      "k": 0.9713,
+      "iteraciones": 2
+    },
+    {
+      "grupo": "sintetico",
+      "caso": "nino/60kmh",
+      "semilla": 10827,
+      "objetivo_m": 21.4607,
+      "banda_m": [
+        15.8087,
+        27.5435
+      ],
+      "distancia_m": 21.4041,
+      "en_banda": true,
+      "sin_calibrar_m": 23.1321,
+      "sin_calibrar_en_banda": true,
+      "k": 0.9632,
+      "iteraciones": 2
+    },
+    {
+      "grupo": "sintetico",
+      "caso": "nino/60kmh",
+      "semilla": 10828,
+      "objetivo_m": 21.4607,
+      "banda_m": [
+        15.8087,
+        27.5435
+      ],
+      "distancia_m": 21.526,
+      "en_banda": true,
+      "sin_calibrar_m": 22.5517,
+      "sin_calibrar_en_banda": true,
+      "k": 0.9755,
+      "iteraciones": 2
+    },
+    {
+      "grupo": "sintetico",
+      "caso": "nino/60kmh",
+      "semilla": 10829,
+      "objetivo_m": 21.4607,
+      "banda_m": [
+        15.8087,
+        27.5435
+      ],
+      "distancia_m": 21.251,
+      "en_banda": true,
+      "sin_calibrar_m": 22.6618,
+      "sin_calibrar_en_banda": true,
+      "k": 0.9731,
+      "iteraciones": 2
+    },
+    {
+      "grupo": "sintetico",
+      "caso": "nino/60kmh",
+      "semilla": 10830,
+      "objetivo_m": 21.4607,
+      "banda_m": [
+        15.8087,
+        27.5435
+      ],
+      "distancia_m": 22.176,
+      "en_banda": true,
+      "sin_calibrar_m": 22.464,
+      "sin_calibrar_en_banda": true,
+      "k": 0.9774,
+      "iteraciones": 2
+    },
+    {
+      "grupo": "sintetico",
+      "caso": "nino/60kmh",
+      "semilla": 10831,
+      "objetivo_m": 21.4607,
+      "banda_m": [
+        15.8087,
+        27.5435
+      ],
+      "distancia_m": 21.6442,
+      "en_banda": true,
+      "sin_calibrar_m": 22.5684,
+      "sin_calibrar_en_banda": true,
+      "k": 0.9752,
+      "iteraciones": 2
+    },
+    {
+      "grupo": "sintetico",
+      "caso": "nino/60kmh",
+      "semilla": 10832,
+      "objetivo_m": 21.4607,
+      "banda_m": [
+        15.8087,
+        27.5435
+      ],
+      "distancia_m": 20.7226,
+      "en_banda": true,
+      "sin_calibrar_m": 23.3329,
+      "sin_calibrar_en_banda": true,
+      "k": 0.959,
+      "iteraciones": 2
+    },
+    {
+      "grupo": "sintetico",
+      "caso": "nino/60kmh",
+      "semilla": 10833,
+      "objetivo_m": 21.4607,
+      "banda_m": [
+        15.8087,
+        27.5435
+      ],
+      "distancia_m": 20.7602,
+      "en_banda": true,
+      "sin_calibrar_m": 22.8865,
+      "sin_calibrar_en_banda": true,
+      "k": 0.9683,
+      "iteraciones": 2
+    },
+    {
+      "grupo": "sintetico",
+      "caso": "nino/60kmh",
+      "semilla": 10834,
+      "objetivo_m": 21.4607,
+      "banda_m": [
+        15.8087,
+        27.5435
+      ],
+      "distancia_m": 21.9215,
+      "en_banda": true,
+      "sin_calibrar_m": 22.1112,
+      "sin_calibrar_en_banda": true,
+      "k": 0.9852,
+      "iteraciones": 2
+    },
+    {
+      "grupo": "sintetico",
+      "caso": "nino/60kmh",
+      "semilla": 10835,
+      "objetivo_m": 21.4607,
+      "banda_m": [
+        15.8087,
+        27.5435
+      ],
+      "distancia_m": 20.9201,
+      "en_banda": true,
+      "sin_calibrar_m": 22.6935,
+      "sin_calibrar_en_banda": true,
+      "k": 0.9725,
+      "iteraciones": 2
+    },
+    {
+      "grupo": "sintetico",
+      "caso": "nino/60kmh",
+      "semilla": 10836,
+      "objetivo_m": 21.4607,
+      "banda_m": [
+        15.8087,
+        27.5435
+      ],
+      "distancia_m": 22.3041,
+      "en_banda": true,
+      "sin_calibrar_m": 22.6649,
+      "sin_calibrar_en_banda": true,
+      "k": 0.9731,
+      "iteraciones": 2
+    },
+    {
+      "grupo": "sintetico",
+      "caso": "nino/60kmh",
+      "semilla": 10837,
+      "objetivo_m": 21.4607,
+      "banda_m": [
+        15.8087,
+        27.5435
+      ],
+      "distancia_m": 21.3584,
+      "en_banda": true,
+      "sin_calibrar_m": 22.5838,
+      "sin_calibrar_en_banda": true,
+      "k": 0.9748,
+      "iteraciones": 2
+    },
+    {
+      "grupo": "sintetico",
+      "caso": "nino/60kmh",
+      "semilla": 10838,
+      "objetivo_m": 21.4607,
+      "banda_m": [
+        15.8087,
+        27.5435
+      ],
+      "distancia_m": 21.7588,
+      "en_banda": true,
+      "sin_calibrar_m": 22.5026,
+      "sin_calibrar_en_banda": true,
+      "k": 0.9766,
+      "iteraciones": 2
+    },
+    {
+      "grupo": "sintetico",
+      "caso": "nino/60kmh",
+      "semilla": 10839,
+      "objetivo_m": 21.4607,
+      "banda_m": [
+        15.8087,
+        27.5435
+      ],
+      "distancia_m": 21.1646,
+      "en_banda": true,
+      "sin_calibrar_m": 23.2247,
+      "sin_calibrar_en_banda": true,
+      "k": 0.9613,
+      "iteraciones": 2
+    },
+    {
+      "grupo": "sintetico",
+      "caso": "nino/70kmh",
+      "semilla": 11790,
+      "objetivo_m": 29.0474,
+      "banda_m": [
+        21.3322,
+        37.3539
+      ],
+      "distancia_m": 28.4827,
+      "en_banda": true,
+      "sin_calibrar_m": 30.5549,
+      "sin_calibrar_en_banda": true,
+      "k": 0.975,
+      "iteraciones": 2
+    },
+    {
+      "grupo": "sintetico",
+      "caso": "nino/70kmh",
+      "semilla": 11791,
+      "objetivo_m": 29.0474,
+      "banda_m": [
+        21.3322,
+        37.3539
+      ],
+      "distancia_m": 28.9471,
+      "en_banda": true,
+      "sin_calibrar_m": 29.7683,
+      "sin_calibrar_en_banda": true,
+      "k": 0.9878,
+      "iteraciones": 2
+    },
+    {
+      "grupo": "sintetico",
+      "caso": "nino/70kmh",
+      "semilla": 11792,
+      "objetivo_m": 29.0474,
+      "banda_m": [
+        21.3322,
+        37.3539
+      ],
+      "distancia_m": 29.1995,
+      "en_banda": true,
+      "sin_calibrar_m": 30.2277,
+      "sin_calibrar_en_banda": true,
+      "k": 0.9803,
+      "iteraciones": 2
+    },
+    {
+      "grupo": "sintetico",
+      "caso": "nino/70kmh",
+      "semilla": 11793,
+      "objetivo_m": 29.0474,
+      "banda_m": [
+        21.3322,
+        37.3539
+      ],
+      "distancia_m": 29.2217,
+      "en_banda": true,
+      "sin_calibrar_m": 30.5832,
+      "sin_calibrar_en_banda": true,
+      "k": 0.9746,
+      "iteraciones": 2
+    },
+    {
+      "grupo": "sintetico",
+      "caso": "nino/70kmh",
+      "semilla": 11794,
+      "objetivo_m": 29.0474,
+      "banda_m": [
+        21.3322,
+        37.3539
+      ],
+      "distancia_m": 28.97,
+      "en_banda": true,
+      "sin_calibrar_m": 30.0398,
+      "sin_calibrar_en_banda": true,
+      "k": 0.9833,
+      "iteraciones": 2
+    },
+    {
+      "grupo": "sintetico",
+      "caso": "nino/70kmh",
+      "semilla": 11795,
+      "objetivo_m": 29.0474,
+      "banda_m": [
+        21.3322,
+        37.3539
+      ],
+      "distancia_m": 29.0791,
+      "en_banda": true,
+      "sin_calibrar_m": 30.1704,
+      "sin_calibrar_en_banda": true,
+      "k": 0.9812,
+      "iteraciones": 2
+    },
+    {
+      "grupo": "sintetico",
+      "caso": "nino/70kmh",
+      "semilla": 11796,
+      "objetivo_m": 29.0474,
+      "banda_m": [
+        21.3322,
+        37.3539
+      ],
+      "distancia_m": 28.9879,
+      "en_banda": true,
+      "sin_calibrar_m": 29.7935,
+      "sin_calibrar_en_banda": true,
+      "k": 0.9874,
+      "iteraciones": 2
+    },
+    {
+      "grupo": "sintetico",
+      "caso": "nino/70kmh",
+      "semilla": 11797,
+      "objetivo_m": 29.0474,
+      "banda_m": [
+        21.3322,
+        37.3539
+      ],
+      "distancia_m": 28.3676,
+      "en_banda": true,
+      "sin_calibrar_m": 30.052,
+      "sin_calibrar_en_banda": true,
+      "k": 0.9831,
+      "iteraciones": 2
+    },
+    {
+      "grupo": "sintetico",
+      "caso": "nino/70kmh",
+      "semilla": 11798,
+      "objetivo_m": 29.0474,
+      "banda_m": [
+        21.3322,
+        37.3539
+      ],
+      "distancia_m": 28.7335,
+      "en_banda": true,
+      "sin_calibrar_m": 30.0107,
+      "sin_calibrar_en_banda": true,
+      "k": 0.9838,
+      "iteraciones": 2
+    },
+    {
+      "grupo": "sintetico",
+      "caso": "nino/70kmh",
+      "semilla": 11799,
+      "objetivo_m": 29.0474,
+      "banda_m": [
+        21.3322,
+        37.3539
+      ],
+      "distancia_m": 29.0959,
+      "en_banda": true,
+      "sin_calibrar_m": 30.2479,
+      "sin_calibrar_en_banda": true,
+      "k": 0.98,
+      "iteraciones": 2
+    },
+    {
+      "grupo": "sintetico",
+      "caso": "nino/70kmh",
+      "semilla": 11800,
+      "objetivo_m": 29.0474,
+      "banda_m": [
+        21.3322,
+        37.3539
+      ],
+      "distancia_m": 28.7141,
+      "en_banda": true,
+      "sin_calibrar_m": 30.3362,
+      "sin_calibrar_en_banda": true,
+      "k": 0.9785,
+      "iteraciones": 2
+    },
+    {
+      "grupo": "sintetico",
+      "caso": "nino/70kmh",
+      "semilla": 11801,
+      "objetivo_m": 29.0474,
+      "banda_m": [
+        21.3322,
+        37.3539
+      ],
+      "distancia_m": 28.6471,
+      "en_banda": true,
+      "sin_calibrar_m": 30.2017,
+      "sin_calibrar_en_banda": true,
+      "k": 0.9807,
+      "iteraciones": 2
+    },
+    {
+      "grupo": "sintetico",
+      "caso": "nino/70kmh",
+      "semilla": 11802,
+      "objetivo_m": 29.0474,
+      "banda_m": [
+        21.3322,
+        37.3539
+      ],
+      "distancia_m": 29.4077,
+      "en_banda": true,
+      "sin_calibrar_m": 30.4419,
+      "sin_calibrar_en_banda": true,
+      "k": 0.9768,
+      "iteraciones": 2
+    },
+    {
+      "grupo": "sintetico",
+      "caso": "nino/70kmh",
+      "semilla": 11803,
+      "objetivo_m": 29.0474,
+      "banda_m": [
+        21.3322,
+        37.3539
+      ],
+      "distancia_m": 28.3522,
+      "en_banda": true,
+      "sin_calibrar_m": 31.0134,
+      "sin_calibrar_en_banda": true,
+      "k": 0.9678,
+      "iteraciones": 2
+    },
+    {
+      "grupo": "sintetico",
+      "caso": "nino/70kmh",
+      "semilla": 11804,
+      "objetivo_m": 29.0474,
+      "banda_m": [
+        21.3322,
+        37.3539
+      ],
+      "distancia_m": 29.2903,
+      "en_banda": true,
+      "sin_calibrar_m": 30.2346,
+      "sin_calibrar_en_banda": true,
+      "k": 0.9802,
+      "iteraciones": 2
+    },
+    {
+      "grupo": "sintetico",
+      "caso": "nino/70kmh",
+      "semilla": 11805,
+      "objetivo_m": 29.0474,
+      "banda_m": [
+        21.3322,
+        37.3539
+      ],
+      "distancia_m": 29.3994,
+      "en_banda": true,
+      "sin_calibrar_m": 29.9796,
+      "sin_calibrar_en_banda": true,
+      "k": 0.9843,
+      "iteraciones": 2
+    },
+    {
+      "grupo": "sintetico",
+      "caso": "nino/70kmh",
+      "semilla": 11806,
+      "objetivo_m": 29.0474,
+      "banda_m": [
+        21.3322,
+        37.3539
+      ],
+      "distancia_m": 28.6251,
+      "en_banda": true,
+      "sin_calibrar_m": 30.4269,
+      "sin_calibrar_en_banda": true,
+      "k": 0.9771,
+      "iteraciones": 2
+    },
+    {
+      "grupo": "sintetico",
+      "caso": "nino/70kmh",
+      "semilla": 11807,
+      "objetivo_m": 29.0474,
+      "banda_m": [
+        21.3322,
+        37.3539
+      ],
+      "distancia_m": 29.734,
+      "en_banda": true,
+      "sin_calibrar_m": 29.734,
+      "sin_calibrar_en_banda": true,
+      "k": 1,
+      "iteraciones": 2
+    },
+    {
+      "grupo": "sintetico",
+      "caso": "nino/70kmh",
+      "semilla": 11808,
+      "objetivo_m": 29.0474,
+      "banda_m": [
+        21.3322,
+        37.3539
+      ],
+      "distancia_m": 29.7086,
+      "en_banda": true,
+      "sin_calibrar_m": 29.9197,
+      "sin_calibrar_en_banda": true,
+      "k": 0.9853,
+      "iteraciones": 2
+    },
+    {
+      "grupo": "sintetico",
+      "caso": "nino/70kmh",
+      "semilla": 11809,
+      "objetivo_m": 29.0474,
+      "banda_m": [
+        21.3322,
+        37.3539
+      ],
+      "distancia_m": 29.5478,
+      "en_banda": true,
+      "sin_calibrar_m": 30.573,
+      "sin_calibrar_en_banda": true,
+      "k": 0.9747,
+      "iteraciones": 2
+    },
+    {
+      "grupo": "sintetico",
+      "caso": "adulto/20kmh",
+      "semilla": 6940,
+      "objetivo_m": 2.9739,
+      "banda_m": [
+        2.4263,
+        3.5515
+      ],
+      "distancia_m": 2.9647,
+      "en_banda": true,
+      "sin_calibrar_m": 3.5354,
+      "sin_calibrar_en_banda": true,
+      "k": 0.9172,
+      "iteraciones": 2
+    },
+    {
+      "grupo": "sintetico",
+      "caso": "adulto/20kmh",
+      "semilla": 6941,
+      "objetivo_m": 2.9739,
+      "banda_m": [
+        2.4263,
+        3.5515
+      ],
+      "distancia_m": 3.007,
+      "en_banda": true,
+      "sin_calibrar_m": 3.1364,
+      "sin_calibrar_en_banda": true,
+      "k": 0.9737,
+      "iteraciones": 2
+    },
+    {
+      "grupo": "sintetico",
+      "caso": "adulto/20kmh",
+      "semilla": 6942,
+      "objetivo_m": 2.9739,
+      "banda_m": [
+        2.4263,
+        3.5515
+      ],
+      "distancia_m": 2.9987,
+      "en_banda": true,
+      "sin_calibrar_m": 3.4878,
+      "sin_calibrar_en_banda": true,
+      "k": 0.9234,
+      "iteraciones": 2
+    },
+    {
+      "grupo": "sintetico",
+      "caso": "adulto/20kmh",
+      "semilla": 6943,
+      "objetivo_m": 2.9739,
+      "banda_m": [
+        2.4263,
+        3.5515
+      ],
+      "distancia_m": 3.1105,
+      "en_banda": true,
+      "sin_calibrar_m": 3.1105,
+      "sin_calibrar_en_banda": true,
+      "k": 1,
+      "iteraciones": 2
+    },
+    {
+      "grupo": "sintetico",
+      "caso": "adulto/20kmh",
+      "semilla": 6944,
+      "objetivo_m": 2.9739,
+      "banda_m": [
+        2.4263,
+        3.5515
+      ],
+      "distancia_m": 3.1203,
+      "en_banda": true,
+      "sin_calibrar_m": 3.165,
+      "sin_calibrar_en_banda": true,
+      "k": 0.94,
+      "iteraciones": 6
+    },
+    {
+      "grupo": "sintetico",
+      "caso": "adulto/20kmh",
+      "semilla": 6945,
+      "objetivo_m": 2.9739,
+      "banda_m": [
+        2.4263,
+        3.5515
+      ],
+      "distancia_m": 2.9388,
+      "en_banda": true,
+      "sin_calibrar_m": 4.1647,
+      "sin_calibrar_en_banda": false,
+      "k": 0.91,
+      "iteraciones": 5
+    },
+    {
+      "grupo": "sintetico",
+      "caso": "adulto/20kmh",
+      "semilla": 6946,
+      "objetivo_m": 2.9739,
+      "banda_m": [
+        2.4263,
+        3.5515
+      ],
+      "distancia_m": 2.8041,
+      "en_banda": true,
+      "sin_calibrar_m": 3.5145,
+      "sin_calibrar_en_banda": true,
+      "k": 0.9199,
+      "iteraciones": 2
+    },
+    {
+      "grupo": "sintetico",
+      "caso": "adulto/20kmh",
+      "semilla": 6947,
+      "objetivo_m": 2.9739,
+      "banda_m": [
+        2.4263,
+        3.5515
+      ],
+      "distancia_m": 2.9724,
+      "en_banda": true,
+      "sin_calibrar_m": 3.1162,
+      "sin_calibrar_en_banda": true,
+      "k": 0.9282,
+      "iteraciones": 5
+    },
+    {
+      "grupo": "sintetico",
+      "caso": "adulto/20kmh",
+      "semilla": 6948,
+      "objetivo_m": 2.9739,
+      "banda_m": [
+        2.4263,
+        3.5515
+      ],
+      "distancia_m": 2.8327,
+      "en_banda": true,
+      "sin_calibrar_m": 3.2923,
+      "sin_calibrar_en_banda": true,
+      "k": 0.9504,
+      "iteraciones": 2
+    },
+    {
+      "grupo": "sintetico",
+      "caso": "adulto/20kmh",
+      "semilla": 6949,
+      "objetivo_m": 2.9739,
+      "banda_m": [
+        2.4263,
+        3.5515
+      ],
+      "distancia_m": 3.0748,
+      "en_banda": true,
+      "sin_calibrar_m": 3.3034,
+      "sin_calibrar_en_banda": true,
+      "k": 0.9488,
+      "iteraciones": 2
+    },
+    {
+      "grupo": "sintetico",
+      "caso": "adulto/20kmh",
+      "semilla": 6950,
+      "objetivo_m": 2.9739,
+      "banda_m": [
+        2.4263,
+        3.5515
+      ],
+      "distancia_m": 3.0176,
+      "en_banda": true,
+      "sin_calibrar_m": 3.3755,
+      "sin_calibrar_en_banda": true,
+      "k": 0.9386,
+      "iteraciones": 2
+    },
+    {
+      "grupo": "sintetico",
+      "caso": "adulto/20kmh",
+      "semilla": 6951,
+      "objetivo_m": 2.9739,
+      "banda_m": [
+        2.4263,
+        3.5515
+      ],
+      "distancia_m": 3.0362,
+      "en_banda": true,
+      "sin_calibrar_m": 3.3858,
+      "sin_calibrar_en_banda": true,
+      "k": 0.9372,
+      "iteraciones": 2
+    },
+    {
+      "grupo": "sintetico",
+      "caso": "adulto/20kmh",
+      "semilla": 6952,
+      "objetivo_m": 2.9739,
+      "banda_m": [
+        2.4263,
+        3.5515
+      ],
+      "distancia_m": 3.1907,
+      "en_banda": true,
+      "sin_calibrar_m": 3.222,
+      "sin_calibrar_en_banda": true,
+      "k": 0.9607,
+      "iteraciones": 2
+    },
+    {
+      "grupo": "sintetico",
+      "caso": "adulto/20kmh",
+      "semilla": 6953,
+      "objetivo_m": 2.9739,
+      "banda_m": [
+        2.4263,
+        3.5515
+      ],
+      "distancia_m": 2.7366,
+      "en_banda": true,
+      "sin_calibrar_m": 3.7414,
+      "sin_calibrar_en_banda": false,
+      "k": 0.8916,
+      "iteraciones": 2
+    },
+    {
+      "grupo": "sintetico",
+      "caso": "adulto/20kmh",
+      "semilla": 6954,
+      "objetivo_m": 2.9739,
+      "banda_m": [
+        2.4263,
+        3.5515
+      ],
+      "distancia_m": 3.0234,
+      "en_banda": true,
+      "sin_calibrar_m": 3.0234,
+      "sin_calibrar_en_banda": true,
+      "k": 1,
+      "iteraciones": 2
+    },
+    {
+      "grupo": "sintetico",
+      "caso": "adulto/20kmh",
+      "semilla": 6955,
+      "objetivo_m": 2.9739,
+      "banda_m": [
+        2.4263,
+        3.5515
+      ],
+      "distancia_m": 2.9847,
+      "en_banda": true,
+      "sin_calibrar_m": 3.153,
+      "sin_calibrar_en_banda": true,
+      "k": 0.9712,
+      "iteraciones": 2
+    },
+    {
+      "grupo": "sintetico",
+      "caso": "adulto/20kmh",
+      "semilla": 6956,
+      "objetivo_m": 2.9739,
+      "banda_m": [
+        2.4263,
+        3.5515
+      ],
+      "distancia_m": 2.9135,
+      "en_banda": true,
+      "sin_calibrar_m": 3.2691,
+      "sin_calibrar_en_banda": true,
+      "k": 0.9538,
+      "iteraciones": 2
+    },
+    {
+      "grupo": "sintetico",
+      "caso": "adulto/20kmh",
+      "semilla": 6957,
+      "objetivo_m": 2.9739,
+      "banda_m": [
+        2.4263,
+        3.5515
+      ],
+      "distancia_m": 3.0834,
+      "en_banda": true,
+      "sin_calibrar_m": 3.3784,
+      "sin_calibrar_en_banda": true,
+      "k": 0.9382,
+      "iteraciones": 2
+    },
+    {
+      "grupo": "sintetico",
+      "caso": "adulto/20kmh",
+      "semilla": 6958,
+      "objetivo_m": 2.9739,
+      "banda_m": [
+        2.4263,
+        3.5515
+      ],
+      "distancia_m": 3.0056,
+      "en_banda": true,
+      "sin_calibrar_m": 3.4126,
+      "sin_calibrar_en_banda": true,
+      "k": 0.9335,
+      "iteraciones": 2
+    },
+    {
+      "grupo": "sintetico",
+      "caso": "adulto/20kmh",
+      "semilla": 6959,
+      "objetivo_m": 2.9739,
+      "banda_m": [
+        2.4263,
+        3.5515
+      ],
+      "distancia_m": 3.0726,
+      "en_banda": true,
+      "sin_calibrar_m": 3.0726,
+      "sin_calibrar_en_banda": true,
+      "k": 1,
+      "iteraciones": 2
+    },
+    {
+      "grupo": "sintetico",
+      "caso": "adulto/30kmh",
+      "semilla": 7910,
+      "objetivo_m": 5.8919,
+      "banda_m": [
+        4.5507,
+        7.3248
+      ],
+      "distancia_m": 5.9248,
+      "en_banda": true,
+      "sin_calibrar_m": 6.9759,
+      "sin_calibrar_en_banda": true,
+      "k": 0.8777,
+      "iteraciones": 6
+    },
+    {
+      "grupo": "sintetico",
+      "caso": "adulto/30kmh",
+      "semilla": 7911,
+      "objetivo_m": 5.8919,
+      "banda_m": [
+        4.5507,
+        7.3248
+      ],
+      "distancia_m": 6.0012,
+      "en_banda": true,
+      "sin_calibrar_m": 7.013,
+      "sin_calibrar_en_banda": true,
+      "k": 0.9166,
+      "iteraciones": 2
+    },
+    {
+      "grupo": "sintetico",
+      "caso": "adulto/30kmh",
+      "semilla": 7912,
+      "objetivo_m": 5.8919,
+      "banda_m": [
+        4.5507,
+        7.3248
+      ],
+      "distancia_m": 5.7022,
+      "en_banda": true,
+      "sin_calibrar_m": 7.2004,
+      "sin_calibrar_en_banda": true,
+      "k": 0.9046,
+      "iteraciones": 2
+    },
+    {
+      "grupo": "sintetico",
+      "caso": "adulto/30kmh",
+      "semilla": 7913,
+      "objetivo_m": 5.8919,
+      "banda_m": [
+        4.5507,
+        7.3248
+      ],
+      "distancia_m": 5.7221,
+      "en_banda": true,
+      "sin_calibrar_m": 7.2344,
+      "sin_calibrar_en_banda": true,
+      "k": 0.9025,
+      "iteraciones": 2
+    },
+    {
+      "grupo": "sintetico",
+      "caso": "adulto/30kmh",
+      "semilla": 7914,
+      "objetivo_m": 5.8919,
+      "banda_m": [
+        4.5507,
+        7.3248
+      ],
+      "distancia_m": 6.0598,
+      "en_banda": true,
+      "sin_calibrar_m": 7.1684,
+      "sin_calibrar_en_banda": true,
+      "k": 0.9066,
+      "iteraciones": 2
+    },
+    {
+      "grupo": "sintetico",
+      "caso": "adulto/30kmh",
+      "semilla": 7915,
+      "objetivo_m": 5.8919,
+      "banda_m": [
+        4.5507,
+        7.3248
+      ],
+      "distancia_m": 6.1542,
+      "en_banda": true,
+      "sin_calibrar_m": 7.1429,
+      "sin_calibrar_en_banda": true,
+      "k": 0.8781,
+      "iteraciones": 4
+    },
+    {
+      "grupo": "sintetico",
+      "caso": "adulto/30kmh",
+      "semilla": 7916,
+      "objetivo_m": 5.8919,
+      "banda_m": [
+        4.5507,
+        7.3248
+      ],
+      "distancia_m": 5.9838,
+      "en_banda": true,
+      "sin_calibrar_m": 6.717,
+      "sin_calibrar_en_banda": true,
+      "k": 0.9366,
+      "iteraciones": 2
+    },
+    {
+      "grupo": "sintetico",
+      "caso": "adulto/30kmh",
+      "semilla": 7917,
+      "objetivo_m": 5.8919,
+      "banda_m": [
+        4.5507,
+        7.3248
+      ],
+      "distancia_m": 6.0661,
+      "en_banda": true,
+      "sin_calibrar_m": 7.5236,
+      "sin_calibrar_en_banda": false,
+      "k": 0.8849,
+      "iteraciones": 2
+    },
+    {
+      "grupo": "sintetico",
+      "caso": "adulto/30kmh",
+      "semilla": 7918,
+      "objetivo_m": 5.8919,
+      "banda_m": [
+        4.5507,
+        7.3248
+      ],
+      "distancia_m": 6.1578,
+      "en_banda": true,
+      "sin_calibrar_m": 7.2228,
+      "sin_calibrar_en_banda": true,
+      "k": 0.9032,
+      "iteraciones": 2
+    },
+    {
+      "grupo": "sintetico",
+      "caso": "adulto/30kmh",
+      "semilla": 7919,
+      "objetivo_m": 5.8919,
+      "banda_m": [
+        4.5507,
+        7.3248
+      ],
+      "distancia_m": 5.9824,
+      "en_banda": true,
+      "sin_calibrar_m": 7.2591,
+      "sin_calibrar_en_banda": true,
+      "k": 0.9009,
+      "iteraciones": 2
+    },
+    {
+      "grupo": "sintetico",
+      "caso": "adulto/30kmh",
+      "semilla": 7920,
+      "objetivo_m": 5.8919,
+      "banda_m": [
+        4.5507,
+        7.3248
+      ],
+      "distancia_m": 5.9455,
+      "en_banda": true,
+      "sin_calibrar_m": 7.2611,
+      "sin_calibrar_en_banda": true,
+      "k": 0.9008,
+      "iteraciones": 2
+    },
+    {
+      "grupo": "sintetico",
+      "caso": "adulto/30kmh",
+      "semilla": 7921,
+      "objetivo_m": 5.8919,
+      "banda_m": [
+        4.5507,
+        7.3248
+      ],
+      "distancia_m": 5.5213,
+      "en_banda": true,
+      "sin_calibrar_m": 7.3199,
+      "sin_calibrar_en_banda": true,
+      "k": 0.8972,
+      "iteraciones": 2
+    },
+    {
+      "grupo": "sintetico",
+      "caso": "adulto/30kmh",
+      "semilla": 7922,
+      "objetivo_m": 5.8919,
+      "banda_m": [
+        4.5507,
+        7.3248
+      ],
+      "distancia_m": 6.2043,
+      "en_banda": true,
+      "sin_calibrar_m": 7.4544,
+      "sin_calibrar_en_banda": false,
+      "k": 0.889,
+      "iteraciones": 2
+    },
+    {
+      "grupo": "sintetico",
+      "caso": "adulto/30kmh",
+      "semilla": 7923,
+      "objetivo_m": 5.8919,
+      "banda_m": [
+        4.5507,
+        7.3248
+      ],
+      "distancia_m": 5.8196,
+      "en_banda": true,
+      "sin_calibrar_m": 7.3511,
+      "sin_calibrar_en_banda": false,
+      "k": 0.8953,
+      "iteraciones": 2
+    },
+    {
+      "grupo": "sintetico",
+      "caso": "adulto/30kmh",
+      "semilla": 7924,
+      "objetivo_m": 5.8919,
+      "banda_m": [
+        4.5507,
+        7.3248
+      ],
+      "distancia_m": 6.0123,
+      "en_banda": true,
+      "sin_calibrar_m": 7.1524,
+      "sin_calibrar_en_banda": true,
+      "k": 0.9076,
+      "iteraciones": 2
+    },
+    {
+      "grupo": "sintetico",
+      "caso": "adulto/30kmh",
+      "semilla": 7925,
+      "objetivo_m": 5.8919,
+      "banda_m": [
+        4.5507,
+        7.3248
+      ],
+      "distancia_m": 5.9934,
+      "en_banda": true,
+      "sin_calibrar_m": 7.3057,
+      "sin_calibrar_en_banda": true,
+      "k": 0.898,
+      "iteraciones": 2
+    },
+    {
+      "grupo": "sintetico",
+      "caso": "adulto/30kmh",
+      "semilla": 7926,
+      "objetivo_m": 5.8919,
+      "banda_m": [
+        4.5507,
+        7.3248
+      ],
+      "distancia_m": 5.936,
+      "en_banda": true,
+      "sin_calibrar_m": 7.3308,
+      "sin_calibrar_en_banda": false,
+      "k": 0.8965,
+      "iteraciones": 2
+    },
+    {
+      "grupo": "sintetico",
+      "caso": "adulto/30kmh",
+      "semilla": 7927,
+      "objetivo_m": 5.8919,
+      "banda_m": [
+        4.5507,
+        7.3248
+      ],
+      "distancia_m": 6.1453,
+      "en_banda": true,
+      "sin_calibrar_m": 7.3767,
+      "sin_calibrar_en_banda": false,
+      "k": 0.8937,
+      "iteraciones": 2
+    },
+    {
+      "grupo": "sintetico",
+      "caso": "adulto/30kmh",
+      "semilla": 7928,
+      "objetivo_m": 5.8919,
+      "banda_m": [
+        4.5507,
+        7.3248
+      ],
+      "distancia_m": 5.4494,
+      "en_banda": true,
+      "sin_calibrar_m": 6.9387,
+      "sin_calibrar_en_banda": true,
+      "k": 0.9215,
+      "iteraciones": 2
+    },
+    {
+      "grupo": "sintetico",
+      "caso": "adulto/30kmh",
+      "semilla": 7929,
+      "objetivo_m": 5.8919,
+      "banda_m": [
+        4.5507,
+        7.3248
+      ],
+      "distancia_m": 5.859,
+      "en_banda": true,
+      "sin_calibrar_m": 7.568,
+      "sin_calibrar_en_banda": false,
+      "k": 0.9155,
+      "iteraciones": 3
+    },
+    {
+      "grupo": "sintetico",
+      "caso": "adulto/40kmh",
+      "semilla": 8880,
+      "objetivo_m": 9.977,
+      "banda_m": [
+        7.5249,
+        12.6073
+      ],
+      "distancia_m": 10.1609,
+      "en_banda": true,
+      "sin_calibrar_m": 11.7019,
+      "sin_calibrar_en_banda": true,
+      "k": 0.9234,
+      "iteraciones": 2
+    },
+    {
+      "grupo": "sintetico",
+      "caso": "adulto/40kmh",
+      "semilla": 8881,
+      "objetivo_m": 9.977,
+      "banda_m": [
+        7.5249,
+        12.6073
+      ],
+      "distancia_m": 10.6239,
+      "en_banda": true,
+      "sin_calibrar_m": 11.8555,
+      "sin_calibrar_en_banda": true,
+      "k": 0.9174,
+      "iteraciones": 2
+    },
+    {
+      "grupo": "sintetico",
+      "caso": "adulto/40kmh",
+      "semilla": 8882,
+      "objetivo_m": 9.977,
+      "banda_m": [
+        7.5249,
+        12.6073
+      ],
+      "distancia_m": 10.1708,
+      "en_banda": true,
+      "sin_calibrar_m": 12.1792,
+      "sin_calibrar_en_banda": true,
+      "k": 0.9051,
+      "iteraciones": 2
+    },
+    {
+      "grupo": "sintetico",
+      "caso": "adulto/40kmh",
+      "semilla": 8883,
+      "objetivo_m": 9.977,
+      "banda_m": [
+        7.5249,
+        12.6073
+      ],
+      "distancia_m": 10.4888,
+      "en_banda": true,
+      "sin_calibrar_m": 11.8597,
+      "sin_calibrar_en_banda": true,
+      "k": 0.9172,
+      "iteraciones": 2
+    },
+    {
+      "grupo": "sintetico",
+      "caso": "adulto/40kmh",
+      "semilla": 8884,
+      "objetivo_m": 9.977,
+      "banda_m": [
+        7.5249,
+        12.6073
+      ],
+      "distancia_m": 9.6332,
+      "en_banda": true,
+      "sin_calibrar_m": 11.6722,
+      "sin_calibrar_en_banda": true,
+      "k": 0.8806,
+      "iteraciones": 4
+    },
+    {
+      "grupo": "sintetico",
+      "caso": "adulto/40kmh",
+      "semilla": 8885,
+      "objetivo_m": 9.977,
+      "banda_m": [
+        7.5249,
+        12.6073
+      ],
+      "distancia_m": 10.1314,
+      "en_banda": true,
+      "sin_calibrar_m": 11.675,
+      "sin_calibrar_en_banda": true,
+      "k": 0.9244,
+      "iteraciones": 2
+    },
+    {
+      "grupo": "sintetico",
+      "caso": "adulto/40kmh",
+      "semilla": 8886,
+      "objetivo_m": 9.977,
+      "banda_m": [
+        7.5249,
+        12.6073
+      ],
+      "distancia_m": 10.0606,
+      "en_banda": true,
+      "sin_calibrar_m": 12.1153,
+      "sin_calibrar_en_banda": true,
+      "k": 0.9075,
+      "iteraciones": 2
+    },
+    {
+      "grupo": "sintetico",
+      "caso": "adulto/40kmh",
+      "semilla": 8887,
+      "objetivo_m": 9.977,
+      "banda_m": [
+        7.5249,
+        12.6073
+      ],
+      "distancia_m": 10.2969,
+      "en_banda": true,
+      "sin_calibrar_m": 11.5486,
+      "sin_calibrar_en_banda": true,
+      "k": 0.9295,
+      "iteraciones": 2
+    },
+    {
+      "grupo": "sintetico",
+      "caso": "adulto/40kmh",
+      "semilla": 8888,
+      "objetivo_m": 9.977,
+      "banda_m": [
+        7.5249,
+        12.6073
+      ],
+      "distancia_m": 10.5785,
+      "en_banda": true,
+      "sin_calibrar_m": 11.6555,
+      "sin_calibrar_en_banda": true,
+      "k": 0.9252,
+      "iteraciones": 2
+    },
+    {
+      "grupo": "sintetico",
+      "caso": "adulto/40kmh",
+      "semilla": 8889,
+      "objetivo_m": 9.977,
+      "banda_m": [
+        7.5249,
+        12.6073
+      ],
+      "distancia_m": 10.1864,
+      "en_banda": true,
+      "sin_calibrar_m": 12.1459,
+      "sin_calibrar_en_banda": true,
+      "k": 0.9063,
+      "iteraciones": 2
+    },
+    {
+      "grupo": "sintetico",
+      "caso": "adulto/40kmh",
+      "semilla": 8890,
+      "objetivo_m": 9.977,
+      "banda_m": [
+        7.5249,
+        12.6073
+      ],
+      "distancia_m": 9.7096,
+      "en_banda": true,
+      "sin_calibrar_m": 11.789,
+      "sin_calibrar_en_banda": true,
+      "k": 0.9199,
+      "iteraciones": 2
+    },
+    {
+      "grupo": "sintetico",
+      "caso": "adulto/40kmh",
+      "semilla": 8891,
+      "objetivo_m": 9.977,
+      "banda_m": [
+        7.5249,
+        12.6073
+      ],
+      "distancia_m": 9.8574,
+      "en_banda": true,
+      "sin_calibrar_m": 11.2594,
+      "sin_calibrar_en_banda": true,
+      "k": 0.9413,
+      "iteraciones": 2
+    },
+    {
+      "grupo": "sintetico",
+      "caso": "adulto/40kmh",
+      "semilla": 8892,
+      "objetivo_m": 9.977,
+      "banda_m": [
+        7.5249,
+        12.6073
+      ],
+      "distancia_m": 9.8928,
+      "en_banda": true,
+      "sin_calibrar_m": 12.5456,
+      "sin_calibrar_en_banda": true,
+      "k": 0.8918,
+      "iteraciones": 2
+    },
+    {
+      "grupo": "sintetico",
+      "caso": "adulto/40kmh",
+      "semilla": 8893,
+      "objetivo_m": 9.977,
+      "banda_m": [
+        7.5249,
+        12.6073
+      ],
+      "distancia_m": 9.8835,
+      "en_banda": true,
+      "sin_calibrar_m": 11.3628,
+      "sin_calibrar_en_banda": true,
+      "k": 0.937,
+      "iteraciones": 2
+    },
+    {
+      "grupo": "sintetico",
+      "caso": "adulto/40kmh",
+      "semilla": 8894,
+      "objetivo_m": 9.977,
+      "banda_m": [
+        7.5249,
+        12.6073
+      ],
+      "distancia_m": 9.5677,
+      "en_banda": true,
+      "sin_calibrar_m": 12.1935,
+      "sin_calibrar_en_banda": true,
+      "k": 0.9046,
+      "iteraciones": 2
+    },
+    {
+      "grupo": "sintetico",
+      "caso": "adulto/40kmh",
+      "semilla": 8895,
+      "objetivo_m": 9.977,
+      "banda_m": [
+        7.5249,
+        12.6073
+      ],
+      "distancia_m": 9.6369,
+      "en_banda": true,
+      "sin_calibrar_m": 11.0873,
+      "sin_calibrar_en_banda": true,
+      "k": 0.9049,
+      "iteraciones": 4
+    },
+    {
+      "grupo": "sintetico",
+      "caso": "adulto/40kmh",
+      "semilla": 8896,
+      "objetivo_m": 9.977,
+      "banda_m": [
+        7.5249,
+        12.6073
+      ],
+      "distancia_m": 9.6559,
+      "en_banda": true,
+      "sin_calibrar_m": 11.872,
+      "sin_calibrar_en_banda": true,
+      "k": 0.9167,
+      "iteraciones": 2
+    },
+    {
+      "grupo": "sintetico",
+      "caso": "adulto/40kmh",
+      "semilla": 8897,
+      "objetivo_m": 9.977,
+      "banda_m": [
+        7.5249,
+        12.6073
+      ],
+      "distancia_m": 9.6224,
+      "en_banda": true,
+      "sin_calibrar_m": 12.02,
+      "sin_calibrar_en_banda": true,
+      "k": 0.9111,
+      "iteraciones": 2
+    },
+    {
+      "grupo": "sintetico",
+      "caso": "adulto/40kmh",
+      "semilla": 8898,
+      "objetivo_m": 9.977,
+      "banda_m": [
+        7.5249,
+        12.6073
+      ],
+      "distancia_m": 9.7075,
+      "en_banda": true,
+      "sin_calibrar_m": 12.3621,
+      "sin_calibrar_en_banda": true,
+      "k": 0.8984,
+      "iteraciones": 2
+    },
+    {
+      "grupo": "sintetico",
+      "caso": "adulto/40kmh",
+      "semilla": 8899,
+      "objetivo_m": 9.977,
+      "banda_m": [
+        7.5249,
+        12.6073
+      ],
+      "distancia_m": 9.5142,
+      "en_banda": true,
+      "sin_calibrar_m": 12.1123,
+      "sin_calibrar_en_banda": true,
+      "k": 0.9076,
+      "iteraciones": 2
+    },
+    {
+      "grupo": "sintetico",
+      "caso": "adulto/50kmh",
+      "semilla": 9850,
+      "objetivo_m": 15.2293,
+      "banda_m": [
+        11.3488,
+        19.3991
+      ],
+      "distancia_m": 15.7986,
+      "en_banda": true,
+      "sin_calibrar_m": 16.4998,
+      "sin_calibrar_en_banda": true,
+      "k": 0.9607,
+      "iteraciones": 2
+    },
+    {
+      "grupo": "sintetico",
+      "caso": "adulto/50kmh",
+      "semilla": 9851,
+      "objetivo_m": 15.2293,
+      "banda_m": [
+        11.3488,
+        19.3991
+      ],
+      "distancia_m": 14.4174,
+      "en_banda": true,
+      "sin_calibrar_m": 17.6933,
+      "sin_calibrar_en_banda": true,
+      "k": 0.9278,
+      "iteraciones": 2
+    },
+    {
+      "grupo": "sintetico",
+      "caso": "adulto/50kmh",
+      "semilla": 9852,
+      "objetivo_m": 15.2293,
+      "banda_m": [
+        11.3488,
+        19.3991
+      ],
+      "distancia_m": 14.4286,
+      "en_banda": true,
+      "sin_calibrar_m": 17.1364,
+      "sin_calibrar_en_banda": true,
+      "k": 0.8849,
+      "iteraciones": 4
+    },
+    {
+      "grupo": "sintetico",
+      "caso": "adulto/50kmh",
+      "semilla": 9853,
+      "objetivo_m": 15.2293,
+      "banda_m": [
+        11.3488,
+        19.3991
+      ],
+      "distancia_m": 15.0608,
+      "en_banda": true,
+      "sin_calibrar_m": 17.5736,
+      "sin_calibrar_en_banda": true,
+      "k": 0.9309,
+      "iteraciones": 2
+    },
+    {
+      "grupo": "sintetico",
+      "caso": "adulto/50kmh",
+      "semilla": 9854,
+      "objetivo_m": 15.2293,
+      "banda_m": [
+        11.3488,
+        19.3991
+      ],
+      "distancia_m": 16.2978,
+      "en_banda": true,
+      "sin_calibrar_m": 16.7865,
+      "sin_calibrar_en_banda": true,
+      "k": 0.9525,
+      "iteraciones": 2
+    },
+    {
+      "grupo": "sintetico",
+      "caso": "adulto/50kmh",
+      "semilla": 9855,
+      "objetivo_m": 15.2293,
+      "banda_m": [
+        11.3488,
+        19.3991
+      ],
+      "distancia_m": 15.9383,
+      "en_banda": true,
+      "sin_calibrar_m": 16.4455,
+      "sin_calibrar_en_banda": true,
+      "k": 0.9623,
+      "iteraciones": 2
+    },
+    {
+      "grupo": "sintetico",
+      "caso": "adulto/50kmh",
+      "semilla": 9856,
+      "objetivo_m": 15.2293,
+      "banda_m": [
+        11.3488,
+        19.3991
+      ],
+      "distancia_m": 14.8824,
+      "en_banda": true,
+      "sin_calibrar_m": 17.7988,
+      "sin_calibrar_en_banda": true,
+      "k": 0.925,
+      "iteraciones": 2
+    },
+    {
+      "grupo": "sintetico",
+      "caso": "adulto/50kmh",
+      "semilla": 9857,
+      "objetivo_m": 15.2293,
+      "banda_m": [
+        11.3488,
+        19.3991
+      ],
+      "distancia_m": 15.3563,
+      "en_banda": true,
+      "sin_calibrar_m": 16.8285,
+      "sin_calibrar_en_banda": true,
+      "k": 0.9513,
+      "iteraciones": 2
+    },
+    {
+      "grupo": "sintetico",
+      "caso": "adulto/50kmh",
+      "semilla": 9858,
+      "objetivo_m": 15.2293,
+      "banda_m": [
+        11.3488,
+        19.3991
+      ],
+      "distancia_m": 14.8453,
+      "en_banda": true,
+      "sin_calibrar_m": 18.4591,
+      "sin_calibrar_en_banda": true,
+      "k": 0.9083,
+      "iteraciones": 2
+    },
+    {
+      "grupo": "sintetico",
+      "caso": "adulto/50kmh",
+      "semilla": 9859,
+      "objetivo_m": 15.2293,
+      "banda_m": [
+        11.3488,
+        19.3991
+      ],
+      "distancia_m": 14.9475,
+      "en_banda": true,
+      "sin_calibrar_m": 16.6711,
+      "sin_calibrar_en_banda": true,
+      "k": 0.9558,
+      "iteraciones": 2
+    },
+    {
+      "grupo": "sintetico",
+      "caso": "adulto/50kmh",
+      "semilla": 9860,
+      "objetivo_m": 15.2293,
+      "banda_m": [
+        11.3488,
+        19.3991
+      ],
+      "distancia_m": 14.9931,
+      "en_banda": true,
+      "sin_calibrar_m": 16.2785,
+      "sin_calibrar_en_banda": true,
+      "k": 0.9672,
+      "iteraciones": 2
+    },
+    {
+      "grupo": "sintetico",
+      "caso": "adulto/50kmh",
+      "semilla": 9861,
+      "objetivo_m": 15.2293,
+      "banda_m": [
+        11.3488,
+        19.3991
+      ],
+      "distancia_m": 15.0663,
+      "en_banda": true,
+      "sin_calibrar_m": 17.6139,
+      "sin_calibrar_en_banda": true,
+      "k": 0.9299,
+      "iteraciones": 2
+    },
+    {
+      "grupo": "sintetico",
+      "caso": "adulto/50kmh",
+      "semilla": 9862,
+      "objetivo_m": 15.2293,
+      "banda_m": [
+        11.3488,
+        19.3991
+      ],
+      "distancia_m": 14.4185,
+      "en_banda": true,
+      "sin_calibrar_m": 16.5792,
+      "sin_calibrar_en_banda": true,
+      "k": 0.9584,
+      "iteraciones": 2
+    },
+    {
+      "grupo": "sintetico",
+      "caso": "adulto/50kmh",
+      "semilla": 9863,
+      "objetivo_m": 15.2293,
+      "banda_m": [
+        11.3488,
+        19.3991
+      ],
+      "distancia_m": 14.8834,
+      "en_banda": true,
+      "sin_calibrar_m": 17.7172,
+      "sin_calibrar_en_banda": true,
+      "k": 0.9271,
+      "iteraciones": 2
+    },
+    {
+      "grupo": "sintetico",
+      "caso": "adulto/50kmh",
+      "semilla": 9864,
+      "objetivo_m": 15.2293,
+      "banda_m": [
+        11.3488,
+        19.3991
+      ],
+      "distancia_m": 15.4978,
+      "en_banda": true,
+      "sin_calibrar_m": 16.7798,
+      "sin_calibrar_en_banda": true,
+      "k": 0.9527,
+      "iteraciones": 2
+    },
+    {
+      "grupo": "sintetico",
+      "caso": "adulto/50kmh",
+      "semilla": 9865,
+      "objetivo_m": 15.2293,
+      "banda_m": [
+        11.3488,
+        19.3991
+      ],
+      "distancia_m": 15.613,
+      "en_banda": true,
+      "sin_calibrar_m": 15.613,
+      "sin_calibrar_en_banda": true,
+      "k": 1,
+      "iteraciones": 2
+    },
+    {
+      "grupo": "sintetico",
+      "caso": "adulto/50kmh",
+      "semilla": 9866,
+      "objetivo_m": 15.2293,
+      "banda_m": [
+        11.3488,
+        19.3991
+      ],
+      "distancia_m": 16.2504,
+      "en_banda": true,
+      "sin_calibrar_m": 16.7371,
+      "sin_calibrar_en_banda": true,
+      "k": 0.9539,
+      "iteraciones": 2
+    },
+    {
+      "grupo": "sintetico",
+      "caso": "adulto/50kmh",
+      "semilla": 9867,
+      "objetivo_m": 15.2293,
+      "banda_m": [
+        11.3488,
+        19.3991
+      ],
+      "distancia_m": 14.7968,
+      "en_banda": true,
+      "sin_calibrar_m": 16.7887,
+      "sin_calibrar_en_banda": true,
+      "k": 0.9524,
+      "iteraciones": 2
+    },
+    {
+      "grupo": "sintetico",
+      "caso": "adulto/50kmh",
+      "semilla": 9868,
+      "objetivo_m": 15.2293,
+      "banda_m": [
+        11.3488,
+        19.3991
+      ],
+      "distancia_m": 15.4683,
+      "en_banda": true,
+      "sin_calibrar_m": 16.4769,
+      "sin_calibrar_en_banda": true,
+      "k": 0.9614,
+      "iteraciones": 2
+    },
+    {
+      "grupo": "sintetico",
+      "caso": "adulto/50kmh",
+      "semilla": 9869,
+      "objetivo_m": 15.2293,
+      "banda_m": [
+        11.3488,
+        19.3991
+      ],
+      "distancia_m": 15.6844,
+      "en_banda": true,
+      "sin_calibrar_m": 17.0604,
+      "sin_calibrar_en_banda": true,
+      "k": 0.9448,
+      "iteraciones": 2
+    },
+    {
+      "grupo": "sintetico",
+      "caso": "adulto/60kmh",
+      "semilla": 10820,
+      "objetivo_m": 21.6488,
+      "banda_m": [
+        16.0225,
+        27.7003
+      ],
+      "distancia_m": 21.5091,
+      "en_banda": true,
+      "sin_calibrar_m": 22.9893,
+      "sin_calibrar_en_banda": true,
+      "k": 0.9704,
+      "iteraciones": 2
+    },
+    {
+      "grupo": "sintetico",
+      "caso": "adulto/60kmh",
+      "semilla": 10821,
+      "objetivo_m": 21.6488,
+      "banda_m": [
+        16.0225,
+        27.7003
+      ],
+      "distancia_m": 21.4849,
+      "en_banda": true,
+      "sin_calibrar_m": 23.044,
+      "sin_calibrar_en_banda": true,
+      "k": 0.9693,
+      "iteraciones": 2
+    },
+    {
+      "grupo": "sintetico",
+      "caso": "adulto/60kmh",
+      "semilla": 10822,
+      "objetivo_m": 21.6488,
+      "banda_m": [
+        16.0225,
+        27.7003
+      ],
+      "distancia_m": 22.3659,
+      "en_banda": true,
+      "sin_calibrar_m": 22.3659,
+      "sin_calibrar_en_banda": true,
+      "k": 1,
+      "iteraciones": 2
+    },
+    {
+      "grupo": "sintetico",
+      "caso": "adulto/60kmh",
+      "semilla": 10823,
+      "objetivo_m": 21.6488,
+      "banda_m": [
+        16.0225,
+        27.7003
+      ],
+      "distancia_m": 21.671,
+      "en_banda": true,
+      "sin_calibrar_m": 22.6831,
+      "sin_calibrar_en_banda": true,
+      "k": 0.9769,
+      "iteraciones": 2
+    },
+    {
+      "grupo": "sintetico",
+      "caso": "adulto/60kmh",
+      "semilla": 10824,
+      "objetivo_m": 21.6488,
+      "banda_m": [
+        16.0225,
+        27.7003
+      ],
+      "distancia_m": 22.2701,
+      "en_banda": true,
+      "sin_calibrar_m": 22.2701,
+      "sin_calibrar_en_banda": true,
+      "k": 1,
+      "iteraciones": 2
+    },
+    {
+      "grupo": "sintetico",
+      "caso": "adulto/60kmh",
+      "semilla": 10825,
+      "objetivo_m": 21.6488,
+      "banda_m": [
+        16.0225,
+        27.7003
+      ],
+      "distancia_m": 21.0613,
+      "en_banda": true,
+      "sin_calibrar_m": 22.9479,
+      "sin_calibrar_en_banda": true,
+      "k": 0.9713,
+      "iteraciones": 2
+    },
+    {
+      "grupo": "sintetico",
+      "caso": "adulto/60kmh",
+      "semilla": 10826,
+      "objetivo_m": 21.6488,
+      "banda_m": [
+        16.0225,
+        27.7003
+      ],
+      "distancia_m": 21.3658,
+      "en_banda": true,
+      "sin_calibrar_m": 22.6103,
+      "sin_calibrar_en_banda": true,
+      "k": 0.9785,
+      "iteraciones": 2
+    },
+    {
+      "grupo": "sintetico",
+      "caso": "adulto/60kmh",
+      "semilla": 10827,
+      "objetivo_m": 21.6488,
+      "banda_m": [
+        16.0225,
+        27.7003
+      ],
+      "distancia_m": 21.2011,
+      "en_banda": true,
+      "sin_calibrar_m": 22.6788,
+      "sin_calibrar_en_banda": true,
+      "k": 0.977,
+      "iteraciones": 2
+    },
+    {
+      "grupo": "sintetico",
+      "caso": "adulto/60kmh",
+      "semilla": 10828,
+      "objetivo_m": 21.6488,
+      "banda_m": [
+        16.0225,
+        27.7003
+      ],
+      "distancia_m": 21.1702,
+      "en_banda": true,
+      "sin_calibrar_m": 22.8387,
+      "sin_calibrar_en_banda": true,
+      "k": 0.9736,
+      "iteraciones": 2
+    },
+    {
+      "grupo": "sintetico",
+      "caso": "adulto/60kmh",
+      "semilla": 10829,
+      "objetivo_m": 21.6488,
+      "banda_m": [
+        16.0225,
+        27.7003
+      ],
+      "distancia_m": 22.1839,
+      "en_banda": true,
+      "sin_calibrar_m": 23.1265,
+      "sin_calibrar_en_banda": true,
+      "k": 0.9675,
+      "iteraciones": 2
+    },
+    {
+      "grupo": "sintetico",
+      "caso": "adulto/60kmh",
+      "semilla": 10830,
+      "objetivo_m": 21.6488,
+      "banda_m": [
+        16.0225,
+        27.7003
+      ],
+      "distancia_m": 21.6838,
+      "en_banda": true,
+      "sin_calibrar_m": 23.287,
+      "sin_calibrar_en_banda": true,
+      "k": 0.9642,
+      "iteraciones": 2
+    },
+    {
+      "grupo": "sintetico",
+      "caso": "adulto/60kmh",
+      "semilla": 10831,
+      "objetivo_m": 21.6488,
+      "banda_m": [
+        16.0225,
+        27.7003
+      ],
+      "distancia_m": 22.0436,
+      "en_banda": true,
+      "sin_calibrar_m": 22.3704,
+      "sin_calibrar_en_banda": true,
+      "k": 0.9837,
+      "iteraciones": 2
+    },
+    {
+      "grupo": "sintetico",
+      "caso": "adulto/60kmh",
+      "semilla": 10832,
+      "objetivo_m": 21.6488,
+      "banda_m": [
+        16.0225,
+        27.7003
+      ],
+      "distancia_m": 21.7098,
+      "en_banda": true,
+      "sin_calibrar_m": 22.555,
+      "sin_calibrar_en_banda": true,
+      "k": 0.9797,
+      "iteraciones": 2
+    },
+    {
+      "grupo": "sintetico",
+      "caso": "adulto/60kmh",
+      "semilla": 10833,
+      "objetivo_m": 21.6488,
+      "banda_m": [
+        16.0225,
+        27.7003
+      ],
+      "distancia_m": 22.2214,
+      "en_banda": true,
+      "sin_calibrar_m": 23.7957,
+      "sin_calibrar_en_banda": true,
+      "k": 0.9538,
+      "iteraciones": 2
+    },
+    {
+      "grupo": "sintetico",
+      "caso": "adulto/60kmh",
+      "semilla": 10834,
+      "objetivo_m": 21.6488,
+      "banda_m": [
+        16.0225,
+        27.7003
+      ],
+      "distancia_m": 21.971,
+      "en_banda": true,
+      "sin_calibrar_m": 22.3104,
+      "sin_calibrar_en_banda": true,
+      "k": 0.9851,
+      "iteraciones": 2
+    },
+    {
+      "grupo": "sintetico",
+      "caso": "adulto/60kmh",
+      "semilla": 10835,
+      "objetivo_m": 21.6488,
+      "banda_m": [
+        16.0225,
+        27.7003
+      ],
+      "distancia_m": 22.1775,
+      "en_banda": true,
+      "sin_calibrar_m": 22.1775,
+      "sin_calibrar_en_banda": true,
+      "k": 1,
+      "iteraciones": 2
+    },
+    {
+      "grupo": "sintetico",
+      "caso": "adulto/60kmh",
+      "semilla": 10836,
+      "objetivo_m": 21.6488,
+      "banda_m": [
+        16.0225,
+        27.7003
+      ],
+      "distancia_m": 21.7526,
+      "en_banda": true,
+      "sin_calibrar_m": 23.2256,
+      "sin_calibrar_en_banda": true,
+      "k": 0.9655,
+      "iteraciones": 2
+    },
+    {
+      "grupo": "sintetico",
+      "caso": "adulto/60kmh",
+      "semilla": 10837,
+      "objetivo_m": 21.6488,
+      "banda_m": [
+        16.0225,
+        27.7003
+      ],
+      "distancia_m": 21.9027,
+      "en_banda": true,
+      "sin_calibrar_m": 22.5468,
+      "sin_calibrar_en_banda": true,
+      "k": 0.9799,
+      "iteraciones": 2
+    },
+    {
+      "grupo": "sintetico",
+      "caso": "adulto/60kmh",
+      "semilla": 10838,
+      "objetivo_m": 21.6488,
+      "banda_m": [
+        16.0225,
+        27.7003
+      ],
+      "distancia_m": 21.852,
+      "en_banda": true,
+      "sin_calibrar_m": 22.6006,
+      "sin_calibrar_en_banda": true,
+      "k": 0.9787,
+      "iteraciones": 2
+    },
+    {
+      "grupo": "sintetico",
+      "caso": "adulto/60kmh",
+      "semilla": 10839,
+      "objetivo_m": 21.6488,
+      "banda_m": [
+        16.0225,
+        27.7003
+      ],
+      "distancia_m": 20.6479,
+      "en_banda": true,
+      "sin_calibrar_m": 23.6956,
+      "sin_calibrar_en_banda": true,
+      "k": 0.9558,
+      "iteraciones": 2
+    },
+    {
+      "grupo": "sintetico",
+      "caso": "adulto/70kmh",
+      "semilla": 11790,
+      "objetivo_m": 29.2355,
+      "banda_m": [
+        21.546,
+        37.5107
+      ],
+      "distancia_m": 30.0973,
+      "en_banda": true,
+      "sin_calibrar_m": 30.3453,
+      "sin_calibrar_en_banda": true,
+      "k": 0.9815,
+      "iteraciones": 2
+    },
+    {
+      "grupo": "sintetico",
+      "caso": "adulto/70kmh",
+      "semilla": 11791,
+      "objetivo_m": 29.2355,
+      "banda_m": [
+        21.546,
+        37.5107
+      ],
+      "distancia_m": 29.1249,
+      "en_banda": true,
+      "sin_calibrar_m": 29.1249,
+      "sin_calibrar_en_banda": true,
+      "k": 1,
+      "iteraciones": 2
+    },
+    {
+      "grupo": "sintetico",
+      "caso": "adulto/70kmh",
+      "semilla": 11792,
+      "objetivo_m": 29.2355,
+      "banda_m": [
+        21.546,
+        37.5107
+      ],
+      "distancia_m": 29.9052,
+      "en_banda": true,
+      "sin_calibrar_m": 29.9052,
+      "sin_calibrar_en_banda": true,
+      "k": 1,
+      "iteraciones": 2
+    },
+    {
+      "grupo": "sintetico",
+      "caso": "adulto/70kmh",
+      "semilla": 11793,
+      "objetivo_m": 29.2355,
+      "banda_m": [
+        21.546,
+        37.5107
+      ],
+      "distancia_m": 28.7666,
+      "en_banda": true,
+      "sin_calibrar_m": 30.3942,
+      "sin_calibrar_en_banda": true,
+      "k": 0.9808,
+      "iteraciones": 2
+    },
+    {
+      "grupo": "sintetico",
+      "caso": "adulto/70kmh",
+      "semilla": 11794,
+      "objetivo_m": 29.2355,
+      "banda_m": [
+        21.546,
+        37.5107
+      ],
+      "distancia_m": 28.7325,
+      "en_banda": true,
+      "sin_calibrar_m": 29.9379,
+      "sin_calibrar_en_banda": true,
+      "k": 0.9882,
+      "iteraciones": 2
+    },
+    {
+      "grupo": "sintetico",
+      "caso": "adulto/70kmh",
+      "semilla": 11795,
+      "objetivo_m": 29.2355,
+      "banda_m": [
+        21.546,
+        37.5107
+      ],
+      "distancia_m": 29.6396,
+      "en_banda": true,
+      "sin_calibrar_m": 29.6396,
+      "sin_calibrar_en_banda": true,
+      "k": 1,
+      "iteraciones": 2
+    },
+    {
+      "grupo": "sintetico",
+      "caso": "adulto/70kmh",
+      "semilla": 11796,
+      "objetivo_m": 29.2355,
+      "banda_m": [
+        21.546,
+        37.5107
+      ],
+      "distancia_m": 29.482,
+      "en_banda": true,
+      "sin_calibrar_m": 30.8012,
+      "sin_calibrar_en_banda": true,
+      "k": 0.9743,
+      "iteraciones": 2
+    },
+    {
+      "grupo": "sintetico",
+      "caso": "adulto/70kmh",
+      "semilla": 11797,
+      "objetivo_m": 29.2355,
+      "banda_m": [
+        21.546,
+        37.5107
+      ],
+      "distancia_m": 29.4516,
+      "en_banda": true,
+      "sin_calibrar_m": 29.8517,
+      "sin_calibrar_en_banda": true,
+      "k": 0.9896,
+      "iteraciones": 2
+    },
+    {
+      "grupo": "sintetico",
+      "caso": "adulto/70kmh",
+      "semilla": 11798,
+      "objetivo_m": 29.2355,
+      "banda_m": [
+        21.546,
+        37.5107
+      ],
+      "distancia_m": 29.2896,
+      "en_banda": true,
+      "sin_calibrar_m": 29.4251,
+      "sin_calibrar_en_banda": true,
+      "k": 0.9968,
+      "iteraciones": 2
+    },
+    {
+      "grupo": "sintetico",
+      "caso": "adulto/70kmh",
+      "semilla": 11799,
+      "objetivo_m": 29.2355,
+      "banda_m": [
+        21.546,
+        37.5107
+      ],
+      "distancia_m": 28.9371,
+      "en_banda": true,
+      "sin_calibrar_m": 30.3153,
+      "sin_calibrar_en_banda": true,
+      "k": 0.982,
+      "iteraciones": 2
+    },
+    {
+      "grupo": "sintetico",
+      "caso": "adulto/70kmh",
+      "semilla": 11800,
+      "objetivo_m": 29.2355,
+      "banda_m": [
+        21.546,
+        37.5107
+      ],
+      "distancia_m": 29.5774,
+      "en_banda": true,
+      "sin_calibrar_m": 30.5353,
+      "sin_calibrar_en_banda": true,
+      "k": 0.9785,
+      "iteraciones": 2
+    },
+    {
+      "grupo": "sintetico",
+      "caso": "adulto/70kmh",
+      "semilla": 11801,
+      "objetivo_m": 29.2355,
+      "banda_m": [
+        21.546,
+        37.5107
+      ],
+      "distancia_m": 29.235,
+      "en_banda": true,
+      "sin_calibrar_m": 30.4335,
+      "sin_calibrar_en_banda": true,
+      "k": 0.9801,
+      "iteraciones": 2
+    },
+    {
+      "grupo": "sintetico",
+      "caso": "adulto/70kmh",
+      "semilla": 11802,
+      "objetivo_m": 29.2355,
+      "banda_m": [
+        21.546,
+        37.5107
+      ],
+      "distancia_m": 29.6271,
+      "en_banda": true,
+      "sin_calibrar_m": 30.8532,
+      "sin_calibrar_en_banda": true,
+      "k": 0.9734,
+      "iteraciones": 2
+    },
+    {
+      "grupo": "sintetico",
+      "caso": "adulto/70kmh",
+      "semilla": 11803,
+      "objetivo_m": 29.2355,
+      "banda_m": [
+        21.546,
+        37.5107
+      ],
+      "distancia_m": 30.0864,
+      "en_banda": true,
+      "sin_calibrar_m": 30.7908,
+      "sin_calibrar_en_banda": true,
+      "k": 0.9744,
+      "iteraciones": 2
+    },
+    {
+      "grupo": "sintetico",
+      "caso": "adulto/70kmh",
+      "semilla": 11804,
+      "objetivo_m": 29.2355,
+      "banda_m": [
+        21.546,
+        37.5107
+      ],
+      "distancia_m": 28.9037,
+      "en_banda": true,
+      "sin_calibrar_m": 30.4102,
+      "sin_calibrar_en_banda": true,
+      "k": 0.9805,
+      "iteraciones": 2
+    },
+    {
+      "grupo": "sintetico",
+      "caso": "adulto/70kmh",
+      "semilla": 11805,
+      "objetivo_m": 29.2355,
+      "banda_m": [
+        21.546,
+        37.5107
+      ],
+      "distancia_m": 29.4176,
+      "en_banda": true,
+      "sin_calibrar_m": 30.8289,
+      "sin_calibrar_en_banda": true,
+      "k": 0.9738,
+      "iteraciones": 2
+    },
+    {
+      "grupo": "sintetico",
+      "caso": "adulto/70kmh",
+      "semilla": 11806,
+      "objetivo_m": 29.2355,
+      "banda_m": [
+        21.546,
+        37.5107
+      ],
+      "distancia_m": 29.5155,
+      "en_banda": true,
+      "sin_calibrar_m": 30.5438,
+      "sin_calibrar_en_banda": true,
+      "k": 0.9783,
+      "iteraciones": 2
+    },
+    {
+      "grupo": "sintetico",
+      "caso": "adulto/70kmh",
+      "semilla": 11807,
+      "objetivo_m": 29.2355,
+      "banda_m": [
+        21.546,
+        37.5107
+      ],
+      "distancia_m": 28.496,
+      "en_banda": true,
+      "sin_calibrar_m": 30.1768,
+      "sin_calibrar_en_banda": true,
+      "k": 0.9843,
+      "iteraciones": 2
+    },
+    {
+      "grupo": "sintetico",
+      "caso": "adulto/70kmh",
+      "semilla": 11808,
+      "objetivo_m": 29.2355,
+      "banda_m": [
+        21.546,
+        37.5107
+      ],
+      "distancia_m": 28.3929,
+      "en_banda": true,
+      "sin_calibrar_m": 30.3255,
+      "sin_calibrar_en_banda": true,
+      "k": 0.9819,
+      "iteraciones": 2
+    },
+    {
+      "grupo": "sintetico",
+      "caso": "adulto/70kmh",
+      "semilla": 11809,
+      "objetivo_m": 29.2355,
+      "banda_m": [
+        21.546,
+        37.5107
+      ],
+      "distancia_m": 29.1217,
+      "en_banda": true,
+      "sin_calibrar_m": 30.6356,
+      "sin_calibrar_en_banda": true,
+      "k": 0.9769,
+      "iteraciones": 2
+    },
+    {
+      "grupo": "sintetico",
+      "caso": "mayor/20kmh",
+      "semilla": 6940,
+      "objetivo_m": 2.9363,
+      "banda_m": [
+        2.3835,
+        3.5202
+      ],
+      "distancia_m": 2.7284,
+      "en_banda": true,
+      "sin_calibrar_m": 3.4175,
+      "sin_calibrar_en_banda": true,
+      "k": 0.9269,
+      "iteraciones": 2
+    },
+    {
+      "grupo": "sintetico",
+      "caso": "mayor/20kmh",
+      "semilla": 6941,
+      "objetivo_m": 2.9363,
+      "banda_m": [
+        2.3835,
+        3.5202
+      ],
+      "distancia_m": 2.803,
+      "en_banda": true,
+      "sin_calibrar_m": 3.1798,
+      "sin_calibrar_en_banda": true,
+      "k": 0.9609,
+      "iteraciones": 2
+    },
+    {
+      "grupo": "sintetico",
+      "caso": "mayor/20kmh",
+      "semilla": 6942,
+      "objetivo_m": 2.9363,
+      "banda_m": [
+        2.3835,
+        3.5202
+      ],
+      "distancia_m": 3.003,
+      "en_banda": true,
+      "sin_calibrar_m": 3.003,
+      "sin_calibrar_en_banda": true,
+      "k": 1,
+      "iteraciones": 5
+    },
+    {
+      "grupo": "sintetico",
+      "caso": "mayor/20kmh",
+      "semilla": 6943,
+      "objetivo_m": 2.9363,
+      "banda_m": [
+        2.3835,
+        3.5202
+      ],
+      "distancia_m": 2.7247,
+      "en_banda": true,
+      "sin_calibrar_m": 3.3546,
+      "sin_calibrar_en_banda": true,
+      "k": 0.9356,
+      "iteraciones": 2
+    },
+    {
+      "grupo": "sintetico",
+      "caso": "mayor/20kmh",
+      "semilla": 6944,
+      "objetivo_m": 2.9363,
+      "banda_m": [
+        2.3835,
+        3.5202
+      ],
+      "distancia_m": 3.0631,
+      "en_banda": true,
+      "sin_calibrar_m": 3.2786,
+      "sin_calibrar_en_banda": true,
+      "k": 0.8867,
+      "iteraciones": 4
+    },
+    {
+      "grupo": "sintetico",
+      "caso": "mayor/20kmh",
+      "semilla": 6945,
+      "objetivo_m": 2.9363,
+      "banda_m": [
+        2.3835,
+        3.5202
+      ],
+      "distancia_m": 2.9426,
+      "en_banda": true,
+      "sin_calibrar_m": 3.351,
+      "sin_calibrar_en_banda": true,
+      "k": 0.9276,
+      "iteraciones": 5
+    },
+    {
+      "grupo": "sintetico",
+      "caso": "mayor/20kmh",
+      "semilla": 6946,
+      "objetivo_m": 2.9363,
+      "banda_m": [
+        2.3835,
+        3.5202
+      ],
+      "distancia_m": 3.0652,
+      "en_banda": true,
+      "sin_calibrar_m": 3.3576,
+      "sin_calibrar_en_banda": true,
+      "k": 0.9352,
+      "iteraciones": 2
+    },
+    {
+      "grupo": "sintetico",
+      "caso": "mayor/20kmh",
+      "semilla": 6947,
+      "objetivo_m": 2.9363,
+      "banda_m": [
+        2.3835,
+        3.5202
+      ],
+      "distancia_m": 2.8704,
+      "en_banda": true,
+      "sin_calibrar_m": 3.236,
+      "sin_calibrar_en_banda": true,
+      "k": 0.9526,
+      "iteraciones": 2
+    },
+    {
+      "grupo": "sintetico",
+      "caso": "mayor/20kmh",
+      "semilla": 6948,
+      "objetivo_m": 2.9363,
+      "banda_m": [
+        2.3835,
+        3.5202
+      ],
+      "distancia_m": 3.08,
+      "en_banda": true,
+      "sin_calibrar_m": 3.2148,
+      "sin_calibrar_en_banda": true,
+      "k": 0.9557,
+      "iteraciones": 2
+    },
+    {
+      "grupo": "sintetico",
+      "caso": "mayor/20kmh",
+      "semilla": 6949,
+      "objetivo_m": 2.9363,
+      "banda_m": [
+        2.3835,
+        3.5202
+      ],
+      "distancia_m": 3.0819,
+      "en_banda": true,
+      "sin_calibrar_m": 3.4769,
+      "sin_calibrar_en_banda": true,
+      "k": 0.919,
+      "iteraciones": 2
+    },
+    {
+      "grupo": "sintetico",
+      "caso": "mayor/20kmh",
+      "semilla": 6950,
+      "objetivo_m": 2.9363,
+      "banda_m": [
+        2.3835,
+        3.5202
+      ],
+      "distancia_m": 2.9273,
+      "en_banda": true,
+      "sin_calibrar_m": 3.2568,
+      "sin_calibrar_en_banda": true,
+      "k": 0.9495,
+      "iteraciones": 2
+    },
+    {
+      "grupo": "sintetico",
+      "caso": "mayor/20kmh",
+      "semilla": 6951,
+      "objetivo_m": 2.9363,
+      "banda_m": [
+        2.3835,
+        3.5202
+      ],
+      "distancia_m": 2.7608,
+      "en_banda": true,
+      "sin_calibrar_m": 3.3122,
+      "sin_calibrar_en_banda": true,
+      "k": 0.9415,
+      "iteraciones": 2
+    },
+    {
+      "grupo": "sintetico",
+      "caso": "mayor/20kmh",
+      "semilla": 6952,
+      "objetivo_m": 2.9363,
+      "banda_m": [
+        2.3835,
+        3.5202
+      ],
+      "distancia_m": 3.0058,
+      "en_banda": true,
+      "sin_calibrar_m": 3.2851,
+      "sin_calibrar_en_banda": true,
+      "k": 0.9454,
+      "iteraciones": 2
+    },
+    {
+      "grupo": "sintetico",
+      "caso": "mayor/20kmh",
+      "semilla": 6953,
+      "objetivo_m": 2.9363,
+      "banda_m": [
+        2.3835,
+        3.5202
+      ],
+      "distancia_m": 3.001,
+      "en_banda": true,
+      "sin_calibrar_m": 3.1629,
+      "sin_calibrar_en_banda": true,
+      "k": 0.9635,
+      "iteraciones": 2
+    },
+    {
+      "grupo": "sintetico",
+      "caso": "mayor/20kmh",
+      "semilla": 6954,
+      "objetivo_m": 2.9363,
+      "banda_m": [
+        2.3835,
+        3.5202
+      ],
+      "distancia_m": 2.7904,
+      "en_banda": true,
+      "sin_calibrar_m": 3.5746,
+      "sin_calibrar_en_banda": false,
+      "k": 0.9063,
+      "iteraciones": 2
+    },
+    {
+      "grupo": "sintetico",
+      "caso": "mayor/20kmh",
+      "semilla": 6955,
+      "objetivo_m": 2.9363,
+      "banda_m": [
+        2.3835,
+        3.5202
+      ],
+      "distancia_m": 2.8285,
+      "en_banda": true,
+      "sin_calibrar_m": 3.1516,
+      "sin_calibrar_en_banda": true,
+      "k": 0.9652,
+      "iteraciones": 2
+    },
+    {
+      "grupo": "sintetico",
+      "caso": "mayor/20kmh",
+      "semilla": 6956,
+      "objetivo_m": 2.9363,
+      "banda_m": [
+        2.3835,
+        3.5202
+      ],
+      "distancia_m": 3.0297,
+      "en_banda": true,
+      "sin_calibrar_m": 3.1528,
+      "sin_calibrar_en_banda": true,
+      "k": 0.9651,
+      "iteraciones": 2
+    },
+    {
+      "grupo": "sintetico",
+      "caso": "mayor/20kmh",
+      "semilla": 6957,
+      "objetivo_m": 2.9363,
+      "banda_m": [
+        2.3835,
+        3.5202
+      ],
+      "distancia_m": 3.0397,
+      "en_banda": true,
+      "sin_calibrar_m": 3.2675,
+      "sin_calibrar_en_banda": true,
+      "k": 0.948,
+      "iteraciones": 2
+    },
+    {
+      "grupo": "sintetico",
+      "caso": "mayor/20kmh",
+      "semilla": 6958,
+      "objetivo_m": 2.9363,
+      "banda_m": [
+        2.3835,
+        3.5202
+      ],
+      "distancia_m": 3.0734,
+      "en_banda": true,
+      "sin_calibrar_m": 3.2031,
+      "sin_calibrar_en_banda": true,
+      "k": 0.9045,
+      "iteraciones": 4
+    },
+    {
+      "grupo": "sintetico",
+      "caso": "mayor/20kmh",
+      "semilla": 6959,
+      "objetivo_m": 2.9363,
+      "banda_m": [
+        2.3835,
+        3.5202
+      ],
+      "distancia_m": 2.9058,
+      "en_banda": true,
+      "sin_calibrar_m": 3.1949,
+      "sin_calibrar_en_banda": true,
+      "k": 0.9587,
+      "iteraciones": 2
+    },
+    {
+      "grupo": "sintetico",
+      "caso": "mayor/30kmh",
+      "semilla": 7910,
+      "objetivo_m": 5.8542,
+      "banda_m": [
+        4.5079,
+        7.2934
+      ],
+      "distancia_m": 5.8993,
+      "en_banda": true,
+      "sin_calibrar_m": 7.4187,
+      "sin_calibrar_en_banda": false,
+      "k": 0.8883,
+      "iteraciones": 2
+    },
+    {
+      "grupo": "sintetico",
+      "caso": "mayor/30kmh",
+      "semilla": 7911,
+      "objetivo_m": 5.8542,
+      "banda_m": [
+        4.5079,
+        7.2934
+      ],
+      "distancia_m": 5.6381,
+      "en_banda": true,
+      "sin_calibrar_m": 7.0104,
+      "sin_calibrar_en_banda": true,
+      "k": 0.9138,
+      "iteraciones": 2
+    },
+    {
+      "grupo": "sintetico",
+      "caso": "mayor/30kmh",
+      "semilla": 7912,
+      "objetivo_m": 5.8542,
+      "banda_m": [
+        4.5079,
+        7.2934
+      ],
+      "distancia_m": 5.9087,
+      "en_banda": true,
+      "sin_calibrar_m": 7.0151,
+      "sin_calibrar_en_banda": true,
+      "k": 0.9135,
+      "iteraciones": 2
+    },
+    {
+      "grupo": "sintetico",
+      "caso": "mayor/30kmh",
+      "semilla": 7913,
+      "objetivo_m": 5.8542,
+      "banda_m": [
+        4.5079,
+        7.2934
+      ],
+      "distancia_m": 5.6242,
+      "en_banda": true,
+      "sin_calibrar_m": 7.1703,
+      "sin_calibrar_en_banda": true,
+      "k": 0.9036,
+      "iteraciones": 2
+    },
+    {
+      "grupo": "sintetico",
+      "caso": "mayor/30kmh",
+      "semilla": 7914,
+      "objetivo_m": 5.8542,
+      "banda_m": [
+        4.5079,
+        7.2934
+      ],
+      "distancia_m": 5.86,
+      "en_banda": true,
+      "sin_calibrar_m": 7.3674,
+      "sin_calibrar_en_banda": false,
+      "k": 0.8914,
+      "iteraciones": 2
+    },
+    {
+      "grupo": "sintetico",
+      "caso": "mayor/30kmh",
+      "semilla": 7915,
+      "objetivo_m": 5.8542,
+      "banda_m": [
+        4.5079,
+        7.2934
+      ],
+      "distancia_m": 5.6793,
+      "en_banda": true,
+      "sin_calibrar_m": 7.9447,
+      "sin_calibrar_en_banda": false,
+      "k": 0.8584,
+      "iteraciones": 2
+    },
+    {
+      "grupo": "sintetico",
+      "caso": "mayor/30kmh",
+      "semilla": 7916,
+      "objetivo_m": 5.8542,
+      "banda_m": [
+        4.5079,
+        7.2934
+      ],
+      "distancia_m": 5.8157,
+      "en_banda": true,
+      "sin_calibrar_m": 6.7051,
+      "sin_calibrar_en_banda": true,
+      "k": 0.9344,
+      "iteraciones": 2
+    },
+    {
+      "grupo": "sintetico",
+      "caso": "mayor/30kmh",
+      "semilla": 7917,
+      "objetivo_m": 5.8542,
+      "banda_m": [
+        4.5079,
+        7.2934
+      ],
+      "distancia_m": 5.9775,
+      "en_banda": true,
+      "sin_calibrar_m": 7.6986,
+      "sin_calibrar_en_banda": false,
+      "k": 0.872,
+      "iteraciones": 2
+    },
+    {
+      "grupo": "sintetico",
+      "caso": "mayor/30kmh",
+      "semilla": 7918,
+      "objetivo_m": 5.8542,
+      "banda_m": [
+        4.5079,
+        7.2934
+      ],
+      "distancia_m": 6.0922,
+      "en_banda": true,
+      "sin_calibrar_m": 7.098,
+      "sin_calibrar_en_banda": true,
+      "k": 0.9082,
+      "iteraciones": 2
+    },
+    {
+      "grupo": "sintetico",
+      "caso": "mayor/30kmh",
+      "semilla": 7919,
+      "objetivo_m": 5.8542,
+      "banda_m": [
+        4.5079,
+        7.2934
+      ],
+      "distancia_m": 6.0744,
+      "en_banda": true,
+      "sin_calibrar_m": 7.3685,
+      "sin_calibrar_en_banda": false,
+      "k": 0.8913,
+      "iteraciones": 2
+    },
+    {
+      "grupo": "sintetico",
+      "caso": "mayor/30kmh",
+      "semilla": 7920,
+      "objetivo_m": 5.8542,
+      "banda_m": [
+        4.5079,
+        7.2934
+      ],
+      "distancia_m": 6.0417,
+      "en_banda": true,
+      "sin_calibrar_m": 7.2947,
+      "sin_calibrar_en_banda": false,
+      "k": 0.8958,
+      "iteraciones": 2
+    },
+    {
+      "grupo": "sintetico",
+      "caso": "mayor/30kmh",
+      "semilla": 7921,
+      "objetivo_m": 5.8542,
+      "banda_m": [
+        4.5079,
+        7.2934
+      ],
+      "distancia_m": 5.6275,
+      "en_banda": true,
+      "sin_calibrar_m": 6.875,
+      "sin_calibrar_en_banda": true,
+      "k": 0.9228,
+      "iteraciones": 2
+    },
+    {
+      "grupo": "sintetico",
+      "caso": "mayor/30kmh",
+      "semilla": 7922,
+      "objetivo_m": 5.8542,
+      "banda_m": [
+        4.5079,
+        7.2934
+      ],
+      "distancia_m": 5.9753,
+      "en_banda": true,
+      "sin_calibrar_m": 7.6583,
+      "sin_calibrar_en_banda": false,
+      "k": 0.8743,
+      "iteraciones": 2
+    },
+    {
+      "grupo": "sintetico",
+      "caso": "mayor/30kmh",
+      "semilla": 7923,
+      "objetivo_m": 5.8542,
+      "banda_m": [
+        4.5079,
+        7.2934
+      ],
+      "distancia_m": 5.9234,
+      "en_banda": true,
+      "sin_calibrar_m": 6.9566,
+      "sin_calibrar_en_banda": true,
+      "k": 0.9174,
+      "iteraciones": 2
+    },
+    {
+      "grupo": "sintetico",
+      "caso": "mayor/30kmh",
+      "semilla": 7924,
+      "objetivo_m": 5.8542,
+      "banda_m": [
+        4.5079,
+        7.2934
+      ],
+      "distancia_m": 5.5119,
+      "en_banda": true,
+      "sin_calibrar_m": 8.0718,
+      "sin_calibrar_en_banda": false,
+      "k": 0.8824,
+      "iteraciones": 3
+    },
+    {
+      "grupo": "sintetico",
+      "caso": "mayor/30kmh",
+      "semilla": 7925,
+      "objetivo_m": 5.8542,
+      "banda_m": [
+        4.5079,
+        7.2934
+      ],
+      "distancia_m": 5.7189,
+      "en_banda": true,
+      "sin_calibrar_m": 7.697,
+      "sin_calibrar_en_banda": false,
+      "k": 0.8721,
+      "iteraciones": 2
+    },
+    {
+      "grupo": "sintetico",
+      "caso": "mayor/30kmh",
+      "semilla": 7926,
+      "objetivo_m": 5.8542,
+      "banda_m": [
+        4.5079,
+        7.2934
+      ],
+      "distancia_m": 5.884,
+      "en_banda": true,
+      "sin_calibrar_m": 7.045,
+      "sin_calibrar_en_banda": true,
+      "k": 0.9116,
+      "iteraciones": 2
+    },
+    {
+      "grupo": "sintetico",
+      "caso": "mayor/30kmh",
+      "semilla": 7927,
+      "objetivo_m": 5.8542,
+      "banda_m": [
+        4.5079,
+        7.2934
+      ],
+      "distancia_m": 5.9227,
+      "en_banda": true,
+      "sin_calibrar_m": 7.9635,
+      "sin_calibrar_en_banda": false,
+      "k": 0.8574,
+      "iteraciones": 2
+    },
+    {
+      "grupo": "sintetico",
+      "caso": "mayor/30kmh",
+      "semilla": 7928,
+      "objetivo_m": 5.8542,
+      "banda_m": [
+        4.5079,
+        7.2934
+      ],
+      "distancia_m": 5.9164,
+      "en_banda": true,
+      "sin_calibrar_m": 6.8149,
+      "sin_calibrar_en_banda": true,
+      "k": 0.9268,
+      "iteraciones": 2
+    },
+    {
+      "grupo": "sintetico",
+      "caso": "mayor/30kmh",
+      "semilla": 7929,
+      "objetivo_m": 5.8542,
+      "banda_m": [
+        4.5079,
+        7.2934
+      ],
+      "distancia_m": 5.9498,
+      "en_banda": true,
+      "sin_calibrar_m": 6.927,
+      "sin_calibrar_en_banda": true,
+      "k": 0.9193,
+      "iteraciones": 2
+    },
+    {
+      "grupo": "sintetico",
+      "caso": "mayor/40kmh",
+      "semilla": 8880,
+      "objetivo_m": 9.9394,
+      "banda_m": [
+        7.4821,
+        12.576
+      ],
+      "distancia_m": 10.298,
+      "en_banda": true,
+      "sin_calibrar_m": 12.051,
+      "sin_calibrar_en_banda": true,
+      "k": 0.9082,
+      "iteraciones": 2
+    },
+    {
+      "grupo": "sintetico",
+      "caso": "mayor/40kmh",
+      "semilla": 8881,
+      "objetivo_m": 9.9394,
+      "banda_m": [
+        7.4821,
+        12.576
+      ],
+      "distancia_m": 10.0737,
+      "en_banda": true,
+      "sin_calibrar_m": 11.6542,
+      "sin_calibrar_en_banda": true,
+      "k": 0.9235,
+      "iteraciones": 2
+    },
+    {
+      "grupo": "sintetico",
+      "caso": "mayor/40kmh",
+      "semilla": 8882,
+      "objetivo_m": 9.9394,
+      "banda_m": [
+        7.4821,
+        12.576
+      ],
+      "distancia_m": 10.353,
+      "en_banda": true,
+      "sin_calibrar_m": 12.0223,
+      "sin_calibrar_en_banda": true,
+      "k": 0.9093,
+      "iteraciones": 2
+    },
+    {
+      "grupo": "sintetico",
+      "caso": "mayor/40kmh",
+      "semilla": 8883,
+      "objetivo_m": 9.9394,
+      "banda_m": [
+        7.4821,
+        12.576
+      ],
+      "distancia_m": 10.4789,
+      "en_banda": true,
+      "sin_calibrar_m": 11.5548,
+      "sin_calibrar_en_banda": true,
+      "k": 0.9275,
+      "iteraciones": 2
+    },
+    {
+      "grupo": "sintetico",
+      "caso": "mayor/40kmh",
+      "semilla": 8884,
+      "objetivo_m": 9.9394,
+      "banda_m": [
+        7.4821,
+        12.576
+      ],
+      "distancia_m": 10.3883,
+      "en_banda": true,
+      "sin_calibrar_m": 12.3182,
+      "sin_calibrar_en_banda": true,
+      "k": 0.8983,
+      "iteraciones": 2
+    },
+    {
+      "grupo": "sintetico",
+      "caso": "mayor/40kmh",
+      "semilla": 8885,
+      "objetivo_m": 9.9394,
+      "banda_m": [
+        7.4821,
+        12.576
+      ],
+      "distancia_m": 10.1828,
+      "en_banda": true,
+      "sin_calibrar_m": 11.7407,
+      "sin_calibrar_en_banda": true,
+      "k": 0.9201,
+      "iteraciones": 2
+    },
+    {
+      "grupo": "sintetico",
+      "caso": "mayor/40kmh",
+      "semilla": 8886,
+      "objetivo_m": 9.9394,
+      "banda_m": [
+        7.4821,
+        12.576
+      ],
+      "distancia_m": 10.1962,
+      "en_banda": true,
+      "sin_calibrar_m": 11.5774,
+      "sin_calibrar_en_banda": true,
+      "k": 0.9266,
+      "iteraciones": 2
+    },
+    {
+      "grupo": "sintetico",
+      "caso": "mayor/40kmh",
+      "semilla": 8887,
+      "objetivo_m": 9.9394,
+      "banda_m": [
+        7.4821,
+        12.576
+      ],
+      "distancia_m": 9.7895,
+      "en_banda": true,
+      "sin_calibrar_m": 11.6351,
+      "sin_calibrar_en_banda": true,
+      "k": 0.9243,
+      "iteraciones": 2
+    },
+    {
+      "grupo": "sintetico",
+      "caso": "mayor/40kmh",
+      "semilla": 8888,
+      "objetivo_m": 9.9394,
+      "banda_m": [
+        7.4821,
+        12.576
+      ],
+      "distancia_m": 10.3011,
+      "en_banda": true,
+      "sin_calibrar_m": 11.4889,
+      "sin_calibrar_en_banda": true,
+      "k": 0.9301,
+      "iteraciones": 2
+    },
+    {
+      "grupo": "sintetico",
+      "caso": "mayor/40kmh",
+      "semilla": 8889,
+      "objetivo_m": 9.9394,
+      "banda_m": [
+        7.4821,
+        12.576
+      ],
+      "distancia_m": 10.0003,
+      "en_banda": true,
+      "sin_calibrar_m": 12.0524,
+      "sin_calibrar_en_banda": true,
+      "k": 0.9081,
+      "iteraciones": 2
+    },
+    {
+      "grupo": "sintetico",
+      "caso": "mayor/40kmh",
+      "semilla": 8890,
+      "objetivo_m": 9.9394,
+      "banda_m": [
+        7.4821,
+        12.576
+      ],
+      "distancia_m": 9.8607,
+      "en_banda": true,
+      "sin_calibrar_m": 11.3781,
+      "sin_calibrar_en_banda": true,
+      "k": 0.9346,
+      "iteraciones": 2
+    },
+    {
+      "grupo": "sintetico",
+      "caso": "mayor/40kmh",
+      "semilla": 8891,
+      "objetivo_m": 9.9394,
+      "banda_m": [
+        7.4821,
+        12.576
+      ],
+      "distancia_m": 10.4289,
+      "en_banda": true,
+      "sin_calibrar_m": 11.2437,
+      "sin_calibrar_en_banda": true,
+      "k": 0.9402,
+      "iteraciones": 2
+    },
+    {
+      "grupo": "sintetico",
+      "caso": "mayor/40kmh",
+      "semilla": 8892,
+      "objetivo_m": 9.9394,
+      "banda_m": [
+        7.4821,
+        12.576
+      ],
+      "distancia_m": 10.0751,
+      "en_banda": true,
+      "sin_calibrar_m": 11.878,
+      "sin_calibrar_en_banda": true,
+      "k": 0.9148,
+      "iteraciones": 2
+    },
+    {
+      "grupo": "sintetico",
+      "caso": "mayor/40kmh",
+      "semilla": 8893,
+      "objetivo_m": 9.9394,
+      "banda_m": [
+        7.4821,
+        12.576
+      ],
+      "distancia_m": 10.3201,
+      "en_banda": true,
+      "sin_calibrar_m": 11.5191,
+      "sin_calibrar_en_banda": true,
+      "k": 0.9289,
+      "iteraciones": 2
+    },
+    {
+      "grupo": "sintetico",
+      "caso": "mayor/40kmh",
+      "semilla": 8894,
+      "objetivo_m": 9.9394,
+      "banda_m": [
+        7.4821,
+        12.576
+      ],
+      "distancia_m": 10.4639,
+      "en_banda": true,
+      "sin_calibrar_m": 11.7758,
+      "sin_calibrar_en_banda": true,
+      "k": 0.9187,
+      "iteraciones": 2
+    },
+    {
+      "grupo": "sintetico",
+      "caso": "mayor/40kmh",
+      "semilla": 8895,
+      "objetivo_m": 9.9394,
+      "banda_m": [
+        7.4821,
+        12.576
+      ],
+      "distancia_m": 9.9209,
+      "en_banda": true,
+      "sin_calibrar_m": 11.939,
+      "sin_calibrar_en_banda": true,
+      "k": 0.9124,
+      "iteraciones": 2
+    },
+    {
+      "grupo": "sintetico",
+      "caso": "mayor/40kmh",
+      "semilla": 8896,
+      "objetivo_m": 9.9394,
+      "banda_m": [
+        7.4821,
+        12.576
+      ],
+      "distancia_m": 10.1556,
+      "en_banda": true,
+      "sin_calibrar_m": 11.2906,
+      "sin_calibrar_en_banda": true,
+      "k": 0.9383,
+      "iteraciones": 2
+    },
+    {
+      "grupo": "sintetico",
+      "caso": "mayor/40kmh",
+      "semilla": 8897,
+      "objetivo_m": 9.9394,
+      "banda_m": [
+        7.4821,
+        12.576
+      ],
+      "distancia_m": 10.6294,
+      "en_banda": true,
+      "sin_calibrar_m": 11.1616,
+      "sin_calibrar_en_banda": true,
+      "k": 0.9437,
+      "iteraciones": 2
+    },
+    {
+      "grupo": "sintetico",
+      "caso": "mayor/40kmh",
+      "semilla": 8898,
+      "objetivo_m": 9.9394,
+      "banda_m": [
+        7.4821,
+        12.576
+      ],
+      "distancia_m": 10.1594,
+      "en_banda": true,
+      "sin_calibrar_m": 12.262,
+      "sin_calibrar_en_banda": true,
+      "k": 0.9003,
+      "iteraciones": 2
+    },
+    {
+      "grupo": "sintetico",
+      "caso": "mayor/40kmh",
+      "semilla": 8899,
+      "objetivo_m": 9.9394,
+      "banda_m": [
+        7.4821,
+        12.576
+      ],
+      "distancia_m": 9.6052,
+      "en_banda": true,
+      "sin_calibrar_m": 11.8286,
+      "sin_calibrar_en_banda": true,
+      "k": 0.9167,
+      "iteraciones": 2
+    },
+    {
+      "grupo": "sintetico",
+      "caso": "mayor/50kmh",
+      "semilla": 9850,
+      "objetivo_m": 15.1917,
+      "banda_m": [
+        11.306,
+        19.3678
+      ],
+      "distancia_m": 15.7428,
+      "en_banda": true,
+      "sin_calibrar_m": 16.3198,
+      "sin_calibrar_en_banda": true,
+      "k": 0.9648,
+      "iteraciones": 2
+    },
+    {
+      "grupo": "sintetico",
+      "caso": "mayor/50kmh",
+      "semilla": 9851,
+      "objetivo_m": 15.1917,
+      "banda_m": [
+        11.306,
+        19.3678
+      ],
+      "distancia_m": 15.4419,
+      "en_banda": true,
+      "sin_calibrar_m": 17.4619,
+      "sin_calibrar_en_banda": true,
+      "k": 0.9327,
+      "iteraciones": 2
+    },
+    {
+      "grupo": "sintetico",
+      "caso": "mayor/50kmh",
+      "semilla": 9852,
+      "objetivo_m": 15.1917,
+      "banda_m": [
+        11.306,
+        19.3678
+      ],
+      "distancia_m": 15.3885,
+      "en_banda": true,
+      "sin_calibrar_m": 16.9928,
+      "sin_calibrar_en_banda": true,
+      "k": 0.9455,
+      "iteraciones": 2
+    },
+    {
+      "grupo": "sintetico",
+      "caso": "mayor/50kmh",
+      "semilla": 9853,
+      "objetivo_m": 15.1917,
+      "banda_m": [
+        11.306,
+        19.3678
+      ],
+      "distancia_m": 15.9422,
+      "en_banda": true,
+      "sin_calibrar_m": 16.5986,
+      "sin_calibrar_en_banda": true,
+      "k": 0.9567,
+      "iteraciones": 2
+    },
+    {
+      "grupo": "sintetico",
+      "caso": "mayor/50kmh",
+      "semilla": 9854,
+      "objetivo_m": 15.1917,
+      "banda_m": [
+        11.306,
+        19.3678
+      ],
+      "distancia_m": 15.7947,
+      "en_banda": true,
+      "sin_calibrar_m": 16.0774,
+      "sin_calibrar_en_banda": true,
+      "k": 0.9721,
+      "iteraciones": 2
+    },
+    {
+      "grupo": "sintetico",
+      "caso": "mayor/50kmh",
+      "semilla": 9855,
+      "objetivo_m": 15.1917,
+      "banda_m": [
+        11.306,
+        19.3678
+      ],
+      "distancia_m": 16.0702,
+      "en_banda": true,
+      "sin_calibrar_m": 16.4176,
+      "sin_calibrar_en_banda": true,
+      "k": 0.9619,
+      "iteraciones": 2
+    },
+    {
+      "grupo": "sintetico",
+      "caso": "mayor/50kmh",
+      "semilla": 9856,
+      "objetivo_m": 15.1917,
+      "banda_m": [
+        11.306,
+        19.3678
+      ],
+      "distancia_m": 15.7766,
+      "en_banda": true,
+      "sin_calibrar_m": 17.5988,
+      "sin_calibrar_en_banda": true,
+      "k": 0.9291,
+      "iteraciones": 2
+    },
+    {
+      "grupo": "sintetico",
+      "caso": "mayor/50kmh",
+      "semilla": 9857,
+      "objetivo_m": 15.1917,
+      "banda_m": [
+        11.306,
+        19.3678
+      ],
+      "distancia_m": 15.6171,
+      "en_banda": true,
+      "sin_calibrar_m": 16.4717,
+      "sin_calibrar_en_banda": true,
+      "k": 0.9604,
+      "iteraciones": 2
+    },
+    {
+      "grupo": "sintetico",
+      "caso": "mayor/50kmh",
+      "semilla": 9858,
+      "objetivo_m": 15.1917,
+      "banda_m": [
+        11.306,
+        19.3678
+      ],
+      "distancia_m": 16.0033,
+      "en_banda": true,
+      "sin_calibrar_m": 17.0663,
+      "sin_calibrar_en_banda": true,
+      "k": 0.9435,
+      "iteraciones": 2
+    },
+    {
+      "grupo": "sintetico",
+      "caso": "mayor/50kmh",
+      "semilla": 9859,
+      "objetivo_m": 15.1917,
+      "banda_m": [
+        11.306,
+        19.3678
+      ],
+      "distancia_m": 15.3348,
+      "en_banda": true,
+      "sin_calibrar_m": 16.1096,
+      "sin_calibrar_en_banda": true,
+      "k": 0.9354,
+      "iteraciones": 5
+    },
+    {
+      "grupo": "sintetico",
+      "caso": "mayor/50kmh",
+      "semilla": 9860,
+      "objetivo_m": 15.1917,
+      "banda_m": [
+        11.306,
+        19.3678
+      ],
+      "distancia_m": 15.8439,
+      "en_banda": true,
+      "sin_calibrar_m": 16.2337,
+      "sin_calibrar_en_banda": true,
+      "k": 0.9674,
+      "iteraciones": 2
+    },
+    {
+      "grupo": "sintetico",
+      "caso": "mayor/50kmh",
+      "semilla": 9861,
+      "objetivo_m": 15.1917,
+      "banda_m": [
+        11.306,
+        19.3678
+      ],
+      "distancia_m": 15.4482,
+      "en_banda": true,
+      "sin_calibrar_m": 17.7097,
+      "sin_calibrar_en_banda": true,
+      "k": 0.9262,
+      "iteraciones": 2
+    },
+    {
+      "grupo": "sintetico",
+      "caso": "mayor/50kmh",
+      "semilla": 9862,
+      "objetivo_m": 15.1917,
+      "banda_m": [
+        11.306,
+        19.3678
+      ],
+      "distancia_m": 15.3372,
+      "en_banda": true,
+      "sin_calibrar_m": 15.9262,
+      "sin_calibrar_en_banda": true,
+      "k": 0.9767,
+      "iteraciones": 2
+    },
+    {
+      "grupo": "sintetico",
+      "caso": "mayor/50kmh",
+      "semilla": 9863,
+      "objetivo_m": 15.1917,
+      "banda_m": [
+        11.306,
+        19.3678
+      ],
+      "distancia_m": 15.6519,
+      "en_banda": true,
+      "sin_calibrar_m": 16.9949,
+      "sin_calibrar_en_banda": true,
+      "k": 0.9455,
+      "iteraciones": 2
+    },
+    {
+      "grupo": "sintetico",
+      "caso": "mayor/50kmh",
+      "semilla": 9864,
+      "objetivo_m": 15.1917,
+      "banda_m": [
+        11.306,
+        19.3678
+      ],
+      "distancia_m": 14.68,
+      "en_banda": true,
+      "sin_calibrar_m": 16.5962,
+      "sin_calibrar_en_banda": true,
+      "k": 0.9568,
+      "iteraciones": 2
+    },
+    {
+      "grupo": "sintetico",
+      "caso": "mayor/50kmh",
+      "semilla": 9865,
+      "objetivo_m": 15.1917,
+      "banda_m": [
+        11.306,
+        19.3678
+      ],
+      "distancia_m": 14.7145,
+      "en_banda": true,
+      "sin_calibrar_m": 16.4526,
+      "sin_calibrar_en_banda": true,
+      "k": 0.9609,
+      "iteraciones": 2
+    },
+    {
+      "grupo": "sintetico",
+      "caso": "mayor/50kmh",
+      "semilla": 9866,
+      "objetivo_m": 15.1917,
+      "banda_m": [
+        11.306,
+        19.3678
+      ],
+      "distancia_m": 16.1736,
+      "en_banda": true,
+      "sin_calibrar_m": 16.1736,
+      "sin_calibrar_en_banda": true,
+      "k": 1,
+      "iteraciones": 2
+    },
+    {
+      "grupo": "sintetico",
+      "caso": "mayor/50kmh",
+      "semilla": 9867,
+      "objetivo_m": 15.1917,
+      "banda_m": [
+        11.306,
+        19.3678
+      ],
+      "distancia_m": 15.9063,
+      "en_banda": true,
+      "sin_calibrar_m": 16.1174,
+      "sin_calibrar_en_banda": true,
+      "k": 0.9709,
+      "iteraciones": 2
+    },
+    {
+      "grupo": "sintetico",
+      "caso": "mayor/50kmh",
+      "semilla": 9868,
+      "objetivo_m": 15.1917,
+      "banda_m": [
+        11.306,
+        19.3678
+      ],
+      "distancia_m": 14.9288,
+      "en_banda": true,
+      "sin_calibrar_m": 16.8083,
+      "sin_calibrar_en_banda": true,
+      "k": 0.9507,
+      "iteraciones": 2
+    },
+    {
+      "grupo": "sintetico",
+      "caso": "mayor/50kmh",
+      "semilla": 9869,
+      "objetivo_m": 15.1917,
+      "banda_m": [
+        11.306,
+        19.3678
+      ],
+      "distancia_m": 15.4768,
+      "en_banda": true,
+      "sin_calibrar_m": 16.6334,
+      "sin_calibrar_en_banda": true,
+      "k": 0.9557,
+      "iteraciones": 2
+    },
+    {
+      "grupo": "sintetico",
+      "caso": "mayor/60kmh",
+      "semilla": 10820,
+      "objetivo_m": 21.6112,
+      "banda_m": [
+        15.9797,
+        27.6689
+      ],
+      "distancia_m": 21.1741,
+      "en_banda": true,
+      "sin_calibrar_m": 22.9972,
+      "sin_calibrar_en_banda": true,
+      "k": 0.9694,
+      "iteraciones": 2
+    },
+    {
+      "grupo": "sintetico",
+      "caso": "mayor/60kmh",
+      "semilla": 10821,
+      "objetivo_m": 21.6112,
+      "banda_m": [
+        15.9797,
+        27.6689
+      ],
+      "distancia_m": 20.8197,
+      "en_banda": true,
+      "sin_calibrar_m": 23.9328,
+      "sin_calibrar_en_banda": true,
+      "k": 0.9503,
+      "iteraciones": 2
+    },
+    {
+      "grupo": "sintetico",
+      "caso": "mayor/60kmh",
+      "semilla": 10822,
+      "objetivo_m": 21.6112,
+      "banda_m": [
+        15.9797,
+        27.6689
+      ],
+      "distancia_m": 22.7833,
+      "en_banda": true,
+      "sin_calibrar_m": 22.8061,
+      "sin_calibrar_en_banda": true,
+      "k": 0.9735,
+      "iteraciones": 2
+    },
+    {
+      "grupo": "sintetico",
+      "caso": "mayor/60kmh",
+      "semilla": 10823,
+      "objetivo_m": 21.6112,
+      "banda_m": [
+        15.9797,
+        27.6689
+      ],
+      "distancia_m": 22.4018,
+      "en_banda": true,
+      "sin_calibrar_m": 22.8618,
+      "sin_calibrar_en_banda": true,
+      "k": 0.9723,
+      "iteraciones": 2
+    },
+    {
+      "grupo": "sintetico",
+      "caso": "mayor/60kmh",
+      "semilla": 10824,
+      "objetivo_m": 21.6112,
+      "banda_m": [
+        15.9797,
+        27.6689
+      ],
+      "distancia_m": 21.5391,
+      "en_banda": true,
+      "sin_calibrar_m": 22.6969,
+      "sin_calibrar_en_banda": true,
+      "k": 0.9758,
+      "iteraciones": 2
+    },
+    {
+      "grupo": "sintetico",
+      "caso": "mayor/60kmh",
+      "semilla": 10825,
+      "objetivo_m": 21.6112,
+      "banda_m": [
+        15.9797,
+        27.6689
+      ],
+      "distancia_m": 20.9926,
+      "en_banda": true,
+      "sin_calibrar_m": 23.123,
+      "sin_calibrar_en_banda": true,
+      "k": 0.9668,
+      "iteraciones": 2
+    },
+    {
+      "grupo": "sintetico",
+      "caso": "mayor/60kmh",
+      "semilla": 10826,
+      "objetivo_m": 21.6112,
+      "banda_m": [
+        15.9797,
+        27.6689
+      ],
+      "distancia_m": 22.2364,
+      "en_banda": true,
+      "sin_calibrar_m": 22.3669,
+      "sin_calibrar_en_banda": true,
+      "k": 0.983,
+      "iteraciones": 2
+    },
+    {
+      "grupo": "sintetico",
+      "caso": "mayor/60kmh",
+      "semilla": 10827,
+      "objetivo_m": 21.6112,
+      "banda_m": [
+        15.9797,
+        27.6689
+      ],
+      "distancia_m": 21.9659,
+      "en_banda": true,
+      "sin_calibrar_m": 23.0642,
+      "sin_calibrar_en_banda": true,
+      "k": 0.968,
+      "iteraciones": 2
+    },
+    {
+      "grupo": "sintetico",
+      "caso": "mayor/60kmh",
+      "semilla": 10828,
+      "objetivo_m": 21.6112,
+      "banda_m": [
+        15.9797,
+        27.6689
+      ],
+      "distancia_m": 21.143,
+      "en_banda": true,
+      "sin_calibrar_m": 22.9785,
+      "sin_calibrar_en_banda": true,
+      "k": 0.9698,
+      "iteraciones": 2
+    },
+    {
+      "grupo": "sintetico",
+      "caso": "mayor/60kmh",
+      "semilla": 10829,
+      "objetivo_m": 21.6112,
+      "banda_m": [
+        15.9797,
+        27.6689
+      ],
+      "distancia_m": 22.3047,
+      "en_banda": true,
+      "sin_calibrar_m": 22.3479,
+      "sin_calibrar_en_banda": true,
+      "k": 0.9834,
+      "iteraciones": 2
+    },
+    {
+      "grupo": "sintetico",
+      "caso": "mayor/60kmh",
+      "semilla": 10830,
+      "objetivo_m": 21.6112,
+      "banda_m": [
+        15.9797,
+        27.6689
+      ],
+      "distancia_m": 21.918,
+      "en_banda": true,
+      "sin_calibrar_m": 22.4724,
+      "sin_calibrar_en_banda": true,
+      "k": 0.9807,
+      "iteraciones": 2
+    },
+    {
+      "grupo": "sintetico",
+      "caso": "mayor/60kmh",
+      "semilla": 10831,
+      "objetivo_m": 21.6112,
+      "banda_m": [
+        15.9797,
+        27.6689
+      ],
+      "distancia_m": 21.0849,
+      "en_banda": true,
+      "sin_calibrar_m": 23.213,
+      "sin_calibrar_en_banda": true,
+      "k": 0.9649,
+      "iteraciones": 2
+    },
+    {
+      "grupo": "sintetico",
+      "caso": "mayor/60kmh",
+      "semilla": 10832,
+      "objetivo_m": 21.6112,
+      "banda_m": [
+        15.9797,
+        27.6689
+      ],
+      "distancia_m": 21.636,
+      "en_banda": true,
+      "sin_calibrar_m": 22.1184,
+      "sin_calibrar_en_banda": true,
+      "k": 0.9885,
+      "iteraciones": 2
+    },
+    {
+      "grupo": "sintetico",
+      "caso": "mayor/60kmh",
+      "semilla": 10833,
+      "objetivo_m": 21.6112,
+      "banda_m": [
+        15.9797,
+        27.6689
+      ],
+      "distancia_m": 21.5095,
+      "en_banda": true,
+      "sin_calibrar_m": 22.9519,
+      "sin_calibrar_en_banda": true,
+      "k": 0.9704,
+      "iteraciones": 2
+    },
+    {
+      "grupo": "sintetico",
+      "caso": "mayor/60kmh",
+      "semilla": 10834,
+      "objetivo_m": 21.6112,
+      "banda_m": [
+        15.9797,
+        27.6689
+      ],
+      "distancia_m": 21.3207,
+      "en_banda": true,
+      "sin_calibrar_m": 22.9646,
+      "sin_calibrar_en_banda": true,
+      "k": 0.9701,
+      "iteraciones": 2
+    },
+    {
+      "grupo": "sintetico",
+      "caso": "mayor/60kmh",
+      "semilla": 10835,
+      "objetivo_m": 21.6112,
+      "banda_m": [
+        15.9797,
+        27.6689
+      ],
+      "distancia_m": 21.2881,
+      "en_banda": true,
+      "sin_calibrar_m": 23.1179,
+      "sin_calibrar_en_banda": true,
+      "k": 0.9669,
+      "iteraciones": 2
+    },
+    {
+      "grupo": "sintetico",
+      "caso": "mayor/60kmh",
+      "semilla": 10836,
+      "objetivo_m": 21.6112,
+      "banda_m": [
+        15.9797,
+        27.6689
+      ],
+      "distancia_m": 21.4085,
+      "en_banda": true,
+      "sin_calibrar_m": 22.8014,
+      "sin_calibrar_en_banda": true,
+      "k": 0.9736,
+      "iteraciones": 2
+    },
+    {
+      "grupo": "sintetico",
+      "caso": "mayor/60kmh",
+      "semilla": 10837,
+      "objetivo_m": 21.6112,
+      "banda_m": [
+        15.9797,
+        27.6689
+      ],
+      "distancia_m": 21.6718,
+      "en_banda": true,
+      "sin_calibrar_m": 22.8275,
+      "sin_calibrar_en_banda": true,
+      "k": 0.973,
+      "iteraciones": 2
+    },
+    {
+      "grupo": "sintetico",
+      "caso": "mayor/60kmh",
+      "semilla": 10838,
+      "objetivo_m": 21.6112,
+      "banda_m": [
+        15.9797,
+        27.6689
+      ],
+      "distancia_m": 21.1517,
+      "en_banda": true,
+      "sin_calibrar_m": 23.1145,
+      "sin_calibrar_en_banda": true,
+      "k": 0.9669,
+      "iteraciones": 2
+    },
+    {
+      "grupo": "sintetico",
+      "caso": "mayor/60kmh",
+      "semilla": 10839,
+      "objetivo_m": 21.6112,
+      "banda_m": [
+        15.9797,
+        27.6689
+      ],
+      "distancia_m": 22.394,
+      "en_banda": true,
+      "sin_calibrar_m": 22.394,
+      "sin_calibrar_en_banda": true,
+      "k": 1,
+      "iteraciones": 2
+    },
+    {
+      "grupo": "sintetico",
+      "caso": "mayor/70kmh",
+      "semilla": 11790,
+      "objetivo_m": 29.1979,
+      "banda_m": [
+        21.5032,
+        37.4793
+      ],
+      "distancia_m": 28.2958,
+      "en_banda": true,
+      "sin_calibrar_m": 31.4714,
+      "sin_calibrar_en_banda": true,
+      "k": 0.9632,
+      "iteraciones": 2
+    },
+    {
+      "grupo": "sintetico",
+      "caso": "mayor/70kmh",
+      "semilla": 11791,
+      "objetivo_m": 29.1979,
+      "banda_m": [
+        21.5032,
+        37.4793
+      ],
+      "distancia_m": 28.1994,
+      "en_banda": true,
+      "sin_calibrar_m": 30.8093,
+      "sin_calibrar_en_banda": true,
+      "k": 0.9735,
+      "iteraciones": 2
+    },
+    {
+      "grupo": "sintetico",
+      "caso": "mayor/70kmh",
+      "semilla": 11792,
+      "objetivo_m": 29.1979,
+      "banda_m": [
+        21.5032,
+        37.4793
+      ],
+      "distancia_m": 29.7595,
+      "en_banda": true,
+      "sin_calibrar_m": 30.2763,
+      "sin_calibrar_en_banda": true,
+      "k": 0.982,
+      "iteraciones": 2
+    },
+    {
+      "grupo": "sintetico",
+      "caso": "mayor/70kmh",
+      "semilla": 11793,
+      "objetivo_m": 29.1979,
+      "banda_m": [
+        21.5032,
+        37.4793
+      ],
+      "distancia_m": 28.9314,
+      "en_banda": true,
+      "sin_calibrar_m": 30.3309,
+      "sin_calibrar_en_banda": true,
+      "k": 0.9811,
+      "iteraciones": 2
+    },
+    {
+      "grupo": "sintetico",
+      "caso": "mayor/70kmh",
+      "semilla": 11794,
+      "objetivo_m": 29.1979,
+      "banda_m": [
+        21.5032,
+        37.4793
+      ],
+      "distancia_m": 29.1754,
+      "en_banda": true,
+      "sin_calibrar_m": 29.7139,
+      "sin_calibrar_en_banda": true,
+      "k": 0.9913,
+      "iteraciones": 2
+    },
+    {
+      "grupo": "sintetico",
+      "caso": "mayor/70kmh",
+      "semilla": 11795,
+      "objetivo_m": 29.1979,
+      "banda_m": [
+        21.5032,
+        37.4793
+      ],
+      "distancia_m": 29.2401,
+      "en_banda": true,
+      "sin_calibrar_m": 30.6102,
+      "sin_calibrar_en_banda": true,
+      "k": 0.9767,
+      "iteraciones": 2
+    },
+    {
+      "grupo": "sintetico",
+      "caso": "mayor/70kmh",
+      "semilla": 11796,
+      "objetivo_m": 29.1979,
+      "banda_m": [
+        21.5032,
+        37.4793
+      ],
+      "distancia_m": 29.1807,
+      "en_banda": true,
+      "sin_calibrar_m": 30.029,
+      "sin_calibrar_en_banda": true,
+      "k": 0.9861,
+      "iteraciones": 2
+    },
+    {
+      "grupo": "sintetico",
+      "caso": "mayor/70kmh",
+      "semilla": 11797,
+      "objetivo_m": 29.1979,
+      "banda_m": [
+        21.5032,
+        37.4793
+      ],
+      "distancia_m": 29.2542,
+      "en_banda": true,
+      "sin_calibrar_m": 29.9544,
+      "sin_calibrar_en_banda": true,
+      "k": 0.9873,
+      "iteraciones": 2
+    },
+    {
+      "grupo": "sintetico",
+      "caso": "mayor/70kmh",
+      "semilla": 11798,
+      "objetivo_m": 29.1979,
+      "banda_m": [
+        21.5032,
+        37.4793
+      ],
+      "distancia_m": 29.0982,
+      "en_banda": true,
+      "sin_calibrar_m": 30.2489,
+      "sin_calibrar_en_banda": true,
+      "k": 0.9825,
+      "iteraciones": 2
+    },
+    {
+      "grupo": "sintetico",
+      "caso": "mayor/70kmh",
+      "semilla": 11799,
+      "objetivo_m": 29.1979,
+      "banda_m": [
+        21.5032,
+        37.4793
+      ],
+      "distancia_m": 29.501,
+      "en_banda": true,
+      "sin_calibrar_m": 29.501,
+      "sin_calibrar_en_banda": true,
+      "k": 1,
+      "iteraciones": 2
+    },
+    {
+      "grupo": "sintetico",
+      "caso": "mayor/70kmh",
+      "semilla": 11800,
+      "objetivo_m": 29.1979,
+      "banda_m": [
+        21.5032,
+        37.4793
+      ],
+      "distancia_m": 29.5381,
+      "en_banda": true,
+      "sin_calibrar_m": 30.4188,
+      "sin_calibrar_en_banda": true,
+      "k": 0.9797,
+      "iteraciones": 2
+    },
+    {
+      "grupo": "sintetico",
+      "caso": "mayor/70kmh",
+      "semilla": 11801,
+      "objetivo_m": 29.1979,
+      "banda_m": [
+        21.5032,
+        37.4793
+      ],
+      "distancia_m": 28.588,
+      "en_banda": true,
+      "sin_calibrar_m": 30.8181,
+      "sin_calibrar_en_banda": true,
+      "k": 0.9734,
+      "iteraciones": 2
+    },
+    {
+      "grupo": "sintetico",
+      "caso": "mayor/70kmh",
+      "semilla": 11802,
+      "objetivo_m": 29.1979,
+      "banda_m": [
+        21.5032,
+        37.4793
+      ],
+      "distancia_m": 29.7129,
+      "en_banda": true,
+      "sin_calibrar_m": 30.2793,
+      "sin_calibrar_en_banda": true,
+      "k": 0.982,
+      "iteraciones": 2
+    },
+    {
+      "grupo": "sintetico",
+      "caso": "mayor/70kmh",
+      "semilla": 11803,
+      "objetivo_m": 29.1979,
+      "banda_m": [
+        21.5032,
+        37.4793
+      ],
+      "distancia_m": 29.0219,
+      "en_banda": true,
+      "sin_calibrar_m": 30.7018,
+      "sin_calibrar_en_banda": true,
+      "k": 0.9752,
+      "iteraciones": 2
+    },
+    {
+      "grupo": "sintetico",
+      "caso": "mayor/70kmh",
+      "semilla": 11804,
+      "objetivo_m": 29.1979,
+      "banda_m": [
+        21.5032,
+        37.4793
+      ],
+      "distancia_m": 29.6966,
+      "en_banda": true,
+      "sin_calibrar_m": 29.8522,
+      "sin_calibrar_en_banda": true,
+      "k": 0.989,
+      "iteraciones": 2
+    },
+    {
+      "grupo": "sintetico",
+      "caso": "mayor/70kmh",
+      "semilla": 11805,
+      "objetivo_m": 29.1979,
+      "banda_m": [
+        21.5032,
+        37.4793
+      ],
+      "distancia_m": 28.1885,
+      "en_banda": true,
+      "sin_calibrar_m": 31.4055,
+      "sin_calibrar_en_banda": true,
+      "k": 0.9642,
+      "iteraciones": 2
+    },
+    {
+      "grupo": "sintetico",
+      "caso": "mayor/70kmh",
+      "semilla": 11806,
+      "objetivo_m": 29.1979,
+      "banda_m": [
+        21.5032,
+        37.4793
+      ],
+      "distancia_m": 29.1098,
+      "en_banda": true,
+      "sin_calibrar_m": 30.5225,
+      "sin_calibrar_en_banda": true,
+      "k": 0.9781,
+      "iteraciones": 2
+    },
+    {
+      "grupo": "sintetico",
+      "caso": "mayor/70kmh",
+      "semilla": 11807,
+      "objetivo_m": 29.1979,
+      "banda_m": [
+        21.5032,
+        37.4793
+      ],
+      "distancia_m": 28.7284,
+      "en_banda": true,
+      "sin_calibrar_m": 31.1084,
+      "sin_calibrar_en_banda": true,
+      "k": 0.9688,
+      "iteraciones": 2
+    },
+    {
+      "grupo": "sintetico",
+      "caso": "mayor/70kmh",
+      "semilla": 11808,
+      "objetivo_m": 29.1979,
+      "banda_m": [
+        21.5032,
+        37.4793
+      ],
+      "distancia_m": 29.299,
+      "en_banda": true,
+      "sin_calibrar_m": 30.3648,
+      "sin_calibrar_en_banda": true,
+      "k": 0.9806,
+      "iteraciones": 2
+    },
+    {
+      "grupo": "sintetico",
+      "caso": "mayor/70kmh",
+      "semilla": 11809,
+      "objetivo_m": 29.1979,
+      "banda_m": [
+        21.5032,
+        37.4793
+      ],
+      "distancia_m": 29.5728,
+      "en_banda": true,
+      "sin_calibrar_m": 29.8072,
+      "sin_calibrar_en_banda": true,
+      "k": 0.9897,
+      "iteraciones": 2
+    }
+  ]
+}
