@@ -2,32 +2,36 @@ import { describe, expect, it } from "vitest";
 import { recentFps, recordTrial, startTrial, TARGET_FPS } from "./backend-choice";
 
 describe("elección automática del backend", () => {
-  it("se queda con WebGPU si alcanza el objetivo", () => {
-    const t = recordTrial(startTrial(), TARGET_FPS + 5, "webgpu");
-    expect(t).toEqual({ current: "webgpu", measured: { webgpu: 65 }, decided: true });
+  it("empieza con WebGPU o con el recordado, y siempre mide", () => {
+    expect(startTrial()).toEqual({ current: "webgpu", measured: {}, decided: false });
+    expect(startTrial("webgl")).toEqual({ current: "webgl", measured: {}, decided: false });
+    expect(startTrial("otro" as never).current).toBe("webgpu");
   });
 
-  it("si WebGPU no alcanza, prueba WebGL 2 y se queda con el más rápido", () => {
+  it("se queda si alcanza el objetivo", () => {
+    expect(recordTrial(startTrial(), TARGET_FPS + 5, "webgpu")).toEqual({
+      current: "webgpu",
+      measured: { webgpu: 65 },
+      decided: true,
+    });
+  });
+
+  it("si no alcanza, prueba el otro y se queda con el más rápido", () => {
     let t = recordTrial(startTrial(), 48, "webgpu");
-    expect(t.current).toBe("webgl");
-    expect(t.decided).toBe(false);
+    expect(t).toEqual({ current: "webgl", measured: { webgpu: 48 }, decided: false });
     t = recordTrial(t, 85, "webgl2");
     expect(t).toEqual({ current: "webgl", measured: { webgpu: 48, webgl: 85 }, decided: true });
-    const back = recordTrial(recordTrial(startTrial(), 48, "webgpu"), 40, "webgl2");
-    expect(back.current).toBe("webgpu");
-    expect(back.decided).toBe(true);
+    const back = recordTrial(recordTrial(startTrial("webgl"), 40, "webgl2"), 52, "webgpu");
+    expect(back).toEqual({ current: "webgpu", measured: { webgl: 40, webgpu: 52 }, decided: true });
+    expect(recordTrial(back, 1, "webgpu")).toBe(back);
   });
 
-  it("sin WebGPU en el navegador termina con WebGL 2 sin más pruebas", () => {
-    const t = recordTrial(startTrial(), 30, "webgl2");
-    expect(t).toEqual({ current: "webgl", measured: { webgl: 30 }, decided: true });
-  });
-
-  it("respeta la decisión recordada y no vuelve a probar", () => {
-    const t = startTrial("webgl");
-    expect(t.decided).toBe(true);
-    expect(recordTrial(t, 10, "webgl2")).toBe(t);
-    expect(startTrial("otro" as never).decided).toBe(false);
+  it("sin WebGPU en el navegador termina con WebGL 2", () => {
+    expect(recordTrial(startTrial(), 30, "webgl2")).toEqual({
+      current: "webgl",
+      measured: { webgl: 30 },
+      decided: true,
+    });
   });
 
   it("promedia los últimos cuadros", () => {

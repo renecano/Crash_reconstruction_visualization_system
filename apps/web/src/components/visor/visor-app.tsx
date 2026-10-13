@@ -31,7 +31,7 @@ import {
 import type { RendererInfo, RendererPreference } from "@croquis/viewer/react";
 import dynamic from "next/dynamic";
 import { useRouter, useSearchParams } from "next/navigation";
-import { useEffect, useMemo, useState, useSyncExternalStore } from "react";
+import { useCallback, useEffect, useMemo, useState, useSyncExternalStore } from "react";
 import { Legend } from "../legend";
 import { ResultPanel } from "./result-panel";
 import { TimelineBar } from "./timeline-bar";
@@ -151,7 +151,23 @@ export function VisorApp() {
 
   // Backend automático por medición (ADR 0006): WebGPU primero; si no llega a 60 fps se prueba
   // WebGL 2 y se queda el más rápido. La decisión se recuerda en este navegador.
-  const [trial, setTrial] = useState<BackendTrial>(() => startTrial(readBackend()));
+  // Una prueba por escena: lo que rinde en una escena puede no rendir en otra.
+  const [trialState, setTrialState] = useState<{ escena: FixtureName; trial: BackendTrial }>(
+    () => ({
+      escena: params.escena,
+      trial: startTrial(readBackend()),
+    }),
+  );
+  const trial = trialState.escena === params.escena ? trialState.trial : startTrial(readBackend());
+  const escena = params.escena;
+  const setTrial = useCallback(
+    (update: (t: BackendTrial) => BackendTrial): void =>
+      setTrialState((s) => ({
+        escena,
+        trial: update(s.escena === escena ? s.trial : startTrial(readBackend())),
+      })),
+    [escena],
+  );
   const effectiveRenderer: RendererPreference =
     params.renderer === "auto" ? trial.current : params.renderer;
   useEffect(() => {
@@ -168,7 +184,7 @@ export function VisorApp() {
       });
     }, 1000);
     return () => window.clearInterval(id);
-  }, [params.renderer, trial.decided, info]);
+  }, [params.renderer, trial.decided, info, setTrial]);
 
   // Calidad automática con histéresis según los fps medidos (PLAN §7.8), una vez elegido el backend.
   useEffect(() => {

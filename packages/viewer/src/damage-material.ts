@@ -32,6 +32,7 @@ import {
   uniform,
   uv,
   vec2,
+  vec3,
   fract,
 } from "three/tsl";
 import { MeshPhysicalNodeMaterial, MeshStandardNodeMaterial } from "three/webgpu";
@@ -63,11 +64,12 @@ export function damagedPaintMaterial(baseHex: string, otherHex?: string): Damage
   const influence = uniform(0);
   const dano = attribute("dano", "float").mul(influence);
   const transfer = attribute("transferencia", "float").mul(influence);
-  const p = positionLocal;
-  const scratches = smoothstep(0.55, 0.8, mx_noise_float(p.mul(vec2(55, 6).xyx))).mul(dano);
+  // Un solo ruido por píxel (estirado: vetas horizontales) alimenta rayones, transferencia y
+  // abolladuras; cada evaluación de ruido Perlin cuesta y en GPU integrada se nota (E6).
+  const n = mx_noise_float(positionLocal.mul(vec3(4, 36, 4)));
+  const scratches = smoothstep(0.45, 0.75, n).mul(dano);
   const base = color(baseHex);
-  // Transferencia en vetas horizontales (roce entre carrocerías), no en manchas.
-  const streaks = smoothstep(0.1, 0.55, mx_noise_float(p.mul(vec2(3, 38).xyx)));
+  const streaks = smoothstep(-0.1, 0.45, n);
   const painted = otherHex ? mix(base, color(otherHex), clamp(transfer.mul(streaks), 0, 1)) : base;
   const m = new MeshPhysicalNodeMaterial();
   m.colorNode = mix(painted, color("#8f9296"), clamp(scratches.mul(0.8), 0, 1));
@@ -75,11 +77,7 @@ export function damagedPaintMaterial(baseHex: string, otherHex?: string): Damage
   m.metalnessNode = mix(float(0.35), float(0.75), clamp(scratches, 0, 1));
   m.clearcoatNode = mix(float(1), float(0.05), clamp(dano.mul(2.5), 0, 1));
   m.clearcoatRoughnessNode = float(0.12);
-  const dents = mx_noise_float(p.mul(9))
-    .mul(0.018)
-    .add(mx_noise_float(p.mul(31)).mul(0.004))
-    .mul(dano);
-  m.normalNode = perturbNormal(dents);
+  m.normalNode = perturbNormal(n.mul(0.012).mul(dano));
   return { material: m, influence };
 }
 
