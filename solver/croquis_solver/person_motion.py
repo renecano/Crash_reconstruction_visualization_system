@@ -7,8 +7,11 @@
   desaceleración μ g hasta detenerse. La distancia total es la de `pedestrian.searle_throw`
   cuando la velocidad horizontal tras el aterrizaje no se anula; una prueba lo verifica.
 
-Las personas a bordo de un vehículo no tienen trayectoria propia: el visor las coloca en su
-asiento (los ocupantes se modelan en F5).
+* Jinete de moto, scooter o bici: va con su vehículo (fase "montado") hasta el impacto y desde
+  ahí sigue el mismo modelo de Searle.
+
+Los ocupantes de vehículos cerrados no tienen trayectoria propia en el mundo: el visor los coloca
+en su asiento y su movimiento relativo al habitáculo sale de `occupant.py`.
 """
 
 from __future__ import annotations
@@ -16,7 +19,7 @@ from __future__ import annotations
 import math
 from dataclasses import dataclass, field
 
-from croquis_solver.models import G, Vec
+from croquis_solver.models import G, Trajectory, Vec
 from croquis_solver.pedestrian import ThrowKinematics, throw_kinematics
 
 LYING_CG_HEIGHT_M = 0.15  # altura del centro de masa de un cuerpo tendido (visual)
@@ -32,7 +35,7 @@ def _phases() -> list[PhaseSpan]:
 
 @dataclass(frozen=True)
 class PhaseSpan:
-    fase: str  # "de_pie" | "caminando" | "vuelo" | "deslizamiento" | "reposo"
+    fase: str  # "de_pie" | "caminando" | "montado" | "vuelo" | "deslizamiento" | "reposo"
     t_inicio: float
     t_fin: float
 
@@ -129,6 +132,15 @@ def straight_walk_track(
             heading,
         )
     track.add_phase("caminando" if speed > 0 else "de_pie", t_begin, t_end)
+
+
+def ride_track(track: PersonTrack, vehicle: Trajectory, cg_height: float) -> None:
+    """Va montado en su vehículo: sigue su trayectoria previa al impacto (hasta t = 0)."""
+    if len(vehicle) == 0:
+        return
+    for i in range(len(vehicle)):
+        track.append(vehicle.t[i], vehicle.x[i], vehicle.y[i], cg_height, vehicle.yaw[i])
+    track.add_phase("montado", vehicle.t[0], vehicle.t[-1])
 
 
 def throw_track(

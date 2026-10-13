@@ -21,7 +21,7 @@ from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any
 
-from croquis_solver import fixed_object, friction, pedestrian
+from croquis_solver import fixed_object, friction, occupant, pedestrian, rollover, visibility
 from croquis_solver.contact import ContactSolution, Locus, contact_offset, resolve_contact
 from croquis_solver.crash3 import TRIANGULAR_SHAPES, Stiffness, crush_energy, profile_for_energy
 from croquis_solver.impact import ImpactResult, planar_impact
@@ -30,6 +30,7 @@ from croquis_solver.person_motion import (
     PersonTrack,
     approach_track,
     rest_track,
+    ride_track,
     straight_walk_track,
     throw_track,
 )
@@ -46,12 +47,13 @@ from croquis_solver.preimpact import (
     Path as KinPath,
 )
 from croquis_solver.road import RoadAxis, lane_following_path, road_axis
+from croquis_solver.scene_objects import SceneObject, scene_objects
 from croquis_solver.stiffness import stiffness_for, zona_from_cdc_side
 from croquis_solver.units import ms_to_kmh
 
 JsonObj = dict[str, Any]
 
-RESULT_VERSION = "1.1.0"
+RESULT_VERSION = "1.2.0"
 DT_OUT = 0.02
 T_PRE_MAX = 6.0
 T_PRE_MIN = 3.0  # contexto mínimo antes del impacto para el visor
@@ -75,6 +77,16 @@ PEDESTRIAN_CRUSH_ENERGY_FRACTION = 0.1  # fracción de la energía del peatón q
 WALKING_SPEED_MS = 1.4  # supuesto dentro de las medias de Knoblauch et al. 1996 (1.25–1.51 m/s)
 DEFAULT_STATURE_M = 1.7
 DEFAULT_PERSON_MASS_KG = 75.0
+# Vía (distancia entre llantas de un eje) como fracción del ancho: ≈ 0.84 en autos y SUVs
+# (p. ej. 1.55 m / 1.80 m en un sedán compacto); la misma que usa el visor para las marcas.
+TRACK_WIDTH_FRACTION = 0.84
+TWO_WHEEL_CLASSES = frozenset({"motocicleta", "scooter", "bicicleta"})
+RIDER_ROLES = frozenset({"motociclista", "ciclista"})
+# Altura del centro de masa del jinete sentado: asiento (≈ 0.8 m en moto) más ≈ 0.25 m de torso.
+RIDER_CG_HEIGHT_M = {"motocicleta": 1.05, "scooter": 1.0, "bicicleta": 1.15}
+# El jinete no va sujeto: sale con la velocidad de su vehículo al impacto por este factor
+# (pierde parte al golpear el otro vehículo); supuesto con el mismo rango que el de peatón.
+RIDER_PROJECTION_FACTOR = 0.9
 
 CLASSES_PATH = (
     Path(__file__).resolve().parents[2] / "packages" / "scene-schema" / "vehicle_classes.json"
@@ -128,6 +140,7 @@ class VehicleOutcome:
     stopped: bool
     rest_pose: tuple[float, float, float]
     distance_post_m: float
+    rollover: rollover.RolloverCheck | None = None
 
 
 @dataclass
@@ -137,6 +150,24 @@ class ThrowOutcome:
     throw_range_m: tuple[float, float]
     rest_position: tuple[float, float]
     contact: dict[str, str]
+    band_m: tuple[float, float] = (0.0, 0.0)  # banda de Searle con el rango de fricción
+    mu_body: tuple[float, float, float] = (0.0, 0.0, 0.0)  # nominal, mínimo, máximo
+    launch_angle_deg: float = 0.0
+    cg_height_m: float = 0.0
+    heading_rad: float = 0.0
+
+
+@dataclass
+class ThrowInfo:
+    """Proyección de una persona (peatón golpeado o jinete que sale de su vehículo)."""
+
+    person_id: str
+    outcome: ThrowOutcome
+    origin: Vec
+    launch: float  # m/s
+    mu: float
+    kind: str  # "peaton" | "jinete"
+    vehicle_id: str | None = None
 
 
 @dataclass
@@ -147,6 +178,7 @@ class PersonOutcome:
     vehiculo_id: str | None
     track: PersonTrack
     throw: ThrowOutcome | None = None
+    occupant: JsonObj | None = None
 
     # Compatibilidad con las pruebas de F2.
     @property
@@ -175,6 +207,14 @@ class EventOutcome:
     detalle: dict[str, Any] = field(default_factory=_empty_detail)
 
 
+def _no_objects() -> list[SceneObject]:
+    return []
+
+
+def _no_docs() -> list[JsonObj]:
+    return []
+
+
 def _r(x: float, nd: int = 6) -> float:
     v = round(x, nd)
     return 0.0 if v == 0 else v  # sin -0.0
@@ -193,6 +233,8 @@ class Reconstruction:
     eventos: list[EventOutcome]
     banderas: list[str]
     parametros: dict[str, Any]
+    objetos: list[SceneObject] = field(default_factory=_no_objects)
+    visibilidad: list[JsonObj] = field(default_factory=_no_docs)
 
     def to_dict(self) -> JsonObj:
         """Documento según `resultado.schema.json` (sin nulos: lo ausente se omite)."""
@@ -211,6 +253,8 @@ class Reconstruction:
             }
         out["vehiculos"] = [_vehicle_dict(v) for v in self.vehiculos]
         out["personas"] = [_person_dict(p) for p in self.personas]
+        out["objetos"] = [o.to_dict() for o in self.objetos]
+        out["visibilidad"] = list(self.visibilidad)
         out["eventos"] = [_event_dict(e) for e in self.eventos]
         out["banderas"] = list(self.banderas)
         out["parametros"] = self.parametros
@@ -269,6 +313,8 @@ def _vehicle_dict(v: VehicleOutcome) -> JsonObj:
         "rumbo_deg": _r(v.rest_pose[2]),
     }
     d["distancia_post_m"] = _r(v.distance_post_m)
+    if v.rollover is not None:
+        d["volcadura"] = v.rollover.to_dict()
     return d
 
 
@@ -295,7 +341,17 @@ def _person_dict(p: PersonOutcome) -> JsonObj:
             "rango_m": [_r(th.throw_range_m[0]), _r(th.throw_range_m[1])],
             "posicion_reposo": {"x": _r(th.rest_position[0]), "y": _r(th.rest_position[1])},
             "contacto": dict(th.contact),
+            "banda_searle_m": [_r(th.band_m[0]), _r(th.band_m[1])],
+            "friccion_cuerpo": {
+                "valor": _r(th.mu_body[0]),
+                "rango": [_r(th.mu_body[1]), _r(th.mu_body[2])],
+            },
+            "angulo_lanzamiento_deg": _r(th.launch_angle_deg),
+            "altura_cg_m": _r(th.cg_height_m),
+            "rumbo_deg": _r(math.degrees(th.heading_rad)),
         }
+    if p.occupant is not None:
+        d["ocupante"] = p.occupant
     return d
 
 
@@ -362,7 +418,7 @@ def _vehicle_model(v: JsonObj, clases: dict[str, Any], banderas: list[str]) -> V
         height=height,
         wheelbase=wheelbase,
         cg_from_front=0.45 * wheelbase,
-        track=max(0.6 * width, 0.4),
+        track=max(TRACK_WIDTH_FRACTION * width, 0.4),
         v0=v0,
         pose0=(float(pose["x"]), float(pose["y"]), math.radians(float(pose["rumbo_deg"]))),
         maniobra=maniobra,
@@ -731,7 +787,60 @@ def reconstruct(spec: JsonObj, *, dt: float = DT_OUT) -> Reconstruction:
     crush: dict[str, tuple[list[float], float, float, str]] = {
         m.id: ([0.0] * 6, m.body.width, 0.0, "sin impacto") for m in models
     }
-    throw_info: tuple[str, ThrowOutcome, Vec, float, float, float, float] | None = None
+    throws: list[ThrowInfo] = []
+    mu_body = friction.pedestrian_friction(lugar["superficie"]["valor"])
+
+    def declared_throw_for(pid: str) -> JsonObj | None:
+        """Distancia de proyección declarada para esa persona (o sin persona indicada)."""
+        cands = [
+            e
+            for e in spec["evidencias"]
+            if e.get("tipo") == "distancia_proyeccion" and e.get("longitud")
+        ]
+        own = [e for e in cands if e.get("persona_id") == pid]
+        rest = own or [e for e in cands if not e.get("persona_id")]
+        return rest[0] if rest else None
+
+    def make_throw(
+        pid: str,
+        launch: float,
+        heading: float,
+        origin: Vec,
+        h_cg: float,
+        v_vehicle: float,
+        projection: float,
+        contact_info: dict[str, str],
+        quien: str,
+    ) -> ThrowOutcome:
+        mu_p = mu_body.nominal
+        d_nom = pedestrian.searle_throw(launch, mu_p, PEDESTRIAN_LAUNCH_ANGLE_DEG, h_cg)
+        theta_min = pedestrian.searle_range(max(d_nom, 0.1), mu_p, h_cg).theta_min_deg
+        d_lo = pedestrian.searle_throw(launch, mu_p, theta_min, h_cg)
+        d_hi = pedestrian.searle_throw(launch, mu_p, 0.0, h_cg)
+        band = pedestrian.searle_distance_band(launch, mu_body.low, mu_body.high, h_cg)
+        decl = declared_throw_for(pid)
+        if decl:
+            d_decl = _num(decl["longitud"], _LEN, d_nom)
+            rng = pedestrian.vehicle_speed_range_from_throw(d_decl, mu_p, h_cg, (projection, 1.0))
+            if not (rng.v_min * 0.85 <= v_vehicle <= rng.v_max * 1.15):
+                banderas.append(
+                    f"La distancia de proyección declarada de {quien} ({d_decl:.0f} m) sugiere "
+                    f"entre {ms_to_kmh(rng.v_min):.0f} y {ms_to_kmh(rng.v_max):.0f} km/h; la "
+                    f"velocidad reconstruida al impacto es {ms_to_kmh(v_vehicle):.0f} km/h."
+                )
+        rest_xy = (origin[0] + d_nom * math.cos(heading), origin[1] + d_nom * math.sin(heading))
+        return ThrowOutcome(
+            ms_to_kmh(launch),
+            d_nom,
+            (min(d_lo, d_hi), max(d_lo, d_hi)),
+            rest_xy,
+            contact_info,
+            (band.d_min, band.d_max),
+            (mu_p, mu_body.low, mu_body.high),
+            PEDESTRIAN_LAUNCH_ANGLE_DEG,
+            h_cg,
+            heading,
+        )
 
     if event and tipo_evento == "impacto_vehiculo_vehiculo" and len(involved) >= 2 and impact_point:
         a, b = involved[0], involved[1]
@@ -782,6 +891,46 @@ def reconstruct(spec: JsonObj, *, dt: float = DT_OUT) -> Reconstruction:
                 },
             )
         )
+        # Jinetes de moto, scooter o bici: no van sujetos y salen proyectados.
+        for m in (a, b):
+            if m.clase not in TWO_WHEEL_CLASSES:
+                continue
+            s_m = impact_states[m.id]
+            v_m = math.hypot(s_m.vx, s_m.vy)
+            if v_m < 0.5:
+                continue
+            heading_m = math.atan2(s_m.vy, s_m.vx)
+            for pdoc in spec["personas"]:
+                if pdoc.get("vehiculo_id") != m.id or pdoc["rol"]["valor"] not in RIDER_ROLES:
+                    continue
+                rid = str(pdoc["id"])
+                launch_r = RIDER_PROJECTION_FACTOR * v_m
+                out_r = make_throw(
+                    rid,
+                    launch_r,
+                    heading_m,
+                    (s_m.x, s_m.y),
+                    RIDER_CG_HEIGHT_M.get(m.clase, 1.05),
+                    v_m,
+                    RIDER_PROJECTION_FACTOR,
+                    {"defensa": "", "borde_cofre": "", "cabeza": ""},
+                    f"la persona que iba en el vehículo {m.rol}",
+                )
+                throws.append(
+                    ThrowInfo(rid, out_r, (s_m.x, s_m.y), launch_r, mu_body.nominal, "jinete", m.id)
+                )
+                eventos_out.append(
+                    EventOutcome(
+                        f"proyeccion-{rid}",
+                        "proyeccion",
+                        0.0,
+                        [m.id, rid],
+                        {
+                            "distancia_proyeccion_m": out_r.throw_distance_m,
+                            "rango_m": list(out_r.throw_range_m),
+                        },
+                    )
+                )
     elif event and tipo_evento == "impacto_vehiculo_objeto" and involved and impact_point:
         a = involved[0]
         sa = impact_states[a.id]
@@ -855,18 +1004,12 @@ def reconstruct(spec: JsonObj, *, dt: float = DT_OUT) -> Reconstruction:
         sa = impact_states[a.id]
         ped_id = str(ped["id"]) if ped else "peaton"
         v_imp = sa.speed
-        mu_ped = friction.pedestrian_friction(lugar["superficie"]["valor"]).nominal
         ped_doc: JsonObj = ped or {}
         stature = _num(ped_doc.get("estatura"), _LEN, DEFAULT_STATURE_M)
         m_ped = _num(ped_doc.get("masa"), _MASS, DEFAULT_PERSON_MASS_KG)
         launch = PEDESTRIAN_PROJECTION_FACTOR * v_imp
         h_cg = PEDESTRIAN_CG_HEIGHT_FACTOR * stature
-        d_nom = pedestrian.searle_throw(launch, mu_ped, PEDESTRIAN_LAUNCH_ANGLE_DEG, h_cg)
-        theta_min = pedestrian.searle_range(max(d_nom, 0.1), mu_ped, h_cg).theta_min_deg
-        d_lo = pedestrian.searle_throw(launch, mu_ped, theta_min, h_cg)
-        d_hi = pedestrian.searle_throw(launch, mu_ped, 0.0, h_cg)
         heading = (math.cos(sa.yaw), math.sin(sa.yaw))
-        rest = (impact_point[0] + d_nom * heading[0], impact_point[1] + d_nom * heading[1])
         dv_a = m_ped * launch / (a.body.mass + m_ped)  # el vehículo cede momento al peatón
         delta_v[a.id] = dv_a
         pdof[a.id] = 0.0
@@ -885,51 +1028,31 @@ def reconstruct(spec: JsonObj, *, dt: float = DT_OUT) -> Reconstruction:
         contact = pedestrian.contact_zones(
             stature, 0.32 * a.height, 0.55 * a.height, 0.25 * a.body.length
         )
-        declared_throw = next(
-            (
-                e
-                for e in spec["evidencias"]
-                if e.get("tipo") == "distancia_proyeccion" and e.get("longitud")
-            ),
-            None,
-        )
-        if declared_throw:
-            d_decl = _num(declared_throw["longitud"], _LEN, d_nom)
-            rng = pedestrian.vehicle_speed_range_from_throw(
-                d_decl, mu_ped, h_cg, (PEDESTRIAN_PROJECTION_FACTOR, 1.0)
-            )
-            if not (rng.v_min * 0.85 <= v_imp <= rng.v_max * 1.15):
-                banderas.append(
-                    f"La distancia de proyección declarada ({d_decl:.0f} m) sugiere entre "
-                    f"{ms_to_kmh(rng.v_min):.0f} y {ms_to_kmh(rng.v_max):.0f} km/h; la velocidad "
-                    f"reconstruida al impacto es {ms_to_kmh(v_imp):.0f} km/h."
-                )
-        throw_info = (
+        out_p = make_throw(
             ped_id,
-            ThrowOutcome(
-                ms_to_kmh(launch),
-                d_nom,
-                (min(d_lo, d_hi), max(d_lo, d_hi)),
-                rest,
-                {
-                    "defensa": contact.bumper_on_body,
-                    "borde_cofre": contact.hood_edge_on_body or "",
-                    "cabeza": contact.head_contact,
-                },
-            ),
-            impact_point,
-            sa.yaw,
             launch,
+            sa.yaw,
+            impact_point,
             h_cg,
-            mu_ped,
+            v_imp,
+            PEDESTRIAN_PROJECTION_FACTOR,
+            {
+                "defensa": contact.bumper_on_body,
+                "borde_cofre": contact.hood_edge_on_body or "",
+                "cabeza": contact.head_contact,
+            },
+            "la persona peatona",
         )
+        throws.append(ThrowInfo(ped_id, out_p, impact_point, launch, mu_body.nominal, "peaton"))
+        d_lo, d_hi = out_p.throw_range_m
+        d_nom = out_p.throw_distance_m
         eventos_out.append(
             EventOutcome(
                 event["id"],
                 tipo_evento,
                 0.0,
                 [a.id, ped_id],
-                {"distancia_proyeccion_m": d_nom, "rango_m": [min(d_lo, d_hi), max(d_lo, d_hi)]},
+                {"distancia_proyeccion_m": d_nom, "rango_m": [d_lo, d_hi]},
             )
         )
     elif event:
@@ -974,26 +1097,53 @@ def reconstruct(spec: JsonObj, *, dt: float = DT_OUT) -> Reconstruction:
     # ---- personas ------------------------------------------------------------------------
     personas_out: list[PersonOutcome] = []
     ped_tracks: dict[str, PersonTrack] = {}
-    if throw_info is not None:
-        ped_id, throw_out, origin, yaw0, launch, h_cg, mu_ped = throw_info
+    for th in throws:
         track = PersonTrack()
-        ped_doc2: JsonObj = personas_spec.get(ped_id) or {}
-        pose = ped_doc2.get("posicion_inicial")
-        start_xy = (float(pose["x"]), float(pose["y"])) if pose else origin
-        speed = _num(ped_doc2.get("velocidad"), _SPEED, WALKING_SPEED_MS)
-        approach_track(track, start_xy, origin, speed, h_cg, -t_pre, 0.0, dt)
+        pdoc2: JsonObj = personas_spec.get(th.person_id) or {}
+        out = th.outcome
+        if th.kind == "peaton":
+            pose = pdoc2.get("posicion_inicial")
+            start_xy = (float(pose["x"]), float(pose["y"])) if pose else th.origin
+            speed = _num(pdoc2.get("velocidad"), _SPEED, WALKING_SPEED_MS)
+            approach_track(track, start_xy, th.origin, speed, out.cg_height_m, -t_pre, 0.0, dt)
+            params["velocidad_peaton"] = {
+                "valor": speed,
+                "rango": [1.0, 1.6],
+                "fuente": "Knoblauch, Pietrucha y Nitzburg 1996, TRR 1538 (medias 1.25–1.51 m/s)",
+                "tipo": "supuesto" if pdoc2.get("velocidad") is None else "relato",
+            }
+        else:
+            assert th.vehicle_id is not None
+            ride_track(track, pre[th.vehicle_id], out.cg_height_m)
         kin = throw_track(
-            track, origin, yaw0, launch, PEDESTRIAN_LAUNCH_ANGLE_DEG, h_cg, mu_ped, 0.0, dt
+            track,
+            th.origin,
+            out.heading_rad,
+            th.launch,
+            out.launch_angle_deg,
+            out.cg_height_m,
+            th.mu,
+            0.0,
+            dt,
         )
-        ped_tracks[ped_id] = track
+        ped_tracks[th.person_id] = track
         t_rest = kin.total_time
         t_fin = max(t_fin, t_rest)
-        eventos_out.append(EventOutcome(f"reposo-{ped_id}", "reposo", t_rest, [ped_id]))
-        params["velocidad_peaton"] = {
-            "valor": speed,
-            "rango": [1.0, 1.6],
-            "fuente": "Knoblauch, Pietrucha y Nitzburg 1996, TRR 1538 (medias 1.25–1.51 m/s)",
-            "tipo": "supuesto" if ped_doc2.get("velocidad") is None else "relato",
+        eventos_out.append(EventOutcome(f"reposo-{th.person_id}", "reposo", t_rest, [th.person_id]))
+    if throws:
+        params["friccion_cuerpo_suelo"] = {
+            "valor": mu_body.nominal,
+            "rango": [mu_body.low, mu_body.high],
+            "fuente": mu_body.fuente,
+            "tipo": mu_body.tipo,
+        }
+    if any(th.kind == "jinete" for th in throws):
+        params["factor_proyeccion_jinete"] = {
+            "valor": RIDER_PROJECTION_FACTOR,
+            "rango": [PEDESTRIAN_PROJECTION_FACTOR - 0.1, 1.0],
+            "fuente": "Searle 1993 (SAE 930659) aplica el mismo modelo a jinetes; el factor es "
+            "un supuesto hasta calibrarlo",
+            "tipo": "supuesto",
         }
     t_fin = math.ceil((t_fin + T_HOLD_AFTER_REST) / dt - 1e-9) * dt
 
@@ -1003,7 +1153,7 @@ def reconstruct(spec: JsonObj, *, dt: float = DT_OUT) -> Reconstruction:
         h_cg = PEDESTRIAN_CG_HEIGHT_FACTOR * stature
         veh = p.get("vehiculo_id")
         track = ped_tracks.get(pid, PersonTrack())
-        throw_out = throw_info[1] if throw_info is not None and throw_info[0] == pid else None
+        throw_out = next((th.outcome for th in throws if th.person_id == pid), None)
         if pid in ped_tracks:
             rest_track(track, t_fin, dt, lying=True)
         elif veh is None and p.get("posicion_inicial"):
@@ -1024,6 +1174,11 @@ def reconstruct(spec: JsonObj, *, dt: float = DT_OUT) -> Reconstruction:
             banderas.append(
                 f"Persona {pid}: sin posición inicial ni vehículo; no se muestra en la escena."
             )
+        occ_doc: JsonObj | None = None
+        if veh is not None and pid not in ped_tracks and str(veh) in by_id:
+            occ_doc = _occupant_doc(
+                p, by_id[str(veh)], delta_v[str(veh)], crush[str(veh)][0], pdof[str(veh)]
+            )
         personas_out.append(
             PersonOutcome(
                 pid,
@@ -1032,6 +1187,7 @@ def reconstruct(spec: JsonObj, *, dt: float = DT_OUT) -> Reconstruction:
                 str(veh) if veh is not None else None,
                 track,
                 throw_out,
+                occ_doc,
             )
         )
 
@@ -1091,6 +1247,60 @@ def reconstruct(spec: JsonObj, *, dt: float = DT_OUT) -> Reconstruction:
             tr_post = post[m.id][0]
             t_stop = tr_post.t[-1] if len(tr_post) else 0.0
             eventos_out.append(EventOutcome(f"reposo-{m.id}", "reposo", t_stop, [m.id]))
+    # ---- volcadura (criterio de tropiezo) -------------------------------------------------
+    declared_roll = {
+        a for e in spec["eventos"] if e.get("tipo") == "volcadura" for a in e.get("actores", [])
+    }
+    if (
+        tipo_evento == "impacto_vehiculo_objeto"
+        and involved
+        and impact_point is not None
+        and (obj is None or obj.get("tipo") in {"muro", "barda"} or involved[0].id in declared_roll)
+    ):
+        a = involved[0]
+        sa = impact_states[a.id]
+        n = _barrier_normal(obj, impact_point, axis, sa)
+        v_n = sa.vx * n[0] + sa.vy * n[1]  # componente de la velocidad hacia la orilla
+        left = -math.sin(sa.yaw) * n[0] + math.cos(sa.yaw) * n[1]
+        check = rollover.trip_check(
+            a.track, a.body.width, a.height, v_n, "izquierdo" if left > 0 else "derecho"
+        )
+        vo = next(v for v in vehiculos_out if v.id == a.id)
+        vo.rollover = check
+        params["altura_cg_volcadura"] = {
+            "valor": rollover.CG_HEIGHT_FRACTION,
+            "fuente": "Fracción del alto del vehículo; SSF típico 1.0–1.5 según la clase (NHTSA)",
+            "tipo": "supuesto",
+        }
+        if a.id in declared_roll and not check.starts:
+            banderas.append(
+                f"Vehículo {a.rol}: el relato dice que se volcó, pero llega a la orilla con "
+                f"{ms_to_kmh(check.lateral_speed):.0f} km/h hacia ella y el tropiezo necesita "
+                f"{ms_to_kmh(check.critical_speed):.0f} km/h; probablemente iba derrapando de "
+                "lado, algo que la fase previa (sin deslizamiento lateral) no reproduce. La "
+                "volcadura del visor es ilustrativa."
+            )
+        elif check.starts and a.id not in declared_roll:
+            banderas.append(
+                f"Vehículo {a.rol}: con {ms_to_kmh(check.lateral_speed):.0f} km/h hacia la orilla "
+                "el tropiezo alcanza para iniciar una volcadura, aunque el relato no la menciona."
+            )
+        if a.id in declared_roll:
+            t_roll = next(
+                (
+                    float(e["t"]["valor"])
+                    for e in spec["eventos"]
+                    if e.get("tipo") == "volcadura" and e.get("t")
+                ),
+                0.0,
+            )
+            eventos_out.append(EventOutcome(f"volcadura-{a.id}", "volcadura", t_roll, [a.id]))
+
+    # ---- visibilidad ---------------------------------------------------------------------
+    objetos_out = scene_objects(spec)
+    visibilidad_out = _visibility(
+        spec, models, vehiculos_out, personas_out, objetos_out, actores, -t_pre, params
+    )
     eventos_out.sort(key=lambda e: (e.t, e.id))
 
     return Reconstruction(
@@ -1105,7 +1315,202 @@ def reconstruct(spec: JsonObj, *, dt: float = DT_OUT) -> Reconstruction:
         eventos=eventos_out,
         banderas=banderas,
         parametros=params,
+        objetos=objetos_out,
+        visibilidad=visibilidad_out,
     )
+
+
+def _occupant_doc(
+    p: JsonObj, m: VehicleModel, dv: float, profile: list[float], pdof_h: float | None
+) -> JsonObj | None:
+    """Cinemática del ocupante relativa al habitáculo (`occupant.py`) para el resultado."""
+    if m.clase in TWO_WHEEL_CLASSES:
+        return None
+    seat_field: JsonObj = p.get("asiento") or {}
+    seat = str(seat_field.get("valor", "otro"))
+    belt_field = p.get("cinturon")
+    belted = bool(belt_field["valor"]) if belt_field and "valor" in belt_field else None
+    pulse = occupant.pulse_for(
+        dv, max(profile, default=0.0), pdof_h if pdof_h is not None else 12.0
+    )
+    if pulse is None:
+        return None
+    toward = pulse.toward
+    doc: JsonObj = {
+        "asiento": seat,
+        "pulso": {
+            "duracion_s": _r(pulse.duration_s),
+            "delta_v_kmh": _r(ms_to_kmh(pulse.delta_v)),
+            "aceleracion_max_g": _r(occupant.peak_g(pulse)),
+            "direccion_deg": _r(math.degrees(math.atan2(toward[1], toward[0]))),
+        },
+        "variantes": [],
+    }
+    if belted is not None:
+        doc["cinturon_declarado"] = belted
+    for mo in occupant.occupant_motions(pulse, seat, belted):
+        var: JsonObj = {
+            "cinturon": mo.belted,
+            "t": [_r(x) for x in mo.t],
+            "dx": [_r(x) for x in mo.dx],
+            "dy": [_r(x) for x in mo.dy],
+            "desplazamiento_max_m": _r(mo.max_displacement),
+        }
+        if mo.contact is not None:
+            var["contacto"] = {
+                "zona": mo.contact.zona,
+                "t_s": _r(mo.contact.t_s),
+                "velocidad_relativa_kmh": _r(ms_to_kmh(mo.contact.relative_speed)),
+            }
+        doc["variantes"].append(var)
+    return doc
+
+
+def _pose_on(tr: Trajectory, t: float) -> tuple[float, float, float]:
+    """Pose de una trayectoria muestreada en el instante más cercano a t."""
+    if len(tr) == 0:
+        return (0.0, 0.0, 0.0)
+    k = min(range(len(tr)), key=lambda i: abs(tr.t[i] - t)) if len(tr) < 8 else None
+    if k is None:
+        lo, hi = 0, len(tr) - 1
+        while lo < hi:
+            mid = (lo + hi) // 2
+            if tr.t[mid] < t:
+                lo = mid + 1
+            else:
+                hi = mid
+        k = lo if lo == 0 or abs(tr.t[lo] - t) <= abs(tr.t[lo - 1] - t) else lo - 1
+    return (tr.x[k], tr.y[k], tr.yaw[k])
+
+
+def _track_pose(track: PersonTrack, t: float) -> tuple[float, float, float] | None:
+    if not track.t or t < track.t[0] - 1e-9:
+        return None
+    lo, hi = 0, len(track.t) - 1
+    while lo < hi:
+        mid = (lo + hi) // 2
+        if track.t[mid] < t:
+            lo = mid + 1
+        else:
+            hi = mid
+    k = lo if lo == 0 or abs(track.t[lo] - t) <= abs(track.t[lo - 1] - t) else lo - 1
+    return (track.x[k], track.y[k], track.yaw[k])
+
+
+def _visibility(
+    spec: JsonObj,
+    models: list[VehicleModel],
+    vehicles: list[VehicleOutcome],
+    persons: list[PersonOutcome],
+    objects: list[SceneObject],
+    actores: list[str],
+    t0: float,
+    params: dict[str, Any],
+) -> list[JsonObj]:
+    """Visibilidad de cada conductor hacia los demás actores antes del impacto."""
+    dt_s = visibility.SAMPLE_DT
+    n = math.floor(-t0 / dt_s + 1e-9)
+    times = [round(-dt_s * k, 9) for k in range(n, -1, -1)]
+    env = spec["entorno"]
+    night_unlit = env["iluminacion"]["valor"] == "noche_sin_alumbrado"
+    met = env.get("visibilidad")
+    met_m = _num(met, _LEN, 0.0) if met else None
+    spec_by_id = {v["id"]: v for v in spec["vehiculos"]}
+
+    def lights(vid: str) -> bool:
+        f = spec_by_id[vid].get("luces_encendidas")
+        return bool(f["valor"]) if f and "valor" in f else True
+
+    static = [o for ob in objects for o in visibility.object_occluders(ob)]
+    vout = {v.id: v for v in vehicles}
+    movers: list[visibility.Actor] = []
+    for m in models:
+        tr = vout[m.id].trajectory
+        movers.append(
+            visibility.Actor(
+                m.id,
+                "vehiculo",
+                [_pose_on(tr, t) for t in times],
+                m.body.length,
+                m.body.width,
+                m.height,
+                lights(m.id),
+            )
+        )
+    walkers: list[visibility.Actor] = []
+    for pr in persons:
+        if pr.vehiculo_id is not None or not pr.track.t:
+            continue
+        poses = [_track_pose(pr.track, t) for t in times]
+        walkers.append(
+            visibility.Actor(
+                pr.id,
+                "persona",
+                [q or (0.0, 0.0, 0.0) for q in poses],
+                height=pr.stature_m,
+                present=[q is not None for q in poses],
+            )
+        )
+    impact_objs = [
+        visibility.Actor(o.id, "objeto", [(o.x, o.y, 0.0)] * len(times), height=o.alto)
+        for o in objects
+        if o.id in actores
+    ]
+    out: list[JsonObj] = []
+    for m in models:
+        if m.v0 <= 0:
+            continue
+        obs = visibility.Observer(
+            m.id,
+            m.clase,
+            next(a.poses for a in movers if a.id == m.id),
+            m.body.length,
+            m.body.width,
+            lights(m.id),
+        )
+        targets = [a for a in movers if a.id != m.id] + walkers
+        if m.id in actores:
+            targets += impact_objs
+        for tgt in targets:
+            res = visibility.analyze_pair(
+                obs,
+                tgt,
+                static,
+                [a for a in movers if a.id != tgt.id],
+                times,
+                night_unlit=night_unlit,
+                met_visibility_m=met_m,
+            )
+            if not res.t:
+                continue
+            out.append(
+                {
+                    "observador": res.observador,
+                    "objetivo": res.objetivo,
+                    "tipo_objetivo": res.tipo_objetivo,
+                    "altura_ojo_m": _r(obs.eye_height),
+                    "t": res.t,
+                    "visible": res.visible,
+                    "fraccion": res.fraccion,
+                    "distancia_m": res.distancia,
+                    "causa": res.causa,
+                    "resumen": res.summary(),
+                }
+            )
+    params["altura_ojo"] = {
+        "valor": visibility.EYE_HEIGHT_M["sedan_compacto"],
+        "fuente": "AASHTO Green Book 2018: 1.08 m autos, 2.33 m camiones; otras clases supuestas",
+        "tipo": "primaria",
+    }
+    if night_unlit:
+        params["alcance_deteccion_nocturna"] = {
+            "valor": visibility.NIGHT_DETECTION_M,
+            "rango": list(visibility.NIGHT_DETECTION_RANGE_M),
+            "fuente": "Olson y Sivak (1983), citado por terceros: peatones con ropa oscura se "
+            "detectan a menos de 30 m con luces bajas",
+            "tipo": "supuesto",
+        }
+    return out
 
 
 def crush_energy_check(v: VehicleOutcome, k: Stiffness) -> float:

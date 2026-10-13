@@ -1,8 +1,8 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://croquis.local/schema/resultado/1.1.0",
+  "$id": "https://croquis.local/schema/resultado/1.2.0",
   "title": "Resultado",
-  "description": "Reconstrucción producida por el solver a partir de una EscenaSpec: trayectorias, impulsos, daños, personas, eventos, banderas y parámetros con su fuente. Unidades SI; tiempo con t = 0 en el impacto principal; rumbos en radianes antihorario desde +X.",
+  "description": "Reconstrucción producida por el solver a partir de una EscenaSpec: trayectorias, impulsos, daños, personas (proyección y ocupantes), visibilidad, objetos del entorno, eventos, banderas y parámetros con su fuente. Unidades SI; tiempo con t = 0 en el impacto principal; rumbos en radianes antihorario desde +X (salvo los campos que terminan en _deg).",
   "type": "object",
   "additionalProperties": false,
   "required": [
@@ -14,13 +14,15 @@
     "t_fin",
     "vehiculos",
     "personas",
+    "objetos",
+    "visibilidad",
     "eventos",
     "banderas",
     "parametros"
   ],
   "properties": {
     "version_resultado": {
-      "const": "1.1.0"
+      "const": "1.2.0"
     },
     "escena_id": {
       "$ref": "#/$defs/Id"
@@ -58,6 +60,20 @@
         "$ref": "#/$defs/PersonaResultado"
       },
       "maxItems": 24
+    },
+    "objetos": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/ObjetoEscena"
+      },
+      "maxItems": 64
+    },
+    "visibilidad": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/Visibilidad"
+      },
+      "maxItems": 128
     },
     "eventos": {
       "type": "array",
@@ -302,6 +318,9 @@
         "distancia_post_m": {
           "type": "number",
           "minimum": 0
+        },
+        "volcadura": {
+          "$ref": "#/$defs/Volcadura"
         }
       }
     },
@@ -335,7 +354,7 @@
       "properties": {
         "fase": {
           "type": "string",
-          "enum": ["de_pie", "caminando", "vuelo", "deslizamiento", "reposo"]
+          "enum": ["de_pie", "caminando", "montado", "vuelo", "deslizamiento", "reposo"]
         },
         "t_inicio": {
           "type": "number"
@@ -347,7 +366,7 @@
     },
     "Contacto": {
       "type": "object",
-      "description": "Zonas probables de contacto con el frente del vehículo, como indicadores neutros (sin diagnóstico de lesiones).",
+      "description": "Zonas probables de contacto con el frente del vehículo, como indicadores neutros (sin diagnóstico de lesiones). Vacías para jinetes proyectados desde su vehículo.",
       "additionalProperties": false,
       "required": ["defensa", "borde_cofre", "cabeza"],
       "properties": {
@@ -373,7 +392,12 @@
         "distancia_m",
         "rango_m",
         "posicion_reposo",
-        "contacto"
+        "contacto",
+        "banda_searle_m",
+        "friccion_cuerpo",
+        "angulo_lanzamiento_deg",
+        "altura_cg_m",
+        "rumbo_deg"
       ],
       "properties": {
         "velocidad_lanzamiento_kmh": {
@@ -398,8 +422,51 @@
         },
         "contacto": {
           "$ref": "#/$defs/Contacto"
+        },
+        "banda_searle_m": {
+          "type": "array",
+          "items": {
+            "type": "number",
+            "minimum": 0
+          },
+          "minItems": 2,
+          "maxItems": 2
+        },
+        "friccion_cuerpo": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["valor", "rango"],
+          "properties": {
+            "valor": {
+              "type": "number",
+              "exclusiveMinimum": 0
+            },
+            "rango": {
+              "type": "array",
+              "items": {
+                "type": "number",
+                "minimum": 0
+              },
+              "minItems": 2,
+              "maxItems": 2
+            }
+          }
+        },
+        "angulo_lanzamiento_deg": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 90
+        },
+        "altura_cg_m": {
+          "type": "number",
+          "exclusiveMinimum": 0,
+          "maximum": 3
+        },
+        "rumbo_deg": {
+          "type": "number"
         }
-      }
+      },
+      "description": "Proyección de una persona (peatón golpeado o jinete que sale de su vehículo) con el modelo de Searle. `banda_searle_m` es el rango de distancias compatible con la velocidad de lanzamiento, el rango de fricción cuerpo–suelo y el dominio de ángulos [0, 2·atan μ]: el criterio con el que se juzga el ragdoll del visor."
     },
     "PersonaResultado": {
       "type": "object",
@@ -433,6 +500,9 @@
         },
         "proyeccion": {
           "$ref": "#/$defs/Proyeccion"
+        },
+        "ocupante": {
+          "$ref": "#/$defs/Ocupante"
         }
       }
     },
@@ -509,6 +579,8 @@
             "impacto_vehiculo_vehiculo",
             "impacto_vehiculo_objeto",
             "impacto_vehiculo_persona",
+            "proyeccion",
+            "volcadura",
             "reposo"
           ]
         },
@@ -587,6 +659,346 @@
         },
         "velocidad_peaton": {
           "$ref": "#/$defs/Parametro"
+        },
+        "friccion_cuerpo_suelo": {
+          "$ref": "#/$defs/Parametro"
+        },
+        "factor_proyeccion_jinete": {
+          "$ref": "#/$defs/Parametro"
+        },
+        "altura_cg_volcadura": {
+          "$ref": "#/$defs/Parametro"
+        },
+        "altura_ojo": {
+          "$ref": "#/$defs/Parametro"
+        },
+        "alcance_deteccion_nocturna": {
+          "$ref": "#/$defs/Parametro"
+        }
+      }
+    },
+    "MovimientoOcupante": {
+      "type": "object",
+      "description": "Desplazamiento del ocupante respecto al habitáculo (marco del vehículo: x adelante, y izquierda) desde el impacto, con y sin cinturón.",
+      "additionalProperties": false,
+      "required": ["cinturon", "t", "dx", "dy", "desplazamiento_max_m"],
+      "properties": {
+        "cinturon": {
+          "type": "boolean"
+        },
+        "t": {
+          "$ref": "#/$defs/Numeros"
+        },
+        "dx": {
+          "$ref": "#/$defs/Numeros"
+        },
+        "dy": {
+          "$ref": "#/$defs/Numeros"
+        },
+        "desplazamiento_max_m": {
+          "type": "number",
+          "minimum": 0
+        },
+        "contacto": {
+          "type": "object",
+          "description": "Parte del interior que alcanza y cuándo (cinemática, no lesión).",
+          "additionalProperties": false,
+          "required": ["zona", "t_s", "velocidad_relativa_kmh"],
+          "properties": {
+            "zona": {
+              "type": "string",
+              "maxLength": 60
+            },
+            "t_s": {
+              "type": "number",
+              "minimum": 0
+            },
+            "velocidad_relativa_kmh": {
+              "type": "number",
+              "minimum": 0
+            }
+          }
+        }
+      }
+    },
+    "Ocupante": {
+      "type": "object",
+      "description": "Cinemática del ocupante dentro del habitáculo (PLAN §6.1.8). Sin estimación de lesiones. Si el cinturón no se declaró, se dan las dos variantes.",
+      "additionalProperties": false,
+      "required": ["asiento", "pulso", "variantes"],
+      "properties": {
+        "asiento": {
+          "type": "string",
+          "enum": [
+            "conductor",
+            "copiloto",
+            "trasero_izquierdo",
+            "trasero_centro",
+            "trasero_derecho",
+            "tercera_fila",
+            "otro"
+          ]
+        },
+        "cinturon_declarado": {
+          "type": "boolean"
+        },
+        "pulso": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["duracion_s", "delta_v_kmh", "aceleracion_max_g", "direccion_deg"],
+          "properties": {
+            "duracion_s": {
+              "type": "number",
+              "exclusiveMinimum": 0
+            },
+            "delta_v_kmh": {
+              "type": "number",
+              "minimum": 0
+            },
+            "aceleracion_max_g": {
+              "type": "number",
+              "minimum": 0
+            },
+            "direccion_deg": {
+              "type": "number",
+              "description": "Hacia dónde se mueve el ocupante respecto al habitáculo, en grados antihorario desde el frente del vehículo."
+            }
+          }
+        },
+        "variantes": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/MovimientoOcupante"
+          },
+          "minItems": 1,
+          "maxItems": 2
+        }
+      }
+    },
+    "Volcadura": {
+      "type": "object",
+      "description": "Criterio de inicio de volcadura por tropiezo (velocidad crítica de deslizamiento). La secuencia 3D del visor es ilustrativa.",
+      "additionalProperties": false,
+      "required": [
+        "inicia",
+        "lado_tropiezo",
+        "velocidad_lateral_kmh",
+        "velocidad_critica_kmh",
+        "ssf",
+        "altura_cg_m",
+        "via_m",
+        "velocidad_alabeo_rad_s"
+      ],
+      "properties": {
+        "inicia": {
+          "type": "boolean"
+        },
+        "lado_tropiezo": {
+          "type": "string",
+          "enum": ["derecho", "izquierdo"]
+        },
+        "velocidad_lateral_kmh": {
+          "type": "number",
+          "minimum": 0
+        },
+        "velocidad_critica_kmh": {
+          "type": "number",
+          "minimum": 0
+        },
+        "ssf": {
+          "type": "number",
+          "exclusiveMinimum": 0
+        },
+        "altura_cg_m": {
+          "type": "number",
+          "exclusiveMinimum": 0
+        },
+        "via_m": {
+          "type": "number",
+          "exclusiveMinimum": 0
+        },
+        "velocidad_alabeo_rad_s": {
+          "type": "number",
+          "minimum": 0
+        }
+      }
+    },
+    "ObjetoEscena": {
+      "type": "object",
+      "description": "Geometría de un objeto del entorno, la misma para el visor y para el análisis de visibilidad.",
+      "additionalProperties": false,
+      "required": ["id", "tipo", "forma", "x", "y", "rumbo_deg", "largo_m", "ancho_m", "alto_m"],
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/Id"
+        },
+        "tipo": {
+          "type": "string",
+          "enum": [
+            "arbol",
+            "poste",
+            "muro",
+            "barda",
+            "vehiculo_estacionado",
+            "puesto",
+            "contenedor",
+            "senal",
+            "parada_autobus",
+            "otro"
+          ]
+        },
+        "forma": {
+          "type": "string",
+          "enum": ["arbol", "cilindro", "caja", "senal"]
+        },
+        "x": {
+          "type": "number"
+        },
+        "y": {
+          "type": "number"
+        },
+        "rumbo_deg": {
+          "type": "number"
+        },
+        "largo_m": {
+          "type": "number",
+          "exclusiveMinimum": 0
+        },
+        "ancho_m": {
+          "type": "number",
+          "exclusiveMinimum": 0
+        },
+        "alto_m": {
+          "type": "number",
+          "exclusiveMinimum": 0
+        },
+        "radio_m": {
+          "type": "number",
+          "exclusiveMinimum": 0
+        },
+        "copa": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["radio_m", "centro_m", "tronco_alto_m"],
+          "properties": {
+            "radio_m": {
+              "type": "number",
+              "exclusiveMinimum": 0
+            },
+            "centro_m": {
+              "type": "number",
+              "exclusiveMinimum": 0
+            },
+            "tronco_alto_m": {
+              "type": "number",
+              "exclusiveMinimum": 0
+            }
+          }
+        },
+        "clase_vehiculo": {
+          "type": "string",
+          "maxLength": 40
+        }
+      }
+    },
+    "Visibilidad": {
+      "type": "object",
+      "description": "Línea de vista desde el ojo de un conductor hacia otro actor antes del impacto (PLAN §6.1.9): si se veía, qué lo tapaba y a qué distancia.",
+      "additionalProperties": false,
+      "required": [
+        "observador",
+        "objetivo",
+        "tipo_objetivo",
+        "altura_ojo_m",
+        "t",
+        "visible",
+        "fraccion",
+        "distancia_m",
+        "causa",
+        "resumen"
+      ],
+      "properties": {
+        "observador": {
+          "$ref": "#/$defs/Id"
+        },
+        "objetivo": {
+          "$ref": "#/$defs/Id"
+        },
+        "tipo_objetivo": {
+          "type": "string",
+          "enum": ["vehiculo", "persona", "objeto"]
+        },
+        "altura_ojo_m": {
+          "type": "number",
+          "exclusiveMinimum": 0
+        },
+        "t": {
+          "$ref": "#/$defs/Numeros"
+        },
+        "visible": {
+          "type": "array",
+          "items": {
+            "type": "boolean"
+          },
+          "maxItems": 2000
+        },
+        "fraccion": {
+          "type": "array",
+          "items": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 1
+          },
+          "maxItems": 2000
+        },
+        "distancia_m": {
+          "$ref": "#/$defs/Numeros"
+        },
+        "causa": {
+          "type": "array",
+          "description": "Por qué no se veía en cada instante: `objeto:<id>`, `vehiculo:<id>`, `noche` o `clima`; vacío si se veía.",
+          "items": {
+            "type": "string",
+            "maxLength": 100
+          },
+          "maxItems": 2000
+        },
+        "resumen": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["visible_al_impacto", "limitado_por"],
+          "properties": {
+            "visible_al_impacto": {
+              "type": "boolean"
+            },
+            "oclusor_principal": {
+              "type": "string",
+              "maxLength": 100,
+              "description": "Lo que más tiempo tapó la vista antes de verse (si algo la tapó)."
+            },
+            "limitado_por": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "maxLength": 100
+              },
+              "maxItems": 64
+            },
+            "visible_desde_s": {
+              "type": "number"
+            },
+            "distancia_al_verse_m": {
+              "type": "number",
+              "minimum": 0
+            },
+            "tiempo_disponible_s": {
+              "type": "number",
+              "minimum": 0
+            },
+            "visible_toda_la_aproximacion": {
+              "type": "boolean"
+            }
+          }
         }
       }
     }

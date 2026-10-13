@@ -456,11 +456,12 @@
       },
       "posicion_inicial": {
         "x": 0,
-        "y": -3.5,
+        "y": -7.6,
         "rumbo_deg": 90,
         "procedencia": {
           "fuente": "supuesto",
-          "confianza": 0.5
+          "confianza": 0.5,
+          "nota": "Sale de la banqueta sur por el paso peatonal, junto al frente del camión estacionado (cruza de derecha a izquierda)."
         }
       },
       "posicion_final": {
