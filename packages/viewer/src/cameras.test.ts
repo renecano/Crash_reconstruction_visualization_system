@@ -71,9 +71,9 @@ describe("cámaras", () => {
     const pos = fromThree(cam.position);
     const dx = pos.x - p.x;
     const dy = pos.y - p.y;
-    // Golpe frontal contra un árbol: la cámara queda adelante, abierta a 55° de su rumbo.
+    // Golpe frontal contra un árbol: la cámara queda adelante, abierta a 60° de su rumbo.
     const rel = Math.atan2(dy, dx) - p.yaw;
-    expect(Math.abs(Math.atan2(Math.sin(rel), Math.cos(rel)))).toBeCloseTo((55 * Math.PI) / 180, 6);
+    expect(Math.abs(Math.atan2(Math.sin(rel), Math.cos(rel)))).toBeCloseTo((60 * Math.PI) / 180, 6);
     expect(Math.hypot(dx, dy)).toBeLessThan(15);
   });
 });

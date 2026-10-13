@@ -16,6 +16,7 @@
   "dependencies": {
     "@croquis/croquis-2d": "workspace:*",
     "@croquis/scene-schema": "workspace:*",
+    "@dimforge/rapier3d-deterministic-compat": "catalog:",
     "@react-three/fiber": "catalog:",
     "three": "catalog:"
   },

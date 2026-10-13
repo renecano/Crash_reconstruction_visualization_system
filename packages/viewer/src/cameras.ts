@@ -163,8 +163,8 @@ export function mostDamaged(scene: CameraScene): CameraVehicle | undefined {
 }
 
 /**
- * Acercamiento al daño: órbita fija frente a la cara golpeada del vehículo más deformado, a 35°
- * de la normal de esa cara (55° contra objetos fijos, para que no tapen) y 25° de elevación, a una distancia que encuadra el vehículo.
+ * Acercamiento al daño: órbita fija frente a la cara golpeada del vehículo más deformado, a 60°
+ * de la normal de esa cara (lo que golpeó queda justo enfrente y no debe tapar) y 32° de elevación, a una distancia que encuadra el vehículo.
  */
 export function damageCamera(scene: CameraScene, t: number, fov = 40): CameraPose {
   const v = mostDamaged(scene);
@@ -172,11 +172,10 @@ export function damageCamera(scene: CameraScene, t: number, fov = 40): CameraPos
   const p = sampleVehicle(v.trayectoria, t);
   const lado = v.dano?.cdc?.lado ?? "F";
   const faceAngle = { F: 0, B: Math.PI, L: Math.PI / 2, R: -Math.PI / 2 }[lado] ?? 0;
-  // Contra un objeto fijo, el objeto queda justo enfrente: la cámara se abre más para no taparlo.
-  const objectImpact = scene.eventos?.some((e) => e.tipo === "impacto_vehiculo_objeto") ?? false;
-  const az = p.yaw + faceAngle + ((objectImpact ? 55 : 35) * Math.PI) / 180;
-  const el = (25 * Math.PI) / 180;
-  const dist = Math.max(5, 1.5 * v.dimensiones.largo_m);
+  // Lo que golpeó (otro vehículo u objeto) queda justo frente a la cara: la cámara se abre 60°.
+  const az = p.yaw + faceAngle + (60 * Math.PI) / 180;
+  const el = (32 * Math.PI) / 180;
+  const dist = Math.max(5.5, 1.7 * v.dimensiones.largo_m);
   const tx = p.x;
   const ty = p.y;
   const h = 0.5 * v.dimensiones.alto_m;

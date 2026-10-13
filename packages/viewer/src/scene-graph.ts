@@ -79,6 +79,10 @@ export interface SceneGraph {
   persons: PersonNode[];
   /** Coloca la escena en el instante t (s, relativo al impacto). */
   update(t: number): void;
+  /** Registra una actualización adicional (p. ej. restos horneados que llegan después). */
+  addUpdater(fn: (t: number) => void): void;
+  /** Último instante aplicado. */
+  readonly time: number;
   dispose(): void;
   stats: { meshes: number; triangles: number };
 }
@@ -601,7 +605,12 @@ export function buildSceneGraph(
   const personData = new Map(resultado.personas.map((p) => [p.id, p]));
   const vehicleNodes = new Map(vehicles.map((n) => [n.id, n]));
 
+  const extraUpdaters: ((t: number) => void)[] = [];
+  let lastT = resultado.t_inicio;
+
   function update(t: number): void {
+    lastT = t;
+    for (const fn of extraUpdaters) fn(t);
     for (const m of markMeshes) m.mesh.geometry.setDrawRange(0, visibleCount(m.quads, t) * 6);
     for (const p of puddles) {
       const r = puddleRadius(p.spec, t);
@@ -671,6 +680,13 @@ export function buildSceneGraph(
     vehicles,
     persons,
     update,
+    addUpdater(fn: (t: number) => void) {
+      extraUpdaters.push(fn);
+      fn(lastT);
+    },
+    get time() {
+      return lastT;
+    },
     dispose() {
       root.traverse((o) => {
         if (o instanceof Mesh) (o.geometry as BufferGeometry).dispose();

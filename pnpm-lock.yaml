@@ -164,6 +164,9 @@ settings:
 
 catalogs:
   default:
+    '@dimforge/rapier3d-deterministic-compat':
+      specifier: 0.21.0
+      version: 0.21.0
     '@eslint/js':
       specifier: 10.0.1
       version: 10.0.1
@@ -436,6 +439,9 @@ importers:
       '@croquis/scene-schema':
         specifier: workspace:*
         version: link:../scene-schema
+      '@dimforge/rapier3d-deterministic-compat':
+        specifier: 'catalog:'
+        version: 0.21.0
       '@react-three/fiber':
         specifier: 'catalog:'
         version: 9.8.1(@types/react@19.3.0)(react-dom@19.3.0(react@19.3.0))(react@19.3.0)(three@0.186.1)
@@ -616,6 +622,9 @@ packages:
 
   '@dimforge/rapier3d-compat@0.12.0':
     resolution: {integrity: sha512-uekIGetywIgopfD97oDL5PfeezkFpNhwlzlaEYNOA0N6ghdsOvh/HYjSMek5Q2O1PYvRSDFcqFVJl4r4ZBwOow==}
+
+  '@dimforge/rapier3d-deterministic-compat@0.21.0':
+    resolution: {integrity: sha512-n7JuU62Obljlgq+OeH2DHhTmRSjRzwuJPl54tS9pFIzVQyvXsO5CH+a5KkIRBtnFWDbg1Zicv9BulG0jfBAopA==}
 
   '@emnapi/core@1.10.0':
     resolution: {integrity: sha512-yq6OkJ4p82CAfPl0u9mQebQHKPJkY7WrIuk205cTYnYe+k2Z8YBh11FrbRG/H6ihirqcacOgl2BIO8oyMQLeXw==}
@@ -3451,6 +3460,8 @@ snapshots:
   '@csstools/css-tokenizer@4.0.2': {}
 
   '@dimforge/rapier3d-compat@0.12.0': {}
+
+  '@dimforge/rapier3d-deterministic-compat@0.21.0': {}
 
   '@emnapi/core@1.10.0':
     dependencies:

@@ -37,6 +37,7 @@ import type { ViewerClock } from "../clock";
 import { toThree } from "../coords";
 import { environmentFor, type EnvironmentSettings } from "../environment";
 import { QUALITY_PROFILES, type QualityLevel } from "../quality";
+import { attachDebris } from "../debris-scene";
 import { buildSceneGraph } from "../scene-graph";
 import { seatHeight } from "../vehicle-geometry";
 
@@ -73,6 +74,8 @@ declare global {
   interface Window {
     __croquisPerf?: PerfSample;
     __croquisReady?: boolean;
+    /** Restos horneados y agregados a la escena. */
+    __croquisDebrisReady?: boolean;
     /** `performance.now()` del primer cuadro listo (E6: tiempo hasta interactivo). */
     __croquisReadyAt?: number;
   }
@@ -108,6 +111,22 @@ function SceneContent({
     [spec, resultado, profile, env],
   );
   useEffect(() => () => graph.dispose(), [graph]);
+  // Restos (piezas, vidrios, plásticos): se hornean con Rapier al cargar la escena.
+  useEffect(() => {
+    let alive = true;
+    window.__croquisDebrisReady = false;
+    attachDebris(spec, resultado, graph)
+      .then(() => {
+        if (alive) window.__croquisDebrisReady = true;
+      })
+      .catch((err: unknown) => {
+        console.error("No se pudieron simular los restos", err);
+        if (alive) window.__croquisDebrisReady = true;
+      });
+    return () => {
+      alive = false;
+    };
+  }, [spec, resultado, graph]);
 
   const { scene, camera: cam, gl } = useThree();
   const bounds = useMemo(() => actionBounds(resultado), [resultado]);
@@ -271,6 +290,7 @@ function PerfProbe({ backend }: { backend: () => RendererInfo["backend"] | undef
       perf.triangles = info.render?.triangles;
       info.reset?.();
     }
+    if (!window.__croquisDebrisReady) return;
     if (!window.__croquisReady) window.__croquisReadyAt = performance.now();
     window.__croquisReady = true;
   });
