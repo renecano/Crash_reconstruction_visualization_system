@@ -7,6 +7,7 @@
 import type { EscenaSpec, Resultado } from "@croquis/scene-schema";
 import {
   BoxGeometry,
+  Color,
   type Group,
   type Material,
   Mesh,
@@ -23,7 +24,7 @@ import {
   type DamageSide,
   type VehicleDamage,
 } from "./damage";
-import { brokenLightMaterial, crackedGlassMaterial, damagedPaintMaterial } from "./damage-material";
+import { crackedGlassMaterial, damagedPaintMaterial } from "./damage-material";
 import { profileFor, type CarLayout, type VehicleDimensions } from "./vehicle-geometry";
 
 type VehicleResult = Resultado["vehiculos"][number];
@@ -36,6 +37,7 @@ export const HEADLIGHT_BREAK_M = 0.04;
 export const WINDSHIELD_CRACK_M = 0.3;
 /** Las grietas crecen durante este tiempo después del impacto (s). */
 export const CRACK_GROWTH_S = 0.25;
+const BROKEN_LIGHT = new Color("#2b2d30");
 
 export interface DamageRig {
   damage: VehicleDamage | null;
@@ -89,7 +91,9 @@ export function buildDamageRig(
   const materials: Material[] = [];
   const influences: { value: number }[] = [];
   const morphMeshes: Mesh[] = [];
-  const swaps: { mesh: Mesh; broken: Material }[] = [];
+  // Faros rotos: material propio por faro y cambio de propiedades (no de material), así no se
+  // compila un sombreador nuevo a media reproducción.
+  const broken: { mat: MeshStandardMaterial; color: Color; emissive: number }[] = [];
   const cracks: { value: number }[] = [];
   const twoWheel = profileFor(v.clase).kind === "two_wheel";
   const input = damageInputFor(v, ctx);
@@ -118,13 +122,14 @@ export function buildDamageRig(
         if (!(m instanceof Mesh) || input.lado !== "F") continue;
         const u = -m.position.z;
         if (crushAt(input, u) >= HEADLIGHT_BREAK_M) {
-          const broken = brokenLightMaterial();
-          materials.push(broken);
-          swaps.push({ mesh: m as Mesh, broken });
+          const own = ((m as Mesh).material as MeshStandardMaterial).clone();
+          (m as Mesh).material = own;
+          materials.push(own);
+          broken.push({ mat: own, color: own.color.clone(), emissive: own.emissiveIntensity });
         }
       }
-      if (swaps.length > 0)
-        notas.push(`Faro${swaps.length > 1 ? "s" : ""} roto${swaps.length > 1 ? "s" : ""}.`);
+      if (broken.length > 0)
+        notas.push(`Faro${broken.length > 1 ? "s" : ""} roto${broken.length > 1 ? "s" : ""}.`);
     }
   }
 
@@ -211,9 +216,11 @@ export function buildDamageRig(
         obj.position.copy(base.pos).addScaledVector(w.shift, k);
         obj.rotation.y = base.rotY + w.toe * k;
       }
-      for (const s of swaps) {
-        if (!s.mesh.userData.original) s.mesh.userData.original = s.mesh.material;
-        s.mesh.material = k > 0.5 ? s.broken : (s.mesh.userData.original as Material);
+      for (const b of broken) {
+        const isBroken = k > 0.5;
+        b.mat.emissiveIntensity = isBroken ? 0 : b.emissive;
+        b.mat.color.copy(isBroken ? BROKEN_LIGHT : b.color);
+        b.mat.roughness = isBroken ? 0.9 : 0.2;
       }
       const crack = Math.min(1, Math.max(0, t / CRACK_GROWTH_S));
       for (const c of cracks) c.value = crack;

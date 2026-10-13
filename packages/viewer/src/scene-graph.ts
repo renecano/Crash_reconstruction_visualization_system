@@ -615,7 +615,6 @@ export function buildSceneGraph(
     for (const p of puddles) {
       const r = puddleRadius(p.spec, t);
       p.mesh.scale.setScalar(Math.max(r, 1e-4));
-      p.mesh.visible = r > 0;
     }
     for (const n of vehicles) {
       const pose = sampleVehicle(n.track, t);

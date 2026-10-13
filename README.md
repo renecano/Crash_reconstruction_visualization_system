@@ -5,7 +5,7 @@
 
 Croquis toma lo que una persona cuenta ("iba por Tollocan, el de la camioneta gris se me cerró…"), lo convierte con un LLM en una escena estructurada donde cada dato está ligado a la frase que lo respalda o marcado como supuesto, lo deja corregir en un croquis 2D, reconstruye la física con un solver propio y lo muestra en 3D en el navegador. **La IA traduce, la física decide y el visor muestra.**
 
-Estado: **F3 — Visor base** (ver `docs/PROGRESS.md`). Este README se completa fase por fase siguiendo el estándar de PLAN §15; toda cifra que aparece aquí sale de un script en `eval/` con su salida en `eval/results/`.
+Estado: **F4 — Daño** (ver `docs/PROGRESS.md`). Este README se completa fase por fase siguiendo el estándar de PLAN §15; toda cifra que aparece aquí sale de un script en `eval/` con su salida en `eval/results/`.
 
 ## Problema
 
@@ -33,6 +33,7 @@ Después de un percance, quien lo vivió tiene que explicarlo (a su aseguradora,
 - **Diez escenas canónicas** con relato (alcance, lateral en intersección, frontal en curva, peatón en cruce, motociclista, árbol, poste, volcadura, nocturno con lluvia, glorieta) que validan en TypeScript y en Python.
 - **Un validador semántico** con paridad TS ↔ Python: referencias rotas, evidencia faltante, rangos declarados, masas y dimensiones fuera de la clase (tabla construida desde 47 fichas técnicas), velocidades implausibles, vehículos encimados, roles y eventos incoherentes. Los mensajes nunca asignan culpa.
 - **El visor 3D** (`/visor`): las diez escenas reconstruidas por el solver en el navegador, con vía, banquetas y rayas del mismo modelo que el croquis, vehículos genéricos sin marcas a sus dimensiones reales, peatones como maniquí neutro, sol según fecha, hora y lugar, línea de tiempo con cámara lenta y cuadro por cuadro, cámaras libre, cenital, del conductor y cinematográfica, y la tabla de ΔV, dirección de la fuerza y energía con la fuente de cada parámetro. Usa `WebGPURenderer` de three.js y elige por medición entre WebGPU y WebGL 2.
+- **El daño** que calcula el solver se ve en cada vehículo: la carrocería se hunde con la forma y la profundidad del perfil de aplastamiento C1–C6 (una prueba lo mide sobre la malla), con pintura transferida, rayones, parabrisas agrietado, vidrios y piezas desprendidas simulados con Rapier, bolsas de aire con umbrales del IIHS y marcas de frenado y derrape sacadas de las trayectorias. Las reglas que no salen del solver están marcadas como ilustrativas.
 - **El croquis 2D** (`/croquis`): arrastra y gira vehículos, personas, objetos y marcas; el JSON y el dibujo son la misma escena y lo que la persona mueve queda marcado como suyo.
 - **El solver de referencia** (`solver/croquis_solver`): impacto por impulso entre cuerpos rígidos planos, energía de deformación CRASH3 con rigidez por clase medida en pruebas de NHTSA, frenado y trayectorias previas, movimiento posterior hasta el reposo, objetos fijos y proyección de peatones (Searle). Reconstruye las diez escenas de forma determinista; la conservación de momento se prueba con Hypothesis.
 

@@ -56,9 +56,9 @@ describe("restos con Rapier", () => {
     const vehicle = sg.vehicles.find((v) => v.id === part?.part?.vehicleId);
     const original = vehicle?.group.getObjectByName(part?.part?.name ?? "");
     sg.update(-0.5);
-    expect(original?.visible).toBe(true);
+    expect(original?.scale.x).toBe(1);
     sg.update(r.t_fin);
-    expect(original?.visible).toBe(false);
+    expect(original?.scale.x).toBeLessThan(0.001);
     const pos = new Vector3();
     const q = new Quaternion();
     for (let i = 0; i < att.bake.bodies.length; i++) {

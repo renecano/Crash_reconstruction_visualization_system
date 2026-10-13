@@ -318,8 +318,9 @@ export async function attachDebris(
       const b = bake.bodies[p.i];
       if (!b) continue;
       const detached = t >= b.t0;
-      p.original.visible = !detached;
-      p.mesh.visible = detached;
+      // Escala casi cero en lugar de ocultar: el sombreador se compila desde el inicio.
+      p.original.scale.setScalar(detached ? 1e-4 : 1);
+      p.mesh.scale.setScalar(detached ? 1 : 1e-4);
       debrisPoseAt(bake, p.i, t, pos, quat);
       p.mesh.position.copy(pos);
       p.mesh.quaternion.copy(quat);
