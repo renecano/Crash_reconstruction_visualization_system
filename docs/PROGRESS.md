@@ -701,14 +701,14 @@ Incidente: una corrida local de `pnpm test` falló una vez en `debris.test.ts` (
 3. **Inercia de guiñada medida** (Heydinger et al., SAE 1999-01-1336) en lugar de la placa uniforme. Cambia todas las trayectorias posteriores al impacto y las capturas.
 4. **Marcas de derrape en la inversión.** El contrato no dice si son anteriores o posteriores al impacto; hace falta un campo y una versión del contrato.
 5. **Procedencia del rumbo final.** Hoy es parte de la pose declarada. Si E9 muestra que las personas no lo dicen, se separa en el contrato.
-6. **Port TS** de inversión, Monte Carlo y consistencia, o llamada al servidor: F9, con E7.
+6. **Port TS** de inversión, Monte Carlo y las banderas de consistencia que muestrean: F9, con E7. Con la migración (ADR 0011) ya no hay servidor Python al cual llamar.
 7. **CMA-ES** si aparecen escenas multimodales; en las diez canónicas el ajuste local converge.
 
 ### Decisiones
 
 - ADR 0010: partición por año en E3, rigidez muestreada, inversión sobre el solver completo, identificabilidad explícita, método de la cuerda, consistencia contra rangos, resultado 1.4.0 e hipótesis con fantasmas.
 - La rigidez lateral y trasera se queda como `supuesto` hasta tener una fuente física. No se calibra con el EDR.
-- Las hipótesis se reconstruyen en el servidor. En la demo sin red llegarán con el port TS (F9).
+- Las hipótesis se reconstruyen en el servidor. En la demo sin red llegarán con el port TS (F9). **Actualizado por la migración (ADR 0011):** ahora se reconstruyen en el navegador, en un Web Worker con el solver TS.
 
 ### Resumen para René (F7)
 
