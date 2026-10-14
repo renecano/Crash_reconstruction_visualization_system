@@ -32,3 +32,4 @@ packages/extraction/fixtures/
 packages/extraction/grabaciones/
 packages/extraction/src/generated/
 packages/solver-ts/src/data/
+packages/solver-ts/fixtures/
