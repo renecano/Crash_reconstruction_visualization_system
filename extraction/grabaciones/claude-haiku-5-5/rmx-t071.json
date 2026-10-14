@@ -1,0 +1,117 @@
+{
+ "costo_estimado_con": "claude-haiku-5-5",
+ "costo_usd": 0.00193972,
+ "esfuerzo": "medium",
+ "grabado": "2026-10-14T16:37:33+00:00",
+ "huella_prompt": "f6b693169a4199c3",
+ "latencia_ms": 15546.3,
+ "modelo": "claude-haiku-5-5",
+ "modelo_respuesta": "claude-haiku-5-5",
+ "prompt": "extraccion_v1",
+ "request_id": "req_011Cg2TStatGbUyxJk8nB5XN",
+ "salida": {
+  "dispositivos": [
+   {
+    "cita": "en el semáforo",
+    "tipo": "semaforo"
+   }
+  ],
+  "hechos": [
+   {
+    "campo": "lugar.tipo_via",
+    "cita": "la intersección del bulevar Belisario Domínguez con la calle 5a. Norte",
+    "persona": -1,
+    "valor": "interseccion",
+    "vehiculo": -1
+   },
+   {
+    "campo": "evento.tipo",
+    "cita": "impactó la salpicadera delantera derecha de mi vehículo",
+    "persona": -1,
+    "valor": "impacto_vehiculo_vehiculo",
+    "vehiculo": -1
+   },
+   {
+    "campo": "vehiculo.maniobra",
+    "cita": "dar vuelta a la izquierda",
+    "persona": -1,
+    "valor": "vuelta_izquierda",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.color",
+    "cita": "color rojo",
+    "persona": -1,
+    "valor": "rojo",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.clase",
+    "cita": "automóvil Chevrolet Aveo",
+    "persona": -1,
+    "valor": "sedan_compacto",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.zona_impacto",
+    "cita": "salpicadera delantera derecha",
+    "persona": -1,
+    "valor": "F",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.clase",
+    "cita": "una motociclista",
+    "persona": -1,
+    "valor": "motocicleta",
+    "vehiculo": 1
+   },
+   {
+    "campo": "vehiculo.velocidad_kmh",
+    "cita": "a exceso de velocidad",
+    "persona": -1,
+    "valor": "alta",
+    "vehiculo": 1
+   },
+   {
+    "campo": "persona.casco",
+    "cita": "portaba casco",
+    "persona": 1,
+    "valor": "true",
+    "vehiculo": -1
+   }
+  ],
+  "personas": [
+   {
+    "cita": "a bordo de mi automóvil Chevrolet Aveo",
+    "rol": "conductor",
+    "vehiculo": 0
+   },
+   {
+    "cita": "una motociclista",
+    "rol": "motociclista",
+    "vehiculo": 1
+   }
+  ],
+  "preguntas": [
+   "¿A qué velocidad circulaba la motociclista al momento del impacto?",
+   "¿Qué condiciones de clima y de iluminación había al momento del percance?",
+   "¿A qué velocidad se desplazaba el automóvil cuando inició la marcha para dar vuelta?"
+  ],
+  "vehiculos": [
+   {
+    "narrador": true
+   },
+   {
+    "narrador": false
+   }
+  ]
+ },
+ "texto_sha256": "d02f6049c5107eb1b53087e0c9a6262b851c3ce6fe654fe5378d2a2f8afa04fe",
+ "usage": {
+  "cache_creation_input_tokens": 0,
+  "cache_read_input_tokens": 5862,
+  "input_tokens": 271,
+  "output_tokens": 3708
+ }
+}

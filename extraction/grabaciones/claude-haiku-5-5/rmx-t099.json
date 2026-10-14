@@ -1,0 +1,79 @@
+{
+ "costo_estimado_con": "claude-haiku-5-5",
+ "costo_usd": 0.00115992,
+ "esfuerzo": "medium",
+ "grabado": "2026-10-14T16:42:34+00:00",
+ "huella_prompt": "f6b693169a4199c3",
+ "latencia_ms": 10318.2,
+ "modelo": "claude-haiku-5-5",
+ "modelo_respuesta": "claude-haiku-5-5",
+ "prompt": "extraccion_v1",
+ "request_id": "req_011Cg2TqVCcFkTewJRJhZdsf",
+ "salida": {
+  "dispositivos": [],
+  "hechos": [
+   {
+    "campo": "evento.tipo",
+    "cita": "se impacto con su carro contra un puesto de tacos",
+    "persona": -1,
+    "valor": "impacto_vehiculo_objeto",
+    "vehiculo": -1
+   },
+   {
+    "campo": "evento.objeto",
+    "cita": "contra un puesto de tacos",
+    "persona": -1,
+    "valor": "puesto",
+    "vehiculo": -1
+   },
+   {
+    "campo": "entorno.iluminacion",
+    "cita": "eran como las 11 de la noche",
+    "persona": -1,
+    "valor": "noche",
+    "vehiculo": -1
+   },
+   {
+    "campo": "vehiculo.velocidad_kmh",
+    "cita": "iba despasio dice el, como a 30",
+    "persona": -1,
+    "valor": "30",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.clase",
+    "cita": "el carro es un attitude",
+    "persona": -1,
+    "valor": "sedan_compacto",
+    "vehiculo": 0
+   }
+  ],
+  "personas": [
+   {
+    "cita": "mi hijo de 18 se impacto con su carro",
+    "rol": "conductor",
+    "vehiculo": 0
+   }
+  ],
+  "preguntas": [
+   "¿Qué hizo el carro de su hijo justo antes del impacto, como girar, frenar o avanzar recto?",
+   "¿El carro que venía de frente llegó a tocar el vehículo de su hijo o solo lo deslumbró?",
+   "¿Su hijo llegó a aplicar el freno antes de chocar con el puesto?"
+  ],
+  "vehiculos": [
+   {
+    "narrador": false
+   },
+   {
+    "narrador": false
+   }
+  ]
+ },
+ "texto_sha256": "2b3c0d952bf2f3c3d554219b68b9f089e5aa26de9a84c5c31fc4eb962a819a4e",
+ "usage": {
+  "cache_creation_input_tokens": 0,
+  "cache_read_input_tokens": 5862,
+  "input_tokens": 153,
+  "output_tokens": 2172
+ }
+}

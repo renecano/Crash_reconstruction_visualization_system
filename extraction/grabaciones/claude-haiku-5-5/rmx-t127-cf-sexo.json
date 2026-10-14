@@ -1,0 +1,108 @@
+{
+ "costo_estimado_con": "claude-haiku-5-5",
+ "costo_usd": 0.00117532,
+ "esfuerzo": "medium",
+ "grabado": "2026-10-14T17:16:29+00:00",
+ "huella_prompt": "f6b693169a4199c3",
+ "latencia_ms": 8658.2,
+ "modelo": "claude-haiku-5-5",
+ "modelo_respuesta": "claude-haiku-5-5",
+ "prompt": "extraccion_v1",
+ "request_id": "req_011Cg2WRYjNE4U1Jx5ddQi7Y",
+ "salida": {
+  "dispositivos": [],
+  "hechos": [
+   {
+    "campo": "entorno.clima",
+    "cita": "Lloviznaba",
+    "persona": -1,
+    "valor": "lluvia_ligera",
+    "vehiculo": -1
+   },
+   {
+    "campo": "lugar.estado_superficie",
+    "cita": "el pavimento estaba mojado",
+    "persona": -1,
+    "valor": "mojado",
+    "vehiculo": -1
+   },
+   {
+    "campo": "evento.tipo",
+    "cita": "Lo golpeé con la parte frontal derecha del vehículo",
+    "persona": -1,
+    "valor": "impacto_vehiculo_persona",
+    "vehiculo": -1
+   },
+   {
+    "campo": "vehiculo.clase",
+    "cita": "conducía mi camioneta Nissan Kicks",
+    "persona": -1,
+    "valor": "suv_o_pickup",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.velocidad_kmh",
+    "cita": "a una velocidad aproximada de 35 km/h",
+    "persona": -1,
+    "valor": "35",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.frenado",
+    "cita": "Accioné el freno",
+    "persona": -1,
+    "valor": "true",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.zona_impacto",
+    "cita": "Lo golpeé con la parte frontal derecha del vehículo",
+    "persona": -1,
+    "valor": "F",
+    "vehiculo": 0
+   },
+   {
+    "campo": "evidencias.marcas_m",
+    "cita": "dejé marcas de aproximadamente seis metros",
+    "persona": -1,
+    "valor": "6",
+    "vehiculo": -1
+   },
+   {
+    "campo": "evidencias.distancia_proyeccion_m",
+    "cita": "quedó tendido a unos cuatro metros",
+    "persona": -1,
+    "valor": "4",
+    "vehiculo": -1
+   }
+  ],
+  "personas": [
+   {
+    "cita": "conducía mi camioneta Nissan Kicks",
+    "rol": "conductor",
+    "vehiculo": 0
+   },
+   {
+    "cita": "un hombre cruzó la calzada por debajo del puente peatonal",
+    "rol": "peaton",
+    "vehiculo": -1
+   }
+  ],
+  "preguntas": [
+   "¿El peatón cruzó caminando o corriendo?",
+   "¿Hubo alguna maniobra de evasión del conductor antes del impacto?"
+  ],
+  "vehiculos": [
+   {
+    "narrador": true
+   }
+  ]
+ },
+ "texto_sha256": "7cc1a27c93ca60e0c7c696c9dba611175baca22b981715f6e84bf4a164e5a371",
+ "usage": {
+  "cache_creation_input_tokens": 0,
+  "cache_read_input_tokens": 5862,
+  "input_tokens": 262,
+  "output_tokens": 2181
+ }
+}

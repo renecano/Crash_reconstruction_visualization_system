@@ -1,0 +1,91 @@
+{
+ "costo_estimado_con": "claude-haiku-5-5",
+ "costo_usd": 0.00120942,
+ "esfuerzo": "medium",
+ "grabado": "2026-10-14T16:51:01+00:00",
+ "huella_prompt": "f6b693169a4199c3",
+ "latencia_ms": 9798.0,
+ "modelo": "claude-haiku-5-5",
+ "modelo_respuesta": "claude-haiku-5-5",
+ "prompt": "extraccion_v1",
+ "request_id": "req_011Cg2UUrureSSRrTJ4MPWWw",
+ "salida": {
+  "dispositivos": [],
+  "hechos": [
+   {
+    "campo": "vehiculo.maniobra",
+    "cita": "completamente parado",
+    "persona": -1,
+    "valor": "detenido",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.velocidad_kmh",
+    "cita": "completamente parado",
+    "persona": -1,
+    "valor": "0",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.color",
+    "cita": "azul cielo",
+    "persona": -1,
+    "valor": "azul cielo",
+    "vehiculo": 0
+   },
+   {
+    "campo": "evento.tipo",
+    "cita": "Me dio en la defensa trasera",
+    "persona": -1,
+    "valor": "impacto_vehiculo_vehiculo",
+    "vehiculo": -1
+   },
+   {
+    "campo": "vehiculo.zona_impacto",
+    "cita": "Me dio en la defensa trasera",
+    "persona": -1,
+    "valor": "B",
+    "vehiculo": 0
+   },
+   {
+    "campo": "lugar.tipo_via",
+    "cita": "entrar al estacionamiento del súper",
+    "persona": -1,
+    "valor": "estacionamiento",
+    "vehiculo": -1
+   }
+  ],
+  "personas": [
+   {
+    "cita": "Mi coche es un i10 azul cielo.",
+    "rol": "conductor",
+    "vehiculo": 0
+   },
+   {
+    "cita": "la vecina de la Odyssey de atrás",
+    "rol": "conductor",
+    "vehiculo": 1
+   }
+  ],
+  "preguntas": [
+   "¿A qué velocidad se movía la Odyssey al momento del golpe?",
+   "¿La Odyssey iba frenada o se movió sin control del pie del freno?",
+   "¿Ambos vehículos estaban formados en la fila al momento del impacto?"
+  ],
+  "vehiculos": [
+   {
+    "narrador": true
+   },
+   {
+    "narrador": false
+   }
+  ]
+ },
+ "texto_sha256": "67cbe406dc83e5fcb1d8db6e665ed980e02961d3cb7a47aa7b9bf3408f89795e",
+ "usage": {
+  "cache_creation_input_tokens": 0,
+  "cache_read_input_tokens": 5862,
+  "input_tokens": 143,
+  "output_tokens": 2273
+ }
+}

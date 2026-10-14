@@ -1,0 +1,70 @@
+{
+ "costo_estimado_con": "claude-haiku-5-5",
+ "costo_usd": 0.00105552,
+ "esfuerzo": "medium",
+ "grabado": "2026-10-14T16:53:20+00:00",
+ "huella_prompt": "f6b693169a4199c3",
+ "latencia_ms": 9605.5,
+ "modelo": "claude-haiku-5-5",
+ "modelo_respuesta": "claude-haiku-5-5",
+ "prompt": "extraccion_v1",
+ "request_id": "req_011Cg2Uf87RnDjvcfjLyTotX",
+ "salida": {
+  "dispositivos": [],
+  "hechos": [
+   {
+    "campo": "lugar.tipo_via",
+    "cita": "en la lateral",
+    "persona": -1,
+    "valor": "incorporacion",
+    "vehiculo": -1
+   },
+   {
+    "campo": "vehiculo.maniobra",
+    "cita": "me cerró en la lateral",
+    "persona": -1,
+    "valor": "cambio_carril",
+    "vehiculo": 1
+   },
+   {
+    "campo": "vehiculo.velocidad_kmh",
+    "cita": "iba a unos 35",
+    "persona": -1,
+    "valor": "35",
+    "vehiculo": 0
+   }
+  ],
+  "personas": [
+   {
+    "cita": "me tiró de la moto",
+    "rol": "motociclista",
+    "vehiculo": 0
+   },
+   {
+    "cita": "Un chavo en un Jetta",
+    "rol": "conductor",
+    "vehiculo": 1
+   }
+  ],
+  "preguntas": [
+   "¿Hubo contacto directo entre la moto y el Jetta?",
+   "¿El Jetta iba en el mismo sentido que la moto?",
+   "¿A qué velocidad iba el Jetta?"
+  ],
+  "vehiculos": [
+   {
+    "narrador": true
+   },
+   {
+    "narrador": false
+   }
+  ]
+ },
+ "texto_sha256": "be390f6ac87a12078858301380537b7209143907c8bb6d0c780f54f79f043c78",
+ "usage": {
+  "cache_creation_input_tokens": 0,
+  "cache_read_input_tokens": 5862,
+  "input_tokens": 49,
+  "output_tokens": 1984
+ }
+}

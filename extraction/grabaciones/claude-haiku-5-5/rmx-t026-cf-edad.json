@@ -1,0 +1,84 @@
+{
+ "costo_estimado_con": "claude-haiku-5-5",
+ "costo_usd": 0.00116172,
+ "esfuerzo": "medium",
+ "grabado": "2026-10-14T16:58:13+00:00",
+ "huella_prompt": "f6b693169a4199c3",
+ "latencia_ms": 9043.0,
+ "modelo": "claude-haiku-5-5",
+ "modelo_respuesta": "claude-haiku-5-5",
+ "prompt": "extraccion_v1",
+ "request_id": "req_011Cg2V2joMsXCAFsowbhvoi",
+ "salida": {
+  "dispositivos": [],
+  "hechos": [
+   {
+    "campo": "vehiculo.clase",
+    "cita": "una urvan",
+    "persona": -1,
+    "valor": "van",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.clase",
+    "cita": "en un aveo",
+    "persona": -1,
+    "valor": "sedan_compacto",
+    "vehiculo": 1
+   },
+   {
+    "campo": "vehiculo.maniobra",
+    "cita": "se metio de su carril al mio",
+    "persona": -1,
+    "valor": "cambio_carril",
+    "vehiculo": 1
+   },
+   {
+    "campo": "evento.tipo",
+    "cita": "me pego en la puerta",
+    "persona": -1,
+    "valor": "impacto_vehiculo_vehiculo",
+    "vehiculo": -1
+   },
+   {
+    "campo": "vehiculo.zona_impacto",
+    "cita": "el lado izquierdo",
+    "persona": -1,
+    "valor": "L",
+    "vehiculo": 0
+   }
+  ],
+  "personas": [
+   {
+    "cita": "yo iva x el bulevar colosio en pachuca",
+    "rol": "conductor",
+    "vehiculo": 0
+   },
+   {
+    "cita": "un señor grande en un aveo",
+    "rol": "conductor",
+    "vehiculo": 1
+   }
+  ],
+  "preguntas": [
+   "¿A qué velocidad circulaba cada vehículo antes del impacto?",
+   "¿Qué parte del Aveo hizo contacto con la Urvan?",
+   "¿Hubo algún frenado antes del impacto?"
+  ],
+  "vehiculos": [
+   {
+    "narrador": true
+   },
+   {
+    "narrador": false
+   }
+  ]
+ },
+ "texto_sha256": "ffbac0083999b1df7a0c4cca54cbd1f1b5c5f6753dc4cca7ea8fde7b912d3c20",
+ "usage": {
+  "cache_creation_input_tokens": 0,
+  "cache_read_input_tokens": 5862,
+  "input_tokens": 131,
+  "output_tokens": 2180
+ }
+}

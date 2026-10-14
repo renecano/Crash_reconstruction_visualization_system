@@ -1,0 +1,89 @@
+{
+ "costo_estimado_con": "claude-haiku-5-5",
+ "costo_usd": 0.00136012,
+ "esfuerzo": "medium",
+ "grabado": "2026-10-14T17:08:02+00:00",
+ "huella_prompt": "f6b693169a4199c3",
+ "latencia_ms": 11160.0,
+ "modelo": "claude-haiku-5-5",
+ "modelo_respuesta": "claude-haiku-5-5",
+ "prompt": "extraccion_v1",
+ "request_id": "req_011Cg2Vn1PBwfKbxviBewHNr",
+ "salida": {
+  "dispositivos": [
+   {
+    "cita": "se pasó el rojo",
+    "tipo": "semaforo"
+   }
+  ],
+  "hechos": [
+   {
+    "campo": "lugar.tipo_via",
+    "cita": "en el cruce con Chapultepec",
+    "persona": -1,
+    "valor": "interseccion",
+    "vehiculo": -1
+   },
+   {
+    "campo": "entorno.iluminacion",
+    "cita": "Hay buen alumbrado ahí",
+    "persona": -1,
+    "valor": "noche_con_alumbrado",
+    "vehiculo": -1
+   },
+   {
+    "campo": "vehiculo.velocidad_kmh",
+    "cita": "iba como a cuarenta",
+    "persona": -1,
+    "valor": "40",
+    "vehiculo": 0
+   },
+   {
+    "campo": "evento.tipo",
+    "cita": "me dio un llegue en la salpicadera delantera del lado derecho",
+    "persona": -1,
+    "valor": "impacto_vehiculo_vehiculo",
+    "vehiculo": -1
+   },
+   {
+    "campo": "vehiculo.zona_impacto",
+    "cita": "salpicadera delantera del lado derecho",
+    "persona": -1,
+    "valor": "R",
+    "vehiculo": 0
+   }
+  ],
+  "personas": [
+   {
+    "cita": "en mi Sentra",
+    "rol": "conductor",
+    "vehiculo": 0
+   },
+   {
+    "cita": "El taxista ni se bajó",
+    "rol": "conductor",
+    "vehiculo": 1
+   }
+  ],
+  "preguntas": [
+   "¿A qué velocidad iba el taxi al cruzar el cruce?",
+   "¿El taxi venía de frente, de lado o en otra dirección respecto a su Sentra?",
+   "¿Hubo algún otro vehículo o testigo que viera el semáforo?"
+  ],
+  "vehiculos": [
+   {
+    "narrador": true
+   },
+   {
+    "narrador": false
+   }
+  ]
+ },
+ "texto_sha256": "c720c3ede714f30341df5325b94834dbaecb1b5adf504eb47a67b0d514ea9947",
+ "usage": {
+  "cache_creation_input_tokens": 0,
+  "cache_read_input_tokens": 5862,
+  "input_tokens": 170,
+  "output_tokens": 2569
+ }
+}

@@ -1,0 +1,108 @@
+{
+ "costo_estimado_con": "claude-haiku-5-5",
+ "costo_usd": 0.00122202,
+ "esfuerzo": "medium",
+ "grabado": "2026-10-14T16:47:41+00:00",
+ "huella_prompt": "f6b693169a4199c3",
+ "latencia_ms": 9930.2,
+ "modelo": "claude-haiku-5-5",
+ "modelo_respuesta": "claude-haiku-5-5",
+ "prompt": "extraccion_v1",
+ "request_id": "req_011Cg2UE7yYiEZLiJBKJZ1RR",
+ "salida": {
+  "dispositivos": [],
+  "hechos": [
+   {
+    "campo": "vehiculo.clase",
+    "cita": "conducía mi camioneta Nissan Kicks",
+    "persona": -1,
+    "valor": "suv_o_pickup",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.velocidad_kmh",
+    "cita": "a una velocidad aproximada de 35 km/h",
+    "persona": -1,
+    "valor": "35",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.frenado",
+    "cita": "Accioné el freno",
+    "persona": -1,
+    "valor": "true",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.zona_impacto",
+    "cita": "La golpeé con la parte frontal derecha del vehículo",
+    "persona": -1,
+    "valor": "F",
+    "vehiculo": 0
+   },
+   {
+    "campo": "evento.tipo",
+    "cita": "La golpeé con la parte frontal derecha del vehículo",
+    "persona": -1,
+    "valor": "impacto_vehiculo_persona",
+    "vehiculo": -1
+   },
+   {
+    "campo": "evidencias.marcas_m",
+    "cita": "dejé marcas de aproximadamente seis metros",
+    "persona": -1,
+    "valor": "6",
+    "vehiculo": -1
+   },
+   {
+    "campo": "evidencias.distancia_proyeccion_m",
+    "cita": "quedó tendida a unos cuatro metros",
+    "persona": -1,
+    "valor": "4",
+    "vehiculo": -1
+   },
+   {
+    "campo": "entorno.clima",
+    "cita": "Lloviznaba",
+    "persona": -1,
+    "valor": "lluvia_ligera",
+    "vehiculo": -1
+   },
+   {
+    "campo": "lugar.estado_superficie",
+    "cita": "el pavimento estaba mojado",
+    "persona": -1,
+    "valor": "mojado",
+    "vehiculo": -1
+   }
+  ],
+  "personas": [
+   {
+    "cita": "conducía mi camioneta Nissan Kicks",
+    "rol": "conductor",
+    "vehiculo": 0
+   },
+   {
+    "cita": "una mujer cruzó la calzada",
+    "rol": "peaton",
+    "vehiculo": -1
+   }
+  ],
+  "preguntas": [
+   "¿La persona peatona estaba en movimiento o detenida en la calzada al momento del impacto?",
+   "¿Cuál era la iluminación de la vía en el momento del percance?"
+  ],
+  "vehiculos": [
+   {
+    "narrador": true
+   }
+  ]
+ },
+ "texto_sha256": "a5a3ed2d95837ae342b1e948e987c56757daecc8d1ab96631ce6c573fafe5a0a",
+ "usage": {
+  "cache_creation_input_tokens": 0,
+  "cache_read_input_tokens": 5862,
+  "input_tokens": 259,
+  "output_tokens": 2275
+ }
+}

@@ -1,0 +1,83 @@
+{
+ "costo_estimado_con": "claude-haiku-5-5",
+ "costo_usd": 0.00123712,
+ "esfuerzo": "medium",
+ "grabado": "2026-10-14T17:20:28+00:00",
+ "huella_prompt": "f6b693169a4199c3",
+ "latencia_ms": 10768.2,
+ "modelo": "claude-haiku-5-5",
+ "modelo_respuesta": "claude-haiku-5-5",
+ "prompt": "extraccion_v1",
+ "request_id": "req_011Cg2Wj3Xh8DFjrnSsfgPJJ",
+ "salida": {
+  "dispositivos": [],
+  "hechos": [
+   {
+    "campo": "lugar.superficie",
+    "cita": "calle empedrada",
+    "persona": -1,
+    "valor": "empedrado",
+    "vehiculo": -1
+   },
+   {
+    "campo": "entorno.clima",
+    "cita": "iba lloviznando",
+    "persona": -1,
+    "valor": "lluvia_ligera",
+    "vehiculo": -1
+   },
+   {
+    "campo": "evento.tipo",
+    "cita": "le pegó a un puesto de elotes",
+    "persona": -1,
+    "valor": "impacto_vehiculo_objeto",
+    "vehiculo": -1
+   },
+   {
+    "campo": "evento.objeto",
+    "cita": "le pegó a un puesto de elotes",
+    "persona": -1,
+    "valor": "puesto",
+    "vehiculo": -1
+   },
+   {
+    "campo": "vehiculo.velocidad_kmh",
+    "cita": "como a 30",
+    "persona": -1,
+    "valor": "30",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.zona_impacto",
+    "cita": "le dio con la esquina delantera derecha",
+    "persona": -1,
+    "valor": "F",
+    "vehiculo": 0
+   }
+  ],
+  "personas": [
+   {
+    "cita": "se llevó mi Tsuru",
+    "rol": "conductor",
+    "vehiculo": 0
+   }
+  ],
+  "preguntas": [
+   "¿La velocidad de 30 km/h es la que el conductor recuerda o fue medida?",
+   "¿Hubo frenado antes del impacto con el puesto?",
+   "¿El golpe fue en la esquina delantera derecha o en el costado derecho del vehículo?"
+  ],
+  "vehiculos": [
+   {
+    "narrador": false
+   }
+  ]
+ },
+ "texto_sha256": "c561a57fb8cd5c4a0038fe2499fb2ba37743f2c95ce6984f1aa6bbfdf5543469",
+ "usage": {
+  "cache_creation_input_tokens": 0,
+  "cache_read_input_tokens": 5862,
+  "input_tokens": 165,
+  "output_tokens": 2324
+ }
+}

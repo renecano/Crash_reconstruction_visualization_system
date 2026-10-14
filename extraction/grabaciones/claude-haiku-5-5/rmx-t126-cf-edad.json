@@ -1,0 +1,77 @@
+{
+ "costo_estimado_con": "claude-haiku-5-5",
+ "costo_usd": 0.00118032,
+ "esfuerzo": "medium",
+ "grabado": "2026-10-14T17:16:20+00:00",
+ "huella_prompt": "f6b693169a4199c3",
+ "latencia_ms": 10107.1,
+ "modelo": "claude-haiku-5-5",
+ "modelo_respuesta": "claude-haiku-5-5",
+ "prompt": "extraccion_v1",
+ "request_id": "req_011Cg2WQoQPUE8vwn4E3Sbtn",
+ "salida": {
+  "dispositivos": [
+   {
+    "cita": "se pasó el alto",
+    "tipo": "alto"
+   }
+  ],
+  "hechos": [
+   {
+    "campo": "lugar.tipo_via",
+    "cita": "En el crucero de Símbolos Patrios",
+    "persona": -1,
+    "valor": "interseccion",
+    "vehiculo": -1
+   },
+   {
+    "campo": "evento.tipo",
+    "cita": "le pegó a mi Polo",
+    "persona": -1,
+    "valor": "impacto_vehiculo_vehiculo",
+    "vehiculo": -1
+   },
+   {
+    "campo": "vehiculo.clase",
+    "cita": "Tsuru",
+    "persona": -1,
+    "valor": "sedan_compacto",
+    "vehiculo": 1
+   },
+   {
+    "campo": "vehiculo.zona_impacto",
+    "cita": "en la puerta del copiloto",
+    "persona": -1,
+    "valor": "R",
+    "vehiculo": 0
+   }
+  ],
+  "personas": [
+   {
+    "cita": "abuelito en un Tsuru",
+    "rol": "conductor",
+    "vehiculo": 1
+   }
+  ],
+  "preguntas": [
+   "¿El Tsuru cruzó el alto sin detenerse o con poca velocidad?",
+   "¿A qué velocidad aproximada iba cada vehículo al momento del choque?",
+   "¿El Polo iba en línea recta o estaba girando o cambiando de carril?"
+  ],
+  "vehiculos": [
+   {
+    "narrador": false
+   },
+   {
+    "narrador": false
+   }
+  ]
+ },
+ "texto_sha256": "dc2c9b3715e05f9c18cde93dc0c5643df6c5a4d9abbf54d76d02f21ebcc55ad2",
+ "usage": {
+  "cache_creation_input_tokens": 0,
+  "cache_read_input_tokens": 5862,
+  "input_tokens": 67,
+  "output_tokens": 2230
+ }
+}

@@ -1,0 +1,110 @@
+{
+ "costo_estimado_con": "claude-haiku-5-5",
+ "costo_usd": 0.00128712,
+ "esfuerzo": "medium",
+ "grabado": "2026-10-14T17:11:52+00:00",
+ "huella_prompt": "f6b693169a4199c3",
+ "latencia_ms": 10070.6,
+ "modelo": "claude-haiku-5-5",
+ "modelo_respuesta": "claude-haiku-5-5",
+ "prompt": "extraccion_v1",
+ "request_id": "req_011Cg2W54f7UgbJd3HeRm1DH",
+ "salida": {
+  "dispositivos": [],
+  "hechos": [
+   {
+    "campo": "vehiculo.clase",
+    "cita": "Iba en mi moto de reparto",
+    "persona": -1,
+    "valor": "motocicleta",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.clase",
+    "cita": "Me tiró un pesero",
+    "persona": -1,
+    "valor": "microbus_combi",
+    "vehiculo": 1
+   },
+   {
+    "campo": "entorno.iluminacion",
+    "cita": "ya de noche",
+    "persona": -1,
+    "valor": "noche",
+    "vehiculo": -1
+   },
+   {
+    "campo": "evento.tipo",
+    "cita": "me rozó el espejo",
+    "persona": -1,
+    "valor": "impacto_vehiculo_vehiculo",
+    "vehiculo": -1
+   },
+   {
+    "campo": "vehiculo.maniobra",
+    "cita": "Lo quise librar por la izquierda",
+    "persona": -1,
+    "valor": "cambio_carril_izquierda",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.velocidad_kmh",
+    "cita": "venía como a 35, no más",
+    "persona": -1,
+    "valor": "35",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.maniobra",
+    "cita": "el pesero se paró de repente",
+    "persona": -1,
+    "valor": "detenido",
+    "vehiculo": 1
+   },
+   {
+    "campo": "persona.casco",
+    "cita": "Traía casco",
+    "persona": 0,
+    "valor": "true",
+    "vehiculo": -1
+   },
+   {
+    "campo": "vehiculo.frenado",
+    "cita": "alcanzó a frenar",
+    "persona": -1,
+    "valor": "true",
+    "vehiculo": 2
+   }
+  ],
+  "personas": [
+   {
+    "cita": "Iba en mi moto de reparto",
+    "rol": "motociclista",
+    "vehiculo": 0
+   }
+  ],
+  "preguntas": [
+   "¿El pesero se detuvo sobre el carril de circulación o en la orilla de la calle?",
+   "¿Qué tan cerca estaba el Fiesta del motociclista cuando frenó?",
+   "¿La caída fue sobre el pavimento o hubo contacto con algún objeto?"
+  ],
+  "vehiculos": [
+   {
+    "narrador": true
+   },
+   {
+    "narrador": false
+   },
+   {
+    "narrador": false
+   }
+  ]
+ },
+ "texto_sha256": "4f6e62d31300a7eeb12b5eddb7db7aa472e74156be1b70f9ac8879f438462a11",
+ "usage": {
+  "cache_creation_input_tokens": 0,
+  "cache_read_input_tokens": 5862,
+  "input_tokens": 210,
+  "output_tokens": 2415
+ }
+}

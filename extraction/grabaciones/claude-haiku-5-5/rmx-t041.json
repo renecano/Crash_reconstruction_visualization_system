@@ -1,0 +1,97 @@
+{
+ "costo_estimado_con": "claude-haiku-5-5",
+ "costo_usd": 0.00110292,
+ "esfuerzo": "medium",
+ "grabado": "2026-10-14T16:32:02+00:00",
+ "huella_prompt": "f6b693169a4199c3",
+ "latencia_ms": 9392.6,
+ "modelo": "claude-haiku-5-5",
+ "modelo_respuesta": "claude-haiku-5-5",
+ "prompt": "extraccion_v1",
+ "request_id": "req_011Cg2T2uJPGW2pZLNyTnuFV",
+ "salida": {
+  "dispositivos": [],
+  "hechos": [
+   {
+    "campo": "entorno.iluminacion",
+    "cita": "ya de noche pero con todo el alumbrado prendido",
+    "persona": -1,
+    "valor": "noche_con_alumbrado",
+    "vehiculo": -1
+   },
+   {
+    "campo": "vehiculo.velocidad_kmh",
+    "cita": "en mi Versa como a 60",
+    "persona": -1,
+    "valor": "60",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.clase",
+    "cita": "Una muchacha en una Tucson blanca",
+    "persona": -1,
+    "valor": "suv_o_pickup",
+    "vehiculo": 1
+   },
+   {
+    "campo": "vehiculo.color",
+    "cita": "Tucson blanca",
+    "persona": -1,
+    "valor": "blanca",
+    "vehiculo": 1
+   },
+   {
+    "campo": "vehiculo.maniobra",
+    "cita": "se pasó del carril de al lado al mío sin poner direccional",
+    "persona": -1,
+    "valor": "cambio_carril",
+    "vehiculo": 1
+   },
+   {
+    "campo": "evento.tipo",
+    "cita": "me echó lámina en el costado derecho",
+    "persona": -1,
+    "valor": "impacto_vehiculo_vehiculo",
+    "vehiculo": -1
+   },
+   {
+    "campo": "vehiculo.zona_impacto",
+    "cita": "me echó lámina en el costado derecho",
+    "persona": -1,
+    "valor": "R",
+    "vehiculo": 0
+   }
+  ],
+  "personas": [
+   {
+    "cita": "en mi Versa",
+    "rol": "conductor",
+    "vehiculo": 0
+   },
+   {
+    "cita": "Una muchacha en una Tucson blanca",
+    "rol": "conductor",
+    "vehiculo": 1
+   }
+  ],
+  "preguntas": [
+   "¿A qué velocidad iba la Tucson al cambiarse de carril?",
+   "¿La avenida Constitución tenía dos o más carriles por sentido en ese tramo?"
+  ],
+  "vehiculos": [
+   {
+    "narrador": true
+   },
+   {
+    "narrador": false
+   }
+  ]
+ },
+ "texto_sha256": "d7cd33b253c31757fe223b38e96098d1422a938e4da2dc90334ae2a3704ec064",
+ "usage": {
+  "cache_creation_input_tokens": 0,
+  "cache_read_input_tokens": 5862,
+  "input_tokens": 168,
+  "output_tokens": 2055
+ }
+}

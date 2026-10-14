@@ -1,0 +1,73 @@
+{
+ "costo_estimado_con": "claude-haiku-5-5",
+ "costo_usd": 0.00124622,
+ "esfuerzo": "medium",
+ "grabado": "2026-10-14T16:57:06+00:00",
+ "huella_prompt": "f6b693169a4199c3",
+ "latencia_ms": 11070.9,
+ "modelo": "claude-haiku-5-5",
+ "modelo_respuesta": "claude-haiku-5-5",
+ "prompt": "extraccion_v1",
+ "request_id": "req_011Cg2UwfCtofvKgEu7cw9eG",
+ "salida": {
+  "dispositivos": [],
+  "hechos": [
+   {
+    "campo": "vehiculo.clase",
+    "cita": "Versa",
+    "persona": -1,
+    "valor": "sedan_compacto",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.clase",
+    "cita": "camión urbano",
+    "persona": -1,
+    "valor": "camion_o_autobus",
+    "vehiculo": 1
+   },
+   {
+    "campo": "vehiculo.maniobra",
+    "cita": "se le metió por la derecha",
+    "persona": -1,
+    "valor": "cambio_carril",
+    "vehiculo": 1
+   },
+   {
+    "campo": "evento.tipo",
+    "cita": "Le pegaron a mi esposo",
+    "persona": -1,
+    "valor": "impacto_vehiculo_vehiculo",
+    "vehiculo": -1
+   },
+   {
+    "campo": "lugar.tipo_via",
+    "cita": "glorieta",
+    "persona": -1,
+    "valor": "glorieta",
+    "vehiculo": -1
+   }
+  ],
+  "personas": [],
+  "preguntas": [
+   "¿Su esposo iba manejando el Versa?",
+   "¿Qué lado del Versa recibió el golpe?",
+   "¿A qué velocidad iban los vehículos al momento del choque?"
+  ],
+  "vehiculos": [
+   {
+    "narrador": false
+   },
+   {
+    "narrador": false
+   }
+  ]
+ },
+ "texto_sha256": "a803f4043d5d5f2fb1935d206908aecc530c96a0fe05c10728a890338bb03256",
+ "usage": {
+  "cache_creation_input_tokens": 0,
+  "cache_read_input_tokens": 5862,
+  "input_tokens": 66,
+  "output_tokens": 2362
+ }
+}

@@ -1,0 +1,86 @@
+{
+ "costo_estimado_con": "claude-haiku-5-5",
+ "costo_usd": 0.00112382,
+ "esfuerzo": "medium",
+ "grabado": "2026-10-14T17:12:59+00:00",
+ "huella_prompt": "f6b693169a4199c3",
+ "latencia_ms": 9212.8,
+ "modelo": "claude-haiku-5-5",
+ "modelo_respuesta": "claude-haiku-5-5",
+ "prompt": "extraccion_v1",
+ "request_id": "req_011Cg2WA4xMTBGw7ZZ1dSE93",
+ "salida": {
+  "dispositivos": [],
+  "hechos": [
+   {
+    "campo": "vehiculo.clase",
+    "cita": "iba en bici",
+    "persona": -1,
+    "valor": "bicicleta",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.clase",
+    "cita": "una Expedition negra",
+    "persona": -1,
+    "valor": "suv_grande",
+    "vehiculo": 1
+   },
+   {
+    "campo": "vehiculo.color",
+    "cita": "una Expedition negra",
+    "persona": -1,
+    "valor": "negra",
+    "vehiculo": 1
+   },
+   {
+    "campo": "vehiculo.maniobra",
+    "cita": "dio vuelta a la derecha",
+    "persona": -1,
+    "valor": "vuelta_derecha",
+    "vehiculo": 1
+   },
+   {
+    "campo": "evento.tipo",
+    "cita": "se estrelló contra el costado de la camioneta",
+    "persona": -1,
+    "valor": "impacto_vehiculo_vehiculo",
+    "vehiculo": -1
+   },
+   {
+    "campo": "persona.casco",
+    "cita": "Traía casco",
+    "persona": 0,
+    "valor": "true",
+    "vehiculo": -1
+   }
+  ],
+  "personas": [
+   {
+    "cita": "un muchacho que iba en bici",
+    "rol": "ciclista",
+    "vehiculo": 0
+   }
+  ],
+  "preguntas": [
+   "¿A qué velocidad iban la bicicleta y la Expedition antes del impacto?",
+   "¿La Expedition se detuvo o siguió en movimiento al dar vuelta a la derecha?",
+   "¿Qué lado de la camioneta recibió el golpe de la bicicleta?"
+  ],
+  "vehiculos": [
+   {
+    "narrador": false
+   },
+   {
+    "narrador": false
+   }
+  ]
+ },
+ "texto_sha256": "3060dbb8c97a5332aa634d3f1bc13b9a1c79aa01405ac5f430f0b631c71cd014",
+ "usage": {
+  "cache_creation_input_tokens": 0,
+  "cache_read_input_tokens": 5862,
+  "input_tokens": 202,
+  "output_tokens": 2090
+ }
+}

@@ -1,0 +1,121 @@
+{
+ "costo_estimado_con": "claude-haiku-5-5",
+ "costo_usd": 0.00185282,
+ "esfuerzo": "medium",
+ "grabado": "2026-10-14T16:40:59+00:00",
+ "huella_prompt": "f6b693169a4199c3",
+ "latencia_ms": 13791.4,
+ "modelo": "claude-haiku-5-5",
+ "modelo_respuesta": "claude-haiku-5-5",
+ "prompt": "extraccion_v1",
+ "request_id": "req_011Cg2TiACQVkUrLDApeM5wF",
+ "salida": {
+  "dispositivos": [],
+  "hechos": [
+   {
+    "campo": "vehiculo.clase",
+    "cita": "Yo venía en la moto",
+    "persona": -1,
+    "valor": "motocicleta",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.velocidad_kmh",
+    "cita": "como a 45",
+    "persona": -1,
+    "valor": "45",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.clase",
+    "cita": "una Suburban blanca",
+    "persona": -1,
+    "valor": "suv_grande",
+    "vehiculo": 1
+   },
+   {
+    "campo": "vehiculo.color",
+    "cita": "una Suburban blanca",
+    "persona": -1,
+    "valor": "blanca",
+    "vehiculo": 1
+   },
+   {
+    "campo": "vehiculo.maniobra",
+    "cita": "estaba estacionada",
+    "persona": -1,
+    "valor": "estacionado",
+    "vehiculo": 1
+   },
+   {
+    "campo": "vehiculo.maniobra",
+    "cita": "se arrancó de repente para salirse y me cerró el paso",
+    "persona": -1,
+    "valor": "cambio_carril",
+    "vehiculo": 1
+   },
+   {
+    "campo": "evento.tipo",
+    "cita": "Le pegué con la llanta delantera en la defensa de enfrente",
+    "persona": -1,
+    "valor": "impacto_vehiculo_vehiculo",
+    "vehiculo": -1
+   },
+   {
+    "campo": "vehiculo.zona_impacto",
+    "cita": "Le pegué con la llanta delantera",
+    "persona": -1,
+    "valor": "F",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.zona_impacto",
+    "cita": "en la defensa de enfrente",
+    "persona": -1,
+    "valor": "F",
+    "vehiculo": 1
+   },
+   {
+    "campo": "persona.casco",
+    "cita": "Traía casco",
+    "persona": 0,
+    "valor": "true",
+    "vehiculo": -1
+   }
+  ],
+  "personas": [
+   {
+    "cita": "Yo venía en la moto",
+    "rol": "motociclista",
+    "vehiculo": 0
+   },
+   {
+    "cita": "mi compa en su Tornado",
+    "rol": "conductor",
+    "vehiculo": 2
+   }
+  ],
+  "preguntas": [
+   "¿La Suburban estaba estacionada en la orilla o dentro del carril de circulación?",
+   "¿Qué tan lejos iba el compa detrás de la moto?"
+  ],
+  "vehiculos": [
+   {
+    "narrador": true
+   },
+   {
+    "narrador": false
+   },
+   {
+    "narrador": false
+   }
+  ]
+ },
+ "texto_sha256": "e90d1351b075b4dbe0dc5f20d7dcb400d67472ec83f31d6338e0a7fcaa38dcf6",
+ "usage": {
+  "cache_creation_input_tokens": 0,
+  "cache_read_input_tokens": 5862,
+  "input_tokens": 172,
+  "output_tokens": 3554
+ }
+}

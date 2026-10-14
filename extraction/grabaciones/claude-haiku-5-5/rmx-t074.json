@@ -1,0 +1,97 @@
+{
+ "costo_estimado_con": "claude-haiku-5-5",
+ "costo_usd": 0.00104762,
+ "esfuerzo": "medium",
+ "grabado": "2026-10-14T16:38:06+00:00",
+ "huella_prompt": "f6b693169a4199c3",
+ "latencia_ms": 8208.9,
+ "modelo": "claude-haiku-5-5",
+ "modelo_respuesta": "claude-haiku-5-5",
+ "prompt": "extraccion_v1",
+ "request_id": "req_011Cg2TVpWuYTQXyyScEDE1w",
+ "salida": {
+  "dispositivos": [],
+  "hechos": [
+   {
+    "campo": "entorno.clima",
+    "cita": "estaba nublado",
+    "persona": -1,
+    "valor": "nublado",
+    "vehiculo": -1
+   },
+   {
+    "campo": "vehiculo.velocidad_kmh",
+    "cita": "como a 60",
+    "persona": -1,
+    "valor": "60",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.maniobra",
+    "cita": "se metió a mi carril para agarrar la salida",
+    "persona": -1,
+    "valor": "cambio_carril",
+    "vehiculo": 1
+   },
+   {
+    "campo": "vehiculo.color",
+    "cita": "un Civic negro",
+    "persona": -1,
+    "valor": "negro",
+    "vehiculo": 1
+   },
+   {
+    "campo": "evento.tipo",
+    "cita": "le di en la parte de atrás",
+    "persona": -1,
+    "valor": "impacto_vehiculo_vehiculo",
+    "vehiculo": -1
+   },
+   {
+    "campo": "vehiculo.zona_impacto",
+    "cita": "le di en la parte de atrás del lado derecho",
+    "persona": -1,
+    "valor": "B",
+    "vehiculo": 1
+   },
+   {
+    "campo": "vehiculo.zona_impacto",
+    "cita": "le di en la parte de atrás del lado derecho",
+    "persona": -1,
+    "valor": "F",
+    "vehiculo": 0
+   }
+  ],
+  "personas": [
+   {
+    "cita": "iba en el carril de en medio",
+    "rol": "conductor",
+    "vehiculo": 0
+   },
+   {
+    "cita": "una muchacha en un Civic negro",
+    "rol": "conductor",
+    "vehiculo": 1
+   }
+  ],
+  "preguntas": [
+   "¿A qué velocidad iba el Civic al cambiar de carril?",
+   "¿A cuántos metros del impacto se orilló el Civic?"
+  ],
+  "vehiculos": [
+   {
+    "narrador": true
+   },
+   {
+    "narrador": false
+   }
+  ]
+ },
+ "texto_sha256": "c96395e63239365ef1b366ab51d88faf9c2e67e91b34b8ef372b1e5c27bcbf9c",
+ "usage": {
+  "cache_creation_input_tokens": 0,
+  "cache_read_input_tokens": 5862,
+  "input_tokens": 150,
+  "output_tokens": 1948
+ }
+}

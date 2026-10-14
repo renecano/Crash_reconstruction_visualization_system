@@ -1,0 +1,53 @@
+{
+ "costo_estimado_con": "claude-haiku-5-5",
+ "costo_usd": 0.00061252,
+ "esfuerzo": "medium",
+ "grabado": "2026-10-14T17:10:58+00:00",
+ "huella_prompt": "f6b693169a4199c3",
+ "latencia_ms": 6325.9,
+ "modelo": "claude-haiku-5-5",
+ "modelo_respuesta": "claude-haiku-5-5",
+ "prompt": "extraccion_v1",
+ "request_id": "req_011Cg2W1PjTiipYmNvsK35TE",
+ "salida": {
+  "dispositivos": [],
+  "hechos": [
+   {
+    "campo": "vehiculo.clase",
+    "cita": "el camión de la ruta",
+    "persona": -1,
+    "valor": "camion_o_autobus",
+    "vehiculo": 0
+   }
+  ],
+  "personas": [
+   {
+    "cita": "A mi tío le pasó en el camión",
+    "rol": "pasajero",
+    "vehiculo": 0
+   },
+   {
+    "cita": "el chofer arrancó",
+    "rol": "conductor",
+    "vehiculo": 0
+   }
+  ],
+  "preguntas": [
+   "¿El camión iba en movimiento constante o recién había arrancado al momento de la caída?",
+   "¿A qué velocidad aproximada arrancó o avanzaba el camión cuando el tío se cayó?",
+   "¿En qué tipo de vía ocurrió la caída, en una parada sobre la banqueta o en el carril de circulación?"
+  ],
+  "vehiculos": [
+   {
+    "narrador": false
+   }
+  ]
+ },
+ "texto_sha256": "3c9087c4b005c866c7b4c759cc3b08e31181cf97da2e57b258c7e288a8f1b716",
+ "usage": {
+  "cache_creation_input_tokens": 0,
+  "cache_read_input_tokens": 5862,
+  "input_tokens": 154,
+  "output_tokens": 1077
+ }
+}

@@ -1,0 +1,89 @@
+{
+ "costo_estimado_con": "claude-haiku-5-5",
+ "costo_usd": 0.00102812,
+ "esfuerzo": "medium",
+ "grabado": "2026-10-14T16:39:16+00:00",
+ "huella_prompt": "f6b693169a4199c3",
+ "latencia_ms": 8349.2,
+ "modelo": "claude-haiku-5-5",
+ "modelo_respuesta": "claude-haiku-5-5",
+ "prompt": "extraccion_v1",
+ "request_id": "req_011Cg2Tays73ZTtP8qcdXnzw",
+ "salida": {
+  "dispositivos": [
+   {
+    "cita": "se pasó el rojo",
+    "tipo": "semaforo"
+   }
+  ],
+  "hechos": [
+   {
+    "campo": "lugar.tipo_via",
+    "cita": "en el cruce con Chapultepec",
+    "persona": -1,
+    "valor": "interseccion",
+    "vehiculo": -1
+   },
+   {
+    "campo": "entorno.iluminacion",
+    "cita": "Hay buen alumbrado ahí",
+    "persona": -1,
+    "valor": "noche_con_alumbrado",
+    "vehiculo": -1
+   },
+   {
+    "campo": "evento.tipo",
+    "cita": "me dio un llegue en la salpicadera delantera del lado derecho",
+    "persona": -1,
+    "valor": "impacto_vehiculo_vehiculo",
+    "vehiculo": -1
+   },
+   {
+    "campo": "vehiculo.zona_impacto",
+    "cita": "salpicadera delantera del lado derecho",
+    "persona": -1,
+    "valor": "F",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.velocidad_kmh",
+    "cita": "iba como a cuarenta",
+    "persona": -1,
+    "valor": "40",
+    "vehiculo": 0
+   }
+  ],
+  "personas": [
+   {
+    "cita": "en mi Corolla",
+    "rol": "conductor",
+    "vehiculo": 0
+   },
+   {
+    "cita": "El taxista ni se bajó",
+    "rol": "conductor",
+    "vehiculo": 1
+   }
+  ],
+  "preguntas": [
+   "¿A qué velocidad iba el taxi al cruzar el semáforo en rojo?",
+   "¿El taxi llevaba pasajeros?",
+   "¿El taxi frenó antes del impacto?"
+  ],
+  "vehiculos": [
+   {
+    "narrador": true
+   },
+   {
+    "narrador": false
+   }
+  ]
+ },
+ "texto_sha256": "07aa06d056cd76aa63b406146f5e9073dc2a619e503e8ddd0dd00144c184f61e",
+ "usage": {
+  "cache_creation_input_tokens": 0,
+  "cache_read_input_tokens": 5862,
+  "input_tokens": 170,
+  "output_tokens": 1905
+ }
+}

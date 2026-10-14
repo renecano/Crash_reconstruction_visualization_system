@@ -1,0 +1,98 @@
+{
+ "costo_estimado_con": "claude-haiku-5-5",
+ "costo_usd": 0.00114712,
+ "esfuerzo": "medium",
+ "grabado": "2026-10-14T17:08:11+00:00",
+ "huella_prompt": "f6b693169a4199c3",
+ "latencia_ms": 9168.6,
+ "modelo": "claude-haiku-5-5",
+ "modelo_respuesta": "claude-haiku-5-5",
+ "prompt": "extraccion_v1",
+ "request_id": "req_011Cg2VnqJys25Jsf6Nn5FuU",
+ "salida": {
+  "dispositivos": [],
+  "hechos": [
+   {
+    "campo": "vehiculo.color",
+    "cita": "Kia Rio color gris",
+    "persona": -1,
+    "valor": "gris",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.velocidad_kmh",
+    "cita": "Mi velocidad era de 60 km/h aproximadamente",
+    "persona": -1,
+    "valor": "60",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.clase",
+    "cita": "camioneta Honda CR-V",
+    "persona": -1,
+    "valor": "suv_o_pickup",
+    "vehiculo": 1
+   },
+   {
+    "campo": "vehiculo.color",
+    "cita": "camioneta Honda CR-V color negro",
+    "persona": -1,
+    "valor": "negro",
+    "vehiculo": 1
+   },
+   {
+    "campo": "vehiculo.maniobra",
+    "cita": "realizó un cambio de carril hacia la izquierda",
+    "persona": -1,
+    "valor": "cambio_carril_izquierda",
+    "vehiculo": 1
+   },
+   {
+    "campo": "evento.tipo",
+    "cita": "impactó el costado derecho de mi unidad",
+    "persona": -1,
+    "valor": "impacto_vehiculo_vehiculo",
+    "vehiculo": -1
+   },
+   {
+    "campo": "vehiculo.zona_impacto",
+    "cita": "impactó el costado derecho de mi unidad",
+    "persona": -1,
+    "valor": "R",
+    "vehiculo": 0
+   }
+  ],
+  "personas": [
+   {
+    "cita": "circulaba a bordo de mi vehículo Kia Rio color gris",
+    "rol": "conductor",
+    "vehiculo": 0
+   },
+   {
+    "cita": "Un conductor a bordo de una camioneta Honda CR-V color negro",
+    "rol": "conductor",
+    "vehiculo": 1
+   }
+  ],
+  "preguntas": [
+   "¿A qué velocidad circulaba la camioneta Honda CR-V antes del cambio de carril?",
+   "¿Hubo frenado antes del impacto en alguno de los dos vehículos?",
+   "¿Iba algún pasajero a bordo de alguno de los vehículos?"
+  ],
+  "vehiculos": [
+   {
+    "narrador": true
+   },
+   {
+    "narrador": false
+   }
+  ]
+ },
+ "texto_sha256": "4340cbdf8a465520de4e80dcf9f07a3331d7c62a65a074f5a200e9d077b93486",
+ "usage": {
+  "cache_creation_input_tokens": 0,
+  "cache_read_input_tokens": 5862,
+  "input_tokens": 245,
+  "output_tokens": 2128
+ }
+}

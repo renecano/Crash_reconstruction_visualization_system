@@ -1,0 +1,96 @@
+{
+ "costo_estimado_con": "claude-haiku-5-5",
+ "costo_usd": 0.00150672,
+ "esfuerzo": "medium",
+ "grabado": "2026-10-14T16:30:58+00:00",
+ "huella_prompt": "f6b693169a4199c3",
+ "latencia_ms": 12492.1,
+ "modelo": "claude-haiku-5-5",
+ "modelo_respuesta": "claude-haiku-5-5",
+ "prompt": "extraccion_v1",
+ "request_id": "req_011Cg2SwyL5qVNzDYjRYJGRQ",
+ "salida": {
+  "dispositivos": [
+   {
+    "cita": "el semáforo estaba en verde para mí",
+    "tipo": "semaforo"
+   }
+  ],
+  "hechos": [
+   {
+    "campo": "lugar.tipo_via",
+    "cita": "en el crucero con Plan de Ayala",
+    "persona": -1,
+    "valor": "interseccion",
+    "vehiculo": -1
+   },
+   {
+    "campo": "evento.tipo",
+    "cita": "me pegó",
+    "persona": -1,
+    "valor": "impacto_vehiculo_vehiculo",
+    "vehiculo": -1
+   },
+   {
+    "campo": "vehiculo.velocidad_kmh",
+    "cita": "Yo iba como a 30",
+    "persona": -1,
+    "valor": "30",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.zona_impacto",
+    "cita": "salpicadera de adelante",
+    "persona": -1,
+    "valor": "F",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.zona_impacto",
+    "cita": "del lado derecho",
+    "persona": -1,
+    "valor": "R",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.frenado",
+    "cita": "ni frenó",
+    "persona": -1,
+    "valor": "false",
+    "vehiculo": 1
+   }
+  ],
+  "personas": [
+   {
+    "cita": "en mi Gol",
+    "rol": "conductor",
+    "vehiculo": 0
+   },
+   {
+    "cita": "Un chavo en una Ecosport",
+    "rol": "conductor",
+    "vehiculo": 1
+   }
+  ],
+  "preguntas": [
+   "¿A qué velocidad circulaba el Ecosport al cruzar el crucero?",
+   "¿Qué clase de vehículo era el Gol y el Ecosport (auto, SUV o pickup)?",
+   "¿El señor que vio el hecho estaba en la banqueta o en otro vehículo?"
+  ],
+  "vehiculos": [
+   {
+    "narrador": true
+   },
+   {
+    "narrador": false
+   }
+  ]
+ },
+ "texto_sha256": "81244bf5072ea6a14c07e61f9bad87cfbf2ca2b53c97829565751791dd3f91d3",
+ "usage": {
+  "cache_creation_input_tokens": 0,
+  "cache_read_input_tokens": 5862,
+  "input_tokens": 156,
+  "output_tokens": 2865
+ }
+}
