@@ -122,3 +122,14 @@ def test_respuestas_fuera_de_rango_se_ignoran() -> None:
     spec = load_fixture("lateral_interseccion")
     _, applied = q.apply_answers(spec, {"velocidad:veh-b": "999", "clase:veh-b": "nave espacial"})
     assert applied == []
+
+
+def test_inconsistencia_fisica_se_pregunta_primero() -> None:
+    spec = load_fixture("alcance")
+    b = spec["vehiculos"][1]
+    b["maniobra"] = {"valor": "detenido", "fuente": "relato", "confianza": 0.9}
+    b["velocidad_previa"] = {"valor": 40, "unidad": "km/h", "fuente": "usuario", "confianza": 0.9}
+    qs = q.ask(spec)
+    assert qs[0].motivo == "contradiccion"
+    assert "detenido" in qs[0].texto
+    assert not BLAME.search(qs[0].texto)
