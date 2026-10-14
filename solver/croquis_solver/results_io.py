@@ -22,6 +22,13 @@ from croquis_solver.reconstruct import reconstruct
 
 REL_TOL = 1e-6
 ABS_TOL = 1e-5
+# La inversión es un ajuste iterativo con álgebra lineal (BLAS) cuyos núcleos cambian con el CPU:
+# entre máquinas sus números difieren en décimas. Sus percentiles salen de 12 reestimaciones, con
+# una incertidumbre estadística mucho mayor que eso, así que esos bloques se comparan con 5 %.
+# Estructura, booleanos (identificable, en el límite) y textos se siguen comparando exactos.
+FIT_PREFIXES = ("/inversion", "/consistencia")
+FIT_REL_TOL = 0.05
+FIT_ABS_TOL = 0.05
 
 
 def render(name: str) -> str:
@@ -45,7 +52,9 @@ def differences(expected: Any, actual: Any, path: str = "") -> list[str]:
         if expected != actual:
             out.append(f"{path}: {expected!r} ≠ {actual!r}")
     elif isinstance(expected, int | float) and isinstance(actual, int | float):
-        if not math.isclose(float(expected), float(actual), rel_tol=REL_TOL, abs_tol=ABS_TOL):
+        fit = path.startswith(FIT_PREFIXES)
+        rel, abs_ = (FIT_REL_TOL, FIT_ABS_TOL) if fit else (REL_TOL, ABS_TOL)
+        if not math.isclose(float(expected), float(actual), rel_tol=rel, abs_tol=abs_):
             out.append(f"{path}: {expected} ≠ {actual}")
     elif isinstance(expected, dict) and isinstance(actual, dict):
         e_keys: set[str] = set(expected)  # pyright: ignore[reportUnknownArgumentType]

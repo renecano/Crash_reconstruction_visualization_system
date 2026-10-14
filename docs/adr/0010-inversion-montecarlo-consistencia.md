@@ -36,6 +36,8 @@
 
 ## Consecuencias
 
+- **Reproducibilidad entre máquinas:** con la misma semilla, la inversión es reproducible en la misma máquina, pero no bit a bit entre máquinas. Es un ajuste iterativo con álgebra lineal (BLAS) cuyos núcleos cambian con el CPU, y CI en Ubuntu y Windows dio números distintos en décimas. Por eso `croquis-solver reconstruct --check` compara los bloques `inversion` y `consistencia` con 5 % de tolerancia relativa (sus percentiles salen de 12 reestimaciones, con mucha más incertidumbre estadística que eso). Estructura, booleanos y textos se comparan exactos, y el resto del resultado conserva 1e-6.
+
 - Las marcas de frenado declaradas fijan la distancia de frenado en la inversión. Las de derrape no se usan, porque el contrato no dice si son anteriores o posteriores al impacto. Es un pendiente del contrato, registrado en `docs/PROGRESS.md`.
 - El rumbo final declarado cuenta como evidencia (σ = 20°). En los fixtures, el rumbo final del relato es parte de la pose declarada. Si E9 muestra que las personas no lo dicen, habrá que separar su procedencia en el contrato.
 - Solo existen en Python la inversión, Monte Carlo y la consistencia. El port TS (F9) debe reproducirlas con paridad o llamar al servidor; esto se decide en F9 con E7.
