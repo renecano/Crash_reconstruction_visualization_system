@@ -81,17 +81,25 @@ def test_el_benchmark_del_repositorio_esta_completo_y_al_dia() -> None:
 
 
 def test_congelar_es_de_una_sola_vez(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
-    build = tmp_path / "build"
-    build.mkdir()
-    (build / "test.jsonl").write_text('{"id": "rmx-t001"}\n', encoding="utf-8")
-    monkeypatch.setattr(relatos_mx, "BUILD", build)
+    items = [_item(id="rmx-t001", split="test"), _item(id="rmx-d001", split="dev")]
+    monkeypatch.setattr(relatos_mx, "load_all", lambda: items)
     monkeypatch.setattr(relatos_mx, "LOCK", tmp_path / "test.lock")
     assert relatos_mx.frozen_hash() is None
     h = relatos_mx.freeze()
     assert relatos_mx.frozen_hash() == h == relatos_mx.split_hash()
-    assert json.loads((tmp_path / "test.lock").read_text(encoding="utf-8"))["sha256"] == h
+    lock = json.loads((tmp_path / "test.lock").read_text(encoding="utf-8"))
+    assert lock["sha256"] == h
+    assert lock["relatos"] == 1
     with pytest.raises(RuntimeError, match="ya está congelado"):
         relatos_mx.freeze()
+
+
+def test_el_hash_solo_depende_del_contenido_fuente_del_test() -> None:
+    a = [_item(id="rmx-t001", split="test"), _item(id="rmx-t002", split="test")]
+    b = [*reversed(a), _item(id="rmx-d009", split="dev")]
+    assert relatos_mx.split_hash(a) == relatos_mx.split_hash(b)
+    changed = [_item(id="rmx-t001", split="test", texto="Choqué."), a[1]]
+    assert relatos_mx.split_hash(changed) != relatos_mx.split_hash(a)
 
 
 def test_salidas_doradas_del_port_ts_al_dia() -> None:

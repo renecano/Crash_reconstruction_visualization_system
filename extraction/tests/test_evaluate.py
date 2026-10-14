@@ -113,3 +113,26 @@ def test_contrafactual_solo_mira_velocidades_y_maniobras() -> None:
     faster = Facts(vehiculos=[_veh(clase="sedan_compacto", velocidad_kmh=70, maniobra="recto")])
     assert not counterfactual_diff(base, same)
     assert counterfactual_diff(base, faster)
+
+
+def test_inferencia_de_la_referencia_no_castiga_al_que_la_afirma() -> None:
+    sc = Score()
+    sc.add("entorno.clima", Fact("lluvia_ligera", None, "supuesto"), Fact("lluvia", "llovía"))
+    assert sum(sc.fp.values()) == 0
+    sc.add("entorno.clima", Fact("lluvia_ligera", None, "supuesto"), Fact("niebla", "neblina"))
+    assert sc.fp["entorno.clima"] == 1
+
+
+def test_conductor_del_otro_vehiculo_no_es_error() -> None:
+    ref = Facts(
+        vehiculos=[_veh(clase="sedan_compacto"), _veh(clase="pickup")],
+        personas=[{"rol": Fact("conductor", "iba")}],
+    )
+    pred = Facts(
+        vehiculos=[_veh(clase="sedan_compacto"), _veh(clase="pickup")],
+        personas=[{"rol": Fact("conductor", "iba")}, {"rol": Fact("conductor", "el chofer")}],
+    )
+    sc = score_story(ref, pred)
+    assert sc.fp["persona.rol"] == 0
+    pred.personas.append({"rol": Fact("conductor", "otro más")})
+    assert score_story(ref, pred).fp["persona.rol"] == 1

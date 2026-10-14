@@ -1,0 +1,816 @@
+# Relatos-MX, lote dev-003. Relatos sintéticos escritos por un agente de Croquis (ver README).
+# Cada hecho: [valor, "cita literal del relato"]; sin cita = inferido por quien anota (no se evalúa).
+
+[[relato]]
+id = "rmx-d056"
+tipo = "vv"
+registro = "coloquial"
+texto = """
+Venía por Constitución en la troca, como a 60, y un Jetta blanco que iba en el carril de en medio se me cerró para agarrar la salida a Gonzalitos. Le pité y frené, pero ni así: le di en la parte de atrás del lado derecho con mi defensa. El morro se paró más adelante y alcancé a tomarle foto a las placas, [[PLACA:SRT-58-21]].
+"""
+[relato.hechos]
+"evento.tipo" = ["impacto_vehiculo_vehiculo", "le di en la parte de atrás del lado derecho"]
+zonas = { "0" = ["F", "con mi defensa"], "1" = ["R", "parte de atrás del lado derecho"] }
+[[relato.hechos.vehiculos]]
+narrador = true
+clase = ["pickup", "troca"]
+velocidad_kmh = [60, "como a 60"]
+frenado = [true, "frené"]
+[[relato.hechos.vehiculos]]
+clase = ["sedan_mediano", "Jetta"]
+color = ["blanco", "blanco"]
+maniobra = ["cambio_carril", "se me cerró"]
+[[relato.hechos.personas]]
+rol = ["conductor", "Venía por Constitución"]
+vehiculo = 0
+
+[[relato]]
+id = "rmx-d057"
+tipo = "vv"
+registro = "formal"
+texto = """
+Siendo aproximadamente las 07:15 horas del día de la fecha, el asegurado circulaba a bordo de su vehículo Volkswagen Vento, color gris, sobre el bulevar Hermanos Serdán con dirección a la autopista, por el carril derecho de tres disponibles. Refiere que el tercero, quien conducía un vehículo tipo SUV marca Mazda, modelo CX-5, color rojo, realizó un cambio de carril hacia la derecha sin anticipar la maniobra, impactando con su costado derecho la parte frontal izquierda del vehículo asegurado. El asegurado manifiesta una velocidad aproximada de 50 km/h. El pavimento se encontraba seco.
+"""
+[relato.hechos]
+"lugar.carriles_por_sentido" = [3, "tres disponibles"]
+"lugar.estado_superficie" = ["seco", "se encontraba seco"]
+"evento.tipo" = ["impacto_vehiculo_vehiculo", "impactando con su costado derecho"]
+zonas = { "0" = ["F", "parte frontal izquierda"], "1" = ["R", "con su costado derecho"] }
+[[relato.hechos.vehiculos]]
+clase = ["sedan_compacto", "Vento"]
+color = ["gris", "gris"]
+velocidad_kmh = [50, "50 km/h"]
+maniobra = ["recto"]
+[[relato.hechos.vehiculos]]
+clase = ["suv_compacta", "CX-5"]
+color = ["rojo", "rojo"]
+maniobra = ["cambio_carril_derecha", "cambio de carril hacia la derecha"]
+[[relato.hechos.personas]]
+rol = ["conductor", "circulaba a bordo de su vehículo"]
+vehiculo = 0
+[[relato.hechos.personas]]
+rol = ["conductor", "quien conducía"]
+vehiculo = 1
+
+[[relato]]
+id = "rmx-d058"
+tipo = "moto"
+registro = "faltas"
+texto = """
+ibamos mi primo y yo en la moto por avenida patria, el manejando y yo atras, como a 50. un carro salio de un estacionamiento sin fijarse y nos avento el carro, le pegamos en la puerta de adelante. mi primo traia casco yo no. nos levantamos solos pero mi primo se lastimo el brazo
+"""
+[relato.hechos]
+"evento.tipo" = ["impacto_vehiculo_vehiculo", "le pegamos en la puerta de adelante"]
+zonas = { "0" = ["F"] }
+[[relato.hechos.vehiculos]]
+narrador = true
+clase = ["motocicleta", "moto"]
+velocidad_kmh = [50, "como a 50"]
+[[relato.hechos.vehiculos]]
+maniobra = ["incorporacion", "salio de un estacionamiento"]
+[[relato.hechos.personas]]
+rol = ["motociclista", "el manejando"]
+vehiculo = 0
+casco = [true, "mi primo traia casco"]
+[[relato.hechos.personas]]
+rol = ["pasajero", "yo atras"]
+vehiculo = 0
+casco = [false, "yo no"]
+
+[[relato]]
+id = "rmx-d059"
+tipo = "objeto"
+registro = "coloquial"
+texto = """
+A mi {{edad:abuelito|hijo}} le pasó ayer en Mérida, sobre el Periférico rumbo a Progreso. Iba en su Tsuru como a 70, ya de noche, y dice que se le atravesó una sombra y volanteó. Se subió al camellón y se estampó contra un poste de luz. Gracias a Dios traía el cinturón y nada más se lastimó la rodilla; ya está en la casa.
+"""
+[relato.hechos]
+"entorno.iluminacion" = ["noche", "ya de noche"]
+"evento.tipo" = ["impacto_vehiculo_objeto", "se estampó contra un poste de luz"]
+"evento.objeto" = ["poste", "poste de luz"]
+zonas = { "0" = ["F"] }
+[[relato.hechos.vehiculos]]
+clase = ["sedan_compacto", "Tsuru"]
+velocidad_kmh = [70, "como a 70"]
+[[relato.hechos.personas]]
+rol = ["conductor", "Iba en su Tsuru"]
+vehiculo = 0
+cinturon = [true, "traía el cinturón"]
+
+[[relato]]
+id = "rmx-d060"
+tipo = "vv"
+registro = "desordenado"
+texto = """
+Fue el martes. No, el miércoles, porque ese día no hubo clases. Yo iba saliendo de mi casa en reversa, en la calle Ojinaga [[NUMERO:número 1418]], y una Suburban negra venía bajando. Bueno, no sé si rápido, pero sí venía. Me pegó en la cajuela, del lado del chofer. Ah, y yo traía el Civic de mi esposa, no el mío. Hacía un frío tremendo, creo que por eso el piso estaba resbaloso.
+"""
+[relato.hechos]
+"evento.tipo" = ["impacto_vehiculo_vehiculo", "Me pegó en la cajuela"]
+zonas = { "0" = ["B", "Me pegó en la cajuela"], "1" = ["F"] }
+[[relato.hechos.vehiculos]]
+narrador = true
+clase = ["sedan_mediano", "Civic"]
+maniobra = ["reversa", "saliendo de mi casa en reversa"]
+[[relato.hechos.vehiculos]]
+clase = ["suv_grande", "Suburban"]
+color = ["negra", "negra"]
+[[relato.hechos.personas]]
+rol = ["conductor", "Yo iba saliendo"]
+vehiculo = 0
+
+[[relato]]
+id = "rmx-d061"
+tipo = "vv"
+registro = "breve"
+texto = """
+Me alcanzó un pesero en Calzada de Tlalpan, yo parado en el rojo. Me hundió la defensa trasera.
+"""
+[relato.hechos]
+"evento.tipo" = ["impacto_vehiculo_vehiculo", "Me alcanzó un pesero"]
+dispositivos = [["semaforo", "el rojo"]]
+zonas = { "0" = ["B", "defensa trasera"], "1" = ["F"] }
+[[relato.hechos.vehiculos]]
+narrador = true
+maniobra = ["detenido", "parado en el rojo"]
+velocidad_kmh = [0, "parado"]
+[[relato.hechos.vehiculos]]
+clase = ["microbus_combi", "pesero"]
+
+[[relato]]
+id = "rmx-d062"
+tipo = "vv"
+registro = "coloquial"
+texto = """
+Estaba cayendo un aguacero en el puerto y yo iba despacito por Díaz Mirón en mi Aveo, porque ya se estaba encharcando todo. En el cruce con Simón Bolívar {{sexo:una muchacha|un muchacho}} en un Spark se pasó el alto y no le dio tiempo de frenar; me pegó en la puerta de atrás de mi lado. Ni modo, {{sexo:ella|él}} luego luego se bajó a ver si estaba bien.
+"""
+[relato.hechos]
+"lugar.tipo_via" = ["interseccion", "cruce con Simón Bolívar"]
+"lugar.estado_superficie" = ["encharcado", "encharcando"]
+"entorno.clima" = ["lluvia_fuerte", "aguacero"]
+"evento.tipo" = ["impacto_vehiculo_vehiculo", "me pegó en la puerta de atrás de mi lado"]
+dispositivos = [["alto", "se pasó el alto"]]
+zonas = { "0" = ["L", "puerta de atrás de mi lado"], "1" = ["F"] }
+[[relato.hechos.vehiculos]]
+narrador = true
+clase = ["sedan_compacto", "Aveo"]
+velocidad_kmh = [15, "despacito"]
+[[relato.hechos.vehiculos]]
+clase = ["hatchback", "Spark"]
+frenado = [false, "no le dio tiempo de frenar"]
+[[relato.hechos.personas]]
+rol = ["conductor", "yo iba despacito"]
+vehiculo = 0
+
+[[relato]]
+id = "rmx-d063"
+tipo = "volcadura"
+registro = "formal"
+texto = """
+Declaro que el día 3 de octubre, alrededor de las 15:40 horas, conducía un tractocamión con caja seca por la carretera federal 15, tramo Guaymas-Hermosillo, a una velocidad aproximada de 85 km/h. A la altura del kilómetro 112, en una curva hacia la izquierda, el semirremolque se desplazó hacia el acotamiento, donde había grava suelta, y la unidad se volcó sobre su costado derecho. No hubo otros vehículos involucrados. El cielo estaba despejado.
+"""
+[relato.hechos]
+"lugar.tipo_via" = ["curva", "una curva hacia la izquierda"]
+"lugar.estado_superficie" = ["grava_suelta", "grava suelta"]
+"entorno.clima" = ["despejado", "El cielo estaba despejado"]
+"entorno.iluminacion" = ["dia", "15:40 horas"]
+"evento.tipo" = ["volcadura", "la unidad se volcó"]
+zonas = { "0" = ["R", "sobre su costado derecho"] }
+[[relato.hechos.vehiculos]]
+narrador = true
+clase = ["tractocamion", "tractocamión"]
+velocidad_kmh = [85, "85 km/h"]
+[[relato.hechos.personas]]
+rol = ["conductor", "conducía un tractocamión"]
+vehiculo = 0
+
+[[relato]]
+id = "rmx-d064"
+tipo = "vv"
+registro = "faltas"
+texto = """
+saliendo del centro de oaxaca por la calzada madero yo iba en mi chevy a unos 30 y el de adelante freno de repente xq se le atraveso un perro, yo tambien frene pero no alcanze y le pegue atras. era una urban de las colectivas, el chofer se llama [[NOMBRE:eleuterio ramirez]] y se puso bien enojado. no paso a mayores
+"""
+[relato.hechos]
+"evento.tipo" = ["impacto_vehiculo_vehiculo", "le pegue atras"]
+zonas = { "0" = ["F"], "1" = ["B", "le pegue atras"] }
+[[relato.hechos.vehiculos]]
+narrador = true
+clase = ["hatchback", "chevy"]
+velocidad_kmh = [30, "a unos 30"]
+frenado = [true, "tambien frene"]
+[[relato.hechos.vehiculos]]
+clase = ["microbus_combi", "urban de las colectivas"]
+frenado = [true, "freno de repente"]
+[[relato.hechos.personas]]
+rol = ["conductor", "yo iba en mi chevy"]
+vehiculo = 0
+[[relato.hechos.personas]]
+rol = ["conductor", "el chofer"]
+vehiculo = 1
+
+[[relato]]
+id = "rmx-d065"
+tipo = "caida"
+registro = "coloquial"
+texto = """
+Yo iba parada en el camión de la ruta que va a Indios Verdes, agarrada del tubo, y el chofer venía bien rápido por Insurgentes Norte. Se le atravesó un carro y frenó de golpe, y yo me fui de boca hasta adelante, me caí en el pasillo. Me dolió la muñeca, pero me pude bajar sola en la siguiente parada.
+"""
+[relato.hechos]
+"evento.tipo" = ["inicio_frenado", "frenó de golpe"]
+[[relato.hechos.vehiculos]]
+narrador = true
+clase = ["autobus", "camión de la ruta"]
+frenado = [true, "frenó de golpe"]
+[[relato.hechos.personas]]
+rol = ["pasajero", "Yo iba parada en el camión"]
+vehiculo = 0
+[[relato.hechos.personas]]
+rol = ["conductor", "el chofer"]
+vehiculo = 0
+
+[[relato]]
+id = "rmx-d066"
+tipo = "vv"
+registro = "coloquial"
+texto = """
+Iba entrando a la glorieta de Bernardo Quintana con mi Kicks y una pickup {{vehiculo:Ranger|Tacoma}} gris que venía por dentro quiso salir de golpe hacia la derecha, cruzándose enfrente de mí. Frené, pero la alcancé a tocar en la caja, del lado derecho. Yo iba como a 25. Nada grave, puro raspón, pero ya ves cómo es eso del seguro.
+"""
+[relato.hechos]
+"lugar.tipo_via" = ["glorieta", "glorieta"]
+"evento.tipo" = ["impacto_vehiculo_vehiculo", "la alcancé a tocar en la caja"]
+zonas = { "0" = ["F"], "1" = ["R", "del lado derecho"] }
+[[relato.hechos.vehiculos]]
+narrador = true
+clase = ["suv_compacta", "Kicks"]
+velocidad_kmh = [25, "como a 25"]
+frenado = [true, "Frené"]
+maniobra = ["incorporacion", "Iba entrando a la glorieta"]
+[[relato.hechos.vehiculos]]
+clase = ["pickup", "pickup"]
+color = ["gris", "gris"]
+maniobra = ["cambio_carril_derecha", "salir de golpe hacia la derecha"]
+[[relato.hechos.personas]]
+rol = ["conductor", "Iba entrando"]
+vehiculo = 0
+
+[[relato]]
+id = "rmx-d067"
+tipo = "moto"
+registro = "coloquial"
+texto = """
+Mi {{edad:hermano chico|tío}} trabaja de repartidor en moto y ayer, en Alfredo del Mazo, un taxi que iba adelante de él dio vuelta a la izquierda sin poner direccional. Él venía como a 40 y ya no lo pudo librar: se le estrelló en el costado y salió volando por encima del cofre. Traía casco, eso lo salvó; lo llevaron al hospital pero ya está bien.
+"""
+[relato.hechos]
+"evento.tipo" = ["impacto_vehiculo_vehiculo", "se le estrelló en el costado"]
+zonas = { "0" = ["F"], "1" = ["L"] }
+[[relato.hechos.vehiculos]]
+clase = ["motocicleta", "moto"]
+velocidad_kmh = [40, "como a 40"]
+[[relato.hechos.vehiculos]]
+clase = ["sedan_compacto", "taxi"]
+maniobra = ["vuelta_izquierda", "dio vuelta a la izquierda"]
+[[relato.hechos.personas]]
+rol = ["motociclista", "repartidor en moto"]
+vehiculo = 0
+casco = [true, "Traía casco"]
+
+[[relato]]
+id = "rmx-d068"
+tipo = "vv"
+registro = "formal"
+texto = """
+Comparezco para denunciar que el día de ayer, aproximadamente a las 22:00 horas, me encontraba detenido en el semáforo en rojo del bulevar Agua Caliente, en el carril izquierdo, a bordo de mi automóvil Honda City color azul, cuando un vehículo tipo pickup color blanco, con placas [[PLACA:AKL 74 92]], me impactó en la parte posterior y se retiró del lugar sin detenerse. La vialidad contaba con alumbrado público. Proporciono mi número de contacto: [[TELEFONO:6641937205]].
+"""
+[relato.hechos]
+"entorno.iluminacion" = ["noche_con_alumbrado", "contaba con alumbrado público"]
+"evento.tipo" = ["impacto_vehiculo_vehiculo", "me impactó en la parte posterior"]
+dispositivos = [["semaforo", "semáforo"]]
+zonas = { "0" = ["B", "parte posterior"], "1" = ["F"] }
+[[relato.hechos.vehiculos]]
+narrador = true
+clase = ["sedan_compacto", "Honda City"]
+color = ["azul", "azul"]
+maniobra = ["detenido", "me encontraba detenido"]
+velocidad_kmh = [0, "detenido"]
+[[relato.hechos.vehiculos]]
+clase = ["pickup", "pickup"]
+color = ["blanco", "blanco"]
+[[relato.hechos.personas]]
+rol = ["conductor", "a bordo de mi automóvil"]
+vehiculo = 0
+
+[[relato]]
+id = "rmx-d069"
+tipo = "vv"
+registro = "desordenado"
+texto = """
+Total que al final ni el ajustador supo bien cómo estuvo, ¿cómo ves? A ver, te cuento bien. Iba por el bulevar López Mateos, por el carril de la derecha, y adelante había un camión urbano parado en la parada. Me cambié al carril de la izquierda para rebasarlo y en eso un Versa rojo que venía por ese carril me pegó por atrás, en la esquina izquierda. Yo creo que él venía a unos 70 y yo apenas a 40. Ah, y eran como las once de la mañana.
+"""
+[relato.hechos]
+"entorno.iluminacion" = ["dia", "once de la mañana"]
+"evento.tipo" = ["impacto_vehiculo_vehiculo", "me pegó por atrás"]
+zonas = { "0" = ["B", "me pegó por atrás"], "1" = ["F"] }
+[[relato.hechos.vehiculos]]
+narrador = true
+velocidad_kmh = [40, "apenas a 40"]
+maniobra = ["cambio_carril_izquierda", "Me cambié al carril de la izquierda"]
+[[relato.hechos.vehiculos]]
+clase = ["sedan_compacto", "Versa"]
+color = ["rojo", "rojo"]
+velocidad_kmh = [70, "a unos 70"]
+maniobra = ["recto"]
+[[relato.hechos.personas]]
+rol = ["conductor", "Iba por el bulevar"]
+vehiculo = 0
+
+[[relato]]
+id = "rmx-d070"
+tipo = "objeto"
+registro = "faltas"
+texto = """
+en la madrugada saliendo de una fiesta por el malecon nuevo, mi amigo hiba manejando su jetta y en una curva se le fue de lado xq el piso tenia aceite o algo, se estampo contra el muro de contencion. yo iva de copiloto con el cinturon puesto, el no traia. hiba como a 100 el loco
+"""
+[relato.hechos]
+"lugar.tipo_via" = ["curva", "una curva"]
+"lugar.estado_superficie" = ["aceite", "el piso tenia aceite"]
+"entorno.iluminacion" = ["noche", "en la madrugada"]
+"evento.tipo" = ["impacto_vehiculo_objeto", "se estampo contra el muro"]
+"evento.objeto" = ["muro", "muro de contencion"]
+zonas = { "0" = ["F"] }
+[[relato.hechos.vehiculos]]
+narrador = true
+clase = ["sedan_mediano", "jetta"]
+velocidad_kmh = [100, "como a 100"]
+[[relato.hechos.personas]]
+rol = ["conductor", "mi amigo hiba manejando"]
+vehiculo = 0
+cinturon = [false, "el no traia"]
+[[relato.hechos.personas]]
+rol = ["pasajero", "yo iva de copiloto"]
+vehiculo = 0
+cinturon = [true, "con el cinturon puesto"]
+
+[[relato]]
+id = "rmx-d071"
+tipo = "vv"
+registro = "breve"
+texto = """
+En el crucero de Venustiano Carranza y Nazario Ortiz una combi se pasó el semáforo y me dio en el costado izquierdo.
+"""
+[relato.hechos]
+"lugar.tipo_via" = ["interseccion_x", "crucero"]
+"evento.tipo" = ["impacto_vehiculo_vehiculo", "me dio en el costado izquierdo"]
+dispositivos = [["semaforo", "semáforo"]]
+zonas = { "0" = ["L", "costado izquierdo"], "1" = ["F"] }
+[[relato.hechos.vehiculos]]
+narrador = true
+maniobra = ["recto"]
+[[relato.hechos.vehiculos]]
+clase = ["microbus_combi", "combi"]
+
+[[relato]]
+id = "rmx-d072"
+tipo = "peaton"
+registro = "coloquial"
+texto = """
+Yo lo vi todo desde la parada: {{sexo:una señora|un señor}} con bolsas del mercado iba cruzando la avenida Madero por la cebra, con el verde para peatones, y un Sentra plateado que dio vuelta a la derecha no {{sexo:la|lo}} vio. {{sexo:La|Lo}} golpeó despacio con la defensa y {{sexo:la señora|el señor}} cayó como a un metro, {{sexo:sentada|sentado}}. El chavo del carro se bajó luego luego y entre todos {{sexo:la|lo}} ayudamos a levantarse. Eran como las cinco de la tarde.
+"""
+[relato.hechos]
+"entorno.iluminacion" = ["dia", "cinco de la tarde"]
+"evento.tipo" = ["impacto_vehiculo_persona", "golpeó despacio con la defensa"]
+"evidencias.distancia_proyeccion_m" = [1, "cayó como a un metro"]
+dispositivos = [["paso_peatonal", "la cebra"], ["semaforo", "el verde para peatones"]]
+zonas = { "0" = ["F", "con la defensa"] }
+[[relato.hechos.vehiculos]]
+clase = ["sedan_mediano", "Sentra"]
+color = ["plateado", "plateado"]
+maniobra = ["vuelta_derecha", "dio vuelta a la derecha"]
+velocidad_kmh = [10, "despacio"]
+[[relato.hechos.personas]]
+rol = ["conductor", "El chavo del carro"]
+vehiculo = 0
+[[relato.hechos.personas]]
+rol = ["peaton", "iba cruzando la avenida"]
+
+[[relato]]
+id = "rmx-d073"
+tipo = "vv"
+registro = "coloquial"
+texto = """
+Estaba metiéndome de reversa a un cajón afuera de una farmacia en avenida Convención y un Gol que iba pasando por atrás no se detuvo; le pegué en la puerta del copiloto con mi defensa trasera. Yo iba a vuelta de rueda, él también despacio. Muy buena onda el señor, se llama [[NOMBRE:Anacleto Gutiérrez Pedroza]], quedamos de arreglarnos y me pasó su cel, [[TELEFONO:449 210 3386]].
+"""
+[relato.hechos]
+"evento.tipo" = ["impacto_vehiculo_vehiculo", "le pegué en la puerta del copiloto"]
+zonas = { "0" = ["B", "con mi defensa trasera"], "1" = ["R", "puerta del copiloto"] }
+[[relato.hechos.vehiculos]]
+narrador = true
+maniobra = ["reversa", "metiéndome de reversa"]
+velocidad_kmh = [8, "a vuelta de rueda"]
+[[relato.hechos.vehiculos]]
+clase = ["hatchback", "Gol"]
+maniobra = ["recto"]
+[[relato.hechos.personas]]
+rol = ["conductor", "Estaba metiéndome de reversa"]
+vehiculo = 0
+
+[[relato]]
+id = "rmx-d074"
+tipo = "moto"
+registro = "formal"
+texto = """
+El suscrito manifiesta que el día 9 de octubre, alrededor de las 13:20 horas, conducía su motocicleta Italika color negro sobre el bulevar Luis Encinas, portando casco. Al aproximarse a la intersección con la calle Reforma, un vehículo tipo sedán color blanco que circulaba en sentido opuesto realizó un giro hacia la izquierda, invadiendo su carril, por lo que el suscrito aplicó los frenos sin lograr evitar el contacto con el costado derecho de dicho vehículo. El suscrito estima que circulaba a 45 km/h.
+"""
+[relato.hechos]
+"lugar.tipo_via" = ["interseccion", "intersección con la calle Reforma"]
+"entorno.iluminacion" = ["dia", "13:20 horas"]
+"evento.tipo" = ["impacto_vehiculo_vehiculo", "evitar el contacto con el costado derecho"]
+zonas = { "0" = ["F"], "1" = ["R", "costado derecho de dicho vehículo"] }
+[[relato.hechos.vehiculos]]
+narrador = true
+clase = ["motocicleta", "Italika"]
+color = ["negro", "negro"]
+velocidad_kmh = [45, "45 km/h"]
+frenado = [true, "aplicó los frenos"]
+maniobra = ["recto"]
+[[relato.hechos.vehiculos]]
+clase = ["sedan_compacto", "sedán"]
+color = ["blanco", "blanco"]
+maniobra = ["vuelta_izquierda", "realizó un giro hacia la izquierda"]
+[[relato.hechos.personas]]
+rol = ["motociclista", "conducía su motocicleta"]
+vehiculo = 0
+casco = [true, "portando casco"]
+
+[[relato]]
+id = "rmx-d075"
+tipo = "vv"
+registro = "faltas"
+texto = """
+oiga pues yo venia en mi tornado x el libramiento norte de tuxtla como a 60, ya estaba oscureciendo, y la camioneta de adelante se freno de golpe sin razon. le pege atras con el frente. la camioneta era una rav4 color vino. el señor dice q se le atraveso un perro pero yo no bi nada
+"""
+[relato.hechos]
+"entorno.iluminacion" = ["atardecer", "ya estaba oscureciendo"]
+"evento.tipo" = ["impacto_vehiculo_vehiculo", "le pege atras con el frente"]
+zonas = { "0" = ["F", "con el frente"], "1" = ["B", "le pege atras"] }
+[[relato.hechos.vehiculos]]
+narrador = true
+clase = ["pickup", "tornado"]
+velocidad_kmh = [60, "como a 60"]
+[[relato.hechos.vehiculos]]
+clase = ["suv_compacta", "rav4"]
+color = ["vino", "vino"]
+frenado = [true, "se freno de golpe"]
+[[relato.hechos.personas]]
+rol = ["conductor", "yo venia en mi tornado"]
+vehiculo = 0
+
+[[relato]]
+id = "rmx-d076"
+tipo = "salida"
+registro = "desordenado"
+texto = """
+Me salí del camino, pero no le pegué a nada, eso primero. Venía de Fresnillo a Zacatecas por la carretera, ya noche, y había llovido; el asfalto estaba mojado. Bueno, en realidad venía de Calera, pasé por Fresnillo antes. En una curva cerrada sentí que la camioneta se iba de atrás, frené y ya no la controlé, terminé en el terreno de al lado, entre el monte. Iba a unos 70, creo. Mi hija iba atrás dormida, con el cinturón.
+"""
+[relato.hechos]
+"lugar.tipo_via" = ["curva", "una curva cerrada"]
+"lugar.superficie" = ["asfalto", "el asfalto"]
+"lugar.estado_superficie" = ["mojado", "estaba mojado"]
+"entorno.iluminacion" = ["noche", "ya noche"]
+"evento.tipo" = ["derrape", "Me salí del camino"]
+[[relato.hechos.vehiculos]]
+narrador = true
+clase = ["suv_o_pickup", "la camioneta"]
+velocidad_kmh = [70, "a unos 70"]
+frenado = [true, "frené"]
+[[relato.hechos.personas]]
+rol = ["conductor", "Venía de Fresnillo a Zacatecas"]
+vehiculo = 0
+[[relato.hechos.personas]]
+rol = ["pasajero", "Mi hija iba atrás"]
+vehiculo = 0
+cinturon = [true, "con el cinturón"]
+
+[[relato]]
+id = "rmx-d077"
+tipo = "vv"
+registro = "coloquial"
+texto = """
+Andaba por la avenida Kabah en mi Corolla, como a 50, y en el retorno un Sportage blanco que venía del otro lado se metió a dar la vuelta en u sin fijarse. Le di en toda la puerta del chofer con mi frente. Ya era de noche pero estaba bien iluminado. Nadie salió lastimado, nada más el susto y el coraje.
+"""
+[relato.hechos]
+"lugar.tipo_via" = ["retorno", "en el retorno"]
+"entorno.iluminacion" = ["noche_con_alumbrado", "estaba bien iluminado"]
+"evento.tipo" = ["impacto_vehiculo_vehiculo", "Le di en toda la puerta del chofer"]
+zonas = { "0" = ["F", "con mi frente"], "1" = ["L", "puerta del chofer"] }
+[[relato.hechos.vehiculos]]
+narrador = true
+clase = ["sedan_mediano", "Corolla"]
+velocidad_kmh = [50, "como a 50"]
+maniobra = ["recto"]
+[[relato.hechos.vehiculos]]
+clase = ["suv_compacta", "Sportage"]
+color = ["blanco", "blanco"]
+maniobra = ["vuelta_u", "dar la vuelta en u"]
+[[relato.hechos.personas]]
+rol = ["conductor", "Andaba por la avenida Kabah"]
+vehiculo = 0
+
+[[relato]]
+id = "rmx-d078"
+tipo = "ciclista"
+registro = "coloquial"
+texto = """
+Iba subiendo por Lázaro Cárdenas en Xalapa, despacio porque había neblina, y {{edad:un chavito|un señor}} en bici venía pegado a la orilla sin luces. No lo vi hasta que lo tenía enfrente; le di con el espejo y con la salpicadera derecha y se cayó de lado. Gracias a Dios se levantó solo, traía casco. Yo iba en mi Polo como a 30.
+"""
+[relato.hechos]
+"entorno.clima" = ["niebla", "neblina"]
+"evento.tipo" = ["impacto_vehiculo_vehiculo", "le di con el espejo"]
+zonas = { "0" = ["R", "salpicadera derecha"], "1" = ["L"] }
+[[relato.hechos.vehiculos]]
+narrador = true
+clase = ["hatchback", "Polo"]
+velocidad_kmh = [30, "como a 30"]
+[[relato.hechos.vehiculos]]
+clase = ["bicicleta", "bici"]
+[[relato.hechos.personas]]
+rol = ["conductor", "Iba subiendo"]
+vehiculo = 0
+[[relato.hechos.personas]]
+rol = ["ciclista", "en bici venía pegado a la orilla"]
+vehiculo = 1
+casco = [true, "traía casco"]
+
+[[relato]]
+id = "rmx-d079"
+tipo = "vv"
+registro = "formal"
+texto = """
+Por este medio reporto el siniestro ocurrido el día 11 de octubre a las 09:40 horas en la avenida Resurgimiento de la ciudad de Campeche. Conducía mi vehículo Nissan March color amarillo en dirección al centro cuando el vehículo que me antecedía, una camioneta Hyundai Creta color gris, se detuvo de manera repentina para estacionarse; no logré detenerme a tiempo y la impacté en su defensa trasera con mi frente. Circulaba aproximadamente a 30 km/h. Mi nombre es [[NOMBRE:Yatziri Canché Poot]] y pueden contactarme al correo [[CORREO:yatziri.canche88@correoyuc.mx]].
+"""
+[relato.hechos]
+"entorno.iluminacion" = ["dia", "09:40 horas"]
+"evento.tipo" = ["impacto_vehiculo_vehiculo", "la impacté en su defensa trasera"]
+zonas = { "0" = ["F", "con mi frente"], "1" = ["B", "defensa trasera"] }
+[[relato.hechos.vehiculos]]
+narrador = true
+clase = ["hatchback", "March"]
+color = ["amarillo", "amarillo"]
+velocidad_kmh = [30, "30 km/h"]
+[[relato.hechos.vehiculos]]
+clase = ["suv_compacta", "Creta"]
+color = ["gris", "gris"]
+maniobra = ["detenido", "se detuvo de manera repentina"]
+[[relato.hechos.personas]]
+rol = ["conductor", "Conducía mi vehículo"]
+vehiculo = 0
+
+[[relato]]
+id = "rmx-d080"
+tipo = "objeto"
+registro = "desordenado"
+texto = """
+Lo del contenedor fue en la madrugada del sábado, como a las 3. O 4, ya no me acuerdo. Iba por el bulevar Colosio en mi Beat y de repente, en la bajada, había un contenedor de basura medio metido en el carril; no lo vi hasta el último y le di de lleno con el frente. Bueno, sí frené, quedaron unas marcas como de 6 metros. Iba como a 60, más o menos. Ah, y el piso estaba seco.
+"""
+[relato.hechos]
+"lugar.estado_superficie" = ["seco", "el piso estaba seco"]
+"entorno.iluminacion" = ["noche", "en la madrugada"]
+"evento.tipo" = ["impacto_vehiculo_objeto", "le di de lleno con el frente"]
+"evento.objeto" = ["contenedor", "contenedor de basura"]
+"evidencias.marcas_m" = [6, "unas marcas como de 6 metros"]
+zonas = { "0" = ["F", "con el frente"] }
+[[relato.hechos.vehiculos]]
+narrador = true
+clase = ["hatchback", "Beat"]
+velocidad_kmh = [60, "como a 60"]
+frenado = [true, "sí frené"]
+[[relato.hechos.personas]]
+rol = ["conductor", "Iba por el bulevar Colosio"]
+vehiculo = 0
+
+[[relato]]
+id = "rmx-d081"
+tipo = "moto"
+registro = "breve"
+texto = """
+En Río Mayo un vocho dio vuelta en u y me lo comí con la moto, yo como a 40.
+"""
+[relato.hechos]
+"evento.tipo" = ["impacto_vehiculo_vehiculo", "me lo comí con la moto"]
+zonas = { "0" = ["F"] }
+[[relato.hechos.vehiculos]]
+narrador = true
+clase = ["motocicleta", "moto"]
+velocidad_kmh = [40, "como a 40"]
+[[relato.hechos.vehiculos]]
+clase = ["sedan_compacto", "vocho"]
+maniobra = ["vuelta_u", "dio vuelta en u"]
+[[relato.hechos.personas]]
+rol = ["motociclista", "me lo comí con la moto"]
+vehiculo = 0
+
+[[relato]]
+id = "rmx-d082"
+tipo = "vv"
+registro = "coloquial"
+texto = """
+Estaba esperando para dar vuelta a la izquierda en la 20 de Noviembre, con la direccional puesta y parado, cuando un taxi, un {{vehiculo:Tsuru|Aveo}} de los blanco con verde, no frenó a tiempo y me pegó por atrás. Me empujó tantito hacia el carril de enfrente. El taxista dice que venía como a 30. Mi camioneta es una Ecosport y nada más se le abolló la puerta de atrás.
+"""
+[relato.hechos]
+"evento.tipo" = ["impacto_vehiculo_vehiculo", "me pegó por atrás"]
+zonas = { "0" = ["B", "me pegó por atrás"], "1" = ["F"] }
+[[relato.hechos.vehiculos]]
+narrador = true
+clase = ["suv_compacta", "Ecosport"]
+maniobra = ["detenido", "parado"]
+velocidad_kmh = [0, "parado"]
+[[relato.hechos.vehiculos]]
+clase = ["sedan_compacto", "taxi"]
+velocidad_kmh = [30, "como a 30"]
+frenado = [false, "no frenó a tiempo"]
+[[relato.hechos.personas]]
+rol = ["conductor", "Estaba esperando para dar vuelta"]
+vehiculo = 0
+
+[[relato]]
+id = "rmx-d083"
+tipo = "volcadura"
+registro = "faltas"
+texto = """
+bamos por la carretera villahermosa cardenas en la estaquitas de mi compadre, yo atras en la caja con otros dos. el compa hiba muy rapido, como a 110, y al rebasar a un trailer se le cerro y bolanteo a la derecha, se salio a la cuneta y se volteo la camioneta. nos avento a todos pero nadie se lastimo feo, solo raspones
+"""
+[relato.hechos]
+"evento.tipo" = ["volcadura", "se volteo la camioneta"]
+[[relato.hechos.vehiculos]]
+narrador = true
+clase = ["pickup", "estaquitas"]
+velocidad_kmh = [110, "como a 110"]
+maniobra = ["cambio_carril_derecha", "bolanteo a la derecha"]
+[[relato.hechos.vehiculos]]
+clase = ["tractocamion", "trailer"]
+maniobra = ["cambio_carril", "se le cerro"]
+[[relato.hechos.personas]]
+rol = ["conductor", "el compa hiba muy rapido"]
+vehiculo = 0
+[[relato.hechos.personas]]
+rol = ["pasajero", "yo atras en la caja"]
+vehiculo = 0
+
+[[relato]]
+id = "rmx-d084"
+tipo = "vv"
+registro = "coloquial"
+texto = """
+Mi {{sexo:esposa|esposo}} iba manejando la Odyssey por Salvador Nava, ya de regreso del trabajo, y en el semáforo de Himno Nacional un Civic se le emparejó y se le metió de golpe al carril para dar vuelta. {{sexo:Ella|Él}} dice que frenó, pero el Civic le rayó todo el lado del copiloto. Iba como a 45, nada más. Yo llegué después y ya estaba el de tránsito ahí.
+"""
+[relato.hechos]
+"evento.tipo" = ["impacto_vehiculo_vehiculo", "le rayó todo el lado del copiloto"]
+dispositivos = [["semaforo", "semáforo"]]
+zonas = { "0" = ["R", "lado del copiloto"], "1" = ["L"] }
+[[relato.hechos.vehiculos]]
+clase = ["van", "Odyssey"]
+velocidad_kmh = [45, "como a 45"]
+frenado = [true, "frenó"]
+[[relato.hechos.vehiculos]]
+clase = ["sedan_mediano", "Civic"]
+maniobra = ["cambio_carril", "se le metió de golpe al carril"]
+[[relato.hechos.personas]]
+rol = ["conductor", "iba manejando la Odyssey"]
+vehiculo = 0
+
+[[relato]]
+id = "rmx-d085"
+tipo = "moto"
+registro = "desordenado"
+texto = """
+Ya me dieron de alta, todo bien. Lo que pasó fue en la avenida del Mar, el domingo en la tarde. No, espérate, fue en Camarón Sábalo, ya saliendo de la avenida del Mar. Iba en mi moto a unos 50 y una van de turistas que estaba orillada se arrancó de repente sin ver y se me metió enfrente. Le pegué en la parte de adelante, del lado izquierdo. Traía casco, eso sí. Ah, y llevaba a mi novia atrás; a ella no le pasó nada.
+"""
+[relato.hechos]
+"entorno.iluminacion" = ["dia", "en la tarde"]
+"evento.tipo" = ["impacto_vehiculo_vehiculo", "Le pegué en la parte de adelante"]
+zonas = { "0" = ["F"], "1" = ["F", "Le pegué en la parte de adelante"] }
+[[relato.hechos.vehiculos]]
+narrador = true
+clase = ["motocicleta", "moto"]
+velocidad_kmh = [50, "a unos 50"]
+[[relato.hechos.vehiculos]]
+clase = ["van", "van de turistas"]
+maniobra = ["incorporacion", "se arrancó de repente"]
+[[relato.hechos.personas]]
+rol = ["motociclista", "Iba en mi moto"]
+vehiculo = 0
+casco = [true, "Traía casco"]
+[[relato.hechos.personas]]
+rol = ["pasajero", "llevaba a mi novia atrás"]
+vehiculo = 0
+
+[[relato]]
+id = "rmx-d086"
+tipo = "vv"
+registro = "formal"
+texto = """
+Yo, [[NOMBRE:Xóchitl Mendoza Arriaga]], con CURP [[CURP:MEAX910522MMCNRC07]], declaro que el día 12 de octubre, alrededor de las 20:10 horas, circulaba sobre la Vía Morelos, en el municipio de Ecatepec, a bordo de un vehículo Chevrolet Aveo color plata, a una velocidad aproximada de 40 km/h. Al llegar al cruce con avenida Central, con la luz del semáforo en verde, un autobús de transporte público que circulaba sobre avenida Central impactó con su parte frontal el costado derecho de mi vehículo. Se encontraba lloviendo ligeramente y la vialidad contaba con alumbrado.
+"""
+[relato.hechos]
+"lugar.tipo_via" = ["interseccion", "cruce con avenida Central"]
+"entorno.clima" = ["lluvia_ligera", "lloviendo ligeramente"]
+"entorno.iluminacion" = ["noche_con_alumbrado", "contaba con alumbrado"]
+"evento.tipo" = ["impacto_vehiculo_vehiculo", "impactó con su parte frontal el costado derecho"]
+dispositivos = [["semaforo", "semáforo"]]
+zonas = { "0" = ["R", "el costado derecho de mi vehículo"], "1" = ["F", "con su parte frontal"] }
+[[relato.hechos.vehiculos]]
+narrador = true
+clase = ["sedan_compacto", "Aveo"]
+color = ["plata", "plata"]
+velocidad_kmh = [40, "40 km/h"]
+maniobra = ["recto"]
+[[relato.hechos.vehiculos]]
+clase = ["autobus", "autobús de transporte público"]
+[[relato.hechos.personas]]
+rol = ["conductor", "circulaba sobre la Vía Morelos"]
+vehiculo = 0
+
+[[relato]]
+id = "rmx-d087"
+tipo = "vv"
+registro = "breve"
+texto = """
+Una Hilux me dio un cerrón en la recta de Apizaco y me pegó en la salpicadera izquierda. Iba a 80.
+"""
+[relato.hechos]
+"lugar.tipo_via" = ["recta", "la recta"]
+"evento.tipo" = ["impacto_vehiculo_vehiculo", "me pegó en la salpicadera izquierda"]
+zonas = { "0" = ["L", "salpicadera izquierda"], "1" = ["R"] }
+[[relato.hechos.vehiculos]]
+narrador = true
+velocidad_kmh = [80, "a 80"]
+[[relato.hechos.vehiculos]]
+clase = ["pickup", "Hilux"]
+maniobra = ["cambio_carril", "me dio un cerrón"]
+
+[[relato]]
+id = "rmx-d088"
+tipo = "objeto"
+registro = "coloquial"
+texto = """
+Me llevé la troca de mi papá, una {{vehiculo:Lobo|Silverado}} ya viejita, para ir a Tepic, y ya entrando a la ciudad, en la lateral, me distraje con el celular y me subí a la banqueta. Le di a un puesto de tacos que estaba cerrado; gracias a Dios no había nadie. Iba como a 35. Mi papá todavía no sabe, ja.
+"""
+[relato.hechos]
+"evento.tipo" = ["impacto_vehiculo_objeto", "Le di a un puesto de tacos"]
+"evento.objeto" = ["puesto", "puesto de tacos"]
+zonas = { "0" = ["F"] }
+[[relato.hechos.vehiculos]]
+narrador = true
+clase = ["pickup", "troca"]
+velocidad_kmh = [35, "como a 35"]
+[[relato.hechos.personas]]
+rol = ["conductor", "Me llevé la troca"]
+vehiculo = 0
+
+[[relato]]
+id = "rmx-d089"
+tipo = "moto"
+registro = "faltas"
+texto = """
+en ciudad juarez por la av tecnologico iba yo en mi moto como a 60 y un carro rojo me dio un cerron x la derecha y me tumbo, me pego en la llanta de atras. el señor se paro y me dio su numero [[TELEFONO:6562847193]] pa arreglarnos. yo traia casco nomas me raspe
+"""
+[relato.hechos]
+"evento.tipo" = ["impacto_vehiculo_vehiculo", "me pego en la llanta de atras"]
+zonas = { "0" = ["R"], "1" = ["L"] }
+[[relato.hechos.vehiculos]]
+narrador = true
+clase = ["motocicleta", "moto"]
+velocidad_kmh = [60, "como a 60"]
+[[relato.hechos.vehiculos]]
+color = ["rojo", "rojo"]
+maniobra = ["cambio_carril_izquierda", "me dio un cerron x la derecha"]
+[[relato.hechos.personas]]
+rol = ["motociclista", "iba yo en mi moto"]
+vehiculo = 0
+casco = [true, "yo traia casco"]
+
+[[relato]]
+id = "rmx-d090"
+tipo = "vv"
+registro = "formal"
+texto = """
+El que suscribe declara que el día 13 de octubre, a las 18:50 horas, conducía una camioneta Toyota RAV4 color blanco por la avenida Tecnológico, en Metepec, Estado de México, a una velocidad aproximada de 20 km/h, y se incorporaba a la avenida Pino Suárez. En ese momento, un vehículo Volkswagen Jetta color negro con placas [[PLACA:318RTM]], que circulaba por el carril derecho de dicha avenida, impactó con su frente la parte trasera izquierda de la camioneta. En el pavimento quedaron huellas de frenado de aproximadamente 12 metros correspondientes al Jetta. El cielo estaba nublado.
+"""
+[relato.hechos]
+"lugar.tipo_via" = ["incorporacion", "se incorporaba a la avenida"]
+"entorno.clima" = ["nublado", "El cielo estaba nublado"]
+"evento.tipo" = ["impacto_vehiculo_vehiculo", "impactó con su frente la parte trasera izquierda"]
+"evidencias.marcas_m" = [12, "huellas de frenado de aproximadamente 12 metros"]
+zonas = { "0" = ["B", "parte trasera izquierda"], "1" = ["F", "con su frente"] }
+[[relato.hechos.vehiculos]]
+narrador = true
+clase = ["suv_compacta", "RAV4"]
+color = ["blanco", "blanco"]
+velocidad_kmh = [20, "20 km/h"]
+maniobra = ["incorporacion", "se incorporaba a la avenida"]
+[[relato.hechos.vehiculos]]
+clase = ["sedan_mediano", "Jetta"]
+color = ["negro", "negro"]
+frenado = [true, "huellas de frenado"]
+[[relato.hechos.personas]]
+rol = ["conductor", "conducía una camioneta"]
+vehiculo = 0

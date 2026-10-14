@@ -335,6 +335,7 @@ source = { editable = "extraction" }
 dependencies = [
     { name = "anthropic" },
     { name = "croquis-scene-schema" },
+    { name = "croquis-solver" },
     { name = "jsonschema" },
     { name = "pydantic" },
 ]
@@ -343,6 +344,7 @@ dependencies = [
 requires-dist = [
     { name = "anthropic", specifier = ">=1.13,<2" },
     { name = "croquis-scene-schema", editable = "packages/scene-schema/python" },
+    { name = "croquis-solver", editable = "solver" },
     { name = "jsonschema", specifier = ">=4.26,<5" },
     { name = "pydantic", specifier = ">=2.14,<3" },
 ]

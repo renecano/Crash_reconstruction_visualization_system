@@ -17,6 +17,7 @@ from __future__ import annotations
 import itertools
 import json
 import math
+from collections.abc import Callable
 from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any
@@ -194,6 +195,25 @@ class PersonOutcome:
         return self.throw.contact if self.throw else None
 
 
+@dataclass(frozen=True)
+class Aviso:
+    """Bandera estructurada: código estable y datos para convertirla en pregunta (F6).
+
+    Solo existe en Python; el resultado publica el `mensaje` en `banderas`.
+    """
+
+    codigo: str
+    mensaje: str
+    datos: dict[str, Any]
+
+
+def _no_avisos() -> list[Aviso]:
+    return []
+
+
+type _Flag = Callable[[str, dict[str, Any], str], None]
+
+
 def _empty_detail() -> dict[str, Any]:
     return {}
 
@@ -235,6 +255,7 @@ class Reconstruction:
     parametros: dict[str, Any]
     objetos: list[SceneObject] = field(default_factory=_no_objects)
     visibilidad: list[JsonObj] = field(default_factory=_no_docs)
+    avisos: list[Aviso] = field(default_factory=_no_avisos)
 
     def to_dict(self) -> JsonObj:
         """Documento según `resultado.schema.json` (sin nulos: lo ausente se omite)."""
@@ -389,7 +410,7 @@ def _classes() -> dict[str, Any]:
     return clases
 
 
-def _vehicle_model(v: JsonObj, clases: dict[str, Any], banderas: list[str]) -> VehicleModel:
+def _vehicle_model(v: JsonObj, clases: dict[str, Any], flag: _Flag) -> VehicleModel:
     clase = v["clase"]["valor"]
     tip = clases.get(clase, {}).get("tipico", {})
     mass = _num(v.get("masa"), _MASS, float(tip.get("masa_kg", 1200.0)))
@@ -409,7 +430,11 @@ def _vehicle_model(v: JsonObj, clases: dict[str, Any], banderas: list[str]) -> V
     if maniobra in {"detenido", "estacionado"}:
         v0 = 0.0
     if not clases.get(clase) and v.get("masa") is None:
-        banderas.append(f"Vehículo {v['rol']}: sin tabla de clase ni masa; se usa 1200 kg.")
+        flag(
+            "clase_sin_tabla",
+            {"vehiculo": v["id"]},
+            f"Vehículo {v['rol']}: sin tabla de clase ni masa; se usa 1200 kg.",
+        )
     return VehicleModel(
         id=v["id"],
         rol=v["rol"],
@@ -600,6 +625,12 @@ def _sample_path(path: KinPath, prof: SpeedProfile, t_ref: float, times: list[fl
 def reconstruct(spec: JsonObj, *, dt: float = DT_OUT) -> Reconstruction:
     """Reconstruye la escena. `spec` debe haber pasado la validación del contrato."""
     banderas: list[str] = []
+    avisos: list[Aviso] = []
+
+    def flag(codigo: str, datos: dict[str, Any], mensaje: str) -> None:
+        banderas.append(mensaje)
+        avisos.append(Aviso(codigo, mensaje, datos))
+
     seed = int(spec["meta"]["semilla"])
     lugar = spec["lugar"]
     clases = _classes()
@@ -623,7 +654,7 @@ def reconstruct(spec: JsonObj, *, dt: float = DT_OUT) -> Reconstruction:
         "factor_abs": {"valor": abs_factor, "tipo": friction.abs_peak_factor().tipo},
     }
 
-    models = [_vehicle_model(v, clases, banderas) for v in spec["vehiculos"]]
+    models = [_vehicle_model(v, clases, flag) for v in spec["vehiculos"]]
     by_id = {m.id: m for m in models}
     personas_spec: dict[str, JsonObj] = {p["id"]: p for p in spec["personas"]}
     objetos: dict[str, JsonObj] = {o["id"]: o for o in spec["entorno"].get("objetos", [])}
@@ -708,18 +739,22 @@ def reconstruct(spec: JsonObj, *, dt: float = DT_OUT) -> Reconstruction:
             if isinstance(first, LaneChangePath):
                 u = SEEK_CONTACT_FRACTION
                 lateral = first.lateral * 0.5 * (1.0 - math.cos(math.pi * u))
-            banderas.append(
+            flag(
+                "desvio_lateral",
+                {"vehiculo": targets[0].id, "lateral_m": lateral},
                 f"Vehículo {targets[0].rol}: para alcanzar el punto de impacto declarado se "
                 f"infiere un desvío lateral de {abs(lateral):.1f} m "
-                f"hacia la {'izquierda' if lateral > 0 else 'derecha'}."
+                f"hacia la {'izquierda' if lateral > 0 else 'derecha'}.",
             )
         impact_point = sol.point
         for m, s_m in zip(targets, sol.params, strict=False):
             s_contact[m.id] = s_m
         if sol.gap > CONTACT_GAP_FLAG_M:
-            banderas.append(
+            flag(
+                "zonas_no_se_tocan",
+                {"separacion_m": sol.gap},
                 "Las zonas de impacto declaradas no llegan a tocarse siguiendo las trayectorias; "
-                f"se usa el acercamiento máximo (quedan a {sol.gap:.1f} m)."
+                f"se usa el acercamiento máximo (quedan a {sol.gap:.1f} m).",
             )
 
     # ---- fase previa ---------------------------------------------------------------------
@@ -737,18 +772,22 @@ def reconstruct(spec: JsonObj, *, dt: float = DT_OUT) -> Reconstruction:
         if m.braking:
             if m.brake_distance is None:
                 d_brake = m.v0 * DEFAULT_BRAKE_BEFORE_IMPACT_S
-                banderas.append(
+                flag(
+                    "frenado_sin_distancia",
+                    {"vehiculo": m.id},
                     f"Vehículo {m.rol}: frenó pero no dice desde dónde; se asume "
-                    f"{DEFAULT_BRAKE_BEFORE_IMPACT_S} s antes del impacto."
+                    f"{DEFAULT_BRAKE_BEFORE_IMPACT_S} s antes del impacto.",
                 )
             else:
                 d_brake = m.brake_distance
             d_brake = min(d_brake, s_imp)
             prof = SpeedProfile(m.v0, (s_imp - d_brake) / m.v0, decel)
             if prof.time_to_distance(s_imp) is None:
-                banderas.append(
+                flag(
+                    "frenado_detiene_antes",
+                    {"vehiculo": m.id, "v_kmh": ms_to_kmh(m.v0), "frenado_m": d_brake},
                     f"Vehículo {m.rol}: con {ms_to_kmh(m.v0):.0f} km/h y {d_brake:.1f} m de "
-                    "frenado se habría detenido antes del impacto; se recorta el frenado."
+                    "frenado se habría detenido antes del impacto; se recorta el frenado.",
                 )
                 d_brake = 0.9 * m.v0 * m.v0 / (2 * decel)
                 prof = SpeedProfile(m.v0, (s_imp - d_brake) / m.v0, decel)
@@ -823,10 +862,18 @@ def reconstruct(spec: JsonObj, *, dt: float = DT_OUT) -> Reconstruction:
             d_decl = _num(decl["longitud"], _LEN, d_nom)
             rng = pedestrian.vehicle_speed_range_from_throw(d_decl, mu_p, h_cg, (projection, 1.0))
             if not (rng.v_min * 0.85 <= v_vehicle <= rng.v_max * 1.15):
-                banderas.append(
+                flag(
+                    "proyeccion_vs_velocidad",
+                    {
+                        "persona": pid,
+                        "distancia_m": d_decl,
+                        "v_min_kmh": ms_to_kmh(rng.v_min),
+                        "v_max_kmh": ms_to_kmh(rng.v_max),
+                        "v_kmh": ms_to_kmh(v_vehicle),
+                    },
                     f"La distancia de proyección declarada de {quien} ({d_decl:.0f} m) sugiere "
                     f"entre {ms_to_kmh(rng.v_min):.0f} y {ms_to_kmh(rng.v_max):.0f} km/h; la "
-                    f"velocidad reconstruida al impacto es {ms_to_kmh(v_vehicle):.0f} km/h."
+                    f"velocidad reconstruida al impacto es {ms_to_kmh(v_vehicle):.0f} km/h.",
                 )
         rest_xy = (origin[0] + d_nom * math.cos(heading), origin[1] + d_nom * math.sin(heading))
         return ThrowOutcome(
@@ -1056,9 +1103,11 @@ def reconstruct(spec: JsonObj, *, dt: float = DT_OUT) -> Reconstruction:
             )
         )
     elif event:
-        banderas.append(
+        flag(
+            "evento_sin_resolver",
+            {"evento": event["id"]},
             f"Evento {event['id']} ({tipo_evento}) sin actores suficientes o sin punto de "
-            "impacto: no se resolvió."
+            "impacto: no se resolvió.",
         )
 
     # ---- fase posterior ------------------------------------------------------------------
@@ -1088,7 +1137,11 @@ def reconstruct(spec: JsonObj, *, dt: float = DT_OUT) -> Reconstruction:
             )
             post[m.id] = (res_post.trajectory, res_post.stopped, res_post.distance)
             if not res_post.stopped:
-                banderas.append(f"Vehículo {m.rol}: no llegó al reposo en {T_POST_MAX:.0f} s.")
+                flag(
+                    "sin_reposo",
+                    {"vehiculo": m.id},
+                    f"Vehículo {m.rol}: no llegó al reposo en {T_POST_MAX:.0f} s.",
+                )
         else:
             post[m.id] = (Trajectory(), True, 0.0)
         tr_post = post[m.id][0]
@@ -1171,8 +1224,10 @@ def reconstruct(spec: JsonObj, *, dt: float = DT_OUT) -> Reconstruction:
                 dt,
             )
         elif veh is None:
-            banderas.append(
-                f"Persona {pid}: sin posición inicial ni vehículo; no se muestra en la escena."
+            flag(
+                "persona_sin_posicion",
+                {"persona": pid},
+                f"Persona {pid}: sin posición inicial ni vehículo; no se muestra en la escena.",
             )
         occ_doc: JsonObj | None = None
         if veh is not None and pid not in ped_tracks and str(veh) in by_id:
@@ -1273,17 +1328,21 @@ def reconstruct(spec: JsonObj, *, dt: float = DT_OUT) -> Reconstruction:
             "tipo": "supuesto",
         }
         if a.id in declared_roll and not check.starts:
-            banderas.append(
+            flag(
+                "volcadura_sin_velocidad",
+                {"vehiculo": a.id},
                 f"Vehículo {a.rol}: el relato dice que se volcó, pero llega a la orilla con "
                 f"{ms_to_kmh(check.lateral_speed):.0f} km/h hacia ella y el tropiezo necesita "
                 f"{ms_to_kmh(check.critical_speed):.0f} km/h; probablemente iba derrapando de "
                 "lado, algo que la fase previa (sin deslizamiento lateral) no reproduce. La "
-                "volcadura del visor es ilustrativa."
+                "volcadura del visor es ilustrativa.",
             )
         elif check.starts and a.id not in declared_roll:
-            banderas.append(
+            flag(
+                "volcadura_no_mencionada",
+                {"vehiculo": a.id},
                 f"Vehículo {a.rol}: con {ms_to_kmh(check.lateral_speed):.0f} km/h hacia la orilla "
-                "el tropiezo alcanza para iniciar una volcadura, aunque el relato no la menciona."
+                "el tropiezo alcanza para iniciar una volcadura, aunque el relato no la menciona.",
             )
         if a.id in declared_roll:
             t_roll = next(
@@ -1315,6 +1374,7 @@ def reconstruct(spec: JsonObj, *, dt: float = DT_OUT) -> Reconstruction:
         eventos=eventos_out,
         banderas=banderas,
         parametros=params,
+        avisos=avisos,
         objetos=objetos_out,
         visibilidad=visibilidad_out,
     )

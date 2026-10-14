@@ -11,7 +11,8 @@ hechos anotados (`[valor, "cita literal"]`). El texto admite dos marcas:
 
 Salida: `data/relatos-mx/build/{dev,test,contrafactuales}.jsonl` con el texto, la PII, los hechos y
 la EscenaSpec de referencia (construida y validada). El test se congela con `freeze`: su hash queda
-en `data/relatos-mx/test.lock` y no se vuelve a tocar (PLAN §5.2).
+en `data/relatos-mx/test.lock` (sobre el contenido fuente, no sobre la spec construida) y no se
+vuelve a tocar (PLAN §5.2).
 """
 
 from __future__ import annotations
@@ -189,20 +190,43 @@ def write(check: bool = False) -> list[str]:
     return stale
 
 
-def split_hash(text: str | None = None) -> str:
-    if text is None:
-        text = (BUILD / "test.jsonl").read_text(encoding="utf-8")
+def source_canonical(items: list[JsonObj], split: str = "test") -> str:
+    """Contenido fuente de una partición (id, tipo, registro, texto con marcas y hechos) en JSON
+    canónico. Es lo que se congela: no depende del constructor de specs ni del formato del TOML."""
+    rows = [
+        {k: it[k] for k in ("id", "tipo", "registro", "texto", "hechos")}
+        for it in sorted(items, key=lambda x: str(x["id"]))
+        if it["split"] == split
+    ]
+    return json.dumps(rows, ensure_ascii=False, sort_keys=True, separators=(",", ":"))
+
+
+def split_hash(items: list[JsonObj] | None = None, split: str = "test") -> str:
+    """SHA-256 del contenido fuente de la partición (por omisión, el test del repositorio)."""
+    text = source_canonical(load_all() if items is None else items, split)
     return hashlib.sha256(text.encode("utf-8")).hexdigest()
 
 
 def freeze() -> str:
-    """Congela el test (una sola vez): escribe test.lock con el hash de build/test.jsonl."""
+    """Congela el test (una sola vez): escribe test.lock con el hash de su contenido fuente."""
     if LOCK.exists():
         msg = "El test ya está congelado; no se vuelve a congelar (PLAN §5.2)."
         raise RuntimeError(msg)
-    h = split_hash()
+    items = load_all()
+    h = split_hash(items)
+    n = sum(1 for it in items if it["split"] == "test")
     LOCK.write_text(
-        json.dumps({"sha256": h, "archivo": "build/test.jsonl"}, indent=2) + "\n",
+        json.dumps(
+            {
+                "sha256": h,
+                "relatos": n,
+                "contenido": "id, tipo, registro, texto y hechos de fuente/test-*.toml "
+                "(JSON canónico)",
+            },
+            indent=2,
+            ensure_ascii=False,
+        )
+        + "\n",
         encoding="utf-8",
         newline="\n",
     )

@@ -29,7 +29,7 @@ Textos y anotaciones: [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/le
 
 - `fuente/dev-*.toml`, `fuente/test-*.toml`: lo que se escribe a mano. El prefijo decide la partición.
 - `build/{dev,test,contrafactuales}.jsonl`: generado con `uv run croquis-extraction relatos build`. Trae el texto final, la PII verdadera con posiciones, los hechos y la `EscenaSpec` de referencia. CI verifica que esté al día (`relatos check`).
-- `test.lock`: hash SHA-256 de `build/test.jsonl`, escrito una sola vez con `relatos freeze`. Después de congelarlo el test no se modifica (CLAUDE.md).
+- `test.lock`: hash SHA-256 del contenido fuente del test (id, tipo, registro, texto con marcas y hechos, en JSON canónico), escrito una sola vez con `relatos freeze`. No depende del constructor de specs: mejorar el constructor no rompe el congelamiento, cambiar un relato o su anotación sí. Después de congelarlo el test no se modifica (CLAUDE.md).
 
 ## Formato de un relato
 

@@ -1,7 +1,9 @@
 """Puntuación de E1 (PLAN §5.3): hechos extraídos contra los hechos de referencia.
 
 Solo cuentan los hechos que el relato afirma (referencia con cita) y lo que el método dice haber
-sacado del relato (`fuente: relato`); lo supuesto no suma ni resta. Por campo se acumulan aciertos
+sacado del relato (`fuente: relato`); lo supuesto no suma ni resta. Si la referencia trae el hecho
+como inferencia de quien anotó (sin cita) y el método lo afirma con el mismo valor, tampoco cuenta:
+no es un error dar con algo que el relato implica. Por campo se acumulan aciertos
 (TP), afirmaciones de más (FP) y faltantes (FN); un valor equivocado cuenta como FP y FN. Los
 números aciertan dentro de una tolerancia y además se reporta su error absoluto. Los valores
 genéricos del relato ("camioneta", "llovía", "de noche", "en la esquina") aceptan cualquiera de sus
@@ -80,7 +82,9 @@ class Score:
         elif rs:
             self.fn[key] += 1
         elif ps:
-            self.fp[key] += 1
+            assert pred is not None
+            if ref is None or not values_match(key, ref.valor, pred.valor):
+                self.fp[key] += 1
 
     def merge(self, other: Score) -> None:
         self.tp.update(other.tp)
@@ -181,10 +185,11 @@ def score_story(ref: Facts, pred: Facts) -> Score:
     for key in SCALAR_FIELDS:
         sc.add(key, ref.escalares.get(key), pred.escalares.get(key))
     rset = Counter(str(d.valor) for d in ref.dispositivos if _stated(d))
+    rinf = Counter(str(d.valor) for d in ref.dispositivos if not _stated(d))
     pset = Counter(str(d.valor) for d in pred.dispositivos if _stated(d))
     inter = rset & pset
     sc.tp["dispositivos"] += sum(inter.values())
-    sc.fp["dispositivos"] += sum((pset - rset).values())
+    sc.fp["dispositivos"] += sum((pset - rset - rinf).values())
     sc.fn["dispositivos"] += sum((rset - pset).values())
     pairs = _match_vehicles(ref, pred)
     for i, j in pairs:
@@ -198,10 +203,20 @@ def score_story(ref: Facts, pred: Facts) -> Score:
     stated_ref_vehicles = len(ref.vehiculos)
     sc.vehicle_count_ok += int(stated_ref_vehicles == len(pred.vehiculos))
     rroles = Counter(str(p["rol"].valor) for p in ref.personas if _stated(p.get("rol")))
+    rinf = Counter(
+        str(p["rol"].valor) for p in ref.personas if "rol" in p and not _stated(p.get("rol"))
+    )
     proles = Counter(str(p["rol"].valor) for p in pred.personas if _stated(p.get("rol")))
     inter = rroles & proles
     sc.tp["persona.rol"] += sum(inter.values())
-    sc.fp["persona.rol"] += sum((proles - rroles).values())
+    extra = proles - rroles - rinf
+    # Relatos-MX anota a quien narra, pasajeros, peatones y ciclistas; quien maneja otro vehículo
+    # puede no estar anotado. Un conductor de más no es error mientras haya un vehículo para él.
+    drivers = ("conductor", "motociclista")
+    free_seats = max(0, len(pred.vehiculos) - sum(rroles[d] + rinf[d] for d in drivers))
+    extra_drivers = sum(extra[d] for d in drivers)
+    sc.fp["persona.rol"] += sum(v for k, v in extra.items() if k not in drivers)
+    sc.fp["persona.rol"] += max(0, extra_drivers - free_seats)
     sc.fn["persona.rol"] += sum((rroles - proles).values())
     for key in ("cinturon", "casco"):
         rvals = [(str(p["rol"].valor), p[key]) for p in ref.personas if key in p and "rol" in p]
