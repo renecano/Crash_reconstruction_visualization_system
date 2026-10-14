@@ -116,6 +116,53 @@ def throw_kinematics(v: float, theta_deg: float, cg_height: float, mu: float) ->
     return ThrowKinematics(t_f, vx * t_f, u, t_s, u * u / (2.0 * mu * G))
 
 
+@dataclass(frozen=True)
+class DistanceBand:
+    """Distancias de proyección posibles para una velocidad de lanzamiento (Searle)."""
+
+    d_min: float
+    d_max: float
+
+    def contains(self, d: float, tol: float = 1e-9) -> bool:
+        return self.d_min - tol <= d <= self.d_max + tol
+
+
+def searle_distance_band(
+    v_launch: float, mu_low: float, mu_high: float, cg_height_m: float
+) -> DistanceBand:
+    """Límites de Searle: distancias posibles para una velocidad dada y μ ∈ [μ_lo, μ_hi].
+
+    Con la ecuación publicada D(θ, μ) = v² (cos θ + μ sin θ)² / (2 μ g) + μ h y el dominio de
+    ángulos plausible θ ∈ [0, 2·atan μ]: el factor (cos θ + μ sin θ) vale 1 en los extremos y
+    √(1 + μ²) en θ = atan μ. Así
+
+        D_min(μ) = v² / (2 μ g) + μ h,        D_max(μ) = v² (1 + μ²) / (2 μ g) + μ h.
+
+    Ambas son convexas en μ: el mínimo de D_min está en μ* = v / √(2 g h) acotado al rango, y el
+    máximo de D_max en uno de los extremos. Es el criterio con el que se juzga la proyección del
+    ragdoll del visor (PLAN §13, F5). El modelo completo de `throw_kinematics` coincide con esta
+    forma mientras la velocidad horizontal tras el aterrizaje no se anule.
+    """
+    if not 0 < mu_low <= mu_high <= 1.5:
+        msg = "Rango de fricción cuerpo–suelo inválido"
+        raise ValueError(msg)
+    if v_launch < 0 or cg_height_m < 0:
+        msg = "Velocidad y altura deben ser no negativas"
+        raise ValueError(msg)
+    v2 = v_launch * v_launch
+
+    def d_min(mu: float) -> float:
+        return v2 / (2.0 * mu * G) + mu * cg_height_m
+
+    def d_max(mu: float) -> float:
+        return v2 * (1.0 + mu * mu) / (2.0 * mu * G) + mu * cg_height_m
+
+    mu_star = v_launch / math.sqrt(2.0 * G * cg_height_m) if cg_height_m > 0 else math.inf
+    lo = d_min(min(mu_high, max(mu_low, mu_star)))
+    hi = max(d_max(mu_low), d_max(mu_high))
+    return DistanceBand(lo, hi)
+
+
 def wood_speed(
     throw_m: float, mu: float, cg_height_m: float, vehicle_mass_kg: float, pedestrian_mass_kg: float
 ) -> float:

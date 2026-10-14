@@ -333,6 +333,37 @@ importers:
         specifier: 'catalog:'
         version: 5.0.3(@types/node@24.19.2)(jsdom@30.1.2)(vite@8.3.4(@types/node@24.19.2)(esbuild@0.28.2)(jiti@2.7.0)(tsx@4.23.15))
 
+  eval/js:
+    dependencies:
+      '@croquis/scene-schema':
+        specifier: workspace:*
+        version: link:../../packages/scene-schema
+      '@croquis/solver-ts':
+        specifier: workspace:*
+        version: link:../../packages/solver-ts
+      '@croquis/viewer':
+        specifier: workspace:*
+        version: link:../../packages/viewer
+      three:
+        specifier: 'catalog:'
+        version: 0.186.1
+    devDependencies:
+      '@types/node':
+        specifier: 'catalog:'
+        version: 24.19.2
+      '@types/three':
+        specifier: 'catalog:'
+        version: 0.186.0
+      eslint:
+        specifier: 'catalog:'
+        version: 10.12.0(jiti@2.7.0)
+      tsx:
+        specifier: 'catalog:'
+        version: 4.23.15
+      typescript:
+        specifier: 'catalog:'
+        version: 6.0.3
+
   packages/croquis-2d:
     dependencies:
       '@croquis/scene-schema':

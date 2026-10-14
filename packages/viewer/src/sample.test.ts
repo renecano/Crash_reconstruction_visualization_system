@@ -97,7 +97,9 @@ describe("muestreo de trayectorias", () => {
       }
       for (const p of r.personas) {
         const s = samplePerson(p.trayectoria, 0);
-        if (p.vehiculo_id) expect(s).toBeNull();
+        // Ocupantes sin trayectoria propia; un jinete proyectado sí la tiene (sale de su vehículo).
+        if (p.vehiculo_id && !p.proyeccion) expect(s).toBeNull();
+        if (p.proyeccion) expect(s).not.toBeNull();
       }
     });
   }

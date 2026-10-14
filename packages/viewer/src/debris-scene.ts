@@ -4,7 +4,6 @@
  * de escena con su actualización por tiempo.
  */
 import type { EscenaSpec, Resultado } from "@croquis/scene-schema";
-import { longitudM } from "@croquis/scene-schema";
 import {
   BoxGeometry,
   Color,
@@ -31,6 +30,7 @@ import {
   type KinematicBox,
   type StaticCollider,
 } from "./debris";
+import { staticColliders } from "./people-scene";
 import { sampleVehicle } from "./sample";
 import type { SceneGraph } from "./scene-graph";
 import type { CarLayout } from "./vehicle-geometry";
@@ -203,34 +203,7 @@ export function planDebris(spec: EscenaSpec, resultado: Resultado, graph: SceneG
       return { position: new Vector3(...toThree(s.x, s.y, v.dimensiones.alto_m / 2)), yaw: s.yaw };
     },
   }));
-  const statics: StaticCollider[] = [];
-  for (const o of spec.entorno.objetos ?? []) {
-    const yaw = ((o.rumbo_deg ?? 0) * Math.PI) / 180;
-    if (o.tipo === "arbol" || o.tipo === "poste") {
-      const d = o.diametro_tronco ? longitudM(o.diametro_tronco) : o.tipo === "arbol" ? 0.35 : 0.3;
-      statics.push({
-        kind: "cilindro",
-        position: new Vector3(...toThree(o.posicion.x, o.posicion.y, 2)),
-        size: [d / 2, 2, 0],
-        yaw,
-      });
-    } else if (
-      o.tipo === "muro" ||
-      o.tipo === "barda" ||
-      o.tipo === "contenedor" ||
-      o.tipo === "vehiculo_estacionado"
-    ) {
-      const sx = o.largo ? longitudM(o.largo) : 4;
-      const sz = o.ancho ? longitudM(o.ancho) : 0.3;
-      const sy = o.alto ? longitudM(o.alto) : 2;
-      statics.push({
-        kind: "caja",
-        position: new Vector3(...toThree(o.posicion.x, o.posicion.y, sy / 2)),
-        size: [sx / 2, sy / 2, sz / 2],
-        yaw,
-      });
-    }
-  }
+  const statics: StaticCollider[] = staticColliders(resultado);
   return { bodies, vehicles, statics };
 }
 

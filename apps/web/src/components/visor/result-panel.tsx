@@ -26,6 +26,11 @@ const PARAM: Record<string, string> = {
   factor_abs: "Factor de frenado con ABS",
   aproximacion_previa_s: "Tiempo de aproximación mostrado (s)",
   velocidad_peaton: "Velocidad al caminar (m/s)",
+  friccion_cuerpo_suelo: "Fricción cuerpo–suelo",
+  factor_proyeccion_jinete: "Factor de proyección del jinete",
+  altura_cg_volcadura: "Altura del centro de masa (fracción del alto)",
+  altura_ojo: "Altura del ojo del conductor (m)",
+  alcance_deteccion_nocturna: "Alcance de detección con luces bajas (m)",
 };
 
 const TIPO: Record<string, string> = {
@@ -119,6 +124,24 @@ export function ResultPanel({
           {spec ? ` Bolsas de aire: regla ilustrativa con umbrales de ${AIRBAG_SOURCE}` : ""}
         </p>
       </div>
+      {resultado.vehiculos.some((v) => v.volcadura) ? (
+        <div>
+          <h3 className="font-semibold">Volcadura (criterio de tropiezo)</h3>
+          <ul className="list-disc pl-5" data-testid="volcadura">
+            {resultado.vehiculos.map((v) =>
+              v.volcadura ? (
+                <li key={v.id}>
+                  Vehículo {v.rol}: llega a la orilla con {fmt(v.volcadura.velocidad_lateral_kmh)}{" "}
+                  km/h hacia ella; el tropiezo necesita {fmt(v.volcadura.velocidad_critica_kmh)}{" "}
+                  km/h (factor de estabilidad {fmt(v.volcadura.ssf, 2)}).{" "}
+                  {v.volcadura.inicia ? "Alcanza para volcar." : "No alcanza para volcar."} La
+                  secuencia de vueltas del visor es ilustrativa.
+                </li>
+              ) : null,
+            )}
+          </ul>
+        </div>
+      ) : null}
       {resultado.banderas.length > 0 ? (
         <div>
           <h3 className="font-semibold">Avisos de la reconstrucción</h3>

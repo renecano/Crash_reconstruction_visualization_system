@@ -14,20 +14,20 @@
 
 ## Módulos (PLAN §6.1)
 
-| #   | Módulo                                                           | Fase  | Estado                                  |
-| --- | ---------------------------------------------------------------- | ----- | --------------------------------------- |
-| 1   | Pre-impacto (trayectorias, frenado, percepción-reacción)         | F2    | **hecho** (`preimpact.py`)              |
-| 2   | Impacto vehículo-vehículo (impulso planar)                       | F2    | **hecho** (`impact.py`)                 |
-| 3   | Energía de deformación CRASH3 (A/B/G, perfil C1–C6)              | F2    | **hecho** (`crash3.py`, E2)             |
-| 4   | Impacto con objeto fijo                                          | F2    | **hecho** (`fixed_object.py`)           |
-| 5   | Post-impacto (3 GDL, círculo de fricción)                        | F2    | **hecho** (`postimpact.py`)             |
-| 6   | Volcadura (criterio de inicio; secuencia en Rapier, ilustrativa) | F5    | pendiente                               |
-| 7   | Peatón y ciclista (Searle, Wood; contactos; ragdoll en F5)       | F2/F5 | ecuaciones **hechas** (`pedestrian.py`) |
-| 8   | Ocupantes (cinemática relativa, sin lesiones)                    | F5    | pendiente                               |
-| 9   | Visibilidad (línea de vista en el tiempo)                        | F5    | pendiente                               |
-| 10  | Inversión (mínimos cuadrados robustos; CMA-ES si hace falta)     | F7    | pendiente                               |
-| 11  | Monte Carlo                                                      | F7    | pendiente                               |
-| 12  | Consistencia (banderas en lenguaje llano)                        | F7    | banderas básicas en `reconstruct.py`    |
+| #   | Módulo                                                           | Fase  | Estado                               |
+| --- | ---------------------------------------------------------------- | ----- | ------------------------------------ |
+| 1   | Pre-impacto (trayectorias, frenado, percepción-reacción)         | F2    | **hecho** (`preimpact.py`)           |
+| 2   | Impacto vehículo-vehículo (impulso planar)                       | F2    | **hecho** (`impact.py`)              |
+| 3   | Energía de deformación CRASH3 (A/B/G, perfil C1–C6)              | F2    | **hecho** (`crash3.py`, E2)          |
+| 4   | Impacto con objeto fijo                                          | F2    | **hecho** (`fixed_object.py`)        |
+| 5   | Post-impacto (3 GDL, círculo de fricción)                        | F2    | **hecho** (`postimpact.py`)          |
+| 6   | Volcadura (criterio de inicio; secuencia en Rapier, ilustrativa) | F5    | **hecho** (`rollover.py`; visor)     |
+| 7   | Peatón y ciclista (Searle, Wood; contactos; ragdoll en F5)       | F2/F5 | **hecho** (`pedestrian.py`; ragdoll) |
+| 8   | Ocupantes (cinemática relativa, sin lesiones)                    | F5    | **hecho** (`occupant.py`)            |
+| 9   | Visibilidad (línea de vista en el tiempo)                        | F5    | **hecho** (`visibility.py`)          |
+| 10  | Inversión (mínimos cuadrados robustos; CMA-ES si hace falta)     | F7    | pendiente                            |
+| 11  | Monte Carlo                                                      | F7    | pendiente                            |
+| 12  | Consistencia (banderas en lenguaje llano)                        | F7    | banderas básicas en `reconstruct.py` |
 
 ## 1. Pre-impacto (`preimpact.py`)
 
@@ -82,7 +82,49 @@ $$D = \frac{v^2 (\cos\theta + \mu \sin\theta)^2}{2 \mu g} + \mu h \quad\Longrigh
 
 (válido mientras el deslizamiento arranca con velocidad, es decir, para ángulos bajos; cotas para $0 \le \theta \le 2\arctan\mu$). **Corrección en F3:** la versión de F2 usaba $(D + \mu h)$; lanzar desde más alto lleva más lejos, así que para una misma distancia la velocidad necesaria es menor y el término resta, igual que en Wood. Una prueba de propiedades exige que la integración y la forma cerrada coincidan a 1e-9. Wood (1988), como lo reproduce Spinu et al. 2018: $v = \sqrt{2\mu g (D - \mu h)}\,(m_v + m_p)/m_v$. Fricción cuerpo–suelo: 0.66 asfalto, 0.79 pasto (Searle). Factor de proyección vehículo → peatón 0.9 (rango 0.8–1.0, **supuesto** hasta E4). Contactos: defensa por altura (pierna/rodilla/muslo/cadera), borde de cofre, y cabeza por distancia de envolvimiento $WAD \approx 1.08 \times$ estatura (**aproximación**, literatura 1.03–1.1; F5 lo calibra con el ragdoll). Pruebas: cotas de Searle acotan toda velocidad en el dominio, ida y vuelta, cinemática = forma cerrada, lanzar desde más alto llega más lejos, Wood decrece con la masa del vehículo, zonas de contacto.
 
-**Trayectorias de personas (`person_motion.py`, F3).** El peatón golpeado camina en línea recta desde su posición declarada para llegar al punto de impacto en $t = 0$ (velocidad del relato o 1.4 m/s, **supuesto** dentro de las medias de 1.25–1.51 m/s de Knoblauch, Pietrucha y Nitzburg, TRR 1538, 1996); después sigue el vuelo, el aterrizaje y el deslizamiento del modelo de Searle, de modo que la distancia recorrida es exactamente la que reporta el solver. Otras personas a pie caminan o permanecen de pie; las que van a bordo no tienen trayectoria propia (F5).
+**Trayectorias de personas (`person_motion.py`, F3).** El peatón golpeado camina en línea recta desde su posición declarada para llegar al punto de impacto en $t = 0$ (velocidad del relato o 1.4 m/s, **supuesto** dentro de las medias de 1.25–1.51 m/s de Knoblauch, Pietrucha y Nitzburg, TRR 1538, 1996); después sigue el vuelo, el aterrizaje y el deslizamiento del modelo de Searle, de modo que la distancia recorrida es exactamente la que reporta el solver. Otras personas a pie caminan o permanecen de pie. Los jinetes de moto, scooter o bici van montados (fase `montado`) hasta el impacto y desde ahí siguen el mismo modelo (F5); los ocupantes de vehículos cerrados no tienen trayectoria en el mundo (§8).
+
+**Jinetes (F5).** En un choque vehículo–vehículo, quien va en moto, scooter o bici no va sujeto: sale con la velocidad de su vehículo al impacto por un factor de proyección 0.9 (**supuesto**, rango 0.8–1.0; Searle 1993 aplica el mismo modelo a motociclistas), desde una altura del centro de masa de 1.05 m en moto, 1.0 m en scooter y 1.15 m en bici (asiento más torso, **supuesto**), y sigue el modelo de Searle. Si el relato declara la distancia de proyección de esa persona y no cabe con la velocidad reconstruida, se marca (en `motociclista`, 8 m declarados piden 29–39 km/h contra 50 km/h reconstruidos: el jinete pierde velocidad al golpear el auto).
+
+**Banda de Searle (`searle_distance_band`, F5).** Para una velocidad de lanzamiento $v$, una fricción $\mu \in [\mu_{lo}, \mu_{hi}]$ y ángulos en $[0, 2\arctan\mu]$, la ecuación de Searle acota la distancia:
+
+$$D_{min}(\mu) = \frac{v^2}{2\mu g} + \mu h,\qquad D_{max}(\mu) = \frac{v^2 (1+\mu^2)}{2\mu g} + \mu h.$$
+
+Ambas son convexas en $\mu$: el mínimo de $D_{min}$ está en $\mu^* = v/\sqrt{2gh}$ acotado al rango y el máximo de $D_{max}$ en un extremo. Es el criterio contra el que se juzga el ragdoll (PLAN §13). Pruebas: toda distancia de la forma cerrada con $\mu$ y $\theta$ en su dominio cae en la banda (Hypothesis, 300 casos); el modelo completo cae en la banda donde la velocidad sobrevive al aterrizaje; sin altura coincide con la forma cerrada a 1e-12. El port TS (`packages/solver-ts/src/pedestrian.ts`) reproduce las distancias y bandas de las escenas canónicas (paridad, E7).
+
+**E4 (`uv run croquis-eval e4-pedestrian`).** 18 casos publicados de acceso abierto con velocidad medida (7 impactos escenificados del IPTM, Becker et al. 2016; 5 pruebas con maniquí de Eubanks y Haight, SAE 921591, y 6 casos reales de Randles et al., SAE 2001-01-0171, reproducidos en Batista 2008); el caso 69 de Eubanks y Haight (vehículo sin frenar) queda fuera del dominio de Searle y se reporta aparte. Resultados en `eval/results/e4_pedestrian.json` y en el README. El factor de proyección 0.9 queda cerca del óptimo de la muestra (0.92) y reajustarlo no mejora fuera de muestra (dejar uno fuera), así que se conserva.
+
+## 6. Volcadura (`rollover.py`, F5)
+
+Un vehículo que se desliza de lado y tropieza con las llantas gira alrededor de la línea de contacto. Con conservación del momento angular respecto a ese punto en el tropiezo impulsivo, $m v h = I_p \omega$ con $I_p = I_{cg} + m(h^2 + (T/2)^2)$, y exigiendo que la energía de rotación suba el centro de masa sobre el punto de giro, $\tfrac12 I_p \omega^2 \ge m g \Delta z$ con $\Delta z = \sqrt{h^2 + (T/2)^2} - h = h(\sqrt{1 + SSF^2} - 1)$:
+
+$$v_{crit} = \sqrt{\frac{2 g \Delta z\, I_p}{m h^2}},\qquad SSF = \frac{T}{2h}$$
+
+(la velocidad crítica de deslizamiento que usó NHTSA junto con el factor de estabilidad estática). Altura del centro de masa $h = 0.37 \times$ alto (**supuesto**; SSF típico 1.0–1.5), inercia de alabeo de una caja homogénea ancho × alto (**supuesto**), vía $T = 0.84 \times$ ancho (la proporción de autos y SUVs; la misma que usa el visor para las marcas). Para la SUV de `volcadura`: SSF 1.21 y $v_{crit} \approx 20$ km/h, del orden de lo publicado para SUVs. La velocidad lateral es la componente hacia la orilla en el tropiezo. Si el relato declara la volcadura y el criterio no alcanza (la fase previa no modela deslizamiento lateral), se marca. El visor simula las vueltas con Rapier desde estas condiciones y las etiqueta como **ilustrativas** (ADR 0008). Pruebas: la energía de rotación con $v_{crit}$ es exactamente $m g \Delta z$; el criterio es monótono y un vehículo más alto vuelca con menos velocidad.
+
+## 8. Ocupantes (`occupant.py`, F5)
+
+Cinemática del ocupante relativa al habitáculo, sin estimar lesiones (PLAN §10 y §16.2).
+
+- **Pulso de choque:** media onda senoidal $a(t) = A\sin(\pi t/T)$ con $\int a\,dt = \Delta V$, es decir $A = \pi \Delta V/(2T)$. Si el vehículo pierde $\Delta V$ contra una barrera equivalente, su desplazamiento durante el pulso es $\Delta V\,T/2 = C$, así que $T = 2C/\Delta V$ con el aplastamiento máximo del solver, acotada a [0.06, 0.20] s. La dirección sale de la PDOF: el ocupante se mueve hacia el lado de donde viene la fuerza.
+- **Sin cinturón:** vuelo libre hasta el espacio de vuelo del modelo de Michie (1981, TRR 796; base del procedimiento MASH de AASHTO): 0.6 m en sentido longitudinal y 0.3 m en lateral. Se reportan el instante y la velocidad relativa al tocar el interior (cinemática; no se comparan con umbrales de lesión).
+- **Con cinturón:** sin fuerza hasta recorrer la holgura (0.05 m, **supuesto**, rango 0.02–0.10) y después resorte amortiguado con frecuencia natural 8 Hz y amortiguamiento 0.3 (**supuestos**). Actúa solo hacia adelante; en lateral el torso queda casi libre y la puerta del lado cercano se alcanza igual. Hacia atrás, el respaldo detiene al torso y la cabeza recorre 0.08 m hasta la cabecera (**supuesto**).
+- **Zonas:** volante y tablero, tablero, respaldo del asiento de adelante, puerta y ventana del lado cercano, consola central o asiento contiguo, respaldo y cabecera.
+- Si el relato no dice si llevaba cinturón se dan las dos variantes.
+
+Ejemplo: a 50 km/h de frente con 0.45 m de aplastamiento, con cinturón el desplazamiento máximo es de unos 21 cm; sin cinturón toca el volante a los 0.6 m. Pruebas: el pulso integra el ΔV, la dirección sigue la PDOF, el cinturón reduce el desplazamiento frontal, sin cinturón la velocidad relativa al contacto es la acumulada del pulso, zonas por asiento y variantes sin dato.
+
+## 9. Visibilidad (`visibility.py`, F5)
+
+¿Podía verlo y a qué distancia? Para cada conductor y cada otro actor, cada 0.1 s antes del impacto se traza la línea de vista en 3D desde el ojo hasta varios puntos del objetivo (esquinas y centro de un vehículo a dos alturas; piernas, torso y cabeza de una persona; el tronco de un objeto). Se ve si al menos un punto queda libre.
+
+- **Ojo:** AASHTO (Green Book 2018) usa 1.08 m para autos y 2.33 m para camiones; SUV, pickup, van, combi, moto y bici son **supuestos** por clase. Posición en el habitáculo con el volante a la izquierda.
+- **Oclusores (geometría de `scene_objects.py`, la misma que dibuja el visor):** tronco (cilindro) y copa (esfera) de cada árbol, postes, muros, bardas, puestos y vehículos estacionados (cajas con altura) y los demás vehículos en movimiento en ese instante. La intersección es exacta para cilindro vertical, esfera y caja orientada; así la vista pasa sobre un auto bajo o bajo una copa alta.
+- **Noche sin alumbrado:** una persona, un objeto o un vehículo sin luces solo se ve dentro del alcance de las luces bajas, 30 m (**supuesto**, rango 10–60; Olson y Sivak, citados por terceros: peatones con ropa oscura se detectan a menos de 30 m), y de su apertura horizontal útil (±30°, **supuesto**). Un vehículo con luces se ve.
+- **Lluvia, niebla o granizo:** si el relato da la visibilidad meteorológica, nada más lejos se ve.
+- No se modelan el campo visual del conductor (pilares, espejos) ni el deslumbramiento.
+
+Resumen por par: si se veía al impacto, desde cuándo y a qué distancia, el tiempo disponible y lo que más tiempo lo tapó. Ejemplos: en `peaton_cruce` el camión estacionado tapa al peatón hasta 1.8 s antes del impacto (se ve a 21.6 m); en `objeto_fijo_arbol` el árbol se ve durante toda la aproximación (prueba del criterio de F5). Pruebas: intersecciones exactas y simétricas (Hypothesis), copa alta y auto bajo, noche y clima, árbol que tapa a una persona detrás de su tronco, segundo árbol que tapa el del impacto un tramo, camión que tapa al peatón.
 
 ## Orquestador (`reconstruct.py`)
 
@@ -132,3 +174,11 @@ El validador semántico (`check.ts` / `check.py`) marca masas, dimensiones y vel
 - IIHS (Insurance Institute for Highway Safety), "Airbags", https://www.iihs.org/research-areas/airbags (consultado el 2026-10-13): umbrales de despliegue de bolsas frontales y laterales.
 - Heydinger, G. J. et al. "Measured vehicle inertial parameters — NHTSA's data through November 1998", SAE 1999-01-1336.
 - Watson et al., SAE 2023-01-5043 y SAE 2022-01-5069 (CISS vs EDR; E3 en F7).
+- Michie, J. D. "Collision risk assessment based on occupant flail-space model", _Transportation Research Record_ 796, 1981 (espacio de vuelo de 0.6 m y 0.3 m; base de MASH, AASHTO).
+- AASHTO, _A Policy on Geometric Design of Highways and Streets_ (Green Book), 7.ª ed., 2018 (altura del ojo 1.08 m en autos y 2.33 m en camiones).
+- Olson, P. L. y Sivak, M., estudios de detección nocturna de peatones con luces bajas (1983–1984), citados en AAFS 2004 C60 y en MDPI Eng. Proc. 150(1) 18 (2026): < 30 m con ropa oscura.
+- NHTSA, investigación de volcaduras y calificación de resistencia a la volcadura: factor de estabilidad estática (SSF) y velocidad crítica de deslizamiento (CSV). La fórmula de §6 se deriva aquí por momento angular y energía; la referencia es conceptual.
+- Winter, D. A. _Biomechanics and Motor Control of Human Movement_, 4.ª ed., Wiley, 2009 (fracciones de masa por segmento, tabla 4.1; curvas normativas de la marcha).
+- Hendriks, E. et al., tabla suplementaria de rangos de movimiento "according to AAOS", _Plast. Reconstr. Surg. Glob. Open_ 8(6), 2020 (cadera, rodilla, hombro y codo).
+- Becker, T., Reade, M. y Scurlock, B. "Simulations of pedestrian impact collisions with Virtual CRASH 3 and comparisons with IPTM staged tests", arXiv:1512.00790, 2016 (tabla 3; E4).
+- Batista, M. "A simple throw model for frontal vehicle-pedestrian collisions", arXiv:0803.2402, 2008 (tablas 1 y 2: Eubanks y Haight, SAE 921591; Randles et al., SAE 2001-01-0171; E4).

@@ -153,8 +153,8 @@
         "id": "arboles-ladera",
         "tipo": "arbol",
         "posicion": {
-          "x": -15,
-          "y": 9
+          "x": 0,
+          "y": -7.2
         },
         "alto": {
           "valor": 7,
@@ -172,7 +172,59 @@
         "procedencia": {
           "fuente": "default",
           "confianza": 0.4,
-          "nota": "Vegetación en el interior de la curva; limita la visibilidad."
+          "nota": "Vegetación en el interior de la curva (al sur: la curva es a la izquierda para A); limita la visibilidad."
+        }
+      },
+      {
+        "id": "arboles-ladera-2",
+        "tipo": "arbol",
+        "posicion": {
+          "x": -10,
+          "y": -7.4
+        },
+        "alto": {
+          "valor": 7,
+          "unidad": "m",
+          "fuente": "default",
+          "confianza": 0.4
+        },
+        "diametro_tronco": {
+          "valor": 0.3,
+          "unidad": "m",
+          "fuente": "default",
+          "confianza": 0.4
+        },
+        "material": "vegetal",
+        "procedencia": {
+          "fuente": "default",
+          "confianza": 0.4,
+          "nota": "Vegetación en el interior de la curva (al sur: la curva es a la izquierda para A); limita la visibilidad."
+        }
+      },
+      {
+        "id": "arboles-ladera-3",
+        "tipo": "arbol",
+        "posicion": {
+          "x": 10,
+          "y": -7.4
+        },
+        "alto": {
+          "valor": 7,
+          "unidad": "m",
+          "fuente": "default",
+          "confianza": 0.4
+        },
+        "diametro_tronco": {
+          "valor": 0.3,
+          "unidad": "m",
+          "fuente": "default",
+          "confianza": 0.4
+        },
+        "material": "vegetal",
+        "procedencia": {
+          "fuente": "default",
+          "confianza": 0.4,
+          "nota": "Vegetación en el interior de la curva (al sur: la curva es a la izquierda para A); limita la visibilidad."
         }
       }
     ]

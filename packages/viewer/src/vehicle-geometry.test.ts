@@ -120,9 +120,12 @@ describe("vehículos procedurales", () => {
     g.traverse((o) => {
       if (o instanceof Mesh) roles.add(o.userData.role as string);
     });
-    expect(roles).toEqual(
-      new Set(["pintura", "vidrio", "plastico", "faro", "calavera", "llanta", "rin"]),
-    );
+    // Llanta y rin van en una sola malla por rueda (rol "rueda", atributo `_parte`).
+    expect(roles).toEqual(new Set(["pintura", "vidrio", "plastico", "faro", "calavera", "rueda"]));
+    const wheel = g.getObjectByName("wheel_fl_rueda") as Mesh;
+    const parte = wheel.geometry.getAttribute("_parte");
+    const values = new Set(Array.from(parte.array as Float32Array));
+    expect(values).toEqual(new Set([0, 1]));
   });
 
   it("motos y bicis tienen dos llantas y asiento a altura plausible", () => {

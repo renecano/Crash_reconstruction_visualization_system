@@ -19,3 +19,6 @@ packages/scene-schema/vehicle_classes.json
 solver/croquis_solver/data/stiffness_classes.json
 data/vehicles/
 packages/scene-schema/fixtures/resultados/
+
+# Salida del pipeline de assets (se verifica byte a byte con croquis-assets humans check)
+apps/web/public/modelos/

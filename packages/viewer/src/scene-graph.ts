@@ -26,10 +26,13 @@ import {
   MeshStandardMaterial,
   PlaneGeometry,
   RingGeometry,
+  Vector3,
 } from "three";
+import { attribute, color, float, mix } from "three/tsl";
+import { MeshStandardNodeMaterial } from "three/webgpu";
 import { toThree } from "./coords";
 import type { EnvironmentSettings } from "./environment";
-import { applyPosture, buildMannequin, CG_HEIGHT_FACTOR, type Posture } from "./person-geometry";
+import { applyPosture, buildMannequin, CG_HEIGHT_FACTOR } from "./person-geometry";
 import type { QualityProfile } from "./quality";
 import { buildDamageRig, type DamageRig } from "./damage-rig";
 import {
@@ -40,6 +43,8 @@ import {
   type TimedQuad,
 } from "./ground-marks";
 import { buildRoadGeometry, type Mesh2D } from "./road-geometry";
+import { rollsOver } from "./rollover-scene";
+import { sunShadowFrame, triangleInShadow, type SunShadowFrame } from "./shadow-frame";
 import { phaseAt, samplePerson, sampleVehicle, bracket } from "./sample";
 import {
   buildVehicle,
@@ -51,7 +56,8 @@ import {
 
 export interface SceneGraphOptions {
   quality: QualityProfile;
-  env: Pick<EnvironmentSettings, "night" | "wet" | "groundColor" | "streetLights">;
+  env: Pick<EnvironmentSettings, "night" | "wet" | "groundColor" | "streetLights"> &
+    Partial<Pick<EnvironmentSettings, "lightDirection">>;
 }
 
 export interface VehicleNode {
@@ -79,8 +85,11 @@ export interface SceneGraph {
   persons: PersonNode[];
   /** Coloca la escena en el instante t (s, relativo al impacto). */
   update(t: number): void;
-  /** Registra una actualización adicional (p. ej. restos horneados que llegan después). */
-  addUpdater(fn: (t: number) => void): void;
+  /**
+   * Registra una actualización adicional (p. ej. restos horneados que llegan después). Con
+   * `after`, corre después de colocar los vehículos (p. ej. la volcadura que los sobrescribe).
+   */
+  addUpdater(fn: (t: number) => void, opts?: { after?: boolean }): void;
   /** Último instante aplicado. */
   readonly time: number;
   dispose(): void;
@@ -131,6 +140,16 @@ function sceneMaterials(opts: SceneGraphOptions) {
   };
 }
 
+/** Llanta y rin con un solo material: el atributo `_parte` elige entre ambos (ver `wheelMesh`). */
+function wheelMaterial(): MeshStandardNodeMaterial {
+  const k = attribute("_parte", "float");
+  const m = new MeshStandardNodeMaterial();
+  m.colorNode = mix(color("#141414"), color("#b9bcc0"), k);
+  m.roughnessNode = mix(float(0.95), float(0.3), k);
+  m.metalnessNode = mix(float(0), float(0.8), k);
+  return m;
+}
+
 function vehicleMaterials(color: string, night: boolean): Record<PartRole, Material> {
   return {
     pintura: new MeshPhysicalMaterial({
@@ -149,6 +168,7 @@ function vehicleMaterials(color: string, night: boolean): Record<PartRole, Mater
     }),
     llanta: std("#141414", 0.95),
     rin: std("#b9bcc0", 0.3, 0.8),
+    rueda: wheelMaterial(),
     faro: std("#f5f3e8", 0.2, 0, {
       emissive: new Color(night ? "#fff6d5" : "#000000"),
       emissiveIntensity: night ? 3 : 0,
@@ -208,7 +228,72 @@ export function mesh2DToGeometry(m: Mesh2D, height: number): BufferGeometry {
   return g;
 }
 
+/**
+ * Parte una capa de la vía en la zona que puede recibir sombra (toca el cuadrado de la cámara de
+ * sombra del sol) y la que no. Los triángulos se subdividen por su lado más largo hasta medir a lo
+ * más `maxEdge` para que la separación siga la zona. Fuera de esa zona ninguna sombra puede caer,
+ * así que dibujarla sin muestrear el mapa de sombras da la misma imagen con menos costo (E6).
+ */
+export function splitByShadow(
+  m: Mesh2D,
+  height: number,
+  frame: SunShadowFrame,
+  maxEdge = 10,
+): { near: BufferGeometry | null; far: BufferGeometry | null } {
+  const pt = (i: number): Vector3 =>
+    new Vector3(...toThree(m.positions[2 * i] ?? 0, m.positions[2 * i + 1] ?? 0, height));
+  const stack: [Vector3, Vector3, Vector3][] = [];
+  for (let k = 0; k + 2 < m.indices.length; k += 3) {
+    stack.push([pt(m.indices[k]!), pt(m.indices[k + 1]!), pt(m.indices[k + 2]!)]);
+  }
+  const near: number[] = [];
+  const far: number[] = [];
+  while (stack.length > 0) {
+    const [a, b, c] = stack.pop()!;
+    const ab = a.distanceToSquared(b);
+    const bc = b.distanceToSquared(c);
+    const ca = c.distanceToSquared(a);
+    const longest = Math.max(ab, bc, ca);
+    if (longest > maxEdge * maxEdge) {
+      if (longest === ab) {
+        const mid = a.clone().add(b).multiplyScalar(0.5);
+        stack.push([a, mid, c], [mid, b, c]);
+      } else if (longest === bc) {
+        const mid = b.clone().add(c).multiplyScalar(0.5);
+        stack.push([a, b, mid], [a, mid, c]);
+      } else {
+        const mid = c.clone().add(a).multiplyScalar(0.5);
+        stack.push([a, b, mid], [mid, b, c]);
+      }
+      continue;
+    }
+    const out = triangleInShadow(frame, a, b, c) ? near : far;
+    out.push(a.x, a.y, a.z, b.x, b.y, b.z, c.x, c.y, c.z);
+  }
+  const make = (arr: number[]): BufferGeometry | null => {
+    if (arr.length === 0) return null;
+    const g = new BufferGeometry();
+    g.setAttribute("position", new BufferAttribute(new Float32Array(arr), 3));
+    const nor = new Float32Array(arr.length);
+    for (let i = 1; i < nor.length; i += 3) nor[i] = 1;
+    g.setAttribute("normal", new BufferAttribute(nor, 3));
+    return g;
+  };
+  return { near: make(near), far: make(far) };
+}
+
 /** Hash determinista de una cadena a [0, 1) (FNV-1a), para variar árboles con semilla. */
+/**
+ * ¿La pieza proyecta sombra? El renderer está limitado por CPU por objeto (E6), y cada malla en el
+ * pase de sombras cuesta lo mismo que en el principal. Rines (su sombra cae dentro de la de la
+ * llanta), faros y calaveras (dentro de la silueta de la carrocería) y vidrios (transparentes: no
+ * deberían dar sombra opaca) no la proyectan; la carrocería, llantas, defensas y espejos sí.
+ */
+export function castsShadow(m: { userData: Record<string, unknown> }): boolean {
+  const role = m.userData.role as PartRole | undefined;
+  return role !== "rin" && role !== "faro" && role !== "calavera" && role !== "vidrio";
+}
+
 export function hash01(s: string): number {
   let h = 0x811c9dc5;
   for (let i = 0; i < s.length; i++) {
@@ -258,6 +343,9 @@ export function buildSceneGraph(
   ground.position.y = -0.03;
   // El pasto no recibe sombras: cubre casi toda la pantalla y las sombras importan en la calzada (E6).
   ground.receiveShadow = false;
+  // Se dibuja después de la vía, los vehículos y los objetos: la prueba de profundidad descarta
+  // los pixeles de pasto que quedan tapados y no se sombrean dos veces (E6, limitado por relleno).
+  ground.renderOrder = 2;
   root.add(ground);
 
   const lugar = spec.lugar;
@@ -284,12 +372,32 @@ export function buildSceneGraph(
     ["rayas_amarillas", road.yellowLines, mats.yellow, 0.012],
     ["paso_peatonal", road.crosswalks, mats.crosswalk, 0.014],
   ];
+  const frame =
+    opts.quality.shadows && opts.env.lightDirection
+      ? sunShadowFrame(resultado, opts.env.lightDirection)
+      : undefined;
   for (const [name, m2d, mat, h] of layers) {
     if (m2d.indices.length === 0) continue;
-    const mesh = new Mesh(mesh2DToGeometry(m2d, h), mat);
-    mesh.name = name;
-    mesh.receiveShadow = true;
-    roadGroup.add(mesh);
+    if (!frame) {
+      const mesh = new Mesh(mesh2DToGeometry(m2d, h), mat);
+      mesh.name = name;
+      mesh.receiveShadow = true;
+      roadGroup.add(mesh);
+      continue;
+    }
+    const { near, far } = splitByShadow(m2d, h, frame);
+    if (near) {
+      const mesh = new Mesh(near, mat);
+      mesh.name = name;
+      mesh.receiveShadow = true;
+      roadGroup.add(mesh);
+    }
+    if (far) {
+      const mesh = new Mesh(far, mat);
+      mesh.name = `${name}_sin_sombra`;
+      mesh.receiveShadow = false;
+      roadGroup.add(mesh);
+    }
   }
   root.add(roadGroup);
 
@@ -325,6 +433,7 @@ export function buildSceneGraph(
   const objGroup = new Group();
   objGroup.name = "objetos";
   const seedText = String(spec.meta.semilla);
+  const solverObjects = new Map((resultado.objetos ?? []).map((g) => [g.id, g]));
   let trees = 0;
   for (const o of spec.entorno.objetos ?? []) {
     const g = new Group();
@@ -334,17 +443,19 @@ export function buildSceneGraph(
     const alto = o.alto ? longitudM(o.alto) : undefined;
     if (o.tipo === "arbol") {
       if (trees++ >= opts.quality.maxTrees) continue;
+      // Geometría del solver (la misma del análisis de visibilidad); sin ella, la del hash.
+      const geo = solverObjects.get(o.id);
       const d = o.diametro_tronco ? longitudM(o.diametro_tronco) : 0.35;
       const u = hash01(`${seedText}:${o.id}`);
-      const h = 3.5 + 2.5 * u;
+      const h = geo?.copa?.tronco_alto_m ?? 3.5 + 2.5 * u;
       const trunk = new Mesh(new CylinderGeometry(d / 2, (d / 2) * 1.15, h, 12), mats.trunk);
       trunk.name = "tronco";
       trunk.position.y = h / 2;
       trunk.userData.radius = d / 2;
-      const crownR = 1.8 + 1.6 * u + 2 * d;
+      const crownR = geo?.copa?.radio_m ?? 1.8 + 1.6 * u + 2 * d;
       const crown = new Mesh(new IcosahedronGeometry(crownR, 1), mats.crown);
       crown.name = "copa";
-      crown.position.y = h + crownR * 0.7;
+      crown.position.y = geo?.copa?.centro_m ?? h + crownR * 0.7;
       crown.rotation.y = 2 * Math.PI * u;
       for (const m of [trunk, crown]) m.castShadow = true;
       g.add(trunk, crown);
@@ -485,7 +596,7 @@ export function buildSceneGraph(
     group.traverse((m) => {
       if (m instanceof Mesh) {
         m.material = vm[m.userData.role as PartRole] ?? vm.plastico;
-        m.castShadow = opts.quality.shadows;
+        m.castShadow = opts.quality.shadows && castsShadow(m);
       }
     });
     const rig = buildDamageRig(group, v, dims, glyphs.get(v.id)?.colorHex ?? "#9aa0a6", {
@@ -496,7 +607,7 @@ export function buildSceneGraph(
     });
     disposables.push(...rig.materials);
     group.traverse((m) => {
-      if (m instanceof Mesh) m.castShadow = opts.quality.shadows;
+      if (m instanceof Mesh) m.castShadow = opts.quality.shadows && castsShadow(m);
     });
     const wheels = wheelNames(group).flatMap((n) => {
       const obj = group.getObjectByName(n);
@@ -538,6 +649,7 @@ export function buildSceneGraph(
         bloqueadas: sv?.frenado?.aplico?.valor ?? false,
         aplastamientoFrontal: (v.dano.cdc?.lado ?? "F") === "F" ? Math.max(...v.dano.perfil_m) : 0,
         tReposo: v.involucrado ? reposo.get(v.id) : undefined,
+        volcado: rollsOver(resultado, v.id),
       };
     }),
   );
@@ -606,6 +718,7 @@ export function buildSceneGraph(
   const vehicleNodes = new Map(vehicles.map((n) => [n.id, n]));
 
   const extraUpdaters: ((t: number) => void)[] = [];
+  const postUpdaters: ((t: number) => void)[] = [];
   let lastT = resultado.t_inicio;
 
   function update(t: number): void {
@@ -620,7 +733,8 @@ export function buildSceneGraph(
       const pose = sampleVehicle(n.track, t);
       const [x, y, z] = toThree(pose.x, pose.y, 0);
       n.group.position.set(x, y, z);
-      n.group.rotation.y = pose.yaw;
+      // Rotación completa: la volcadura (actualización posterior) puede dejar alabeo y cabeceo.
+      n.group.rotation.set(0, pose.yaw, 0);
       const { i, f } = bracket(n.track.t, t);
       const s =
         (n.distance[i] ?? 0) +
@@ -638,7 +752,7 @@ export function buildSceneGraph(
         n.group.position.set(x, y, z);
         n.group.rotation.y = pose.yaw;
         const fase = phaseAt(data.fases, t);
-        const posture = (fase?.fase ?? "de_pie") as Posture;
+        const posture = fase?.fase === "montado" ? "sentado" : (fase?.fase ?? "de_pie");
         const progress =
           fase && fase.t_fin > fase.t_inicio
             ? (t - fase.t_inicio) / (fase.t_fin - fase.t_inicio)
@@ -660,6 +774,7 @@ export function buildSceneGraph(
         applyPosture(n.group, "sentado");
       }
     }
+    for (const fn of postUpdaters) fn(t);
   }
 
   update(resultado.t_inicio);
@@ -679,9 +794,9 @@ export function buildSceneGraph(
     vehicles,
     persons,
     update,
-    addUpdater(fn: (t: number) => void) {
-      extraUpdaters.push(fn);
-      fn(lastT);
+    addUpdater(fn: (t: number) => void, o?: { after?: boolean }) {
+      (o?.after ? postUpdaters : extraUpdaters).push(fn);
+      update(lastT);
     },
     get time() {
       return lastT;

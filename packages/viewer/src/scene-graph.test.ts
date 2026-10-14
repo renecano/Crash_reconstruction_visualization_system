@@ -80,14 +80,17 @@ describe("grafo de escena", () => {
     expect(w.x).toBeCloseTo(data.proyeccion?.posicion_reposo.x ?? NaN, 4);
   });
 
-  it("los ocupantes de autos van ocultos y quien va en moto se ve sobre ella", async () => {
+  it("sin cuerpos cargados: ocupantes de autos ocultos y el jinete sigue su trayectoria", async () => {
     const r = await loadResultado("motociclista");
     const sg = buildSceneGraph(loadFixture("motociclista"), r, opts);
     const moto = r.vehiculos.find((v) => v.clase === "motocicleta");
     expect(moto).toBeDefined();
     for (const n of sg.persons) {
+      const data = r.personas.find((p) => p.id === n.id)!;
       if (n.vehicleId === moto?.id) {
-        expect(n.mode).toBe("a_bordo_visible");
+        // El jinete sale proyectado: tiene trayectoria propia y va montado hasta el impacto.
+        expect(data.proyeccion).toBeDefined();
+        expect(n.mode).toBe("trayectoria");
         expect(n.group.visible).toBe(true);
         sg.update(-1);
         const mp = sampleVehicle(moto?.trayectoria ?? r.vehiculos[0]!.trayectoria, -1);

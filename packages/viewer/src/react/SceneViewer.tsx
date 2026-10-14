@@ -24,9 +24,9 @@ import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
 import { SkyMesh } from "three/examples/jsm/objects/SkyMesh.js";
 import { CubeRenderTarget } from "three/webgpu";
 import {
-  actionBounds,
   cinematicCamera,
   damageCamera,
+  personCamera,
   driverCamera,
   freeCameraStart,
   overheadCamera,
@@ -34,10 +34,14 @@ import {
   type CameraPose,
 } from "../cameras";
 import type { ViewerClock } from "../clock";
-import { toThree } from "../coords";
 import { environmentFor, type EnvironmentSettings } from "../environment";
 import { QUALITY_PROFILES, type QualityLevel } from "../quality";
 import { attachDebris } from "../debris-scene";
+import { attachRollovers } from "../rollover-scene";
+import { buildVisibilityOverlay, eyeHeightFor } from "../visibility-overlay";
+import { sunShadowFrame } from "../shadow-frame";
+import { BODY_BASE_URL, loadBodies } from "../body-assets";
+import { attachPeople, variantsFor, type PeopleAttachment } from "../people-scene";
 import { buildSceneGraph } from "../scene-graph";
 import { seatHeight } from "../vehicle-geometry";
 
@@ -60,6 +64,10 @@ export interface SceneViewerProps {
   onRendererInfo?: (info: RendererInfo) => void;
   onError?: (error: Error) => void;
   className?: string;
+  /** Carpeta de los cuerpos de MakeHuman (`personas.json` y los .glb). */
+  bodiesBaseUrl?: string;
+  /** Resultado del montaje de personas (ragdolls calibrados, indicadores). */
+  onPeople?: (people: PeopleAttachment) => void;
 }
 
 /** Muestras de tiempo por cuadro para E6, expuestas en `window.__croquisPerf`. */
@@ -76,6 +84,8 @@ declare global {
     __croquisReady?: boolean;
     /** Restos horneados y agregados a la escena. */
     __croquisDebrisReady?: boolean;
+    __croquisPeopleReady?: boolean;
+    __croquisPeople?: PeopleAttachment;
     /** `performance.now()` del primer cuadro listo (E6: tiempo hasta interactivo). */
     __croquisReadyAt?: number;
   }
@@ -102,6 +112,8 @@ function SceneContent({
   driverVehicleId,
   quality,
   env,
+  bodiesBaseUrl,
+  onPeople,
 }: Omit<SceneViewerProps, "renderer" | "onRendererInfo" | "onError" | "className"> & {
   env: EnvironmentSettings;
 }): ReactElement {
@@ -115,7 +127,7 @@ function SceneContent({
   useEffect(() => {
     let alive = true;
     window.__croquisDebrisReady = false;
-    attachDebris(spec, resultado, graph)
+    Promise.all([attachDebris(spec, resultado, graph), attachRollovers(resultado, graph)])
       .then(() => {
         if (alive) window.__croquisDebrisReady = true;
       })
@@ -128,32 +140,51 @@ function SceneContent({
     };
   }, [spec, resultado, graph]);
 
+  // Personas: cuerpos de MakeHuman, ocupantes y ragdolls calibrados (se hornean al cargar).
+  useEffect(() => {
+    let alive = true;
+    window.__croquisPeopleReady = false;
+    loadBodies(variantsFor(spec), bodiesBaseUrl ?? BODY_BASE_URL)
+      .then((templates) => attachPeople(spec, resultado, graph, templates))
+      .then((people) => {
+        if (!alive) return;
+        window.__croquisPeople = people;
+        onPeople?.(people);
+        window.__croquisPeopleReady = true;
+      })
+      .catch((err: unknown) => {
+        // Sin cuerpos (p. ej. sin red) quedan los maniquíes del grafo de escena.
+        console.error("No se pudieron cargar los cuerpos", err);
+        if (alive) window.__croquisPeopleReady = true;
+      });
+    return () => {
+      alive = false;
+    };
+  }, [spec, resultado, graph, bodiesBaseUrl, onPeople]);
+
   const { scene, camera: cam, gl } = useThree();
-  const bounds = useMemo(() => actionBounds(resultado), [resultado]);
 
   // Cielo, niebla y luces.
   const lights = useMemo(() => {
     const group = new Object3D();
     const hemi = new HemisphereLight(env.ambientSkyColor, env.groundColor, env.ambientIntensity);
     const sun = new DirectionalLight(env.night ? "#b8c6ff" : "#fff4e0", env.sunIntensity);
-    const [dx, dy, dz] = env.lightDirection;
-    const center = toThree(bounds.cx, bounds.cy, 0);
-    const dist = 120;
-    sun.position.set(center[0] + dx * dist, Math.max(8, dz * dist), center[2] - dy * dist);
-    sun.target.position.set(center[0], 0, center[2]);
+    // Mismo marco que usa el grafo de escena para saber qué parte de la vía recibe sombra.
+    const frame = sunShadowFrame(resultado, env.lightDirection);
+    sun.position.copy(frame.position);
+    sun.target.position.copy(frame.target);
     sun.castShadow = profile.shadows;
-    const extent = Math.max(18, 0.75 * bounds.size);
-    sun.shadow.camera.left = -extent;
-    sun.shadow.camera.right = extent;
-    sun.shadow.camera.top = extent;
-    sun.shadow.camera.bottom = -extent;
+    sun.shadow.camera.left = -frame.extent;
+    sun.shadow.camera.right = frame.extent;
+    sun.shadow.camera.top = frame.extent;
+    sun.shadow.camera.bottom = -frame.extent;
     sun.shadow.camera.near = 1;
     sun.shadow.camera.far = 400;
     sun.shadow.mapSize.set(profile.shadowMapSize, profile.shadowMapSize);
     sun.shadow.bias = -0.0004;
     group.add(hemi, sun, sun.target);
     return group;
-  }, [env, bounds, profile]);
+  }, [env, resultado, profile]);
 
   const sky = useMemo(() => {
     if (env.night) return null;
@@ -213,7 +244,9 @@ function SceneContent({
   const driver = useMemo(() => {
     const v = resultado.vehiculos.find((x) => x.id === driverVehicleId) ?? resultado.vehiculos[0];
     if (!v) return undefined;
+    // Altura del ojo del análisis de visibilidad del solver; sin él, asiento + 0.62 m.
     const eye =
+      eyeHeightFor(resultado, v.id) ??
       seatHeight(v.clase, {
         length: v.dimensiones.largo_m,
         width: v.dimensiones.ancho_m,
@@ -222,6 +255,13 @@ function SceneContent({
       }) + 0.62;
     return { v, eye };
   }, [resultado, driverVehicleId]);
+
+  // Líneas de vista del conductor (solo en su cámara).
+  const overlay = useMemo(() => buildVisibilityOverlay(resultado, graph), [resultado, graph]);
+  useEffect(() => () => overlay.dispose(), [overlay]);
+  useEffect(() => {
+    overlay.setObserver(camera === "conductor" ? driver?.v.id : undefined);
+  }, [overlay, camera, driver]);
 
   useFrame((_, delta) => {
     clock.tick(Math.min(delta, 0.1), performance.now());
@@ -234,6 +274,7 @@ function SceneContent({
       applyPose(persp, driverCamera(driver.v, t, driver.eye));
     else if (camera === "cinematica") applyPose(persp, cinematicCamera(resultado, t));
     else if (camera === "dano") applyPose(persp, damageCamera(resultado, t));
+    else if (camera === "persona") applyPose(persp, personCamera(resultado, t));
   });
 
   return (
@@ -290,7 +331,7 @@ function PerfProbe({ backend }: { backend: () => RendererInfo["backend"] | undef
       perf.triangles = info.render?.triangles;
       info.reset?.();
     }
-    if (!window.__croquisDebrisReady) return;
+    if (!window.__croquisDebrisReady || !window.__croquisPeopleReady) return;
     if (!window.__croquisReady) window.__croquisReadyAt = performance.now();
     window.__croquisReady = true;
   });

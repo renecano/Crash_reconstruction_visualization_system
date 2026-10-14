@@ -6,6 +6,7 @@ requires-python = ">=3.14"
 members = [
     "croquis",
     "croquis-api",
+    "croquis-assets",
     "croquis-data",
     "croquis-eval",
     "croquis-extraction",
@@ -204,6 +205,7 @@ version = "0.1.0"
 source = { virtual = "." }
 dependencies = [
     { name = "croquis-api" },
+    { name = "croquis-assets" },
     { name = "croquis-data" },
     { name = "croquis-eval" },
     { name = "croquis-extraction" },
@@ -224,6 +226,7 @@ dev = [
 [package.metadata]
 requires-dist = [
     { name = "croquis-api", editable = "services/api" },
+    { name = "croquis-assets", editable = "assets/pipeline" },
     { name = "croquis-data", editable = "data" },
     { name = "croquis-eval", editable = "eval" },
     { name = "croquis-extraction", editable = "extraction" },
@@ -273,6 +276,21 @@ requires-dist = [
 
 [package.metadata.requires-dev]
 dev = [{ name = "httpx", specifier = ">=0.28,<1" }]
+
+[[package]]
+name = "croquis-assets"
+version = "0.1.0"
+source = { editable = "assets/pipeline" }
+dependencies = [
+    { name = "httpx" },
+    { name = "numpy" },
+]
+
+[package.metadata]
+requires-dist = [
+    { name = "httpx", specifier = ">=0.28,<1" },
+    { name = "numpy", specifier = ">=2.5,<3" },
+]
 
 [[package]]
 name = "croquis-data"

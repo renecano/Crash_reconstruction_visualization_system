@@ -33,6 +33,8 @@ import dynamic from "next/dynamic";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useCallback, useEffect, useMemo, useState, useSyncExternalStore } from "react";
 import { Legend } from "../legend";
+import type { PeopleAttachment } from "@croquis/viewer";
+import { PeoplePanel } from "./people-panel";
 import { ResultPanel } from "./result-panel";
 import { TimelineBar } from "./timeline-bar";
 
@@ -99,6 +101,7 @@ const CAMARAS: { value: CameraMode; label: string }[] = [
   { value: "cenital", label: "Cenital" },
   { value: "cinematica", label: "Cinematográfica" },
   { value: "dano", label: "Acercamiento al daño" },
+  { value: "persona", label: "Seguir a la persona" },
 ];
 
 const noopSubscribe = () => () => undefined;
@@ -151,6 +154,14 @@ export function VisorApp() {
 
   // Backend automático por medición (ADR 0006): WebGPU primero; si no llega a 60 fps se prueba
   // WebGL 2 y se queda el más rápido. La decisión se recuerda en este navegador.
+  // Resultado del montaje de personas (ragdolls calibrados) para el panel.
+  const [people, setPeople] = useState<{ escena: FixtureName; data: PeopleAttachment } | null>(
+    null,
+  );
+  const onPeople = useCallback(
+    (data: PeopleAttachment) => setPeople({ escena: params.escena, data }),
+    [params.escena],
+  );
   // Una prueba por escena: lo que rinde en una escena puede no rendir en otra.
   const [trialState, setTrialState] = useState<{ escena: FixtureName; trial: BackendTrial }>(
     () => ({
@@ -221,9 +232,14 @@ export function VisorApp() {
   const [mode, driverId] = params.camara.startsWith("conductor-")
     ? (["conductor", params.camara.slice("conductor-".length)] as const)
     : ([params.camara as CameraMode, undefined] as const);
-  const cameraMode: CameraMode = ["libre", "cenital", "conductor", "cinematica", "dano"].includes(
-    mode,
-  )
+  const cameraMode: CameraMode = [
+    "libre",
+    "cenital",
+    "conductor",
+    "cinematica",
+    "dano",
+    "persona",
+  ].includes(mode)
     ? mode
     : "libre";
 
@@ -339,6 +355,7 @@ export function VisorApp() {
             quality={calidad}
             renderer={effectiveRenderer}
             onRendererInfo={setInfo}
+            onPeople={onPeople}
             onError={() =>
               setError(
                 "Este navegador no pudo iniciar WebGPU ni WebGL 2; el visor 3D no está disponible.",
@@ -368,6 +385,9 @@ export function VisorApp() {
       ) : null}
 
       {r ? <ResultPanel resultado={r} supuestosEntorno={env.supuestos} spec={spec} /> : null}
+      {r ? (
+        <PeoplePanel resultado={r} people={people?.escena === params.escena ? people.data : null} />
+      ) : null}
     </div>
   );
 }

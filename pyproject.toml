@@ -12,6 +12,7 @@ dependencies = [
   "croquis-extraction",
   "croquis-data",
   "croquis-eval",
+  "croquis-assets",
 ]
 
 [tool.uv.sources]
@@ -21,9 +22,10 @@ croquis-api = { workspace = true }
 croquis-extraction = { workspace = true }
 croquis-data = { workspace = true }
 croquis-eval = { workspace = true }
+croquis-assets = { workspace = true }
 
 [tool.uv.workspace]
-members = ["packages/scene-schema/python", "solver", "services/api", "extraction", "data", "eval"]
+members = ["packages/scene-schema/python", "solver", "services/api", "extraction", "data", "eval", "assets/pipeline"]
 
 [dependency-groups]
 dev = [
@@ -36,7 +38,7 @@ dev = [
 ]
 
 [tool.pytest.ini_options]
-testpaths = ["packages/scene-schema/python/tests", "solver/tests", "services/api/tests", "extraction/tests", "data/tests", "eval/tests"]
+testpaths = ["packages/scene-schema/python/tests", "solver/tests", "services/api/tests", "extraction/tests", "data/tests", "eval/tests", "assets/pipeline/tests"]
 addopts = "-q --strict-markers --strict-config --import-mode=importlib"
 xfail_strict = true
 filterwarnings = ["error"]
@@ -57,7 +59,7 @@ ignore = ["RUF001", "RUF002", "RUF003"]
 "**/generated.py" = ["E501", "N815", "UP"]
 
 [tool.ruff.lint.isort]
-known-first-party = ["croquis_scene_schema", "croquis_solver", "croquis_api", "croquis_extraction", "croquis_data", "croquis_eval"]
+known-first-party = ["croquis_scene_schema", "croquis_solver", "croquis_api", "croquis_extraction", "croquis_data", "croquis_eval", "croquis_assets"]
 
 [tool.ruff.format]
 quote-style = "double"
@@ -65,7 +67,7 @@ quote-style = "double"
 [tool.pyright]
 pythonVersion = "3.14"
 typeCheckingMode = "strict"
-include = ["packages/scene-schema/python", "solver", "services/api", "extraction", "data", "eval"]
+include = ["packages/scene-schema/python", "solver", "services/api", "extraction", "data", "eval", "assets/pipeline"]
 exclude = ["**/node_modules", "**/__pycache__", "**/.venv", "data/raw", "data/processed", "eval/results"]
 venvPath = "."
 venv = ".venv"
