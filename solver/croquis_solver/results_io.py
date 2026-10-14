@@ -15,14 +15,29 @@ from pathlib import Path
 from typing import Any
 
 from croquis_scene_schema import RESULTS_DIR, list_fixtures, load_fixture, result_errors
+from croquis_solver.consistency import check_consistency
+from croquis_solver.inversion import invert
+from croquis_solver.montecarlo import monte_carlo
 from croquis_solver.reconstruct import reconstruct
 
 REL_TOL = 1e-6
 ABS_TOL = 1e-5
+# La inversión es un ajuste iterativo con álgebra lineal (BLAS) cuyos núcleos cambian con el CPU:
+# entre máquinas sus números difieren en décimas. Sus percentiles salen de 12 reestimaciones, con
+# una incertidumbre estadística mucho mayor que eso, así que esos bloques se comparan con 5 %.
+# Estructura, booleanos (identificable, en el límite) y textos se siguen comparando exactos.
+FIT_PREFIXES = ("/inversion", "/consistencia")
+FIT_REL_TOL = 0.05
+FIT_ABS_TOL = 0.05
 
 
 def render(name: str) -> str:
-    doc = reconstruct(load_fixture(name)).to_dict()
+    spec = load_fixture(name)
+    doc = reconstruct(spec).to_dict()
+    doc["incertidumbre"] = monte_carlo(spec).to_dict()
+    inv = invert(spec)
+    doc["inversion"] = inv.to_dict()
+    doc["consistencia"] = [f.to_dict() for f in check_consistency(spec, inversion=inv)]
     errors = result_errors(doc)
     if errors:
         msg = f"El resultado de {name} no cumple resultado.schema.json:\n" + "\n".join(errors[:10])
@@ -37,7 +52,9 @@ def differences(expected: Any, actual: Any, path: str = "") -> list[str]:
         if expected != actual:
             out.append(f"{path}: {expected!r} ≠ {actual!r}")
     elif isinstance(expected, int | float) and isinstance(actual, int | float):
-        if not math.isclose(float(expected), float(actual), rel_tol=REL_TOL, abs_tol=ABS_TOL):
+        fit = path.startswith(FIT_PREFIXES)
+        rel, abs_ = (FIT_REL_TOL, FIT_ABS_TOL) if fit else (REL_TOL, ABS_TOL)
+        if not math.isclose(float(expected), float(actual), rel_tol=rel, abs_tol=abs_):
             out.append(f"{path}: {expected} ≠ {actual}")
     elif isinstance(expected, dict) and isinstance(actual, dict):
         e_keys: set[str] = set(expected)  # pyright: ignore[reportUnknownArgumentType]

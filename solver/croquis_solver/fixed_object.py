@@ -113,7 +113,10 @@ def narrow_object(
             break
         width = new_width
         profile = profile_for_energy(e_vehicle, width, k, TRIANGULAR_SHAPES["poste"])
-    assert math.isclose(crush_energy(profile, width, k), e_vehicle, rel_tol=1e-6) or e_vehicle == 0
+    # Por debajo del umbral de deformación permanente (G·ancho, ~b0) el perfil es cero: la
+    # energía se absorbe de forma elástica y no deja aplastamiento.
+    below_threshold = max(profile) == 0.0 and e_vehicle <= crush_energy(profile, width, k)
+    assert below_threshold or math.isclose(crush_energy(profile, width, k), e_vehicle, rel_tol=1e-6)
     return FixedObjectResult(
         delta_v=delta_v,
         v_after=v_after,

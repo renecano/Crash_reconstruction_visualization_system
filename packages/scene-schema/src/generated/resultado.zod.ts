@@ -2,8 +2,17 @@
 // Regenera con `pnpm --filter @croquis/scene-schema generate`.
 import { z } from "zod";
 
-export const RESULTADO_SCHEMA_ID = "https://croquis.local/schema/resultado/1.2.0";
-export const RESULT_VERSION = "1.2.0" as const;
+export const RESULTADO_SCHEMA_ID = "https://croquis.local/schema/resultado/1.4.0";
+export const RESULT_VERSION = "1.4.0" as const;
+
+export const CampoMuestreado = z.strictObject({
+  ruta: z.string().min(1).max(120),
+  distribucion: z.enum(["uniforme"]),
+  min: z.number(),
+  max: z.number(),
+  nota: z.string().max(200),
+});
+export type CampoMuestreado = z.infer<typeof CampoMuestreado>;
 
 /** Zonas probables de contacto con el frente del vehículo, como indicadores neutros (sin diagnóstico de lesiones). Vacías para jinetes proyectados desde su vehículo. */
 export const Contacto = z.strictObject({
@@ -39,6 +48,27 @@ export const Dano = z.strictObject({
 });
 export type Dano = z.infer<typeof Dano>;
 
+export const Id = z.string().regex(new RegExp("^[a-z0-9][a-z0-9_-]{0,63}$"));
+export type Id = z.infer<typeof Id>;
+
+/** Números detrás de la bandera (km/h y m); los pares son [mínimo, máximo]. */
+export const DatosInconsistencia = z.strictObject({
+  vehiculo: Id,
+  velocidad_kmh: z.number().optional(),
+  marcas_m: z.number().optional(),
+  minima_kmh: z.number().optional(),
+  declarada_max_kmh: z.number().optional(),
+  distancia_m: z.number().optional(),
+  rango_kmh: z.tuple([z.number(), z.number()]).optional(),
+  dano_kmh: z.tuple([z.number(), z.number()]).optional(),
+  velocidades_kmh: z.tuple([z.number(), z.number()]).optional(),
+  distancia_minima_m: z.number().optional(),
+  evidencia_kmh: z.tuple([z.number(), z.number()]).optional(),
+  declarada_kmh: z.tuple([z.number(), z.number()]).optional(),
+  evidencia: z.array(z.string().min(1).max(80)).max(64).optional(),
+});
+export type DatosInconsistencia = z.infer<typeof DatosInconsistencia>;
+
 export const DetalleEvento = z.strictObject({
   impulso_ns: z.tuple([z.number(), z.number()]).optional(),
   adherencia: z.boolean().optional(),
@@ -63,8 +93,15 @@ export const Dimensiones = z.strictObject({
 });
 export type Dimensiones = z.infer<typeof Dimensiones>;
 
-export const Id = z.string().regex(new RegExp("^[a-z0-9][a-z0-9_-]{0,63}$"));
-export type Id = z.infer<typeof Id>;
+/** Mejor ajuste y percentiles de las reestimaciones con entradas perturbadas. */
+export const EstimacionParametro = z.strictObject({
+  mejor: z.number(),
+  p10: z.number(),
+  p50: z.number(),
+  p90: z.number(),
+  muestras: z.int().min(1).max(1000),
+});
+export type EstimacionParametro = z.infer<typeof EstimacionParametro>;
 
 export const EventoResultado = z.strictObject({
   id: z.string().regex(new RegExp("^[a-z0-9][a-z0-9_-]{0,79}$")),
@@ -89,6 +126,92 @@ export const Fase = z.strictObject({
   t_fin: z.number(),
 });
 export type Fase = z.infer<typeof Fase>;
+
+/** Percentiles 10, 50 y 90 de las muestras. */
+export const Percentiles = z.strictObject({ p10: z.number(), p50: z.number(), p90: z.number() });
+export type Percentiles = z.infer<typeof Percentiles>;
+
+export const IncertidumbrePersona = z.strictObject({ id: Id, distancia_proyeccion_m: Percentiles });
+export type IncertidumbrePersona = z.infer<typeof IncertidumbrePersona>;
+
+export const IncertidumbreVehiculo = z.strictObject({
+  id: Id,
+  v_impacto_kmh: Percentiles,
+  delta_v_kmh: Percentiles,
+  reposo_x_m: Percentiles,
+  reposo_y_m: Percentiles,
+  distancia_post_m: Percentiles,
+});
+export type IncertidumbreVehiculo = z.infer<typeof IncertidumbreVehiculo>;
+
+/** Monte Carlo sobre los campos inciertos (PLAN §6.1.11): cada campo muestreado con su rango y los percentiles de las salidas principales. */
+export const Incertidumbre = z.strictObject({
+  semilla: z.int().min(0),
+  muestras: z.int().min(1).max(10000),
+  validas: z.int().min(0),
+  campos: z.array(CampoMuestreado).max(64),
+  vehiculos: z.array(IncertidumbreVehiculo).max(16),
+  personas: z.array(IncertidumbrePersona).max(32),
+});
+export type Incertidumbre = z.infer<typeof Incertidumbre>;
+
+export const Inconsistencia = z.strictObject({
+  codigo: z.enum([
+    "detenido_con_velocidad",
+    "marcas_vs_velocidad",
+    "proyeccion_vs_velocidad",
+    "dano_vs_velocidad",
+    "reposo_inalcanzable",
+    "velocidad_vs_evidencia",
+  ]),
+  mensaje: z.string().min(1).max(600),
+  datos: DatosInconsistencia,
+});
+export type Inconsistencia = z.infer<typeof Inconsistencia>;
+
+/** Incógnita de la inversión. Sin `estimacion` cuando la evidencia no la fija (identificable = false): queda en su valor inicial. */
+export const ParametroInvertido = z.strictObject({
+  parametro: z.enum(["velocidad_previa", "rumbo_inicial"]),
+  vehiculo: Id,
+  unidad: z.enum(["km/h", "deg"]),
+  inicial: z.number(),
+  inicial_declarado: z.boolean(),
+  identificable: z.boolean(),
+  sigma_local: z.number().min(0).optional(),
+  estimacion: EstimacionParametro.optional(),
+  en_limite: z.boolean().optional(),
+});
+export type ParametroInvertido = z.infer<typeof ParametroInvertido>;
+
+export const Residuo = z.strictObject({ nombre: z.string().min(1).max(80), sigma: z.number() });
+export type Residuo = z.infer<typeof Residuo>;
+
+export const VelocidadImpactoInvertida = z.strictObject({
+  vehiculo: Id,
+  p10: z.number(),
+  p50: z.number(),
+  p90: z.number(),
+  muestras: z.int().min(1).max(1000),
+});
+export type VelocidadImpactoInvertida = z.infer<typeof VelocidadImpactoInvertida>;
+
+/** Inversión (PLAN §6.1.10): velocidades y rumbos que reproducen la evidencia declarada, con mínimos cuadrados robustos y reestimaciones con semilla. */
+export const Inversion = z.strictObject({
+  semilla: z.int().min(0),
+  muestras: z.int().min(0).max(1000),
+  evidencia: z
+    .array(
+      z
+        .string()
+        .regex(new RegExp("^(reposo|rumbo_final|marcas_frenado|proyeccion|dano):[A-Za-z0-9_-]+$")),
+    )
+    .max(64),
+  parametros: z.array(ParametroInvertido).max(32),
+  velocidad_impacto: z.array(VelocidadImpactoInvertida).max(16),
+  residuos: z.array(Residuo).max(128),
+  convergio: z.boolean(),
+});
+export type Inversion = z.infer<typeof Inversion>;
 
 export const Numeros = z.array(z.number()).max(20000);
 export type Numeros = z.infer<typeof Numeros>;
@@ -303,9 +426,9 @@ export const Visibilidad = z.strictObject({
 });
 export type Visibilidad = z.infer<typeof Visibilidad>;
 
-/** Reconstrucción producida por el solver a partir de una EscenaSpec: trayectorias, impulsos, daños, personas (proyección y ocupantes), visibilidad, objetos del entorno, eventos, banderas y parámetros con su fuente. Unidades SI; tiempo con t = 0 en el impacto principal; rumbos en radianes antihorario desde +X (salvo los campos que terminan en _deg). */
+/** Reconstrucción producida por el solver a partir de una EscenaSpec: trayectorias, impulsos, daños, personas (proyección y ocupantes), visibilidad, objetos del entorno, eventos, banderas, parámetros con su fuente incertidumbre por Monte Carlo (percentiles con semilla), inversión desde la evidencia y banderas de consistencia. Unidades SI; tiempo con t = 0 en el impacto principal; rumbos en radianes antihorario desde +X (salvo los campos que terminan en _deg). */
 export const ResultadoSchema = z.strictObject({
-  version_resultado: z.literal("1.2.0"),
+  version_resultado: z.literal("1.4.0"),
   escena_id: Id,
   semilla: z.int().min(0),
   dt: z.number().max(1).gt(0),
@@ -319,5 +442,8 @@ export const ResultadoSchema = z.strictObject({
   eventos: z.array(EventoResultado).max(64),
   banderas: z.array(z.string().min(1).max(400)).max(64),
   parametros: Parametros,
+  incertidumbre: Incertidumbre.optional(),
+  inversion: Inversion.optional(),
+  consistencia: z.array(Inconsistencia).max(32).optional(),
 });
 export type Resultado = z.infer<typeof ResultadoSchema>;

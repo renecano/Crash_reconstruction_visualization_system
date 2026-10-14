@@ -58,3 +58,13 @@ def test_arbol_delgado_cede_y_el_auto_sigue() -> None:
     assert is_rigid("vegetal", 0.4)
     assert not is_rigid("madera", 0.2)
     assert is_rigid("metal", 0.1)
+
+
+@settings(max_examples=60, deadline=None)
+@given(st.floats(min_value=0.0, max_value=30.0, allow_nan=False), st.floats(0.1, 1.0))
+def test_poste_a_cualquier_velocidad_sin_fallar(v: float, diameter: float) -> None:
+    # Regresión (F7): a baja energía no hay deformación permanente y el perfil es cero.
+    r = narrow_object(CAR, v, K, diameter_m=diameter, material="concreto")
+    assert r.max_crush >= 0.0
+    if r.max_crush == 0.0:
+        assert r.energy_absorbed_vehicle <= crush_energy(r.profile, r.damage_width, K)

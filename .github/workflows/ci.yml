@@ -93,6 +93,10 @@ jobs:
         run: |
           uv run croquis-data nombres download
           uv run croquis-data nombres build --check
+      - name: CISS 2017–2024 reproducible (descarga fijada por SHA-256 y tabla de E3)
+        run: |
+          uv run croquis-data ciss download
+          uv run croquis-data ciss build --check
       - run: uv run croquis-extraction relatos check
       - run: uv run croquis-extraction golden check
       - name: Cuerpos de MakeHuman reproducibles (descarga fijada y reconstrucción byte a byte)

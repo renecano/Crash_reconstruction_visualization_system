@@ -25,6 +25,9 @@ from croquis_extraction.pii import redact
 from croquis_extraction.spec_builder import build_spec
 from croquis_extraction.verify import verify_spec
 from croquis_scene_schema import schema_errors
+from croquis_solver.consistency import check_consistency
+from croquis_solver.inversion import invert
+from croquis_solver.montecarlo import monte_carlo
 from croquis_solver.reconstruct import reconstruct
 
 router = APIRouter()
@@ -53,6 +56,7 @@ class RateLimiter:
 
 
 limiter = RateLimiter()
+analysis_limiter = RateLimiter()
 
 
 class ExtraerIn(BaseModel):
@@ -101,6 +105,13 @@ class ResponderOut(BaseModel):
 
 class ReconstruirIn(BaseModel):
     spec: JsonObj
+    analisis: bool = Field(
+        default=False,
+        description=(
+            "Agrega incertidumbre (Monte Carlo), inversión desde la evidencia y banderas de "
+            "consistencia. Tarda segundos y tiene límite por hora."
+        ),
+    )
 
 
 def _valid(spec: JsonObj) -> None:
@@ -190,9 +201,22 @@ def responder(body: ResponderIn) -> ResponderOut:
 
 
 @router.post("/reconstruir")
-def reconstruir(body: ReconstruirIn) -> JsonObj:
+def reconstruir(body: ReconstruirIn, request: Request) -> JsonObj:
     _valid(body.spec)
+    if body.analisis:
+        client = request.client.host if request.client else "anon"
+        if not analysis_limiter.allow(client, get_settings().croquis_analysis_rate_limit_per_hour):
+            raise HTTPException(
+                status_code=429,
+                detail="Límite de análisis por hora alcanzado; intenta más tarde.",
+            )
     try:
-        return reconstruct(body.spec).to_dict()
+        doc = reconstruct(body.spec).to_dict()
+        if body.analisis:
+            doc["incertidumbre"] = monte_carlo(body.spec).to_dict()
+            inv = invert(body.spec)
+            doc["inversion"] = inv.to_dict()
+            doc["consistencia"] = [f.to_dict() for f in check_consistency(body.spec, inversion=inv)]
+        return doc
     except (ValueError, KeyError, ArithmeticError) as e:
         raise HTTPException(status_code=422, detail=f"La escena no se pudo reconstruir: {e}") from e

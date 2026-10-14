@@ -42,6 +42,7 @@ import { buildVisibilityOverlay, eyeHeightFor } from "../visibility-overlay";
 import { sunShadowFrame } from "../shadow-frame";
 import { BODY_BASE_URL, loadBodies } from "../body-assets";
 import { attachPeople, variantsFor, type PeopleAttachment } from "../people-scene";
+import { buildGhostLayer, GHOST_COLORS } from "../ghosts";
 import { buildSceneGraph } from "../scene-graph";
 import { seatHeight } from "../vehicle-geometry";
 
@@ -68,6 +69,8 @@ export interface SceneViewerProps {
   bodiesBaseUrl?: string;
   /** Resultado del montaje de personas (ragdolls calibrados, indicadores). */
   onPeople?: (people: PeopleAttachment) => void;
+  /** Otras reconstrucciones de la misma escena: sus vehículos se dibujan como fantasmas. */
+  hipotesis?: readonly Resultado[];
 }
 
 /** Muestras de tiempo por cuadro para E6, expuestas en `window.__croquisPerf`. */
@@ -84,6 +87,8 @@ declare global {
     __croquisReady?: boolean;
     /** Restos horneados y agregados a la escena. */
     __croquisDebrisReady?: boolean;
+    /** Fantasmas de la hipótesis montados en la escena (e2e). */
+    __croquisGhosts?: number;
     __croquisPeopleReady?: boolean;
     __croquisPeople?: PeopleAttachment;
     /** `performance.now()` del primer cuadro listo (E6: tiempo hasta interactivo). */
@@ -114,6 +119,7 @@ function SceneContent({
   env,
   bodiesBaseUrl,
   onPeople,
+  hipotesis,
 }: Omit<SceneViewerProps, "renderer" | "onRendererInfo" | "onError" | "className"> & {
   env: EnvironmentSettings;
 }): ReactElement {
@@ -123,6 +129,23 @@ function SceneContent({
     [spec, resultado, profile, env],
   );
   useEffect(() => () => graph.dispose(), [graph]);
+  // Hipótesis: fantasmas translúcidos con el mismo reloj que la escena.
+  const ghosts = useMemo(
+    () =>
+      (hipotesis ?? []).map((h, i) => buildGhostLayer(h, GHOST_COLORS[i % GHOST_COLORS.length])),
+    [hipotesis],
+  );
+  useEffect(() => {
+    for (const g of ghosts) graph.root.add(g.group);
+    window.__croquisGhosts = ghosts.reduce((n, g) => n + g.group.children.length, 0);
+    return () => {
+      for (const g of ghosts) {
+        graph.root.remove(g.group);
+        g.dispose();
+      }
+      window.__croquisGhosts = 0;
+    };
+  }, [graph, ghosts]);
   // Restos (piezas, vidrios, plásticos): se hornean con Rapier al cargar la escena.
   useEffect(() => {
     let alive = true;
@@ -267,6 +290,7 @@ function SceneContent({
     clock.tick(Math.min(delta, 0.1), performance.now());
     const t = clock.get().t;
     graph.update(t);
+    for (const g of ghosts) g.update(t);
     const persp = cam as PerspectiveCamera;
     if (camera === "libre") controls.current?.update();
     else if (camera === "cenital") applyPose(persp, overheadCamera(resultado));

@@ -51,3 +51,16 @@ def test_differences_tolera_ruido_numerico_pero_no_cambios_de_estructura() -> No
     assert differences(a, {"x": [1.0, 2.0], "s": "b", "b": True})
     assert differences(a, {"x": [1.0, 2.0], "s": "a", "b": False})
     assert differences(a, {"x": [1.0, 2.0], "s": "a"})
+
+
+def test_tolerancia_del_ajuste_solo_en_inversion_y_consistencia() -> None:
+    from croquis_solver.results_io import differences
+
+    base = {"vehiculos": [{"v": 16.07}], "inversion": {"s": 16.07, "ok": True}}
+    near = {"vehiculos": [{"v": 16.13}], "inversion": {"s": 16.13, "ok": True}}
+    diffs = differences(base, near)
+    assert diffs == ["/vehiculos/0/v: 16.07 ≠ 16.13"]  # el solver se compara exacto
+    flipped = {"vehiculos": [{"v": 16.07}], "inversion": {"s": 16.07, "ok": False}}
+    assert differences(base, flipped) == ["/inversion/ok: True ≠ False"]
+    far = {"vehiculos": [{"v": 16.07}], "inversion": {"s": 18.0, "ok": True}}
+    assert differences(base, far) == ["/inversion/s: 16.07 ≠ 18.0"]

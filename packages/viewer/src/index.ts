@@ -61,3 +61,12 @@ export * from "./people-scene";
 export * from "./rollover-scene";
 export * from "./visibility-overlay";
 export * from "./shadow-frame";
+export {
+  buildGhostLayer,
+  compareHypotheses,
+  GHOST_COLOR,
+  GHOST_COLORS,
+  MAX_HYPOTHESES,
+  type GhostLayer,
+  type VehicleDiff,
+} from "./ghosts";

@@ -17,6 +17,8 @@ def main(argv: list[str] | None = None) -> int:
     )
     sub.add_parser("e2-barrier", help="E2: rigidez CRASH3 por clase desde pruebas de NHTSA")
     sub.add_parser("e4-pedestrian", help="E4: proyección de peatones contra casos publicados")
+    sub.add_parser("e3-ciss", help="E3: ΔV desde el daño contra el EDR y WinSmash (NHTSA CISS)")
+    sub.add_parser("f7-inversion", help="F7: inversión, consistencia y tiempos en las escenas")
     e1 = sub.add_parser("e1-extraction", help="E1: extracción del relato en Relatos-MX")
     e1.add_argument("--split", choices=["dev", "test"], default="test")
     args = parser.parse_args(argv)
@@ -34,6 +36,16 @@ def main(argv: list[str] | None = None) -> int:
         from croquis_eval.e1_extraction import main as run_e1
 
         print(run_e1(args.split))
+        return 0
+    if args.command == "e3-ciss":
+        from croquis_eval.e3_ciss import main as run_e3
+
+        print(run_e3())
+        return 0
+    if args.command == "f7-inversion":
+        from croquis_eval.f7_inversion import main as run_f7
+
+        print(run_f7())
         return 0
     if args.command == "e4-pedestrian":
         from croquis_eval.e4_pedestrian import main as run_e4

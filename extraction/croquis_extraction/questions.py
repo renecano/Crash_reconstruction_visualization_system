@@ -2,8 +2,10 @@
 
 Tres fuentes, en este orden de prioridad:
 
-1. **Contradicciones.** Los avisos estructurados del solver (`Reconstruction.avisos`) se convierten
-   en preguntas neutrales: nunca en acusaciones ni en juicios de culpa (PLAN §10).
+1. **Contradicciones.** Las banderas de consistencia (`croquis_solver.consistency`: lo declarado
+   que no cabe en ninguna solución física) y los avisos estructurados del solver
+   (`Reconstruction.avisos`) se convierten en preguntas neutrales: nunca en acusaciones ni en
+   juicios de culpa (PLAN §10).
 2. **Sensibilidad.** Para cada campo incierto (velocidades supuestas, estado del piso, si frenó,
    masa por clase supuesta) se reconstruye la escena variando solo ese campo con muestras
    estratificadas y semilla explícita, y se mide la varianza que produce en la velocidad al
@@ -149,6 +151,35 @@ def _vindex(spec: JsonObj, vid: str) -> int:
 
 
 # --- Contradicciones ----------------------------------------------------------------------------
+
+
+# Bandera de consistencia → campo que la respuesta corrige (tema de la pregunta).
+_CONSISTENCY_TOPIC = {
+    "detenido_con_velocidad": ("velocidad", "vehiculos.{i}.velocidad_previa"),
+    "marcas_vs_velocidad": ("velocidad", "vehiculos.{i}.velocidad_previa"),
+    "proyeccion_vs_velocidad": ("proyeccion", "evidencias.distancia_proyeccion"),
+    "dano_vs_velocidad": ("velocidad", "vehiculos.{i}.velocidad_previa"),
+    "reposo_inalcanzable": ("reposo", "vehiculos.{i}.posicion_final"),
+    "velocidad_vs_evidencia": ("velocidad", "vehiculos.{i}.velocidad_previa"),
+}
+
+
+def from_consistency(spec: JsonObj, seed: int) -> tuple[list[Pregunta], set[str]]:
+    """Lo declarado que no cabe en ninguna solución física, como pregunta (sin culpa), y la
+    evidencia que esas preguntas ya cubren (p. ej. `proyeccion:per-1`): el aviso del solver sobre
+    esa misma evidencia sería la misma pregunta con otras palabras."""
+    from croquis_solver.consistency import check_consistency
+
+    out: list[Pregunta] = []
+    covered: set[str] = set()
+    for f in check_consistency(spec, seed=seed, samples=16):
+        kind, campo = _CONSISTENCY_TOPIC[f.codigo]
+        vid = str(f.datos.get("vehiculo", ""))
+        idx = next((i for i, v in enumerate(spec["vehiculos"]) if v["id"] == vid), 0)
+        out.append(Pregunta(f"{kind}:{vid}", f.mensaje, "contradiccion", campo.format(i=idx)))
+        evidencia: list[str] = f.datos.get("evidencia", [])
+        covered.update(topic(e) for e in evidencia)
+    return out, covered
 
 
 def from_avisos(spec: JsonObj, avisos: list[Aviso]) -> list[Pregunta]:
@@ -466,6 +497,10 @@ def ask(
             seen.add(key)
             chosen.append(p)
 
+    consistency, covered = from_consistency(spec, seed)
+    for p in consistency:
+        take(p)
+    seen |= covered
     for p in from_avisos(spec, base.avisos):
         take(p)
     for cand, share, effect in sensitivity(spec, seed, samples):

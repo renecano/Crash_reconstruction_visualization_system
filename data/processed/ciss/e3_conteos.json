@@ -1,0 +1,88 @@
+{
+  "_generado_por": "uv run croquis-data ciss build (data/croquis_data/ciss.py)",
+  "fuente": "NHTSA CISS 2017–2024, archivos CSV; códigos del manual https://crashstats.nhtsa.dot.gov/Api/Public/ViewPublication/813771",
+  "sha256": {
+    "2017": "486b7774459f2fb6b7b9d8b04a0131f07b9564795ae3b4e3e273a729246b5b74",
+    "2018": "d78d561490694723c96e2d3e823ff79e561bfba0f70ff05dd4a9803d6b84ab80",
+    "2019": "256e69f5a987000893c10d80812bd22c977924d651d5dd2e5b226a55f8742cca",
+    "2020": "f411c4c5276b5f1025048f5e5554cde41c738fd82751101bae156fb54ee09d88",
+    "2021": "88414ae318a15baded08e58b641259f1697c179ee61b41fd5f6a54d1cde5e50b",
+    "2022": "d4d1a33988aff255790d20ad96b996cff93d5afa9dabfd742b8b4769d29c1173",
+    "2023": "1ae9fe6672f007f00407ede3a498900ff33e2118bef13825387e783cbc8966c4",
+    "2024": "adb602e31742fbab4782abf1df0bbc2eaab5e771bfef72ed3f0c8f202446a9de"
+  },
+  "conteos_por_anio": {
+    "2017": {
+      "contacto_no_modelado": 69,
+      "edr_registro_incompleto": 6,
+      "edr_sin_dv_valido": 297,
+      "eventos_con_edr": 1353,
+      "filas": 728,
+      "sin_perfil_medido_o_pdof": 251,
+      "vehiculo_fuera_de_clase_o_sin_masa": 2
+    },
+    "2018": {
+      "contacto_no_modelado": 126,
+      "edr_registro_incompleto": 11,
+      "edr_sin_dv_valido": 344,
+      "eventos_con_edr": 1848,
+      "filas": 1008,
+      "sin_perfil_medido_o_pdof": 355,
+      "vehiculo_fuera_de_clase_o_sin_masa": 4
+    },
+    "2019": {
+      "contacto_no_modelado": 126,
+      "edr_registro_incompleto": 5,
+      "edr_sin_dv_valido": 282,
+      "eventos_con_edr": 1977,
+      "filas": 1003,
+      "sin_cdc_del_evento": 1,
+      "sin_perfil_medido_o_pdof": 559,
+      "vehiculo_fuera_de_clase_o_sin_masa": 1
+    },
+    "2020": {
+      "contacto_no_modelado": 124,
+      "edr_registro_incompleto": 7,
+      "edr_sin_dv_valido": 234,
+      "eventos_con_edr": 1960,
+      "filas": 908,
+      "sin_perfil_medido_o_pdof": 685,
+      "vehiculo_fuera_de_clase_o_sin_masa": 2
+    },
+    "2021": {
+      "contacto_no_modelado": 129,
+      "edr_registro_incompleto": 6,
+      "edr_sin_dv_valido": 223,
+      "eventos_con_edr": 2284,
+      "filas": 1103,
+      "sin_perfil_medido_o_pdof": 822,
+      "vehiculo_fuera_de_clase_o_sin_masa": 1
+    },
+    "2022": {
+      "contacto_no_modelado": 112,
+      "edr_registro_incompleto": 7,
+      "edr_sin_dv_valido": 229,
+      "eventos_con_edr": 1982,
+      "filas": 910,
+      "sin_perfil_medido_o_pdof": 724
+    },
+    "2023": {
+      "contacto_no_modelado": 129,
+      "edr_registro_incompleto": 21,
+      "edr_sin_dv_valido": 258,
+      "eventos_con_edr": 2938,
+      "filas": 1398,
+      "sin_perfil_medido_o_pdof": 1131,
+      "vehiculo_fuera_de_clase_o_sin_masa": 1
+    },
+    "2024": {
+      "contacto_no_modelado": 192,
+      "edr_registro_incompleto": 27,
+      "edr_sin_dv_valido": 283,
+      "eventos_con_edr": 3969,
+      "filas": 1917,
+      "sin_perfil_medido_o_pdof": 1550
+    }
+  },
+  "filas": 8975
+}

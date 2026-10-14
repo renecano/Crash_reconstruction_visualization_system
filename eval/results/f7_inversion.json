@@ -1,0 +1,599 @@
+{
+  "name": "f7_inversion",
+  "generated_at": "2026-10-14T20:59:00+00:00",
+  "git_commit": "270ec4d",
+  "seed": null,
+  "descripcion": "F7 en las 10 escenas canónicas: parámetros que fija la evidencia en la inversión, banderas de consistencia y tiempo de Monte Carlo, inversión y consistencia con el solver de referencia. Incluye el intervalo que daría la inversión sin la regla de identificabilidad en las escenas contra objeto fijo.",
+  "maquina": {
+    "sistema": "Windows-11-10.0.26200-SP0",
+    "procesador": "Intel64 Family 6 Model 142 Stepping 12, GenuineIntel",
+    "nucleos_logicos": 8,
+    "python": "3.14.0"
+  },
+  "reestimaciones": 12,
+  "escenas": [
+    {
+      "escena": "alcance",
+      "semilla": 101,
+      "segundos": {
+        "monte_carlo": 1.04,
+        "inversion": 0.01,
+        "consistencia_sin_inversion": 0.0
+      },
+      "evidencia": [
+        "marcas_frenado:veh-a"
+      ],
+      "parametros": [
+        {
+          "parametro": "velocidad_previa",
+          "vehiculo": "veh-a",
+          "unidad": "km/h",
+          "inicial": 50.0,
+          "inicial_declarado": true,
+          "identificable": false
+        }
+      ],
+      "banderas": []
+    },
+    {
+      "escena": "frontal_curva",
+      "semilla": 103,
+      "segundos": {
+        "monte_carlo": 10.16,
+        "inversion": 0.14,
+        "consistencia_sin_inversion": 0.0
+      },
+      "evidencia": [
+        "marcas_frenado:veh-b"
+      ],
+      "parametros": [
+        {
+          "parametro": "velocidad_previa",
+          "vehiculo": "veh-a",
+          "unidad": "km/h",
+          "inicial": 70.0,
+          "inicial_declarado": true,
+          "identificable": false
+        },
+        {
+          "parametro": "velocidad_previa",
+          "vehiculo": "veh-b",
+          "unidad": "km/h",
+          "inicial": 60.0,
+          "inicial_declarado": false,
+          "identificable": false
+        }
+      ],
+      "banderas": []
+    },
+    {
+      "escena": "glorieta",
+      "semilla": 110,
+      "segundos": {
+        "monte_carlo": 3.9,
+        "inversion": 38.95,
+        "consistencia_sin_inversion": 5.02
+      },
+      "evidencia": [
+        "reposo:veh-a",
+        "rumbo_final:veh-a"
+      ],
+      "parametros": [
+        {
+          "parametro": "velocidad_previa",
+          "vehiculo": "veh-a",
+          "unidad": "km/h",
+          "inicial": 30.0,
+          "inicial_declarado": true,
+          "identificable": true,
+          "sigma_local": 16.07,
+          "estimacion": {
+            "mejor": 0.0,
+            "p10": 0.0,
+            "p50": 0.0,
+            "p90": 0.0,
+            "muestras": 12
+          },
+          "en_limite": true
+        },
+        {
+          "parametro": "velocidad_previa",
+          "vehiculo": "veh-b",
+          "unidad": "km/h",
+          "inicial": 25.0,
+          "inicial_declarado": true,
+          "identificable": true,
+          "sigma_local": 11.52,
+          "estimacion": {
+            "mejor": 24.99,
+            "p10": 15.84,
+            "p50": 23.27,
+            "p90": 32.95,
+            "muestras": 12
+          },
+          "en_limite": false
+        },
+        {
+          "parametro": "rumbo_inicial",
+          "vehiculo": "veh-a",
+          "unidad": "deg",
+          "inicial": -44.6,
+          "inicial_declarado": false,
+          "identificable": false
+        },
+        {
+          "parametro": "rumbo_inicial",
+          "vehiculo": "veh-b",
+          "unidad": "deg",
+          "inicial": 90.0,
+          "inicial_declarado": false,
+          "identificable": true,
+          "sigma_local": 7.53,
+          "estimacion": {
+            "mejor": 79.74,
+            "p10": 73.77,
+            "p50": 78.25,
+            "p90": 82.38,
+            "muestras": 12
+          },
+          "en_limite": false
+        }
+      ],
+      "banderas": []
+    },
+    {
+      "escena": "lateral_interseccion",
+      "semilla": 102,
+      "segundos": {
+        "monte_carlo": 1.44,
+        "inversion": 3.81,
+        "consistencia_sin_inversion": 2.23
+      },
+      "evidencia": [
+        "reposo:veh-a",
+        "reposo:veh-b",
+        "rumbo_final:veh-a",
+        "rumbo_final:veh-b"
+      ],
+      "parametros": [
+        {
+          "parametro": "velocidad_previa",
+          "vehiculo": "veh-a",
+          "unidad": "km/h",
+          "inicial": 45.0,
+          "inicial_declarado": true,
+          "identificable": true,
+          "sigma_local": 25.81,
+          "estimacion": {
+            "mejor": 61.56,
+            "p10": 52.74,
+            "p50": 65.1,
+            "p90": 72.0,
+            "muestras": 12
+          },
+          "en_limite": false
+        },
+        {
+          "parametro": "velocidad_previa",
+          "vehiculo": "veh-b",
+          "unidad": "km/h",
+          "inicial": 40.0,
+          "inicial_declarado": false,
+          "identificable": true,
+          "sigma_local": 6.72,
+          "estimacion": {
+            "mejor": 6.77,
+            "p10": 0.35,
+            "p50": 7.41,
+            "p90": 13.18,
+            "muestras": 12
+          },
+          "en_limite": false
+        },
+        {
+          "parametro": "rumbo_inicial",
+          "vehiculo": "veh-a",
+          "unidad": "deg",
+          "inicial": 0.0,
+          "inicial_declarado": false,
+          "identificable": true,
+          "sigma_local": 2.41,
+          "estimacion": {
+            "mejor": 4.86,
+            "p10": 3.16,
+            "p50": 4.82,
+            "p90": 6.53,
+            "muestras": 12
+          },
+          "en_limite": false
+        },
+        {
+          "parametro": "rumbo_inicial",
+          "vehiculo": "veh-b",
+          "unidad": "deg",
+          "inicial": 90.0,
+          "inicial_declarado": false,
+          "identificable": true,
+          "sigma_local": 7.11,
+          "estimacion": {
+            "mejor": 84.31,
+            "p10": 84.43,
+            "p50": 86.49,
+            "p90": 89.25,
+            "muestras": 12
+          },
+          "en_limite": false
+        }
+      ],
+      "banderas": []
+    },
+    {
+      "escena": "motociclista",
+      "semilla": 105,
+      "segundos": {
+        "monte_carlo": 1.43,
+        "inversion": 4.0,
+        "consistencia_sin_inversion": 4.05
+      },
+      "evidencia": [
+        "reposo:veh-b",
+        "rumbo_final:veh-b",
+        "proyeccion:per-b1"
+      ],
+      "parametros": [
+        {
+          "parametro": "velocidad_previa",
+          "vehiculo": "veh-a",
+          "unidad": "km/h",
+          "inicial": 20.0,
+          "inicial_declarado": true,
+          "identificable": false,
+          "sigma_local": 75.98
+        },
+        {
+          "parametro": "velocidad_previa",
+          "vehiculo": "veh-b",
+          "unidad": "km/h",
+          "inicial": 50.0,
+          "inicial_declarado": true,
+          "identificable": true,
+          "sigma_local": 3.58,
+          "estimacion": {
+            "mejor": 35.49,
+            "p10": 30.47,
+            "p50": 33.85,
+            "p90": 37.89,
+            "muestras": 12
+          },
+          "en_limite": false
+        },
+        {
+          "parametro": "rumbo_inicial",
+          "vehiculo": "veh-a",
+          "unidad": "deg",
+          "inicial": 180.0,
+          "inicial_declarado": false,
+          "identificable": true,
+          "sigma_local": 8.91,
+          "estimacion": {
+            "mejor": 188.82,
+            "p10": 178.53,
+            "p50": 191.05,
+            "p90": 194.95,
+            "muestras": 12
+          },
+          "en_limite": false
+        },
+        {
+          "parametro": "rumbo_inicial",
+          "vehiculo": "veh-b",
+          "unidad": "deg",
+          "inicial": 0.0,
+          "inicial_declarado": false,
+          "identificable": true,
+          "sigma_local": 2.28,
+          "estimacion": {
+            "mejor": -1.33,
+            "p10": -5.55,
+            "p50": -1.62,
+            "p90": 0.1,
+            "muestras": 12
+          },
+          "en_limite": false
+        }
+      ],
+      "banderas": [
+        {
+          "codigo": "velocidad_vs_evidencia",
+          "mensaje": "Por dónde quedó, hacia dónde quedó orientado y la distancia a la que quedó la persona, el vehículo B iría a unos 30–38 km/h antes del choque, y la velocidad indicada va de 40 a 60 km/h. ¿Puedes confirmar la velocidad, o alguno de esos datos?",
+          "datos": {
+            "vehiculo": "veh-b",
+            "evidencia_kmh": [
+              30.47,
+              37.89
+            ],
+            "declarada_kmh": [
+              40.0,
+              60.0
+            ],
+            "evidencia": [
+              "reposo:veh-b",
+              "rumbo_final:veh-b",
+              "proyeccion:per-b1"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "escena": "nocturno_lluvia",
+      "semilla": 109,
+      "segundos": {
+        "monte_carlo": 2.32,
+        "inversion": 0.04,
+        "consistencia_sin_inversion": 0.0
+      },
+      "evidencia": [],
+      "parametros": [
+        {
+          "parametro": "velocidad_previa",
+          "vehiculo": "veh-a",
+          "unidad": "km/h",
+          "inicial": 55.0,
+          "inicial_declarado": true,
+          "identificable": false
+        },
+        {
+          "parametro": "velocidad_previa",
+          "vehiculo": "veh-b",
+          "unidad": "km/h",
+          "inicial": 35.0,
+          "inicial_declarado": false,
+          "identificable": false
+        }
+      ],
+      "banderas": []
+    },
+    {
+      "escena": "objeto_fijo_arbol",
+      "semilla": 106,
+      "segundos": {
+        "monte_carlo": 2.21,
+        "inversion": 2.22,
+        "consistencia_sin_inversion": 0.55
+      },
+      "evidencia": [
+        "reposo:veh-a",
+        "rumbo_final:veh-a"
+      ],
+      "parametros": [
+        {
+          "parametro": "velocidad_previa",
+          "vehiculo": "veh-a",
+          "unidad": "km/h",
+          "inicial": 80.0,
+          "inicial_declarado": true,
+          "identificable": false,
+          "sigma_local": 511.27
+        },
+        {
+          "parametro": "rumbo_inicial",
+          "vehiculo": "veh-a",
+          "unidad": "deg",
+          "inicial": 30.7,
+          "inicial_declarado": false,
+          "identificable": false,
+          "sigma_local": 19.73
+        }
+      ],
+      "banderas": []
+    },
+    {
+      "escena": "peaton_cruce",
+      "semilla": 104,
+      "segundos": {
+        "monte_carlo": 0.6,
+        "inversion": 0.89,
+        "consistencia_sin_inversion": 0.0
+      },
+      "evidencia": [
+        "marcas_frenado:veh-a",
+        "proyeccion:per-peaton"
+      ],
+      "parametros": [
+        {
+          "parametro": "velocidad_previa",
+          "vehiculo": "veh-a",
+          "unidad": "km/h",
+          "inicial": 40.0,
+          "inicial_declarado": true,
+          "identificable": true,
+          "sigma_local": 2.39,
+          "estimacion": {
+            "mejor": 53.27,
+            "p10": 50.71,
+            "p50": 54.36,
+            "p90": 56.15,
+            "muestras": 12
+          },
+          "en_limite": false
+        }
+      ],
+      "banderas": [
+        {
+          "codigo": "velocidad_vs_evidencia",
+          "mensaje": "Por las marcas de frenado y la distancia a la que quedó la persona, el vehículo A iría a unos 51–56 km/h antes de frenar, y la velocidad indicada va de 30 a 50 km/h. ¿Puedes confirmar la velocidad, o alguno de esos datos?",
+          "datos": {
+            "vehiculo": "veh-a",
+            "evidencia_kmh": [
+              50.71,
+              56.15
+            ],
+            "declarada_kmh": [
+              30.0,
+              50.0
+            ],
+            "evidencia": [
+              "marcas_frenado:veh-a",
+              "proyeccion:per-peaton"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "escena": "poste",
+      "semilla": 107,
+      "segundos": {
+        "monte_carlo": 1.36,
+        "inversion": 0.69,
+        "consistencia_sin_inversion": 0.8
+      },
+      "evidencia": [
+        "reposo:veh-a",
+        "rumbo_final:veh-a"
+      ],
+      "parametros": [
+        {
+          "parametro": "velocidad_previa",
+          "vehiculo": "veh-a",
+          "unidad": "km/h",
+          "inicial": 60.0,
+          "inicial_declarado": true,
+          "identificable": false,
+          "sigma_local": 3214.08
+        },
+        {
+          "parametro": "rumbo_inicial",
+          "vehiculo": "veh-a",
+          "unidad": "deg",
+          "inicial": 0.0,
+          "inicial_declarado": false,
+          "identificable": false,
+          "sigma_local": 26.53
+        }
+      ],
+      "banderas": []
+    },
+    {
+      "escena": "volcadura",
+      "semilla": 108,
+      "segundos": {
+        "monte_carlo": 2.08,
+        "inversion": 7.21,
+        "consistencia_sin_inversion": 2.25
+      },
+      "evidencia": [
+        "reposo:veh-a",
+        "rumbo_final:veh-a"
+      ],
+      "parametros": [
+        {
+          "parametro": "velocidad_previa",
+          "vehiculo": "veh-a",
+          "unidad": "km/h",
+          "inicial": 90.0,
+          "inicial_declarado": true,
+          "identificable": true,
+          "sigma_local": 1.2,
+          "estimacion": {
+            "mejor": 80.29,
+            "p10": 70.31,
+            "p50": 79.0,
+            "p90": 80.6,
+            "muestras": 12
+          },
+          "en_limite": false
+        },
+        {
+          "parametro": "velocidad_previa",
+          "vehiculo": "veh-b",
+          "unidad": "km/h",
+          "inicial": 80.0,
+          "inicial_declarado": false,
+          "identificable": false
+        },
+        {
+          "parametro": "rumbo_inicial",
+          "vehiculo": "veh-a",
+          "unidad": "deg",
+          "inicial": 0.0,
+          "inicial_declarado": false,
+          "identificable": true,
+          "sigma_local": 2.45,
+          "estimacion": {
+            "mejor": -20.0,
+            "p10": -20.0,
+            "p50": -20.0,
+            "p90": -20.0,
+            "muestras": 12
+          },
+          "en_limite": true
+        },
+        {
+          "parametro": "rumbo_inicial",
+          "vehiculo": "veh-b",
+          "unidad": "deg",
+          "inicial": 0.0,
+          "inicial_declarado": false,
+          "identificable": false
+        }
+      ],
+      "banderas": [
+        {
+          "codigo": "reposo_inalcanzable",
+          "mensaje": "Con ninguna velocidad entre 0 y 200 km/h el vehículo A termina donde se indicó, aun llegando con otro ángulo: lo más cerca que llega queda a unos 10 m. ¿La posición final es correcta, o el vehículo pegó con algo más o cambió de dirección antes?",
+          "datos": {
+            "vehiculo": "veh-a",
+            "distancia_minima_m": 9.82
+          }
+        }
+      ]
+    }
+  ],
+  "banderas_por_codigo": {
+    "reposo_inalcanzable": 1,
+    "velocidad_vs_evidencia": 2
+  },
+  "segundos_max": {
+    "monte_carlo": 10.16,
+    "inversion": 38.95,
+    "consistencia_sin_inversion": 5.02
+  },
+  "sin_regla_de_identificabilidad": [
+    {
+      "escena": "poste",
+      "intervalos_sin_regla": {
+        "rumbo:veh-a": {
+          "p10": -19.5,
+          "p50": 6.4,
+          "p90": 20.0,
+          "muestras": 12
+        },
+        "velocidad:veh-a": {
+          "p10": 0.8,
+          "p50": 5.3,
+          "p90": 200.0,
+          "muestras": 12
+        }
+      }
+    },
+    {
+      "escena": "objeto_fijo_arbol",
+      "intervalos_sin_regla": {
+        "rumbo:veh-a": {
+          "p10": 16.3,
+          "p50": 34.1,
+          "p90": 44.7,
+          "muestras": 12
+        },
+        "velocidad:veh-a": {
+          "p10": 0.2,
+          "p50": 39.2,
+          "p90": 200.0,
+          "muestras": 12
+        }
+      }
+    }
+  ]
+}

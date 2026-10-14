@@ -34,6 +34,8 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { useCallback, useEffect, useMemo, useState, useSyncExternalStore } from "react";
 import { Legend } from "../legend";
 import type { PeopleAttachment } from "@croquis/viewer";
+import { EvidencePanel } from "./evidence-panel";
+import { HypothesisPanel, type Hipotesis } from "./hypothesis-panel";
 import { PeoplePanel } from "./people-panel";
 import { ResultPanel } from "./result-panel";
 import { TimelineBar } from "./timeline-bar";
@@ -140,6 +142,13 @@ export function VisorApp() {
   }, [params.escena]);
 
   const r = resultado?.name === params.escena ? resultado.r : null;
+  // Hipótesis alternativa de la escena actual (se descarta al cambiar de escena).
+  const [hyp, setHyp] = useState<{ escena: FixtureName; lista: Hipotesis[] } | null>(null);
+  const hipotesis = useMemo(
+    () => (hyp?.escena === params.escena ? hyp.lista : []),
+    [hyp, params.escena],
+  );
+  const ghostResults = useMemo(() => hipotesis.map((h) => h.resultado), [hipotesis]);
   const clock = useMemo(() => {
     if (!r) return null;
     return createClock(
@@ -356,6 +365,7 @@ export function VisorApp() {
             renderer={effectiveRenderer}
             onRendererInfo={setInfo}
             onPeople={onPeople}
+            hipotesis={ghostResults}
             onError={() =>
               setError(
                 "Este navegador no pudo iniciar WebGPU ni WebGL 2; el visor 3D no está disponible.",
@@ -385,6 +395,15 @@ export function VisorApp() {
       ) : null}
 
       {r ? <ResultPanel resultado={r} supuestosEntorno={env.supuestos} spec={spec} /> : null}
+      {r ? <EvidencePanel resultado={r} /> : null}
+      {r ? (
+        <HypothesisPanel
+          spec={spec}
+          resultado={r}
+          hipotesis={hipotesis}
+          onChange={(lista) => setHyp({ escena: params.escena, lista })}
+        />
+      ) : null}
       {r ? (
         <PeoplePanel resultado={r} people={people?.escena === params.escena ? people.data : null} />
       ) : null}

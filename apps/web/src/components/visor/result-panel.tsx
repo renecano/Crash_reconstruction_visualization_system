@@ -50,6 +50,21 @@ export function clockHour(hours: number): string {
 const fmt = (v: number, d = 0) =>
   v.toLocaleString("es-MX", { maximumFractionDigits: d, minimumFractionDigits: d });
 
+interface Pct {
+  p10: number;
+  p90: number;
+}
+
+/** Intervalo p10–p90 de Monte Carlo (80 % de las muestras), si el resultado lo trae. */
+function Range({ pct, unit }: { pct: Pct | undefined; unit: string }) {
+  if (!pct) return null;
+  return (
+    <span className="block text-xs text-neutral-600 dark:text-neutral-400">
+      80 %: {fmt(pct.p10)}–{fmt(pct.p90)} {unit}
+    </span>
+  );
+}
+
 /** Resultados por vehículo, avisos y parámetros con su fuente. Nunca asigna culpa (PLAN §10). */
 export function ResultPanel({
   resultado,
@@ -60,6 +75,8 @@ export function ResultPanel({
   supuestosEntorno: string[];
   spec?: EscenaSpec;
 }) {
+  const inc = resultado.incertidumbre;
+  const incV = new Map((inc?.vehiculos ?? []).map((v) => [v.id, v]));
   return (
     <section className="flex flex-col gap-4 text-sm" aria-label="Resultados de la reconstrucción">
       <div className="overflow-x-auto">
@@ -83,8 +100,14 @@ export function ResultPanel({
                   {v.rol} · {CLASE[v.clase] ?? v.clase}
                   {!v.involucrado ? " (no participa en el impacto)" : ""}
                 </td>
-                <td className="py-1 pr-3">{fmt(v.v_impacto_kmh)} km/h</td>
-                <td className="py-1 pr-3">{fmt(v.delta_v_kmh)} km/h</td>
+                <td className="py-1 pr-3">
+                  {fmt(v.v_impacto_kmh)} km/h
+                  <Range pct={incV.get(v.id)?.v_impacto_kmh} unit="km/h" />
+                </td>
+                <td className="py-1 pr-3">
+                  {fmt(v.delta_v_kmh)} km/h
+                  <Range pct={incV.get(v.id)?.delta_v_kmh} unit="km/h" />
+                </td>
                 <td className="py-1 pr-3">
                   {v.pdof_horas !== undefined ? clockHour(v.pdof_horas) : "—"}
                 </td>
@@ -120,10 +143,24 @@ export function ResultPanel({
           </tbody>
         </table>
         <p className="mt-1 text-xs text-neutral-600 dark:text-neutral-400">
-          Valores nominales del modelo físico. La incertidumbre se mostrará como rango.
+          {inc
+            ? `Valor nominal del modelo físico y, debajo, el rango donde cae el 80 % de ${inc.validas} reconstrucciones con los datos inciertos muestreados (semilla ${inc.semilla}).`
+            : "Valores nominales del modelo físico."}
           {spec ? ` Bolsas de aire: regla ilustrativa con umbrales de ${AIRBAG_SOURCE}` : ""}
         </p>
       </div>
+      {inc && inc.campos.length > 0 ? (
+        <details data-testid="incertidumbre">
+          <summary className="cursor-pointer font-semibold">Datos inciertos y sus rangos</summary>
+          <ul className="mt-1 list-disc pl-5">
+            {inc.campos.map((c) => (
+              <li key={c.ruta}>
+                <code>{c.ruta}</code>: {fmt(c.min, 2)}–{fmt(c.max, 2)} ({c.nota})
+              </li>
+            ))}
+          </ul>
+        </details>
+      ) : null}
       {resultado.vehiculos.some((v) => v.volcadura) ? (
         <div>
           <h3 className="font-semibold">Volcadura (criterio de tropiezo)</h3>

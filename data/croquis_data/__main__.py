@@ -1,4 +1,4 @@
-"""CLI: ``uv run croquis-data atus download|process``."""
+"""CLI: ``uv run croquis-data <fuente> <comando>`` (ver --help)."""
 
 from __future__ import annotations
 
@@ -55,7 +55,28 @@ def main(argv: list[str] | None = None) -> int:
     p_nb = no_sub.add_parser("build", help="Escribe packages/relato/data/nombres.json")
     p_nb.add_argument("--check", action="store_true", help="Solo verifica que esté al día")
 
+    p_ci = sub.add_parser("ciss", help="NHTSA CISS 2017–2024 (E3: daño, WinSmash y EDR)")
+    ci_sub = p_ci.add_subparsers(dest="command", required=True)
+    ci_sub.add_parser(
+        "download", help="Descarga los CSV anuales a data/raw/ciss y verifica SHA-256"
+    )
+    p_cb = ci_sub.add_parser("build", help="Escribe data/processed/ciss/e3_vehiculos.csv")
+    p_cb.add_argument("--check", action="store_true", help="Solo verifica que esté al día")
+
     args = parser.parse_args(argv)
+    if args.source == "ciss":
+        from croquis_data import ciss
+
+        if args.command == "download":
+            paths = ciss.download()
+            print(f"{len(paths)} años de CISS descargados y verificados en {ciss.RAW_DIR}")
+            return 0
+        ok = ciss.build(check=args.check)
+        if args.check:
+            print("Tabla de E3 (CISS) al día" if ok else "Tabla de E3 (CISS) DESACTUALIZADA")
+        else:
+            print(f"Escrita {ciss.OUT_DIR / 'e3_vehiculos.csv'}")
+        return 0 if ok else 1
     if args.source == "nombres":
         from croquis_data import nombres
 

@@ -11,6 +11,8 @@ class Settings(BaseSettings):
     croquis_llm_model: str = Field(default="claude-sonnet-5-5")
     croquis_llm_daily_budget_usd: float = Field(default=2.0, ge=0)
     croquis_llm_rate_limit_per_hour: int = Field(default=20, ge=0)
+    # Inversión, Monte Carlo y consistencia: segundos de CPU por petición (F7).
+    croquis_analysis_rate_limit_per_hour: int = Field(default=30, ge=0)
     croquis_cors_origins: str = Field(
         default="http://localhost:3000",
         description="Orígenes permitidos para la web, separados por comas",

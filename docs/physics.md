@@ -10,7 +10,7 @@
 - Marco del mundo: X al este, Y al norte, rumbo medido desde +X en sentido antihorario. Marco del cuerpo: x al frente, y a la izquierda.
 - Dirección principal de la fuerza (PDOF) en horas de reloj: 12 = de frente, 3 = desde la derecha, 6 = desde atrás, 9 = desde la izquierda (`impact.pdof_degrees`).
 - Todo lo aleatorio recibe semilla explícita; los resultados con rango se reportan como percentiles (Monte Carlo en F7).
-- Inercia de guiñada: placa rectangular uniforme, $I_z = m\,(L^2 + W^2)/12$ (`Body2D.box_inertia`). **Aproximación**; para un sedán de 1 300 kg y 4.5 × 1.8 m da ≈ 2 540 kg·m², del orden de las mediciones publicadas (Heydinger et al., SAE 1999-01-1336), que se adoptarán en F7.
+- Inercia de guiñada: placa rectangular uniforme, $I_z = m\,(L^2 + W^2)/12$ (`Body2D.box_inertia`). **Aproximación**; para un sedán de 1 300 kg y 4.5 × 1.8 m da ≈ 2 540 kg·m², del orden de las mediciones publicadas (Heydinger et al., SAE 1999-01-1336). Adoptar esas mediciones cambia todas las trayectorias posteriores al impacto; es un pendiente registrado en `docs/PROGRESS.md`.
 
 ## Módulos (PLAN §6.1)
 
@@ -25,9 +25,9 @@
 | 7   | Peatón y ciclista (Searle, Wood; contactos; ragdoll en F5)       | F2/F5 | **hecho** (`pedestrian.py`; ragdoll) |
 | 8   | Ocupantes (cinemática relativa, sin lesiones)                    | F5    | **hecho** (`occupant.py`)            |
 | 9   | Visibilidad (línea de vista en el tiempo)                        | F5    | **hecho** (`visibility.py`)          |
-| 10  | Inversión (mínimos cuadrados robustos; CMA-ES si hace falta)     | F7    | pendiente                            |
-| 11  | Monte Carlo                                                      | F7    | pendiente                            |
-| 12  | Consistencia (banderas en lenguaje llano)                        | F7    | banderas básicas en `reconstruct.py` |
+| 10  | Inversión (mínimos cuadrados robustos; CMA-ES si hace falta)     | F7    | **hecho** (`inversion.py`, E3)       |
+| 11  | Monte Carlo                                                      | F7    | **hecho** (`montecarlo.py`)          |
+| 12  | Consistencia (banderas en lenguaje llano)                        | F7    | **hecho** (`consistency.py`)         |
 
 ## 1. Pre-impacto (`preimpact.py`)
 
@@ -126,6 +126,70 @@ Ejemplo: a 50 km/h de frente con 0.45 m de aplastamiento, con cinturón el despl
 
 Resumen por par: si se veía al impacto, desde cuándo y a qué distancia, el tiempo disponible y lo que más tiempo lo tapó. Ejemplos: en `peaton_cruce` el camión estacionado tapa al peatón hasta 1.8 s antes del impacto (se ve a 21.6 m); en `objeto_fijo_arbol` el árbol se ve durante toda la aproximación (prueba del criterio de F5). Pruebas: intersecciones exactas y simétricas (Hypothesis), copa alta y auto bajo, noche y clima, árbol que tapa a una persona detrás de su tronco, segundo árbol que tapa el del impacto un tramo, camión que tapa al peatón.
 
+## 10. Inversión (`inversion.py`, F7)
+
+De la evidencia a velocidades y ángulos, con distribución y sin dar un intervalo que la evidencia no respalda.
+
+**ΔV desde el daño (CRASH3).** Con el perfil de aplastamiento C1–C6 y el ancho dañado (medidos en CISS o una profundidad y un ancho declarados), la energía absorbida sale de §3 con corrección por PDOF. La rigidez es lo más incierto: se muestrea por **bootstrap de las pruebas de barrera de NHTSA de la clase** (A y B salen de la misma pendiente y van juntos); las zonas lateral y trasera usan el respaldo genérico con pendiente en [0.7, 1.4] (**supuesto**). La masa varía ±5 % (ocupantes y carga no medidos). Entre dos vehículos el ΔV sale de la energía de ambos y la conservación de momento (velocidad común, como CRASH3). Contra un objeto rígido sale de la velocidad equivalente de barrera con restitución en [0, 0.2]. Encima va el error del modelo calibrado en E3 (ver abajo): $\ln \Delta V \sim \mathcal N(\ln \Delta V_{CRASH3},\ \sigma^2)$, con $\sigma = 0.4981$ ajustada con bisección para que p10–p90 cubra el 80 % de los casos de desarrollo de CISS (2017–2021). Se guarda en `solver/croquis_solver/data/inversion_calibration.json`.
+
+**Velocidades y ángulos desde la evidencia.**
+
+- **Incógnitas:** la velocidad previa de cada vehículo en movimiento (0–200 km/h). Si hay una posición final declarada, también el rumbo inicial de los vehículos cuya pose inicial nadie declaró, a ±20° del supuesto (**supuesto**). Sin posición final, el rumbo no se puede identificar y no se ajusta.
+- **Residuos (en sigmas, todos supuestos de este módulo):** posición final (σ = 1 m por eje), rumbo final (σ = 20°, con el ángulo envuelto a ±180°), distancia de proyección (σ = 1.5 m) y ΔV que implica el daño declarado (σ = (p90 − p10)/2.563 de la distribución anterior, mínimo 1 km/h).
+- **Marcas de frenado:** fijan la distancia de frenado antes del impacto en el modelo directo. Son evidencia física y pesan más que una distancia que solo dice el relato; una distancia que dio la persona usuaria se respeta. Las marcas de derrape no se usan: el contrato no dice si son anteriores o posteriores al impacto (pendiente del contrato).
+- **Ajuste:** mínimos cuadrados robustos con SciPy `least_squares` (pérdida `soft_l1`, límites, jacobiano por diferencias hacia adelante con paso fijo de 1 km/h y 1°, escala de 10 por parámetro). Cada evaluación es una reconstrucción completa con el solver de referencia.
+- **Identificabilidad:** en el mejor ajuste, $\sigma_k = \sqrt{[(J^\top J)^+]_{kk}}$ (aproximación de Laplace con los residuos en sigmas). Si $\sigma_k$ pasa de 30 km/h o de 15°, o la columna del jacobiano es nula, **la evidencia no fija ese parámetro**: se informa así, queda en su valor inicial y se reajusta lo demás. Ejemplo: contra un poste o un árbol el vehículo se detiene ahí a cualquier velocidad, así que la posición final no dice nada de la velocidad. Sin esta regla, el p10–p90 de la velocidad sale de 0.8 a 200 km/h en `poste` y de 0.2 a 200 km/h en `objeto_fijo_arbol`, es decir, de los límites de búsqueda (`croquis-eval f7-inversion` → `eval/results/f7_inversion.json`).
+- **Distribución:** 12 reestimaciones con semilla. En cada una se sortean la fricción (rango de la tabla), las masas (±5 %) y la evidencia dentro de su σ (las marcas se toman tal cual; su incertidumbre entra por la fricción). Cada reestimación arranca del mejor ajuste con el método de la cuerda: Gauss-Newton con el jacobiano del mejor ajuste, pesos IRLS de `soft_l1`, pasos recortados a la mitad si no mejoran y hasta 4 iteraciones. Si ningún paso mejora, esa muestra se reajusta completa (20 evaluaciones). Se reportan p10–p50–p90 de cada parámetro identificable y de la velocidad al impacto.
+- **En el límite:** si el mejor ajuste queda en un límite de búsqueda (por ejemplo 0 km/h), se marca `en_limite`: la evidencia lleva el parámetro fuera de lo que el modelo permite y conviene revisar los datos.
+- **Reproducibilidad:** con la misma semilla el resultado se repite en la misma máquina. Entre máquinas difiere en décimas (BLAS por CPU), así que la verificación de resultados compara estos bloques con 5 % de tolerancia y el resto con 1e-6 (ADR 0010).
+
+**Validación (E3, `eval/croquis_eval/e3_ciss.py`).** ΔV desde el aplastamiento medido de NHTSA CISS contra el ΔV del EDR, comparado con el ΔV de WinSMASH que publica CISS. La partición es por año: la calibración usa 2017–2021 y el test 2022–2024 (2,205 vehículos comparables con WinSMASH). Croquis queda detrás de WinSMASH en error medio (11.49 contra 8.19 km/h). Tiene menos sesgo cuando el EDR registra 48 km/h o más (−3.14 contra −14.37 km/h) y es claramente peor en impactos traseros (16.59 contra 7.26 km/h), donde la rigidez es genérica. El intervalo p10–p90 cubre el 81.7 % de los casos de test. Detalle en el README.
+
+Pruebas (`test_inversion.py`):
+
+- monotonía del ΔV con el aplastamiento;
+- momento entre dos vehículos;
+- determinismo por semilla;
+- la calibración existe y es razonable;
+- recuperar velocidades y el ángulo de llegada a partir de poses finales generadas por el solver;
+- las marcas fijan la distancia de frenado y se respeta la de la persona usuaria;
+- lo que la evidencia no fija no se reporta como intervalo;
+- la estimación en el límite se marca.
+
+## 11. Monte Carlo (`montecarlo.py`, F7)
+
+Cada campo incierto que usa el solver se muestrea de forma uniforme y con semilla explícita, y la escena se reconstruye con cada muestra (64 por omisión, rejilla de 0.1 s). Rangos cuando el campo no trae `rango` propio (**supuestos** de este módulo):
+
+| Campo                                  | Rango                                                                         |
+| -------------------------------------- | ----------------------------------------------------------------------------- |
+| Velocidad previa                       | ±5 % si la dio la persona usuaria, ±15 % del relato, ±30 % supuesto o default |
+| Masa                                   | rango de la clase (fichas técnicas); ±3 % si la dio la persona usuaria        |
+| Fricción llanta–pavimento              | rango de la tabla para la superficie y su estado                              |
+| Distancia de frenado antes del impacto | ±10 % usuario, ±20 % relato, ±40 % supuesto                                   |
+
+El resultado (`incertidumbre`, esquema 1.3.0 en adelante) lleva p10–p50–p90 de la velocidad al impacto, el ΔV, la posición final y la distancia recorrida después del impacto de cada vehículo, la distancia de proyección de cada persona proyectada y la lista de campos muestreados con su rango. El visor muestra el intervalo del 80 % bajo cada valor nominal. Las preguntas del relato (F6) usan el mismo muestreo para la sensibilidad.
+
+## 12. Consistencia (`consistency.py`, F7)
+
+Banderas cuando lo declarado no cabe en ninguna solución física. Cada una compara contra el **rango** físico posible (fricción, rigidez y masas en sus extremos), no contra un valor nominal: solo se marca lo que no cabe ni en el extremo favorable. Los mensajes son en lenguaje llano, terminan en una pregunta y nunca atribuyen culpa ni intención (PLAN §10). La página del relato las convierte en las primeras preguntas de cada ronda y el visor las muestra en "Datos que no cuadran".
+
+| Código                    | Cuándo                                                                                                                                   |
+| ------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------- |
+| `detenido_con_velocidad`  | Un vehículo "detenido" o "estacionado" con velocidad declarada mayor a 5 km/h.                                                           |
+| `marcas_vs_velocidad`     | Las marcas exigen $v \ge \sqrt{2\mu_{min} g d}$ y la velocidad declarada (con su rango) no llega.                                        |
+| `proyeccion_vs_velocidad` | La banda de Searle para la distancia declarada (con el rango de fricción cuerpo–suelo) no se cruza con el rango de velocidad declarado.  |
+| `dano_vs_velocidad`       | El ΔV del daño declarado (§10) no se cruza con el ΔV de Monte Carlo con las velocidades declaradas.                                      |
+| `velocidad_vs_evidencia`  | La velocidad declarada no se cruza con el intervalo que fija la inversión (solo parámetros identificables y que no quedan en el límite). |
+| `reposo_inalcanzable`     | Ni la mejor combinación de velocidad (0–200 km/h) y rumbo no declarado (±20°) deja el vehículo a menos de 3 σ de la posición declarada.  |
+
+En las escenas canónicas aparecen tres banderas:
+
+- **`peaton_cruce`:** 5 m de marcas y 12 m de proyección piden 51–56 km/h antes de frenar, y el rango de la velocidad del relato es 30–50 km/h.
+- **`motociclista`:** la posición y la orientación final de la moto y la distancia a la que quedó la persona piden 30–38 km/h, y el rango de la velocidad del relato es 40–60 km/h.
+- **`volcadura`:** la posición final del relato queda a unos 10 m de lo que alcanza cualquier velocidad.
+
+Pruebas (`test_consistency.py`): una prueba que dispara cada bandera y otra que no, y además que ningún mensaje contenga palabras de culpa.
+
 ## Orquestador (`reconstruct.py`)
 
 1. Modelos por vehículo desde el contrato (masa, dimensiones; faltantes desde `vehicle_classes.json`).
@@ -173,7 +237,10 @@ El validador semántico (`check.ts` / `check.py`) marca masas, dimensiones y vel
 - Knoblauch, R. L., Pietrucha, M. T. y Nitzburg, M. "Field studies of pedestrian walking speed and start-up time", _Transportation Research Record_ 1538, 1996 (velocidad al caminar).
 - IIHS (Insurance Institute for Highway Safety), "Airbags", https://www.iihs.org/research-areas/airbags (consultado el 2026-10-13): umbrales de despliegue de bolsas frontales y laterales.
 - Heydinger, G. J. et al. "Measured vehicle inertial parameters — NHTSA's data through November 1998", SAE 1999-01-1336.
-- Watson et al., SAE 2023-01-5043 y SAE 2022-01-5069 (CISS vs EDR; E3 en F7).
+- Watson et al., SAE 2023-01-5043 y SAE 2022-01-5069 (CISS contra EDR; contexto de E3).
+- NHTSA, Crash Investigation Sampling System (CISS) 2017–2024, archivos CSV y _CISS Analytical User's Manual_ 2024 (E3; `data/SOURCES.md`).
+- Virtanen, P. et al. "SciPy 1.0", _Nature Methods_ 17, 2020 (`least_squares` con pérdida `soft_l1`).
+- Nocedal, J. y Wright, S. _Numerical Optimization_, 2.ª ed., Springer, 2006 (Gauss-Newton, mínimos cuadrados con pesos iterativos).
 - Michie, J. D. "Collision risk assessment based on occupant flail-space model", _Transportation Research Record_ 796, 1981 (espacio de vuelo de 0.6 m y 0.3 m; base de MASH, AASHTO).
 - AASHTO, _A Policy on Geometric Design of Highways and Streets_ (Green Book), 7.ª ed., 2018 (altura del ojo 1.08 m en autos y 2.33 m en camiones).
 - Olson, P. L. y Sivak, M., estudios de detección nocturna de peatones con luces bajas (1983–1984), citados en AAFS 2004 C60 y en MDPI Eng. Proc. 150(1) 18 (2026): < 30 m con ropa oscura.

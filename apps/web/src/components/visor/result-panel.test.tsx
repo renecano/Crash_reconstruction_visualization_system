@@ -37,3 +37,14 @@ describe("<ResultPanel />", () => {
     expect(screen.getByText(/IIHS/)).toBeDefined();
   });
 });
+
+describe("<ResultPanel /> con incertidumbre", () => {
+  it("muestra el rango del 80 % y los datos muestreados", async () => {
+    const r = await loadResultado("alcance");
+    expect(r.incertidumbre?.validas).toBeGreaterThan(0);
+    render(<ResultPanel resultado={r} supuestosEntorno={[]} />);
+    const text = document.body.textContent ?? "";
+    expect(text).toMatch(/80 %: \d+–\d+ km\/h/);
+    expect(screen.getByTestId("incertidumbre").textContent).toMatch(/velocidad_previa/);
+  });
+});
