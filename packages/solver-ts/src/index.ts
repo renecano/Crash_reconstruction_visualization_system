@@ -1,5 +1,6 @@
 export * from "./units";
 export * from "./pymath";
+export * from "./pyrandom";
 export * from "./models";
 export * from "./friction";
 export * from "./crash3";

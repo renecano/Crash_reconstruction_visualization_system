@@ -85,3 +85,77 @@ export function str(x: unknown, dflt = ""): string {
   if (typeof x === "number" || typeof x === "boolean") return String(x);
   return JSON.stringify(x);
 }
+
+/** Un flotante como fracción exacta: numerador entero y exponente k (x = n / 2^k, k ≥ 0). */
+function exactRatio(x: number): [bigint, number] {
+  if (x === 0) return [0n, 0];
+  const view = new DataView(new ArrayBuffer(8));
+  view.setFloat64(0, x);
+  const hi = view.getUint32(0);
+  const lo = view.getUint32(4);
+  const sign = hi >>> 31 ? -1n : 1n;
+  const biased = (hi >>> 20) & 0x7ff;
+  let mant = (BigInt(hi & 0xfffff) << 32n) | BigInt(lo);
+  let exp: number;
+  if (biased === 0) {
+    exp = -1074;
+  } else {
+    mant |= 1n << 52n;
+    exp = biased - 1075;
+  }
+  if (exp >= 0) return [sign * (mant << BigInt(exp)), 0];
+  return [sign * mant, -exp];
+}
+
+function bitLength(n: bigint): number {
+  return n === 0n ? 0 : n.toString(2).length;
+}
+
+/** p/q redondeado al flotante más cercano (empates al par), como la división de enteros de Python. */
+export function ratioToDouble(pIn: bigint, qIn: bigint): number {
+  if (qIn === 0n) throw new Error("División entre cero");
+  if (pIn === 0n) return 0;
+  const neg = pIn < 0n !== qIn < 0n;
+  const p = pIn < 0n ? -pIn : pIn;
+  const q = qIn < 0n ? -qIn : qIn;
+  let s = 54 - (bitLength(p) - bitLength(q));
+  let m = 0n;
+  let rem = 0n;
+  for (let tries = 0; tries < 4; tries++) {
+    const num = s >= 0 ? p << BigInt(s) : p;
+    const den = s >= 0 ? q : q << BigInt(-s);
+    m = num / den;
+    rem = num % den;
+    const bl = bitLength(m);
+    if (bl === 54) break;
+    s += 54 - bl;
+  }
+  // m tiene 54 bits: 53 de mantisa y uno de guarda; el resto es el bit pegajoso.
+  let mant = m >> 1n;
+  const guard = m & 1n;
+  if (guard === 1n && (rem !== 0n || (mant & 1n) === 1n)) mant += 1n;
+  const v = Number(mant) * 2 ** (1 - s);
+  return neg ? -v : v;
+}
+
+/**
+ * `statistics.pvariance` de CPython: la suma de cuadrados se calcula con fracciones exactas y el
+ * resultado se redondea una sola vez. Un cálculo en flotantes no da los mismos bits.
+ */
+export function pvariance(xs: readonly number[]): number {
+  const n = xs.length;
+  if (n < 1) throw new Error("pvariance requiere al menos un dato");
+  const parts = xs.map(exactRatio);
+  const k = Math.max(...parts.map(([, e]) => e));
+  let s1 = 0n;
+  let s2 = 0n;
+  for (const [num, e] of parts) {
+    const a = num << BigInt(k - e);
+    s1 += a;
+    s2 += a * a;
+  }
+  const bn = BigInt(n);
+  const numer = bn * s2 - s1 * s1;
+  const denom = bn * bn * (1n << BigInt(2 * k));
+  return ratioToDouble(numer, denom);
+}
