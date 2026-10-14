@@ -5,9 +5,12 @@ Reglas de trabajo: `CLAUDE.md`. Especificación: `PLAN.md`.
 
 ## Estado actual
 
-- **Fase actual:** F6 — Comprensión del relato (rama `feat/f6-relato`): completa, en PR. Criterio cumplido: E1 publicado con las tres alternativas (reglas, Haiku, Sonnet), fuga de PII y contrafactuales medidos.
-- **Siguiente paso concreto:** fusionar el PR de F6 con CI en verde y empezar F7 (inversión, Monte Carlo y consistencia; E3 con CISS), incluido el test nuevo de Relatos-MX adaptado de CISS.
-- **F0** cerrado el 2026-10-10 (PR #1), **F1** el 2026-10-10 (PR #3), **F2** el 2026-10-13 (PR #4), **F3** el 2026-10-13 (PR #5), **F4** el 2026-10-13 (PR #6), **F5** el 2026-10-13 (PR #7).
+- **Fase actual:** F7 — Inversión, Monte Carlo y consistencia (rama `feat/f7-inversion`): completa, en PR. Criterio cumplido: E3 contra EDR y WinSMASH publicado; seis banderas de inconsistencia, cada una con su prueba.
+- **Siguiente paso concreto:**
+  1. Fusionar el PR de F7 con CI en verde.
+  2. En una rama propia, segundo test de Relatos-MX desde los campos codificados de CISS y prompt v2 (pendiente 1 de F7).
+  3. F8 (entorno completo con OSM).
+- **F0** cerrado el 2026-10-10 (PR #1), **F1** el 2026-10-10 (PR #3), **F2** el 2026-10-13 (PR #4), **F3** el 2026-10-13 (PR #5), **F4** el 2026-10-13 (PR #6), **F5** el 2026-10-13 (PR #7), **F6** el 2026-10-14 (PR #8).
 
 ### Bloqueado — necesita a René
 
@@ -647,3 +650,88 @@ Riesgos:
 - **Datos de CISS:** solo una parte de los casos tiene EDR, y su ΔV es longitudinal y lateral por separado y con códigos centinela (888/997). Se filtra y se documenta cada exclusión.
 - **Clases de vehículo:** la clasificación de CISS (BODYTYPE) es distinta de la nuestra y hace falta una tabla de correspondencia con fuente.
 - **Rendimiento:** Monte Carlo es costoso en la laptop y su número de muestras se elige midiendo el tiempo.
+
+### Hecho
+
+- **CISS 2017–2024** (`data/croquis_data/ciss.py`, `croquis-data ciss download|build [--check]`):
+  - CSV oficiales de NHTSA con candado SHA-256 por año, registrados en `data/SOURCES.md`.
+  - Tabla por vehículo y evento en `data/processed/ciss/e3_vehiculos.csv` (8,975 filas), con perfil C1–C6, ancho, PDOF, objeto, masa, ΔV de WinSMASH, ΔV del EDR ligado por `CDCEVENT` y el otro vehículo.
+  - Las exclusiones se cuentan en `e3_conteos.json`.
+- **Inversión** (`solver/croquis_solver/inversion.py`, módulo 6.1.10):
+  - **ΔV desde el daño:** CRASH3 con rigidez de NHTSA muestreada por bootstrap (A y B juntas) y error de modelo calibrado en CISS dev.
+  - **Velocidades y rumbos desde la evidencia:** posición y rumbo final, marcas de frenado (fijan la distancia de frenado), proyección y daño. Mínimos cuadrados robustos (`soft_l1`) sobre el solver completo.
+  - **Identificabilidad por Laplace:** "la evidencia no basta" en vez de un intervalo de los límites de búsqueda; las estimaciones en el límite se marcan.
+  - **Distribución:** 12 reestimaciones con semilla por el método de la cuerda, con respaldo de ajuste completo.
+- **Monte Carlo** (`montecarlo.py`, 6.1.11): 64 muestras uniformes con semilla y rangos según la fuente del dato. Resultado 1.3.0 con `incertidumbre`; el visor muestra el rango del 80 % bajo cada valor.
+- **Consistencia** (`consistency.py`, 6.1.12): seis banderas contra el rango físico, en llano y sin culpa:
+  - `detenido_con_velocidad`, `marcas_vs_velocidad`, `proyeccion_vs_velocidad`;
+  - `dano_vs_velocidad`, `velocidad_vs_evidencia`, `reposo_inalcanzable`.
+
+  En `/relato` son las primeras preguntas de cada ronda. La evidencia que una bandera ya cubre no se vuelve a preguntar con el aviso del solver.
+
+- **Resultado 1.4.0:** `inversion` y `consistencia`, precalculados en las diez escenas; Zod regenerado. La API acepta `POST /reconstruir {analisis: true}`, con límite propio por hora (`CROQUIS_ANALYSIS_RATE_LIMIT_PER_HOUR`).
+- **Visor:**
+  - Panel "Lo que dice la evidencia física": evidencia usada, valor de partida contra lo que fija la evidencia, y "Datos que no cuadran".
+  - Comparación de hasta tres hipótesis como vehículos fantasma (azul, naranja y violeta) con la diferencia en un panel (PLAN §7.6).
+- **E3** (`eval/croquis_eval/e3_ciss.py`): ΔV de Croquis y de WinSMASH contra el EDR. Calibra en 2017–2021 y reporta en 2022–2024, por grupo de plano, contacto y rango de ΔV.
+- **F7 en las escenas** (`eval/croquis_eval/f7_inversion.py`): parámetros identificables, banderas, tiempos y el intervalo sin la regla de identificabilidad.
+- **Arreglo del solver:** un poste o árbol a muy baja energía disparaba una aserción (energía bajo el umbral de deformación permanente). Se acepta perfil cero y hay prueba de regresión con Hypothesis.
+- **Documentación:** `docs/physics.md` §10–§12, ADR 0010 y README (filas y lectura honesta de E3, "Qué hay hoy").
+
+### Evidencia (local, Windows, 2026-10-14)
+
+| Comando                                                         | Resultado                                                                                                                                                                                                                                                        |
+| --------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `uv run ruff check .` · `ruff format --check .` · `pyright`     | sin errores                                                                                                                                                                                                                                                      |
+| `uv run pytest`                                                 | **436 pruebas** en verde (inversión 19, consistencia 8, Monte Carlo 5, preguntas 12, API 12, objeto fijo con regresión)                                                                                                                                          |
+| `pnpm lint` · `pnpm typecheck` · `pnpm test` · `format:check`   | en verde; **899 pruebas** (relato 547, scene-schema 126, viewer 160, croquis-2d 35, web 24, solver-ts 7)                                                                                                                                                         |
+| Playwright (`visor.spec.ts`: hipótesis y volcadura)             | en verde: dos hipótesis se suman y se quitan (fantasmas contados en la escena); la bandera de reposo inalcanzable se ve en la volcadura                                                                                                                          |
+| `uv run croquis-solver reconstruct --check`                     | resultados 1.4.0 de las diez escenas al día (con `incertidumbre`, `inversion` y `consistencia`)                                                                                                                                                                  |
+| `uv run croquis-eval e3-ciss`                                   | test 2022–2024, 2,205 vehículos: Croquis 11.49 km/h de error medio (WinSMASH 8.19); EDR ≥ 48 km/h: sesgo −3.14 (WinSMASH −14.37); traseros 16.59 (7.26); cobertura p10–p90 81.7 %                                                                                |
+| `uv run croquis-eval f7-inversion`                              | en las diez escenas: 3 banderas (2 `velocidad_vs_evidencia`, 1 `reposo_inalcanzable`); sin la regla de identificabilidad, el p10–p90 sale 0.8–200 km/h (poste) y 0.2–200 (árbol); inversión más lenta 38.95 s (glorieta), Monte Carlo 10.16 s (frontal en curva) |
+| `uv run croquis-eval e1-extraction --split test` (reproducción) | las preguntas ahora empiezan por la consistencia: cobertura sobre reglas 32.8 % → **33.9 %** (59 de 174); Sonnet y Haiku sin cambio (5.4 % y 8.6 %). README actualizado; la tabla de F6 queda como registro de su commit                                         |
+
+Capturas revisadas (no versionadas): el visor con una hipótesis (fantasmas azules desplazados 4 m del vehículo real, tabla de diferencias) y el panel de evidencia en `peaton_cruce` y `glorieta` (velocidad que fija la evidencia, "la evidencia no basta", estimación en el límite).
+
+Incidente: una corrida local de `pnpm test` falló una vez en `debris.test.ts` (horneado con Rapier, choque de frente) y no se reprodujo en 5 corridas más. Se dio a esas pruebas un límite explícito de 30 s por si fue el de 5 s por omisión. Si reaparece con otro mensaje, se investiga como bug.
+
+### Pendientes registrados
+
+1. **Relatos-MX, segundo test y prompt v2 (pendiente de F6).** Se hace en una rama propia antes de F8 (es un cambio de orden, no un recorte).
+   - **Fuente:** los CSV de CISS no traen narrativas y NHTSA no publica una API documentada para las del Crash Viewer (su API documentada es la de FARS). El test se construirá desde los campos codificados de CISS (maniobra, tipo de choque, superficie, luz, clima, clase): la verdad viene de NHTSA, no del autor de los relatos.
+   - **Prompt v2:** con la tabla modelo → clase, validado en dev y medido en ese test nuevo.
+2. **Rigidez lateral y trasera desde pruebas de NHTSA** (FMVSS 214 lateral y FMVSS 301 trasera). Es la debilidad medida en E3. No se ajusta con el EDR de CISS para no mezclar validación y calibración. Cambiará resultados y capturas.
+3. **Inercia de guiñada medida** (Heydinger et al., SAE 1999-01-1336) en lugar de la placa uniforme. Cambia todas las trayectorias posteriores al impacto y las capturas.
+4. **Marcas de derrape en la inversión.** El contrato no dice si son anteriores o posteriores al impacto; hace falta un campo y una versión del contrato.
+5. **Procedencia del rumbo final.** Hoy es parte de la pose declarada. Si E9 muestra que las personas no lo dicen, se separa en el contrato.
+6. **Port TS** de inversión, Monte Carlo y consistencia, o llamada al servidor: F9, con E7.
+7. **CMA-ES** si aparecen escenas multimodales; en las diez canónicas el ajuste local converge.
+
+### Decisiones
+
+- ADR 0010: partición por año en E3, rigidez muestreada, inversión sobre el solver completo, identificabilidad explícita, método de la cuerda, consistencia contra rangos, resultado 1.4.0 e hipótesis con fantasmas.
+- La rigidez lateral y trasera se queda como `supuesto` hasta tener una fuente física. No se calibra con el EDR.
+- Las hipótesis se reconstruyen en el servidor. En la demo sin red llegarán con el port TS (F9).
+
+### Resumen para René (F7)
+
+Croquis ya no da un solo número cuando no lo sabe:
+
+1. **Rangos:** cada velocidad, ΔV y posición final trae el intervalo del 80 % (Monte Carlo con semilla).
+2. **Lo que dice la evidencia:** con posiciones finales, marcas de frenado, distancia de proyección o daño, Croquis busca las velocidades y direcciones con las que el solver la reproduce. Cuando la evidencia no basta (por ejemplo, contra un poste), lo dice en vez de inventar un intervalo.
+3. **Datos que no cuadran:** se marcan en lenguaje llano, sin culpar, y en `/relato` se convierten en preguntas. Ejemplo: en el cruce peatonal, las marcas y la distancia de proyección piden 51–56 km/h y el relato dice "como a 40".
+4. **Hipótesis:** en `/visor`, "¿y si iba a 60?" dibuja la otra reconstrucción como fantasma de color (hasta tres) y compara velocidades, ΔV y posición final.
+
+E3 con 2,205 casos reales de NHTSA (2022–2024):
+
+- **En conjunto:** Croquis estima el ΔV con 11.49 km/h de error medio, contra 8.19 de WinSMASH (la herramienta de NHTSA).
+- **Choques fuertes:** Croquis tiene mucho menos sesgo (−3.14 contra −14.37 km/h).
+- **Traseros:** son su punto débil, porque no hay rigidez medida para atrás ni para los lados.
+- **Intervalo:** cubre el 81.7 % de los casos.
+
+Cómo probarlo:
+
+- **Visor:** `pnpm --filter @croquis/web dev` y abre `/visor?escena=peaton_cruce`. Mira el panel "Lo que dice la evidencia física".
+- **Hipótesis:** necesitan la API corriendo (`uv run uvicorn croquis_api.main:app`).
+
+Qué necesito de ti: nada nuevo. Siguen pendientes AWS y Vercel, BeamNG y las personas para E9.
