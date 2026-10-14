@@ -67,9 +67,16 @@ _MARKS2 = re.compile(
     + r"\s*(?:metros|mts|m)\b"
 )
 _THROW = re.compile(
-    r"(?:cayo|quedo|salio volando|lo avento|la avento|termino|fue a dar)\s+(?:tirad[oa]\s+)?(?:como\s+|unos\s+)?a\s+(?:unos\s+|como\s+)?"
+    r"(?:cayo|quedo|salio volando|lo avento|la avento|lo aventaron|la aventaron|lo lanzo|la lanzo|termino|fue a dar)\s+(?:tirad[oa]\s+)?(?:como\s+|unos\s+)?(?:a\s+)?(?:unos\s+|como\s+)?"
     + _NUM
     + r"\s*(?:metros|mts|m)\b"
+)
+_DRIVING = re.compile(
+    r"(?<![a-z])(?:choque|me estrelle|me sali|me fui contra|me volque|me voltee|derrape|frene|"
+    r"iba a \d|iba manejando|venia manejando|iba conduciendo|maneje)(?![a-z])"
+)
+_FIRST_STRONG = re.compile(
+    r"(?<![a-z])(?:yo|mi|me|choque|frene|meti|di|doble|gire|voltee|pise|clave|maneje|traigo)(?![a-z])"
 )
 _FIRST = re.compile(
     r"(?<![a-z])(?:yo|mi|me|iba|venia|circulaba|manejaba|traia|choque|frene|meti|di|doble|gire|voltee|pise|clave|estaba)(?![a-z])"
@@ -185,7 +192,8 @@ def extract_facts(text: str) -> Facts:
     folded = fold(text)
     terms = find_terms(text)
     f = Facts()
-    first_person = _is_first_person(folded)
+    # "iba", "venía", "estaba" valen para yo y para él: aquí solo cuentan las marcas inequívocas.
+    first_person = bool(_FIRST_STRONG.search(folded))
     mentions = _vehicle_mentions(text, folded, terms)
 
     # Vehículos: el del narrador primero (A), luego los demás en orden de aparición.
@@ -199,20 +207,23 @@ def extract_facts(text: str) -> Facts:
         if narr and narr[0].clase == m.clase and not narr[0].cita.lower().startswith("mi"):
             continue
         others.append(m)
+    # Peatón que narra: "iba cruzando" sin sujeto en tercera persona ("un señor que iba
+    # cruzando" es otra persona).
     pedestrian_narrator = (
         bool(
             re.search(
-                r"(?<![a-z])(?:iba cruzando|estaba cruzando|cruzaba la calle|iba caminando)(?![a-z])",
+                r"(?<![a-z])(?<!que )(?:iba cruzando|estaba cruzando|cruzaba la calle|iba caminando)(?![a-z])",
                 folded,
             )
         )
+        and bool(re.search(r"(?<![a-z])(?:yo|me|mi)(?![a-z])", folded))
         and not narr
     )
     vehs: list[Mention] = []
     if narr:
         vehs.append(narr[0])
-    elif first_person and not pedestrian_narrator and others:
-        # Narra en primera persona sin decir su vehículo: el primero mencionado con "mi" no existe;
+    elif first_person and not pedestrian_narrator and (others or _DRIVING.search(folded)):
+        # Narra en primera persona sin decir su vehículo ("choqué contra un poste", "iba a 80"):
         # se crea uno sin clase.
         vehs.append(Mention(0, 0, "", "", True))
     vehs.extend(others[:4])
@@ -292,8 +303,10 @@ def extract_facts(text: str) -> Facts:
                     f.vehiculos[k]["maniobra"] = Fact(valor, t.texto, "relato")
             elif campo == "vehiculo.frenado.aplico":
                 orig = t.texto
-                if re.search(r"frenó|frenaron|no frenó", orig) or fold(orig).startswith(
-                    "freno a fondo"
+                if re.search(r"frenó|frenaron|nunca frenó", orig) or fold(orig) in (
+                    "freno a fondo",
+                    "si freno",
+                    "alcanzo a frenar",
                 ):
                     cands = [i for i in range(len(f.vehiculos)) if i != f.narrador_vehiculo]
                     k = cands[0] if cands else None
@@ -311,7 +324,7 @@ def extract_facts(text: str) -> Facts:
         "entorno.iluminacion": "entorno.iluminacion",
         "objeto.tipo": "evento.objeto",
     }
-    for t in terms:
+    for t in sorted(terms, key=lambda t: (t.ambiguo, t.start)):
         for e in t.efectos:
             campo = str(e["campo"])
             if campo in keymap and keymap[campo] not in f.escalares:
@@ -341,10 +354,10 @@ def extract_facts(text: str) -> Facts:
     )
     obj = f.escalares.get("evento.objeto")
     impact_word = re.search(
-        r"(?<![a-z])(?:me pego|le pegue|me pegaron|me dio|le di|choque|chocamos|me impacto|impacto|golpe|me golpeo|la golpee|lo golpee|atropelle|lo atropelle|la atropelle|nos dimos|me rozo|me fui contra|pegue contra|me estrelle)(?![a-z])",
+        r"(?<![a-z])(?:me pego|le pegue|me pegaron|me dio|le di|choque|chocamos|me impacto|impacto|golpe|me golpeo|la golpee|lo golpee|atropelle|lo atropelle|la atropelle|atropello|lo atropello|la atropello|lo arrollo|la arrollo|nos dimos|me rozo|me fui contra|pegue contra|me estrelle)(?![a-z])",
         folded,
     )
-    if pedestrian is not None and not pedestrian_narrator and f.vehiculos:
+    if pedestrian is not None and f.vehiculos:
         ev = Fact(
             "impacto_vehiculo_persona",
             impact_word.group(0) and text[impact_word.start() : impact_word.end()]
@@ -352,7 +365,8 @@ def extract_facts(text: str) -> Facts:
             else pedestrian.texto,
             "relato",
         )
-        f.personas.append({"rol": Fact("peaton", pedestrian.texto, "relato")})
+        if not pedestrian_narrator:  # el peatón que narra se agrega abajo
+            f.personas.append({"rol": Fact("peaton", pedestrian.texto, "relato")})
     elif obj is not None:
         cita = text[impact_word.start() : impact_word.end()] if impact_word else str(obj.cita)
         ev = Fact("impacto_vehiculo_objeto", cita, "relato")
@@ -457,6 +471,8 @@ def _zones(text: str, folded: str, f: Facts) -> None:
             "B",
         ),
         (r"por alcance", "F", "B"),
+        (r"(?:le di|le pegue|lo alcance|la alcance)\s+(?:un\s+)?alcance", "F", "B"),
+        (r"(?:me dieron|me dio|me pegaron|me pego)\s+(?:un\s+)?alcance", "B", "F"),
         (r"de frente|frente a frente", "F", "F"),
         (r"defensas traseras", "B", "B"),
         (

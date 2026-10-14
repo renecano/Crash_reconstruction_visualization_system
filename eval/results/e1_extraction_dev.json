@@ -1,7 +1,7 @@
 {
   "name": "e1_extraction_dev",
-  "generated_at": "2026-10-14T03:04:56+00:00",
-  "git_commit": "feb2c7c",
+  "generated_at": "2026-10-14T13:33:51+00:00",
+  "git_commit": "f3b111e",
   "seed": null,
   "descripcion": "E1: extracción del relato en Relatos-MX (línea base de reglas, Claude Haiku y Sonnet desde respuestas grabadas), fuga de PII del redactor y diferencia contrafactual.",
   "split": "dev",
@@ -22,10 +22,10 @@
       "estado": "medido",
       "relatos": 20,
       "sin_respuesta": 0,
-      "f1_micro": 0.821,
-      "f1_macro": 0.8042,
-      "precision_micro": 0.8693,
-      "exhaustividad_micro": 0.7778,
+      "f1_micro": 0.8282,
+      "f1_macro": 0.8164,
+      "precision_micro": 0.871,
+      "exhaustividad_micro": 0.7895,
       "numero_de_vehiculos_exacto": 0.85,
       "por_campo": {
         "clase": {
@@ -61,12 +61,12 @@
           "f1": 0.6667
         },
         "entorno.iluminacion": {
-          "tp": 4,
+          "tp": 5,
           "fp": 0,
-          "fn": 2,
+          "fn": 1,
           "precision": 1.0,
-          "exhaustividad": 0.6667,
-          "f1": 0.8
+          "exhaustividad": 0.8333,
+          "f1": 0.9091
         },
         "evento.objeto": {
           "tp": 3,
@@ -94,12 +94,12 @@
           "error_absoluto_medio": 0.0
         },
         "frenado": {
-          "tp": 4,
+          "tp": 5,
           "fp": 0,
-          "fn": 1,
+          "fn": 0,
           "precision": 1.0,
-          "exhaustividad": 0.8,
-          "f1": 0.8889
+          "exhaustividad": 1.0,
+          "f1": 1.0
         },
         "lugar.estado_superficie": {
           "tp": 3,
@@ -176,14 +176,14 @@
         }
       },
       "con_verificador": {
-        "f1_micro": 0.821,
-        "f1_macro": 0.8042,
-        "precision_micro": 0.8693,
-        "exhaustividad_micro": 0.7778,
+        "f1_micro": 0.8282,
+        "f1_macro": 0.8164,
+        "precision_micro": 0.871,
+        "exhaustividad_micro": 0.7895,
         "numero_de_vehiculos_exacto": 0.85
       },
       "alucinacion_de_campo": {
-        "campos_relato": 139,
+        "campos_relato": 141,
         "sin_cita_literal": 0,
         "tasa": 0.0,
         "tasa_tras_verificador": 0.0,
@@ -195,8 +195,8 @@
         "tasa": null
       },
       "latencia_ms": {
-        "p50": 3.01,
-        "p95": 5.1
+        "p50": 3.52,
+        "p95": 5.67
       },
       "costo_usd_por_1000": 0.0
     },

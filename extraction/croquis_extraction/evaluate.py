@@ -21,6 +21,7 @@ from croquis_extraction.facts import NUMERIC, SCALAR_FIELDS, TOLERANCE, VEHICLE_
 
 EQUIV: dict[tuple[str, str], frozenset[str]] = {
     ("clase", "suv_o_pickup"): frozenset({"suv_compacta", "suv_grande", "pickup"}),
+    ("clase", "camion_o_autobus"): frozenset({"autobus", "camion_unitario"}),
     ("entorno.clima", "lluvia"): frozenset({"lluvia_ligera", "lluvia_fuerte"}),
     ("entorno.iluminacion", "noche"): frozenset({"noche_con_alumbrado", "noche_sin_alumbrado"}),
     ("lugar.tipo_via", "interseccion"): frozenset({"interseccion_x", "interseccion_t"}),

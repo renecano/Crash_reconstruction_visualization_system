@@ -1,10 +1,10 @@
 {
-  "version": "1.1.0",
+  "version": "1.2.0",
   "descripcion": "Glosario de expresiones del español de México en relatos de percances viales. Cada entrada dice qué significa y a qué campo de EscenaSpec apunta. Los patrones se buscan sobre el texto en minúsculas y sin acentos; las coincidencias conservan su posición en el texto original para citarlas como evidencia. Las entradas ambiguas no fijan un valor: sugieren una pregunta. Ninguna entrada asigna culpa.",
   "entradas": [
     {
       "id": "se_me_cerro",
-      "patrones": ["se me cerr[oó]", "me cerr[oó] el paso", "se me meti[oó]", "se me atraves[oó]"],
+      "patrones": ["se me cerro", "me cerro el paso", "se me metio", "se me atraveso"],
       "significado": "Otro vehículo invadió el carril o la trayectoria de quien relata.",
       "efectos": [
         {
@@ -18,9 +18,9 @@
     {
       "id": "me_echo_la_lamina",
       "patrones": [
-        "me ech[oó] la lamina",
-        "me ech[oó] el carro",
-        "me ech[oó] la camioneta",
+        "me echo la lamina",
+        "me echo el carro",
+        "me echo la camioneta",
         "me aventaron la lamina"
       ],
       "significado": "Otro vehículo se acercó o se incorporó de forma brusca sobre el carril de quien relata.",
@@ -153,8 +153,8 @@
     {
       "id": "se_volteo",
       "patrones": [
-        "se volte[oó]",
-        "se volc[oó]",
+        "se volteo",
+        "se volco",
         "dio vueltas",
         "dio una vuelta de campana",
         "se dio la vuelta",
@@ -172,7 +172,7 @@
     {
       "id": "derrape",
       "patrones": [
-        "derrap[eoé]",
+        "derrap[eo]",
         "me derrape",
         "se derrapo",
         "me barri",
@@ -199,7 +199,12 @@
         "frene",
         "freno a fondo",
         "clave los frenos",
-        "frenazo"
+        "frenazo",
+        "freno(?= (?:pero|y|tarde|de golpe|en seco|fuerte|bruscamente))",
+        "si freno",
+        "alcanzo a frenar",
+        "alcance a frenar",
+        "frenaron"
       ],
       "significado": "Aplicó el freno.",
       "efectos": [
@@ -216,7 +221,9 @@
         "ni freno",
         "no alcance a frenar",
         "no me dio tiempo de frenar",
-        "sin frenar"
+        "sin frenar",
+        "no frenaron",
+        "nunca freno"
       ],
       "significado": "No aplicó el freno antes del impacto.",
       "efectos": [
@@ -549,6 +556,19 @@
       ]
     },
     {
+      "id": "camion",
+      "patrones": ["camion", "camiones", "camioncito"],
+      "significado": "Camión sin más: puede ser autobús de pasajeros (uso común en el centro del país) o camión de carga.",
+      "efectos": [
+        {
+          "campo": "vehiculo.clase",
+          "valor": "camion_o_autobus"
+        }
+      ],
+      "ambiguo": true,
+      "pregunta": "¿El camión era de pasajeros o de carga?"
+    },
+    {
       "id": "camioneta",
       "patrones": ["camioneta", "camionetita"],
       "significado": "Camioneta: puede ser SUV, pickup o van.",
@@ -633,7 +653,7 @@
         "(?:una|un|la|el) (?:senora|senor|muchacho|muchacha|nino|nina|persona|joven|chavo|chava|viejito|viejita|abuelito|abuelita) se (?:atraveso|cruzo|me atraveso|me cruzo)",
         "iba cruzando",
         "cruzo la calle",
-        "atropell[eoé]",
+        "atropell[eo]",
         "atropellad[oa]"
       ],
       "significado": "Persona a pie (sin datos personales).",

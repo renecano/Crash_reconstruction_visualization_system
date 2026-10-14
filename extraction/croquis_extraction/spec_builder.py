@@ -51,6 +51,7 @@ ENUM_FIX = {
     ("entorno.clima", "lluvia"): "lluvia_ligera",
     ("entorno.iluminacion", "noche"): "noche_con_alumbrado",
     ("clase", "suv_o_pickup"): "suv_compacta",
+    ("clase", "camion_o_autobus"): "autobus",
     ("maniobra", "cambio_carril"): "cambio_carril_izquierda",
 }
 DEFAULTS = {

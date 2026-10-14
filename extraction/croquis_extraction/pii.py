@@ -112,7 +112,7 @@ _PATTERNS: list[tuple[str, re.Pattern[str]]] = [
     (
         "NUMERO",
         re.compile(
-            r"(?i)(?:(?<![\w])(?:numero|número|num\.?|no\.|#)\s*\d{1,5}[A-Z]?"
+            r"(?i)(?:(?<![\w])(?:numero|número|num\.?|no\.|#)\s*\d{1,5}(?![\s.-]?\d)[A-Z]?"
             r"(?:\s*(?:int(?:erior)?\.?|depto\.?|departamento)\s*[A-Z0-9-]+)?)"
         ),
     ),
