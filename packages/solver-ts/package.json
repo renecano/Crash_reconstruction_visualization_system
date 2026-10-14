@@ -25,5 +25,6 @@
   },
   "dependencies": {
     "@croquis/scene-schema": "workspace:*"
-  }
+  },
+  "sideEffects": false
 }

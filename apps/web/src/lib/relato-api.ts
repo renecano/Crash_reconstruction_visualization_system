@@ -1,10 +1,12 @@
 /**
- * Cliente de las rutas del relato en `services/api` (FastAPI). El texto que se envía ya va
- * redactado en el navegador; el servidor vuelve a redactar como defensa en profundidad.
+ * Cliente de las rutas del relato (Route Handlers en `app/api/relato`, desplegadas junto con la
+ * web en Vercel). El texto que se envía ya va redactado en el navegador; el servidor vuelve a
+ * redactar como defensa en profundidad. La extracción llega como NDJSON en streaming.
  */
 import type { EscenaSpec } from "@croquis/scene-schema";
 
-export const API_URL = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8000";
+/** Rutas del relato (mismo origen que la página). */
+export const API_BASE = "/api/relato";
 
 export interface Pregunta {
   id: string;
@@ -41,6 +43,12 @@ export interface ResponderRespuesta {
   preguntas: Pregunta[];
 }
 
+/** Avance de la extracción: método elegido y caracteres que Claude lleva escritos. */
+export interface Progreso {
+  metodo: "reglas" | "claude" | null;
+  caracteres: number;
+}
+
 export class ApiError extends Error {
   constructor(
     message: string,
@@ -50,41 +58,82 @@ export class ApiError extends Error {
   }
 }
 
-async function post<T>(path: string, body: unknown, fetcher: typeof fetch): Promise<T> {
+const OFFLINE =
+  "No se pudo conectar con el servidor de Croquis. Revisa tu conexión e intenta de nuevo.";
+
+async function send(path: string, body: unknown, fetcher: typeof fetch): Promise<Response> {
   let res: Response;
   try {
-    res = await fetcher(`${API_URL}${path}`, {
+    res = await fetcher(`${API_BASE}${path}`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(body),
     });
   } catch {
-    throw new ApiError(
-      `No se pudo conectar con el servidor de Croquis en ${API_URL}. ¿Está corriendo services/api?`,
-    );
+    throw new ApiError(OFFLINE);
   }
-  if (!res.ok) {
-    throw new ApiError(`El servidor respondió ${res.status}.`, res.status);
-  }
-  return (await res.json()) as T;
+  if (!res.ok) throw new ApiError(`El servidor respondió ${res.status}.`, res.status);
+  return res;
 }
 
-export function extraer(
+type Evento =
+  | { tipo: "inicio"; metodo: "reglas" | "claude" }
+  | { tipo: "progreso"; caracteres: number }
+  | { tipo: "resultado"; datos: ExtraerRespuesta }
+  | { tipo: "error"; mensaje: string };
+
+/** Lee un cuerpo NDJSON evento por evento. */
+async function* ndjson(res: Response): AsyncGenerator<Evento> {
+  if (!res.body) {
+    for (const line of (await res.text()).split("\n"))
+      if (line.trim()) yield JSON.parse(line) as Evento;
+    return;
+  }
+  const reader = res.body.getReader();
+  const decoder = new TextDecoder();
+  let buffer = "";
+  for (;;) {
+    const { value, done } = await reader.read();
+    if (value) buffer += decoder.decode(value, { stream: true });
+    let nl = buffer.indexOf("\n");
+    while (nl >= 0) {
+      const line = buffer.slice(0, nl);
+      buffer = buffer.slice(nl + 1);
+      if (line.trim()) yield JSON.parse(line) as Evento;
+      nl = buffer.indexOf("\n");
+    }
+    if (done) break;
+  }
+  if (buffer.trim()) yield JSON.parse(buffer) as Evento;
+}
+
+export async function extraer(
   texto: string,
   metodo: "auto" | "reglas" | "claude" = "auto",
   fetcher: typeof fetch = fetch,
+  onProgress?: (p: Progreso) => void,
 ): Promise<ExtraerRespuesta> {
-  return post("/relato/extraer", { texto, metodo }, fetcher);
+  const res = await send("/extraer", { texto, metodo }, fetcher);
+  let progreso: Progreso = { metodo: null, caracteres: 0 };
+  for await (const ev of ndjson(res)) {
+    if (ev.tipo === "inicio") progreso = { ...progreso, metodo: ev.metodo };
+    else if (ev.tipo === "progreso") progreso = { ...progreso, caracteres: ev.caracteres };
+    else if (ev.tipo === "resultado") return ev.datos;
+    else throw new ApiError(ev.mensaje);
+    onProgress?.(progreso);
+  }
+  throw new ApiError("La respuesta del servidor se cortó antes del resultado.");
 }
 
-export function responder(
+export async function responder(
   spec: EscenaSpec,
   texto: string,
   respuestas: Record<string, string>,
   contestadas: string[],
   fetcher: typeof fetch = fetch,
 ): Promise<ResponderRespuesta> {
-  return post("/relato/responder", { spec, texto, respuestas, contestadas }, fetcher);
+  const res = await send("/responder", { spec, texto, respuestas, contestadas }, fetcher);
+  return (await res.json()) as ResponderRespuesta;
 }
 
 /** Clave de sessionStorage con la escena que el croquis abre desde el relato. */

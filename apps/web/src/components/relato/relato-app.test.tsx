@@ -34,12 +34,21 @@ const extraida: ExtraerRespuesta = {
   ],
 };
 
+/** Doble del servidor: la extracción responde en NDJSON (inicio y resultado); el resto, JSON. */
 function fakeFetch(responses: unknown[]) {
   const calls: { url: string; body: unknown }[] = [];
   const fn = vi.fn((url: string, init?: RequestInit) => {
     calls.push({ url, body: JSON.parse(String(init?.body)) });
     const next = responses.shift();
-    return Promise.resolve(new Response(JSON.stringify(next), { status: 200 }));
+    const body = url.endsWith("/extraer")
+      ? [
+          { tipo: "inicio", metodo: "reglas" },
+          { tipo: "resultado", datos: next },
+        ]
+          .map((e) => JSON.stringify(e) + "\n")
+          .join("")
+      : JSON.stringify(next);
+    return Promise.resolve(new Response(body, { status: 200 }));
   });
   return { fetcher: fn as unknown as typeof fetch, calls };
 }

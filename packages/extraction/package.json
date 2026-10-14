@@ -30,5 +30,6 @@
     "@noble/hashes": "catalog:",
     "@upstash/ratelimit": "catalog:",
     "@upstash/redis": "catalog:"
-  }
+  },
+  "sideEffects": false
 }
