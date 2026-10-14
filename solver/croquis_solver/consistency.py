@@ -15,8 +15,12 @@ Banderas:
   el rango de fricción cuerpo–suelo) que no se cruzan con el rango de velocidad declarado.
 * `dano_vs_velocidad`: el ΔV que implica el aplastamiento declarado (CRASH3) no se cruza con el
   ΔV que resulta de las velocidades declaradas (Monte Carlo).
-* `reposo_inalcanzable`: ninguna velocidad entre 0 y 200 km/h lleva el vehículo a la posición
-  final declarada (ajuste de la inversión con residuo mayor a 3 σ).
+* `velocidad_vs_evidencia`: la velocidad declarada no se cruza con el intervalo p10–p90 que fija la
+  evidencia física en la inversión (solo parámetros que la evidencia identifica y que no quedan en
+  el límite de búsqueda).
+* `reposo_inalcanzable`: ninguna velocidad entre 0 y 200 km/h (ni un rumbo inicial no declarado
+  dentro de ±20°) lleva el vehículo a la posición final declarada (ajuste de la inversión con
+  residuo mayor a 3 σ).
 """
 
 from __future__ import annotations
@@ -28,8 +32,11 @@ from typing import Any
 from croquis_solver import friction, pedestrian
 from croquis_solver.inversion import (
     SIGMA_POSITION_M,
+    Evidence,
+    Inversion,
     evidence_from_spec,
-    fit_speeds,
+    fit_evidence,
+    invert,
 )
 from croquis_solver.montecarlo import monte_carlo, ranges
 
@@ -49,7 +56,20 @@ class Inconsistency:
     datos: JsonObj
 
     def to_dict(self) -> JsonObj:
-        return {"codigo": self.codigo, "mensaje": self.mensaje, "datos": self.datos}
+        return {"codigo": self.codigo, "mensaje": self.mensaje, "datos": _rounded(self.datos)}
+
+
+def _rounded(x: Any) -> Any:
+    """Números a 2 decimales (km/h y m) para el resultado; listas y textos tal cual."""
+    if isinstance(x, float):
+        return round(x, 2)
+    if isinstance(x, dict):
+        d: JsonObj = x  # pyright: ignore[reportUnknownVariableType]
+        return {k: _rounded(v) for k, v in d.items()}
+    if isinstance(x, list):
+        items: list[Any] = x  # pyright: ignore[reportUnknownVariableType]
+        return [_rounded(v) for v in items]
+    return x
 
 
 def _stated(campo: JsonObj | None) -> bool:
@@ -212,7 +232,7 @@ def check_rest(spec: JsonObj, seed: int) -> list[Inconsistency]:
     ev = evidence_from_spec(spec, seed=seed)
     if not ev.rest:
         return out
-    fit = fit_speeds(spec, type(ev)(ev.rest, {}, {}))
+    fit = fit_evidence(spec, Evidence(ev.rest, {}, {}))
     by_id = {v["id"]: v for v in spec["vehiculos"]}
     for vid in ev.rest:
         rx = fit.residuals.get(f"reposo:{vid}:x", 0.0)
@@ -223,26 +243,88 @@ def check_rest(spec: JsonObj, seed: int) -> list[Inconsistency]:
                 Inconsistency(
                     "reposo_inalcanzable",
                     f"Con ninguna velocidad entre 0 y 200 km/h {_name(by_id[vid])} termina donde "
-                    f"se indicó: lo más cerca que llega queda a unos {miss:.0f} m. ¿La posición "
-                    "final es correcta, o el vehículo pegó con algo más o cambió de dirección "
-                    "antes?",
+                    f"se indicó, aun llegando con otro ángulo: lo más cerca que llega queda a unos "
+                    f"{miss:.0f} m. ¿La posición final es correcta, o el vehículo pegó con algo "
+                    "más o cambió de dirección antes?",
                     {"vehiculo": vid, "distancia_minima_m": miss},
                 )
             )
     return out
 
 
+# Evidencia de la inversión en palabras llanas (para los mensajes).
+_EVIDENCE_WORDS = {
+    "reposo": "dónde quedó",
+    "rumbo_final": "hacia dónde quedó orientado",
+    "marcas_frenado": "las marcas de frenado",
+    "proyeccion": "la distancia a la que quedó la persona",
+    "dano": "el daño descrito",
+}
+
+
+def check_speed_evidence(spec: JsonObj, inv: Inversion) -> list[Inconsistency]:
+    """Velocidad declarada fuera del intervalo que fija la evidencia física (inversión)."""
+    out: list[Inconsistency] = []
+    by_id = {v["id"]: (i, v) for i, v in enumerate(spec["vehiculos"])}
+    kinds: list[str] = []
+    for label in inv.evidence:
+        k = label.split(":", 1)[0]
+        if k not in kinds:
+            kinds.append(k)
+    words = [_EVIDENCE_WORDS[k] for k in kinds if k in _EVIDENCE_WORDS]
+    if not words:
+        return out
+    said = words[0] if len(words) == 1 else ", ".join(words[:-1]) + " y " + words[-1]
+    for e in inv.estimates:
+        if e.param.kind != "velocidad" or e.dist is None or not e.identifiable or e.at_bound:
+            continue
+        hit = by_id.get(e.param.vehicle)
+        if hit is None or not _stated(hit[1].get("velocidad_previa")):
+            continue
+        idx, v = hit
+        rng = _speed_range(spec, idx)
+        if rng is None or not (rng[1] < e.dist.p10 or rng[0] > e.dist.p90):
+            continue
+        frenado: JsonObj = v.get("frenado") or {}
+        aplico: JsonObj = frenado.get("aplico") or {}
+        braked = bool(aplico.get("valor")) or f"marcas_frenado:{v['id']}" in inv.evidence
+        when = "antes de frenar" if braked else "antes del choque"
+        out.append(
+            Inconsistency(
+                "velocidad_vs_evidencia",
+                f"Por {said}, {_name(v)} iría a unos {e.dist.p10:.0f}–{e.dist.p90:.0f} km/h "
+                f"{when}, y la velocidad indicada va de {rng[0]:.0f} a {rng[1]:.0f} km/h. "
+                "¿Puedes confirmar la velocidad, o alguno de esos datos?",
+                {
+                    "vehiculo": v["id"],
+                    "evidencia_kmh": [e.dist.p10, e.dist.p90],
+                    "declarada_kmh": [rng[0], rng[1]],
+                    "evidencia": list(inv.evidence),
+                },
+            )
+        )
+    return out
+
+
 def check_consistency(
-    spec: JsonObj, *, seed: int | None = None, samples: int = 32
+    spec: JsonObj,
+    *,
+    seed: int | None = None,
+    samples: int = 32,
+    inversion: Inversion | None = None,
 ) -> list[Inconsistency]:
-    """Todas las banderas de consistencia de la escena, en orden fijo."""
+    """Todas las banderas de consistencia de la escena, en orden fijo. `inversion` evita repetir
+    la inversión si ya se calculó con la misma semilla."""
     seed = int(spec["meta"]["semilla"]) if seed is None else seed
+    if inversion is None and not evidence_from_spec(spec, seed=seed).empty():
+        inversion = invert(spec, seed=seed)
     return (
         check_stopped(spec)
         + check_marks(spec)
         + check_throw(spec)
         + check_damage(spec, seed, samples)
         + check_rest(spec, seed)
+        + (check_speed_evidence(spec, inversion) if inversion is not None else [])
     )
 
 

@@ -71,7 +71,7 @@ def test_la_calibracion_de_e3_existe_y_es_razonable() -> None:
 
 def _declare_rest(spec: dict[str, Any], speeds: dict[str, float]) -> dict[str, Any]:
     """Escena con posiciones finales declaradas = las que da el solver con `speeds`."""
-    truth = inv._with_speeds(spec, list(speeds), list(speeds.values()))  # pyright: ignore[reportPrivateUsage]
+    truth = inv.with_speeds(spec, list(speeds), list(speeds.values()))
     r = reconstruct(truth, dt=0.1)
     out: dict[str, Any] = copy.deepcopy(spec)
     # Solo cuenta la posición final que declara la prueba (el fixture trae la suya).
@@ -93,10 +93,10 @@ def test_recupera_la_velocidad_desde_las_posiciones_finales() -> None:
     moving = inv.moving_vehicles(spec)
     truth = {vid: 55.0 if k == 0 else 35.0 for k, vid in enumerate(moving)}
     declared = _declare_rest(spec, truth)
-    start = inv._with_speeds(declared, moving, [30.0] * len(moving))  # pyright: ignore[reportPrivateUsage]
+    start = inv.with_speeds(declared, moving, [30.0] * len(moving))
     ev = inv.evidence_from_spec(start)
     assert set(ev.rest) == {v["id"] for v in spec["vehiculos"]}
-    fit = inv.fit_speeds(start, ev, dt=0.1)
+    fit = inv.fit_evidence(start, ev, dt=0.1)
     for vid, kmh in truth.items():
         assert fit.speeds_kmh[vid] == pytest.approx(kmh, abs=3.0)
     assert max(abs(r) for r in fit.residuals.values()) < 1.0
@@ -118,5 +118,56 @@ def test_inversion_devuelve_distribucion_reproducible() -> None:
 def test_sin_evidencia_no_cambia_nada() -> None:
     spec = load_fixture("alcance")
     ev = inv.evidence_from_spec(spec)
-    fit = inv.fit_speeds(spec, ev)
+    fit = inv.fit_evidence(spec, ev)
     assert fit.cost == 0.0
+
+
+def test_lo_que_la_evidencia_no_fija_no_se_reporta_como_intervalo() -> None:
+    # Contra un poste el vehículo se detiene ahí a cualquier velocidad: el reposo no la fija.
+    out = inv.invert(load_fixture("poste"), samples=3)
+    speed = next(e for e in out.estimates if e.param.kind == "velocidad")
+    assert not speed.identifiable
+    assert speed.dist is None
+    assert "estimacion" not in speed.to_dict()
+    assert out.speeds == {}
+
+
+def test_recupera_el_angulo_de_llegada_desde_la_pose_final() -> None:
+    spec = load_fixture("lateral_interseccion")
+    moving = inv.moving_vehicles(spec)
+    a = moving[0]
+    h0 = next(v for v in spec["vehiculos"] if v["id"] == a)["posicion_inicial"]["rumbo_deg"]
+    truth = {f"velocidad:{v}": 45.0 for v in moving} | {f"rumbo:{a}": h0 + 8.0}
+    shown = inv.apply_values(spec, truth)
+    declared = _declare_rest(shown, dict.fromkeys(moving, 45.0))
+    declared["vehiculos"][0]["posicion_inicial"]["rumbo_deg"] = h0  # se arranca del rumbo supuesto
+    ev = inv.evidence_from_spec(declared)
+    assert set(ev.rest_heading) == set(ev.rest)
+    fit = inv.fit_evidence(declared, ev, dt=0.1)
+    assert fit.headings_deg[a] == pytest.approx(h0 + 8.0, abs=2.0)
+    for v in moving:
+        assert fit.speeds_kmh[v] == pytest.approx(45.0, abs=4.0)
+
+
+def test_las_marcas_fijan_la_distancia_de_frenado() -> None:
+    spec = load_fixture("peaton_cruce")
+    car = next(v for v in spec["vehiculos"] if v["maniobra"]["valor"] != "estacionado")
+    car["frenado"] = {}
+    ev = inv.evidence_from_spec(spec)
+    assert ev.skid == {car["id"]: 5.0}
+    marked = inv.with_marks(spec, ev)
+    fr = next(v for v in marked["vehiculos"] if v["id"] == car["id"])["frenado"]
+    assert fr["aplico"]["valor"] is True
+    assert fr["distancia_antes_impacto"]["valor"] == 5.0
+    # Una distancia que dio la persona usuaria se respeta.
+    car["frenado"] = {"distancia_antes_impacto": {"valor": 3, "unidad": "m", "fuente": "usuario"}}
+    kept = inv.with_marks(spec, ev)
+    fr = next(v for v in kept["vehiculos"] if v["id"] == car["id"])["frenado"]
+    assert fr["distancia_antes_impacto"]["valor"] == 3
+
+
+def test_estimacion_en_el_limite_se_marca() -> None:
+    p = inv.Param("velocidad", "veh-a", 30.0, 0.0, 200.0, True)
+    d = inv.Distribution(0.0, 0.0, 0.0, 3)
+    assert inv.Estimate(p, 5.0, True, 0.0, d).to_dict()["en_limite"] is True
+    assert inv.Estimate(p, 5.0, True, 40.0, d).to_dict()["en_limite"] is False

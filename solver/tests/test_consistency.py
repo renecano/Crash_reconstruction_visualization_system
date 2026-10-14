@@ -124,6 +124,24 @@ def test_reposo_inalcanzable() -> None:
     assert "reposo_inalcanzable" not in _codes(_with_rest(0.0))
 
 
-def test_escenas_canonicas_sin_banderas_salvo_la_volcadura() -> None:
-    for name in ("alcance", "glorieta", "nocturno_lluvia", "poste"):
+def _pedestrian_speed(kmh: float) -> JsonObj:
+    spec = load_fixture("peaton_cruce")
+    car = next(v for v in spec["vehiculos"] if v["maniobra"]["valor"] != "estacionado")
+    car["velocidad_previa"] = _relato(kmh, "km/h")
+    return spec
+
+
+def test_velocidad_fuera_de_lo_que_fija_la_evidencia() -> None:
+    # Marcas de 5 m y proyección de 12 m: la evidencia fija la velocidad antes de frenar.
+    flags = cons.check_consistency(_pedestrian_speed(20.0), samples=12)
+    hit = next(f for f in flags if f.codigo == "velocidad_vs_evidencia")
+    assert "antes de frenar" in hit.mensaje
+    assert "marcas de frenado" in hit.mensaje
+    assert not BLAME.search(hit.mensaje)
+    assert "velocidad_vs_evidencia" not in _codes(_pedestrian_speed(53.0))
+
+
+def test_escenas_canonicas_sin_banderas() -> None:
+    # La glorieta también queda limpia, pero su inversión tarda; la cubre la prueba de resultados.
+    for name in ("alcance", "lateral_interseccion", "nocturno_lluvia", "poste"):
         assert _codes(load_fixture(name)) == [], name

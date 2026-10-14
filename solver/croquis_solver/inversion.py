@@ -9,12 +9,16 @@ Dos piezas:
    energía total y la conservación de momento (velocidad común, como CRASH3); contra un objeto
    rígido, de la velocidad equivalente de barrera con restitución en [0, 0.2]. E3 lo valida contra
    el EDR de casos reales de CISS.
-2. **Velocidades desde la evidencia.** Las velocidades previas de los vehículos en movimiento se
-   ajustan con mínimos cuadrados robustos (SciPy `least_squares`, pérdida `soft_l1`) para que el
-   solver reproduzca la evidencia declarada: posiciones finales, distancia de proyección y ΔV del
-   daño declarado. El ajuste se repite con entradas perturbadas con semilla (fricción, masas,
-   rigidez y la propia evidencia dentro de su incertidumbre) y devuelve percentiles. Si ni el mejor
-   ajuste reproduce algo declarado, eso queda como inconsistencia (ver `consistency`).
+2. **Velocidades y ángulos desde la evidencia.** Las velocidades previas de los vehículos en
+   movimiento (y su rumbo inicial cuando nadie lo declaró y hay posiciones finales) se ajustan con
+   mínimos cuadrados robustos (SciPy `least_squares`, pérdida `soft_l1`) para que el solver
+   reproduzca la evidencia declarada: posiciones y rumbos finales, marcas de frenado (fijan la
+   distancia de frenado antes del impacto), distancia de proyección y ΔV del daño declarado.
+   Con el jacobiano en el mejor ajuste se ve qué parámetros fija la evidencia (aproximación de
+   Laplace); los que no, se informan así en vez de dar un intervalo que solo reflejaría los
+   límites de búsqueda. El ajuste se repite con entradas perturbadas con semilla (fricción, masas
+   y la propia evidencia dentro de su incertidumbre) y devuelve percentiles. Si ni el mejor ajuste
+   reproduce algo declarado, eso queda como inconsistencia (ver `consistency`).
 """
 
 from __future__ import annotations
@@ -25,7 +29,7 @@ import json
 import math
 import random
 import statistics
-from collections.abc import Callable, Sequence
+from collections.abc import Sequence
 from dataclasses import dataclass, field
 from functools import cache
 from pathlib import Path
@@ -167,11 +171,33 @@ def delta_v_from_damage(
     return distribution(out)
 
 
-# --- 2. Velocidades desde la evidencia ----------------------------------------------------------
+# --- 2. Velocidades y ángulos desde la evidencia ------------------------------------------------
+
+SIGMA_HEADING_DEG = 20.0  # incertidumbre de un rumbo final declarado (supuesto)
+ANGLE_BOUND_DEG = 20.0  # desvío máximo que se ajusta al rumbo inicial no declarado (supuesto)
+# Pasos de diferencias finitas y escalas de cada tipo de parámetro (km/h y grados).
+JAC_STEP = {"velocidad": 1.0, "rumbo": 1.0}
+SCALE = {"velocidad": 10.0, "rumbo": 10.0}
+# Desviación local (Laplace) por encima de la cual la evidencia no fija el parámetro: el intervalo
+# saldría de los límites de búsqueda y no de la evidencia, así que no se reporta.
+IDENT_MAX = {"velocidad": 30.0, "rumbo": 15.0}
+CHORD_ITER = 4  # iteraciones de cada reajuste perturbado (cuerda con el jacobiano del mejor)
+FALLBACK_NFEV = 20  # ajuste completo de una muestra si la cuerda no mejora
 
 
 def _stated(campo: JsonObj | None) -> bool:
     return campo is not None and campo.get("fuente") in STATED
+
+
+def _stated_pose(pose: JsonObj | None) -> bool:
+    if pose is None:
+        return False
+    proc: JsonObj = pose.get("procedencia") or {}
+    return proc.get("fuente") in STATED
+
+
+def _no_floats() -> dict[str, float]:
+    return {}
 
 
 @dataclass(frozen=True)
@@ -181,9 +207,21 @@ class Evidence:
     rest: dict[str, tuple[float, float]]  # vehículo → posición final (m)
     throw: dict[str, float]  # persona → distancia de proyección (m)
     damage_dv: dict[str, Distribution]  # vehículo → ΔV que implica el daño declarado (km/h)
+    rest_heading: dict[str, float] = field(default_factory=_no_floats)  # vehículo → rumbo final (°)
+    skid: dict[str, float] = field(default_factory=_no_floats)  # vehículo → marcas de frenado (m)
 
     def empty(self) -> bool:
-        return not (self.rest or self.throw or self.damage_dv)
+        return not (self.rest or self.throw or self.damage_dv or self.rest_heading)
+
+    def labels(self) -> list[str]:
+        """Evidencia usada, en orden fijo (para el resultado y el visor)."""
+        return (
+            [f"reposo:{k}" for k in sorted(self.rest)]
+            + [f"rumbo_final:{k}" for k in sorted(self.rest_heading)]
+            + [f"marcas_frenado:{k}" for k in sorted(self.skid)]
+            + [f"proyeccion:{k}" for k in sorted(self.throw)]
+            + [f"dano:{k}" for k in sorted(self.damage_dv)]
+        )
 
 
 def _len_m(campo: JsonObj) -> float:
@@ -196,27 +234,37 @@ def _len_m(campo: JsonObj) -> float:
 def evidence_from_spec(spec: JsonObj, seed: int = 0, n_damage: int = 200) -> Evidence:
     """Evidencia declarada de la escena (solo lo que dice el relato o la persona usuaria)."""
     rest: dict[str, tuple[float, float]] = {}
+    rest_heading: dict[str, float] = {}
     for v in spec["vehiculos"]:
-        pf = v.get("posicion_final")
-        if pf and pf.get("procedencia", {}).get("fuente") in STATED:
+        pf: JsonObj | None = v.get("posicion_final")
+        if _stated_pose(pf) and pf is not None:
             rest[v["id"]] = (float(pf["x"]), float(pf["y"]))
+            if pf.get("rumbo_deg") is not None:
+                rest_heading[v["id"]] = float(pf["rumbo_deg"])
+    throw: dict[str, float] = {}
+    skid: dict[str, float] = {}
     for e in spec.get("evidencias", []):
+        stated = e.get("procedencia", {}).get("fuente") in STATED
         if (
             e.get("tipo") == "posicion_final"
             and e.get("vehiculo_id")
             and e.get("puntos")
-            and e.get("procedencia", {}).get("fuente") in STATED
+            and stated
         ):
             p = e["puntos"][-1]
             rest[e["vehiculo_id"]] = (float(p["x"]), float(p["y"]))
-    throw: dict[str, float] = {}
-    for e in spec.get("evidencias", []):
-        if e.get("tipo") == "distancia_proyeccion" and _stated(e.get("longitud")):
+        elif e.get("tipo") == "distancia_proyeccion" and _stated(e.get("longitud")):
             pid = e.get("persona_id") or next(
                 (p["id"] for p in spec["personas"] if not p.get("vehiculo_id")), None
             )
             if pid:
                 throw[pid] = _len_m(e["longitud"])
+        elif (
+            e.get("tipo") == "marcas_frenado"
+            and e.get("vehiculo_id")
+            and _stated(e.get("longitud"))
+        ):
+            skid[str(e["vehiculo_id"])] = _len_m(e["longitud"])
     damage_dv: dict[str, Distribution] = {}
     by_id = {v["id"]: v for v in spec["vehiculos"]}
     declared = [
@@ -256,7 +304,7 @@ def evidence_from_spec(spec: JsonObj, seed: int = 0, n_damage: int = 200) -> Evi
                 other = next((dmg[o] for o in actors if o != vid and o in dmg), None)
                 if other is not None:
                     damage_dv[vid] = delta_v_from_damage(dmg[vid], other, seed=seed + k, n=n_damage)
-    return Evidence(rest, throw, damage_dv)
+    return Evidence(rest, throw, damage_dv, rest_heading, skid)
 
 
 def _class_mass(clase: str) -> float:
@@ -274,25 +322,111 @@ def moving_vehicles(spec: JsonObj) -> list[str]:
     ]
 
 
-def _with_speeds(spec: JsonObj, ids: list[str], speeds_kmh: Sequence[float]) -> JsonObj:
+def with_marks(spec: JsonObj, ev: Evidence) -> JsonObj:
+    """Las marcas de frenado declaradas fijan la distancia de frenado antes del impacto.
+
+    Son evidencia física: pesan más que una distancia de frenado que solo dice el relato. Solo una
+    distancia que dio la persona usuaria se respeta tal cual.
+    """
+    if not ev.skid:
+        return spec
+    s = copy.deepcopy(spec)
+    for v in s["vehiculos"]:
+        length = ev.skid.get(v["id"])
+        if length is None:
+            continue
+        fr: JsonObj = v.get("frenado") or {}
+        prev: JsonObj = fr.get("distancia_antes_impacto") or {}
+        if prev.get("fuente") == "usuario":
+            continue
+        fr["aplico"] = {"valor": True, "fuente": "relato", "confianza": 0.8}
+        fr["distancia_antes_impacto"] = {
+            "valor": length,
+            "unidad": "m",
+            "fuente": "relato",
+            "confianza": 0.8,
+        }
+        v["frenado"] = fr
+    return s
+
+
+@dataclass(frozen=True)
+class Param:
+    """Incógnita del ajuste: velocidad previa (km/h) o rumbo inicial (°) de un vehículo."""
+
+    kind: str  # "velocidad" | "rumbo"
+    vehicle: str
+    start: float
+    lo: float
+    hi: float
+    declared: bool  # el valor de arranque lo dijo el relato o la persona usuaria
+
+    @property
+    def name(self) -> str:
+        return f"{self.kind}:{self.vehicle}"
+
+
+def parameters(spec: JsonObj, ev: Evidence) -> list[Param]:
+    """Velocidad de cada vehículo en movimiento y, si hay posiciones finales declaradas, el rumbo
+    inicial de los que no lo tienen declarado (±`ANGLE_BOUND_DEG`)."""
+    out: list[Param] = []
+    by_id = {v["id"]: v for v in spec["vehiculos"]}
+    ids = moving_vehicles(spec)
+    for vid in ids:
+        vp: JsonObj = by_id[vid].get("velocidad_previa") or {}
+        val = float(vp.get("valor", 40.0)) * (3.6 if vp.get("unidad") == "m/s" else 1.0)
+        start = min(max(val, 5.0), SPEED_BOUNDS_KMH[1] - 1)
+        out.append(Param("velocidad", vid, start, *SPEED_BOUNDS_KMH, _stated(vp or None)))
+    if ev.rest or ev.rest_heading:
+        for vid in ids:
+            pose: JsonObj = by_id[vid]["posicion_inicial"]
+            if _stated_pose(pose):
+                continue
+            h = float(pose["rumbo_deg"])
+            out.append(Param("rumbo", vid, h, h - ANGLE_BOUND_DEG, h + ANGLE_BOUND_DEG, False))
+    return out
+
+
+def apply_values(spec: JsonObj, values: dict[str, float]) -> JsonObj:
+    """Escena con las velocidades y rumbos de `values` ("velocidad:veh-a" → km/h, etc.)."""
     s = copy.deepcopy(spec)
     by_id = {v["id"]: v for v in s["vehiculos"]}
-    for vid, kmh in zip(ids, speeds_kmh, strict=True):
-        by_id[vid]["velocidad_previa"] = {
-            "valor": float(kmh),
-            "unidad": "km/h",
-            "fuente": "supuesto",
-            "confianza": 0.5,
-        }
+    for name, x in values.items():
+        kind, vid = name.split(":", 1)
+        if kind == "velocidad":
+            by_id[vid]["velocidad_previa"] = {
+                "valor": float(x),
+                "unidad": "km/h",
+                "fuente": "supuesto",
+                "confianza": 0.5,
+            }
+        elif kind == "rumbo":
+            by_id[vid]["posicion_inicial"]["rumbo_deg"] = max(-360.0, min(360.0, float(x)))
     return s
+
+
+def with_speeds(spec: JsonObj, ids: list[str], speeds_kmh: Sequence[float]) -> JsonObj:
+    return apply_values(spec, {f"velocidad:{v}": k for v, k in zip(ids, speeds_kmh, strict=True)})
+
+
+def _wrap_deg(a: float) -> float:
+    return (a + 180.0) % 360.0 - 180.0
 
 
 @dataclass
 class Fit:
-    speeds_kmh: dict[str, float]
+    values: dict[str, float]  # parámetro → valor (km/h o grados)
     residuals: dict[str, float]  # nombre del residuo → valor en sigmas (con signo)
     cost: float
     success: bool
+
+    @property
+    def speeds_kmh(self) -> dict[str, float]:
+        return {k.split(":", 1)[1]: v for k, v in self.values.items() if k.startswith("velocidad:")}
+
+    @property
+    def headings_deg(self) -> dict[str, float]:
+        return {k.split(":", 1)[1]: v for k, v in self.values.items() if k.startswith("rumbo:")}
 
 
 def _residuals(spec: JsonObj, ev: Evidence, dt: float) -> dict[str, float] | None:
@@ -310,6 +444,11 @@ def _residuals(spec: JsonObj, ev: Evidence, dt: float) -> dict[str, float] | Non
             continue
         out[f"reposo:{vid}:x"] = (v.rest_pose[0] - x) / SIGMA_POSITION_M
         out[f"reposo:{vid}:y"] = (v.rest_pose[1] - y) / SIGMA_POSITION_M
+    for vid, h in sorted(ev.rest_heading.items()):
+        v = by_v.get(vid)
+        if v is None:
+            continue
+        out[f"rumbo_final:{vid}"] = _wrap_deg(v.rest_pose[2] - h) / SIGMA_HEADING_DEG
     by_p = {p.id: p for p in r.personas}
     for pid, d in sorted(ev.throw.items()):
         p = by_p.get(pid)
@@ -325,59 +464,176 @@ def _residuals(spec: JsonObj, ev: Evidence, dt: float) -> dict[str, float] | Non
     return out
 
 
-def fit_speeds(spec: JsonObj, ev: Evidence, *, dt: float = 0.1, max_nfev: int = 40) -> Fit:
-    """Mejor ajuste (mínimos cuadrados robustos) de las velocidades previas a la evidencia."""
-    ids = moving_vehicles(spec)
-    x0: list[float] = []
-    for vid in ids:
-        v: JsonObj = next(x for x in spec["vehiculos"] if x["id"] == vid)
-        vp: JsonObj = v.get("velocidad_previa") or {}
-        val = float(vp.get("valor", 40.0)) * (3.6 if vp.get("unidad") == "m/s" else 1.0)
-        x0.append(min(max(val, 5.0), SPEED_BOUNDS_KMH[1] - 1))
-    if not ids or ev.empty():
-        res0 = _residuals(spec, ev, dt) or {}
-        return Fit(dict(zip(ids, x0, strict=True)), res0, 0.0, True)
-    names: list[str] = []
+class _Problem:
+    """Residuos en función de los parámetros libres, con caché por punto (SciPy pide la función y
+    luego el jacobiano en el mismo punto)."""
 
-    def fun(x: np.ndarray) -> np.ndarray:
-        res = _residuals(_with_speeds(spec, ids, list(x)), ev, dt)
+    def __init__(
+        self, spec: JsonObj, ev: Evidence, params: list[Param], fixed: dict[str, float], dt: float
+    ) -> None:
+        self.spec, self.ev, self.params, self.fixed, self.dt = spec, ev, params, fixed, dt
+        self.names: list[str] = []
+        self._cache: dict[tuple[float, ...], np.ndarray] = {}
+
+    def values(self, x: Sequence[float]) -> dict[str, float]:
+        out = dict(self.fixed)
+        out.update({p.name: float(v) for p, v in zip(self.params, x, strict=True)})
+        return out
+
+    def raw(self, x: Sequence[float]) -> dict[str, float] | None:
+        return _residuals(apply_values(self.spec, self.values(x)), self.ev, self.dt)
+
+    def __call__(self, x: np.ndarray) -> np.ndarray:
+        key = tuple(round(float(v), 9) for v in x)
+        hit = self._cache.get(key)
+        if hit is not None:
+            return hit
+        res = self.raw(list(x))
         if res is None:
-            return np.full(max(len(names), 1), 1e3)
-        if not names:
-            names.extend(sorted(res))
-        return np.array([res.get(k, 1e3) for k in names], dtype=float)
+            out = np.full(max(len(self.names), 1), 1e3)
+        else:
+            if not self.names:
+                self.names.extend(sorted(res))
+            out = np.array([res.get(k, 1e3) for k in self.names], dtype=float)
+        self._cache[key] = out
+        return out
 
-    first = fun(np.array(x0))
-    if first.size == 0:
-        return Fit(dict(zip(ids, x0, strict=True)), {}, 0.0, True)
-    x_best, cost, ok = _robust_least_squares(fun, x0, max_nfev)
-    best = fun(np.array(x_best))
+    def jac(self, x: np.ndarray) -> np.ndarray:
+        """Diferencias hacia adelante con paso fijo por tipo (hacia atrás junto al límite)."""
+        f0 = self(x)
+        cols: list[np.ndarray] = []
+        for k, p in enumerate(self.params):
+            h = JAC_STEP[p.kind]
+            if x[k] + h > p.hi:
+                h = -h
+            xk = np.array(x, dtype=float)
+            xk[k] += h
+            cols.append((self(xk) - f0) / h)
+        return np.column_stack(cols) if cols else np.zeros((f0.size, 0))
+
+
+def fit_evidence(
+    spec: JsonObj,
+    ev: Evidence,
+    *,
+    dt: float = 0.1,
+    max_nfev: int = 40,
+    start: dict[str, float] | None = None,
+    free: set[str] | None = None,
+) -> Fit:
+    """Mejor ajuste (mínimos cuadrados robustos) de velocidades y rumbos a la evidencia.
+
+    `start` cambia el punto de arranque; los parámetros fuera de `free` quedan fijos en él.
+    """
+    base = with_marks(spec, ev)
+    params = parameters(base, ev)
+    x_start = {p.name: p.start for p in params} | (start or {})
+    free_params = [p for p in params if free is None or p.name in free]
+    fixed = {n: v for n, v in x_start.items() if all(p.name != n for p in free_params)}
+    prob = _Problem(base, ev, free_params, fixed, dt)
+    x0 = [min(max(x_start[p.name], p.lo), p.hi) for p in free_params]
+    if not free_params or ev.empty():
+        res0 = _residuals(apply_values(base, x_start), ev, dt) or {}
+        return Fit(x_start, res0, 0.0, True)
+    first = prob(np.array(x0))
+    if not prob.names:
+        return Fit(x_start, {}, 0.0, True)
+    x_best, cost, ok = _robust_least_squares(prob, x0, free_params, max_nfev)
+    best = prob(np.array(x_best))
+    del first
     return Fit(
-        dict(zip(ids, x_best, strict=True)),
-        {k: float(r) for k, r in zip(names, best, strict=True)},
+        prob.values(x_best),
+        {k: float(r) for k, r in zip(prob.names, best, strict=True)},
         cost,
         ok,
     )
 
 
 def _robust_least_squares(
-    fun: Callable[[np.ndarray], np.ndarray], x0: list[float], max_nfev: int
+    prob: _Problem, x0: list[float], params: list[Param], max_nfev: int
 ) -> tuple[list[float], float, bool]:
     """`scipy.optimize.least_squares` con pérdida `soft_l1` (SciPy no trae tipos)."""
     least_squares: Any = importlib.import_module("scipy.optimize").least_squares
     sol: Any = least_squares(
-        fun,
+        prob,
         np.array(x0),
-        bounds=(SPEED_BOUNDS_KMH[0], SPEED_BOUNDS_KMH[1]),
+        jac=prob.jac,
+        bounds=([p.lo for p in params], [p.hi for p in params]),
         loss="soft_l1",
         f_scale=1.0,
-        diff_step=0.05,
+        x_scale=np.array([SCALE[p.kind] for p in params]),
         max_nfev=max_nfev,
     )
     return [float(v) for v in sol.x], float(sol.cost), bool(sol.success)
 
 
-def _perturbed(spec: JsonObj, ev: Evidence, rng: random.Random) -> tuple[JsonObj, Evidence]:
+def local_sigma(spec: JsonObj, ev: Evidence, fit: Fit, *, dt: float = 0.1) -> dict[str, float]:
+    """Desviación local de cada parámetro en el mejor ajuste: √diag((JᵀJ)⁺) con los residuos en
+    sigmas (aproximación de Laplace). Infinita si la evidencia no lo mueve."""
+    base = with_marks(spec, ev)
+    params = parameters(base, ev)
+    if not params:
+        return {}
+    prob = _Problem(base, ev, params, {}, dt)
+    x = np.array([min(max(fit.values.get(p.name, p.start), p.lo), p.hi) for p in params])
+    j = prob.jac(x)
+    if j.size == 0 or not prob.names:
+        return {p.name: math.inf for p in params}
+    return _laplace(j, params)
+
+
+def _laplace(j: np.ndarray, params: list[Param]) -> dict[str, float]:
+    jtj = j.T @ j
+    cov = np.linalg.pinv(jtj, rcond=1e-10)
+    out: dict[str, float] = {}
+    for k, p in enumerate(params):
+        col = float(np.linalg.norm(j[:, k]))
+        var = float(cov[k, k])
+        out[p.name] = math.inf if col < 1e-6 or var <= 0 else math.sqrt(var)
+    return out
+
+
+def _chord_refit(prob: _Problem, x_best: list[float], j: np.ndarray) -> Fit | None:
+    """Reajuste barato de una muestra perturbada: Gauss-Newton con el jacobiano del mejor ajuste
+    (método de la cuerda), pesos de la pérdida `soft_l1` (ρ'(z) = 1/√(1+z)), pasos recortados a la
+    mitad si no mejoran y dentro de los límites. Cerca del mejor ajuste converge como el ajuste
+    completo con unas cuantas reconstrucciones en vez de decenas. Devuelve `None` si ningún paso
+    mejora (la muestra se reajusta completa)."""
+    lo = np.array([p.lo for p in prob.params])
+    hi = np.array([p.hi for p in prob.params])
+    x = np.array(x_best, dtype=float)
+    r = prob(x)
+
+    def loss(v: np.ndarray) -> float:
+        return float(np.sum(np.sqrt(1.0 + v**2) - 1.0))
+
+    accepted = 0
+    for _ in range(CHORD_ITER):
+        w = 1.0 / np.sqrt(np.sqrt(1.0 + r**2))  # raíz del peso IRLS de soft_l1
+        step = np.linalg.lstsq(j * w[:, None], -(r * w), rcond=None)[0]
+        moved = False
+        for frac in (1.0, 0.5, 0.25):
+            x_new = np.clip(x + frac * step, lo, hi)
+            r_new = prob(x_new)
+            if loss(r_new) < loss(r):
+                x, r, moved = x_new, r_new, True
+                break
+        if not moved:
+            break
+        accepted += 1
+        if float(np.max(np.abs(step))) < 0.05:
+            break
+    if accepted == 0:
+        return None
+    return Fit(
+        prob.values(list(x)),
+        {k: float(v) for k, v in zip(prob.names, r, strict=True)},
+        loss(r),
+        True,
+    )
+
+
+def perturbed(spec: JsonObj, ev: Evidence, rng: random.Random) -> tuple[JsonObj, Evidence]:
     s = copy.deepcopy(spec)
     lugar = s["lugar"]
     mu = friction.tire_friction(lugar["superficie"]["valor"], lugar["estado_superficie"]["valor"])
@@ -398,69 +654,149 @@ def _perturbed(spec: JsonObj, ev: Evidence, rng: random.Random) -> tuple[JsonObj
         k: (x + rng.gauss(0, SIGMA_POSITION_M), y + rng.gauss(0, SIGMA_POSITION_M))
         for k, (x, y) in ev.rest.items()
     }
+    heading = {k: h + rng.gauss(0, SIGMA_HEADING_DEG) for k, h in ev.rest_heading.items()}
     throw = {k: max(0.5, d + rng.gauss(0, SIGMA_THROW_M)) for k, d in ev.throw.items()}
     damage: dict[str, Distribution] = {}
     for k, d in ev.damage_dv.items():
         shift = rng.gauss(0, (d.p90 - d.p10) / 2.563)
         damage[k] = Distribution(d.p10 + shift, d.p50 + shift, d.p90 + shift, d.muestras)
-    return s, Evidence(rest, throw, damage)
+    # Las marcas se miden con cinta: se toman tal cual (su incertidumbre entra por la fricción).
+    return s, Evidence(rest, throw, damage, heading, dict(ev.skid))
 
 
 def _no_fits() -> list[Fit]:
     return []
 
 
+@dataclass(frozen=True)
+class Estimate:
+    param: Param
+    sigma_local: float
+    identifiable: bool
+    best: float | None
+    dist: Distribution | None
+
+    @property
+    def at_bound(self) -> bool:
+        """El mejor ajuste quedó en el límite de búsqueda: la evidencia lleva el parámetro fuera
+        de lo que el modelo permite (se informa; no es un intervalo de la evidencia)."""
+        p = self.param
+        return self.best is not None and min(self.best - p.lo, p.hi - self.best) < 1e-3
+
+    def to_dict(self) -> JsonObj:
+        p = self.param
+        out: JsonObj = {
+            "parametro": "velocidad_previa" if p.kind == "velocidad" else "rumbo_inicial",
+            "vehiculo": p.vehicle,
+            "unidad": "km/h" if p.kind == "velocidad" else "deg",
+            "inicial": round(p.start, 2),
+            "inicial_declarado": p.declared,
+            "identificable": self.identifiable,
+        }
+        if math.isfinite(self.sigma_local):
+            out["sigma_local"] = round(self.sigma_local, 2)
+        if self.identifiable and self.best is not None and self.dist is not None:
+            out["estimacion"] = {"mejor": round(self.best, 2), **self.dist.to_dict(2)}
+            out["en_limite"] = self.at_bound
+        return out
+
+
 @dataclass
 class Inversion:
+    evidence: list[str]
+    estimates: list[Estimate]
     best: Fit
-    speeds: dict[str, Distribution]
     impact_speeds: dict[str, Distribution]
     fits: list[Fit] = field(default_factory=_no_fits)
     seed: int = 0
+
+    @property
+    def speeds(self) -> dict[str, Distribution]:
+        """Velocidad previa estimada de cada vehículo que la evidencia fija."""
+        return {
+            e.param.vehicle: e.dist
+            for e in self.estimates
+            if e.param.kind == "velocidad" and e.dist is not None
+        }
 
     def to_dict(self) -> JsonObj:
         return {
             "semilla": self.seed,
             "muestras": len(self.fits),
-            "mejor_ajuste": {
-                "velocidades_kmh": {k: round(v, 2) for k, v in self.best.speeds_kmh.items()},
-                "residuos_sigma": {k: round(v, 3) for k, v in self.best.residuals.items()},
-                "convergio": self.best.success,
-            },
-            "velocidad_previa_kmh": {k: d.to_dict(2) for k, d in self.speeds.items()},
-            "velocidad_impacto_kmh": {k: d.to_dict(2) for k, d in self.impact_speeds.items()},
+            "evidencia": self.evidence,
+            "parametros": [e.to_dict() for e in self.estimates],
+            "velocidad_impacto": [
+                {"vehiculo": k, **d.to_dict(2)} for k, d in sorted(self.impact_speeds.items())
+            ],
+            "residuos": [
+                {"nombre": k, "sigma": round(v, 3)} for k, v in sorted(self.best.residuals.items())
+            ],
+            "convergio": self.best.success,
         }
 
 
 def invert(
     spec: JsonObj, *, seed: int | None = None, samples: int = 12, dt: float = 0.1
 ) -> Inversion:
-    """Velocidades que reproducen la evidencia, con percentiles sobre `samples` ajustes."""
+    """Velocidades (y rumbos no declarados) que reproducen la evidencia, con percentiles sobre
+    `samples` ajustes con entradas perturbadas. Lo que la evidencia no fija se informa así y queda
+    en su valor inicial."""
     from croquis_solver.reconstruct import reconstruct
 
     seed = int(spec["meta"]["semilla"]) if seed is None else seed
     ev = evidence_from_spec(spec, seed=seed)
-    best = fit_speeds(spec, ev, dt=dt)
+    params = parameters(with_marks(spec, ev), ev)
+    best = fit_evidence(spec, ev, dt=dt)
+    sigma = (
+        local_sigma(spec, ev, best, dt=dt)
+        if not ev.empty()
+        else dict.fromkeys((p.name for p in params), math.inf)
+    )
+    ident = {p.name: sigma.get(p.name, math.inf) <= IDENT_MAX[p.kind] for p in params}
+    free = {n for n, ok in ident.items() if ok}
+    if free and len(free) < len(params):
+        # Lo que la evidencia no fija vuelve a su valor inicial y se reajusta lo demás.
+        start = {p.name: (best.values[p.name] if p.name in free else p.start) for p in params}
+        best = fit_evidence(spec, ev, dt=dt, start=start, free=free)
     rng = random.Random(seed)
     fits: list[Fit] = []
     impacts: dict[str, list[float]] = {}
-    for _ in range(samples):
-        s, e = _perturbed(spec, ev, rng)
-        f = fit_speeds(s, e, dt=dt)
+    free_params = [p for p in params if p.name in free]
+    x_best = [best.values[p.name] for p in free_params]
+    fixed = {n: v for n, v in best.values.items() if n not in free}
+    j_best = (
+        _Problem(with_marks(spec, ev), ev, free_params, fixed, dt).jac(np.array(x_best))
+        if free_params
+        else np.zeros((0, 0))
+    )
+    for _ in range(samples if free_params else 0):
+        s, e = perturbed(spec, ev, rng)
+        prob = _Problem(with_marks(s, e), e, free_params, fixed, dt)
+        prob.names.extend(sorted(best.residuals))
+        f = _chord_refit(prob, x_best, j_best) or fit_evidence(
+            s, e, dt=dt, start=best.values, free=free, max_nfev=FALLBACK_NFEV
+        )
         fits.append(f)
         try:
-            r = reconstruct(_with_speeds(s, list(f.speeds_kmh), list(f.speeds_kmh.values())), dt=dt)
+            r = reconstruct(apply_values(with_marks(s, e), f.values), dt=dt)
         except ValueError, KeyError, ArithmeticError:
             continue
         for v in r.vehiculos:
             impacts.setdefault(v.id, []).append(v.v_impact_kmh)
-    speeds = {
-        vid: distribution([f.speeds_kmh[vid] for f in fits if vid in f.speeds_kmh])
-        for vid in best.speeds_kmh
-    }
+    estimates = [
+        Estimate(
+            p,
+            sigma.get(p.name, math.inf),
+            ident[p.name],
+            best.values.get(p.name) if ident[p.name] else None,
+            distribution([f.values[p.name] for f in fits]) if ident[p.name] and fits else None,
+        )
+        for p in params
+    ]
     return Inversion(
+        evidence=ev.labels(),
+        estimates=estimates,
         best=best,
-        speeds=speeds,
         impact_speeds={k: distribution(v) for k, v in impacts.items() if v},
         fits=fits,
         seed=seed,
@@ -470,13 +806,21 @@ def invert(
 __all__ = [
     "Damage",
     "Distribution",
+    "Estimate",
     "Evidence",
     "Fit",
     "Inversion",
+    "Param",
+    "apply_values",
     "delta_v_from_damage",
     "distribution",
     "evidence_from_spec",
-    "fit_speeds",
+    "fit_evidence",
     "invert",
+    "local_sigma",
+    "parameters",
     "pdof_offset",
+    "perturbed",
+    "with_marks",
+    "with_speeds",
 ]

@@ -12,13 +12,25 @@ BLAME = re.compile(r"(?i)culpa|culpable|responsable|irresponsable|imprudente|deb
 
 
 def test_proyeccion_contradictoria_se_pregunta_sin_culpar() -> None:
+    # Marcas de 5 m y proyección de 12 m no caben con "como a 40": una sola pregunta lo cubre (la
+    # de consistencia usa la proyección como evidencia; el aviso del solver sobre ella sobraría).
     spec = load_fixture("peaton_cruce")
     qs = q.ask(spec, spec["meta"]["relato"])
     assert qs[0].motivo == "contradiccion"
-    assert qs[0].id.startswith("proyeccion:")
-    assert "12 m" in qs[0].texto
+    assert qs[0].id.startswith("velocidad:")
+    assert "distancia a la que quedó la persona" in qs[0].texto
+    assert not any(p.id.startswith("proyeccion:") for p in qs)
     for p in qs:
         assert not BLAME.search(p.texto)
+
+
+def test_aviso_de_proyeccion_sin_bandera_de_evidencia_se_pregunta() -> None:
+    spec = load_fixture("peaton_cruce")
+    car = next(v for v in spec["vehiculos"] if v["maniobra"]["valor"] != "estacionado")
+    car["velocidad_previa"]["valor"] = 53  # cabe con la evidencia: no hay bandera de velocidad
+    car["velocidad_previa"].pop("rango", None)
+    qs = q.ask(spec, spec["meta"]["relato"])
+    assert not any(p.id.startswith("velocidad:") and p.motivo == "contradiccion" for p in qs)
 
 
 def test_maximo_tres_y_sin_temas_repetidos() -> None:

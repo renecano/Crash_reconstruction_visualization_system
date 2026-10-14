@@ -160,20 +160,26 @@ _CONSISTENCY_TOPIC = {
     "proyeccion_vs_velocidad": ("proyeccion", "evidencias.distancia_proyeccion"),
     "dano_vs_velocidad": ("velocidad", "vehiculos.{i}.velocidad_previa"),
     "reposo_inalcanzable": ("reposo", "vehiculos.{i}.posicion_final"),
+    "velocidad_vs_evidencia": ("velocidad", "vehiculos.{i}.velocidad_previa"),
 }
 
 
-def from_consistency(spec: JsonObj, seed: int) -> list[Pregunta]:
-    """Lo declarado que no cabe en ninguna solución física, como pregunta (sin culpa)."""
+def from_consistency(spec: JsonObj, seed: int) -> tuple[list[Pregunta], set[str]]:
+    """Lo declarado que no cabe en ninguna solución física, como pregunta (sin culpa), y la
+    evidencia que esas preguntas ya cubren (p. ej. `proyeccion:per-1`): el aviso del solver sobre
+    esa misma evidencia sería la misma pregunta con otras palabras."""
     from croquis_solver.consistency import check_consistency
 
     out: list[Pregunta] = []
+    covered: set[str] = set()
     for f in check_consistency(spec, seed=seed, samples=16):
         kind, campo = _CONSISTENCY_TOPIC[f.codigo]
         vid = str(f.datos.get("vehiculo", ""))
         idx = next((i for i, v in enumerate(spec["vehiculos"]) if v["id"] == vid), 0)
         out.append(Pregunta(f"{kind}:{vid}", f.mensaje, "contradiccion", campo.format(i=idx)))
-    return out
+        evidencia: list[str] = f.datos.get("evidencia", [])
+        covered.update(topic(e) for e in evidencia)
+    return out, covered
 
 
 def from_avisos(spec: JsonObj, avisos: list[Aviso]) -> list[Pregunta]:
@@ -491,8 +497,10 @@ def ask(
             seen.add(key)
             chosen.append(p)
 
-    for p in from_consistency(spec, seed):
+    consistency, covered = from_consistency(spec, seed)
+    for p in consistency:
         take(p)
+    seen |= covered
     for p in from_avisos(spec, base.avisos):
         take(p)
     for cand, share, effect in sensitivity(spec, seed, samples):
