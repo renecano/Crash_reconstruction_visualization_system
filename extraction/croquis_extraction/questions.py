@@ -411,7 +411,7 @@ def sensitivity(
 # --- Ronda de preguntas -------------------------------------------------------------------------
 
 
-def _topic(qid: str) -> str:
+def topic(qid: str) -> str:
     """Tema de una pregunta: dos preguntas del mismo tema no van en la misma ronda."""
     kind, _, target = qid.partition(":")
     return f"{kind.removesuffix('_distancia')}:{target}"
@@ -441,12 +441,12 @@ def ask(
     seed = int(spec["meta"]["semilla"]) if seed is None else seed
     base = reconstruct(spec, dt=SOLVER_DT)
     chosen: list[Pregunta] = []
-    seen: set[str] = {_topic(a) for a in answered}
+    seen: set[str] = {topic(a) for a in answered}
 
     def take(p: Pregunta) -> None:
-        topic = _topic(p.id)
-        if topic not in seen and len(chosen) < max_questions:
-            seen.add(topic)
+        key = topic(p.id)
+        if key not in seen and len(chosen) < max_questions:
+            seen.add(key)
             chosen.append(p)
 
     for p in from_avisos(spec, base.avisos):

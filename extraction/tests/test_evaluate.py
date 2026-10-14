@@ -136,3 +136,22 @@ def test_conductor_del_otro_vehiculo_no_es_error() -> None:
     assert sc.fp["persona.rol"] == 0
     pred.personas.append({"rol": Fact("conductor", "otro más")})
     assert score_story(ref, pred).fp["persona.rol"] == 1
+
+
+def test_temas_de_error_para_cobertura_de_preguntas() -> None:
+    from croquis_extraction.evaluate import error_topics
+
+    ref = Facts(
+        escalares={"lugar.estado_superficie": Fact("mojado", "piso mojado")},
+        vehiculos=[_veh(clase="sedan_compacto", velocidad_kmh=50), _veh(clase="pickup")],
+        narrador_vehiculo=0,
+    )
+    pred = Facts(
+        vehiculos=[_veh(clase="sedan_compacto"), _veh(clase="autobus")],
+        narrador_vehiculo=0,
+    )
+    assert error_topics(ref, pred, ["veh-a", "veh-b"]) == {
+        "velocidad:veh-a",
+        "clase:veh-b",
+        "estado_superficie:",
+    }

@@ -137,7 +137,7 @@ def _r(x: float) -> float | None:
     return None if x != x else round(x, 4)
 
 
-def _match_vehicles(ref: Facts, pred: Facts) -> list[tuple[int | None, int | None]]:
+def match_vehicles(ref: Facts, pred: Facts) -> list[tuple[int | None, int | None]]:
     """Empareja vehículos: narrador con narrador y luego por similitud de clase y maniobra."""
     pairs: list[tuple[int | None, int | None]] = []
     used_r: set[int] = set()
@@ -191,7 +191,7 @@ def score_story(ref: Facts, pred: Facts) -> Score:
     sc.tp["dispositivos"] += sum(inter.values())
     sc.fp["dispositivos"] += sum((pset - rset - rinf).values())
     sc.fn["dispositivos"] += sum((rset - pset).values())
-    pairs = _match_vehicles(ref, pred)
+    pairs = match_vehicles(ref, pred)
     for i, j in pairs:
         rv = ref.vehiculos[i] if i is not None else {}
         pv = pred.vehiculos[j] if j is not None else {}
@@ -278,3 +278,46 @@ def counterfactual_diff(base: Facts, variant: Facts) -> bool:
         return out
 
     return sig(base) != sig(variant)
+
+
+# Errores que una pregunta puede corregir, con el mismo tema que usa `questions` (ver `_topic`).
+_TOPIC_FIELDS = {
+    "velocidad_kmh": "velocidad",
+    "maniobra": "maniobra",
+    "frenado": "frenado",
+    "clase": "clase",
+}
+
+
+def error_topics(ref: Facts, pred: Facts, vehicle_ids: list[str]) -> set[str]:
+    """Temas en los que la extracción falló (falta o valor distinto a lo que el relato afirma)."""
+    return _topics(ref, pred, vehicle_ids, errors=True)
+
+
+def settled_topics(ref: Facts, pred: Facts, vehicle_ids: list[str]) -> set[str]:
+    """Temas que el relato afirma y la extracción ya sacó bien: preguntarlos es redundante."""
+    return _topics(ref, pred, vehicle_ids, errors=False)
+
+
+def _topics(ref: Facts, pred: Facts, vehicle_ids: list[str], *, errors: bool) -> set[str]:
+    out: set[str] = set()
+    for i, j in match_vehicles(ref, pred):
+        if i is None or j is None or j >= len(vehicle_ids):
+            continue
+        rv, pv = ref.vehiculos[i], pred.vehiculos[j]
+        for key, topic in _TOPIC_FIELDS.items():
+            r = rv.get(key)
+            if not _stated(r):
+                continue
+            assert r is not None
+            p = pv.get(key)
+            wrong = not _stated(p) or (p is not None and not values_match(key, r.valor, p.valor))
+            if wrong == errors:
+                out.add(f"{topic}:{vehicle_ids[j]}")
+    r = ref.escalares.get("lugar.estado_superficie")
+    p = pred.escalares.get("lugar.estado_superficie")
+    if _stated(r) and r is not None:
+        wrong = not _stated(p) or (p is not None and not values_match("x", r.valor, p.valor))
+        if wrong == errors:
+            out.add("estado_superficie:")
+    return out

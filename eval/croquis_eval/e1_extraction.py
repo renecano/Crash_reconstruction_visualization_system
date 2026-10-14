@@ -7,7 +7,11 @@ CI nunca llama a la API. Las dos rutas terminan en el mismo constructor de Escen
 
 Por método: F1 por campo y micro/macro, error en numéricos, número de vehículos, alucinación de
 campo antes y después del verificador, diferencia contrafactual, costo por 1 000 relatos y latencia
-p50/p95. Además, para el redactor de PII (común a todos): datos personales filtrados.
+p50/p95 y cobertura de preguntas útiles (qué parte de los errores de extracción en velocidad,
+maniobra, frenado, clase y estado del piso cubre la ronda de preguntas, y qué parte de las
+preguntas no es redundante: una pregunta es redundante si el relato ya lo dijo y la extracción lo
+sacó bien). Además, para el redactor de PII (común a todos): datos
+personales filtrados.
 El test solo se evalúa congelado (PLAN §5.2).
 """
 
@@ -18,7 +22,7 @@ from collections import Counter
 from typing import Any
 
 from croquis_eval.results import write_result
-from croquis_extraction import baseline, relatos_mx
+from croquis_extraction import baseline, questions, relatos_mx
 from croquis_extraction.claude_client import (
     MODELS,
     LLMError,
@@ -28,9 +32,11 @@ from croquis_extraction.claude_client import (
 from croquis_extraction.evaluate import (
     Score,
     counterfactual_diff,
+    error_topics,
     hallucinated_fields,
     pii_leaks,
     score_story,
+    settled_topics,
 )
 from croquis_extraction.facts import Facts, facts_from_annotation, facts_from_spec
 from croquis_extraction.pii import redact
@@ -90,6 +96,7 @@ def evaluate_method(
     cost = 0.0
     missing = 0
     preds: dict[str, Facts] = {}
+    q_asked = q_redundant = err_total = err_covered = q_failed = 0
     for it in items:
         text = redact(it["texto"]).text
         ref = facts_from_annotation({**it["hechos"], "tipo": it["tipo"]})
@@ -106,6 +113,17 @@ def evaluate_method(
         preds[it["id"]] = facts_from_spec(run.spec)
         score.merge(score_story(ref, preds[it["id"]]))
         score_verified.merge(score_story(ref, facts_from_spec(verified)))
+        errs = error_topics(ref, preds[it["id"]], [v["id"] for v in run.spec["vehiculos"]])
+        try:
+            asked = {questions.topic(q.id) for q in questions.ask(run.spec, text, samples=4)}
+        except ValueError, KeyError, ArithmeticError:
+            asked: set[str] = set()
+            q_failed += 1
+        q_asked += len(asked)
+        ids = [v["id"] for v in run.spec["vehiculos"]]
+        q_redundant += len(asked & settled_topics(ref, preds[it["id"]], ids))
+        err_total += len(errs)
+        err_covered += len(errs & asked)
     evaluated = len(items) - missing
     if evaluated == 0:
         return {
@@ -140,6 +158,16 @@ def evaluate_method(
             "pares": pairs,
             "con_diferencia": diffs,
             "tasa": round(diffs / pairs, 4) if pairs else None,
+        },
+        "preguntas": {
+            "hechas": q_asked,
+            "redundantes": q_redundant,
+            "utiles": q_asked - q_redundant,
+            "precision": round((q_asked - q_redundant) / q_asked, 4) if q_asked else None,
+            "errores_preguntables": err_total,
+            "errores_cubiertos": err_covered,
+            "cobertura": round(err_covered / err_total, 4) if err_total else None,
+            "rondas_fallidas": q_failed,
         },
         "latencia_ms": {"p50": _pctl(latencies, 0.5), "p95": _pctl(latencies, 0.95)},
         "costo_usd_por_1000": round(1000 * cost / evaluated, 4),

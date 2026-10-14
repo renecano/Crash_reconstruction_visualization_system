@@ -26,7 +26,7 @@ def test_maximo_tres_y_sin_temas_repetidos() -> None:
         spec = load_fixture(name)
         qs = q.ask(spec, spec["meta"]["relato"])
         assert len(qs) <= q.MAX_QUESTIONS
-        topics = [q._topic(p.id) for p in qs]  # pyright: ignore[reportPrivateUsage]
+        topics = [q.topic(p.id) for p in qs]
         assert len(topics) == len(set(topics)), name
         for p in qs:
             assert not BLAME.search(p.texto), p.texto
