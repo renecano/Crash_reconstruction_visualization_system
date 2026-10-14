@@ -1,0 +1,105 @@
+{
+ "costo_estimado_con": "claude-sonnet-5-5",
+ "costo_usd": 0.0085964,
+ "esfuerzo": "medium",
+ "grabado": "2026-10-14T17:52:07+00:00",
+ "huella_prompt": "f6b693169a4199c3",
+ "latencia_ms": 4456.0,
+ "modelo": "claude-sonnet-5-5",
+ "modelo_respuesta": "claude-sonnet-5-5",
+ "prompt": "extraccion_v1",
+ "request_id": "req_011Cg2Z9Tjsw7rKynVYjrggA",
+ "salida": {
+  "dispositivos": [],
+  "hechos": [
+   {
+    "campo": "vehiculo.velocidad_kmh",
+    "cita": "a vuelta de rueda",
+    "persona": -1,
+    "valor": "8",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.maniobra",
+    "cita": "se cambió a mi carril",
+    "persona": -1,
+    "valor": "cambio_carril",
+    "vehiculo": 1
+   },
+   {
+    "campo": "vehiculo.color",
+    "cita": "Odyssey gris",
+    "persona": -1,
+    "valor": "gris",
+    "vehiculo": 1
+   },
+   {
+    "campo": "vehiculo.clase",
+    "cita": "Odyssey",
+    "persona": -1,
+    "valor": "van",
+    "vehiculo": 1
+   },
+   {
+    "campo": "evento.tipo",
+    "cita": "me raspó toda la defensa delantera y la salpicadera izquierda",
+    "persona": -1,
+    "valor": "impacto_vehiculo_vehiculo",
+    "vehiculo": -1
+   },
+   {
+    "campo": "vehiculo.zona_impacto",
+    "cita": "defensa delantera",
+    "persona": -1,
+    "valor": "F",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.zona_impacto",
+    "cita": "salpicadera izquierda",
+    "persona": -1,
+    "valor": "L",
+    "vehiculo": 0
+   },
+   {
+    "campo": "entorno.iluminacion",
+    "cita": "Eran como las 7 de la noche, ya oscuro",
+    "persona": -1,
+    "valor": "noche",
+    "vehiculo": -1
+   }
+  ],
+  "personas": [
+   {
+    "cita": "Estaba en el tráfico de Periférico a la altura de Satélite, a vuelta de rueda",
+    "rol": "conductor",
+    "vehiculo": 0
+   },
+   {
+    "cita": "un señor ya de edad en una Odyssey gris",
+    "rol": "conductor",
+    "vehiculo": 1
+   }
+  ],
+  "preguntas": [
+   "¿Cuántos carriles tenía Periférico en ese tramo y en cuál iba usted?",
+   "¿Cuál era la velocidad aproximada de la Odyssey al cambiarse de carril?",
+   "¿Había alumbrado público en ese tramo?"
+  ],
+  "vehiculos": [
+   {
+    "narrador": true
+   },
+   {
+    "narrador": false
+   }
+  ]
+ },
+ "texto_sha256": "954b7258d10c112e6309b9711a5088477762e374de021da847dc5262d1af49cb",
+ "usage": {
+  "cache_creation_input_tokens": 0,
+  "cache_read_input_tokens": 5862,
+  "input_tokens": 157,
+  "output_tokens": 711
+ }
+}

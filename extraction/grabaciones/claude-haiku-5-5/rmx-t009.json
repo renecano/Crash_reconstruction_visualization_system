@@ -1,0 +1,91 @@
+{
+ "costo_estimado_con": "claude-haiku-5-5",
+ "costo_usd": 0.00150902,
+ "esfuerzo": "medium",
+ "grabado": "2026-10-14T16:26:26+00:00",
+ "huella_prompt": "f6b693169a4199c3",
+ "latencia_ms": 11608.4,
+ "modelo": "claude-haiku-5-5",
+ "modelo_respuesta": "claude-haiku-5-5",
+ "prompt": "extraccion_v1",
+ "request_id": "req_011Cg2Sbzx1urHdFUatcnreM",
+ "salida": {
+  "dispositivos": [
+   {
+    "cita": "el semaforo estaba en amarillo creo",
+    "tipo": "semaforo"
+   }
+  ],
+  "hechos": [
+   {
+    "campo": "lugar.tipo_via",
+    "cita": "en el cruze",
+    "persona": -1,
+    "valor": "interseccion",
+    "vehiculo": -1
+   },
+   {
+    "campo": "evento.tipo",
+    "cita": "le di de lado con el frente",
+    "persona": -1,
+    "valor": "impacto_vehiculo_vehiculo",
+    "vehiculo": -1
+   },
+   {
+    "campo": "vehiculo.clase",
+    "cita": "benia en la troca",
+    "persona": -1,
+    "valor": "suv_o_pickup",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.clase",
+    "cita": "un pointer",
+    "persona": -1,
+    "valor": "pickup",
+    "vehiculo": 1
+   },
+   {
+    "campo": "vehiculo.maniobra",
+    "cita": "un pointer se me atraveso",
+    "persona": -1,
+    "valor": "cambio_carril",
+    "vehiculo": 1
+   },
+   {
+    "campo": "vehiculo.zona_impacto",
+    "cita": "le di de lado con el frente",
+    "persona": -1,
+    "valor": "F",
+    "vehiculo": 0
+   }
+  ],
+  "personas": [
+   {
+    "cita": "benia en la troca",
+    "rol": "conductor",
+    "vehiculo": 0
+   }
+  ],
+  "preguntas": [
+   "¿A qué velocidad iba exactamente al momento del impacto?",
+   "¿Qué lado del pointer recibió el golpe?",
+   "¿Cuál era el estado del semáforo para cada sentido de circulación?"
+  ],
+  "vehiculos": [
+   {
+    "narrador": true
+   },
+   {
+    "narrador": false
+   }
+  ]
+ },
+ "texto_sha256": "a12113708c5f29049086df5d6e8077ac7974ec1779f3256cdb005c823ac9253d",
+ "usage": {
+  "cache_creation_input_tokens": 0,
+  "cache_read_input_tokens": 5862,
+  "input_tokens": 119,
+  "output_tokens": 2877
+ }
+}

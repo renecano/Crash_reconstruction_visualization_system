@@ -1,0 +1,90 @@
+{
+ "costo_estimado_con": "claude-sonnet-5-5",
+ "costo_usd": 0.0072504,
+ "esfuerzo": "medium",
+ "grabado": "2026-10-14T18:44:34+00:00",
+ "huella_prompt": "f6b693169a4199c3",
+ "latencia_ms": 3699.1,
+ "modelo": "claude-sonnet-5-5",
+ "modelo_respuesta": "claude-sonnet-5-5",
+ "prompt": "extraccion_v1",
+ "request_id": "req_011Cg2d9ZRQRhh4EE5eFVDWH",
+ "salida": {
+  "dispositivos": [],
+  "hechos": [
+   {
+    "campo": "lugar.superficie",
+    "cita": "calle empedrada",
+    "persona": -1,
+    "valor": "empedrado",
+    "vehiculo": -1
+   },
+   {
+    "campo": "entorno.clima",
+    "cita": "iba lloviznando",
+    "persona": -1,
+    "valor": "lluvia_ligera",
+    "vehiculo": -1
+   },
+   {
+    "campo": "evento.tipo",
+    "cita": "le pegó a un puesto de elotes",
+    "persona": -1,
+    "valor": "impacto_vehiculo_objeto",
+    "vehiculo": -1
+   },
+   {
+    "campo": "evento.objeto",
+    "cita": "puesto de elotes",
+    "persona": -1,
+    "valor": "puesto",
+    "vehiculo": -1
+   },
+   {
+    "campo": "vehiculo.velocidad_kmh",
+    "cita": "como a 30",
+    "persona": -1,
+    "valor": "30",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.zona_impacto",
+    "cita": "Le dio con la esquina delantera derecha",
+    "persona": -1,
+    "valor": "F",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.zona_impacto",
+    "cita": "Le dio con la esquina delantera derecha",
+    "persona": -1,
+    "valor": "R",
+    "vehiculo": 0
+   }
+  ],
+  "personas": [
+   {
+    "cita": "Mi hija acaba de sacar su licencia",
+    "rol": "conductor",
+    "vehiculo": 0
+   }
+  ],
+  "preguntas": [
+   "¿El Tsuru frenó o intentó frenar antes de subirse a la banqueta?",
+   "¿Qué tan pronunciada era la bajada de la calle?",
+   "¿Había marcas en el pavimento o en la banqueta tras el percance?"
+  ],
+  "vehiculos": [
+   {
+    "narrador": false
+   }
+  ]
+ },
+ "texto_sha256": "54327db3ced1826a034bcec6880d4e5457edb2641d013eba1a5500c527bf61fc",
+ "usage": {
+  "cache_creation_input_tokens": 0,
+  "cache_read_input_tokens": 5862,
+  "input_tokens": 164,
+  "output_tokens": 575
+ }
+}

@@ -1,0 +1,104 @@
+{
+ "costo_estimado_con": "claude-haiku-5-5",
+ "costo_usd": 0.00145322,
+ "esfuerzo": "medium",
+ "grabado": "2026-10-14T18:11:06+00:00",
+ "huella_prompt": "f6b693169a4199c3",
+ "latencia_ms": 11831.4,
+ "modelo": "claude-haiku-5-5",
+ "modelo_respuesta": "claude-haiku-5-5",
+ "prompt": "extraccion_v1",
+ "request_id": "req_011Cg2aawRpoMU4LzKAZhdXf",
+ "salida": {
+  "dispositivos": [],
+  "hechos": [
+   {
+    "campo": "vehiculo.clase",
+    "cita": "Mi carro es una Tiguan",
+    "persona": -1,
+    "valor": "suv_compacta",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.clase",
+    "cita": "venía en un Attitude blanco",
+    "persona": -1,
+    "valor": "sedan_compacto",
+    "vehiculo": 1
+   },
+   {
+    "campo": "vehiculo.color",
+    "cita": "Attitude blanco",
+    "persona": -1,
+    "valor": "blanco",
+    "vehiculo": 1
+   },
+   {
+    "campo": "vehiculo.maniobra",
+    "cita": "iba saliendo en reversa",
+    "persona": -1,
+    "valor": "reversa",
+    "vehiculo": 0
+   },
+   {
+    "campo": "evento.tipo",
+    "cita": "Me pegó en la esquina de atrás del lado izquierdo",
+    "persona": -1,
+    "valor": "impacto_vehiculo_vehiculo",
+    "vehiculo": -1
+   },
+   {
+    "campo": "vehiculo.zona_impacto",
+    "cita": "esquina de atrás",
+    "persona": -1,
+    "valor": "B",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.zona_impacto",
+    "cita": "lado izquierdo",
+    "persona": -1,
+    "valor": "L",
+    "vehiculo": 0
+   },
+   {
+    "campo": "entorno.iluminacion",
+    "cita": "en la noche",
+    "persona": -1,
+    "valor": "noche",
+    "vehiculo": -1
+   }
+  ],
+  "personas": [
+   {
+    "cita": "yo iba saliendo en reversa",
+    "rol": "conductor",
+    "vehiculo": 0
+   },
+   {
+    "cita": "venía en un Attitude blanco",
+    "rol": "conductor",
+    "vehiculo": 1
+   }
+  ],
+  "preguntas": [
+   "¿A qué velocidad iba el Attitude al momento del impacto?",
+   "¿El Attitude venía por el mismo carril en el que usted salía del cajón?"
+  ],
+  "vehiculos": [
+   {
+    "narrador": true
+   },
+   {
+    "narrador": false
+   }
+  ]
+ },
+ "texto_sha256": "76f6e19da08954ce987423243203ef80ed06dc07b798518c448baaea114e15c3",
+ "usage": {
+  "cache_creation_input_tokens": 0,
+  "cache_read_input_tokens": 5862,
+  "input_tokens": 211,
+  "output_tokens": 2747
+ }
+}

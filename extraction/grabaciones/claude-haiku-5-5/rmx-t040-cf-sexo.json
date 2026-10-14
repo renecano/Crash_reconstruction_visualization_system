@@ -1,0 +1,116 @@
+{
+ "costo_estimado_con": "claude-haiku-5-5",
+ "costo_usd": 0.00120042,
+ "esfuerzo": "medium",
+ "grabado": "2026-10-14T17:00:31+00:00",
+ "huella_prompt": "f6b693169a4199c3",
+ "latencia_ms": 8888.3,
+ "modelo": "claude-haiku-5-5",
+ "modelo_respuesta": "claude-haiku-5-5",
+ "prompt": "extraccion_v1",
+ "request_id": "req_011Cg2VCy6LphGHfLsoBLib4",
+ "salida": {
+  "dispositivos": [
+   {
+    "cita": "luz roja del semáforo",
+    "tipo": "semaforo"
+   }
+  ],
+  "hechos": [
+   {
+    "campo": "lugar.tipo_via",
+    "cita": "En la intersección con la calle Zaragoza",
+    "persona": -1,
+    "valor": "interseccion",
+    "vehiculo": -1
+   },
+   {
+    "campo": "vehiculo.clase",
+    "cita": "conducía mi motocicleta",
+    "persona": -1,
+    "valor": "motocicleta",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.color",
+    "cita": "color negro",
+    "persona": -1,
+    "valor": "negro",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.velocidad_kmh",
+    "cita": "a una velocidad de 40 km/h",
+    "persona": -1,
+    "valor": "40",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.clase",
+    "cita": "un vehículo tipo pickup",
+    "persona": -1,
+    "valor": "pickup",
+    "vehiculo": 1
+   },
+   {
+    "campo": "evento.tipo",
+    "cita": "nos impactó en el costado izquierdo",
+    "persona": -1,
+    "valor": "impacto_vehiculo_vehiculo",
+    "vehiculo": -1
+   },
+   {
+    "campo": "vehiculo.zona_impacto",
+    "cita": "nos impactó en el costado izquierdo",
+    "persona": -1,
+    "valor": "L",
+    "vehiculo": 0
+   },
+   {
+    "campo": "persona.casco",
+    "cita": "Ambos portábamos casco",
+    "persona": 0,
+    "valor": "true",
+    "vehiculo": -1
+   },
+   {
+    "campo": "persona.casco",
+    "cita": "Ambos portábamos casco",
+    "persona": 1,
+    "valor": "true",
+    "vehiculo": -1
+   }
+  ],
+  "personas": [
+   {
+    "cita": "conducía mi motocicleta",
+    "rol": "conductor",
+    "vehiculo": 0
+   },
+   {
+    "cita": "llevando como acompañante a mi esposo",
+    "rol": "pasajero",
+    "vehiculo": 0
+   }
+  ],
+  "preguntas": [
+   "¿Qué velocidad llevaba la pickup al cruzar la intersección?",
+   "¿Cuántos carriles tiene la calle 20 de Noviembre en cada sentido?"
+  ],
+  "vehiculos": [
+   {
+    "narrador": true
+   },
+   {
+    "narrador": false
+   }
+  ]
+ },
+ "texto_sha256": "bf9aa38fbd5f9514d857e63a042a38744b78fa5d33c7a27e7027cf7c35a9588a",
+ "usage": {
+  "cache_creation_input_tokens": 0,
+  "cache_read_input_tokens": 5862,
+  "input_tokens": 258,
+  "output_tokens": 2232
+ }
+}

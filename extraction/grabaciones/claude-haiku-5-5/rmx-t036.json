@@ -1,0 +1,113 @@
+{
+ "costo_estimado_con": "claude-haiku-5-5",
+ "costo_usd": 0.00130712,
+ "esfuerzo": "medium",
+ "grabado": "2026-10-14T16:31:07+00:00",
+ "huella_prompt": "f6b693169a4199c3",
+ "latencia_ms": 9841.6,
+ "modelo": "claude-haiku-5-5",
+ "modelo_respuesta": "claude-haiku-5-5",
+ "prompt": "extraccion_v1",
+ "request_id": "req_011Cg2Sxt57H7qDKW3HV6vnW",
+ "salida": {
+  "dispositivos": [],
+  "hechos": [
+   {
+    "campo": "vehiculo.clase",
+    "cita": "andaba de repartidor en la moto",
+    "persona": -1,
+    "valor": "motocicleta",
+    "vehiculo": 0
+   },
+   {
+    "campo": "entorno.clima",
+    "cita": "estaba lloviendo bien fuerte",
+    "persona": -1,
+    "valor": "lluvia_fuerte",
+    "vehiculo": -1
+   },
+   {
+    "campo": "lugar.estado_superficie",
+    "cita": "el piso estaba encharcado",
+    "persona": -1,
+    "valor": "encharcado",
+    "vehiculo": -1
+   },
+   {
+    "campo": "vehiculo.frenado",
+    "cita": "freno de golpe",
+    "persona": -1,
+    "valor": "true",
+    "vehiculo": 1
+   },
+   {
+    "campo": "vehiculo.frenado",
+    "cita": "yo frene tambien",
+    "persona": -1,
+    "valor": "true",
+    "vehiculo": 0
+   },
+   {
+    "campo": "evento.tipo",
+    "cita": "la moto se derrapo",
+    "persona": -1,
+    "valor": "derrape",
+    "vehiculo": -1
+   },
+   {
+    "campo": "evento.tipo",
+    "cita": "me fui contra la parte de atras de el",
+    "persona": -1,
+    "valor": "impacto_vehiculo_vehiculo",
+    "vehiculo": -1
+   },
+   {
+    "campo": "vehiculo.zona_impacto",
+    "cita": "me fui contra la parte de atras de el",
+    "persona": -1,
+    "valor": "F",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.zona_impacto",
+    "cita": "me fui contra la parte de atras de el",
+    "persona": -1,
+    "valor": "B",
+    "vehiculo": 1
+   },
+   {
+    "campo": "persona.casco",
+    "cita": "trai casco",
+    "persona": 0,
+    "valor": "true",
+    "vehiculo": -1
+   }
+  ],
+  "personas": [
+   {
+    "cita": "andaba de repartidor en la moto",
+    "rol": "motociclista",
+    "vehiculo": 0
+   }
+  ],
+  "preguntas": [
+   "¿A qué velocidad circulaban la moto y el jetta antes de que el jetta frenara?",
+   "¿Qué distancia había entre la moto y el jetta cuando este frenó?"
+  ],
+  "vehiculos": [
+   {
+    "narrador": true
+   },
+   {
+    "narrador": false
+   }
+  ]
+ },
+ "texto_sha256": "ac5cd64407772628d897f14f0dbda601b8e57397c0ca22e8348f39e61a224bee",
+ "usage": {
+  "cache_creation_input_tokens": 0,
+  "cache_read_input_tokens": 5862,
+  "input_tokens": 125,
+  "output_tokens": 2472
+ }
+}

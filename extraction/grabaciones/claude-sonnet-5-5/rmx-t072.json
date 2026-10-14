@@ -1,0 +1,110 @@
+{
+ "costo_estimado_con": "claude-sonnet-5-5",
+ "costo_usd": 0.0081764,
+ "esfuerzo": "medium",
+ "grabado": "2026-10-14T17:30:42+00:00",
+ "huella_prompt": "f6b693169a4199c3",
+ "latencia_ms": 6248.7,
+ "modelo": "claude-sonnet-5-5",
+ "modelo_respuesta": "claude-sonnet-5-5",
+ "prompt": "extraccion_v1",
+ "request_id": "req_011Cg2XWeG1VThPvek1RKyAW",
+ "salida": {
+  "dispositivos": [
+   {
+    "cita": "en el semaforo",
+    "tipo": "semaforo"
+   }
+  ],
+  "hechos": [
+   {
+    "campo": "vehiculo.maniobra",
+    "cita": "yo estaba parada esperando el verde",
+    "persona": -1,
+    "valor": "detenido",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.velocidad_kmh",
+    "cita": "yo estaba parada esperando el verde",
+    "persona": -1,
+    "valor": "0",
+    "vehiculo": 0
+   },
+   {
+    "campo": "evento.tipo",
+    "cita": "me pego x atras",
+    "persona": -1,
+    "valor": "impacto_vehiculo_vehiculo",
+    "vehiculo": -1
+   },
+   {
+    "campo": "vehiculo.zona_impacto",
+    "cita": "me pego x atras",
+    "persona": -1,
+    "valor": "B",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.zona_impacto",
+    "cita": "me pego x atras",
+    "persona": -1,
+    "valor": "F",
+    "vehiculo": 1
+   },
+   {
+    "campo": "vehiculo.color",
+    "cita": "un beat azul",
+    "persona": -1,
+    "valor": "azul",
+    "vehiculo": 1
+   },
+   {
+    "campo": "lugar.estado_superficie",
+    "cita": "el piso estaba mojado de la lluvia",
+    "persona": -1,
+    "valor": "mojado",
+    "vehiculo": -1
+   },
+   {
+    "campo": "entorno.clima",
+    "cita": "mojado de la lluvia",
+    "persona": -1,
+    "valor": "lluvia",
+    "vehiculo": -1
+   }
+  ],
+  "personas": [
+   {
+    "cita": "yo estaba parada",
+    "rol": "conductor",
+    "vehiculo": 0
+   },
+   {
+    "cita": "un chamaco en un beat azul",
+    "rol": "conductor",
+    "vehiculo": 1
+   }
+  ],
+  "preguntas": [
+   "¿A qué velocidad aproximada se acercaba el otro vehículo?",
+   "¿Llovía en el momento del choque o ya había parado?",
+   "¿Sabe si el otro conductor alcanzó a frenar?"
+  ],
+  "vehiculos": [
+   {
+    "narrador": true
+   },
+   {
+    "narrador": false
+   }
+  ]
+ },
+ "texto_sha256": "0e26baab867f8a85d1dc452993dffd66729d944f511c7f6be6a7e2dd053d14bb",
+ "usage": {
+  "cache_creation_input_tokens": 0,
+  "cache_read_input_tokens": 5862,
+  "input_tokens": 132,
+  "output_tokens": 674
+ }
+}

@@ -1,0 +1,97 @@
+{
+ "costo_estimado_con": "claude-haiku-5-5",
+ "costo_usd": 0.00112812,
+ "esfuerzo": "medium",
+ "grabado": "2026-10-14T16:30:45+00:00",
+ "huella_prompt": "f6b693169a4199c3",
+ "latencia_ms": 9036.9,
+ "modelo": "claude-haiku-5-5",
+ "modelo_respuesta": "claude-haiku-5-5",
+ "prompt": "extraccion_v1",
+ "request_id": "req_011Cg2SwJ9e9dUPAdo9Ejmz6",
+ "salida": {
+  "dispositivos": [],
+  "hechos": [
+   {
+    "campo": "entorno.iluminacion",
+    "cita": "Aún no amanecía y la zona cuenta con alumbrado público",
+    "persona": -1,
+    "valor": "noche_con_alumbrado",
+    "vehiculo": -1
+   },
+   {
+    "campo": "lugar.estado_superficie",
+    "cita": "presencia de aceite sobre el pavimento",
+    "persona": -1,
+    "valor": "aceite",
+    "vehiculo": -1
+   },
+   {
+    "campo": "evento.tipo",
+    "cita": "se impactó contra una parada de autobús",
+    "persona": -1,
+    "valor": "impacto_vehiculo_objeto",
+    "vehiculo": -1
+   },
+   {
+    "campo": "evento.objeto",
+    "cita": "una parada de autobús",
+    "persona": -1,
+    "valor": "parada_autobus",
+    "vehiculo": -1
+   },
+   {
+    "campo": "vehiculo.clase",
+    "cita": "unidad tipo autobús de pasajeros",
+    "persona": -1,
+    "valor": "autobus",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.velocidad_kmh",
+    "cita": "circulaba a una velocidad aproximada de 35 km/h",
+    "persona": -1,
+    "valor": "35",
+    "vehiculo": 0
+   }
+  ],
+  "personas": [
+   {
+    "cita": "conducida por la operadora en turno",
+    "rol": "conductor",
+    "vehiculo": 0
+   },
+   {
+    "cita": "tres pasajeros fueron valorados en el lugar por paramédicos",
+    "rol": "pasajero",
+    "vehiculo": 0
+   },
+   {
+    "cita": "tres pasajeros fueron valorados en el lugar por paramédicos",
+    "rol": "pasajero",
+    "vehiculo": 0
+   },
+   {
+    "cita": "tres pasajeros fueron valorados en el lugar por paramédicos",
+    "rol": "pasajero",
+    "vehiculo": 0
+   }
+  ],
+  "preguntas": [
+   "¿La conductora frenó antes del impacto o no alcanzó a hacerlo?",
+   "¿Los tres pasajeros iban a bordo de la unidad en el momento del percance?"
+  ],
+  "vehiculos": [
+   {
+    "narrador": false
+   }
+  ]
+ },
+ "texto_sha256": "789b93f6061d580b719e4b5faafb41b1fd474b62e5de259b186744b36c88acfe",
+ "usage": {
+  "cache_creation_input_tokens": 0,
+  "cache_read_input_tokens": 5862,
+  "input_tokens": 235,
+  "output_tokens": 2092
+ }
+}

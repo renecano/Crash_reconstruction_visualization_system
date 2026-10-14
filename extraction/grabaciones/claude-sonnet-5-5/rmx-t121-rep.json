@@ -1,0 +1,114 @@
+{
+ "costo_estimado_con": "claude-sonnet-5-5",
+ "costo_usd": 0.0093044,
+ "esfuerzo": "medium",
+ "grabado": "2026-10-14T18:41:51+00:00",
+ "huella_prompt": "f6b693169a4199c3",
+ "latencia_ms": 5176.1,
+ "modelo": "claude-sonnet-5-5",
+ "modelo_respuesta": "claude-sonnet-5-5",
+ "prompt": "extraccion_v1",
+ "request_id": "req_011Cg2cwQtNaLKdAs4hmdk3V",
+ "salida": {
+  "dispositivos": [],
+  "hechos": [
+   {
+    "campo": "vehiculo.clase",
+    "cita": "mi Jetta",
+    "persona": -1,
+    "valor": "sedan_compacto",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.velocidad_kmh",
+    "cita": "como a 60",
+    "persona": -1,
+    "valor": "60",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.clase",
+    "cita": "un Beat rojo",
+    "persona": -1,
+    "valor": "hatchback",
+    "vehiculo": 1
+   },
+   {
+    "campo": "vehiculo.color",
+    "cita": "Beat rojo",
+    "persona": -1,
+    "valor": "rojo",
+    "vehiculo": 1
+   },
+   {
+    "campo": "vehiculo.maniobra",
+    "cita": "se me cerró para agarrar el retorno",
+    "persona": -1,
+    "valor": "cambio_carril",
+    "vehiculo": 1
+   },
+   {
+    "campo": "lugar.tipo_via",
+    "cita": "agarrar el retorno",
+    "persona": -1,
+    "valor": "retorno",
+    "vehiculo": -1
+   },
+   {
+    "campo": "evento.tipo",
+    "cita": "Le di en la puerta de atrás de su lado izquierdo",
+    "persona": -1,
+    "valor": "impacto_vehiculo_vehiculo",
+    "vehiculo": -1
+   },
+   {
+    "campo": "vehiculo.zona_impacto",
+    "cita": "Le di en la puerta de atrás de su lado izquierdo",
+    "persona": -1,
+    "valor": "F",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.zona_impacto",
+    "cita": "Le di en la puerta de atrás de su lado izquierdo",
+    "persona": -1,
+    "valor": "L",
+    "vehiculo": 1
+   },
+   {
+    "campo": "vehiculo.frenado",
+    "cita": "ni tiempo me dio de frenar",
+    "persona": -1,
+    "valor": "false",
+    "vehiculo": 0
+   }
+  ],
+  "personas": [
+   {
+    "cita": "iba en mi Jetta",
+    "rol": "conductor",
+    "vehiculo": 0
+   }
+  ],
+  "preguntas": [
+   "¿El Beat ya estaba cruzando el carril central cuando ocurrió el golpe?",
+   "¿Cuántos carriles por sentido tiene ese tramo de avenida Vallarta?",
+   "¿Era de día o de noche y cómo estaba el pavimento?"
+  ],
+  "vehiculos": [
+   {
+    "narrador": true
+   },
+   {
+    "narrador": false
+   }
+  ]
+ },
+ "texto_sha256": "64e4a66a29bbda1e745e446b10c56c6cbf3c288afe2dfa6a77ab62c435581ebc",
+ "usage": {
+  "cache_creation_input_tokens": 0,
+  "cache_read_input_tokens": 5862,
+  "input_tokens": 161,
+  "output_tokens": 781
+ }
+}

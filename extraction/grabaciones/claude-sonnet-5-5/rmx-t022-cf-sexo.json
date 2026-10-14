@@ -1,0 +1,107 @@
+{
+ "costo_estimado_con": "claude-sonnet-5-5",
+ "costo_usd": 0.0088484,
+ "esfuerzo": "medium",
+ "grabado": "2026-10-14T17:48:16+00:00",
+ "huella_prompt": "f6b693169a4199c3",
+ "latencia_ms": 5180.1,
+ "modelo": "claude-sonnet-5-5",
+ "modelo_respuesta": "claude-sonnet-5-5",
+ "prompt": "extraccion_v1",
+ "request_id": "req_011Cg2YrPyBr9AEzWqUeWMAG",
+ "salida": {
+  "dispositivos": [],
+  "hechos": [
+   {
+    "campo": "lugar.tipo_via",
+    "cita": "estacionamiento de la plaza",
+    "persona": -1,
+    "valor": "estacionamiento",
+    "vehiculo": -1
+   },
+   {
+    "campo": "evento.tipo",
+    "cita": "Nos dimos de frente",
+    "persona": -1,
+    "valor": "impacto_vehiculo_vehiculo",
+    "vehiculo": -1
+   },
+   {
+    "campo": "vehiculo.clase",
+    "cita": "CR-V",
+    "persona": -1,
+    "valor": "suv_compacta",
+    "vehiculo": 1
+   },
+   {
+    "campo": "vehiculo.color",
+    "cita": "negra",
+    "persona": -1,
+    "valor": "negra",
+    "vehiculo": 1
+   },
+   {
+    "campo": "vehiculo.clase",
+    "cita": "Mi carro es un Civic",
+    "persona": -1,
+    "valor": "sedan_compacto",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.velocidad_kmh",
+    "cita": "a vuelta de rueda los dos",
+    "persona": -1,
+    "valor": "8",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.velocidad_kmh",
+    "cita": "a vuelta de rueda los dos",
+    "persona": -1,
+    "valor": "8",
+    "vehiculo": 1
+   },
+   {
+    "campo": "vehiculo.zona_impacto",
+    "cita": "Nos dimos de frente",
+    "persona": -1,
+    "valor": "F",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.zona_impacto",
+    "cita": "Nos dimos de frente",
+    "persona": -1,
+    "valor": "F",
+    "vehiculo": 1
+   }
+  ],
+  "personas": [
+   {
+    "cita": "Andaba buscando lugar",
+    "rol": "conductor",
+    "vehiculo": 0
+   }
+  ],
+  "preguntas": [
+   "¿En qué zona del frente de cada vehículo quedaron los daños (lado izquierdo, centro o derecho)?",
+   "¿Los dos vehículos circulaban sobre el mismo pasillo del estacionamiento o alguno estaba entrando o saliendo de un cajón?",
+   "¿Alguno de los vehículos frenó o se detuvo justo antes del contacto?"
+  ],
+  "vehiculos": [
+   {
+    "narrador": true
+   },
+   {
+    "narrador": false
+   }
+  ]
+ },
+ "texto_sha256": "c36f3d215e34727ad03d9c8c33b9df213f27006c4949c510e1518e6844b18de0",
+ "usage": {
+  "cache_creation_input_tokens": 0,
+  "cache_read_input_tokens": 5862,
+  "input_tokens": 163,
+  "output_tokens": 735
+ }
+}

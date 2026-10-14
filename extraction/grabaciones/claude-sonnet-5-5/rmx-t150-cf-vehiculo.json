@@ -1,0 +1,95 @@
+{
+ "costo_estimado_con": "claude-sonnet-5-5",
+ "costo_usd": 0.0071784,
+ "esfuerzo": "medium",
+ "grabado": "2026-10-14T18:00:15+00:00",
+ "huella_prompt": "f6b693169a4199c3",
+ "latencia_ms": 4339.0,
+ "modelo": "claude-sonnet-5-5",
+ "modelo_respuesta": "claude-sonnet-5-5",
+ "prompt": "extraccion_v1",
+ "request_id": "req_011Cg2ZmTaTrKeUtXnA1gbBJ",
+ "salida": {
+  "dispositivos": [],
+  "hechos": [
+   {
+    "campo": "lugar.tipo_via",
+    "cita": "en una curva",
+    "persona": -1,
+    "valor": "curva",
+    "vehiculo": -1
+   },
+   {
+    "campo": "lugar.superficie",
+    "cita": "terraseria",
+    "persona": -1,
+    "valor": "terraceria",
+    "vehiculo": -1
+   },
+   {
+    "campo": "lugar.estado_superficie",
+    "cita": "mucho lodo",
+    "persona": -1,
+    "valor": "lodo",
+    "vehiculo": -1
+   },
+   {
+    "campo": "entorno.clima",
+    "cita": "neblina",
+    "persona": -1,
+    "valor": "niebla",
+    "vehiculo": -1
+   },
+   {
+    "campo": "evento.tipo",
+    "cita": "se le patino",
+    "persona": -1,
+    "valor": "derrape",
+    "vehiculo": -1
+   },
+   {
+    "campo": "vehiculo.clase",
+    "cita": "ranger",
+    "persona": -1,
+    "valor": "pickup",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.velocidad_kmh",
+    "cita": "como a 30",
+    "persona": -1,
+    "valor": "30",
+    "vehiculo": 0
+   }
+  ],
+  "personas": [
+   {
+    "cita": "mi tio manejaba su ranger",
+    "rol": "conductor",
+    "vehiculo": 0
+   },
+   {
+    "cita": "ibamos a puerto escondido",
+    "rol": "pasajero",
+    "vehiculo": 0
+   }
+  ],
+  "preguntas": [
+   "¿La Ranger era de cabina sencilla o doble, y cuántas personas iban a bordo?",
+   "¿Qué tan profunda era la cuneta y hubo algún daño en la camioneta al quedar atorada?",
+   "¿El tramo de terracería tenía pendiente (subida o bajada) en la curva?"
+  ],
+  "vehiculos": [
+   {
+    "narrador": false
+   }
+  ]
+ },
+ "texto_sha256": "c96fb11067a91617b7b8001ab9bec84e96b7c28423993ae67e431be6e2c8871d",
+ "usage": {
+  "cache_creation_input_tokens": 0,
+  "cache_read_input_tokens": 5862,
+  "input_tokens": 123,
+  "output_tokens": 576
+ }
+}

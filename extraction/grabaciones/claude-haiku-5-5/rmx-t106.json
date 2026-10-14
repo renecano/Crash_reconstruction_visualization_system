@@ -1,0 +1,68 @@
+{
+ "costo_estimado_con": "claude-haiku-5-5",
+ "costo_usd": 0.00086032,
+ "esfuerzo": "medium",
+ "grabado": "2026-10-14T16:43:49+00:00",
+ "huella_prompt": "f6b693169a4199c3",
+ "latencia_ms": 7239.1,
+ "modelo": "claude-haiku-5-5",
+ "modelo_respuesta": "claude-haiku-5-5",
+ "prompt": "extraccion_v1",
+ "request_id": "req_011Cg2TwEw2SZNoVJKY1kqzS",
+ "salida": {
+  "dispositivos": [],
+  "hechos": [
+   {
+    "campo": "evento.tipo",
+    "cita": "le dio a un contenedor de basura",
+    "persona": -1,
+    "valor": "impacto_vehiculo_objeto",
+    "vehiculo": -1
+   },
+   {
+    "campo": "evento.objeto",
+    "cita": "contenedor de basura",
+    "persona": -1,
+    "valor": "contenedor",
+    "vehiculo": -1
+   },
+   {
+    "campo": "vehiculo.maniobra",
+    "cita": "al echarse en reversa",
+    "persona": -1,
+    "valor": "reversa",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.zona_impacto",
+    "cita": "al echarse en reversa le dio",
+    "persona": -1,
+    "valor": "B",
+    "vehiculo": 0
+   }
+  ],
+  "personas": [
+   {
+    "cita": "Mi novia se estacionó mal",
+    "rol": "conductor",
+    "vehiculo": 0
+   }
+  ],
+  "preguntas": [
+   "¿A qué velocidad iba el vehículo al retroceder?",
+   "¿El vehículo estaba estacionado o detenido antes de la maniobra en reversa?"
+  ],
+  "vehiculos": [
+   {
+    "narrador": false
+   }
+  ]
+ },
+ "texto_sha256": "5ec4b84cee5824c72d011d12a4cfa2e331ae9d002bb5a66f826f6a88be385307",
+ "usage": {
+  "cache_creation_input_tokens": 0,
+  "cache_read_input_tokens": 5862,
+  "input_tokens": 67,
+  "output_tokens": 1590
+ }
+}

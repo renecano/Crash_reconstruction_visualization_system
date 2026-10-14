@@ -1,0 +1,112 @@
+{
+ "costo_estimado_con": "claude-sonnet-5-5",
+ "costo_usd": 0.0087784,
+ "esfuerzo": "medium",
+ "grabado": "2026-10-14T18:35:06+00:00",
+ "huella_prompt": "f6b693169a4199c3",
+ "latencia_ms": 4714.7,
+ "modelo": "claude-sonnet-5-5",
+ "modelo_respuesta": "claude-sonnet-5-5",
+ "prompt": "extraccion_v1",
+ "request_id": "req_011Cg2cRavmaeaXEQXYxXT8a",
+ "salida": {
+  "dispositivos": [
+   {
+    "cita": "sin ceder el paso",
+    "tipo": "ceda_el_paso"
+   }
+  ],
+  "hechos": [
+   {
+    "campo": "lugar.tipo_via",
+    "cita": "En la glorieta de la Recta a Cholula",
+    "persona": -1,
+    "valor": "glorieta",
+    "vehiculo": -1
+   },
+   {
+    "campo": "evento.tipo",
+    "cita": "me pegó en la puerta de atrás del lado derecho",
+    "persona": -1,
+    "valor": "impacto_vehiculo_vehiculo",
+    "vehiculo": -1
+   },
+   {
+    "campo": "vehiculo.velocidad_kmh",
+    "cita": "yo como a 25",
+    "persona": -1,
+    "valor": "25",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.zona_impacto",
+    "cita": "me pegó en la puerta de atrás del lado derecho",
+    "persona": -1,
+    "valor": "R",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.maniobra",
+    "cita": "yo ya iba adentro, por el carril de afuera",
+    "persona": -1,
+    "valor": "recto",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.maniobra",
+    "cita": "entró sin ceder el paso",
+    "persona": -1,
+    "valor": "incorporacion",
+    "vehiculo": 1
+   },
+   {
+    "campo": "vehiculo.color",
+    "cita": "Polo rojo",
+    "persona": -1,
+    "valor": "rojo",
+    "vehiculo": 1
+   },
+   {
+    "campo": "entorno.iluminacion",
+    "cita": "en la mañana",
+    "persona": -1,
+    "valor": "dia",
+    "vehiculo": -1
+   },
+   {
+    "campo": "entorno.clima",
+    "cita": "estaba soleado",
+    "persona": -1,
+    "valor": "despejado",
+    "vehiculo": -1
+   }
+  ],
+  "personas": [
+   {
+    "cita": "yo ya iba adentro",
+    "rol": "conductor",
+    "vehiculo": 0
+   }
+  ],
+  "preguntas": [
+   "¿Cuál era la velocidad aproximada del Polo al entrar a la glorieta?",
+   "¿Qué tipo de vehículo manejaba usted?",
+   "¿Cuántos carriles tenía la glorieta?"
+  ],
+  "vehiculos": [
+   {
+    "narrador": true
+   },
+   {
+    "narrador": false
+   }
+  ]
+ },
+ "texto_sha256": "23ce8d5b0922f5626350a184767226f49056d308548698a8bf1121aeec34903a",
+ "usage": {
+  "cache_creation_input_tokens": 0,
+  "cache_read_input_tokens": 5862,
+  "input_tokens": 163,
+  "output_tokens": 728
+ }
+}

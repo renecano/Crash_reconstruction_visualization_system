@@ -22,3 +22,10 @@ packages/scene-schema/fixtures/resultados/
 
 # Salida del pipeline de assets (se verifica byte a byte con croquis-assets humans check)
 apps/web/public/modelos/
+
+# Generados por scripts de Python (se verifican byte a byte con --check)
+packages/relato/data/nombres.json
+packages/relato/fixtures/
+
+# Respuestas grabadas de Claude (las escribe croquis-extraction claude record)
+extraction/grabaciones/

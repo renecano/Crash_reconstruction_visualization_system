@@ -1,0 +1,93 @@
+{
+ "costo_estimado_con": "claude-sonnet-5-5",
+ "costo_usd": 0.0130004,
+ "esfuerzo": "medium",
+ "grabado": "2026-10-14T18:39:59+00:00",
+ "huella_prompt": "f6b693169a4199c3",
+ "latencia_ms": 7532.9,
+ "modelo": "claude-sonnet-5-5",
+ "modelo_respuesta": "claude-sonnet-5-5",
+ "prompt": "extraccion_v1",
+ "request_id": "req_011Cg2cnyPxceZ2TMAdF5adT",
+ "salida": {
+  "dispositivos": [],
+  "hechos": [
+   {
+    "campo": "vehiculo.maniobra",
+    "cita": "se encontraba estacionado",
+    "persona": -1,
+    "valor": "estacionado",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.color",
+    "cita": "color rojo",
+    "persona": -1,
+    "valor": "rojo",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.clase",
+    "cita": "camioneta",
+    "persona": -1,
+    "valor": "suv_o_pickup",
+    "vehiculo": 1
+   },
+   {
+    "campo": "vehiculo.color",
+    "cita": "color blanco",
+    "persona": -1,
+    "valor": "blanco",
+    "vehiculo": 1
+   },
+   {
+    "campo": "lugar.tipo_via",
+    "cita": "al tomar la curva",
+    "persona": -1,
+    "valor": "curva",
+    "vehiculo": -1
+   },
+   {
+    "campo": "evento.tipo",
+    "cita": "golpeó la parte frontal de mi vehículo",
+    "persona": -1,
+    "valor": "impacto_vehiculo_vehiculo",
+    "vehiculo": -1
+   },
+   {
+    "campo": "vehiculo.zona_impacto",
+    "cita": "golpeó la parte frontal de mi vehículo",
+    "persona": -1,
+    "valor": "F",
+    "vehiculo": 0
+   }
+  ],
+  "personas": [
+   {
+    "cita": "una conductora",
+    "rol": "conductor",
+    "vehiculo": 1
+   }
+  ],
+  "preguntas": [
+   "¿Con qué parte de la camioneta golpeó al vehículo estacionado?",
+   "¿A qué velocidad aproximada circulaba la camioneta antes de la curva?",
+   "¿La camioneta alcanzó a frenar antes del golpe?"
+  ],
+  "vehiculos": [
+   {
+    "narrador": false
+   },
+   {
+    "narrador": false
+   }
+  ]
+ },
+ "texto_sha256": "6bed05a88af511295c595ed720bd29532197f95e2ae817a24eb3cab0cc7897a4",
+ "usage": {
+  "cache_creation_input_tokens": 0,
+  "cache_read_input_tokens": 5862,
+  "input_tokens": 229,
+  "output_tokens": 1137
+ }
+}

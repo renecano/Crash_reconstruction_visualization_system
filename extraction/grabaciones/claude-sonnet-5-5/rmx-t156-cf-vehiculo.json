@@ -1,0 +1,114 @@
+{
+ "costo_estimado_con": "claude-sonnet-5-5",
+ "costo_usd": 0.0092044,
+ "esfuerzo": "medium",
+ "grabado": "2026-10-14T18:00:47+00:00",
+ "huella_prompt": "f6b693169a4199c3",
+ "latencia_ms": 4910.7,
+ "modelo": "claude-sonnet-5-5",
+ "modelo_respuesta": "claude-sonnet-5-5",
+ "prompt": "extraccion_v1",
+ "request_id": "req_011Cg2ZonS5uq4cEaLguKxL6",
+ "salida": {
+  "dispositivos": [],
+  "hechos": [
+   {
+    "campo": "lugar.superficie",
+    "cita": "empedrada",
+    "persona": -1,
+    "valor": "empedrado",
+    "vehiculo": -1
+   },
+   {
+    "campo": "entorno.iluminacion",
+    "cita": "las dos de la mañana",
+    "persona": -1,
+    "valor": "noche",
+    "vehiculo": -1
+   },
+   {
+    "campo": "lugar.estado_superficie",
+    "cita": "estaba mojado de la lluvia de en la tarde",
+    "persona": -1,
+    "valor": "mojado",
+    "vehiculo": -1
+   },
+   {
+    "campo": "evento.tipo",
+    "cita": "Le pegué a una camioneta estacionada en la parte de atrás",
+    "persona": -1,
+    "valor": "impacto_vehiculo_vehiculo",
+    "vehiculo": -1
+   },
+   {
+    "campo": "vehiculo.frenado",
+    "cita": "Al llegar abajo frené",
+    "persona": -1,
+    "valor": "true",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.velocidad_kmh",
+    "cita": "creo que a 25",
+    "persona": -1,
+    "valor": "25",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.clase",
+    "cita": "una camioneta estacionada",
+    "persona": -1,
+    "valor": "suv_o_pickup",
+    "vehiculo": 1
+   },
+   {
+    "campo": "vehiculo.maniobra",
+    "cita": "una camioneta estacionada",
+    "persona": -1,
+    "valor": "estacionado",
+    "vehiculo": 1
+   },
+   {
+    "campo": "vehiculo.zona_impacto",
+    "cita": "Le pegué a una camioneta estacionada en la parte de atrás",
+    "persona": -1,
+    "valor": "F",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.zona_impacto",
+    "cita": "en la parte de atrás",
+    "persona": -1,
+    "valor": "B",
+    "vehiculo": 1
+   }
+  ],
+  "personas": [
+   {
+    "cita": "Venía de dejar a unos amigos en mi Gol",
+    "rol": "conductor",
+    "vehiculo": 0
+   }
+  ],
+  "preguntas": [
+   "¿La calle tenía pendiente pronunciada en el tramo donde frenaste?",
+   "¿Había alumbrado público en la calle?",
+   "¿La camioneta estacionada era SUV o pickup?"
+  ],
+  "vehiculos": [
+   {
+    "narrador": true
+   },
+   {
+    "narrador": false
+   }
+  ]
+ },
+ "texto_sha256": "5cba8eedc5e93364a231ddb4e71d745c5429a9021836e375b014e07b284cd529",
+ "usage": {
+  "cache_creation_input_tokens": 0,
+  "cache_read_input_tokens": 5862,
+  "input_tokens": 181,
+  "output_tokens": 767
+ }
+}

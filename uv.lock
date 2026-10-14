@@ -313,6 +313,7 @@ version = "0.1.0"
 source = { editable = "eval" }
 dependencies = [
     { name = "croquis-data" },
+    { name = "croquis-extraction" },
     { name = "croquis-solver" },
     { name = "numpy" },
     { name = "polars" },
@@ -321,6 +322,7 @@ dependencies = [
 [package.metadata]
 requires-dist = [
     { name = "croquis-data", editable = "data" },
+    { name = "croquis-extraction", editable = "extraction" },
     { name = "croquis-solver", editable = "solver" },
     { name = "numpy", specifier = ">=2.5,<3" },
     { name = "polars", specifier = ">=2.0,<3" },
@@ -333,6 +335,7 @@ source = { editable = "extraction" }
 dependencies = [
     { name = "anthropic" },
     { name = "croquis-scene-schema" },
+    { name = "croquis-solver" },
     { name = "jsonschema" },
     { name = "pydantic" },
 ]
@@ -341,6 +344,7 @@ dependencies = [
 requires-dist = [
     { name = "anthropic", specifier = ">=1.13,<2" },
     { name = "croquis-scene-schema", editable = "packages/scene-schema/python" },
+    { name = "croquis-solver", editable = "solver" },
     { name = "jsonschema", specifier = ">=4.26,<5" },
     { name = "pydantic", specifier = ">=2.14,<3" },
 ]

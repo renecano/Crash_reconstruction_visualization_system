@@ -1,0 +1,91 @@
+{
+ "costo_estimado_con": "claude-sonnet-5-5",
+ "costo_usd": 0.0134464,
+ "esfuerzo": "medium",
+ "grabado": "2026-10-14T17:46:40+00:00",
+ "huella_prompt": "f6b693169a4199c3",
+ "latencia_ms": 8345.7,
+ "modelo": "claude-sonnet-5-5",
+ "modelo_respuesta": "claude-sonnet-5-5",
+ "prompt": "extraccion_v1",
+ "request_id": "req_011Cg2Yj8RMjgijhaZE3LPQy",
+ "salida": {
+  "dispositivos": [
+   {
+    "cita": "el semaforo estaba en amarillo creo",
+    "tipo": "semaforo"
+   }
+  ],
+  "hechos": [
+   {
+    "campo": "vehiculo.clase",
+    "cita": "troca",
+    "persona": -1,
+    "valor": "suv_o_pickup",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.clase",
+    "cita": "camion de redilas",
+    "persona": -1,
+    "valor": "camion_unitario",
+    "vehiculo": 1
+   },
+   {
+    "campo": "lugar.tipo_via",
+    "cita": "en el cruze con la pacheco",
+    "persona": -1,
+    "valor": "interseccion",
+    "vehiculo": -1
+   },
+   {
+    "campo": "vehiculo.maniobra",
+    "cita": "se me atraveso",
+    "persona": -1,
+    "valor": "cambio_carril",
+    "vehiculo": 1
+   },
+   {
+    "campo": "evento.tipo",
+    "cita": "le di de lado con el frente",
+    "persona": -1,
+    "valor": "impacto_vehiculo_vehiculo",
+    "vehiculo": -1
+   },
+   {
+    "campo": "vehiculo.zona_impacto",
+    "cita": "con el frente",
+    "persona": -1,
+    "valor": "F",
+    "vehiculo": 0
+   }
+  ],
+  "personas": [
+   {
+    "cita": "benia en la troca",
+    "rol": "conductor",
+    "vehiculo": 0
+   }
+  ],
+  "preguntas": [
+   "¿A qué velocidad iba aproximadamente tu camioneta: 50 o 60 km/h?",
+   "¿Qué lado del camión de redilas recibió el golpe, el izquierdo o el derecho?",
+   "¿Por cuál calle venía cada vehículo y qué señal del semáforo tenía cada uno?"
+  ],
+  "vehiculos": [
+   {
+    "narrador": true
+   },
+   {
+    "narrador": false
+   }
+  ]
+ },
+ "texto_sha256": "43b94480939d7f4a24abb19ccf0acb2c2cd521e4275e62028f8dbbdacd2fdc91",
+ "usage": {
+  "cache_creation_input_tokens": 0,
+  "cache_read_input_tokens": 5862,
+  "input_tokens": 122,
+  "output_tokens": 1203
+ }
+}

@@ -1,0 +1,91 @@
+{
+ "costo_estimado_con": "claude-sonnet-5-5",
+ "costo_usd": 0.0068424,
+ "esfuerzo": "medium",
+ "grabado": "2026-10-14T17:38:04+00:00",
+ "huella_prompt": "f6b693169a4199c3",
+ "latencia_ms": 3326.1,
+ "modelo": "claude-sonnet-5-5",
+ "modelo_respuesta": "claude-sonnet-5-5",
+ "prompt": "extraccion_v1",
+ "request_id": "req_011Cg2Y5TU2jccKSr6LUYUQo",
+ "salida": {
+  "dispositivos": [
+   {
+    "cita": "la caseta de Palo Blanco",
+    "tipo": "otro"
+   }
+  ],
+  "hechos": [
+   {
+    "campo": "evento.tipo",
+    "cita": "Me alcanzó por atrás un tráiler",
+    "persona": -1,
+    "valor": "impacto_vehiculo_vehiculo",
+    "vehiculo": -1
+   },
+   {
+    "campo": "vehiculo.clase",
+    "cita": "tráiler",
+    "persona": -1,
+    "valor": "tractocamion",
+    "vehiculo": 1
+   },
+   {
+    "campo": "vehiculo.maniobra",
+    "cita": "yo estaba formado",
+    "persona": -1,
+    "valor": "detenido",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.velocidad_kmh",
+    "cita": "yo estaba formado",
+    "persona": -1,
+    "valor": "0",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.zona_impacto",
+    "cita": "Me alcanzó por atrás",
+    "persona": -1,
+    "valor": "B",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.zona_impacto",
+    "cita": "Me alcanzó por atrás",
+    "persona": -1,
+    "valor": "F",
+    "vehiculo": 1
+   }
+  ],
+  "personas": [
+   {
+    "cita": "yo estaba formado en mi Creta",
+    "rol": "conductor",
+    "vehiculo": 0
+   }
+  ],
+  "preguntas": [
+   "¿A qué velocidad aproximada venía el tráiler al momento del impacto?",
+   "¿El tráiler alcanzó a frenar antes del golpe?",
+   "¿La fila en la caseta estaba completamente detenida o avanzaba lentamente?"
+  ],
+  "vehiculos": [
+   {
+    "narrador": true
+   },
+   {
+    "narrador": false
+   }
+  ]
+ },
+ "texto_sha256": "f40ffe455a3b2d9656fcf528172d401632825b62d44f2aa12a96198b571312eb",
+ "usage": {
+  "cache_creation_input_tokens": 0,
+  "cache_read_input_tokens": 5862,
+  "input_tokens": 55,
+  "output_tokens": 556
+ }
+}

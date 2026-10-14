@@ -1,0 +1,76 @@
+{
+ "costo_estimado_con": "claude-sonnet-5-5",
+ "costo_usd": 0.0100344,
+ "esfuerzo": "medium",
+ "grabado": "2026-10-14T17:49:07+00:00",
+ "huella_prompt": "f6b693169a4199c3",
+ "latencia_ms": 6110.6,
+ "modelo": "claude-sonnet-5-5",
+ "modelo_respuesta": "claude-sonnet-5-5",
+ "prompt": "extraccion_v1",
+ "request_id": "req_011Cg2Yv8XrvJ2MzwkZweENg",
+ "salida": {
+  "dispositivos": [],
+  "hechos": [
+   {
+    "campo": "lugar.tipo_via",
+    "cita": "curva",
+    "persona": -1,
+    "valor": "curva",
+    "vehiculo": -1
+   },
+   {
+    "campo": "vehiculo.clase",
+    "cita": "la camioneta",
+    "persona": -1,
+    "valor": "suv_o_pickup",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.velocidad_kmh",
+    "cita": "como a 70",
+    "persona": -1,
+    "valor": "70",
+    "vehiculo": 0
+   },
+   {
+    "campo": "evento.tipo",
+    "cita": "se volcó",
+    "persona": -1,
+    "valor": "volcadura",
+    "vehiculo": -1
+   },
+   {
+    "campo": "persona.cinturon",
+    "cita": "Traía el cinturón",
+    "persona": 0,
+    "valor": "true",
+    "vehiculo": -1
+   }
+  ],
+  "personas": [
+   {
+    "cita": "Mi tío",
+    "rol": "conductor",
+    "vehiculo": 0
+   }
+  ],
+  "preguntas": [
+   "¿La camioneta era una pickup de caja abierta o una SUV?",
+   "¿Cómo estaba la superficie de la carretera en la curva (seca, mojada)?",
+   "¿Era de día o de noche cuando ocurrió?"
+  ],
+  "vehiculos": [
+   {
+    "narrador": false
+   }
+  ]
+ },
+ "texto_sha256": "228de8986616181a592f304d58c373dd8c6de566bf30bfa5018d08eef4a06107",
+ "usage": {
+  "cache_creation_input_tokens": 0,
+  "cache_read_input_tokens": 5862,
+  "input_tokens": 136,
+  "output_tokens": 859
+ }
+}

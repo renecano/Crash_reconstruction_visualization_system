@@ -5,20 +5,20 @@ Reglas de trabajo: `CLAUDE.md`. Especificación: `PLAN.md`.
 
 ## Estado actual
 
-- **Fase actual:** F5 — Personas y visibilidad (cerrando: PR #7 de `feat/f5-personas`).
-- **Siguiente paso concreto:** merge del PR #7 con CI verde (referencias visuales regeneradas en Linux) y arrancar **F6 — Comprensión del relato** (PLAN §5: PII, extracción con Claude, verificador, glosario, preguntas por sensibilidad, Relatos-MX con test congelado, E1). F6 necesita `ANTHROPIC_API_KEY` para grabar respuestas; mientras tanto se avanza con todo lo que no la requiere (PII, reglas, verificador, benchmark, línea base de reglas).
-- **F0** cerrado el 2026-10-10 (PR #1), **F1** el 2026-10-10 (PR #3), **F2** el 2026-10-13 (PR #4), **F3** el 2026-10-13 (PR #5), **F4** el 2026-10-13 (PR #6).
+- **Fase actual:** F6 — Comprensión del relato (rama `feat/f6-relato`): completa, en PR. Criterio cumplido: E1 publicado con las tres alternativas (reglas, Haiku, Sonnet), fuga de PII y contrafactuales medidos.
+- **Siguiente paso concreto:** fusionar el PR de F6 con CI en verde y empezar F7 (inversión, Monte Carlo y consistencia; E3 con CISS), incluido el test nuevo de Relatos-MX adaptado de CISS.
+- **F0** cerrado el 2026-10-10 (PR #1), **F1** el 2026-10-10 (PR #3), **F2** el 2026-10-13 (PR #4), **F3** el 2026-10-13 (PR #5), **F4** el 2026-10-13 (PR #6), **F5** el 2026-10-13 (PR #7).
 
 ### Bloqueado — necesita a René
 
-| Qué                                                                                                                                                                                                                                 | Para qué                                                                                  | Estado              |
-| ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------- | ------------------- |
-| `ANTHROPIC_API_KEY`                                                                                                                                                                                                                 | F6 (extracción con Claude) y E1. CI usa respuestas grabadas, así que no bloquea hasta F6. | Pendiente           |
-| Credenciales AWS (cuenta/rol para CDK) y proyecto Vercel                                                                                                                                                                            | F11 despliegue dev/prod. Mientras tanto todo corre local.                                 | Pendiente           |
-| Licencia académica BeamNG.tech                                                                                                                                                                                                      | F10 y E5                                                                                  | Pendiente           |
-| Confirmar licencia MIT del código y el nombre _Croquis_                                                                                                                                                                             | Se usan los valores por defecto de PLAN §16 (ADR 0002)                                    | Usando default      |
-| Pruebas con ≥ 5 personas reales (E9)                                                                                                                                                                                                | F11                                                                                       | Pendiente           |
-| Confirmar que el repositorio remoto correcto es `renecano/Crash_reconstruction_visualization_system` (público, lo creó René vacío el 2026-10-10). Se eligió por nombre y fecha; se puede cambiar con `git remote set-url origin …`. | Push y CI                                                                                 | Asumido y ya en uso |
+| Qué                                                                                                                                                                                                                                 | Para qué                                                                                  | Estado                             |
+| ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------- | ---------------------------------- |
+| `ANTHROPIC_API_KEY`                                                                                                                                                                                                                 | F6 (extracción con Claude) y E1. CI usa respuestas grabadas, así que no bloquea hasta F6. | Recibida 2026-10-14 (`.env.local`) |
+| Credenciales AWS (cuenta/rol para CDK) y proyecto Vercel                                                                                                                                                                            | F11 despliegue dev/prod. Mientras tanto todo corre local.                                 | Pendiente                          |
+| Licencia académica BeamNG.tech                                                                                                                                                                                                      | F10 y E5                                                                                  | Pendiente                          |
+| Confirmar licencia MIT del código y el nombre _Croquis_                                                                                                                                                                             | Se usan los valores por defecto de PLAN §16 (ADR 0002)                                    | Usando default                     |
+| Pruebas con ≥ 5 personas reales (E9)                                                                                                                                                                                                | F11                                                                                       | Pendiente                          |
+| Confirmar que el repositorio remoto correcto es `renecano/Crash_reconstruction_visualization_system` (público, lo creó René vacío el 2026-10-10). Se eligió por nombre y fecha; se puede cambiar con `git remote set-url origin …`. | Push y CI                                                                                 | Asumido y ya en uso                |
 
 ## Entorno de desarrollo (verificado 2026-10-10)
 
@@ -465,3 +465,155 @@ Para probarlo:
 3. Corre las evaluaciones: `uv run croquis-eval e4-pedestrian` y `pnpm --filter @croquis/eval-js ragdoll`.
 
 No necesito nada nuevo de ti para F5. Lo bloqueado sigue en la tabla de arriba.
+
+## F6 — Comprensión del relato
+
+Criterio de aceptación (PLAN §13): E1 publicado con las tres alternativas (reglas, Haiku, Sonnet); fuga de PII medida; contrafactuales medidos.
+
+### Plan (orden de trabajo)
+
+1. **Glosario de español mexicano** versionado (`extraction/glosario.json`): expresión, variantes, significado y campo del contrato que afecta. Lo usan la línea base de reglas y el prompt.
+2. **Redacción de PII local.** Referencia en Python y port TS con paridad, porque corre en el navegador antes de que el texto salga del dispositivo. Cubre nombres (diccionario con fuente), placas mexicanas, teléfonos, correos, CURP/RFC y direcciones con número.
+3. **Relatos-MX.** Formato, herramientas y ≥ 300 relatos con su `EscenaSpec` de referencia, distribuidos como los tipos de ATUS:
+   - **Relatos:** escritos a mano por el agente (marcados como sintéticos), con variaciones de registro (formal, coloquial, faltas de ortografía, desorden temporal) y contrafactuales de sexo, edad y tipo de vehículo.
+   - **Partición y congelamiento:** división dev/test; el test se congela con hash antes de la primera evaluación.
+4. **Línea base de reglas:** del relato redactado a una `EscenaSpec` parcial con evidencia literal.
+5. **Verificador de evidencia:** todo campo con `fuente: relato` debe citar un fragmento literal; si no, baja a `supuesto`. Mide la tasa de alucinación de campo.
+6. **Cliente de Claude:**
+   - **Salida y modelos:** salida estructurada contra el esquema; modelo configurable (`claude-sonnet-5-5` por omisión; comparar con `claude-haiku-5-5`).
+   - **Respuestas grabadas:** grabación y reproducción, que es lo que usa CI.
+   - **Controles:** límite de gasto y medición de costo y latencia.
+7. **Preguntas al usuario:**
+   - **Contradicciones:** las banderas del solver se convierten en preguntas, no en acusaciones.
+   - **Sensibilidad:** el solver muestrea con semilla los campos inciertos y estima cuánto reduce cada respuesta la varianza de la velocidad de impacto y las posiciones finales. Máximo 3 preguntas por ronda.
+8. **E1:** F1 por campo, exactitud de categorías, error en numéricos, alucinación de campo, fuga de PII, cobertura de preguntas útiles, costo por 1 000 relatos, latencia p50/p95 y diferencia contrafactual. La línea base se mide ya; Haiku y Sonnet se graban cuando haya llave.
+9. **Web:** página del relato con redacción en el navegador, extracción (reglas, o Claude si hay llave), preguntas y paso al croquis y al visor.
+
+Riesgos: sin llave no hay columnas de Claude en E1 (queda bloqueado y documentado). Un benchmark escrito por el propio agente puede favorecer a la línea base de reglas: se mitiga con registros y estructuras variadas y declarándolo en las limitaciones.
+
+### Qué se hizo (F6)
+
+- **Relato en el dispositivo** (`packages/relato`, nuevo paquete `@croquis/relato`):
+  - **Redactor y glosario en TypeScript:** port del redactor de datos personales y del glosario, que corren en el navegador antes de que el texto salga.
+  - **Datos compartidos con Python:** patrones y pistas en `packages/relato/data/pii.json`. Se usa un subconjunto de regex que se comporta igual en `re.ASCII` y en `RegExp` sin `u`, y los espacios Unicode se normalizan uno a uno.
+  - **Paridad:** `croquis-extraction golden build|check` escribe `fixtures/golden.json` (Relatos-MX completo más casos difíciles) y Vitest compara redacción, tramos y glosario en 517 textos.
+  - **Cobertura del redactor:** nombres (diccionario de 491 nombres de DataMX, CC0, más pistas de contexto, minúsculas tras "se llama" y correferencia), placas, teléfonos (incluido 3-3-2-2), correos, CURP, RFC y números de domicilio. Los nombres de calles y lugares no se tocan.
+- **Glosario de español mexicano** versionado (1.4.0): expresiones con su significado, el campo del contrato que afectan y la pregunta sugerida si son ambiguas ("camión" sin más, "camioneta", "se me cerró", "de noche"…).
+- **Extracción:**
+  - **Hechos:** representación de hechos con cita (`facts.py`) y constructor determinista de `EscenaSpec` (`spec_builder.py`): lo dicho va como `relato` con su cita literal; lo demás, como `supuesto` o `default`.
+  - **Línea base de reglas** (`baseline.py`), ajustada solo con el dev.
+  - **Verificador de evidencia** (`verify.py`).
+  - **Cliente de Claude** (`claude_client.py`):
+    - **Salida:** estructurada (`output_config.format`) sobre un esquema pequeño de hechos, que pasan por el mismo constructor (ADR 0009).
+    - **Grabación:** grabación y reproducción por relato, hash del texto y huella del prompt.
+    - **Gasto y respaldo:** tope de gasto diario y respaldo ante rechazos del servidor para Sonnet.
+    - **Lotes:** `croquis-extraction claude record --split test` graba por lotes cuando haya llave.
+- **Preguntas** (`questions.py`), máximo tres por ronda y sin culpa:
+  - **Contradicciones:** salen de avisos estructurados que ahora emite el solver (`Reconstruction.avisos`, solo en Python; el resultado no cambia).
+  - **Sensibilidad:** varía un campo a la vez con semilla y mide qué parte de la varianza de la velocidad al impacto y de la posición final explica.
+  - **Ambigüedad:** sale de las expresiones ambiguas del glosario.
+  - **Respuestas:** `apply_answers` las aplica como `fuente: usuario`.
+- **Relatos-MX** (`data/relatos-mx`):
+  - **Contenido:** 320 relatos sintéticos (160 dev, 160 test), distribuidos como los tipos de ATUS 2025 con mínimos para las categorías raras, en cinco registros, con 82 relatos con PII sintética y 197 variantes contrafactuales.
+  - **Autoría y auditoría:** los lotes de test los escribieron agentes que no vieron la línea base, el glosario ni el redactor, y otros agentes los auditaron (52 correcciones) antes de congelar.
+  - **Congelamiento:** el test está congelado sobre su contenido fuente (`test.lock`, `3454a815…`): mejorar el constructor no lo rompe.
+  - **Licencia:** CC BY 4.0.
+  - **Guía de anotación:** en su README.
+- **E1** (`eval/croquis_eval/e1_extraction.py`):
+  - **Métricas:** F1 por campo con equivalencias de valores genéricos, error de los números, número de vehículos, alucinación de campo antes y después del verificador, diferencia contrafactual, fuga de PII, cobertura de preguntas útiles, latencia y costo.
+  - **Claude:** las columnas se miden solas en cuanto haya grabaciones.
+- **API** (`services/api`):
+  - **`POST /relato/extraer`:** vuelve a redactar en el servidor; usa Claude si hay llave y presupuesto (con límite por hora) y si no, reglas; verifica y devuelve las preguntas.
+  - **Otras rutas:** `POST /relato/responder` y `POST /reconstruir`.
+  - **CORS:** orígenes configurables.
+- **Web** (`/relato`):
+  - **Redacción a la vista:** escribes el relato y ves en vivo lo que se enviará, con los datos quitados.
+  - **Glosario:** las expresiones ambiguas se marcan.
+  - **Resultado:** se muestran los hechos con su fuente y su cita, y las preguntas se contestan ahí mismo.
+  - **Croquis:** la escena se abre en `/croquis?fuente=relato` o se descarga.
+- **Solver:** avisos estructurados con código y datos para cada bandera (`clase_sin_tabla`, `desvio_lateral`, `zonas_no_se_tocan`, `frenado_sin_distancia`, `frenado_detiene_antes`, `proyeccion_vs_velocidad`, `evento_sin_resolver`, `sin_reposo`, `persona_sin_posicion`, `volcadura_sin_velocidad`, `volcadura_no_mencionada`).
+
+### Evidencia y números medidos (`eval/results/e1_extraction.json`, test congelado de 160 relatos; `e1_extraction_dev.json`, dev)
+
+| Métrica (test congelado)                              | Reglas          | Claude Haiku 5.5 | Claude Sonnet 5.5 |
+| ----------------------------------------------------- | --------------- | ---------------- | ----------------- |
+| F1 micro / macro                                      | 0.714 / 0.557   | 0.852 / 0.878    | **0.875** / 0.904 |
+| Precisión / exhaustividad (micro)                     | 0.816 / 0.635   | 0.901 / 0.808    | 0.898 / 0.853     |
+| Número de vehículos exacto                            | 69.4 %          | 92.5 %           | 91.9 %            |
+| Citas sin respaldo literal (antes del verificador)    | 0 de 997        | 8 de 1416        | 0 de 1468         |
+| Citas sin respaldo tras el verificador                | 0               | 0                | 0                 |
+| Diferencia contrafactual / al repetir el mismo relato | 3.8 % / 0.0 %   | 15.6 % / 21.2 %  | 11.2 % / 11.2 %   |
+| Preguntas: errores cubiertos / no redundantes         | 32.8 % / 94.7 % | 8.6 % / 92.4 %   | 5.4 % / 92.1 %    |
+| Latencia p50 / p95                                    | 2.3 / 4.2 ms    | 10.6 / 14.3 s    | 4.5 / 10.6 s      |
+| Costo por 1,000 relatos                               | $0              | $1.31            | $9.96             |
+
+Redactor de PII (común a los tres): **7.3 %** de fuga en el test (8 de 110: 6 NOMBRE, 2 PLACA), 2 tramos de más; en el dev, 0 de 64. Reglas en el dev: F1 micro 0.759.
+
+Grabación de Claude (2026-10-14): 962 respuestas (por modelo, 160 relatos, 160 contrafactuales y 160 repeticiones del test, más una prueba en el dev). Gasto total registrado en `extraction/grabaciones/gasto.json`: **$5.33**, dentro del tope diario.
+
+Lectura honesta:
+
+- **Claude contra reglas:** Claude supera a las reglas en casi todos los campos (zonas de impacto, frenado, velocidad, clima, cinturón, casco, distancias).
+- **Clase de vehículo:** es la excepción (F1 0.638 Sonnet, 0.614 Haiku, 0.802 reglas). Con un modelo nombrado ("Aveo", "Jetta"), el prompt v1 no trae la tabla modelo → clase y pide no precisar lo que no se dice, así que Claude omite la clase. Lo vio el coordinador al revisar pares agregados del test; por PLAN §5.2 no se ajustó el prompt contra el test.
+- **Diferencia contrafactual:** en Claude es igual o menor que su propia variación al repetir el mismo relato (los modelos 5.5 no aceptan temperatura 0). No hay diferencia atribuible a sexo, edad o vehículo más allá del ruido. En las reglas, que son deterministas, el 3.75 % sí viene del cambio de palabras.
+- **Brecha dev–test:** la línea base y el redactor se ajustaron solo con el dev; la brecha frente al test (0 % → 7.3 % de fuga; 0.759 → 0.714 de F1) mide cuánto generalizan. No se miró el contenido de las fugas del test.
+- **Lo que vio el coordinador:** leyó los reportes de los auditores, que mencionan detalles de algunos relatos de test; después solo se cambió la línea base con evidencia del dev.
+- **Cobertura de preguntas:** es baja con Claude porque sus errores restantes son sobre todo la clase omitida (dato que sí pregunta solo cuando pesa en la física) y valores que el relato dice y la extracción no tomó.
+- **Autoría del benchmark:** todo el benchmark lo escribieron modelos; E9 lo contrastará con relatos de personas.
+
+### Dependencias y herramientas (F6)
+
+- **Paquete JS `@croquis/relato`:** sin dependencias nuevas (Vitest y fast-check del catálogo).
+- **Python:** `croquis-extraction` ahora depende de `croquis-solver` (preguntas por sensibilidad). `anthropic` 1.13 ya estaba en el stack; la API se verificó con la documentación oficial del SDK.
+- **Agentes de redacción y auditoría de Relatos-MX:** subagentes de Claude Code (8 escritores y 4 auditores). Las instrucciones quedaron en el scratchpad de la sesión; sus reglas están en `data/relatos-mx/README.md`.
+
+### Decisiones (ver ADR 0009)
+
+- **Claude produce hechos con cita**, no la `EscenaSpec` completa. El mismo constructor que usan la línea base y la referencia arma la spec; así el modelo nunca produce geometría ni números físicos.
+- **Paridad de la redacción por datos compartidos** más salidas doradas, en vez de mantener dos copias de las regex.
+- **Congelamiento sobre el contenido fuente**, no sobre la spec construida.
+- **Puntuación justa:**
+  - lo que la referencia trae como inferencia no castiga a quien lo afirma con el mismo valor;
+  - un conductor de otro vehículo no es error;
+  - los valores genéricos citados reciben crédito después de precisarse.
+- **Caída de pasajero** como `inicio_frenado` o `arrastre`, porque el contrato no tiene un evento propio.
+
+### Pendientes declarados
+
+- **Prompt v2:** agregar la tabla modelo → clase (`modelos.json`) y aclarar que deducir la clase de un modelo nombrado no es adivinar. Se valida en el dev y se mide en el test nuevo de F7 (relatos adaptados de CISS), con su propio candado; el test actual queda con v1.
+- **Relatos adaptados de casos CISS** (PLAN §5.2): se agregarán en F7, cuando se ingieran los datos de CISS, como un test aparte con su propio candado (el test actual ya está congelado).
+- **Visor con escenas arbitrarias:** hoy la escena del relato se abre en el croquis; para verla en 3D, el visor necesita aceptar una spec y un resultado externos (la API ya tiene `POST /reconstruir`). Queda para F9 (demo y casos precargados), donde el visor deja de depender de las escenas canónicas.
+- **Gasto persistente en el despliegue:** el tope se lleva en `extraction/grabaciones/gasto.json`; en F11 pasará a almacenamiento persistente del servidor.
+- **Redactor:**
+  - nombres comunes que también son palabras ("Rosa" al inicio de una oración);
+  - nombres que no están en el diccionario de 2012 (por ejemplo, nombres jóvenes) y aparecen sin pista.
+
+  La fuga del test (7.3 %) es la medida vigente.
+
+- **Línea base:** zonas de impacto (F1 0.42), maniobras (0.57) y frenado (0.58) son los campos más débiles, y el clima (0.49).
+- **Voz** (PLAN §5.1, paso 7): fase posterior.
+
+### Resumen para René (F6)
+
+Croquis ya entiende el relato:
+
+1. **Redacción en tu dispositivo:** escribes en `/relato` y los datos personales se quitan en el navegador antes de enviar. Ves exactamente qué sale.
+2. **Extracción:** Claude extrae los hechos con su cita literal y un verificador baja a "supuesto" lo que no esté en tu texto.
+3. **Preguntas:** se pregunta, como máximo tres veces por ronda y sin culpar, lo que más cambia la reconstrucción.
+4. **Croquis:** la escena se abre en el croquis.
+
+En el test congelado de Relatos-MX:
+
+- **Extracción:** Claude Sonnet 5.5 llega a F1 0.875, Haiku 5.5 a 0.852 y las reglas a 0.714.
+- **Citas:** ninguna cita sin respaldo pasa el verificador.
+- **Costo:** $9.96 por cada 1,000 relatos con Sonnet y $1.31 con Haiku.
+- **Sesgo:** cambiar sexo, edad o vehículo no mueve velocidades ni maniobras más de lo que varía el modelo consigo mismo.
+- **Datos personales:** el redactor deja pasar 7.3 % (nombres raros y dos placas); es lo más débil y se sigue midiendo.
+
+Para probarlo:
+
+1. Corre `uv run uvicorn croquis_api.main:app --port 8000` (con tu `.env.local` cargado) y `pnpm dev`.
+2. Abre `/relato`.
+3. Revisa los números con `uv run croquis-eval e1-extraction --split test`.
+
+Gasté $5.33 de la API en grabar E1, dentro del tope que pusiste. No necesito nada nuevo de ti para F6.

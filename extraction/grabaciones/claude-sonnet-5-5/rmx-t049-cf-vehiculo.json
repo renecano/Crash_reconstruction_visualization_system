@@ -1,0 +1,59 @@
+{
+ "costo_estimado_con": "claude-sonnet-5-5",
+ "costo_usd": 0.0107524,
+ "esfuerzo": "medium",
+ "grabado": "2026-10-14T17:50:37+00:00",
+ "huella_prompt": "f6b693169a4199c3",
+ "latencia_ms": 6933.8,
+ "modelo": "claude-sonnet-5-5",
+ "modelo_respuesta": "claude-sonnet-5-5",
+ "prompt": "extraccion_v1",
+ "request_id": "req_011Cg2Z2eQdXcvgK2ZsJ7aCQ",
+ "salida": {
+  "dispositivos": [],
+  "hechos": [
+   {
+    "campo": "vehiculo.maniobra",
+    "cita": "Tenía mi Corolla estacionado",
+    "persona": -1,
+    "valor": "estacionado",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.color",
+    "cita": "Polo plateado",
+    "persona": -1,
+    "valor": "plateado",
+    "vehiculo": 1
+   },
+   {
+    "campo": "evento.tipo",
+    "cita": "le dio al espejo y a toda la puerta",
+    "persona": -1,
+    "valor": "impacto_vehiculo_vehiculo",
+    "vehiculo": -1
+   }
+  ],
+  "personas": [],
+  "preguntas": [
+   "¿La puerta dañada del Corolla era la del lado del conductor o la del lado del copiloto?",
+   "¿Aproximadamente a qué velocidad iba el Polo?",
+   "¿El Corolla estaba pegado a la banqueta o separado de ella?"
+  ],
+  "vehiculos": [
+   {
+    "narrador": false
+   },
+   {
+    "narrador": false
+   }
+  ]
+ },
+ "texto_sha256": "9030343e84953cfef942e8d915aaff0032518927007009f61f2fde938573d552",
+ "usage": {
+  "cache_creation_input_tokens": 0,
+  "cache_read_input_tokens": 5862,
+  "input_tokens": 155,
+  "output_tokens": 927
+ }
+}

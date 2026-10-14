@@ -1,0 +1,96 @@
+{
+ "costo_estimado_con": "claude-haiku-5-5",
+ "costo_usd": 0.00134252,
+ "esfuerzo": "medium",
+ "grabado": "2026-10-14T17:07:51+00:00",
+ "huella_prompt": "f6b693169a4199c3",
+ "latencia_ms": 10866.2,
+ "modelo": "claude-haiku-5-5",
+ "modelo_respuesta": "claude-haiku-5-5",
+ "prompt": "extraccion_v1",
+ "request_id": "req_011Cg2VmD38KNLeqd4jVj2Kk",
+ "salida": {
+  "dispositivos": [
+   {
+    "cita": "se paró en el semáforo",
+    "tipo": "semaforo"
+   }
+  ],
+  "hechos": [
+   {
+    "campo": "evento.tipo",
+    "cita": "me dio un llegue por atrás",
+    "persona": -1,
+    "valor": "impacto_vehiculo_vehiculo",
+    "vehiculo": -1
+   },
+   {
+    "campo": "vehiculo.zona_impacto",
+    "cita": "me dio un llegue por atrás",
+    "persona": -1,
+    "valor": "B",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.zona_impacto",
+    "cita": "me dio un llegue por atrás",
+    "persona": -1,
+    "valor": "F",
+    "vehiculo": 1
+   },
+   {
+    "campo": "vehiculo.clase",
+    "cita": "en una Urvan del transporte",
+    "persona": -1,
+    "valor": "van",
+    "vehiculo": 1
+   },
+   {
+    "campo": "vehiculo.frenado",
+    "cita": "yo frené",
+    "persona": -1,
+    "valor": "true",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.frenado",
+    "cita": "no alcanzó a frenar",
+    "persona": -1,
+    "valor": "false",
+    "vehiculo": 1
+   }
+  ],
+  "personas": [
+   {
+    "cita": "yo frené",
+    "rol": "conductor",
+    "vehiculo": 0
+   },
+   {
+    "cita": "un señor que venía atrás de mí en una Urvan del transporte",
+    "rol": "conductor",
+    "vehiculo": 1
+   }
+  ],
+  "preguntas": [
+   "¿A qué velocidad iba la Urvan al momento del alcance?",
+   "¿Qué se determinó sobre el estado de los frenos de la Urvan?",
+   "¿El carro de adelante llegó a tener contacto con el Aveo o solo estuvo cerca?"
+  ],
+  "vehiculos": [
+   {
+    "narrador": true
+   },
+   {
+    "narrador": false
+   }
+  ]
+ },
+ "texto_sha256": "bf7799b767ff3c869ca0433bd4994ac9f74501809c6f1768db41afdce6d7ac24",
+ "usage": {
+  "cache_creation_input_tokens": 0,
+  "cache_read_input_tokens": 5862,
+  "input_tokens": 174,
+  "output_tokens": 2533
+ }
+}

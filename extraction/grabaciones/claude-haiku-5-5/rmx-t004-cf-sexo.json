@@ -1,0 +1,109 @@
+{
+ "costo_estimado_con": "claude-haiku-5-5",
+ "costo_usd": 0.00174232,
+ "esfuerzo": "medium",
+ "grabado": "2026-10-14T16:54:30+00:00",
+ "huella_prompt": "f6b693169a4199c3",
+ "latencia_ms": 12789.5,
+ "modelo": "claude-haiku-5-5",
+ "modelo_respuesta": "claude-haiku-5-5",
+ "prompt": "extraccion_v1",
+ "request_id": "req_011Cg2Uk2xWKcX1H2A7ABjZY",
+ "salida": {
+  "dispositivos": [],
+  "hechos": [
+   {
+    "campo": "lugar.tipo_via",
+    "cita": "en el retorno que está antes de Taxqueña",
+    "persona": -1,
+    "valor": "retorno",
+    "vehiculo": -1
+   },
+   {
+    "campo": "entorno.clima",
+    "cita": "estaba lloviendo durísimo",
+    "persona": -1,
+    "valor": "lluvia_fuerte",
+    "vehiculo": -1
+   },
+   {
+    "campo": "vehiculo.maniobra",
+    "cita": "quiso dar la vuelta en U",
+    "persona": -1,
+    "valor": "vuelta_u",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.velocidad_kmh",
+    "cita": "yo creo que iba como a 60",
+    "persona": -1,
+    "valor": "60",
+    "vehiculo": 1
+   },
+   {
+    "campo": "evento.tipo",
+    "cita": "nos pegó en la parte de atrás del lado izquierdo",
+    "persona": -1,
+    "valor": "impacto_vehiculo_vehiculo",
+    "vehiculo": -1
+   },
+   {
+    "campo": "vehiculo.zona_impacto",
+    "cita": "nos pegó en la parte de atrás del lado izquierdo",
+    "persona": -1,
+    "valor": "B",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.zona_impacto",
+    "cita": "nos pegó en la parte de atrás del lado izquierdo",
+    "persona": -1,
+    "valor": "L",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.zona_impacto",
+    "cita": "nos pegó en la parte de atrás del lado izquierdo",
+    "persona": -1,
+    "valor": "F",
+    "vehiculo": 1
+   }
+  ],
+  "personas": [
+   {
+    "cita": "Mi hermano manejaba el Jetta",
+    "rol": "conductor",
+    "vehiculo": 0
+   },
+   {
+    "cita": "yo iba de copiloto",
+    "rol": "pasajero",
+    "vehiculo": 0
+   },
+   {
+    "cita": "El taxista dice que no nos vio",
+    "rol": "conductor",
+    "vehiculo": 1
+   }
+  ],
+  "preguntas": [
+   "¿Qué carril ocupaba el Jetta al iniciar la vuelta en U?",
+   "¿A qué velocidad circulaba el taxi al momento del impacto?"
+  ],
+  "vehiculos": [
+   {
+    "narrador": false
+   },
+   {
+    "narrador": false
+   }
+  ]
+ },
+ "texto_sha256": "a644bef6d554a9bc8a1b435c95c50716c1cab15703a1db1e3dcfccf908819b63",
+ "usage": {
+  "cache_creation_input_tokens": 0,
+  "cache_read_input_tokens": 5862,
+  "input_tokens": 187,
+  "output_tokens": 3330
+ }
+}

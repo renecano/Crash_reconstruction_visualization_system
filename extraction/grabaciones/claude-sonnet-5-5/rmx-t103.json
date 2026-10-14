@@ -1,0 +1,101 @@
+{
+ "costo_estimado_con": "claude-sonnet-5-5",
+ "costo_usd": 0.0084404,
+ "esfuerzo": "medium",
+ "grabado": "2026-10-14T17:33:48+00:00",
+ "huella_prompt": "f6b693169a4199c3",
+ "latencia_ms": 4295.3,
+ "modelo": "claude-sonnet-5-5",
+ "modelo_respuesta": "claude-sonnet-5-5",
+ "prompt": "extraccion_v1",
+ "request_id": "req_011Cg2XkWY3gwZ6B3r6zDktj",
+ "salida": {
+  "dispositivos": [],
+  "hechos": [
+   {
+    "campo": "vehiculo.clase",
+    "cita": "Nissan March",
+    "persona": -1,
+    "valor": "sedan_compacto",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.color",
+    "cita": "color rojo",
+    "persona": -1,
+    "valor": "rojo",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.maniobra",
+    "cita": "se encontraba estacionado",
+    "persona": -1,
+    "valor": "estacionado",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.velocidad_kmh",
+    "cita": "se encontraba estacionado",
+    "persona": -1,
+    "valor": "0",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.zona_impacto",
+    "cita": "golpeó la parte frontal de mi vehículo",
+    "persona": -1,
+    "valor": "F",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.clase",
+    "cita": "camioneta Nissan NP300",
+    "persona": -1,
+    "valor": "suv_o_pickup",
+    "vehiculo": 1
+   },
+   {
+    "campo": "vehiculo.color",
+    "cita": "color blanco",
+    "persona": -1,
+    "valor": "blanco",
+    "vehiculo": 1
+   },
+   {
+    "campo": "lugar.tipo_via",
+    "cita": "tomar la curva",
+    "persona": -1,
+    "valor": "curva",
+    "vehiculo": -1
+   },
+   {
+    "campo": "evento.tipo",
+    "cita": "perdió el control al tomar la curva y golpeó la parte frontal de mi vehículo",
+    "persona": -1,
+    "valor": "impacto_vehiculo_vehiculo",
+    "vehiculo": -1
+   }
+  ],
+  "personas": [],
+  "preguntas": [
+   "¿Qué tipo de camioneta era la Nissan NP300, pickup o SUV?",
+   "¿Se conoce la velocidad aproximada de la camioneta al tomar la curva?",
+   "¿Cuál era el estado de la superficie (seca o mojada) al momento del percance?"
+  ],
+  "vehiculos": [
+   {
+    "narrador": false
+   },
+   {
+    "narrador": false
+   }
+  ]
+ },
+ "texto_sha256": "6bed05a88af511295c595ed720bd29532197f95e2ae817a24eb3cab0cc7897a4",
+ "usage": {
+  "cache_creation_input_tokens": 0,
+  "cache_read_input_tokens": 5862,
+  "input_tokens": 229,
+  "output_tokens": 681
+ }
+}

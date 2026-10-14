@@ -1,0 +1,109 @@
+{
+ "costo_estimado_con": "claude-haiku-5-5",
+ "costo_usd": 0.00109202,
+ "esfuerzo": "medium",
+ "grabado": "2026-10-14T16:57:44+00:00",
+ "huella_prompt": "f6b693169a4199c3",
+ "latencia_ms": 10242.6,
+ "modelo": "claude-haiku-5-5",
+ "modelo_respuesta": "claude-haiku-5-5",
+ "prompt": "extraccion_v1",
+ "request_id": "req_011Cg2UzXtCPaqoaRxfBNp8P",
+ "salida": {
+  "dispositivos": [
+   {
+    "cita": "había un tope",
+    "tipo": "tope"
+   }
+  ],
+  "hechos": [
+   {
+    "campo": "vehiculo.clase",
+    "cita": "en la Suburban",
+    "persona": -1,
+    "valor": "suv_grande",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.clase",
+    "cita": "iba en la moto",
+    "persona": -1,
+    "valor": "motocicleta",
+    "vehiculo": 1
+   },
+   {
+    "campo": "vehiculo.maniobra",
+    "cita": "dar vuelta a la derecha",
+    "persona": -1,
+    "valor": "vuelta_derecha",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.frenado",
+    "cita": "frené para el tope",
+    "persona": -1,
+    "valor": "true",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.maniobra",
+    "cita": "la moto se me metió por la derecha",
+    "persona": -1,
+    "valor": "cambio_carril",
+    "vehiculo": 1
+   },
+   {
+    "campo": "evento.tipo",
+    "cita": "sentí el golpe en el lado derecho",
+    "persona": -1,
+    "valor": "impacto_vehiculo_vehiculo",
+    "vehiculo": -1
+   },
+   {
+    "campo": "vehiculo.zona_impacto",
+    "cita": "sentí el golpe en el lado derecho",
+    "persona": -1,
+    "valor": "R",
+    "vehiculo": 0
+   },
+   {
+    "campo": "persona.casco",
+    "cita": "traía casco",
+    "persona": 1,
+    "valor": "true",
+    "vehiculo": -1
+   }
+  ],
+  "personas": [
+   {
+    "cita": "Yo venía",
+    "rol": "conductor",
+    "vehiculo": 0
+   },
+   {
+    "cita": "El que iba en la moto",
+    "rol": "motociclista",
+    "vehiculo": 1
+   }
+  ],
+  "preguntas": [
+   "¿A qué velocidad circulaba cada vehículo antes del golpe?",
+   "¿A qué distancia del tope iba cuando frenó?"
+  ],
+  "vehiculos": [
+   {
+    "narrador": true
+   },
+   {
+    "narrador": false
+   }
+  ]
+ },
+ "texto_sha256": "333a12387d6ba3fa6e108993ad13924f667e93cbb088f7c444fd95534c013c03",
+ "usage": {
+  "cache_creation_input_tokens": 0,
+  "cache_read_input_tokens": 5862,
+  "input_tokens": 194,
+  "output_tokens": 2028
+ }
+}

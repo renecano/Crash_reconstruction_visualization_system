@@ -1,0 +1,119 @@
+{
+ "costo_estimado_con": "claude-sonnet-5-5",
+ "costo_usd": 0.0170164,
+ "esfuerzo": "medium",
+ "grabado": "2026-10-14T17:32:46+00:00",
+ "huella_prompt": "f6b693169a4199c3",
+ "latencia_ms": 11208.7,
+ "modelo": "claude-sonnet-5-5",
+ "modelo_respuesta": "claude-sonnet-5-5",
+ "prompt": "extraccion_v1",
+ "request_id": "req_011Cg2XfPwY7RiE2vQWJuVzF",
+ "salida": {
+  "dispositivos": [
+   {
+    "cita": "semáforo en rojo",
+    "tipo": "semaforo"
+   }
+  ],
+  "hechos": [
+   {
+    "campo": "vehiculo.color",
+    "cita": "color blanco",
+    "persona": -1,
+    "valor": "blanco",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.maniobra",
+    "cita": "se encontraba detenido",
+    "persona": -1,
+    "valor": "detenido",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.velocidad_kmh",
+    "cita": "se encontraba detenido",
+    "persona": -1,
+    "valor": "0",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.clase",
+    "cita": "tractocamión",
+    "persona": -1,
+    "valor": "tractocamion",
+    "vehiculo": 1
+   },
+   {
+    "campo": "vehiculo.maniobra",
+    "cita": "vuelta a la derecha",
+    "persona": -1,
+    "valor": "vuelta_derecha",
+    "vehiculo": 1
+   },
+   {
+    "campo": "evento.tipo",
+    "cita": "golpeó con el remolque la esquina delantera izquierda del vehículo asegurado",
+    "persona": -1,
+    "valor": "impacto_vehiculo_vehiculo",
+    "vehiculo": -1
+   },
+   {
+    "campo": "lugar.tipo_via",
+    "cita": "esquina con bulevar Hidalgo",
+    "persona": -1,
+    "valor": "interseccion",
+    "vehiculo": -1
+   },
+   {
+    "campo": "entorno.clima",
+    "cita": "día soleado",
+    "persona": -1,
+    "valor": "despejado",
+    "vehiculo": -1
+   },
+   {
+    "campo": "entorno.iluminacion",
+    "cita": "día soleado",
+    "persona": -1,
+    "valor": "dia",
+    "vehiculo": -1
+   },
+   {
+    "campo": "lugar.estado_superficie",
+    "cita": "pavimento seco",
+    "persona": -1,
+    "valor": "seco",
+    "vehiculo": -1
+   }
+  ],
+  "personas": [
+   {
+    "cita": "El asegurado manifiesta",
+    "rol": "conductor",
+    "vehiculo": 0
+   }
+  ],
+  "preguntas": [
+   "¿El golpe fue en el frente o en el costado izquierdo del Virtus?",
+   "¿Cuántos carriles tenía cada sentido de la vía?",
+   "¿El Virtus recibió algún otro golpe o se movió después del impacto?"
+  ],
+  "vehiculos": [
+   {
+    "narrador": true
+   },
+   {
+    "narrador": false
+   }
+  ]
+ },
+ "texto_sha256": "2b5e22049a3fb6180fcb29cd0c59a8fcc509090e05a8e67a09ae14779264eeb7",
+ "usage": {
+  "cache_creation_input_tokens": 0,
+  "cache_read_input_tokens": 5862,
+  "input_tokens": 302,
+  "output_tokens": 1524
+ }
+}

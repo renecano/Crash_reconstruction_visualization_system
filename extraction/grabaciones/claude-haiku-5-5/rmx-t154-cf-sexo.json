@@ -1,0 +1,91 @@
+{
+ "costo_estimado_con": "claude-haiku-5-5",
+ "costo_usd": 0.00114632,
+ "esfuerzo": "medium",
+ "grabado": "2026-10-14T17:21:40+00:00",
+ "huella_prompt": "f6b693169a4199c3",
+ "latencia_ms": 9925.2,
+ "modelo": "claude-haiku-5-5",
+ "modelo_respuesta": "claude-haiku-5-5",
+ "prompt": "extraccion_v1",
+ "request_id": "req_011Cg2WpR1QqiLajteWAt6hC",
+ "salida": {
+  "dispositivos": [],
+  "hechos": [
+   {
+    "campo": "vehiculo.clase",
+    "cita": "circulaba en bicicleta",
+    "persona": -1,
+    "valor": "bicicleta",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.color",
+    "cita": "color negro",
+    "persona": -1,
+    "valor": "negro",
+    "vehiculo": 1
+   },
+   {
+    "campo": "vehiculo.maniobra",
+    "cita": "invadió el acotamiento",
+    "persona": -1,
+    "valor": "cambio_carril",
+    "vehiculo": 1
+   },
+   {
+    "campo": "evento.tipo",
+    "cita": "me impactó con su costado derecho",
+    "persona": -1,
+    "valor": "impacto_vehiculo_vehiculo",
+    "vehiculo": -1
+   },
+   {
+    "campo": "entorno.iluminacion",
+    "cita": "estaba amaneciendo",
+    "persona": -1,
+    "valor": "amanecer",
+    "vehiculo": -1
+   },
+   {
+    "campo": "persona.casco",
+    "cita": "Portaba casco",
+    "persona": 0,
+    "valor": "true",
+    "vehiculo": -1
+   }
+  ],
+  "personas": [
+   {
+    "cita": "el suscrito circulaba en bicicleta",
+    "rol": "ciclista",
+    "vehiculo": 0
+   },
+   {
+    "cita": "conducido por una persona del sexo masculino",
+    "rol": "conductor",
+    "vehiculo": 1
+   }
+  ],
+  "preguntas": [
+   "¿A qué velocidad circulaba el sedán?",
+   "¿Qué lado de la bicicleta recibió el golpe?",
+   "¿El sedán Nissan Sentra era compacto o mediano?"
+  ],
+  "vehiculos": [
+   {
+    "narrador": true
+   },
+   {
+    "narrador": false
+   }
+  ]
+ },
+ "texto_sha256": "6c77af990ba7757038dc5d66643cfd598db879bc9fa5ba4406b0b84ad2a03fe4",
+ "usage": {
+  "cache_creation_input_tokens": 0,
+  "cache_read_input_tokens": 5862,
+  "input_tokens": 207,
+  "output_tokens": 2134
+ }
+}

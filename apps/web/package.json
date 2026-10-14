@@ -14,6 +14,7 @@
   },
   "dependencies": {
     "@croquis/croquis-2d": "workspace:*",
+    "@croquis/relato": "workspace:*",
     "@croquis/scene-schema": "workspace:*",
     "@croquis/viewer": "workspace:*",
     "next": "16.4.0",

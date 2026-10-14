@@ -1,0 +1,105 @@
+{
+ "costo_estimado_con": "claude-sonnet-5-5",
+ "costo_usd": 0.0088064,
+ "esfuerzo": "medium",
+ "grabado": "2026-10-14T18:44:39+00:00",
+ "huella_prompt": "f6b693169a4199c3",
+ "latencia_ms": 4460.1,
+ "modelo": "claude-sonnet-5-5",
+ "modelo_respuesta": "claude-sonnet-5-5",
+ "prompt": "extraccion_v1",
+ "request_id": "req_011Cg2d9qUZD5rXgmCqbbESA",
+ "salida": {
+  "dispositivos": [
+   {
+    "cita": "con luz roja",
+    "tipo": "semaforo"
+   }
+  ],
+  "hechos": [
+   {
+    "campo": "lugar.tipo_via",
+    "cita": "en la intersección de la avenida Tecnológico y la calle Ejército Nacional",
+    "persona": -1,
+    "valor": "interseccion",
+    "vehiculo": -1
+   },
+   {
+    "campo": "vehiculo.maniobra",
+    "cita": "Me encontraba detenida en el primer lugar de la fila",
+    "persona": -1,
+    "valor": "detenido",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.velocidad_kmh",
+    "cita": "Me encontraba detenida en el primer lugar de la fila",
+    "persona": -1,
+    "valor": "0",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.clase",
+    "cita": "pickup Ford F-150",
+    "persona": -1,
+    "valor": "pickup",
+    "vehiculo": 1
+   },
+   {
+    "campo": "vehiculo.color",
+    "cita": "color gris",
+    "persona": -1,
+    "valor": "gris",
+    "vehiculo": 1
+   },
+   {
+    "campo": "vehiculo.maniobra",
+    "cita": "cruzó con luz roja",
+    "persona": -1,
+    "valor": "recto",
+    "vehiculo": 1
+   },
+   {
+    "campo": "evento.tipo",
+    "cita": "impactó el frente de mi vehículo",
+    "persona": -1,
+    "valor": "impacto_vehiculo_vehiculo",
+    "vehiculo": -1
+   },
+   {
+    "campo": "vehiculo.zona_impacto",
+    "cita": "impactó el frente de mi vehículo",
+    "persona": -1,
+    "valor": "F",
+    "vehiculo": 0
+   }
+  ],
+  "personas": [
+   {
+    "cita": "Me encontraba detenida en el primer lugar de la fila",
+    "rol": "conductor",
+    "vehiculo": 0
+   }
+  ],
+  "preguntas": [
+   "¿Su vehículo ya había avanzado hacia el cruce o seguía detenido en el momento del impacto?",
+   "¿Con qué parte del frente de la pickup golpeó su vehículo?",
+   "¿Cuántos carriles tiene cada sentido en la intersección?"
+  ],
+  "vehiculos": [
+   {
+    "narrador": true
+   },
+   {
+    "narrador": false
+   }
+  ]
+ },
+ "texto_sha256": "6166f49a059f4d8b3feb8b83b1dd8052b26721070e8be7712e73582bf0ccd4f1",
+ "usage": {
+  "cache_creation_input_tokens": 0,
+  "cache_read_input_tokens": 5862,
+  "input_tokens": 257,
+  "output_tokens": 712
+ }
+}

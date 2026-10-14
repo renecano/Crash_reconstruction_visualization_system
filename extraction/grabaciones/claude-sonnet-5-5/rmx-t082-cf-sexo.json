@@ -1,0 +1,105 @@
+{
+ "costo_estimado_con": "claude-sonnet-5-5",
+ "costo_usd": 0.0093824,
+ "esfuerzo": "medium",
+ "grabado": "2026-10-14T17:53:51+00:00",
+ "huella_prompt": "f6b693169a4199c3",
+ "latencia_ms": 4662.5,
+ "modelo": "claude-sonnet-5-5",
+ "modelo_respuesta": "claude-sonnet-5-5",
+ "prompt": "extraccion_v1",
+ "request_id": "req_011Cg2ZH8agRV5y4Ae7K9Y6P",
+ "salida": {
+  "dispositivos": [],
+  "hechos": [
+   {
+    "campo": "vehiculo.color",
+    "cita": "Kia Rio color gris",
+    "persona": -1,
+    "valor": "gris",
+    "vehiculo": 0
+   },
+   {
+    "campo": "lugar.carriles_por_sentido",
+    "cita": "por el carril central de tres disponibles",
+    "persona": -1,
+    "valor": "3",
+    "vehiculo": -1
+   },
+   {
+    "campo": "vehiculo.clase",
+    "cita": "camioneta Honda CR-V",
+    "persona": -1,
+    "valor": "suv_o_pickup",
+    "vehiculo": 1
+   },
+   {
+    "campo": "vehiculo.color",
+    "cita": "camioneta Honda CR-V color negro",
+    "persona": -1,
+    "valor": "negro",
+    "vehiculo": 1
+   },
+   {
+    "campo": "vehiculo.maniobra",
+    "cita": "realizó un cambio de carril hacia la izquierda",
+    "persona": -1,
+    "valor": "cambio_carril_izquierda",
+    "vehiculo": 1
+   },
+   {
+    "campo": "evento.tipo",
+    "cita": "impactó el costado derecho de mi unidad",
+    "persona": -1,
+    "valor": "impacto_vehiculo_vehiculo",
+    "vehiculo": -1
+   },
+   {
+    "campo": "vehiculo.zona_impacto",
+    "cita": "impactó el costado derecho de mi unidad",
+    "persona": -1,
+    "valor": "R",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.velocidad_kmh",
+    "cita": "Mi velocidad era de 60 km/h aproximadamente",
+    "persona": -1,
+    "valor": "60",
+    "vehiculo": 0
+   }
+  ],
+  "personas": [
+   {
+    "cita": "circulaba a bordo de mi vehículo Kia Rio color gris",
+    "rol": "conductor",
+    "vehiculo": 0
+   },
+   {
+    "cita": "Un conductor a bordo de una camioneta Honda CR-V color negro",
+    "rol": "conductor",
+    "vehiculo": 1
+   }
+  ],
+  "preguntas": [
+   "¿La camioneta Honda CR-V golpeó con su costado o con su frente el costado derecho de su vehículo?",
+   "¿Qué maniobra realizaba usted al momento del impacto (recto, cambio de carril, frenado)?",
+   "¿Cuál era la velocidad aproximada de la camioneta Honda CR-V?"
+  ],
+  "vehiculos": [
+   {
+    "narrador": true
+   },
+   {
+    "narrador": false
+   }
+  ]
+ },
+ "texto_sha256": "4340cbdf8a465520de4e80dcf9f07a3331d7c62a65a074f5a200e9d077b93486",
+ "usage": {
+  "cache_creation_input_tokens": 0,
+  "cache_read_input_tokens": 5862,
+  "input_tokens": 245,
+  "output_tokens": 772
+ }
+}

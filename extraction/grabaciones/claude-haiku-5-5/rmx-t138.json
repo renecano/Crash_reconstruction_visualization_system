@@ -1,0 +1,105 @@
+{
+ "costo_estimado_con": "claude-haiku-5-5",
+ "costo_usd": 0.00162662,
+ "esfuerzo": "medium",
+ "grabado": "2026-10-14T16:49:41+00:00",
+ "huella_prompt": "f6b693169a4199c3",
+ "latencia_ms": 12984.5,
+ "modelo": "claude-haiku-5-5",
+ "modelo_respuesta": "claude-haiku-5-5",
+ "prompt": "extraccion_v1",
+ "request_id": "req_011Cg2UNiqWHz7m6gabLpkgY",
+ "salida": {
+  "dispositivos": [],
+  "hechos": [
+   {
+    "campo": "lugar.tipo_via",
+    "cita": "en la curva",
+    "persona": -1,
+    "valor": "curva",
+    "vehiculo": -1
+   },
+   {
+    "campo": "lugar.estado_superficie",
+    "cita": "la llanta agarró la grava",
+    "persona": -1,
+    "valor": "grava_suelta",
+    "vehiculo": -1
+   },
+   {
+    "campo": "evento.tipo",
+    "cita": "Se volteó la camioneta",
+    "persona": -1,
+    "valor": "volcadura",
+    "vehiculo": -1
+   },
+   {
+    "campo": "vehiculo.clase",
+    "cita": "Era una Lobo de doble cabina",
+    "persona": -1,
+    "valor": "pickup",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.maniobra",
+    "cita": "un tráiler venía invadiendo nuestro carril",
+    "persona": -1,
+    "valor": "cambio_carril",
+    "vehiculo": 1
+   },
+   {
+    "campo": "vehiculo.velocidad_kmh",
+    "cita": "como a sesenta",
+    "persona": -1,
+    "valor": "60",
+    "vehiculo": 0
+   },
+   {
+    "campo": "persona.cinturon",
+    "cita": "Todos traíamos cinturón",
+    "persona": 0,
+    "valor": "true",
+    "vehiculo": -1
+   },
+   {
+    "campo": "persona.cinturon",
+    "cita": "Todos traíamos cinturón",
+    "persona": 1,
+    "valor": "true",
+    "vehiculo": -1
+   }
+  ],
+  "personas": [
+   {
+    "cita": "mi compadre, que era el que manejaba",
+    "rol": "conductor",
+    "vehiculo": 0
+   },
+   {
+    "cita": "Íbamos tranquilos",
+    "rol": "pasajero",
+    "vehiculo": 0
+   }
+  ],
+  "preguntas": [
+   "¿El tráiler era tractocamión u otro tipo de camión?",
+   "¿Hubo contacto directo entre el tráiler y la camioneta antes de que se volteara?",
+   "¿A qué velocidad iba el tráiler en la curva?"
+  ],
+  "vehiculos": [
+   {
+    "narrador": false
+   },
+   {
+    "narrador": false
+   }
+  ]
+ },
+ "texto_sha256": "b838ecf2a17ece91562c4416ef8e5ea03c0ecc7f92ad103f874e89e5b01e9e96",
+ "usage": {
+  "cache_creation_input_tokens": 0,
+  "cache_read_input_tokens": 5862,
+  "input_tokens": 235,
+  "output_tokens": 3089
+ }
+}

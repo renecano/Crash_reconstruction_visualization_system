@@ -1,0 +1,96 @@
+{
+ "costo_estimado_con": "claude-haiku-5-5",
+ "costo_usd": 0.00166652,
+ "esfuerzo": "medium",
+ "grabado": "2026-10-14T16:45:56+00:00",
+ "huella_prompt": "f6b693169a4199c3",
+ "latencia_ms": 15614.8,
+ "modelo": "claude-haiku-5-5",
+ "modelo_respuesta": "claude-haiku-5-5",
+ "prompt": "extraccion_v1",
+ "request_id": "req_011Cg2U5zEkF9YyYpr2kkAPH",
+ "salida": {
+  "dispositivos": [
+   {
+    "cita": "una calle de un solo sentido",
+    "tipo": "un_sentido"
+   }
+  ],
+  "hechos": [
+   {
+    "campo": "vehiculo.velocidad_kmh",
+    "cita": "yo como a 40",
+    "persona": -1,
+    "valor": "40",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.clase",
+    "cita": "una van blanca",
+    "persona": -1,
+    "valor": "van",
+    "vehiculo": 1
+   },
+   {
+    "campo": "vehiculo.color",
+    "cita": "una van blanca",
+    "persona": -1,
+    "valor": "blanca",
+    "vehiculo": 1
+   },
+   {
+    "campo": "evento.tipo",
+    "cita": "me pego de frente",
+    "persona": -1,
+    "valor": "impacto_vehiculo_vehiculo",
+    "vehiculo": -1
+   },
+   {
+    "campo": "lugar.estado_superficie",
+    "cita": "todo seco",
+    "persona": -1,
+    "valor": "seco",
+    "vehiculo": -1
+   },
+   {
+    "campo": "entorno.iluminacion",
+    "cita": "como las 12 del dia",
+    "persona": -1,
+    "valor": "dia",
+    "vehiculo": -1
+   }
+  ],
+  "personas": [
+   {
+    "cita": "yo iba en mi gol",
+    "rol": "conductor",
+    "vehiculo": 0
+   },
+   {
+    "cita": "un chavo que iba en una van blanca",
+    "rol": "conductor",
+    "vehiculo": 1
+   }
+  ],
+  "preguntas": [
+   "¿La van circulaba en sentido contrario por la calle de un solo sentido o se incorporó desde otra vía?",
+   "¿Qué velocidad llevaba la van antes del impacto?",
+   "¿Hubo frenado o marcas en el pavimento antes del choque?"
+  ],
+  "vehiculos": [
+   {
+    "narrador": true
+   },
+   {
+    "narrador": false
+   }
+  ]
+ },
+ "texto_sha256": "820ad00d4b211476456eb9d6de1df953fd9124110fba9e9fecf4d7909e8b9dbf",
+ "usage": {
+  "cache_creation_input_tokens": 0,
+  "cache_read_input_tokens": 5862,
+  "input_tokens": 144,
+  "output_tokens": 3187
+ }
+}

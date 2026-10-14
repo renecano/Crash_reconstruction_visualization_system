@@ -1,0 +1,88 @@
+{
+ "costo_estimado_con": "claude-sonnet-5-5",
+ "costo_usd": 0.0070344,
+ "esfuerzo": "medium",
+ "grabado": "2026-10-14T17:50:30+00:00",
+ "huella_prompt": "f6b693169a4199c3",
+ "latencia_ms": 4355.1,
+ "modelo": "claude-sonnet-5-5",
+ "modelo_respuesta": "claude-sonnet-5-5",
+ "prompt": "extraccion_v1",
+ "request_id": "req_011Cg2Z2KsumxnjwgsGb4ByC",
+ "salida": {
+  "dispositivos": [],
+  "hechos": [
+   {
+    "campo": "vehiculo.clase",
+    "cita": "camioneta pickup",
+    "persona": -1,
+    "valor": "pickup",
+    "vehiculo": 0
+   },
+   {
+    "campo": "evento.tipo",
+    "cita": "volcó",
+    "persona": -1,
+    "valor": "volcadura",
+    "vehiculo": -1
+   },
+   {
+    "campo": "vehiculo.zona_impacto",
+    "cita": "volcó sobre su costado derecho",
+    "persona": -1,
+    "valor": "R",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.velocidad_kmh",
+    "cita": "90 km/h",
+    "persona": -1,
+    "valor": "90",
+    "vehiculo": 0
+   },
+   {
+    "campo": "entorno.clima",
+    "cita": "El clima era despejado",
+    "persona": -1,
+    "valor": "despejado",
+    "vehiculo": -1
+   },
+   {
+    "campo": "persona.cinturon",
+    "cita": "con el cinturón abrochado",
+    "persona": 1,
+    "valor": "true",
+    "vehiculo": -1
+   }
+  ],
+  "personas": [
+   {
+    "cita": "transitaba por la carretera federal 15",
+    "rol": "conductor",
+    "vehiculo": 0
+   },
+   {
+    "cita": "mi padre de 78 años, quien viajaba en el asiento del copiloto con el cinturón abrochado",
+    "rol": "pasajero",
+    "vehiculo": 0
+   }
+  ],
+  "preguntas": [
+   "¿Cuántos carriles tenía la carretera en cada sentido?",
+   "¿Cómo estaba la superficie del pavimento (seca, mojada)?",
+   "¿Usted llevaba puesto el cinturón de seguridad?"
+  ],
+  "vehiculos": [
+   {
+    "narrador": true
+   }
+  ]
+ },
+ "texto_sha256": "758435331f04f8b70a1344896f820c82896410194d9afac166c0b4f07d0c136b",
+ "usage": {
+  "cache_creation_input_tokens": 0,
+  "cache_read_input_tokens": 5862,
+  "input_tokens": 231,
+  "output_tokens": 540
+ }
+}

@@ -1,0 +1,100 @@
+{
+ "costo_estimado_con": "claude-haiku-5-5",
+ "costo_usd": 0.00124492,
+ "esfuerzo": "medium",
+ "grabado": "2026-10-14T17:08:33+00:00",
+ "huella_prompt": "f6b693169a4199c3",
+ "latencia_ms": 10492.4,
+ "modelo": "claude-haiku-5-5",
+ "modelo_respuesta": "claude-haiku-5-5",
+ "prompt": "extraccion_v1",
+ "request_id": "req_011Cg2VpNgeyFF4VFGjBySmH",
+ "salida": {
+  "dispositivos": [],
+  "hechos": [
+   {
+    "campo": "vehiculo.velocidad_kmh",
+    "cita": "venía como a 70",
+    "persona": -1,
+    "valor": "70",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.frenado",
+    "cita": "Yo ya estaba frenando",
+    "persona": -1,
+    "valor": "true",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.color",
+    "cita": "una Ranger roja",
+    "persona": -1,
+    "valor": "roja",
+    "vehiculo": 1
+   },
+   {
+    "campo": "vehiculo.zona_impacto",
+    "cita": "me echó lámina por atrás",
+    "persona": -1,
+    "valor": "B",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.zona_impacto",
+    "cita": "me echó lámina por atrás",
+    "persona": -1,
+    "valor": "F",
+    "vehiculo": 1
+   },
+   {
+    "campo": "evento.tipo",
+    "cita": "me echó lámina por atrás",
+    "persona": -1,
+    "valor": "impacto_vehiculo_vehiculo",
+    "vehiculo": -1
+   },
+   {
+    "campo": "entorno.iluminacion",
+    "cita": "era como mediodía",
+    "persona": -1,
+    "valor": "dia",
+    "vehiculo": -1
+   },
+   {
+    "campo": "vehiculo.zona_impacto",
+    "cita": "quedó con la cajuela hundida",
+    "persona": -1,
+    "valor": "B",
+    "vehiculo": 0
+   }
+  ],
+  "personas": [
+   {
+    "cita": "yo venía como a 70",
+    "rol": "conductor",
+    "vehiculo": 0
+   }
+  ],
+  "preguntas": [
+   "¿La Ranger roja era una pickup, una SUV u otro tipo de vehículo?",
+   "¿A qué velocidad iba la Ranger al momento del impacto?",
+   "¿El vehículo de adelante que frenó tuvo algún contacto en el percance?"
+  ],
+  "vehiculos": [
+   {
+    "narrador": true
+   },
+   {
+    "narrador": false
+   }
+  ]
+ },
+ "texto_sha256": "3844f4d766a036d8b5bd6a6b1d3ee99ab83aefe9fb8c5aa0e926cf52cbe4587d",
+ "usage": {
+  "cache_creation_input_tokens": 0,
+  "cache_read_input_tokens": 5862,
+  "input_tokens": 188,
+  "output_tokens": 2335
+ }
+}

@@ -1,0 +1,90 @@
+{
+ "costo_estimado_con": "claude-haiku-5-5",
+ "costo_usd": 0.00142752,
+ "esfuerzo": "medium",
+ "grabado": "2026-10-14T17:17:43+00:00",
+ "huella_prompt": "f6b693169a4199c3",
+ "latencia_ms": 11665.7,
+ "modelo": "claude-haiku-5-5",
+ "modelo_respuesta": "claude-haiku-5-5",
+ "prompt": "extraccion_v1",
+ "request_id": "req_011Cg2WWpiRtZ2uM4yV75fLn",
+ "salida": {
+  "dispositivos": [],
+  "hechos": [
+   {
+    "campo": "vehiculo.clase",
+    "cita": "se cayó de la bici",
+    "persona": -1,
+    "valor": "bicicleta",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.clase",
+    "cita": "en una Hilux gris",
+    "persona": -1,
+    "valor": "suv_o_pickup",
+    "vehiculo": 1
+   },
+   {
+    "campo": "vehiculo.color",
+    "cita": "en una Hilux gris",
+    "persona": -1,
+    "valor": "gris",
+    "vehiculo": 1
+   },
+   {
+    "campo": "vehiculo.velocidad_kmh",
+    "cita": "iba como a cincuenta",
+    "persona": -1,
+    "valor": "50",
+    "vehiculo": 1
+   },
+   {
+    "campo": "vehiculo.frenado",
+    "cita": "ni frenó",
+    "persona": -1,
+    "valor": "false",
+    "vehiculo": 1
+   },
+   {
+    "campo": "evento.tipo",
+    "cita": "le dio con el espejo en el hombro",
+    "persona": -1,
+    "valor": "impacto_vehiculo_persona",
+    "vehiculo": -1
+   }
+  ],
+  "personas": [
+   {
+    "cita": "Mi papá sale a pedalear",
+    "rol": "ciclista",
+    "vehiculo": 0
+   },
+   {
+    "cita": "un señor mayor que iba en una Hilux gris",
+    "rol": "conductor",
+    "vehiculo": 1
+   }
+  ],
+  "preguntas": [
+   "¿La velocidad de unos 50 km/h de la Hilux proviene de quien iba en la bicicleta o de otra fuente?",
+   "¿Hubo marcas de frenado o distancia registrada en el pavimento después del rebase?"
+  ],
+  "vehiculos": [
+   {
+    "narrador": false
+   },
+   {
+    "narrador": false
+   }
+  ]
+ },
+ "texto_sha256": "cc8a23c67ec3c37914fb8d4ed003cf469ce0714e89f19cbd5b2f115edbe0eedd",
+ "usage": {
+  "cache_creation_input_tokens": 0,
+  "cache_read_input_tokens": 5862,
+  "input_tokens": 164,
+  "output_tokens": 2705
+ }
+}

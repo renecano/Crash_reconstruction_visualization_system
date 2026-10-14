@@ -47,7 +47,26 @@ def main(argv: list[str] | None = None) -> int:
     p_nd.add_argument("--limit", type=int, default=None, help="Solo las primeras N pruebas")
     nh_sub.add_parser("process", help="Escribe data/processed/nhtsa/vtb_tests.csv")
 
+    p_no = sub.add_parser(
+        "nombres", help="Nombres de pila comunes (DataMX, CC0) para el redactor de PII"
+    )
+    no_sub = p_no.add_subparsers(dest="command", required=True)
+    no_sub.add_parser("download", help="Descarga los CSV a data/raw/nombres y verifica SHA-256")
+    p_nb = no_sub.add_parser("build", help="Escribe packages/relato/data/nombres.json")
+    p_nb.add_argument("--check", action="store_true", help="Solo verifica que esté al día")
+
     args = parser.parse_args(argv)
+    if args.source == "nombres":
+        from croquis_data import nombres
+
+        if args.command == "download":
+            errs = nombres.download()
+            print("; ".join(errs) if errs else "Nombres descargados y verificados.")
+            return 1 if errs else 0
+        ok = nombres.build(check=args.check)
+        if args.check:
+            print("nombres.json al día" if ok else "nombres.json desactualizado")
+        return 0 if ok else 1
     if args.source == "nhtsa":
         from croquis_data import nhtsa_ctd
 

@@ -1,0 +1,120 @@
+{
+ "costo_estimado_con": "claude-haiku-5-5",
+ "costo_usd": 0.00107992,
+ "esfuerzo": "medium",
+ "grabado": "2026-10-14T16:59:53+00:00",
+ "huella_prompt": "f6b693169a4199c3",
+ "latencia_ms": 9046.9,
+ "modelo": "claude-haiku-5-5",
+ "modelo_respuesta": "claude-haiku-5-5",
+ "prompt": "extraccion_v1",
+ "request_id": "req_011Cg2VA6r5pizsTA2BjBzG3",
+ "salida": {
+  "dispositivos": [],
+  "hechos": [
+   {
+    "campo": "vehiculo.clase",
+    "cita": "la moto",
+    "persona": -1,
+    "valor": "motocicleta",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.clase",
+    "cita": "un camion de la basura",
+    "persona": -1,
+    "valor": "camion_o_autobus",
+    "vehiculo": 1
+   },
+   {
+    "campo": "entorno.clima",
+    "cita": "estaba lloviendo bien fuerte",
+    "persona": -1,
+    "valor": "lluvia_fuerte",
+    "vehiculo": -1
+   },
+   {
+    "campo": "lugar.estado_superficie",
+    "cita": "el piso estaba encharcado",
+    "persona": -1,
+    "valor": "encharcado",
+    "vehiculo": -1
+   },
+   {
+    "campo": "vehiculo.frenado",
+    "cita": "freno de golpe",
+    "persona": -1,
+    "valor": "true",
+    "vehiculo": 1
+   },
+   {
+    "campo": "vehiculo.frenado",
+    "cita": "yo frene tambien",
+    "persona": -1,
+    "valor": "true",
+    "vehiculo": 0
+   },
+   {
+    "campo": "evento.tipo",
+    "cita": "la moto se derrapo",
+    "persona": -1,
+    "valor": "derrape",
+    "vehiculo": 0
+   },
+   {
+    "campo": "evento.tipo",
+    "cita": "me fui contra la parte de atras de el",
+    "persona": -1,
+    "valor": "impacto_vehiculo_vehiculo",
+    "vehiculo": -1
+   },
+   {
+    "campo": "vehiculo.zona_impacto",
+    "cita": "me fui contra la parte de atras de el",
+    "persona": -1,
+    "valor": "F",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.zona_impacto",
+    "cita": "me fui contra la parte de atras de el",
+    "persona": -1,
+    "valor": "B",
+    "vehiculo": 1
+   },
+   {
+    "campo": "persona.casco",
+    "cita": "trai casco",
+    "persona": 0,
+    "valor": "true",
+    "vehiculo": -1
+   }
+  ],
+  "personas": [
+   {
+    "cita": "andaba de repartidor en la moto",
+    "rol": "motociclista",
+    "vehiculo": 0
+   }
+  ],
+  "preguntas": [
+   "¿A qué velocidad iba la moto antes de frenar?",
+   "¿El camión de la basura iba en movimiento o estaba detenido en el momento del frenado?"
+  ],
+  "vehiculos": [
+   {
+    "narrador": true
+   },
+   {
+    "narrador": false
+   }
+  ]
+ },
+ "texto_sha256": "1129ccfd4a18760d43330288fc6c983bb7d23e2c39002d74b992fda5745cb540",
+ "usage": {
+  "cache_creation_input_tokens": 0,
+  "cache_read_input_tokens": 5862,
+  "input_tokens": 128,
+  "output_tokens": 2017
+ }
+}

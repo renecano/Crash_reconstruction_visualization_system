@@ -1,0 +1,79 @@
+{
+ "costo_estimado_con": "claude-sonnet-5-5",
+ "costo_usd": 0.0058644,
+ "esfuerzo": "medium",
+ "grabado": "2026-10-14T17:26:10+00:00",
+ "huella_prompt": "f6b693169a4199c3",
+ "latencia_ms": 3079.6,
+ "modelo": "claude-sonnet-5-5",
+ "modelo_respuesta": "claude-sonnet-5-5",
+ "prompt": "extraccion_v1",
+ "request_id": "req_011Cg2XApA1Azz5EfBox8QFj",
+ "salida": {
+  "dispositivos": [],
+  "hechos": [
+   {
+    "campo": "lugar.tipo_via",
+    "cita": "glorieta",
+    "persona": -1,
+    "valor": "glorieta",
+    "vehiculo": -1
+   },
+   {
+    "campo": "evento.tipo",
+    "cita": "Le pegaron a mi esposa",
+    "persona": -1,
+    "valor": "impacto_vehiculo_vehiculo",
+    "vehiculo": -1
+   },
+   {
+    "campo": "vehiculo.clase",
+    "cita": "camión urbano",
+    "persona": -1,
+    "valor": "camion_o_autobus",
+    "vehiculo": 1
+   },
+   {
+    "campo": "vehiculo.maniobra",
+    "cita": "se le metió por la derecha",
+    "persona": -1,
+    "valor": "cambio_carril",
+    "vehiculo": 1
+   },
+   {
+    "campo": "vehiculo.zona_impacto",
+    "cita": "le rayó todo el costado del Versa",
+    "persona": -1,
+    "valor": "R",
+    "vehiculo": 0
+   }
+  ],
+  "personas": [
+   {
+    "cita": "mi esposa",
+    "rol": "conductor",
+    "vehiculo": 0
+   }
+  ],
+  "preguntas": [
+   "¿El camión urbano era de pasajeros o de carga?",
+   "¿Hacia qué lado giraba cada vehículo dentro de la glorieta?",
+   "¿A qué velocidad aproximada iban ambos vehículos?"
+  ],
+  "vehiculos": [
+   {
+    "narrador": false
+   },
+   {
+    "narrador": false
+   }
+  ]
+ },
+ "texto_sha256": "f9529b83caa6825bd31b129951bdabc2e1917802e6f04888fcb71f537d545430",
+ "usage": {
+  "cache_creation_input_tokens": 0,
+  "cache_read_input_tokens": 5862,
+  "input_tokens": 66,
+  "output_tokens": 456
+ }
+}

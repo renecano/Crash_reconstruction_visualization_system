@@ -1,0 +1,91 @@
+{
+ "costo_estimado_con": "claude-sonnet-5-5",
+ "costo_usd": 0.0063564,
+ "esfuerzo": "medium",
+ "grabado": "2026-10-14T17:37:17+00:00",
+ "huella_prompt": "f6b693169a4199c3",
+ "latencia_ms": 3785.1,
+ "modelo": "claude-sonnet-5-5",
+ "modelo_respuesta": "claude-sonnet-5-5",
+ "prompt": "extraccion_v1",
+ "request_id": "req_011Cg2Y1vNBTakAavZ7LFZ2V",
+ "salida": {
+  "dispositivos": [
+   {
+    "cita": "alto",
+    "tipo": "alto"
+   }
+  ],
+  "hechos": [
+   {
+    "campo": "vehiculo.clase",
+    "cita": "Urvan",
+    "persona": -1,
+    "valor": "van",
+    "vehiculo": 1
+   },
+   {
+    "campo": "evento.tipo",
+    "cita": "me pegó por atrás",
+    "persona": -1,
+    "valor": "impacto_vehiculo_vehiculo",
+    "vehiculo": -1
+   },
+   {
+    "campo": "vehiculo.zona_impacto",
+    "cita": "me pegó por atrás",
+    "persona": -1,
+    "valor": "B",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.zona_impacto",
+    "cita": "me pegó por atrás",
+    "persona": -1,
+    "valor": "F",
+    "vehiculo": 1
+   },
+   {
+    "campo": "vehiculo.maniobra",
+    "cita": "yo estaba parada",
+    "persona": -1,
+    "valor": "detenido",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.velocidad_kmh",
+    "cita": "yo estaba parada",
+    "persona": -1,
+    "valor": "0",
+    "vehiculo": 0
+   }
+  ],
+  "personas": [
+   {
+    "cita": "yo estaba parada",
+    "rol": "conductor",
+    "vehiculo": 0
+   }
+  ],
+  "preguntas": [
+   "¿A qué velocidad aproximada venía la Urvan al momento del golpe?",
+   "¿La Urvan frenó antes del impacto?",
+   "¿Cuántos carriles tenía la calle en ese sentido?"
+  ],
+  "vehiculos": [
+   {
+    "narrador": true
+   },
+   {
+    "narrador": false
+   }
+  ]
+ },
+ "texto_sha256": "3beda8d6c9af10d17308a913975386b6a2c35d90ac79dbf81c881d3343a8cb38",
+ "usage": {
+  "cache_creation_input_tokens": 0,
+  "cache_read_input_tokens": 5862,
+  "input_tokens": 47,
+  "output_tokens": 509
+ }
+}

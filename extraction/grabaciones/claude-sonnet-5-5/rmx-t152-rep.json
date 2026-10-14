@@ -1,0 +1,103 @@
+{
+ "costo_estimado_con": "claude-sonnet-5-5",
+ "costo_usd": 0.0161324,
+ "esfuerzo": "medium",
+ "grabado": "2026-10-14T18:45:03+00:00",
+ "huella_prompt": "f6b693169a4199c3",
+ "latencia_ms": 10203.9,
+ "modelo": "claude-sonnet-5-5",
+ "modelo_respuesta": "claude-sonnet-5-5",
+ "prompt": "extraccion_v1",
+ "request_id": "req_011Cg2dBD6qdgSBVrr9pN15Q",
+ "salida": {
+  "dispositivos": [
+   {
+    "cita": "sin hacer el alto",
+    "tipo": "alto"
+   }
+  ],
+  "hechos": [
+   {
+    "campo": "vehiculo.clase",
+    "cita": "moto",
+    "persona": -1,
+    "valor": "motocicleta",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.velocidad_kmh",
+    "cita": "a unos cuarenta",
+    "persona": -1,
+    "valor": "40",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.clase",
+    "cita": "Explorer",
+    "persona": -1,
+    "valor": "suv_grande",
+    "vehiculo": 1
+   },
+   {
+    "campo": "vehiculo.maniobra",
+    "cita": "salió de una calle",
+    "persona": -1,
+    "valor": "incorporacion",
+    "vehiculo": 1
+   },
+   {
+    "campo": "evento.tipo",
+    "cita": "le pegó en la llanta de atrás",
+    "persona": -1,
+    "valor": "impacto_vehiculo_vehiculo",
+    "vehiculo": -1
+   },
+   {
+    "campo": "vehiculo.zona_impacto",
+    "cita": "le pegó en la llanta de atrás",
+    "persona": -1,
+    "valor": "B",
+    "vehiculo": 0
+   },
+   {
+    "campo": "persona.casco",
+    "cita": "traía casco",
+    "persona": 0,
+    "valor": "true",
+    "vehiculo": -1
+   }
+  ],
+  "personas": [
+   {
+    "cita": "A mi sobrino lo tumbaron de la moto",
+    "rol": "motociclista",
+    "vehiculo": 0
+   },
+   {
+    "cita": "un chavo que venía en una Explorer",
+    "rol": "conductor",
+    "vehiculo": 1
+   }
+  ],
+  "preguntas": [
+   "¿De qué lado de la avenida salió la Explorer?",
+   "¿La avenida tenía varios carriles por sentido?",
+   "¿La moto o la Explorer alcanzaron a frenar antes del golpe?"
+  ],
+  "vehiculos": [
+   {
+    "narrador": false
+   },
+   {
+    "narrador": false
+   }
+  ]
+ },
+ "texto_sha256": "ac2cb7cbcb20c7ad0f0823d1df50e585e210e254981968d4070dc6846bcf2a9c",
+ "usage": {
+  "cache_creation_input_tokens": 0,
+  "cache_read_input_tokens": 5862,
+  "input_tokens": 145,
+  "output_tokens": 1467
+ }
+}

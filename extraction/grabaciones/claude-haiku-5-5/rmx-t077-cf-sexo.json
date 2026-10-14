@@ -1,0 +1,76 @@
+{
+ "costo_estimado_con": "claude-haiku-5-5",
+ "costo_usd": 0.00127022,
+ "esfuerzo": "medium",
+ "grabado": "2026-10-14T17:07:20+00:00",
+ "huella_prompt": "f6b693169a4199c3",
+ "latencia_ms": 11142.8,
+ "modelo": "claude-haiku-5-5",
+ "modelo_respuesta": "claude-haiku-5-5",
+ "prompt": "extraccion_v1",
+ "request_id": "req_011Cg2Vitzsm9arTnd69Q5Wa",
+ "salida": {
+  "dispositivos": [],
+  "hechos": [
+   {
+    "campo": "evento.tipo",
+    "cita": "choco anoche contra un puesto de tacos",
+    "persona": -1,
+    "valor": "impacto_vehiculo_objeto",
+    "vehiculo": -1
+   },
+   {
+    "campo": "evento.objeto",
+    "cita": "contra un puesto de tacos",
+    "persona": -1,
+    "valor": "puesto",
+    "vehiculo": -1
+   },
+   {
+    "campo": "entorno.iluminacion",
+    "cita": "anoche",
+    "persona": -1,
+    "valor": "noche",
+    "vehiculo": -1
+   },
+   {
+    "campo": "vehiculo.velocidad_kmh",
+    "cita": "como a 40 dice",
+    "persona": -1,
+    "valor": "40",
+    "vehiculo": 0
+   },
+   {
+    "campo": "persona.cinturon",
+    "cita": "no traia cinturon",
+    "persona": 0,
+    "valor": "false",
+    "vehiculo": -1
+   }
+  ],
+  "personas": [
+   {
+    "cita": "iba solo en su vocho",
+    "rol": "conductor",
+    "vehiculo": 0
+   }
+  ],
+  "preguntas": [
+   "¿A qué velocidad iba el vehículo justo antes de volantear?",
+   "¿Con qué parte del vehículo golpeó el puesto?",
+   "¿El lugar tenía alumbrado público?"
+  ],
+  "vehiculos": [
+   {
+    "narrador": false
+   }
+  ]
+ },
+ "texto_sha256": "98aa6fd00bb83e52d6639d7250c795a58d2260724d87616c81abc2157dbfdc03",
+ "usage": {
+  "cache_creation_input_tokens": 0,
+  "cache_read_input_tokens": 5862,
+  "input_tokens": 151,
+  "output_tokens": 2393
+ }
+}

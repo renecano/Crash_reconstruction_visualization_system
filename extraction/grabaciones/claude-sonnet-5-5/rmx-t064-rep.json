@@ -1,0 +1,100 @@
+{
+ "costo_estimado_con": "claude-sonnet-5-5",
+ "costo_usd": 0.0151804,
+ "esfuerzo": "medium",
+ "grabado": "2026-10-14T18:36:08+00:00",
+ "huella_prompt": "f6b693169a4199c3",
+ "latencia_ms": 9670.4,
+ "modelo": "claude-sonnet-5-5",
+ "modelo_respuesta": "claude-sonnet-5-5",
+ "prompt": "extraccion_v1",
+ "request_id": "req_011Cg2cVnZcxLH6WRbiWMVHo",
+ "salida": {
+  "dispositivos": [],
+  "hechos": [
+   {
+    "campo": "vehiculo.clase",
+    "cita": "Era un carro tipo Jetta",
+    "persona": -1,
+    "valor": "sedan_mediano",
+    "vehiculo": 1
+   },
+   {
+    "campo": "vehiculo.color",
+    "cita": "color guinda",
+    "persona": -1,
+    "valor": "guinda",
+    "vehiculo": 1
+   },
+   {
+    "campo": "vehiculo.clase",
+    "cita": "en mi March",
+    "persona": -1,
+    "valor": "hatchback",
+    "vehiculo": 0
+   },
+   {
+    "campo": "entorno.iluminacion",
+    "cita": "a las 11 de la noche",
+    "persona": -1,
+    "valor": "noche",
+    "vehiculo": -1
+   },
+   {
+    "campo": "vehiculo.velocidad_kmh",
+    "cita": "como a 30",
+    "persona": -1,
+    "valor": "30",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.maniobra",
+    "cita": "se abrió",
+    "persona": -1,
+    "valor": "cambio_carril",
+    "vehiculo": 1
+   },
+   {
+    "campo": "evento.tipo",
+    "cita": "me pegó de lado",
+    "persona": -1,
+    "valor": "impacto_vehiculo_vehiculo",
+    "vehiculo": -1
+   },
+   {
+    "campo": "vehiculo.zona_impacto",
+    "cita": "en el espejo y la puerta del chofer",
+    "persona": -1,
+    "valor": "L",
+    "vehiculo": 0
+   }
+  ],
+  "personas": [
+   {
+    "cita": "Yo venía de regreso de una cena con mis amigas, en mi March",
+    "rol": "conductor",
+    "vehiculo": 0
+   }
+  ],
+  "preguntas": [
+   "¿El choque ocurrió en la curva o en el tramo recto de la avenida?",
+   "¿Qué parte del otro vehículo golpeó a tu auto?",
+   "¿El otro vehículo invadió tu carril o tú te desplazaste hacia él?"
+  ],
+  "vehiculos": [
+   {
+    "narrador": true
+   },
+   {
+    "narrador": false
+   }
+  ]
+ },
+ "texto_sha256": "d793f80f52bcc46bafa0bd1a6f9661c008b14324a34e9213515eea6c3f8916d2",
+ "usage": {
+  "cache_creation_input_tokens": 0,
+  "cache_read_input_tokens": 5862,
+  "input_tokens": 224,
+  "output_tokens": 1356
+ }
+}

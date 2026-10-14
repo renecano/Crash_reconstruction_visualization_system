@@ -9,6 +9,7 @@ const nextConfig: NextConfig = {
     "@croquis/solver-ts",
     "@croquis/viewer",
     "@croquis/croquis-2d",
+    "@croquis/relato",
   ],
   turbopack: {
     rules: {

@@ -1,0 +1,106 @@
+{
+ "costo_estimado_con": "claude-sonnet-5-5",
+ "costo_usd": 0.0080604,
+ "esfuerzo": "medium",
+ "grabado": "2026-10-14T17:53:41+00:00",
+ "huella_prompt": "f6b693169a4199c3",
+ "latencia_ms": 4628.2,
+ "modelo": "claude-sonnet-5-5",
+ "modelo_respuesta": "claude-sonnet-5-5",
+ "prompt": "extraccion_v1",
+ "request_id": "req_011Cg2ZGSBKNrk21ypT1kaCD",
+ "salida": {
+  "dispositivos": [
+   {
+    "cita": "semáforo",
+    "tipo": "semaforo"
+   }
+  ],
+  "hechos": [
+   {
+    "campo": "vehiculo.clase",
+    "cita": "Urvan",
+    "persona": -1,
+    "valor": "van",
+    "vehiculo": 1
+   },
+   {
+    "campo": "vehiculo.frenado",
+    "cita": "yo frené",
+    "persona": -1,
+    "valor": "true",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.frenado",
+    "cita": "no alcanzó a frenar",
+    "persona": -1,
+    "valor": "false",
+    "vehiculo": 1
+   },
+   {
+    "campo": "evento.tipo",
+    "cita": "me dio un llegue por atrás",
+    "persona": -1,
+    "valor": "impacto_vehiculo_vehiculo",
+    "vehiculo": -1
+   },
+   {
+    "campo": "vehiculo.zona_impacto",
+    "cita": "me dio un llegue por atrás",
+    "persona": -1,
+    "valor": "B",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.zona_impacto",
+    "cita": "me dio un llegue por atrás",
+    "persona": -1,
+    "valor": "F",
+    "vehiculo": 1
+   },
+   {
+    "campo": "vehiculo.maniobra",
+    "cita": "el carro de adelante se paró en el semáforo",
+    "persona": -1,
+    "valor": "detenido",
+    "vehiculo": 2
+   }
+  ],
+  "personas": [
+   {
+    "cita": "Yo iba en el Aveo de mi papá",
+    "rol": "conductor",
+    "vehiculo": 0
+   },
+   {
+    "cita": "un señor que venía atrás de mí en una Urvan del transporte",
+    "rol": "conductor",
+    "vehiculo": 1
+   }
+  ],
+  "preguntas": [
+   "¿A qué velocidad aproximada iban los vehículos al bajar por la avenida?",
+   "¿Había lluvia o el pavimento estaba mojado?",
+   "¿Qué tan cerca quedó su vehículo del auto de adelante tras el empujón?"
+  ],
+  "vehiculos": [
+   {
+    "narrador": true
+   },
+   {
+    "narrador": false
+   },
+   {
+    "narrador": false
+   }
+  ]
+ },
+ "texto_sha256": "bf7799b767ff3c869ca0433bd4994ac9f74501809c6f1768db41afdce6d7ac24",
+ "usage": {
+  "cache_creation_input_tokens": 0,
+  "cache_read_input_tokens": 5862,
+  "input_tokens": 174,
+  "output_tokens": 654
+ }
+}

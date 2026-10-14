@@ -1,0 +1,112 @@
+{
+ "costo_estimado_con": "claude-haiku-5-5",
+ "costo_usd": 0.00140102,
+ "esfuerzo": "medium",
+ "grabado": "2026-10-14T16:43:42+00:00",
+ "huella_prompt": "f6b693169a4199c3",
+ "latencia_ms": 12038.2,
+ "modelo": "claude-haiku-5-5",
+ "modelo_respuesta": "claude-haiku-5-5",
+ "prompt": "extraccion_v1",
+ "request_id": "req_011Cg2TvMNSy7G88dNDZrbrr",
+ "salida": {
+  "dispositivos": [],
+  "hechos": [
+   {
+    "campo": "vehiculo.clase",
+    "cita": "iba yo en la troca, una Silverado",
+    "persona": -1,
+    "valor": "suv_o_pickup",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.maniobra",
+    "cita": "el de enfrente se paró de golpe",
+    "persona": -1,
+    "valor": "detenido",
+    "vehiculo": 1
+   },
+   {
+    "campo": "evento.objeto",
+    "cita": "se le atravesó un perro",
+    "persona": -1,
+    "valor": "otro",
+    "vehiculo": -1
+   },
+   {
+    "campo": "vehiculo.frenado",
+    "cita": "Yo alcancé a frenar",
+    "persona": -1,
+    "valor": "true",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.frenado",
+    "cita": "pero el que venía detrás de mí, un Sentra, no",
+    "persona": -1,
+    "valor": "false",
+    "vehiculo": 2
+   },
+   {
+    "campo": "evento.tipo",
+    "cita": "me pegó en la caja",
+    "persona": -1,
+    "valor": "impacto_vehiculo_vehiculo",
+    "vehiculo": -1
+   },
+   {
+    "campo": "vehiculo.zona_impacto",
+    "cita": "me pegó en la caja",
+    "persona": -1,
+    "valor": "B",
+    "vehiculo": 0
+   },
+   {
+    "campo": "entorno.iluminacion",
+    "cita": "eran las 3 de la tarde",
+    "persona": -1,
+    "valor": "dia",
+    "vehiculo": -1
+   }
+  ],
+  "personas": [
+   {
+    "cita": "iba yo en la troca",
+    "rol": "conductor",
+    "vehiculo": 0
+   },
+   {
+    "cita": "el de enfrente se paró de golpe",
+    "rol": "conductor",
+    "vehiculo": 1
+   },
+   {
+    "cita": "el que venía detrás de mí, un Sentra",
+    "rol": "conductor",
+    "vehiculo": 2
+   }
+  ],
+  "preguntas": [
+   "¿A qué velocidad iba el Sentra al momento del golpe?",
+   "¿A qué velocidad iba la Silverado al frenar y a qué distancia quedó del vehículo de enfrente?"
+  ],
+  "vehiculos": [
+   {
+    "narrador": true
+   },
+   {
+    "narrador": false
+   },
+   {
+    "narrador": false
+   }
+  ]
+ },
+ "texto_sha256": "fbe0644169996e232677103b7756c7c4e5ad7de65b2d1c1a8577333945a76ac4",
+ "usage": {
+  "cache_creation_input_tokens": 0,
+  "cache_read_input_tokens": 5862,
+  "input_tokens": 159,
+  "output_tokens": 2653
+ }
+}

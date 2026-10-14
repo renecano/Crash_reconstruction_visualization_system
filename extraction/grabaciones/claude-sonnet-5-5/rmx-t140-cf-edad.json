@@ -1,0 +1,105 @@
+{
+ "costo_estimado_con": "claude-sonnet-5-5",
+ "costo_usd": 0.0081004,
+ "esfuerzo": "medium",
+ "grabado": "2026-10-14T17:59:19+00:00",
+ "huella_prompt": "f6b693169a4199c3",
+ "latencia_ms": 4226.3,
+ "modelo": "claude-sonnet-5-5",
+ "modelo_respuesta": "claude-sonnet-5-5",
+ "prompt": "extraccion_v1",
+ "request_id": "req_011Cg2ZhNWVoirvjJ5J3pHa6",
+ "salida": {
+  "dispositivos": [],
+  "hechos": [
+   {
+    "campo": "entorno.iluminacion",
+    "cita": "ya noche",
+    "persona": -1,
+    "valor": "noche",
+    "vehiculo": -1
+   },
+   {
+    "campo": "vehiculo.clase",
+    "cita": "la moto de un amigo",
+    "persona": -1,
+    "valor": "motocicleta",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.velocidad_kmh",
+    "cita": "Iban como a treinta",
+    "persona": -1,
+    "valor": "30",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.maniobra",
+    "cita": "su carro estacionado",
+    "persona": -1,
+    "valor": "estacionado",
+    "vehiculo": 1
+   },
+   {
+    "campo": "evento.tipo",
+    "cita": "le dieron con la puerta",
+    "persona": -1,
+    "valor": "impacto_vehiculo_vehiculo",
+    "vehiculo": -1
+   },
+   {
+    "campo": "vehiculo.zona_impacto",
+    "cita": "abrió la puerta de su carro",
+    "persona": -1,
+    "valor": "L",
+    "vehiculo": 1
+   },
+   {
+    "campo": "persona.casco",
+    "cita": "El amigo no traía casco",
+    "persona": 1,
+    "valor": "false",
+    "vehiculo": -1
+   },
+   {
+    "campo": "persona.casco",
+    "cita": "mi primo sí",
+    "persona": 0,
+    "valor": "true",
+    "vehiculo": -1
+   }
+  ],
+  "personas": [
+   {
+    "cita": "Mi primo iba de pasajero en la moto de un amigo",
+    "rol": "pasajero",
+    "vehiculo": 0
+   },
+   {
+    "cita": "la moto de un amigo",
+    "rol": "motociclista",
+    "vehiculo": 0
+   }
+  ],
+  "preguntas": [
+   "¿De qué lado de la calle estaba estacionado el Spark respecto a la moto?",
+   "¿Qué tan abierta estaba la puerta cuando la moto pasó?",
+   "¿Cuántos carriles tiene la avenida Madero en ese tramo?"
+  ],
+  "vehiculos": [
+   {
+    "narrador": false
+   },
+   {
+    "narrador": false
+   }
+  ]
+ },
+ "texto_sha256": "38f4b6ceca79cc58ceb370253af1afd3eed219cbecba797ae7b9f91fb21e1b5a",
+ "usage": {
+  "cache_creation_input_tokens": 0,
+  "cache_read_input_tokens": 5862,
+  "input_tokens": 174,
+  "output_tokens": 658
+ }
+}

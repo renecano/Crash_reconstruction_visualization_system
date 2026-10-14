@@ -1,0 +1,78 @@
+{
+ "costo_estimado_con": "claude-haiku-5-5",
+ "costo_usd": 0.00112562,
+ "esfuerzo": "medium",
+ "grabado": "2026-10-14T18:08:02+00:00",
+ "huella_prompt": "f6b693169a4199c3",
+ "latencia_ms": 9486.9,
+ "modelo": "claude-haiku-5-5",
+ "modelo_respuesta": "claude-haiku-5-5",
+ "prompt": "extraccion_v1",
+ "request_id": "req_011Cg2aMXU4xVWTkRCsWgHiB",
+ "salida": {
+  "dispositivos": [],
+  "hechos": [
+   {
+    "campo": "vehiculo.velocidad_kmh",
+    "cita": "como a 40",
+    "persona": -1,
+    "valor": "40",
+    "vehiculo": 0
+   },
+   {
+    "campo": "evento.tipo",
+    "cita": "me fui contra un carro estacionado",
+    "persona": -1,
+    "valor": "impacto_vehiculo_vehiculo",
+    "vehiculo": -1
+   },
+   {
+    "campo": "vehiculo.maniobra",
+    "cita": "carro estacionado",
+    "persona": -1,
+    "valor": "estacionado",
+    "vehiculo": 1
+   },
+   {
+    "campo": "vehiculo.zona_impacto",
+    "cita": "me fui contra un carro estacionado",
+    "persona": -1,
+    "valor": "F",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.zona_impacto",
+    "cita": "Le pegué en toda la cajuela",
+    "persona": -1,
+    "valor": "B",
+    "vehiculo": 1
+   }
+  ],
+  "personas": [
+   {
+    "cita": "Iba yo a la chamba",
+    "rol": "conductor",
+    "vehiculo": 0
+   }
+  ],
+  "preguntas": [
+   "¿Hubo frenado antes del impacto y, de ser así, cuánto duró?",
+   "¿A qué distancia del carro estacionado iba el conductor cuando levantó la vista?"
+  ],
+  "vehiculos": [
+   {
+    "narrador": true
+   },
+   {
+    "narrador": false
+   }
+  ]
+ },
+ "texto_sha256": "8042be36e5aa49b2ef4a9de02b87406751f5e0d4ad1eb9cd5b1a9d6992e7f58f",
+ "usage": {
+  "cache_creation_input_tokens": 0,
+  "cache_read_input_tokens": 5862,
+  "input_tokens": 145,
+  "output_tokens": 2105
+ }
+}

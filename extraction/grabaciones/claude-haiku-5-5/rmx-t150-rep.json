@@ -1,0 +1,94 @@
+{
+ "costo_estimado_con": "claude-haiku-5-5",
+ "costo_usd": 0.00109392,
+ "esfuerzo": "medium",
+ "grabado": "2026-10-14T18:28:06+00:00",
+ "huella_prompt": "f6b693169a4199c3",
+ "latencia_ms": 9100.9,
+ "modelo": "claude-haiku-5-5",
+ "modelo_respuesta": "claude-haiku-5-5",
+ "prompt": "extraccion_v1",
+ "request_id": "req_011Cg2btJ5Q2VE2bLxcgbDbf",
+ "salida": {
+  "dispositivos": [],
+  "hechos": [
+   {
+    "campo": "lugar.tipo_via",
+    "cita": "en una curva",
+    "persona": -1,
+    "valor": "curva",
+    "vehiculo": -1
+   },
+   {
+    "campo": "lugar.superficie",
+    "cita": "curva de terraseria",
+    "persona": -1,
+    "valor": "terraceria",
+    "vehiculo": -1
+   },
+   {
+    "campo": "lugar.estado_superficie",
+    "cita": "con mucho lodo",
+    "persona": -1,
+    "valor": "lodo",
+    "vehiculo": -1
+   },
+   {
+    "campo": "evento.tipo",
+    "cita": "se le patino",
+    "persona": -1,
+    "valor": "derrape",
+    "vehiculo": -1
+   },
+   {
+    "campo": "vehiculo.velocidad_kmh",
+    "cita": "como a 30",
+    "persona": -1,
+    "valor": "30",
+    "vehiculo": 0
+   },
+   {
+    "campo": "entorno.clima",
+    "cita": "estaba nublado",
+    "persona": -1,
+    "valor": "nublado",
+    "vehiculo": -1
+   },
+   {
+    "campo": "entorno.clima",
+    "cita": "con neblina",
+    "persona": -1,
+    "valor": "niebla",
+    "vehiculo": -1
+   }
+  ],
+  "personas": [
+   {
+    "cita": "mi tio manejaba su np300",
+    "rol": "conductor",
+    "vehiculo": 0
+   },
+   {
+    "cita": "ibamos a puerto escondido",
+    "rol": "pasajero",
+    "vehiculo": 0
+   }
+  ],
+  "preguntas": [
+   "¿La velocidad de unos 30 km/h era la del vehículo justo antes de patinar?",
+   "¿El vehículo llegó a volcarse o se detuvo en la cuneta sin rodar?"
+  ],
+  "vehiculos": [
+   {
+    "narrador": false
+   }
+  ]
+ },
+ "texto_sha256": "29e2baabdafd8c51e9f1fd6e98773e05adfe67625268bcbe759a33c758ff3e64",
+ "usage": {
+  "cache_creation_input_tokens": 0,
+  "cache_read_input_tokens": 5862,
+  "input_tokens": 123,
+  "output_tokens": 2046
+ }
+}

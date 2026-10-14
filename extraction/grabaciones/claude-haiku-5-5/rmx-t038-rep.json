@@ -1,0 +1,83 @@
+{
+ "costo_estimado_con": "claude-haiku-5-5",
+ "costo_usd": 0.00149272,
+ "esfuerzo": "medium",
+ "grabado": "2026-10-14T18:07:53+00:00",
+ "huella_prompt": "f6b693169a4199c3",
+ "latencia_ms": 12608.7,
+ "modelo": "claude-haiku-5-5",
+ "modelo_respuesta": "claude-haiku-5-5",
+ "prompt": "extraccion_v1",
+ "request_id": "req_011Cg2aLb17F8sbjUFu3vNLM",
+ "salida": {
+  "dispositivos": [],
+  "hechos": [
+   {
+    "campo": "lugar.tipo_via",
+    "cita": "en la lateral de Insurgentes",
+    "persona": -1,
+    "valor": "incorporacion",
+    "vehiculo": -1
+   },
+   {
+    "campo": "vehiculo.clase",
+    "cita": "en un Polo",
+    "persona": -1,
+    "valor": "hatchback",
+    "vehiculo": 1
+   },
+   {
+    "campo": "vehiculo.maniobra",
+    "cita": "se me cerró",
+    "persona": -1,
+    "valor": "cambio_carril",
+    "vehiculo": 1
+   },
+   {
+    "campo": "evento.tipo",
+    "cita": "le di en la defensa trasera",
+    "persona": -1,
+    "valor": "impacto_vehiculo_vehiculo",
+    "vehiculo": -1
+   },
+   {
+    "campo": "vehiculo.zona_impacto",
+    "cita": "le di en la defensa trasera",
+    "persona": -1,
+    "valor": "B",
+    "vehiculo": 1
+   }
+  ],
+  "personas": [
+   {
+    "cita": "le di en la defensa trasera",
+    "rol": "conductor",
+    "vehiculo": 0
+   },
+   {
+    "cita": "Un muchacho en un Polo",
+    "rol": "conductor",
+    "vehiculo": 1
+   }
+  ],
+  "preguntas": [
+   "¿A qué velocidad circulaba cada vehículo antes del impacto?",
+   "¿El Polo venía de otro carril o ya circulaba en la lateral antes de cerrarse?"
+  ],
+  "vehiculos": [
+   {
+    "narrador": true
+   },
+   {
+    "narrador": false
+   }
+  ]
+ },
+ "texto_sha256": "62891bdb19ab220cb3ce619dfc07ea25a5b7d5727c5e85eb72041676386a3eef",
+ "usage": {
+  "cache_creation_input_tokens": 0,
+  "cache_read_input_tokens": 5862,
+  "input_tokens": 51,
+  "output_tokens": 2858
+ }
+}

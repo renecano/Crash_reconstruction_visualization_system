@@ -1,0 +1,109 @@
+{
+ "costo_estimado_con": "claude-haiku-5-5",
+ "costo_usd": 0.00167412,
+ "esfuerzo": "medium",
+ "grabado": "2026-10-14T17:21:02+00:00",
+ "huella_prompt": "f6b693169a4199c3",
+ "latencia_ms": 12817.1,
+ "modelo": "claude-haiku-5-5",
+ "modelo_respuesta": "claude-haiku-5-5",
+ "prompt": "extraccion_v1",
+ "request_id": "req_011Cg2WmQWZsycNiDmmiWpLE",
+ "salida": {
+  "dispositivos": [],
+  "hechos": [
+   {
+    "campo": "vehiculo.clase",
+    "cita": "la Frontier",
+    "persona": -1,
+    "valor": "pickup",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.clase",
+    "cita": "un Versa gris",
+    "persona": -1,
+    "valor": "sedan_compacto",
+    "vehiculo": 1
+   },
+   {
+    "campo": "vehiculo.color",
+    "cita": "un Versa gris",
+    "persona": -1,
+    "valor": "gris",
+    "vehiculo": 1
+   },
+   {
+    "campo": "vehiculo.velocidad_kmh",
+    "cita": "íbamos a vuelta de rueda",
+    "persona": -1,
+    "valor": "8",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.maniobra",
+    "cita": "se metió a la fuerza desde la derecha",
+    "persona": -1,
+    "valor": "cambio_carril",
+    "vehiculo": 1
+   },
+   {
+    "campo": "evento.tipo",
+    "cita": "me pegó con su defensa en mi salpicadera",
+    "persona": -1,
+    "valor": "impacto_vehiculo_vehiculo",
+    "vehiculo": -1
+   },
+   {
+    "campo": "vehiculo.zona_impacto",
+    "cita": "me pegó con su defensa",
+    "persona": -1,
+    "valor": "F",
+    "vehiculo": 1
+   },
+   {
+    "campo": "vehiculo.zona_impacto",
+    "cita": "me pegó con su defensa en mi salpicadera",
+    "persona": -1,
+    "valor": "R",
+    "vehiculo": 0
+   }
+  ],
+  "personas": [
+   {
+    "cita": "Yo traía la Frontier del trabajo.",
+    "rol": "conductor",
+    "vehiculo": 0
+   },
+   {
+    "cita": "un chavo en un taxi de aplicación",
+    "rol": "conductor",
+    "vehiculo": 1
+   },
+   {
+    "cita": "el taxi traía pasajero atrás",
+    "rol": "pasajero",
+    "vehiculo": 1
+   }
+  ],
+  "preguntas": [
+   "¿A qué velocidad iba el taxi al incorporarse?",
+   "¿Hubo frenado antes del impacto en alguno de los dos vehículos?"
+  ],
+  "vehiculos": [
+   {
+    "narrador": true
+   },
+   {
+    "narrador": false
+   }
+  ]
+ },
+ "texto_sha256": "cef2a90e1005e787c66f6068fa717e53e7fb4c107c0ba289bdc09da11934efce",
+ "usage": {
+  "cache_creation_input_tokens": 0,
+  "cache_read_input_tokens": 5862,
+  "input_tokens": 190,
+  "output_tokens": 3193
+ }
+}

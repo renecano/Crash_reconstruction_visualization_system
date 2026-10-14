@@ -1,0 +1,103 @@
+{
+ "costo_estimado_con": "claude-sonnet-5-5",
+ "costo_usd": 0.0160424,
+ "esfuerzo": "medium",
+ "grabado": "2026-10-14T17:37:27+00:00",
+ "huella_prompt": "f6b693169a4199c3",
+ "latencia_ms": 9901.2,
+ "modelo": "claude-sonnet-5-5",
+ "modelo_respuesta": "claude-sonnet-5-5",
+ "prompt": "extraccion_v1",
+ "request_id": "req_011Cg2Y2CZWPGRh2MDqyLtk5",
+ "salida": {
+  "dispositivos": [],
+  "hechos": [
+   {
+    "campo": "entorno.iluminacion",
+    "cita": "ya noche",
+    "persona": -1,
+    "valor": "noche",
+    "vehiculo": -1
+   },
+   {
+    "campo": "vehiculo.clase",
+    "cita": "moto",
+    "persona": -1,
+    "valor": "motocicleta",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.maniobra",
+    "cita": "carro estacionado",
+    "persona": -1,
+    "valor": "estacionado",
+    "vehiculo": 1
+   },
+   {
+    "campo": "vehiculo.velocidad_kmh",
+    "cita": "Iban como a treinta",
+    "persona": -1,
+    "valor": "30",
+    "vehiculo": 0
+   },
+   {
+    "campo": "evento.tipo",
+    "cita": "le dieron con la puerta",
+    "persona": -1,
+    "valor": "impacto_vehiculo_vehiculo",
+    "vehiculo": -1
+   },
+   {
+    "campo": "persona.casco",
+    "cita": "no traía casco",
+    "persona": 1,
+    "valor": "false",
+    "vehiculo": -1
+   },
+   {
+    "campo": "persona.casco",
+    "cita": "mi primo sí",
+    "persona": 0,
+    "valor": "true",
+    "vehiculo": -1
+   }
+  ],
+  "personas": [
+   {
+    "cita": "Mi primo iba de pasajero",
+    "rol": "pasajero",
+    "vehiculo": 0
+   },
+   {
+    "cita": "la moto de un amigo",
+    "rol": "conductor",
+    "vehiculo": 0
+   },
+   {
+    "cita": "una muchacha en un Spark",
+    "rol": "conductor",
+    "vehiculo": 1
+   }
+  ],
+  "preguntas": [
+   "¿La puerta del Spark que se abrió era la del lado izquierdo o la del derecho?",
+   "¿Qué parte de la moto golpeó la puerta?",
+   "¿La avenida Madero tenía alumbrado público en ese tramo?"
+  ],
+  "vehiculos": [
+   {
+    "narrador": false
+   },
+   {
+    "narrador": false
+   }
+  ]
+ },
+ "texto_sha256": "e06a8d43b3aba58c0852d893b970bab7e67c3098272944c766380d24e6757d56",
+ "usage": {
+  "cache_creation_input_tokens": 0,
+  "cache_read_input_tokens": 5862,
+  "input_tokens": 170,
+  "output_tokens": 1453
+ }
+}

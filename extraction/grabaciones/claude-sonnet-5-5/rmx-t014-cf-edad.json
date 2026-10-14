@@ -1,0 +1,90 @@
+{
+ "costo_estimado_con": "claude-sonnet-5-5",
+ "costo_usd": 0.0070084,
+ "esfuerzo": "medium",
+ "grabado": "2026-10-14T17:47:26+00:00",
+ "huella_prompt": "f6b693169a4199c3",
+ "latencia_ms": 13236.4,
+ "modelo": "claude-sonnet-5-5",
+ "modelo_respuesta": "claude-sonnet-5-5",
+ "prompt": "extraccion_v1",
+ "request_id": "req_011Cg2Yn8C3zUwawSpipE77D",
+ "salida": {
+  "dispositivos": [],
+  "hechos": [
+   {
+    "campo": "vehiculo.maniobra",
+    "cita": "se fue derecho",
+    "persona": -1,
+    "valor": "recto",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.frenado",
+    "cita": "no le respondieron los frenos",
+    "persona": -1,
+    "valor": "false",
+    "vehiculo": 0
+   },
+   {
+    "campo": "evento.tipo",
+    "cita": "se estampo contra un poste de luz",
+    "persona": -1,
+    "valor": "impacto_vehiculo_objeto",
+    "vehiculo": -1
+   },
+   {
+    "campo": "evento.objeto",
+    "cita": "un poste de luz",
+    "persona": -1,
+    "valor": "poste",
+    "vehiculo": -1
+   },
+   {
+    "campo": "vehiculo.zona_impacto",
+    "cita": "se estampo contra un poste de luz",
+    "persona": -1,
+    "valor": "F",
+    "vehiculo": 0
+   },
+   {
+    "campo": "entorno.clima",
+    "cita": "avia llovido",
+    "persona": -1,
+    "valor": "lluvia",
+    "vehiculo": -1
+   },
+   {
+    "campo": "lugar.estado_superficie",
+    "cita": "estaba resbaloso",
+    "persona": -1,
+    "valor": "mojado",
+    "vehiculo": -1
+   }
+  ],
+  "personas": [
+   {
+    "cita": "mi abuelito de 80 iba manejando su vocho",
+    "rol": "conductor",
+    "vehiculo": 0
+   }
+  ],
+  "preguntas": [
+   "¿A qué hora ocurrió el percance (de día o de noche)?",
+   "¿Se sabe aproximadamente a qué velocidad iba el vehículo?",
+   "¿La bajada era recta o tenía curva en el punto del choque?"
+  ],
+  "vehiculos": [
+   {
+    "narrador": false
+   }
+  ]
+ },
+ "texto_sha256": "124f867f84adbd0049e1827913fd68ac2821ca730da18b169c0606f878f1bb7c",
+ "usage": {
+  "cache_creation_input_tokens": 0,
+  "cache_read_input_tokens": 5862,
+  "input_tokens": 133,
+  "output_tokens": 557
+ }
+}

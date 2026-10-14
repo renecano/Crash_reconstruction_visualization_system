@@ -1,0 +1,116 @@
+{
+ "costo_estimado_con": "claude-haiku-5-5",
+ "costo_usd": 0.00124272,
+ "esfuerzo": "medium",
+ "grabado": "2026-10-14T18:03:18+00:00",
+ "huella_prompt": "f6b693169a4199c3",
+ "latencia_ms": 10081.0,
+ "modelo": "claude-haiku-5-5",
+ "modelo_respuesta": "claude-haiku-5-5",
+ "prompt": "extraccion_v1",
+ "request_id": "req_011Cg2ZzYuZF7oX6YKw7qrqt",
+ "salida": {
+  "dispositivos": [
+   {
+    "cita": "la fila del semáforo en Bernardo Quintana",
+    "tipo": "semaforo"
+   }
+  ],
+  "hechos": [
+   {
+    "campo": "vehiculo.clase",
+    "cita": "Mi Kicks",
+    "persona": -1,
+    "valor": "suv_compacta",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.clase",
+    "cita": "una Frontier",
+    "persona": -1,
+    "valor": "pickup",
+    "vehiculo": 1
+   },
+   {
+    "campo": "vehiculo.velocidad_kmh",
+    "cita": "yo calculo que a unos 25",
+    "persona": -1,
+    "valor": "25",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.frenado",
+    "cita": "no frenó a tiempo",
+    "persona": -1,
+    "valor": "false",
+    "vehiculo": 1
+   },
+   {
+    "campo": "vehiculo.zona_impacto",
+    "cita": "me pegó por atrás",
+    "persona": -1,
+    "valor": "B",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.zona_impacto",
+    "cita": "me pegó por atrás",
+    "persona": -1,
+    "valor": "F",
+    "vehiculo": 1
+   },
+   {
+    "campo": "evento.tipo",
+    "cita": "me pegó por atrás",
+    "persona": -1,
+    "valor": "impacto_vehiculo_vehiculo",
+    "vehiculo": -1
+   },
+   {
+    "campo": "entorno.clima",
+    "cita": "acababa de llover",
+    "persona": -1,
+    "valor": "lluvia",
+    "vehiculo": -1
+   },
+   {
+    "campo": "lugar.estado_superficie",
+    "cita": "el piso estaba mojado",
+    "persona": -1,
+    "valor": "mojado",
+    "vehiculo": -1
+   }
+  ],
+  "personas": [
+   {
+    "cita": "Mi Kicks quedó con la cajuela sumida",
+    "rol": "conductor",
+    "vehiculo": 0
+   },
+   {
+    "cita": "un chavo que venía en una Frontier",
+    "rol": "conductor",
+    "vehiculo": 1
+   }
+  ],
+  "preguntas": [
+   "¿La Frontier frenó en algún momento antes del impacto o no frenó en absoluto?",
+   "¿A qué velocidad circulaba la Frontier al acercarse a la fila?"
+  ],
+  "vehiculos": [
+   {
+    "narrador": true
+   },
+   {
+    "narrador": false
+   }
+  ]
+ },
+ "texto_sha256": "6e8aa90ca96e3b25e802f41321fb3095e9aec1a7ca89605a44f5d99e1ab62a24",
+ "usage": {
+  "cache_creation_input_tokens": 0,
+  "cache_read_input_tokens": 5862,
+  "input_tokens": 136,
+  "output_tokens": 2341
+ }
+}

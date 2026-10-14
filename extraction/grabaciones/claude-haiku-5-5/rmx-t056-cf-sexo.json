@@ -1,0 +1,83 @@
+{
+ "costo_estimado_con": "claude-haiku-5-5",
+ "costo_usd": 0.00103872,
+ "esfuerzo": "medium",
+ "grabado": "2026-10-14T17:03:27+00:00",
+ "huella_prompt": "f6b693169a4199c3",
+ "latencia_ms": 9036.8,
+ "modelo": "claude-haiku-5-5",
+ "modelo_respuesta": "claude-haiku-5-5",
+ "prompt": "extraccion_v1",
+ "request_id": "req_011Cg2VRvo3PSQaGmZL6CpZG",
+ "salida": {
+  "dispositivos": [],
+  "hechos": [
+   {
+    "campo": "vehiculo.clase",
+    "cita": "circulaba en bicicleta",
+    "persona": -1,
+    "valor": "bicicleta",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.maniobra",
+    "cita": "se encontraba estacionado",
+    "persona": -1,
+    "valor": "estacionado",
+    "vehiculo": 1
+   },
+   {
+    "campo": "vehiculo.velocidad_kmh",
+    "cita": "Mi velocidad era de aproximadamente 15 km/h",
+    "persona": -1,
+    "valor": "15",
+    "vehiculo": 0
+   },
+   {
+    "campo": "evento.tipo",
+    "cita": "me impactara contra ella",
+    "persona": -1,
+    "valor": "impacto_vehiculo_vehiculo",
+    "vehiculo": -1
+   },
+   {
+    "campo": "persona.casco",
+    "cita": "Portaba casco",
+    "persona": 0,
+    "valor": "true",
+    "vehiculo": -1
+   }
+  ],
+  "personas": [
+   {
+    "cita": "circulaba en bicicleta",
+    "rol": "ciclista",
+    "vehiculo": 0
+   },
+   {
+    "cita": "el conductor abrió la puerta",
+    "rol": "conductor",
+    "vehiculo": 1
+   }
+  ],
+  "preguntas": [
+   "¿El conductor del automóvil estacionado estaba dentro del vehículo al abrir la puerta?",
+   "¿La bicicleta circulaba a qué distancia de la puerta abierta al momento del impacto?"
+  ],
+  "vehiculos": [
+   {
+    "narrador": true
+   },
+   {
+    "narrador": false
+   }
+  ]
+ },
+ "texto_sha256": "7e16548df9f8862f3892819e74b19b326bc2b3f39af755d5ad56c870409fddff",
+ "usage": {
+  "cache_creation_input_tokens": 0,
+  "cache_read_input_tokens": 5862,
+  "input_tokens": 236,
+  "output_tokens": 1913
+ }
+}

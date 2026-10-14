@@ -89,6 +89,12 @@ jobs:
       - run: uv run croquis-scene-schema-generate --check
       - run: uv run croquis-data vehicles build --check
       - run: uv run croquis-solver reconstruct --check
+      - name: Nombres de pila de DataMX reproducibles (descarga fijada por SHA-256)
+        run: |
+          uv run croquis-data nombres download
+          uv run croquis-data nombres build --check
+      - run: uv run croquis-extraction relatos check
+      - run: uv run croquis-extraction golden check
       - name: Cuerpos de MakeHuman reproducibles (descarga fijada y reconstrucción byte a byte)
         run: |
           uv run croquis-assets humans download
