@@ -38,17 +38,25 @@ interface PiiData {
   version: string;
   patrones: PatternSpec[];
   pistas_nombre: string[];
+  pistas_fuertes: string[];
+  cortes_nombre: string[];
   pistas_lugar: string[];
   particulas: string[];
   enlaces_lugar: string[];
+  preposiciones_lugar: string[];
+  prefijos_lugar: string[];
 }
 
 interface Rules {
   patterns: { spec: PatternSpec; rx: RegExp }[];
   cues: RegExp;
+  strongCues: ReadonlySet<string>;
+  cuts: ReadonlySet<string>;
   placeCues: ReadonlySet<string>;
   particles: ReadonlySet<string>;
   placeLinks: ReadonlySet<string>;
+  placePreps: ReadonlySet<string>;
+  placePrefixes: ReadonlySet<string>;
   names: ReadonlySet<string>;
   ambiguous: ReadonlySet<string>;
   surnames: ReadonlySet<string>;
@@ -71,10 +79,14 @@ function rules(): Rules {
   const particles = new Set(d.particulas);
   cached = {
     patterns: d.patrones.map((spec) => ({ spec, rx: new RegExp(spec.regex, "gd") })),
-    cues: new RegExp(`(?<![a-z])(?:${cues})\\s+`, "g"),
+    cues: new RegExp(`(?<![a-z])(${cues})[\\s,]+`, "g"),
+    strongCues: new Set(d.pistas_fuertes),
+    cuts: new Set(d.cortes_nombre),
     placeCues: new Set(d.pistas_lugar),
     particles,
     placeLinks: new Set([...particles, ...d.enlaces_lugar]),
+    placePreps: new Set(d.preposiciones_lugar),
+    placePrefixes: new Set(d.prefijos_lugar),
     names: new Set(n.nombres),
     ambiguous: new Set(n.ambiguos),
     surnames: new Set(n.apellidos_frecuentes),
@@ -122,10 +134,32 @@ function nameSpans(text: string, folded: string): [number, number][] {
     return j;
   };
 
+  const starts = new Map(words.map((x, k) => [x.start, k]));
   const cueStarts = new Set<number>();
   for (const m of folded.matchAll(r.cues)) {
     const e = m.index + m[0].length;
-    if (UPPER.has(text.slice(e, e + 1))) cueStarts.add(e);
+    if (UPPER.has(text.slice(e, e + 1))) {
+      cueStarts.add(e);
+      continue;
+    }
+    const k = starts.get(e);
+    if (k === undefined) continue;
+    if (r.strongCues.has(m[1] ?? "")) {
+      // "se llama kevin armendariz": hasta tres palabras en minúsculas que no cortan.
+      let j = k;
+      while (
+        j < words.length &&
+        j - k < 3 &&
+        !r.cuts.has(fold(word(j).w)) &&
+        (j === k || text.slice(word(j - 1).end, word(j).start).trim() === "")
+      ) {
+        j += 1;
+      }
+      if (j > k) spans.push([word(k).start, word(j - 1).end]);
+    } else if (r.names.has(fold(word(k).w)) && !r.ambiguous.has(fold(word(k).w))) {
+      // "mi primo jorge": un nombre del diccionario en minúsculas tras una pista.
+      spans.push([word(k).start, word(k).end]);
+    }
   }
 
   const afterPlaceCue = (i: number): boolean => {
@@ -136,6 +170,14 @@ function nameSpans(text: string, folded: string): [number, number][] {
       while (k >= 0 && r.placeLinks.has(fold(word(k).w))) k -= 1;
     }
     return k >= 0 && r.placeCues.has(fold(word(k).w));
+  };
+
+  // "por Cuauhtémoc", "en León", "San Luis": la palabra nombra un lugar.
+  const placeContext = (i: number): boolean => {
+    if (r.placePrefixes.has(fold(word(i).w))) return true;
+    if (i === 0) return false;
+    const prev = fold(word(i - 1).w);
+    return r.placePreps.has(prev) || (r.placePrefixes.has(prev) && isCap(word(i - 1).w));
   };
 
   const sentenceStart = (i: number): boolean => {
@@ -152,7 +194,7 @@ function nameSpans(text: string, folded: string): [number, number][] {
     let isName = false;
     if (cueStarts.has(s) && isCap(w)) {
       isName = true;
-    } else if (afterPlaceCue(i)) {
+    } else if (afterPlaceCue(i) || placeContext(i)) {
       isName = false;
     } else if (
       isCap(w) &&
@@ -201,7 +243,24 @@ export function redact(raw: string): Redaction {
       found.push({ kind: spec.tipo, start: s, end: e, original: seg });
     }
   }
-  for (const [s, e] of nameSpans(text, folded)) {
+  const names = nameSpans(text, folded);
+  // Correferencia: un nombre ya detectado se redacta también donde aparece sin pista.
+  const keys = [...new Set(names.map(([s, e]) => folded.slice(s, e)))].sort(
+    (a, b) => b.length - a.length || (a < b ? -1 : a > b ? 1 : 0),
+  );
+  const seen = new Set(names.map(([s, e]) => `${s}:${e}`));
+  for (const key of keys) {
+    for (const m of folded.matchAll(
+      new RegExp(`(?<![a-z0-9])${escapeRegExp(key)}(?![a-z0-9])`, "g"),
+    )) {
+      const id = `${m.index}:${m.index + m[0].length}`;
+      if (!seen.has(id)) {
+        seen.add(id);
+        names.push([m.index, m.index + m[0].length]);
+      }
+    }
+  }
+  for (const [s, e] of names) {
     found.push({ kind: "NOMBRE", start: s, end: e, original: raw.slice(s, e) });
   }
   found.sort((a, b) => a.start - b.start || b.end - b.start - (a.end - a.start));

@@ -1,5 +1,5 @@
 {
- "version_pii": "1.0.0",
+ "version_pii": "1.1.0",
  "version_glosario": "1.2.0",
  "plegado": {
   "entrada": " !\"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~ ¡¢£¤¥¦§¨©ª«¬­®¯°±²³´µ¶·¸¹º»¼½¾¿ÀÁÂÃÄÅÆÇÈÉÊËÌÍÎÏÐÑÒÓÔÕÖ×ØÙÚÛÜÝÞßàáâãäåæçèéêëìíîïðñòóôõö÷øùúûüýþÿĀāĂăĄąĆćĈĉĊċČčĎďĐđĒēĔĕĖėĘęĚěĜĝĞğĠġĢģĤĥĦħĨĩĪīĬĭĮįİıĲĳĴĵĶķĸĹĺĻļĽľĿŀŁłŃńŅņŇňŉŊŋŌōŎŏŐőŒœŔŕŖŗŘřŚśŜŝŞşŠšŢţŤťŦŧŨũŪūŬŭŮůŰűŲųŴŵŶŷŸŹźŻżŽžſƀƁƂƃƄƅƆƇƈƉƊƋƌƍƎƏƐƑƒƓƔƕƖƗƘƙƚƛƜƝƞƟƠơƢƣƤƥƦƧƨƩƪƫƬƭƮƯưƱƲƳƴƵƶƷƸƹƺƻƼƽƾƿǀǁǂǃǄǅǆǇǈǉǊǋǌǍǎǏǐǑǒǓǔǕǖǗǘǙǚǛǜǝǞǟǠǡǢǣǤǥǦǧǨǩǪǫǬǭǮǯǰǱǲǳǴǵǶǷǸǹǺǻǼǽǾǿȀȁȂȃȄȅȆȇȈȉȊȋȌȍȎȏȐȑȒȓȔȕȖȗȘșȚțȜȝȞȟȠȡȢȣȤȥȦȧȨȩȪȫȬȭȮȯȰȱȲȳȴȵȶȷȸȹȺȻȼȽȾȿɀɁɂɃɄɅɆɇɈɉɊɋɌɍɎɏḀḁḂḃḄḅḆḇḈḉḊḋḌḍḎḏḐḑḒḓḔḕḖḗḘḙḚḛḜḝḞḟḠḡḢḣḤḥḦḧḨḩḪḫḬḭḮḯḰḱḲḳḴḵḶḷḸḹḺḻḼḽḾḿṀṁṂṃṄṅṆṇṈṉṊṋṌṍṎṏṐṑṒṓṔṕṖṗṘṙṚṛṜṝṞṟṠṡṢṣṤṥṦṧṨṩṪṫṬṭṮṯṰṱṲṳṴṵṶṷṸṹṺṻṼṽṾṿẀẁẂẃẄẅẆẇẈẉẊẋẌẍẎẏẐẑẒẓẔẕẖẗẘẙẚẛẜẝẞẟẠạẢảẤấẦầẨẩẪẫẬậẮắẰằẲẳẴẵẶặẸẹẺẻẼẽẾếỀềỂểỄễỆệỈỉỊịỌọỎỏỐốỒồỔổỖỗỘộỚớỜờỞởỠỡỢợỤụỦủỨứỪừỬửỮữỰựỲỳỴỵỶỷỸỹỺỻỼỽỾỿ           ​‌‍‎‏‐‑‒–—―‖‗‘’‚‛“”„‟†‡•‣․‥…‧  ‪‫‬‭‮ ‰‱′″‴‵‶‷‸‹›※‼‽‾‿⁀⁁⁂⁃⁄⁅⁆⁇⁈⁉⁊⁋⁌⁍⁎⁏⁐⁑⁒⁓⁔⁕⁖⁗⁘⁙⁚⁛⁜⁝⁞ ⁠⁡⁢⁣⁤⁥⁦⁧⁨⁩⁪⁫⁬⁭⁮⁯　",
@@ -293,6 +293,41 @@
      "frene_a_fondo",
      25,
      38
+    ]
+   ]
+  },
+  {
+   "texto": "el chavo se llama kevin armendariz; kevin dijo que no vio. Iba por Lázaro Cárdenas en León",
+   "redaccion": "el chavo se llama [NOMBRE]; kevin dijo que no vio. Iba por Lázaro Cárdenas en León",
+   "tramos": [
+    [
+     "NOMBRE",
+     18,
+     34
+    ]
+   ],
+   "glosario": []
+  },
+  {
+   "texto": "El asegurado, Eleuterio Vargas Ocampo, dejó el 686 214 77 09; en San Luis llovía",
+   "redaccion": "El asegurado, [NOMBRE], dejó el [TELEFONO]; en San Luis llovía",
+   "tramos": [
+    [
+     "NOMBRE",
+     14,
+     37
+    ],
+    [
+     "TELEFONO",
+     47,
+     60
+    ]
+   ],
+   "glosario": [
+    [
+     "llovia",
+     74,
+     80
     ]
    ]
   },
@@ -863,8 +898,14 @@
   },
   {
    "texto": "Un repartidor en moto me pegó por atrás cuando frené en el tope de la calle Gómez Farías. Yo traía mi Kia Rio blanco, iba a vuelta de rueda por el tope. El chavo Brandon se cayó pero no le pasó nada.",
-   "redaccion": "Un repartidor en moto me pegó por atrás cuando frené en el tope de la calle Gómez Farías. Yo traía mi Kia Rio blanco, iba a vuelta de rueda por el tope. El chavo Brandon se cayó pero no le pasó nada.",
-   "tramos": [],
+   "redaccion": "Un repartidor en moto me pegó por atrás cuando frené en el tope de la calle Gómez Farías. Yo traía mi Kia Rio blanco, iba a vuelta de rueda por el tope. El chavo [NOMBRE] se cayó pero no le pasó nada.",
+   "tramos": [
+    [
+     "NOMBRE",
+     162,
+     169
+    ]
+   ],
    "glosario": [
     [
      "moto",
@@ -1087,14 +1128,8 @@
   },
   {
    "texto": "No, espérate, empiezo bien. Iba yo por Eje 3 Sur con mi papá de copiloto, íbamos a su cita del seguro. En el cruce con Cuauhtémoc el semáforo se puso en amarillo y frené, y un muchacho que venía atrás en un Jetta blanco nos pegó. Bueno, sí frenó pero tarde, dejó como cinco metros de llanta. Mi carro es un Beat. Ah, y estaba lloviznando.",
-   "redaccion": "No, espérate, empiezo bien. Iba yo por Eje 3 Sur con mi papá de copiloto, íbamos a su cita del seguro. En el cruce con [NOMBRE] el semáforo se puso en amarillo y frené, y un muchacho que venía atrás en un Jetta blanco nos pegó. Bueno, sí frenó pero tarde, dejó como cinco metros de llanta. Mi carro es un Beat. Ah, y estaba lloviznando.",
-   "tramos": [
-    [
-     "NOMBRE",
-     119,
-     129
-    ]
-   ],
+   "redaccion": "No, espérate, empiezo bien. Iba yo por Eje 3 Sur con mi papá de copiloto, íbamos a su cita del seguro. En el cruce con Cuauhtémoc el semáforo se puso en amarillo y frené, y un muchacho que venía atrás en un Jetta blanco nos pegó. Bueno, sí frenó pero tarde, dejó como cinco metros de llanta. Mi carro es un Beat. Ah, y estaba lloviznando.",
+   "tramos": [],
    "glosario": [
     [
      "cruce_crucero",
@@ -1120,14 +1155,8 @@
   },
   {
    "texto": "No, espérate, empiezo bien. Iba yo por Eje 3 Sur con mi papá de copiloto, íbamos a su cita del seguro. En el cruce con Cuauhtémoc el semáforo se puso en amarillo y frené, y un señor ya grande que venía atrás en un Jetta blanco nos pegó. Bueno, sí frenó pero tarde, dejó como cinco metros de llanta. Mi carro es un Beat. Ah, y estaba lloviznando.",
-   "redaccion": "No, espérate, empiezo bien. Iba yo por Eje 3 Sur con mi papá de copiloto, íbamos a su cita del seguro. En el cruce con [NOMBRE] el semáforo se puso en amarillo y frené, y un señor ya grande que venía atrás en un Jetta blanco nos pegó. Bueno, sí frenó pero tarde, dejó como cinco metros de llanta. Mi carro es un Beat. Ah, y estaba lloviznando.",
-   "tramos": [
-    [
-     "NOMBRE",
-     119,
-     129
-    ]
-   ],
+   "redaccion": "No, espérate, empiezo bien. Iba yo por Eje 3 Sur con mi papá de copiloto, íbamos a su cita del seguro. En el cruce con Cuauhtémoc el semáforo se puso en amarillo y frené, y un señor ya grande que venía atrás en un Jetta blanco nos pegó. Bueno, sí frenó pero tarde, dejó como cinco metros de llanta. Mi carro es un Beat. Ah, y estaba lloviznando.",
+   "tramos": [],
    "glosario": [
     [
      "cruce_crucero",
@@ -1192,14 +1221,8 @@
   },
   {
    "texto": "Declaro que el día de ayer, alrededor de las 21:00 horas, me encontraba en la esquina de las calles Morelos y Porfirio Díaz, en el centro de Oaxaca, cuando observé que un taxi colectivo que circulaba a velocidad elevada atropelló a una joven que cruzaba por el paso peatonal. La persona cayó a unos cuatro metros del punto del impacto y fue trasladada al hospital por paramédicos. La calle cuenta con alumbrado, aunque escaso.",
-   "redaccion": "Declaro que el día de ayer, alrededor de las 21:00 horas, me encontraba en la esquina de las calles Morelos y [NOMBRE], en el centro de Oaxaca, cuando observé que un taxi colectivo que circulaba a velocidad elevada atropelló a una joven que cruzaba por el paso peatonal. La persona cayó a unos cuatro metros del punto del impacto y fue trasladada al hospital por paramédicos. La calle cuenta con alumbrado, aunque escaso.",
-   "tramos": [
-    [
-     "NOMBRE",
-     110,
-     123
-    ]
-   ],
+   "redaccion": "Declaro que el día de ayer, alrededor de las 21:00 horas, me encontraba en la esquina de las calles Morelos y Porfirio Díaz, en el centro de Oaxaca, cuando observé que un taxi colectivo que circulaba a velocidad elevada atropelló a una joven que cruzaba por el paso peatonal. La persona cayó a unos cuatro metros del punto del impacto y fue trasladada al hospital por paramédicos. La calle cuenta con alumbrado, aunque escaso.",
+   "tramos": [],
    "glosario": [
     [
      "cruce_crucero",
@@ -1225,14 +1248,8 @@
   },
   {
    "texto": "Declaro que el día de ayer, alrededor de las 21:00 horas, me encontraba en la esquina de las calles Morelos y Porfirio Díaz, en el centro de Oaxaca, cuando observé que un taxi colectivo que circulaba a velocidad elevada atropelló a una señora de edad avanzada que cruzaba por el paso peatonal. La persona cayó a unos cuatro metros del punto del impacto y fue trasladada al hospital por paramédicos. La calle cuenta con alumbrado, aunque escaso.",
-   "redaccion": "Declaro que el día de ayer, alrededor de las 21:00 horas, me encontraba en la esquina de las calles Morelos y [NOMBRE], en el centro de Oaxaca, cuando observé que un taxi colectivo que circulaba a velocidad elevada atropelló a una señora de edad avanzada que cruzaba por el paso peatonal. La persona cayó a unos cuatro metros del punto del impacto y fue trasladada al hospital por paramédicos. La calle cuenta con alumbrado, aunque escaso.",
-   "tramos": [
-    [
-     "NOMBRE",
-     110,
-     123
-    ]
-   ],
+   "redaccion": "Declaro que el día de ayer, alrededor de las 21:00 horas, me encontraba en la esquina de las calles Morelos y Porfirio Díaz, en el centro de Oaxaca, cuando observé que un taxi colectivo que circulaba a velocidad elevada atropelló a una señora de edad avanzada que cruzaba por el paso peatonal. La persona cayó a unos cuatro metros del punto del impacto y fue trasladada al hospital por paramédicos. La calle cuenta con alumbrado, aunque escaso.",
+   "tramos": [],
    "glosario": [
     [
      "cruce_crucero",
@@ -1258,8 +1275,13 @@
   },
   {
    "texto": "yo iba saliendo del estacionamiento de la tienda en mi troca pa agarrar la av tecnologico en juarez y un carro gris q biene rapido me pego en la defensa de adelante. el muchacho se llama kevin armendariz y me dio su cel 6561203348. estaba haciendo un frio y ya era de noche",
-   "redaccion": "yo iba saliendo del estacionamiento de la tienda en mi troca pa agarrar la av tecnologico en juarez y un carro gris q biene rapido me pego en la defensa de adelante. el muchacho se llama kevin armendariz y me dio su cel [TELEFONO]. estaba haciendo un frio y ya era de noche",
+   "redaccion": "yo iba saliendo del estacionamiento de la tienda en mi troca pa agarrar la av tecnologico en juarez y un carro gris q biene rapido me pego en la defensa de adelante. el muchacho se llama [NOMBRE] y me dio su cel [TELEFONO]. estaba haciendo un frio y ya era de noche",
    "tramos": [
+    [
+     "NOMBRE",
+     187,
+     203
+    ],
     [
      "TELEFONO",
      220,
@@ -1441,8 +1463,13 @@
   },
   {
    "texto": "Reporte de siniestro. El asegurado, Eleuterio Vargas Ocampo, manifiesta que circulaba a bordo de su vehículo Nissan Sentra color azul sobre la avenida 5 de Febrero, en Querétaro, por el carril derecho, a una velocidad aproximada de 30 km/h, cuando el tercero, a bordo de un vehículo Chevrolet Aveo color blanco con placas UQK 45 21, se incorporó desde la calle lateral sin ceder el paso e impactó la parte lateral derecha del vehículo asegurado. Se aprecian daños en ambas puertas del lado derecho. Condiciones climáticas: nublado, pavimento seco.",
-   "redaccion": "Reporte de siniestro. El asegurado, Eleuterio Vargas Ocampo, manifiesta que circulaba a bordo de su vehículo Nissan Sentra color azul sobre la avenida 5 de Febrero, en Querétaro, por el carril derecho, a una velocidad aproximada de 30 km/h, cuando el tercero, a bordo de un vehículo Chevrolet Aveo color blanco con placas [PLACA], se incorporó desde la calle lateral sin ceder el paso e impactó la parte lateral derecha del vehículo asegurado. Se aprecian daños en ambas puertas del lado derecho. Condiciones climáticas: nublado, pavimento seco.",
+   "redaccion": "Reporte de siniestro. El asegurado, [NOMBRE], manifiesta que circulaba a bordo de su vehículo Nissan Sentra color azul sobre la avenida 5 de Febrero, en Querétaro, por el carril derecho, a una velocidad aproximada de 30 km/h, cuando el tercero, a bordo de un vehículo Chevrolet Aveo color blanco con placas [PLACA], se incorporó desde la calle lateral sin ceder el paso e impactó la parte lateral derecha del vehículo asegurado. Se aprecian daños en ambas puertas del lado derecho. Condiciones climáticas: nublado, pavimento seco.",
    "tramos": [
+    [
+     "NOMBRE",
+     36,
+     59
+    ],
     [
      "PLACA",
      322,
@@ -1469,8 +1496,13 @@
   },
   {
    "texto": "Reporte de siniestro. El asegurado, Eleuterio Vargas Ocampo, manifiesta que circulaba a bordo de su vehículo Nissan Sentra color azul sobre la avenida 5 de Febrero, en Querétaro, por el carril derecho, a una velocidad aproximada de 30 km/h, cuando el tercero, a bordo de una camioneta Nissan NP300 color blanco con placas UQK 45 21, se incorporó desde la calle lateral sin ceder el paso e impactó la parte lateral derecha del vehículo asegurado. Se aprecian daños en ambas puertas del lado derecho. Condiciones climáticas: nublado, pavimento seco.",
-   "redaccion": "Reporte de siniestro. El asegurado, Eleuterio Vargas Ocampo, manifiesta que circulaba a bordo de su vehículo Nissan Sentra color azul sobre la avenida 5 de Febrero, en Querétaro, por el carril derecho, a una velocidad aproximada de 30 km/h, cuando el tercero, a bordo de una camioneta Nissan NP300 color blanco con placas [PLACA], se incorporó desde la calle lateral sin ceder el paso e impactó la parte lateral derecha del vehículo asegurado. Se aprecian daños en ambas puertas del lado derecho. Condiciones climáticas: nublado, pavimento seco.",
+   "redaccion": "Reporte de siniestro. El asegurado, [NOMBRE], manifiesta que circulaba a bordo de su vehículo Nissan Sentra color azul sobre la avenida 5 de Febrero, en Querétaro, por el carril derecho, a una velocidad aproximada de 30 km/h, cuando el tercero, a bordo de una camioneta Nissan NP300 color blanco con placas [PLACA], se incorporó desde la calle lateral sin ceder el paso e impactó la parte lateral derecha del vehículo asegurado. Se aprecian daños en ambas puertas del lado derecho. Condiciones climáticas: nublado, pavimento seco.",
    "tramos": [
+    [
+     "NOMBRE",
+     36,
+     59
+    ],
     [
      "PLACA",
      322,
@@ -1761,14 +1793,8 @@
   },
   {
    "texto": "Bajando de San Cristóbal hacia Tuxtla, en la autopista, cayó un aguacero de esos que no ves nada. Yo iba en mi Versa como a ochenta y en una curva sentí que el carro flotó, se me fue de lado y terminé en el pasto, del otro lado de la cuneta. No le pegué a nada, gracias a Dios. Iba con mi esposa y mis dos hijos atrás, todos con cinturón.",
-   "redaccion": "Bajando de San [NOMBRE] hacia Tuxtla, en la autopista, cayó un aguacero de esos que no ves nada. Yo iba en mi Versa como a ochenta y en una curva sentí que el carro flotó, se me fue de lado y terminé en el pasto, del otro lado de la cuneta. No le pegué a nada, gracias a Dios. Iba con mi esposa y mis dos hijos atrás, todos con cinturón.",
-   "tramos": [
-    [
-     "NOMBRE",
-     15,
-     24
-    ]
-   ],
+   "redaccion": "Bajando de San Cristóbal hacia Tuxtla, en la autopista, cayó un aguacero de esos que no ves nada. Yo iba en mi Versa como a ochenta y en una curva sentí que el carro flotó, se me fue de lado y terminé en el pasto, del otro lado de la cuneta. No le pegué a nada, gracias a Dios. Iba con mi esposa y mis dos hijos atrás, todos con cinturón.",
+   "tramos": [],
    "glosario": [
     [
      "autopista",
@@ -1869,8 +1895,13 @@
   },
   {
    "texto": "Por este medio informo a la aseguradora que el día 9 de octubre, a las 13:20 horas aproximadamente, me encontraba detenido en el carril izquierdo del bulevar Lázaro Cárdenas, en Mexicali, en espera de la luz verde del semáforo, cuando fui impactado en la parte trasera por un vehículo tipo sedán color plata, cuyo conductor manifestó haberse distraído. Mi vehículo es una Nissan Kicks color rojo. El otro conductor proporcionó como datos de contacto el teléfono 686 214 77 09 y el correo jl.quiroz.mxl@correo.mx. La temperatura era muy elevada y el pavimento se encontraba seco.",
-   "redaccion": "Por este medio informo a la aseguradora que el día 9 de octubre, a las 13:20 horas aproximadamente, me encontraba detenido en el carril izquierdo del bulevar Lázaro Cárdenas, en Mexicali, en espera de la luz verde del semáforo, cuando fui impactado en la parte trasera por un vehículo tipo sedán color plata, cuyo conductor manifestó haberse distraído. Mi vehículo es una Nissan Kicks color rojo. El otro conductor proporcionó como datos de contacto el teléfono 686 214 77 09 y el correo [CORREO]. La temperatura era muy elevada y el pavimento se encontraba seco.",
+   "redaccion": "Por este medio informo a la aseguradora que el día 9 de octubre, a las 13:20 horas aproximadamente, me encontraba detenido en el carril izquierdo del bulevar Lázaro Cárdenas, en Mexicali, en espera de la luz verde del semáforo, cuando fui impactado en la parte trasera por un vehículo tipo sedán color plata, cuyo conductor manifestó haberse distraído. Mi vehículo es una Nissan Kicks color rojo. El otro conductor proporcionó como datos de contacto el teléfono [TELEFONO] y el correo [CORREO]. La temperatura era muy elevada y el pavimento se encontraba seco.",
    "tramos": [
+    [
+     "TELEFONO",
+     462,
+     475
+    ],
     [
      "CORREO",
      488,
@@ -2590,14 +2621,8 @@
   },
   {
    "texto": "Estaba cayendo un aguacero en el puerto y yo iba despacito por Díaz Mirón en mi Aveo, porque ya se estaba encharcando todo. En el cruce con Simón Bolívar una muchacha en un Spark se pasó el alto y no le dio tiempo de frenar; me pegó en la puerta de atrás de mi lado. Ni modo, ella luego luego se bajó a ver si estaba bien.",
-   "redaccion": "Estaba cayendo un aguacero en el puerto y yo iba despacito por Díaz Mirón en mi Aveo, porque ya se estaba encharcando todo. En el cruce con [NOMBRE] una muchacha en un Spark se pasó el alto y no le dio tiempo de frenar; me pegó en la puerta de atrás de mi lado. Ni modo, ella luego luego se bajó a ver si estaba bien.",
-   "tramos": [
-    [
-     "NOMBRE",
-     140,
-     153
-    ]
-   ],
+   "redaccion": "Estaba cayendo un aguacero en el puerto y yo iba despacito por Díaz Mirón en mi Aveo, porque ya se estaba encharcando todo. En el cruce con Simón Bolívar una muchacha en un Spark se pasó el alto y no le dio tiempo de frenar; me pegó en la puerta de atrás de mi lado. Ni modo, ella luego luego se bajó a ver si estaba bien.",
+   "tramos": [],
    "glosario": [
     [
      "lluvia_fuerte",
@@ -2628,14 +2653,8 @@
   },
   {
    "texto": "Estaba cayendo un aguacero en el puerto y yo iba despacito por Díaz Mirón en mi Aveo, porque ya se estaba encharcando todo. En el cruce con Simón Bolívar un muchacho en un Spark se pasó el alto y no le dio tiempo de frenar; me pegó en la puerta de atrás de mi lado. Ni modo, él luego luego se bajó a ver si estaba bien.",
-   "redaccion": "Estaba cayendo un aguacero en el puerto y yo iba despacito por Díaz Mirón en mi Aveo, porque ya se estaba encharcando todo. En el cruce con [NOMBRE] un muchacho en un Spark se pasó el alto y no le dio tiempo de frenar; me pegó en la puerta de atrás de mi lado. Ni modo, él luego luego se bajó a ver si estaba bien.",
-   "tramos": [
-    [
-     "NOMBRE",
-     140,
-     153
-    ]
-   ],
+   "redaccion": "Estaba cayendo un aguacero en el puerto y yo iba despacito por Díaz Mirón en mi Aveo, porque ya se estaba encharcando todo. En el cruce con Simón Bolívar un muchacho en un Spark se pasó el alto y no le dio tiempo de frenar; me pegó en la puerta de atrás de mi lado. Ni modo, él luego luego se bajó a ver si estaba bien.",
+   "tramos": [],
    "glosario": [
     [
      "lluvia_fuerte",
@@ -2708,8 +2727,14 @@
   },
   {
    "texto": "saliendo del centro de oaxaca por la calzada madero yo iba en mi chevy a unos 30 y el de adelante freno de repente xq se le atraveso un perro, yo tambien frene pero no alcanze y le pegue atras. era una urban de las colectivas, el chofer se llama eleuterio ramirez y se puso bien enojado. no paso a mayores",
-   "redaccion": "saliendo del centro de oaxaca por la calzada madero yo iba en mi chevy a unos 30 y el de adelante freno de repente xq se le atraveso un perro, yo tambien frene pero no alcanze y le pegue atras. era una urban de las colectivas, el chofer se llama eleuterio ramirez y se puso bien enojado. no paso a mayores",
-   "tramos": [],
+   "redaccion": "saliendo del centro de oaxaca por la calzada madero yo iba en mi chevy a unos 30 y el de adelante freno de repente xq se le atraveso un perro, yo tambien frene pero no alcanze y le pegue atras. era una urban de las colectivas, el chofer se llama [NOMBRE] y se puso bien enojado. no paso a mayores",
+   "tramos": [
+    [
+     "NOMBRE",
+     246,
+     263
+    ]
+   ],
    "glosario": [
     [
      "velocidad_como_a",
@@ -2801,14 +2826,8 @@
   },
   {
    "texto": "Mi hermano chico trabaja de repartidor en moto y ayer, en Alfredo del Mazo, un taxi que iba adelante de él dio vuelta a la izquierda sin poner direccional. Él venía como a 40 y ya no lo pudo librar: se le estrelló en el costado y salió volando por encima del cofre. Traía casco, eso lo salvó; lo llevaron al hospital pero ya está bien.",
-   "redaccion": "Mi hermano chico trabaja de repartidor en moto y ayer, en [NOMBRE], un taxi que iba adelante de él dio vuelta a la izquierda sin poner direccional. Él venía como a 40 y ya no lo pudo librar: se le estrelló en el costado y salió volando por encima del cofre. Traía casco, eso lo salvó; lo llevaron al hospital pero ya está bien.",
-   "tramos": [
-    [
-     "NOMBRE",
-     58,
-     74
-    ]
-   ],
+   "redaccion": "Mi hermano chico trabaja de repartidor en moto y ayer, en Alfredo del Mazo, un taxi que iba adelante de él dio vuelta a la izquierda sin poner direccional. Él venía como a 40 y ya no lo pudo librar: se le estrelló en el costado y salió volando por encima del cofre. Traía casco, eso lo salvó; lo llevaron al hospital pero ya está bien.",
+   "tramos": [],
    "glosario": [
     [
      "moto",
@@ -2839,14 +2858,8 @@
   },
   {
    "texto": "Mi tío trabaja de repartidor en moto y ayer, en Alfredo del Mazo, un taxi que iba adelante de él dio vuelta a la izquierda sin poner direccional. Él venía como a 40 y ya no lo pudo librar: se le estrelló en el costado y salió volando por encima del cofre. Traía casco, eso lo salvó; lo llevaron al hospital pero ya está bien.",
-   "redaccion": "Mi tío trabaja de repartidor en moto y ayer, en [NOMBRE], un taxi que iba adelante de él dio vuelta a la izquierda sin poner direccional. Él venía como a 40 y ya no lo pudo librar: se le estrelló en el costado y salió volando por encima del cofre. Traía casco, eso lo salvó; lo llevaron al hospital pero ya está bien.",
-   "tramos": [
-    [
-     "NOMBRE",
-     48,
-     64
-    ]
-   ],
+   "redaccion": "Mi tío trabaja de repartidor en moto y ayer, en Alfredo del Mazo, un taxi que iba adelante de él dio vuelta a la izquierda sin poner direccional. Él venía como a 40 y ya no lo pudo librar: se le estrelló en el costado y salió volando por encima del cofre. Traía casco, eso lo salvó; lo llevaron al hospital pero ya está bien.",
+   "tramos": [],
    "glosario": [
     [
      "moto",
@@ -3216,14 +3229,8 @@
   },
   {
    "texto": "Iba subiendo por Lázaro Cárdenas en Xalapa, despacio porque había neblina, y un chavito en bici venía pegado a la orilla sin luces. No lo vi hasta que lo tenía enfrente; le di con el espejo y con la salpicadera derecha y se cayó de lado. Gracias a Dios se levantó solo, traía casco. Yo iba en mi Polo como a 30.",
-   "redaccion": "Iba subiendo por [NOMBRE] en Xalapa, despacio porque había neblina, y un chavito en bici venía pegado a la orilla sin luces. No lo vi hasta que lo tenía enfrente; le di con el espejo y con la salpicadera derecha y se cayó de lado. Gracias a Dios se levantó solo, traía casco. Yo iba en mi Polo como a 30.",
-   "tramos": [
-    [
-     "NOMBRE",
-     17,
-     32
-    ]
-   ],
+   "redaccion": "Iba subiendo por Lázaro Cárdenas en Xalapa, despacio porque había neblina, y un chavito en bici venía pegado a la orilla sin luces. No lo vi hasta que lo tenía enfrente; le di con el espejo y con la salpicadera derecha y se cayó de lado. Gracias a Dios se levantó solo, traía casco. Yo iba en mi Polo como a 30.",
+   "tramos": [],
    "glosario": [
     [
      "niebla",
@@ -3259,14 +3266,8 @@
   },
   {
    "texto": "Iba subiendo por Lázaro Cárdenas en Xalapa, despacio porque había neblina, y un señor en bici venía pegado a la orilla sin luces. No lo vi hasta que lo tenía enfrente; le di con el espejo y con la salpicadera derecha y se cayó de lado. Gracias a Dios se levantó solo, traía casco. Yo iba en mi Polo como a 30.",
-   "redaccion": "Iba subiendo por [NOMBRE] en Xalapa, despacio porque había neblina, y un señor en bici venía pegado a la orilla sin luces. No lo vi hasta que lo tenía enfrente; le di con el espejo y con la salpicadera derecha y se cayó de lado. Gracias a Dios se levantó solo, traía casco. Yo iba en mi Polo como a 30.",
-   "tramos": [
-    [
-     "NOMBRE",
-     17,
-     32
-    ]
-   ],
+   "redaccion": "Iba subiendo por Lázaro Cárdenas en Xalapa, despacio porque había neblina, y un señor en bici venía pegado a la orilla sin luces. No lo vi hasta que lo tenía enfrente; le di con el espejo y con la salpicadera derecha y se cayó de lado. Gracias a Dios se levantó solo, traía casco. Yo iba en mi Polo como a 30.",
+   "tramos": [],
    "glosario": [
     [
      "niebla",
@@ -3475,14 +3476,8 @@
   },
   {
    "texto": "Mi esposa iba manejando la Odyssey por Salvador Nava, ya de regreso del trabajo, y en el semáforo de Himno Nacional un Civic se le emparejó y se le metió de golpe al carril para dar vuelta. Ella dice que frenó, pero el Civic le rayó todo el lado del copiloto. Iba como a 45, nada más. Yo llegué después y ya estaba el de tránsito ahí.",
-   "redaccion": "Mi esposa iba manejando la Odyssey por [NOMBRE], ya de regreso del trabajo, y en el semáforo de Himno Nacional un Civic se le emparejó y se le metió de golpe al carril para dar vuelta. Ella dice que frenó, pero el Civic le rayó todo el lado del copiloto. Iba como a 45, nada más. Yo llegué después y ya estaba el de tránsito ahí.",
-   "tramos": [
-    [
-     "NOMBRE",
-     39,
-     52
-    ]
-   ],
+   "redaccion": "Mi esposa iba manejando la Odyssey por Salvador Nava, ya de regreso del trabajo, y en el semáforo de Himno Nacional un Civic se le emparejó y se le metió de golpe al carril para dar vuelta. Ella dice que frenó, pero el Civic le rayó todo el lado del copiloto. Iba como a 45, nada más. Yo llegué después y ya estaba el de tránsito ahí.",
+   "tramos": [],
    "glosario": [
     [
      "semaforo",
@@ -3498,14 +3493,8 @@
   },
   {
    "texto": "Mi esposo iba manejando la Odyssey por Salvador Nava, ya de regreso del trabajo, y en el semáforo de Himno Nacional un Civic se le emparejó y se le metió de golpe al carril para dar vuelta. Él dice que frenó, pero el Civic le rayó todo el lado del copiloto. Iba como a 45, nada más. Yo llegué después y ya estaba el de tránsito ahí.",
-   "redaccion": "Mi esposo iba manejando la Odyssey por [NOMBRE], ya de regreso del trabajo, y en el semáforo de Himno Nacional un Civic se le emparejó y se le metió de golpe al carril para dar vuelta. Él dice que frenó, pero el Civic le rayó todo el lado del copiloto. Iba como a 45, nada más. Yo llegué después y ya estaba el de tránsito ahí.",
-   "tramos": [
-    [
-     "NOMBRE",
-     39,
-     52
-    ]
-   ],
+   "redaccion": "Mi esposo iba manejando la Odyssey por Salvador Nava, ya de regreso del trabajo, y en el semáforo de Himno Nacional un Civic se le emparejó y se le metió de golpe al carril para dar vuelta. Él dice que frenó, pero el Civic le rayó todo el lado del copiloto. Iba como a 45, nada más. Yo llegué después y ya estaba el de tránsito ahí.",
+   "tramos": [],
    "glosario": [
     [
      "semaforo",
@@ -3935,14 +3924,8 @@
   },
   {
    "texto": "Comparezco en calidad de testigo. El día 3 de octubre, alrededor de las 20:40 horas, me encontraba en la esquina de las calles Morelos y Porfirio Díaz, en el centro de la ciudad de Oaxaca. Observé que un taxi colectivo de color guinda circulaba por la calle Morelos a velocidad moderada y que, al dar vuelta a la derecha, golpeó con su costado derecho a un señor de edad avanzada que cruzaba por el paso peatonal. La persona cayó al pavimento y fue trasladada por paramédicos al hospital. La calle contaba con alumbrado público y el piso estaba mojado por la lluvia de la tarde.",
-   "redaccion": "Comparezco en calidad de testigo. El día 3 de octubre, alrededor de las 20:40 horas, me encontraba en la esquina de las calles Morelos y [NOMBRE], en el centro de la ciudad de Oaxaca. Observé que un taxi colectivo de color guinda circulaba por la calle Morelos a velocidad moderada y que, al dar vuelta a la derecha, golpeó con su costado derecho a un señor de edad avanzada que cruzaba por el paso peatonal. La persona cayó al pavimento y fue trasladada por paramédicos al hospital. La calle contaba con alumbrado público y el piso estaba mojado por la lluvia de la tarde.",
-   "tramos": [
-    [
-     "NOMBRE",
-     137,
-     150
-    ]
-   ],
+   "redaccion": "Comparezco en calidad de testigo. El día 3 de octubre, alrededor de las 20:40 horas, me encontraba en la esquina de las calles Morelos y Porfirio Díaz, en el centro de la ciudad de Oaxaca. Observé que un taxi colectivo de color guinda circulaba por la calle Morelos a velocidad moderada y que, al dar vuelta a la derecha, golpeó con su costado derecho a un señor de edad avanzada que cruzaba por el paso peatonal. La persona cayó al pavimento y fue trasladada por paramédicos al hospital. La calle contaba con alumbrado público y el piso estaba mojado por la lluvia de la tarde.",
+   "tramos": [],
    "glosario": [
     [
      "cruce_crucero",
@@ -3978,8 +3961,14 @@
   },
   {
    "texto": "iva por la via morelos en ecatepec en mi chevy y el de adelante freno de la nada pq se le atraveso un perro, yo no alcanse a frenar y le di un llegue atras. el wey se bajo bien enojado, dice q se llama kevin hernandez y quiere q le pague todo. ibamos los 2 como a 30 nomas",
-   "redaccion": "iva por la via morelos en ecatepec en mi chevy y el de adelante freno de la nada pq se le atraveso un perro, yo no alcanse a frenar y le di un llegue atras. el wey se bajo bien enojado, dice q se llama kevin hernandez y quiere q le pague todo. ibamos los 2 como a 30 nomas",
-   "tramos": [],
+   "redaccion": "iva por la via morelos en ecatepec en mi chevy y el de adelante freno de la nada pq se le atraveso un perro, yo no alcanse a frenar y le di un llegue atras. el wey se bajo bien enojado, dice q se llama [NOMBRE] y quiere q le pague todo. ibamos los 2 como a 30 nomas",
+   "tramos": [
+    [
+     "NOMBRE",
+     202,
+     217
+    ]
+   ],
    "glosario": [
     [
      "dio_el_llegue",
@@ -4101,13 +4090,8 @@
   },
   {
    "texto": "Reporte de siniestro. El asegurado manifiesta que el día 12 de septiembre, alrededor de las 13:00 horas, circulaba a bordo de su vehículo Honda Civic color azul marino por la carretera federal 57, tramo Querétaro–San Luis Potosí, en el carril de baja velocidad, a aproximadamente 80 km/h. Un tractocamión que circulaba en el carril contiguo realizó un cambio de carril hacia la derecha sin precaución e impactó el costado izquierdo de la unidad asegurada. El operador del tractocamión, con placas 45-AK-7R, proporcionó como número de contacto el 4421936058. El clima era despejado y el pavimento estaba seco. La vía cuenta con dos carriles por sentido.",
-   "redaccion": "Reporte de siniestro. El asegurado manifiesta que el día 12 de septiembre, alrededor de las 13:00 horas, circulaba a bordo de su vehículo Honda Civic color azul marino por la carretera federal 57, tramo Querétaro–San [NOMBRE], en el carril de baja velocidad, a aproximadamente 80 km/h. Un tractocamión que circulaba en el carril contiguo realizó un cambio de carril hacia la derecha sin precaución e impactó el costado izquierdo de la unidad asegurada. El operador del tractocamión, con placas [PLACA], proporcionó como número de contacto el [TELEFONO]. El clima era despejado y el pavimento estaba seco. La vía cuenta con dos carriles por sentido.",
+   "redaccion": "Reporte de siniestro. El asegurado manifiesta que el día 12 de septiembre, alrededor de las 13:00 horas, circulaba a bordo de su vehículo Honda Civic color azul marino por la carretera federal 57, tramo Querétaro–San Luis Potosí, en el carril de baja velocidad, a aproximadamente 80 km/h. Un tractocamión que circulaba en el carril contiguo realizó un cambio de carril hacia la derecha sin precaución e impactó el costado izquierdo de la unidad asegurada. El operador del tractocamión, con placas [PLACA], proporcionó como número de contacto el [TELEFONO]. El clima era despejado y el pavimento estaba seco. La vía cuenta con dos carriles por sentido.",
    "tramos": [
-    [
-     "NOMBRE",
-     217,
-     228
-    ],
     [
      "PLACA",
      497,
@@ -5015,12 +4999,17 @@
   },
   {
    "texto": "Mi hermana Itzel iba en su moto por la avenida Guerrero en Irapuato y un carro que iba adelante se paró de golpe para estacionarse. Ella no alcanzó a frenar y se le fue encima, le dio en la cajuela. Traía casco y nomás se raspó las rodillas. El señor del carro fue buena onda y nos dejó su teléfono, 462 117 30 84, para lo del arreglo.",
-   "redaccion": "Mi hermana [NOMBRE] iba en su moto por la avenida Guerrero en Irapuato y un carro que iba adelante se paró de golpe para estacionarse. Ella no alcanzó a frenar y se le fue encima, le dio en la cajuela. Traía casco y nomás se raspó las rodillas. El señor del carro fue buena onda y nos dejó su teléfono, 462 117 30 84, para lo del arreglo.",
+   "redaccion": "Mi hermana [NOMBRE] iba en su moto por la avenida Guerrero en Irapuato y un carro que iba adelante se paró de golpe para estacionarse. Ella no alcanzó a frenar y se le fue encima, le dio en la cajuela. Traía casco y nomás se raspó las rodillas. El señor del carro fue buena onda y nos dejó su teléfono, [TELEFONO], para lo del arreglo.",
    "tramos": [
     [
      "NOMBRE",
      11,
      16
+    ],
+    [
+     "TELEFONO",
+     300,
+     313
     ]
    ],
    "glosario": [
@@ -5070,14 +5059,8 @@
   },
   {
    "texto": "Venía por Constitución rumbo a San Pedro en mi troca, una Lobo blanca, a unos 60, y un señor en un Corolla que iba adelante frenó en seco porque se le pasó la salida. Le di un llegue en la defensa de atrás, nada grave. Se bajó bien apenado y hasta me ofreció un agua. Eran como las 6 de la tarde y hacía un calorón.",
-   "redaccion": "Venía por Constitución rumbo a San [NOMBRE] en mi troca, una Lobo blanca, a unos 60, y un señor en un Corolla que iba adelante frenó en seco porque se le pasó la salida. Le di un llegue en la defensa de atrás, nada grave. Se bajó bien apenado y hasta me ofreció un agua. Eran como las 6 de la tarde y hacía un calorón.",
-   "tramos": [
-    [
-     "NOMBRE",
-     35,
-     40
-    ]
-   ],
+   "redaccion": "Venía por Constitución rumbo a San Pedro en mi troca, una Lobo blanca, a unos 60, y un señor en un Corolla que iba adelante frenó en seco porque se le pasó la salida. Le di un llegue en la defensa de atrás, nada grave. Se bajó bien apenado y hasta me ofreció un agua. Eran como las 6 de la tarde y hacía un calorón.",
+   "tramos": [],
    "glosario": [
     [
      "pickup",
@@ -5103,14 +5086,8 @@
   },
   {
    "texto": "Venía por Constitución rumbo a San Pedro en mi troca, una Lobo blanca, a unos 60, y una señora en un Corolla que iba adelante frenó en seco porque se le pasó la salida. Le di un llegue en la defensa de atrás, nada grave. Se bajó bien apenada y hasta me ofreció un agua. Eran como las 6 de la tarde y hacía un calorón.",
-   "redaccion": "Venía por Constitución rumbo a San [NOMBRE] en mi troca, una Lobo blanca, a unos 60, y una señora en un Corolla que iba adelante frenó en seco porque se le pasó la salida. Le di un llegue en la defensa de atrás, nada grave. Se bajó bien apenada y hasta me ofreció un agua. Eran como las 6 de la tarde y hacía un calorón.",
-   "tramos": [
-    [
-     "NOMBRE",
-     35,
-     40
-    ]
-   ],
+   "redaccion": "Venía por Constitución rumbo a San Pedro en mi troca, una Lobo blanca, a unos 60, y una señora en un Corolla que iba adelante frenó en seco porque se le pasó la salida. Le di un llegue en la defensa de atrás, nada grave. Se bajó bien apenada y hasta me ofreció un agua. Eran como las 6 de la tarde y hacía un calorón.",
+   "tramos": [],
    "glosario": [
     [
      "pickup",
@@ -5218,14 +5195,8 @@
   },
   {
    "texto": "Salía de la chamba en Cuauhtémoc, ya noche, y en el camino a la casa hay un tramo de terracería con pura grava suelta. Agarré la curva un poquito rápido, el Tsuru se me fue de lado y acabé dándole a un poste de madera con la puerta del chofer. Iba solo, con el cinturón puesto, y salí por el otro lado sin nada. No había ni un foco en todo el tramo.",
-   "redaccion": "Salía de la chamba en [NOMBRE], ya noche, y en el camino a la casa hay un tramo de terracería con pura grava suelta. Agarré la curva un poquito rápido, el Tsuru se me fue de lado y acabé dándole a un poste de madera con la puerta del chofer. Iba solo, con el cinturón puesto, y salí por el otro lado sin nada. No había ni un foco en todo el tramo.",
-   "tramos": [
-    [
-     "NOMBRE",
-     22,
-     32
-    ]
-   ],
+   "redaccion": "Salía de la chamba en Cuauhtémoc, ya noche, y en el camino a la casa hay un tramo de terracería con pura grava suelta. Agarré la curva un poquito rápido, el Tsuru se me fue de lado y acabé dándole a un poste de madera con la puerta del chofer. Iba solo, con el cinturón puesto, y salí por el otro lado sin nada. No había ni un foco en todo el tramo.",
+   "tramos": [],
    "glosario": [
     [
      "noche",
@@ -5539,14 +5510,8 @@
   },
   {
    "texto": "Saliendo del Poliforum en León un Jetta se me pegó por la izquierda y me echó lámina en toda la puerta; los dos íbamos a vuelta de rueda.",
-   "redaccion": "Saliendo del Poliforum en [NOMBRE] un Jetta se me pegó por la izquierda y me echó lámina en toda la puerta; los dos íbamos a vuelta de rueda.",
-   "tramos": [
-    [
-     "NOMBRE",
-     26,
-     30
-    ]
-   ],
+   "redaccion": "Saliendo del Poliforum en León un Jetta se me pegó por la izquierda y me echó lámina en toda la puerta; los dos íbamos a vuelta de rueda.",
+   "tramos": [],
    "glosario": [
     [
      "a_vuelta_de_rueda",
@@ -6029,19 +5994,8 @@
   },
   {
    "texto": "Pues no sé ni cómo pasó, pero le cuento. Yo venía en mi Sentra por Salvador Nava, en San Luis, llovía bastante y el piso estaba encharcado. Ah no, espere, primero se me atravesó... bueno, una Tornado gris salió de una gasolinera para meterse a la avenida y yo frené, pero el carro se siguió de largo y le pegué con el frente en su costado izquierdo. Yo iba como a cincuenta, más o menos. Eran como las siete de la noche.",
-   "redaccion": "Pues no sé ni cómo pasó, pero le cuento. Yo venía en mi Sentra por [NOMBRE], en San [NOMBRE], llovía bastante y el piso estaba encharcado. Ah no, espere, primero se me atravesó... bueno, una Tornado gris salió de una gasolinera para meterse a la avenida y yo frené, pero el carro se siguió de largo y le pegué con el frente en su costado izquierdo. Yo iba como a cincuenta, más o menos. Eran como las siete de la noche.",
-   "tramos": [
-    [
-     "NOMBRE",
-     67,
-     80
-    ],
-    [
-     "NOMBRE",
-     89,
-     93
-    ]
-   ],
+   "redaccion": "Pues no sé ni cómo pasó, pero le cuento. Yo venía en mi Sentra por Salvador Nava, en San Luis, llovía bastante y el piso estaba encharcado. Ah no, espere, primero se me atravesó... bueno, una Tornado gris salió de una gasolinera para meterse a la avenida y yo frené, pero el carro se siguió de largo y le pegué con el frente en su costado izquierdo. Yo iba como a cincuenta, más o menos. Eran como las siete de la noche.",
+   "tramos": [],
    "glosario": [
     [
      "llovia",
@@ -6072,8 +6026,24 @@
   },
   {
    "texto": "mi primo jorge iba en su moto x la calle 60 en merida y un carro blanco salio de un estacionamiento sin fijarse y lo tumbo, le pego en la llanta de adelante. jorge iba despacio como a 30 y si trayia casco. el señor del carro se llama anastasio uc y dijo q no lo vio x q el sol le pego en la cara. ya lo checaron y esta bien",
-   "redaccion": "mi primo jorge iba en su moto x la calle 60 en merida y un carro blanco salio de un estacionamiento sin fijarse y lo tumbo, le pego en la llanta de adelante. jorge iba despacio como a 30 y si trayia casco. el señor del carro se llama anastasio uc y dijo q no lo vio x q el sol le pego en la cara. ya lo checaron y esta bien",
-   "tramos": [],
+   "redaccion": "mi primo [NOMBRE] iba en su moto x la calle 60 en merida y un carro blanco salio de un estacionamiento sin fijarse y lo tumbo, le pego en la llanta de adelante. [NOMBRE] iba despacio como a 30 y si trayia casco. el señor del carro se llama [NOMBRE] y dijo q no lo vio x q el sol le pego en la cara. ya lo checaron y esta bien",
+   "tramos": [
+    [
+     "NOMBRE",
+     9,
+     14
+    ],
+    [
+     "NOMBRE",
+     158,
+     163
+    ],
+    [
+     "NOMBRE",
+     234,
+     246
+    ]
+   ],
    "glosario": [
     [
      "moto",
@@ -6408,13 +6378,8 @@
   },
   {
    "texto": "Ayer en Xalapa cayó una granizada de esas feas y en Lázaro Cárdenas todo mundo iba a vuelta de rueda. Yo iba en mi Polo y el señor de adelante, en una Hilux, se frenó en seco porque ya no veía nada; yo sí alcancé a frenar, pero el piso estaba hecho una pista, me patinó y le di en la defensa. A su camioneta ni se le notó, a mi Polo sí se le hundió el cofre. Me dejó su número por si acaso: 228 315 6620.",
-   "redaccion": "Ayer en Xalapa cayó una granizada de esas feas y en [NOMBRE] todo mundo iba a vuelta de rueda. Yo iba en mi Polo y el señor de adelante, en una Hilux, se frenó en seco porque ya no veía nada; yo sí alcancé a frenar, pero el piso estaba hecho una pista, me patinó y le di en la defensa. A su camioneta ni se le notó, a mi Polo sí se le hundió el cofre. Me dejó su número por si acaso: [TELEFONO].",
+   "redaccion": "Ayer en Xalapa cayó una granizada de esas feas y en Lázaro Cárdenas todo mundo iba a vuelta de rueda. Yo iba en mi Polo y el señor de adelante, en una Hilux, se frenó en seco porque ya no veía nada; yo sí alcancé a frenar, pero el piso estaba hecho una pista, me patinó y le di en la defensa. A su camioneta ni se le notó, a mi Polo sí se le hundió el cofre. Me dejó su número por si acaso: [TELEFONO].",
    "tramos": [
-    [
-     "NOMBRE",
-     52,
-     67
-    ],
     [
      "TELEFONO",
      391,
@@ -6772,13 +6737,8 @@
   },
   {
    "texto": "Estaba esperando para dar vuelta a la izquierda en Gustavo Baz, con la direccional puesta, y una señora en un Sentra blanco que venía atrás se distrajo con el celular y me dio por detrás. No fue tan fuerte, yo estaba parado y ella venía como a 20. Nos orillamos y me dio el número de su aseguradora y el nombre del ajustador, Eleuterio Cancino, 5531970624.",
-   "redaccion": "Estaba esperando para dar vuelta a la izquierda en [NOMBRE], con la direccional puesta, y una señora en un Sentra blanco que venía atrás se distrajo con el celular y me dio por detrás. No fue tan fuerte, yo estaba parado y ella venía como a 20. Nos orillamos y me dio el número de su aseguradora y el nombre del ajustador, Eleuterio Cancino, [TELEFONO].",
+   "redaccion": "Estaba esperando para dar vuelta a la izquierda en Gustavo Baz, con la direccional puesta, y una señora en un Sentra blanco que venía atrás se distrajo con el celular y me dio por detrás. No fue tan fuerte, yo estaba parado y ella venía como a 20. Nos orillamos y me dio el número de su aseguradora y el nombre del ajustador, Eleuterio Cancino, [TELEFONO].",
    "tramos": [
-    [
-     "NOMBRE",
-     51,
-     62
-    ],
     [
      "TELEFONO",
      345,
@@ -6805,13 +6765,8 @@
   },
   {
    "texto": "Estaba esperando para dar vuelta a la izquierda en Gustavo Baz, con la direccional puesta, y un señor en un Sentra blanco que venía atrás se distrajo con el celular y me dio por detrás. No fue tan fuerte, yo estaba parado y él venía como a 20. Nos orillamos y me dio el número de su aseguradora y el nombre del ajustador, Eleuterio Cancino, 5531970624.",
-   "redaccion": "Estaba esperando para dar vuelta a la izquierda en [NOMBRE], con la direccional puesta, y un señor en un Sentra blanco que venía atrás se distrajo con el celular y me dio por detrás. No fue tan fuerte, yo estaba parado y él venía como a 20. Nos orillamos y me dio el número de su aseguradora y el nombre del ajustador, Eleuterio Cancino, [TELEFONO].",
+   "redaccion": "Estaba esperando para dar vuelta a la izquierda en Gustavo Baz, con la direccional puesta, y un señor en un Sentra blanco que venía atrás se distrajo con el celular y me dio por detrás. No fue tan fuerte, yo estaba parado y él venía como a 20. Nos orillamos y me dio el número de su aseguradora y el nombre del ajustador, Eleuterio Cancino, [TELEFONO].",
    "tramos": [
-    [
-     "NOMBRE",
-     51,
-     62
-    ],
     [
      "TELEFONO",
      341,
@@ -7057,14 +7012,8 @@
   },
   {
    "texto": "Estaba en la fila del semáforo en Bernardo Quintana, ya en rojo, y un chavo que venía en una Frontier no frenó a tiempo y me pegó por atrás. Mi Kicks quedó con la cajuela sumida. Ni iba rápido, yo calculo que a unos 25, pero el piso estaba mojado porque acababa de llover.",
-   "redaccion": "Estaba en la fila del semáforo en [NOMBRE], ya en rojo, y un chavo que venía en una Frontier no frenó a tiempo y me pegó por atrás. Mi Kicks quedó con la cajuela sumida. Ni iba rápido, yo calculo que a unos 25, pero el piso estaba mojado porque acababa de llover.",
-   "tramos": [
-    [
-     "NOMBRE",
-     34,
-     51
-    ]
-   ],
+   "redaccion": "Estaba en la fila del semáforo en Bernardo Quintana, ya en rojo, y un chavo que venía en una Frontier no frenó a tiempo y me pegó por atrás. Mi Kicks quedó con la cajuela sumida. Ni iba rápido, yo calculo que a unos 25, pero el piso estaba mojado porque acababa de llover.",
+   "tramos": [],
    "glosario": [
     [
      "semaforo",
@@ -7090,14 +7039,8 @@
   },
   {
    "texto": "Estaba en la fila del semáforo en Bernardo Quintana, ya en rojo, y un señor ya grande que venía en una Frontier no frenó a tiempo y me pegó por atrás. Mi Kicks quedó con la cajuela sumida. Ni iba rápido, yo calculo que a unos 25, pero el piso estaba mojado porque acababa de llover.",
-   "redaccion": "Estaba en la fila del semáforo en [NOMBRE], ya en rojo, y un señor ya grande que venía en una Frontier no frenó a tiempo y me pegó por atrás. Mi Kicks quedó con la cajuela sumida. Ni iba rápido, yo calculo que a unos 25, pero el piso estaba mojado porque acababa de llover.",
-   "tramos": [
-    [
-     "NOMBRE",
-     34,
-     51
-    ]
-   ],
+   "redaccion": "Estaba en la fila del semáforo en Bernardo Quintana, ya en rojo, y un señor ya grande que venía en una Frontier no frenó a tiempo y me pegó por atrás. Mi Kicks quedó con la cajuela sumida. Ni iba rápido, yo calculo que a unos 25, pero el piso estaba mojado porque acababa de llover.",
+   "tramos": [],
    "glosario": [
     [
      "semaforo",
@@ -7970,12 +7913,12 @@
   },
   {
    "texto": "oiga es q yo iva x el bulevar colosio en pachuca y un chavo en un aveo se metio de su carril al mio sin poner direccional y me pego en la puerta de mi lado, el lado izquierdo. yo trayo una urvan de la ruta y ni lo vi. el se llama jose eduardo tapia y dice q fui yo pero no",
-   "redaccion": "oiga es q yo iva x el bulevar colosio en pachuca y un chavo en un aveo se metio de su carril al mio sin poner direccional y me pego en la puerta de mi lado, el lado izquierdo. yo trayo una urvan de la ruta y ni lo vi. el se llama [NOMBRE] tapia y dice q fui yo pero no",
+   "redaccion": "oiga es q yo iva x el bulevar colosio en pachuca y un chavo en un aveo se metio de su carril al mio sin poner direccional y me pego en la puerta de mi lado, el lado izquierdo. yo trayo una urvan de la ruta y ni lo vi. el se llama [NOMBRE] y dice q fui yo pero no",
    "tramos": [
     [
      "NOMBRE",
      230,
-     242
+     248
     ]
    ],
    "glosario": [
@@ -7993,12 +7936,12 @@
   },
   {
    "texto": "oiga es q yo iva x el bulevar colosio en pachuca y un señor grande en un aveo se metio de su carril al mio sin poner direccional y me pego en la puerta de mi lado, el lado izquierdo. yo trayo una urvan de la ruta y ni lo vi. el se llama jose eduardo tapia y dice q fui yo pero no",
-   "redaccion": "oiga es q yo iva x el bulevar colosio en pachuca y un señor grande en un aveo se metio de su carril al mio sin poner direccional y me pego en la puerta de mi lado, el lado izquierdo. yo trayo una urvan de la ruta y ni lo vi. el se llama [NOMBRE] tapia y dice q fui yo pero no",
+   "redaccion": "oiga es q yo iva x el bulevar colosio en pachuca y un señor grande en un aveo se metio de su carril al mio sin poner direccional y me pego en la puerta de mi lado, el lado izquierdo. yo trayo una urvan de la ruta y ni lo vi. el se llama [NOMBRE] y dice q fui yo pero no",
    "tramos": [
     [
      "NOMBRE",
      237,
-     249
+     255
     ]
    ],
    "glosario": [
@@ -8065,14 +8008,8 @@
   },
   {
    "texto": "Yo vi todo porque estaba en la parada del camión. La señora ya iba a la mitad del paso de cebra, con el semáforo peatonal en verde, eso que quede claro. Una camioneta gris dio vuelta a la izquierda desde la Carranza y la golpeó con la esquina del frente. Iba despacio, como a 15, pero la tiró. Ah, esto fue en San Luis, en el centro, como a la una de la tarde. Quedó tirada como a un metro y se la llevó la ambulancia.",
-   "redaccion": "Yo vi todo porque estaba en la parada del camión. La señora ya iba a la mitad del paso de cebra, con el semáforo peatonal en verde, eso que quede claro. Una camioneta gris dio vuelta a la izquierda desde la Carranza y la golpeó con la esquina del frente. Iba despacio, como a 15, pero la tiró. Ah, esto fue en San [NOMBRE], en el centro, como a la una de la tarde. Quedó tirada como a un metro y se la llevó la ambulancia.",
-   "tramos": [
-    [
-     "NOMBRE",
-     314,
-     318
-    ]
-   ],
+   "redaccion": "Yo vi todo porque estaba en la parada del camión. La señora ya iba a la mitad del paso de cebra, con el semáforo peatonal en verde, eso que quede claro. Una camioneta gris dio vuelta a la izquierda desde la Carranza y la golpeó con la esquina del frente. Iba despacio, como a 15, pero la tiró. Ah, esto fue en San Luis, en el centro, como a la una de la tarde. Quedó tirada como a un metro y se la llevó la ambulancia.",
+   "tramos": [],
    "glosario": [
     [
      "camion",
@@ -8113,14 +8050,8 @@
   },
   {
    "texto": "Yo vi todo porque estaba en la parada del camión. El señor ya iba a la mitad del paso de cebra, con el semáforo peatonal en verde, eso que quede claro. Una camioneta gris dio vuelta a la izquierda desde la Carranza y lo golpeó con la esquina del frente. Iba despacio, como a 15, pero lo tiró. Ah, esto fue en San Luis, en el centro, como a la una de la tarde. Quedó tirado como a un metro y se lo llevó la ambulancia.",
-   "redaccion": "Yo vi todo porque estaba en la parada del camión. El señor ya iba a la mitad del paso de cebra, con el semáforo peatonal en verde, eso que quede claro. Una camioneta gris dio vuelta a la izquierda desde la Carranza y lo golpeó con la esquina del frente. Iba despacio, como a 15, pero lo tiró. Ah, esto fue en San [NOMBRE], en el centro, como a la una de la tarde. Quedó tirado como a un metro y se lo llevó la ambulancia.",
-   "tramos": [
-    [
-     "NOMBRE",
-     313,
-     317
-    ]
-   ],
+   "redaccion": "Yo vi todo porque estaba en la parada del camión. El señor ya iba a la mitad del paso de cebra, con el semáforo peatonal en verde, eso que quede claro. Una camioneta gris dio vuelta a la izquierda desde la Carranza y lo golpeó con la esquina del frente. Iba despacio, como a 15, pero lo tiró. Ah, esto fue en San Luis, en el centro, como a la una de la tarde. Quedó tirado como a un metro y se lo llevó la ambulancia.",
+   "tramos": [],
    "glosario": [
     [
      "camion",
@@ -8399,8 +8330,14 @@
   },
   {
    "texto": "aqui en acapulco en la costera, yo iva en mi taxi con pasaje y un camion urbano q iba adelante se paro de golpe sin razon, yo frene pero no me alcanzo y le di x atras. iba como a 40. el chofer me dejo su cel 744 218 90 37 x si el seguro necesita algo. mi pasajera nomas se pego en la rodilla",
-   "redaccion": "aqui en acapulco en la costera, yo iva en mi taxi con pasaje y un camion urbano q iba adelante se paro de golpe sin razon, yo frene pero no me alcanzo y le di x atras. iba como a 40. el chofer me dejo su cel 744 218 90 37 x si el seguro necesita algo. mi pasajera nomas se pego en la rodilla",
-   "tramos": [],
+   "redaccion": "aqui en acapulco en la costera, yo iva en mi taxi con pasaje y un camion urbano q iba adelante se paro de golpe sin razon, yo frene pero no me alcanzo y le di x atras. iba como a 40. el chofer me dejo su cel [TELEFONO] x si el seguro necesita algo. mi pasajera nomas se pego en la rodilla",
+   "tramos": [
+    [
+     "TELEFONO",
+     208,
+     221
+    ]
+   ],
    "glosario": [
     [
      "camion",
@@ -8426,8 +8363,14 @@
   },
   {
    "texto": "aqui en acapulco en la costera, yo iva en mi taxi con pasaje y una suburban q iba adelante se paro de golpe sin razon, yo frene pero no me alcanzo y le di x atras. iba como a 40. el chofer me dejo su cel 744 218 90 37 x si el seguro necesita algo. mi pasajera nomas se pego en la rodilla",
-   "redaccion": "aqui en acapulco en la costera, yo iva en mi taxi con pasaje y una suburban q iba adelante se paro de golpe sin razon, yo frene pero no me alcanzo y le di x atras. iba como a 40. el chofer me dejo su cel 744 218 90 37 x si el seguro necesita algo. mi pasajera nomas se pego en la rodilla",
-   "tramos": [],
+   "redaccion": "aqui en acapulco en la costera, yo iva en mi taxi con pasaje y una suburban q iba adelante se paro de golpe sin razon, yo frene pero no me alcanzo y le di x atras. iba como a 40. el chofer me dejo su cel [TELEFONO] x si el seguro necesita algo. mi pasajera nomas se pego en la rodilla",
+   "tramos": [
+    [
+     "TELEFONO",
+     204,
+     217
+    ]
+   ],
    "glosario": [
     [
      "frene_a_fondo",
@@ -10710,8 +10653,14 @@
   },
   {
    "texto": "ayer en tampico x la av hidalgo un chamaco en un beat azul me pego x atras en el semaforo, yo estaba parada esperando el verde. se llama kevin ortiz y dice q los frenos no le respondieron xq el piso estaba mojado de la lluvia. a mi carro le quedo la cajuela sumida y el no se iso nada",
-   "redaccion": "ayer en tampico x la av hidalgo un chamaco en un beat azul me pego x atras en el semaforo, yo estaba parada esperando el verde. se llama kevin ortiz y dice q los frenos no le respondieron xq el piso estaba mojado de la lluvia. a mi carro le quedo la cajuela sumida y el no se iso nada",
-   "tramos": [],
+   "redaccion": "ayer en tampico x la av hidalgo un chamaco en un beat azul me pego x atras en el semaforo, yo estaba parada esperando el verde. se llama [NOMBRE] y dice q los frenos no le respondieron xq el piso estaba mojado de la lluvia. a mi carro le quedo la cajuela sumida y el no se iso nada",
+   "tramos": [
+    [
+     "NOMBRE",
+     137,
+     148
+    ]
+   ],
    "glosario": [
     [
      "semaforo",
@@ -10727,8 +10676,14 @@
   },
   {
    "texto": "ayer en tampico x la av hidalgo un señor grande en un beat azul me pego x atras en el semaforo, yo estaba parada esperando el verde. se llama kevin ortiz y dice q los frenos no le respondieron xq el piso estaba mojado de la lluvia. a mi carro le quedo la cajuela sumida y el no se iso nada",
-   "redaccion": "ayer en tampico x la av hidalgo un señor grande en un beat azul me pego x atras en el semaforo, yo estaba parada esperando el verde. se llama kevin ortiz y dice q los frenos no le respondieron xq el piso estaba mojado de la lluvia. a mi carro le quedo la cajuela sumida y el no se iso nada",
-   "tramos": [],
+   "redaccion": "ayer en tampico x la av hidalgo un señor grande en un beat azul me pego x atras en el semaforo, yo estaba parada esperando el verde. se llama [NOMBRE] y dice q los frenos no le respondieron xq el piso estaba mojado de la lluvia. a mi carro le quedo la cajuela sumida y el no se iso nada",
+   "tramos": [
+    [
+     "NOMBRE",
+     142,
+     153
+    ]
+   ],
    "glosario": [
     [
      "semaforo",
@@ -11764,14 +11719,8 @@
   },
   {
    "texto": "Te cuento lo de mi esposa: iba sola en la Tiguan por Bernardo Quintana, en Querétaro, y un microbús que quería agarrar el retorno se le cerró desde el carril de la derecha. Le pegó en toda la puerta del copiloto. Dice que venía como a 50 porque había tráfico. Llovía un buen y ya eran como las 8 de la noche, así que ni lo vio venir.",
-   "redaccion": "Te cuento lo de mi esposa: iba sola en la Tiguan por [NOMBRE], en Querétaro, y un microbús que quería agarrar el retorno se le cerró desde el carril de la derecha. Le pegó en toda la puerta del copiloto. Dice que venía como a 50 porque había tráfico. Llovía un buen y ya eran como las 8 de la noche, así que ni lo vio venir.",
-   "tramos": [
-    [
-     "NOMBRE",
-     53,
-     70
-    ]
-   ],
+   "redaccion": "Te cuento lo de mi esposa: iba sola en la Tiguan por Bernardo Quintana, en Querétaro, y un microbús que quería agarrar el retorno se le cerró desde el carril de la derecha. Le pegó en toda la puerta del copiloto. Dice que venía como a 50 porque había tráfico. Llovía un buen y ya eran como las 8 de la noche, así que ni lo vio venir.",
+   "tramos": [],
    "glosario": [
     [
      "combi",
@@ -11802,14 +11751,8 @@
   },
   {
    "texto": "Te cuento lo de mi esposo: iba solo en la Tiguan por Bernardo Quintana, en Querétaro, y un microbús que quería agarrar el retorno se le cerró desde el carril de la derecha. Le pegó en toda la puerta del copiloto. Dice que venía como a 50 porque había tráfico. Llovía un buen y ya eran como las 8 de la noche, así que ni lo vio venir.",
-   "redaccion": "Te cuento lo de mi esposo: iba solo en la Tiguan por [NOMBRE], en Querétaro, y un microbús que quería agarrar el retorno se le cerró desde el carril de la derecha. Le pegó en toda la puerta del copiloto. Dice que venía como a 50 porque había tráfico. Llovía un buen y ya eran como las 8 de la noche, así que ni lo vio venir.",
-   "tramos": [
-    [
-     "NOMBRE",
-     53,
-     70
-    ]
-   ],
+   "redaccion": "Te cuento lo de mi esposo: iba solo en la Tiguan por Bernardo Quintana, en Querétaro, y un microbús que quería agarrar el retorno se le cerró desde el carril de la derecha. Le pegó en toda la puerta del copiloto. Dice que venía como a 50 porque había tráfico. Llovía un buen y ya eran como las 8 de la noche, así que ni lo vio venir.",
+   "tramos": [],
    "glosario": [
     [
      "combi",
@@ -12379,13 +12322,8 @@
   },
   {
    "texto": "Lo que pasó fue en la carretera a Rioverde, bueno, todavía dentro de San Luis, en la salida. Yo iba a rebasar un camión de volteo... no, espera, primero el de volteo frenó y yo me fui al carril de la izquierda para rebasarlo, y una muchacha que venía en una Ecosport por ese carril, más rápido que yo, me pegó en la esquina de atrás del lado izquierdo. Yo traía la Frontier del trabajo, a unos 60. Eran como las 7 de la mañana. Ella se llama Yatziri, ya hablamos con los seguros. Ah, y llovía tantito.",
-   "redaccion": "Lo que pasó fue en la carretera a Rioverde, bueno, todavía dentro de San [NOMBRE], en la salida. Yo iba a rebasar un camión de volteo... no, espera, primero el de volteo frenó y yo me fui al carril de la izquierda para rebasarlo, y una muchacha que venía en una Ecosport por ese carril, más rápido que yo, me pegó en la esquina de atrás del lado izquierdo. Yo traía la Frontier del trabajo, a unos 60. Eran como las 7 de la mañana. Ella se llama [NOMBRE], ya hablamos con los seguros. Ah, y llovía tantito.",
+   "redaccion": "Lo que pasó fue en la carretera a Rioverde, bueno, todavía dentro de San Luis, en la salida. Yo iba a rebasar un camión de volteo... no, espera, primero el de volteo frenó y yo me fui al carril de la izquierda para rebasarlo, y una muchacha que venía en una Ecosport por ese carril, más rápido que yo, me pegó en la esquina de atrás del lado izquierdo. Yo traía la Frontier del trabajo, a unos 60. Eran como las 7 de la mañana. Ella se llama [NOMBRE], ya hablamos con los seguros. Ah, y llovía tantito.",
    "tramos": [
-    [
-     "NOMBRE",
-     73,
-     77
-    ],
     [
      "NOMBRE",
      442,
@@ -12427,13 +12365,8 @@
   },
   {
    "texto": "Lo que pasó fue en la carretera a Rioverde, bueno, todavía dentro de San Luis, en la salida. Yo iba a rebasar un camión de volteo... no, espera, primero el de volteo frenó y yo me fui al carril de la izquierda para rebasarlo, y un muchacho que venía en una Ecosport por ese carril, más rápido que yo, me pegó en la esquina de atrás del lado izquierdo. Yo traía la Frontier del trabajo, a unos 60. Eran como las 7 de la mañana. Él se llama Ulises, ya hablamos con los seguros. Ah, y llovía tantito.",
-   "redaccion": "Lo que pasó fue en la carretera a Rioverde, bueno, todavía dentro de San [NOMBRE], en la salida. Yo iba a rebasar un camión de volteo... no, espera, primero el de volteo frenó y yo me fui al carril de la izquierda para rebasarlo, y un muchacho que venía en una Ecosport por ese carril, más rápido que yo, me pegó en la esquina de atrás del lado izquierdo. Yo traía la Frontier del trabajo, a unos 60. Eran como las 7 de la mañana. Él se llama [NOMBRE], ya hablamos con los seguros. Ah, y llovía tantito.",
+   "redaccion": "Lo que pasó fue en la carretera a Rioverde, bueno, todavía dentro de San Luis, en la salida. Yo iba a rebasar un camión de volteo... no, espera, primero el de volteo frenó y yo me fui al carril de la izquierda para rebasarlo, y un muchacho que venía en una Ecosport por ese carril, más rápido que yo, me pegó en la esquina de atrás del lado izquierdo. Yo traía la Frontier del trabajo, a unos 60. Eran como las 7 de la mañana. Él se llama [NOMBRE], ya hablamos con los seguros. Ah, y llovía tantito.",
    "tramos": [
-    [
-     "NOMBRE",
-     73,
-     77
-    ],
     [
      "NOMBRE",
      439,
@@ -14439,14 +14372,8 @@
   },
   {
    "texto": "Fue en León, en el bulevar López Mateos. O sea, ya había pasado el semáforo, iba en verde, ¿eh? Corrijo: estaba en amarillo pero yo ya estaba dentro del cruce. La señora de la Sportage que venía de frente dio vuelta a la izquierda y me la eché encima, le pegué en todo el lado del copiloto. Iba como a 50, a lo mejor 55. Mi carro es un Vento gris. Era de noche, pero con mucha luz de los negocios.",
-   "redaccion": "Fue en [NOMBRE], en el bulevar López Mateos. O sea, ya había pasado el semáforo, iba en verde, ¿eh? Corrijo: estaba en amarillo pero yo ya estaba dentro del cruce. La señora de la Sportage que venía de frente dio vuelta a la izquierda y me la eché encima, le pegué en todo el lado del copiloto. Iba como a 50, a lo mejor 55. Mi carro es un Vento gris. Era de noche, pero con mucha luz de los negocios.",
-   "tramos": [
-    [
-     "NOMBRE",
-     7,
-     11
-    ]
-   ],
+   "redaccion": "Fue en León, en el bulevar López Mateos. O sea, ya había pasado el semáforo, iba en verde, ¿eh? Corrijo: estaba en amarillo pero yo ya estaba dentro del cruce. La señora de la Sportage que venía de frente dio vuelta a la izquierda y me la eché encima, le pegué en todo el lado del copiloto. Iba como a 50, a lo mejor 55. Mi carro es un Vento gris. Era de noche, pero con mucha luz de los negocios.",
+   "tramos": [],
    "glosario": [
     [
      "semaforo",
@@ -14482,14 +14409,8 @@
   },
   {
    "texto": "Fue en León, en el bulevar López Mateos. O sea, ya había pasado el semáforo, iba en verde, ¿eh? Corrijo: estaba en amarillo pero yo ya estaba dentro del cruce. El señor de la Sportage que venía de frente dio vuelta a la izquierda y me la eché encima, le pegué en todo el lado del copiloto. Iba como a 50, a lo mejor 55. Mi carro es un Vento gris. Era de noche, pero con mucha luz de los negocios.",
-   "redaccion": "Fue en [NOMBRE], en el bulevar López Mateos. O sea, ya había pasado el semáforo, iba en verde, ¿eh? Corrijo: estaba en amarillo pero yo ya estaba dentro del cruce. El señor de la Sportage que venía de frente dio vuelta a la izquierda y me la eché encima, le pegué en todo el lado del copiloto. Iba como a 50, a lo mejor 55. Mi carro es un Vento gris. Era de noche, pero con mucha luz de los negocios.",
-   "tramos": [
-    [
-     "NOMBRE",
-     7,
-     11
-    ]
-   ],
+   "redaccion": "Fue en León, en el bulevar López Mateos. O sea, ya había pasado el semáforo, iba en verde, ¿eh? Corrijo: estaba en amarillo pero yo ya estaba dentro del cruce. El señor de la Sportage que venía de frente dio vuelta a la izquierda y me la eché encima, le pegué en todo el lado del copiloto. Iba como a 50, a lo mejor 55. Mi carro es un Vento gris. Era de noche, pero con mucha luz de los negocios.",
+   "tramos": [],
    "glosario": [
     [
      "semaforo",
@@ -15563,13 +15484,8 @@
   },
   {
    "texto": "Ando que no me la creo. En San Luis, en la avenida Carranza, íbamos a vuelta de rueda por un choque más adelante y una chava en un taxi de aplicación, un Versa gris, se metió a la fuerza desde la derecha y me pegó con su defensa en mi salpicadera. Yo traía la Frontier del trabajo. La esperé a que llegara el seguro y me dejó su cel por cualquier cosa: 444 812 3390. Ah, el taxi traía pasajero atrás.",
-   "redaccion": "Ando que no me la creo. En San [NOMBRE], en la avenida Carranza, íbamos a vuelta de rueda por un choque más adelante y una chava en un taxi de aplicación, un Versa gris, se metió a la fuerza desde la derecha y me pegó con su defensa en mi salpicadera. Yo traía la Frontier del trabajo. La esperé a que llegara el seguro y me dejó su cel por cualquier cosa: [TELEFONO]. Ah, el taxi traía pasajero atrás.",
+   "redaccion": "Ando que no me la creo. En San Luis, en la avenida Carranza, íbamos a vuelta de rueda por un choque más adelante y una chava en un taxi de aplicación, un Versa gris, se metió a la fuerza desde la derecha y me pegó con su defensa en mi salpicadera. Yo traía la Frontier del trabajo. La esperé a que llegara el seguro y me dejó su cel por cualquier cosa: [TELEFONO]. Ah, el taxi traía pasajero atrás.",
    "tramos": [
-    [
-     "NOMBRE",
-     31,
-     35
-    ],
     [
      "TELEFONO",
      353,
@@ -15586,13 +15502,8 @@
   },
   {
    "texto": "Ando que no me la creo. En San Luis, en la avenida Carranza, íbamos a vuelta de rueda por un choque más adelante y un chavo en un taxi de aplicación, un Versa gris, se metió a la fuerza desde la derecha y me pegó con su defensa en mi salpicadera. Yo traía la Frontier del trabajo. Lo esperé a que llegara el seguro y me dejó su cel por cualquier cosa: 444 812 3390. Ah, el taxi traía pasajero atrás.",
-   "redaccion": "Ando que no me la creo. En San [NOMBRE], en la avenida Carranza, íbamos a vuelta de rueda por un choque más adelante y un chavo en un taxi de aplicación, un Versa gris, se metió a la fuerza desde la derecha y me pegó con su defensa en mi salpicadera. Yo traía la Frontier del trabajo. Lo esperé a que llegara el seguro y me dejó su cel por cualquier cosa: [TELEFONO]. Ah, el taxi traía pasajero atrás.",
+   "redaccion": "Ando que no me la creo. En San Luis, en la avenida Carranza, íbamos a vuelta de rueda por un choque más adelante y un chavo en un taxi de aplicación, un Versa gris, se metió a la fuerza desde la derecha y me pegó con su defensa en mi salpicadera. Yo traía la Frontier del trabajo. Lo esperé a que llegara el seguro y me dejó su cel por cualquier cosa: [TELEFONO]. Ah, el taxi traía pasajero atrás.",
    "tramos": [
-    [
-     "NOMBRE",
-     31,
-     35
-    ],
     [
      "TELEFONO",
      352,
@@ -15781,12 +15692,12 @@
   },
   {
    "texto": "en pachuca x el bulevar colosio, yo iva en mi chevy a unos 60 y un chavo en una tornado roja se paso el semaforo en rojo y le pege en el lado del chofer. dijo q se llama juan carlos hernandez y q su seguro iva a pagar. estaba llobisnando y ya era de noche",
-   "redaccion": "en pachuca x el bulevar colosio, yo iva en mi chevy a unos 60 y un chavo en una tornado roja se paso el semaforo en rojo y le pege en el lado del chofer. dijo q se llama [NOMBRE] hernandez y q su seguro iva a pagar. estaba llobisnando y ya era de noche",
+   "redaccion": "en pachuca x el bulevar colosio, yo iva en mi chevy a unos 60 y un chavo en una tornado roja se paso el semaforo en rojo y le pege en el lado del chofer. dijo q se llama [NOMBRE] y q su seguro iva a pagar. estaba llobisnando y ya era de noche",
    "tramos": [
     [
      "NOMBRE",
      170,
-     181
+     191
     ]
    ],
    "glosario": [
@@ -15809,12 +15720,12 @@
   },
   {
    "texto": "en pachuca x el bulevar colosio, yo iva en mi chevy a unos 60 y un señor grande en una tornado roja se paso el semaforo en rojo y le pege en el lado del chofer. dijo q se llama juan carlos hernandez y q su seguro iva a pagar. estaba llobisnando y ya era de noche",
-   "redaccion": "en pachuca x el bulevar colosio, yo iva en mi chevy a unos 60 y un señor grande en una tornado roja se paso el semaforo en rojo y le pege en el lado del chofer. dijo q se llama [NOMBRE] hernandez y q su seguro iva a pagar. estaba llobisnando y ya era de noche",
+   "redaccion": "en pachuca x el bulevar colosio, yo iva en mi chevy a unos 60 y un señor grande en una tornado roja se paso el semaforo en rojo y le pege en el lado del chofer. dijo q se llama [NOMBRE] y q su seguro iva a pagar. estaba llobisnando y ya era de noche",
    "tramos": [
     [
      "NOMBRE",
      177,
-     188
+     198
     ]
    ],
    "glosario": [

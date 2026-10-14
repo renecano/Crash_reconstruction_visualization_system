@@ -1,202 +1,216 @@
 {
   "name": "e1_extraction_dev",
-  "generated_at": "2026-10-14T14:06:18+00:00",
-  "git_commit": "e3b4eff",
+  "generated_at": "2026-10-14T14:28:56+00:00",
+  "git_commit": "3324610",
   "seed": null,
   "descripcion": "E1: extracción del relato en Relatos-MX (línea base de reglas, Claude Haiku y Sonnet desde respuestas grabadas), fuga de PII del redactor y diferencia contrafactual.",
   "split": "dev",
-  "relatos": 20,
-  "contrafactuales": 0,
-  "test_congelado": null,
+  "relatos": 160,
+  "contrafactuales": 37,
+  "test_congelado": "3454a815c9f0c6c8eee19cf8a993484ba13996032dc375daf3299aa2a0a83c7e",
   "pii": {
-    "datos_personales": 5,
-    "filtrados": 1,
-    "tasa_fuga": 0.2,
-    "filtrados_por_tipo": {
-      "NOMBRE": 1
-    },
+    "datos_personales": 64,
+    "filtrados": 0,
+    "tasa_fuga": 0.0,
+    "filtrados_por_tipo": {},
     "tramos_redactados_que_no_eran_pii": 0
   },
   "metodos": {
     "reglas": {
       "estado": "medido",
-      "relatos": 20,
+      "relatos": 160,
       "sin_respuesta": 0,
-      "f1_micro": 0.8282,
-      "f1_macro": 0.8164,
-      "precision_micro": 0.871,
-      "exhaustividad_micro": 0.7895,
-      "numero_de_vehiculos_exacto": 0.85,
+      "f1_micro": 0.6554,
+      "f1_macro": 0.5384,
+      "precision_micro": 0.8094,
+      "exhaustividad_micro": 0.5506,
+      "numero_de_vehiculos_exacto": 0.5875,
       "por_campo": {
         "clase": {
-          "tp": 27,
-          "fp": 0,
-          "fn": 4,
-          "precision": 1.0,
-          "exhaustividad": 0.871,
-          "f1": 0.931
+          "tp": 182,
+          "fp": 59,
+          "fn": 57,
+          "precision": 0.7552,
+          "exhaustividad": 0.7615,
+          "f1": 0.7583
         },
         "color": {
-          "tp": 10,
-          "fp": 0,
-          "fn": 0,
-          "precision": 1.0,
-          "exhaustividad": 1.0,
-          "f1": 1.0
+          "tp": 52,
+          "fp": 20,
+          "fn": 37,
+          "precision": 0.7222,
+          "exhaustividad": 0.5843,
+          "f1": 0.646
         },
         "dispositivos": {
-          "tp": 4,
-          "fp": 1,
-          "fn": 1,
-          "precision": 0.8,
-          "exhaustividad": 0.8,
-          "f1": 0.8
-        },
-        "entorno.clima": {
-          "tp": 3,
-          "fp": 1,
-          "fn": 2,
-          "precision": 0.75,
-          "exhaustividad": 0.6,
-          "f1": 0.6667
-        },
-        "entorno.iluminacion": {
-          "tp": 5,
-          "fp": 0,
-          "fn": 1,
-          "precision": 1.0,
-          "exhaustividad": 0.8333,
-          "f1": 0.9091
-        },
-        "evento.objeto": {
-          "tp": 3,
-          "fp": 0,
-          "fn": 0,
-          "precision": 1.0,
-          "exhaustividad": 1.0,
-          "f1": 1.0
-        },
-        "evento.tipo": {
-          "tp": 18,
-          "fp": 0,
-          "fn": 2,
-          "precision": 1.0,
-          "exhaustividad": 0.9,
-          "f1": 0.9474
-        },
-        "evidencias.distancia_proyeccion_m": {
-          "tp": 1,
-          "fp": 0,
-          "fn": 0,
-          "precision": 1.0,
-          "exhaustividad": 1.0,
-          "f1": 1.0,
-          "error_absoluto_medio": 0.0
-        },
-        "frenado": {
-          "tp": 5,
-          "fp": 0,
-          "fn": 0,
-          "precision": 1.0,
-          "exhaustividad": 1.0,
-          "f1": 1.0
-        },
-        "lugar.estado_superficie": {
-          "tp": 3,
-          "fp": 0,
-          "fn": 0,
-          "precision": 1.0,
-          "exhaustividad": 1.0,
-          "f1": 1.0
-        },
-        "lugar.superficie": {
-          "tp": 0,
-          "fp": 1,
-          "fn": 0,
-          "precision": 0.0,
-          "exhaustividad": null,
-          "f1": 0.0
-        },
-        "lugar.tipo_via": {
-          "tp": 6,
-          "fp": 3,
-          "fn": 6,
-          "precision": 0.6667,
-          "exhaustividad": 0.5,
-          "f1": 0.5714
-        },
-        "maniobra": {
-          "tp": 6,
+          "tp": 31,
           "fp": 2,
           "fn": 8,
+          "precision": 0.9394,
+          "exhaustividad": 0.7949,
+          "f1": 0.8611
+        },
+        "entorno.clima": {
+          "tp": 13,
+          "fp": 3,
+          "fn": 16,
+          "precision": 0.8125,
+          "exhaustividad": 0.4483,
+          "f1": 0.5778
+        },
+        "entorno.iluminacion": {
+          "tp": 27,
+          "fp": 9,
+          "fn": 34,
           "precision": 0.75,
-          "exhaustividad": 0.4286,
-          "f1": 0.5455
+          "exhaustividad": 0.4426,
+          "f1": 0.5567
         },
-        "persona.casco": {
-          "tp": 1,
-          "fp": 0,
-          "fn": 0,
-          "precision": 1.0,
-          "exhaustividad": 1.0,
-          "f1": 1.0
+        "evento.objeto": {
+          "tp": 7,
+          "fp": 3,
+          "fn": 12,
+          "precision": 0.7,
+          "exhaustividad": 0.3684,
+          "f1": 0.4828
         },
-        "persona.cinturon": {
+        "evento.tipo": {
+          "tp": 102,
+          "fp": 6,
+          "fn": 58,
+          "precision": 0.9444,
+          "exhaustividad": 0.6375,
+          "f1": 0.7612
+        },
+        "evidencias.distancia_proyeccion_m": {
           "tp": 2,
           "fp": 0,
-          "fn": 0,
+          "fn": 3,
           "precision": 1.0,
-          "exhaustividad": 1.0,
-          "f1": 1.0
+          "exhaustividad": 0.4,
+          "f1": 0.5714,
+          "error_absoluto_medio": 0.0
+        },
+        "evidencias.marcas_m": {
+          "tp": 0,
+          "fp": 0,
+          "fn": 6,
+          "precision": null,
+          "exhaustividad": 0.0,
+          "f1": 0.0
+        },
+        "frenado": {
+          "tp": 32,
+          "fp": 5,
+          "fn": 23,
+          "precision": 0.8649,
+          "exhaustividad": 0.5818,
+          "f1": 0.6957
+        },
+        "lugar.carriles_por_sentido": {
+          "tp": 0,
+          "fp": 0,
+          "fn": 3,
+          "precision": null,
+          "exhaustividad": 0.0,
+          "f1": 0.0
+        },
+        "lugar.estado_superficie": {
+          "tp": 25,
+          "fp": 0,
+          "fn": 8,
+          "precision": 1.0,
+          "exhaustividad": 0.7576,
+          "f1": 0.8621
+        },
+        "lugar.superficie": {
+          "tp": 3,
+          "fp": 2,
+          "fn": 2,
+          "precision": 0.6,
+          "exhaustividad": 0.6,
+          "f1": 0.6
+        },
+        "lugar.tipo_via": {
+          "tp": 22,
+          "fp": 33,
+          "fn": 38,
+          "precision": 0.4,
+          "exhaustividad": 0.3667,
+          "f1": 0.3826
+        },
+        "maniobra": {
+          "tp": 40,
+          "fp": 12,
+          "fn": 64,
+          "precision": 0.7692,
+          "exhaustividad": 0.3846,
+          "f1": 0.5128
+        },
+        "persona.casco": {
+          "tp": 6,
+          "fp": 10,
+          "fn": 23,
+          "precision": 0.375,
+          "exhaustividad": 0.2069,
+          "f1": 0.2667
+        },
+        "persona.cinturon": {
+          "tp": 7,
+          "fp": 3,
+          "fn": 14,
+          "precision": 0.7,
+          "exhaustividad": 0.3333,
+          "f1": 0.4516
         },
         "persona.rol": {
-          "tp": 13,
-          "fp": 9,
-          "fn": 2,
-          "precision": 0.5909,
-          "exhaustividad": 0.8667,
-          "f1": 0.7027
+          "tp": 115,
+          "fp": 0,
+          "fn": 58,
+          "precision": 1.0,
+          "exhaustividad": 0.6647,
+          "f1": 0.7986
         },
         "velocidad_kmh": {
-          "tp": 15,
-          "fp": 1,
-          "fn": 4,
-          "precision": 0.9375,
-          "exhaustividad": 0.7895,
-          "f1": 0.8571,
-          "error_absoluto_medio": 2.875
+          "tp": 88,
+          "fp": 12,
+          "fn": 48,
+          "precision": 0.88,
+          "exhaustividad": 0.6471,
+          "f1": 0.7458,
+          "error_absoluto_medio": 1.2637
         },
         "zona_impacto": {
-          "tp": 13,
-          "fp": 2,
-          "fn": 6,
-          "precision": 0.8667,
-          "exhaustividad": 0.6842,
-          "f1": 0.7647
+          "tp": 19,
+          "fp": 3,
+          "fn": 119,
+          "precision": 0.8636,
+          "exhaustividad": 0.1377,
+          "f1": 0.2375
         }
       },
       "con_verificador": {
-        "f1_micro": 0.8282,
-        "f1_macro": 0.8164,
-        "precision_micro": 0.871,
-        "exhaustividad_micro": 0.7895,
-        "numero_de_vehiculos_exacto": 0.85
+        "f1_micro": 0.6554,
+        "f1_macro": 0.5384,
+        "precision_micro": 0.8094,
+        "exhaustividad_micro": 0.5506,
+        "numero_de_vehiculos_exacto": 0.5875
       },
       "alucinacion_de_campo": {
-        "citas": 141,
+        "citas": 975,
         "sin_cita_literal": 0,
         "tasa": 0.0,
         "degradados_por_verificador": 0,
         "tasa_tras_verificador": 0.0
       },
       "contrafactual": {
-        "pares": 0,
-        "con_diferencia": 0,
-        "tasa": null
+        "pares": 37,
+        "con_diferencia": 3,
+        "tasa": 0.0811
       },
       "latencia_ms": {
-        "p50": 3.39,
-        "p95": 8.4
+        "p50": 4.22,
+        "p95": 7.24
       },
       "costo_usd_por_1000": 0.0
     },

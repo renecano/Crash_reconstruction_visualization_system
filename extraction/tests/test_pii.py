@@ -84,3 +84,19 @@ def test_datos_generados_nunca_se_filtran(placa: str, correo: str, tel: str) -> 
     for dato in (placa, correo, tel):
         assert dato not in out
     assert re.findall(r"\[(\w+)\]", out) == ["PLACA", "CORREO", "TELEFONO"]
+
+
+@pytest.mark.parametrize(
+    ("text", "expected"),
+    [
+        ("se llama kevin armendariz y me dio", "se llama [NOMBRE] y me dio"),
+        ("El asegurado, Eleuterio Vargas Ocampo, manifiesta", "El asegurado, [NOMBRE], manifiesta"),
+        ("mi primo jorge iba y jorge traía casco", "mi primo [NOMBRE] iba y [NOMBRE] traía casco"),
+        ("el teléfono 686 214 77 09 y ya", "el teléfono [TELEFONO] y ya"),
+        ("En el cruce con Cuauhtémoc el semáforo", "En el cruce con Cuauhtémoc el semáforo"),
+        ("Bajando de San Cristóbal hacia Tuxtla", "Bajando de San Cristóbal hacia Tuxtla"),
+        ("Iba por Lázaro Cárdenas en León", "Iba por Lázaro Cárdenas en León"),
+    ],
+)  # fmt: skip
+def test_pistas_en_minusculas_correferencia_y_lugares(text: str, expected: str) -> None:
+    assert redact(text).text == expected

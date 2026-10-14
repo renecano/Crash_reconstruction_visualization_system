@@ -54,9 +54,13 @@ class Redaction:
 class _Rules:
     patterns: tuple[tuple[dict[str, Any], re.Pattern[str]], ...]
     cues: re.Pattern[str]
+    strong_cues: frozenset[str]
+    cuts: frozenset[str]
     place_cues: frozenset[str]
     particles: frozenset[str]
     place_links: frozenset[str]
+    place_preps: frozenset[str]
+    place_prefixes: frozenset[str]
 
 
 @cache
@@ -67,10 +71,14 @@ def _rules() -> _Rules:
     particles = frozenset(d["particulas"])
     return _Rules(
         patterns=pats,
-        cues=re.compile(rf"(?<![a-z])(?:{cues})\s+", re.ASCII),
+        cues=re.compile(rf"(?<![a-z])({cues})[\s,]+", re.ASCII),
+        strong_cues=frozenset(d["pistas_fuertes"]),
+        cuts=frozenset(d["cortes_nombre"]),
         place_cues=frozenset(d["pistas_lugar"]),
         particles=particles,
         place_links=particles | frozenset(d["enlaces_lugar"]),
+        place_preps=frozenset(d["preposiciones_lugar"]),
+        place_prefixes=frozenset(d["prefijos_lugar"]),
     )
 
 
@@ -116,9 +124,30 @@ def _name_spans(text: str, folded: str) -> list[tuple[int, int]]:
                 break
         return j
 
-    cue_starts = {
-        m.end() for m in rules.cues.finditer(folded) if text[m.end() : m.end() + 1] in _UPPER
-    }
+    starts = {s: k for k, (s, _, _) in enumerate(words)}
+    cue_starts: set[int] = set()
+    for m in rules.cues.finditer(folded):
+        if text[m.end() : m.end() + 1] in _UPPER:
+            cue_starts.add(m.end())
+            continue
+        k = starts.get(m.end())
+        if k is None:
+            continue
+        if m.group(1) in rules.strong_cues:
+            # "se llama kevin armendariz": hasta tres palabras en minúsculas que no cortan.
+            j = k
+            while (
+                j < len(words)
+                and j - k < 3
+                and fold(words[j][2]) not in rules.cuts
+                and (j == k or text[words[j - 1][1] : words[j][0]].strip() == "")
+            ):
+                j += 1
+            if j > k:
+                spans.append((words[k][0], words[j - 1][1]))
+        elif fold(words[k][2]) in names and fold(words[k][2]) not in ambiguous:
+            # "mi primo jorge": un nombre del diccionario en minúsculas tras una pista.
+            spans.append((words[k][0], words[k][1]))
 
     def after_place_cue(i: int) -> bool:
         """¿La palabra i (o la secuencia que la contiene) sigue a una pista de lugar?"""
@@ -130,6 +159,17 @@ def _name_spans(text: str, folded: str) -> list[tuple[int, int]]:
             while k >= 0 and fold(words[k][2]) in rules.place_links:
                 k -= 1
         return k >= 0 and fold(words[k][2]) in rules.place_cues
+
+    def place_context(i: int) -> bool:
+        """ "por Cuauhtémoc", "en León", "San Luis": la palabra nombra un lugar."""
+        if fold(words[i][2]) in rules.place_prefixes:
+            return True
+        if i == 0:
+            return False
+        prev = fold(words[i - 1][2])
+        return prev in rules.place_preps or (
+            prev in rules.place_prefixes and _is_cap(words[i - 1][2])
+        )
 
     def sentence_start(i: int) -> bool:
         before = text[: words[i][0]].rstrip()
@@ -144,7 +184,7 @@ def _name_spans(text: str, folded: str) -> list[tuple[int, int]]:
         is_name = False
         if s in cue_starts and _is_cap(w):
             is_name = True
-        elif after_place_cue(i):
+        elif after_place_cue(i) or place_context(i):
             is_name = False
         elif _is_cap(w) and (
             (f in names and f not in ambiguous)
@@ -193,7 +233,13 @@ def redact(raw: str) -> Redaction:
             if "digitos" in p and len(re.sub(r"[^0-9]", "", seg)) not in p["digitos"]:
                 continue
             found.append(Span(str(p["tipo"]), s, e, seg))
-    for s, e in _name_spans(text, folded):
+    name_spans = _name_spans(text, folded)
+    # Correferencia: un nombre ya detectado se redacta también donde aparece sin pista.
+    for key in sorted({folded[s:e] for s, e in name_spans}, key=len, reverse=True):
+        for m in re.finditer(rf"(?<![a-z0-9]){re.escape(key)}(?![a-z0-9])", folded):
+            if (m.start(), m.end()) not in name_spans:
+                name_spans.append((m.start(), m.end()))
+    for s, e in name_spans:
         found.append(Span("NOMBRE", s, e, raw[s:e]))
     found.sort(key=lambda sp: (sp.start, -(sp.end - sp.start)))
     chosen: list[Span] = []

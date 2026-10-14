@@ -41,6 +41,8 @@ EDGE_CASES = (
     "el chofer Ramírez dijo que mi esposa Lupita iba de copiloto",
     "No. 12 de la calle 5 de Mayo # 34B depto 2",
     "MI NOMBRE ES JOSÉ LUIS y frené a fondo",
+    "el chavo se llama kevin armendariz; kevin dijo que no vio. Iba por Lázaro Cárdenas en León",
+    "El asegurado, Eleuterio Vargas Ocampo, dejó el 686 214 77 09; en San Luis llovía",
     "",
 )
 
