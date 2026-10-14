@@ -274,6 +274,9 @@ importers:
       '@croquis/croquis-2d':
         specifier: workspace:*
         version: link:../../packages/croquis-2d
+      '@croquis/relato':
+        specifier: workspace:*
+        version: link:../../packages/relato
       '@croquis/scene-schema':
         specifier: workspace:*
         version: link:../../packages/scene-schema

@@ -11,7 +11,8 @@ import {
   type FixtureName,
   type Problema,
 } from "@croquis/scene-schema";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
+import { RELATO_SPEC_KEY } from "@/lib/relato-api";
 import { Legend } from "./legend";
 
 function toJson(spec: EscenaSpec): string {
@@ -39,8 +40,34 @@ export function CroquisEditor({ initial = "alcance" }: { initial?: FixtureName }
   const pick = (n: FixtureName) => {
     setName(n);
     setSelected(undefined);
+    setFromRelato(false);
     applySpec(loadFixture(n));
   };
+
+  // Escena que llega desde la página del relato (`/croquis?fuente=relato`).
+  const [fromRelato, setFromRelato] = useState(false);
+  useEffect(() => {
+    if (new URLSearchParams(window.location.search).get("fuente") !== "relato") return;
+    let raw: string | null = null;
+    try {
+      raw = sessionStorage.getItem(RELATO_SPEC_KEY);
+    } catch {
+      return;
+    }
+    if (!raw) return;
+    let parsed: unknown;
+    try {
+      parsed = JSON.parse(raw);
+    } catch {
+      return;
+    }
+    const result = validateEscena(parsed);
+    if (!result.ok) return;
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- sincroniza con sessionStorage al montar
+    setSpec(result.spec);
+    setJsonText(toJson(result.spec));
+    setFromRelato(true);
+  }, []);
 
   const applyJson = () => {
     let parsed: unknown;
@@ -73,6 +100,14 @@ export function CroquisEditor({ initial = "alcance" }: { initial?: FixtureName }
     <div className="grid gap-6 lg:grid-cols-[minmax(0,3fr)_minmax(0,2fr)]">
       <section aria-label="Croquis editable" className="flex flex-col gap-3">
         <div className="flex flex-wrap items-center gap-3">
+          {fromRelato ? (
+            <span
+              data-testid="escena-relato"
+              className="rounded bg-green-100 px-2 py-1 text-sm text-green-900"
+            >
+              Escena de tu relato
+            </span>
+          ) : null}
           <label className="flex items-center gap-2 text-sm">
             <span>Escena</span>
             <select

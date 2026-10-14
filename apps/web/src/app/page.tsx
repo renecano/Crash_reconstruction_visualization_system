@@ -11,9 +11,12 @@ export default function Page() {
       </p>
       <nav aria-label="Secciones" className="flex flex-wrap gap-3">
         <Link
-          href="/visor"
+          href="/relato"
           className="rounded bg-neutral-900 px-4 py-2 font-medium text-white dark:bg-neutral-100 dark:text-neutral-900"
         >
+          Contar qué pasó
+        </Link>
+        <Link href="/visor" className="rounded border border-neutral-400 px-4 py-2 font-medium">
           Ver las escenas en 3D
         </Link>
         <Link href="/croquis" className="rounded border border-neutral-400 px-4 py-2 font-medium">
