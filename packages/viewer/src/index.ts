@@ -60,3 +60,4 @@ export * from "./person-ragdoll";
 export * from "./people-scene";
 export * from "./rollover-scene";
 export * from "./visibility-overlay";
+export * from "./shadow-frame";

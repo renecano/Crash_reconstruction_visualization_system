@@ -26,6 +26,7 @@ import {
   MeshStandardMaterial,
   PlaneGeometry,
   RingGeometry,
+  Vector3,
 } from "three";
 import { attribute, color, float, mix } from "three/tsl";
 import { MeshStandardNodeMaterial } from "three/webgpu";
@@ -43,6 +44,7 @@ import {
 } from "./ground-marks";
 import { buildRoadGeometry, type Mesh2D } from "./road-geometry";
 import { rollsOver } from "./rollover-scene";
+import { sunShadowFrame, triangleInShadow, type SunShadowFrame } from "./shadow-frame";
 import { phaseAt, samplePerson, sampleVehicle, bracket } from "./sample";
 import {
   buildVehicle,
@@ -54,7 +56,8 @@ import {
 
 export interface SceneGraphOptions {
   quality: QualityProfile;
-  env: Pick<EnvironmentSettings, "night" | "wet" | "groundColor" | "streetLights">;
+  env: Pick<EnvironmentSettings, "night" | "wet" | "groundColor" | "streetLights"> &
+    Partial<Pick<EnvironmentSettings, "lightDirection">>;
 }
 
 export interface VehicleNode {
@@ -225,6 +228,60 @@ export function mesh2DToGeometry(m: Mesh2D, height: number): BufferGeometry {
   return g;
 }
 
+/**
+ * Parte una capa de la vía en la zona que puede recibir sombra (toca el cuadrado de la cámara de
+ * sombra del sol) y la que no. Los triángulos se subdividen por su lado más largo hasta medir a lo
+ * más `maxEdge` para que la separación siga la zona. Fuera de esa zona ninguna sombra puede caer,
+ * así que dibujarla sin muestrear el mapa de sombras da la misma imagen con menos costo (E6).
+ */
+export function splitByShadow(
+  m: Mesh2D,
+  height: number,
+  frame: SunShadowFrame,
+  maxEdge = 10,
+): { near: BufferGeometry | null; far: BufferGeometry | null } {
+  const pt = (i: number): Vector3 =>
+    new Vector3(...toThree(m.positions[2 * i] ?? 0, m.positions[2 * i + 1] ?? 0, height));
+  const stack: [Vector3, Vector3, Vector3][] = [];
+  for (let k = 0; k + 2 < m.indices.length; k += 3) {
+    stack.push([pt(m.indices[k]!), pt(m.indices[k + 1]!), pt(m.indices[k + 2]!)]);
+  }
+  const near: number[] = [];
+  const far: number[] = [];
+  while (stack.length > 0) {
+    const [a, b, c] = stack.pop()!;
+    const ab = a.distanceToSquared(b);
+    const bc = b.distanceToSquared(c);
+    const ca = c.distanceToSquared(a);
+    const longest = Math.max(ab, bc, ca);
+    if (longest > maxEdge * maxEdge) {
+      if (longest === ab) {
+        const mid = a.clone().add(b).multiplyScalar(0.5);
+        stack.push([a, mid, c], [mid, b, c]);
+      } else if (longest === bc) {
+        const mid = b.clone().add(c).multiplyScalar(0.5);
+        stack.push([a, b, mid], [a, mid, c]);
+      } else {
+        const mid = c.clone().add(a).multiplyScalar(0.5);
+        stack.push([a, b, mid], [mid, b, c]);
+      }
+      continue;
+    }
+    const out = triangleInShadow(frame, a, b, c) ? near : far;
+    out.push(a.x, a.y, a.z, b.x, b.y, b.z, c.x, c.y, c.z);
+  }
+  const make = (arr: number[]): BufferGeometry | null => {
+    if (arr.length === 0) return null;
+    const g = new BufferGeometry();
+    g.setAttribute("position", new BufferAttribute(new Float32Array(arr), 3));
+    const nor = new Float32Array(arr.length);
+    for (let i = 1; i < nor.length; i += 3) nor[i] = 1;
+    g.setAttribute("normal", new BufferAttribute(nor, 3));
+    return g;
+  };
+  return { near: make(near), far: make(far) };
+}
+
 /** Hash determinista de una cadena a [0, 1) (FNV-1a), para variar árboles con semilla. */
 /**
  * ¿La pieza proyecta sombra? El renderer está limitado por CPU por objeto (E6), y cada malla en el
@@ -315,12 +372,32 @@ export function buildSceneGraph(
     ["rayas_amarillas", road.yellowLines, mats.yellow, 0.012],
     ["paso_peatonal", road.crosswalks, mats.crosswalk, 0.014],
   ];
+  const frame =
+    opts.quality.shadows && opts.env.lightDirection
+      ? sunShadowFrame(resultado, opts.env.lightDirection)
+      : undefined;
   for (const [name, m2d, mat, h] of layers) {
     if (m2d.indices.length === 0) continue;
-    const mesh = new Mesh(mesh2DToGeometry(m2d, h), mat);
-    mesh.name = name;
-    mesh.receiveShadow = true;
-    roadGroup.add(mesh);
+    if (!frame) {
+      const mesh = new Mesh(mesh2DToGeometry(m2d, h), mat);
+      mesh.name = name;
+      mesh.receiveShadow = true;
+      roadGroup.add(mesh);
+      continue;
+    }
+    const { near, far } = splitByShadow(m2d, h, frame);
+    if (near) {
+      const mesh = new Mesh(near, mat);
+      mesh.name = name;
+      mesh.receiveShadow = true;
+      roadGroup.add(mesh);
+    }
+    if (far) {
+      const mesh = new Mesh(far, mat);
+      mesh.name = `${name}_sin_sombra`;
+      mesh.receiveShadow = false;
+      roadGroup.add(mesh);
+    }
   }
   root.add(roadGroup);
 

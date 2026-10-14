@@ -24,7 +24,6 @@ import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
 import { SkyMesh } from "three/examples/jsm/objects/SkyMesh.js";
 import { CubeRenderTarget } from "three/webgpu";
 import {
-  actionBounds,
   cinematicCamera,
   damageCamera,
   personCamera,
@@ -35,12 +34,12 @@ import {
   type CameraPose,
 } from "../cameras";
 import type { ViewerClock } from "../clock";
-import { toThree } from "../coords";
 import { environmentFor, type EnvironmentSettings } from "../environment";
 import { QUALITY_PROFILES, type QualityLevel } from "../quality";
 import { attachDebris } from "../debris-scene";
 import { attachRollovers } from "../rollover-scene";
 import { buildVisibilityOverlay, eyeHeightFor } from "../visibility-overlay";
+import { sunShadowFrame } from "../shadow-frame";
 import { BODY_BASE_URL, loadBodies } from "../body-assets";
 import { attachPeople, variantsFor, type PeopleAttachment } from "../people-scene";
 import { buildSceneGraph } from "../scene-graph";
@@ -164,31 +163,28 @@ function SceneContent({
   }, [spec, resultado, graph, bodiesBaseUrl, onPeople]);
 
   const { scene, camera: cam, gl } = useThree();
-  const bounds = useMemo(() => actionBounds(resultado), [resultado]);
 
   // Cielo, niebla y luces.
   const lights = useMemo(() => {
     const group = new Object3D();
     const hemi = new HemisphereLight(env.ambientSkyColor, env.groundColor, env.ambientIntensity);
     const sun = new DirectionalLight(env.night ? "#b8c6ff" : "#fff4e0", env.sunIntensity);
-    const [dx, dy, dz] = env.lightDirection;
-    const center = toThree(bounds.cx, bounds.cy, 0);
-    const dist = 120;
-    sun.position.set(center[0] + dx * dist, Math.max(8, dz * dist), center[2] - dy * dist);
-    sun.target.position.set(center[0], 0, center[2]);
+    // Mismo marco que usa el grafo de escena para saber qué parte de la vía recibe sombra.
+    const frame = sunShadowFrame(resultado, env.lightDirection);
+    sun.position.copy(frame.position);
+    sun.target.position.copy(frame.target);
     sun.castShadow = profile.shadows;
-    const extent = Math.max(18, 0.75 * bounds.size);
-    sun.shadow.camera.left = -extent;
-    sun.shadow.camera.right = extent;
-    sun.shadow.camera.top = extent;
-    sun.shadow.camera.bottom = -extent;
+    sun.shadow.camera.left = -frame.extent;
+    sun.shadow.camera.right = frame.extent;
+    sun.shadow.camera.top = frame.extent;
+    sun.shadow.camera.bottom = -frame.extent;
     sun.shadow.camera.near = 1;
     sun.shadow.camera.far = 400;
     sun.shadow.mapSize.set(profile.shadowMapSize, profile.shadowMapSize);
     sun.shadow.bias = -0.0004;
     group.add(hemi, sun, sun.target);
     return group;
-  }, [env, bounds, profile]);
+  }, [env, resultado, profile]);
 
   const sky = useMemo(() => {
     if (env.night) return null;
