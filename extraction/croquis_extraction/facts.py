@@ -122,7 +122,12 @@ def _campo(spec_field: JsonObj | None) -> Fact | None:
         return None
     ev: list[JsonObj] = spec_field.get("evidencia") or []
     cita = ev[0]["texto"] if ev else None
-    return Fact(spec_field["valor"], cita, str(spec_field.get("fuente", "supuesto")))
+    fuente = str(spec_field.get("fuente", "supuesto"))
+    # El constructor precisa lo genérico ("camioneta" → suv_compacta) como supuesto, con su cita:
+    # el relato sí lo dijo (en genérico) y la puntuación acepta la precisión como equivalente.
+    if fuente == "supuesto" and cita and "se precisó" in str(spec_field.get("nota", "")):
+        fuente = "relato"
+    return Fact(spec_field["valor"], cita, fuente)
 
 
 def _kmh(campo: JsonObj) -> float:

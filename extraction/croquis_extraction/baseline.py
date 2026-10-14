@@ -99,6 +99,33 @@ _PASSENGER = re.compile(
 )
 
 
+_REL = (
+    r"esposa|esposo|hijo|hija|hijos|hijas|mama|papa|hermano|hermana|hermanos|amigo|amiga|amigos|"
+    r"novio|novia|suegra|suegro|companero|companera|abuelo|abuela|primo|prima|tio|tia|sobrino|"
+    r"sobrina|nieto|nieta|bebe|nino|nina|ninos"
+)
+# "con mi papá de copiloto", "iba con mi esposa y mis dos hijos": pasajeros de quien narra.
+_PASSENGER_WITH = re.compile(
+    r"(?<![a-z])(?:con|y)\s+(?:mi|mis)\s+(?:(dos|tres|cuatro)\s+)?(?:" + _REL + r")(?![a-z])"
+    r"(?:\s+(?:de copiloto|atras|adelante))?"
+)
+# Quien narra iba de pasajero: "iba de copiloto", "yo de copiloto", "iba en el pesero".
+_NARRATOR_PASSENGER = re.compile(
+    r"(?<![a-z])(?:(?:yo\s+)?(?:iba|venia|ibamos|veniamos)\s+(?:de\s+)?(?:copiloto|parrillera|"
+    r"parrillero|pasajer[oa]|atras)|yo\s+de\s+copiloto|(?:iba|venia)\s+(?:sentad[oa]\s+)?en\s+"
+    r"(?:el|la)\s+(?:pesero|camion|combi|micro|microbus|taxi|autobus|uber|colectivo|ruta))(?![a-z])"
+)
+# Reportes en tercera persona de quien declara: "el asegurado ... circulaba a bordo de su vehículo".
+_DECLARANT = re.compile(
+    r"(?<![a-z])(?:el|la)\s+(?:asegurad[oa]|suscrit[oa]|que suscribe|declarante|reportante)(?![a-z])"
+)
+_DECLARANT_VEH = re.compile(
+    r"(?<![a-z])(?:(?:circulaba|conducia|manejaba|iba)\s+(?:a bordo de\s+|en\s+)?"
+    r"(?:su|el)\s+(?:vehiculo|camioneta|carro|automovil|auto|moto|motocicleta|coche)|"
+    r"vehiculo de su propiedad)(?![a-z])"
+)
+
+
 _COLORS = (
     "blanco|blanca|negro|negra|gris|plata|plateado|plateada|rojo|roja|azul|verde|amarillo|"
     "amarilla|naranja|cafe|vino|dorado|dorada|beige|morado|morada|guinda"
@@ -110,6 +137,56 @@ _HOUR = re.compile(
 )
 
 
+_GENERIC_NOUN = re.compile(
+    r"(?<![a-z])(?:un|una|el|la|ese|esa|otro|otra|este|esta|dicho|dicha)\s+"
+    r"(carro|coche|auto|automovil|vehiculo|carrito|unidad|particular)(?![a-z])"
+)
+_DEFINITE = re.compile(r"(?:^|[^a-z])(?:el|la|ese|esa|este|esta|dicho|dicha|aquel|aquella)\s+$")
+# Clases genéricas y las clases concretas que pueden nombrar ("camioneta" puede ser una Ranger).
+_CARS = frozenset(
+    {"sedan_compacto", "sedan_mediano", "hatchback", "suv_compacta", "suv_grande", "pickup", "van"}
+)
+_GENERIC_CLASSES: dict[str, frozenset[str]] = {
+    "": _CARS | {"suv_o_pickup"},
+    "suv_o_pickup": frozenset({"suv_compacta", "suv_grande", "pickup", "van"}),
+    "camion_o_autobus": frozenset({"autobus", "camion_unitario"}),
+}
+_HIT_ME = re.compile(
+    r"(?<![a-z])(?:me pego|me pegaron|me choco|me chocaron|me dio|me dieron|me impacto|"
+    r"me alcanzo|le pegue|le di|chocamos|me golpeo|me echo|me aviento)(?![a-z])"
+)
+_WITNESS = re.compile(
+    r"(?<![a-z])(?:observe|vi que|vi como|presencie|me toco ver|"
+    r"a mi (?:hermano|hermana|hijo|hija|esposo|esposa|papa|mama|primo|prima|amigo|amiga|tio|tia)"
+    r" (?:lo|la) (?:chocaron|atropellaron|golpearon|aventaron))(?![a-z])"
+)
+
+
+_PART_SIDE = {"f": "F", "b": "B", "l": "L", "r": "R"}
+_PARTS = re.compile(
+    r"(?<![a-z])(?:"
+    r"(?P<f>defensa (?:delantera|de adelante|de enfrente)|parte (?:de adelante|delantera|frontal)|"
+    r"esquina (?:de adelante|delantera)|el frente|su frente|frente de|cofre|parrilla|trompa|"
+    r"faros?|llanta de adelante|llanta delantera)|"
+    r"(?P<b>defensa (?:trasera|de atras)|parte (?:de atras|trasera|posterior)|cajuela|calaveras?|"
+    r"llanta de atras|llanta trasera|medallon)|"
+    r"(?P<l>(?:costado|lado|lateral|parte lateral) izquierd[oa]|puerta del (?:chofer|conductor)|"
+    r"lado del (?:chofer|conductor)|puerta izquierda)|"
+    r"(?P<r>(?:costado|lado|lateral|parte lateral) derech[oa]|puerta del copiloto|"
+    r"lado del copiloto|puerta derecha)"
+    r")(?![a-z])"
+)
+
+
+def _compatible(a: str, b: str) -> bool:
+    """¿Dos clases pueden nombrar al mismo vehículo? (genérica con concreta o iguales)."""
+    return (
+        a == b
+        or b in _GENERIC_CLASSES.get(a, frozenset())
+        or a in _GENERIC_CLASSES.get(b, frozenset())
+    )
+
+
 @dataclass
 class Mention:
     start: int
@@ -117,6 +194,8 @@ class Mention:
     clase: str
     cita: str
     narrator: bool
+    definite: bool = False
+    generic: bool = False
 
 
 def _num(s: str) -> float:
@@ -138,6 +217,14 @@ def _vehicle_mentions(text: str, folded: str, terms: list[Term]) -> list[Mention
             )
     for m in _NARRATOR_VEH.finditer(folded):
         found.append(Mention(m.start(), m.end(), "", text[m.start() : m.end()], True))
+    if _DECLARANT.search(folded):
+        for m in _DECLARANT_VEH.finditer(folded):
+            found.append(Mention(m.start(), m.end(), "", text[m.start() : m.end()], True))
+    for m in _GENERIC_NOUN.finditer(folded):
+        found.append(Mention(m.start(1), m.end(1), "", text[m.start(1) : m.end(1)], False))
+    for x in found:
+        x.definite = bool(_DEFINITE.search(folded[max(0, x.start - 10) : x.start]))
+        x.generic = x.clase in _GENERIC_CLASSES
     found.sort(key=lambda x: (x.start, -(x.end - x.start)))
     out: list[Mention] = []
     for x in found:
@@ -160,19 +247,44 @@ def _vehicle_mentions(text: str, folded: str, terms: list[Term]) -> list[Mention
         wider = folded[max(0, x.start - 30) : x.start]
         if re.search(_OWN_VERB + r"(?:\s+(?:la|el|una|un))?\s+$", wider):
             x.narrator = True
-    # "mi vehículo Nissan Versa" / "Mi carro es un Jetta": la clase pasa al narrador.
+    # "mi vehículo Nissan Versa" / "Mi carro es un Jetta" / "Mi carro, un Fiesta gris": la clase
+    # pasa al narrador. "taxi colectivo", "combi de la ruta", "vehículo tipo pickup": una mención.
     merged: list[Mention] = []
     for x in out:
-        if merged and merged[-1].narrator and not merged[-1].clase and x.clase and not x.narrator:
-            gap = folded[merged[-1].end : x.start]
-            if (
-                len(gap) <= 30
-                and not re.search(r"[.;!?]", gap)
-                and re.fullmatch(r"(?:[\s,]*[a-z]+){0,4}[\s,]*", gap)
-            ):
-                merged[-1].clase, merged[-1].cita = x.clase, x.cita
-                merged[-1].end = x.end
-                continue
+        prev = merged[-1] if merged else None
+        gap = folded[prev.end : x.start] if prev else ""
+        if (
+            prev
+            and prev.narrator
+            and x.clase
+            and not x.narrator
+            and (
+                (
+                    not prev.clase
+                    and len(gap) <= 30
+                    and not re.search(r"[.;!?]", gap)
+                    and re.fullmatch(r"(?:[\s,]*[a-z]+){0,4}[\s,]*", gap)
+                )
+                or (
+                    (prev.generic or not prev.clase)
+                    and re.fullmatch(r"\s*,?\s*(?:(?:es|era)\s+)?(?:un|una)\s+", gap)
+                    and _compatible(prev.clase, x.clase)
+                )
+            )
+        ):
+            prev.clase, prev.cita, prev.generic = x.clase, x.cita, x.generic
+            prev.end = x.end
+            continue
+        if (
+            prev
+            and not x.narrator
+            and re.fullmatch(r"\s+(?:de\s+(?:la\s+|el\s+)?|tipo\s+|marca\s+)?", gap)
+        ):
+            if not prev.clase or (prev.generic and x.clase and not x.generic):
+                prev.clase, prev.generic = x.clase, x.generic
+            prev.cita = text[prev.start : x.end]
+            prev.end = x.end
+            continue
         merged.append(x)
     return merged
 
@@ -206,6 +318,14 @@ def extract_facts(text: str) -> Facts:
             continue
         if narr and narr[0].clase == m.clase and not narr[0].cita.lower().startswith("mi"):
             continue
+        known = narr[:1] + others
+        # "la camioneta" después de "la Ranger", "el carro" después de un Jetta: el mismo vehículo.
+        if (
+            m.definite
+            and (m.generic or not m.clase)
+            and any(o.clase and _compatible(o.clase, m.clase) for o in known)
+        ):
+            continue
         others.append(m)
     # Peatón que narra: "iba cruzando" sin sujeto en tercera persona ("un señor que iba
     # cruzando" es otra persona).
@@ -222,7 +342,11 @@ def extract_facts(text: str) -> Facts:
     vehs: list[Mention] = []
     if narr:
         vehs.append(narr[0])
-    elif first_person and not pedestrian_narrator and (others or _DRIVING.search(folded)):
+    elif (
+        first_person
+        and not pedestrian_narrator
+        and (_DRIVING.search(folded) or (_HIT_ME.search(folded) and not _WITNESS.search(folded)))
+    ):
         # Narra en primera persona sin decir su vehículo ("choqué contra un poste", "iba a 80"):
         # se crea uno sin clase.
         vehs.append(Mention(0, 0, "", "", True))
@@ -354,7 +478,13 @@ def extract_facts(text: str) -> Facts:
     )
     obj = f.escalares.get("evento.objeto")
     impact_word = re.search(
-        r"(?<![a-z])(?:me pego|le pegue|me pegaron|me dio|le di|choque|chocamos|me impacto|impacto|golpe|me golpeo|la golpee|lo golpee|atropelle|lo atropelle|la atropelle|atropello|lo atropello|la atropello|lo arrollo|la arrollo|nos dimos|me rozo|me fui contra|pegue contra|me estrelle)(?![a-z])",
+        r"(?<![a-z])(?:(?:me|le|la|lo|nos|se)\s+(?:\w+\s+)?(?:pego|pegue|pegaron|pegamos|pegaste|dio|di|dieron|"
+        r"impacto|impacte|golpeo|golpee|estampo|estampe|estrello|estrelle|alcanzo|rozo|rayo|choco|"
+        r"chocaron|comi|lleve|arranco|aventaron|avento|echo)|choque|chocamos|chocaron|impactado|"
+        r"impactada|impactando|impactaron|impacto|golpe|golpeado|golpeada|atropelle|atropello|"
+        r"lo arrollo|la arrollo|nos dimos|me fui contra|pegue contra|fuimos a dar contra|"
+        r"fue a dar contra|termine contra|se proyecto contra|un llegue|echo lamina|"
+        r"me la lleve|me lo lleve|me lo comi)(?![a-z])",
         folded,
     )
     if pedestrian is not None and f.vehiculos:
@@ -399,7 +529,18 @@ def extract_facts(text: str) -> Facts:
         )
 
     # Personas: quien narra, pasajeros, peatón narrador, cinturón y casco.
-    if f.narrador_vehiculo is not None:
+    passenger_narr = _NARRATOR_PASSENGER.search(folded)
+    if passenger_narr and f.narrador_vehiculo is None and f.vehiculos:
+        f.personas.insert(
+            0,
+            {
+                "rol": Fact(
+                    "pasajero", text[passenger_narr.start() : passenger_narr.end()], "relato"
+                ),
+                "vehiculo": Fact(0, None, "supuesto"),
+            },
+        )
+    elif f.narrador_vehiculo is not None:
         nv = vehs[f.narrador_vehiculo]
         clase = nv.clase
         rol = (
@@ -409,7 +550,7 @@ def extract_facts(text: str) -> Facts:
             if clase == "bicicleta"
             else "conductor"
         )
-        cue = _FIRST.search(folded)
+        cue = _FIRST.search(folded) or (_DECLARANT_VEH.search(folded) if nv.narrator else None)
         cita = text[cue.start() : cue.end()] if cue else None
         f.personas.insert(
             0,
@@ -422,13 +563,39 @@ def extract_facts(text: str) -> Facts:
         pm = re.search(r"iba cruzando|estaba cruzando|cruzaba la calle|iba caminando", folded)
         assert pm is not None
         f.personas.insert(0, {"rol": Fact("peaton", text[pm.start() : pm.end()], "relato")})
+    passenger_spans: list[tuple[int, int]] = []
     for pm in _PASSENGER.finditer(folded):
+        passenger_spans.append((pm.start(), pm.end()))
         f.personas.append(
             {
                 "rol": Fact("pasajero", text[pm.start() : pm.end()], "relato"),
                 "vehiculo": Fact(f.narrador_vehiculo or 0, None, "supuesto"),
             }
         )
+    if f.narrador_vehiculo is not None and not pedestrian_narrator:
+        for pm in _PASSENGER_WITH.finditer(folded):
+            if any(a < pm.end() and pm.start() < b for a, b in passenger_spans):
+                continue
+            n = {"dos": 2, "tres": 3, "cuatro": 4}.get(pm.group(1) or "", 1)
+            for _ in range(n):
+                f.personas.append(
+                    {
+                        "rol": Fact("pasajero", text[pm.start() : pm.end()], "relato"),
+                        "vehiculo": Fact(f.narrador_vehiculo, None, "supuesto"),
+                    }
+                )
+    # Quien va en la moto o la bici del otro vehículo ("el de la moto", "un chavo en bici").
+    for k, m in enumerate(vehs):
+        if k == f.narrador_vehiculo or not m.cita:
+            continue
+        rider = {"motocicleta": "motociclista", "scooter": "motociclista", "bicicleta": "ciclista"}
+        if m.clase in rider and k < len(f.vehiculos):
+            f.personas.append(
+                {
+                    "rol": Fact(rider[m.clase], m.cita, "relato"),
+                    "vehiculo": Fact(k, None, "supuesto"),
+                }
+            )
     for t in terms:
         for e in t.efectos:
             if e["campo"] in ("persona.cinturon", "persona.casco"):
@@ -499,6 +666,30 @@ def _zones(text: str, folded: str, f: Facts) -> None:
                 put(me, mine, cita)
             if theirs and other is not None:
                 put(other, theirs, cita)
+
+    # Partes del vehículo y de quién son: "me pegó en la cajuela" (quien narra), "con su
+    # costado derecho" (el otro), "le di con la defensa" (quien narra).
+    for m in _PARTS.finditer(folded):
+        side = _PART_SIDE[next(k for k, v in m.groupdict().items() if v)]
+        s0, _ = _sentence_bounds(folded, m.start())
+        window = folded[max(s0, m.start() - 45) : m.start()]
+        cita = text[m.start() : m.end()]
+        if re.search(
+            r"(?<![a-z])(?:su|sus)\s+$|(?<![a-z])(?:le|la|lo)\s+\w+(?:\s+\w+){0,3}\s+(?:en|a|por)\s+(?:la|el|su|sus)?\s*$",
+            window,
+        ):
+            put(other, side, cita)
+        elif re.search(
+            r"(?<![a-z])(?:mi|mis)\s+$|de mi\s+\w+\s+$|(?<![a-z])me\s+\w+(?:\s+\w+){0,4}\s+(?:en|por|de)\s+(?:la|el|mi|mis|las|los)?\s*$",
+            window,
+        ) or (
+            re.search(r"(?<![a-z])con\s+(?:la|el|las|los)\s+$", window)
+            and re.search(
+                r"(?<![a-z])(?:le di|le pegue|pegue|me fui|me estrelle|choque|me lo lleve|me la lleve)(?![a-z])",
+                window,
+            )
+        ):
+            put(me, side, cita)
 
 
 def extract_spec(text: str, spec_id: str = "linea-base") -> dict[str, object]:

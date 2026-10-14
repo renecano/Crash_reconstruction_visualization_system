@@ -1,7 +1,7 @@
 {
   "name": "e1_extraction_dev",
-  "generated_at": "2026-10-14T14:28:56+00:00",
-  "git_commit": "3324610",
+  "generated_at": "2026-10-14T14:38:17+00:00",
+  "git_commit": "f584337",
   "seed": null,
   "descripcion": "E1: extracción del relato en Relatos-MX (línea base de reglas, Claude Haiku y Sonnet desde respuestas grabadas), fuga de PII del redactor y diferencia contrafactual.",
   "split": "dev",
@@ -20,27 +20,27 @@
       "estado": "medido",
       "relatos": 160,
       "sin_respuesta": 0,
-      "f1_micro": 0.6554,
-      "f1_macro": 0.5384,
-      "precision_micro": 0.8094,
-      "exhaustividad_micro": 0.5506,
-      "numero_de_vehiculos_exacto": 0.5875,
+      "f1_micro": 0.7589,
+      "f1_macro": 0.6201,
+      "precision_micro": 0.8356,
+      "exhaustividad_micro": 0.6952,
+      "numero_de_vehiculos_exacto": 0.6813,
       "por_campo": {
         "clase": {
-          "tp": 182,
-          "fp": 59,
-          "fn": 57,
-          "precision": 0.7552,
-          "exhaustividad": 0.7615,
-          "f1": 0.7583
+          "tp": 213,
+          "fp": 45,
+          "fn": 26,
+          "precision": 0.8256,
+          "exhaustividad": 0.8912,
+          "f1": 0.8571
         },
         "color": {
-          "tp": 52,
-          "fp": 20,
-          "fn": 37,
-          "precision": 0.7222,
-          "exhaustividad": 0.5843,
-          "f1": 0.646
+          "tp": 67,
+          "fp": 12,
+          "fn": 22,
+          "precision": 0.8481,
+          "exhaustividad": 0.7528,
+          "f1": 0.7976
         },
         "dispositivos": {
           "tp": 31,
@@ -51,36 +51,36 @@
           "f1": 0.8611
         },
         "entorno.clima": {
-          "tp": 13,
-          "fp": 3,
-          "fn": 16,
-          "precision": 0.8125,
-          "exhaustividad": 0.4483,
-          "f1": 0.5778
+          "tp": 16,
+          "fp": 5,
+          "fn": 13,
+          "precision": 0.7619,
+          "exhaustividad": 0.5517,
+          "f1": 0.64
         },
         "entorno.iluminacion": {
-          "tp": 27,
-          "fp": 9,
-          "fn": 34,
-          "precision": 0.75,
-          "exhaustividad": 0.4426,
-          "f1": 0.5567
+          "tp": 43,
+          "fp": 14,
+          "fn": 18,
+          "precision": 0.7544,
+          "exhaustividad": 0.7049,
+          "f1": 0.7288
         },
         "evento.objeto": {
-          "tp": 7,
-          "fp": 3,
-          "fn": 12,
-          "precision": 0.7,
-          "exhaustividad": 0.3684,
-          "f1": 0.4828
+          "tp": 15,
+          "fp": 8,
+          "fn": 4,
+          "precision": 0.6522,
+          "exhaustividad": 0.7895,
+          "f1": 0.7143
         },
         "evento.tipo": {
-          "tp": 102,
-          "fp": 6,
-          "fn": 58,
+          "tp": 136,
+          "fp": 8,
+          "fn": 24,
           "precision": 0.9444,
-          "exhaustividad": 0.6375,
-          "f1": 0.7612
+          "exhaustividad": 0.85,
+          "f1": 0.8947
         },
         "evidencias.distancia_proyeccion_m": {
           "tp": 2,
@@ -132,72 +132,72 @@
           "f1": 0.6
         },
         "lugar.tipo_via": {
-          "tp": 22,
-          "fp": 33,
-          "fn": 38,
-          "precision": 0.4,
-          "exhaustividad": 0.3667,
-          "f1": 0.3826
+          "tp": 42,
+          "fp": 36,
+          "fn": 18,
+          "precision": 0.5385,
+          "exhaustividad": 0.7,
+          "f1": 0.6087
         },
         "maniobra": {
-          "tp": 40,
-          "fp": 12,
-          "fn": 64,
-          "precision": 0.7692,
-          "exhaustividad": 0.3846,
-          "f1": 0.5128
+          "tp": 71,
+          "fp": 22,
+          "fn": 33,
+          "precision": 0.7634,
+          "exhaustividad": 0.6827,
+          "f1": 0.7208
         },
         "persona.casco": {
-          "tp": 6,
-          "fp": 10,
-          "fn": 23,
-          "precision": 0.375,
-          "exhaustividad": 0.2069,
-          "f1": 0.2667
+          "tp": 11,
+          "fp": 5,
+          "fn": 18,
+          "precision": 0.6875,
+          "exhaustividad": 0.3793,
+          "f1": 0.4889
         },
         "persona.cinturon": {
-          "tp": 7,
-          "fp": 3,
-          "fn": 14,
-          "precision": 0.7,
-          "exhaustividad": 0.3333,
-          "f1": 0.4516
+          "tp": 4,
+          "fp": 1,
+          "fn": 17,
+          "precision": 0.8,
+          "exhaustividad": 0.1905,
+          "f1": 0.3077
         },
         "persona.rol": {
-          "tp": 115,
-          "fp": 0,
-          "fn": 58,
-          "precision": 1.0,
-          "exhaustividad": 0.6647,
-          "f1": 0.7986
+          "tp": 138,
+          "fp": 2,
+          "fn": 35,
+          "precision": 0.9857,
+          "exhaustividad": 0.7977,
+          "f1": 0.8818
         },
         "velocidad_kmh": {
-          "tp": 88,
-          "fp": 12,
-          "fn": 48,
-          "precision": 0.88,
-          "exhaustividad": 0.6471,
-          "f1": 0.7458,
-          "error_absoluto_medio": 1.2637
+          "tp": 83,
+          "fp": 10,
+          "fn": 53,
+          "precision": 0.8925,
+          "exhaustividad": 0.6103,
+          "f1": 0.7249,
+          "error_absoluto_medio": 0.8471
         },
         "zona_impacto": {
-          "tp": 19,
-          "fp": 3,
-          "fn": 119,
-          "precision": 0.8636,
-          "exhaustividad": 0.1377,
-          "f1": 0.2375
+          "tp": 44,
+          "fp": 15,
+          "fn": 94,
+          "precision": 0.7458,
+          "exhaustividad": 0.3188,
+          "f1": 0.4467
         }
       },
       "con_verificador": {
-        "f1_micro": 0.6554,
-        "f1_macro": 0.5384,
-        "precision_micro": 0.8094,
-        "exhaustividad_micro": 0.5506,
-        "numero_de_vehiculos_exacto": 0.5875
+        "f1_micro": 0.7589,
+        "f1_macro": 0.6201,
+        "precision_micro": 0.8356,
+        "exhaustividad_micro": 0.6952,
+        "numero_de_vehiculos_exacto": 0.6813
       },
       "alucinacion_de_campo": {
-        "citas": 975,
+        "citas": 1048,
         "sin_cita_literal": 0,
         "tasa": 0.0,
         "degradados_por_verificador": 0,
@@ -205,12 +205,12 @@
       },
       "contrafactual": {
         "pares": 37,
-        "con_diferencia": 3,
-        "tasa": 0.0811
+        "con_diferencia": 2,
+        "tasa": 0.0541
       },
       "latencia_ms": {
-        "p50": 4.22,
-        "p95": 7.24
+        "p50": 3.73,
+        "p95": 6.42
       },
       "costo_usd_por_1000": 0.0
     },

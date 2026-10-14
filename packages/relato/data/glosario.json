@@ -1,5 +1,5 @@
 {
-  "version": "1.2.0",
+  "version": "1.4.0",
   "descripcion": "Glosario de expresiones del español de México en relatos de percances viales. Cada entrada dice qué significa y a qué campo de EscenaSpec apunta. Los patrones se buscan sobre el texto en minúsculas y sin acentos; las coincidencias conservan su posición en el texto original para citarlas como evidencia. Las entradas ambiguas no fijan un valor: sugieren una pregunta. Ninguna entrada asigna culpa.",
   "entradas": [
     {
@@ -279,7 +279,8 @@
         "di vuelta a la izquierda",
         "doble a la izquierda",
         "gire a la izquierda",
-        "voltee a la izquierda"
+        "voltee a la izquierda",
+        "giro (?:hacia |a )?la izquierda"
       ],
       "significado": "Vuelta a la izquierda.",
       "efectos": [
@@ -296,7 +297,8 @@
         "di vuelta a la derecha",
         "doble a la derecha",
         "gire a la derecha",
-        "voltee a la derecha"
+        "voltee a la derecha",
+        "giro (?:hacia |a )?la derecha"
       ],
       "significado": "Vuelta a la derecha.",
       "efectos": [
@@ -315,7 +317,12 @@
         "me pase al carril",
         "se paso a mi carril",
         "se abrio de mas",
-        "invadio mi carril"
+        "invadio mi carril",
+        "se le cerro",
+        "se le metio",
+        "cerron",
+        "se le atraveso",
+        "se metio a mi carril"
       ],
       "significado": "Cambio de carril o invasión de carril.",
       "efectos": [
@@ -326,6 +333,38 @@
       ],
       "ambiguo": true,
       "pregunta": "¿Hacia qué lado fue el cambio de carril?"
+    },
+    {
+      "id": "cambio_carril_izquierda",
+      "patrones": [
+        "(?:me|se) (?:cambie|cambio|pase|paso|meti|metio) al carril de la izquierda",
+        "(?:me|se) (?:empece|empezo) a pasar al carril de la izquierda",
+        "volante(?:e|o) (?:fuerte |duro )?(?:hacia |a )?la izquierda",
+        "me abri (?:hacia |a )?la izquierda"
+      ],
+      "significado": "Cambio de carril hacia la izquierda.",
+      "efectos": [
+        {
+          "campo": "vehiculo.maniobra",
+          "valor": "cambio_carril_izquierda"
+        }
+      ]
+    },
+    {
+      "id": "cambio_carril_derecha",
+      "patrones": [
+        "(?:me|se) (?:cambie|cambio|pase|paso|meti|metio) al carril de la derecha",
+        "(?:me|se) (?:empece|empezo) a pasar al carril de la derecha",
+        "volante(?:e|o) (?:fuerte |duro )?(?:hacia |a )?la derecha",
+        "me abri (?:hacia |a )?la derecha"
+      ],
+      "significado": "Cambio de carril hacia la derecha.",
+      "efectos": [
+        {
+          "campo": "vehiculo.maniobra",
+          "valor": "cambio_carril_derecha"
+        }
+      ]
     },
     {
       "id": "reversa",
@@ -373,7 +412,17 @@
         "hacia alto",
         "me detuve",
         "frenado en el semaforo",
-        "estaba en el alto"
+        "estaba en el alto",
+        "estaba parad[oa]",
+        "parad[oa] en el (?:rojo|alto|semaforo)",
+        "me encontraba detenid[oa]",
+        "estaba detenid[oa]",
+        "estaba esperando",
+        "me pare",
+        "se detuvo",
+        "se paro de repente",
+        "estaba en la fila",
+        "estaba formad[oa]"
       ],
       "significado": "Vehículo detenido (no estacionado).",
       "efectos": [
@@ -391,7 +440,14 @@
         "incorporandome",
         "al incorporarme",
         "entrando a la autopista",
-        "saliendo de la lateral"
+        "saliendo de la lateral",
+        "incorporarme",
+        "iba entrando",
+        "agarrar la (?:av|avenida|carretera|autopista|lateral)",
+        "sali(?:a|endo)? de(?:l)? (?:estacionamiento|la cochera|mi cochera)",
+        "salio de (?:un|el|la) (?:estacionamiento|parada|cochera)",
+        "se salio de la parada",
+        "entrando a la glorieta"
       ],
       "significado": "Incorporación a una vía.",
       "efectos": [
@@ -1067,7 +1123,18 @@
     },
     {
       "id": "arbol",
-      "patrones": ["arbol", "un arbol", "el arbol", "un pino", "un fresno"],
+      "patrones": [
+        "arbol",
+        "un arbol",
+        "el arbol",
+        "un pino",
+        "un fresno",
+        "palmera",
+        "un sabino",
+        "un eucalipto",
+        "un ahuehuete",
+        "un truenito"
+      ],
       "significado": "Árbol.",
       "efectos": [
         {
@@ -1078,7 +1145,16 @@
     },
     {
       "id": "poste",
-      "patrones": ["poste", "un poste", "poste de luz", "poste de telefono", "arbotante"],
+      "patrones": [
+        "poste",
+        "un poste",
+        "poste de luz",
+        "poste de telefono",
+        "arbotante",
+        "poste de concreto",
+        "luminaria",
+        "semaforo de poste"
+      ],
       "significado": "Poste.",
       "efectos": [
         {
@@ -1095,6 +1171,75 @@
         {
           "campo": "objeto.tipo",
           "valor": "barda"
+        }
+      ]
+    },
+    {
+      "id": "contenedor",
+      "patrones": ["contenedor(?: de basura)?", "bote de basura", "tambo"],
+      "significado": "Contenedor o bote de basura.",
+      "efectos": [
+        {
+          "campo": "objeto.tipo",
+          "valor": "contenedor"
+        }
+      ]
+    },
+    {
+      "id": "parada_autobus",
+      "patrones": ["parabus", "parada del camion", "parada de autobus", "paradero"],
+      "significado": "Parada de autobús o parabús.",
+      "efectos": [
+        {
+          "campo": "objeto.tipo",
+          "valor": "parada_autobus"
+        }
+      ]
+    },
+    {
+      "id": "puesto",
+      "patrones": ["puesto(?: de [a-z]+)?", "un puestito", "carrito de [a-z]+"],
+      "significado": "Puesto ambulante o fijo en la banqueta.",
+      "efectos": [
+        {
+          "campo": "objeto.tipo",
+          "valor": "puesto"
+        }
+      ]
+    },
+    {
+      "id": "vehiculo_estacionado",
+      "patrones": [
+        "(?:carro|coche|auto|vehiculo|camioneta) estacionad[oa]",
+        "vehiculo que se encontraba estacionado"
+      ],
+      "significado": "Vehículo estacionado golpeado.",
+      "efectos": [
+        {
+          "campo": "objeto.tipo",
+          "valor": "vehiculo_estacionado"
+        }
+      ]
+    },
+    {
+      "id": "senal",
+      "patrones": ["senalamiento", "una senal", "el letrero", "un letrero", "espectacular"],
+      "significado": "Señal o letrero vial.",
+      "efectos": [
+        {
+          "campo": "objeto.tipo",
+          "valor": "senal"
+        }
+      ]
+    },
+    {
+      "id": "guarnicion",
+      "patrones": ["guarnicion", "camellon", "banqueta alta", "el borde"],
+      "significado": "Guarnición o camellón (objeto bajo).",
+      "efectos": [
+        {
+          "campo": "objeto.tipo",
+          "valor": "otro"
         }
       ]
     },

@@ -1,6 +1,6 @@
 {
  "version_pii": "1.1.0",
- "version_glosario": "1.2.0",
+ "version_glosario": "1.4.0",
  "plegado": {
   "entrada": " !\"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~ ¡¢£¤¥¦§¨©ª«¬­®¯°±²³´µ¶·¸¹º»¼½¾¿ÀÁÂÃÄÅÆÇÈÉÊËÌÍÎÏÐÑÒÓÔÕÖ×ØÙÚÛÜÝÞßàáâãäåæçèéêëìíîïðñòóôõö÷øùúûüýþÿĀāĂăĄąĆćĈĉĊċČčĎďĐđĒēĔĕĖėĘęĚěĜĝĞğĠġĢģĤĥĦħĨĩĪīĬĭĮįİıĲĳĴĵĶķĸĹĺĻļĽľĿŀŁłŃńŅņŇňŉŊŋŌōŎŏŐőŒœŔŕŖŗŘřŚśŜŝŞşŠšŢţŤťŦŧŨũŪūŬŭŮůŰűŲųŴŵŶŷŸŹźŻżŽžſƀƁƂƃƄƅƆƇƈƉƊƋƌƍƎƏƐƑƒƓƔƕƖƗƘƙƚƛƜƝƞƟƠơƢƣƤƥƦƧƨƩƪƫƬƭƮƯưƱƲƳƴƵƶƷƸƹƺƻƼƽƾƿǀǁǂǃǄǅǆǇǈǉǊǋǌǍǎǏǐǑǒǓǔǕǖǗǘǙǚǛǜǝǞǟǠǡǢǣǤǥǦǧǨǩǪǫǬǭǮǯǰǱǲǳǴǵǶǷǸǹǺǻǼǽǾǿȀȁȂȃȄȅȆȇȈȉȊȋȌȍȎȏȐȑȒȓȔȕȖȗȘșȚțȜȝȞȟȠȡȢȣȤȥȦȧȨȩȪȫȬȭȮȯȰȱȲȳȴȵȶȷȸȹȺȻȼȽȾȿɀɁɂɃɄɅɆɇɈɉɊɋɌɍɎɏḀḁḂḃḄḅḆḇḈḉḊḋḌḍḎḏḐḑḒḓḔḕḖḗḘḙḚḛḜḝḞḟḠḡḢḣḤḥḦḧḨḩḪḫḬḭḮḯḰḱḲḳḴḵḶḷḸḹḺḻḼḽḾḿṀṁṂṃṄṅṆṇṈṉṊṋṌṍṎṏṐṑṒṓṔṕṖṗṘṙṚṛṜṝṞṟṠṡṢṣṤṥṦṧṨṩṪṫṬṭṮṯṰṱṲṳṴṵṶṷṸṹṺṻṼṽṾṿẀẁẂẃẄẅẆẇẈẉẊẋẌẍẎẏẐẑẒẓẔẕẖẗẘẙẚẛẜẝẞẟẠạẢảẤấẦầẨẩẪẫẬậẮắẰằẲẳẴẵẶặẸẹẺẻẼẽẾếỀềỂểỄễỆệỈỉỊịỌọỎỏỐốỒồỔổỖỗỘộỚớỜờỞởỠỡỢợỤụỦủỨứỪừỬửỮữỰựỲỳỴỵỶỷỸỹỺỻỼỽỾỿ           ​‌‍‎‏‐‑‒–—―‖‗‘’‚‛“”„‟†‡•‣․‥…‧  ‪‫‬‭‮ ‰‱′″‴‵‶‷‸‹›※‼‽‾‿⁀⁁⁂⁃⁄⁅⁆⁇⁈⁉⁊⁋⁌⁍⁎⁏⁐⁑⁒⁓⁔⁕⁖⁗⁘⁙⁚⁛⁜⁝⁞ ⁠⁡⁢⁣⁤⁥⁦⁧⁨⁩⁪⁫⁬⁭⁮⁯　",
   "salida": " !\"#$%&'()*+,-./0123456789:;<=>?@abcdefghijklmnopqrstuvwxyz[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~ ¡¢£¤¥¦§¨©ª«¬­®¯°±²³´µ¶·¸¹º»¼½¾¿aaaaaaæceeeeiiiiðnooooo×øuuuuyþßaaaaaaæceeeeiiiiðnooooo÷øuuuuyþyaaaaaaccccccccddđđeeeeeeeeeegggggggghhħħiiiiiiiiiıĳĳjjkkĸllllllŀŀłłnnnnnnŉŋŋooooooœœrrrrrrssssssssttttŧŧuuuuuuuuuuuuwwyyyzzzzzzſƀɓƃƃƅƅɔƈƈɖɗƌƌƍǝəɛƒƒɠɣƕɩɨƙƙƚƛɯɲƞɵooƣƣƥƥʀƨƨʃƪƫƭƭʈuuʊʋƴƴƶƶʒƹƹƺƻƽƽƾƿǀǁǂǃǆǆǆǉǉǉǌǌǌaaiioouuuuuuuuuuǝaaaaææǥǥggkkooooʒʒjǳǳǳggƕƿnnaaææøøaaaaeeeeiiiioooorrrruuuussttȝȝhhƞȡȣȣȥȥaaeeooooooooyyȴȵȶȷȸȹⱥȼȼƚⱦȿɀɂɂƀʉʌɇɇɉɉɋɋɍɍɏɏaabbbbbbccddddddddddeeeeeeeeeeffgghhhhhhhhhhiiiikkkkkkllllllllmmmmmmnnnnnnnnoooooooopppprrrrrrrrssssssssssttttttttuuuuuuuuuuvvvvwwwwwwwwwwxxxxyyzzzzzzhtwyẚſẜẝßẟaaaaaaaaaaaaaaaaaaaaaaaaeeeeeeeeeeeeeeeeiiiioooooooooooooooooooooooouuuuuuuuuuuuuuyyyyyyyyỻỻỽỽỿỿ           ​‌‍‎‏‐‑‒–—―‖‗‘’‚‛“”„‟†‡•‣․‥…‧  ‪‫‬‭‮ ‰‱′″‴‵‶‷‸‹›※‼‽‾‿⁀⁁⁂⁃⁄⁅⁆⁇⁈⁉⁊⁋⁌⁍⁎⁏⁐⁑⁒⁓⁔⁕⁖⁗⁘⁙⁚⁛⁜⁝⁞ ⁠⁡⁢⁣⁤⁥⁦⁧⁨⁩⁪⁫⁬⁭⁮⁯ "
@@ -595,6 +595,11 @@
      55
     ],
     [
+     "cambio_carril_derecha",
+     72,
+     100
+    ],
+    [
      "camioneta",
      105,
      114
@@ -707,6 +712,11 @@
      13
     ],
     [
+     "incorporacion",
+     70,
+     92
+    ],
+    [
      "reversa",
      93,
      103
@@ -727,6 +737,11 @@
      "glorieta",
      6,
      14
+    ],
+    [
+     "incorporacion",
+     24,
+     36
     ],
     [
      "camion_autobus",
@@ -1015,6 +1030,11 @@
    "tramos": [],
    "glosario": [
     [
+     "incorporacion",
+     35,
+     47
+    ],
+    [
      "combi",
      83,
      88
@@ -1040,6 +1060,11 @@
      "camion",
      107,
      113
+    ],
+    [
+     "incorporacion",
+     121,
+     142
     ]
    ]
   },
@@ -1196,9 +1221,19 @@
      87
     ],
     [
+     "cambio_carril",
+     106,
+     120
+    ],
+    [
      "camellon",
      175,
      183
+    ],
+    [
+     "arbol",
+     210,
+     217
     ],
     [
      "velocidad_como_a",
@@ -1216,6 +1251,11 @@
      "por_alcance",
      0,
      21
+    ],
+    [
+     "detenido",
+     42,
+     59
     ]
    ]
   },
@@ -1290,14 +1330,19 @@
    ],
    "glosario": [
     [
-     "estacionamiento",
-     20,
+     "incorporacion",
+     7,
      35
     ],
     [
      "pickup",
      55,
      60
+    ],
+    [
+     "incorporacion",
+     64,
+     77
     ],
     [
      "noche",
@@ -1386,6 +1431,11 @@
    "tramos": [],
    "glosario": [
     [
+     "detenido",
+     0,
+     16
+    ],
+    [
      "vuelta_izquierda",
      26,
      47
@@ -1397,6 +1447,11 @@
    "redaccion": "Estaba esperando para dar vuelta a la izquierda en el bulevar López Mateos, en León, con la direccional puesta, y el de atrás, en una Ecosport, se desesperó, se quiso pasar por mi lado y me arrancó el espejo y me rayó el costado izquierdo. Yo traigo un Polo plata. Ni se paró, se fue.",
    "tramos": [],
    "glosario": [
+    [
+     "detenido",
+     0,
+     16
+    ],
     [
      "vuelta_izquierda",
      26,
@@ -1458,6 +1513,11 @@
      "cinturon",
      375,
      392
+    ],
+    [
+     "puesto",
+     393,
+     399
     ]
    ]
   },
@@ -1543,6 +1603,11 @@
      16
     ],
     [
+     "cambio_carril_izquierda",
+     118,
+     153
+    ],
+    [
      "velocidad_como_a",
      213,
      222
@@ -1558,6 +1623,11 @@
      "combi",
      10,
      16
+    ],
+    [
+     "cambio_carril_izquierda",
+     118,
+     153
     ],
     [
      "velocidad_como_a",
@@ -1669,6 +1739,11 @@
      "banqueta",
      78,
      86
+    ],
+    [
+     "contenedor",
+     103,
+     123
     ],
     [
      "cruce_crucero",
@@ -1877,6 +1952,16 @@
      121
     ],
     [
+     "puesto",
+     155,
+     161
+    ],
+    [
+     "cambio_carril_derecha",
+     182,
+     223
+    ],
+    [
      "moto",
      244,
      248
@@ -1909,6 +1994,11 @@
     ]
    ],
    "glosario": [
+    [
+     "detenido",
+     100,
+     122
+    ],
     [
      "semaforo",
      201,
@@ -2248,8 +2338,18 @@
    "glosario": [
     [
      "incorporacion",
-     4,
+     0,
+     12
+    ],
+    [
+     "autopista",
+     18,
      27
+    ],
+    [
+     "incorporacion",
+     70,
+     82
     ],
     [
      "trailer",
@@ -2287,6 +2387,11 @@
      "combi",
      29,
      47
+    ],
+    [
+     "parada_autobus",
+     262,
+     269
     ],
     [
      "despejado",
@@ -2484,8 +2589,8 @@
      86
     ],
     [
-     "estacionamiento",
-     109,
+     "incorporacion",
+     97,
      124
     ],
     [
@@ -2524,6 +2629,11 @@
      "noche",
      106,
      114
+    ],
+    [
+     "cambio_carril",
+     127,
+     141
     ],
     [
      "camellon",
@@ -2566,6 +2676,11 @@
      "noche",
      102,
      110
+    ],
+    [
+     "cambio_carril",
+     123,
+     137
     ],
     [
      "camellon",
@@ -2616,6 +2731,11 @@
      "combi",
      14,
      20
+    ],
+    [
+     "detenido",
+     47,
+     64
     ]
    ]
   },
@@ -2742,6 +2862,11 @@
      80
     ],
     [
+     "cambio_carril",
+     118,
+     132
+    ],
+    [
      "frene_a_fondo",
      154,
      159
@@ -2764,6 +2889,11 @@
      110
     ],
     [
+     "cambio_carril",
+     134,
+     148
+    ],
+    [
      "frene_a_fondo",
      160,
      165
@@ -2775,6 +2905,11 @@
    "redaccion": "Iba entrando a la glorieta de Bernardo Quintana con mi Kicks y una pickup Ranger gris que venía por dentro quiso salir de golpe hacia la derecha, cruzándose enfrente de mí. Frené, pero la alcancé a tocar en la caja, del lado derecho. Yo iba como a 25. Nada grave, puro raspón, pero ya ves cómo es eso del seguro.",
    "tramos": [],
    "glosario": [
+    [
+     "incorporacion",
+     0,
+     12
+    ],
     [
      "glorieta",
      18,
@@ -2802,6 +2937,11 @@
    "redaccion": "Iba entrando a la glorieta de Bernardo Quintana con mi Kicks y una pickup Tacoma gris que venía por dentro quiso salir de golpe hacia la derecha, cruzándose enfrente de mí. Frené, pero la alcancé a tocar en la caja, del lado derecho. Yo iba como a 25. Nada grave, puro raspón, pero ya ves cómo es eso del seguro.",
    "tramos": [],
    "glosario": [
+    [
+     "incorporacion",
+     0,
+     12
+    ],
     [
      "glorieta",
      18,
@@ -2905,6 +3045,11 @@
    ],
    "glosario": [
     [
+     "detenido",
+     81,
+     103
+    ],
+    [
      "semaforo",
      110,
      118
@@ -2930,6 +3075,11 @@
      "camion",
      174,
      180
+    ],
+    [
+     "cambio_carril_izquierda",
+     209,
+     244
     ],
     [
      "cruce_crucero",
@@ -3088,6 +3238,11 @@
      28
     ],
     [
+     "detenido",
+     123,
+     132
+    ],
+    [
      "de_lado",
      134,
      155
@@ -3113,6 +3268,11 @@
      "cruce_crucero",
      189,
      201
+    ],
+    [
+     "vuelta_izquierda",
+     304,
+     327
     ],
     [
      "velocidad_como_a",
@@ -3150,6 +3310,11 @@
      "camioneta",
      189,
      198
+    ],
+    [
+     "cambio_carril",
+     240,
+     254
     ]
    ]
   },
@@ -3323,6 +3488,11 @@
      260
     ],
     [
+     "detenido",
+     287,
+     296
+    ],
+    [
      "velocidad_como_a",
      440,
      447
@@ -3335,9 +3505,19 @@
    "tramos": [],
    "glosario": [
     [
+     "contenedor",
+     7,
+     17
+    ],
+    [
      "noche",
      28,
      37
+    ],
+    [
+     "contenedor",
+     162,
+     182
     ],
     [
      "frene_a_fondo",
@@ -3389,6 +3569,11 @@
    "tramos": [],
    "glosario": [
     [
+     "detenido",
+     0,
+     16
+    ],
+    [
      "vuelta_izquierda",
      26,
      47
@@ -3420,6 +3605,11 @@
    "redaccion": "Estaba esperando para dar vuelta a la izquierda en la 20 de Noviembre, con la direccional puesta y parado, cuando un taxi, un Aveo de los blanco con verde, no frenó a tiempo y me pegó por atrás. Me empujó tantito hacia el carril de enfrente. El taxista dice que venía como a 30. Mi camioneta es una Ecosport y nada más se le abolló la puerta de atrás.",
    "tramos": [],
    "glosario": [
+    [
+     "detenido",
+     0,
+     16
+    ],
     [
      "vuelta_izquierda",
      26,
@@ -3463,6 +3653,11 @@
      176
     ],
     [
+     "cambio_carril",
+     177,
+     188
+    ],
+    [
      "se_volteo",
      237,
      246
@@ -3485,6 +3680,11 @@
      97
     ],
     [
+     "cambio_carril",
+     142,
+     153
+    ],
+    [
      "velocidad_como_a",
      264,
      273
@@ -3500,6 +3700,11 @@
      "semaforo",
      89,
      97
+    ],
+    [
+     "cambio_carril",
+     142,
+     153
     ],
     [
      "velocidad_como_a",
@@ -3594,6 +3799,11 @@
    "tramos": [],
    "glosario": [
     [
+     "cambio_carril",
+     20,
+     26
+    ],
+    [
      "velocidad_como_a",
      89,
      97
@@ -3619,6 +3829,11 @@
      "banqueta",
      152,
      160
+    ],
+    [
+     "puesto",
+     173,
+     188
     ],
     [
      "velocidad_como_a",
@@ -3648,6 +3863,11 @@
      165
     ],
     [
+     "puesto",
+     178,
+     193
+    ],
+    [
      "velocidad_como_a",
      249,
      258
@@ -3674,6 +3894,11 @@
      "velocidad_como_a",
      57,
      66
+    ],
+    [
+     "cambio_carril",
+     93,
+     99
     ],
     [
      "casco",
@@ -3778,8 +4003,8 @@
      61
     ],
     [
-     "estacionamiento",
-     122,
+     "incorporacion",
+     110,
      137
     ],
     [
@@ -3970,6 +4195,11 @@
     ]
    ],
    "glosario": [
+    [
+     "cambio_carril",
+     84,
+     98
+    ],
     [
      "dio_el_llegue",
      134,
@@ -4335,8 +4565,8 @@
    ],
    "glosario": [
     [
-     "estacionado",
-     412,
+     "vehiculo_estacionado",
+     403,
      423
     ],
     [
@@ -4434,6 +4664,11 @@
      "moto",
      406,
      410
+    ],
+    [
+     "puesto",
+     485,
+     491
     ]
    ]
   },
@@ -4442,6 +4677,11 @@
    "redaccion": "Iba entrando a la carretera a Monterrey desde el bulevar Fundadores en Saltillo, por el carril de incorporación, como a 50, y una Sprinter de las de personal que venía por el carril de la derecha no me dio chance, aceleró y nos rozamos. Me rayó toda la salpicadera y el espejo del lado del copiloto. Mi carro es un Elantra gris. El chofer ni se paró.",
    "tramos": [],
    "glosario": [
+    [
+     "incorporacion",
+     0,
+     12
+    ],
     [
      "carretera",
      18,
@@ -4659,6 +4899,11 @@
    ],
    "glosario": [
     [
+     "detenido",
+     113,
+     120
+    ],
+    [
      "torton",
      133,
      150
@@ -4667,6 +4912,11 @@
      "reversa",
      168,
      175
+    ],
+    [
+     "detenido",
+     210,
+     223
     ]
    ]
   },
@@ -4764,6 +5014,11 @@
      "camioneta",
      299,
      308
+    ],
+    [
+     "detenido",
+     505,
+     514
     ],
     [
      "tope",
@@ -4890,6 +5145,11 @@
    "tramos": [],
    "glosario": [
     [
+     "puesto",
+     17,
+     32
+    ],
+    [
      "noche",
      81,
      86
@@ -4908,6 +5168,11 @@
      "velocidad_como_a",
      232,
      241
+    ],
+    [
+     "puesto",
+     272,
+     278
     ]
    ]
   },
@@ -5318,8 +5583,8 @@
    "tramos": [],
    "glosario": [
     [
-     "camion",
-     34,
+     "parada_autobus",
+     23,
      40
     ],
     [
@@ -5331,6 +5596,11 @@
      "venia_hecho_la_mocha",
      92,
      102
+    ],
+    [
+     "cambio_carril_izquierda",
+     140,
+     175
     ],
     [
      "moto",
@@ -5396,6 +5666,11 @@
      "frene_a_fondo",
      142,
      147
+    ],
+    [
+     "cambio_carril",
+     164,
+     178
     ]
    ]
   },
@@ -5413,6 +5688,11 @@
      "frene_a_fondo",
      137,
      142
+    ],
+    [
+     "cambio_carril",
+     159,
+     173
     ]
    ]
   },
@@ -6051,8 +6331,8 @@
      29
     ],
     [
-     "estacionamiento",
-     84,
+     "incorporacion",
+     72,
      99
     ],
     [
@@ -6260,6 +6540,11 @@
      "motoneta",
      240,
      248
+    ],
+    [
+     "puesto",
+     353,
+     359
     ]
    ]
   },
@@ -6272,6 +6557,11 @@
      "moto",
      4,
      8
+    ],
+    [
+     "detenido",
+     93,
+     102
     ]
    ]
   },
@@ -6281,14 +6571,34 @@
    "tramos": [],
    "glosario": [
     [
+     "puesto",
+     17,
+     33
+    ],
+    [
+     "puesto",
+     45,
+     51
+    ],
+    [
      "cruce_crucero",
      220,
      233
     ],
     [
+     "cambio_carril_derecha",
+     276,
+     297
+    ],
+    [
      "banqueta",
      313,
      321
+    ],
+    [
+     "puesto",
+     346,
+     352
     ]
    ]
   },
@@ -6425,8 +6735,8 @@
    "tramos": [],
    "glosario": [
     [
-     "estacionamiento",
-     103,
+     "incorporacion",
+     91,
      118
     ],
     [
@@ -6447,8 +6757,8 @@
    "tramos": [],
    "glosario": [
     [
-     "estacionamiento",
-     102,
+     "incorporacion",
+     90,
      117
     ],
     [
@@ -6658,6 +6968,11 @@
      159
     ],
     [
+     "arbol",
+     176,
+     183
+    ],
+    [
      "velocidad_como_a",
      248,
      257
@@ -6666,6 +6981,11 @@
      "cinturon",
      259,
      276
+    ],
+    [
+     "puesto",
+     277,
+     283
     ]
    ]
   },
@@ -6695,6 +7015,11 @@
      159
     ],
     [
+     "arbol",
+     176,
+     183
+    ],
+    [
      "velocidad_como_a",
      248,
      257
@@ -6703,6 +7028,11 @@
      "cinturon",
      259,
      276
+    ],
+    [
+     "puesto",
+     277,
+     283
     ]
    ]
   },
@@ -6747,6 +7077,11 @@
    ],
    "glosario": [
     [
+     "detenido",
+     0,
+     16
+    ],
+    [
      "vuelta_izquierda",
      26,
      47
@@ -6774,6 +7109,11 @@
     ]
    ],
    "glosario": [
+    [
+     "detenido",
+     0,
+     16
+    ],
     [
      "vuelta_izquierda",
      26,
@@ -7016,6 +7356,11 @@
    "tramos": [],
    "glosario": [
     [
+     "detenido",
+     0,
+     17
+    ],
+    [
      "semaforo",
      22,
      30
@@ -7042,6 +7387,11 @@
    "redaccion": "Estaba en la fila del semáforo en Bernardo Quintana, ya en rojo, y un señor ya grande que venía en una Frontier no frenó a tiempo y me pegó por atrás. Mi Kicks quedó con la cajuela sumida. Ni iba rápido, yo calculo que a unos 25, pero el piso estaba mojado porque acababa de llover.",
    "tramos": [],
    "glosario": [
+    [
+     "detenido",
+     0,
+     17
+    ],
     [
      "semaforo",
      22,
@@ -7195,6 +7545,11 @@
    ],
    "glosario": [
     [
+     "detenido",
+     76,
+     98
+    ],
+    [
      "semaforo",
      205,
      213
@@ -7217,6 +7572,11 @@
     ]
    ],
    "glosario": [
+    [
+     "detenido",
+     76,
+     98
+    ],
     [
      "semaforo",
      205,
@@ -7495,6 +7855,11 @@
      "camion",
      56,
      62
+    ],
+    [
+     "cambio_carril",
+     70,
+     81
     ]
    ]
   },
@@ -7512,6 +7877,11 @@
      "camion",
      56,
      62
+    ],
+    [
+     "cambio_carril",
+     70,
+     81
     ]
    ]
   },
@@ -7710,6 +8080,11 @@
      21
     ],
     [
+     "puesto",
+     149,
+     155
+    ],
+    [
      "vuelta_derecha",
      180,
      199
@@ -7760,6 +8135,11 @@
      "moto",
      17,
      21
+    ],
+    [
+     "puesto",
+     163,
+     169
     ],
     [
      "vuelta_derecha",
@@ -7873,9 +8253,19 @@
    "tramos": [],
    "glosario": [
     [
+     "cambio_carril",
+     83,
+     97
+    ],
+    [
      "banqueta",
      148,
      156
+    ],
+    [
+     "puesto",
+     171,
+     186
     ],
     [
      "velocidad_como_a",
@@ -7895,9 +8285,19 @@
    "tramos": [],
    "glosario": [
     [
+     "cambio_carril",
+     83,
+     97
+    ],
+    [
      "banqueta",
      148,
      156
+    ],
+    [
+     "puesto",
+     171,
+     186
     ],
     [
      "velocidad_como_a",
@@ -8012,8 +8412,8 @@
    "tramos": [],
    "glosario": [
     [
-     "camion",
-     42,
+     "parada_autobus",
+     31,
      48
     ],
     [
@@ -8054,8 +8454,8 @@
    "tramos": [],
    "glosario": [
     [
-     "camion",
-     42,
+     "parada_autobus",
+     31,
      48
     ],
     [
@@ -8162,6 +8562,11 @@
      44
     ],
     [
+     "detenido",
+     84,
+     97
+    ],
+    [
      "venia_hecho_la_mocha",
      121,
      131
@@ -8182,6 +8587,11 @@
      "alto_total",
      37,
      44
+    ],
+    [
+     "detenido",
+     84,
+     97
     ],
     [
      "venia_hecho_la_mocha",
@@ -8405,8 +8815,8 @@
      85
     ],
     [
-     "camion_autobus",
-     178,
+     "parada_autobus",
+     168,
      185
     ],
     [
@@ -8437,8 +8847,8 @@
      85
     ],
     [
-     "camion_autobus",
-     177,
+     "parada_autobus",
+     167,
      184
     ],
     [
@@ -8697,8 +9107,8 @@
      76
     ],
     [
-     "estacionado",
-     103,
+     "vehiculo_estacionado",
+     97,
      114
     ]
    ]
@@ -8714,8 +9124,8 @@
      76
     ],
     [
-     "estacionado",
-     103,
+     "vehiculo_estacionado",
+     97,
      114
     ]
    ]
@@ -9051,9 +9461,19 @@
      80
     ],
     [
+     "detenido",
+     109,
+     125
+    ],
+    [
      "vuelta_izquierda",
      135,
      156
+    ],
+    [
+     "detenido",
+     235,
+     248
     ],
     [
      "velocidad_como_a",
@@ -9079,9 +9499,19 @@
      80
     ],
     [
+     "detenido",
+     109,
+     125
+    ],
+    [
      "vuelta_izquierda",
      135,
      156
+    ],
+    [
+     "detenido",
+     245,
+     258
     ],
     [
      "velocidad_como_a",
@@ -9126,6 +9556,11 @@
      210
     ],
     [
+     "arbol",
+     225,
+     232
+    ],
+    [
      "velocidad_como_a",
      238,
      247
@@ -9166,6 +9601,11 @@
      "camellon",
      198,
      206
+    ],
+    [
+     "arbol",
+     221,
+     228
     ],
     [
      "velocidad_como_a",
@@ -9297,6 +9737,11 @@
      "estacionado",
      17,
      28
+    ],
+    [
+     "cambio_carril",
+     245,
+     259
     ]
    ]
   },
@@ -9315,6 +9760,11 @@
      "estacionado",
      17,
      28
+    ],
+    [
+     "cambio_carril",
+     246,
+     260
     ]
    ]
   },
@@ -9379,6 +9829,11 @@
    ],
    "glosario": [
     [
+     "vuelta_izquierda",
+     416,
+     439
+    ],
+    [
      "marca_en_el_piso",
      595,
      612
@@ -9401,6 +9856,11 @@
     ]
    ],
    "glosario": [
+    [
+     "vuelta_izquierda",
+     429,
+     452
+    ],
     [
      "marca_en_el_piso",
      608,
@@ -10043,6 +10503,11 @@
      146
     ],
     [
+     "cambio_carril",
+     163,
+     177
+    ],
+    [
      "camion",
      229,
      235
@@ -10063,6 +10528,11 @@
      "frene_a_fondo",
      139,
      144
+    ],
+    [
+     "cambio_carril",
+     161,
+     175
     ],
     [
      "camion",
@@ -10330,6 +10800,11 @@
      273
     ],
     [
+     "senal",
+     284,
+     296
+    ],
+    [
      "acotamiento",
      320,
      331
@@ -10365,6 +10840,11 @@
      "de_frente",
      268,
      277
+    ],
+    [
+     "senal",
+     288,
+     300
     ],
     [
      "acotamiento",
@@ -10534,8 +11014,8 @@
    "tramos": [],
    "glosario": [
     [
-     "estacionamiento",
-     25,
+     "incorporacion",
+     12,
      40
     ],
     [
@@ -10556,8 +11036,8 @@
    "tramos": [],
    "glosario": [
     [
-     "estacionamiento",
-     25,
+     "incorporacion",
+     12,
      40
     ],
     [
@@ -10572,6 +11052,11 @@
    "redaccion": "Comparezco para declarar que el día 10 de octubre, aproximadamente a las 20:00 horas, me encontraba detenido en el semáforo de la intersección del bulevar Belisario Domínguez con la calle 5a. Norte, en Tuxtla Gutiérrez, Chiapas, a bordo de mi automóvil Chevrolet Aveo color rojo. Al cambiar la luz a verde inicié la marcha para dar vuelta a la izquierda, momento en el que una motociclista que circulaba en sentido opuesto a exceso de velocidad impactó la salpicadera delantera derecha de mi vehículo. La motociclista portaba casco y fue trasladada a un hospital para su valoración. La vialidad contaba con alumbrado público.",
    "tramos": [],
    "glosario": [
+    [
+     "detenido",
+     86,
+     108
+    ],
     [
      "semaforo",
      115,
@@ -10614,6 +11099,11 @@
    "redaccion": "Comparezco para declarar que el día 10 de octubre, aproximadamente a las 20:00 horas, me encontraba detenido en el semáforo de la intersección del bulevar Belisario Domínguez con la calle 5a. Norte, en Tuxtla Gutiérrez, Chiapas, a bordo de mi automóvil Chevrolet Aveo color rojo. Al cambiar la luz a verde inicié la marcha para dar vuelta a la izquierda, momento en el que un motociclista que circulaba en sentido opuesto a exceso de velocidad impactó la salpicadera delantera derecha de mi vehículo. El motociclista portaba casco y fue trasladado a un hospital para su valoración. La vialidad contaba con alumbrado público.",
    "tramos": [],
    "glosario": [
+    [
+     "detenido",
+     86,
+     108
+    ],
     [
      "semaforo",
      115,
@@ -10668,6 +11158,11 @@
      89
     ],
     [
+     "detenido",
+     94,
+     107
+    ],
+    [
      "piso_mojado",
      199,
      212
@@ -10689,6 +11184,11 @@
      "semaforo",
      86,
      94
+    ],
+    [
+     "detenido",
+     99,
+     112
     ],
     [
      "piso_mojado",
@@ -10800,6 +11300,11 @@
      "velocidad_como_a",
      70,
      79
+    ],
+    [
+     "cambio_carril",
+     154,
+     174
     ]
    ]
   },
@@ -10812,6 +11317,11 @@
      "velocidad_como_a",
      70,
      79
+    ],
+    [
+     "cambio_carril",
+     153,
+     173
     ]
    ]
   },
@@ -10951,9 +11461,19 @@
    "tramos": [],
    "glosario": [
     [
+     "puesto",
+     34,
+     49
+    ],
+    [
      "cruce_crucero",
      59,
      72
+    ],
+    [
+     "puesto",
+     193,
+     199
     ],
     [
      "vocho",
@@ -10973,9 +11493,19 @@
    "tramos": [],
    "glosario": [
     [
+     "puesto",
+     34,
+     49
+    ],
+    [
      "cruce_crucero",
      59,
      72
+    ],
+    [
+     "puesto",
+     191,
+     197
     ],
     [
      "vocho",
@@ -11063,6 +11593,11 @@
      "moto",
      136,
      147
+    ],
+    [
+     "detenido",
+     334,
+     343
     ]
    ]
   },
@@ -11096,6 +11631,11 @@
      "combi",
      298,
      316
+    ],
+    [
+     "detenido",
+     345,
+     354
     ]
    ]
   },
@@ -11279,8 +11819,8 @@
      76
     ],
     [
-     "estacionamiento",
-     96,
+     "incorporacion",
+     84,
      111
     ],
     [
@@ -11326,8 +11866,8 @@
      83
     ],
     [
-     "estacionamiento",
-     103,
+     "incorporacion",
+     91,
      118
     ],
     [
@@ -11491,6 +12031,11 @@
    ],
    "glosario": [
     [
+     "detenido",
+     0,
+     16
+    ],
+    [
      "vuelta_izquierda",
      37,
      58
@@ -11518,6 +12063,11 @@
     ]
    ],
    "glosario": [
+    [
+     "detenido",
+     0,
+     16
+    ],
     [
      "vuelta_izquierda",
      37,
@@ -11733,6 +12283,11 @@
      129
     ],
     [
+     "cambio_carril",
+     130,
+     141
+    ],
+    [
      "velocidad_como_a",
      228,
      237
@@ -11763,6 +12318,11 @@
      "retorno",
      122,
      129
+    ],
+    [
+     "cambio_carril",
+     130,
+     141
     ],
     [
      "velocidad_como_a",
@@ -11990,6 +12550,11 @@
    "tramos": [],
    "glosario": [
     [
+     "detenido",
+     0,
+     13
+    ],
+    [
      "semaforo",
      20,
      28
@@ -12016,6 +12581,11 @@
    "redaccion": "estaba parada en el semaforo del bulevar felipe angeles en pachuca y el de atras me pego, un taxi. yo traia mi i10 y le hundio toda la cajuela. el taxista dice q se le patino xq estaba mojado de la lluvia de en la mañana pero la verdad biene viendo el celular, yo lo bi por el espejo",
    "tramos": [],
    "glosario": [
+    [
+     "detenido",
+     0,
+     13
+    ],
     [
      "semaforo",
      20,
@@ -12272,6 +12842,11 @@
    "tramos": [],
    "glosario": [
     [
+     "puesto",
+     48,
+     63
+    ],
+    [
      "banqueta",
      76,
      85
@@ -12285,6 +12860,11 @@
      "noche",
      224,
      229
+    ],
+    [
+     "puesto",
+     250,
+     256
     ],
     [
      "velocidad_como_a",
@@ -12299,6 +12879,11 @@
    "tramos": [],
    "glosario": [
     [
+     "puesto",
+     48,
+     63
+    ],
+    [
      "banqueta",
      76,
      85
@@ -12312,6 +12897,11 @@
      "noche",
      224,
      229
+    ],
+    [
+     "puesto",
+     250,
+     256
     ],
     [
      "velocidad_como_a",
@@ -12501,6 +13091,11 @@
      155
     ],
     [
+     "detenido",
+     156,
+     174
+    ],
+    [
      "rozon",
      247,
      254
@@ -12556,6 +13151,11 @@
      "combi",
      149,
      155
+    ],
+    [
+     "detenido",
+     156,
+     174
     ],
     [
      "rozon",
@@ -12725,6 +13325,11 @@
      59
     ],
     [
+     "cambio_carril",
+     117,
+     131
+    ],
+    [
      "frene_a_fondo",
      145,
      161
@@ -12740,6 +13345,11 @@
      "pickup",
      54,
      59
+    ],
+    [
+     "cambio_carril",
+     117,
+     131
     ],
     [
      "frene_a_fondo",
@@ -12759,6 +13369,11 @@
      49
     ],
     [
+     "contenedor",
+     62,
+     82
+    ],
+    [
      "a_vuelta_de_rueda",
      95,
      104
@@ -12774,6 +13389,11 @@
      "reversa",
      39,
      49
+    ],
+    [
+     "contenedor",
+     62,
+     82
     ],
     [
      "a_vuelta_de_rueda",
@@ -13036,8 +13656,8 @@
      124
     ],
     [
-     "estacionamiento",
-     203,
+     "incorporacion",
+     191,
      218
     ],
     [
@@ -13073,8 +13693,8 @@
      124
     ],
     [
-     "estacionamiento",
-     201,
+     "incorporacion",
+     189,
      216
     ],
     [
@@ -13533,6 +14153,11 @@
      68
     ],
     [
+     "cambio_carril",
+     108,
+     122
+    ],
+    [
      "frene_a_fondo",
      170,
      175
@@ -13573,6 +14198,11 @@
      "motoneta",
      76,
      84
+    ],
+    [
+     "cambio_carril",
+     124,
+     138
     ],
     [
      "frene_a_fondo",
@@ -13672,6 +14302,11 @@
    ],
    "glosario": [
     [
+     "detenido",
+     55,
+     77
+    ],
+    [
      "semaforo",
      95,
      103
@@ -13705,6 +14340,11 @@
    ],
    "glosario": [
     [
+     "detenido",
+     55,
+     77
+    ],
+    [
      "semaforo",
      95,
      103
@@ -13737,8 +14377,8 @@
      72
     ],
     [
-     "estacionamiento",
-     85,
+     "incorporacion",
+     73,
      100
     ],
     [
@@ -13774,8 +14414,8 @@
      82
     ],
     [
-     "estacionamiento",
-     95,
+     "incorporacion",
+     83,
      110
     ],
     [
@@ -14138,6 +14778,11 @@
      58
     ],
     [
+     "cambio_carril",
+     85,
+     105
+    ],
+    [
      "seco",
      218,
      227
@@ -14168,6 +14813,11 @@
      "velocidad_como_a",
      49,
      58
+    ],
+    [
+     "cambio_carril",
+     90,
+     110
     ],
     [
      "seco",
@@ -14785,6 +15435,11 @@
      "alto_total",
      45,
      52
+    ],
+    [
+     "detenido",
+     68,
+     81
     ]
    ]
   },
@@ -14797,6 +15452,11 @@
      "alto_total",
      43,
      50
+    ],
+    [
+     "detenido",
+     66,
+     79
     ]
    ]
   },
@@ -14816,8 +15476,8 @@
      91
     ],
     [
-     "estacionado",
-     155,
+     "vehiculo_estacionado",
+     149,
      166
     ],
     [
@@ -14843,8 +15503,8 @@
      91
     ],
     [
-     "estacionado",
-     169,
+     "vehiculo_estacionado",
+     163,
      180
     ],
     [
@@ -15186,8 +15846,8 @@
    "tramos": [],
    "glosario": [
     [
-     "camion",
-     28,
+     "parada_autobus",
+     17,
      34
     ],
     [
@@ -15238,8 +15898,8 @@
    "tramos": [],
    "glosario": [
     [
-     "camion",
-     28,
+     "parada_autobus",
+     17,
      34
     ],
     [
@@ -15298,6 +15958,11 @@
      "trailer",
      24,
      31
+    ],
+    [
+     "detenido",
+     64,
+     78
     ]
    ]
   },
@@ -15315,6 +15980,11 @@
      "torton",
      24,
      30
+    ],
+    [
+     "detenido",
+     63,
+     77
     ]
    ]
   },
@@ -15332,6 +16002,11 @@
      "banqueta",
      179,
      187
+    ],
+    [
+     "puesto",
+     203,
+     219
     ],
     [
      "velocidad_como_a",
@@ -15359,6 +16034,11 @@
      "banqueta",
      179,
      187
+    ],
+    [
+     "puesto",
+     203,
+     219
     ],
     [
      "velocidad_como_a",
@@ -15389,6 +16069,11 @@
      113
     ],
     [
+     "detenido",
+     199,
+     221
+    ],
+    [
      "pickup",
      336,
      342
@@ -15410,6 +16095,11 @@
      "cruce_crucero",
      101,
      113
+    ],
+    [
+     "detenido",
+     199,
+     221
     ],
     [
      "pickup",
@@ -15752,8 +16442,8 @@
    "tramos": [],
    "glosario": [
     [
-     "estacionado",
-     17,
+     "vehiculo_estacionado",
+     11,
      28
     ],
     [
@@ -15782,13 +16472,8 @@
      275
     ],
     [
-     "camioneta",
+     "vehiculo_estacionado",
      320,
-     329
-    ],
-    [
-     "estacionado",
-     330,
      341
     ]
    ]
@@ -15799,8 +16484,8 @@
    "tramos": [],
    "glosario": [
     [
-     "estacionado",
-     17,
+     "vehiculo_estacionado",
+     11,
      28
     ],
     [
@@ -15829,13 +16514,8 @@
      274
     ],
     [
-     "camioneta",
+     "vehiculo_estacionado",
      319,
-     328
-    ],
-    [
-     "estacionado",
-     329,
      340
     ]
    ]
