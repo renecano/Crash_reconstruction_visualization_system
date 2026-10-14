@@ -3,6 +3,7 @@
  * 0006): recta sobre +X, curva con centro en (0, −R) y glorieta con centro en (0, R + W/2)
  * recorrida en sentido antihorario.
  */
+import { str } from "./pymath";
 import { CurvedLanePath, type Path, StraightPath } from "./preimpact";
 
 type Json = Record<string, unknown>;
@@ -24,7 +25,7 @@ export interface RoadAxis {
 function len(campo: unknown, dflt: number): number {
   if (!campo) return dflt;
   const c = campo as Json;
-  return Number(c.valor) * (LEN[String(c.unidad ?? "m")] ?? 1.0);
+  return Number(c.valor) * (LEN[str(c.unidad, "m")] ?? 1.0);
 }
 
 /** `int(x)` de Python para los enteros del contrato. */

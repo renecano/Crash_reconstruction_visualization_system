@@ -34,7 +34,7 @@ export function rigidBarrier(
   if (vImpact < 0) throw new Error("La velocidad de impacto no puede ser negativa");
   const w = opts.damageWidth ?? body.width;
   const energy = 0.5 * body.mass * vImpact ** 2 * (1.0 - restitution ** 2);
-  const profile = profileForEnergy(energy, w, k, TRIANGULAR_SHAPES.uniforme!);
+  const profile = profileForEnergy(energy, w, k, TRIANGULAR_SHAPES.uniforme);
   return {
     deltaV: vImpact * (1.0 + restitution),
     vAfter: vImpact * restitution,
@@ -98,12 +98,12 @@ export function narrowObject(
   }
   const tanA = Math.tan(radians(spreadAngleDeg));
   let width = Math.min(body.width, Math.max(diameterM, 0.3 * body.width));
-  let profile = profileForEnergy(eVehicle, width, k, TRIANGULAR_SHAPES.poste!);
+  let profile = profileForEnergy(eVehicle, width, k, TRIANGULAR_SHAPES.poste);
   for (let i = 0; i < maxIter; i++) {
     const newWidth = Math.min(body.width, diameterM + 2.0 * Math.max(...profile) * tanA);
     if (Math.abs(newWidth - width) < 1e-6) break;
     width = newWidth;
-    profile = profileForEnergy(eVehicle, width, k, TRIANGULAR_SHAPES.poste!);
+    profile = profileForEnergy(eVehicle, width, k, TRIANGULAR_SHAPES.poste);
   }
   // Por debajo del umbral de deformación permanente el perfil es cero (absorción elástica).
   const below = Math.max(...profile) === 0.0 && eVehicle <= crushEnergy(profile, width, k);

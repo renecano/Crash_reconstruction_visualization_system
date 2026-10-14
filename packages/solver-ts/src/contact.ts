@@ -6,7 +6,7 @@
  * cuerpos, se refina con Levenberg-Marquardt.
  */
 import { rot, type Vec } from "./models";
-import { pySum } from "./pymath";
+import { pySum, str } from "./pymath";
 
 const COARSE_SAMPLES = 800;
 const LOCAL_SAMPLES = 40;
@@ -43,8 +43,8 @@ export function contactOffset(
   width: number,
   standoff = 0.0,
 ): Vec {
-  const lado = String(cdc?.lado ?? "F");
-  const zona = String(cdc?.zona_horizontal ?? "D");
+  const lado = str(cdc?.lado, "F");
+  const zona = str(cdc?.zona_horizontal, "D");
   if (lado === "F" || lado === "B" || (lado !== "L" && lado !== "R")) {
     const sign = lado === "B" ? -1.0 : 1.0;
     return [sign * (length / 2 + standoff), (ALONG_FRONT_BACK[zona] ?? 0.0) * width];

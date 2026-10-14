@@ -4,7 +4,7 @@
  * dice se completa con valores por defecto; la variación entre árboles sale de un hash FNV-1a de la
  * semilla y el id, determinista.
  */
-import { pyRound } from "./pymath";
+import { pyRound, str } from "./pymath";
 
 type Json = Record<string, unknown>;
 
@@ -25,7 +25,7 @@ export function hash01(text: string): number {
 function len(field: unknown): number | null {
   if (!field) return null;
   const f = field as Json;
-  return Number(f.valor) * (LEN[String(f.unidad ?? "m")] ?? 1.0);
+  return Number(f.valor) * (LEN[str(f.unidad, "m")] ?? 1.0);
 }
 
 /** `x or dflt` de Python para números opcionales (0 también cae al valor por omisión). */
@@ -170,7 +170,7 @@ export function sceneObjects(spec: Json): SceneObject[] {
         obj(oid, tipo, "cilindro", x, y, rumbo, d, d, orDefault(alto, 8.0), { radio: d / 2 }),
       );
     } else if (tipo === "vehiculo_estacionado") {
-      const clase = String(((o.clase_vehiculo ?? {}) as Json).valor ?? "sedan_compacto");
+      const clase = str(((o.clase_vehiculo ?? {}) as Json).valor, "sedan_compacto");
       const two = TWO_WHEEL.has(clase);
       out.push(
         obj(

@@ -77,3 +77,11 @@ export function isClose(a: number, b: number, relTol = 1e-9, absTol = 0.0): bool
   const diff = Math.abs(b - a);
   return diff <= Math.abs(relTol * b) || diff <= Math.abs(relTol * a) || diff <= absTol;
 }
+
+/** Texto de un campo del contrato (`str(x)` para escalares; el valor por omisión si falta). */
+export function str(x: unknown, dflt = ""): string {
+  if (x === undefined || x === null) return dflt;
+  if (typeof x === "string") return x;
+  if (typeof x === "number" || typeof x === "boolean") return String(x);
+  return JSON.stringify(x);
+}

@@ -12,7 +12,8 @@
     "typecheck": "tsc -p tsconfig.json",
     "test": "vitest run",
     "generate": "tsx scripts/generate-data.ts",
-    "generate:check": "tsx scripts/generate-data.ts --check"
+    "generate:check": "tsx scripts/generate-data.ts --check",
+    "e7": "tsx scripts/e7-parity.ts"
   },
   "devDependencies": {
     "@types/node": "catalog:",
