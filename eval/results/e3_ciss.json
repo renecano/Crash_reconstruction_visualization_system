@@ -1,0 +1,384 @@
+{
+  "name": "e3_ciss",
+  "generated_at": "2026-10-14T19:29:19+00:00",
+  "git_commit": "43d6f16",
+  "seed": 20261014,
+  "descripcion": "E3: ΔV de Croquis desde el daño medido (CRASH3 con rigidez de NHTSA muestreada) y ΔV de WinSMASH, contra el ΔV del EDR, en NHTSA CISS 2017–2024.",
+  "fuente": "data/processed/ciss/e3_vehiculos.csv (uv run croquis-data ciss build)",
+  "metodo": {
+    "muestras_por_caso": 200,
+    "semilla": 20261014,
+    "dano": "perfil C1–C6 medido y Field L de CISS; energía CRASH3 con corrección por PDOF; entre dos vehículos con la energía de ambos y conservación de momento (velocidad común); contra objeto rígido con velocidad de barrera y restitución en [0, 0.2]",
+    "rigidez": "frontal: bootstrap de las pruebas de barrera de NHTSA de la clase (E2); trasera y lateral: respaldo genérico con pendiente en [0.7, 1.4] (supuesto)",
+    "masa": "peso vacío de CISS + 75 kg por ocupante (mínimo 1), ±5 %",
+    "edr": "ΔV máximo resultante (longitudinal y lateral) del evento ligado por CDCEVENT; solo longitudinal en frontales y traseros sin lateral reportado"
+  },
+  "calibracion": {
+    "sigma_log_dv": 0.4981,
+    "cobertura_dev": 0.8001,
+    "anios_dev": [
+      2017,
+      2021
+    ],
+    "semilla": 20261014,
+    "muestras_por_caso": 200
+  },
+  "test": {
+    "anios": [
+      2022,
+      2024
+    ],
+    "filas": 4225,
+    "estimables_por_croquis": 2359,
+    "comparables_con_winsmash": 2205,
+    "croquis_en_todos_los_estimables": {
+      "n": 2359,
+      "error_absoluto_medio_kmh": 11.73,
+      "error_absoluto_mediano_kmh": 8.04,
+      "sesgo_kmh": 3.56,
+      "a_10_kmh": 0.5863
+    },
+    "cobertura_intervalo_p10_p90": 0.8173,
+    "comparacion": {
+      "contacto_objeto_rigido": {
+        "croquis": {
+          "n": 269,
+          "error_absoluto_medio_kmh": 17.22,
+          "error_absoluto_mediano_kmh": 11.66,
+          "sesgo_kmh": 2.13,
+          "a_10_kmh": 0.4275
+        },
+        "winsmash": {
+          "n": 269,
+          "error_absoluto_medio_kmh": 14.33,
+          "error_absoluto_mediano_kmh": 9.29,
+          "sesgo_kmh": -3.14,
+          "a_10_kmh": 0.5242
+        }
+      },
+      "contacto_vehiculo": {
+        "croquis": {
+          "n": 1936,
+          "error_absoluto_medio_kmh": 10.69,
+          "error_absoluto_mediano_kmh": 7.34,
+          "sesgo_kmh": 4.23,
+          "a_10_kmh": 0.6178
+        },
+        "winsmash": {
+          "n": 1936,
+          "error_absoluto_medio_kmh": 7.34,
+          "error_absoluto_mediano_kmh": 5.23,
+          "sesgo_kmh": -3.49,
+          "a_10_kmh": 0.7536
+        }
+      },
+      "edr_0-16_kmh": {
+        "croquis": {
+          "n": 431,
+          "error_absoluto_medio_kmh": 12.51,
+          "error_absoluto_mediano_kmh": 7.34,
+          "sesgo_kmh": 11.37,
+          "a_10_kmh": 0.6102
+        },
+        "winsmash": {
+          "n": 431,
+          "error_absoluto_medio_kmh": 6.73,
+          "error_absoluto_mediano_kmh": 3.29,
+          "sesgo_kmh": 5.26,
+          "a_10_kmh": 0.8329
+        }
+      },
+      "edr_16-32_kmh": {
+        "croquis": {
+          "n": 1089,
+          "error_absoluto_medio_kmh": 8.82,
+          "error_absoluto_mediano_kmh": 6.43,
+          "sesgo_kmh": 4.07,
+          "a_10_kmh": 0.6722
+        },
+        "winsmash": {
+          "n": 1089,
+          "error_absoluto_medio_kmh": 5.75,
+          "error_absoluto_mediano_kmh": 4.68,
+          "sesgo_kmh": -2.32,
+          "a_10_kmh": 0.8421
+        }
+      },
+      "edr_32-48_kmh": {
+        "croquis": {
+          "n": 431,
+          "error_absoluto_medio_kmh": 12.44,
+          "error_absoluto_mediano_kmh": 9.63,
+          "sesgo_kmh": 0.5,
+          "a_10_kmh": 0.5267
+        },
+        "winsmash": {
+          "n": 431,
+          "error_absoluto_medio_kmh": 10.3,
+          "error_absoluto_mediano_kmh": 9.0,
+          "sesgo_kmh": -8.58,
+          "a_10_kmh": 0.5638
+        }
+      },
+      "edr_48+_kmh": {
+        "croquis": {
+          "n": 254,
+          "error_absoluto_medio_kmh": 19.56,
+          "error_absoluto_mediano_kmh": 15.45,
+          "sesgo_kmh": -3.14,
+          "a_10_kmh": 0.3504
+        },
+        "winsmash": {
+          "n": 254,
+          "error_absoluto_medio_kmh": 17.54,
+          "error_absoluto_mediano_kmh": 15.72,
+          "sesgo_kmh": -14.37,
+          "a_10_kmh": 0.3189
+        }
+      },
+      "plano_frontal": {
+        "croquis": {
+          "n": 1455,
+          "error_absoluto_medio_kmh": 10.74,
+          "error_absoluto_mediano_kmh": 7.34,
+          "sesgo_kmh": 1.86,
+          "a_10_kmh": 0.6165
+        },
+        "winsmash": {
+          "n": 1455,
+          "error_absoluto_medio_kmh": 8.65,
+          "error_absoluto_mediano_kmh": 6.02,
+          "sesgo_kmh": -4.4,
+          "a_10_kmh": 0.701
+        }
+      },
+      "plano_lateral": {
+        "croquis": {
+          "n": 494,
+          "error_absoluto_medio_kmh": 11.04,
+          "error_absoluto_mediano_kmh": 8.5,
+          "sesgo_kmh": 6.26,
+          "a_10_kmh": 0.5628
+        },
+        "winsmash": {
+          "n": 494,
+          "error_absoluto_medio_kmh": 7.32,
+          "error_absoluto_mediano_kmh": 5.16,
+          "sesgo_kmh": -3.39,
+          "a_10_kmh": 0.7591
+        }
+      },
+      "plano_trasero": {
+        "croquis": {
+          "n": 256,
+          "error_absoluto_medio_kmh": 16.59,
+          "error_absoluto_mediano_kmh": 9.11,
+          "sesgo_kmh": 11.55,
+          "a_10_kmh": 0.5312
+        },
+        "winsmash": {
+          "n": 256,
+          "error_absoluto_medio_kmh": 7.26,
+          "error_absoluto_mediano_kmh": 5.0,
+          "sesgo_kmh": 1.87,
+          "a_10_kmh": 0.8008
+        }
+      },
+      "todos": {
+        "croquis": {
+          "n": 2205,
+          "error_absoluto_medio_kmh": 11.49,
+          "error_absoluto_mediano_kmh": 7.89,
+          "sesgo_kmh": 3.97,
+          "a_10_kmh": 0.5946
+        },
+        "winsmash": {
+          "n": 2205,
+          "error_absoluto_medio_kmh": 8.19,
+          "error_absoluto_mediano_kmh": 5.7,
+          "sesgo_kmh": -3.45,
+          "a_10_kmh": 0.7256
+        }
+      }
+    }
+  },
+  "dev": {
+    "anios": [
+      2017,
+      2021
+    ],
+    "filas": 4750,
+    "estimables_por_croquis": 2857,
+    "comparables_con_winsmash": 2602,
+    "croquis_en_todos_los_estimables": {
+      "n": 2857,
+      "error_absoluto_medio_kmh": 10.89,
+      "error_absoluto_mediano_kmh": 7.57,
+      "sesgo_kmh": 1.68,
+      "a_10_kmh": 0.6143
+    },
+    "cobertura_intervalo_p10_p90": 0.8001,
+    "comparacion": {
+      "contacto_objeto_rigido": {
+        "croquis": {
+          "n": 315,
+          "error_absoluto_medio_kmh": 16.46,
+          "error_absoluto_mediano_kmh": 10.41,
+          "sesgo_kmh": -0.95,
+          "a_10_kmh": 0.4921
+        },
+        "winsmash": {
+          "n": 315,
+          "error_absoluto_medio_kmh": 13.91,
+          "error_absoluto_mediano_kmh": 10.05,
+          "sesgo_kmh": -5.58,
+          "a_10_kmh": 0.4952
+        }
+      },
+      "contacto_vehiculo": {
+        "croquis": {
+          "n": 2287,
+          "error_absoluto_medio_kmh": 9.68,
+          "error_absoluto_mediano_kmh": 6.95,
+          "sesgo_kmh": 2.4,
+          "a_10_kmh": 0.6467
+        },
+        "winsmash": {
+          "n": 2287,
+          "error_absoluto_medio_kmh": 7.36,
+          "error_absoluto_mediano_kmh": 5.36,
+          "sesgo_kmh": -3.95,
+          "a_10_kmh": 0.7534
+        }
+      },
+      "edr_0-16_kmh": {
+        "croquis": {
+          "n": 672,
+          "error_absoluto_medio_kmh": 9.32,
+          "error_absoluto_mediano_kmh": 5.73,
+          "sesgo_kmh": 7.61,
+          "a_10_kmh": 0.7083
+        },
+        "winsmash": {
+          "n": 672,
+          "error_absoluto_medio_kmh": 5.52,
+          "error_absoluto_mediano_kmh": 3.38,
+          "sesgo_kmh": 3.78,
+          "a_10_kmh": 0.8765
+        }
+      },
+      "edr_16-32_kmh": {
+        "croquis": {
+          "n": 1185,
+          "error_absoluto_medio_kmh": 7.95,
+          "error_absoluto_mediano_kmh": 6.45,
+          "sesgo_kmh": 1.05,
+          "a_10_kmh": 0.7139
+        },
+        "winsmash": {
+          "n": 1185,
+          "error_absoluto_medio_kmh": 5.96,
+          "error_absoluto_mediano_kmh": 5.19,
+          "sesgo_kmh": -3.72,
+          "a_10_kmh": 0.8414
+        }
+      },
+      "edr_32-48_kmh": {
+        "croquis": {
+          "n": 452,
+          "error_absoluto_medio_kmh": 13.29,
+          "error_absoluto_mediano_kmh": 10.81,
+          "sesgo_kmh": 0.06,
+          "a_10_kmh": 0.4668
+        },
+        "winsmash": {
+          "n": 452,
+          "error_absoluto_medio_kmh": 11.58,
+          "error_absoluto_mediano_kmh": 10.62,
+          "sesgo_kmh": -9.9,
+          "a_10_kmh": 0.4624
+        }
+      },
+      "edr_48+_kmh": {
+        "croquis": {
+          "n": 293,
+          "error_absoluto_medio_kmh": 19.2,
+          "error_absoluto_mediano_kmh": 15.48,
+          "sesgo_kmh": -4.02,
+          "a_10_kmh": 0.3447
+        },
+        "winsmash": {
+          "n": 293,
+          "error_absoluto_medio_kmh": 17.75,
+          "error_absoluto_mediano_kmh": 16.23,
+          "sesgo_kmh": -15.15,
+          "a_10_kmh": 0.2867
+        }
+      },
+      "plano_frontal": {
+        "croquis": {
+          "n": 1731,
+          "error_absoluto_medio_kmh": 10.55,
+          "error_absoluto_mediano_kmh": 7.32,
+          "sesgo_kmh": 0.16,
+          "a_10_kmh": 0.617
+        },
+        "winsmash": {
+          "n": 1731,
+          "error_absoluto_medio_kmh": 8.86,
+          "error_absoluto_mediano_kmh": 6.19,
+          "sesgo_kmh": -5.12,
+          "a_10_kmh": 0.6834
+        }
+      },
+      "plano_lateral": {
+        "croquis": {
+          "n": 565,
+          "error_absoluto_medio_kmh": 8.87,
+          "error_absoluto_mediano_kmh": 7.03,
+          "sesgo_kmh": 4.66,
+          "a_10_kmh": 0.6637
+        },
+        "winsmash": {
+          "n": 565,
+          "error_absoluto_medio_kmh": 6.74,
+          "error_absoluto_mediano_kmh": 4.91,
+          "sesgo_kmh": -3.94,
+          "a_10_kmh": 0.7947
+        }
+      },
+      "plano_trasero": {
+        "croquis": {
+          "n": 306,
+          "error_absoluto_medio_kmh": 13.22,
+          "error_absoluto_mediano_kmh": 7.7,
+          "sesgo_kmh": 7.49,
+          "a_10_kmh": 0.6242
+        },
+        "winsmash": {
+          "n": 306,
+          "error_absoluto_medio_kmh": 6.73,
+          "error_absoluto_mediano_kmh": 4.96,
+          "sesgo_kmh": 1.01,
+          "a_10_kmh": 0.8072
+        }
+      },
+      "todos": {
+        "croquis": {
+          "n": 2602,
+          "error_absoluto_medio_kmh": 10.5,
+          "error_absoluto_mediano_kmh": 7.23,
+          "sesgo_kmh": 2.0,
+          "a_10_kmh": 0.628
+        },
+        "winsmash": {
+          "n": 2602,
+          "error_absoluto_medio_kmh": 8.15,
+          "error_absoluto_mediano_kmh": 5.7,
+          "sesgo_kmh": -4.14,
+          "a_10_kmh": 0.7221
+        }
+      }
+    }
+  }
+}
