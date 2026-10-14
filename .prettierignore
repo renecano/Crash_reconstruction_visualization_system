@@ -31,3 +31,4 @@ packages/extraction/fixtures/
 # Respuestas grabadas de Claude (las escribe croquis-extraction claude record)
 packages/extraction/grabaciones/
 packages/extraction/src/generated/
+packages/solver-ts/src/data/

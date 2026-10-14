@@ -10,13 +10,19 @@
   "scripts": {
     "lint": "eslint .",
     "typecheck": "tsc -p tsconfig.json",
-    "test": "vitest run"
+    "test": "vitest run",
+    "generate": "tsx scripts/generate-data.ts",
+    "generate:check": "tsx scripts/generate-data.ts --check"
   },
   "devDependencies": {
     "@types/node": "catalog:",
     "eslint": "catalog:",
     "fast-check": "catalog:",
+    "tsx": "catalog:",
     "typescript": "catalog:",
     "vitest": "catalog:"
+  },
+  "dependencies": {
+    "@croquis/scene-schema": "workspace:*"
   }
 }
