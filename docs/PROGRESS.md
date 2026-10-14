@@ -5,9 +5,9 @@ Reglas de trabajo: `CLAUDE.md`. Especificación: `PLAN.md`.
 
 ## Estado actual
 
-- **Fase actual:** F5 — Personas y visibilidad (cerrando: PR #7 de `feat/f5-personas`).
-- **Siguiente paso concreto:** merge del PR #7 con CI verde (referencias visuales regeneradas en Linux) y arrancar **F6 — Comprensión del relato** (PLAN §5: PII, extracción con Claude, verificador, glosario, preguntas por sensibilidad, Relatos-MX con test congelado, E1). F6 necesita `ANTHROPIC_API_KEY` para grabar respuestas; mientras tanto se avanza con todo lo que no la requiere (PII, reglas, verificador, benchmark, línea base de reglas).
-- **F0** cerrado el 2026-10-10 (PR #1), **F1** el 2026-10-10 (PR #3), **F2** el 2026-10-13 (PR #4), **F3** el 2026-10-13 (PR #5), **F4** el 2026-10-13 (PR #6).
+- **Fase actual:** F6 — Comprensión del relato (rama `feat/f6-relato`).
+- **Siguiente paso concreto:** ver el plan de F6 al final de este archivo; avanzar en el orden indicado. Las corridas reales con Claude esperan `ANTHROPIC_API_KEY` (bloqueado, ver tabla).
+- **F0** cerrado el 2026-10-10 (PR #1), **F1** el 2026-10-10 (PR #3), **F2** el 2026-10-13 (PR #4), **F3** el 2026-10-13 (PR #5), **F4** el 2026-10-13 (PR #6), **F5** el 2026-10-13 (PR #7).
 
 ### Bloqueado — necesita a René
 
@@ -465,3 +465,29 @@ Para probarlo:
 3. Corre las evaluaciones: `uv run croquis-eval e4-pedestrian` y `pnpm --filter @croquis/eval-js ragdoll`.
 
 No necesito nada nuevo de ti para F5. Lo bloqueado sigue en la tabla de arriba.
+
+## F6 — Comprensión del relato
+
+Criterio de aceptación (PLAN §13): E1 publicado con las tres alternativas (reglas, Haiku, Sonnet); fuga de PII medida; contrafactuales medidos.
+
+### Plan (orden de trabajo)
+
+1. **Glosario de español mexicano** versionado (`extraction/glosario.json`): expresión, variantes, significado y campo del contrato que afecta. Lo usan la línea base de reglas y el prompt.
+2. **Redacción de PII local.** Referencia en Python y port TS con paridad, porque corre en el navegador antes de que el texto salga del dispositivo. Cubre nombres (diccionario con fuente), placas mexicanas, teléfonos, correos, CURP/RFC y direcciones con número.
+3. **Relatos-MX.** Formato, herramientas y ≥ 300 relatos con su `EscenaSpec` de referencia, distribuidos como los tipos de ATUS:
+   - **Relatos:** escritos a mano por el agente (marcados como sintéticos), con variaciones de registro (formal, coloquial, faltas de ortografía, desorden temporal) y contrafactuales de sexo, edad y tipo de vehículo.
+   - **Partición y congelamiento:** división dev/test; el test se congela con hash antes de la primera evaluación.
+4. **Línea base de reglas:** del relato redactado a una `EscenaSpec` parcial con evidencia literal.
+5. **Verificador de evidencia:** todo campo con `fuente: relato` debe citar un fragmento literal; si no, baja a `supuesto`. Mide la tasa de alucinación de campo.
+6. **Cliente de Claude:**
+   - **Salida y modelos:** salida estructurada contra el esquema; modelo configurable (`claude-sonnet-5-5` por omisión; comparar con `claude-haiku-5-5`).
+   - **Respuestas grabadas:** grabación y reproducción, que es lo que usa CI.
+   - **Controles:** límite de gasto y medición de costo y latencia.
+7. **Preguntas al usuario:**
+   - **Contradicciones:** las banderas del solver se convierten en preguntas, no en acusaciones.
+   - **Sensibilidad:** el solver muestrea con semilla los campos inciertos y estima cuánto reduce cada respuesta la varianza de la velocidad de impacto y las posiciones finales. Máximo 3 preguntas por ronda.
+8. **E1:** F1 por campo, exactitud de categorías, error en numéricos, alucinación de campo, fuga de PII, cobertura de preguntas útiles, costo por 1 000 relatos, latencia p50/p95 y diferencia contrafactual. La línea base se mide ya; Haiku y Sonnet se graban cuando haya llave.
+9. **Web:** página del relato con redacción en el navegador, extracción (reglas, o Claude si hay llave), preguntas y paso al croquis y al visor.
+
+Riesgos: sin llave no hay columnas de Claude en E1 (queda bloqueado y documentado). Un benchmark escrito por el propio agente puede favorecer a la línea base de reglas: se mitiga con registros y estructuras variadas y declarándolo en las limitaciones.
+
