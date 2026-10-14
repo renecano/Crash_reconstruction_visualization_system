@@ -121,7 +121,14 @@ test.describe("visor 3D", () => {
     await expect(page.getByTestId("hipotesis-diferencias")).toContainText("queda a 6.0 m");
     await page.waitForFunction(() => window.__croquisGhosts === 2);
     expect(sent!.spec.vehiculos[0]!.velocidad_previa?.valor).toBe(70);
-    await page.getByRole("button", { name: "Quitar hipótesis" }).click();
+    // Una segunda hipótesis se suma (otro color) y cada una se quita por separado.
+    await page.getByTestId("hipotesis-velocidad").fill("30");
+    await page.getByTestId("hipotesis-comparar").click();
+    await expect(page.getByTestId("hipotesis-1")).toContainText("A a 30 km/h");
+    await page.waitForFunction(() => window.__croquisGhosts === 4);
+    await page.getByRole("button", { name: "Quitar" }).first().click();
+    await page.waitForFunction(() => window.__croquisGhosts === 2);
+    await page.getByRole("button", { name: "Quitar" }).click();
     await page.waitForFunction(() => window.__croquisGhosts === 0);
   });
 

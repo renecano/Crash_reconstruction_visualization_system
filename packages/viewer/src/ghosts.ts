@@ -19,7 +19,11 @@ import {
 import { toThree } from "./coords";
 import { sampleVehicle } from "./sample";
 
-export const GHOST_COLOR = 0x2b8cff;
+/** Colores de las hipótesis (azul, naranja, violeta): distinguibles con daltonismo común. */
+export const GHOST_COLORS = [0x2b8cff, 0xff8a1f, 0xa05cff] as const;
+export const GHOST_COLOR = GHOST_COLORS[0];
+/** Máximo de hipótesis sobrepuestas a la vez (más se vuelve ilegible). */
+export const MAX_HYPOTHESES = GHOST_COLORS.length;
 export const GHOST_OPACITY = 0.28;
 
 export interface GhostLayer {
@@ -29,7 +33,7 @@ export interface GhostLayer {
 }
 
 /** Capa de fantasmas para los vehículos de `hipotesis` (ids iguales a los de la escena). */
-export function buildGhostLayer(hipotesis: Resultado, color = GHOST_COLOR): GhostLayer {
+export function buildGhostLayer(hipotesis: Resultado, color: number = GHOST_COLOR): GhostLayer {
   const group = new Group();
   group.name = "hipotesis";
   const fill = new MeshBasicMaterial({

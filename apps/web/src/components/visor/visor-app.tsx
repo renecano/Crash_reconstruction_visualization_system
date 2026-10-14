@@ -34,7 +34,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { useCallback, useEffect, useMemo, useState, useSyncExternalStore } from "react";
 import { Legend } from "../legend";
 import type { PeopleAttachment } from "@croquis/viewer";
-import { HypothesisPanel } from "./hypothesis-panel";
+import { HypothesisPanel, type Hipotesis } from "./hypothesis-panel";
 import { PeoplePanel } from "./people-panel";
 import { ResultPanel } from "./result-panel";
 import { TimelineBar } from "./timeline-bar";
@@ -142,8 +142,12 @@ export function VisorApp() {
 
   const r = resultado?.name === params.escena ? resultado.r : null;
   // Hipótesis alternativa de la escena actual (se descarta al cambiar de escena).
-  const [hyp, setHyp] = useState<{ escena: FixtureName; r: Resultado } | null>(null);
-  const hipotesis = hyp?.escena === params.escena ? hyp.r : null;
+  const [hyp, setHyp] = useState<{ escena: FixtureName; lista: Hipotesis[] } | null>(null);
+  const hipotesis = useMemo(
+    () => (hyp?.escena === params.escena ? hyp.lista : []),
+    [hyp, params.escena],
+  );
+  const ghostResults = useMemo(() => hipotesis.map((h) => h.resultado), [hipotesis]);
   const clock = useMemo(() => {
     if (!r) return null;
     return createClock(
@@ -360,7 +364,7 @@ export function VisorApp() {
             renderer={effectiveRenderer}
             onRendererInfo={setInfo}
             onPeople={onPeople}
-            hipotesis={hipotesis ?? undefined}
+            hipotesis={ghostResults}
             onError={() =>
               setError(
                 "Este navegador no pudo iniciar WebGPU ni WebGL 2; el visor 3D no está disponible.",
@@ -395,7 +399,7 @@ export function VisorApp() {
           spec={spec}
           resultado={r}
           hipotesis={hipotesis}
-          onHipotesis={(h) => setHyp(h ? { escena: params.escena, r: h } : null)}
+          onChange={(lista) => setHyp({ escena: params.escena, lista })}
         />
       ) : null}
       {r ? (

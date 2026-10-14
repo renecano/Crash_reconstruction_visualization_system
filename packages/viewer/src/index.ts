@@ -65,6 +65,8 @@ export {
   buildGhostLayer,
   compareHypotheses,
   GHOST_COLOR,
+  GHOST_COLORS,
+  MAX_HYPOTHESES,
   type GhostLayer,
   type VehicleDiff,
 } from "./ghosts";
