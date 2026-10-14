@@ -15,6 +15,7 @@ from pathlib import Path
 from typing import Any
 
 from croquis_scene_schema import RESULTS_DIR, list_fixtures, load_fixture, result_errors
+from croquis_solver.montecarlo import monte_carlo
 from croquis_solver.reconstruct import reconstruct
 
 REL_TOL = 1e-6
@@ -22,7 +23,9 @@ ABS_TOL = 1e-5
 
 
 def render(name: str) -> str:
-    doc = reconstruct(load_fixture(name)).to_dict()
+    spec = load_fixture(name)
+    doc = reconstruct(spec).to_dict()
+    doc["incertidumbre"] = monte_carlo(spec).to_dict()
     errors = result_errors(doc)
     if errors:
         msg = f"El resultado de {name} no cumple resultado.schema.json:\n" + "\n".join(errors[:10])

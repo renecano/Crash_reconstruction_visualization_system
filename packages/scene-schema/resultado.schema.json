@@ -1,8 +1,8 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://croquis.local/schema/resultado/1.2.0",
+  "$id": "https://croquis.local/schema/resultado/1.3.0",
   "title": "Resultado",
-  "description": "Reconstrucción producida por el solver a partir de una EscenaSpec: trayectorias, impulsos, daños, personas (proyección y ocupantes), visibilidad, objetos del entorno, eventos, banderas y parámetros con su fuente. Unidades SI; tiempo con t = 0 en el impacto principal; rumbos en radianes antihorario desde +X (salvo los campos que terminan en _deg).",
+  "description": "Reconstrucción producida por el solver a partir de una EscenaSpec: trayectorias, impulsos, daños, personas (proyección y ocupantes), visibilidad, objetos del entorno, eventos, banderas, parámetros con su fuente e incertidumbre por Monte Carlo (percentiles con semilla). Unidades SI; tiempo con t = 0 en el impacto principal; rumbos en radianes antihorario desde +X (salvo los campos que terminan en _deg).",
   "type": "object",
   "additionalProperties": false,
   "required": [
@@ -22,7 +22,7 @@
   ],
   "properties": {
     "version_resultado": {
-      "const": "1.2.0"
+      "const": "1.3.0"
     },
     "escena_id": {
       "$ref": "#/$defs/Id"
@@ -94,6 +94,9 @@
     },
     "parametros": {
       "$ref": "#/$defs/Parametros"
+    },
+    "incertidumbre": {
+      "$ref": "#/$defs/Incertidumbre"
     }
   },
   "$defs": {
@@ -999,6 +1002,138 @@
               "type": "boolean"
             }
           }
+        }
+      }
+    },
+    "Percentiles": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["p10", "p50", "p90"],
+      "description": "Percentiles 10, 50 y 90 de las muestras.",
+      "properties": {
+        "p10": {
+          "type": "number"
+        },
+        "p50": {
+          "type": "number"
+        },
+        "p90": {
+          "type": "number"
+        }
+      }
+    },
+    "CampoMuestreado": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["ruta", "distribucion", "min", "max", "nota"],
+      "properties": {
+        "ruta": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 120,
+          "description": "Ruta del campo en la EscenaSpec (p. ej. vehiculos.0.velocidad_previa)."
+        },
+        "distribucion": {
+          "type": "string",
+          "enum": ["uniforme"]
+        },
+        "min": {
+          "type": "number"
+        },
+        "max": {
+          "type": "number"
+        },
+        "nota": {
+          "type": "string",
+          "maxLength": 200,
+          "description": "De dónde sale el rango."
+        }
+      }
+    },
+    "IncertidumbreVehiculo": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "v_impacto_kmh",
+        "delta_v_kmh",
+        "reposo_x_m",
+        "reposo_y_m",
+        "distancia_post_m"
+      ],
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/Id"
+        },
+        "v_impacto_kmh": {
+          "$ref": "#/$defs/Percentiles"
+        },
+        "delta_v_kmh": {
+          "$ref": "#/$defs/Percentiles"
+        },
+        "reposo_x_m": {
+          "$ref": "#/$defs/Percentiles"
+        },
+        "reposo_y_m": {
+          "$ref": "#/$defs/Percentiles"
+        },
+        "distancia_post_m": {
+          "$ref": "#/$defs/Percentiles"
+        }
+      }
+    },
+    "IncertidumbrePersona": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "distancia_proyeccion_m"],
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/Id"
+        },
+        "distancia_proyeccion_m": {
+          "$ref": "#/$defs/Percentiles"
+        }
+      }
+    },
+    "Incertidumbre": {
+      "type": "object",
+      "additionalProperties": false,
+      "description": "Monte Carlo sobre los campos inciertos (PLAN §6.1.11): cada campo muestreado con su rango y los percentiles de las salidas principales.",
+      "required": ["semilla", "muestras", "validas", "campos", "vehiculos", "personas"],
+      "properties": {
+        "semilla": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "muestras": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 10000
+        },
+        "validas": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "campos": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/CampoMuestreado"
+          },
+          "maxItems": 64
+        },
+        "vehiculos": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/IncertidumbreVehiculo"
+          },
+          "maxItems": 16
+        },
+        "personas": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/IncertidumbrePersona"
+          },
+          "maxItems": 32
         }
       }
     }
