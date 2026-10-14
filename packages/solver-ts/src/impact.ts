@@ -21,6 +21,12 @@ import {
 } from "./models";
 import { degrees, pyMod } from "./pymath";
 
+/**
+ * Velocidad tangencial relativa que se toma como cero: si la normal sale de la velocidad relativa,
+ * v_t es solo ruido de redondeo y su signo no debe decidir hacia dónde actúa la fricción.
+ */
+export const TANGENTIAL_ZERO_REL = 1e-9;
+
 /** Resultado del impacto. `impulse` actúa sobre B; sobre A actúa `-impulse`. */
 export interface ImpactResult {
   impulse: Vec;
@@ -148,7 +154,8 @@ export function planarImpact(
   const vPB: Vec = stateB !== null ? velocityAt(stateB, point) : [0.0, 0.0];
   const vRel: Vec = [vPB[0] - vPA[0], vPB[1] - vPA[1]];
   const vN = dot(vRel, n);
-  const vT = dot(vRel, t);
+  let vT = dot(vRel, t);
+  if (Math.abs(vT) <= TANGENTIAL_ZERO_REL * Math.abs(vN)) vT = 0.0;
   if (vN >= 0) {
     return {
       impulse: [0.0, 0.0],

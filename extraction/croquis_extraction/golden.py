@@ -12,6 +12,10 @@ Haiku y Sonnet), lo que produce el pipeline de referencia sobre el texto redacta
 la prueba de que el pipeline TS da los mismos resultados que el de Python, y por eso de que E1
 sigue vigente.
 
+`packages/extraction/fixtures/questions.golden.json` guarda la ronda de preguntas de la
+referencia con `sampled=False` (sin las banderas que muestrean, que llegan al TS en F9) para
+las escenas canónicas y una muestra de Relatos-MX.
+
 `croquis-extraction golden check` falla si algún archivo no coincide con lo que produce el código
 actual.
 """
@@ -38,6 +42,9 @@ from croquis_extraction.verify import verify_spec
 GOLDEN = relatos_mx.ROOT / "packages" / "extraction" / "fixtures" / "golden.json"
 PIPELINE = relatos_mx.ROOT / "packages" / "extraction" / "fixtures" / "pipeline.golden.json"
 MODELS = ("claude-haiku-5-5", "claude-sonnet-5-5")
+QUESTIONS = relatos_mx.ROOT / "packages" / "extraction" / "fixtures" / "questions.golden.json"
+# Muestra de specs de Relatos-MX para la paridad de las preguntas (la cobertura completa la da E1).
+QUESTION_SAMPLE = 30
 
 # Bloques donde el plegado debe coincidir carácter por carácter: latín, puntuación general y los
 # espacios Unicode (Python y el motor de JS comparten estos datos de Unicode desde hace años).
@@ -166,6 +173,52 @@ def build_pipeline_text() -> str:
     return json.dumps(payload, ensure_ascii=False, separators=(",", ":")) + "\n"
 
 
+def question_cases() -> list[dict[str, Any]]:
+    """Preguntas de la referencia con `sampled=False` (lo que reproduce hoy el pipeline TS):
+    las 10 escenas canónicas con su relato y una muestra de Relatos-MX (reglas en dev, Sonnet en
+    test) con las 4 muestras por campo que usa E1."""
+    from croquis_extraction import questions
+    from croquis_scene_schema import list_fixtures, load_fixture
+
+    cases: list[dict[str, Any]] = []
+    for name in list_fixtures():
+        spec = load_fixture(name)
+        text = str(spec["meta"].get("relato", "")) or None
+        qs = questions.ask(spec, text, sampled=False)
+        cases.append(
+            {
+                "clave": name,
+                "spec": spec,
+                "texto": text,
+                "muestras": questions.SAMPLES,
+                "preguntas": [q.to_dict() for q in qs],
+            }
+        )
+    for split, method in (("dev", "reglas"), ("test", "claude-sonnet-5-5")):
+        for it in relatos_mx.load_split(split)[:QUESTION_SAMPLE]:
+            c = pipeline_case(method, it["id"], it["texto"])
+            if c is None:
+                continue
+            text = redact(it["texto"]).text
+            spec = {**c["spec"], "meta": {**c["spec"]["meta"], "relato": text}}
+            qs = questions.ask(spec, text, samples=4, sampled=False)
+            cases.append(
+                {
+                    "clave": f"{method}/{it['id']}",
+                    "spec": spec,
+                    "texto": text,
+                    "muestras": 4,
+                    "preguntas": [q.to_dict() for q in qs],
+                }
+            )
+    return cases
+
+
+def build_questions_text() -> str:
+    payload = {"casos": question_cases()}
+    return json.dumps(payload, ensure_ascii=False, separators=(",", ":")) + "\n"
+
+
 def _write_one(path: Path, text: str, check: bool) -> bool:
     if check:
         return path.exists() and path.read_text(encoding="utf-8") == text
@@ -174,7 +227,13 @@ def _write_one(path: Path, text: str, check: bool) -> bool:
     return True
 
 
-def write(check: bool = False, path: Path = GOLDEN, pipeline: Path = PIPELINE) -> bool:
+def write(
+    check: bool = False,
+    path: Path = GOLDEN,
+    pipeline: Path = PIPELINE,
+    questions_path: Path = QUESTIONS,
+) -> bool:
     """Escribe (o verifica) los archivos dorados. Devuelve True si estaban al día."""
     ok = _write_one(path, build_text(), check)
-    return _write_one(pipeline, build_pipeline_text(), check) and ok
+    ok = _write_one(pipeline, build_pipeline_text(), check) and ok
+    return _write_one(questions_path, build_questions_text(), check) and ok

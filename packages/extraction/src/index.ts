@@ -8,3 +8,4 @@ export * from "./spec-builder";
 export * from "./verify";
 export * from "./baseline";
 export * from "./claude-output";
+export * from "./questions";

@@ -312,16 +312,24 @@ def check_consistency(
     seed: int | None = None,
     samples: int = 32,
     inversion: Inversion | None = None,
+    sampled: bool = True,
 ) -> list[Inconsistency]:
     """Todas las banderas de consistencia de la escena, en orden fijo. `inversion` evita repetir
-    la inversión si ya se calculó con la misma semilla."""
+    la inversión si ya se calculó con la misma semilla.
+
+    Con `sampled=False` solo van las banderas que no muestrean (detenido con velocidad, marcas y
+    proyección contra la velocidad): las de daño, reposo y velocidad contra evidencia necesitan
+    Monte Carlo o la inversión, que llegan al solver TS en F9. Es el conjunto que reproduce hoy
+    el pipeline TS y contra el que se prueba su paridad.
+    """
     seed = int(spec["meta"]["semilla"]) if seed is None else seed
+    basic = check_stopped(spec) + check_marks(spec) + check_throw(spec)
+    if not sampled:
+        return basic
     if inversion is None and not evidence_from_spec(spec, seed=seed).empty():
         inversion = invert(spec, seed=seed)
     return (
-        check_stopped(spec)
-        + check_marks(spec)
-        + check_throw(spec)
+        basic
         + check_damage(spec, seed, samples)
         + check_rest(spec, seed)
         + (check_speed_evidence(spec, inversion) if inversion is not None else [])

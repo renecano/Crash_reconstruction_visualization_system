@@ -26,6 +26,7 @@
   "dependencies": {
     "@anthropic-ai/sdk": "catalog:",
     "@croquis/scene-schema": "workspace:*",
+    "@croquis/solver-ts": "workspace:*",
     "@noble/hashes": "catalog:",
     "@upstash/ratelimit": "catalog:",
     "@upstash/redis": "catalog:"

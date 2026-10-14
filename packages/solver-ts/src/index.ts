@@ -18,3 +18,4 @@ export * from "./occupant";
 export * from "./rollover";
 export * from "./visibility";
 export * from "./reconstruct";
+export * from "./consistency";

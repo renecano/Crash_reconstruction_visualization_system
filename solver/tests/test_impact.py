@@ -168,3 +168,31 @@ def test_pdof_hours_envuelve() -> None:
     assert pdof_hours(180) == 6.0
     assert pdof_hours(270) == 9.0
     assert pdof_hours(360) == 0.0
+
+
+def test_normal_por_velocidad_relativa_no_depende_del_ruido() -> None:
+    # Regresión (migración TS): con la normal a lo largo de la velocidad relativa, v_t es ruido de
+    # redondeo (−8.9e−16 aquí, contra v_n = −13 m/s) y su signo no debe meter un impulso
+    # tangencial de μ·J_n en un sentido u otro. Valores de una escena real de Relatos-MX.
+    from croquis_solver.impact import planar_impact
+    from croquis_solver.models import Body2D, State2D
+
+    body = Body2D(1180.0, 2288.964, 4.5, 1.74)
+    sa = State2D(-3.120000000000072, -1.75, 0.0, 6.708333333333333, 0.0, 0.0, 0.0)
+    sb = State2D(
+        1.9441267936463436e-15,
+        -1.7499999999986997,
+        -1.5707963267948966,
+        6.803593328596406e-16,
+        -11.11111111111111,
+        0.0,
+        0.0,
+    )
+    point = (-0.8700000000000332, -1.7499999999993499)
+    normal = (6.708333333333332, 11.11111111111111)
+    base = planar_impact(body, sa, body, sb, point, normal)
+    # Una normal a un bit de distancia invierte el signo del ruido; sin la tolerancia la energía
+    # disipada saltaba de 15 540 J a 27 568 J.
+    other = planar_impact(body, sa, body, sb, point, (6.708333333333331, 11.11111111111111))
+    assert math.isclose(base.energy_loss, other.energy_loss, rel_tol=1e-9)
+    assert math.isclose(base.impulse_tangential, other.impulse_tangential, abs_tol=1e-6)
