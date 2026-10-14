@@ -140,7 +140,7 @@ def download(raw_dir: Path = RAW_DIR, force: bool = False) -> list[Path]:
     return out
 
 
-def _rows(z: zipfile.ZipFile, table: str) -> Iterator[dict[str, str]]:
+def rows(z: zipfile.ZipFile, table: str) -> Iterator[dict[str, str]]:
     names = {n.split("/")[-1].upper(): n for n in z.namelist()}
     with z.open(names[f"{table}.CSV"]) as f:
         reader = csv.reader(io.TextIOWrapper(f, encoding="latin-1", newline=""))
@@ -149,7 +149,7 @@ def _rows(z: zipfile.ZipFile, table: str) -> Iterator[dict[str, str]]:
             yield dict(zip(header, row, strict=False))
 
 
-def _num(raw: str | None) -> float | None:
+def num(raw: str | None) -> float | None:
     try:
         return float(raw) if raw not in (None, "") else None
     except ValueError:
@@ -181,7 +181,7 @@ def clase_ciss(bodytype: int, largo_cm: float | None) -> str | None:
 
 def crush_profile(cdc: dict[str, str]) -> list[float] | None:
     """Perfil medido en cm (C1–C6 válidos, en orden); None si hay menos de dos puntos."""
-    vals = [_num(cdc.get(f"C{i}")) for i in range(1, 7)]
+    vals = [num(cdc.get(f"C{i}")) for i in range(1, 7)]
     good = [v for v in vals if v is not None and 0 <= v <= 250]
     return good if len(good) >= 2 and len(good) in (2, 3, 4, 6) else None
 
@@ -192,10 +192,10 @@ def edr_delta_v(
     """ΔV del EDR para el evento: resultante, longitudinal, lateral y componentes usadas."""
     best: tuple[float, float | None, float | None, str] | None = None
     for r in rows:
-        if _num(r.get("FILEREC")) in INCOMPLETE_FILE:
+        if num(r.get("FILEREC")) in INCOMPLETE_FILE:
             continue  # el EDR no terminó de grabar el evento (FILEREC 0) o el dato no es válido
-        lon = _num(r.get("MAXDVLONG"))
-        lat = _num(r.get("MAXDVLAT"))
+        lon = num(r.get("MAXDVLONG"))
+        lat = num(r.get("MAXDVLAT"))
         lon = lon if lon is not None and abs(lon) <= 150 else None
         lat = lat if lat is not None and abs(lat) <= 150 else None
         if lon is not None and lat is not None:
@@ -214,23 +214,23 @@ def build_year(year: int, raw_dir: Path = RAW_DIR) -> tuple[list[dict[str, Any]]
     z = zipfile.ZipFile(zip_path(year, raw_dir))
     counts: Counter[str] = Counter()
     veh: dict[tuple[str, int], dict[str, Any]] = {}
-    for g in _rows(z, "GV"):
+    for g in rows(z, "GV"):
         key = (g["CASEID"], int(g["VEHNO"]))
         veh[key] = {
-            "bodytype": int(_num(g.get("BODYTYPE")) or 99),
-            "curb_gv": _num(g.get("CURBWT")),
+            "bodytype": int(num(g.get("BODYTYPE")) or 99),
+            "curb_gv": num(g.get("CURBWT")),
             "peso": g.get("CASEWGT", ""),
         }
-    for s in _rows(z, "VEHSPEC"):
+    for s in rows(z, "VEHSPEC"):
         key = (s["CASEID"], int(s["VEHNO"]))
         if key in veh:
             veh[key].update(
-                curb=_num(s.get("CURBWT")), largo=_num(s.get("OAL")), ancho=_num(s.get("MAXWIDTH"))
+                curb=num(s.get("CURBWT")), largo=num(s.get("OAL")), ancho=num(s.get("MAXWIDTH"))
             )
     occ: Counter[tuple[str, int]] = Counter()
-    for o in _rows(z, "OCC"):
+    for o in rows(z, "OCC"):
         occ[(o["CASEID"], int(o["VEHNO"]))] += 1
-    case_no = {c["CASEID"]: c.get("CASENUMBER", "") for c in _rows(z, "CRASH")}
+    case_no = {c["CASEID"]: c.get("CASENUMBER", "") for c in rows(z, "CRASH")}
 
     def vehicle(key: tuple[str, int]) -> dict[str, Any] | None:
         v = veh.get(key)
@@ -254,18 +254,18 @@ def build_year(year: int, raw_dir: Path = RAW_DIR) -> tuple[list[dict[str, Any]]
         }
 
     cdcs: dict[tuple[str, int, int], dict[str, str]] = {}
-    for c in _rows(z, "CDC"):
+    for c in rows(z, "CDC"):
         cdcs[(c["CASEID"], int(c["VEHNO"]), int(c["EVENTNO"]))] = c
     edr: dict[tuple[str, int, int], list[dict[str, str]]] = defaultdict(list)
-    for e in _rows(z, "EDREVENT"):
-        ev = _num(e.get("CDCEVENT"))
+    for e in rows(z, "EDREVENT"):
+        ev = num(e.get("CDCEVENT"))
         if ev is not None and 1 <= ev <= 30:
             edr[(e["CASEID"], int(e["VEHNO"]), int(ev))].append(e)
 
     def damage(c: dict[str, str]) -> tuple[str, float, list[float], float] | None:
         plane = c.get("CDCPLANE", "").strip()
-        pdof = _num(c.get("PDOF"))
-        width = _num(c.get("FIELDL"))
+        pdof = num(c.get("PDOF"))
+        width = num(c.get("FIELDL"))
         prof = crush_profile(c)
         if plane not in PLANES or pdof is None or not 0 <= pdof <= 350:
             return None
@@ -288,14 +288,14 @@ def build_year(year: int, raw_dir: Path = RAW_DIR) -> tuple[list[dict[str, Any]]
         plane, pdof, prof, width = d
         dv = edr_delta_v(records, plane)
         if dv is None:
-            incomplete = all(_num(r.get("FILEREC")) in INCOMPLETE_FILE for r in records)
+            incomplete = all(num(r.get("FILEREC")) in INCOMPLETE_FILE for r in records)
             counts["edr_registro_incompleto" if incomplete else "edr_sin_dv_valido"] += 1
             continue
         v = vehicle((caseid, vehno))
         if v is None:
             counts["vehiculo_fuera_de_clase_o_sin_masa"] += 1
             continue
-        objcont = int(_num(c.get("OBJCONT")) or 0)
+        objcont = int(num(c.get("OBJCONT")) or 0)
         row: dict[str, Any] = {
             "anio": year,
             "caseid": caseid,
@@ -326,13 +326,13 @@ def build_year(year: int, raw_dir: Path = RAW_DIR) -> tuple[list[dict[str, Any]]
         else:
             counts["contacto_no_modelado"] += 1
             continue
-        total = _num(c.get("DVTOTAL"))
-        basis = int(_num(c.get("DVBASIS")) or 0)
+        total = num(c.get("DVTOTAL"))
+        basis = int(num(c.get("DVBASIS")) or 0)
         row["dv_base_winsmash"] = basis
         if total is not None and 1 <= total <= 160 and basis in SMASH_BASIS:
             row["dv_winsmash_kmh"] = total
-            lon = _num(c.get("DVLONG"))
-            lat = _num(c.get("DVLAT"))
+            lon = num(c.get("DVLONG"))
+            lat = num(c.get("DVLAT"))
             row["dv_winsmash_long_kmh"] = lon if lon is not None and abs(lon) <= 160 else None
             row["dv_winsmash_lat_kmh"] = lat if lat is not None and abs(lat) <= 160 else None
         row["dv_edr_kmh"] = round(dv[0], 3)

@@ -1,0 +1,65 @@
+{
+  "anio": 2024,
+  "campos_sin_equivalente": {
+    "entorno.clima": 2,
+    "frenado": 57,
+    "lugar.superficie": 1,
+    "lugar.tipo_via": 43,
+    "maniobra": 54,
+    "velocidad_kmh": 22
+  },
+  "casos": 5290,
+  "cuota_por_tipo": {
+    "animal": 3,
+    "ciclista": 10,
+    "moto": 10,
+    "objeto": 22,
+    "peaton": 13,
+    "volcadura": 12,
+    "vv": 80
+  },
+  "descartados": {
+    "choque entre vehículos con más de dos": 573,
+    "clase de vehículo sin equivalente": 85,
+    "más de una persona fuera de vehículo": 16,
+    "objeto fijo sin equivalente": 731,
+    "objeto: nieve o hielo (no se adapta a México)": 3,
+    "persona fuera de vehículo sin equivalente": 27,
+    "primer evento sin equivalente": 70,
+    "un solo evento con objeto pero varios vehículos": 68,
+    "volcadura: nieve o hielo (no se adapta a México)": 4,
+    "vv: nieve o hielo (no se adapta a México)": 3
+  },
+  "elegibles_por_tipo": {
+    "animal": 247,
+    "ciclista": 106,
+    "moto": 15,
+    "objeto": 557,
+    "peaton": 175,
+    "volcadura": 104,
+    "vv": 2516
+  },
+  "fichas_por_tipo": {
+    "animal": 3,
+    "ciclista": 10,
+    "moto": 10,
+    "objeto": 22,
+    "peaton": 13,
+    "volcadura": 12,
+    "vv": 80
+  },
+  "probabilidad_de_mencion": {
+    "clase_otro": 0.8,
+    "dispositivos": 0.7,
+    "entorno.clima": 0.5,
+    "entorno.iluminacion": 0.6,
+    "frenado": 0.6,
+    "lugar.estado_superficie": 0.5,
+    "lugar.superficie": 0.25,
+    "lugar.tipo_via": 0.7,
+    "maniobra": 0.9,
+    "velocidad_kmh": 0.85,
+    "zonas": 0.7
+  },
+  "semilla": 20261014
+}
