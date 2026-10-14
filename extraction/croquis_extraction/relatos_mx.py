@@ -24,11 +24,10 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
 
-from croquis_scene_schema import schema_errors
-from croquis_scene_schema.check import check_escena, errores_de
-
 from croquis_extraction.facts import facts_from_annotation
 from croquis_extraction.spec_builder import build_spec
+from croquis_scene_schema import schema_errors
+from croquis_scene_schema.check import check_escena, errores_de
 
 ROOT = Path(__file__).resolve().parents[2]
 DATA = ROOT / "data" / "relatos-mx"
@@ -190,7 +189,7 @@ def write(check: bool = False) -> list[str]:
     return stale
 
 
-def test_hash(text: str | None = None) -> str:
+def split_hash(text: str | None = None) -> str:
     if text is None:
         text = (BUILD / "test.jsonl").read_text(encoding="utf-8")
     return hashlib.sha256(text.encode("utf-8")).hexdigest()
@@ -201,7 +200,7 @@ def freeze() -> str:
     if LOCK.exists():
         msg = "El test ya está congelado; no se vuelve a congelar (PLAN §5.2)."
         raise RuntimeError(msg)
-    h = test_hash()
+    h = split_hash()
     LOCK.write_text(
         json.dumps({"sha256": h, "archivo": "build/test.jsonl"}, indent=2) + "\n",
         encoding="utf-8",

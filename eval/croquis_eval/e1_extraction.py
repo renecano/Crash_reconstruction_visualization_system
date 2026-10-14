@@ -19,6 +19,7 @@ from collections import Counter
 from pathlib import Path
 from typing import Any
 
+from croquis_eval.results import write_result
 from croquis_extraction import baseline, relatos_mx
 from croquis_extraction.evaluate import (
     Score,
@@ -30,8 +31,6 @@ from croquis_extraction.evaluate import (
 from croquis_extraction.facts import facts_from_annotation, facts_from_spec
 from croquis_extraction.pii import redact
 from croquis_extraction.verify import verify_spec
-
-from croquis_eval.results import write_result
 
 RECORDINGS = Path(__file__).resolve().parents[2] / "extraction" / "grabaciones"
 MODELS = ("claude-haiku-5-5", "claude-sonnet-5-5")
@@ -168,12 +167,13 @@ def main(split: str = "test") -> str:
     if split == "test" and relatos_mx.frozen_hash() is None:
         msg = "El test no está congelado: congélalo antes de la primera evaluación (PLAN §5.2)."
         raise RuntimeError(msg)
-    if split == "test" and relatos_mx.frozen_hash() != relatos_mx.test_hash():
+    if split == "test" and relatos_mx.frozen_hash() != relatos_mx.split_hash():
         msg = "build/test.jsonl no coincide con test.lock."
         raise RuntimeError(msg)
     payload = {
-        "descripcion": "E1: extracción del relato en Relatos-MX (línea base de reglas, Claude Haiku "
-        "y Sonnet desde respuestas grabadas), fuga de PII del redactor y diferencia contrafactual.",
+        "descripcion": "E1: extracción del relato en Relatos-MX (línea base de reglas, Claude "
+        "Haiku y Sonnet desde respuestas grabadas), fuga de PII del redactor y diferencia "
+        "contrafactual.",
         **evaluate(split),
     }
     name = "e1_extraction" if split == "test" else f"e1_extraction_{split}"

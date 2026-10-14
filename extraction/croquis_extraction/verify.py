@@ -58,7 +58,7 @@ def verify_spec(spec: JsonObj, text: str) -> tuple[JsonObj, VerifyStats]:
             d: JsonObj = o  # pyright: ignore[reportUnknownVariableType]
             if d.get("fuente") == "relato":
                 revisados += 1
-                ev = d.get("evidencia") or []
+                ev: list[JsonObj] = d.get("evidencia") or []
                 fixed_ev, fixed = _fix_evidence(ev, text) if ev else (None, False)
                 if fixed_ev is None:
                     degradados += 1

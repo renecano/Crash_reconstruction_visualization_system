@@ -133,7 +133,7 @@ class Redaction:
     spans: tuple[Span, ...]
 
     def counts(self) -> dict[str, int]:
-        out = dict.fromkeys(MARKERS, 0)
+        out: dict[str, int] = dict.fromkeys(MARKERS, 0)
         for s in self.spans:
             out[s.kind] += 1
         return out
@@ -205,16 +205,15 @@ def _name_spans(text: str) -> list[tuple[int, int]]:
             is_name = True
         elif after_place_cue(i):
             is_name = False
-        elif _is_cap(w) and f in names and f not in ambiguous:
-            is_name = True
-        elif _is_cap(w) and f in ambiguous and not sentence_start(i):
-            is_name = True
-        elif (
-            _is_cap(w)
-            and f in names
-            and adjacent
-            and _is_cap(nxt)
-            and (fold(nxt) in names or surname_like(nxt))
+        elif _is_cap(w) and (
+            (f in names and f not in ambiguous)
+            or (f in ambiguous and not sentence_start(i))
+            or (
+                f in names
+                and adjacent
+                and _is_cap(nxt)
+                and (fold(nxt) in names or surname_like(nxt))
+            )
         ):
             is_name = True
         elif (
@@ -248,9 +247,9 @@ def redact(text: str) -> Redaction:
             else:
                 s, e = m.start(), m.end()
             seg = text[s:e]
-            if kind == "PLACA" and not (re.search(r"\d", seg) and re.search(r"[A-Za-z]", seg)):
-                if m.lastindex is None:
-                    continue
+            mixed = re.search(r"\d", seg) and re.search(r"[A-Za-z]", seg)
+            if kind == "PLACA" and not mixed and m.lastindex is None:
+                continue
             if kind == "TELEFONO" and len(re.sub(r"\D", "", seg)) not in (10, 12):
                 continue
             found.append(Span(kind, s, e, seg))

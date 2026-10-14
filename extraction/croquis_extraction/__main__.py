@@ -37,7 +37,7 @@ def main(argv: list[str] | None = None) -> int:
             print("Desactualizados: " + ", ".join(stale), file=sys.stderr)
             return 1
         frozen = relatos_mx.frozen_hash()
-        if frozen is not None and frozen != relatos_mx.test_hash():
+        if frozen is not None and frozen != relatos_mx.split_hash():
             print("El test congelado cambió (test.lock no coincide).", file=sys.stderr)
             return 1
         print("Relatos-MX al día" + (" y test congelado intacto." if frozen else "."))

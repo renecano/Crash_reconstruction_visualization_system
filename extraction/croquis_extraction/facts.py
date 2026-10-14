@@ -120,7 +120,7 @@ def facts_from_annotation(h: JsonObj) -> Facts:
 def _campo(spec_field: JsonObj | None) -> Fact | None:
     if not spec_field or "valor" not in spec_field:
         return None
-    ev = spec_field.get("evidencia") or []
+    ev: list[JsonObj] = spec_field.get("evidencia") or []
     cita = ev[0]["texto"] if ev else None
     return Fact(spec_field["valor"], cita, str(spec_field.get("fuente", "supuesto")))
 
@@ -139,7 +139,7 @@ def _m(campo: JsonObj) -> float:
 
 def _proc_fact(valor: Any, proc: JsonObj | None) -> Fact:
     proc = proc or {}
-    ev = proc.get("evidencia") or []
+    ev: list[JsonObj] = proc.get("evidencia") or []
     return Fact(valor, ev[0]["texto"] if ev else None, str(proc.get("fuente", "supuesto")))
 
 
@@ -156,8 +156,9 @@ def facts_from_spec(spec: JsonObj) -> Facts:
         c = _campo(entorno.get(key))
         if c:
             f.escalares[f"entorno.{key}"] = c
-    for d in lugar.get("dispositivos", []):
-        f.dispositivos.append(_proc_fact(d["tipo"], d.get("procedencia")))
+    for disp in lugar.get("dispositivos", []):
+        disp_obj: JsonObj = disp
+        f.dispositivos.append(_proc_fact(disp_obj["tipo"], disp_obj.get("procedencia")))
     ids = [v["id"] for v in spec.get("vehiculos", [])]
     for v in spec.get("vehiculos", []):
         d: dict[str, Fact] = {}
@@ -171,11 +172,12 @@ def facts_from_spec(spec: JsonObj) -> Facts:
             if c:
                 c.valor = _kmh(vp)
                 d["velocidad_kmh"] = c
-        fr = (v.get("frenado") or {}).get("aplico")
-        c = _campo(fr)
+        frenado: JsonObj = v.get("frenado") or {}
+        c = _campo(frenado.get("aplico"))
         if c:
             d["frenado"] = c
-        c = _campo((v.get("color") or {}).get("nombre"))
+        color: JsonObj = v.get("color") or {}
+        c = _campo(color.get("nombre"))
         if c:
             d["color"] = c
         f.vehiculos.append(d)
@@ -191,8 +193,9 @@ def facts_from_spec(spec: JsonObj) -> Facts:
                 d[key] = c
         if p.get("vehiculo_id") in ids:
             d["vehiculo"] = Fact(ids.index(p["vehiculo_id"]), None, "supuesto")
-            if (p.get("rol") or {}).get("valor") == "conductor" and (
-                (p.get("rol") or {}).get("nota") == "narrador" or f.narrador_vehiculo is None
+            rol_obj: JsonObj = p.get("rol") or {}
+            if rol_obj.get("valor") == "conductor" and (
+                rol_obj.get("nota") == "narrador" or f.narrador_vehiculo is None
             ):
                 f.narrador_vehiculo = ids.index(p["vehiculo_id"])
         f.personas.append(d)

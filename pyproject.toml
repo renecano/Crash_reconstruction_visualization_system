@@ -57,6 +57,8 @@ ignore = ["RUF001", "RUF002", "RUF003"]
 "**/scripts/**" = ["T20"]
 "**/__main__.py" = ["T20"]
 "**/generated.py" = ["E501", "N815", "UP"]
+# Tablas de expresiones regulares en español: partirlas las vuelve ilegibles.
+"extraction/croquis_extraction/baseline.py" = ["E501"]
 
 [tool.ruff.lint.isort]
 known-first-party = ["croquis_scene_schema", "croquis_solver", "croquis_api", "croquis_extraction", "croquis_data", "croquis_eval", "croquis_assets"]

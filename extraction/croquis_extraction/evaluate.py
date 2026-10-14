@@ -10,6 +10,7 @@ precisiones.
 
 from __future__ import annotations
 
+import contextlib
 import math
 import statistics
 from collections import Counter
@@ -63,19 +64,18 @@ class Score:
     def add(self, key: str, ref: Fact | None, pred: Fact | None) -> None:
         rs, ps = _stated(ref), _stated(pred)
         if rs and ps:
-            assert ref is not None and pred is not None
+            assert ref is not None
+            assert pred is not None
             if values_match(key, ref.valor, pred.valor):
                 self.tp[key] += 1
             else:
                 self.fp[key] += 1
                 self.fn[key] += 1
             if key in NUMERIC:
-                try:
+                with contextlib.suppress(TypeError, ValueError):
                     self.abs_err.setdefault(key, []).append(
                         abs(float(ref.valor) - float(pred.valor))
                     )
-                except TypeError, ValueError:
-                    pass
         elif rs:
             self.fn[key] += 1
         elif ps:
@@ -106,7 +106,7 @@ class Score:
                 "exhaustividad": _r(r),
                 "f1": _r(f1),
             }
-            if k in self.abs_err and self.abs_err[k]:
+            if self.abs_err.get(k):
                 entry["error_absoluto_medio"] = _r(statistics.fmean(self.abs_err[k]))
             per[k] = entry
         tp = sum(self.tp.values())
@@ -226,7 +226,7 @@ def hallucinated_fields(spec: dict[str, Any], text: str) -> tuple[int, int]:
             d: dict[str, Any] = o  # pyright: ignore[reportUnknownVariableType]
             if d.get("fuente") == "relato":
                 total += 1
-                ev = d.get("evidencia") or []
+                ev: list[dict[str, Any]] = d.get("evidencia") or []
                 if not ev or any(e.get("texto", "") not in text for e in ev):
                     bad += 1
             for v in d.values():

@@ -76,7 +76,7 @@ AMBIGUOS = [
 
 def fold(text: str) -> str:
     """Minúsculas sin acentos (ñ → n), carácter por carácter."""
-    out = []
+    out: list[str] = []
     for ch in text:
         base = unicodedata.normalize("NFD", ch)[0]
         out.append(base.lower())

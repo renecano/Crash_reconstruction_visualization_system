@@ -233,7 +233,7 @@ def extract_facts(text: str) -> Facts:
         """Vehículo al que pertenece un hecho en `pos`: primera persona → narrador."""
         if not f.vehiculos:
             return None
-        s, e = _sentence_bounds(folded, pos)
+        s, _end = _sentence_bounds(folded, pos)
         mt = fold(match_text)
         third = re.search(r"(?<![a-z])(?:dio|doblo|giro|volteo|se)(?![a-z])", mt)
         first = re.search(r"(?<![a-z])(?:me|yo)(?![a-z])", mt) or re.match(
