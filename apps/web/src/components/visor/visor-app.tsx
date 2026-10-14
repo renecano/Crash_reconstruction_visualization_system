@@ -34,6 +34,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { useCallback, useEffect, useMemo, useState, useSyncExternalStore } from "react";
 import { Legend } from "../legend";
 import type { PeopleAttachment } from "@croquis/viewer";
+import { EvidencePanel } from "./evidence-panel";
 import { HypothesisPanel, type Hipotesis } from "./hypothesis-panel";
 import { PeoplePanel } from "./people-panel";
 import { ResultPanel } from "./result-panel";
@@ -394,6 +395,7 @@ export function VisorApp() {
       ) : null}
 
       {r ? <ResultPanel resultado={r} supuestosEntorno={env.supuestos} spec={spec} /> : null}
+      {r ? <EvidencePanel resultado={r} /> : null}
       {r ? (
         <HypothesisPanel
           spec={spec}

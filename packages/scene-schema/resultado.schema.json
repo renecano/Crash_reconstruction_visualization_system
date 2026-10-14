@@ -1,8 +1,8 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://croquis.local/schema/resultado/1.3.0",
+  "$id": "https://croquis.local/schema/resultado/1.4.0",
   "title": "Resultado",
-  "description": "Reconstrucción producida por el solver a partir de una EscenaSpec: trayectorias, impulsos, daños, personas (proyección y ocupantes), visibilidad, objetos del entorno, eventos, banderas, parámetros con su fuente e incertidumbre por Monte Carlo (percentiles con semilla). Unidades SI; tiempo con t = 0 en el impacto principal; rumbos en radianes antihorario desde +X (salvo los campos que terminan en _deg).",
+  "description": "Reconstrucción producida por el solver a partir de una EscenaSpec: trayectorias, impulsos, daños, personas (proyección y ocupantes), visibilidad, objetos del entorno, eventos, banderas, parámetros con su fuente incertidumbre por Monte Carlo (percentiles con semilla), inversión desde la evidencia y banderas de consistencia. Unidades SI; tiempo con t = 0 en el impacto principal; rumbos en radianes antihorario desde +X (salvo los campos que terminan en _deg).",
   "type": "object",
   "additionalProperties": false,
   "required": [
@@ -22,7 +22,7 @@
   ],
   "properties": {
     "version_resultado": {
-      "const": "1.3.0"
+      "const": "1.4.0"
     },
     "escena_id": {
       "$ref": "#/$defs/Id"
@@ -97,6 +97,17 @@
     },
     "incertidumbre": {
       "$ref": "#/$defs/Incertidumbre"
+    },
+    "inversion": {
+      "$ref": "#/$defs/Inversion"
+    },
+    "consistencia": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/Inconsistencia"
+      },
+      "maxItems": 32,
+      "description": "Lo declarado que no cabe en ninguna solución física (PLAN §6.1.12), en lenguaje llano y sin culpa."
     }
   },
   "$defs": {
@@ -1134,6 +1145,279 @@
             "$ref": "#/$defs/IncertidumbrePersona"
           },
           "maxItems": 32
+        }
+      }
+    },
+    "EstimacionParametro": {
+      "type": "object",
+      "additionalProperties": false,
+      "description": "Mejor ajuste y percentiles de las reestimaciones con entradas perturbadas.",
+      "required": ["mejor", "p10", "p50", "p90", "muestras"],
+      "properties": {
+        "mejor": {
+          "type": "number"
+        },
+        "p10": {
+          "type": "number"
+        },
+        "p50": {
+          "type": "number"
+        },
+        "p90": {
+          "type": "number"
+        },
+        "muestras": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 1000
+        }
+      }
+    },
+    "ParametroInvertido": {
+      "type": "object",
+      "additionalProperties": false,
+      "description": "Incógnita de la inversión. Sin `estimacion` cuando la evidencia no la fija (identificable = false): queda en su valor inicial.",
+      "required": [
+        "parametro",
+        "vehiculo",
+        "unidad",
+        "inicial",
+        "inicial_declarado",
+        "identificable"
+      ],
+      "properties": {
+        "parametro": {
+          "type": "string",
+          "enum": ["velocidad_previa", "rumbo_inicial"]
+        },
+        "vehiculo": {
+          "$ref": "#/$defs/Id"
+        },
+        "unidad": {
+          "type": "string",
+          "enum": ["km/h", "deg"]
+        },
+        "inicial": {
+          "type": "number"
+        },
+        "inicial_declarado": {
+          "type": "boolean",
+          "description": "El valor inicial lo dijo el relato o la persona usuaria."
+        },
+        "identificable": {
+          "type": "boolean"
+        },
+        "sigma_local": {
+          "type": "number",
+          "minimum": 0,
+          "description": "Desviación local (Laplace) en el mejor ajuste; falta si la evidencia no mueve el parámetro."
+        },
+        "estimacion": {
+          "$ref": "#/$defs/EstimacionParametro"
+        },
+        "en_limite": {
+          "type": "boolean",
+          "description": "El mejor ajuste quedó en el límite de búsqueda: la evidencia lleva el parámetro fuera de lo que el modelo permite."
+        }
+      }
+    },
+    "VelocidadImpactoInvertida": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["vehiculo", "p10", "p50", "p90", "muestras"],
+      "properties": {
+        "vehiculo": {
+          "$ref": "#/$defs/Id"
+        },
+        "p10": {
+          "type": "number"
+        },
+        "p50": {
+          "type": "number"
+        },
+        "p90": {
+          "type": "number"
+        },
+        "muestras": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 1000
+        }
+      }
+    },
+    "Residuo": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["nombre", "sigma"],
+      "properties": {
+        "nombre": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 80
+        },
+        "sigma": {
+          "type": "number"
+        }
+      }
+    },
+    "Inversion": {
+      "type": "object",
+      "additionalProperties": false,
+      "description": "Inversión (PLAN §6.1.10): velocidades y rumbos que reproducen la evidencia declarada, con mínimos cuadrados robustos y reestimaciones con semilla.",
+      "required": [
+        "semilla",
+        "muestras",
+        "evidencia",
+        "parametros",
+        "velocidad_impacto",
+        "residuos",
+        "convergio"
+      ],
+      "properties": {
+        "semilla": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "muestras": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 1000
+        },
+        "evidencia": {
+          "type": "array",
+          "maxItems": 64,
+          "items": {
+            "type": "string",
+            "pattern": "^(reposo|rumbo_final|marcas_frenado|proyeccion|dano):[A-Za-z0-9_-]+$"
+          }
+        },
+        "parametros": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/ParametroInvertido"
+          },
+          "maxItems": 32
+        },
+        "velocidad_impacto": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/VelocidadImpactoInvertida"
+          },
+          "maxItems": 16
+        },
+        "residuos": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/Residuo"
+          },
+          "maxItems": 128
+        },
+        "convergio": {
+          "type": "boolean"
+        }
+      }
+    },
+    "Inconsistencia": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["codigo", "mensaje", "datos"],
+      "properties": {
+        "codigo": {
+          "type": "string",
+          "enum": [
+            "detenido_con_velocidad",
+            "marcas_vs_velocidad",
+            "proyeccion_vs_velocidad",
+            "dano_vs_velocidad",
+            "reposo_inalcanzable",
+            "velocidad_vs_evidencia"
+          ]
+        },
+        "mensaje": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 600
+        },
+        "datos": {
+          "$ref": "#/$defs/DatosInconsistencia"
+        }
+      }
+    },
+    "DatosInconsistencia": {
+      "type": "object",
+      "additionalProperties": false,
+      "description": "Números detrás de la bandera (km/h y m); los pares son [mínimo, máximo].",
+      "required": ["vehiculo"],
+      "properties": {
+        "vehiculo": {
+          "$ref": "#/$defs/Id"
+        },
+        "velocidad_kmh": {
+          "type": "number"
+        },
+        "marcas_m": {
+          "type": "number"
+        },
+        "minima_kmh": {
+          "type": "number"
+        },
+        "declarada_max_kmh": {
+          "type": "number"
+        },
+        "distancia_m": {
+          "type": "number"
+        },
+        "rango_kmh": {
+          "type": "array",
+          "items": {
+            "type": "number"
+          },
+          "minItems": 2,
+          "maxItems": 2
+        },
+        "dano_kmh": {
+          "type": "array",
+          "items": {
+            "type": "number"
+          },
+          "minItems": 2,
+          "maxItems": 2
+        },
+        "velocidades_kmh": {
+          "type": "array",
+          "items": {
+            "type": "number"
+          },
+          "minItems": 2,
+          "maxItems": 2
+        },
+        "distancia_minima_m": {
+          "type": "number"
+        },
+        "evidencia_kmh": {
+          "type": "array",
+          "items": {
+            "type": "number"
+          },
+          "minItems": 2,
+          "maxItems": 2
+        },
+        "declarada_kmh": {
+          "type": "array",
+          "items": {
+            "type": "number"
+          },
+          "minItems": 2,
+          "maxItems": 2
+        },
+        "evidencia": {
+          "type": "array",
+          "maxItems": 64,
+          "items": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 80
+          }
         }
       }
     }

@@ -21,7 +21,10 @@ const box = (y: number): DebrisSpec => ({
   t0: 0,
 });
 
-describe("restos con Rapier", () => {
+// Hornear con Rapier depende del CPU. En F7 una corrida local con todos los paquetes en paralelo
+// falló una vez y no se reprodujo en 5 corridas más; se da margen por si fue el límite de 5 s por
+// omisión. El límite no cambia lo que se prueba.
+describe("restos con Rapier", { timeout: 30_000 }, () => {
   it("el generador con semilla es determinista", () => {
     const a = mulberry32(42);
     const b = mulberry32(42);

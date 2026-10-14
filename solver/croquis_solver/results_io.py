@@ -15,6 +15,8 @@ from pathlib import Path
 from typing import Any
 
 from croquis_scene_schema import RESULTS_DIR, list_fixtures, load_fixture, result_errors
+from croquis_solver.consistency import check_consistency
+from croquis_solver.inversion import invert
 from croquis_solver.montecarlo import monte_carlo
 from croquis_solver.reconstruct import reconstruct
 
@@ -26,6 +28,9 @@ def render(name: str) -> str:
     spec = load_fixture(name)
     doc = reconstruct(spec).to_dict()
     doc["incertidumbre"] = monte_carlo(spec).to_dict()
+    inv = invert(spec)
+    doc["inversion"] = inv.to_dict()
+    doc["consistencia"] = [f.to_dict() for f in check_consistency(spec, inversion=inv)]
     errors = result_errors(doc)
     if errors:
         msg = f"El resultado de {name} no cumple resultado.schema.json:\n" + "\n".join(errors[:10])

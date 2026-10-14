@@ -96,6 +96,8 @@ test.describe("visor 3D", () => {
     await waitReady(page);
     await expect(page.getByTestId("volcadura")).toContainText("ilustrativa");
     await expect(page.getByTestId("personas")).toContainText("Sentado al volante");
+    // Consistencia (F7): la posición final declarada no la alcanza ninguna velocidad.
+    await expect(page.getByTestId("consistencia")).toContainText("aun llegando con otro ángulo");
   });
 
   test("hipótesis: otra velocidad se dibuja como fantasmas y se compara", async ({ page }) => {

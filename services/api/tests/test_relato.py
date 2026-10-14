@@ -79,6 +79,27 @@ def test_reconstruir_devuelve_el_resultado_del_solver(client: TestClient) -> Non
     assert len(body["vehiculos"]) == 2
 
 
+def test_reconstruir_con_analisis_trae_inversion_y_consistencia(
+    client: TestClient, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    from croquis_scene_schema import result_errors
+
+    monkeypatch.setattr(relato, "analysis_limiter", relato.RateLimiter())
+    monkeypatch.setenv("CROQUIS_ANALYSIS_RATE_LIMIT_PER_HOUR", "1")
+    spec = load_fixture("peaton_cruce")
+    r = client.post("/reconstruir", json={"spec": spec, "analisis": True})
+    assert r.status_code == 200
+    body = r.json()
+    assert result_errors(body) == []
+    assert body["inversion"]["evidencia"]
+    assert any(f["codigo"] == "velocidad_vs_evidencia" for f in body["consistencia"])
+    assert "incertidumbre" in body
+    # El análisis cuesta CPU: tiene límite por hora (la reconstrucción simple no).
+    again = client.post("/reconstruir", json={"spec": spec, "analisis": True})
+    assert again.status_code == 429
+    assert client.post("/reconstruir", json={"spec": spec}).status_code == 200
+
+
 def test_ruta_de_claude_con_doble(monkeypatch: pytest.MonkeyPatch) -> None:
     monkeypatch.setenv("ANTHROPIC_API_KEY", "sk-prueba")
     monkeypatch.setenv("CROQUIS_LLM_DAILY_BUDGET_USD", "1")
