@@ -759,6 +759,6 @@ René eligió portar ya el núcleo del solver a TS, para que nada deje de funcio
 
 Riesgos:
 
-- **Regex Python contra JS:** ``, `\w` y lookbehind se comportan distinto. Se mitiga trabajando sobre el texto plegado y con la paridad dorada.
+- **Regex Python contra JS:** `\b`, `\w` y lookbehind se comportan distinto. Se mitiga trabajando sobre el texto plegado y con la paridad dorada.
 - **Posiciones:** Python cuenta puntos de código y JS unidades UTF-16. Se convierten al escribir la evidencia.
 - **Paridad numérica del solver:** `Math` de V8 contra `libm`, que se amplifica en el contacto iterativo. La tolerancia se documenta en E7.
