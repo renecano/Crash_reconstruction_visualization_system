@@ -617,3 +617,33 @@ Para probarlo:
 3. Revisa los números con `uv run croquis-eval e1-extraction --split test`.
 
 Gasté $5.33 de la API en grabar E1, dentro del tope que pusiste. No necesito nada nuevo de ti para F6.
+
+## F7 — Inversión, Monte Carlo y consistencia
+
+Criterio de aceptación (PLAN §13): E3 contra EDR y WinSmash; banderas de inconsistencia con pruebas.
+
+### Plan (orden de trabajo)
+
+1. **Ingesta de CISS 2017–2024** (`data/croquis_data/ciss.py`). Descarga los CSV de NHTSA con candado SHA-256 y arma una tabla por vehículo y evento con:
+   - perfil de aplastamiento C1–C6, ancho, PDOF, plano CDC y objeto;
+   - masa y dimensiones del vehículo;
+   - ΔV de WinSmash (`CDC.DVTOTAL/DVLONG/DVLAT`, `DVBASIS`);
+   - ΔV del EDR (`EDREVENT.MAXDVLONG/MAXDVLAT`, ligado por `CDCEVENT`);
+   - el otro vehículo del evento.
+2. **Inversión** (`solver/croquis_solver/inversion.py`, módulo 6.1.10):
+   - **ΔV desde el daño:** CRASH3 con rigidez por clase y su dispersión, para choques entre dos vehículos y contra objeto.
+   - **Velocidades desde la evidencia:** mínimos cuadrados robustos (SciPy `least_squares` con pérdida `soft_l1`) a partir de daños, posiciones finales, marcas de frenado y distancia de proyección.
+   - **Distribución:** se obtiene muestreando las entradas inciertas con semilla.
+3. **Monte Carlo** (módulo 6.1.11): muestrea todo campo con rango (masas, velocidades, fricción, frenado, rigidez) con semilla y da percentiles de la velocidad al impacto, ΔV y posiciones finales en el resultado. Cambia `resultado.schema.json` a 1.3.0, con el Zod generado, el panel del visor y las pruebas.
+4. **Consistencia** (módulo 6.1.12): banderas cuando lo declarado no cabe en ninguna muestra física (marcas contra velocidad, reposo inalcanzable, proyección contra velocidad, daño contra velocidad), explicadas en lenguaje llano y sin culpa, con una prueba por bandera.
+5. **E3** (`eval/croquis_eval/e3_ciss.py`): ΔV de Croquis desde el daño medido contra el ΔV del EDR, comparado con WinSmash contra el EDR. Reporta error absoluto medio, sesgo por rango de ΔV y cobertura del intervalo.
+6. **Hipótesis en el visor:** comparar dos escenas (por ejemplo 40 contra 60 km/h) con vehículos fantasma y la diferencia de resultados en un panel.
+7. **Pendientes de F6:**
+   - **Relatos-MX:** test nuevo adaptado de narrativas públicas de CISS, con su propio candado.
+   - **Prompt v2:** con la tabla modelo → clase, validado en el dev y medido en ese test nuevo.
+
+Riesgos:
+
+- **Datos de CISS:** solo una parte de los casos tiene EDR, y su ΔV es longitudinal y lateral por separado y con códigos centinela (888/997). Se filtra y se documenta cada exclusión.
+- **Clases de vehículo:** la clasificación de CISS (BODYTYPE) es distinta de la nuestra y hace falta una tabla de correspondencia con fuente.
+- **Rendimiento:** Monte Carlo es costoso en la laptop y su número de muestras se elige midiendo el tiempo.
