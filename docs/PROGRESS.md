@@ -5,12 +5,9 @@ Reglas de trabajo: `CLAUDE.md`. Especificación: `PLAN.md`.
 
 ## Estado actual
 
-- **Fase actual:** F7 — Inversión, Monte Carlo y consistencia (rama `feat/f7-inversion`): completa, en PR. Criterio cumplido: E3 contra EDR y WinSMASH publicado; seis banderas de inconsistencia, cada una con su prueba.
-- **Siguiente paso concreto:**
-  1. Fusionar el PR de F7 con CI en verde.
-  2. En una rama propia, segundo test de Relatos-MX desde los campos codificados de CISS y prompt v2 (pendiente 1 de F7).
-  3. F8 (entorno completo con OSM).
-- **F0** cerrado el 2026-10-10 (PR #1), **F1** el 2026-10-10 (PR #3), **F2** el 2026-10-13 (PR #4), **F3** el 2026-10-13 (PR #5), **F4** el 2026-10-13 (PR #6), **F5** el 2026-10-13 (PR #7), **F6** el 2026-10-14 (PR #8).
+- **Fase actual:** migración a Vercel solo (rama `feat/vercel-only`), por decisión de René del 2026-10-14. F7 se fusionó (PR #9) y se retoma después de la migración con sus pendientes (segundo test de Relatos-MX desde CISS y prompt v2).
+- **Siguiente paso concreto:** seguir el plan de la sección "Migración a Vercel solo" (abajo). Va en el paso que esté marcado como en curso.
+- **F0** cerrado el 2026-10-10 (PR #1), **F1** el 2026-10-10 (PR #3), **F2** el 2026-10-13 (PR #4), **F3** el 2026-10-13 (PR #5), **F4** el 2026-10-13 (PR #6), **F5** el 2026-10-13 (PR #7), **F6** el 2026-10-14 (PR #8), **F7** el 2026-10-14 (PR #9; pendientes registrados).
 
 ### Bloqueado — necesita a René
 
@@ -735,3 +732,33 @@ Cómo probarlo:
 - **Hipótesis:** necesitan la API corriendo (`uv run uvicorn croquis_api.main:app`).
 
 Qué necesito de ti: nada nuevo. Siguen pendientes AWS y Vercel, BeamNG y las personas para E9.
+
+## Migración a Vercel solo (decisión de René, 2026-10-14)
+
+Despliegue solo en Vercel: la web y la API van juntas como Route Handlers de Next.js, sin AWS, CDK ni FastAPI, y en producción no corre Python (`CLAUDE.md` y `PLAN.md` nuevos). El solver Python y la extracción Python quedan como referencia para pruebas, paridad y evaluaciones.
+
+René eligió portar ya el núcleo del solver a TS, para que nada deje de funcionar en Vercel: las preguntas por sensibilidad y las contradicciones de `/relato`, y las hipótesis del visor. La inversión y Monte Carlo en TS siguen en F9, como él pidió. Las banderas de consistencia que dependen de ellos (daño contra velocidad, reposo inalcanzable y velocidad contra evidencia) llegan a TS con ese port.
+
+### Plan (orden de trabajo)
+
+1. **Hecho:** `CLAUDE.md` y `PLAN.md` nuevos; `packages/relato` pasa a `packages/extraction` (`@croquis/extraction`).
+2. **`packages/extraction` en TS:**
+   - Hechos, constructor de `EscenaSpec`, verificador de evidencia, línea base de reglas y conversión de la salida de Claude.
+   - Cliente de Claude con salida estructurada. Reproduce las grabaciones existentes, con la misma huella de prompt que Python.
+   - Tope de gasto detrás de una interfaz: archivo en local y Upstash Redis en Vercel. Conectar Upstash requiere la cuenta de René.
+   - **Paridad:** salidas doradas de Python sobre todo Relatos-MX (reglas y respuestas grabadas de Haiku y Sonnet), comparadas en Vitest sin llamar a la API.
+3. **Núcleo del solver en `packages/solver-ts`:** todo lo que usa `reconstruct` (pre-impacto, impulso, CRASH3, objeto fijo, post-impacto, contacto, vía, objetos, personas, ocupantes, visibilidad y volcadura). Paridad E7 contra los resultados de las 10 escenas canónicas, con tolerancia documentada.
+4. **Preguntas en TS:**
+   - Contradicciones por los avisos del solver, sensibilidad con Mersenne Twister idéntico al `random` de Python, glosario, banderas de consistencia que no dependen de inversión ni Monte Carlo, y aplicación de respuestas.
+   - **Paridad:** contra Python con el mismo conjunto de banderas.
+5. **Route Handlers:**
+   - `apps/web/src/app/api/relato/extraer` (con streaming) y `/api/relato/responder`, con límite de peticiones (Upstash en Vercel, memoria en local).
+   - Las hipótesis del visor se reconstruyen en el navegador con solver-ts en un Web Worker.
+6. **Evaluaciones:** E1 mide el pipeline TS desde Node (Python solo puntúa) y debe dar los mismos números. Si no, se depura. El test congelado no se toca.
+7. **Limpieza:** se borran `services/api`, `infra/` y lo de AWS; se actualizan CI, `.env.example`, la documentación y ADR 0011 (Vercel solo); merge con todo en verde y regreso a F7.
+
+Riesgos:
+
+- **Regex Python contra JS:** ``, `\w` y lookbehind se comportan distinto. Se mitiga trabajando sobre el texto plegado y con la paridad dorada.
+- **Posiciones:** Python cuenta puntos de código y JS unidades UTF-16. Se convierten al escribir la evidencia.
+- **Paridad numérica del solver:** `Math` de V8 contra `libm`, que se amplifica en el contacto iterativo. La tolerancia se documenta en E7.
