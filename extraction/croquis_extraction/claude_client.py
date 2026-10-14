@@ -395,7 +395,9 @@ def _charge(ledger: Path, usd: float) -> None:
     today = dt.date.today().isoformat()
     data[today] = round(data.get(today, 0.0) + usd, 8)
     ledger.parent.mkdir(parents=True, exist_ok=True)
-    ledger.write_text(json.dumps(data, indent=2, sort_keys=True) + "\n", encoding="utf-8")
+    ledger.write_text(
+        json.dumps(data, indent=2, sort_keys=True) + "\n", encoding="utf-8", newline="\n"
+    )
 
 
 def budget_usd() -> float:

@@ -7,7 +7,8 @@ CI nunca llama a la API. Las dos rutas terminan en el mismo constructor de Escen
 
 Por método: F1 por campo y micro/macro, error en numéricos, número de vehículos, alucinación de
 campo antes y después del verificador, diferencia contrafactual, costo por 1 000 relatos y latencia
-p50/p95 y cobertura de preguntas útiles (qué parte de los errores de extracción en velocidad,
+p50/p95, repetición (el mismo relato otra vez: piso de ruido de la diferencia contrafactual) y
+cobertura de preguntas útiles (qué parte de los errores de extracción en velocidad,
 maniobra, frenado, clase y estado del piso cubre la ronda de preguntas, y qué parte de las
 preguntas no es redundante: una pregunta es redundante si el relato ya lo dijo y la extracción lo
 sacó bien). Además, para el redactor de PII (común a todos): datos
@@ -140,6 +141,21 @@ def evaluate_method(
             continue
         pairs += 1
         diffs += int(counterfactual_diff(base, facts_from_spec(run.spec)))
+    # Piso de ruido: el mismo relato otra vez. Las reglas son deterministas; los modelos no
+    # aceptan temperatura 0, así que parte de la diferencia contrafactual puede ser variación.
+    rep_diffs = rep_pairs = 0
+    for it in items:
+        base = preds.get(it["id"])
+        if base is None:
+            continue
+        text = redact(it["texto"]).text
+        run = (
+            _run(name, it["id"] + "-rep", text) if name != "reglas" else _run(name, it["id"], text)
+        )
+        if run is None:
+            continue
+        rep_pairs += 1
+        rep_diffs += int(counterfactual_diff(base, facts_from_spec(run.spec)))
     return {
         "estado": "medido" if missing == 0 else "parcial",
         "relatos": evaluated,
@@ -158,6 +174,11 @@ def evaluate_method(
             "pares": pairs,
             "con_diferencia": diffs,
             "tasa": round(diffs / pairs, 4) if pairs else None,
+        },
+        "repeticion": {
+            "pares": rep_pairs,
+            "con_diferencia": rep_diffs,
+            "tasa": round(rep_diffs / rep_pairs, 4) if rep_pairs else None,
         },
         "preguntas": {
             "hechas": q_asked,

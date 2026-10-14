@@ -6,17 +6,26 @@ import argparse
 import json
 import sys
 
+REPEAT_SUFFIX = "-rep"
 
-def _record(split: str, model: str | None, limit: int | None) -> int:
-    """Graba (o salta si ya existe) la respuesta de cada relato y contrafactual del split."""
+
+def _record(split: str, model: str | None, limit: int | None, repeat: bool = False) -> int:
+    """Graba (o salta si ya existe) la respuesta de cada relato y contrafactual del split.
+
+    Con `repeat`, graba una segunda respuesta de cada relato base con el mismo texto (clave
+    `<id>-rep`): mide cuánto varía el modelo consigo mismo, el piso de ruido del contrafactual.
+    """
     from croquis_extraction import claude_client as cc
     from croquis_extraction import relatos_mx
     from croquis_extraction.pii import redact
 
     models = [model] if model else list(cc.MODELS)
-    rows = relatos_mx.load_split(split) + [
-        x for x in relatos_mx.load_split("contrafactuales") if x["split"] == split
-    ]
+    if repeat:
+        rows = [{**x, "id": x["id"] + REPEAT_SUFFIX} for x in relatos_mx.load_split(split)]
+    else:
+        rows = relatos_mx.load_split(split) + [
+            x for x in relatos_mx.load_split("contrafactuales") if x["split"] == split
+        ]
     if limit is not None:
         rows = rows[:limit]
     spent = 0.0
@@ -56,10 +65,15 @@ def main(argv: list[str] | None = None) -> int:
     c.add_argument("--split", choices=["dev", "test"], required=True)
     c.add_argument("--model", default=None, help="claude-sonnet-5-5 o claude-haiku-5-5")
     c.add_argument("--limit", type=int, default=None)
+    c.add_argument(
+        "--repetir",
+        action="store_true",
+        help="Segunda respuesta de cada relato base con el mismo texto (piso de ruido)",
+    )
     args = parser.parse_args(argv)
 
     if args.group == "claude":
-        return _record(args.split, args.model, args.limit)
+        return _record(args.split, args.model, args.limit, args.repetir)
 
     if args.group == "golden":
         from croquis_extraction import golden
