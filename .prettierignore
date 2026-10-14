@@ -29,4 +29,4 @@ packages/extraction/data/nombres.json
 packages/extraction/fixtures/
 
 # Respuestas grabadas de Claude (las escribe croquis-extraction claude record)
-extraction/grabaciones/
+packages/extraction/grabaciones/

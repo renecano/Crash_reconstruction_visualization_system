@@ -8,12 +8,12 @@ toca números físicos.
 Modos (`CROQUIS_LLM_MODO`):
 
 * `replay` (por omisión; el único que usa CI): lee la respuesta grabada en
-  `extraction/grabaciones/<modelo>/<clave>.json`. Si no existe o el relato cambió, falla.
+  `packages/extraction/grabaciones/<modelo>/<clave>.json`. Si no existe o el relato cambió, falla.
 * `record`: llama a la API, guarda la respuesta y descuenta el gasto del tope diario.
 * `live`: llama a la API sin grabar (la página del relato con llave configurada).
 
 Tope de gasto: `CROQUIS_LLM_DAILY_BUDGET_USD` (PLAN §16.4); el gasto por día se lleva en
-`extraction/grabaciones/gasto.json`. Precios por millón de tokens según la tabla oficial vigente
+`packages/extraction/grabaciones/gasto.json`. Precios por millón de tokens según la tabla oficial vigente
 (registrada en docs/adr/0009-relato.md).
 """
 
@@ -35,9 +35,9 @@ from croquis_extraction.glossary import glossary_version
 from croquis_extraction.text import load_json
 
 ROOT = Path(__file__).resolve().parents[2]
-RECORDINGS = ROOT / "extraction" / "grabaciones"
+RECORDINGS = ROOT / "packages" / "extraction" / "grabaciones"
 LEDGER = RECORDINGS / "gasto.json"
-PROMPT_FILE = ROOT / "extraction" / "prompts" / "extraccion_v1.md"
+PROMPT_FILE = ROOT / "packages" / "extraction" / "prompts" / "extraccion_v1.md"
 PROMPT_VERSION = "extraccion_v1"
 SCHEMA_FILE = ROOT / "packages" / "scene-schema" / "escena.schema.json"
 DEFAULT_MODEL = "claude-sonnet-5-5"

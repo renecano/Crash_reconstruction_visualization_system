@@ -89,7 +89,7 @@ Lectura honesta de E1:
 - **Quién escribió el benchmark:** lo escribieron agentes de IA (los lotes de test, agentes que no vieron la línea base, y otros que los auditaron). Mide español escrito por un modelo, no por personas; E9 lo contrastará con relatos reales.
 - **Brecha dev–test:** la línea base y el redactor se ajustaron solo con el dev. Allí dan F1 0.759 y 0 % de fuga, contra 0.714 y 7.3 % en el test congelado.
 - **Clase de vehículo:** es el único campo donde Claude queda por debajo de las reglas (F1 0.638 Sonnet, 0.614 Haiku, 0.802 reglas). Cuando el relato solo nombra el modelo ("Aveo", "Jetta"), el prompt v1 no le da la tabla de modelos y le pide no precisar lo que no se dice, así que omite la clase. Se descubrió con el test, así que no se corrigió contra él (PLAN §5.2); el prompt v2 se valida en el dev y se medirá en un test nuevo.
-- **Script:** `uv run croquis-eval e1-extraction --split test` → [`eval/results/e1_extraction.json`](eval/results/e1_extraction.json). Las 962 respuestas de Claude están grabadas en `extraction/grabaciones` y CI las reproduce sin llamar a la API.
+- **Script:** `uv run croquis-eval e1-extraction --split test` → [`eval/results/e1_extraction.json`](eval/results/e1_extraction.json). Las 962 respuestas de Claude están grabadas en `packages/extraction/grabaciones` y CI las reproduce sin llamar a la API.
 
 Lectura honesta de E3:
 

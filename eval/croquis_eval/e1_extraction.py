@@ -1,7 +1,7 @@
 """E1: extracción del relato (PLAN §8 y §5.3) sobre Relatos-MX.
 
 Métodos: línea base de reglas (siempre) y Claude Haiku 5.5 y Sonnet 5.5 desde respuestas grabadas
-(`extraction/grabaciones/<modelo>/<id>.json`, ver `croquis_extraction.claude_client`); sin
+(`packages/extraction/grabaciones/<modelo>/<id>.json`, ver `croquis_extraction.claude_client`); sin
 grabaciones, esas columnas quedan pendientes (requieren `ANTHROPIC_API_KEY`, ver docs/PROGRESS.md).
 CI nunca llama a la API. Las dos rutas terminan en el mismo constructor de EscenaSpec.
 

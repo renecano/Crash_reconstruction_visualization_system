@@ -15,7 +15,7 @@
    - **Esquema sin uniones:** lo opcional es una lista que puede faltar; `valor` va como texto y se valida en código contra el contrato (los valores inválidos se descartan y se cuentan).
    - **Citas:** una cita que no aparece literal baja el hecho a `supuesto`; E1 reporta esa tasa como alucinación de campo y el verificador confirma que la spec final no tiene citas falsas.
 3. **Grabación y reproducción.** `CROQUIS_LLM_MODO=replay|record|live`; CI solo usa `replay`.
-   - **Archivos:** cada respuesta se guarda en `extraction/grabaciones/<modelo>/<id>.json` con la salida, el uso de tokens, la latencia, el costo y el `request_id`.
+   - **Archivos:** cada respuesta se guarda en `packages/extraction/grabaciones/<modelo>/<id>.json` con la salida, el uso de tokens, la latencia, el costo y el `request_id`.
    - **Validez:** una grabación solo vale para el mismo texto (SHA-256) y la misma huella de prompt y esquema; si alguno cambia, hay que volver a grabar.
 4. **Modelos, precios y tope de gasto.**
    - **Modelos:** `claude-sonnet-5-5` por omisión (PLAN §5.1) y `claude-haiku-5-5` para comparar, con esfuerzo `medium` y razonamiento adaptativo por omisión.
@@ -28,7 +28,7 @@
      | Haiku 5.5 (≤ 100 000 tokens de entrada) | 0.10    | 0.50   | 0.01             | ×1.25 de la entrada |
 
    - **Caché:** el prompt de sistema (instrucciones, valores válidos y glosario) es estable y se marca con `cache_control`.
-   - **Tope de gasto:** `CROQUIS_LLM_DAILY_BUDGET_USD` (PLAN §16.4), contabilizado por día en `extraction/grabaciones/gasto.json`; con tope 0 no hay llamadas.
+   - **Tope de gasto:** `CROQUIS_LLM_DAILY_BUDGET_USD` (PLAN §16.4), contabilizado por día en `packages/extraction/grabaciones/gasto.json`; con tope 0 no hay llamadas.
 5. **Glosario versionado y compartido** (`packages/extraction/data/glosario.json`): patrones sobre el texto plegado, efectos sobre campos del contrato y pregunta sugerida en las entradas ambiguas. Lo usan la línea base, el prompt de Claude y el navegador.
 6. **Relatos-MX.**
    - **Distribución:** ATUS 2025 con mínimos para las categorías raras.
