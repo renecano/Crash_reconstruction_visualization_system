@@ -1,0 +1,112 @@
+{
+ "costo_estimado_con": "claude-sonnet-5-5",
+ "costo_usd": 0.0096704,
+ "esfuerzo": "medium",
+ "grabado": "2026-10-14T18:45:56+00:00",
+ "huella_prompt": "f6b693169a4199c3",
+ "latencia_ms": 5192.4,
+ "modelo": "claude-sonnet-5-5",
+ "modelo_respuesta": "claude-sonnet-5-5",
+ "prompt": "extraccion_v1",
+ "request_id": "req_011Cg2dFSpwaqKnyZ8PBXBtH",
+ "salida": {
+  "dispositivos": [],
+  "hechos": [
+   {
+    "campo": "vehiculo.color",
+    "cita": "Nissan Altima color gris",
+    "persona": -1,
+    "valor": "gris",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.velocidad_kmh",
+    "cita": "aproximadamente 45 km/h",
+    "persona": -1,
+    "valor": "45",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.clase",
+    "cita": "camioneta Nissan X-Trail",
+    "persona": -1,
+    "valor": "suv_o_pickup",
+    "vehiculo": 1
+   },
+   {
+    "campo": "vehiculo.color",
+    "cita": "X-Trail color plata",
+    "persona": -1,
+    "valor": "plata",
+    "vehiculo": 1
+   },
+   {
+    "campo": "vehiculo.maniobra",
+    "cita": "realizó una vuelta a la izquierda",
+    "persona": -1,
+    "valor": "vuelta_izquierda",
+    "vehiculo": 1
+   },
+   {
+    "campo": "evento.tipo",
+    "cita": "golpeó con el frente de su unidad el costado derecho del vehículo del suscrito",
+    "persona": -1,
+    "valor": "impacto_vehiculo_vehiculo",
+    "vehiculo": -1
+   },
+   {
+    "campo": "vehiculo.zona_impacto",
+    "cita": "golpeó con el frente de su unidad",
+    "persona": -1,
+    "valor": "F",
+    "vehiculo": 1
+   },
+   {
+    "campo": "vehiculo.zona_impacto",
+    "cita": "el costado derecho del vehículo del suscrito",
+    "persona": -1,
+    "valor": "R",
+    "vehiculo": 0
+   },
+   {
+    "campo": "entorno.clima",
+    "cita": "el clima era nublado",
+    "persona": -1,
+    "valor": "nublado",
+    "vehiculo": -1
+   }
+  ],
+  "personas": [
+   {
+    "cita": "conducía su vehículo Nissan Altima color gris",
+    "rol": "conductor",
+    "vehiculo": 0
+   },
+   {
+    "cita": "una conductora a bordo de una camioneta Nissan X-Trail color plata",
+    "rol": "conductor",
+    "vehiculo": 1
+   }
+  ],
+  "preguntas": [
+   "¿Cuántos carriles tiene el Paseo Colón en cada sentido?",
+   "¿Había semáforo o señal en el cruce donde ocurrió la vuelta?",
+   "¿Qué hacía el vehículo del suscrito en el momento del impacto: iba recto o frenó?"
+  ],
+  "vehiculos": [
+   {
+    "narrador": true
+   },
+   {
+    "narrador": false
+   }
+  ]
+ },
+ "texto_sha256": "3bfa77ac21b8337f9800437e6ff5b2fb171012207387099e9e2b69f1ddabc26e",
+ "usage": {
+  "cache_creation_input_tokens": 0,
+  "cache_read_input_tokens": 5862,
+  "input_tokens": 254,
+  "output_tokens": 799
+ }
+}

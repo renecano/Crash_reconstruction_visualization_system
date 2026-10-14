@@ -1,0 +1,100 @@
+{
+ "costo_estimado_con": "claude-sonnet-5-5",
+ "costo_usd": 0.0139924,
+ "esfuerzo": "medium",
+ "grabado": "2026-10-14T17:49:35+00:00",
+ "huella_prompt": "f6b693169a4199c3",
+ "latencia_ms": 8552.8,
+ "modelo": "claude-sonnet-5-5",
+ "modelo_respuesta": "claude-sonnet-5-5",
+ "prompt": "extraccion_v1",
+ "request_id": "req_011Cg2YwxfbjtVPxHXnzdqom",
+ "salida": {
+  "dispositivos": [],
+  "hechos": [
+   {
+    "campo": "vehiculo.clase",
+    "cita": "mi Expedition",
+    "persona": -1,
+    "valor": "suv_grande",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.clase",
+    "cita": "Sprinter",
+    "persona": -1,
+    "valor": "van",
+    "vehiculo": 1
+   },
+   {
+    "campo": "vehiculo.color",
+    "cita": "blanca",
+    "persona": -1,
+    "valor": "blanca",
+    "vehiculo": 1
+   },
+   {
+    "campo": "vehiculo.maniobra",
+    "cita": "se cambió a mi carril",
+    "persona": -1,
+    "valor": "cambio_carril",
+    "vehiculo": 1
+   },
+   {
+    "campo": "vehiculo.velocidad_kmh",
+    "cita": "Iba yo a unos 50",
+    "persona": -1,
+    "valor": "50",
+    "vehiculo": 0
+   },
+   {
+    "campo": "evento.tipo",
+    "cita": "me pegó",
+    "persona": -1,
+    "valor": "impacto_vehiculo_vehiculo",
+    "vehiculo": -1
+   },
+   {
+    "campo": "vehiculo.zona_impacto",
+    "cita": "en la parte de adelante del lado izquierdo",
+    "persona": -1,
+    "valor": "F",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.zona_impacto",
+    "cita": "en la parte de adelante del lado izquierdo",
+    "persona": -1,
+    "valor": "L",
+    "vehiculo": 0
+   }
+  ],
+  "personas": [
+   {
+    "cita": "yo iba",
+    "rol": "conductor",
+    "vehiculo": 0
+   }
+  ],
+  "preguntas": [
+   "¿Qué parte de la Sprinter recibió el golpe?",
+   "¿Cuántos carriles por sentido tiene la avenida de las Torres?",
+   "¿Alcanzaste a frenar o maniobrar antes del impacto?"
+  ],
+  "vehiculos": [
+   {
+    "narrador": true
+   },
+   {
+    "narrador": false
+   }
+  ]
+ },
+ "texto_sha256": "dd0a6439b2d37941de0fa1c49f08b203ec5f28f5a622f6c21c23635d9cbcda5a",
+ "usage": {
+  "cache_creation_input_tokens": 0,
+  "cache_read_input_tokens": 5862,
+  "input_tokens": 185,
+  "output_tokens": 1245
+ }
+}

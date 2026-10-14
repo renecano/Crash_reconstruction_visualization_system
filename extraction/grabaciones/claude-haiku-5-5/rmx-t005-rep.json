@@ -1,0 +1,86 @@
+{
+ "costo_estimado_con": "claude-haiku-5-5",
+ "costo_usd": 0.00103082,
+ "esfuerzo": "medium",
+ "grabado": "2026-10-14T18:02:10+00:00",
+ "huella_prompt": "f6b693169a4199c3",
+ "latencia_ms": 9388.2,
+ "modelo": "claude-haiku-5-5",
+ "modelo_respuesta": "claude-haiku-5-5",
+ "prompt": "extraccion_v1",
+ "request_id": "req_011Cg2ZubwDr8C2aPHv8VXUW",
+ "salida": {
+  "dispositivos": [],
+  "hechos": [
+   {
+    "campo": "entorno.iluminacion",
+    "cita": "ya de noche",
+    "persona": -1,
+    "valor": "noche",
+    "vehiculo": -1
+   },
+   {
+    "campo": "vehiculo.velocidad_kmh",
+    "cita": "iba como a 60",
+    "persona": -1,
+    "valor": "60",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.maniobra",
+    "cita": "Se fue de lado",
+    "persona": -1,
+    "valor": "cambio_carril",
+    "vehiculo": 0
+   },
+   {
+    "campo": "evento.tipo",
+    "cita": "le pegó a una palmera",
+    "persona": -1,
+    "valor": "impacto_vehiculo_objeto",
+    "vehiculo": -1
+   },
+   {
+    "campo": "evento.objeto",
+    "cita": "le pegó a una palmera",
+    "persona": -1,
+    "valor": "arbol",
+    "vehiculo": -1
+   },
+   {
+    "campo": "persona.cinturon",
+    "cita": "Traía el cinturón puesto",
+    "persona": 0,
+    "valor": "true",
+    "vehiculo": -1
+   }
+  ],
+  "personas": [
+   {
+    "cita": "Mi papá venía de Progreso en su Tornado",
+    "rol": "conductor",
+    "vehiculo": 0
+   }
+  ],
+  "preguntas": [
+   "¿El vehículo que venía de frente llegó a tocar el Tornado o solo lo encandiló?",
+   "¿Qué tipo de vehículo era el que venía de frente?",
+   "¿Qué velocidad llevaba el vehículo que venía de frente?"
+  ],
+  "vehiculos": [
+   {
+    "narrador": false
+   },
+   {
+    "narrador": false
+   }
+  ]
+ },
+ "texto_sha256": "1afb3f251b7898c14562adc49b246893bd4a1fe4d38ed655a7324e2609645e21",
+ "usage": {
+  "cache_creation_input_tokens": 0,
+  "cache_read_input_tokens": 5862,
+  "input_tokens": 142,
+  "output_tokens": 1916
+ }
+}

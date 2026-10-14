@@ -1,0 +1,102 @@
+{
+ "costo_estimado_con": "claude-sonnet-5-5",
+ "costo_usd": 0.0151484,
+ "esfuerzo": "medium",
+ "grabado": "2026-10-14T18:44:48+00:00",
+ "huella_prompt": "f6b693169a4199c3",
+ "latencia_ms": 9330.7,
+ "modelo": "claude-sonnet-5-5",
+ "modelo_respuesta": "claude-sonnet-5-5",
+ "prompt": "extraccion_v1",
+ "request_id": "req_011Cg2dAAjvuZZcBecAFN2C2",
+ "salida": {
+  "dispositivos": [],
+  "hechos": [
+   {
+    "campo": "lugar.tipo_via",
+    "cita": "en una curva",
+    "persona": -1,
+    "valor": "curva",
+    "vehiculo": -1
+   },
+   {
+    "campo": "lugar.superficie",
+    "cita": "terraseria",
+    "persona": -1,
+    "valor": "terraceria",
+    "vehiculo": -1
+   },
+   {
+    "campo": "lugar.estado_superficie",
+    "cita": "mucho lodo",
+    "persona": -1,
+    "valor": "lodo",
+    "vehiculo": -1
+   },
+   {
+    "campo": "entorno.clima",
+    "cita": "nublado",
+    "persona": -1,
+    "valor": "nublado",
+    "vehiculo": -1
+   },
+   {
+    "campo": "entorno.clima",
+    "cita": "neblina",
+    "persona": -1,
+    "valor": "niebla",
+    "vehiculo": -1
+   },
+   {
+    "campo": "evento.tipo",
+    "cita": "se le patino",
+    "persona": -1,
+    "valor": "derrape",
+    "vehiculo": -1
+   },
+   {
+    "campo": "vehiculo.clase",
+    "cita": "np300",
+    "persona": -1,
+    "valor": "pickup",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.velocidad_kmh",
+    "cita": "como a 30",
+    "persona": -1,
+    "valor": "30",
+    "vehiculo": 0
+   }
+  ],
+  "personas": [
+   {
+    "cita": "mi tio manejaba su np300",
+    "rol": "conductor",
+    "vehiculo": 0
+   },
+   {
+    "cita": "ibamos",
+    "rol": "pasajero",
+    "vehiculo": 0
+   }
+  ],
+  "preguntas": [
+   "¿La cuneta quedó a la derecha o a la izquierda del camino?",
+   "¿Cuánto avanzó aproximadamente la camioneta fuera del camino antes de quedar atorada?",
+   "¿La camioneta quedó sobre sus ruedas o inclinada?"
+  ],
+  "vehiculos": [
+   {
+    "narrador": false
+   }
+  ]
+ },
+ "texto_sha256": "29e2baabdafd8c51e9f1fd6e98773e05adfe67625268bcbe759a33c758ff3e64",
+ "usage": {
+  "cache_creation_input_tokens": 0,
+  "cache_read_input_tokens": 5862,
+  "input_tokens": 123,
+  "output_tokens": 1373
+ }
+}

@@ -1,0 +1,117 @@
+{
+ "costo_estimado_con": "claude-sonnet-5-5",
+ "costo_usd": 0.0093964,
+ "esfuerzo": "medium",
+ "grabado": "2026-10-14T17:35:10+00:00",
+ "huella_prompt": "f6b693169a4199c3",
+ "latencia_ms": 4560.8,
+ "modelo": "claude-sonnet-5-5",
+ "modelo_respuesta": "claude-sonnet-5-5",
+ "prompt": "extraccion_v1",
+ "request_id": "req_011Cg2XrVnKbJqXy7TdJyqNE",
+ "salida": {
+  "dispositivos": [],
+  "hechos": [
+   {
+    "campo": "lugar.carriles_por_sentido",
+    "cita": "eran tres carriles",
+    "persona": -1,
+    "valor": "3",
+    "vehiculo": -1
+   },
+   {
+    "campo": "vehiculo.velocidad_kmh",
+    "cita": "como a 60",
+    "persona": -1,
+    "valor": "60",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.clase",
+    "cita": "un tráiler",
+    "persona": -1,
+    "valor": "tractocamion",
+    "vehiculo": 1
+   },
+   {
+    "campo": "vehiculo.maniobra",
+    "cita": "un tráiler del carril de la derecha se empezó a pasar al mío",
+    "persona": -1,
+    "valor": "cambio_carril_izquierda",
+    "vehiculo": 1
+   },
+   {
+    "campo": "evento.tipo",
+    "cita": "me pegó en la puerta de atrás del lado derecho",
+    "persona": -1,
+    "valor": "impacto_vehiculo_vehiculo",
+    "vehiculo": -1
+   },
+   {
+    "campo": "vehiculo.zona_impacto",
+    "cita": "me pegó en la puerta de atrás del lado derecho",
+    "persona": -1,
+    "valor": "R",
+    "vehiculo": 0
+   },
+   {
+    "campo": "evento.tipo",
+    "cita": "ya luego me arrastró tantito",
+    "persona": -1,
+    "valor": "arrastre",
+    "vehiculo": -1
+   },
+   {
+    "campo": "persona.cinturon",
+    "cita": "traían el cinturón",
+    "persona": 1,
+    "valor": "true",
+    "vehiculo": -1
+   },
+   {
+    "campo": "persona.cinturon",
+    "cita": "traían el cinturón",
+    "persona": 2,
+    "valor": "true",
+    "vehiculo": -1
+   }
+  ],
+  "personas": [
+   {
+    "cita": "Yo soy taxista",
+    "rol": "conductor",
+    "vehiculo": 0
+   },
+   {
+    "cita": "una señora con su niña atrás",
+    "rol": "pasajero",
+    "vehiculo": 0
+   },
+   {
+    "cita": "una señora con su niña atrás",
+    "rol": "pasajero",
+    "vehiculo": 0
+   }
+  ],
+  "preguntas": [
+   "¿El tráiler invadió el carril de en medio de forma gradual o de golpe?",
+   "¿Usted frenó o hizo alguna maniobra antes del golpe?",
+   "¿Qué tanto se desplazó el taxi durante el arrastre?"
+  ],
+  "vehiculos": [
+   {
+    "narrador": true
+   },
+   {
+    "narrador": false
+   }
+  ]
+ },
+ "texto_sha256": "f6439d521593b99eb87799576b8fd7bcdde8ef8ab282adc9caa23eb3a5f400b4",
+ "usage": {
+  "cache_creation_input_tokens": 0,
+  "cache_read_input_tokens": 5862,
+  "input_tokens": 227,
+  "output_tokens": 777
+ }
+}

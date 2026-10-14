@@ -1,0 +1,98 @@
+{
+ "costo_estimado_con": "claude-sonnet-5-5",
+ "costo_usd": 0.0076964,
+ "esfuerzo": "medium",
+ "grabado": "2026-10-14T18:41:18+00:00",
+ "huella_prompt": "f6b693169a4199c3",
+ "latencia_ms": 4082.6,
+ "modelo": "claude-sonnet-5-5",
+ "modelo_respuesta": "claude-sonnet-5-5",
+ "prompt": "extraccion_v1",
+ "request_id": "req_011Cg2cu4SEqBGkfhuX7owdq",
+ "salida": {
+  "dispositivos": [],
+  "hechos": [
+   {
+    "campo": "vehiculo.clase",
+    "cita": "en moto",
+    "persona": -1,
+    "valor": "motocicleta",
+    "vehiculo": 1
+   },
+   {
+    "campo": "vehiculo.maniobra",
+    "cita": "yo me estaba cambiando a ese carril",
+    "persona": -1,
+    "valor": "cambio_carril_derecha",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.velocidad_kmh",
+    "cita": "Yo iba como a 40",
+    "persona": -1,
+    "valor": "40",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.velocidad_kmh",
+    "cita": "ella como a 60",
+    "persona": -1,
+    "valor": "60",
+    "vehiculo": 1
+   },
+   {
+    "campo": "vehiculo.zona_impacto",
+    "cita": "le di con la salpicadera derecha",
+    "persona": -1,
+    "valor": "R",
+    "vehiculo": 0
+   },
+   {
+    "campo": "evento.tipo",
+    "cita": "le di con la salpicadera derecha",
+    "persona": -1,
+    "valor": "impacto_vehiculo_vehiculo",
+    "vehiculo": -1
+   },
+   {
+    "campo": "persona.casco",
+    "cita": "traía casco",
+    "persona": 1,
+    "valor": "true",
+    "vehiculo": -1
+   }
+  ],
+  "personas": [
+   {
+    "cita": "yo me estaba cambiando a ese carril",
+    "rol": "conductor",
+    "vehiculo": 0
+   },
+   {
+    "cita": "una muchacha en moto",
+    "rol": "motociclista",
+    "vehiculo": 1
+   }
+  ],
+  "preguntas": [
+   "¿El Mazda 3 y la motocicleta iban en el mismo sentido sobre la avenida?",
+   "¿Cuántos carriles por sentido tiene ese tramo de la avenida Juárez?",
+   "¿Qué zona de la motocicleta recibió el golpe?"
+  ],
+  "vehiculos": [
+   {
+    "narrador": true
+   },
+   {
+    "narrador": false
+   }
+  ]
+ },
+ "texto_sha256": "615cba8af585f5b8daaa40d2b34aac9ffa52e4805bd550ed3036907ca20a8c63",
+ "usage": {
+  "cache_creation_input_tokens": 0,
+  "cache_read_input_tokens": 5862,
+  "input_tokens": 142,
+  "output_tokens": 624
+ }
+}

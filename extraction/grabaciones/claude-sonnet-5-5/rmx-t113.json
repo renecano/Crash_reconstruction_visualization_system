@@ -1,0 +1,92 @@
+{
+ "costo_estimado_con": "claude-sonnet-5-5",
+ "costo_usd": 0.0136604,
+ "esfuerzo": "medium",
+ "grabado": "2026-10-14T17:34:48+00:00",
+ "huella_prompt": "f6b693169a4199c3",
+ "latencia_ms": 8556.4,
+ "modelo": "claude-sonnet-5-5",
+ "modelo_respuesta": "claude-sonnet-5-5",
+ "prompt": "extraccion_v1",
+ "request_id": "req_011Cg2XpaQpVJTzN75MMfgsc",
+ "salida": {
+  "dispositivos": [
+   {
+    "cita": "paso de cebra",
+    "tipo": "paso_peatonal"
+   },
+   {
+    "cita": "semáforo peatonal en verde",
+    "tipo": "semaforo"
+   }
+  ],
+  "hechos": [
+   {
+    "campo": "vehiculo.color",
+    "cita": "Aveo rojo",
+    "persona": -1,
+    "valor": "rojo",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.maniobra",
+    "cita": "dio vuelta a la derecha",
+    "persona": -1,
+    "valor": "vuelta_derecha",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.velocidad_kmh",
+    "cita": "a lo mucho a 15",
+    "persona": -1,
+    "valor": "15",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.zona_impacto",
+    "cita": "con el frente del carro",
+    "persona": -1,
+    "valor": "F",
+    "vehiculo": 0
+   },
+   {
+    "campo": "evento.tipo",
+    "cita": "me pegó en la cadera",
+    "persona": -1,
+    "valor": "impacto_vehiculo_persona",
+    "vehiculo": -1
+   },
+   {
+    "campo": "evidencias.distancia_proyeccion_m",
+    "cita": "Caí como a un metro",
+    "persona": -1,
+    "valor": "1",
+    "vehiculo": -1
+   }
+  ],
+  "personas": [
+   {
+    "cita": "Iba cruzando la calle",
+    "rol": "peaton",
+    "vehiculo": -1
+   }
+  ],
+  "preguntas": [
+   "¿El Aveo era sedán o hatchback?",
+   "¿Se había detenido el auto antes de dar la vuelta?",
+   "¿La calle era una intersección con otra vía?"
+  ],
+  "vehiculos": [
+   {
+    "narrador": false
+   }
+  ]
+ },
+ "texto_sha256": "c6f904a0e1c9855aa80a94855ef4e2f08dc784b19b082ece6e60868ff4e45258",
+ "usage": {
+  "cache_creation_input_tokens": 0,
+  "cache_read_input_tokens": 5862,
+  "input_tokens": 154,
+  "output_tokens": 1218
+ }
+}

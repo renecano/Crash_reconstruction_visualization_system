@@ -1,0 +1,95 @@
+{
+ "costo_estimado_con": "claude-haiku-5-5",
+ "costo_usd": 0.00101782,
+ "esfuerzo": "medium",
+ "grabado": "2026-10-14T18:26:11+00:00",
+ "huella_prompt": "f6b693169a4199c3",
+ "latencia_ms": 8484.5,
+ "modelo": "claude-haiku-5-5",
+ "modelo_respuesta": "claude-haiku-5-5",
+ "prompt": "extraccion_v1",
+ "request_id": "req_011Cg2bjqzGnSCrBDFgf6NwG",
+ "salida": {
+  "dispositivos": [
+   {
+    "cita": "el alto de Reforma",
+    "tipo": "alto"
+   }
+  ],
+  "hechos": [
+   {
+    "campo": "vehiculo.clase",
+    "cita": "en una Urvan",
+    "persona": -1,
+    "valor": "van",
+    "vehiculo": 1
+   },
+   {
+    "campo": "vehiculo.maniobra",
+    "cita": "yo estaba parada",
+    "persona": -1,
+    "valor": "detenido",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.velocidad_kmh",
+    "cita": "yo estaba parada",
+    "persona": -1,
+    "valor": "0",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.zona_impacto",
+    "cita": "me pegó por atrás",
+    "persona": -1,
+    "valor": "B",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.zona_impacto",
+    "cita": "me pegó por atrás",
+    "persona": -1,
+    "valor": "F",
+    "vehiculo": 1
+   },
+   {
+    "campo": "evento.tipo",
+    "cita": "me pegó por atrás",
+    "persona": -1,
+    "valor": "impacto_vehiculo_vehiculo",
+    "vehiculo": -1
+   }
+  ],
+  "personas": [
+   {
+    "cita": "yo estaba parada",
+    "rol": "conductor",
+    "vehiculo": 0
+   },
+   {
+    "cita": "Una señora en una Urvan",
+    "rol": "conductor",
+    "vehiculo": 1
+   }
+  ],
+  "preguntas": [
+   "¿A qué velocidad se acercaba la Urvan al momento del impacto?",
+   "¿La Urvan venía por el mismo carril y sentido que el vehículo de quien narra?"
+  ],
+  "vehiculos": [
+   {
+    "narrador": true
+   },
+   {
+    "narrador": false
+   }
+  ]
+ },
+ "texto_sha256": "3beda8d6c9af10d17308a913975386b6a2c35d90ac79dbf81c881d3343a8cb38",
+ "usage": {
+  "cache_creation_input_tokens": 0,
+  "cache_read_input_tokens": 5862,
+  "input_tokens": 47,
+  "output_tokens": 1909
+ }
+}

@@ -1,0 +1,112 @@
+{
+ "costo_estimado_con": "claude-sonnet-5-5",
+ "costo_usd": 0.0088584,
+ "esfuerzo": "medium",
+ "grabado": "2026-10-14T17:57:35+00:00",
+ "huella_prompt": "f6b693169a4199c3",
+ "latencia_ms": 4290.3,
+ "modelo": "claude-sonnet-5-5",
+ "modelo_respuesta": "claude-sonnet-5-5",
+ "prompt": "extraccion_v1",
+ "request_id": "req_011Cg2ZZfaCYhXeenEAd6RxW",
+ "salida": {
+  "dispositivos": [
+   {
+    "cita": "luz roja del semáforo",
+    "tipo": "semaforo"
+   }
+  ],
+  "hechos": [
+   {
+    "campo": "vehiculo.maniobra",
+    "cita": "me encontraba detenido",
+    "persona": -1,
+    "valor": "detenido",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.velocidad_kmh",
+    "cita": "me encontraba detenido",
+    "persona": -1,
+    "valor": "0",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.color",
+    "cita": "color arena",
+    "persona": -1,
+    "valor": "arena",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.clase",
+    "cita": "tractocamión",
+    "persona": -1,
+    "valor": "tractocamion",
+    "vehiculo": 1
+   },
+   {
+    "campo": "vehiculo.frenado",
+    "cita": "no frenó a tiempo",
+    "persona": -1,
+    "valor": "false",
+    "vehiculo": 1
+   },
+   {
+    "campo": "evento.tipo",
+    "cita": "golpeó la parte posterior de mi unidad",
+    "persona": -1,
+    "valor": "impacto_vehiculo_vehiculo",
+    "vehiculo": -1
+   },
+   {
+    "campo": "vehiculo.zona_impacto",
+    "cita": "golpeó la parte posterior de mi unidad",
+    "persona": -1,
+    "valor": "B",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.zona_impacto",
+    "cita": "golpeó la parte posterior de mi unidad",
+    "persona": -1,
+    "valor": "F",
+    "vehiculo": 1
+   },
+   {
+    "campo": "lugar.estado_superficie",
+    "cita": "El pavimento estaba seco",
+    "persona": -1,
+    "valor": "seco",
+    "vehiculo": -1
+   }
+  ],
+  "personas": [
+   {
+    "cita": "me encontraba detenido con luz roja del semáforo",
+    "rol": "conductor",
+    "vehiculo": 0
+   }
+  ],
+  "preguntas": [
+   "¿A qué velocidad aproximada venía el tractocamión al momento del golpe?",
+   "¿Cuántos carriles tiene la avenida en su sentido de circulación?",
+   "¿El tractocamión circulaba cargado o vacío?"
+  ],
+  "vehiculos": [
+   {
+    "narrador": true
+   },
+   {
+    "narrador": false
+   }
+  ]
+ },
+ "texto_sha256": "cab08da358c2c92b56806afc04a13313d7fc185c9e1113f0c1a825946569156e",
+ "usage": {
+  "cache_creation_input_tokens": 0,
+  "cache_read_input_tokens": 5862,
+  "input_tokens": 223,
+  "output_tokens": 724
+ }
+}

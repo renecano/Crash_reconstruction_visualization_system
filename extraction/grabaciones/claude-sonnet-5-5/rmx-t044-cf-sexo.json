@@ -1,0 +1,112 @@
+{
+ "costo_estimado_con": "claude-sonnet-5-5",
+ "costo_usd": 0.0089244,
+ "esfuerzo": "medium",
+ "grabado": "2026-10-14T17:50:04+00:00",
+ "huella_prompt": "f6b693169a4199c3",
+ "latencia_ms": 4660.6,
+ "modelo": "claude-sonnet-5-5",
+ "modelo_respuesta": "claude-sonnet-5-5",
+ "prompt": "extraccion_v1",
+ "request_id": "req_011Cg2YzP9K8n8ozjxBfFduU",
+ "salida": {
+  "dispositivos": [],
+  "hechos": [
+   {
+    "campo": "vehiculo.clase",
+    "cita": "mi Italika",
+    "persona": -1,
+    "valor": "motocicleta",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.velocidad_kmh",
+    "cita": "como a cuarenta",
+    "persona": -1,
+    "valor": "40",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.color",
+    "cita": "Kicks gris",
+    "persona": -1,
+    "valor": "gris",
+    "vehiculo": 1
+   },
+   {
+    "campo": "vehiculo.maniobra",
+    "cita": "iba saliendo de una tiendita",
+    "persona": -1,
+    "valor": "incorporacion",
+    "vehiculo": 1
+   },
+   {
+    "campo": "evento.tipo",
+    "cita": "Le pegué en la puerta del copiloto",
+    "persona": -1,
+    "valor": "impacto_vehiculo_vehiculo",
+    "vehiculo": -1
+   },
+   {
+    "campo": "vehiculo.zona_impacto",
+    "cita": "Le pegué en la puerta del copiloto",
+    "persona": -1,
+    "valor": "F",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.zona_impacto",
+    "cita": "Le pegué en la puerta del copiloto",
+    "persona": -1,
+    "valor": "R",
+    "vehiculo": 1
+   },
+   {
+    "campo": "persona.casco",
+    "cita": "Traía casco",
+    "persona": 0,
+    "valor": "true",
+    "vehiculo": -1
+   },
+   {
+    "campo": "lugar.tipo_via",
+    "cita": "por la lateral del Periférico",
+    "persona": -1,
+    "valor": "incorporacion",
+    "vehiculo": -1
+   }
+  ],
+  "personas": [
+   {
+    "cita": "Iba en mi Italika",
+    "rol": "motociclista",
+    "vehiculo": 0
+   },
+   {
+    "cita": "un señor que iba saliendo de una tiendita en su Kicks gris",
+    "rol": "conductor",
+    "vehiculo": 1
+   }
+  ],
+  "preguntas": [
+   "¿El Kicks venía saliendo hacia la derecha o hacia la izquierda de la lateral?",
+   "¿La motocicleta frenó o esquivó antes del golpe?",
+   "¿A qué distancia aproximada del punto de impacto cayó usted?"
+  ],
+  "vehiculos": [
+   {
+    "narrador": true
+   },
+   {
+    "narrador": false
+   }
+  ]
+ },
+ "texto_sha256": "3d19834d833c94ba0b2699958ec8293c16b5326b06372f012822082043f9d9d0",
+ "usage": {
+  "cache_creation_input_tokens": 0,
+  "cache_read_input_tokens": 5862,
+  "input_tokens": 166,
+  "output_tokens": 742
+ }
+}

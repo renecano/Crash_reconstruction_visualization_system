@@ -1,0 +1,98 @@
+{
+ "costo_estimado_con": "claude-sonnet-5-5",
+ "costo_usd": 0.0080864,
+ "esfuerzo": "medium",
+ "grabado": "2026-10-14T17:30:23+00:00",
+ "huella_prompt": "f6b693169a4199c3",
+ "latencia_ms": 4161.9,
+ "modelo": "claude-sonnet-5-5",
+ "modelo_respuesta": "claude-sonnet-5-5",
+ "prompt": "extraccion_v1",
+ "request_id": "req_011Cg2XVPS17k7PyKd7pZ8gA",
+ "salida": {
+  "dispositivos": [],
+  "hechos": [
+   {
+    "campo": "lugar.tipo_via",
+    "cita": "en el cruce con Río Nilo",
+    "persona": -1,
+    "valor": "interseccion",
+    "vehiculo": -1
+   },
+   {
+    "campo": "evento.tipo",
+    "cita": "Le di de frente en la puerta del copiloto",
+    "persona": -1,
+    "valor": "impacto_vehiculo_vehiculo",
+    "vehiculo": -1
+   },
+   {
+    "campo": "vehiculo.velocidad_kmh",
+    "cita": "como a 50",
+    "persona": -1,
+    "valor": "50",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.frenado",
+    "cita": "Sí alcancé a frenar",
+    "persona": -1,
+    "valor": "true",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.maniobra",
+    "cita": "dio vuelta a la izquierda",
+    "persona": -1,
+    "valor": "vuelta_izquierda",
+    "vehiculo": 1
+   },
+   {
+    "campo": "vehiculo.zona_impacto",
+    "cita": "Le di de frente",
+    "persona": -1,
+    "valor": "F",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.zona_impacto",
+    "cita": "en la puerta del copiloto",
+    "persona": -1,
+    "valor": "R",
+    "vehiculo": 1
+   }
+  ],
+  "personas": [
+   {
+    "cita": "iba en mi Yaris",
+    "rol": "conductor",
+    "vehiculo": 0
+   },
+   {
+    "cita": "una señora en una Sienna",
+    "rol": "conductor",
+    "vehiculo": 1
+   }
+  ],
+  "preguntas": [
+   "¿La puerta del copiloto de la Sienna era la del lado derecho, y desde qué dirección venía respecto a su vehículo?",
+   "¿Había semáforo o señal de alto en el cruce de Niños Héroes y Río Nilo?",
+   "¿Qué tan cerca estaba la Sienna cuando usted empezó a frenar?"
+  ],
+  "vehiculos": [
+   {
+    "narrador": true
+   },
+   {
+    "narrador": false
+   }
+  ]
+ },
+ "texto_sha256": "cf05bc123b4cb389c01023a957b6e046c4c36891ab59b039474e193ddca02008",
+ "usage": {
+  "cache_creation_input_tokens": 0,
+  "cache_read_input_tokens": 5862,
+  "input_tokens": 192,
+  "output_tokens": 653
+ }
+}

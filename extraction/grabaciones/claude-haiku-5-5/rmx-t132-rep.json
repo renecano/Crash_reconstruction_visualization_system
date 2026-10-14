@@ -1,0 +1,90 @@
+{
+ "costo_estimado_con": "claude-haiku-5-5",
+ "costo_usd": 0.00113932,
+ "esfuerzo": "medium",
+ "grabado": "2026-10-14T18:24:49+00:00",
+ "huella_prompt": "f6b693169a4199c3",
+ "latencia_ms": 9926.2,
+ "modelo": "claude-haiku-5-5",
+ "modelo_respuesta": "claude-haiku-5-5",
+ "prompt": "extraccion_v1",
+ "request_id": "req_011Cg2bdivDFRr26JGSyynS8",
+ "salida": {
+  "dispositivos": [],
+  "hechos": [
+   {
+    "campo": "vehiculo.clase",
+    "cita": "Ando de repartidor en la moto",
+    "persona": -1,
+    "valor": "motocicleta",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.velocidad_kmh",
+    "cita": "iba entre los carros a vuelta de rueda",
+    "persona": -1,
+    "valor": "8",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.clase",
+    "cita": "Un pesero",
+    "persona": -1,
+    "valor": "microbus_combi",
+    "vehiculo": 1
+   },
+   {
+    "campo": "evento.tipo",
+    "cita": "Me pegó con la parte de atrás en el costado izquierdo de la moto",
+    "persona": -1,
+    "valor": "impacto_vehiculo_vehiculo",
+    "vehiculo": -1
+   },
+   {
+    "campo": "vehiculo.zona_impacto",
+    "cita": "en el costado izquierdo de la moto",
+    "persona": -1,
+    "valor": "L",
+    "vehiculo": 0
+   },
+   {
+    "campo": "persona.casco",
+    "cita": "Traía casco",
+    "persona": 0,
+    "valor": "true",
+    "vehiculo": -1
+   }
+  ],
+  "personas": [
+   {
+    "cita": "Ando de repartidor en la moto",
+    "rol": "motociclista",
+    "vehiculo": 0
+   },
+   {
+    "cita": "El chofer ni se paró",
+    "rol": "conductor",
+    "vehiculo": 1
+   }
+  ],
+  "preguntas": [
+   "¿A qué velocidad se orilló el pesero antes de subir pasaje?",
+   "¿El pesero iba en movimiento o ya estaba detenido cuando frenó bruscamente?"
+  ],
+  "vehiculos": [
+   {
+    "narrador": true
+   },
+   {
+    "narrador": false
+   }
+  ]
+ },
+ "texto_sha256": "aaa71d18f3b46ec2b89354dbc5584c5bb5ff8565d622d91daf10299852752116",
+ "usage": {
+  "cache_creation_input_tokens": 0,
+  "cache_read_input_tokens": 5862,
+  "input_tokens": 172,
+  "output_tokens": 2127
+ }
+}

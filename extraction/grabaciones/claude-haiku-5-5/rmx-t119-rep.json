@@ -1,0 +1,108 @@
+{
+ "costo_estimado_con": "claude-haiku-5-5",
+ "costo_usd": 0.00130362,
+ "esfuerzo": "medium",
+ "grabado": "2026-10-14T18:22:28+00:00",
+ "huella_prompt": "f6b693169a4199c3",
+ "latencia_ms": 10321.5,
+ "modelo": "claude-haiku-5-5",
+ "modelo_respuesta": "claude-haiku-5-5",
+ "prompt": "extraccion_v1",
+ "request_id": "req_011Cg2bTFuDp8aJknKULweRu",
+ "salida": {
+  "dispositivos": [],
+  "hechos": [
+   {
+    "campo": "vehiculo.color",
+    "cita": "color vino",
+    "persona": -1,
+    "valor": "vino",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.velocidad_kmh",
+    "cita": "a una velocidad aproximada de 50 km/h",
+    "persona": -1,
+    "valor": "50",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.zona_impacto",
+    "cita": "El impacto se produjo del lado del conductor",
+    "persona": -1,
+    "valor": "L",
+    "vehiculo": 0
+   },
+   {
+    "campo": "evento.tipo",
+    "cita": "se impactara de costado contra el muro de contención del camellón central",
+    "persona": -1,
+    "valor": "impacto_vehiculo_objeto",
+    "vehiculo": -1
+   },
+   {
+    "campo": "evento.objeto",
+    "cita": "muro de contención del camellón central",
+    "persona": -1,
+    "valor": "muro",
+    "vehiculo": -1
+   },
+   {
+    "campo": "lugar.estado_superficie",
+    "cita": "encharcamientos derivados de la lluvia intensa",
+    "persona": -1,
+    "valor": "encharcado",
+    "vehiculo": -1
+   },
+   {
+    "campo": "entorno.clima",
+    "cita": "lluvia intensa",
+    "persona": -1,
+    "valor": "lluvia_fuerte",
+    "vehiculo": -1
+   },
+   {
+    "campo": "entorno.iluminacion",
+    "cita": "alrededor de las 23:40 horas",
+    "persona": -1,
+    "valor": "noche",
+    "vehiculo": -1
+   },
+   {
+    "campo": "persona.cinturon",
+    "cita": "con el cinturón colocado",
+    "persona": 1,
+    "valor": "true",
+    "vehiculo": -1
+   }
+  ],
+  "personas": [
+   {
+    "cita": "conducía mi vehículo",
+    "rol": "conductor",
+    "vehiculo": 0
+   },
+   {
+    "cita": "acompañado de mi esposa",
+    "rol": "pasajero",
+    "vehiculo": 0
+   }
+  ],
+  "preguntas": [
+   "¿El Hyundai Tucson era una SUV compacta u otro tipo de vehículo?",
+   "¿El vehículo tuvo contacto con algún otro vehículo además del muro?"
+  ],
+  "vehiculos": [
+   {
+    "narrador": true
+   }
+  ]
+ },
+ "texto_sha256": "0670217ea297b05e76fb721e6045a7b83853922d9cc29038eafc13cf943bcd76",
+ "usage": {
+  "cache_creation_input_tokens": 0,
+  "cache_read_input_tokens": 5862,
+  "input_tokens": 265,
+  "output_tokens": 2437
+ }
+}

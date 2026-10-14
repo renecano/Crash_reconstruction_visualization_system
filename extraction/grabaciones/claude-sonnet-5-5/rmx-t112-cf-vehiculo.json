@@ -1,0 +1,98 @@
+{
+ "costo_estimado_con": "claude-sonnet-5-5",
+ "costo_usd": 0.0078224,
+ "esfuerzo": "medium",
+ "grabado": "2026-10-14T17:56:44+00:00",
+ "huella_prompt": "f6b693169a4199c3",
+ "latencia_ms": 3949.4,
+ "modelo": "claude-sonnet-5-5",
+ "modelo_respuesta": "claude-sonnet-5-5",
+ "prompt": "extraccion_v1",
+ "request_id": "req_011Cg2ZVvmtNaCz4vHkp7Yir",
+ "salida": {
+  "dispositivos": [],
+  "hechos": [
+   {
+    "campo": "lugar.tipo_via",
+    "cita": "en la glorieta",
+    "persona": -1,
+    "valor": "glorieta",
+    "vehiculo": -1
+   },
+   {
+    "campo": "evento.tipo",
+    "cita": "le pegué en su costado izquierdo con mi defensa",
+    "persona": -1,
+    "valor": "impacto_vehiculo_vehiculo",
+    "vehiculo": -1
+   },
+   {
+    "campo": "vehiculo.color",
+    "cita": "un Vento gris",
+    "persona": -1,
+    "valor": "gris",
+    "vehiculo": 1
+   },
+   {
+    "campo": "vehiculo.maniobra",
+    "cita": "se metió sin ceder el paso",
+    "persona": -1,
+    "valor": "cambio_carril",
+    "vehiculo": 1
+   },
+   {
+    "campo": "vehiculo.velocidad_kmh",
+    "cita": "como a 20",
+    "persona": -1,
+    "valor": "20",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.zona_impacto",
+    "cita": "en su costado izquierdo",
+    "persona": -1,
+    "valor": "L",
+    "vehiculo": 1
+   },
+   {
+    "campo": "vehiculo.zona_impacto",
+    "cita": "con mi defensa",
+    "persona": -1,
+    "valor": "F",
+    "vehiculo": 0
+   }
+  ],
+  "personas": [
+   {
+    "cita": "Iba a dejar a mis hijos a la escuela en la Sienna",
+    "rol": "conductor",
+    "vehiculo": 0
+   },
+   {
+    "cita": "Iba a dejar a mis hijos a la escuela",
+    "rol": "pasajero",
+    "vehiculo": 0
+   }
+  ],
+  "preguntas": [
+   "¿La Sienna iba en la glorieta o se estaba incorporando a ella cuando ocurrió el golpe?",
+   "¿Aplicó el freno antes del impacto?",
+   "¿Cómo estaba el clima y la superficie en ese momento?"
+  ],
+  "vehiculos": [
+   {
+    "narrador": true
+   },
+   {
+    "narrador": false
+   }
+  ]
+ },
+ "texto_sha256": "8b1198a88092a22f9fef3510faf353070bedb8ab4cf94cb92ddb00eaea1dcecf",
+ "usage": {
+  "cache_creation_input_tokens": 0,
+  "cache_read_input_tokens": 5862,
+  "input_tokens": 165,
+  "output_tokens": 632
+ }
+}

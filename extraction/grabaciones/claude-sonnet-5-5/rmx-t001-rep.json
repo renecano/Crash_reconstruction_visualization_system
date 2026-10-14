@@ -1,0 +1,100 @@
+{
+ "costo_estimado_con": "claude-sonnet-5-5",
+ "costo_usd": 0.021375,
+ "esfuerzo": "medium",
+ "grabado": "2026-10-14T18:30:29+00:00",
+ "huella_prompt": "f6b693169a4199c3",
+ "latencia_ms": 4495.2,
+ "modelo": "claude-sonnet-5-5",
+ "modelo_respuesta": "claude-sonnet-5-5",
+ "prompt": "extraccion_v1",
+ "request_id": "req_011Cg2c5B5X2X5EigGVXTrQZ",
+ "salida": {
+  "dispositivos": [],
+  "hechos": [
+   {
+    "campo": "vehiculo.velocidad_kmh",
+    "cita": "como a cuarenta",
+    "persona": -1,
+    "valor": "40",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.color",
+    "cita": "Beat rojo",
+    "persona": -1,
+    "valor": "rojo",
+    "vehiculo": 1
+   },
+   {
+    "campo": "vehiculo.maniobra",
+    "cita": "se salió de un estacionamiento",
+    "persona": -1,
+    "valor": "incorporacion",
+    "vehiculo": 1
+   },
+   {
+    "campo": "vehiculo.frenado",
+    "cita": "Metí freno",
+    "persona": -1,
+    "valor": "true",
+    "vehiculo": 0
+   },
+   {
+    "campo": "evento.tipo",
+    "cita": "le pegué en la puerta del chofer",
+    "persona": -1,
+    "valor": "impacto_vehiculo_vehiculo",
+    "vehiculo": -1
+   },
+   {
+    "campo": "vehiculo.zona_impacto",
+    "cita": "le pegué en la puerta del chofer",
+    "persona": -1,
+    "valor": "F",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.zona_impacto",
+    "cita": "la puerta del chofer",
+    "persona": -1,
+    "valor": "L",
+    "vehiculo": 1
+   },
+   {
+    "campo": "entorno.iluminacion",
+    "cita": "ya estaba pardeando",
+    "persona": -1,
+    "valor": "atardecer",
+    "vehiculo": -1
+   }
+  ],
+  "personas": [
+   {
+    "cita": "Iba por avenida Vallarta en mi Corolla",
+    "rol": "conductor",
+    "vehiculo": 0
+   }
+  ],
+  "preguntas": [
+   "¿A qué velocidad aproximada iba el Beat al salir del estacionamiento?",
+   "¿Cuántos carriles tenía la avenida en el sentido en que usted circulaba?",
+   "¿Cuál era el estado de la superficie (seca o mojada)?"
+  ],
+  "vehiculos": [
+   {
+    "narrador": true
+   },
+   {
+    "narrador": false
+   }
+  ]
+ },
+ "texto_sha256": "cb016d15527a05f0dfdcea1be01f749954307308092394dcc3fabaab75c0d798",
+ "usage": {
+  "cache_creation_input_tokens": 5862,
+  "cache_read_input_tokens": 0,
+  "input_tokens": 135,
+  "output_tokens": 645
+ }
+}

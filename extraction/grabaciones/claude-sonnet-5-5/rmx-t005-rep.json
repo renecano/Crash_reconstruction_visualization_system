@@ -1,0 +1,79 @@
+{
+ "costo_estimado_con": "claude-sonnet-5-5",
+ "costo_usd": 0.0060164,
+ "esfuerzo": "medium",
+ "grabado": "2026-10-14T18:30:58+00:00",
+ "huella_prompt": "f6b693169a4199c3",
+ "latencia_ms": 3762.6,
+ "modelo": "claude-sonnet-5-5",
+ "modelo_respuesta": "claude-sonnet-5-5",
+ "prompt": "extraccion_v1",
+ "request_id": "req_011Cg2c7PNjdpGka6v7MTmyu",
+ "salida": {
+  "dispositivos": [],
+  "hechos": [
+   {
+    "campo": "entorno.iluminacion",
+    "cita": "ya de noche",
+    "persona": -1,
+    "valor": "noche",
+    "vehiculo": -1
+   },
+   {
+    "campo": "vehiculo.velocidad_kmh",
+    "cita": "iba como a 60",
+    "persona": -1,
+    "valor": "60",
+    "vehiculo": 0
+   },
+   {
+    "campo": "persona.cinturon",
+    "cita": "Traía el cinturón puesto",
+    "persona": 0,
+    "valor": "true",
+    "vehiculo": -1
+   },
+   {
+    "campo": "evento.tipo",
+    "cita": "le pegó a una palmera",
+    "persona": -1,
+    "valor": "impacto_vehiculo_objeto",
+    "vehiculo": -1
+   },
+   {
+    "campo": "evento.objeto",
+    "cita": "una palmera",
+    "persona": -1,
+    "valor": "arbol",
+    "vehiculo": -1
+   }
+  ],
+  "personas": [
+   {
+    "cita": "Mi papá venía de Progreso en su Tornado",
+    "rol": "conductor",
+    "vehiculo": 0
+   }
+  ],
+  "preguntas": [
+   "¿El vehículo que venía de frente llegó a tener contacto con el Tornado?",
+   "¿Qué parte del Tornado golpeó la palmera?",
+   "¿Cómo era la vía donde ocurrió (recta, curva, cuántos carriles)?"
+  ],
+  "vehiculos": [
+   {
+    "narrador": false
+   },
+   {
+    "narrador": false
+   }
+  ]
+ },
+ "texto_sha256": "1afb3f251b7898c14562adc49b246893bd4a1fe4d38ed655a7324e2609645e21",
+ "usage": {
+  "cache_creation_input_tokens": 0,
+  "cache_read_input_tokens": 5862,
+  "input_tokens": 142,
+  "output_tokens": 456
+ }
+}

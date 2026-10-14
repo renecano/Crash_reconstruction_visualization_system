@@ -1,0 +1,89 @@
+{
+ "costo_estimado_con": "claude-sonnet-5-5",
+ "costo_usd": 0.0144864,
+ "esfuerzo": "medium",
+ "grabado": "2026-10-14T17:38:23+00:00",
+ "huella_prompt": "f6b693169a4199c3",
+ "latencia_ms": 9361.1,
+ "modelo": "claude-sonnet-5-5",
+ "modelo_respuesta": "claude-sonnet-5-5",
+ "prompt": "extraccion_v1",
+ "request_id": "req_011Cg2Y6MUeXgdhQBfmRAqy2",
+ "salida": {
+  "dispositivos": [
+   {
+    "cita": "luz roja",
+    "tipo": "semaforo"
+   }
+  ],
+  "hechos": [
+   {
+    "campo": "lugar.tipo_via",
+    "cita": "intersección",
+    "persona": -1,
+    "valor": "interseccion",
+    "vehiculo": -1
+   },
+   {
+    "campo": "evento.tipo",
+    "cita": "impactó el frente de mi vehículo",
+    "persona": -1,
+    "valor": "impacto_vehiculo_vehiculo",
+    "vehiculo": -1
+   },
+   {
+    "campo": "vehiculo.clase",
+    "cita": "pickup",
+    "persona": -1,
+    "valor": "pickup",
+    "vehiculo": 1
+   },
+   {
+    "campo": "vehiculo.color",
+    "cita": "gris",
+    "persona": -1,
+    "valor": "gris",
+    "vehiculo": 1
+   },
+   {
+    "campo": "vehiculo.zona_impacto",
+    "cita": "impactó el frente de mi vehículo",
+    "persona": -1,
+    "valor": "F",
+    "vehiculo": 0
+   }
+  ],
+  "personas": [
+   {
+    "cita": "Me encontraba detenida",
+    "rol": "conductor",
+    "vehiculo": 0
+   },
+   {
+    "cita": "conducido por un hombre joven",
+    "rol": "conductor",
+    "vehiculo": 1
+   }
+  ],
+  "preguntas": [
+   "¿La pickup iba en línea recta o daba vuelta al cruzar?",
+   "¿Cuántos carriles tenía cada calle en la intersección?",
+   "¿Qué parte de la pickup recibió el golpe?"
+  ],
+  "vehiculos": [
+   {
+    "narrador": true
+   },
+   {
+    "narrador": false
+   }
+  ]
+ },
+ "texto_sha256": "6166f49a059f4d8b3feb8b83b1dd8052b26721070e8be7712e73582bf0ccd4f1",
+ "usage": {
+  "cache_creation_input_tokens": 0,
+  "cache_read_input_tokens": 5862,
+  "input_tokens": 257,
+  "output_tokens": 1280
+ }
+}

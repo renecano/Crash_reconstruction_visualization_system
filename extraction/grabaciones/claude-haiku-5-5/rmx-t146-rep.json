@@ -1,0 +1,91 @@
+{
+ "costo_estimado_con": "claude-haiku-5-5",
+ "costo_usd": 0.00101312,
+ "esfuerzo": "medium",
+ "grabado": "2026-10-14T18:27:27+00:00",
+ "huella_prompt": "f6b693169a4199c3",
+ "latencia_ms": 8902.1,
+ "modelo": "claude-haiku-5-5",
+ "modelo_respuesta": "claude-haiku-5-5",
+ "prompt": "extraccion_v1",
+ "request_id": "req_011Cg2bqQtpm7Z8FrHh8KE2C",
+ "salida": {
+  "dispositivos": [
+   {
+    "cita": "paso peatonal",
+    "tipo": "paso_peatonal"
+   },
+   {
+    "cita": "el semaforo en rojo pa los carros",
+    "tipo": "semaforo"
+   }
+  ],
+  "hechos": [
+   {
+    "campo": "vehiculo.clase",
+    "cita": "una combi",
+    "persona": -1,
+    "valor": "microbus_combi",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.velocidad_kmh",
+    "cita": "como a 60",
+    "persona": -1,
+    "valor": "60",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.frenado",
+    "cita": "freno ya tarde",
+    "persona": -1,
+    "valor": "true",
+    "vehiculo": 0
+   },
+   {
+    "campo": "evidencias.marcas_m",
+    "cita": "se vieron las marcas como de 10 metros",
+    "persona": -1,
+    "valor": "10",
+    "vehiculo": -1
+   },
+   {
+    "campo": "evento.tipo",
+    "cita": "le pego con el espejo y la defensa",
+    "persona": -1,
+    "valor": "impacto_vehiculo_persona",
+    "vehiculo": -1
+   },
+   {
+    "campo": "evidencias.distancia_proyeccion_m",
+    "cita": "cayo como a 3 metros",
+    "persona": -1,
+    "valor": "3",
+    "vehiculo": -1
+   }
+  ],
+  "personas": [
+   {
+    "cita": "un muchacho cruzo x el paso peatonal",
+    "rol": "peaton",
+    "vehiculo": -1
+   }
+  ],
+  "preguntas": [
+   "¿El semáforo estaba en rojo para los carros al momento en que el peatón comenzó a cruzar?",
+   "¿A qué distancia del peatón frenó la combi y dónde terminó su recorrido?"
+  ],
+  "vehiculos": [
+   {
+    "narrador": false
+   }
+  ]
+ },
+ "texto_sha256": "49a828c90dc6174e90bbdd1c115409c9e608d22fd651216c29b2d61393ff8977",
+ "usage": {
+  "cache_creation_input_tokens": 0,
+  "cache_read_input_tokens": 5862,
+  "input_tokens": 165,
+  "output_tokens": 1876
+ }
+}

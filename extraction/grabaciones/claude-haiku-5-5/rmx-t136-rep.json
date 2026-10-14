@@ -1,0 +1,105 @@
+{
+ "costo_estimado_con": "claude-haiku-5-5",
+ "costo_usd": 0.00136362,
+ "esfuerzo": "medium",
+ "grabado": "2026-10-14T18:25:37+00:00",
+ "huella_prompt": "f6b693169a4199c3",
+ "latencia_ms": 10942.1,
+ "modelo": "claude-haiku-5-5",
+ "modelo_respuesta": "claude-haiku-5-5",
+ "prompt": "extraccion_v1",
+ "request_id": "req_011Cg2bhBGJr8EpNGFgYU2Qw",
+ "salida": {
+  "dispositivos": [],
+  "hechos": [
+   {
+    "campo": "vehiculo.color",
+    "cita": "color blanco",
+    "persona": -1,
+    "valor": "blanco",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.velocidad_kmh",
+    "cita": "circulaba a una velocidad aproximada de 60 km/h",
+    "persona": -1,
+    "valor": "60",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.zona_impacto",
+    "cita": "se impactó de frente contra un poste de alumbrado público",
+    "persona": -1,
+    "valor": "F",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.maniobra",
+    "cita": "un vehículo no identificado invadió su carril",
+    "persona": -1,
+    "valor": "cambio_carril",
+    "vehiculo": 1
+   },
+   {
+    "campo": "evento.tipo",
+    "cita": "se impactó de frente contra un poste de alumbrado público",
+    "persona": -1,
+    "valor": "impacto_vehiculo_objeto",
+    "vehiculo": -1
+   },
+   {
+    "campo": "evento.objeto",
+    "cita": "contra un poste de alumbrado público",
+    "persona": -1,
+    "valor": "poste",
+    "vehiculo": -1
+   },
+   {
+    "campo": "persona.cinturon",
+    "cita": "ambos ocupantes portaban el cinturón de seguridad",
+    "persona": 0,
+    "valor": "true",
+    "vehiculo": -1
+   },
+   {
+    "campo": "persona.cinturon",
+    "cita": "ambos ocupantes portaban el cinturón de seguridad",
+    "persona": 1,
+    "valor": "true",
+    "vehiculo": -1
+   }
+  ],
+  "personas": [
+   {
+    "cita": "circulaba a bordo de su vehículo",
+    "rol": "conductor",
+    "vehiculo": 0
+   },
+   {
+    "cita": "acompañado de su esposa",
+    "rol": "pasajero",
+    "vehiculo": 0
+   }
+  ],
+  "preguntas": [
+   "¿Qué maniobra exacta realizó el conductor al desviarse hacia la derecha?",
+   "¿El vehículo no identificado llegó a tener contacto físico con el Toyota Yaris?",
+   "¿El relato corresponde a un recorrido de noche con alumbrado público en el periférico?"
+  ],
+  "vehiculos": [
+   {
+    "narrador": true
+   },
+   {
+    "narrador": false
+   }
+  ]
+ },
+ "texto_sha256": "8c62a92c096441a9d608dd40029e00b920ee32919698b59814167f896574f8fd",
+ "usage": {
+  "cache_creation_input_tokens": 0,
+  "cache_read_input_tokens": 5862,
+  "input_tokens": 250,
+  "output_tokens": 2560
+ }
+}

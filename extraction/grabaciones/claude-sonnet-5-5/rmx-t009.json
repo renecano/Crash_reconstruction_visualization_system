@@ -1,0 +1,91 @@
+{
+ "costo_estimado_con": "claude-sonnet-5-5",
+ "costo_usd": 0.0067404,
+ "esfuerzo": "medium",
+ "grabado": "2026-10-14T17:25:12+00:00",
+ "huella_prompt": "f6b693169a4199c3",
+ "latencia_ms": 3375.8,
+ "modelo": "claude-sonnet-5-5",
+ "modelo_respuesta": "claude-sonnet-5-5",
+ "prompt": "extraccion_v1",
+ "request_id": "req_011Cg2X6VD8E6UZeBsE9Md51",
+ "salida": {
+  "dispositivos": [
+   {
+    "cita": "el semaforo estaba en amarillo creo",
+    "tipo": "semaforo"
+   }
+  ],
+  "hechos": [
+   {
+    "campo": "vehiculo.clase",
+    "cita": "troca",
+    "persona": -1,
+    "valor": "suv_o_pickup",
+    "vehiculo": 0
+   },
+   {
+    "campo": "lugar.tipo_via",
+    "cita": "en el cruze",
+    "persona": -1,
+    "valor": "interseccion",
+    "vehiculo": -1
+   },
+   {
+    "campo": "vehiculo.maniobra",
+    "cita": "se me atraveso",
+    "persona": -1,
+    "valor": "cambio_carril",
+    "vehiculo": 1
+   },
+   {
+    "campo": "evento.tipo",
+    "cita": "le di de lado con el frente",
+    "persona": -1,
+    "valor": "impacto_vehiculo_vehiculo",
+    "vehiculo": -1
+   },
+   {
+    "campo": "vehiculo.zona_impacto",
+    "cita": "le di de lado con el frente",
+    "persona": -1,
+    "valor": "F",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.zona_impacto",
+    "cita": "le di de lado",
+    "persona": -1,
+    "valor": "L",
+    "vehiculo": 1
+   }
+  ],
+  "personas": [
+   {
+    "cita": "benia en la troca",
+    "rol": "conductor",
+    "vehiculo": 0
+   }
+  ],
+  "preguntas": [
+   "¿El otro vehículo recibió el golpe en su costado izquierdo o derecho?",
+   "¿A qué velocidad aproximada iba el Pointer?",
+   "¿Cuántos carriles tenía cada sentido de la avenida?"
+  ],
+  "vehiculos": [
+   {
+    "narrador": true
+   },
+   {
+    "narrador": false
+   }
+  ]
+ },
+ "texto_sha256": "a12113708c5f29049086df5d6e8077ac7974ec1779f3256cdb005c823ac9253d",
+ "usage": {
+  "cache_creation_input_tokens": 0,
+  "cache_read_input_tokens": 5862,
+  "input_tokens": 119,
+  "output_tokens": 533
+ }
+}

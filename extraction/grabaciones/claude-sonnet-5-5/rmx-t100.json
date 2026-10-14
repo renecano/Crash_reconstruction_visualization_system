@@ -1,0 +1,138 @@
+{
+ "costo_estimado_con": "claude-sonnet-5-5",
+ "costo_usd": 0.0113724,
+ "esfuerzo": "medium",
+ "grabado": "2026-10-14T17:33:28+00:00",
+ "huella_prompt": "f6b693169a4199c3",
+ "latencia_ms": 5512.3,
+ "modelo": "claude-sonnet-5-5",
+ "modelo_respuesta": "claude-sonnet-5-5",
+ "prompt": "extraccion_v1",
+ "request_id": "req_011Cg2XivyQsqf8hzHYdwFed",
+ "salida": {
+  "dispositivos": [],
+  "hechos": [
+   {
+    "campo": "vehiculo.clase",
+    "cita": "la Frontier del trabajo",
+    "persona": -1,
+    "valor": "pickup",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.velocidad_kmh",
+    "cita": "a unos 60",
+    "persona": -1,
+    "valor": "60",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.maniobra",
+    "cita": "yo me fui al carril de la izquierda para rebasarlo",
+    "persona": -1,
+    "valor": "cambio_carril_izquierda",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.clase",
+    "cita": "un camión de volteo",
+    "persona": -1,
+    "valor": "camion_unitario",
+    "vehiculo": 1
+   },
+   {
+    "campo": "vehiculo.frenado",
+    "cita": "el de volteo frenó",
+    "persona": -1,
+    "valor": "true",
+    "vehiculo": 1
+   },
+   {
+    "campo": "vehiculo.clase",
+    "cita": "una Ecosport",
+    "persona": -1,
+    "valor": "suv_compacta",
+    "vehiculo": 2
+   },
+   {
+    "campo": "vehiculo.maniobra",
+    "cita": "venía en una Ecosport por ese carril",
+    "persona": -1,
+    "valor": "recto",
+    "vehiculo": 2
+   },
+   {
+    "campo": "vehiculo.zona_impacto",
+    "cita": "me pegó en la esquina de atrás del lado izquierdo",
+    "persona": -1,
+    "valor": "B",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.zona_impacto",
+    "cita": "me pegó",
+    "persona": -1,
+    "valor": "F",
+    "vehiculo": 2
+   },
+   {
+    "campo": "evento.tipo",
+    "cita": "me pegó",
+    "persona": -1,
+    "valor": "impacto_vehiculo_vehiculo",
+    "vehiculo": -1
+   },
+   {
+    "campo": "lugar.tipo_via",
+    "cita": "la carretera a Rioverde",
+    "persona": -1,
+    "valor": "carretera_dos_carriles",
+    "vehiculo": -1
+   },
+   {
+    "campo": "entorno.clima",
+    "cita": "llovía tantito",
+    "persona": -1,
+    "valor": "lluvia_ligera",
+    "vehiculo": -1
+   },
+   {
+    "campo": "entorno.iluminacion",
+    "cita": "las 7 de la mañana",
+    "persona": -1,
+    "valor": "dia",
+    "vehiculo": -1
+   }
+  ],
+  "personas": [
+   {
+    "cita": "Yo traía la Frontier del trabajo",
+    "rol": "conductor",
+    "vehiculo": 0
+   }
+  ],
+  "preguntas": [
+   "¿La Ecosport iba a mayor velocidad que tu camioneta? ¿Aproximadamente a cuánto?",
+   "¿El golpe fue en la esquina trasera izquierda de tu Frontier, y con qué parte de la Ecosport?",
+   "¿Cuántos carriles tenía la carretera por sentido?"
+  ],
+  "vehiculos": [
+   {
+    "narrador": true
+   },
+   {
+    "narrador": false
+   },
+   {
+    "narrador": false
+   }
+  ]
+ },
+ "texto_sha256": "adfffb97609cb13f5b0192e6a3a906afab890ef2c7eb886c7fcf65ed613fc51c",
+ "usage": {
+  "cache_creation_input_tokens": 0,
+  "cache_read_input_tokens": 5862,
+  "input_tokens": 235,
+  "output_tokens": 973
+ }
+}

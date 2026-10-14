@@ -1,0 +1,93 @@
+{
+ "costo_estimado_con": "claude-sonnet-5-5",
+ "costo_usd": 0.0074924,
+ "esfuerzo": "medium",
+ "grabado": "2026-10-14T17:31:15+00:00",
+ "huella_prompt": "f6b693169a4199c3",
+ "latencia_ms": 4602.2,
+ "modelo": "claude-sonnet-5-5",
+ "modelo_respuesta": "claude-sonnet-5-5",
+ "prompt": "extraccion_v1",
+ "request_id": "req_011Cg2XZB2j8rtC9DeVPfRUj",
+ "salida": {
+  "dispositivos": [],
+  "hechos": [
+   {
+    "campo": "vehiculo.maniobra",
+    "cita": "yo iba incorporándome a la Ruiz Cortines",
+    "persona": -1,
+    "valor": "incorporacion",
+    "vehiculo": 0
+   },
+   {
+    "campo": "entorno.clima",
+    "cita": "estaba lloviendo durísimo",
+    "persona": -1,
+    "valor": "lluvia_fuerte",
+    "vehiculo": -1
+   },
+   {
+    "campo": "vehiculo.color",
+    "cita": "Fiesta plateado",
+    "persona": -1,
+    "valor": "plateado",
+    "vehiculo": 1
+   },
+   {
+    "campo": "vehiculo.maniobra",
+    "cita": "se cerró",
+    "persona": -1,
+    "valor": "cambio_carril",
+    "vehiculo": 1
+   },
+   {
+    "campo": "evento.tipo",
+    "cita": "me pegó en el costado izquierdo",
+    "persona": -1,
+    "valor": "impacto_vehiculo_vehiculo",
+    "vehiculo": -1
+   },
+   {
+    "campo": "vehiculo.zona_impacto",
+    "cita": "me pegó en el costado izquierdo",
+    "persona": -1,
+    "valor": "L",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.velocidad_kmh",
+    "cita": "Yo iba como a 40",
+    "persona": -1,
+    "valor": "40",
+    "vehiculo": 0
+   }
+  ],
+  "personas": [
+   {
+    "cita": "yo iba incorporándome",
+    "rol": "conductor",
+    "vehiculo": 0
+   }
+  ],
+  "preguntas": [
+   "¿El Fiesta venía en un carril de la Ruiz Cortines o en el carril de incorporación?",
+   "¿Qué tipo de vehículo era el suyo?",
+   "¿Había superficie encharcada o solo mojada en el lugar del choque?"
+  ],
+  "vehiculos": [
+   {
+    "narrador": true
+   },
+   {
+    "narrador": false
+   }
+  ]
+ },
+ "texto_sha256": "d0cea24de19d74255c421b539b90e4c5106ff4643cfc545b6dd799b1ef729da9",
+ "usage": {
+  "cache_creation_input_tokens": 0,
+  "cache_read_input_tokens": 5862,
+  "input_tokens": 165,
+  "output_tokens": 599
+ }
+}

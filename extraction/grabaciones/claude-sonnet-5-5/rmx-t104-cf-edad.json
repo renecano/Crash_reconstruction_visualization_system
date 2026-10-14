@@ -1,0 +1,90 @@
+{
+ "costo_estimado_con": "claude-sonnet-5-5",
+ "costo_usd": 0.0067704,
+ "esfuerzo": "medium",
+ "grabado": "2026-10-14T17:55:57+00:00",
+ "huella_prompt": "f6b693169a4199c3",
+ "latencia_ms": 4225.0,
+ "modelo": "claude-sonnet-5-5",
+ "modelo_respuesta": "claude-sonnet-5-5",
+ "prompt": "extraccion_v1",
+ "request_id": "req_011Cg2ZSTeA5zt4TpL2PabT3",
+ "salida": {
+  "dispositivos": [],
+  "hechos": [
+   {
+    "campo": "entorno.iluminacion",
+    "cita": "en la noche",
+    "persona": -1,
+    "valor": "noche",
+    "vehiculo": -1
+   },
+   {
+    "campo": "entorno.clima",
+    "cita": "abia mucha neblina",
+    "persona": -1,
+    "valor": "niebla",
+    "vehiculo": -1
+   },
+   {
+    "campo": "lugar.tipo_via",
+    "cita": "en una curva",
+    "persona": -1,
+    "valor": "curva",
+    "vehiculo": -1
+   },
+   {
+    "campo": "vehiculo.clase",
+    "cita": "la camioneta",
+    "persona": -1,
+    "valor": "suv_o_pickup",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.velocidad_kmh",
+    "cita": "iva como a 60",
+    "persona": -1,
+    "valor": "60",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.frenado",
+    "cita": "q freno",
+    "persona": -1,
+    "valor": "true",
+    "vehiculo": 0
+   },
+   {
+    "campo": "lugar.estado_superficie",
+    "cita": "el piso estaba bien mojado",
+    "persona": -1,
+    "valor": "mojado",
+    "vehiculo": -1
+   }
+  ],
+  "personas": [
+   {
+    "cita": "mi tio el mas grande, de 68 iva manejando",
+    "rol": "conductor",
+    "vehiculo": 0
+   }
+  ],
+  "preguntas": [
+   "¿La camioneta era SUV, pickup o van?",
+   "¿Qué tan lejos del camino quedó la camioneta respecto a la curva?",
+   "¿Había señalamientos o límite de velocidad en la curva?"
+  ],
+  "vehiculos": [
+   {
+    "narrador": false
+   }
+  ]
+ },
+ "texto_sha256": "2aa43c2cd0996d4efbd7532768d04c7fd562a56f516142392d5e1bea78a7f13e",
+ "usage": {
+  "cache_creation_input_tokens": 0,
+  "cache_read_input_tokens": 5862,
+  "input_tokens": 134,
+  "output_tokens": 533
+ }
+}

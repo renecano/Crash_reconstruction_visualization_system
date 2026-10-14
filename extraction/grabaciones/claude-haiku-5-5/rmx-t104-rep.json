@@ -1,0 +1,89 @@
+{
+ "costo_estimado_con": "claude-haiku-5-5",
+ "costo_usd": 0.00094932,
+ "esfuerzo": "medium",
+ "grabado": "2026-10-14T18:19:43+00:00",
+ "huella_prompt": "f6b693169a4199c3",
+ "latencia_ms": 7837.7,
+ "modelo": "claude-haiku-5-5",
+ "modelo_respuesta": "claude-haiku-5-5",
+ "prompt": "extraccion_v1",
+ "request_id": "req_011Cg2bFJfq4z5mMp8AZNAbo",
+ "salida": {
+  "dispositivos": [],
+  "hechos": [
+   {
+    "campo": "lugar.tipo_via",
+    "cita": "en una curva",
+    "persona": -1,
+    "valor": "curva",
+    "vehiculo": -1
+   },
+   {
+    "campo": "entorno.clima",
+    "cita": "abia mucha neblina",
+    "persona": -1,
+    "valor": "niebla",
+    "vehiculo": -1
+   },
+   {
+    "campo": "entorno.iluminacion",
+    "cita": "en la noche",
+    "persona": -1,
+    "valor": "noche",
+    "vehiculo": -1
+   },
+   {
+    "campo": "vehiculo.clase",
+    "cita": "la camioneta",
+    "persona": -1,
+    "valor": "suv_o_pickup",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.velocidad_kmh",
+    "cita": "iva como a 60",
+    "persona": -1,
+    "valor": "60",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.frenado",
+    "cita": "y q freno",
+    "persona": -1,
+    "valor": "true",
+    "vehiculo": 0
+   },
+   {
+    "campo": "lugar.estado_superficie",
+    "cita": "el piso estaba bien mojado",
+    "persona": -1,
+    "valor": "mojado",
+    "vehiculo": -1
+   }
+  ],
+  "personas": [
+   {
+    "cita": "iva manejando",
+    "rol": "conductor",
+    "vehiculo": 0
+   }
+  ],
+  "preguntas": [
+   "¿A qué velocidad entró el vehículo a la curva y en qué momento aplicó el frenado?",
+   "¿La camioneta llegó a salirse de la vía por sí sola o hubo algún contacto con otro vehículo u objeto antes de quedar en la cuneta?"
+  ],
+  "vehiculos": [
+   {
+    "narrador": false
+   }
+  ]
+ },
+ "texto_sha256": "604c9e35933677492123e704a5e078d1ea093d31c7c4e51b7f204c26966a899e",
+ "usage": {
+  "cache_creation_input_tokens": 0,
+  "cache_read_input_tokens": 5862,
+  "input_tokens": 132,
+  "output_tokens": 1755
+ }
+}

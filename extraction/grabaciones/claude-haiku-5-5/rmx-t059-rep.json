@@ -1,0 +1,72 @@
+{
+ "costo_estimado_con": "claude-haiku-5-5",
+ "costo_usd": 0.00106582,
+ "esfuerzo": "medium",
+ "grabado": "2026-10-14T18:11:25+00:00",
+ "huella_prompt": "f6b693169a4199c3",
+ "latencia_ms": 9466.1,
+ "modelo": "claude-haiku-5-5",
+ "modelo_respuesta": "claude-haiku-5-5",
+ "prompt": "extraccion_v1",
+ "request_id": "req_011Cg2acTDVWUc5CymRvxk3r",
+ "salida": {
+  "dispositivos": [],
+  "hechos": [
+   {
+    "campo": "vehiculo.maniobra",
+    "cita": "salio de su cochera de reversa",
+    "persona": -1,
+    "valor": "reversa",
+    "vehiculo": 0
+   },
+   {
+    "campo": "evento.tipo",
+    "cita": "le pego a mi carro",
+    "persona": -1,
+    "valor": "impacto_vehiculo_vehiculo",
+    "vehiculo": -1
+   },
+   {
+    "campo": "vehiculo.color",
+    "cita": "una sentra gris",
+    "persona": -1,
+    "valor": "gris",
+    "vehiculo": 1
+   },
+   {
+    "campo": "vehiculo.maniobra",
+    "cita": "estasionado en la banqueta de enfrente",
+    "persona": -1,
+    "valor": "estacionado",
+    "vehiculo": 1
+   },
+   {
+    "campo": "vehiculo.zona_impacto",
+    "cita": "le abollo toda la puerta del copiloto",
+    "persona": -1,
+    "valor": "R",
+    "vehiculo": 1
+   }
+  ],
+  "personas": [],
+  "preguntas": [
+   "¿A qué velocidad se movía el vehículo de la vecina al salir de la cochera?",
+   "¿El vehículo de la vecina era un auto, camioneta u otro tipo de vehículo?"
+  ],
+  "vehiculos": [
+   {
+    "narrador": false
+   },
+   {
+    "narrador": false
+   }
+  ]
+ },
+ "texto_sha256": "13979e5497f911e584ffc196b8f9bce967fd50dec7f92783a0fcd2a4b02d6443",
+ "usage": {
+  "cache_creation_input_tokens": 0,
+  "cache_read_input_tokens": 5862,
+  "input_tokens": 137,
+  "output_tokens": 1987
+ }
+}

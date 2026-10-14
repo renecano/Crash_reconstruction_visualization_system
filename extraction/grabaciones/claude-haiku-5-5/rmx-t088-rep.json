@@ -1,0 +1,95 @@
+{
+ "costo_estimado_con": "claude-haiku-5-5",
+ "costo_usd": 0.00119892,
+ "esfuerzo": "medium",
+ "grabado": "2026-10-14T18:16:45+00:00",
+ "huella_prompt": "f6b693169a4199c3",
+ "latencia_ms": 10223.7,
+ "modelo": "claude-haiku-5-5",
+ "modelo_respuesta": "claude-haiku-5-5",
+ "prompt": "extraccion_v1",
+ "request_id": "req_011Cg2b218muoehXRZXLFUKi",
+ "salida": {
+  "dispositivos": [],
+  "hechos": [
+   {
+    "campo": "vehiculo.color",
+    "cita": "color azul",
+    "persona": -1,
+    "valor": "azul",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.velocidad_kmh",
+    "cita": "a una velocidad aproximada de 30 km/h",
+    "persona": -1,
+    "valor": "30",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.frenado",
+    "cita": "Accioné el freno",
+    "persona": -1,
+    "valor": "true",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.zona_impacto",
+    "cita": "con la parte frontal derecha",
+    "persona": -1,
+    "valor": "F",
+    "vehiculo": 0
+   },
+   {
+    "campo": "evento.tipo",
+    "cita": "lo impacté",
+    "persona": -1,
+    "valor": "impacto_vehiculo_persona",
+    "vehiculo": -1
+   },
+   {
+    "campo": "lugar.estado_superficie",
+    "cita": "el pavimento estaba seco",
+    "persona": -1,
+    "valor": "seco",
+    "vehiculo": -1
+   },
+   {
+    "campo": "entorno.iluminacion",
+    "cita": "La calle contaba con alumbrado público",
+    "persona": -1,
+    "valor": "noche_con_alumbrado",
+    "vehiculo": -1
+   }
+  ],
+  "personas": [
+   {
+    "cita": "conducía mi vehículo",
+    "rol": "conductor",
+    "vehiculo": 0
+   },
+   {
+    "cita": "un joven de aproximadamente 20 años",
+    "rol": "peaton",
+    "vehiculo": -1
+   }
+  ],
+  "preguntas": [
+   "¿Hubo marcas de frenado en el pavimento y de qué longitud?",
+   "¿A qué distancia del punto de impacto quedó detenido el vehículo?",
+   "¿Cuál era la posición del peatón al iniciar el cruce, y a qué velocidad se desplazaba?"
+  ],
+  "vehiculos": [
+   {
+    "narrador": true
+   }
+  ]
+ },
+ "texto_sha256": "541b8e47447e89d9aafd40501472c80060f199bbbb0ff028fda6ae45b7a642bc",
+ "usage": {
+  "cache_creation_input_tokens": 0,
+  "cache_read_input_tokens": 5862,
+  "input_tokens": 268,
+  "output_tokens": 2227
+ }
+}
