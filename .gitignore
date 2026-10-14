@@ -49,3 +49,6 @@ cdk.out/
 .DS_Store
 Thumbs.db
 *.log
+
+# Relatos-MX publicado (derivado, verificado en CI con croquis-extraction relatos check)
+!data/relatos-mx/build/
