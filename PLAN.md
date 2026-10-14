@@ -3,7 +3,7 @@
 > Reconstrucción 3D de percances viales a partir del relato de quien los vivió.
 > Este documento es la especificación que Claude Code sigue fase por fase. Las reglas permanentes de trabajo están en `CLAUDE.md`.
 
-**Nombre de trabajo:** _Croquis_ (el dibujo del percance que se hace en el parte de tránsito en México). Se puede cambiar; ver "Decisiones abiertas".
+**Nombre de trabajo:** *Croquis* (el dibujo del percance que se hace en el parte de tránsito en México). Se puede cambiar; ver "Decisiones abiertas".
 
 ---
 
@@ -86,23 +86,26 @@ Regla central: **la IA traduce, la física decide y el visor muestra.** El LLM n
 
 ### 3.1 Stack
 
-| Capa              | Tecnología                                                                 | Por qué                                                                                     |
-| ----------------- | -------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------- |
-| Web               | Next.js (App Router) + React 19 + TypeScript estricto                      | Mismo ecosistema de PackFlow; SSR para la página de historia                                |
-| 3D                | three.js con `WebGPURenderer` y respaldo WebGL, React Three Fiber v9, drei | R3F v9 acepta el renderer WebGPU vía `gl` asíncrono; TSL compila sombreadores a WGSL y GLSL |
-| Física visual     | Rapier (`@react-three/rapier` v2, WASM)                                    | Determinista entre plataformas; ragdolls, piezas, volcaduras                                |
-| Croquis 2D        | SVG con React (o Konva si el rendimiento lo exige; decidir en ADR)         | Editable, exportable                                                                        |
-| Esquema           | JSON Schema como fuente única → genera Zod (TS) y Pydantic (Python)        | Un solo contrato                                                                            |
-| Solver referencia | Python 3.12, NumPy, SciPy, `uv`                                            | Precisión, validación, notebooks de evaluación                                              |
-| Solver navegador  | TypeScript puro en `packages/solver-ts`                                    | Demo offline; paridad probada contra Python                                                 |
-| API               | FastAPI                                                                    | Extracción, informes, casos guardados                                                       |
-| LLM               | Claude API con salida estructurada (JSON outputs / strict tool use)        | Garantiza JSON válido; la exactitud se mide aparte                                          |
-| Assets            | Blender en modo headless (scripts Python) → glTF con Draco/meshopt         | Pipeline reproducible y con licencias                                                       |
-| Pruebas           | pytest + Hypothesis, Vitest, Playwright (incluye snapshots visuales)       | Leyes físicas como propiedades; regresiones visuales                                        |
-| Infra             | Web en Vercel; API en AWS con CDK (patrón de Helada)                       | Ya probado por René                                                                         |
-| CI                | GitHub Actions                                                             | lint, tipos, pruebas, paridad, evaluación rápida                                            |
+| Capa | Tecnología | Por qué |
+|---|---|---|
+| Web | Next.js (App Router) + React 19 + TypeScript estricto | Mismo ecosistema de PackFlow; SSR para la página de historia |
+| 3D | three.js con `WebGPURenderer` y respaldo WebGL, React Three Fiber v9, drei | R3F v9 acepta el renderer WebGPU vía `gl` asíncrono; TSL compila sombreadores a WGSL y GLSL |
+| Física visual | Rapier (`@react-three/rapier` v2, WASM) | Determinista entre plataformas; ragdolls, piezas, volcaduras |
+| Croquis 2D | SVG con React (o Konva si el rendimiento lo exige; decidir en ADR) | Editable, exportable |
+| Esquema | JSON Schema como fuente única → genera Zod (TS) y Pydantic (Python) | Un solo contrato |
+| Solver referencia | Python 3.12, NumPy, SciPy, `uv` | Precisión, validación, notebooks de evaluación |
+| Solver navegador | TypeScript puro en `packages/solver-ts`, corriendo en Web Workers | Es el solver de producción: todos los módulos de §6 (incluidos inversión y Monte Carlo); paridad probada contra Python |
+| API | Route Handlers de Next.js en TypeScript (`apps/web/app/api/`) | Extracción con Claude, validación, límite de peticiones; se despliega junto con la web en Vercel |
+| Almacenamiento | Navegador (IndexedDB) por defecto; con consentimiento, Vercel Blob o una base del Marketplace de Vercel; límite de peticiones con Upstash Redis del Marketplace | Sin servidores propios; decidir en ADR |
+| LLM | Claude API con salida estructurada (JSON outputs / strict tool use) | Garantiza JSON válido; la exactitud se mide aparte |
+| Assets | Blender en modo headless (scripts Python) → glTF con Draco/meshopt | Pipeline reproducible y con licencias |
+| Pruebas | pytest + Hypothesis, Vitest, Playwright (incluye snapshots visuales) | Leyes físicas como propiedades; regresiones visuales |
+| Infra | **Todo en Vercel** (web + API), con entornos de preview y producción | Un solo despliegue; sin AWS |
+| CI | GitHub Actions | lint, tipos, pruebas, paridad, evaluación rápida |
 
 **Versiones:** al instalar, usar la versión estable vigente de cada paquete y registrarla en `docs/adr/0001-stack.md`. No fijar versiones copiadas de este plan.
+
+**Despliegue solo en Vercel:** en producción no corre Python. El solver Python es la referencia para pruebas, paridad y evaluaciones (local y CI); el usuario siempre usa el port TS. El PDF se genera en el navegador. Si alguna función del servidor necesitara Python, primero se intenta en TS; Python en Vercel (runtime beta) solo con ADR que justifique por qué.
 
 **Restricción de hardware:** desarrollo en Windows con 8 GB de RAM. No correr BeamNG junto con los servidores de desarrollo; scripts compatibles con PowerShell; presupuestos de rendimiento medidos en esa laptop (ver §7.8).
 
@@ -111,16 +114,14 @@ Regla central: **la IA traduce, la física decide y el visor muestra.** El LLM n
 ```
 croquis/
 ├─ apps/
-│  └─ web/                    Next.js: historia, demo, app, visor
+│  └─ web/                    Next.js: historia, demo, app, visor y app/api/ (Route Handlers)
 ├─ packages/
 │  ├─ scene-schema/           escena.schema.json + generadores Zod/Pydantic + fixtures
-│  ├─ solver-ts/              port TS del solver
+│  ├─ solver-ts/              solver de producción (port TS, Web Workers)
+│  ├─ extraction/             prompts, redactor PII, verificador, glosario, preguntas (TS)
 │  ├─ viewer/                 componentes R3F (vía, vehículos, daño, personas, clima)
 │  └─ croquis-2d/             editor 2D
-├─ services/
-│  └─ api/                    FastAPI (extracción, validación, informes)
-├─ solver/                    paquete Python croquis_solver (referencia)
-├─ extraction/                prompts, redactor PII, verificador, preguntas
+├─ solver/                    paquete Python croquis_solver (referencia; no se despliega)
 ├─ data/
 │  ├─ raw/                    descargas (no versionadas si pesan; script para bajarlas)
 │  ├─ processed/
@@ -139,7 +140,6 @@ croquis/
 │  └─ ASSETS.md               autor, licencia y URL de cada asset
 ├─ tools/
 │  └─ beamng-bridge/          BeamNGpy (opcional, licencia académica)
-├─ infra/                     CDK
 ├─ docs/
 │  ├─ adr/                    decisiones de arquitectura
 │  ├─ PROGRESS.md             bitácora por fase
@@ -158,14 +158,9 @@ croquis/
 Cada valor escalar usa el envoltorio:
 
 ```json
-{
-  "valor": 40,
-  "unidad": "km/h",
-  "rango": [30, 50],
-  "fuente": "relato",
-  "confianza": 0.7,
-  "evidencia": [{ "inicio": 23, "fin": 41, "texto": "iba como a 40" }]
-}
+{ "valor": 40, "unidad": "km/h", "rango": [30, 50],
+  "fuente": "relato", "confianza": 0.7,
+  "evidencia": [{ "inicio": 23, "fin": 41, "texto": "iba como a 40" }] }
 ```
 
 ### 4.1 Bloques
@@ -173,7 +168,6 @@ Cada valor escalar usa el envoltorio:
 **meta**: `id`, `version_esquema`, `idioma`, `semilla`, `creado`, hash del relato (el texto completo solo vive en el dispositivo salvo consentimiento).
 
 **lugar**
-
 - `tipo_via`: recta, curva, intersección en X, intersección en T, glorieta, incorporación, retorno, estacionamiento, carretera de dos carriles, autopista
 - carriles por sentido, ancho de carril, sentidos, camellón, banquetas, guarniciones, acotamiento
 - pendiente, peralte, radio de curva
@@ -182,14 +176,12 @@ Cada valor escalar usa el envoltorio:
 - `ubicacion_real` opcional: coordenadas para generar la geometría desde OpenStreetMap
 
 **entorno**
-
 - fecha y hora → posición del sol
 - clima: despejado, nublado, lluvia ligera o fuerte, niebla, granizo; visibilidad
 - iluminación: día, amanecer/atardecer, noche con o sin alumbrado
 - objetos: árboles (diámetro de tronco y altura, porque cambian el impacto y la visibilidad), postes (material), muros, bardas, vehículos estacionados, puestos, contenedores, señales
 
 **vehiculos[]**
-
 - `id`, `rol` (A, B, C…), `clase`: sedán compacto, sedán mediano, hatchback, SUV compacta, SUV grande, pickup, van, microbús/combi, autobús, camión unitario, tractocamión, motocicleta, bicicleta, scooter
 - marca/modelo/año opcionales (solo para masa, dimensiones y rigidez; **el modelo 3D es genérico por clase, sin logotipos**)
 - color (nombre + hex), estado de la pintura
@@ -199,14 +191,12 @@ Cada valor escalar usa el envoltorio:
 - ocupantes (referencias a `personas`)
 
 **personas[]** (sin nombres)
-
 - rol: conductor, pasajero (asiento), peatón, ciclista, motociclista
 - edad aproximada, estatura y masa en rango
 - cinturón, casco, sistema de retención infantil
 - postura y movimiento (caminando, corriendo, detenido, cruzando)
 
 **eventos[]** en secuencia temporal
-
 - impacto entre A y B, o A con objeto
 - zona de impacto con código tipo CDC (SAE J224): lado, zona horizontal, zona vertical, extensión
 - dirección principal de la fuerza en horas de reloj (PDOF)
@@ -265,7 +255,7 @@ Paquete `solver/croquis_solver` (referencia) y `packages/solver-ts` (port). Toda
 7. **Peatón y ciclista.** Ecuaciones de distancia de proyección de Searle (velocidad mínima y máxima a partir de la distancia y la fricción cuerpo-suelo) y de Wood; un ragdoll en Rapier cuyo impulso se calibra para caer dentro de esos límites. Contactos con defensa, cofre y parabrisas según altura del vehículo y estatura.
 8. **Ocupantes.** Cinemática relativa al habitáculo: el ocupante se mueve hacia el punto de impacto (opuesto a la desaceleración), con y sin cinturón; zonas de contacto probables. Sin predicción de lesiones (ver §10 y Decisiones abiertas).
 9. **Visibilidad.** Línea de vista desde el ojo de cada conductor en el tiempo: qué tapaba la vista (árbol, vehículo estacionado, curva, lluvia, noche). Responde "¿podía verlo y a qué distancia?".
-10. **Inversión.** Dados daños, posiciones finales, marcas de frenado y distancia de proyección, estimar velocidades y ángulos por optimización (mínimos cuadrados robustos con SciPy; CMA-ES si hace falta) y devolver distribución, no un solo número.
+10. **Inversión.** Dados daños, posiciones finales, marcas de frenado y distancia de proyección, estimar velocidades y ángulos por optimización (en la referencia, mínimos cuadrados robustos con SciPy; en el port TS, un optimizador propio o una librería JS equivalente, con paridad probada; CMA-ES si hace falta) y devolver distribución, no un solo número.
 11. **Monte Carlo.** Muestreo de todos los campos con rango; resultado con percentiles y la semilla registrada.
 12. **Consistencia.** Banderas cuando lo declarado no cabe en ninguna solución física; se explican en lenguaje llano.
 
@@ -296,10 +286,10 @@ Paquete `solver/croquis_solver` (referencia) y `packages/solver-ts` (port). Toda
 
 ### 7.3 Daño (lo más real posible)
 
-1. **Deformación plástica:** campo de desplazamiento por vértice construido desde el perfil C1–C6 del solver (ancho, profundidad, altura de la zona), con caída suave, arrugas por ruido dirigido y suavizado laplaciano; se hornea como _morph target_ y se anima durante la fase de contacto (~100–150 ms) en cámara lenta. Implementación en TSL (GPU) con respaldo en CPU.
+1. **Deformación plástica:** campo de desplazamiento por vértice construido desde el perfil C1–C6 del solver (ancho, profundidad, altura de la zona), con caída suave, arrugas por ruido dirigido y suavizado laplaciano; se hornea como *morph target* y se anima durante la fase de contacto (~100–150 ms) en cámara lenta. Implementación en TSL (GPU) con respaldo en CPU.
 2. **Vidrios:** parabrisas con grieta tipo telaraña en el punto de contacto (sombreador + decal), vidrios laterales que estallan en partículas instanciadas, faros rotos.
 3. **Piezas desprendidas:** defensa, espejos, tapones, molduras como cuerpos Rapier con impulso del impacto.
-4. **Superficie:** rayones, abolladuras (normal maps) y **transferencia de pintura** del color del otro vehículo con _projected decals_.
+4. **Superficie:** rayones, abolladuras (normal maps) y **transferencia de pintura** del color del otro vehículo con *projected decals*.
 5. **Bolsas de aire** que se despliegan según ΔV y zona, con umbral configurable y referenciado.
 6. **En el piso:** marcas de frenado y derrape siguiendo la trayectoria del solver, vidrios y restos, fluidos, huellas de arrastre.
 
@@ -337,20 +327,19 @@ Video (MediaRecorder WebM; MP4 con ffmpeg.wasm), cuadros PNG, escena glTF, infor
 
 Cada evaluación tiene script en `eval/`, salida en `eval/results/` y se compara contra al menos una alternativa simple. El README solo cita estos resultados.
 
-| ID  | Qué se mide                                                                                                   | Datos                                                      | Comparar contra                       |
-| --- | ------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------- | ------------------------------------- |
-| E1  | Extracción del relato (F1 por campo, alucinación de campo, fuga de PII, costo, latencia, sesgo contrafactual) | Relatos-MX test congelado                                  | Línea base de reglas, Haiku vs Sonnet |
-| E2  | Impacto contra barrera: ΔV y aplastamiento a partir de la velocidad, y velocidad a partir del aplastamiento   | NHTSA Vehicle Crash Test Database (API pública)            | Modelo de energía equivalente ingenuo |
-| E3  | Reconstrucción de casos reales: ΔV estimado vs ΔV del EDR                                                     | NHTSA CISS (casos con descarga de EDR)                     | ΔV reconstruido por CISS con WinSmash |
-| E4  | Proyección de peatón: velocidad estimada y distancia                                                          | Ecuaciones de Searle y Wood y datos publicados accesibles  | Fórmula de Searle sola                |
-| E5  | Deformación visual: perfil C1–C6 del visor vs el de BeamNG con las mismas condiciones                         | BeamNG.tech (licencia académica)                           | Deformación lineal simple             |
-| E6  | Rendimiento: fps, tiempo de carga, memoria                                                                    | Escenas canónicas en la laptop de René                     | Presupuesto §7.8                      |
-| E7  | Paridad Python ↔ TS                                                                                           | Fixtures del solver                                        | Tolerancia documentada                |
-| E8  | Determinismo                                                                                                  | Repeticiones por semilla en distintos navegadores          | Igualdad exacta                       |
-| E9  | Usabilidad: tiempo hasta la primera reconstrucción, correcciones necesarias, SUS                              | ≥ 5 personas reales contando un percance propio o ficticio | —                                     |
+| ID | Qué se mide | Datos | Comparar contra |
+|---|---|---|---|
+| E1 | Extracción del relato (F1 por campo, alucinación de campo, fuga de PII, costo, latencia, sesgo contrafactual) | Relatos-MX test congelado | Línea base de reglas, Haiku vs Sonnet |
+| E2 | Impacto contra barrera: ΔV y aplastamiento a partir de la velocidad, y velocidad a partir del aplastamiento | NHTSA Vehicle Crash Test Database (API pública) | Modelo de energía equivalente ingenuo |
+| E3 | Reconstrucción de casos reales: ΔV estimado vs ΔV del EDR | NHTSA CISS (casos con descarga de EDR) | ΔV reconstruido por CISS con WinSmash |
+| E4 | Proyección de peatón: velocidad estimada y distancia | Ecuaciones de Searle y Wood y datos publicados accesibles | Fórmula de Searle sola |
+| E5 | Deformación visual: perfil C1–C6 del visor vs el de BeamNG con las mismas condiciones | BeamNG.tech (licencia académica) | Deformación lineal simple |
+| E6 | Rendimiento: fps, tiempo de carga, memoria | Escenas canónicas en la laptop de René | Presupuesto §7.8 |
+| E7 | Paridad Python ↔ TS | Fixtures del solver | Tolerancia documentada |
+| E8 | Determinismo | Repeticiones por semilla en distintos navegadores | Igualdad exacta |
+| E9 | Usabilidad: tiempo hasta la primera reconstrucción, correcciones necesarias, SUS | ≥ 5 personas reales contando un percance propio o ficticio | — |
 
 Notas:
-
 - CISS: sus reconstrucciones con WinSmash, en promedio, sobreestiman el ΔV debajo de 16 km/h y lo subestiman arriba, comparadas con el EDR. Medirse contra el EDR y contra WinSmash es "comparar hacia arriba".
 - Si un dato no es accesible (por formato o licencia), se documenta en `docs/data.md` y se reemplaza por la mejor alternativa con fuente; no se inventan números.
 
@@ -358,25 +347,24 @@ Notas:
 
 ## 9. Datos y licencias
 
-| Dato                                    | Uso                                                            | Licencia / condición                                  |
-| --------------------------------------- | -------------------------------------------------------------- | ----------------------------------------------------- |
-| INEGI ATUS (datos abiertos)             | Problema, distribución de tipos de accidente para el benchmark | Términos de libre uso de INEGI; citar                 |
-| NHTSA Vehicle Crash Test Database (API) | Rigidez CRASH3, validación E2, masas de prueba                 | Datos públicos del gobierno de EE. UU.; citar         |
-| NHTSA CISS                              | Validación E3, narrativas para relatos                         | Datos públicos; citar                                 |
-| Fichas técnicas de fabricantes          | Dimensiones y masas por modelo común en México                 | Cita por ficha en `data/SOURCES.md`                   |
-| Tablas de fricción de la literatura     | Rangos por superficie y estado                                 | Cita por valor                                        |
-| OpenStreetMap                           | Geometría de vías reales                                       | ODbL, atribución visible                              |
-| Poly Haven, Quaternius, Kenney          | Texturas, HDRI, modelos                                        | CC0                                                   |
-| MakeHuman / MPFB                        | Personas                                                       | Assets CC0                                            |
-| BeamNG.tech                             | Validación y modo alta fidelidad                               | Licencia académica, solo no comercial, con atribución |
-| Código de Croquis                       | —                                                              | MIT (confirmar con René)                              |
+| Dato | Uso | Licencia / condición |
+|---|---|---|
+| INEGI ATUS (datos abiertos) | Problema, distribución de tipos de accidente para el benchmark | Términos de libre uso de INEGI; citar |
+| NHTSA Vehicle Crash Test Database (API) | Rigidez CRASH3, validación E2, masas de prueba | Datos públicos del gobierno de EE. UU.; citar |
+| NHTSA CISS | Validación E3, narrativas para relatos | Datos públicos; citar |
+| Fichas técnicas de fabricantes | Dimensiones y masas por modelo común en México | Cita por ficha en `data/SOURCES.md` |
+| Tablas de fricción de la literatura | Rangos por superficie y estado | Cita por valor |
+| OpenStreetMap | Geometría de vías reales | ODbL, atribución visible |
+| Poly Haven, Quaternius, Kenney | Texturas, HDRI, modelos | CC0 |
+| MakeHuman / MPFB | Personas | Assets CC0 |
+| BeamNG.tech | Validación y modo alta fidelidad | Licencia académica, solo no comercial, con atribución |
+| Código de Croquis | — | MIT (confirmar con René) |
 
 ---
 
 ## 10. IA responsable
 
 **Lo que Croquis nunca debe hacer:**
-
 1. Asignar culpa o "presunto responsable".
 2. Diagnosticar o estimar lesiones de personas reales (ver Decisiones abiertas).
 3. Presentar la reconstrucción como peritaje o prueba.
@@ -385,7 +373,6 @@ Notas:
 6. Mostrar contenido gráfico de personas lesionadas.
 
 **Medidas:**
-
 - Leyenda visible en el visor y marca en cada exportación: "Reconstrucción ilustrativa generada a partir de un relato. No es un peritaje." + semilla + hash de entradas.
 - Consentimiento separado para guardar casos y para usar relatos en mejorar el sistema.
 - PII redactada en el dispositivo; IDs seudónimos.
@@ -399,6 +386,14 @@ Notas:
 
 Lecciones de `aprendizajes-hackathon`: ingeniería real + historia visual.
 
+- **Acrónimos.** Subtítulo en inglés (README y portafolio): *Crash Reconstruction from Oral Queries Using Impact Simulation*. Lema en español: *Cuenta. Reconoce. Ordena. ¿Qué falta? Ubica. Impacta. Simula.* La página de historia lleva una sección por letra:
+  - **C — Cuenta.** Lo dices con tus palabras, como se lo contarías a alguien.
+  - **R — Reconoce.** La IA convierte tu relato en datos y marca de qué frase salió cada uno.
+  - **O — Ordena.** Arma la línea de tiempo: antes, impacto y después.
+  - **Q — ¿Qué falta?** Te pregunta solo lo que de verdad cambia el resultado.
+  - **U — Ubica.** Acomodas autos, personas y calles en el croquis.
+  - **I — Impacta.** La física calcula el choque, la deformación y hacia dónde salió cada quien.
+  - **S — Simula.** Lo ves pasar en 3D, desde cualquier ángulo y en cámara lenta.
 - **Página de historia** con scroll: una persona ficticia del valle de Toluca que choca en una avenida real, la dificultad de explicar lo que pasó, datos de ATUS en el momento justo, por qué un croquis a mano y una animación genérica no bastan, y luego el producto.
 - **Demo "Tú eres…"**: el visitante escribe (o elige) un relato, ve en vivo qué entendió la IA campo por campo, corrige el croquis, ve la reconstrucción y compara hipótesis. Casos precargados que corren sin servidor, con semilla.
 - **Recorrido técnico**: página que muestra evaluaciones E1–E9 con gráficas generadas desde `eval/results/`.
@@ -410,7 +405,7 @@ Lecciones de `aprendizajes-hackathon`: ingeniería real + historia visual.
 
 - Monorepo con pnpm workspaces (JS) y `uv` (Python).
 - CI: lint (ESLint, Ruff), tipos (tsc, mypy o pyright), pytest, Vitest, Playwright con snapshots visuales de escenas canónicas, paridad, determinismo, evaluación rápida (subconjunto de E1 sin llamar a la API usando respuestas grabadas).
-- Despliegue: web en Vercel; API en AWS con CDK; entornos dev y prod; secretos fuera del repo.
+- Despliegue: todo en Vercel (web y API), con un preview por cada PR y producción desde `main`; variables de entorno de Vercel para secretos; las funciones de extracción usan streaming y `maxDuration` configurado según los límites vigentes de Vercel (verificarlos en su documentación).
 - Observabilidad: registro estructurado, costo por petición LLM, errores del visor.
 - Accesibilidad: el croquis y los resultados se pueden leer sin el 3D; contraste y teclado.
 - i18n: español de México por defecto, inglés como segundo idioma.
@@ -458,7 +453,7 @@ OSM real, clima, noche y faros, todos los dispositivos de tránsito, vehículos 
 ✅ Escena en una intersección real de Toluca generada desde OSM con atribución; snapshots de clima.
 
 **F9 — Demo offline y exportaciones**
-Port TS del solver con paridad (E7), determinismo (E8), casos precargados, PDF, video, glTF.
+Port TS completo del solver (todos los módulos de §6, incluidos inversión y Monte Carlo en Web Workers) con paridad (E7), determinismo (E8), casos precargados, PDF, video, glTF.
 ✅ La demo funciona sin red; E7 y E8 en verde.
 
 **F10 — BeamNG**
@@ -466,21 +461,21 @@ Puente BeamNGpy, E5, modo de render alta fidelidad opcional fuera de línea. Req
 ✅ E5 publicado.
 
 **F11 — Producto final**
-Página de historia, recorrido técnico, README completo, despliegue dev y prod, E9 con usuarios reales, guiones de video.
+Página de historia, recorrido técnico, README completo, despliegue en Vercel (preview y producción), E9 con usuarios reales, guiones de video.
 ✅ Checklist del README (§15) completo con enlaces; sitio en vivo.
 
 ---
 
 ## 14. Riesgos
 
-| Riesgo                                           | Mitigación                                                                                    |
-| ------------------------------------------------ | --------------------------------------------------------------------------------------------- |
-| Modelos 3D realistas con licencia libre escasean | Pipeline Blender para mejorar bases CC0; CC-BY con atribución; registrar la decisión en ADR   |
-| 8 GB de RAM                                      | Calidad por niveles; BeamNG fuera de la laptop (laboratorio del Tec); no correr todo a la vez |
-| Formatos complejos de CISS y CTD                 | Scripts de ingesta con pruebas; empezar por subconjuntos documentados                         |
-| Sobreafirmar precisión física                    | Rangos, banderas, leyenda; README separa "medido" de "ilustrativo"                            |
-| Costo de la API                                  | Respuestas grabadas en CI, caché, límite por usuario, comparar Haiku                          |
-| Relatos ambiguos                                 | Croquis editable + preguntas por sensibilidad                                                 |
+| Riesgo | Mitigación |
+|---|---|
+| Modelos 3D realistas con licencia libre escasean | Pipeline Blender para mejorar bases CC0; CC-BY con atribución; registrar la decisión en ADR |
+| 8 GB de RAM | Calidad por niveles; BeamNG fuera de la laptop (laboratorio del Tec); no correr todo a la vez |
+| Formatos complejos de CISS y CTD | Scripts de ingesta con pruebas; empezar por subconjuntos documentados |
+| Sobreafirmar precisión física | Rangos, banderas, leyenda; README separa "medido" de "ilustrativo" |
+| Costo de la API | Respuestas grabadas en CI, caché, límite por usuario, comparar Haiku |
+| Relatos ambiguos | Croquis editable + preguntas por sensibilidad |
 
 ---
 
@@ -494,9 +489,9 @@ Problema con fuentes · cómo probarlo en vivo y en local · resultados medidos 
 
 Claude Code no espera respuesta: usa la **opción por defecto**, la registra en un ADR y René puede cambiarla después.
 
-1. Nombre. Por defecto: _Croquis_.
+1. Nombre. Por defecto: *Croquis*.
 2. Lesiones. Por defecto: **no** se estiman (razones en §10). Alternativa: modo educativo separado con curvas de riesgo publicadas y advertencias.
-3. Despliegue de la API. Por defecto: AWS con CDK, como Helada. Mientras René no dé credenciales, todo corre en local y el despliegue queda en "Bloqueado — necesita a René".
+3. Despliegue. **Decidido por René: solo Vercel** (web y API), sin AWS. Mientras René no conecte el repo a su cuenta de Vercel, todo corre en local y el despliegue queda en "Bloqueado — necesita a René".
 4. Presupuesto de la API de Claude. Por defecto: límite configurable por variable de entorno con un tope bajo; las evaluaciones grandes (E1) se corren una vez y se graban.
 5. Licencia del código. Por defecto: MIT.
 6. Entrada por fotos del daño. Por defecto: queda como fase posterior a F11 (se documenta como siguiente paso, no se recorta nada del plan actual).
