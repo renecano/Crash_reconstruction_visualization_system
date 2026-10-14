@@ -59,6 +59,19 @@
    - los parámetros nuevos con su fuente.
 10. **Fixtures corregidos con sus relatos.** En `peaton_cruce` el peatón arranca en la banqueta sur, junto al frente del camión estacionado ("salió de atrás de un camión"). En `frontal_curva` la vegetación pasa al interior real de la curva (al sur, porque la curva es a la izquierda para A) y son tres árboles. Las posiciones eran supuestos; no se tocaron datos del relato.
 
+11. **Rendimiento sin bajar calidad (E6).** Con personas, el visor quedó debajo de 60 fps en `glorieta` en calidad media. El perfil mostró dos límites.
+    - **CPU por objeto dibujado:** el hilo principal casi nunca descansa en `updateForRender` y `_renderObjectDirect` de three.js. Se resolvió así:
+      - los ocupantes no proyectan sombra (la da la carrocería);
+      - rines, faros, calaveras y vidrios salen del pase de sombras;
+      - cada rueda es una sola malla, con un material que elige entre llanta y rin por vértice;
+      - todos los aros de contacto son una `InstancedMesh`;
+      - las posturas se recalculan solo cuando cambian.
+    - **Relleno en `glorieta`:** los fps se duplican a media resolución. Se resolvió así:
+      - el pasto se dibuja después de lo que lo tapa;
+      - la vía se parte en la zona que toca el cuadrado de la cámara de sombra del sol y la que no; la segunda se dibuja sin muestrear el mapa de sombras, porque ahí ninguna sombra puede caer.
+
+    La imagen es la misma: CI compara las 20 capturas. El protocolo de E6 alterna el orden de las escenas entre repeticiones y deja una pausa entre mediciones, porque la laptop se calienta y la última escena de cada calidad se medía siempre en peores condiciones.
+
 ## Consecuencias
 
 - El port TS completo (F9) debe reproducir `occupant`, `visibility`, `rollover`, `scene_objects` y la proyección de jinetes; la de Searle ya está con paridad.

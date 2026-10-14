@@ -5,8 +5,8 @@ Reglas de trabajo: `CLAUDE.md`. Especificación: `PLAN.md`.
 
 ## Estado actual
 
-- **Fase actual:** F5 — Personas y visibilidad (rama `feat/f5-personas`).
-- **Siguiente paso concreto:** ver el plan de F5 al final de este archivo; avanzar en el orden indicado ahí.
+- **Fase actual:** F5 — Personas y visibilidad (cerrando: PR #7 de `feat/f5-personas`).
+- **Siguiente paso concreto:** merge del PR #7 con CI verde (referencias visuales regeneradas en Linux) y arrancar **F6 — Comprensión del relato** (PLAN §5: PII, extracción con Claude, verificador, glosario, preguntas por sensibilidad, Relatos-MX con test congelado, E1). F6 necesita `ANTHROPIC_API_KEY` para grabar respuestas; mientras tanto se avanza con todo lo que no la requiere (PII, reglas, verificador, benchmark, línea base de reglas).
 - **F0** cerrado el 2026-10-10 (PR #1), **F1** el 2026-10-10 (PR #3), **F2** el 2026-10-13 (PR #4), **F3** el 2026-10-13 (PR #5), **F4** el 2026-10-13 (PR #6).
 
 ### Bloqueado — necesita a René
@@ -364,3 +364,104 @@ Criterio de aceptación (PLAN §13): proyección del ragdoll dentro de los lími
 9. **Pruebas.** Hypothesis para las propiedades de ocupantes y visibilidad, prueba de visibilidad en `objeto_fijo_arbol`, `peaton_cruce` (camión estacionado) y casos sintéticos, pruebas del ragdoll y capturas visuales nuevas.
 
 Riesgos: rendimiento con mallas con piel en GPU integrada (se mide con E6; hay LOD si hace falta); datos públicos de E4 escasos (se documenta cuál se usó y su licencia).
+
+### Qué se hizo (F5)
+
+- **Solver (Python, referencia):**
+  - **Jinetes:** proyección de motociclistas y ciclistas en choques vehículo–vehículo (fase `montado` y luego Searle).
+  - **Banda de Searle** (`searle_distance_band`, forma cerrada convexa en μ).
+  - **Ocupantes** (`occupant.py`): pulso senoidal desde ΔV y aplastamiento; espacio de vuelo de Michie sin cinturón; holgura más resorte con cinturón; zona y velocidad relativa de contacto; dos variantes si no se declara el cinturón.
+  - **Visibilidad** (`visibility.py`): línea de vista 2.5D desde alturas de ojo AASHTO; oclusores exactos; noche (faros) y clima.
+  - **Volcadura** (`rollover.py`): velocidad crítica de deslizamiento con bandera de consistencia.
+  - **Objetos del entorno** (`scene_objects.py`): geometría compartida con el visor.
+  - **Otros:** vía 0.84 × ancho, igual que el visor. Resultado **1.2.0**.
+- **Cuerpos** (`assets/pipeline`, CC0 de MakeHuman):
+  - **Descarga:** commit fijo con candado SHA-256.
+  - **Forma:** _macro targets_ con el algoritmo de MakeHuman; sexo neutro y etnias a 1/3.
+  - **Salida:** tres variantes por edad (762 KB cada una), complexión como _morph target_ y rig reducido a 16 segmentos.
+  - **Reproducibilidad:** CI descarga los insumos y reconstruye byte a byte.
+- **Visor:**
+  - **Animación:** posturas por direcciones de segmento; marcha con curvas de Winter.
+  - **Ragdoll:** Rapier con límites AAOS aplicados por el módulo, calibrado contra la banda de Searle y sin volver a chocar con los vehículos de su propio evento.
+  - **Ocupantes:** en su asiento, con el desplazamiento del solver y aros neutros de contacto.
+  - **Volcadura:** ilustrativa en Rapier.
+  - **Cámaras:** "Seguir a la persona", y la del conductor con líneas de vista y aros verde o naranja.
+  - **Panel:** personas y visibilidad en lenguaje neutro.
+- **Rendimiento:** E6 mostró que el visor está limitado por la CPU por objeto dibujado. Para devolver el margen:
+  - los ocupantes no proyectan sombra;
+  - rines, faros, calaveras y vidrios salen del pase de sombras;
+  - cada rueda es una malla y los aros son una sola `InstancedMesh`;
+  - las posturas se recalculan solo cuando cambian.
+- **Port TS:** `packages/solver-ts/src/pedestrian.ts` (Searle y banda) con paridad probada contra los resultados del solver.
+- **Fixtures corregidos con su relato:** el peatón de `peaton_cruce` sale de detrás del camión estacionado; la vegetación de `frontal_curva` pasa al interior de la curva.
+
+### Evidencia y números medidos
+
+- **Criterio del ragdoll** (`pnpm --filter @croquis/eval-js ragdoll` → `eval/results/ragdoll_searle.json`): 460 corridas con semilla (100 en escenas canónicas y 360 en el barrido de 20–70 km/h con tres cuerpos).
+  - **Con calibración:** **100.0 %** dentro de la banda de Searle. Es casi por construcción, porque la calibración apunta al centro de la banda.
+  - **Sin calibrar** (física sola, k = 1): **94.6 %**.
+  - **Factor k:** mediana 0.9527 (rango 0.8574–1) y 2.14 horneados en promedio.
+  - **Casos sin calibrar por debajo del 90 %:** adulto/30kmh (70 %), mayor/30kmh (50 %).
+  - **Criterio de F5** (≥ 95 %): ✔.
+- **E4** (`uv run croquis-eval e4-pedestrian` → `eval/results/e4_pedestrian.json`): 17 casos publicados en dominio.
+  - **Velocidad desde la distancia:** error absoluto medio de Croquis **5.215 km/h** (sesgo +3.125), con su intervalo cubriendo **65 %** de los casos (ancho medio 12.685 km/h). Searle sola: 5.813 km/h, cobertura 24 % (ancho 5.831 km/h). Wood: 6.156 km/h.
+  - **Por fuente:** IPTM 2.501 frente a 8.549 km/h; Eubanks y Haight 5.058 frente a 4.229; Randles 8.485 frente a 3.677. Croquis sobreestima en los casos reales de baja velocidad.
+  - **Distancia desde la velocidad:** Croquis 2.543 m (banda que cubre 47 %), Searle sola 2.912 m; el ragdoll sin calibrar da 2.423 m.
+  - **Factor de proyección:** 0.9; el óptimo de la muestra es 0.92 y reajustarlo da 6.5 km/h dejando uno fuera, así que se conserva.
+- **Visibilidad en la escena del árbol** (criterio de F5): `test_visibilidad_en_la_escena_del_arbol`. El conductor de la pickup (ojo a 1.40 m) ve el árbol durante toda la aproximación, desde más de 50 m.
+  - **Árbol que tapa:** con un segundo árbol frondoso entre ambos, lo tapa un tramo (`test_visibilidad_con_otro_arbol_que_tapa_el_del_impacto`).
+  - **Camión estacionado:** en `peaton_cruce` tapa al peatón hasta 1.8 s antes del impacto (se ve a 21.6 m).
+- **E6 con personas** (`eval/results/e6_performance.json`, mejor de 2 corridas, 1920×1080, cámara en movimiento, sin tope de vsync):
+
+| Backend | Calidad | fps mínimo entre escenas | fps mediana | Escena más lenta |
+| ------- | ------- | -----------------------: | ----------: | ---------------- |
+| WebGPU  | baja    |                    102.5 |       118.3 | glorieta         |
+| WebGPU  | media   |                     44.8 |        56.7 | frontal_curva    |
+| WebGPU  | alta    |                     17.5 |        22.9 | nocturno_lluvia  |
+| WebGL 2 | baja    |                    117.5 |       169.6 | nocturno_lluvia  |
+| WebGL 2 | media   |                     61.4 |        69.5 | glorieta         |
+| WebGL 2 | alta    |                     30.3 |        37.6 | glorieta         |
+
+Con la política automática por escena: calidad media **61.4 fps** mínimo (escena más lenta objeto_fijo_arbol); alta **30.3 fps**; carga inicial máxima **3.1 MB** (incluye cuerpos y el WASM de Rapier). Presupuesto: media ≥ 60 ✔, alta ≥ 30 ✔, ≤ 8 MB ✔.
+
+- **Pruebas:** pytest **286**, TS **336** (visor 157, web 11, solver-ts 7) y e2e **17** locales (las 20 capturas se generan en Linux por CI). Lint, tipos, Prettier y reproducibilidad de los cuerpos en verde.
+
+### Dependencias y herramientas (F5)
+
+- **Paquete Python `croquis-assets`** (`assets/pipeline`; NumPy y httpx, ya en el stack).
+- **Paquete JS `@croquis/eval-js`** (`eval/js`; tsx del catálogo) para evaluaciones que usan el visor.
+- **pypdf y PyMuPDF**, solo de forma efímera con `uv run --with`, para leer las tablas de los artículos de E4. No quedan en el proyecto.
+
+### Decisiones (ver ADR 0008)
+
+- Cuerpos de MakeHuman sin Blender (pipeline Python reproducible).
+- Sin suponer sexo ni etnia.
+- Ragdoll calibrado que ignora a los vehículos de su propio evento.
+- Visibilidad calculada por el solver con geometría compartida con el visor.
+- Volcadura como criterio físico en el solver y vueltas ilustrativas en el visor.
+
+### Pendientes declarados
+
+- **Visibilidad:** campo visual del conductor (pilares, espejos) y deslumbramiento.
+- **Fase previa:** deslizamiento lateral, para que la volcadura de `volcadura` salga del criterio y no solo del relato.
+- **Cinturón:** calibrar holgura y rigidez cuando haya datos accesibles de pruebas.
+- **Volcadura 3D:** validarla contra BeamNG (E5, F10).
+- **E4:** sumar más casos publicados en cuanto haya conjuntos abiertos más grandes.
+- **E6 con margen estrecho:** 61.4 fps en media y 30.3 en alta, contra 60 y 30; la laptop varía ±15 % según su temperatura. Siguientes optimizaciones sin bajar calidad, si una fase nueva lo empuja abajo: LOD de los cuerpos para ocupantes lejanos y fusión de más piezas fijas de los vehículos (el renderer está limitado por CPU por objeto).
+
+### Resumen para René (F5)
+
+Las personas ya son cuerpos articulados de MakeHuman (CC0, sin rasgos de sexo ni etnia, con ropa neutra):
+
+- **Peatones:** caminan y salen proyectados con un ragdoll que cae dentro de los límites de Searle.
+- **Ocupantes:** van en su asiento y se mueven en el impacto con aros azules neutros donde tocan el interior.
+- **Conductores:** su cámara muestra qué podían ver y qué lo tapaba.
+- **Volcadura:** se ve como secuencia ilustrativa.
+
+Para probarlo:
+
+1. Corre `pnpm dev` y abre `/visor?escena=peaton_cruce&camara=persona`; luego cambia a "Vista del conductor A" antes del impacto.
+2. Revisa los paneles "Personas" y "Visibilidad".
+3. Corre las evaluaciones: `uv run croquis-eval e4-pedestrian` y `pnpm --filter @croquis/eval-js ragdoll`.
+
+No necesito nada nuevo de ti para F5. Lo bloqueado sigue en la tabla de arriba.
