@@ -5,9 +5,9 @@ Reglas de trabajo: `CLAUDE.md`. Especificación: `PLAN.md`.
 
 ## Estado actual
 
-- **Fase actual:** migración a Vercel solo (rama `feat/vercel-only`), por decisión de René del 2026-10-14. F7 se fusionó (PR #9) y se retoma después de la migración con sus pendientes (segundo test de Relatos-MX desde CISS y prompt v2).
-- **Siguiente paso concreto:** fusionar el PR de la migración con CI en verde y retomar F7: segundo test de Relatos-MX desde los campos codificados de CISS y prompt v2, ahora en el pipeline TS.
-- **F0** cerrado el 2026-10-10 (PR #1), **F1** el 2026-10-10 (PR #3), **F2** el 2026-10-13 (PR #4), **F3** el 2026-10-13 (PR #5), **F4** el 2026-10-13 (PR #6), **F5** el 2026-10-13 (PR #7), **F6** el 2026-10-14 (PR #8), **F7** el 2026-10-14 (PR #9; pendientes registrados).
+- **Fase actual:** F7, pendiente 1 (rama `feat/f7-relatos-ciss`): test de Relatos-MX desde los campos codificados de CISS y prompt v2. La migración a Vercel se fusionó el 2026-10-14 (PR #10, ADR 0011).
+- **Siguiente paso concreto:** paso 1 del plan "F7 (continuación)" (abajo): fichas desde CISS con `croquis-data ciss relatos`.
+- **F0** cerrado el 2026-10-10 (PR #1), **F1** el 2026-10-10 (PR #3), **F2** el 2026-10-13 (PR #4), **F3** el 2026-10-13 (PR #5), **F4** el 2026-10-13 (PR #6), **F5** el 2026-10-13 (PR #7), **F6** el 2026-10-14 (PR #8), **F7** el 2026-10-14 (PR #9; pendientes registrados); migración a Vercel el 2026-10-14 (PR #10).
 
 ### Bloqueado — necesita a René
 
@@ -796,3 +796,28 @@ Los siete pasos del plan están terminados, y están en ADR 0011.
 1. **Análisis bajo pedido** (`/reconstruir {analisis: true}`, de F7): se fue con FastAPI y vuelve con la inversión y Monte Carlo en TS (F9). Los resultados de las escenas canónicas los siguen trayendo precalculados.
 2. **Banderas que muestrean en TS** (daño, reposo, velocidad contra evidencia): F9. En el test de E1 no cambian ninguna métrica.
 3. **Vercel:** René tiene que conectar el repo, configurar las variables (`ANTHROPIC_API_KEY`, el tope y las de Upstash) y elegir el plan. Sin Upstash, en producción solo responde la línea base de reglas.
+
+## F7 (continuación) — Relatos-MX: test CISS y prompt v2
+
+Rama `feat/f7-relatos-ciss`. Es el pendiente 1 de F7. La migración a Vercel ya se fusionó (PR #10).
+
+### Plan
+
+1. **Fichas desde CISS** (`data/croquis_data/ciss_relatos.py`, `croquis-data ciss relatos [--check]`):
+   - Selección con semilla y por estratos de los casos 2017–2024, para que los tipos se parezcan a la distribución de ATUS.
+   - Cada código de NHTSA se traduce al vocabulario del contrato, usando las etiquetas oficiales de `FORMAT24.sas`, que viene en el mismo zip, y el manual (DOT HS 813 771).
+   - Lo que se traduce: ambiente (WEATHER, LIGHTCOND, SURFCOND, SURFTYPE), vía (ALIGNMENT, RELJCT2, TYP_INT), control (TRAFCONT), maniobra (PREMOVE), frenado (MANEUVER), clase (BODYTYPE con largo), zonas (GAD del primer evento), tipo y objeto (EVENT) y la velocidad antes del choque del EDR (EDRPRECRASH, código 1010).
+   - Un código sin equivalente exacto deja el campo fuera de la ficha, con cada exclusión contada.
+   - Salida: `data/relatos-mx/ciss/fichas.jsonl` y conteos.
+2. **Relatos escritos desde las fichas:**
+   - Los escriben agentes que no vieron la línea base de reglas, con los cinco registros y PII sintética.
+   - Quien escribe solo pone el texto y las citas: `relatos check` exige que los hechos anotados sean exactamente los de la ficha.
+   - Un segundo agente, independiente, revisa que el texto no afirme hechos fuera de la ficha.
+3. **Partición `ciss` en Relatos-MX:** `fuente/ciss-*.toml`, `build/ciss.jsonl` y su propio candado `ciss.lock`. Se congela antes de la primera evaluación. El test actual no se toca: su hash solo cubre la partición `test`.
+4. **E1 con `--split ciss`** sobre el pipeline TS: reglas, y Haiku y Sonnet con prompt v1 (grabaciones nuevas, dentro del tope diario).
+5. **Prompt v2:** la tabla modelo → clase; se valida en dev y se mide en `ciss`.
+
+Riesgos:
+
+- **CISS es de EE. UU. y solo de vehículos de pasajeros remolcados.** Los relatos se adaptan a México (km/h, vías y modelos que circulan aquí) y la distribución de tipos no puede ser la de ATUS en todo: casi no hay motocicletas. Lo que no se pueda se documenta.
+- **Velocidad narrada:** la gente redondea. La ficha guarda el valor del EDR y la velocidad narrada redondeada a 5 km/h, que es la verdad de la extracción. El error contra el EDR se reporta aparte.
