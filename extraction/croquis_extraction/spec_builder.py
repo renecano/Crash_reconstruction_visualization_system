@@ -325,8 +325,10 @@ def build_spec(
         evento["zonas_impacto"] = [
             {"vehiculo_id": vehiculos[i]["id"], "cdc": {"lado": lado}}
             for i, lado in sorted(zonas.items())
-            if i < len(vehiculos)
+            if i < len(vehiculos) and vehiculos[i]["id"] in actores
         ]
+        if not evento["zonas_impacto"]:
+            del evento["zonas_impacto"]
     evidencias: list[JsonObj] = []
     dp = sc.get("evidencias.distancia_proyeccion_m")
     if dp is not None:

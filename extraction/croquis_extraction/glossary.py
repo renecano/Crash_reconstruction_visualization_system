@@ -30,7 +30,7 @@ def _compiled() -> list[tuple[dict[str, Any], re.Pattern[str]]]:
     out: list[tuple[dict[str, Any], re.Pattern[str]]] = []
     for e in load_json("glosario.json")["entradas"]:
         alts = "|".join(f"(?:{p})" for p in e["patrones"])
-        out.append((e, re.compile(rf"(?<![a-z0-9])(?:{alts})(?![a-z0-9])")))
+        out.append((e, re.compile(rf"(?<![a-z0-9])(?:{alts})(?![a-z0-9])", re.ASCII)))
     return out
 
 

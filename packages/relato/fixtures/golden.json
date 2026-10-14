@@ -1,0 +1,994 @@
+{
+ "version_pii": "1.0.0",
+ "version_glosario": "1.2.0",
+ "plegado": {
+  "entrada": " !\"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~ ¡¢£¤¥¦§¨©ª«¬­®¯°±²³´µ¶·¸¹º»¼½¾¿ÀÁÂÃÄÅÆÇÈÉÊËÌÍÎÏÐÑÒÓÔÕÖ×ØÙÚÛÜÝÞßàáâãäåæçèéêëìíîïðñòóôõö÷øùúûüýþÿĀāĂăĄąĆćĈĉĊċČčĎďĐđĒēĔĕĖėĘęĚěĜĝĞğĠġĢģĤĥĦħĨĩĪīĬĭĮįİıĲĳĴĵĶķĸĹĺĻļĽľĿŀŁłŃńŅņŇňŉŊŋŌōŎŏŐőŒœŔŕŖŗŘřŚśŜŝŞşŠšŢţŤťŦŧŨũŪūŬŭŮůŰűŲųŴŵŶŷŸŹźŻżŽžſƀƁƂƃƄƅƆƇƈƉƊƋƌƍƎƏƐƑƒƓƔƕƖƗƘƙƚƛƜƝƞƟƠơƢƣƤƥƦƧƨƩƪƫƬƭƮƯưƱƲƳƴƵƶƷƸƹƺƻƼƽƾƿǀǁǂǃǄǅǆǇǈǉǊǋǌǍǎǏǐǑǒǓǔǕǖǗǘǙǚǛǜǝǞǟǠǡǢǣǤǥǦǧǨǩǪǫǬǭǮǯǰǱǲǳǴǵǶǷǸǹǺǻǼǽǾǿȀȁȂȃȄȅȆȇȈȉȊȋȌȍȎȏȐȑȒȓȔȕȖȗȘșȚțȜȝȞȟȠȡȢȣȤȥȦȧȨȩȪȫȬȭȮȯȰȱȲȳȴȵȶȷȸȹȺȻȼȽȾȿɀɁɂɃɄɅɆɇɈɉɊɋɌɍɎɏḀḁḂḃḄḅḆḇḈḉḊḋḌḍḎḏḐḑḒḓḔḕḖḗḘḙḚḛḜḝḞḟḠḡḢḣḤḥḦḧḨḩḪḫḬḭḮḯḰḱḲḳḴḵḶḷḸḹḺḻḼḽḾḿṀṁṂṃṄṅṆṇṈṉṊṋṌṍṎṏṐṑṒṓṔṕṖṗṘṙṚṛṜṝṞṟṠṡṢṣṤṥṦṧṨṩṪṫṬṭṮṯṰṱṲṳṴṵṶṷṸṹṺṻṼṽṾṿẀẁẂẃẄẅẆẇẈẉẊẋẌẍẎẏẐẑẒẓẔẕẖẗẘẙẚẛẜẝẞẟẠạẢảẤấẦầẨẩẪẫẬậẮắẰằẲẳẴẵẶặẸẹẺẻẼẽẾếỀềỂểỄễỆệỈỉỊịỌọỎỏỐốỒồỔổỖỗỘộỚớỜờỞởỠỡỢợỤụỦủỨứỪừỬửỮữỰựỲỳỴỵỶỷỸỹỺỻỼỽỾỿ           ​‌‍‎‏‐‑‒–—―‖‗‘’‚‛“”„‟†‡•‣․‥…‧  ‪‫‬‭‮ ‰‱′″‴‵‶‷‸‹›※‼‽‾‿⁀⁁⁂⁃⁄⁅⁆⁇⁈⁉⁊⁋⁌⁍⁎⁏⁐⁑⁒⁓⁔⁕⁖⁗⁘⁙⁚⁛⁜⁝⁞ ⁠⁡⁢⁣⁤⁥⁦⁧⁨⁩⁪⁫⁬⁭⁮⁯　",
+  "salida": " !\"#$%&'()*+,-./0123456789:;<=>?@abcdefghijklmnopqrstuvwxyz[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~ ¡¢£¤¥¦§¨©ª«¬­®¯°±²³´µ¶·¸¹º»¼½¾¿aaaaaaæceeeeiiiiðnooooo×øuuuuyþßaaaaaaæceeeeiiiiðnooooo÷øuuuuyþyaaaaaaccccccccddđđeeeeeeeeeegggggggghhħħiiiiiiiiiıĳĳjjkkĸllllllŀŀłłnnnnnnŉŋŋooooooœœrrrrrrssssssssttttŧŧuuuuuuuuuuuuwwyyyzzzzzzſƀɓƃƃƅƅɔƈƈɖɗƌƌƍǝəɛƒƒɠɣƕɩɨƙƙƚƛɯɲƞɵooƣƣƥƥʀƨƨʃƪƫƭƭʈuuʊʋƴƴƶƶʒƹƹƺƻƽƽƾƿǀǁǂǃǆǆǆǉǉǉǌǌǌaaiioouuuuuuuuuuǝaaaaææǥǥggkkooooʒʒjǳǳǳggƕƿnnaaææøøaaaaeeeeiiiioooorrrruuuussttȝȝhhƞȡȣȣȥȥaaeeooooooooyyȴȵȶȷȸȹⱥȼȼƚⱦȿɀɂɂƀʉʌɇɇɉɉɋɋɍɍɏɏaabbbbbbccddddddddddeeeeeeeeeeffgghhhhhhhhhhiiiikkkkkkllllllllmmmmmmnnnnnnnnoooooooopppprrrrrrrrssssssssssttttttttuuuuuuuuuuvvvvwwwwwwwwwwxxxxyyzzzzzzhtwyẚſẜẝßẟaaaaaaaaaaaaaaaaaaaaaaaaeeeeeeeeeeeeeeeeiiiioooooooooooooooooooooooouuuuuuuuuuuuuuyyyyyyyyỻỻỽỽỿỿ           ​‌‍‎‏‐‑‒–—―‖‗‘’‚‛“”„‟†‡•‣․‥…‧  ‪‫‬‭‮ ‰‱′″‴‵‶‷‸‹›※‼‽‾‿⁀⁁⁂⁃⁄⁅⁆⁇⁈⁉⁊⁋⁌⁍⁎⁏⁐⁑⁒⁓⁔⁕⁖⁗⁘⁙⁚⁛⁜⁝⁞ ⁠⁡⁢⁣⁤⁥⁦⁧⁨⁩⁪⁫⁬⁭⁮⁯ "
+ },
+ "casos": [
+  {
+   "texto": "Me llamo Brenda Ruiz y mi tel es 722 123 4567",
+   "redaccion": "Me llamo [NOMBRE] y mi tel es [TELEFONO]",
+   "tramos": [
+    [
+     "NOMBRE",
+     9,
+     20
+    ],
+    [
+     "TELEFONO",
+     33,
+     45
+    ]
+   ],
+   "glosario": []
+  },
+  {
+   "texto": "El señor Luis Hernández García iba en la calle Miguel Hidalgo",
+   "redaccion": "El señor [NOMBRE] iba en la calle Miguel Hidalgo",
+   "tramos": [
+    [
+     "NOMBRE",
+     9,
+     30
+    ]
+   ],
+   "glosario": []
+  },
+  {
+   "texto": "placas MXA-123-B, correo ana.p@gmail.com",
+   "redaccion": "placas [PLACA], correo [CORREO]",
+   "tramos": [
+    [
+     "PLACA",
+     7,
+     16
+    ],
+    [
+     "CORREO",
+     25,
+     40
+    ]
+   ],
+   "glosario": []
+  },
+  {
+   "texto": "Placas: 123-ABC; PLACA número XYZ1234 y las placas del carro eran nuevas",
+   "redaccion": "Placas: [PLACA]; PLACA número [PLACA] y las placas del carro eran nuevas",
+   "tramos": [
+    [
+     "PLACA",
+     8,
+     15
+    ],
+    [
+     "PLACA",
+     30,
+     37
+    ]
+   ],
+   "glosario": []
+  },
+  {
+   "texto": "juan perez me chocó y maria lopez lo vio",
+   "redaccion": "[NOMBRE] me chocó y [NOMBRE] lo vio",
+   "tramos": [
+    [
+     "NOMBRE",
+     0,
+     10
+    ],
+    [
+     "NOMBRE",
+     22,
+     33
+    ]
+   ],
+   "glosario": []
+  },
+  {
+   "texto": "Vivo en Morelos NÚMERO 245 int 3, mi número 722 000 0000",
+   "redaccion": "Vivo en Morelos [NUMERO], mi número [TELEFONO]",
+   "tramos": [
+    [
+     "NUMERO",
+     16,
+     32
+    ],
+    [
+     "TELEFONO",
+     44,
+     56
+    ]
+   ],
+   "glosario": []
+  },
+  {
+   "texto": "Mi CURP es PERA800101HMCRZN09 y el RFC ÑEPA800101AB1",
+   "redaccion": "Mi CURP es [CURP] y el RFC [RFC]",
+   "tramos": [
+    [
+     "CURP",
+     11,
+     29
+    ],
+    [
+     "RFC",
+     39,
+     52
+    ]
+   ],
+   "glosario": []
+  },
+  {
+   "texto": "el teléfono +52 55 1234 5678 o (722) 123-4567 o 722.123.4567",
+   "redaccion": "el teléfono [TELEFONO] o [TELEFONO] o [TELEFONO]",
+   "tramos": [
+    [
+     "TELEFONO",
+     12,
+     28
+    ],
+    [
+     "TELEFONO",
+     31,
+     45
+    ],
+    [
+     "TELEFONO",
+     48,
+     60
+    ]
+   ],
+   "glosario": []
+  },
+  {
+   "texto": "Rosa iba conmigo. La luz estaba en rojo y doña Rosa López bajó.",
+   "redaccion": "Rosa iba conmigo. La luz estaba en rojo y doña [NOMBRE] bajó.",
+   "tramos": [
+    [
+     "NOMBRE",
+     47,
+     57
+    ]
+   ],
+   "glosario": [
+    [
+     "semaforo",
+     18,
+     24
+    ]
+   ]
+  },
+  {
+   "texto": "en la esquina de Benito Juárez con Miguel Hidalgo, colonia Guadalupe",
+   "redaccion": "en la esquina de Benito Juárez con Miguel Hidalgo, colonia Guadalupe",
+   "tramos": [],
+   "glosario": [
+    [
+     "cruce_crucero",
+     0,
+     13
+    ]
+   ]
+  },
+  {
+   "texto": "Iba a 60　por Tollocan﻿ con Ana María Pérez",
+   "redaccion": "Iba a 60　por Tollocan﻿ con [NOMBRE]",
+   "tramos": [
+    [
+     "NOMBRE",
+     27,
+     42
+    ]
+   ],
+   "glosario": [
+    [
+     "velocidad_como_a",
+     0,
+     8
+    ]
+   ]
+  },
+  {
+   "texto": "😀 Me llamo Ana Pérez 🚗 y mis placas son ABC-12-34 🙏",
+   "redaccion": "😀 Me llamo [NOMBRE] 🚗 y mis placas son [PLACA] 🙏",
+   "tramos": [
+    [
+     "NOMBRE",
+     11,
+     20
+    ],
+    [
+     "PLACA",
+     40,
+     49
+    ]
+   ],
+   "glosario": []
+  },
+  {
+   "texto": "Se me cerró un camión; el tráiler se pasó el alto. LLOVÍA y había TOPE",
+   "redaccion": "Se me cerró un camión; el tráiler se pasó el alto. LLOVÍA y había TOPE",
+   "tramos": [],
+   "glosario": [
+    [
+     "se_me_cerro",
+     0,
+     11
+    ],
+    [
+     "camion",
+     15,
+     21
+    ],
+    [
+     "trailer",
+     26,
+     33
+    ],
+    [
+     "se_paso_el_alto",
+     34,
+     49
+    ],
+    [
+     "llovia",
+     51,
+     57
+    ],
+    [
+     "tope",
+     66,
+     70
+    ]
+   ]
+  },
+  {
+   "texto": "el chofer Ramírez dijo que mi esposa Lupita iba de copiloto",
+   "redaccion": "el chofer [NOMBRE] dijo que mi esposa [NOMBRE] iba de copiloto",
+   "tramos": [
+    [
+     "NOMBRE",
+     10,
+     17
+    ],
+    [
+     "NOMBRE",
+     37,
+     43
+    ]
+   ],
+   "glosario": []
+  },
+  {
+   "texto": "No. 12 de la calle 5 de Mayo # 34B depto 2",
+   "redaccion": "[NUMERO] de la calle 5 de Mayo [NUMERO]",
+   "tramos": [
+    [
+     "NUMERO",
+     0,
+     6
+    ],
+    [
+     "NUMERO",
+     29,
+     42
+    ]
+   ],
+   "glosario": []
+  },
+  {
+   "texto": "MI NOMBRE ES JOSÉ LUIS y frené a fondo",
+   "redaccion": "MI NOMBRE ES [NOMBRE] y frené a fondo",
+   "tramos": [
+    [
+     "NOMBRE",
+     13,
+     22
+    ]
+   ],
+   "glosario": [
+    [
+     "frene_a_fondo",
+     25,
+     38
+    ]
+   ]
+  },
+  {
+   "texto": "",
+   "redaccion": "",
+   "tramos": [],
+   "glosario": []
+  },
+  {
+   "texto": "Iba por Paseo Tollocan en mi Aveo gris, como a 50, y la camioneta de enfrente frenó de golpe en el semáforo. No alcancé a frenar y le pegué por detrás. Estaba chispeando y el piso mojado.",
+   "redaccion": "Iba por Paseo Tollocan en mi Aveo gris, como a 50, y la camioneta de enfrente frenó de golpe en el semáforo. No alcancé a frenar y le pegué por detrás. Estaba chispeando y el piso mojado.",
+   "tramos": [],
+   "glosario": [
+    [
+     "velocidad_como_a",
+     40,
+     49
+    ],
+    [
+     "camioneta",
+     56,
+     65
+    ],
+    [
+     "frene_a_fondo",
+     78,
+     83
+    ],
+    [
+     "semaforo",
+     99,
+     107
+    ],
+    [
+     "no_freno",
+     109,
+     128
+    ],
+    [
+     "por_alcance",
+     131,
+     150
+    ],
+    [
+     "lluvia_ligera",
+     159,
+     169
+    ],
+    [
+     "piso_mojado",
+     175,
+     186
+    ]
+   ]
+  },
+  {
+   "texto": "El día de hoy, aproximadamente a las 19:30 horas, circulaba en mi vehículo Nissan Versa color blanco sobre la avenida Las Torres en dirección al oriente. Al llegar a la intersección con la calle Morelos, un vehículo tipo pickup de color rojo no respetó la señal de alto y me impactó en la puerta del lado del conductor. Mi velocidad era de aproximadamente 40 km/h. Ya estaba oscuro, pero había alumbrado público.",
+   "redaccion": "El día de hoy, aproximadamente a las 19:30 horas, circulaba en mi vehículo Nissan Versa color blanco sobre la avenida Las Torres en dirección al oriente. Al llegar a la intersección con la calle Morelos, un vehículo tipo pickup de color rojo no respetó la señal de alto y me impactó en la puerta del lado del conductor. Mi velocidad era de aproximadamente 40 km/h. Ya estaba oscuro, pero había alumbrado público.",
+   "tramos": [],
+   "glosario": [
+    [
+     "cruce_crucero",
+     169,
+     181
+    ],
+    [
+     "pickup",
+     221,
+     227
+    ],
+    [
+     "alto_total",
+     256,
+     269
+    ],
+    [
+     "de_lado",
+     283,
+     295
+    ],
+    [
+     "noche_con_luz",
+     388,
+     403
+    ]
+   ]
+  },
+  {
+   "texto": "Yo iba en mi moto por la lateral de Periférico como a 60 y un taxi se me cerró para dar vuelta a la derecha. Lo alcancé a esquivar poquito pero le di con el manubrio en la salpicadera y me caí. Traía casco, gracias a Dios.",
+   "redaccion": "Yo iba en mi moto por la lateral de Periférico como a 60 y un taxi se me cerró para dar vuelta a la derecha. Lo alcancé a esquivar poquito pero le di con el manubrio en la salpicadera y me caí. Traía casco, gracias a Dios.",
+   "tramos": [],
+   "glosario": [
+    [
+     "moto",
+     13,
+     17
+    ],
+    [
+     "lateral",
+     22,
+     32
+    ],
+    [
+     "autopista",
+     36,
+     46
+    ],
+    [
+     "velocidad_como_a",
+     47,
+     56
+    ],
+    [
+     "se_me_cerro",
+     67,
+     78
+    ],
+    [
+     "vuelta_derecha",
+     88,
+     107
+    ],
+    [
+     "casco",
+     194,
+     205
+    ]
+   ]
+  },
+  {
+   "texto": "iba de regreso a mi casa en la noche, en la carretera a Ixtlahuaca, y en una curva se me fue la camioneta, perdi el control y me fui contra un arbol. no habia luz en esa parte y estaba llobiendo fuerte. creo q iba a unos 80",
+   "redaccion": "iba de regreso a mi casa en la noche, en la carretera a Ixtlahuaca, y en una curva se me fue la camioneta, perdi el control y me fui contra un arbol. no habia luz en esa parte y estaba llobiendo fuerte. creo q iba a unos 80",
+   "tramos": [],
+   "glosario": [
+    [
+     "noche",
+     25,
+     36
+    ],
+    [
+     "carretera",
+     44,
+     53
+    ],
+    [
+     "curva",
+     77,
+     82
+    ],
+    [
+     "camioneta",
+     96,
+     105
+    ],
+    [
+     "arbol",
+     140,
+     148
+    ],
+    [
+     "noche_sin_luz",
+     150,
+     162
+    ],
+    [
+     "velocidad_como_a",
+     214,
+     223
+    ]
+   ]
+  },
+  {
+   "texto": "Venía manejando la Urvan de la ruta por Hidalgo, a vuelta de rueda porque había mucho tráfico, y una señora se atravesó corriendo entre los carros, fuera del paso de cebra. La golpeé con la defensa y cayó como a dos metros. Se levantó sola.",
+   "redaccion": "Venía manejando la Urvan de la ruta por Hidalgo, a vuelta de rueda porque había mucho tráfico, y una señora se atravesó corriendo entre los carros, fuera del paso de cebra. La golpeé con la defensa y cayó como a dos metros. Se levantó sola.",
+   "tramos": [],
+   "glosario": [
+    [
+     "combi",
+     28,
+     35
+    ],
+    [
+     "a_vuelta_de_rueda",
+     49,
+     66
+    ],
+    [
+     "peaton",
+     97,
+     119
+    ],
+    [
+     "paso_de_cebra",
+     158,
+     171
+    ],
+    [
+     "salio_volando",
+     200,
+     211
+    ]
+   ]
+  },
+  {
+   "texto": "Me pegaron. Bueno, primero: estaba parado en el alto de Juárez y Pino Suárez esperando el siga. De repente sentí el golpe por atrás, era un microbús que no frenó a tiempo. Eran como las 8 de la mañana, todo seco, buen día. Mi carro es un Jetta azul.",
+   "redaccion": "Me pegaron. Bueno, primero: estaba parado en el alto de Juárez y Pino Suárez esperando el siga. De repente sentí el golpe por atrás, era un microbús que no frenó a tiempo. Eran como las 8 de la mañana, todo seco, buen día. Mi carro es un Jetta azul.",
+   "tramos": [],
+   "glosario": [
+    [
+     "detenido",
+     28,
+     41
+    ],
+    [
+     "alto_total",
+     45,
+     52
+    ],
+    [
+     "detenido",
+     77,
+     94
+    ],
+    [
+     "combi",
+     140,
+     148
+    ],
+    [
+     "no_freno",
+     153,
+     161
+    ],
+    [
+     "seco",
+     202,
+     211
+    ],
+    [
+     "despejado",
+     213,
+     221
+    ]
+   ]
+  },
+  {
+   "texto": "En la autopista México-Querétaro un tráiler se me cerró y para no darle volanteé fuerte a la derecha. La camioneta se ladeó, pegó con la guarnición y se volteó, dio como dos vueltas. Iba como a 100. Mi esposa iba de copiloto con cinturón.",
+   "redaccion": "En la autopista México-Querétaro un tráiler se me cerró y para no darle volanteé fuerte a la derecha. La camioneta se ladeó, pegó con la guarnición y se volteó, dio como dos vueltas. Iba como a 100. Mi esposa iba de copiloto con cinturón.",
+   "tramos": [],
+   "glosario": [
+    [
+     "autopista",
+     6,
+     15
+    ],
+    [
+     "trailer",
+     36,
+     43
+    ],
+    [
+     "se_me_cerro",
+     44,
+     55
+    ],
+    [
+     "camioneta",
+     105,
+     114
+    ],
+    [
+     "banqueta",
+     137,
+     147
+    ],
+    [
+     "se_volteo",
+     150,
+     159
+    ],
+    [
+     "velocidad_como_a",
+     187,
+     197
+    ],
+    [
+     "cinturon",
+     225,
+     237
+    ]
+   ]
+  },
+  {
+   "texto": "Choque de frente en la carretera libre a Valle de Bravo. Yo en mi Tsuru a 70, el otro en una pickup se pasó a mi carril en la curva.",
+   "redaccion": "Choque de frente en la carretera libre a Valle de Bravo. Yo en mi Tsuru a 70, el otro en una pickup se pasó a mi carril en la curva.",
+   "tramos": [],
+   "glosario": [
+    [
+     "de_frente",
+     7,
+     16
+    ],
+    [
+     "carretera",
+     23,
+     32
+    ],
+    [
+     "vocho",
+     66,
+     71
+    ],
+    [
+     "pickup",
+     93,
+     99
+    ],
+    [
+     "cambio_carril",
+     100,
+     119
+    ],
+    [
+     "curva",
+     120,
+     131
+    ]
+   ]
+  },
+  {
+   "texto": "Estaba en el estacionamiento de la plaza dando reversa para salir del cajón y una señora en una Honda CR-V venía también en reversa del otro lado. Nos dimos con las defensas traseras, despacito. Mi carro es un March rojo. Se llama Patricia Álvarez y me dio su teléfono 722 189 4471.",
+   "redaccion": "Estaba en el estacionamiento de la plaza dando reversa para salir del cajón y una señora en una Honda CR-V venía también en reversa del otro lado. Nos dimos con las defensas traseras, despacito. Mi carro es un March rojo. Se llama [NOMBRE] y me dio su teléfono [TELEFONO].",
+   "tramos": [
+    [
+     "NOMBRE",
+     231,
+     247
+    ],
+    [
+     "TELEFONO",
+     269,
+     281
+    ]
+   ],
+   "glosario": [
+    [
+     "estacionamiento",
+     13,
+     28
+    ],
+    [
+     "reversa",
+     41,
+     54
+    ],
+    [
+     "reversa",
+     121,
+     131
+    ],
+    [
+     "a_vuelta_de_rueda",
+     184,
+     193
+    ]
+   ]
+  },
+  {
+   "texto": "el de la moto venia en sentido contrario por la calle angosta, yo iva saliendo de mi cochera en reversa y no lo bi. me pego en la parte de atras del lado derecho. el iba rapidisimo",
+   "redaccion": "el de la moto venia en sentido contrario por la calle angosta, yo iva saliendo de mi cochera en reversa y no lo bi. me pego en la parte de atras del lado derecho. el iba rapidisimo",
+   "tramos": [],
+   "glosario": [
+    [
+     "moto",
+     9,
+     13
+    ],
+    [
+     "reversa",
+     93,
+     103
+    ],
+    [
+     "venia_hecho_la_mocha",
+     170,
+     180
+    ]
+   ]
+  },
+  {
+   "texto": "En la glorieta de Colón iba entrando con mi Mazda 3 negro y un camión de pasajeros que ya iba dentro de la glorieta me dio un llegue en el costado derecho. Él iba despacio, yo como a 20.",
+   "redaccion": "En la glorieta de Colón iba entrando con mi Mazda 3 negro y un camión de pasajeros que ya iba dentro de la glorieta me dio un llegue en el costado derecho. Él iba despacio, yo como a 20.",
+   "tramos": [],
+   "glosario": [
+    [
+     "glorieta",
+     6,
+     14
+    ],
+    [
+     "camion_autobus",
+     63,
+     82
+    ],
+    [
+     "glorieta",
+     107,
+     115
+    ],
+    [
+     "dio_el_llegue",
+     116,
+     132
+    ],
+    [
+     "velocidad_como_a",
+     176,
+     185
+    ]
+   ]
+  },
+  {
+   "texto": "Circulaba en bicicleta por la ciclovía de avenida Insurgentes cuando un automóvil compacto dio vuelta a la derecha sin percatarse de mi presencia y me golpeó con su costado. Caí sobre el pavimento. Eran aproximadamente las 14:00 horas y el clima estaba despejado.",
+   "redaccion": "Circulaba en bicicleta por la ciclovía de avenida Insurgentes cuando un automóvil compacto dio vuelta a la derecha sin percatarse de mi presencia y me golpeó con su costado. Caí sobre el pavimento. Eran aproximadamente las 14:00 horas y el clima estaba despejado.",
+   "tramos": [],
+   "glosario": [
+    [
+     "bici",
+     13,
+     22
+    ],
+    [
+     "vuelta_derecha",
+     95,
+     114
+    ],
+    [
+     "despejado",
+     253,
+     262
+    ]
+   ]
+  },
+  {
+   "texto": "Me quedé dormido tantito manejando de madrugada por la carretera y me salí, choqué contra un poste de luz. El poste era de concreto. Yo iba solo en mi Sentra, sin cinturón la neta, como a 90.",
+   "redaccion": "Me quedé dormido tantito manejando de madrugada por la carretera y me salí, choqué contra un poste de luz. El poste era de concreto. Yo iba solo en mi Sentra, sin cinturón la neta, como a 90.",
+   "tramos": [],
+   "glosario": [
+    [
+     "noche",
+     38,
+     47
+    ],
+    [
+     "carretera",
+     55,
+     64
+    ],
+    [
+     "poste",
+     90,
+     98
+    ],
+    [
+     "poste",
+     110,
+     115
+    ],
+    [
+     "concreto",
+     120,
+     131
+    ],
+    [
+     "sin_cinturon",
+     159,
+     171
+    ],
+    [
+     "velocidad_como_a",
+     181,
+     190
+    ]
+   ]
+  },
+  {
+   "texto": "Iba por el carril de alta en Circuito Exterior a unos 90 y el de al lado se cambió de carril sin poner direccional, me rozó todo el costado izquierdo. Era un Chevrolet Spark verde. Las placas eran NXR-482-C.",
+   "redaccion": "Iba por el carril de alta en Circuito Exterior a unos 90 y el de al lado se cambió de carril sin poner direccional, me rozó todo el costado izquierdo. Era un Chevrolet Spark verde. Las placas eran [PLACA].",
+   "tramos": [
+    [
+     "PLACA",
+     197,
+     206
+    ]
+   ],
+   "glosario": [
+    [
+     "velocidad_como_a",
+     47,
+     56
+    ],
+    [
+     "cambio_carril",
+     73,
+     92
+    ],
+    [
+     "rozon",
+     116,
+     123
+    ]
+   ]
+  },
+  {
+   "texto": "bajando a Toluca por la Marquesa habia neblina y no se veia nada, en la curva me sali del camino y me fui a la cuneta. mi carro es un vocho, iba despasio como a 40",
+   "redaccion": "bajando a Toluca por la Marquesa habia neblina y no se veia nada, en la curva me sali del camino y me fui a la cuneta. mi carro es un vocho, iba despasio como a 40",
+   "tramos": [],
+   "glosario": [
+    [
+     "niebla",
+     39,
+     46
+    ],
+    [
+     "curva",
+     66,
+     77
+    ],
+    [
+     "vocho",
+     134,
+     139
+    ],
+    [
+     "velocidad_como_a",
+     154,
+     163
+    ]
+   ]
+  },
+  {
+   "texto": "Al final quedamos los dos atravesados en el crucero. Yo venía por Lerdo a 40 con el verde, y la otra, una Sienna gris, se pasó el rojo y me pegó en la puerta del copiloto. Llovía poquito.",
+   "redaccion": "Al final quedamos los dos atravesados en el crucero. Yo venía por Lerdo a 40 con el verde, y la otra, una Sienna gris, se pasó el rojo y me pegó en la puerta del copiloto. Llovía poquito.",
+   "tramos": [],
+   "glosario": [
+    [
+     "cruce_crucero",
+     44,
+     51
+    ],
+    [
+     "se_paso_el_alto",
+     119,
+     134
+    ],
+    [
+     "de_lado",
+     137,
+     157
+    ],
+    [
+     "llovia",
+     172,
+     178
+    ]
+   ]
+  },
+  {
+   "texto": "Un repartidor en moto me pegó por atrás cuando frené en el tope de la calle Gómez Farías. Yo traía mi Kia Rio blanco, iba a vuelta de rueda por el tope. El chavo Brandon se cayó pero no le pasó nada.",
+   "redaccion": "Un repartidor en moto me pegó por atrás cuando frené en el tope de la calle Gómez Farías. Yo traía mi Kia Rio blanco, iba a vuelta de rueda por el tope. El chavo Brandon se cayó pero no le pasó nada.",
+   "tramos": [],
+   "glosario": [
+    [
+     "moto",
+     3,
+     21
+    ],
+    [
+     "frene_a_fondo",
+     47,
+     52
+    ],
+    [
+     "tope",
+     59,
+     63
+    ],
+    [
+     "a_vuelta_de_rueda",
+     122,
+     139
+    ],
+    [
+     "tope",
+     147,
+     151
+    ]
+   ]
+  },
+  {
+   "texto": "Por medio del presente hago constar que el vehículo de mi propiedad, marca Toyota, modelo Hilux, color plata, se encontraba estacionado frente al número 245 de la calle Allende cuando fue impactado en su parte trasera por un camión de carga que realizaba maniobras de reversa.",
+   "redaccion": "Por medio del presente hago constar que el vehículo de mi propiedad, marca Toyota, modelo Hilux, color plata, se encontraba estacionado frente al [NUMERO] de la calle Allende cuando fue impactado en su parte trasera por un camión de carga que realizaba maniobras de reversa.",
+   "tramos": [
+    [
+     "NUMERO",
+     146,
+     156
+    ]
+   ],
+   "glosario": [
+    [
+     "estacionado",
+     124,
+     135
+    ],
+    [
+     "torton",
+     225,
+     240
+    ],
+    [
+     "reversa",
+     265,
+     275
+    ]
+   ]
+  },
+  {
+   "texto": "En la carretera a Atlacomulco se me atravesó un perro y por no atropellarlo frené y me fui contra la barda de la orilla. Iba como a 60 en mi Aveo. Era de día y estaba seco.",
+   "redaccion": "En la carretera a Atlacomulco se me atravesó un perro y por no atropellarlo frené y me fui contra la barda de la orilla. Iba como a 60 en mi Aveo. Era de día y estaba seco.",
+   "tramos": [],
+   "glosario": [
+    [
+     "carretera",
+     6,
+     15
+    ],
+    [
+     "se_me_cerro",
+     30,
+     44
+    ],
+    [
+     "frene_a_fondo",
+     76,
+     81
+    ],
+    [
+     "barda_muro",
+     101,
+     106
+    ],
+    [
+     "banqueta",
+     110,
+     119
+    ],
+    [
+     "velocidad_como_a",
+     125,
+     134
+    ],
+    [
+     "de_dia",
+     147,
+     157
+    ],
+    [
+     "seco",
+     160,
+     171
+    ]
+   ]
+  },
+  {
+   "texto": "Iba saliendo de la gasolinera para incorporarme a la avenida y no vi que venía una combi. Me pegó en la defensa delantera del lado izquierdo. Yo iba muy despacio y él como a 50, creo.",
+   "redaccion": "Iba saliendo de la gasolinera para incorporarme a la avenida y no vi que venía una combi. Me pegó en la defensa delantera del lado izquierdo. Yo iba muy despacio y él como a 50, creo.",
+   "tramos": [],
+   "glosario": [
+    [
+     "combi",
+     83,
+     88
+    ],
+    [
+     "a_vuelta_de_rueda",
+     149,
+     161
+    ],
+    [
+     "velocidad_como_a",
+     167,
+     176
+    ]
+   ]
+  }
+ ]
+}

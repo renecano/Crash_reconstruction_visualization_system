@@ -74,9 +74,9 @@ def test_tramos_ordenados_sin_traslapes(text: str) -> None:
 
 
 @given(
-    st.from_regex(r"[A-Z]{3}-\d{3}-[A-Z]", fullmatch=True),
+    st.from_regex(r"[A-Z]{3}-[0-9]{3}-[A-Z]", fullmatch=True),
     st.from_regex(r"[a-z]{3,8}@[a-z]{3,8}\.com", fullmatch=True),
-    st.from_regex(r"722 \d{3} \d{4}", fullmatch=True),
+    st.from_regex(r"722 [0-9]{3} [0-9]{4}", fullmatch=True),
 )
 def test_datos_generados_nunca_se_filtran(placa: str, correo: str, tel: str) -> None:
     text = f"Las placas eran {placa}, mi correo {correo} y mi número {tel}."

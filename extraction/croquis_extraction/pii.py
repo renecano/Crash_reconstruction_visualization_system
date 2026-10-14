@@ -5,6 +5,9 @@ números de domicilio. Corre en el navegador (port TS en `packages/relato`, con 
 aquí como referencia. Reemplaza cada dato por un marcador (`[NOMBRE]`, `[PLACA]`, …) y devuelve
 los tramos para que la interfaz pueda mostrar el original solo en el dispositivo.
 
+Patrones y pistas viven en `packages/relato/data/pii.json`, compartido con el port TS; se compilan
+con `re.ASCII` para que `\\d`, `\\s`, `\\w` y `\\b` signifiquen lo mismo que en JS.
+
 Nombres: diccionario de nombres de pila comunes (DataMX, CC0) con mayúscula, o después de una pista
 ("me llamo", "el señor", "mi esposa"…); se extiende a las palabras con mayúscula que siguen
 (apellidos). En minúsculas solo si son dos nombres o nombre y apellido seguidos. Los nombres que
@@ -17,106 +20,14 @@ from __future__ import annotations
 import re
 from dataclasses import dataclass
 from functools import cache
+from typing import Any
 
-from croquis_extraction.text import fold, load_json
+from croquis_extraction.text import fold, load_json, normalize_spaces
 
 MARKERS = ("NOMBRE", "PLACA", "TELEFONO", "CORREO", "CURP", "RFC", "NUMERO")
 
 _WORD = re.compile(r"[A-Za-zÁÉÍÓÚÜÑáéíóúüñ]+")
-_CUES = re.compile(
-    r"(?<![a-z])(?:me llamo|mi nombre es|se llama|se llamaba|el senor|la senora|la senorita|"
-    r"el joven|la joven|don|dona|el licenciado|la licenciada|el ingeniero|la ingeniera|"
-    r"el doctor|la doctora|el oficial|la oficial|el agente|la agente|el ajustador|la ajustadora|"
-    r"mi esposo|mi esposa|mi hijo|mi hija|mi hermano|mi hermana|mi papa|mi mama|mi novio|"
-    r"mi novia|mi amigo|mi amiga|mi companero|mi companera|mi primo|mi prima|mi tio|mi tia|"
-    r"el chofer|la chofer|el conductor|la conductora)\s+"
-)
-# Palabras que anuncian un lugar: lo que sigue es nombre de calle, colonia, etc., no de persona.
-_PLACE_CUES = {
-    "calle",
-    "avenida",
-    "av",
-    "ave",
-    "boulevard",
-    "bulevar",
-    "blvd",
-    "calzada",
-    "colonia",
-    "col",
-    "carretera",
-    "autopista",
-    "periferico",
-    "glorieta",
-    "puente",
-    "plaza",
-    "parque",
-    "esquina",
-    "mercado",
-    "escuela",
-    "hospital",
-    "iglesia",
-    "privada",
-    "cerrada",
-    "andador",
-    "callejon",
-    "fraccionamiento",
-    "barrio",
-    "pueblo",
-    "municipio",
-    "ciudad",
-    "estado",
-    "entre",
-    "metro",
-    "estacion",
-    "paseo",
-    "circuito",
-    "eje",
-    "via",
-    "camino",
-    "libramiento",
-    "prolongacion",
-}
-_PARTICLES = {"de", "del", "la", "las", "los", "y"}
-# Conectores entre una pista de lugar y el nombre del lugar ("esquina con Miguel Hidalgo").
-_PLACE_LINKS = _PARTICLES | {"con", "e", "esq", "y", "a", "en", "por", "sobre", "hacia"}
-_PATTERNS: list[tuple[str, re.Pattern[str]]] = [
-    ("CORREO", re.compile(r"[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}")),
-    ("CURP", re.compile(r"\b[A-Z]{4}\d{6}[HM][A-Z]{5}[A-Z0-9]\d\b")),
-    ("RFC", re.compile(r"\b[A-ZÑ&]{3,4}\d{6}[A-Z0-9]{3}\b")),
-    (
-        "TELEFONO",
-        re.compile(
-            r"(?<![\w])(?:\+?52[\s.-]?)?(?:\(?\d{2,3}\)?[\s.-]?)?\d{3,4}[\s.-]?\d{4}(?![\w])"
-        ),
-    ),
-    (
-        "PLACA",
-        re.compile(
-            r"(?i)(?<![\w])(?:[A-Z]{3}[\s-]?\d{3}[\s-]?[A-Z]|[A-Z]{3}[\s-]?\d{2}[\s-]?\d{2}|"
-            r"\d{3}[\s-]?[A-Z]{3}|[A-Z]{2}[\s-]?\d{2}[\s-]?\d{3}|[A-Z]\d{2}[\s-]?[A-Z]{3}|"
-            r"\d{2}[\s-]?[A-Z]{2}[\s-]?\d{2}|[A-Z]{3}[\s-]?\d{4})(?![\w])"
-        ),
-    ),
-    (
-        "PLACA",
-        re.compile(
-            r"(?i)(?<=placas)(?:\s+(?:de|con|numero|número|son|eran))?[\s:]*([A-Z0-9][A-Z0-9-]{2,9})"
-        ),
-    ),
-    (
-        "PLACA",
-        re.compile(
-            r"(?i)(?<=placa)(?:\s+(?:de|con|numero|número|es|era))?[\s:]*([A-Z0-9][A-Z0-9-]{2,9})"
-        ),
-    ),
-    (
-        "NUMERO",
-        re.compile(
-            r"(?i)(?:(?<![\w])(?:numero|número|num\.?|no\.|#)\s*\d{1,5}(?![\s.-]?\d)[A-Z]?"
-            r"(?:\s*(?:int(?:erior)?\.?|depto\.?|departamento)\s*[A-Z0-9-]+)?)"
-        ),
-    ),
-]
+_UPPER = frozenset("ABCDEFGHIJKLMNOPQRSTUVWXYZÁÉÍÓÚÜÑ")
 
 
 @dataclass(frozen=True)
@@ -139,6 +50,34 @@ class Redaction:
         return out
 
 
+@dataclass(frozen=True)
+class _Rules:
+    patterns: tuple[tuple[dict[str, Any], re.Pattern[str]], ...]
+    cues: re.Pattern[str]
+    place_cues: frozenset[str]
+    particles: frozenset[str]
+    place_links: frozenset[str]
+
+
+@cache
+def _rules() -> _Rules:
+    d = load_json("pii.json")
+    pats = tuple((p, re.compile(p["regex"], re.ASCII)) for p in d["patrones"])
+    cues = "|".join(re.escape(c) for c in sorted(d["pistas_nombre"], key=len, reverse=True))
+    particles = frozenset(d["particulas"])
+    return _Rules(
+        patterns=pats,
+        cues=re.compile(rf"(?<![a-z])(?:{cues})\s+", re.ASCII),
+        place_cues=frozenset(d["pistas_lugar"]),
+        particles=particles,
+        place_links=particles | frozenset(d["enlaces_lugar"]),
+    )
+
+
+def pii_version() -> str:
+    return str(load_json("pii.json")["version"])
+
+
 @cache
 def _names() -> tuple[frozenset[str], frozenset[str], frozenset[str]]:
     d = load_json("nombres.json")
@@ -146,12 +85,12 @@ def _names() -> tuple[frozenset[str], frozenset[str], frozenset[str]]:
 
 
 def _is_cap(w: str) -> bool:
-    return w[:1].isupper()
+    return w[:1] in _UPPER
 
 
-def _name_spans(text: str) -> list[tuple[int, int]]:
+def _name_spans(text: str, folded: str) -> list[tuple[int, int]]:
     names, ambiguous, surnames = _names()
-    folded = fold(text)
+    rules = _rules()
     words = [(m.start(), m.end(), m.group(0)) for m in _WORD.finditer(text)]
     spans: list[tuple[int, int]] = []
 
@@ -168,27 +107,29 @@ def _name_spans(text: str) -> list[tuple[int, int]]:
             gap = text[words[k - 1][1] : words[k][0]]
             if gap.strip() not in ("", "-"):
                 break
-            if _is_cap(w) and fold(w) not in _PARTICLES:
+            if _is_cap(w) and fold(w) not in rules.particles:
                 j = k
                 k += 1
-            elif fold(w) in _PARTICLES and k + 1 < len(words) and _is_cap(words[k + 1][2]):
+            elif fold(w) in rules.particles and k + 1 < len(words) and _is_cap(words[k + 1][2]):
                 k += 1
             else:
                 break
         return j
 
-    cue_starts = {m.end() for m in _CUES.finditer(folded) if text[m.end() : m.end() + 1].isupper()}
+    cue_starts = {
+        m.end() for m in rules.cues.finditer(folded) if text[m.end() : m.end() + 1] in _UPPER
+    }
 
     def after_place_cue(i: int) -> bool:
         """¿La palabra i (o la secuencia que la contiene) sigue a una pista de lugar?"""
         k = i - 1
-        while k >= 0 and fold(words[k][2]) in _PLACE_LINKS:
+        while k >= 0 and fold(words[k][2]) in rules.place_links:
             k -= 1
-        while k >= 0 and _is_cap(words[k][2]) and fold(words[k][2]) not in _PLACE_CUES:
+        while k >= 0 and _is_cap(words[k][2]) and fold(words[k][2]) not in rules.place_cues:
             k -= 1
-            while k >= 0 and fold(words[k][2]) in _PLACE_LINKS:
+            while k >= 0 and fold(words[k][2]) in rules.place_links:
                 k -= 1
-        return k >= 0 and fold(words[k][2]).rstrip(".") in _PLACE_CUES
+        return k >= 0 and fold(words[k][2]) in rules.place_cues
 
     def sentence_start(i: int) -> bool:
         before = text[: words[i][0]].rstrip()
@@ -237,24 +178,23 @@ def _name_spans(text: str) -> list[tuple[int, int]]:
     return spans
 
 
-def redact(text: str) -> Redaction:
+def redact(raw: str) -> Redaction:
     """Redacta datos personales; los tramos no se traslapan (gana el que empieza antes)."""
+    text = normalize_spaces(raw)
+    folded = fold(text)
     found: list[Span] = []
-    for kind, rx in _PATTERNS:
-        for m in rx.finditer(text):
-            if m.lastindex:
-                s, e = m.start(1), m.end(1)
-            else:
-                s, e = m.start(), m.end()
-            seg = text[s:e]
-            mixed = re.search(r"\d", seg) and re.search(r"[A-Za-z]", seg)
-            if kind == "PLACA" and not mixed and m.lastindex is None:
+    for p, rx in _rules().patterns:
+        view = folded if p["vista"] == "plegado" else text
+        for m in rx.finditer(view):
+            s, e = (m.start(1), m.end(1)) if m.lastindex else (m.start(), m.end())
+            seg = raw[s:e]
+            if p.get("mixto") and not (re.search(r"[0-9]", seg) and re.search(r"[A-Za-z]", seg)):
                 continue
-            if kind == "TELEFONO" and len(re.sub(r"\D", "", seg)) not in (10, 12):
+            if "digitos" in p and len(re.sub(r"[^0-9]", "", seg)) not in p["digitos"]:
                 continue
-            found.append(Span(kind, s, e, seg))
-    for s, e in _name_spans(text):
-        found.append(Span("NOMBRE", s, e, text[s:e]))
+            found.append(Span(str(p["tipo"]), s, e, seg))
+    for s, e in _name_spans(text, folded):
+        found.append(Span("NOMBRE", s, e, raw[s:e]))
     found.sort(key=lambda sp: (sp.start, -(sp.end - sp.start)))
     chosen: list[Span] = []
     for sp in found:
@@ -264,8 +204,8 @@ def redact(text: str) -> Redaction:
     out: list[str] = []
     pos = 0
     for sp in chosen:
-        out.append(text[pos : sp.start])
+        out.append(raw[pos : sp.start])
         out.append(f"[{sp.kind}]")
         pos = sp.end
-    out.append(text[pos:])
+    out.append(raw[pos:])
     return Redaction("".join(out), tuple(chosen))

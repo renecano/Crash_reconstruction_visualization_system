@@ -203,7 +203,12 @@ def facts_from_spec(spec: JsonObj) -> Facts:
     eventos = sorted(spec.get("eventos", []), key=lambda e: e.get("orden", 0))
     impacto = next((e for e in eventos if str(e.get("tipo", "")).startswith("impacto")), None)
     principal = impacto or next(
-        (e for e in eventos if e.get("tipo") in ("volcadura", "derrape")), None
+        (
+            e
+            for e in eventos
+            if e.get("tipo") in ("volcadura", "derrape", "arrastre", "inicio_frenado", "giro")
+        ),
+        None,
     )
     if principal:
         f.escalares["evento.tipo"] = _proc_fact(principal["tipo"], principal.get("procedencia"))

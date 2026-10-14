@@ -92,3 +92,9 @@ def test_congelar_es_de_una_sola_vez(tmp_path: Path, monkeypatch: pytest.MonkeyP
     assert json.loads((tmp_path / "test.lock").read_text(encoding="utf-8"))["sha256"] == h
     with pytest.raises(RuntimeError, match="ya está congelado"):
         relatos_mx.freeze()
+
+
+def test_salidas_doradas_del_port_ts_al_dia() -> None:
+    from croquis_extraction import golden
+
+    assert golden.write(check=True), "corre `uv run croquis-extraction golden build`"

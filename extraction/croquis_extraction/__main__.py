@@ -1,4 +1,4 @@
-"""CLI: `uv run croquis-extraction relatos build|check|freeze|stats`."""
+"""CLI: `uv run croquis-extraction relatos build|check|freeze|stats` y `golden build|check`."""
 
 from __future__ import annotations
 
@@ -15,7 +15,26 @@ def main(argv: list[str] | None = None) -> int:
     sub = parser.add_subparsers(dest="group", required=True)
     r = sub.add_parser("relatos", help="Benchmark Relatos-MX")
     r.add_argument("action", choices=["build", "check", "freeze", "stats"])
+    g = sub.add_parser("golden", help="Salidas doradas para la paridad del port TS")
+    g.add_argument("action", choices=["build", "check"])
     args = parser.parse_args(argv)
+
+    if args.group == "golden":
+        from croquis_extraction import golden
+
+        if args.action == "check":
+            if not golden.write(check=True):
+                print(
+                    "packages/relato/fixtures/golden.json desactualizado: corre "
+                    "`uv run croquis-extraction golden build`.",
+                    file=sys.stderr,
+                )
+                return 1
+            print("Salidas doradas al día.")
+            return 0
+        golden.write()
+        print("Salidas doradas escritas en packages/relato/fixtures/golden.json")
+        return 0
 
     from croquis_extraction import relatos_mx
 

@@ -490,4 +490,3 @@ Criterio de aceptación (PLAN §13): E1 publicado con las tres alternativas (reg
 9. **Web:** página del relato con redacción en el navegador, extracción (reglas, o Claude si hay llave), preguntas y paso al croquis y al visor.
 
 Riesgos: sin llave no hay columnas de Claude en E1 (queda bloqueado y documentado). Un benchmark escrito por el propio agente puede favorecer a la línea base de reglas: se mitiga con registros y estructuras variadas y declarándolo en las limitaciones.
-
