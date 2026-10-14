@@ -33,7 +33,7 @@ test.describe("visor 3D", () => {
       await expect(page.getByTestId("backend")).toHaveText(/WebGPU|WebGL 2/);
       await expect(page.getByRole("note")).toContainText("No es un peritaje");
       await expect(page.getByTestId("tiempo")).toHaveText("0.00 s");
-      await expect(page.getByRole("table")).toBeVisible();
+      await expect(page.getByRole("table", { name: "Vehículos", exact: true })).toBeVisible();
       const frames = await page.evaluate(() => window.__croquisPerf?.frameMs.length ?? 0);
       expect(frames).toBeGreaterThan(0);
       expect(errors).toEqual([]);
