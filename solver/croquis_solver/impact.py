@@ -21,6 +21,11 @@ from dataclasses import dataclass
 
 from croquis_solver.models import Body2D, State2D, Vec, cross, dot, perp, rot, unit
 
+# Velocidad tangencial relativa que se toma como cero: si la normal sale de la velocidad
+# relativa, v_t es solo ruido de redondeo (~1e-16) y su signo no debe decidir hacia dónde actúa
+# la fricción del contacto.
+TANGENTIAL_ZERO_REL = 1e-9
+
 
 @dataclass(frozen=True)
 class ImpactResult:
@@ -155,6 +160,8 @@ def planar_impact(
     v_rel = (v_pb[0] - v_pa[0], v_pb[1] - v_pa[1])
     v_n = dot(v_rel, n)
     v_t = dot(v_rel, t)
+    if abs(v_t) <= TANGENTIAL_ZERO_REL * abs(v_n):
+        v_t = 0.0
     if v_n >= 0:
         return ImpactResult(
             impulse=(0.0, 0.0),

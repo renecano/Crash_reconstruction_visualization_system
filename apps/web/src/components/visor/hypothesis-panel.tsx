@@ -3,7 +3,7 @@
 import type { EscenaSpec, Resultado } from "@croquis/scene-schema";
 import { compareHypotheses, GHOST_COLORS, MAX_HYPOTHESES } from "@croquis/viewer";
 import { useState } from "react";
-import { API_URL } from "@/lib/relato-api";
+import { reconstruirEnNavegador } from "@/lib/reconstruct-client";
 
 const fmt = (v: number, d = 0) =>
   v.toLocaleString("es-MX", { maximumFractionDigits: d, minimumFractionDigits: d });
@@ -32,20 +32,22 @@ export interface HypothesisPanelProps {
   resultado: Resultado;
   hipotesis: readonly Hipotesis[];
   onChange: (h: Hipotesis[]) => void;
-  fetcher?: typeof fetch;
+  /** Reconstruye una escena (por omisión, el solver TS en un Web Worker). */
+  reconstructor?: (spec: EscenaSpec) => Promise<Resultado>;
 }
 
 /**
- * Comparar hipótesis (PLAN §7.6): "¿y si iba a 60 en vez de 40?". El servidor reconstruye la
- * escena con la otra velocidad y el visor la sobrepone como fantasmas de color; aquí se muestra la
- * diferencia contra la reconstrucción principal. Hasta `MAX_HYPOTHESES` a la vez.
+ * Comparar hipótesis (PLAN §7.6): "¿y si iba a 60 en vez de 40?". El solver TS reconstruye la
+ * escena con la otra velocidad en el navegador (Web Worker, sin servidor) y el visor la sobrepone
+ * como fantasmas de color; aquí se muestra la diferencia contra la reconstrucción principal. Hasta
+ * `MAX_HYPOTHESES` a la vez.
  */
 export function HypothesisPanel({
   spec,
   resultado,
   hipotesis,
   onChange,
-  fetcher = fetch,
+  reconstructor = reconstruirEnNavegador,
 }: HypothesisPanelProps) {
   const moving = spec.vehiculos.filter(
     (v) => !["detenido", "estacionado"].includes(v.maniobra.valor),
@@ -66,25 +68,13 @@ export function HypothesisPanel({
     setBusy(true);
     setError(null);
     try {
-      const res = await fetcher(`${API_URL}/reconstruir`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ spec: withSpeed(spec, vehicleId, value) }),
-      });
-      if (!res.ok) throw new Error(`El servidor respondió ${res.status}.`);
+      const resultadoH = await reconstructor(withSpeed(spec, vehicleId, value));
       const rol = spec.vehiculos.find((v) => v.id === vehicleId)?.rol ?? vehicleId;
-      onChange([
-        ...hipotesis,
-        { etiqueta: `${rol} a ${fmt(value)} km/h`, resultado: (await res.json()) as Resultado },
-      ]);
+      onChange([...hipotesis, { etiqueta: `${rol} a ${fmt(value)} km/h`, resultado: resultadoH }]);
       setKmh("");
     } catch (e) {
       setError(
-        e instanceof TypeError
-          ? `No se pudo conectar con el servidor de Croquis en ${API_URL}.`
-          : e instanceof Error
-            ? e.message
-            : String(e),
+        `No se pudo reconstruir la hipótesis: ${e instanceof Error ? e.message : String(e)}`,
       );
     } finally {
       setBusy(false);

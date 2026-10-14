@@ -13,11 +13,11 @@ from functools import cache
 from pathlib import Path
 from typing import Any
 
-DATA_DIR = Path(__file__).resolve().parents[2] / "packages" / "relato" / "data"
+DATA_DIR = Path(__file__).resolve().parents[2] / "packages" / "extraction" / "data"
 
 
 # Espacios fuera de ASCII: se vuelven " " (uno a uno) para que \s signifique lo mismo en Python
-# (re con ASCII) y en JS. La lista es la misma en `packages/relato/src/text.ts`.
+# (re con ASCII) y en JS. La lista es la misma en `packages/extraction/src/text.ts`.
 UNICODE_SPACES = frozenset(
     "\x1c\x1d\x1e\x1f\x85\xa0\u1680\u2000\u2001\u2002\u2003\u2004\u2005\u2006\u2007"
     "\u2008\u2009\u200a\u2028\u2029\u202f\u205f\u3000\ufeff"

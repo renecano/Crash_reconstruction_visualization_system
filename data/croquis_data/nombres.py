@@ -21,7 +21,7 @@ import httpx
 
 ROOT = Path(__file__).resolve().parents[2]
 RAW_DIR = ROOT / "data" / "raw" / "nombres"
-OUT = ROOT / "packages" / "relato" / "data" / "nombres.json"
+OUT = ROOT / "packages" / "extraction" / "data" / "nombres.json"
 DATASET = "https://datamx.io/dataset/nombres-mas-comunes-en-mexico"
 BASE = "https://datamx.io/dataset/729c80e3-15d0-47fc-9cd3-3850a204ea7b/resource"
 FILES = {

@@ -1,0 +1,35 @@
+{
+  "name": "@croquis/extraction",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Relato: redactor de datos personales, glosario, hechos, constructor de EscenaSpec, verificador, línea base y cliente de Claude (paridad probada contra Python)",
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts",
+    "./server": "./src/server/index.ts"
+  },
+  "scripts": {
+    "lint": "eslint .",
+    "typecheck": "tsc -p tsconfig.json",
+    "test": "vitest run",
+    "generate": "tsx scripts/generate-prompts.ts",
+    "generate:check": "tsx scripts/generate-prompts.ts --check"
+  },
+  "devDependencies": {
+    "@types/node": "catalog:",
+    "eslint": "catalog:",
+    "fast-check": "catalog:",
+    "tsx": "catalog:",
+    "typescript": "catalog:",
+    "vitest": "catalog:"
+  },
+  "dependencies": {
+    "@anthropic-ai/sdk": "catalog:",
+    "@croquis/scene-schema": "workspace:*",
+    "@croquis/solver-ts": "workspace:*",
+    "@noble/hashes": "catalog:",
+    "@upstash/ratelimit": "catalog:",
+    "@upstash/redis": "catalog:"
+  },
+  "sideEffects": false
+}

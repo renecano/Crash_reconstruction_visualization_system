@@ -1,5 +1,3 @@
-import { readFileSync } from "node:fs";
-import { resolve } from "node:path";
 import { expect, test, type Page } from "@playwright/test";
 
 const ESCENAS = [
@@ -100,33 +98,21 @@ test.describe("visor 3D", () => {
     await expect(page.getByTestId("consistencia")).toContainText("aun llegando con otro ángulo");
   });
 
-  test("hipótesis: otra velocidad se dibuja como fantasmas y se compara", async ({ page }) => {
-    const base = JSON.parse(
-      readFileSync(
-        resolve(process.cwd(), "../../packages/scene-schema/fixtures/resultados/alcance.json"),
-        "utf-8",
-      ),
-    ) as { vehiculos: { v_impacto_kmh: number; pose_final: { x: number } }[] };
-    const alt = structuredClone(base);
-    alt.vehiculos[0]!.v_impacto_kmh += 15;
-    alt.vehiculos[0]!.pose_final.x += 6;
-    let sent: { spec: { vehiculos: { velocidad_previa?: { valor: number } }[] } } | null = null;
-    await page.route("**/reconstruir", async (route) => {
-      sent = route.request().postDataJSON() as typeof sent;
-      await route.fulfill({ json: alt });
-    });
+  test("hipótesis: otra velocidad se reconstruye en el navegador y se dibuja como fantasma", async ({
+    page,
+  }) => {
+    // Sin servidor: el solver TS corre en un Web Worker del navegador.
     await page.goto("/visor?escena=alcance&t=0");
     await waitReady(page);
     await page.getByTestId("hipotesis-velocidad").fill("70");
     await page.getByTestId("hipotesis-comparar").click();
-    await expect(page.getByTestId("hipotesis-diferencias")).toContainText("km/h");
-    await expect(page.getByTestId("hipotesis-diferencias")).toContainText("queda a 6.0 m");
+    await expect(page.getByTestId("hipotesis-0")).toContainText("A a 70 km/h", { timeout: 30_000 });
+    await expect(page.getByTestId("hipotesis-diferencias")).toContainText(/queda a \d/);
     await page.waitForFunction(() => window.__croquisGhosts === 2);
-    expect(sent!.spec.vehiculos[0]!.velocidad_previa?.valor).toBe(70);
     // Una segunda hipótesis se suma (otro color) y cada una se quita por separado.
     await page.getByTestId("hipotesis-velocidad").fill("30");
     await page.getByTestId("hipotesis-comparar").click();
-    await expect(page.getByTestId("hipotesis-1")).toContainText("A a 30 km/h");
+    await expect(page.getByTestId("hipotesis-1")).toContainText("A a 30 km/h", { timeout: 30_000 });
     await page.waitForFunction(() => window.__croquisGhosts === 4);
     await page.getByRole("button", { name: "Quitar" }).first().click();
     await page.waitForFunction(() => window.__croquisGhosts === 2);

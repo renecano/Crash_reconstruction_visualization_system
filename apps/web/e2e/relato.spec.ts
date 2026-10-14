@@ -14,32 +14,39 @@ test("relato: redacta en el navegador, pregunta y abre la escena en el croquis",
   page,
 }) => {
   const enviados: string[] = [];
-  // La API se simula: CI no llama servicios externos y esta prueba mira la web.
-  await page.route("**/relato/extraer", async (route) => {
+  // Las rutas se simulan: esta prueba mira la web (las rutas tienen sus propias pruebas).
+  // La extracción responde en NDJSON (inicio, progreso y resultado), como la Route Handler.
+  await page.route("**/api/relato/extraer", async (route) => {
     const body = route.request().postDataJSON() as { texto: string };
     enviados.push(body.texto);
+    const datos = {
+      spec,
+      texto: body.texto,
+      metodo: "reglas",
+      motivo: null,
+      redacciones_servidor: 0,
+      verificador: { revisados: 12, corregidos: 0, degradados: 0 },
+      glosario: [],
+      preguntas: [
+        {
+          id: "estado_superficie",
+          texto: "¿El piso estaba seco o mojado?",
+          motivo: "sensibilidad",
+          campo: "lugar.estado_superficie",
+          opciones: ["seco", "mojado", "encharcado"],
+        },
+      ],
+    };
+    const eventos = [
+      { tipo: "inicio", metodo: "reglas" },
+      { tipo: "resultado", datos },
+    ];
     await route.fulfill({
-      json: {
-        spec,
-        texto: body.texto,
-        metodo: "reglas",
-        motivo: null,
-        redacciones_servidor: 0,
-        verificador: { revisados: 12, corregidos: 0, degradados: 0 },
-        glosario: [],
-        preguntas: [
-          {
-            id: "estado_superficie",
-            texto: "¿El piso estaba seco o mojado?",
-            motivo: "sensibilidad",
-            campo: "lugar.estado_superficie",
-            opciones: ["seco", "mojado", "encharcado"],
-          },
-        ],
-      },
+      contentType: "application/x-ndjson",
+      body: eventos.map((ev) => JSON.stringify(ev)).join(String.fromCharCode(10)),
     });
   });
-  await page.route("**/relato/responder", async (route) => {
+  await page.route("**/api/relato/responder", async (route) => {
     await route.fulfill({ json: { spec, aplicadas: ["estado_superficie"], preguntas: [] } });
   });
 

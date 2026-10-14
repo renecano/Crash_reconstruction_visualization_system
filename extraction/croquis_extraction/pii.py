@@ -1,12 +1,12 @@
 """Redacción de datos personales en el dispositivo (PLAN §5.1, paso 1; §10).
 
 El texto que sale del dispositivo no lleva nombres, placas, teléfonos, correos, CURP, RFC ni
-números de domicilio. Corre en el navegador (port TS en `packages/relato`, con paridad probada) y
-aquí como referencia. Reemplaza cada dato por un marcador (`[NOMBRE]`, `[PLACA]`, …) y devuelve
-los tramos para que la interfaz pueda mostrar el original solo en el dispositivo.
+números de domicilio. Corre en el navegador (port TS en `packages/extraction`, con paridad
+probada) y aquí como referencia. Reemplaza cada dato por un marcador (`[NOMBRE]`, `[PLACA]`,
+…) y devuelve los tramos para que la interfaz pueda mostrar el original solo en el dispositivo.
 
-Patrones y pistas viven en `packages/relato/data/pii.json`, compartido con el port TS; se compilan
-con `re.ASCII` para que `\\d`, `\\s`, `\\w` y `\\b` signifiquen lo mismo que en JS.
+Patrones y pistas viven en `packages/extraction/data/pii.json`, compartido con el port TS; se
+compilan con `re.ASCII` para que `\\d`, `\\s`, `\\w` y `\\b` signifiquen lo mismo que en JS.
 
 Nombres: diccionario de nombres de pila comunes (DataMX, CC0) con mayúscula, o después de una pista
 ("me llamo", "el señor", "mi esposa"…); se extiende a las palabras con mayúscula que siguen

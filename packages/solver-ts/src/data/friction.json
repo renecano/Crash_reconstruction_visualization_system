@@ -1,0 +1,176 @@
+{
+  "_nota": "Rangos de coeficiente de fricción llanta–pavimento (deslizamiento, llanta bloqueada) por superficie y estado, y cuerpo–pavimento para peatones. Son rangos de literatura, no mediciones de Croquis; cada entrada cita su fuente y los valores sin fuente primaria accesible se marcan como 'secundaria'. El solver muestrea dentro del rango con semilla.",
+  "fuentes": {
+    "fricke": "Fricke, L. B. Traffic Crash Reconstruction, 2.ª ed., Northwestern University Center for Public Safety, 2010 (tabla de factores de arrastre por superficie; valores reproducidos por fuentes secundarias: tarorigin.com/ARnews/ARnews9-98/0039.html y Spinu et al. 2018, IOP Conf. Ser.: Mater. Sci. Eng. 444 072017, tabla 1).",
+    "mumford": "Mumford, D. et al. Inverted vehicle drag tests: assessing the effect of speed on deceleration rates. Accident Investigation Quarterly 13, 1997 (asfalto y concreto, seco y mojado: 0.52–0.72 estático; 0.33–0.44 a más de 50 km/h). Vía TRID 476591.",
+    "searle": "Searle, J. A. y Searle, A. The trajectories and landing velocities of pedestrians... SAE 831622, 1983; Searle, J. A. The physics of throw distance in accident reconstruction, SAE 930659, 1993 (cuerpo–asfalto 0.66, cuerpo–pasto 0.79; 0.70 citado en SAE 2014-01-0470).",
+    "toolbox": "Engineering ToolBox, Friction coefficients for common materials (rubber on asphalt/concrete, dry/wet), engineeringtoolbox.com/friction-coefficients-d_778.html (verificación cruzada, no primaria)."
+  },
+  "llanta": {
+    "asfalto": {
+      "seco": {
+        "rango": [0.55, 0.8],
+        "nominal": 0.7,
+        "fuente": "fricke; toolbox",
+        "tipo": "secundaria"
+      },
+      "mojado": {
+        "rango": [0.4, 0.65],
+        "nominal": 0.5,
+        "fuente": "fricke (0.25–0.75 según edad); mumford",
+        "tipo": "secundaria"
+      },
+      "encharcado": {
+        "rango": [0.3, 0.55],
+        "nominal": 0.4,
+        "fuente": "fricke (límite bajo de mojado); supuesto para hidroplaneo parcial",
+        "tipo": "supuesto"
+      },
+      "grava_suelta": {
+        "rango": [0.35, 0.6],
+        "nominal": 0.45,
+        "fuente": "fricke (grava suelta 0.40–0.70 para grava sobre asfalto, reducido)",
+        "tipo": "secundaria"
+      },
+      "aceite": {
+        "rango": [0.2, 0.45],
+        "nominal": 0.3,
+        "fuente": "supuesto (sin tabla primaria accesible)",
+        "tipo": "supuesto"
+      },
+      "lodo": { "rango": [0.25, 0.5], "nominal": 0.35, "fuente": "supuesto", "tipo": "supuesto" }
+    },
+    "concreto": {
+      "seco": {
+        "rango": [0.6, 0.85],
+        "nominal": 0.72,
+        "fuente": "fricke; toolbox",
+        "tipo": "secundaria"
+      },
+      "mojado": {
+        "rango": [0.45, 0.7],
+        "nominal": 0.55,
+        "fuente": "fricke; mumford",
+        "tipo": "secundaria"
+      },
+      "encharcado": {
+        "rango": [0.3, 0.55],
+        "nominal": 0.42,
+        "fuente": "supuesto",
+        "tipo": "supuesto"
+      },
+      "grava_suelta": {
+        "rango": [0.35, 0.6],
+        "nominal": 0.45,
+        "fuente": "fricke",
+        "tipo": "secundaria"
+      },
+      "aceite": { "rango": [0.2, 0.45], "nominal": 0.3, "fuente": "supuesto", "tipo": "supuesto" },
+      "lodo": { "rango": [0.25, 0.5], "nominal": 0.35, "fuente": "supuesto", "tipo": "supuesto" }
+    },
+    "adoquin": {
+      "seco": {
+        "rango": [0.5, 0.75],
+        "nominal": 0.6,
+        "fuente": "supuesto (entre asfalto y empedrado)",
+        "tipo": "supuesto"
+      },
+      "mojado": { "rango": [0.3, 0.55], "nominal": 0.4, "fuente": "supuesto", "tipo": "supuesto" },
+      "encharcado": {
+        "rango": [0.25, 0.5],
+        "nominal": 0.35,
+        "fuente": "supuesto",
+        "tipo": "supuesto"
+      },
+      "grava_suelta": {
+        "rango": [0.3, 0.55],
+        "nominal": 0.4,
+        "fuente": "supuesto",
+        "tipo": "supuesto"
+      },
+      "aceite": { "rango": [0.2, 0.4], "nominal": 0.28, "fuente": "supuesto", "tipo": "supuesto" },
+      "lodo": { "rango": [0.2, 0.45], "nominal": 0.3, "fuente": "supuesto", "tipo": "supuesto" }
+    },
+    "empedrado": {
+      "seco": {
+        "rango": [0.4, 0.7],
+        "nominal": 0.55,
+        "fuente": "fricke (cobblestone dry 0.40–0.70 según fuente secundaria)",
+        "tipo": "secundaria"
+      },
+      "mojado": { "rango": [0.3, 0.5], "nominal": 0.4, "fuente": "fricke", "tipo": "secundaria" },
+      "encharcado": {
+        "rango": [0.25, 0.45],
+        "nominal": 0.33,
+        "fuente": "supuesto",
+        "tipo": "supuesto"
+      },
+      "grava_suelta": {
+        "rango": [0.3, 0.5],
+        "nominal": 0.38,
+        "fuente": "supuesto",
+        "tipo": "supuesto"
+      },
+      "aceite": { "rango": [0.15, 0.4], "nominal": 0.25, "fuente": "supuesto", "tipo": "supuesto" },
+      "lodo": { "rango": [0.2, 0.4], "nominal": 0.3, "fuente": "supuesto", "tipo": "supuesto" }
+    },
+    "terraceria": {
+      "seco": {
+        "rango": [0.4, 0.7],
+        "nominal": 0.55,
+        "fuente": "fricke (gravel packed/loose 0.40–0.85)",
+        "tipo": "secundaria"
+      },
+      "mojado": { "rango": [0.3, 0.55], "nominal": 0.42, "fuente": "fricke", "tipo": "secundaria" },
+      "encharcado": {
+        "rango": [0.25, 0.45],
+        "nominal": 0.35,
+        "fuente": "supuesto",
+        "tipo": "supuesto"
+      },
+      "grava_suelta": {
+        "rango": [0.35, 0.6],
+        "nominal": 0.45,
+        "fuente": "fricke (loose gravel 0.40–0.70)",
+        "tipo": "secundaria"
+      },
+      "aceite": { "rango": [0.2, 0.4], "nominal": 0.3, "fuente": "supuesto", "tipo": "supuesto" },
+      "lodo": {
+        "rango": [0.2, 0.45],
+        "nominal": 0.3,
+        "fuente": "fricke (mud 0.20–0.45 vía secundaria)",
+        "tipo": "secundaria"
+      }
+    }
+  },
+  "cuerpo_peaton": {
+    "asfalto": { "rango": [0.55, 0.75], "nominal": 0.66, "fuente": "searle", "tipo": "primaria" },
+    "concreto": {
+      "rango": [0.55, 0.75],
+      "nominal": 0.66,
+      "fuente": "searle (mismo valor que asfalto)",
+      "tipo": "secundaria"
+    },
+    "pasto": { "rango": [0.7, 0.85], "nominal": 0.79, "fuente": "searle", "tipo": "primaria" },
+    "otro": {
+      "rango": [0.45, 0.8],
+      "nominal": 0.6,
+      "fuente": "fricke (0.45–0.6 asfalto, 0.45–0.7 pasto, vía secundaria)",
+      "tipo": "secundaria"
+    }
+  },
+  "abs": {
+    "factor_pico_sobre_deslizamiento": {
+      "rango": [1.05, 1.3],
+      "nominal": 1.15,
+      "fuente": "supuesto: relación típica entre fricción pico (ABS) y de deslizamiento (llanta bloqueada) en pavimento seco; se afinará con datos de E3",
+      "tipo": "supuesto"
+    }
+  },
+  "percepcion_reaccion_s": {
+    "rango": [0.7, 1.5],
+    "nominal": 1.1,
+    "fuente": "Olson, P. L. y Sivak, M. (1986) Perception-response time to unexpected roadway hazards, Human Factors 28(1): percentil 85 ≈ 1.5 s; Green, M. (2000) How long does it take to stop?, Transportation Human Factors 2(3): 195–216 (≈1.1 s típico, 1.5 s sorpresa).",
+    "tipo": "primaria"
+  }
+}

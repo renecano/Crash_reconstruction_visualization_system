@@ -5,23 +5,20 @@ Reglas de trabajo: `CLAUDE.md`. Especificación: `PLAN.md`.
 
 ## Estado actual
 
-- **Fase actual:** F7 — Inversión, Monte Carlo y consistencia (rama `feat/f7-inversion`): completa, en PR. Criterio cumplido: E3 contra EDR y WinSMASH publicado; seis banderas de inconsistencia, cada una con su prueba.
-- **Siguiente paso concreto:**
-  1. Fusionar el PR de F7 con CI en verde.
-  2. En una rama propia, segundo test de Relatos-MX desde los campos codificados de CISS y prompt v2 (pendiente 1 de F7).
-  3. F8 (entorno completo con OSM).
-- **F0** cerrado el 2026-10-10 (PR #1), **F1** el 2026-10-10 (PR #3), **F2** el 2026-10-13 (PR #4), **F3** el 2026-10-13 (PR #5), **F4** el 2026-10-13 (PR #6), **F5** el 2026-10-13 (PR #7), **F6** el 2026-10-14 (PR #8).
+- **Fase actual:** migración a Vercel solo (rama `feat/vercel-only`), por decisión de René del 2026-10-14. F7 se fusionó (PR #9) y se retoma después de la migración con sus pendientes (segundo test de Relatos-MX desde CISS y prompt v2).
+- **Siguiente paso concreto:** fusionar el PR de la migración con CI en verde y retomar F7: segundo test de Relatos-MX desde los campos codificados de CISS y prompt v2, ahora en el pipeline TS.
+- **F0** cerrado el 2026-10-10 (PR #1), **F1** el 2026-10-10 (PR #3), **F2** el 2026-10-13 (PR #4), **F3** el 2026-10-13 (PR #5), **F4** el 2026-10-13 (PR #6), **F5** el 2026-10-13 (PR #7), **F6** el 2026-10-14 (PR #8), **F7** el 2026-10-14 (PR #9; pendientes registrados).
 
 ### Bloqueado — necesita a René
 
-| Qué                                                                                                                                                                                                                                 | Para qué                                                                                  | Estado                             |
-| ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------- | ---------------------------------- |
-| `ANTHROPIC_API_KEY`                                                                                                                                                                                                                 | F6 (extracción con Claude) y E1. CI usa respuestas grabadas, así que no bloquea hasta F6. | Recibida 2026-10-14 (`.env.local`) |
-| Credenciales AWS (cuenta/rol para CDK) y proyecto Vercel                                                                                                                                                                            | F11 despliegue dev/prod. Mientras tanto todo corre local.                                 | Pendiente                          |
-| Licencia académica BeamNG.tech                                                                                                                                                                                                      | F10 y E5                                                                                  | Pendiente                          |
-| Confirmar licencia MIT del código y el nombre _Croquis_                                                                                                                                                                             | Se usan los valores por defecto de PLAN §16 (ADR 0002)                                    | Usando default                     |
-| Pruebas con ≥ 5 personas reales (E9)                                                                                                                                                                                                | F11                                                                                       | Pendiente                          |
-| Confirmar que el repositorio remoto correcto es `renecano/Crash_reconstruction_visualization_system` (público, lo creó René vacío el 2026-10-10). Se eligió por nombre y fecha; se puede cambiar con `git remote set-url origin …`. | Push y CI                                                                                 | Asumido y ya en uso                |
+| Qué                                                                                                                                                                                                                                 | Para qué                                                                                          | Estado                             |
+| ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------- | ---------------------------------- |
+| `ANTHROPIC_API_KEY`                                                                                                                                                                                                                 | F6 (extracción con Claude) y E1. CI usa respuestas grabadas, así que no bloquea hasta F6.         | Recibida 2026-10-14 (`.env.local`) |
+| Conectar el repo a Vercel, configurar las variables de entorno (`ANTHROPIC_API_KEY`, tope, Upstash) y elegir el plan                                                                                                                | Despliegue en Vercel (ADR 0011); sin Upstash, en producción solo responde la línea base de reglas | Pendiente                          |
+| Licencia académica BeamNG.tech                                                                                                                                                                                                      | F10 y E5                                                                                          | Pendiente                          |
+| Confirmar licencia MIT del código y el nombre _Croquis_                                                                                                                                                                             | Se usan los valores por defecto de PLAN §16 (ADR 0002)                                            | Usando default                     |
+| Pruebas con ≥ 5 personas reales (E9)                                                                                                                                                                                                | F11                                                                                               | Pendiente                          |
+| Confirmar que el repositorio remoto correcto es `renecano/Crash_reconstruction_visualization_system` (público, lo creó René vacío el 2026-10-10). Se eligió por nombre y fecha; se puede cambiar con `git remote set-url origin …`. | Push y CI                                                                                         | Asumido y ya en uso                |
 
 ## Entorno de desarrollo (verificado 2026-10-10)
 
@@ -704,14 +701,14 @@ Incidente: una corrida local de `pnpm test` falló una vez en `debris.test.ts` (
 3. **Inercia de guiñada medida** (Heydinger et al., SAE 1999-01-1336) en lugar de la placa uniforme. Cambia todas las trayectorias posteriores al impacto y las capturas.
 4. **Marcas de derrape en la inversión.** El contrato no dice si son anteriores o posteriores al impacto; hace falta un campo y una versión del contrato.
 5. **Procedencia del rumbo final.** Hoy es parte de la pose declarada. Si E9 muestra que las personas no lo dicen, se separa en el contrato.
-6. **Port TS** de inversión, Monte Carlo y consistencia, o llamada al servidor: F9, con E7.
+6. **Port TS** de inversión, Monte Carlo y las banderas de consistencia que muestrean: F9, con E7. Con la migración (ADR 0011) ya no hay servidor Python al cual llamar.
 7. **CMA-ES** si aparecen escenas multimodales; en las diez canónicas el ajuste local converge.
 
 ### Decisiones
 
 - ADR 0010: partición por año en E3, rigidez muestreada, inversión sobre el solver completo, identificabilidad explícita, método de la cuerda, consistencia contra rangos, resultado 1.4.0 e hipótesis con fantasmas.
 - La rigidez lateral y trasera se queda como `supuesto` hasta tener una fuente física. No se calibra con el EDR.
-- Las hipótesis se reconstruyen en el servidor. En la demo sin red llegarán con el port TS (F9).
+- Las hipótesis se reconstruyen en el servidor. En la demo sin red llegarán con el port TS (F9). **Actualizado por la migración (ADR 0011):** ahora se reconstruyen en el navegador, en un Web Worker con el solver TS.
 
 ### Resumen para René (F7)
 
@@ -735,3 +732,67 @@ Cómo probarlo:
 - **Hipótesis:** necesitan la API corriendo (`uv run uvicorn croquis_api.main:app`).
 
 Qué necesito de ti: nada nuevo. Siguen pendientes AWS y Vercel, BeamNG y las personas para E9.
+
+## Migración a Vercel solo (decisión de René, 2026-10-14)
+
+Despliegue solo en Vercel: la web y la API van juntas como Route Handlers de Next.js, sin AWS, CDK ni FastAPI, y en producción no corre Python (`CLAUDE.md` y `PLAN.md` nuevos). El solver Python y la extracción Python quedan como referencia para pruebas, paridad y evaluaciones.
+
+René eligió portar ya el núcleo del solver a TS, para que nada deje de funcionar en Vercel: las preguntas por sensibilidad y las contradicciones de `/relato`, y las hipótesis del visor. La inversión y Monte Carlo en TS siguen en F9, como él pidió. Las banderas de consistencia que dependen de ellos (daño contra velocidad, reposo inalcanzable y velocidad contra evidencia) llegan a TS con ese port.
+
+### Plan (orden de trabajo)
+
+1. **Hecho:** `CLAUDE.md` y `PLAN.md` nuevos; `packages/relato` pasa a `packages/extraction` (`@croquis/extraction`).
+2. **`packages/extraction` en TS:**
+   - Hechos, constructor de `EscenaSpec`, verificador de evidencia, línea base de reglas y conversión de la salida de Claude.
+   - Cliente de Claude con salida estructurada. Reproduce las grabaciones existentes, con la misma huella de prompt que Python.
+   - Tope de gasto detrás de una interfaz: archivo en local y Upstash Redis en Vercel. Conectar Upstash requiere la cuenta de René.
+   - **Paridad:** salidas doradas de Python sobre todo Relatos-MX (reglas y respuestas grabadas de Haiku y Sonnet), comparadas en Vitest sin llamar a la API.
+3. **Núcleo del solver en `packages/solver-ts`:** todo lo que usa `reconstruct` (pre-impacto, impulso, CRASH3, objeto fijo, post-impacto, contacto, vía, objetos, personas, ocupantes, visibilidad y volcadura). Paridad E7 contra los resultados de las 10 escenas canónicas, con tolerancia documentada.
+4. **Preguntas en TS:**
+   - Contradicciones por los avisos del solver, sensibilidad con Mersenne Twister idéntico al `random` de Python, glosario, banderas de consistencia que no dependen de inversión ni Monte Carlo, y aplicación de respuestas.
+   - **Paridad:** contra Python con el mismo conjunto de banderas.
+5. **Route Handlers:**
+   - `apps/web/src/app/api/relato/extraer` (con streaming) y `/api/relato/responder`, con límite de peticiones (Upstash en Vercel, memoria en local).
+   - Las hipótesis del visor se reconstruyen en el navegador con solver-ts en un Web Worker.
+6. **Evaluaciones:** E1 mide el pipeline TS desde Node (Python solo puntúa) y debe dar los mismos números. Si no, se depura. El test congelado no se toca.
+7. **Limpieza:** se borran `services/api`, `infra/` y lo de AWS; se actualizan CI, `.env.example`, la documentación y ADR 0011 (Vercel solo); merge con todo en verde y regreso a F7.
+
+Riesgos:
+
+- **Regex Python contra JS:** `\b`, `\w` y lookbehind se comportan distinto. Se mitiga trabajando sobre el texto plegado y con la paridad dorada.
+- **Posiciones:** Python cuenta puntos de código y JS unidades UTF-16. Se convierten al escribir la evidencia.
+- **Paridad numérica del solver:** `Math` de V8 contra `libm`, que se amplifica en el contacto iterativo. La tolerancia se documenta en E7.
+
+### Hecho
+
+Los siete pasos del plan están terminados, y están en ADR 0011.
+
+- **`packages/extraction` (TS):**
+  - Hechos, constructor, verificador, línea base de reglas, conversión de la salida de Claude y preguntas, con paridad exacta contra Python sin llamar a la API.
+  - Del lado del servidor: Claude con streaming, grabaciones, tope de gasto (Upstash o `gasto.json`) y límite de peticiones (Upstash o memoria).
+  - El prompt y las grabaciones se mudaron al paquete; la huella del prompt no cambió y todas las grabaciones siguen valiendo.
+- **`packages/solver-ts`:**
+  - Núcleo completo del solver con paridad E7 en las diez escenas.
+  - Aritmética con la semántica de CPython (`pymath`: suma compensada, redondeo al par, `%`, `radians`/`degrees`, `isclose`, `pvariance` exacta) y el Mersenne Twister de Python (`pyrandom`), todo contra valores que escribió CPython.
+- **Banderas en TS:** las tres banderas de consistencia que no muestrean. Las otras llegan en F9 con la inversión y Monte Carlo.
+- **Route Handlers:** `POST /api/relato/extraer` (NDJSON en streaming) y `POST /api/relato/responder`. La página del relato muestra el avance mientras Claude escribe.
+- **Visor:** las hipótesis se reconstruyen en un Web Worker con el solver TS.
+- **E1:** mide el pipeline TS (`scripts/e1-predict.ts`). `--pipeline py` puntúa la referencia.
+- **Limpieza:** se borró `services/api` (FastAPI) y lo de AWS. Se actualizaron `.env.example` (Upstash), CI (verificación de los módulos generados de prompts y tablas del solver), README, ADR 0001, 0002 y 0011, y `docs/responsible-ai.md`.
+- **Bug de la referencia encontrado por el port:** con la normal del impacto tomada de la velocidad relativa, el signo del ruido de redondeo de v_t decidía la fricción del contacto. Dos normales a un bit de distancia daban 15 540 J o 27 568 J disipados. Los dos solvers tratan ahora |v_t| ≤ 1e−9·|v_n| como cero. Hay prueba de regresión con el caso real, que falla sin el arreglo, y los resultados canónicos no cambian.
+
+### Evidencia (local, Windows, 2026-10-14)
+
+| Comando                                                                 | Resultado                                                                                                                                                                        |
+| ----------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `pnpm --filter @croquis/extraction test`                                | paridad del pipeline en todo Relatos-MX (reglas, Haiku, Sonnet; con control negativo), huella del prompt idéntica, 70 rondas de preguntas idénticas, servidor con dobles del SDK |
+| `pnpm --filter @croquis/solver-ts test`                                 | E7 en las diez escenas con la tolerancia de `reconstruct --check` (con control negativo), aritmética de CPython bit a bit                                                        |
+| `pnpm --filter @croquis/solver-ts e7`                                   | 61,888 números comparados; diferencia máxima 4.3e-5 (un impulso en N·s); 0 diferencias de estructura o texto (`eval/results/e7_parity.json`)                                     |
+| `uv run croquis-eval e1-extraction --split test` (TS) y `--pipeline py` | métricas idénticas salvo la latencia de las reglas (0.85 ms p50 en TS, 2.56 ms en Python); idénticas también a las publicadas antes de la migración, así que E1 sigue vigente    |
+| Playwright `relato` e `hipótesis`                                       | en verde sobre el build de producción; el Web Worker del solver funciona con Turbopack                                                                                           |
+
+### Pendientes registrados
+
+1. **Análisis bajo pedido** (`/reconstruir {analisis: true}`, de F7): se fue con FastAPI y vuelve con la inversión y Monte Carlo en TS (F9). Los resultados de las escenas canónicas los siguen trayendo precalculados.
+2. **Banderas que muestrean en TS** (daño, reposo, velocidad contra evidencia): F9. En el test de E1 no cambian ninguna métrica.
+3. **Vercel:** René tiene que conectar el repo, configurar las variables (`ANTHROPIC_API_KEY`, el tope y las de Upstash) y elegir el plan. Sin Upstash, en producción solo responde la línea base de reglas.

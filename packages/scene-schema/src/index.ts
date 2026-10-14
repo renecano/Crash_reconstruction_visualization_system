@@ -34,6 +34,8 @@ export {
   type ValidationResult,
 } from "./validate";
 export { MIGRATIONS, migrateEscena, type Migration, type MigrationResult } from "./migrate";
+/** El contrato tal cual (`escena.schema.json`), para leer sus enumeraciones. */
+export { default as ESCENA_JSON_SCHEMA } from "../escena.schema.json";
 export {
   DEFAULT_CLASES,
   VEHICLE_CLASSES,

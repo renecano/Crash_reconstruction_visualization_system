@@ -52,7 +52,7 @@ def main(argv: list[str] | None = None) -> int:
     )
     no_sub = p_no.add_subparsers(dest="command", required=True)
     no_sub.add_parser("download", help="Descarga los CSV a data/raw/nombres y verifica SHA-256")
-    p_nb = no_sub.add_parser("build", help="Escribe packages/relato/data/nombres.json")
+    p_nb = no_sub.add_parser("build", help="Escribe packages/extraction/data/nombres.json")
     p_nb.add_argument("--check", action="store_true", help="Solo verifica que esté al día")
 
     p_ci = sub.add_parser("ciss", help="NHTSA CISS 2017–2024 (E3: daño, WinSmash y EDR)")

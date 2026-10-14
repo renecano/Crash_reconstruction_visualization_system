@@ -81,7 +81,7 @@ def main(argv: list[str] | None = None) -> int:
         if args.action == "check":
             if not golden.write(check=True):
                 print(
-                    "packages/relato/fixtures/golden.json desactualizado: corre "
+                    "Salidas doradas de packages/extraction/fixtures desactualizadas: corre "
                     "`uv run croquis-extraction golden build`.",
                     file=sys.stderr,
                 )
@@ -89,7 +89,7 @@ def main(argv: list[str] | None = None) -> int:
             print("Salidas doradas al día.")
             return 0
         golden.write()
-        print("Salidas doradas escritas en packages/relato/fixtures/golden.json")
+        print("Salidas doradas escritas en packages/extraction/fixtures/")
         return 0
 
     from croquis_extraction import relatos_mx

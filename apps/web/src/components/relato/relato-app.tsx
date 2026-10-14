@@ -1,6 +1,6 @@
 "use client";
 
-import { findTerms, redact, type Span } from "@croquis/relato";
+import { findTerms, redact, type Span } from "@croquis/extraction";
 import type { EscenaSpec } from "@croquis/scene-schema";
 import { useRouter } from "next/navigation";
 import { useMemo, useState } from "react";
@@ -12,9 +12,18 @@ import {
   responder,
   type ExtraerRespuesta,
   type Pregunta,
+  type Progreso,
 } from "@/lib/relato-api";
 import { FactsPanel } from "./facts-panel";
 import { QuestionsPanel } from "./questions-panel";
+
+/** Texto del botón mientras el servidor lee el relato. */
+export function leyendo(p: Progreso | null): string {
+  if (!p || p.metodo !== "claude") return "Leyendo…";
+  return p.caracteres > 0
+    ? `Claude está leyendo… (${p.caracteres} caracteres)`
+    : "Claude está leyendo…";
+}
 
 const EJEMPLO =
   "Iba por Paseo Tollocan en mi Aveo gris, como a 50, y la camioneta de enfrente frenó de golpe " +
@@ -64,6 +73,7 @@ export function RelatoApp({ fetcher }: RelatoAppProps) {
   const [contestadas, setContestadas] = useState<string[]>([]);
   const [error, setError] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
+  const [progreso, setProgreso] = useState<Progreso | null>(null);
 
   // Todo esto corre en el navegador: nada del texto original sale de aquí.
   const red = useMemo(() => redact(texto), [texto]);
@@ -80,7 +90,7 @@ export function RelatoApp({ fetcher }: RelatoAppProps) {
     setBusy(true);
     setError(null);
     try {
-      const r = await extraer(red.text, "auto", fetcher);
+      const r = await extraer(red.text, "auto", fetcher, setProgreso);
       setResultado(r);
       setSpec(r.spec);
       setPreguntas(r.preguntas);
@@ -89,6 +99,7 @@ export function RelatoApp({ fetcher }: RelatoAppProps) {
       fail(e);
     } finally {
       setBusy(false);
+      setProgreso(null);
     }
   };
 
@@ -154,7 +165,7 @@ export function RelatoApp({ fetcher }: RelatoAppProps) {
             onClick={() => void entender()}
             className="rounded bg-neutral-900 px-4 py-2 font-medium text-white disabled:opacity-50 dark:bg-neutral-100 dark:text-neutral-900"
           >
-            {busy && !resultado ? "Leyendo…" : "Entender el relato"}
+            {busy && !resultado ? leyendo(progreso) : "Entender el relato"}
           </button>
           <button
             type="button"

@@ -164,7 +164,9 @@ _CONSISTENCY_TOPIC = {
 }
 
 
-def from_consistency(spec: JsonObj, seed: int) -> tuple[list[Pregunta], set[str]]:
+def from_consistency(
+    spec: JsonObj, seed: int, *, sampled: bool = True
+) -> tuple[list[Pregunta], set[str]]:
     """Lo declarado que no cabe en ninguna solución física, como pregunta (sin culpa), y la
     evidencia que esas preguntas ya cubren (p. ej. `proyeccion:per-1`): el aviso del solver sobre
     esa misma evidencia sería la misma pregunta con otras palabras."""
@@ -172,7 +174,7 @@ def from_consistency(spec: JsonObj, seed: int) -> tuple[list[Pregunta], set[str]
 
     out: list[Pregunta] = []
     covered: set[str] = set()
-    for f in check_consistency(spec, seed=seed, samples=16):
+    for f in check_consistency(spec, seed=seed, samples=16, sampled=sampled):
         kind, campo = _CONSISTENCY_TOPIC[f.codigo]
         vid = str(f.datos.get("vehiculo", ""))
         idx = next((i for i, v in enumerate(spec["vehiculos"]) if v["id"] == vid), 0)
@@ -484,8 +486,10 @@ def ask(
     samples: int = SAMPLES,
     max_questions: int = MAX_QUESTIONS,
     answered: frozenset[str] = frozenset(),
+    sampled: bool = True,
 ) -> list[Pregunta]:
-    """La ronda de preguntas para `spec` (y su relato redactado, si se tiene)."""
+    """La ronda de preguntas para `spec` (y su relato redactado, si se tiene). `sampled=False`
+    deja fuera las banderas de consistencia que muestrean (ver `check_consistency`)."""
     seed = int(spec["meta"]["semilla"]) if seed is None else seed
     base = reconstruct(spec, dt=SOLVER_DT)
     chosen: list[Pregunta] = []
@@ -497,7 +501,7 @@ def ask(
             seen.add(key)
             chosen.append(p)
 
-    consistency, covered = from_consistency(spec, seed)
+    consistency, covered = from_consistency(spec, seed, sampled=sampled)
     for p in consistency:
         take(p)
     seen |= covered
