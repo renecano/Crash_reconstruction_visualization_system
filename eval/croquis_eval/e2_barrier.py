@@ -251,6 +251,7 @@ def evaluate(tests: list[BarrierTest]) -> dict[str, Any]:
             "b_n_m2": round(b_med, 1),
             "a_kgf_cm": round(a_med / KGF_PER_CM_TO_N_PER_M, 2),
             "b_kgf_cm2": round(b_med / KGF_PER_CM2_TO_N_PER_M2, 2),
+            "muestras_ab": sorted([round(t.a_n_m), round(t.b_n_m2)] for t in rows),
             "a_mad_kgf_cm": round(_mad([t.a_n_m for t in rows]) / KGF_PER_CM_TO_N_PER_M, 2),
             "b_mad_kgf_cm2": round(_mad([t.b_n_m2 for t in rows]) / KGF_PER_CM2_TO_N_PER_M2, 2),
             "masa_media_kg": round(statistics.fmean(t.mass_kg for t in rows), 1),
@@ -316,6 +317,9 @@ def write_stiffness_table(report: dict[str, Any], path: Path = STIFFNESS_PATH) -
                 "origen": "nhtsa",
                 "n_tests": c["n"],
                 "nota": "Mediana de pruebas frontales a 0° contra barrera rígida (E2).",
+                # Pares (A, B) de cada prueba: A y B salen de la misma pendiente b1, así que
+                # se muestrean juntos (bootstrap) para la incertidumbre de la inversión (F7).
+                "muestras_ab": c["muestras_ab"],
             }
         }
     doc = {
@@ -372,6 +376,11 @@ def main(
             "evaluacion": "dejar-uno-fuera por clase (clases con ≥ 5 pruebas)",
         },
         **report,
+        # Los pares (A, B) por prueba ya van en "pruebas_usadas"; no se repiten por clase.
+        "clases": {
+            k: {kk: vv for kk, vv in v.items() if kk != "muestras_ab"}
+            for k, v in report["clases"].items()
+        },
         "pruebas_usadas": [
             asdict(t)
             | {

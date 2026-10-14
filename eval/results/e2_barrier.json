@@ -1,7 +1,7 @@
 {
   "name": "e2_barrier",
-  "generated_at": "2026-10-11T02:54:06+00:00",
-  "git_commit": "745d8eb",
+  "generated_at": "2026-10-14T19:15:32+00:00",
+  "git_commit": "4706162",
   "seed": null,
   "fuente": {
     "nombre": "NHTSA Vehicle Crash Test Database (API pública), pruebas vehículo contra barrera",
