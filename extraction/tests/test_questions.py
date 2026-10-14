@@ -78,3 +78,47 @@ def test_ambiguedad_del_glosario() -> None:
     qs = q.from_glossary("Se me cerró un camión en el cruce")
     assert any(p.id == "glosario:camion" for p in qs)
     assert all(p.motivo == "ambiguedad" for p in qs)
+
+
+def test_respuestas_actualizan_la_escena_como_usuario() -> None:
+    from croquis_scene_schema import schema_errors
+
+    spec = load_fixture("lateral_interseccion")
+    out, applied = q.apply_answers(
+        spec,
+        {
+            "velocidad:veh-b": "como a 45",
+            "frenado:veh-a": "no",
+            "estado_superficie": "mojado",
+            "maniobra:veh-b": "dio vuelta a la izquierda",
+            "zonas_impacto": "frente",
+            "frenado:veh-b": "no sé",
+        },
+    )
+    assert set(applied) == {
+        "velocidad:veh-b",
+        "frenado:veh-a",
+        "estado_superficie",
+        "maniobra:veh-b",
+    }
+    b = out["vehiculos"][1]
+    assert b["velocidad_previa"] == {
+        "valor": 45.0,
+        "unidad": "km/h",
+        "fuente": "usuario",
+        "confianza": q.USER_CONFIDENCE,
+    }
+    assert b["maniobra"]["valor"] == "vuelta_izquierda"
+    assert out["vehiculos"][0]["frenado"]["aplico"]["valor"] is False
+    assert out["lugar"]["estado_superficie"]["fuente"] == "usuario"
+    assert spec["vehiculos"][1]["velocidad_previa"]["fuente"] != "usuario"  # no muta
+    assert schema_errors(out) == []
+    # Lo contestado ya no se vuelve a preguntar por sensibilidad.
+    ids = {c.pregunta.id for c in q.candidates(out, random.Random(1))}
+    assert "velocidad:veh-b" not in ids
+
+
+def test_respuestas_fuera_de_rango_se_ignoran() -> None:
+    spec = load_fixture("lateral_interseccion")
+    _, applied = q.apply_answers(spec, {"velocidad:veh-b": "999", "clase:veh-b": "nave espacial"})
+    assert applied == []

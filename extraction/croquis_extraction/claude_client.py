@@ -473,6 +473,7 @@ def extract(
     client: ClientLike | None = None,
     root: Path = RECORDINGS,
     effort: str = DEFAULT_EFFORT,
+    budget: float | None = None,
 ) -> dict[str, Any]:
     """Registro de extracción para `text` (ya redactado) según el modo; ver el docstring."""
     mode = mode or os.environ.get("CROQUIS_LLM_MODO", "replay")
@@ -482,7 +483,7 @@ def extract(
         msg = f"Modo desconocido: {mode}"
         raise LLMError(msg)
     ledger = root / LEDGER.name
-    cap = budget_usd()
+    cap = budget_usd() if budget is None else budget
     if cap <= 0 or _spent_today(ledger) >= cap:
         msg = (
             f"Tope de gasto diario alcanzado o sin configurar (CROQUIS_LLM_DAILY_BUDGET_USD={cap})."

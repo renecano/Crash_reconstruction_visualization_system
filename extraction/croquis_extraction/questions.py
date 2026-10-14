@@ -61,6 +61,23 @@ SPEED_RANGE_BY_ROAD = {
     "retorno": (10.0, 40.0),
 }
 SPEED_RANGE_DEFAULT = (20.0, 70.0)
+NO_SE = "no sé"
+MANIOBRA_OPCIONES = (
+    "cambió de carril a la izquierda",
+    "cambió de carril a la derecha",
+    "dio vuelta a la izquierda",
+    "dio vuelta a la derecha",
+    "siguió recto",
+    NO_SE,
+)
+_MANIOBRA_VALOR = {
+    "cambió de carril a la izquierda": "cambio_carril_izquierda",
+    "cambió de carril a la derecha": "cambio_carril_derecha",
+    "dio vuelta a la izquierda": "vuelta_izquierda",
+    "dio vuelta a la derecha": "vuelta_derecha",
+    "siguió recto": "recto",
+}
+USER_CONFIDENCE = 0.8
 
 
 @dataclass(frozen=True)
@@ -189,7 +206,7 @@ def from_avisos(spec: JsonObj, avisos: list[Aviso]) -> list[Pregunta]:
                     texto,
                     "contradiccion",
                     f"vehiculos.{_vindex(spec, vid)}.maniobra",
-                    ("cambió de carril", "se abrió para dar vuelta", "siguió recto", "no sé"),
+                    MANIOBRA_OPCIONES,
                 )
             )
         elif a.codigo == "volcadura_sin_velocidad" and vid:
@@ -471,3 +488,81 @@ def ask(
 
 def ask_json(spec: JsonObj, text: str | None = None, seed: int | None = None) -> str:
     return json.dumps([p.to_dict() for p in ask(spec, text, seed=seed)], ensure_ascii=False)
+
+
+# --- Respuestas -------------------------------------------------------------------------------
+
+
+def _user(valor: Any, unidad: str | None = None) -> JsonObj:
+    campo: JsonObj = {"valor": valor, "fuente": "usuario", "confianza": USER_CONFIDENCE}
+    if unidad:
+        campo["unidad"] = unidad
+    return campo
+
+
+def _number(raw: Any) -> float | None:
+    if isinstance(raw, bool):
+        return None
+    if isinstance(raw, int | float):
+        return float(raw)
+    m = re.search(r"\d+(?:[.,]\d+)?", str(raw))
+    return float(m.group(0).replace(",", ".")) if m else None
+
+
+def _yes_no(raw: Any) -> bool | None:
+    if isinstance(raw, bool):
+        return raw
+    return {"sí": True, "si": True, "no": False}.get(str(raw).strip().lower())
+
+
+def apply_answers(spec: JsonObj, respuestas: dict[str, Any]) -> tuple[JsonObj, list[str]]:
+    """La spec con las respuestas del usuario (`fuente: usuario`) y los ids que cambiaron algo.
+
+    "no sé", respuestas vacías y preguntas sin campo directo (zonas, glosario, volcadura) se dan
+    por contestadas sin inventar nada: la persona corrige esos detalles en el croquis.
+    """
+    out = copy.deepcopy(spec)
+    applied: list[str] = []
+    ids = {v["id"]: v for v in out["vehiculos"]}
+    for qid, raw in respuestas.items():
+        if raw is None or str(raw).strip().lower() in ("", NO_SE, "no se"):
+            continue
+        kind, _, target = qid.partition(":")
+        v = ids.get(target)
+        if kind == "velocidad" and v is not None:
+            n = _number(raw)
+            if n is not None and 0 <= n <= 300:
+                v["velocidad_previa"] = _user(n, "km/h")
+                applied.append(qid)
+        elif kind == "frenado" and v is not None:
+            yn = _yes_no(raw)
+            if yn is not None:
+                v.setdefault("frenado", {})["aplico"] = _user(yn)
+                applied.append(qid)
+        elif kind == "frenado_distancia" and v is not None:
+            n = _number(raw)
+            if n is not None and 0 < n <= 200:
+                fr = v.setdefault("frenado", {})
+                fr["aplico"] = _user(True)
+                fr["distancia_antes_impacto"] = _user(n, "m")
+                applied.append(qid)
+        elif kind == "clase" and v is not None and raw in CLASS_LABEL:
+            v["clase"] = _user(raw)
+            v.pop("masa", None)
+            applied.append(qid)
+        elif kind == "maniobra" and v is not None and raw in _MANIOBRA_VALOR:
+            v["maniobra"] = _user(_MANIOBRA_VALOR[raw])
+            applied.append(qid)
+        elif kind == "estado_superficie" and raw in ("seco", "mojado", "encharcado"):
+            out["lugar"]["estado_superficie"] = _user(raw)
+            applied.append(qid)
+        elif kind == "proyeccion":
+            n = _number(raw)
+            ev = next(
+                (e for e in out.get("evidencias", []) if e.get("tipo") == "distancia_proyeccion"),
+                None,
+            )
+            if n is not None and 0 < n <= 100 and ev is not None:
+                ev["longitud"] = _user(n, "m")
+                applied.append(qid)
+    return out, applied
