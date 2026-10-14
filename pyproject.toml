@@ -1,14 +1,13 @@
 [project]
 name = "croquis"
 version = "0.1.0"
-description = "Espacio de trabajo Python de Croquis: solver de referencia, API, extracción, datos y evaluación"
+description = "Espacio de trabajo Python de Croquis: solver y extracción de referencia, datos y evaluación (no se despliega)"
 readme = "README.md"
 requires-python = ">=3.14"
 license = "MIT"
 dependencies = [
   "croquis-scene-schema",
   "croquis-solver",
-  "croquis-api",
   "croquis-extraction",
   "croquis-data",
   "croquis-eval",
@@ -18,14 +17,13 @@ dependencies = [
 [tool.uv.sources]
 croquis-scene-schema = { workspace = true }
 croquis-solver = { workspace = true }
-croquis-api = { workspace = true }
 croquis-extraction = { workspace = true }
 croquis-data = { workspace = true }
 croquis-eval = { workspace = true }
 croquis-assets = { workspace = true }
 
 [tool.uv.workspace]
-members = ["packages/scene-schema/python", "solver", "services/api", "extraction", "data", "eval", "assets/pipeline"]
+members = ["packages/scene-schema/python", "solver", "extraction", "data", "eval", "assets/pipeline"]
 
 [dependency-groups]
 dev = [
@@ -38,7 +36,7 @@ dev = [
 ]
 
 [tool.pytest.ini_options]
-testpaths = ["packages/scene-schema/python/tests", "solver/tests", "services/api/tests", "extraction/tests", "data/tests", "eval/tests", "assets/pipeline/tests"]
+testpaths = ["packages/scene-schema/python/tests", "solver/tests", "extraction/tests", "data/tests", "eval/tests", "assets/pipeline/tests"]
 addopts = "-q --strict-markers --strict-config --import-mode=importlib"
 xfail_strict = true
 filterwarnings = ["error"]
@@ -61,7 +59,7 @@ ignore = ["RUF001", "RUF002", "RUF003"]
 "extraction/croquis_extraction/baseline.py" = ["E501"]
 
 [tool.ruff.lint.isort]
-known-first-party = ["croquis_scene_schema", "croquis_solver", "croquis_api", "croquis_extraction", "croquis_data", "croquis_eval", "croquis_assets"]
+known-first-party = ["croquis_scene_schema", "croquis_solver", "croquis_extraction", "croquis_data", "croquis_eval", "croquis_assets"]
 
 [tool.ruff.format]
 quote-style = "double"
@@ -69,7 +67,7 @@ quote-style = "double"
 [tool.pyright]
 pythonVersion = "3.14"
 typeCheckingMode = "strict"
-include = ["packages/scene-schema/python", "solver", "services/api", "extraction", "data", "eval", "assets/pipeline"]
+include = ["packages/scene-schema/python", "solver", "extraction", "data", "eval", "assets/pipeline"]
 exclude = ["**/node_modules", "**/__pycache__", "**/.venv", "data/raw", "data/processed", "eval/results"]
 venvPath = "."
 venv = ".venv"
