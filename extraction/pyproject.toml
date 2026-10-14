@@ -10,6 +10,9 @@ dependencies = [
   "jsonschema>=4.26,<5",
 ]
 
+[project.scripts]
+croquis-extraction = "croquis_extraction.__main__:main"
+
 [tool.uv.sources]
 croquis-scene-schema = { workspace = true }
 

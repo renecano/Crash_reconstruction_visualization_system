@@ -313,6 +313,7 @@ version = "0.1.0"
 source = { editable = "eval" }
 dependencies = [
     { name = "croquis-data" },
+    { name = "croquis-extraction" },
     { name = "croquis-solver" },
     { name = "numpy" },
     { name = "polars" },
@@ -321,6 +322,7 @@ dependencies = [
 [package.metadata]
 requires-dist = [
     { name = "croquis-data", editable = "data" },
+    { name = "croquis-extraction", editable = "extraction" },
     { name = "croquis-solver", editable = "solver" },
     { name = "numpy", specifier = ">=2.5,<3" },
     { name = "polars", specifier = ">=2.0,<3" },

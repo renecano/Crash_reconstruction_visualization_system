@@ -1,0 +1,1214 @@
+{
+  "version": "1.1.0",
+  "descripcion": "Glosario de expresiones del español de México en relatos de percances viales. Cada entrada dice qué significa y a qué campo de EscenaSpec apunta. Los patrones se buscan sobre el texto en minúsculas y sin acentos; las coincidencias conservan su posición en el texto original para citarlas como evidencia. Las entradas ambiguas no fijan un valor: sugieren una pregunta. Ninguna entrada asigna culpa.",
+  "entradas": [
+    {
+      "id": "se_me_cerro",
+      "patrones": ["se me cerr[oó]", "me cerr[oó] el paso", "se me meti[oó]", "se me atraves[oó]"],
+      "significado": "Otro vehículo invadió el carril o la trayectoria de quien relata.",
+      "efectos": [
+        {
+          "campo": "otro.maniobra",
+          "valor": "cambio_carril"
+        }
+      ],
+      "ambiguo": true,
+      "pregunta": "¿El otro vehículo se cambió de carril hacia el tuyo o cruzó frente a ti?"
+    },
+    {
+      "id": "me_echo_la_lamina",
+      "patrones": [
+        "me ech[oó] la lamina",
+        "me ech[oó] el carro",
+        "me ech[oó] la camioneta",
+        "me aventaron la lamina"
+      ],
+      "significado": "Otro vehículo se acercó o se incorporó de forma brusca sobre el carril de quien relata.",
+      "efectos": [
+        {
+          "campo": "otro.maniobra",
+          "valor": "cambio_carril"
+        }
+      ],
+      "ambiguo": true,
+      "pregunta": "¿El otro vehículo se incorporó a tu carril o se cambió hacia él?"
+    },
+    {
+      "id": "por_alcance",
+      "patrones": [
+        "por alcance",
+        "le pegue por detras",
+        "me pegaron por detras",
+        "me dieron por detras",
+        "le di por atras",
+        "me alcanzo"
+      ],
+      "significado": "Choque por alcance: el frente de un vehículo contra la parte trasera de otro.",
+      "efectos": [
+        {
+          "campo": "evento.tipo",
+          "valor": "impacto_vehiculo_vehiculo"
+        },
+        {
+          "campo": "zona.golpeador",
+          "valor": "F"
+        },
+        {
+          "campo": "zona.golpeado",
+          "valor": "B"
+        }
+      ]
+    },
+    {
+      "id": "dio_el_llegue",
+      "patrones": [
+        "dio el llegue",
+        "dar el llegue",
+        "le di un llegue",
+        "me dio un llegue",
+        "nos dimos un llegue",
+        "el llegue"
+      ],
+      "significado": "Golpe o choque (coloquial).",
+      "efectos": [
+        {
+          "campo": "evento.tipo",
+          "valor": "impacto"
+        }
+      ]
+    },
+    {
+      "id": "rozon",
+      "patrones": [
+        "rozon",
+        "me rozo",
+        "nos rozamos",
+        "me raspo",
+        "nos raspamos",
+        "me dio un raspon"
+      ],
+      "significado": "Roce lateral de baja severidad.",
+      "efectos": [
+        {
+          "campo": "evento.tipo",
+          "valor": "impacto_vehiculo_vehiculo"
+        },
+        {
+          "campo": "zona.lado",
+          "valor": "lateral"
+        },
+        {
+          "campo": "severidad",
+          "valor": "baja"
+        }
+      ]
+    },
+    {
+      "id": "de_frente",
+      "patrones": ["de frente", "frente a frente", "nos dimos de frente", "choque frontal"],
+      "significado": "Choque frontal entre dos vehículos que se encuentran de frente.",
+      "efectos": [
+        {
+          "campo": "zona.golpeador",
+          "valor": "F"
+        },
+        {
+          "campo": "zona.golpeado",
+          "valor": "F"
+        }
+      ]
+    },
+    {
+      "id": "de_lado",
+      "patrones": [
+        "de lado",
+        "por un lado",
+        "por el costado",
+        "en la puerta",
+        "me pego en la puerta",
+        "le pegue en la puerta",
+        "me dio de lado"
+      ],
+      "significado": "Impacto lateral.",
+      "efectos": [
+        {
+          "campo": "zona.lado",
+          "valor": "lateral"
+        }
+      ]
+    },
+    {
+      "id": "carambola",
+      "patrones": ["carambola", "choque en cadena"],
+      "significado": "Choques encadenados entre varios vehículos.",
+      "efectos": [
+        {
+          "campo": "evento.tipo",
+          "valor": "segundo_impacto"
+        }
+      ],
+      "ambiguo": true,
+      "pregunta": "¿Cuántos vehículos participaron y en qué orden se golpearon?"
+    },
+    {
+      "id": "se_volteo",
+      "patrones": [
+        "se volte[oó]",
+        "se volc[oó]",
+        "dio vueltas",
+        "dio una vuelta de campana",
+        "se dio la vuelta",
+        "quedo con las llantas para arriba",
+        "volcadura"
+      ],
+      "significado": "Volcadura.",
+      "efectos": [
+        {
+          "campo": "evento.tipo",
+          "valor": "volcadura"
+        }
+      ]
+    },
+    {
+      "id": "derrape",
+      "patrones": [
+        "derrap[eoé]",
+        "me derrape",
+        "se derrapo",
+        "me barri",
+        "se barrio",
+        "patino",
+        "se patino",
+        "coleo",
+        "se coleo"
+      ],
+      "significado": "Derrape o deslizamiento sin control direccional.",
+      "efectos": [
+        {
+          "campo": "evento.tipo",
+          "valor": "derrape"
+        }
+      ]
+    },
+    {
+      "id": "frene_a_fondo",
+      "patrones": [
+        "frene a fondo",
+        "pise el freno",
+        "meti el freno",
+        "frene",
+        "freno a fondo",
+        "clave los frenos",
+        "frenazo"
+      ],
+      "significado": "Aplicó el freno.",
+      "efectos": [
+        {
+          "campo": "vehiculo.frenado.aplico",
+          "valor": true
+        }
+      ]
+    },
+    {
+      "id": "no_freno",
+      "patrones": [
+        "no freno",
+        "ni freno",
+        "no alcance a frenar",
+        "no me dio tiempo de frenar",
+        "sin frenar"
+      ],
+      "significado": "No aplicó el freno antes del impacto.",
+      "efectos": [
+        {
+          "campo": "vehiculo.frenado.aplico",
+          "valor": false
+        }
+      ]
+    },
+    {
+      "id": "marca_en_el_piso",
+      "patrones": [
+        "marca de frenado",
+        "marcas de frenado",
+        "dejo marca",
+        "dejo una marca",
+        "rayon en el piso",
+        "raspadura en el asfalto",
+        "huella de llanta",
+        "llantazo"
+      ],
+      "significado": "Marcas en el pavimento (frenado o derrape).",
+      "efectos": [
+        {
+          "campo": "evidencia.tipo",
+          "valor": "marcas_frenado"
+        }
+      ],
+      "ambiguo": true,
+      "pregunta": "¿La marca era recta (frenado) o curva (derrape)? ¿Qué tan larga era?"
+    },
+    {
+      "id": "vuelta_en_u",
+      "patrones": [
+        "vuelta en u",
+        "vuelta en 'u'",
+        "media vuelta",
+        "dar la vuelta en u",
+        "retorno en u"
+      ],
+      "significado": "Vuelta en U.",
+      "efectos": [
+        {
+          "campo": "vehiculo.maniobra",
+          "valor": "vuelta_u"
+        }
+      ]
+    },
+    {
+      "id": "vuelta_izquierda",
+      "patrones": [
+        "vuelta a la izquierda",
+        "di vuelta a la izquierda",
+        "doble a la izquierda",
+        "gire a la izquierda",
+        "voltee a la izquierda"
+      ],
+      "significado": "Vuelta a la izquierda.",
+      "efectos": [
+        {
+          "campo": "vehiculo.maniobra",
+          "valor": "vuelta_izquierda"
+        }
+      ]
+    },
+    {
+      "id": "vuelta_derecha",
+      "patrones": [
+        "vuelta a la derecha",
+        "di vuelta a la derecha",
+        "doble a la derecha",
+        "gire a la derecha",
+        "voltee a la derecha"
+      ],
+      "significado": "Vuelta a la derecha.",
+      "efectos": [
+        {
+          "campo": "vehiculo.maniobra",
+          "valor": "vuelta_derecha"
+        }
+      ]
+    },
+    {
+      "id": "cambio_carril",
+      "patrones": [
+        "me cambie de carril",
+        "se cambio de carril",
+        "cambio de carril",
+        "me pase al carril",
+        "se paso a mi carril",
+        "se abrio de mas",
+        "invadio mi carril"
+      ],
+      "significado": "Cambio de carril o invasión de carril.",
+      "efectos": [
+        {
+          "campo": "vehiculo.maniobra",
+          "valor": "cambio_carril"
+        }
+      ],
+      "ambiguo": true,
+      "pregunta": "¿Hacia qué lado fue el cambio de carril?"
+    },
+    {
+      "id": "reversa",
+      "patrones": [
+        "meti reversa",
+        "en reversa",
+        "echandome de reversa",
+        "reversa",
+        "dando reversa",
+        "de reversa"
+      ],
+      "significado": "Marcha atrás.",
+      "efectos": [
+        {
+          "campo": "vehiculo.maniobra",
+          "valor": "reversa"
+        }
+      ]
+    },
+    {
+      "id": "estacionado",
+      "patrones": [
+        "estaba estacionado",
+        "estacionado",
+        "estacionada",
+        "parado en la banqueta",
+        "orillado"
+      ],
+      "significado": "Vehículo estacionado.",
+      "efectos": [
+        {
+          "campo": "vehiculo.maniobra",
+          "valor": "estacionado"
+        }
+      ]
+    },
+    {
+      "id": "detenido",
+      "patrones": [
+        "estaba detenido",
+        "estaba parado",
+        "me pare en el alto",
+        "esperando el siga",
+        "esperando la luz",
+        "hacia alto",
+        "me detuve",
+        "frenado en el semaforo",
+        "estaba en el alto"
+      ],
+      "significado": "Vehículo detenido (no estacionado).",
+      "efectos": [
+        {
+          "campo": "vehiculo.maniobra",
+          "valor": "detenido"
+        }
+      ]
+    },
+    {
+      "id": "incorporacion",
+      "patrones": [
+        "me incorpore",
+        "se incorporo",
+        "incorporandome",
+        "al incorporarme",
+        "entrando a la autopista",
+        "saliendo de la lateral"
+      ],
+      "significado": "Incorporación a una vía.",
+      "efectos": [
+        {
+          "campo": "vehiculo.maniobra",
+          "valor": "incorporacion"
+        }
+      ]
+    },
+    {
+      "id": "se_paso_el_alto",
+      "patrones": [
+        "se paso el alto",
+        "se paso el rojo",
+        "se volo el alto",
+        "se volo el semaforo",
+        "se paso el semaforo",
+        "no respeto el alto",
+        "me pase el alto"
+      ],
+      "significado": "Un vehículo cruzó con el semáforo en rojo o sin hacer alto. Es un dato del relato, no una conclusión de responsabilidad.",
+      "efectos": [
+        {
+          "campo": "dispositivo.estado",
+          "valor": "rojo_o_alto"
+        }
+      ]
+    },
+    {
+      "id": "venia_hecho_la_mocha",
+      "patrones": [
+        "hecho la mocha",
+        "hecha la mocha",
+        "a toda velocidad",
+        "a todo lo que daba",
+        "bien rapido",
+        "rapidisimo",
+        "volando",
+        "a madres"
+      ],
+      "significado": "Velocidad alta sin cifra.",
+      "efectos": [
+        {
+          "campo": "velocidad.cualitativa",
+          "valor": "alta"
+        }
+      ],
+      "ambiguo": true,
+      "pregunta": "¿A cuántos km/h crees que iba (aunque sea aproximado)?"
+    },
+    {
+      "id": "a_vuelta_de_rueda",
+      "patrones": [
+        "a vuelta de rueda",
+        "bien despacito",
+        "muy despacio",
+        "despacito",
+        "a paso de tortuga"
+      ],
+      "significado": "Velocidad muy baja (del orden de 5–10 km/h).",
+      "efectos": [
+        {
+          "campo": "velocidad.cualitativa",
+          "valor": "muy_baja"
+        }
+      ]
+    },
+    {
+      "id": "velocidad_como_a",
+      "patrones": [
+        "como a \\d{1,3}",
+        "a unos \\d{1,3}",
+        "a \\d{1,3} (?:km|kilometros|por hora|km/h|kph)",
+        "iba a \\d{1,3}",
+        "a mas de \\d{1,3}",
+        "a menos de \\d{1,3}"
+      ],
+      "significado": "Velocidad con cifra (km/h).",
+      "efectos": [
+        {
+          "campo": "vehiculo.velocidad_previa",
+          "valor": "numero"
+        }
+      ]
+    },
+    {
+      "id": "combi",
+      "patrones": [
+        "combi",
+        "combis",
+        "micro\\b",
+        "microbus",
+        "pesero",
+        "colectivo",
+        "transporte publico",
+        "la ruta"
+      ],
+      "significado": "Microbús o combi de transporte colectivo.",
+      "efectos": [
+        {
+          "campo": "vehiculo.clase",
+          "valor": "microbus_combi"
+        }
+      ]
+    },
+    {
+      "id": "urvan",
+      "patrones": ["van\\b", "vanette", "camioneta de pasajeros", "sprinter"],
+      "significado": "Van de pasajeros o de carga ligera (la Urvan está en el diccionario de modelos).",
+      "efectos": [
+        {
+          "campo": "vehiculo.clase",
+          "valor": "van"
+        }
+      ]
+    },
+    {
+      "id": "camion_autobus",
+      "patrones": ["autobus", "camion de pasajeros", "el camion de la ruta", "metrobus", "mexibus"],
+      "significado": "Autobús.",
+      "efectos": [
+        {
+          "campo": "vehiculo.clase",
+          "valor": "autobus"
+        }
+      ]
+    },
+    {
+      "id": "trailer",
+      "patrones": [
+        "trailer",
+        "trailers",
+        "tractocamion",
+        "doble remolque",
+        "full\\b",
+        "quinta rueda"
+      ],
+      "significado": "Tractocamión.",
+      "efectos": [
+        {
+          "campo": "vehiculo.clase",
+          "valor": "tractocamion"
+        }
+      ]
+    },
+    {
+      "id": "torton",
+      "patrones": [
+        "torton",
+        "rabon",
+        "camion de carga",
+        "camion de volteo",
+        "pipa",
+        "camion repartidor"
+      ],
+      "significado": "Camión unitario de carga.",
+      "efectos": [
+        {
+          "campo": "vehiculo.clase",
+          "valor": "camion_unitario"
+        }
+      ]
+    },
+    {
+      "id": "camioneta",
+      "patrones": ["camioneta", "camionetita"],
+      "significado": "Camioneta: puede ser SUV, pickup o van.",
+      "efectos": [
+        {
+          "campo": "vehiculo.clase",
+          "valor": "suv_o_pickup"
+        }
+      ],
+      "ambiguo": true,
+      "pregunta": "¿La camioneta era tipo SUV (cerrada), pickup (con caja) o van?"
+    },
+    {
+      "id": "pickup",
+      "patrones": [
+        "pickup",
+        "pick up",
+        "pick-up",
+        "camioneta de caja",
+        "camioneta con caja",
+        "troca",
+        "trokita"
+      ],
+      "significado": "Pickup.",
+      "efectos": [
+        {
+          "campo": "vehiculo.clase",
+          "valor": "pickup"
+        }
+      ]
+    },
+    {
+      "id": "vocho",
+      "patrones": ["vocho", "vochito", "tsuru", "carrito"],
+      "significado": "Auto compacto.",
+      "efectos": [
+        {
+          "campo": "vehiculo.clase",
+          "valor": "sedan_compacto"
+        }
+      ]
+    },
+    {
+      "id": "moto",
+      "patrones": ["moto\\b", "motocicleta", "motociclista", "motorizado", "repartidor en moto"],
+      "significado": "Motocicleta.",
+      "efectos": [
+        {
+          "campo": "vehiculo.clase",
+          "valor": "motocicleta"
+        }
+      ]
+    },
+    {
+      "id": "motoneta",
+      "patrones": ["motoneta", "scooter", "patineta electrica", "patin electrico"],
+      "significado": "Motoneta o scooter.",
+      "efectos": [
+        {
+          "campo": "vehiculo.clase",
+          "valor": "scooter"
+        }
+      ]
+    },
+    {
+      "id": "bici",
+      "patrones": ["bici\\b", "bicicleta", "ciclista", "el de la bici"],
+      "significado": "Bicicleta.",
+      "efectos": [
+        {
+          "campo": "vehiculo.clase",
+          "valor": "bicicleta"
+        }
+      ]
+    },
+    {
+      "id": "peaton",
+      "patrones": [
+        "peaton",
+        "peatona",
+        "(?:una|un|la|el) (?:senora|senor|muchacho|muchacha|nino|nina|persona|joven|chavo|chava|viejito|viejita|abuelito|abuelita)(?: que)? (?:iba |venia |estaba )?(?:cruzando|caminando|corriendo)",
+        "(?:una|un|la|el) (?:senora|senor|muchacho|muchacha|nino|nina|persona|joven|chavo|chava|viejito|viejita|abuelito|abuelita) se (?:atraveso|cruzo|me atraveso|me cruzo)",
+        "iba cruzando",
+        "cruzo la calle",
+        "atropell[eoé]",
+        "atropellad[oa]"
+      ],
+      "significado": "Persona a pie (sin datos personales).",
+      "efectos": [
+        {
+          "campo": "persona.rol",
+          "valor": "peaton"
+        }
+      ]
+    },
+    {
+      "id": "tope",
+      "patrones": ["tope", "topes", "reductor de velocidad", "vibrador"],
+      "significado": "Reductor de velocidad (tope).",
+      "efectos": [
+        {
+          "campo": "dispositivo.tipo",
+          "valor": "tope"
+        }
+      ]
+    },
+    {
+      "id": "paso_de_cebra",
+      "patrones": ["paso de cebra", "paso peatonal", "cruce peatonal", "las rayas", "la cebra"],
+      "significado": "Paso peatonal.",
+      "efectos": [
+        {
+          "campo": "dispositivo.tipo",
+          "valor": "paso_peatonal"
+        }
+      ]
+    },
+    {
+      "id": "semaforo",
+      "patrones": ["semaforo", "semaforos", "la luz", "el siga"],
+      "significado": "Semáforo.",
+      "efectos": [
+        {
+          "campo": "dispositivo.tipo",
+          "valor": "semaforo"
+        }
+      ]
+    },
+    {
+      "id": "alto_total",
+      "patrones": ["alto total", "senal de alto", "el alto\\b", "un alto\\b"],
+      "significado": "Señal de alto.",
+      "efectos": [
+        {
+          "campo": "dispositivo.tipo",
+          "valor": "alto"
+        }
+      ]
+    },
+    {
+      "id": "ceda_el_paso",
+      "patrones": ["ceda el paso", "ceder el paso", "uno y uno", "uno por uno"],
+      "significado": "Ceda el paso (o paso alternado uno y uno).",
+      "efectos": [
+        {
+          "campo": "dispositivo.tipo",
+          "valor": "ceda_el_paso"
+        }
+      ]
+    },
+    {
+      "id": "glorieta",
+      "patrones": ["glorieta", "rotonda", "redondel"],
+      "significado": "Glorieta.",
+      "efectos": [
+        {
+          "campo": "lugar.tipo_via",
+          "valor": "glorieta"
+        }
+      ]
+    },
+    {
+      "id": "retorno",
+      "patrones": ["retorno", "en el retorno"],
+      "significado": "Retorno.",
+      "efectos": [
+        {
+          "campo": "lugar.tipo_via",
+          "valor": "retorno"
+        }
+      ]
+    },
+    {
+      "id": "cruce_crucero",
+      "patrones": ["crucero", "cruce", "la esquina", "en la esquina", "interseccion", "bocacalle"],
+      "significado": "Intersección.",
+      "efectos": [
+        {
+          "campo": "lugar.tipo_via",
+          "valor": "interseccion"
+        }
+      ],
+      "ambiguo": true,
+      "pregunta": "¿Las calles se cruzaban en X o una terminaba en la otra (en T)?"
+    },
+    {
+      "id": "curva",
+      "patrones": ["curva", "en la curva", "curvita"],
+      "significado": "Curva.",
+      "efectos": [
+        {
+          "campo": "lugar.tipo_via",
+          "valor": "curva"
+        }
+      ]
+    },
+    {
+      "id": "autopista",
+      "patrones": [
+        "autopista",
+        "periferico",
+        "circuito interior",
+        "viaducto",
+        "via rapida",
+        "carretera de cuota",
+        "la cuota"
+      ],
+      "significado": "Vía rápida o autopista.",
+      "efectos": [
+        {
+          "campo": "lugar.tipo_via",
+          "valor": "autopista"
+        }
+      ]
+    },
+    {
+      "id": "carretera",
+      "patrones": ["carretera", "la libre", "carretera libre", "un carril por sentido"],
+      "significado": "Carretera de dos carriles.",
+      "efectos": [
+        {
+          "campo": "lugar.tipo_via",
+          "valor": "carretera_dos_carriles"
+        }
+      ]
+    },
+    {
+      "id": "lateral",
+      "patrones": ["la lateral", "carril lateral", "laterales"],
+      "significado": "Vía lateral (de servicio) junto a una vía rápida.",
+      "efectos": [
+        {
+          "campo": "lugar.tipo_via",
+          "valor": "incorporacion"
+        }
+      ],
+      "ambiguo": true,
+      "pregunta": "¿El percance fue en la lateral o al incorporarte a la vía principal?"
+    },
+    {
+      "id": "estacionamiento",
+      "patrones": ["estacionamiento", "cajon de estacionamiento", "en la plaza"],
+      "significado": "Estacionamiento.",
+      "efectos": [
+        {
+          "campo": "lugar.tipo_via",
+          "valor": "estacionamiento"
+        }
+      ]
+    },
+    {
+      "id": "camellon",
+      "patrones": ["camellon", "el camellon"],
+      "significado": "Camellón.",
+      "efectos": [
+        {
+          "campo": "lugar.camellon",
+          "valor": true
+        }
+      ]
+    },
+    {
+      "id": "banqueta",
+      "patrones": ["banqueta", "guarnicion", "la orilla"],
+      "significado": "Banqueta o guarnición.",
+      "efectos": [
+        {
+          "campo": "lugar.banquetas",
+          "valor": true
+        }
+      ]
+    },
+    {
+      "id": "acotamiento",
+      "patrones": ["acotamiento", "el hombro"],
+      "significado": "Acotamiento.",
+      "efectos": [
+        {
+          "campo": "lugar.acotamiento",
+          "valor": true
+        }
+      ]
+    },
+    {
+      "id": "lluvia_ligera",
+      "patrones": [
+        "chispeaba",
+        "chispeando",
+        "lloviznaba",
+        "llovizna",
+        "brisa",
+        "estaba lloviendo poquito"
+      ],
+      "significado": "Lluvia ligera.",
+      "efectos": [
+        {
+          "campo": "entorno.clima",
+          "valor": "lluvia_ligera"
+        }
+      ]
+    },
+    {
+      "id": "lluvia_fuerte",
+      "patrones": [
+        "aguacero",
+        "tormenta",
+        "llovia fuerte",
+        "llovia muy fuerte",
+        "diluvio",
+        "lluvia fuerte",
+        "tromba"
+      ],
+      "significado": "Lluvia fuerte.",
+      "efectos": [
+        {
+          "campo": "entorno.clima",
+          "valor": "lluvia_fuerte"
+        }
+      ]
+    },
+    {
+      "id": "llovia",
+      "patrones": ["llovia", "lloviendo", "con lluvia"],
+      "significado": "Lluvia sin intensidad declarada.",
+      "efectos": [
+        {
+          "campo": "entorno.clima",
+          "valor": "lluvia"
+        }
+      ],
+      "ambiguo": true,
+      "pregunta": "¿Llovía poco o fuerte?"
+    },
+    {
+      "id": "niebla",
+      "patrones": ["neblina", "niebla", "no se veia nada por la neblina", "bruma"],
+      "significado": "Niebla.",
+      "efectos": [
+        {
+          "campo": "entorno.clima",
+          "valor": "niebla"
+        }
+      ]
+    },
+    {
+      "id": "granizo",
+      "patrones": ["granizo", "granizada"],
+      "significado": "Granizo.",
+      "efectos": [
+        {
+          "campo": "entorno.clima",
+          "valor": "granizo"
+        }
+      ]
+    },
+    {
+      "id": "atardecer",
+      "patrones": ["oscureciendo", "atardecer", "ya se estaba metiendo el sol", "al caer la tarde"],
+      "significado": "Atardecer.",
+      "efectos": [
+        {
+          "campo": "entorno.iluminacion",
+          "valor": "atardecer"
+        }
+      ]
+    },
+    {
+      "id": "amanecer",
+      "patrones": ["amaneciendo", "amanecer", "de madrugada ya clareando", "apenas salia el sol"],
+      "significado": "Amanecer.",
+      "efectos": [
+        {
+          "campo": "entorno.iluminacion",
+          "valor": "amanecer"
+        }
+      ]
+    },
+    {
+      "id": "noche_sin_luz",
+      "patrones": [
+        "no habia luz",
+        "sin alumbrado",
+        "estaba muy oscuro",
+        "no habia lamparas",
+        "oscurisimo",
+        "las lamparas no servian"
+      ],
+      "significado": "Noche sin alumbrado.",
+      "efectos": [
+        {
+          "campo": "entorno.iluminacion",
+          "valor": "noche_sin_alumbrado"
+        }
+      ]
+    },
+    {
+      "id": "noche",
+      "patrones": ["de noche", "en la noche", "noche", "madrugada"],
+      "significado": "De noche (alumbrado no declarado).",
+      "efectos": [
+        {
+          "campo": "entorno.iluminacion",
+          "valor": "noche"
+        }
+      ],
+      "ambiguo": true,
+      "pregunta": "¿Había alumbrado público donde ocurrió?"
+    },
+    {
+      "id": "piso_mojado",
+      "patrones": ["piso mojado", "pavimento mojado", "estaba mojado", "calle mojada"],
+      "significado": "Superficie mojada.",
+      "efectos": [
+        {
+          "campo": "lugar.estado_superficie",
+          "valor": "mojado"
+        }
+      ]
+    },
+    {
+      "id": "encharcado",
+      "patrones": ["encharcado", "charco", "charcos", "inundado"],
+      "significado": "Superficie encharcada.",
+      "efectos": [
+        {
+          "campo": "lugar.estado_superficie",
+          "valor": "encharcado"
+        }
+      ]
+    },
+    {
+      "id": "grava",
+      "patrones": ["grava", "gravilla", "piedritas sueltas"],
+      "significado": "Grava suelta.",
+      "efectos": [
+        {
+          "campo": "lugar.estado_superficie",
+          "valor": "grava_suelta"
+        }
+      ]
+    },
+    {
+      "id": "aceite",
+      "patrones": ["aceite", "diesel derramado", "mancha de aceite"],
+      "significado": "Aceite en el pavimento.",
+      "efectos": [
+        {
+          "campo": "lugar.estado_superficie",
+          "valor": "aceite"
+        }
+      ]
+    },
+    {
+      "id": "terraceria",
+      "patrones": ["terraceria", "camino de tierra", "brecha"],
+      "significado": "Terracería.",
+      "efectos": [
+        {
+          "campo": "lugar.superficie",
+          "valor": "terraceria"
+        }
+      ]
+    },
+    {
+      "id": "empedrado",
+      "patrones": ["empedrado", "calle de piedra"],
+      "significado": "Empedrado.",
+      "efectos": [
+        {
+          "campo": "lugar.superficie",
+          "valor": "empedrado"
+        }
+      ]
+    },
+    {
+      "id": "adoquin",
+      "patrones": ["adoquin", "adoquinado"],
+      "significado": "Adoquín.",
+      "efectos": [
+        {
+          "campo": "lugar.superficie",
+          "valor": "adoquin"
+        }
+      ]
+    },
+    {
+      "id": "concreto",
+      "patrones": ["concreto hidraulico", "calle de concreto", "de concreto"],
+      "significado": "Concreto.",
+      "efectos": [
+        {
+          "campo": "lugar.superficie",
+          "valor": "concreto"
+        }
+      ]
+    },
+    {
+      "id": "arbol",
+      "patrones": ["arbol", "un arbol", "el arbol", "un pino", "un fresno"],
+      "significado": "Árbol.",
+      "efectos": [
+        {
+          "campo": "objeto.tipo",
+          "valor": "arbol"
+        }
+      ]
+    },
+    {
+      "id": "poste",
+      "patrones": ["poste", "un poste", "poste de luz", "poste de telefono", "arbotante"],
+      "significado": "Poste.",
+      "efectos": [
+        {
+          "campo": "objeto.tipo",
+          "valor": "poste"
+        }
+      ]
+    },
+    {
+      "id": "barda_muro",
+      "patrones": ["barda", "muro", "pared", "contencion", "muro de contencion"],
+      "significado": "Barda o muro.",
+      "efectos": [
+        {
+          "campo": "objeto.tipo",
+          "valor": "barda"
+        }
+      ]
+    },
+    {
+      "id": "cinturon",
+      "patrones": [
+        "con cinturon",
+        "traia el cinturon",
+        "llevaba el cinturon",
+        "abrochado",
+        "cinturon puesto"
+      ],
+      "significado": "Llevaba cinturón de seguridad.",
+      "efectos": [
+        {
+          "campo": "persona.cinturon",
+          "valor": true
+        }
+      ]
+    },
+    {
+      "id": "sin_cinturon",
+      "patrones": [
+        "sin cinturon",
+        "no traia el cinturon",
+        "no llevaba cinturon",
+        "no se habia puesto el cinturon"
+      ],
+      "significado": "No llevaba cinturón.",
+      "efectos": [
+        {
+          "campo": "persona.cinturon",
+          "valor": false
+        }
+      ]
+    },
+    {
+      "id": "casco",
+      "patrones": ["con casco", "traia casco", "llevaba casco"],
+      "significado": "Llevaba casco.",
+      "efectos": [
+        {
+          "campo": "persona.casco",
+          "valor": true
+        }
+      ]
+    },
+    {
+      "id": "sin_casco",
+      "patrones": ["sin casco", "no traia casco", "no llevaba casco"],
+      "significado": "No llevaba casco.",
+      "efectos": [
+        {
+          "campo": "persona.casco",
+          "valor": false
+        }
+      ]
+    },
+    {
+      "id": "salio_volando",
+      "patrones": [
+        "salio volando",
+        "salio disparado",
+        "lo avento",
+        "la avento",
+        "quedo tirado a",
+        "cayo como a",
+        "lo proyecto"
+      ],
+      "significado": "Persona proyectada; suele venir con una distancia.",
+      "efectos": [
+        {
+          "campo": "evidencia.tipo",
+          "valor": "distancia_proyeccion"
+        }
+      ]
+    },
+    {
+      "id": "noche_con_luz",
+      "patrones": [
+        "habia alumbrado",
+        "alumbrado publico",
+        "estaba bien iluminado",
+        "estaba iluminado",
+        "con las lamparas prendidas"
+      ],
+      "significado": "Había alumbrado público (de noche).",
+      "efectos": [
+        {
+          "campo": "entorno.iluminacion",
+          "valor": "noche_con_alumbrado"
+        }
+      ]
+    },
+    {
+      "id": "de_dia",
+      "patrones": [
+        "de dia",
+        "era de dia",
+        "en la manana",
+        "al mediodia",
+        "a medio dia",
+        "a plena luz del dia",
+        "con luz de dia"
+      ],
+      "significado": "De día.",
+      "efectos": [
+        {
+          "campo": "entorno.iluminacion",
+          "valor": "dia"
+        }
+      ]
+    },
+    {
+      "id": "despejado",
+      "patrones": ["despejado", "dia soleado", "hacia sol", "buen dia", "buen clima"],
+      "significado": "Cielo despejado.",
+      "efectos": [
+        {
+          "campo": "entorno.clima",
+          "valor": "despejado"
+        }
+      ]
+    },
+    {
+      "id": "seco",
+      "patrones": ["estaba seco", "todo seco", "piso seco", "pavimento seco"],
+      "significado": "Superficie seca.",
+      "efectos": [
+        {
+          "campo": "lugar.estado_superficie",
+          "valor": "seco"
+        }
+      ]
+    }
+  ]
+}
