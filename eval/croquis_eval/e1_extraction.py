@@ -1,8 +1,9 @@
 """E1: extracción del relato (PLAN §8 y §5.3) sobre Relatos-MX.
 
 Métodos: línea base de reglas (siempre) y Claude Haiku 5.5 y Sonnet 5.5 desde respuestas grabadas
-(`extraction/grabaciones/<modelo>/<id>.json`); sin grabaciones, esas columnas quedan pendientes
-(requieren `ANTHROPIC_API_KEY`, ver docs/PROGRESS.md). CI nunca llama a la API.
+(`extraction/grabaciones/<modelo>/<id>.json`, ver `croquis_extraction.claude_client`); sin
+grabaciones, esas columnas quedan pendientes (requieren `ANTHROPIC_API_KEY`, ver docs/PROGRESS.md).
+CI nunca llama a la API. Las dos rutas terminan en el mismo constructor de EscenaSpec.
 
 Por método: F1 por campo y micro/macro, error en numéricos, número de vehículos, alucinación de
 campo antes y después del verificador, diferencia contrafactual, costo por 1 000 relatos y latencia
@@ -12,15 +13,18 @@ El test solo se evalúa congelado (PLAN §5.2).
 
 from __future__ import annotations
 
-import json
-import statistics
 import time
 from collections import Counter
-from pathlib import Path
 from typing import Any
 
 from croquis_eval.results import write_result
 from croquis_extraction import baseline, relatos_mx
+from croquis_extraction.claude_client import (
+    MODELS,
+    LLMError,
+    facts_from_output,
+    load_recording,
+)
 from croquis_extraction.evaluate import (
     Score,
     counterfactual_diff,
@@ -28,12 +32,10 @@ from croquis_extraction.evaluate import (
     pii_leaks,
     score_story,
 )
-from croquis_extraction.facts import facts_from_annotation, facts_from_spec
+from croquis_extraction.facts import Facts, facts_from_annotation, facts_from_spec
 from croquis_extraction.pii import redact
+from croquis_extraction.spec_builder import build_spec
 from croquis_extraction.verify import verify_spec
-
-RECORDINGS = Path(__file__).resolve().parents[2] / "extraction" / "grabaciones"
-MODELS = ("claude-haiku-5-5", "claude-sonnet-5-5")
 
 
 def _pctl(xs: list[float], p: float) -> float | None:
@@ -43,12 +45,39 @@ def _pctl(xs: list[float], p: float) -> float | None:
     return round(s[min(len(s) - 1, int(p * (len(s) - 1) + 0.5))], 2)
 
 
-def _recorded(model: str, rid: str) -> dict[str, Any] | None:
-    path = RECORDINGS / model / f"{rid}.json"
-    if not path.exists():
+class _Run:
+    """Lo que un método produce para un relato."""
+
+    def __init__(
+        self, spec: dict[str, Any], citas: int, sin_cita: int, latency: float, cost: float
+    ):
+        self.spec = spec
+        self.citas = citas
+        self.sin_cita = sin_cita
+        self.latency = latency
+        self.cost = cost
+
+
+def _run(name: str, rid: str, text: str) -> _Run | None:
+    if name == "reglas":
+        t0 = time.perf_counter()
+        spec: dict[str, Any] = baseline.extract_spec(text, rid)
+        latency = (time.perf_counter() - t0) * 1000
+        total, bad = hallucinated_fields(spec, text)
+        return _Run(spec, total, bad, latency, 0.0)
+    try:
+        rec = load_recording(name, rid, text)
+    except LLMError:
         return None
-    data: dict[str, Any] = json.loads(path.read_text(encoding="utf-8"))
-    return data
+    facts, conv = facts_from_output(rec["salida"], text)
+    spec = build_spec(facts, text, spec_id=rid, origen="escrito", sintetico=False)
+    return _Run(
+        spec,
+        conv.citas,
+        conv.sin_cita_literal,
+        float(rec.get("latencia_ms", 0.0)),
+        float(rec.get("costo_usd", 0.0)),
+    )
 
 
 def evaluate_method(
@@ -56,34 +85,26 @@ def evaluate_method(
 ) -> dict[str, Any]:
     score = Score()
     score_verified = Score()
-    halluc_total = halluc_bad = 0
-    verified_down = 0
+    citas = sin_cita = verified_down = 0
     latencies: list[float] = []
     cost = 0.0
     missing = 0
-    preds: dict[str, Any] = {}
+    preds: dict[str, Facts] = {}
     for it in items:
         text = redact(it["texto"]).text
         ref = facts_from_annotation({**it["hechos"], "tipo": it["tipo"]})
-        if name == "reglas":
-            t0 = time.perf_counter()
-            spec = baseline.extract_spec(text, it["id"])
-            latencies.append((time.perf_counter() - t0) * 1000)
-        else:
-            rec = _recorded(name, it["id"])
-            if rec is None:
-                missing += 1
-                continue
-            spec = rec["spec"]
-            latencies.append(float(rec.get("latencia_ms", 0.0)))
-            cost += float(rec.get("costo_usd", 0.0))
-        total, bad = hallucinated_fields(spec, text)
-        halluc_total += total
-        halluc_bad += bad
-        verified, vs = verify_spec(spec, text)
+        run = _run(name, it["id"], text)
+        if run is None:
+            missing += 1
+            continue
+        latencies.append(run.latency)
+        cost += run.cost
+        citas += run.citas
+        sin_cita += run.sin_cita
+        verified, vs = verify_spec(run.spec, text)
         verified_down += vs.degradados
-        preds[it["id"]] = facts_from_spec(spec)
-        score.merge(score_story(ref, facts_from_spec(spec)))
+        preds[it["id"]] = facts_from_spec(run.spec)
+        score.merge(score_story(ref, preds[it["id"]]))
         score_verified.merge(score_story(ref, facts_from_spec(verified)))
     evaluated = len(items) - missing
     if evaluated == 0:
@@ -91,34 +112,29 @@ def evaluate_method(
             "estado": "pendiente",
             "motivo": "Sin respuestas grabadas: requiere ANTHROPIC_API_KEY (ver PROGRESS).",
         }
-    diffs = 0
-    pairs = 0
+    diffs = pairs = 0
     for cf in cfs:
         base = preds.get(cf["base"])
         if base is None:
             continue
-        text = redact(cf["texto"]).text
-        if name == "reglas":
-            variant = facts_from_spec(baseline.extract_spec(text, cf["id"]))
-        else:
-            rec = _recorded(name, cf["id"])
-            if rec is None:
-                continue
-            variant = facts_from_spec(rec["spec"])
+        run = _run(name, cf["id"], redact(cf["texto"]).text)
+        if run is None:
+            continue
         pairs += 1
-        diffs += int(counterfactual_diff(base, variant))
+        diffs += int(counterfactual_diff(base, facts_from_spec(run.spec)))
     return {
-        "estado": "medido",
+        "estado": "medido" if missing == 0 else "parcial",
         "relatos": evaluated,
         "sin_respuesta": missing,
         **score.report(),
         "con_verificador": {k: v for k, v in score_verified.report().items() if k != "por_campo"},
         "alucinacion_de_campo": {
-            "campos_relato": halluc_total,
-            "sin_cita_literal": halluc_bad,
-            "tasa": round(halluc_bad / halluc_total, 4) if halluc_total else 0.0,
-            "tasa_tras_verificador": 0.0,
+            "citas": citas,
+            "sin_cita_literal": sin_cita,
+            "tasa": round(sin_cita / citas, 4) if citas else 0.0,
+            # El constructor solo deja citas literales y el verificador lo comprueba.
             "degradados_por_verificador": verified_down,
+            "tasa_tras_verificador": 0.0 if verified_down == 0 else None,
         },
         "contrafactual": {
             "pares": pairs,
@@ -126,7 +142,7 @@ def evaluate_method(
             "tasa": round(diffs / pairs, 4) if pairs else None,
         },
         "latencia_ms": {"p50": _pctl(latencies, 0.5), "p95": _pctl(latencies, 0.95)},
-        "costo_usd_por_1000": round(1000 * cost / evaluated, 4) if evaluated else None,
+        "costo_usd_por_1000": round(1000 * cost / evaluated, 4),
     }
 
 
@@ -181,4 +197,3 @@ def main(split: str = "test") -> str:
 
 
 __all__ = ["evaluate", "main"]
-_ = statistics

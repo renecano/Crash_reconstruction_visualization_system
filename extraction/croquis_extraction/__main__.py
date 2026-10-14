@@ -1,10 +1,44 @@
-"""CLI: `uv run croquis-extraction relatos build|check|freeze|stats` y `golden build|check`."""
+"""CLI: `croquis-extraction relatos …`, `golden build|check` y `claude record` (ver --help)."""
 
 from __future__ import annotations
 
 import argparse
 import json
 import sys
+
+
+def _record(split: str, model: str | None, limit: int | None) -> int:
+    """Graba (o salta si ya existe) la respuesta de cada relato y contrafactual del split."""
+    from croquis_extraction import claude_client as cc
+    from croquis_extraction import relatos_mx
+    from croquis_extraction.pii import redact
+
+    models = [model] if model else list(cc.MODELS)
+    rows = relatos_mx.load_split(split) + [
+        x for x in relatos_mx.load_split("contrafactuales") if x["split"] == split
+    ]
+    if limit is not None:
+        rows = rows[:limit]
+    spent = 0.0
+    for m in models:
+        done = 0
+        for row in rows:
+            text = redact(row["texto"]).text
+            try:
+                cc.load_recording(m, row["id"], text)
+                continue  # ya grabada y vigente
+            except cc.LLMError:
+                pass
+            try:
+                rec = cc.extract(text, row["id"], m, mode="record")
+            except cc.BudgetExceededError as e:
+                print(f"Detenido: {e}", file=sys.stderr)
+                return 2
+            spent += float(rec["costo_usd"])
+            done += 1
+        print(f"{m}: {done} grabadas")
+    print(f"Gasto de esta corrida: {spent:.4f} USD")
+    return 0
 
 
 def main(argv: list[str] | None = None) -> int:
@@ -17,7 +51,15 @@ def main(argv: list[str] | None = None) -> int:
     r.add_argument("action", choices=["build", "check", "freeze", "stats"])
     g = sub.add_parser("golden", help="Salidas doradas para la paridad del port TS")
     g.add_argument("action", choices=["build", "check"])
+    c = sub.add_parser("claude", help="Graba respuestas de Claude para E1 (requiere llave)")
+    c.add_argument("action", choices=["record"])
+    c.add_argument("--split", choices=["dev", "test"], required=True)
+    c.add_argument("--model", default=None, help="claude-sonnet-5-5 o claude-haiku-5-5")
+    c.add_argument("--limit", type=int, default=None)
     args = parser.parse_args(argv)
+
+    if args.group == "claude":
+        return _record(args.split, args.model, args.limit)
 
     if args.group == "golden":
         from croquis_extraction import golden

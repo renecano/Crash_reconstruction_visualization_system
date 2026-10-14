@@ -1,7 +1,7 @@
 {
   "name": "e1_extraction_dev",
-  "generated_at": "2026-10-14T13:41:22+00:00",
-  "git_commit": "8934c99",
+  "generated_at": "2026-10-14T14:06:18+00:00",
+  "git_commit": "e3b4eff",
   "seed": null,
   "descripcion": "E1: extracción del relato en Relatos-MX (línea base de reglas, Claude Haiku y Sonnet desde respuestas grabadas), fuga de PII del redactor y diferencia contrafactual.",
   "split": "dev",
@@ -183,11 +183,11 @@
         "numero_de_vehiculos_exacto": 0.85
       },
       "alucinacion_de_campo": {
-        "campos_relato": 141,
+        "citas": 141,
         "sin_cita_literal": 0,
         "tasa": 0.0,
-        "tasa_tras_verificador": 0.0,
-        "degradados_por_verificador": 0
+        "degradados_por_verificador": 0,
+        "tasa_tras_verificador": 0.0
       },
       "contrafactual": {
         "pares": 0,
@@ -195,16 +195,16 @@
         "tasa": null
       },
       "latencia_ms": {
-        "p50": 4.8,
-        "p95": 9.42
+        "p50": 3.39,
+        "p95": 8.4
       },
       "costo_usd_por_1000": 0.0
     },
-    "claude-haiku-5-5": {
+    "claude-sonnet-5-5": {
       "estado": "pendiente",
       "motivo": "Sin respuestas grabadas: requiere ANTHROPIC_API_KEY (ver PROGRESS)."
     },
-    "claude-sonnet-5-5": {
+    "claude-haiku-5-5": {
       "estado": "pendiente",
       "motivo": "Sin respuestas grabadas: requiere ANTHROPIC_API_KEY (ver PROGRESS)."
     }
