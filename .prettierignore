@@ -25,8 +25,8 @@ packages/scene-schema/fixtures/resultados/
 apps/web/public/modelos/
 
 # Generados por scripts de Python (se verifican byte a byte con --check)
-packages/relato/data/nombres.json
-packages/relato/fixtures/
+packages/extraction/data/nombres.json
+packages/extraction/fixtures/
 
 # Respuestas grabadas de Claude (las escribe croquis-extraction claude record)
 extraction/grabaciones/

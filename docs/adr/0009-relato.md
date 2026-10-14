@@ -5,10 +5,10 @@
 
 ## Decisiones
 
-1. **Redacción de PII con datos compartidos y paridad probada.** Los patrones y pistas viven en `packages/relato/data/pii.json`; la referencia Python (`croquis_extraction.pii`) y el port TS (`@croquis/relato`, que corre en el navegador) los leen igual.
+1. **Redacción de PII con datos compartidos y paridad probada.** Los patrones y pistas viven en `packages/extraction/data/pii.json`; la referencia Python (`croquis_extraction.pii`) y el port TS (`@croquis/extraction`, que corre en el navegador) los leen igual.
    - **Regex común:** solo un subconjunto que se comporta igual en `re` con `re.ASCII` y en `RegExp` sin bandera `u` (`\d`, `\s`, `\w`, `\b` ASCII, lookbehind de ancho fijo, sin banderas en línea). Lo que antes era insensible a mayúsculas corre sobre el texto plegado.
    - **Espacios Unicode:** se normalizan uno a uno a `" "` (24 caracteres listados igual en ambos lados), así que las posiciones no cambian.
-   - **Paridad:** `croquis-extraction golden build|check` escribe `packages/relato/fixtures/golden.json` (Relatos-MX completo más casos difíciles: emojis, espacios raros, mayúsculas con acento) y Vitest compara redacción, tramos y glosario. Las posiciones de Python son puntos de código; el port las convierte desde UTF-16.
+   - **Paridad:** `croquis-extraction golden build|check` escribe `packages/extraction/fixtures/golden.json` (Relatos-MX completo más casos difíciles: emojis, espacios raros, mayúsculas con acento) y Vitest compara redacción, tramos y glosario. Las posiciones de Python son puntos de código; el port las convierte desde UTF-16.
    - **Nombres:** diccionario de 491 nombres de pila de DataMX (CC0), más pistas de contexto y apellidos frecuentes del INEGI. Los nombres que también son palabras comunes ("Rosa", "Luz") no se redactan al inicio de una oración sin otra pista: es una fuga aceptada y medida en E1 (ver limitaciones).
 2. **Claude produce hechos, no la `EscenaSpec` completa.** El modelo devuelve, con salida estructurada (`output_config.format` con `json_schema`), una lista plana de hechos `{campo, vehiculo, persona, valor, cita}` más vehículos, personas, dispositivos y hasta tres preguntas. El constructor determinista (`spec_builder`), el mismo que usan la línea base y la referencia de Relatos-MX, los convierte en `EscenaSpec`.
    - **Por qué:** el esquema completo del contrato (48 definiciones, `$ref`, patrones y rangos) es grande para la salida estructurada y le daría al modelo la oportunidad de producir poses y números que no le tocan (CLAUDE.md: el LLM nunca genera geometría ni números físicos finales). Con un constructor común, E1 compara la comprensión del relato y nada más.
@@ -29,7 +29,7 @@
 
    - **Caché:** el prompt de sistema (instrucciones, valores válidos y glosario) es estable y se marca con `cache_control`.
    - **Tope de gasto:** `CROQUIS_LLM_DAILY_BUDGET_USD` (PLAN §16.4), contabilizado por día en `extraction/grabaciones/gasto.json`; con tope 0 no hay llamadas.
-5. **Glosario versionado y compartido** (`packages/relato/data/glosario.json`): patrones sobre el texto plegado, efectos sobre campos del contrato y pregunta sugerida en las entradas ambiguas. Lo usan la línea base, el prompt de Claude y el navegador.
+5. **Glosario versionado y compartido** (`packages/extraction/data/glosario.json`): patrones sobre el texto plegado, efectos sobre campos del contrato y pregunta sugerida en las entradas ambiguas. Lo usan la línea base, el prompt de Claude y el navegador.
 6. **Relatos-MX.**
    - **Distribución:** ATUS 2025 con mínimos para las categorías raras.
    - **Formato:** TOML con marcas de PII sintética y ranuras contrafactuales.

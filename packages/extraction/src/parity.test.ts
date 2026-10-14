@@ -23,7 +23,7 @@ function cp(text: string, i: number): number {
   return [...text.slice(0, i)].length;
 }
 
-describe("paridad con la referencia Python (packages/relato/fixtures/golden.json)", () => {
+describe("paridad con la referencia Python (packages/extraction/fixtures/golden.json)", () => {
   it("usa las mismas versiones de datos", () => {
     expect(piiVersion()).toBe(G.version_pii);
     expect(glossaryVersion()).toBe(G.version_glosario);

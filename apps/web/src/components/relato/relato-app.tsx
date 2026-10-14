@@ -1,6 +1,6 @@
 "use client";
 
-import { findTerms, redact, type Span } from "@croquis/relato";
+import { findTerms, redact, type Span } from "@croquis/extraction";
 import type { EscenaSpec } from "@croquis/scene-schema";
 import { useRouter } from "next/navigation";
 import { useMemo, useState } from "react";

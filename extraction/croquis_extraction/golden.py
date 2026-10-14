@@ -1,6 +1,6 @@
-"""Salidas doradas para la paridad del port TS (`packages/relato`) con la referencia Python.
+"""Salidas doradas para la paridad del port TS (`packages/extraction`) con la referencia Python.
 
-`packages/relato/fixtures/golden.json` guarda, para cada texto del corpus (Relatos-MX completo más
+`packages/extraction/fixtures/golden.json` guarda, para cada texto del corpus (Relatos-MX completo más
 casos difíciles escritos aquí), la redacción de PII y las coincidencias del glosario, y el plegado
 de los bloques Unicode que importan. Las posiciones van en puntos de código (las de Python); el
 port TS las convierte desde UTF-16. `croquis-extraction golden check` falla si el archivo no
@@ -18,7 +18,7 @@ from croquis_extraction.glossary import find_terms, glossary_version
 from croquis_extraction.pii import pii_version, redact
 from croquis_extraction.text import fold
 
-GOLDEN = relatos_mx.ROOT / "packages" / "relato" / "fixtures" / "golden.json"
+GOLDEN = relatos_mx.ROOT / "packages" / "extraction" / "fixtures" / "golden.json"
 
 # Bloques donde el plegado debe coincidir carácter por carácter: latín, puntuación general y los
 # espacios Unicode (Python y el motor de JS comparten estos datos de Unicode desde hace años).

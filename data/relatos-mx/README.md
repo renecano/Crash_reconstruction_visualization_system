@@ -93,7 +93,7 @@ Por vehículo (`[[relato.hechos.vehiculos]]`, en orden: el de quien narra primer
 
 Por persona (`[[relato.hechos.personas]]`): `rol` ∈ `conductor`, `pasajero`, `peaton`, `ciclista`, `motociclista`; `vehiculo` (índice, sin cita) para quien va a bordo; `cinturon` y `casco` (`true`/`false`) si el relato los menciona. Quien narra y maneja va primero.
 
-La clase de un modelo sale de `packages/relato/data/modelos.json` cuando está ahí (fichas técnicas); si no, se usa la clase evidente ("Aveo" → `sedan_compacto`).
+La clase de un modelo sale de `packages/extraction/data/modelos.json` cuando está ahí (fichas técnicas); si no, se usa la clase evidente ("Aveo" → `sedan_compacto`).
 
 ### Validar un lote
 

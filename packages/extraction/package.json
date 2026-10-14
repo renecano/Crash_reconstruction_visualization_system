@@ -1,5 +1,5 @@
 {
-  "name": "@croquis/relato",
+  "name": "@croquis/extraction",
   "version": "0.1.0",
   "private": true,
   "description": "Relato en el dispositivo: redactor de datos personales y glosario (paridad probada contra Python)",
