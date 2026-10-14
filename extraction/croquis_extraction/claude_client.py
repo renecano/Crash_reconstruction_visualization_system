@@ -13,8 +13,8 @@ Modos (`CROQUIS_LLM_MODO`):
 * `live`: llama a la API sin grabar (la página del relato con llave configurada).
 
 Tope de gasto: `CROQUIS_LLM_DAILY_BUDGET_USD` (PLAN §16.4); el gasto por día se lleva en
-`packages/extraction/grabaciones/gasto.json`. Precios por millón de tokens según la tabla oficial vigente
-(registrada en docs/adr/0009-relato.md).
+`packages/extraction/grabaciones/gasto.json`. Precios por millón de tokens según la tabla
+oficial vigente (registrada en docs/adr/0009-relato.md).
 """
 
 from __future__ import annotations
