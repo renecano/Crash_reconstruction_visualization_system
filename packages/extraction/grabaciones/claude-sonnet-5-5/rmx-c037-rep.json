@@ -1,0 +1,81 @@
+{
+ "costo_estimado_con": "claude-sonnet-5-5",
+ "costo_usd": 0.0061884,
+ "esfuerzo": "medium",
+ "grabado": "2026-10-15T00:56:21+00:00",
+ "huella_prompt": "f6b693169a4199c3",
+ "latencia_ms": 3008.2,
+ "modelo": "claude-sonnet-5-5",
+ "modelo_respuesta": "claude-sonnet-5-5",
+ "prompt": "extraccion_v1",
+ "request_id": "req_011Cg37VtsG1zaotx7uCuKeb",
+ "salida": {
+  "dispositivos": [],
+  "hechos": [
+   {
+    "campo": "vehiculo.clase",
+    "cita": "una SUV grande",
+    "persona": -1,
+    "valor": "suv_grande",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.maniobra",
+    "cita": "circulaba derecho",
+    "persona": -1,
+    "valor": "recto",
+    "vehiculo": 0
+   },
+   {
+    "campo": "lugar.tipo_via",
+    "cita": "en un tramo recto",
+    "persona": -1,
+    "valor": "recta",
+    "vehiculo": -1
+   },
+   {
+    "campo": "evento.tipo",
+    "cita": "lo atropellé",
+    "persona": -1,
+    "valor": "impacto_vehiculo_persona",
+    "vehiculo": -1
+   },
+   {
+    "campo": "vehiculo.frenado",
+    "cita": "No alcancé a frenar",
+    "persona": -1,
+    "valor": "false",
+    "vehiculo": 0
+   }
+  ],
+  "personas": [
+   {
+    "cita": "al volante de mi Equinox",
+    "rol": "conductor",
+    "vehiculo": 0
+   },
+   {
+    "cita": "un señor que cruzaba a pie",
+    "rol": "peaton",
+    "vehiculo": -1
+   }
+  ],
+  "preguntas": [
+   "¿A qué velocidad aproximada circulaba usted?",
+   "¿Había un paso peatonal o semáforo en el lugar donde cruzaba la persona?",
+   "¿Era de día o de noche y cómo estaba el clima?"
+  ],
+  "vehiculos": [
+   {
+    "narrador": true
+   }
+  ]
+ },
+ "texto_sha256": "2f33010492ef1a4e15d97e6f3e9b41c02baad99c28543917ab1bf060c09ad4f7",
+ "usage": {
+  "cache_creation_input_tokens": 0,
+  "cache_read_input_tokens": 5862,
+  "input_tokens": 173,
+  "output_tokens": 467
+ }
+}

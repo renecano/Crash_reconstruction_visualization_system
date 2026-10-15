@@ -1,0 +1,76 @@
+{
+ "costo_estimado_con": "claude-sonnet-5-5",
+ "costo_usd": 0.0062044,
+ "esfuerzo": "medium",
+ "grabado": "2026-10-15T03:13:27+00:00",
+ "huella_prompt": "f6b693169a4199c3",
+ "latencia_ms": 3146.4,
+ "modelo": "claude-sonnet-5-5",
+ "modelo_respuesta": "claude-sonnet-5-5",
+ "prompt": "extraccion_v1",
+ "request_id": "req_011Cg3HxLMq8fhM1jMatQ6QJ",
+ "salida": {
+  "dispositivos": [],
+  "hechos": [
+   {
+    "campo": "lugar.tipo_via",
+    "cita": "en una curva abia grava suelta",
+    "persona": -1,
+    "valor": "curva",
+    "vehiculo": -1
+   },
+   {
+    "campo": "lugar.estado_superficie",
+    "cita": "abia grava suelta",
+    "persona": -1,
+    "valor": "grava_suelta",
+    "vehiculo": -1
+   },
+   {
+    "campo": "evento.tipo",
+    "cita": "se me fue de cola",
+    "persona": -1,
+    "valor": "derrape",
+    "vehiculo": -1
+   },
+   {
+    "campo": "vehiculo.velocidad_kmh",
+    "cita": "hiba como a 70 creo",
+    "persona": -1,
+    "valor": "70",
+    "vehiculo": 0
+   },
+   {
+    "campo": "entorno.iluminacion",
+    "cita": "eran como las 2 de la mañana y no abia luz",
+    "persona": -1,
+    "valor": "noche_sin_alumbrado",
+    "vehiculo": -1
+   }
+  ],
+  "personas": [
+   {
+    "cita": "yo manejando el jeta de mi papa",
+    "rol": "conductor",
+    "vehiculo": 0
+   }
+  ],
+  "preguntas": [
+   "¿Aplicó los frenos antes o durante el derrape?",
+   "¿Cuántos pasajeros iban en el vehículo y llevaban cinturón de seguridad?",
+   "¿Había marcas en el camino o a qué distancia del camino quedó el vehículo?"
+  ],
+  "vehiculos": [
+   {
+    "narrador": true
+   }
+  ]
+ },
+ "texto_sha256": "051713f9ab12963850a15e9f0b5c8f6bcc9af91f27e4adbea7d28165cdb59f63",
+ "usage": {
+  "cache_creation_input_tokens": 0,
+  "cache_read_input_tokens": 5862,
+  "input_tokens": 141,
+  "output_tokens": 475
+ }
+}

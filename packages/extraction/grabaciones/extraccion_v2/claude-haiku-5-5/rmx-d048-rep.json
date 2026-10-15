@@ -1,0 +1,107 @@
+{
+ "costo_estimado_con": "claude-haiku-5-5",
+ "costo_usd": 0.00151671,
+ "esfuerzo": "medium",
+ "grabado": "2026-10-15T01:00:05+00:00",
+ "huella_prompt": "5816b86ad0e718ee",
+ "latencia_ms": 12861.4,
+ "modelo": "claude-haiku-5-5",
+ "modelo_respuesta": "claude-haiku-5-5",
+ "prompt": "extraccion_v2",
+ "request_id": "req_011Cg37mhtR2FpKfjiswWQDS",
+ "salida": {
+  "dispositivos": [
+   {
+    "cita": "se pasó el alto",
+    "tipo": "alto"
+   }
+  ],
+  "hechos": [
+   {
+    "campo": "vehiculo.clase",
+    "cita": "la moto de mi novio",
+    "persona": -1,
+    "valor": "motocicleta",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.clase",
+    "cita": "Silverado",
+    "persona": -1,
+    "valor": "pickup",
+    "vehiculo": 1
+   },
+   {
+    "campo": "lugar.tipo_via",
+    "cita": "en un crucero",
+    "persona": -1,
+    "valor": "interseccion",
+    "vehiculo": -1
+   },
+   {
+    "campo": "evento.tipo",
+    "cita": "nos pegó en el costado",
+    "persona": -1,
+    "valor": "impacto_vehiculo_vehiculo",
+    "vehiculo": -1
+   },
+   {
+    "campo": "vehiculo.velocidad_kmh",
+    "cita": "Íbamos como a 50",
+    "persona": -1,
+    "valor": "50",
+    "vehiculo": 0
+   },
+   {
+    "campo": "persona.casco",
+    "cita": "Los dos traíamos casco.",
+    "persona": 0,
+    "valor": "true",
+    "vehiculo": -1
+   },
+   {
+    "campo": "persona.casco",
+    "cita": "Los dos traíamos casco.",
+    "persona": 1,
+    "valor": "true",
+    "vehiculo": -1
+   }
+  ],
+  "personas": [
+   {
+    "cita": "Iba de parrillera en la moto de mi novio",
+    "rol": "pasajero",
+    "vehiculo": 0
+   },
+   {
+    "cita": "Iba de parrillera en la moto de mi novio",
+    "rol": "conductor",
+    "vehiculo": 0
+   },
+   {
+    "cita": "un señor en una Silverado",
+    "rol": "conductor",
+    "vehiculo": 1
+   }
+  ],
+  "preguntas": [
+   "¿La Silverado venía de frente, de lado o en sentido contrario a la moto?",
+   "¿El golpe fue en el costado izquierdo o derecho de la moto?"
+  ],
+  "vehiculos": [
+   {
+    "narrador": false
+   },
+   {
+    "narrador": false
+   }
+  ]
+ },
+ "texto_sha256": "02e98c399bad7edfd210eb03766952f1f8f95d2d1f8eb634d662aef82774a942",
+ "usage": {
+  "cache_creation_input_tokens": 0,
+  "cache_read_input_tokens": 6881,
+  "input_tokens": 189,
+  "output_tokens": 2858
+ }
+}

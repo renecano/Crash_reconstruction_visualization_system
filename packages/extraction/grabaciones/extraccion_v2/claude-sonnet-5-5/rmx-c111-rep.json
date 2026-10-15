@@ -1,0 +1,110 @@
+{
+ "costo_estimado_con": "claude-sonnet-5-5",
+ "costo_usd": 0.0088062,
+ "esfuerzo": "medium",
+ "grabado": "2026-10-15T02:01:58+00:00",
+ "huella_prompt": "5816b86ad0e718ee",
+ "latencia_ms": 4649.1,
+ "modelo": "claude-sonnet-5-5",
+ "modelo_respuesta": "claude-sonnet-5-5",
+ "prompt": "extraccion_v2",
+ "request_id": "req_011Cg3CW4gh4reZens3NDe7C",
+ "salida": {
+  "dispositivos": [
+   {
+    "cita": "donde hay un alto",
+    "tipo": "alto"
+   }
+  ],
+  "hechos": [
+   {
+    "campo": "entorno.iluminacion",
+    "cita": "de noche y con el alumbrado público encendido",
+    "persona": -1,
+    "valor": "noche_con_alumbrado",
+    "vehiculo": -1
+   },
+   {
+    "campo": "lugar.tipo_via",
+    "cita": "una calle que termina en T",
+    "persona": -1,
+    "valor": "interseccion_t",
+    "vehiculo": -1
+   },
+   {
+    "campo": "vehiculo.maniobra",
+    "cita": "Inicié la vuelta a la izquierda",
+    "persona": -1,
+    "valor": "vuelta_izquierda",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.velocidad_kmh",
+    "cita": "a unos 5 km/h",
+    "persona": -1,
+    "valor": "5",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.clase",
+    "cita": "KTM Enduro",
+    "persona": -1,
+    "valor": "motocicleta",
+    "vehiculo": 1
+   },
+   {
+    "campo": "vehiculo.maniobra",
+    "cita": "circulaba en línea recta",
+    "persona": -1,
+    "valor": "recto",
+    "vehiculo": 1
+   },
+   {
+    "campo": "evento.tipo",
+    "cita": "mi unidad colisionaron",
+    "persona": -1,
+    "valor": "impacto_vehiculo_vehiculo",
+    "vehiculo": -1
+   },
+   {
+    "campo": "vehiculo.frenado",
+    "cita": "Accioné el freno de inmediato",
+    "persona": -1,
+    "valor": "true",
+    "vehiculo": 0
+   }
+  ],
+  "personas": [
+   {
+    "cita": "conducía mi [PLACA]",
+    "rol": "conductor",
+    "vehiculo": 0
+   },
+   {
+    "cita": "El motociclista",
+    "rol": "motociclista",
+    "vehiculo": 1
+   }
+  ],
+  "preguntas": [
+   "¿Por cuál lado de su vehículo recibió el golpe la motocicleta?",
+   "¿Desde qué dirección se acercaba la motocicleta respecto a su vuelta?",
+   "¿Qué clase de vehículo conducía usted?"
+  ],
+  "vehiculos": [
+   {
+    "narrador": true
+   },
+   {
+    "narrador": false
+   }
+  ]
+ },
+ "texto_sha256": "dfd32e1b62718448cba394dbcf2bafbac3201bb2fc6e097bf167cb75ec6b2b72",
+ "usage": {
+  "cache_creation_input_tokens": 0,
+  "cache_read_input_tokens": 6881,
+  "input_tokens": 165,
+  "output_tokens": 710
+ }
+}

@@ -1,0 +1,77 @@
+{
+ "costo_estimado_con": "claude-sonnet-5-5",
+ "costo_usd": 0.0058324,
+ "esfuerzo": "medium",
+ "grabado": "2026-10-15T00:50:11+00:00",
+ "huella_prompt": "f6b693169a4199c3",
+ "latencia_ms": 3477.5,
+ "modelo": "claude-sonnet-5-5",
+ "modelo_respuesta": "claude-sonnet-5-5",
+ "prompt": "extraccion_v1",
+ "request_id": "req_011Cg372cgvouTcXQ6SdMtTB",
+ "salida": {
+  "dispositivos": [],
+  "hechos": [
+   {
+    "campo": "vehiculo.velocidad_kmh",
+    "cita": "como a 85",
+    "persona": -1,
+    "valor": "85",
+    "vehiculo": 0
+   },
+   {
+    "campo": "lugar.estado_superficie",
+    "cita": "el piso estaba seco",
+    "persona": -1,
+    "valor": "seco",
+    "vehiculo": -1
+   },
+   {
+    "campo": "vehiculo.maniobra",
+    "cita": "se dio la vuelta en U",
+    "persona": -1,
+    "valor": "vuelta_u",
+    "vehiculo": 1
+   },
+   {
+    "campo": "evento.tipo",
+    "cita": "chocamos",
+    "persona": -1,
+    "valor": "impacto_vehiculo_vehiculo",
+    "vehiculo": -1
+   }
+  ],
+  "personas": [
+   {
+    "cita": "Venía manejando mi Jetta",
+    "rol": "conductor",
+    "vehiculo": 0
+   },
+   {
+    "cita": "una muchacha en un Camry",
+    "rol": "conductor",
+    "vehiculo": 1
+   }
+  ],
+  "preguntas": [
+   "¿Con qué parte del Jetta golpeó al Camry y qué lado del Camry recibió el golpe?",
+   "¿Frenó o esquivó antes del choque?",
+   "¿Cuántos carriles por sentido tenía la vía?"
+  ],
+  "vehiculos": [
+   {
+    "narrador": true
+   },
+   {
+    "narrador": false
+   }
+  ]
+ },
+ "texto_sha256": "4a8d69711ae4455c24bb12f9bd61a53cf0190c9660a72634501d54540417a468",
+ "usage": {
+  "cache_creation_input_tokens": 0,
+  "cache_read_input_tokens": 5862,
+  "input_tokens": 160,
+  "output_tokens": 434
+ }
+}

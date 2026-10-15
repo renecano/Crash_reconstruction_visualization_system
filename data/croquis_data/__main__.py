@@ -62,6 +62,10 @@ def main(argv: list[str] | None = None) -> int:
     )
     p_cb = ci_sub.add_parser("build", help="Escribe data/processed/ciss/e3_vehiculos.csv")
     p_cb.add_argument("--check", action="store_true", help="Solo verifica que esté al día")
+    p_cr = ci_sub.add_parser(
+        "relatos", help="Escribe las fichas del test CISS de Relatos-MX (data/relatos-mx/ciss)"
+    )
+    p_cr.add_argument("--check", action="store_true", help="Solo verifica que estén al día")
 
     args = parser.parse_args(argv)
     if args.source == "ciss":
@@ -71,6 +75,15 @@ def main(argv: list[str] | None = None) -> int:
             paths = ciss.download()
             print(f"{len(paths)} años de CISS descargados y verificados en {ciss.RAW_DIR}")
             return 0
+        if args.command == "relatos":
+            from croquis_data import ciss_relatos
+
+            ok = ciss_relatos.build(check=args.check)
+            if args.check:
+                print("Fichas CISS al día" if ok else "Fichas CISS DESACTUALIZADAS")
+            else:
+                print(f"Escritas {ciss_relatos.FICHAS}")
+            return 0 if ok else 1
         ok = ciss.build(check=args.check)
         if args.check:
             print("Tabla de E3 (CISS) al día" if ok else "Tabla de E3 (CISS) DESACTUALIZADA")

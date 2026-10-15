@@ -1,0 +1,79 @@
+{
+ "costo_estimado_con": "claude-sonnet-5-5",
+ "costo_usd": 0.0122242,
+ "esfuerzo": "medium",
+ "grabado": "2026-10-15T01:23:13+00:00",
+ "huella_prompt": "5816b86ad0e718ee",
+ "latencia_ms": 7751.7,
+ "modelo": "claude-sonnet-5-5",
+ "modelo_respuesta": "claude-sonnet-5-5",
+ "prompt": "extraccion_v2",
+ "request_id": "req_011Cg39YMGHzfnSfzcKsj9v6",
+ "salida": {
+  "dispositivos": [],
+  "hechos": [
+   {
+    "campo": "vehiculo.maniobra",
+    "cita": "incorporarme a la avenida",
+    "persona": -1,
+    "valor": "incorporacion",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.clase",
+    "cita": "combi",
+    "persona": -1,
+    "valor": "microbus_combi",
+    "vehiculo": 1
+   },
+   {
+    "campo": "evento.tipo",
+    "cita": "Me pegó",
+    "persona": -1,
+    "valor": "impacto_vehiculo_vehiculo",
+    "vehiculo": -1
+   },
+   {
+    "campo": "vehiculo.zona_impacto",
+    "cita": "defensa delantera del lado izquierdo",
+    "persona": -1,
+    "valor": "F",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.velocidad_kmh",
+    "cita": "él como a 50",
+    "persona": -1,
+    "valor": "50",
+    "vehiculo": 1
+   }
+  ],
+  "personas": [
+   {
+    "cita": "Iba saliendo de la gasolinera",
+    "rol": "conductor",
+    "vehiculo": 0
+   }
+  ],
+  "preguntas": [
+   "¿La combi circulaba en el carril más cercano a la salida de la gasolinera?",
+   "¿Qué tan despacio iba su vehículo al momento del golpe?",
+   "¿Dónde quedó la combi respecto a su vehículo después del impacto?"
+  ],
+  "vehiculos": [
+   {
+    "narrador": true
+   },
+   {
+    "narrador": false
+   }
+  ]
+ },
+ "texto_sha256": "9b57ae322a69120ed87b0cfeffd811df9a58432479e6286159b75c447ddfe7d1",
+ "usage": {
+  "cache_creation_input_tokens": 0,
+  "cache_read_input_tokens": 6881,
+  "input_tokens": 89,
+  "output_tokens": 1067
+ }
+}

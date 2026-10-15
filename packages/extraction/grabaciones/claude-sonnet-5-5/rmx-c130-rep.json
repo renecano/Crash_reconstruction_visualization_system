@@ -1,0 +1,117 @@
+{
+ "costo_estimado_con": "claude-sonnet-5-5",
+ "costo_usd": 0.0095764,
+ "esfuerzo": "medium",
+ "grabado": "2026-10-15T01:02:55+00:00",
+ "huella_prompt": "f6b693169a4199c3",
+ "latencia_ms": 4620.6,
+ "modelo": "claude-sonnet-5-5",
+ "modelo_respuesta": "claude-sonnet-5-5",
+ "prompt": "extraccion_v1",
+ "request_id": "req_011Cg37zpqUkGdKJUVUp6jbB",
+ "salida": {
+  "dispositivos": [
+   {
+    "cita": "donde está el semáforo",
+    "tipo": "semaforo"
+   }
+  ],
+  "hechos": [
+   {
+    "campo": "entorno.iluminacion",
+    "cita": "de día",
+    "persona": -1,
+    "valor": "dia",
+    "vehiculo": -1
+   },
+   {
+    "campo": "vehiculo.clase",
+    "cita": "sedán mediano",
+    "persona": -1,
+    "valor": "sedan_mediano",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.velocidad_kmh",
+    "cita": "a unos 25 km/h",
+    "persona": -1,
+    "valor": "25",
+    "vehiculo": 0
+   },
+   {
+    "campo": "lugar.tipo_via",
+    "cita": "cruce de cuatro esquinas",
+    "persona": -1,
+    "valor": "interseccion_x",
+    "vehiculo": -1
+   },
+   {
+    "campo": "evento.tipo",
+    "cita": "el frente de mi vehículo impactó el costado izquierdo de un Altima",
+    "persona": -1,
+    "valor": "impacto_vehiculo_vehiculo",
+    "vehiculo": -1
+   },
+   {
+    "campo": "vehiculo.zona_impacto",
+    "cita": "el frente de mi vehículo impactó",
+    "persona": -1,
+    "valor": "F",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.zona_impacto",
+    "cita": "el costado izquierdo de un Altima",
+    "persona": -1,
+    "valor": "L",
+    "vehiculo": 1
+   },
+   {
+    "campo": "vehiculo.frenado",
+    "cita": "no alcancé a frenar",
+    "persona": -1,
+    "valor": "false",
+    "vehiculo": 0
+   },
+   {
+    "campo": "lugar.estado_superficie",
+    "cita": "El piso estaba seco",
+    "persona": -1,
+    "valor": "seco",
+    "vehiculo": -1
+   }
+  ],
+  "personas": [
+   {
+    "cita": "circulaba en mi sedán mediano Accord",
+    "rol": "conductor",
+    "vehiculo": 0
+   },
+   {
+    "cita": "La conductora del Altima",
+    "rol": "conductor",
+    "vehiculo": 1
+   }
+  ],
+  "preguntas": [
+   "¿Cuál era el estado del semáforo (verde, amarillo o rojo) para cada vehículo al momento del impacto?",
+   "¿Qué maniobra realizaba el Altima al momento del golpe (circulaba recto, giraba o estaba detenido)?",
+   "¿Cuántos carriles tenía la avenida Morelos por sentido?"
+  ],
+  "vehiculos": [
+   {
+    "narrador": true
+   },
+   {
+    "narrador": false
+   }
+  ]
+ },
+ "texto_sha256": "05ae744b37b781ab2d57584b07670b7e75767a7722ac45ba4d08c79b2cd054a7",
+ "usage": {
+  "cache_creation_input_tokens": 0,
+  "cache_read_input_tokens": 5862,
+  "input_tokens": 182,
+  "output_tokens": 804
+ }
+}

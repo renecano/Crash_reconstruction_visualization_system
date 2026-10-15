@@ -1,11 +1,12 @@
 {
   "name": "e1_extraction",
-  "generated_at": "2026-10-14T23:02:12+00:00",
-  "git_commit": "3d3ebd8",
+  "generated_at": "2026-10-15T00:17:53+00:00",
+  "git_commit": "eb6f290",
   "seed": null,
   "descripcion": "E1: extracción del relato en Relatos-MX (línea base de reglas, Claude Haiku y Sonnet desde respuestas grabadas), fuga de PII del redactor y diferencia contrafactual, medidas sobre el pipeline TS de producción (packages/extraction).",
   "split": "test",
   "pipeline": "ts",
+  "prompt": "extraccion_v1",
   "relatos": 160,
   "contrafactuales": 160,
   "test_congelado": "3454a815c9f0c6c8eee19cf8a993484ba13996032dc375daf3299aa2a0a83c7e",
@@ -228,8 +229,8 @@
         "rondas_fallidas": 0
       },
       "latencia_ms": {
-        "p50": 0.85,
-        "p95": 1.67
+        "p50": 0.64,
+        "p95": 1.07
       },
       "costo_usd_por_1000": 0.0
     },

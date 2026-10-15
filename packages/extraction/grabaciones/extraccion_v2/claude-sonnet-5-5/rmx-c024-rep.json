@@ -1,0 +1,69 @@
+{
+ "costo_estimado_con": "claude-sonnet-5-5",
+ "costo_usd": 0.0057282,
+ "esfuerzo": "medium",
+ "grabado": "2026-10-15T01:54:59+00:00",
+ "huella_prompt": "5816b86ad0e718ee",
+ "latencia_ms": 2637.7,
+ "modelo": "claude-sonnet-5-5",
+ "modelo_respuesta": "claude-sonnet-5-5",
+ "prompt": "extraccion_v2",
+ "request_id": "req_011Cg3ByNQBvzosStfRfo12t",
+ "salida": {
+  "dispositivos": [],
+  "hechos": [
+   {
+    "campo": "vehiculo.clase",
+    "cita": "una SUV grande",
+    "persona": -1,
+    "valor": "suv_grande",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.velocidad_kmh",
+    "cita": "10 km/h",
+    "persona": -1,
+    "valor": "10",
+    "vehiculo": 0
+   },
+   {
+    "campo": "evento.tipo",
+    "cita": "el vehículo se volcó",
+    "persona": -1,
+    "valor": "volcadura",
+    "vehiculo": -1
+   },
+   {
+    "campo": "vehiculo.frenado",
+    "cita": "No alcancé a frenar en ningún momento",
+    "persona": -1,
+    "valor": "false",
+    "vehiculo": 0
+   }
+  ],
+  "personas": [
+   {
+    "cita": "conducía mi Outback",
+    "rol": "conductor",
+    "vehiculo": 0
+   }
+  ],
+  "preguntas": [
+   "¿En qué tipo de vía ocurrió la volcadura (recta, curva, intersección)?",
+   "¿Cómo estaba la superficie de la vía y el clima en ese momento?",
+   "¿Hubo algún objeto, bache u otro vehículo involucrado antes de que se volcara?"
+  ],
+  "vehiculos": [
+   {
+    "narrador": true
+   }
+  ]
+ },
+ "texto_sha256": "5ef9177c0201b6b8d1dd32d663a77772520b016bc60ef4dcd66579d20083bd74",
+ "usage": {
+  "cache_creation_input_tokens": 0,
+  "cache_read_input_tokens": 6881,
+  "input_tokens": 181,
+  "output_tokens": 399
+ }
+}

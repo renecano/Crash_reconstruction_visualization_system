@@ -1,0 +1,86 @@
+{
+ "costo_estimado_con": "claude-sonnet-5-5",
+ "costo_usd": 0.0073504,
+ "esfuerzo": "medium",
+ "grabado": "2026-10-15T03:06:30+00:00",
+ "huella_prompt": "f6b693169a4199c3",
+ "latencia_ms": 3932.3,
+ "modelo": "claude-sonnet-5-5",
+ "modelo_respuesta": "claude-sonnet-5-5",
+ "prompt": "extraccion_v1",
+ "request_id": "req_011Cg3HRaprwHvpwiJGsYfSx",
+ "salida": {
+  "dispositivos": [],
+  "hechos": [
+   {
+    "campo": "vehiculo.maniobra",
+    "cita": "Estaba esperando para dar vuelta a la izquierda",
+    "persona": -1,
+    "valor": "detenido",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.velocidad_kmh",
+    "cita": "Estaba esperando para dar vuelta a la izquierda",
+    "persona": -1,
+    "valor": "0",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.maniobra",
+    "cita": "se quiso pasar por mi lado",
+    "persona": -1,
+    "valor": "cambio_carril",
+    "vehiculo": 1
+   },
+   {
+    "campo": "evento.tipo",
+    "cita": "me arrancó el espejo y me rayó el costado izquierdo",
+    "persona": -1,
+    "valor": "impacto_vehiculo_vehiculo",
+    "vehiculo": -1
+   },
+   {
+    "campo": "vehiculo.zona_impacto",
+    "cita": "me rayó el costado izquierdo",
+    "persona": -1,
+    "valor": "L",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.color",
+    "cita": "Yo traigo un Polo plata",
+    "persona": -1,
+    "valor": "plata",
+    "vehiculo": 0
+   }
+  ],
+  "personas": [
+   {
+    "cita": "Estaba esperando para dar vuelta a la izquierda",
+    "rol": "conductor",
+    "vehiculo": 0
+   }
+  ],
+  "preguntas": [
+   "¿Cuántos carriles tiene el bulevar en ese tramo?",
+   "¿El otro vehículo se pasó por el carril de la izquierda o por un acotamiento?",
+   "¿Qué tan cerca del otro vehículo quedó el suyo al estar esperando para dar la vuelta?"
+  ],
+  "vehiculos": [
+   {
+    "narrador": true
+   },
+   {
+    "narrador": false
+   }
+  ]
+ },
+ "texto_sha256": "16a20b79e8dc500f9d011c66102a83af955ab7bdb54672c0f4c1effc45e1a439",
+ "usage": {
+  "cache_creation_input_tokens": 0,
+  "cache_read_input_tokens": 5862,
+  "input_tokens": 134,
+  "output_tokens": 591
+ }
+}

@@ -1,0 +1,88 @@
+{
+ "costo_estimado_con": "claude-haiku-5-5",
+ "costo_usd": 0.00102621,
+ "esfuerzo": "medium",
+ "grabado": "2026-10-15T00:57:27+00:00",
+ "huella_prompt": "5816b86ad0e718ee",
+ "latencia_ms": 9426.4,
+ "modelo": "claude-haiku-5-5",
+ "modelo_respuesta": "claude-haiku-5-5",
+ "prompt": "extraccion_v2",
+ "request_id": "req_011Cg37aGtT4GaxKBebZZ8x1",
+ "salida": {
+  "dispositivos": [],
+  "hechos": [
+   {
+    "campo": "vehiculo.clase",
+    "cita": "el pesero",
+    "persona": -1,
+    "valor": "microbus_combi",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.clase",
+    "cita": "un taxi",
+    "persona": -1,
+    "valor": "sedan_compacto",
+    "vehiculo": 1
+   },
+   {
+    "campo": "vehiculo.maniobra",
+    "cita": "se cambió al carril de la izquierda",
+    "persona": -1,
+    "valor": "cambio_carril_izquierda",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.velocidad_kmh",
+    "cita": "Íbamos como a 50",
+    "persona": -1,
+    "valor": "50",
+    "vehiculo": 0
+   },
+   {
+    "campo": "evento.tipo",
+    "cita": "le dio un llegue a un taxi",
+    "persona": -1,
+    "valor": "impacto_vehiculo_vehiculo",
+    "vehiculo": -1
+   }
+  ],
+  "personas": [
+   {
+    "cita": "Iba en el pesero",
+    "rol": "pasajero",
+    "vehiculo": 0
+   },
+   {
+    "cita": "El chofer",
+    "rol": "conductor",
+    "vehiculo": 0
+   },
+   {
+    "cita": "el taxista",
+    "rol": "conductor",
+    "vehiculo": 1
+   }
+  ],
+  "preguntas": [
+   "¿A qué velocidad iba el taxi y qué maniobra hacía al momento del golpe?",
+   "¿Qué parte del pesero y del taxi se tocó?"
+  ],
+  "vehiculos": [
+   {
+    "narrador": false
+   },
+   {
+    "narrador": false
+   }
+  ]
+ },
+ "texto_sha256": "598e903d8ac750f9e72b3297e1f7be5615a545cd89171b2b8ffd9d02a9961c37",
+ "usage": {
+  "cache_creation_input_tokens": 0,
+  "cache_read_input_tokens": 6881,
+  "input_tokens": 174,
+  "output_tokens": 1880
+ }
+}

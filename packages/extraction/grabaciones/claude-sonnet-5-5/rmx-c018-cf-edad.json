@@ -1,0 +1,74 @@
+{
+ "costo_estimado_con": "claude-sonnet-5-5",
+ "costo_usd": 0.0057524,
+ "esfuerzo": "medium",
+ "grabado": "2026-10-15T00:49:17+00:00",
+ "huella_prompt": "f6b693169a4199c3",
+ "latencia_ms": 2733.8,
+ "modelo": "claude-sonnet-5-5",
+ "modelo_respuesta": "claude-sonnet-5-5",
+ "prompt": "extraccion_v1",
+ "request_id": "req_011Cg36xfVUpUGerZXu43YGu",
+ "salida": {
+  "dispositivos": [],
+  "hechos": [
+   {
+    "campo": "lugar.tipo_via",
+    "cita": "en una curva",
+    "persona": -1,
+    "valor": "curva",
+    "vehiculo": -1
+   },
+   {
+    "campo": "evento.tipo",
+    "cita": "le pegué con el frente del Integra",
+    "persona": -1,
+    "valor": "impacto_vehiculo_persona",
+    "vehiculo": -1
+   },
+   {
+    "campo": "vehiculo.frenado",
+    "cita": "metí el freno",
+    "persona": -1,
+    "valor": "true",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.zona_impacto",
+    "cita": "con el frente del Integra",
+    "persona": -1,
+    "valor": "F",
+    "vehiculo": 0
+   }
+  ],
+  "personas": [
+   {
+    "cita": "Venía manejando mi Integra",
+    "rol": "conductor",
+    "vehiculo": 0
+   },
+   {
+    "cita": "un señor ya grande iba cruzando a pie",
+    "rol": "peaton",
+    "vehiculo": -1
+   }
+  ],
+  "preguntas": [
+   "¿A qué velocidad aproximada venía el Integra antes de frenar?",
+   "¿Era de día o de noche, y había alumbrado en la calle?",
+   "¿El peatón cruzaba por un paso peatonal o a mitad de la calle?"
+  ],
+  "vehiculos": [
+   {
+    "narrador": true
+   }
+  ]
+ },
+ "texto_sha256": "738319495c89743f968f7c30fad4776dc0e4a6043f7bd8c4ee21b3e685394607",
+ "usage": {
+  "cache_creation_input_tokens": 0,
+  "cache_read_input_tokens": 5862,
+  "input_tokens": 165,
+  "output_tokens": 425
+ }
+}

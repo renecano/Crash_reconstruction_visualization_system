@@ -1,0 +1,96 @@
+{
+ "costo_estimado_con": "claude-haiku-5-5",
+ "costo_usd": 0.00099191,
+ "esfuerzo": "medium",
+ "grabado": "2026-10-15T02:21:26+00:00",
+ "huella_prompt": "5816b86ad0e718ee",
+ "latencia_ms": 7959.7,
+ "modelo": "claude-haiku-5-5",
+ "modelo_respuesta": "claude-haiku-5-5",
+ "prompt": "extraccion_v2",
+ "request_id": "req_011Cg3DyujpoCEerhRMdc3Cp",
+ "salida": {
+  "dispositivos": [
+   {
+    "cita": "donde esta el semaforo",
+    "tipo": "semaforo"
+   }
+  ],
+  "hechos": [
+   {
+    "campo": "vehiculo.clase",
+    "cita": "sedan mediano Impala",
+    "persona": -1,
+    "valor": "sedan_mediano",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.maniobra",
+    "cita": "iva derecho",
+    "persona": -1,
+    "valor": "recto",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.velocidad_kmh",
+    "cita": "iva derecho como a 20",
+    "persona": -1,
+    "valor": "20",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.maniobra",
+    "cita": "dio buelta a la isquierda",
+    "persona": -1,
+    "valor": "vuelta_izquierda",
+    "vehiculo": 1
+   },
+   {
+    "campo": "lugar.tipo_via",
+    "cita": "cruce de cuatro esquinas",
+    "persona": -1,
+    "valor": "interseccion_x",
+    "vehiculo": -1
+   },
+   {
+    "campo": "evento.tipo",
+    "cita": "chocamos",
+    "persona": -1,
+    "valor": "impacto_vehiculo_vehiculo",
+    "vehiculo": -1
+   }
+  ],
+  "personas": [
+   {
+    "cita": "Iva manejando mi sedan",
+    "rol": "conductor",
+    "vehiculo": 0
+   },
+   {
+    "cita": "el otro conductor",
+    "rol": "conductor",
+    "vehiculo": 1
+   }
+  ],
+  "preguntas": [
+   "¿El otro vehículo era un auto, una camioneta o un camión?",
+   "¿En qué color estaba el semáforo cuando usted llegó al cruce?",
+   "¿Qué parte del Impala recibió el golpe?"
+  ],
+  "vehiculos": [
+   {
+    "narrador": true
+   },
+   {
+    "narrador": false
+   }
+  ]
+ },
+ "texto_sha256": "524600b4ac923849d6a3439e8928ca0026854aa071cc0e910a8126fb9f655118",
+ "usage": {
+  "cache_creation_input_tokens": 0,
+  "cache_read_input_tokens": 6881,
+  "input_tokens": 151,
+  "output_tokens": 1816
+ }
+}

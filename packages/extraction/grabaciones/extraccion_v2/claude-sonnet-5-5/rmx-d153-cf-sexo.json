@@ -1,0 +1,86 @@
+{
+ "costo_estimado_con": "claude-sonnet-5-5",
+ "costo_usd": 0.0131802,
+ "esfuerzo": "medium",
+ "grabado": "2026-10-15T01:21:21+00:00",
+ "huella_prompt": "5816b86ad0e718ee",
+ "latencia_ms": 8115.1,
+ "modelo": "claude-sonnet-5-5",
+ "modelo_respuesta": "claude-sonnet-5-5",
+ "prompt": "extraccion_v2",
+ "request_id": "req_011Cg39Q6x7KMzgrR3XtKsc3",
+ "salida": {
+  "dispositivos": [],
+  "hechos": [
+   {
+    "campo": "vehiculo.clase",
+    "cita": "March",
+    "persona": -1,
+    "valor": "hatchback",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.clase",
+    "cita": "camión urbano",
+    "persona": -1,
+    "valor": "camion_o_autobus",
+    "vehiculo": 1
+   },
+   {
+    "campo": "evento.tipo",
+    "cita": "le dio por detrás",
+    "persona": -1,
+    "valor": "impacto_vehiculo_vehiculo",
+    "vehiculo": -1
+   },
+   {
+    "campo": "vehiculo.zona_impacto",
+    "cita": "le dio por detrás",
+    "persona": -1,
+    "valor": "F",
+    "vehiculo": 1
+   },
+   {
+    "campo": "vehiculo.zona_impacto",
+    "cita": "le dio por detrás",
+    "persona": -1,
+    "valor": "B",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.frenado",
+    "cita": "no alcanzó a frenar",
+    "persona": -1,
+    "valor": "false",
+    "vehiculo": 1
+   }
+  ],
+  "personas": [
+   {
+    "cita": "Ella iba en su March",
+    "rol": "conductor",
+    "vehiculo": 0
+   }
+  ],
+  "preguntas": [
+   "¿Aproximadamente a qué velocidad iba el camión urbano antes del golpe?",
+   "¿Era de día o de noche, y cómo estaba el pavimento en la bajada?",
+   "¿En qué parte del carro se ubicó el golpe y qué tanto se movió después del impacto?"
+  ],
+  "vehiculos": [
+   {
+    "narrador": false
+   },
+   {
+    "narrador": false
+   }
+  ]
+ },
+ "texto_sha256": "06f6875fdb73ee8665b9ff5a595596fd297079f62e115ee571310f9f9f188119",
+ "usage": {
+  "cache_creation_input_tokens": 0,
+  "cache_read_input_tokens": 6881,
+  "input_tokens": 152,
+  "output_tokens": 1150
+ }
+}

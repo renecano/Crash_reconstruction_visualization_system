@@ -35,6 +35,7 @@ from croquis_eval.results import write_result
 from croquis_extraction import baseline, questions, relatos_mx
 from croquis_extraction.claude_client import (
     MODELS,
+    PROMPT_VERSION,
     LLMError,
     facts_from_output,
     load_recording,
@@ -67,7 +68,12 @@ def _pctl(xs: list[float], p: float) -> float | None:
 # --- Registros de cada pipeline (mismo formato) -------------------------------------------------
 
 
-def _ts_records(split: str) -> list[JsonObj]:
+# Los resultados de v1 (el prompt con que se midió E1 en F6) no llevan sufijo; los demás, el de su
+# versión (e1_extraction_ciss_v2.json), aunque sea la de producción: así ningún nombre cambia.
+BASE_PROMPT = "extraccion_v1"
+
+
+def _ts_records(split: str, prompt: str = PROMPT_VERSION) -> list[JsonObj]:
     """Registros del pipeline TS (lo que se despliega), escritos por `scripts/e1-predict.ts`."""
     with tempfile.TemporaryDirectory() as tmp:
         out = Path(tmp) / f"e1_{split}.jsonl"
@@ -82,13 +88,17 @@ def _ts_records(split: str) -> list[JsonObj]:
             split,
             "--out",
             str(out),
+            "--prompt",
+            prompt,
         ]
         # En Windows `pnpm` es un script .cmd: hay que lanzarlo por el intérprete de comandos.
         subprocess.run(cmd, cwd=relatos_mx.ROOT, check=True, shell=os.name == "nt")
         return [json.loads(line) for line in out.read_text(encoding="utf-8").splitlines() if line]
 
 
-def _py_run(metodo: str, clave: str, raw: str, with_questions: bool) -> JsonObj:
+def _py_run(
+    metodo: str, clave: str, raw: str, with_questions: bool, prompt: str = PROMPT_VERSION
+) -> JsonObj:
     text = redact(raw).text
     rec: JsonObj = {"tipo": "corrida", "metodo": metodo, "clave": clave}
     if metodo == "reglas":
@@ -98,7 +108,7 @@ def _py_run(metodo: str, clave: str, raw: str, with_questions: bool) -> JsonObj:
         rec["costo_usd"] = 0.0
     else:
         try:
-            recording = load_recording(metodo, clave, text)
+            recording = load_recording(metodo, clave, text, prompt=prompt)
         except LLMError:
             return {**rec, "ausente": True}
         facts, conv = facts_from_output(recording["salida"], text)
@@ -126,7 +136,7 @@ def _py_run(metodo: str, clave: str, raw: str, with_questions: bool) -> JsonObj:
     return rec
 
 
-def _py_records(split: str) -> list[JsonObj]:
+def _py_records(split: str, prompt: str = PROMPT_VERSION) -> list[JsonObj]:
     """Los mismos registros con la referencia Python (para comparar con el pipeline TS)."""
     items = relatos_mx.load_split(split)
     cfs = [c for c in relatos_mx.load_split("contrafactuales") if c["split"] == split]
@@ -142,10 +152,12 @@ def _py_records(split: str) -> list[JsonObj]:
             }
         )
     for metodo in ("reglas", *MODELS):
-        out.extend(_py_run(metodo, it["id"], it["texto"], True) for it in items)
-        out.extend(_py_run(metodo, c["id"], c["texto"], False) for c in cfs)
+        out.extend(_py_run(metodo, it["id"], it["texto"], True, prompt) for it in items)
+        out.extend(_py_run(metodo, c["id"], c["texto"], False, prompt) for c in cfs)
         if metodo != "reglas":
-            out.extend(_py_run(metodo, it["id"] + "-rep", it["texto"], False) for it in items)
+            out.extend(
+                _py_run(metodo, it["id"] + "-rep", it["texto"], False, prompt) for it in items
+            )
     return out
 
 
@@ -188,7 +200,56 @@ class _Records:
         return _Run(rec, self.text(clave.removesuffix("-rep")))
 
 
-def evaluate_method(name: str, items: list[JsonObj], cfs: list[JsonObj], recs: _Records) -> JsonObj:
+def _narrator_speed(facts: Facts) -> float | None:
+    i = facts.narrador_vehiculo
+    if i is None or i >= len(facts.vehiculos):
+        return None
+    f = facts.vehiculos[i].get("velocidad_kmh")
+    return None if f is None else float(f.valor)
+
+
+def edr_speed(items: list[JsonObj], preds: dict[str, Facts]) -> JsonObj:
+    """Test CISS: velocidad de quien narra contra la del EDR de NHTSA (sin redondear).
+
+    La verdad de la extracción es la velocidad que dice el relato (la del EDR redondeada a 5 km/h);
+    aquí se reporta además cuánto se aleja lo extraído del EDR y el piso que pone ese redondeo.
+    """
+    fichas = relatos_mx.fichas()
+    err_narr: list[float] = []
+    err_edr: list[float] = []
+    floor: list[float] = []
+    with_truth = 0
+    for it in items:
+        f = fichas.get(it["id"])
+        if f is None:
+            continue
+        said = f["hechos"]["vehiculos"][0].get("velocidad_kmh")
+        edr = f["contexto"]["vehiculos"][0].get("velocidad_edr_kmh")
+        if said is None or edr is None:
+            continue
+        with_truth += 1
+        pred = _narrator_speed(preds[it["id"]]) if it["id"] in preds else None
+        if pred is None:
+            continue
+        err_narr.append(abs(pred - float(said)))
+        err_edr.append(abs(pred - float(edr)))
+        floor.append(abs(float(said) - float(edr)))
+
+    def mean(xs: list[float]) -> float | None:
+        return round(sum(xs) / len(xs), 2) if xs else None
+
+    return {
+        "relatos_con_velocidad_del_edr": with_truth,
+        "con_velocidad_extraida": len(err_edr),
+        "error_medio_kmh_contra_lo_narrado": mean(err_narr),
+        "error_medio_kmh_contra_edr": mean(err_edr),
+        "piso_por_redondeo_kmh": mean(floor),
+    }
+
+
+def evaluate_method(
+    name: str, items: list[JsonObj], cfs: list[JsonObj], recs: _Records, split: str = "test"
+) -> JsonObj:
     score = Score()
     score_verified = Score()
     citas = sin_cita = verified_down = 0
@@ -282,16 +343,17 @@ def evaluate_method(name: str, items: list[JsonObj], cfs: list[JsonObj], recs: _
         },
         "latencia_ms": {"p50": _pctl(latencies, 0.5), "p95": _pctl(latencies, 0.95)},
         "costo_usd_por_1000": round(1000 * cost / evaluated, 4),
+        **({"velocidad_contra_edr": edr_speed(items, preds)} if split == "ciss" else {}),
     }
 
 
-def evaluate(split: str, pipeline: str = "ts") -> JsonObj:
+def evaluate(split: str, pipeline: str = "ts", prompt: str = PROMPT_VERSION) -> JsonObj:
     if pipeline not in PIPELINES:
         msg = f"Pipeline desconocido: {pipeline}"
         raise ValueError(msg)
     items = relatos_mx.load_split(split)
     cfs = [c for c in relatos_mx.load_split("contrafactuales") if c["split"] == split]
-    recs = _Records(_ts_records(split) if pipeline == "ts" else _py_records(split))
+    recs = _Records(_ts_records(split, prompt) if pipeline == "ts" else _py_records(split, prompt))
     pii_total = pii_leak = 0
     by_kind: Counter[str] = Counter()
     over = 0
@@ -304,13 +366,14 @@ def evaluate(split: str, pipeline: str = "ts") -> JsonObj:
         truth = [(p["inicio"], p["fin"]) for p in it["pii"]]
         tramos: list[list[int]] = red["tramos"]
         over += sum(1 for s, e in tramos if not any(s < te and tb < e for tb, te in truth))
-    methods = {m: evaluate_method(m, items, cfs, recs) for m in ("reglas", *MODELS)}
+    methods = {m: evaluate_method(m, items, cfs, recs, split) for m in ("reglas", *MODELS)}
     return {
         "split": split,
         "pipeline": pipeline,
+        "prompt": prompt,
         "relatos": len(items),
         "contrafactuales": len(cfs),
-        "test_congelado": relatos_mx.frozen_hash(),
+        "test_congelado": relatos_mx.frozen_hash(split) if split in relatos_mx.LOCKS else None,
         "pii": {
             "datos_personales": pii_total,
             "filtrados": pii_leak,
@@ -322,13 +385,18 @@ def evaluate(split: str, pipeline: str = "ts") -> JsonObj:
     }
 
 
-def main(split: str = "test", pipeline: str = "ts") -> str:
-    if split == "test" and relatos_mx.frozen_hash() is None:
-        msg = "El test no está congelado: congélalo antes de la primera evaluación (PLAN §5.2)."
-        raise RuntimeError(msg)
-    if split == "test" and relatos_mx.frozen_hash() != relatos_mx.split_hash():
-        msg = "build/test.jsonl no coincide con test.lock."
-        raise RuntimeError(msg)
+def main(split: str = "test", pipeline: str = "ts", prompt: str = PROMPT_VERSION) -> str:
+    if split in relatos_mx.LOCKS:
+        frozen = relatos_mx.frozen_hash(split)
+        if frozen is None:
+            msg = (
+                f"El test {split} no está congelado: congélalo antes de la primera evaluación "
+                "(PLAN §5.2)."
+            )
+            raise RuntimeError(msg)
+        if frozen != relatos_mx.split_hash(split=split):
+            msg = f"La fuente del test {split} no coincide con {split}.lock."
+            raise RuntimeError(msg)
     which = (
         "TS de producción (packages/extraction)." if pipeline == "ts" else "Python de referencia."
     )
@@ -336,9 +404,11 @@ def main(split: str = "test", pipeline: str = "ts") -> str:
         "descripcion": "E1: extracción del relato en Relatos-MX (línea base de reglas, Claude "
         "Haiku y Sonnet desde respuestas grabadas), fuga de PII del redactor y diferencia "
         "contrafactual, medidas sobre el pipeline " + which,
-        **evaluate(split, pipeline),
+        **evaluate(split, pipeline, prompt),
     }
-    suffix = "" if pipeline == "ts" else "_py"
+    suffix = ("" if prompt == BASE_PROMPT else "_" + prompt.removeprefix("extraccion_")) + (
+        "" if pipeline == "ts" else "_py"
+    )
     name = ("e1_extraction" if split == "test" else f"e1_extraction_{split}") + suffix
     return str(write_result(name, payload))
 

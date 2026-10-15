@@ -9,7 +9,13 @@ import sys
 REPEAT_SUFFIX = "-rep"
 
 
-def _record(split: str, model: str | None, limit: int | None, repeat: bool = False) -> int:
+def _record(
+    split: str,
+    model: str | None,
+    limit: int | None,
+    repeat: bool = False,
+    prompt: str | None = None,
+) -> int:
     """Graba (o salta si ya existe) la respuesta de cada relato y contrafactual del split.
 
     Con `repeat`, graba una segunda respuesta de cada relato base con el mismo texto (clave
@@ -19,6 +25,7 @@ def _record(split: str, model: str | None, limit: int | None, repeat: bool = Fal
     from croquis_extraction import relatos_mx
     from croquis_extraction.pii import redact
 
+    prompt = prompt or cc.PROMPT_VERSION
     models = [model] if model else list(cc.MODELS)
     if repeat:
         rows = [{**x, "id": x["id"] + REPEAT_SUFFIX} for x in relatos_mx.load_split(split)]
@@ -34,12 +41,12 @@ def _record(split: str, model: str | None, limit: int | None, repeat: bool = Fal
         for row in rows:
             text = redact(row["texto"]).text
             try:
-                cc.load_recording(m, row["id"], text)
+                cc.load_recording(m, row["id"], text, prompt=prompt)
                 continue  # ya grabada y vigente
             except cc.LLMError:
                 pass
             try:
-                rec = cc.extract(text, row["id"], m, mode="record")
+                rec = cc.extract(text, row["id"], m, mode="record", prompt=prompt)
             except cc.BudgetExceededError as e:
                 print(f"Detenido: {e}", file=sys.stderr)
                 return 2
@@ -54,17 +61,31 @@ def main(argv: list[str] | None = None) -> int:
     reconfigure = getattr(sys.stdout, "reconfigure", None)
     if reconfigure is not None:
         reconfigure(encoding="utf-8")
+    from croquis_extraction.claude_client import PROMPT_VERSION, PROMPT_VERSIONS
+
     parser = argparse.ArgumentParser(prog="croquis-extraction")
     sub = parser.add_subparsers(dest="group", required=True)
     r = sub.add_parser("relatos", help="Benchmark Relatos-MX")
     r.add_argument("action", choices=["build", "check", "freeze", "stats"])
+    r.add_argument(
+        "--split",
+        choices=["test", "ciss"],
+        default="test",
+        help="Partición que congela `freeze` (cada test tiene su candado)",
+    )
     g = sub.add_parser("golden", help="Salidas doradas para la paridad del port TS")
     g.add_argument("action", choices=["build", "check"])
     c = sub.add_parser("claude", help="Graba respuestas de Claude para E1 (requiere llave)")
     c.add_argument("action", choices=["record"])
-    c.add_argument("--split", choices=["dev", "test"], required=True)
+    c.add_argument("--split", choices=["dev", "test", "ciss"], required=True)
     c.add_argument("--model", default=None, help="claude-sonnet-5-5 o claude-haiku-5-5")
     c.add_argument("--limit", type=int, default=None)
+    c.add_argument(
+        "--prompt",
+        choices=list(PROMPT_VERSIONS),
+        default=PROMPT_VERSION,
+        help="Versión del prompt (por omisión la de producción; cada una graba en su carpeta)",
+    )
     c.add_argument(
         "--repetir",
         action="store_true",
@@ -73,7 +94,7 @@ def main(argv: list[str] | None = None) -> int:
     args = parser.parse_args(argv)
 
     if args.group == "claude":
-        return _record(args.split, args.model, args.limit, args.repetir)
+        return _record(args.split, args.model, args.limit, args.repetir, args.prompt)
 
     if args.group == "golden":
         from croquis_extraction import golden
@@ -111,14 +132,24 @@ def main(argv: list[str] | None = None) -> int:
         if stale:
             print("Desactualizados: " + ", ".join(stale), file=sys.stderr)
             return 1
-        frozen = relatos_mx.frozen_hash()
-        if frozen is not None and frozen != relatos_mx.split_hash():
-            print("El test congelado cambió (test.lock no coincide).", file=sys.stderr)
-            return 1
-        print("Relatos-MX al día" + (" y test congelado intacto." if frozen else "."))
+        intact: list[str] = []
+        for split in relatos_mx.LOCKS:
+            frozen = relatos_mx.frozen_hash(split)
+            if frozen is None:
+                continue
+            if frozen != relatos_mx.split_hash(items, split):
+                print(
+                    f"El test {split} congelado cambió ({split}.lock no coincide).", file=sys.stderr
+                )
+                return 1
+            intact.append(split)
+        print(
+            "Relatos-MX al día"
+            + (f"; tests congelados intactos: {', '.join(intact)}." if intact else ".")
+        )
         return 0
-    h = relatos_mx.freeze()
-    print(f"Test congelado: {h}")
+    h = relatos_mx.freeze(args.split)
+    print(f"Test {args.split} congelado: {h}")
     return 0
 
 

@@ -1,0 +1,72 @@
+{
+  "anio": 2024,
+  "campos_sin_equivalente": {
+    "clase: carrocería de GV distinta de la de VPIC": 3,
+    "clase: carrocería que no decide la clase": 13,
+    "clase: clase de NHTSA distinta de la de modelos.json": 6,
+    "entorno.clima": 5,
+    "frenado": 82,
+    "lugar.estado_superficie": 1,
+    "lugar.superficie": 2,
+    "lugar.tipo_via": 43,
+    "maniobra": 50,
+    "velocidad_kmh": 24
+  },
+  "casos": 5290,
+  "cuota_por_tipo": {
+    "animal": 3,
+    "ciclista": 10,
+    "moto": 10,
+    "objeto": 22,
+    "peaton": 13,
+    "volcadura": 12,
+    "vv": 80
+  },
+  "descartados": {
+    "choque entre vehículos con más de dos": 573,
+    "ciclista: clase de quien narra ambigua o distinta de modelos.json": 1,
+    "más de una persona fuera de vehículo": 16,
+    "objeto fijo sin equivalente": 731,
+    "objeto: nieve o hielo (no se adapta a México)": 5,
+    "peaton: clase de quien narra ambigua o distinta de modelos.json": 2,
+    "persona fuera de vehículo sin equivalente": 27,
+    "primer evento sin equivalente": 70,
+    "un solo evento con objeto pero varios vehículos": 68,
+    "volcadura: clase de quien narra ambigua o distinta de modelos.json": 1,
+    "volcadura: nieve o hielo (no se adapta a México)": 1,
+    "vv: clase de quien narra ambigua o distinta de modelos.json": 7,
+    "vv: nieve o hielo (no se adapta a México)": 3
+  },
+  "elegibles_por_tipo": {
+    "animal": 247,
+    "ciclista": 106,
+    "moto": 10,
+    "objeto": 557,
+    "peaton": 175,
+    "volcadura": 104,
+    "vv": 2606
+  },
+  "fichas_por_tipo": {
+    "animal": 3,
+    "ciclista": 10,
+    "moto": 10,
+    "objeto": 22,
+    "peaton": 13,
+    "volcadura": 12,
+    "vv": 80
+  },
+  "probabilidad_de_mencion": {
+    "clase_otro": 0.8,
+    "dispositivos": 0.7,
+    "entorno.clima": 0.5,
+    "entorno.iluminacion": 0.6,
+    "frenado": 0.6,
+    "lugar.estado_superficie": 0.5,
+    "lugar.superficie": 0.25,
+    "lugar.tipo_via": 0.7,
+    "maniobra": 0.9,
+    "velocidad_kmh": 0.85,
+    "zonas": 0.7
+  },
+  "semilla": 20261014
+}

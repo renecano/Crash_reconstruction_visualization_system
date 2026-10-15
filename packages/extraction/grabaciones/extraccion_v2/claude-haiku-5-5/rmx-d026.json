@@ -1,0 +1,97 @@
+{
+ "costo_estimado_con": "claude-haiku-5-5",
+ "costo_usd": 0.00137521,
+ "esfuerzo": "medium",
+ "grabado": "2026-10-15T00:22:39+00:00",
+ "huella_prompt": "5816b86ad0e718ee",
+ "latencia_ms": 12394.3,
+ "modelo": "claude-haiku-5-5",
+ "modelo_respuesta": "claude-haiku-5-5",
+ "prompt": "extraccion_v2",
+ "request_id": "req_011Cg34v8WsGcYQJ3Xwv1Twm",
+ "salida": {
+  "dispositivos": [
+   {
+    "cita": "en el rojo",
+    "tipo": "semaforo"
+   }
+  ],
+  "hechos": [
+   {
+    "campo": "evento.tipo",
+    "cita": "Me pegaron por detrás",
+    "persona": -1,
+    "valor": "impacto",
+    "vehiculo": -1
+   },
+   {
+    "campo": "vehiculo.maniobra",
+    "cita": "parado en el rojo",
+    "persona": -1,
+    "valor": "detenido",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.velocidad_kmh",
+    "cita": "parado en el rojo",
+    "persona": -1,
+    "valor": "0",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.zona_impacto",
+    "cita": "Me pegaron por detrás",
+    "persona": -1,
+    "valor": "B",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.zona_impacto",
+    "cita": "Me pegaron por detrás",
+    "persona": -1,
+    "valor": "F",
+    "vehiculo": 1
+   },
+   {
+    "campo": "vehiculo.clase",
+    "cita": "Lobo",
+    "persona": -1,
+    "valor": "pickup",
+    "vehiculo": 1
+   },
+   {
+    "campo": "vehiculo.color",
+    "cita": "blanca",
+    "persona": -1,
+    "valor": "blanca",
+    "vehiculo": 1
+   }
+  ],
+  "personas": [
+   {
+    "cita": "Me pegaron por detrás",
+    "rol": "conductor",
+    "vehiculo": 0
+   }
+  ],
+  "preguntas": [
+   "¿Usted iba manejando o viajaba como pasajero?",
+   "¿A qué velocidad venía el vehículo que lo golpeó por detrás?"
+  ],
+  "vehiculos": [
+   {
+    "narrador": true
+   },
+   {
+    "narrador": false
+   }
+  ]
+ },
+ "texto_sha256": "c5e1d0b06cc2900e9774a7b88801ccd5e1678dd37e4140e71f124b1b1da831df",
+ "usage": {
+  "cache_creation_input_tokens": 0,
+  "cache_read_input_tokens": 6881,
+  "input_tokens": 49,
+  "output_tokens": 2603
+ }
+}

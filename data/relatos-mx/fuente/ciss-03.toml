@@ -1,0 +1,654 @@
+# Test CISS de Relatos-MX, lote 3: relatos escritos desde fichas de NHTSA CISS 2024
+# (data/relatos-mx/ciss/fichas.jsonl). Los hechos son los de la ficha: no se cambian.
+
+[[relato]]
+id = "rmx-c051"
+tipo = "vv"
+registro = "faltas"
+# Contexto (quien narra): nómbralo por su modelo (Buick Envision (2020)); conductor mujer, 67 años
+# Contexto (el otro vehículo): nómbralo por su modelo (Chevrolet Silverado (2020)); conductor hombre, 54 años
+texto = """
+Iba yo en mi SUV compacta Envision como a 30, era de dia, el piso estaba seco y la calle es de asfalto. Llegando al cruce chocamos con una Silverado de placas [[PLACA:NRT-48-21]]. Yo si frene pero {{sexo:el señor|la señora}} de la Silverado no freno nada. Me baje bien espantada, grasias a dios nadie salio lastimado y ya despues llego el ajustador del seguro.
+"""
+[relato.hechos]
+"entorno.iluminacion" = ["dia", "de dia"]
+"evento.tipo" = ["impacto_vehiculo_vehiculo", "chocamos"]
+"lugar.estado_superficie" = ["seco", "el piso estaba seco"]
+"lugar.superficie" = ["asfalto", "asfalto"]
+"lugar.tipo_via" = ["interseccion", "al cruce"]
+[[relato.hechos.vehiculos]]
+clase = ["suv_compacta", "SUV compacta Envision"]
+frenado = [true, "Yo si frene"]
+narrador = true
+velocidad_kmh = [30, "como a 30"]
+[[relato.hechos.vehiculos]]
+clase = ["pickup", "Silverado"]
+frenado = [false, "no freno nada"]
+[[relato.hechos.personas]]
+rol = ["conductor", "Iba yo en mi SUV compacta Envision"]
+vehiculo = 0
+
+[[relato]]
+id = "rmx-c052"
+tipo = "vv"
+registro = "desordenado"
+# Contexto (quien narra): nómbralo por su modelo (Dodge Journey (2019)); conductor mujer, 47 años
+# Contexto (el otro vehículo): nómbralo por su modelo (Chevrolet Equinox (2022)); conductor mujer, 67 años
+texto = """
+Me di cuenta de que mi frente le había pegado en su lado derecho a la SUV compacta Equinox cuando me bajé a ver. Antes de eso, yo iba derecho en mi SUV grande Journey, como a 30, por un cruce de cuatro esquinas, de esos donde las dos calles siguen. Ella también iba derecho por la otra calle; las dos frenamos, pero chocamos igual. Ah, y era de día, estaba nublado y el piso estaba seco. La otra conductora era {{edad:una señora ya grande|una muchacha joven}} y se llamaba [[NOMBRE:Rosalía Mendoza Íñiguez]]; nos quedamos juntas esperando al seguro.
+"""
+[relato.hechos]
+"entorno.clima" = ["nublado", "estaba nublado"]
+"entorno.iluminacion" = ["dia", "era de día"]
+"evento.tipo" = ["impacto_vehiculo_vehiculo", "chocamos"]
+"lugar.estado_superficie" = ["seco", "el piso estaba seco"]
+"lugar.tipo_via" = ["interseccion_x", "un cruce de cuatro esquinas"]
+zonas = { "0" = ["F", "mi frente le había pegado"], "1" = ["R", "en su lado derecho"] }
+[[relato.hechos.vehiculos]]
+clase = ["suv_grande", "SUV grande Journey"]
+frenado = [true, "las dos frenamos"]
+maniobra = ["recto", "yo iba derecho"]
+narrador = true
+velocidad_kmh = [30, "como a 30"]
+[[relato.hechos.vehiculos]]
+clase = ["suv_compacta", "SUV compacta Equinox"]
+frenado = [true, "las dos frenamos"]
+maniobra = ["recto", "Ella también iba derecho"]
+[[relato.hechos.personas]]
+rol = ["conductor", "yo iba derecho en mi SUV grande Journey"]
+vehiculo = 0
+
+[[relato]]
+id = "rmx-c053"
+tipo = "vv"
+registro = "formal"
+# Contexto (quien narra): nómbralo por su modelo (Toyota Prius (2015)); conductor mujer, 30 años
+# Contexto (el otro vehículo): nómbralo por su modelo (Toyota Camry (2020))
+texto = """
+Por medio de la presente declaro que, siendo de día, conducía mi Prius y seguía de frente a una velocidad aproximada de 5 km/h al atravesar un cruce de cuatro esquinas, donde ambas calles continúan. Un Camry que avanzaba de frente por la calle transversal entró al cruce al mismo tiempo. Frené; sin embargo, ambos vehículos colisionaron. {{sexo:El conductor|La conductora}} del Camry, de placas [[PLACA:MXK-302-B]], y la suscrita permanecimos en el lugar hasta la llegada de los ajustadores de ambas aseguradoras.
+"""
+[relato.hechos]
+"entorno.iluminacion" = ["dia", "siendo de día"]
+"evento.tipo" = ["impacto_vehiculo_vehiculo", "ambos vehículos colisionaron"]
+"lugar.tipo_via" = ["interseccion_x", "un cruce de cuatro esquinas"]
+[[relato.hechos.vehiculos]]
+clase = ["hatchback", "Prius"]
+frenado = [true, "Frené"]
+maniobra = ["recto", "seguía de frente"]
+narrador = true
+velocidad_kmh = [5, "5 km/h"]
+[[relato.hechos.vehiculos]]
+clase = ["sedan_mediano", "Camry"]
+maniobra = ["recto", "avanzaba de frente"]
+[[relato.hechos.personas]]
+rol = ["conductor", "conducía mi Prius"]
+vehiculo = 0
+
+[[relato]]
+id = "rmx-c054"
+tipo = "objeto"
+registro = "desordenado"
+# Contexto (quien narra): nómbralo por su modelo (Cadillac CTS (2016)); conductor hombre, 20 años
+# Contexto (objeto según NHTSA): Tree (> 10 cm in diameter)
+texto = """
+Terminé contra un árbol, eso es lo primero que me acuerdo. Antes, ya en la curva, había frenado, pero no sirvió de nada. Era de día y yo venía manejando mi sedán mediano CTS como a 35 por la calzada que baja a la colonia Lomas del Río, toda de asfalto. Después del golpe me bajé temblando y le hablé a mi papá para que me ayudara con la grúa y el seguro.
+"""
+[relato.hechos]
+"entorno.iluminacion" = ["dia", "Era de día"]
+"evento.objeto" = ["arbol", "un árbol"]
+"evento.tipo" = ["impacto_vehiculo_objeto", "Terminé contra un árbol"]
+"lugar.superficie" = ["asfalto", "asfalto"]
+"lugar.tipo_via" = ["curva", "en la curva"]
+[[relato.hechos.vehiculos]]
+clase = ["sedan_mediano", "sedán mediano CTS"]
+frenado = [true, "había frenado"]
+narrador = true
+velocidad_kmh = [35, "como a 35"]
+[[relato.hechos.personas]]
+rol = ["conductor", "yo venía manejando"]
+vehiculo = 0
+
+[[relato]]
+id = "rmx-c055"
+tipo = "vv"
+registro = "desordenado"
+# Contexto (quien narra): nómbralo por su modelo (Toyota Camry (2007)); conductor hombre, 51 años
+# Contexto (el otro vehículo): nómbralo por su modelo (Ram 1500 (2020))
+texto = """
+La Ram 1500 y yo chocamos, y hasta después entendí cómo. Yo iba derecho en mi Camry, como a 55, por un cruce de cuatro esquinas con semáforo; la Ram también iba derecho, por la otra calle. Estaba despejado, era de día y el piso estaba seco. Todavía no sé quién tenía el verde. El otro conductor me dio su teléfono, [[TELEFONO:722 418 9063]], para arreglarnos con los seguros.
+"""
+[relato.hechos]
+dispositivos = [["semaforo", "semáforo"]]
+"entorno.clima" = ["despejado", "Estaba despejado"]
+"entorno.iluminacion" = ["dia", "era de día"]
+"evento.tipo" = ["impacto_vehiculo_vehiculo", "chocamos"]
+"lugar.estado_superficie" = ["seco", "el piso estaba seco"]
+"lugar.tipo_via" = ["interseccion_x", "un cruce de cuatro esquinas"]
+[[relato.hechos.vehiculos]]
+clase = ["sedan_mediano", "Camry"]
+maniobra = ["recto", "Yo iba derecho"]
+narrador = true
+velocidad_kmh = [55, "como a 55"]
+[[relato.hechos.vehiculos]]
+clase = ["pickup", "Ram 1500"]
+maniobra = ["recto", "la Ram también iba derecho"]
+[[relato.hechos.personas]]
+rol = ["conductor", "Yo iba derecho en mi Camry"]
+vehiculo = 0
+
+[[relato]]
+id = "rmx-c056"
+tipo = "vv"
+registro = "desordenado"
+# Contexto (quien narra): nómbralo por su modelo (Nissan Rogue (2022)); conductor mujer, 33 años
+# Contexto (el otro vehículo): NO lo nombres: ni modelo ni tipo de vehículo
+texto = """
+Le pegué por detrás al otro vehículo, con todo mi frente; eso fue lo último. Antes, yo iba derecho en mi SUV compacta Rogue, como a 25, en un tramo recto de la avenida de los Fresnos. Frené en cuanto me di cuenta, pero no me alcanzó. Era de día. {{sexo:El otro conductor|La otra conductora}} se bajó {{sexo:tranquilo|tranquila}}, revisamos los golpes y llamamos a los seguros.
+"""
+[relato.hechos]
+"entorno.iluminacion" = ["dia", "Era de día"]
+"evento.tipo" = ["impacto_vehiculo_vehiculo", "Le pegué por detrás al otro vehículo"]
+"lugar.tipo_via" = ["recta", "en un tramo recto"]
+zonas = { "0" = ["F", "con todo mi frente"], "1" = ["B", "Le pegué por detrás"] }
+[[relato.hechos.vehiculos]]
+clase = ["suv_compacta", "SUV compacta Rogue"]
+frenado = [true, "Frené"]
+maniobra = ["recto", "yo iba derecho"]
+narrador = true
+velocidad_kmh = [25, "como a 25"]
+[[relato.hechos.vehiculos]]
+[[relato.hechos.personas]]
+rol = ["conductor", "yo iba derecho en mi SUV compacta Rogue"]
+vehiculo = 0
+
+[[relato]]
+id = "rmx-c057"
+tipo = "objeto"
+registro = "desordenado"
+# Contexto (quien narra): nómbralo por su modelo (Honda CR-V (2017)); conductor mujer, 78 años
+# Contexto (objeto según NHTSA): Nonbreakaway Pole or post (> 30 cm in diameter)
+texto = """
+Acabé contra un poste, así de rápido. Lo que pasó antes fue que venía manejando mi CR-V como a 30 por la calle de la iglesia, en una curva que me conozco de memoria. Después del golpe me quedé sentada un rato, con el corazón a mil, y le hablé a mi hijo para que viniera por mí y llamara a la grúa.
+"""
+[relato.hechos]
+"evento.objeto" = ["poste", "un poste"]
+"evento.tipo" = ["impacto_vehiculo_objeto", "Acabé contra un poste"]
+"lugar.tipo_via" = ["curva", "en una curva"]
+[[relato.hechos.vehiculos]]
+clase = ["suv_compacta", "CR-V"]
+narrador = true
+velocidad_kmh = [30, "como a 30"]
+[[relato.hechos.personas]]
+rol = ["conductor", "venía manejando"]
+vehiculo = 0
+
+[[relato]]
+id = "rmx-c058"
+tipo = "animal"
+registro = "coloquial"
+# Contexto (quien narra): nómbralo por su modelo (Nissan Maxima (2023)); conductor mujer, 62 años
+# Contexto (objeto según NHTSA): Animal
+texto = """
+Iba de regreso de casa de mi hermana en mi sedán mediano Maxima; iba derecho, como a 120, en un tramo recto. Ya era de noche y sin alumbrado, pero estaba despejado. De la nada se atravesó un venado y le pegué con el frente; ni lo vi venir. Me orillé toda asustada, el venado se fue al monte y yo le hablé al seguro. Les mandé las fotos desde mi correo, [[CORREO:lupita.maxima62@correo.mx]], y ya me dieron fecha para el taller.
+"""
+[relato.hechos]
+"entorno.clima" = ["despejado", "estaba despejado"]
+"entorno.iluminacion" = ["noche_sin_alumbrado", "de noche y sin alumbrado"]
+"evento.objeto" = ["otro", "un venado"]
+"evento.tipo" = ["impacto_vehiculo_objeto", "le pegué"]
+"lugar.tipo_via" = ["recta", "en un tramo recto"]
+zonas = { "0" = ["F", "con el frente"] }
+[[relato.hechos.vehiculos]]
+clase = ["sedan_mediano", "sedán mediano Maxima"]
+maniobra = ["recto", "iba derecho"]
+narrador = true
+velocidad_kmh = [120, "como a 120"]
+[[relato.hechos.personas]]
+rol = ["conductor", "Iba de regreso"]
+vehiculo = 0
+
+[[relato]]
+id = "rmx-c059"
+tipo = "vv"
+registro = "coloquial"
+# Contexto (quien narra): nómbralo por su modelo (Lexus RX (2018))
+# Contexto (el otro vehículo): nómbralo por su modelo (Chevrolet Silverado (2007)); conductor hombre, 41 años
+texto = """
+Yo iba en mi SUV grande RX bien despacito, como a 5, en un tramo recto de la calle Juárez, cuando sentí el madrazo: una Silverado que venía derecho me pegó por atrás con su frente. {{edad:El señor|El muchacho}} sí frenó, hasta se oyó, pero ya no le dio. Se llamaba [[NOMBRE:Joaquín Robles Ortega]], me dio su teléfono, [[TELEFONO:55 3197 2640]], y quedamos de vernos con los seguros. Nomás fue el susto y la defensa.
+"""
+[relato.hechos]
+"evento.tipo" = ["impacto_vehiculo_vehiculo", "me pegó por atrás"]
+"lugar.tipo_via" = ["recta", "en un tramo recto"]
+zonas = { "0" = ["B", "me pegó por atrás"], "1" = ["F", "con su frente"] }
+[[relato.hechos.vehiculos]]
+clase = ["suv_grande", "SUV grande RX"]
+narrador = true
+velocidad_kmh = [5, "como a 5"]
+[[relato.hechos.vehiculos]]
+clase = ["pickup", "Silverado"]
+frenado = [true, "sí frenó"]
+maniobra = ["recto", "venía derecho"]
+[[relato.hechos.personas]]
+rol = ["conductor", "Yo iba en mi SUV grande RX"]
+vehiculo = 0
+
+[[relato]]
+id = "rmx-c060"
+tipo = "vv"
+registro = "breve"
+# Contexto (quien narra): nómbralo por su modelo (Toyota Tacoma (2023)); conductor mujer, 44 años
+# Contexto (el otro vehículo): nómbralo por su modelo (Buick LaCrosse (2005))
+texto = """
+Iba derecho en mi Tacoma a unos 30 por un cruce de cuatro esquinas; estaba lloviendo y el piso estaba mojado. No alcancé a frenar y chocamos con un sedán mediano LaCrosse.
+"""
+[relato.hechos]
+"entorno.clima" = ["lluvia", "estaba lloviendo"]
+"evento.tipo" = ["impacto_vehiculo_vehiculo", "chocamos"]
+"lugar.estado_superficie" = ["mojado", "el piso estaba mojado"]
+"lugar.tipo_via" = ["interseccion_x", "un cruce de cuatro esquinas"]
+[[relato.hechos.vehiculos]]
+clase = ["pickup", "Tacoma"]
+frenado = [false, "No alcancé a frenar"]
+maniobra = ["recto", "Iba derecho"]
+narrador = true
+velocidad_kmh = [30, "a unos 30"]
+[[relato.hechos.vehiculos]]
+clase = ["sedan_mediano", "sedán mediano LaCrosse"]
+[[relato.hechos.personas]]
+rol = ["conductor", "Iba derecho en mi Tacoma"]
+vehiculo = 0
+
+[[relato]]
+id = "rmx-c061"
+tipo = "vv"
+registro = "coloquial"
+# Contexto (quien narra): nómbralo por su modelo (Ford Explorer (2018)); conductor mujer, 57 años
+# Contexto (el otro vehículo): nómbralo por su modelo (Chrysler 200 (2015))
+texto = """
+Iba derecho en mi Explorer como a 40, de día, y estaba bien despejado. Llegando al cruce de cuatro esquinas con semáforo, un sedán mediano Chrysler 200 dio vuelta a la izquierda y me pegó con su frente en mi lado izquierdo, en la puerta del chofer. Le tomé foto a sus placas, [[PLACA:PXR-771-C]], y esperamos al ajustador. Nomás fue el susto, gracias a Dios.
+"""
+[relato.hechos]
+dispositivos = [["semaforo", "semáforo"]]
+"entorno.clima" = ["despejado", "estaba bien despejado"]
+"entorno.iluminacion" = ["dia", "de día"]
+"evento.tipo" = ["impacto_vehiculo_vehiculo", "me pegó"]
+"lugar.tipo_via" = ["interseccion_x", "cruce de cuatro esquinas"]
+zonas = { "0" = ["L", "en mi lado izquierdo"], "1" = ["F", "con su frente"] }
+[[relato.hechos.vehiculos]]
+clase = ["suv_grande", "Explorer"]
+maniobra = ["recto", "Iba derecho"]
+narrador = true
+velocidad_kmh = [40, "como a 40"]
+[[relato.hechos.vehiculos]]
+clase = ["sedan_mediano", "sedán mediano Chrysler 200"]
+maniobra = ["vuelta_izquierda", "dio vuelta a la izquierda"]
+[[relato.hechos.personas]]
+rol = ["conductor", "Iba derecho en mi Explorer"]
+vehiculo = 0
+
+[[relato]]
+id = "rmx-c062"
+tipo = "vv"
+registro = "coloquial"
+# Contexto (quien narra): nómbralo por su modelo (Honda Civic (2015)); conductor mujer, 22 años
+# Contexto (el otro vehículo): nómbralo por su modelo (Bmw 325i (2005)); conductor hombre, 32 años
+texto = """
+Iba dando vuelta a la izquierda en mi Civic, como a 25, y un sedán compacto BMW 325i que venía derecho se me apareció; frené con todo, pero chocamos. El piso estaba seco, o sea, ni modo de decir que me resbalé. {{edad:El chavo|El señor}} del BMW se bajó bien enojado, pero al final nos pasamos los datos: se llama [[NOMBRE:Emiliano Cárdenas Pliego]] y su cel es [[TELEFONO:722 905 1184]]. Ya lo demás lo ve el seguro.
+"""
+[relato.hechos]
+"evento.tipo" = ["impacto_vehiculo_vehiculo", "chocamos"]
+"lugar.estado_superficie" = ["seco", "El piso estaba seco"]
+[[relato.hechos.vehiculos]]
+clase = ["sedan_mediano", "Civic"]
+frenado = [true, "frené"]
+maniobra = ["vuelta_izquierda", "dando vuelta a la izquierda"]
+narrador = true
+velocidad_kmh = [25, "como a 25"]
+[[relato.hechos.vehiculos]]
+clase = ["sedan_compacto", "sedán compacto BMW 325i"]
+maniobra = ["recto", "venía derecho"]
+[[relato.hechos.personas]]
+rol = ["conductor", "Iba dando vuelta a la izquierda en mi Civic"]
+vehiculo = 0
+
+[[relato]]
+id = "rmx-c063"
+tipo = "volcadura"
+registro = "coloquial"
+# Contexto (quien narra): nómbralo por su modelo (Chevrolet Equinox (2018)); conductor hombre, 31 años
+texto = """
+Iba derecho en mi SUV compacta Equinox, la neta como a 130, en un tramo recto saliendo del pueblo. El piso estaba seco, ni pretexto tengo. No sé qué pasó, ni tiempo de frenar: de repente se volteó. Salí por mi propio pie, llegó la ambulancia nomás para revisarme y el seguro mandó la grúa. Ya aprendí la lección.
+"""
+[relato.hechos]
+"evento.tipo" = ["volcadura", "se volteó"]
+"lugar.estado_superficie" = ["seco", "El piso estaba seco"]
+"lugar.tipo_via" = ["recta", "en un tramo recto"]
+[[relato.hechos.vehiculos]]
+clase = ["suv_compacta", "SUV compacta Equinox"]
+frenado = [false, "ni tiempo de frenar"]
+maniobra = ["recto", "Iba derecho"]
+narrador = true
+velocidad_kmh = [130, "como a 130"]
+[[relato.hechos.personas]]
+rol = ["conductor", "Iba derecho en mi SUV compacta Equinox"]
+vehiculo = 0
+
+[[relato]]
+id = "rmx-c064"
+tipo = "peaton"
+registro = "breve"
+# Contexto (quien narra): nómbralo por su modelo (Toyota RAV4 (2014)); conductor mujer, 54 años
+# Contexto (persona atropellada o ciclista): hombre, 46 años
+texto = """
+De noche, con el alumbrado prendido, iba derecho en mi RAV4 y atropellé con el frente a {{sexo:un señor|una señora}} que iba cruzando. Llamé a la ambulancia y me quedé ahí.
+"""
+[relato.hechos]
+"entorno.iluminacion" = ["noche_con_alumbrado", "De noche, con el alumbrado prendido"]
+"evento.tipo" = ["impacto_vehiculo_persona", "atropellé"]
+zonas = { "0" = ["F", "con el frente"] }
+[[relato.hechos.vehiculos]]
+clase = ["suv_compacta", "RAV4"]
+maniobra = ["recto", "iba derecho"]
+narrador = true
+[[relato.hechos.personas]]
+rol = ["conductor", "iba derecho en mi RAV4"]
+vehiculo = 0
+[[relato.hechos.personas]]
+rol = ["peaton", "que iba cruzando"]
+
+[[relato]]
+id = "rmx-c065"
+tipo = "volcadura"
+registro = "coloquial"
+# Contexto (quien narra): nómbralo por su modelo (Jeep Grand Cherokee (2012)); conductor hombre, 24 años
+texto = """
+Venía manejando mi Grand Cherokee, una SUV grande, de día, todo tranquilo, y el piso estaba seco. Entrando a una curva frené y, no sé ni cómo, se volteó. Salí yo solo por la ventana, nomás con raspones, y mi carnal llegó a ayudarme con la grúa y el seguro. Todavía no me la creo.
+"""
+[relato.hechos]
+"entorno.iluminacion" = ["dia", "de día"]
+"evento.tipo" = ["volcadura", "se volteó"]
+"lugar.estado_superficie" = ["seco", "el piso estaba seco"]
+"lugar.tipo_via" = ["curva", "una curva"]
+[[relato.hechos.vehiculos]]
+clase = ["suv_grande", "Grand Cherokee, una SUV grande"]
+frenado = [true, "frené"]
+narrador = true
+[[relato.hechos.personas]]
+rol = ["conductor", "Venía manejando"]
+vehiculo = 0
+
+[[relato]]
+id = "rmx-c066"
+tipo = "ciclista"
+registro = "faltas"
+# Contexto (quien narra): nómbralo por su modelo (Lexus IS (2015))
+# Contexto (el otro vehículo): nómbralo con la palabra exacta de su clase (no hay modelo)
+# Contexto (persona atropellada o ciclista): hombre, 18 años
+texto = """
+Ise el alto donde la calle termina en T, todo bien, y di buelta a la derecha con mi sedan mediano Lexus IS. Era de dia y el piso estaba seco. En eso no vi a {{edad:un muchacho|un señor}} que iba en bici y le pegue a su bici con el frente. Me baje luego luego, el se levanto y dijo que nomas le dolia la pierna, pero igual le hable a la anbulancia y nos esperamos hasta que llego.
+"""
+[relato.hechos]
+"lugar.tipo_via" = ["interseccion_t", "donde la calle termina en T"]
+dispositivos = [["alto", "el alto"]]
+"entorno.iluminacion" = ["dia", "de dia"]
+"evento.tipo" = ["impacto_vehiculo_vehiculo", "le pegue a su bici"]
+"lugar.estado_superficie" = ["seco", "el piso estaba seco"]
+zonas = { "0" = ["F", "con el frente"] }
+[[relato.hechos.vehiculos]]
+clase = ["sedan_mediano", "sedan mediano Lexus IS"]
+maniobra = ["vuelta_derecha", "di buelta a la derecha"]
+narrador = true
+[[relato.hechos.vehiculos]]
+clase = ["bicicleta", "bici"]
+[[relato.hechos.personas]]
+rol = ["conductor", "con mi sedan mediano Lexus IS"]
+vehiculo = 0
+[[relato.hechos.personas]]
+rol = ["ciclista", "que iba en bici"]
+vehiculo = 1
+
+[[relato]]
+id = "rmx-c067"
+tipo = "peaton"
+registro = "faltas"
+# Contexto (quien narra): nómbralo por su modelo (Toyota RAV4 (2008)); conductor hombre, 46 años
+# Contexto (persona atropellada o ciclista): hombre, 49 años
+texto = """
+Hiba derecho en mi RAV4 como a 120, en un tramo recto, ya de noche y sin alumbrado, y el piso estaba seco. De repente {{sexo:un señor|una señora}} que iba caminando se me aparecio y {{sexo:lo|la}} atropelle con el frente. Me pare luego luego y le marque al 911, llego la anbulancia y se {{sexo:lo|la}} llevaron. Todavia no se me quita el susto.
+"""
+[relato.hechos]
+"entorno.iluminacion" = ["noche_sin_alumbrado", "de noche y sin alumbrado"]
+"evento.tipo" = ["impacto_vehiculo_persona", "atropelle"]
+"lugar.estado_superficie" = ["seco", "el piso estaba seco"]
+"lugar.tipo_via" = ["recta", "en un tramo recto"]
+zonas = { "0" = ["F", "con el frente"] }
+[[relato.hechos.vehiculos]]
+clase = ["suv_compacta", "RAV4"]
+maniobra = ["recto", "Hiba derecho"]
+narrador = true
+velocidad_kmh = [120, "como a 120"]
+[[relato.hechos.personas]]
+rol = ["conductor", "Hiba derecho en mi RAV4"]
+vehiculo = 0
+[[relato.hechos.personas]]
+rol = ["peaton", "que iba caminando"]
+
+[[relato]]
+id = "rmx-c068"
+tipo = "vv"
+registro = "desordenado"
+# Contexto (quien narra): nómbralo por su modelo (Buick Encore (2017)); conductor hombre, 68 años
+# Contexto (el otro vehículo): nómbralo por su modelo (Chrysler Town and Country (2006))
+texto = """
+La Town and Country me pegó con su frente en mi lado derecho, justo en la puerta del copiloto; así terminó todo, aunque lo cuento al revés. Yo iba derecho en mi SUV compacta Encore, como a 25, y era de día. Ni la vi llegar. Ya con el golpe encima, nos hicimos a un lado y la persona que la manejaba me pasó sus placas, [[PLACA:LTW-529-A]], para el seguro.
+"""
+[relato.hechos]
+"entorno.iluminacion" = ["dia", "era de día"]
+"evento.tipo" = ["impacto_vehiculo_vehiculo", "me pegó"]
+zonas = { "0" = ["R", "en mi lado derecho"], "1" = ["F", "con su frente"] }
+[[relato.hechos.vehiculos]]
+clase = ["suv_compacta", "SUV compacta Encore"]
+maniobra = ["recto", "Yo iba derecho"]
+narrador = true
+velocidad_kmh = [25, "como a 25"]
+[[relato.hechos.vehiculos]]
+clase = ["van", "Town and Country"]
+[[relato.hechos.personas]]
+rol = ["conductor", "Yo iba derecho en mi SUV compacta Encore"]
+vehiculo = 0
+
+[[relato]]
+id = "rmx-c069"
+tipo = "moto"
+registro = "coloquial"
+# Contexto (quien narra): nómbralo por su modelo y su carrocería (Mazda Mazda3 (2016) hatchback); conductor mujer, 18 años
+# Contexto (el otro vehículo): nómbralo por su modelo (Harley-Davidson Street Glide (2021))
+texto = """
+Era de noche, con el alumbrado prendido, y yo me estaba dando la vuelta en U con mi Mazda3 hatchback en el semáforo de un cruce de cuatro esquinas, bien despacito, como a 5. Una moto Street Glide venía derecho y me pegó con su frente en mi lado derecho; ni tiempo de frenar tuve. El motociclista se cayó, pero se paró solito y llegó la ambulancia a revisarlo. Se llamaba [[NOMBRE:Ulises Barragán Toledo]] y fue bien buena onda conmigo.
+"""
+[relato.hechos]
+dispositivos = [["semaforo", "semáforo"]]
+"entorno.iluminacion" = ["noche_con_alumbrado", "de noche, con el alumbrado prendido"]
+"evento.tipo" = ["impacto_vehiculo_vehiculo", "me pegó"]
+"lugar.tipo_via" = ["interseccion_x", "un cruce de cuatro esquinas"]
+zonas = { "0" = ["R", "en mi lado derecho"], "1" = ["F", "con su frente"] }
+[[relato.hechos.vehiculos]]
+clase = ["hatchback", "Mazda3 hatchback"]
+frenado = [false, "ni tiempo de frenar"]
+maniobra = ["vuelta_u", "dando la vuelta en U"]
+narrador = true
+velocidad_kmh = [5, "como a 5"]
+[[relato.hechos.vehiculos]]
+clase = ["motocicleta", "moto Street Glide"]
+maniobra = ["recto", "venía derecho"]
+[[relato.hechos.personas]]
+rol = ["conductor", "yo me estaba dando la vuelta en U con mi Mazda3 hatchback"]
+vehiculo = 0
+[[relato.hechos.personas]]
+rol = ["motociclista", "El motociclista"]
+vehiculo = 1
+
+[[relato]]
+id = "rmx-c070"
+tipo = "objeto"
+registro = "desordenado"
+# Contexto (quien narra): nómbralo por su modelo (Buick Envision (2023)); conductor mujer, 75 años
+# Contexto (objeto según NHTSA): Tree (> 10 cm in diameter)
+texto = """
+Me fui contra un árbol y le di con el frente; eso lo cuento primero porque es lo que más me acuerdo. Antes iba derecho en mi SUV compacta Envision, como a 85, por un tramo recto. No alcancé a frenar. El piso estaba seco, no había nada raro. Luego mis nietos vinieron por mí y el seguro se llevó mi Envision en grúa.
+"""
+[relato.hechos]
+"evento.objeto" = ["arbol", "un árbol"]
+"evento.tipo" = ["impacto_vehiculo_objeto", "Me fui contra un árbol"]
+"lugar.estado_superficie" = ["seco", "El piso estaba seco"]
+"lugar.tipo_via" = ["recta", "un tramo recto"]
+zonas = { "0" = ["F", "le di con el frente"] }
+[[relato.hechos.vehiculos]]
+clase = ["suv_compacta", "SUV compacta Envision"]
+frenado = [false, "No alcancé a frenar"]
+maniobra = ["recto", "iba derecho"]
+narrador = true
+velocidad_kmh = [85, "como a 85"]
+[[relato.hechos.personas]]
+rol = ["conductor", "iba derecho en mi SUV compacta Envision"]
+vehiculo = 0
+
+[[relato]]
+id = "rmx-c071"
+tipo = "vv"
+registro = "coloquial"
+# Contexto (quien narra): nómbralo por su modelo (Gmc Sierra (2022)); conductor hombre, 71 años
+# Contexto (el otro vehículo): nómbralo por su modelo (Ram 2500 (2024)); conductor hombre, 47 años
+texto = """
+Iba en mi Sierra y di vuelta a la izquierda como a 50, ya sé que iba recio, y una Ram 2500 que venía derecho... pues le pegué con mi frente en su lado derecho. Estaba despejado, ni modo de echarle la culpa al clima. {{edad:El señor|El muchacho}} de la Ram se llamaba [[NOMBRE:Fermín Ochoa Salgado]], me dio su teléfono, [[TELEFONO:443 260 7718]], y quedamos en arreglarnos por el seguro.
+"""
+[relato.hechos]
+"entorno.clima" = ["despejado", "Estaba despejado"]
+"evento.tipo" = ["impacto_vehiculo_vehiculo", "le pegué"]
+zonas = { "0" = ["F", "con mi frente"], "1" = ["R", "en su lado derecho"] }
+[[relato.hechos.vehiculos]]
+clase = ["pickup", "Sierra"]
+maniobra = ["vuelta_izquierda", "di vuelta a la izquierda"]
+narrador = true
+velocidad_kmh = [50, "como a 50"]
+[[relato.hechos.vehiculos]]
+clase = ["pickup", "Ram 2500"]
+maniobra = ["recto", "venía derecho"]
+[[relato.hechos.personas]]
+rol = ["conductor", "Iba en mi Sierra"]
+vehiculo = 0
+
+[[relato]]
+id = "rmx-c072"
+tipo = "moto"
+registro = "desordenado"
+# Contexto (quien narra): nómbralo por su modelo (Nissan Rogue (2021)); conductor mujer, 78 años
+# Contexto (el otro vehículo): nómbralo por su modelo (Yamaha YZF-R6 (2008))
+texto = """
+Chocamos la moto YZF-R6 y yo, y fue tan rápido que ni tiempo de frenar tuve. Ahora sí, desde antes: venía manejando mi SUV compacta Rogue como a 70, estaba amaneciendo y el piso estaba seco. {{sexo:El|La}} motociclista dio vuelta a la izquierda y ahí fue. Después se levantó {{sexo:solito|solita}} y la ambulancia nomás {{sexo:lo|la}} revisó. Yo me quedé temblando un buen rato.
+"""
+[relato.hechos]
+"entorno.iluminacion" = ["amanecer", "estaba amaneciendo"]
+"evento.tipo" = ["impacto_vehiculo_vehiculo", "Chocamos"]
+"lugar.estado_superficie" = ["seco", "el piso estaba seco"]
+[[relato.hechos.vehiculos]]
+clase = ["suv_compacta", "SUV compacta Rogue"]
+frenado = [false, "ni tiempo de frenar"]
+narrador = true
+velocidad_kmh = [70, "como a 70"]
+[[relato.hechos.vehiculos]]
+clase = ["motocicleta", "moto YZF-R6"]
+maniobra = ["vuelta_izquierda", "dio vuelta a la izquierda"]
+[[relato.hechos.personas]]
+rol = ["conductor", "venía manejando mi SUV compacta Rogue"]
+vehiculo = 0
+[[relato.hechos.personas]]
+rol = ["motociclista", "motociclista"]
+vehiculo = 1
+
+[[relato]]
+id = "rmx-c073"
+tipo = "moto"
+registro = "faltas"
+# Contexto (quien narra): nómbralo por su modelo (Honda Ridgeline (2022)); conductor hombre, 53 años
+# Contexto (el otro vehículo): nómbralo con la palabra exacta de su clase (no hay modelo)
+texto = """
+Hise el alto donde la calle termina en T y di vuelta a la isquierda con mi Ridgeline, despasito, como a 10. Estaba despejado y el piso estaba seco. En eso una moto me pego en mi lado isquierdo con su lado isquierdo, como rozandonos. El de la moto se cayo pero se levanto luego luego. Le tome foto a su placa [[PLACA:Z4K-88-MX]] por si acaso y ya nos arreglamos.
+"""
+[relato.hechos]
+dispositivos = [["alto", "el alto"]]
+"entorno.clima" = ["despejado", "Estaba despejado"]
+"evento.tipo" = ["impacto_vehiculo_vehiculo", "me pego"]
+"lugar.estado_superficie" = ["seco", "el piso estaba seco"]
+"lugar.tipo_via" = ["interseccion_t", "donde la calle termina en T"]
+zonas = { "0" = ["L", "en mi lado isquierdo"], "1" = ["L", "con su lado isquierdo"] }
+[[relato.hechos.vehiculos]]
+clase = ["pickup", "Ridgeline"]
+maniobra = ["vuelta_izquierda", "di vuelta a la isquierda"]
+narrador = true
+velocidad_kmh = [10, "como a 10"]
+[[relato.hechos.vehiculos]]
+clase = ["motocicleta", "una moto"]
+[[relato.hechos.personas]]
+rol = ["conductor", "con mi Ridgeline"]
+vehiculo = 0
+[[relato.hechos.personas]]
+rol = ["motociclista", "El de la moto"]
+vehiculo = 1
+
+[[relato]]
+id = "rmx-c074"
+tipo = "moto"
+registro = "breve"
+# Contexto (quien narra): nómbralo por su modelo (Bmw X1 (2020)); conductor mujer, 41 años
+# Contexto (el otro vehículo): nómbralo por su modelo (Yamaha YZF690 (2023))
+texto = """
+Iba derecho en mi SUV compacta X1 por un tramo recto y estaba despejado; el motociclista, que venía en una moto YZF690 y también iba derecho, no frenó y chocamos. Nadie salió grave.
+"""
+[relato.hechos]
+"entorno.clima" = ["despejado", "estaba despejado"]
+"evento.tipo" = ["impacto_vehiculo_vehiculo", "chocamos"]
+"lugar.tipo_via" = ["recta", "un tramo recto"]
+[[relato.hechos.vehiculos]]
+clase = ["suv_compacta", "SUV compacta X1"]
+maniobra = ["recto", "Iba derecho"]
+narrador = true
+[[relato.hechos.vehiculos]]
+clase = ["motocicleta", "moto YZF690"]
+frenado = [false, "no frenó"]
+maniobra = ["recto", "también iba derecho"]
+[[relato.hechos.personas]]
+rol = ["conductor", "Iba derecho en mi SUV compacta X1"]
+vehiculo = 0
+[[relato.hechos.personas]]
+rol = ["motociclista", "el motociclista"]
+vehiculo = 1
+
+[[relato]]
+id = "rmx-c075"
+tipo = "ciclista"
+registro = "formal"
+# Contexto (quien narra): nómbralo por su modelo (Nissan Pathfinder (2020))
+# Contexto (el otro vehículo): nómbralo con la palabra exacta de su clase (no hay modelo)
+# Contexto (persona atropellada o ciclista): hombre, 48 años
+texto = """
+El suscrito, [[NOMBRE:Héctor Villaseñor Ruiz]], con CURP [[CURP:VIRH790312HMCLZC08]], manifiesto que, siendo de día, me encontraba al volante de mi Pathfinder, completamente detenido mientras consultaba una dirección en mi teléfono, y el piso se encontraba seco. En ese momento, {{sexo:un señor|una señora}} que circulaba en bicicleta impactó el costado derecho de mi vehículo. Descendí de inmediato; la persona refirió sentirse bien y, como medida preventiva, se solicitó una ambulancia. Ambas partes permanecimos en el lugar hasta la llegada del ajustador.
+"""
+[relato.hechos]
+"entorno.iluminacion" = ["dia", "siendo de día"]
+"evento.tipo" = ["impacto_vehiculo_vehiculo", "impactó"]
+"lugar.estado_superficie" = ["seco", "el piso se encontraba seco"]
+zonas = { "0" = ["R", "el costado derecho"] }
+[[relato.hechos.vehiculos]]
+clase = ["suv_grande", "Pathfinder"]
+maniobra = ["detenido", "completamente detenido"]
+narrador = true
+velocidad_kmh = [0, "completamente detenido"]
+[[relato.hechos.vehiculos]]
+clase = ["bicicleta", "bicicleta"]
+[[relato.hechos.personas]]
+rol = ["conductor", "al volante de mi Pathfinder"]
+vehiculo = 0
+[[relato.hechos.personas]]
+rol = ["ciclista", "circulaba en bicicleta"]
+vehiculo = 1

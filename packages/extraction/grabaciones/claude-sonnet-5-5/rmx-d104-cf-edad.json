@@ -1,0 +1,98 @@
+{
+ "costo_estimado_con": "claude-sonnet-5-5",
+ "costo_usd": 0.0136004,
+ "esfuerzo": "medium",
+ "grabado": "2026-10-15T03:19:41+00:00",
+ "huella_prompt": "f6b693169a4199c3",
+ "latencia_ms": 8370.8,
+ "modelo": "claude-sonnet-5-5",
+ "modelo_respuesta": "claude-sonnet-5-5",
+ "prompt": "extraccion_v1",
+ "request_id": "req_011Cg3JRWUJ8m58R4FpgCC4f",
+ "salida": {
+  "dispositivos": [
+   {
+    "cita": "ciclovía",
+    "tipo": "otro"
+   }
+  ],
+  "hechos": [
+   {
+    "campo": "vehiculo.clase",
+    "cita": "bici",
+    "persona": -1,
+    "valor": "bicicleta",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.clase",
+    "cita": "camioneta",
+    "persona": -1,
+    "valor": "suv_o_pickup",
+    "vehiculo": 1
+   },
+   {
+    "campo": "vehiculo.color",
+    "cita": "gris",
+    "persona": -1,
+    "valor": "gris",
+    "vehiculo": 1
+   },
+   {
+    "campo": "vehiculo.maniobra",
+    "cita": "dio vuelta a la derecha",
+    "persona": -1,
+    "valor": "vuelta_derecha",
+    "vehiculo": 1
+   },
+   {
+    "campo": "evento.tipo",
+    "cita": "le pegó",
+    "persona": -1,
+    "valor": "impacto_vehiculo_vehiculo",
+    "vehiculo": -1
+   },
+   {
+    "campo": "vehiculo.zona_impacto",
+    "cita": "con la defensa de enfrente",
+    "persona": -1,
+    "valor": "F",
+    "vehiculo": 1
+   },
+   {
+    "campo": "persona.casco",
+    "cita": "Traía casco",
+    "persona": 0,
+    "valor": "true",
+    "vehiculo": -1
+   }
+  ],
+  "personas": [
+   {
+    "cita": "Iba en su bici",
+    "rol": "ciclista",
+    "vehiculo": 0
+   }
+  ],
+  "preguntas": [
+   "¿La camioneta era una SUV, una pickup o una van?",
+   "¿La bicicleta y la camioneta iban en el mismo sentido o en sentidos contrarios?",
+   "¿La camioneta iba muy despacio o a velocidad normal al dar la vuelta?"
+  ],
+  "vehiculos": [
+   {
+    "narrador": false
+   },
+   {
+    "narrador": false
+   }
+  ]
+ },
+ "texto_sha256": "f2da85b8ef8b4e87cd48d2ee4349002a6db0d016259bd7867fc0b5ffe81759ea",
+ "usage": {
+  "cache_creation_input_tokens": 0,
+  "cache_read_input_tokens": 5862,
+  "input_tokens": 194,
+  "output_tokens": 1204
+ }
+}

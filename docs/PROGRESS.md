@@ -5,9 +5,9 @@ Reglas de trabajo: `CLAUDE.md`. Especificación: `PLAN.md`.
 
 ## Estado actual
 
-- **Fase actual:** migración a Vercel solo (rama `feat/vercel-only`), por decisión de René del 2026-10-14. F7 se fusionó (PR #9) y se retoma después de la migración con sus pendientes (segundo test de Relatos-MX desde CISS y prompt v2).
-- **Siguiente paso concreto:** fusionar el PR de la migración con CI en verde y retomar F7: segundo test de Relatos-MX desde los campos codificados de CISS y prompt v2, ahora en el pipeline TS.
-- **F0** cerrado el 2026-10-10 (PR #1), **F1** el 2026-10-10 (PR #3), **F2** el 2026-10-13 (PR #4), **F3** el 2026-10-13 (PR #5), **F4** el 2026-10-13 (PR #6), **F5** el 2026-10-13 (PR #7), **F6** el 2026-10-14 (PR #8), **F7** el 2026-10-14 (PR #9; pendientes registrados).
+- **Fase actual:** pendientes físicos de F7, antes de F8. El pendiente 1 de F7 (test CISS de Relatos-MX y prompt v2) quedó hecho el 2026-10-14 (PR #11, ADR 0012); v2 es el prompt de producción.
+- **Siguiente paso concreto:** pendiente 2 de F7, la rigidez lateral y trasera desde las pruebas FMVSS 214 y 301 de NHTSA, en la rama `feat/f7-rigidez-lateral`. Después, el pendiente 3 (inercia de guiñada medida) y luego F8. Los dos cambian resultados y capturas, así que van antes de las capturas de F8.
+- **F0** cerrado el 2026-10-10 (PR #1), **F1** el 2026-10-10 (PR #3), **F2** el 2026-10-13 (PR #4), **F3** el 2026-10-13 (PR #5), **F4** el 2026-10-13 (PR #6), **F5** el 2026-10-13 (PR #7), **F6** el 2026-10-14 (PR #8), **F7** el 2026-10-14 (PR #9; pendientes registrados); migración a Vercel el 2026-10-14 (PR #10); test CISS y prompt v2 el 2026-10-14 (PR #11).
 
 ### Bloqueado — necesita a René
 
@@ -694,7 +694,7 @@ Incidente: una corrida local de `pnpm test` falló una vez en `debris.test.ts` (
 
 ### Pendientes registrados
 
-1. **Relatos-MX, segundo test y prompt v2 (pendiente de F6).** Se hace en una rama propia antes de F8 (es un cambio de orden, no un recorte).
+1. **Relatos-MX, segundo test y prompt v2 (pendiente de F6). Hecho el 2026-10-14** (ver "F7 (continuación)" y ADR 0012).
    - **Fuente:** los CSV de CISS no traen narrativas y NHTSA no publica una API documentada para las del Crash Viewer (su API documentada es la de FARS). El test se construirá desde los campos codificados de CISS (maniobra, tipo de choque, superficie, luz, clima, clase): la verdad viene de NHTSA, no del autor de los relatos.
    - **Prompt v2:** con la tabla modelo → clase, validado en dev y medido en ese test nuevo.
 2. **Rigidez lateral y trasera desde pruebas de NHTSA** (FMVSS 214 lateral y FMVSS 301 trasera). Es la debilidad medida en E3. No se ajusta con el EDR de CISS para no mezclar validación y calibración. Cambiará resultados y capturas.
@@ -796,3 +796,89 @@ Los siete pasos del plan están terminados, y están en ADR 0011.
 1. **Análisis bajo pedido** (`/reconstruir {analisis: true}`, de F7): se fue con FastAPI y vuelve con la inversión y Monte Carlo en TS (F9). Los resultados de las escenas canónicas los siguen trayendo precalculados.
 2. **Banderas que muestrean en TS** (daño, reposo, velocidad contra evidencia): F9. En el test de E1 no cambian ninguna métrica.
 3. **Vercel:** René tiene que conectar el repo, configurar las variables (`ANTHROPIC_API_KEY`, el tope y las de Upstash) y elegir el plan. Sin Upstash, en producción solo responde la línea base de reglas.
+
+## F7 (continuación) — Relatos-MX: test CISS y prompt v2
+
+Rama `feat/f7-relatos-ciss`. Es el pendiente 1 de F7. La migración a Vercel ya se fusionó (PR #10).
+
+### Plan
+
+1. **Fichas desde CISS** (`data/croquis_data/ciss_relatos.py`, `croquis-data ciss relatos [--check]`):
+   - Selección con semilla y por estratos de los casos 2017–2024, para que los tipos se parezcan a la distribución de ATUS.
+   - Cada código de NHTSA se traduce al vocabulario del contrato, usando las etiquetas oficiales de `FORMAT24.sas`, que viene en el mismo zip, y el manual (DOT HS 813 771).
+   - Lo que se traduce: ambiente (WEATHER, LIGHTCOND, SURFCOND, SURFTYPE), vía (ALIGNMENT, RELJCT2, TYP_INT), control (TRAFCONT), maniobra (PREMOVE), frenado (MANEUVER), clase (BODYTYPE con largo), zonas (GAD del primer evento), tipo y objeto (EVENT) y la velocidad antes del choque del EDR (EDRPRECRASH, código 1010).
+   - Un código sin equivalente exacto deja el campo fuera de la ficha, con cada exclusión contada.
+   - Salida: `data/relatos-mx/ciss/fichas.jsonl` y conteos.
+2. **Relatos escritos desde las fichas:**
+   - Los escriben agentes que no vieron la línea base de reglas, con los cinco registros y PII sintética.
+   - Quien escribe solo pone el texto y las citas: `relatos check` exige que los hechos anotados sean exactamente los de la ficha.
+   - Un segundo agente, independiente, revisa que el texto no afirme hechos fuera de la ficha.
+3. **Partición `ciss` en Relatos-MX:** `fuente/ciss-*.toml`, `build/ciss.jsonl` y su propio candado `ciss.lock`. Se congela antes de la primera evaluación. El test actual no se toca: su hash solo cubre la partición `test`.
+4. **E1 con `--split ciss`** sobre el pipeline TS: reglas, y Haiku y Sonnet con prompt v1 (grabaciones nuevas, dentro del tope diario).
+5. **Prompt v2:** la tabla modelo → clase; se valida en dev y se mide en `ciss`.
+
+Riesgos:
+
+- **CISS es de EE. UU. y solo de vehículos de pasajeros remolcados.** Los relatos se adaptan a México (km/h, vías y modelos que circulan aquí) y la distribución de tipos no puede ser la de ATUS en todo: casi no hay motocicletas. Lo que no se pueda se documenta.
+- **Velocidad narrada:** la gente redondea. La ficha guarda el valor del EDR y la velocidad narrada redondeada a 5 km/h, que es la verdad de la extracción. El error contra el EDR se reporta aparte.
+
+### Avance (2026-10-14)
+
+1. **Fichas, hecho.** `croquis-data ciss relatos`, con pruebas sintéticas de cada traducción, exclusión, clase y acoplamiento. Al escribir y revisar salieron cuatro reglas que se aplicaron al generador y a todos los relatos (ADR 0012 §9):
+   - clase del relato aparte de la de E3: carrocería que decide sola, VPIC y `modelos.json` coinciden;
+   - tamaño dicho en el texto cuando el modelo no está en la tabla;
+   - hechos que van juntos (velocidad 0 con detenido; dispositivo del cruce con su tipo, también en 'Intersection-Related');
+   - el ciclista en su bicicleta, como choque entre vehículos.
+2. **Relatos, hecho.** Los 150 pasaron por cuatro etapas:
+   - escritos por seis agentes que no vieron la línea base;
+   - revisados por otros seis;
+   - editados para decir el tamaño y los cruces acoplados;
+   - validados por la verificación contra la ficha, el esquema y el validador semántico.
+     Se leyó una muestra antes de congelar.
+3. **Partición `ciss`, congelada** (`ciss.lock`, `bd16632a…`). `test.lock` sigue intacto. Las salidas doradas incluyen los relatos CISS y la paridad TS pasa en reglas y redacción.
+4. **Prompt v2, hecho.** Tiene versión propia en Python y TS, con huellas, paridad y grabaciones en `grabaciones/extraccion_v2/`.
+   - **Grabaciones:** v1 y v2 en dev y en `ciss`, con Haiku y Sonnet. Las repeticiones van en todo, salvo v1 en dev (abajo). El libro de gasto registra $18.57 en el día (`grabaciones/gasto.json`), dentro del tope de $20.
+   - **Libro de gasto seguro para grabadores en paralelo:** usa candado y escritura atómica. En Windows, abrir un candado que otro está borrando da `PermissionError`; ahora se reintenta, y lo prueba un caso propio.
+5. **E1 medido.** El orden fue: dev con v1 y v2, decisión, y después `ciss`.
+6. **v2 a producción** (`PROMPT_VERSION` en Python y TS, ADR 0012 §10). Los resultados sin sufijo siguen siendo de v1.
+
+### Evidencia y números medidos (`eval/results/e1_extraction_dev*.json`, `e1_extraction_ciss*.json`)
+
+| Medida                                                  | v1            | v2                |
+| ------------------------------------------------------- | ------------- | ----------------- |
+| Dev, F1 micro Sonnet / Haiku                            | 0.895 / 0.872 | **0.937 / 0.918** |
+| Dev, clase Sonnet / Haiku                               | 0.638 / 0.662 | 0.944 / 0.932     |
+| `ciss`, F1 micro Sonnet / Haiku                         | 0.978 / 0.968 | **0.993 / 0.986** |
+| `ciss`, clase Sonnet / Haiku                            | 0.851 / 0.819 | 0.975 / 0.942     |
+| `ciss`, repetir el mismo relato (de 150) Sonnet / Haiku | 0 / 5         | 1 / 5             |
+| `ciss`, costo por 1,000 relatos Sonnet / Haiku          | $8.42 / $0.99 | $9.42 / $1.05     |
+
+- **Reglas en `ciss`:** F1 0.690, clase 0.514, vehículos exactos 53.3 %.
+- **Fuga del redactor:** 2 de 163 datos personales (1.2 %), los dos nombres.
+- **Velocidad contra el EDR:** de 113 relatos con velocidad, Claude la extrae en todos, con 1.47 km/h de error medio contra el EDR, igual al piso del redondeo a 5 km/h. Las reglas la extraen en 104, con 3.09 km/h.
+- **Suites, local:**
+  - Python: ruff, pyright y pytest en verde.
+  - TS: format, lint, typecheck, tests (782 en extraction) y build en verde.
+  - Al día: los `generate:check`, `golden check`, `relatos check` (los dos candados intactos) y `ciss relatos --check`.
+
+### Pendientes registrados (de esta rama)
+
+1. **v2 en el primer test.** Faltan sus grabaciones de relatos, contrafactuales y repeticiones con los dos modelos. Sirve para la continuidad de la fila de E1, no para decidir: en ese test se descubrió el problema de la clase.
+2. **Repeticiones de v1 en dev.** Faltaron por el tope del día. La decisión no las necesitó: el ruido se comparó en `ciss`.
+3. **Clase de E3 y clase del relato.** E3 agrupa la carrocería 14 de CISS (SUV compacta) por su código y el test CISS la separa por largo. No cambia E3 (la clase solo elige rigidez), pero conviene unificarlas cuando se revise la rigidez (pendiente 2 de F7).
+
+### Resumen para René (F7, test CISS y prompt v2)
+
+1. **Un test cuya verdad no escribí yo.** Son 150 relatos nuevos. Los hechos salen de los campos codificados de 150 choques reales de NHTSA CISS 2024, y la velocidad, del EDR del vehículo. Otros agentes escribieron el texto; el sistema rechaza un relato si sus hechos no son exactamente los de NHTSA.
+2. **El problema de la clase quedó resuelto.** Claude omitía la clase cuando el relato solo nombraba el modelo ("mi Aveo"). El prompt v2 le da la tabla de modelos. Se probó primero en dev y después en el test nuevo:
+   - clase con Sonnet, de 0.851 a 0.975;
+   - F1 general, de 0.978 a 0.993.
+     Ya es el prompt de producción.
+3. **Velocidad:** Claude extrae la velocidad narrada sin error. Contra el EDR queda a 1.47 km/h, que es justo lo que se pierde al redondear a 5 km/h como lo diría una persona.
+
+Cómo probarlo:
+
+- `uv run croquis-eval e1-extraction --split ciss` reproduce los números desde las respuestas grabadas, sin gastar.
+- `uv run croquis-extraction relatos check` verifica que los dos tests congelados siguen intactos.
+
+Qué necesito de ti: nada nuevo. El gasto en Claude del día fue $18.57 de los $20 del tope. Siguen pendientes Vercel y Upstash, BeamNG y las personas para E9.

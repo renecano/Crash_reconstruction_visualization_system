@@ -75,15 +75,18 @@ def test_el_benchmark_del_repositorio_esta_completo_y_al_dia() -> None:
     assert items
     assert relatos_mx.problems(items) == []
     assert relatos_mx.write(check=True) == []
-    frozen = relatos_mx.frozen_hash()
-    if frozen is not None:
-        assert frozen == relatos_mx.split_hash()
+    for split in relatos_mx.LOCKS:
+        frozen = relatos_mx.frozen_hash(split)
+        if frozen is not None:
+            assert frozen == relatos_mx.split_hash(items, split)
 
 
 def test_congelar_es_de_una_sola_vez(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
     items = [_item(id="rmx-t001", split="test"), _item(id="rmx-d001", split="dev")]
     monkeypatch.setattr(relatos_mx, "load_all", lambda: items)
-    monkeypatch.setattr(relatos_mx, "LOCK", tmp_path / "test.lock")
+    monkeypatch.setattr(
+        relatos_mx, "LOCKS", {"test": tmp_path / "test.lock", "ciss": tmp_path / "ciss.lock"}
+    )
     assert relatos_mx.frozen_hash() is None
     h = relatos_mx.freeze()
     assert relatos_mx.frozen_hash() == h == relatos_mx.split_hash()
@@ -92,6 +95,79 @@ def test_congelar_es_de_una_sola_vez(tmp_path: Path, monkeypatch: pytest.MonkeyP
     assert lock["relatos"] == 1
     with pytest.raises(RuntimeError, match="ya está congelado"):
         relatos_mx.freeze()
+    # Cada test tiene su candado: el de CISS no existe y una partición vacía no se congela.
+    assert relatos_mx.frozen_hash("ciss") is None
+    with pytest.raises(RuntimeError, match="vacía"):
+        relatos_mx.freeze("ciss")
+
+
+def _ficha(**hechos: object) -> dict[str, object]:
+    return {
+        "id": "rmx-c001",
+        "tipo": "vv",
+        "registro": "breve",
+        "ciss": {"anio": 2024, "caseid": "2400001", "caso": "1-1-2024-001-01"},
+        "hechos": {
+            "evento.tipo": "impacto_vehiculo_vehiculo",
+            "vehiculos": [{"narrador": True, "velocidad_kmh": 40}, {"clase": "motocicleta"}],
+            **hechos,
+        },
+    }
+
+
+def test_relato_ciss_debe_decir_los_hechos_de_su_ficha() -> None:
+    it = _item(id="rmx-c001", split="ciss")
+    ficha = _ficha()
+    assert relatos_mx.ficha_problems(it, ficha) == []
+    # Un valor distinto del de NHTSA: se rechaza y se dice dónde.
+    otro = _ficha()
+    otro["hechos"]["vehiculos"][0]["velocidad_kmh"] = 50  # type: ignore[index]
+    probs = relatos_mx.ficha_problems(it, otro)
+    assert any("vehiculos[0].velocidad_kmh: ficha 50, relato 40" in p for p in probs)
+    # Un hecho de más o de menos tampoco pasa.
+    extra = _ficha(**{"entorno.clima": "lluvia"})
+    assert any("entorno.clima" in p for p in relatos_mx.ficha_problems(it, extra))
+    # Sin ficha, con otro tipo o registro: problema.
+    assert relatos_mx.ficha_problems(it, None) == ["rmx-c001: no hay ficha CISS con ese id"]
+    assert relatos_mx.ficha_problems(it, {**ficha, "registro": "formal"})
+
+
+def test_en_el_test_ciss_todo_hecho_lleva_cita() -> None:
+    sin_cita = _item(
+        id="rmx-c001",
+        split="ciss",
+        hechos={
+            "evento.tipo": ["impacto_vehiculo_vehiculo"],
+            "vehiculos": [
+                {"narrador": True, "velocidad_kmh": [40, "iba a 40"]},
+                {"clase": ["motocicleta", "moto"]},
+            ],
+        },
+    )
+    probs = relatos_mx.ficha_problems(sin_cita, _ficha())
+    assert probs == ["rmx-c001: evento.tipo sin cita (en el test CISS todo hecho se cita)"]
+
+
+def test_quitar_citas_da_la_forma_de_la_ficha() -> None:
+    plain, uncited = relatos_mx.strip_citations(
+        {
+            "dispositivos": [["semaforo", "el semáforo"]],
+            "zonas": {"0": ["F", "de frente"]},
+            "lugar.tipo_via": ["recta", "en la recta"],
+            "personas": [{"rol": ["conductor", "manejaba"], "vehiculo": 0}],
+            "vehiculos": [{"narrador": True, "clase": ["pickup", "mi Hilux"]}],
+        }
+    )
+    assert plain == {
+        "dispositivos": ["semaforo"],
+        "zonas": {"0": "F"},
+        "lugar.tipo_via": "recta",
+        "personas": [{"rol": "conductor", "vehiculo": 0}],
+        "vehiculos": [{"narrador": True, "clase": "pickup"}],
+    }
+    assert uncited == []
+    with pytest.raises(ValueError, match="se esperaba"):
+        relatos_mx.strip_citations({"lugar.tipo_via": "recta"})
 
 
 def test_el_hash_solo_depende_del_contenido_fuente_del_test() -> None:

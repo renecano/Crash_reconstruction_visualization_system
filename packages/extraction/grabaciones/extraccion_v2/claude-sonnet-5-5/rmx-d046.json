@@ -1,0 +1,90 @@
+{
+ "costo_estimado_con": "claude-sonnet-5-5",
+ "costo_usd": 0.0121302,
+ "esfuerzo": "medium",
+ "grabado": "2026-10-15T01:08:16+00:00",
+ "huella_prompt": "5816b86ad0e718ee",
+ "latencia_ms": 6786.2,
+ "modelo": "claude-sonnet-5-5",
+ "modelo_respuesta": "claude-sonnet-5-5",
+ "prompt": "extraccion_v2",
+ "request_id": "req_011Cg38QLZYkdMikHx5bYSKg",
+ "salida": {
+  "dispositivos": [
+   {
+    "cita": "paso de cebra",
+    "tipo": "paso_peatonal"
+   },
+   {
+    "cita": "semáforo peatonal en verde",
+    "tipo": "semaforo"
+   }
+  ],
+  "hechos": [
+   {
+    "campo": "vehiculo.clase",
+    "cita": "Aveo",
+    "persona": -1,
+    "valor": "sedan_compacto",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.maniobra",
+    "cita": "dio vuelta a la derecha",
+    "persona": -1,
+    "valor": "vuelta_derecha",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.velocidad_kmh",
+    "cita": "como a 20",
+    "persona": -1,
+    "valor": "20",
+    "vehiculo": 0
+   },
+   {
+    "campo": "evento.tipo",
+    "cita": "le pegó con el espejo en el brazo",
+    "persona": -1,
+    "valor": "impacto_vehiculo_persona",
+    "vehiculo": -1
+   },
+   {
+    "campo": "entorno.iluminacion",
+    "cita": "las ocho de la noche",
+    "persona": -1,
+    "valor": "noche",
+    "vehiculo": -1
+   }
+  ],
+  "personas": [
+   {
+    "cita": "Iba cruzando la calle Juárez",
+    "rol": "peaton",
+    "vehiculo": -1
+   },
+   {
+    "cita": "mi mamá",
+    "rol": "peaton",
+    "vehiculo": -1
+   }
+  ],
+  "preguntas": [
+   "¿Había alumbrado público en la calle Juárez a esa hora?",
+   "¿Su mamá y usted iban cruzando juntas, una al lado de la otra?",
+   "¿Desde qué dirección venía el Aveo respecto a donde cruzaban?"
+  ],
+  "vehiculos": [
+   {
+    "narrador": false
+   }
+  ]
+ },
+ "texto_sha256": "1df112d9b372f636e872a1d3f0b8b7da605ef65a1a493692bf6a5d7602cc8a70",
+ "usage": {
+  "cache_creation_input_tokens": 0,
+  "cache_read_input_tokens": 6881,
+  "input_tokens": 182,
+  "output_tokens": 1039
+ }
+}

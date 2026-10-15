@@ -1,0 +1,76 @@
+{
+ "costo_estimado_con": "claude-haiku-5-5",
+ "costo_usd": 0.00081772,
+ "esfuerzo": "medium",
+ "grabado": "2026-10-15T03:35:27+00:00",
+ "huella_prompt": "f6b693169a4199c3",
+ "latencia_ms": 7376.7,
+ "modelo": "claude-haiku-5-5",
+ "modelo_respuesta": "claude-haiku-5-5",
+ "prompt": "extraccion_v1",
+ "request_id": "req_011Cg3KdLS1AgQnZCYZBkLaA",
+ "salida": {
+  "dispositivos": [],
+  "hechos": [
+   {
+    "campo": "vehiculo.clase",
+    "cita": "la troca de mi papá",
+    "persona": -1,
+    "valor": "pickup",
+    "vehiculo": 0
+   },
+   {
+    "campo": "lugar.tipo_via",
+    "cita": "en la lateral",
+    "persona": -1,
+    "valor": "incorporacion",
+    "vehiculo": -1
+   },
+   {
+    "campo": "vehiculo.velocidad_kmh",
+    "cita": "Iba como a 35",
+    "persona": -1,
+    "valor": "35",
+    "vehiculo": 0
+   },
+   {
+    "campo": "evento.tipo",
+    "cita": "Le di a un puesto de tacos",
+    "persona": -1,
+    "valor": "impacto_vehiculo_objeto",
+    "vehiculo": -1
+   },
+   {
+    "campo": "evento.objeto",
+    "cita": "Le di a un puesto de tacos que estaba cerrado",
+    "persona": -1,
+    "valor": "puesto",
+    "vehiculo": -1
+   }
+  ],
+  "personas": [
+   {
+    "cita": "Me llevé la troca de mi papá",
+    "rol": "conductor",
+    "vehiculo": 0
+   }
+  ],
+  "preguntas": [
+   "¿El puesto de tacos era fijo o ambulante?",
+   "¿El vehículo frenó antes de subirse a la banqueta?",
+   "¿El relato de la velocidad de 35 km/h corresponde al momento previo a subirse a la banqueta?"
+  ],
+  "vehiculos": [
+   {
+    "narrador": true
+   }
+  ]
+ },
+ "texto_sha256": "804921e1ead94fce2351539639a73cd0d28d1bc7ed50966e01a3e994143fbba0",
+ "usage": {
+  "cache_creation_input_tokens": 0,
+  "cache_read_input_tokens": 5862,
+  "input_tokens": 141,
+  "output_tokens": 1490
+ }
+}

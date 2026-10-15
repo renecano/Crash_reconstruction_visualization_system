@@ -1,0 +1,69 @@
+{
+ "costo_estimado_con": "claude-sonnet-5-5",
+ "costo_usd": 0.0054584,
+ "esfuerzo": "medium",
+ "grabado": "2026-10-15T00:43:47+00:00",
+ "huella_prompt": "f6b693169a4199c3",
+ "latencia_ms": 3480.4,
+ "modelo": "claude-sonnet-5-5",
+ "modelo_respuesta": "claude-sonnet-5-5",
+ "prompt": "extraccion_v1",
+ "request_id": "req_011Cg36YJ7St6ndBisjVLXcq",
+ "salida": {
+  "dispositivos": [],
+  "hechos": [
+   {
+    "campo": "evento.tipo",
+    "cita": "Mi Versa se volteó",
+    "persona": -1,
+    "valor": "volcadura",
+    "vehiculo": -1
+   },
+   {
+    "campo": "vehiculo.velocidad_kmh",
+    "cita": "como a 5 km/h",
+    "persona": -1,
+    "valor": "5",
+    "vehiculo": 0
+   },
+   {
+    "campo": "entorno.clima",
+    "cita": "estaba despejado",
+    "persona": -1,
+    "valor": "despejado",
+    "vehiculo": -1
+   },
+   {
+    "campo": "vehiculo.frenado",
+    "cita": "no alcancé a frenar",
+    "persona": -1,
+    "valor": "false",
+    "vehiculo": 0
+   }
+  ],
+  "personas": [
+   {
+    "cita": "Yo iba manejando",
+    "rol": "conductor",
+    "vehiculo": 0
+   }
+  ],
+  "preguntas": [
+   "¿En qué tipo de vía ocurrió (recta, curva, intersección)?",
+   "¿Qué estaba pasando en el camino justo antes de que el vehículo se ladeara (curva, tope, bache, maniobra)?",
+   "¿Hacia qué lado se volcó el vehículo?"
+  ],
+  "vehiculos": [
+   {
+    "narrador": true
+   }
+  ]
+ },
+ "texto_sha256": "27934d2207052c1cc243cc7166895fa80813ead729d61a793eb8f8f91f99d49d",
+ "usage": {
+  "cache_creation_input_tokens": 0,
+  "cache_read_input_tokens": 5862,
+  "input_tokens": 168,
+  "output_tokens": 395
+ }
+}

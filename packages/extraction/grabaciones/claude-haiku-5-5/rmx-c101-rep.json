@@ -1,0 +1,81 @@
+{
+ "costo_estimado_con": "claude-haiku-5-5",
+ "costo_usd": 0.00082352,
+ "esfuerzo": "medium",
+ "grabado": "2026-10-15T02:00:44+00:00",
+ "huella_prompt": "f6b693169a4199c3",
+ "latencia_ms": 6877.4,
+ "modelo": "claude-haiku-5-5",
+ "modelo_respuesta": "claude-haiku-5-5",
+ "prompt": "extraccion_v1",
+ "request_id": "req_011Cg3CQTzVVMSD5SMmMi9Xv",
+ "salida": {
+  "dispositivos": [],
+  "hechos": [
+   {
+    "campo": "vehiculo.clase",
+    "cita": "sedán mediano WRX",
+    "persona": -1,
+    "valor": "sedan_mediano",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.velocidad_kmh",
+    "cita": "iba como a 110",
+    "persona": -1,
+    "valor": "110",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.maniobra",
+    "cita": "iba derecho",
+    "persona": -1,
+    "valor": "recto",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.zona_impacto",
+    "cita": "le pegué con el frente",
+    "persona": -1,
+    "valor": "F",
+    "vehiculo": 0
+   },
+   {
+    "campo": "evento.tipo",
+    "cita": "le pegué",
+    "persona": -1,
+    "valor": "impacto_vehiculo_persona",
+    "vehiculo": -1
+   }
+  ],
+  "personas": [
+   {
+    "cita": "Yo venía manejando",
+    "rol": "conductor",
+    "vehiculo": 0
+   },
+   {
+    "cita": "a una muchacha",
+    "rol": "peaton",
+    "vehiculo": -1
+   }
+  ],
+  "preguntas": [
+   "¿Había semáforo, paso peatonal o alguna señal en el lugar del percance?",
+   "¿Qué tipo de vía era el lugar: calle, avenida, cruce o alguna otra?",
+   "¿Cómo estaban la superficie de la calle, el clima y la iluminación al momento del percance?"
+  ],
+  "vehiculos": [
+   {
+    "narrador": true
+   }
+  ]
+ },
+ "texto_sha256": "5034b1471d3eddae4cee5a1dfec0ad986de9a1b999589a07c4585ec198ff02ba",
+ "usage": {
+  "cache_creation_input_tokens": 0,
+  "cache_read_input_tokens": 5862,
+  "input_tokens": 179,
+  "output_tokens": 1494
+ }
+}

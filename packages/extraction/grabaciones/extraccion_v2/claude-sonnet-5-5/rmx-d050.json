@@ -1,0 +1,76 @@
+{
+ "costo_estimado_con": "claude-sonnet-5-5",
+ "costo_usd": 0.0060822,
+ "esfuerzo": "medium",
+ "grabado": "2026-10-15T01:08:37+00:00",
+ "huella_prompt": "5816b86ad0e718ee",
+ "latencia_ms": 3070.9,
+ "modelo": "claude-sonnet-5-5",
+ "modelo_respuesta": "claude-sonnet-5-5",
+ "prompt": "extraccion_v2",
+ "request_id": "req_011Cg38SAvAvNbE65TLrkehR",
+ "salida": {
+  "dispositivos": [],
+  "hechos": [
+   {
+    "campo": "vehiculo.clase",
+    "cita": "camioneta de redilas",
+    "persona": -1,
+    "valor": "suv_o_pickup",
+    "vehiculo": 0
+   },
+   {
+    "campo": "evento.tipo",
+    "cita": "la camioneta se volco",
+    "persona": -1,
+    "valor": "volcadura",
+    "vehiculo": -1
+   },
+   {
+    "campo": "entorno.iluminacion",
+    "cita": "era de noche y no habia luz",
+    "persona": -1,
+    "valor": "noche_sin_alumbrado",
+    "vehiculo": -1
+   },
+   {
+    "campo": "persona.cinturon",
+    "cita": "sin cinturon",
+    "persona": 0,
+    "valor": "false",
+    "vehiculo": -1
+   },
+   {
+    "campo": "vehiculo.velocidad_kmh",
+    "cita": "iba como a 100",
+    "persona": -1,
+    "valor": "100",
+    "vehiculo": 0
+   }
+  ],
+  "personas": [
+   {
+    "cita": "mi tio venia en su camioneta de redilas",
+    "rol": "conductor",
+    "vehiculo": 0
+   }
+  ],
+  "preguntas": [
+   "¿La carretera tenía uno o dos carriles por sentido?",
+   "¿El pavimento estaba seco o mojado?",
+   "¿Dónde quedó la camioneta al terminar de dar vueltas respecto a la carretera?"
+  ],
+  "vehiculos": [
+   {
+    "narrador": false
+   }
+  ]
+ },
+ "texto_sha256": "5c9ed57f7b654c349aef7f962f114dcb970e2c841f913c63a69a940d6dcdb8c7",
+ "usage": {
+  "cache_creation_input_tokens": 0,
+  "cache_read_input_tokens": 6881,
+  "input_tokens": 128,
+  "output_tokens": 445
+ }
+}

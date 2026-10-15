@@ -1,0 +1,86 @@
+{
+ "costo_estimado_con": "claude-sonnet-5-5",
+ "costo_usd": 0.0070402,
+ "esfuerzo": "medium",
+ "grabado": "2026-10-15T01:53:19+00:00",
+ "huella_prompt": "5816b86ad0e718ee",
+ "latencia_ms": 3966.5,
+ "modelo": "claude-sonnet-5-5",
+ "modelo_respuesta": "claude-sonnet-5-5",
+ "prompt": "extraccion_v2",
+ "request_id": "req_011Cg3BqrLjEoeGTWN5jPkxR",
+ "salida": {
+  "dispositivos": [
+   {
+    "cita": "el semáforo",
+    "tipo": "semaforo"
+   }
+  ],
+  "hechos": [
+   {
+    "campo": "entorno.iluminacion",
+    "cita": "a plena luz del día",
+    "persona": -1,
+    "valor": "dia",
+    "vehiculo": -1
+   },
+   {
+    "campo": "vehiculo.clase",
+    "cita": "un sedán mediano",
+    "persona": -1,
+    "valor": "sedan_mediano",
+    "vehiculo": 0
+   },
+   {
+    "campo": "lugar.superficie",
+    "cita": "La calle es de asfalto",
+    "persona": -1,
+    "valor": "asfalto",
+    "vehiculo": -1
+   },
+   {
+    "campo": "lugar.tipo_via",
+    "cita": "cruce de cuatro esquinas",
+    "persona": -1,
+    "valor": "interseccion_x",
+    "vehiculo": -1
+   },
+   {
+    "campo": "evento.tipo",
+    "cita": "fue golpeado por mi vehículo",
+    "persona": -1,
+    "valor": "impacto_vehiculo_persona",
+    "vehiculo": -1
+   }
+  ],
+  "personas": [
+   {
+    "cita": "conducía mi Maxima",
+    "rol": "conductor",
+    "vehiculo": 0
+   },
+   {
+    "cita": "un joven que iba cruzando a pie",
+    "rol": "peaton",
+    "vehiculo": -1
+   }
+  ],
+  "preguntas": [
+   "¿Qué color tenía el semáforo para su sentido cuando ocurrió el percance?",
+   "¿A qué velocidad aproximada circulaba su vehículo al llegar al cruce?",
+   "¿Qué parte de su vehículo golpeó al peatón?"
+  ],
+  "vehiculos": [
+   {
+    "narrador": true
+   }
+  ]
+ },
+ "texto_sha256": "56425417e4810e771f61fe1837854de55b413d9c5a78ebd388908bab87419e40",
+ "usage": {
+  "cache_creation_input_tokens": 0,
+  "cache_read_input_tokens": 6881,
+  "input_tokens": 222,
+  "output_tokens": 522
+ }
+}

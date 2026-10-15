@@ -10,6 +10,8 @@ def main(argv: list[str] | None = None) -> int:
     reconfigure = getattr(sys.stdout, "reconfigure", None)
     if reconfigure is not None:
         reconfigure(encoding="utf-8")
+    from croquis_extraction.claude_client import PROMPT_VERSION, PROMPT_VERSIONS
+
     parser = argparse.ArgumentParser(prog="croquis-eval", description="Evaluaciones de Croquis")
     sub = parser.add_subparsers(dest="command", required=True)
     sub.add_parser(
@@ -20,12 +22,19 @@ def main(argv: list[str] | None = None) -> int:
     sub.add_parser("e3-ciss", help="E3: ΔV desde el daño contra el EDR y WinSmash (NHTSA CISS)")
     sub.add_parser("f7-inversion", help="F7: inversión, consistencia y tiempos en las escenas")
     e1 = sub.add_parser("e1-extraction", help="E1: extracción del relato en Relatos-MX")
-    e1.add_argument("--split", choices=["dev", "test"], default="test")
+    e1.add_argument("--split", choices=["dev", "test", "ciss"], default="test")
     e1.add_argument(
         "--pipeline",
         choices=["ts", "py"],
         default="ts",
         help="ts: el pipeline de producción (por omisión); py: la referencia Python, para comparar",
+    )
+    e1.add_argument(
+        "--prompt",
+        choices=list(PROMPT_VERSIONS),
+        default=PROMPT_VERSION,
+        help="Versión del prompt cuyas respuestas grabadas se puntúan (por omisión, la de "
+        "producción)",
     )
     args = parser.parse_args(argv)
     if args.command == "atus-summary":
@@ -41,7 +50,7 @@ def main(argv: list[str] | None = None) -> int:
     if args.command == "e1-extraction":
         from croquis_eval.e1_extraction import main as run_e1
 
-        print(run_e1(args.split, args.pipeline))
+        print(run_e1(args.split, args.pipeline, args.prompt))
         return 0
     if args.command == "e3-ciss":
         from croquis_eval.e3_ciss import main as run_e3

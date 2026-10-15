@@ -1,0 +1,99 @@
+{
+ "costo_estimado_con": "claude-sonnet-5-5",
+ "costo_usd": 0.0080964,
+ "esfuerzo": "medium",
+ "grabado": "2026-10-15T03:18:51+00:00",
+ "huella_prompt": "f6b693169a4199c3",
+ "latencia_ms": 4161.9,
+ "modelo": "claude-sonnet-5-5",
+ "modelo_respuesta": "claude-sonnet-5-5",
+ "prompt": "extraccion_v1",
+ "request_id": "req_011Cg3JN8MgAUkGh8h5BWqaS",
+ "salida": {
+  "dispositivos": [
+   {
+    "cita": "por la cebra",
+    "tipo": "paso_peatonal"
+   },
+   {
+    "cita": "con el verde para peatones",
+    "tipo": "semaforo"
+   }
+  ],
+  "hechos": [
+   {
+    "campo": "vehiculo.clase",
+    "cita": "un Sentra plateado",
+    "persona": -1,
+    "valor": "sedan_compacto",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.color",
+    "cita": "un Sentra plateado",
+    "persona": -1,
+    "valor": "plateado",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.maniobra",
+    "cita": "dio vuelta a la derecha",
+    "persona": -1,
+    "valor": "vuelta_derecha",
+    "vehiculo": 0
+   },
+   {
+    "campo": "evento.tipo",
+    "cita": "Lo golpeó despacio con la defensa",
+    "persona": -1,
+    "valor": "impacto_vehiculo_persona",
+    "vehiculo": -1
+   },
+   {
+    "campo": "vehiculo.zona_impacto",
+    "cita": "con la defensa",
+    "persona": -1,
+    "valor": "F",
+    "vehiculo": 0
+   },
+   {
+    "campo": "evidencias.distancia_proyeccion_m",
+    "cita": "cayó como a un metro",
+    "persona": -1,
+    "valor": "1",
+    "vehiculo": -1
+   },
+   {
+    "campo": "entorno.iluminacion",
+    "cita": "las cinco de la tarde",
+    "persona": -1,
+    "valor": "dia",
+    "vehiculo": -1
+   }
+  ],
+  "personas": [
+   {
+    "cita": "un señor con bolsas del mercado iba cruzando la avenida Madero por la cebra",
+    "rol": "peaton",
+    "vehiculo": -1
+   }
+  ],
+  "preguntas": [
+   "¿La defensa del Sentra golpeó al peatón de frente o de costado al dar la vuelta?",
+   "¿Aproximadamente a qué velocidad iba el Sentra al momento del contacto?",
+   "¿El conductor del Sentra frenó antes de tocar al peatón?"
+  ],
+  "vehiculos": [
+   {
+    "narrador": false
+   }
+  ]
+ },
+ "texto_sha256": "88cdbf7c6a1a60b99e431198992f1f3b1b8f34477c01383f2b5497d7fdad9a35",
+ "usage": {
+  "cache_creation_input_tokens": 0,
+  "cache_read_input_tokens": 5862,
+  "input_tokens": 172,
+  "output_tokens": 658
+ }
+}

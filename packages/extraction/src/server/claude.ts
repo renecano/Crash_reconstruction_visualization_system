@@ -67,6 +67,7 @@ export async function callClaude(
   model: string = DEFAULT_MODEL,
   effort: Effort = DEFAULT_EFFORT,
   onProgress?: Progress,
+  prompt: string = PROMPT_VERSION,
 ): Promise<Recording> {
   if (!(model in PRICES)) throw new LLMError(`Modelo no soportado: ${model}`);
   const params = {
@@ -75,7 +76,7 @@ export async function callClaude(
     system: [
       {
         type: "text" as const,
-        text: systemPrompt(),
+        text: systemPrompt(prompt),
         cache_control: { type: "ephemeral" as const },
       },
     ],
@@ -123,8 +124,8 @@ export async function callClaude(
   return {
     modelo: model,
     modelo_respuesta: served,
-    prompt: PROMPT_VERSION,
-    huella_prompt: promptFingerprint(),
+    prompt,
+    huella_prompt: promptFingerprint(prompt),
     esfuerzo: effort,
     texto_sha256: sha256Hex(text),
     salida,
@@ -147,6 +148,8 @@ export interface ExtractOptions {
   budget?: number;
   budgetStore: BudgetStore;
   onProgress?: Progress;
+  /** Versión del prompt; por omisión la de producción. */
+  prompt?: string;
 }
 
 /** Registro de extracción para `text` (ya redactado) según el modo. */
@@ -158,7 +161,8 @@ export async function extract(
 ): Promise<Recording> {
   const mode = opts.mode ?? ((process.env.CROQUIS_LLM_MODO as Mode | undefined) || "replay");
   const root = opts.root ?? RECORDINGS;
-  if (mode === "replay") return loadRecording(model, key, text, root);
+  const prompt = opts.prompt ?? PROMPT_VERSION;
+  if (mode === "replay") return loadRecording(model, key, text, root, prompt);
   if (mode !== "record" && mode !== "live") throw new LLMError(`Modo desconocido: ${String(mode)}`);
   const cap = opts.budget ?? budgetUsd();
   if (cap <= 0 || (await opts.budgetStore.spentToday()) >= cap) {
@@ -167,7 +171,14 @@ export async function extract(
     );
   }
   const client = opts.client ?? new Anthropic();
-  const rec = await callClaude(client, text, model, opts.effort ?? DEFAULT_EFFORT, opts.onProgress);
+  const rec = await callClaude(
+    client,
+    text,
+    model,
+    opts.effort ?? DEFAULT_EFFORT,
+    opts.onProgress,
+    prompt,
+  );
   await opts.budgetStore.charge(rec.costo_usd);
   if (mode === "record") saveRecording(rec, key, root);
   return rec;

@@ -1,0 +1,83 @@
+{
+ "costo_estimado_con": "claude-sonnet-5-5",
+ "costo_usd": 0.0062624,
+ "esfuerzo": "medium",
+ "grabado": "2026-10-15T00:48:03+00:00",
+ "huella_prompt": "f6b693169a4199c3",
+ "latencia_ms": 2940.8,
+ "modelo": "claude-sonnet-5-5",
+ "modelo_respuesta": "claude-sonnet-5-5",
+ "prompt": "extraccion_v1",
+ "request_id": "req_011Cg36sAiUaEHyr4zgrq8Ta",
+ "salida": {
+  "dispositivos": [],
+  "hechos": [
+   {
+    "campo": "entorno.iluminacion",
+    "cita": "era de noche, con el alumbrado prendido",
+    "persona": -1,
+    "valor": "noche_con_alumbrado",
+    "vehiculo": -1
+   },
+   {
+    "campo": "vehiculo.clase",
+    "cita": "F-150",
+    "persona": -1,
+    "valor": "pickup",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.velocidad_kmh",
+    "cita": "como a 75",
+    "persona": -1,
+    "valor": "75",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.frenado",
+    "cita": "frene",
+    "persona": -1,
+    "valor": "true",
+    "vehiculo": 0
+   },
+   {
+    "campo": "evento.tipo",
+    "cita": "me fui contra un poste",
+    "persona": -1,
+    "valor": "impacto_vehiculo_objeto",
+    "vehiculo": -1
+   },
+   {
+    "campo": "evento.objeto",
+    "cita": "un poste",
+    "persona": -1,
+    "valor": "poste",
+    "vehiculo": -1
+   }
+  ],
+  "personas": [
+   {
+    "cita": "yo venia en mi F-150",
+    "rol": "conductor",
+    "vehiculo": 0
+   }
+  ],
+  "preguntas": [
+   "¿Qué parte de la camioneta golpeó el poste?",
+   "¿Qué tipo de vía era y cuántos carriles tenía?",
+   "¿Cómo estaba la superficie de la calle (seca o mojada)?"
+  ],
+  "vehiculos": [
+   {
+    "narrador": true
+   }
+  ]
+ },
+ "texto_sha256": "52bc4d734ecf4e1b7facd2a67086e87168c2aa69c840a5ede4a69a50f1ad871f",
+ "usage": {
+  "cache_creation_input_tokens": 0,
+  "cache_read_input_tokens": 5862,
+  "input_tokens": 135,
+  "output_tokens": 482
+ }
+}

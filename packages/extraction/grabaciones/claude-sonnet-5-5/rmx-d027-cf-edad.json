@@ -1,0 +1,74 @@
+{
+ "costo_estimado_con": "claude-sonnet-5-5",
+ "costo_usd": 0.0063044,
+ "esfuerzo": "medium",
+ "grabado": "2026-10-15T03:17:50+00:00",
+ "huella_prompt": "f6b693169a4199c3",
+ "latencia_ms": 3094.9,
+ "modelo": "claude-sonnet-5-5",
+ "modelo_respuesta": "claude-sonnet-5-5",
+ "prompt": "extraccion_v1",
+ "request_id": "req_011Cg3JHjnWFuzY2Z9ZjEiRh",
+ "salida": {
+  "dispositivos": [
+   {
+    "cita": "paso peatonal",
+    "tipo": "paso_peatonal"
+   }
+  ],
+  "hechos": [
+   {
+    "campo": "entorno.iluminacion",
+    "cita": "La calle cuenta con alumbrado, aunque escaso",
+    "persona": -1,
+    "valor": "noche_con_alumbrado",
+    "vehiculo": -1
+   },
+   {
+    "campo": "evento.tipo",
+    "cita": "atropelló a una señora de edad avanzada",
+    "persona": -1,
+    "valor": "impacto_vehiculo_persona",
+    "vehiculo": -1
+   },
+   {
+    "campo": "evidencias.distancia_proyeccion_m",
+    "cita": "cayó a unos cuatro metros del punto del impacto",
+    "persona": -1,
+    "valor": "4",
+    "vehiculo": -1
+   },
+   {
+    "campo": "vehiculo.zona_impacto",
+    "cita": "atropelló a una señora de edad avanzada",
+    "persona": -1,
+    "valor": "F",
+    "vehiculo": 0
+   }
+  ],
+  "personas": [
+   {
+    "cita": "una señora de edad avanzada que cruzaba por el paso peatonal",
+    "rol": "peaton",
+    "vehiculo": -1
+   }
+  ],
+  "preguntas": [
+   "¿El taxi colectivo era un sedán, una van o un microbús?",
+   "¿Aproximadamente a qué velocidad circulaba el taxi en km/h?",
+   "¿Frenó el taxi antes del impacto?"
+  ],
+  "vehiculos": [
+   {
+    "narrador": false
+   }
+  ]
+ },
+ "texto_sha256": "1de6d3e1d10ce0813293c3c5ca0cfaa97121e21adaac0a4e63507b9cbd4fa5f1",
+ "usage": {
+  "cache_creation_input_tokens": 0,
+  "cache_read_input_tokens": 5862,
+  "input_tokens": 196,
+  "output_tokens": 474
+ }
+}

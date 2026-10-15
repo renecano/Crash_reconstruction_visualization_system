@@ -110,6 +110,28 @@ def test_prompt_estable_incluye_glosario_y_valores() -> None:
     assert cc.prompt_fingerprint() == cc.prompt_fingerprint()
 
 
+def test_prompt_v2_agrega_la_tabla_de_modelos_y_graba_aparte(tmp_path: Path) -> None:
+    v1, v2 = cc.system_prompt("extraccion_v1"), cc.system_prompt("extraccion_v2")
+    assert "{MODELOS}" not in v2
+    assert "- aveo → sedan_compacto" in v2
+    assert "- aveo → sedan_compacto" not in v1
+    assert cc.prompt_fingerprint("extraccion_v1") != cc.prompt_fingerprint("extraccion_v2")
+    # v2 es el de producción (ADR 0012).
+    assert cc.PROMPT_VERSION == "extraccion_v2"
+    assert cc.system_prompt() == v2
+    # Las grabaciones de v1 se quedan donde estaban; las de v2 van en su carpeta.
+    assert cc.recording_path("claude-haiku-5-5", "k", tmp_path, "extraccion_v1") == (
+        tmp_path / "claude-haiku-5-5" / "k.json"
+    )
+    assert (
+        cc.recording_path("claude-haiku-5-5", "k", tmp_path)
+        == cc.recording_path("claude-haiku-5-5", "k", tmp_path, "extraccion_v2")
+        == tmp_path / "extraccion_v2" / "claude-haiku-5-5" / "k.json"
+    )
+    with pytest.raises(cc.LLMError, match="desconocida"):
+        cc.system_prompt("extraccion_v9")
+
+
 def test_conversion_a_hechos_degrada_y_descarta() -> None:
     facts, conv = cc.facts_from_output(OUTPUT, TEXT)
     assert facts.narrador_vehiculo == 0
@@ -187,3 +209,57 @@ def test_rechazo_y_truncado_son_errores(tmp_path: Path, monkeypatch: pytest.Monk
 def test_clave_invalida() -> None:
     with pytest.raises(cc.LLMError):
         cc.recording_path("claude-haiku-5-5", "../fuera")
+
+
+def test_libro_de_gasto_no_pierde_cargos_con_grabadores_en_paralelo(tmp_path: Path) -> None:
+    """Varios hilos cobrando a la vez: el total es exacto y no queda candado ni temporal."""
+    import threading
+
+    ledger = tmp_path / "gasto.json"
+    charges = [0.001 * (i % 7 + 1) for i in range(200)]
+
+    def work(part: list[float]) -> None:
+        for usd in part:
+            cc._charge(ledger, usd)  # pyright: ignore[reportPrivateUsage]
+
+    threads = [threading.Thread(target=work, args=(charges[i::4],)) for i in range(4)]
+    for th in threads:
+        th.start()
+    for th in threads:
+        th.join()
+    assert cc._spent_today(ledger) == pytest.approx(sum(charges), abs=1e-6)  # pyright: ignore[reportPrivateUsage]
+    assert sorted(x.name for x in tmp_path.iterdir()) == ["gasto.json"]
+
+
+def test_candado_abandonado_se_recupera(tmp_path: Path) -> None:
+    import os
+
+    ledger = tmp_path / "gasto.json"
+    lock = tmp_path / "gasto.json.lock"
+    lock.write_text("", encoding="utf-8")
+    old = lock.stat().st_mtime - cc.LOCK_STALE_S - 1
+    os.utime(lock, (old, old))
+    cc._charge(ledger, 0.5)  # pyright: ignore[reportPrivateUsage]
+    assert cc._spent_today(ledger) == 0.5  # pyright: ignore[reportPrivateUsage]
+    assert not lock.exists()
+
+
+def test_candado_ocupado_en_windows_se_reintenta(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    """Abrir un candado que otro proceso está borrando da PermissionError en Windows: se espera
+    y se reintenta en vez de perder el cargo."""
+    import os
+
+    real_open = os.open
+    fails = iter([True, True])
+
+    def flaky_open(path: str, flags: int, *args: int) -> int:
+        if str(path).endswith(".lock") and next(fails, False):
+            raise PermissionError(13, "Permission denied", str(path))
+        return real_open(path, flags, *args)
+
+    monkeypatch.setattr(os, "open", flaky_open)
+    ledger = tmp_path / "gasto.json"
+    cc._charge(ledger, 0.25)  # pyright: ignore[reportPrivateUsage]
+    assert cc._spent_today(ledger) == 0.25  # pyright: ignore[reportPrivateUsage]

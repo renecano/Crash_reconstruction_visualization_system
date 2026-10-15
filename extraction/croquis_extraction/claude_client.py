@@ -25,6 +25,8 @@ import json
 import os
 import re
 import time
+from collections.abc import Generator
+from contextlib import contextmanager
 from dataclasses import dataclass, field
 from functools import cache
 from pathlib import Path
@@ -37,8 +39,12 @@ from croquis_extraction.text import load_json
 ROOT = Path(__file__).resolve().parents[2]
 RECORDINGS = ROOT / "packages" / "extraction" / "grabaciones"
 LEDGER = RECORDINGS / "gasto.json"
-PROMPT_FILE = ROOT / "packages" / "extraction" / "prompts" / "extraccion_v1.md"
-PROMPT_VERSION = "extraccion_v1"
+PROMPTS_DIR = ROOT / "packages" / "extraction" / "prompts"
+# v2 es el prompt de producción: superó a v1 en dev y se midió después en el test CISS (ADR 0012).
+# Las grabaciones de v1 viven en grabaciones/<modelo>/ y las de otras versiones en
+# grabaciones/<versión>/<modelo>/.
+PROMPT_VERSION = "extraccion_v2"
+PROMPT_VERSIONS = ("extraccion_v1", "extraccion_v2")
 SCHEMA_FILE = ROOT / "packages" / "scene-schema" / "escena.schema.json"
 DEFAULT_MODEL = "claude-sonnet-5-5"
 MODELS = ("claude-sonnet-5-5", "claude-haiku-5-5")
@@ -210,21 +216,38 @@ def _values_doc() -> str:
     return "\n".join(lines)
 
 
+def _check_prompt(prompt: str) -> None:
+    if prompt not in PROMPT_VERSIONS:
+        msg = f"Versión de prompt desconocida: {prompt}"
+        raise LLMError(msg)
+
+
+def _models_doc() -> str:
+    """Tabla modelo → clase de `modelos.json` (la misma que usa la línea base de reglas)."""
+    models: dict[str, dict[str, str]] = load_json("modelos.json")["modelos"]
+    return "\n".join(f"- {name} → {m['clase']}" for name, m in models.items())
+
+
 @cache
-def system_prompt() -> str:
-    """Prompt de sistema estable (se cachea): instrucciones, valores válidos y glosario."""
+def system_prompt(prompt: str = PROMPT_VERSION) -> str:
+    """Prompt de sistema estable (se cachea): instrucciones, valores válidos, glosario y, desde
+    v2, la tabla de modelos."""
+    _check_prompt(prompt)
     lines: list[str] = []
     for e in load_json("glosario.json")["entradas"]:
         effects = ", ".join(f"{x['campo']}={x['valor']}" for x in e["efectos"])
         lines.append(f"- {e['significado']}" + (f" → {effects}" if effects else ""))
     gl = "\n".join(lines)
-    base = PROMPT_FILE.read_text(encoding="utf-8").replace("{GLOSARIO}", gl)
+    base = (PROMPTS_DIR / f"{prompt}.md").read_text(encoding="utf-8").replace("{GLOSARIO}", gl)
+    base = base.replace("{MODELOS}", _models_doc())
     return base + "\n\n" + _values_doc() + "\n"
 
 
-def prompt_fingerprint() -> str:
+def prompt_fingerprint(prompt: str = PROMPT_VERSION) -> str:
     """Huella del prompt y del esquema: una grabación solo vale para la misma huella."""
-    payload = system_prompt() + json.dumps(output_schema(), sort_keys=True) + glossary_version()
+    payload = (
+        system_prompt(prompt) + json.dumps(output_schema(), sort_keys=True) + glossary_version()
+    )
     return hashlib.sha256(payload.encode("utf-8")).hexdigest()[:16]
 
 
@@ -357,15 +380,21 @@ def _text_sha(text: str) -> str:
     return hashlib.sha256(text.encode("utf-8")).hexdigest()
 
 
-def recording_path(model: str, key: str, root: Path = RECORDINGS) -> Path:
+def recording_path(
+    model: str, key: str, root: Path = RECORDINGS, prompt: str = PROMPT_VERSION
+) -> Path:
     if not re.fullmatch(r"[A-Za-z0-9_-]{1,80}", key):
         msg = f"Clave de grabación inválida: {key!r}"
         raise LLMError(msg)
-    return root / model / f"{key}.json"
+    _check_prompt(prompt)
+    base = root if prompt == "extraccion_v1" else root / prompt
+    return base / model / f"{key}.json"
 
 
-def load_recording(model: str, key: str, text: str, root: Path = RECORDINGS) -> dict[str, Any]:
-    path = recording_path(model, key, root)
+def load_recording(
+    model: str, key: str, text: str, root: Path = RECORDINGS, prompt: str = PROMPT_VERSION
+) -> dict[str, Any]:
+    path = recording_path(model, key, root, prompt)
     if not path.exists():
         msg = (
             f"Sin respuesta grabada para {model}/{key} (requiere ANTHROPIC_API_KEY y modo record)."
@@ -375,29 +404,85 @@ def load_recording(model: str, key: str, text: str, root: Path = RECORDINGS) -> 
     if rec.get("texto_sha256") != _text_sha(text):
         msg = f"La grabación {model}/{key} es de otro texto; vuelve a grabarla."
         raise LLMError(msg)
-    if rec.get("huella_prompt") != prompt_fingerprint():
+    if rec.get("huella_prompt") != prompt_fingerprint(prompt):
         msg = f"La grabación {model}/{key} es de otra versión del prompt o del esquema."
         raise LLMError(msg)
     return rec
 
 
-def _spent_today(ledger: Path) -> float:
+LOCK_TIMEOUT_S = 30.0
+LOCK_STALE_S = 120.0
+
+
+@contextmanager
+def _ledger_lock(ledger: Path) -> Generator[None]:
+    """Candado exclusivo del libro de gasto para varios grabadores a la vez (un archivo creado
+    con O_EXCL; uno abandonado por un proceso muerto se considera viejo a los 2 minutos)."""
+    lock = ledger.with_name(ledger.name + ".lock")
+    lock.parent.mkdir(parents=True, exist_ok=True)
+    deadline = time.monotonic() + LOCK_TIMEOUT_S
+    while True:
+        try:
+            fd = os.open(lock, os.O_CREAT | os.O_EXCL | os.O_WRONLY)
+            break
+        except FileExistsError, PermissionError:
+            # En Windows, abrir un candado que otro está borrando da PermissionError: está ocupado.
+            try:
+                if time.time() - lock.stat().st_mtime > LOCK_STALE_S:
+                    lock.unlink(missing_ok=True)
+                    continue
+            except FileNotFoundError, PermissionError:
+                pass
+            if time.monotonic() > deadline:
+                msg = f"No se pudo tomar el candado del libro de gasto ({lock})."
+                raise LLMError(msg) from None
+            time.sleep(0.05)
+    try:
+        yield
+    finally:
+        os.close(fd)
+        lock.unlink(missing_ok=True)
+
+
+def _read_ledger(ledger: Path) -> dict[str, float]:
     if not ledger.exists():
-        return 0.0
-    data = json.loads(ledger.read_text(encoding="utf-8"))
-    return float(data.get(dt.date.today().isoformat(), 0.0))
+        return {}
+    data: dict[str, float] = json.loads(ledger.read_text(encoding="utf-8"))
+    return data
+
+
+def _spent_today(ledger: Path) -> float:
+    # También bajo candado: en Windows, leer mientras otro reemplaza el archivo puede fallar.
+    with _ledger_lock(ledger):
+        return float(_read_ledger(ledger).get(dt.date.today().isoformat(), 0.0))
+
+
+def _replace(src: Path, dst: Path) -> None:
+    """os.replace con reintentos: en Windows falla si otro programa (un antivirus, el indexador)
+    tiene abierto el destino un instante."""
+    deadline = time.monotonic() + LOCK_TIMEOUT_S
+    while True:
+        try:
+            os.replace(src, dst)
+            return
+        except PermissionError:
+            if time.monotonic() > deadline:
+                raise
+            time.sleep(0.05)
 
 
 def _charge(ledger: Path, usd: float) -> None:
-    data: dict[str, float] = (
-        json.loads(ledger.read_text(encoding="utf-8")) if ledger.exists() else {}
-    )
-    today = dt.date.today().isoformat()
-    data[today] = round(data.get(today, 0.0) + usd, 8)
-    ledger.parent.mkdir(parents=True, exist_ok=True)
-    ledger.write_text(
-        json.dumps(data, indent=2, sort_keys=True) + "\n", encoding="utf-8", newline="\n"
-    )
+    """Suma al gasto del día. Bajo candado y con escritura atómica: varios grabadores pueden
+    correr a la vez sin perder cargos ni leer el archivo a medio escribir."""
+    with _ledger_lock(ledger):
+        data = _read_ledger(ledger)
+        today = dt.date.today().isoformat()
+        data[today] = round(data.get(today, 0.0) + usd, 8)
+        tmp = ledger.with_name(f"{ledger.name}.{os.getpid()}.tmp")
+        tmp.write_text(
+            json.dumps(data, indent=2, sort_keys=True) + "\n", encoding="utf-8", newline="\n"
+        )
+        _replace(tmp, ledger)
 
 
 def budget_usd() -> float:
@@ -405,7 +490,11 @@ def budget_usd() -> float:
 
 
 def call_claude(
-    client: ClientLike, text: str, model: str = DEFAULT_MODEL, effort: str = DEFAULT_EFFORT
+    client: ClientLike,
+    text: str,
+    model: str = DEFAULT_MODEL,
+    effort: str = DEFAULT_EFFORT,
+    prompt: str = PROMPT_VERSION,
 ) -> dict[str, Any]:
     """Una petición a la API con salida estructurada; devuelve el registro (sin escribirlo)."""
     if model not in PRICES:
@@ -415,7 +504,7 @@ def call_claude(
         "model": model,
         "max_tokens": MAX_TOKENS,
         "system": [
-            {"type": "text", "text": system_prompt(), "cache_control": {"type": "ephemeral"}}
+            {"type": "text", "text": system_prompt(prompt), "cache_control": {"type": "ephemeral"}}
         ],
         "messages": [{"role": "user", "content": f"Relato:\n\n{text}"}],
         "output_config": {
@@ -451,8 +540,8 @@ def call_claude(
     return {
         "modelo": model,
         "modelo_respuesta": served,
-        "prompt": PROMPT_VERSION,
-        "huella_prompt": prompt_fingerprint(),
+        "prompt": prompt,
+        "huella_prompt": prompt_fingerprint(prompt),
         "esfuerzo": effort,
         "texto_sha256": _text_sha(text),
         "salida": salida,
@@ -476,11 +565,12 @@ def extract(
     root: Path = RECORDINGS,
     effort: str = DEFAULT_EFFORT,
     budget: float | None = None,
+    prompt: str = PROMPT_VERSION,
 ) -> dict[str, Any]:
     """Registro de extracción para `text` (ya redactado) según el modo; ver el docstring."""
     mode = mode or os.environ.get("CROQUIS_LLM_MODO", "replay")
     if mode == "replay":
-        return load_recording(model, key, text, root)
+        return load_recording(model, key, text, root, prompt)
     if mode not in ("record", "live"):
         msg = f"Modo desconocido: {mode}"
         raise LLMError(msg)
@@ -495,10 +585,10 @@ def extract(
         import anthropic
 
         client = anthropic.Anthropic()
-    rec = call_claude(client, text, model, effort)
+    rec = call_claude(client, text, model, effort, prompt)
     _charge(ledger, float(rec["costo_usd"]))
     if mode == "record":
-        path = recording_path(model, key, root)
+        path = recording_path(model, key, root, prompt)
         path.parent.mkdir(parents=True, exist_ok=True)
         path.write_text(
             json.dumps(rec, ensure_ascii=False, indent=1, sort_keys=True) + "\n",

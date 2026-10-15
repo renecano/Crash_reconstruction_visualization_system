@@ -1,0 +1,66 @@
+{
+ "costo_estimado_con": "claude-haiku-5-5",
+ "costo_usd": 0.00105182,
+ "esfuerzo": "medium",
+ "grabado": "2026-10-15T03:31:23+00:00",
+ "huella_prompt": "f6b693169a4199c3",
+ "latencia_ms": 10091.5,
+ "modelo": "claude-haiku-5-5",
+ "modelo_respuesta": "claude-haiku-5-5",
+ "prompt": "extraccion_v1",
+ "request_id": "req_011Cg3KKBmMYaU7aBUWgQMtW",
+ "salida": {
+  "dispositivos": [],
+  "hechos": [
+   {
+    "campo": "vehiculo.clase",
+    "cita": "Una moto",
+    "persona": -1,
+    "valor": "motocicleta",
+    "vehiculo": 1
+   },
+   {
+    "campo": "evento.tipo",
+    "cita": "Una moto me pegó en el espejo derecho",
+    "persona": -1,
+    "valor": "impacto_vehiculo_vehiculo",
+    "vehiculo": -1
+   },
+   {
+    "campo": "vehiculo.zona_impacto",
+    "cita": "me pegó en el espejo derecho",
+    "persona": -1,
+    "valor": "R",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.frenado",
+    "cita": "ni se detuvo",
+    "persona": -1,
+    "valor": "false",
+    "vehiculo": 1
+   }
+  ],
+  "personas": [],
+  "preguntas": [
+   "¿A qué velocidad iba la moto al rebasar?",
+   "¿Usted manejaba el vehículo en el que iba o viajaba como pasajero?",
+   "¿El rebase ocurrió mientras los carros avanzaban o estaban detenidos?"
+  ],
+  "vehiculos": [
+   {
+    "narrador": true
+   },
+   {
+    "narrador": false
+   }
+  ]
+ },
+ "texto_sha256": "04fbc599ef0d3f5fbfe2cb7c6c70e56fec6981d1abb3d40e01406b6ed825f373",
+ "usage": {
+  "cache_creation_input_tokens": 0,
+  "cache_read_input_tokens": 5862,
+  "input_tokens": 57,
+  "output_tokens": 1975
+ }
+}
