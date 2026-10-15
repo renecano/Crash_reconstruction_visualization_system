@@ -195,7 +195,56 @@ class _Records:
         return _Run(rec, self.text(clave.removesuffix("-rep")))
 
 
-def evaluate_method(name: str, items: list[JsonObj], cfs: list[JsonObj], recs: _Records) -> JsonObj:
+def _narrator_speed(facts: Facts) -> float | None:
+    i = facts.narrador_vehiculo
+    if i is None or i >= len(facts.vehiculos):
+        return None
+    f = facts.vehiculos[i].get("velocidad_kmh")
+    return None if f is None else float(f.valor)
+
+
+def edr_speed(items: list[JsonObj], preds: dict[str, Facts]) -> JsonObj:
+    """Test CISS: velocidad de quien narra contra la del EDR de NHTSA (sin redondear).
+
+    La verdad de la extracción es la velocidad que dice el relato (la del EDR redondeada a 5 km/h);
+    aquí se reporta además cuánto se aleja lo extraído del EDR y el piso que pone ese redondeo.
+    """
+    fichas = relatos_mx.fichas()
+    err_narr: list[float] = []
+    err_edr: list[float] = []
+    floor: list[float] = []
+    with_truth = 0
+    for it in items:
+        f = fichas.get(it["id"])
+        if f is None:
+            continue
+        said = f["hechos"]["vehiculos"][0].get("velocidad_kmh")
+        edr = f["contexto"]["vehiculos"][0].get("velocidad_edr_kmh")
+        if said is None or edr is None:
+            continue
+        with_truth += 1
+        pred = _narrator_speed(preds[it["id"]]) if it["id"] in preds else None
+        if pred is None:
+            continue
+        err_narr.append(abs(pred - float(said)))
+        err_edr.append(abs(pred - float(edr)))
+        floor.append(abs(float(said) - float(edr)))
+
+    def mean(xs: list[float]) -> float | None:
+        return round(sum(xs) / len(xs), 2) if xs else None
+
+    return {
+        "relatos_con_velocidad_del_edr": with_truth,
+        "con_velocidad_extraida": len(err_edr),
+        "error_medio_kmh_contra_lo_narrado": mean(err_narr),
+        "error_medio_kmh_contra_edr": mean(err_edr),
+        "piso_por_redondeo_kmh": mean(floor),
+    }
+
+
+def evaluate_method(
+    name: str, items: list[JsonObj], cfs: list[JsonObj], recs: _Records, split: str = "test"
+) -> JsonObj:
     score = Score()
     score_verified = Score()
     citas = sin_cita = verified_down = 0
@@ -289,6 +338,7 @@ def evaluate_method(name: str, items: list[JsonObj], cfs: list[JsonObj], recs: _
         },
         "latencia_ms": {"p50": _pctl(latencies, 0.5), "p95": _pctl(latencies, 0.95)},
         "costo_usd_por_1000": round(1000 * cost / evaluated, 4),
+        **({"velocidad_contra_edr": edr_speed(items, preds)} if split == "ciss" else {}),
     }
 
 
@@ -311,7 +361,7 @@ def evaluate(split: str, pipeline: str = "ts", prompt: str = PROMPT_VERSION) -> 
         truth = [(p["inicio"], p["fin"]) for p in it["pii"]]
         tramos: list[list[int]] = red["tramos"]
         over += sum(1 for s, e in tramos if not any(s < te and tb < e for tb, te in truth))
-    methods = {m: evaluate_method(m, items, cfs, recs) for m in ("reglas", *MODELS)}
+    methods = {m: evaluate_method(m, items, cfs, recs, split) for m in ("reglas", *MODELS)}
     return {
         "split": split,
         "pipeline": pipeline,
