@@ -25,12 +25,13 @@ from __future__ import annotations
 import json
 import random
 import re
+import unicodedata
 import zipfile
 from collections import Counter, defaultdict
 from pathlib import Path
 from typing import Any
 
-from croquis_data.ciss import RAW_DIR, clase_ciss, num, rows, zip_path
+from croquis_data.ciss import RAW_DIR, SEDAN_CUT_CM, UTILITY_CUT_CM, num, rows, zip_path
 
 YEAR = 2024
 SEED = 20261014
@@ -206,6 +207,70 @@ HEAVY_AND_CYCLES: CodeMap = {
     80: ("Two Wheel Motorcycle (excluding motor scooters)", "motocicleta"),
     84: ("Motor Scooter", "scooter"),
 }
+# Clase del relato: la carrocería de GV debe decidir la clase sola y coincidir con la de VPIC
+# (BodyClass). Los códigos que mezclan carrocerías no deciden: convertible (1), coupé (2, 17),
+# vagoneta (6, puede ser auto o SUV: el Subaru Outback y la GMC Acadia vienen así), "otro
+# automóvil" (9) y pickups o paneles sobre auto (10, 11). La tabla de E3 (`ciss.clase_ciss`) agrupa
+# más porque solo elige rigidez.
+SEDAN_BODIES = {4: "4-door sedan, hardtop", 8: "Sedan/Hardtop, number of doors unknown"}
+HATCH_BODIES = {
+    3: "3-door/2-door hatchback",
+    5: "5-door/4-door hatchback",
+    7: "Hatchback, number of doors unknown",
+}
+SMALL_MID_UTILITY = (14, 'Compact Utility (Utility Vehicle Categories "Small" and "Midsize")')
+LARGE_UTILITY_BODIES = {
+    15: 'Large utility (ANSI D16.1 Utility Vehicle Categories and "Full Size" and "Large")',
+    16: "Utility station wagon (includes suburban limousines, Suburban, Travellall, Grand Wagoneer)",  # noqa: E501 (etiqueta oficial)
+}
+UNKNOWN_UTILITY = (19, "Utility Vehicle, Unknown body type")
+VAN_BODIES = {
+    20: "Minivan (Chrysler Town and Country, Caravan, Grand Caravan, Voyager, Voyager, Honda-Odyssey, ...)",  # noqa: E501 (etiqueta oficial)
+    21: "Large Van-Includes van-based buses (B150-B350, Sportsman, Royal Maxiwagon, Ram, Tradesman,...)",  # noqa: E501 (etiqueta oficial)
+}
+PICKUP_BODIES = {34: "Light Pickup"}
+# VPIC BodyClass compatible con cada clase del relato.
+VPIC_GROUPS: dict[str, set[str]] = {
+    "sedan": {"Sedan/Saloon"},
+    "hatchback": {"Hatchback/Liftback/Notchback"},
+    "suv": {
+        "Sport Utility Vehicle (SUV)/Multi-Purpose Vehicle (MPV)",
+        "Crossover Utility Vehicle (CUV)",
+    },
+    "van": {"Minivan", "Van", "Cargo Van"},
+    "pickup": {"Pickup"},
+    "tractocamion": {"Truck-Tractor"},
+    "camion_unitario": {
+        "Truck",
+        "Incomplete - Chassis Cab (Single Cab)",
+        "Incomplete - Chassis Cab (Double Cab)",
+        "Incomplete - Chassis Cab (Number of Cab Unknown)",
+    },
+    "autobus": {"Bus - School Bus", "Bus", "Bus - Transit/City Bus", "Bus - Intercity/Coach"},
+    "motocicleta": {
+        "Motorcycle - Sport",
+        "Motorcycle - Standard",
+        "Motorcycle - Cruiser",
+        "Motorcycle - Touring / Sport Touring",
+        "Motorcycle - Dual Sport / Adventure / Supermoto / On/Off-road",
+        "Motorcycle - Street",
+    },
+    "scooter": {"Motorcycle - Scooter"},
+}
+GROUP_OF = {
+    "sedan_compacto": "sedan",
+    "sedan_mediano": "sedan",
+    "hatchback": "hatchback",
+    "suv_compacta": "suv",
+    "suv_grande": "suv",
+    "van": "van",
+    "pickup": "pickup",
+    "tractocamion": "tractocamion",
+    "camion_unitario": "camion_unitario",
+    "autobus": "autobus",
+    "motocicleta": "motocicleta",
+    "scooter": "scooter",
+}
 EDR_SPEED = (1010, "Vehicle Speed (kmph)")
 PVALUE_INVALID = {99996.0, 99997.0}  # PVALUE24F: dato no válido, no reportado
 DRIVER_ROLE = 1  # OCC.ROLE: conductor
@@ -262,6 +327,16 @@ def label_problems(fmt: dict[str, dict[str, str]]) -> list[str]:
     )
     out += _expect(fmt, "PTYPE24F", lab(PTYPE))
     out += _expect(fmt, "BODYTYPE24F", lab(HEAVY_AND_CYCLES))
+    out += _expect(
+        fmt,
+        "BODYTYPE24F",
+        SEDAN_BODIES
+        | HATCH_BODIES
+        | LARGE_UTILITY_BODIES
+        | VAN_BODIES
+        | PICKUP_BODIES
+        | dict([SMALL_MID_UTILITY, UNKNOWN_UTILITY]),
+    )
     out += _expect(fmt, "CODETYPE24F", dict([EDR_SPEED]))
     out += _expect(fmt, "SEX24F", {1: "Male", 2: "Female"})
     return out
@@ -327,17 +402,78 @@ class Year:
 # --- Traducción de un caso ----------------------------------------------------------------------
 
 
-def vehicle_class(y: Year, cid: str, vehno: int) -> str | None:
+def _key(name: str) -> str:
+    """Clave de `modelos.json`: minúsculas y sin acentos."""
+    nfd = unicodedata.normalize("NFD", name.strip().lower())
+    return "".join(c for c in nfd if unicodedata.category(c) != "Mn")
+
+
+def body_class(y: Year, cid: str, vehno: int) -> tuple[str | None, str]:
+    """Clase según NHTSA (carrocería de GV, largo de VEHSPEC y BodyClass de VPIC); None y el
+    motivo si la carrocería no decide la clase o GV y VPIC no coinciden."""
     g = y.gv.get((cid, vehno))
-    if g is None:
-        return None
-    body = _int(g.get("BODYTYPE"))
+    body = _int(g.get("BODYTYPE")) if g else None
     if body is None:
-        return None
+        return None, "sin carrocería"
+    largo = num(y.spec.get((cid, vehno), {}).get("OAL"))
+    clase: str | None
     if body in HEAVY_AND_CYCLES:
-        return HEAVY_AND_CYCLES[body][1]
-    s = y.spec.get((cid, vehno), {})
-    return clase_ciss(body, num(s.get("OAL")))
+        clase = HEAVY_AND_CYCLES[body][1]
+    elif body in SEDAN_BODIES:
+        clase = (
+            None
+            if largo is None
+            else ("sedan_compacto" if largo < SEDAN_CUT_CM else "sedan_mediano")
+        )
+    elif body in HATCH_BODIES:
+        clase = "hatchback"
+    elif body in (SMALL_MID_UTILITY[0], UNKNOWN_UTILITY[0]):
+        # 'Small and Midsize' no es una sola clase del contrato: decide el largo (como E3
+        # con el 19).
+        clase = (
+            None if largo is None else ("suv_compacta" if largo < UTILITY_CUT_CM else "suv_grande")
+        )
+    elif body in LARGE_UTILITY_BODIES:
+        clase = "suv_grande"
+    elif body in VAN_BODIES:
+        clase = "van"
+    elif body in PICKUP_BODIES:
+        clase = "pickup"
+    else:
+        return None, "carrocería que no decide la clase"
+    if clase is None:
+        return None, "sin largo para decidir la clase"
+    vpic = y.vpic.get((cid, vehno), {}).get("BODYCLASS", "").strip()
+    if vpic and vpic not in VPIC_GROUPS[GROUP_OF[clase]]:
+        return None, "carrocería de GV distinta de la de VPIC"
+    return clase, ""
+
+
+def story_class(
+    y: Year, cid: str, vehno: int, models: dict[str, str]
+) -> tuple[str | None, str, str]:
+    """Clase del vehículo en el relato, cómo nombrarlo y, si no hay clase, por qué.
+
+    Quien escribe nombra el vehículo por su modelo, así que la clase debe ser la que un extractor
+    deduce de ese nombre: la de `modelos.json` si el modelo está ahí (README de Relatos-MX). Si la
+    tabla y NHTSA no coinciden, no hay clase exacta; la única excepción es un hatchback de un
+    modelo que la tabla da como sedán, que el relato nombra con su carrocería ("Rio hatchback").
+    """
+    clase, why = body_class(y, cid, vehno)
+    if clase is None:
+        return None, "no", why
+    v = y.vpic.get((cid, vehno), {})
+    table = models.get(_key(v.get("MODEL", ""))) if v.get("MODEL") else None
+    if table is None or table == clase:
+        return clase, ("modelo" if v.get("MODEL") else "clase"), ""
+    if clase == "hatchback" and table in ("sedan_compacto", "sedan_mediano"):
+        return clase, "modelo_y_carroceria", ""
+    return None, "no", "clase de NHTSA distinta de la de modelos.json"
+
+
+def vehicle_class(y: Year, cid: str, vehno: int) -> str | None:
+    """Clase según NHTSA (para clasificar el caso: moto, pesado o pasajeros)."""
+    return body_class(y, cid, vehno)[0]
 
 
 def _model(y: Year, cid: str, vehno: int) -> str | None:
@@ -367,8 +503,6 @@ def classify(y: Year, cid: str) -> tuple[str | None, str]:
         if a is None or b is None:
             return None, "vehículos del evento sin número"
         ca, cb = vehicle_class(y, cid, a), vehicle_class(y, cid, b)
-        if ca is None or cb is None:
-            return None, "clase de vehículo sin equivalente"
         if "motocicleta" in (ca, cb) or "scooter" in (ca, cb):
             return "moto", ""
         return "vv", ""
@@ -428,18 +562,27 @@ def _env(g: dict[str, str], omitted: Counter[str]) -> tuple[JsonObj, str | None]
 
 
 def _vehicle_facts(
-    y: Year, cid: str, vehno: int, *, narrator: bool, omitted: Counter[str]
+    y: Year,
+    cid: str,
+    vehno: int,
+    *,
+    narrator: bool,
+    omitted: Counter[str],
+    models: dict[str, str],
 ) -> tuple[JsonObj, JsonObj]:
-    """Hechos de un vehículo y su contexto (modelo, velocidad del EDR sin redondear)."""
+    """Hechos de un vehículo y su contexto (modelo, cómo nombrarlo, velocidad del EDR)."""
     g = y.gv[(cid, vehno)]
     facts: JsonObj = {}
     ctx: JsonObj = {"vehno": vehno}
     if narrator:
         facts["narrador"] = True
-    clase = vehicle_class(y, cid, vehno)
+    clase, nombrar, why = story_class(y, cid, vehno, models)
     if clase is not None:
         facts["clase"] = clase
+    else:
+        omitted[f"clase: {why}"] += 1
     ctx["modelo"] = _model(y, cid, vehno)
+    ctx["nombrar"] = nombrar
     pm = _int(g.get("PREMOVE"))
     if pm in PREMOVE:
         facts["maniobra"] = PREMOVE[pm][1]
@@ -472,10 +615,13 @@ def _vehicle_facts(
     return facts, ctx
 
 
-def translate(y: Year, cid: str, tipo: str, omitted: Counter[str]) -> tuple[JsonObj | None, str]:
+def translate(
+    y: Year, cid: str, tipo: str, omitted: Counter[str], models: dict[str, str] | None = None
+) -> tuple[JsonObj | None, str]:
     """Hechos esperados (sin citas) y contexto de un caso; None y el motivo si se descarta."""
     ev = y.first_event(cid)
     assert ev is not None
+    models = load_models() if models is None else models
     if tipo in ("vv", "moto"):
         a, b = int(ev["VEHNUM"]), int(ev["OBJCONT"])
         # Narra quien tiene velocidad del EDR; si los dos, el que pega.
@@ -490,9 +636,9 @@ def translate(y: Year, cid: str, tipo: str, omitted: Counter[str]) -> tuple[Json
     env, why = _env(g, omitted)
     if why:
         return None, why
-    v0, c0 = _vehicle_facts(y, cid, narr, narrator=True, omitted=omitted)
+    v0, c0 = _vehicle_facts(y, cid, narr, narrator=True, omitted=omitted, models=models)
     if "clase" not in v0:
-        return None, "clase de vehículo sin equivalente"
+        return None, "clase de quien narra ambigua o distinta de modelos.json"
     vehicles, ctx_vehicles = [v0], [c0]
     zones: JsonObj = {}
     gad_a, gad_b = ev.get("GAD1", "").strip(), ev.get("GAD2", "").strip()
@@ -503,7 +649,7 @@ def translate(y: Year, cid: str, tipo: str, omitted: Counter[str]) -> tuple[Json
     event: JsonObj = {}
     ctx_extra: JsonObj = {}
     if other is not None:
-        v1, c1 = _vehicle_facts(y, cid, other, narrator=False, omitted=omitted)
+        v1, c1 = _vehicle_facts(y, cid, other, narrator=False, omitted=omitted, models=models)
         # Quien narra no conoce la velocidad del otro: solo queda si estaba parado.
         if v1.get("velocidad_kmh") != 0:
             v1.pop("velocidad_kmh", None)
@@ -528,7 +674,13 @@ def translate(y: Year, cid: str, tipo: str, omitted: Counter[str]) -> tuple[Json
     else:  # peaton, ciclista
         event["evento.tipo"] = "impacto_vehiculo_persona"
         nm = y.nonmotorists[cid][0]
-        persons.append({"rol": tipo})
+        if tipo == "ciclista":
+            # La bicicleta es un vehículo del contrato y el ciclista va en ella (validador E010).
+            vehicles.append({"clase": "bicicleta"})
+            ctx_vehicles.append({"nombrar": "clase"})
+            persons.append({"rol": tipo, "vehiculo": 1})
+        else:
+            persons.append({"rol": tipo})
         age, sex = _int(nm.get("AGE")), _int(nm.get("SEX"))
         ctx_extra["persona"] = {
             "edad": age if age is not None and 0 < age < 120 else None,
@@ -558,7 +710,8 @@ def _mention(hechos: JsonObj, rng: random.Random) -> JsonObj:
             if k == "narrador":
                 nv[k] = val
             elif k == "clase":
-                if i == 0 or rng.random() < MENTION["clase_otro"]:
+                always = i == 0 or val in ("motocicleta", "scooter", "bicicleta")
+                if always or rng.random() < MENTION["clase_otro"]:
                     nv[k] = val
             elif rng.random() < MENTION[k]:
                 nv[k] = val
@@ -568,9 +721,27 @@ def _mention(hechos: JsonObj, rng: random.Random) -> JsonObj:
     return out
 
 
+def load_models() -> dict[str, str]:
+    """Modelo → clase de `packages/extraction/data/modelos.json`."""
+    path = ROOT / "packages" / "extraction" / "data" / "modelos.json"
+    data: dict[str, dict[str, str]] = json.loads(path.read_text(encoding="utf-8"))["modelos"]
+    return {k: v["clase"] for k, v in data.items()}
+
+
+def _naming(ctx: JsonObj, hechos: JsonObj) -> JsonObj:
+    """Si la ficha no pide la clase de un vehículo, el relato no lo nombra (ni por su modelo)."""
+    out = {**ctx, "vehiculos": [dict(v) for v in ctx["vehiculos"]]}
+    for v, h in zip(out["vehiculos"], hechos["vehiculos"], strict=True):
+        if "clase" not in h:
+            v["nombrar"] = "no"
+            v.pop("modelo", None)
+    return out
+
+
 def select(y: Year) -> tuple[list[JsonObj], JsonObj]:
     """Elige y traduce los casos por estratos, con semilla. Devuelve fichas y conteos."""
     rng = random.Random(SEED)
+    models = load_models()
     reasons: Counter[str] = Counter()
     omitted: Counter[str] = Counter()
     by_type: dict[str, list[str]] = defaultdict(list)
@@ -593,7 +764,7 @@ def select(y: Year) -> tuple[list[JsonObj], JsonObj]:
         for cid in pool:
             if taken[tipo] >= QUOTAS[tipo]:
                 break
-            tr, why = translate(y, cid, tipo, omitted)
+            tr, why = translate(y, cid, tipo, omitted, models)
             if tr is None:
                 reasons[f"{tipo}: {why}"] += 1
                 continue
@@ -605,8 +776,8 @@ def select(y: Year) -> tuple[list[JsonObj], JsonObj]:
                     "tipo": tipo,
                     "registro": reg,
                     "ciss": {"anio": YEAR, "caseid": cid, "caso": c.get("CASENUMBER", "")},
-                    "hechos": _mention(tr["hechos"], rng),
-                    "contexto": tr["contexto"],
+                    "hechos": (hechos := _mention(tr["hechos"], random.Random(f"{SEED}-{cid}"))),
+                    "contexto": _naming(tr["contexto"], hechos),
                 }
             )
     rng.shuffle(fichas)
