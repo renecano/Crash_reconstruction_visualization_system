@@ -13,7 +13,13 @@ import { VEHICLE_CLASSES } from "@croquis/scene-schema";
 import { type ContactSolution, contactOffset, Locus, resolveContact } from "./contact";
 import { profileForEnergy, TRIANGULAR_SHAPES } from "./crash3";
 import { narrowObject } from "./fixed-object";
-import { absPeakFactor, pedestrianFriction, tireFriction } from "./friction";
+import {
+  absPeakFactor,
+  DOWNED_SLIDE_CLASSES,
+  downedMotorcycleFriction,
+  pedestrianFriction,
+  tireFriction,
+} from "./friction";
 import { planarImpact, pdofHours, type ImpactResult } from "./impact";
 import { bodyFor } from "./inertia";
 import {
@@ -72,7 +78,7 @@ import {
 
 type Json = Record<string, unknown>;
 
-export const RESULT_VERSION = "1.5.0";
+export const RESULT_VERSION = "1.6.0";
 export const DT_OUT = 0.02;
 const T_PRE_MAX = 6.0;
 const T_PRE_MIN = 3.0;
@@ -623,7 +629,14 @@ function* product<T>(options: readonly (readonly T[])[]): Generator<T[]> {
 // ----------------------------------------------------------------------------------------------
 
 /** Reconstruye la escena. `spec` debe haber pasado la validación del contrato. */
-export function reconstruct(spec: Json, opts: { dt?: number } = {}): Reconstruction {
+/**
+ * `downedMu` fija el arrastre de una motocicleta caída (Monte Carlo e inversión lo muestrean);
+ * sin él se usa el nominal de la tabla.
+ */
+export function reconstruct(
+  spec: Json,
+  opts: { dt?: number; downedMu?: number } = {},
+): Reconstruction {
   const dt = opts.dt ?? DT_OUT;
   const banderas: string[] = [];
   const avisos: Aviso[] = [];
@@ -1142,15 +1155,20 @@ export function reconstruct(spec: Json, opts: { dt?: number } = {}): Reconstruct
   // ---- fase posterior ------------------------------------------------------------------
   let tFin = dt;
   const post = new Map<string, [Trajectory, boolean, number]>();
+  const muDowned = downedMotorcycleFriction(String((lugar.superficie as Json).valor));
   for (const m of models) {
     if (!actores.includes(m.id)) continue;
     const start = postStart.get(m.id)!;
     if (stateSpeed(start) > 0.05 || Math.abs(start.yawRate) > 0.05) {
-      const wheels = fourWheels(m.wheelbase, m.track, m.cgFromFront, m.braking);
-      const drag = m.braking
-        ? ROLLING_RESISTANCE
-        : Math.max(ROLLING_RESISTANCE, POST_IMPACT_DRAG_FRACTION * mu);
-      const resPost = integrate(m.body, { ...start, t: 0.0 }, wheels, mu, {
+      const downed = DOWNED_SLIDE_CLASSES.has(m.clase);
+      // Caída, se arrastra de lado: todo el contacto desliza con el arrastre medido.
+      const wheels = fourWheels(m.wheelbase, m.track, m.cgFromFront, m.braking || downed);
+      const drag =
+        m.braking || downed
+          ? ROLLING_RESISTANCE
+          : Math.max(ROLLING_RESISTANCE, POST_IMPACT_DRAG_FRACTION * mu);
+      const muPost = downed ? (opts.downedMu ?? muDowned.nominal) : mu;
+      const resPost = integrate(m.body, { ...start, t: 0.0 }, wheels, muPost, {
         dtOut: dt,
         tMax: T_POST_MAX,
         rollingDrag: drag,
@@ -1168,6 +1186,14 @@ export function reconstruct(spec: Json, opts: { dt?: number } = {}): Reconstruct
     }
     const trPost = post.get(m.id)![0];
     tFin = Math.max(tFin, trPost.length > 0 ? trPost.t[trPost.length - 1]! : 0.0);
+  }
+  if (models.some((m) => actores.includes(m.id) && DOWNED_SLIDE_CLASSES.has(m.clase))) {
+    params.friccion_moto_caida = {
+      valor: opts.downedMu ?? muDowned.nominal,
+      rango: [muDowned.low, muDowned.high],
+      fuente: muDowned.fuente,
+      tipo: muDowned.tipo,
+    };
   }
 
   // ---- personas ------------------------------------------------------------------------

@@ -2,8 +2,8 @@
 // Regenera con `pnpm --filter @croquis/scene-schema generate`.
 import { z } from "zod";
 
-export const RESULTADO_SCHEMA_ID = "https://croquis.local/schema/resultado/1.5.0";
-export const RESULT_VERSION = "1.5.0" as const;
+export const RESULTADO_SCHEMA_ID = "https://croquis.local/schema/resultado/1.6.0";
+export const RESULT_VERSION = "1.6.0" as const;
 
 export const CampoMuestreado = z.strictObject({
   ruta: z.string().min(1).max(120),
@@ -312,6 +312,7 @@ export const Parametros = z.strictObject({
   velocidad_peaton: Parametro.optional(),
   friccion_cuerpo_suelo: Parametro.optional(),
   factor_proyeccion_jinete: Parametro.optional(),
+  friccion_moto_caida: Parametro.optional(),
   altura_cg_volcadura: Parametro.optional(),
   altura_ojo: Parametro.optional(),
   alcance_deteccion_nocturna: Parametro.optional(),
@@ -432,7 +433,7 @@ export type Visibilidad = z.infer<typeof Visibilidad>;
 
 /** Reconstrucción producida por el solver a partir de una EscenaSpec: trayectorias, impulsos, daños, personas (proyección y ocupantes), visibilidad, objetos del entorno, eventos, banderas, parámetros con su fuente incertidumbre por Monte Carlo (percentiles con semilla), inversión desde la evidencia y banderas de consistencia. Unidades SI; tiempo con t = 0 en el impacto principal; rumbos en radianes antihorario desde +X (salvo los campos que terminan en _deg). */
 export const ResultadoSchema = z.strictObject({
-  version_resultado: z.literal("1.5.0"),
+  version_resultado: z.literal("1.6.0"),
   escena_id: Id,
   semilla: z.int().min(0),
   dt: z.number().max(1).gt(0),
