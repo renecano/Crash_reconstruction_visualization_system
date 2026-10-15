@@ -10,7 +10,7 @@
 - Marco del mundo: X al este, Y al norte, rumbo medido desde +X en sentido antihorario. Marco del cuerpo: x al frente, y a la izquierda.
 - Dirección principal de la fuerza (PDOF) en horas de reloj: 12 = de frente, 3 = desde la derecha, 6 = desde atrás, 9 = desde la izquierda (`impact.pdof_degrees`).
 - Todo lo aleatorio recibe semilla explícita; los resultados con rango se reportan como percentiles (Monte Carlo en F7).
-- Inercia de guiñada: placa rectangular uniforme, $I_z = m\,(L^2 + W^2)/12$ (`Body2D.box_inertia`). **Aproximación**; para un sedán de 1 300 kg y 4.5 × 1.8 m da ≈ 2 540 kg·m², del orden de las mediciones publicadas (Heydinger et al., SAE 1999-01-1336). Adoptar esas mediciones cambia todas las trayectorias posteriores al impacto; es un pendiente registrado en `docs/PROGRESS.md`.
+- Inercia de guiñada (`inertia.py`, ADR 0015): el radio de giro es proporcional al largo, $I_z = m\,(c\,L)^2$, con $c$ medido por grupo de carrocería en la base de parámetros inerciales de NHTSA (Heydinger et al., SAE 1999-01-1336): auto 0.2885, SUV 0.3100, pickup 0.2867, van 0.3183, en 164 vehículos medidos. Dejando uno fuera, el error relativo de $I_z$ es 5.3 %, contra 10.0 % de la placa rectangular uniforme $m\,(L^2 + W^2)/12$, que sobreestima 7.5 %, y 7.8 % de $I_z = m\,a\,b$. Autobús, camiones y vehículos de dos ruedas no están en la base: usan la placa, **supuesto**.
 
 ## Módulos (PLAN §6.1)
 
@@ -250,7 +250,7 @@ El validador semántico (`check.ts` / `check.py`) marca masas, dimensiones y vel
 - Olson, P. L. y Sivak, M. "Perception-response time to unexpected roadway hazards", _Human Factors_ 28(1), 1986; Green, M. "How long does it take to stop?", _Transportation Human Factors_ 2(3), 2000.
 - Knoblauch, R. L., Pietrucha, M. T. y Nitzburg, M. "Field studies of pedestrian walking speed and start-up time", _Transportation Research Record_ 1538, 1996 (velocidad al caminar).
 - IIHS (Insurance Institute for Highway Safety), "Airbags", https://www.iihs.org/research-areas/airbags (consultado el 2026-10-13): umbrales de despliegue de bolsas frontales y laterales.
-- Heydinger, G. J. et al. "Measured vehicle inertial parameters — NHTSA's data through November 1998", SAE 1999-01-1336.
+- Heydinger, G. J. et al. "Measured vehicle inertial parameters — NHTSA's data through November 1998", SAE 1999-01-1336; NHTSA VRTC, _Light Vehicle Inertial Parameter Database_ (PDF métrico, copia del Internet Archive del 2022-07-09; `data/SOURCES.md`).
 - Watson et al., SAE 2023-01-5043 y SAE 2022-01-5069 (CISS contra EDR; contexto de E3).
 - NHTSA, Crash Investigation Sampling System (CISS) 2017–2024, archivos CSV y _CISS Analytical User's Manual_ 2024 (E3; `data/SOURCES.md`).
 - Virtanen, P. et al. "SciPy 1.0", _Nature Methods_ 17, 2020 (`least_squares` con pérdida `soft_l1`).
