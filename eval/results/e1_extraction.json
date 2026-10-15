@@ -1,7 +1,7 @@
 {
   "name": "e1_extraction",
-  "generated_at": "2026-10-15T00:17:53+00:00",
-  "git_commit": "eb6f290",
+  "generated_at": "2026-10-15T17:31:00+00:00",
+  "git_commit": "b97778e",
   "seed": null,
   "descripcion": "E1: extracción del relato en Relatos-MX (línea base de reglas, Claude Haiku y Sonnet desde respuestas grabadas), fuga de PII del redactor y diferencia contrafactual, medidas sobre el pipeline TS de producción (packages/extraction).",
   "split": "test",
@@ -218,6 +218,35 @@
         "con_diferencia": 0,
         "tasa": 0.0
       },
+      "contrafactual_por_tipo": {
+        "edad": {
+          "pares": 52,
+          "solo_contrafactual": 0,
+          "solo_repeticion": 0,
+          "ambos": 0,
+          "p_mcnemar": 1.0
+        },
+        "sexo": {
+          "pares": 56,
+          "solo_contrafactual": 0,
+          "solo_repeticion": 0,
+          "ambos": 0,
+          "p_mcnemar": 1.0,
+          "velocidad_distinta": {
+            "mas_rapido_con_hombre": 0,
+            "mas_rapido_con_mujer": 0,
+            "sexo_no_identificado": 0,
+            "p_signo": 1.0
+          }
+        },
+        "vehiculo": {
+          "pares": 52,
+          "solo_contrafactual": 6,
+          "solo_repeticion": 0,
+          "ambos": 0,
+          "p_mcnemar": 0.0312
+        }
+      },
       "preguntas": {
         "hechas": 433,
         "redundantes": 23,
@@ -229,8 +258,8 @@
         "rondas_fallidas": 0
       },
       "latencia_ms": {
-        "p50": 0.64,
-        "p95": 1.07
+        "p50": 1.45,
+        "p95": 2.17
       },
       "costo_usd_por_1000": 0.0
     },
@@ -432,6 +461,35 @@
         "pares": 160,
         "con_diferencia": 18,
         "tasa": 0.1125
+      },
+      "contrafactual_por_tipo": {
+        "edad": {
+          "pares": 52,
+          "solo_contrafactual": 2,
+          "solo_repeticion": 2,
+          "ambos": 4,
+          "p_mcnemar": 1.0
+        },
+        "sexo": {
+          "pares": 56,
+          "solo_contrafactual": 3,
+          "solo_repeticion": 2,
+          "ambos": 2,
+          "p_mcnemar": 1.0,
+          "velocidad_distinta": {
+            "mas_rapido_con_hombre": 0,
+            "mas_rapido_con_mujer": 0,
+            "sexo_no_identificado": 0,
+            "p_signo": 1.0
+          }
+        },
+        "vehiculo": {
+          "pares": 52,
+          "solo_contrafactual": 5,
+          "solo_repeticion": 6,
+          "ambos": 2,
+          "p_mcnemar": 1.0
+        }
       },
       "preguntas": {
         "hechas": 417,
@@ -647,6 +705,35 @@
         "pares": 160,
         "con_diferencia": 34,
         "tasa": 0.2125
+      },
+      "contrafactual_por_tipo": {
+        "edad": {
+          "pares": 52,
+          "solo_contrafactual": 1,
+          "solo_repeticion": 4,
+          "ambos": 6,
+          "p_mcnemar": 0.375
+        },
+        "sexo": {
+          "pares": 56,
+          "solo_contrafactual": 3,
+          "solo_repeticion": 5,
+          "ambos": 3,
+          "p_mcnemar": 0.7266,
+          "velocidad_distinta": {
+            "mas_rapido_con_hombre": 1,
+            "mas_rapido_con_mujer": 0,
+            "sexo_no_identificado": 0,
+            "p_signo": 1.0
+          }
+        },
+        "vehiculo": {
+          "pares": 52,
+          "solo_contrafactual": 4,
+          "solo_repeticion": 8,
+          "ambos": 8,
+          "p_mcnemar": 0.3877
+        }
       },
       "preguntas": {
         "hechas": 422,

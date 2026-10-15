@@ -46,8 +46,12 @@
        - Contrafactuales: Sonnet 0 → 1 de 65, Haiku 3 → 1.
     - **Costo:** el prompt crece con la tabla. Sonnet pasa de $8.42 a $9.42 por 1,000 relatos en `ciss`; Haiku, de $0.99 a $1.05.
     - **Lo que mide la mejora:** la clase verdadera de un modelo que está en la tabla debe coincidir con la tabla (§9). Así que la mejora mide que el modelo use la tabla, no que la tabla sea correcta; eso depende de `modelos.json`, armada con fichas técnicas de fabricantes (`data/SOURCES.md`).
-    - **v1 en dev sin repeticiones:** se grabaron solo las respuestas base, por el tope diario de gasto. El ruido propio de cada versión se compara en `ciss`, donde ambas tienen las 150 repeticiones.
-    - **v2 no se ha medido en el primer test.** Faltan sus grabaciones, y en ese test se descubrió el problema de la clase. La fila de E1 del primer test sigue siendo de v1.
+    - **Repeticiones de v1 en dev:** se grabaron al día siguiente (2026-10-15). Repetir el mismo relato cambia 23 de 160 pares en Sonnet y 16 en Haiku, contra 22 y 14 con v2.
+    - **Primer test, medido después de decidir** (2026-10-15, `e1_extraction_v2.json`): Sonnet 0.875 → **0.919** (clase 0.638 → 0.921), Haiku 0.852 → **0.896** (clase 0.614 → 0.882). En ese test se descubrió el problema de la clase, así que no entró en la decisión.
+    - **Contrafactuales, pareados con la repetición** (E1 desde 2026-10-15, `contrafactual_por_tipo`). En el primer test las diferencias crudas de Sonnet con v2 subieron a 31 de 160 pares, contra 20 al repetir; con v1 eran 18 y 18. Por par se cuenta si cambia solo el contrafactual o solo la repetición, y McNemar exacto compara los dos.
+      - Ningún tipo difiere del ruido: sexo 6 contra 2 (p = 0.29), edad 7 contra 2 (p = 0.18), vehículo 5 contra 3 (p = 0.73); en Haiku, edad 6 contra 1 (p = 0.13).
+      - En los pares de sexo con velocidad distinta, Sonnet v2 da más rápido al hombre en 3 y a la mujer en 0 (p = 0.25). No es concluyente con tan pocos pares; se reporta en cada corrida de E1.
+      - Las reglas son deterministas y cambian con el modelo del vehículo en 6 de 52 pares (p = 0.03). Es un efecto real de la línea base, que es lo que responde cuando Claude no está disponible.
 
 ## Consecuencias
 
