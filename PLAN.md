@@ -81,7 +81,7 @@ Regla central: **la IA traduce, la física decide y el visor muestra.** El LLM n
  │ Visor 3D (R3F)   │   │ Informe PDF  │   │ Video / glTF  │
  └──────────────────┘   └──────────────┘   └───────────────┘
 
- Fuera de línea: puente BeamNG.tech (validación de daño y modo alta fidelidad)
+ Fuera de línea: validación del daño contra autos reales chocados (NHTSA y CISS), ver E5
 ```
 
 ### 3.1 Stack
@@ -107,7 +107,7 @@ Regla central: **la IA traduce, la física decide y el visor muestra.** El LLM n
 
 **Despliegue solo en Vercel:** en producción no corre Python. El solver Python es la referencia para pruebas, paridad y evaluaciones (local y CI); el usuario siempre usa el port TS. El PDF se genera en el navegador. Si alguna función del servidor necesitara Python, primero se intenta en TS; Python en Vercel (runtime beta) solo con ADR que justifique por qué.
 
-**Restricción de hardware:** desarrollo en Windows con 8 GB de RAM. No correr BeamNG junto con los servidores de desarrollo; scripts compatibles con PowerShell; presupuestos de rendimiento medidos en esa laptop (ver §7.8).
+**Restricción de hardware:** desarrollo en Windows con 8 GB de RAM. Scripts compatibles con PowerShell; presupuestos de rendimiento medidos en esa laptop (ver §7.8).
 
 ### 3.2 Estructura del repo
 
@@ -131,15 +131,13 @@ croquis/
 │  ├─ crash-tests/            NHTSA CTD
 │  ├─ ciss/                   casos reales con EDR
 │  ├─ pedestrian/             proyección de peatones
-│  ├─ damage-beamng/          comparación de deformación
+│  ├─ damage-real/            deformación del visor vs aplastamiento medido en autos reales
 │  ├─ perf/                   fps, carga, memoria
 │  └─ results/                salidas versionadas que alimentan el README
 ├─ assets/
 │  ├─ pipeline/               scripts Blender headless
 │  ├─ vehicles/  humans/  env/
 │  └─ ASSETS.md               autor, licencia y URL de cada asset
-├─ tools/
-│  └─ beamng-bridge/          BeamNGpy (opcional, licencia académica)
 ├─ docs/
 │  ├─ adr/                    decisiones de arquitectura
 │  ├─ PROGRESS.md             bitácora por fase
@@ -333,7 +331,7 @@ Cada evaluación tiene script en `eval/`, salida en `eval/results/` y se compara
 | E2 | Impacto contra barrera: ΔV y aplastamiento a partir de la velocidad, y velocidad a partir del aplastamiento | NHTSA Vehicle Crash Test Database (API pública) | Modelo de energía equivalente ingenuo |
 | E3 | Reconstrucción de casos reales: ΔV estimado vs ΔV del EDR | NHTSA CISS (casos con descarga de EDR) | ΔV reconstruido por CISS con WinSmash |
 | E4 | Proyección de peatón: velocidad estimada y distancia | Ecuaciones de Searle y Wood y datos publicados accesibles | Fórmula de Searle sola |
-| E5 | Deformación visual: perfil C1–C6 del visor vs el de BeamNG con las mismas condiciones | BeamNG.tech (licencia académica) | Deformación lineal simple |
+| E5 | Deformación contra autos reales: (a) se reproduce cada prueba de choque en Croquis y se compara el perfil de aplastamiento de la malla con el medido en el vehículo después de la prueba; (b) lo mismo con casos reales de CISS (aplastamiento C1–C6 medido por los investigadores); (c) comparación visual lado a lado contra las fotos del vehículo | NHTSA Vehicle Crash Test Database (reportes con fotos y medidas de aplastamiento posteriores a la prueba) y NHTSA CISS | Deformación lineal simple y deformación uniforme en la zona de impacto |
 | E6 | Rendimiento: fps, tiempo de carga, memoria | Escenas canónicas en la laptop de René | Presupuesto §7.8 |
 | E7 | Paridad Python ↔ TS | Fixtures del solver | Tolerancia documentada |
 | E8 | Determinismo | Repeticiones por semilla en distintos navegadores | Igualdad exacta |
@@ -341,6 +339,7 @@ Cada evaluación tiene script en `eval/`, salida en `eval/results/` y se compara
 
 Notas:
 - CISS: sus reconstrucciones con WinSmash, en promedio, sobreestiman el ΔV debajo de 16 km/h y lo subestiman arriba, comparadas con el EDR. Medirse contra el EDR y contra WinSmash es "comparar hacia arriba".
+- E5: primero inventariar cuántas pruebas de NHTSA y casos CISS traen medidas completas de aplastamiento y fotos útiles, y documentarlo en `docs/data.md` con el tamaño de muestra. Métricas: error por punto (C1–C6) y error en profundidad máxima, ancho dañado y área, por tipo de impacto (frontal, frontal desplazado, lateral, alcance, poste).
 - Si un dato no es accesible (por formato o licencia), se documenta en `docs/data.md` y se reemplaza por la mejor alternativa con fuente; no se inventan números.
 
 ---
@@ -350,14 +349,13 @@ Notas:
 | Dato | Uso | Licencia / condición |
 |---|---|---|
 | INEGI ATUS (datos abiertos) | Problema, distribución de tipos de accidente para el benchmark | Términos de libre uso de INEGI; citar |
-| NHTSA Vehicle Crash Test Database (API) | Rigidez CRASH3, validación E2, masas de prueba | Datos públicos del gobierno de EE. UU.; citar |
-| NHTSA CISS | Validación E3, narrativas para relatos | Datos públicos; citar |
+| NHTSA Vehicle Crash Test Database (API) | Rigidez CRASH3, validación E2 y E5 (fotos y aplastamiento medido), masas de prueba | Datos públicos del gobierno de EE. UU.; citar |
+| NHTSA CISS | Validación E3 y E5, narrativas para relatos | Datos públicos; citar |
 | Fichas técnicas de fabricantes | Dimensiones y masas por modelo común en México | Cita por ficha en `data/SOURCES.md` |
 | Tablas de fricción de la literatura | Rangos por superficie y estado | Cita por valor |
 | OpenStreetMap | Geometría de vías reales | ODbL, atribución visible |
 | Poly Haven, Quaternius, Kenney | Texturas, HDRI, modelos | CC0 |
 | MakeHuman / MPFB | Personas | Assets CC0 |
-| BeamNG.tech | Validación y modo alta fidelidad | Licencia académica, solo no comercial, con atribución |
 | Código de Croquis | — | MIT (confirmar con René) |
 
 ---
@@ -456,9 +454,9 @@ OSM real, clima, noche y faros, todos los dispositivos de tránsito, vehículos 
 Port TS completo del solver (todos los módulos de §6, incluidos inversión y Monte Carlo en Web Workers) con paridad (E7), determinismo (E8), casos precargados, PDF, video, glTF.
 ✅ La demo funciona sin red; E7 y E8 en verde.
 
-**F10 — BeamNG**
-Puente BeamNGpy, E5, modo de render alta fidelidad opcional fuera de línea. Requiere licencia académica aprobada y probablemente un equipo con más RAM que la laptop.
-✅ E5 publicado.
+**F10 — Validación del daño contra autos reales**
+Ingesta de reportes de pruebas de NHTSA (fotos y aplastamiento medido) y de casos CISS con aplastamiento C1–C6; reproducción de cada caso en Croquis con la misma clase, masa, velocidad y ángulo; medición del perfil sobre la malla deformada; comparaciones lado a lado contra las fotos; ajuste de la deformación (caída, ancho, arrugas) solo con el conjunto de desarrollo y evaluación final en un conjunto de prueba separado y congelado antes de medir. Corre en la laptop; no requiere software externo con licencia.
+✅ E5 publicado con tamaño de muestra, error por tipo de impacto contra las dos líneas base y galería de comparaciones con las fotos reales.
 
 **F11 — Producto final**
 Página de historia, recorrido técnico, README completo, despliegue en Vercel (preview y producción), E9 con usuarios reales, guiones de video.
@@ -471,7 +469,8 @@ Página de historia, recorrido técnico, README completo, despliegue en Vercel (
 | Riesgo | Mitigación |
 |---|---|
 | Modelos 3D realistas con licencia libre escasean | Pipeline Blender para mejorar bases CC0; CC-BY con atribución; registrar la decisión en ADR |
-| 8 GB de RAM | Calidad por niveles; BeamNG fuera de la laptop (laboratorio del Tec); no correr todo a la vez |
+| 8 GB de RAM | Calidad por niveles; no correr todo a la vez |
+| Pocas pruebas con medidas completas de aplastamiento | Combinar NHTSA y CISS; reportar el tamaño de muestra real y los tipos de impacto no cubiertos como límite |
 | Formatos complejos de CISS y CTD | Scripts de ingesta con pruebas; empezar por subconjuntos documentados |
 | Sobreafirmar precisión física | Rangos, banderas, leyenda; README separa "medido" de "ilustrativo" |
 | Costo de la API | Respuestas grabadas en CI, caché, límite por usuario, comparar Haiku |
@@ -481,7 +480,9 @@ Página de historia, recorrido técnico, README completo, despliegue en Vercel (
 
 ## 15. README (estándar Helada)
 
-Problema con fuentes · cómo probarlo en vivo y en local · resultados medidos contra alternativas simples (E1–E9) · mapa del repo · datos con fuente y licencia y lo que no cubren · IA responsable · límites y siguiente paso · documentación de respaldo para cada afirmación · pruebas · licencia y atribución (incluye BeamNG, OSM y assets).
+Problema con fuentes · cómo probarlo en vivo y en local · resultados medidos contra alternativas simples (E1–E9) · mapa del repo · datos con fuente y licencia y lo que no cubren · IA responsable · límites y siguiente paso · documentación de respaldo para cada afirmación · pruebas · licencia y atribución (incluye NHTSA, INEGI, OSM y assets).
+
+**Siguiente paso documentado (no es parte de las fases):** comparar la deformación contra simulación por elementos finitos con software libre (OpenRadioss y modelos públicos de vehículos) cuando haya acceso a una máquina potente.
 
 ---
 
@@ -511,8 +512,6 @@ Claude Code no espera respuesta: usa la **opción por defecto**, la registra en 
 - React Three Fiber v9 y WebGPU: https://r3f.docs.pmnd.rs/tutorials/v9-migration-guide
 - `@react-three/rapier`: https://github.com/pmndrs/react-three-rapier
 - Claude API, salida estructurada: https://platform.claude.com/docs/en/build-with-claude/structured-outputs
-- BeamNG.tech para academia: https://www.beamng.tech/blog/beamng-tech-for-academia
-- BeamNGpy: https://github.com/BeamNG/BeamNGpy
 - MakeHuman / MPFB, licencia: https://static.makehumancommunity.org/about/license.html
 - Quaternius (CC0): https://quaternius.com
 - OpenStreetMap, licencia: https://www.openstreetmap.org/copyright

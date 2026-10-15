@@ -20,7 +20,6 @@ Reglas de trabajo: `CLAUDE.md`. Especificación: `PLAN.md`.
 | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------- | ---------------------------------- |
 | `ANTHROPIC_API_KEY`                                                                                                                                                                                                                 | F6 (extracción con Claude) y E1. CI usa respuestas grabadas, así que no bloquea hasta F6.         | Recibida 2026-10-14 (`.env.local`) |
 | Conectar el repo a Vercel, configurar las variables de entorno (`ANTHROPIC_API_KEY`, tope, Upstash) y elegir el plan                                                                                                                | Despliegue en Vercel (ADR 0011); sin Upstash, en producción solo responde la línea base de reglas | Pendiente                          |
-| Licencia académica BeamNG.tech                                                                                                                                                                                                      | F10 y E5                                                                                          | Pendiente                          |
 | Confirmar licencia MIT del código y el nombre _Croquis_                                                                                                                                                                             | Se usan los valores por defecto de PLAN §16 (ADR 0002)                                            | Usando default                     |
 | Pruebas con ≥ 5 personas reales (E9)                                                                                                                                                                                                | F11                                                                                               | Pendiente                          |
 | Confirmar que el repositorio remoto correcto es `renecano/Crash_reconstruction_visualization_system` (público, lo creó René vacío el 2026-10-10). Se eligió por nombre y fecha; se puede cambiar con `git remote set-url origin …`. | Push y CI                                                                                         | Asumido y ya en uso                |
@@ -108,7 +107,7 @@ Cifras medidas (de `eval/results/atus_summary.json`): 2025 = 380,391 accidentes,
 
 - **Qué quedó:** el repo completo con CI, los primeros módulos con pruebas y la ingesta real de ATUS con cifras verificables.
 - **Cómo probarlo:** `pnpm install && uv sync --all-packages --all-groups`, luego `pnpm dev` (web), `uv run pytest`, `pnpm test`. Para regenerar las cifras: `uv run croquis-data atus download`, `uv run croquis-data atus process`, `uv run croquis-eval atus-summary`.
-- **Qué necesito de ti:** nada para seguir a F1–F5. Para F6 la `ANTHROPIC_API_KEY`; para F10 la licencia de BeamNG.tech; para F11 credenciales de AWS/Vercel y las 5 personas de E9. Y confirmar el remoto de GitHub si no es el que asumí.
+- **Qué necesito de ti:** nada para seguir a F1–F5. Para F6 la `ANTHROPIC_API_KEY`; para F11 credenciales de AWS/Vercel y las 5 personas de E9. Y confirmar el remoto de GitHub si no es el que asumí.
 
 ## F1 — Contrato y croquis
 
@@ -164,7 +163,7 @@ Criterio de aceptación F1 (PLAN §13): las 10 escenas validan en ambos lados �
 
 - **Qué quedó:** el contrato completo con tipos generados en los dos lenguajes, diez escenas listas para la demo, un validador que explica en lenguaje llano qué no cuadra, y el croquis editable en `/croquis` sincronizado con el JSON.
 - **Cómo probarlo:** `pnpm dev` y abre http://localhost:3000/croquis; cambia de escena, arrastra el vehículo A y mira cómo cambia el JSON (y cómo la posición queda marcada como tuya); pega un JSON roto y verás los errores del contrato. Pruebas: `pnpm test`, `uv run pytest`, `pnpm --filter @croquis/web test:e2e`.
-- **Qué necesito de ti:** nada para F2. Sigue pendiente lo de la lista de bloqueados (llave de API para F6, BeamNG para F10, AWS/Vercel y personas para F11).
+- **Qué necesito de ti:** nada para F2. Sigue pendiente lo de la lista de bloqueados (llave de API para F6, AWS/Vercel y personas para F11).
 
 ## F2 — Solver de referencia
 
@@ -337,7 +336,7 @@ Criterio de aceptación F4 (PLAN §13): capturas de daño por escena ✔; perfil
 
 ### Pendientes registrados
 
-- Calibrar las reglas ilustrativas (faros, parabrisas, piezas, vidrios, bolsas) con E5/BeamNG en F10.
+- Calibrar las reglas ilustrativas (faros, parabrisas, piezas, vidrios, bolsas) con E5 contra autos reales en F10 (ADR 0018).
 - Colisiones de restos con banquetas elevadas (hoy el piso de colisión es plano).
 - Deformación de motos y bicis con su propio modelo (hoy ilustrativa) cuando el solver tenga rigideces para dos ruedas.
 - Fluidos distintos del radiador y marcas de arrastre de volcadura: F5 (volcadura).
@@ -450,7 +449,7 @@ Con la política automática por escena: calidad media **61.4 fps** mínimo (esc
 - **Visibilidad:** campo visual del conductor (pilares, espejos) y deslumbramiento.
 - **Fase previa:** deslizamiento lateral, para que la volcadura de `volcadura` salga del criterio y no solo del relato.
 - **Cinturón:** calibrar holgura y rigidez cuando haya datos accesibles de pruebas.
-- **Volcadura 3D:** validarla contra BeamNG (E5, F10).
+- **Volcadura 3D:** E5 no cubre volcaduras (ADR 0018). Validarla con casos de volcadura de CISS si traen medidas útiles; si no, queda como límite declarado.
 - **E4:** sumar más casos publicados en cuanto haya conjuntos abiertos más grandes.
 - **E6 con margen estrecho:** 61.4 fps en media y 30.3 en alta, contra 60 y 30; la laptop varía ±15 % según su temperatura. Siguientes optimizaciones sin bajar calidad, si una fase nueva lo empuja abajo: LOD de los cuerpos para ocupantes lejanos y fusión de más piezas fijas de los vehículos (el renderer está limitado por CPU por objeto).
 
@@ -736,7 +735,7 @@ Cómo probarlo:
 - **Visor:** `pnpm --filter @croquis/web dev` y abre `/visor?escena=peaton_cruce`. Mira el panel "Lo que dice la evidencia física".
 - **Hipótesis:** necesitan la API corriendo (`uv run uvicorn croquis_api.main:app`).
 
-Qué necesito de ti: nada nuevo. Siguen pendientes AWS y Vercel, BeamNG y las personas para E9.
+Qué necesito de ti: nada nuevo. Siguen pendientes AWS y Vercel y las personas para E9.
 
 ## Migración a Vercel solo (decisión de René, 2026-10-14)
 
@@ -886,7 +885,7 @@ Cómo probarlo:
 - `uv run croquis-eval e1-extraction --split ciss` reproduce los números desde las respuestas grabadas, sin gastar.
 - `uv run croquis-extraction relatos check` verifica que los dos tests congelados siguen intactos.
 
-Qué necesito de ti: nada nuevo. El gasto en Claude del día fue $18.57 de los $20 del tope. Siguen pendientes Vercel y Upstash, BeamNG y las personas para E9.
+Qué necesito de ti: nada nuevo. El gasto en Claude del día fue $18.57 de los $20 del tope. Siguen pendientes Vercel y Upstash y las personas para E9.
 
 ## F7 (continuación) — Rigidez lateral (pendiente 2)
 
@@ -1066,3 +1065,15 @@ Rama `feat/f7-marcas-derrape`. ADR 0016.
 2. **La fase en la extracción:** prompt, reglas y anotación del dev, sin tocar los tests congelados.
 3. **Marcas de derrape de antes del impacto:** pedirían un modelo de velocidad crítica en curva.
 4. **Ruido numérico entre máquinas en la inversión:** el álgebra lineal con varios hilos suma en otro orden. Ya pasó con `en_limite`, que se arregló con una tolerancia en unidades del parámetro (PR #15). Si vuelve a aparecer en otra clasificación, fijar un solo hilo en el solver de referencia.
+
+## Decisión de René (2026-10-15) — BeamNG sale del proyecto
+
+ADR 0018. PLAN.md y CLAUDE.md quedan con las versiones que dio René.
+
+- **E5** ahora compara la deformación contra autos reales. La **F10** pasa a ser "Validación del daño contra autos reales".
+  - **Fuentes:** los reportes de pruebas de NHTSA (fotos y aplastamiento medido) y los casos CISS con C1–C6.
+  - **Conjuntos:** uno de desarrollo y uno de prueba que se congela antes de medir.
+  - **Métricas:** error por punto C1–C6, profundidad máxima, ancho y área, por tipo de impacto, contra dos líneas base (deformación lineal y uniforme).
+  - **Primer paso:** el inventario de muestras en `docs/data.md`.
+- **Lo que existía de BeamNG:** solo una carpeta vacía `tools/beamng-bridge`, sin versionar; se borró. No había `eval/damage-beamng`. Las menciones en el README, en `docs/` y en este archivo se cambiaron al plan nuevo, y la licencia salió de "Bloqueado — necesita a René".
+- **La volcadura 3D pierde su validación prevista:** E5 no cubre volcaduras. Queda como límite, salvo que CISS traiga casos con medidas útiles.

@@ -76,7 +76,7 @@ Pruebas (`test_crash3.py`): uniforme = fórmula cerrada, inversa recupera la ene
 
 - Barrera plana rígida: $\Delta V = v(1+e)$, $E = \tfrac12 m v^2 (1 - e^2)$, perfil uniforme sobre el ancho. Desde F3 el orquestador resuelve las superficies planas con el impulso planar de §2 contra un cuerpo inmóvil (normal de la superficie), que se reduce a esta fórmula en un choque de frente centrado y trata bien los golpes oblicuos o de costado.
 - Objeto estrecho (poste, árbol): el ancho dañado se propaga desde el diámetro $D$ con ángulo $\alpha = 45°$: $L = \min(W, D + 2 C_{max} \tan\alpha)$, resuelto por iteración porque $C_{max}$ depende de $L$ (forma "poste" de CRASH3). **Aproximación** habitual en reconstrucción.
-- Rigidez del objeto: concreto, metal y mampostería son rígidos; madera/vegetal con $D \ge 0.25$ m se trata como rígido; si es más delgado, cede y absorbe el 30 % de la energía cinética (**supuesto**, rango 10–50 %, pendiente de E5 con BeamNG en F10).
+- Rigidez del objeto: concreto, metal y mampostería son rígidos; madera/vegetal con $D \ge 0.25$ m se trata como rígido; si es más delgado, cede y absorbe el 30 % de la energía cinética (**supuesto**, rango 10–50 %, pendiente de E5 contra autos reales en F10).
 
 ## 5. Post-impacto (`postimpact.py`)
 
