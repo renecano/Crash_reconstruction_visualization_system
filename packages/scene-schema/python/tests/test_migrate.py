@@ -7,7 +7,12 @@ from typing import Any, cast
 import pytest
 
 from croquis_scene_schema import FIXTURES_DIR, SCHEMA_VERSION, load_fixture, schema_errors
-from croquis_scene_schema.migrate import Migration, compare_versions, migrate_escena
+from croquis_scene_schema.migrate import (
+    MIGRATIONS,
+    Migration,
+    compare_versions,
+    migrate_escena,
+)
 
 JsonObj = dict[str, Any]
 
@@ -25,7 +30,8 @@ def _v090_a_100(doc: JsonObj) -> JsonObj:
 TEST_REGISTRY = [
     Migration(
         "0.9.0", "1.0.0", "velocidad → velocidad_previa; lugar.sentidos por defecto", _v090_a_100
-    )
+    ),
+    *MIGRATIONS,
 ]
 
 
@@ -49,7 +55,7 @@ def test_encadena_migraciones_y_el_resultado_valida() -> None:
     doc = _legacy()
     assert schema_errors(doc)
     r = migrate_escena(doc, TEST_REGISTRY)
-    assert r.aplicadas == ["0.9.0→1.0.0"]
+    assert r.aplicadas == ["0.9.0→1.0.0", "1.0.0→1.1.0"]
     assert schema_errors(r.doc) == []
     assert r.doc["meta"]["version_esquema"] == SCHEMA_VERSION
 
@@ -65,6 +71,19 @@ def test_falla_con_versiones_desconocidas_futuras_o_ausentes() -> None:
         migrate_escena({})
     with pytest.raises(ValueError, match="objeto"):
         migrate_escena(None)
+
+
+def test_una_escena_1_0_0_migra_sin_cambios_a_1_1_0() -> None:
+    """La 1.1.0 solo agrega evidencias[].fase: un documento 1.0.0 conserva su significado."""
+    actual = load_fixture("alcance")
+    viejo = copy.deepcopy(actual)
+    viejo["meta"]["version_esquema"] = "1.0.0"
+    for e in viejo.get("evidencias", []):
+        e.pop("fase", None)
+    r = migrate_escena(viejo)
+    assert r.aplicadas == ["1.0.0→1.1.0"]
+    assert schema_errors(r.doc) == []
+    assert r.doc["meta"] == actual["meta"]
 
 
 def test_compare_versions() -> None:

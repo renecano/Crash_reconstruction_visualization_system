@@ -16,8 +16,17 @@ export interface Migration {
   aplicar: (doc: Record<string, unknown>) => Record<string, unknown>;
 }
 
-/** Migraciones registradas, en orden ascendente. Vacío mientras solo exista la 1.0.0. */
-export const MIGRATIONS: Migration[] = [];
+/** Migraciones registradas, en orden ascendente. */
+export const MIGRATIONS: Migration[] = [
+  {
+    desde: "1.0.0",
+    hasta: "1.1.0",
+    descripcion:
+      "evidencias[].fase opcional (antes o después del impacto); los documentos no cambian",
+    // Sin el campo, las marcas conservan el significado de 1.0.0.
+    aplicar: (doc) => doc,
+  },
+];
 
 export interface MigrationResult {
   doc: Record<string, unknown>;

@@ -1,7 +1,7 @@
 {
   "meta": {
     "id": "fx-motociclista-vuelta",
-    "version_esquema": "1.0.0",
+    "version_esquema": "1.1.0",
     "idioma": "es-MX",
     "semilla": 105,
     "creado": "2026-10-10T18:20:00-06:00",
@@ -595,6 +595,7 @@
     {
       "id": "evid-raspadura-moto",
       "tipo": "marcas_derrape",
+      "fase": "despues_impacto",
       "vehiculo_id": "veh-b",
       "longitud": {
         "valor": 6,

@@ -581,7 +581,7 @@ class Meta(BaseModel):
         extra="forbid",
     )
     id: Annotated[str, Field(max_length=64, min_length=8, pattern="^[A-Za-z0-9_-]+$")]
-    version_esquema: Literal["1.0.0"]
+    version_esquema: Literal["1.1.0"]
     idioma: Literal["es-MX", "en"]
     semilla: Annotated[int, Field(ge=0, le=4294967295)]
     """
@@ -936,6 +936,10 @@ class EvidenciaFisica(BaseModel):
     Identificador estable dentro de la escena.
     """
     longitud: CampoLongitud | None = None
+    fase: Literal["antes_impacto", "despues_impacto"] | None = None
+    """
+    Si las marcas quedaron antes o después del impacto (desde 1.1.0). Sin este campo, unas marcas_frenado se toman como de antes del impacto (la convención de 1.0.0) y unas marcas_derrape tienen fase desconocida y el solver no las usa.
+    """
     puntos: Annotated[list[Punto2D] | None, Field(max_length=64)] = None
     descripcion: Annotated[str | None, Field(max_length=400)] = None
     procedencia: Procedencia

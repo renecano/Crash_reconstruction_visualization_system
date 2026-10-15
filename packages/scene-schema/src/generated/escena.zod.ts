@@ -3,7 +3,7 @@
 import { z } from "zod";
 
 export const SCHEMA_ID = "https://croquis.mx/schemas/escena/1.0.0/escena.schema.json";
-export const SCHEMA_VERSION = "1.0.0" as const;
+export const SCHEMA_VERSION = "1.1.0" as const;
 
 /** Confianza en el valor, de 0 (adivinado) a 1 (seguro). */
 export const Confianza = z.number().min(0).max(1);
@@ -493,6 +493,7 @@ export const EvidenciaFisica = z.strictObject({
   vehiculo_id: Id.optional(),
   persona_id: Id.optional(),
   longitud: CampoLongitud.optional(),
+  fase: z.enum(["antes_impacto", "despues_impacto"]).optional(),
   puntos: z.array(Punto2D).max(64).optional(),
   descripcion: z.string().max(400).optional(),
   procedencia: Procedencia,
@@ -544,7 +545,7 @@ export type Lugar = z.infer<typeof Lugar>;
 
 export const Meta = z.strictObject({
   id: z.string().min(8).max(64).regex(new RegExp("^[A-Za-z0-9_-]+$")),
-  version_esquema: z.literal("1.0.0"),
+  version_esquema: z.literal("1.1.0"),
   idioma: z.enum(["es-MX", "en"]),
   semilla: z.int().min(0).max(4294967295),
   creado: z.iso.datetime({ offset: true }),

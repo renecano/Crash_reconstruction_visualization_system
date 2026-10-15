@@ -1,7 +1,7 @@
 {
   "meta": {
     "id": "fx-objeto-fijo-arbol",
-    "version_esquema": "1.0.0",
+    "version_esquema": "1.1.0",
     "idioma": "es-MX",
     "semilla": 106,
     "creado": "2026-10-10T18:25:00-06:00",
@@ -578,6 +578,7 @@
     {
       "id": "evid-derrape",
       "tipo": "marcas_derrape",
+      "fase": "antes_impacto",
       "vehiculo_id": "veh-a",
       "longitud": {
         "valor": 20,

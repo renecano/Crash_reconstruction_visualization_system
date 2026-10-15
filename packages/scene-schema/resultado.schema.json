@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://croquis.local/schema/resultado/1.4.0",
+  "$id": "https://croquis.local/schema/resultado/1.5.0",
   "title": "Resultado",
   "description": "Reconstrucción producida por el solver a partir de una EscenaSpec: trayectorias, impulsos, daños, personas (proyección y ocupantes), visibilidad, objetos del entorno, eventos, banderas, parámetros con su fuente incertidumbre por Monte Carlo (percentiles con semilla), inversión desde la evidencia y banderas de consistencia. Unidades SI; tiempo con t = 0 en el impacto principal; rumbos en radianes antihorario desde +X (salvo los campos que terminan en _deg).",
   "type": "object",
@@ -22,7 +22,7 @@
   ],
   "properties": {
     "version_resultado": {
-      "const": "1.4.0"
+      "const": "1.5.0"
     },
     "escena_id": {
       "$ref": "#/$defs/Id"
@@ -1288,7 +1288,7 @@
           "maxItems": 64,
           "items": {
             "type": "string",
-            "pattern": "^(reposo|rumbo_final|marcas_frenado|proyeccion|dano):[A-Za-z0-9_-]+$"
+            "pattern": "^(reposo|rumbo_final|marcas_frenado|marcas_despues|proyeccion|dano):[A-Za-z0-9_-]+$"
           }
         },
         "parametros": {

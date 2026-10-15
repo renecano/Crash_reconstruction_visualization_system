@@ -1,7 +1,7 @@
 {
   "meta": {
     "id": "fx-frontal-curva",
-    "version_esquema": "1.0.0",
+    "version_esquema": "1.1.0",
     "idioma": "es-MX",
     "semilla": 103,
     "creado": "2026-10-10T18:10:00-06:00",
@@ -818,6 +818,7 @@
     {
       "id": "evid-frenado-b",
       "tipo": "marcas_frenado",
+      "fase": "antes_impacto",
       "vehiculo_id": "veh-b",
       "longitud": {
         "valor": 15,

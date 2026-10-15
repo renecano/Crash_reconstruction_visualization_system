@@ -520,7 +520,7 @@
       "required": ["id", "version_esquema", "idioma", "semilla", "creado"],
       "properties": {
         "id": { "type": "string", "minLength": 8, "maxLength": 64, "pattern": "^[A-Za-z0-9_-]+$" },
-        "version_esquema": { "type": "string", "const": "1.0.0" },
+        "version_esquema": { "type": "string", "const": "1.1.0" },
         "idioma": { "type": "string", "enum": ["es-MX", "en"] },
         "semilla": {
           "type": "integer",
@@ -941,6 +941,11 @@
         "vehiculo_id": { "$ref": "#/$defs/Id" },
         "persona_id": { "$ref": "#/$defs/Id" },
         "longitud": { "$ref": "#/$defs/CampoLongitud" },
+        "fase": {
+          "type": "string",
+          "enum": ["antes_impacto", "despues_impacto"],
+          "description": "Si las marcas quedaron antes o después del impacto (desde 1.1.0). Sin este campo, unas marcas_frenado se toman como de antes del impacto (la convención de 1.0.0) y unas marcas_derrape tienen fase desconocida y el solver no las usa."
+        },
         "puntos": { "type": "array", "items": { "$ref": "#/$defs/Punto2D" }, "maxItems": 64 },
         "descripcion": { "type": "string", "maxLength": 400 },
         "procedencia": { "$ref": "#/$defs/Procedencia" }
