@@ -9,7 +9,7 @@
    - **Desarrollo (2017–2021):** calibra la única constante libre, σ del error del modelo en log ΔV.
    - **Test (2022–2024):** solo se reporta.
 
-   El objetivo de la calibración (que p10–p90 cubra el 80 % en dev) se fijó antes de mirar el test. En el test la cobertura da 81.7 %.
+   El objetivo de la calibración (que p10–p90 cubra el 80 % en dev) se fijó antes de mirar el test. En el test la cobertura da 81.7 %. **Actualizado (ADR 0013):** con la rigidez lateral de NHTSA, σ = 0.4658 y la cobertura en el test es 82.0 %.
 
 2. **Rigidez muestreada en vez de un valor por clase.** La rigidez frontal sale del bootstrap de las pruebas de barrera de NHTSA de la clase. A y B vienen de la misma prueba y se muestrean juntas, porque están correlacionadas. Para la lateral y la trasera no hay pruebas en la tabla de E2: se usa el respaldo genérico con pendiente en [0.7, 1.4] y la fuente `supuesto`.
    - **Consecuencia medida en E3:** los traseros son el grupo más débil.

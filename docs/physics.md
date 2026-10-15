@@ -58,7 +58,17 @@ $$E = w \sum_{i=1}^{N-1} \left[ \frac{A}{2}(C_i + C_{i+1}) + \frac{B}{6}\left(C_
 
 con $\theta$ el ángulo entre la fuerza principal y la normal a la superficie (acotado a 45°). Caso uniforme: $E = L\,(A C + B C^2/2 + G)$ y su inversa $C = (-A + \sqrt{A^2 + 2B(E/L - G)})/B$. Velocidad equivalente contra barrera $EBS = \sqrt{2E/m}$; para dos vehículos $\Delta V_1 = \sqrt{2 E_{tot} m_2 / (m_1 (m_1+m_2))}$.
 
-**Coeficientes por clase** (`stiffness_classes.json`, generado por E2 desde pruebas frontales a 0° contra barrera rígida de NHTSA): con $\Delta V = v(1+e)$, $b_1 = (\Delta V - b_0)/\bar C$, $A = m b_0 b_1 / L$, $B = m b_1^2 / L$, $b_0 = 8$ km/h y $e = 0.1$ (valores de literatura citados por Kodsi et al. 2017). Se reporta la mediana por clase; solo hay datos para la zona frontal; lateral y trasera usan el respaldo marcado `supuesto`. El reparto de la energía disipada entre dos carrocerías se hace inversamente a $B$ (misma fuerza en el contacto; **aproximación**). Formas de perfil por zona CDC: distribuido → uniforme; Y/Z → triangular sobre 66 % del lado; L/C/R → 40 % del lado.
+**Coeficientes por clase** (`stiffness_classes.json`, generado por E2 desde pruebas frontales a 0° contra barrera rígida de NHTSA): con $\Delta V = v(1+e)$, $b_1 = (\Delta V - b_0)/\bar C$, $A = m b_0 b_1 / L$, $B = m b_1^2 / L$, $b_0 = 8$ km/h y $e = 0.1$ (valores de literatura citados por Kodsi et al. 2017). Se reporta la mediana por clase.
+
+**Zona lateral** (E2 lateral, `e2-mdb`, ADR 0013): pruebas FMVSS 214 y NCAP lateral de NHTSA, en las que la barrera móvil deformable de 1,368 kg avanza oblicua a 27° contra el costado detenido. La derivación es la inversa del cálculo del solver:
+
+- energía total con momento en 1-D y restitución cero, $E = \tfrac12 \mu v^2$;
+- la barrera se lleva el 13.6 % (Johnson 2011, promedio de 70 pruebas con el aplastamiento de su cara medido; NHTSA supone 5 % y con eso infla la rigidez lateral);
+- el resto lo absorbe el perfil DPD1–DPD6 del costado con la corrección por PDOF.
+
+Los coeficientes van en la forma de WinSMASH, $A = d_0 d_1$ y $B = d_1^2$, con $d_0 = 63.3\ \sqrt{N}$, el valor de NHTSA para costados (Prasad 1991). Se despeja $d_1$ en cada prueba. Repartir la energía por equilibrio de fuerzas daba a la barrera 54 %, incompatible con el aplastamiento medido, y se descartó antes de mirar E3.
+
+**Zona trasera:** usa el respaldo marcado `supuesto`. Las pruebas de FMVSS 301 desde 2007 no traen en la API masa, largo ni perfil del vehículo, y las completas son de modelos 1978–1994. El reparto de la energía disipada entre dos carrocerías se hace inversamente a $B$ (misma fuerza en el contacto; **aproximación**). Formas de perfil por zona CDC: distribuido → uniforme; Y/Z → triangular sobre 66 % del lado; L/C/R → 40 % del lado.
 
 Pruebas (`test_crash3.py`): uniforme = fórmula cerrada, inversa recupera la energía, monotonía, perfiles con forma absorben exactamente la energía pedida, conversión kgf/cm → N/m.
 
@@ -130,7 +140,7 @@ Resumen por par: si se veía al impacto, desde cuándo y a qué distancia, el ti
 
 De la evidencia a velocidades y ángulos, con distribución y sin dar un intervalo que la evidencia no respalda.
 
-**ΔV desde el daño (CRASH3).** Con el perfil de aplastamiento C1–C6 y el ancho dañado (medidos en CISS o una profundidad y un ancho declarados), la energía absorbida sale de §3 con corrección por PDOF. La rigidez es lo más incierto: se muestrea por **bootstrap de las pruebas de barrera de NHTSA de la clase** (A y B salen de la misma pendiente y van juntos); las zonas lateral y trasera usan el respaldo genérico con pendiente en [0.7, 1.4] (**supuesto**). La masa varía ±5 % (ocupantes y carga no medidos). Entre dos vehículos el ΔV sale de la energía de ambos y la conservación de momento (velocidad común, como CRASH3). Contra un objeto rígido sale de la velocidad equivalente de barrera con restitución en [0, 0.2]. Encima va el error del modelo calibrado en E3 (ver abajo): $\ln \Delta V \sim \mathcal N(\ln \Delta V_{CRASH3},\ \sigma^2)$, con $\sigma = 0.4981$ ajustada con bisección para que p10–p90 cubra el 80 % de los casos de desarrollo de CISS (2017–2021). Se guarda en `solver/croquis_solver/data/inversion_calibration.json`.
+**ΔV desde el daño (CRASH3).** Con el perfil de aplastamiento C1–C6 y el ancho dañado (medidos en CISS o una profundidad y un ancho declarados), la energía absorbida sale de §3 con corrección por PDOF. La rigidez es lo más incierto: se muestrea por **bootstrap de las pruebas de NHTSA de la clase** (A y B salen de la misma pendiente y van juntos): frontales contra barrera rígida y, para el costado, las de barrera móvil (§3). La zona trasera usa el respaldo genérico con pendiente en [0.7, 1.4] (**supuesto**). La masa varía ±5 % (ocupantes y carga no medidos). Entre dos vehículos el ΔV sale de la energía de ambos y la conservación de momento (velocidad común, como CRASH3). Contra un objeto rígido sale de la velocidad equivalente de barrera con restitución en [0, 0.2]. Encima va el error del modelo calibrado en E3 (ver abajo): $\ln \Delta V \sim \mathcal N(\ln \Delta V_{CRASH3},\ \sigma^2)$, con $\sigma = 0.4658$ ajustada con bisección para que p10–p90 cubra el 80 % de los casos de desarrollo de CISS (2017–2021). Se guarda en `solver/croquis_solver/data/inversion_calibration.json`.
 
 **Velocidades y ángulos desde la evidencia.**
 
@@ -143,7 +153,7 @@ De la evidencia a velocidades y ángulos, con distribución y sin dar un interva
 - **En el límite:** si el mejor ajuste queda en un límite de búsqueda (por ejemplo 0 km/h), se marca `en_limite`: la evidencia lleva el parámetro fuera de lo que el modelo permite y conviene revisar los datos.
 - **Reproducibilidad:** con la misma semilla el resultado se repite en la misma máquina. Entre máquinas difiere en décimas (BLAS por CPU), así que la verificación de resultados compara estos bloques con 5 % de tolerancia y el resto con 1e-6 (ADR 0010).
 
-**Validación (E3, `eval/croquis_eval/e3_ciss.py`).** ΔV desde el aplastamiento medido de NHTSA CISS contra el ΔV del EDR, comparado con el ΔV de WinSMASH que publica CISS. La partición es por año: la calibración usa 2017–2021 y el test 2022–2024 (2,205 vehículos comparables con WinSMASH). Croquis queda detrás de WinSMASH en error medio (11.49 contra 8.19 km/h). Tiene menos sesgo cuando el EDR registra 48 km/h o más (−3.14 contra −14.37 km/h) y es claramente peor en impactos traseros (16.59 contra 7.26 km/h), donde la rigidez es genérica. El intervalo p10–p90 cubre el 81.7 % de los casos de test. Detalle en el README.
+**Validación (E3, `eval/croquis_eval/e3_ciss.py`).** ΔV desde el aplastamiento medido de NHTSA CISS contra el ΔV del EDR, comparado con el ΔV de WinSMASH que publica CISS. La partición es por año: la calibración usa 2017–2021 y el test 2022–2024 (2,205 vehículos comparables con WinSMASH). Croquis queda detrás de WinSMASH en error medio (10.30 contra 8.19 km/h). Tiene menos sesgo cuando el EDR registra 48 km/h o más (−5.19 contra −14.37 km/h). En costados, con la rigidez de las pruebas de barrera móvil, queda a 8.51 km/h contra 7.32. Es claramente peor en impactos traseros (16.45 contra 7.26 km/h), donde la rigidez sigue siendo genérica. El intervalo p10–p90 cubre el 82.0 % de los casos de test. Detalle en el README.
 
 Pruebas (`test_inversion.py`):
 
@@ -229,6 +239,10 @@ El validador semántico (`check.ts` / `check.py`) marca masas, dimensiones y vel
 - McHenry, R. R. CRASH3 Technical Manual, NHTSA, 1986; Campbell, K. L. "Energy basis for collision severity", SAE 740565, 1974.
 - Kodsi, S., Selesnic, S., Attalla, S., Chakravarty, A. "Vehicle frontal crush stiffness coefficients trends", _Accident Reconstruction Journal_, sep./oct. 2017 (método de A/B desde la base de NHTSA; $b_0$ 5–11 km/h; $e$ 0.03–0.2).
 - Siddall, D. y Day, T. "Updating the vehicle class categories", SAE 960897, 1996 (clases por distancia entre ejes).
+- Johnson, N. S. _Assessment of Crash Energy-Based Side Impact Reconstruction Accuracy_, tesis de maestría, Virginia Tech, 2011 (https://vtechworks.lib.vt.edu/items/59052d27-bcc8-4973-ad60-6474aa95a1d6): fracción de la energía en la barrera deformable de NHTSA (13.6 %, de 2.49 % a 49.1 %), $d_0 = 63.3\ \sqrt{N}$ y el supuesto de 5 % de NHTSA.
+- Sharma, D., Stern, S., Brophy, J. y Choi, E. "An overview of NHTSA's crash reconstruction software WinSMASH", ESV 2007, paper 07-0211; Prasad, A. K. "Energy absorbed by vehicle structures in side impacts", SAE 910599, 1991 (citados por Johnson 2011).
+- NHTSA, DOT HS 811 546, _Development of the WinSMASH 2010 Crash Reconstruction Code_, 2012 (rigideces por categoría y forma $d_0$, $d_1$).
+- 49 CFR 571.214 (FMVSS 214, prueba con barrera móvil deformable), 571.301 (FMVSS 301) y parte 587 (barrera deformable de 3,015 lb), eCFR consultado el 2026-10-15.
 - Fricke, L. B. _Traffic Crash Reconstruction_, 2.ª ed., Northwestern University Center for Public Safety, 2010 (fricción, arrastre post-impacto).
 - Mumford, D. et al. "Inverted vehicle drag tests", _Accident Investigation Quarterly_ 13, 1997.
 - Searle, J. A. y Searle, A. "The trajectories and landing velocities of pedestrians...", SAE 831622, 1983; Searle, J. A. "The physics of throw distance in accident reconstruction", SAE 930659, 1993.
