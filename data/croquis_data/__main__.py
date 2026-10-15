@@ -65,6 +65,16 @@ def main(argv: list[str] | None = None) -> int:
     p_nb = no_sub.add_parser("build", help="Escribe packages/extraction/data/nombres.json")
     p_nb.add_argument("--check", action="store_true", help="Solo verifica que esté al día")
 
+    p_in = sub.add_parser(
+        "inercia", help="Base de parámetros inerciales de vehículos ligeros de NHTSA (VRTC)"
+    )
+    in_sub = p_in.add_subparsers(dest="command", required=True)
+    in_sub.add_parser(
+        "download", help="Descarga el PDF a data/raw/nhtsa_inercia y verifica SHA-256"
+    )
+    p_ib = in_sub.add_parser("build", help="Escribe data/processed/nhtsa/inercia.csv")
+    p_ib.add_argument("--check", action="store_true", help="Solo verifica que esté al día")
+
     p_ci = sub.add_parser("ciss", help="NHTSA CISS 2017–2024 (E3: daño, WinSmash y EDR)")
     ci_sub = p_ci.add_subparsers(dest="command", required=True)
     ci_sub.add_parser(
@@ -99,6 +109,18 @@ def main(argv: list[str] | None = None) -> int:
             print("Tabla de E3 (CISS) al día" if ok else "Tabla de E3 (CISS) DESACTUALIZADA")
         else:
             print(f"Escrita {ciss.OUT_DIR / 'e3_vehiculos.csv'}")
+        return 0 if ok else 1
+    if args.source == "inercia":
+        from croquis_data import nhtsa_inercia
+
+        if args.command == "download":
+            print(nhtsa_inercia.download())
+            return 0
+        ok = nhtsa_inercia.build(check=args.check)
+        if args.check:
+            print("inercia.csv al día" if ok else "inercia.csv desactualizado")
+        else:
+            print(nhtsa_inercia.CSV_PATH)
         return 0 if ok else 1
     if args.source == "nombres":
         from croquis_data import nombres
