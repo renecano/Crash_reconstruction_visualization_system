@@ -1,0 +1,148 @@
+{
+  "name": "inercia_guinada",
+  "generated_at": "2026-10-15T15:43:32+00:00",
+  "git_commit": "b97778e",
+  "seed": null,
+  "fuente": {
+    "nombre": "NHTSA VRTC, Light Vehicle Inertial Parameter Database (PDF métrico; Heydinger et al., SAE 1999-01-1336)",
+    "archivo": "data\\processed\\nhtsa\\inercia.csv"
+  },
+  "conteos": {
+    "total": 495,
+    "usados": 164,
+    "sin_guinada_masa_largo_cg_o_vias": 250,
+    "medicion_repetida": 36,
+    "con_lastre_u_ocupantes": 45
+  },
+  "metodo": {
+    "modelo": "k_z = c·L con c la mediana del grupo; I_z = m·(c·L)²",
+    "evaluacion": "dejar-uno-fuera por grupo: error relativo de I_z",
+    "alternativas": {
+      "placa_uniforme": "m·(L² + W²)/12 con W = vía media + 0.20 m (supuesto; la base no trae el ancho)",
+      "indice_dinamico_1": "m·a·b con a y b las distancias del CG a los ejes"
+    },
+    "grupos_por_carroceria": {
+      "2S": "auto",
+      "2C": "auto",
+      "4S": "auto",
+      "3H": "auto",
+      "5H": "auto",
+      "SW": "auto",
+      "CV": "auto",
+      "MP": "suv",
+      "PU": "pickup",
+      "VN": "van"
+    },
+    "grupos_por_clase": {
+      "sedan_compacto": "auto",
+      "sedan_mediano": "auto",
+      "hatchback": "auto",
+      "suv_compacta": "suv",
+      "suv_grande": "suv",
+      "pickup": "pickup",
+      "van": "van",
+      "microbus_combi": "van"
+    }
+  },
+  "grupos": {
+    "auto": {
+      "n": 78,
+      "c_radio_de_giro_sobre_largo": 0.2885,
+      "desviacion": 0.0102,
+      "p10_p90": [
+        0.2798,
+        0.3097
+      ],
+      "modelo": {
+        "error_relativo_medio": 0.0543,
+        "sesgo_relativo": -0.0144
+      },
+      "placa_uniforme": {
+        "error_relativo_medio": 0.1208,
+        "sesgo_relativo": 0.1185
+      },
+      "indice_dinamico_1": {
+        "error_relativo_medio": 0.0897,
+        "sesgo_relativo": -0.0782
+      }
+    },
+    "suv": {
+      "n": 28,
+      "c_radio_de_giro_sobre_largo": 0.31,
+      "desviacion": 0.0111,
+      "p10_p90": [
+        0.2955,
+        0.3283
+      ],
+      "modelo": {
+        "error_relativo_medio": 0.0547,
+        "sesgo_relativo": -0.0007
+      },
+      "placa_uniforme": {
+        "error_relativo_medio": 0.0539,
+        "sesgo_relativo": -0.0049
+      },
+      "indice_dinamico_1": {
+        "error_relativo_medio": 0.0704,
+        "sesgo_relativo": -0.0496
+      }
+    },
+    "pickup": {
+      "n": 35,
+      "c_radio_de_giro_sobre_largo": 0.2867,
+      "desviacion": 0.0096,
+      "p10_p90": [
+        0.2793,
+        0.3059
+      ],
+      "modelo": {
+        "error_relativo_medio": 0.0478,
+        "sesgo_relativo": -0.0171
+      },
+      "placa_uniforme": {
+        "error_relativo_medio": 0.1175,
+        "sesgo_relativo": 0.1124
+      },
+      "indice_dinamico_1": {
+        "error_relativo_medio": 0.0576,
+        "sesgo_relativo": 0.0501
+      }
+    },
+    "van": {
+      "n": 23,
+      "c_radio_de_giro_sobre_largo": 0.3183,
+      "desviacion": 0.0108,
+      "p10_p90": [
+        0.3006,
+        0.3237
+      ],
+      "modelo": {
+        "error_relativo_medio": 0.0521,
+        "sesgo_relativo": 0.0262
+      },
+      "placa_uniforme": {
+        "error_relativo_medio": 0.0617,
+        "sesgo_relativo": -0.0329
+      },
+      "indice_dinamico_1": {
+        "error_relativo_medio": 0.0755,
+        "sesgo_relativo": 0.0101
+      }
+    }
+  },
+  "global": {
+    "n": 164,
+    "modelo": {
+      "error_relativo_medio": 0.0527,
+      "sesgo_relativo": -0.007
+    },
+    "placa_uniforme": {
+      "error_relativo_medio": 0.1004,
+      "sesgo_relativo": 0.0749
+    },
+    "indice_dinamico_1": {
+      "error_relativo_medio": 0.0776,
+      "sesgo_relativo": -0.0335
+    }
+  }
+}

@@ -177,6 +177,11 @@ SIGMA_HEADING_DEG = 20.0  # incertidumbre de un rumbo final declarado (supuesto)
 ANGLE_BOUND_DEG = 20.0  # desvío máximo que se ajusta al rumbo inicial no declarado (supuesto)
 # Pasos de diferencias finitas y escalas de cada tipo de parámetro (km/h y grados).
 JAC_STEP = {"velocidad": 1.0, "rumbo": 1.0}
+# Distancia al límite de búsqueda por debajo de la cual el mejor ajuste "quedó en el límite", en las
+# unidades del parámetro (km/h y grados). Con 1e-3, un ajuste que se pega al límite caía de un lado
+# o del otro según el orden de las sumas del álgebra lineal en cada máquina; los resultados se
+# reportan al centésimo, así que una décima es estar en el límite.
+BOUND_TOL = {"velocidad": 0.1, "rumbo": 0.1}
 SCALE = {"velocidad": 10.0, "rumbo": 10.0}
 # Desviación local (Laplace) por encima de la cual la evidencia no fija el parámetro: el intervalo
 # saldría de los límites de búsqueda y no de la evidencia, así que no se reporta.
@@ -681,7 +686,7 @@ class Estimate:
         """El mejor ajuste quedó en el límite de búsqueda: la evidencia lleva el parámetro fuera
         de lo que el modelo permite (se informa; no es un intervalo de la evidencia)."""
         p = self.param
-        return self.best is not None and min(self.best - p.lo, p.hi - self.best) < 1e-3
+        return self.best is not None and min(self.best - p.lo, p.hi - self.best) < BOUND_TOL[p.kind]
 
     def to_dict(self) -> JsonObj:
         p = self.param

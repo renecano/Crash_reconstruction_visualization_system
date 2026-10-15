@@ -8,7 +8,8 @@ Reglas de trabajo: `CLAUDE.md`. Especificación: `PLAN.md`.
 - **Fase actual:** pendientes físicos de F7, antes de F8. El pendiente 1 de F7 (test CISS de Relatos-MX y prompt v2) quedó hecho el 2026-10-14 (PR #11, ADR 0012); v2 es el prompt de producción.
 - **Rigidez lateral, hecha** (PR #12, ADR 0013). Sale de 1,265 pruebas de barrera móvil de NHTSA. En el test de E3, el error en costados baja de 11.04 a 8.51 km/h.
 - **Rigidez trasera, hecha** (PR #13, ADR 0014). Sale de 136 pruebas FMVSS 301 con barrera rígida, modelos 1975–2004. En el test de E3, el error en traseros baja de 16.45 a 7.68 km/h; en conjunto, 8.85 km/h contra 8.19 de WinSMASH.
-- **Siguiente paso concreto:** pendiente 3 de F7, la inercia de guiñada medida (Heydinger et al., SAE 1999-01-1336) en lugar de la placa uniforme, en la rama `feat/f7-inercia-guinada`. Después, F8. Cambia trayectorias y capturas, así que va antes de las capturas de F8.
+- **Inercia de guiñada medida, hecha** (PR #15, ADR 0015). Viene de la base de parámetros inerciales de NHTSA, 164 vehículos medidos: el error de la inercia baja de 10.0 % con la placa uniforme a 5.3 %.
+- **Siguiente paso concreto:** F8 (entorno completo: OSM real, clima, noche y faros, todos los dispositivos de tránsito, vehículos estacionados y superficie mojada). Antes, el pendiente 4 de F7 (marcas de derrape en el contrato), porque cambia el contrato que F8 también toca.
 - **E1 del prompt v2 en el primer test, hecho** (PR #14). Sonnet 0.875 → 0.919 y Haiku 0.852 → 0.896. Además, E1 ahora compara cada contrafactual con la repetición del mismo relato (McNemar por tipo): ningún tipo difiere del ruido, y las reglas cambian con el modelo del vehículo en 6 de 52 pares (ADR 0012 §10).
 - **F0** cerrado el 2026-10-10 (PR #1), **F1** el 2026-10-10 (PR #3), **F2** el 2026-10-13 (PR #4), **F3** el 2026-10-13 (PR #5), **F4** el 2026-10-13 (PR #6), **F5** el 2026-10-13 (PR #7), **F6** el 2026-10-14 (PR #8), **F7** el 2026-10-14 (PR #9; pendientes registrados); migración a Vercel el 2026-10-14 (PR #10); test CISS y prompt v2 el 2026-10-14 (PR #11).
 
@@ -701,7 +702,7 @@ Incidente: una corrida local de `pnpm test` falló una vez en `debris.test.ts` (
    - **Fuente:** los CSV de CISS no traen narrativas y NHTSA no publica una API documentada para las del Crash Viewer (su API documentada es la de FARS). El test se construirá desde los campos codificados de CISS (maniobra, tipo de choque, superficie, luz, clima, clase): la verdad viene de NHTSA, no del autor de los relatos.
    - **Prompt v2:** con la tabla modelo → clase, validado en dev y medido en ese test nuevo.
 2. **Rigidez lateral y trasera desde pruebas de NHTSA** (FMVSS 214 lateral y FMVSS 301 trasera). Es la debilidad medida en E3. No se ajusta con el EDR de CISS para no mezclar validación y calibración. Cambiará resultados y capturas. **Hecha el 2026-10-15:** lateral (ADR 0013) y trasera (ADR 0014).
-3. **Inercia de guiñada medida** (Heydinger et al., SAE 1999-01-1336) en lugar de la placa uniforme. Cambia todas las trayectorias posteriores al impacto y las capturas.
+3. **Inercia de guiñada medida** (Heydinger et al., SAE 1999-01-1336) en lugar de la placa uniforme. Cambia todas las trayectorias posteriores al impacto y las capturas. **Hecha el 2026-10-15** (ADR 0015).
 4. **Marcas de derrape en la inversión.** El contrato no dice si son anteriores o posteriores al impacto; hace falta un campo y una versión del contrato.
 5. **Procedencia del rumbo final.** Hoy es parte de la pose declarada. Si E9 muestra que las personas no lo dicen, se separa en el contrato.
 6. **Port TS** de inversión, Monte Carlo y las banderas de consistencia que muestrean: F9, con E7. Con la migración (ADR 0011) ya no hay servidor Python al cual llamar.
@@ -1018,3 +1019,21 @@ Rama `feat/f7-e1-v2-test`.
 
 1. **Más pares contrafactuales de sexo:** el sentido observado en Sonnet v2 (3 contra 0) no se puede confirmar ni descartar con 56 pares. Habría que ampliarlos en el dev, sin tocar los tests congelados, y repetir la medición.
 2. **Reglas que dependen del modelo del vehículo:** revisar qué patrón de la línea base cambia con el nombre del modelo y corregirlo en el dev.
+
+## F7 (continuación) — Inercia de guiñada medida (pendiente 3)
+
+Rama `feat/f7-inercia-guinada`. ADR 0015.
+
+### Hecho
+
+1. **Datos:** la base de parámetros inerciales de vehículos ligeros de NHTSA (VRTC), con 495 vehículos (`croquis-data inercia download|build`, `data/processed/nhtsa/inercia.csv`).
+   - El PDF oficial se baja del Internet Archive, fijado por SHA-256: NHTSA rechaza descargas automáticas.
+   - Las tres tablas del PDF se emparejan por la posición de cada fila y se verifican campo por campo.
+   - Dependencia nueva: `pypdf` en `croquis-data` (ADR 0001).
+2. **Modelo y evaluación** (`croquis-eval inercia-guinada`): radio de giro $k = c\,L$ por grupo de carrocería, con 164 vehículos tras los filtros. Dejando uno fuera, el error de la inercia es 5.3 %, contra 10.0 % de la placa uniforme y 7.8 % de $m\,a\,b$.
+3. **Solver y port TS:** `inertia.py` e `inertia.ts` leen la misma tabla. Cambian siete escenas canónicas, y la paridad E7 se mantiene (61,909 números, diferencia máxima 4.1e-5). F7 en las escenas cambia un poco.
+
+### Pendientes
+
+1. **Muestrear la dispersión de $c$ en Monte Carlo** (±3.5 % en el radio de giro).
+2. **Vehículos actuales:** la base es de modelos 1971–1998.

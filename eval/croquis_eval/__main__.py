@@ -23,6 +23,10 @@ def main(argv: list[str] | None = None) -> int:
         help="E2 lateral y trasera: rigidez desde pruebas de barrera móvil de NHTSA",
     )
     sub.add_parser("e4-pedestrian", help="E4: proyección de peatones contra casos publicados")
+    sub.add_parser(
+        "inercia-guinada",
+        help="Inercia de guiñada por grupo de carrocería desde la base de NHTSA (VRTC)",
+    )
     sub.add_parser("e3-ciss", help="E3: ΔV desde el daño contra el EDR y WinSmash (NHTSA CISS)")
     sub.add_parser("f7-inversion", help="F7: inversión, consistencia y tiempos en las escenas")
     e1 = sub.add_parser("e1-extraction", help="E1: extracción del relato en Relatos-MX")
@@ -55,6 +59,11 @@ def main(argv: list[str] | None = None) -> int:
         from croquis_eval.e2_mdb import main as run_e2_mdb
 
         print(run_e2_mdb())
+        return 0
+    if args.command == "inercia-guinada":
+        from croquis_eval.inercia_guinada import main as run_inercia
+
+        print(run_inercia())
         return 0
     if args.command == "e1-extraction":
         from croquis_eval.e1_extraction import main as run_e1

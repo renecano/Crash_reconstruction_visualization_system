@@ -41,6 +41,7 @@
 | jsonschema                       | ≥ 4.26                    | Validación del contrato en Python                                                                         |
 | polars                           | ≥ 2.0                     | Ingesta ATUS con `scan_csv` perezoso (memoria acotada en 8 GB)                                            |
 | httpx                            | ≥ 0.28                    | Descargas                                                                                                 |
+| pypdf                            | ≥ 6.20                    | Lectura de la tabla de inercias de NHTSA (PDF oficial, F7)                                                |
 | pytest / pytest-cov / hypothesis | ≥ 9.1 / ≥ 7.1 / ≥ 6.168   | `filterwarnings = error`, `xfail_strict`                                                                  |
 | ruff                             | ≥ 0.17                    | lint + format; `target-version = py314`                                                                   |
 | pyright                          | ≥ 1.1.414                 | modo `strict` (elegido sobre mypy por velocidad y soporte de Pydantic v2)                                 |
