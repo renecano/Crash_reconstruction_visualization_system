@@ -9,7 +9,8 @@ Reglas de trabajo: `CLAUDE.md`. Especificación: `PLAN.md`.
 - **Rigidez lateral, hecha** (PR #12, ADR 0013). Sale de 1,265 pruebas de barrera móvil de NHTSA. En el test de E3, el error en costados baja de 11.04 a 8.51 km/h.
 - **Rigidez trasera, hecha** (PR #13, ADR 0014). Sale de 136 pruebas FMVSS 301 con barrera rígida, modelos 1975–2004. En el test de E3, el error en traseros baja de 16.45 a 7.68 km/h; en conjunto, 8.85 km/h contra 8.19 de WinSMASH.
 - **Inercia de guiñada medida, hecha** (PR #15, ADR 0015). Viene de la base de parámetros inerciales de NHTSA, 164 vehículos medidos: el error de la inercia baja de 10.0 % con la placa uniforme a 5.3 %.
-- **Siguiente paso concreto:** F8 (entorno completo: OSM real, clima, noche y faros, todos los dispositivos de tránsito, vehículos estacionados y superficie mojada). Antes, el pendiente 4 de F7 (marcas de derrape en el contrato), porque cambia el contrato que F8 también toca.
+- **Fase de las marcas, hecha** (rama `feat/f7-marcas-derrape`, ADR 0016). Contrato 1.1.0 con `evidencias[].fase`, resultado 1.5.0 y la evidencia nueva `marcas_despues` en la inversión.
+- **Siguiente paso concreto:** la moto caída que se arrastra de lado después del choque, con fricción de deslizamiento con fuente, en la rama `feat/f7-moto-caida`. Hoy el solver la desliza menos de un metro y la raspadura de `motociclista` dice seis (ADR 0016). Después, la fase de las marcas en la extracción, y luego F8.
 - **E1 del prompt v2 en el primer test, hecho** (PR #14). Sonnet 0.875 → 0.919 y Haiku 0.852 → 0.896. Además, E1 ahora compara cada contrafactual con la repetición del mismo relato (McNemar por tipo): ningún tipo difiere del ruido, y las reglas cambian con el modelo del vehículo en 6 de 52 pares (ADR 0012 §10).
 - **F0** cerrado el 2026-10-10 (PR #1), **F1** el 2026-10-10 (PR #3), **F2** el 2026-10-13 (PR #4), **F3** el 2026-10-13 (PR #5), **F4** el 2026-10-13 (PR #6), **F5** el 2026-10-13 (PR #7), **F6** el 2026-10-14 (PR #8), **F7** el 2026-10-14 (PR #9; pendientes registrados); migración a Vercel el 2026-10-14 (PR #10); test CISS y prompt v2 el 2026-10-14 (PR #11).
 
@@ -703,7 +704,7 @@ Incidente: una corrida local de `pnpm test` falló una vez en `debris.test.ts` (
    - **Prompt v2:** con la tabla modelo → clase, validado en dev y medido en ese test nuevo.
 2. **Rigidez lateral y trasera desde pruebas de NHTSA** (FMVSS 214 lateral y FMVSS 301 trasera). Es la debilidad medida en E3. No se ajusta con el EDR de CISS para no mezclar validación y calibración. Cambiará resultados y capturas. **Hecha el 2026-10-15:** lateral (ADR 0013) y trasera (ADR 0014).
 3. **Inercia de guiñada medida** (Heydinger et al., SAE 1999-01-1336) en lugar de la placa uniforme. Cambia todas las trayectorias posteriores al impacto y las capturas. **Hecha el 2026-10-15** (ADR 0015).
-4. **Marcas de derrape en la inversión.** El contrato no dice si son anteriores o posteriores al impacto; hace falta un campo y una versión del contrato.
+4. **Marcas de derrape en la inversión.** El contrato no dice si son anteriores o posteriores al impacto; hace falta un campo y una versión del contrato. **Hecho el 2026-10-15** (ADR 0016).
 5. **Procedencia del rumbo final.** Hoy es parte de la pose declarada. Si E9 muestra que las personas no lo dicen, se separa en el contrato.
 6. **Port TS** de inversión, Monte Carlo y las banderas de consistencia que muestrean: F9, con E7. Con la migración (ADR 0011) ya no hay servidor Python al cual llamar.
 7. **CMA-ES** si aparecen escenas multimodales; en las diez canónicas el ajuste local converge.
@@ -1037,3 +1038,31 @@ Rama `feat/f7-inercia-guinada`. ADR 0015.
 
 1. **Muestrear la dispersión de $c$ en Monte Carlo** (±3.5 % en el radio de giro).
 2. **Vehículos actuales:** la base es de modelos 1971–1998.
+
+## F7 (continuación) — Fase de las marcas (pendiente 4)
+
+Rama `feat/f7-marcas-derrape`. ADR 0016.
+
+### Hecho
+
+1. **Contrato 1.1.0:** `evidencias[].fase` opcional (`antes_impacto` o `despues_impacto`).
+   - Sin fase, el significado de 1.0.0: las de frenado, de antes del impacto; las de derrape, desconocidas.
+   - La migración 1.0.0 → 1.1.0 está registrada en TS y Python (el registro estaba vacío). Una prueba migra una escena 1.0.0 y la valida.
+   - Zod y Pydantic se regeneraron.
+2. **Resultado 1.5.0:** la evidencia `marcas_despues:<vehículo>`.
+3. **Solver:**
+   - **Inversión:** las marcas de después del impacto restringen lo que el vehículo se desliza hasta el reposo, con σ = 1.5 m (supuesto).
+   - **Consistencia (Python y TS):** solo compara las marcas de frenado de antes del impacto con la velocidad.
+   - Hay pruebas de cada caso.
+4. **Fixtures y regenerados:**
+   - las siete marcas canónicas llevan su fase según el relato;
+   - los constructores de specs emiten 1.1.0;
+   - se regeneraron Relatos-MX (los dos candados intactos), las salidas doradas, los resultados de las escenas y E7 (sin cambios: 61,909 números, diferencia máxima 4.1e-5);
+   - F7 en las escenas cambia solo en `motociclista`.
+
+### Pendientes
+
+1. **Moto caída que se desliza** (siguiente paso): con la raspadura como evidencia, el residuo de `motociclista` es −3.4 σ.
+2. **La fase en la extracción:** prompt, reglas y anotación del dev, sin tocar los tests congelados.
+3. **Marcas de derrape de antes del impacto:** pedirían un modelo de velocidad crítica en curva.
+4. **Ruido numérico entre máquinas en la inversión:** el álgebra lineal con varios hilos suma en otro orden. Ya pasó con `en_limite`, que se arregló con una tolerancia en unidades del parámetro (PR #15). Si vuelve a aparecer en otra clasificación, fijar un solo hilo en el solver de referencia.

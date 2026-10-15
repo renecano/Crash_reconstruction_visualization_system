@@ -40,7 +40,20 @@ class Migration:
     aplicar: Callable[[JsonObj], JsonObj]
 
 
-MIGRATIONS: list[Migration] = []
+def _v100_a_110(doc: JsonObj) -> JsonObj:
+    """1.1.0 agrega ``evidencias[].fase`` (opcional). Sin el campo, las marcas conservan el
+    significado de 1.0.0, así que ningún documento cambia."""
+    return doc
+
+
+MIGRATIONS: list[Migration] = [
+    Migration(
+        "1.0.0",
+        "1.1.0",
+        "evidencias[].fase opcional (antes o después del impacto); los documentos no cambian",
+        _v100_a_110,
+    ),
+]
 
 
 @dataclass

@@ -113,6 +113,8 @@ export function checkMarks(spec: Json): Inconsistency[] {
   const byId = new Map(vehicles.map((v, i) => [str(v.id), [i, v] as const]));
   for (const e of (spec.evidencias ?? []) as Json[]) {
     if (e.tipo !== "marcas_frenado" || !stated(e.longitud)) continue;
+    // Marcas de después del impacto: no hablan de la velocidad previa.
+    if (e.fase === "despues_impacto") continue;
     const hit = byId.get(str(e.vehiculo_id));
     if (!hit) continue;
     const [idx, v] = hit;

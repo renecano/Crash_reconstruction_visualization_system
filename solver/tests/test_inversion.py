@@ -166,6 +166,39 @@ def test_las_marcas_fijan_la_distancia_de_frenado() -> None:
     assert fr["distancia_antes_impacto"]["valor"] == 3
 
 
+def test_la_fase_decide_que_restringen_las_marcas() -> None:
+    """Contrato 1.1.0: antes del impacto, frenado; después, lo que se desliza hasta el reposo."""
+    spec = load_fixture("motociclista")
+    moto = next(e for e in spec["evidencias"] if e["id"] == "evid-raspadura-moto")
+    assert moto["fase"] == "despues_impacto"
+    ev = inv.evidence_from_spec(spec)
+    assert ev.slide == {moto["vehiculo_id"]: 6.0}
+    assert f"marcas_despues:{moto['vehiculo_id']}" in ev.labels()
+    assert not ev.empty()
+    # Sin fase, unas marcas de derrape no se usan (fase desconocida).
+    del moto["fase"]
+    assert inv.evidence_from_spec(spec).slide == {}
+    # Unas marcas de frenado sin fase son de antes del impacto (la convención de 1.0.0).
+    peaton = load_fixture("peaton_cruce")
+    frenado = next(e for e in peaton["evidencias"] if e["tipo"] == "marcas_frenado")
+    del frenado["fase"]
+    assert inv.evidence_from_spec(peaton).skid == {frenado["vehiculo_id"]: 5.0}
+    frenado["fase"] = "despues_impacto"
+    ev2 = inv.evidence_from_spec(peaton)
+    assert ev2.skid == {}
+    assert ev2.slide == {frenado["vehiculo_id"]: 5.0}
+
+
+def test_residuo_de_las_marcas_de_despues_del_impacto() -> None:
+    spec = load_fixture("motociclista")
+    ev = inv.evidence_from_spec(spec)
+    vid = next(iter(ev.slide))
+    res = inv._residuals(spec, ev, 0.1)  # pyright: ignore[reportPrivateUsage]
+    assert res is not None
+    post = next(v for v in reconstruct(spec, dt=0.1).vehiculos if v.id == vid).distance_post_m
+    assert res[f"marcas_despues:{vid}"] == pytest.approx((post - 6.0) / inv.SIGMA_SLIDE_M)
+
+
 def test_estimacion_en_el_limite_se_marca() -> None:
     p = inv.Param("velocidad", "veh-a", 30.0, 0.0, 200.0, True)
     d = inv.Distribution(0.0, 0.0, 0.0, 3)

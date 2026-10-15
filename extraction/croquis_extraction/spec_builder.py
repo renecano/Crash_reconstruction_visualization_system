@@ -355,7 +355,7 @@ def build_spec(
         )
     meta: JsonObj = {
         "id": spec_id,
-        "version_esquema": "1.0.0",
+        "version_esquema": "1.1.0",
         "idioma": "es-MX",
         "semilla": seed,
         "creado": CREATED,

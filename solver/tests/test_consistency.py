@@ -61,6 +61,14 @@ def test_marcas_largas_para_la_velocidad() -> None:
     assert "marcas_vs_velocidad" not in _codes(_with_marks(8.0, 60.0))
 
 
+def test_marcas_de_despues_del_impacto_no_se_comparan_con_la_velocidad_previa() -> None:
+    spec = _with_marks(45.0, 30.0)
+    for e in spec["evidencias"]:
+        if e.get("tipo") == "marcas_frenado":
+            e["fase"] = "despues_impacto"
+    assert "marcas_vs_velocidad" not in _codes(spec)
+
+
 def _with_throw(distance_m: float, speed_kmh: float) -> JsonObj:
     spec = load_fixture("peaton_cruce")
     car = next(v for v in spec["vehiculos"] if v["maniobra"]["valor"] not in ("estacionado",))
