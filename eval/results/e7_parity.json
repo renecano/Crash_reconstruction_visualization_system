@@ -1,7 +1,7 @@
 {
   "name": "e7_parity",
-  "generated_at": "2026-10-14T22:20:52+00:00",
-  "git_commit": "9b0790c",
+  "generated_at": "2026-10-15T13:44:27+00:00",
+  "git_commit": "1d03c4d",
   "seed": null,
   "descripcion": "E7: paridad del solver TS (packages/solver-ts) con la referencia Python en las 10 escenas canónicas. Se comparan todos los números del resultado (trayectorias, impactos, daño, personas, ocupantes, visibilidad, eventos y parámetros) y los textos; los bloques de Monte Carlo, inversión y consistencia llegan al port en F9.",
   "tolerancia": {
@@ -20,7 +20,7 @@
       "max_rel": 0,
       "peor_ruta": "",
       "estructura": [],
-      "ms_ts": 50
+      "ms_ts": 56.3
     },
     {
       "escena": "lateral_interseccion",
@@ -29,7 +29,7 @@
       "max_rel": 0,
       "peor_ruta": "",
       "estructura": [],
-      "ms_ts": 25.7
+      "ms_ts": 24.4
     },
     {
       "escena": "frontal_curva",
@@ -38,7 +38,7 @@
       "max_rel": 0.000013829919648180677,
       "peor_ruta": "/eventos/2/detalle/impulso_ns/1",
       "estructura": [],
-      "ms_ts": 34.7
+      "ms_ts": 35.7
     },
     {
       "escena": "peaton_cruce",
@@ -47,7 +47,7 @@
       "max_rel": 0,
       "peor_ruta": "",
       "estructura": [],
-      "ms_ts": 13
+      "ms_ts": 12.1
     },
     {
       "escena": "motociclista",
@@ -56,7 +56,7 @@
       "max_rel": 0,
       "peor_ruta": "",
       "estructura": [],
-      "ms_ts": 21.8
+      "ms_ts": 23
     },
     {
       "escena": "objeto_fijo_arbol",
@@ -65,7 +65,7 @@
       "max_rel": 0,
       "peor_ruta": "",
       "estructura": [],
-      "ms_ts": 9.9
+      "ms_ts": 9.5
     },
     {
       "escena": "poste",
@@ -74,7 +74,7 @@
       "max_rel": 0,
       "peor_ruta": "",
       "estructura": [],
-      "ms_ts": 8.4
+      "ms_ts": 9.8
     },
     {
       "escena": "volcadura",
@@ -83,7 +83,7 @@
       "max_rel": 0.000021984786527744804,
       "peor_ruta": "/eventos/0/detalle/energia_disipada_j",
       "estructura": [],
-      "ms_ts": 26
+      "ms_ts": 27.3
     },
     {
       "escena": "nocturno_lluvia",
@@ -92,7 +92,7 @@
       "max_rel": 0,
       "peor_ruta": "",
       "estructura": [],
-      "ms_ts": 21.9
+      "ms_ts": 22.9
     },
     {
       "escena": "glorieta",
@@ -101,7 +101,7 @@
       "max_rel": 4.628977468850305e-11,
       "peor_ruta": "/eventos/0/detalle/energia_disipada_j",
       "estructura": [],
-      "ms_ts": 21.5
+      "ms_ts": 21.1
     }
   ]
 }

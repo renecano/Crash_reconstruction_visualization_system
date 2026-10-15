@@ -1,7 +1,7 @@
 {
   "_generado_por": "uv run croquis-eval e3-ciss (eval/croquis_eval/e3_ciss.py)",
   "_nota": "Dispersión del error del ΔV desde el daño (log), calibrada para que el intervalo p10–p90 cubra el 80 % del ΔV del EDR en CISS 2017–2021 (dev). El test (2022–2024) no interviene.",
-  "sigma_log_dv": 0.4981,
+  "sigma_log_dv": 0.4658,
   "cobertura_dev": 0.8001,
   "anios_dev": [
     2017,
