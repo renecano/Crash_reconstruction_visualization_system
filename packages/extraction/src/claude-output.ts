@@ -19,12 +19,13 @@ import { pyJsonDumps } from "./pyjson";
 import { pyStr } from "./spec-builder";
 
 /**
- * v1 es el prompt de producción mientras v2 no supere a v1 en dev (ADR 0012). Las grabaciones de
- * v1 viven en `grabaciones/<modelo>/` y las de otras versiones en `grabaciones/<versión>/<modelo>/`.
+ * v2 es el prompt de producción: superó a v1 en dev y se midió después en el test CISS (ADR 0012).
+ * Las grabaciones de v1 viven en `grabaciones/<modelo>/` y las de otras versiones en
+ * `grabaciones/<versión>/<modelo>/`.
  */
 export const PROMPT_VERSIONS = ["extraccion_v1", "extraccion_v2"] as const;
 export type PromptVersion = (typeof PROMPT_VERSIONS)[number];
-export const PROMPT_VERSION: PromptVersion = "extraccion_v1";
+export const PROMPT_VERSION: PromptVersion = "extraccion_v2";
 export const DEFAULT_MODEL = "claude-sonnet-5-5";
 export const MODELS = ["claude-sonnet-5-5", "claude-haiku-5-5"] as const;
 export type Model = (typeof MODELS)[number];

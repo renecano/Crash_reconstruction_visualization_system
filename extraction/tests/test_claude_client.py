@@ -111,18 +111,22 @@ def test_prompt_estable_incluye_glosario_y_valores() -> None:
 
 
 def test_prompt_v2_agrega_la_tabla_de_modelos_y_graba_aparte(tmp_path: Path) -> None:
-    v1, v2 = cc.system_prompt(), cc.system_prompt("extraccion_v2")
+    v1, v2 = cc.system_prompt("extraccion_v1"), cc.system_prompt("extraccion_v2")
     assert "{MODELOS}" not in v2
     assert "- aveo → sedan_compacto" in v2
     assert "- aveo → sedan_compacto" not in v1
-    assert cc.prompt_fingerprint() != cc.prompt_fingerprint("extraccion_v2")
+    assert cc.prompt_fingerprint("extraccion_v1") != cc.prompt_fingerprint("extraccion_v2")
+    # v2 es el de producción (ADR 0012).
+    assert cc.PROMPT_VERSION == "extraccion_v2"
+    assert cc.system_prompt() == v2
     # Las grabaciones de v1 se quedan donde estaban; las de v2 van en su carpeta.
+    assert cc.recording_path("claude-haiku-5-5", "k", tmp_path, "extraccion_v1") == (
+        tmp_path / "claude-haiku-5-5" / "k.json"
+    )
     assert (
         cc.recording_path("claude-haiku-5-5", "k", tmp_path)
-        == tmp_path / "claude-haiku-5-5" / "k.json"
-    )
-    assert cc.recording_path("claude-haiku-5-5", "k", tmp_path, "extraccion_v2") == (
-        tmp_path / "extraccion_v2" / "claude-haiku-5-5" / "k.json"
+        == cc.recording_path("claude-haiku-5-5", "k", tmp_path, "extraccion_v2")
+        == tmp_path / "extraccion_v2" / "claude-haiku-5-5" / "k.json"
     )
     with pytest.raises(cc.LLMError, match="desconocida"):
         cc.system_prompt("extraccion_v9")
@@ -238,3 +242,24 @@ def test_candado_abandonado_se_recupera(tmp_path: Path) -> None:
     cc._charge(ledger, 0.5)  # pyright: ignore[reportPrivateUsage]
     assert cc._spent_today(ledger) == 0.5  # pyright: ignore[reportPrivateUsage]
     assert not lock.exists()
+
+
+def test_candado_ocupado_en_windows_se_reintenta(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    """Abrir un candado que otro proceso está borrando da PermissionError en Windows: se espera
+    y se reintenta en vez de perder el cargo."""
+    import os
+
+    real_open = os.open
+    fails = iter([True, True])
+
+    def flaky_open(path: str, flags: int, *args: int) -> int:
+        if str(path).endswith(".lock") and next(fails, False):
+            raise PermissionError(13, "Permission denied", str(path))
+        return real_open(path, flags, *args)
+
+    monkeypatch.setattr(os, "open", flaky_open)
+    ledger = tmp_path / "gasto.json"
+    cc._charge(ledger, 0.25)  # pyright: ignore[reportPrivateUsage]
+    assert cc._spent_today(ledger) == 0.25  # pyright: ignore[reportPrivateUsage]

@@ -68,6 +68,11 @@ def _pctl(xs: list[float], p: float) -> float | None:
 # --- Registros de cada pipeline (mismo formato) -------------------------------------------------
 
 
+# Los resultados de v1 (el prompt con que se midió E1 en F6) no llevan sufijo; los demás, el de su
+# versión (e1_extraction_ciss_v2.json), aunque sea la de producción: así ningún nombre cambia.
+BASE_PROMPT = "extraccion_v1"
+
+
 def _ts_records(split: str, prompt: str = PROMPT_VERSION) -> list[JsonObj]:
     """Registros del pipeline TS (lo que se despliega), escritos por `scripts/e1-predict.ts`."""
     with tempfile.TemporaryDirectory() as tmp:
@@ -401,7 +406,7 @@ def main(split: str = "test", pipeline: str = "ts", prompt: str = PROMPT_VERSION
         "contrafactual, medidas sobre el pipeline " + which,
         **evaluate(split, pipeline, prompt),
     }
-    suffix = ("" if prompt == PROMPT_VERSION else "_" + prompt.removeprefix("extraccion_")) + (
+    suffix = ("" if prompt == BASE_PROMPT else "_" + prompt.removeprefix("extraccion_")) + (
         "" if pipeline == "ts" else "_py"
     )
     name = ("e1_extraction" if split == "test" else f"e1_extraction_{split}") + suffix

@@ -14,7 +14,7 @@ def _record(
     model: str | None,
     limit: int | None,
     repeat: bool = False,
-    prompt: str = "extraccion_v1",
+    prompt: str | None = None,
 ) -> int:
     """Graba (o salta si ya existe) la respuesta de cada relato y contrafactual del split.
 
@@ -25,6 +25,7 @@ def _record(
     from croquis_extraction import relatos_mx
     from croquis_extraction.pii import redact
 
+    prompt = prompt or cc.PROMPT_VERSION
     models = [model] if model else list(cc.MODELS)
     if repeat:
         rows = [{**x, "id": x["id"] + REPEAT_SUFFIX} for x in relatos_mx.load_split(split)]
@@ -60,6 +61,8 @@ def main(argv: list[str] | None = None) -> int:
     reconfigure = getattr(sys.stdout, "reconfigure", None)
     if reconfigure is not None:
         reconfigure(encoding="utf-8")
+    from croquis_extraction.claude_client import PROMPT_VERSION, PROMPT_VERSIONS
+
     parser = argparse.ArgumentParser(prog="croquis-extraction")
     sub = parser.add_subparsers(dest="group", required=True)
     r = sub.add_parser("relatos", help="Benchmark Relatos-MX")
@@ -79,9 +82,9 @@ def main(argv: list[str] | None = None) -> int:
     c.add_argument("--limit", type=int, default=None)
     c.add_argument(
         "--prompt",
-        choices=["extraccion_v1", "extraccion_v2"],
-        default="extraccion_v1",
-        help="Versión del prompt (cada una graba en su carpeta)",
+        choices=list(PROMPT_VERSIONS),
+        default=PROMPT_VERSION,
+        help="Versión del prompt (por omisión la de producción; cada una graba en su carpeta)",
     )
     c.add_argument(
         "--repetir",

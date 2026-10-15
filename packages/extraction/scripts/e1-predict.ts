@@ -10,7 +10,13 @@ import { readFileSync, writeFileSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 import { extractSpec } from "../src/baseline";
-import { checkPrompt, factsFromOutput, LLMError, MODELS } from "../src/claude-output";
+import {
+  checkPrompt,
+  factsFromOutput,
+  LLMError,
+  MODELS,
+  PROMPT_VERSION,
+} from "../src/claude-output";
 import { cpIndex } from "../src/codepoints";
 import { redact } from "../src/pii";
 import { ask, topic } from "../src/questions";
@@ -27,7 +33,7 @@ function arg(name: string, dflt: string): string {
 
 const split = arg("split", "test");
 const out = arg("out", "");
-const prompt = checkPrompt(arg("prompt", "extraccion_v1"));
+const prompt = checkPrompt(arg("prompt", PROMPT_VERSION));
 if (!out) throw new Error("Falta --out");
 const repo = join(dirname(fileURLToPath(import.meta.url)), "..", "..", "..");
 const load = (name: string): Json[] =>

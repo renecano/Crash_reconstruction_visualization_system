@@ -184,7 +184,7 @@ def build_pipeline_text() -> str:
 def question_cases() -> list[dict[str, Any]]:
     """Preguntas de la referencia con `sampled=False` (lo que reproduce hoy el pipeline TS):
     las 10 escenas canónicas con su relato y una muestra de Relatos-MX (reglas en dev, Sonnet en
-    test) con las 4 muestras por campo que usa E1."""
+    test, con las respuestas grabadas del prompt v1) con las 4 muestras por campo que usa E1."""
     from croquis_extraction import questions
     from croquis_scene_schema import list_fixtures, load_fixture
 
@@ -204,7 +204,7 @@ def question_cases() -> list[dict[str, Any]]:
         )
     for split, method in (("dev", "reglas"), ("test", "claude-sonnet-5-5")):
         for it in relatos_mx.load_split(split)[:QUESTION_SAMPLE]:
-            c = pipeline_case(method, it["id"], it["texto"])
+            c = pipeline_case(method, it["id"], it["texto"], "extraccion_v1")
             if c is None:
                 continue
             text = redact(it["texto"]).text

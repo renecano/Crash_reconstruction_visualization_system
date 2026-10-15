@@ -2,7 +2,13 @@ import { mkdtempSync, readFileSync, readdirSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { describe, expect, it } from "vitest";
-import { BudgetExceededError, LLMError, promptFingerprint, systemPrompt } from "../claude-output";
+import {
+  BudgetExceededError,
+  LLMError,
+  PROMPT_VERSION,
+  promptFingerprint,
+  systemPrompt,
+} from "../claude-output";
 import { sha256Hex } from "../hash";
 import { budgetUsd, FileBudgetStore, MemoryBudgetStore, RedisBudgetStore, today } from "./budget";
 import { callClaude, extract, type ClientLike } from "./claude";
@@ -156,11 +162,14 @@ describe("modos y tope de gasto", () => {
       join(root, "extraccion_v2", "claude-haiku-5-5", "caso-2.json"),
     );
     // Una grabación de v2 no vale como de v1 (otra carpeta y otra huella).
-    expect(() => loadRecording("claude-haiku-5-5", "caso-2", "derrapé", root)).toThrow(
-      /Sin respuesta/,
-    );
+    expect(() =>
+      loadRecording("claude-haiku-5-5", "caso-2", "derrapé", root, "extraccion_v1"),
+    ).toThrow(/Sin respuesta/);
     const again = loadRecording("claude-haiku-5-5", "caso-2", "derrapé", root, "extraccion_v2");
     expect(again.salida).toEqual(rec.salida);
+    // v2 es el de producción (ADR 0012): es lo que se reproduce sin decir la versión.
+    expect(PROMPT_VERSION).toBe("extraccion_v2");
+    expect(loadRecording("claude-haiku-5-5", "caso-2", "derrapé", root).salida).toEqual(rec.salida);
     expect(() => systemPrompt("extraccion_v9")).toThrow(/desconocida/);
   });
 

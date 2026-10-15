@@ -40,10 +40,10 @@ ROOT = Path(__file__).resolve().parents[2]
 RECORDINGS = ROOT / "packages" / "extraction" / "grabaciones"
 LEDGER = RECORDINGS / "gasto.json"
 PROMPTS_DIR = ROOT / "packages" / "extraction" / "prompts"
-PROMPT_FILE = PROMPTS_DIR / "extraccion_v1.md"
-# v1 es el prompt de producción mientras v2 no supere a v1 en dev (ADR 0012); las grabaciones de
-# v1 viven en grabaciones/<modelo>/ y las de otras versiones en grabaciones/<versión>/<modelo>/.
-PROMPT_VERSION = "extraccion_v1"
+# v2 es el prompt de producción: superó a v1 en dev y se midió después en el test CISS (ADR 0012).
+# Las grabaciones de v1 viven en grabaciones/<modelo>/ y las de otras versiones en
+# grabaciones/<versión>/<modelo>/.
+PROMPT_VERSION = "extraccion_v2"
 PROMPT_VERSIONS = ("extraccion_v1", "extraccion_v2")
 SCHEMA_FILE = ROOT / "packages" / "scene-schema" / "escena.schema.json"
 DEFAULT_MODEL = "claude-sonnet-5-5"
@@ -425,13 +425,14 @@ def _ledger_lock(ledger: Path) -> Generator[None]:
         try:
             fd = os.open(lock, os.O_CREAT | os.O_EXCL | os.O_WRONLY)
             break
-        except FileExistsError:
+        except FileExistsError, PermissionError:
+            # En Windows, abrir un candado que otro está borrando da PermissionError: está ocupado.
             try:
                 if time.time() - lock.stat().st_mtime > LOCK_STALE_S:
                     lock.unlink(missing_ok=True)
                     continue
-            except FileNotFoundError:
-                continue
+            except FileNotFoundError, PermissionError:
+                pass
             if time.monotonic() > deadline:
                 msg = f"No se pudo tomar el candado del libro de gasto ({lock})."
                 raise LLMError(msg) from None
@@ -451,7 +452,23 @@ def _read_ledger(ledger: Path) -> dict[str, float]:
 
 
 def _spent_today(ledger: Path) -> float:
-    return float(_read_ledger(ledger).get(dt.date.today().isoformat(), 0.0))
+    # También bajo candado: en Windows, leer mientras otro reemplaza el archivo puede fallar.
+    with _ledger_lock(ledger):
+        return float(_read_ledger(ledger).get(dt.date.today().isoformat(), 0.0))
+
+
+def _replace(src: Path, dst: Path) -> None:
+    """os.replace con reintentos: en Windows falla si otro programa (un antivirus, el indexador)
+    tiene abierto el destino un instante."""
+    deadline = time.monotonic() + LOCK_TIMEOUT_S
+    while True:
+        try:
+            os.replace(src, dst)
+            return
+        except PermissionError:
+            if time.monotonic() > deadline:
+                raise
+            time.sleep(0.05)
 
 
 def _charge(ledger: Path, usd: float) -> None:
@@ -465,7 +482,7 @@ def _charge(ledger: Path, usd: float) -> None:
         tmp.write_text(
             json.dumps(data, indent=2, sort_keys=True) + "\n", encoding="utf-8", newline="\n"
         )
-        os.replace(tmp, ledger)
+        _replace(tmp, ledger)
 
 
 def budget_usd() -> float:

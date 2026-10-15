@@ -10,6 +10,8 @@ def main(argv: list[str] | None = None) -> int:
     reconfigure = getattr(sys.stdout, "reconfigure", None)
     if reconfigure is not None:
         reconfigure(encoding="utf-8")
+    from croquis_extraction.claude_client import PROMPT_VERSION, PROMPT_VERSIONS
+
     parser = argparse.ArgumentParser(prog="croquis-eval", description="Evaluaciones de Croquis")
     sub = parser.add_subparsers(dest="command", required=True)
     sub.add_parser(
@@ -29,9 +31,10 @@ def main(argv: list[str] | None = None) -> int:
     )
     e1.add_argument(
         "--prompt",
-        choices=["extraccion_v1", "extraccion_v2"],
-        default="extraccion_v1",
-        help="Versión del prompt cuyas respuestas grabadas se puntúan",
+        choices=list(PROMPT_VERSIONS),
+        default=PROMPT_VERSION,
+        help="Versión del prompt cuyas respuestas grabadas se puntúan (por omisión, la de "
+        "producción)",
     )
     args = parser.parse_args(argv)
     if args.command == "atus-summary":
