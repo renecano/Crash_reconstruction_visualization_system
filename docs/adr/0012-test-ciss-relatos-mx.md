@@ -24,6 +24,15 @@
    - Seis agentes escriben 25 relatos cada uno, sin ver la línea base, el glosario ni las otras partes del benchmark.
    - Otros seis, independientes, revisan cada lote: buscan hechos que el texto afirme fuera de la ficha y citas que no respalden su valor. Pueden cambiar texto y citas, nunca los valores.
 8. **Candado propio** (`ciss.lock`), escrito antes de la primera evaluación. `test.lock` no se toca.
+9. **Reglas que salieron de escribir y revisar.** Cada una se aplicó al generador y a todos los relatos, no caso por caso:
+   - **Clase del relato aparte de la de E3.** La agrupación de E3 (`ciss.clase_ciss`) solo elige rigidez: una GMC Acadia 2011 codificada como vagoneta salía sedán. Para el relato:
+     - la carrocería de GV debe decidir la clase sola: vagoneta, coupé, convertible y "otro automóvil" no deciden;
+     - debe coincidir con la BodyClass de VPIC;
+     - si el modelo está en `modelos.json`, debe coincidir con la tabla. La única excepción es el hatchback de un modelo que la tabla da como sedán, que se nombra con su carrocería ("Rio hatchback").
+     Si no hay clase exacta: para quien narra, el caso se descarta; para el otro, se quita la clase y el relato no lo nombra.
+   - **Tamaño dicho en el texto.** Fuera de la tabla, compacto o mediano y compacta o grande salen del corte por largo, y el nombre del modelo no lo deja ver. El relato lo dice junto al modelo ("mi sedán mediano Accord").
+   - **Hechos que van juntos.** Velocidad 0 con maniobra `detenido`/`estacionado`. Un semáforo, alto o ceda el paso con el tipo de cruce, también cuando NHTSA codifica el choque como 'Intersection-Related' (en la entrada del cruce). Se aplican después del sorteo, sin sortear de nuevo.
+   - **Ciclista en su bicicleta.** Como en el resto de Relatos-MX, la bicicleta es un vehículo y el choque es `impacto_vehiculo_vehiculo`.
 
 ## Consecuencias
 

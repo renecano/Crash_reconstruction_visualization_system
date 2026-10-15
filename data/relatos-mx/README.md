@@ -41,7 +41,8 @@ El primer test lo escribió el mismo agente que escribió la línea base de regl
 - **Origen.** CISS investiga choques en EE. UU. con al menos un vehículo de pasajeros remolcado. No hay relatos de motociclista, caída de pasajero ni salida del camino sin impacto, y las motocicletas solo aparecen como el otro vehículo. La distribución de tipos sigue a ATUS hasta donde CISS lo permite (ver `cuota_por_tipo`).
 - **Velocidad.** La que se narra es la del EDR redondeada a 5 km/h, como la diría una persona; el valor original queda en la ficha. Se eligen primero los casos con velocidad del EDR, lo que sesga hacia vehículos con EDR, que son los más nuevos.
 - **Texto.** Lo escribió un modelo desde una ficha, no una persona que vivió el choque. La verdad es de NHTSA; la forma de contarlo sigue siendo sintética y se marca `sintetico: true`.
-- **Menciones.** Cada ficha pide mencionar un subconjunto de los hechos, elegido con semilla (`probabilidad_de_mencion`), porque la gente no lo dice todo. Los hechos no mencionados no se evalúan.
+- **Menciones.** Cada ficha pide mencionar un subconjunto de los hechos, elegido con semilla (`probabilidad_de_mencion`), porque la gente no lo dice todo. Los hechos no mencionados no se evalúan. Algunos van juntos porque no se pueden decir por separado: velocidad 0 con `detenido`, un semáforo con el tipo de cruce.
+- **Clase.** Las clases de vehículo solo son exactas si la carrocería de NHTSA, la de VPIC y `modelos.json` coinciden (ADR 0012). Si el modelo no está en la tabla, el relato dice el tamaño junto al modelo ("mi sedán mediano Accord"), y eso se lee menos natural que como lo diría una persona.
 
 ## Licencia
 

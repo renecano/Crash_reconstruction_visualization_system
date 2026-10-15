@@ -9,13 +9,13 @@ registro = "faltas"
 # Contexto (el otro vehículo): nómbralo con la palabra exacta de su clase (no hay modelo)
 # Contexto (persona atropellada o ciclista): hombre, 25 años
 texto = """
-Yo iva manejando mi Trailblazer derecho por la calle Hidalgo, ya iba tarde al trabajo, y de repente tenia enfrente a {{sexo:un muchacho|una muchacha}} que iva en su bici. Le pege con el frente y se cayo al piso. Me baje luego luego a {{sexo:ayudarlo|ayudarla}}, se quejaba de la pierna y yo le hable a la ambulansia. Llego la patruya y luego el del seguro. Gracias a dios no fue nada grave pero yo todabia estoy bien nerviosa.
+Yo iva manejando mi SUV grande Trailblazer derecho por la calle Hidalgo, ya iba tarde al trabajo, y de repente tenia enfrente a {{sexo:un muchacho|una muchacha}} que iva en su bici. Le pege con el frente y se cayo al piso. Me baje luego luego a {{sexo:ayudarlo|ayudarla}}, se quejaba de la pierna y yo le hable a la ambulansia. Llego la patruya y luego el del seguro. Gracias a dios no fue nada grave pero yo todabia estoy bien nerviosa.
 """
 [relato.hechos]
 "evento.tipo" = ["impacto_vehiculo_vehiculo", "Le pege"]
 zonas = { "0" = ["F", "con el frente"] }
 [[relato.hechos.vehiculos]]
-clase = ["suv_grande", "Trailblazer"]
+clase = ["suv_grande", "SUV grande Trailblazer"]
 maniobra = ["recto", "derecho"]
 narrador = true
 [[relato.hechos.vehiculos]]
@@ -34,7 +34,7 @@ registro = "desordenado"
 # Contexto (quien narra): nómbralo por su modelo (Nissan Altima (2016)); conductor mujer, 59 años
 # Contexto (el otro vehículo): nómbralo por su modelo (Chevrolet Trax (2024)); conductor mujer, 77 años
 texto = """
-{{edad:La señora|La muchacha}} de la Trax ya estaba afuera cuando llegó el ajustador; gracias a Dios no se lastimó, nada más fue el susto. Yo le había pegado con el frente de mi Altima en su costado izquierdo. Todo fue cuando di vuelta a la izquierda; yo iba manejando como a 20, despacito. Ella venía derecho y sí frenó, pero ya no le dio tiempo. Antes de que llegara el ajustador intercambiamos teléfonos: se llama [[NOMBRE:Rosa Elvira Quintanar]] y su número es [[TELEFONO:55 4128 7731]]. Yo me quedé temblando un buen rato.
+{{edad:La señora|La muchacha}} de la SUV compacta Trax ya estaba afuera cuando llegó el ajustador; gracias a Dios no se lastimó, nada más fue el susto. Yo le había pegado con el frente de mi Altima en su costado izquierdo. Todo fue cuando di vuelta a la izquierda; yo iba manejando como a 20, despacito. Ella venía derecho y sí frenó, pero ya no le dio tiempo. Antes de que llegara el ajustador intercambiamos teléfonos: se llama [[NOMBRE:Rosa Elvira Quintanar]] y su número es [[TELEFONO:55 4128 7731]]. Yo me quedé temblando un buen rato.
 """
 [relato.hechos]
 "evento.tipo" = ["impacto_vehiculo_vehiculo", "le había pegado"]
@@ -45,7 +45,7 @@ maniobra = ["vuelta_izquierda", "di vuelta a la izquierda"]
 narrador = true
 velocidad_kmh = [20, "como a 20"]
 [[relato.hechos.vehiculos]]
-clase = ["suv_compacta", "Trax"]
+clase = ["suv_compacta", "SUV compacta Trax"]
 frenado = [true, "sí frenó"]
 maniobra = ["recto", "venía derecho"]
 [[relato.hechos.personas]]
@@ -58,7 +58,7 @@ tipo = "volcadura"
 registro = "desordenado"
 # Contexto (quien narra): nómbralo por su modelo (Fiat 500X (2016)); conductor hombre, 25 años
 texto = """
-Mi 500X terminó volteada y yo salí por la ventana sin un rasguño, gracias a Dios. Le hablé a mi hermano y a la grúa. Ya pensándolo bien, así pasó: iba manejando de regreso de casa de mis papás, era de noche y sin alumbrado por ese rumbo, aunque estaba despejado. En la curva, que es de asfalto, se volteó; el piso estaba seco, no había nada raro. Los del seguro dicen que, según los datos que sacaron, en ese momento iba a 5 km/h; yo ni sentí que fuera tan lento.
+Mi 500X, una SUV compacta, terminó volteada y yo salí por la ventana sin un rasguño, gracias a Dios. Le hablé a mi hermano y a la grúa. Ya pensándolo bien, así pasó: iba manejando de regreso de casa de mis papás, era de noche y sin alumbrado por ese rumbo, aunque estaba despejado. En la curva, que es de asfalto, se volteó; el piso estaba seco, no había nada raro. Los del seguro dicen que, según los datos que sacaron, en ese momento iba a 5 km/h; yo ni sentí que fuera tan lento.
 """
 [relato.hechos]
 "entorno.clima" = ["despejado", "despejado"]
@@ -68,7 +68,7 @@ Mi 500X terminó volteada y yo salí por la ventana sin un rasguño, gracias a D
 "lugar.superficie" = ["asfalto", "asfalto"]
 "lugar.tipo_via" = ["curva", "En la curva"]
 [[relato.hechos.vehiculos]]
-clase = ["suv_compacta", "500X"]
+clase = ["suv_compacta", "500X, una SUV compacta"]
 narrador = true
 velocidad_kmh = [5, "a 5 km/h"]
 [[relato.hechos.personas]]
@@ -83,7 +83,7 @@ registro = "desordenado"
 # Contexto (el otro vehículo): nómbralo con la palabra exacta de su clase (no hay modelo)
 # Contexto (persona atropellada o ciclista): hombre, 21 años
 texto = """
-{{edad:Al muchacho|Al señor}} de la bici se lo llevó la ambulancia, pero luego me dijeron que nada más fue el susto y unos raspones. Yo me quedé con mi RDX hasta que llegó el del seguro. Todo pasó cuando di vuelta a la derecha. Iba manejando a la panadería, estaba amaneciendo, despejado, el piso seco. Le pegué con el frente al {{edad:muchacho|señor}} que iba en su bici; de veras no lo vi. Llevo cuarenta años manejando y nunca me había pasado algo así.
+{{edad:Al muchacho|Al señor}} de la bici se lo llevó la ambulancia, pero luego me dijeron que nada más fue el susto y unos raspones. Yo me quedé con mi SUV compacta RDX hasta que llegó el del seguro. Todo pasó cuando di vuelta a la derecha. Iba manejando a la panadería, estaba amaneciendo, despejado, el piso seco. Le pegué con el frente al {{edad:muchacho|señor}} que iba en su bici; de veras no lo vi. Llevo cuarenta años manejando y nunca me había pasado algo así.
 """
 [relato.hechos]
 "entorno.clima" = ["despejado", "despejado"]
@@ -92,7 +92,7 @@ texto = """
 "lugar.estado_superficie" = ["seco", "el piso seco"]
 zonas = { "0" = ["F", "con el frente"] }
 [[relato.hechos.vehiculos]]
-clase = ["suv_compacta", "RDX"]
+clase = ["suv_compacta", "SUV compacta RDX"]
 maniobra = ["vuelta_derecha", "di vuelta a la derecha"]
 narrador = true
 [[relato.hechos.vehiculos]]
@@ -112,15 +112,16 @@ registro = "breve"
 # Contexto (el otro vehículo): nómbralo con la palabra exacta de su clase (no hay modelo)
 # Contexto (persona atropellada o ciclista): hombre, 56 años
 texto = """
-Iba manejando derecho en mi Corsair, con el semáforo en verde y el piso seco, cuando le pegué con el frente a un señor que iba en bici. Le hablé a la ambulancia y lo atendieron ahí mismo.
+Iba manejando derecho en mi SUV compacta Corsair, entrando al cruce de cuatro esquinas, con el semáforo en verde y el piso seco, cuando le pegué con el frente a un señor que iba en bici. Le hablé a la ambulancia y lo atendieron ahí mismo.
 """
 [relato.hechos]
+"lugar.tipo_via" = ["interseccion_x", "cruce de cuatro esquinas"]
 dispositivos = [["semaforo", "semáforo"]]
 "evento.tipo" = ["impacto_vehiculo_vehiculo", "le pegué"]
 "lugar.estado_superficie" = ["seco", "el piso seco"]
 zonas = { "0" = ["F", "con el frente"] }
 [[relato.hechos.vehiculos]]
-clase = ["suv_compacta", "Corsair"]
+clase = ["suv_compacta", "SUV compacta Corsair"]
 maniobra = ["recto", "derecho"]
 narrador = true
 [[relato.hechos.vehiculos]]
@@ -139,7 +140,7 @@ registro = "formal"
 # Contexto (quien narra): nómbralo por su modelo (Chevrolet Silverado (2022)); conductor hombre, 61 años
 # Contexto (el otro vehículo): nómbralo por su modelo (Buick Encore GX (2022)); conductor mujer, 76 años
 texto = """
-Por medio de la presente declaro que los hechos ocurrieron de día, con el cielo despejado y el piso seco. Yo conducía mi Silverado a aproximadamente 30 km/h sobre la avenida Juárez, en la colonia Centro. {{sexo:Una señora|Un señor}} que manejaba un Encore GX, con placas [[PLACA:NXR-482-B]], dio vuelta a la izquierda y chocamos. {{sexo:La señora|El señor}} se mostró {{sexo:tranquila|tranquilo}} y ambos esperamos a los ajustadores de nuestras aseguradoras. No hubo personas lesionadas.
+Por medio de la presente declaro que los hechos ocurrieron de día, con el cielo despejado y el piso seco. Yo conducía mi Silverado a aproximadamente 30 km/h sobre la avenida Juárez, en la colonia Centro. {{sexo:Una señora|Un señor}} que manejaba una SUV compacta Encore GX, con placas [[PLACA:NXR-482-B]], dio vuelta a la izquierda y chocamos. {{sexo:La señora|El señor}} se mostró {{sexo:tranquila|tranquilo}} y ambos esperamos a los ajustadores de nuestras aseguradoras. No hubo personas lesionadas.
 """
 [relato.hechos]
 "entorno.clima" = ["despejado", "despejado"]
@@ -151,7 +152,7 @@ clase = ["pickup", "Silverado"]
 narrador = true
 velocidad_kmh = [30, "aproximadamente 30 km/h"]
 [[relato.hechos.vehiculos]]
-clase = ["suv_compacta", "Encore GX"]
+clase = ["suv_compacta", "SUV compacta Encore GX"]
 maniobra = ["vuelta_izquierda", "dio vuelta a la izquierda"]
 [[relato.hechos.personas]]
 rol = ["conductor", "Yo conducía"]
@@ -164,7 +165,7 @@ registro = "formal"
 # Contexto (quien narra): nómbralo por su modelo (Toyota RAV4 (2021)); conductor mujer, 30 años
 # Contexto (el otro vehículo): NO lo nombres: ni modelo ni tipo de vehículo; conductor hombre, 31 años
 texto = """
-Por medio de la presente manifiesto que conducía mi RAV4 a unos 35 km/h, con el cielo despejado, y di vuelta a la izquierda. En ese momento el otro vehículo, que venía derecho, me impactó con su parte frontal en el costado derecho de mi unidad, del lado del copiloto. El otro conductor y yo nos detuvimos, intercambiamos teléfonos (el suyo es [[TELEFONO:722 315 9046]]) y dimos aviso a nuestras aseguradoras. Ninguno de los dos requirió atención médica.
+Por medio de la presente manifiesto que conducía mi RAV4 a unos 35 km/h, con el cielo despejado, y di vuelta a la izquierda. En ese momento el otro vehículo, que venía derecho, me impactó con su parte frontal en el costado derecho de mi unidad, del lado del copiloto. El otro conductor y yo descendimos, intercambiamos teléfonos (el suyo es [[TELEFONO:722 315 9046]]) y dimos aviso a nuestras aseguradoras. Ninguno de los dos requirió atención médica.
 """
 [relato.hechos]
 "entorno.clima" = ["despejado", "despejado"]
@@ -188,12 +189,12 @@ registro = "breve"
 # Contexto (quien narra): nómbralo por su modelo (Cadillac Escalade (2021)); conductor hombre, 51 años
 # Contexto (el otro vehículo): NO lo nombres: ni modelo ni tipo de vehículo; conductor mujer, 40 años
 texto = """
-Iba manejando mi Escalade como a 85 y choqué con el otro vehículo; ni tiempo de frenar. La otra conductora y yo nos quedamos a esperar al ajustador.
+Iba manejando mi SUV grande Escalade como a 85 y choqué con el otro vehículo; ni tiempo de frenar. La otra conductora y yo nos quedamos a esperar al ajustador.
 """
 [relato.hechos]
 "evento.tipo" = ["impacto_vehiculo_vehiculo", "choqué"]
 [[relato.hechos.vehiculos]]
-clase = ["suv_grande", "Escalade"]
+clase = ["suv_grande", "SUV grande Escalade"]
 frenado = [false, "ni tiempo de frenar"]
 narrador = true
 velocidad_kmh = [85, "como a 85"]
@@ -209,13 +210,13 @@ registro = "formal"
 # Contexto (quien narra): nómbralo por su modelo (Chevrolet Trax (2022)); conductor mujer, 52 años
 # Contexto (el otro vehículo): nómbralo por su modelo y su carrocería (Nissan Versa (2007) hatchback); conductor mujer, 20 años
 texto = """
-Manifiesto que conducía mi Trax a aproximadamente 5 km/h y di vuelta a la derecha. En ese momento, {{edad:una joven|una señora}} que manejaba un Versa hatchback, con placas [[PLACA:MTZ-917-A]], venía derecho y me impactó con el frente en el costado izquierdo de mi vehículo, del lado del conductor. Ambas descendimos, verificamos que nadie estuviera lesionado y reportamos el percance a nuestras aseguradoras.
+Manifiesto que conducía mi Trax, una SUV compacta, a aproximadamente 5 km/h y di vuelta a la derecha. En ese momento, {{edad:una joven|una señora}} que manejaba un Versa hatchback, con placas [[PLACA:MTZ-917-A]], venía derecho y me impactó con el frente en el costado izquierdo de mi vehículo, del lado del conductor. Ambas descendimos, verificamos que nadie estuviera lesionado y reportamos el percance a nuestras aseguradoras.
 """
 [relato.hechos]
 "evento.tipo" = ["impacto_vehiculo_vehiculo", "me impactó"]
 zonas = { "0" = ["L", "en el costado izquierdo"], "1" = ["F", "con el frente"] }
 [[relato.hechos.vehiculos]]
-clase = ["suv_compacta", "Trax"]
+clase = ["suv_compacta", "Trax, una SUV compacta"]
 maniobra = ["vuelta_derecha", "di vuelta a la derecha"]
 narrador = true
 velocidad_kmh = [5, "aproximadamente 5 km/h"]
@@ -255,7 +256,7 @@ registro = "formal"
 # Contexto (quien narra): nómbralo por su modelo (Chevrolet Equinox (2012)); conductor hombre, 27 años
 # Contexto (objeto según NHTSA): Animal
 texto = """
-Declaro que conducía mi Equinox a aproximadamente 100 km/h en un tramo recto, de noche y sin alumbrado público, cuando un venado apareció en el camino y lo impacté con la parte frontal del vehículo. Detuve la marcha, encendí las intermitentes y reporté el siniestro a mi aseguradora, que envió una grúa. No resulté lesionado.
+Declaro que conducía mi Equinox, una SUV grande, a aproximadamente 100 km/h en un tramo recto, de noche y sin alumbrado público, cuando un venado apareció en el camino y lo impacté con la parte frontal del vehículo. Después del impacto encendí las intermitentes y reporté el siniestro a mi aseguradora, que envió una grúa. No resulté lesionado.
 """
 [relato.hechos]
 "entorno.iluminacion" = ["noche_sin_alumbrado", "de noche y sin alumbrado"]
@@ -264,7 +265,7 @@ Declaro que conducía mi Equinox a aproximadamente 100 km/h en un tramo recto, d
 "lugar.tipo_via" = ["recta", "en un tramo recto"]
 zonas = { "0" = ["F", "con la parte frontal"] }
 [[relato.hechos.vehiculos]]
-clase = ["suv_grande", "Equinox"]
+clase = ["suv_grande", "Equinox, una SUV grande"]
 narrador = true
 velocidad_kmh = [100, "aproximadamente 100 km/h"]
 [[relato.hechos.personas]]
@@ -278,13 +279,13 @@ registro = "formal"
 # Contexto (quien narra): nómbralo por su modelo (Chevrolet Equinox (2013)); conductor hombre, 47 años
 # Contexto (persona atropellada o ciclista): hombre, 50 años
 texto = """
-Hago constar que, al volante de mi Equinox, circulaba derecho por la calle Morelos, en un tramo recto, cuando {{edad:un señor|un joven}} que cruzaba a pie apareció de pronto. No alcancé a frenar y lo atropellé. Descendí de inmediato, solicité una ambulancia y permanecí en el lugar hasta la llegada de las autoridades. El {{edad:señor|joven}}, de nombre [[NOMBRE:Ezequiel Montaño Ruiz]], fue trasladado consciente al hospital.
+Hago constar que, al volante de mi Equinox, una SUV grande, circulaba derecho por la calle Morelos, en un tramo recto, cuando {{edad:un señor|un joven}} que cruzaba a pie apareció de pronto. No alcancé a frenar y lo atropellé. Descendí de inmediato, solicité una ambulancia y permanecí en el lugar hasta la llegada de las autoridades. El {{edad:señor|joven}}, de nombre [[NOMBRE:Ezequiel Montaño Ruiz]], fue trasladado consciente al hospital.
 """
 [relato.hechos]
 "evento.tipo" = ["impacto_vehiculo_persona", "lo atropellé"]
 "lugar.tipo_via" = ["recta", "en un tramo recto"]
 [[relato.hechos.vehiculos]]
-clase = ["suv_grande", "Equinox"]
+clase = ["suv_grande", "Equinox, una SUV grande"]
 frenado = [false, "No alcancé a frenar"]
 maniobra = ["recto", "derecho"]
 narrador = true
@@ -301,7 +302,7 @@ registro = "faltas"
 # Contexto (quien narra): nómbralo por su modelo (Subaru Legacy (2016)); conductor mujer, 71 años
 # Contexto (el otro vehículo): nómbralo por su modelo (International MA025 (2018))
 texto = """
-Iva manejando mi Legacy derecho, de dia, el piso estaba seco y era puro asfalto, y le pege por atras a un International que estaba parado. Le di con el frente, la verdad no se ni como no lo vi. Nos dimos los telefonos, el de la otra persona es [[TELEFONO:55 6012 4478]]. Yo me quede bien asustada y mi hijo vino por mi.
+Iva manejando mi sedan mediano Legacy derecho, de dia, el piso estaba seco y era puro asfalto, y le pege por atras a un camion de carga International que estaba parado. Le di con el frente, la verdad no se ni como no lo vi. Nos dimos los telefonos, el de la otra persona es [[TELEFONO:55 6012 4478]]. Yo me quede bien asustada y mi hijo vino por mi.
 """
 [relato.hechos]
 "entorno.iluminacion" = ["dia", "de dia"]
@@ -310,11 +311,11 @@ Iva manejando mi Legacy derecho, de dia, el piso estaba seco y era puro asfalto,
 "lugar.superficie" = ["asfalto", "asfalto"]
 zonas = { "0" = ["F", "con el frente"], "1" = ["B", "por atras"] }
 [[relato.hechos.vehiculos]]
-clase = ["sedan_mediano", "Legacy"]
+clase = ["sedan_mediano", "sedan mediano Legacy"]
 maniobra = ["recto", "derecho"]
 narrador = true
 [[relato.hechos.vehiculos]]
-clase = ["camion_unitario", "International"]
+clase = ["camion_unitario", "camion de carga International"]
 maniobra = ["detenido", "estaba parado"]
 velocidad_kmh = [0, "estaba parado"]
 [[relato.hechos.personas]]
@@ -329,14 +330,14 @@ registro = "formal"
 # Contexto (el otro vehículo): nómbralo con la palabra exacta de su clase (no hay modelo)
 # Contexto (persona atropellada o ciclista): hombre, 37 años
 texto = """
-Manifiesto que conducía mi Trax en una curva cuando {{edad:un señor|un joven}} que circulaba en bicicleta apareció delante de mí. No alcancé a frenar y lo golpeé con el frente de mi vehículo. Me detuve de inmediato y llamé a emergencias; el {{edad:señor|joven}} fue atendido por paramédicos. Por ser menor de edad, esperé en el lugar a mi padre, [[NOMBRE:Arturo Delgado Peña]], quien habló con la aseguradora.
+Manifiesto que conducía mi Trax, una SUV compacta, en una curva cuando {{edad:un señor|un joven}} que circulaba en bicicleta apareció delante de mí. No alcancé a frenar y lo golpeé con el frente de mi vehículo. Bajé de inmediato y llamé a emergencias; el {{edad:señor|joven}} fue atendido por paramédicos. Por ser menor de edad, esperé en el lugar a mi padre, [[NOMBRE:Arturo Delgado Peña]], quien habló con la aseguradora.
 """
 [relato.hechos]
 "evento.tipo" = ["impacto_vehiculo_vehiculo", "lo golpeé"]
 "lugar.tipo_via" = ["curva", "en una curva"]
 zonas = { "0" = ["F", "con el frente"] }
 [[relato.hechos.vehiculos]]
-clase = ["suv_compacta", "Trax"]
+clase = ["suv_compacta", "Trax, una SUV compacta"]
 frenado = [false, "No alcancé a frenar"]
 narrador = true
 [[relato.hechos.vehiculos]]
@@ -355,7 +356,7 @@ registro = "faltas"
 # Contexto (quien narra): nómbralo por su modelo (Toyota 4Runner (2021)); conductor mujer, 44 años
 # Contexto (el otro vehículo): NO lo nombres: ni modelo ni tipo de vehículo; conductor mujer, 49 años
 texto = """
-Yo iva manejando mi 4Runner, en el alto donde la calle termina en T di buelta a la izquierda bien despasito, como a 5. {{sexo:La otra señora|El otro señor}} venia derecho, yo frene y {{sexo:ella|el}} tambien freno pero aun asi chocamos. Estaba despejado y el piso seco, asi que ni pretexto. Nos dimos los telefonos, me dio el [[TELEFONO:722 488 1093]] y quedamos de vernos con los ajustadores.
+Yo iva manejando mi SUV grande 4Runner, en el alto donde la calle termina en T di buelta a la izquierda bien despasito, como a 5. {{sexo:La otra señora|El otro señor}} venia derecho, yo frene y {{sexo:ella|el}} tambien freno pero aun asi chocamos. Estaba despejado y el piso seco, asi que ni pretexto. Nos dimos los telefonos, me dio el [[TELEFONO:722 488 1093]] y quedamos de vernos con los ajustadores.
 """
 [relato.hechos]
 dispositivos = [["alto", "el alto"]]
@@ -364,7 +365,7 @@ dispositivos = [["alto", "el alto"]]
 "lugar.estado_superficie" = ["seco", "el piso seco"]
 "lugar.tipo_via" = ["interseccion_t", "donde la calle termina en T"]
 [[relato.hechos.vehiculos]]
-clase = ["suv_grande", "4Runner"]
+clase = ["suv_grande", "SUV grande 4Runner"]
 frenado = [true, "yo frene"]
 maniobra = ["vuelta_izquierda", "di buelta a la izquierda"]
 narrador = true
@@ -382,14 +383,14 @@ tipo = "volcadura"
 registro = "coloquial"
 # Contexto (quien narra): nómbralo por su modelo (Chevrolet Uplander (2008)); conductor mujer, 47 años
 texto = """
-Iba manejando mi Uplander derecho, como a 30, de noche y sin alumbrado, el cielo estaba despejado, y de repente se volteó. No sé ni cómo, nomás sentí que se iba de lado y ya estaba volteada. Me salí como pude, me temblaban las piernas. Le marqué a mi compadre y llegó con la grúa como en una hora. Ya no la quiero ni ver, la verdad.
+Iba manejando mi van Uplander derecho, como a 30, de noche y sin alumbrado, el cielo estaba despejado, y de repente se volteó. No sé ni cómo, nomás sentí que se iba de lado y ya estaba volteada. Me salí como pude, me temblaban las piernas. Le marqué a mi compadre y llegó con la grúa como en una hora. Ya no la quiero ni ver, la verdad.
 """
 [relato.hechos]
 "entorno.clima" = ["despejado", "despejado"]
 "entorno.iluminacion" = ["noche_sin_alumbrado", "de noche y sin alumbrado"]
 "evento.tipo" = ["volcadura", "se volteó"]
 [[relato.hechos.vehiculos]]
-clase = ["van", "Uplander"]
+clase = ["van", "van Uplander"]
 maniobra = ["recto", "derecho"]
 narrador = true
 velocidad_kmh = [30, "como a 30"]
@@ -430,20 +431,20 @@ registro = "desordenado"
 # Contexto (quien narra): nómbralo por su modelo (Chevrolet Malibu (2005)); conductor mujer, 49 años
 # Contexto (el otro vehículo): nómbralo por su modelo (Bmw 328i (2011))
 texto = """
-El BMW 328i me dio con su frente en todo el lado izquierdo, en mi puerta; ni tiempo de frenar tuve. Luego me bajé por la otra puerta porque la mía ya no abría. Pero antes de eso, yo iba manejando derecho mi Malibu Maxx como a 50, sobre el concreto nuevo de la avenida, y el BMW también venía derecho. La persona del BMW me dejó su correo, [[CORREO:jl.vargas88@hotmail.com]], para lo del seguro.
+El BMW 328i me dio con su frente en todo el lado izquierdo, en mi puerta; ni tiempo de frenar tuve. Luego me bajé por la otra puerta porque la mía ya no abría. Pero antes de eso, yo iba manejando derecho mi Malibu Maxx hatchback como a 50, sobre el concreto nuevo de la avenida, y el BMW, un sedán compacto, también venía derecho. La persona del BMW me dejó su correo, [[CORREO:jl.vargas88@hotmail.com]], para lo del seguro.
 """
 [relato.hechos]
 "evento.tipo" = ["impacto_vehiculo_vehiculo", "me dio"]
 "lugar.superficie" = ["concreto", "concreto"]
 zonas = { "0" = ["L", "el lado izquierdo"], "1" = ["F", "con su frente"] }
 [[relato.hechos.vehiculos]]
-clase = ["hatchback", "Malibu Maxx"]
+clase = ["hatchback", "Malibu Maxx hatchback"]
 frenado = [false, "ni tiempo de frenar"]
 maniobra = ["recto", "manejando derecho"]
 narrador = true
 velocidad_kmh = [50, "como a 50"]
 [[relato.hechos.vehiculos]]
-clase = ["sedan_compacto", "BMW 328i"]
+clase = ["sedan_compacto", "un sedán compacto"]
 maniobra = ["recto", "también venía derecho"]
 [[relato.hechos.personas]]
 rol = ["conductor", "iba manejando"]
@@ -483,13 +484,13 @@ registro = "formal"
 # Contexto (quien narra): nómbralo por su modelo (Buick Envision (2022)); conductor mujer, 37 años
 # Contexto (el otro vehículo): NO lo nombres: ni modelo ni tipo de vehículo; conductor mujer, 44 años
 texto = """
-Declaro que conducía mi Envision derecho, a aproximadamente 5 km/h, en el punto donde la calle Allende termina en T con la avenida Hidalgo, cuando el otro vehículo y el mío chocaron. La otra conductora y yo nos detuvimos, intercambiamos los datos de nuestras pólizas y esperamos a los ajustadores. No hubo lesionados y los daños fueron menores.
+Declaro que conducía mi SUV compacta Envision derecho, a aproximadamente 5 km/h, en el punto donde la calle Allende termina en T con la avenida Hidalgo, cuando el otro vehículo y el mío chocaron. La otra conductora y yo descendimos, intercambiamos los datos de nuestras pólizas y esperamos a los ajustadores. No hubo lesionados y los daños fueron menores.
 """
 [relato.hechos]
 "evento.tipo" = ["impacto_vehiculo_vehiculo", "chocaron"]
 "lugar.tipo_via" = ["interseccion_t", "termina en T"]
 [[relato.hechos.vehiculos]]
-clase = ["suv_compacta", "Envision"]
+clase = ["suv_compacta", "SUV compacta Envision"]
 maniobra = ["recto", "derecho"]
 narrador = true
 velocidad_kmh = [5, "aproximadamente 5 km/h"]
@@ -505,7 +506,7 @@ registro = "breve"
 # Contexto (quien narra): nómbralo por su modelo (Gmc Envoy (2003)); conductor hombre, 59 años
 # Contexto (el otro vehículo): NO lo nombres: ni modelo ni tipo de vehículo; conductor hombre, 54 años
 texto = """
-De día iba manejando derecho mi Envoy a unos 45 sobre el asfalto; el otro conductor y yo frenamos, pero chocamos frente con frente.
+De día iba manejando derecho mi SUV grande Envoy a unos 45 sobre el asfalto; el otro conductor y yo frenamos, pero chocamos frente con frente.
 """
 [relato.hechos]
 "entorno.iluminacion" = ["dia", "De día"]
@@ -513,7 +514,7 @@ De día iba manejando derecho mi Envoy a unos 45 sobre el asfalto; el otro condu
 "lugar.superficie" = ["asfalto", "asfalto"]
 zonas = { "0" = ["F", "frente con frente"], "1" = ["F", "frente con frente"] }
 [[relato.hechos.vehiculos]]
-clase = ["suv_grande", "Envoy"]
+clase = ["suv_grande", "SUV grande Envoy"]
 frenado = [true, "el otro conductor y yo frenamos"]
 maniobra = ["recto", "derecho"]
 narrador = true
@@ -531,7 +532,7 @@ registro = "breve"
 # Contexto (quien narra): nómbralo por su modelo (Ford Fusion (2020)); conductor mujer, 78 años
 # Contexto (el otro vehículo): nómbralo por su modelo (Yamaha YZF-R6 (2006))
 texto = """
-De día, despejado y con el piso seco, iba manejando mi Fusion en el cruce de cuatro esquinas y choqué con la persona que venía derecho en su Yamaha YZF-R6; ni tiempo de frenar.
+De día, despejado y con el piso seco, iba manejando mi sedán mediano Fusion en el cruce de cuatro esquinas y choqué con la persona que venía derecho en su moto Yamaha YZF-R6; ni tiempo de frenar.
 """
 [relato.hechos]
 "entorno.clima" = ["despejado", "despejado"]
@@ -540,7 +541,7 @@ De día, despejado y con el piso seco, iba manejando mi Fusion en el cruce de cu
 "lugar.estado_superficie" = ["seco", "el piso seco"]
 "lugar.tipo_via" = ["interseccion_x", "en el cruce de cuatro esquinas"]
 [[relato.hechos.vehiculos]]
-clase = ["sedan_mediano", "Fusion"]
+clase = ["sedan_mediano", "sedán mediano Fusion"]
 frenado = [false, "ni tiempo de frenar"]
 narrador = true
 [[relato.hechos.vehiculos]]
@@ -550,7 +551,7 @@ maniobra = ["recto", "venía derecho"]
 rol = ["conductor", "iba manejando"]
 vehiculo = 0
 [[relato.hechos.personas]]
-rol = ["motociclista", "la persona que venía derecho en su Yamaha YZF-R6"]
+rol = ["motociclista", "la persona que venía derecho en su moto Yamaha YZF-R6"]
 vehiculo = 1
 
 [[relato]]
