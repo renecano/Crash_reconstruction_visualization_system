@@ -257,6 +257,7 @@ def test_ciclista_va_en_su_bicicleta(tmp_path: object) -> None:
     y = cr.Year(_zip(tmp_path))
     g, _ = cr.translate(y, "G", "ciclista", Counter(), {})
     assert g is not None
+    assert g["hechos"]["evento.tipo"] == "impacto_vehiculo_vehiculo"
     assert g["hechos"]["vehiculos"][1] == {"clase": "bicicleta"}
     assert g["hechos"]["personas"][1] == {"rol": "ciclista", "vehiculo": 1}
 
@@ -296,6 +297,21 @@ def test_otro_sin_clase_no_se_nombra(tmp_path: object) -> None:
     ctx = cr._naming(tr["contexto"], hechos)  # pyright: ignore[reportPrivateUsage]
     assert ctx["vehiculos"][1]["nombrar"] == "no"
     assert "modelo" not in ctx["vehiculos"][1]
+
+
+def test_hechos_que_van_juntos(tmp_path: object) -> None:
+    y = cr.Year(_zip(tmp_path))
+    tr, _ = cr.translate(y, "A", "vv", Counter(), {})
+    assert tr is not None
+    full = tr["hechos"]
+    for seed in range(60):
+        m = cr._mention(full, random.Random(seed))  # pyright: ignore[reportPrivateUsage]
+        other = m["vehiculos"][1]
+        # El otro estaba detenido: velocidad 0 y maniobra van juntas o no van.
+        assert ("velocidad_kmh" in other) == ("maniobra" in other)
+        # Con semáforo se menciona el tipo de vía que NHTSA conoce.
+        if "dispositivos" in m:
+            assert m["lugar.tipo_via"] == "interseccion_t"
 
 
 def test_fichas_al_dia_si_hay_datos_crudos() -> None:

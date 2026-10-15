@@ -672,7 +672,11 @@ def translate(
         event["evento.tipo"] = "volcadura"
         zones.pop("0", None)  # la volcadura no tiene un lado de impacto único
     else:  # peaton, ciclista
-        event["evento.tipo"] = "impacto_vehiculo_persona"
+        # Como en el resto de Relatos-MX: la bicicleta es un vehículo, así que el choque con un
+        # ciclista es entre vehículos; el atropello de un peatón es impacto con persona.
+        event["evento.tipo"] = (
+            "impacto_vehiculo_vehiculo" if tipo == "ciclista" else "impacto_vehiculo_persona"
+        )
         nm = y.nonmotorists[cid][0]
         if tipo == "ciclista":
             # La bicicleta es un vehículo del contrato y el ciclista va en ella (validador E010).
@@ -718,7 +722,30 @@ def _mention(hechos: JsonObj, rng: random.Random) -> JsonObj:
         vehicles.append(nv)
     out["vehiculos"] = vehicles
     out["personas"] = hechos["personas"]
-    return out
+    return _couple(hechos, out)
+
+
+STOPPED = ("detenido", "estacionado")
+JUNCTION_DEVICES = ("semaforo", "alto", "ceda_el_paso")
+
+
+def _couple(full: JsonObj, kept: JsonObj) -> JsonObj:
+    """Hechos que no se pueden decir uno sin el otro van juntos (sin más sorteos).
+
+    - Velocidad 0 y maniobra `detenido`/`estacionado`: decir "estaba parado" afirma las dos.
+    - Semáforo, alto o ceda el paso y el tipo de vía: el dispositivo deja ver dónde fue, así que
+      si NHTSA sabe el tipo de vía, se menciona.
+    """
+    for fv, kv in zip(full["vehiculos"], kept["vehiculos"], strict=True):
+        stopped = kv.get("velocidad_kmh") == 0 or kv.get("maniobra") in STOPPED
+        if stopped:
+            for k in ("velocidad_kmh", "maniobra"):
+                if k in fv:
+                    kv[k] = fv[k]
+    devices = kept.get("dispositivos", [])
+    if any(d in JUNCTION_DEVICES for d in devices) and "lugar.tipo_via" in full:
+        kept["lugar.tipo_via"] = full["lugar.tipo_via"]
+    return kept
 
 
 def load_models() -> dict[str, str]:
