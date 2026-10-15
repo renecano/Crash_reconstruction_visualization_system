@@ -52,3 +52,7 @@ Thumbs.db
 
 # Relatos-MX publicado (derivado, verificado en CI con croquis-extraction relatos check)
 !data/relatos-mx/build/
+
+# Candado y temporales del libro de gasto (grabadores en paralelo)
+packages/extraction/grabaciones/*.lock
+packages/extraction/grabaciones/*.tmp

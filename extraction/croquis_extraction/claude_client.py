@@ -25,6 +25,8 @@ import json
 import os
 import re
 import time
+from collections.abc import Generator
+from contextlib import contextmanager
 from dataclasses import dataclass, field
 from functools import cache
 from pathlib import Path
@@ -408,23 +410,62 @@ def load_recording(
     return rec
 
 
-def _spent_today(ledger: Path) -> float:
+LOCK_TIMEOUT_S = 30.0
+LOCK_STALE_S = 120.0
+
+
+@contextmanager
+def _ledger_lock(ledger: Path) -> Generator[None]:
+    """Candado exclusivo del libro de gasto para varios grabadores a la vez (un archivo creado
+    con O_EXCL; uno abandonado por un proceso muerto se considera viejo a los 2 minutos)."""
+    lock = ledger.with_name(ledger.name + ".lock")
+    lock.parent.mkdir(parents=True, exist_ok=True)
+    deadline = time.monotonic() + LOCK_TIMEOUT_S
+    while True:
+        try:
+            fd = os.open(lock, os.O_CREAT | os.O_EXCL | os.O_WRONLY)
+            break
+        except FileExistsError:
+            try:
+                if time.time() - lock.stat().st_mtime > LOCK_STALE_S:
+                    lock.unlink(missing_ok=True)
+                    continue
+            except FileNotFoundError:
+                continue
+            if time.monotonic() > deadline:
+                msg = f"No se pudo tomar el candado del libro de gasto ({lock})."
+                raise LLMError(msg) from None
+            time.sleep(0.05)
+    try:
+        yield
+    finally:
+        os.close(fd)
+        lock.unlink(missing_ok=True)
+
+
+def _read_ledger(ledger: Path) -> dict[str, float]:
     if not ledger.exists():
-        return 0.0
-    data = json.loads(ledger.read_text(encoding="utf-8"))
-    return float(data.get(dt.date.today().isoformat(), 0.0))
+        return {}
+    data: dict[str, float] = json.loads(ledger.read_text(encoding="utf-8"))
+    return data
+
+
+def _spent_today(ledger: Path) -> float:
+    return float(_read_ledger(ledger).get(dt.date.today().isoformat(), 0.0))
 
 
 def _charge(ledger: Path, usd: float) -> None:
-    data: dict[str, float] = (
-        json.loads(ledger.read_text(encoding="utf-8")) if ledger.exists() else {}
-    )
-    today = dt.date.today().isoformat()
-    data[today] = round(data.get(today, 0.0) + usd, 8)
-    ledger.parent.mkdir(parents=True, exist_ok=True)
-    ledger.write_text(
-        json.dumps(data, indent=2, sort_keys=True) + "\n", encoding="utf-8", newline="\n"
-    )
+    """Suma al gasto del día. Bajo candado y con escritura atómica: varios grabadores pueden
+    correr a la vez sin perder cargos ni leer el archivo a medio escribir."""
+    with _ledger_lock(ledger):
+        data = _read_ledger(ledger)
+        today = dt.date.today().isoformat()
+        data[today] = round(data.get(today, 0.0) + usd, 8)
+        tmp = ledger.with_name(f"{ledger.name}.{os.getpid()}.tmp")
+        tmp.write_text(
+            json.dumps(data, indent=2, sort_keys=True) + "\n", encoding="utf-8", newline="\n"
+        )
+        os.replace(tmp, ledger)
 
 
 def budget_usd() -> float:
