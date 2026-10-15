@@ -105,10 +105,24 @@ def test_filtros_y_evaluacion_con_csv_sintetico(tmp_path: Path) -> None:
 
 
 def test_tabla_de_rigidez_versionada_se_reproduce_desde_el_csv(tmp_path: Path) -> None:
-    """La tabla que usa el solver sale exactamente de E2 sobre el CSV versionado."""
+    """La tabla que usa el solver sale exactamente de E2 (frontal) y E2 lateral y trasera sobre
+    los CSV versionados, en cualquier orden."""
+    from croquis_eval import e2_mdb
+
     tests, _ = e2.load_tests(e2.CSV_PATH)
-    out = e2.write_stiffness_table(e2.evaluate(tests), tmp_path / "stiffness.json")
-    assert out.read_bytes() == e2.STIFFNESS_PATH.read_bytes()
+    mdb, _ = e2_mdb.load_tests(e2_mdb.CSV_PATH)
+    for order in ("frontal_primero", "lateral_primero"):
+        out = tmp_path / f"{order}.json"
+        if order == "lateral_primero":
+            out.write_text(json.dumps({"clases": {}}), encoding="utf-8")
+            e2_mdb.write_stiffness_zones(e2_mdb.evaluate(mdb), out)
+            e2.write_stiffness_table(e2.evaluate(tests), out)
+        else:
+            e2.write_stiffness_table(e2.evaluate(tests), out)
+            e2_mdb.write_stiffness_zones(e2_mdb.evaluate(mdb), out)
+        doc = json.loads(out.read_text(encoding="utf-8"))
+        assert doc["parametros"]["b0_kmh"] == e2.B0_KMH
+        assert out.read_bytes() == e2.STIFFNESS_PATH.read_bytes(), order
 
 
 def test_el_solver_usa_la_rigidez_medida() -> None:
@@ -116,9 +130,16 @@ def test_el_solver_usa_la_rigidez_medida() -> None:
 
     doc = json.loads(e2.STIFFNESS_PATH.read_text(encoding="utf-8"))
     for clase, zonas in doc["clases"].items():
+        if "frontal" not in zonas:
+            continue
         entry = stiffness_for(clase, "frontal")
         assert entry.origen == "nhtsa"
         assert entry.n_tests == zonas["frontal"]["n_tests"] >= e2.MIN_TESTS_PER_CLASS
         assert math.isclose(entry.stiffness.a, zonas["frontal"]["a_n_m"])
-    assert stiffness_for("sedan_mediano", "lateral").origen == "supuesto"
+    # Lateral desde las pruebas de barrera móvil (E2 lateral); trasera sin pruebas suficientes.
+    lateral = stiffness_for("sedan_mediano", "lateral")
+    assert lateral.origen == "nhtsa"
+    assert lateral.n_tests == doc["clases"]["sedan_mediano"]["lateral"]["n_tests"]
+    assert len(lateral.samples) == lateral.n_tests
+    assert stiffness_for("sedan_mediano", "trasera").origen == "supuesto"
     assert stiffness_for("motocicleta", "frontal").origen == "supuesto"

@@ -18,6 +18,10 @@ def main(argv: list[str] | None = None) -> int:
         "atus-summary", help="Escribe eval/results/atus_summary.json desde data/processed/atus"
     )
     sub.add_parser("e2-barrier", help="E2: rigidez CRASH3 por clase desde pruebas de NHTSA")
+    sub.add_parser(
+        "e2-mdb",
+        help="E2 lateral y trasera: rigidez desde pruebas de barrera móvil de NHTSA",
+    )
     sub.add_parser("e4-pedestrian", help="E4: proyección de peatones contra casos publicados")
     sub.add_parser("e3-ciss", help="E3: ΔV desde el daño contra el EDR y WinSmash (NHTSA CISS)")
     sub.add_parser("f7-inversion", help="F7: inversión, consistencia y tiempos en las escenas")
@@ -46,6 +50,11 @@ def main(argv: list[str] | None = None) -> int:
         from croquis_eval.e2_barrier import main as run_e2
 
         print(run_e2())
+        return 0
+    if args.command == "e2-mdb":
+        from croquis_eval.e2_mdb import main as run_e2_mdb
+
+        print(run_e2_mdb())
         return 0
     if args.command == "e1-extraction":
         from croquis_eval.e1_extraction import main as run_e1
