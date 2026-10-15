@@ -171,3 +171,7 @@ def test_estimacion_en_el_limite_se_marca() -> None:
     d = inv.Distribution(0.0, 0.0, 0.0, 3)
     assert inv.Estimate(p, 5.0, True, 0.0, d).to_dict()["en_limite"] is True
     assert inv.Estimate(p, 5.0, True, 40.0, d).to_dict()["en_limite"] is False
+    # Un ajuste pegado al límite no depende del ruido numérico de la máquina.
+    assert inv.Estimate(p, 5.0, True, p.lo + 0.004, d).at_bound
+    assert inv.Estimate(p, 5.0, True, p.lo + 0.09, d).at_bound
+    assert not inv.Estimate(p, 5.0, True, p.lo + 0.2, d).at_bound
