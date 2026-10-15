@@ -1,0 +1,88 @@
+{
+ "costo_estimado_con": "claude-sonnet-5-5",
+ "costo_usd": 0.0067102,
+ "esfuerzo": "medium",
+ "grabado": "2026-10-15T15:04:55+00:00",
+ "huella_prompt": "5816b86ad0e718ee",
+ "latencia_ms": 3414.1,
+ "modelo": "claude-sonnet-5-5",
+ "modelo_respuesta": "claude-sonnet-5-5",
+ "prompt": "extraccion_v2",
+ "request_id": "req_011Cg4ED3Wm6CoW9Fy3zFChw",
+ "salida": {
+  "dispositivos": [],
+  "hechos": [
+   {
+    "campo": "entorno.iluminacion",
+    "cita": "en la noche",
+    "persona": -1,
+    "valor": "noche",
+    "vehiculo": -1
+   },
+   {
+    "campo": "vehiculo.clase",
+    "cita": "ecosport",
+    "persona": -1,
+    "valor": "suv_compacta",
+    "vehiculo": 0
+   },
+   {
+    "campo": "lugar.tipo_via",
+    "cita": "la curva",
+    "persona": -1,
+    "valor": "curva",
+    "vehiculo": -1
+   },
+   {
+    "campo": "lugar.estado_superficie",
+    "cita": "mucha grava suelta",
+    "persona": -1,
+    "valor": "grava_suelta",
+    "vehiculo": -1
+   },
+   {
+    "campo": "evento.tipo",
+    "cita": "se nos fue de lado",
+    "persona": -1,
+    "valor": "derrape",
+    "vehiculo": -1
+   },
+   {
+    "campo": "vehiculo.velocidad_kmh",
+    "cita": "iba como a 70",
+    "persona": -1,
+    "valor": "70",
+    "vehiculo": 0
+   }
+  ],
+  "personas": [
+   {
+    "cita": "veniamos de san cristobal a tuxtla",
+    "rol": "pasajero",
+    "vehiculo": 0
+   },
+   {
+    "cita": "mi esposo manejaba la ecosport",
+    "rol": "conductor",
+    "vehiculo": 0
+   }
+  ],
+  "preguntas": [
+   "¿Cuántos carriles tenía la carretera en ese tramo?",
+   "¿Había alumbrado público en la curva?",
+   "¿El conductor frenó antes de salirse del camino?"
+  ],
+  "vehiculos": [
+   {
+    "narrador": false
+   }
+  ]
+ },
+ "texto_sha256": "0d2ce7a1da2a54c356f9c96adb767056486d017bbd8b039d2749b47827c2e5ea",
+ "usage": {
+  "cache_creation_input_tokens": 0,
+  "cache_read_input_tokens": 6881,
+  "input_tokens": 137,
+  "output_tokens": 506
+ }
+}

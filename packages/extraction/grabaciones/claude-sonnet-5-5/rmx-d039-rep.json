@@ -1,0 +1,105 @@
+{
+ "costo_estimado_con": "claude-sonnet-5-5",
+ "costo_usd": 0.0088284,
+ "esfuerzo": "medium",
+ "grabado": "2026-10-15T15:35:31+00:00",
+ "huella_prompt": "f6b693169a4199c3",
+ "latencia_ms": 4871.3,
+ "modelo": "claude-sonnet-5-5",
+ "modelo_respuesta": "claude-sonnet-5-5",
+ "prompt": "extraccion_v1",
+ "request_id": "req_011Cg4GYHrjWwVWthTrAkK9o",
+ "salida": {
+  "dispositivos": [
+   {
+    "cita": "llegué a un alto",
+    "tipo": "alto"
+   }
+  ],
+  "hechos": [
+   {
+    "campo": "lugar.tipo_via",
+    "cita": "Era una T, la calle donde yo estaba se termina ahí",
+    "persona": -1,
+    "valor": "interseccion_t",
+    "vehiculo": -1
+   },
+   {
+    "campo": "entorno.iluminacion",
+    "cita": "Ya era de noche y los postes de luz no servían",
+    "persona": -1,
+    "valor": "noche_sin_alumbrado",
+    "vehiculo": -1
+   },
+   {
+    "campo": "evento.tipo",
+    "cita": "me dio de lleno en la salpicadera de adelante del lado derecho",
+    "persona": -1,
+    "valor": "impacto_vehiculo_vehiculo",
+    "vehiculo": -1
+   },
+   {
+    "campo": "vehiculo.maniobra",
+    "cita": "para dar vuelta a la izquierda",
+    "persona": -1,
+    "valor": "vuelta_izquierda",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.zona_impacto",
+    "cita": "me dio de lleno en la salpicadera de adelante del lado derecho",
+    "persona": -1,
+    "valor": "R",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.clase",
+    "cita": "una Tahoe negra",
+    "persona": -1,
+    "valor": "suv_grande",
+    "vehiculo": 1
+   },
+   {
+    "campo": "vehiculo.color",
+    "cita": "una Tahoe negra",
+    "persona": -1,
+    "valor": "negra",
+    "vehiculo": 1
+   },
+   {
+    "campo": "vehiculo.maniobra",
+    "cita": "de la derecha venía una Tahoe negra",
+    "persona": -1,
+    "valor": "recto",
+    "vehiculo": 1
+   }
+  ],
+  "personas": [
+   {
+    "cita": "venía yo en mi Civic",
+    "rol": "conductor",
+    "vehiculo": 0
+   }
+  ],
+  "preguntas": [
+   "¿Aproximadamente a qué velocidad iba la Tahoe?",
+   "¿La Tahoe venía por una calle con continuidad o por la calle principal de la T?",
+   "¿Cuánto tiempo estuvo detenido en el alto antes de arrancar?"
+  ],
+  "vehiculos": [
+   {
+    "narrador": true
+   },
+   {
+    "narrador": false
+   }
+  ]
+ },
+ "texto_sha256": "f389ece728862b2f4e9990c1eb2fa73a64a4edb0df6d25c29096cc9b4a73c663",
+ "usage": {
+  "cache_creation_input_tokens": 0,
+  "cache_read_input_tokens": 5862,
+  "input_tokens": 178,
+  "output_tokens": 730
+ }
+}

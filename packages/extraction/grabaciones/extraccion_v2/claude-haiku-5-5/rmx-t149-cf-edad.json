@@ -1,0 +1,95 @@
+{
+ "costo_estimado_con": "claude-haiku-5-5",
+ "costo_usd": 0.00134051,
+ "esfuerzo": "medium",
+ "grabado": "2026-10-15T13:49:56+00:00",
+ "huella_prompt": "5816b86ad0e718ee",
+ "latencia_ms": 10234.3,
+ "modelo": "claude-haiku-5-5",
+ "modelo_respuesta": "claude-haiku-5-5",
+ "prompt": "extraccion_v2",
+ "request_id": "req_011Cg48UuDC7NS9kpCoBQFyc",
+ "salida": {
+  "dispositivos": [
+   {
+    "cita": "con luz roja",
+    "tipo": "semaforo"
+   }
+  ],
+  "hechos": [
+   {
+    "campo": "lugar.tipo_via",
+    "cita": "en la intersección de la avenida Tecnológico y la calle Ejército Nacional",
+    "persona": -1,
+    "valor": "interseccion",
+    "vehiculo": -1
+   },
+   {
+    "campo": "vehiculo.clase",
+    "cita": "Hyundai Elantra",
+    "persona": -1,
+    "valor": "sedan_mediano",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.clase",
+    "cita": "Ford F-150",
+    "persona": -1,
+    "valor": "pickup",
+    "vehiculo": 1
+   },
+   {
+    "campo": "vehiculo.color",
+    "cita": "color gris",
+    "persona": -1,
+    "valor": "gris",
+    "vehiculo": 1
+   },
+   {
+    "campo": "evento.tipo",
+    "cita": "impactó el frente de mi vehículo Hyundai Elantra",
+    "persona": -1,
+    "valor": "impacto_vehiculo_vehiculo",
+    "vehiculo": -1
+   },
+   {
+    "campo": "vehiculo.zona_impacto",
+    "cita": "impactó el frente de mi vehículo",
+    "persona": -1,
+    "valor": "F",
+    "vehiculo": 0
+   }
+  ],
+  "personas": [
+   {
+    "cita": "Me encontraba detenida",
+    "rol": "conductor",
+    "vehiculo": 0
+   },
+   {
+    "cita": "conducido por un hombre de la tercera edad",
+    "rol": "conductor",
+    "vehiculo": 1
+   }
+  ],
+  "preguntas": [
+   "¿A qué velocidad avanzaba la pickup al cruzar la intersección?",
+   "¿Hubo frenado de la pickup antes del impacto?"
+  ],
+  "vehiculos": [
+   {
+    "narrador": true
+   },
+   {
+    "narrador": false
+   }
+  ]
+ },
+ "texto_sha256": "3dc1b5659c332a1550460866f5227bf48aeab2c58c0d28f60fcdd1996b4085bd",
+ "usage": {
+  "cache_creation_input_tokens": 0,
+  "cache_read_input_tokens": 6881,
+  "input_tokens": 262,
+  "output_tokens": 2491
+ }
+}

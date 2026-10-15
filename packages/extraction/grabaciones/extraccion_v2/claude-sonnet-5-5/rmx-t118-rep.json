@@ -1,0 +1,131 @@
+{
+ "costo_estimado_con": "claude-sonnet-5-5",
+ "costo_usd": 0.0107602,
+ "esfuerzo": "medium",
+ "grabado": "2026-10-15T15:28:31+00:00",
+ "huella_prompt": "5816b86ad0e718ee",
+ "latencia_ms": 5810.5,
+ "modelo": "claude-sonnet-5-5",
+ "modelo_respuesta": "claude-sonnet-5-5",
+ "prompt": "extraccion_v2",
+ "request_id": "req_011Cg4G1Dvja2RNW5MxGMZ35",
+ "salida": {
+  "dispositivos": [],
+  "hechos": [
+   {
+    "campo": "vehiculo.clase",
+    "cita": "Versa",
+    "persona": -1,
+    "valor": "sedan_compacto",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.clase",
+    "cita": "tráiler",
+    "persona": -1,
+    "valor": "tractocamion",
+    "vehiculo": 1
+   },
+   {
+    "campo": "lugar.carriles_por_sentido",
+    "cita": "eran tres carriles",
+    "persona": -1,
+    "valor": "3",
+    "vehiculo": -1
+   },
+   {
+    "campo": "vehiculo.velocidad_kmh",
+    "cita": "como a 60",
+    "persona": -1,
+    "valor": "60",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.maniobra",
+    "cita": "Iba en el carril de en medio",
+    "persona": -1,
+    "valor": "recto",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.maniobra",
+    "cita": "un tráiler del carril de la derecha se empezó a pasar al mío",
+    "persona": -1,
+    "valor": "cambio_carril_izquierda",
+    "vehiculo": 1
+   },
+   {
+    "campo": "evento.tipo",
+    "cita": "me pegó en la puerta de atrás del lado derecho",
+    "persona": -1,
+    "valor": "impacto_vehiculo_vehiculo",
+    "vehiculo": -1
+   },
+   {
+    "campo": "vehiculo.zona_impacto",
+    "cita": "me pegó en la puerta de atrás del lado derecho",
+    "persona": -1,
+    "valor": "R",
+    "vehiculo": 0
+   },
+   {
+    "campo": "evento.tipo",
+    "cita": "ya luego me arrastró tantito",
+    "persona": -1,
+    "valor": "arrastre",
+    "vehiculo": -1
+   },
+   {
+    "campo": "persona.cinturon",
+    "cita": "traían el cinturón",
+    "persona": 1,
+    "valor": "true",
+    "vehiculo": -1
+   },
+   {
+    "campo": "persona.cinturon",
+    "cita": "traían el cinturón",
+    "persona": 2,
+    "valor": "true",
+    "vehiculo": -1
+   }
+  ],
+  "personas": [
+   {
+    "cita": "Yo soy taxista",
+    "rol": "conductor",
+    "vehiculo": 0
+   },
+   {
+    "cita": "una señora con su niña atrás",
+    "rol": "pasajero",
+    "vehiculo": 0
+   },
+   {
+    "cita": "una señora con su niña atrás",
+    "rol": "pasajero",
+    "vehiculo": 0
+   }
+  ],
+  "preguntas": [
+   "¿Qué tan cargado de tráfico iba el tráiler y cuántas cajas o remolques llevaba?",
+   "¿Hubo frenado de alguno de los dos vehículos antes del golpe?",
+   "¿Era de día o de noche y cómo estaba el clima?"
+  ],
+  "vehiculos": [
+   {
+    "narrador": true
+   },
+   {
+    "narrador": false
+   }
+  ]
+ },
+ "texto_sha256": "f6439d521593b99eb87799576b8fd7bcdde8ef8ab282adc9caa23eb3a5f400b4",
+ "usage": {
+  "cache_creation_input_tokens": 0,
+  "cache_read_input_tokens": 6881,
+  "input_tokens": 227,
+  "output_tokens": 893
+ }
+}

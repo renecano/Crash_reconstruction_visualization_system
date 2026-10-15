@@ -1,0 +1,86 @@
+{
+ "costo_estimado_con": "claude-sonnet-5-5",
+ "costo_usd": 0.0144042,
+ "esfuerzo": "medium",
+ "grabado": "2026-10-15T15:04:12+00:00",
+ "huella_prompt": "5816b86ad0e718ee",
+ "latencia_ms": 9642.5,
+ "modelo": "claude-sonnet-5-5",
+ "modelo_respuesta": "claude-sonnet-5-5",
+ "prompt": "extraccion_v2",
+ "request_id": "req_011Cg4E9RLZJGFA2poaGiu1f",
+ "salida": {
+  "dispositivos": [],
+  "hechos": [
+   {
+    "campo": "vehiculo.clase",
+    "cita": "camioneta",
+    "persona": -1,
+    "valor": "suv_o_pickup",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.velocidad_kmh",
+    "cita": "como a 80",
+    "persona": -1,
+    "valor": "80",
+    "vehiculo": 0
+   },
+   {
+    "campo": "lugar.superficie",
+    "cita": "de terracería en ese tramo",
+    "persona": -1,
+    "valor": "terraceria",
+    "vehiculo": -1
+   },
+   {
+    "campo": "lugar.tipo_via",
+    "cita": "En una curva",
+    "persona": -1,
+    "valor": "curva",
+    "vehiculo": -1
+   },
+   {
+    "campo": "evento.tipo",
+    "cita": "se volteó de lado",
+    "persona": -1,
+    "valor": "volcadura",
+    "vehiculo": -1
+   }
+  ],
+  "personas": [
+   {
+    "cita": "la camioneta de mi compadre",
+    "rol": "conductor",
+    "vehiculo": 0
+   },
+   {
+    "cita": "Yo iba atrás",
+    "rol": "pasajero",
+    "vehiculo": 0
+   },
+   {
+    "cita": "con mi hijo",
+    "rol": "pasajero",
+    "vehiculo": 0
+   }
+  ],
+  "preguntas": [
+   "¿La camioneta era tipo pickup, SUV o van?",
+   "¿Hacia qué lado daba la curva y hacia qué lado se volteó la camioneta?",
+   "¿El tráiler siguió su camino o se detuvo después de rebasarlos?"
+  ],
+  "vehiculos": [
+   {
+    "narrador": false
+   }
+  ]
+ },
+ "texto_sha256": "2a0a564261c2c6fcff92c2eacdd4b753b6cd82fa13cc50596d6c71cbda421a3a",
+ "usage": {
+  "cache_creation_input_tokens": 0,
+  "cache_read_input_tokens": 6881,
+  "input_tokens": 194,
+  "output_tokens": 1264
+ }
+}

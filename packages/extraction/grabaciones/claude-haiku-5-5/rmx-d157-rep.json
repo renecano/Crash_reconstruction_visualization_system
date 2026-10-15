@@ -1,0 +1,65 @@
+{
+ "costo_estimado_con": "claude-haiku-5-5",
+ "costo_usd": 0.00098332,
+ "esfuerzo": "medium",
+ "grabado": "2026-10-15T14:47:33+00:00",
+ "huella_prompt": "f6b693169a4199c3",
+ "latencia_ms": 9011.5,
+ "modelo": "claude-haiku-5-5",
+ "modelo_respuesta": "claude-haiku-5-5",
+ "prompt": "extraccion_v1",
+ "request_id": "req_011Cg4Cspo8zQv6hAZTwJ8p5",
+ "salida": {
+  "dispositivos": [],
+  "hechos": [
+   {
+    "campo": "vehiculo.clase",
+    "cita": "Una moto",
+    "persona": -1,
+    "valor": "motocicleta",
+    "vehiculo": 1
+   },
+   {
+    "campo": "evento.tipo",
+    "cita": "me pegó en el espejo derecho",
+    "persona": -1,
+    "valor": "impacto_vehiculo_vehiculo",
+    "vehiculo": -1
+   },
+   {
+    "campo": "vehiculo.zona_impacto",
+    "cita": "me pegó en el espejo derecho",
+    "persona": -1,
+    "valor": "R",
+    "vehiculo": 0
+   }
+  ],
+  "personas": [
+   {
+    "cita": "Una moto",
+    "rol": "motociclista",
+    "vehiculo": 1
+   }
+  ],
+  "preguntas": [
+   "¿Usted manejaba el vehículo en el que iba al momento del percance?",
+   "¿La moto frenó o siguió avanzando después del golpe?",
+   "¿Qué tipo de vía era: avenida de un solo sentido, con carriles por sentido, o algún otro?"
+  ],
+  "vehiculos": [
+   {
+    "narrador": false
+   },
+   {
+    "narrador": false
+   }
+  ]
+ },
+ "texto_sha256": "04fbc599ef0d3f5fbfe2cb7c6c70e56fec6981d1abb3d40e01406b6ed825f373",
+ "usage": {
+  "cache_creation_input_tokens": 0,
+  "cache_read_input_tokens": 5862,
+  "input_tokens": 57,
+  "output_tokens": 1838
+ }
+}

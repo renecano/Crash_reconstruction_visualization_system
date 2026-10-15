@@ -1,0 +1,71 @@
+{
+ "costo_estimado_con": "claude-haiku-5-5",
+ "costo_usd": 0.00116401,
+ "esfuerzo": "medium",
+ "grabado": "2026-10-15T14:04:36+00:00",
+ "huella_prompt": "5816b86ad0e718ee",
+ "latencia_ms": 9843.3,
+ "modelo": "claude-haiku-5-5",
+ "modelo_respuesta": "claude-haiku-5-5",
+ "prompt": "extraccion_v2",
+ "request_id": "req_011Cg49booaEuVqpQnEGFtom",
+ "salida": {
+  "dispositivos": [
+   {
+    "cita": "por la cebra",
+    "tipo": "paso_peatonal"
+   },
+   {
+    "cita": "con el siga para peatones",
+    "tipo": "semaforo"
+   }
+  ],
+  "hechos": [
+   {
+    "campo": "vehiculo.clase",
+    "cita": "una camioneta de las grandes",
+    "persona": -1,
+    "valor": "suv_o_pickup",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.maniobra",
+    "cita": "dio vuelta a la derecha",
+    "persona": -1,
+    "valor": "vuelta_derecha",
+    "vehiculo": 0
+   },
+   {
+    "campo": "evento.tipo",
+    "cita": "Me dio con el espejo en el hombro",
+    "persona": -1,
+    "valor": "impacto_vehiculo_persona",
+    "vehiculo": -1
+   }
+  ],
+  "personas": [
+   {
+    "cita": "Iba cruzando la calzada Zaragoza por la cebra",
+    "rol": "peaton",
+    "vehiculo": -1
+   }
+  ],
+  "preguntas": [
+   "¿Qué color marcaba el semáforo para peatones al momento de cruzar?",
+   "¿A qué velocidad iba la camioneta al dar vuelta a la derecha?",
+   "¿La camioneta se detuvo después del golpe o siguió su marcha?"
+  ],
+  "vehiculos": [
+   {
+    "narrador": false
+   }
+  ]
+ },
+ "texto_sha256": "2ed9bc5ef014a25aca889cad2026a8abba031b1c0e4f68053a72f9d59b3961d3",
+ "usage": {
+  "cache_creation_input_tokens": 0,
+  "cache_read_input_tokens": 6881,
+  "input_tokens": 167,
+  "output_tokens": 2157
+ }
+}

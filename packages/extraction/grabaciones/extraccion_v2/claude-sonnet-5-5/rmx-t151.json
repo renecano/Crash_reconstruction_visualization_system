@@ -1,0 +1,91 @@
+{
+ "costo_estimado_con": "claude-sonnet-5-5",
+ "costo_usd": 0.0076002,
+ "esfuerzo": "medium",
+ "grabado": "2026-10-15T15:02:07+00:00",
+ "huella_prompt": "5816b86ad0e718ee",
+ "latencia_ms": 4128.8,
+ "modelo": "claude-sonnet-5-5",
+ "modelo_respuesta": "claude-sonnet-5-5",
+ "prompt": "extraccion_v2",
+ "request_id": "req_011Cg4DzbuoNWyX5MvZbV2Ja",
+ "salida": {
+  "dispositivos": [],
+  "hechos": [
+   {
+    "campo": "vehiculo.velocidad_kmh",
+    "cita": "íbamos a vuelta de rueda",
+    "persona": -1,
+    "valor": "8",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.clase",
+    "cita": "Versa",
+    "persona": -1,
+    "valor": "sedan_compacto",
+    "vehiculo": 1
+   },
+   {
+    "campo": "vehiculo.color",
+    "cita": "gris",
+    "persona": -1,
+    "valor": "gris",
+    "vehiculo": 1
+   },
+   {
+    "campo": "vehiculo.maniobra",
+    "cita": "se metió a la fuerza desde la derecha",
+    "persona": -1,
+    "valor": "cambio_carril_izquierda",
+    "vehiculo": 1
+   },
+   {
+    "campo": "evento.tipo",
+    "cita": "me pegó con su defensa en mi salpicadera",
+    "persona": -1,
+    "valor": "impacto_vehiculo_vehiculo",
+    "vehiculo": -1
+   },
+   {
+    "campo": "vehiculo.clase",
+    "cita": "Frontier",
+    "persona": -1,
+    "valor": "pickup",
+    "vehiculo": 0
+   }
+  ],
+  "personas": [
+   {
+    "cita": "Yo traía la Frontier del trabajo",
+    "rol": "conductor",
+    "vehiculo": 0
+   },
+   {
+    "cita": "el taxi traía pasajero atrás",
+    "rol": "pasajero",
+    "vehiculo": 1
+   }
+  ],
+  "preguntas": [
+   "¿El golpe fue en la salpicadera delantera o en la trasera del lado derecho de tu Frontier?",
+   "¿Cuántos carriles tiene la avenida Carranza en ese tramo?",
+   "¿Tu vehículo estaba en movimiento o ya detenido al momento del golpe?"
+  ],
+  "vehiculos": [
+   {
+    "narrador": true
+   },
+   {
+    "narrador": false
+   }
+  ]
+ },
+ "texto_sha256": "6de69f9e2c6d83936994568398c0c390cf47ef7e84b8de33dbf33b46000270e2",
+ "usage": {
+  "cache_creation_input_tokens": 0,
+  "cache_read_input_tokens": 6881,
+  "input_tokens": 187,
+  "output_tokens": 585
+ }
+}

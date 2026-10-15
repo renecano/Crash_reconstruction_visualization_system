@@ -1,0 +1,77 @@
+{
+ "costo_estimado_con": "claude-haiku-5-5",
+ "costo_usd": 0.00113571,
+ "esfuerzo": "medium",
+ "grabado": "2026-10-15T12:59:25+00:00",
+ "huella_prompt": "5816b86ad0e718ee",
+ "latencia_ms": 8883.2,
+ "modelo": "claude-haiku-5-5",
+ "modelo_respuesta": "claude-haiku-5-5",
+ "prompt": "extraccion_v2",
+ "request_id": "req_011Cg44dciY3YmT699Uv9G2E",
+ "salida": {
+  "dispositivos": [],
+  "hechos": [
+   {
+    "campo": "vehiculo.clase",
+    "cita": "Iba en mi bici",
+    "persona": -1,
+    "valor": "bicicleta",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.clase",
+    "cita": "un Polo",
+    "persona": -1,
+    "valor": "hatchback",
+    "vehiculo": 1
+   },
+   {
+    "campo": "vehiculo.velocidad_kmh",
+    "cita": "Yo iba como a 20",
+    "persona": -1,
+    "valor": "20",
+    "vehiculo": 0
+   },
+   {
+    "campo": "evento.tipo",
+    "cita": "Me di con la puerta",
+    "persona": -1,
+    "valor": "impacto_vehiculo_vehiculo",
+    "vehiculo": -1
+   }
+  ],
+  "personas": [
+   {
+    "cita": "Iba en mi bici",
+    "rol": "ciclista",
+    "vehiculo": 0
+   },
+   {
+    "cita": "una señora que iba en un Polo",
+    "rol": "conductor",
+    "vehiculo": 1
+   }
+  ],
+  "preguntas": [
+   "¿A qué velocidad iba el Polo al momento de abrir la puerta?",
+   "¿El Polo estaba estacionado o en movimiento?",
+   "¿La puerta que se abrió era la del lado por donde iba la bicicleta?"
+  ],
+  "vehiculos": [
+   {
+    "narrador": true
+   },
+   {
+    "narrador": false
+   }
+  ]
+ },
+ "texto_sha256": "88fe7e4a31aa14a8307910c2a4761d09d4b9e52fae27a1511002b4d8a1ca0a8f",
+ "usage": {
+  "cache_creation_input_tokens": 0,
+  "cache_read_input_tokens": 6881,
+  "input_tokens": 129,
+  "output_tokens": 2108
+ }
+}

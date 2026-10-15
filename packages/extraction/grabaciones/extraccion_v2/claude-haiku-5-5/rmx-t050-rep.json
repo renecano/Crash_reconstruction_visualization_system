@@ -1,0 +1,71 @@
+{
+ "costo_estimado_con": "claude-haiku-5-5",
+ "costo_usd": 0.00073011,
+ "esfuerzo": "medium",
+ "grabado": "2026-10-15T14:00:13+00:00",
+ "huella_prompt": "5816b86ad0e718ee",
+ "latencia_ms": 6096.3,
+ "modelo": "claude-haiku-5-5",
+ "modelo_respuesta": "claude-haiku-5-5",
+ "prompt": "extraccion_v2",
+ "request_id": "req_011Cg49GgWzRUuju7dRYBpRt",
+ "salida": {
+  "dispositivos": [],
+  "hechos": [
+   {
+    "campo": "evento.tipo",
+    "cita": "si la alcanzo a tocar con la defensa",
+    "persona": -1,
+    "valor": "impacto_vehiculo_persona",
+    "vehiculo": -1
+   },
+   {
+    "campo": "vehiculo.frenado",
+    "cita": "mi primo freno",
+    "persona": -1,
+    "valor": "true",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.zona_impacto",
+    "cita": "si la alcanzo a tocar con la defensa",
+    "persona": -1,
+    "valor": "F",
+    "vehiculo": 0
+   }
+  ],
+  "personas": [
+   {
+    "cita": "ibamos x la calle de independencia",
+    "rol": "pasajero",
+    "vehiculo": 0
+   },
+   {
+    "cita": "mi primo manejava despacito",
+    "rol": "conductor",
+    "vehiculo": 0
+   },
+   {
+    "cita": "una viejita se bajo de la banqueta sin voltear",
+    "rol": "peaton",
+    "vehiculo": -1
+   }
+  ],
+  "preguntas": [
+   "¿Qué clase de vehículo manejaba el primo?",
+   "¿A qué velocidad aproximada iba el vehículo al momento del impacto?"
+  ],
+  "vehiculos": [
+   {
+    "narrador": false
+   }
+  ]
+ },
+ "texto_sha256": "054abb1a4b6434eb4ce140d0b207e11cf32c08dd433404207522c887b415eb03",
+ "usage": {
+  "cache_creation_input_tokens": 0,
+  "cache_read_input_tokens": 6881,
+  "input_tokens": 133,
+  "output_tokens": 1296
+ }
+}

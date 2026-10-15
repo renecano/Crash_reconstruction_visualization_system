@@ -1,0 +1,69 @@
+{
+ "costo_estimado_con": "claude-sonnet-5-5",
+ "costo_usd": 0.0050744,
+ "esfuerzo": "medium",
+ "grabado": "2026-10-15T15:33:24+00:00",
+ "huella_prompt": "f6b693169a4199c3",
+ "latencia_ms": 3148.7,
+ "modelo": "claude-sonnet-5-5",
+ "modelo_respuesta": "claude-sonnet-5-5",
+ "prompt": "extraccion_v1",
+ "request_id": "req_011Cg4GP1nbCU2VSQe12jGGu",
+ "salida": {
+  "dispositivos": [],
+  "hechos": [
+   {
+    "campo": "evento.tipo",
+    "cita": "choqué contra un poste de luz",
+    "persona": -1,
+    "valor": "impacto_vehiculo_objeto",
+    "vehiculo": -1
+   },
+   {
+    "campo": "evento.objeto",
+    "cita": "poste de luz",
+    "persona": -1,
+    "valor": "poste",
+    "vehiculo": -1
+   },
+   {
+    "campo": "persona.cinturon",
+    "cita": "sin cinturón",
+    "persona": 0,
+    "valor": "false",
+    "vehiculo": -1
+   },
+   {
+    "campo": "vehiculo.velocidad_kmh",
+    "cita": "como a 90",
+    "persona": -1,
+    "valor": "90",
+    "vehiculo": 0
+   }
+  ],
+  "personas": [
+   {
+    "cita": "Yo iba solo",
+    "rol": "conductor",
+    "vehiculo": 0
+   }
+  ],
+  "preguntas": [
+   "¿Cuántos carriles tenía la carretera por sentido?",
+   "¿Había alumbrado o luz natural en el lugar en el momento del percance?",
+   "¿En qué zona del vehículo recibió el golpe contra el poste?"
+  ],
+  "vehiculos": [
+   {
+    "narrador": true
+   }
+  ]
+ },
+ "texto_sha256": "a6a1ba9205c98fa3e53191a97580b595ef3a7f489850a4c8c31439dc25c8c2cd",
+ "usage": {
+  "cache_creation_input_tokens": 0,
+  "cache_read_input_tokens": 5862,
+  "input_tokens": 91,
+  "output_tokens": 372
+ }
+}

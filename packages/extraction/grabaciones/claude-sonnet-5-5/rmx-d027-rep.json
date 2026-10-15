@@ -1,0 +1,81 @@
+{
+ "costo_estimado_con": "claude-sonnet-5-5",
+ "costo_usd": 0.0071504,
+ "esfuerzo": "medium",
+ "grabado": "2026-10-15T15:34:41+00:00",
+ "huella_prompt": "f6b693169a4199c3",
+ "latencia_ms": 3933.1,
+ "modelo": "claude-sonnet-5-5",
+ "modelo_respuesta": "claude-sonnet-5-5",
+ "prompt": "extraccion_v1",
+ "request_id": "req_011Cg4GUgjnTyUDCv2aEFmfv",
+ "salida": {
+  "dispositivos": [
+   {
+    "cita": "cruzaba por el paso peatonal",
+    "tipo": "paso_peatonal"
+   }
+  ],
+  "hechos": [
+   {
+    "campo": "lugar.tipo_via",
+    "cita": "en la esquina de las calles Morelos y Porfirio Díaz",
+    "persona": -1,
+    "valor": "interseccion",
+    "vehiculo": -1
+   },
+   {
+    "campo": "evento.tipo",
+    "cita": "atropelló a una joven",
+    "persona": -1,
+    "valor": "impacto_vehiculo_persona",
+    "vehiculo": -1
+   },
+   {
+    "campo": "evidencias.distancia_proyeccion_m",
+    "cita": "cayó a unos cuatro metros del punto del impacto",
+    "persona": -1,
+    "valor": "4",
+    "vehiculo": -1
+   },
+   {
+    "campo": "entorno.iluminacion",
+    "cita": "La calle cuenta con alumbrado, aunque escaso",
+    "persona": -1,
+    "valor": "noche_con_alumbrado",
+    "vehiculo": -1
+   },
+   {
+    "campo": "vehiculo.zona_impacto",
+    "cita": "atropelló a una joven",
+    "persona": -1,
+    "valor": "F",
+    "vehiculo": 0
+   }
+  ],
+  "personas": [
+   {
+    "cita": "una joven que cruzaba por el paso peatonal",
+    "rol": "peaton",
+    "vehiculo": -1
+   }
+  ],
+  "preguntas": [
+   "¿El taxi colectivo era un auto, una combi o una van?",
+   "¿Qué tan cerca del paso peatonal ocurrió el impacto y desde qué lado cruzaba la joven?",
+   "¿Aproximadamente a qué velocidad circulaba el taxi y frenó antes del impacto?"
+  ],
+  "vehiculos": [
+   {
+    "narrador": false
+   }
+  ]
+ },
+ "texto_sha256": "19e8a10febee6ec141375b61b1fe74cc75b84779a0f4495cee57a1dc0868d0b0",
+ "usage": {
+  "cache_creation_input_tokens": 0,
+  "cache_read_input_tokens": 5862,
+  "input_tokens": 189,
+  "output_tokens": 560
+ }
+}

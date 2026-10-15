@@ -1,0 +1,64 @@
+{
+ "costo_estimado_con": "claude-haiku-5-5",
+ "costo_usd": 0.00088152,
+ "esfuerzo": "medium",
+ "grabado": "2026-10-15T14:43:50+00:00",
+ "huella_prompt": "f6b693169a4199c3",
+ "latencia_ms": 7923.3,
+ "modelo": "claude-haiku-5-5",
+ "modelo_respuesta": "claude-haiku-5-5",
+ "prompt": "extraccion_v1",
+ "request_id": "req_011Cg4CbUS6ASNPFofAnzmvY",
+ "salida": {
+  "dispositivos": [],
+  "hechos": [
+   {
+    "campo": "vehiculo.clase",
+    "cita": "en el camión de la ruta",
+    "persona": -1,
+    "valor": "camion_o_autobus",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.frenado",
+    "cita": "el chofer frenó de golpe",
+    "persona": -1,
+    "valor": "true",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.maniobra",
+    "cita": "se le atravesó un carro",
+    "persona": -1,
+    "valor": "cambio_carril",
+    "vehiculo": 1
+   }
+  ],
+  "personas": [
+   {
+    "cita": "Iba parada agarrada del tubo",
+    "rol": "pasajero",
+    "vehiculo": 0
+   }
+  ],
+  "preguntas": [
+   "¿El carro que se atravesó llegó a tocar el camión o solo obligó a frenar?",
+   "¿El camión era de pasajeros o de carga?"
+  ],
+  "vehiculos": [
+   {
+    "narrador": false
+   },
+   {
+    "narrador": false
+   }
+  ]
+ },
+ "texto_sha256": "d95b54355f14ee64c6496efb5073fd37c601e05a714f0a034307d505296bfb0a",
+ "usage": {
+  "cache_creation_input_tokens": 0,
+  "cache_read_input_tokens": 5862,
+  "input_tokens": 144,
+  "output_tokens": 1617
+ }
+}
