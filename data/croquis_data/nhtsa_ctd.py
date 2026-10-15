@@ -3,14 +3,21 @@
 Fuente: https://nrd.api.nhtsa.dot.gov/nhtsa/vehicle/ (OpenAPI en ``/v3/api-docs``);
 ver ``data/SOURCES.md``.
 
-Qué se baja: todas las pruebas con configuración ``VTB`` (vehículo contra barrera). Para cada
-prueba, el detalle del vehículo (peso de prueba, largo, ancho, velocidad, perfil de daño DPD1–DPD6,
-aplastamiento máximo, índice de daño) y la información de la barrera (rígida/deformable, forma,
-ángulo, diámetro de poste). Las respuestas crudas se guardan una por prueba en ``data/raw/nhtsa/``
-(no versionado, reanudable) y el resumen tabular en ``data/processed/nhtsa/vtb_tests.csv``
-(versionado, pequeño), que alimenta E2.
+Qué se baja, por configuración:
 
-Uso: ``uv run croquis-data nhtsa download`` y ``uv run croquis-data nhtsa process``.
+- ``VTB`` (vehículo contra barrera): alimenta E2 y la rigidez frontal.
+- ``ITV`` (impactor contra vehículo): la barrera móvil de FMVSS 214 y del NCAP lateral contra el
+  costado, y la de FMVSS 301 contra la parte trasera. Alimenta la rigidez lateral y trasera.
+
+Para cada prueba, el detalle de cada vehículo (peso de prueba, largo, ancho, velocidad, ángulo de
+avance oblicuo, dirección principal de la fuerza, perfil de daño DPD1–DPD6, aplastamiento máximo,
+índice de daño) y la información de la barrera fija si la hay. Las respuestas crudas se guardan una
+por prueba (``data/raw/nhtsa/`` y ``data/raw/nhtsa/itv/``; no versionado, reanudable) y el resumen
+tabular, una fila por vehículo, en ``data/processed/nhtsa/vtb_tests.csv`` e ``itv_tests.csv``
+(versionados, pequeños).
+
+Uso: ``uv run croquis-data nhtsa download [--config ITV]`` y ``uv run croquis-data nhtsa process
+[--config ITV]``.
 """
 
 from __future__ import annotations
@@ -32,6 +39,13 @@ DATA_DIR = Path(__file__).resolve().parents[1]
 RAW_DIR = DATA_DIR / "raw" / "nhtsa"
 PROCESSED_DIR = DATA_DIR / "processed" / "nhtsa"
 CSV_PATH = PROCESSED_DIR / "vtb_tests.csv"
+ITV_RAW_DIR = RAW_DIR / "itv"
+ITV_CSV_PATH = PROCESSED_DIR / "itv_tests.csv"
+# Configuración de la API → (carpeta cruda, CSV procesado).
+CONFIGS: dict[str, tuple[Path, Path]] = {
+    "VTB": (RAW_DIR, CSV_PATH),
+    "ITV": (ITV_RAW_DIR, ITV_CSV_PATH),
+}
 USER_AGENT = (
     "croquis-data/0.1 (+https://github.com/renecano/Crash_reconstruction_visualization_system)"
 )
@@ -110,17 +124,19 @@ def _get_json(
     return None
 
 
-def list_vtb_tests(
-    client: httpx.Client, *, log: Callable[[str], None] | None = None
+def list_tests(
+    client: httpx.Client, config: str = "VTB", *, log: Callable[[str], None] | None = None
 ) -> list[dict[str, Any]]:
-    """Lista (paginando) todas las pruebas vehículo-contra-barrera con sus campos de resumen."""
+    """Lista (paginando) todas las pruebas de una configuración con sus campos de resumen.
+
+    La API repite una prueba por cada vehículo que tiene; se conservan todas las filas."""
     out: list[dict[str, Any]] = []
     page = 1
     while True:
         data = _get_json(
             client,
             f"{BASE_URL}/by-search",
-            {"testConfiguration": "VTB", "count": PAGE_SIZE, "pageNumber": page},
+            {"testConfiguration": config, "count": PAGE_SIZE, "pageNumber": page},
         )
         results: list[dict[str, Any]] = data.get("results") or []
         out.extend(results)
@@ -162,20 +178,23 @@ def fetch_test(client: httpx.Client, test_no: int, raw_dir: Path = RAW_DIR) -> d
 
 
 def download(
-    raw_dir: Path = RAW_DIR,
+    raw_dir: Path | None = None,
     *,
+    config: str = "VTB",
     workers: int = 4,
     limit: int | None = None,
     log: Callable[[str], None] | None = None,
 ) -> DownloadStats:
-    """Descarga todas las pruebas VTB. Reanudable: las que ya están en ``raw_dir`` no se repiten."""
+    """Descarga todas las pruebas de la configuración. Reanudable: las que ya están en
+    ``raw_dir`` no se repiten."""
+    raw_dir = raw_dir or CONFIGS[config][0]
     raw_dir.mkdir(parents=True, exist_ok=True)
     with _client() as client:
-        tests = list_vtb_tests(client, log=log)
-        (raw_dir / "vtb_index.json").write_text(
+        tests = list_tests(client, config, log=log)
+        (raw_dir / f"{config.lower()}_index.json").write_text(
             json.dumps(tests, ensure_ascii=False) + "\n", encoding="utf-8", newline="\n"
         )
-        numbers = [int(t["testNo"]) for t in tests]
+        numbers = sorted({int(t["testNo"]) for t in tests})
         if limit is not None:
             numbers = numbers[:limit]
         cached = sum(1 for n in numbers if (raw_dir / f"test_{n}.json").exists())
@@ -275,11 +294,15 @@ def rows_from_doc(doc: dict[str, Any]) -> list[dict[str, Any]]:
     return rows
 
 
-def process(raw_dir: Path = RAW_DIR, csv_path: Path = CSV_PATH) -> int:
-    """Convierte las respuestas crudas en ``vtb_tests.csv`` ordenado por prueba.
+def process(
+    raw_dir: Path | None = None, csv_path: Path | None = None, *, config: str = "VTB"
+) -> int:
+    """Convierte las respuestas crudas en el CSV de la configuración, ordenado por prueba.
 
     Devuelve el número de filas escritas.
     """
+    raw_dir = raw_dir or CONFIGS[config][0]
+    csv_path = csv_path or CONFIGS[config][1]
     rows: list[dict[str, Any]] = []
     for path in sorted(raw_dir.glob("test_*.json"), key=lambda p: int(p.stem.split("_")[1])):
         rows.extend(rows_from_doc(json.loads(path.read_text(encoding="utf-8"))))
