@@ -193,3 +193,31 @@ def test_ocupantes_van_a_bordo_sin_trayectoria_propia() -> None:
     a_bordo = [p for p in r.personas if p.vehiculo_id is not None]
     assert a_bordo
     assert all(len(p.track) == 0 for p in a_bordo)
+
+
+def test_la_moto_caida_se_desliza_con_el_arrastre_medido() -> None:
+    spec = load_fixture("motociclista")
+    nominal = reconstruct(spec, dt=0.05)
+    moto = next(v for v in nominal.vehiculos if v.clase == "motocicleta")
+    assert nominal.parametros["friccion_moto_caida"]["valor"] == 0.45
+    assert nominal.parametros["friccion_moto_caida"]["fuente"] == "peck"
+    # Con más arrastre se desliza menos; con menos, más (v² / 2μg con el mismo arranque).
+    alto = reconstruct(spec, dt=0.05, downed_mu=0.56)
+    bajo = reconstruct(spec, dt=0.05, downed_mu=0.36)
+    d = {
+        r: next(v for v in x.vehiculos if v.id == moto.id).distance_post_m
+        for r, x in (("alto", alto), ("bajo", bajo))
+    }
+    assert d["alto"] < moto.distance_post_m < d["bajo"]
+    assert alto.parametros["friccion_moto_caida"]["valor"] == 0.56
+    # El auto no cambia: el arrastre de la moto caída solo aplica a motos y scooters.
+    auto = next(v for v in nominal.vehiculos if v.clase != "motocicleta")
+    assert next(v for v in alto.vehiculos if v.id == auto.id).rest_pose == auto.rest_pose
+
+
+def test_sin_moto_no_hay_arrastre_de_moto_caida() -> None:
+    for name in list_fixtures():
+        spec = load_fixture(name)
+        if any(v["clase"]["valor"] in ("motocicleta", "scooter") for v in spec["vehiculos"]):
+            continue
+        assert "friccion_moto_caida" not in reconstruct(spec, dt=0.1).parametros, name

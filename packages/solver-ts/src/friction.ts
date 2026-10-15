@@ -4,6 +4,10 @@
  */
 import table from "./data/friction.json";
 
+// Después del impacto caen y se deslizan de lado (ADR 0017). La bicicleta sigue con el modelo de
+// llantas: no hay medición de su arrastre caída.
+export const DOWNED_SLIDE_CLASSES: ReadonlySet<string> = new Set(["motocicleta", "scooter"]);
+
 export interface RangedValue {
   low: number;
   high: number;
@@ -22,6 +26,7 @@ interface Node {
 const T = table as unknown as {
   llanta: Record<string, Record<string, Node>>;
   cuerpo_peaton: Record<string, Node>;
+  moto_caida: Record<string, Node>;
   abs: { factor_pico_sobre_deslizamiento: Node };
   percepcion_reaccion_s: Node;
   fuentes: Record<string, string>;
@@ -46,6 +51,12 @@ export function tireFriction(superficie: string, estado: string): RangedValue {
 
 export function pedestrianFriction(superficie: string): RangedValue {
   return ranged(T.cuerpo_peaton[superficie] ?? T.cuerpo_peaton.otro!);
+}
+
+/** Factor de arrastre de una motocicleta o scooter caído que se desliza de lado. */
+export function downedMotorcycleFriction(superficie: string): RangedValue {
+  const node = superficie === "_nota" ? undefined : T.moto_caida[superficie];
+  return ranged(node ?? T.moto_caida.otro!);
 }
 
 export function absPeakFactor(): RangedValue {

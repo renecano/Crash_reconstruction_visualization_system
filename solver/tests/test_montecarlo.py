@@ -57,3 +57,12 @@ def test_sin_rango_el_valor_nominal_cae_en_el_intervalo_de_su_velocidad() -> Non
         lo = min(d.p10, d.p50) - 25
         hi = max(d.p90, d.p50) + 25
         assert lo <= v.v_impact_kmh <= hi
+
+
+def test_el_arrastre_de_la_moto_caida_se_muestrea_solo_con_moto() -> None:
+    from croquis_solver.montecarlo import DOWNED_RUTA
+
+    moto = ranges(load_fixture("motociclista"))
+    assert moto[-1].ruta == DOWNED_RUTA
+    assert (moto[-1].minimo, moto[-1].maximo) == (0.36, 0.56)
+    assert all(c.ruta != DOWNED_RUTA for c in ranges(load_fixture("alcance")))

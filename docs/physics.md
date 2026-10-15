@@ -82,7 +82,7 @@ Pruebas (`test_crash3.py`): uniforme = fórmula cerrada, inversa recupera la ene
 
 Modelo planar de 3 GDL en el marco del cuerpo $(u, v, r)$: $m(\dot u - r v) = \sum F_x$, $m(\dot v + r u) = \sum F_y$, $I_z \dot r = \sum (x_i F_{y,i} - y_i F_{x,i})$. Cuatro llantas con carga estática repartida por ejes; llanta bloqueada: fuerza $\mu N$ opuesta a su velocidad de deslizamiento (círculo de fricción saturado); llanta rodando: lateral $-\mu N\,\mathrm{sat}(v_{lat}/0.3)$ más arrastre longitudinal. Integración semi-implícita de Euler con $dt = 2$ ms, salida cada 20 ms, reposo cuando $|v| < 0.05$ m/s y $|r| < 0.05$ rad/s.
 
-Tras el impacto, si el conductor frenaba las llantas van bloqueadas; si no, ruedan con un arrastre de $0.35\,\mu$ (**supuesto** que representa frenado parcial y daño; Fricke 2010 discute factores de arrastre post-impacto entre 0.3 y 0.5 de $\mu$). Pruebas: derrape recto = $v^2/(2\mu g)$ (1 %), energía no creciente, giro que decae, determinismo bit a bit.
+Tras el impacto, si el conductor frenaba las llantas van bloqueadas; si no, ruedan con un arrastre de $0.35\,\mu$ (**supuesto** que representa frenado parcial y daño; Fricke 2010 discute factores de arrastre post-impacto entre 0.3 y 0.5 de $\mu$). Una motocicleta o un scooter caen y se deslizan de lado: todos sus contactos deslizan con el arrastre medido por Peck, Focha y Gloekler 2014, nominal 0.45 y rango 0.36–0.56, primaria en asfalto y supuesto en otras superficies. Se muestrea en Monte Carlo y en la inversión (ADR 0017). La bicicleta conserva el modelo de llantas: no hay medición de su arrastre caída. Pruebas: derrape recto = $v^2/(2\mu g)$ (1 %), energía no creciente, giro que decae, determinismo bit a bit.
 
 ## 7. Peatón y ciclista (`pedestrian.py`)
 
@@ -244,6 +244,7 @@ El validador semántico (`check.ts` / `check.py`) marca masas, dimensiones y vel
 - NHTSA, DOT HS 811 546, _Development of the WinSMASH 2010 Crash Reconstruction Code_, 2012 (rigideces por categoría y forma $d_0$, $d_1$).
 - 49 CFR 571.214 (FMVSS 214, prueba con barrera móvil deformable), 571.301 (FMVSS 301) y parte 587 (barrera deformable de 3,015 lb), eCFR consultado el 2026-10-15.
 - Fricke, L. B. _Traffic Crash Reconstruction_, 2.ª ed., Northwestern University Center for Public Safety, 2010 (fricción, arrastre post-impacto).
+- Peck, L. R., Focha, W. y Gloekler, T. L. "Motorcycle Sliding Friction for Accident Investigation", _ifz Forschungsheft_ 16, Institut für Zweiradsicherheit, 2014 (arrastre de la motocicleta caída en 15 choques reales y 14 pruebas controladas).
 - Mumford, D. et al. "Inverted vehicle drag tests", _Accident Investigation Quarterly_ 13, 1997.
 - Searle, J. A. y Searle, A. "The trajectories and landing velocities of pedestrians...", SAE 831622, 1983; Searle, J. A. "The physics of throw distance in accident reconstruction", SAE 930659, 1993.
 - Wood, D. P. "Application of a pedestrian impact model to the determination of impact speed", SAE 910814, 1991; Wood 1988 según Spinu, A. et al., IOP Conf. Ser.: Mater. Sci. Eng. 444 (2018) 072017.

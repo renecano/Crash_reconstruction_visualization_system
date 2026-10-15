@@ -55,7 +55,7 @@ from croquis_solver.units import ms_to_kmh
 
 JsonObj = dict[str, Any]
 
-RESULT_VERSION = "1.5.0"
+RESULT_VERSION = "1.6.0"
 DT_OUT = 0.02
 T_PRE_MAX = 6.0
 T_PRE_MIN = 3.0  # contexto mínimo antes del impacto para el visor
@@ -623,8 +623,14 @@ def _sample_path(path: KinPath, prof: SpeedProfile, t_ref: float, times: list[fl
 # ----------------------------------------------------------------------------------------------
 
 
-def reconstruct(spec: JsonObj, *, dt: float = DT_OUT) -> Reconstruction:
-    """Reconstruye la escena. `spec` debe haber pasado la validación del contrato."""
+def reconstruct(
+    spec: JsonObj, *, dt: float = DT_OUT, downed_mu: float | None = None
+) -> Reconstruction:
+    """Reconstruye la escena. `spec` debe haber pasado la validación del contrato.
+
+    `downed_mu` fija el arrastre de una motocicleta caída (Monte Carlo e inversión lo muestrean);
+    sin él se usa el nominal de la tabla.
+    """
     banderas: list[str] = []
     avisos: list[Aviso] = []
 
@@ -1114,24 +1120,28 @@ def reconstruct(spec: JsonObj, *, dt: float = DT_OUT) -> Reconstruction:
     # ---- fase posterior ------------------------------------------------------------------
     t_fin = dt
     post: dict[str, tuple[Trajectory, bool, float]] = {}
+    mu_downed = friction.downed_motorcycle_friction(lugar["superficie"]["valor"])
     for m in models:
         if m.id not in actores:
             continue
         start = post_start[m.id]
         if start.speed > 0.05 or abs(start.yaw_rate) > 0.05:
+            downed = m.clase in friction.DOWNED_SLIDE_CLASSES
+            # Caída, se arrastra de lado: todo el contacto desliza con el arrastre medido.
             wheels = WheelConfig.four_wheels(
-                m.wheelbase, m.track, m.cg_from_front, locked=m.braking
+                m.wheelbase, m.track, m.cg_from_front, locked=m.braking or downed
             )
             drag = (
                 ROLLING_RESISTANCE
-                if m.braking
+                if m.braking or downed
                 else max(ROLLING_RESISTANCE, POST_IMPACT_DRAG_FRACTION * mu)
             )
+            mu_post = (mu_downed.nominal if downed_mu is None else downed_mu) if downed else mu
             res_post = integrate(
                 m.body,
                 State2D(start.x, start.y, start.yaw, start.vx, start.vy, start.yaw_rate, 0.0),
                 wheels,
-                mu,
+                mu_post,
                 dt_out=dt,
                 t_max=T_POST_MAX,
                 rolling_drag=drag,
@@ -1147,6 +1157,13 @@ def reconstruct(spec: JsonObj, *, dt: float = DT_OUT) -> Reconstruction:
             post[m.id] = (Trajectory(), True, 0.0)
         tr_post = post[m.id][0]
         t_fin = max(t_fin, tr_post.t[-1] if len(tr_post) else 0.0)
+    if any(m.id in actores and m.clase in friction.DOWNED_SLIDE_CLASSES for m in models):
+        params["friccion_moto_caida"] = {
+            "valor": mu_downed.nominal if downed_mu is None else downed_mu,
+            "rango": [mu_downed.low, mu_downed.high],
+            "fuente": mu_downed.fuente,
+            "tipo": mu_downed.tipo,
+        }
 
     # ---- personas ------------------------------------------------------------------------
     personas_out: list[PersonOutcome] = []

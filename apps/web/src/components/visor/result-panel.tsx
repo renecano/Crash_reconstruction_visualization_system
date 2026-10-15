@@ -28,6 +28,7 @@ const PARAM: Record<string, string> = {
   velocidad_peaton: "Velocidad al caminar (m/s)",
   friccion_cuerpo_suelo: "Fricción cuerpo–suelo",
   factor_proyeccion_jinete: "Factor de proyección del jinete",
+  friccion_moto_caida: "Arrastre de la moto caída",
   altura_cg_volcadura: "Altura del centro de masa (fracción del alto)",
   altura_ojo: "Altura del ojo del conductor (m)",
   alcance_deteccion_nocturna: "Alcance de detección con luces bajas (m)",

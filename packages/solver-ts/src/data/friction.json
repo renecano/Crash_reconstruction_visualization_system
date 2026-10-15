@@ -4,7 +4,8 @@
     "fricke": "Fricke, L. B. Traffic Crash Reconstruction, 2.ª ed., Northwestern University Center for Public Safety, 2010 (tabla de factores de arrastre por superficie; valores reproducidos por fuentes secundarias: tarorigin.com/ARnews/ARnews9-98/0039.html y Spinu et al. 2018, IOP Conf. Ser.: Mater. Sci. Eng. 444 072017, tabla 1).",
     "mumford": "Mumford, D. et al. Inverted vehicle drag tests: assessing the effect of speed on deceleration rates. Accident Investigation Quarterly 13, 1997 (asfalto y concreto, seco y mojado: 0.52–0.72 estático; 0.33–0.44 a más de 50 km/h). Vía TRID 476591.",
     "searle": "Searle, J. A. y Searle, A. The trajectories and landing velocities of pedestrians... SAE 831622, 1983; Searle, J. A. The physics of throw distance in accident reconstruction, SAE 930659, 1993 (cuerpo–asfalto 0.66, cuerpo–pasto 0.79; 0.70 citado en SAE 2014-01-0470).",
-    "toolbox": "Engineering ToolBox, Friction coefficients for common materials (rubber on asphalt/concrete, dry/wet), engineeringtoolbox.com/friction-coefficients-d_778.html (verificación cruzada, no primaria)."
+    "toolbox": "Engineering ToolBox, Friction coefficients for common materials (rubber on asphalt/concrete, dry/wet), engineeringtoolbox.com/friction-coefficients-d_778.html (verificación cruzada, no primaria).",
+    "peck": "Peck, L. R., Focha, W. y Gloekler, T. L. Motorcycle Sliding Friction for Accident Investigation. ifz Forschungsheft 16, Institut für Zweiradsicherheit, 2014 (año por los metadatos del PDF), pp. 62–76. 15 choques reales en pista con GPS: −0.45 g (DE 0.09); 14 pruebas controladas sin deslizadores: −0.48 g (DE 0.08); el único evento en asfalto mojado: −0.41 g. Copia consultada: axiomforensic.com/wp-content/uploads/2017/12/Sliding-Motorcycle-Friction-for-Accident-Investigation.pdf (SHA-256 d267041b537a66d644d92bfb54a3e18adb6f6fc1d1da02a151473f5c87637fe7)."
   },
   "llanta": {
     "asfalto": {
@@ -157,6 +158,16 @@
       "nominal": 0.6,
       "fuente": "fricke (0.45–0.6 asfalto, 0.45–0.7 pasto, vía secundaria)",
       "tipo": "secundaria"
+    }
+  },
+  "moto_caida": {
+    "_nota": "Factor de arrastre de una motocicleta o scooter caído que se desliza de lado. Rango: de la media menos una DE de los choques reales (0.45 − 0.09) a la media más una DE de las pruebas controladas (0.48 + 0.08); nominal, la media de los choques reales. No depende del estado de la superficie: el evento en mojado (0.41) cae dentro del rango en seco.",
+    "asfalto": { "rango": [0.36, 0.56], "nominal": 0.45, "fuente": "peck", "tipo": "primaria" },
+    "otro": {
+      "rango": [0.36, 0.56],
+      "nominal": 0.45,
+      "fuente": "peck (medido en asfalto; sin medición para esta superficie)",
+      "tipo": "supuesto"
     }
   },
   "abs": {
