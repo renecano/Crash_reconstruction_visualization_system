@@ -6,7 +6,7 @@ Reglas de trabajo: `CLAUDE.md`. Especificación: `PLAN.md`.
 ## Estado actual
 
 - **Fase actual:** pendientes físicos de F7, antes de F8. El pendiente 1 de F7 (test CISS de Relatos-MX y prompt v2) quedó hecho el 2026-10-14 (PR #11, ADR 0012); v2 es el prompt de producción.
-- **Rigidez lateral, hecha** (rama `feat/f7-rigidez-lateral`, ADR 0013). Sale de 1,265 pruebas de barrera móvil de NHTSA. En el test de E3, el error en costados baja de 11.04 a 8.51 km/h.
+- **Rigidez lateral, hecha** (PR #12, ADR 0013). Sale de 1,265 pruebas de barrera móvil de NHTSA. En el test de E3, el error en costados baja de 11.04 a 8.51 km/h.
 - **Siguiente paso concreto:** rigidez trasera desde los reportes PDF de FMVSS 301, en la rama `feat/f7-rigidez-trasera`. La API no trae masa ni perfil de esas pruebas; ver "F7 (continuación) — Rigidez lateral" → "Pendientes". Después, el pendiente 3 (inercia de guiñada medida) y luego F8. Los dos cambian resultados y capturas, así que van antes de las capturas de F8.
 - **En paralelo** (rama `feat/f7-e1-v2-test`): grabaciones del prompt v2 en el primer test y repeticiones de v1 en dev, dentro del tope diario. Cuando terminen: `golden build`, `e1-extraction --split test --prompt extraccion_v2` y su PR.
 - **F0** cerrado el 2026-10-10 (PR #1), **F1** el 2026-10-10 (PR #3), **F2** el 2026-10-13 (PR #4), **F3** el 2026-10-13 (PR #5), **F4** el 2026-10-13 (PR #6), **F5** el 2026-10-13 (PR #7), **F6** el 2026-10-14 (PR #8), **F7** el 2026-10-14 (PR #9; pendientes registrados); migración a Vercel el 2026-10-14 (PR #10); test CISS y prompt v2 el 2026-10-14 (PR #11).
