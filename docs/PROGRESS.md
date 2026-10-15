@@ -10,7 +10,8 @@ Reglas de trabajo: `CLAUDE.md`. Especificación: `PLAN.md`.
 - **Rigidez trasera, hecha** (PR #13, ADR 0014). Sale de 136 pruebas FMVSS 301 con barrera rígida, modelos 1975–2004. En el test de E3, el error en traseros baja de 16.45 a 7.68 km/h; en conjunto, 8.85 km/h contra 8.19 de WinSMASH.
 - **Inercia de guiñada medida, hecha** (PR #15, ADR 0015). Viene de la base de parámetros inerciales de NHTSA, 164 vehículos medidos: el error de la inercia baja de 10.0 % con la placa uniforme a 5.3 %.
 - **Fase de las marcas, hecha** (rama `feat/f7-marcas-derrape`, ADR 0016). Contrato 1.1.0 con `evidencias[].fase`, resultado 1.5.0 y la evidencia nueva `marcas_despues` en la inversión.
-- **Siguiente paso concreto:** la moto caída que se arrastra de lado después del choque, con fricción de deslizamiento con fuente, en la rama `feat/f7-moto-caida`. Hoy el solver la desliza menos de un metro y la raspadura de `motociclista` dice seis (ADR 0016). Después, la fase de las marcas en la extracción, y luego F8.
+- **Moto caída, hecha** (rama `feat/f7-moto-caida`, ADR 0017): arrastre medido de Peck et al. 2014, muestreado en Monte Carlo y en la inversión; resultado 1.6.0.
+- **Siguiente paso concreto:** la fase de las marcas en la extracción (prompt v3, reglas y anotación del dev, sin tocar los tests congelados), en la rama `feat/f7-fase-extraccion`. Después, F8.
 - **E1 del prompt v2 en el primer test, hecho** (PR #14). Sonnet 0.875 → 0.919 y Haiku 0.852 → 0.896. Además, E1 ahora compara cada contrafactual con la repetición del mismo relato (McNemar por tipo): ningún tipo difiere del ruido, y las reglas cambian con el modelo del vehículo en 6 de 52 pares (ADR 0012 §10).
 - **F0** cerrado el 2026-10-10 (PR #1), **F1** el 2026-10-10 (PR #3), **F2** el 2026-10-13 (PR #4), **F3** el 2026-10-13 (PR #5), **F4** el 2026-10-13 (PR #6), **F5** el 2026-10-13 (PR #7), **F6** el 2026-10-14 (PR #8), **F7** el 2026-10-14 (PR #9; pendientes registrados); migración a Vercel el 2026-10-14 (PR #10); test CISS y prompt v2 el 2026-10-14 (PR #11).
 
@@ -1062,7 +1063,30 @@ Rama `feat/f7-marcas-derrape`. ADR 0016.
 
 ### Pendientes
 
-1. **Moto caída que se desliza** (siguiente paso): con la raspadura como evidencia, el residuo de `motociclista` es −3.4 σ.
+1. **Moto caída que se desliza** (siguiente paso): con la raspadura como evidencia, el residuo de `motociclista` es −3.4 σ. **Hecho** (ADR 0017); el residuo queda en −3.1 σ.
 2. **La fase en la extracción:** prompt, reglas y anotación del dev, sin tocar los tests congelados.
 3. **Marcas de derrape de antes del impacto:** pedirían un modelo de velocidad crítica en curva.
 4. **Ruido numérico entre máquinas en la inversión:** el álgebra lineal con varios hilos suma en otro orden. Ya pasó con `en_limite`, que se arregló con una tolerancia en unidades del parámetro (PR #15). Si vuelve a aparecer en otra clasificación, fijar un solo hilo en el solver de referencia.
+
+## F7 (continuación) — Moto caída que se desliza
+
+Rama `feat/f7-moto-caida`. ADR 0017.
+
+### Hecho
+
+1. **Arrastre medido:** Peck, Focha y Gloekler 2014 (ifz Forschungsheft 16), nominal 0.45 y rango 0.36–0.56.
+   - Es `primaria` en asfalto y `supuesto` en otras superficies.
+   - Está en `friction.json` (copiada al port TS) y registrado en `data/SOURCES.md`.
+2. **Solver (Python y TS):** después del impacto, una motocicleta o un scooter se deslizan con todos sus contactos bloqueados y ese arrastre. La bicicleta conserva el modelo de llantas.
+3. **Incertidumbre:** el arrastre se muestrea en Monte Carlo (`parametros.friccion_moto_caida`) y en cada reestimación de la inversión. Se sortea al final para no mover los demás sorteos.
+4. **Resultado 1.6.0:** el parámetro `friccion_moto_caida` y la etiqueta en el panel del visor.
+5. **Regenerados:** los resultados de las escenas, las salidas doradas, E7 y F7. Solo cambia `motociclista`: la moto se desliza 1.33 m y la raspadura dice 6 m (−3.1 σ).
+6. **Pruebas:**
+   - Python: tabla, monotonía del deslizamiento con el arrastre, auto sin cambios, parámetro solo con moto y muestreo en Monte Carlo.
+   - TS: `friction.test.ts`.
+
+### Pendientes
+
+1. **Arrastre de una bicicleta caída:** falta una medición con fuente.
+2. **Moto que cae antes del impacto y llega deslizándose:** pide una fase previa con caída que el contrato no describe.
+3. **Separar en `motociclista`** un error del modelo de impacto moto–auto de un largo de raspadura impreciso. Hace falta un caso con datos medidos (por ejemplo, un expediente con raspadura y EDR).
