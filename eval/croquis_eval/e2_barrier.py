@@ -305,6 +305,22 @@ def _mad(values: list[float]) -> float:
     return statistics.median(abs(v - med) for v in values)
 
 
+TABLE_HEADER = {
+    "_generado_por": (
+        "uv run croquis-eval e2-barrier (frontal) y uv run croquis-eval e2-mdb (lateral y "
+        "trasera); eval/croquis_eval/e2_barrier.py y e2_mdb.py"
+    ),
+    "_fuente": (
+        "NHTSA Vehicle Crash Test Database vía data/processed/nhtsa/vtb_tests.csv e "
+        "itv_tests.csv; ver data/SOURCES.md"
+    ),
+    "_nota": (
+        "Frontal, lateral y trasera desde pruebas de NHTSA. Una clase sin pruebas suficientes en "
+        "una zona usa el respaldo marcado 'supuesto' en el solver."
+    ),
+}
+
+
 def write_stiffness_table(report: dict[str, Any], path: Path = STIFFNESS_PATH) -> Path:
     clases: dict[str, Any] = {}
     for clase, c in report["clases"].items():
@@ -322,22 +338,26 @@ def write_stiffness_table(report: dict[str, Any], path: Path = STIFFNESS_PATH) -
                 "muestras_ab": c["muestras_ab"],
             }
         }
-    doc = {
-        "_generado_por": "uv run croquis-eval e2-barrier (eval/croquis_eval/e2_barrier.py)",
-        "_fuente": (
-            "NHTSA Vehicle Crash Test Database vía data/processed/nhtsa/vtb_tests.csv; "
-            "ver data/SOURCES.md"
-        ),
-        "_nota": (
-            "Solo zona frontal. Lateral y trasera usan el respaldo marcado 'supuesto' en el solver."
-        ),
+    # Las zonas lateral y trasera las escribe e2-mdb: se conservan.
+    old: dict[str, Any] = json.loads(path.read_text(encoding="utf-8")) if path.exists() else {}
+    for clase, zonas in old.get("clases", {}).items():
+        for zona in ("lateral", "trasera"):
+            if zona in zonas:
+                clases.setdefault(clase, {})[zona] = zonas[zona]
+    doc: dict[str, Any] = {
+        **TABLE_HEADER,
         "parametros": {
             "b0_kmh": B0_KMH,
             "restitucion": RESTITUTION,
             "velocidad_kmh": list(SPEED_RANGE_KMH),
             "anio_minimo": MIN_MODEL_YEAR,
         },
-        "clases": clases,
+    }
+    if "parametros_lateral_trasera" in old:
+        doc["parametros_lateral_trasera"] = old["parametros_lateral_trasera"]
+    doc["clases"] = {
+        k: {z: v[z] for z in ("frontal", "lateral", "trasera") if z in v}
+        for k, v in sorted(clases.items())
     }
     path.parent.mkdir(parents=True, exist_ok=True)
     path.write_text(
