@@ -35,6 +35,7 @@ from croquis_eval.results import write_result
 from croquis_extraction import baseline, questions, relatos_mx
 from croquis_extraction.claude_client import (
     MODELS,
+    PROMPT_VERSION,
     LLMError,
     facts_from_output,
     load_recording,
@@ -67,7 +68,7 @@ def _pctl(xs: list[float], p: float) -> float | None:
 # --- Registros de cada pipeline (mismo formato) -------------------------------------------------
 
 
-def _ts_records(split: str) -> list[JsonObj]:
+def _ts_records(split: str, prompt: str = PROMPT_VERSION) -> list[JsonObj]:
     """Registros del pipeline TS (lo que se despliega), escritos por `scripts/e1-predict.ts`."""
     with tempfile.TemporaryDirectory() as tmp:
         out = Path(tmp) / f"e1_{split}.jsonl"
@@ -82,13 +83,17 @@ def _ts_records(split: str) -> list[JsonObj]:
             split,
             "--out",
             str(out),
+            "--prompt",
+            prompt,
         ]
         # En Windows `pnpm` es un script .cmd: hay que lanzarlo por el intérprete de comandos.
         subprocess.run(cmd, cwd=relatos_mx.ROOT, check=True, shell=os.name == "nt")
         return [json.loads(line) for line in out.read_text(encoding="utf-8").splitlines() if line]
 
 
-def _py_run(metodo: str, clave: str, raw: str, with_questions: bool) -> JsonObj:
+def _py_run(
+    metodo: str, clave: str, raw: str, with_questions: bool, prompt: str = PROMPT_VERSION
+) -> JsonObj:
     text = redact(raw).text
     rec: JsonObj = {"tipo": "corrida", "metodo": metodo, "clave": clave}
     if metodo == "reglas":
@@ -98,7 +103,7 @@ def _py_run(metodo: str, clave: str, raw: str, with_questions: bool) -> JsonObj:
         rec["costo_usd"] = 0.0
     else:
         try:
-            recording = load_recording(metodo, clave, text)
+            recording = load_recording(metodo, clave, text, prompt=prompt)
         except LLMError:
             return {**rec, "ausente": True}
         facts, conv = facts_from_output(recording["salida"], text)
@@ -126,7 +131,7 @@ def _py_run(metodo: str, clave: str, raw: str, with_questions: bool) -> JsonObj:
     return rec
 
 
-def _py_records(split: str) -> list[JsonObj]:
+def _py_records(split: str, prompt: str = PROMPT_VERSION) -> list[JsonObj]:
     """Los mismos registros con la referencia Python (para comparar con el pipeline TS)."""
     items = relatos_mx.load_split(split)
     cfs = [c for c in relatos_mx.load_split("contrafactuales") if c["split"] == split]
@@ -142,10 +147,12 @@ def _py_records(split: str) -> list[JsonObj]:
             }
         )
     for metodo in ("reglas", *MODELS):
-        out.extend(_py_run(metodo, it["id"], it["texto"], True) for it in items)
-        out.extend(_py_run(metodo, c["id"], c["texto"], False) for c in cfs)
+        out.extend(_py_run(metodo, it["id"], it["texto"], True, prompt) for it in items)
+        out.extend(_py_run(metodo, c["id"], c["texto"], False, prompt) for c in cfs)
         if metodo != "reglas":
-            out.extend(_py_run(metodo, it["id"] + "-rep", it["texto"], False) for it in items)
+            out.extend(
+                _py_run(metodo, it["id"] + "-rep", it["texto"], False, prompt) for it in items
+            )
     return out
 
 
@@ -285,13 +292,13 @@ def evaluate_method(name: str, items: list[JsonObj], cfs: list[JsonObj], recs: _
     }
 
 
-def evaluate(split: str, pipeline: str = "ts") -> JsonObj:
+def evaluate(split: str, pipeline: str = "ts", prompt: str = PROMPT_VERSION) -> JsonObj:
     if pipeline not in PIPELINES:
         msg = f"Pipeline desconocido: {pipeline}"
         raise ValueError(msg)
     items = relatos_mx.load_split(split)
     cfs = [c for c in relatos_mx.load_split("contrafactuales") if c["split"] == split]
-    recs = _Records(_ts_records(split) if pipeline == "ts" else _py_records(split))
+    recs = _Records(_ts_records(split, prompt) if pipeline == "ts" else _py_records(split, prompt))
     pii_total = pii_leak = 0
     by_kind: Counter[str] = Counter()
     over = 0
@@ -308,6 +315,7 @@ def evaluate(split: str, pipeline: str = "ts") -> JsonObj:
     return {
         "split": split,
         "pipeline": pipeline,
+        "prompt": prompt,
         "relatos": len(items),
         "contrafactuales": len(cfs),
         "test_congelado": relatos_mx.frozen_hash(split) if split in relatos_mx.LOCKS else None,
@@ -322,7 +330,7 @@ def evaluate(split: str, pipeline: str = "ts") -> JsonObj:
     }
 
 
-def main(split: str = "test", pipeline: str = "ts") -> str:
+def main(split: str = "test", pipeline: str = "ts", prompt: str = PROMPT_VERSION) -> str:
     if split in relatos_mx.LOCKS:
         frozen = relatos_mx.frozen_hash(split)
         if frozen is None:
@@ -341,9 +349,11 @@ def main(split: str = "test", pipeline: str = "ts") -> str:
         "descripcion": "E1: extracción del relato en Relatos-MX (línea base de reglas, Claude "
         "Haiku y Sonnet desde respuestas grabadas), fuga de PII del redactor y diferencia "
         "contrafactual, medidas sobre el pipeline " + which,
-        **evaluate(split, pipeline),
+        **evaluate(split, pipeline, prompt),
     }
-    suffix = "" if pipeline == "ts" else "_py"
+    suffix = ("" if prompt == PROMPT_VERSION else "_" + prompt.removeprefix("extraccion_")) + (
+        "" if pipeline == "ts" else "_py"
+    )
     name = ("e1_extraction" if split == "test" else f"e1_extraction_{split}") + suffix
     return str(write_result(name, payload))
 

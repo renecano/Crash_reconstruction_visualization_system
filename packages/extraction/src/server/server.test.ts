@@ -2,7 +2,7 @@ import { mkdtempSync, readFileSync, readdirSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { describe, expect, it } from "vitest";
-import { BudgetExceededError, LLMError, promptFingerprint } from "../claude-output";
+import { BudgetExceededError, LLMError, promptFingerprint, systemPrompt } from "../claude-output";
 import { sha256Hex } from "../hash";
 import { budgetUsd, FileBudgetStore, MemoryBudgetStore, RedisBudgetStore, today } from "./budget";
 import { callClaude, extract, type ClientLike } from "./claude";
@@ -133,6 +133,35 @@ describe("modos y tope de gasto", () => {
       budgetStore: store,
     });
     expect(again.salida).toEqual(rec.salida);
+  });
+
+  it("cada versión del prompt graba y reproduce en su carpeta", async () => {
+    const root = mkdtempSync(join(tmpdir(), "croquis-rec-"));
+    const store = new MemoryBudgetStore();
+    const { client, calls } = fakeClient();
+    const rec = await extract("derrapé", "caso-2", "claude-haiku-5-5", {
+      mode: "record",
+      client,
+      root,
+      budget: 1,
+      budgetStore: store,
+      prompt: "extraccion_v2",
+    });
+    const system = calls[0]!.params.system as { text: string }[];
+    expect(system[0]!.text).toBe(systemPrompt("extraccion_v2"));
+    expect(system[0]!.text).toContain("- aveo → sedan_compacto");
+    expect(rec.prompt).toBe("extraccion_v2");
+    expect(rec.huella_prompt).toBe(promptFingerprint("extraccion_v2"));
+    expect(recordingPath("claude-haiku-5-5", "caso-2", root, "extraccion_v2")).toBe(
+      join(root, "extraccion_v2", "claude-haiku-5-5", "caso-2.json"),
+    );
+    // Una grabación de v2 no vale como de v1 (otra carpeta y otra huella).
+    expect(() => loadRecording("claude-haiku-5-5", "caso-2", "derrapé", root)).toThrow(
+      /Sin respuesta/,
+    );
+    const again = loadRecording("claude-haiku-5-5", "caso-2", "derrapé", root, "extraccion_v2");
+    expect(again.salida).toEqual(rec.salida);
+    expect(() => systemPrompt("extraccion_v9")).toThrow(/desconocida/);
   });
 
   it("sin tope o con el tope gastado no llama a la API", async () => {

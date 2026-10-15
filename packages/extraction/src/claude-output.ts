@@ -10,6 +10,7 @@
  */
 import { ESCENA_JSON_SCHEMA } from "@croquis/scene-schema";
 import glosario from "../data/glosario.json";
+import modelos from "../data/modelos.json";
 import { emptyFacts, fact, type Fact, type Facts, type FactValue } from "./facts";
 import { PROMPTS } from "./generated/prompts";
 import { glossaryVersion } from "./glossary";
@@ -17,7 +18,13 @@ import { sha256Hex } from "./hash";
 import { pyJsonDumps } from "./pyjson";
 import { pyStr } from "./spec-builder";
 
-export const PROMPT_VERSION = "extraccion_v1";
+/**
+ * v1 es el prompt de producción mientras v2 no supere a v1 en dev (ADR 0012). Las grabaciones de
+ * v1 viven en `grabaciones/<modelo>/` y las de otras versiones en `grabaciones/<versión>/<modelo>/`.
+ */
+export const PROMPT_VERSIONS = ["extraccion_v1", "extraccion_v2"] as const;
+export type PromptVersion = (typeof PROMPT_VERSIONS)[number];
+export const PROMPT_VERSION: PromptVersion = "extraccion_v1";
 export const DEFAULT_MODEL = "claude-sonnet-5-5";
 export const MODELS = ["claude-sonnet-5-5", "claude-haiku-5-5"] as const;
 export type Model = (typeof MODELS)[number];
@@ -191,23 +198,46 @@ interface GlossaryEntry {
   efectos: { campo: string; valor: FactValue }[];
 }
 
-let system: string | null = null;
+const systems = new Map<PromptVersion, string>();
 
-/** Prompt de sistema estable (se cachea): instrucciones, valores válidos y glosario. */
-export function systemPrompt(): string {
-  if (system !== null) return system;
+export function checkPrompt(prompt: string): PromptVersion {
+  if (!(PROMPT_VERSIONS as readonly string[]).includes(prompt)) {
+    throw new LLMError(`Versión de prompt desconocida: ${prompt}`);
+  }
+  return prompt as PromptVersion;
+}
+
+/** Tabla modelo → clase de `modelos.json` (la misma que usa la línea base de reglas). */
+function modelsDoc(): string {
+  const table = (modelos as { modelos: Record<string, { clase: string }> }).modelos;
+  return Object.entries(table)
+    .map(([name, m]) => `- ${name} → ${m.clase}`)
+    .join("\n");
+}
+
+/**
+ * Prompt de sistema estable (se cachea): instrucciones, valores válidos, glosario y, desde v2, la
+ * tabla de modelos.
+ */
+export function systemPrompt(prompt: string = PROMPT_VERSION): string {
+  const version = checkPrompt(prompt);
+  const cached = systems.get(version);
+  if (cached !== undefined) return cached;
   const lines = (glosario as { entradas: GlossaryEntry[] }).entradas.map((e) => {
     const effects = e.efectos.map((x) => `${x.campo}=${pyStr(x.valor)}`).join(", ");
     return `- ${e.significado}` + (effects ? ` → ${effects}` : "");
   });
-  const base = PROMPTS.extraccion_v1.replaceAll("{GLOSARIO}", lines.join("\n"));
-  system = base + "\n\n" + valuesDoc() + "\n";
-  return system;
+  const base = PROMPTS[version]
+    .replaceAll("{GLOSARIO}", lines.join("\n"))
+    .replaceAll("{MODELOS}", modelsDoc());
+  const out = base + "\n\n" + valuesDoc() + "\n";
+  systems.set(version, out);
+  return out;
 }
 
 /** Huella del prompt y del esquema: una grabación solo vale para la misma huella. */
-export function promptFingerprint(): string {
-  const payload = systemPrompt() + pyJsonDumps(outputSchema()) + glossaryVersion();
+export function promptFingerprint(prompt: string = PROMPT_VERSION): string {
+  const payload = systemPrompt(prompt) + pyJsonDumps(outputSchema()) + glossaryVersion();
   return sha256Hex(payload).slice(0, 16);
 }
 

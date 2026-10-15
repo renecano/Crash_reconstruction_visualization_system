@@ -110,6 +110,24 @@ def test_prompt_estable_incluye_glosario_y_valores() -> None:
     assert cc.prompt_fingerprint() == cc.prompt_fingerprint()
 
 
+def test_prompt_v2_agrega_la_tabla_de_modelos_y_graba_aparte(tmp_path: Path) -> None:
+    v1, v2 = cc.system_prompt(), cc.system_prompt("extraccion_v2")
+    assert "{MODELOS}" not in v2
+    assert "- aveo → sedan_compacto" in v2
+    assert "- aveo → sedan_compacto" not in v1
+    assert cc.prompt_fingerprint() != cc.prompt_fingerprint("extraccion_v2")
+    # Las grabaciones de v1 se quedan donde estaban; las de v2 van en su carpeta.
+    assert (
+        cc.recording_path("claude-haiku-5-5", "k", tmp_path)
+        == tmp_path / "claude-haiku-5-5" / "k.json"
+    )
+    assert cc.recording_path("claude-haiku-5-5", "k", tmp_path, "extraccion_v2") == (
+        tmp_path / "extraccion_v2" / "claude-haiku-5-5" / "k.json"
+    )
+    with pytest.raises(cc.LLMError, match="desconocida"):
+        cc.system_prompt("extraccion_v9")
+
+
 def test_conversion_a_hechos_degrada_y_descarta() -> None:
     facts, conv = cc.facts_from_output(OUTPUT, TEXT)
     assert facts.narrador_vehiculo == 0

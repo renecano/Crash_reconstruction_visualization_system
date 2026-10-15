@@ -4,17 +4,17 @@
  * Haiku y Sonnet), constructor, verificador y la ronda de preguntas. Escribe JSONL, una línea por
  * relato y método, sin llamar a la API.
  *
- * Uso: tsx scripts/e1-predict.ts --split test --out <archivo.jsonl>
+ * Uso: tsx scripts/e1-predict.ts --split test --out <archivo.jsonl> [--prompt extraccion_v2]
  */
 import { readFileSync, writeFileSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 import { extractSpec } from "../src/baseline";
-import { factsFromOutput, LLMError, MODELS } from "../src/claude-output";
+import { checkPrompt, factsFromOutput, LLMError, MODELS } from "../src/claude-output";
 import { cpIndex } from "../src/codepoints";
 import { redact } from "../src/pii";
 import { ask, topic } from "../src/questions";
-import { loadRecording } from "../src/server/recordings";
+import { loadRecording, RECORDINGS } from "../src/server/recordings";
 import { buildSpec } from "../src/spec-builder";
 import { verifySpec } from "../src/verify";
 
@@ -27,6 +27,7 @@ function arg(name: string, dflt: string): string {
 
 const split = arg("split", "test");
 const out = arg("out", "");
+const prompt = checkPrompt(arg("prompt", "extraccion_v1"));
 if (!out) throw new Error("Falta --out");
 const repo = join(dirname(fileURLToPath(import.meta.url)), "..", "..", "..");
 const load = (name: string): Json[] =>
@@ -66,7 +67,7 @@ function run(metodo: string, clave: string, raw: string, withQuestions: boolean)
   } else {
     let recording;
     try {
-      recording = loadRecording(metodo, clave, text);
+      recording = loadRecording(metodo, clave, text, RECORDINGS, prompt);
     } catch (e) {
       if (!(e instanceof LLMError)) throw e;
       emit({ ...rec, ausente: true });

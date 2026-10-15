@@ -37,8 +37,12 @@ from croquis_extraction.text import load_json
 ROOT = Path(__file__).resolve().parents[2]
 RECORDINGS = ROOT / "packages" / "extraction" / "grabaciones"
 LEDGER = RECORDINGS / "gasto.json"
-PROMPT_FILE = ROOT / "packages" / "extraction" / "prompts" / "extraccion_v1.md"
+PROMPTS_DIR = ROOT / "packages" / "extraction" / "prompts"
+PROMPT_FILE = PROMPTS_DIR / "extraccion_v1.md"
+# v1 es el prompt de producción mientras v2 no supere a v1 en dev (ADR 0012); las grabaciones de
+# v1 viven en grabaciones/<modelo>/ y las de otras versiones en grabaciones/<versión>/<modelo>/.
 PROMPT_VERSION = "extraccion_v1"
+PROMPT_VERSIONS = ("extraccion_v1", "extraccion_v2")
 SCHEMA_FILE = ROOT / "packages" / "scene-schema" / "escena.schema.json"
 DEFAULT_MODEL = "claude-sonnet-5-5"
 MODELS = ("claude-sonnet-5-5", "claude-haiku-5-5")
@@ -210,21 +214,38 @@ def _values_doc() -> str:
     return "\n".join(lines)
 
 
+def _check_prompt(prompt: str) -> None:
+    if prompt not in PROMPT_VERSIONS:
+        msg = f"Versión de prompt desconocida: {prompt}"
+        raise LLMError(msg)
+
+
+def _models_doc() -> str:
+    """Tabla modelo → clase de `modelos.json` (la misma que usa la línea base de reglas)."""
+    models: dict[str, dict[str, str]] = load_json("modelos.json")["modelos"]
+    return "\n".join(f"- {name} → {m['clase']}" for name, m in models.items())
+
+
 @cache
-def system_prompt() -> str:
-    """Prompt de sistema estable (se cachea): instrucciones, valores válidos y glosario."""
+def system_prompt(prompt: str = PROMPT_VERSION) -> str:
+    """Prompt de sistema estable (se cachea): instrucciones, valores válidos, glosario y, desde
+    v2, la tabla de modelos."""
+    _check_prompt(prompt)
     lines: list[str] = []
     for e in load_json("glosario.json")["entradas"]:
         effects = ", ".join(f"{x['campo']}={x['valor']}" for x in e["efectos"])
         lines.append(f"- {e['significado']}" + (f" → {effects}" if effects else ""))
     gl = "\n".join(lines)
-    base = PROMPT_FILE.read_text(encoding="utf-8").replace("{GLOSARIO}", gl)
+    base = (PROMPTS_DIR / f"{prompt}.md").read_text(encoding="utf-8").replace("{GLOSARIO}", gl)
+    base = base.replace("{MODELOS}", _models_doc())
     return base + "\n\n" + _values_doc() + "\n"
 
 
-def prompt_fingerprint() -> str:
+def prompt_fingerprint(prompt: str = PROMPT_VERSION) -> str:
     """Huella del prompt y del esquema: una grabación solo vale para la misma huella."""
-    payload = system_prompt() + json.dumps(output_schema(), sort_keys=True) + glossary_version()
+    payload = (
+        system_prompt(prompt) + json.dumps(output_schema(), sort_keys=True) + glossary_version()
+    )
     return hashlib.sha256(payload.encode("utf-8")).hexdigest()[:16]
 
 
@@ -357,15 +378,21 @@ def _text_sha(text: str) -> str:
     return hashlib.sha256(text.encode("utf-8")).hexdigest()
 
 
-def recording_path(model: str, key: str, root: Path = RECORDINGS) -> Path:
+def recording_path(
+    model: str, key: str, root: Path = RECORDINGS, prompt: str = PROMPT_VERSION
+) -> Path:
     if not re.fullmatch(r"[A-Za-z0-9_-]{1,80}", key):
         msg = f"Clave de grabación inválida: {key!r}"
         raise LLMError(msg)
-    return root / model / f"{key}.json"
+    _check_prompt(prompt)
+    base = root if prompt == "extraccion_v1" else root / prompt
+    return base / model / f"{key}.json"
 
 
-def load_recording(model: str, key: str, text: str, root: Path = RECORDINGS) -> dict[str, Any]:
-    path = recording_path(model, key, root)
+def load_recording(
+    model: str, key: str, text: str, root: Path = RECORDINGS, prompt: str = PROMPT_VERSION
+) -> dict[str, Any]:
+    path = recording_path(model, key, root, prompt)
     if not path.exists():
         msg = (
             f"Sin respuesta grabada para {model}/{key} (requiere ANTHROPIC_API_KEY y modo record)."
@@ -375,7 +402,7 @@ def load_recording(model: str, key: str, text: str, root: Path = RECORDINGS) -> 
     if rec.get("texto_sha256") != _text_sha(text):
         msg = f"La grabación {model}/{key} es de otro texto; vuelve a grabarla."
         raise LLMError(msg)
-    if rec.get("huella_prompt") != prompt_fingerprint():
+    if rec.get("huella_prompt") != prompt_fingerprint(prompt):
         msg = f"La grabación {model}/{key} es de otra versión del prompt o del esquema."
         raise LLMError(msg)
     return rec
@@ -405,7 +432,11 @@ def budget_usd() -> float:
 
 
 def call_claude(
-    client: ClientLike, text: str, model: str = DEFAULT_MODEL, effort: str = DEFAULT_EFFORT
+    client: ClientLike,
+    text: str,
+    model: str = DEFAULT_MODEL,
+    effort: str = DEFAULT_EFFORT,
+    prompt: str = PROMPT_VERSION,
 ) -> dict[str, Any]:
     """Una petición a la API con salida estructurada; devuelve el registro (sin escribirlo)."""
     if model not in PRICES:
@@ -415,7 +446,7 @@ def call_claude(
         "model": model,
         "max_tokens": MAX_TOKENS,
         "system": [
-            {"type": "text", "text": system_prompt(), "cache_control": {"type": "ephemeral"}}
+            {"type": "text", "text": system_prompt(prompt), "cache_control": {"type": "ephemeral"}}
         ],
         "messages": [{"role": "user", "content": f"Relato:\n\n{text}"}],
         "output_config": {
@@ -451,8 +482,8 @@ def call_claude(
     return {
         "modelo": model,
         "modelo_respuesta": served,
-        "prompt": PROMPT_VERSION,
-        "huella_prompt": prompt_fingerprint(),
+        "prompt": prompt,
+        "huella_prompt": prompt_fingerprint(prompt),
         "esfuerzo": effort,
         "texto_sha256": _text_sha(text),
         "salida": salida,
@@ -476,11 +507,12 @@ def extract(
     root: Path = RECORDINGS,
     effort: str = DEFAULT_EFFORT,
     budget: float | None = None,
+    prompt: str = PROMPT_VERSION,
 ) -> dict[str, Any]:
     """Registro de extracción para `text` (ya redactado) según el modo; ver el docstring."""
     mode = mode or os.environ.get("CROQUIS_LLM_MODO", "replay")
     if mode == "replay":
-        return load_recording(model, key, text, root)
+        return load_recording(model, key, text, root, prompt)
     if mode not in ("record", "live"):
         msg = f"Modo desconocido: {mode}"
         raise LLMError(msg)
@@ -495,10 +527,10 @@ def extract(
         import anthropic
 
         client = anthropic.Anthropic()
-    rec = call_claude(client, text, model, effort)
+    rec = call_claude(client, text, model, effort, prompt)
     _charge(ledger, float(rec["costo_usd"]))
     if mode == "record":
-        path = recording_path(model, key, root)
+        path = recording_path(model, key, root, prompt)
         path.parent.mkdir(parents=True, exist_ok=True)
         path.write_text(
             json.dumps(rec, ensure_ascii=False, indent=1, sort_keys=True) + "\n",

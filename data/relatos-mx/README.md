@@ -21,6 +21,28 @@ Benchmark de comprensión de relatos de percances viales en español mexicano (P
 
 - **Limitación declarada.** Un benchmark escrito por un modelo puede parecerse más a cómo escribe un modelo que a cómo escribe la gente, y su autor también escribió la línea base de reglas. Se mitiga con cinco registros (`coloquial`, `formal`, `faltas`, `desordenado`, `breve`), con lotes de test escritos por agentes que no vieron la línea base, y congelando el test antes de la primera evaluación. Los números de E1 se leen con esa advertencia.
 
+## Test CISS (segundo test, verdad de NHTSA)
+
+El primer test lo escribió el mismo agente que escribió la línea base de reglas, así que su verdad depende de quien escribe. El test `ciss` corrige eso: cada relato se escribe desde un caso real investigado por NHTSA y los hechos los fija NHTSA, no quien escribe.
+
+- **Fuente.** Casos de CISS 2024 (Crash Investigation Sampling System, NHTSA; datos públicos del gobierno de EE. UU.; ver `data/SOURCES.md`). Los CSV de CISS no traen narrativas, así que se usan sus campos codificados: ambiente, vía, control de tránsito, maniobra previa, freno, clase de vehículo, lado del impacto, tipo de evento, objeto y persona atropellada. La velocidad sale del EDR, en el último punto válido antes del primer evento.
+- **Fichas.** `uv run croquis-data ciss relatos` (`data/croquis_data/ciss_relatos.py`) escribe `ciss/fichas.jsonl`:
+  - **Selección:** casos elegidos con semilla, por cuotas de tipo que siguen la tabla de arriba dentro de lo que CISS tiene.
+  - **Traducción:** cada código va al vocabulario de esta anotación solo si la equivalencia es exacta. Cada etiqueta supuesta se comprueba contra el catálogo oficial `FORMAT24.sas` del mismo zip. Lo que no tiene equivalente queda fuera de la ficha. Lo que no se adapta a México (nieve, hielo) descarta el caso.
+  - **Cuentas:** las exclusiones y los campos sin equivalente están en `ciss/fichas_conteos.json`.
+- **Relatos.** `fuente/ciss-*.toml`, uno por ficha y con el mismo id (`rmx-cNNN`).
+  - **Quién escribe:** agentes que no vieron la línea base ni el glosario. Escriben con los cinco registros, PII sintética y ranuras contrafactuales.
+  - **Verdad fija:** quien escribe solo pone el texto y las citas. `relatos check` rechaza un relato cuyos hechos, sin citas, no sean exactamente los de su ficha, o que deje un hecho sin cita.
+  - **Revisión:** otro agente, independiente, revisó lote por lote que el texto no afirme hechos de campos que la ficha no trae, porque un extractor que los encontrara sería castigado injustamente.
+- **Candado propio.** `ciss.lock`, escrito con `relatos freeze --split ciss` antes de la primera evaluación. El candado del primer test (`test.lock`) no cambia.
+
+### Limitaciones declaradas
+
+- **Origen.** CISS investiga choques en EE. UU. con al menos un vehículo de pasajeros remolcado. No hay relatos de motociclista, caída de pasajero ni salida del camino sin impacto, y las motocicletas solo aparecen como el otro vehículo. La distribución de tipos sigue a ATUS hasta donde CISS lo permite (ver `cuota_por_tipo`).
+- **Velocidad.** La que se narra es la del EDR redondeada a 5 km/h, como la diría una persona; el valor original queda en la ficha. Se eligen primero los casos con velocidad del EDR, lo que sesga hacia vehículos con EDR, que son los más nuevos.
+- **Texto.** Lo escribió un modelo desde una ficha, no una persona que vivió el choque. La verdad es de NHTSA; la forma de contarlo sigue siendo sintética y se marca `sintetico: true`.
+- **Menciones.** Cada ficha pide mencionar un subconjunto de los hechos, elegido con semilla (`probabilidad_de_mencion`), porque la gente no lo dice todo. Los hechos no mencionados no se evalúan.
+
 ## Licencia
 
 Textos y anotaciones: [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/legalcode.es) (`LICENSE` en esta carpeta); el código que los procesa es MIT como el resto del repositorio. Las clases de vehículo citan fichas técnicas (ver `data/SOURCES.md`).
@@ -29,6 +51,7 @@ Textos y anotaciones: [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/le
 
 - `fuente/dev-*.toml`, `fuente/test-*.toml`: lo que se escribe a mano. El prefijo decide la partición.
 - `build/{dev,test,contrafactuales}.jsonl`: generado con `uv run croquis-extraction relatos build`. Trae el texto final, la PII verdadera con posiciones, los hechos y la `EscenaSpec` de referencia. CI verifica que esté al día (`relatos check`).
+- `ciss/fichas.jsonl`, `ciss/fichas_conteos.json`, `fuente/ciss-*.toml`, `build/ciss.jsonl` y `ciss.lock`: el test CISS (ver arriba).
 - `test.lock`: hash SHA-256 del contenido fuente del test (id, tipo, registro, texto con marcas y hechos, en JSON canónico), escrito una sola vez con `relatos freeze`. No depende del constructor de specs: mejorar el constructor no rompe el congelamiento, cambiar un relato o su anotación sí. Después de congelarlo el test no se modifica (CLAUDE.md).
 
 ## Formato de un relato

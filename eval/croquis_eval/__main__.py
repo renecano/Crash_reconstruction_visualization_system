@@ -27,6 +27,12 @@ def main(argv: list[str] | None = None) -> int:
         default="ts",
         help="ts: el pipeline de producción (por omisión); py: la referencia Python, para comparar",
     )
+    e1.add_argument(
+        "--prompt",
+        choices=["extraccion_v1", "extraccion_v2"],
+        default="extraccion_v1",
+        help="Versión del prompt cuyas respuestas grabadas se puntúan",
+    )
     args = parser.parse_args(argv)
     if args.command == "atus-summary":
         from croquis_eval.atus_summary import main as run
@@ -41,7 +47,7 @@ def main(argv: list[str] | None = None) -> int:
     if args.command == "e1-extraction":
         from croquis_eval.e1_extraction import main as run_e1
 
-        print(run_e1(args.split, args.pipeline))
+        print(run_e1(args.split, args.pipeline, args.prompt))
         return 0
     if args.command == "e3-ciss":
         from croquis_eval.e3_ciss import main as run_e3

@@ -9,9 +9,16 @@ import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 import { describe, expect, it } from "vitest";
 import { extractSpec } from "./baseline";
-import { factsFromOutput, promptFingerprint, type ClaudeOutput } from "./claude-output";
+import {
+  factsFromOutput,
+  PROMPT_VERSION,
+  PROMPT_VERSIONS,
+  promptFingerprint,
+  type ClaudeOutput,
+} from "./claude-output";
 import { glossaryVersion } from "./glossary";
 import { redact } from "./pii";
+import { recordingPath } from "./server/recordings";
 import { buildSpec } from "./spec-builder";
 import { verifySpec } from "./verify";
 
@@ -19,6 +26,7 @@ type Json = Record<string, unknown>;
 
 interface Case {
   metodo: string;
+  prompt?: string;
   clave: string;
   spec: Json;
   verificador: { revisados: number; corregidos: number; degradados: number };
@@ -37,6 +45,7 @@ const golden = JSON.parse(
 ) as {
   version_glosario: string;
   huella_prompt: string;
+  huellas_prompt: Record<string, string>;
   casos: Case[];
 };
 const repo = join(root, "..", "..");
@@ -48,7 +57,7 @@ const lines = (split: string): Json[] =>
 
 /** Clave → texto sin redactar (igual que `pipeline_inputs` en Python). */
 const texts = new Map<string, string>();
-for (const split of ["dev", "test"]) {
+for (const split of ["dev", "test", "ciss"]) {
   for (const it of lines(split)) {
     texts.set(it.id as string, it.texto as string);
     texts.set(`${it.id as string}-rep`, it.texto as string);
@@ -76,9 +85,8 @@ function run(c: Case): {
   if (c.metodo === "reglas") {
     spec = extractSpec(text, c.clave);
   } else {
-    const rec = JSON.parse(
-      readFileSync(join(root, "grabaciones", c.metodo, `${c.clave}.json`), "utf-8"),
-    ) as { salida: ClaudeOutput };
+    const path = recordingPath(c.metodo, c.clave, join(root, "grabaciones"), c.prompt);
+    const rec = JSON.parse(readFileSync(path, "utf-8")) as { salida: ClaudeOutput };
     const [facts, cv] = factsFromOutput(rec.salida, text);
     conv = cv;
     spec = buildSpec(facts, text, { specId: c.clave, origen: "escrito", sintetico: false });
@@ -91,11 +99,23 @@ describe("paridad del pipeline con Python (fixtures/pipeline.golden.json)", () =
   it("mismo glosario y misma huella del prompt que las grabaciones", () => {
     expect(glossaryVersion()).toBe(golden.version_glosario);
     expect(promptFingerprint()).toBe(golden.huella_prompt);
+    for (const p of PROMPT_VERSIONS) expect(promptFingerprint(p)).toBe(golden.huellas_prompt[p]);
   });
 
-  for (const metodo of ["reglas", "claude-haiku-5-5", "claude-sonnet-5-5"]) {
-    const cases = golden.casos.filter((c) => c.metodo === metodo);
-    it(`${metodo}: ${cases.length} relatos dan la misma spec, conversión y verificación`, () => {
+  const runs = [
+    ["reglas", undefined],
+    ...PROMPT_VERSIONS.flatMap((p) =>
+      ["claude-haiku-5-5", "claude-sonnet-5-5"].map((m) => [
+        m,
+        p === PROMPT_VERSION ? undefined : p,
+      ]),
+    ),
+  ] as const;
+  for (const [metodo, prompt] of runs) {
+    const cases = golden.casos.filter((c) => c.metodo === metodo && c.prompt === prompt);
+    if (metodo !== "reglas" && prompt !== undefined && cases.length === 0) continue;
+    const label = prompt ? `${metodo} (${prompt})` : metodo;
+    it(`${label}: ${cases.length} relatos dan la misma spec, conversión y verificación`, () => {
       const failures: string[] = [];
       for (const c of cases) {
         const got = run(c);

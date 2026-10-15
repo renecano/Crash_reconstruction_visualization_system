@@ -5,7 +5,14 @@
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
-import { LLMError, promptFingerprint, type ClaudeOutput, type Usage } from "../claude-output";
+import {
+  checkPrompt,
+  LLMError,
+  PROMPT_VERSION,
+  promptFingerprint,
+  type ClaudeOutput,
+  type Usage,
+} from "../claude-output";
 import { sha256Hex } from "../hash";
 
 export const RECORDINGS = join(dirname(fileURLToPath(import.meta.url)), "..", "..", "grabaciones");
@@ -26,11 +33,18 @@ export interface Recording {
   grabado: string;
 }
 
-export function recordingPath(model: string, key: string, root = RECORDINGS): string {
+export function recordingPath(
+  model: string,
+  key: string,
+  root = RECORDINGS,
+  prompt: string = PROMPT_VERSION,
+): string {
   if (!/^[A-Za-z0-9_-]{1,80}$/.test(key)) {
     throw new LLMError(`Clave de grabación inválida: ${JSON.stringify(key)}`);
   }
-  return join(root, model, `${key}.json`);
+  const version = checkPrompt(prompt);
+  const base = version === "extraccion_v1" ? root : join(root, version);
+  return join(base, model, `${key}.json`);
 }
 
 export function loadRecording(
@@ -38,8 +52,9 @@ export function loadRecording(
   key: string,
   text: string,
   root = RECORDINGS,
+  prompt: string = PROMPT_VERSION,
 ): Recording {
-  const path = recordingPath(model, key, root);
+  const path = recordingPath(model, key, root, prompt);
   if (!existsSync(path)) {
     throw new LLMError(
       `Sin respuesta grabada para ${model}/${key} (requiere ANTHROPIC_API_KEY y modo record).`,
@@ -49,7 +64,7 @@ export function loadRecording(
   if (rec.texto_sha256 !== sha256Hex(text)) {
     throw new LLMError(`La grabación ${model}/${key} es de otro texto; vuelve a grabarla.`);
   }
-  if (rec.huella_prompt !== promptFingerprint()) {
+  if (rec.huella_prompt !== promptFingerprint(prompt)) {
     throw new LLMError(`La grabación ${model}/${key} es de otra versión del prompt o del esquema.`);
   }
   return rec;
@@ -78,7 +93,7 @@ function sortedJson(value: unknown, indent: string, depth: number): string {
 }
 
 export function saveRecording(rec: Recording, key: string, root = RECORDINGS): string {
-  const path = recordingPath(rec.modelo, key, root);
+  const path = recordingPath(rec.modelo, key, root, rec.prompt);
   mkdirSync(dirname(path), { recursive: true });
   writeFileSync(path, sortedJson(rec, " ", 0) + "\n", "utf-8");
   return path;

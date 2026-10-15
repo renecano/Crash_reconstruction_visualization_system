@@ -9,7 +9,13 @@ import sys
 REPEAT_SUFFIX = "-rep"
 
 
-def _record(split: str, model: str | None, limit: int | None, repeat: bool = False) -> int:
+def _record(
+    split: str,
+    model: str | None,
+    limit: int | None,
+    repeat: bool = False,
+    prompt: str = "extraccion_v1",
+) -> int:
     """Graba (o salta si ya existe) la respuesta de cada relato y contrafactual del split.
 
     Con `repeat`, graba una segunda respuesta de cada relato base con el mismo texto (clave
@@ -34,12 +40,12 @@ def _record(split: str, model: str | None, limit: int | None, repeat: bool = Fal
         for row in rows:
             text = redact(row["texto"]).text
             try:
-                cc.load_recording(m, row["id"], text)
+                cc.load_recording(m, row["id"], text, prompt=prompt)
                 continue  # ya grabada y vigente
             except cc.LLMError:
                 pass
             try:
-                rec = cc.extract(text, row["id"], m, mode="record")
+                rec = cc.extract(text, row["id"], m, mode="record", prompt=prompt)
             except cc.BudgetExceededError as e:
                 print(f"Detenido: {e}", file=sys.stderr)
                 return 2
@@ -72,6 +78,12 @@ def main(argv: list[str] | None = None) -> int:
     c.add_argument("--model", default=None, help="claude-sonnet-5-5 o claude-haiku-5-5")
     c.add_argument("--limit", type=int, default=None)
     c.add_argument(
+        "--prompt",
+        choices=["extraccion_v1", "extraccion_v2"],
+        default="extraccion_v1",
+        help="Versión del prompt (cada una graba en su carpeta)",
+    )
+    c.add_argument(
         "--repetir",
         action="store_true",
         help="Segunda respuesta de cada relato base con el mismo texto (piso de ruido)",
@@ -79,7 +91,7 @@ def main(argv: list[str] | None = None) -> int:
     args = parser.parse_args(argv)
 
     if args.group == "claude":
-        return _record(args.split, args.model, args.limit, args.repetir)
+        return _record(args.split, args.model, args.limit, args.repetir, args.prompt)
 
     if args.group == "golden":
         from croquis_extraction import golden

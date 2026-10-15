@@ -28,6 +28,8 @@ from typing import Any
 
 from croquis_extraction import baseline, relatos_mx
 from croquis_extraction.claude_client import (
+    PROMPT_VERSION,
+    PROMPT_VERSIONS,
     LLMError,
     facts_from_output,
     load_recording,
@@ -114,15 +116,19 @@ def _without_story(spec: dict[str, Any]) -> dict[str, Any]:
     return {**spec, "meta": meta}
 
 
-def pipeline_case(method: str, key: str, raw: str) -> dict[str, Any] | None:
+def pipeline_case(
+    method: str, key: str, raw: str, prompt: str = PROMPT_VERSION
+) -> dict[str, Any] | None:
     """Lo que produce el pipeline de referencia para un relato (None si no hay grabación)."""
     text = redact(raw).text
     out: dict[str, Any] = {"metodo": method, "clave": key}
+    if method != "reglas" and prompt != PROMPT_VERSION:
+        out["prompt"] = prompt
     if method == "reglas":
         spec = baseline.extract_spec(text, key)
     else:
         try:
-            rec = load_recording(method, key, text)
+            rec = load_recording(method, key, text, prompt=prompt)
         except LLMError:
             return None
         facts, conv = facts_from_output(rec["salida"], text)
@@ -148,7 +154,7 @@ def pipeline_case(method: str, key: str, raw: str) -> dict[str, Any] | None:
 def pipeline_inputs() -> list[tuple[str, str]]:
     """(clave, texto sin redactar) de cada relato, contrafactual y repetición de Relatos-MX."""
     out: list[tuple[str, str]] = []
-    for split in ("dev", "test"):
+    for split in relatos_mx.SPLITS:
         items = relatos_mx.load_split(split)
         out.extend((it["id"], it["texto"]) for it in items)
         out.extend((it["id"] + "-rep", it["texto"]) for it in items)
@@ -159,15 +165,17 @@ def pipeline_inputs() -> list[tuple[str, str]]:
 def build_pipeline_text() -> str:
     cases: list[dict[str, Any]] = []
     for key, raw in pipeline_inputs():
-        for method in ("reglas", *MODELS):
+        runs = [("reglas", PROMPT_VERSION)] + [(m, p) for p in PROMPT_VERSIONS for m in MODELS]
+        for method, prompt in runs:
             if method == "reglas" and key.endswith("-rep"):
                 continue  # las reglas son deterministas: la repetición es el mismo caso
-            c = pipeline_case(method, key, raw)
+            c = pipeline_case(method, key, raw, prompt)
             if c is not None:
                 cases.append(c)
     payload = {
         "version_glosario": glossary_version(),
         "huella_prompt": prompt_fingerprint(),
+        "huellas_prompt": {p: prompt_fingerprint(p) for p in PROMPT_VERSIONS},
         "casos": cases,
     }
     return json.dumps(payload, ensure_ascii=False, separators=(",", ":")) + "\n"
