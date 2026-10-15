@@ -16,13 +16,13 @@ Reglas de trabajo: `CLAUDE.md`. Especificación: `PLAN.md`.
 
 ### Bloqueado — necesita a René
 
-| Qué                                                                                                                                                                                                                                 | Para qué                                                                                          | Estado                             |
-| ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------- | ---------------------------------- |
-| `ANTHROPIC_API_KEY`                                                                                                                                                                                                                 | F6 (extracción con Claude) y E1. CI usa respuestas grabadas, así que no bloquea hasta F6.         | Recibida 2026-10-14 (`.env.local`) |
-| Conectar el repo a Vercel, configurar las variables de entorno (`ANTHROPIC_API_KEY`, tope, Upstash) y elegir el plan                                                                                                                | Despliegue en Vercel (ADR 0011); sin Upstash, en producción solo responde la línea base de reglas | Pendiente                          |
-| Confirmar licencia MIT del código y el nombre _Croquis_                                                                                                                                                                             | Se usan los valores por defecto de PLAN §16 (ADR 0002)                                            | Usando default                     |
-| Pruebas con ≥ 5 personas reales (E9)                                                                                                                                                                                                | F11                                                                                               | Pendiente                          |
-| Confirmar que el repositorio remoto correcto es `renecano/Crash_reconstruction_visualization_system` (público, lo creó René vacío el 2026-10-10). Se eligió por nombre y fecha; se puede cambiar con `git remote set-url origin …`. | Push y CI                                                                                         | Asumido y ya en uso                |
+| Qué                                                                                                                                                                                                                                 | Para qué                                                                                                                         | Estado                                                   |
+| ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------- |
+| `ANTHROPIC_API_KEY`                                                                                                                                                                                                                 | F6 (extracción con Claude) y E1. CI usa respuestas grabadas, así que no bloquea hasta F6.                                        | Recibida 2026-10-14 (`.env.local`)                       |
+| Aceptar los términos de Upstash en el Marketplace de Vercel: https://vercel.com/renecanof-gmailcoms-projects/~/integrations/accept-terms/upstash?source=cli (después corro `vercel integration add upstash/upstash-kv --plan free`) | Tope de gasto y límite de peticiones en producción (ADR 0011). Sin Upstash, producción responde solo con la línea base de reglas | Pendiente; el resto de Vercel ya está hecho (2026-10-15) |
+| Confirmar licencia MIT del código y el nombre _Croquis_                                                                                                                                                                             | Se usan los valores por defecto de PLAN §16 (ADR 0002)                                                                           | Usando default                                           |
+| Pruebas con ≥ 5 personas reales (E9)                                                                                                                                                                                                | F11                                                                                                                              | Pendiente                                                |
+| Confirmar que el repositorio remoto correcto es `renecano/Crash_reconstruction_visualization_system` (público, lo creó René vacío el 2026-10-10). Se eligió por nombre y fecha; se puede cambiar con `git remote set-url origin …`. | Push y CI                                                                                                                        | Asumido y ya en uso                                      |
 
 ## Entorno de desarrollo (verificado 2026-10-10)
 
@@ -1077,3 +1077,21 @@ ADR 0018. PLAN.md y CLAUDE.md quedan con las versiones que dio René.
   - **Primer paso:** el inventario de muestras en `docs/data.md`.
 - **Lo que existía de BeamNG:** solo una carpeta vacía `tools/beamng-bridge`, sin versionar; se borró. No había `eval/damage-beamng`. Las menciones en el README, en `docs/` y en este archivo se cambiaron al plan nuevo, y la licencia salió de "Bloqueado — necesita a René".
 - **La volcadura 3D pierde su validación prevista:** E5 no cubre volcaduras. Queda como límite, salvo que CISS traiga casos con medidas útiles.
+
+## Vercel conectado (2026-10-15)
+
+René pidió que yo hiciera la conexión. La sesión de la CLI ya era suya (`renecanof-2888`).
+
+- **Proyecto `croquis`** en `renecanof-gmailcoms-projects`: raíz `apps/web`, Next.js y Node 24.x.
+  - Conectado al repo de GitHub: cada push a `main` despliega producción y cada rama, una vista previa.
+- **Variables de producción y vista previa:**
+  - `ANTHROPIC_API_KEY`, como secreto. Se cargó desde `.env.local` sin imprimirse.
+  - `CROQUIS_LLM_MODEL=claude-sonnet-5-5`.
+  - `CROQUIS_LLM_DAILY_BUDGET_USD=2`, el tope por omisión de `.env.example`; el de $20 era solo para las evaluaciones locales.
+  - `CROQUIS_LLM_RATE_LIMIT_PER_HOUR=20`.
+- **Producción:** https://croquis-sage.vercel.app, desplegada desde `main` (PR #17). La compilación tardó 58 s.
+  - **Prueba de humo:** la página responde 200 y `POST /api/relato/extraer` devuelve una escena con `metodo: reglas`.
+- **Pendiente de René:** Upstash pide aceptar sus términos en el navegador; el enlace está en "Bloqueado — necesita a René". Mientras falte, producción no llama a Claude (no hay dónde llevar el gasto) y responde con la línea base de reglas.
+- **Notas:**
+  - Los despliegues desde la CLI quedaron bloqueados 24 h por el límite de subidas del plan gratuito (más de 5,000 archivos). Los de GitHub no pasan por ese límite.
+  - `vercel link` agregó `.env*` al final de `.gitignore`, después de la excepción `!.env.example`; se revirtió porque el `.gitignore` existente ya ignora `.vercel` y `.env.local`.
