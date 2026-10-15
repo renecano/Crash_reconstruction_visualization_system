@@ -22,8 +22,11 @@ El test solo se evalúa congelado (PLAN §5.2).
 
 from __future__ import annotations
 
+import difflib
 import json
+import math
 import os
+import re
 import subprocess
 import tempfile
 import time
@@ -247,6 +250,107 @@ def edr_speed(items: list[JsonObj], preds: dict[str, Facts]) -> JsonObj:
     }
 
 
+def _mcnemar_p(b: int, c: int) -> float:
+    """McNemar exacto de dos colas: binomial con p = 1/2 sobre los pares discordantes."""
+    n = b + c
+    if n == 0:
+        return 1.0
+    k = min(b, c)
+    return min(1.0, 2.0 * sum(math.comb(n, i) for i in range(k + 1)) / 2**n)
+
+
+_FEM_WORDS = {"ella", "la", "las", "una", "dicha", "otra", "esta", "esa", "femenino"}
+_MASC_WORDS = {"él", "el", "los", "un", "dicho", "otro", "este", "ese", "lo", "masculino"}
+_WORD = re.compile(r"\w+", re.UNICODE)
+
+
+def base_sex(base_text: str, cf_text: str) -> str | None:
+    """Sexo de la persona en el relato base de un contrafactual de sexo: compara las palabras que
+    cambian entre los dos textos (artículos y pronombres, y terminaciones -a/-o como señora/señor o
+    sentada/sentado) y vota. None si no se puede decidir."""
+    a = [w.lower() for w in _WORD.findall(base_text)]
+    b = [w.lower() for w in _WORD.findall(cf_text)]
+    fem = masc = 0
+    for tag, i1, i2, j1, j2 in difflib.SequenceMatcher(a=a, b=b, autojunk=False).get_opcodes():
+        if tag != "replace" or i2 - i1 != j2 - j1:
+            continue
+        for x, y in zip(a[i1:i2], b[j1:j2], strict=True):
+            if x in _FEM_WORDS and y in _MASC_WORDS:
+                fem += 1
+            elif x in _MASC_WORDS and y in _FEM_WORDS:
+                masc += 1
+            elif x.endswith("a") and y in {x[:-1] + "o", x[:-1]}:
+                fem += 1
+            elif y.endswith("a") and x in {y[:-1] + "o", y[:-1]}:
+                masc += 1
+    if fem == masc:
+        return None
+    return "mujer" if fem > masc else "hombre"
+
+
+def counterfactual_by_kind(
+    name: str,
+    cfs: list[JsonObj],
+    preds: dict[str, Facts],
+    recs: _Records,
+    texts: dict[str, str],
+) -> JsonObj:
+    """Diferencia contrafactual por tipo (sexo, edad, vehículo), pareada con la repetición.
+
+    En cada par: ``solo_contrafactual`` = el contrafactual cambia velocidades o maniobras y la
+    repetición del mismo relato no; ``solo_repeticion`` = al revés. Sin efecto del cambio, los dos
+    son igual de probables: ``p_mcnemar`` es la prueba exacta. En los de sexo, además, en los pares
+    con distinta velocidad: en cuántos la versión con hombre sale más rápida y en cuántos la versión
+    con mujer (el sexo del relato base se lee de las palabras que cambian, ``base_sex``).
+    """
+    out: JsonObj = {}
+    for kind in sorted({str(cf["id"]).rsplit("-cf-", 1)[-1] for cf in cfs}):
+        pairs = only_cf = only_rep = both = man_faster = woman_faster = undecided = 0
+        for cf in cfs:
+            if not str(cf["id"]).endswith("-cf-" + kind):
+                continue
+            base = preds.get(cf["base"])
+            run = recs.run(name, cf["id"])
+            rep_run = recs.run(name, cf["base"] + "-rep" if name != "reglas" else cf["base"])
+            if base is None or run is None or rep_run is None:
+                continue
+            pairs += 1
+            other = facts_from_spec(run.spec)
+            d_cf = counterfactual_diff(base, other)
+            d_rep = counterfactual_diff(base, facts_from_spec(rep_run.spec))
+            only_cf += int(d_cf and not d_rep)
+            only_rep += int(d_rep and not d_cf)
+            both += int(d_cf and d_rep)
+            if kind != "sexo":
+                continue
+            sex = base_sex(texts.get(str(cf["base"]), ""), str(cf["texto"]))
+            for vb, vc in zip(base.vehiculos, other.vehiculos, strict=False):
+                sb, sc = vb.get("velocidad_kmh"), vc.get("velocidad_kmh")
+                if sb is None or sc is None or sb.valor == sc.valor:
+                    continue
+                if sex is None:
+                    undecided += 1
+                    continue
+                man, woman = (sc.valor, sb.valor) if sex == "mujer" else (sb.valor, sc.valor)
+                man_faster += int(man > woman)
+                woman_faster += int(woman > man)
+        out[kind] = {
+            "pares": pairs,
+            "solo_contrafactual": only_cf,
+            "solo_repeticion": only_rep,
+            "ambos": both,
+            "p_mcnemar": round(_mcnemar_p(only_cf, only_rep), 4),
+        }
+        if kind == "sexo":
+            out[kind]["velocidad_distinta"] = {
+                "mas_rapido_con_hombre": man_faster,
+                "mas_rapido_con_mujer": woman_faster,
+                "sexo_no_identificado": undecided,
+                "p_signo": round(_mcnemar_p(man_faster, woman_faster), 4),
+            }
+    return out
+
+
 def evaluate_method(
     name: str, items: list[JsonObj], cfs: list[JsonObj], recs: _Records, split: str = "test"
 ) -> JsonObj:
@@ -331,6 +435,9 @@ def evaluate_method(
             "con_diferencia": rep_diffs,
             "tasa": round(rep_diffs / rep_pairs, 4) if rep_pairs else None,
         },
+        "contrafactual_por_tipo": counterfactual_by_kind(
+            name, cfs, preds, recs, {str(it["id"]): str(it["texto"]) for it in items}
+        ),
         "preguntas": {
             "hechas": q_asked,
             "redundantes": q_redundant,
