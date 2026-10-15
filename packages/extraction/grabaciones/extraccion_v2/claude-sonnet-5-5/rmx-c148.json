@@ -1,0 +1,81 @@
+{
+ "costo_estimado_con": "claude-sonnet-5-5",
+ "costo_usd": 0.0064342,
+ "esfuerzo": "medium",
+ "grabado": "2026-10-15T01:47:26+00:00",
+ "huella_prompt": "5816b86ad0e718ee",
+ "latencia_ms": 3041.8,
+ "modelo": "claude-sonnet-5-5",
+ "modelo_respuesta": "claude-sonnet-5-5",
+ "prompt": "extraccion_v2",
+ "request_id": "req_011Cg3BPuznFoVmr2EPeYjCK",
+ "salida": {
+  "dispositivos": [],
+  "hechos": [
+   {
+    "campo": "entorno.iluminacion",
+    "cita": "era de dia",
+    "persona": -1,
+    "valor": "dia",
+    "vehiculo": -1
+   },
+   {
+    "campo": "vehiculo.clase",
+    "cita": "corolla cross",
+    "persona": -1,
+    "valor": "suv_compacta",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.maniobra",
+    "cita": "di vuelta a la isquierda",
+    "persona": -1,
+    "valor": "vuelta_izquierda",
+    "vehiculo": 0
+   },
+   {
+    "campo": "evento.tipo",
+    "cita": "la atropelle con el frente",
+    "persona": -1,
+    "valor": "impacto_vehiculo_persona",
+    "vehiculo": -1
+   },
+   {
+    "campo": "vehiculo.zona_impacto",
+    "cita": "con el frente",
+    "persona": -1,
+    "valor": "F",
+    "vehiculo": 0
+   }
+  ],
+  "personas": [
+   {
+    "cita": "yo iva manejando",
+    "rol": "conductor",
+    "vehiculo": 0
+   },
+   {
+    "cita": "una señora grande que iva cruzando",
+    "rol": "peaton",
+    "vehiculo": -1
+   }
+  ],
+  "preguntas": [
+   "¿Había paso peatonal o semáforo en el lugar donde cruzaba la persona?",
+   "¿A qué velocidad aproximada iba al dar la vuelta?",
+   "¿Cuántos carriles tenía la calle en la que dio la vuelta?"
+  ],
+  "vehiculos": [
+   {
+    "narrador": true
+   }
+  ]
+ },
+ "texto_sha256": "346734f41a9ae27ce99bd01b16ce089a0e1bd115010c6d053c4b4da4b7fe7460",
+ "usage": {
+  "cache_creation_input_tokens": 0,
+  "cache_read_input_tokens": 6881,
+  "input_tokens": 119,
+  "output_tokens": 482
+ }
+}

@@ -1,0 +1,89 @@
+{
+ "costo_estimado_con": "claude-haiku-5-5",
+ "costo_usd": 0.00129592,
+ "esfuerzo": "medium",
+ "grabado": "2026-10-15T03:29:30+00:00",
+ "huella_prompt": "f6b693169a4199c3",
+ "latencia_ms": 11407.2,
+ "modelo": "claude-haiku-5-5",
+ "modelo_respuesta": "claude-haiku-5-5",
+ "prompt": "extraccion_v1",
+ "request_id": "req_011Cg3KAiH9GTtk3id4bz1b3",
+ "salida": {
+  "dispositivos": [
+   {
+    "cita": "el semáforo se puso en amarillo",
+    "tipo": "semaforo"
+   }
+  ],
+  "hechos": [
+   {
+    "campo": "vehiculo.frenado",
+    "cita": "yo frené",
+    "persona": -1,
+    "valor": "true",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.color",
+    "cita": "un Corolla plateado",
+    "persona": -1,
+    "valor": "plateado",
+    "vehiculo": 1
+   },
+   {
+    "campo": "evento.tipo",
+    "cita": "me alcanzó a dar en la defensa",
+    "persona": -1,
+    "valor": "impacto_vehiculo_vehiculo",
+    "vehiculo": -1
+   },
+   {
+    "campo": "vehiculo.zona_impacto",
+    "cita": "me alcanzó a dar en la defensa",
+    "persona": -1,
+    "valor": "B",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.zona_impacto",
+    "cita": "me alcanzó a dar en la defensa",
+    "persona": -1,
+    "valor": "F",
+    "vehiculo": 1
+   }
+  ],
+  "personas": [
+   {
+    "cita": "yo traía la Sienna",
+    "rol": "conductor",
+    "vehiculo": 0
+   },
+   {
+    "cita": "El muchacho se bajó",
+    "rol": "conductor",
+    "vehiculo": 1
+   }
+  ],
+  "preguntas": [
+   "¿Cuántas personas iban en la Sienna y en el Corolla?",
+   "¿A qué velocidad iba cada vehículo al momento del choque?",
+   "¿El Corolla frenó antes del impacto o siguió de largo al cambiar el semáforo?"
+  ],
+  "vehiculos": [
+   {
+    "narrador": true
+   },
+   {
+    "narrador": false
+   }
+  ]
+ },
+ "texto_sha256": "09f6c3eda1a928f0b2dc68e45fd0e6783f5e38d7263545cf22ac2785ac4d2b0f",
+ "usage": {
+  "cache_creation_input_tokens": 0,
+  "cache_read_input_tokens": 5862,
+  "input_tokens": 163,
+  "output_tokens": 2442
+ }
+}

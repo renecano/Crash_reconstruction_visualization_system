@@ -1,0 +1,65 @@
+{
+ "costo_estimado_con": "claude-sonnet-5-5",
+ "costo_usd": 0.0100942,
+ "esfuerzo": "medium",
+ "grabado": "2026-10-15T01:16:03+00:00",
+ "huella_prompt": "5816b86ad0e718ee",
+ "latencia_ms": 6581.0,
+ "modelo": "claude-sonnet-5-5",
+ "modelo_respuesta": "claude-sonnet-5-5",
+ "prompt": "extraccion_v2",
+ "request_id": "req_011Cg38zj8YycF21KkY8imHy",
+ "salida": {
+  "dispositivos": [],
+  "hechos": [
+   {
+    "campo": "vehiculo.clase",
+    "cita": "camión",
+    "persona": -1,
+    "valor": "camion_o_autobus",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.frenado",
+    "cita": "el chofer frenó de golpe",
+    "persona": -1,
+    "valor": "true",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.maniobra",
+    "cita": "se le atravesó un carro",
+    "persona": -1,
+    "valor": "cambio_carril",
+    "vehiculo": 1
+   }
+  ],
+  "personas": [
+   {
+    "cita": "mi abuelita",
+    "rol": "pasajero",
+    "vehiculo": 0
+   }
+  ],
+  "preguntas": [
+   "¿Hubo contacto entre el carro y el camión?",
+   "¿Por qué lado se atravesó el carro?",
+   "¿Aproximadamente a qué velocidad iba el camión antes de frenar?"
+  ],
+  "vehiculos": [
+   {
+    "narrador": false
+   },
+   {
+    "narrador": false
+   }
+  ]
+ },
+ "texto_sha256": "d95b54355f14ee64c6496efb5073fd37c601e05a714f0a034307d505296bfb0a",
+ "usage": {
+  "cache_creation_input_tokens": 0,
+  "cache_read_input_tokens": 6881,
+  "input_tokens": 144,
+  "output_tokens": 843
+ }
+}

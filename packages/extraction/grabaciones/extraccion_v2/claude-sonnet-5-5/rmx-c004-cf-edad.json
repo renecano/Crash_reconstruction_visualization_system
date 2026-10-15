@@ -1,0 +1,93 @@
+{
+ "costo_estimado_con": "claude-sonnet-5-5",
+ "costo_usd": 0.0077642,
+ "esfuerzo": "medium",
+ "grabado": "2026-10-15T01:47:42+00:00",
+ "huella_prompt": "5816b86ad0e718ee",
+ "latencia_ms": 3605.4,
+ "modelo": "claude-sonnet-5-5",
+ "modelo_respuesta": "claude-sonnet-5-5",
+ "prompt": "extraccion_v2",
+ "request_id": "req_011Cg3BR5Vogg2maCqkeWUuB",
+ "salida": {
+  "dispositivos": [
+   {
+    "cita": "donde está el semáforo",
+    "tipo": "semaforo"
+   }
+  ],
+  "hechos": [
+   {
+    "campo": "entorno.iluminacion",
+    "cita": "a plena luz del día",
+    "persona": -1,
+    "valor": "dia",
+    "vehiculo": -1
+   },
+   {
+    "campo": "vehiculo.clase",
+    "cita": "un sedán mediano",
+    "persona": -1,
+    "valor": "sedan_mediano",
+    "vehiculo": 0
+   },
+   {
+    "campo": "lugar.superficie",
+    "cita": "La calle es de asfalto",
+    "persona": -1,
+    "valor": "asfalto",
+    "vehiculo": -1
+   },
+   {
+    "campo": "lugar.tipo_via",
+    "cita": "cruce de cuatro esquinas",
+    "persona": -1,
+    "valor": "interseccion_x",
+    "vehiculo": -1
+   },
+   {
+    "campo": "evento.tipo",
+    "cita": "fue golpeado por mi vehículo",
+    "persona": -1,
+    "valor": "impacto_vehiculo_persona",
+    "vehiculo": -1
+   },
+   {
+    "campo": "vehiculo.zona_impacto",
+    "cita": "fue golpeado por mi vehículo",
+    "persona": -1,
+    "valor": "F",
+    "vehiculo": 0
+   }
+  ],
+  "personas": [
+   {
+    "cita": "conducía mi Maxima",
+    "rol": "conductor",
+    "vehiculo": 0
+   },
+   {
+    "cita": "un señor de edad avanzada que iba cruzando a pie",
+    "rol": "peaton",
+    "vehiculo": -1
+   }
+  ],
+  "preguntas": [
+   "¿Qué color tenía el semáforo para usted y para el peatón al momento del golpe?",
+   "¿A qué velocidad aproximada circulaba su vehículo al llegar al cruce?",
+   "¿Alcanzó a frenar antes de golpear al peatón?"
+  ],
+  "vehiculos": [
+   {
+    "narrador": true
+   }
+  ]
+ },
+ "texto_sha256": "593405dfed74c58408c52ae47a2b2ca8f9b77cc13b71f70bb5912e6dcc6ea8dd",
+ "usage": {
+  "cache_creation_input_tokens": 0,
+  "cache_read_input_tokens": 6881,
+  "input_tokens": 229,
+  "output_tokens": 593
+ }
+}

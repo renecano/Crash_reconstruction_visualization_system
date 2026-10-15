@@ -1,0 +1,85 @@
+{
+ "costo_estimado_con": "claude-haiku-5-5",
+ "costo_usd": 0.00094321,
+ "esfuerzo": "medium",
+ "grabado": "2026-10-15T00:53:05+00:00",
+ "huella_prompt": "5816b86ad0e718ee",
+ "latencia_ms": 7441.7,
+ "modelo": "claude-haiku-5-5",
+ "modelo_respuesta": "claude-haiku-5-5",
+ "prompt": "extraccion_v2",
+ "request_id": "req_011Cg37F8gYZbpTpV4YrwcFm",
+ "salida": {
+  "dispositivos": [
+   {
+    "cita": "fuera del paso de cebra",
+    "tipo": "paso_peatonal"
+   }
+  ],
+  "hechos": [
+   {
+    "campo": "vehiculo.clase",
+    "cita": "la Urvan",
+    "persona": -1,
+    "valor": "microbus_combi",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.velocidad_kmh",
+    "cita": "a vuelta de rueda",
+    "persona": -1,
+    "valor": "8",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.zona_impacto",
+    "cita": "La golpeé con la defensa",
+    "persona": -1,
+    "valor": "F",
+    "vehiculo": 0
+   },
+   {
+    "campo": "evento.tipo",
+    "cita": "La golpeé con la defensa",
+    "persona": -1,
+    "valor": "impacto_vehiculo_persona",
+    "vehiculo": -1
+   },
+   {
+    "campo": "evidencias.distancia_proyeccion_m",
+    "cita": "cayó como a dos metros",
+    "persona": -1,
+    "valor": "2",
+    "vehiculo": -1
+   }
+  ],
+  "personas": [
+   {
+    "cita": "Venía manejando la Urvan",
+    "rol": "conductor",
+    "vehiculo": 0
+   },
+   {
+    "cita": "una señora se atravesó corriendo",
+    "rol": "peaton",
+    "vehiculo": -1
+   }
+  ],
+  "preguntas": [
+   "¿A qué distancia estaba el paso de cebra del punto del golpe?",
+   "¿El lugar era un tramo recto o una intersección o glorieta?"
+  ],
+  "vehiculos": [
+   {
+    "narrador": true
+   }
+  ]
+ },
+ "texto_sha256": "48d7ac21db8a4735b9c50467f6c2f394072ec723f2485e07260475756a35f116",
+ "usage": {
+  "cache_creation_input_tokens": 0,
+  "cache_read_input_tokens": 6881,
+  "input_tokens": 114,
+  "output_tokens": 1726
+ }
+}

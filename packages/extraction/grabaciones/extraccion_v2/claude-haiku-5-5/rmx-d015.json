@@ -1,0 +1,68 @@
+{
+ "costo_estimado_con": "claude-haiku-5-5",
+ "costo_usd": 0.00063721,
+ "esfuerzo": "medium",
+ "grabado": "2026-10-15T00:20:57+00:00",
+ "huella_prompt": "5816b86ad0e718ee",
+ "latencia_ms": 5297.3,
+ "modelo": "claude-haiku-5-5",
+ "modelo_respuesta": "claude-haiku-5-5",
+ "prompt": "extraccion_v2",
+ "request_id": "req_011Cg34oCbk2hLem44fAzvS1",
+ "salida": {
+  "dispositivos": [],
+  "hechos": [
+   {
+    "campo": "lugar.tipo_via",
+    "cita": "en la curva",
+    "persona": -1,
+    "valor": "curva",
+    "vehiculo": -1
+   },
+   {
+    "campo": "entorno.clima",
+    "cita": "habia neblina",
+    "persona": -1,
+    "valor": "niebla",
+    "vehiculo": -1
+   },
+   {
+    "campo": "vehiculo.clase",
+    "cita": "vocho",
+    "persona": -1,
+    "valor": "sedan_compacto",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.velocidad_kmh",
+    "cita": "iba despasio como a 40",
+    "persona": -1,
+    "valor": "40",
+    "vehiculo": 0
+   }
+  ],
+  "personas": [
+   {
+    "cita": "mi carro es un vocho",
+    "rol": "conductor",
+    "vehiculo": 0
+   }
+  ],
+  "preguntas": [
+   "¿El vehículo golpeó algún objeto o barranco al salirse a la cuneta?",
+   "¿Había otros vehículos involucrados en el percance?"
+  ],
+  "vehiculos": [
+   {
+    "narrador": true
+   }
+  ]
+ },
+ "texto_sha256": "eddcf3d4975e8ea7db0658d7e177c6e87d5772822213ff1c192ff9900a01267f",
+ "usage": {
+  "cache_creation_input_tokens": 0,
+  "cache_read_input_tokens": 6881,
+  "input_tokens": 79,
+  "output_tokens": 1121
+ }
+}

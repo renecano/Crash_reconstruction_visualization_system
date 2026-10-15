@@ -1,0 +1,103 @@
+{
+ "costo_estimado_con": "claude-haiku-5-5",
+ "costo_usd": 0.00163142,
+ "esfuerzo": "medium",
+ "grabado": "2026-10-15T03:13:36+00:00",
+ "huella_prompt": "f6b693169a4199c3",
+ "latencia_ms": 14687.8,
+ "modelo": "claude-haiku-5-5",
+ "modelo_respuesta": "claude-haiku-5-5",
+ "prompt": "extraccion_v1",
+ "request_id": "req_011Cg3HxAMKcJ7fGEjvedWkN",
+ "salida": {
+  "dispositivos": [],
+  "hechos": [
+   {
+    "campo": "vehiculo.velocidad_kmh",
+    "cita": "como a 40 antes de frenar",
+    "persona": -1,
+    "valor": "40",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.frenado",
+    "cita": "Yo frené a tiempo",
+    "persona": -1,
+    "valor": "true",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.frenado",
+    "cita": "el Sentra que venía atrás de mí no",
+    "persona": -1,
+    "valor": "false",
+    "vehiculo": 1
+   },
+   {
+    "campo": "vehiculo.clase",
+    "cita": "la camioneta de adelante",
+    "persona": -1,
+    "valor": "suv_o_pickup",
+    "vehiculo": 2
+   },
+   {
+    "campo": "vehiculo.zona_impacto",
+    "cita": "me empujó",
+    "persona": -1,
+    "valor": "B",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.zona_impacto",
+    "cita": "contra la camioneta de adelante",
+    "persona": -1,
+    "valor": "B",
+    "vehiculo": 2
+   },
+   {
+    "campo": "evento.tipo",
+    "cita": "Fue una carambola de tres",
+    "persona": -1,
+    "valor": "impacto_vehiculo_vehiculo",
+    "vehiculo": -1
+   },
+   {
+    "campo": "entorno.clima",
+    "cita": "estaba despejado",
+    "persona": -1,
+    "valor": "despejado",
+    "vehiculo": -1
+   }
+  ],
+  "personas": [
+   {
+    "cita": "Yo iba en mi Creta",
+    "rol": "conductor",
+    "vehiculo": 0
+   }
+  ],
+  "preguntas": [
+   "¿Qué tipo de vehículo era el Sentra y el de la camioneta cuál era?",
+   "¿La camioneta de adelante estaba detenida o en movimiento al momento del golpe?",
+   "¿Había alumbrado o era de día a las cinco de la tarde?"
+  ],
+  "vehiculos": [
+   {
+    "narrador": true
+   },
+   {
+    "narrador": false
+   },
+   {
+    "narrador": false
+   }
+  ]
+ },
+ "texto_sha256": "a281216d77799ce4359267aa1adededa91b8ce0845bbe00b01821e0036cb1bc6",
+ "usage": {
+  "cache_creation_input_tokens": 0,
+  "cache_read_input_tokens": 5862,
+  "input_tokens": 153,
+  "output_tokens": 3115
+ }
+}

@@ -1,0 +1,90 @@
+{
+ "costo_estimado_con": "claude-haiku-5-5",
+ "costo_usd": 0.00115832,
+ "esfuerzo": "medium",
+ "grabado": "2026-10-15T03:23:34+00:00",
+ "huella_prompt": "f6b693169a4199c3",
+ "latencia_ms": 8869.4,
+ "modelo": "claude-haiku-5-5",
+ "modelo_respuesta": "claude-haiku-5-5",
+ "prompt": "extraccion_v1",
+ "request_id": "req_011Cg3JihghcvjNa4H5W6e8o",
+ "salida": {
+  "dispositivos": [],
+  "hechos": [
+   {
+    "campo": "vehiculo.clase",
+    "cita": "Una moto",
+    "persona": -1,
+    "valor": "motocicleta",
+    "vehiculo": 1
+   },
+   {
+    "campo": "vehiculo.maniobra",
+    "cita": "se me metió por la derecha",
+    "persona": -1,
+    "valor": "cambio_carril",
+    "vehiculo": 1
+   },
+   {
+    "campo": "evento.tipo",
+    "cita": "me arrancó el espejo",
+    "persona": -1,
+    "valor": "impacto_vehiculo_vehiculo",
+    "vehiculo": -1
+   },
+   {
+    "campo": "vehiculo.zona_impacto",
+    "cita": "me arrancó el espejo",
+    "persona": -1,
+    "valor": "R",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.maniobra",
+    "cita": "yo ni me moví",
+    "persona": -1,
+    "valor": "detenido",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.velocidad_kmh",
+    "cita": "yo ni me moví",
+    "persona": -1,
+    "valor": "0",
+    "vehiculo": 0
+   }
+  ],
+  "personas": [
+   {
+    "cita": "me arrancó el espejo",
+    "rol": "conductor",
+    "vehiculo": 0
+   },
+   {
+    "cita": "Una moto",
+    "rol": "motociclista",
+    "vehiculo": 1
+   }
+  ],
+  "preguntas": [
+   "¿El vehículo de quien narra estaba detenido o en movimiento al momento del impacto?",
+   "¿A qué velocidad circulaba la motocicleta?"
+  ],
+  "vehiculos": [
+   {
+    "narrador": true
+   },
+   {
+    "narrador": false
+   }
+  ]
+ },
+ "texto_sha256": "6764cc453db21cb14258c004a217a157f4950e3eb31b47479e67f461218b4cd1",
+ "usage": {
+  "cache_creation_input_tokens": 0,
+  "cache_read_input_tokens": 5862,
+  "input_tokens": 57,
+  "output_tokens": 2188
+ }
+}

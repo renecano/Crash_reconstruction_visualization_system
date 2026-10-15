@@ -1,0 +1,96 @@
+{
+ "costo_estimado_con": "claude-haiku-5-5",
+ "costo_usd": 0.00135961,
+ "esfuerzo": "medium",
+ "grabado": "2026-10-15T01:04:12+00:00",
+ "huella_prompt": "5816b86ad0e718ee",
+ "latencia_ms": 11012.4,
+ "modelo": "claude-haiku-5-5",
+ "modelo_respuesta": "claude-haiku-5-5",
+ "prompt": "extraccion_v2",
+ "request_id": "req_011Cg3863PRhdNzM3quVpY7U",
+ "salida": {
+  "dispositivos": [
+   {
+    "cita": "por la cebra",
+    "tipo": "paso_peatonal"
+   },
+   {
+    "cita": "con el verde para peatones",
+    "tipo": "semaforo"
+   }
+  ],
+  "hechos": [
+   {
+    "campo": "vehiculo.clase",
+    "cita": "Sentra",
+    "persona": -1,
+    "valor": "sedan_mediano",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.color",
+    "cita": "plateado",
+    "persona": -1,
+    "valor": "plateado",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.maniobra",
+    "cita": "dio vuelta a la derecha",
+    "persona": -1,
+    "valor": "vuelta_derecha",
+    "vehiculo": 0
+   },
+   {
+    "campo": "evento.tipo",
+    "cita": "La golpeó",
+    "persona": -1,
+    "valor": "impacto_vehiculo_persona",
+    "vehiculo": -1
+   },
+   {
+    "campo": "vehiculo.zona_impacto",
+    "cita": "con la defensa",
+    "persona": -1,
+    "valor": "F",
+    "vehiculo": 0
+   },
+   {
+    "campo": "evidencias.distancia_proyeccion_m",
+    "cita": "cayó como a un metro",
+    "persona": -1,
+    "valor": "1",
+    "vehiculo": -1
+   }
+  ],
+  "personas": [
+   {
+    "cita": "El chavo del carro",
+    "rol": "conductor",
+    "vehiculo": 0
+   },
+   {
+    "cita": "una señora con bolsas del mercado",
+    "rol": "peaton",
+    "vehiculo": -1
+   }
+  ],
+  "preguntas": [
+   "¿A qué velocidad aproximada iba el Sentra al dar la vuelta?",
+   "¿El Sentra frenó antes del contacto con la señora?"
+  ],
+  "vehiculos": [
+   {
+    "narrador": false
+   }
+  ]
+ },
+ "texto_sha256": "96d41c6740686c3fef51b16d9b74d1b8e52dd8043f092aa6359c4bb950996641",
+ "usage": {
+  "cache_creation_input_tokens": 0,
+  "cache_read_input_tokens": 6881,
+  "input_tokens": 168,
+  "output_tokens": 2548
+ }
+}

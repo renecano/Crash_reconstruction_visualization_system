@@ -1,0 +1,84 @@
+{
+ "costo_estimado_con": "claude-haiku-5-5",
+ "costo_usd": 0.00102201,
+ "esfuerzo": "medium",
+ "grabado": "2026-10-15T00:22:26+00:00",
+ "huella_prompt": "5816b86ad0e718ee",
+ "latencia_ms": 8459.1,
+ "modelo": "claude-haiku-5-5",
+ "modelo_respuesta": "claude-haiku-5-5",
+ "prompt": "extraccion_v2",
+ "request_id": "req_011Cg34uW7rVzgy8qTb87qth",
+ "salida": {
+  "dispositivos": [],
+  "hechos": [
+   {
+    "campo": "vehiculo.clase",
+    "cita": "Tsuru",
+    "persona": -1,
+    "valor": "sedan_compacto",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.velocidad_kmh",
+    "cita": "Iba como a 70, quizá más.",
+    "persona": -1,
+    "valor": "70",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.maniobra",
+    "cita": "Se le atravesó un carro de otro carril",
+    "persona": -1,
+    "valor": "cambio_carril",
+    "vehiculo": 1
+   },
+   {
+    "campo": "evento.tipo",
+    "cita": "fuimos a dar contra una palmera",
+    "persona": -1,
+    "valor": "impacto_vehiculo_objeto",
+    "vehiculo": -1
+   },
+   {
+    "campo": "evento.objeto",
+    "cita": "una palmera",
+    "persona": -1,
+    "valor": "arbol",
+    "vehiculo": -1
+   }
+  ],
+  "personas": [
+   {
+    "cita": "mi primo manejando su Tsuru",
+    "rol": "conductor",
+    "vehiculo": 0
+   },
+   {
+    "cita": "yo de copiloto",
+    "rol": "pasajero",
+    "vehiculo": 0
+   }
+  ],
+  "preguntas": [
+   "¿Qué tipo de vehículo era el carro que se atravesó?",
+   "¿A qué velocidad iba el carro que se atravesó?",
+   "¿Qué tipo de vía era el tramo del Periférico donde ocurrió el percance?"
+  ],
+  "vehiculos": [
+   {
+    "narrador": false
+   },
+   {
+    "narrador": false
+   }
+  ]
+ },
+ "texto_sha256": "e9e1aad2fb3ff35a6a7977679ddead9dfc91139ad64dea9a205008cd7a3f6803",
+ "usage": {
+  "cache_creation_input_tokens": 0,
+  "cache_read_input_tokens": 6881,
+  "input_tokens": 147,
+  "output_tokens": 1877
+ }
+}
