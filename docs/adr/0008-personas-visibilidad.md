@@ -76,4 +76,4 @@
 
 - El port TS completo (F9) debe reproducir `occupant`, `visibility`, `rollover`, `scene_objects` y la proyección de jinetes; la de Searle ya está con paridad.
 - Las capturas de referencia cambian (personas visibles); CI las regenera.
-- Pendientes declarados en `docs/PROGRESS.md`: campo visual (pilares, espejos) y deslumbramiento en la visibilidad, deslizamiento lateral en la fase previa (para que la volcadura salga del criterio), calibrar los parámetros del cinturón con datos de pruebas cuando sean accesibles y validar la volcadura 3D (E5 con BeamNG, F10).
+- Pendientes declarados en `docs/PROGRESS.md`: campo visual (pilares, espejos) y deslumbramiento en la visibilidad, deslizamiento lateral en la fase previa (para que la volcadura salga del criterio), calibrar los parámetros del cinturón con datos de pruebas cuando sean accesibles y validar la volcadura 3D (ADR 0018: ya no con BeamNG; E5 no cubre volcaduras y queda como límite si CISS no trae medidas útiles).

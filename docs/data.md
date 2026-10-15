@@ -11,17 +11,17 @@ El registro formal de cada fuente (origen, URL, fecha, licencia, script) está e
 
 ## Fuentes por uso
 
-| Uso                                                                        | Fuente                                      | Fase | Estado                                                |
-| -------------------------------------------------------------------------- | ------------------------------------------- | ---- | ----------------------------------------------------- |
-| Magnitud del problema y distribución de tipos de accidente para Relatos-MX | INEGI ATUS (datos abiertos 1997–2025)       | F0   | **listo**: `eval/results/atus_summary.json`           |
-| Rigidez CRASH3 por clase y validación E2                                   | NHTSA Vehicle Crash Test Database (API)     | F2   | **listo**: `eval/results/e2_barrier.json`             |
-| Validación E3 contra EDR                                                   | NHTSA CISS                                  | F7   | pendiente                                             |
-| Dimensiones y masas por modelo común en México                             | Fichas técnicas de fabricantes (47 modelos) | F1   | **listo**: `data/vehicles/models_raw.json`            |
-| Coeficientes de fricción por superficie y estado                           | Literatura (cita por valor)                 | F2   | **listo**: `solver/croquis_solver/data/friction.json` |
-| Geometría de vías reales                                                   | OpenStreetMap (ODbL, atribución visible)    | F8   | pendiente                                             |
-| Texturas, HDRI, modelos                                                    | Poly Haven, Quaternius, Kenney (CC0)        | F3   | pendiente                                             |
-| Personas                                                                   | MakeHuman / MPFB (CC0)                      | F5   | pendiente                                             |
-| Deformación de alta fidelidad                                              | BeamNG.tech (licencia académica)            | F10  | bloqueado: necesita licencia                          |
+| Uso                                                                        | Fuente                                                                                                                    | Fase | Estado                                                                                            |
+| -------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------- | ---- | ------------------------------------------------------------------------------------------------- |
+| Magnitud del problema y distribución de tipos de accidente para Relatos-MX | INEGI ATUS (datos abiertos 1997–2025)                                                                                     | F0   | **listo**: `eval/results/atus_summary.json`                                                       |
+| Rigidez CRASH3 por clase y validación E2                                   | NHTSA Vehicle Crash Test Database (API)                                                                                   | F2   | **listo**: `eval/results/e2_barrier.json`                                                         |
+| Validación E3 contra EDR                                                   | NHTSA CISS                                                                                                                | F7   | pendiente                                                                                         |
+| Dimensiones y masas por modelo común en México                             | Fichas técnicas de fabricantes (47 modelos)                                                                               | F1   | **listo**: `data/vehicles/models_raw.json`                                                        |
+| Coeficientes de fricción por superficie y estado                           | Literatura (cita por valor)                                                                                               | F2   | **listo**: `solver/croquis_solver/data/friction.json`                                             |
+| Geometría de vías reales                                                   | OpenStreetMap (ODbL, atribución visible)                                                                                  | F8   | pendiente                                                                                         |
+| Texturas, HDRI, modelos                                                    | Poly Haven, Quaternius, Kenney (CC0)                                                                                      | F3   | pendiente                                                                                         |
+| Personas                                                                   | MakeHuman / MPFB (CC0)                                                                                                    | F5   | pendiente                                                                                         |
+| Deformación medida en autos reales (E5)                                    | NHTSA Vehicle Crash Test Database (reportes con fotos y aplastamiento posterior a la prueba) y CISS (aplastamiento C1–C6) | F10  | pendiente: inventario de pruebas y casos con medidas completas y fotos útiles (PLAN §9, ADR 0018) |
 
 ## INEGI ATUS
 

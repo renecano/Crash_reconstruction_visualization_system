@@ -25,7 +25,7 @@ Trabajas de forma autónoma. **No pidas visto bueno para planes, decisiones téc
 
 **Solo te detienes por:**
 1. Un recorte de calidad o alcance que parezca inevitable (pregúntale a René antes).
-2. Algo que solo René puede dar: llaves de API, licencia de BeamNG, cuentas de despliegue, pruebas con personas reales (E9).
+2. Algo que solo René puede dar: llaves de API, cuentas de despliegue, pruebas con personas reales (E9).
 
 Si algo está bloqueado por el punto 2, **no te detengas**: anótalo en la sección "Bloqueado — necesita a René" de `docs/PROGRESS.md`, avanza con todo lo que no dependa de eso y retómalo cuando esté disponible.
 
