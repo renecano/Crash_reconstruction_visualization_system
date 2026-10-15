@@ -47,6 +47,9 @@ MASS_SPREAD = 0.05  # ±5 % de masa (ocupantes y carga no medidos; supuesto)
 RESTITUTION_RIGID = (0.0, 0.2)  # barrera rígida: rango de la literatura usado en E2
 SIGMA_POSITION_M = 1.0  # incertidumbre de una posición final declarada (supuesto)
 SIGMA_THROW_M = 1.5  # incertidumbre de una distancia de proyección declarada (supuesto)
+# Incertidumbre del largo de unas marcas de después del impacto (supuesto, como la proyección: un
+# largo que da el relato, no una medición con cinta).
+SIGMA_SLIDE_M = 1.5
 SPEED_BOUNDS_KMH = (0.0, 200.0)
 STATED = ("relato", "usuario")
 CALIBRATION_PATH = Path(__file__).resolve().parent / "data" / "inversion_calibration.json"
@@ -214,9 +217,11 @@ class Evidence:
     damage_dv: dict[str, Distribution]  # vehículo → ΔV que implica el daño declarado (km/h)
     rest_heading: dict[str, float] = field(default_factory=_no_floats)  # vehículo → rumbo final (°)
     skid: dict[str, float] = field(default_factory=_no_floats)  # vehículo → marcas de frenado (m)
+    # vehículo → largo de las marcas de después del impacto (m): lo que se desliza hasta el reposo.
+    slide: dict[str, float] = field(default_factory=_no_floats)
 
     def empty(self) -> bool:
-        return not (self.rest or self.throw or self.damage_dv or self.rest_heading)
+        return not (self.rest or self.throw or self.damage_dv or self.rest_heading or self.slide)
 
     def labels(self) -> list[str]:
         """Evidencia usada, en orden fijo (para el resultado y el visor)."""
@@ -224,6 +229,7 @@ class Evidence:
             [f"reposo:{k}" for k in sorted(self.rest)]
             + [f"rumbo_final:{k}" for k in sorted(self.rest_heading)]
             + [f"marcas_frenado:{k}" for k in sorted(self.skid)]
+            + [f"marcas_despues:{k}" for k in sorted(self.slide)]
             + [f"proyeccion:{k}" for k in sorted(self.throw)]
             + [f"dano:{k}" for k in sorted(self.damage_dv)]
         )
@@ -248,6 +254,7 @@ def evidence_from_spec(spec: JsonObj, seed: int = 0, n_damage: int = 200) -> Evi
                 rest_heading[v["id"]] = float(pf["rumbo_deg"])
     throw: dict[str, float] = {}
     skid: dict[str, float] = {}
+    slide: dict[str, float] = {}
     for e in spec.get("evidencias", []):
         stated = e.get("procedencia", {}).get("fuente") in STATED
         if (
@@ -265,11 +272,17 @@ def evidence_from_spec(spec: JsonObj, seed: int = 0, n_damage: int = 200) -> Evi
             if pid:
                 throw[pid] = _len_m(e["longitud"])
         elif (
-            e.get("tipo") == "marcas_frenado"
+            e.get("tipo") in ("marcas_frenado", "marcas_derrape")
             and e.get("vehiculo_id")
             and _stated(e.get("longitud"))
         ):
-            skid[str(e["vehiculo_id"])] = _len_m(e["longitud"])
+            # Contrato 1.1.0: sin fase, unas marcas de frenado son de antes del impacto y unas de
+            # derrape no tienen fase conocida (no se usan).
+            fase = e.get("fase") or ("antes_impacto" if e["tipo"] == "marcas_frenado" else None)
+            if fase == "despues_impacto":
+                slide[str(e["vehiculo_id"])] = _len_m(e["longitud"])
+            elif fase == "antes_impacto" and e["tipo"] == "marcas_frenado":
+                skid[str(e["vehiculo_id"])] = _len_m(e["longitud"])
     damage_dv: dict[str, Distribution] = {}
     by_id = {v["id"]: v for v in spec["vehiculos"]}
     declared = [
@@ -309,7 +322,7 @@ def evidence_from_spec(spec: JsonObj, seed: int = 0, n_damage: int = 200) -> Evi
                 other = next((dmg[o] for o in actors if o != vid and o in dmg), None)
                 if other is not None:
                     damage_dv[vid] = delta_v_from_damage(dmg[vid], other, seed=seed + k, n=n_damage)
-    return Evidence(rest, throw, damage_dv, rest_heading, skid)
+    return Evidence(rest, throw, damage_dv, rest_heading, skid, slide)
 
 
 def _class_mass(clase: str) -> float:
@@ -460,6 +473,11 @@ def _residuals(spec: JsonObj, ev: Evidence, dt: float) -> dict[str, float] | Non
         if p is None or p.throw is None:
             continue
         out[f"proyeccion:{pid}"] = (p.throw.throw_distance_m - d) / SIGMA_THROW_M
+    for vid, d in sorted(ev.slide.items()):
+        v = by_v.get(vid)
+        if v is None:
+            continue
+        out[f"marcas_despues:{vid}"] = (v.distance_post_m - d) / SIGMA_SLIDE_M
     for vid, dist in sorted(ev.damage_dv.items()):
         v = by_v.get(vid)
         if v is None:
@@ -665,8 +683,10 @@ def perturbed(spec: JsonObj, ev: Evidence, rng: random.Random) -> tuple[JsonObj,
     for k, d in ev.damage_dv.items():
         shift = rng.gauss(0, (d.p90 - d.p10) / 2.563)
         damage[k] = Distribution(d.p10 + shift, d.p50 + shift, d.p90 + shift, d.muestras)
-    # Las marcas se miden con cinta: se toman tal cual (su incertidumbre entra por la fricción).
-    return s, Evidence(rest, throw, damage, heading, dict(ev.skid))
+    slide = {k: max(0.5, d + rng.gauss(0, SIGMA_SLIDE_M)) for k, d in ev.slide.items()}
+    # Las marcas de frenado se miden con cinta: se toman tal cual (su incertidumbre entra por la
+    # fricción).
+    return s, Evidence(rest, throw, damage, heading, dict(ev.skid), slide)
 
 
 def _no_fits() -> list[Fit]:

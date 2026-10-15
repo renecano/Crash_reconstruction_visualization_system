@@ -348,7 +348,7 @@ export function buildSpec(facts: Facts, text: string, opts: BuildOptions): Json 
   }
   const meta: Json = {
     id: specId,
-    version_esquema: "1.0.0",
+    version_esquema: "1.1.0",
     idioma: "es-MX",
     semilla: seedFor(specId),
     creado: CREATED,

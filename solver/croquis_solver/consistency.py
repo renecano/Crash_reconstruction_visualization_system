@@ -129,6 +129,8 @@ def check_marks(spec: JsonObj) -> list[Inconsistency]:
     for e in spec.get("evidencias", []):
         if e.get("tipo") != "marcas_frenado" or not _stated(e.get("longitud")):
             continue
+        if e.get("fase") == "despues_impacto":
+            continue  # marcas de después del impacto: no hablan de la velocidad previa
         hit = by_id.get(str(e.get("vehiculo_id", "")))
         if hit is None:
             continue

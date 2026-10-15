@@ -1,7 +1,7 @@
 {
   "name": "e7_parity",
-  "generated_at": "2026-10-15T15:45:03+00:00",
-  "git_commit": "b97778e",
+  "generated_at": "2026-10-15T22:19:09+00:00",
+  "git_commit": "0cade05",
   "seed": null,
   "descripcion": "E7: paridad del solver TS (packages/solver-ts) con la referencia Python en las 10 escenas canónicas. Se comparan todos los números del resultado (trayectorias, impactos, daño, personas, ocupantes, visibilidad, eventos y parámetros) y los textos; los bloques de Monte Carlo, inversión y consistencia llegan al port en F9.",
   "tolerancia": {
@@ -29,7 +29,7 @@
       "max_rel": 0,
       "peor_ruta": "",
       "estructura": [],
-      "ms_ts": 33.6
+      "ms_ts": 34.8
     },
     {
       "escena": "frontal_curva",
@@ -38,7 +38,7 @@
       "max_rel": 0.00003177225646568596,
       "peor_ruta": "/eventos/2/detalle/impulso_ns/1",
       "estructura": [],
-      "ms_ts": 47.9
+      "ms_ts": 52.1
     },
     {
       "escena": "peaton_cruce",
@@ -47,7 +47,7 @@
       "max_rel": 0,
       "peor_ruta": "",
       "estructura": [],
-      "ms_ts": 13.9
+      "ms_ts": 17.1
     },
     {
       "escena": "motociclista",
@@ -56,7 +56,7 @@
       "max_rel": 0,
       "peor_ruta": "",
       "estructura": [],
-      "ms_ts": 25.3
+      "ms_ts": 30
     },
     {
       "escena": "objeto_fijo_arbol",
@@ -65,7 +65,7 @@
       "max_rel": 0,
       "peor_ruta": "",
       "estructura": [],
-      "ms_ts": 13.8
+      "ms_ts": 13.6
     },
     {
       "escena": "poste",
@@ -74,7 +74,7 @@
       "max_rel": 0,
       "peor_ruta": "",
       "estructura": [],
-      "ms_ts": 10.5
+      "ms_ts": 12.6
     },
     {
       "escena": "volcadura",
@@ -83,7 +83,7 @@
       "max_rel": 0.000021984786527744804,
       "peor_ruta": "/eventos/0/detalle/energia_disipada_j",
       "estructura": [],
-      "ms_ts": 35.6
+      "ms_ts": 43.6
     },
     {
       "escena": "nocturno_lluvia",
@@ -92,7 +92,7 @@
       "max_rel": 0,
       "peor_ruta": "",
       "estructura": [],
-      "ms_ts": 28.8
+      "ms_ts": 40.2
     },
     {
       "escena": "glorieta",
@@ -101,7 +101,7 @@
       "max_rel": 0.00000135211328549839,
       "peor_ruta": "/eventos/0/detalle/energia_disipada_j",
       "estructura": [],
-      "ms_ts": 29.6
+      "ms_ts": 43.4
     }
   ]
 }
