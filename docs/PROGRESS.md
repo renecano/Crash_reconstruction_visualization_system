@@ -9,7 +9,7 @@ Reglas de trabajo: `CLAUDE.md`. Especificación: `PLAN.md`.
 - **Rigidez lateral, hecha** (PR #12, ADR 0013). Sale de 1,265 pruebas de barrera móvil de NHTSA. En el test de E3, el error en costados baja de 11.04 a 8.51 km/h.
 - **Rigidez trasera, hecha** (PR #13, ADR 0014). Sale de 136 pruebas FMVSS 301 con barrera rígida, modelos 1975–2004. En el test de E3, el error en traseros baja de 16.45 a 7.68 km/h; en conjunto, 8.85 km/h contra 8.19 de WinSMASH.
 - **Siguiente paso concreto:** pendiente 3 de F7, la inercia de guiñada medida (Heydinger et al., SAE 1999-01-1336) en lugar de la placa uniforme, en la rama `feat/f7-inercia-guinada`. Después, F8. Cambia trayectorias y capturas, así que va antes de las capturas de F8.
-- **E1 del prompt v2 en el primer test, hecho** (rama `feat/f7-e1-v2-test`). Sonnet 0.875 → 0.919 y Haiku 0.852 → 0.896. Además, E1 ahora compara cada contrafactual con la repetición del mismo relato (McNemar por tipo): ningún tipo difiere del ruido, y las reglas cambian con el modelo del vehículo en 6 de 52 pares (ADR 0012 §10).
+- **E1 del prompt v2 en el primer test, hecho** (PR #14). Sonnet 0.875 → 0.919 y Haiku 0.852 → 0.896. Además, E1 ahora compara cada contrafactual con la repetición del mismo relato (McNemar por tipo): ningún tipo difiere del ruido, y las reglas cambian con el modelo del vehículo en 6 de 52 pares (ADR 0012 §10).
 - **F0** cerrado el 2026-10-10 (PR #1), **F1** el 2026-10-10 (PR #3), **F2** el 2026-10-13 (PR #4), **F3** el 2026-10-13 (PR #5), **F4** el 2026-10-13 (PR #6), **F5** el 2026-10-13 (PR #7), **F6** el 2026-10-14 (PR #8), **F7** el 2026-10-14 (PR #9; pendientes registrados); migración a Vercel el 2026-10-14 (PR #10); test CISS y prompt v2 el 2026-10-14 (PR #11).
 
 ### Bloqueado — necesita a René
