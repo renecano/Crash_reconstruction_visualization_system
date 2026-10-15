@@ -1,0 +1,65 @@
+{
+ "costo_estimado_con": "claude-sonnet-5-5",
+ "costo_usd": 0.0104022,
+ "esfuerzo": "medium",
+ "grabado": "2026-10-15T15:08:32+00:00",
+ "huella_prompt": "5816b86ad0e718ee",
+ "latencia_ms": 6742.1,
+ "modelo": "claude-sonnet-5-5",
+ "modelo_respuesta": "claude-sonnet-5-5",
+ "prompt": "extraccion_v2",
+ "request_id": "req_011Cg4EUpSf4ohTMcjiQKozA",
+ "salida": {
+  "dispositivos": [],
+  "hechos": [
+   {
+    "campo": "vehiculo.clase",
+    "cita": "camión",
+    "persona": -1,
+    "valor": "camion_o_autobus",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.frenado",
+    "cita": "frenó de golpe",
+    "persona": -1,
+    "valor": "true",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.maniobra",
+    "cita": "se le atravesó un carro",
+    "persona": -1,
+    "valor": "cambio_carril",
+    "vehiculo": 1
+   }
+  ],
+  "personas": [
+   {
+    "cita": "venía de pie junto a la puerta de atrás",
+    "rol": "pasajero",
+    "vehiculo": 0
+   }
+  ],
+  "preguntas": [
+   "¿El carro llegó a tocar al camión o solo se le atravesó?",
+   "¿Por qué lado se atravesó el carro frente al camión?",
+   "¿A qué velocidad aproximada iba el camión antes de frenar?"
+  ],
+  "vehiculos": [
+   {
+    "narrador": false
+   },
+   {
+    "narrador": false
+   }
+  ]
+ },
+ "texto_sha256": "8ca16b4299d2055837f837d125f79da7340448dcb9908f32f85f3a33f894b457",
+ "usage": {
+  "cache_creation_input_tokens": 0,
+  "cache_read_input_tokens": 6881,
+  "input_tokens": 168,
+  "output_tokens": 869
+ }
+}

@@ -1,0 +1,94 @@
+{
+ "costo_estimado_con": "claude-haiku-5-5",
+ "costo_usd": 0.00109741,
+ "esfuerzo": "medium",
+ "grabado": "2026-10-15T13:40:10+00:00",
+ "huella_prompt": "5816b86ad0e718ee",
+ "latencia_ms": 8492.5,
+ "modelo": "claude-haiku-5-5",
+ "modelo_respuesta": "claude-haiku-5-5",
+ "prompt": "extraccion_v2",
+ "request_id": "req_011Cg47jpA91YkjAN9jALKeJ",
+ "salida": {
+  "dispositivos": [],
+  "hechos": [
+   {
+    "campo": "lugar.estado_superficie",
+    "cita": "que era de pura grava suelta",
+    "persona": -1,
+    "valor": "grava_suelta",
+    "vehiculo": -1
+   },
+   {
+    "campo": "evento.tipo",
+    "cita": "Se volteó la camioneta de mi papá",
+    "persona": -1,
+    "valor": "volcadura",
+    "vehiculo": -1
+   },
+   {
+    "campo": "vehiculo.clase",
+    "cita": "la camioneta de mi papá",
+    "persona": -1,
+    "valor": "suv_o_pickup",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.velocidad_kmh",
+    "cita": "Iban como a 90",
+    "persona": -1,
+    "valor": "90",
+    "vehiculo": 0
+   },
+   {
+    "campo": "entorno.iluminacion",
+    "cita": "fue en la tarde, como a las 4",
+    "persona": -1,
+    "valor": "dia",
+    "vehiculo": -1
+   },
+   {
+    "campo": "persona.cinturon",
+    "cita": "Los dos traían el cinturón.",
+    "persona": 0,
+    "valor": "true",
+    "vehiculo": -1
+   },
+   {
+    "campo": "persona.cinturon",
+    "cita": "Los dos traían el cinturón.",
+    "persona": 1,
+    "valor": "true",
+    "vehiculo": -1
+   }
+  ],
+  "personas": [
+   {
+    "cita": "Él iba con mi abuelo, que tiene como 80 de copiloto",
+    "rol": "conductor",
+    "vehiculo": 0
+   },
+   {
+    "cita": "mi abuelo, que tiene como 80 de copiloto",
+    "rol": "pasajero",
+    "vehiculo": 0
+   }
+  ],
+  "preguntas": [
+   "¿La velocidad de 90 km/h era la que llevaban cuando reventó la llanta?",
+   "¿Cuánto avanzó la camioneta por el acotamiento antes de quedar de lado?"
+  ],
+  "vehiculos": [
+   {
+    "narrador": false
+   }
+  ]
+ },
+ "texto_sha256": "a92002c986fd44e31b31e907a97e4f560954ac6058413d30880240c354b573dc",
+ "usage": {
+  "cache_creation_input_tokens": 0,
+  "cache_read_input_tokens": 6881,
+  "input_tokens": 216,
+  "output_tokens": 2014
+ }
+}

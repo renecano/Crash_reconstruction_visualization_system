@@ -1,0 +1,65 @@
+{
+ "costo_estimado_con": "claude-haiku-5-5",
+ "costo_usd": 0.00089362,
+ "esfuerzo": "medium",
+ "grabado": "2026-10-15T14:38:24+00:00",
+ "huella_prompt": "f6b693169a4199c3",
+ "latencia_ms": 7802.4,
+ "modelo": "claude-haiku-5-5",
+ "modelo_respuesta": "claude-haiku-5-5",
+ "prompt": "extraccion_v1",
+ "request_id": "req_011Cg4CBUd64rFksXSBwNUiJ",
+ "salida": {
+  "dispositivos": [],
+  "hechos": [
+   {
+    "campo": "lugar.tipo_via",
+    "cita": "glorieta de Insurgentes",
+    "persona": -1,
+    "valor": "glorieta",
+    "vehiculo": -1
+   },
+   {
+    "campo": "evento.tipo",
+    "cita": "Un taxi me dio por un lado",
+    "persona": -1,
+    "valor": "impacto_vehiculo_vehiculo",
+    "vehiculo": -1
+   },
+   {
+    "campo": "vehiculo.velocidad_kmh",
+    "cita": "como a 20",
+    "persona": -1,
+    "valor": "20",
+    "vehiculo": 0
+   }
+  ],
+  "personas": [
+   {
+    "cita": "yo iba en mi Polo",
+    "rol": "conductor",
+    "vehiculo": 0
+   }
+  ],
+  "preguntas": [
+   "¿Por qué lado de su Polo recibió el golpe el taxi?",
+   "¿Qué maniobra hacía el taxi al salir de la glorieta?",
+   "¿A qué velocidad iba el taxi?"
+  ],
+  "vehiculos": [
+   {
+    "narrador": true
+   },
+   {
+    "narrador": false
+   }
+  ]
+ },
+ "texto_sha256": "4171fc0d2f5d3e5a6737cbe44609f76f65694f528a45064663d9a04d0946cd7c",
+ "usage": {
+  "cache_creation_input_tokens": 0,
+  "cache_read_input_tokens": 5862,
+  "input_tokens": 55,
+  "output_tokens": 1659
+ }
+}

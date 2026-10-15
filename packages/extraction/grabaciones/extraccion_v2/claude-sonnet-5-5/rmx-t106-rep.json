@@ -1,0 +1,69 @@
+{
+ "costo_estimado_con": "claude-sonnet-5-5",
+ "costo_usd": 0.0119502,
+ "esfuerzo": "medium",
+ "grabado": "2026-10-15T15:27:27+00:00",
+ "huella_prompt": "5816b86ad0e718ee",
+ "latencia_ms": 8172.1,
+ "modelo": "claude-sonnet-5-5",
+ "modelo_respuesta": "claude-sonnet-5-5",
+ "prompt": "extraccion_v2",
+ "request_id": "req_011Cg4FvPpub2Go7CVo5zZPu",
+ "salida": {
+  "dispositivos": [],
+  "hechos": [
+   {
+    "campo": "vehiculo.maniobra",
+    "cita": "echarse en reversa",
+    "persona": -1,
+    "valor": "reversa",
+    "vehiculo": 0
+   },
+   {
+    "campo": "evento.tipo",
+    "cita": "le dio a un contenedor de basura",
+    "persona": -1,
+    "valor": "impacto_vehiculo_objeto",
+    "vehiculo": -1
+   },
+   {
+    "campo": "evento.objeto",
+    "cita": "contenedor de basura",
+    "persona": -1,
+    "valor": "contenedor",
+    "vehiculo": -1
+   },
+   {
+    "campo": "vehiculo.zona_impacto",
+    "cita": "echarse en reversa le dio a un contenedor de basura",
+    "persona": -1,
+    "valor": "B",
+    "vehiculo": 0
+   }
+  ],
+  "personas": [
+   {
+    "cita": "Mi novia",
+    "rol": "conductor",
+    "vehiculo": 0
+   }
+  ],
+  "preguntas": [
+   "¿El lugar era un estacionamiento o la vía pública?",
+   "¿Qué tipo de vehículo manejaba tu novia?",
+   "¿El contenedor estaba sobre la banqueta o sobre el arroyo vial?"
+  ],
+  "vehiculos": [
+   {
+    "narrador": false
+   }
+  ]
+ },
+ "texto_sha256": "5ec4b84cee5824c72d011d12a4cfa2e331ae9d002bb5a66f826f6a88be385307",
+ "usage": {
+  "cache_creation_input_tokens": 0,
+  "cache_read_input_tokens": 6881,
+  "input_tokens": 67,
+  "output_tokens": 1044
+ }
+}

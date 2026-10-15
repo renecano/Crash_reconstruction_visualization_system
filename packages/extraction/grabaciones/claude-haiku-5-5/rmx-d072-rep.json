@@ -1,0 +1,82 @@
+{
+ "costo_estimado_con": "claude-haiku-5-5",
+ "costo_usd": 0.00121442,
+ "esfuerzo": "medium",
+ "grabado": "2026-10-15T14:32:27+00:00",
+ "huella_prompt": "f6b693169a4199c3",
+ "latencia_ms": 10120.8,
+ "modelo": "claude-haiku-5-5",
+ "modelo_respuesta": "claude-haiku-5-5",
+ "prompt": "extraccion_v1",
+ "request_id": "req_011Cg4Biw63UymstZd3s6M6u",
+ "salida": {
+  "dispositivos": [
+   {
+    "cita": "por la cebra",
+    "tipo": "paso_peatonal"
+   },
+   {
+    "cita": "con el verde para peatones",
+    "tipo": "semaforo"
+   }
+  ],
+  "hechos": [
+   {
+    "campo": "vehiculo.color",
+    "cita": "un Sentra plateado",
+    "persona": -1,
+    "valor": "plateado",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.maniobra",
+    "cita": "dio vuelta a la derecha",
+    "persona": -1,
+    "valor": "vuelta_derecha",
+    "vehiculo": 0
+   },
+   {
+    "campo": "evento.tipo",
+    "cita": "La golpeó despacio con la defensa",
+    "persona": -1,
+    "valor": "impacto_vehiculo_persona",
+    "vehiculo": -1
+   },
+   {
+    "campo": "evidencias.distancia_proyeccion_m",
+    "cita": "cayó como a un metro",
+    "persona": 0,
+    "valor": "1",
+    "vehiculo": -1
+   }
+  ],
+  "personas": [
+   {
+    "cita": "una señora con bolsas del mercado iba cruzando la avenida Madero por la cebra",
+    "rol": "peaton",
+    "vehiculo": -1
+   },
+   {
+    "cita": "el chavo del carro se bajó luego luego",
+    "rol": "conductor",
+    "vehiculo": 0
+   }
+  ],
+  "preguntas": [
+   "¿A qué velocidad iba el Sentra al dar vuelta a la derecha?",
+   "¿El semáforo para peatones estaba en verde para el Sentra o para la señora?"
+  ],
+  "vehiculos": [
+   {
+    "narrador": false
+   }
+  ]
+ },
+ "texto_sha256": "96d41c6740686c3fef51b16d9b74d1b8e52dd8043f092aa6359c4bb950996641",
+ "usage": {
+  "cache_creation_input_tokens": 0,
+  "cache_read_input_tokens": 5862,
+  "input_tokens": 168,
+  "output_tokens": 2278
+ }
+}

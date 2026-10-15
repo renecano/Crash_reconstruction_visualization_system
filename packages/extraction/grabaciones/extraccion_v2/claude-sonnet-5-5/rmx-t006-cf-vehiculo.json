@@ -1,0 +1,84 @@
+{
+ "costo_estimado_con": "claude-sonnet-5-5",
+ "costo_usd": 0.0065402,
+ "esfuerzo": "medium",
+ "grabado": "2026-10-15T15:03:25+00:00",
+ "huella_prompt": "5816b86ad0e718ee",
+ "latencia_ms": 3870.6,
+ "modelo": "claude-sonnet-5-5",
+ "modelo_respuesta": "claude-sonnet-5-5",
+ "prompt": "extraccion_v2",
+ "request_id": "req_011Cg4E6REnUoLL637o45GJM",
+ "salida": {
+  "dispositivos": [
+   {
+    "cita": "se pasó el rojo",
+    "tipo": "semaforo"
+   }
+  ],
+  "hechos": [
+   {
+    "campo": "vehiculo.clase",
+    "cita": "Ranger",
+    "persona": -1,
+    "valor": "pickup",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.clase",
+    "cita": "tráiler",
+    "persona": -1,
+    "valor": "tractocamion",
+    "vehiculo": 1
+   },
+   {
+    "campo": "evento.tipo",
+    "cita": "me pegó",
+    "persona": -1,
+    "valor": "impacto_vehiculo_vehiculo",
+    "vehiculo": -1
+   },
+   {
+    "campo": "vehiculo.zona_impacto",
+    "cita": "me pegó en la salpicadera del copiloto",
+    "persona": -1,
+    "valor": "R",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.zona_impacto",
+    "cita": "un tráiler se pasó el rojo y me pegó",
+    "persona": -1,
+    "valor": "F",
+    "vehiculo": 1
+   }
+  ],
+  "personas": [
+   {
+    "cita": "yo iba en mi Ranger",
+    "rol": "conductor",
+    "vehiculo": 0
+   }
+  ],
+  "preguntas": [
+   "¿El tráiler venía de frente, de la izquierda o de la derecha respecto a su camioneta?",
+   "¿Qué maniobra hacía usted al momento del golpe: seguía recto o daba vuelta?",
+   "¿A qué velocidad aproximada iban ambos vehículos?"
+  ],
+  "vehiculos": [
+   {
+    "narrador": true
+   },
+   {
+    "narrador": false
+   }
+  ]
+ },
+ "texto_sha256": "db9c7a16cd1b8e7ab42d33ca24981f7afdfafd381cd18806a5821b4c97ca3dd4",
+ "usage": {
+  "cache_creation_input_tokens": 0,
+  "cache_read_input_tokens": 6881,
+  "input_tokens": 67,
+  "output_tokens": 503
+ }
+}

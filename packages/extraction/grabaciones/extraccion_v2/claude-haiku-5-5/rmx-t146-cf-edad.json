@@ -1,0 +1,91 @@
+{
+ "costo_estimado_con": "claude-haiku-5-5",
+ "costo_usd": 0.00114841,
+ "esfuerzo": "medium",
+ "grabado": "2026-10-15T13:49:25+00:00",
+ "huella_prompt": "5816b86ad0e718ee",
+ "latencia_ms": 9495.3,
+ "modelo": "claude-haiku-5-5",
+ "modelo_respuesta": "claude-haiku-5-5",
+ "prompt": "extraccion_v2",
+ "request_id": "req_011Cg48SfdaUioGxAoEsTn55",
+ "salida": {
+  "dispositivos": [
+   {
+    "cita": "con el semaforo en rojo",
+    "tipo": "semaforo"
+   },
+   {
+    "cita": "el paso peatonal",
+    "tipo": "paso_peatonal"
+   }
+  ],
+  "hechos": [
+   {
+    "campo": "vehiculo.clase",
+    "cita": "una combi",
+    "persona": -1,
+    "valor": "microbus_combi",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.velocidad_kmh",
+    "cita": "iba rapido, como a 60",
+    "persona": -1,
+    "valor": "60",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.frenado",
+    "cita": "freno ya tarde",
+    "persona": -1,
+    "valor": "true",
+    "vehiculo": 0
+   },
+   {
+    "campo": "evento.tipo",
+    "cita": "le pego con el espejo y la defensa",
+    "persona": -1,
+    "valor": "impacto_vehiculo_persona",
+    "vehiculo": -1
+   },
+   {
+    "campo": "evidencias.marcas_m",
+    "cita": "se vieron las marcas como de 10 metros",
+    "persona": -1,
+    "valor": "10",
+    "vehiculo": -1
+   },
+   {
+    "campo": "evidencias.distancia_proyeccion_m",
+    "cita": "el señor cayo como a 3 metros",
+    "persona": -1,
+    "valor": "3",
+    "vehiculo": -1
+   }
+  ],
+  "personas": [
+   {
+    "cita": "un señor ya mayor cruzo x el paso peatonal",
+    "rol": "peaton",
+    "vehiculo": -1
+   }
+  ],
+  "preguntas": [
+   "¿De qué color era el semáforo para la combi en el momento del impacto?",
+   "¿Cuánto tiempo pasó entre que el peatón entró al paso peatonal y el impacto?"
+  ],
+  "vehiculos": [
+   {
+    "narrador": false
+   }
+  ]
+ },
+ "texto_sha256": "24762627db8a52354987d499f6a036ba17eb000a65e6df563cc55caea4f084bb",
+ "usage": {
+  "cache_creation_input_tokens": 0,
+  "cache_read_input_tokens": 6881,
+  "input_tokens": 166,
+  "output_tokens": 2126
+ }
+}

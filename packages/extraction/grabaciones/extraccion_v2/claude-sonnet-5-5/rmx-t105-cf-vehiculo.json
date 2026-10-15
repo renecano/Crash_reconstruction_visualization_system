@@ -1,0 +1,110 @@
+{
+ "costo_estimado_con": "claude-sonnet-5-5",
+ "costo_usd": 0.0084542,
+ "esfuerzo": "medium",
+ "grabado": "2026-10-15T15:12:19+00:00",
+ "huella_prompt": "5816b86ad0e718ee",
+ "latencia_ms": 5360.6,
+ "modelo": "claude-sonnet-5-5",
+ "modelo_respuesta": "claude-sonnet-5-5",
+ "prompt": "extraccion_v2",
+ "request_id": "req_011Cg4EmdPrwTZeUZRdXnH2Z",
+ "salida": {
+  "dispositivos": [],
+  "hechos": [
+   {
+    "campo": "vehiculo.clase",
+    "cita": "Silverado",
+    "persona": -1,
+    "valor": "pickup",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.clase",
+    "cita": "Elantra",
+    "persona": -1,
+    "valor": "sedan_mediano",
+    "vehiculo": 2
+   },
+   {
+    "campo": "vehiculo.frenado",
+    "cita": "Yo alcancé a frenar",
+    "persona": -1,
+    "valor": "true",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.frenado",
+    "cita": "el que venía detrás de mí, un Elantra, no",
+    "persona": -1,
+    "valor": "false",
+    "vehiculo": 2
+   },
+   {
+    "campo": "vehiculo.maniobra",
+    "cita": "se paró de golpe",
+    "persona": -1,
+    "valor": "detenido",
+    "vehiculo": 1
+   },
+   {
+    "campo": "vehiculo.zona_impacto",
+    "cita": "me pegó en la caja",
+    "persona": -1,
+    "valor": "B",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.zona_impacto",
+    "cita": "me pegó en la caja",
+    "persona": -1,
+    "valor": "F",
+    "vehiculo": 2
+   },
+   {
+    "campo": "evento.tipo",
+    "cita": "me pegó en la caja",
+    "persona": -1,
+    "valor": "impacto_vehiculo_vehiculo",
+    "vehiculo": -1
+   },
+   {
+    "campo": "entorno.iluminacion",
+    "cita": "las 3 de la tarde",
+    "persona": -1,
+    "valor": "dia",
+    "vehiculo": -1
+   }
+  ],
+  "personas": [
+   {
+    "cita": "iba yo en la troca",
+    "rol": "conductor",
+    "vehiculo": 0
+   }
+  ],
+  "preguntas": [
+   "¿A qué velocidad aproximada iban los tres vehículos antes de frenar?",
+   "¿La calzada tiene más de un carril por sentido?",
+   "¿Cómo estaba la superficie del pavimento al momento del percance?"
+  ],
+  "vehiculos": [
+   {
+    "narrador": true
+   },
+   {
+    "narrador": false
+   },
+   {
+    "narrador": false
+   }
+  ]
+ },
+ "texto_sha256": "09ecfb874cc39013add3abd1e2310be48d6038be469476e43c76fc3aca599560",
+ "usage": {
+  "cache_creation_input_tokens": 0,
+  "cache_read_input_tokens": 6881,
+  "input_tokens": 159,
+  "output_tokens": 676
+ }
+}

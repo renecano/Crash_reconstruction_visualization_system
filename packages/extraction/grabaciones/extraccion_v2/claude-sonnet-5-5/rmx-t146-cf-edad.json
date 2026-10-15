@@ -1,0 +1,99 @@
+{
+ "costo_estimado_con": "claude-sonnet-5-5",
+ "costo_usd": 0.0080282,
+ "esfuerzo": "medium",
+ "grabado": "2026-10-15T15:15:57+00:00",
+ "huella_prompt": "5816b86ad0e718ee",
+ "latencia_ms": 4542.6,
+ "modelo": "claude-sonnet-5-5",
+ "modelo_respuesta": "claude-sonnet-5-5",
+ "prompt": "extraccion_v2",
+ "request_id": "req_011Cg4F3mSVkcsuHYUi88mZa",
+ "salida": {
+  "dispositivos": [
+   {
+    "cita": "paso peatonal",
+    "tipo": "paso_peatonal"
+   },
+   {
+    "cita": "semaforo en rojo pa los carros",
+    "tipo": "semaforo"
+   }
+  ],
+  "hechos": [
+   {
+    "campo": "evento.tipo",
+    "cita": "le pego con el espejo y la defensa",
+    "persona": -1,
+    "valor": "impacto_vehiculo_persona",
+    "vehiculo": -1
+   },
+   {
+    "campo": "vehiculo.clase",
+    "cita": "combi",
+    "persona": -1,
+    "valor": "microbus_combi",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.velocidad_kmh",
+    "cita": "como a 60",
+    "persona": -1,
+    "valor": "60",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.frenado",
+    "cita": "freno ya tarde",
+    "persona": -1,
+    "valor": "true",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.zona_impacto",
+    "cita": "le pego con el espejo y la defensa",
+    "persona": -1,
+    "valor": "F",
+    "vehiculo": 0
+   },
+   {
+    "campo": "evidencias.marcas_m",
+    "cita": "como de 10 metros",
+    "persona": -1,
+    "valor": "10",
+    "vehiculo": -1
+   },
+   {
+    "campo": "evidencias.distancia_proyeccion_m",
+    "cita": "como a 3 metros",
+    "persona": -1,
+    "valor": "3",
+    "vehiculo": -1
+   }
+  ],
+  "personas": [
+   {
+    "cita": "un señor ya mayor cruzo x el paso peatonal",
+    "rol": "peaton",
+    "vehiculo": -1
+   }
+  ],
+  "preguntas": [
+   "¿La combi venía en línea recta o iba girando al momento del golpe?",
+   "¿Cuántos carriles tiene la vía en el sentido de la combi?",
+   "¿De qué lado de la combi fue el golpe: frente, lado derecho o izquierdo?"
+  ],
+  "vehiculos": [
+   {
+    "narrador": false
+   }
+  ]
+ },
+ "texto_sha256": "24762627db8a52354987d499f6a036ba17eb000a65e6df563cc55caea4f084bb",
+ "usage": {
+  "cache_creation_input_tokens": 0,
+  "cache_read_input_tokens": 6881,
+  "input_tokens": 166,
+  "output_tokens": 632
+ }
+}

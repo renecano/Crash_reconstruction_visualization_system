@@ -1,0 +1,96 @@
+{
+ "costo_estimado_con": "claude-haiku-5-5",
+ "costo_usd": 0.00113871,
+ "esfuerzo": "medium",
+ "grabado": "2026-10-15T13:43:42+00:00",
+ "huella_prompt": "5816b86ad0e718ee",
+ "latencia_ms": 8562.2,
+ "modelo": "claude-haiku-5-5",
+ "modelo_respuesta": "claude-haiku-5-5",
+ "prompt": "extraccion_v2",
+ "request_id": "req_011Cg481T6ZgLcexmNeF5ccN",
+ "salida": {
+  "dispositivos": [
+   {
+    "cita": "paso de cebra",
+    "tipo": "paso_peatonal"
+   },
+   {
+    "cita": "semáforo peatonal en verde",
+    "tipo": "semaforo"
+   }
+  ],
+  "hechos": [
+   {
+    "campo": "vehiculo.clase",
+    "cita": "Aveo",
+    "persona": -1,
+    "valor": "sedan_compacto",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.color",
+    "cita": "rojo",
+    "persona": -1,
+    "valor": "rojo",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.maniobra",
+    "cita": "dio vuelta a la derecha",
+    "persona": -1,
+    "valor": "vuelta_derecha",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.zona_impacto",
+    "cita": "con el frente del carro",
+    "persona": -1,
+    "valor": "F",
+    "vehiculo": 0
+   },
+   {
+    "campo": "evento.tipo",
+    "cita": "me pegó en la cadera",
+    "persona": -1,
+    "valor": "impacto_vehiculo_persona",
+    "vehiculo": -1
+   },
+   {
+    "campo": "evidencias.distancia_proyeccion_m",
+    "cita": "Caí como a un metro",
+    "persona": -1,
+    "valor": "1",
+    "vehiculo": -1
+   }
+  ],
+  "personas": [
+   {
+    "cita": "Iba cruzando la calle",
+    "rol": "peaton",
+    "vehiculo": -1
+   },
+   {
+    "cita": "un señor en un Aveo rojo",
+    "rol": "conductor",
+    "vehiculo": 0
+   }
+  ],
+  "preguntas": [
+   "¿El conductor del Aveo se detuvo antes de dar vuelta a la derecha?",
+   "¿El semáforo para vehículos estaba en verde o en rojo al momento del giro?"
+  ],
+  "vehiculos": [
+   {
+    "narrador": false
+   }
+  ]
+ },
+ "texto_sha256": "226c4ec2c1cb9afdabfea4c715c36729ca9aa01e6aca4b8bf915016bf0f11620",
+ "usage": {
+  "cache_creation_input_tokens": 0,
+  "cache_read_input_tokens": 6881,
+  "input_tokens": 154,
+  "output_tokens": 2109
+ }
+}

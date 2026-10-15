@@ -9,7 +9,7 @@ Reglas de trabajo: `CLAUDE.md`. Especificación: `PLAN.md`.
 - **Rigidez lateral, hecha** (PR #12, ADR 0013). Sale de 1,265 pruebas de barrera móvil de NHTSA. En el test de E3, el error en costados baja de 11.04 a 8.51 km/h.
 - **Rigidez trasera, hecha** (PR #13, ADR 0014). Sale de 136 pruebas FMVSS 301 con barrera rígida, modelos 1975–2004. En el test de E3, el error en traseros baja de 16.45 a 7.68 km/h; en conjunto, 8.85 km/h contra 8.19 de WinSMASH.
 - **Siguiente paso concreto:** pendiente 3 de F7, la inercia de guiñada medida (Heydinger et al., SAE 1999-01-1336) en lugar de la placa uniforme, en la rama `feat/f7-inercia-guinada`. Después, F8. Cambia trayectorias y capturas, así que va antes de las capturas de F8.
-- **En paralelo** (rama `feat/f7-e1-v2-test`): grabaciones del prompt v2 en el primer test y repeticiones de v1 en dev, dentro del tope diario. Cuando terminen: `golden build`, `e1-extraction --split test --prompt extraccion_v2` y su PR.
+- **E1 del prompt v2 en el primer test, hecho** (PR #14). Sonnet 0.875 → 0.919 y Haiku 0.852 → 0.896. Además, E1 ahora compara cada contrafactual con la repetición del mismo relato (McNemar por tipo): ningún tipo difiere del ruido, y las reglas cambian con el modelo del vehículo en 6 de 52 pares (ADR 0012 §10).
 - **F0** cerrado el 2026-10-10 (PR #1), **F1** el 2026-10-10 (PR #3), **F2** el 2026-10-13 (PR #4), **F3** el 2026-10-13 (PR #5), **F4** el 2026-10-13 (PR #6), **F5** el 2026-10-13 (PR #7), **F6** el 2026-10-14 (PR #8), **F7** el 2026-10-14 (PR #9; pendientes registrados); migración a Vercel el 2026-10-14 (PR #10); test CISS y prompt v2 el 2026-10-14 (PR #11).
 
 ### Bloqueado — necesita a René
@@ -866,8 +866,8 @@ Riesgos:
 
 ### Pendientes registrados (de esta rama)
 
-1. **v2 en el primer test.** Faltan sus grabaciones de relatos, contrafactuales y repeticiones con los dos modelos. Sirve para la continuidad de la fila de E1, no para decidir: en ese test se descubrió el problema de la clase.
-2. **Repeticiones de v1 en dev.** Faltaron por el tope del día. La decisión no las necesitó: el ruido se comparó en `ciss`.
+1. **v2 en el primer test. Hecho el 2026-10-15** (ver arriba). Sirve para la continuidad de la fila de E1, no para decidir: en ese test se descubrió el problema de la clase.
+2. **Repeticiones de v1 en dev. Hechas el 2026-10-15.**
 3. **Clase de E3 y clase del relato.** E3 agrupa la carrocería 14 de CISS (SUV compacta) por su código y el test CISS la separa por largo. No cambia E3 (la clase solo elige rigidez), pero conviene unificarlas cuando se revise la rigidez (pendiente 2 de F7).
 
 ### Resumen para René (F7, test CISS y prompt v2)
@@ -1000,3 +1000,21 @@ Contra los EDR de choques reales (CISS 2022–2024):
 El límite: esas pruebas son de autos de 1975–2004, porque las modernas no traen los datos necesarios. Por eso la regla para adoptarla se fijó antes, sobre los años de desarrollo.
 
 Qué necesito de ti: nada nuevo.
+
+## F7 (continuación) — E1 del prompt v2 en el primer test y contrafactuales pareados
+
+Rama `feat/f7-e1-v2-test`.
+
+### Hecho
+
+1. **Grabaciones:** v2 en el primer test (relatos, contrafactuales y repeticiones) y las repeticiones de v1 en dev, con los dos modelos, dentro del tope diario (`grabaciones/gasto.json`).
+2. **E1 en el primer test con v2** (`e1_extraction_v2.json`): Sonnet 0.875 → **0.919** (clase 0.638 → 0.921), Haiku 0.852 → **0.896** (clase 0.614 → 0.882). Se midió después de decidir el prompt.
+3. **Contrafactuales pareados con la repetición:** E1 cuenta, por tipo (sexo, edad, vehículo), los pares en que cambia solo el contrafactual o solo la repetición del mismo relato, y aplica McNemar exacto. En los de sexo, también en qué versión sale más rápido el vehículo.
+   - El sexo del relato base se lee de las palabras que cambian (`base_sex`); se probó contra los 102 pares de sexo de Relatos-MX.
+   - Resultado: ningún tipo difiere del ruido. En el primer test, Sonnet v2 da 6 contra 2 en sexo (p = 0.29) y 7 contra 2 en edad (p = 0.18). Hubo 3 casos de velocidad más alta con hombre y 0 con mujer (p = 0.25), no concluyente.
+   - Las reglas cambian con el modelo del vehículo en 6 de 52 pares (p = 0.03).
+
+### Pendientes
+
+1. **Más pares contrafactuales de sexo:** el sentido observado en Sonnet v2 (3 contra 0) no se puede confirmar ni descartar con 56 pares. Habría que ampliarlos en el dev, sin tocar los tests congelados, y repetir la medición.
+2. **Reglas que dependen del modelo del vehículo:** revisar qué patrón de la línea base cambia con el nombre del modelo y corregirlo en el dev.

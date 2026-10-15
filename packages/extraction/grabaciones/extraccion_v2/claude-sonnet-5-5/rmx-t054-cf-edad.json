@@ -1,0 +1,88 @@
+{
+ "costo_estimado_con": "claude-sonnet-5-5",
+ "costo_usd": 0.0121462,
+ "esfuerzo": "medium",
+ "grabado": "2026-10-15T15:07:50+00:00",
+ "huella_prompt": "5816b86ad0e718ee",
+ "latencia_ms": 7425.4,
+ "modelo": "claude-sonnet-5-5",
+ "modelo_respuesta": "claude-sonnet-5-5",
+ "prompt": "extraccion_v2",
+ "request_id": "req_011Cg4ERgeWMGLPBJVVHxP8E",
+ "salida": {
+  "dispositivos": [],
+  "hechos": [
+   {
+    "campo": "vehiculo.clase",
+    "cita": "estaquitas",
+    "persona": -1,
+    "valor": "pickup",
+    "vehiculo": 0
+   },
+   {
+    "campo": "lugar.tipo_via",
+    "cita": "curva cerrada",
+    "persona": -1,
+    "valor": "curva",
+    "vehiculo": -1
+   },
+   {
+    "campo": "lugar.estado_superficie",
+    "cita": "grava suelta",
+    "persona": -1,
+    "valor": "grava_suelta",
+    "vehiculo": -1
+   },
+   {
+    "campo": "evento.tipo",
+    "cita": "derrapar",
+    "persona": -1,
+    "valor": "derrape",
+    "vehiculo": -1
+   },
+   {
+    "campo": "vehiculo.velocidad_kmh",
+    "cita": "como a 30",
+    "persona": -1,
+    "valor": "30",
+    "vehiculo": 0
+   },
+   {
+    "campo": "entorno.clima",
+    "cita": "avia neblina",
+    "persona": -1,
+    "valor": "niebla",
+    "vehiculo": -1
+   }
+  ],
+  "personas": [
+   {
+    "cita": "mi abuelo de 74 hiba manejando",
+    "rol": "conductor",
+    "vehiculo": 0
+   },
+   {
+    "cita": "yo hiba de copiloto",
+    "rol": "pasajero",
+    "vehiculo": 0
+   }
+  ],
+  "preguntas": [
+   "¿La camioneta quedó sobre sus ruedas o volcada en la cuneta?",
+   "¿Había otros vehículos circulando cerca en ese momento?",
+   "¿Era de día o de noche cuando ocurrió?"
+  ],
+  "vehiculos": [
+   {
+    "narrador": false
+   }
+  ]
+ },
+ "texto_sha256": "fee2b5ee875002d782a29e06ea69211b0ee6667e9d28e7deecd2cab66798ef25",
+ "usage": {
+  "cache_creation_input_tokens": 0,
+  "cache_read_input_tokens": 6881,
+  "input_tokens": 145,
+  "output_tokens": 1048
+ }
+}
