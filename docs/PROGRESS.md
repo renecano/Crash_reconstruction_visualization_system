@@ -6,7 +6,7 @@ Reglas de trabajo: `CLAUDE.md`. Especificación: `PLAN.md`.
 ## Estado actual
 
 - **Fase actual:** F7, pendiente 1 (rama `feat/f7-relatos-ciss`): test de Relatos-MX desde los campos codificados de CISS y prompt v2. La migración a Vercel se fusionó el 2026-10-14 (PR #10, ADR 0011).
-- **Siguiente paso concreto:** paso 1 del plan "F7 (continuación)" (abajo): fichas desde CISS con `croquis-data ciss relatos`.
+- **Siguiente paso concreto:** terminar las grabaciones de Claude para el test CISS y el prompt v2 dentro del tope diario y medir E1 (ver "F7 (continuación)" → "Siguiente paso concreto"). El test CISS ya está congelado.
 - **F0** cerrado el 2026-10-10 (PR #1), **F1** el 2026-10-10 (PR #3), **F2** el 2026-10-13 (PR #4), **F3** el 2026-10-13 (PR #5), **F4** el 2026-10-13 (PR #6), **F5** el 2026-10-13 (PR #7), **F6** el 2026-10-14 (PR #8), **F7** el 2026-10-14 (PR #9; pendientes registrados); migración a Vercel el 2026-10-14 (PR #10).
 
 ### Bloqueado — necesita a René
@@ -821,3 +821,36 @@ Riesgos:
 
 - **CISS es de EE. UU. y solo de vehículos de pasajeros remolcados.** Los relatos se adaptan a México (km/h, vías y modelos que circulan aquí) y la distribución de tipos no puede ser la de ATUS en todo: casi no hay motocicletas. Lo que no se pueda se documenta.
 - **Velocidad narrada:** la gente redondea. La ficha guarda el valor del EDR y la velocidad narrada redondeada a 5 km/h, que es la verdad de la extracción. El error contra el EDR se reporta aparte.
+
+### Avance (2026-10-14)
+
+1. **Fichas, hecho.** `croquis-data ciss relatos`, con pruebas sintéticas de cada traducción, exclusión, clase y acoplamiento. Al escribir y revisar salieron cuatro reglas que se aplicaron al generador y a todos los relatos (ADR 0012 §9):
+   - clase del relato aparte de la de E3: carrocería que decide sola, VPIC y `modelos.json` coinciden;
+   - tamaño dicho en el texto cuando el modelo no está en la tabla;
+   - hechos que van juntos (velocidad 0 con detenido; dispositivo del cruce con su tipo, también en 'Intersection-Related');
+   - el ciclista en su bicicleta, como choque entre vehículos.
+2. **Relatos, hecho.** Los 150 pasaron por cuatro etapas:
+   - escritos por seis agentes que no vieron la línea base;
+   - revisados por otros seis;
+   - editados para decir el tamaño y los cruces acoplados;
+   - validados por la verificación contra la ficha, el esquema y el validador semántico.
+     Se leyó una muestra antes de congelar.
+3. **Partición `ciss`, congelada** (`ciss.lock`, `bd16632a…`). `test.lock` sigue intacto. Las salidas doradas incluyen los relatos CISS y la paridad TS pasa en reglas y redacción.
+4. **Prompt v2 y grabaciones, en curso.** El prompt v2 tiene versión propia en Python y TS: misma huella de v1 y la de v2, paridad, grabaciones en `grabaciones/extraccion_v2/`. Se graba dentro del tope diario (`CROQUIS_LLM_DAILY_BUDGET_USD=8`), en este orden:
+   1. Haiku v2 en dev (en curso);
+   2. Haiku v1 en `ciss`;
+   3. Sonnet v1 en `ciss`;
+   4. Sonnet v2 en dev;
+   5. v2 en `ciss`.
+      El grabador se detiene solo al llegar al tope y sigue al día siguiente.
+
+### Siguiente paso concreto
+
+Terminar las grabaciones. Después, en este orden:
+
+1. `uv run croquis-extraction golden build`;
+2. `uv run croquis-eval e1-extraction --split ciss` (v1);
+3. `--split dev --prompt extraccion_v2`, para compararlo con v1 en dev;
+4. si v2 no empeora en dev, `--split ciss --prompt extraccion_v2`.
+
+Con eso se publican los números en el README, junto a E1 del primer test, y se decide qué prompt queda en producción (ADR 0012).
