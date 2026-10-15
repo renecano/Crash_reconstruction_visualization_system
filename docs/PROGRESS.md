@@ -7,7 +7,8 @@ Reglas de trabajo: `CLAUDE.md`. Especificación: `PLAN.md`.
 
 - **Fase actual:** pendientes físicos de F7, antes de F8. El pendiente 1 de F7 (test CISS de Relatos-MX y prompt v2) quedó hecho el 2026-10-14 (PR #11, ADR 0012); v2 es el prompt de producción.
 - **Rigidez lateral, hecha** (PR #12, ADR 0013). Sale de 1,265 pruebas de barrera móvil de NHTSA. En el test de E3, el error en costados baja de 11.04 a 8.51 km/h.
-- **Siguiente paso concreto:** rigidez trasera desde los reportes PDF de FMVSS 301, en la rama `feat/f7-rigidez-trasera`. La API no trae masa ni perfil de esas pruebas; ver "F7 (continuación) — Rigidez lateral" → "Pendientes". Después, el pendiente 3 (inercia de guiñada medida) y luego F8. Los dos cambian resultados y capturas, así que van antes de las capturas de F8.
+- **Rigidez trasera, hecha** (rama `feat/f7-rigidez-trasera`, ADR 0014). Sale de 136 pruebas FMVSS 301 con barrera rígida, modelos 1975–2004. En el test de E3, el error en traseros baja de 16.45 a 7.68 km/h; en conjunto, 8.85 km/h contra 8.19 de WinSMASH.
+- **Siguiente paso concreto:** pendiente 3 de F7, la inercia de guiñada medida (Heydinger et al., SAE 1999-01-1336) en lugar de la placa uniforme, en la rama `feat/f7-inercia-guinada`. Después, F8. Cambia trayectorias y capturas, así que va antes de las capturas de F8.
 - **En paralelo** (rama `feat/f7-e1-v2-test`): grabaciones del prompt v2 en el primer test y repeticiones de v1 en dev, dentro del tope diario. Cuando terminen: `golden build`, `e1-extraction --split test --prompt extraccion_v2` y su PR.
 - **F0** cerrado el 2026-10-10 (PR #1), **F1** el 2026-10-10 (PR #3), **F2** el 2026-10-13 (PR #4), **F3** el 2026-10-13 (PR #5), **F4** el 2026-10-13 (PR #6), **F5** el 2026-10-13 (PR #7), **F6** el 2026-10-14 (PR #8), **F7** el 2026-10-14 (PR #9; pendientes registrados); migración a Vercel el 2026-10-14 (PR #10); test CISS y prompt v2 el 2026-10-14 (PR #11).
 
@@ -699,7 +700,7 @@ Incidente: una corrida local de `pnpm test` falló una vez en `debris.test.ts` (
 1. **Relatos-MX, segundo test y prompt v2 (pendiente de F6). Hecho el 2026-10-14** (ver "F7 (continuación)" y ADR 0012).
    - **Fuente:** los CSV de CISS no traen narrativas y NHTSA no publica una API documentada para las del Crash Viewer (su API documentada es la de FARS). El test se construirá desde los campos codificados de CISS (maniobra, tipo de choque, superficie, luz, clima, clase): la verdad viene de NHTSA, no del autor de los relatos.
    - **Prompt v2:** con la tabla modelo → clase, validado en dev y medido en ese test nuevo.
-2. **Rigidez lateral y trasera desde pruebas de NHTSA** (FMVSS 214 lateral y FMVSS 301 trasera). Es la debilidad medida en E3. No se ajusta con el EDR de CISS para no mezclar validación y calibración. Cambiará resultados y capturas. **Lateral, hecha el 2026-10-15** (ADR 0013); trasera, pendiente de los reportes PDF.
+2. **Rigidez lateral y trasera desde pruebas de NHTSA** (FMVSS 214 lateral y FMVSS 301 trasera). Es la debilidad medida en E3. No se ajusta con el EDR de CISS para no mezclar validación y calibración. Cambiará resultados y capturas. **Hecha el 2026-10-15:** lateral (ADR 0013) y trasera (ADR 0014).
 3. **Inercia de guiñada medida** (Heydinger et al., SAE 1999-01-1336) en lugar de la placa uniforme. Cambia todas las trayectorias posteriores al impacto y las capturas.
 4. **Marcas de derrape en la inversión.** El contrato no dice si son anteriores o posteriores al impacto; hace falta un campo y una versión del contrato.
 5. **Procedencia del rumbo final.** Hoy es parte de la pose declarada. Si E9 muestra que las personas no lo dicen, se separa en el contrato.
@@ -950,5 +951,52 @@ Contra lo que registraron los EDR de choques reales (CISS 2022–2024, que no se
 La parte trasera es lo siguiente. Los datos modernos están en los reportes PDF de NHTSA y hay que leerlos uno por uno.
 
 Cómo probarlo: `uv run croquis-eval e2-mdb` y `uv run croquis-eval e3-ciss` reproducen los números desde los CSV versionados.
+
+Qué necesito de ti: nada nuevo.
+
+## F7 (continuación) — Rigidez trasera (pendiente 2)
+
+Rama `feat/f7-rigidez-trasera`. ADR 0014.
+
+### Hecho
+
+1. **Reportes PDF de FMVSS 301 revisados** en los tres laboratorios (casi todas las pruebas modernas tienen reporte).
+   - Calspan trae el aplastamiento del vehículo en tres puntos.
+   - KARCO trae el aplastamiento al centro y el de la cara de la barrera, que llega cerca del fondo.
+   - MGA no trae el aplastamiento del vehículo en el texto.
+
+   La parte de energía de la barrera deformable en la trasera es grande y no se conoce por prueba, así que no se usaron.
+
+2. **Trasera desde las pruebas FMVSS 301 con barrera rígida** (no absorbe energía): 136 pruebas de modelos 1975–2004 en 6 clases, con el mismo método de ADR 0013.
+3. **Regla fijada antes de correr E3:** adoptar solo si mejora los traseros del dev de E3. En el dev pasó de 13.20 a 7.21 km/h; se adoptó. El test solo se reporta.
+4. **Regenerados:**
+   - E3 (σ = 0.4319);
+   - la escena `alcance`, la tabla del port TS y E7.
+
+   F7 en las escenas no cambia, salvo los tiempos.
+
+### Evidencia (local, Windows, 2026-10-15)
+
+| Comando                                        | Resultado                                                                                                                                                                                                                             |
+| ---------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `uv run croquis-eval e2-mdb`                   | trasera: 136 pruebas; dejar uno fuera: ΔV con error medio 4.57 km/h, contra 33.94 con el respaldo                                                                                                                                     |
+| `uv run croquis-eval e3-ciss` (test 2022–2024) | traseros 16.45 → **7.68 km/h** (sesgo +11.40 → −0.75; ±10 km/h 53.5 % → 78.1 %; WinSMASH 7.26); conjunto 10.30 → **8.85** (WinSMASH 8.19); EDR ≥ 48 km/h 19.94 → 16.26 (WinSMASH 17.54; sesgo −11.90 contra −14.37); cobertura 81.5 % |
+| `pnpm --filter @croquis/solver-ts e7`          | 61,888 números, diferencia máxima 4.3e-5, 0 diferencias de estructura                                                                                                                                                                 |
+
+### Pendientes
+
+1. **Flota moderna para la trasera:** la rigidez viene de modelos 1975–2004. Se podría usar la de los reportes de Calspan (perfil de tres puntos) cuando haya una forma medida de repartir la energía con la barrera deformable cerca del fondo de su cara.
+2. **SUV grande y autobús** siguen con el respaldo en la trasera (una prueba cada uno).
+
+### Resumen para René (F7, rigidez trasera)
+
+La parte trasera ya no usa una rigidez inventada. Sale de 136 choques de prueba de NHTSA contra la parte trasera con una barrera rígida.
+
+Contra los EDR de choques reales (CISS 2022–2024):
+
+- en traseros, Croquis se equivoca 7.68 km/h en promedio (antes 16.45; WinSMASH 7.26);
+- en conjunto, 8.85 km/h contra 8.19 de WinSMASH.
+
+El límite: esas pruebas son de autos de 1975–2004, porque las modernas no traen los datos necesarios. Por eso la regla para adoptarla se fijó antes, sobre los años de desarrollo.
 
 Qué necesito de ti: nada nuevo.
