@@ -58,11 +58,17 @@ def main(argv: list[str] | None = None) -> int:
     sub = parser.add_subparsers(dest="group", required=True)
     r = sub.add_parser("relatos", help="Benchmark Relatos-MX")
     r.add_argument("action", choices=["build", "check", "freeze", "stats"])
+    r.add_argument(
+        "--split",
+        choices=["test", "ciss"],
+        default="test",
+        help="Partición que congela `freeze` (cada test tiene su candado)",
+    )
     g = sub.add_parser("golden", help="Salidas doradas para la paridad del port TS")
     g.add_argument("action", choices=["build", "check"])
     c = sub.add_parser("claude", help="Graba respuestas de Claude para E1 (requiere llave)")
     c.add_argument("action", choices=["record"])
-    c.add_argument("--split", choices=["dev", "test"], required=True)
+    c.add_argument("--split", choices=["dev", "test", "ciss"], required=True)
     c.add_argument("--model", default=None, help="claude-sonnet-5-5 o claude-haiku-5-5")
     c.add_argument("--limit", type=int, default=None)
     c.add_argument(
@@ -111,14 +117,24 @@ def main(argv: list[str] | None = None) -> int:
         if stale:
             print("Desactualizados: " + ", ".join(stale), file=sys.stderr)
             return 1
-        frozen = relatos_mx.frozen_hash()
-        if frozen is not None and frozen != relatos_mx.split_hash():
-            print("El test congelado cambió (test.lock no coincide).", file=sys.stderr)
-            return 1
-        print("Relatos-MX al día" + (" y test congelado intacto." if frozen else "."))
+        intact: list[str] = []
+        for split in relatos_mx.LOCKS:
+            frozen = relatos_mx.frozen_hash(split)
+            if frozen is None:
+                continue
+            if frozen != relatos_mx.split_hash(items, split):
+                print(
+                    f"El test {split} congelado cambió ({split}.lock no coincide).", file=sys.stderr
+                )
+                return 1
+            intact.append(split)
+        print(
+            "Relatos-MX al día"
+            + (f"; tests congelados intactos: {', '.join(intact)}." if intact else ".")
+        )
         return 0
-    h = relatos_mx.freeze()
-    print(f"Test congelado: {h}")
+    h = relatos_mx.freeze(args.split)
+    print(f"Test {args.split} congelado: {h}")
     return 0
 
 

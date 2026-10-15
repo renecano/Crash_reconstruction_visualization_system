@@ -20,7 +20,7 @@ def main(argv: list[str] | None = None) -> int:
     sub.add_parser("e3-ciss", help="E3: ΔV desde el daño contra el EDR y WinSmash (NHTSA CISS)")
     sub.add_parser("f7-inversion", help="F7: inversión, consistencia y tiempos en las escenas")
     e1 = sub.add_parser("e1-extraction", help="E1: extracción del relato en Relatos-MX")
-    e1.add_argument("--split", choices=["dev", "test"], default="test")
+    e1.add_argument("--split", choices=["dev", "test", "ciss"], default="test")
     e1.add_argument(
         "--pipeline",
         choices=["ts", "py"],

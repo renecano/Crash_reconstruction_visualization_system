@@ -9,10 +9,15 @@ hechos anotados (`[valor, "cita literal"]`). El texto admite dos marcas:
   relato canónico usa la primera opción; la variante de un grupo cambia todas sus ranuras a la
   segunda. La extracción de velocidades y maniobras no debe cambiar entre ambas.
 
-Salida: `data/relatos-mx/build/{dev,test,contrafactuales}.jsonl` con el texto, la PII, los hechos y
-la EscenaSpec de referencia (construida y validada). El test se congela con `freeze`: su hash queda
-en `data/relatos-mx/test.lock` (sobre el contenido fuente, no sobre la spec construida) y no se
-vuelve a tocar (PLAN §5.2).
+Salida: `data/relatos-mx/build/{dev,test,ciss,contrafactuales}.jsonl` con el texto, la PII, los
+hechos y la EscenaSpec de referencia (construida y validada). Cada test se congela con `freeze`: su
+hash queda en `data/relatos-mx/<split>.lock` (sobre el contenido fuente, no sobre la spec
+construida) y no se vuelve a tocar (PLAN §5.2).
+
+La partición `ciss` (`fuente/ciss-*.toml`) es un segundo test cuya verdad viene de NHTSA: cada
+relato se escribió desde una ficha de `data/relatos-mx/ciss/fichas.jsonl` (`croquis-data ciss
+relatos`) y sus hechos, sin las citas, deben ser exactamente los de la ficha; quien escribe solo
+pone el texto y las citas.
 """
 
 from __future__ import annotations
@@ -34,7 +39,10 @@ ROOT = Path(__file__).resolve().parents[2]
 DATA = ROOT / "data" / "relatos-mx"
 SOURCE = DATA / "fuente"
 BUILD = DATA / "build"
-LOCK = DATA / "test.lock"
+LOCKS = {"test": DATA / "test.lock", "ciss": DATA / "ciss.lock"}
+LOCK = LOCKS["test"]
+FICHAS = DATA / "ciss" / "fichas.jsonl"
+SPLITS = ("dev", "test", "ciss")
 CATEGORIES = (
     "vv",
     "moto",
@@ -85,7 +93,7 @@ def render(markup: str, variant: str | None = None) -> Rendered:
 def load_source(path: Path) -> list[JsonObj]:
     data = tomllib.loads(path.read_text(encoding="utf-8"))
     items: list[JsonObj] = data.get("relato", [])
-    split = "test" if path.name.startswith("test") else "dev"
+    split = next((s for s in ("test", "ciss") if path.name.startswith(s)), "dev")
     for it in items:
         it["split"] = split
         it["archivo"] = path.name
@@ -113,6 +121,7 @@ def build_item(it: JsonObj) -> JsonObj:
         "hechos": it["hechos"],
         "spec": spec,
         "contrafactual": sorted({g for g, _, _ in _SLOT.findall(it["texto"])}),
+        **({"ciss": fichas()[it["id"]]["ciss"]} if it["split"] == "ciss" else {}),
     }
 
 
@@ -134,11 +143,102 @@ def counterfactuals(it: JsonObj) -> list[JsonObj]:
     return out
 
 
+def fichas() -> dict[str, JsonObj]:
+    """Fichas CISS por id (vacío si no se han escrito)."""
+    if not FICHAS.exists():
+        return {}
+    rows = [json.loads(x) for x in FICHAS.read_text(encoding="utf-8").splitlines() if x.strip()]
+    return {str(f["id"]): f for f in rows}
+
+
+_NO_CITE = {"narrador", "vehiculo"}  # campos que la anotación lleva sin cita
+
+
+def _value(path: str, v: Any, uncited: list[str]) -> Any:
+    if not isinstance(v, list) or len(v) not in (1, 2):  # pyright: ignore[reportUnknownArgumentType]
+        msg = f"{path}: se esperaba [valor, cita]"
+        raise ValueError(msg)
+    pair: list[Any] = v  # pyright: ignore[reportUnknownVariableType]
+    if len(pair) == 1 or not str(pair[1]).strip():
+        uncited.append(path)
+    return pair[0]
+
+
+def strip_citations(hechos: JsonObj) -> tuple[JsonObj, list[str]]:
+    """Hechos sin citas, en la forma de una ficha CISS, y los campos que no traen cita."""
+    uncited: list[str] = []
+    out: JsonObj = {}
+    for k, v in hechos.items():
+        if k in ("vehiculos", "personas"):
+            rows: list[JsonObj] = v
+            out[k] = [
+                {
+                    f: (x if f in _NO_CITE else _value(f"{k}[{i}].{f}", x, uncited))
+                    for f, x in row.items()
+                }
+                for i, row in enumerate(rows)
+            ]
+        elif k == "zonas":
+            zones: JsonObj = v
+            out[k] = {z: _value(f"zonas.{z}", x, uncited) for z, x in zones.items()}
+        elif k == "dispositivos":
+            devices: list[Any] = v
+            out[k] = [_value(f"dispositivos[{i}]", d, uncited) for i, d in enumerate(devices)]
+        else:
+            out[k] = _value(k, v, uncited)
+    return out, uncited
+
+
+def _diff(want: Any, have: Any, path: str = "") -> list[str]:
+    if isinstance(want, dict) and isinstance(have, dict):
+        w: JsonObj = want  # pyright: ignore[reportUnknownVariableType]
+        h: JsonObj = have  # pyright: ignore[reportUnknownVariableType]
+        return [
+            d for k in sorted(set(w) | set(h)) for d in _diff(w.get(k), h.get(k), f"{path}.{k}")
+        ]
+    if isinstance(want, list) and isinstance(have, list):
+        wl: list[Any] = want  # pyright: ignore[reportUnknownVariableType]
+        hl: list[Any] = have  # pyright: ignore[reportUnknownVariableType]
+        if len(wl) == len(hl):
+            return [
+                d
+                for i, (a, b) in enumerate(zip(wl, hl, strict=True))
+                for d in _diff(a, b, f"{path}[{i}]")
+            ]
+    return [] if want == have else [f"{path or '/'}: ficha {want!r}, relato {have!r}"]
+
+
+def ficha_problems(it: JsonObj, ficha: JsonObj | None) -> list[str]:
+    """Un relato CISS debe decir exactamente los hechos de su ficha, cada uno con su cita."""
+    rid = it.get("id", "?")
+    if ficha is None:
+        return [f"{rid}: no hay ficha CISS con ese id"]
+    out: list[str] = []
+    if it.get("tipo") != ficha["tipo"]:
+        out.append(f"{rid}: tipo {it.get('tipo')} distinto del de la ficha ({ficha['tipo']})")
+    if it.get("registro") != ficha["registro"]:
+        out.append(f"{rid}: registro distinto del de la ficha ({ficha['registro']})")
+    try:
+        plain, uncited = strip_citations(it["hechos"])
+    except ValueError as e:
+        return [*out, f"{rid}: {e}"]
+    if plain != ficha["hechos"]:
+        out.append(
+            f"{rid}: hechos distintos de la ficha: " + "; ".join(_diff(ficha["hechos"], plain))
+        )
+    out.extend(f"{rid}: {u} sin cita (en el test CISS todo hecho se cita)" for u in uncited)
+    return out
+
+
 def problems(items: list[JsonObj]) -> list[str]:
-    """Todo lo que impide usar el benchmark: ids repetidos, citas que no están, specs inválidas."""
+    """Todo lo que impide usar el benchmark: ids repetidos, citas que no están, specs inválidas
+    y, en el test CISS, hechos distintos de los de la ficha."""
     out: list[str] = []
     seen: set[str] = set()
+    by_id = fichas()
     for it in items:
+        if it.get("split") == "ciss":
+            out.extend(ficha_problems(it, by_id.get(str(it.get("id")))))
         rid = it.get("id", "?")
         if rid in seen:
             out.append(f"{rid}: id repetido")
@@ -171,6 +271,7 @@ def build_texts(items: list[JsonObj]) -> dict[str, str]:
     return {
         "dev.jsonl": _jsonl([b for b in built if b["split"] == "dev"]),
         "test.jsonl": _jsonl([b for b in built if b["split"] == "test"]),
+        "ciss.jsonl": _jsonl([b for b in built if b["split"] == "ciss"]),
         "contrafactuales.jsonl": _jsonl(cfs),
     }
 
@@ -207,20 +308,24 @@ def split_hash(items: list[JsonObj] | None = None, split: str = "test") -> str:
     return hashlib.sha256(text.encode("utf-8")).hexdigest()
 
 
-def freeze() -> str:
-    """Congela el test (una sola vez): escribe test.lock con el hash de su contenido fuente."""
-    if LOCK.exists():
-        msg = "El test ya está congelado; no se vuelve a congelar (PLAN §5.2)."
+def freeze(split: str = "test") -> str:
+    """Congela un test (una sola vez): escribe <split>.lock con el hash de su contenido fuente."""
+    lock = LOCKS[split]
+    if lock.exists():
+        msg = f"El test {split} ya está congelado; no se vuelve a congelar (PLAN §5.2)."
         raise RuntimeError(msg)
     items = load_all()
-    h = split_hash(items)
-    n = sum(1 for it in items if it["split"] == "test")
-    LOCK.write_text(
+    h = split_hash(items, split)
+    n = sum(1 for it in items if it["split"] == split)
+    if n == 0:
+        msg = f"La partición {split} está vacía."
+        raise RuntimeError(msg)
+    lock.write_text(
         json.dumps(
             {
                 "sha256": h,
                 "relatos": n,
-                "contenido": "id, tipo, registro, texto y hechos de fuente/test-*.toml "
+                "contenido": f"id, tipo, registro, texto y hechos de fuente/{split}-*.toml "
                 "(JSON canónico)",
             },
             indent=2,
@@ -233,10 +338,11 @@ def freeze() -> str:
     return h
 
 
-def frozen_hash() -> str | None:
-    if not LOCK.exists():
+def frozen_hash(split: str = "test") -> str | None:
+    lock = LOCKS[split]
+    if not lock.exists():
         return None
-    return str(json.loads(LOCK.read_text(encoding="utf-8"))["sha256"])
+    return str(json.loads(lock.read_text(encoding="utf-8"))["sha256"])
 
 
 def load_split(split: str) -> list[JsonObj]:
@@ -249,7 +355,7 @@ def load_split(split: str) -> list[JsonObj]:
 def stats(items: list[JsonObj]) -> JsonObj:
     by_cat: dict[str, dict[str, int]] = {}
     for it in items:
-        d = by_cat.setdefault(it["tipo"], {"dev": 0, "test": 0})
+        d = by_cat.setdefault(it["tipo"], dict.fromkeys(SPLITS, 0))
         d[it["split"]] += 1
     regs: dict[str, int] = {}
     for it in items:

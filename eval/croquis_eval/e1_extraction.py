@@ -310,7 +310,7 @@ def evaluate(split: str, pipeline: str = "ts") -> JsonObj:
         "pipeline": pipeline,
         "relatos": len(items),
         "contrafactuales": len(cfs),
-        "test_congelado": relatos_mx.frozen_hash(),
+        "test_congelado": relatos_mx.frozen_hash(split) if split in relatos_mx.LOCKS else None,
         "pii": {
             "datos_personales": pii_total,
             "filtrados": pii_leak,
@@ -323,12 +323,17 @@ def evaluate(split: str, pipeline: str = "ts") -> JsonObj:
 
 
 def main(split: str = "test", pipeline: str = "ts") -> str:
-    if split == "test" and relatos_mx.frozen_hash() is None:
-        msg = "El test no está congelado: congélalo antes de la primera evaluación (PLAN §5.2)."
-        raise RuntimeError(msg)
-    if split == "test" and relatos_mx.frozen_hash() != relatos_mx.split_hash():
-        msg = "build/test.jsonl no coincide con test.lock."
-        raise RuntimeError(msg)
+    if split in relatos_mx.LOCKS:
+        frozen = relatos_mx.frozen_hash(split)
+        if frozen is None:
+            msg = (
+                f"El test {split} no está congelado: congélalo antes de la primera evaluación "
+                "(PLAN §5.2)."
+            )
+            raise RuntimeError(msg)
+        if frozen != relatos_mx.split_hash(split=split):
+            msg = f"La fuente del test {split} no coincide con {split}.lock."
+            raise RuntimeError(msg)
     which = (
         "TS de producción (packages/extraction)." if pipeline == "ts" else "Python de referencia."
     )
