@@ -194,7 +194,9 @@ def main(csv_path: Path = CSV_PATH) -> str:
             "[0, 0.2]",
             "rigidez": "frontal: bootstrap de las pruebas de barrera de NHTSA de la clase (E2); "
             "lateral: bootstrap de las pruebas FMVSS 214 y NCAP lateral de la clase (E2 lateral, "
-            "ADR 0013); trasera: respaldo genérico con pendiente en [0.7, 1.4] (supuesto)",
+            "ADR 0013); trasera: bootstrap de las pruebas FMVSS 301 con barrera rígida de la "
+            "clase (ADR 0014); sin pruebas suficientes, respaldo genérico con pendiente en "
+            "[0.7, 1.4] (supuesto)",
             "masa": "peso vacío de CISS + 75 kg por ocupante (mínimo 1), ±5 %",
             "edr": "ΔV máximo resultante (longitudinal y lateral) del evento ligado por "
             "CDCEVENT; solo longitudinal en frontales y traseros sin lateral reportado",

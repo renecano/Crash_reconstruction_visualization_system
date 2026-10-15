@@ -136,10 +136,12 @@ def test_el_solver_usa_la_rigidez_medida() -> None:
         assert entry.origen == "nhtsa"
         assert entry.n_tests == zonas["frontal"]["n_tests"] >= e2.MIN_TESTS_PER_CLASS
         assert math.isclose(entry.stiffness.a, zonas["frontal"]["a_n_m"])
-    # Lateral desde las pruebas de barrera móvil (E2 lateral); trasera sin pruebas suficientes.
-    lateral = stiffness_for("sedan_mediano", "lateral")
-    assert lateral.origen == "nhtsa"
-    assert lateral.n_tests == doc["clases"]["sedan_mediano"]["lateral"]["n_tests"]
-    assert len(lateral.samples) == lateral.n_tests
-    assert stiffness_for("sedan_mediano", "trasera").origen == "supuesto"
+    # Lateral y trasera desde las pruebas de barrera móvil (E2 lateral y trasera).
+    for zona in ("lateral", "trasera"):
+        entry = stiffness_for("sedan_mediano", zona)
+        assert entry.origen == "nhtsa"
+        assert entry.n_tests == doc["clases"]["sedan_mediano"][zona]["n_tests"]
+        assert len(entry.samples) == entry.n_tests
+    # Una clase sin pruebas suficientes en la zona usa el respaldo.
+    assert stiffness_for("suv_grande", "trasera").origen == "supuesto"
     assert stiffness_for("motocicleta", "frontal").origen == "supuesto"

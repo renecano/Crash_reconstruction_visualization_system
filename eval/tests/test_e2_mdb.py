@@ -149,21 +149,33 @@ def test_carga_empareja_filtra_y_deriva(tmp_path: Path) -> None:
         # 7: valores centinela (no medidos).
         _barrier(7, "FLAT IMPACTOR", 1804, 48.0, 0, 180),
         _car(7, 180, 180, [9999] * 6, 99999),
+        # 8: trasera con barrera deformable: la energía de la cara es desconocida.
+        _barrier(8, "DEFORMABLE IMPACTOR", 1366, 80.0, 0, 180),
+        _car(8, 180, 180, rear, 1300),
+        # 9: trasera con barrera rígida de un modelo 1985: vale (no hay modernas completas).
+        _barrier(9, "FLAT IMPACTOR", 1804, 48.0, 0, 180),
+        _car(9, 180, 180, rear, 1700, model_year=1985),
+        # 10: costado de un modelo 1985: no (hay de sobra desde 1995).
+        _barrier(10, "DEFORMABLE IMPACTOR", 1366, 62.0, 27, 270),
+        _car(10, 270, 297, side, 3300, model_year=1985),
     ]
     path = tmp_path / "itv.csv"
     _write(path, rows)
     tests, counts = m.load_tests(path)
-    assert [t.test_no for t in tests] == [1, 3]
+    assert [t.test_no for t in tests] == [1, 3, 9]
     assert counts == {
-        "total": 7,
-        "usadas": 2,
+        "total": 10,
+        "usadas": 3,
+        "trasera_con_barrera_deformable": 1,
+        "modelo_anterior_al_minimo": 1,
         "valor_centinela_sin_medir": 1,
         "barrera_no_estandar": 1,
         "vehiculo_modificado": 1,
         "lateral_no_fmvss214": 1,
         "aplastamiento_implausible": 1,
     }
-    side_t, rear_t = tests
+    side_t, rear_t, rear_old = tests
+    assert (rear_old.zona, rear_old.model_year) == ("trasera", 1985)
     assert (side_t.zona, side_t.barrier, side_t.plano) == ("lateral", "deformable", "L")
     assert side_t.profile_m[0] == 0.0  # lámina abombada: sin aplastamiento
     assert side_t.offset_deg == pytest.approx(27.0)

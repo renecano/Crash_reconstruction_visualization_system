@@ -5,8 +5,11 @@ Datos: pruebas ``ITV`` de la Vehicle Crash Test Database de NHTSA
 
 - **Lateral:** FMVSS 214 y NCAP lateral. La barrera móvil deformable de NHTSA (≈ 1,368 kg, cara de
   panal de aluminio) avanza con las ruedas oblicuas a 27° contra el costado detenido.
-- **Trasera:** FMVSS 301. Barrera móvil rígida plana (≈ 1,800 kg) contra toda la parte trasera, o
-  la deformable de NHTSA sin avance oblicuo.
+- **Trasera:** FMVSS 301 con la barrera móvil rígida plana (≈ 1,800 kg) contra toda la parte
+  trasera, de modelos 1975 en adelante. Las modernas (desde 2007, barrera deformable con 70 % de
+  traslape) vienen en la API sin masa ni perfil del vehículo, y en ellas la cara de la barrera se
+  lleva una parte grande y desconocida de la energía (en los reportes de KARCO la cara llega cerca
+  del fondo): no se usan (ADR 0014).
 
 Método, la inversa exacta de cómo usa la rigidez el solver (``croquis_solver.inversion``):
 
@@ -75,6 +78,8 @@ NHTSA_MDB_ENERGY_FRACTION = 0.05
 SIDE_D0 = 63.3  # √N, NHTSA para costados (Prasad 1991; Sharma et al. 2007)
 REAR_ONSET_KMH = 16.0  # umbral de daño trasero de Prasad (1990), contra la barrera de la prueba
 MIN_MODEL_YEAR = 1995
+# Trasera: las únicas pruebas completas en la API son las de barrera rígida, de modelos 1975–2004.
+REAR_MIN_MODEL_YEAR = 1975
 MIN_TESTS_PER_CLASS = 5
 D1_MAX = 1.0e5  # √N/m; muy por encima de cualquier vehículo (E2: d1 frontal ~ 700–1,500)
 # Valores centinela de la base de NHTSA (dato no medido) y largo de daño mínimo plausible.
@@ -265,12 +270,15 @@ def load_tests(csv_path: Path = CSV_PATH) -> tuple[list[MdbTest], dict[str, int]
         if zona == "trasera" and crab != 0.0:
             drop("trasera_oblicua")
             continue
+        if zona == "trasera" and kind != "rigida":
+            drop("trasera_con_barrera_deformable")
+            continue
         if (veh.get("vehicle_modification") or "").upper() not in {"", "PRODUCTION VEHICLE"}:
             drop("vehiculo_modificado")
             continue
         year = _f(veh, "model_year")
-        if year is None or year < MIN_MODEL_YEAR:
-            drop("modelo_anterior_a_1995")
+        if year is None or year < (MIN_MODEL_YEAR if zona == "lateral" else REAR_MIN_MODEL_YEAR):
+            drop("modelo_anterior_al_minimo")
             continue
         speed = _f(bar, "speed_kmh") or _f(veh, "closing_speed_kmh")
         mass, bmass = _f(veh, "test_weight_kg"), _f(bar, "test_weight_kg") or 0.0
@@ -464,9 +472,8 @@ ZONE_NOTES = {
         "d0 = 63.3 √N de NHTSA y 13.6 % de la energía en la barrera (Johnson 2011). E2 lateral."
     ),
     "trasera": (
-        "Mediana de pruebas FMVSS 301 (barrera rígida plana o la deformable de NHTSA); umbral de "
-        "daño de Prasad (16 km/h contra la barrera). La barrera deformable se lleva el 13.6 % "
-        "medido en costados: en la trasera es un supuesto. E2 trasera."
+        "Mediana de pruebas FMVSS 301 con barrera rígida plana (modelos 1975–2004: las modernas no "
+        "traen perfil en la API); umbral de daño de Prasad (16 km/h contra la barrera). E2 trasera."
     ),
 }
 
@@ -499,6 +506,7 @@ def write_stiffness_zones(zones: dict[str, Any], path: Path = STIFFNESS_PATH) ->
             "umbral_trasero_kmh": REAR_ONSET_KMH,
             "fraccion_barrera_deformable": MDB_ENERGY_FRACTION,
             "anio_minimo": MIN_MODEL_YEAR,
+            "anio_minimo_trasera": REAR_MIN_MODEL_YEAR,
         },
         "clases": {
             k: {z: v[z] for z in ("frontal", "lateral", "trasera") if z in v}
@@ -532,12 +540,12 @@ def main(
                 "impacto a 90° o 270°"
             ),
             "trasera": (
-                "impacto a 180° sin avance oblicuo: barrera rígida plana (1,750–1,850 kg) o la "
-                "deformable de NHTSA"
+                "impacto a 180° sin avance oblicuo con la barrera rígida plana (1,750–1,850 kg); "
+                f"modelo {REAR_MIN_MODEL_YEAR} o posterior"
             ),
             "vehiculo": (
-                "de producción, modelo 1995 o posterior, DPD1–DPD6 medidos (sin centinelas) y "
-                f"largo de daño ≥ {MIN_DAMAGE_LENGTH_M} m"
+                f"de producción, modelo {MIN_MODEL_YEAR} o posterior en costados, DPD1–DPD6 "
+                f"medidos (sin centinelas) y largo de daño ≥ {MIN_DAMAGE_LENGTH_M} m"
             ),
         },
         "conteos": counts,
@@ -548,9 +556,7 @@ def main(
             "fraccion_barrera_deformable": MDB_ENERGY_FRACTION,
             "fraccion_barrera_fuente": (
                 "Johnson (2011): promedio de 70 pruebas laterales de NHTSA con el aplastamiento de "
-                "la cara medido (2.49–49.1 %); NHTSA supone 5 % (sensibilidad por clase). En "
-                "las traseras con barrera deformable se usa la misma fracción: no hay medición "
-                "(supuesto)"
+                "la cara medido (2.49–49.1 %); NHTSA supone 5 % (sensibilidad por clase)"
             ),
             "evaluacion": (
                 "dejar-uno-fuera por clase (≥ 5 pruebas): ΔV del vehículo con el cálculo del "

@@ -32,6 +32,8 @@
 
    Los datos están en los reportes PDF de cada prueba (peso de prueba, masa de la barrera, velocidad medida y aplastamiento en tres puntos). Leerlos es la siguiente tarea, en su propia rama (`docs/PROGRESS.md`).
 
+   **Actualizado (ADR 0014):** la trasera sale de las pruebas FMVSS 301 con barrera rígida de modelos 1975–2004.
+
 ## Resultados (medidos)
 
 - **E2 lateral** (`eval/results/e2_mdb.json`), dejar uno fuera por clase: el ΔV de cada prueba con la mediana de las demás tiene un error absoluto medio de **6.19 km/h**, contra 14.95 km/h con el respaldo genérico.
