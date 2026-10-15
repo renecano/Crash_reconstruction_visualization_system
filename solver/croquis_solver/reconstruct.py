@@ -26,6 +26,7 @@ from croquis_solver import fixed_object, friction, occupant, pedestrian, rollove
 from croquis_solver.contact import ContactSolution, Locus, contact_offset, resolve_contact
 from croquis_solver.crash3 import TRIANGULAR_SHAPES, Stiffness, crush_energy, profile_for_energy
 from croquis_solver.impact import ImpactResult, planar_impact
+from croquis_solver.inertia import body_for
 from croquis_solver.models import Body2D, State2D, Trajectory, Vec, rot, wrap_angle
 from croquis_solver.person_motion import (
     PersonTrack,
@@ -439,7 +440,7 @@ def _vehicle_model(v: JsonObj, clases: dict[str, Any], flag: _Flag) -> VehicleMo
         id=v["id"],
         rol=v["rol"],
         clase=clase,
-        body=Body2D.from_dimensions(mass, length, width),
+        body=body_for(clase, mass, length, width),
         height=height,
         wheelbase=wheelbase,
         cg_from_front=0.45 * wheelbase,

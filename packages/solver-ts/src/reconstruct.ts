@@ -15,6 +15,7 @@ import { profileForEnergy, TRIANGULAR_SHAPES } from "./crash3";
 import { narrowObject } from "./fixed-object";
 import { absPeakFactor, pedestrianFriction, tireFriction } from "./friction";
 import { planarImpact, pdofHours, type ImpactResult } from "./impact";
+import { bodyFor } from "./inertia";
 import {
   Body2D,
   rot,
@@ -402,7 +403,7 @@ function vehicleModel(v: Json, clases: Record<string, Json>, flag: Flag): Vehicl
     id: String(v.id),
     rol: String(v.rol),
     clase,
-    body: Body2D.fromDimensions(mass, length, width),
+    body: bodyFor(clase, mass, length, width),
     height,
     wheelbase,
     cgFromFront: 0.45 * wheelbase,

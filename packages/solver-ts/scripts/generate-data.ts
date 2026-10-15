@@ -9,7 +9,7 @@ import { fileURLToPath } from "node:url";
 
 const root = join(dirname(fileURLToPath(import.meta.url)), "..");
 const source = join(root, "..", "..", "solver", "croquis_solver", "data");
-const files = ["friction.json", "stiffness_classes.json"];
+const files = ["friction.json", "stiffness_classes.json", "yaw_inertia.json"];
 const check = process.argv.includes("--check");
 let stale = false;
 for (const f of files) {

@@ -4,6 +4,7 @@ export * from "./pyrandom";
 export * from "./models";
 export * from "./friction";
 export * from "./crash3";
+export * from "./inertia";
 export * from "./stiffness";
 export * from "./impact";
 export * from "./fixed-object";

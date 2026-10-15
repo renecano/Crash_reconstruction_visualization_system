@@ -1,0 +1,37 @@
+{
+  "_generado_por": "uv run croquis-eval inercia-guinada (eval/croquis_eval/inercia_guinada.py)",
+  "_fuente": "NHTSA VRTC, Light Vehicle Inertial Parameter Database (Heydinger et al., SAE 1999-01-1336) vía data/processed/nhtsa/inercia.csv; ver data/SOURCES.md",
+  "_nota": "Radio de giro de guiñada k = c·L por grupo (mediana); I = m·(c·L)². Las clases sin grupo usan la placa uniforme del solver (supuesto).",
+  "grupos": {
+    "auto": {
+      "c": 0.2885,
+      "desviacion": 0.0102,
+      "n": 78
+    },
+    "suv": {
+      "c": 0.31,
+      "desviacion": 0.0111,
+      "n": 28
+    },
+    "pickup": {
+      "c": 0.2867,
+      "desviacion": 0.0096,
+      "n": 35
+    },
+    "van": {
+      "c": 0.3183,
+      "desviacion": 0.0108,
+      "n": 23
+    }
+  },
+  "clases": {
+    "hatchback": "auto",
+    "microbus_combi": "van",
+    "pickup": "pickup",
+    "sedan_compacto": "auto",
+    "sedan_mediano": "auto",
+    "suv_compacta": "suv",
+    "suv_grande": "suv",
+    "van": "van"
+  }
+}
