@@ -61,8 +61,8 @@ def without_identifiability(name: str) -> JsonObj:
     rng = random.Random(seed)
     values: dict[str, list[float]] = {}
     for _ in range(SAMPLES):
-        s, e = perturbed(spec, ev, rng)
-        f = fit_evidence(s, e)
+        pert = perturbed(spec, ev, rng)
+        f = fit_evidence(pert.spec, pert.evidence, downed_mu=pert.downed_mu)
         for k, v in f.values.items():
             values.setdefault(k, []).append(v)
     return {

@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://croquis.local/schema/resultado/1.5.0",
+  "$id": "https://croquis.local/schema/resultado/1.6.0",
   "title": "Resultado",
   "description": "Reconstrucción producida por el solver a partir de una EscenaSpec: trayectorias, impulsos, daños, personas (proyección y ocupantes), visibilidad, objetos del entorno, eventos, banderas, parámetros con su fuente incertidumbre por Monte Carlo (percentiles con semilla), inversión desde la evidencia y banderas de consistencia. Unidades SI; tiempo con t = 0 en el impacto principal; rumbos en radianes antihorario desde +X (salvo los campos que terminan en _deg).",
   "type": "object",
@@ -22,7 +22,7 @@
   ],
   "properties": {
     "version_resultado": {
-      "const": "1.5.0"
+      "const": "1.6.0"
     },
     "escena_id": {
       "$ref": "#/$defs/Id"
@@ -680,6 +680,9 @@
         "factor_proyeccion_jinete": {
           "$ref": "#/$defs/Parametro"
         },
+        "friccion_moto_caida": {
+          "$ref": "#/$defs/Parametro"
+        },
         "altura_cg_volcadura": {
           "$ref": "#/$defs/Parametro"
         },
@@ -1042,7 +1045,7 @@
           "type": "string",
           "minLength": 1,
           "maxLength": 120,
-          "description": "Ruta del campo en la EscenaSpec (p. ej. vehiculos.0.velocidad_previa)."
+          "description": "Ruta del campo en la EscenaSpec (p. ej. vehiculos.0.velocidad_previa) o, para un parámetro del solver que no está en la escena, parametros.<nombre> (desde 1.6.0)."
         },
         "distribucion": {
           "type": "string",

@@ -55,3 +55,16 @@ def test_json_declara_fuentes() -> None:
     raw = json.loads(friction.DATA_PATH.read_text(encoding="utf-8"))
     assert {"fricke", "mumford", "searle"} <= set(raw["fuentes"])
     assert set(friction.sources()) == set(raw["fuentes"])
+
+
+def test_arrastre_de_la_moto_caida_con_fuente() -> None:
+    """Peck et al. 2014: medido en asfalto; en otra superficie es un supuesto con el mismo rango."""
+    asfalto = friction.downed_motorcycle_friction("asfalto")
+    assert (asfalto.low, asfalto.nominal, asfalto.high) == (0.36, 0.45, 0.56)
+    assert asfalto.tipo == "primaria"
+    assert asfalto.fuente in friction.sources()
+    for sup in ["concreto", "adoquin", "empedrado", "terraceria", "_nota"]:
+        otro = friction.downed_motorcycle_friction(sup)
+        assert otro.tipo == "supuesto"
+        assert (otro.low, otro.high) == (asfalto.low, asfalto.high)
+    assert {"motocicleta", "scooter"} == friction.DOWNED_SLIDE_CLASSES

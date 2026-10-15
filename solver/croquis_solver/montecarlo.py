@@ -36,6 +36,8 @@ SPEED_SPREAD_DEFAULT = 0.30
 MASS_USER_SPREAD = 0.03
 BRAKE_SPREAD = {"usuario": 0.10, "relato": 0.20}
 BRAKE_SPREAD_DEFAULT = 0.40
+# Parámetro del solver, no de la escena: el arrastre de una motocicleta caída (ADR 0017).
+DOWNED_RUTA = "parametros.friccion_moto_caida"
 
 
 @dataclass(frozen=True)
@@ -154,6 +156,11 @@ def ranges(spec: JsonObj) -> list[Sampled]:
             lugar["superficie"]["valor"], lugar["estado_superficie"]["valor"]
         )
         out.append(Sampled("lugar.friccion", mu.low, mu.high, f"tabla de fricción ({mu.fuente})"))
+    if any(str(v["clase"]["valor"]) in friction.DOWNED_SLIDE_CLASSES for v in spec["vehiculos"]):
+        md = friction.downed_motorcycle_friction(lugar["superficie"]["valor"])
+        out.append(
+            Sampled(DOWNED_RUTA, md.low, md.high, f"arrastre de la moto caída ({md.fuente})")
+        )
     return out
 
 
@@ -186,10 +193,15 @@ def monte_carlo(
     valid = 0
     for _ in range(samples):
         s = copy.deepcopy(spec)
+        downed: float | None = None
         for c in campos:
-            _set(s, c.ruta, rng.uniform(c.minimo, c.maximo))
+            value = rng.uniform(c.minimo, c.maximo)
+            if c.ruta == DOWNED_RUTA:
+                downed = value
+            else:
+                _set(s, c.ruta, value)
         try:
-            r = reconstruct(s, dt=dt)
+            r = reconstruct(s, dt=dt, downed_mu=downed)
         except ValueError, KeyError, ArithmeticError:
             continue
         valid += 1

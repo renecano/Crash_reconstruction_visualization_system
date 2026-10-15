@@ -447,11 +447,13 @@ class Fit:
         return {k.split(":", 1)[1]: v for k, v in self.values.items() if k.startswith("rumbo:")}
 
 
-def _residuals(spec: JsonObj, ev: Evidence, dt: float) -> dict[str, float] | None:
+def _residuals(
+    spec: JsonObj, ev: Evidence, dt: float, downed_mu: float | None = None
+) -> dict[str, float] | None:
     from croquis_solver.reconstruct import reconstruct
 
     try:
-        r = reconstruct(spec, dt=dt)
+        r = reconstruct(spec, dt=dt, downed_mu=downed_mu)
     except ValueError, KeyError, ArithmeticError:
         return None
     out: dict[str, float] = {}
@@ -492,9 +494,16 @@ class _Problem:
     luego el jacobiano en el mismo punto)."""
 
     def __init__(
-        self, spec: JsonObj, ev: Evidence, params: list[Param], fixed: dict[str, float], dt: float
+        self,
+        spec: JsonObj,
+        ev: Evidence,
+        params: list[Param],
+        fixed: dict[str, float],
+        dt: float,
+        downed_mu: float | None = None,
     ) -> None:
         self.spec, self.ev, self.params, self.fixed, self.dt = spec, ev, params, fixed, dt
+        self.downed_mu = downed_mu
         self.names: list[str] = []
         self._cache: dict[tuple[float, ...], np.ndarray] = {}
 
@@ -504,7 +513,7 @@ class _Problem:
         return out
 
     def raw(self, x: Sequence[float]) -> dict[str, float] | None:
-        return _residuals(apply_values(self.spec, self.values(x)), self.ev, self.dt)
+        return _residuals(apply_values(self.spec, self.values(x)), self.ev, self.dt, self.downed_mu)
 
     def __call__(self, x: np.ndarray) -> np.ndarray:
         key = tuple(round(float(v), 9) for v in x)
@@ -543,6 +552,7 @@ def fit_evidence(
     max_nfev: int = 40,
     start: dict[str, float] | None = None,
     free: set[str] | None = None,
+    downed_mu: float | None = None,
 ) -> Fit:
     """Mejor ajuste (mínimos cuadrados robustos) de velocidades y rumbos a la evidencia.
 
@@ -553,10 +563,10 @@ def fit_evidence(
     x_start = {p.name: p.start for p in params} | (start or {})
     free_params = [p for p in params if free is None or p.name in free]
     fixed = {n: v for n, v in x_start.items() if all(p.name != n for p in free_params)}
-    prob = _Problem(base, ev, free_params, fixed, dt)
+    prob = _Problem(base, ev, free_params, fixed, dt, downed_mu)
     x0 = [min(max(x_start[p.name], p.lo), p.hi) for p in free_params]
     if not free_params or ev.empty():
-        res0 = _residuals(apply_values(base, x_start), ev, dt) or {}
+        res0 = _residuals(apply_values(base, x_start), ev, dt, downed_mu) or {}
         return Fit(x_start, res0, 0.0, True)
     first = prob(np.array(x0))
     if not prob.names:
@@ -656,7 +666,16 @@ def _chord_refit(prob: _Problem, x_best: list[float], j: np.ndarray) -> Fit | No
     )
 
 
-def perturbed(spec: JsonObj, ev: Evidence, rng: random.Random) -> tuple[JsonObj, Evidence]:
+@dataclass(frozen=True)
+class Perturbed:
+    """Una reestimación: la escena y la evidencia sorteadas, y el arrastre de la moto caída."""
+
+    spec: JsonObj
+    evidence: Evidence
+    downed_mu: float | None
+
+
+def perturbed(spec: JsonObj, ev: Evidence, rng: random.Random) -> Perturbed:
     s = copy.deepcopy(spec)
     lugar = s["lugar"]
     mu = friction.tire_friction(lugar["superficie"]["valor"], lugar["estado_superficie"]["valor"])
@@ -686,7 +705,12 @@ def perturbed(spec: JsonObj, ev: Evidence, rng: random.Random) -> tuple[JsonObj,
     slide = {k: max(0.5, d + rng.gauss(0, SIGMA_SLIDE_M)) for k, d in ev.slide.items()}
     # Las marcas de frenado se miden con cinta: se toman tal cual (su incertidumbre entra por la
     # fricción).
-    return s, Evidence(rest, throw, damage, heading, dict(ev.skid), slide)
+    e = Evidence(rest, throw, damage, heading, dict(ev.skid), slide)
+    downed_mu: float | None = None
+    if any(str(v["clase"]["valor"]) in friction.DOWNED_SLIDE_CLASSES for v in s["vehiculos"]):
+        md = friction.downed_motorcycle_friction(lugar["superficie"]["valor"])
+        downed_mu = rng.uniform(md.low, md.high)  # al final: no mueve los sorteos de lo demás
+    return Perturbed(s, e, downed_mu)
 
 
 def _no_fits() -> list[Fit]:
@@ -795,15 +819,16 @@ def invert(
         else np.zeros((0, 0))
     )
     for _ in range(samples if free_params else 0):
-        s, e = perturbed(spec, ev, rng)
-        prob = _Problem(with_marks(s, e), e, free_params, fixed, dt)
+        pert = perturbed(spec, ev, rng)
+        s, e, dmu = pert.spec, pert.evidence, pert.downed_mu
+        prob = _Problem(with_marks(s, e), e, free_params, fixed, dt, dmu)
         prob.names.extend(sorted(best.residuals))
         f = _chord_refit(prob, x_best, j_best) or fit_evidence(
-            s, e, dt=dt, start=best.values, free=free, max_nfev=FALLBACK_NFEV
+            s, e, dt=dt, start=best.values, free=free, max_nfev=FALLBACK_NFEV, downed_mu=dmu
         )
         fits.append(f)
         try:
-            r = reconstruct(apply_values(with_marks(s, e), f.values), dt=dt)
+            r = reconstruct(apply_values(with_marks(s, e), f.values), dt=dt, downed_mu=dmu)
         except ValueError, KeyError, ArithmeticError:
             continue
         for v in r.vehiculos:

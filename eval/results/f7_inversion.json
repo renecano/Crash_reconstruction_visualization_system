@@ -1,7 +1,7 @@
 {
   "name": "f7_inversion",
-  "generated_at": "2026-10-15T22:23:29+00:00",
-  "git_commit": "0cade05",
+  "generated_at": "2026-10-15T22:52:21+00:00",
+  "git_commit": "c2c49fc",
   "seed": null,
   "descripcion": "F7 en las 10 escenas canónicas: parámetros que fija la evidencia en la inversión, banderas de consistencia y tiempo de Monte Carlo, inversión y consistencia con el solver de referencia. Incluye el intervalo que daría la inversión sin la regla de identificabilidad en las escenas contra objeto fijo.",
   "maquina": {
@@ -16,8 +16,8 @@
       "escena": "alcance",
       "semilla": 101,
       "segundos": {
-        "monte_carlo": 1.11,
-        "inversion": 0.03,
+        "monte_carlo": 1.38,
+        "inversion": 0.02,
         "consistencia_sin_inversion": 0.0
       },
       "evidencia": [
@@ -39,8 +39,8 @@
       "escena": "frontal_curva",
       "semilla": 103,
       "segundos": {
-        "monte_carlo": 11.35,
-        "inversion": 0.23,
+        "monte_carlo": 11.47,
+        "inversion": 0.2,
         "consistencia_sin_inversion": 0.0
       },
       "evidencia": [
@@ -70,9 +70,9 @@
       "escena": "glorieta",
       "semilla": 110,
       "segundos": {
-        "monte_carlo": 4.17,
-        "inversion": 39.8,
-        "consistencia_sin_inversion": 4.66
+        "monte_carlo": 4.72,
+        "inversion": 43.82,
+        "consistencia_sin_inversion": 5.36
       },
       "evidencia": [
         "reposo:veh-a",
@@ -145,9 +145,9 @@
       "escena": "lateral_interseccion",
       "semilla": 102,
       "segundos": {
-        "monte_carlo": 1.75,
-        "inversion": 5.23,
-        "consistencia_sin_inversion": 2.97
+        "monte_carlo": 1.91,
+        "inversion": 6.08,
+        "consistencia_sin_inversion": 3.34
       },
       "evidencia": [
         "reposo:veh-a",
@@ -231,9 +231,9 @@
       "escena": "motociclista",
       "semilla": 105,
       "segundos": {
-        "monte_carlo": 1.64,
-        "inversion": 3.52,
-        "consistencia_sin_inversion": 3.84
+        "monte_carlo": 1.76,
+        "inversion": 4.32,
+        "consistencia_sin_inversion": 4.87
       },
       "evidencia": [
         "reposo:veh-b",
@@ -249,7 +249,7 @@
           "inicial": 20.0,
           "inicial_declarado": true,
           "identificable": false,
-          "sigma_local": 66.79
+          "sigma_local": 97.9
         },
         {
           "parametro": "velocidad_previa",
@@ -260,10 +260,10 @@
           "identificable": true,
           "sigma_local": 3.58,
           "estimacion": {
-            "mejor": 35.49,
-            "p10": 32.07,
-            "p50": 37.51,
-            "p90": 38.12,
+            "mejor": 35.55,
+            "p10": 31.53,
+            "p50": 34.95,
+            "p90": 39.75,
             "muestras": 12
           },
           "en_limite": false
@@ -275,12 +275,12 @@
           "inicial": 180.0,
           "inicial_declarado": false,
           "identificable": true,
-          "sigma_local": 8.87,
+          "sigma_local": 8.7,
           "estimacion": {
-            "mejor": 188.23,
-            "p10": 175.14,
-            "p50": 188.43,
-            "p90": 196.19,
+            "mejor": 190.68,
+            "p10": 177.52,
+            "p50": 192.59,
+            "p90": 199.9,
             "muestras": 12
           },
           "en_limite": false
@@ -294,10 +294,10 @@
           "identificable": true,
           "sigma_local": 2.28,
           "estimacion": {
-            "mejor": -0.85,
-            "p10": -2.92,
-            "p50": -1.06,
-            "p90": 2.24,
+            "mejor": -0.49,
+            "p10": -3.45,
+            "p50": -1.08,
+            "p90": 1.47,
             "muestras": 12
           },
           "en_limite": false
@@ -306,12 +306,12 @@
       "banderas": [
         {
           "codigo": "velocidad_vs_evidencia",
-          "mensaje": "Por dónde quedó, hacia dónde quedó orientado y la distancia a la que quedó la persona, el vehículo B iría a unos 32–38 km/h antes del choque, y la velocidad indicada va de 40 a 60 km/h. ¿Puedes confirmar la velocidad, o alguno de esos datos?",
+          "mensaje": "Por dónde quedó, hacia dónde quedó orientado y la distancia a la que quedó la persona, el vehículo B iría a unos 32–40 km/h antes del choque, y la velocidad indicada va de 40 a 60 km/h. ¿Puedes confirmar la velocidad, o alguno de esos datos?",
           "datos": {
             "vehiculo": "veh-b",
             "evidencia_kmh": [
-              32.07,
-              38.12
+              31.53,
+              39.75
             ],
             "declarada_kmh": [
               40.0,
@@ -331,7 +331,7 @@
       "escena": "nocturno_lluvia",
       "semilla": 109,
       "segundos": {
-        "monte_carlo": 2.56,
+        "monte_carlo": 2.86,
         "inversion": 0.04,
         "consistencia_sin_inversion": 0.0
       },
@@ -360,9 +360,9 @@
       "escena": "objeto_fijo_arbol",
       "semilla": 106,
       "segundos": {
-        "monte_carlo": 2.39,
-        "inversion": 2.38,
-        "consistencia_sin_inversion": 0.64
+        "monte_carlo": 2.72,
+        "inversion": 2.79,
+        "consistencia_sin_inversion": 0.71
       },
       "evidencia": [
         "reposo:veh-a",
@@ -394,8 +394,8 @@
       "escena": "peaton_cruce",
       "semilla": 104,
       "segundos": {
-        "monte_carlo": 0.71,
-        "inversion": 0.96,
+        "monte_carlo": 0.73,
+        "inversion": 1.09,
         "consistencia_sin_inversion": 0.0
       },
       "evidencia": [
@@ -447,9 +447,9 @@
       "escena": "poste",
       "semilla": 107,
       "segundos": {
-        "monte_carlo": 1.52,
-        "inversion": 0.76,
-        "consistencia_sin_inversion": 0.82
+        "monte_carlo": 1.65,
+        "inversion": 0.82,
+        "consistencia_sin_inversion": 0.91
       },
       "evidencia": [
         "reposo:veh-a",
@@ -481,9 +481,9 @@
       "escena": "volcadura",
       "semilla": 108,
       "segundos": {
-        "monte_carlo": 2.29,
-        "inversion": 6.67,
-        "consistencia_sin_inversion": 3.31
+        "monte_carlo": 2.51,
+        "inversion": 7.27,
+        "consistencia_sin_inversion": 3.64
       },
       "evidencia": [
         "reposo:veh-a",
@@ -558,9 +558,9 @@
     "velocidad_vs_evidencia": 2
   },
   "segundos_max": {
-    "monte_carlo": 11.35,
-    "inversion": 39.8,
-    "consistencia_sin_inversion": 4.66
+    "monte_carlo": 11.47,
+    "inversion": 43.82,
+    "consistencia_sin_inversion": 5.36
   },
   "sin_regla_de_identificabilidad": [
     {
