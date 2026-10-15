@@ -12,6 +12,10 @@ import numpy as np
 
 DATA_PATH = Path(__file__).resolve().parent / "data" / "friction.json"
 
+# Después del impacto caen y se deslizan de lado (ADR 0017). La bicicleta sigue con el modelo de
+# llantas: no hay medición de su arrastre caída.
+DOWNED_SLIDE_CLASSES = frozenset({"motocicleta", "scooter"})
+
 
 @dataclass(frozen=True)
 class RangedValue:
@@ -58,6 +62,14 @@ def pedestrian_friction(superficie: str) -> RangedValue:
     cuerpo: dict[str, Any] = _table()["cuerpo_peaton"]
     key = superficie if superficie in cuerpo else "otro"
     return _ranged(cuerpo[key])
+
+
+def downed_motorcycle_friction(superficie: str) -> RangedValue:
+    """Factor de arrastre de una motocicleta o scooter caído que se desliza de lado."""
+    moto: dict[str, Any] = _table()["moto_caida"]
+    return _ranged(
+        moto[superficie] if superficie in moto and superficie != "_nota" else moto["otro"]
+    )
 
 
 def abs_peak_factor() -> RangedValue:
