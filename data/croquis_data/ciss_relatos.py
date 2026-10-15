@@ -115,6 +115,10 @@ SURFTYPE: CodeMap = {
 ALIGNMENT: dict[int, str] = {1: "Straight", 2: "Curve Right", 3: "Curve Left"}
 RELJCT2_INTERSECTION = (2, "Intersection")
 RELJCT2_NON_JUNCTION = (1, "Non-Junction")
+# 'Intersection-Related': en la entrada o salida de un cruce, por el tránsito que lo cruza (manual,
+# RELJCT2). El lugar es ese cruce, pero el choque no fue dentro: solo se usa cuando un dispositivo
+# del cruce (semáforo, alto, ceda el paso) ya lo deja ver en el relato.
+RELJCT2_RELATED = (3, "Intersection-Related")
 TYP_INT: CodeMap = {
     2: ("Four-Way Intersection", "interseccion_x"),
     3: ("T-Intersection", "interseccion_t"),
@@ -271,6 +275,8 @@ GROUP_OF = {
     "motocicleta": "motocicleta",
     "scooter": "scooter",
 }
+# Clases cuyo tamaño decide el largo (corte de E2 y E3), no la carrocería.
+SIZED = ("sedan_compacto", "sedan_mediano", "suv_compacta", "suv_grande")
 EDR_SPEED = (1010, "Vehicle Speed (kmph)")
 PVALUE_INVALID = {99996.0, 99997.0}  # PVALUE24F: dato no válido, no reportado
 DRIVER_ROLE = 1  # OCC.ROLE: conductor
@@ -312,7 +318,13 @@ def label_problems(fmt: dict[str, dict[str, str]]) -> list[str]:
     out += _expect(fmt, "SURTYPE24F", lab(SURFTYPE))
     out += _expect(fmt, "ALIGNMNT24F", ALIGNMENT)
     out += _expect(
-        fmt, "RELJCT224F", {"02": RELJCT2_INTERSECTION[1], "01": RELJCT2_NON_JUNCTION[1]}
+        fmt,
+        "RELJCT224F",
+        {
+            "02": RELJCT2_INTERSECTION[1],
+            "01": RELJCT2_NON_JUNCTION[1],
+            "03": RELJCT2_RELATED[1],
+        },
     )
     out += _expect(fmt, "TYP_INT24F", lab(TYP_INT))
     out += _expect(fmt, "TRAFCONT24F", lab(TRAFDEV))
@@ -464,8 +476,14 @@ def story_class(
         return None, "no", why
     v = y.vpic.get((cid, vehno), {})
     table = models.get(_key(v.get("MODEL", ""))) if v.get("MODEL") else None
-    if table is None or table == clase:
-        return clase, ("modelo" if v.get("MODEL") else "clase"), ""
+    if table == clase:
+        return clase, "modelo", ""
+    if table is None:
+        if not v.get("MODEL"):
+            return clase, "clase", ""
+        # Fuera de la tabla, el tamaño (compacto o mediano, compacta o grande) sale del largo, y
+        # el nombre del modelo no lo deja ver: el relato lo dice ("mi sedán mediano Cobalt").
+        return clase, ("modelo_y_clase" if clase in SIZED else "modelo"), ""
     if clase == "hatchback" and table in ("sedan_compacto", "sedan_mediano"):
         return clase, "modelo_y_carroceria", ""
     return None, "no", "clase de NHTSA distinta de la de modelos.json"
@@ -559,6 +577,12 @@ def _env(g: dict[str, str], omitted: Counter[str]) -> tuple[JsonObj, str | None]
     if dev in TRAFDEV:
         out["dispositivos"] = [TRAFDEV[dev][1]]
     return out, None
+
+
+def related_junction(g: dict[str, str]) -> str | None:
+    """Tipo de cruce de un choque 'Intersection-Related' (para acoplar con su dispositivo)."""
+    rel, ti = _int(g.get("RELJCT2")), _int(g.get("TYP_INT"))
+    return TYP_INT[ti][1] if rel == RELJCT2_RELATED[0] and ti in TYP_INT else None
 
 
 def _vehicle_facts(
@@ -691,12 +715,15 @@ def translate(
             "sexo": SEX.get(1 if sex == 1 else 2 if sex in (2, 3, 4, 5, 6) else 0),
         }
     hechos: JsonObj = {**env, **event, "vehiculos": vehicles, "personas": persons}
+    near = related_junction(g)
+    if near is not None:
+        ctx_extra["cruce_relacionado"] = near
     if zones:
         hechos["zonas"] = zones
     return {"hechos": hechos, "contexto": {"vehiculos": ctx_vehicles, **ctx_extra}}, ""
 
 
-def _mention(hechos: JsonObj, rng: random.Random) -> JsonObj:
+def _mention(hechos: JsonObj, rng: random.Random, near: str | None = None) -> JsonObj:
     """Quita, con la semilla, los hechos que este relato no menciona (la gente no dice todo)."""
     out: JsonObj = {}
     for k, v in hechos.items():
@@ -722,14 +749,14 @@ def _mention(hechos: JsonObj, rng: random.Random) -> JsonObj:
         vehicles.append(nv)
     out["vehiculos"] = vehicles
     out["personas"] = hechos["personas"]
-    return _couple(hechos, out)
+    return _couple(hechos, out, near)
 
 
 STOPPED = ("detenido", "estacionado")
 JUNCTION_DEVICES = ("semaforo", "alto", "ceda_el_paso")
 
 
-def _couple(full: JsonObj, kept: JsonObj) -> JsonObj:
+def _couple(full: JsonObj, kept: JsonObj, near: str | None = None) -> JsonObj:
     """Hechos que no se pueden decir uno sin el otro van juntos (sin más sorteos).
 
     - Velocidad 0 y maniobra `detenido`/`estacionado`: decir "estaba parado" afirma las dos.
@@ -743,8 +770,12 @@ def _couple(full: JsonObj, kept: JsonObj) -> JsonObj:
                 if k in fv:
                     kv[k] = fv[k]
     devices = kept.get("dispositivos", [])
-    if any(d in JUNCTION_DEVICES for d in devices) and "lugar.tipo_via" in full:
-        kept["lugar.tipo_via"] = full["lugar.tipo_via"]
+    if any(d in JUNCTION_DEVICES for d in devices):
+        if "lugar.tipo_via" in full:
+            kept["lugar.tipo_via"] = full["lugar.tipo_via"]
+        elif near is not None:
+            # El choque fue en la entrada del cruce que el dispositivo controla.
+            kept["lugar.tipo_via"] = near
     return kept
 
 
@@ -803,7 +834,13 @@ def select(y: Year) -> tuple[list[JsonObj], JsonObj]:
                     "tipo": tipo,
                     "registro": reg,
                     "ciss": {"anio": YEAR, "caseid": cid, "caso": c.get("CASENUMBER", "")},
-                    "hechos": (hechos := _mention(tr["hechos"], random.Random(f"{SEED}-{cid}"))),
+                    "hechos": (
+                        hechos := _mention(
+                            tr["hechos"],
+                            random.Random(f"{SEED}-{cid}"),
+                            tr["contexto"].get("cruce_relacionado"),
+                        )
+                    ),
                     "contexto": _naming(tr["contexto"], hechos),
                 }
             )

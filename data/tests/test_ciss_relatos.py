@@ -28,7 +28,7 @@ _FORMATS = {
     "SURCOND24F": {k: v[0] for k, v in cr.SURFCOND.items()} | cr.SURFCOND_EXCLUDE,
     "SURTYPE24F": {k: v[0] for k, v in cr.SURFTYPE.items()},
     "ALIGNMNT24F": cr.ALIGNMENT,
-    "RELJCT224F": {"01": "Non-Junction", "02": "Intersection"},
+    "RELJCT224F": {"01": "Non-Junction", "02": "Intersection", "03": "Intersection-Related"},
     "TYP_INT24F": {k: v[0] for k, v in cr.TYP_INT.items()},
     "TRAFCONT24F": {k: v[0] for k, v in cr.TRAFDEV.items()},
     "PREMOVE24F": {k: v[0] for k, v in cr.PREMOVE.items()},
@@ -190,7 +190,8 @@ def test_traduce_solo_equivalencias_exactas(tmp_path: object) -> None:
                   "frenado": True, "velocidad_kmh": 65}  # fmt: skip
     assert tr["contexto"]["vehiculos"][0]["velocidad_edr_kmh"] == 63.0
     assert tr["contexto"]["vehiculos"][0]["modelo"] == "Chevrolet Malibu (2019)"
-    assert tr["contexto"]["vehiculos"][0]["nombrar"] == "modelo"
+    # Malibu no está en la tabla y el tamaño sale del largo: el relato dice "sedán compacto".
+    assert tr["contexto"]["vehiculos"][0]["nombrar"] == "modelo_y_clase"
     assert tr["contexto"]["vehiculos"][0]["conductor"] == {"edad": 41, "sexo": "mujer"}
     # El otro estaba detenido: velocidad 0 sin frenado.
     assert v1 == {"clase": "suv_compacta", "maniobra": "detenido", "velocidad_kmh": 0}
@@ -312,6 +313,24 @@ def test_hechos_que_van_juntos(tmp_path: object) -> None:
         # Con semáforo se menciona el tipo de vía que NHTSA conoce.
         if "dispositivos" in m:
             assert m["lugar.tipo_via"] == "interseccion_t"
+
+
+def test_cruce_relacionado_solo_con_su_dispositivo() -> None:
+    full = {
+        "evento.tipo": "impacto_vehiculo_vehiculo",
+        "dispositivos": ["semaforo"],
+        "vehiculos": [{"narrador": True, "clase": "pickup"}],
+        "personas": [{"rol": "conductor", "vehiculo": 0}],
+    }
+    with_device = {**full, "vehiculos": [{"narrador": True, "clase": "pickup"}]}
+    out = cr._couple(full, with_device, "interseccion_x")  # pyright: ignore[reportPrivateUsage]
+    assert out["lugar.tipo_via"] == "interseccion_x"
+    no_device = {k: v for k, v in full.items() if k != "dispositivos"}
+    kept = {**no_device, "vehiculos": [{"narrador": True, "clase": "pickup"}]}
+    out2 = cr._couple(no_device, kept, "interseccion_x")  # pyright: ignore[reportPrivateUsage]
+    assert "lugar.tipo_via" not in out2
+    assert cr.related_junction({"RELJCT2": "3", "TYP_INT": "3"}) == "interseccion_t"
+    assert cr.related_junction({"RELJCT2": "2", "TYP_INT": "3"}) is None
 
 
 def test_fichas_al_dia_si_hay_datos_crudos() -> None:
