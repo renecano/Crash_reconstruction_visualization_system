@@ -112,6 +112,10 @@ jobs:
         run: |
           uv run croquis-assets humans download
           uv run croquis-assets humans check
+      - name: Texturas de Poly Haven reproducibles (descarga fijada por MD5 y reconstrucción byte a byte)
+        run: |
+          uv run croquis-assets textures download
+          uv run croquis-assets textures check
       - run: uv run ruff check .
       - run: uv run ruff format --check .
       - run: uv run pyright

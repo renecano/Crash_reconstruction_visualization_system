@@ -1,0 +1,72 @@
+{
+  "_nota": "Texturas PBR de Poly Haven (CC0 1.0); ver assets/ASSETS.md y ADR 0024.",
+  "tamano_px": 512,
+  "texturas": {
+    "asfalto": {
+      "polyhaven": "asphalt_02",
+      "autor": "Rob Tuytel",
+      "licencia": "CC0 1.0",
+      "url": "https://polyhaven.com/a/asphalt_02",
+      "mosaico_m": 4.0,
+      "uso": "Calzada",
+      "archivos": {
+        "diff": {
+          "archivo": "asfalto_diff.webp",
+          "sha256": "7aca563b4eb1658e2dbc2792d2c0035fcbc340a1a541a1b941e06a11c7a10322"
+        },
+        "nor_gl": {
+          "archivo": "asfalto_nor_gl.webp",
+          "sha256": "953c037fa03f2017795fa4abc21cab924b4ff933e772d27c872ec8b46d6ce60f"
+        },
+        "rough": {
+          "archivo": "asfalto_rough.webp",
+          "sha256": "b2944dfe191a2cb9ff252bd3c7f61c8c840a7d931b9d9bfdd8bb8b82055a40bf"
+        }
+      }
+    },
+    "concreto": {
+      "polyhaven": "concrete_pavement",
+      "autor": "Charlotte Baglioni",
+      "licencia": "CC0 1.0",
+      "url": "https://polyhaven.com/a/concrete_pavement",
+      "mosaico_m": 2.0,
+      "uso": "Banquetas, guarniciones y camellón",
+      "archivos": {
+        "diff": {
+          "archivo": "concreto_diff.webp",
+          "sha256": "f8706e534aa9982ccc5da745efdede017469f2304ffd2e36a3a95fc2b1aebb0b"
+        },
+        "nor_gl": {
+          "archivo": "concreto_nor_gl.webp",
+          "sha256": "eeef5e9d12bcf4987fd8cd752ab8f99ac51310a963e86977d24266a5eaefd7d1"
+        },
+        "rough": {
+          "archivo": "concreto_rough.webp",
+          "sha256": "7137bb55afd48067aa50b79225c49befef399b4a9e0ade9a09df96aef1f1f3a6"
+        }
+      }
+    },
+    "pasto": {
+      "polyhaven": "aerial_grass_rock",
+      "autor": "Rob Tuytel",
+      "licencia": "CC0 1.0",
+      "url": "https://polyhaven.com/a/aerial_grass_rock",
+      "mosaico_m": 6.0,
+      "uso": "Suelo fuera de la vía",
+      "archivos": {
+        "diff": {
+          "archivo": "pasto_diff.webp",
+          "sha256": "5d3e7308e30a56d25d50ad1b47d67be46ccda7e6a56f66321cda56a7740091da"
+        },
+        "nor_gl": {
+          "archivo": "pasto_nor_gl.webp",
+          "sha256": "0c292c6a89da9446117389dbd425d8dc578907d51c7433252ccf9639dad853b9"
+        },
+        "rough": {
+          "archivo": "pasto_rough.webp",
+          "sha256": "0ea8d589bdf27f8e4a5085ac292363d9cf7da19bf0e268e202ff10f1a4b1f668"
+        }
+      }
+    }
+  }
+}
