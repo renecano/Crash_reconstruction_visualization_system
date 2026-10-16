@@ -1,10 +1,10 @@
 import type { Resultado } from "@croquis/scene-schema";
+import { fmtNumber } from "@/lib/format-number";
 
 type Inversion = NonNullable<Resultado["inversion"]>;
 type Parametro = Inversion["parametros"][number];
 
-const fmt = (v: number, d = 0) =>
-  v.toLocaleString("es-MX", { maximumFractionDigits: d, minimumFractionDigits: d });
+const fmt = fmtNumber;
 
 /** Evidencia de la inversión en palabras llanas. */
 const EVIDENCIA: Record<string, string> = {
