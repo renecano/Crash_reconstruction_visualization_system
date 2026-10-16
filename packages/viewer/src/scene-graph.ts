@@ -57,6 +57,7 @@ import {
   type Mesh2D,
 } from "./road-geometry";
 import { asphaltMaterial, type AsphaltMaterial } from "./road-surface";
+import { texturedPlanarMaterial, type EnvTextures } from "./env-textures";
 import { buildDevice, type DeviceNode } from "./traffic-devices";
 import {
   HEADLIGHT_HALF_ANGLE_DEG,
@@ -119,6 +120,8 @@ export interface SceneGraph {
   readonly time: number;
   /** Mapa de entorno (cielo horneado) para que el piso mojado lo refleje; null lo quita. */
   setReflections(env: Texture | null): void;
+  /** Texturas PBR del entorno (F8e): asfalto, concreto de banquetas y camellón, y pasto. */
+  applyTextures(t: EnvTextures): void;
   dispose(): void;
   stats: { meshes: number; triangles: number };
 }
@@ -975,6 +978,32 @@ export function buildSceneGraph(
     },
     setReflections(env: Texture | null) {
       asphalt.setReflections(env);
+    },
+    applyTextures(t: EnvTextures) {
+      asphalt.applyTexture(t.asfalto ?? null);
+      // Banqueta y camellón de concreto; suelo de pasto. Cada textura toma el color y la rugosidad
+      // del material liso que reemplaza (seco o mojado, día o noche). La guarnición conserva su
+      // material liso: en sus caras verticales la proyección en planta se vería rayada.
+      const calibrated = (m: MeshStandardMaterial) => ({
+        color: `#${m.color.getHexString()}`,
+        roughness: m.roughness,
+      });
+      const swaps = new Map<Material, Material>();
+      if (t.concreto) {
+        swaps.set(mats.sidewalk, texturedPlanarMaterial(t.concreto, calibrated(mats.sidewalk)));
+      }
+      if (t.pasto) {
+        swaps.set(
+          mats.ground,
+          texturedPlanarMaterial(t.pasto, { ...calibrated(mats.ground), variation: true }),
+        );
+      }
+      root.traverse((o) => {
+        if (o instanceof Mesh && swaps.has(o.material as Material)) {
+          o.material = swaps.get(o.material as Material)!;
+        }
+      });
+      disposables.push(...swaps.values());
     },
     dispose() {
       root.traverse((o) => {

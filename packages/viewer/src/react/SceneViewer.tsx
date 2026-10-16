@@ -46,6 +46,7 @@ import { attachRollovers } from "../rollover-scene";
 import { buildVisibilityOverlay, eyeHeightFor } from "../visibility-overlay";
 import { sunShadowFrame } from "../shadow-frame";
 import { BODY_BASE_URL, loadBodies } from "../body-assets";
+import { loadEnvTextures, TEXTURE_BASE_URL, texturesWanted } from "../env-textures";
 import { attachPeople, variantsFor, type PeopleAttachment } from "../people-scene";
 import { buildGhostLayer, GHOST_COLORS } from "../ghosts";
 import { buildSceneGraph } from "../scene-graph";
@@ -108,6 +109,8 @@ declare global {
     /** Fantasmas de la hipótesis montados en la escena (e2e). */
     __croquisGhosts?: number;
     __croquisPeopleReady?: boolean;
+    /** Texturas del entorno aplicadas (o descartadas por calidad o por error). */
+    __croquisTexturesReady?: boolean;
     __croquisPeople?: PeopleAttachment;
     /** `performance.now()` del primer cuadro listo (E6: tiempo hasta interactivo). */
     __croquisReadyAt?: number;
@@ -186,6 +189,30 @@ function SceneContent({
       alive = false;
     };
   }, [spec, resultado, graph]);
+
+  // Texturas PBR del entorno (F8e): solo en calidad media y alta.
+  useEffect(() => {
+    let alive = true;
+    window.__croquisTexturesReady = false;
+    if (!texturesWanted(quality)) {
+      window.__croquisTexturesReady = true;
+      return undefined;
+    }
+    loadEnvTextures(TEXTURE_BASE_URL)
+      .then((t) => {
+        if (!alive) return;
+        graph.applyTextures(t);
+        window.__croquisTexturesReady = true;
+      })
+      .catch((err: unknown) => {
+        // Sin texturas (p. ej. sin red) quedan los colores lisos.
+        console.error("No se pudieron cargar las texturas", err);
+        if (alive) window.__croquisTexturesReady = true;
+      });
+    return () => {
+      alive = false;
+    };
+  }, [graph, quality]);
 
   // Personas: cuerpos de MakeHuman, ocupantes y ragdolls calibrados (se hornean al cargar).
   useEffect(() => {
@@ -399,7 +426,12 @@ function PerfProbe({ backend }: { backend: () => RendererInfo["backend"] | undef
       perf.triangles = info.render?.triangles;
       info.reset?.();
     }
-    if (!window.__croquisDebrisReady || !window.__croquisPeopleReady) return;
+    if (
+      !window.__croquisDebrisReady ||
+      !window.__croquisPeopleReady ||
+      !window.__croquisTexturesReady
+    )
+      return;
     if (!window.__croquisReady) window.__croquisReadyAt = performance.now();
     window.__croquisReady = true;
   });
