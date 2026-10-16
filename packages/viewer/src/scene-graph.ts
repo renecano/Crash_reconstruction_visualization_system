@@ -9,7 +9,7 @@
  */
 import { roadLayout, sceneLayout } from "@croquis/croquis-2d";
 import type { EscenaSpec, Resultado } from "@croquis/scene-schema";
-import { longitudM } from "@croquis/scene-schema";
+import { longitudM, velocidadKmh } from "@croquis/scene-schema";
 import {
   BoxGeometry,
   BufferAttribute,
@@ -45,8 +45,9 @@ import {
   type GroundMarks,
   type TimedQuad,
 } from "./ground-marks";
-import { buildRoadGeometry, type Mesh2D } from "./road-geometry";
+import { buildRoadGeometry, dashPatternFor, markingsFor, type Mesh2D } from "./road-geometry";
 import { asphaltMaterial, type AsphaltMaterial } from "./road-surface";
+import { buildDevice, type DeviceNode } from "./traffic-devices";
 import {
   HEADLIGHT_HALF_ANGLE_DEG,
   HEADLIGHT_INTENSITY,
@@ -319,6 +320,8 @@ export function hash01(s: string): number {
   return (h >>> 0) / 0x1_0000_0000;
 }
 
+const TIEMPO_A_S: Record<string, number> = { s: 1, ms: 0.001, min: 60 };
+
 function place(obj: Group | Mesh, x: number, y: number, headingDeg = 0, height = 0): void {
   const [px, py, pz] = toThree(x, y, height);
   obj.position.set(px, py, pz);
@@ -376,10 +379,15 @@ export function buildSceneGraph(
       roadHeading: d.orientacion_deg ?? 0,
       roadWidth: mainWidth,
     }));
+  const devTipos = (lugar.dispositivos ?? []).map((d) => d.tipo);
+  const limite = (lugar.dispositivos ?? []).find((d) => d.limite_velocidad)?.limite_velocidad;
+  const dobleSentido = lugar.sentidos.valor === "doble_sentido";
   const road = buildRoadGeometry(layout, {
-    dobleSentido: lugar.sentidos.valor === "doble_sentido",
+    dobleSentido,
     banquetas: lugar.banquetas?.valor ?? false,
     crosswalks,
+    dash: dashPatternFor(lugar.tipo_via.valor, limite ? velocidadKmh(limite) : undefined),
+    markings: markingsFor(dobleSentido, devTipos),
   });
   const roadGroup = new Group();
   roadGroup.name = "via";
@@ -558,9 +566,16 @@ export function buildSceneGraph(
   }
   root.add(objGroup);
 
-  // Dispositivos de tránsito (básicos en F3; fases de semáforo y señalización completa en F8).
+  // Dispositivos de tránsito (F8c): semáforos con su fase en el tiempo y una placa por señal.
   const devGroup = new Group();
   devGroup.name = "dispositivos";
+  const devices: DeviceNode[] = [];
+  const firstPose = new Map(
+    resultado.vehiculos.map((v) => [
+      v.id,
+      { x: v.trayectoria.x[0] ?? 0, y: v.trayectoria.y[0] ?? 0 },
+    ]),
+  );
   for (const d of lugar.dispositivos ?? []) {
     if (
       d.tipo === "paso_peatonal" ||
@@ -569,35 +584,34 @@ export function buildSceneGraph(
     ) {
       continue;
     }
-    const g = new Group();
-    g.name = `dispositivo_${d.id}`;
-    if (d.tipo === "tope") {
-      const bump = new Mesh(new BoxGeometry(0.6, 0.08, mainWidth), mats.yellow);
-      bump.position.y = 0.04;
-      g.add(bump);
-    } else {
-      const h = d.tipo === "semaforo" ? 3.2 : 2.4;
-      const pole = new Mesh(new CylinderGeometry(0.06, 0.07, h, 8), mats.metal);
-      pole.position.y = h / 2;
-      pole.castShadow = true;
-      g.add(pole);
-      if (d.tipo === "semaforo") {
-        const head = new Mesh(new BoxGeometry(0.3, 0.9, 0.3), mats.dark);
-        head.name = "semaforo";
-        head.position.y = h + 0.35;
-        g.add(head);
-      } else {
-        const plate = new Mesh(
-          new BoxGeometry(0.04, 0.6, 0.6),
-          d.tipo === "alto" ? mats.signRed : mats.signPlate,
-        );
-        plate.name = "placa";
-        plate.position.y = h - 0.1;
-        g.add(plate);
-      }
-    }
-    place(g, d.posicion.x, d.posicion.y, d.orientacion_deg ?? 0);
-    devGroup.add(g);
+    const orient = ((d.orientacion_deg ?? 0) * Math.PI) / 180;
+    // Cada fase mira al vehículo cuyo flujo regula (su id en `movimiento` o en `aplica_a`); si no
+    // hay vehículo, las cabezas se reparten en cruz a partir de la orientación del dispositivo.
+    const fases = (d.fases ?? []).map((f, i) => {
+      const vid = firstPose.has(f.movimiento) ? f.movimiento : d.aplica_a?.[i];
+      const at = vid ? firstPose.get(vid) : undefined;
+      const yaw = at
+        ? Math.atan2(at.y - d.posicion.y, at.x - d.posicion.x) - orient
+        : (i * Math.PI) / 2;
+      const tau = f.tiempo_en_fase
+        ? f.tiempo_en_fase.valor * (TIEMPO_A_S[f.tiempo_en_fase.unidad] ?? 1)
+        : undefined;
+      return { phase: { color: f.color, tiempoEnFaseS: tau }, yaw };
+    });
+    const node = buildDevice(
+      {
+        tipo: d.tipo,
+        limiteKmh: d.limite_velocidad ? velocidadKmh(d.limite_velocidad) : undefined,
+        fases,
+        anchoTopeM: mainWidth,
+      },
+      mats.metal,
+    );
+    node.group.name = `dispositivo_${d.id}`;
+    place(node.group, d.posicion.x, d.posicion.y, d.orientacion_deg ?? 0);
+    devGroup.add(node.group);
+    disposables.push(...node.materials);
+    devices.push(node);
   }
   root.add(devGroup);
 
@@ -791,6 +805,7 @@ export function buildSceneGraph(
 
   function update(t: number): void {
     lastT = t;
+    for (const dv of devices) dv.update(t);
     for (const fn of extraUpdaters) fn(t);
     for (const m of markMeshes) m.mesh.geometry.setDrawRange(0, visibleCount(m.quads, t) * 6);
     for (const p of puddles) {

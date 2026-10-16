@@ -80,3 +80,5 @@ export {
   type SurfaceLook,
 } from "./road-surface";
 export * from "./night-lights";
+export * from "./traffic-signals";
+export { buildDevice, type DeviceInput, type DeviceNode } from "./traffic-devices";

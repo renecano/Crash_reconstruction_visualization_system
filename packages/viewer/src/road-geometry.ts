@@ -33,11 +33,53 @@ export interface RoadOptions {
   banquetas: boolean;
   /** Pasos peatonales: centro del cruce en el mundo y rumbo de la vía que cruzan (grados). */
   crosswalks?: { center: Vec2; roadHeading: number; roadWidth: number }[];
+  /** Largo y separación de los segmentos de las rayas discontinuas (por omisión, calle ≤ 50 km/h). */
+  dash?: DashPattern;
+  /** Cómo van las rayas según los dispositivos de línea de la escena (`markingsFor`). */
+  markings?: Markings;
+}
+
+export interface DashPattern {
+  length: number;
+  gap: number;
+}
+
+/**
+ * Segmentos de las rayas discontinuas del Manual de Señalización y Dispositivos para el Control
+ * del Tránsito (SEDATU/SCT, 2023, Tabla II.2-3): calles hasta 50 km/h, 2.5 m cada 5 m; carreteras
+ * y calles de más de 50 km/h, 5 m cada 10 m.
+ */
+export const DASH_HASTA_50: DashPattern = { length: 2.5, gap: 5 };
+export const DASH_MAS_50: DashPattern = { length: 5, gap: 10 };
+
+export function dashPatternFor(tipoVia: string | undefined, limiteKmh?: number): DashPattern {
+  if (tipoVia === "carretera_dos_carriles" || tipoVia === "autopista") return DASH_MAS_50;
+  return limiteKmh !== undefined && limiteKmh > 50 ? DASH_MAS_50 : DASH_HASTA_50;
+}
+
+export interface Markings {
+  /** Raya entre sentidos: doble continua (no se rebasa) o sencilla discontinua (se rebasa). */
+  centro: "doble_continua" | "discontinua";
+  /** Rayas entre carriles del mismo sentido: discontinua (se cambia de carril) o continua. */
+  carriles: "discontinua" | "continua";
+}
+
+/**
+ * Lo que dicen los dispositivos `linea_continua` y `linea_discontinua` de la escena. En una vía de
+ * doble sentido se refieren a la raya central (lo común en un relato: "había línea continua", no
+ * se podía rebasar); en una de un sentido, a las rayas entre carriles. Sin dispositivos: doble
+ * continua al centro y discontinua entre carriles.
+ */
+export function markingsFor(dobleSentido: boolean, tipos: readonly string[]): Markings {
+  const continua = tipos.includes("linea_continua");
+  const discontinua = tipos.includes("linea_discontinua") && !continua;
+  if (dobleSentido) {
+    return { centro: discontinua ? "discontinua" : "doble_continua", carriles: "discontinua" };
+  }
+  return { centro: "doble_continua", carriles: continua ? "continua" : "discontinua" };
 }
 
 export const LINE_WIDTH = 0.12;
-export const DASH = 3;
-export const GAP = 6;
 export const SIDEWALK_WIDTH = 2.5;
 const ARC_SEGMENT_M = 2;
 
@@ -132,11 +174,12 @@ function lineAlongStrip(
   offset: number,
   dashed: boolean,
   exclude: (p: Vec2) => boolean,
+  dash: DashPattern = DASH_HASTA_50,
 ): void {
   const d = dir(s.heading);
   const n = { x: -d.y, y: d.x };
-  const step = dashed ? DASH + GAP : 1;
-  const segLen = dashed ? DASH : 1;
+  const step = dashed ? dash.length + dash.gap : 1;
+  const segLen = dashed ? dash.length : 1;
   for (let a = -s.length / 2; a < s.length / 2 - 1e-9; a += step) {
     const len = Math.min(segLen, s.length / 2 - a);
     const mid = a + len / 2;
@@ -156,10 +199,11 @@ function lineAlongArc(
   from: number,
   to: number,
   dashed: boolean,
+  dash: DashPattern = DASH_HASTA_50,
 ): void {
   const total = (Math.abs(to - from) * Math.PI * radius) / 180;
-  const step = dashed ? DASH + GAP : ARC_SEGMENT_M;
-  const segLen = dashed ? DASH : ARC_SEGMENT_M;
+  const step = dashed ? dash.length + dash.gap : ARC_SEGMENT_M;
+  const segLen = dashed ? dash.length : ARC_SEGMENT_M;
   for (let s = 0; s < total - 1e-9; s += step) {
     const len = Math.min(segLen, total - s);
     const a0 = from + (s / total) * (to - from);
@@ -169,6 +213,8 @@ function lineAlongArc(
 }
 
 export function buildRoadGeometry(layout: RoadLayout, opts: RoadOptions): RoadGeometry {
+  const dash = opts.dash ?? DASH_HASTA_50;
+  const markings = opts.markings ?? markingsFor(opts.dobleSentido, []);
   const pavement = emptyMesh();
   const sidewalk = emptyMesh();
   const white = emptyMesh();
@@ -224,8 +270,15 @@ export function buildRoadGeometry(layout: RoadLayout, opts: RoadOptions): RoadGe
     const offsets = stripLineOffsets(s, opts.dobleSentido);
     const excl = inIntersection(s);
     for (const o of offsets.edges) lineAlongStrip(white, s, o, false, excl);
-    for (const o of offsets.center) lineAlongStrip(yellow, s, o, false, excl);
-    for (const o of offsets.dashed) lineAlongStrip(white, s, o, true, excl);
+    // Raya central sencilla discontinua (se puede rebasar) solo sin camellón: con camellón las
+    // rayas amarillas son sus orillas y siguen continuas.
+    if (markings.centro === "discontinua" && offsets.center.length === 2 && !s.median) {
+      lineAlongStrip(yellow, s, 0, true, excl, dash);
+    } else {
+      for (const o of offsets.center) lineAlongStrip(yellow, s, o, false, excl);
+    }
+    for (const o of offsets.dashed)
+      lineAlongStrip(white, s, o, markings.carriles === "discontinua", excl, dash);
   }
 
   for (const a of layout.arcs) {
@@ -247,7 +300,9 @@ export function buildRoadGeometry(layout: RoadLayout, opts: RoadOptions): RoadGe
     }
     lineAlongArc(white, a.center, rIn + LINE_WIDTH, a.from, a.to, false);
     lineAlongArc(white, a.center, rOut - LINE_WIDTH, a.from, a.to, false);
-    if (opts.dobleSentido) {
+    if (opts.dobleSentido && markings.centro === "discontinua") {
+      lineAlongArc(yellow, a.center, a.radius, a.from, a.to, true, dash);
+    } else if (opts.dobleSentido) {
       lineAlongArc(yellow, a.center, a.radius - 0.1, a.from, a.to, false);
       lineAlongArc(yellow, a.center, a.radius + 0.1, a.from, a.to, false);
     }
@@ -259,7 +314,7 @@ export function buildRoadGeometry(layout: RoadLayout, opts: RoadOptions): RoadGe
     grow({ x: r.center.x + r.outerRadius, y: r.center.y + r.outerRadius });
     lineAlongArc(white, r.center, r.innerRadius + LINE_WIDTH, 0, 360, false);
     const mid = (r.innerRadius + r.outerRadius) / 2;
-    lineAlongArc(white, r.center, mid, 0, 360, true);
+    lineAlongArc(white, r.center, mid, 0, 360, true, dash);
     // Isla central como banqueta (camellón elevado).
     annulus(sidewalk, r.center, 0, r.innerRadius, 0, 360);
   }
