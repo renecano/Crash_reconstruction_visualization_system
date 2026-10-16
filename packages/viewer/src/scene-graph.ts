@@ -49,6 +49,7 @@ import {
   type TimedQuad,
 } from "./ground-marks";
 import {
+  buildMapRoadGeometry,
   buildRoadGeometry,
   CURB_HEIGHT,
   dashPatternFor,
@@ -393,14 +394,18 @@ export function buildSceneGraph(
   const devTipos = (lugar.dispositivos ?? []).map((d) => d.tipo);
   const limite = (lugar.dispositivos ?? []).find((d) => d.limite_velocidad)?.limite_velocidad;
   const dobleSentido = lugar.sentidos.valor === "doble_sentido";
-  const road = buildRoadGeometry(layout, {
-    dobleSentido,
-    banquetas: lugar.banquetas?.valor ?? false,
-    crosswalks,
-    dash: dashPatternFor(lugar.tipo_via.valor, limite ? velocidadKmh(limite) : undefined),
-    markings: markingsFor(dobleSentido, devTipos),
-    guarniciones: lugar.guarniciones?.valor ?? false,
-  });
+  // Con calles del mapa (ADR 0023) se dibuja la red de OSM; la plantilla queda para la física.
+  const mapa = sceneLayout(spec).mapa;
+  const road = mapa
+    ? buildMapRoadGeometry(mapa.vias, { crosswalks })
+    : buildRoadGeometry(layout, {
+        dobleSentido,
+        banquetas: lugar.banquetas?.valor ?? false,
+        crosswalks,
+        dash: dashPatternFor(lugar.tipo_via.valor, limite ? velocidadKmh(limite) : undefined),
+        markings: markingsFor(dobleSentido, devTipos),
+        guarniciones: lugar.guarniciones?.valor ?? false,
+      });
   const roadGroup = new Group();
   roadGroup.name = "via";
   const layers: [string, Mesh2D, Material, number][] = [

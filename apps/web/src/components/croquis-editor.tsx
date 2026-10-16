@@ -153,7 +153,11 @@ export function CroquisEditor({ initial = "alcance" }: { initial?: FixtureName }
           Arrastra vehículos, personas, objetos y marcas; gira un vehículo con el asa naranja. Cada
           cambio queda marcado como <code>fuente: usuario</code> en el JSON.
         </p>
-        <Legend seed={spec.meta.semilla} inputHash={spec.meta.hash_relato} />
+        <Legend
+          seed={spec.meta.semilla}
+          inputHash={spec.meta.hash_relato}
+          atribucion={spec.lugar.red_vial?.atribucion}
+        />
       </section>
 
       <section aria-label="EscenaSpec en JSON" className="flex flex-col gap-3">

@@ -393,7 +393,12 @@ export function VisorApp() {
           </div>
         )}
         <div className="pointer-events-none absolute inset-x-0 bottom-0 bg-black/55 px-3 py-1.5 text-white">
-          <Legend seed={spec.meta.semilla} inputHash={spec.meta.hash_relato} tone="clara" />
+          <Legend
+            seed={spec.meta.semilla}
+            inputHash={spec.meta.hash_relato}
+            tone="clara"
+            atribucion={spec.lugar.red_vial?.atribucion}
+          />
         </div>
       </div>
 

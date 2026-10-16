@@ -238,6 +238,71 @@ function lineAlongArc(
   }
 }
 
+/**
+ * Calzada desde las calles del mapa (ADR 0023): un rectángulo por segmento de cada calle y un
+ * disco en cada vértice para cerrar las uniones. Solo la calzada: las rayas y banquetas de OSM no
+ * se infieren (no vienen en los datos), y los pasos peatonales siguen saliendo de los dispositivos.
+ */
+export function buildMapRoadGeometry(
+  vias: readonly { puntos: readonly Vec2[]; ancho: number }[],
+  crosswalkOpts: Pick<RoadOptions, "crosswalks"> = {},
+): RoadGeometry {
+  const pavement = emptyMesh();
+  const crosswalks = emptyMesh();
+  let minX = Infinity;
+  let minY = Infinity;
+  let maxX = -Infinity;
+  let maxY = -Infinity;
+  for (const v of vias) {
+    const r = v.ancho / 2;
+    for (let i = 0; i < v.puntos.length; i++) {
+      const a = v.puntos[i]!;
+      minX = Math.min(minX, a.x - r);
+      minY = Math.min(minY, a.y - r);
+      maxX = Math.max(maxX, a.x + r);
+      maxY = Math.max(maxY, a.y + r);
+      annulus(pavement, a, 0, r, 0, 360);
+      const b = v.puntos[i + 1];
+      if (!b) continue;
+      const len = Math.hypot(b.x - a.x, b.y - a.y);
+      if (len < 1e-6) continue;
+      const d = { x: (b.x - a.x) / len, y: (b.y - a.y) / len };
+      orientedQuad(pavement, { x: (a.x + b.x) / 2, y: (a.y + b.y) / 2 }, d, len, v.ancho);
+    }
+  }
+  for (const cw of crosswalkOpts.crosswalks ?? []) {
+    const d = dir(cw.roadHeading);
+    const n = { x: -d.y, y: d.x };
+    const stripes = Math.floor(cw.roadWidth / 1.0);
+    for (let k = 0; k < stripes; k++) {
+      const off = -cw.roadWidth / 2 + 0.5 + k * 1.0;
+      orientedQuad(
+        crosswalks,
+        { x: cw.center.x + n.x * off, y: cw.center.y + n.y * off },
+        d,
+        3.0,
+        0.5,
+      );
+    }
+  }
+  if (!Number.isFinite(minX)) {
+    minX = -10;
+    minY = -10;
+    maxX = 10;
+    maxY = 10;
+  }
+  return {
+    pavement,
+    sidewalk: emptyMesh(),
+    whiteLines: emptyMesh(),
+    yellowLines: emptyMesh(),
+    crosswalks,
+    medians: emptyMesh(),
+    curbs: [],
+    bounds: [minX, minY, maxX, maxY],
+  };
+}
+
 export function buildRoadGeometry(layout: RoadLayout, opts: RoadOptions): RoadGeometry {
   const dash = opts.dash ?? DASH_HASTA_50;
   const markings = opts.markings ?? markingsFor(opts.dobleSentido, []);
