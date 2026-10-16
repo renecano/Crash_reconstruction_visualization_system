@@ -171,3 +171,14 @@ def test_la_fase_solo_se_puntua_donde_la_referencia_la_anota() -> None:
     inferida = Facts()
     inferida.escalares["evidencias.marcas_fase"] = Fact("despues_impacto", None, "supuesto")
     assert score_story(inferida, pred).fp["evidencias.marcas_fase"] == 0
+
+
+def test_f1_sin_campos_parciales_ignora_la_fase() -> None:
+    ref = Facts()
+    ref.escalares["evidencias.marcas_fase"] = Fact("antes_impacto", "frené")
+    ref.escalares["entorno.clima"] = Fact("lluvia", "llovía")
+    pred = Facts()
+    pred.escalares["entorno.clima"] = Fact("lluvia", "llovía")
+    rep = score_story(ref, pred).report()
+    assert rep["f1_micro"] < 1.0
+    assert rep["f1_micro_sin_campos_parciales"] == 1.0

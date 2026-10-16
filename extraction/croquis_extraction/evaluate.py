@@ -129,8 +129,17 @@ class Score:
         r = tp / (tp + fn) if tp + fn else math.nan
         micro = 2 * p * r / (p + r) if p == p and r == r and p + r else 0.0
         macro = statistics.fmean([v["f1"] for v in per.values()]) if per else 0.0
+        # Sin los campos que solo anota parte de la referencia: compara versiones del prompt que
+        # no los conocen (v1 y v2 no pueden dar la fase de las marcas).
+        tp0 = tp - sum(self.tp[k] for k in ANNOTATED_ONLY)
+        fp0 = fp - sum(self.fp[k] for k in ANNOTATED_ONLY)
+        fn0 = fn - sum(self.fn[k] for k in ANNOTATED_ONLY)
+        p0 = tp0 / (tp0 + fp0) if tp0 + fp0 else math.nan
+        r0 = tp0 / (tp0 + fn0) if tp0 + fn0 else math.nan
+        micro0 = 2 * p0 * r0 / (p0 + r0) if p0 == p0 and r0 == r0 and p0 + r0 else 0.0
         return {
             "f1_micro": _r(micro),
+            "f1_micro_sin_campos_parciales": _r(micro0),
             "f1_macro": _r(macro),
             "precision_micro": _r(p),
             "exhaustividad_micro": _r(r),

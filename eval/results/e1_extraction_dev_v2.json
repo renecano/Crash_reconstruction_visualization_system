@@ -1,7 +1,7 @@
 {
   "name": "e1_extraction_dev_v2",
-  "generated_at": "2026-10-16T03:31:44+00:00",
-  "git_commit": "e8fbd7d",
+  "generated_at": "2026-10-16T03:42:17+00:00",
+  "git_commit": "dd2bad6",
   "seed": null,
   "descripcion": "E1: extracción del relato en Relatos-MX (línea base de reglas, Claude Haiku y Sonnet desde respuestas grabadas), fuga de PII del redactor y diferencia contrafactual, medidas sobre el pipeline TS de producción (packages/extraction).",
   "split": "dev",
@@ -23,6 +23,7 @@
       "relatos": 190,
       "sin_respuesta": 0,
       "f1_micro": 0.7454,
+      "f1_micro_sin_campos_parciales": 0.7515,
       "f1_macro": 0.6153,
       "precision_micro": 0.8365,
       "exhaustividad_micro": 0.6721,
@@ -202,6 +203,7 @@
       },
       "con_verificador": {
         "f1_micro": 0.7454,
+        "f1_micro_sin_campos_parciales": 0.7515,
         "f1_macro": 0.6153,
         "precision_micro": 0.8365,
         "exhaustividad_micro": 0.6721,
@@ -264,8 +266,8 @@
         "rondas_fallidas": 0
       },
       "latencia_ms": {
-        "p50": 1.76,
-        "p95": 2.82
+        "p50": 1.79,
+        "p95": 3.14
       },
       "costo_usd_por_1000": 0.0
     },
@@ -274,6 +276,7 @@
       "relatos": 190,
       "sin_respuesta": 0,
       "f1_micro": 0.9279,
+      "f1_micro_sin_campos_parciales": 0.9363,
       "f1_macro": 0.8941,
       "precision_micro": 0.9431,
       "exhaustividad_micro": 0.9132,
@@ -454,6 +457,7 @@
       },
       "con_verificador": {
         "f1_micro": 0.9279,
+        "f1_micro_sin_campos_parciales": 0.9363,
         "f1_macro": 0.8941,
         "precision_micro": 0.9431,
         "exhaustividad_micro": 0.9132,
@@ -526,6 +530,7 @@
       "relatos": 190,
       "sin_respuesta": 0,
       "f1_micro": 0.905,
+      "f1_micro_sin_campos_parciales": 0.9133,
       "f1_macro": 0.8714,
       "precision_micro": 0.935,
       "exhaustividad_micro": 0.8768,
@@ -706,6 +711,7 @@
       },
       "con_verificador": {
         "f1_micro": 0.905,
+        "f1_micro_sin_campos_parciales": 0.9133,
         "f1_macro": 0.8714,
         "precision_micro": 0.935,
         "exhaustividad_micro": 0.8768,
