@@ -14,7 +14,11 @@
  * y se reporta la mejor: la laptop comparte recursos con otras aplicaciones y la variación entre
  * corridas llega a ±15 %. Uso: `node eval/e6_performance.mjs [--seconds 6]
  * [--warmup 2] [--repeats 2] [--cooldown 8] [--scenes a,b] [--qualities media,alta] [--renderers webgpu,webgl]`.
- * Salida: eval/results/e6_performance.json.
+ * Salida: eval/results/e6_performance.json (o la ruta de `--out`, para corridas de diagnóstico que
+ * no deben reemplazar la medición oficial).
+ *
+ * Además de los fps se cuentan las tareas largas del hilo principal (> 50 ms, `longtask`): un
+ * promedio bajo con mediana alta son tirones, y las tareas largas dicen si son de JavaScript.
  */
 import { execFileSync, spawn } from "node:child_process";
 import { mkdirSync, writeFileSync } from "node:fs";
@@ -140,6 +144,10 @@ async function measure(browser, base, scene, quality, renderer) {
   await page.waitForTimeout(WARMUP * 1000);
   await page.evaluate(() => {
     if (window.__croquisPerf) window.__croquisPerf.frameMs = [];
+    window.__e6LongTasks = [];
+    new PerformanceObserver((list) => {
+      for (const e of list.getEntries()) window.__e6LongTasks.push(e.duration);
+    }).observe({ type: "longtask" });
   });
   await page.waitForTimeout(SECONDS * 1000);
   const sample = await page.evaluate(() => {
@@ -147,6 +155,7 @@ async function measure(browser, base, scene, quality, renderer) {
     const mem = performance.memory;
     return {
       frameMs: p ? [...p.frameMs] : [],
+      longTasks: [...(window.__e6LongTasks ?? [])],
       backend: p?.backend ?? null,
       drawCalls: p?.drawCalls ?? null,
       triangles: p?.triangles ?? null,
@@ -166,6 +175,11 @@ async function measure(browser, base, scene, quality, renderer) {
     fps_mediana: round(1000 / percentile(ms, 50), 1),
     fps_p1_bajo: round(1000 / percentile(ms, 99), 1),
     cuadro_p95_ms: round(percentile(ms, 95), 2),
+    tareas_largas: sample.longTasks.length,
+    tareas_largas_ms: round(
+      sample.longTasks.reduce((a, b) => a + b, 0),
+      0,
+    ),
     llamadas_dibujo: sample.drawCalls,
     triangulos: sample.triangles,
     memoria_js_mb: round(sample.jsHeapMB, 1),
@@ -322,7 +336,7 @@ async function main() {
       resumen: summary,
       corridas: runs,
     };
-    const out = join(ROOT, "eval", "results", "e6_performance.json");
+    const out = resolve(ROOT, arg("out", join("eval", "results", "e6_performance.json")));
     mkdirSync(dirname(out), { recursive: true });
     writeFileSync(out, `${JSON.stringify(doc, null, 2)}\n`, "utf8");
     console.log(out);

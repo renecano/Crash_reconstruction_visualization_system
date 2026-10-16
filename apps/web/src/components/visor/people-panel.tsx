@@ -1,5 +1,6 @@
 import type { Resultado } from "@croquis/scene-schema";
 import type { PeopleAttachment } from "@croquis/viewer";
+import { fmtNumber } from "@/lib/format-number";
 
 const ROL: Record<string, string> = {
   conductor: "Conductor",
@@ -32,8 +33,7 @@ const OBJETO: Record<string, string> = {
   otro: "un objeto",
 };
 
-const fmt = (v: number, d = 0) =>
-  v.toLocaleString("es-MX", { maximumFractionDigits: d, minimumFractionDigits: d });
+const fmt = fmtNumber;
 
 /** Hacia dónde se mueve el ocupante respecto al habitáculo, en palabras. */
 export function directionWords(deg: number): string {
