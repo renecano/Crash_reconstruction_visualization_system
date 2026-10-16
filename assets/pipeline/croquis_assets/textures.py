@@ -14,8 +14,12 @@ Qué hace el pipeline (determinista):
 3. **Formato.** WebP con pérdida (calidad 82; 90 en las normales) con Pillow 12.3.0 y libwebp
    fijos, así que ``build`` reproduce los mismos bytes (``check``).
 
+4. **Promedios.** Del WebP ya codificado: color medio en RGB lineal (``diff``) y rugosidad media
+   (``rough``). El visor escala la textura para que su promedio sea el color y la rugosidad
+   calibrados de cada material: la textura aporta detalle, no cambia el tono (ADR 0024).
+
 Salida: ``apps/web/public/texturas/<nombre>_<mapa>.webp`` y ``texturas.json`` con el tamaño del
-mosaico, el autor, la licencia y el SHA-256 de cada archivo.
+mosaico, el autor, la licencia, los promedios y el SHA-256 de cada archivo.
 
 Uso: ``uv run croquis-assets textures download``, ``build`` y ``check``.
 """
@@ -53,15 +57,9 @@ class Textura:
 
 
 TEXTURAS = [
-    Textura("asfalto", "asphalt_02", "Rob Tuytel", 4.0, "Calzada"),
-    Textura(
-        "concreto",
-        "concrete_pavement",
-        "Charlotte Baglioni",
-        2.0,
-        "Banquetas, guarniciones y camellón",
-    ),
-    Textura("pasto", "aerial_grass_rock", "Rob Tuytel", 6.0, "Suelo fuera de la vía"),
+    Textura("asfalto", "asphalt_track", "Dimitrios Savva", 4.0, "Calzada"),
+    Textura("concreto", "concrete_pavement", "Charlotte Baglioni", 2.0, "Banquetas y camellón"),
+    Textura("pasto", "leafy_grass", "Charlotte Baglioni", 8.0, "Suelo fuera de la vía"),
 ]
 
 
@@ -122,6 +120,28 @@ def encode(raw: bytes, mapa: str) -> bytes:
     return buf.getvalue()
 
 
+def _srgb_to_linear(v: int) -> float:
+    c = v / 255
+    return c / 12.92 if c <= 0.04045 else ((c + 0.055) / 1.055) ** 2.4
+
+
+def mean_of(data: bytes, mapa: str) -> list[float] | float | None:
+    """Promedio del mapa codificado: RGB lineal del color, rugosidad (0-1) del canal rojo."""
+    if mapa == "nor_gl":
+        return None
+    img = Image.open(io.BytesIO(data)).convert("RGB")
+    n = img.width * img.height
+    hist = img.histogram()  # 256 cuentas por canal, R, G y B seguidos
+    if mapa == "rough":
+        return round(sum(k * v for v, k in enumerate(hist[:256])) / 255 / n, 4)
+    return [
+        round(
+            sum(k * _srgb_to_linear(v) for v, k in enumerate(hist[256 * c : 256 * c + 256])) / n, 4
+        )
+        for c in range(3)
+    ]
+
+
 def outputs() -> dict[str, bytes]:
     """Archivos de salida (ruta relativa a ``OUT_DIR`` → bytes), incluido el manifiesto."""
     files: dict[str, bytes] = {}
@@ -144,7 +164,11 @@ def outputs() -> dict[str, bytes]:
             data = encode(raw_path(t, mapa).read_bytes(), mapa)
             name = f"{t.nombre}_{mapa}.webp"
             files[name] = data
-            entry["archivos"][mapa] = {"archivo": name, "sha256": hashlib.sha256(data).hexdigest()}
+            info: dict[str, Any] = {"archivo": name, "sha256": hashlib.sha256(data).hexdigest()}
+            media = mean_of(data, mapa)
+            if media is not None:
+                info["media"] = media
+            entry["archivos"][mapa] = info
         manifest["texturas"][t.nombre] = entry
     files["texturas.json"] = (json.dumps(manifest, ensure_ascii=False, indent=2) + "\n").encode()
     return files

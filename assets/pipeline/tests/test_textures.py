@@ -48,8 +48,26 @@ def test_las_texturas_versionadas_son_webp_de_512_y_coinciden_con_el_manifiesto(
                 # WebP no guarda un solo canal: la rugosidad va en gris. Con pérdida (YUV) los
                 # canales difieren a lo más unos niveles; el material lee solo el rojo.
                 assert _gray_spread(img) <= 3
+                assert 0 < info["media"] <= 1
+            elif mapa == "diff":
+                assert len(info["media"]) == 3
+                assert all(0 < c < 1 for c in info["media"])
+            else:
+                assert "media" not in info
     # Presupuesto de carga de E6 (≤ 8 MB al primer cuadro): las texturas son una fracción.
     assert total < 1_000_000
+
+
+def test_promedios_en_rgb_lineal_y_rugosidad() -> None:
+    def webp(color: tuple[int, int, int]) -> bytes:
+        buf = io.BytesIO()
+        Image.new("RGB", (8, 8), color).save(buf, format="WEBP", lossless=True)
+        return buf.getvalue()
+
+    # sRGB 255 → 1; sRGB 188 → 0.5029 (lineal); sRGB 0 → 0.
+    assert textures.mean_of(webp((255, 188, 0)), "diff") == [1.0, 0.5029, 0.0]
+    assert textures.mean_of(webp((51, 51, 51)), "rough") == 0.2
+    assert textures.mean_of(webp((128, 128, 255)), "nor_gl") is None
 
 
 def test_codificar_es_determinista() -> None:

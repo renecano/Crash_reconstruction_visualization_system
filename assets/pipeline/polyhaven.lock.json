@@ -1,16 +1,16 @@
 {
-  "asphalt_02": {
+  "asphalt_track": {
     "diff": {
-      "url": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/asphalt_02/asphalt_02_diff_1k.jpg",
-      "md5": "fa19772d4817754c3efab708c651f5a8"
+      "url": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/asphalt_track/asphalt_track_diff_1k.jpg",
+      "md5": "92e0682878c39430e521cce235ac1f75"
     },
     "nor_gl": {
-      "url": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/asphalt_02/asphalt_02_nor_gl_1k.jpg",
-      "md5": "338da8de636ea36133170578cac82e8e"
+      "url": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/asphalt_track/asphalt_track_nor_gl_1k.jpg",
+      "md5": "d61d8e22e24ea0e44873b9c9c97d4e0c"
     },
     "rough": {
-      "url": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/asphalt_02/asphalt_02_rough_1k.jpg",
-      "md5": "ec80a2929797c1b3ffc121c4f665585a"
+      "url": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/asphalt_track/asphalt_track_rough_1k.jpg",
+      "md5": "c57f7b3a42ebfaf58e44c0ccc83326c3"
     }
   },
   "concrete_pavement": {
@@ -27,18 +27,18 @@
       "md5": "e5a0fc9831bad12c7b3779179aa706f7"
     }
   },
-  "aerial_grass_rock": {
+  "leafy_grass": {
     "diff": {
-      "url": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/aerial_grass_rock/aerial_grass_rock_diff_1k.jpg",
-      "md5": "e920ce36afd0abff000b8366d3d768d3"
+      "url": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/leafy_grass/leafy_grass_diff_1k.jpg",
+      "md5": "0dbc071e91d6905edfcfbe8eb785a1ab"
     },
     "nor_gl": {
-      "url": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/aerial_grass_rock/aerial_grass_rock_nor_gl_1k.jpg",
-      "md5": "c8aa4c4f09b113cc7edef89ddeaccad9"
+      "url": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/leafy_grass/leafy_grass_nor_gl_1k.jpg",
+      "md5": "8279e096e204ea326d57a318869f99df"
     },
     "rough": {
-      "url": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/aerial_grass_rock/aerial_grass_rock_rough_1k.jpg",
-      "md5": "f78c5cdc565f990299ae7c5a81f68cf7"
+      "url": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/leafy_grass/leafy_grass_rough_1k.jpg",
+      "md5": "05f6bb1383e12b327727d313c5899cf2"
     }
   }
 }
