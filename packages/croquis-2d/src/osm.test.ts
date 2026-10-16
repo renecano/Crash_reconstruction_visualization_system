@@ -79,7 +79,7 @@ describe("OpenStreetMap a red vial (ADR 0023)", () => {
     expect(redVialFrom(RESP, { ...ORIGEN, radioM: 150, rotacionDeg: t.rotacion_deg })).toEqual({
       ...red,
       nodo_cruce: undefined,
-    } as unknown);
+    });
   });
 
   it("andadores y ciclovías no entran; un nodo ajeno es error", () => {

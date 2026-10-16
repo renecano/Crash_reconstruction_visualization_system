@@ -238,6 +238,29 @@ export function redVialFrom(resp: OverpassResponse, o: RedVialOptions): RedVial 
   return red;
 }
 
+/** Carriles típicos (en total) por tipo de calle cuando OSM no trae `lanes` (supuesto). */
+export const DEFAULT_LANES: Readonly<Record<string, number>> = {
+  motorway: 6,
+  trunk: 4,
+  primary: 4,
+  secondary: 3,
+  tertiary: 2,
+  unclassified: 2,
+  residential: 2,
+  living_street: 1,
+  service: 1,
+};
+
+/** Ancho de la calzada (m): `width` de OSM; si no, carriles × ancho de carril. */
+export function viaWidthM(
+  via: Pick<ViaMapa, "tipo" | "carriles" | "ancho_m">,
+  laneM = 3.5,
+): number {
+  if (via.ancho_m !== undefined) return via.ancho_m;
+  const lanes = via.carriles ?? DEFAULT_LANES[via.tipo.replace(/_link$/, "")] ?? 2;
+  return lanes * laneM;
+}
+
 export interface TemplateFromMap {
   tipo_via: "interseccion_x" | "interseccion_t" | "recta";
   sentidos: "un_sentido" | "doble_sentido";
