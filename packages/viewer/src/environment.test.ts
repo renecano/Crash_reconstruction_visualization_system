@@ -1,5 +1,12 @@
 import { describe, expect, it } from "vitest";
-import { environmentFor, parseSceneTime, sunDirection, sunPosition, TOLUCA } from "./environment";
+import {
+  environmentFor,
+  fogDensityForVisibility,
+  parseSceneTime,
+  sunDirection,
+  sunPosition,
+  TOLUCA,
+} from "./environment";
 
 /** Elevación máxima del sol en un día (búsqueda minuto a minuto). */
 function maxElevation(
@@ -94,5 +101,38 @@ describe("fecha y hora de la escena", () => {
     const e = environmentFor({ fechaHora: "18:40", iluminacion: "atardecer" });
     expect(e.night).toBe(false);
     expect(e.lightDirection[2]).toBeGreaterThanOrEqual(Math.sin((6 * Math.PI) / 180) - 1e-12);
+  });
+});
+
+describe("piso, niebla y precipitación (F8a)", () => {
+  it("el piso sigue al estado declarado aunque no llueva (poste: nublado y mojado)", () => {
+    const e = environmentFor({ clima: "nublado", estadoSuperficie: "mojado" });
+    expect(e.surface).toBe("mojado");
+    expect(e.wet).toBe(true);
+    expect(e.precipitation).toBe("ninguna");
+    expect(e.supuestos.join(" ")).not.toContain("Estado del piso");
+  });
+
+  it("sin estado declarado, la lluvia moja el piso y se reporta como supuesto", () => {
+    const fuerte = environmentFor({ clima: "lluvia_fuerte" });
+    expect(fuerte.surface).toBe("encharcado");
+    expect(fuerte.precipitation).toBe("lluvia_fuerte");
+    expect(fuerte.supuestos.join(" ")).toContain("Estado del piso no declarado");
+    expect(environmentFor({ clima: "lluvia" }).precipitation).toBe("lluvia_ligera");
+    expect(environmentFor({ clima: "granizo" }).surface).toBe("mojado");
+    // Lo declarado manda: lluvia con el piso seco (recién empezó) se dibuja seco.
+    expect(environmentFor({ clima: "lluvia_ligera", estadoSuperficie: "seco" }).wet).toBe(false);
+    expect(environmentFor({ estadoSuperficie: "lodo" }).surface).toBe("lodo");
+    expect(environmentFor({ estadoSuperficie: "lodo" }).wet).toBe(false);
+  });
+
+  it("con visibilidad declarada la niebla deja pasar el 5 % de la luz a esa distancia (OMM)", () => {
+    for (const v of [40, 150, 800]) {
+      const d = environmentFor({ clima: "niebla", visibilidadM: v }).fogDensity;
+      expect(d).toBeCloseTo(fogDensityForVisibility(v), 12);
+      expect(Math.exp(-((d * v) ** 2))).toBeCloseTo(0.05, 9);
+    }
+    // Menos visibilidad, más densa.
+    expect(fogDensityForVisibility(60)).toBeGreaterThan(fogDensityForVisibility(600));
   });
 });

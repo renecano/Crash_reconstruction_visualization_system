@@ -26,6 +26,7 @@ import {
   MeshStandardMaterial,
   PlaneGeometry,
   RingGeometry,
+  type Texture,
   Vector3,
 } from "three";
 import { attribute, color, float, mix } from "three/tsl";
@@ -43,6 +44,7 @@ import {
   type TimedQuad,
 } from "./ground-marks";
 import { buildRoadGeometry, type Mesh2D } from "./road-geometry";
+import { asphaltMaterial, type AsphaltMaterial } from "./road-surface";
 import { rollsOver } from "./rollover-scene";
 import { sunShadowFrame, triangleInShadow, type SunShadowFrame } from "./shadow-frame";
 import { phaseAt, samplePerson, sampleVehicle, bracket } from "./sample";
@@ -57,7 +59,7 @@ import {
 export interface SceneGraphOptions {
   quality: QualityProfile;
   env: Pick<EnvironmentSettings, "night" | "wet" | "groundColor" | "streetLights"> &
-    Partial<Pick<EnvironmentSettings, "lightDirection">>;
+    Partial<Pick<EnvironmentSettings, "lightDirection" | "surface">>;
 }
 
 export interface VehicleNode {
@@ -92,6 +94,8 @@ export interface SceneGraph {
   addUpdater(fn: (t: number) => void, opts?: { after?: boolean }): void;
   /** Último instante aplicado. */
   readonly time: number;
+  /** Mapa de entorno (cielo horneado) para que el piso mojado lo refleje; null lo quita. */
+  setReflections(env: Texture | null): void;
   dispose(): void;
   stats: { meshes: number; triangles: number };
 }
@@ -111,12 +115,13 @@ function std(
   return m;
 }
 
-function sceneMaterials(opts: SceneGraphOptions) {
+function sceneMaterials(opts: SceneGraphOptions, asphalt: AsphaltMaterial) {
   const wet = opts.env.wet;
   const night = opts.env.night;
   return {
-    asphalt: std(wet ? "#26292c" : "#3b3e42", wet ? 0.32 : 0.92),
-    sidewalk: std("#a19f99", 0.95),
+    asphalt: asphalt.material,
+    // La banqueta mojada se oscurece un poco y pierde rugosidad, sin llegar a reflejar.
+    sidewalk: std(wet ? "#85837d" : "#a19f99", wet ? 0.6 : 0.95),
     white: std("#ecebe4", 0.6),
     yellow: std("#e3b21c", 0.6),
     crosswalk: std("#f2f2ee", 0.6),
@@ -331,7 +336,9 @@ export function buildSceneGraph(
   resultado: Resultado,
   opts: SceneGraphOptions,
 ): SceneGraph {
-  const mats = sceneMaterials(opts);
+  // Sin estado del piso (pruebas y llamadas antiguas): mojado o seco según `wet`.
+  const asphalt = asphaltMaterial(opts.env.surface ?? (opts.env.wet ? "mojado" : "seco"));
+  const mats = sceneMaterials(opts, asphalt);
   const root = new Group();
   root.name = "escena";
   const disposables: { dispose(): void }[] = Object.values(mats);
@@ -800,6 +807,9 @@ export function buildSceneGraph(
     },
     get time() {
       return lastT;
+    },
+    setReflections(env: Texture | null) {
+      asphalt.setReflections(env);
     },
     dispose() {
       root.traverse((o) => {
