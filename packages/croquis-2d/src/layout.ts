@@ -3,9 +3,8 @@
  * No muta la escena. Coordenadas: X al este, Y al norte, rumbo en grados antihorario desde +X.
  */
 import type { EscenaSpec, Pose2D, TablaClases } from "@croquis/scene-schema";
-import { DEFAULT_CLASES, longitudM } from "@croquis/scene-schema";
+import { DEFAULT_CLASES, longitudM, viaWidthM } from "@croquis/scene-schema";
 import { orientedBox, type Vec2 } from "./geometry";
-import { viaWidthM } from "./osm";
 
 export interface LaneStrip {
   /** Centro del eje de la franja. */

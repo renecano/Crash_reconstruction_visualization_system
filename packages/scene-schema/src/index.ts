@@ -55,3 +55,4 @@ export {
   validateResultado,
   type ResultadoValidation,
 } from "./resultado";
+export { outsideRedVialM, RED_VIAL_DEFAULTS, viaWidthM, type ViaMedida } from "./red-vial";
