@@ -1,0 +1,94 @@
+{
+ "costo_estimado_con": "claude-haiku-5-5",
+ "costo_usd": 0.00106521,
+ "esfuerzo": "medium",
+ "grabado": "2026-10-16T15:00:39+00:00",
+ "huella_prompt": "86f6a54999b8cbf7",
+ "latencia_ms": 8692.4,
+ "modelo": "claude-haiku-5-5",
+ "modelo_respuesta": "claude-haiku-5-5",
+ "prompt": "extraccion_v3",
+ "request_id": "req_011Cg67ggmZpLYL6e58dg18G",
+ "salida": {
+  "dispositivos": [],
+  "hechos": [
+   {
+    "campo": "vehiculo.clase",
+    "cita": "versa",
+    "persona": -1,
+    "valor": "sedan_compacto",
+    "vehiculo": 0
+   },
+   {
+    "campo": "entorno.iluminacion",
+    "cita": "no habia nada de luz en la carretera",
+    "persona": -1,
+    "valor": "noche_sin_alumbrado",
+    "vehiculo": -1
+   },
+   {
+    "campo": "evento.tipo",
+    "cita": "le pegamos con el frente",
+    "persona": -1,
+    "valor": "impacto_vehiculo_objeto",
+    "vehiculo": -1
+   },
+   {
+    "campo": "evento.objeto",
+    "cita": "se atraveso un venado",
+    "persona": -1,
+    "valor": "otro",
+    "vehiculo": -1
+   },
+   {
+    "campo": "vehiculo.zona_impacto",
+    "cita": "le pegamos con el frente",
+    "persona": -1,
+    "valor": "F",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.velocidad_kmh",
+    "cita": "ivamos como a 90",
+    "persona": -1,
+    "valor": "90",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.frenado",
+    "cita": "ella freno",
+    "persona": -1,
+    "valor": "true",
+    "vehiculo": 0
+   }
+  ],
+  "personas": [
+   {
+    "cita": "mi esposa iba manejando el versa",
+    "rol": "conductor",
+    "vehiculo": 0
+   },
+   {
+    "cita": "veniamos de valladolid a merida",
+    "rol": "pasajero",
+    "vehiculo": 0
+   }
+  ],
+  "preguntas": [
+   "¿Qué velocidad llevaban justo antes de que apareciera el venado?",
+   "¿Quedaron marcas de frenado en el pavimento antes del golpe?"
+  ],
+  "vehiculos": [
+   {
+    "narrador": false
+   }
+  ]
+ },
+ "texto_sha256": "644e21442b259bedfda27cc26357a80c22b43c5fdd0224369369c7678138a16a",
+ "usage": {
+  "cache_creation_input_tokens": 0,
+  "cache_read_input_tokens": 7131,
+  "input_tokens": 129,
+  "output_tokens": 1962
+ }
+}

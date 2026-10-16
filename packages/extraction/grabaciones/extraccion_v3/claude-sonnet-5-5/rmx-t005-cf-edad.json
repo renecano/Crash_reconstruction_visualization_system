@@ -1,0 +1,83 @@
+{
+ "costo_estimado_con": "claude-sonnet-5-5",
+ "costo_usd": 0.0110102,
+ "esfuerzo": "medium",
+ "grabado": "2026-10-16T14:11:39+00:00",
+ "huella_prompt": "86f6a54999b8cbf7",
+ "latencia_ms": 6906.3,
+ "modelo": "claude-sonnet-5-5",
+ "modelo_respuesta": "claude-sonnet-5-5",
+ "prompt": "extraccion_v3",
+ "request_id": "req_011Cg63x8RsJT2mSVvteAgP4",
+ "salida": {
+  "dispositivos": [],
+  "hechos": [
+   {
+    "campo": "vehiculo.clase",
+    "cita": "Tornado",
+    "persona": -1,
+    "valor": "pickup",
+    "vehiculo": 0
+   },
+   {
+    "campo": "entorno.iluminacion",
+    "cita": "ya de noche",
+    "persona": -1,
+    "valor": "noche",
+    "vehiculo": -1
+   },
+   {
+    "campo": "evento.tipo",
+    "cita": "le pegó a una palmera",
+    "persona": -1,
+    "valor": "impacto_vehiculo_objeto",
+    "vehiculo": -1
+   },
+   {
+    "campo": "evento.objeto",
+    "cita": "palmera",
+    "persona": -1,
+    "valor": "arbol",
+    "vehiculo": -1
+   },
+   {
+    "campo": "vehiculo.velocidad_kmh",
+    "cita": "iba como a 60",
+    "persona": -1,
+    "valor": "60",
+    "vehiculo": 0
+   },
+   {
+    "campo": "persona.cinturon",
+    "cita": "Traía el cinturón puesto",
+    "persona": 0,
+    "valor": "true",
+    "vehiculo": -1
+   }
+  ],
+  "personas": [
+   {
+    "cita": "Mi papá",
+    "rol": "conductor",
+    "vehiculo": 0
+   }
+  ],
+  "preguntas": [
+   "¿Con qué parte del vehículo golpeó la palmera (frente, lado derecho o izquierdo)?",
+   "¿El conductor frenó o intentó esquivar antes de subirse al camellón?",
+   "¿Cómo era la vía donde ocurrió (recta, curva, cuántos carriles) y tenía alumbrado público?"
+  ],
+  "vehiculos": [
+   {
+    "narrador": false
+   }
+  ]
+ },
+ "texto_sha256": "5391577af13a4b4c20f7ff5f8343b313850a2b8b475530640c6ddaa6123e1d6a",
+ "usage": {
+  "cache_creation_input_tokens": 0,
+  "cache_read_input_tokens": 7131,
+  "input_tokens": 142,
+  "output_tokens": 930
+ }
+}

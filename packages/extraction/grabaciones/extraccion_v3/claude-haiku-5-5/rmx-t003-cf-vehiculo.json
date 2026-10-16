@@ -1,0 +1,99 @@
+{
+ "costo_estimado_con": "claude-haiku-5-5",
+ "costo_usd": 0.00152711,
+ "esfuerzo": "medium",
+ "grabado": "2026-10-16T15:04:15+00:00",
+ "huella_prompt": "86f6a54999b8cbf7",
+ "latencia_ms": 12413.8,
+ "modelo": "claude-haiku-5-5",
+ "modelo_respuesta": "claude-haiku-5-5",
+ "prompt": "extraccion_v3",
+ "request_id": "req_011Cg67xHkRFCJcdGcrbQ6LP",
+ "salida": {
+  "dispositivos": [],
+  "hechos": [
+   {
+    "campo": "vehiculo.clase",
+    "cita": "italika",
+    "persona": -1,
+    "valor": "motocicleta",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.clase",
+    "cita": "tsuru",
+    "persona": -1,
+    "valor": "sedan_compacto",
+    "vehiculo": 1
+   },
+   {
+    "campo": "vehiculo.velocidad_kmh",
+    "cita": "como a 50",
+    "persona": -1,
+    "valor": "50",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.maniobra",
+    "cita": "estaba estacionado",
+    "persona": -1,
+    "valor": "estacionado",
+    "vehiculo": 1
+   },
+   {
+    "campo": "vehiculo.frenado",
+    "cita": "no me dio chanse de frenar",
+    "persona": -1,
+    "valor": "false",
+    "vehiculo": 0
+   },
+   {
+    "campo": "evento.tipo",
+    "cita": "me di contra la puerta",
+    "persona": -1,
+    "valor": "impacto_vehiculo_vehiculo",
+    "vehiculo": -1
+   },
+   {
+    "campo": "evento.objeto",
+    "cita": "estaba estacionado",
+    "persona": -1,
+    "valor": "vehiculo_estacionado",
+    "vehiculo": -1
+   },
+   {
+    "campo": "persona.casco",
+    "cita": "traia casco",
+    "persona": 0,
+    "valor": "true",
+    "vehiculo": -1
+   }
+  ],
+  "personas": [
+   {
+    "cita": "iba en mi italika",
+    "rol": "motociclista",
+    "vehiculo": 0
+   }
+  ],
+  "preguntas": [
+   "¿De qué lado del tsuru se abrió la puerta?",
+   "¿El señor que se bajó del tsuru era el conductor?"
+  ],
+  "vehiculos": [
+   {
+    "narrador": true
+   },
+   {
+    "narrador": false
+   }
+  ]
+ },
+ "texto_sha256": "5f22339f75df0a5c0b3e5ddf3517555afb985f01a0998fe6fc3d657158ce243b",
+ "usage": {
+  "cache_creation_input_tokens": 0,
+  "cache_read_input_tokens": 7131,
+  "input_tokens": 118,
+  "output_tokens": 2888
+ }
+}

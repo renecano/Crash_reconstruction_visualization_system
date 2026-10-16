@@ -1,0 +1,85 @@
+{
+ "costo_estimado_con": "claude-haiku-5-5",
+ "costo_usd": 0.00121051,
+ "esfuerzo": "medium",
+ "grabado": "2026-10-16T15:13:49+00:00",
+ "huella_prompt": "86f6a54999b8cbf7",
+ "latencia_ms": 9520.7,
+ "modelo": "claude-haiku-5-5",
+ "modelo_respuesta": "claude-haiku-5-5",
+ "prompt": "extraccion_v3",
+ "request_id": "req_011Cg68gt8oWh5fKHfnTdHFz",
+ "salida": {
+  "dispositivos": [],
+  "hechos": [
+   {
+    "campo": "vehiculo.clase",
+    "cita": "mi Civic",
+    "persona": -1,
+    "valor": "sedan_mediano",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.velocidad_kmh",
+    "cita": "iba como a 110",
+    "persona": -1,
+    "valor": "110",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.clase",
+    "cita": "tráiler",
+    "persona": -1,
+    "valor": "tractocamion",
+    "vehiculo": 1
+   },
+   {
+    "campo": "vehiculo.maniobra",
+    "cita": "Se me cerró un tráiler",
+    "persona": -1,
+    "valor": "cambio_carril",
+    "vehiculo": 1
+   },
+   {
+    "campo": "evento.tipo",
+    "cita": "estampé mi Civic contra el muro de contención",
+    "persona": -1,
+    "valor": "impacto_vehiculo_objeto",
+    "vehiculo": -1
+   },
+   {
+    "campo": "evento.objeto",
+    "cita": "muro de contención",
+    "persona": -1,
+    "valor": "muro",
+    "vehiculo": -1
+   }
+  ],
+  "personas": [
+   {
+    "cita": "estampé mi Civic contra el muro de contención",
+    "rol": "conductor",
+    "vehiculo": 0
+   }
+  ],
+  "preguntas": [
+   "¿El tráiler hizo contacto con el Civic antes de que chocara contra el muro?",
+   "¿El tráiler continuó su marcha o se detuvo después del cierre?"
+  ],
+  "vehiculos": [
+   {
+    "narrador": true
+   },
+   {
+    "narrador": false
+   }
+  ]
+ },
+ "texto_sha256": "2bcdb73e654ffe25a3c0b79ac29deddf01b291ed07d1113fd45cf4f391bea929",
+ "usage": {
+  "cache_creation_input_tokens": 0,
+  "cache_read_input_tokens": 7131,
+  "input_tokens": 62,
+  "output_tokens": 2266
+ }
+}

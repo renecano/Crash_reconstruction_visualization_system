@@ -1,0 +1,114 @@
+{
+ "costo_estimado_con": "claude-sonnet-5-5",
+ "costo_usd": 0.0094502,
+ "esfuerzo": "medium",
+ "grabado": "2026-10-16T14:11:32+00:00",
+ "huella_prompt": "86f6a54999b8cbf7",
+ "latencia_ms": 4954.5,
+ "modelo": "claude-sonnet-5-5",
+ "modelo_respuesta": "claude-sonnet-5-5",
+ "prompt": "extraccion_v3",
+ "request_id": "req_011Cg63wmFQ8CXy7AU1GjXu1",
+ "salida": {
+  "dispositivos": [],
+  "hechos": [
+   {
+    "campo": "vehiculo.clase",
+    "cita": "Jetta",
+    "persona": -1,
+    "valor": "sedan_mediano",
+    "vehiculo": 0
+   },
+   {
+    "campo": "lugar.tipo_via",
+    "cita": "retorno",
+    "persona": -1,
+    "valor": "retorno",
+    "vehiculo": -1
+   },
+   {
+    "campo": "vehiculo.maniobra",
+    "cita": "dar la vuelta en U",
+    "persona": -1,
+    "valor": "vuelta_u",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.clase",
+    "cita": "taxi",
+    "persona": -1,
+    "valor": "sedan_compacto",
+    "vehiculo": 1
+   },
+   {
+    "campo": "evento.tipo",
+    "cita": "nos pegó",
+    "persona": -1,
+    "valor": "impacto_vehiculo_vehiculo",
+    "vehiculo": -1
+   },
+   {
+    "campo": "vehiculo.zona_impacto",
+    "cita": "en la parte de atrás del lado izquierdo",
+    "persona": -1,
+    "valor": "B",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.zona_impacto",
+    "cita": "en la parte de atrás del lado izquierdo",
+    "persona": -1,
+    "valor": "L",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.zona_impacto",
+    "cita": "nos pegó",
+    "persona": -1,
+    "valor": "F",
+    "vehiculo": 1
+   },
+   {
+    "campo": "entorno.clima",
+    "cita": "estaba lloviendo durísimo",
+    "persona": -1,
+    "valor": "lluvia_fuerte",
+    "vehiculo": -1
+   },
+   {
+    "campo": "vehiculo.velocidad_kmh",
+    "cita": "iba como a 60",
+    "persona": -1,
+    "valor": "60",
+    "vehiculo": 1
+   }
+  ],
+  "personas": [
+   {
+    "cita": "yo iba de copiloto",
+    "rol": "pasajero",
+    "vehiculo": 0
+   }
+  ],
+  "preguntas": [
+   "¿En qué carril del retorno o de Tlalpan estaba el Jetta cuando inició la vuelta en U?",
+   "¿El Jetta ya estaba atravesado o aún se movía cuando lo golpeó el taxi?",
+   "¿El taxi frenó o intentó esquivar antes del golpe?"
+  ],
+  "vehiculos": [
+   {
+    "narrador": false
+   },
+   {
+    "narrador": false
+   }
+  ]
+ },
+ "texto_sha256": "a644bef6d554a9bc8a1b435c95c50716c1cab15703a1db1e3dcfccf908819b63",
+ "usage": {
+  "cache_creation_input_tokens": 0,
+  "cache_read_input_tokens": 7131,
+  "input_tokens": 187,
+  "output_tokens": 765
+ }
+}

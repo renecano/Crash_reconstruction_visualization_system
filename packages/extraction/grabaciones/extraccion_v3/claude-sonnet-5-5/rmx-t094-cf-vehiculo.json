@@ -1,0 +1,117 @@
+{
+ "costo_estimado_con": "claude-sonnet-5-5",
+ "costo_usd": 0.0088882,
+ "esfuerzo": "medium",
+ "grabado": "2026-10-16T14:19:32+00:00",
+ "huella_prompt": "86f6a54999b8cbf7",
+ "latencia_ms": 4580.9,
+ "modelo": "claude-sonnet-5-5",
+ "modelo_respuesta": "claude-sonnet-5-5",
+ "prompt": "extraccion_v3",
+ "request_id": "req_011Cg64Z8yq6xviTGABLZWZs",
+ "salida": {
+  "dispositivos": [
+   {
+    "cita": "semaforo",
+    "tipo": "semaforo"
+   }
+  ],
+  "hechos": [
+   {
+    "campo": "vehiculo.maniobra",
+    "cita": "estaba parada en el semaforo",
+    "persona": -1,
+    "valor": "detenido",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.velocidad_kmh",
+    "cita": "estaba parada en el semaforo",
+    "persona": -1,
+    "valor": "0",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.clase",
+    "cita": "i10",
+    "persona": -1,
+    "valor": "hatchback",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.clase",
+    "cita": "un taxi",
+    "persona": -1,
+    "valor": "sedan_compacto",
+    "vehiculo": 1
+   },
+   {
+    "campo": "evento.tipo",
+    "cita": "el de atras me pego",
+    "persona": -1,
+    "valor": "impacto_vehiculo_vehiculo",
+    "vehiculo": -1
+   },
+   {
+    "campo": "vehiculo.zona_impacto",
+    "cita": "le hundio toda la cajuela",
+    "persona": -1,
+    "valor": "B",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.zona_impacto",
+    "cita": "el de atras me pego",
+    "persona": -1,
+    "valor": "F",
+    "vehiculo": 1
+   },
+   {
+    "campo": "entorno.clima",
+    "cita": "la lluvia de en la mañana",
+    "persona": -1,
+    "valor": "lluvia",
+    "vehiculo": -1
+   },
+   {
+    "campo": "lugar.estado_superficie",
+    "cita": "estaba mojado",
+    "persona": -1,
+    "valor": "mojado",
+    "vehiculo": -1
+   }
+  ],
+  "personas": [
+   {
+    "cita": "yo traia mi i10",
+    "rol": "conductor",
+    "vehiculo": 0
+   },
+   {
+    "cita": "el taxista",
+    "rol": "conductor",
+    "vehiculo": 1
+   }
+  ],
+  "preguntas": [
+   "¿Qué velocidad aproximada llevaba el taxi al momento del golpe?",
+   "¿El taxi alcanzó a frenar antes del impacto?",
+   "¿El semáforo estaba en rojo cuando te detuviste?"
+  ],
+  "vehiculos": [
+   {
+    "narrador": true
+   },
+   {
+    "narrador": false
+   }
+  ]
+ },
+ "texto_sha256": "a8e1fbf6994bd83f973a7488df694b8329e0681f3643c6e3154447ff8e8a5e42",
+ "usage": {
+  "cache_creation_input_tokens": 0,
+  "cache_read_input_tokens": 7131,
+  "input_tokens": 131,
+  "output_tokens": 720
+ }
+}

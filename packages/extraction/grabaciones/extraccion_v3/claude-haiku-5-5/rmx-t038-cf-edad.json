@@ -1,0 +1,90 @@
+{
+ "costo_estimado_con": "claude-haiku-5-5",
+ "costo_usd": 0.00125001,
+ "esfuerzo": "medium",
+ "grabado": "2026-10-16T15:10:27+00:00",
+ "huella_prompt": "86f6a54999b8cbf7",
+ "latencia_ms": 10144.9,
+ "modelo": "claude-haiku-5-5",
+ "modelo_respuesta": "claude-haiku-5-5",
+ "prompt": "extraccion_v3",
+ "request_id": "req_011Cg68RugPisYRXvCfcTP1V",
+ "salida": {
+  "dispositivos": [],
+  "hechos": [
+   {
+    "campo": "evento.tipo",
+    "cita": "le di en la defensa trasera",
+    "persona": -1,
+    "valor": "impacto_vehiculo_vehiculo",
+    "vehiculo": -1
+   },
+   {
+    "campo": "lugar.tipo_via",
+    "cita": "lateral de Insurgentes",
+    "persona": -1,
+    "valor": "incorporacion",
+    "vehiculo": -1
+   },
+   {
+    "campo": "vehiculo.clase",
+    "cita": "Polo",
+    "persona": -1,
+    "valor": "hatchback",
+    "vehiculo": 1
+   },
+   {
+    "campo": "vehiculo.maniobra",
+    "cita": "se me cerró",
+    "persona": -1,
+    "valor": "cambio_carril",
+    "vehiculo": 1
+   },
+   {
+    "campo": "vehiculo.zona_impacto",
+    "cita": "le di en la defensa trasera",
+    "persona": -1,
+    "valor": "B",
+    "vehiculo": 1
+   },
+   {
+    "campo": "vehiculo.zona_impacto",
+    "cita": "le di en la defensa trasera",
+    "persona": -1,
+    "valor": "F",
+    "vehiculo": 0
+   }
+  ],
+  "personas": [
+   {
+    "cita": "le di en la defensa trasera",
+    "rol": "conductor",
+    "vehiculo": 0
+   },
+   {
+    "cita": "Un señor mayor en un Polo",
+    "rol": "conductor",
+    "vehiculo": 1
+   }
+  ],
+  "preguntas": [
+   "¿A qué velocidad iba cada vehículo al momento del golpe?",
+   "¿El Polo cambió de carril hacia la izquierda o hacia la derecha?"
+  ],
+  "vehiculos": [
+   {
+    "narrador": true
+   },
+   {
+    "narrador": false
+   }
+  ]
+ },
+ "texto_sha256": "bcb0735a84daf5cb3502370aee9ff5f6a6b67181e4aed16c22abf5f910903bf9",
+ "usage": {
+  "cache_creation_input_tokens": 0,
+  "cache_read_input_tokens": 7131,
+  "input_tokens": 52,
+  "output_tokens": 2347
+ }
+}

@@ -1,0 +1,106 @@
+{
+ "costo_estimado_con": "claude-haiku-5-5",
+ "costo_usd": 0.00126641,
+ "esfuerzo": "medium",
+ "grabado": "2026-10-16T14:46:06+00:00",
+ "huella_prompt": "86f6a54999b8cbf7",
+ "latencia_ms": 9707.9,
+ "modelo": "claude-haiku-5-5",
+ "modelo_respuesta": "claude-haiku-5-5",
+ "prompt": "extraccion_v3",
+ "request_id": "req_011Cg66aH1H75tZz8fxC5x7S",
+ "salida": {
+  "dispositivos": [],
+  "hechos": [
+   {
+    "campo": "vehiculo.clase",
+    "cita": "Ford Ranger",
+    "persona": -1,
+    "valor": "pickup",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.color",
+    "cita": "color blanco",
+    "persona": -1,
+    "valor": "blanco",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.velocidad_kmh",
+    "cita": "a una velocidad aproximada de 50 km/h",
+    "persona": -1,
+    "valor": "50",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.clase",
+    "cita": "vehículo sedán compacto",
+    "persona": -1,
+    "valor": "sedan_compacto",
+    "vehiculo": 1
+   },
+   {
+    "campo": "vehiculo.velocidad_kmh",
+    "cita": "se encontraba detenido en el carril izquierdo",
+    "persona": -1,
+    "valor": "0",
+    "vehiculo": 1
+   },
+   {
+    "campo": "vehiculo.maniobra",
+    "cita": "realizó un cambio de carril hacia la derecha",
+    "persona": -1,
+    "valor": "cambio_carril_derecha",
+    "vehiculo": 1
+   },
+   {
+    "campo": "vehiculo.zona_impacto",
+    "cita": "la parte frontal izquierda de mi unidad",
+    "persona": -1,
+    "valor": "F",
+    "vehiculo": 0
+   },
+   {
+    "campo": "evento.tipo",
+    "cita": "impactando con su costado derecho",
+    "persona": -1,
+    "valor": "impacto_vehiculo_vehiculo",
+    "vehiculo": -1
+   },
+   {
+    "campo": "lugar.estado_superficie",
+    "cita": "El pavimento se encontraba seco.",
+    "persona": -1,
+    "valor": "seco",
+    "vehiculo": -1
+   }
+  ],
+  "personas": [
+   {
+    "cita": "conducía mi camioneta",
+    "rol": "conductor",
+    "vehiculo": 0
+   }
+  ],
+  "preguntas": [
+   "¿Cuántos carriles tiene la avenida Lázaro Cárdenas en ese sentido?",
+   "¿Había otras personas a bordo del sedán compacto?"
+  ],
+  "vehiculos": [
+   {
+    "narrador": true
+   },
+   {
+    "narrador": false
+   }
+  ]
+ },
+ "texto_sha256": "c7537ec0f36a3746fef62ae8647c7e07fb13ee94ecf6cb06ff08502ed7e388a8",
+ "usage": {
+  "cache_creation_input_tokens": 0,
+  "cache_read_input_tokens": 7131,
+  "input_tokens": 266,
+  "output_tokens": 2337
+ }
+}

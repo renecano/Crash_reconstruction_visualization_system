@@ -1,0 +1,106 @@
+{
+ "costo_estimado_con": "claude-haiku-5-5",
+ "costo_usd": 0.00111571,
+ "esfuerzo": "medium",
+ "grabado": "2026-10-16T14:50:13+00:00",
+ "huella_prompt": "86f6a54999b8cbf7",
+ "latencia_ms": 8701.3,
+ "modelo": "claude-haiku-5-5",
+ "modelo_respuesta": "claude-haiku-5-5",
+ "prompt": "extraccion_v3",
+ "request_id": "req_011Cg66tYFKcuWvrUwhnbrhE",
+ "salida": {
+  "dispositivos": [],
+  "hechos": [
+   {
+    "campo": "vehiculo.clase",
+    "cita": "Mi carro es un Jetta",
+    "persona": -1,
+    "valor": "sedan_mediano",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.clase",
+    "cita": "una Ranger roja",
+    "persona": -1,
+    "valor": "pickup",
+    "vehiculo": 1
+   },
+   {
+    "campo": "vehiculo.color",
+    "cita": "una Ranger roja",
+    "persona": -1,
+    "valor": "roja",
+    "vehiculo": 1
+   },
+   {
+    "campo": "vehiculo.velocidad_kmh",
+    "cita": "venía como a 70",
+    "persona": -1,
+    "valor": "70",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.frenado",
+    "cita": "Yo ya estaba frenando",
+    "persona": -1,
+    "valor": "true",
+    "vehiculo": 0
+   },
+   {
+    "campo": "entorno.iluminacion",
+    "cita": "era como mediodía",
+    "persona": -1,
+    "valor": "dia",
+    "vehiculo": -1
+   },
+   {
+    "campo": "evento.tipo",
+    "cita": "me pegó de a tiro",
+    "persona": -1,
+    "valor": "impacto_vehiculo_vehiculo",
+    "vehiculo": -1
+   },
+   {
+    "campo": "vehiculo.zona_impacto",
+    "cita": "me echó lámina por atrás",
+    "persona": -1,
+    "valor": "B",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.zona_impacto",
+    "cita": "una Ranger roja, me echó lámina por atrás",
+    "persona": -1,
+    "valor": "F",
+    "vehiculo": 1
+   }
+  ],
+  "personas": [
+   {
+    "cita": "Yo ya estaba frenando",
+    "rol": "conductor",
+    "vehiculo": 0
+   }
+  ],
+  "preguntas": [
+   "¿El vehículo de adelante llegó a tocarse o solo frenó?",
+   "¿A qué velocidad iba la Ranger al momento del golpe?"
+  ],
+  "vehiculos": [
+   {
+    "narrador": true
+   },
+   {
+    "narrador": false
+   }
+  ]
+ },
+ "texto_sha256": "62a833430f8c25a056cb3caec5b712de41d407a6c62073ba861c247a27b7cccf",
+ "usage": {
+  "cache_creation_input_tokens": 0,
+  "cache_read_input_tokens": 7131,
+  "input_tokens": 189,
+  "output_tokens": 2051
+ }
+}

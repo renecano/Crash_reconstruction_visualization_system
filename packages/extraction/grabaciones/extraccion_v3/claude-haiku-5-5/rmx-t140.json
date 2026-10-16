@@ -1,0 +1,103 @@
+{
+ "costo_estimado_con": "claude-haiku-5-5",
+ "costo_usd": 0.00151481,
+ "esfuerzo": "medium",
+ "grabado": "2026-10-16T15:00:18+00:00",
+ "huella_prompt": "86f6a54999b8cbf7",
+ "latencia_ms": 12118.1,
+ "modelo": "claude-haiku-5-5",
+ "modelo_respuesta": "claude-haiku-5-5",
+ "prompt": "extraccion_v3",
+ "request_id": "req_011Cg67es3PLoCcLGMosgPTX",
+ "salida": {
+  "dispositivos": [],
+  "hechos": [
+   {
+    "campo": "vehiculo.clase",
+    "cita": "la moto de un amigo",
+    "persona": -1,
+    "valor": "motocicleta",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.clase",
+    "cita": "Spark",
+    "persona": -1,
+    "valor": "hatchback",
+    "vehiculo": 1
+   },
+   {
+    "campo": "vehiculo.maniobra",
+    "cita": "su carro estacionado",
+    "persona": -1,
+    "valor": "estacionado",
+    "vehiculo": 1
+   },
+   {
+    "campo": "vehiculo.velocidad_kmh",
+    "cita": "Iban como a treinta, no más.",
+    "persona": -1,
+    "valor": "30",
+    "vehiculo": 0
+   },
+   {
+    "campo": "entorno.iluminacion",
+    "cita": "ya noche",
+    "persona": -1,
+    "valor": "noche",
+    "vehiculo": -1
+   },
+   {
+    "campo": "evento.tipo",
+    "cita": "le dieron con la puerta",
+    "persona": -1,
+    "valor": "impacto_vehiculo_vehiculo",
+    "vehiculo": -1
+   },
+   {
+    "campo": "persona.casco",
+    "cita": "El amigo no traía casco",
+    "persona": 1,
+    "valor": "false",
+    "vehiculo": -1
+   },
+   {
+    "campo": "persona.casco",
+    "cita": "mi primo sí",
+    "persona": 0,
+    "valor": "true",
+    "vehiculo": -1
+   }
+  ],
+  "personas": [
+   {
+    "cita": "iba de pasajero",
+    "rol": "pasajero",
+    "vehiculo": 0
+   },
+   {
+    "cita": "la moto de un amigo",
+    "rol": "conductor",
+    "vehiculo": 0
+   }
+  ],
+  "preguntas": [
+   "¿Quién iba manejando el Spark y en qué parte de la calle estaba estacionado?"
+  ],
+  "vehiculos": [
+   {
+    "narrador": false
+   },
+   {
+    "narrador": false
+   }
+  ]
+ },
+ "texto_sha256": "e06a8d43b3aba58c0852d893b970bab7e67c3098272944c766380d24e6757d56",
+ "usage": {
+  "cache_creation_input_tokens": 0,
+  "cache_read_input_tokens": 7131,
+  "input_tokens": 170,
+  "output_tokens": 2853
+ }
+}

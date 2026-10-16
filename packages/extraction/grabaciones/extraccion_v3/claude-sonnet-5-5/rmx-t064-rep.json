@@ -1,0 +1,100 @@
+{
+ "costo_estimado_con": "claude-sonnet-5-5",
+ "costo_usd": 0.0142142,
+ "esfuerzo": "medium",
+ "grabado": "2026-10-16T15:38:10+00:00",
+ "huella_prompt": "86f6a54999b8cbf7",
+ "latencia_ms": 8520.0,
+ "modelo": "claude-sonnet-5-5",
+ "modelo_respuesta": "claude-sonnet-5-5",
+ "prompt": "extraccion_v3",
+ "request_id": "req_011Cg6AYbxxZMLiZ7hNGoZ8u",
+ "salida": {
+  "dispositivos": [],
+  "hechos": [
+   {
+    "campo": "vehiculo.clase",
+    "cita": "March",
+    "persona": -1,
+    "valor": "hatchback",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.clase",
+    "cita": "Jetta",
+    "persona": -1,
+    "valor": "sedan_mediano",
+    "vehiculo": 1
+   },
+   {
+    "campo": "vehiculo.color",
+    "cita": "color guinda",
+    "persona": -1,
+    "valor": "guinda",
+    "vehiculo": 1
+   },
+   {
+    "campo": "entorno.iluminacion",
+    "cita": "las 11 de la noche",
+    "persona": -1,
+    "valor": "noche",
+    "vehiculo": -1
+   },
+   {
+    "campo": "vehiculo.velocidad_kmh",
+    "cita": "como a 30",
+    "persona": -1,
+    "valor": "30",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.maniobra",
+    "cita": "se abrió",
+    "persona": -1,
+    "valor": "cambio_carril",
+    "vehiculo": 1
+   },
+   {
+    "campo": "evento.tipo",
+    "cita": "me pegó de lado",
+    "persona": -1,
+    "valor": "impacto_vehiculo_vehiculo",
+    "vehiculo": -1
+   },
+   {
+    "campo": "vehiculo.zona_impacto",
+    "cita": "la puerta del chofer",
+    "persona": -1,
+    "valor": "L",
+    "vehiculo": 0
+   }
+  ],
+  "personas": [
+   {
+    "cita": "Yo venía de regreso",
+    "rol": "conductor",
+    "vehiculo": 0
+   }
+  ],
+  "preguntas": [
+   "¿El golpe ocurrió en la curva o en el tramo recto de la avenida?",
+   "¿Cuántos carriles por sentido tiene la avenida en ese punto?",
+   "¿Qué parte del otro vehículo tocó el suyo?"
+  ],
+  "vehiculos": [
+   {
+    "narrador": true
+   },
+   {
+    "narrador": false
+   }
+  ]
+ },
+ "texto_sha256": "d793f80f52bcc46bafa0bd1a6f9661c008b14324a34e9213515eea6c3f8916d2",
+ "usage": {
+  "cache_creation_input_tokens": 0,
+  "cache_read_input_tokens": 7131,
+  "input_tokens": 224,
+  "output_tokens": 1234
+ }
+}

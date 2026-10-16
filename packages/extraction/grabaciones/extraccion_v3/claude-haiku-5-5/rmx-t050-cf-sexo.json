@@ -1,0 +1,72 @@
+{
+ "costo_estimado_con": "claude-haiku-5-5",
+ "costo_usd": 0.00081091,
+ "esfuerzo": "medium",
+ "grabado": "2026-10-16T15:12:26+00:00",
+ "huella_prompt": "86f6a54999b8cbf7",
+ "latencia_ms": 6741.8,
+ "modelo": "claude-haiku-5-5",
+ "modelo_respuesta": "claude-haiku-5-5",
+ "prompt": "extraccion_v3",
+ "request_id": "req_011Cg68axtdQUqHWZqRXwLsk",
+ "salida": {
+  "dispositivos": [],
+  "hechos": [
+   {
+    "campo": "vehiculo.frenado",
+    "cita": "mi primo freno",
+    "persona": -1,
+    "valor": "true",
+    "vehiculo": 0
+   },
+   {
+    "campo": "evento.tipo",
+    "cita": "lo alcanzo a tocar con la defensa",
+    "persona": -1,
+    "valor": "impacto_vehiculo_persona",
+    "vehiculo": -1
+   },
+   {
+    "campo": "vehiculo.zona_impacto",
+    "cita": "con la defensa",
+    "persona": -1,
+    "valor": "F",
+    "vehiculo": 0
+   }
+  ],
+  "personas": [
+   {
+    "cita": "ibamos",
+    "rol": "pasajero",
+    "vehiculo": 0
+   },
+   {
+    "cita": "mi primo manejava despacito",
+    "rol": "conductor",
+    "vehiculo": 0
+   },
+   {
+    "cita": "un viejito se bajo de la banqueta sin voltear",
+    "rol": "peaton",
+    "vehiculo": -1
+   }
+  ],
+  "preguntas": [
+   "¿Qué modelo o tipo de vehículo manejaba el primo?",
+   "¿A qué velocidad iban aproximadamente al momento del impacto?",
+   "¿Había cruce, semáforo o alguna señal cerca de donde se bajó el peatón?"
+  ],
+  "vehiculos": [
+   {
+    "narrador": false
+   }
+  ]
+ },
+ "texto_sha256": "2f558e868b6c8d268009b98dd8025d203f86c37d13c938cafd6353e1139eb0d3",
+ "usage": {
+  "cache_creation_input_tokens": 0,
+  "cache_read_input_tokens": 7131,
+  "input_tokens": 136,
+  "output_tokens": 1452
+ }
+}

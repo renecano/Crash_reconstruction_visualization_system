@@ -1,0 +1,119 @@
+{
+ "costo_estimado_con": "claude-sonnet-5-5",
+ "costo_usd": 0.0100302,
+ "esfuerzo": "medium",
+ "grabado": "2026-10-16T15:35:19+00:00",
+ "huella_prompt": "86f6a54999b8cbf7",
+ "latencia_ms": 7122.7,
+ "modelo": "claude-sonnet-5-5",
+ "modelo_respuesta": "claude-sonnet-5-5",
+ "prompt": "extraccion_v3",
+ "request_id": "req_011Cg6AL9Ljo37xkos8xstsC",
+ "salida": {
+  "dispositivos": [],
+  "hechos": [
+   {
+    "campo": "lugar.tipo_via",
+    "cita": "la incorporación a la vía rápida",
+    "persona": -1,
+    "valor": "incorporacion",
+    "vehiculo": -1
+   },
+   {
+    "campo": "vehiculo.clase",
+    "cita": "Mazda 3",
+    "persona": -1,
+    "valor": "sedan_mediano",
+    "vehiculo": 1
+   },
+   {
+    "campo": "vehiculo.color",
+    "cita": "azul",
+    "persona": -1,
+    "valor": "azul",
+    "vehiculo": 1
+   },
+   {
+    "campo": "vehiculo.maniobra",
+    "cita": "se quiso meter a la fuerza",
+    "persona": -1,
+    "valor": "cambio_carril",
+    "vehiculo": 1
+   },
+   {
+    "campo": "vehiculo.velocidad_kmh",
+    "cita": "Yo iba como a 60",
+    "persona": -1,
+    "valor": "60",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.clase",
+    "cita": "Lobo",
+    "persona": -1,
+    "valor": "pickup",
+    "vehiculo": 0
+   },
+   {
+    "campo": "evento.tipo",
+    "cita": "le pegué con la esquina de la defensa en su puerta de atrás",
+    "persona": -1,
+    "valor": "impacto_vehiculo_vehiculo",
+    "vehiculo": -1
+   },
+   {
+    "campo": "vehiculo.zona_impacto",
+    "cita": "en su puerta de atrás",
+    "persona": -1,
+    "valor": "R",
+    "vehiculo": 1
+   },
+   {
+    "campo": "vehiculo.zona_impacto",
+    "cita": "con la esquina de la defensa",
+    "persona": -1,
+    "valor": "F",
+    "vehiculo": 0
+   },
+   {
+    "campo": "entorno.iluminacion",
+    "cita": "Ya estaba oscuro y no había alumbrado en esa parte",
+    "persona": -1,
+    "valor": "noche_sin_alumbrado",
+    "vehiculo": -1
+   }
+  ],
+  "personas": [
+   {
+    "cita": "se me emparejó por la izquierda",
+    "rol": "conductor",
+    "vehiculo": 0
+   },
+   {
+    "cita": "una muchacha en un Mazda 3 azul",
+    "rol": "conductor",
+    "vehiculo": 1
+   }
+  ],
+  "preguntas": [
+   "¿La esquina de la defensa que golpeó fue la delantera derecha o la delantera izquierda?",
+   "¿Cuántos carriles tenía la incorporación en ese punto?",
+   "¿Qué velocidad llevaba el Mazda 3 al momento del contacto?"
+  ],
+  "vehiculos": [
+   {
+    "narrador": true
+   },
+   {
+    "narrador": false
+   }
+  ]
+ },
+ "texto_sha256": "aadb9d177789beea06ec36b7325d2b9c51f2bd7e36c048dbda50696e42801af8",
+ "usage": {
+  "cache_creation_input_tokens": 0,
+  "cache_read_input_tokens": 7131,
+  "input_tokens": 182,
+  "output_tokens": 824
+ }
+}

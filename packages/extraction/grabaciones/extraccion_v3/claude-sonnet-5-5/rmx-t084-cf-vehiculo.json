@@ -1,0 +1,107 @@
+{
+ "costo_estimado_con": "claude-sonnet-5-5",
+ "costo_usd": 0.0084222,
+ "esfuerzo": "medium",
+ "grabado": "2026-10-16T14:18:37+00:00",
+ "huella_prompt": "86f6a54999b8cbf7",
+ "latencia_ms": 4305.5,
+ "modelo": "claude-sonnet-5-5",
+ "modelo_respuesta": "claude-sonnet-5-5",
+ "prompt": "extraccion_v3",
+ "request_id": "req_011Cg64V8JY2JDedkivkpyaw",
+ "salida": {
+  "dispositivos": [],
+  "hechos": [
+   {
+    "campo": "vehiculo.clase",
+    "cita": "Civic",
+    "persona": -1,
+    "valor": "sedan_mediano",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.clase",
+    "cita": "Ranger",
+    "persona": -1,
+    "valor": "pickup",
+    "vehiculo": 1
+   },
+   {
+    "campo": "vehiculo.color",
+    "cita": "roja",
+    "persona": -1,
+    "valor": "roja",
+    "vehiculo": 1
+   },
+   {
+    "campo": "vehiculo.frenado",
+    "cita": "Yo ya estaba frenando",
+    "persona": -1,
+    "valor": "true",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.velocidad_kmh",
+    "cita": "yo venía como a 70",
+    "persona": -1,
+    "valor": "70",
+    "vehiculo": 0
+   },
+   {
+    "campo": "evento.tipo",
+    "cita": "me pegó de a tiro",
+    "persona": -1,
+    "valor": "impacto_vehiculo_vehiculo",
+    "vehiculo": -1
+   },
+   {
+    "campo": "vehiculo.zona_impacto",
+    "cita": "me echó lámina por atrás",
+    "persona": -1,
+    "valor": "B",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.zona_impacto",
+    "cita": "me echó lámina por atrás",
+    "persona": -1,
+    "valor": "F",
+    "vehiculo": 1
+   },
+   {
+    "campo": "entorno.iluminacion",
+    "cita": "era como mediodía",
+    "persona": -1,
+    "valor": "dia",
+    "vehiculo": -1
+   }
+  ],
+  "personas": [
+   {
+    "cita": "Yo ya estaba frenando",
+    "rol": "conductor",
+    "vehiculo": 0
+   }
+  ],
+  "preguntas": [
+   "¿El vehículo de adelante también tuvo contacto con tu carro?",
+   "¿Sabes a qué velocidad iba la Ranger al momento del golpe?",
+   "¿Cuántos carriles tenía el periférico en tu sentido?"
+  ],
+  "vehiculos": [
+   {
+    "narrador": true
+   },
+   {
+    "narrador": false
+   }
+  ]
+ },
+ "texto_sha256": "3844f4d766a036d8b5bd6a6b1d3ee99ab83aefe9fb8c5aa0e926cf52cbe4587d",
+ "usage": {
+  "cache_creation_input_tokens": 0,
+  "cache_read_input_tokens": 7131,
+  "input_tokens": 188,
+  "output_tokens": 662
+ }
+}

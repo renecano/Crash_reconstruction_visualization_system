@@ -1,0 +1,98 @@
+{
+ "costo_estimado_con": "claude-sonnet-5-5",
+ "costo_usd": 0.0156682,
+ "esfuerzo": "medium",
+ "grabado": "2026-10-16T15:33:28+00:00",
+ "huella_prompt": "86f6a54999b8cbf7",
+ "latencia_ms": 10057.3,
+ "modelo": "claude-sonnet-5-5",
+ "modelo_respuesta": "claude-sonnet-5-5",
+ "prompt": "extraccion_v3",
+ "request_id": "req_011Cg6ABgkcJoAP64Z5ZaPsx",
+ "salida": {
+  "dispositivos": [
+   {
+    "cita": "semáforo",
+    "tipo": "semaforo"
+   }
+  ],
+  "hechos": [
+   {
+    "campo": "vehiculo.clase",
+    "cita": "Kicks",
+    "persona": -1,
+    "valor": "suv_compacta",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.clase",
+    "cita": "Frontier",
+    "persona": -1,
+    "valor": "pickup",
+    "vehiculo": 1
+   },
+   {
+    "campo": "vehiculo.maniobra",
+    "cita": "Estaba en la fila del semáforo",
+    "persona": -1,
+    "valor": "detenido",
+    "vehiculo": 0
+   },
+   {
+    "campo": "evento.tipo",
+    "cita": "me pegó por atrás",
+    "persona": -1,
+    "valor": "impacto_vehiculo_vehiculo",
+    "vehiculo": -1
+   },
+   {
+    "campo": "vehiculo.zona_impacto",
+    "cita": "me pegó por atrás",
+    "persona": -1,
+    "valor": "B",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.zona_impacto",
+    "cita": "me pegó por atrás",
+    "persona": -1,
+    "valor": "F",
+    "vehiculo": 1
+   },
+   {
+    "campo": "lugar.estado_superficie",
+    "cita": "el piso estaba mojado",
+    "persona": -1,
+    "valor": "mojado",
+    "vehiculo": -1
+   }
+  ],
+  "personas": [
+   {
+    "cita": "Estaba en la fila del semáforo",
+    "rol": "conductor",
+    "vehiculo": 0
+   }
+  ],
+  "preguntas": [
+   "¿Los 25 km/h que mencionas eran la velocidad de la Frontier o la tuya?",
+   "¿Tu Kicks estaba completamente detenido al momento del golpe?",
+   "¿La Frontier alcanzó a frenar antes de pegarte?"
+  ],
+  "vehiculos": [
+   {
+    "narrador": true
+   },
+   {
+    "narrador": false
+   }
+  ]
+ },
+ "texto_sha256": "6e8aa90ca96e3b25e802f41321fb3095e9aec1a7ca89605a44f5d99e1ab62a24",
+ "usage": {
+  "cache_creation_input_tokens": 0,
+  "cache_read_input_tokens": 7131,
+  "input_tokens": 136,
+  "output_tokens": 1397
+ }
+}

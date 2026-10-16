@@ -1,0 +1,102 @@
+{
+ "costo_estimado_con": "claude-haiku-5-5",
+ "costo_usd": 0.00120151,
+ "esfuerzo": "medium",
+ "grabado": "2026-10-16T15:58:54+00:00",
+ "huella_prompt": "86f6a54999b8cbf7",
+ "latencia_ms": 10316.9,
+ "modelo": "claude-haiku-5-5",
+ "modelo_respuesta": "claude-haiku-5-5",
+ "prompt": "extraccion_v3",
+ "request_id": "req_011Cg6C8BpTrd9cSq5i5LGzU",
+ "salida": {
+  "dispositivos": [
+   {
+    "cita": "se paso el alto",
+    "tipo": "alto"
+   }
+  ],
+  "hechos": [
+   {
+    "campo": "vehiculo.clase",
+    "cita": "moto x",
+    "persona": -1,
+    "valor": "motocicleta",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.clase",
+    "cita": "suburban",
+    "persona": -1,
+    "valor": "suv_grande",
+    "vehiculo": 1
+   },
+   {
+    "campo": "vehiculo.velocidad_kmh",
+    "cita": "yo hiba como a 40",
+    "persona": -1,
+    "valor": "40",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.frenado",
+    "cita": "alcanse a frenar",
+    "persona": -1,
+    "valor": "true",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.zona_impacto",
+    "cita": "le pege en la defensa de adelante",
+    "persona": -1,
+    "valor": "F",
+    "vehiculo": 1
+   },
+   {
+    "campo": "evento.tipo",
+    "cita": "le pege en la defensa de adelante",
+    "persona": -1,
+    "valor": "impacto_vehiculo_vehiculo",
+    "vehiculo": -1
+   },
+   {
+    "campo": "persona.casco",
+    "cita": "no traia casco",
+    "persona": 0,
+    "valor": "false",
+    "vehiculo": -1
+   }
+  ],
+  "personas": [
+   {
+    "cita": "venia en mi moto x",
+    "rol": "motociclista",
+    "vehiculo": 0
+   },
+   {
+    "cita": "una doña en una suburban",
+    "rol": "conductor",
+    "vehiculo": 1
+   }
+  ],
+  "preguntas": [
+   "¿A qué velocidad iba la suburban al pasar el alto?",
+   "¿Qué lado de la moto recibió el golpe y hubo marcas en el pavimento?"
+  ],
+  "vehiculos": [
+   {
+    "narrador": true
+   },
+   {
+    "narrador": false
+   }
+  ]
+ },
+ "texto_sha256": "e95f24724294c3156e0aa4f0cd4d98545f30ff7a3ebc60ca56c432aa0a6c2a17",
+ "usage": {
+  "cache_creation_input_tokens": 0,
+  "cache_read_input_tokens": 7131,
+  "input_tokens": 127,
+  "output_tokens": 2235
+ }
+}

@@ -1,0 +1,111 @@
+{
+ "costo_estimado_con": "claude-haiku-5-5",
+ "costo_usd": 0.00132501,
+ "esfuerzo": "medium",
+ "grabado": "2026-10-16T15:59:22+00:00",
+ "huella_prompt": "86f6a54999b8cbf7",
+ "latencia_ms": 10153.4,
+ "modelo": "claude-haiku-5-5",
+ "modelo_respuesta": "claude-haiku-5-5",
+ "prompt": "extraccion_v3",
+ "request_id": "req_011Cg6CAGjgfr1XPTXkfjJ4H",
+ "salida": {
+  "dispositivos": [],
+  "hechos": [
+   {
+    "campo": "lugar.tipo_via",
+    "cita": "en el cruce con Río Nilo",
+    "persona": -1,
+    "valor": "interseccion",
+    "vehiculo": -1
+   },
+   {
+    "campo": "vehiculo.clase",
+    "cita": "Yaris",
+    "persona": -1,
+    "valor": "hatchback",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.velocidad_kmh",
+    "cita": "como a 50",
+    "persona": -1,
+    "valor": "50",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.frenado",
+    "cita": "Sí alcancé a frenar",
+    "persona": -1,
+    "valor": "true",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.zona_impacto",
+    "cita": "Le di de frente",
+    "persona": -1,
+    "valor": "F",
+    "vehiculo": 0
+   },
+   {
+    "campo": "evento.tipo",
+    "cita": "Le di de frente",
+    "persona": -1,
+    "valor": "impacto_vehiculo_vehiculo",
+    "vehiculo": -1
+   },
+   {
+    "campo": "vehiculo.clase",
+    "cita": "Sienna",
+    "persona": -1,
+    "valor": "van",
+    "vehiculo": 1
+   },
+   {
+    "campo": "vehiculo.maniobra",
+    "cita": "dio vuelta a la izquierda",
+    "persona": -1,
+    "valor": "vuelta_izquierda",
+    "vehiculo": 1
+   },
+   {
+    "campo": "vehiculo.zona_impacto",
+    "cita": "en la puerta del copiloto",
+    "persona": -1,
+    "valor": "R",
+    "vehiculo": 1
+   }
+  ],
+  "personas": [
+   {
+    "cita": "iba en mi Yaris",
+    "rol": "conductor",
+    "vehiculo": 0
+   },
+   {
+    "cita": "una señora en una Sienna",
+    "rol": "conductor",
+    "vehiculo": 1
+   }
+  ],
+  "preguntas": [
+   "¿A qué velocidad iba la Sienna al dar vuelta a la izquierda?",
+   "¿Quedaron marcas de frenado en el pavimento?"
+  ],
+  "vehiculos": [
+   {
+    "narrador": true
+   },
+   {
+    "narrador": false
+   }
+  ]
+ },
+ "texto_sha256": "cf05bc123b4cb389c01023a957b6e046c4c36891ab59b039474e193ddca02008",
+ "usage": {
+  "cache_creation_input_tokens": 0,
+  "cache_read_input_tokens": 7131,
+  "input_tokens": 192,
+  "output_tokens": 2469
+ }
+}

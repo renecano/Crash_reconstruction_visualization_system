@@ -1,0 +1,89 @@
+{
+ "costo_estimado_con": "claude-sonnet-5-5",
+ "costo_usd": 0.0064382,
+ "esfuerzo": "medium",
+ "grabado": "2026-10-16T15:39:09+00:00",
+ "huella_prompt": "86f6a54999b8cbf7",
+ "latencia_ms": 3237.0,
+ "modelo": "claude-sonnet-5-5",
+ "modelo_respuesta": "claude-sonnet-5-5",
+ "prompt": "extraccion_v3",
+ "request_id": "req_011Cg6AdLFnczfJzcusmGKAr",
+ "salida": {
+  "dispositivos": [
+   {
+    "cita": "se pasó el alto",
+    "tipo": "alto"
+   }
+  ],
+  "hechos": [
+   {
+    "campo": "vehiculo.clase",
+    "cita": "camioneta",
+    "persona": -1,
+    "valor": "suv_o_pickup",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.clase",
+    "cita": "moto",
+    "persona": -1,
+    "valor": "motocicleta",
+    "vehiculo": 1
+   },
+   {
+    "campo": "evento.tipo",
+    "cita": "le pegó a mi camioneta",
+    "persona": -1,
+    "valor": "impacto_vehiculo_vehiculo",
+    "vehiculo": -1
+   },
+   {
+    "campo": "vehiculo.zona_impacto",
+    "cita": "la puerta del copiloto",
+    "persona": -1,
+    "valor": "R",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.zona_impacto",
+    "cita": "le pegó a mi camioneta",
+    "persona": -1,
+    "valor": "F",
+    "vehiculo": 1
+   }
+  ],
+  "personas": [
+   {
+    "cita": "mi camioneta",
+    "rol": "conductor",
+    "vehiculo": 0
+   },
+   {
+    "cita": "un chavo en moto",
+    "rol": "motociclista",
+    "vehiculo": 1
+   }
+  ],
+  "preguntas": [
+   "¿A qué velocidad aproximada iba la moto?",
+   "¿Era una intersección y de qué lado llegó la moto?",
+   "¿Alcanzaste a frenar antes del golpe?"
+  ],
+  "vehiculos": [
+   {
+    "narrador": true
+   },
+   {
+    "narrador": false
+   }
+  ]
+ },
+ "texto_sha256": "e9b7d41bea759c4986cdd50c56ca925de94cf1e400d320c3791c9e7e303829f1",
+ "usage": {
+  "cache_creation_input_tokens": 0,
+  "cache_read_input_tokens": 7131,
+  "input_tokens": 61,
+  "output_tokens": 489
+ }
+}

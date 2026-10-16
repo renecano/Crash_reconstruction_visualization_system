@@ -1,0 +1,97 @@
+{
+ "costo_estimado_con": "claude-sonnet-5-5",
+ "costo_usd": 0.0076122,
+ "esfuerzo": "medium",
+ "grabado": "2026-10-16T15:43:59+00:00",
+ "huella_prompt": "86f6a54999b8cbf7",
+ "latencia_ms": 3866.1,
+ "modelo": "claude-sonnet-5-5",
+ "modelo_respuesta": "claude-sonnet-5-5",
+ "prompt": "extraccion_v3",
+ "request_id": "req_011Cg6AziT7ZPegvjfMvNzbP",
+ "salida": {
+  "dispositivos": [],
+  "hechos": [
+   {
+    "campo": "entorno.iluminacion",
+    "cita": "Sí había lámparas",
+    "persona": -1,
+    "valor": "noche_con_alumbrado",
+    "vehiculo": -1
+   },
+   {
+    "campo": "lugar.tipo_via",
+    "cita": "la curva",
+    "persona": -1,
+    "valor": "curva",
+    "vehiculo": -1
+   },
+   {
+    "campo": "lugar.estado_superficie",
+    "cita": "el piso tenía arenilla",
+    "persona": -1,
+    "valor": "grava_suelta",
+    "vehiculo": -1
+   },
+   {
+    "campo": "evento.tipo",
+    "cita": "me estampé contra el muro de contención",
+    "persona": -1,
+    "valor": "impacto_vehiculo_objeto",
+    "vehiculo": -1
+   },
+   {
+    "campo": "evento.objeto",
+    "cita": "muro de contención",
+    "persona": -1,
+    "valor": "muro",
+    "vehiculo": -1
+   },
+   {
+    "campo": "vehiculo.clase",
+    "cita": "Civic",
+    "persona": -1,
+    "valor": "sedan_mediano",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.velocidad_kmh",
+    "cita": "como a setenta",
+    "persona": -1,
+    "valor": "70",
+    "vehiculo": 0
+   },
+   {
+    "campo": "persona.cinturon",
+    "cita": "con cinturón",
+    "persona": 0,
+    "valor": "true",
+    "vehiculo": -1
+   }
+  ],
+  "personas": [
+   {
+    "cita": "iba yo sola",
+    "rol": "conductor",
+    "vehiculo": 0
+   }
+  ],
+  "preguntas": [
+   "¿El muro quedó del lado interior o exterior de la curva?",
+   "¿Frenó o giró el volante antes de que el carro se fuera de lado?",
+   "¿Qué parte del carro golpeó primero el muro?"
+  ],
+  "vehiculos": [
+   {
+    "narrador": true
+   }
+  ]
+ },
+ "texto_sha256": "a48b9337ea0f642f931ee5d035abc8d49f3f0a70036d5895a7f73135f0965d4f",
+ "usage": {
+  "cache_creation_input_tokens": 0,
+  "cache_read_input_tokens": 7131,
+  "input_tokens": 138,
+  "output_tokens": 591
+ }
+}

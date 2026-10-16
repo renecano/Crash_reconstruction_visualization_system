@@ -1,0 +1,126 @@
+{
+ "costo_estimado_con": "claude-sonnet-5-5",
+ "costo_usd": 0.0104662,
+ "esfuerzo": "medium",
+ "grabado": "2026-10-16T14:08:58+00:00",
+ "huella_prompt": "86f6a54999b8cbf7",
+ "latencia_ms": 5177.2,
+ "modelo": "claude-sonnet-5-5",
+ "modelo_respuesta": "claude-sonnet-5-5",
+ "prompt": "extraccion_v3",
+ "request_id": "req_011Cg63kPuSmuey1wAUMGAML",
+ "salida": {
+  "dispositivos": [],
+  "hechos": [
+   {
+    "campo": "vehiculo.clase",
+    "cita": "Yaris",
+    "persona": -1,
+    "valor": "hatchback",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.color",
+    "cita": "color blanco",
+    "persona": -1,
+    "valor": "blanco",
+    "vehiculo": 0
+   },
+   {
+    "campo": "entorno.iluminacion",
+    "cita": "aproximadamente a las 23:40 horas",
+    "persona": -1,
+    "valor": "noche",
+    "vehiculo": -1
+   },
+   {
+    "campo": "vehiculo.maniobra",
+    "cita": "invadió su carril",
+    "persona": -1,
+    "valor": "cambio_carril",
+    "vehiculo": 1
+   },
+   {
+    "campo": "vehiculo.maniobra",
+    "cita": "maniobró hacia la derecha",
+    "persona": -1,
+    "valor": "cambio_carril_derecha",
+    "vehiculo": 0
+   },
+   {
+    "campo": "evento.tipo",
+    "cita": "se impactó de frente contra un poste de alumbrado público",
+    "persona": -1,
+    "valor": "impacto_vehiculo_objeto",
+    "vehiculo": -1
+   },
+   {
+    "campo": "evento.objeto",
+    "cita": "poste de alumbrado público",
+    "persona": -1,
+    "valor": "poste",
+    "vehiculo": -1
+   },
+   {
+    "campo": "vehiculo.zona_impacto",
+    "cita": "se impactó de frente",
+    "persona": -1,
+    "valor": "F",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.velocidad_kmh",
+    "cita": "60 km/h",
+    "persona": -1,
+    "valor": "60",
+    "vehiculo": 0
+   },
+   {
+    "campo": "persona.cinturon",
+    "cita": "ambos ocupantes portaban el cinturón de seguridad",
+    "persona": 0,
+    "valor": "true",
+    "vehiculo": -1
+   },
+   {
+    "campo": "persona.cinturon",
+    "cita": "ambos ocupantes portaban el cinturón de seguridad",
+    "persona": 1,
+    "valor": "true",
+    "vehiculo": -1
+   }
+  ],
+  "personas": [
+   {
+    "cita": "circulaba a bordo de su vehículo",
+    "rol": "conductor",
+    "vehiculo": 0
+   },
+   {
+    "cita": "acompañado de su esposa",
+    "rol": "pasajero",
+    "vehiculo": 0
+   }
+  ],
+  "preguntas": [
+   "¿Cuántos carriles tiene el periférico en cada sentido en ese tramo?",
+   "¿El vehículo que invadió el carril llegó por la izquierda o por la derecha?",
+   "¿El asegurado alcanzó a frenar antes del impacto?"
+  ],
+  "vehiculos": [
+   {
+    "narrador": true
+   },
+   {
+    "narrador": false
+   }
+  ]
+ },
+ "texto_sha256": "8c62a92c096441a9d608dd40029e00b920ee32919698b59814167f896574f8fd",
+ "usage": {
+  "cache_creation_input_tokens": 0,
+  "cache_read_input_tokens": 7131,
+  "input_tokens": 250,
+  "output_tokens": 854
+ }
+}

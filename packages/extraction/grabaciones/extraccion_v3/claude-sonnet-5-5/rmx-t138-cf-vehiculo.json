@@ -1,0 +1,112 @@
+{
+ "costo_estimado_con": "claude-sonnet-5-5",
+ "costo_usd": 0.0169762,
+ "esfuerzo": "medium",
+ "grabado": "2026-10-16T14:23:37+00:00",
+ "huella_prompt": "86f6a54999b8cbf7",
+ "latencia_ms": 9595.8,
+ "modelo": "claude-sonnet-5-5",
+ "modelo_respuesta": "claude-sonnet-5-5",
+ "prompt": "extraccion_v3",
+ "request_id": "req_011Cg64rs2P1bYL3GQuH3Usm",
+ "salida": {
+  "dispositivos": [],
+  "hechos": [
+   {
+    "campo": "evento.tipo",
+    "cita": "Se volteó la camioneta",
+    "persona": -1,
+    "valor": "volcadura",
+    "vehiculo": -1
+   },
+   {
+    "campo": "vehiculo.clase",
+    "cita": "Silverado",
+    "persona": -1,
+    "valor": "pickup",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.clase",
+    "cita": "tráiler",
+    "persona": -1,
+    "valor": "tractocamion",
+    "vehiculo": 1
+   },
+   {
+    "campo": "vehiculo.maniobra",
+    "cita": "invadiendo nuestro carril",
+    "persona": -1,
+    "valor": "cambio_carril",
+    "vehiculo": 1
+   },
+   {
+    "campo": "lugar.tipo_via",
+    "cita": "en la curva",
+    "persona": -1,
+    "valor": "curva",
+    "vehiculo": -1
+   },
+   {
+    "campo": "lugar.estado_superficie",
+    "cita": "la llanta agarró la grava",
+    "persona": -1,
+    "valor": "grava_suelta",
+    "vehiculo": -1
+   },
+   {
+    "campo": "vehiculo.velocidad_kmh",
+    "cita": "como a sesenta",
+    "persona": -1,
+    "valor": "60",
+    "vehiculo": 0
+   },
+   {
+    "campo": "persona.cinturon",
+    "cita": "Todos traíamos cinturón",
+    "persona": 0,
+    "valor": "true",
+    "vehiculo": -1
+   },
+   {
+    "campo": "persona.cinturon",
+    "cita": "Todos traíamos cinturón",
+    "persona": 1,
+    "valor": "true",
+    "vehiculo": -1
+   }
+  ],
+  "personas": [
+   {
+    "cita": "mi compadre, que era el que manejaba",
+    "rol": "conductor",
+    "vehiculo": 0
+   },
+   {
+    "cita": "Íbamos por la carretera Durango-Mazatlán",
+    "rol": "pasajero",
+    "vehiculo": 0
+   }
+  ],
+  "preguntas": [
+   "¿La camioneta quedó apoyada sobre su costado izquierdo o derecho?",
+   "¿El tráiler llegó a tocar a la camioneta?",
+   "¿Cuántas personas iban a bordo de la camioneta?"
+  ],
+  "vehiculos": [
+   {
+    "narrador": false
+   },
+   {
+    "narrador": false
+   }
+  ]
+ },
+ "texto_sha256": "8f0adeaa2a0abff1e5f4a4e5251020dbe2e29c3b81950f457a31b31b07f93c24",
+ "usage": {
+  "cache_creation_input_tokens": 0,
+  "cache_read_input_tokens": 7131,
+  "input_tokens": 235,
+  "output_tokens": 1508
+ }
+}

@@ -1,0 +1,109 @@
+{
+ "costo_estimado_con": "claude-haiku-5-5",
+ "costo_usd": 0.00127801,
+ "esfuerzo": "medium",
+ "grabado": "2026-10-16T15:27:16+00:00",
+ "huella_prompt": "86f6a54999b8cbf7",
+ "latencia_ms": 10474.4,
+ "modelo": "claude-haiku-5-5",
+ "modelo_respuesta": "claude-haiku-5-5",
+ "prompt": "extraccion_v3",
+ "request_id": "req_011Cg69iGnDH5UWPyVuy3uAW",
+ "salida": {
+  "dispositivos": [],
+  "hechos": [
+   {
+    "campo": "vehiculo.clase",
+    "cita": "Sienna",
+    "persona": -1,
+    "valor": "van",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.velocidad_kmh",
+    "cita": "como a veinte",
+    "persona": -1,
+    "valor": "20",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.clase",
+    "cita": "Mazda 3",
+    "persona": -1,
+    "valor": "sedan_mediano",
+    "vehiculo": 1
+   },
+   {
+    "campo": "vehiculo.color",
+    "cita": "Mazda 3 azul",
+    "persona": -1,
+    "valor": "azul",
+    "vehiculo": 1
+   },
+   {
+    "campo": "vehiculo.maniobra",
+    "cita": "se incorporó sin voltear",
+    "persona": -1,
+    "valor": "incorporacion",
+    "vehiculo": 1
+   },
+   {
+    "campo": "lugar.tipo_via",
+    "cita": "venía en la lateral",
+    "persona": -1,
+    "valor": "incorporacion",
+    "vehiculo": -1
+   },
+   {
+    "campo": "evento.tipo",
+    "cita": "me raspó todo el costado derecho",
+    "persona": -1,
+    "valor": "impacto_vehiculo_vehiculo",
+    "vehiculo": -1
+   },
+   {
+    "campo": "vehiculo.zona_impacto",
+    "cita": "costado derecho",
+    "persona": -1,
+    "valor": "R",
+    "vehiculo": 0
+   }
+  ],
+  "personas": [
+   {
+    "cita": "Iba con mi niña",
+    "rol": "conductor",
+    "vehiculo": 0
+   },
+   {
+    "cita": "mi niña",
+    "rol": "pasajero",
+    "vehiculo": 0
+   },
+   {
+    "cita": "un señor de edad",
+    "rol": "conductor",
+    "vehiculo": 1
+   }
+  ],
+  "preguntas": [
+   "¿El Mazda 3 circulaba en la misma dirección que la Sienna por la vía lateral?",
+   "¿A qué velocidad iba el Mazda 3 al incorporarse?"
+  ],
+  "vehiculos": [
+   {
+    "narrador": true
+   },
+   {
+    "narrador": false
+   }
+  ]
+ },
+ "texto_sha256": "b2e7ffd7bc19a2dc67e092d5ea791ce096e864b8cabc30e64c1f667965c614c6",
+ "usage": {
+  "cache_creation_input_tokens": 0,
+  "cache_read_input_tokens": 7131,
+  "input_tokens": 157,
+  "output_tokens": 2382
+ }
+}

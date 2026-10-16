@@ -1,0 +1,107 @@
+{
+ "costo_estimado_con": "claude-sonnet-5-5",
+ "costo_usd": 0.0082622,
+ "esfuerzo": "medium",
+ "grabado": "2026-10-16T14:11:27+00:00",
+ "huella_prompt": "86f6a54999b8cbf7",
+ "latencia_ms": 4468.6,
+ "modelo": "claude-sonnet-5-5",
+ "modelo_respuesta": "claude-sonnet-5-5",
+ "prompt": "extraccion_v3",
+ "request_id": "req_011Cg63wS1WJDQ7qGkY8CVzk",
+ "salida": {
+  "dispositivos": [],
+  "hechos": [
+   {
+    "campo": "vehiculo.clase",
+    "cita": "italika",
+    "persona": -1,
+    "valor": "motocicleta",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.velocidad_kmh",
+    "cita": "como a 50",
+    "persona": -1,
+    "valor": "50",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.clase",
+    "cita": "tsuru",
+    "persona": -1,
+    "valor": "sedan_compacto",
+    "vehiculo": 1
+   },
+   {
+    "campo": "vehiculo.maniobra",
+    "cita": "estacionado",
+    "persona": -1,
+    "valor": "estacionado",
+    "vehiculo": 1
+   },
+   {
+    "campo": "vehiculo.frenado",
+    "cita": "no me dio chanse de frenar",
+    "persona": -1,
+    "valor": "false",
+    "vehiculo": 0
+   },
+   {
+    "campo": "evento.tipo",
+    "cita": "me di contra la puerta",
+    "persona": -1,
+    "valor": "impacto_vehiculo_vehiculo",
+    "vehiculo": -1
+   },
+   {
+    "campo": "vehiculo.zona_impacto",
+    "cita": "me di contra la puerta",
+    "persona": -1,
+    "valor": "F",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.zona_impacto",
+    "cita": "abrio la puerta de repente",
+    "persona": -1,
+    "valor": "L",
+    "vehiculo": 1
+   },
+   {
+    "campo": "persona.casco",
+    "cita": "traia casco",
+    "persona": 0,
+    "valor": "true",
+    "vehiculo": -1
+   }
+  ],
+  "personas": [
+   {
+    "cita": "iba en mi italika",
+    "rol": "motociclista",
+    "vehiculo": 0
+   }
+  ],
+  "preguntas": [
+   "¿La puerta del Tsuru que se abrió era la del lado del conductor o la del pasajero?",
+   "¿Cuántos carriles tiene la 11 Sur y por cuál iba?",
+   "¿Era de día o de noche y cómo estaba el pavimento?"
+  ],
+  "vehiculos": [
+   {
+    "narrador": true
+   },
+   {
+    "narrador": false
+   }
+  ]
+ },
+ "texto_sha256": "5f22339f75df0a5c0b3e5ddf3517555afb985f01a0998fe6fc3d657158ce243b",
+ "usage": {
+  "cache_creation_input_tokens": 0,
+  "cache_read_input_tokens": 7131,
+  "input_tokens": 118,
+  "output_tokens": 660
+ }
+}

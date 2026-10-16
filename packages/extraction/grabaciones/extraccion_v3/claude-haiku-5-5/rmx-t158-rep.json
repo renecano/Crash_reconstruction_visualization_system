@@ -1,0 +1,77 @@
+{
+ "costo_estimado_con": "claude-haiku-5-5",
+ "costo_usd": 0.00106871,
+ "esfuerzo": "medium",
+ "grabado": "2026-10-16T16:16:06+00:00",
+ "huella_prompt": "86f6a54999b8cbf7",
+ "latencia_ms": 8964.1,
+ "modelo": "claude-haiku-5-5",
+ "modelo_respuesta": "claude-haiku-5-5",
+ "prompt": "extraccion_v3",
+ "request_id": "req_011Cg6DSM5T21mzvSDGNG6LE",
+ "salida": {
+  "dispositivos": [],
+  "hechos": [
+   {
+    "campo": "vehiculo.clase",
+    "cita": "moto",
+    "persona": -1,
+    "valor": "motocicleta",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.velocidad_kmh",
+    "cita": "iba a unos 35",
+    "persona": -1,
+    "valor": "35",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.clase",
+    "cita": "Jetta",
+    "persona": -1,
+    "valor": "sedan_mediano",
+    "vehiculo": 1
+   },
+   {
+    "campo": "vehiculo.maniobra",
+    "cita": "me cerró en la lateral",
+    "persona": -1,
+    "valor": "cambio_carril",
+    "vehiculo": 1
+   }
+  ],
+  "personas": [
+   {
+    "cita": "me tiró de la moto",
+    "rol": "motociclista",
+    "vehiculo": 0
+   },
+   {
+    "cita": "Un chavo en un Jetta",
+    "rol": "conductor",
+    "vehiculo": 1
+   }
+  ],
+  "preguntas": [
+   "¿La lateral era una vía de servicio junto a una vía rápida o una calle común?",
+   "¿Qué maniobra o velocidad tenía el Jetta antes de cerrarle el paso?",
+   "¿Hubo impacto directo con el Jetta o solo la caída de la moto?"
+  ],
+  "vehiculos": [
+   {
+    "narrador": true
+   },
+   {
+    "narrador": false
+   }
+  ]
+ },
+ "texto_sha256": "be390f6ac87a12078858301380537b7209143907c8bb6d0c780f54f79f043c78",
+ "usage": {
+  "cache_creation_input_tokens": 0,
+  "cache_read_input_tokens": 7131,
+  "input_tokens": 49,
+  "output_tokens": 1985
+ }
+}

@@ -1,0 +1,109 @@
+{
+ "costo_estimado_con": "claude-haiku-5-5",
+ "costo_usd": 0.00104341,
+ "esfuerzo": "medium",
+ "grabado": "2026-10-16T14:43:32+00:00",
+ "huella_prompt": "86f6a54999b8cbf7",
+ "latencia_ms": 7956.9,
+ "modelo": "claude-haiku-5-5",
+ "modelo_respuesta": "claude-haiku-5-5",
+ "prompt": "extraccion_v3",
+ "request_id": "req_011Cg66P1ULQZbJHrK56NGPJ",
+ "salida": {
+  "dispositivos": [],
+  "hechos": [
+   {
+    "campo": "vehiculo.clase",
+    "cita": "Sportage",
+    "persona": -1,
+    "valor": "suv_compacta",
+    "vehiculo": 0
+   },
+   {
+    "campo": "lugar.tipo_via",
+    "cita": "En una curvita frené",
+    "persona": -1,
+    "valor": "curva",
+    "vehiculo": -1
+   },
+   {
+    "campo": "lugar.estado_superficie",
+    "cita": "el piso estaba bien encharcado",
+    "persona": -1,
+    "valor": "encharcado",
+    "vehiculo": -1
+   },
+   {
+    "campo": "entorno.clima",
+    "cita": "había llovido",
+    "persona": -1,
+    "valor": "lluvia",
+    "vehiculo": -1
+   },
+   {
+    "campo": "entorno.iluminacion",
+    "cita": "Anoche",
+    "persona": -1,
+    "valor": "noche",
+    "vehiculo": -1
+   },
+   {
+    "campo": "vehiculo.frenado",
+    "cita": "frené",
+    "persona": -1,
+    "valor": "true",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.velocidad_kmh",
+    "cita": "Iba como a 50, no más.",
+    "persona": -1,
+    "valor": "50",
+    "vehiculo": 0
+   },
+   {
+    "campo": "evento.tipo",
+    "cita": "se fue de lado",
+    "persona": -1,
+    "valor": "derrape",
+    "vehiculo": -1
+   },
+   {
+    "campo": "evento.tipo",
+    "cita": "le di a una palmera",
+    "persona": -1,
+    "valor": "impacto_vehiculo_objeto",
+    "vehiculo": -1
+   },
+   {
+    "campo": "evento.objeto",
+    "cita": "le di a una palmera",
+    "persona": -1,
+    "valor": "arbol",
+    "vehiculo": -1
+   }
+  ],
+  "personas": [
+   {
+    "cita": "venía por el bulevar de Boca del Río con la Sportage de mi cuñado",
+    "rol": "conductor",
+    "vehiculo": 0
+   }
+  ],
+  "preguntas": [
+   "¿Quedaron marcas de frenado o derrape en el pavimento, y de qué largo?"
+  ],
+  "vehiculos": [
+   {
+    "narrador": true
+   }
+  ]
+ },
+ "texto_sha256": "3001524b59038d3257c9d11a6c34b0559573634201fba1b511d0ea46b71ab28a",
+ "usage": {
+  "cache_creation_input_tokens": 0,
+  "cache_read_input_tokens": 7131,
+  "input_tokens": 136,
+  "output_tokens": 1917
+ }
+}

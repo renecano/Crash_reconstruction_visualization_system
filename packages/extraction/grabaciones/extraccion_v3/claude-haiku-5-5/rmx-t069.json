@@ -1,0 +1,98 @@
+{
+ "costo_estimado_con": "claude-haiku-5-5",
+ "costo_usd": 0.00130671,
+ "esfuerzo": "medium",
+ "grabado": "2026-10-16T14:47:37+00:00",
+ "huella_prompt": "86f6a54999b8cbf7",
+ "latencia_ms": 15016.7,
+ "modelo": "claude-haiku-5-5",
+ "modelo_respuesta": "claude-haiku-5-5",
+ "prompt": "extraccion_v3",
+ "request_id": "req_011Cg66gZtCoWvovS2RiERKM",
+ "salida": {
+  "dispositivos": [],
+  "hechos": [
+   {
+    "campo": "evento.tipo",
+    "cita": "Se volteó la camioneta",
+    "persona": -1,
+    "valor": "volcadura",
+    "vehiculo": -1
+   },
+   {
+    "campo": "vehiculo.clase",
+    "cita": "Explorer",
+    "persona": -1,
+    "valor": "suv_grande",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.frenado",
+    "cita": "primero frenó",
+    "persona": -1,
+    "valor": "true",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.velocidad_kmh",
+    "cita": "Íbamos como a ochenta",
+    "persona": -1,
+    "valor": "80",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.maniobra",
+    "cita": "un carro se nos atravesó",
+    "persona": -1,
+    "valor": "cambio_carril",
+    "vehiculo": 1
+   },
+   {
+    "campo": "persona.cinturon",
+    "cita": "Los dos traíamos el cinturón",
+    "persona": 0,
+    "valor": "true",
+    "vehiculo": -1
+   },
+   {
+    "campo": "persona.cinturon",
+    "cita": "Los dos traíamos el cinturón",
+    "persona": 1,
+    "valor": "true",
+    "vehiculo": -1
+   }
+  ],
+  "personas": [
+   {
+    "cita": "mi hijo manejando la Explorer",
+    "rol": "conductor",
+    "vehiculo": 0
+   },
+   {
+    "cita": "yo de copiloto",
+    "rol": "pasajero",
+    "vehiculo": 0
+   }
+  ],
+  "preguntas": [
+   "¿El carro que se atravesó llegó a tener contacto con la camioneta o solo provocó el volantazo?",
+   "¿A qué distancia de la camioneta quedaron las personas al salir por la ventana?",
+   "¿La camioneta se volteó antes o después de quedar en la cuneta, y qué tan largas fueron las marcas en el piso?"
+  ],
+  "vehiculos": [
+   {
+    "narrador": false
+   },
+   {
+    "narrador": false
+   }
+  ]
+ },
+ "texto_sha256": "157cf6ca16fbd109d7ec8f84193fd71ede76573d53dfc3c9c4955304c4f366ee",
+ "usage": {
+  "cache_creation_input_tokens": 0,
+  "cache_read_input_tokens": 7131,
+  "input_tokens": 219,
+  "output_tokens": 2427
+ }
+}

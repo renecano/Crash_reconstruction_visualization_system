@@ -1,0 +1,112 @@
+{
+ "costo_estimado_con": "claude-haiku-5-5",
+ "costo_usd": 0.00123261,
+ "esfuerzo": "medium",
+ "grabado": "2026-10-16T16:09:50+00:00",
+ "huella_prompt": "86f6a54999b8cbf7",
+ "latencia_ms": 9944.7,
+ "modelo": "claude-haiku-5-5",
+ "modelo_respuesta": "claude-haiku-5-5",
+ "prompt": "extraccion_v3",
+ "request_id": "req_011Cg6CxZASoMpdndYT72mm6",
+ "salida": {
+  "dispositivos": [
+   {
+    "cita": "luz roja del semáforo",
+    "tipo": "semaforo"
+   }
+  ],
+  "hechos": [
+   {
+    "campo": "lugar.estado_superficie",
+    "cita": "El pavimento estaba seco",
+    "persona": -1,
+    "valor": "seco",
+    "vehiculo": -1
+   },
+   {
+    "campo": "evento.tipo",
+    "cita": "golpeó la parte posterior de mi unidad",
+    "persona": -1,
+    "valor": "impacto_vehiculo_vehiculo",
+    "vehiculo": -1
+   },
+   {
+    "campo": "vehiculo.clase",
+    "cita": "Chevrolet Aveo",
+    "persona": -1,
+    "valor": "sedan_compacto",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.color",
+    "cita": "color arena",
+    "persona": -1,
+    "valor": "arena",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.maniobra",
+    "cita": "me encontraba detenido",
+    "persona": -1,
+    "valor": "detenido",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.velocidad_kmh",
+    "cita": "me encontraba detenido",
+    "persona": -1,
+    "valor": "0",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.zona_impacto",
+    "cita": "golpeó la parte posterior de mi unidad",
+    "persona": -1,
+    "valor": "B",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.clase",
+    "cita": "un tractocamión",
+    "persona": -1,
+    "valor": "tractocamion",
+    "vehiculo": 1
+   },
+   {
+    "campo": "vehiculo.frenado",
+    "cita": "no frenó a tiempo",
+    "persona": -1,
+    "valor": "false",
+    "vehiculo": 1
+   }
+  ],
+  "personas": [
+   {
+    "cita": "a bordo de mi vehículo",
+    "rol": "conductor",
+    "vehiculo": 0
+   }
+  ],
+  "preguntas": [
+   "¿A qué velocidad circulaba el tractocamión al momento del impacto?",
+   "¿Qué distancia había entre ambos vehículos cuando el tractocamión comenzó a acercarse?",
+   "¿Hubo marcas de frenado en el pavimento y, de ser así, de qué largo?"
+  ],
+  "vehiculos": [
+   {
+    "narrador": true
+   },
+   {
+    "narrador": false
+   }
+  ]
+ },
+ "texto_sha256": "7ddde7e6949f441d8826428ab50360e8dea9ad801416d986784d979d3296f9a7",
+ "usage": {
+  "cache_creation_input_tokens": 0,
+  "cache_read_input_tokens": 7131,
+  "input_tokens": 223,
+  "output_tokens": 2278
+ }
+}

@@ -1,0 +1,100 @@
+{
+ "costo_estimado_con": "claude-sonnet-5-5",
+ "costo_usd": 0.0078962,
+ "esfuerzo": "medium",
+ "grabado": "2026-10-16T15:35:56+00:00",
+ "huella_prompt": "86f6a54999b8cbf7",
+ "latencia_ms": 3787.8,
+ "modelo": "claude-sonnet-5-5",
+ "modelo_respuesta": "claude-sonnet-5-5",
+ "prompt": "extraccion_v3",
+ "request_id": "req_011Cg6AP82hekKKP17zhkmb7",
+ "salida": {
+  "dispositivos": [],
+  "hechos": [
+   {
+    "campo": "vehiculo.clase",
+    "cita": "Attitude",
+    "persona": -1,
+    "valor": "sedan_compacto",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.velocidad_kmh",
+    "cita": "como a 40",
+    "persona": -1,
+    "valor": "40",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.clase",
+    "cita": "Versa",
+    "persona": -1,
+    "valor": "sedan_compacto",
+    "vehiculo": 1
+   },
+   {
+    "campo": "vehiculo.maniobra",
+    "cita": "carro estacionado",
+    "persona": -1,
+    "valor": "estacionado",
+    "vehiculo": 1
+   },
+   {
+    "campo": "vehiculo.velocidad_kmh",
+    "cita": "carro estacionado",
+    "persona": -1,
+    "valor": "0",
+    "vehiculo": 1
+   },
+   {
+    "campo": "evento.tipo",
+    "cita": "Le pegué en toda la cajuela",
+    "persona": -1,
+    "valor": "impacto_vehiculo_vehiculo",
+    "vehiculo": -1
+   },
+   {
+    "campo": "vehiculo.zona_impacto",
+    "cita": "Le pegué en toda la cajuela",
+    "persona": -1,
+    "valor": "F",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.zona_impacto",
+    "cita": "Le pegué en toda la cajuela",
+    "persona": -1,
+    "valor": "B",
+    "vehiculo": 1
+   }
+  ],
+  "personas": [
+   {
+    "cita": "Iba yo a la chamba",
+    "rol": "conductor",
+    "vehiculo": 0
+   }
+  ],
+  "preguntas": [
+   "¿Frenaste en algún momento antes del golpe?",
+   "¿Cuántos carriles tiene la avenida México en ese tramo?",
+   "¿Era de día o de noche y cómo estaba el pavimento?"
+  ],
+  "vehiculos": [
+   {
+    "narrador": true
+   },
+   {
+    "narrador": false
+   }
+  ]
+ },
+ "texto_sha256": "8042be36e5aa49b2ef4a9de02b87406751f5e0d4ad1eb9cd5b1a9d6992e7f58f",
+ "usage": {
+  "cache_creation_input_tokens": 0,
+  "cache_read_input_tokens": 7131,
+  "input_tokens": 145,
+  "output_tokens": 618
+ }
+}

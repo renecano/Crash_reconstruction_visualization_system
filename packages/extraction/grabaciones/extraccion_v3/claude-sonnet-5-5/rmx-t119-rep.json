@@ -1,0 +1,109 @@
+{
+ "costo_estimado_con": "claude-sonnet-5-5",
+ "costo_usd": 0.0093662,
+ "esfuerzo": "medium",
+ "grabado": "2026-10-16T15:43:22+00:00",
+ "huella_prompt": "86f6a54999b8cbf7",
+ "latencia_ms": 6255.0,
+ "modelo": "claude-sonnet-5-5",
+ "modelo_respuesta": "claude-sonnet-5-5",
+ "prompt": "extraccion_v3",
+ "request_id": "req_011Cg6AwnTsoqQAKqXFueUBd",
+ "salida": {
+  "dispositivos": [],
+  "hechos": [
+   {
+    "campo": "vehiculo.clase",
+    "cita": "Tucson",
+    "persona": -1,
+    "valor": "suv_compacta",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.color",
+    "cita": "color vino",
+    "persona": -1,
+    "valor": "vino",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.velocidad_kmh",
+    "cita": "50 km/h",
+    "persona": -1,
+    "valor": "50",
+    "vehiculo": 0
+   },
+   {
+    "campo": "lugar.estado_superficie",
+    "cita": "el pavimento presentaba encharcamientos",
+    "persona": -1,
+    "valor": "encharcado",
+    "vehiculo": -1
+   },
+   {
+    "campo": "entorno.clima",
+    "cita": "lluvia intensa",
+    "persona": -1,
+    "valor": "lluvia_fuerte",
+    "vehiculo": -1
+   },
+   {
+    "campo": "evento.tipo",
+    "cita": "se impactara de costado contra el muro de contención del camellón central",
+    "persona": -1,
+    "valor": "impacto_vehiculo_objeto",
+    "vehiculo": -1
+   },
+   {
+    "campo": "evento.objeto",
+    "cita": "muro de contención",
+    "persona": -1,
+    "valor": "muro",
+    "vehiculo": -1
+   },
+   {
+    "campo": "vehiculo.zona_impacto",
+    "cita": "El impacto se produjo del lado del conductor.",
+    "persona": -1,
+    "valor": "L",
+    "vehiculo": 0
+   },
+   {
+    "campo": "persona.cinturon",
+    "cita": "con el cinturón colocado",
+    "persona": 1,
+    "valor": "true",
+    "vehiculo": -1
+   }
+  ],
+  "personas": [
+   {
+    "cita": "conducía mi vehículo Hyundai Tucson",
+    "rol": "conductor",
+    "vehiculo": 0
+   },
+   {
+    "cita": "acompañado de mi esposa, quien viajaba en el asiento del copiloto con el cinturón colocado",
+    "rol": "pasajero",
+    "vehiculo": 0
+   }
+  ],
+  "preguntas": [
+   "¿El muro de contención era continuo o había alguna abertura en el camellón?",
+   "¿Cuántos carriles tenía el bulevar en su sentido de circulación?",
+   "¿Hubo marcas de derrape o frenado antes del impacto?"
+  ],
+  "vehiculos": [
+   {
+    "narrador": true
+   }
+  ]
+ },
+ "texto_sha256": "0670217ea297b05e76fb721e6045a7b83853922d9cc29038eafc13cf943bcd76",
+ "usage": {
+  "cache_creation_input_tokens": 0,
+  "cache_read_input_tokens": 7131,
+  "input_tokens": 265,
+  "output_tokens": 741
+ }
+}

@@ -1,0 +1,90 @@
+{
+ "costo_estimado_con": "claude-haiku-5-5",
+ "costo_usd": 0.00130211,
+ "esfuerzo": "medium",
+ "grabado": "2026-10-16T14:59:07+00:00",
+ "huella_prompt": "86f6a54999b8cbf7",
+ "latencia_ms": 11868.7,
+ "modelo": "claude-haiku-5-5",
+ "modelo_respuesta": "claude-haiku-5-5",
+ "prompt": "extraccion_v3",
+ "request_id": "req_011Cg67ZfeA6xpM4Xavc4LLr",
+ "salida": {
+  "dispositivos": [],
+  "hechos": [
+   {
+    "campo": "vehiculo.clase",
+    "cita": "Hilux",
+    "persona": -1,
+    "valor": "pickup",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.color",
+    "cita": "Hilux gris",
+    "persona": -1,
+    "valor": "gris",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.velocidad_kmh",
+    "cita": "iba como a cincuenta",
+    "persona": -1,
+    "valor": "50",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.frenado",
+    "cita": "ni frenó",
+    "persona": -1,
+    "valor": "false",
+    "vehiculo": 0
+   },
+   {
+    "campo": "evento.tipo",
+    "cita": "le dio con el espejo en el hombro",
+    "persona": -1,
+    "valor": "impacto_vehiculo_persona",
+    "vehiculo": -1
+   },
+   {
+    "campo": "vehiculo.clase",
+    "cita": "pedalear",
+    "persona": -1,
+    "valor": "bicicleta",
+    "vehiculo": 1
+   }
+  ],
+  "personas": [
+   {
+    "cita": "un muchacho que iba en una Hilux gris",
+    "rol": "conductor",
+    "vehiculo": 0
+   },
+   {
+    "cita": "Mi papá sale a pedalear",
+    "rol": "ciclista",
+    "vehiculo": 1
+   }
+  ],
+  "preguntas": [
+   "¿Qué lado de la camioneta quedó junto a la bicicleta?",
+   "¿Quedaron marcas de frenado o derrape en el pavimento?"
+  ],
+  "vehiculos": [
+   {
+    "narrador": false
+   },
+   {
+    "narrador": false
+   }
+  ]
+ },
+ "texto_sha256": "fb8864bd27c1a84802d8b39ebb7f6a1fdb622ba6d36bba95bf92a8a58c0e8b1c",
+ "usage": {
+  "cache_creation_input_tokens": 0,
+  "cache_read_input_tokens": 7131,
+  "input_tokens": 163,
+  "output_tokens": 2429
+ }
+}

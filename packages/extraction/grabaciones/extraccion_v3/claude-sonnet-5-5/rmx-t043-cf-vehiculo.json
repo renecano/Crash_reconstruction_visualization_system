@@ -1,0 +1,105 @@
+{
+ "costo_estimado_con": "claude-sonnet-5-5",
+ "costo_usd": 0.0080302,
+ "esfuerzo": "medium",
+ "grabado": "2026-10-16T14:15:03+00:00",
+ "huella_prompt": "86f6a54999b8cbf7",
+ "latencia_ms": 5163.0,
+ "modelo": "claude-sonnet-5-5",
+ "modelo_respuesta": "claude-sonnet-5-5",
+ "prompt": "extraccion_v3",
+ "request_id": "req_011Cg64DHqaUAD86Xzkun3TU",
+ "salida": {
+  "dispositivos": [
+   {
+    "cita": "el semaforo estaba en verde pa mi",
+    "tipo": "semaforo"
+   }
+  ],
+  "hechos": [
+   {
+    "campo": "vehiculo.clase",
+    "cita": "chevy",
+    "persona": -1,
+    "valor": "hatchback",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.clase",
+    "cita": "Ram",
+    "persona": -1,
+    "valor": "pickup",
+    "vehiculo": 1
+   },
+   {
+    "campo": "vehiculo.color",
+    "cita": "roja",
+    "persona": -1,
+    "valor": "roja",
+    "vehiculo": 1
+   },
+   {
+    "campo": "vehiculo.velocidad_kmh",
+    "cita": "yo hiba como a 50",
+    "persona": -1,
+    "valor": "50",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.zona_impacto",
+    "cita": "me pego de lado en la puerta del chofer",
+    "persona": -1,
+    "valor": "L",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.zona_impacto",
+    "cita": "me pego de lado",
+    "persona": -1,
+    "valor": "F",
+    "vehiculo": 1
+   },
+   {
+    "campo": "evento.tipo",
+    "cita": "me pego de lado",
+    "persona": -1,
+    "valor": "impacto_vehiculo_vehiculo",
+    "vehiculo": -1
+   },
+   {
+    "campo": "entorno.iluminacion",
+    "cita": "las 10 de la noche",
+    "persona": -1,
+    "valor": "noche",
+    "vehiculo": -1
+   }
+  ],
+  "personas": [
+   {
+    "cita": "andaba en mi chevy",
+    "rol": "conductor",
+    "vehiculo": 0
+   }
+  ],
+  "preguntas": [
+   "¿Había alumbrado público en el lugar?",
+   "¿Cuántos carriles por sentido tiene la avenida López Mateos en ese punto?",
+   "¿La Ram venía frenando o en movimiento constante antes del golpe?"
+  ],
+  "vehiculos": [
+   {
+    "narrador": true
+   },
+   {
+    "narrador": false
+   }
+  ]
+ },
+ "texto_sha256": "e2b7f8a43b81a5430e2709f5d0d9f149dfc310c19fb83b0b6c2dab542cc4f8ce",
+ "usage": {
+  "cache_creation_input_tokens": 0,
+  "cache_read_input_tokens": 7131,
+  "input_tokens": 142,
+  "output_tokens": 632
+ }
+}

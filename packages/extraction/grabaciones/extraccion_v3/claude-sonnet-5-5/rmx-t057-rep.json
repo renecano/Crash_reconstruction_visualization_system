@@ -1,0 +1,93 @@
+{
+ "costo_estimado_con": "claude-sonnet-5-5",
+ "costo_usd": 0.0074382,
+ "esfuerzo": "medium",
+ "grabado": "2026-10-16T15:37:27+00:00",
+ "huella_prompt": "86f6a54999b8cbf7",
+ "latencia_ms": 4235.0,
+ "modelo": "claude-sonnet-5-5",
+ "modelo_respuesta": "claude-sonnet-5-5",
+ "prompt": "extraccion_v3",
+ "request_id": "req_011Cg6AVm7Jd7wq3Sq7vSLhw",
+ "salida": {
+  "dispositivos": [],
+  "hechos": [
+   {
+    "campo": "entorno.iluminacion",
+    "cita": "en la noche",
+    "persona": -1,
+    "valor": "noche",
+    "vehiculo": -1
+   },
+   {
+    "campo": "vehiculo.clase",
+    "cita": "Tiguan",
+    "persona": -1,
+    "valor": "suv_compacta",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.clase",
+    "cita": "Attitude",
+    "persona": -1,
+    "valor": "sedan_compacto",
+    "vehiculo": 1
+   },
+   {
+    "campo": "vehiculo.color",
+    "cita": "Attitude blanco",
+    "persona": -1,
+    "valor": "blanco",
+    "vehiculo": 1
+   },
+   {
+    "campo": "vehiculo.maniobra",
+    "cita": "saliendo en reversa",
+    "persona": -1,
+    "valor": "reversa",
+    "vehiculo": 0
+   },
+   {
+    "campo": "evento.tipo",
+    "cita": "Me pegó",
+    "persona": -1,
+    "valor": "impacto_vehiculo_vehiculo",
+    "vehiculo": -1
+   },
+   {
+    "campo": "vehiculo.zona_impacto",
+    "cita": "Me pegó en la esquina de atrás del lado izquierdo",
+    "persona": -1,
+    "valor": "B",
+    "vehiculo": 0
+   }
+  ],
+  "personas": [
+   {
+    "cita": "yo iba saliendo en reversa",
+    "rol": "conductor",
+    "vehiculo": 0
+   }
+  ],
+  "preguntas": [
+   "¿A qué velocidad aproximada iba el otro vehículo?",
+   "¿Frenó alguno de los dos vehículos antes del golpe?",
+   "¿Qué parte del otro vehículo golpeó al suyo?"
+  ],
+  "vehiculos": [
+   {
+    "narrador": true
+   },
+   {
+    "narrador": false
+   }
+  ]
+ },
+ "texto_sha256": "76f6e19da08954ce987423243203ef80ed06dc07b798518c448baaea114e15c3",
+ "usage": {
+  "cache_creation_input_tokens": 0,
+  "cache_read_input_tokens": 7131,
+  "input_tokens": 211,
+  "output_tokens": 559
+ }
+}

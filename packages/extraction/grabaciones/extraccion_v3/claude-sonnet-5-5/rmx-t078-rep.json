@@ -1,0 +1,100 @@
+{
+ "costo_estimado_con": "claude-sonnet-5-5",
+ "costo_usd": 0.0144662,
+ "esfuerzo": "medium",
+ "grabado": "2026-10-16T15:39:32+00:00",
+ "huella_prompt": "86f6a54999b8cbf7",
+ "latencia_ms": 8535.3,
+ "modelo": "claude-sonnet-5-5",
+ "modelo_respuesta": "claude-sonnet-5-5",
+ "prompt": "extraccion_v3",
+ "request_id": "req_011Cg6AedG1jQn2XirfYwGLL",
+ "salida": {
+  "dispositivos": [],
+  "hechos": [
+   {
+    "campo": "entorno.clima",
+    "cita": "estaba lloviendo durísimo",
+    "persona": -1,
+    "valor": "lluvia_fuerte",
+    "vehiculo": -1
+   },
+   {
+    "campo": "vehiculo.maniobra",
+    "cita": "incorporándome",
+    "persona": -1,
+    "valor": "incorporacion",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.velocidad_kmh",
+    "cita": "como a 40",
+    "persona": -1,
+    "valor": "40",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.clase",
+    "cita": "Fiesta",
+    "persona": -1,
+    "valor": "hatchback",
+    "vehiculo": 1
+   },
+   {
+    "campo": "vehiculo.color",
+    "cita": "plateado",
+    "persona": -1,
+    "valor": "plateado",
+    "vehiculo": 1
+   },
+   {
+    "campo": "vehiculo.maniobra",
+    "cita": "se cerró",
+    "persona": -1,
+    "valor": "cambio_carril",
+    "vehiculo": 1
+   },
+   {
+    "campo": "evento.tipo",
+    "cita": "me pegó",
+    "persona": -1,
+    "valor": "impacto_vehiculo_vehiculo",
+    "vehiculo": -1
+   },
+   {
+    "campo": "vehiculo.zona_impacto",
+    "cita": "costado izquierdo",
+    "persona": -1,
+    "valor": "L",
+    "vehiculo": 0
+   }
+  ],
+  "personas": [
+   {
+    "cita": "yo iba incorporándome",
+    "rol": "conductor",
+    "vehiculo": 0
+   }
+  ],
+  "preguntas": [
+   "¿Con qué parte del Fiesta recibió el golpe su vehículo?",
+   "¿Cuántos carriles tenía la Ruiz Cortines en ese tramo?",
+   "¿Alcanzó a frenar alguno de los dos vehículos antes del golpe?"
+  ],
+  "vehiculos": [
+   {
+    "narrador": true
+   },
+   {
+    "narrador": false
+   }
+  ]
+ },
+ "texto_sha256": "d0cea24de19d74255c421b539b90e4c5106ff4643cfc545b6dd799b1ef729da9",
+ "usage": {
+  "cache_creation_input_tokens": 0,
+  "cache_read_input_tokens": 7131,
+  "input_tokens": 165,
+  "output_tokens": 1271
+ }
+}

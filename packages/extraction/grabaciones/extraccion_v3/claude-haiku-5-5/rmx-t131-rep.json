@@ -1,0 +1,109 @@
+{
+ "costo_estimado_con": "claude-haiku-5-5",
+ "costo_usd": 0.00160211,
+ "esfuerzo": "medium",
+ "grabado": "2026-10-16T16:11:20+00:00",
+ "huella_prompt": "86f6a54999b8cbf7",
+ "latencia_ms": 12989.7,
+ "modelo": "claude-haiku-5-5",
+ "modelo_respuesta": "claude-haiku-5-5",
+ "prompt": "extraccion_v3",
+ "request_id": "req_011Cg6D4y1ory8FqXXqBKf2P",
+ "salida": {
+  "dispositivos": [
+   {
+    "cita": "un límite de velocidad de 30 km/h debidamente señalizado",
+    "tipo": "limite_velocidad"
+   }
+  ],
+  "hechos": [
+   {
+    "campo": "vehiculo.clase",
+    "cita": "CR-V",
+    "persona": -1,
+    "valor": "suv_compacta",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.color",
+    "cita": "color vino",
+    "persona": -1,
+    "valor": "vino",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.maniobra",
+    "cita": "salía en reversa",
+    "persona": -1,
+    "valor": "reversa",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.clase",
+    "cita": "Nissan Versa",
+    "persona": -1,
+    "valor": "sedan_compacto",
+    "vehiculo": 1
+   },
+   {
+    "campo": "vehiculo.color",
+    "cita": "color azul",
+    "persona": -1,
+    "valor": "azul",
+    "vehiculo": 1
+   },
+   {
+    "campo": "evento.tipo",
+    "cita": "impactó la parte trasera izquierda de mi unidad",
+    "persona": -1,
+    "valor": "impacto_vehiculo_vehiculo",
+    "vehiculo": -1
+   },
+   {
+    "campo": "vehiculo.zona_impacto",
+    "cita": "impactó la parte trasera izquierda de mi unidad",
+    "persona": -1,
+    "valor": "B",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.zona_impacto",
+    "cita": "impactó la parte trasera izquierda de mi unidad",
+    "persona": -1,
+    "valor": "L",
+    "vehiculo": 0
+   }
+  ],
+  "personas": [
+   {
+    "cita": "a bordo de mi camioneta",
+    "rol": "conductor",
+    "vehiculo": 0
+   },
+   {
+    "cita": "Un conductor de aproximadamente 25 años",
+    "rol": "conductor",
+    "vehiculo": 1
+   }
+  ],
+  "preguntas": [
+   "¿A qué velocidad aproximada circulaba el Versa al momento del impacto?",
+   "¿Dónde quedó el punto de impacto respecto a la salida de la cochera?"
+  ],
+  "vehiculos": [
+   {
+    "narrador": true
+   },
+   {
+    "narrador": false
+   }
+  ]
+ },
+ "texto_sha256": "7cde3daf726b3933c7fcd884c3381ed04721060d8eb7517e025915c7f5c81460",
+ "usage": {
+  "cache_creation_input_tokens": 0,
+  "cache_read_input_tokens": 7131,
+  "input_tokens": 248,
+  "output_tokens": 3012
+ }
+}

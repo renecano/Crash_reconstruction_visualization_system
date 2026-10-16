@@ -1,0 +1,119 @@
+{
+ "costo_estimado_con": "claude-haiku-5-5",
+ "costo_usd": 0.00146761,
+ "esfuerzo": "medium",
+ "grabado": "2026-10-16T15:24:41+00:00",
+ "huella_prompt": "86f6a54999b8cbf7",
+ "latencia_ms": 11523.6,
+ "modelo": "claude-haiku-5-5",
+ "modelo_respuesta": "claude-haiku-5-5",
+ "prompt": "extraccion_v3",
+ "request_id": "req_011Cg69WkYy5d3h5HDhKT3tu",
+ "salida": {
+  "dispositivos": [
+   {
+    "cita": "luz roja del semáforo",
+    "tipo": "semaforo"
+   }
+  ],
+  "hechos": [
+   {
+    "campo": "lugar.estado_superficie",
+    "cita": "El pavimento estaba seco",
+    "persona": -1,
+    "valor": "seco",
+    "vehiculo": -1
+   },
+   {
+    "campo": "evento.tipo",
+    "cita": "golpeó la parte posterior de mi unidad",
+    "persona": -1,
+    "valor": "impacto_vehiculo_vehiculo",
+    "vehiculo": -1
+   },
+   {
+    "campo": "vehiculo.clase",
+    "cita": "Volkswagen Virtus",
+    "persona": -1,
+    "valor": "sedan_compacto",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.color",
+    "cita": "color arena",
+    "persona": -1,
+    "valor": "arena",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.maniobra",
+    "cita": "me encontraba detenido",
+    "persona": -1,
+    "valor": "detenido",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.velocidad_kmh",
+    "cita": "me encontraba detenido",
+    "persona": -1,
+    "valor": "0",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.zona_impacto",
+    "cita": "golpeó la parte posterior de mi unidad",
+    "persona": -1,
+    "valor": "B",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.clase",
+    "cita": "un tractocamión",
+    "persona": -1,
+    "valor": "tractocamion",
+    "vehiculo": 1
+   },
+   {
+    "campo": "vehiculo.frenado",
+    "cita": "no frenó a tiempo",
+    "persona": -1,
+    "valor": "false",
+    "vehiculo": 1
+   },
+   {
+    "campo": "vehiculo.zona_impacto",
+    "cita": "golpeó la parte posterior de mi unidad",
+    "persona": -1,
+    "valor": "F",
+    "vehiculo": 1
+   }
+  ],
+  "personas": [
+   {
+    "cita": "a bordo de mi vehículo",
+    "rol": "conductor",
+    "vehiculo": 0
+   }
+  ],
+  "preguntas": [
+   "¿Ibas manejando tu vehículo al momento del golpe?",
+   "¿Qué velocidad llevaba el tractocamión antes del impacto?",
+   "¿El tractocamión era de carga o de otro tipo?"
+  ],
+  "vehiculos": [
+   {
+    "narrador": true
+   },
+   {
+    "narrador": false
+   }
+  ]
+ },
+ "texto_sha256": "cab08da358c2c92b56806afc04a13313d7fc185c9e1113f0c1a825946569156e",
+ "usage": {
+  "cache_creation_input_tokens": 0,
+  "cache_read_input_tokens": 7131,
+  "input_tokens": 223,
+  "output_tokens": 2748
+ }
+}

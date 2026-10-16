@@ -1,0 +1,86 @@
+{
+ "costo_estimado_con": "claude-sonnet-5-5",
+ "costo_usd": 0.0140922,
+ "esfuerzo": "medium",
+ "grabado": "2026-10-16T14:12:39+00:00",
+ "huella_prompt": "86f6a54999b8cbf7",
+ "latencia_ms": 9248.9,
+ "modelo": "claude-sonnet-5-5",
+ "modelo_respuesta": "claude-sonnet-5-5",
+ "prompt": "extraccion_v3",
+ "request_id": "req_011Cg642Mfwk4QDDvPwnNBGN",
+ "salida": {
+  "dispositivos": [],
+  "hechos": [
+   {
+    "campo": "vehiculo.clase",
+    "cita": "Aveo",
+    "persona": -1,
+    "valor": "sedan_compacto",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.clase",
+    "cita": "Hilux",
+    "persona": -1,
+    "valor": "pickup",
+    "vehiculo": 1
+   },
+   {
+    "campo": "vehiculo.maniobra",
+    "cita": "dando reversa",
+    "persona": -1,
+    "valor": "reversa",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.velocidad_kmh",
+    "cita": "en reversa ni a 5 iba",
+    "persona": -1,
+    "valor": "5",
+    "vehiculo": 0
+   },
+   {
+    "campo": "evento.tipo",
+    "cita": "Le di en la puerta de atrás",
+    "persona": -1,
+    "valor": "impacto_vehiculo_vehiculo",
+    "vehiculo": -1
+   },
+   {
+    "campo": "vehiculo.zona_impacto",
+    "cita": "puerta de atrás del lado del copiloto",
+    "persona": -1,
+    "valor": "R",
+    "vehiculo": 1
+   }
+  ],
+  "personas": [
+   {
+    "cita": "Iba saliendo de una tienda",
+    "rol": "conductor",
+    "vehiculo": 0
+   }
+  ],
+  "preguntas": [
+   "¿La Hilux venía circulando por la calle o también salía de la tienda?",
+   "¿En qué sentido y a qué velocidad aproximada iba la Hilux?",
+   "¿Con qué parte de tu Aveo se dio el contacto?"
+  ],
+  "vehiculos": [
+   {
+    "narrador": true
+   },
+   {
+    "narrador": false
+   }
+  ]
+ },
+ "texto_sha256": "d95613eae3594d8bc3999fb4b4e4a9d446b24e8c8a8a72c6e96e89a9b96a4fa5",
+ "usage": {
+  "cache_creation_input_tokens": 0,
+  "cache_read_input_tokens": 7131,
+  "input_tokens": 133,
+  "output_tokens": 1240
+ }
+}

@@ -54,8 +54,25 @@ Dev de 190 relatos, pipeline TS, `e1_extraction_dev{,_v2,_v3}.json`. Las tres ve
 
   El primer test se mide después de decidir y no entra en la decisión.
 
-{TESTS}
+- **Test `ciss`**, medido después de cumplir el criterio en dev (`e1_extraction_ciss_v2.json` contra `e1_extraction_ciss_v3.json`): v3 no empeora, así que **pasa a producción** (`PROMPT_VERSION = "extraccion_v3"` en Python y TS).
+  - **F1 micro:** Sonnet 0.9926 → **0.9926**; Haiku 0.9858 → **0.9871**.
+  - **Clase:** Sonnet 0.975 → 0.973; Haiku 0.942 → 0.975.
+  - **Repetir el mismo relato:** Sonnet 1 → 2 de 150 pares; Haiku 5 → 5.
+  - **Contrafactuales:** Sonnet 1 → 0 de 65; Haiku 1 → 2.
+  - **Costo por 1,000 relatos:** Sonnet $9.42 → $9.25; Haiku $1.05 → $1.07.
+- **Primer test, medido después de decidir** (`e1_extraction_v3.json`), no entra en la decisión:
+  - **F1 micro:** Sonnet 0.919 → **0.924**; Haiku 0.896 → **0.902**.
+  - **Contrafactuales crudos:** Sonnet 31 → 21 de 160 pares, contra 20 al repetir; Haiku 33 → 31, contra 21.
+  - **Prueba pareada:** no encuentra efecto en ningún tipo.
+- **Corridas incompletas:** cuatro respuestas de Haiku en CISS se cortaron por un error de conexión. Las grabaciones de dev y del primer test se detuvieron dos veces porque la laptop se quedó sin memoria. Todo se completó grabando solo lo que faltaba; ningún resultado se midió con respuestas incompletas.
 
 ## Consecuencias
 
-{CONSECUENCIAS}
+- **Producción usa v3.** El solver recibe la fase cuando el relato la dice; si no la dice, la spec no la trae y el solver aplica la convención de 1.0.0.
+- **Grabaciones:** las de v1 y v2 siguen valiendo (sus huellas no cambiaron). Las de v3 viven en `grabaciones/extraccion_v3`.
+- **Las reglas casi no leen la fase:** su límite es el largo de las marcas (4 de 36 en dev). Mejorar esos patrones queda pendiente, con relatos nuevos que no sean los del lote, para no ajustarlos a él.
+- **Fase medida solo en dev:** E1 solo mide la fase en dev, con 30 relatos dirigidos que escribió un agente.
+- **Vehículo de las marcas:** la extracción no dice qué vehículo dejó las marcas. El constructor se las asigna al primero, como antes.
+- **Pendientes:**
+  - un test con la fase anotada, que se congele antes de medir;
+  - el vehículo que deja las marcas.

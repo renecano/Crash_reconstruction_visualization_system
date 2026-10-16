@@ -1,0 +1,100 @@
+{
+ "costo_estimado_con": "claude-sonnet-5-5",
+ "costo_usd": 0.0078262,
+ "esfuerzo": "medium",
+ "grabado": "2026-10-16T15:43:46+00:00",
+ "huella_prompt": "86f6a54999b8cbf7",
+ "latencia_ms": 4001.4,
+ "modelo": "claude-sonnet-5-5",
+ "modelo_respuesta": "claude-sonnet-5-5",
+ "prompt": "extraccion_v3",
+ "request_id": "req_011Cg6AyiHuyre3mf6bqAxqW",
+ "salida": {
+  "dispositivos": [],
+  "hechos": [
+   {
+    "campo": "vehiculo.clase",
+    "cita": "italika",
+    "persona": -1,
+    "valor": "motocicleta",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.clase",
+    "cita": "tsuru",
+    "persona": -1,
+    "valor": "sedan_compacto",
+    "vehiculo": 1
+   },
+   {
+    "campo": "vehiculo.maniobra",
+    "cita": "salio de un estacionamiento",
+    "persona": -1,
+    "valor": "incorporacion",
+    "vehiculo": 1
+   },
+   {
+    "campo": "evento.tipo",
+    "cita": "le pegue en la puerta del chofer",
+    "persona": -1,
+    "valor": "impacto_vehiculo_vehiculo",
+    "vehiculo": -1
+   },
+   {
+    "campo": "vehiculo.zona_impacto",
+    "cita": "le pegue en la puerta del chofer",
+    "persona": -1,
+    "valor": "F",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.zona_impacto",
+    "cita": "puerta del chofer",
+    "persona": -1,
+    "valor": "L",
+    "vehiculo": 1
+   },
+   {
+    "campo": "vehiculo.velocidad_kmh",
+    "cita": "yo iba como a 45",
+    "persona": -1,
+    "valor": "45",
+    "vehiculo": 0
+   },
+   {
+    "campo": "persona.casco",
+    "cita": "traia casco",
+    "persona": 0,
+    "valor": "true",
+    "vehiculo": -1
+   }
+  ],
+  "personas": [
+   {
+    "cita": "iba en mi italika",
+    "rol": "motociclista",
+    "vehiculo": 0
+   }
+  ],
+  "preguntas": [
+   "¿Cuántos carriles tiene la 11 sur en el sentido en que circulabas?",
+   "¿Frenaste o hiciste alguna maniobra antes del golpe?",
+   "¿Era de día o de noche y cómo estaba el clima?"
+  ],
+  "vehiculos": [
+   {
+    "narrador": true
+   },
+   {
+    "narrador": false
+   }
+  ]
+ },
+ "texto_sha256": "e1d477b6e97395e8c86da2ed043e1cbdac0efa7d78523ce6394aabb9bb00fcf7",
+ "usage": {
+  "cache_creation_input_tokens": 0,
+  "cache_read_input_tokens": 7131,
+  "input_tokens": 120,
+  "output_tokens": 616
+ }
+}

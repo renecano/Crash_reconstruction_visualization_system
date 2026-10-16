@@ -1,0 +1,119 @@
+{
+ "costo_estimado_con": "claude-haiku-5-5",
+ "costo_usd": 0.00158071,
+ "esfuerzo": "medium",
+ "grabado": "2026-10-16T14:44:21+00:00",
+ "huella_prompt": "86f6a54999b8cbf7",
+ "latencia_ms": 12411.7,
+ "modelo": "claude-haiku-5-5",
+ "modelo_respuesta": "claude-haiku-5-5",
+ "prompt": "extraccion_v3",
+ "request_id": "req_011Cg66SKNwauBLmFevzERWL",
+ "salida": {
+  "dispositivos": [],
+  "hechos": [
+   {
+    "campo": "vehiculo.clase",
+    "cita": "Nissan Sentra",
+    "persona": -1,
+    "valor": "sedan_mediano",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.color",
+    "cita": "color negro",
+    "persona": -1,
+    "valor": "negro",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.frenado",
+    "cita": "accioné los frenos",
+    "persona": -1,
+    "valor": "true",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.clase",
+    "cita": "Un vehículo tipo SUV",
+    "persona": -1,
+    "valor": "suv_o_pickup",
+    "vehiculo": 1
+   },
+   {
+    "campo": "vehiculo.maniobra",
+    "cita": "realizó un giro hacia la izquierda",
+    "persona": -1,
+    "valor": "vuelta_izquierda",
+    "vehiculo": 1
+   },
+   {
+    "campo": "vehiculo.zona_impacto",
+    "cita": "impacté su costado derecho",
+    "persona": -1,
+    "valor": "R",
+    "vehiculo": 1
+   },
+   {
+    "campo": "vehiculo.zona_impacto",
+    "cita": "con el frente de mi vehículo",
+    "persona": -1,
+    "valor": "F",
+    "vehiculo": 0
+   },
+   {
+    "campo": "evento.tipo",
+    "cita": "impacté su costado derecho con el frente de mi vehículo",
+    "persona": -1,
+    "valor": "impacto_vehiculo_vehiculo",
+    "vehiculo": -1
+   },
+   {
+    "campo": "evidencias.marcas_m",
+    "cita": "quedaron marcas de frenado de aproximadamente 8 metros",
+    "persona": -1,
+    "valor": "8",
+    "vehiculo": -1
+   },
+   {
+    "campo": "lugar.carriles_por_sentido",
+    "cita": "una vialidad de tres carriles por sentido",
+    "persona": -1,
+    "valor": "3",
+    "vehiculo": -1
+   }
+  ],
+  "personas": [
+   {
+    "cita": "conducía mi vehículo Nissan Sentra",
+    "rol": "conductor",
+    "vehiculo": 0
+   },
+   {
+    "cita": "Un vehículo tipo SUV conducido por una persona joven",
+    "rol": "conductor",
+    "vehiculo": 1
+   }
+  ],
+  "preguntas": [
+   "¿A qué velocidad circulaba cada vehículo al momento del impacto?",
+   "¿Las marcas de frenado quedaron antes o después del impacto?",
+   "¿El vehículo contrario tenía señal o alto en ese punto del cruce?"
+  ],
+  "vehiculos": [
+   {
+    "narrador": true
+   },
+   {
+    "narrador": false
+   }
+  ]
+ },
+ "texto_sha256": "f182910d8a4df00d584d4aca9459aa07af6e6040c6b65b2fa04dc79536781a59",
+ "usage": {
+  "cache_creation_input_tokens": 0,
+  "cache_read_input_tokens": 7131,
+  "input_tokens": 284,
+  "output_tokens": 2962
+ }
+}

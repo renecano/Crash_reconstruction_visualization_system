@@ -1,0 +1,104 @@
+{
+ "costo_estimado_con": "claude-haiku-5-5",
+ "costo_usd": 0.00128681,
+ "esfuerzo": "medium",
+ "grabado": "2026-10-16T16:04:10+00:00",
+ "huella_prompt": "86f6a54999b8cbf7",
+ "latencia_ms": 10265.1,
+ "modelo": "claude-haiku-5-5",
+ "modelo_respuesta": "claude-haiku-5-5",
+ "prompt": "extraccion_v3",
+ "request_id": "req_011Cg6CXVn6fetAEZD1RqgJr",
+ "salida": {
+  "dispositivos": [],
+  "hechos": [
+   {
+    "campo": "vehiculo.clase",
+    "cita": "motocicleta",
+    "persona": -1,
+    "valor": "motocicleta",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.velocidad_kmh",
+    "cita": "40 kilómetros por hora",
+    "persona": -1,
+    "valor": "40",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.zona_impacto",
+    "cita": "me impactó en el costado izquierdo de la motocicleta",
+    "persona": -1,
+    "valor": "L",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.color",
+    "cita": "color plata",
+    "persona": -1,
+    "valor": "plata",
+    "vehiculo": 1
+   },
+   {
+    "campo": "vehiculo.maniobra",
+    "cita": "dio vuelta a la izquierda",
+    "persona": -1,
+    "valor": "vuelta_izquierda",
+    "vehiculo": 1
+   },
+   {
+    "campo": "evento.tipo",
+    "cita": "me impactó en el costado izquierdo de la motocicleta",
+    "persona": -1,
+    "valor": "impacto_vehiculo_vehiculo",
+    "vehiculo": -1
+   },
+   {
+    "campo": "lugar.tipo_via",
+    "cita": "la intersección con la calle Nigromante",
+    "persona": -1,
+    "valor": "interseccion",
+    "vehiculo": -1
+   },
+   {
+    "campo": "persona.casco",
+    "cita": "portando casco",
+    "persona": 0,
+    "valor": "true",
+    "vehiculo": -1
+   }
+  ],
+  "personas": [
+   {
+    "cita": "conducía mi motocicleta",
+    "rol": "motociclista",
+    "vehiculo": 0
+   },
+   {
+    "cita": "conducido por una mujer",
+    "rol": "conductor",
+    "vehiculo": 1
+   }
+  ],
+  "preguntas": [
+   "¿En la intersección había señal de alto, ceda el paso o semáforo?",
+   "¿A qué velocidad circulaba el automóvil al dar vuelta a la izquierda?"
+  ],
+  "vehiculos": [
+   {
+    "narrador": true
+   },
+   {
+    "narrador": false
+   }
+  ]
+ },
+ "texto_sha256": "bd47c6b0dc7c69d409ea8666a647543d9d69699c609d5ab1ececc75c215f9aca",
+ "usage": {
+  "cache_creation_input_tokens": 0,
+  "cache_read_input_tokens": 7131,
+  "input_tokens": 260,
+  "output_tokens": 2379
+ }
+}

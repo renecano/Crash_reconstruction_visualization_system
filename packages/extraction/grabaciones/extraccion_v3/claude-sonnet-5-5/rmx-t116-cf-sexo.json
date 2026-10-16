@@ -1,0 +1,112 @@
+{
+ "costo_estimado_con": "claude-sonnet-5-5",
+ "costo_usd": 0.0087062,
+ "esfuerzo": "medium",
+ "grabado": "2026-10-16T14:21:31+00:00",
+ "huella_prompt": "86f6a54999b8cbf7",
+ "latencia_ms": 5893.8,
+ "modelo": "claude-sonnet-5-5",
+ "modelo_respuesta": "claude-sonnet-5-5",
+ "prompt": "extraccion_v3",
+ "request_id": "req_011Cg64hrX8Mqr3Xn8gzGyXa",
+ "salida": {
+  "dispositivos": [],
+  "hechos": [
+   {
+    "campo": "vehiculo.clase",
+    "cita": "Mazda 3",
+    "persona": -1,
+    "valor": "sedan_mediano",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.clase",
+    "cita": "moto",
+    "persona": -1,
+    "valor": "motocicleta",
+    "vehiculo": 1
+   },
+   {
+    "campo": "vehiculo.maniobra",
+    "cita": "me estaba cambiando a ese carril",
+    "persona": -1,
+    "valor": "cambio_carril_derecha",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.maniobra",
+    "cita": "me rebasó por la derecha",
+    "persona": -1,
+    "valor": "recto",
+    "vehiculo": 1
+   },
+   {
+    "campo": "vehiculo.velocidad_kmh",
+    "cita": "Yo iba como a 40",
+    "persona": -1,
+    "valor": "40",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.velocidad_kmh",
+    "cita": "él como a 60",
+    "persona": -1,
+    "valor": "60",
+    "vehiculo": 1
+   },
+   {
+    "campo": "evento.tipo",
+    "cita": "le di con la salpicadera derecha",
+    "persona": -1,
+    "valor": "impacto_vehiculo_vehiculo",
+    "vehiculo": -1
+   },
+   {
+    "campo": "vehiculo.zona_impacto",
+    "cita": "salpicadera derecha",
+    "persona": -1,
+    "valor": "R",
+    "vehiculo": 0
+   },
+   {
+    "campo": "persona.casco",
+    "cita": "traía casco",
+    "persona": 1,
+    "valor": "true",
+    "vehiculo": -1
+   }
+  ],
+  "personas": [
+   {
+    "cita": "yo me estaba cambiando",
+    "rol": "conductor",
+    "vehiculo": 0
+   },
+   {
+    "cita": "un muchacho en moto",
+    "rol": "motociclista",
+    "vehiculo": 1
+   }
+  ],
+  "preguntas": [
+   "¿La avenida Juárez tiene más de un carril por sentido?",
+   "¿En qué parte de la moto recibió el golpe?",
+   "¿Cómo estaba el clima y la iluminación al momento del percance?"
+  ],
+  "vehiculos": [
+   {
+    "narrador": true
+   },
+   {
+    "narrador": false
+   }
+  ]
+ },
+ "texto_sha256": "65bee12d0fd53c4fd898515c534f0919ace765e2819d730793b92d6a824ec1eb",
+ "usage": {
+  "cache_creation_input_tokens": 0,
+  "cache_read_input_tokens": 7131,
+  "input_tokens": 140,
+  "output_tokens": 700
+ }
+}

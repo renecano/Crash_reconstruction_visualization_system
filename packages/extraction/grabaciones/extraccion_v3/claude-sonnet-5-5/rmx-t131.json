@@ -1,0 +1,124 @@
+{
+ "costo_estimado_con": "claude-sonnet-5-5",
+ "costo_usd": 0.0106722,
+ "esfuerzo": "medium",
+ "grabado": "2026-10-16T14:08:31+00:00",
+ "huella_prompt": "86f6a54999b8cbf7",
+ "latencia_ms": 5367.0,
+ "modelo": "claude-sonnet-5-5",
+ "modelo_respuesta": "claude-sonnet-5-5",
+ "prompt": "extraccion_v3",
+ "request_id": "req_011Cg63iLyn1Wz5XSUrYybLM",
+ "salida": {
+  "dispositivos": [
+   {
+    "cita": "existe un límite de velocidad de 30 km/h debidamente señalizado",
+    "tipo": "limite_velocidad"
+   }
+  ],
+  "hechos": [
+   {
+    "campo": "vehiculo.maniobra",
+    "cita": "salía en reversa de la cochera",
+    "persona": -1,
+    "valor": "reversa",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.clase",
+    "cita": "Honda CR-V",
+    "persona": -1,
+    "valor": "suv_compacta",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.color",
+    "cita": "color vino",
+    "persona": -1,
+    "valor": "vino",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.clase",
+    "cita": "Nissan Versa",
+    "persona": -1,
+    "valor": "sedan_compacto",
+    "vehiculo": 1
+   },
+   {
+    "campo": "vehiculo.color",
+    "cita": "color azul",
+    "persona": -1,
+    "valor": "azul",
+    "vehiculo": 1
+   },
+   {
+    "campo": "evento.tipo",
+    "cita": "impactó la parte trasera izquierda de mi unidad",
+    "persona": -1,
+    "valor": "impacto_vehiculo_vehiculo",
+    "vehiculo": -1
+   },
+   {
+    "campo": "vehiculo.zona_impacto",
+    "cita": "impactó la parte trasera izquierda de mi unidad",
+    "persona": -1,
+    "valor": "B",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.zona_impacto",
+    "cita": "parte trasera izquierda de mi unidad",
+    "persona": -1,
+    "valor": "L",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.zona_impacto",
+    "cita": "impactó la parte trasera izquierda de mi unidad",
+    "persona": -1,
+    "valor": "F",
+    "vehiculo": 1
+   },
+   {
+    "campo": "entorno.iluminacion",
+    "cita": "alrededor de las 18:00 horas",
+    "persona": -1,
+    "valor": "dia",
+    "vehiculo": -1
+   }
+  ],
+  "personas": [
+   {
+    "cita": "salía en reversa de la cochera de mi domicilio",
+    "rol": "conductor",
+    "vehiculo": 0
+   },
+   {
+    "cita": "Un conductor de aproximadamente 25 años",
+    "rol": "conductor",
+    "vehiculo": 1
+   }
+  ],
+  "preguntas": [
+   "¿A qué velocidad aproximada circulaba el Versa al momento del impacto?",
+   "¿Qué tan avanzada iba su camioneta fuera de la cochera cuando ocurrió el golpe?",
+   "¿Había luz de día o ya estaba oscureciendo a las 18:00 horas?"
+  ],
+  "vehiculos": [
+   {
+    "narrador": true
+   },
+   {
+    "narrador": false
+   }
+  ]
+ },
+ "texto_sha256": "7cde3daf726b3933c7fcd884c3381ed04721060d8eb7517e025915c7f5c81460",
+ "usage": {
+  "cache_creation_input_tokens": 0,
+  "cache_read_input_tokens": 7131,
+  "input_tokens": 248,
+  "output_tokens": 875
+ }
+}

@@ -1,0 +1,100 @@
+{
+ "costo_estimado_con": "claude-haiku-5-5",
+ "costo_usd": 0.00144241,
+ "esfuerzo": "medium",
+ "grabado": "2026-10-16T15:22:24+00:00",
+ "huella_prompt": "86f6a54999b8cbf7",
+ "latencia_ms": 10879.7,
+ "modelo": "claude-haiku-5-5",
+ "modelo_respuesta": "claude-haiku-5-5",
+ "prompt": "extraccion_v3",
+ "request_id": "req_011Cg69LgMBzUAdoMfKGFzz9",
+ "salida": {
+  "dispositivos": [],
+  "hechos": [
+   {
+    "campo": "lugar.estado_superficie",
+    "cita": "El pavimento se encontraba seco",
+    "persona": -1,
+    "valor": "seco",
+    "vehiculo": -1
+   },
+   {
+    "campo": "vehiculo.clase",
+    "cita": "autobús de pasajeros",
+    "persona": -1,
+    "valor": "autobus",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.velocidad_kmh",
+    "cita": "a una velocidad aproximada de 25 km/h",
+    "persona": -1,
+    "valor": "25",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.color",
+    "cita": "color blanco",
+    "persona": -1,
+    "valor": "blanco",
+    "vehiculo": 1
+   },
+   {
+    "campo": "vehiculo.maniobra",
+    "cita": "se incorporó repentinamente al carril derecho",
+    "persona": -1,
+    "valor": "cambio_carril",
+    "vehiculo": 1
+   },
+   {
+    "campo": "evento.tipo",
+    "cita": "no fue posible evitar el contacto con su parte trasera",
+    "persona": -1,
+    "valor": "impacto_vehiculo_vehiculo",
+    "vehiculo": -1
+   },
+   {
+    "campo": "vehiculo.zona_impacto",
+    "cita": "no fue posible evitar el contacto con su parte trasera",
+    "persona": -1,
+    "valor": "F",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.zona_impacto",
+    "cita": "no fue posible evitar el contacto con su parte trasera",
+    "persona": -1,
+    "valor": "B",
+    "vehiculo": 1
+   }
+  ],
+  "personas": [
+   {
+    "cita": "en calidad de operador",
+    "rol": "conductor",
+    "vehiculo": 0
+   }
+  ],
+  "preguntas": [
+   "¿A qué velocidad se incorporó el sedán al carril derecho?",
+   "¿El sedán llegó a frenar antes del contacto?",
+   "¿Qué tipo de sedán era (compacto o mediano)?"
+  ],
+  "vehiculos": [
+   {
+    "narrador": true
+   },
+   {
+    "narrador": false
+   }
+  ]
+ },
+ "texto_sha256": "d9fcae5b97c863d8a3bee76c411c15cb678717d5bbabd19b8f72fbf5d6c42388",
+ "usage": {
+  "cache_creation_input_tokens": 0,
+  "cache_read_input_tokens": 7131,
+  "input_tokens": 226,
+  "output_tokens": 2697
+ }
+}

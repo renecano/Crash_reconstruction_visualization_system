@@ -1,0 +1,88 @@
+{
+ "costo_estimado_con": "claude-sonnet-5-5",
+ "costo_usd": 0.0119682,
+ "esfuerzo": "medium",
+ "grabado": "2026-10-16T15:34:23+00:00",
+ "huella_prompt": "86f6a54999b8cbf7",
+ "latencia_ms": 7630.2,
+ "modelo": "claude-sonnet-5-5",
+ "modelo_respuesta": "claude-sonnet-5-5",
+ "prompt": "extraccion_v3",
+ "request_id": "req_011Cg6AFycUqdVqQ3QyriQdx",
+ "salida": {
+  "dispositivos": [],
+  "hechos": [
+   {
+    "campo": "vehiculo.clase",
+    "cita": "sentra",
+    "persona": -1,
+    "valor": "sedan_mediano",
+    "vehiculo": 0
+   },
+   {
+    "campo": "entorno.iluminacion",
+    "cita": "en la noche",
+    "persona": -1,
+    "valor": "noche",
+    "vehiculo": -1
+   },
+   {
+    "campo": "lugar.tipo_via",
+    "cita": "curva",
+    "persona": -1,
+    "valor": "curva",
+    "vehiculo": -1
+   },
+   {
+    "campo": "lugar.estado_superficie",
+    "cita": "grava suelta",
+    "persona": -1,
+    "valor": "grava_suelta",
+    "vehiculo": -1
+   },
+   {
+    "campo": "evento.tipo",
+    "cita": "se nos fue de lado",
+    "persona": -1,
+    "valor": "derrape",
+    "vehiculo": -1
+   },
+   {
+    "campo": "vehiculo.velocidad_kmh",
+    "cita": "iba como a 70",
+    "persona": -1,
+    "valor": "70",
+    "vehiculo": 0
+   }
+  ],
+  "personas": [
+   {
+    "cita": "veniamos",
+    "rol": "pasajero",
+    "vehiculo": 0
+   },
+   {
+    "cita": "mi esposo manejaba el sentra",
+    "rol": "conductor",
+    "vehiculo": 0
+   }
+  ],
+  "preguntas": [
+   "¿El conductor alcanzó a frenar antes o durante el derrape?",
+   "¿Hacia qué lado de la curva se fue el vehículo al salirse del camino?",
+   "¿Qué tan cerca de la curva iba la velocidad real: 70 km/h o más?"
+  ],
+  "vehiculos": [
+   {
+    "narrador": false
+   }
+  ]
+ },
+ "texto_sha256": "33067265fb5339066bb78fa87e3d4fabe60afb8f0b4589cab4216fd7871e71cb",
+ "usage": {
+  "cache_creation_input_tokens": 0,
+  "cache_read_input_tokens": 7131,
+  "input_tokens": 136,
+  "output_tokens": 1027
+ }
+}

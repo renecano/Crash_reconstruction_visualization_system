@@ -1,0 +1,90 @@
+{
+ "costo_estimado_con": "claude-haiku-5-5",
+ "costo_usd": 0.00140921,
+ "esfuerzo": "medium",
+ "grabado": "2026-10-16T15:26:44+00:00",
+ "huella_prompt": "86f6a54999b8cbf7",
+ "latencia_ms": 11617.8,
+ "modelo": "claude-haiku-5-5",
+ "modelo_respuesta": "claude-haiku-5-5",
+ "prompt": "extraccion_v3",
+ "request_id": "req_011Cg69foKB7H5o5EUKsBYBx",
+ "salida": {
+  "dispositivos": [],
+  "hechos": [
+   {
+    "campo": "vehiculo.clase",
+    "cita": "Hilux",
+    "persona": -1,
+    "valor": "pickup",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.color",
+    "cita": "gris",
+    "persona": -1,
+    "valor": "gris",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.velocidad_kmh",
+    "cita": "iba como a cincuenta",
+    "persona": -1,
+    "valor": "50",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.frenado",
+    "cita": "ni frenó",
+    "persona": -1,
+    "valor": "false",
+    "vehiculo": 0
+   },
+   {
+    "campo": "evento.tipo",
+    "cita": "le dio con el espejo en el hombro",
+    "persona": -1,
+    "valor": "impacto_vehiculo_persona",
+    "vehiculo": -1
+   },
+   {
+    "campo": "vehiculo.clase",
+    "cita": "bici",
+    "persona": -1,
+    "valor": "bicicleta",
+    "vehiculo": 1
+   }
+  ],
+  "personas": [
+   {
+    "cita": "un señor mayor que iba en una Hilux gris",
+    "rol": "conductor",
+    "vehiculo": 0
+   },
+   {
+    "cita": "sale a pedalear",
+    "rol": "ciclista",
+    "vehiculo": 1
+   }
+  ],
+  "preguntas": [
+   "¿En qué carril iba la camioneta al rebasar y qué tan cerca pasó de la bicicleta?",
+   "¿Por dónde circulaba la bicicleta: por la orilla o por el carril de la camioneta?"
+  ],
+  "vehiculos": [
+   {
+    "narrador": false
+   },
+   {
+    "narrador": false
+   }
+  ]
+ },
+ "texto_sha256": "cc8a23c67ec3c37914fb8d4ed003cf469ce0714e89f19cbd5b2f115edbe0eedd",
+ "usage": {
+  "cache_creation_input_tokens": 0,
+  "cache_read_input_tokens": 7131,
+  "input_tokens": 164,
+  "output_tokens": 2643
+ }
+}

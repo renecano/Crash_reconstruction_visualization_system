@@ -1,0 +1,123 @@
+{
+ "costo_estimado_con": "claude-haiku-5-5",
+ "costo_usd": 0.00152801,
+ "esfuerzo": "medium",
+ "grabado": "2026-10-16T15:26:55+00:00",
+ "huella_prompt": "86f6a54999b8cbf7",
+ "latencia_ms": 11636.1,
+ "modelo": "claude-haiku-5-5",
+ "modelo_respuesta": "claude-haiku-5-5",
+ "prompt": "extraccion_v3",
+ "request_id": "req_011Cg69gf4r5E6xrws6Su8ib",
+ "salida": {
+  "dispositivos": [
+   {
+    "cita": "en el semaforo de la cacho",
+    "tipo": "semaforo"
+   }
+  ],
+  "hechos": [
+   {
+    "campo": "vehiculo.clase",
+    "cita": "kicks",
+    "persona": -1,
+    "valor": "suv_compacta",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.color",
+    "cita": "mi carro es una kicks blanca",
+    "persona": -1,
+    "valor": "blanca",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.maniobra",
+    "cita": "estaba parado esperando el siga",
+    "persona": -1,
+    "valor": "detenido",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.velocidad_kmh",
+    "cita": "estaba parado esperando el siga",
+    "persona": -1,
+    "valor": "0",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.zona_impacto",
+    "cita": "le quedo toda doblada la defensa de atras",
+    "persona": -1,
+    "valor": "B",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.clase",
+    "cita": "civic",
+    "persona": -1,
+    "valor": "sedan_mediano",
+    "vehiculo": 1
+   },
+   {
+    "campo": "vehiculo.frenado",
+    "cita": "ni freno el bato",
+    "persona": -1,
+    "valor": "false",
+    "vehiculo": 1
+   },
+   {
+    "campo": "evento.tipo",
+    "cita": "me pego",
+    "persona": -1,
+    "valor": "impacto_vehiculo_vehiculo",
+    "vehiculo": -1
+   },
+   {
+    "campo": "entorno.clima",
+    "cita": "estaba nublado",
+    "persona": -1,
+    "valor": "nublado",
+    "vehiculo": -1
+   },
+   {
+    "campo": "lugar.estado_superficie",
+    "cita": "el piso mojado",
+    "persona": -1,
+    "valor": "mojado",
+    "vehiculo": -1
+   }
+  ],
+  "personas": [
+   {
+    "cita": "mi carro es una kicks blanca",
+    "rol": "conductor",
+    "vehiculo": 0
+   },
+   {
+    "cita": "el de atras en un civic",
+    "rol": "conductor",
+    "vehiculo": 1
+   }
+  ],
+  "preguntas": [
+   "¿A qué velocidad iba el Civic al momento del impacto?",
+   "¿El semáforo estaba en verde para su sentido al momento del choque?"
+  ],
+  "vehiculos": [
+   {
+    "narrador": true
+   },
+   {
+    "narrador": false
+   }
+  ]
+ },
+ "texto_sha256": "f93264c8f76a4395cb5b8846e3003d39d9cb947827d31bdb072a98b5e40ed76b",
+ "usage": {
+  "cache_creation_input_tokens": 0,
+  "cache_read_input_tokens": 7131,
+  "input_tokens": 152,
+  "output_tokens": 2883
+ }
+}

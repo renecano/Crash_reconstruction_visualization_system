@@ -1,0 +1,122 @@
+{
+ "costo_estimado_con": "claude-sonnet-5-5",
+ "costo_usd": 0.0098042,
+ "esfuerzo": "medium",
+ "grabado": "2026-10-16T15:40:17+00:00",
+ "huella_prompt": "86f6a54999b8cbf7",
+ "latencia_ms": 4777.5,
+ "modelo": "claude-sonnet-5-5",
+ "modelo_respuesta": "claude-sonnet-5-5",
+ "prompt": "extraccion_v3",
+ "request_id": "req_011Cg6AiEFn3JhBmPkwbS5Uc",
+ "salida": {
+  "dispositivos": [],
+  "hechos": [
+   {
+    "campo": "vehiculo.clase",
+    "cita": "Kicks",
+    "persona": -1,
+    "valor": "suv_compacta",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.clase",
+    "cita": "Lobo",
+    "persona": -1,
+    "valor": "pickup",
+    "vehiculo": 1
+   },
+   {
+    "campo": "vehiculo.color",
+    "cita": "gris",
+    "persona": -1,
+    "valor": "gris",
+    "vehiculo": 1
+   },
+   {
+    "campo": "vehiculo.clase",
+    "cita": "Aveo",
+    "persona": -1,
+    "valor": "sedan_compacto",
+    "vehiculo": 2
+   },
+   {
+    "campo": "vehiculo.maniobra",
+    "cita": "Estaba esperando en la fila para dar vuelta a la izquierda",
+    "persona": -1,
+    "valor": "detenido",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.maniobra",
+    "cita": "también esperaba",
+    "persona": -1,
+    "valor": "detenido",
+    "vehiculo": 2
+   },
+   {
+    "campo": "vehiculo.velocidad_kmh",
+    "cita": "Estaba esperando en la fila para dar vuelta a la izquierda",
+    "persona": -1,
+    "valor": "0",
+    "vehiculo": 0
+   },
+   {
+    "campo": "evento.tipo",
+    "cita": "me pegó en la defensa",
+    "persona": -1,
+    "valor": "impacto_vehiculo_vehiculo",
+    "vehiculo": -1
+   },
+   {
+    "campo": "vehiculo.zona_impacto",
+    "cita": "me pegó en la defensa",
+    "persona": -1,
+    "valor": "B",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.zona_impacto",
+    "cita": "no se paró a tiempo y me pegó en la defensa",
+    "persona": -1,
+    "valor": "F",
+    "vehiculo": 1
+   }
+  ],
+  "personas": [
+   {
+    "cita": "Yo traía la Kicks de mi suegro",
+    "rol": "conductor",
+    "vehiculo": 0
+   },
+   {
+    "cita": "El señor de la troca",
+    "rol": "conductor",
+    "vehiculo": 1
+   }
+  ],
+  "preguntas": [
+   "¿Qué tan lejos estaba la Lobo cuando empezó a frenar?",
+   "¿Tu vehículo alcanzó a golpear al Aveo que estaba adelante?",
+   "¿La vía tenía varios carriles por sentido?"
+  ],
+  "vehiculos": [
+   {
+    "narrador": true
+   },
+   {
+    "narrador": false
+   },
+   {
+    "narrador": false
+   }
+  ]
+ },
+ "texto_sha256": "0e54cc6875cc2406dc818c60401aa5fd69d8911c1505b1ad040a110028dc4613",
+ "usage": {
+  "cache_creation_input_tokens": 0,
+  "cache_read_input_tokens": 7131,
+  "input_tokens": 194,
+  "output_tokens": 799
+ }
+}

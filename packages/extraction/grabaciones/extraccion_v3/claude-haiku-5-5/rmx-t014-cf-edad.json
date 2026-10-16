@@ -1,0 +1,69 @@
+{
+ "costo_estimado_con": "claude-haiku-5-5",
+ "costo_usd": 0.00092161,
+ "esfuerzo": "medium",
+ "grabado": "2026-10-16T15:06:31+00:00",
+ "huella_prompt": "86f6a54999b8cbf7",
+ "latencia_ms": 8331.1,
+ "modelo": "claude-haiku-5-5",
+ "modelo_respuesta": "claude-haiku-5-5",
+ "prompt": "extraccion_v3",
+ "request_id": "req_011Cg688fTu4XWSKw9qprmve",
+ "salida": {
+  "dispositivos": [],
+  "hechos": [
+   {
+    "campo": "vehiculo.clase",
+    "cita": "vocho",
+    "persona": -1,
+    "valor": "sedan_compacto",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.maniobra",
+    "cita": "se fue derecho",
+    "persona": -1,
+    "valor": "recto",
+    "vehiculo": 0
+   },
+   {
+    "campo": "evento.tipo",
+    "cita": "se estampo contra un poste de luz",
+    "persona": -1,
+    "valor": "impacto_vehiculo_objeto",
+    "vehiculo": -1
+   },
+   {
+    "campo": "evento.objeto",
+    "cita": "se estampo contra un poste de luz",
+    "persona": -1,
+    "valor": "poste",
+    "vehiculo": -1
+   }
+  ],
+  "personas": [
+   {
+    "cita": "mi abuelito de 80 iba manejando su vocho",
+    "rol": "conductor",
+    "vehiculo": 0
+   }
+  ],
+  "preguntas": [
+   "¿Estaba lloviendo en el momento del percance o solo había llovido antes?",
+   "¿A qué velocidad iba el vocho antes de perder el control?",
+   "¿Quedaron marcas de frenado o de derrape en el pavimento?"
+  ],
+  "vehiculos": [
+   {
+    "narrador": false
+   }
+  ]
+ },
+ "texto_sha256": "124f867f84adbd0049e1827913fd68ac2821ca730da18b169c0606f878f1bb7c",
+ "usage": {
+  "cache_creation_input_tokens": 0,
+  "cache_read_input_tokens": 7131,
+  "input_tokens": 133,
+  "output_tokens": 1674
+ }
+}

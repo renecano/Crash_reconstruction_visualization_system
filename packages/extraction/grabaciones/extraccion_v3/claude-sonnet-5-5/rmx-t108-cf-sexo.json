@@ -1,0 +1,107 @@
+{
+ "costo_estimado_con": "claude-sonnet-5-5",
+ "costo_usd": 0.0086902,
+ "esfuerzo": "medium",
+ "grabado": "2026-10-16T14:20:52+00:00",
+ "huella_prompt": "86f6a54999b8cbf7",
+ "latencia_ms": 5693.6,
+ "modelo": "claude-sonnet-5-5",
+ "modelo_respuesta": "claude-sonnet-5-5",
+ "prompt": "extraccion_v3",
+ "request_id": "req_011Cg64f1mfFV1rPa1783b4w",
+ "salida": {
+  "dispositivos": [],
+  "hechos": [
+   {
+    "campo": "vehiculo.clase",
+    "cita": "bici",
+    "persona": -1,
+    "valor": "bicicleta",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.clase",
+    "cita": "Expedition",
+    "persona": -1,
+    "valor": "suv_grande",
+    "vehiculo": 1
+   },
+   {
+    "campo": "vehiculo.color",
+    "cita": "negra",
+    "persona": -1,
+    "valor": "negra",
+    "vehiculo": 1
+   },
+   {
+    "campo": "vehiculo.maniobra",
+    "cita": "dio vuelta a la derecha",
+    "persona": -1,
+    "valor": "vuelta_derecha",
+    "vehiculo": 1
+   },
+   {
+    "campo": "evento.tipo",
+    "cita": "El muchacho se estrelló contra el costado de la camioneta",
+    "persona": -1,
+    "valor": "impacto_vehiculo_vehiculo",
+    "vehiculo": -1
+   },
+   {
+    "campo": "vehiculo.zona_impacto",
+    "cita": "contra el costado de la camioneta",
+    "persona": -1,
+    "valor": "R",
+    "vehiculo": 1
+   },
+   {
+    "campo": "persona.casco",
+    "cita": "Traía casco",
+    "persona": 0,
+    "valor": "true",
+    "vehiculo": -1
+   },
+   {
+    "campo": "lugar.tipo_via",
+    "cita": "meterse a un estacionamiento",
+    "persona": -1,
+    "valor": "estacionamiento",
+    "vehiculo": -1
+   },
+   {
+    "campo": "entorno.iluminacion",
+    "cita": "las 6 y media de la tarde",
+    "persona": -1,
+    "valor": "atardecer",
+    "vehiculo": -1
+   }
+  ],
+  "personas": [
+   {
+    "cita": "un muchacho que iba en bici",
+    "rol": "ciclista",
+    "vehiculo": 0
+   }
+  ],
+  "preguntas": [
+   "¿A qué velocidad aproximada iban la bicicleta y la camioneta?",
+   "¿El ciclista alcanzó a frenar antes de chocar con la camioneta?",
+   "¿Cuántos carriles tiene la avenida en ese sentido?"
+  ],
+  "vehiculos": [
+   {
+    "narrador": false
+   },
+   {
+    "narrador": false
+   }
+  ]
+ },
+ "texto_sha256": "3060dbb8c97a5332aa634d3f1bc13b9a1c79aa01405ac5f430f0b631c71cd014",
+ "usage": {
+  "cache_creation_input_tokens": 0,
+  "cache_read_input_tokens": 7131,
+  "input_tokens": 202,
+  "output_tokens": 686
+ }
+}

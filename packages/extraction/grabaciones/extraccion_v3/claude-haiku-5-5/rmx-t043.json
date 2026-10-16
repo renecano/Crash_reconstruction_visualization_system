@@ -1,0 +1,102 @@
+{
+ "costo_estimado_con": "claude-haiku-5-5",
+ "costo_usd": 0.00166261,
+ "esfuerzo": "medium",
+ "grabado": "2026-10-16T14:42:59+00:00",
+ "huella_prompt": "86f6a54999b8cbf7",
+ "latencia_ms": 13183.3,
+ "modelo": "claude-haiku-5-5",
+ "modelo_respuesta": "claude-haiku-5-5",
+ "prompt": "extraccion_v3",
+ "request_id": "req_011Cg66LCJdK6aiikSz31rUZ",
+ "salida": {
+  "dispositivos": [
+   {
+    "cita": "el semaforo",
+    "tipo": "semaforo"
+   }
+  ],
+  "hechos": [
+   {
+    "campo": "vehiculo.clase",
+    "cita": "chevy",
+    "persona": -1,
+    "valor": "hatchback",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.clase",
+    "cita": "Lobo",
+    "persona": -1,
+    "valor": "pickup",
+    "vehiculo": 1
+   },
+   {
+    "campo": "vehiculo.color",
+    "cita": "Lobo roja",
+    "persona": -1,
+    "valor": "roja",
+    "vehiculo": 1
+   },
+   {
+    "campo": "vehiculo.velocidad_kmh",
+    "cita": "yo hiba como a 50 nomas",
+    "persona": -1,
+    "valor": "50",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.zona_impacto",
+    "cita": "en la puerta del chofer",
+    "persona": -1,
+    "valor": "L",
+    "vehiculo": 0
+   },
+   {
+    "campo": "evento.tipo",
+    "cita": "me pego de lado",
+    "persona": -1,
+    "valor": "impacto_vehiculo_vehiculo",
+    "vehiculo": -1
+   },
+   {
+    "campo": "entorno.iluminacion",
+    "cita": "eran como las 10 de la noche",
+    "persona": -1,
+    "valor": "noche",
+    "vehiculo": -1
+   }
+  ],
+  "personas": [
+   {
+    "cita": "andaba en mi chevy",
+    "rol": "conductor",
+    "vehiculo": 0
+   },
+   {
+    "cita": "una troca Lobo roja",
+    "rol": "conductor",
+    "vehiculo": 1
+   }
+  ],
+  "preguntas": [
+   "¿A qué velocidad iba la troca Lobo al cruzar el semáforo?",
+   "¿El conductor de la Lobo iba solo a bordo?"
+  ],
+  "vehiculos": [
+   {
+    "narrador": true
+   },
+   {
+    "narrador": false
+   }
+  ]
+ },
+ "texto_sha256": "859ded4555df6aebbb1b38775d7862122e279f5262059c0b71dd73ea3192ce57",
+ "usage": {
+  "cache_creation_input_tokens": 0,
+  "cache_read_input_tokens": 7131,
+  "input_tokens": 143,
+  "output_tokens": 3154
+ }
+}

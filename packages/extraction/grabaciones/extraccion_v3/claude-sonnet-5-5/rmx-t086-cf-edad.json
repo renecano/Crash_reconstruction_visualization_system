@@ -1,0 +1,86 @@
+{
+ "costo_estimado_con": "claude-sonnet-5-5",
+ "costo_usd": 0.0065142,
+ "esfuerzo": "medium",
+ "grabado": "2026-10-16T14:18:44+00:00",
+ "huella_prompt": "86f6a54999b8cbf7",
+ "latencia_ms": 3284.0,
+ "modelo": "claude-sonnet-5-5",
+ "modelo_respuesta": "claude-sonnet-5-5",
+ "prompt": "extraccion_v3",
+ "request_id": "req_011Cg64VkdL9m7a8K4yn9uBL",
+ "salida": {
+  "dispositivos": [],
+  "hechos": [
+   {
+    "campo": "vehiculo.clase",
+    "cita": "Vento",
+    "persona": -1,
+    "valor": "sedan_compacto",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.clase",
+    "cita": "Chevy",
+    "persona": -1,
+    "valor": "hatchback",
+    "vehiculo": 1
+   },
+   {
+    "campo": "evento.tipo",
+    "cita": "le di por detrás",
+    "persona": -1,
+    "valor": "impacto_vehiculo_vehiculo",
+    "vehiculo": -1
+   },
+   {
+    "campo": "vehiculo.zona_impacto",
+    "cita": "le di por detrás",
+    "persona": -1,
+    "valor": "F",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.zona_impacto",
+    "cita": "le di por detrás",
+    "persona": -1,
+    "valor": "B",
+    "vehiculo": 1
+   },
+   {
+    "campo": "vehiculo.frenado",
+    "cita": "se frenó en seco",
+    "persona": -1,
+    "valor": "true",
+    "vehiculo": 1
+   }
+  ],
+  "personas": [
+   {
+    "cita": "yo iba despacio en mi Vento",
+    "rol": "conductor",
+    "vehiculo": 0
+   }
+  ],
+  "preguntas": [
+   "¿A qué velocidad aproximada iba usted, en km/h?",
+   "¿A qué distancia iba de la parte trasera del Chevy antes de que frenara?",
+   "¿Cuántos carriles tenía Eje Central en ese sentido?"
+  ],
+  "vehiculos": [
+   {
+    "narrador": true
+   },
+   {
+    "narrador": false
+   }
+  ]
+ },
+ "texto_sha256": "e25b8b27e78f142a41178e625f35d437ade81749330630b4db6196af132ee398",
+ "usage": {
+  "cache_creation_input_tokens": 0,
+  "cache_read_input_tokens": 7131,
+  "input_tokens": 59,
+  "output_tokens": 497
+ }
+}

@@ -1,0 +1,97 @@
+{
+ "costo_estimado_con": "claude-haiku-5-5",
+ "costo_usd": 0.00112771,
+ "esfuerzo": "medium",
+ "grabado": "2026-10-16T15:09:41+00:00",
+ "huella_prompt": "86f6a54999b8cbf7",
+ "latencia_ms": 8515.0,
+ "modelo": "claude-haiku-5-5",
+ "modelo_respuesta": "claude-haiku-5-5",
+ "prompt": "extraccion_v3",
+ "request_id": "req_011Cg68Nech2Bt8jefVFcb6i",
+ "salida": {
+  "dispositivos": [],
+  "hechos": [
+   {
+    "campo": "vehiculo.clase",
+    "cita": "unidad tipo autobús de pasajeros",
+    "persona": -1,
+    "valor": "autobus",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.velocidad_kmh",
+    "cita": "circulaba a una velocidad aproximada de 35 km/h",
+    "persona": -1,
+    "valor": "35",
+    "vehiculo": 0
+   },
+   {
+    "campo": "lugar.estado_superficie",
+    "cita": "presencia de aceite sobre el pavimento",
+    "persona": -1,
+    "valor": "aceite",
+    "vehiculo": -1
+   },
+   {
+    "campo": "evento.tipo",
+    "cita": "se impactó contra una parada de autobús",
+    "persona": -1,
+    "valor": "impacto_vehiculo_objeto",
+    "vehiculo": -1
+   },
+   {
+    "campo": "evento.objeto",
+    "cita": "se impactó contra una parada de autobús",
+    "persona": -1,
+    "valor": "parada_autobus",
+    "vehiculo": -1
+   },
+   {
+    "campo": "entorno.iluminacion",
+    "cita": "la zona cuenta con alumbrado público",
+    "persona": -1,
+    "valor": "noche_con_alumbrado",
+    "vehiculo": -1
+   }
+  ],
+  "personas": [
+   {
+    "cita": "conducida por el operador en turno",
+    "rol": "conductor",
+    "vehiculo": 0
+   },
+   {
+    "cita": "tres pasajeros fueron valorados en el lugar por paramédicos",
+    "rol": "pasajero",
+    "vehiculo": 0
+   },
+   {
+    "cita": "tres pasajeros fueron valorados en el lugar por paramédicos",
+    "rol": "pasajero",
+    "vehiculo": 0
+   },
+   {
+    "cita": "tres pasajeros fueron valorados en el lugar por paramédicos",
+    "rol": "pasajero",
+    "vehiculo": 0
+   }
+  ],
+  "preguntas": [
+   "¿Quedaron marcas de frenado o derrape sobre el pavimento, y de qué largo?",
+   "¿Qué lado o parte del autobús recibió el golpe contra la parada?"
+  ],
+  "vehiculos": [
+   {
+    "narrador": false
+   }
+  ]
+ },
+ "texto_sha256": "755e758b1c93fff76aacf9708b0571e16c6ecb7c682c14205ff0fd69f5a37e4e",
+ "usage": {
+  "cache_creation_input_tokens": 0,
+  "cache_read_input_tokens": 7131,
+  "input_tokens": 234,
+  "output_tokens": 2066
+ }
+}

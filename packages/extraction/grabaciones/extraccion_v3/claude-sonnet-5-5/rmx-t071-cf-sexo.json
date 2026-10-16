@@ -1,0 +1,117 @@
+{
+ "costo_estimado_con": "claude-sonnet-5-5",
+ "costo_usd": 0.0099282,
+ "esfuerzo": "medium",
+ "grabado": "2026-10-16T14:17:34+00:00",
+ "huella_prompt": "86f6a54999b8cbf7",
+ "latencia_ms": 6494.7,
+ "modelo": "claude-sonnet-5-5",
+ "modelo_respuesta": "claude-sonnet-5-5",
+ "prompt": "extraccion_v3",
+ "request_id": "req_011Cg64QMMiAVeqLxZs9EDwN",
+ "salida": {
+  "dispositivos": [
+   {
+    "cita": "me encontraba detenido en el semáforo",
+    "tipo": "semaforo"
+   }
+  ],
+  "hechos": [
+   {
+    "campo": "lugar.tipo_via",
+    "cita": "intersección del bulevar Belisario Domínguez con la calle 5a. Norte",
+    "persona": -1,
+    "valor": "interseccion",
+    "vehiculo": -1
+   },
+   {
+    "campo": "entorno.iluminacion",
+    "cita": "La vialidad contaba con alumbrado público.",
+    "persona": -1,
+    "valor": "noche_con_alumbrado",
+    "vehiculo": -1
+   },
+   {
+    "campo": "evento.tipo",
+    "cita": "impactó la salpicadera delantera derecha de mi vehículo",
+    "persona": -1,
+    "valor": "impacto_vehiculo_vehiculo",
+    "vehiculo": -1
+   },
+   {
+    "campo": "vehiculo.clase",
+    "cita": "Aveo",
+    "persona": -1,
+    "valor": "sedan_compacto",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.color",
+    "cita": "color rojo",
+    "persona": -1,
+    "valor": "rojo",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.maniobra",
+    "cita": "dar vuelta a la izquierda",
+    "persona": -1,
+    "valor": "vuelta_izquierda",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.zona_impacto",
+    "cita": "salpicadera delantera derecha de mi vehículo",
+    "persona": -1,
+    "valor": "R",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.clase",
+    "cita": "un motociclista",
+    "persona": -1,
+    "valor": "motocicleta",
+    "vehiculo": 1
+   },
+   {
+    "campo": "persona.casco",
+    "cita": "El motociclista portaba casco",
+    "persona": 1,
+    "valor": "true",
+    "vehiculo": -1
+   }
+  ],
+  "personas": [
+   {
+    "cita": "me encontraba detenido en el semáforo",
+    "rol": "conductor",
+    "vehiculo": 0
+   },
+   {
+    "cita": "El motociclista portaba casco",
+    "rol": "motociclista",
+    "vehiculo": 1
+   }
+  ],
+  "preguntas": [
+   "¿A qué velocidad aproximada circulaba la motocicleta?",
+   "¿Qué zona de la motocicleta recibió el impacto?",
+   "¿La motocicleta frenó o realizó alguna maniobra antes del impacto?"
+  ],
+  "vehiculos": [
+   {
+    "narrador": true
+   },
+   {
+    "narrador": false
+   }
+  ]
+ },
+ "texto_sha256": "b430f82f756caf7d70e7855dca9bf5447244be14f0e23882734726816c872e3a",
+ "usage": {
+  "cache_creation_input_tokens": 0,
+  "cache_read_input_tokens": 7131,
+  "input_tokens": 271,
+  "output_tokens": 796
+ }
+}

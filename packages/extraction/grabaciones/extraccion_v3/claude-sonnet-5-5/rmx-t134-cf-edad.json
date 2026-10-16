@@ -1,0 +1,91 @@
+{
+ "costo_estimado_con": "claude-sonnet-5-5",
+ "costo_usd": 0.0128542,
+ "esfuerzo": "medium",
+ "grabado": "2026-10-16T14:23:11+00:00",
+ "huella_prompt": "86f6a54999b8cbf7",
+ "latencia_ms": 7812.7,
+ "modelo": "claude-sonnet-5-5",
+ "modelo_respuesta": "claude-sonnet-5-5",
+ "prompt": "extraccion_v3",
+ "request_id": "req_011Cg64q67PSLwHz3yXiMNRz",
+ "salida": {
+  "dispositivos": [],
+  "hechos": [
+   {
+    "campo": "vehiculo.clase",
+    "cita": "bici",
+    "persona": -1,
+    "valor": "bicicleta",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.clase",
+    "cita": "Hilux",
+    "persona": -1,
+    "valor": "pickup",
+    "vehiculo": 1
+   },
+   {
+    "campo": "vehiculo.color",
+    "cita": "gris",
+    "persona": -1,
+    "valor": "gris",
+    "vehiculo": 1
+   },
+   {
+    "campo": "vehiculo.velocidad_kmh",
+    "cita": "como a cincuenta",
+    "persona": -1,
+    "valor": "50",
+    "vehiculo": 1
+   },
+   {
+    "campo": "vehiculo.frenado",
+    "cita": "ni frenó",
+    "persona": -1,
+    "valor": "false",
+    "vehiculo": 1
+   },
+   {
+    "campo": "evento.tipo",
+    "cita": "le dio con el espejo en el hombro",
+    "persona": -1,
+    "valor": "impacto_vehiculo_vehiculo",
+    "vehiculo": -1
+   }
+  ],
+  "personas": [
+   {
+    "cita": "Mi papá",
+    "rol": "ciclista",
+    "vehiculo": 0
+   },
+   {
+    "cita": "un señor mayor",
+    "rol": "conductor",
+    "vehiculo": 1
+   }
+  ],
+  "preguntas": [
+   "¿Por qué lado de la bicicleta pasó la Hilux al rebasar?",
+   "¿Cuánto espacio, aproximadamente, quedó entre la Hilux y la bicicleta al rebasar?",
+   "¿Tu papá iba pegado a la orilla o en medio del carril?"
+  ],
+  "vehiculos": [
+   {
+    "narrador": false
+   },
+   {
+    "narrador": false
+   }
+  ]
+ },
+ "texto_sha256": "cc8a23c67ec3c37914fb8d4ed003cf469ce0714e89f19cbd5b2f115edbe0eedd",
+ "usage": {
+  "cache_creation_input_tokens": 0,
+  "cache_read_input_tokens": 7131,
+  "input_tokens": 164,
+  "output_tokens": 1110
+ }
+}
