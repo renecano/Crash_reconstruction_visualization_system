@@ -1,0 +1,83 @@
+{
+ "costo_estimado_con": "claude-haiku-5-5",
+ "costo_usd": 0.00143362,
+ "esfuerzo": "medium",
+ "grabado": "2026-10-16T02:33:53+00:00",
+ "huella_prompt": "f6b693169a4199c3",
+ "latencia_ms": 11982.9,
+ "modelo": "claude-haiku-5-5",
+ "modelo_respuesta": "claude-haiku-5-5",
+ "prompt": "extraccion_v1",
+ "request_id": "req_011Cg58ja2CnrgEa1H7Wvs9e",
+ "salida": {
+  "dispositivos": [],
+  "hechos": [
+   {
+    "campo": "evento.tipo",
+    "cita": "Le pegué a un poste",
+    "persona": -1,
+    "valor": "impacto_vehiculo_objeto",
+    "vehiculo": -1
+   },
+   {
+    "campo": "evento.objeto",
+    "cita": "Le pegué a un poste",
+    "persona": -1,
+    "valor": "poste",
+    "vehiculo": -1
+   },
+   {
+    "campo": "entorno.clima",
+    "cita": "Estaba lloviendo",
+    "persona": -1,
+    "valor": "lluvia",
+    "vehiculo": -1
+   },
+   {
+    "campo": "vehiculo.zona_impacto",
+    "cita": "con la esquina derecha del frente",
+    "persona": -1,
+    "valor": "F",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.velocidad_kmh",
+    "cita": "Iba como a 60",
+    "persona": -1,
+    "valor": "60",
+    "vehiculo": 0
+   },
+   {
+    "campo": "evidencias.marcas_m",
+    "cita": "se siguió el carro como cinco metros, de lado, quedó la marca en el asfalto",
+    "persona": -1,
+    "valor": "5",
+    "vehiculo": -1
+   }
+  ],
+  "personas": [
+   {
+    "cita": "volanteé",
+    "rol": "conductor",
+    "vehiculo": 0
+   }
+  ],
+  "preguntas": [
+   "¿La marca en el asfalto corresponde a un frenado o a un derrape lateral?",
+   "¿Qué maniobra hizo al volantear para evitar al perro?",
+   "¿Aplicó el freno antes del impacto con el poste?"
+  ],
+  "vehiculos": [
+   {
+    "narrador": true
+   }
+  ]
+ },
+ "texto_sha256": "a65c46d8de6a7f294c5e6bfb5d07480653cf597e4d3407d8d6bbd8a742dbefc3",
+ "usage": {
+  "cache_creation_input_tokens": 0,
+  "cache_read_input_tokens": 5862,
+  "input_tokens": 180,
+  "output_tokens": 2714
+ }
+}

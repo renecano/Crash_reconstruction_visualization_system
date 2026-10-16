@@ -1,0 +1,84 @@
+{
+ "costo_estimado_con": "claude-sonnet-5-5",
+ "costo_usd": 0.0072042,
+ "esfuerzo": "medium",
+ "grabado": "2026-10-16T02:54:39+00:00",
+ "huella_prompt": "86f6a54999b8cbf7",
+ "latencia_ms": 3582.7,
+ "modelo": "claude-sonnet-5-5",
+ "modelo_respuesta": "claude-sonnet-5-5",
+ "prompt": "extraccion_v3",
+ "request_id": "req_011Cg5AL2Kp4NXRdq3agSRka",
+ "salida": {
+  "dispositivos": [],
+  "hechos": [
+   {
+    "campo": "vehiculo.clase",
+    "cita": "un autobús de pasajeros del transporte urbano",
+    "persona": -1,
+    "valor": "autobus",
+    "vehiculo": 0
+   },
+   {
+    "campo": "evento.tipo",
+    "cita": "impactó con su costado derecho una parada de autobús",
+    "persona": -1,
+    "valor": "impacto_vehiculo_objeto",
+    "vehiculo": -1
+   },
+   {
+    "campo": "evento.objeto",
+    "cita": "una parada de autobús",
+    "persona": -1,
+    "valor": "parada_autobus",
+    "vehiculo": -1
+   },
+   {
+    "campo": "vehiculo.zona_impacto",
+    "cita": "con su costado derecho",
+    "persona": -1,
+    "valor": "R",
+    "vehiculo": 0
+   },
+   {
+    "campo": "evidencias.marcas_m",
+    "cita": "marcas de neumático de 10 metros",
+    "persona": -1,
+    "valor": "10",
+    "vehiculo": -1
+   },
+   {
+    "campo": "lugar.superficie",
+    "cita": "concreto hidráulico",
+    "persona": -1,
+    "valor": "concreto",
+    "vehiculo": -1
+   },
+   {
+    "campo": "entorno.iluminacion",
+    "cita": "La vialidad cuenta con alumbrado público",
+    "persona": -1,
+    "valor": "noche_con_alumbrado",
+    "vehiculo": -1
+   }
+  ],
+  "personas": [],
+  "preguntas": [
+   "¿Las marcas de neumático quedaron antes o después del impacto con la parada?",
+   "¿A qué velocidad aproximada circulaba el autobús?",
+   "¿El autobús frenó antes del impacto?"
+  ],
+  "vehiculos": [
+   {
+    "narrador": false
+   }
+  ]
+ },
+ "texto_sha256": "d524685f2471d04edd1738db36eaa277bb8959944afa645e5f47a166b31dd25f",
+ "usage": {
+  "cache_creation_input_tokens": 0,
+  "cache_read_input_tokens": 7131,
+  "input_tokens": 174,
+  "output_tokens": 543
+ }
+}

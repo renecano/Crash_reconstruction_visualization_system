@@ -1,0 +1,70 @@
+{
+ "costo_estimado_con": "claude-haiku-5-5",
+ "costo_usd": 0.00098651,
+ "esfuerzo": "medium",
+ "grabado": "2026-10-16T00:33:05+00:00",
+ "huella_prompt": "86f6a54999b8cbf7",
+ "latencia_ms": 8711.7,
+ "modelo": "claude-haiku-5-5",
+ "modelo_respuesta": "claude-haiku-5-5",
+ "prompt": "extraccion_v3",
+ "request_id": "req_011Cg4yXVZgxiYw7qSwfhpYY",
+ "salida": {
+  "dispositivos": [
+   {
+    "cita": "el semáforo",
+    "tipo": "semaforo"
+   }
+  ],
+  "hechos": [
+   {
+    "campo": "lugar.tipo_via",
+    "cita": "En el crucero",
+    "persona": -1,
+    "valor": "interseccion",
+    "vehiculo": -1
+   },
+   {
+    "campo": "vehiculo.clase",
+    "cita": "una combi",
+    "persona": -1,
+    "valor": "microbus_combi",
+    "vehiculo": 0
+   },
+   {
+    "campo": "evento.tipo",
+    "cita": "me dio en el costado izquierdo",
+    "persona": -1,
+    "valor": "impacto_vehiculo_vehiculo",
+    "vehiculo": -1
+   },
+   {
+    "campo": "vehiculo.zona_impacto",
+    "cita": "me dio en el costado izquierdo",
+    "persona": -1,
+    "valor": "L",
+    "vehiculo": 1
+   }
+  ],
+  "personas": [],
+  "preguntas": [
+   "¿Usted manejaba el vehículo que recibió el golpe o iba como pasajero?",
+   "¿La combi cruzaba la intersección de frente o venía de otra calle?"
+  ],
+  "vehiculos": [
+   {
+    "narrador": false
+   },
+   {
+    "narrador": false
+   }
+  ]
+ },
+ "texto_sha256": "7417eaf302ba39047bdf7932e6be3ceb62c9266c1396c77c1a0fcc81b285fe64",
+ "usage": {
+  "cache_creation_input_tokens": 0,
+  "cache_read_input_tokens": 7131,
+  "input_tokens": 62,
+  "output_tokens": 1818
+ }
+}

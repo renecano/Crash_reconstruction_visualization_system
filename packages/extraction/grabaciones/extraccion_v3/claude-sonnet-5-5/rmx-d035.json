@@ -1,0 +1,76 @@
+{
+ "costo_estimado_con": "claude-sonnet-5-5",
+ "costo_usd": 0.0062482,
+ "esfuerzo": "medium",
+ "grabado": "2026-10-16T00:03:07+00:00",
+ "huella_prompt": "86f6a54999b8cbf7",
+ "latencia_ms": 3122.0,
+ "modelo": "claude-sonnet-5-5",
+ "modelo_respuesta": "claude-sonnet-5-5",
+ "prompt": "extraccion_v3",
+ "request_id": "req_011Cg4wFQ8adQ9Db3jBHhyuN",
+ "salida": {
+  "dispositivos": [],
+  "hechos": [
+   {
+    "campo": "entorno.iluminacion",
+    "cita": "la calle sin luz",
+    "persona": -1,
+    "valor": "noche_sin_alumbrado",
+    "vehiculo": -1
+   },
+   {
+    "campo": "evento.tipo",
+    "cita": "le pegue a un contenedor de basura",
+    "persona": -1,
+    "valor": "impacto_vehiculo_objeto",
+    "vehiculo": -1
+   },
+   {
+    "campo": "evento.objeto",
+    "cita": "contenedor de basura",
+    "persona": -1,
+    "valor": "contenedor",
+    "vehiculo": -1
+   },
+   {
+    "campo": "vehiculo.clase",
+    "cita": "chevy",
+    "persona": -1,
+    "valor": "hatchback",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.velocidad_kmh",
+    "cita": "iva como a 40",
+    "persona": -1,
+    "valor": "40",
+    "vehiculo": 0
+   }
+  ],
+  "personas": [
+   {
+    "cita": "me hize a un lado",
+    "rol": "conductor",
+    "vehiculo": 0
+   }
+  ],
+  "preguntas": [
+   "¿Por qué parte del vehículo golpeó el contenedor (frente, lado izquierdo o derecho)?",
+   "¿Alcanzó a frenar antes de golpear el contenedor?",
+   "¿Quedaron marcas en el piso y de qué largo aproximado?"
+  ],
+  "vehiculos": [
+   {
+    "narrador": true
+   }
+  ]
+ },
+ "texto_sha256": "e9ee00d172e2b5935fdd586be33db9349329d5bdb06daf5f2965e302db038f22",
+ "usage": {
+  "cache_creation_input_tokens": 0,
+  "cache_read_input_tokens": 7131,
+  "input_tokens": 126,
+  "output_tokens": 457
+ }
+}

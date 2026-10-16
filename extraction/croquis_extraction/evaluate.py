@@ -19,7 +19,15 @@ from collections import Counter
 from dataclasses import dataclass, field
 from typing import Any
 
-from croquis_extraction.facts import NUMERIC, SCALAR_FIELDS, TOLERANCE, VEHICLE_FIELDS, Fact, Facts
+from croquis_extraction.facts import (
+    ANNOTATED_ONLY,
+    NUMERIC,
+    SCALAR_FIELDS,
+    TOLERANCE,
+    VEHICLE_FIELDS,
+    Fact,
+    Facts,
+)
 
 EQUIV: dict[tuple[str, str], frozenset[str]] = {
     ("clase", "suv_o_pickup"): frozenset({"suv_compacta", "suv_grande", "pickup"}),
@@ -183,6 +191,8 @@ def match_vehicles(ref: Facts, pred: Facts) -> list[tuple[int | None, int | None
 def score_story(ref: Facts, pred: Facts) -> Score:
     sc = Score(stories=1)
     for key in SCALAR_FIELDS:
+        if key in ANNOTATED_ONLY and key not in ref.escalares:
+            continue
         sc.add(key, ref.escalares.get(key), pred.escalares.get(key))
     rset = Counter(str(d.valor) for d in ref.dispositivos if _stated(d))
     rinf = Counter(str(d.valor) for d in ref.dispositivos if not _stated(d))

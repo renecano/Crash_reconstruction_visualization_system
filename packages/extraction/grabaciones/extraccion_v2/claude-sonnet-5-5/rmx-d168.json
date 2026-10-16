@@ -1,0 +1,100 @@
+{
+ "costo_estimado_con": "claude-sonnet-5-5",
+ "costo_usd": 0.0134802,
+ "esfuerzo": "medium",
+ "grabado": "2026-10-15T23:44:33+00:00",
+ "huella_prompt": "5816b86ad0e718ee",
+ "latencia_ms": 8339.9,
+ "modelo": "claude-sonnet-5-5",
+ "modelo_respuesta": "claude-sonnet-5-5",
+ "prompt": "extraccion_v2",
+ "request_id": "req_011Cg4upujkAK7zfbgiu8Xee",
+ "salida": {
+  "dispositivos": [],
+  "hechos": [
+   {
+    "campo": "vehiculo.clase",
+    "cita": "moto",
+    "persona": -1,
+    "valor": "motocicleta",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.velocidad_kmh",
+    "cita": "como a 70",
+    "persona": -1,
+    "valor": "70",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.color",
+    "cita": "blanco",
+    "persona": -1,
+    "valor": "blanco",
+    "vehiculo": 1
+   },
+   {
+    "campo": "evento.tipo",
+    "cita": "un carro blanco me pego por atras",
+    "persona": -1,
+    "valor": "impacto_vehiculo_vehiculo",
+    "vehiculo": -1
+   },
+   {
+    "campo": "vehiculo.zona_impacto",
+    "cita": "me pego por atras",
+    "persona": -1,
+    "valor": "B",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.zona_impacto",
+    "cita": "me pego por atras",
+    "persona": -1,
+    "valor": "F",
+    "vehiculo": 1
+   },
+   {
+    "campo": "evidencias.marcas_m",
+    "cita": "como de 10 metros",
+    "persona": -1,
+    "valor": "10",
+    "vehiculo": -1
+   },
+   {
+    "campo": "persona.casco",
+    "cita": "traia casco",
+    "persona": 0,
+    "valor": "true",
+    "vehiculo": -1
+   }
+  ],
+  "personas": [
+   {
+    "cita": "benia en mi moto",
+    "rol": "motociclista",
+    "vehiculo": 0
+   }
+  ],
+  "preguntas": [
+   "¿Los 10 metros corresponden a la marca de la moto o a la distancia a la que usted salió proyectado?",
+   "¿Qué tipo de carro era el blanco (compacto, camioneta u otro)?",
+   "¿Era de día o de noche y en qué estado estaba el pavimento?"
+  ],
+  "vehiculos": [
+   {
+    "narrador": true
+   },
+   {
+    "narrador": false
+   }
+  ]
+ },
+ "texto_sha256": "dfed722a762174685894084b16c24ab1f40828d179f1f451e50f0f8f00a4140f",
+ "usage": {
+  "cache_creation_input_tokens": 0,
+  "cache_read_input_tokens": 6881,
+  "input_tokens": 112,
+  "output_tokens": 1188
+ }
+}

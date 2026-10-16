@@ -1,0 +1,83 @@
+{
+ "costo_estimado_con": "claude-haiku-5-5",
+ "costo_usd": 0.00110901,
+ "esfuerzo": "medium",
+ "grabado": "2026-10-16T00:40:22+00:00",
+ "huella_prompt": "86f6a54999b8cbf7",
+ "latencia_ms": 9122.1,
+ "modelo": "claude-haiku-5-5",
+ "modelo_respuesta": "claude-haiku-5-5",
+ "prompt": "extraccion_v3",
+ "request_id": "req_011Cg4z5jEMazZbM7hsJD7eX",
+ "salida": {
+  "dispositivos": [],
+  "hechos": [
+   {
+    "campo": "lugar.superficie",
+    "cita": "de esas empedradas",
+    "persona": -1,
+    "valor": "empedrado",
+    "vehiculo": -1
+   },
+   {
+    "campo": "entorno.clima",
+    "cita": "estaba lloviznando",
+    "persona": -1,
+    "valor": "lluvia_ligera",
+    "vehiculo": -1
+   },
+   {
+    "campo": "evento.tipo",
+    "cita": "acabé contra el muro",
+    "persona": -1,
+    "valor": "impacto_vehiculo_objeto",
+    "vehiculo": -1
+   },
+   {
+    "campo": "evento.objeto",
+    "cita": "el muro",
+    "persona": -1,
+    "valor": "muro",
+    "vehiculo": -1
+   },
+   {
+    "campo": "vehiculo.clase",
+    "cita": "Gol",
+    "persona": -1,
+    "valor": "hatchback",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.velocidad_kmh",
+    "cita": "como a 30",
+    "persona": -1,
+    "valor": "30",
+    "vehiculo": 0
+   }
+  ],
+  "personas": [
+   {
+    "cita": "Iba en mi Gol",
+    "rol": "conductor",
+    "vehiculo": 0
+   }
+  ],
+  "preguntas": [
+   "¿El frente del carro fue el que golpeó el muro o fue otra parte del vehículo?",
+   "¿Quedaron marcas de frenado o derrape en el pavimento, y de qué largo?",
+   "¿La calle tenía alumbrado público al momento del percance?"
+  ],
+  "vehiculos": [
+   {
+    "narrador": true
+   }
+  ]
+ },
+ "texto_sha256": "71edd51ab2cca46baa8ca4d4f7bdf37077420cb31cefa4f94a6dd9ae8707ea8a",
+ "usage": {
+  "cache_creation_input_tokens": 0,
+  "cache_read_input_tokens": 7131,
+  "input_tokens": 197,
+  "output_tokens": 2036
+ }
+}

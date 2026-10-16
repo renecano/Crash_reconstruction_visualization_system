@@ -1,0 +1,117 @@
+{
+ "costo_estimado_con": "claude-sonnet-5-5",
+ "costo_usd": 0.0093302,
+ "esfuerzo": "medium",
+ "grabado": "2026-10-16T02:52:52+00:00",
+ "huella_prompt": "86f6a54999b8cbf7",
+ "latencia_ms": 4111.8,
+ "modelo": "claude-sonnet-5-5",
+ "modelo_respuesta": "claude-sonnet-5-5",
+ "prompt": "extraccion_v3",
+ "request_id": "req_011Cg5AC5gkLJMBEtnuxzx7b",
+ "salida": {
+  "dispositivos": [
+   {
+    "cita": "se pasó el alto",
+    "tipo": "alto"
+   }
+  ],
+  "hechos": [
+   {
+    "campo": "vehiculo.clase",
+    "cita": "Jetta",
+    "persona": -1,
+    "valor": "sedan_mediano",
+    "vehiculo": 1
+   },
+   {
+    "campo": "vehiculo.color",
+    "cita": "negro",
+    "persona": -1,
+    "valor": "negro",
+    "vehiculo": 1
+   },
+   {
+    "campo": "evento.tipo",
+    "cita": "nos pegó en la puerta de atrás del lado derecho",
+    "persona": -1,
+    "valor": "impacto_vehiculo_vehiculo",
+    "vehiculo": -1
+   },
+   {
+    "campo": "vehiculo.zona_impacto",
+    "cita": "nos pegó en la puerta de atrás del lado derecho",
+    "persona": -1,
+    "valor": "R",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.zona_impacto",
+    "cita": "nos pegó en la puerta de atrás del lado derecho",
+    "persona": -1,
+    "valor": "F",
+    "vehiculo": 1
+   },
+   {
+    "campo": "evidencias.marcas_m",
+    "cita": "unos doce metros",
+    "persona": -1,
+    "valor": "12",
+    "vehiculo": -1
+   },
+   {
+    "campo": "evidencias.marcas_fase",
+    "cita": "todas de cuando giramos después del choque",
+    "persona": -1,
+    "valor": "despues_impacto",
+    "vehiculo": -1
+   },
+   {
+    "campo": "entorno.iluminacion",
+    "cita": "de noche",
+    "persona": -1,
+    "valor": "noche",
+    "vehiculo": -1
+   },
+   {
+    "campo": "entorno.clima",
+    "cita": "lloviznando",
+    "persona": -1,
+    "valor": "lluvia_ligera",
+    "vehiculo": -1
+   }
+  ],
+  "personas": [
+   {
+    "cita": "yo de copiloto",
+    "rol": "pasajero",
+    "vehiculo": 0
+   },
+   {
+    "cita": "él manejando",
+    "rol": "conductor",
+    "vehiculo": 0
+   }
+  ],
+  "preguntas": [
+   "¿La Avanza era una camioneta tipo van o una SUV?",
+   "¿Por qué lado del cruce venía el Jetta respecto a la Avanza?",
+   "¿Cuál era la velocidad aproximada de cada vehículo antes del choque?"
+  ],
+  "vehiculos": [
+   {
+    "narrador": false
+   },
+   {
+    "narrador": false
+   }
+  ]
+ },
+ "texto_sha256": "3ea26694859c673d12fad14fa7f42016d0e9339c71288fca4ad3065b72006fa5",
+ "usage": {
+  "cache_creation_input_tokens": 0,
+  "cache_read_input_tokens": 7131,
+  "input_tokens": 192,
+  "output_tokens": 752
+ }
+}

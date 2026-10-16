@@ -1,0 +1,98 @@
+{
+ "costo_estimado_con": "claude-sonnet-5-5",
+ "costo_usd": 0.0074122,
+ "esfuerzo": "medium",
+ "grabado": "2026-10-16T00:12:59+00:00",
+ "huella_prompt": "86f6a54999b8cbf7",
+ "latencia_ms": 3674.2,
+ "modelo": "claude-sonnet-5-5",
+ "modelo_respuesta": "claude-sonnet-5-5",
+ "prompt": "extraccion_v3",
+ "request_id": "req_011Cg4x12cFjcczo7EkcA9Gr",
+ "salida": {
+  "dispositivos": [
+   {
+    "cita": "el tope",
+    "tipo": "tope"
+   }
+  ],
+  "hechos": [
+   {
+    "campo": "vehiculo.velocidad_kmh",
+    "cita": "yo iva casi parado x el tope",
+    "persona": -1,
+    "valor": "8",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.frenado",
+    "cita": "el de atras no freno",
+    "persona": -1,
+    "valor": "false",
+    "vehiculo": 1
+   },
+   {
+    "campo": "evento.tipo",
+    "cita": "me dio en la cajuela",
+    "persona": -1,
+    "valor": "impacto_vehiculo_vehiculo",
+    "vehiculo": -1
+   },
+   {
+    "campo": "vehiculo.zona_impacto",
+    "cita": "me dio en la cajuela",
+    "persona": -1,
+    "valor": "B",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.zona_impacto",
+    "cita": "el de atras no freno y me dio en la cajuela",
+    "persona": -1,
+    "valor": "F",
+    "vehiculo": 1
+   },
+   {
+    "campo": "vehiculo.clase",
+    "cita": "estaquitas",
+    "persona": -1,
+    "valor": "pickup",
+    "vehiculo": 1
+   },
+   {
+    "campo": "vehiculo.color",
+    "cita": "blanca",
+    "persona": -1,
+    "valor": "blanca",
+    "vehiculo": 1
+   }
+  ],
+  "personas": [
+   {
+    "cita": "yo iva casi parado x el tope",
+    "rol": "conductor",
+    "vehiculo": 0
+   }
+  ],
+  "preguntas": [
+   "¿A qué velocidad aproximada iba el otro vehículo al momento del golpe?",
+   "¿Había lluvia o el pavimento estaba mojado?",
+   "¿Qué tipo de vehículo era el suyo?"
+  ],
+  "vehiculos": [
+   {
+    "narrador": true
+   },
+   {
+    "narrador": false
+   }
+  ]
+ },
+ "texto_sha256": "9b803448e32eb47a86bf389f7ebbc5b0a47c7900c9cf6a170d1103ee2f0b16b3",
+ "usage": {
+  "cache_creation_input_tokens": 0,
+  "cache_read_input_tokens": 7131,
+  "input_tokens": 93,
+  "output_tokens": 580
+ }
+}

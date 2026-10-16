@@ -1,0 +1,72 @@
+{
+ "costo_estimado_con": "claude-sonnet-5-5",
+ "costo_usd": 0.0054924,
+ "esfuerzo": "medium",
+ "grabado": "2026-10-16T02:22:45+00:00",
+ "huella_prompt": "f6b693169a4199c3",
+ "latencia_ms": 3160.7,
+ "modelo": "claude-sonnet-5-5",
+ "modelo_respuesta": "claude-sonnet-5-5",
+ "prompt": "extraccion_v1",
+ "request_id": "req_011Cg57typKiQLMhFPsYPBb9",
+ "salida": {
+  "dispositivos": [],
+  "hechos": [
+   {
+    "campo": "lugar.tipo_via",
+    "cita": "En Periférico",
+    "persona": -1,
+    "valor": "autopista",
+    "vehiculo": -1
+   },
+   {
+    "campo": "evento.tipo",
+    "cita": "un Mazda 3 me pegó en la puerta del copiloto",
+    "persona": -1,
+    "valor": "impacto_vehiculo_vehiculo",
+    "vehiculo": -1
+   },
+   {
+    "campo": "vehiculo.zona_impacto",
+    "cita": "en la puerta del copiloto",
+    "persona": -1,
+    "valor": "R",
+    "vehiculo": 0
+   },
+   {
+    "campo": "evidencias.marcas_m",
+    "cita": "se barrió 5 metros",
+    "persona": -1,
+    "valor": "5",
+    "vehiculo": -1
+   }
+  ],
+  "personas": [
+   {
+    "cita": "me pegó",
+    "rol": "conductor",
+    "vehiculo": 0
+   }
+  ],
+  "preguntas": [
+   "¿Cuántos carriles tenía Periférico en ese tramo y en cuál iba cada vehículo?",
+   "¿A qué velocidad aproximada iba cada vehículo?",
+   "¿Qué maniobra hacía el Mazda 3 al momento del golpe?"
+  ],
+  "vehiculos": [
+   {
+    "narrador": true
+   },
+   {
+    "narrador": false
+   }
+  ]
+ },
+ "texto_sha256": "4cd785277783e2c5cf6eb5555fe6f059293aa1796bc6cc8bcecbbb7a43f16a6a",
+ "usage": {
+  "cache_creation_input_tokens": 0,
+  "cache_read_input_tokens": 5862,
+  "input_tokens": 70,
+  "output_tokens": 418
+ }
+}

@@ -516,6 +516,7 @@ Te cuento: salí de Morelia por la carretera a Salamanca, en la recta, como a 80
 [relato.hechos]
 "lugar.tipo_via" = ["recta", "en la recta"]
 "evidencias.marcas_m" = [15, "como 15 metros"]
+"evidencias.marcas_fase" = ["antes_impacto", "Frené con todo"]
 "evento.tipo" = ["impacto_vehiculo_vehiculo", "le pegué en la puerta del chofer"]
 zonas = { "0" = ["F"], "1" = ["L", "la puerta del chofer"] }
 [[relato.hechos.vehiculos]]
@@ -662,6 +663,7 @@ Parte informativo. Siendo las 16:45 horas, se atendió un reporte de hecho de tr
 "entorno.iluminacion" = ["dia", "16:45 horas"]
 "evento.tipo" = ["impacto_vehiculo_vehiculo", "impactando el costado izquierdo de la motocicleta"]
 "evidencias.marcas_m" = [6, "aproximadamente 6 metros"]
+"evidencias.marcas_fase" = ["antes_impacto", "marcas de frenado"]
 dispositivos = [["alto", "señal de alto"]]
 zonas = { "0" = ["L", "el costado izquierdo de la motocicleta"], "1" = ["F", "daños en su parte frontal"] }
 [[relato.hechos.vehiculos]]

@@ -1,0 +1,85 @@
+{
+ "costo_estimado_con": "claude-haiku-5-5",
+ "costo_usd": 0.00120091,
+ "esfuerzo": "medium",
+ "grabado": "2026-10-16T02:18:40+00:00",
+ "huella_prompt": "86f6a54999b8cbf7",
+ "latencia_ms": 9763.6,
+ "modelo": "claude-haiku-5-5",
+ "modelo_respuesta": "claude-haiku-5-5",
+ "prompt": "extraccion_v3",
+ "request_id": "req_011Cg57aQc42SKjCEooc9zHB",
+ "salida": {
+  "dispositivos": [
+   {
+    "cita": "hay un montón de topes",
+    "tipo": "tope"
+   }
+  ],
+  "hechos": [
+   {
+    "campo": "entorno.iluminacion",
+    "cita": "ya oscureciendo",
+    "persona": -1,
+    "valor": "atardecer",
+    "vehiculo": -1
+   },
+   {
+    "campo": "vehiculo.velocidad_kmh",
+    "cita": "como a 30",
+    "persona": -1,
+    "valor": "30",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.frenado",
+    "cita": "Frené",
+    "persona": -1,
+    "valor": "true",
+    "vehiculo": 0
+   },
+   {
+    "campo": "evento.tipo",
+    "cita": "alcancé a darle con el espejo",
+    "persona": -1,
+    "valor": "impacto_vehiculo_persona",
+    "vehiculo": -1
+   },
+   {
+    "campo": "evidencias.distancia_proyeccion_m",
+    "cita": "cayó como a un metro",
+    "persona": 1,
+    "valor": "1",
+    "vehiculo": -1
+   }
+  ],
+  "personas": [
+   {
+    "cita": "Iba por la avenida Carranza",
+    "rol": "conductor",
+    "vehiculo": 0
+   },
+   {
+    "cita": "un muchacho salió de entre dos carros estacionados",
+    "rol": "peaton",
+    "vehiculo": -1
+   }
+  ],
+  "preguntas": [
+   "¿Qué lado del vehículo recibió el golpe, el frente o el costado izquierdo o derecho?",
+   "¿Por qué lado de los carros estacionados salió el muchacho, hacia la calle o hacia la banqueta?"
+  ],
+  "vehiculos": [
+   {
+    "narrador": true
+   }
+  ]
+ },
+ "texto_sha256": "17381990a2dd5e55953d5b9ebf0c54e4c7d51ac8fc8fd7d2b18c749138b204e8",
+ "usage": {
+  "cache_creation_input_tokens": 0,
+  "cache_read_input_tokens": 7131,
+  "input_tokens": 161,
+  "output_tokens": 2227
+ }
+}

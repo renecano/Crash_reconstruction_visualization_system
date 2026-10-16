@@ -8,6 +8,7 @@ from typing import Any
 import pytest
 
 from croquis_extraction import claude_client as cc
+from croquis_extraction.facts import facts_from_spec
 from croquis_extraction.spec_builder import build_spec
 from croquis_scene_schema import schema_errors
 
@@ -263,3 +264,43 @@ def test_candado_ocupado_en_windows_se_reintenta(
     ledger = tmp_path / "gasto.json"
     cc._charge(ledger, 0.25)  # pyright: ignore[reportPrivateUsage]
     assert cc._spent_today(ledger) == 0.25  # pyright: ignore[reportPrivateUsage]
+
+
+def test_v3_pide_la_fase_de_las_marcas_y_v1_v2_no_cambian() -> None:
+    """La fase entra solo en v3: el esquema y la huella de v1 y v2 siguen iguales."""
+
+    def enum(p: str) -> list[str]:
+        hechos = cc.output_schema(p)["properties"]["hechos"]
+        return list(hechos["items"]["properties"]["campo"]["enum"])
+
+    assert "evidencias.marcas_fase" in enum("extraccion_v3")
+    for p in ("extraccion_v1", "extraccion_v2"):
+        assert "evidencias.marcas_fase" not in enum(p)
+        assert "evidencias.marcas_fase" not in cc.system_prompt(p)
+    assert "evidencias.marcas_fase: antes_impacto, despues_impacto" in cc.system_prompt(
+        "extraccion_v3"
+    )
+    assert cc.prompt_fingerprint("extraccion_v1") == "f6b693169a4199c3"
+    assert cc.prompt_fingerprint("extraccion_v2") == "5816b86ad0e718ee"
+
+
+def test_la_fase_de_claude_llega_a_la_spec_con_su_cita() -> None:
+    text = "Me pegaron por detrás y ya después frené; quedaron 6 metros de marca."
+    out = {
+        "vehiculos": [{"narrador": True}, {"narrador": False}],
+        "personas": [],
+        "hechos": [
+            _h("evidencias.marcas_m", "6", "6 metros de marca"),
+            _h("evidencias.marcas_fase", "despues_impacto", "ya después frené"),
+        ],
+        "dispositivos": [],
+        "preguntas": [],
+    }
+    facts, conv = cc.facts_from_output(out, text)
+    assert conv.valores_invalidos == 0
+    spec = build_spec(facts, text, spec_id="prueba-fase")
+    marcas = next(e for e in spec["evidencias"] if e["id"] == "evid-marcas")
+    assert marcas["fase"] == "despues_impacto"
+    assert schema_errors(spec) == []
+    back = facts_from_spec(spec).escalares["evidencias.marcas_fase"]
+    assert (back.valor, back.cita, back.stated) == ("despues_impacto", "ya después frené", True)

@@ -1,0 +1,92 @@
+{
+ "costo_estimado_con": "claude-haiku-5-5",
+ "costo_usd": 0.00099281,
+ "esfuerzo": "medium",
+ "grabado": "2026-10-15T23:59:01+00:00",
+ "huella_prompt": "5816b86ad0e718ee",
+ "latencia_ms": 8178.5,
+ "modelo": "claude-haiku-5-5",
+ "modelo_respuesta": "claude-haiku-5-5",
+ "prompt": "extraccion_v2",
+ "request_id": "req_011Cg4vvtmyf4LWKTXXGKyMP",
+ "salida": {
+  "dispositivos": [],
+  "hechos": [
+   {
+    "campo": "vehiculo.clase",
+    "cita": "moto",
+    "persona": -1,
+    "valor": "motocicleta",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.frenado",
+    "cita": "Frené la moto",
+    "persona": -1,
+    "valor": "true",
+    "vehiculo": 0
+   },
+   {
+    "campo": "evidencias.marcas_m",
+    "cita": "marqué 4 metros de llanta",
+    "persona": -1,
+    "valor": "4",
+    "vehiculo": -1
+   },
+   {
+    "campo": "evento.tipo",
+    "cita": "le di al taxi",
+    "persona": -1,
+    "valor": "impacto_vehiculo_vehiculo",
+    "vehiculo": -1
+   },
+   {
+    "campo": "vehiculo.clase",
+    "cita": "taxi",
+    "persona": -1,
+    "valor": "sedan_compacto",
+    "vehiculo": 1
+   },
+   {
+    "campo": "vehiculo.maniobra",
+    "cita": "se paró en doble fila",
+    "persona": -1,
+    "valor": "detenido",
+    "vehiculo": 1
+   },
+   {
+    "campo": "vehiculo.velocidad_kmh",
+    "cita": "se paró en doble fila",
+    "persona": -1,
+    "valor": "0",
+    "vehiculo": 1
+   }
+  ],
+  "personas": [
+   {
+    "cita": "Frené la moto",
+    "rol": "motociclista",
+    "vehiculo": 0
+   }
+  ],
+  "preguntas": [
+   "¿A qué velocidad iba la moto antes de frenar?",
+   "¿El taxi ya estaba detenido cuando llegó la moto o se detuvo justo antes del golpe?"
+  ],
+  "vehiculos": [
+   {
+    "narrador": true
+   },
+   {
+    "narrador": false
+   }
+  ]
+ },
+ "texto_sha256": "8d8c3ca1e963223cf630893475f50a12d8a8820ac07952aa6add863566e6c098",
+ "usage": {
+  "cache_creation_input_tokens": 0,
+  "cache_read_input_tokens": 6881,
+  "input_tokens": 50,
+  "output_tokens": 1838
+ }
+}

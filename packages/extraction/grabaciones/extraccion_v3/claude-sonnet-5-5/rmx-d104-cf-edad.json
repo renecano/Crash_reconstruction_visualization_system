@@ -1,0 +1,93 @@
+{
+ "costo_estimado_con": "claude-sonnet-5-5",
+ "costo_usd": 0.0141542,
+ "esfuerzo": "medium",
+ "grabado": "2026-10-16T00:20:05+00:00",
+ "huella_prompt": "86f6a54999b8cbf7",
+ "latencia_ms": 8328.8,
+ "modelo": "claude-sonnet-5-5",
+ "modelo_respuesta": "claude-sonnet-5-5",
+ "prompt": "extraccion_v3",
+ "request_id": "req_011Cg4xY5vHrjkUjxP8XTnf1",
+ "salida": {
+  "dispositivos": [],
+  "hechos": [
+   {
+    "campo": "vehiculo.clase",
+    "cita": "bici",
+    "persona": -1,
+    "valor": "bicicleta",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.clase",
+    "cita": "camioneta",
+    "persona": -1,
+    "valor": "suv_o_pickup",
+    "vehiculo": 1
+   },
+   {
+    "campo": "vehiculo.color",
+    "cita": "gris",
+    "persona": -1,
+    "valor": "gris",
+    "vehiculo": 1
+   },
+   {
+    "campo": "vehiculo.maniobra",
+    "cita": "dio vuelta a la derecha",
+    "persona": -1,
+    "valor": "vuelta_derecha",
+    "vehiculo": 1
+   },
+   {
+    "campo": "evento.tipo",
+    "cita": "le pegó con la defensa de enfrente",
+    "persona": -1,
+    "valor": "impacto_vehiculo_vehiculo",
+    "vehiculo": -1
+   },
+   {
+    "campo": "vehiculo.zona_impacto",
+    "cita": "con la defensa de enfrente",
+    "persona": -1,
+    "valor": "F",
+    "vehiculo": 1
+   },
+   {
+    "campo": "persona.casco",
+    "cita": "Traía casco",
+    "persona": 0,
+    "valor": "true",
+    "vehiculo": -1
+   }
+  ],
+  "personas": [
+   {
+    "cita": "Iba en su bici",
+    "rol": "ciclista",
+    "vehiculo": 0
+   }
+  ],
+  "preguntas": [
+   "¿La camioneta era tipo SUV, pickup o van?",
+   "¿Qué parte de la bicicleta recibió el golpe?",
+   "¿Aproximadamente a qué velocidad iba la camioneta al dar la vuelta?"
+  ],
+  "vehiculos": [
+   {
+    "narrador": false
+   },
+   {
+    "narrador": false
+   }
+  ]
+ },
+ "texto_sha256": "f2da85b8ef8b4e87cd48d2ee4349002a6db0d016259bd7867fc0b5ffe81759ea",
+ "usage": {
+  "cache_creation_input_tokens": 0,
+  "cache_read_input_tokens": 7131,
+  "input_tokens": 194,
+  "output_tokens": 1234
+ }
+}

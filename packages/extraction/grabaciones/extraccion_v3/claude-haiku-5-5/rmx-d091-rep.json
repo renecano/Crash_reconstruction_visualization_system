@@ -1,0 +1,112 @@
+{
+ "costo_estimado_con": "claude-haiku-5-5",
+ "costo_usd": 0.00193671,
+ "esfuerzo": "medium",
+ "grabado": "2026-10-16T03:10:08+00:00",
+ "huella_prompt": "86f6a54999b8cbf7",
+ "latencia_ms": 16045.1,
+ "modelo": "claude-haiku-5-5",
+ "modelo_respuesta": "claude-haiku-5-5",
+ "prompt": "extraccion_v3",
+ "request_id": "req_011Cg5BVdfgcVXKsnCFZ9nHu",
+ "salida": {
+  "dispositivos": [],
+  "hechos": [
+   {
+    "campo": "entorno.iluminacion",
+    "cita": "Ahí está bien alumbrado",
+    "persona": -1,
+    "valor": "noche_con_alumbrado",
+    "vehiculo": -1
+   },
+   {
+    "campo": "vehiculo.clase",
+    "cita": "una Lobo blanca",
+    "persona": -1,
+    "valor": "pickup",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.color",
+    "cita": "una Lobo blanca",
+    "persona": -1,
+    "valor": "blanca",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.velocidad_kmh",
+    "cita": "como a 70",
+    "persona": -1,
+    "valor": "70",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.clase",
+    "cita": "Un Versa rojo",
+    "persona": -1,
+    "valor": "sedan_compacto",
+    "vehiculo": 1
+   },
+   {
+    "campo": "vehiculo.color",
+    "cita": "Un Versa rojo",
+    "persona": -1,
+    "valor": "rojo",
+    "vehiculo": 1
+   },
+   {
+    "campo": "vehiculo.maniobra",
+    "cita": "se me cerró desde la lateral para meterse al carril central",
+    "persona": -1,
+    "valor": "cambio_carril",
+    "vehiculo": 1
+   },
+   {
+    "campo": "vehiculo.zona_impacto",
+    "cita": "le di en toda la puerta de atrás del lado del copiloto",
+    "persona": -1,
+    "valor": "R",
+    "vehiculo": 1
+   },
+   {
+    "campo": "evento.tipo",
+    "cita": "le di en toda la puerta de atrás del lado del copiloto",
+    "persona": -1,
+    "valor": "impacto_vehiculo_vehiculo",
+    "vehiculo": -1
+   }
+  ],
+  "personas": [
+   {
+    "cita": "en la troca de mi compa",
+    "rol": "conductor",
+    "vehiculo": 0
+   },
+   {
+    "cita": "Ni direccional puso el bato",
+    "rol": "conductor",
+    "vehiculo": 1
+   }
+  ],
+  "preguntas": [
+   "¿A qué velocidad iba el Versa al cambiar de carril?",
+   "¿Hubo marcas de frenado en el pavimento antes o después del golpe?",
+   "¿El cambio de carril del Versa fue desde una vía lateral o desde otro carril de la avenida?"
+  ],
+  "vehiculos": [
+   {
+    "narrador": true
+   },
+   {
+    "narrador": false
+   }
+  ]
+ },
+ "texto_sha256": "a7c945e1c8e76b524205b790a953f5f72bbba475f0f6cee775ef7c03188e997b",
+ "usage": {
+  "cache_creation_input_tokens": 0,
+  "cache_read_input_tokens": 7131,
+  "input_tokens": 164,
+  "output_tokens": 3698
+ }
+}

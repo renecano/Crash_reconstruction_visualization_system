@@ -1,0 +1,118 @@
+{
+ "costo_estimado_con": "claude-haiku-5-5",
+ "costo_usd": 0.00129801,
+ "esfuerzo": "medium",
+ "grabado": "2026-10-16T02:16:58+00:00",
+ "huella_prompt": "86f6a54999b8cbf7",
+ "latencia_ms": 10480.1,
+ "modelo": "claude-haiku-5-5",
+ "modelo_respuesta": "claude-haiku-5-5",
+ "prompt": "extraccion_v3",
+ "request_id": "req_011Cg57StjFhedmG7ff9SSH7",
+ "salida": {
+  "dispositivos": [],
+  "hechos": [
+   {
+    "campo": "vehiculo.clase",
+    "cita": "Ecosport",
+    "persona": -1,
+    "valor": "suv_compacta",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.clase",
+    "cita": "Aveo",
+    "persona": -1,
+    "valor": "sedan_compacto",
+    "vehiculo": 1
+   },
+   {
+    "campo": "vehiculo.color",
+    "cita": "de los blanco con verde",
+    "persona": -1,
+    "valor": "blanco con verde",
+    "vehiculo": 1
+   },
+   {
+    "campo": "vehiculo.maniobra",
+    "cita": "parado",
+    "persona": -1,
+    "valor": "detenido",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.velocidad_kmh",
+    "cita": "parado",
+    "persona": -1,
+    "valor": "0",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.velocidad_kmh",
+    "cita": "venía como a 30",
+    "persona": -1,
+    "valor": "30",
+    "vehiculo": 1
+   },
+   {
+    "campo": "vehiculo.frenado",
+    "cita": "no frenó a tiempo",
+    "persona": -1,
+    "valor": "false",
+    "vehiculo": 1
+   },
+   {
+    "campo": "evento.tipo",
+    "cita": "me pegó por atrás",
+    "persona": -1,
+    "valor": "impacto_vehiculo_vehiculo",
+    "vehiculo": -1
+   },
+   {
+    "campo": "vehiculo.zona_impacto",
+    "cita": "me pegó por atrás",
+    "persona": -1,
+    "valor": "B",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.zona_impacto",
+    "cita": "me pegó por atrás",
+    "persona": -1,
+    "valor": "F",
+    "vehiculo": 1
+   }
+  ],
+  "personas": [
+   {
+    "cita": "Estaba esperando para dar vuelta a la izquierda",
+    "rol": "conductor",
+    "vehiculo": 0
+   },
+   {
+    "cita": "El taxista",
+    "rol": "conductor",
+    "vehiculo": 1
+   }
+  ],
+  "preguntas": [
+   "¿Los 30 km/h del taxi son solo la estimación del taxista o hubo otra medición?",
+   "¿Quedaron marcas de frenado en el pavimento, y de qué largo?"
+  ],
+  "vehiculos": [
+   {
+    "narrador": true
+   },
+   {
+    "narrador": false
+   }
+  ]
+ },
+ "texto_sha256": "2277abb45c888b59c6336c27a5ebdefc8334546aefd1a92b1d9dc3da6543438c",
+ "usage": {
+  "cache_creation_input_tokens": 0,
+  "cache_read_input_tokens": 7131,
+  "input_tokens": 162,
+  "output_tokens": 2421
+ }
+}

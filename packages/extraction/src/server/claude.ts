@@ -83,7 +83,7 @@ export async function callClaude(
     messages: [{ role: "user" as const, content: `Relato:\n\n${text}` }],
     output_config: {
       effort,
-      format: { type: "json_schema" as const, schema: outputSchema() },
+      format: { type: "json_schema" as const, schema: outputSchema(prompt) },
     },
   };
   const t0 = performance.now();

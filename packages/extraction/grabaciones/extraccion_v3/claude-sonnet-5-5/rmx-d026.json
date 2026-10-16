@@ -1,0 +1,98 @@
+{
+ "costo_estimado_con": "claude-sonnet-5-5",
+ "costo_usd": 0.0072042,
+ "esfuerzo": "medium",
+ "grabado": "2026-10-16T00:02:25+00:00",
+ "huella_prompt": "86f6a54999b8cbf7",
+ "latencia_ms": 3459.2,
+ "modelo": "claude-sonnet-5-5",
+ "modelo_respuesta": "claude-sonnet-5-5",
+ "prompt": "extraccion_v3",
+ "request_id": "req_011Cg4wCJGmT6ZR6dL49kPvE",
+ "salida": {
+  "dispositivos": [
+   {
+    "cita": "rojo",
+    "tipo": "semaforo"
+   }
+  ],
+  "hechos": [
+   {
+    "campo": "evento.tipo",
+    "cita": "Me pegaron por detrás",
+    "persona": -1,
+    "valor": "impacto_vehiculo_vehiculo",
+    "vehiculo": -1
+   },
+   {
+    "campo": "vehiculo.zona_impacto",
+    "cita": "Me pegaron por detrás",
+    "persona": -1,
+    "valor": "B",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.zona_impacto",
+    "cita": "Me pegaron por detrás",
+    "persona": -1,
+    "valor": "F",
+    "vehiculo": 1
+   },
+   {
+    "campo": "vehiculo.maniobra",
+    "cita": "parado en el rojo",
+    "persona": -1,
+    "valor": "detenido",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.velocidad_kmh",
+    "cita": "parado en el rojo",
+    "persona": -1,
+    "valor": "0",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.clase",
+    "cita": "Lobo",
+    "persona": -1,
+    "valor": "pickup",
+    "vehiculo": 1
+   },
+   {
+    "campo": "vehiculo.color",
+    "cita": "blanca",
+    "persona": -1,
+    "valor": "blanco",
+    "vehiculo": 1
+   }
+  ],
+  "personas": [
+   {
+    "cita": "Me pegaron",
+    "rol": "conductor",
+    "vehiculo": 0
+   }
+  ],
+  "preguntas": [
+   "¿A qué velocidad aproximada venía la Lobo al momento del golpe?",
+   "¿La Lobo frenó antes de golpear?",
+   "¿Cuántos carriles tiene el bulevar en ese sentido?"
+  ],
+  "vehiculos": [
+   {
+    "narrador": true
+   },
+   {
+    "narrador": false
+   }
+  ]
+ },
+ "texto_sha256": "c5e1d0b06cc2900e9774a7b88801ccd5e1678dd37e4140e71f124b1b1da831df",
+ "usage": {
+  "cache_creation_input_tokens": 0,
+  "cache_read_input_tokens": 7131,
+  "input_tokens": 49,
+  "output_tokens": 568
+ }
+}

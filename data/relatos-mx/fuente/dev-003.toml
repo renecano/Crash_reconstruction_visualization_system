@@ -577,6 +577,7 @@ Lo del contenedor fue en la madrugada del sábado, como a las 3. O 4, ya no me a
 "evento.tipo" = ["impacto_vehiculo_objeto", "le di de lleno con el frente"]
 "evento.objeto" = ["contenedor", "contenedor de basura"]
 "evidencias.marcas_m" = [6, "unas marcas como de 6 metros"]
+"evidencias.marcas_fase" = ["antes_impacto", "sí frené"]
 zonas = { "0" = ["F", "con el frente"] }
 [[relato.hechos.vehiculos]]
 narrador = true
@@ -800,6 +801,7 @@ El que suscribe declara que el día 13 de octubre, a las 18:50 horas, conducía 
 "entorno.clima" = ["nublado", "El cielo estaba nublado"]
 "evento.tipo" = ["impacto_vehiculo_vehiculo", "impactó con su frente la parte trasera izquierda"]
 "evidencias.marcas_m" = [12, "huellas de frenado de aproximadamente 12 metros"]
+"evidencias.marcas_fase" = ["antes_impacto", "huellas de frenado"]
 zonas = { "0" = ["B", "parte trasera izquierda"], "1" = ["F", "con su frente"] }
 [[relato.hechos.vehiculos]]
 narrador = true

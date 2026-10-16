@@ -1,0 +1,100 @@
+{
+ "costo_estimado_con": "claude-sonnet-5-5",
+ "costo_usd": 0.0078982,
+ "esfuerzo": "medium",
+ "grabado": "2026-10-16T02:47:27+00:00",
+ "huella_prompt": "86f6a54999b8cbf7",
+ "latencia_ms": 4269.4,
+ "modelo": "claude-sonnet-5-5",
+ "modelo_respuesta": "claude-sonnet-5-5",
+ "prompt": "extraccion_v3",
+ "request_id": "req_011Cg59n8EcfgxWvVSH74Fim",
+ "salida": {
+  "dispositivos": [],
+  "hechos": [
+   {
+    "campo": "lugar.tipo_via",
+    "cita": "por el carril de incorporación",
+    "persona": -1,
+    "valor": "incorporacion",
+    "vehiculo": -1
+   },
+   {
+    "campo": "vehiculo.maniobra",
+    "cita": "Iba entrando a la carretera a Monterrey",
+    "persona": -1,
+    "valor": "incorporacion",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.velocidad_kmh",
+    "cita": "como a 50",
+    "persona": -1,
+    "valor": "50",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.clase",
+    "cita": "Sprinter",
+    "persona": -1,
+    "valor": "van",
+    "vehiculo": 1
+   },
+   {
+    "campo": "vehiculo.clase",
+    "cita": "Elantra",
+    "persona": -1,
+    "valor": "sedan_mediano",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.color",
+    "cita": "gris",
+    "persona": -1,
+    "valor": "gris",
+    "vehiculo": 0
+   },
+   {
+    "campo": "evento.tipo",
+    "cita": "nos rozamos",
+    "persona": -1,
+    "valor": "impacto_vehiculo_vehiculo",
+    "vehiculo": -1
+   },
+   {
+    "campo": "vehiculo.zona_impacto",
+    "cita": "el espejo del lado del copiloto",
+    "persona": -1,
+    "valor": "R",
+    "vehiculo": 0
+   }
+  ],
+  "personas": [
+   {
+    "cita": "Iba entrando a la carretera a Monterrey",
+    "rol": "conductor",
+    "vehiculo": 0
+   }
+  ],
+  "preguntas": [
+   "¿La Sprinter era de transporte de personal o de otro tipo?",
+   "¿Cuántos carriles tenía la carretera en ese tramo?",
+   "¿A qué velocidad aproximada iba la Sprinter?"
+  ],
+  "vehiculos": [
+   {
+    "narrador": true
+   },
+   {
+    "narrador": false
+   }
+  ]
+ },
+ "texto_sha256": "59542dc0a03785478a5c2be159d49dbd313d85d79e70bd17f75bb44e48368084",
+ "usage": {
+  "cache_creation_input_tokens": 0,
+  "cache_read_input_tokens": 7131,
+  "input_tokens": 156,
+  "output_tokens": 616
+ }
+}

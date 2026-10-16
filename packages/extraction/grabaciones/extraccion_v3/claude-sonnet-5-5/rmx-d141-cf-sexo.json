@@ -1,0 +1,99 @@
+{
+ "costo_estimado_con": "claude-sonnet-5-5",
+ "costo_usd": 0.0086082,
+ "esfuerzo": "medium",
+ "grabado": "2026-10-16T00:20:43+00:00",
+ "huella_prompt": "86f6a54999b8cbf7",
+ "latencia_ms": 4267.7,
+ "modelo": "claude-sonnet-5-5",
+ "modelo_respuesta": "claude-sonnet-5-5",
+ "prompt": "extraccion_v3",
+ "request_id": "req_011Cg4xb7vBLkgJtgM7F3BbL",
+ "salida": {
+  "dispositivos": [
+   {
+    "cita": "el paso peatonal",
+    "tipo": "paso_peatonal"
+   },
+   {
+    "cita": "el semáforo peatonal en verde",
+    "tipo": "semaforo"
+   }
+  ],
+  "hechos": [
+   {
+    "campo": "lugar.tipo_via",
+    "cita": "en la esquina de la calle Victoria y la calle Allende",
+    "persona": -1,
+    "valor": "interseccion",
+    "vehiculo": -1
+   },
+   {
+    "campo": "evento.tipo",
+    "cita": "atropelló a dicha señora",
+    "persona": -1,
+    "valor": "impacto_vehiculo_persona",
+    "vehiculo": -1
+   },
+   {
+    "campo": "evidencias.distancia_proyeccion_m",
+    "cita": "cayó a aproximadamente un metro del vehículo",
+    "persona": -1,
+    "valor": "1",
+    "vehiculo": -1
+   },
+   {
+    "campo": "vehiculo.clase",
+    "cita": "Un automóvil compacto",
+    "persona": -1,
+    "valor": "sedan_compacto",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.color",
+    "cita": "de color gris",
+    "persona": -1,
+    "valor": "gris",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.maniobra",
+    "cita": "dio vuelta a la izquierda",
+    "persona": -1,
+    "valor": "vuelta_izquierda",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.zona_impacto",
+    "cita": "con la parte frontal",
+    "persona": -1,
+    "valor": "F",
+    "vehiculo": 0
+   }
+  ],
+  "personas": [
+   {
+    "cita": "una mujer de edad avanzada cruzaba por el paso peatonal",
+    "rol": "peaton",
+    "vehiculo": -1
+   }
+  ],
+  "preguntas": [
+   "¿Cuántos carriles tenía la calle Allende en el sentido en que circulaba el automóvil?",
+   "¿A qué velocidad aproximada circulaba el automóvil al dar la vuelta?",
+   "¿El automóvil frenó antes o después de golpear a la señora?"
+  ],
+  "vehiculos": [
+   {
+    "narrador": false
+   }
+  ]
+ },
+ "texto_sha256": "c59d92c8be2718ac4e7839c9a38a5a544dc106bf4f42f402d572e246ff4714c4",
+ "usage": {
+  "cache_creation_input_tokens": 0,
+  "cache_read_input_tokens": 7131,
+  "input_tokens": 216,
+  "output_tokens": 675
+ }
+}

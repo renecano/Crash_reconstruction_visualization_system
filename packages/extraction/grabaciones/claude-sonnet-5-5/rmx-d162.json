@@ -1,0 +1,106 @@
+{
+ "costo_estimado_con": "claude-sonnet-5-5",
+ "costo_usd": 0.0092344,
+ "esfuerzo": "medium",
+ "grabado": "2026-10-16T02:21:44+00:00",
+ "huella_prompt": "f6b693169a4199c3",
+ "latencia_ms": 4424.5,
+ "modelo": "claude-sonnet-5-5",
+ "modelo_respuesta": "claude-sonnet-5-5",
+ "prompt": "extraccion_v1",
+ "request_id": "req_011Cg57pQu4BDSLWcowbwFsK",
+ "salida": {
+  "dispositivos": [
+   {
+    "cita": "no respetó la señal de alto",
+    "tipo": "alto"
+   }
+  ],
+  "hechos": [
+   {
+    "campo": "lugar.tipo_via",
+    "cita": "Al cruzar la intersección con la calle Tata Vasco",
+    "persona": -1,
+    "valor": "interseccion",
+    "vehiculo": -1
+   },
+   {
+    "campo": "lugar.estado_superficie",
+    "cita": "El pavimento se encontraba seco",
+    "persona": -1,
+    "valor": "seco",
+    "vehiculo": -1
+   },
+   {
+    "campo": "evento.tipo",
+    "cita": "impactó con su frente el costado izquierdo de la unidad asegurada",
+    "persona": -1,
+    "valor": "impacto_vehiculo_vehiculo",
+    "vehiculo": -1
+   },
+   {
+    "campo": "evidencias.marcas_m",
+    "cita": "huellas de arrastre de aproximadamente 4 metros",
+    "persona": -1,
+    "valor": "4",
+    "vehiculo": -1
+   },
+   {
+    "campo": "vehiculo.color",
+    "cita": "Nissan Versa color blanco",
+    "persona": -1,
+    "valor": "blanco",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.velocidad_kmh",
+    "cita": "a una velocidad aproximada de 40 km/h",
+    "persona": -1,
+    "valor": "40",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.zona_impacto",
+    "cita": "el costado izquierdo de la unidad asegurada",
+    "persona": -1,
+    "valor": "L",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.color",
+    "cita": "Chevrolet Aveo color rojo",
+    "persona": -1,
+    "valor": "rojo",
+    "vehiculo": 1
+   },
+   {
+    "campo": "vehiculo.zona_impacto",
+    "cita": "impactó con su frente",
+    "persona": -1,
+    "valor": "F",
+    "vehiculo": 1
+   }
+  ],
+  "personas": [],
+  "preguntas": [
+   "¿Cuántos carriles tiene cada sentido de la avenida Vasco de Quiroga en ese cruce?",
+   "¿A qué velocidad aproximada circulaba el Chevrolet Aveo?",
+   "¿El vehículo asegurado llegó a frenar antes del impacto?"
+  ],
+  "vehiculos": [
+   {
+    "narrador": false
+   },
+   {
+    "narrador": false
+   }
+  ]
+ },
+ "texto_sha256": "943f9e3ced0ce683f6ee76a2a3d2596bdf9b1899b8c326ad4c32ed2511366338",
+ "usage": {
+  "cache_creation_input_tokens": 0,
+  "cache_read_input_tokens": 5862,
+  "input_tokens": 266,
+  "output_tokens": 753
+ }
+}

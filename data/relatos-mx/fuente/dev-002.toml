@@ -86,6 +86,7 @@ No, espérate, empiezo bien. Iba yo por Eje 3 Sur con mi papá de copiloto, íba
 "entorno.clima" = ["lluvia_ligera", "lloviznando"]
 "evento.tipo" = ["impacto_vehiculo_vehiculo", "nos pegó"]
 "evidencias.marcas_m" = [5, "como cinco metros de llanta"]
+"evidencias.marcas_fase" = ["antes_impacto", "sí frenó pero tarde"]
 dispositivos = [["semaforo", "semáforo"]]
 zonas = { "0" = ["B"], "1" = ["F"] }
 [[relato.hechos.vehiculos]]

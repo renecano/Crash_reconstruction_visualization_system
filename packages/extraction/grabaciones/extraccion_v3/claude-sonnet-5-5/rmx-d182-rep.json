@@ -1,0 +1,107 @@
+{
+ "costo_estimado_con": "claude-sonnet-5-5",
+ "costo_usd": 0.0155382,
+ "esfuerzo": "medium",
+ "grabado": "2026-10-16T02:54:08+00:00",
+ "huella_prompt": "86f6a54999b8cbf7",
+ "latencia_ms": 9568.4,
+ "modelo": "claude-sonnet-5-5",
+ "modelo_respuesta": "claude-sonnet-5-5",
+ "prompt": "extraccion_v3",
+ "request_id": "req_011Cg5AHH8ic5jbH7n9nc2Ns",
+ "salida": {
+  "dispositivos": [],
+  "hechos": [
+   {
+    "campo": "vehiculo.clase",
+    "cita": "moto",
+    "persona": -1,
+    "valor": "motocicleta",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.velocidad_kmh",
+    "cita": "como a 40",
+    "persona": -1,
+    "valor": "40",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.clase",
+    "cita": "Versa",
+    "persona": -1,
+    "valor": "sedan_compacto",
+    "vehiculo": 1
+   },
+   {
+    "campo": "vehiculo.maniobra",
+    "cita": "de reversa",
+    "persona": -1,
+    "valor": "reversa",
+    "vehiculo": 1
+   },
+   {
+    "campo": "vehiculo.frenado",
+    "cita": "Alcancé a frenar",
+    "persona": -1,
+    "valor": "true",
+    "vehiculo": 0
+   },
+   {
+    "campo": "evidencias.marcas_m",
+    "cita": "rayita de llanta como de cinco metros",
+    "persona": -1,
+    "valor": "5",
+    "vehiculo": -1
+   },
+   {
+    "campo": "evidencias.marcas_fase",
+    "cita": "dejé una rayita de llanta como de cinco metros y luego sí me estampé",
+    "persona": -1,
+    "valor": "antes_impacto",
+    "vehiculo": -1
+   },
+   {
+    "campo": "evento.tipo",
+    "cita": "me estampé contra su salpicadera de atrás",
+    "persona": -1,
+    "valor": "impacto_vehiculo_vehiculo",
+    "vehiculo": -1
+   },
+   {
+    "campo": "persona.casco",
+    "cita": "Traía casco",
+    "persona": 0,
+    "valor": "true",
+    "vehiculo": -1
+   }
+  ],
+  "personas": [
+   {
+    "cita": "Venía en la moto",
+    "rol": "motociclista",
+    "vehiculo": 0
+   }
+  ],
+  "preguntas": [
+   "¿El Versa golpeado quedó atravesado en el carril o ya iba saliendo del cajón?",
+   "¿El golpe fue en la parte trasera izquierda o derecha del Versa?",
+   "¿El cajón de donde salió era de estacionamiento junto a la avenida?"
+  ],
+  "vehiculos": [
+   {
+    "narrador": true
+   },
+   {
+    "narrador": false
+   }
+  ]
+ },
+ "texto_sha256": "f7a4c054ddf61f0be9e0ea8bd07dbb9e1012a7aaca70564dec54347c24caa7b4",
+ "usage": {
+  "cache_creation_input_tokens": 0,
+  "cache_read_input_tokens": 7131,
+  "input_tokens": 131,
+  "output_tokens": 1385
+ }
+}

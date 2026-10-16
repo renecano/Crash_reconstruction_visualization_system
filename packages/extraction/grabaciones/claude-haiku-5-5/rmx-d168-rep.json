@@ -1,0 +1,99 @@
+{
+ "costo_estimado_con": "claude-haiku-5-5",
+ "costo_usd": 0.00109482,
+ "esfuerzo": "medium",
+ "grabado": "2026-10-16T02:34:31+00:00",
+ "huella_prompt": "f6b693169a4199c3",
+ "latencia_ms": 9128.3,
+ "modelo": "claude-haiku-5-5",
+ "modelo_respuesta": "claude-haiku-5-5",
+ "prompt": "extraccion_v1",
+ "request_id": "req_011Cg58nbtuTw4f7rjh3i5ZG",
+ "salida": {
+  "dispositivos": [],
+  "hechos": [
+   {
+    "campo": "vehiculo.clase",
+    "cita": "en mi moto",
+    "persona": -1,
+    "valor": "motocicleta",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.velocidad_kmh",
+    "cita": "como a 70",
+    "persona": -1,
+    "valor": "70",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.color",
+    "cita": "carro blanco",
+    "persona": -1,
+    "valor": "blanco",
+    "vehiculo": 1
+   },
+   {
+    "campo": "evento.tipo",
+    "cita": "me pego por atras",
+    "persona": -1,
+    "valor": "impacto_vehiculo_vehiculo",
+    "vehiculo": -1
+   },
+   {
+    "campo": "vehiculo.zona_impacto",
+    "cita": "me pego por atras",
+    "persona": -1,
+    "valor": "B",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.zona_impacto",
+    "cita": "me pego por atras",
+    "persona": -1,
+    "valor": "F",
+    "vehiculo": 1
+   },
+   {
+    "campo": "evidencias.marcas_m",
+    "cita": "rayon en el pavimento como de 10 metros",
+    "persona": -1,
+    "valor": "10",
+    "vehiculo": -1
+   },
+   {
+    "campo": "persona.casco",
+    "cita": "traia casco",
+    "persona": 0,
+    "valor": "true",
+    "vehiculo": -1
+   }
+  ],
+  "personas": [
+   {
+    "cita": "benia en mi moto",
+    "rol": "motociclista",
+    "vehiculo": 0
+   }
+  ],
+  "preguntas": [
+   "¿A qué velocidad circulaba el carro blanco?",
+   "¿El carro blanco frenó o cambió de carril antes del choque?"
+  ],
+  "vehiculos": [
+   {
+    "narrador": true
+   },
+   {
+    "narrador": false
+   }
+  ]
+ },
+ "texto_sha256": "dfed722a762174685894084b16c24ab1f40828d179f1f451e50f0f8f00a4140f",
+ "usage": {
+  "cache_creation_input_tokens": 0,
+  "cache_read_input_tokens": 5862,
+  "input_tokens": 112,
+  "output_tokens": 2050
+ }
+}

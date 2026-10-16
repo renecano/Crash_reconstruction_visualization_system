@@ -1,0 +1,83 @@
+{
+ "costo_estimado_con": "claude-sonnet-5-5",
+ "costo_usd": 0.0118282,
+ "esfuerzo": "medium",
+ "grabado": "2026-10-16T00:09:52+00:00",
+ "huella_prompt": "86f6a54999b8cbf7",
+ "latencia_ms": 7743.9,
+ "modelo": "claude-sonnet-5-5",
+ "modelo_respuesta": "claude-sonnet-5-5",
+ "prompt": "extraccion_v3",
+ "request_id": "req_011Cg4wkvaiPJGe2RRXseiMR",
+ "salida": {
+  "dispositivos": [],
+  "hechos": [
+   {
+    "campo": "lugar.tipo_via",
+    "cita": "una curva",
+    "persona": -1,
+    "valor": "curva",
+    "vehiculo": -1
+   },
+   {
+    "campo": "lugar.estado_superficie",
+    "cita": "grava suelta",
+    "persona": -1,
+    "valor": "grava_suelta",
+    "vehiculo": -1
+   },
+   {
+    "campo": "entorno.iluminacion",
+    "cita": "no abia luz",
+    "persona": -1,
+    "valor": "noche_sin_alumbrado",
+    "vehiculo": -1
+   },
+   {
+    "campo": "evento.tipo",
+    "cita": "se me fue de cola",
+    "persona": -1,
+    "valor": "derrape",
+    "vehiculo": -1
+   },
+   {
+    "campo": "vehiculo.clase",
+    "cita": "jeta",
+    "persona": -1,
+    "valor": "sedan_mediano",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.velocidad_kmh",
+    "cita": "hiba como a 70",
+    "persona": -1,
+    "valor": "70",
+    "vehiculo": 0
+   }
+  ],
+  "personas": [
+   {
+    "cita": "yo manejando",
+    "rol": "conductor",
+    "vehiculo": 0
+   }
+  ],
+  "preguntas": [
+   "¿Frenó o hizo alguna maniobra antes de que el auto se fuera de cola?",
+   "¿Cuántas personas iban en el auto además de usted?",
+   "¿Qué tan lejos del camino quedó el auto?"
+  ],
+  "vehiculos": [
+   {
+    "narrador": true
+   }
+  ]
+ },
+ "texto_sha256": "051713f9ab12963850a15e9f0b5c8f6bcc9af91f27e4adbea7d28165cdb59f63",
+ "usage": {
+  "cache_creation_input_tokens": 0,
+  "cache_read_input_tokens": 7131,
+  "input_tokens": 141,
+  "output_tokens": 1012
+ }
+}

@@ -23,7 +23,7 @@ import { pyStr } from "./spec-builder";
  * Las grabaciones de v1 viven en `grabaciones/<modelo>/` y las de otras versiones en
  * `grabaciones/<versión>/<modelo>/`.
  */
-export const PROMPT_VERSIONS = ["extraccion_v1", "extraccion_v2"] as const;
+export const PROMPT_VERSIONS = ["extraccion_v1", "extraccion_v2", "extraccion_v3"] as const;
 export type PromptVersion = (typeof PROMPT_VERSIONS)[number];
 export const PROMPT_VERSION: PromptVersion = "extraccion_v2";
 export const DEFAULT_MODEL = "claude-sonnet-5-5";
@@ -52,8 +52,14 @@ export const SCALAR_CAMPOS = [
   "evento.tipo",
   "evento.objeto",
   "evidencias.marcas_m",
+  "evidencias.marcas_fase",
   "evidencias.distancia_proyeccion_m",
 ] as const;
+/**
+ * Campos que pide cada versión del prompt: v1 y v2 no conocen la fase de las marcas (contrato
+ * 1.1.0, ADR 0019), así su esquema y su huella no cambian y sus grabaciones siguen valiendo.
+ */
+const SINCE_V3 = new Set(["evidencias.marcas_fase"]);
 export const VEHICLE_CAMPOS = [
   "vehiculo.clase",
   "vehiculo.maniobra",
@@ -70,6 +76,13 @@ const NUMERIC_CAMPOS = new Set([
   "evidencias.distancia_proyeccion_m",
   "vehiculo.velocidad_kmh",
 ]);
+/** Campos del esquema de salida de una versión del prompt. */
+export function camposFor(prompt: string): readonly string[] {
+  if (prompt === "extraccion_v1" || prompt === "extraccion_v2") {
+    return CAMPOS.filter((c) => !SINCE_V3.has(c));
+  }
+  return CAMPOS;
+}
 const BOOL_CAMPOS = new Set(["vehiculo.frenado", "persona.cinturon", "persona.casco"]);
 const EVENT_TYPES = [
   "impacto_vehiculo_vehiculo",
@@ -105,6 +118,7 @@ export function allowedValues(): Record<string, readonly string[]> {
     "entorno.iluminacion": [...schemaEnum("CampoIluminacion"), "noche"],
     "evento.tipo": EVENT_TYPES,
     "evento.objeto": schemaEnum("ObjetoEntorno", "tipo"),
+    "evidencias.marcas_fase": schemaEnum("EvidenciaFisica", "fase"),
     "vehiculo.clase": [...schemaEnum("CampoClaseVehiculo"), "suv_o_pickup", "camion_o_autobus"],
     "vehiculo.maniobra": [...schemaEnum("CampoManiobra"), "cambio_carril"],
     "vehiculo.zona_impacto": schemaEnum("ZonaCDC", "lado"),
@@ -115,7 +129,7 @@ export function allowedValues(): Record<string, readonly string[]> {
 }
 
 /** Esquema de la salida estructurada; sin uniones: lo opcional es una lista que puede faltar. */
-export function outputSchema(): Record<string, unknown> {
+export function outputSchema(prompt: string = PROMPT_VERSION): Record<string, unknown> {
   const av = allowedValues();
   return {
     type: "object",
@@ -147,7 +161,7 @@ export function outputSchema(): Record<string, unknown> {
         items: {
           type: "object",
           properties: {
-            campo: { type: "string", enum: [...CAMPOS] },
+            campo: { type: "string", enum: [...camposFor(prompt)] },
             vehiculo: { type: "integer" },
             persona: { type: "integer" },
             valor: { type: "string" },
@@ -176,10 +190,10 @@ export function outputSchema(): Record<string, unknown> {
   };
 }
 
-function valuesDoc(): string {
+function valuesDoc(prompt: string): string {
   const av = allowedValues();
   const lines = ["Valores por campo (`valor` va como texto):"];
-  for (const campo of CAMPOS) {
+  for (const campo of camposFor(prompt)) {
     if (NUMERIC_CAMPOS.has(campo)) lines.push(`- ${campo}: número`);
     else if (BOOL_CAMPOS.has(campo)) lines.push(`- ${campo}: true o false`);
     else if (campo === "vehiculo.color") {
@@ -231,14 +245,14 @@ export function systemPrompt(prompt: string = PROMPT_VERSION): string {
   const base = PROMPTS[version]
     .replaceAll("{GLOSARIO}", lines.join("\n"))
     .replaceAll("{MODELOS}", modelsDoc());
-  const out = base + "\n\n" + valuesDoc() + "\n";
+  const out = base + "\n\n" + valuesDoc(version) + "\n";
   systems.set(version, out);
   return out;
 }
 
 /** Huella del prompt y del esquema: una grabación solo vale para la misma huella. */
 export function promptFingerprint(prompt: string = PROMPT_VERSION): string {
-  const payload = systemPrompt(prompt) + pyJsonDumps(outputSchema()) + glossaryVersion();
+  const payload = systemPrompt(prompt) + pyJsonDumps(outputSchema(prompt)) + glossaryVersion();
   return sha256Hex(payload).slice(0, 16);
 }
 

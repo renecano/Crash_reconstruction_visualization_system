@@ -1,0 +1,67 @@
+{
+ "costo_estimado_con": "claude-haiku-5-5",
+ "costo_usd": 0.00109321,
+ "esfuerzo": "medium",
+ "grabado": "2026-10-16T02:59:14+00:00",
+ "huella_prompt": "86f6a54999b8cbf7",
+ "latencia_ms": 9140.4,
+ "modelo": "claude-haiku-5-5",
+ "modelo_respuesta": "claude-haiku-5-5",
+ "prompt": "extraccion_v3",
+ "request_id": "req_011Cg5Aft5HG3j8Y1EQxGupL",
+ "salida": {
+  "dispositivos": [
+   {
+    "cita": "paso peatonal",
+    "tipo": "paso_peatonal"
+   }
+  ],
+  "hechos": [
+   {
+    "campo": "entorno.iluminacion",
+    "cita": "La calle cuenta con alumbrado, aunque escaso.",
+    "persona": -1,
+    "valor": "noche_con_alumbrado",
+    "vehiculo": -1
+   },
+   {
+    "campo": "evento.tipo",
+    "cita": "atropelló a una joven",
+    "persona": -1,
+    "valor": "impacto_vehiculo_persona",
+    "vehiculo": -1
+   },
+   {
+    "campo": "evidencias.distancia_proyeccion_m",
+    "cita": "cayó a unos cuatro metros del punto del impacto",
+    "persona": 0,
+    "valor": "4",
+    "vehiculo": -1
+   }
+  ],
+  "personas": [
+   {
+    "cita": "una joven que cruzaba por el paso peatonal",
+    "rol": "peaton",
+    "vehiculo": -1
+   }
+  ],
+  "preguntas": [
+   "¿Qué modelo o tipo de vehículo era el taxi colectivo?",
+   "¿A qué velocidad circulaba el taxi colectivo?",
+   "¿El taxi colectivo cambió de carril o hizo alguna maniobra antes del impacto?"
+  ],
+  "vehiculos": [
+   {
+    "narrador": false
+   }
+  ]
+ },
+ "texto_sha256": "19e8a10febee6ec141375b61b1fe74cc75b84779a0f4495cee57a1dc0868d0b0",
+ "usage": {
+  "cache_creation_input_tokens": 0,
+  "cache_read_input_tokens": 7131,
+  "input_tokens": 189,
+  "output_tokens": 2006
+ }
+}

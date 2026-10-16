@@ -1,0 +1,104 @@
+{
+ "costo_estimado_con": "claude-sonnet-5-5",
+ "costo_usd": 0.0079982,
+ "esfuerzo": "medium",
+ "grabado": "2026-10-16T02:40:18+00:00",
+ "huella_prompt": "86f6a54999b8cbf7",
+ "latencia_ms": 3876.2,
+ "modelo": "claude-sonnet-5-5",
+ "modelo_respuesta": "claude-sonnet-5-5",
+ "prompt": "extraccion_v3",
+ "request_id": "req_011Cg59EWvETnXinHKP9G9YB",
+ "salida": {
+  "dispositivos": [],
+  "hechos": [
+   {
+    "campo": "lugar.tipo_via",
+    "cita": "En la carretera",
+    "persona": -1,
+    "valor": "carretera_dos_carriles",
+    "vehiculo": -1
+   },
+   {
+    "campo": "evento.tipo",
+    "cita": "me fui contra la barda",
+    "persona": -1,
+    "valor": "impacto_vehiculo_objeto",
+    "vehiculo": -1
+   },
+   {
+    "campo": "evento.objeto",
+    "cita": "barda",
+    "persona": -1,
+    "valor": "barda",
+    "vehiculo": -1
+   },
+   {
+    "campo": "vehiculo.clase",
+    "cita": "Aveo",
+    "persona": -1,
+    "valor": "sedan_compacto",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.velocidad_kmh",
+    "cita": "Iba como a 60",
+    "persona": -1,
+    "valor": "60",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.frenado",
+    "cita": "frené",
+    "persona": -1,
+    "valor": "true",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.zona_impacto",
+    "cita": "me fui contra la barda",
+    "persona": -1,
+    "valor": "F",
+    "vehiculo": 0
+   },
+   {
+    "campo": "entorno.iluminacion",
+    "cita": "Era de día",
+    "persona": -1,
+    "valor": "dia",
+    "vehiculo": -1
+   },
+   {
+    "campo": "lugar.estado_superficie",
+    "cita": "estaba seco",
+    "persona": -1,
+    "valor": "seco",
+    "vehiculo": -1
+   }
+  ],
+  "personas": [
+   {
+    "cita": "me atravesó",
+    "rol": "conductor",
+    "vehiculo": 0
+   }
+  ],
+  "preguntas": [
+   "¿La carretera tenía un carril por sentido o más?",
+   "¿Hacia qué lado de la carretera se desvió el vehículo antes de golpear la barda?",
+   "¿Quedaron marcas de frenado en el pavimento y de qué largo?"
+  ],
+  "vehiculos": [
+   {
+    "narrador": true
+   }
+  ]
+ },
+ "texto_sha256": "a1ce781ddc63172a8f4ee2a34c9a35aade283b99dcccee7443e54a8e43d62a64",
+ "usage": {
+  "cache_creation_input_tokens": 0,
+  "cache_read_input_tokens": 7131,
+  "input_tokens": 86,
+  "output_tokens": 640
+ }
+}

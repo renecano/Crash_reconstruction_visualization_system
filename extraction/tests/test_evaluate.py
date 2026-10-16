@@ -155,3 +155,19 @@ def test_temas_de_error_para_cobertura_de_preguntas() -> None:
         "clase:veh-b",
         "estado_superficie:",
     }
+
+
+def test_la_fase_solo_se_puntua_donde_la_referencia_la_anota() -> None:
+    pred = Facts()
+    pred.escalares["evidencias.marcas_fase"] = Fact("despues_impacto", "después del golpe")
+    sin_anotar = score_story(Facts(), pred)
+    assert sin_anotar.fp["evidencias.marcas_fase"] == 0
+    ref = Facts()
+    ref.escalares["evidencias.marcas_fase"] = Fact("antes_impacto", "frené")
+    anotada = score_story(ref, pred)
+    assert anotada.fp["evidencias.marcas_fase"] == 1
+    assert anotada.fn["evidencias.marcas_fase"] == 1
+    # Una fase inferida por quien anota no se evalúa como extracción, pero una distinta sí resta.
+    inferida = Facts()
+    inferida.escalares["evidencias.marcas_fase"] = Fact("despues_impacto", None, "supuesto")
+    assert score_story(inferida, pred).fp["evidencias.marcas_fase"] == 0

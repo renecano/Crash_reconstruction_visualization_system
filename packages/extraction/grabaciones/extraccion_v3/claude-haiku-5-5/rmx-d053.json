@@ -1,0 +1,111 @@
+{
+ "costo_estimado_con": "claude-haiku-5-5",
+ "costo_usd": 0.00114301,
+ "esfuerzo": "medium",
+ "grabado": "2026-10-16T00:29:59+00:00",
+ "huella_prompt": "86f6a54999b8cbf7",
+ "latencia_ms": 8926.3,
+ "modelo": "claude-haiku-5-5",
+ "modelo_respuesta": "claude-haiku-5-5",
+ "prompt": "extraccion_v3",
+ "request_id": "req_011Cg4yHpWZaeLtN7s7YK3ZU",
+ "salida": {
+  "dispositivos": [],
+  "hechos": [
+   {
+    "campo": "lugar.tipo_via",
+    "cita": "en el estacionamiento del súper",
+    "persona": -1,
+    "valor": "estacionamiento",
+    "vehiculo": -1
+   },
+   {
+    "campo": "vehiculo.clase",
+    "cita": "Virtus",
+    "persona": -1,
+    "valor": "sedan_compacto",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.color",
+    "cita": "azul marino",
+    "persona": -1,
+    "valor": "azul marino",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.maniobra",
+    "cita": "me estaba metiendo de reversa al cajón",
+    "persona": -1,
+    "valor": "reversa",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.velocidad_kmh",
+    "cita": "ni a 5 íbamos",
+    "persona": -1,
+    "valor": "5",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.clase",
+    "cita": "Tucson",
+    "persona": -1,
+    "valor": "suv_compacta",
+    "vehiculo": 1
+   },
+   {
+    "campo": "vehiculo.maniobra",
+    "cita": "salió de su lugar también en reversa",
+    "persona": -1,
+    "valor": "reversa",
+    "vehiculo": 1
+   },
+   {
+    "campo": "vehiculo.velocidad_kmh",
+    "cita": "ni a 5 íbamos",
+    "persona": -1,
+    "valor": "5",
+    "vehiculo": 1
+   },
+   {
+    "campo": "evento.tipo",
+    "cita": "chocamos, defensa con defensa",
+    "persona": -1,
+    "valor": "impacto_vehiculo_vehiculo",
+    "vehiculo": -1
+   }
+  ],
+  "personas": [
+   {
+    "cita": "Yo estaba ya estacionada",
+    "rol": "conductor",
+    "vehiculo": 0
+   },
+   {
+    "cita": "una muchacha en una Tucson",
+    "rol": "conductor",
+    "vehiculo": 1
+   }
+  ],
+  "preguntas": [
+   "¿Qué parte de cada carro recibió el golpe, la defensa delantera o la trasera?",
+   "¿Fue la Tucson o otro carro quien tocó el claxon antes del choque?"
+  ],
+  "vehiculos": [
+   {
+    "narrador": true
+   },
+   {
+    "narrador": false
+   }
+  ]
+ },
+ "texto_sha256": "6caa9a35e7fe2c0cec61b25b8a74a308b3817c2c1bdad2c0555d9e07e19875c1",
+ "usage": {
+  "cache_creation_input_tokens": 0,
+  "cache_read_input_tokens": 7131,
+  "input_tokens": 182,
+  "output_tokens": 2107
+ }
+}

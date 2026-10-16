@@ -1,0 +1,86 @@
+{
+ "costo_estimado_con": "claude-sonnet-5-5",
+ "costo_usd": 0.0061224,
+ "esfuerzo": "medium",
+ "grabado": "2026-10-16T02:32:41+00:00",
+ "huella_prompt": "f6b693169a4199c3",
+ "latencia_ms": 3041.7,
+ "modelo": "claude-sonnet-5-5",
+ "modelo_respuesta": "claude-sonnet-5-5",
+ "prompt": "extraccion_v1",
+ "request_id": "req_011Cg58eucHMFmDjk645dEui",
+ "salida": {
+  "dispositivos": [],
+  "hechos": [
+   {
+    "campo": "vehiculo.clase",
+    "cita": "la moto",
+    "persona": -1,
+    "valor": "motocicleta",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.frenado",
+    "cita": "Frené",
+    "persona": -1,
+    "valor": "true",
+    "vehiculo": 0
+   },
+   {
+    "campo": "evidencias.marcas_m",
+    "cita": "4 metros de llanta",
+    "persona": -1,
+    "valor": "4",
+    "vehiculo": -1
+   },
+   {
+    "campo": "evento.tipo",
+    "cita": "le di al taxi",
+    "persona": -1,
+    "valor": "impacto_vehiculo_vehiculo",
+    "vehiculo": -1
+   },
+   {
+    "campo": "vehiculo.zona_impacto",
+    "cita": "le di al taxi",
+    "persona": -1,
+    "valor": "F",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.maniobra",
+    "cita": "se paró en doble fila",
+    "persona": -1,
+    "valor": "detenido",
+    "vehiculo": 1
+   }
+  ],
+  "personas": [
+   {
+    "cita": "Frené la moto",
+    "rol": "motociclista",
+    "vehiculo": 0
+   }
+  ],
+  "preguntas": [
+   "¿El taxi estaba completamente detenido cuando ocurrió el impacto?",
+   "¿A qué velocidad aproximada iba la moto antes de frenar?",
+   "¿En qué parte del taxi golpeó la moto?"
+  ],
+  "vehiculos": [
+   {
+    "narrador": true
+   },
+   {
+    "narrador": false
+   }
+  ]
+ },
+ "texto_sha256": "8d8c3ca1e963223cf630893475f50a12d8a8820ac07952aa6add863566e6c098",
+ "usage": {
+  "cache_creation_input_tokens": 0,
+  "cache_read_input_tokens": 5862,
+  "input_tokens": 50,
+  "output_tokens": 485
+ }
+}

@@ -1,0 +1,105 @@
+{
+ "costo_estimado_con": "claude-haiku-5-5",
+ "costo_usd": 0.00150972,
+ "esfuerzo": "medium",
+ "grabado": "2026-10-16T02:35:55+00:00",
+ "huella_prompt": "f6b693169a4199c3",
+ "latencia_ms": 12350.9,
+ "modelo": "claude-haiku-5-5",
+ "modelo_respuesta": "claude-haiku-5-5",
+ "prompt": "extraccion_v1",
+ "request_id": "req_011Cg58tZPWME4RUGRqrwAyp",
+ "salida": {
+  "dispositivos": [],
+  "hechos": [
+   {
+    "campo": "vehiculo.velocidad_kmh",
+    "cita": "como a 60",
+    "persona": -1,
+    "valor": "60",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.frenado",
+    "cita": "Frené con todo",
+    "persona": -1,
+    "valor": "true",
+    "vehiculo": 0
+   },
+   {
+    "campo": "evidencias.marcas_m",
+    "cita": "dejé como diez metros de llanta",
+    "persona": -1,
+    "valor": "10",
+    "vehiculo": -1
+   },
+   {
+    "campo": "evento.tipo",
+    "cita": "sí le pegué en la puerta de atrás del lado del chofer",
+    "persona": -1,
+    "valor": "impacto_vehiculo_vehiculo",
+    "vehiculo": -1
+   },
+   {
+    "campo": "vehiculo.clase",
+    "cita": "en una Hilux",
+    "persona": -1,
+    "valor": "suv_o_pickup",
+    "vehiculo": 1
+   },
+   {
+    "campo": "vehiculo.maniobra",
+    "cita": "salió de una calle sin hacer alto",
+    "persona": -1,
+    "valor": "incorporacion",
+    "vehiculo": 1
+   },
+   {
+    "campo": "vehiculo.zona_impacto",
+    "cita": "puerta de atrás del lado del chofer",
+    "persona": -1,
+    "valor": "L",
+    "vehiculo": 1
+   },
+   {
+    "campo": "entorno.iluminacion",
+    "cita": "eran como las nueve de la mañana",
+    "persona": -1,
+    "valor": "dia",
+    "vehiculo": -1
+   }
+  ],
+  "personas": [
+   {
+    "cita": "Iba por la avenida Constituyentes en Querétaro en mi Corolla",
+    "rol": "conductor",
+    "vehiculo": 0
+   },
+   {
+    "cita": "un señor en una Hilux",
+    "rol": "conductor",
+    "vehiculo": 1
+   }
+  ],
+  "preguntas": [
+   "¿La Hilux salía de una calle con señal de alto o sin señal?",
+   "¿A qué velocidad iba la Hilux al salir de la calle?",
+   "¿Cuál era el tipo de vía de la avenida Constituyentes en el punto del choque?"
+  ],
+  "vehiculos": [
+   {
+    "narrador": true
+   },
+   {
+    "narrador": false
+   }
+  ]
+ },
+ "texto_sha256": "72a1aad72c551d051b02d48b682ef07b5665e480ac76699c7a4dd53f45ea72f4",
+ "usage": {
+  "cache_creation_input_tokens": 0,
+  "cache_read_input_tokens": 5862,
+  "input_tokens": 151,
+  "output_tokens": 2872
+ }
+}

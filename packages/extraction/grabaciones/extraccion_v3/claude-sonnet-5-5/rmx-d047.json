@@ -1,0 +1,93 @@
+{
+ "costo_estimado_con": "claude-sonnet-5-5",
+ "costo_usd": 0.0136502,
+ "esfuerzo": "medium",
+ "grabado": "2026-10-16T00:04:15+00:00",
+ "huella_prompt": "86f6a54999b8cbf7",
+ "latencia_ms": 8321.4,
+ "modelo": "claude-sonnet-5-5",
+ "modelo_respuesta": "claude-sonnet-5-5",
+ "prompt": "extraccion_v3",
+ "request_id": "req_011Cg4wL2E6bBx27okJuwrWM",
+ "salida": {
+  "dispositivos": [],
+  "hechos": [
+   {
+    "campo": "vehiculo.clase",
+    "cita": "vocho",
+    "persona": -1,
+    "valor": "sedan_compacto",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.clase",
+    "cita": "camion de pasajeros",
+    "persona": -1,
+    "valor": "autobus",
+    "vehiculo": 1
+   },
+   {
+    "campo": "vehiculo.maniobra",
+    "cita": "se me cerro",
+    "persona": -1,
+    "valor": "cambio_carril",
+    "vehiculo": 1
+   },
+   {
+    "campo": "vehiculo.velocidad_kmh",
+    "cita": "iva como a 30",
+    "persona": -1,
+    "valor": "30",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.zona_impacto",
+    "cita": "defensa de atras",
+    "persona": -1,
+    "valor": "B",
+    "vehiculo": 0
+   },
+   {
+    "campo": "evento.tipo",
+    "cita": "me pego",
+    "persona": -1,
+    "valor": "impacto_vehiculo_vehiculo",
+    "vehiculo": -1
+   },
+   {
+    "campo": "entorno.iluminacion",
+    "cita": "las 11 de la mañana",
+    "persona": -1,
+    "valor": "dia",
+    "vehiculo": -1
+   }
+  ],
+  "personas": [
+   {
+    "cita": "yo traiba mi vocho",
+    "rol": "conductor",
+    "vehiculo": 0
+   }
+  ],
+  "preguntas": [
+   "¿El camión venía por el carril de tu izquierda o de tu derecha?",
+   "¿Cuántos carriles había en tu sentido sobre la Costera?",
+   "¿Frenaste o hiciste alguna maniobra antes del golpe?"
+  ],
+  "vehiculos": [
+   {
+    "narrador": true
+   },
+   {
+    "narrador": false
+   }
+  ]
+ },
+ "texto_sha256": "bf50f98fce367b464262c5da1569d47495a72328e42933a65e7b98c3165cfdb6",
+ "usage": {
+  "cache_creation_input_tokens": 0,
+  "cache_read_input_tokens": 7131,
+  "input_tokens": 112,
+  "output_tokens": 1200
+ }
+}

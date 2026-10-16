@@ -1,0 +1,118 @@
+{
+ "costo_estimado_con": "claude-haiku-5-5",
+ "costo_usd": 0.00147101,
+ "esfuerzo": "medium",
+ "grabado": "2026-10-16T00:41:04+00:00",
+ "huella_prompt": "86f6a54999b8cbf7",
+ "latencia_ms": 12082.6,
+ "modelo": "claude-haiku-5-5",
+ "modelo_respuesta": "claude-haiku-5-5",
+ "prompt": "extraccion_v3",
+ "request_id": "req_011Cg4z8YrbrX5dovpzYR5g1",
+ "salida": {
+  "dispositivos": [],
+  "hechos": [
+   {
+    "campo": "lugar.tipo_via",
+    "cita": "me metí al retorno",
+    "persona": -1,
+    "valor": "retorno",
+    "vehiculo": -1
+   },
+   {
+    "campo": "lugar.estado_superficie",
+    "cita": "el piso seco",
+    "persona": -1,
+    "valor": "seco",
+    "vehiculo": -1
+   },
+   {
+    "campo": "entorno.iluminacion",
+    "cita": "Había mucho sol",
+    "persona": -1,
+    "valor": "dia",
+    "vehiculo": -1
+   },
+   {
+    "campo": "evento.tipo",
+    "cita": "me pegó",
+    "persona": -1,
+    "valor": "impacto_vehiculo_vehiculo",
+    "vehiculo": -1
+   },
+   {
+    "campo": "vehiculo.maniobra",
+    "cita": "dar la vuelta en U",
+    "persona": -1,
+    "valor": "vuelta_u",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.velocidad_kmh",
+    "cita": "vuelta de rueda",
+    "persona": -1,
+    "valor": "8",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.velocidad_kmh",
+    "cita": "como a 60",
+    "persona": -1,
+    "valor": "60",
+    "vehiculo": 1
+   },
+   {
+    "campo": "vehiculo.clase",
+    "cita": "Sentra",
+    "persona": -1,
+    "valor": "sedan_mediano",
+    "vehiculo": 1
+   },
+   {
+    "campo": "vehiculo.color",
+    "cita": "azul",
+    "persona": -1,
+    "valor": "azul",
+    "vehiculo": 1
+   },
+   {
+    "campo": "vehiculo.zona_impacto",
+    "cita": "en la parte de atrás",
+    "persona": -1,
+    "valor": "B",
+    "vehiculo": 0
+   }
+  ],
+  "personas": [
+   {
+    "cita": "me metí",
+    "rol": "conductor",
+    "vehiculo": 0
+   },
+   {
+    "cita": "él",
+    "rol": "conductor",
+    "vehiculo": 1
+   }
+  ],
+  "preguntas": [
+   "¿El carril de alta era del mismo sentido que el carril por el que usted se incorporaba al retorno?",
+   "¿Había algún señalamiento o dispositivo de control en el retorno?"
+  ],
+  "vehiculos": [
+   {
+    "narrador": true
+   },
+   {
+    "narrador": false
+   }
+  ]
+ },
+ "texto_sha256": "6667c7c37c5c2c745c5a075febfb268bf43e222cdf3caa0fe15b4f58594532f7",
+ "usage": {
+  "cache_creation_input_tokens": 0,
+  "cache_read_input_tokens": 7131,
+  "input_tokens": 167,
+  "output_tokens": 2766
+ }
+}

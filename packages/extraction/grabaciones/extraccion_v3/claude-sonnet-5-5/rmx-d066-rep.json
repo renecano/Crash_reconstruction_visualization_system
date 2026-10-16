@@ -1,0 +1,114 @@
+{
+ "costo_estimado_con": "claude-sonnet-5-5",
+ "costo_usd": 0.0092842,
+ "esfuerzo": "medium",
+ "grabado": "2026-10-16T02:44:09+00:00",
+ "huella_prompt": "86f6a54999b8cbf7",
+ "latencia_ms": 4578.3,
+ "modelo": "claude-sonnet-5-5",
+ "modelo_respuesta": "claude-sonnet-5-5",
+ "prompt": "extraccion_v3",
+ "request_id": "req_011Cg59XXAatXr5bzkUR2QNp",
+ "salida": {
+  "dispositivos": [],
+  "hechos": [
+   {
+    "campo": "lugar.tipo_via",
+    "cita": "glorieta de Bernardo Quintana",
+    "persona": -1,
+    "valor": "glorieta",
+    "vehiculo": -1
+   },
+   {
+    "campo": "vehiculo.clase",
+    "cita": "Kicks",
+    "persona": -1,
+    "valor": "suv_compacta",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.clase",
+    "cita": "pickup Ranger",
+    "persona": -1,
+    "valor": "pickup",
+    "vehiculo": 1
+   },
+   {
+    "campo": "vehiculo.color",
+    "cita": "gris",
+    "persona": -1,
+    "valor": "gris",
+    "vehiculo": 1
+   },
+   {
+    "campo": "vehiculo.maniobra",
+    "cita": "quiso salir de golpe hacia la derecha",
+    "persona": -1,
+    "valor": "cambio_carril_derecha",
+    "vehiculo": 1
+   },
+   {
+    "campo": "vehiculo.frenado",
+    "cita": "Frené",
+    "persona": -1,
+    "valor": "true",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.velocidad_kmh",
+    "cita": "Yo iba como a 25",
+    "persona": -1,
+    "valor": "25",
+    "vehiculo": 0
+   },
+   {
+    "campo": "evento.tipo",
+    "cita": "la alcancé a tocar en la caja",
+    "persona": -1,
+    "valor": "impacto_vehiculo_vehiculo",
+    "vehiculo": -1
+   },
+   {
+    "campo": "vehiculo.zona_impacto",
+    "cita": "la alcancé a tocar",
+    "persona": -1,
+    "valor": "F",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.zona_impacto",
+    "cita": "en la caja, del lado derecho",
+    "persona": -1,
+    "valor": "R",
+    "vehiculo": 1
+   }
+  ],
+  "personas": [
+   {
+    "cita": "Iba entrando a la glorieta de Bernardo Quintana con mi Kicks",
+    "rol": "conductor",
+    "vehiculo": 0
+   }
+  ],
+  "preguntas": [
+   "¿La Ranger ya estaba por completo frente a tu Kicks cuando se dio el contacto?",
+   "¿Cuántos carriles tenía la glorieta?",
+   "¿Había marcas de frenado en el pavimento?"
+  ],
+  "vehiculos": [
+   {
+    "narrador": true
+   },
+   {
+    "narrador": false
+   }
+  ]
+ },
+ "texto_sha256": "16bf7b4b847154f1cc33ac4f78544866ac583c1017e2a589bbed22692639017a",
+ "usage": {
+  "cache_creation_input_tokens": 0,
+  "cache_read_input_tokens": 7131,
+  "input_tokens": 154,
+  "output_tokens": 755
+ }
+}

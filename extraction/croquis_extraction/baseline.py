@@ -66,6 +66,45 @@ _MARKS2 = re.compile(
     + _NUM
     + r"\s*(?:metros|mts|m)\b"
 )
+# Fase de las marcas (ADR 0019), en orden de prioridad: lo explícito antes que lo deducido. Se
+# busca en la oración de las marcas y en la anterior.
+_MARKS_PHASE = (
+    (
+        "despues_impacto",
+        re.compile(
+            r"(?<![a-z])(?:despues|luego|tras)\s+(?:de\s+)?(?:del?|el|la|que)\s+(?:golpe|choque|impacto|madrazo|trancazo|colision|percance|accidente|encontronazo)"
+        ),
+    ),
+    (
+        "despues_impacto",
+        re.compile(
+            r"(?<![a-z])posterior(?:es)?\s+al\s+(?:golpe|choque|impacto|madrazo|trancazo|colision|percance|accidente|encontronazo)"
+        ),
+    ),
+    (
+        "antes_impacto",
+        re.compile(
+            r"(?<![a-z])(?:antes|previ[ao]s?)\s+(?:del?|al)\s+(?:golpe|choque|impacto|madrazo|trancazo|colision|percance|accidente|encontronazo)"
+        ),
+    ),
+    (
+        "antes_impacto",
+        re.compile(r"(?<![a-z])antes\s+de\s+(?:pegar|chocar|impactar|alcanzar|llegar|estrellar)"),
+    ),
+    (
+        "despues_impacto",
+        re.compile(
+            r"(?<![a-z])(?:con|por)\s+el\s+(?:golpe|choque|impacto|madrazo|trancazo|colision|percance|accidente|encontronazo)"
+        ),
+    ),
+    ("despues_impacto", re.compile(r"(?<![a-z])arrastr(?:o|ando|ada|ado|e|aron)(?![a-z])")),
+    (
+        "antes_impacto",
+        re.compile(
+            r"(?<![a-z])(?:frene|freno|frenamos|frenaron|frenando|frenado|meti el freno|pise el freno)(?![a-z])"
+        ),
+    ),
+)
 _THROW = re.compile(
     r"(?:cayo|quedo|salio volando|lo avento|la avento|lo aventaron|la aventaron|lo lanzo|la lanzo|termino|fue a dar)\s+(?:tirad[oa]\s+)?(?:como\s+|unos\s+)?(?:a\s+)?(?:unos\s+|como\s+)?"
     + _NUM
@@ -522,6 +561,9 @@ def extract_facts(text: str) -> Facts:
         f.escalares["evidencias.marcas_m"] = Fact(
             _num(m.group(1)), text[m.start() : m.end()], "relato"
         )
+        fase = _marks_phase(text, folded, m.start(), m.end())
+        if fase is not None:
+            f.escalares["evidencias.marcas_fase"] = fase
     m = _THROW.search(folded)
     if m:
         f.escalares["evidencias.distancia_proyeccion_m"] = Fact(
@@ -613,6 +655,21 @@ def extract_facts(text: str) -> Facts:
 def _near_passenger(folded: str, pos: int) -> bool:
     s, _ = _sentence_bounds(folded, pos)
     return bool(_PASSENGER.search(folded[s:pos]))
+
+
+def _marks_phase(text: str, folded: str, start: int, end: int) -> Fact | None:
+    """Fase de las marcas en su oración y la anterior; None si el relato no la dice."""
+    stops = ".;!?\n"
+    cut = max(folded.rfind(c, 0, start) for c in stops)
+    lo = max(folded.rfind(c, 0, cut) for c in stops) + 1 if cut >= 0 else 0
+    ends = [k for k in (folded.find(c, end) for c in stops) if k >= 0]
+    hi = min(ends) if ends else len(folded)
+    window = folded[lo:hi]
+    for fase, pat in _MARKS_PHASE:
+        m = pat.search(window)
+        if m:
+            return Fact(fase, text[lo + m.start() : lo + m.end()], "relato")
+    return None
 
 
 def _zones(text: str, folded: str, f: Facts) -> None:

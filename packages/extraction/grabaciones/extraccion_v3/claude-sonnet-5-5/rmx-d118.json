@@ -1,0 +1,121 @@
+{
+ "costo_estimado_con": "claude-sonnet-5-5",
+ "costo_usd": 0.0095202,
+ "esfuerzo": "medium",
+ "grabado": "2026-10-16T00:10:38+00:00",
+ "huella_prompt": "86f6a54999b8cbf7",
+ "latencia_ms": 4542.9,
+ "modelo": "claude-sonnet-5-5",
+ "modelo_respuesta": "claude-sonnet-5-5",
+ "prompt": "extraccion_v3",
+ "request_id": "req_011Cg4wpY222RuA5J4pF4DYV",
+ "salida": {
+  "dispositivos": [],
+  "hechos": [
+   {
+    "campo": "lugar.tipo_via",
+    "cita": "retorno",
+    "persona": -1,
+    "valor": "retorno",
+    "vehiculo": -1
+   },
+   {
+    "campo": "vehiculo.maniobra",
+    "cita": "dar la vuelta en U",
+    "persona": -1,
+    "valor": "vuelta_u",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.velocidad_kmh",
+    "cita": "a vuelta de rueda",
+    "persona": -1,
+    "valor": "8",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.clase",
+    "cita": "Sentra",
+    "persona": -1,
+    "valor": "sedan_mediano",
+    "vehiculo": 1
+   },
+   {
+    "campo": "vehiculo.color",
+    "cita": "azul",
+    "persona": -1,
+    "valor": "azul",
+    "vehiculo": 1
+   },
+   {
+    "campo": "vehiculo.velocidad_kmh",
+    "cita": "como a 60",
+    "persona": -1,
+    "valor": "60",
+    "vehiculo": 1
+   },
+   {
+    "campo": "evento.tipo",
+    "cita": "me pegó",
+    "persona": -1,
+    "valor": "impacto_vehiculo_vehiculo",
+    "vehiculo": -1
+   },
+   {
+    "campo": "vehiculo.zona_impacto",
+    "cita": "en la parte de atrás del lado del chofer",
+    "persona": -1,
+    "valor": "B",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.zona_impacto",
+    "cita": "me pegó",
+    "persona": -1,
+    "valor": "F",
+    "vehiculo": 1
+   },
+   {
+    "campo": "entorno.iluminacion",
+    "cita": "Había mucho sol",
+    "persona": -1,
+    "valor": "dia",
+    "vehiculo": -1
+   },
+   {
+    "campo": "lugar.estado_superficie",
+    "cita": "el piso seco",
+    "persona": -1,
+    "valor": "seco",
+    "vehiculo": -1
+   }
+  ],
+  "personas": [
+   {
+    "cita": "me metí al retorno",
+    "rol": "conductor",
+    "vehiculo": 0
+   }
+  ],
+  "preguntas": [
+   "¿Tu vehículo ya había salido por completo del retorno o seguía cruzando carriles al momento del golpe?",
+   "¿Cuántos carriles tiene Paseo Usumacinta en ese tramo?",
+   "¿El otro conductor frenó antes del impacto?"
+  ],
+  "vehiculos": [
+   {
+    "narrador": true
+   },
+   {
+    "narrador": false
+   }
+  ]
+ },
+ "texto_sha256": "6667c7c37c5c2c745c5a075febfb268bf43e222cdf3caa0fe15b4f58594532f7",
+ "usage": {
+  "cache_creation_input_tokens": 0,
+  "cache_read_input_tokens": 7131,
+  "input_tokens": 167,
+  "output_tokens": 776
+ }
+}

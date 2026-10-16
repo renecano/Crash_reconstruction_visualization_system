@@ -1,0 +1,104 @@
+{
+ "costo_estimado_con": "claude-haiku-5-5",
+ "costo_usd": 0.00154731,
+ "esfuerzo": "medium",
+ "grabado": "2026-10-16T02:20:07+00:00",
+ "huella_prompt": "86f6a54999b8cbf7",
+ "latencia_ms": 12225.5,
+ "modelo": "claude-haiku-5-5",
+ "modelo_respuesta": "claude-haiku-5-5",
+ "prompt": "extraccion_v3",
+ "request_id": "req_011Cg57ghDbzCrTppSQZAedU",
+ "salida": {
+  "dispositivos": [],
+  "hechos": [
+   {
+    "campo": "vehiculo.clase",
+    "cita": "en mi bici",
+    "persona": -1,
+    "valor": "bicicleta",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.clase",
+    "cita": "Sentra",
+    "persona": -1,
+    "valor": "sedan_mediano",
+    "vehiculo": 1
+   },
+   {
+    "campo": "lugar.tipo_via",
+    "cita": "en el cruce con Chapultepec",
+    "persona": -1,
+    "valor": "interseccion",
+    "vehiculo": -1
+   },
+   {
+    "campo": "vehiculo.velocidad_kmh",
+    "cita": "como a 20",
+    "persona": -1,
+    "valor": "20",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.maniobra",
+    "cita": "dio vuelta a la derecha",
+    "persona": -1,
+    "valor": "vuelta_derecha",
+    "vehiculo": 1
+   },
+   {
+    "campo": "evento.tipo",
+    "cita": "Le pegué en la puerta del copiloto",
+    "persona": -1,
+    "valor": "impacto_vehiculo_vehiculo",
+    "vehiculo": -1
+   },
+   {
+    "campo": "vehiculo.zona_impacto",
+    "cita": "en la puerta del copiloto",
+    "persona": -1,
+    "valor": "R",
+    "vehiculo": 1
+   },
+   {
+    "campo": "persona.casco",
+    "cita": "Traía casco",
+    "persona": 0,
+    "valor": "true",
+    "vehiculo": -1
+   }
+  ],
+  "personas": [
+   {
+    "cita": "Iba en mi bici",
+    "rol": "ciclista",
+    "vehiculo": 0
+   },
+   {
+    "cita": "un señor de unos setenta en un Sentra",
+    "rol": "conductor",
+    "vehiculo": 1
+   }
+  ],
+  "preguntas": [
+   "¿La ciclovía cruzaba la calle en el cruce o corría junto al carril vehicular?",
+   "¿A qué velocidad daba vuelta el Sentra?"
+  ],
+  "vehiculos": [
+   {
+    "narrador": true
+   },
+   {
+    "narrador": false
+   }
+  ]
+ },
+ "texto_sha256": "12c01ffe2c5ceab96ec01efba9b1b4b854acaef181dacb668c55b6b172242eb8",
+ "usage": {
+  "cache_creation_input_tokens": 0,
+  "cache_read_input_tokens": 7131,
+  "input_tokens": 165,
+  "output_tokens": 2919
+ }
+}

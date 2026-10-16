@@ -1,0 +1,104 @@
+{
+ "costo_estimado_con": "claude-haiku-5-5",
+ "costo_usd": 0.00115651,
+ "esfuerzo": "medium",
+ "grabado": "2026-10-15T23:58:33+00:00",
+ "huella_prompt": "5816b86ad0e718ee",
+ "latencia_ms": 9362.2,
+ "modelo": "claude-haiku-5-5",
+ "modelo_respuesta": "claude-haiku-5-5",
+ "prompt": "extraccion_v2",
+ "request_id": "req_011Cg4vtn47dwijLRtgtXWEY",
+ "salida": {
+  "dispositivos": [],
+  "hechos": [
+   {
+    "campo": "lugar.tipo_via",
+    "cita": "agarre la curva",
+    "persona": -1,
+    "valor": "curva",
+    "vehiculo": -1
+   },
+   {
+    "campo": "vehiculo.clase",
+    "cita": "jetta",
+    "persona": -1,
+    "valor": "sedan_mediano",
+    "vehiculo": 0
+   },
+   {
+    "campo": "evento.tipo",
+    "cita": "derrape como doce metros",
+    "persona": -1,
+    "valor": "derrape",
+    "vehiculo": -1
+   },
+   {
+    "campo": "evidencias.marcas_m",
+    "cita": "derrape como doce metros",
+    "persona": -1,
+    "valor": "12",
+    "vehiculo": -1
+   },
+   {
+    "campo": "evento.tipo",
+    "cita": "fui a dar contra la barda de una casa",
+    "persona": -1,
+    "valor": "impacto_vehiculo_objeto",
+    "vehiculo": -1
+   },
+   {
+    "campo": "evento.objeto",
+    "cita": "contra la barda de una casa",
+    "persona": -1,
+    "valor": "barda",
+    "vehiculo": -1
+   },
+   {
+    "campo": "entorno.iluminacion",
+    "cita": "como la 1 de la mañana",
+    "persona": -1,
+    "valor": "noche",
+    "vehiculo": -1
+   },
+   {
+    "campo": "entorno.clima",
+    "cita": "estaba lloviznando",
+    "persona": -1,
+    "valor": "lluvia_ligera",
+    "vehiculo": -1
+   },
+   {
+    "campo": "persona.cinturon",
+    "cita": "no traia el cinturon",
+    "persona": 0,
+    "valor": "false",
+    "vehiculo": -1
+   }
+  ],
+  "personas": [
+   {
+    "cita": "agarre la curva",
+    "rol": "conductor",
+    "vehiculo": 0
+   }
+  ],
+  "preguntas": [
+   "¿A qué velocidad iba al entrar a la curva?",
+   "¿La barda estaba al borde de la calle o retirada de ella?",
+   "¿Había alumbrado público en la avenida Insurgentes?"
+  ],
+  "vehiculos": [
+   {
+    "narrador": true
+   }
+  ]
+ },
+ "texto_sha256": "590d1a39e331d6660f9fd6660665c52d0af3611d8b70920dc97b1466627c2800",
+ "usage": {
+  "cache_creation_input_tokens": 0,
+  "cache_read_input_tokens": 6881,
+  "input_tokens": 127,
+  "output_tokens": 2150
+ }
+}

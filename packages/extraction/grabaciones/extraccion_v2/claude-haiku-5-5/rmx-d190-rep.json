@@ -1,0 +1,76 @@
+{
+ "costo_estimado_con": "claude-haiku-5-5",
+ "costo_usd": 0.00077271,
+ "esfuerzo": "medium",
+ "grabado": "2026-10-15T23:59:54+00:00",
+ "huella_prompt": "5816b86ad0e718ee",
+ "latencia_ms": 6376.1,
+ "modelo": "claude-haiku-5-5",
+ "modelo_respuesta": "claude-haiku-5-5",
+ "prompt": "extraccion_v2",
+ "request_id": "req_011Cg4vzw5kdkeaVqmcH2xkW",
+ "salida": {
+  "dispositivos": [],
+  "hechos": [
+   {
+    "campo": "lugar.superficie",
+    "cita": "concreto hidráulico",
+    "persona": -1,
+    "valor": "concreto",
+    "vehiculo": -1
+   },
+   {
+    "campo": "evento.tipo",
+    "cita": "impactó con su costado derecho una parada de autobús",
+    "persona": -1,
+    "valor": "impacto_vehiculo_objeto",
+    "vehiculo": 0
+   },
+   {
+    "campo": "evento.objeto",
+    "cita": "parada de autobús ubicada sobre la banqueta",
+    "persona": -1,
+    "valor": "parada_autobus",
+    "vehiculo": -1
+   },
+   {
+    "campo": "vehiculo.clase",
+    "cita": "autobús de pasajeros",
+    "persona": -1,
+    "valor": "autobus",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.zona_impacto",
+    "cita": "con su costado derecho",
+    "persona": -1,
+    "valor": "R",
+    "vehiculo": 0
+   },
+   {
+    "campo": "evidencias.marcas_m",
+    "cita": "marcas de neumático de 10 metros",
+    "persona": -1,
+    "valor": "10",
+    "vehiculo": -1
+   }
+  ],
+  "personas": [],
+  "preguntas": [
+   "¿Qué velocidad llevaba el autobús antes del impacto?",
+   "¿El autobús aplicó el freno antes de impactar la parada?"
+  ],
+  "vehiculos": [
+   {
+    "narrador": false
+   }
+  ]
+ },
+ "texto_sha256": "d524685f2471d04edd1738db36eaa277bb8959944afa645e5f47a166b31dd25f",
+ "usage": {
+  "cache_creation_input_tokens": 0,
+  "cache_read_input_tokens": 6881,
+  "input_tokens": 174,
+  "output_tokens": 1373
+ }
+}

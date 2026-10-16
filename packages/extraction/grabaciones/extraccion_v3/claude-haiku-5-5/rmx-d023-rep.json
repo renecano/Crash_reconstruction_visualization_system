@@ -1,0 +1,86 @@
+{
+ "costo_estimado_con": "claude-haiku-5-5",
+ "costo_usd": 0.00124791,
+ "esfuerzo": "medium",
+ "grabado": "2026-10-16T02:58:33+00:00",
+ "huella_prompt": "86f6a54999b8cbf7",
+ "latencia_ms": 10511.2,
+ "modelo": "claude-haiku-5-5",
+ "modelo_respuesta": "claude-haiku-5-5",
+ "prompt": "extraccion_v3",
+ "request_id": "req_011Cg5AcmJPmxphLr34vCVGD",
+ "salida": {
+  "dispositivos": [],
+  "hechos": [
+   {
+    "campo": "vehiculo.clase",
+    "cita": "italika",
+    "persona": -1,
+    "valor": "motocicleta",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.velocidad_kmh",
+    "cita": "iba como a 30",
+    "persona": -1,
+    "valor": "30",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.color",
+    "cita": "carro rojo",
+    "persona": -1,
+    "valor": "rojo",
+    "vehiculo": 1
+   },
+   {
+    "campo": "vehiculo.maniobra",
+    "cita": "estacionado",
+    "persona": -1,
+    "valor": "estacionado",
+    "vehiculo": 1
+   },
+   {
+    "campo": "evento.tipo",
+    "cita": "me la lleve",
+    "persona": -1,
+    "valor": "impacto_vehiculo_vehiculo",
+    "vehiculo": -1
+   },
+   {
+    "campo": "persona.casco",
+    "cita": "traia casco",
+    "persona": 0,
+    "valor": "true",
+    "vehiculo": -1
+   }
+  ],
+  "personas": [
+   {
+    "cita": "venia en mi italika",
+    "rol": "motociclista",
+    "vehiculo": 0
+   }
+  ],
+  "preguntas": [
+   "¿Qué tipo de carro era el rojo?",
+   "¿El carro rojo estaba estacionado en la orilla o en un carril de circulación?",
+   "¿Frenó usted antes del impacto?"
+  ],
+  "vehiculos": [
+   {
+    "narrador": true
+   },
+   {
+    "narrador": false
+   }
+  ]
+ },
+ "texto_sha256": "397a2031c83836eb5755c1d84071a940ec88bef7a193874efdcf6dea0f012ba8",
+ "usage": {
+  "cache_creation_input_tokens": 0,
+  "cache_read_input_tokens": 7131,
+  "input_tokens": 106,
+  "output_tokens": 2332
+ }
+}

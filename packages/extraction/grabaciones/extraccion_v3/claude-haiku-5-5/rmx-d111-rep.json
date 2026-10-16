@@ -1,0 +1,119 @@
+{
+ "costo_estimado_con": "claude-haiku-5-5",
+ "costo_usd": 0.00168071,
+ "esfuerzo": "medium",
+ "grabado": "2026-10-16T03:13:39+00:00",
+ "huella_prompt": "86f6a54999b8cbf7",
+ "latencia_ms": 13170.4,
+ "modelo": "claude-haiku-5-5",
+ "modelo_respuesta": "claude-haiku-5-5",
+ "prompt": "extraccion_v3",
+ "request_id": "req_011Cg5BmNWp45CYDsdbna1BU",
+ "salida": {
+  "dispositivos": [
+   {
+    "cita": "el cambio de luz del semáforo",
+    "tipo": "semaforo"
+   }
+  ],
+  "hechos": [
+   {
+    "campo": "vehiculo.clase",
+    "cita": "Nissan March",
+    "persona": -1,
+    "valor": "hatchback",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.color",
+    "cita": "color azul",
+    "persona": -1,
+    "valor": "azul",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.maniobra",
+    "cita": "al detenerse por el cambio de luz del semáforo",
+    "persona": -1,
+    "valor": "detenido",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.frenado",
+    "cita": "al detenerse por el cambio de luz del semáforo",
+    "persona": -1,
+    "valor": "true",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.clase",
+    "cita": "autobús de pasajeros",
+    "persona": -1,
+    "valor": "autobus",
+    "vehiculo": 1
+   },
+   {
+    "campo": "vehiculo.frenado",
+    "cita": "no logró frenar",
+    "persona": -1,
+    "valor": "false",
+    "vehiculo": 1
+   },
+   {
+    "campo": "vehiculo.zona_impacto",
+    "cita": "la impactó por la parte trasera",
+    "persona": -1,
+    "valor": "B",
+    "vehiculo": 0
+   },
+   {
+    "campo": "evento.tipo",
+    "cita": "la impactó por la parte trasera",
+    "persona": -1,
+    "valor": "impacto_vehiculo_vehiculo",
+    "vehiculo": -1
+   },
+   {
+    "campo": "lugar.estado_superficie",
+    "cita": "el pavimento estaba encharcado",
+    "persona": -1,
+    "valor": "encharcado",
+    "vehiculo": -1
+   },
+   {
+    "campo": "entorno.clima",
+    "cita": "llovía con intensidad",
+    "persona": -1,
+    "valor": "lluvia",
+    "vehiculo": -1
+   }
+  ],
+  "personas": [
+   {
+    "cita": "conducía su automóvil Nissan March color azul",
+    "rol": "conductor",
+    "vehiculo": 0
+   }
+  ],
+  "preguntas": [
+   "¿El semáforo estaba en rojo o en cambio cuando la conductora se detuvo?",
+   "¿A qué velocidad circulaba el autobús al acercarse al semáforo?",
+   "¿El autobús era de pasajeros o de otro tipo de servicio?"
+  ],
+  "vehiculos": [
+   {
+    "narrador": true
+   },
+   {
+    "narrador": false
+   }
+  ]
+ },
+ "texto_sha256": "8d3f6516f8c09aabf330fb96526265de28290b00ba8d2b3101d3ffc826ffbf1d",
+ "usage": {
+  "cache_creation_input_tokens": 0,
+  "cache_read_input_tokens": 7131,
+  "input_tokens": 214,
+  "output_tokens": 3176
+ }
+}

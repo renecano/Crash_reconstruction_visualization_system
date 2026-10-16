@@ -1,0 +1,98 @@
+{
+ "costo_estimado_con": "claude-sonnet-5-5",
+ "costo_usd": 0.0150642,
+ "esfuerzo": "medium",
+ "grabado": "2026-10-16T00:19:17+00:00",
+ "huella_prompt": "86f6a54999b8cbf7",
+ "latencia_ms": 9060.1,
+ "modelo": "claude-sonnet-5-5",
+ "modelo_respuesta": "claude-sonnet-5-5",
+ "prompt": "extraccion_v3",
+ "request_id": "req_011Cg4xUU6gN9bA8sAFB3EA7",
+ "salida": {
+  "dispositivos": [
+   {
+    "cita": "semáforo",
+    "tipo": "semaforo"
+   }
+  ],
+  "hechos": [
+   {
+    "campo": "vehiculo.clase",
+    "cita": "Odyssey",
+    "persona": -1,
+    "valor": "van",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.clase",
+    "cita": "Civic",
+    "persona": -1,
+    "valor": "sedan_mediano",
+    "vehiculo": 1
+   },
+   {
+    "campo": "vehiculo.maniobra",
+    "cita": "se le metió de golpe al carril",
+    "persona": -1,
+    "valor": "cambio_carril",
+    "vehiculo": 1
+   },
+   {
+    "campo": "vehiculo.frenado",
+    "cita": "frenó",
+    "persona": -1,
+    "valor": "true",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.velocidad_kmh",
+    "cita": "Iba como a 45",
+    "persona": -1,
+    "valor": "45",
+    "vehiculo": 0
+   },
+   {
+    "campo": "evento.tipo",
+    "cita": "le rayó",
+    "persona": -1,
+    "valor": "impacto_vehiculo_vehiculo",
+    "vehiculo": -1
+   },
+   {
+    "campo": "vehiculo.zona_impacto",
+    "cita": "el lado del copiloto",
+    "persona": -1,
+    "valor": "R",
+    "vehiculo": 0
+   }
+  ],
+  "personas": [
+   {
+    "cita": "Mi esposo iba manejando",
+    "rol": "conductor",
+    "vehiculo": 0
+   }
+  ],
+  "preguntas": [
+   "¿Qué luz tenía el semáforo cuando ocurrió el roce?",
+   "¿El Civic venía por el carril de al lado o se detuvo junto a la Odyssey antes de meterse?",
+   "¿En qué sentido iba el Civic dando la vuelta, a la izquierda o a la derecha?"
+  ],
+  "vehiculos": [
+   {
+    "narrador": false
+   },
+   {
+    "narrador": false
+   }
+  ]
+ },
+ "texto_sha256": "d9624af8644f9183efa1c5330f746af97024aa72c321c144f8f2f402e1f58e5d",
+ "usage": {
+  "cache_creation_input_tokens": 0,
+  "cache_read_input_tokens": 7131,
+  "input_tokens": 159,
+  "output_tokens": 1332
+ }
+}

@@ -1,0 +1,90 @@
+{
+ "costo_estimado_con": "claude-haiku-5-5",
+ "costo_usd": 0.00105481,
+ "esfuerzo": "medium",
+ "grabado": "2026-10-15T23:55:43+00:00",
+ "huella_prompt": "5816b86ad0e718ee",
+ "latencia_ms": 8776.9,
+ "modelo": "claude-haiku-5-5",
+ "modelo_respuesta": "claude-haiku-5-5",
+ "prompt": "extraccion_v2",
+ "request_id": "req_011Cg4vgFzGcfPrkoTPrDnPs",
+ "salida": {
+  "dispositivos": [],
+  "hechos": [
+   {
+    "campo": "entorno.clima",
+    "cita": "Estaba lloviendo",
+    "persona": -1,
+    "valor": "lluvia",
+    "vehiculo": -1
+   },
+   {
+    "campo": "evento.tipo",
+    "cita": "Le pegué a un poste",
+    "persona": -1,
+    "valor": "impacto_vehiculo_objeto",
+    "vehiculo": -1
+   },
+   {
+    "campo": "evento.objeto",
+    "cita": "le di al poste de luz",
+    "persona": -1,
+    "valor": "poste",
+    "vehiculo": -1
+   },
+   {
+    "campo": "vehiculo.clase",
+    "cita": "Aveo",
+    "persona": -1,
+    "valor": "sedan_compacto",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.zona_impacto",
+    "cita": "con la esquina derecha del frente",
+    "persona": -1,
+    "valor": "F",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.velocidad_kmh",
+    "cita": "Iba como a 60",
+    "persona": -1,
+    "valor": "60",
+    "vehiculo": 0
+   },
+   {
+    "campo": "evidencias.marcas_m",
+    "cita": "como cinco metros",
+    "persona": -1,
+    "valor": "5",
+    "vehiculo": -1
+   }
+  ],
+  "personas": [
+   {
+    "cita": "volanteé",
+    "rol": "conductor",
+    "vehiculo": 0
+   }
+  ],
+  "preguntas": [
+   "¿Frenó antes del impacto con el poste?",
+   "¿A qué velocidad iba exactamente al momento del golpe?",
+   "¿El perro logró cruzar la carretera o fue atropellado?"
+  ],
+  "vehiculos": [
+   {
+    "narrador": true
+   }
+  ]
+ },
+ "texto_sha256": "a65c46d8de6a7f294c5e6bfb5d07480653cf597e4d3407d8d6bbd8a742dbefc3",
+ "usage": {
+  "cache_creation_input_tokens": 0,
+  "cache_read_input_tokens": 6881,
+  "input_tokens": 180,
+  "output_tokens": 1936
+ }
+}

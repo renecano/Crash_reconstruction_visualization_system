@@ -1,0 +1,82 @@
+{
+ "costo_estimado_con": "claude-haiku-5-5",
+ "costo_usd": 0.00081601,
+ "esfuerzo": "medium",
+ "grabado": "2026-10-16T03:01:56+00:00",
+ "huella_prompt": "86f6a54999b8cbf7",
+ "latencia_ms": 7036.2,
+ "modelo": "claude-haiku-5-5",
+ "modelo_respuesta": "claude-haiku-5-5",
+ "prompt": "extraccion_v3",
+ "request_id": "req_011Cg5At1QdzWsNLtPN9HTuB",
+ "salida": {
+  "dispositivos": [],
+  "hechos": [
+   {
+    "campo": "lugar.tipo_via",
+    "cita": "en la lateral de Venustiano Carranza",
+    "persona": -1,
+    "valor": "incorporacion",
+    "vehiculo": -1
+   },
+   {
+    "campo": "evento.tipo",
+    "cita": "Me derrapé",
+    "persona": -1,
+    "valor": "derrape",
+    "vehiculo": -1
+   },
+   {
+    "campo": "evento.tipo",
+    "cita": "me estampé contra un poste",
+    "persona": -1,
+    "valor": "impacto_vehiculo_objeto",
+    "vehiculo": -1
+   },
+   {
+    "campo": "evento.objeto",
+    "cita": "contra un poste",
+    "persona": -1,
+    "valor": "poste",
+    "vehiculo": -1
+   },
+   {
+    "campo": "vehiculo.clase",
+    "cita": "Sportage",
+    "persona": -1,
+    "valor": "suv_compacta",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.velocidad_kmh",
+    "cita": "Iba como a 50",
+    "persona": -1,
+    "valor": "50",
+    "vehiculo": 0
+   }
+  ],
+  "personas": [
+   {
+    "cita": "Iba como a 50 en mi Sportage",
+    "rol": "conductor",
+    "vehiculo": 0
+   }
+  ],
+  "preguntas": [
+   "¿Qué largo tuvieron las marcas del derrape y quedaron antes o después del choque con el poste?",
+   "¿Qué parte de la camioneta recibió el golpe del poste?"
+  ],
+  "vehiculos": [
+   {
+    "narrador": true
+   }
+  ]
+ },
+ "texto_sha256": "d3aa43fc21d0c2d66596462644dffef6b25ceae45797a7f4438ff6604cc219d9",
+ "usage": {
+  "cache_creation_input_tokens": 0,
+  "cache_read_input_tokens": 7131,
+  "input_tokens": 67,
+  "output_tokens": 1476
+ }
+}

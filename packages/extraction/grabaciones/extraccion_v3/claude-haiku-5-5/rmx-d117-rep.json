@@ -1,0 +1,107 @@
+{
+ "costo_estimado_con": "claude-haiku-5-5",
+ "costo_usd": 0.00120151,
+ "esfuerzo": "medium",
+ "grabado": "2026-10-16T03:14:42+00:00",
+ "huella_prompt": "86f6a54999b8cbf7",
+ "latencia_ms": 9856.3,
+ "modelo": "claude-haiku-5-5",
+ "modelo_respuesta": "claude-haiku-5-5",
+ "prompt": "extraccion_v3",
+ "request_id": "req_011Cg5BrFrqz4rSFAHuhDRrZ",
+ "salida": {
+  "dispositivos": [
+   {
+    "cita": "La calle es de un solo sentido",
+    "tipo": "un_sentido"
+   },
+   {
+    "cita": "cuenta con topes",
+    "tipo": "tope"
+   }
+  ],
+  "hechos": [
+   {
+    "campo": "vehiculo.clase",
+    "cita": "Toyota RAV4",
+    "persona": -1,
+    "valor": "suv_compacta",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.color",
+    "cita": "color vino",
+    "persona": -1,
+    "valor": "vino",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.maniobra",
+    "cita": "saliendo en reversa",
+    "persona": -1,
+    "valor": "reversa",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.color",
+    "cita": "sedán color blanco",
+    "persona": -1,
+    "valor": "blanco",
+    "vehiculo": 1
+   },
+   {
+    "campo": "vehiculo.zona_impacto",
+    "cita": "impactó la parte trasera izquierda de mi unidad",
+    "persona": -1,
+    "valor": "B",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.zona_impacto",
+    "cita": "impactó la parte trasera izquierda de mi unidad",
+    "persona": -1,
+    "valor": "L",
+    "vehiculo": 0
+   },
+   {
+    "campo": "evento.tipo",
+    "cita": "impactó la parte trasera izquierda de mi unidad",
+    "persona": -1,
+    "valor": "impacto_vehiculo_vehiculo",
+    "vehiculo": -1
+   }
+  ],
+  "personas": [
+   {
+    "cita": "a bordo de mi camioneta",
+    "rol": "conductor",
+    "vehiculo": 0
+   },
+   {
+    "cita": "El conductor del sedán no se detuvo.",
+    "rol": "conductor",
+    "vehiculo": 1
+   }
+  ],
+  "preguntas": [
+   "¿A qué velocidad circulaba el sedán blanco?",
+   "¿Quedaron marcas en el pavimento antes o después del impacto?",
+   "¿El sedán se detuvo o siguió su marcha tras el golpe?"
+  ],
+  "vehiculos": [
+   {
+    "narrador": true
+   },
+   {
+    "narrador": false
+   }
+  ]
+ },
+ "texto_sha256": "9c6a60d9bd909bfa634565964a5c04dd1c9e22f84947cc81526b89b012856b31",
+ "usage": {
+  "cache_creation_input_tokens": 0,
+  "cache_read_input_tokens": 7131,
+  "input_tokens": 267,
+  "output_tokens": 2207
+ }
+}

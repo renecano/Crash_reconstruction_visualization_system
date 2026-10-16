@@ -1,0 +1,106 @@
+{
+ "costo_estimado_con": "claude-haiku-5-5",
+ "costo_usd": 0.00129722,
+ "esfuerzo": "medium",
+ "grabado": "2026-10-16T02:37:05+00:00",
+ "huella_prompt": "f6b693169a4199c3",
+ "latencia_ms": 11181.2,
+ "modelo": "claude-haiku-5-5",
+ "modelo_respuesta": "claude-haiku-5-5",
+ "prompt": "extraccion_v1",
+ "request_id": "req_011Cg58ymD3Gpm5YbbZYdcv5",
+ "salida": {
+  "dispositivos": [],
+  "hechos": [
+   {
+    "campo": "vehiculo.clase",
+    "cita": "Venía en la moto",
+    "persona": -1,
+    "valor": "motocicleta",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.velocidad_kmh",
+    "cita": "como a 40",
+    "persona": -1,
+    "valor": "40",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.maniobra",
+    "cita": "se metió de reversa",
+    "persona": -1,
+    "valor": "reversa",
+    "vehiculo": 1
+   },
+   {
+    "campo": "vehiculo.frenado",
+    "cita": "Alcancé a frenar",
+    "persona": -1,
+    "valor": "true",
+    "vehiculo": 0
+   },
+   {
+    "campo": "evidencias.marcas_m",
+    "cita": "dejé una rayita de llanta como de cinco metros",
+    "persona": -1,
+    "valor": "5",
+    "vehiculo": -1
+   },
+   {
+    "campo": "evento.tipo",
+    "cita": "me estampé contra su salpicadera de atrás",
+    "persona": -1,
+    "valor": "impacto_vehiculo_vehiculo",
+    "vehiculo": -1
+   },
+   {
+    "campo": "vehiculo.zona_impacto",
+    "cita": "me estampé contra su salpicadera de atrás",
+    "persona": -1,
+    "valor": "F",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.zona_impacto",
+    "cita": "me estampé contra su salpicadera de atrás",
+    "persona": -1,
+    "valor": "B",
+    "vehiculo": 1
+   },
+   {
+    "campo": "persona.casco",
+    "cita": "Traía casco",
+    "persona": 0,
+    "valor": "true",
+    "vehiculo": -1
+   }
+  ],
+  "personas": [
+   {
+    "cita": "Venía en la moto",
+    "rol": "motociclista",
+    "vehiculo": 0
+   }
+  ],
+  "preguntas": [
+   "¿Qué velocidad llevaba el Versa al salir en reversa del cajón?",
+   "¿Qué tipo de vía es la avenida Hidalgo en el punto del percance?"
+  ],
+  "vehiculos": [
+   {
+    "narrador": true
+   },
+   {
+    "narrador": false
+   }
+  ]
+ },
+ "texto_sha256": "f7a4c054ddf61f0be9e0ea8bd07dbb9e1012a7aaca70564dec54347c24caa7b4",
+ "usage": {
+  "cache_creation_input_tokens": 0,
+  "cache_read_input_tokens": 5862,
+  "input_tokens": 131,
+  "output_tokens": 2451
+ }
+}

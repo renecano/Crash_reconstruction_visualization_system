@@ -1,0 +1,134 @@
+{
+ "costo_estimado_con": "claude-sonnet-5-5",
+ "costo_usd": 0.0110624,
+ "esfuerzo": "medium",
+ "grabado": "2026-10-16T02:23:41+00:00",
+ "huella_prompt": "f6b693169a4199c3",
+ "latencia_ms": 4982.9,
+ "modelo": "claude-sonnet-5-5",
+ "modelo_respuesta": "claude-sonnet-5-5",
+ "prompt": "extraccion_v1",
+ "request_id": "req_011Cg57xygFKCqcdeq1VRSDG",
+ "salida": {
+  "dispositivos": [
+   {
+    "cita": "el cambio de luz del semáforo",
+    "tipo": "semaforo"
+   }
+  ],
+  "hechos": [
+   {
+    "campo": "vehiculo.clase",
+    "cita": "una camioneta Honda CR-V color plata",
+    "persona": -1,
+    "valor": "suv_compacta",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.color",
+    "cita": "color plata",
+    "persona": -1,
+    "valor": "plata",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.velocidad_kmh",
+    "cita": "a una velocidad aproximada de 70 km/h",
+    "persona": -1,
+    "valor": "70",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.frenado",
+    "cita": "accionó el freno",
+    "persona": -1,
+    "valor": "true",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.zona_impacto",
+    "cita": "impactar con su frente la parte trasera del tercero",
+    "persona": -1,
+    "valor": "F",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.clase",
+    "cita": "un Chevrolet Onix color rojo",
+    "persona": -1,
+    "valor": "hatchback",
+    "vehiculo": 1
+   },
+   {
+    "campo": "vehiculo.color",
+    "cita": "color rojo",
+    "persona": -1,
+    "valor": "rojo",
+    "vehiculo": 1
+   },
+   {
+    "campo": "vehiculo.maniobra",
+    "cita": "se detuvo por el cambio de luz del semáforo",
+    "persona": -1,
+    "valor": "detenido",
+    "vehiculo": 1
+   },
+   {
+    "campo": "vehiculo.zona_impacto",
+    "cita": "la parte trasera del tercero",
+    "persona": -1,
+    "valor": "B",
+    "vehiculo": 1
+   },
+   {
+    "campo": "evento.tipo",
+    "cita": "impactar con su frente la parte trasera del tercero",
+    "persona": -1,
+    "valor": "impacto_vehiculo_vehiculo",
+    "vehiculo": -1
+   },
+   {
+    "campo": "lugar.tipo_via",
+    "cita": "la intersección con la avenida Venustiano Carranza",
+    "persona": -1,
+    "valor": "interseccion",
+    "vehiculo": -1
+   },
+   {
+    "campo": "evidencias.marcas_m",
+    "cita": "huellas de frenado de 14 metros",
+    "persona": -1,
+    "valor": "14",
+    "vehiculo": -1
+   },
+   {
+    "campo": "entorno.clima",
+    "cita": "El clima era despejado",
+    "persona": -1,
+    "valor": "despejado",
+    "vehiculo": -1
+   }
+  ],
+  "personas": [],
+  "preguntas": [
+   "¿Cuál era el estado de la superficie (seca o mojada)?",
+   "¿Cuántos carriles tenía la avenida Constitución en ese sentido?",
+   "¿Había ocupantes en los vehículos y usaban cinturón?"
+  ],
+  "vehiculos": [
+   {
+    "narrador": false
+   },
+   {
+    "narrador": false
+   }
+  ]
+ },
+ "texto_sha256": "6a23155587679e1f04cff0277c8ea2b6a30270b3130203e9f87ca75cb5496a0d",
+ "usage": {
+  "cache_creation_input_tokens": 0,
+  "cache_read_input_tokens": 5862,
+  "input_tokens": 265,
+  "output_tokens": 936
+ }
+}

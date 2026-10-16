@@ -1,0 +1,119 @@
+{
+ "costo_estimado_con": "claude-sonnet-5-5",
+ "costo_usd": 0.0171402,
+ "esfuerzo": "medium",
+ "grabado": "2026-10-15T23:53:18+00:00",
+ "huella_prompt": "5816b86ad0e718ee",
+ "latencia_ms": 10342.7,
+ "modelo": "claude-sonnet-5-5",
+ "modelo_respuesta": "claude-sonnet-5-5",
+ "prompt": "extraccion_v2",
+ "request_id": "req_011Cg4vVSA9Eoy8yx7GGJowr",
+ "salida": {
+  "dispositivos": [],
+  "hechos": [
+   {
+    "campo": "lugar.tipo_via",
+    "cita": "lateral",
+    "persona": -1,
+    "valor": "incorporacion",
+    "vehiculo": -1
+   },
+   {
+    "campo": "vehiculo.clase",
+    "cita": "Tsuru",
+    "persona": -1,
+    "valor": "sedan_compacto",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.velocidad_kmh",
+    "cita": "40",
+    "persona": -1,
+    "valor": "40",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.clase",
+    "cita": "ciclista",
+    "persona": -1,
+    "valor": "bicicleta",
+    "vehiculo": 1
+   },
+   {
+    "campo": "vehiculo.maniobra",
+    "cita": "se me atravesó",
+    "persona": -1,
+    "valor": "cambio_carril",
+    "vehiculo": 1
+   },
+   {
+    "campo": "evento.tipo",
+    "cita": "le pegué de frente a un árbol",
+    "persona": -1,
+    "valor": "impacto_vehiculo_objeto",
+    "vehiculo": -1
+   },
+   {
+    "campo": "evento.objeto",
+    "cita": "árbol",
+    "persona": -1,
+    "valor": "arbol",
+    "vehiculo": -1
+   },
+   {
+    "campo": "vehiculo.zona_impacto",
+    "cita": "de frente",
+    "persona": -1,
+    "valor": "F",
+    "vehiculo": 0
+   },
+   {
+    "campo": "evento.tipo",
+    "cita": "se fue patinando",
+    "persona": -1,
+    "valor": "derrape",
+    "vehiculo": -1
+   },
+   {
+    "campo": "persona.cinturon",
+    "cita": "traía el cinturón",
+    "persona": 0,
+    "valor": "true",
+    "vehiculo": -1
+   }
+  ],
+  "personas": [
+   {
+    "cita": "Iba por la lateral de López Mateos en mi Tsuru",
+    "rol": "conductor",
+    "vehiculo": 0
+   },
+   {
+    "cita": "un ciclista",
+    "rol": "ciclista",
+    "vehiculo": 1
+   }
+  ],
+  "preguntas": [
+   "¿Hacia qué lado giró el volante al esquivar al ciclista?",
+   "¿Hubo contacto entre el Tsuru y el ciclista?",
+   "¿De qué lado venía el ciclista al cruzarse?"
+  ],
+  "vehiculos": [
+   {
+    "narrador": true
+   },
+   {
+    "narrador": false
+   }
+  ]
+ },
+ "texto_sha256": "183d5a16194c3ca1c7f926dcd1b0d7883d55c88b7aee212cb70f9c7a89383247",
+ "usage": {
+  "cache_creation_input_tokens": 0,
+  "cache_read_input_tokens": 6881,
+  "input_tokens": 157,
+  "output_tokens": 1545
+ }
+}

@@ -1,0 +1,88 @@
+{
+ "costo_estimado_con": "claude-haiku-5-5",
+ "costo_usd": 0.00088581,
+ "esfuerzo": "medium",
+ "grabado": "2026-10-16T00:31:04+00:00",
+ "huella_prompt": "86f6a54999b8cbf7",
+ "latencia_ms": 7135.8,
+ "modelo": "claude-haiku-5-5",
+ "modelo_respuesta": "claude-haiku-5-5",
+ "prompt": "extraccion_v3",
+ "request_id": "req_011Cg4yNhuLZkDGydw1DYydm",
+ "salida": {
+  "dispositivos": [],
+  "hechos": [
+   {
+    "campo": "vehiculo.clase",
+    "cita": "Tsuru",
+    "persona": -1,
+    "valor": "sedan_compacto",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.velocidad_kmh",
+    "cita": "como a 70",
+    "persona": -1,
+    "valor": "70",
+    "vehiculo": 0
+   },
+   {
+    "campo": "entorno.iluminacion",
+    "cita": "ya de noche",
+    "persona": -1,
+    "valor": "noche",
+    "vehiculo": -1
+   },
+   {
+    "campo": "evento.tipo",
+    "cita": "se estampó contra un poste de luz",
+    "persona": -1,
+    "valor": "impacto_vehiculo_objeto",
+    "vehiculo": -1
+   },
+   {
+    "campo": "evento.objeto",
+    "cita": "se estampó contra un poste de luz",
+    "persona": -1,
+    "valor": "poste",
+    "vehiculo": -1
+   },
+   {
+    "campo": "persona.cinturon",
+    "cita": "traía el cinturón",
+    "persona": 0,
+    "valor": "true",
+    "vehiculo": -1
+   }
+  ],
+  "personas": [
+   {
+    "cita": "Iba en su Tsuru",
+    "rol": "conductor",
+    "vehiculo": 0
+   },
+   {
+    "cita": "",
+    "rol": "pasajero",
+    "vehiculo": -1
+   }
+  ],
+  "preguntas": [
+   "¿Qué era la sombra que se le atravesó: un animal u otro objeto?",
+   "¿Hubo frenado antes de que el vehículo se saliera de control?",
+   "¿A qué velocidad iba justo antes de volantear?"
+  ],
+  "vehiculos": [
+   {
+    "narrador": false
+   }
+  ]
+ },
+ "texto_sha256": "6e0bf0e15792a45971d750f2f5650c4db84fece3ea0eec4e5b338ae7aca45c67",
+ "usage": {
+  "cache_creation_input_tokens": 0,
+  "cache_read_input_tokens": 7131,
+  "input_tokens": 150,
+  "output_tokens": 1599
+ }
+}

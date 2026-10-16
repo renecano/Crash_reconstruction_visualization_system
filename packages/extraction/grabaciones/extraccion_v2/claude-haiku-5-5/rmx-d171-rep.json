@@ -1,0 +1,104 @@
+{
+ "costo_estimado_con": "claude-haiku-5-5",
+ "costo_usd": 0.00152741,
+ "esfuerzo": "medium",
+ "grabado": "2026-10-15T23:56:58+00:00",
+ "huella_prompt": "5816b86ad0e718ee",
+ "latencia_ms": 11644.9,
+ "modelo": "claude-haiku-5-5",
+ "modelo_respuesta": "claude-haiku-5-5",
+ "prompt": "extraccion_v2",
+ "request_id": "req_011Cg4vmYsQVSQVoXJe9qGwv",
+ "salida": {
+  "dispositivos": [],
+  "hechos": [
+   {
+    "campo": "vehiculo.clase",
+    "cita": "la motocicleta",
+    "persona": -1,
+    "valor": "motocicleta",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.clase",
+    "cita": "Nissan March",
+    "persona": -1,
+    "valor": "hatchback",
+    "vehiculo": 1
+   },
+   {
+    "campo": "vehiculo.color",
+    "cita": "color gris",
+    "persona": -1,
+    "valor": "gris",
+    "vehiculo": 1
+   },
+   {
+    "campo": "evento.tipo",
+    "cita": "fue impactado en su costado derecho por un automóvil",
+    "persona": -1,
+    "valor": "impacto_vehiculo_vehiculo",
+    "vehiculo": -1
+   },
+   {
+    "campo": "vehiculo.zona_impacto",
+    "cita": "en su costado derecho",
+    "persona": -1,
+    "valor": "R",
+    "vehiculo": 0
+   },
+   {
+    "campo": "evento.tipo",
+    "cita": "se desplazó derrapando",
+    "persona": -1,
+    "valor": "derrape",
+    "vehiculo": -1
+   },
+   {
+    "campo": "evidencias.distancia_proyeccion_m",
+    "cita": "aproximadamente 11 metros",
+    "persona": -1,
+    "valor": "11",
+    "vehiculo": -1
+   },
+   {
+    "campo": "persona.casco",
+    "cita": "portaba casco",
+    "persona": 0,
+    "valor": "true",
+    "vehiculo": -1
+   }
+  ],
+  "personas": [
+   {
+    "cita": "un motociclista que circulaba con dirección al sur",
+    "rol": "motociclista",
+    "vehiculo": 0
+   },
+   {
+    "cita": "El conductor del automóvil permaneció en el lugar.",
+    "rol": "conductor",
+    "vehiculo": 1
+   }
+  ],
+  "preguntas": [
+   "¿El automóvil se incorporó a la avenida desde la gasolinera o estaba detenido antes del impacto?",
+   "¿Cuál era la velocidad aproximada de la motocicleta y del automóvil al momento del impacto?"
+  ],
+  "vehiculos": [
+   {
+    "narrador": false
+   },
+   {
+    "narrador": false
+   }
+  ]
+ },
+ "texto_sha256": "001fcb9ee5226dcbbea8f8d658429958cf8cf942eed874b504e2ad9c7ee6f11b",
+ "usage": {
+  "cache_creation_input_tokens": 0,
+  "cache_read_input_tokens": 6881,
+  "input_tokens": 236,
+  "output_tokens": 2870
+ }
+}

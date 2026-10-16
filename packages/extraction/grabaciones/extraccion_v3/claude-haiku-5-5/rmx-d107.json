@@ -1,0 +1,98 @@
+{
+ "costo_estimado_con": "claude-haiku-5-5",
+ "costo_usd": 0.00117821,
+ "esfuerzo": "medium",
+ "grabado": "2026-10-16T00:39:11+00:00",
+ "huella_prompt": "86f6a54999b8cbf7",
+ "latencia_ms": 9689.5,
+ "modelo": "claude-haiku-5-5",
+ "modelo_respuesta": "claude-haiku-5-5",
+ "prompt": "extraccion_v3",
+ "request_id": "req_011Cg4yzTygTCxqadMP9hQs9",
+ "salida": {
+  "dispositivos": [],
+  "hechos": [
+   {
+    "campo": "vehiculo.clase",
+    "cita": "camión",
+    "persona": -1,
+    "valor": "camion_o_autobus",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.clase",
+    "cita": "Jetta",
+    "persona": -1,
+    "valor": "sedan_mediano",
+    "vehiculo": 1
+   },
+   {
+    "campo": "vehiculo.maniobra",
+    "cita": "el chofer se paró en la parada",
+    "persona": -1,
+    "valor": "detenido",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.maniobra",
+    "cita": "se quiso meter adelante",
+    "persona": -1,
+    "valor": "cambio_carril",
+    "vehiculo": 1
+   },
+   {
+    "campo": "evento.tipo",
+    "cita": "le dio al camión en la esquina de enfrente",
+    "persona": -1,
+    "valor": "impacto_vehiculo_vehiculo",
+    "vehiculo": -1
+   },
+   {
+    "campo": "lugar.estado_superficie",
+    "cita": "el piso estaba seco",
+    "persona": -1,
+    "valor": "seco",
+    "vehiculo": -1
+   },
+   {
+    "campo": "entorno.iluminacion",
+    "cita": "como a mediodía",
+    "persona": -1,
+    "valor": "dia",
+    "vehiculo": -1
+   }
+  ],
+  "personas": [
+   {
+    "cita": "Iba de pasajero en el camión urbano",
+    "rol": "pasajero",
+    "vehiculo": 0
+   },
+   {
+    "cita": "el chofer se paró en la parada",
+    "rol": "conductor",
+    "vehiculo": 0
+   }
+  ],
+  "preguntas": [
+   "¿A qué velocidad iba el Jetta antes de la maniobra?",
+   "¿Qué parte del camión recibió el golpe: el frente, el costado o la parte trasera?",
+   "¿El camión ya había arrancado o seguía detenido en la parada al momento del impacto?"
+  ],
+  "vehiculos": [
+   {
+    "narrador": false
+   },
+   {
+    "narrador": false
+   }
+  ]
+ },
+ "texto_sha256": "4bcc31fba7899fc379fe528bf1c0e2a290fcc7db2b6321d0fa5e7a85c19a34e7",
+ "usage": {
+  "cache_creation_input_tokens": 0,
+  "cache_read_input_tokens": 7131,
+  "input_tokens": 159,
+  "output_tokens": 2182
+ }
+}

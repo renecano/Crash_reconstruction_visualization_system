@@ -1,0 +1,100 @@
+{
+ "costo_estimado_con": "claude-sonnet-5-5",
+ "costo_usd": 0.0076222,
+ "esfuerzo": "medium",
+ "grabado": "2026-10-16T00:10:51+00:00",
+ "huella_prompt": "86f6a54999b8cbf7",
+ "latencia_ms": 3992.3,
+ "modelo": "claude-sonnet-5-5",
+ "modelo_respuesta": "claude-sonnet-5-5",
+ "prompt": "extraccion_v3",
+ "request_id": "req_011Cg4wqWk9R4CV4oqCs5HeS",
+ "salida": {
+  "dispositivos": [],
+  "hechos": [
+   {
+    "campo": "evento.tipo",
+    "cita": "me fui contra un puesto de tacos",
+    "persona": -1,
+    "valor": "impacto_vehiculo_objeto",
+    "vehiculo": -1
+   },
+   {
+    "campo": "evento.objeto",
+    "cita": "puesto de tacos",
+    "persona": -1,
+    "valor": "puesto",
+    "vehiculo": -1
+   },
+   {
+    "campo": "entorno.iluminacion",
+    "cita": "las 11 de la noche",
+    "persona": -1,
+    "valor": "noche",
+    "vehiculo": -1
+   },
+   {
+    "campo": "vehiculo.clase",
+    "cita": "tsuru",
+    "persona": -1,
+    "valor": "sedan_compacto",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.velocidad_kmh",
+    "cita": "como a 50",
+    "persona": -1,
+    "valor": "50",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.maniobra",
+    "cita": "me sali de mi carril",
+    "persona": -1,
+    "valor": "cambio_carril",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.maniobra",
+    "cita": "venia de frente",
+    "persona": -1,
+    "valor": "recto",
+    "vehiculo": 1
+   },
+   {
+    "campo": "vehiculo.zona_impacto",
+    "cita": "mi defensa",
+    "persona": -1,
+    "valor": "F",
+    "vehiculo": 0
+   }
+  ],
+  "personas": [
+   {
+    "cita": "iba en el tsuru",
+    "rol": "conductor",
+    "vehiculo": 0
+   }
+  ],
+  "preguntas": [
+   "¿Tu Tsuru alcanzó a frenar antes de pegar con el puesto?",
+   "¿Había alumbrado público en la calle?",
+   "¿La calle estaba seca o mojada?"
+  ],
+  "vehiculos": [
+   {
+    "narrador": true
+   },
+   {
+    "narrador": false
+   }
+  ]
+ },
+ "texto_sha256": "ecb830a987f33e4aac97a7f4c792e4dc23e2d949f9727a09f91c89ee7d6fb3f0",
+ "usage": {
+  "cache_creation_input_tokens": 0,
+  "cache_read_input_tokens": 7131,
+  "input_tokens": 133,
+  "output_tokens": 593
+ }
+}

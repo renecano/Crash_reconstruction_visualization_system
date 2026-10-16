@@ -1,0 +1,119 @@
+{
+ "costo_estimado_con": "claude-sonnet-5-5",
+ "costo_usd": 0.0094282,
+ "esfuerzo": "medium",
+ "grabado": "2026-10-16T00:09:44+00:00",
+ "huella_prompt": "86f6a54999b8cbf7",
+ "latencia_ms": 4997.5,
+ "modelo": "claude-sonnet-5-5",
+ "modelo_respuesta": "claude-sonnet-5-5",
+ "prompt": "extraccion_v3",
+ "request_id": "req_011Cg4wkZ6e5y31EMcrPqFWW",
+ "salida": {
+  "dispositivos": [],
+  "hechos": [
+   {
+    "campo": "lugar.tipo_via",
+    "cita": "por el carril de incorporación",
+    "persona": -1,
+    "valor": "incorporacion",
+    "vehiculo": -1
+   },
+   {
+    "campo": "evento.tipo",
+    "cita": "nos rozamos",
+    "persona": -1,
+    "valor": "impacto_vehiculo_vehiculo",
+    "vehiculo": -1
+   },
+   {
+    "campo": "vehiculo.clase",
+    "cita": "Elantra",
+    "persona": -1,
+    "valor": "sedan_mediano",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.color",
+    "cita": "gris",
+    "persona": -1,
+    "valor": "gris",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.maniobra",
+    "cita": "Iba entrando a la carretera",
+    "persona": -1,
+    "valor": "incorporacion",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.velocidad_kmh",
+    "cita": "como a 50",
+    "persona": -1,
+    "valor": "50",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.zona_impacto",
+    "cita": "Me rayó toda la salpicadera y el espejo del lado del copiloto",
+    "persona": -1,
+    "valor": "R",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.clase",
+    "cita": "Sprinter",
+    "persona": -1,
+    "valor": "van",
+    "vehiculo": 1
+   },
+   {
+    "campo": "vehiculo.maniobra",
+    "cita": "venía por el carril de la derecha",
+    "persona": -1,
+    "valor": "recto",
+    "vehiculo": 1
+   },
+   {
+    "campo": "vehiculo.zona_impacto",
+    "cita": "nos rozamos",
+    "persona": -1,
+    "valor": "L",
+    "vehiculo": 1
+   }
+  ],
+  "personas": [
+   {
+    "cita": "Iba entrando a la carretera a Monterrey",
+    "rol": "conductor",
+    "vehiculo": 0
+   },
+   {
+    "cita": "El chofer ni se paró",
+    "rol": "conductor",
+    "vehiculo": 1
+   }
+  ],
+  "preguntas": [
+   "¿A qué velocidad aproximada iba la Sprinter?",
+   "¿Frenaste o maniobraste antes del roce?",
+   "¿El carril de incorporación terminaba o se unía al carril de la derecha en ese punto?"
+  ],
+  "vehiculos": [
+   {
+    "narrador": true
+   },
+   {
+    "narrador": false
+   }
+  ]
+ },
+ "texto_sha256": "59542dc0a03785478a5c2be159d49dbd313d85d79e70bd17f75bb44e48368084",
+ "usage": {
+  "cache_creation_input_tokens": 0,
+  "cache_read_input_tokens": 7131,
+  "input_tokens": 156,
+  "output_tokens": 769
+ }
+}

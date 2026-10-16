@@ -1,0 +1,112 @@
+{
+ "costo_estimado_con": "claude-sonnet-5-5",
+ "costo_usd": 0.0183464,
+ "esfuerzo": "medium",
+ "grabado": "2026-10-16T02:22:33+00:00",
+ "huella_prompt": "f6b693169a4199c3",
+ "latencia_ms": 11196.4,
+ "modelo": "claude-sonnet-5-5",
+ "modelo_respuesta": "claude-sonnet-5-5",
+ "prompt": "extraccion_v1",
+ "request_id": "req_011Cg57sVSEoNdK7HWQsGgB9",
+ "salida": {
+  "dispositivos": [],
+  "hechos": [
+   {
+    "campo": "lugar.tipo_via",
+    "cita": "lateral de López Mateos",
+    "persona": -1,
+    "valor": "incorporacion",
+    "vehiculo": -1
+   },
+   {
+    "campo": "vehiculo.clase",
+    "cita": "Tsuru",
+    "persona": -1,
+    "valor": "sedan_compacto",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.velocidad_kmh",
+    "cita": "como a 40",
+    "persona": -1,
+    "valor": "40",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.clase",
+    "cita": "ciclista",
+    "persona": -1,
+    "valor": "bicicleta",
+    "vehiculo": 1
+   },
+   {
+    "campo": "vehiculo.maniobra",
+    "cita": "se me atravesó",
+    "persona": -1,
+    "valor": "cambio_carril",
+    "vehiculo": 1
+   },
+   {
+    "campo": "evento.tipo",
+    "cita": "le pegué de frente a un árbol",
+    "persona": -1,
+    "valor": "impacto_vehiculo_objeto",
+    "vehiculo": -1
+   },
+   {
+    "campo": "evento.objeto",
+    "cita": "un árbol",
+    "persona": -1,
+    "valor": "arbol",
+    "vehiculo": -1
+   },
+   {
+    "campo": "vehiculo.zona_impacto",
+    "cita": "de frente",
+    "persona": -1,
+    "valor": "F",
+    "vehiculo": 0
+   },
+   {
+    "campo": "persona.cinturon",
+    "cita": "traía el cinturón",
+    "persona": 0,
+    "valor": "true",
+    "vehiculo": -1
+   }
+  ],
+  "personas": [
+   {
+    "cita": "mi Tsuru",
+    "rol": "conductor",
+    "vehiculo": 0
+   },
+   {
+    "cita": "un ciclista",
+    "rol": "ciclista",
+    "vehiculo": 1
+   }
+  ],
+  "preguntas": [
+   "¿Las huellas de las llantas medían los cuatro metros que patinó el carro?",
+   "¿Cuántos carriles tenía la lateral en ese tramo?",
+   "¿Hubo contacto entre el auto y el ciclista?"
+  ],
+  "vehiculos": [
+   {
+    "narrador": true
+   },
+   {
+    "narrador": false
+   }
+  ]
+ },
+ "texto_sha256": "183d5a16194c3ca1c7f926dcd1b0d7883d55c88b7aee212cb70f9c7a89383247",
+ "usage": {
+  "cache_creation_input_tokens": 0,
+  "cache_read_input_tokens": 5862,
+  "input_tokens": 157,
+  "output_tokens": 1686
+ }
+}

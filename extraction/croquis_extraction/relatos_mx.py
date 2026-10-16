@@ -247,6 +247,9 @@ def problems(items: list[JsonObj]) -> list[str]:
             out.append(f"{rid}: tipo desconocido {it.get('tipo')}")
         if it.get("registro") not in REGISTERS:
             out.append(f"{rid}: registro desconocido {it.get('registro')}")
+        hechos: JsonObj = it.get("hechos") or {}
+        if "evidencias.marcas_fase" in hechos and "evidencias.marcas_m" not in hechos:
+            out.append(f"{rid}: evidencias.marcas_fase sin evidencias.marcas_m")
         try:
             b = build_item(it)
         except (ValueError, KeyError) as e:

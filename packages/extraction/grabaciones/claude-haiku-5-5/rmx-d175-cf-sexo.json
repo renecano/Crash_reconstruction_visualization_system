@@ -1,0 +1,105 @@
+{
+ "costo_estimado_con": "claude-haiku-5-5",
+ "costo_usd": 0.00174072,
+ "esfuerzo": "medium",
+ "grabado": "2026-10-16T02:30:07+00:00",
+ "huella_prompt": "f6b693169a4199c3",
+ "latencia_ms": 14776.5,
+ "modelo": "claude-haiku-5-5",
+ "modelo_respuesta": "claude-haiku-5-5",
+ "prompt": "extraccion_v1",
+ "request_id": "req_011Cg58Sh2uhRMjrnVohc62q",
+ "salida": {
+  "dispositivos": [],
+  "hechos": [
+   {
+    "campo": "vehiculo.velocidad_kmh",
+    "cita": "como a 60",
+    "persona": -1,
+    "valor": "60",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.frenado",
+    "cita": "Frené con todo",
+    "persona": -1,
+    "valor": "true",
+    "vehiculo": 0
+   },
+   {
+    "campo": "evidencias.marcas_m",
+    "cita": "dejé como diez metros de llanta",
+    "persona": -1,
+    "valor": "10",
+    "vehiculo": -1
+   },
+   {
+    "campo": "vehiculo.maniobra",
+    "cita": "salió de una calle sin hacer alto",
+    "persona": -1,
+    "valor": "incorporacion",
+    "vehiculo": 1
+   },
+   {
+    "campo": "vehiculo.clase",
+    "cita": "en una Hilux",
+    "persona": -1,
+    "valor": "suv_o_pickup",
+    "vehiculo": 1
+   },
+   {
+    "campo": "evento.tipo",
+    "cita": "le pegué en la puerta de atrás del lado del chofer",
+    "persona": -1,
+    "valor": "impacto_vehiculo_vehiculo",
+    "vehiculo": -1
+   },
+   {
+    "campo": "vehiculo.zona_impacto",
+    "cita": "le pegué en la puerta de atrás del lado del chofer",
+    "persona": -1,
+    "valor": "L",
+    "vehiculo": 1
+   },
+   {
+    "campo": "entorno.iluminacion",
+    "cita": "eran como las nueve de la mañana",
+    "persona": -1,
+    "valor": "dia",
+    "vehiculo": -1
+   }
+  ],
+  "personas": [
+   {
+    "cita": "Iba por la avenida Constituyentes en Querétaro en mi Corolla",
+    "rol": "conductor",
+    "vehiculo": 0
+   },
+   {
+    "cita": "una señora en una Hilux",
+    "rol": "conductor",
+    "vehiculo": 1
+   }
+  ],
+  "preguntas": [
+   "¿La calle de la que salió la Hilux tenía señal de alto o semáforo?",
+   "¿A qué velocidad iba la Hilux al salir de la calle?",
+   "¿Dónde ocurrió el punto de contacto exacto entre los dos vehículos?"
+  ],
+  "vehiculos": [
+   {
+    "narrador": true
+   },
+   {
+    "narrador": false
+   }
+  ]
+ },
+ "texto_sha256": "c11f22ebeff8570c26b4e66ac7ff923c0cdc7e4b2292d14c252a0a38877b7f51",
+ "usage": {
+  "cache_creation_input_tokens": 0,
+  "cache_read_input_tokens": 5862,
+  "input_tokens": 151,
+  "output_tokens": 3334
+ }
+}

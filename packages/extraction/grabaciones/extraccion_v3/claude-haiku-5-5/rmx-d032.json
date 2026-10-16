@@ -1,0 +1,118 @@
+{
+ "costo_estimado_con": "claude-haiku-5-5",
+ "costo_usd": 0.00121761,
+ "esfuerzo": "medium",
+ "grabado": "2026-10-16T00:26:19+00:00",
+ "huella_prompt": "86f6a54999b8cbf7",
+ "latencia_ms": 8669.4,
+ "modelo": "claude-haiku-5-5",
+ "modelo_respuesta": "claude-haiku-5-5",
+ "prompt": "extraccion_v3",
+ "request_id": "req_011Cg4y1cN7wZLuiQKrjXYbj",
+ "salida": {
+  "dispositivos": [],
+  "hechos": [
+   {
+    "campo": "entorno.clima",
+    "cita": "Condiciones climáticas: nublado",
+    "persona": -1,
+    "valor": "nublado",
+    "vehiculo": -1
+   },
+   {
+    "campo": "lugar.estado_superficie",
+    "cita": "pavimento seco",
+    "persona": -1,
+    "valor": "seco",
+    "vehiculo": -1
+   },
+   {
+    "campo": "vehiculo.clase",
+    "cita": "Nissan Sentra",
+    "persona": -1,
+    "valor": "sedan_mediano",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.color",
+    "cita": "color azul",
+    "persona": -1,
+    "valor": "azul",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.velocidad_kmh",
+    "cita": "a una velocidad aproximada de 30 km/h",
+    "persona": -1,
+    "valor": "30",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.clase",
+    "cita": "Chevrolet Aveo",
+    "persona": -1,
+    "valor": "sedan_compacto",
+    "vehiculo": 1
+   },
+   {
+    "campo": "vehiculo.color",
+    "cita": "color blanco",
+    "persona": -1,
+    "valor": "blanco",
+    "vehiculo": 1
+   },
+   {
+    "campo": "vehiculo.maniobra",
+    "cita": "se incorporó desde la calle lateral",
+    "persona": -1,
+    "valor": "incorporacion",
+    "vehiculo": 1
+   },
+   {
+    "campo": "evento.tipo",
+    "cita": "impactó la parte lateral derecha del vehículo asegurado",
+    "persona": -1,
+    "valor": "impacto_vehiculo_vehiculo",
+    "vehiculo": -1
+   },
+   {
+    "campo": "vehiculo.zona_impacto",
+    "cita": "impactó la parte lateral derecha del vehículo asegurado",
+    "persona": -1,
+    "valor": "R",
+    "vehiculo": 0
+   }
+  ],
+  "personas": [
+   {
+    "cita": "circulaba a bordo de su vehículo",
+    "rol": "conductor",
+    "vehiculo": 0
+   },
+   {
+    "cita": "a bordo de un vehículo Chevrolet Aveo color blanco",
+    "rol": "conductor",
+    "vehiculo": 1
+   }
+  ],
+  "preguntas": [
+   "¿La calle lateral desde la que se incorporó el Aveo tenía señalamiento de alto o ceda el paso?",
+   "¿A qué velocidad circulaba el Chevrolet Aveo al incorporarse?"
+  ],
+  "vehiculos": [
+   {
+    "narrador": true
+   },
+   {
+    "narrador": false
+   }
+  ]
+ },
+ "texto_sha256": "ca4c03341beb023bddedf5fd704f9f1868ff84bcd738b27c54d528c5e88ed3b6",
+ "usage": {
+  "cache_creation_input_tokens": 0,
+  "cache_read_input_tokens": 7131,
+  "input_tokens": 243,
+  "output_tokens": 2244
+ }
+}
