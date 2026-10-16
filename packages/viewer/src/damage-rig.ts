@@ -45,6 +45,8 @@ export interface DamageRig {
   /** Descripción para el panel: qué se rompió y por qué. */
   notas: string[];
   update(t: number): void;
+  /** Fracción de faros que siguen encendibles en el instante t (los rotos se apagan). */
+  workingHeadlights(t: number): number;
   materials: Material[];
 }
 
@@ -201,11 +203,19 @@ export function buildDamageRig(
   }
   notas.push(`Bolsas de aire (ilustrativo): ${airbag.motivo}`);
 
+  const headlightCount = ["headlight_l", "headlight_r", "headlight_c"].filter((n) =>
+    group.getObjectByName(n),
+  ).length;
   return {
     damage,
     airbag,
     notas,
     materials,
+    workingHeadlights(t: number) {
+      if (headlightCount === 0) return 0;
+      const rotos = damageInfluence(t) > 0.5 ? broken.length : 0;
+      return Math.max(0, headlightCount - rotos) / headlightCount;
+    },
     update(t: number) {
       const k = damageInfluence(t);
       for (const m of morphMeshes) if (m.morphTargetInfluences) m.morphTargetInfluences[0] = k;

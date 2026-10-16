@@ -79,3 +79,4 @@ export {
   type AsphaltMaterial,
   type SurfaceLook,
 } from "./road-surface";
+export * from "./night-lights";
