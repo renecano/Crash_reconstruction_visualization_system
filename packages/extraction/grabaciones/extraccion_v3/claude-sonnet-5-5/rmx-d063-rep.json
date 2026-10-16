@@ -1,0 +1,90 @@
+{
+ "costo_estimado_con": "claude-sonnet-5-5",
+ "costo_usd": 0.0074842,
+ "esfuerzo": "medium",
+ "grabado": "2026-10-16T02:43:57+00:00",
+ "huella_prompt": "86f6a54999b8cbf7",
+ "latencia_ms": 3649.4,
+ "modelo": "claude-sonnet-5-5",
+ "modelo_respuesta": "claude-sonnet-5-5",
+ "prompt": "extraccion_v3",
+ "request_id": "req_011Cg59Wjt2ziqZCfmrENkY9",
+ "salida": {
+  "dispositivos": [],
+  "hechos": [
+   {
+    "campo": "vehiculo.clase",
+    "cita": "tractocamión",
+    "persona": -1,
+    "valor": "tractocamion",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.velocidad_kmh",
+    "cita": "85 km/h",
+    "persona": -1,
+    "valor": "85",
+    "vehiculo": 0
+   },
+   {
+    "campo": "lugar.tipo_via",
+    "cita": "en una curva hacia la izquierda",
+    "persona": -1,
+    "valor": "curva",
+    "vehiculo": -1
+   },
+   {
+    "campo": "lugar.estado_superficie",
+    "cita": "grava suelta",
+    "persona": -1,
+    "valor": "grava_suelta",
+    "vehiculo": -1
+   },
+   {
+    "campo": "evento.tipo",
+    "cita": "la unidad se volcó",
+    "persona": -1,
+    "valor": "volcadura",
+    "vehiculo": -1
+   },
+   {
+    "campo": "vehiculo.zona_impacto",
+    "cita": "sobre su costado derecho",
+    "persona": -1,
+    "valor": "R",
+    "vehiculo": 0
+   },
+   {
+    "campo": "entorno.clima",
+    "cita": "El cielo estaba despejado",
+    "persona": -1,
+    "valor": "despejado",
+    "vehiculo": -1
+   }
+  ],
+  "personas": [
+   {
+    "cita": "conducía un tractocamión con caja seca",
+    "rol": "conductor",
+    "vehiculo": 0
+   }
+  ],
+  "preguntas": [
+   "¿Qué maniobra hacía el tractocamión justo antes de que el semirremolque se desplazara al acotamiento?",
+   "¿Aplicó el freno antes de la volcadura?",
+   "¿Quedaron marcas en el pavimento o en el acotamiento y de qué largo?"
+  ],
+  "vehiculos": [
+   {
+    "narrador": true
+   }
+  ]
+ },
+ "texto_sha256": "c4bd17fedae265e0b58203a93ff1ffb3c130b3188e5fa68823987d6d510eb9a5",
+ "usage": {
+  "cache_creation_input_tokens": 0,
+  "cache_read_input_tokens": 7131,
+  "input_tokens": 199,
+  "output_tokens": 566
+ }
+}

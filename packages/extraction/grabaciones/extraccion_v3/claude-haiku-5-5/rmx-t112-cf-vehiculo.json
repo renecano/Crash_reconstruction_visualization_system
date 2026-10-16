@@ -1,0 +1,116 @@
+{
+ "costo_estimado_con": "claude-haiku-5-5",
+ "costo_usd": 0.00144631,
+ "esfuerzo": "medium",
+ "grabado": "2026-10-16T15:22:53+00:00",
+ "huella_prompt": "86f6a54999b8cbf7",
+ "latencia_ms": 10463.6,
+ "modelo": "claude-haiku-5-5",
+ "modelo_respuesta": "claude-haiku-5-5",
+ "prompt": "extraccion_v3",
+ "request_id": "req_011Cg69NuK77VZSnywRzd29r",
+ "salida": {
+  "dispositivos": [],
+  "hechos": [
+   {
+    "campo": "lugar.tipo_via",
+    "cita": "en la glorieta",
+    "persona": -1,
+    "valor": "glorieta",
+    "vehiculo": -1
+   },
+   {
+    "campo": "evento.tipo",
+    "cita": "le pegué en su costado izquierdo",
+    "persona": -1,
+    "valor": "impacto_vehiculo_vehiculo",
+    "vehiculo": -1
+   },
+   {
+    "campo": "vehiculo.clase",
+    "cita": "Sienna",
+    "persona": -1,
+    "valor": "van",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.clase",
+    "cita": "Vento",
+    "persona": -1,
+    "valor": "sedan_compacto",
+    "vehiculo": 1
+   },
+   {
+    "campo": "vehiculo.color",
+    "cita": "Vento gris",
+    "persona": -1,
+    "valor": "gris",
+    "vehiculo": 1
+   },
+   {
+    "campo": "vehiculo.maniobra",
+    "cita": "se metió sin ceder el paso",
+    "persona": -1,
+    "valor": "cambio_carril",
+    "vehiculo": 1
+   },
+   {
+    "campo": "vehiculo.velocidad_kmh",
+    "cita": "como a 20",
+    "persona": -1,
+    "valor": "20",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.zona_impacto",
+    "cita": "en su costado izquierdo",
+    "persona": -1,
+    "valor": "L",
+    "vehiculo": 1
+   },
+   {
+    "campo": "vehiculo.zona_impacto",
+    "cita": "con mi defensa",
+    "persona": -1,
+    "valor": "F",
+    "vehiculo": 0
+   }
+  ],
+  "personas": [
+   {
+    "cita": "Iba a dejar a mis hijos",
+    "rol": "conductor",
+    "vehiculo": 0
+   },
+   {
+    "cita": "Los niños bien, nomás se asustaron",
+    "rol": "pasajero",
+    "vehiculo": 0
+   },
+   {
+    "cita": "El chofer",
+    "rol": "conductor",
+    "vehiculo": 1
+   }
+  ],
+  "preguntas": [
+   "¿A qué velocidad iba el Vento al entrar a la glorieta?",
+   "¿Había algún semáforo o señal de alto en la glorieta?"
+  ],
+  "vehiculos": [
+   {
+    "narrador": true
+   },
+   {
+    "narrador": false
+   }
+  ]
+ },
+ "texto_sha256": "8b1198a88092a22f9fef3510faf353070bedb8ab4cf94cb92ddb00eaea1dcecf",
+ "usage": {
+  "cache_creation_input_tokens": 0,
+  "cache_read_input_tokens": 7131,
+  "input_tokens": 165,
+  "output_tokens": 2717
+ }
+}

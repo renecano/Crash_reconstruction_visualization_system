@@ -1,6 +1,6 @@
 """Línea base de reglas: casos escritos aquí (no son de Relatos-MX) y propiedades generales."""
 
-from typing import Any
+from typing import Any, cast
 
 from hypothesis import HealthCheck, given, settings
 from hypothesis import strategies as st
@@ -165,3 +165,49 @@ def test_nunca_inventa_citas_y_la_spec_es_valida(words: list[str]) -> None:
     assert bad == 0, total
     assert schema_errors(spec) == []
     assert errores_de(check_escena(spec)) == []
+
+
+def _fase(text: str) -> tuple[object, object] | None:
+    f = baseline.extract_facts(text).escalares.get("evidencias.marcas_fase")
+    return (f.valor, f.cita) if f else None
+
+
+def test_fase_de_las_marcas_por_lo_que_dice_el_relato() -> None:
+    """ADR 0019: lo explícito ("después del golpe") gana a lo deducido ("frené")."""
+    assert _fase("Frené con todo y dejé como 10 metros de marca, pero sí le pegué.") == (
+        "antes_impacto",
+        "Frené",
+    )
+    assert _fase(
+        "Me pegaron por un lado. Después del golpe la moto se fue arrastrando, "
+        "8 metros de raspadura."
+    ) == ("despues_impacto", "Después del golpe")
+    assert _fase("Frené ya después del choque y quedaron 5 metros de marca.") == (
+        "despues_impacto",
+        "después del choque",
+    )
+    assert _fase("Se me cayó la moto antes de llegar al carro; quedaron 6 metros de marca.") == (
+        "antes_impacto",
+        "antes de llegar",
+    )
+    # Sin nada que diga la fase, no se adivina; sin marcas, no hay fase.
+    assert _fase("Quedaron 6 metros de marca en el piso.") is None
+    assert _fase("Después del golpe me bajé a ver.") is None
+
+
+def test_la_fase_solo_mira_la_oracion_de_las_marcas_y_la_anterior() -> None:
+    texto = (
+        "Frené en el semáforo. Luego seguí. Más adelante me pegaron. "
+        "Quedaron 4 metros de marca en el piso."
+    )
+    assert _fase(texto) is None
+    spec = baseline.extract_spec("Frené con todo, dejé como 10 metros de marca y le pegué.")
+    evidencias = cast("list[dict[str, Any]]", spec["evidencias"])
+    marcas = next(e for e in evidencias if e["id"] == "evid-marcas")
+    citas: list[dict[str, Any]] = marcas["procedencia"]["evidencia"]
+    assert marcas["fase"] == "antes_impacto"
+    assert [x["texto"] for x in citas] == [
+        "como 10 metros de marca",
+        "Frené",
+    ]
+    assert schema_errors(spec) == []

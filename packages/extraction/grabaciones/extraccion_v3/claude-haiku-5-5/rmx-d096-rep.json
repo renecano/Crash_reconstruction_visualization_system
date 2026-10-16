@@ -1,0 +1,105 @@
+{
+ "costo_estimado_con": "claude-haiku-5-5",
+ "costo_usd": 0.00156801,
+ "esfuerzo": "medium",
+ "grabado": "2026-10-16T03:10:59+00:00",
+ "huella_prompt": "86f6a54999b8cbf7",
+ "latencia_ms": 12830.5,
+ "modelo": "claude-haiku-5-5",
+ "modelo_respuesta": "claude-haiku-5-5",
+ "prompt": "extraccion_v3",
+ "request_id": "req_011Cg5BZcSPESLVgPxhnfyfR",
+ "salida": {
+  "dispositivos": [],
+  "hechos": [
+   {
+    "campo": "vehiculo.clase",
+    "cita": "Kangoo",
+    "persona": -1,
+    "valor": "van",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.clase",
+    "cita": "Corolla",
+    "persona": -1,
+    "valor": "sedan_mediano",
+    "vehiculo": 1
+   },
+   {
+    "campo": "vehiculo.color",
+    "cita": "plateado",
+    "persona": -1,
+    "valor": "plateado",
+    "vehiculo": 1
+   },
+   {
+    "campo": "vehiculo.maniobra",
+    "cita": "dando vuelta a la izquierda",
+    "persona": -1,
+    "valor": "vuelta_izquierda",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.velocidad_kmh",
+    "cita": "Él venía como a 60",
+    "persona": -1,
+    "valor": "60",
+    "vehiculo": 1
+   },
+   {
+    "campo": "vehiculo.frenado",
+    "cita": "ni frenó",
+    "persona": -1,
+    "valor": "false",
+    "vehiculo": 1
+   },
+   {
+    "campo": "evento.tipo",
+    "cita": "me pegó en la salpicadera delantera izquierda",
+    "persona": -1,
+    "valor": "impacto_vehiculo_vehiculo",
+    "vehiculo": -1
+   },
+   {
+    "campo": "vehiculo.zona_impacto",
+    "cita": "salpicadera delantera izquierda",
+    "persona": -1,
+    "valor": "L",
+    "vehiculo": 0
+   }
+  ],
+  "personas": [
+   {
+    "cita": "yo traía la Kangoo del trabajo",
+    "rol": "conductor",
+    "vehiculo": 0
+   },
+   {
+    "cita": "manejado por un muchacho como de veinte años",
+    "rol": "conductor",
+    "vehiculo": 1
+   }
+  ],
+  "preguntas": [
+   "¿Qué tan lejos estaba el Corolla cuando empezaste a dar vuelta a la izquierda?",
+   "¿Dónde quedaron los vehículos después del golpe?",
+   "¿El Corolla venía por el mismo sentido de la vialidad que la Kangoo?"
+  ],
+  "vehiculos": [
+   {
+    "narrador": true
+   },
+   {
+    "narrador": false
+   }
+  ]
+ },
+ "texto_sha256": "079b115524b3f0e67b81835595d967d63ea30915e095b315c99bdb9c9390e7f2",
+ "usage": {
+  "cache_creation_input_tokens": 0,
+  "cache_read_input_tokens": 7131,
+  "input_tokens": 222,
+  "output_tokens": 2949
+ }
+}

@@ -1,0 +1,132 @@
+{
+ "costo_estimado_con": "claude-haiku-5-5",
+ "costo_usd": 0.00146191,
+ "esfuerzo": "medium",
+ "grabado": "2026-10-16T03:25:14+00:00",
+ "huella_prompt": "86f6a54999b8cbf7",
+ "latencia_ms": 11828.0,
+ "modelo": "claude-haiku-5-5",
+ "modelo_respuesta": "claude-haiku-5-5",
+ "prompt": "extraccion_v3",
+ "request_id": "req_011Cg5CehfAreGVKVPvHcEch",
+ "salida": {
+  "dispositivos": [],
+  "hechos": [
+   {
+    "campo": "vehiculo.clase",
+    "cita": "Pulsar",
+    "persona": -1,
+    "valor": "motocicleta",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.clase",
+    "cita": "camioneta",
+    "persona": -1,
+    "valor": "suv_o_pickup",
+    "vehiculo": 1
+   },
+   {
+    "campo": "vehiculo.color",
+    "cita": "camioneta blanca",
+    "persona": -1,
+    "valor": "blanca",
+    "vehiculo": 1
+   },
+   {
+    "campo": "vehiculo.frenado",
+    "cita": "frené",
+    "persona": -1,
+    "valor": "true",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.frenado",
+    "cita": "se frenó de golpe",
+    "persona": -1,
+    "valor": "true",
+    "vehiculo": 1
+   },
+   {
+    "campo": "vehiculo.velocidad_kmh",
+    "cita": "Iba como a 45",
+    "persona": -1,
+    "valor": "45",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.zona_impacto",
+    "cita": "defensa trasera",
+    "persona": -1,
+    "valor": "B",
+    "vehiculo": 1
+   },
+   {
+    "campo": "evento.tipo",
+    "cita": "se me barrió la llanta de atrás",
+    "persona": -1,
+    "valor": "derrape",
+    "vehiculo": -1
+   },
+   {
+    "campo": "evento.tipo",
+    "cita": "terminó pegándole en la defensa trasera",
+    "persona": -1,
+    "valor": "impacto_vehiculo_vehiculo",
+    "vehiculo": -1
+   },
+   {
+    "campo": "evidencias.marcas_m",
+    "cita": "se fue raspando unos seis metros",
+    "persona": -1,
+    "valor": "6",
+    "vehiculo": -1
+   },
+   {
+    "campo": "evidencias.marcas_fase",
+    "cita": "se fue raspando unos seis metros y terminó pegándole",
+    "persona": -1,
+    "valor": "antes_impacto",
+    "vehiculo": -1
+   },
+   {
+    "campo": "persona.casco",
+    "cita": "con el casco puesto",
+    "persona": 0,
+    "valor": "true",
+    "vehiculo": -1
+   }
+  ],
+  "personas": [
+   {
+    "cita": "en mi moto",
+    "rol": "motociclista",
+    "vehiculo": 0
+   },
+   {
+    "cita": "",
+    "rol": "pasajero",
+    "vehiculo": -1
+   }
+  ],
+  "preguntas": [
+   "¿La camioneta se detuvo por completo o solo desaceleró de golpe?",
+   "¿Cuántos segundos pasaron entre la caída y el impacto contra la defensa?"
+  ],
+  "vehiculos": [
+   {
+    "narrador": true
+   },
+   {
+    "narrador": false
+   }
+  ]
+ },
+ "texto_sha256": "b5d937768109727fb041721d592cf000a035f470de6b4babed4e33a5b36bf40d",
+ "usage": {
+  "cache_creation_input_tokens": 0,
+  "cache_read_input_tokens": 7131,
+  "input_tokens": 196,
+  "output_tokens": 2742
+ }
+}

@@ -1,0 +1,108 @@
+{
+ "costo_estimado_con": "claude-haiku-5-5",
+ "costo_usd": 0.00096101,
+ "esfuerzo": "medium",
+ "grabado": "2026-10-16T03:20:35+00:00",
+ "huella_prompt": "86f6a54999b8cbf7",
+ "latencia_ms": 7114.9,
+ "modelo": "claude-haiku-5-5",
+ "modelo_respuesta": "claude-haiku-5-5",
+ "prompt": "extraccion_v3",
+ "request_id": "req_011Cg5CJTmvgbbDxh24aVrnF",
+ "salida": {
+  "dispositivos": [],
+  "hechos": [
+   {
+    "campo": "entorno.iluminacion",
+    "cita": "que no tiene nada de luz",
+    "persona": -1,
+    "valor": "noche_sin_alumbrado",
+    "vehiculo": -1
+   },
+   {
+    "campo": "vehiculo.clase",
+    "cita": "el Versa",
+    "persona": -1,
+    "valor": "sedan_compacto",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.velocidad_kmh",
+    "cita": "como a 80",
+    "persona": -1,
+    "valor": "80",
+    "vehiculo": 0
+   },
+   {
+    "campo": "evento.objeto",
+    "cita": "una vaca negra",
+    "persona": -1,
+    "valor": "otro",
+    "vehiculo": -1
+   },
+   {
+    "campo": "evento.tipo",
+    "cita": "Le pegué de lleno con el frente",
+    "persona": -1,
+    "valor": "impacto_vehiculo_objeto",
+    "vehiculo": -1
+   },
+   {
+    "campo": "vehiculo.zona_impacto",
+    "cita": "Le pegué de lleno con el frente",
+    "persona": -1,
+    "valor": "F",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.frenado",
+    "cita": "frené",
+    "persona": -1,
+    "valor": "true",
+    "vehiculo": 0
+   },
+   {
+    "campo": "persona.cinturon",
+    "cita": "las dos traíamos el cinturón",
+    "persona": 0,
+    "valor": "true",
+    "vehiculo": -1
+   },
+   {
+    "campo": "persona.cinturon",
+    "cita": "las dos traíamos el cinturón",
+    "persona": 1,
+    "valor": "true",
+    "vehiculo": -1
+   }
+  ],
+  "personas": [
+   {
+    "cita": "Yo manejaba el Versa",
+    "rol": "conductor",
+    "vehiculo": 0
+   },
+   {
+    "cita": "Mi hermana iba de copiloto",
+    "rol": "pasajero",
+    "vehiculo": 0
+   }
+  ],
+  "preguntas": [
+   "¿La vaca estaba sobre la carretera o cruzó desde un costado?",
+   "¿A qué velocidad se movía la vaca al momento del impacto?"
+  ],
+  "vehiculos": [
+   {
+    "narrador": true
+   }
+  ]
+ },
+ "texto_sha256": "08783ba478e0ab0987576b085e833023cff7d16b22f3d819d659e9de696d384f",
+ "usage": {
+  "cache_creation_input_tokens": 0,
+  "cache_read_input_tokens": 7131,
+  "input_tokens": 167,
+  "output_tokens": 1746
+ }
+}

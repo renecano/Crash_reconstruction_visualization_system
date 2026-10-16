@@ -1,0 +1,90 @@
+{
+ "costo_estimado_con": "claude-haiku-5-5",
+ "costo_usd": 0.00125621,
+ "esfuerzo": "medium",
+ "grabado": "2026-10-16T00:23:28+00:00",
+ "huella_prompt": "86f6a54999b8cbf7",
+ "latencia_ms": 9276.2,
+ "modelo": "claude-haiku-5-5",
+ "modelo_respuesta": "claude-haiku-5-5",
+ "prompt": "extraccion_v3",
+ "request_id": "req_011Cg4xnwyy2CmFNKb7mjtA4",
+ "salida": {
+  "dispositivos": [],
+  "hechos": [
+   {
+    "campo": "vehiculo.velocidad_kmh",
+    "cita": "a unos 90",
+    "persona": -1,
+    "valor": "90",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.maniobra",
+    "cita": "se cambió de carril",
+    "persona": -1,
+    "valor": "cambio_carril",
+    "vehiculo": 1
+   },
+   {
+    "campo": "evento.tipo",
+    "cita": "me rozó todo el costado izquierdo",
+    "persona": -1,
+    "valor": "impacto_vehiculo_vehiculo",
+    "vehiculo": -1
+   },
+   {
+    "campo": "vehiculo.zona_impacto",
+    "cita": "me rozó todo el costado izquierdo",
+    "persona": -1,
+    "valor": "L",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.clase",
+    "cita": "Spark",
+    "persona": -1,
+    "valor": "hatchback",
+    "vehiculo": 1
+   },
+   {
+    "campo": "vehiculo.color",
+    "cita": "verde",
+    "persona": -1,
+    "valor": "verde",
+    "vehiculo": 1
+   }
+  ],
+  "personas": [
+   {
+    "cita": "Iba por el carril",
+    "rol": "conductor",
+    "vehiculo": 0
+   },
+   {
+    "cita": "el de al lado se cambió de carril",
+    "rol": "conductor",
+    "vehiculo": 1
+   }
+  ],
+  "preguntas": [
+   "¿El carril de alta en Circuito Exterior era una vía rápida o autopista?",
+   "¿Ambos vehículos iban en el mismo sentido de circulación?"
+  ],
+  "vehiculos": [
+   {
+    "narrador": true
+   },
+   {
+    "narrador": false
+   }
+  ]
+ },
+ "texto_sha256": "0e49ca2c1d4daba5306e06eb3f52963f66d6e71981c825751cac0e83bf136820",
+ "usage": {
+  "cache_creation_input_tokens": 0,
+  "cache_read_input_tokens": 7131,
+  "input_tokens": 99,
+  "output_tokens": 2350
+ }
+}

@@ -1,7 +1,7 @@
 {
   "name": "e1_extraction_v2",
-  "generated_at": "2026-10-15T17:32:03+00:00",
-  "git_commit": "b97778e",
+  "generated_at": "2026-10-16T16:19:09+00:00",
+  "git_commit": "80d0a58",
   "seed": null,
   "descripcion": "E1: extracción del relato en Relatos-MX (línea base de reglas, Claude Haiku y Sonnet desde respuestas grabadas), fuga de PII del redactor y diferencia contrafactual, medidas sobre el pipeline TS de producción (packages/extraction).",
   "split": "test",
@@ -26,6 +26,7 @@
       "relatos": 160,
       "sin_respuesta": 0,
       "f1_micro": 0.7141,
+      "f1_micro_sin_campos_parciales": 0.7141,
       "f1_macro": 0.5571,
       "precision_micro": 0.8159,
       "exhaustividad_micro": 0.6348,
@@ -196,6 +197,7 @@
       },
       "con_verificador": {
         "f1_micro": 0.7141,
+        "f1_micro_sin_campos_parciales": 0.7141,
         "f1_macro": 0.5571,
         "precision_micro": 0.8159,
         "exhaustividad_micro": 0.6348,
@@ -253,13 +255,13 @@
         "utiles": 410,
         "precision": 0.9469,
         "errores_preguntables": 174,
-        "errores_cubiertos": 59,
-        "cobertura": 0.3391,
+        "errores_cubiertos": 60,
+        "cobertura": 0.3448,
         "rondas_fallidas": 0
       },
       "latencia_ms": {
-        "p50": 1.43,
-        "p95": 2.36
+        "p50": 2.25,
+        "p95": 4.81
       },
       "costo_usd_por_1000": 0.0
     },
@@ -268,6 +270,7 @@
       "relatos": 160,
       "sin_respuesta": 0,
       "f1_micro": 0.9185,
+      "f1_micro_sin_campos_parciales": 0.9185,
       "f1_macro": 0.927,
       "precision_micro": 0.915,
       "exhaustividad_micro": 0.9221,
@@ -440,6 +443,7 @@
       },
       "con_verificador": {
         "f1_micro": 0.9185,
+        "f1_micro_sin_campos_parciales": 0.9185,
         "f1_macro": 0.927,
         "precision_micro": 0.915,
         "exhaustividad_micro": 0.9221,
@@ -492,10 +496,10 @@
         }
       },
       "preguntas": {
-        "hechas": 419,
+        "hechas": 418,
         "redundantes": 32,
-        "utiles": 387,
-        "precision": 0.9236,
+        "utiles": 386,
+        "precision": 0.9234,
         "errores_preguntables": 36,
         "errores_cubiertos": 6,
         "cobertura": 0.1667,
@@ -512,6 +516,7 @@
       "relatos": 160,
       "sin_respuesta": 0,
       "f1_micro": 0.8957,
+      "f1_micro_sin_campos_parciales": 0.8957,
       "f1_macro": 0.9048,
       "precision_micro": 0.9113,
       "exhaustividad_micro": 0.8806,
@@ -684,6 +689,7 @@
       },
       "con_verificador": {
         "f1_micro": 0.8957,
+        "f1_micro_sin_campos_parciales": 0.8957,
         "f1_macro": 0.9048,
         "precision_micro": 0.9113,
         "exhaustividad_micro": 0.8806,
@@ -736,10 +742,10 @@
         }
       },
       "preguntas": {
-        "hechas": 422,
+        "hechas": 419,
         "redundantes": 33,
-        "utiles": 389,
-        "precision": 0.9218,
+        "utiles": 386,
+        "precision": 0.9212,
         "errores_preguntables": 71,
         "errores_cubiertos": 11,
         "cobertura": 0.1549,

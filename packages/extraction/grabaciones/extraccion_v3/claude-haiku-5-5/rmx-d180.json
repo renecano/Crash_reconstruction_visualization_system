@@ -1,0 +1,97 @@
+{
+ "costo_estimado_con": "claude-haiku-5-5",
+ "costo_usd": 0.00105151,
+ "esfuerzo": "medium",
+ "grabado": "2026-10-16T02:12:36+00:00",
+ "huella_prompt": "86f6a54999b8cbf7",
+ "latencia_ms": 8778.1,
+ "modelo": "claude-haiku-5-5",
+ "modelo_respuesta": "claude-haiku-5-5",
+ "prompt": "extraccion_v3",
+ "request_id": "req_011Cg577hiSeL4V8AGQup9aY",
+ "salida": {
+  "dispositivos": [
+   {
+    "cita": "semáforo de Reforma",
+    "tipo": "semaforo"
+   }
+  ],
+  "hechos": [
+   {
+    "campo": "evidencias.marcas_m",
+    "cita": "7 metros de frenada",
+    "persona": -1,
+    "valor": "7",
+    "vehiculo": -1
+   },
+   {
+    "campo": "evidencias.marcas_fase",
+    "cita": "antes de tocarle",
+    "persona": -1,
+    "valor": "antes_impacto",
+    "vehiculo": -1
+   },
+   {
+    "campo": "evento.tipo",
+    "cita": "tocarle la defensa",
+    "persona": -1,
+    "valor": "impacto_vehiculo_vehiculo",
+    "vehiculo": -1
+   },
+   {
+    "campo": "vehiculo.frenado",
+    "cita": "Dejé 7 metros de frenada",
+    "persona": -1,
+    "valor": "true",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.zona_impacto",
+    "cita": "tocarle la defensa",
+    "persona": -1,
+    "valor": "F",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.clase",
+    "cita": "Jetta",
+    "persona": -1,
+    "valor": "sedan_mediano",
+    "vehiculo": 1
+   },
+   {
+    "campo": "vehiculo.zona_impacto",
+    "cita": "tocarle la defensa",
+    "persona": -1,
+    "valor": "B",
+    "vehiculo": 1
+   }
+  ],
+  "personas": [
+   {
+    "cita": "Dejé",
+    "rol": "conductor",
+    "vehiculo": 0
+   }
+  ],
+  "preguntas": [
+   "¿A qué velocidad iba al momento de frenar?",
+   "¿El Jetta estaba detenido en el semáforo cuando lo tocó?"
+  ],
+  "vehiculos": [
+   {
+    "narrador": true
+   },
+   {
+    "narrador": false
+   }
+  ]
+ },
+ "texto_sha256": "53de5df603fa1e79dcc3376a74430de23dc6c1a54bbe81d544488b90ce0cd605",
+ "usage": {
+  "cache_creation_input_tokens": 0,
+  "cache_read_input_tokens": 7131,
+  "input_tokens": 57,
+  "output_tokens": 1949
+ }
+}

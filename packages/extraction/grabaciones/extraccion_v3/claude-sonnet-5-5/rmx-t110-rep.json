@@ -1,0 +1,91 @@
+{
+ "costo_estimado_con": "claude-sonnet-5-5",
+ "costo_usd": 0.0070422,
+ "esfuerzo": "medium",
+ "grabado": "2026-10-16T15:42:33+00:00",
+ "huella_prompt": "86f6a54999b8cbf7",
+ "latencia_ms": 3957.1,
+ "modelo": "claude-sonnet-5-5",
+ "modelo_respuesta": "claude-sonnet-5-5",
+ "prompt": "extraccion_v3",
+ "request_id": "req_011Cg6AtMS9ZbvrNnUr9vSpA",
+ "salida": {
+  "dispositivos": [],
+  "hechos": [
+   {
+    "campo": "vehiculo.clase",
+    "cita": "italika 150",
+    "persona": -1,
+    "valor": "motocicleta",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.clase",
+    "cita": "taxi",
+    "persona": -1,
+    "valor": "sedan_compacto",
+    "vehiculo": 1
+   },
+   {
+    "campo": "evento.tipo",
+    "cita": "le pego en la llanta de atras",
+    "persona": -1,
+    "valor": "impacto_vehiculo_vehiculo",
+    "vehiculo": -1
+   },
+   {
+    "campo": "vehiculo.zona_impacto",
+    "cita": "le pego en la llanta de atras",
+    "persona": -1,
+    "valor": "B",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.maniobra",
+    "cita": "salio de la gasolinera",
+    "persona": -1,
+    "valor": "incorporacion",
+    "vehiculo": 1
+   },
+   {
+    "campo": "persona.casco",
+    "cita": "no traia casco",
+    "persona": 0,
+    "valor": "false",
+    "vehiculo": -1
+   }
+  ],
+  "personas": [
+   {
+    "cita": "mi hermano",
+    "rol": "motociclista",
+    "vehiculo": 0
+   },
+   {
+    "cita": "el taxista",
+    "rol": "conductor",
+    "vehiculo": 1
+   }
+  ],
+  "preguntas": [
+   "¿La moto iba circulando o estaba detenida cuando el taxi salió de la gasolinera?",
+   "¿A qué velocidad aproximada iba la moto?",
+   "¿La moto iba por el carril junto a la gasolinera o en otro carril?"
+  ],
+  "vehiculos": [
+   {
+    "narrador": false
+   },
+   {
+    "narrador": false
+   }
+  ]
+ },
+ "texto_sha256": "49299e77f28399d64ec6f134385a422c711277b06e8697c639f8be7e1e59b557",
+ "usage": {
+  "cache_creation_input_tokens": 0,
+  "cache_read_input_tokens": 7131,
+  "input_tokens": 163,
+  "output_tokens": 529
+ }
+}

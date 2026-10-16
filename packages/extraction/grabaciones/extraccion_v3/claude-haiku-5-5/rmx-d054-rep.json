@@ -1,0 +1,88 @@
+{
+ "costo_estimado_con": "claude-haiku-5-5",
+ "costo_usd": 0.00105831,
+ "esfuerzo": "medium",
+ "grabado": "2026-10-16T03:03:45+00:00",
+ "huella_prompt": "86f6a54999b8cbf7",
+ "latencia_ms": 8824.9,
+ "modelo": "claude-haiku-5-5",
+ "modelo_respuesta": "claude-haiku-5-5",
+ "prompt": "extraccion_v3",
+ "request_id": "req_011Cg5B1vQUbKvGuFye21jZ3",
+ "salida": {
+  "dispositivos": [
+   {
+    "cita": "en el tope",
+    "tipo": "tope"
+   }
+  ],
+  "hechos": [
+   {
+    "campo": "evento.tipo",
+    "cita": "se me estampó en la cajuela",
+    "persona": -1,
+    "valor": "impacto_vehiculo_vehiculo",
+    "vehiculo": -1
+   },
+   {
+    "campo": "vehiculo.zona_impacto",
+    "cita": "se me estampó en la cajuela",
+    "persona": -1,
+    "valor": "B",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.frenado",
+    "cita": "cuando frené",
+    "persona": -1,
+    "valor": "true",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.clase",
+    "cita": "Un motociclista",
+    "persona": -1,
+    "valor": "motocicleta",
+    "vehiculo": 1
+   },
+   {
+    "campo": "persona.casco",
+    "cita": "Iba sin casco.",
+    "persona": 1,
+    "valor": "false",
+    "vehiculo": -1
+   }
+  ],
+  "personas": [
+   {
+    "cita": "cuando frené",
+    "rol": "conductor",
+    "vehiculo": 0
+   },
+   {
+    "cita": "Un motociclista",
+    "rol": "motociclista",
+    "vehiculo": 1
+   }
+  ],
+  "preguntas": [
+   "¿A qué velocidad iba cada vehículo al momento del impacto?",
+   "¿Qué clase o modelo tenía el vehículo en el que manejabas?"
+  ],
+  "vehiculos": [
+   {
+    "narrador": true
+   },
+   {
+    "narrador": false
+   }
+  ]
+ },
+ "texto_sha256": "67c0c74c2bb439168c59f4a4ade592e5253db1629b7e7d22bf7d1b15a7fc5a38",
+ "usage": {
+  "cache_creation_input_tokens": 0,
+  "cache_read_input_tokens": 7131,
+  "input_tokens": 55,
+  "output_tokens": 1963
+ }
+}

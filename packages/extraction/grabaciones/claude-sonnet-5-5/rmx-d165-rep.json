@@ -1,0 +1,72 @@
+{
+ "costo_estimado_con": "claude-sonnet-5-5",
+ "costo_usd": 0.0109884,
+ "esfuerzo": "medium",
+ "grabado": "2026-10-16T02:31:06+00:00",
+ "huella_prompt": "f6b693169a4199c3",
+ "latencia_ms": 6540.3,
+ "modelo": "claude-sonnet-5-5",
+ "modelo_respuesta": "claude-sonnet-5-5",
+ "prompt": "extraccion_v1",
+ "request_id": "req_011Cg58XdbRXM8XtUAwcKwSC",
+ "salida": {
+  "dispositivos": [],
+  "hechos": [
+   {
+    "campo": "vehiculo.clase",
+    "cita": "la moto",
+    "persona": -1,
+    "valor": "motocicleta",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.maniobra",
+    "cita": "al cambiarse de carril",
+    "persona": -1,
+    "valor": "cambio_carril",
+    "vehiculo": 1
+   },
+   {
+    "campo": "evento.tipo",
+    "cita": "Un taxi me tumbó",
+    "persona": -1,
+    "valor": "impacto_vehiculo_vehiculo",
+    "vehiculo": -1
+   },
+   {
+    "campo": "evidencias.marcas_m",
+    "cita": "una raspadura de 7 metros",
+    "persona": -1,
+    "valor": "7",
+    "vehiculo": -1
+   }
+  ],
+  "personas": [
+   {
+    "cita": "me tumbó",
+    "rol": "motociclista",
+    "vehiculo": 0
+   }
+  ],
+  "preguntas": [
+   "¿Hacia qué lado se cambió de carril el taxi?",
+   "¿Qué parte de la moto recibió el golpe del taxi?",
+   "¿A qué velocidad aproximada iba la moto?"
+  ],
+  "vehiculos": [
+   {
+    "narrador": true
+   },
+   {
+    "narrador": false
+   }
+  ]
+ },
+ "texto_sha256": "a8591f807a6d5a20338d0a8e9f209f07ddbeb27671d2ff8894eceec44095b4bb",
+ "usage": {
+  "cache_creation_input_tokens": 0,
+  "cache_read_input_tokens": 5862,
+  "input_tokens": 63,
+  "output_tokens": 969
+ }
+}

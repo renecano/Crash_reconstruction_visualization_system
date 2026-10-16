@@ -1,0 +1,95 @@
+{
+ "costo_estimado_con": "claude-haiku-5-5",
+ "costo_usd": 0.00088471,
+ "esfuerzo": "medium",
+ "grabado": "2026-10-16T13:30:45+00:00",
+ "huella_prompt": "86f6a54999b8cbf7",
+ "latencia_ms": 6994.8,
+ "modelo": "claude-haiku-5-5",
+ "modelo_respuesta": "claude-haiku-5-5",
+ "prompt": "extraccion_v3",
+ "request_id": "req_011Cg5zqD5N2Lagws4JYwXEU",
+ "salida": {
+  "dispositivos": [],
+  "hechos": [
+   {
+    "campo": "lugar.tipo_via",
+    "cita": "en un tramo recto",
+    "persona": -1,
+    "valor": "recta",
+    "vehiculo": -1
+   },
+   {
+    "campo": "lugar.estado_superficie",
+    "cita": "el piso estaba seco",
+    "persona": -1,
+    "valor": "seco",
+    "vehiculo": -1
+   },
+   {
+    "campo": "entorno.iluminacion",
+    "cita": "ya de noche y sin alumbrado",
+    "persona": -1,
+    "valor": "noche_sin_alumbrado",
+    "vehiculo": -1
+   },
+   {
+    "campo": "vehiculo.clase",
+    "cita": "RAV4",
+    "persona": -1,
+    "valor": "suv_compacta",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.velocidad_kmh",
+    "cita": "como a 120",
+    "persona": -1,
+    "valor": "120",
+    "vehiculo": 0
+   },
+   {
+    "campo": "evento.tipo",
+    "cita": "lo atropelle con el frente",
+    "persona": -1,
+    "valor": "impacto_vehiculo_persona",
+    "vehiculo": -1
+   },
+   {
+    "campo": "vehiculo.zona_impacto",
+    "cita": "lo atropelle con el frente",
+    "persona": -1,
+    "valor": "F",
+    "vehiculo": 0
+   }
+  ],
+  "personas": [
+   {
+    "cita": "Hiba derecho en mi RAV4",
+    "rol": "conductor",
+    "vehiculo": 0
+   },
+   {
+    "cita": "un señor que iba caminando",
+    "rol": "peaton",
+    "vehiculo": -1
+   }
+  ],
+  "preguntas": [
+   "¿Por qué lado de la vía apareció la persona que caminaba?",
+   "¿La persona que caminaba cruzaba la vía o iba por la banqueta?",
+   "¿El vehículo alcanzó a frenar antes del impacto?"
+  ],
+  "vehiculos": [
+   {
+    "narrador": true
+   }
+  ]
+ },
+ "texto_sha256": "15a7092482b9ec62b352b776a3dd192fcec0db9c5c7b58e64276789f15a20d2a",
+ "usage": {
+  "cache_creation_input_tokens": 0,
+  "cache_read_input_tokens": 7131,
+  "input_tokens": 139,
+  "output_tokens": 1599
+ }
+}

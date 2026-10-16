@@ -1,0 +1,77 @@
+{
+ "costo_estimado_con": "claude-sonnet-5-5",
+ "costo_usd": 0.0057502,
+ "esfuerzo": "medium",
+ "grabado": "2026-10-16T13:11:56+00:00",
+ "huella_prompt": "86f6a54999b8cbf7",
+ "latencia_ms": 3748.4,
+ "modelo": "claude-sonnet-5-5",
+ "modelo_respuesta": "claude-sonnet-5-5",
+ "prompt": "extraccion_v3",
+ "request_id": "req_011Cg5yQDKSGGBsGQEVujuvr",
+ "salida": {
+  "dispositivos": [],
+  "hechos": [
+   {
+    "campo": "vehiculo.clase",
+    "cita": "SUV grande",
+    "persona": -1,
+    "valor": "suv_grande",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.velocidad_kmh",
+    "cita": "como a 85",
+    "persona": -1,
+    "valor": "85",
+    "vehiculo": 0
+   },
+   {
+    "campo": "evento.tipo",
+    "cita": "choqué con el otro vehículo",
+    "persona": -1,
+    "valor": "impacto_vehiculo_vehiculo",
+    "vehiculo": -1
+   },
+   {
+    "campo": "vehiculo.frenado",
+    "cita": "ni tiempo de frenar",
+    "persona": -1,
+    "valor": "false",
+    "vehiculo": 0
+   }
+  ],
+  "personas": [
+   {
+    "cita": "Iba manejando",
+    "rol": "conductor",
+    "vehiculo": 0
+   },
+   {
+    "cita": "La otra conductora",
+    "rol": "conductor",
+    "vehiculo": 1
+   }
+  ],
+  "preguntas": [
+   "¿En qué tipo de vía ocurrió el choque?",
+   "¿Qué zona de cada vehículo recibió el golpe?",
+   "¿Qué tipo de vehículo era el otro y qué maniobra hacía?"
+  ],
+  "vehiculos": [
+   {
+    "narrador": true
+   },
+   {
+    "narrador": false
+   }
+  ]
+ },
+ "texto_sha256": "d1c2849d0dccce85ec55381b0c71039c3c22e0df727e413fec4bebce479cae64",
+ "usage": {
+  "cache_creation_input_tokens": 0,
+  "cache_read_input_tokens": 7131,
+  "input_tokens": 82,
+  "output_tokens": 416
+ }
+}

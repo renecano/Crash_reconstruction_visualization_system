@@ -1,0 +1,104 @@
+{
+ "costo_estimado_con": "claude-haiku-5-5",
+ "costo_usd": 0.00116821,
+ "esfuerzo": "medium",
+ "grabado": "2026-10-16T15:25:41+00:00",
+ "huella_prompt": "86f6a54999b8cbf7",
+ "latencia_ms": 9153.6,
+ "modelo": "claude-haiku-5-5",
+ "modelo_respuesta": "claude-haiku-5-5",
+ "prompt": "extraccion_v3",
+ "request_id": "req_011Cg69bPkUQkSbSe3BozJrC",
+ "salida": {
+  "dispositivos": [],
+  "hechos": [
+   {
+    "campo": "vehiculo.clase",
+    "cita": "Sentra plata",
+    "persona": -1,
+    "valor": "sedan_mediano",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.color",
+    "cita": "Sentra plata",
+    "persona": -1,
+    "valor": "plata",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.maniobra",
+    "cita": "Estaba estacionado",
+    "persona": -1,
+    "valor": "estacionado",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.velocidad_kmh",
+    "cita": "Estaba estacionado",
+    "persona": -1,
+    "valor": "0",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.zona_impacto",
+    "cita": "salpicadera delantera del lado derecho",
+    "persona": -1,
+    "valor": "R",
+    "vehiculo": 0
+   },
+   {
+    "campo": "evento.tipo",
+    "cita": "me dio un llegue",
+    "persona": -1,
+    "valor": "impacto_vehiculo_vehiculo",
+    "vehiculo": -1
+   },
+   {
+    "campo": "vehiculo.clase",
+    "cita": "Fiesta",
+    "persona": -1,
+    "valor": "hatchback",
+    "vehiculo": 1
+   },
+   {
+    "campo": "vehiculo.maniobra",
+    "cita": "iba saliendo en reversa",
+    "persona": -1,
+    "valor": "reversa",
+    "vehiculo": 1
+   }
+  ],
+  "personas": [
+   {
+    "cita": "ya con el carro apagado",
+    "rol": "conductor",
+    "vehiculo": 0
+   },
+   {
+    "cita": "un chavo que iba saliendo en reversa con su Fiesta",
+    "rol": "conductor",
+    "vehiculo": 1
+   }
+  ],
+  "preguntas": [
+   "¿A qué velocidad se movía el Fiesta al momento del golpe?",
+   "¿Quién conducía el Sentra al momento del golpe?"
+  ],
+  "vehiculos": [
+   {
+    "narrador": true
+   },
+   {
+    "narrador": false
+   }
+  ]
+ },
+ "texto_sha256": "e0ecee45a21302e89aa048df5a9826f462f8287ab9fe82a16f0fd82b7cb9f4f9",
+ "usage": {
+  "cache_creation_input_tokens": 0,
+  "cache_read_input_tokens": 7131,
+  "input_tokens": 174,
+  "output_tokens": 2159
+ }
+}

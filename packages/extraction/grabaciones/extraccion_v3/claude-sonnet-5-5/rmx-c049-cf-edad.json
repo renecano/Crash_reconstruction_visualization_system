@@ -1,0 +1,86 @@
+{
+ "costo_estimado_con": "claude-sonnet-5-5",
+ "costo_usd": 0.0067062,
+ "esfuerzo": "medium",
+ "grabado": "2026-10-16T03:57:58+00:00",
+ "huella_prompt": "86f6a54999b8cbf7",
+ "latencia_ms": 3551.7,
+ "modelo": "claude-sonnet-5-5",
+ "modelo_respuesta": "claude-sonnet-5-5",
+ "prompt": "extraccion_v3",
+ "request_id": "req_011Cg5FA4wNbhfy97KT6c9iL",
+ "salida": {
+  "dispositivos": [],
+  "hechos": [
+   {
+    "campo": "vehiculo.clase",
+    "cita": "Jetta",
+    "persona": -1,
+    "valor": "sedan_mediano",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.velocidad_kmh",
+    "cita": "como a 85",
+    "persona": -1,
+    "valor": "85",
+    "vehiculo": 0
+   },
+   {
+    "campo": "lugar.estado_superficie",
+    "cita": "el piso estaba seco",
+    "persona": -1,
+    "valor": "seco",
+    "vehiculo": -1
+   },
+   {
+    "campo": "vehiculo.clase",
+    "cita": "Camry",
+    "persona": -1,
+    "valor": "sedan_mediano",
+    "vehiculo": 1
+   },
+   {
+    "campo": "vehiculo.maniobra",
+    "cita": "se dio la vuelta en U",
+    "persona": -1,
+    "valor": "vuelta_u",
+    "vehiculo": 1
+   },
+   {
+    "campo": "evento.tipo",
+    "cita": "chocamos",
+    "persona": -1,
+    "valor": "impacto_vehiculo_vehiculo",
+    "vehiculo": -1
+   }
+  ],
+  "personas": [
+   {
+    "cita": "Venía manejando mi Jetta",
+    "rol": "conductor",
+    "vehiculo": 0
+   }
+  ],
+  "preguntas": [
+   "¿Por cuál lado del Jetta recibió el golpe del Camry?",
+   "¿Iba frenando el Jetta antes del choque?",
+   "¿Cuántos carriles tenía la vía por sentido?"
+  ],
+  "vehiculos": [
+   {
+    "narrador": true
+   },
+   {
+    "narrador": false
+   }
+  ]
+ },
+ "texto_sha256": "4a8d69711ae4455c24bb12f9bd61a53cf0190c9660a72634501d54540417a468",
+ "usage": {
+  "cache_creation_input_tokens": 0,
+  "cache_read_input_tokens": 7131,
+  "input_tokens": 160,
+  "output_tokens": 496
+ }
+}

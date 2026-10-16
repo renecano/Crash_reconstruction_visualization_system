@@ -8,7 +8,7 @@
  * reglas no producen geometría.
  */
 import { cpIndex, cpLength } from "./codepoints";
-import { fact, type Fact, type Facts, type FactValue } from "./facts";
+import { fact, type Fact, type Facts, type FactValue, stated } from "./facts";
 import { sha256Hex } from "./hash";
 
 type Json = Record<string, unknown>;
@@ -338,13 +338,20 @@ export function buildSpec(facts: Facts, text: string, opts: BuildOptions): Json 
   }
   const mk = sc.get("evidencias.marcas_m");
   if (mk !== undefined) {
-    evidencias.push({
-      id: "evid-marcas",
-      tipo: "marcas_frenado",
-      vehiculo_id: vehiculos[0]!.id,
-      longitud: campo(text, "evidencias.marcas_m", mk, 0.0, { unidad: "m" }),
-      procedencia: proc(text, mk),
-    });
+    const marcas: Json = { id: "evid-marcas", tipo: "marcas_frenado" };
+    const pr = proc(text, mk);
+    const fase = sc.get("evidencias.marcas_fase");
+    if (fase !== undefined) {
+      marcas.fase = fase.valor;
+      // La cita de la fase va como segundo fragmento de la procedencia (`facts_from_spec`).
+      if (fase.cita && stated(fase) && "evidencia" in pr) {
+        pr.evidencia = [...(pr.evidencia as Json[]), ...evidence(text, fase.cita)];
+      }
+    }
+    marcas.vehiculo_id = vehiculos[0]!.id;
+    marcas.longitud = campo(text, "evidencias.marcas_m", mk, 0.0, { unidad: "m" });
+    marcas.procedencia = pr;
+    evidencias.push(marcas);
   }
   const meta: Json = {
     id: specId,

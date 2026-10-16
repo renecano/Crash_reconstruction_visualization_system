@@ -1,0 +1,83 @@
+{
+ "costo_estimado_con": "claude-haiku-5-5",
+ "costo_usd": 0.00092491,
+ "esfuerzo": "medium",
+ "grabado": "2026-10-16T15:30:58+00:00",
+ "huella_prompt": "86f6a54999b8cbf7",
+ "latencia_ms": 8010.3,
+ "modelo": "claude-haiku-5-5",
+ "modelo_respuesta": "claude-haiku-5-5",
+ "prompt": "extraccion_v3",
+ "request_id": "req_011Cg69zpQB7vNZwn4GyV2fF",
+ "salida": {
+  "dispositivos": [],
+  "hechos": [
+   {
+    "campo": "vehiculo.clase",
+    "cita": "moto",
+    "persona": -1,
+    "valor": "motocicleta",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.clase",
+    "cita": "Jetta",
+    "persona": -1,
+    "valor": "sedan_mediano",
+    "vehiculo": 1
+   },
+   {
+    "campo": "vehiculo.maniobra",
+    "cita": "me cerró",
+    "persona": -1,
+    "valor": "cambio_carril",
+    "vehiculo": 1
+   },
+   {
+    "campo": "vehiculo.velocidad_kmh",
+    "cita": "iba a unos 35",
+    "persona": -1,
+    "valor": "35",
+    "vehiculo": 0
+   },
+   {
+    "campo": "lugar.tipo_via",
+    "cita": "lateral",
+    "persona": -1,
+    "valor": "incorporacion",
+    "vehiculo": -1
+   }
+  ],
+  "personas": [
+   {
+    "cita": "me tiró de la moto",
+    "rol": "motociclista",
+    "vehiculo": 0
+   },
+   {
+    "cita": "Un señor mayor en un Jetta",
+    "rol": "conductor",
+    "vehiculo": 1
+   }
+  ],
+  "preguntas": [
+   "¿Hubo contacto directo entre la moto y el Jetta antes de que te tiraran?",
+   "¿La lateral era una vía de servicio junto a una vía rápida o una calle común?"
+  ],
+  "vehiculos": [
+   {
+    "narrador": true
+   },
+   {
+    "narrador": false
+   }
+  ]
+ },
+ "texto_sha256": "14c98c352e5ecede9d81b81bf33303add8718637df1684e52c66f8951c1da382",
+ "usage": {
+  "cache_creation_input_tokens": 0,
+  "cache_read_input_tokens": 7131,
+  "input_tokens": 51,
+  "output_tokens": 1697
+ }
+}

@@ -1,0 +1,84 @@
+{
+ "costo_estimado_con": "claude-haiku-5-5",
+ "costo_usd": 0.00147001,
+ "esfuerzo": "medium",
+ "grabado": "2026-10-15T23:55:34+00:00",
+ "huella_prompt": "5816b86ad0e718ee",
+ "latencia_ms": 11591.9,
+ "modelo": "claude-haiku-5-5",
+ "modelo_respuesta": "claude-haiku-5-5",
+ "prompt": "extraccion_v2",
+ "request_id": "req_011Cg4vfQKHwFqo6qFyXCghR",
+ "salida": {
+  "dispositivos": [
+   {
+    "cita": "se paso el rojo",
+    "tipo": "semaforo"
+   }
+  ],
+  "hechos": [
+   {
+    "campo": "vehiculo.clase",
+    "cita": "chevy",
+    "persona": -1,
+    "valor": "hatchback",
+    "vehiculo": 0
+   },
+   {
+    "campo": "evento.tipo",
+    "cita": "me pego en la puerta de mi lado",
+    "persona": -1,
+    "valor": "impacto_vehiculo_vehiculo",
+    "vehiculo": -1
+   },
+   {
+    "campo": "vehiculo.zona_impacto",
+    "cita": "me pego en la puerta de mi lado",
+    "persona": -1,
+    "valor": "L",
+    "vehiculo": 0
+   },
+   {
+    "campo": "evidencias.marcas_m",
+    "cita": "dejo como 6 metros de marcas",
+    "persona": -1,
+    "valor": "6",
+    "vehiculo": -1
+   },
+   {
+    "campo": "persona.cinturon",
+    "cita": "yo traia el cinturon",
+    "persona": 0,
+    "valor": "true",
+    "vehiculo": -1
+   }
+  ],
+  "personas": [
+   {
+    "cita": "en mi chevy",
+    "rol": "conductor",
+    "vehiculo": 0
+   }
+  ],
+  "preguntas": [
+   "¿La urban era un microbús, un autobús u otro tipo de vehículo de pasajeros?",
+   "¿El carro se volcó o solo se deslizó de lado después del golpe?",
+   "¿A qué velocidad iba cada vehículo al momento del golpe?"
+  ],
+  "vehiculos": [
+   {
+    "narrador": true
+   },
+   {
+    "narrador": false
+   }
+  ]
+ },
+ "texto_sha256": "60f33d88bd7f5f294091932acc7e4dcd209f6fac559689d674970e657b27f10b",
+ "usage": {
+  "cache_creation_input_tokens": 0,
+  "cache_read_input_tokens": 6881,
+  "input_tokens": 127,
+  "output_tokens": 2777
+ }
+}

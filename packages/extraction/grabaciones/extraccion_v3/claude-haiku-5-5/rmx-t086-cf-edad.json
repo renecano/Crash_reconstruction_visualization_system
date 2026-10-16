@@ -1,0 +1,91 @@
+{
+ "costo_estimado_con": "claude-haiku-5-5",
+ "costo_usd": 0.00095771,
+ "esfuerzo": "medium",
+ "grabado": "2026-10-16T15:18:25+00:00",
+ "huella_prompt": "86f6a54999b8cbf7",
+ "latencia_ms": 7402.7,
+ "modelo": "claude-haiku-5-5",
+ "modelo_respuesta": "claude-haiku-5-5",
+ "prompt": "extraccion_v3",
+ "request_id": "req_011Cg693KbJVC3d5e8Lk4Gng",
+ "salida": {
+  "dispositivos": [],
+  "hechos": [
+   {
+    "campo": "evento.tipo",
+    "cita": "le di por detrás",
+    "persona": -1,
+    "valor": "impacto_vehiculo_vehiculo",
+    "vehiculo": -1
+   },
+   {
+    "campo": "vehiculo.clase",
+    "cita": "Vento",
+    "persona": -1,
+    "valor": "sedan_compacto",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.clase",
+    "cita": "Chevy",
+    "persona": -1,
+    "valor": "hatchback",
+    "vehiculo": 1
+   },
+   {
+    "campo": "vehiculo.zona_impacto",
+    "cita": "le di por detrás",
+    "persona": -1,
+    "valor": "F",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.zona_impacto",
+    "cita": "le di por detrás",
+    "persona": -1,
+    "valor": "B",
+    "vehiculo": 1
+   },
+   {
+    "campo": "vehiculo.frenado",
+    "cita": "se frenó en seco",
+    "persona": -1,
+    "valor": "true",
+    "vehiculo": 1
+   }
+  ],
+  "personas": [
+   {
+    "cita": "yo iba despacio en mi Vento",
+    "rol": "conductor",
+    "vehiculo": 0
+   },
+   {
+    "cita": "un señor ya grande en un Chevy",
+    "rol": "conductor",
+    "vehiculo": 1
+   }
+  ],
+  "preguntas": [
+   "¿Por qué se detuvo en seco el otro vehículo?",
+   "¿Quedaron marcas de frenado o de otro tipo en el pavimento?",
+   "¿A qué velocidad aproximada circulaban ambos vehículos al momento del golpe?"
+  ],
+  "vehiculos": [
+   {
+    "narrador": true
+   },
+   {
+    "narrador": false
+   }
+  ]
+ },
+ "texto_sha256": "e25b8b27e78f142a41178e625f35d437ade81749330630b4db6196af132ee398",
+ "usage": {
+  "cache_creation_input_tokens": 0,
+  "cache_read_input_tokens": 7131,
+  "input_tokens": 59,
+  "output_tokens": 1761
+ }
+}

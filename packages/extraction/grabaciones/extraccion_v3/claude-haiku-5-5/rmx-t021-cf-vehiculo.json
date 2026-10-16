@@ -1,0 +1,87 @@
+{
+ "costo_estimado_con": "claude-haiku-5-5",
+ "costo_usd": 0.00099801,
+ "esfuerzo": "medium",
+ "grabado": "2026-10-16T15:07:38+00:00",
+ "huella_prompt": "86f6a54999b8cbf7",
+ "latencia_ms": 7863.2,
+ "modelo": "claude-haiku-5-5",
+ "modelo_respuesta": "claude-haiku-5-5",
+ "prompt": "extraccion_v3",
+ "request_id": "req_011Cg68DeFseVqNRNLNwdHU6",
+ "salida": {
+  "dispositivos": [],
+  "hechos": [
+   {
+    "campo": "vehiculo.clase",
+    "cita": "ecosport",
+    "persona": -1,
+    "valor": "suv_compacta",
+    "vehiculo": 0
+   },
+   {
+    "campo": "lugar.tipo_via",
+    "cita": "en la curva antes de chiapa",
+    "persona": -1,
+    "valor": "curva",
+    "vehiculo": -1
+   },
+   {
+    "campo": "lugar.estado_superficie",
+    "cita": "mucha grava suelta",
+    "persona": -1,
+    "valor": "grava_suelta",
+    "vehiculo": -1
+   },
+   {
+    "campo": "entorno.iluminacion",
+    "cita": "en la noche",
+    "persona": -1,
+    "valor": "noche",
+    "vehiculo": -1
+   },
+   {
+    "campo": "evento.tipo",
+    "cita": "se nos fue de lado",
+    "persona": -1,
+    "valor": "derrape",
+    "vehiculo": -1
+   },
+   {
+    "campo": "vehiculo.velocidad_kmh",
+    "cita": "el dice q iba como a 70",
+    "persona": -1,
+    "valor": "70",
+    "vehiculo": 0
+   }
+  ],
+  "personas": [
+   {
+    "cita": "mi esposo manejaba la ecosport",
+    "rol": "conductor",
+    "vehiculo": 0
+   },
+   {
+    "cita": "veniamos",
+    "rol": "pasajero",
+    "vehiculo": 0
+   }
+  ],
+  "preguntas": [
+   "¿A qué velocidad iba el vehículo al perder el control, según la estimación de quien iba de pasajera?",
+   "¿Quedaron marcas de derrape o de frenado en el pavimento antes de salirse del camino?"
+  ],
+  "vehiculos": [
+   {
+    "narrador": false
+   }
+  ]
+ },
+ "texto_sha256": "0d2ce7a1da2a54c356f9c96adb767056486d017bbd8b039d2749b47827c2e5ea",
+ "usage": {
+  "cache_creation_input_tokens": 0,
+  "cache_read_input_tokens": 7131,
+  "input_tokens": 137,
+  "output_tokens": 1826
+ }
+}

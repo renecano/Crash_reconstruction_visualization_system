@@ -1,0 +1,110 @@
+{
+ "costo_estimado_con": "claude-sonnet-5-5",
+ "costo_usd": 0.0084962,
+ "esfuerzo": "medium",
+ "grabado": "2026-10-16T14:09:19+00:00",
+ "huella_prompt": "86f6a54999b8cbf7",
+ "latencia_ms": 6622.2,
+ "modelo": "claude-sonnet-5-5",
+ "modelo_respuesta": "claude-sonnet-5-5",
+ "prompt": "extraccion_v3",
+ "request_id": "req_011Cg63moFQvfPNZJvihvxup",
+ "salida": {
+  "dispositivos": [],
+  "hechos": [
+   {
+    "campo": "vehiculo.clase",
+    "cita": "moto",
+    "persona": -1,
+    "valor": "motocicleta",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.clase",
+    "cita": "Spark",
+    "persona": -1,
+    "valor": "hatchback",
+    "vehiculo": 1
+   },
+   {
+    "campo": "vehiculo.maniobra",
+    "cita": "su carro estacionado",
+    "persona": -1,
+    "valor": "estacionado",
+    "vehiculo": 1
+   },
+   {
+    "campo": "vehiculo.velocidad_kmh",
+    "cita": "Iban como a treinta",
+    "persona": -1,
+    "valor": "30",
+    "vehiculo": 0
+   },
+   {
+    "campo": "entorno.iluminacion",
+    "cita": "ya noche",
+    "persona": -1,
+    "valor": "noche",
+    "vehiculo": -1
+   },
+   {
+    "campo": "evento.tipo",
+    "cita": "le dieron con la puerta",
+    "persona": -1,
+    "valor": "impacto_vehiculo_vehiculo",
+    "vehiculo": -1
+   },
+   {
+    "campo": "persona.casco",
+    "cita": "El amigo no traía casco",
+    "persona": 1,
+    "valor": "false",
+    "vehiculo": -1
+   },
+   {
+    "campo": "persona.casco",
+    "cita": "mi primo sí",
+    "persona": 0,
+    "valor": "true",
+    "vehiculo": -1
+   }
+  ],
+  "personas": [
+   {
+    "cita": "Mi primo iba de pasajero en la moto de un amigo",
+    "rol": "pasajero",
+    "vehiculo": 0
+   },
+   {
+    "cita": "la moto de un amigo",
+    "rol": "conductor",
+    "vehiculo": 0
+   },
+   {
+    "cita": "una muchacha en un Spark",
+    "rol": "conductor",
+    "vehiculo": 1
+   }
+  ],
+  "preguntas": [
+   "¿La puerta abierta golpeó a la moto de frente o por un costado?",
+   "¿La moto circulaba cerca de los autos estacionados o por el centro del carril?",
+   "¿Cuántos carriles tiene la avenida Madero en ese tramo?"
+  ],
+  "vehiculos": [
+   {
+    "narrador": false
+   },
+   {
+    "narrador": false
+   }
+  ]
+ },
+ "texto_sha256": "e06a8d43b3aba58c0852d893b970bab7e67c3098272944c766380d24e6757d56",
+ "usage": {
+  "cache_creation_input_tokens": 0,
+  "cache_read_input_tokens": 7131,
+  "input_tokens": 170,
+  "output_tokens": 673
+ }
+}

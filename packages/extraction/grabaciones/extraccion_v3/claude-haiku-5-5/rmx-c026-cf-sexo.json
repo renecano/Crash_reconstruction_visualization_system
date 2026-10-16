@@ -1,0 +1,77 @@
+{
+ "costo_estimado_con": "claude-haiku-5-5",
+ "costo_usd": 0.00119261,
+ "esfuerzo": "medium",
+ "grabado": "2026-10-16T04:24:57+00:00",
+ "huella_prompt": "86f6a54999b8cbf7",
+ "latencia_ms": 10067.7,
+ "modelo": "claude-haiku-5-5",
+ "modelo_respuesta": "claude-haiku-5-5",
+ "prompt": "extraccion_v3",
+ "request_id": "req_011Cg5HCvmZEa8U2UZpYxc6T",
+ "salida": {
+  "dispositivos": [],
+  "hechos": [
+   {
+    "campo": "vehiculo.clase",
+    "cita": "SUV grande Trailblazer",
+    "persona": -1,
+    "valor": "suv_grande",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.maniobra",
+    "cita": "derecho por la calle Hidalgo",
+    "persona": -1,
+    "valor": "recto",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.clase",
+    "cita": "iva en su bici",
+    "persona": -1,
+    "valor": "bicicleta",
+    "vehiculo": 1
+   },
+   {
+    "campo": "evento.tipo",
+    "cita": "Le pege con el frente",
+    "persona": -1,
+    "valor": "impacto_vehiculo_vehiculo",
+    "vehiculo": -1
+   }
+  ],
+  "personas": [
+   {
+    "cita": "Yo iva manejando mi SUV grande Trailblazer",
+    "rol": "conductor",
+    "vehiculo": 0
+   },
+   {
+    "cita": "una muchacha que iva en su bici",
+    "rol": "ciclista",
+    "vehiculo": 1
+   }
+  ],
+  "preguntas": [
+   "¿A qué velocidad iba al momento del impacto?",
+   "¿La ciclista iba en el mismo sentido que usted o de frente?",
+   "¿Hubo frenado o marcas en el pavimento antes del golpe?"
+  ],
+  "vehiculos": [
+   {
+    "narrador": true
+   },
+   {
+    "narrador": false
+   }
+  ]
+ },
+ "texto_sha256": "21d08778b32fc025865b627fb028d3ac05a729d26db01983bf81afc7522a573f",
+ "usage": {
+  "cache_creation_input_tokens": 0,
+  "cache_read_input_tokens": 7131,
+  "input_tokens": 188,
+  "output_tokens": 2205
+ }
+}

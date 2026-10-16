@@ -1,0 +1,90 @@
+{
+ "costo_estimado_con": "claude-sonnet-5-5",
+ "costo_usd": 0.0070442,
+ "esfuerzo": "medium",
+ "grabado": "2026-10-16T14:20:21+00:00",
+ "huella_prompt": "86f6a54999b8cbf7",
+ "latencia_ms": 3522.7,
+ "modelo": "claude-sonnet-5-5",
+ "modelo_respuesta": "claude-sonnet-5-5",
+ "prompt": "extraccion_v3",
+ "request_id": "req_011Cg64csyYYaGrGGn2EXrqa",
+ "salida": {
+  "dispositivos": [],
+  "hechos": [
+   {
+    "campo": "entorno.iluminacion",
+    "cita": "en la noche",
+    "persona": -1,
+    "valor": "noche",
+    "vehiculo": -1
+   },
+   {
+    "campo": "entorno.clima",
+    "cita": "mucha neblina",
+    "persona": -1,
+    "valor": "niebla",
+    "vehiculo": -1
+   },
+   {
+    "campo": "lugar.tipo_via",
+    "cita": "en una curva",
+    "persona": -1,
+    "valor": "curva",
+    "vehiculo": -1
+   },
+   {
+    "campo": "vehiculo.velocidad_kmh",
+    "cita": "iva como a 60",
+    "persona": -1,
+    "valor": "60",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.frenado",
+    "cita": "freno",
+    "persona": -1,
+    "valor": "true",
+    "vehiculo": 0
+   },
+   {
+    "campo": "lugar.estado_superficie",
+    "cita": "el piso estaba bien mojado",
+    "persona": -1,
+    "valor": "mojado",
+    "vehiculo": -1
+   },
+   {
+    "campo": "vehiculo.clase",
+    "cita": "la camioneta",
+    "persona": -1,
+    "valor": "suv_o_pickup",
+    "vehiculo": 0
+   }
+  ],
+  "personas": [
+   {
+    "cita": "mi tio el mas grande, de 68 iva manejando",
+    "rol": "conductor",
+    "vehiculo": 0
+   }
+  ],
+  "preguntas": [
+   "¿La camioneta era tipo SUV, pickup o van?",
+   "¿Qué tan lejos de la orilla del camino quedó la camioneta?",
+   "¿Había marcas de frenado en el piso antes de que saliera del camino?"
+  ],
+  "vehiculos": [
+   {
+    "narrador": false
+   }
+  ]
+ },
+ "texto_sha256": "2aa43c2cd0996d4efbd7532768d04c7fd562a56f516142392d5e1bea78a7f13e",
+ "usage": {
+  "cache_creation_input_tokens": 0,
+  "cache_read_input_tokens": 7131,
+  "input_tokens": 134,
+  "output_tokens": 535
+ }
+}

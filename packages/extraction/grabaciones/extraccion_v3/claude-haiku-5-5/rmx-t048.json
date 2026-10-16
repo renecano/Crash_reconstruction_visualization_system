@@ -1,0 +1,80 @@
+{
+ "costo_estimado_con": "claude-haiku-5-5",
+ "costo_usd": 0.00113601,
+ "esfuerzo": "medium",
+ "grabado": "2026-10-16T14:43:51+00:00",
+ "huella_prompt": "86f6a54999b8cbf7",
+ "latencia_ms": 9037.0,
+ "modelo": "claude-haiku-5-5",
+ "modelo_respuesta": "claude-haiku-5-5",
+ "prompt": "extraccion_v3",
+ "request_id": "req_011Cg66QPEoLbJo6t6eUWSNn",
+ "salida": {
+  "dispositivos": [],
+  "hechos": [
+   {
+    "campo": "vehiculo.clase",
+    "cita": "camioneta pickup",
+    "persona": -1,
+    "valor": "pickup",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.velocidad_kmh",
+    "cita": "Mi velocidad aproximada era de 90 km/h",
+    "persona": -1,
+    "valor": "90",
+    "vehiculo": 0
+   },
+   {
+    "campo": "evento.tipo",
+    "cita": "volcó sobre su costado derecho",
+    "persona": -1,
+    "valor": "volcadura",
+    "vehiculo": -1
+   },
+   {
+    "campo": "entorno.clima",
+    "cita": "El clima era despejado",
+    "persona": -1,
+    "valor": "despejado",
+    "vehiculo": -1
+   },
+   {
+    "campo": "persona.cinturon",
+    "cita": "con el cinturón abrochado",
+    "persona": 1,
+    "valor": "true",
+    "vehiculo": -1
+   }
+  ],
+  "personas": [
+   {
+    "cita": "perdí el control del vehículo",
+    "rol": "conductor",
+    "vehiculo": 0
+   },
+   {
+    "cita": "acompañado de mi hijo de 17 años",
+    "rol": "pasajero",
+    "vehiculo": 0
+   }
+  ],
+  "preguntas": [
+   "¿Hubo otros vehículos involucrados en el percance?",
+   "¿Cómo era la superficie del acotamiento por donde salió el vehículo?"
+  ],
+  "vehiculos": [
+   {
+    "narrador": true
+   }
+  ]
+ },
+ "texto_sha256": "82705a55309fea5b672f9496a7d9d3ed90aa9c09a3da75700002277b03a26c0d",
+ "usage": {
+  "cache_creation_input_tokens": 0,
+  "cache_read_input_tokens": 7131,
+  "input_tokens": 232,
+  "output_tokens": 2083
+ }
+}

@@ -1,0 +1,88 @@
+{
+ "costo_estimado_con": "claude-sonnet-5-5",
+ "costo_usd": 0.0071002,
+ "esfuerzo": "medium",
+ "grabado": "2026-10-16T13:09:45+00:00",
+ "huella_prompt": "86f6a54999b8cbf7",
+ "latencia_ms": 3345.8,
+ "modelo": "claude-sonnet-5-5",
+ "modelo_respuesta": "claude-sonnet-5-5",
+ "prompt": "extraccion_v3",
+ "request_id": "req_011Cg5yEdvFUSkcUFUVxZG9V",
+ "salida": {
+  "dispositivos": [],
+  "hechos": [
+   {
+    "campo": "vehiculo.clase",
+    "cita": "una SUV grande",
+    "persona": -1,
+    "valor": "suv_grande",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.maniobra",
+    "cita": "avanzando derecho",
+    "persona": -1,
+    "valor": "recto",
+    "vehiculo": 0
+   },
+   {
+    "campo": "lugar.superficie",
+    "cita": "La superficie era de asfalto",
+    "persona": -1,
+    "valor": "asfalto",
+    "vehiculo": -1
+   },
+   {
+    "campo": "lugar.estado_superficie",
+    "cita": "el piso estaba seco",
+    "persona": -1,
+    "valor": "seco",
+    "vehiculo": -1
+   },
+   {
+    "campo": "evento.tipo",
+    "cita": "lo golpeé con el frente de mi Bronco",
+    "persona": -1,
+    "valor": "impacto_vehiculo_persona",
+    "vehiculo": -1
+   },
+   {
+    "campo": "vehiculo.zona_impacto",
+    "cita": "con el frente de mi Bronco",
+    "persona": -1,
+    "valor": "F",
+    "vehiculo": 0
+   }
+  ],
+  "personas": [
+   {
+    "cita": "circulaba en mi Bronco",
+    "rol": "conductor",
+    "vehiculo": 0
+   },
+   {
+    "cita": "un señor que cruzaba a pie",
+    "rol": "peaton",
+    "vehiculo": -1
+   }
+  ],
+  "preguntas": [
+   "¿A qué velocidad aproximada circulaba usted?",
+   "¿Frenó o realizó alguna maniobra antes del golpe?",
+   "¿Era de día o de noche?"
+  ],
+  "vehiculos": [
+   {
+    "narrador": true
+   }
+  ]
+ },
+ "texto_sha256": "cc4be20a0edb1dfbf229b789808caf55571ee0e84eac21d3ea64e1e0f2d20c82",
+ "usage": {
+  "cache_creation_input_tokens": 0,
+  "cache_read_input_tokens": 7131,
+  "input_tokens": 217,
+  "output_tokens": 524
+ }
+}

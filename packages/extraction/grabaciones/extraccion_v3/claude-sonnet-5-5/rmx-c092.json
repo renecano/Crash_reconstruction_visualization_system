@@ -1,0 +1,98 @@
+{
+ "costo_estimado_con": "claude-sonnet-5-5",
+ "costo_usd": 0.0079322,
+ "esfuerzo": "medium",
+ "grabado": "2026-10-16T03:51:25+00:00",
+ "huella_prompt": "86f6a54999b8cbf7",
+ "latencia_ms": 3744.1,
+ "modelo": "claude-sonnet-5-5",
+ "modelo_respuesta": "claude-sonnet-5-5",
+ "prompt": "extraccion_v3",
+ "request_id": "req_011Cg5Ef7ufFmQpj8Qiz1u7r",
+ "salida": {
+  "dispositivos": [],
+  "hechos": [
+   {
+    "campo": "vehiculo.clase",
+    "cita": "Grand Cherokee, una SUV grande",
+    "persona": -1,
+    "valor": "suv_grande",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.clase",
+    "cita": "bici",
+    "persona": -1,
+    "valor": "bicicleta",
+    "vehiculo": 1
+   },
+   {
+    "campo": "evento.tipo",
+    "cita": "Le pegué a su bici con el frente de mi Grand Cherokee",
+    "persona": -1,
+    "valor": "impacto_vehiculo_vehiculo",
+    "vehiculo": -1
+   },
+   {
+    "campo": "vehiculo.zona_impacto",
+    "cita": "con el frente de mi Grand Cherokee",
+    "persona": -1,
+    "valor": "F",
+    "vehiculo": 0
+   },
+   {
+    "campo": "entorno.iluminacion",
+    "cita": "Era de día",
+    "persona": -1,
+    "valor": "dia",
+    "vehiculo": -1
+   },
+   {
+    "campo": "lugar.estado_superficie",
+    "cita": "el piso estaba seco",
+    "persona": -1,
+    "valor": "seco",
+    "vehiculo": -1
+   },
+   {
+    "campo": "vehiculo.frenado",
+    "cita": "ya ni tiempo de frenar",
+    "persona": -1,
+    "valor": "false",
+    "vehiculo": 0
+   }
+  ],
+  "personas": [
+   {
+    "cita": "Le pegué a su bici",
+    "rol": "conductor",
+    "vehiculo": 0
+   },
+   {
+    "cita": "Había un niño que iba en bici",
+    "rol": "ciclista",
+    "vehiculo": 1
+   }
+  ],
+  "preguntas": [
+   "¿En qué tipo de calle o cruce ocurrió el choque?",
+   "¿Hacia qué lado de la calle o en qué dirección iba el niño en la bici?",
+   "¿A qué velocidad aproximada iba usted?"
+  ],
+  "vehiculos": [
+   {
+    "narrador": true
+   },
+   {
+    "narrador": false
+   }
+  ]
+ },
+ "texto_sha256": "a0111ead0612d470efc5bd34ce16cbb324d14ae4a33c45dd85a8e0d9f2466b7e",
+ "usage": {
+  "cache_creation_input_tokens": 0,
+  "cache_read_input_tokens": 7131,
+  "input_tokens": 173,
+  "output_tokens": 616
+ }
+}

@@ -1,0 +1,76 @@
+{
+ "costo_estimado_con": "claude-haiku-5-5",
+ "costo_usd": 0.00095341,
+ "esfuerzo": "medium",
+ "grabado": "2026-10-16T15:50:29+00:00",
+ "huella_prompt": "86f6a54999b8cbf7",
+ "latencia_ms": 7800.0,
+ "modelo": "claude-haiku-5-5",
+ "modelo_respuesta": "claude-haiku-5-5",
+ "prompt": "extraccion_v3",
+ "request_id": "req_011Cg6BV9wLGC663R35cZirx",
+ "salida": {
+  "dispositivos": [],
+  "hechos": [
+   {
+    "campo": "vehiculo.clase",
+    "cita": "vocho",
+    "persona": -1,
+    "valor": "sedan_compacto",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.maniobra",
+    "cita": "se fue derecho",
+    "persona": -1,
+    "valor": "recto",
+    "vehiculo": 0
+   },
+   {
+    "campo": "evento.tipo",
+    "cita": "se estampo contra un poste de luz",
+    "persona": -1,
+    "valor": "impacto_vehiculo_objeto",
+    "vehiculo": -1
+   },
+   {
+    "campo": "evento.objeto",
+    "cita": "un poste de luz",
+    "persona": -1,
+    "valor": "poste",
+    "vehiculo": -1
+   },
+   {
+    "campo": "vehiculo.zona_impacto",
+    "cita": "se estampo contra un poste de luz",
+    "persona": -1,
+    "valor": "F",
+    "vehiculo": 0
+   }
+  ],
+  "personas": [
+   {
+    "cita": "iba manejando su vocho",
+    "rol": "conductor",
+    "vehiculo": 0
+   }
+  ],
+  "preguntas": [
+   "¿Qué velocidad llevaba el vehículo al bajar la pendiente?",
+   "¿Quedaron marcas de frenado o de derrape en el pavimento antes del poste?",
+   "¿Estaba lloviendo en el momento del percance o solo había llovido antes?"
+  ],
+  "vehiculos": [
+   {
+    "narrador": false
+   }
+  ]
+ },
+ "texto_sha256": "6e9105b5beb2a19e8cd723963b5d997192721adc243e204588930dafeaa096c2",
+ "usage": {
+  "cache_creation_input_tokens": 0,
+  "cache_read_input_tokens": 7131,
+  "input_tokens": 131,
+  "output_tokens": 1738
+ }
+}

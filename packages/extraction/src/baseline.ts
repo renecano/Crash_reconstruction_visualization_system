@@ -67,6 +67,47 @@ const MARKS2 = new PyRe(
     NUM +
     String.raw`\s*(?:metros|mts|m)\b`,
 );
+// Fase de las marcas (ADR 0019), en orden de prioridad: lo explícito antes que lo deducido. Se
+// busca en la oración de las marcas y en la anterior.
+const MARKS_PHASE: ReadonlyArray<readonly [string, PyRe]> = [
+  [
+    "despues_impacto",
+    new PyRe(
+      String.raw`(?<![a-z])(?:despues|luego|tras)\s+(?:de\s+)?(?:del?|el|la|que)\s+(?:golpe|choque|impacto|madrazo|trancazo|colision|percance|accidente|encontronazo)`,
+    ),
+  ],
+  [
+    "despues_impacto",
+    new PyRe(
+      String.raw`(?<![a-z])posterior(?:es)?\s+al\s+(?:golpe|choque|impacto|madrazo|trancazo|colision|percance|accidente|encontronazo)`,
+    ),
+  ],
+  [
+    "antes_impacto",
+    new PyRe(
+      String.raw`(?<![a-z])(?:antes|previ[ao]s?)\s+(?:del?|al)\s+(?:golpe|choque|impacto|madrazo|trancazo|colision|percance|accidente|encontronazo)`,
+    ),
+  ],
+  [
+    "antes_impacto",
+    new PyRe(
+      String.raw`(?<![a-z])antes\s+de\s+(?:pegar|chocar|impactar|alcanzar|llegar|estrellar)`,
+    ),
+  ],
+  [
+    "despues_impacto",
+    new PyRe(
+      String.raw`(?<![a-z])(?:con|por)\s+el\s+(?:golpe|choque|impacto|madrazo|trancazo|colision|percance|accidente|encontronazo)`,
+    ),
+  ],
+  ["despues_impacto", new PyRe(String.raw`(?<![a-z])arrastr(?:o|ando|ada|ado|e|aron)(?![a-z])`)],
+  [
+    "antes_impacto",
+    new PyRe(
+      String.raw`(?<![a-z])(?:frene|freno|frenamos|frenaron|frenando|frenado|meti el freno|pise el freno)(?![a-z])`,
+    ),
+  ],
+];
 const THROW = new PyRe(
   String.raw`(?:cayo|quedo|salio volando|lo avento|la avento|lo aventaron|la aventaron|lo lanzo|la lanzo|termino|fue a dar)\s+(?:tirad[oa]\s+)?(?:como\s+|unos\s+)?(?:a\s+)?(?:unos\s+|como\s+)?` +
     NUM +
@@ -588,7 +629,11 @@ export function extractFacts(text: string): Facts {
 
   // Distancias.
   let m = MARKS.search(folded) ?? MARKS2.search(folded);
-  if (m) f.escalares.set("evidencias.marcas_m", fact(num(m.group(1)!), slice(m), "relato"));
+  if (m) {
+    f.escalares.set("evidencias.marcas_m", fact(num(m.group(1)!), slice(m), "relato"));
+    const fase = marksPhase(text, folded, m.start(), m.end());
+    if (fase !== null) f.escalares.set("evidencias.marcas_fase", fase);
+  }
   m = THROW.search(folded);
   if (m) {
     f.escalares.set(
@@ -739,6 +784,21 @@ const WITH_ART = new PyRe(String.raw`(?<![a-z])con\s+(?:la|el|las|los)\s+$`);
 const I_HIT = new PyRe(
   String.raw`(?<![a-z])(?:le di|le pegue|pegue|me fui|me estrelle|choque|me lo lleve|me la lleve)(?![a-z])`,
 );
+
+/** Fase de las marcas en su oración y la anterior; null si el relato no la dice. */
+function marksPhase(text: string, folded: string, start: number, end: number): Fact | null {
+  const stops = [".", ";", "!", "?", "\n"];
+  const cut = Math.max(...stops.map((c) => rfindBefore(folded, c, start)));
+  const lo = cut >= 0 ? Math.max(...stops.map((c) => rfindBefore(folded, c, cut))) + 1 : 0;
+  const ends = stops.map((c) => folded.indexOf(c, end)).filter((k) => k >= 0);
+  const hi = ends.length > 0 ? Math.min(...ends) : folded.length;
+  const window = folded.slice(lo, hi);
+  for (const [fase, pat] of MARKS_PHASE) {
+    const m = pat.search(window);
+    if (m) return fact(fase, text.slice(lo + m.start(), lo + m.end()), "relato");
+  }
+  return null;
+}
 
 function zones(text: string, folded: string, f: Facts): void {
   if (f.vehiculos.length === 0) return;

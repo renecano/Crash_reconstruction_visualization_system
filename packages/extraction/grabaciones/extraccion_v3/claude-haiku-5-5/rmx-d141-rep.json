@@ -1,0 +1,98 @@
+{
+ "costo_estimado_con": "claude-haiku-5-5",
+ "costo_usd": 0.00099241,
+ "esfuerzo": "medium",
+ "grabado": "2026-10-16T03:18:44+00:00",
+ "huella_prompt": "86f6a54999b8cbf7",
+ "latencia_ms": 8855.6,
+ "modelo": "claude-haiku-5-5",
+ "modelo_respuesta": "claude-haiku-5-5",
+ "prompt": "extraccion_v3",
+ "request_id": "req_011Cg5CAAjnaGDzoYYBdouoy",
+ "salida": {
+  "dispositivos": [
+   {
+    "cita": "paso peatonal",
+    "tipo": "paso_peatonal"
+   },
+   {
+    "cita": "semáforo peatonal en verde",
+    "tipo": "semaforo"
+   }
+  ],
+  "hechos": [
+   {
+    "campo": "vehiculo.clase",
+    "cita": "automóvil compacto",
+    "persona": -1,
+    "valor": "sedan_compacto",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.color",
+    "cita": "de color gris",
+    "persona": -1,
+    "valor": "gris",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.maniobra",
+    "cita": "dio vuelta a la izquierda",
+    "persona": -1,
+    "valor": "vuelta_izquierda",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.zona_impacto",
+    "cita": "con la parte frontal",
+    "persona": -1,
+    "valor": "F",
+    "vehiculo": 0
+   },
+   {
+    "campo": "evento.tipo",
+    "cita": "atropelló a dicho señor",
+    "persona": -1,
+    "valor": "impacto_vehiculo_persona",
+    "vehiculo": -1
+   },
+   {
+    "campo": "lugar.tipo_via",
+    "cita": "esquina de la calle Victoria y la calle Allende",
+    "persona": -1,
+    "valor": "interseccion",
+    "vehiculo": -1
+   },
+   {
+    "campo": "evidencias.distancia_proyeccion_m",
+    "cita": "cayó a aproximadamente un metro del vehículo",
+    "persona": -1,
+    "valor": "1",
+    "vehiculo": -1
+   }
+  ],
+  "personas": [
+   {
+    "cita": "un hombre de edad avanzada",
+    "rol": "peaton",
+    "vehiculo": -1
+   }
+  ],
+  "preguntas": [
+   "¿A qué velocidad circulaba el automóvil al dar vuelta a la izquierda?",
+   "¿El semáforo para vehículos en Allende estaba en verde, rojo o no se observó?"
+  ],
+  "vehiculos": [
+   {
+    "narrador": false
+   }
+  ]
+ },
+ "texto_sha256": "ebea4a6b90d9a79e9cb5ed9f3f4ab285d0a50c83dcf1a10337118d3c73eb6b01",
+ "usage": {
+  "cache_creation_input_tokens": 0,
+  "cache_read_input_tokens": 7131,
+  "input_tokens": 216,
+  "output_tokens": 1799
+ }
+}

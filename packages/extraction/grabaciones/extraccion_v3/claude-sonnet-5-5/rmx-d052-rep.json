@@ -1,0 +1,76 @@
+{
+ "costo_estimado_con": "claude-sonnet-5-5",
+ "costo_usd": 0.0062222,
+ "esfuerzo": "medium",
+ "grabado": "2026-10-16T02:42:57+00:00",
+ "huella_prompt": "86f6a54999b8cbf7",
+ "latencia_ms": 3195.8,
+ "modelo": "claude-sonnet-5-5",
+ "modelo_respuesta": "claude-sonnet-5-5",
+ "prompt": "extraccion_v3",
+ "request_id": "req_011Cg59SJt1gfcLbbZq4u35J",
+ "salida": {
+  "dispositivos": [],
+  "hechos": [
+   {
+    "campo": "vehiculo.clase",
+    "cita": "microbús",
+    "persona": -1,
+    "valor": "microbus_combi",
+    "vehiculo": 0
+   },
+   {
+    "campo": "evento.tipo",
+    "cita": "se proyectó contra el parabús",
+    "persona": -1,
+    "valor": "impacto_vehiculo_objeto",
+    "vehiculo": -1
+   },
+   {
+    "campo": "evento.objeto",
+    "cita": "parabús",
+    "persona": -1,
+    "valor": "parada_autobus",
+    "vehiculo": -1
+   },
+   {
+    "campo": "vehiculo.velocidad_kmh",
+    "cita": "35 km/h",
+    "persona": -1,
+    "valor": "35",
+    "vehiculo": 0
+   },
+   {
+    "campo": "entorno.clima",
+    "cita": "cielo despejado",
+    "persona": -1,
+    "valor": "despejado",
+    "vehiculo": -1
+   }
+  ],
+  "personas": [
+   {
+    "cita": "El conductor del microbús de transporte público",
+    "rol": "conductor",
+    "vehiculo": 0
+   }
+  ],
+  "preguntas": [
+   "¿El golpe contra el parabús fue con el frente o con un costado del microbús?",
+   "¿Quedaron marcas de llanta en el pavimento antes del parabús y de qué largo?",
+   "¿La avenida tenía uno o más carriles por sentido?"
+  ],
+  "vehiculos": [
+   {
+    "narrador": false
+   }
+  ]
+ },
+ "texto_sha256": "de0db511e12c77f281689c59ae98dca1c42a89d73ee9c6df0c760b6c14445e29",
+ "usage": {
+  "cache_creation_input_tokens": 0,
+  "cache_read_input_tokens": 7131,
+  "input_tokens": 188,
+  "output_tokens": 442
+ }
+}

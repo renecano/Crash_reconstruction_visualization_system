@@ -1,0 +1,103 @@
+{
+ "costo_estimado_con": "claude-haiku-5-5",
+ "costo_usd": 0.00102971,
+ "esfuerzo": "medium",
+ "grabado": "2026-10-16T16:07:16+00:00",
+ "huella_prompt": "86f6a54999b8cbf7",
+ "latencia_ms": 9179.0,
+ "modelo": "claude-haiku-5-5",
+ "modelo_respuesta": "claude-haiku-5-5",
+ "prompt": "extraccion_v3",
+ "request_id": "req_011Cg6CmG2kiKNnPUHkDhLm7",
+ "salida": {
+  "dispositivos": [
+   {
+    "cita": "por el paso de cebra",
+    "tipo": "paso_peatonal"
+   },
+   {
+    "cita": "con el semáforo peatonal en verde",
+    "tipo": "semaforo"
+   }
+  ],
+  "hechos": [
+   {
+    "campo": "vehiculo.clase",
+    "cita": "Aveo",
+    "persona": -1,
+    "valor": "sedan_compacto",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.color",
+    "cita": "Aveo rojo",
+    "persona": -1,
+    "valor": "rojo",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.maniobra",
+    "cita": "dio vuelta a la derecha",
+    "persona": -1,
+    "valor": "vuelta_derecha",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.zona_impacto",
+    "cita": "con el frente del carro",
+    "persona": -1,
+    "valor": "F",
+    "vehiculo": 0
+   },
+   {
+    "campo": "evento.tipo",
+    "cita": "me pegó en la cadera",
+    "persona": -1,
+    "valor": "impacto_vehiculo_persona",
+    "vehiculo": -1
+   },
+   {
+    "campo": "evidencias.distancia_proyeccion_m",
+    "cita": "Caí como a un metro",
+    "persona": -1,
+    "valor": "1",
+    "vehiculo": -1
+   },
+   {
+    "campo": "entorno.clima",
+    "cita": "Iba cruzando la calle",
+    "persona": -1,
+    "valor": "despejado",
+    "vehiculo": -1
+   }
+  ],
+  "personas": [
+   {
+    "cita": "Iba cruzando la calle",
+    "rol": "peaton",
+    "vehiculo": -1
+   },
+   {
+    "cita": "una señora en un Aveo rojo",
+    "rol": "conductor",
+    "vehiculo": 0
+   }
+  ],
+  "preguntas": [
+   "¿A qué velocidad iba el Aveo al dar vuelta a la derecha?",
+   "¿El semáforo para vehículos estaba en verde o en rojo al momento del cruce?"
+  ],
+  "vehiculos": [
+   {
+    "narrador": false
+   }
+  ]
+ },
+ "texto_sha256": "c6f904a0e1c9855aa80a94855ef4e2f08dc784b19b082ece6e60868ff4e45258",
+ "usage": {
+  "cache_creation_input_tokens": 0,
+  "cache_read_input_tokens": 7131,
+  "input_tokens": 154,
+  "output_tokens": 1886
+ }
+}

@@ -1,0 +1,82 @@
+{
+ "costo_estimado_con": "claude-haiku-5-5",
+ "costo_usd": 0.00086371,
+ "esfuerzo": "medium",
+ "grabado": "2026-10-16T00:31:43+00:00",
+ "huella_prompt": "86f6a54999b8cbf7",
+ "latencia_ms": 7002.9,
+ "modelo": "claude-haiku-5-5",
+ "modelo_respuesta": "claude-haiku-5-5",
+ "prompt": "extraccion_v3",
+ "request_id": "req_011Cg4yRbAs9azq9J57ARPr1",
+ "salida": {
+  "dispositivos": [],
+  "hechos": [
+   {
+    "campo": "vehiculo.clase",
+    "cita": "tractocamión",
+    "persona": -1,
+    "valor": "tractocamion",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.velocidad_kmh",
+    "cita": "a una velocidad aproximada de 85 km/h",
+    "persona": -1,
+    "valor": "85",
+    "vehiculo": 0
+   },
+   {
+    "campo": "lugar.tipo_via",
+    "cita": "en una curva hacia la izquierda",
+    "persona": -1,
+    "valor": "curva",
+    "vehiculo": -1
+   },
+   {
+    "campo": "lugar.estado_superficie",
+    "cita": "donde había grava suelta",
+    "persona": -1,
+    "valor": "grava_suelta",
+    "vehiculo": -1
+   },
+   {
+    "campo": "entorno.clima",
+    "cita": "El cielo estaba despejado.",
+    "persona": -1,
+    "valor": "despejado",
+    "vehiculo": -1
+   },
+   {
+    "campo": "evento.tipo",
+    "cita": "se volcó",
+    "persona": -1,
+    "valor": "volcadura",
+    "vehiculo": -1
+   }
+  ],
+  "personas": [
+   {
+    "cita": "conducía un tractocamión con caja seca",
+    "rol": "conductor",
+    "vehiculo": 0
+   }
+  ],
+  "preguntas": [
+   "¿El conductor aplicó el freno antes de que el semirremolque se desplazara hacia el acotamiento?",
+   "¿Quedaron marcas de llanta en el pavimento y, de ser así, de cuántos metros?"
+  ],
+  "vehiculos": [
+   {
+    "narrador": true
+   }
+  ]
+ },
+ "texto_sha256": "c4bd17fedae265e0b58203a93ff1ffb3c130b3188e5fa68823987d6d510eb9a5",
+ "usage": {
+  "cache_creation_input_tokens": 0,
+  "cache_read_input_tokens": 7131,
+  "input_tokens": 199,
+  "output_tokens": 1545
+ }
+}

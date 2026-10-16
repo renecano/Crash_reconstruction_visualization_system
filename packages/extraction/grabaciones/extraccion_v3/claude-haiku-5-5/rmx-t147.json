@@ -1,0 +1,66 @@
+{
+ "costo_estimado_con": "claude-haiku-5-5",
+ "costo_usd": 0.00110181,
+ "esfuerzo": "medium",
+ "grabado": "2026-10-16T15:01:28+00:00",
+ "huella_prompt": "86f6a54999b8cbf7",
+ "latencia_ms": 9721.2,
+ "modelo": "claude-haiku-5-5",
+ "modelo_respuesta": "claude-haiku-5-5",
+ "prompt": "extraccion_v3",
+ "request_id": "req_011Cg67kFdaVbYRkyRjEbkTH",
+ "salida": {
+  "dispositivos": [],
+  "hechos": [
+   {
+    "campo": "vehiculo.clase",
+    "cita": "Creta",
+    "persona": -1,
+    "valor": "suv_compacta",
+    "vehiculo": 0
+   },
+   {
+    "campo": "evento.tipo",
+    "cita": "Me alcanzó por atrás",
+    "persona": -1,
+    "valor": "impacto_vehiculo_vehiculo",
+    "vehiculo": -1
+   },
+   {
+    "campo": "vehiculo.zona_impacto",
+    "cita": "Me alcanzó por atrás",
+    "persona": -1,
+    "valor": "B",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.zona_impacto",
+    "cita": "Me alcanzó por atrás",
+    "persona": -1,
+    "valor": "F",
+    "vehiculo": 1
+   }
+  ],
+  "personas": [],
+  "preguntas": [
+   "¿Quién manejaba la Creta en el momento del golpe?",
+   "¿Qué tipo de tráiler era: tractocamión, camión unitario u otro?",
+   "¿A qué velocidad iba cada vehículo antes del impacto y estaba detenido o en movimiento?"
+  ],
+  "vehiculos": [
+   {
+    "narrador": false
+   },
+   {
+    "narrador": false
+   }
+  ]
+ },
+ "texto_sha256": "f40ffe455a3b2d9656fcf528172d401632825b62d44f2aa12a96198b571312eb",
+ "usage": {
+  "cache_creation_input_tokens": 0,
+  "cache_read_input_tokens": 7131,
+  "input_tokens": 55,
+  "output_tokens": 2050
+ }
+}

@@ -1,0 +1,71 @@
+{
+ "costo_estimado_con": "claude-haiku-5-5",
+ "costo_usd": 0.00101091,
+ "esfuerzo": "medium",
+ "grabado": "2026-10-16T15:16:24+00:00",
+ "huella_prompt": "86f6a54999b8cbf7",
+ "latencia_ms": 8200.6,
+ "modelo": "claude-haiku-5-5",
+ "modelo_respuesta": "claude-haiku-5-5",
+ "prompt": "extraccion_v3",
+ "request_id": "req_011Cg68tLtBxsRbBv3ztwqEq",
+ "salida": {
+  "dispositivos": [
+   {
+    "cita": "por la cebra",
+    "tipo": "paso_peatonal"
+   },
+   {
+    "cita": "con el siga para peatones",
+    "tipo": "semaforo"
+   }
+  ],
+  "hechos": [
+   {
+    "campo": "vehiculo.clase",
+    "cita": "una combi de pasajeros",
+    "persona": -1,
+    "valor": "microbus_combi",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.maniobra",
+    "cita": "dio vuelta a la derecha",
+    "persona": -1,
+    "valor": "vuelta_derecha",
+    "vehiculo": 0
+   },
+   {
+    "campo": "evento.tipo",
+    "cita": "Me dio con el espejo en el hombro",
+    "persona": -1,
+    "valor": "impacto_vehiculo_persona",
+    "vehiculo": -1
+   }
+  ],
+  "personas": [
+   {
+    "cita": "Iba cruzando la calzada Zaragoza",
+    "rol": "peaton",
+    "vehiculo": -1
+   }
+  ],
+  "preguntas": [
+   "¿A qué velocidad iba la combi al dar vuelta a la derecha?",
+   "¿Había alumbrado público en el cruce a esa hora de la mañana?",
+   "¿El siga para peatones estaba en verde cuando comenzó a cruzar?"
+  ],
+  "vehiculos": [
+   {
+    "narrador": false
+   }
+  ]
+ },
+ "texto_sha256": "76e600588075529d52e783692710d27139487b2bc1ad0b5320168b35dd037b96",
+ "usage": {
+  "cache_creation_input_tokens": 0,
+  "cache_read_input_tokens": 7131,
+  "input_tokens": 166,
+  "output_tokens": 1846
+ }
+}

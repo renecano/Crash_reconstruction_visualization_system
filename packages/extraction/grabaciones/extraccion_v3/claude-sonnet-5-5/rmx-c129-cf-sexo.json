@@ -1,0 +1,88 @@
+{
+ "costo_estimado_con": "claude-sonnet-5-5",
+ "costo_usd": 0.0073202,
+ "esfuerzo": "medium",
+ "grabado": "2026-10-16T04:01:02+00:00",
+ "huella_prompt": "86f6a54999b8cbf7",
+ "latencia_ms": 3336.8,
+ "modelo": "claude-sonnet-5-5",
+ "modelo_respuesta": "claude-sonnet-5-5",
+ "prompt": "extraccion_v3",
+ "request_id": "req_011Cg5FPghoAUtKCex4AAAYy",
+ "salida": {
+  "dispositivos": [],
+  "hechos": [
+   {
+    "campo": "vehiculo.clase",
+    "cita": "Altima",
+    "persona": -1,
+    "valor": "sedan_mediano",
+    "vehiculo": 0
+   },
+   {
+    "campo": "evento.tipo",
+    "cita": "La atropellé",
+    "persona": -1,
+    "valor": "impacto_vehiculo_persona",
+    "vehiculo": -1
+   },
+   {
+    "campo": "vehiculo.zona_impacto",
+    "cita": "con el frente de mi Altima",
+    "persona": -1,
+    "valor": "F",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.maniobra",
+    "cita": "yo iba derecho",
+    "persona": -1,
+    "valor": "recto",
+    "vehiculo": 0
+   },
+   {
+    "campo": "entorno.iluminacion",
+    "cita": "ya de noche, con el alumbrado prendido",
+    "persona": -1,
+    "valor": "noche_con_alumbrado",
+    "vehiculo": -1
+   },
+   {
+    "campo": "lugar.estado_superficie",
+    "cita": "El piso estaba seco",
+    "persona": -1,
+    "valor": "seco",
+    "vehiculo": -1
+   }
+  ],
+  "personas": [
+   {
+    "cita": "La atropellé con el frente de mi Altima",
+    "rol": "conductor",
+    "vehiculo": 0
+   },
+   {
+    "cita": "Una muchacha iba cruzando",
+    "rol": "peaton",
+    "vehiculo": -1
+   }
+  ],
+  "preguntas": [
+   "¿A qué velocidad aproximada iba usted al momento del golpe?",
+   "¿Frenó o intentó esquivar a la persona antes del impacto?",
+   "¿Había paso peatonal o semáforo en el lugar donde cruzaba?"
+  ],
+  "vehiculos": [
+   {
+    "narrador": true
+   }
+  ]
+ },
+ "texto_sha256": "c98cc6869684019a04cee36407641b8404b467e92f4e0d661e5f727c085decb8",
+ "usage": {
+  "cache_creation_input_tokens": 0,
+  "cache_read_input_tokens": 7131,
+  "input_tokens": 192,
+  "output_tokens": 551
+ }
+}

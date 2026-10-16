@@ -1,0 +1,119 @@
+{
+ "costo_estimado_con": "claude-sonnet-5-5",
+ "costo_usd": 0.0096482,
+ "esfuerzo": "medium",
+ "grabado": "2026-10-16T00:15:35+00:00",
+ "huella_prompt": "86f6a54999b8cbf7",
+ "latencia_ms": 4465.0,
+ "modelo": "claude-sonnet-5-5",
+ "modelo_respuesta": "claude-sonnet-5-5",
+ "prompt": "extraccion_v3",
+ "request_id": "req_011Cg4xCRh8Sy18Bw63zW8VD",
+ "salida": {
+  "dispositivos": [],
+  "hechos": [
+   {
+    "campo": "vehiculo.clase",
+    "cita": "motociclista",
+    "persona": -1,
+    "valor": "motocicleta",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.clase",
+    "cita": "Nissan March",
+    "persona": -1,
+    "valor": "hatchback",
+    "vehiculo": 1
+   },
+   {
+    "campo": "vehiculo.color",
+    "cita": "gris",
+    "persona": -1,
+    "valor": "gris",
+    "vehiculo": 1
+   },
+   {
+    "campo": "evento.tipo",
+    "cita": "fue impactado en su costado derecho por un automóvil",
+    "persona": -1,
+    "valor": "impacto_vehiculo_vehiculo",
+    "vehiculo": -1
+   },
+   {
+    "campo": "vehiculo.zona_impacto",
+    "cita": "impactado en su costado derecho",
+    "persona": -1,
+    "valor": "R",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.maniobra",
+    "cita": "circulaba con dirección al sur",
+    "persona": -1,
+    "valor": "recto",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.maniobra",
+    "cita": "salía de una gasolinera",
+    "persona": -1,
+    "valor": "incorporacion",
+    "vehiculo": 1
+   },
+   {
+    "campo": "evidencias.marcas_m",
+    "cita": "aproximadamente 11 metros a partir del punto de impacto",
+    "persona": -1,
+    "valor": "11",
+    "vehiculo": -1
+   },
+   {
+    "campo": "evidencias.marcas_fase",
+    "cita": "a partir del punto de impacto",
+    "persona": -1,
+    "valor": "despues_impacto",
+    "vehiculo": -1
+   },
+   {
+    "campo": "persona.casco",
+    "cita": "El motociclista portaba casco",
+    "persona": 0,
+    "valor": "true",
+    "vehiculo": -1
+   }
+  ],
+  "personas": [
+   {
+    "cita": "un motociclista que circulaba con dirección al sur",
+    "rol": "motociclista",
+    "vehiculo": 0
+   },
+   {
+    "cita": "El conductor del automóvil",
+    "rol": "conductor",
+    "vehiculo": 1
+   }
+  ],
+  "preguntas": [
+   "¿El motociclista circulaba por un carril o por el acotamiento?",
+   "¿A qué velocidad aproximada iba la motocicleta?",
+   "¿Cuántos carriles tiene la avenida por sentido?"
+  ],
+  "vehiculos": [
+   {
+    "narrador": false
+   },
+   {
+    "narrador": false
+   }
+  ]
+ },
+ "texto_sha256": "001fcb9ee5226dcbbea8f8d658429958cf8cf942eed874b504e2ad9c7ee6f11b",
+ "usage": {
+  "cache_creation_input_tokens": 0,
+  "cache_read_input_tokens": 7131,
+  "input_tokens": 236,
+  "output_tokens": 775
+ }
+}

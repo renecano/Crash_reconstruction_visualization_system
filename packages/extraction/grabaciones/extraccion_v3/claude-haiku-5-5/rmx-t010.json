@@ -1,0 +1,124 @@
+{
+ "costo_estimado_con": "claude-haiku-5-5",
+ "costo_usd": 0.00153911,
+ "esfuerzo": "medium",
+ "grabado": "2026-10-16T14:37:24+00:00",
+ "huella_prompt": "86f6a54999b8cbf7",
+ "latencia_ms": 12532.8,
+ "modelo": "claude-haiku-5-5",
+ "modelo_respuesta": "claude-haiku-5-5",
+ "prompt": "extraccion_v3",
+ "request_id": "req_011Cg65uaD3dZQ3s3sv9VSBg",
+ "salida": {
+  "dispositivos": [],
+  "hechos": [
+   {
+    "campo": "vehiculo.clase",
+    "cita": "moto",
+    "persona": -1,
+    "valor": "motocicleta",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.clase",
+    "cita": "camioneta blanca",
+    "persona": -1,
+    "valor": "suv_o_pickup",
+    "vehiculo": 1
+   },
+   {
+    "campo": "vehiculo.color",
+    "cita": "camioneta blanca",
+    "persona": -1,
+    "valor": "blanca",
+    "vehiculo": 1
+   },
+   {
+    "campo": "vehiculo.maniobra",
+    "cita": "se cambió a la izquierda",
+    "persona": -1,
+    "valor": "cambio_carril_izquierda",
+    "vehiculo": 1
+   },
+   {
+    "campo": "vehiculo.velocidad_kmh",
+    "cita": "Ella iba como a 40",
+    "persona": -1,
+    "valor": "40",
+    "vehiculo": 0
+   },
+   {
+    "campo": "evento.tipo",
+    "cita": "le pegamos en la defensa de atrás",
+    "persona": -1,
+    "valor": "impacto_vehiculo_vehiculo",
+    "vehiculo": -1
+   },
+   {
+    "campo": "vehiculo.zona_impacto",
+    "cita": "le pegamos en la defensa de atrás",
+    "persona": -1,
+    "valor": "B",
+    "vehiculo": 1
+   },
+   {
+    "campo": "vehiculo.zona_impacto",
+    "cita": "le pegamos en la defensa de atrás",
+    "persona": -1,
+    "valor": "F",
+    "vehiculo": 0
+   },
+   {
+    "campo": "persona.casco",
+    "cita": "Los dos traíamos casco.",
+    "persona": 0,
+    "valor": "true",
+    "vehiculo": -1
+   },
+   {
+    "campo": "persona.casco",
+    "cita": "Los dos traíamos casco.",
+    "persona": 1,
+    "valor": "true",
+    "vehiculo": -1
+   }
+  ],
+  "personas": [
+   {
+    "cita": "Iba atrás en la moto de mi novia",
+    "rol": "pasajero",
+    "vehiculo": 0
+   },
+   {
+    "cita": "Ella iba como a 40, tranquilos.",
+    "rol": "conductor",
+    "vehiculo": 0
+   },
+   {
+    "cita": "El de la camioneta",
+    "rol": "conductor",
+    "vehiculo": 1
+   }
+  ],
+  "preguntas": [
+   "¿A qué velocidad iba la camioneta al cambiarse de carril?",
+   "¿La moto frenó o intentó maniobrar antes del golpe?",
+   "¿Qué tipo de vía era el bulevar en ese tramo (con o sin carriles de servicio, glorieta o intersección)?"
+  ],
+  "vehiculos": [
+   {
+    "narrador": false
+   },
+   {
+    "narrador": false
+   }
+  ]
+ },
+ "texto_sha256": "27dcd943b61e06245878a5028062fbcbffda321ad88bd3f1742d7e51e52326bd",
+ "usage": {
+  "cache_creation_input_tokens": 0,
+  "cache_read_input_tokens": 7131,
+  "input_tokens": 173,
+  "output_tokens": 2901
+ }
+}

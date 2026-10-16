@@ -1,0 +1,100 @@
+{
+ "costo_estimado_con": "claude-sonnet-5-5",
+ "costo_usd": 0.0073962,
+ "esfuerzo": "medium",
+ "grabado": "2026-10-15T23:46:06+00:00",
+ "huella_prompt": "5816b86ad0e718ee",
+ "latencia_ms": 3694.9,
+ "modelo": "claude-sonnet-5-5",
+ "modelo_respuesta": "claude-sonnet-5-5",
+ "prompt": "extraccion_v2",
+ "request_id": "req_011Cg4ux5hiP5R1Y2udfg5e5",
+ "salida": {
+  "dispositivos": [],
+  "hechos": [
+   {
+    "campo": "vehiculo.clase",
+    "cita": "moto",
+    "persona": -1,
+    "valor": "motocicleta",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.frenado",
+    "cita": "Frené",
+    "persona": -1,
+    "valor": "true",
+    "vehiculo": 0
+   },
+   {
+    "campo": "evidencias.marcas_m",
+    "cita": "4 metros de llanta",
+    "persona": -1,
+    "valor": "4",
+    "vehiculo": -1
+   },
+   {
+    "campo": "evento.tipo",
+    "cita": "le di al taxi",
+    "persona": -1,
+    "valor": "impacto_vehiculo_vehiculo",
+    "vehiculo": -1
+   },
+   {
+    "campo": "vehiculo.clase",
+    "cita": "taxi",
+    "persona": -1,
+    "valor": "sedan_compacto",
+    "vehiculo": 1
+   },
+   {
+    "campo": "vehiculo.maniobra",
+    "cita": "se paró en doble fila",
+    "persona": -1,
+    "valor": "detenido",
+    "vehiculo": 1
+   },
+   {
+    "campo": "vehiculo.velocidad_kmh",
+    "cita": "se paró en doble fila",
+    "persona": -1,
+    "valor": "0",
+    "vehiculo": 1
+   },
+   {
+    "campo": "vehiculo.zona_impacto",
+    "cita": "le di al taxi",
+    "persona": -1,
+    "valor": "F",
+    "vehiculo": -1
+   }
+  ],
+  "personas": [
+   {
+    "cita": "Frené la moto",
+    "rol": "motociclista",
+    "vehiculo": 0
+   }
+  ],
+  "preguntas": [
+   "¿A qué velocidad aproximada iba la moto antes de frenar?",
+   "¿En qué parte del taxi pegó la moto (atrás o de lado)?",
+   "¿Llevaba casco quien iba en la moto?"
+  ],
+  "vehiculos": [
+   {
+    "narrador": true
+   },
+   {
+    "narrador": false
+   }
+  ]
+ },
+ "texto_sha256": "8d8c3ca1e963223cf630893475f50a12d8a8820ac07952aa6add863566e6c098",
+ "usage": {
+  "cache_creation_input_tokens": 0,
+  "cache_read_input_tokens": 6881,
+  "input_tokens": 50,
+  "output_tokens": 592
+ }
+}

@@ -1,0 +1,76 @@
+{
+ "costo_estimado_con": "claude-haiku-5-5",
+ "costo_usd": 0.00116911,
+ "esfuerzo": "medium",
+ "grabado": "2026-10-16T16:04:43+00:00",
+ "huella_prompt": "86f6a54999b8cbf7",
+ "latencia_ms": 9270.1,
+ "modelo": "claude-haiku-5-5",
+ "modelo_respuesta": "claude-haiku-5-5",
+ "prompt": "extraccion_v3",
+ "request_id": "req_011Cg6Ca1mhuz7q1ZkrcTAkH",
+ "salida": {
+  "dispositivos": [],
+  "hechos": [
+   {
+    "campo": "entorno.iluminacion",
+    "cita": "eran como las 11 de la noche",
+    "persona": -1,
+    "valor": "noche",
+    "vehiculo": -1
+   },
+   {
+    "campo": "evento.tipo",
+    "cita": "se impacto con su carro contra un puesto",
+    "persona": -1,
+    "valor": "impacto_vehiculo_objeto",
+    "vehiculo": -1
+   },
+   {
+    "campo": "evento.objeto",
+    "cita": "contra un puesto de tacos",
+    "persona": -1,
+    "valor": "puesto",
+    "vehiculo": -1
+   },
+   {
+    "campo": "vehiculo.clase",
+    "cita": "attitude",
+    "persona": -1,
+    "valor": "sedan_compacto",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.velocidad_kmh",
+    "cita": "como a 30",
+    "persona": -1,
+    "valor": "30",
+    "vehiculo": 0
+   }
+  ],
+  "personas": [
+   {
+    "cita": "mi hijo de 18",
+    "rol": "conductor",
+    "vehiculo": 0
+   }
+  ],
+  "preguntas": [
+   "¿Qué otro vehículo venía de frente y deslumbró al conductor, y participó en el percance?",
+   "¿Con qué parte del carro se impactó el puesto?",
+   "¿Quedaron marcas de frenado o de llanta en el pavimento?"
+  ],
+  "vehiculos": [
+   {
+    "narrador": false
+   }
+  ]
+ },
+ "texto_sha256": "2b3c0d952bf2f3c3d554219b68b9f089e5aa26de9a84c5c31fc4eb962a819a4e",
+ "usage": {
+  "cache_creation_input_tokens": 0,
+  "cache_read_input_tokens": 7131,
+  "input_tokens": 153,
+  "output_tokens": 2165
+ }
+}

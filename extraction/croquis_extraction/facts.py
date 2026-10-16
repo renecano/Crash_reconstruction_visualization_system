@@ -25,7 +25,11 @@ SCALAR_FIELDS = (
     "evento.objeto",
     "evidencias.distancia_proyeccion_m",
     "evidencias.marcas_m",
+    "evidencias.marcas_fase",
 )
+# Campos que se agregaron después de anotar los tests congelados: E1 solo los puntúa donde la
+# referencia los anota (si no, un acierto contaría como inventado en un relato sin anotar).
+ANNOTATED_ONLY = frozenset({"evidencias.marcas_fase"})
 VEHICLE_FIELDS = ("clase", "maniobra", "velocidad_kmh", "frenado", "color")
 PERSON_FIELDS = ("rol", "cinturon", "casco")
 NUMERIC = {
@@ -240,4 +244,12 @@ def facts_from_spec(spec: JsonObj) -> Facts:
             if c:
                 c.valor = _m(lon)
                 f.escalares["evidencias.marcas_m"] = c
+            if e.get("fase"):
+                # El constructor agrega la cita de la fase como segundo fragmento de la procedencia.
+                proc: JsonObj = e.get("procedencia") or {}
+                ev: list[JsonObj] = proc.get("evidencia") or []
+                if len(ev) >= 2 and proc.get("fuente") == "relato":
+                    f.escalares["evidencias.marcas_fase"] = Fact(e["fase"], ev[1]["texto"])
+                else:
+                    f.escalares["evidencias.marcas_fase"] = Fact(e["fase"], None, "supuesto")
     return f

@@ -1,0 +1,105 @@
+{
+ "costo_estimado_con": "claude-haiku-5-5",
+ "costo_usd": 0.00130931,
+ "esfuerzo": "medium",
+ "grabado": "2026-10-16T00:37:59+00:00",
+ "huella_prompt": "86f6a54999b8cbf7",
+ "latencia_ms": 10886.2,
+ "modelo": "claude-haiku-5-5",
+ "modelo_respuesta": "claude-haiku-5-5",
+ "prompt": "extraccion_v3",
+ "request_id": "req_011Cg4yu1hVPJxkUDSVNXUTV",
+ "salida": {
+  "dispositivos": [],
+  "hechos": [
+   {
+    "campo": "entorno.clima",
+    "cita": "cayó una granizada de esas feas",
+    "persona": -1,
+    "valor": "granizo",
+    "vehiculo": -1
+   },
+   {
+    "campo": "vehiculo.velocidad_kmh",
+    "cita": "a vuelta de rueda",
+    "persona": -1,
+    "valor": "8",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.clase",
+    "cita": "Sentra",
+    "persona": -1,
+    "valor": "sedan_mediano",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.clase",
+    "cita": "Ram",
+    "persona": -1,
+    "valor": "pickup",
+    "vehiculo": 1
+   },
+   {
+    "campo": "evento.tipo",
+    "cita": "me echó lámina por detrás",
+    "persona": -1,
+    "valor": "impacto_vehiculo_vehiculo",
+    "vehiculo": -1
+   },
+   {
+    "campo": "vehiculo.zona_impacto",
+    "cita": "me echó lámina por detrás",
+    "persona": -1,
+    "valor": "B",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.zona_impacto",
+    "cita": "me echó lámina por detrás",
+    "persona": -1,
+    "valor": "F",
+    "vehiculo": 1
+   },
+   {
+    "campo": "evento.tipo",
+    "cita": "se le patinó la troca con el hielo",
+    "persona": -1,
+    "valor": "derrape",
+    "vehiculo": -1
+   }
+  ],
+  "personas": [
+   {
+    "cita": "yo venía por la Pacheco",
+    "rol": "conductor",
+    "vehiculo": 0
+   },
+   {
+    "cita": "El de atrás, en una Ram vieja",
+    "rol": "conductor",
+    "vehiculo": 1
+   }
+  ],
+  "preguntas": [
+   "¿A qué velocidad venía la Ram al momento del impacto?",
+   "¿La Ram frenó antes del golpe?",
+   "¿Qué tipo de vía era la Pacheco en ese tramo?"
+  ],
+  "vehiculos": [
+   {
+    "narrador": true
+   },
+   {
+    "narrador": false
+   }
+  ]
+ },
+ "texto_sha256": "3a88fc09461940a02526752342c3e59bf2fd5b61dfd46b65fb5b09e115526fb9",
+ "usage": {
+  "cache_creation_input_tokens": 0,
+  "cache_read_input_tokens": 7131,
+  "input_tokens": 150,
+  "output_tokens": 2446
+ }
+}

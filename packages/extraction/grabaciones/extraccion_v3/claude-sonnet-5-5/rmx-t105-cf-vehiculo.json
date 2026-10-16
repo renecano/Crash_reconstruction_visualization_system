@@ -1,0 +1,110 @@
+{
+ "costo_estimado_con": "claude-sonnet-5-5",
+ "costo_usd": 0.0085242,
+ "esfuerzo": "medium",
+ "grabado": "2026-10-16T14:20:26+00:00",
+ "huella_prompt": "86f6a54999b8cbf7",
+ "latencia_ms": 4242.4,
+ "modelo": "claude-sonnet-5-5",
+ "modelo_respuesta": "claude-sonnet-5-5",
+ "prompt": "extraccion_v3",
+ "request_id": "req_011Cg64d98NPNmdiRTdPH748",
+ "salida": {
+  "dispositivos": [],
+  "hechos": [
+   {
+    "campo": "vehiculo.clase",
+    "cita": "Silverado",
+    "persona": -1,
+    "valor": "pickup",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.clase",
+    "cita": "Elantra",
+    "persona": -1,
+    "valor": "sedan_mediano",
+    "vehiculo": 2
+   },
+   {
+    "campo": "vehiculo.maniobra",
+    "cita": "se paró de golpe",
+    "persona": -1,
+    "valor": "detenido",
+    "vehiculo": 1
+   },
+   {
+    "campo": "vehiculo.frenado",
+    "cita": "Yo alcancé a frenar",
+    "persona": -1,
+    "valor": "true",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.frenado",
+    "cita": "un Elantra, no",
+    "persona": -1,
+    "valor": "false",
+    "vehiculo": 2
+   },
+   {
+    "campo": "evento.tipo",
+    "cita": "me pegó en la caja",
+    "persona": -1,
+    "valor": "impacto_vehiculo_vehiculo",
+    "vehiculo": -1
+   },
+   {
+    "campo": "vehiculo.zona_impacto",
+    "cita": "me pegó en la caja",
+    "persona": -1,
+    "valor": "B",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.zona_impacto",
+    "cita": "me pegó en la caja",
+    "persona": -1,
+    "valor": "F",
+    "vehiculo": 2
+   },
+   {
+    "campo": "entorno.iluminacion",
+    "cita": "las 3 de la tarde",
+    "persona": -1,
+    "valor": "dia",
+    "vehiculo": -1
+   }
+  ],
+  "personas": [
+   {
+    "cita": "iba yo en la troca",
+    "rol": "conductor",
+    "vehiculo": 0
+   }
+  ],
+  "preguntas": [
+   "¿A qué velocidad aproximada iban los tres vehículos antes del frenado?",
+   "¿Cuánta distancia había entre su vehículo y el Elantra antes del golpe?",
+   "¿Hubo golpe entre su vehículo y el que iba enfrente?"
+  ],
+  "vehiculos": [
+   {
+    "narrador": true
+   },
+   {
+    "narrador": false
+   },
+   {
+    "narrador": false
+   }
+  ]
+ },
+ "texto_sha256": "09ecfb874cc39013add3abd1e2310be48d6038be469476e43c76fc3aca599560",
+ "usage": {
+  "cache_creation_input_tokens": 0,
+  "cache_read_input_tokens": 7131,
+  "input_tokens": 159,
+  "output_tokens": 678
+ }
+}

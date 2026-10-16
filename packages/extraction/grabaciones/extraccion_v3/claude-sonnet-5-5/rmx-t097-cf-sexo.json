@@ -1,0 +1,55 @@
+{
+ "costo_estimado_con": "claude-sonnet-5-5",
+ "costo_usd": 0.0046542,
+ "esfuerzo": "medium",
+ "grabado": "2026-10-16T14:19:47+00:00",
+ "huella_prompt": "86f6a54999b8cbf7",
+ "latencia_ms": 2878.9,
+ "modelo": "claude-sonnet-5-5",
+ "modelo_respuesta": "claude-sonnet-5-5",
+ "prompt": "extraccion_v3",
+ "request_id": "req_011Cg64aNXgJxLcB9wB5xwhB",
+ "salida": {
+  "dispositivos": [],
+  "hechos": [
+   {
+    "campo": "vehiculo.clase",
+    "cita": "camión",
+    "persona": -1,
+    "valor": "camion_o_autobus",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.maniobra",
+    "cita": "el chofer arrancó",
+    "persona": -1,
+    "valor": "recto",
+    "vehiculo": 0
+   }
+  ],
+  "personas": [
+   {
+    "cita": "A mi tío le pasó en el camión de la ruta",
+    "rol": "pasajero",
+    "vehiculo": 0
+   }
+  ],
+  "preguntas": [
+   "¿El camión era de pasajeros de la ruta urbana o de otro tipo?",
+   "¿Las puertas del camión estaban abiertas cuando arrancó?",
+   "¿Qué tan rápido iba el camión al arrancar y a qué distancia de la banqueta estaba?"
+  ],
+  "vehiculos": [
+   {
+    "narrador": false
+   }
+  ]
+ },
+ "texto_sha256": "3c9087c4b005c866c7b4c759cc3b08e31181cf97da2e57b258c7e288a8f1b716",
+ "usage": {
+  "cache_creation_input_tokens": 0,
+  "cache_read_input_tokens": 7131,
+  "input_tokens": 154,
+  "output_tokens": 292
+ }
+}

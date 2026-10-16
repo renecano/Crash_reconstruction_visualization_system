@@ -1,0 +1,117 @@
+{
+ "costo_estimado_con": "claude-haiku-5-5",
+ "costo_usd": 0.00146551,
+ "esfuerzo": "medium",
+ "grabado": "2026-10-16T16:00:09+00:00",
+ "huella_prompt": "86f6a54999b8cbf7",
+ "latencia_ms": 12645.0,
+ "modelo": "claude-haiku-5-5",
+ "modelo_respuesta": "claude-haiku-5-5",
+ "prompt": "extraccion_v3",
+ "request_id": "req_011Cg6CDaRQF7jrG6ByMqYEp",
+ "salida": {
+  "dispositivos": [
+   {
+    "cita": "en el semaforo",
+    "tipo": "semaforo"
+   }
+  ],
+  "hechos": [
+   {
+    "campo": "vehiculo.maniobra",
+    "cita": "yo estaba parada",
+    "persona": -1,
+    "valor": "detenido",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.velocidad_kmh",
+    "cita": "esperando el verde",
+    "persona": -1,
+    "valor": "0",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.clase",
+    "cita": "beat",
+    "persona": -1,
+    "valor": "hatchback",
+    "vehiculo": 1
+   },
+   {
+    "campo": "vehiculo.color",
+    "cita": "beat azul",
+    "persona": -1,
+    "valor": "azul",
+    "vehiculo": 1
+   },
+   {
+    "campo": "evento.tipo",
+    "cita": "me pego x atras",
+    "persona": -1,
+    "valor": "impacto_vehiculo_vehiculo",
+    "vehiculo": -1
+   },
+   {
+    "campo": "vehiculo.zona_impacto",
+    "cita": "me pego x atras",
+    "persona": -1,
+    "valor": "F",
+    "vehiculo": 1
+   },
+   {
+    "campo": "vehiculo.zona_impacto",
+    "cita": "le quedo la cajuela sumida",
+    "persona": -1,
+    "valor": "B",
+    "vehiculo": 0
+   },
+   {
+    "campo": "lugar.estado_superficie",
+    "cita": "el piso estaba mojado de la lluvia",
+    "persona": -1,
+    "valor": "mojado",
+    "vehiculo": -1
+   },
+   {
+    "campo": "entorno.clima",
+    "cita": "de la lluvia",
+    "persona": -1,
+    "valor": "lluvia",
+    "vehiculo": -1
+   }
+  ],
+  "personas": [
+   {
+    "cita": "yo estaba parada",
+    "rol": "conductor",
+    "vehiculo": 0
+   },
+   {
+    "cita": "un chamaco en un beat azul",
+    "rol": "conductor",
+    "vehiculo": 1
+   }
+  ],
+  "preguntas": [
+   "¿El beat iba a qué velocidad al momento del golpe?",
+   "¿El conductor del beat intentó frenar antes del impacto, y hubo marcas de frenado en el piso?",
+   "¿Cuál era el color de la luz del semáforo cuando el beat la alcanzó?"
+  ],
+  "vehiculos": [
+   {
+    "narrador": true
+   },
+   {
+    "narrador": false
+   }
+  ]
+ },
+ "texto_sha256": "0e26baab867f8a85d1dc452993dffd66729d944f511c7f6be6a7e2dd053d14bb",
+ "usage": {
+  "cache_creation_input_tokens": 0,
+  "cache_read_input_tokens": 7131,
+  "input_tokens": 132,
+  "output_tokens": 2762
+ }
+}

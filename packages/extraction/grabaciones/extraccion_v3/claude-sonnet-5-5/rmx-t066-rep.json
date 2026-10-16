@@ -1,0 +1,77 @@
+{
+ "costo_estimado_con": "claude-sonnet-5-5",
+ "costo_usd": 0.0113082,
+ "esfuerzo": "medium",
+ "grabado": "2026-10-16T15:38:22+00:00",
+ "huella_prompt": "86f6a54999b8cbf7",
+ "latencia_ms": 7878.3,
+ "modelo": "claude-sonnet-5-5",
+ "modelo_respuesta": "claude-sonnet-5-5",
+ "prompt": "extraccion_v3",
+ "request_id": "req_011Cg6AZaNVyWFjaZ2k6rmTM",
+ "salida": {
+  "dispositivos": [
+   {
+    "cita": "el rojo",
+    "tipo": "semaforo"
+   }
+  ],
+  "hechos": [
+   {
+    "campo": "lugar.tipo_via",
+    "cita": "crucero",
+    "persona": -1,
+    "valor": "interseccion",
+    "vehiculo": -1
+   },
+   {
+    "campo": "evento.tipo",
+    "cita": "le pegó de lado",
+    "persona": -1,
+    "valor": "impacto_vehiculo_vehiculo",
+    "vehiculo": -1
+   },
+   {
+    "campo": "vehiculo.clase",
+    "cita": "Vento",
+    "persona": -1,
+    "valor": "sedan_compacto",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.clase",
+    "cita": "Hilux",
+    "persona": -1,
+    "valor": "pickup",
+    "vehiculo": 1
+   }
+  ],
+  "personas": [
+   {
+    "cita": "mi Vento",
+    "rol": "conductor",
+    "vehiculo": 0
+   }
+  ],
+  "preguntas": [
+   "¿Qué lado de tu Vento recibió el golpe, el izquierdo o el derecho?",
+   "¿A qué velocidad aproximada iban tú y la Hilux al llegar al crucero?",
+   "¿Era de día o de noche, y cómo estaba el clima y el pavimento?"
+  ],
+  "vehiculos": [
+   {
+    "narrador": true
+   },
+   {
+    "narrador": false
+   }
+  ]
+ },
+ "texto_sha256": "252c8da9955706cac00a15373fe32cfddda09e19b675db12082434bf59959fca",
+ "usage": {
+  "cache_creation_input_tokens": 0,
+  "cache_read_input_tokens": 7131,
+  "input_tokens": 76,
+  "output_tokens": 973
+ }
+}

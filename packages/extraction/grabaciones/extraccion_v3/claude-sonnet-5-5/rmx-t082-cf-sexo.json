@@ -1,0 +1,119 @@
+{
+ "costo_estimado_con": "claude-sonnet-5-5",
+ "costo_usd": 0.0099862,
+ "esfuerzo": "medium",
+ "grabado": "2026-10-16T14:18:27+00:00",
+ "huella_prompt": "86f6a54999b8cbf7",
+ "latencia_ms": 4879.1,
+ "modelo": "claude-sonnet-5-5",
+ "modelo_respuesta": "claude-sonnet-5-5",
+ "prompt": "extraccion_v3",
+ "request_id": "req_011Cg64UMLqB5duxkpSwqBAG",
+ "salida": {
+  "dispositivos": [],
+  "hechos": [
+   {
+    "campo": "vehiculo.clase",
+    "cita": "Rio",
+    "persona": -1,
+    "valor": "sedan_compacto",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.color",
+    "cita": "color gris",
+    "persona": -1,
+    "valor": "gris",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.clase",
+    "cita": "CR-V",
+    "persona": -1,
+    "valor": "suv_compacta",
+    "vehiculo": 1
+   },
+   {
+    "campo": "vehiculo.color",
+    "cita": "color negro",
+    "persona": -1,
+    "valor": "negro",
+    "vehiculo": 1
+   },
+   {
+    "campo": "lugar.carriles_por_sentido",
+    "cita": "carril central de tres disponibles",
+    "persona": -1,
+    "valor": "3",
+    "vehiculo": -1
+   },
+   {
+    "campo": "entorno.iluminacion",
+    "cita": "07:45 horas",
+    "persona": -1,
+    "valor": "dia",
+    "vehiculo": -1
+   },
+   {
+    "campo": "vehiculo.maniobra",
+    "cita": "realizó un cambio de carril hacia la izquierda",
+    "persona": -1,
+    "valor": "cambio_carril_izquierda",
+    "vehiculo": 1
+   },
+   {
+    "campo": "evento.tipo",
+    "cita": "impactó el costado derecho de mi unidad",
+    "persona": -1,
+    "valor": "impacto_vehiculo_vehiculo",
+    "vehiculo": -1
+   },
+   {
+    "campo": "vehiculo.zona_impacto",
+    "cita": "costado derecho de mi unidad",
+    "persona": -1,
+    "valor": "R",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.velocidad_kmh",
+    "cita": "60 km/h",
+    "persona": -1,
+    "valor": "60",
+    "vehiculo": 0
+   }
+  ],
+  "personas": [
+   {
+    "cita": "circulaba a bordo de mi vehículo Kia Rio",
+    "rol": "conductor",
+    "vehiculo": 0
+   },
+   {
+    "cita": "Un conductor a bordo de una camioneta Honda CR-V",
+    "rol": "conductor",
+    "vehiculo": 1
+   }
+  ],
+  "preguntas": [
+   "¿El vehículo que cambió de carril alcanzó a frenar antes del contacto?",
+   "¿Cuál era aproximadamente la velocidad de la camioneta Honda CR-V?",
+   "¿Usted realizó alguna maniobra de frenado o esquiva antes del impacto?"
+  ],
+  "vehiculos": [
+   {
+    "narrador": true
+   },
+   {
+    "narrador": false
+   }
+  ]
+ },
+ "texto_sha256": "4340cbdf8a465520de4e80dcf9f07a3331d7c62a65a074f5a200e9d077b93486",
+ "usage": {
+  "cache_creation_input_tokens": 0,
+  "cache_read_input_tokens": 7131,
+  "input_tokens": 245,
+  "output_tokens": 807
+ }
+}

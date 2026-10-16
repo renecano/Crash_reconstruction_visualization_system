@@ -1,0 +1,124 @@
+{
+ "costo_estimado_con": "claude-sonnet-5-5",
+ "costo_usd": 0.0168122,
+ "esfuerzo": "medium",
+ "grabado": "2026-10-16T00:18:31+00:00",
+ "huella_prompt": "86f6a54999b8cbf7",
+ "latencia_ms": 10478.8,
+ "modelo": "claude-sonnet-5-5",
+ "modelo_respuesta": "claude-sonnet-5-5",
+ "prompt": "extraccion_v3",
+ "request_id": "req_011Cg4xQw7XHEeyiA5iHTFkM",
+ "salida": {
+  "dispositivos": [],
+  "hechos": [
+   {
+    "campo": "entorno.clima",
+    "cita": "estaba despejado",
+    "persona": -1,
+    "valor": "despejado",
+    "vehiculo": -1
+   },
+   {
+    "campo": "evento.tipo",
+    "cita": "me empujó contra la camioneta de adelante",
+    "persona": -1,
+    "valor": "impacto_vehiculo_vehiculo",
+    "vehiculo": -1
+   },
+   {
+    "campo": "vehiculo.clase",
+    "cita": "Creta",
+    "persona": -1,
+    "valor": "suv_compacta",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.clase",
+    "cita": "Frontier",
+    "persona": -1,
+    "valor": "pickup",
+    "vehiculo": 1
+   },
+   {
+    "campo": "vehiculo.clase",
+    "cita": "camioneta",
+    "persona": -1,
+    "valor": "suv_o_pickup",
+    "vehiculo": 2
+   },
+   {
+    "campo": "vehiculo.velocidad_kmh",
+    "cita": "como a 40 antes de frenar",
+    "persona": -1,
+    "valor": "40",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.frenado",
+    "cita": "Yo frené a tiempo",
+    "persona": -1,
+    "valor": "true",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.zona_impacto",
+    "cita": "la Frontier que venía atrás de mí no, y me empujó",
+    "persona": -1,
+    "valor": "B",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.zona_impacto",
+    "cita": "la Frontier que venía atrás de mí no, y me empujó",
+    "persona": -1,
+    "valor": "F",
+    "vehiculo": 1
+   },
+   {
+    "campo": "vehiculo.zona_impacto",
+    "cita": "me empujó contra la camioneta de adelante",
+    "persona": -1,
+    "valor": "F",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.zona_impacto",
+    "cita": "me empujó contra la camioneta de adelante",
+    "persona": -1,
+    "valor": "B",
+    "vehiculo": 2
+   }
+  ],
+  "personas": [
+   {
+    "cita": "Yo iba en mi Creta",
+    "rol": "conductor",
+    "vehiculo": 0
+   }
+  ],
+  "preguntas": [
+   "¿Cuál era la velocidad aproximada de la Frontier al momento del golpe?",
+   "¿Cómo era la camioneta de adelante (tamaño o tipo)?",
+   "¿Cuántos carriles tenía la vía donde ocurrió?"
+  ],
+  "vehiculos": [
+   {
+    "narrador": true
+   },
+   {
+    "narrador": false
+   },
+   {
+    "narrador": false
+   }
+  ]
+ },
+ "texto_sha256": "02ad4790a3774ec42b6cb8f4327d74af9f1671e609d552777e730b5f862ed2d9",
+ "usage": {
+  "cache_creation_input_tokens": 0,
+  "cache_read_input_tokens": 7131,
+  "input_tokens": 153,
+  "output_tokens": 1508
+ }
+}

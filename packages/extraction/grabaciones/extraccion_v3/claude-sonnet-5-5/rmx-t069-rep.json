@@ -1,0 +1,98 @@
+{
+ "costo_estimado_con": "claude-sonnet-5-5",
+ "costo_usd": 0.0159642,
+ "esfuerzo": "medium",
+ "grabado": "2026-10-16T15:38:43+00:00",
+ "huella_prompt": "86f6a54999b8cbf7",
+ "latencia_ms": 9863.5,
+ "modelo": "claude-sonnet-5-5",
+ "modelo_respuesta": "claude-sonnet-5-5",
+ "prompt": "extraccion_v3",
+ "request_id": "req_011Cg6AawsLZtnfGpNtjUD6c",
+ "salida": {
+  "dispositivos": [],
+  "hechos": [
+   {
+    "campo": "evento.tipo",
+    "cita": "Se volteó la camioneta",
+    "persona": -1,
+    "valor": "volcadura",
+    "vehiculo": -1
+   },
+   {
+    "campo": "vehiculo.clase",
+    "cita": "Explorer",
+    "persona": -1,
+    "valor": "suv_grande",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.maniobra",
+    "cita": "un carro se nos atravesó",
+    "persona": -1,
+    "valor": "cambio_carril",
+    "vehiculo": 1
+   },
+   {
+    "campo": "vehiculo.frenado",
+    "cita": "primero frenó",
+    "persona": -1,
+    "valor": "true",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.velocidad_kmh",
+    "cita": "como a ochenta",
+    "persona": -1,
+    "valor": "80",
+    "vehiculo": 0
+   },
+   {
+    "campo": "persona.cinturon",
+    "cita": "Los dos traíamos el cinturón",
+    "persona": 0,
+    "valor": "true",
+    "vehiculo": -1
+   },
+   {
+    "campo": "persona.cinturon",
+    "cita": "Los dos traíamos el cinturón",
+    "persona": 1,
+    "valor": "true",
+    "vehiculo": -1
+   }
+  ],
+  "personas": [
+   {
+    "cita": "yo de copiloto",
+    "rol": "pasajero",
+    "vehiculo": 0
+   },
+   {
+    "cita": "mi hijo manejando",
+    "rol": "conductor",
+    "vehiculo": 0
+   }
+  ],
+  "preguntas": [
+   "¿La camioneta llegó a tocar al otro carro antes de volcarse?",
+   "¿Hacia qué lado de la carretera dio el volantazo y se salió hacia la cuneta?",
+   "¿Cuántos carriles tenía la carretera en ese tramo?"
+  ],
+  "vehiculos": [
+   {
+    "narrador": false
+   },
+   {
+    "narrador": false
+   }
+  ]
+ },
+ "texto_sha256": "157cf6ca16fbd109d7ec8f84193fd71ede76573d53dfc3c9c4955304c4f366ee",
+ "usage": {
+  "cache_creation_input_tokens": 0,
+  "cache_read_input_tokens": 7131,
+  "input_tokens": 219,
+  "output_tokens": 1410
+ }
+}

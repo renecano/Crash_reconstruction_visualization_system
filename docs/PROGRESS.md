@@ -11,19 +11,19 @@ Reglas de trabajo: `CLAUDE.md`. Especificación: `PLAN.md`.
 - **Inercia de guiñada medida, hecha** (PR #15, ADR 0015). Viene de la base de parámetros inerciales de NHTSA, 164 vehículos medidos: el error de la inercia baja de 10.0 % con la placa uniforme a 5.3 %.
 - **Fase de las marcas, hecha** (rama `feat/f7-marcas-derrape`, ADR 0016). Contrato 1.1.0 con `evidencias[].fase`, resultado 1.5.0 y la evidencia nueva `marcas_despues` en la inversión.
 - **Moto caída, hecha** (rama `feat/f7-moto-caida`, ADR 0017): arrastre medido de Peck et al. 2014, muestreado en Monte Carlo y en la inversión; resultado 1.6.0.
-- **Siguiente paso concreto:** la fase de las marcas en la extracción (prompt v3, reglas y anotación del dev, sin tocar los tests congelados), en la rama `feat/f7-fase-extraccion`. Después, F8.
+- **Fase de las marcas en la extracción, hecha** (rama `feat/f7-fase-extraccion`, ADR 0019): reglas y prompt v3, que pasa a producción.
+- **Siguiente paso concreto:** F8, entorno completo (PLAN §13): OSM real, clima, noche y faros, todos los dispositivos de tránsito, vehículos estacionados y piso mojado. Empezar por leer la fase en `PLAN.md` y escribir su plan aquí, en la rama `feat/f8-entorno`.
 - **E1 del prompt v2 en el primer test, hecho** (PR #14). Sonnet 0.875 → 0.919 y Haiku 0.852 → 0.896. Además, E1 ahora compara cada contrafactual con la repetición del mismo relato (McNemar por tipo): ningún tipo difiere del ruido, y las reglas cambian con el modelo del vehículo en 6 de 52 pares (ADR 0012 §10).
 - **F0** cerrado el 2026-10-10 (PR #1), **F1** el 2026-10-10 (PR #3), **F2** el 2026-10-13 (PR #4), **F3** el 2026-10-13 (PR #5), **F4** el 2026-10-13 (PR #6), **F5** el 2026-10-13 (PR #7), **F6** el 2026-10-14 (PR #8), **F7** el 2026-10-14 (PR #9; pendientes registrados); migración a Vercel el 2026-10-14 (PR #10); test CISS y prompt v2 el 2026-10-14 (PR #11).
 
 ### Bloqueado — necesita a René
 
-| Qué                                                                                                                                                                                                                                 | Para qué                                                                                                                         | Estado                                                   |
-| ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------- |
-| `ANTHROPIC_API_KEY`                                                                                                                                                                                                                 | F6 (extracción con Claude) y E1. CI usa respuestas grabadas, así que no bloquea hasta F6.                                        | Recibida 2026-10-14 (`.env.local`)                       |
-| Aceptar los términos de Upstash en el Marketplace de Vercel: https://vercel.com/renecanof-gmailcoms-projects/~/integrations/accept-terms/upstash?source=cli (después corro `vercel integration add upstash/upstash-kv --plan free`) | Tope de gasto y límite de peticiones en producción (ADR 0011). Sin Upstash, producción responde solo con la línea base de reglas | Pendiente; el resto de Vercel ya está hecho (2026-10-15) |
-| Confirmar licencia MIT del código y el nombre _Croquis_                                                                                                                                                                             | Se usan los valores por defecto de PLAN §16 (ADR 0002)                                                                           | Usando default                                           |
-| Pruebas con ≥ 5 personas reales (E9)                                                                                                                                                                                                | F11                                                                                                                              | Pendiente                                                |
-| Confirmar que el repositorio remoto correcto es `renecano/Crash_reconstruction_visualization_system` (público, lo creó René vacío el 2026-10-10). Se eligió por nombre y fecha; se puede cambiar con `git remote set-url origin …`. | Push y CI                                                                                                                        | Asumido y ya en uso                                      |
+| Qué                                                                                                                                                                                                                                 | Para qué                                                                                  | Estado                             |
+| ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------- | ---------------------------------- |
+| `ANTHROPIC_API_KEY`                                                                                                                                                                                                                 | F6 (extracción con Claude) y E1. CI usa respuestas grabadas, así que no bloquea hasta F6. | Recibida 2026-10-14 (`.env.local`) |
+| Confirmar licencia MIT del código y el nombre _Croquis_                                                                                                                                                                             | Se usan los valores por defecto de PLAN §16 (ADR 0002)                                    | Usando default                     |
+| Pruebas con ≥ 5 personas reales (E9)                                                                                                                                                                                                | F11                                                                                       | Pendiente                          |
+| Confirmar que el repositorio remoto correcto es `renecano/Crash_reconstruction_visualization_system` (público, lo creó René vacío el 2026-10-10). Se eligió por nombre y fecha; se puede cambiar con `git remote set-url origin …`. | Push y CI                                                                                 | Asumido y ya en uso                |
 
 ## Entorno de desarrollo (verificado 2026-10-10)
 
@@ -1115,7 +1115,53 @@ René pidió que yo hiciera la conexión. La sesión de la CLI ya era suya (`ren
   - `CROQUIS_LLM_RATE_LIMIT_PER_HOUR=20`.
 - **Producción:** https://croquis-sage.vercel.app, desplegada desde `main` (PR #17). La compilación tardó 58 s.
   - **Prueba de humo:** la página responde 200 y `POST /api/relato/extraer` devuelve una escena con `metodo: reglas`.
-- **Pendiente de René:** Upstash pide aceptar sus términos en el navegador; el enlace está en "Bloqueado — necesita a René". Mientras falte, producción no llama a Claude (no hay dónde llevar el gasto) y responde con la línea base de reglas.
+- **Upstash, hecho el mismo día:** René aceptó los términos y se instaló Upstash for Redis.
+  - **Recurso:** plan gratuito, región `iad1`, recurso `croquis-redis`, conectado a producción y vista previa con `KV_REST_API_URL` y `KV_REST_API_TOKEN`. `budget.ts` ya acepta esos nombres.
+  - **Despliegue:** se redesplegó con `vercel redeploy`, que no sube archivos.
+  - **Prueba de humo:** `POST /api/relato/extraer` responde con `metodo: claude`; el tope de $2 al día y el límite por hora quedan en Redis.
+  - **Archivos que no se pidieron:** la CLI instaló en el repo dos "skills" de Upstash para agentes (`.agents/`, `.claude/skills/` con enlaces y `skills-lock.json`). Son instrucciones de terceros que nadie pidió; no se versionaron y se borraron con el visto bueno de René (el proyecto usa su propio `budget.ts`).
 - **Notas:**
   - Los despliegues desde la CLI quedaron bloqueados 24 h por el límite de subidas del plan gratuito (más de 5,000 archivos). Los de GitHub no pasan por ese límite.
   - `vercel link` agregó `.env*` al final de `.gitignore`, después de la excepción `!.env.example`; se revirtió porque el `.gitignore` existente ya ignora `.vercel` y `.env.local`.
+
+## F7 (continuación) — La extracción lee la fase de las marcas
+
+Rama `feat/f7-fase-extraccion`. ADR 0019.
+
+### Hecho
+
+1. **Campo `evidencias.marcas_fase`** en hechos, constructor de specs (Python y TS) y verificador. La cita de la fase va como segundo fragmento de la procedencia de las marcas.
+2. **Reglas (Python y TS):** buscan la fase en la oración de las marcas y la anterior; lo explícito gana a lo deducido. Se escribieron antes de leer el lote nuevo.
+3. **Prompt v3** = v2 más la regla de las marcas. v1 y v2 conservan esquema, huella y grabaciones.
+4. **E1:**
+   - puntúa la fase solo donde la referencia la anota (`ANNOTATED_ONLY`);
+   - reporta `f1_micro_sin_campos_parciales` para comparar con versiones que no la conocen.
+5. **Dev de 190 relatos:**
+   - 6 relatos con marcas anotados;
+   - lote `dev-006` con 30 relatos de marcas, escritos por un agente que no vio reglas, glosario ni prompts.
+
+   Hay grabaciones de v1, v2 y v3 para todo el dev, con contrafactuales y repeticiones. v3 también se grabó en los dos tests congelados.
+
+6. **Decisión con el criterio fijado antes de medir** (ADR 0019): v3 no empeora en dev ni en CISS y **pasa a producción**. Los números están en el README (filas de E1) y en el ADR.
+   - **Fase en dev:** Sonnet F1 0.824, Haiku 0.868, reglas 0.182, sin ninguna inventada.
+   - **Primer test, medido después:** Sonnet 0.924 y Haiku 0.902.
+7. **README:**
+   - las filas de E1 pasan a v3;
+   - la fila de E7 se corrigió a lo medido: 61,912 números y 4.1e-5, porque se había quedado con los valores de antes de los PR #16 y #17.
+8. **Gasto en Claude:** $15.00 el 2026-10-15 y $6.63 el 2026-10-16 (`grabaciones/gasto.json`).
+
+### Pendientes
+
+1. **Patrones de largo de las marcas en las reglas:** solo encuentran 4 de 36 en dev. Mejorarlos con relatos nuevos, no con el lote dev-006.
+2. **Un test con la fase anotada,** congelado antes de medir.
+3. **Qué vehículo deja las marcas:** hoy el constructor se las asigna al primero.
+4. **Memoria de la laptop:** las grabaciones largas en segundo plano se detuvieron dos veces por falta de memoria. Correrlas por lotes, un modelo a la vez y con pocos programas abiertos.
+
+### Resumen para René
+
+- **Qué quedó:**
+  - la extracción lee si las marcas fueron antes o después del choque;
+  - producción ya usa el prompt v3;
+  - Vercel y Upstash están conectados: https://croquis-sage.vercel.app extrae con Claude, con tope de $2 al día.
+- **Cómo probarlo:** escribe en la app un relato con marcas ("después del golpe la moto se fue arrastrando como seis metros") y revisa la fase en la evidencia del croquis. Para la medición, `uv run croquis-eval e1-extraction --split dev --prompt extraccion_v3`.
+- **Qué necesito de ti:** nada nuevo. Siguen pendientes la licencia MIT y el nombre, y las personas para E9.

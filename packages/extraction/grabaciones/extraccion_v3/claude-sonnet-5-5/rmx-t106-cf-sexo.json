@@ -1,0 +1,68 @@
+{
+ "costo_estimado_con": "claude-sonnet-5-5",
+ "costo_usd": 0.0119202,
+ "esfuerzo": "medium",
+ "grabado": "2026-10-16T14:20:33+00:00",
+ "huella_prompt": "86f6a54999b8cbf7",
+ "latencia_ms": 7534.5,
+ "modelo": "claude-sonnet-5-5",
+ "modelo_respuesta": "claude-sonnet-5-5",
+ "prompt": "extraccion_v3",
+ "request_id": "req_011Cg64dTEnJgKoUrFxttPAp",
+ "salida": {
+  "dispositivos": [],
+  "hechos": [
+   {
+    "campo": "evento.tipo",
+    "cita": "le dio a un contenedor de basura",
+    "persona": -1,
+    "valor": "impacto_vehiculo_objeto",
+    "vehiculo": -1
+   },
+   {
+    "campo": "evento.objeto",
+    "cita": "contenedor de basura",
+    "persona": -1,
+    "valor": "contenedor",
+    "vehiculo": -1
+   },
+   {
+    "campo": "vehiculo.maniobra",
+    "cita": "echarse en reversa",
+    "persona": -1,
+    "valor": "reversa",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.zona_impacto",
+    "cita": "echarse en reversa le dio a un contenedor de basura",
+    "persona": -1,
+    "valor": "B",
+    "vehiculo": 0
+   }
+  ],
+  "personas": [
+   {
+    "cita": "Mi novio",
+    "rol": "conductor",
+    "vehiculo": 0
+   }
+  ],
+  "preguntas": [
+   "¿Qué tipo de vehículo era el de tu novio?",
+   "¿Dónde estaba el contenedor respecto al vehículo (en la calle o en la banqueta)?"
+  ],
+  "vehiculos": [
+   {
+    "narrador": false
+   }
+  ]
+ },
+ "texto_sha256": "38c8d5f89d27ffb290c58c35d4854f1a9f3356dde1d12494ae8dc4b78fe9ad30",
+ "usage": {
+  "cache_creation_input_tokens": 0,
+  "cache_read_input_tokens": 7131,
+  "input_tokens": 67,
+  "output_tokens": 1036
+ }
+}

@@ -1,0 +1,95 @@
+{
+ "costo_estimado_con": "claude-sonnet-5-5",
+ "costo_usd": 0.0111122,
+ "esfuerzo": "medium",
+ "grabado": "2026-10-16T14:10:12+00:00",
+ "huella_prompt": "86f6a54999b8cbf7",
+ "latencia_ms": 6632.3,
+ "modelo": "claude-sonnet-5-5",
+ "modelo_respuesta": "claude-sonnet-5-5",
+ "prompt": "extraccion_v3",
+ "request_id": "req_011Cg63qmFiuSQbTTax6UvzF",
+ "salida": {
+  "dispositivos": [],
+  "hechos": [
+   {
+    "campo": "vehiculo.clase",
+    "cita": "np300",
+    "persona": -1,
+    "valor": "pickup",
+    "vehiculo": 0
+   },
+   {
+    "campo": "lugar.tipo_via",
+    "cita": "en una curva",
+    "persona": -1,
+    "valor": "curva",
+    "vehiculo": -1
+   },
+   {
+    "campo": "lugar.superficie",
+    "cita": "terraseria",
+    "persona": -1,
+    "valor": "terraceria",
+    "vehiculo": -1
+   },
+   {
+    "campo": "lugar.estado_superficie",
+    "cita": "mucho lodo",
+    "persona": -1,
+    "valor": "lodo",
+    "vehiculo": -1
+   },
+   {
+    "campo": "evento.tipo",
+    "cita": "se le patino",
+    "persona": -1,
+    "valor": "derrape",
+    "vehiculo": -1
+   },
+   {
+    "campo": "vehiculo.velocidad_kmh",
+    "cita": "como a 30",
+    "persona": -1,
+    "valor": "30",
+    "vehiculo": 0
+   },
+   {
+    "campo": "entorno.clima",
+    "cita": "neblina",
+    "persona": -1,
+    "valor": "niebla",
+    "vehiculo": -1
+   }
+  ],
+  "personas": [
+   {
+    "cita": "mi tio manejaba",
+    "rol": "conductor",
+    "vehiculo": 0
+   },
+   {
+    "cita": "ibamos",
+    "rol": "pasajero",
+    "vehiculo": 0
+   }
+  ],
+  "preguntas": [
+   "¿La camioneta frenó o intentó corregir el rumbo antes de salirse del camino?",
+   "¿Hacia qué lado de la curva se salieron del camino?",
+   "¿Era de día o de noche?"
+  ],
+  "vehiculos": [
+   {
+    "narrador": false
+   }
+  ]
+ },
+ "texto_sha256": "29e2baabdafd8c51e9f1fd6e98773e05adfe67625268bcbe759a33c758ff3e64",
+ "usage": {
+  "cache_creation_input_tokens": 0,
+  "cache_read_input_tokens": 7131,
+  "input_tokens": 123,
+  "output_tokens": 944
+ }
+}

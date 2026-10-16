@@ -1,0 +1,81 @@
+{
+ "costo_estimado_con": "claude-sonnet-5-5",
+ "costo_usd": 0.0063282,
+ "esfuerzo": "medium",
+ "grabado": "2026-10-16T00:16:05+00:00",
+ "huella_prompt": "86f6a54999b8cbf7",
+ "latencia_ms": 3318.3,
+ "modelo": "claude-sonnet-5-5",
+ "modelo_respuesta": "claude-sonnet-5-5",
+ "prompt": "extraccion_v3",
+ "request_id": "req_011Cg4xEkajXLfKt7bzNUnAk",
+ "salida": {
+  "dispositivos": [
+   {
+    "cita": "cebra",
+    "tipo": "paso_peatonal"
+   }
+  ],
+  "hechos": [
+   {
+    "campo": "vehiculo.clase",
+    "cita": "taxi",
+    "persona": -1,
+    "valor": "sedan_compacto",
+    "vehiculo": 0
+   },
+   {
+    "campo": "evento.tipo",
+    "cita": "atropelló a la señora",
+    "persona": -1,
+    "valor": "impacto_vehiculo_persona",
+    "vehiculo": -1
+   },
+   {
+    "campo": "evidencias.marcas_m",
+    "cita": "9 metros de frenado",
+    "persona": -1,
+    "valor": "9",
+    "vehiculo": -1
+   },
+   {
+    "campo": "evidencias.marcas_fase",
+    "cita": "terminan justo donde atropelló a la señora",
+    "persona": -1,
+    "valor": "antes_impacto",
+    "vehiculo": -1
+   },
+   {
+    "campo": "vehiculo.frenado",
+    "cita": "9 metros de frenado",
+    "persona": -1,
+    "valor": "true",
+    "vehiculo": 0
+   }
+  ],
+  "personas": [
+   {
+    "cita": "la señora",
+    "rol": "peaton",
+    "vehiculo": -1
+   }
+  ],
+  "preguntas": [
+   "¿A qué velocidad aproximada iba el taxi antes de frenar?",
+   "¿Era de día o de noche, y cómo estaba el pavimento?",
+   "¿La señora iba cruzando de izquierda a derecha o de derecha a izquierda respecto al taxi?"
+  ],
+  "vehiculos": [
+   {
+    "narrador": false
+   }
+  ]
+ },
+ "texto_sha256": "91f678b2da28409c532dec80ab67f9c938991eb734b7840bb8cb1f2bcde84e58",
+ "usage": {
+  "cache_creation_input_tokens": 0,
+  "cache_read_input_tokens": 7131,
+  "input_tokens": 56,
+  "output_tokens": 479
+ }
+}

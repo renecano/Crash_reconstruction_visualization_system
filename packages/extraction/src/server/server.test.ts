@@ -167,9 +167,11 @@ describe("modos y tope de gasto", () => {
     ).toThrow(/Sin respuesta/);
     const again = loadRecording("claude-haiku-5-5", "caso-2", "derrapé", root, "extraccion_v2");
     expect(again.salida).toEqual(rec.salida);
-    // v2 es el de producción (ADR 0012): es lo que se reproduce sin decir la versión.
-    expect(PROMPT_VERSION).toBe("extraccion_v2");
-    expect(loadRecording("claude-haiku-5-5", "caso-2", "derrapé", root).salida).toEqual(rec.salida);
+    // v3 es el de producción (ADR 0019): sin decir la versión se busca la de v3, no la de v2.
+    expect(PROMPT_VERSION).toBe("extraccion_v3");
+    expect(() => loadRecording("claude-haiku-5-5", "caso-2", "derrapé", root)).toThrow(
+      /Sin respuesta/,
+    );
     expect(() => systemPrompt("extraccion_v9")).toThrow(/desconocida/);
   });
 

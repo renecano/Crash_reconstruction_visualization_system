@@ -1,0 +1,121 @@
+{
+ "costo_estimado_con": "claude-sonnet-5-5",
+ "costo_usd": 0.0095962,
+ "esfuerzo": "medium",
+ "grabado": "2026-10-16T14:25:10+00:00",
+ "huella_prompt": "86f6a54999b8cbf7",
+ "latencia_ms": 6583.5,
+ "modelo": "claude-sonnet-5-5",
+ "modelo_respuesta": "claude-sonnet-5-5",
+ "prompt": "extraccion_v3",
+ "request_id": "req_011Cg64yvAqL92rzmgYPfy97",
+ "salida": {
+  "dispositivos": [],
+  "hechos": [
+   {
+    "campo": "lugar.tipo_via",
+    "cita": "La autopista estaba con neblina",
+    "persona": -1,
+    "valor": "autopista",
+    "vehiculo": -1
+   },
+   {
+    "campo": "entorno.clima",
+    "cita": "neblina",
+    "persona": -1,
+    "valor": "niebla",
+    "vehiculo": -1
+   },
+   {
+    "campo": "entorno.iluminacion",
+    "cita": "como a las seis de la mañana, todavía medio oscuro",
+    "persona": -1,
+    "valor": "amanecer",
+    "vehiculo": -1
+   },
+   {
+    "campo": "vehiculo.clase",
+    "cita": "Corolla",
+    "persona": -1,
+    "valor": "sedan_mediano",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.velocidad_kmh",
+    "cita": "a unos 50",
+    "persona": -1,
+    "valor": "50",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.frenado",
+    "cita": "ya había frenado yo",
+    "persona": -1,
+    "valor": "true",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.clase",
+    "cita": "camión de carga",
+    "persona": -1,
+    "valor": "camion_unitario",
+    "vehiculo": 1
+   },
+   {
+    "campo": "evento.tipo",
+    "cita": "me pegó atrás",
+    "persona": -1,
+    "valor": "impacto_vehiculo_vehiculo",
+    "vehiculo": -1
+   },
+   {
+    "campo": "vehiculo.zona_impacto",
+    "cita": "me pegó atrás",
+    "persona": -1,
+    "valor": "B",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.zona_impacto",
+    "cita": "me pegó atrás",
+    "persona": -1,
+    "valor": "F",
+    "vehiculo": 1
+   },
+   {
+    "campo": "evidencias.distancia_proyeccion_m",
+    "cita": "Me empujó como diez metros",
+    "persona": -1,
+    "valor": "10",
+    "vehiculo": -1
+   }
+  ],
+  "personas": [
+   {
+    "cita": "Yo iba en mi Corolla",
+    "rol": "conductor",
+    "vehiculo": 0
+   }
+  ],
+  "preguntas": [
+   "¿El camión de carga era unitario o tractocamión?",
+   "¿Sabe a qué velocidad aproximada venía el camión?",
+   "¿Cuántos carriles tiene la autopista en ese sentido?"
+  ],
+  "vehiculos": [
+   {
+    "narrador": true
+   },
+   {
+    "narrador": false
+   }
+  ]
+ },
+ "texto_sha256": "0a2da62b3a407d0767508465e2e623e758c3560adbb327d6af6548c9ffe1e71f",
+ "usage": {
+  "cache_creation_input_tokens": 0,
+  "cache_read_input_tokens": 7131,
+  "input_tokens": 180,
+  "output_tokens": 781
+ }
+}

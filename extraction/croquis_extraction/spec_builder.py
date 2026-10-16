@@ -344,15 +344,18 @@ def build_spec(
         evidencias.append(e)
     mk = sc.get("evidencias.marcas_m")
     if mk is not None:
-        evidencias.append(
-            {
-                "id": "evid-marcas",
-                "tipo": "marcas_frenado",
-                "vehiculo_id": vehiculos[0]["id"],
-                "longitud": _campo(text, "evidencias.marcas_m", mk, 0.0, {"unidad": "m"}),
-                "procedencia": _proc(text, mk),
-            }
-        )
+        marcas: JsonObj = {"id": "evid-marcas", "tipo": "marcas_frenado"}
+        proc = _proc(text, mk)
+        fase = sc.get("evidencias.marcas_fase")
+        if fase is not None:
+            marcas["fase"] = fase.valor
+            # La cita de la fase va como segundo fragmento de la procedencia (`facts_from_spec`).
+            if fase.cita and fase.stated and "evidencia" in proc:
+                proc["evidencia"] = proc["evidencia"] + _evidence(text, fase.cita)
+        marcas["vehiculo_id"] = vehiculos[0]["id"]
+        marcas["longitud"] = _campo(text, "evidencias.marcas_m", mk, 0.0, {"unidad": "m"})
+        marcas["procedencia"] = proc
+        evidencias.append(marcas)
     meta: JsonObj = {
         "id": spec_id,
         "version_esquema": "1.1.0",

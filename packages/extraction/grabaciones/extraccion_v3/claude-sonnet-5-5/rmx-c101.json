@@ -1,0 +1,81 @@
+{
+ "costo_estimado_con": "claude-sonnet-5-5",
+ "costo_usd": 0.0115642,
+ "esfuerzo": "medium",
+ "grabado": "2026-10-16T03:52:07+00:00",
+ "huella_prompt": "86f6a54999b8cbf7",
+ "latencia_ms": 7199.5,
+ "modelo": "claude-sonnet-5-5",
+ "modelo_respuesta": "claude-sonnet-5-5",
+ "prompt": "extraccion_v3",
+ "request_id": "req_011Cg5EhuZLkDeXP7WyenAbz",
+ "salida": {
+  "dispositivos": [],
+  "hechos": [
+   {
+    "campo": "evento.tipo",
+    "cita": "le pegué con el frente de mi sedán mediano WRX a una muchacha",
+    "persona": -1,
+    "valor": "impacto_vehiculo_persona",
+    "vehiculo": -1
+   },
+   {
+    "campo": "vehiculo.clase",
+    "cita": "sedán mediano",
+    "persona": -1,
+    "valor": "sedan_mediano",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.zona_impacto",
+    "cita": "le pegué con el frente",
+    "persona": -1,
+    "valor": "F",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.velocidad_kmh",
+    "cita": "iba como a 110",
+    "persona": -1,
+    "valor": "110",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.maniobra",
+    "cita": "iba derecho",
+    "persona": -1,
+    "valor": "recto",
+    "vehiculo": 0
+   }
+  ],
+  "personas": [
+   {
+    "cita": "Yo venía manejando",
+    "rol": "conductor",
+    "vehiculo": 0
+   },
+   {
+    "cita": "una muchacha",
+    "rol": "peaton",
+    "vehiculo": -1
+   }
+  ],
+  "preguntas": [
+   "¿Había semáforo o paso peatonal en el lugar donde ella cruzaba?",
+   "¿Alcanzó a frenar antes del golpe?",
+   "¿Era de día o de noche, y cómo estaba el clima?"
+  ],
+  "vehiculos": [
+   {
+    "narrador": true
+   }
+  ]
+ },
+ "texto_sha256": "5034b1471d3eddae4cee5a1dfec0ad986de9a1b999589a07c4585ec198ff02ba",
+ "usage": {
+  "cache_creation_input_tokens": 0,
+  "cache_read_input_tokens": 7131,
+  "input_tokens": 179,
+  "output_tokens": 978
+ }
+}

@@ -1,0 +1,114 @@
+{
+ "costo_estimado_con": "claude-haiku-5-5",
+ "costo_usd": 0.00205161,
+ "esfuerzo": "medium",
+ "grabado": "2026-10-16T14:47:14+00:00",
+ "huella_prompt": "86f6a54999b8cbf7",
+ "latencia_ms": 15714.5,
+ "modelo": "claude-haiku-5-5",
+ "modelo_respuesta": "claude-haiku-5-5",
+ "prompt": "extraccion_v3",
+ "request_id": "req_011Cg66eosX4h8qzQwcyLSdh",
+ "salida": {
+  "dispositivos": [],
+  "hechos": [
+   {
+    "campo": "entorno.iluminacion",
+    "cita": "No había alumbrado en el tramo",
+    "persona": -1,
+    "valor": "noche_sin_alumbrado",
+    "vehiculo": -1
+   },
+   {
+    "campo": "vehiculo.clase",
+    "cita": "Mazda 3",
+    "persona": -1,
+    "valor": "sedan_mediano",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.color",
+    "cita": "Mazda 3 color azul",
+    "persona": -1,
+    "valor": "azul",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.velocidad_kmh",
+    "cita": "Indica una velocidad aproximada de 100 km/h",
+    "persona": -1,
+    "valor": "100",
+    "vehiculo": 0
+   },
+   {
+    "campo": "evento.tipo",
+    "cita": "perdió el control de la unidad",
+    "persona": -1,
+    "valor": "derrape",
+    "vehiculo": -1
+   },
+   {
+    "campo": "evento.tipo",
+    "cita": "impactó de frente contra un señalamiento vertical",
+    "persona": -1,
+    "valor": "impacto_vehiculo_objeto",
+    "vehiculo": -1
+   },
+   {
+    "campo": "evento.objeto",
+    "cita": "un señalamiento vertical",
+    "persona": -1,
+    "valor": "senal",
+    "vehiculo": -1
+   },
+   {
+    "campo": "vehiculo.zona_impacto",
+    "cita": "impactó de frente",
+    "persona": -1,
+    "valor": "F",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.clase",
+    "cita": "un camión de carga",
+    "persona": -1,
+    "valor": "camion_o_autobus",
+    "vehiculo": 1
+   },
+   {
+    "campo": "persona.cinturon",
+    "cita": "portaba cinturón de seguridad",
+    "persona": 0,
+    "valor": "true",
+    "vehiculo": -1
+   }
+  ],
+  "personas": [
+   {
+    "cita": "El asegurado manifiesta que circulaba",
+    "rol": "conductor",
+    "vehiculo": 0
+   }
+  ],
+  "preguntas": [
+   "¿El camión de carga era unitario o tractocamión?",
+   "¿Hubo contacto entre el vehículo del asegurado y el camión durante el rebase?",
+   "¿Quedaron marcas en el pavimento antes del impacto y de qué largo?"
+  ],
+  "vehiculos": [
+   {
+    "narrador": true
+   },
+   {
+    "narrador": false
+   }
+  ]
+ },
+ "texto_sha256": "6a2e02a4f5992d3299e6c6ccc06fdae543d6cecdceb483ff54def01589695d88",
+ "usage": {
+  "cache_creation_input_tokens": 0,
+  "cache_read_input_tokens": 7131,
+  "input_tokens": 208,
+  "output_tokens": 3919
+ }
+}

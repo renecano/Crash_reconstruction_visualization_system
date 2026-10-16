@@ -1,0 +1,77 @@
+{
+ "costo_estimado_con": "claude-haiku-5-5",
+ "costo_usd": 0.00113541,
+ "esfuerzo": "medium",
+ "grabado": "2026-10-16T14:46:58+00:00",
+ "huella_prompt": "86f6a54999b8cbf7",
+ "latencia_ms": 9147.9,
+ "modelo": "claude-haiku-5-5",
+ "modelo_respuesta": "claude-haiku-5-5",
+ "prompt": "extraccion_v3",
+ "request_id": "req_011Cg66e8k46TET826mNUA4x",
+ "salida": {
+  "dispositivos": [
+   {
+    "cita": "se pasó el rojo",
+    "tipo": "semaforo"
+   }
+  ],
+  "hechos": [
+   {
+    "campo": "lugar.tipo_via",
+    "cita": "crucero",
+    "persona": -1,
+    "valor": "interseccion",
+    "vehiculo": -1
+   },
+   {
+    "campo": "evento.tipo",
+    "cita": "le pegó de lado a mi Vento",
+    "persona": -1,
+    "valor": "impacto_vehiculo_vehiculo",
+    "vehiculo": -1
+   },
+   {
+    "campo": "vehiculo.clase",
+    "cita": "Hilux",
+    "persona": -1,
+    "valor": "pickup",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.clase",
+    "cita": "Vento",
+    "persona": -1,
+    "valor": "sedan_compacto",
+    "vehiculo": 1
+   }
+  ],
+  "personas": [
+   {
+    "cita": "un joven en una Hilux",
+    "rol": "conductor",
+    "vehiculo": 0
+   }
+  ],
+  "preguntas": [
+   "¿Quién manejaba el Vento al momento del golpe?",
+   "¿Qué lado del Vento recibió el impacto?",
+   "¿A qué velocidad iba la Hilux?"
+  ],
+  "vehiculos": [
+   {
+    "narrador": false
+   },
+   {
+    "narrador": false
+   }
+  ]
+ },
+ "texto_sha256": "252c8da9955706cac00a15373fe32cfddda09e19b675db12082434bf59959fca",
+ "usage": {
+  "cache_creation_input_tokens": 0,
+  "cache_read_input_tokens": 7131,
+  "input_tokens": 76,
+  "output_tokens": 2113
+ }
+}

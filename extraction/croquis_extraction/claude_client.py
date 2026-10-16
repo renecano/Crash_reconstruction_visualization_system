@@ -40,11 +40,12 @@ ROOT = Path(__file__).resolve().parents[2]
 RECORDINGS = ROOT / "packages" / "extraction" / "grabaciones"
 LEDGER = RECORDINGS / "gasto.json"
 PROMPTS_DIR = ROOT / "packages" / "extraction" / "prompts"
-# v2 es el prompt de producción: superó a v1 en dev y se midió después en el test CISS (ADR 0012).
+# v3 es el prompt de producción: v2 más la fase de las marcas; no empeoró en dev ni en el test
+# CISS (ADR 0019). v2 lo fue antes (ADR 0012).
 # Las grabaciones de v1 viven en grabaciones/<modelo>/ y las de otras versiones en
 # grabaciones/<versión>/<modelo>/.
-PROMPT_VERSION = "extraccion_v2"
-PROMPT_VERSIONS = ("extraccion_v1", "extraccion_v2")
+PROMPT_VERSION = "extraccion_v3"
+PROMPT_VERSIONS = ("extraccion_v1", "extraccion_v2", "extraccion_v3")
 SCHEMA_FILE = ROOT / "packages" / "scene-schema" / "escena.schema.json"
 DEFAULT_MODEL = "claude-sonnet-5-5"
 MODELS = ("claude-sonnet-5-5", "claude-haiku-5-5")
@@ -71,8 +72,12 @@ SCALAR_CAMPOS = (
     "evento.tipo",
     "evento.objeto",
     "evidencias.marcas_m",
+    "evidencias.marcas_fase",
     "evidencias.distancia_proyeccion_m",
 )
+# Campos que pide cada versión del prompt: v1 y v2 no conocen la fase de las marcas (contrato
+# 1.1.0, ADR 0019), así su esquema y su huella no cambian y sus grabaciones siguen valiendo.
+SINCE_V3 = frozenset({"evidencias.marcas_fase"})
 VEHICLE_CAMPOS = (
     "vehiculo.clase",
     "vehiculo.maniobra",
@@ -89,6 +94,15 @@ NUMERIC_CAMPOS = {
     "evidencias.distancia_proyeccion_m",
     "vehiculo.velocidad_kmh",
 }
+
+
+def campos_for(prompt: str) -> tuple[str, ...]:
+    """Campos del esquema de salida de una versión del prompt."""
+    if prompt in ("extraccion_v1", "extraccion_v2"):
+        return tuple(c for c in CAMPOS if c not in SINCE_V3)
+    return CAMPOS
+
+
 BOOL_CAMPOS = {"vehiculo.frenado", "persona.cinturon", "persona.casco"}
 EVENT_TYPES = (
     "impacto_vehiculo_vehiculo",
@@ -126,6 +140,7 @@ def allowed_values() -> dict[str, tuple[str, ...]]:
         "entorno.iluminacion": (*_schema_enum("CampoIluminacion"), "noche"),
         "evento.tipo": EVENT_TYPES,
         "evento.objeto": _schema_enum("ObjetoEntorno", "tipo"),
+        "evidencias.marcas_fase": _schema_enum("EvidenciaFisica", "fase"),
         "vehiculo.clase": (*_schema_enum("CampoClaseVehiculo"), "suv_o_pickup", "camion_o_autobus"),
         "vehiculo.maniobra": (*_schema_enum("CampoManiobra"), "cambio_carril"),
         "vehiculo.zona_impacto": _schema_enum("ZonaCDC", "lado"),
@@ -134,7 +149,7 @@ def allowed_values() -> dict[str, tuple[str, ...]]:
     }
 
 
-def output_schema() -> dict[str, Any]:
+def output_schema(prompt: str = PROMPT_VERSION) -> dict[str, Any]:
     """Esquema de la salida estructurada; sin uniones: lo opcional es una lista que puede faltar."""
     av = allowed_values()
     return {
@@ -167,7 +182,7 @@ def output_schema() -> dict[str, Any]:
                 "items": {
                     "type": "object",
                     "properties": {
-                        "campo": {"type": "string", "enum": list(CAMPOS)},
+                        "campo": {"type": "string", "enum": list(campos_for(prompt))},
                         "vehiculo": {"type": "integer"},
                         "persona": {"type": "integer"},
                         "valor": {"type": "string"},
@@ -196,10 +211,10 @@ def output_schema() -> dict[str, Any]:
     }
 
 
-def _values_doc() -> str:
+def _values_doc(prompt: str = PROMPT_VERSION) -> str:
     av = allowed_values()
     lines = ["Valores por campo (`valor` va como texto):"]
-    for campo in CAMPOS:
+    for campo in campos_for(prompt):
         if campo in NUMERIC_CAMPOS:
             lines.append(f"- {campo}: número")
         elif campo in BOOL_CAMPOS:
@@ -240,13 +255,15 @@ def system_prompt(prompt: str = PROMPT_VERSION) -> str:
     gl = "\n".join(lines)
     base = (PROMPTS_DIR / f"{prompt}.md").read_text(encoding="utf-8").replace("{GLOSARIO}", gl)
     base = base.replace("{MODELOS}", _models_doc())
-    return base + "\n\n" + _values_doc() + "\n"
+    return base + "\n\n" + _values_doc(prompt) + "\n"
 
 
 def prompt_fingerprint(prompt: str = PROMPT_VERSION) -> str:
     """Huella del prompt y del esquema: una grabación solo vale para la misma huella."""
     payload = (
-        system_prompt(prompt) + json.dumps(output_schema(), sort_keys=True) + glossary_version()
+        system_prompt(prompt)
+        + json.dumps(output_schema(prompt), sort_keys=True)
+        + glossary_version()
     )
     return hashlib.sha256(payload.encode("utf-8")).hexdigest()[:16]
 
@@ -509,7 +526,7 @@ def call_claude(
         "messages": [{"role": "user", "content": f"Relato:\n\n{text}"}],
         "output_config": {
             "effort": effort,
-            "format": {"type": "json_schema", "schema": output_schema()},
+            "format": {"type": "json_schema", "schema": output_schema(prompt)},
         },
     }
     t0 = time.perf_counter()

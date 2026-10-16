@@ -1,0 +1,119 @@
+{
+ "costo_estimado_con": "claude-sonnet-5-5",
+ "costo_usd": 0.0096722,
+ "esfuerzo": "medium",
+ "grabado": "2026-10-16T14:02:06+00:00",
+ "huella_prompt": "86f6a54999b8cbf7",
+ "latencia_ms": 6610.7,
+ "modelo": "claude-sonnet-5-5",
+ "modelo_respuesta": "claude-sonnet-5-5",
+ "prompt": "extraccion_v3",
+ "request_id": "req_011Cg63Dt4FPihR7NTfTfaCQ",
+ "salida": {
+  "dispositivos": [
+   {
+    "cita": "señalamiento vertical",
+    "tipo": "otro"
+   }
+  ],
+  "hechos": [
+   {
+    "campo": "entorno.iluminacion",
+    "cita": "No había alumbrado en el tramo",
+    "persona": -1,
+    "valor": "noche_sin_alumbrado",
+    "vehiculo": -1
+   },
+   {
+    "campo": "evento.tipo",
+    "cita": "impactó de frente contra un señalamiento vertical",
+    "persona": -1,
+    "valor": "impacto_vehiculo_objeto",
+    "vehiculo": -1
+   },
+   {
+    "campo": "evento.objeto",
+    "cita": "señalamiento vertical",
+    "persona": -1,
+    "valor": "senal",
+    "vehiculo": -1
+   },
+   {
+    "campo": "vehiculo.clase",
+    "cita": "Mazda 3",
+    "persona": -1,
+    "valor": "sedan_mediano",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.color",
+    "cita": "azul",
+    "persona": -1,
+    "valor": "azul",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.velocidad_kmh",
+    "cita": "100 km/h",
+    "persona": -1,
+    "valor": "100",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.zona_impacto",
+    "cita": "impactó de frente",
+    "persona": -1,
+    "valor": "F",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.clase",
+    "cita": "camión de carga",
+    "persona": -1,
+    "valor": "camion_unitario",
+    "vehiculo": 1
+   },
+   {
+    "campo": "persona.cinturon",
+    "cita": "portaba cinturón de seguridad",
+    "persona": 0,
+    "valor": "true",
+    "vehiculo": -1
+   },
+   {
+    "campo": "lugar.tipo_via",
+    "cita": "carretera Mérida–Progreso",
+    "persona": -1,
+    "valor": "carretera_dos_carriles",
+    "vehiculo": -1
+   }
+  ],
+  "personas": [
+   {
+    "cita": "El asegurado manifiesta que circulaba",
+    "rol": "conductor",
+    "vehiculo": 0
+   }
+  ],
+  "preguntas": [
+   "¿La carretera tenía uno o más carriles por sentido en ese tramo?",
+   "¿Cómo estaba la superficie del pavimento (seca o mojada)?",
+   "¿El camión de carga circulaba a velocidad constante o iba frenando al intentar rebasarlo?"
+  ],
+  "vehiculos": [
+   {
+    "narrador": true
+   },
+   {
+    "narrador": false
+   }
+  ]
+ },
+ "texto_sha256": "6a2e02a4f5992d3299e6c6ccc06fdae543d6cecdceb483ff54def01589695d88",
+ "usage": {
+  "cache_creation_input_tokens": 0,
+  "cache_read_input_tokens": 7131,
+  "input_tokens": 208,
+  "output_tokens": 783
+ }
+}

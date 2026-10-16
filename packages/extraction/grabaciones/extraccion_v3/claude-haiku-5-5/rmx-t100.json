@@ -1,0 +1,122 @@
+{
+ "costo_estimado_con": "claude-haiku-5-5",
+ "costo_usd": 0.00159781,
+ "esfuerzo": "medium",
+ "grabado": "2026-10-16T14:53:14+00:00",
+ "huella_prompt": "86f6a54999b8cbf7",
+ "latencia_ms": 13891.4,
+ "modelo": "claude-haiku-5-5",
+ "modelo_respuesta": "claude-haiku-5-5",
+ "prompt": "extraccion_v3",
+ "request_id": "req_011Cg677XGdrRDK5seBMgaJq",
+ "salida": {
+  "dispositivos": [],
+  "hechos": [
+   {
+    "campo": "vehiculo.clase",
+    "cita": "Frontier",
+    "persona": -1,
+    "valor": "pickup",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.clase",
+    "cita": "Ecosport",
+    "persona": -1,
+    "valor": "suv_compacta",
+    "vehiculo": 2
+   },
+   {
+    "campo": "vehiculo.velocidad_kmh",
+    "cita": "a unos 60",
+    "persona": -1,
+    "valor": "60",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.maniobra",
+    "cita": "me fui al carril de la izquierda",
+    "persona": -1,
+    "valor": "cambio_carril_izquierda",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.frenado",
+    "cita": "el de volteo frenó",
+    "persona": -1,
+    "valor": "true",
+    "vehiculo": 1
+   },
+   {
+    "campo": "evento.tipo",
+    "cita": "me pegó",
+    "persona": -1,
+    "valor": "impacto_vehiculo_vehiculo",
+    "vehiculo": -1
+   },
+   {
+    "campo": "vehiculo.zona_impacto",
+    "cita": "en la esquina de atrás del lado izquierdo",
+    "persona": -1,
+    "valor": "B",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.zona_impacto",
+    "cita": "en la esquina de atrás del lado izquierdo",
+    "persona": -1,
+    "valor": "L",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.zona_impacto",
+    "cita": "me pegó",
+    "persona": -1,
+    "valor": "F",
+    "vehiculo": 2
+   },
+   {
+    "campo": "entorno.clima",
+    "cita": "llovía tantito",
+    "persona": -1,
+    "valor": "lluvia_ligera",
+    "vehiculo": -1
+   }
+  ],
+  "personas": [
+   {
+    "cita": "Yo traía la Frontier",
+    "rol": "conductor",
+    "vehiculo": 0
+   },
+   {
+    "cita": "una muchacha que venía en una Ecosport",
+    "rol": "conductor",
+    "vehiculo": 2
+   }
+  ],
+  "preguntas": [
+   "¿A qué velocidad iba la Ecosport?",
+   "¿Qué carril ocupaba el camión de volteo cuando frenó?",
+   "¿Qué tipo de vía era, de uno o de más carriles por sentido?"
+  ],
+  "vehiculos": [
+   {
+    "narrador": true
+   },
+   {
+    "narrador": false
+   },
+   {
+    "narrador": false
+   }
+  ]
+ },
+ "texto_sha256": "adfffb97609cb13f5b0192e6a3a906afab890ef2c7eb886c7fcf65ed613fc51c",
+ "usage": {
+  "cache_creation_input_tokens": 0,
+  "cache_read_input_tokens": 7131,
+  "input_tokens": 235,
+  "output_tokens": 3006
+ }
+}

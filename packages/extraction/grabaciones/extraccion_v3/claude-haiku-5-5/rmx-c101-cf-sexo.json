@@ -1,0 +1,80 @@
+{
+ "costo_estimado_con": "claude-haiku-5-5",
+ "costo_usd": 0.00091111,
+ "esfuerzo": "medium",
+ "grabado": "2026-10-16T04:29:27+00:00",
+ "huella_prompt": "86f6a54999b8cbf7",
+ "latencia_ms": 7337.9,
+ "modelo": "claude-haiku-5-5",
+ "modelo_respuesta": "claude-haiku-5-5",
+ "prompt": "extraccion_v3",
+ "request_id": "req_011Cg5HZ41SGYFPsHM5M2t9t",
+ "salida": {
+  "dispositivos": [],
+  "hechos": [
+   {
+    "campo": "vehiculo.clase",
+    "cita": "sedán mediano WRX",
+    "persona": -1,
+    "valor": "sedan_mediano",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.maniobra",
+    "cita": "iba derecho",
+    "persona": -1,
+    "valor": "recto",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.velocidad_kmh",
+    "cita": "iba como a 110",
+    "persona": -1,
+    "valor": "110",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.zona_impacto",
+    "cita": "le pegué con el frente",
+    "persona": -1,
+    "valor": "F",
+    "vehiculo": 0
+   },
+   {
+    "campo": "evento.tipo",
+    "cita": "le pegué con el frente",
+    "persona": -1,
+    "valor": "impacto_vehiculo_persona",
+    "vehiculo": -1
+   }
+  ],
+  "personas": [
+   {
+    "cita": "Yo venía manejando de la escuela",
+    "rol": "conductor",
+    "vehiculo": 0
+   },
+   {
+    "cita": "a un muchacho",
+    "rol": "peaton",
+    "vehiculo": -1
+   }
+  ],
+  "preguntas": [
+   "¿El choque ocurrió en una intersección, en una calle recta u otro lugar?",
+   "¿El peatón cruzaba por un paso peatonal o en otro punto de la vía?"
+  ],
+  "vehiculos": [
+   {
+    "narrador": true
+   }
+  ]
+ },
+ "texto_sha256": "aa4beadf9389763c4473fec1bddba0880d1995d231fc77f80f2c06b3f5f489f3",
+ "usage": {
+  "cache_creation_input_tokens": 0,
+  "cache_read_input_tokens": 7131,
+  "input_tokens": 178,
+  "output_tokens": 1644
+ }
+}

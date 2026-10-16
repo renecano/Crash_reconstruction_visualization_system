@@ -1,0 +1,86 @@
+{
+ "costo_estimado_con": "claude-haiku-5-5",
+ "costo_usd": 0.00116791,
+ "esfuerzo": "medium",
+ "grabado": "2026-10-16T03:21:30+00:00",
+ "huella_prompt": "86f6a54999b8cbf7",
+ "latencia_ms": 9251.9,
+ "modelo": "claude-haiku-5-5",
+ "modelo_respuesta": "claude-haiku-5-5",
+ "prompt": "extraccion_v3",
+ "request_id": "req_011Cg5CNQaJdLKMcd3vPuYnn",
+ "salida": {
+  "dispositivos": [],
+  "hechos": [
+   {
+    "campo": "vehiculo.clase",
+    "cita": "Corolla",
+    "persona": -1,
+    "valor": "sedan_mediano",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.velocidad_kmh",
+    "cita": "Iba como a sesenta, creo.",
+    "persona": -1,
+    "valor": "60",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.zona_impacto",
+    "cita": "Le di con el frente al puesto",
+    "persona": -1,
+    "valor": "F",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.maniobra",
+    "cita": "un carro se me echó encima",
+    "persona": -1,
+    "valor": "cambio_carril",
+    "vehiculo": 1
+   },
+   {
+    "campo": "evento.tipo",
+    "cita": "Choqué contra un puesto de elotes",
+    "persona": -1,
+    "valor": "impacto_vehiculo_objeto",
+    "vehiculo": -1
+   },
+   {
+    "campo": "evento.objeto",
+    "cita": "puesto de elotes",
+    "persona": -1,
+    "valor": "puesto",
+    "vehiculo": -1
+   }
+  ],
+  "personas": [
+   {
+    "cita": "en mi Corolla",
+    "rol": "conductor",
+    "vehiculo": 0
+   }
+  ],
+  "preguntas": [
+   "¿Qué tipo de vehículo era el carro que se le echó encima?",
+   "¿A qué velocidad iba el otro vehículo?",
+   "¿Cuál era la iluminación de la calle a esa hora?"
+  ],
+  "vehiculos": [
+   {
+    "narrador": true
+   },
+   {
+    "narrador": false
+   }
+  ]
+ },
+ "texto_sha256": "0ef2a1676d62d4e6aa2c4ce8018a546e1d4ec69533cb9ebfadcee6f48cc30594",
+ "usage": {
+  "cache_creation_input_tokens": 0,
+  "cache_read_input_tokens": 7131,
+  "input_tokens": 206,
+  "output_tokens": 2152
+ }
+}

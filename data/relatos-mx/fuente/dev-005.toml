@@ -445,6 +445,7 @@ Reporte de siniestro. El conductor de la unidad asegurada, una van de carga Ford
 "evento.tipo" = ["impacto_vehiculo_objeto", "impactó con su frente contra un muro de contención"]
 "evento.objeto" = ["muro", "muro de contención"]
 "evidencias.marcas_m" = [12, "aproximadamente 12 metros"]
+"evidencias.marcas_fase" = ["antes_impacto"]
 zonas = { "0" = ["F", "con su frente"] }
 [[relato.hechos.vehiculos]]
 narrador = true
