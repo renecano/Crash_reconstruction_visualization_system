@@ -23,6 +23,7 @@ EXPECTED = [
     "alcance",
     "frontal_curva",
     "glorieta",
+    "interseccion_toluca",
     "lateral_interseccion",
     "motociclista",
     "nocturno_lluvia",
@@ -92,11 +93,12 @@ def test_schema_es_draft_2020_12_valido_y_versionado() -> None:
     assert schema_errors({})  # un documento vacío no es una escena
 
 
-def test_hay_diez_escenas_canonicas_con_ids_unicos() -> None:
+def test_escenas_canonicas_con_ids_unicos() -> None:
     names = list_fixtures()
     assert names == EXPECTED
     ids = {load_fixture(n)["meta"]["id"] for n in names}
-    assert len(ids) == 10
+    # Las diez de F1 y la de Toluca con vía de OpenStreetMap (F8, ADR 0023).
+    assert len(ids) == 11
 
 
 @pytest.mark.parametrize("name", EXPECTED)

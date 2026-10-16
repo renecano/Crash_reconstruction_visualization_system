@@ -74,7 +74,7 @@ def without_identifiability(name: str) -> JsonObj:
 def main() -> str:
     scenes = [scene(n) for n in list_fixtures()]
     payload = {
-        "descripcion": "F7 en las 10 escenas canónicas: parámetros que fija la evidencia en la "
+        "descripcion": "F7 en las escenas canónicas: parámetros que fija la evidencia en la "
         "inversión, banderas de consistencia y tiempo de Monte Carlo, inversión y consistencia "
         "con el solver de referencia. Incluye el intervalo que daría la inversión sin la regla "
         "de identificabilidad en las escenas contra objeto fijo.",

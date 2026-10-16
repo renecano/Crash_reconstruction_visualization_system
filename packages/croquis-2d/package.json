@@ -10,7 +10,9 @@
   "scripts": {
     "lint": "eslint .",
     "typecheck": "tsc -p tsconfig.json",
-    "test": "vitest run"
+    "test": "vitest run",
+    "generate": "tsx scripts/red-vial-fixtures.ts",
+    "generate:check": "tsx scripts/red-vial-fixtures.ts --check"
   },
   "peerDependencies": {
     "react": "catalog:",
@@ -27,6 +29,7 @@
     "jsdom": "catalog:",
     "react": "catalog:",
     "react-dom": "catalog:",
+    "tsx": "catalog:",
     "typescript": "catalog:",
     "vite": "catalog:",
     "vitest": "catalog:"
