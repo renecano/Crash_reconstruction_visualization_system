@@ -40,10 +40,11 @@ ROOT = Path(__file__).resolve().parents[2]
 RECORDINGS = ROOT / "packages" / "extraction" / "grabaciones"
 LEDGER = RECORDINGS / "gasto.json"
 PROMPTS_DIR = ROOT / "packages" / "extraction" / "prompts"
-# v2 es el prompt de producción: superó a v1 en dev y se midió después en el test CISS (ADR 0012).
+# v3 es el prompt de producción: v2 más la fase de las marcas; no empeoró en dev ni en el test
+# CISS (ADR 0019). v2 lo fue antes (ADR 0012).
 # Las grabaciones de v1 viven en grabaciones/<modelo>/ y las de otras versiones en
 # grabaciones/<versión>/<modelo>/.
-PROMPT_VERSION = "extraccion_v2"
+PROMPT_VERSION = "extraccion_v3"
 PROMPT_VERSIONS = ("extraccion_v1", "extraccion_v2", "extraccion_v3")
 SCHEMA_FILE = ROOT / "packages" / "scene-schema" / "escena.schema.json"
 DEFAULT_MODEL = "claude-sonnet-5-5"
