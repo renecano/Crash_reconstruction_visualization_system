@@ -1,0 +1,15 @@
+{
+  "toluca_carranza_juarez": {
+    "descripcion": "Av. General Venustiano Carranza y Calle Benito Juárez García, Toluca, Estado de México",
+    "lat": 19.278975,
+    "lon": -99.6539869,
+    "radio_m": 150,
+    "nodo_cruce": 305269145,
+    "url": "https://overpass-api.de/api/interpreter",
+    "consulta": "[out:json][timeout:25];way(around:150,19.278975,-99.6539869)[\"highway\"];out body;>;out skel qt;",
+    "datos_osm": "2026-10-16T18:30:24Z",
+    "descargado": "2026-10-16",
+    "sha256": "e9b314dc498cd9a9e3aece4b20a5344eac030be25f0c5e504f51ddb747342087",
+    "elementos": 80
+  }
+}

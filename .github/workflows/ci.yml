@@ -103,6 +103,8 @@ jobs:
         run: |
           uv run croquis-data inercia download
           uv run croquis-data inercia build --check
+      - name: Extractos de OpenStreetMap íntegros (SHA-256 del manifiesto)
+        run: uv run croquis-data osm check
       - run: uv run croquis-extraction relatos check
       - run: uv run croquis-extraction golden check
       - name: Cuerpos de MakeHuman reproducibles (descarga fijada y reconstrucción byte a byte)

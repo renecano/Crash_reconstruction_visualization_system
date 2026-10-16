@@ -87,7 +87,24 @@ def main(argv: list[str] | None = None) -> int:
     )
     p_cr.add_argument("--check", action="store_true", help="Solo verifica que estén al día")
 
+    p_os = sub.add_parser("osm", help="Extractos de OpenStreetMap vía Overpass (ADR 0023)")
+    os_sub = p_os.add_subparsers(dest="command", required=True)
+    p_od = os_sub.add_parser("download", help="Descarga un extracto a data/osm con su SHA-256")
+    p_od.add_argument("--nombre", default="toluca_carranza_juarez")
+    os_sub.add_parser("check", help="Verifica los extractos contra data/osm/manifest.json")
+
     args = parser.parse_args(argv)
+    if args.source == "osm":
+        from croquis_data import osm
+
+        if args.command == "download":
+            print(f"Escrito {osm.download(args.nombre)}")
+            return 0
+        problems = osm.check()
+        for pr in problems:
+            print(pr)
+        print("Extractos de OSM al día" if not problems else "Extractos de OSM con problemas")
+        return 0 if not problems else 1
     if args.source == "ciss":
         from croquis_data import ciss
 
