@@ -3,14 +3,14 @@
 import { z } from "zod";
 
 export const SCHEMA_ID = "https://croquis.mx/schemas/escena/1.0.0/escena.schema.json";
-export const SCHEMA_VERSION = "1.1.0" as const;
+export const SCHEMA_VERSION = "1.2.0" as const;
 
 /** Confianza en el valor, de 0 (adivinado) a 1 (seguro). */
 export const Confianza = z.number().min(0).max(1);
 export type Confianza = z.infer<typeof Confianza>;
 
-/** De dónde salió el dato: del relato (con evidencia textual), lo escribió o corrigió la persona, lo supuso el sistema, o es el valor por defecto de la clase. */
-export const Fuente = z.enum(["relato", "usuario", "supuesto", "default"]);
+/** De dónde salió el dato: del relato (con evidencia textual), lo escribió o corrigió la persona, lo supuso el sistema, es el valor por defecto de la clase, o salió del mapa de OpenStreetMap en `ubicacion_real` (desde 1.2.0). */
+export const Fuente = z.enum(["relato", "usuario", "supuesto", "default", "mapa"]);
 export type Fuente = z.infer<typeof Fuente>;
 
 /** Fragmento literal del relato que respalda el dato. Los offsets son índices de caracteres (inicio inclusivo, fin exclusivo) sobre el relato normalizado. */
@@ -508,6 +508,29 @@ export const Frenado = z.strictObject({
 });
 export type Frenado = z.infer<typeof Frenado>;
 
+/** Una calle de OSM (un `way` con `highway`), ya en metros locales. */
+export const ViaMapa = z.strictObject({
+  id_osm: z.int(),
+  tipo: z.string().min(1).max(40),
+  nombre: z.string().max(120).optional(),
+  carriles: z.int().min(1).max(12).optional(),
+  ancho_m: z.number().min(2).max(60).optional(),
+  un_sentido: z.boolean().optional(),
+  puntos: z.array(Punto2D).min(2).max(400),
+});
+export type ViaMapa = z.infer<typeof ViaMapa>;
+
+/** Calles de OpenStreetMap alrededor de `ubicacion_real`, proyectadas a metros en el marco local de la escena (desde 1.2.0). Se guardan en la escena para que sea determinista y funcione sin red. */
+export const RedVial = z.strictObject({
+  fuente_datos: z.literal("OpenStreetMap"),
+  licencia: z.literal("ODbL-1.0"),
+  atribucion: z.string().min(1).max(200),
+  consultado: z.string().max(40),
+  nodo_cruce: z.int().optional(),
+  vias: z.array(ViaMapa).min(1).max(64),
+});
+export type RedVial = z.infer<typeof RedVial>;
+
 /** Coordenadas opcionales para generar la geometría desde OpenStreetMap (atribución ODbL en pantalla). */
 export const UbicacionReal = z.strictObject({
   lat: z.number().min(-90).max(90),
@@ -540,12 +563,13 @@ export const Lugar = z.strictObject({
   friccion: CampoAdimensional.optional(),
   dispositivos: z.array(Dispositivo).max(32).optional(),
   ubicacion_real: UbicacionReal.optional(),
+  red_vial: RedVial.optional(),
 });
 export type Lugar = z.infer<typeof Lugar>;
 
 export const Meta = z.strictObject({
   id: z.string().min(8).max(64).regex(new RegExp("^[A-Za-z0-9_-]+$")),
-  version_esquema: z.literal("1.1.0"),
+  version_esquema: z.literal("1.2.0"),
   idioma: z.enum(["es-MX", "en"]),
   semilla: z.int().min(0).max(4294967295),
   creado: z.iso.datetime({ offset: true }),

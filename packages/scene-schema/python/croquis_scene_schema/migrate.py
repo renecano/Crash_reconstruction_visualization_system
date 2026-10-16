@@ -46,12 +46,24 @@ def _v100_a_110(doc: JsonObj) -> JsonObj:
     return doc
 
 
+def _v110_a_120(doc: JsonObj) -> JsonObj:
+    """1.2.0 agrega la fuente ``mapa`` y ``lugar.red_vial`` (opcional): ningún documento
+    cambia de significado."""
+    return doc
+
+
 MIGRATIONS: list[Migration] = [
     Migration(
         "1.0.0",
         "1.1.0",
         "evidencias[].fase opcional (antes o después del impacto); los documentos no cambian",
         _v100_a_110,
+    ),
+    Migration(
+        "1.1.0",
+        "1.2.0",
+        "fuente 'mapa' y lugar.red_vial opcional (calles de OSM); los documentos no cambian",
+        _v110_a_120,
     ),
 ]
 

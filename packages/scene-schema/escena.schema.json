@@ -57,8 +57,8 @@
     },
     "Fuente": {
       "type": "string",
-      "description": "De dónde salió el dato: del relato (con evidencia textual), lo escribió o corrigió la persona, lo supuso el sistema, o es el valor por defecto de la clase.",
-      "enum": ["relato", "usuario", "supuesto", "default"]
+      "description": "De dónde salió el dato: del relato (con evidencia textual), lo escribió o corrigió la persona, lo supuso el sistema, es el valor por defecto de la clase, o salió del mapa de OpenStreetMap en `ubicacion_real` (desde 1.2.0).",
+      "enum": ["relato", "usuario", "supuesto", "default", "mapa"]
     },
     "Confianza": {
       "type": "number",
@@ -520,7 +520,7 @@
       "required": ["id", "version_esquema", "idioma", "semilla", "creado"],
       "properties": {
         "id": { "type": "string", "minLength": 8, "maxLength": 64, "pattern": "^[A-Za-z0-9_-]+$" },
-        "version_esquema": { "type": "string", "const": "1.1.0" },
+        "version_esquema": { "type": "string", "const": "1.2.0" },
         "idioma": { "type": "string", "enum": ["es-MX", "en"] },
         "semilla": {
           "type": "integer",
@@ -600,6 +600,52 @@
         "procedencia": { "$ref": "#/$defs/Procedencia" }
       }
     },
+    "RedVial": {
+      "type": "object",
+      "description": "Calles de OpenStreetMap alrededor de `ubicacion_real`, proyectadas a metros en el marco local de la escena (desde 1.2.0). Se guardan en la escena para que sea determinista y funcione sin red.",
+      "additionalProperties": false,
+      "required": ["fuente_datos", "licencia", "atribucion", "consultado", "vias"],
+      "properties": {
+        "fuente_datos": { "type": "string", "const": "OpenStreetMap" },
+        "licencia": { "type": "string", "const": "ODbL-1.0" },
+        "atribucion": { "type": "string", "minLength": 1, "maxLength": 200 },
+        "consultado": {
+          "type": "string",
+          "maxLength": 40,
+          "description": "Fecha de los datos de OSM (`timestamp_osm_base` de Overpass), ISO 8601."
+        },
+        "nodo_cruce": {
+          "type": "integer",
+          "description": "Nodo OSM del cruce que queda en el origen de la escena, si lo hay."
+        },
+        "vias": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 64,
+          "items": { "$ref": "#/$defs/ViaMapa" }
+        }
+      }
+    },
+    "ViaMapa": {
+      "type": "object",
+      "description": "Una calle de OSM (un `way` con `highway`), ya en metros locales.",
+      "additionalProperties": false,
+      "required": ["id_osm", "tipo", "puntos"],
+      "properties": {
+        "id_osm": { "type": "integer" },
+        "tipo": { "type": "string", "minLength": 1, "maxLength": 40 },
+        "nombre": { "type": "string", "maxLength": 120 },
+        "carriles": { "type": "integer", "minimum": 1, "maximum": 12 },
+        "ancho_m": { "type": "number", "minimum": 2, "maximum": 60 },
+        "un_sentido": { "type": "boolean" },
+        "puntos": {
+          "type": "array",
+          "minItems": 2,
+          "maxItems": 400,
+          "items": { "$ref": "#/$defs/Punto2D" }
+        }
+      }
+    },
     "UbicacionReal": {
       "type": "object",
       "description": "Coordenadas opcionales para generar la geometría desde OpenStreetMap (atribución ODbL en pantalla).",
@@ -654,7 +700,8 @@
           "items": { "$ref": "#/$defs/Dispositivo" },
           "maxItems": 32
         },
-        "ubicacion_real": { "$ref": "#/$defs/UbicacionReal" }
+        "ubicacion_real": { "$ref": "#/$defs/UbicacionReal" },
+        "red_vial": { "$ref": "#/$defs/RedVial" }
       }
     },
     "ObjetoEntorno": {
