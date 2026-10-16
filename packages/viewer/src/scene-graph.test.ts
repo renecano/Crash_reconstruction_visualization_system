@@ -1,5 +1,5 @@
 import { FIXTURE_NAMES, loadFixture, loadResultado, longitudM } from "@croquis/scene-schema";
-import { Mesh, Vector3 } from "three";
+import { InstancedMesh, Matrix4, Mesh, Vector3 } from "three";
 import { describe, expect, it } from "vitest";
 import { fromThree } from "./coords";
 import { QUALITY_PROFILES } from "./quality";
@@ -140,5 +140,38 @@ describe("grafo de escena", () => {
         .color;
       expect(`#${color.getHexString()}`).toBe(v.color.hex.toLowerCase());
     }
+  });
+});
+
+describe("árboles instanciados (F8c)", () => {
+  it("los árboles que no participan en un evento van en dos mallas instanciadas", async () => {
+    const spec = structuredClone(loadFixture("lateral_interseccion"));
+    const r = await loadResultado("lateral_interseccion");
+    const n = 40;
+    spec.entorno.objetos = [
+      ...(spec.entorno.objetos ?? []),
+      ...Array.from({ length: n }, (_, i) => ({
+        id: `arbol-decor-${i}`,
+        tipo: "arbol" as const,
+        posicion: { x: -60 + 3 * i, y: 25 },
+        procedencia: { fuente: "supuesto" as const, confianza: 0.3 },
+      })),
+    ];
+    const sg = buildSceneGraph(spec, r, opts);
+    const trunks = sg.root.getObjectByName("troncos") as InstancedMesh;
+    const crowns = sg.root.getObjectByName("copas") as InstancedMesh;
+    expect(trunks.count).toBe(n);
+    expect(crowns.count).toBe(n);
+    // Cada instancia en su lugar y con el alto determinista de su hash.
+    const m = new Matrix4();
+    trunks.getMatrixAt(5, m);
+    const p = new Vector3().setFromMatrixPosition(m);
+    expect(p.x).toBeCloseTo(-60 + 15, 6);
+    expect(p.z).toBeCloseTo(-25, 6);
+    // El conteo de triángulos incluye todas las instancias.
+    const base = buildSceneGraph(loadFixture("lateral_interseccion"), r, opts);
+    expect(sg.stats.triangles - base.stats.triangles).toBeGreaterThan(n * 100);
+    sg.dispose();
+    base.dispose();
   });
 });

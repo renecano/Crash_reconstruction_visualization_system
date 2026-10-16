@@ -24,6 +24,10 @@ export interface RoadGeometry {
   whiteLines: Mesh2D;
   yellowLines: Mesh2D;
   crosswalks: Mesh2D;
+  /** Parte de arriba del camellón (elevado a la altura de la guarnición). */
+  medians: Mesh2D;
+  /** Caras verticales de las guarniciones: segmentos en planta (de a a b). */
+  curbs: { a: Vec2; b: Vec2 }[];
   /** Caja envolvente de la calzada [minX, minY, maxX, maxY]. */
   bounds: [number, number, number, number];
 }
@@ -31,6 +35,8 @@ export interface RoadGeometry {
 export interface RoadOptions {
   dobleSentido: boolean;
   banquetas: boolean;
+  /** Guarnición en la orilla de la calzada aunque no haya banqueta (PLAN §7.1). */
+  guarniciones?: boolean;
   /** Pasos peatonales: centro del cruce en el mundo y rumbo de la vía que cruzan (grados). */
   crosswalks?: { center: Vec2; roadHeading: number; roadWidth: number }[];
   /** Largo y separación de los segmentos de las rayas discontinuas (por omisión, calle ≤ 50 km/h). */
@@ -80,6 +86,8 @@ export function markingsFor(dobleSentido: boolean, tipos: readonly string[]): Ma
 }
 
 export const LINE_WIDTH = 0.12;
+/** Altura de la guarnición, la banqueta y el camellón (m): 15 cm, la altura usual en México. */
+export const CURB_HEIGHT = 0.15;
 export const SIDEWALK_WIDTH = 2.5;
 const ARC_SEGMENT_M = 2;
 
@@ -133,6 +141,24 @@ function annulus(
 }
 
 /** ¿Está el punto dentro del rectángulo de una franja (con margen)? */
+/** Arco partido en segmentos rectos de ~2 m (para las caras verticales de la guarnición). */
+function arcSegments(
+  center: Vec2,
+  radius: number,
+  from: number,
+  to: number,
+): { a: Vec2; b: Vec2 }[] {
+  const span = ((to - from) * Math.PI) / 180;
+  const n = Math.max(8, Math.ceil((Math.abs(span) * radius) / ARC_SEGMENT_M));
+  const pt = (k: number): Vec2 => {
+    const ang = (from * Math.PI) / 180 + (span * k) / n;
+    return { x: center.x + radius * Math.cos(ang), y: center.y + radius * Math.sin(ang) };
+  };
+  const out: { a: Vec2; b: Vec2 }[] = [];
+  for (let k = 0; k < n; k++) out.push({ a: pt(k), b: pt(k + 1) });
+  return out;
+}
+
 function insideStrip(p: Vec2, s: LaneStrip, margin = 0): boolean {
   const d = dir(s.heading);
   const rel = { x: p.x - s.center.x, y: p.y - s.center.y };
@@ -220,6 +246,9 @@ export function buildRoadGeometry(layout: RoadLayout, opts: RoadOptions): RoadGe
   const white = emptyMesh();
   const yellow = emptyMesh();
   const crosswalks = emptyMesh();
+  const medians = emptyMesh();
+  const curbs: { a: Vec2; b: Vec2 }[] = [];
+  const withCurbs = opts.banquetas || (opts.guarniciones ?? false);
   let minX = Infinity;
   let minY = Infinity;
   let maxX = -Infinity;
@@ -267,6 +296,33 @@ export function buildRoadGeometry(layout: RoadLayout, opts: RoadOptions): RoadGe
         }
       }
     }
+    {
+      const step = 2;
+      const blocked = (c: Vec2, margin: number): boolean =>
+        layout.strips.some((o) => o !== s && insideStrip(c, o, margin)) ||
+        layout.rings.some((r) => insideRing(c, r));
+      for (let a = -s.length / 2; a < s.length / 2 - 1e-9; a += step) {
+        const l = Math.min(step, s.length / 2 - a);
+        const at = (along: number, off: number): Vec2 => ({
+          x: s.center.x + d.x * along + n.x * off,
+          y: s.center.y + d.y * along + n.y * off,
+        });
+        if (withCurbs) {
+          for (const side of [-1, 1]) {
+            const off = (side * s.width) / 2;
+            if (blocked(at(a + l / 2, off), 0.3)) continue;
+            curbs.push({ a: at(a, off), b: at(a + l, off) });
+          }
+        }
+        if (s.median > 0 && !blocked(at(a + l / 2, 0), 0.3)) {
+          orientedQuad(medians, at(a + l / 2, 0), d, l, s.median);
+          for (const side of [-1, 1]) {
+            const off = (side * s.median) / 2;
+            curbs.push({ a: at(a, off), b: at(a + l, off) });
+          }
+        }
+      }
+    }
     const offsets = stripLineOffsets(s, opts.dobleSentido);
     const excl = inIntersection(s);
     for (const o of offsets.edges) lineAlongStrip(white, s, o, false, excl);
@@ -298,6 +354,9 @@ export function buildRoadGeometry(layout: RoadLayout, opts: RoadOptions): RoadGe
       annulus(sidewalk, a.center, rOut, rOut + SIDEWALK_WIDTH, a.from, a.to);
       annulus(sidewalk, a.center, Math.max(0, rIn - SIDEWALK_WIDTH), rIn, a.from, a.to);
     }
+    if (withCurbs) {
+      for (const r of [rIn, rOut]) curbs.push(...arcSegments(a.center, r, a.from, a.to));
+    }
     lineAlongArc(white, a.center, rIn + LINE_WIDTH, a.from, a.to, false);
     lineAlongArc(white, a.center, rOut - LINE_WIDTH, a.from, a.to, false);
     if (opts.dobleSentido && markings.centro === "discontinua") {
@@ -315,8 +374,9 @@ export function buildRoadGeometry(layout: RoadLayout, opts: RoadOptions): RoadGe
     lineAlongArc(white, r.center, r.innerRadius + LINE_WIDTH, 0, 360, false);
     const mid = (r.innerRadius + r.outerRadius) / 2;
     lineAlongArc(white, r.center, mid, 0, 360, true, dash);
-    // Isla central como banqueta (camellón elevado).
+    // Isla central como banqueta (camellón elevado), con su guarnición.
     annulus(sidewalk, r.center, 0, r.innerRadius, 0, 360);
+    curbs.push(...arcSegments(r.center, r.innerRadius, 0, 360));
   }
 
   for (const cw of opts.crosswalks ?? []) {
@@ -343,6 +403,8 @@ export function buildRoadGeometry(layout: RoadLayout, opts: RoadOptions): RoadGe
     whiteLines: white,
     yellowLines: yellow,
     crosswalks,
+    medians,
+    curbs,
     bounds: [minX, minY, maxX, maxY],
   };
 }

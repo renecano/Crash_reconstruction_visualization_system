@@ -20,11 +20,14 @@ import {
   DoubleSide,
   Group,
   IcosahedronGeometry,
+  InstancedMesh,
   type Material,
+  Matrix4,
   Mesh,
   MeshPhysicalMaterial,
   MeshStandardMaterial,
   PlaneGeometry,
+  Quaternion,
   Object3D,
   RingGeometry,
   SpotLight,
@@ -45,7 +48,13 @@ import {
   type GroundMarks,
   type TimedQuad,
 } from "./ground-marks";
-import { buildRoadGeometry, dashPatternFor, markingsFor, type Mesh2D } from "./road-geometry";
+import {
+  buildRoadGeometry,
+  CURB_HEIGHT,
+  dashPatternFor,
+  markingsFor,
+  type Mesh2D,
+} from "./road-geometry";
 import { asphaltMaterial, type AsphaltMaterial } from "./road-surface";
 import { buildDevice, type DeviceNode } from "./traffic-devices";
 import {
@@ -142,6 +151,8 @@ function sceneMaterials(opts: SceneGraphOptions, asphalt: AsphaltMaterial) {
     trunk: std("#5b4636", 0.95),
     crown: std("#3e6b35", 0.9),
     concrete: std("#a5a39c", 0.9),
+    // Cara de la guarnición: concreto, visible por los dos lados (el segmento no tiene sentido).
+    curb: std("#b9b6ad", 0.9, 0, { side: DoubleSide }),
     metal: std("#8d9196", 0.45, 0.6),
     wall: std("#b7a68e", 0.95),
     signPlate: std("#e6e6e6", 0.5),
@@ -388,12 +399,14 @@ export function buildSceneGraph(
     crosswalks,
     dash: dashPatternFor(lugar.tipo_via.valor, limite ? velocidadKmh(limite) : undefined),
     markings: markingsFor(dobleSentido, devTipos),
+    guarniciones: lugar.guarniciones?.valor ?? false,
   });
   const roadGroup = new Group();
   roadGroup.name = "via";
   const layers: [string, Mesh2D, Material, number][] = [
     ["calzada", road.pavement, mats.asphalt, 0],
-    ["banqueta", road.sidewalk, mats.sidewalk, 0.15],
+    ["banqueta", road.sidewalk, mats.sidewalk, CURB_HEIGHT],
+    ["camellon", road.medians, mats.sidewalk, CURB_HEIGHT],
     ["rayas_blancas", road.whiteLines, mats.white, 0.012],
     ["rayas_amarillas", road.yellowLines, mats.yellow, 0.012],
     ["paso_peatonal", road.crosswalks, mats.crosswalk, 0.014],
@@ -424,6 +437,26 @@ export function buildSceneGraph(
       mesh.receiveShadow = false;
       roadGroup.add(mesh);
     }
+  }
+  // Caras verticales de las guarniciones (de la calzada a la banqueta o al camellón).
+  if (road.curbs.length > 0) {
+    const pos: number[] = [];
+    const idx: number[] = [];
+    for (const c of road.curbs) {
+      const base = pos.length / 3;
+      const [ax, , az] = toThree(c.a.x, c.a.y, 0);
+      const [bx, , bz] = toThree(c.b.x, c.b.y, 0);
+      pos.push(ax, 0, az, bx, 0, bz, bx, CURB_HEIGHT, bz, ax, CURB_HEIGHT, az);
+      idx.push(base, base + 1, base + 2, base, base + 2, base + 3);
+    }
+    const g = new BufferGeometry();
+    g.setAttribute("position", new BufferAttribute(new Float32Array(pos), 3));
+    g.setIndex(idx);
+    g.computeVertexNormals();
+    const curbs = new Mesh(g, mats.curb);
+    curbs.name = "guarniciones";
+    curbs.receiveShadow = true;
+    roadGroup.add(curbs);
   }
   root.add(roadGroup);
 
@@ -465,6 +498,17 @@ export function buildSceneGraph(
   const seedText = String(spec.meta.semilla);
   const solverObjects = new Map((resultado.objetos ?? []).map((g) => [g.id, g]));
   let trees = 0;
+  // Objetos que participan en un evento (p. ej. el árbol del choque): malla propia.
+  const actorIds = new Set(resultado.eventos.flatMap((e) => e.actores));
+  const decorTrees: {
+    x: number;
+    z: number;
+    d: number;
+    h: number;
+    crownR: number;
+    crownY: number;
+    yaw: number;
+  }[] = [];
   for (const o of spec.entorno.objetos ?? []) {
     const g = new Group();
     g.name = `objeto_${o.id}`;
@@ -483,9 +527,17 @@ export function buildSceneGraph(
       trunk.position.y = h / 2;
       trunk.userData.radius = d / 2;
       const crownR = geo?.copa?.radio_m ?? 1.8 + 1.6 * u + 2 * d;
+      const crownY = geo?.copa?.centro_m ?? h + crownR * 0.7;
+      if (!actorIds.has(o.id)) {
+        // Árbol que no participa en un evento: va en las mallas instanciadas (una llamada de
+        // dibujo para todos los troncos y otra para todas las copas).
+        const [px, , pz] = toThree(o.posicion.x, o.posicion.y, 0);
+        decorTrees.push({ x: px, z: pz, d, h, crownR, crownY, yaw: 2 * Math.PI * u });
+        continue;
+      }
       const crown = new Mesh(new IcosahedronGeometry(crownR, 1), mats.crown);
       crown.name = "copa";
-      crown.position.y = geo?.copa?.centro_m ?? h + crownR * 0.7;
+      crown.position.y = crownY;
       crown.rotation.y = 2 * Math.PI * u;
       for (const m of [trunk, crown]) m.castShadow = true;
       g.add(trunk, crown);
@@ -563,6 +615,32 @@ export function buildSceneGraph(
     }
     place(g, o.posicion.x, o.posicion.y, o.rumbo_deg ?? 0);
     objGroup.add(g);
+  }
+  if (decorTrees.length > 0) {
+    // Geometrías unitarias escaladas por instancia: tronco de radio 0.5 y alto 1, copa de radio 1.
+    const trunkGeo = new CylinderGeometry(0.5, 0.575, 1, 12);
+    trunkGeo.translate(0, 0.5, 0);
+    const crownGeo = new IcosahedronGeometry(1, 1);
+    const trunks = new InstancedMesh(trunkGeo, mats.trunk, decorTrees.length);
+    const crowns = new InstancedMesh(crownGeo, mats.crown, decorTrees.length);
+    trunks.name = "troncos";
+    crowns.name = "copas";
+    const m = new Matrix4();
+    const q = new Quaternion();
+    const up = new Vector3(0, 1, 0);
+    decorTrees.forEach((t, i) => {
+      q.setFromAxisAngle(up, t.yaw);
+      m.compose(new Vector3(t.x, 0, t.z), q, new Vector3(t.d, t.h, t.d));
+      trunks.setMatrixAt(i, m);
+      m.compose(new Vector3(t.x, t.crownY, t.z), q, new Vector3(t.crownR, t.crownR, t.crownR));
+      crowns.setMatrixAt(i, m);
+    });
+    for (const im of [trunks, crowns]) {
+      im.castShadow = true;
+      im.instanceMatrix.needsUpdate = true;
+      im.computeBoundingSphere();
+      objGroup.add(im);
+    }
   }
   root.add(objGroup);
 
@@ -872,7 +950,9 @@ export function buildSceneGraph(
     if (o instanceof Mesh) {
       meshes++;
       const g = o.geometry as BufferGeometry;
-      triangles += (g.index ? g.index.count : (g.getAttribute("position")?.count ?? 0)) / 3;
+      const perInstance = (g.index ? g.index.count : (g.getAttribute("position")?.count ?? 0)) / 3;
+      // Una malla instanciada dibuja su geometría una vez por instancia.
+      triangles += perInstance * (o instanceof InstancedMesh ? o.count : 1);
     }
   });
 

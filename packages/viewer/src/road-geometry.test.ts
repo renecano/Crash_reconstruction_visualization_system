@@ -140,3 +140,54 @@ describe("rayas según el manual y los dispositivos de línea (F8c)", () => {
     expect(meshArea(disc.yellowLines)).toBeGreaterThan(0);
   });
 });
+
+describe("guarniciones y camellón (F8c)", () => {
+  function road(name: (typeof FIXTURE_NAMES)[number]) {
+    const spec = loadFixture(name);
+    return {
+      spec,
+      g: buildRoadGeometry(roadLayout(spec.lugar), {
+        dobleSentido: spec.lugar.sentidos.valor === "doble_sentido",
+        banquetas: spec.lugar.banquetas?.valor ?? false,
+        guarniciones: spec.lugar.guarniciones?.valor ?? false,
+      }),
+    };
+  }
+
+  it("con camellón hay camellón elevado del ancho del separador, con sus guarniciones", () => {
+    const { spec, g } = road("poste");
+    expect(spec.lugar.camellon?.valor).toBe(true);
+    const strip = roadLayout(spec.lugar).strips[0]!;
+    expect(meshArea(g.medians)).toBeGreaterThan(0.9 * strip.median * strip.length);
+    expect(g.curbs.length).toBeGreaterThan(0);
+  });
+
+  it("sin banquetas ni guarniciones no hay guarniciones", () => {
+    const { spec, g } = road("frontal_curva");
+    expect(spec.lugar.banquetas?.valor ?? false).toBe(false);
+    expect(spec.lugar.guarniciones?.valor ?? false).toBe(false);
+    expect(g.curbs).toHaveLength(0);
+  });
+
+  it("las guarniciones se cortan donde la otra vía cruza (no hay muro en el cruce)", () => {
+    const { spec, g } = road("lateral_interseccion");
+    const layout = roadLayout(spec.lugar);
+    expect(g.curbs.length).toBeGreaterThan(0);
+    for (const c of g.curbs) {
+      const mid = { x: (c.a.x + c.b.x) / 2, y: (c.a.y + c.b.y) / 2 };
+      // Ninguna guarnición pasa por el centro del cruce (dentro de las dos calzadas a la vez).
+      const inside = layout.strips.filter((s) => {
+        const d = {
+          x: Math.cos((s.heading * Math.PI) / 180),
+          y: Math.sin((s.heading * Math.PI) / 180),
+        };
+        const rx = mid.x - s.center.x;
+        const ry = mid.y - s.center.y;
+        const along = rx * d.x + ry * d.y;
+        const across = -rx * d.y + ry * d.x;
+        return Math.abs(along) <= s.length / 2 && Math.abs(across) < s.width / 2 - 0.5;
+      });
+      expect(inside.length).toBe(0);
+    }
+  });
+});
