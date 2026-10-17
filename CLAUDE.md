@@ -23,9 +23,12 @@ Trabajas de forma autónoma. **No pidas visto bueno para planes, decisiones téc
 - Dependencias y herramientas de desarrollo (npm, pip/uv, winget): instálalas tú y anota en `docs/PROGRESS.md` qué instalaste y para qué.
 - Si algo falla, depúralo hasta que funcione. No marques nada como hecho con pruebas en rojo, saltadas o borradas para que pase.
 
-**Solo te detienes por:**
-1. Un recorte de calidad o alcance que parezca inevitable (pregúntale a René antes).
-2. Algo que solo René puede dar: llaves de API, cuentas de despliegue, pruebas con personas reales (E9).
+- **No le preguntes a René decisiones técnicas, de medición, de herramientas ni de configuración.** Elige tú la opción que recomiendes, regístrala en `docs/PROGRESS.md` (y en un ADR si es de arquitectura) y sigue trabajando sin esperar.
+- Cambios en la computadora de René que sean reversibles y se restauren solos (por ejemplo, el modo de energía durante una medición) también los decides tú, siempre que quede registrado en el resultado.
+
+**Solo le preguntas a René en dos casos:**
+1. Un recorte de calidad o alcance: quitar algo visual, una función o una evaluación.
+2. Algo que solo René puede dar: llaves de API, cuentas de despliegue, la computadora de demo, pruebas con personas reales (E9).
 
 Si algo está bloqueado por el punto 2, **no te detengas**: anótalo en la sección "Bloqueado — necesita a René" de `docs/PROGRESS.md`, avanza con todo lo que no dependa de eso y retómalo cuando esté disponible.
 
