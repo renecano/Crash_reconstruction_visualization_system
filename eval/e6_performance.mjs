@@ -293,15 +293,27 @@ async function main() {
   );
   try {
     await waitForServer(`${base}/visor`, 60_000);
-    const browser = await chromium.launch({
-      headless: false,
-      args: [
-        "--enable-unsafe-webgpu",
-        "--ignore-gpu-blocklist",
-        "--disable-gpu-vsync",
-        "--disable-frame-rate-limit",
-      ],
-    });
+    const launch = () =>
+      chromium.launch({
+        headless: false,
+        args: [
+          "--enable-unsafe-webgpu",
+          "--ignore-gpu-blocklist",
+          "--disable-gpu-vsync",
+          "--disable-frame-rate-limit",
+        ],
+      });
+    // Un navegador nuevo por medición (ADR 0026): con uno solo para decenas de escenas, el proceso
+    // de GPU acumula estado y aparecen tirones que el usuario, que abre una escena, nunca ve.
+    const measureFresh = async (scene, quality, renderer) => {
+      const fresh = await launch();
+      try {
+        return await measure(fresh, base, scene, quality, renderer);
+      } finally {
+        await fresh.close();
+      }
+    };
+    const browser = await launch();
     const condicionesInicio = conditions();
     if (condicionesInicio.conectada === false) {
       console.warn(
@@ -320,7 +332,7 @@ async function main() {
         for (let k = 0; k < REPEATS; k++) {
           const order = k % 2 === 0 ? SCENES : [...SCENES].reverse();
           for (const scene of order) {
-            let r = await measure(browser, base, scene, quality, renderer);
+            let r = await measureFresh(scene, quality, renderer);
             const discarded = [];
             while (externalStutter(r) && discarded.length < MAX_RETRIES) {
               discarded.push({
@@ -330,7 +342,7 @@ async function main() {
               });
               console.log(`  re-medición por tirones externos: ${renderer}/${quality}/${scene}`);
               await new Promise((resolve) => setTimeout(resolve, COOLDOWN_S * 1000));
-              r = await measure(browser, base, scene, quality, renderer);
+              r = await measureFresh(scene, quality, renderer);
             }
             r.descartadas_por_tirones = discarded;
             reps.get(scene).push(r);
@@ -413,6 +425,8 @@ async function main() {
         navegador: "Chromium de Playwright con interfaz y GPU real",
         repeticiones: `${REPEATS} por configuración, cada una recorre las escenas en orden alterno (directo e inverso) con ${COOLDOWN_S} s de pausa entre mediciones; se reporta la repetición mediana por fps promedio (todas en repeticiones_fps)`,
         tirones_externos: `una repetición con tareas largas aunque sus cuadros normales van a más de 40 fps, y con el promedio más de 15 % por debajo de la mediana, se vuelve a medir (hasta ${MAX_RETRIES} veces; las descartadas quedan en descartadas_por_tirones)`,
+        navegador_por_medicion:
+          "uno nuevo por medición (con uno solo para todas, el proceso de GPU acumula estado y mete tirones)",
         criterio:
           "ADR 0026: baja ≥ 30 y media ≥ 60 fps en todas las escenas canónicas, en modo automático; alta y ultra solo como información",
       },
