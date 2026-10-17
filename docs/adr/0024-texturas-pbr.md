@@ -34,7 +34,7 @@
    - **Corte:** cada píxel calcula, con derivadas fuera de cualquier rama, cuántos texeles cubre. Desde 2^4.5 texeles la textura se funde con su promedio y desde 2^6 ya no se lee.
    - **Por qué no se nota:** el promedio es justo el color calibrado (decisión 3), que es a lo que tiende la textura filtrada a esa distancia.
    - **Normal sin derivadas:** se arma con el marco tangente conocido de una superficie horizontal con UV en planta (T = +X, B = +Z, N = +Y). Es el mismo marco que da el método de derivadas de three.js (`perturbNormal2Arb`) para esta proyección, y permite leerla dentro de la rama con gradiente explícito.
-   - **Medición:** `eval/e6_corte_texturas.mjs` compara el cuadro con el corte y sin él (`window.__croquisDiag.texturasSinCorte`). La primera corrida completa se detuvo porque la laptop se quedó sin memoria; está pendiente, igual que E6 con el corte.
+   - **Medición:** `eval/e6_corte_texturas.mjs` compara el cuadro con el corte y sin él (`window.__croquisDiag.texturasSinCorte`). En las 11 escenas canónicas, en calidad media y alta, la diferencia máxima es de 8.1 niveles de gris de 255; ningún píxel cambia 8 niveles o más y a lo más el 1.73 % cambia 3 o más (`eval/results/e6_corte_texturas.json`). Es la franja lejana y rasante del suelo.
 
 ## Consecuencias
 

@@ -1245,14 +1245,14 @@ Las ramas van una encima de otra y se fusionan en este orden, cada una con su PR
 - **Ya corregido en `feat/f8-entorno` y llevado por merge a F8c, F8d y F8e:**
   - Los paneles se volvían a dibujar 15 veces por segundo y causaban tirones de JavaScript.
   - De noche ya no se calcula la sombra de la luna: no se ve (`eval/results/e6_sombra_luna.json`) y cuesta un pase completo.
-- **En `feat/f8e-texturas`:** corte de las texturas por nivel de mip. Está revisado a ojo en 4 escenas; `eval/e6_corte_texturas.mjs` completo está pendiente porque la primera corrida se detuvo por falta de memoria.
+- **En `feat/f8e-texturas`:** corte de las texturas por nivel de mip. No se nota: a lo más 8.1 niveles de gris y ningún píxel cambia 8 o más (`eval/results/e6_corte_texturas.json`, 11 escenas en media y alta).
+- **Segunda corrida de E6 (2026-10-17):** se detuvo por falta de memoria justo antes de medir `nocturno_lluvia` en WebGL 2. E6 solo escribe al final, así que no hay resultado oficial nuevo.
 - **Por qué no hay números nuevos:** durante la sesión la batería bajó de 34 % a 27 % estando conectada. La laptop limitó su rendimiento y las mediciones de tiempo dejaron de ser comparables.
 
 **Pendiente con René (en este orden, con la laptop cargada, fría y sin Chrome abierto):**
 
-1. `! node eval/e6_corte_texturas.mjs` (tras `pnpm --filter @croquis/web build` en `feat/f8e-texturas`).
-2. `! node eval/e6_performance.mjs` (~70 min).
-3. Si `nocturno_lluvia` sigue por debajo de 60 fps en media, decidir con René qué entra en cada nivel de calidad. Es una decisión de alcance y no se toma sin él.
+1. `pnpm --filter @croquis/web build; node eval/e6_performance.mjs` (~70 min) en `feat/f8e-texturas`. Se corre en una terminal de PowerShell aparte, fuera de Claude Code: dentro de Claude Code, un proceso largo en segundo plano se detiene cuando falta memoria.
+2. Si `nocturno_lluvia` sigue por debajo de 60 fps en media, decidir con René qué entra en cada nivel de calidad. Es una decisión de alcance y no se toma sin él.
 
 **Siguiente paso concreto:**
 
