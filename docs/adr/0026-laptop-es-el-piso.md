@@ -1,0 +1,31 @@
+# ADR 0026 — La laptop es el piso: cuatro niveles de calidad y E6 por nivel
+
+- **Estado:** aceptado (2026-10-17)
+- **Contexto:** hasta ahora el presupuesto de PLAN §7.8 se medía en la laptop de René (GPU integrada Intel UHD, 8 GB) para los dos niveles altos del visor: media ≥ 60 fps y alta ≥ 30 fps. Con el entorno de F8 (ADR 0020–0025), media quedó justo en el límite: según la corrida, la escena más lenta dio entre 55.7 y 63.8 fps (`eval/results/e6_performance_f8_corte_mip.json` y `e6_performance_f8_tercera.json`). Entre corridas el mismo código varió ±15–20 % por el estado del equipo, y la corrida «mejor de 2 repeticiones» dejó pasar repeticiones que se contradecían.
+- **Decisión de René (2026-10-17):** su laptop es el piso, no el techo. Las demos se harán en una computadora más potente, así que la calidad visual de los niveles altos no se limita por la laptop. René reemplazó PLAN.md (§7.8 y la fila de E6 de §8).
+
+## Decisiones
+
+1. **Cuatro niveles: baja, media, alta y ultra.**
+   - **Elección automática:** según la GPU que reporta el navegador (las integradas arrancan en media; las dedicadas, en alta). Luego se ajusta con los fps medidos, con histéresis.
+   - **Cambio manual:** siempre disponible en el visor.
+2. **Alta y ultra se diseñan para la máxima calidad visual.**
+   - **Qué llevan:** luces reales de faros y alumbrado, texturas completas, sombras (también de los focos) y efectos.
+   - **Nunca se les quita nada por el rendimiento de la laptop.** Por eso la sombra de la luna, que ADR 0025 quitó de noche en todos los niveles, vuelve en alta y ultra aunque no se note: allí no se recorta nada.
+   - **Lo nuevo que solo corre bien en una GPU potente** se agrega en estos niveles.
+3. **Baja y media se ajustan a la laptop:** media ≥ 60 fps y baja ≥ 30 fps a 1080p.
+   - **Lectura estricta de §7.8:** el plan pide el presupuesto en «la escena de referencia» (2 vehículos, 2 personas, intersección con árboles), y ninguna escena canónica coincide exactamente. E6 exige el presupuesto en **todas** las escenas canónicas, lo que incluye a cualquier escena de referencia. No se elige una escena fácil para pasar.
+   - **Orden de trabajo en estos niveles:** primero se optimiza sin cambiar el aspecto (culling de luces por distancia y por cámara, luz horneada o proyectada que se vea igual, LOD y mipmaps del pasto, merge o instancing del piso, resolución de sombras), midiendo antes y después de cada cambio. Que el aspecto no cambia se mide con la diferencia por píxel, como en `eval/lib/visual-diff.mjs`.
+   - **Si aun así hace falta quitar un efecto en media,** se le pregunta a René.
+4. **E6 con protocolo robusto:**
+   - **Repeticiones:** tres por configuración, en orden alterno de escenas, y se reporta la **mediana**, no la mejor.
+   - **Re-medición:** si una repetición tiene tirones externos se vuelve a medir, con un máximo de intentos. Un tirón externo es una tarea larga del hilo principal en un nivel cuyos cuadros normales duran mucho menos de 50 ms, con el promedio claramente por debajo de las otras repeticiones.
+   - **Condiciones registradas:** si el equipo está conectado o en batería, la carga, el plan de energía, la memoria libre, la GPU y la versión del navegador, al inicio y al final.
+   - **Alcance en la laptop:** baja y media son el criterio. Alta y ultra se miden solo como información; su meta es la computadora de demo.
+5. **Meta en la computadora de demo:** ≥ 60 fps en alta o ultra en todas las escenas canónicas. Queda en «Bloqueado — necesita a René» hasta que esa computadora esté disponible.
+
+## Consecuencias
+
+- La fila de E6 del README cambia de forma: baja y media en la laptop (criterio) y alta y ultra como información, por ahora.
+- La corrida oficial de E6 tarda más (tres repeticiones), pero un resultado ya no depende de una repetición afortunada.
+- Las corridas de E6 que no cumplieron se conservan como evidencia en `eval/results/` (`e6_performance_f8_*.json`).

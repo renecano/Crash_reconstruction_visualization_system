@@ -31,6 +31,8 @@ export const NIGHT_LIGHT_BUDGET: Record<QualityLevel, { vehicles: number; poles:
   baja: { vehicles: 0, poles: 0 },
   media: { vehicles: 2, poles: 2 },
   alta: { vehicles: 4, poles: 4 },
+  // Ultra: todos los vehículos con faros encendidos y todos los postes.
+  ultra: { vehicles: Number.POSITIVE_INFINITY, poles: Number.POSITIVE_INFINITY },
 };
 
 /** ¿El vehículo lleva las luces encendidas? Sin dato, sí (como el solver). */
