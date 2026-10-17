@@ -232,9 +232,11 @@ test.describe("capturas de daño", () => {
       await page.goto(`/visor?escena=${escena}&t=1.5&camara=dano&calidad=media&renderer=webgl`);
       await waitReady(page);
       await page.waitForTimeout(1500);
+      // Con texturas (F8e) el acercamiento llena la pantalla de suelo cercano y, por software, un
+      // cuadro puede tardar segundos: la captura necesita dos cuadros estables seguidos.
       await expect(page.getByTestId("visor-3d")).toHaveScreenshot(`${escena}-dano.png`, {
         maxDiffPixelRatio: 0.02,
-        timeout: 30_000,
+        timeout: 60_000,
       });
     });
   }
