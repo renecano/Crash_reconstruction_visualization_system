@@ -46,6 +46,7 @@ import { attachRollovers } from "../rollover-scene";
 import { buildVisibilityOverlay, eyeHeightFor } from "../visibility-overlay";
 import { sunShadowFrame } from "../shadow-frame";
 import { BODY_BASE_URL, loadBodies } from "../body-assets";
+import { PostEffects } from "./PostEffects";
 import { loadEnvTextures, TEXTURE_BASE_URL, texturesWanted } from "../env-textures";
 import { attachPeople, variantsFor, type PeopleAttachment } from "../people-scene";
 import { buildGhostLayer, GHOST_COLORS } from "../ghosts";
@@ -252,11 +253,11 @@ function SceneContent({
     const frame = sunShadowFrame(resultado, env.lightDirection);
     sun.position.copy(frame.position);
     sun.target.position.copy(frame.target);
-    // De noche la luz direccional es la luna (intensidad 0.45 contra 2.8 de día) y su sombra no se
-    // ve junto a los faros y el alumbrado (eval/results/e6_sombra_luna.json), pero cuesta un pase
-    // de sombras completo y su muestreo en cada píxel: de noche no se calcula.
-    const moonShadow = typeof window !== "undefined" && window.__croquisDiag?.sombraLuna === true;
-    sun.castShadow = profile.shadows && (!env.night || moonShadow);
+    // De noche la luz direccional es la luna (intensidad 0.45 contra 2.8 de día). Su sombra no se ve
+    // junto a los faros y el alumbrado (eval/results/e6_sombra_luna.json) pero cuesta un pase de
+    // sombras completo: baja y media no la calculan; alta y ultra sí (ADR 0026: no se recortan).
+    const forcedMoon = typeof window !== "undefined" && window.__croquisDiag?.sombraLuna === true;
+    sun.castShadow = profile.shadows && (!env.night || profile.moonShadow || forcedMoon);
     sun.shadow.camera.left = -frame.extent;
     sun.shadow.camera.right = frame.extent;
     sun.shadow.camera.top = frame.extent;
@@ -471,11 +472,14 @@ export function SceneViewer(props: SceneViewerProps): ReactElement {
             const { WebGPURenderer: Renderer, UnsignedByteType } = await import("three/webgpu");
             const r = new Renderer({
               canvas: defaults.canvas as HTMLCanvasElement,
-              antialias: profile.antialias,
+              antialias: profile.msaaSamples > 0,
+              ...(profile.msaaSamples > 0 ? { samples: profile.msaaSamples } : {}),
               alpha: false,
               forceWebGL: renderer === "webgl",
               // Búfer de 8 bits en baja y media: menos ancho de banda en GPU integrada (E6).
-              ...(profile.level === "alta" ? {} : { outputBufferType: UnsignedByteType }),
+              ...(profile.level === "baja" || profile.level === "media"
+                ? { outputBufferType: UnsignedByteType }
+                : {}),
             });
             await r.init();
             const backend = (r.backend as { isWebGPUBackend?: boolean }).isWebGPUBackend
@@ -491,6 +495,9 @@ export function SceneViewer(props: SceneViewerProps): ReactElement {
         }}
       >
         <SceneContent {...rest} quality={quality} env={env} />
+        {profile.ambientOcclusion || profile.bloom ? (
+          <PostEffects ambientOcclusion={profile.ambientOcclusion} withBloom={profile.bloom} />
+        ) : null}
         <PerfProbe backend={() => backendRef.current} />
       </Canvas>
     </div>

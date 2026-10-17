@@ -39,10 +39,11 @@ const fetchOf = (manifest: unknown) =>
 const fakeFetch = fetchOf(MANIFEST);
 
 describe("texturas del entorno (F8e)", () => {
-  it("en calidad baja no se cargan", () => {
+  it("solo alta y ultra las cargan (ADR 0026, decisión 7)", () => {
     expect(texturesWanted("baja")).toBe(false);
-    expect(texturesWanted("media")).toBe(true);
+    expect(texturesWanted("media")).toBe(false);
     expect(texturesWanted("alta")).toBe(true);
+    expect(texturesWanted("ultra")).toBe(true);
   });
 
   it("carga los tres mapas de cada textura, en mosaico y con el espacio de color correcto", async () => {

@@ -1,0 +1,110 @@
+{
+  "name": "e6_ab",
+  "generated_at": "2026-10-17T19:47:37.822Z",
+  "git_commit": "e1598eb",
+  "seed": 20261017,
+  "metodo": "Variantes intercaladas por ronda con orden rotado, navegador nuevo por medición, 1920×1080, cámara cinematográfica; diferencia en ms por cuadro contra la base pareada por ronda, mediana e IC 90 % por bootstrap (2000).",
+  "calidad": "media",
+  "renderer": "webgl",
+  "rondas": 4,
+  "variantes": {
+    "base": {},
+    "sinTexturas": {
+      "sinTexturas": true
+    },
+    "sinMSAA": {
+      "sinMSAA": true
+    },
+    "sinSombras": {
+      "sinSombras": true
+    },
+    "sinRuido": {
+      "sinRuido": true
+    }
+  },
+  "modo_energia": {
+    "cambiado": true,
+    "antes": {
+      "guid": "00000000-0000-0000-0000-000000000000",
+      "nombre": "equilibrado"
+    },
+    "durante": {
+      "guid": "ded574b5-45a0-4f42-8737-46345c09c238",
+      "nombre": "mejor_rendimiento"
+    }
+  },
+  "escenas": {
+    "glorieta": {
+      "base": {
+        "fps_mediana_rondas": 57.8,
+        "ms_por_cuadro_rondas": [
+          16.5,
+          18.21,
+          16.61,
+          18.02
+        ],
+        "dif_ms_vs_base": 0,
+        "dif_ms_ic90": [
+          0,
+          0
+        ]
+      },
+      "sinTexturas": {
+        "fps_mediana_rondas": 72,
+        "ms_por_cuadro_rondas": [
+          13.18,
+          15.41,
+          13.99,
+          13.79
+        ],
+        "dif_ms_vs_base": -3.07,
+        "dif_ms_ic90": [
+          -3.78,
+          -2.72
+        ]
+      },
+      "sinMSAA": {
+        "fps_mediana_rondas": 78.7,
+        "ms_por_cuadro_rondas": [
+          11.59,
+          13.62,
+          12.95,
+          12.45
+        ],
+        "dif_ms_vs_base": -4.75,
+        "dif_ms_ic90": [
+          -5.56,
+          -4.12
+        ]
+      },
+      "sinSombras": {
+        "fps_mediana_rondas": 64.6,
+        "ms_por_cuadro_rondas": [
+          15.15,
+          15.97,
+          14.99,
+          15.82
+        ],
+        "dif_ms_vs_base": -1.91,
+        "dif_ms_ic90": [
+          -2.24,
+          -1.48
+        ]
+      },
+      "sinRuido": {
+        "fps_mediana_rondas": 57.3,
+        "ms_por_cuadro_rondas": [
+          17.76,
+          17.42,
+          17.24,
+          17.45
+        ],
+        "dif_ms_vs_base": 0.03,
+        "dif_ms_ic90": [
+          -0.79,
+          0.95
+        ]
+      }
+    }
+  }
+}

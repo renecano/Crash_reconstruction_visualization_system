@@ -27,7 +27,7 @@
    - **Guarnición:** conserva su material liso; en sus caras verticales la proyección en planta se vería rayada.
    - **Pasto:** se le agrega un ruido de brillo de 23 m (±15 %) para que no se note la repetición en superficies grandes.
    - **Asfalto con agua:** el relieve se suaviza con agua: escala del normal 0.5 mojado y 0.4 encharcado.
-5. **Calidad.** Solo en calidad media y alta; en baja no se descargan.
+5. **Calidad.** Solo en alta y ultra; en baja y media no se descargan. Al principio también estaban en media, pero ahí costaban 3–4 ms por cuadro en la laptop de referencia (ADR 0026, decisión 7).
    - **Captura lista:** `__croquisReady` espera a que las texturas estén aplicadas o descartadas, para que las capturas de referencia sean deterministas.
    - **Si falla la carga** (p. ej. sin red): se registra el error y quedan los colores lisos; el visor no se rompe.
 6. **Corte por nivel de mip: probado y revertido (ADR 0025).** Se probó no leer las texturas donde un píxel cubre muchos texeles (a partir de 2^6), con el nivel de mip calculado por derivadas, lectura con gradiente explícito dentro de una rama y normal armada con el marco tangente conocido.

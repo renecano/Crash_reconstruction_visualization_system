@@ -22,10 +22,18 @@ Trabajas de forma autónoma. **No pidas visto bueno para planes, decisiones téc
 - Decisiones abiertas de `PLAN.md` §16: usa la opción por defecto marcada ahí y regístrala.
 - Dependencias y herramientas de desarrollo (npm, pip/uv, winget): instálalas tú y anota en `docs/PROGRESS.md` qué instalaste y para qué.
 - Si algo falla, depúralo hasta que funcione. No marques nada como hecho con pruebas en rojo, saltadas o borradas para que pase.
+- **No le preguntes a René decisiones técnicas, de medición, de herramientas ni de configuración.** Elige tú la opción que recomiendes, regístrala en `docs/PROGRESS.md` (y en un ADR si es de arquitectura) y sigue trabajando sin esperar.
+- Cambios en la computadora de René que sean reversibles y se restauren solos (por ejemplo, el modo de energía durante una medición) también los decides tú, siempre que quede registrado en el resultado.
 
-**Solo te detienes por:**
-1. Un recorte de calidad o alcance que parezca inevitable (pregúntale a René antes).
-2. Algo que solo René puede dar: llaves de API, cuentas de despliegue, pruebas con personas reales (E9).
+- Ajustes que solo tocan baja o media también los decides tú, si cumplen las cuatro condiciones siguientes. Los documentas en E6 y en `docs/PROGRESS.md` con los números de antes y después, y sigues.
+  - Con ellos se cumple §7.8 de `PLAN.md`.
+  - Primero intentaste optimizar sin cambiar el aspecto.
+  - Alta y ultra conservan todo.
+  - No se pierde ninguna función (por ejemplo, la visibilidad nocturna).
+
+**Solo le preguntas a René en dos casos:**
+1. Un recorte de calidad o alcance que afecte a alta o ultra, o que quite una función o una evaluación.
+2. Algo que solo René puede dar: llaves de API, cuentas de despliegue, la computadora de demo, pruebas con personas reales (E9).
 
 Si algo está bloqueado por el punto 2, **no te detengas**: anótalo en la sección "Bloqueado — necesita a René" de `docs/PROGRESS.md`, avanza con todo lo que no dependa de eso y retómalo cuando esté disponible.
 

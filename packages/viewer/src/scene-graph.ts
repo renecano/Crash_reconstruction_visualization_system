@@ -498,6 +498,17 @@ export function buildSceneGraph(
 
   // Luces reales de noche (F8b): qué vehículos y postes llevan foco, según el nivel de calidad.
   const nightPlan = planNightLights(spec, resultado, opts.env, opts.quality.level);
+  // Sombras de los focos (alta y ultra, ADR 0026): el plano cercano deja fuera la carrocería del
+  // propio vehículo y el lejano es el alcance del foco.
+  const withSpotShadow = (spot: SpotLight, rangeM: number, nearM: number): void => {
+    const size = opts.quality.spotShadowMapSize;
+    if (size <= 0) return;
+    spot.castShadow = true;
+    spot.shadow.mapSize.set(size, size);
+    spot.shadow.bias = -0.0005;
+    spot.shadow.camera.near = nearM;
+    spot.shadow.camera.far = rangeM;
+  };
   const headlightSpots: { vehicleId: string; spot: SpotLight }[] = [];
 
   // Objetos del entorno.
@@ -578,6 +589,7 @@ export function buildSceneGraph(
         );
         spot.name = "luz_poste";
         spot.position.copy(lamp.position);
+        withSpotShadow(spot, STREETLIGHT_RANGE_M, 0.3);
         const target = new Object3D();
         target.position.set(lamp.position.x, 0, 0);
         spot.target = target;
@@ -774,6 +786,7 @@ export function buildSceneGraph(
       );
       spot.name = "luz_faros";
       spot.position.copy(at);
+      withSpotShadow(spot, HEADLIGHT_RANGE_M, 0.6);
       const target = new Object3D();
       target.position.set(at.x + 25, 0, at.z);
       spot.target = target;

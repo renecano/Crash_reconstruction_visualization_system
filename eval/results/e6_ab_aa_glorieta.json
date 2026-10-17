@@ -1,0 +1,93 @@
+{
+  "name": "e6_ab",
+  "generated_at": "2026-10-17T20:06:39.880Z",
+  "git_commit": "e1598eb",
+  "seed": 20261017,
+  "metodo": "Variantes intercaladas por ronda con orden rotado, navegador nuevo por medición, 1920×1080, cámara cinematográfica; diferencia en ms por cuadro contra la base pareada por ronda, mediana e IC 90 % por bootstrap (2000).",
+  "calidad": "media",
+  "renderer": "webgl",
+  "rondas": 4,
+  "variantes": {
+    "base": {},
+    "msaa2": {
+      "msaa": 2
+    },
+    "smaa": {
+      "aa": "smaa"
+    },
+    "sinAA": {
+      "sinMSAA": true
+    }
+  },
+  "modo_energia": {
+    "cambiado": true,
+    "antes": {
+      "guid": "00000000-0000-0000-0000-000000000000",
+      "nombre": "equilibrado"
+    },
+    "durante": {
+      "guid": "ded574b5-45a0-4f42-8737-46345c09c238",
+      "nombre": "mejor_rendimiento"
+    }
+  },
+  "escenas": {
+    "glorieta": {
+      "base": {
+        "fps_mediana_rondas": 54.3,
+        "ms_por_cuadro_rondas": [
+          17.09,
+          17.99,
+          19.8,
+          18.83
+        ],
+        "dif_ms_vs_base": 0,
+        "dif_ms_ic90": [
+          0,
+          0
+        ]
+      },
+      "msaa2": {
+        "fps_mediana_rondas": 61.3,
+        "ms_por_cuadro_rondas": [
+          15.24,
+          14.68,
+          18.21,
+          17.39
+        ],
+        "dif_ms_vs_base": -1.72,
+        "dif_ms_ic90": [
+          -2.58,
+          -1.51
+        ]
+      },
+      "smaa": {
+        "fps_mediana_rondas": 55.6,
+        "ms_por_cuadro_rondas": [
+          16.13,
+          16.81,
+          19.96,
+          19.16
+        ],
+        "dif_ms_vs_base": -0.4,
+        "dif_ms_ic90": [
+          -1.18,
+          0.32
+        ]
+      },
+      "sinAA": {
+        "fps_mediana_rondas": 78,
+        "ms_por_cuadro_rondas": [
+          10.87,
+          11.93,
+          14.47,
+          13.72
+        ],
+        "dif_ms_vs_base": -5.69,
+        "dif_ms_ic90": [
+          -6.14,
+          -5.11
+        ]
+      }
+    }
+  }
+}

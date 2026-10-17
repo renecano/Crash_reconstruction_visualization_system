@@ -13,7 +13,11 @@ import {
   createTimeline,
   environmentFor,
   eventMarkers,
+  isQualityLevel,
   nextQualityLevel,
+  qualityForGpu,
+  readGpuRenderer,
+  type GpuTier,
   recentFps,
   recordTrial,
   startTrial,
@@ -78,7 +82,7 @@ function parseParams(sp: URLSearchParams): VisorParams {
       ? (escena as FixtureName)
       : "lateral_interseccion",
     camara: sp.get("camara") ?? "libre",
-    calidad: calidad === "baja" || calidad === "media" || calidad === "alta" ? calidad : "auto",
+    calidad: isQualityLevel(calidad) ? calidad : "auto",
     renderer: renderer === "webgl" || renderer === "webgpu" ? renderer : "auto",
     t: t !== null && Number.isFinite(Number(t)) ? Number(t) : undefined,
     auto: sp.get("auto") === "1",
@@ -117,6 +121,9 @@ const CAMARAS: { value: CameraMode; label: string }[] = [
 
 const noopSubscribe = () => () => undefined;
 const nullSnapshot = () => null;
+/** GPU leída una sola vez por página (la instantánea de `useSyncExternalStore` debe ser estable). */
+let gpuTierCache: GpuTier | null = null;
+const gpuTierSnapshot = (): GpuTier => (gpuTierCache ??= qualityForGpu(readGpuRenderer()));
 
 /** Estado del reloj como almacén externo (avisos limitados por el propio reloj). */
 function useClockState(clock: ViewerClock | null): TimelineState | null {
@@ -164,7 +171,11 @@ export function VisorApp() {
   const [resultado, setResultado] = useState<{ name: FixtureName; r: Resultado } | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [info, setInfo] = useState<RendererInfo | null>(null);
-  const [autoCalidad, setAutoCalidad] = useState<QualityLevel>("media");
+  // Modo automático (ADR 0026): arranca en el nivel que sugiere la GPU y luego lo ajustan los fps
+  // medidos. En el prerender no hay GPU (null) y se usa media.
+  const gpu = useSyncExternalStore(noopSubscribe, gpuTierSnapshot, nullSnapshot);
+  const [autoAjustada, setAutoAjustada] = useState<QualityLevel | null>(null);
+  const autoCalidad: QualityLevel = autoAjustada ?? gpu?.level ?? "media";
   const calidad: QualityLevel = params.calidad === "auto" ? autoCalidad : params.calidad;
 
   useEffect(() => {
@@ -249,10 +260,12 @@ export function VisorApp() {
       return undefined;
     const id = window.setInterval(() => {
       const fps = recentFps(window.__croquisPerf?.frameMs ?? [], 90);
-      if (Number.isFinite(fps)) setAutoCalidad((q) => nextQualityLevel(q, fps));
+      if (Number.isFinite(fps)) {
+        setAutoAjustada((q) => nextQualityLevel(q ?? gpu?.level ?? "media", fps));
+      }
     }, 3000);
     return () => window.clearInterval(id);
-  }, [params.calidad, params.renderer, trial.decided]);
+  }, [params.calidad, params.renderer, trial.decided, gpu]);
 
   const env = useMemo(
     () =>
@@ -344,10 +357,14 @@ export function VisorApp() {
             className="rounded border border-neutral-400 bg-transparent px-2 py-1"
             aria-label="Calidad"
           >
-            <option value="auto">Automática ({calidad})</option>
+            <option value="auto">
+              Automática ({calidad}
+              {gpu ? ` · ${gpu.kind}` : ""})
+            </option>
             <option value="baja">Baja</option>
             <option value="media">Media</option>
             <option value="alta">Alta</option>
+            <option value="ultra">Ultra</option>
           </select>
         </label>
         <label className="flex flex-col gap-1">

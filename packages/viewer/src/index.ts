@@ -83,3 +83,4 @@ export * from "./night-lights";
 export * from "./traffic-signals";
 export { buildDevice, type DeviceInput, type DeviceNode } from "./traffic-devices";
 export * from "./env-textures";
+export * from "./gpu-tier";

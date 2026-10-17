@@ -1,0 +1,218 @@
+{
+  "name": "e6_performance",
+  "generated_at": "2026-10-17T19:38:37+00:00",
+  "git_commit": "e1598eb",
+  "seed": null,
+  "maquina": {
+    "so": "Windows_NT 10.0.26200",
+    "cpu": "Intel(R) Core(TM) i5-10210U CPU @ 1.60GHz",
+    "nucleos": 8,
+    "memoria_gb": 7.8,
+    "gpu": {
+      "webgpu": {
+        "vendor": "intel",
+        "architecture": "gen-9",
+        "description": ""
+      },
+      "webgl": "ANGLE (Intel, Intel(R) UHD Graphics (0x00009B41) Direct3D11 vs_5_0 ps_5_0, D3D11)"
+    }
+  },
+  "metodo": {
+    "resolucion": "1920x1080, deviceScaleFactor 1, visor a pantalla completa",
+    "interruptores_diagnostico": {},
+    "camara": "cinematográfica (en movimiento), reproducción en bucle a 1×",
+    "segundos_medidos": 6,
+    "calentamiento_s": 2,
+    "vsync": "desactivado (--disable-gpu-vsync --disable-frame-rate-limit) para medir capacidad",
+    "navegador": "Chromium de Playwright con interfaz y GPU real",
+    "repeticiones": "3 por configuración, cada una recorre las escenas en orden alterno (directo e inverso) con 5 s de pausa entre mediciones; se reporta la repetición mediana por fps promedio (todas en repeticiones_fps)",
+    "tirones_externos": "una repetición con tareas largas aunque sus cuadros normales van a más de 40 fps, y con el promedio más de 15 % por debajo de la mediana, se vuelve a medir (hasta 2 veces; las descartadas quedan en descartadas_por_tirones)",
+    "navegador_por_medicion": "uno nuevo por medición (con uno solo para todas, el proceso de GPU acumula estado y mete tirones)",
+    "criterio": "ADR 0026: baja ≥ 30 y media ≥ 60 fps en todas las escenas canónicas, en modo automático; alta y ultra solo como información"
+  },
+  "condiciones": {
+    "navegador": "156.0.8078.4",
+    "inicio": {
+      "momento": "2026-10-17T19:33:50.961Z",
+      "memoria_libre_mb": 1597,
+      "memoria_total_mb": 8020,
+      "conectada": true,
+      "bateria_pct": 99,
+      "carga_cpu_pct": 3,
+      "plan_energia": "Equilibrado"
+    },
+    "fin": {
+      "momento": "2026-10-17T19:38:34.508Z",
+      "memoria_libre_mb": 1944,
+      "memoria_total_mb": 8020,
+      "conectada": true,
+      "bateria_pct": 99,
+      "carga_cpu_pct": 4,
+      "plan_energia": "Equilibrado"
+    },
+    "validas": true,
+    "modo_energia": {
+      "cambiado": true,
+      "antes": {
+        "guid": "00000000-0000-0000-0000-000000000000",
+        "nombre": "equilibrado"
+      },
+      "durante": {
+        "guid": "ded574b5-45a0-4f42-8737-46345c09c238",
+        "nombre": "mejor_rendimiento"
+      }
+    }
+  },
+  "presupuesto": {
+    "fpsBaja": 30,
+    "fpsMedia": 60,
+    "initialLoadMB": 8
+  },
+  "modo_automatico": {
+    "media": {
+      "fps_min_entre_escenas": 54.2,
+      "escena_mas_lenta": "nocturno_lluvia",
+      "por_escena": [
+        {
+          "escena": "nocturno_lluvia",
+          "backend": "webgl",
+          "fps": 54.2
+        },
+        {
+          "escena": "frontal_curva",
+          "backend": "webgl",
+          "fps": 58.1
+        },
+        {
+          "escena": "alcance",
+          "backend": "webgl",
+          "fps": 59.5
+        },
+        {
+          "escena": "glorieta",
+          "backend": "webgl",
+          "fps": 59.9
+        }
+      ]
+    }
+  },
+  "backend_modo_automatico": {
+    "observado_en_el_visor": "WebGPU · elegido por medición (WebGPU 81 fps)"
+  },
+  "cumple": {
+    "baja_30fps": null,
+    "media_60fps": false,
+    "carga_inicial_8mb": true
+  },
+  "resumen": {
+    "webgl/media": {
+      "backend": "webgl2",
+      "fps_min_entre_escenas": 54.2,
+      "fps_mediana_entre_escenas": 59.5,
+      "escena_mas_lenta": "nocturno_lluvia",
+      "carga_inicial_max_mb": 3.18
+    }
+  },
+  "corridas": [
+    {
+      "escena": "nocturno_lluvia",
+      "calidad": "media",
+      "renderer_pedido": "webgl",
+      "backend": "webgl2",
+      "cuadros": 326,
+      "fps_promedio": 54.2,
+      "fps_mediana": 54.9,
+      "fps_p1_bajo": 15.4,
+      "cuadro_p95_ms": 36.5,
+      "tareas_largas": 6,
+      "tareas_largas_ms": 404,
+      "llamadas_dibujo": 62,
+      "triangulos": 249975,
+      "memoria_js_mb": 57.7,
+      "carga_inicial_mb": 3.18,
+      "tiempo_hasta_listo_ms": 8138,
+      "errores": [],
+      "descartadas_por_tirones": [],
+      "repeticiones_fps": [
+        53.4,
+        57.2,
+        54.2
+      ]
+    },
+    {
+      "escena": "frontal_curva",
+      "calidad": "media",
+      "renderer_pedido": "webgl",
+      "backend": "webgl2",
+      "cuadros": 351,
+      "fps_promedio": 58.1,
+      "fps_mediana": 58.1,
+      "fps_p1_bajo": 21.9,
+      "cuadro_p95_ms": 32,
+      "tareas_largas": 3,
+      "tareas_largas_ms": 174,
+      "llamadas_dibujo": 87,
+      "triangulos": 251543,
+      "memoria_js_mb": 56.7,
+      "carga_inicial_mb": 3.17,
+      "tiempo_hasta_listo_ms": 6129,
+      "errores": [],
+      "descartadas_por_tirones": [],
+      "repeticiones_fps": [
+        58.1,
+        60.4,
+        55.4
+      ]
+    },
+    {
+      "escena": "alcance",
+      "calidad": "media",
+      "renderer_pedido": "webgl",
+      "backend": "webgl2",
+      "cuadros": 359,
+      "fps_promedio": 59.5,
+      "fps_mediana": 56.2,
+      "fps_p1_bajo": 25.1,
+      "cuadro_p95_ms": 31.3,
+      "tareas_largas": 1,
+      "tareas_largas_ms": 50,
+      "llamadas_dibujo": 67,
+      "triangulos": 159273,
+      "memoria_js_mb": 56.6,
+      "carga_inicial_mb": 3.17,
+      "tiempo_hasta_listo_ms": 6555,
+      "errores": [],
+      "descartadas_por_tirones": [],
+      "repeticiones_fps": [
+        59.5,
+        60.3,
+        52.6
+      ]
+    },
+    {
+      "escena": "glorieta",
+      "calidad": "media",
+      "renderer_pedido": "webgl",
+      "backend": "webgl2",
+      "cuadros": 359,
+      "fps_promedio": 59.9,
+      "fps_mediana": 52.1,
+      "fps_p1_bajo": 18.7,
+      "cuadro_p95_ms": 30,
+      "tareas_largas": 4,
+      "tareas_largas_ms": 233,
+      "llamadas_dibujo": 72,
+      "triangulos": 193589,
+      "memoria_js_mb": 52.2,
+      "carga_inicial_mb": 3.17,
+      "tiempo_hasta_listo_ms": 6094,
+      "errores": [],
+      "descartadas_por_tirones": [],
+      "repeticiones_fps": [
+        59.9,
+        60,
+        55.1
+      ]
+    }
+  ]
+}

@@ -1,0 +1,1792 @@
+{
+  "name": "e6_performance",
+  "generated_at": "2026-10-17T16:55:16+00:00",
+  "git_commit": "ef12aa2",
+  "seed": null,
+  "maquina": {
+    "so": "Windows_NT 10.0.26200",
+    "cpu": "Intel(R) Core(TM) i5-10210U CPU @ 1.60GHz",
+    "nucleos": 8,
+    "memoria_gb": 7.8,
+    "gpu": {
+      "webgpu": {
+        "vendor": "intel",
+        "architecture": "gen-9",
+        "description": ""
+      },
+      "webgl": "ANGLE (Intel, Intel(R) UHD Graphics (0x00009B41) Direct3D11 vs_5_0 ps_5_0, D3D11)"
+    }
+  },
+  "metodo": {
+    "resolucion": "1920x1080, deviceScaleFactor 1, visor a pantalla completa",
+    "interruptores_diagnostico": {},
+    "camara": "cinematográfica (en movimiento), reproducción en bucle a 1×",
+    "segundos_medidos": 6,
+    "calentamiento_s": 2,
+    "vsync": "desactivado (--disable-gpu-vsync --disable-frame-rate-limit) para medir capacidad",
+    "navegador": "Chromium de Playwright con interfaz y GPU real",
+    "repeticiones": "2 por configuración, cada una recorre las escenas en orden alterno (directo e inverso) con 8 s de pausa entre mediciones; se reporta la de mayor fps promedio (todas en repeticiones_fps)"
+  },
+  "presupuesto": {
+    "fpsMedia": 60,
+    "fpsAlta": 30,
+    "initialLoadMB": 8
+  },
+  "modo_automatico": {
+    "baja": {
+      "fps_min_entre_escenas": 106,
+      "escena_mas_lenta": "alcance",
+      "por_escena": [
+        {
+          "escena": "alcance",
+          "backend": "webgpu",
+          "fps": 106
+        },
+        {
+          "escena": "lateral_interseccion",
+          "backend": "webgpu",
+          "fps": 135
+        },
+        {
+          "escena": "frontal_curva",
+          "backend": "webgpu",
+          "fps": 115.7
+        },
+        {
+          "escena": "peaton_cruce",
+          "backend": "webgpu",
+          "fps": 164.3
+        },
+        {
+          "escena": "motociclista",
+          "backend": "webgpu",
+          "fps": 162.7
+        },
+        {
+          "escena": "objeto_fijo_arbol",
+          "backend": "webgpu",
+          "fps": 154.5
+        },
+        {
+          "escena": "poste",
+          "backend": "webgpu",
+          "fps": 186.4
+        },
+        {
+          "escena": "volcadura",
+          "backend": "webgpu",
+          "fps": 141
+        },
+        {
+          "escena": "nocturno_lluvia",
+          "backend": "webgpu",
+          "fps": 118.3
+        },
+        {
+          "escena": "glorieta",
+          "backend": "webgpu",
+          "fps": 127.1
+        },
+        {
+          "escena": "interseccion_toluca",
+          "backend": "webgpu",
+          "fps": 129.7
+        }
+      ]
+    },
+    "media": {
+      "fps_min_entre_escenas": 57.6,
+      "escena_mas_lenta": "frontal_curva",
+      "por_escena": [
+        {
+          "escena": "alcance",
+          "backend": "webgl",
+          "fps": 59.7
+        },
+        {
+          "escena": "lateral_interseccion",
+          "backend": "webgl",
+          "fps": 61.2
+        },
+        {
+          "escena": "frontal_curva",
+          "backend": "webgl",
+          "fps": 57.6
+        },
+        {
+          "escena": "peaton_cruce",
+          "backend": "webgl",
+          "fps": 75.3
+        },
+        {
+          "escena": "motociclista",
+          "backend": "webgl",
+          "fps": 67.9
+        },
+        {
+          "escena": "objeto_fijo_arbol",
+          "backend": "webgpu",
+          "fps": 61.8
+        },
+        {
+          "escena": "poste",
+          "backend": "webgl",
+          "fps": 85.7
+        },
+        {
+          "escena": "volcadura",
+          "backend": "webgl",
+          "fps": 84
+        },
+        {
+          "escena": "nocturno_lluvia",
+          "backend": "webgl",
+          "fps": 63.8
+        },
+        {
+          "escena": "glorieta",
+          "backend": "webgl",
+          "fps": 63.4
+        },
+        {
+          "escena": "interseccion_toluca",
+          "backend": "webgl",
+          "fps": 71.6
+        }
+      ]
+    },
+    "alta": {
+      "fps_min_entre_escenas": 60.4,
+      "escena_mas_lenta": "frontal_curva",
+      "por_escena": [
+        {
+          "escena": "alcance",
+          "backend": "webgpu",
+          "fps": 65.1
+        },
+        {
+          "escena": "lateral_interseccion",
+          "backend": "webgpu",
+          "fps": 69.7
+        },
+        {
+          "escena": "frontal_curva",
+          "backend": "webgpu",
+          "fps": 60.4
+        },
+        {
+          "escena": "peaton_cruce",
+          "backend": "webgpu",
+          "fps": 69.7
+        },
+        {
+          "escena": "motociclista",
+          "backend": "webgpu",
+          "fps": 69.8
+        },
+        {
+          "escena": "objeto_fijo_arbol",
+          "backend": "webgpu",
+          "fps": 60.4
+        },
+        {
+          "escena": "poste",
+          "backend": "webgpu",
+          "fps": 67.2
+        },
+        {
+          "escena": "volcadura",
+          "backend": "webgpu",
+          "fps": 71
+        },
+        {
+          "escena": "nocturno_lluvia",
+          "backend": "webgpu",
+          "fps": 70.2
+        },
+        {
+          "escena": "glorieta",
+          "backend": "webgpu",
+          "fps": 69.9
+        },
+        {
+          "escena": "interseccion_toluca",
+          "backend": "webgpu",
+          "fps": 67.7
+        }
+      ]
+    }
+  },
+  "backend_modo_automatico": {
+    "observado_en_el_visor": "WebGL 2 · elegido por medición (WebGPU 56 fps, WebGL 2 52 fps)"
+  },
+  "cumple": {
+    "media_60fps": false,
+    "alta_30fps": true,
+    "carga_inicial_8mb": true
+  },
+  "resumen": {
+    "webgpu/baja": {
+      "backend": "webgpu",
+      "fps_min_entre_escenas": 106,
+      "fps_mediana_entre_escenas": 135,
+      "escena_mas_lenta": "alcance",
+      "carga_inicial_max_mb": 3.12
+    },
+    "webgpu/media": {
+      "backend": "webgpu",
+      "fps_min_entre_escenas": 37,
+      "fps_mediana_entre_escenas": 50.8,
+      "escena_mas_lenta": "nocturno_lluvia",
+      "carga_inicial_max_mb": 3.53
+    },
+    "webgpu/alta": {
+      "backend": "webgpu",
+      "fps_min_entre_escenas": 60.4,
+      "fps_mediana_entre_escenas": 69.7,
+      "escena_mas_lenta": "frontal_curva",
+      "carga_inicial_max_mb": 3.53
+    },
+    "webgl/baja": {
+      "backend": "webgl2",
+      "fps_min_entre_escenas": 141.6,
+      "fps_mediana_entre_escenas": 149.2,
+      "escena_mas_lenta": "alcance",
+      "carga_inicial_max_mb": 3.12
+    },
+    "webgl/media": {
+      "backend": "webgl2",
+      "fps_min_entre_escenas": 57.6,
+      "fps_mediana_entre_escenas": 67.9,
+      "escena_mas_lenta": "frontal_curva",
+      "carga_inicial_max_mb": 3.53
+    },
+    "webgl/alta": {
+      "backend": "webgl2",
+      "fps_min_entre_escenas": 22.9,
+      "fps_mediana_entre_escenas": 26.5,
+      "escena_mas_lenta": "nocturno_lluvia",
+      "carga_inicial_max_mb": 3.53
+    }
+  },
+  "corridas": [
+    {
+      "escena": "alcance",
+      "calidad": "baja",
+      "renderer_pedido": "webgpu",
+      "backend": "webgpu",
+      "cuadros": 877,
+      "fps_promedio": 106,
+      "fps_mediana": 144.9,
+      "fps_p1_bajo": 89.3,
+      "cuadro_p95_ms": 8.6,
+      "tareas_largas": 0,
+      "tareas_largas_ms": 0,
+      "llamadas_dibujo": 56,
+      "triangulos": 124495,
+      "memoria_js_mb": 58.2,
+      "carga_inicial_mb": 2.75,
+      "tiempo_hasta_listo_ms": 2108,
+      "errores": [],
+      "repeticiones_fps": [
+        105.4,
+        106
+      ]
+    },
+    {
+      "escena": "lateral_interseccion",
+      "calidad": "baja",
+      "renderer_pedido": "webgpu",
+      "backend": "webgpu",
+      "cuadros": 867,
+      "fps_promedio": 135,
+      "fps_mediana": 149.3,
+      "fps_p1_bajo": 77.5,
+      "cuadro_p95_ms": 9,
+      "tareas_largas": 0,
+      "tareas_largas_ms": 0,
+      "llamadas_dibujo": 60,
+      "triangulos": 149573,
+      "memoria_js_mb": 78.7,
+      "carga_inicial_mb": 2.76,
+      "tiempo_hasta_listo_ms": 2404,
+      "errores": [],
+      "repeticiones_fps": [
+        133.1,
+        135
+      ]
+    },
+    {
+      "escena": "frontal_curva",
+      "calidad": "baja",
+      "renderer_pedido": "webgpu",
+      "backend": "webgpu",
+      "cuadros": 750,
+      "fps_promedio": 115.7,
+      "fps_mediana": 142.9,
+      "fps_p1_bajo": 65.4,
+      "cuadro_p95_ms": 9.5,
+      "tareas_largas": 2,
+      "tareas_largas_ms": 673,
+      "llamadas_dibujo": 58,
+      "triangulos": 197677,
+      "memoria_js_mb": 60.7,
+      "carga_inicial_mb": 2.76,
+      "tiempo_hasta_listo_ms": 2088,
+      "errores": [],
+      "repeticiones_fps": [
+        102.8,
+        115.7
+      ]
+    },
+    {
+      "escena": "peaton_cruce",
+      "calidad": "baja",
+      "renderer_pedido": "webgpu",
+      "backend": "webgpu",
+      "cuadros": 989,
+      "fps_promedio": 164.3,
+      "fps_mediana": 169.5,
+      "fps_p1_bajo": 105.3,
+      "cuadro_p95_ms": 8.1,
+      "tareas_largas": 0,
+      "tareas_largas_ms": 0,
+      "llamadas_dibujo": 50,
+      "triangulos": 162339,
+      "memoria_js_mb": 50.7,
+      "carga_inicial_mb": 2.75,
+      "tiempo_hasta_listo_ms": 1872,
+      "errores": [],
+      "repeticiones_fps": [
+        164.3,
+        158.1
+      ]
+    },
+    {
+      "escena": "motociclista",
+      "calidad": "baja",
+      "renderer_pedido": "webgpu",
+      "backend": "webgpu",
+      "cuadros": 988,
+      "fps_promedio": 162.7,
+      "fps_mediana": 175.4,
+      "fps_p1_bajo": 101,
+      "cuadro_p95_ms": 8.1,
+      "tareas_largas": 1,
+      "tareas_largas_ms": 174,
+      "llamadas_dibujo": 38,
+      "triangulos": 88473,
+      "memoria_js_mb": 53.8,
+      "carga_inicial_mb": 2.76,
+      "tiempo_hasta_listo_ms": 2138,
+      "errores": [],
+      "repeticiones_fps": [
+        162.7,
+        160.2
+      ]
+    },
+    {
+      "escena": "objeto_fijo_arbol",
+      "calidad": "baja",
+      "renderer_pedido": "webgpu",
+      "backend": "webgpu",
+      "cuadros": 974,
+      "fps_promedio": 154.5,
+      "fps_mediana": 169.5,
+      "fps_p1_bajo": 94.3,
+      "cuadro_p95_ms": 8.5,
+      "tareas_largas": 0,
+      "tareas_largas_ms": 0,
+      "llamadas_dibujo": 37,
+      "triangulos": 95629,
+      "memoria_js_mb": 48.4,
+      "carga_inicial_mb": 2.75,
+      "tiempo_hasta_listo_ms": 1907,
+      "errores": [],
+      "repeticiones_fps": [
+        154.5,
+        151.2
+      ]
+    },
+    {
+      "escena": "poste",
+      "calidad": "baja",
+      "renderer_pedido": "webgpu",
+      "backend": "webgpu",
+      "cuadros": 1122,
+      "fps_promedio": 186.4,
+      "fps_mediana": 188.7,
+      "fps_p1_bajo": 125,
+      "cuadro_p95_ms": 7.2,
+      "tareas_largas": 0,
+      "tareas_largas_ms": 0,
+      "llamadas_dibujo": 38,
+      "triangulos": 59261,
+      "memoria_js_mb": 45.9,
+      "carga_inicial_mb": 2.75,
+      "tiempo_hasta_listo_ms": 1798,
+      "errores": [],
+      "repeticiones_fps": [
+        186.4,
+        186.3
+      ]
+    },
+    {
+      "escena": "volcadura",
+      "calidad": "baja",
+      "renderer_pedido": "webgpu",
+      "backend": "webgpu",
+      "cuadros": 903,
+      "fps_promedio": 141,
+      "fps_mediana": 151.5,
+      "fps_p1_bajo": 86.2,
+      "cuadro_p95_ms": 8.7,
+      "tareas_largas": 0,
+      "tareas_largas_ms": 0,
+      "llamadas_dibujo": 41,
+      "triangulos": 131559,
+      "memoria_js_mb": 60.8,
+      "carga_inicial_mb": 3.12,
+      "tiempo_hasta_listo_ms": 1991,
+      "errores": [],
+      "repeticiones_fps": [
+        141,
+        140.9
+      ]
+    },
+    {
+      "escena": "nocturno_lluvia",
+      "calidad": "baja",
+      "renderer_pedido": "webgpu",
+      "backend": "webgpu",
+      "cuadros": 719,
+      "fps_promedio": 118.3,
+      "fps_mediana": 138.9,
+      "fps_p1_bajo": 78.1,
+      "cuadro_p95_ms": 9.4,
+      "tareas_largas": 2,
+      "tareas_largas_ms": 874,
+      "llamadas_dibujo": 57,
+      "triangulos": 213761,
+      "memoria_js_mb": 76.8,
+      "carga_inicial_mb": 2.76,
+      "tiempo_hasta_listo_ms": 2305,
+      "errores": [],
+      "repeticiones_fps": [
+        95.8,
+        118.3
+      ]
+    },
+    {
+      "escena": "glorieta",
+      "calidad": "baja",
+      "renderer_pedido": "webgpu",
+      "backend": "webgpu",
+      "cuadros": 823,
+      "fps_promedio": 127.1,
+      "fps_mediana": 138.9,
+      "fps_p1_bajo": 84.7,
+      "cuadro_p95_ms": 9.5,
+      "tareas_largas": 0,
+      "tareas_largas_ms": 0,
+      "llamadas_dibujo": 43,
+      "triangulos": 139505,
+      "memoria_js_mb": 57.7,
+      "carga_inicial_mb": 2.76,
+      "tiempo_hasta_listo_ms": 2093,
+      "errores": [],
+      "repeticiones_fps": [
+        127.1,
+        124.9
+      ]
+    },
+    {
+      "escena": "interseccion_toluca",
+      "calidad": "baja",
+      "renderer_pedido": "webgpu",
+      "backend": "webgpu",
+      "cuadros": 817,
+      "fps_promedio": 129.7,
+      "fps_mediana": 137,
+      "fps_p1_bajo": 82,
+      "cuadro_p95_ms": 9.5,
+      "tareas_largas": 0,
+      "tareas_largas_ms": 0,
+      "llamadas_dibujo": 52,
+      "triangulos": 119479,
+      "memoria_js_mb": 72.9,
+      "carga_inicial_mb": 2.76,
+      "tiempo_hasta_listo_ms": 2283,
+      "errores": [],
+      "repeticiones_fps": [
+        128,
+        129.7
+      ]
+    },
+    {
+      "escena": "alcance",
+      "calidad": "media",
+      "renderer_pedido": "webgpu",
+      "backend": "webgpu",
+      "cuadros": 300,
+      "fps_promedio": 47.5,
+      "fps_mediana": 56.5,
+      "fps_p1_bajo": 7.1,
+      "cuadro_p95_ms": 32.2,
+      "tareas_largas": 7,
+      "tareas_largas_ms": 984,
+      "llamadas_dibujo": 80,
+      "triangulos": 180861,
+      "memoria_js_mb": 79.3,
+      "carga_inicial_mb": 3.16,
+      "tiempo_hasta_listo_ms": 2267,
+      "errores": [],
+      "repeticiones_fps": [
+        47.5,
+        46.3
+      ]
+    },
+    {
+      "escena": "lateral_interseccion",
+      "calidad": "media",
+      "renderer_pedido": "webgpu",
+      "backend": "webgpu",
+      "cuadros": 321,
+      "fps_promedio": 52.2,
+      "fps_mediana": 57.1,
+      "fps_p1_bajo": 7.6,
+      "cuadro_p95_ms": 31,
+      "tareas_largas": 4,
+      "tareas_largas_ms": 637,
+      "llamadas_dibujo": 85,
+      "triangulos": 193357,
+      "memoria_js_mb": 81.3,
+      "carga_inicial_mb": 3.16,
+      "tiempo_hasta_listo_ms": 2704,
+      "errores": [],
+      "repeticiones_fps": [
+        52.2,
+        46.4
+      ]
+    },
+    {
+      "escena": "frontal_curva",
+      "calidad": "media",
+      "renderer_pedido": "webgpu",
+      "backend": "webgpu",
+      "cuadros": 267,
+      "fps_promedio": 40.8,
+      "fps_mediana": 56.2,
+      "fps_p1_bajo": 4.3,
+      "cuadro_p95_ms": 35.9,
+      "tareas_largas": 8,
+      "tareas_largas_ms": 1641,
+      "llamadas_dibujo": 87,
+      "triangulos": 250633,
+      "memoria_js_mb": 73.1,
+      "carga_inicial_mb": 3.16,
+      "tiempo_hasta_listo_ms": 2278,
+      "errores": [],
+      "repeticiones_fps": [
+        40.8,
+        40.8
+      ]
+    },
+    {
+      "escena": "peaton_cruce",
+      "calidad": "media",
+      "renderer_pedido": "webgpu",
+      "backend": "webgpu",
+      "cuadros": 359,
+      "fps_promedio": 59.7,
+      "fps_mediana": 59.2,
+      "fps_p1_bajo": 33.8,
+      "cuadro_p95_ms": 19.1,
+      "tareas_largas": 0,
+      "tareas_largas_ms": 0,
+      "llamadas_dibujo": 75,
+      "triangulos": 282165,
+      "memoria_js_mb": 42.5,
+      "carga_inicial_mb": 3.16,
+      "tiempo_hasta_listo_ms": 1931,
+      "errores": [],
+      "repeticiones_fps": [
+        58.7,
+        59.7
+      ]
+    },
+    {
+      "escena": "motociclista",
+      "calidad": "media",
+      "renderer_pedido": "webgpu",
+      "backend": "webgpu",
+      "cuadros": 346,
+      "fps_promedio": 55.2,
+      "fps_mediana": 61.7,
+      "fps_p1_bajo": 13.2,
+      "cuadro_p95_ms": 28.7,
+      "tareas_largas": 4,
+      "tareas_largas_ms": 506,
+      "llamadas_dibujo": 54,
+      "triangulos": 136127,
+      "memoria_js_mb": 75.9,
+      "carga_inicial_mb": 3.16,
+      "tiempo_hasta_listo_ms": 2199,
+      "errores": [],
+      "repeticiones_fps": [
+        54.6,
+        55.2
+      ]
+    },
+    {
+      "escena": "objeto_fijo_arbol",
+      "calidad": "media",
+      "renderer_pedido": "webgpu",
+      "backend": "webgpu",
+      "cuadros": 372,
+      "fps_promedio": 61.8,
+      "fps_mediana": 61.3,
+      "fps_p1_bajo": 24.9,
+      "cuadro_p95_ms": 24.8,
+      "tareas_largas": 2,
+      "tareas_largas_ms": 224,
+      "llamadas_dibujo": 53,
+      "triangulos": 122445,
+      "memoria_js_mb": 65.6,
+      "carga_inicial_mb": 3.16,
+      "tiempo_hasta_listo_ms": 2037,
+      "errores": [],
+      "repeticiones_fps": [
+        61.5,
+        61.8
+      ]
+    },
+    {
+      "escena": "poste",
+      "calidad": "media",
+      "renderer_pedido": "webgpu",
+      "backend": "webgpu",
+      "cuadros": 344,
+      "fps_promedio": 57.1,
+      "fps_mediana": 56.8,
+      "fps_p1_bajo": 46.7,
+      "cuadro_p95_ms": 19.9,
+      "tareas_largas": 0,
+      "tareas_largas_ms": 0,
+      "llamadas_dibujo": 43,
+      "triangulos": 59659,
+      "memoria_js_mb": 61.1,
+      "carga_inicial_mb": 3.16,
+      "tiempo_hasta_listo_ms": 1957,
+      "errores": [],
+      "repeticiones_fps": [
+        56.7,
+        57.1
+      ]
+    },
+    {
+      "escena": "volcadura",
+      "calidad": "media",
+      "renderer_pedido": "webgpu",
+      "backend": "webgpu",
+      "cuadros": 313,
+      "fps_promedio": 50,
+      "fps_mediana": 59.5,
+      "fps_p1_bajo": 6.4,
+      "cuadro_p95_ms": 29.3,
+      "tareas_largas": 6,
+      "tareas_largas_ms": 915,
+      "llamadas_dibujo": 46,
+      "triangulos": 131821,
+      "memoria_js_mb": 67.8,
+      "carga_inicial_mb": 3.53,
+      "tiempo_hasta_listo_ms": 2186,
+      "errores": [],
+      "repeticiones_fps": [
+        50,
+        45.9
+      ]
+    },
+    {
+      "escena": "nocturno_lluvia",
+      "calidad": "media",
+      "renderer_pedido": "webgpu",
+      "backend": "webgpu",
+      "cuadros": 224,
+      "fps_promedio": 37,
+      "fps_mediana": 47.2,
+      "fps_p1_bajo": 4.3,
+      "cuadro_p95_ms": 29.9,
+      "tareas_largas": 6,
+      "tareas_largas_ms": 1621,
+      "llamadas_dibujo": 62,
+      "triangulos": 249975,
+      "memoria_js_mb": 73.1,
+      "carga_inicial_mb": 3.17,
+      "tiempo_hasta_listo_ms": 2457,
+      "errores": [],
+      "repeticiones_fps": [
+        25.1,
+        37
+      ]
+    },
+    {
+      "escena": "glorieta",
+      "calidad": "media",
+      "renderer_pedido": "webgpu",
+      "backend": "webgpu",
+      "cuadros": 318,
+      "fps_promedio": 50.8,
+      "fps_mediana": 54.9,
+      "fps_p1_bajo": 27.8,
+      "cuadro_p95_ms": 33.2,
+      "tareas_largas": 2,
+      "tareas_largas_ms": 217,
+      "llamadas_dibujo": 71,
+      "triangulos": 193461,
+      "memoria_js_mb": 79.9,
+      "carga_inicial_mb": 3.16,
+      "tiempo_hasta_listo_ms": 2286,
+      "errores": [],
+      "repeticiones_fps": [
+        50.8,
+        50.1
+      ]
+    },
+    {
+      "escena": "interseccion_toluca",
+      "calidad": "media",
+      "renderer_pedido": "webgpu",
+      "backend": "webgpu",
+      "cuadros": 293,
+      "fps_promedio": 48.8,
+      "fps_mediana": 51,
+      "fps_p1_bajo": 6.6,
+      "cuadro_p95_ms": 34.7,
+      "tareas_largas": 3,
+      "tareas_largas_ms": 508,
+      "llamadas_dibujo": 64,
+      "triangulos": 143671,
+      "memoria_js_mb": 74.3,
+      "carga_inicial_mb": 3.16,
+      "tiempo_hasta_listo_ms": 2464,
+      "errores": [],
+      "repeticiones_fps": [
+        47.4,
+        48.8
+      ]
+    },
+    {
+      "escena": "alcance",
+      "calidad": "alta",
+      "renderer_pedido": "webgpu",
+      "backend": "webgpu",
+      "cuadros": 411,
+      "fps_promedio": 65.1,
+      "fps_mediana": 138.9,
+      "fps_p1_bajo": 8.7,
+      "cuadro_p95_ms": 31.7,
+      "tareas_largas": 4,
+      "tareas_largas_ms": 471,
+      "llamadas_dibujo": 80,
+      "triangulos": 209661,
+      "memoria_js_mb": 73.1,
+      "carga_inicial_mb": 3.16,
+      "tiempo_hasta_listo_ms": 7076,
+      "errores": [],
+      "repeticiones_fps": [
+        22.3,
+        65.1
+      ]
+    },
+    {
+      "escena": "lateral_interseccion",
+      "calidad": "alta",
+      "renderer_pedido": "webgpu",
+      "backend": "webgpu",
+      "cuadros": 420,
+      "fps_promedio": 69.7,
+      "fps_mediana": 119,
+      "fps_p1_bajo": 11.7,
+      "cuadro_p95_ms": 39,
+      "tareas_largas": 4,
+      "tareas_largas_ms": 579,
+      "llamadas_dibujo": 61,
+      "triangulos": 172297,
+      "memoria_js_mb": 68.4,
+      "carga_inicial_mb": 3.16,
+      "tiempo_hasta_listo_ms": 7424,
+      "errores": [],
+      "repeticiones_fps": [
+        25.5,
+        69.7
+      ]
+    },
+    {
+      "escena": "frontal_curva",
+      "calidad": "alta",
+      "renderer_pedido": "webgpu",
+      "backend": "webgpu",
+      "cuadros": 362,
+      "fps_promedio": 60.4,
+      "fps_mediana": 100,
+      "fps_p1_bajo": 15.5,
+      "cuadro_p95_ms": 39.6,
+      "tareas_largas": 4,
+      "tareas_largas_ms": 318,
+      "llamadas_dibujo": 87,
+      "triangulos": 251543,
+      "memoria_js_mb": 78.6,
+      "carga_inicial_mb": 3.16,
+      "tiempo_hasta_listo_ms": 6833,
+      "errores": [],
+      "repeticiones_fps": [
+        19,
+        60.4
+      ]
+    },
+    {
+      "escena": "peaton_cruce",
+      "calidad": "alta",
+      "renderer_pedido": "webgpu",
+      "backend": "webgpu",
+      "cuadros": 420,
+      "fps_promedio": 69.7,
+      "fps_mediana": 131.6,
+      "fps_p1_bajo": 14.6,
+      "cuadro_p95_ms": 38.1,
+      "tareas_largas": 4,
+      "tareas_largas_ms": 535,
+      "llamadas_dibujo": 75,
+      "triangulos": 282213,
+      "memoria_js_mb": 54.2,
+      "carga_inicial_mb": 3.16,
+      "tiempo_hasta_listo_ms": 4950,
+      "errores": [],
+      "repeticiones_fps": [
+        27.2,
+        69.7
+      ]
+    },
+    {
+      "escena": "motociclista",
+      "calidad": "alta",
+      "renderer_pedido": "webgpu",
+      "backend": "webgpu",
+      "cuadros": 426,
+      "fps_promedio": 69.8,
+      "fps_mediana": 133.3,
+      "fps_p1_bajo": 9.3,
+      "cuadro_p95_ms": 38.6,
+      "tareas_largas": 7,
+      "tareas_largas_ms": 657,
+      "llamadas_dibujo": 59,
+      "triangulos": 137827,
+      "memoria_js_mb": 57.6,
+      "carga_inicial_mb": 3.16,
+      "tiempo_hasta_listo_ms": 6215,
+      "errores": [],
+      "repeticiones_fps": [
+        19,
+        69.8
+      ]
+    },
+    {
+      "escena": "objeto_fijo_arbol",
+      "calidad": "alta",
+      "renderer_pedido": "webgpu",
+      "backend": "webgpu",
+      "cuadros": 424,
+      "fps_promedio": 60.4,
+      "fps_mediana": 138.9,
+      "fps_p1_bajo": 10.6,
+      "cuadro_p95_ms": 44.5,
+      "tareas_largas": 10,
+      "tareas_largas_ms": 764,
+      "llamadas_dibujo": 53,
+      "triangulos": 122109,
+      "memoria_js_mb": 50,
+      "carga_inicial_mb": 3.16,
+      "tiempo_hasta_listo_ms": 5247,
+      "errores": [],
+      "repeticiones_fps": [
+        8.7,
+        60.4
+      ]
+    },
+    {
+      "escena": "poste",
+      "calidad": "alta",
+      "renderer_pedido": "webgpu",
+      "backend": "webgpu",
+      "cuadros": 404,
+      "fps_promedio": 67.2,
+      "fps_mediana": 166.7,
+      "fps_p1_bajo": 19.9,
+      "cuadro_p95_ms": 46.3,
+      "tareas_largas": 1,
+      "tareas_largas_ms": 55,
+      "llamadas_dibujo": 43,
+      "triangulos": 59675,
+      "memoria_js_mb": 52.6,
+      "carga_inicial_mb": 3.16,
+      "tiempo_hasta_listo_ms": 6080,
+      "errores": [],
+      "repeticiones_fps": [
+        32.7,
+        67.2
+      ]
+    },
+    {
+      "escena": "volcadura",
+      "calidad": "alta",
+      "renderer_pedido": "webgpu",
+      "backend": "webgpu",
+      "cuadros": 426,
+      "fps_promedio": 71,
+      "fps_mediana": 129.9,
+      "fps_p1_bajo": 14.2,
+      "cuadro_p95_ms": 38.6,
+      "tareas_largas": 5,
+      "tareas_largas_ms": 643,
+      "llamadas_dibujo": 41,
+      "triangulos": 130989,
+      "memoria_js_mb": 72.2,
+      "carga_inicial_mb": 3.53,
+      "tiempo_hasta_listo_ms": 7484,
+      "errores": [],
+      "repeticiones_fps": [
+        71,
+        70.5
+      ]
+    },
+    {
+      "escena": "nocturno_lluvia",
+      "calidad": "alta",
+      "renderer_pedido": "webgpu",
+      "backend": "webgpu",
+      "cuadros": 421,
+      "fps_promedio": 70.2,
+      "fps_mediana": 149.3,
+      "fps_p1_bajo": 18.1,
+      "cuadro_p95_ms": 51.8,
+      "tareas_largas": 7,
+      "tareas_largas_ms": 369,
+      "llamadas_dibujo": 62,
+      "triangulos": 321975,
+      "memoria_js_mb": 77.9,
+      "carga_inicial_mb": 3.17,
+      "tiempo_hasta_listo_ms": 9059,
+      "errores": [],
+      "repeticiones_fps": [
+        69.3,
+        70.2
+      ]
+    },
+    {
+      "escena": "glorieta",
+      "calidad": "alta",
+      "renderer_pedido": "webgpu",
+      "backend": "webgpu",
+      "cuadros": 418,
+      "fps_promedio": 69.9,
+      "fps_mediana": 126.6,
+      "fps_p1_bajo": 7.6,
+      "cuadro_p95_ms": 37.4,
+      "tareas_largas": 3,
+      "tareas_largas_ms": 254,
+      "llamadas_dibujo": 58,
+      "triangulos": 181577,
+      "memoria_js_mb": 57.5,
+      "carga_inicial_mb": 3.16,
+      "tiempo_hasta_listo_ms": 7319,
+      "errores": [],
+      "repeticiones_fps": [
+        49.9,
+        69.9
+      ]
+    },
+    {
+      "escena": "interseccion_toluca",
+      "calidad": "alta",
+      "renderer_pedido": "webgpu",
+      "backend": "webgpu",
+      "cuadros": 405,
+      "fps_promedio": 67.7,
+      "fps_mediana": 119,
+      "fps_p1_bajo": 13.4,
+      "cuadro_p95_ms": 44.4,
+      "tareas_largas": 5,
+      "tareas_largas_ms": 397,
+      "llamadas_dibujo": 70,
+      "triangulos": 163927,
+      "memoria_js_mb": 67.9,
+      "carga_inicial_mb": 3.16,
+      "tiempo_hasta_listo_ms": 7468,
+      "errores": [],
+      "repeticiones_fps": [
+        61.1,
+        67.7
+      ]
+    },
+    {
+      "escena": "alcance",
+      "calidad": "baja",
+      "renderer_pedido": "webgl",
+      "backend": "webgl2",
+      "cuadros": 851,
+      "fps_promedio": 141.6,
+      "fps_mediana": 147.1,
+      "fps_p1_bajo": 82.6,
+      "cuadro_p95_ms": 9.9,
+      "tareas_largas": 0,
+      "tareas_largas_ms": 0,
+      "llamadas_dibujo": 56,
+      "triangulos": 123919,
+      "memoria_js_mb": 66.9,
+      "carga_inicial_mb": 2.75,
+      "tiempo_hasta_listo_ms": 8530,
+      "errores": [],
+      "repeticiones_fps": [
+        141.6,
+        138.8
+      ]
+    },
+    {
+      "escena": "lateral_interseccion",
+      "calidad": "baja",
+      "renderer_pedido": "webgl",
+      "backend": "webgl2",
+      "cuadros": 859,
+      "fps_promedio": 142.8,
+      "fps_mediana": 147.1,
+      "fps_p1_bajo": 93.5,
+      "cuadro_p95_ms": 9.5,
+      "tareas_largas": 0,
+      "tareas_largas_ms": 0,
+      "llamadas_dibujo": 60,
+      "triangulos": 148949,
+      "memoria_js_mb": 68.4,
+      "carga_inicial_mb": 2.76,
+      "tiempo_hasta_listo_ms": 5948,
+      "errores": [],
+      "repeticiones_fps": [
+        142.8,
+        132.8
+      ]
+    },
+    {
+      "escena": "frontal_curva",
+      "calidad": "baja",
+      "renderer_pedido": "webgl",
+      "backend": "webgl2",
+      "cuadros": 857,
+      "fps_promedio": 142.2,
+      "fps_mediana": 147.1,
+      "fps_p1_bajo": 86.2,
+      "cuadro_p95_ms": 9.7,
+      "tareas_largas": 0,
+      "tareas_largas_ms": 0,
+      "llamadas_dibujo": 58,
+      "triangulos": 198491,
+      "memoria_js_mb": 93.2,
+      "carga_inicial_mb": 2.76,
+      "tiempo_hasta_listo_ms": 4934,
+      "errores": [],
+      "repeticiones_fps": [
+        142.2,
+        137.1
+      ]
+    },
+    {
+      "escena": "peaton_cruce",
+      "calidad": "baja",
+      "renderer_pedido": "webgl",
+      "backend": "webgl2",
+      "cuadros": 1059,
+      "fps_promedio": 174.4,
+      "fps_mediana": 181.8,
+      "fps_p1_bajo": 103.1,
+      "cuadro_p95_ms": 8.2,
+      "tareas_largas": 0,
+      "tareas_largas_ms": 0,
+      "llamadas_dibujo": 50,
+      "triangulos": 162371,
+      "memoria_js_mb": 49.9,
+      "carga_inicial_mb": 2.75,
+      "tiempo_hasta_listo_ms": 2739,
+      "errores": [],
+      "repeticiones_fps": [
+        174.4,
+        152.5
+      ]
+    },
+    {
+      "escena": "motociclista",
+      "calidad": "baja",
+      "renderer_pedido": "webgl",
+      "backend": "webgl2",
+      "cuadros": 1007,
+      "fps_promedio": 165.1,
+      "fps_mediana": 169.5,
+      "fps_p1_bajo": 101,
+      "cuadro_p95_ms": 8.2,
+      "tareas_largas": 0,
+      "tareas_largas_ms": 0,
+      "llamadas_dibujo": 40,
+      "triangulos": 88909,
+      "memoria_js_mb": 52.4,
+      "carga_inicial_mb": 2.76,
+      "tiempo_hasta_listo_ms": 4268,
+      "errores": [],
+      "repeticiones_fps": [
+        165.1,
+        157
+      ]
+    },
+    {
+      "escena": "objeto_fijo_arbol",
+      "calidad": "baja",
+      "renderer_pedido": "webgl",
+      "backend": "webgl2",
+      "cuadros": 1050,
+      "fps_promedio": 174.6,
+      "fps_mediana": 181.8,
+      "fps_p1_bajo": 104.2,
+      "cuadro_p95_ms": 7.9,
+      "tareas_largas": 0,
+      "tareas_largas_ms": 0,
+      "llamadas_dibujo": 37,
+      "triangulos": 96021,
+      "memoria_js_mb": 48.8,
+      "carga_inicial_mb": 2.75,
+      "tiempo_hasta_listo_ms": 4455,
+      "errores": [],
+      "repeticiones_fps": [
+        174.6,
+        156.1
+      ]
+    },
+    {
+      "escena": "poste",
+      "calidad": "baja",
+      "renderer_pedido": "webgl",
+      "backend": "webgl2",
+      "cuadros": 990,
+      "fps_promedio": 164.2,
+      "fps_mediana": 166.7,
+      "fps_p1_bajo": 97.1,
+      "cuadro_p95_ms": 8.6,
+      "tareas_largas": 0,
+      "tareas_largas_ms": 0,
+      "llamadas_dibujo": 38,
+      "triangulos": 59461,
+      "memoria_js_mb": 49.7,
+      "carga_inicial_mb": 2.75,
+      "tiempo_hasta_listo_ms": 4114,
+      "errores": [],
+      "repeticiones_fps": [
+        164.2,
+        160.2
+      ]
+    },
+    {
+      "escena": "volcadura",
+      "calidad": "baja",
+      "renderer_pedido": "webgl",
+      "backend": "webgl2",
+      "cuadros": 960,
+      "fps_promedio": 159.4,
+      "fps_mediana": 163.9,
+      "fps_p1_bajo": 96.2,
+      "cuadro_p95_ms": 8.4,
+      "tareas_largas": 0,
+      "tareas_largas_ms": 0,
+      "llamadas_dibujo": 36,
+      "triangulos": 130727,
+      "memoria_js_mb": 76.6,
+      "carga_inicial_mb": 3.12,
+      "tiempo_hasta_listo_ms": 4326,
+      "errores": [],
+      "repeticiones_fps": [
+        159.4,
+        134
+      ]
+    },
+    {
+      "escena": "nocturno_lluvia",
+      "calidad": "baja",
+      "renderer_pedido": "webgl",
+      "backend": "webgl2",
+      "cuadros": 868,
+      "fps_promedio": 144.4,
+      "fps_mediana": 151.5,
+      "fps_p1_bajo": 90.9,
+      "cuadro_p95_ms": 9.2,
+      "tareas_largas": 0,
+      "tareas_largas_ms": 0,
+      "llamadas_dibujo": 57,
+      "triangulos": 213761,
+      "memoria_js_mb": 89.3,
+      "carga_inicial_mb": 2.76,
+      "tiempo_hasta_listo_ms": 6029,
+      "errores": [],
+      "repeticiones_fps": [
+        144.4,
+        129
+      ]
+    },
+    {
+      "escena": "glorieta",
+      "calidad": "baja",
+      "renderer_pedido": "webgl",
+      "backend": "webgl2",
+      "cuadros": 880,
+      "fps_promedio": 146.1,
+      "fps_mediana": 151.5,
+      "fps_p1_bajo": 88.5,
+      "cuadro_p95_ms": 9.3,
+      "tareas_largas": 0,
+      "tareas_largas_ms": 0,
+      "llamadas_dibujo": 50,
+      "triangulos": 150109,
+      "memoria_js_mb": 55.4,
+      "carga_inicial_mb": 2.76,
+      "tiempo_hasta_listo_ms": 5677,
+      "errores": [],
+      "repeticiones_fps": [
+        146.1,
+        131.4
+      ]
+    },
+    {
+      "escena": "interseccion_toluca",
+      "calidad": "baja",
+      "renderer_pedido": "webgl",
+      "backend": "webgl2",
+      "cuadros": 899,
+      "fps_promedio": 149.2,
+      "fps_mediana": 156.2,
+      "fps_p1_bajo": 91.7,
+      "cuadro_p95_ms": 9.3,
+      "tareas_largas": 0,
+      "tareas_largas_ms": 0,
+      "llamadas_dibujo": 52,
+      "triangulos": 119479,
+      "memoria_js_mb": 60.9,
+      "carga_inicial_mb": 2.76,
+      "tiempo_hasta_listo_ms": 5775,
+      "errores": [],
+      "repeticiones_fps": [
+        149.2,
+        141.2
+      ]
+    },
+    {
+      "escena": "alcance",
+      "calidad": "media",
+      "renderer_pedido": "webgl",
+      "backend": "webgl2",
+      "cuadros": 359,
+      "fps_promedio": 59.7,
+      "fps_mediana": 88.5,
+      "fps_p1_bajo": 8,
+      "cuadro_p95_ms": 52.4,
+      "tareas_largas": 15,
+      "tareas_largas_ms": 1378,
+      "llamadas_dibujo": 71,
+      "triangulos": 160085,
+      "memoria_js_mb": 84.6,
+      "carga_inicial_mb": 3.16,
+      "tiempo_hasta_listo_ms": 8224,
+      "errores": [],
+      "repeticiones_fps": [
+        59.7,
+        51.2
+      ]
+    },
+    {
+      "escena": "lateral_interseccion",
+      "calidad": "media",
+      "renderer_pedido": "webgl",
+      "backend": "webgl2",
+      "cuadros": 386,
+      "fps_promedio": 61.2,
+      "fps_mediana": 86.2,
+      "fps_p1_bajo": 11.4,
+      "cuadro_p95_ms": 43.8,
+      "tareas_largas": 13,
+      "tareas_largas_ms": 1020,
+      "llamadas_dibujo": 75,
+      "triangulos": 174649,
+      "memoria_js_mb": 66.8,
+      "carga_inicial_mb": 3.16,
+      "tiempo_hasta_listo_ms": 8790,
+      "errores": [],
+      "repeticiones_fps": [
+        61.2,
+        52.9
+      ]
+    },
+    {
+      "escena": "frontal_curva",
+      "calidad": "media",
+      "renderer_pedido": "webgl",
+      "backend": "webgl2",
+      "cuadros": 348,
+      "fps_promedio": 57.6,
+      "fps_mediana": 81.3,
+      "fps_p1_bajo": 14.6,
+      "cuadro_p95_ms": 53.2,
+      "tareas_largas": 13,
+      "tareas_largas_ms": 779,
+      "llamadas_dibujo": 87,
+      "triangulos": 251543,
+      "memoria_js_mb": 60.9,
+      "carga_inicial_mb": 3.16,
+      "tiempo_hasta_listo_ms": 9694,
+      "errores": [],
+      "repeticiones_fps": [
+        57.6,
+        54.9
+      ]
+    },
+    {
+      "escena": "peaton_cruce",
+      "calidad": "media",
+      "renderer_pedido": "webgl",
+      "backend": "webgl2",
+      "cuadros": 454,
+      "fps_promedio": 75.3,
+      "fps_mediana": 117.6,
+      "fps_p1_bajo": 7,
+      "cuadro_p95_ms": 35.4,
+      "tareas_largas": 11,
+      "tareas_largas_ms": 1017,
+      "llamadas_dibujo": 75,
+      "triangulos": 282165,
+      "memoria_js_mb": 43,
+      "carga_inicial_mb": 3.16,
+      "tiempo_hasta_listo_ms": 5178,
+      "errores": [],
+      "repeticiones_fps": [
+        75.3,
+        58
+      ]
+    },
+    {
+      "escena": "motociclista",
+      "calidad": "media",
+      "renderer_pedido": "webgl",
+      "backend": "webgl2",
+      "cuadros": 411,
+      "fps_promedio": 67.9,
+      "fps_mediana": 107.5,
+      "fps_p1_bajo": 7.9,
+      "cuadro_p95_ms": 48.1,
+      "tareas_largas": 14,
+      "tareas_largas_ms": 1395,
+      "llamadas_dibujo": 59,
+      "triangulos": 137827,
+      "memoria_js_mb": 60.1,
+      "carga_inicial_mb": 3.16,
+      "tiempo_hasta_listo_ms": 7187,
+      "errores": [],
+      "repeticiones_fps": [
+        67.9,
+        56.3
+      ]
+    },
+    {
+      "escena": "objeto_fijo_arbol",
+      "calidad": "media",
+      "renderer_pedido": "webgl",
+      "backend": "webgl2",
+      "cuadros": 454,
+      "fps_promedio": 75.7,
+      "fps_mediana": 112.4,
+      "fps_p1_bajo": 6,
+      "cuadro_p95_ms": 22.7,
+      "tareas_largas": 8,
+      "tareas_largas_ms": 1237,
+      "llamadas_dibujo": 53,
+      "triangulos": 122405,
+      "memoria_js_mb": 61.3,
+      "carga_inicial_mb": 3.16,
+      "tiempo_hasta_listo_ms": 6338,
+      "errores": [],
+      "repeticiones_fps": [
+        75.7,
+        57.8
+      ]
+    },
+    {
+      "escena": "poste",
+      "calidad": "media",
+      "renderer_pedido": "webgl",
+      "backend": "webgl2",
+      "cuadros": 505,
+      "fps_promedio": 85.7,
+      "fps_mediana": 175.4,
+      "fps_p1_bajo": 5.1,
+      "cuadro_p95_ms": 27.5,
+      "tareas_largas": 12,
+      "tareas_largas_ms": 2212,
+      "llamadas_dibujo": 43,
+      "triangulos": 59603,
+      "memoria_js_mb": 58.6,
+      "carga_inicial_mb": 3.16,
+      "tiempo_hasta_listo_ms": 7180,
+      "errores": [],
+      "repeticiones_fps": [
+        85.7,
+        56.9
+      ]
+    },
+    {
+      "escena": "volcadura",
+      "calidad": "media",
+      "renderer_pedido": "webgl",
+      "backend": "webgl2",
+      "cuadros": 514,
+      "fps_promedio": 84,
+      "fps_mediana": 123.5,
+      "fps_p1_bajo": 9.2,
+      "cuadro_p95_ms": 30.6,
+      "tareas_largas": 10,
+      "tareas_largas_ms": 1135,
+      "llamadas_dibujo": 42,
+      "triangulos": 131117,
+      "memoria_js_mb": 80.1,
+      "carga_inicial_mb": 3.53,
+      "tiempo_hasta_listo_ms": 6793,
+      "errores": [],
+      "repeticiones_fps": [
+        84,
+        59.4
+      ]
+    },
+    {
+      "escena": "nocturno_lluvia",
+      "calidad": "media",
+      "renderer_pedido": "webgl",
+      "backend": "webgl2",
+      "cuadros": 394,
+      "fps_promedio": 63.8,
+      "fps_mediana": 102,
+      "fps_p1_bajo": 8.8,
+      "cuadro_p95_ms": 51.4,
+      "tareas_largas": 15,
+      "tareas_largas_ms": 1339,
+      "llamadas_dibujo": 62,
+      "triangulos": 249975,
+      "memoria_js_mb": 95.9,
+      "carga_inicial_mb": 3.17,
+      "tiempo_hasta_listo_ms": 3776,
+      "errores": [],
+      "repeticiones_fps": [
+        62.4,
+        63.8
+      ]
+    },
+    {
+      "escena": "glorieta",
+      "calidad": "media",
+      "renderer_pedido": "webgl",
+      "backend": "webgl2",
+      "cuadros": 376,
+      "fps_promedio": 63.4,
+      "fps_mediana": 97.1,
+      "fps_p1_bajo": 8.5,
+      "cuadro_p95_ms": 44.6,
+      "tareas_largas": 10,
+      "tareas_largas_ms": 989,
+      "llamadas_dibujo": 72,
+      "triangulos": 193589,
+      "memoria_js_mb": 73.5,
+      "carga_inicial_mb": 3.16,
+      "tiempo_hasta_listo_ms": 8666,
+      "errores": [],
+      "repeticiones_fps": [
+        63.4,
+        59.2
+      ]
+    },
+    {
+      "escena": "interseccion_toluca",
+      "calidad": "media",
+      "renderer_pedido": "webgl",
+      "backend": "webgl2",
+      "cuadros": 433,
+      "fps_promedio": 71.6,
+      "fps_mediana": 117.6,
+      "fps_p1_bajo": 7.1,
+      "cuadro_p95_ms": 41.1,
+      "tareas_largas": 9,
+      "tareas_largas_ms": 1165,
+      "llamadas_dibujo": 73,
+      "triangulos": 164647,
+      "memoria_js_mb": 81.2,
+      "carga_inicial_mb": 3.16,
+      "tiempo_hasta_listo_ms": 7246,
+      "errores": [],
+      "repeticiones_fps": [
+        71.6,
+        63.4
+      ]
+    },
+    {
+      "escena": "alcance",
+      "calidad": "alta",
+      "renderer_pedido": "webgl",
+      "backend": "webgl2",
+      "cuadros": 153,
+      "fps_promedio": 24.8,
+      "fps_mediana": 32.7,
+      "fps_p1_bajo": 4.3,
+      "cuadro_p95_ms": 105.2,
+      "tareas_largas": 24,
+      "tareas_largas_ms": 2187,
+      "llamadas_dibujo": 80,
+      "triangulos": 209085,
+      "memoria_js_mb": 73.1,
+      "carga_inicial_mb": 3.16,
+      "tiempo_hasta_listo_ms": 6186,
+      "errores": [],
+      "repeticiones_fps": [
+        24.8,
+        24.8
+      ]
+    },
+    {
+      "escena": "lateral_interseccion",
+      "calidad": "alta",
+      "renderer_pedido": "webgl",
+      "backend": "webgl2",
+      "cuadros": 161,
+      "fps_promedio": 26.6,
+      "fps_mediana": 38.5,
+      "fps_p1_bajo": 4.4,
+      "cuadro_p95_ms": 117.4,
+      "tareas_largas": 10,
+      "tareas_largas_ms": 1266,
+      "llamadas_dibujo": 52,
+      "triangulos": 138781,
+      "memoria_js_mb": 63.1,
+      "carga_inicial_mb": 3.16,
+      "tiempo_hasta_listo_ms": 6316,
+      "errores": [],
+      "repeticiones_fps": [
+        26.6,
+        26.4
+      ]
+    },
+    {
+      "escena": "frontal_curva",
+      "calidad": "alta",
+      "renderer_pedido": "webgl",
+      "backend": "webgl2",
+      "cuadros": 164,
+      "fps_promedio": 27.1,
+      "fps_mediana": 30.2,
+      "fps_p1_bajo": 4.8,
+      "cuadro_p95_ms": 76.3,
+      "tareas_largas": 23,
+      "tareas_largas_ms": 1884,
+      "llamadas_dibujo": 87,
+      "triangulos": 251543,
+      "memoria_js_mb": 73.1,
+      "carga_inicial_mb": 3.16,
+      "tiempo_hasta_listo_ms": 20530,
+      "errores": [],
+      "repeticiones_fps": [
+        26.7,
+        27.1
+      ]
+    },
+    {
+      "escena": "peaton_cruce",
+      "calidad": "alta",
+      "renderer_pedido": "webgl",
+      "backend": "webgl2",
+      "cuadros": 166,
+      "fps_promedio": 26.4,
+      "fps_mediana": 34.6,
+      "fps_p1_bajo": 5.1,
+      "cuadro_p95_ms": 97.5,
+      "tareas_largas": 33,
+      "tareas_largas_ms": 2654,
+      "llamadas_dibujo": 75,
+      "triangulos": 282325,
+      "memoria_js_mb": 57.2,
+      "carga_inicial_mb": 3.16,
+      "tiempo_hasta_listo_ms": 4712,
+      "errores": [],
+      "repeticiones_fps": [
+        25.8,
+        26.4
+      ]
+    },
+    {
+      "escena": "motociclista",
+      "calidad": "alta",
+      "renderer_pedido": "webgl",
+      "backend": "webgl2",
+      "cuadros": 163,
+      "fps_promedio": 26.5,
+      "fps_mediana": 39.2,
+      "fps_p1_bajo": 5.1,
+      "cuadro_p95_ms": 94.7,
+      "tareas_largas": 28,
+      "tareas_largas_ms": 2316,
+      "llamadas_dibujo": 59,
+      "triangulos": 137827,
+      "memoria_js_mb": 45.6,
+      "carga_inicial_mb": 3.16,
+      "tiempo_hasta_listo_ms": 7469,
+      "errores": [],
+      "repeticiones_fps": [
+        26.5,
+        26.2
+      ]
+    },
+    {
+      "escena": "objeto_fijo_arbol",
+      "calidad": "alta",
+      "renderer_pedido": "webgl",
+      "backend": "webgl2",
+      "cuadros": 162,
+      "fps_promedio": 27.4,
+      "fps_mediana": 45.5,
+      "fps_p1_bajo": 4.4,
+      "cuadro_p95_ms": 94.4,
+      "tareas_largas": 32,
+      "tareas_largas_ms": 2377,
+      "llamadas_dibujo": 53,
+      "triangulos": 122533,
+      "memoria_js_mb": 50.6,
+      "carga_inicial_mb": 3.16,
+      "tiempo_hasta_listo_ms": 5937,
+      "errores": [],
+      "repeticiones_fps": [
+        27.4,
+        27.2
+      ]
+    },
+    {
+      "escena": "poste",
+      "calidad": "alta",
+      "renderer_pedido": "webgl",
+      "backend": "webgl2",
+      "cuadros": 168,
+      "fps_promedio": 27.8,
+      "fps_mediana": 89.3,
+      "fps_p1_bajo": 2.2,
+      "cuadro_p95_ms": 110.3,
+      "tareas_largas": 22,
+      "tareas_largas_ms": 3906,
+      "llamadas_dibujo": 43,
+      "triangulos": 59403,
+      "memoria_js_mb": 47,
+      "carga_inicial_mb": 3.16,
+      "tiempo_hasta_listo_ms": 5423,
+      "errores": [],
+      "repeticiones_fps": [
+        27.8,
+        27
+      ]
+    },
+    {
+      "escena": "volcadura",
+      "calidad": "alta",
+      "renderer_pedido": "webgl",
+      "backend": "webgl2",
+      "cuadros": 170,
+      "fps_promedio": 28,
+      "fps_mediana": 52.1,
+      "fps_p1_bajo": 3.8,
+      "cuadro_p95_ms": 116.8,
+      "tareas_largas": 26,
+      "tareas_largas_ms": 2697,
+      "llamadas_dibujo": 41,
+      "triangulos": 130989,
+      "memoria_js_mb": 62.1,
+      "carga_inicial_mb": 3.53,
+      "tiempo_hasta_listo_ms": 5711,
+      "errores": [],
+      "repeticiones_fps": [
+        27.6,
+        28
+      ]
+    },
+    {
+      "escena": "nocturno_lluvia",
+      "calidad": "alta",
+      "renderer_pedido": "webgl",
+      "backend": "webgl2",
+      "cuadros": 140,
+      "fps_promedio": 22.9,
+      "fps_mediana": 57.5,
+      "fps_p1_bajo": 2.7,
+      "cuadro_p95_ms": 134,
+      "tareas_largas": 26,
+      "tareas_largas_ms": 3645,
+      "llamadas_dibujo": 62,
+      "triangulos": 321975,
+      "memoria_js_mb": 87.5,
+      "carga_inicial_mb": 3.17,
+      "tiempo_hasta_listo_ms": 7831,
+      "errores": [],
+      "repeticiones_fps": [
+        22.9,
+        22.4
+      ]
+    },
+    {
+      "escena": "glorieta",
+      "calidad": "alta",
+      "renderer_pedido": "webgl",
+      "backend": "webgl2",
+      "cuadros": 156,
+      "fps_promedio": 25.9,
+      "fps_mediana": 39.5,
+      "fps_p1_bajo": 2.7,
+      "cuadro_p95_ms": 112.5,
+      "tareas_largas": 25,
+      "tareas_largas_ms": 2798,
+      "llamadas_dibujo": 72,
+      "triangulos": 193589,
+      "memoria_js_mb": 63,
+      "carga_inicial_mb": 3.16,
+      "tiempo_hasta_listo_ms": 10449,
+      "errores": [],
+      "repeticiones_fps": [
+        25.9,
+        25.5
+      ]
+    },
+    {
+      "escena": "interseccion_toluca",
+      "calidad": "alta",
+      "renderer_pedido": "webgl",
+      "backend": "webgl2",
+      "cuadros": 146,
+      "fps_promedio": 24.1,
+      "fps_mediana": 36.5,
+      "fps_p1_bajo": 3.6,
+      "cuadro_p95_ms": 119.7,
+      "tareas_largas": 26,
+      "tareas_largas_ms": 2543,
+      "llamadas_dibujo": 73,
+      "triangulos": 164647,
+      "memoria_js_mb": 59.1,
+      "carga_inicial_mb": 3.16,
+      "tiempo_hasta_listo_ms": 8967,
+      "errores": [],
+      "repeticiones_fps": [
+        24.1,
+        23.7
+      ]
+    }
+  ]
+}

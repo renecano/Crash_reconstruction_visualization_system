@@ -10,7 +10,7 @@
  * `media` en el manifiesto) sea el color y la rugosidad calibrados de cada material, así que seco
  * contra mojado, día contra noche y el resto de la calibración quedan igual que sin textura.
  *
- * En calidad baja no se cargan (los materiales quedan de color liso).
+ * Solo en alta y ultra (ADR 0026, decisión 7); en baja y media los materiales quedan de color liso.
  */
 import {
   Color,
@@ -32,7 +32,7 @@ import {
   vec3,
 } from "three/tsl";
 import { MeshStandardNodeMaterial, type Node } from "three/webgpu";
-import type { QualityLevel } from "./quality";
+import { QUALITY_PROFILES, type QualityLevel } from "./quality";
 
 export const TEXTURE_BASE_URL = "/texturas/";
 export const ENV_TEXTURE_NAMES = ["asfalto", "concreto", "pasto"] as const;
@@ -60,7 +60,7 @@ interface Manifest {
 }
 
 export function texturesWanted(quality: QualityLevel): boolean {
-  return quality !== "baja";
+  return QUALITY_PROFILES[quality].envTextures;
 }
 
 function meanRgbOf(f: ManifestFile, name: string): [number, number, number] {
