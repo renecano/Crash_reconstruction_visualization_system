@@ -5,7 +5,7 @@ Reglas de trabajo: `CLAUDE.md`. Especificación: `PLAN.md`.
 
 ## Estado actual
 
-- **Fase actual: cierre de F8.** F8a a F8f están hechas y E6 cumple (2026-10-17). Falta fusionar #20 a #24 en orden; después, F9. Detalle en «F8 — Estado», al final de este archivo.
+- **Fase actual: F9, demo sin red y exportaciones.** F8 quedó cerrada el 2026-10-17 (#20 a #24, E6 cumple). El plan de F9 está al final de este archivo.
 - **Pendientes físicos de F7:** hechos. El pendiente 1 (test CISS de Relatos-MX y prompt v2) quedó hecho el 2026-10-14 (PR #11, ADR 0012).
 - **Rigidez lateral, hecha** (PR #12, ADR 0013). Sale de 1,265 pruebas de barrera móvil de NHTSA. En el test de E3, el error en costados baja de 11.04 a 8.51 km/h.
 - **Rigidez trasera, hecha** (PR #13, ADR 0014). Sale de 136 pruebas FMVSS 301 con barrera rígida, modelos 1975–2004. En el test de E3, el error en traseros baja de 16.45 a 7.68 km/h; en conjunto, 8.85 km/h contra 8.19 de WinSMASH.
@@ -13,9 +13,9 @@ Reglas de trabajo: `CLAUDE.md`. Especificación: `PLAN.md`.
 - **Fase de las marcas, hecha** (rama `feat/f7-marcas-derrape`, ADR 0016). Contrato 1.1.0 con `evidencias[].fase`, resultado 1.5.0 y la evidencia nueva `marcas_despues` en la inversión.
 - **Moto caída, hecha** (rama `feat/f7-moto-caida`, ADR 0017): arrastre medido de Peck et al. 2014, muestreado en Monte Carlo y en la inversión; resultado 1.6.0.
 - **Fase de las marcas en la extracción, hecha** (rama `feat/f7-fase-extraccion`, ADR 0019): reglas y prompt v3, que pasa a producción.
-- **Siguiente paso concreto:** fusionar #20, #21, #22, #23 y #24 en ese orden y empezar F9.
+- **Siguiente paso concreto:** F9, paso 1. Hacer el optimizador propio de la inversión en Python puro, con pruebas de propiedades contra SciPy (rama `feat/f9-optimizador`, ADR 0027).
 - **E1 del prompt v2 en el primer test, hecho** (PR #14). Sonnet 0.875 → 0.919 y Haiku 0.852 → 0.896. Además, E1 ahora compara cada contrafactual con la repetición del mismo relato (McNemar por tipo): ningún tipo difiere del ruido, y las reglas cambian con el modelo del vehículo en 6 de 52 pares (ADR 0012 §10).
-- **F0** cerrado el 2026-10-10 (PR #1), **F1** el 2026-10-10 (PR #3), **F2** el 2026-10-13 (PR #4), **F3** el 2026-10-13 (PR #5), **F4** el 2026-10-13 (PR #6), **F5** el 2026-10-13 (PR #7), **F6** el 2026-10-14 (PR #8), **F7** el 2026-10-14 (PR #9; pendientes registrados); migración a Vercel el 2026-10-14 (PR #10); test CISS y prompt v2 el 2026-10-14 (PR #11).
+- **F8** cerrada el 2026-10-17 (PR #20 a #24). **F0** cerrado el 2026-10-10 (PR #1), **F1** el 2026-10-10 (PR #3), **F2** el 2026-10-13 (PR #4), **F3** el 2026-10-13 (PR #5), **F4** el 2026-10-13 (PR #6), **F5** el 2026-10-13 (PR #7), **F6** el 2026-10-14 (PR #8), **F7** el 2026-10-14 (PR #9; pendientes registrados); migración a Vercel el 2026-10-14 (PR #10); test CISS y prompt v2 el 2026-10-14 (PR #11).
 
 ### Bloqueado — necesita a René
 
@@ -1311,3 +1311,51 @@ Las ramas van una encima de otra y se fusionan en este orden, cada una con su PR
   - texturas en caras verticales (guarnición, barda) con proyección triplanar, si E9 muestra que hacen falta.
   - grava suelta: las manchas de ruido de F8a (ADR 0020) se ven como camuflaje en el acercamiento de `objeto_fijo_arbol`; conviene una textura de grava CC0 en su lugar;
   - corte del camellón en los cruces peatonales (refugio a nivel de calle), visto en la captura de `peaton_cruce`.
+
+## F9 — Demo offline y exportaciones (plan)
+
+**Criterio (PLAN §13):** la demo funciona sin red; E7 (paridad) y E8 (determinismo) en verde.
+
+**Alcance (PLAN §3, §7, §13):**
+
+- **Port TS completo del solver:** los módulos que faltan son `inversion.py` (876 líneas) y `montecarlo.py` (230). Ya existen en TS `consistency`, `pyrandom` (el generador de Python) y el resto.
+- **Web Workers:** Monte Carlo e inversión corren fuera del hilo principal.
+- **E7 sin exclusiones:** hoy `parity.test.ts` excluye los bloques `incertidumbre`, `inversion` y `consistencia`. En F9 se comparan todos, con la misma tolerancia (relativa 1e-6, absoluta 1e-5).
+- **E8:** misma escena y semilla ⇒ mismo resultado bit a bit en Chromium, Firefox y WebKit (Playwright). Abarca el solver TS y el horneado de Rapier (restos, volcaduras, ragdolls).
+- **Casos precargados y sin red:** las escenas canónicas, sus resultados, los modelos (cuerpos de MakeHuman, vehículos) y las texturas quedan en caché con un service worker. La demo abre y reconstruye sin conexión; la extracción con Claude es lo único que requiere red, y la interfaz lo dice.
+- **Exportaciones**, siempre con la leyenda de reconstrucción ilustrativa (PLAN §10):
+  - informe PDF generado en el navegador: croquis, línea de tiempo, parámetros con fuente, supuestos, rangos, banderas, semilla, hash de entradas y atribución de OSM cuando aplique;
+  - video WebM con MediaRecorder, y MP4 con ffmpeg.wasm;
+  - cuadros PNG;
+  - escena glTF con `GLTFExporter`;
+  - croquis 2D en SVG, PNG y PDF.
+
+**Riesgo principal y decisión propuesta (ADR 0027):**
+
+- **El problema:** `inversion.py` usa `scipy.optimize.least_squares` (región de confianza reflectiva con límites y pérdida `soft_l1`), además de `pinv` y `lstsq` de NumPy. No hay equivalente en el navegador, y dos optimizadores distintos no coinciden a 1e-6 si paran por número de evaluaciones o siguen caminos distintos.
+- **Propuesta:** la referencia Python deja SciPy en la inversión y usa un optimizador propio, escrito en Python puro y portado línea por línea a TS:
+  - Levenberg–Marquardt con límites (proyección) y pérdida `soft_l1` por mínimos cuadrados reponderados;
+  - álgebra lineal densa pequeña (Cholesky o QR con pivoteo) también propia.
+- **Así,** la paridad se prueba como en el resto del solver: mismo algoritmo, misma aritmética de doble precisión y mismo orden de operaciones.
+- **Por qué no basta un optimizador «equivalente»:**
+  - `fit_evidence` usa `max_nfev=40`, así que muchas veces el ajuste para por presupuesto y no por convergencia: el valor final depende del camino exacto.
+  - Además, `_chord_refit` usa `lstsq` (solución de norma mínima por SVD) y `_laplace` usa `pinv`. Con jacobianos de rango deficiente, eso no lo reproduce una solución por ecuaciones normales.
+- **Álgebra lineal propia:** SVD de Jacobi de un lado (las matrices son de unos cuantos residuos por ≤ 6 parámetros), con `lstsq` y `pinv` encima, idéntica en Python y TS. Se prueba contra NumPy con Hypothesis a 1e-12.
+- **Detalles que el port debe copiar tal cual:** la caché de residuos redondea el punto a 9 decimales; el jacobiano es de diferencias hacia adelante con paso fijo por tipo (hacia atrás junto al límite); y los cuantiles son `statistics.quantiles(..., method="inclusive")`.
+- **Cómo se valida el cambio de optimizador:**
+  - Pruebas de propiedades (Hypothesis): el nuevo encuentra el mismo mínimo que SciPy en problemas sintéticos con solución conocida.
+  - E3 se vuelve a correr completo con el optimizador nuevo, y la diferencia contra el E3 actual se reporta tal cual en el README.
+- **Alternativa descartada:** comparar la inversión con una tolerancia más laxa que el resto. Rompe la regla de una sola tolerancia para E7 y esconde diferencias de camino.
+
+**Orden de trabajo (ramas `feat/f9-*`):**
+
+1. **Optimizador propio en Python con pruebas de propiedades;** la inversión lo usa; E3 de nuevo y regeneración de resultados (`reconstruct --check`).
+2. **`inversion.ts` y `montecarlo.ts`:** paridad E7 sin exclusiones en las 11 escenas.
+3. **Web Workers** para el solver: la interfaz no se congela durante Monte Carlo (prueba e2e que mide las tareas largas, como E6).
+4. **E8:** script `eval/e8_determinism.mjs` con Chromium, Firefox y WebKit, resultado en `eval/results/e8_determinism.json` y paso en CI.
+5. **Service worker y modo sin red:** prueba e2e con la red cortada (`context.setOffline(true)`).
+6. **Exportaciones:** PDF, video, PNG, glTF y croquis, con pruebas que abren cada archivo generado y verifican que lleva la leyenda.
+
+**Dependencias nuevas previstas** (se verifican en su documentación oficial y se registran en el ADR 0001 al instalarlas): un generador de PDF para el navegador, `@ffmpeg/ffmpeg` para MP4 y el `GLTFExporter` de three.js (ya incluido).
+
+**Pendientes de F8 que siguen abiertos:** OSM en producción, rayas y banquetas sobre calles de OSM, semáforo peatonal, textura de grava, corte del camellón en cruces y texturas en caras verticales. Las sombras de los focos ya están en alta y ultra (ADR 0026).
