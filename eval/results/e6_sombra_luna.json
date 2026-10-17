@@ -1,0 +1,113 @@
+{
+  "name": "e6_sombra_luna",
+  "generated_at": "2026-10-17T00:10:17.840Z",
+  "git_commit": "2fddd0c",
+  "metodo": "Mismo cuadro (1920×1080, calidad media, WebGL 2, cámara libre por omisión) con y sin la sombra de la luna; diferencia por píxel en gris Rec. 601 (0-255).",
+  "escenas_nocturnas": [
+    "nocturno_lluvia",
+    "poste"
+  ],
+  "resumen": {
+    "diferencia_max_niveles": 8.6,
+    "pct_pixeles_dif_ge_3_max": 0.08,
+    "pct_pixeles_dif_ge_8_max": 0
+  },
+  "casos": [
+    {
+      "escena": "nocturno_lluvia",
+      "clima": "el de la escena",
+      "t": -1,
+      "diferencia_max_niveles": 8.6,
+      "pct_pixeles_dif_ge_3": 0.08,
+      "pct_pixeles_dif_ge_8": 0
+    },
+    {
+      "escena": "nocturno_lluvia",
+      "clima": "el de la escena",
+      "t": 0,
+      "diferencia_max_niveles": 6,
+      "pct_pixeles_dif_ge_3": 0.008,
+      "pct_pixeles_dif_ge_8": 0
+    },
+    {
+      "escena": "nocturno_lluvia",
+      "clima": "el de la escena",
+      "t": 1,
+      "diferencia_max_niveles": 4.9,
+      "pct_pixeles_dif_ge_3": 0.006,
+      "pct_pixeles_dif_ge_8": 0
+    },
+    {
+      "escena": "nocturno_lluvia",
+      "clima": "despejado",
+      "t": -1,
+      "diferencia_max_niveles": 7.3,
+      "pct_pixeles_dif_ge_3": 0.073,
+      "pct_pixeles_dif_ge_8": 0
+    },
+    {
+      "escena": "nocturno_lluvia",
+      "clima": "despejado",
+      "t": 0,
+      "diferencia_max_niveles": 5.2,
+      "pct_pixeles_dif_ge_3": 0.004,
+      "pct_pixeles_dif_ge_8": 0
+    },
+    {
+      "escena": "nocturno_lluvia",
+      "clima": "despejado",
+      "t": 1,
+      "diferencia_max_niveles": 3.9,
+      "pct_pixeles_dif_ge_3": 0.003,
+      "pct_pixeles_dif_ge_8": 0
+    },
+    {
+      "escena": "poste",
+      "clima": "el de la escena",
+      "t": -1,
+      "diferencia_max_niveles": 6.8,
+      "pct_pixeles_dif_ge_3": 0.014,
+      "pct_pixeles_dif_ge_8": 0
+    },
+    {
+      "escena": "poste",
+      "clima": "el de la escena",
+      "t": 0,
+      "diferencia_max_niveles": 7.7,
+      "pct_pixeles_dif_ge_3": 0.033,
+      "pct_pixeles_dif_ge_8": 0
+    },
+    {
+      "escena": "poste",
+      "clima": "el de la escena",
+      "t": 1,
+      "diferencia_max_niveles": 8,
+      "pct_pixeles_dif_ge_3": 0.034,
+      "pct_pixeles_dif_ge_8": 0
+    },
+    {
+      "escena": "poste",
+      "clima": "despejado",
+      "t": -1,
+      "diferencia_max_niveles": 5.9,
+      "pct_pixeles_dif_ge_3": 0.015,
+      "pct_pixeles_dif_ge_8": 0
+    },
+    {
+      "escena": "poste",
+      "clima": "despejado",
+      "t": 0,
+      "diferencia_max_niveles": 7.4,
+      "pct_pixeles_dif_ge_3": 0.034,
+      "pct_pixeles_dif_ge_8": 0
+    },
+    {
+      "escena": "poste",
+      "clima": "despejado",
+      "t": 1,
+      "diferencia_max_niveles": 7.4,
+      "pct_pixeles_dif_ge_3": 0.034,
+      "pct_pixeles_dif_ge_8": 0
+    }
+  ]
+}
