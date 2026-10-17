@@ -3,7 +3,7 @@
  * No muta la escena. Coordenadas: X al este, Y al norte, rumbo en grados antihorario desde +X.
  */
 import type { EscenaSpec, Pose2D, TablaClases } from "@croquis/scene-schema";
-import { DEFAULT_CLASES, longitudM } from "@croquis/scene-schema";
+import { DEFAULT_CLASES, longitudM, viaWidthM } from "@croquis/scene-schema";
 import { orientedBox, type Vec2 } from "./geometry";
 
 export interface LaneStrip {
@@ -83,8 +83,16 @@ export interface EventMarker {
   punto: Vec2;
 }
 
+/** Calles de OpenStreetMap para dibujar (ADR 0023): el dibujo usa estas, la física la plantilla. */
+export interface MapLayout {
+  vias: { id: number; puntos: Vec2[]; ancho: number; nombre?: string }[];
+  atribucion: string;
+}
+
 export interface SceneLayout {
   road: RoadLayout;
+  /** Red vial del mapa, si la escena trae `lugar.red_vial`. */
+  mapa?: MapLayout;
   vehicles: VehicleGlyph[];
   people: PersonGlyph[];
   objects: ObjectGlyph[];
@@ -331,8 +339,22 @@ export function sceneLayout(spec: EscenaSpec, clases?: TablaClases): SceneLayout
     maxX = Math.max(maxX, p.x + 6);
     maxY = Math.max(maxY, p.y + 6);
   }
+  const red = spec.lugar.red_vial;
+  const lane = spec.lugar.ancho_carril ? longitudM(spec.lugar.ancho_carril) : 3.5;
+  const mapa: MapLayout | undefined = red
+    ? {
+        vias: red.vias.map((v) => ({
+          id: v.id_osm,
+          puntos: v.puntos.map((p) => ({ x: p.x, y: p.y })),
+          ancho: viaWidthM(v, lane),
+          nombre: v.nombre,
+        })),
+        atribucion: red.atribucion,
+      }
+    : undefined;
   return {
     road: roadLayout(spec.lugar),
+    ...(mapa ? { mapa } : {}),
     vehicles,
     people,
     objects,

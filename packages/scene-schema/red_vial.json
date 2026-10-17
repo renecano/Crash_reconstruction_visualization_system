@@ -1,0 +1,16 @@
+{
+  "_nota": "Ancho de las calles del mapa (ADR 0023) cuando OpenStreetMap no trae `width`: carriles de la etiqueta `lanes` o, sin ella, carriles típicos por tipo de calle (supuesto), por el ancho de carril de la escena o 3.5 m. `tolerancia_fuera_m`: cuánto puede quedar un vehículo fuera de la orilla de la calle más cercana antes de preguntar por su posición.",
+  "ancho_carril_m": 3.5,
+  "carriles_por_tipo": {
+    "motorway": 6,
+    "trunk": 4,
+    "primary": 4,
+    "secondary": 3,
+    "tertiary": 2,
+    "unclassified": 2,
+    "residential": 2,
+    "living_street": 1,
+    "service": 1
+  },
+  "tolerancia_fuera_m": 1.5
+}

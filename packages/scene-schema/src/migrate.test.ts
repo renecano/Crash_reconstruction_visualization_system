@@ -43,12 +43,12 @@ describe("migrateEscena", () => {
     void _d;
     expect(isValidEscena(doc)).toBe(false);
     const r = migrateEscena(doc, TEST_REGISTRY);
-    expect(r.aplicadas).toEqual(["0.9.0→1.0.0", "1.0.0→1.1.0"]);
+    expect(r.aplicadas).toEqual(["0.9.0→1.0.0", "1.0.0→1.1.0", "1.1.0→1.2.0"]);
     expect(schemaErrors(r.doc)).toEqual([]);
     expect((r.doc.meta as Record<string, unknown>).version_esquema).toBe(SCHEMA_VERSION);
   });
 
-  it("una escena 1.0.0 migra sin cambios a 1.1.0 (solo agrega evidencias[].fase)", () => {
+  it("una escena 1.0.0 migra sin cambios a la vigente (solo hay campos opcionales nuevos)", () => {
     const viejo = structuredClone(RAW_FIXTURES.alcance) as {
       meta: Record<string, unknown>;
       evidencias?: Record<string, unknown>[];
@@ -56,7 +56,7 @@ describe("migrateEscena", () => {
     viejo.meta.version_esquema = "1.0.0";
     for (const e of viejo.evidencias ?? []) delete e.fase;
     const r = migrateEscena(viejo);
-    expect(r.aplicadas).toEqual(["1.0.0→1.1.0"]);
+    expect(r.aplicadas).toEqual(["1.0.0→1.1.0", "1.1.0→1.2.0"]);
     expect(schemaErrors(r.doc)).toEqual([]);
     expect(r.doc.meta).toEqual((RAW_FIXTURES.alcance as { meta: unknown }).meta);
   });

@@ -1,5 +1,5 @@
 /**
- * E7 (PLAN §8): paridad numérica del solver TS con la referencia Python en las diez escenas
+ * E7 (PLAN §8): paridad numérica del solver TS con la referencia Python en las escenas
  * canónicas. Para cada escena compara el resultado completo (sin los bloques que llegan en F9) y
  * reporta cuántos números se compararon, la mayor diferencia absoluta y relativa, y cualquier
  * diferencia de estructura o de texto. Escribe `eval/results/e7_parity.json`.
@@ -83,7 +83,7 @@ const payload = {
   git_commit: commit,
   seed: null,
   descripcion:
-    "E7: paridad del solver TS (packages/solver-ts) con la referencia Python en las 10 escenas " +
+    "E7: paridad del solver TS (packages/solver-ts) con la referencia Python en las escenas " +
     "canónicas. Se comparan todos los números del resultado (trayectorias, impactos, daño, " +
     "personas, ocupantes, visibilidad, eventos y parámetros) y los textos; los bloques de Monte " +
     "Carlo, inversión y consistencia llegan al port en F9.",

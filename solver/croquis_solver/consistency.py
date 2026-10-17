@@ -29,6 +29,8 @@ import math
 from dataclasses import dataclass
 from typing import Any
 
+from croquis_scene_schema.red_vial import defaults as red_vial_defaults
+from croquis_scene_schema.red_vial import outside_red_vial_m
 from croquis_solver import friction, pedestrian
 from croquis_solver.inversion import (
     SIGMA_POSITION_M,
@@ -116,6 +118,34 @@ def check_stopped(spec: JsonObj) -> list[Inconsistency]:
                     f"Se dijo que {_name(v)} estaba {v['maniobra']['valor']} y también que iba "
                     f"a unos {_kmh(vp):.0f} km/h. ¿Cuál de los dos datos es el correcto?",
                     {"vehiculo": v["id"], "velocidad_kmh": _kmh(vp)},
+                )
+            )
+    return out
+
+
+def check_map(spec: JsonObj) -> list[Inconsistency]:
+    """Con calles del mapa (ADR 0023): cada vehículo debe arrancar sobre la calzada de OSM. Si
+    queda fuera de la calle más cercana más que la tolerancia, la plantilla paramétrica o la
+    posición no representan el cruce real, y se pregunta por la posición."""
+    red: JsonObj | None = spec["lugar"].get("red_vial")
+    if not red:
+        return []
+    lane = spec["lugar"].get("ancho_carril")
+    lane_m = _len_m(lane) if lane else None
+    tol = float(red_vial_defaults()["tolerancia_fuera_m"])
+    out: list[Inconsistency] = []
+    for v in spec["vehiculos"]:
+        pose: JsonObj | None = v.get("posicion_inicial")
+        if pose is None:
+            continue
+        fuera = outside_red_vial_m((float(pose["x"]), float(pose["y"])), red["vias"], lane_m)
+        if fuera > tol:
+            out.append(
+                Inconsistency(
+                    "fuera_de_la_via_del_mapa",
+                    f"La posición inicial de {_name(v)} queda a unos {fuera:.0f} m de la calle más "
+                    "cercana del mapa. ¿Puedes revisar dónde estaba?",
+                    {"vehiculo": v["id"], "distancia_m": fuera},
                 )
             )
     return out
@@ -325,7 +355,7 @@ def check_consistency(
     el pipeline TS y contra el que se prueba su paridad.
     """
     seed = int(spec["meta"]["semilla"]) if seed is None else seed
-    basic = check_stopped(spec) + check_marks(spec) + check_throw(spec)
+    basic = check_stopped(spec) + check_marks(spec) + check_throw(spec) + check_map(spec)
     if not sampled:
         return basic
     if inversion is None and not evidence_from_spec(spec, seed=seed).empty():

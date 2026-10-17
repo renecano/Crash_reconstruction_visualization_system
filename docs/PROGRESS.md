@@ -1211,3 +1211,34 @@ Riesgos:
 
 - **Presupuesto E6:** WebGL alta queda en 30.3 fps en `nocturno_lluvia`. Las luces y partículas se limitan por nivel de calidad y se vuelve a medir.
 - **Overpass en producción:** respuesta externa y no determinista. Se decide en el ADR de F8d.
+
+## F8 — Estado (2026-10-16)
+
+Las ramas van una encima de otra y se fusionan en este orden, cada una con su PR y CI en verde:
+
+1. **`feat/f8-entorno`, PR #20, F8a y F8b** (ADR 0020 y 0021):
+   - clima, piso según el estado, niebla por visibilidad, lluvia y granizo;
+   - faros y alumbrado con luz real;
+   - CI en verde y capturas revisadas.
+   - **Falta E6** antes de fusionar: hay que medir el rendimiento con la lluvia y las luces.
+2. **`feat/f8c-dispositivos`, F8c** (ADR 0022):
+   - semáforos con fase en el tiempo y una placa por señal;
+   - rayas del manual de la SEDATU/SCT, guarniciones, camellón elevado y árboles instanciados.
+   - **Faltan** el PR, las capturas que cambian y su revisión.
+3. **`feat/f8d-osm`, F8d** (ADR 0023):
+   - **Contrato y datos:** contrato 1.2.0 (fuente `mapa`, `lugar.red_vial`), `croquis-data osm` y la conversión de Overpass.
+   - **Dibujo y física:** la red de OSM en 2D y 3D con atribución, y la revisión `fuera_de_la_via_del_mapa` en Python y TS (resultado 1.7.0).
+   - **Escena `interseccion_toluca`:** la undécima. E7 compara 68,127 números en 11 escenas, sin diferencias de estructura.
+   - **Faltan** el PR, las capturas y la revisión visual en el navegador.
+
+**Bloqueo de E6:** dos corridas se detuvieron porque la laptop se quedó sin memoria (Claude Code detiene procesos en segundo plano cuando la sesión está inactiva). Opción recomendada para René: `! pnpm --filter @croquis/web build && node eval/e6_performance.mjs` en primer plano, sin otros programas pesados (~70 min). Con 11 escenas, E6 debe medirse antes de cambiar la fila de E6 del README.
+
+**Siguiente paso concreto:**
+
+- Con E6 medido: fusionar #20 y abrir los PR de F8c y F8d en orden. Para cada uno, regenerar las capturas en CI, revisarlas y fusionar.
+- Después, F8e: texturas PBR CC0 (Poly Haven) dentro del presupuesto de carga de E6 (≤ 8 MB) y el cierre de F8.
+- **Pendientes de F8:**
+  - OSM en producción (consultar al crear una escena del usuario con coordenadas, con caché);
+  - rayas y banquetas sobre las calles de OSM;
+  - semáforo peatonal;
+  - sombras de los focos en alta.

@@ -1,9 +1,18 @@
-import { loadFixture, type EscenaSpec } from "@croquis/scene-schema";
+import { loadFixture, longitudM, type EscenaSpec } from "@croquis/scene-schema";
 import { fireEvent, render, screen } from "@testing-library/react";
 import { describe, expect, it, vi } from "vitest";
 import { CROQUIS_LEGEND, Croquis } from "./Croquis";
 import { sceneLayout } from "./layout";
+import {
+  crossingAt,
+  OSM_ATTRIBUTION,
+  redVialFrom,
+  templateFromCrossing,
+  type OverpassResponse,
+} from "./osm";
 import { makeViewport, worldToSvg } from "./viewport";
+import { readFileSync } from "node:fs";
+import { join } from "node:path";
 
 function mockRect(svg: Element, width: number, height: number) {
   Object.defineProperty(svg, "getBoundingClientRect", {
@@ -88,5 +97,40 @@ describe("<Croquis />", () => {
     fireEvent.pointerDown(body, { clientX: 10, clientY: 10, pointerId: 1 });
     fireEvent.pointerUp(svg, { clientX: 50, clientY: 50, pointerId: 1 });
     expect(onChange).not.toHaveBeenCalled();
+  });
+});
+
+describe("<Croquis /> con la red vial del mapa (ADR 0023)", () => {
+  it("dibuja las calles de OSM en vez de la plantilla y muestra la atribución", () => {
+    const resp = JSON.parse(
+      readFileSync(
+        join(process.cwd(), "../../data/osm/toluca_carranza_juarez.overpass.json"),
+        "utf-8",
+      ),
+    ) as OverpassResponse;
+    const t = templateFromCrossing(crossingAt(resp, 305269145));
+    const red = redVialFrom(resp, {
+      lat: 19.278975,
+      lon: -99.6539869,
+      radioM: 150,
+      rotacionDeg: t.rotacion_deg,
+      nodoCruce: 305269145,
+    });
+    const spec = structuredClone<EscenaSpec>(loadFixture("lateral_interseccion"));
+    spec.lugar.red_vial = red;
+    render(<Croquis spec={spec} />);
+    const road = screen.getByTestId("road");
+    expect(road.getAttribute("data-fuente")).toBe("mapa");
+    expect(road.querySelectorAll("polyline")).toHaveLength(red.vias.length);
+    // Juárez, de 4 carriles: sin `width` en OSM, 4 × el ancho de carril de la escena.
+    const lay = sceneLayout(spec);
+    const juarez = lay.mapa!.vias.find((v) => v.id === 614145444)!;
+    expect(juarez.ancho).toBeCloseTo(4 * longitudM(spec.lugar.ancho_carril), 9);
+    expect(screen.getByTestId("atribucion-osm").textContent).toBe(OSM_ATTRIBUTION);
+  });
+
+  it("sin red vial no hay atribución", () => {
+    render(<Croquis spec={loadFixture("alcance")} />);
+    expect(screen.queryByTestId("atribucion-osm")).toBeNull();
   });
 });

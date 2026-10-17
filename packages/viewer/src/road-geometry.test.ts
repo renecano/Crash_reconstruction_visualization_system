@@ -2,6 +2,7 @@ import { roadLayout } from "@croquis/croquis-2d";
 import { FIXTURE_NAMES, loadFixture } from "@croquis/scene-schema";
 import { describe, expect, it } from "vitest";
 import {
+  buildMapRoadGeometry,
   buildRoadGeometry,
   DASH_HASTA_50,
   DASH_MAS_50,
@@ -189,5 +190,44 @@ describe("guarniciones y camellón (F8c)", () => {
       });
       expect(inside.length).toBe(0);
     }
+  });
+});
+
+describe("calzada desde las calles del mapa (ADR 0023)", () => {
+  it("cubre cada calle con su ancho y cierra las uniones", () => {
+    const vias = [
+      {
+        puntos: [
+          { x: -50, y: 0 },
+          { x: 0, y: 0 },
+          { x: 50, y: 0 },
+        ],
+        ancho: 10,
+      },
+      {
+        puntos: [
+          { x: 0, y: -40 },
+          { x: 0, y: 40 },
+        ],
+        ancho: 7,
+      },
+    ];
+    const g = buildMapRoadGeometry(vias);
+    for (const [x, y] of [
+      [-49, 4.5],
+      [0, 0],
+      [49, -4.5],
+      [0, 39],
+      [3, -30],
+    ] as const) {
+      expect(pointInMesh(g.pavement, x, y)).toBe(true);
+    }
+    expect(pointInMesh(g.pavement, 20, 20)).toBe(false);
+    // Área: al menos la de los rectángulos (los discos de las uniones se traslapan con ellos).
+    expect(meshArea(g.pavement)).toBeGreaterThan(100 * 10 + 80 * 7 - 70);
+    expect(g.bounds[0]).toBeLessThanOrEqual(-55);
+    expect(g.bounds[3]).toBeGreaterThanOrEqual(43.5);
+    expect(g.curbs).toEqual([]);
+    expect(g.whiteLines.indices).toEqual([]);
   });
 });

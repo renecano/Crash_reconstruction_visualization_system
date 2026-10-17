@@ -1,0 +1,756 @@
+{
+  "version": 0.6,
+  "generator": "Overpass API 0.7.62.11 87bfad18",
+  "osm3s": {
+    "timestamp_osm_base": "2026-10-16T18:30:24Z",
+    "copyright": "The data included in this document is from www.openstreetmap.org. The data is made available under ODbL."
+  },
+  "elements": [
+
+{
+  "type": "way",
+  "id": 32250368,
+  "nodes": [
+    1584361715,
+    1584359183,
+    1584361727,
+    2666290640,
+    1584361705,
+    8693775945,
+    1951083031
+  ],
+  "tags": {
+    "bus:lanes": "||designated",
+    "highway": "residential",
+    "lanes": "3",
+    "name": "Calle Juan Aldama",
+    "oneway": "yes",
+    "surface": "asphalt"
+  }
+},
+{
+  "type": "way",
+  "id": 32250745,
+  "nodes": [
+    362013829,
+    1150145256,
+    362013835,
+    1584360211
+  ],
+  "tags": {
+    "alt_name": "Avenida Juan Fernández Albarrán",
+    "highway": "residential",
+    "lanes": "4",
+    "name": "Calle Juan Fernández Albarrán",
+    "surface": "asphalt"
+  }
+},
+{
+  "type": "way",
+  "id": 32250746,
+  "nodes": [
+    1584356043,
+    8349847021,
+    8859059474,
+    1584360217,
+    1584360205,
+    1951083033,
+    1150145256,
+    2666290647,
+    1584361717,
+    5825243794,
+    362013848
+  ],
+  "tags": {
+    "highway": "residential",
+    "lanes": "3",
+    "name": "Calle Ignacio López Rayón",
+    "oneway": "yes",
+    "surface": "asphalt"
+  }
+},
+{
+  "type": "way",
+  "id": 144960114,
+  "nodes": [
+    1951083032,
+    1584360214,
+    1584360208,
+    1584356013
+  ],
+  "tags": {
+    "highway": "residential",
+    "lanes": "3",
+    "name": "Calle Pablo Sidar",
+    "oneway": "yes",
+    "surface": "asphalt"
+  }
+},
+{
+  "type": "way",
+  "id": 614145444,
+  "nodes": [
+    305269145,
+    1951083030
+  ],
+  "tags": {
+    "bus:lanes": "|||designated",
+    "busway:right": "lane",
+    "highway": "secondary",
+    "lanes": "4",
+    "name": "Calle Benito Juárez Garcia",
+    "oneway": "yes",
+    "short_name": "Juarez",
+    "surface": "asphalt"
+  }
+},
+{
+  "type": "way",
+  "id": 616106026,
+  "nodes": [
+    1951083030,
+    1951083032,
+    1951083033,
+    11972524356,
+    1584368466,
+    2666290661
+  ],
+  "tags": {
+    "highway": "secondary",
+    "lanes": "3",
+    "name": "Avenida General Venustiano Carranza",
+    "oneway": "yes",
+    "surface": "asphalt"
+  }
+},
+{
+  "type": "way",
+  "id": 840623317,
+  "nodes": [
+    7844059884,
+    1951083032
+  ],
+  "tags": {
+    "highway": "residential",
+    "lanes": "3",
+    "name": "Calle Pablo Sidar",
+    "oneway": "yes",
+    "surface": "asphalt",
+    "turn:lanes": "left|through|right"
+  }
+},
+{
+  "type": "way",
+  "id": 840623318,
+  "nodes": [
+    362013835,
+    7844059884
+  ],
+  "tags": {
+    "highway": "residential",
+    "lanes": "3",
+    "name": "Calle Pablo Sidar",
+    "oneway": "yes",
+    "surface": "asphalt"
+  }
+},
+{
+  "type": "way",
+  "id": 841427161,
+  "nodes": [
+    7850674168,
+    1269452994
+  ],
+  "tags": {
+    "bus:lanes": "||designated",
+    "highway": "residential",
+    "lanes": "3",
+    "name": "Calle Juan Aldama",
+    "oneway": "yes",
+    "surface": "asphalt",
+    "turn:lanes": "left|through|"
+  }
+},
+{
+  "type": "way",
+  "id": 841427162,
+  "nodes": [
+    1269452994,
+    7850674167
+  ],
+  "tags": {
+    "bus:lanes": "||designated",
+    "highway": "residential",
+    "lanes": "3",
+    "name": "Calle Juan Aldama",
+    "oneway": "yes",
+    "surface": "asphalt"
+  }
+},
+{
+  "type": "way",
+  "id": 842769178,
+  "nodes": [
+    7862113731,
+    1584360208
+  ],
+  "tags": {
+    "bus:lanes": "||designated",
+    "highway": "residential",
+    "lanes": "3",
+    "name": "Calle Rafael Miguel Hidalgo",
+    "oneway": "yes",
+    "surface": "asphalt",
+    "turn:lanes": "through|through|through;right"
+  }
+},
+{
+  "type": "way",
+  "id": 842769179,
+  "nodes": [
+    1584360208,
+    1269454346,
+    1269452994,
+    1584361718,
+    7843764851
+  ],
+  "tags": {
+    "bus:lanes": "||designated",
+    "highway": "residential",
+    "lanes": "3",
+    "name": "Calle Rafael Miguel Hidalgo",
+    "oneway": "yes",
+    "surface": "asphalt"
+  }
+},
+{
+  "type": "way",
+  "id": 842864223,
+  "nodes": [
+    1584360217,
+    7862113731
+  ],
+  "tags": {
+    "bus:lanes": "||designated",
+    "highway": "residential",
+    "lanes": "3",
+    "name": "Calle Rafael Miguel Hidalgo",
+    "oneway": "yes",
+    "surface": "asphalt"
+  }
+},
+{
+  "type": "way",
+  "id": 1334343292,
+  "nodes": [
+    305269145,
+    8693775944,
+    1584361701,
+    1584361716,
+    3231728098,
+    1584361710,
+    5867006598,
+    680473313,
+    3226824042,
+    3226824856
+  ],
+  "tags": {
+    "highway": "secondary",
+    "lanes": "3",
+    "name": "Avenida General Venustiano Carranza",
+    "oneway": "yes",
+    "surface": "asphalt"
+  }
+},
+{
+  "type": "way",
+  "id": 1334343293,
+  "nodes": [
+    1584356035,
+    1269454346,
+    305269145
+  ],
+  "tags": {
+    "bus:lanes": "|||designated",
+    "busway:right": "lane",
+    "highway": "secondary",
+    "lanes": "4",
+    "name": "Calle Benito Juárez Garcia",
+    "oneway": "yes",
+    "short_name": "Juarez",
+    "surface": "asphalt"
+  }
+},
+{
+  "type": "way",
+  "id": 1363663229,
+  "nodes": [
+    1584360211,
+    1584361705,
+    1584360210
+  ],
+  "tags": {
+    "alt_name": "Avenida Juan Fernández Albarrán",
+    "highway": "residential",
+    "lanes": "4",
+    "name": "Calle Juan Fernández Albarrán",
+    "surface": "asphalt"
+  }
+},
+{
+  "type": "way",
+  "id": 1363663230,
+  "nodes": [
+    1584360211,
+    2666290642,
+    1584361703
+  ],
+  "tags": {
+    "bus:lanes": "|||designated",
+    "busway:right": "lane",
+    "highway": "secondary",
+    "lanes": "4",
+    "name": "Calle Benito Juárez Garcia",
+    "oneway": "yes",
+    "short_name": "Juarez",
+    "surface": "asphalt"
+  }
+},
+{
+  "type": "way",
+  "id": 1363846372,
+  "nodes": [
+    1951083027,
+    1951083028,
+    8693775943,
+    1951083031
+  ],
+  "tags": {
+    "highway": "secondary",
+    "lanes": "3",
+    "name": "Avenida General Venustiano Carranza",
+    "oneway": "yes",
+    "surface": "asphalt"
+  }
+},
+{
+  "type": "way",
+  "id": 1363846373,
+  "nodes": [
+    1951083030,
+    1584360211
+  ],
+  "tags": {
+    "bus:lanes": "|||designated",
+    "busway:right": "lane",
+    "highway": "secondary",
+    "lanes": "4",
+    "name": "Calle Benito Juárez Garcia",
+    "oneway": "yes",
+    "short_name": "Juarez",
+    "surface": "asphalt"
+  }
+},
+{
+  "type": "way",
+  "id": 1367914357,
+  "nodes": [
+    305268919,
+    11972524359,
+    2666290663,
+    1584356020,
+    1584360205,
+    1584360214,
+    305269145
+  ],
+  "tags": {
+    "highway": "secondary",
+    "lanes": "3",
+    "name": "Avenida General Venustiano Carranza",
+    "oneway": "yes",
+    "surface": "asphalt"
+  }
+},
+{
+  "type": "way",
+  "id": 1415729384,
+  "nodes": [
+    1951083031,
+    1951083030
+  ],
+  "tags": {
+    "highway": "secondary",
+    "lanes": "3",
+    "name": "Avenida General Venustiano Carranza",
+    "oneway": "yes",
+    "surface": "asphalt"
+  }
+},
+{
+  "type": "way",
+  "id": 1415729385,
+  "nodes": [
+    1951083031,
+    1584361701,
+    7850674168
+  ],
+  "tags": {
+    "bus:lanes": "||designated",
+    "highway": "residential",
+    "lanes": "3",
+    "name": "Calle Juan Aldama",
+    "oneway": "yes",
+    "surface": "asphalt"
+  }
+},
+{
+  "type": "node",
+  "id": 1584359183,
+  "lat": 19.2739314,
+  "lon": -99.6546956
+},
+{
+  "type": "node",
+  "id": 1584361715,
+  "lat": 19.2726732,
+  "lon": -99.6547052
+},
+{
+  "type": "node",
+  "id": 1584361727,
+  "lat": 19.2754488,
+  "lon": -99.6547745
+},
+{
+  "type": "node",
+  "id": 2666290640,
+  "lat": 19.2755442,
+  "lon": -99.6547711
+},
+{
+  "type": "node",
+  "id": 680473313,
+  "lat": 19.2789084,
+  "lon": -99.6580833
+},
+{
+  "type": "node",
+  "id": 1269452994,
+  "lat": 19.2799481,
+  "lon": -99.6548440
+},
+{
+  "type": "node",
+  "id": 1584356035,
+  "lat": 19.2809790,
+  "lon": -99.6540625
+},
+{
+  "type": "node",
+  "id": 1584360210,
+  "lat": 19.2777055,
+  "lon": -99.6555394
+},
+{
+  "type": "node",
+  "id": 1584361701,
+  "lat": 19.2789722,
+  "lon": -99.6548149
+},
+{
+  "type": "node",
+  "id": 1584361705,
+  "lat": 19.2777170,
+  "lon": -99.6547968
+},
+{
+  "type": "node",
+  "id": 1584361710,
+  "lat": 19.2789428,
+  "lon": -99.6562733
+},
+{
+  "type": "node",
+  "id": 1584361716,
+  "lat": 19.2789570,
+  "lon": -99.6555681
+},
+{
+  "type": "node",
+  "id": 1584361718,
+  "lat": 19.2799227,
+  "lon": -99.6555692
+},
+{
+  "type": "node",
+  "id": 1951083027,
+  "lat": 19.2788473,
+  "lon": -99.6562748
+},
+{
+  "type": "node",
+  "id": 1951083028,
+  "lat": 19.2788670,
+  "lon": -99.6555692
+},
+{
+  "type": "node",
+  "id": 1951083031,
+  "lat": 19.2788856,
+  "lon": -99.6548132
+},
+{
+  "type": "node",
+  "id": 3226824042,
+  "lat": 19.2789035,
+  "lon": -99.6583763
+},
+{
+  "type": "node",
+  "id": 3226824856,
+  "lat": 19.2789071,
+  "lon": -99.6585913
+},
+{
+  "type": "node",
+  "id": 3231728098,
+  "lat": 19.2789456,
+  "lon": -99.6561384
+},
+{
+  "type": "node",
+  "id": 5867006598,
+  "lat": 19.2789418,
+  "lon": -99.6563239
+},
+{
+  "type": "node",
+  "id": 7843764851,
+  "lat": 19.2799154,
+  "lon": -99.6560309
+},
+{
+  "type": "node",
+  "id": 7850674167,
+  "lat": 19.2806927,
+  "lon": -99.6548574
+},
+{
+  "type": "node",
+  "id": 7850674168,
+  "lat": 19.2796731,
+  "lon": -99.6548422
+},
+{
+  "type": "node",
+  "id": 8693775943,
+  "lat": 19.2788840,
+  "lon": -99.6548796
+},
+{
+  "type": "node",
+  "id": 8693775944,
+  "lat": 19.2789724,
+  "lon": -99.6547414
+},
+{
+  "type": "node",
+  "id": 8693775945,
+  "lat": 19.2788028,
+  "lon": -99.6548120
+},
+{
+  "type": "node",
+  "id": 362013848,
+  "lat": 19.2723833,
+  "lon": -99.6524294
+},
+{
+  "type": "node",
+  "id": 1584361703,
+  "lat": 19.2754569,
+  "lon": -99.6539179
+},
+{
+  "type": "node",
+  "id": 1584361717,
+  "lat": 19.2754926,
+  "lon": -99.6525281
+},
+{
+  "type": "node",
+  "id": 2666290642,
+  "lat": 19.2755575,
+  "lon": -99.6539198
+},
+{
+  "type": "node",
+  "id": 2666290647,
+  "lat": 19.2755741,
+  "lon": -99.6525319
+},
+{
+  "type": "node",
+  "id": 5825243794,
+  "lat": 19.2739727,
+  "lon": -99.6524674
+},
+{
+  "type": "node",
+  "id": 305268919,
+  "lat": 19.2790522,
+  "lon": -99.6514289
+},
+{
+  "type": "node",
+  "id": 305269145,
+  "lat": 19.2789750,
+  "lon": -99.6539869
+},
+{
+  "type": "node",
+  "id": 362013829,
+  "lat": 19.2777800,
+  "lon": -99.6518548
+},
+{
+  "type": "node",
+  "id": 362013835,
+  "lat": 19.2777499,
+  "lon": -99.6532580
+},
+{
+  "type": "node",
+  "id": 1150145256,
+  "lat": 19.2777711,
+  "lon": -99.6525669
+},
+{
+  "type": "node",
+  "id": 1269454346,
+  "lat": 19.2799627,
+  "lon": -99.6540240
+},
+{
+  "type": "node",
+  "id": 1584356013,
+  "lat": 19.2809967,
+  "lon": -99.6533376
+},
+{
+  "type": "node",
+  "id": 1584356020,
+  "lat": 19.2790320,
+  "lon": -99.6519171
+},
+{
+  "type": "node",
+  "id": 1584356043,
+  "lat": 19.2810098,
+  "lon": -99.6526404
+},
+{
+  "type": "node",
+  "id": 1584360205,
+  "lat": 19.2790246,
+  "lon": -99.6525936
+},
+{
+  "type": "node",
+  "id": 1584360208,
+  "lat": 19.2799736,
+  "lon": -99.6533211
+},
+{
+  "type": "node",
+  "id": 1584360211,
+  "lat": 19.2777398,
+  "lon": -99.6539517
+},
+{
+  "type": "node",
+  "id": 1584360214,
+  "lat": 19.2790064,
+  "lon": -99.6533024
+},
+{
+  "type": "node",
+  "id": 1584360217,
+  "lat": 19.2799779,
+  "lon": -99.6526066
+},
+{
+  "type": "node",
+  "id": 1584368466,
+  "lat": 19.2789402,
+  "lon": -99.6519097
+},
+{
+  "type": "node",
+  "id": 1951083030,
+  "lat": 19.2788979,
+  "lon": -99.6539824
+},
+{
+  "type": "node",
+  "id": 1951083032,
+  "lat": 19.2789121,
+  "lon": -99.6533040
+},
+{
+  "type": "node",
+  "id": 1951083033,
+  "lat": 19.2789334,
+  "lon": -99.6525857
+},
+{
+  "type": "node",
+  "id": 2666290661,
+  "lat": 19.2789456,
+  "lon": -99.6517942
+},
+{
+  "type": "node",
+  "id": 2666290663,
+  "lat": 19.2790408,
+  "lon": -99.6517977
+},
+{
+  "type": "node",
+  "id": 7844059884,
+  "lat": 19.2787028,
+  "lon": -99.6532921
+},
+{
+  "type": "node",
+  "id": 7862113731,
+  "lat": 19.2799767,
+  "lon": -99.6530717
+},
+{
+  "type": "node",
+  "id": 8349847021,
+  "lat": 19.2803842,
+  "lon": -99.6526197
+},
+{
+  "type": "node",
+  "id": 8859059474,
+  "lat": 19.2801782,
+  "lon": -99.6526131
+},
+{
+  "type": "node",
+  "id": 11972524356,
+  "lat": 19.2789396,
+  "lon": -99.6519716
+},
+{
+  "type": "node",
+  "id": 11972524359,
+  "lat": 19.2790431,
+  "lon": -99.6517233
+}
+
+  ]
+}

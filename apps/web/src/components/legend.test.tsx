@@ -16,6 +16,16 @@ describe("Legend", () => {
     expect(note.textContent).not.toContain("6789");
   });
 
+  it("con datos del mapa muestra su atribución; sin ellos, no", () => {
+    const { unmount } = render(
+      <Legend atribucion="Contiene información de OpenStreetMap (ODbL)" />,
+    );
+    expect(screen.getByTestId("atribucion-mapa").textContent).toContain("OpenStreetMap");
+    unmount();
+    render(<Legend />);
+    expect(screen.queryByTestId("atribucion-mapa")).toBeNull();
+  });
+
   it("no menciona culpa ni responsables", () => {
     expect(LEGEND_TEXT).toMatch(/No es un peritaje/);
     expect(LEGEND_TEXT.toLowerCase()).not.toMatch(/culpa|responsable/);

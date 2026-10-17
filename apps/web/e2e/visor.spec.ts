@@ -11,6 +11,7 @@ const ESCENAS = [
   "volcadura",
   "nocturno_lluvia",
   "glorieta",
+  "interseccion_toluca",
 ] as const;
 
 async function waitReady(page: Page): Promise<void> {

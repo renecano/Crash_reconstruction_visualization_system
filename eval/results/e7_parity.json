@@ -1,14 +1,14 @@
 {
   "name": "e7_parity",
-  "generated_at": "2026-10-15T22:45:43+00:00",
-  "git_commit": "cc27fdd",
+  "generated_at": "2026-10-16T20:09:20+00:00",
+  "git_commit": "4d399a9",
   "seed": null,
-  "descripcion": "E7: paridad del solver TS (packages/solver-ts) con la referencia Python en las 10 escenas canónicas. Se comparan todos los números del resultado (trayectorias, impactos, daño, personas, ocupantes, visibilidad, eventos y parámetros) y los textos; los bloques de Monte Carlo, inversión y consistencia llegan al port en F9.",
+  "descripcion": "E7: paridad del solver TS (packages/solver-ts) con la referencia Python en las escenas canónicas. Se comparan todos los números del resultado (trayectorias, impactos, daño, personas, ocupantes, visibilidad, eventos y parámetros) y los textos; los bloques de Monte Carlo, inversión y consistencia llegan al port en F9.",
   "tolerancia": {
     "relativa": 0.000001,
     "absoluta": 0.00001
   },
-  "numeros_comparados": 61912,
+  "numeros_comparados": 68127,
   "max_abs": 0.000041000000237545464,
   "max_rel_valores_mayores_a_una_milesima": 0.00003177225646568596,
   "diferencias_de_estructura_o_texto": 0,
@@ -20,7 +20,7 @@
       "max_rel": 0,
       "peor_ruta": "",
       "estructura": [],
-      "ms_ts": 59.3
+      "ms_ts": 159.4
     },
     {
       "escena": "lateral_interseccion",
@@ -29,7 +29,7 @@
       "max_rel": 0,
       "peor_ruta": "",
       "estructura": [],
-      "ms_ts": 26.4
+      "ms_ts": 78.3
     },
     {
       "escena": "frontal_curva",
@@ -38,7 +38,7 @@
       "max_rel": 0.00003177225646568596,
       "peor_ruta": "/eventos/2/detalle/impulso_ns/1",
       "estructura": [],
-      "ms_ts": 43.3
+      "ms_ts": 124
     },
     {
       "escena": "peaton_cruce",
@@ -47,7 +47,7 @@
       "max_rel": 0,
       "peor_ruta": "",
       "estructura": [],
-      "ms_ts": 14.4
+      "ms_ts": 37.2
     },
     {
       "escena": "motociclista",
@@ -56,7 +56,7 @@
       "max_rel": 0,
       "peor_ruta": "",
       "estructura": [],
-      "ms_ts": 20.5
+      "ms_ts": 62
     },
     {
       "escena": "objeto_fijo_arbol",
@@ -65,7 +65,7 @@
       "max_rel": 0,
       "peor_ruta": "",
       "estructura": [],
-      "ms_ts": 10
+      "ms_ts": 25.2
     },
     {
       "escena": "poste",
@@ -74,7 +74,7 @@
       "max_rel": 0,
       "peor_ruta": "",
       "estructura": [],
-      "ms_ts": 8.8
+      "ms_ts": 25.8
     },
     {
       "escena": "volcadura",
@@ -83,7 +83,7 @@
       "max_rel": 0.000021984786527744804,
       "peor_ruta": "/eventos/0/detalle/energia_disipada_j",
       "estructura": [],
-      "ms_ts": 29
+      "ms_ts": 76.8
     },
     {
       "escena": "nocturno_lluvia",
@@ -92,7 +92,7 @@
       "max_rel": 0,
       "peor_ruta": "",
       "estructura": [],
-      "ms_ts": 27.3
+      "ms_ts": 76
     },
     {
       "escena": "glorieta",
@@ -101,7 +101,16 @@
       "max_rel": 0.00000135211328549839,
       "peor_ruta": "/eventos/0/detalle/energia_disipada_j",
       "estructura": [],
-      "ms_ts": 24
+      "ms_ts": 83.7
+    },
+    {
+      "escena": "interseccion_toluca",
+      "numeros": 6215,
+      "max_abs": 0,
+      "max_rel": 0,
+      "peor_ruta": "",
+      "estructura": [],
+      "ms_ts": 44.9
     }
   ]
 }

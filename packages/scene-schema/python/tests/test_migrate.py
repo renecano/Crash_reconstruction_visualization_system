@@ -55,7 +55,7 @@ def test_encadena_migraciones_y_el_resultado_valida() -> None:
     doc = _legacy()
     assert schema_errors(doc)
     r = migrate_escena(doc, TEST_REGISTRY)
-    assert r.aplicadas == ["0.9.0→1.0.0", "1.0.0→1.1.0"]
+    assert r.aplicadas == ["0.9.0→1.0.0", "1.0.0→1.1.0", "1.1.0→1.2.0"]
     assert schema_errors(r.doc) == []
     assert r.doc["meta"]["version_esquema"] == SCHEMA_VERSION
 
@@ -73,15 +73,16 @@ def test_falla_con_versiones_desconocidas_futuras_o_ausentes() -> None:
         migrate_escena(None)
 
 
-def test_una_escena_1_0_0_migra_sin_cambios_a_1_1_0() -> None:
-    """La 1.1.0 solo agrega evidencias[].fase: un documento 1.0.0 conserva su significado."""
+def test_una_escena_1_0_0_migra_sin_cambios_a_la_vigente() -> None:
+    """1.1.0 agrega evidencias[].fase y 1.2.0 la fuente mapa y lugar.red_vial: un documento
+    1.0.0 conserva su significado."""
     actual = load_fixture("alcance")
     viejo = copy.deepcopy(actual)
     viejo["meta"]["version_esquema"] = "1.0.0"
     for e in viejo.get("evidencias", []):
         e.pop("fase", None)
     r = migrate_escena(viejo)
-    assert r.aplicadas == ["1.0.0→1.1.0"]
+    assert r.aplicadas == ["1.0.0→1.1.0", "1.1.0→1.2.0"]
     assert schema_errors(r.doc) == []
     assert r.doc["meta"] == actual["meta"]
 

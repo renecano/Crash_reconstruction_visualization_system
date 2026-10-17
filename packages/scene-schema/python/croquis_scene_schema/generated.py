@@ -36,9 +36,9 @@ class Procedencia(BaseModel):
     model_config = ConfigDict(
         extra="forbid",
     )
-    fuente: Literal["relato", "usuario", "supuesto", "default"]
+    fuente: Literal["relato", "usuario", "supuesto", "default", "mapa"]
     """
-    De dónde salió el dato: del relato (con evidencia textual), lo escribió o corrigió la persona, lo supuso el sistema, o es el valor por defecto de la clase.
+    De dónde salió el dato: del relato (con evidencia textual), lo escribió o corrigió la persona, lo supuso el sistema, es el valor por defecto de la clase, o salió del mapa de OpenStreetMap en `ubicacion_real` (desde 1.2.0).
     """
     confianza: Annotated[float, Field(ge=0.0, le=1.0)]
     """
@@ -58,9 +58,9 @@ class CampoLongitud(BaseModel):
     """
     Intervalo [mínimo, máximo] plausible en la misma unidad que valor.
     """
-    fuente: Literal["relato", "usuario", "supuesto", "default"]
+    fuente: Literal["relato", "usuario", "supuesto", "default", "mapa"]
     """
-    De dónde salió el dato: del relato (con evidencia textual), lo escribió o corrigió la persona, lo supuso el sistema, o es el valor por defecto de la clase.
+    De dónde salió el dato: del relato (con evidencia textual), lo escribió o corrigió la persona, lo supuso el sistema, es el valor por defecto de la clase, o salió del mapa de OpenStreetMap en `ubicacion_real` (desde 1.2.0).
     """
     confianza: Annotated[float, Field(ge=0.0, le=1.0)]
     """
@@ -80,9 +80,9 @@ class CampoVelocidad(BaseModel):
     """
     Intervalo [mínimo, máximo] plausible en la misma unidad que valor.
     """
-    fuente: Literal["relato", "usuario", "supuesto", "default"]
+    fuente: Literal["relato", "usuario", "supuesto", "default", "mapa"]
     """
-    De dónde salió el dato: del relato (con evidencia textual), lo escribió o corrigió la persona, lo supuso el sistema, o es el valor por defecto de la clase.
+    De dónde salió el dato: del relato (con evidencia textual), lo escribió o corrigió la persona, lo supuso el sistema, es el valor por defecto de la clase, o salió del mapa de OpenStreetMap en `ubicacion_real` (desde 1.2.0).
     """
     confianza: Annotated[float, Field(ge=0.0, le=1.0)]
     """
@@ -102,9 +102,9 @@ class CampoMasa(BaseModel):
     """
     Intervalo [mínimo, máximo] plausible en la misma unidad que valor.
     """
-    fuente: Literal["relato", "usuario", "supuesto", "default"]
+    fuente: Literal["relato", "usuario", "supuesto", "default", "mapa"]
     """
-    De dónde salió el dato: del relato (con evidencia textual), lo escribió o corrigió la persona, lo supuso el sistema, o es el valor por defecto de la clase.
+    De dónde salió el dato: del relato (con evidencia textual), lo escribió o corrigió la persona, lo supuso el sistema, es el valor por defecto de la clase, o salió del mapa de OpenStreetMap en `ubicacion_real` (desde 1.2.0).
     """
     confianza: Annotated[float, Field(ge=0.0, le=1.0)]
     """
@@ -124,9 +124,9 @@ class CampoTiempo(BaseModel):
     """
     Intervalo [mínimo, máximo] plausible en la misma unidad que valor.
     """
-    fuente: Literal["relato", "usuario", "supuesto", "default"]
+    fuente: Literal["relato", "usuario", "supuesto", "default", "mapa"]
     """
-    De dónde salió el dato: del relato (con evidencia textual), lo escribió o corrigió la persona, lo supuso el sistema, o es el valor por defecto de la clase.
+    De dónde salió el dato: del relato (con evidencia textual), lo escribió o corrigió la persona, lo supuso el sistema, es el valor por defecto de la clase, o salió del mapa de OpenStreetMap en `ubicacion_real` (desde 1.2.0).
     """
     confianza: Annotated[float, Field(ge=0.0, le=1.0)]
     """
@@ -146,9 +146,9 @@ class CampoAngulo(BaseModel):
     """
     Intervalo [mínimo, máximo] plausible en la misma unidad que valor.
     """
-    fuente: Literal["relato", "usuario", "supuesto", "default"]
+    fuente: Literal["relato", "usuario", "supuesto", "default", "mapa"]
     """
-    De dónde salió el dato: del relato (con evidencia textual), lo escribió o corrigió la persona, lo supuso el sistema, o es el valor por defecto de la clase.
+    De dónde salió el dato: del relato (con evidencia textual), lo escribió o corrigió la persona, lo supuso el sistema, es el valor por defecto de la clase, o salió del mapa de OpenStreetMap en `ubicacion_real` (desde 1.2.0).
     """
     confianza: Annotated[float, Field(ge=0.0, le=1.0)]
     """
@@ -168,9 +168,9 @@ class CampoAceleracion(BaseModel):
     """
     Intervalo [mínimo, máximo] plausible en la misma unidad que valor.
     """
-    fuente: Literal["relato", "usuario", "supuesto", "default"]
+    fuente: Literal["relato", "usuario", "supuesto", "default", "mapa"]
     """
-    De dónde salió el dato: del relato (con evidencia textual), lo escribió o corrigió la persona, lo supuso el sistema, o es el valor por defecto de la clase.
+    De dónde salió el dato: del relato (con evidencia textual), lo escribió o corrigió la persona, lo supuso el sistema, es el valor por defecto de la clase, o salió del mapa de OpenStreetMap en `ubicacion_real` (desde 1.2.0).
     """
     confianza: Annotated[float, Field(ge=0.0, le=1.0)]
     """
@@ -190,9 +190,9 @@ class CampoPorcentaje(BaseModel):
     """
     Intervalo [mínimo, máximo] plausible en la misma unidad que valor.
     """
-    fuente: Literal["relato", "usuario", "supuesto", "default"]
+    fuente: Literal["relato", "usuario", "supuesto", "default", "mapa"]
     """
-    De dónde salió el dato: del relato (con evidencia textual), lo escribió o corrigió la persona, lo supuso el sistema, o es el valor por defecto de la clase.
+    De dónde salió el dato: del relato (con evidencia textual), lo escribió o corrigió la persona, lo supuso el sistema, es el valor por defecto de la clase, o salió del mapa de OpenStreetMap en `ubicacion_real` (desde 1.2.0).
     """
     confianza: Annotated[float, Field(ge=0.0, le=1.0)]
     """
@@ -215,9 +215,9 @@ class CampoAdimensional(BaseModel):
     """
     Intervalo [mínimo, máximo] plausible en la misma unidad que valor.
     """
-    fuente: Literal["relato", "usuario", "supuesto", "default"]
+    fuente: Literal["relato", "usuario", "supuesto", "default", "mapa"]
     """
-    De dónde salió el dato: del relato (con evidencia textual), lo escribió o corrigió la persona, lo supuso el sistema, o es el valor por defecto de la clase.
+    De dónde salió el dato: del relato (con evidencia textual), lo escribió o corrigió la persona, lo supuso el sistema, es el valor por defecto de la clase, o salió del mapa de OpenStreetMap en `ubicacion_real` (desde 1.2.0).
     """
     confianza: Annotated[float, Field(ge=0.0, le=1.0)]
     """
@@ -236,9 +236,9 @@ class CampoEntero(BaseModel):
     """
     Intervalo [mínimo, máximo] plausible en la misma unidad que valor.
     """
-    fuente: Literal["relato", "usuario", "supuesto", "default"]
+    fuente: Literal["relato", "usuario", "supuesto", "default", "mapa"]
     """
-    De dónde salió el dato: del relato (con evidencia textual), lo escribió o corrigió la persona, lo supuso el sistema, o es el valor por defecto de la clase.
+    De dónde salió el dato: del relato (con evidencia textual), lo escribió o corrigió la persona, lo supuso el sistema, es el valor por defecto de la clase, o salió del mapa de OpenStreetMap en `ubicacion_real` (desde 1.2.0).
     """
     confianza: Annotated[float, Field(ge=0.0, le=1.0)]
     """
@@ -253,9 +253,9 @@ class CampoBooleano(BaseModel):
         extra="forbid",
     )
     valor: bool
-    fuente: Literal["relato", "usuario", "supuesto", "default"]
+    fuente: Literal["relato", "usuario", "supuesto", "default", "mapa"]
     """
-    De dónde salió el dato: del relato (con evidencia textual), lo escribió o corrigió la persona, lo supuso el sistema, o es el valor por defecto de la clase.
+    De dónde salió el dato: del relato (con evidencia textual), lo escribió o corrigió la persona, lo supuso el sistema, es el valor por defecto de la clase, o salió del mapa de OpenStreetMap en `ubicacion_real` (desde 1.2.0).
     """
     confianza: Annotated[float, Field(ge=0.0, le=1.0)]
     """
@@ -270,9 +270,9 @@ class CampoTexto(BaseModel):
         extra="forbid",
     )
     valor: Annotated[str, Field(max_length=200)]
-    fuente: Literal["relato", "usuario", "supuesto", "default"]
+    fuente: Literal["relato", "usuario", "supuesto", "default", "mapa"]
     """
-    De dónde salió el dato: del relato (con evidencia textual), lo escribió o corrigió la persona, lo supuso el sistema, o es el valor por defecto de la clase.
+    De dónde salió el dato: del relato (con evidencia textual), lo escribió o corrigió la persona, lo supuso el sistema, es el valor por defecto de la clase, o salió del mapa de OpenStreetMap en `ubicacion_real` (desde 1.2.0).
     """
     confianza: Annotated[float, Field(ge=0.0, le=1.0)]
     """
@@ -298,9 +298,9 @@ class CampoTipoVia(BaseModel):
         "carretera_dos_carriles",
         "autopista",
     ]
-    fuente: Literal["relato", "usuario", "supuesto", "default"]
+    fuente: Literal["relato", "usuario", "supuesto", "default", "mapa"]
     """
-    De dónde salió el dato: del relato (con evidencia textual), lo escribió o corrigió la persona, lo supuso el sistema, o es el valor por defecto de la clase.
+    De dónde salió el dato: del relato (con evidencia textual), lo escribió o corrigió la persona, lo supuso el sistema, es el valor por defecto de la clase, o salió del mapa de OpenStreetMap en `ubicacion_real` (desde 1.2.0).
     """
     confianza: Annotated[float, Field(ge=0.0, le=1.0)]
     """
@@ -315,9 +315,9 @@ class CampoSentidos(BaseModel):
         extra="forbid",
     )
     valor: Literal["un_sentido", "doble_sentido"]
-    fuente: Literal["relato", "usuario", "supuesto", "default"]
+    fuente: Literal["relato", "usuario", "supuesto", "default", "mapa"]
     """
-    De dónde salió el dato: del relato (con evidencia textual), lo escribió o corrigió la persona, lo supuso el sistema, o es el valor por defecto de la clase.
+    De dónde salió el dato: del relato (con evidencia textual), lo escribió o corrigió la persona, lo supuso el sistema, es el valor por defecto de la clase, o salió del mapa de OpenStreetMap en `ubicacion_real` (desde 1.2.0).
     """
     confianza: Annotated[float, Field(ge=0.0, le=1.0)]
     """
@@ -332,9 +332,9 @@ class CampoSuperficie(BaseModel):
         extra="forbid",
     )
     valor: Literal["asfalto", "concreto", "adoquin", "empedrado", "terraceria"]
-    fuente: Literal["relato", "usuario", "supuesto", "default"]
+    fuente: Literal["relato", "usuario", "supuesto", "default", "mapa"]
     """
-    De dónde salió el dato: del relato (con evidencia textual), lo escribió o corrigió la persona, lo supuso el sistema, o es el valor por defecto de la clase.
+    De dónde salió el dato: del relato (con evidencia textual), lo escribió o corrigió la persona, lo supuso el sistema, es el valor por defecto de la clase, o salió del mapa de OpenStreetMap en `ubicacion_real` (desde 1.2.0).
     """
     confianza: Annotated[float, Field(ge=0.0, le=1.0)]
     """
@@ -349,9 +349,9 @@ class CampoEstadoSuperficie(BaseModel):
         extra="forbid",
     )
     valor: Literal["seco", "mojado", "encharcado", "grava_suelta", "aceite", "lodo"]
-    fuente: Literal["relato", "usuario", "supuesto", "default"]
+    fuente: Literal["relato", "usuario", "supuesto", "default", "mapa"]
     """
-    De dónde salió el dato: del relato (con evidencia textual), lo escribió o corrigió la persona, lo supuso el sistema, o es el valor por defecto de la clase.
+    De dónde salió el dato: del relato (con evidencia textual), lo escribió o corrigió la persona, lo supuso el sistema, es el valor por defecto de la clase, o salió del mapa de OpenStreetMap en `ubicacion_real` (desde 1.2.0).
     """
     confianza: Annotated[float, Field(ge=0.0, le=1.0)]
     """
@@ -366,9 +366,9 @@ class CampoClima(BaseModel):
         extra="forbid",
     )
     valor: Literal["despejado", "nublado", "lluvia_ligera", "lluvia_fuerte", "niebla", "granizo"]
-    fuente: Literal["relato", "usuario", "supuesto", "default"]
+    fuente: Literal["relato", "usuario", "supuesto", "default", "mapa"]
     """
-    De dónde salió el dato: del relato (con evidencia textual), lo escribió o corrigió la persona, lo supuso el sistema, o es el valor por defecto de la clase.
+    De dónde salió el dato: del relato (con evidencia textual), lo escribió o corrigió la persona, lo supuso el sistema, es el valor por defecto de la clase, o salió del mapa de OpenStreetMap en `ubicacion_real` (desde 1.2.0).
     """
     confianza: Annotated[float, Field(ge=0.0, le=1.0)]
     """
@@ -383,9 +383,9 @@ class CampoIluminacion(BaseModel):
         extra="forbid",
     )
     valor: Literal["dia", "amanecer", "atardecer", "noche_con_alumbrado", "noche_sin_alumbrado"]
-    fuente: Literal["relato", "usuario", "supuesto", "default"]
+    fuente: Literal["relato", "usuario", "supuesto", "default", "mapa"]
     """
-    De dónde salió el dato: del relato (con evidencia textual), lo escribió o corrigió la persona, lo supuso el sistema, o es el valor por defecto de la clase.
+    De dónde salió el dato: del relato (con evidencia textual), lo escribió o corrigió la persona, lo supuso el sistema, es el valor por defecto de la clase, o salió del mapa de OpenStreetMap en `ubicacion_real` (desde 1.2.0).
     """
     confianza: Annotated[float, Field(ge=0.0, le=1.0)]
     """
@@ -415,9 +415,9 @@ class CampoClaseVehiculo(BaseModel):
         "bicicleta",
         "scooter",
     ]
-    fuente: Literal["relato", "usuario", "supuesto", "default"]
+    fuente: Literal["relato", "usuario", "supuesto", "default", "mapa"]
     """
-    De dónde salió el dato: del relato (con evidencia textual), lo escribió o corrigió la persona, lo supuso el sistema, o es el valor por defecto de la clase.
+    De dónde salió el dato: del relato (con evidencia textual), lo escribió o corrigió la persona, lo supuso el sistema, es el valor por defecto de la clase, o salió del mapa de OpenStreetMap en `ubicacion_real` (desde 1.2.0).
     """
     confianza: Annotated[float, Field(ge=0.0, le=1.0)]
     """
@@ -443,9 +443,9 @@ class CampoManiobra(BaseModel):
         "detenido",
         "estacionado",
     ]
-    fuente: Literal["relato", "usuario", "supuesto", "default"]
+    fuente: Literal["relato", "usuario", "supuesto", "default", "mapa"]
     """
-    De dónde salió el dato: del relato (con evidencia textual), lo escribió o corrigió la persona, lo supuso el sistema, o es el valor por defecto de la clase.
+    De dónde salió el dato: del relato (con evidencia textual), lo escribió o corrigió la persona, lo supuso el sistema, es el valor por defecto de la clase, o salió del mapa de OpenStreetMap en `ubicacion_real` (desde 1.2.0).
     """
     confianza: Annotated[float, Field(ge=0.0, le=1.0)]
     """
@@ -460,9 +460,9 @@ class CampoEstadoPintura(BaseModel):
         extra="forbid",
     )
     valor: Literal["nueva", "normal", "desgastada"]
-    fuente: Literal["relato", "usuario", "supuesto", "default"]
+    fuente: Literal["relato", "usuario", "supuesto", "default", "mapa"]
     """
-    De dónde salió el dato: del relato (con evidencia textual), lo escribió o corrigió la persona, lo supuso el sistema, o es el valor por defecto de la clase.
+    De dónde salió el dato: del relato (con evidencia textual), lo escribió o corrigió la persona, lo supuso el sistema, es el valor por defecto de la clase, o salió del mapa de OpenStreetMap en `ubicacion_real` (desde 1.2.0).
     """
     confianza: Annotated[float, Field(ge=0.0, le=1.0)]
     """
@@ -477,9 +477,9 @@ class CampoRolPersona(BaseModel):
         extra="forbid",
     )
     valor: Literal["conductor", "pasajero", "peaton", "ciclista", "motociclista"]
-    fuente: Literal["relato", "usuario", "supuesto", "default"]
+    fuente: Literal["relato", "usuario", "supuesto", "default", "mapa"]
     """
-    De dónde salió el dato: del relato (con evidencia textual), lo escribió o corrigió la persona, lo supuso el sistema, o es el valor por defecto de la clase.
+    De dónde salió el dato: del relato (con evidencia textual), lo escribió o corrigió la persona, lo supuso el sistema, es el valor por defecto de la clase, o salió del mapa de OpenStreetMap en `ubicacion_real` (desde 1.2.0).
     """
     confianza: Annotated[float, Field(ge=0.0, le=1.0)]
     """
@@ -502,9 +502,9 @@ class CampoAsiento(BaseModel):
         "tercera_fila",
         "otro",
     ]
-    fuente: Literal["relato", "usuario", "supuesto", "default"]
+    fuente: Literal["relato", "usuario", "supuesto", "default", "mapa"]
     """
-    De dónde salió el dato: del relato (con evidencia textual), lo escribió o corrigió la persona, lo supuso el sistema, o es el valor por defecto de la clase.
+    De dónde salió el dato: del relato (con evidencia textual), lo escribió o corrigió la persona, lo supuso el sistema, es el valor por defecto de la clase, o salió del mapa de OpenStreetMap en `ubicacion_real` (desde 1.2.0).
     """
     confianza: Annotated[float, Field(ge=0.0, le=1.0)]
     """
@@ -528,9 +528,9 @@ class CampoPostura(BaseModel):
         "en_moto",
         "tirado",
     ]
-    fuente: Literal["relato", "usuario", "supuesto", "default"]
+    fuente: Literal["relato", "usuario", "supuesto", "default", "mapa"]
     """
-    De dónde salió el dato: del relato (con evidencia textual), lo escribió o corrigió la persona, lo supuso el sistema, o es el valor por defecto de la clase.
+    De dónde salió el dato: del relato (con evidencia textual), lo escribió o corrigió la persona, lo supuso el sistema, es el valor por defecto de la clase, o salió del mapa de OpenStreetMap en `ubicacion_real` (desde 1.2.0).
     """
     confianza: Annotated[float, Field(ge=0.0, le=1.0)]
     """
@@ -581,7 +581,7 @@ class Meta(BaseModel):
         extra="forbid",
     )
     id: Annotated[str, Field(max_length=64, min_length=8, pattern="^[A-Za-z0-9_-]+$")]
-    version_esquema: Literal["1.1.0"]
+    version_esquema: Literal["1.2.0"]
     idioma: Literal["es-MX", "en"]
     semilla: Annotated[int, Field(ge=0, le=4294967295)]
     """
@@ -652,6 +652,23 @@ class Dispositivo(BaseModel):
     procedencia: Procedencia
 
 
+class ViaMapa(BaseModel):
+    """
+    Una calle de OSM (un `way` con `highway`), ya en metros locales.
+    """
+
+    model_config = ConfigDict(
+        extra="forbid",
+    )
+    id_osm: int
+    tipo: Annotated[str, Field(max_length=40, min_length=1)]
+    nombre: Annotated[str | None, Field(max_length=120)] = None
+    carriles: Annotated[int | None, Field(ge=1, le=12)] = None
+    ancho_m: Annotated[float | None, Field(ge=2.0, le=60.0)] = None
+    un_sentido: bool | None = None
+    puntos: Annotated[list[Punto2D], Field(max_length=400, min_length=2)]
+
+
 class UbicacionReal(BaseModel):
     """
     Coordenadas opcionales para generar la geometría desde OpenStreetMap (atribución ODbL en pantalla).
@@ -668,33 +685,6 @@ class UbicacionReal(BaseModel):
     Rotación aplicada al norte real para alinear con el eje de la escena.
     """
     procedencia: Procedencia
-
-
-class Lugar(BaseModel):
-    model_config = ConfigDict(
-        extra="forbid",
-    )
-    nombre_via: CampoTexto | None = None
-    nombre_via_secundaria: CampoTexto | None = None
-    tipo_via: CampoTipoVia
-    carriles_por_sentido: CampoEntero
-    carriles_por_sentido_secundaria: CampoEntero | None = None
-    ancho_carril: CampoLongitud
-    sentidos: CampoSentidos
-    camellon: CampoBooleano | None = None
-    ancho_camellon: CampoLongitud | None = None
-    banquetas: CampoBooleano | None = None
-    guarniciones: CampoBooleano | None = None
-    acotamiento: CampoBooleano | None = None
-    ancho_acotamiento: CampoLongitud | None = None
-    pendiente: CampoPorcentaje | None = None
-    peralte: CampoPorcentaje | None = None
-    radio_curva: CampoLongitud | None = None
-    superficie: CampoSuperficie
-    estado_superficie: CampoEstadoSuperficie
-    friccion: CampoAdimensional | None = None
-    dispositivos: Annotated[list[Dispositivo] | None, Field(max_length=32)] = None
-    ubicacion_real: UbicacionReal | None = None
 
 
 class ObjetoEntorno(BaseModel):
@@ -943,6 +933,56 @@ class EvidenciaFisica(BaseModel):
     puntos: Annotated[list[Punto2D] | None, Field(max_length=64)] = None
     descripcion: Annotated[str | None, Field(max_length=400)] = None
     procedencia: Procedencia
+
+
+class RedVial(BaseModel):
+    """
+    Calles de OpenStreetMap alrededor de `ubicacion_real`, proyectadas a metros en el marco local de la escena (desde 1.2.0). Se guardan en la escena para que sea determinista y funcione sin red.
+    """
+
+    model_config = ConfigDict(
+        extra="forbid",
+    )
+    fuente_datos: Literal["OpenStreetMap"]
+    licencia: Literal["ODbL-1.0"]
+    atribucion: Annotated[str, Field(max_length=200, min_length=1)]
+    consultado: Annotated[str, Field(max_length=40)]
+    """
+    Fecha de los datos de OSM (`timestamp_osm_base` de Overpass), ISO 8601.
+    """
+    nodo_cruce: int | None = None
+    """
+    Nodo OSM del cruce que queda en el origen de la escena, si lo hay.
+    """
+    vias: Annotated[list[ViaMapa], Field(max_length=64, min_length=1)]
+
+
+class Lugar(BaseModel):
+    model_config = ConfigDict(
+        extra="forbid",
+    )
+    nombre_via: CampoTexto | None = None
+    nombre_via_secundaria: CampoTexto | None = None
+    tipo_via: CampoTipoVia
+    carriles_por_sentido: CampoEntero
+    carriles_por_sentido_secundaria: CampoEntero | None = None
+    ancho_carril: CampoLongitud
+    sentidos: CampoSentidos
+    camellon: CampoBooleano | None = None
+    ancho_camellon: CampoLongitud | None = None
+    banquetas: CampoBooleano | None = None
+    guarniciones: CampoBooleano | None = None
+    acotamiento: CampoBooleano | None = None
+    ancho_acotamiento: CampoLongitud | None = None
+    pendiente: CampoPorcentaje | None = None
+    peralte: CampoPorcentaje | None = None
+    radio_curva: CampoLongitud | None = None
+    superficie: CampoSuperficie
+    estado_superficie: CampoEstadoSuperficie
+    friccion: CampoAdimensional | None = None
+    dispositivos: Annotated[list[Dispositivo] | None, Field(max_length=32)] = None
+    ubicacion_real: UbicacionReal | None = None
+    red_vial: RedVial | None = None
 
 
 class Evento(BaseModel):

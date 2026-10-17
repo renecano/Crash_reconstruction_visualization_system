@@ -7,3 +7,5 @@
 *.ico binary
 *.woff2 binary
 *.zip binary
+# Extractos crudos de OSM: verificados por SHA-256; git no debe tocar los bytes.
+data/osm/*.overpass.json -text
