@@ -24,6 +24,10 @@ export interface RoadGeometry {
   whiteLines: Mesh2D;
   yellowLines: Mesh2D;
   crosswalks: Mesh2D;
+  /** Parte de arriba del camellón (elevado a la altura de la guarnición). */
+  medians: Mesh2D;
+  /** Caras verticales de las guarniciones: segmentos en planta (de a a b). */
+  curbs: { a: Vec2; b: Vec2 }[];
   /** Caja envolvente de la calzada [minX, minY, maxX, maxY]. */
   bounds: [number, number, number, number];
 }
@@ -31,13 +35,59 @@ export interface RoadGeometry {
 export interface RoadOptions {
   dobleSentido: boolean;
   banquetas: boolean;
+  /** Guarnición en la orilla de la calzada aunque no haya banqueta (PLAN §7.1). */
+  guarniciones?: boolean;
   /** Pasos peatonales: centro del cruce en el mundo y rumbo de la vía que cruzan (grados). */
   crosswalks?: { center: Vec2; roadHeading: number; roadWidth: number }[];
+  /** Largo y separación de los segmentos de las rayas discontinuas (por omisión, calle ≤ 50 km/h). */
+  dash?: DashPattern;
+  /** Cómo van las rayas según los dispositivos de línea de la escena (`markingsFor`). */
+  markings?: Markings;
+}
+
+export interface DashPattern {
+  length: number;
+  gap: number;
+}
+
+/**
+ * Segmentos de las rayas discontinuas del Manual de Señalización y Dispositivos para el Control
+ * del Tránsito (SEDATU/SCT, 2023, Tabla II.2-3): calles hasta 50 km/h, 2.5 m cada 5 m; carreteras
+ * y calles de más de 50 km/h, 5 m cada 10 m.
+ */
+export const DASH_HASTA_50: DashPattern = { length: 2.5, gap: 5 };
+export const DASH_MAS_50: DashPattern = { length: 5, gap: 10 };
+
+export function dashPatternFor(tipoVia: string | undefined, limiteKmh?: number): DashPattern {
+  if (tipoVia === "carretera_dos_carriles" || tipoVia === "autopista") return DASH_MAS_50;
+  return limiteKmh !== undefined && limiteKmh > 50 ? DASH_MAS_50 : DASH_HASTA_50;
+}
+
+export interface Markings {
+  /** Raya entre sentidos: doble continua (no se rebasa) o sencilla discontinua (se rebasa). */
+  centro: "doble_continua" | "discontinua";
+  /** Rayas entre carriles del mismo sentido: discontinua (se cambia de carril) o continua. */
+  carriles: "discontinua" | "continua";
+}
+
+/**
+ * Lo que dicen los dispositivos `linea_continua` y `linea_discontinua` de la escena. En una vía de
+ * doble sentido se refieren a la raya central (lo común en un relato: "había línea continua", no
+ * se podía rebasar); en una de un sentido, a las rayas entre carriles. Sin dispositivos: doble
+ * continua al centro y discontinua entre carriles.
+ */
+export function markingsFor(dobleSentido: boolean, tipos: readonly string[]): Markings {
+  const continua = tipos.includes("linea_continua");
+  const discontinua = tipos.includes("linea_discontinua") && !continua;
+  if (dobleSentido) {
+    return { centro: discontinua ? "discontinua" : "doble_continua", carriles: "discontinua" };
+  }
+  return { centro: "doble_continua", carriles: continua ? "continua" : "discontinua" };
 }
 
 export const LINE_WIDTH = 0.12;
-export const DASH = 3;
-export const GAP = 6;
+/** Altura de la guarnición, la banqueta y el camellón (m): 15 cm, la altura usual en México. */
+export const CURB_HEIGHT = 0.15;
 export const SIDEWALK_WIDTH = 2.5;
 const ARC_SEGMENT_M = 2;
 
@@ -91,6 +141,24 @@ function annulus(
 }
 
 /** ¿Está el punto dentro del rectángulo de una franja (con margen)? */
+/** Arco partido en segmentos rectos de ~2 m (para las caras verticales de la guarnición). */
+function arcSegments(
+  center: Vec2,
+  radius: number,
+  from: number,
+  to: number,
+): { a: Vec2; b: Vec2 }[] {
+  const span = ((to - from) * Math.PI) / 180;
+  const n = Math.max(8, Math.ceil((Math.abs(span) * radius) / ARC_SEGMENT_M));
+  const pt = (k: number): Vec2 => {
+    const ang = (from * Math.PI) / 180 + (span * k) / n;
+    return { x: center.x + radius * Math.cos(ang), y: center.y + radius * Math.sin(ang) };
+  };
+  const out: { a: Vec2; b: Vec2 }[] = [];
+  for (let k = 0; k < n; k++) out.push({ a: pt(k), b: pt(k + 1) });
+  return out;
+}
+
 function insideStrip(p: Vec2, s: LaneStrip, margin = 0): boolean {
   const d = dir(s.heading);
   const rel = { x: p.x - s.center.x, y: p.y - s.center.y };
@@ -132,11 +200,12 @@ function lineAlongStrip(
   offset: number,
   dashed: boolean,
   exclude: (p: Vec2) => boolean,
+  dash: DashPattern = DASH_HASTA_50,
 ): void {
   const d = dir(s.heading);
   const n = { x: -d.y, y: d.x };
-  const step = dashed ? DASH + GAP : 1;
-  const segLen = dashed ? DASH : 1;
+  const step = dashed ? dash.length + dash.gap : 1;
+  const segLen = dashed ? dash.length : 1;
   for (let a = -s.length / 2; a < s.length / 2 - 1e-9; a += step) {
     const len = Math.min(segLen, s.length / 2 - a);
     const mid = a + len / 2;
@@ -156,10 +225,11 @@ function lineAlongArc(
   from: number,
   to: number,
   dashed: boolean,
+  dash: DashPattern = DASH_HASTA_50,
 ): void {
   const total = (Math.abs(to - from) * Math.PI * radius) / 180;
-  const step = dashed ? DASH + GAP : ARC_SEGMENT_M;
-  const segLen = dashed ? DASH : ARC_SEGMENT_M;
+  const step = dashed ? dash.length + dash.gap : ARC_SEGMENT_M;
+  const segLen = dashed ? dash.length : ARC_SEGMENT_M;
   for (let s = 0; s < total - 1e-9; s += step) {
     const len = Math.min(segLen, total - s);
     const a0 = from + (s / total) * (to - from);
@@ -169,11 +239,16 @@ function lineAlongArc(
 }
 
 export function buildRoadGeometry(layout: RoadLayout, opts: RoadOptions): RoadGeometry {
+  const dash = opts.dash ?? DASH_HASTA_50;
+  const markings = opts.markings ?? markingsFor(opts.dobleSentido, []);
   const pavement = emptyMesh();
   const sidewalk = emptyMesh();
   const white = emptyMesh();
   const yellow = emptyMesh();
   const crosswalks = emptyMesh();
+  const medians = emptyMesh();
+  const curbs: { a: Vec2; b: Vec2 }[] = [];
+  const withCurbs = opts.banquetas || (opts.guarniciones ?? false);
   let minX = Infinity;
   let minY = Infinity;
   let maxX = -Infinity;
@@ -221,11 +296,45 @@ export function buildRoadGeometry(layout: RoadLayout, opts: RoadOptions): RoadGe
         }
       }
     }
+    {
+      const step = 2;
+      const blocked = (c: Vec2, margin: number): boolean =>
+        layout.strips.some((o) => o !== s && insideStrip(c, o, margin)) ||
+        layout.rings.some((r) => insideRing(c, r));
+      for (let a = -s.length / 2; a < s.length / 2 - 1e-9; a += step) {
+        const l = Math.min(step, s.length / 2 - a);
+        const at = (along: number, off: number): Vec2 => ({
+          x: s.center.x + d.x * along + n.x * off,
+          y: s.center.y + d.y * along + n.y * off,
+        });
+        if (withCurbs) {
+          for (const side of [-1, 1]) {
+            const off = (side * s.width) / 2;
+            if (blocked(at(a + l / 2, off), 0.3)) continue;
+            curbs.push({ a: at(a, off), b: at(a + l, off) });
+          }
+        }
+        if (s.median > 0 && !blocked(at(a + l / 2, 0), 0.3)) {
+          orientedQuad(medians, at(a + l / 2, 0), d, l, s.median);
+          for (const side of [-1, 1]) {
+            const off = (side * s.median) / 2;
+            curbs.push({ a: at(a, off), b: at(a + l, off) });
+          }
+        }
+      }
+    }
     const offsets = stripLineOffsets(s, opts.dobleSentido);
     const excl = inIntersection(s);
     for (const o of offsets.edges) lineAlongStrip(white, s, o, false, excl);
-    for (const o of offsets.center) lineAlongStrip(yellow, s, o, false, excl);
-    for (const o of offsets.dashed) lineAlongStrip(white, s, o, true, excl);
+    // Raya central sencilla discontinua (se puede rebasar) solo sin camellón: con camellón las
+    // rayas amarillas son sus orillas y siguen continuas.
+    if (markings.centro === "discontinua" && offsets.center.length === 2 && !s.median) {
+      lineAlongStrip(yellow, s, 0, true, excl, dash);
+    } else {
+      for (const o of offsets.center) lineAlongStrip(yellow, s, o, false, excl);
+    }
+    for (const o of offsets.dashed)
+      lineAlongStrip(white, s, o, markings.carriles === "discontinua", excl, dash);
   }
 
   for (const a of layout.arcs) {
@@ -245,9 +354,14 @@ export function buildRoadGeometry(layout: RoadLayout, opts: RoadOptions): RoadGe
       annulus(sidewalk, a.center, rOut, rOut + SIDEWALK_WIDTH, a.from, a.to);
       annulus(sidewalk, a.center, Math.max(0, rIn - SIDEWALK_WIDTH), rIn, a.from, a.to);
     }
+    if (withCurbs) {
+      for (const r of [rIn, rOut]) curbs.push(...arcSegments(a.center, r, a.from, a.to));
+    }
     lineAlongArc(white, a.center, rIn + LINE_WIDTH, a.from, a.to, false);
     lineAlongArc(white, a.center, rOut - LINE_WIDTH, a.from, a.to, false);
-    if (opts.dobleSentido) {
+    if (opts.dobleSentido && markings.centro === "discontinua") {
+      lineAlongArc(yellow, a.center, a.radius, a.from, a.to, true, dash);
+    } else if (opts.dobleSentido) {
       lineAlongArc(yellow, a.center, a.radius - 0.1, a.from, a.to, false);
       lineAlongArc(yellow, a.center, a.radius + 0.1, a.from, a.to, false);
     }
@@ -259,9 +373,10 @@ export function buildRoadGeometry(layout: RoadLayout, opts: RoadOptions): RoadGe
     grow({ x: r.center.x + r.outerRadius, y: r.center.y + r.outerRadius });
     lineAlongArc(white, r.center, r.innerRadius + LINE_WIDTH, 0, 360, false);
     const mid = (r.innerRadius + r.outerRadius) / 2;
-    lineAlongArc(white, r.center, mid, 0, 360, true);
-    // Isla central como banqueta (camellón elevado).
+    lineAlongArc(white, r.center, mid, 0, 360, true, dash);
+    // Isla central como banqueta (camellón elevado), con su guarnición.
     annulus(sidewalk, r.center, 0, r.innerRadius, 0, 360);
+    curbs.push(...arcSegments(r.center, r.innerRadius, 0, 360));
   }
 
   for (const cw of opts.crosswalks ?? []) {
@@ -288,6 +403,8 @@ export function buildRoadGeometry(layout: RoadLayout, opts: RoadOptions): RoadGe
     whiteLines: white,
     yellowLines: yellow,
     crosswalks,
+    medians,
+    curbs,
     bounds: [minX, minY, maxX, maxY],
   };
 }
