@@ -12,13 +12,7 @@ import { Color, type Texture } from "three";
 import { float, mix, mx_noise_float, positionWorld, smoothstep, vec2, vec3 } from "three/tsl";
 import { MeshStandardNodeMaterial, type Node } from "three/webgpu";
 import type { SurfaceState } from "./environment";
-import {
-  normalizedColor,
-  normalizedRough,
-  planarSample,
-  texturedNormal,
-  type EnvTexture,
-} from "./env-textures";
+import { normalizedColor, normalizedRough, texturedNormal, type EnvTexture } from "./env-textures";
 
 export interface SurfaceLook {
   color: string;
@@ -119,9 +113,8 @@ export function asphaltMaterial(surface: SurfaceState): AsphaltMaterial {
         paint(rgb(look.color), float(look.roughness));
         m.normalNode = null;
       } else {
-        const s = planarSample(t);
-        paint(normalizedColor(t, look.color, s), normalizedRough(t, look.roughness, s));
-        m.normalNode = texturedNormal(t, look.normalScale, s);
+        paint(normalizedColor(t, look.color), normalizedRough(t, look.roughness));
+        m.normalNode = texturedNormal(t, look.normalScale);
       }
       m.needsUpdate = true;
     },

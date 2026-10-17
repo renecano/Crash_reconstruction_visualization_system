@@ -1,6 +1,10 @@
 /**
  * E6 (apoyo): ¿se ve el corte por nivel de mip de las texturas del entorno?
  *
+ * Histórico: el corte se revirtió porque E6 lo mostró más lento en la GPU de referencia (ADR 0024,
+ * decisión 6; ADR 0025). El visor ya no tiene el interruptor `texturasSinCorte`, así que correr
+ * este script hoy compara dos cuadros iguales. Se conserva con su resultado como evidencia.
+ *
  * Donde un píxel cubre muchos texeles, el visor no lee la textura y usa su promedio, que es el
  * color calibrado (ADR 0024, `env-textures.ts`). Este script lo mide: para cada escena canónica,
  * en calidad media y alta y varios instantes, dibuja el mismo cuadro con el corte y sin él

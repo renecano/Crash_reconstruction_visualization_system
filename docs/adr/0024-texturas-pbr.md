@@ -23,18 +23,19 @@
    - **Motivo:** la primera prueba sin normalizar dejó la calzada casi negra, porque «Asphalt Track» promedia 0.0164 en el canal rojo lineal (`media` del manifiesto) contra 0.0437 del asfalto seco calibrado (`#3b3e42` convertido de sRGB a lineal).
    - **Manifiesto incompleto:** si no trae los promedios, la carga falla y quedan los colores lisos. Nunca se aplica una textura sin calibrar.
 4. **Proyección en planta.** Las coordenadas de textura son las del mundo (x, z) entre el tamaño del mosaico: 4 m el asfalto, 2 m el concreto y 8 m el pasto.
-   - **Normal:** `normalMap` de TSL deriva las tangentes en pantalla.
+   - **Normal:** `normalMap` de TSL deriva las tangentes en pantalla (el intento sin derivadas de la decisión 6 se revirtió).
    - **Guarnición:** conserva su material liso; en sus caras verticales la proyección en planta se vería rayada.
    - **Pasto:** se le agrega un ruido de brillo de 23 m (±15 %) para que no se note la repetición en superficies grandes.
    - **Asfalto con agua:** el relieve se suaviza con agua: escala del normal 0.5 mojado y 0.4 encharcado.
 5. **Calidad.** Solo en calidad media y alta; en baja no se descargan.
    - **Captura lista:** `__croquisReady` espera a que las texturas estén aplicadas o descartadas, para que las capturas de referencia sean deterministas.
    - **Si falla la carga** (p. ej. sin red): se registra el error y quedan los colores lisos; el visor no se rompe.
-6. **Corte por nivel de mip (E6, ADR 0025).** El suelo cubre casi toda la pantalla y se ve rasante, así que leer sus tres mapas en cada píxel es de lo más caro del cuadro.
-   - **Corte:** cada píxel calcula, con derivadas fuera de cualquier rama, cuántos texeles cubre. Desde 2^4.5 texeles la textura se funde con su promedio y desde 2^6 ya no se lee.
-   - **Por qué no se nota:** el promedio es justo el color calibrado (decisión 3), que es a lo que tiende la textura filtrada a esa distancia.
-   - **Normal sin derivadas:** se arma con el marco tangente conocido de una superficie horizontal con UV en planta (T = +X, B = +Z, N = +Y). Es el mismo marco que da el método de derivadas de three.js (`perturbNormal2Arb`) para esta proyección, y permite leerla dentro de la rama con gradiente explícito.
-   - **Medición:** `eval/e6_corte_texturas.mjs` compara el cuadro con el corte y sin él (`window.__croquisDiag.texturasSinCorte`). En las 11 escenas canónicas, en calidad media y alta, la diferencia máxima es de 8.1 niveles de gris de 255; ningún píxel cambia 8 niveles o más y a lo más el 1.73 % cambia 3 o más (`eval/results/e6_corte_texturas.json`). Es la franja lejana y rasante del suelo.
+6. **Corte por nivel de mip: probado y revertido (ADR 0025).** Se probó no leer las texturas donde un píxel cubre muchos texeles (a partir de 2^6), con el nivel de mip calculado por derivadas, lectura con gradiente explícito dentro de una rama y normal armada con el marco tangente conocido.
+   - **No se nota:** a lo más 8.1 niveles de gris de 255 y ningún píxel cambia 8 o más (`eval/results/e6_corte_texturas.json`).
+   - **Pero es más lento en la GPU de referencia.** En la segunda corrida de E6 (`eval/results/e6_performance_f8_corte_mip.json`) la laptop rindió más que en la primera: calidad baja en WebGL 2 subió de 149.8 a 253.3 fps de mínimo entre escenas.
+   - **Las escenas con más suelo bajaron en calidad media.** Mediana de `glorieta`: 92.6 → 64.9 fps; de `interseccion_toluca`: 96.2 → 76.9; de `nocturno_lluvia`: 66.2 → 51.8.
+   - **Explicación probable:** leer con gradiente explícito dentro de una rama pierde la vía rápida de muestreo de la GPU integrada. En CI, con render por software, también hizo más lentos los acercamientos.
+   - **Resultado:** se vuelve al muestreo normal y a `normalMap` con derivadas.
 
 ## Consecuencias
 

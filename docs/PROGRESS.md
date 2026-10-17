@@ -1245,8 +1245,8 @@ Las ramas van una encima de otra y se fusionan en este orden, cada una con su PR
 - **Ya corregido en `feat/f8-entorno` y llevado por merge a F8c, F8d y F8e:**
   - Los paneles se volvían a dibujar 15 veces por segundo y causaban tirones de JavaScript.
   - De noche ya no se calcula la sombra de la luna: no se ve (`eval/results/e6_sombra_luna.json`) y cuesta un pase completo.
-- **En `feat/f8e-texturas`:** corte de las texturas por nivel de mip. No se nota: a lo más 8.1 niveles de gris y ningún píxel cambia 8 o más (`eval/results/e6_corte_texturas.json`, 11 escenas en media y alta).
-- **Segunda corrida de E6 (2026-10-17):** se detuvo por falta de memoria justo antes de medir `nocturno_lluvia` en WebGL 2. E6 solo escribe al final, así que no hay resultado oficial nuevo.
+- **En `feat/f8e-texturas`:** se probó un corte de las texturas por nivel de mip. No se nota a la vista (`eval/results/e6_corte_texturas.json`), pero es más lento en la GPU de referencia, así que se revirtió.
+- **Segunda corrida de E6 (2026-10-17, René, terminal aparte):** no cumple. Media queda en 55.7 fps y alta en 27.3, las dos en `nocturno_lluvia` (`eval/results/e6_performance_f8_corte_mip.json`). Las escenas con más suelo bajaron aunque el equipo rindió más: el corte por mip las hizo más lentas en la GPU de referencia y se revirtió (ADR 0024 y 0025).
 - **Por qué no hay números nuevos:** durante la sesión la batería bajó de 34 % a 27 % estando conectada. La laptop limitó su rendimiento y las mediciones de tiempo dejaron de ser comparables.
 
 **Pendiente con René (en este orden, con la laptop cargada, fría y sin Chrome abierto):**

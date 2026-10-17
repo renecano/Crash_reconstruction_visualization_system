@@ -115,9 +115,8 @@ declare global {
     /**
      * Interruptores de diagnóstico para las evaluaciones (`eval/`); la página nunca los pone.
      * `sombraLuna`: dibuja la sombra de la luna de noche, para medir que no se ve.
-     * `texturasSinCorte`: lee las texturas del entorno a toda distancia (sin corte por mip).
      */
-    __croquisDiag?: { sombraLuna?: boolean; texturasSinCorte?: boolean };
+    __croquisDiag?: { sombraLuna?: boolean };
     /** `performance.now()` del primer cuadro listo (E6: tiempo hasta interactivo). */
     __croquisReadyAt?: number;
   }
