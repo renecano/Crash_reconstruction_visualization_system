@@ -25,7 +25,10 @@ import {
   MeshPhysicalMaterial,
   MeshStandardMaterial,
   PlaneGeometry,
+  Object3D,
   RingGeometry,
+  SpotLight,
+  type Texture,
   Vector3,
 } from "three";
 import { attribute, color, float, mix } from "three/tsl";
@@ -43,6 +46,17 @@ import {
   type TimedQuad,
 } from "./ground-marks";
 import { buildRoadGeometry, type Mesh2D } from "./road-geometry";
+import { asphaltMaterial, type AsphaltMaterial } from "./road-surface";
+import {
+  HEADLIGHT_HALF_ANGLE_DEG,
+  HEADLIGHT_INTENSITY,
+  HEADLIGHT_RANGE_M,
+  headlightsOn,
+  planNightLights,
+  STREETLIGHT_HALF_ANGLE_DEG,
+  STREETLIGHT_INTENSITY,
+  STREETLIGHT_RANGE_M,
+} from "./night-lights";
 import { rollsOver } from "./rollover-scene";
 import { sunShadowFrame, triangleInShadow, type SunShadowFrame } from "./shadow-frame";
 import { phaseAt, samplePerson, sampleVehicle, bracket } from "./sample";
@@ -57,7 +71,7 @@ import {
 export interface SceneGraphOptions {
   quality: QualityProfile;
   env: Pick<EnvironmentSettings, "night" | "wet" | "groundColor" | "streetLights"> &
-    Partial<Pick<EnvironmentSettings, "lightDirection">>;
+    Partial<Pick<EnvironmentSettings, "lightDirection" | "surface">>;
 }
 
 export interface VehicleNode {
@@ -92,6 +106,8 @@ export interface SceneGraph {
   addUpdater(fn: (t: number) => void, opts?: { after?: boolean }): void;
   /** Último instante aplicado. */
   readonly time: number;
+  /** Mapa de entorno (cielo horneado) para que el piso mojado lo refleje; null lo quita. */
+  setReflections(env: Texture | null): void;
   dispose(): void;
   stats: { meshes: number; triangles: number };
 }
@@ -111,12 +127,12 @@ function std(
   return m;
 }
 
-function sceneMaterials(opts: SceneGraphOptions) {
+function sceneMaterials(opts: SceneGraphOptions, asphalt: AsphaltMaterial) {
   const wet = opts.env.wet;
-  const night = opts.env.night;
   return {
-    asphalt: std(wet ? "#26292c" : "#3b3e42", wet ? 0.32 : 0.92),
-    sidewalk: std("#a19f99", 0.95),
+    asphalt: asphalt.material,
+    // La banqueta mojada se oscurece un poco y pierde rugosidad, sin llegar a reflejar.
+    sidewalk: std(wet ? "#85837d" : "#a19f99", wet ? 0.6 : 0.95),
     white: std("#ecebe4", 0.6),
     yellow: std("#e3b21c", 0.6),
     crosswalk: std("#f2f2ee", 0.6),
@@ -131,8 +147,8 @@ function sceneMaterials(opts: SceneGraphOptions) {
     signRed: std("#b3261e", 0.5),
     dark: std("#2a2c2e", 0.6),
     lamp: std("#fff3cf", 0.4, 0, {
-      emissive: new Color(night ? "#ffe2a0" : "#000000"),
-      emissiveIntensity: night ? 2 : 0,
+      emissive: new Color(opts.env.streetLights ? "#ffe2a0" : "#000000"),
+      emissiveIntensity: opts.env.streetLights ? 2 : 0,
     }),
     impact: std("#f0b429", 0.5, 0, { transparent: true, opacity: 0.9, side: DoubleSide }),
     person: std("#b7bcc6", 0.8),
@@ -331,7 +347,9 @@ export function buildSceneGraph(
   resultado: Resultado,
   opts: SceneGraphOptions,
 ): SceneGraph {
-  const mats = sceneMaterials(opts);
+  // Sin estado del piso (pruebas y llamadas antiguas): mojado o seco según `wet`.
+  const asphalt = asphaltMaterial(opts.env.surface ?? (opts.env.wet ? "mojado" : "seco"));
+  const mats = sceneMaterials(opts, asphalt);
   const root = new Group();
   root.name = "escena";
   const disposables: { dispose(): void }[] = Object.values(mats);
@@ -429,6 +447,10 @@ export function buildSceneGraph(
   }
   root.add(evGroup);
 
+  // Luces reales de noche (F8b): qué vehículos y postes llevan foco, según el nivel de calidad.
+  const nightPlan = planNightLights(spec, resultado, opts.env, opts.quality.level);
+  const headlightSpots: { vehicleId: string; spot: SpotLight }[] = [];
+
   // Objetos del entorno.
   const objGroup = new Group();
   objGroup.name = "objetos";
@@ -477,6 +499,23 @@ export function buildSceneGraph(
       lamp.position.set(1.5, h - 0.4, 0);
       for (const m of [pole, arm]) m.castShadow = true;
       g.add(pole, arm, lamp);
+      if (nightPlan.poles.includes(o.id)) {
+        const spot = new SpotLight(
+          "#ffe7c2",
+          STREETLIGHT_INTENSITY,
+          STREETLIGHT_RANGE_M,
+          (STREETLIGHT_HALF_ANGLE_DEG * Math.PI) / 180,
+          0.6,
+          2,
+        );
+        spot.name = "luz_poste";
+        spot.position.copy(lamp.position);
+        const target = new Object3D();
+        target.position.set(lamp.position.x, 0, 0);
+        spot.target = target;
+        g.add(spot, target);
+        disposables.push(spot);
+      }
     } else if (o.tipo === "vehiculo_estacionado") {
       const clase = o.clase_vehiculo?.valor ?? "sedan_compacto";
       const t = profileFor(clase);
@@ -487,7 +526,7 @@ export function buildSceneGraph(
         wheelbase: 0.6 * (largo ?? 4.4),
       };
       const parked = buildVehicle(clase, dims);
-      const vm = vehicleMaterials(o.color?.hex ?? "#8a8d91", opts.env.night);
+      const vm = vehicleMaterials(o.color?.hex ?? "#8a8d91", false);
       disposables.push(...Object.values(vm));
       parked.traverse((m) => {
         if (m instanceof Mesh) m.material = vm[m.userData.role as PartRole] ?? vm.plastico;
@@ -591,7 +630,10 @@ export function buildSceneGraph(
     const group = buildVehicle(v.clase, dims);
     group.name = `vehiculo_${v.id}`;
     group.userData.id = v.id;
-    const vm = vehicleMaterials(glyphs.get(v.id)?.colorHex ?? "#9aa0a6", opts.env.night);
+    const vm = vehicleMaterials(
+      glyphs.get(v.id)?.colorHex ?? "#9aa0a6",
+      opts.env.night && headlightsOn(spec, v.id),
+    );
     disposables.push(...Object.values(vm));
     group.traverse((m) => {
       if (m instanceof Mesh) {
@@ -613,6 +655,32 @@ export function buildSceneGraph(
       const obj = group.getObjectByName(n);
       return obj instanceof Group ? [{ obj, radius: obj.userData.radius as number }] : [];
     });
+    if (nightPlan.vehicles.includes(v.id)) {
+      // Foco al frente, entre los faros, apuntando al piso unos 25 m adelante.
+      const lights = ["headlight_l", "headlight_r", "headlight_c"]
+        .map((n) => group.getObjectByName(n))
+        .filter((o): o is Object3D => o !== undefined);
+      const at = new Vector3();
+      for (const l of lights) at.add(l.position);
+      if (lights.length > 0) at.divideScalar(lights.length);
+      else at.set(dims.length / 2, 0.7, 0);
+      const spot = new SpotLight(
+        "#fff4dc",
+        HEADLIGHT_INTENSITY,
+        HEADLIGHT_RANGE_M,
+        (HEADLIGHT_HALF_ANGLE_DEG * Math.PI) / 180,
+        0.4,
+        2,
+      );
+      spot.name = "luz_faros";
+      spot.position.copy(at);
+      const target = new Object3D();
+      target.position.set(at.x + 25, 0, at.z);
+      spot.target = target;
+      group.add(spot, target);
+      disposables.push(spot);
+      headlightSpots.push({ vehicleId: v.id, spot });
+    }
     root.add(group);
     vehicles.push({
       id: v.id,
@@ -741,6 +809,10 @@ export function buildSceneGraph(
         ((n.distance[i + 1] ?? n.distance[i] ?? 0) - (n.distance[i] ?? 0)) * f;
       for (const w of n.wheels) w.obj.rotation.z = -s / w.radius;
       n.rig.update(t);
+      for (const h of headlightSpots) {
+        if (h.vehicleId === n.id)
+          h.spot.intensity = HEADLIGHT_INTENSITY * n.rig.workingHeadlights(t);
+      }
     }
     for (const n of persons) {
       const data = personData.get(n.id);
@@ -800,6 +872,9 @@ export function buildSceneGraph(
     },
     get time() {
       return lastT;
+    },
+    setReflections(env: Texture | null) {
+      asphalt.setReflections(env);
     },
     dispose() {
       root.traverse((o) => {

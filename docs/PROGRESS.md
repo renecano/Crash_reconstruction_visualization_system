@@ -1165,3 +1165,49 @@ Rama `feat/f7-fase-extraccion`. ADR 0019.
   - Vercel y Upstash están conectados: https://croquis-sage.vercel.app extrae con Claude, con tope de $2 al día.
 - **Cómo probarlo:** escribe en la app un relato con marcas ("después del golpe la moto se fue arrastrando como seis metros") y revisa la fase en la evidencia del croquis. Para la medición, `uv run croquis-eval e1-extraction --split dev --prompt extraccion_v3`.
 - **Qué necesito de ti:** nada nuevo. Siguen pendientes la licencia MIT y el nombre, y las personas para E9.
+
+## F8 — Entorno completo (plan)
+
+Rama `feat/f8-entorno` y ramas por subfase. Criterio de aceptación (PLAN §13): una escena en una intersección real de Toluca generada desde OSM, con atribución, y capturas de clima.
+
+Estado de partida (inventario del 2026-10-16):
+
+- **Ya existe:** el sol según fecha, hora y lugar; la niebla exponencial; el piso oscuro y menos rugoso con lluvia; las luminarias que brillan de noche; y las banquetas, líneas y pasos peatonales.
+- **Falta:**
+  - OSM;
+  - la atribución;
+  - las partículas de lluvia y granizo;
+  - el piso mojado según `estado_superficie`. Hoy `poste` dice mojado y sale seco;
+  - la niebla según `visibilidad`;
+  - las luces reales de alumbrado y faros;
+  - las fases del semáforo y una malla por cada señal;
+  - las guarniciones, el camellón elevado y las líneas como dispositivo;
+  - los árboles instanciados;
+  - las texturas PBR;
+  - las capturas de clima.
+
+Subfases, cada una con su PR, pruebas y E6 cuando toque el visor:
+
+1. **F8a, clima y superficie:**
+   - piso mojado desde `estado_superficie`;
+   - niebla según `visibilidad`;
+   - lluvia y granizo como partículas por nivel de calidad;
+   - parámetros de URL `clima` e `iluminacion` para las capturas;
+   - capturas de niebla, granizo, lluvia de día y noche sin alumbrado;
+   - ADR 0020.
+2. **F8b, alumbrado y faros con luz real:** luminarias con tope por nivel de calidad, faros según `luces_encendidas` y estacionados apagados. Se vuelve a medir E6.
+3. **F8c, dispositivos y vía completa:**
+   - semáforo con la luz de su fase en el tiempo;
+   - una malla por cada señal;
+   - guarniciones, camellón elevado y líneas;
+   - árboles instanciados.
+4. **F8d, vía desde OpenStreetMap:**
+   - Overpass a geometría para `ubicacion_real`;
+   - escena de una intersección real de Toluca;
+   - atribución ODbL en pantalla y registro en `data/SOURCES.md`.
+5. **F8e, texturas y cierre:** texturas PBR CC0 de Poly Haven en `assets/ASSETS.md`, E6 con todo y el resumen de la fase.
+
+Riesgos:
+
+- **Presupuesto E6:** WebGL alta queda en 30.3 fps en `nocturno_lluvia`. Las luces y partículas se limitan por nivel de calidad y se vuelve a medir.
+- **Overpass en producción:** respuesta externa y no determinista. Se decide en el ADR de F8d.
