@@ -12,6 +12,7 @@ from __future__ import annotations
 
 import json
 import random
+import statistics
 from pathlib import Path
 from typing import Any
 
@@ -133,6 +134,32 @@ def _lsq_cases(rng: random.Random) -> list[dict[str, Any]]:
     return cases
 
 
+def _random_cases() -> list[dict[str, Any]]:
+    """`randrange` (enteros, exactos) y `gauss` de CPython con varias semillas. `gauss` usa cos, sin
+    y log, que pueden diferir en el último bit entre bibliotecas matemáticas (MSVC, glibc, V8): se
+    guarda con 12 cifras significativas para que el archivo sea el mismo en cualquier sistema."""
+    cases: list[dict[str, Any]] = []
+    for seed in (0, 1, 12345, 2**40 + 7):
+        rng = random.Random(seed)
+        draws: dict[str, list[int]] = {}
+        for n in (1, 2, 3, 10, 300, 1000):
+            draws[str(n)] = [rng.randrange(n) for _ in range(25)]
+        gauss = [float(f"{rng.gauss(0.0, 1.0):.12g}") for _ in range(25)]
+        mixed = [float(f"{rng.uniform(-1.0, 1.0) + rng.gauss(2.0, 0.5):.12g}") for _ in range(10)]
+        cases.append({"seed": seed, "randrange": draws, "gauss": gauss, "mixto": mixed})
+    return cases
+
+
+def _statistics_cases(rng: random.Random) -> list[dict[str, Any]]:
+    """`statistics.quantiles(..., method="inclusive")` y `statistics.median` (aritmética pura)."""
+    cases: list[dict[str, Any]] = []
+    for size in (1, 2, 3, 5, 9, 10, 11, 37, 200):
+        data = [rng.uniform(-50.0, 150.0) for _ in range(size)]
+        q = statistics.quantiles(data, n=10, method="inclusive") if size >= 1 else []
+        cases.append({"data": data, "quantiles10": q, "median": statistics.median(data)})
+    return cases
+
+
 def build() -> dict[str, Any]:
     rng = random.Random(SEED)
     return {
@@ -142,6 +169,8 @@ def build() -> dict[str, Any]:
         "seed": SEED,
         "linalg": _linalg_cases(rng),
         "lsq": _lsq_cases(rng),
+        "random": _random_cases(),
+        "statistics": _statistics_cases(rng),
     }
 
 

@@ -7,6 +7,8 @@ import { readFileSync } from "node:fs";
 import { describe, expect, it } from "vitest";
 import { lstsq, matmul, pinv, solveSpd, svd, transpose } from "./linalg";
 import { leastSquaresSoftL1, softL1Cost } from "./lsq";
+import { median, quantilesInclusive } from "./pymath";
+import { PyRandom } from "./pyrandom";
 
 interface LinalgCase {
   a?: number[][];
@@ -33,7 +35,12 @@ interface LsqCase {
 
 const data = JSON.parse(
   readFileSync(new URL("../fixtures/numerics.json", import.meta.url), "utf-8"),
-) as { linalg: LinalgCase[]; lsq: LsqCase[] };
+) as {
+  linalg: LinalgCase[];
+  lsq: LsqCase[];
+  random: { seed: number; randrange: Record<string, number[]>; gauss: number[]; mixto: number[] }[];
+  statistics: { data: number[]; quantiles10: number[]; median: number }[];
+};
 
 /** Diferencias bit a bit (`Object.is`, con +0 y −0 iguales) entre dos estructuras numéricas. */
 function bitDiffs(got: unknown, want: unknown, path = ""): string[] {
@@ -133,5 +140,40 @@ describe("optimizador propio: mismo camino que Python", () => {
   it("costo soft_l1", () => {
     expect(softL1Cost([0])).toBe(0);
     expect(softL1Cost([1])).toBeCloseTo(Math.SQRT2 - 1, 15);
+  });
+});
+
+describe("random de CPython: randrange y gauss", () => {
+  it("randrange da los mismos enteros", () => {
+    for (const c of data.random) {
+      const rng = new PyRandom(BigInt(c.seed));
+      for (const [n, want] of Object.entries(c.randrange)) {
+        expect(want.map(() => rng.randrange(Number(n)))).toEqual(want);
+      }
+    }
+  });
+
+  it("gauss (y su valor guardado) coincide a 12 cifras con CPython", () => {
+    const close = (got: number, want: number) =>
+      Math.abs(got - want) <= 1e-11 * Math.max(1, Math.abs(want));
+    for (const c of data.random) {
+      const rng = new PyRandom(BigInt(c.seed));
+      for (const n of Object.keys(c.randrange))
+        for (let k = 0; k < 25; k++) rng.randrange(Number(n));
+      const gauss = c.gauss.map(() => rng.gauss(0, 1));
+      gauss.forEach((g, i) => expect(close(g, c.gauss[i]!)).toBe(true));
+      const mixed = c.mixto.map(() => rng.uniform(-1, 1) + rng.gauss(2, 0.5));
+      mixed.forEach((g, i) => expect(close(g, c.mixto[i]!)).toBe(true));
+    }
+  });
+});
+
+describe("statistics de CPython", () => {
+  it("quantiles(n=10, inclusive) y median dan los mismos bits", () => {
+    const bad = data.statistics.flatMap((c, i) => [
+      ...bitDiffs(quantilesInclusive(c.data, 10), c.quantiles10, `${i}/q`),
+      ...bitDiffs(median(c.data), c.median, `${i}/med`),
+    ]);
+    expect(bad).toEqual([]);
   });
 });

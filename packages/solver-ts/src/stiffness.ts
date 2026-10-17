@@ -3,9 +3,10 @@
  * `croquis_solver.stiffness`; tabla escrita por E2 desde pruebas de NHTSA). Sin datos para la clase
  * o la zona se usa el respaldo genérico marcado `supuesto`.
  *
- * El muestreo de rigidez (bootstrap) lo usa la inversión, que llega al port TS en F9.
+ * El muestreo de rigidez (bootstrap) lo usa la inversión (F9).
  */
 import { Stiffness } from "./crash3";
+import type { PyRandom } from "./pyrandom";
 import table from "./data/stiffness_classes.json";
 
 export const FALLBACK = Stiffness.fromKgfCm(55.0, 36.0);
@@ -53,6 +54,25 @@ export function stiffnessFor(clase: string, zona = "frontal"): StiffnessEntry {
     nota: `Sin coeficientes medidos para ${clase}/${zona}; se usa el respaldo genérico.`,
     samples: [],
   };
+}
+
+/**
+ * `n` coeficientes plausibles para la clase (port de `sample_stiffness`): bootstrap de sus pruebas
+ * o, sin pruebas, el respaldo con la pendiente escalada en `FALLBACK_SLOPE_RANGE`.
+ */
+export function sampleStiffness(entry: StiffnessEntry, rng: PyRandom, n: number): Stiffness[] {
+  const out: Stiffness[] = [];
+  if (entry.samples.length > 0) {
+    for (let i = 0; i < n; i++) out.push(entry.samples[rng.randrange(entry.samples.length)]!);
+    return out;
+  }
+  const lo = Math.log(FALLBACK_SLOPE_RANGE[0]);
+  const hi = Math.log(FALLBACK_SLOPE_RANGE[1]);
+  for (let i = 0; i < n; i++) {
+    const s = Math.exp(rng.uniform(lo, hi));
+    out.push(new Stiffness(entry.stiffness.a * s, entry.stiffness.b * s * s));
+  }
+  return out;
 }
 
 export function zonaFromCdcSide(lado: string): string {
