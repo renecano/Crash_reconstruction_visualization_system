@@ -23,6 +23,7 @@ Reglas de trabajo: `CLAUDE.md`. Especificación: `PLAN.md`.
 | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------- | ---------------------------------- |
 | `ANTHROPIC_API_KEY`                                                                                                                                                                                                                 | F6 (extracción con Claude) y E1. CI usa respuestas grabadas, así que no bloquea hasta F6. | Recibida 2026-10-14 (`.env.local`) |
 | Confirmar licencia MIT del código y el nombre _Croquis_                                                                                                                                                                             | Se usan los valores por defecto de PLAN §16 (ADR 0002)                                    | Usando default                     |
+| Computadora de demo (GPU potente) para medir alta y ultra                                                                                                                                                                           | Meta de PLAN §7.8: ≥ 60 fps en alta o ultra en todas las escenas canónicas (ADR 0026)     | Pendiente                          |
 | Pruebas con ≥ 5 personas reales (E9)                                                                                                                                                                                                | F11                                                                                       | Pendiente                          |
 | Confirmar que el repositorio remoto correcto es `renecano/Crash_reconstruction_visualization_system` (público, lo creó René vacío el 2026-10-10). Se eligió por nombre y fecha; se puede cambiar con `git remote set-url origin …`. | Push y CI                                                                                 | Asumido y ya en uso                |
 
@@ -1249,7 +1250,15 @@ Las ramas van una encima de otra y se fusionan en este orden, cada una con su PR
 - **Segunda corrida de E6 (2026-10-17, René, terminal aparte):** no cumple. Media queda en 55.7 fps y alta en 27.3, las dos en `nocturno_lluvia` (`eval/results/e6_performance_f8_corte_mip.json`). Las escenas con más suelo bajaron aunque el equipo rindió más: el corte por mip las hizo más lentas en la GPU de referencia y se revirtió (ADR 0024 y 0025).
 - **Por qué no hay números nuevos:** durante la sesión la batería bajó de 34 % a 27 % estando conectada. La laptop limitó su rendimiento y las mediciones de tiempo dejaron de ser comparables.
 
-**Pendiente con René (en este orden, con la laptop cargada, fría y sin Chrome abierto):**
+**Cambio de criterio de René (2026-10-17, ADR 0026):**
+
+- **La laptop es el piso, no el techo.** Hay cuatro niveles (baja, media, alta y ultra), elegidos por la GPU y con cambio manual.
+- **Alta y ultra:** máxima calidad visual, sin recortes por la laptop.
+- **Baja y media:** se ajustan a la laptop (media ≥ 60 y baja ≥ 30 fps), primero optimizando sin cambiar el aspecto.
+- **E6:** mediana de 3 repeticiones, re-medición si hay tirones externos y condiciones de la prueba registradas.
+- **Tercera corrida de E6 (sin el corte por mip):** no se usa como resultado. WebGPU en alta dio repeticiones contradictorias (~20 contra ~65 fps), y WebGL 2 en media tuvo 13–15 tareas largas por escena, contra 0–4 en la corrida anterior (`eval/results/e6_performance_f8_tercera.json`).
+
+**Siguiente paso (rama `feat/f8f-calidad`, encima de F8e):** E6 con el protocolo nuevo; nivel ultra con elección por GPU; alta y ultra completos; luego, optimizaciones de media sin cambio visible, medidas antes y después.
 
 1. `pnpm --filter @croquis/web build; node eval/e6_performance.mjs` (~70 min) en `feat/f8e-texturas`. Se corre en una terminal de PowerShell aparte, fuera de Claude Code: dentro de Claude Code, un proceso largo en segundo plano se detiene cuando falta memoria.
 2. Si `nocturno_lluvia` sigue por debajo de 60 fps en media, decidir con René qué entra en cada nivel de calidad. Es una decisión de alcance y no se toma sin él.

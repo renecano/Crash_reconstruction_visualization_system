@@ -309,11 +309,16 @@ Comparar dos o más hipótesis (por ejemplo, 40 vs 60 km/h) con vehículos "fant
 
 Vista cenital editable sincronizada con el 3D: arrastrar vehículos, rotar, dibujar trayectorias, colocar árboles y señales. Exporta un croquis tipo parte de tránsito (SVG/PNG/PDF).
 
-### 7.8 Presupuesto de rendimiento (medido en la laptop de René)
+### 7.8 Presupuesto de rendimiento
 
-- Escena de 2 vehículos, 2 personas, intersección con árboles: ≥ 60 fps a 1080p en GPU integrada en calidad "media"; ≥ 30 fps en "alta".
+**La laptop de René es el piso, no el techo.** La calidad visual de los niveles altos no se limita para que quepa en la laptop; las demos se harán en una computadora más potente.
+
+- Niveles: baja, media, alta y ultra, elegidos automáticamente según la GPU, con cambio manual.
+- **Alta y ultra** se diseñan para la máxima calidad visual (luces reales, texturas completas, sombras, efectos). Nunca se les quita nada por el rendimiento de la laptop.
+- **Baja y media** son las que se ajustan para que la app sea usable en equipos modestos como la laptop (GPU integrada, 8 GB): media ≥ 60 fps y baja ≥ 30 fps a 1080p en la escena de referencia (2 vehículos, 2 personas, intersección con árboles). Antes de quitar efectos en estos niveles se optimiza sin cambiar el aspecto (culling de luces, luz horneada o proyectada, LOD, mipmaps, instancing).
+- Meta en la computadora de demo: ≥ 60 fps en alta o ultra en todas las escenas canónicas. Se mide cuando René tenga esa computadora (mientras, queda en "Bloqueado — necesita a René").
 - Carga inicial de la demo ≤ 8 MB antes de interactuar; assets restantes en streaming.
-- Niveles de calidad automáticos según GPU; respaldo WebGL medido.
+- Respaldo WebGL medido.
 
 ### 7.9 Exportación
 
@@ -332,7 +337,7 @@ Cada evaluación tiene script en `eval/`, salida en `eval/results/` y se compara
 | E3 | Reconstrucción de casos reales: ΔV estimado vs ΔV del EDR | NHTSA CISS (casos con descarga de EDR) | ΔV reconstruido por CISS con WinSmash |
 | E4 | Proyección de peatón: velocidad estimada y distancia | Ecuaciones de Searle y Wood y datos publicados accesibles | Fórmula de Searle sola |
 | E5 | Deformación contra autos reales: (a) se reproduce cada prueba de choque en Croquis y se compara el perfil de aplastamiento de la malla con el medido en el vehículo después de la prueba; (b) lo mismo con casos reales de CISS (aplastamiento C1–C6 medido por los investigadores); (c) comparación visual lado a lado contra las fotos del vehículo | NHTSA Vehicle Crash Test Database (reportes con fotos y medidas de aplastamiento posteriores a la prueba) y NHTSA CISS | Deformación lineal simple y deformación uniforme en la zona de impacto |
-| E6 | Rendimiento: fps, tiempo de carga, memoria | Escenas canónicas en la laptop de René | Presupuesto §7.8 |
+| E6 | Rendimiento: fps (mediana de 3 repeticiones), tiempo de carga, memoria, por nivel de calidad, con las condiciones de la prueba registradas | Escenas canónicas en la laptop de René (baja/media) y en la computadora de demo (alta/ultra) | Presupuesto §7.8 |
 | E7 | Paridad Python ↔ TS | Fixtures del solver | Tolerancia documentada |
 | E8 | Determinismo | Repeticiones por semilla en distintos navegadores | Igualdad exacta |
 | E9 | Usabilidad: tiempo hasta la primera reconstrucción, correcciones necesarias, SUS | ≥ 5 personas reales contando un percance propio o ficticio | — |
