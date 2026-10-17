@@ -10,9 +10,11 @@ export interface LegendProps {
   inputHash?: string;
   /** "clara" para fondos oscuros (sobre el visor 3D). */
   tone?: "normal" | "clara";
+  /** Atribución de los datos del mapa (ODbL, ADR 0023) cuando la escena trae `red_vial`. */
+  atribucion?: string;
 }
 
-export function Legend({ seed, inputHash, tone = "normal" }: LegendProps) {
+export function Legend({ seed, inputHash, tone = "normal", atribucion }: LegendProps) {
   return (
     <p
       role="note"
@@ -24,6 +26,11 @@ export function Legend({ seed, inputHash, tone = "normal" }: LegendProps) {
       {LEGEND_TEXT}
       {seed !== undefined ? <span className="ml-2 font-mono">semilla {String(seed)}</span> : null}
       {inputHash ? <span className="ml-2 font-mono">hash {inputHash.slice(0, 12)}</span> : null}
+      {atribucion ? (
+        <span className="block text-xs" data-testid="atribucion-mapa">
+          {atribucion}
+        </span>
+      ) : null}
     </p>
   );
 }

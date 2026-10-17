@@ -33,3 +33,6 @@ packages/extraction/grabaciones/
 packages/extraction/src/generated/
 packages/solver-ts/src/data/
 packages/solver-ts/fixtures/
+
+# Extractos crudos de OSM: se verifican por SHA-256, deben quedar byte a byte.
+data/osm/*.overpass.json

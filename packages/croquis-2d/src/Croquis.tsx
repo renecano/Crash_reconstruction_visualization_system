@@ -328,6 +328,18 @@ export function Croquis({
         );
       })}
       <NorthArrow vp={vp} />
+      {shownLayout.mapa ? (
+        <text
+          data-testid="atribucion-osm"
+          x={m(1)}
+          y={vp.viewBox.height - m(2.3)}
+          fontSize={m(0.9)}
+          fill="#333"
+          fontFamily="system-ui, sans-serif"
+        >
+          {shownLayout.mapa.atribucion}
+        </text>
+      ) : null}
       <text
         x={m(1)}
         y={vp.viewBox.height - m(0.8)}
@@ -348,6 +360,30 @@ function sub(a: Vec2, b: Vec2): Vec2 {
 function Road({ layout, vp }: { layout: ReturnType<typeof sceneLayout>; vp: Viewport }) {
   const m = (v: number) => v * vp.scale;
   const P = (p: Vec2) => worldToSvg(vp, p);
+  if (layout.mapa) {
+    // Calles del mapa (ADR 0023): cada una como trazo de su ancho, con uniones redondas.
+    return (
+      <g data-testid="road" data-fuente="mapa">
+        {layout.mapa.vias.map((v, i) => (
+          <polyline
+            key={`${v.id}-${i}`}
+            data-testid={`via-${v.id}`}
+            points={v.puntos
+              .map((p) => {
+                const q = P(p);
+                return `${q.x},${q.y}`;
+              })
+              .join(" ")}
+            fill="none"
+            stroke={ROAD_FILL}
+            strokeWidth={m(v.ancho)}
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          />
+        ))}
+      </g>
+    );
+  }
   return (
     <g data-testid="road">
       {layout.road.arcs.map((a, i) => {

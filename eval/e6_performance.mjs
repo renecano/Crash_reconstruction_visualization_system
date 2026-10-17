@@ -43,6 +43,7 @@ const ALL_SCENES = [
   "volcadura",
   "nocturno_lluvia",
   "glorieta",
+  "interseccion_toluca",
 ];
 /** Presupuesto de PLAN §7.8. */
 const BUDGET = { fpsMedia: 60, fpsAlta: 30, initialLoadMB: 8 };

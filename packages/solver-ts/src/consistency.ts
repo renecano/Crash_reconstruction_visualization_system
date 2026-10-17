@@ -5,6 +5,7 @@
  * y velocidad contra evidencia necesitan Monte Carlo o la inversión, que llegan al port en F9.
  * Los mensajes son en lenguaje llano y nunca atribuyen culpa.
  */
+import { outsideRedVialM, RED_VIAL_DEFAULTS } from "@croquis/scene-schema";
 import { pedestrianFriction, tireFriction } from "./friction";
 import { G } from "./models";
 import { vehicleSpeedRangeFromThrow } from "./pedestrian";
@@ -174,6 +175,30 @@ export function checkThrow(spec: Json): Inconsistency[] {
 }
 
 /** Las banderas que no muestrean, en el orden de la referencia (`sampled=False`). */
+/** Con calles del mapa (ADR 0023): cada vehículo debe arrancar sobre la calzada de OSM. */
+export function checkMap(spec: Json): Inconsistency[] {
+  const lugar = spec.lugar as Json;
+  const red = lugar.red_vial as Json | undefined;
+  if (!red) return [];
+  const lane = lugar.ancho_carril as Json | undefined;
+  const laneM = lane ? lenM(lane) : undefined;
+  const vias = red.vias as Parameters<typeof outsideRedVialM>[1];
+  const out: Inconsistency[] = [];
+  for (const v of spec.vehiculos as Json[]) {
+    const pose = v.posicion_inicial as Json | undefined;
+    if (!pose) continue;
+    const fuera = outsideRedVialM({ x: Number(pose.x), y: Number(pose.y) }, vias, laneM);
+    if (fuera > RED_VIAL_DEFAULTS.tolerancia_fuera_m) {
+      out.push({
+        codigo: "fuera_de_la_via_del_mapa",
+        mensaje: `La posición inicial de ${name(v)} queda a unos ${pyFixed(fuera, 0)} m de la calle más cercana del mapa. ¿Puedes revisar dónde estaba?`,
+        datos: { vehiculo: str(v.id), distancia_m: fuera },
+      });
+    }
+  }
+  return out;
+}
+
 export function checkConsistencyBasic(spec: Json): Inconsistency[] {
-  return [...checkStopped(spec), ...checkMarks(spec), ...checkThrow(spec)];
+  return [...checkStopped(spec), ...checkMarks(spec), ...checkThrow(spec), ...checkMap(spec)];
 }

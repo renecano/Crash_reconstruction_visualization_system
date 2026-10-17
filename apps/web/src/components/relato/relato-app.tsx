@@ -239,7 +239,7 @@ export function RelatoApp({ fetcher }: RelatoAppProps) {
                 Descargar EscenaSpec
               </button>
             </div>
-            <Legend seed={spec.meta.semilla} />
+            <Legend seed={spec.meta.semilla} atribucion={spec.lugar.red_vial?.atribucion} />
           </>
         ) : (
           <p className="text-neutral-600 dark:text-neutral-400">

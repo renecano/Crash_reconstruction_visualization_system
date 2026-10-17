@@ -1,5 +1,5 @@
 /**
- * Paridad E7: el solver TS reconstruye las diez escenas canónicas y su resultado coincide con el
+ * Paridad E7: el solver TS reconstruye las escenas canónicas y su resultado coincide con el
  * de la referencia Python (`packages/scene-schema/fixtures/resultados`) con la misma tolerancia de
  * `croquis-solver reconstruct --check` (relativa 1e-6, absoluta 1e-5; textos y booleanos exactos).
  * Los bloques de Monte Carlo, inversión y consistencia llegan al port en F9 y aquí no se comparan.

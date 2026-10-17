@@ -26,6 +26,14 @@ export const MIGRATIONS: Migration[] = [
     // Sin el campo, las marcas conservan el significado de 1.0.0.
     aplicar: (doc) => doc,
   },
+  {
+    desde: "1.1.0",
+    hasta: "1.2.0",
+    descripcion:
+      "fuente 'mapa' y lugar.red_vial opcional (calles de OSM); los documentos no cambian",
+    // Campos nuevos opcionales: ningún documento cambia de significado.
+    aplicar: (doc) => doc,
+  },
 ];
 
 export interface MigrationResult {

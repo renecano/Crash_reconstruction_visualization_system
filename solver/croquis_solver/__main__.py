@@ -17,7 +17,7 @@ def main(argv: list[str] | None = None) -> int:
     sub = parser.add_subparsers(dest="command", required=True)
     rec = sub.add_parser("reconstruct", help="Reconstruye escenas")
     rec.add_argument("escena", nargs="?", help="Nombre de una escena canónica")
-    rec.add_argument("--all", action="store_true", help="Las 10 escenas canónicas → resultados/")
+    rec.add_argument("--all", action="store_true", help="Las escenas canónicas → resultados/")
     rec.add_argument("--check", action="store_true", help="Falla si los resultados no están al día")
     rec.add_argument("--json", type=Path, help="EscenaSpec en un archivo JSON")
     args = parser.parse_args(argv)

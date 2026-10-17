@@ -4,6 +4,8 @@ import copy
 import re
 from typing import Any
 
+import pytest
+
 from croquis_scene_schema import load_fixture
 from croquis_solver import consistency as cons
 from croquis_solver.reconstruct import reconstruct
@@ -153,3 +155,34 @@ def test_escenas_canonicas_sin_banderas() -> None:
     # La glorieta también queda limpia, pero su inversión tarda; la cubre la prueba de resultados.
     for name in ("alcance", "lateral_interseccion", "nocturno_lluvia", "poste"):
         assert _codes(load_fixture(name)) == [], name
+
+
+def test_vehiculo_fuera_de_las_calles_del_mapa() -> None:
+    """ADR 0023: con red vial, un vehículo que arranca lejos de toda calle del mapa se pregunta."""
+    spec = load_fixture("alcance")
+    assert cons.check_map(spec) == []  # sin red vial no hay revisión
+    xs = [float(v["posicion_inicial"]["x"]) for v in spec["vehiculos"]]
+    ys = [float(v["posicion_inicial"]["y"]) for v in spec["vehiculos"]]
+    y0 = sum(ys) / len(ys)
+    spec["lugar"]["red_vial"] = {
+        "fuente_datos": "OpenStreetMap",
+        "licencia": "ODbL-1.0",
+        "atribucion": "Contiene información de OpenStreetMap (ODbL)",
+        "consultado": "2026-10-16T18:30:24Z",
+        "vias": [
+            {
+                "id_osm": 1,
+                "tipo": "secondary",
+                "carriles": 4,
+                "puntos": [{"x": min(xs) - 50, "y": y0}, {"x": max(xs) + 50, "y": y0}],
+            }
+        ],
+    }
+    assert cons.check_map(spec) == []
+    lejos = spec["vehiculos"][0]
+    lejos["posicion_inicial"]["y"] = y0 + 30
+    flags = cons.check_map(spec)
+    assert [f.codigo for f in flags] == ["fuera_de_la_via_del_mapa"]
+    lane = float(spec["lugar"]["ancho_carril"]["valor"])
+    assert flags[0].datos["distancia_m"] == pytest.approx(30 - 2 * lane)
+    assert "¿Puedes revisar dónde estaba?" in flags[0].mensaje
