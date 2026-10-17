@@ -57,6 +57,7 @@ describe("texturas del entorno (F8e)", () => {
     expect(t.concreto?.rough.wrapS).toBe(RepeatWrapping);
     expect(t.asfalto?.meanRgb).toEqual([0.02, 0.016, 0.014]);
     expect(t.asfalto?.meanRough).toBe(0.8);
+    expect(t.asfalto?.sizePx).toBe(512);
   });
 
   it("la textura conserva el color calibrado: promedio × ganancia = color del material", async () => {

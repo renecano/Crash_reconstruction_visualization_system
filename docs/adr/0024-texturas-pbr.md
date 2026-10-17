@@ -30,6 +30,11 @@
 5. **Calidad.** Solo en calidad media y alta; en baja no se descargan.
    - **Captura lista:** `__croquisReady` espera a que las texturas estén aplicadas o descartadas, para que las capturas de referencia sean deterministas.
    - **Si falla la carga** (p. ej. sin red): se registra el error y quedan los colores lisos; el visor no se rompe.
+6. **Corte por nivel de mip (E6, ADR 0025).** El suelo cubre casi toda la pantalla y se ve rasante, así que leer sus tres mapas en cada píxel es de lo más caro del cuadro.
+   - **Corte:** cada píxel calcula, con derivadas fuera de cualquier rama, cuántos texeles cubre. Desde 2^4.5 texeles la textura se funde con su promedio y desde 2^6 ya no se lee.
+   - **Por qué no se nota:** el promedio es justo el color calibrado (decisión 3), que es a lo que tiende la textura filtrada a esa distancia.
+   - **Normal sin derivadas:** se arma con el marco tangente conocido de una superficie horizontal con UV en planta (T = +X, B = +Z, N = +Y). Es el mismo marco que da el método de derivadas de three.js (`perturbNormal2Arb`) para esta proyección, y permite leerla dentro de la rama con gradiente explícito.
+   - **Medición:** `eval/e6_corte_texturas.mjs` compara el cuadro con el corte y sin él (`window.__croquisDiag.texturasSinCorte`). La primera corrida completa se detuvo porque la laptop se quedó sin memoria; está pendiente, igual que E6 con el corte.
 
 ## Consecuencias
 

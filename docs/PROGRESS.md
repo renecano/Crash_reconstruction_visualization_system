@@ -1239,7 +1239,20 @@ Las ramas van una encima de otra y se fusionan en este orden, cada una con su PR
    - **Evidencia local:** todos los pasos de CI en verde, incluidas las 203 pruebas del visor, `textures check` y pytest completo. Se revisaron las capturas en el navegador: cruce seco, alcance mojado con lluvia y Toluca al atardecer, comparada con la versión sin texturas, mismo tono.
    - **Faltan** el PR, las capturas que cambian en calidad media (CI) y su revisión.
 
-**Bloqueo de E6:** dos corridas se detuvieron porque la laptop se quedó sin memoria (Claude Code detiene procesos en segundo plano cuando la sesión está inactiva). Opción recomendada para René: `! pnpm --filter @croquis/web build && node eval/e6_performance.mjs` en primer plano, sin otros programas pesados (~70 min). Con 11 escenas, E6 debe medirse antes de cambiar la fila de E6 del README.
+**E6 con F8 completo (2026-10-16): no cumple en calidad media** (ADR 0025).
+
+- **Resultado:** `nocturno_lluvia` quedó en 50.8 fps de promedio, contra ≥ 60. Alta y carga inicial sí cumplen. La corrida está en `eval/results/e6_performance_f8_antes.json`; el `e6_performance.json` oficial sigue siendo el de antes de F8.
+- **Ya corregido en `feat/f8-entorno` y llevado por merge a F8c, F8d y F8e:**
+  - Los paneles se volvían a dibujar 15 veces por segundo y causaban tirones de JavaScript.
+  - De noche ya no se calcula la sombra de la luna: no se ve (`eval/results/e6_sombra_luna.json`) y cuesta un pase completo.
+- **En `feat/f8e-texturas`:** corte de las texturas por nivel de mip. Está revisado a ojo en 4 escenas; `eval/e6_corte_texturas.mjs` completo está pendiente porque la primera corrida se detuvo por falta de memoria.
+- **Por qué no hay números nuevos:** durante la sesión la batería bajó de 34 % a 27 % estando conectada. La laptop limitó su rendimiento y las mediciones de tiempo dejaron de ser comparables.
+
+**Pendiente con René (en este orden, con la laptop cargada, fría y sin Chrome abierto):**
+
+1. `! node eval/e6_corte_texturas.mjs` (tras `pnpm --filter @croquis/web build` en `feat/f8e-texturas`).
+2. `! node eval/e6_performance.mjs` (~70 min).
+3. Si `nocturno_lluvia` sigue por debajo de 60 fps en media, decidir con René qué entra en cada nivel de calidad. Es una decisión de alcance y no se toma sin él.
 
 **Siguiente paso concreto:**
 
