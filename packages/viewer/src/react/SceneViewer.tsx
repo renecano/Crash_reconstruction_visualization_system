@@ -472,7 +472,8 @@ export function SceneViewer(props: SceneViewerProps): ReactElement {
             const { WebGPURenderer: Renderer, UnsignedByteType } = await import("three/webgpu");
             const r = new Renderer({
               canvas: defaults.canvas as HTMLCanvasElement,
-              antialias: profile.antialias,
+              antialias: profile.msaaSamples > 0,
+              ...(profile.msaaSamples > 0 ? { samples: profile.msaaSamples } : {}),
               alpha: false,
               forceWebGL: renderer === "webgl",
               // Búfer de 8 bits en baja y media: menos ancho de banda en GPU integrada (E6).

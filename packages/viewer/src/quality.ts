@@ -25,8 +25,16 @@ export interface QualityProfile {
   spotShadowMapSize: number;
   /** Número máximo de instancias de árboles. */
   maxTrees: number;
-  /** MSAA (4 muestras) en el renderer. */
-  antialias: boolean;
+  /**
+   * Muestras de MSAA (0: sin antialiasing). Media usa 2: en la laptop de referencia 4 muestras
+   * costaban ~5 ms por cuadro (ADR 0026, decisión 7).
+   */
+  msaaSamples: number;
+  /**
+   * Texturas PBR del entorno (asfalto, concreto, pasto; ADR 0024). Solo alta y ultra: en media
+   * costaban 3–4 ms por cuadro y la superficie queda con su color calibrado (ADR 0026, decisión 7).
+   */
+  envTextures: boolean;
   /** Oclusión ambiental en pantalla (GTAO). */
   ambientOcclusion: boolean;
   /** Resplandor de luces y superficies muy brillantes (faros, lámparas, cielo). */
@@ -42,7 +50,8 @@ export const QUALITY_PROFILES: Record<QualityLevel, QualityProfile> = {
     moonShadow: false,
     spotShadowMapSize: 0,
     maxTrees: 60,
-    antialias: false,
+    msaaSamples: 0,
+    envTextures: false,
     ambientOcclusion: false,
     bloom: false,
   },
@@ -54,7 +63,8 @@ export const QUALITY_PROFILES: Record<QualityLevel, QualityProfile> = {
     moonShadow: false,
     spotShadowMapSize: 0,
     maxTrees: 200,
-    antialias: true,
+    msaaSamples: 2,
+    envTextures: false,
     ambientOcclusion: false,
     bloom: false,
   },
@@ -66,7 +76,8 @@ export const QUALITY_PROFILES: Record<QualityLevel, QualityProfile> = {
     moonShadow: true,
     spotShadowMapSize: 1024,
     maxTrees: 600,
-    antialias: true,
+    msaaSamples: 4,
+    envTextures: true,
     ambientOcclusion: true,
     bloom: true,
   },
@@ -78,7 +89,8 @@ export const QUALITY_PROFILES: Record<QualityLevel, QualityProfile> = {
     moonShadow: true,
     spotShadowMapSize: 2048,
     maxTrees: 1500,
-    antialias: true,
+    msaaSamples: 4,
+    envTextures: true,
     ambientOcclusion: true,
     bloom: true,
   },

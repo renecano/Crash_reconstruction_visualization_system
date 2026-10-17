@@ -31,7 +31,10 @@ describe("quality", () => {
   it("alta y ultra no recortan nada de lo que tienen los niveles de abajo (ADR 0026)", () => {
     for (const lvl of ["alta", "ultra"] as const) {
       const p = QUALITY_PROFILES[lvl];
-      expect(p.shadows && p.moonShadow && p.antialias && p.ambientOcclusion && p.bloom).toBe(true);
+      expect(p.shadows && p.moonShadow && p.envTextures && p.ambientOcclusion && p.bloom).toBe(
+        true,
+      );
+      expect(p.msaaSamples).toBeGreaterThanOrEqual(4);
       expect(p.spotShadowMapSize).toBeGreaterThan(0);
       expect(p.shadowMapSize).toBeGreaterThanOrEqual(QUALITY_PROFILES.media.shadowMapSize);
     }

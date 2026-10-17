@@ -1,0 +1,93 @@
+{
+  "name": "e6_ab",
+  "generated_at": "2026-10-17T19:53:34.056Z",
+  "git_commit": "e1598eb",
+  "seed": 20261017,
+  "metodo": "Variantes intercaladas por ronda con orden rotado, navegador nuevo por medición, 1920×1080, cámara cinematográfica; diferencia en ms por cuadro contra la base pareada por ronda, mediana e IC 90 % por bootstrap (2000).",
+  "calidad": "media",
+  "renderer": "webgl",
+  "rondas": 4,
+  "variantes": {
+    "base": {},
+    "sinTexturas": {
+      "sinTexturas": true
+    },
+    "sinMSAA": {
+      "sinMSAA": true
+    },
+    "sinFocos": {
+      "sinFocos": true
+    }
+  },
+  "modo_energia": {
+    "cambiado": true,
+    "antes": {
+      "guid": "00000000-0000-0000-0000-000000000000",
+      "nombre": "equilibrado"
+    },
+    "durante": {
+      "guid": "ded574b5-45a0-4f42-8737-46345c09c238",
+      "nombre": "mejor_rendimiento"
+    }
+  },
+  "escenas": {
+    "nocturno_lluvia": {
+      "base": {
+        "fps_mediana_rondas": 50.5,
+        "ms_por_cuadro_rondas": [
+          17.99,
+          19.69,
+          21.05,
+          19.88
+        ],
+        "dif_ms_vs_base": 0,
+        "dif_ms_ic90": [
+          0,
+          0
+        ]
+      },
+      "sinTexturas": {
+        "fps_mediana_rondas": 64,
+        "ms_por_cuadro_rondas": [
+          14.45,
+          14.81,
+          16.64,
+          16.45
+        ],
+        "dif_ms_vs_base": -3.97,
+        "dif_ms_ic90": [
+          -4.64,
+          -3.48
+        ]
+      },
+      "sinMSAA": {
+        "fps_mediana_rondas": 75.9,
+        "ms_por_cuadro_rondas": [
+          11.7,
+          12.63,
+          15.77,
+          13.74
+        ],
+        "dif_ms_vs_base": -6.22,
+        "dif_ms_ic90": [
+          -7.06,
+          -5.71
+        ]
+      },
+      "sinFocos": {
+        "fps_mediana_rondas": 60.7,
+        "ms_por_cuadro_rondas": [
+          15.06,
+          15.9,
+          17.73,
+          17.06
+        ],
+        "dif_ms_vs_base": -3.12,
+        "dif_ms_ic90": [
+          -3.79,
+          -2.82
+        ]
+      }
+    }
+  }
+}

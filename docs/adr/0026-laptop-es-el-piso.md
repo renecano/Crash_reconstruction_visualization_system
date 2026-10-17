@@ -29,6 +29,33 @@
      - **Cómo se aplica:** E6 guarda el modo que había, activa «Mejor rendimiento» con la API de Windows (`powrprof.dll`) y lo restaura al terminar, también si falla o se interrumpe (`eval/lib/power-mode.mjs`).
      - **Registro:** el modo de antes y el de durante quedan en `condiciones.modo_energia`.
      - **Por qué se decide sin preguntar:** es un cambio reversible que se restaura solo (regla de autonomía de `CLAUDE.md`).
+7. **Media: MSAA 2× y superficies sin textura** (decisión de René, 2026-10-17; alta y ultra conservan MSAA 4× y las texturas).
+   - **Costo por componente:** medido con `eval/e6_ab.mjs` (variantes intercaladas por ronda, diferencia pareada e IC 90 %), en calidad media sobre la base de antes del cambio.
+
+     | Escena            | MSAA 4×                | Texturas del entorno | Sombras del sol     | Dos focos de faros  | Ruido del pasto  |
+     | ----------------- | ---------------------- | -------------------- | ------------------- | ------------------- | ---------------- |
+     | `glorieta`        | 4.75 ms (IC 4.12–5.56) | 3.07 ms (2.72–3.78)  | 1.91 ms (1.48–2.24) | —                   | no significativo |
+     | `nocturno_lluvia` | 6.22 ms (5.71–7.06)    | 3.97 ms (3.48–4.64)  | —                   | 3.12 ms (2.82–3.79) | —                |
+
+     Fuentes: `eval/results/e6_ab_costos_glorieta.json` y `e6_ab_costos_nocturno.json`. Las variantes usaron interruptores temporales que no quedaron en el código.
+
+   - **Antes, se intentó optimizar sin cambiar el aspecto.**
+     - **Rama de los focos:** saltar el modelo de iluminación de cada foco donde su color vale cero. Se descartó porque cambiaba la imagen: desaparecía el charco de luz del alumbrado.
+     - **SMAA en lugar de MSAA:** no ahorró de forma significativa, 0.40 ms (IC −0.32 a 1.18), por el costo del pase de posproceso (`eval/results/e6_ab_aa_glorieta.json`).
+   - **Opciones medidas** (`eval/results/e6_ab_aa_*.json`):
+     - MSAA 2×: `glorieta` 61.3 fps y `nocturno_lluvia` 54.9.
+     - MSAA 2× sin texturas: `nocturno_lluvia` 66.2.
+     - MSAA 2× sin la luz real de los faros: `nocturno_lluvia` 62.9; se descartó porque quita los haces de los faros, que importan para la visibilidad nocturna.
+   - **Antes y después**, con E6 en las mismas condiciones (modo «Mejor rendimiento», navegador nuevo, mediana de 3; `eval/results/e6_media_decision7_antes.json` y `e6_media_decision7_despues.json`):
+
+     | Escena            | Antes    | Después  |
+     | ----------------- | -------- | -------- |
+     | `nocturno_lluvia` | 54.2 fps | 62.7 fps |
+     | `frontal_curva`   | 58.1 fps | 79.2 fps |
+     | `alcance`         | 59.5 fps | 86.0 fps |
+     | `glorieta`        | 59.9 fps | 85.4 fps |
+
+   - **Regla nueva de René** (en `CLAUDE.md`): los ajustes que solo tocan baja o media y cumplen §7.8, después de intentar optimizar sin cambio visible, sin quitarle nada a alta ni a ultra y sin perder ninguna función, se deciden sin preguntar y se documentan con sus números de antes y después.
 
 ## Consecuencias
 

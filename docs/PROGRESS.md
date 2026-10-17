@@ -1265,7 +1265,17 @@ Las ramas van una encima de otra y se fusionan en este orden, cada una con su PR
 - **Línea base real de media**, con navegador nuevo, en «Equilibrado» y mediana de 3: `glorieta` 54.4, `nocturno_lluvia` 55.6, `frontal_curva` 59.3 y `alcance` 59.8 fps.
 - **Qué cuesta en `glorieta`:** sin las texturas del entorno gana ~4 ms por cuadro. El reparto entre color, normal, rugosidad y ruido no se pudo separar en «Equilibrado».
 
-**Siguiente paso:** repetir el reparto con «Mejor rendimiento» y luego optimizar media sin cambio visible, medido antes y después.
+- **Reparto del costo en media:** medido con `eval/e6_ab.mjs`, con variantes intercaladas e IC 90 %.
+  - `glorieta`: MSAA 4× 4.75 ms, texturas 3.07 ms y sombras del sol 1.91 ms.
+  - `nocturno_lluvia`: MSAA 4× 6.22 ms, texturas 3.97 ms y los dos focos de faros 3.12 ms.
+- **Intentos sin cambio visible:**
+  - Rama de los focos: descartada porque cambiaba la imagen.
+  - SMAA en lugar de MSAA: sin ahorro significativo.
+- **Decisión de René (ADR 0026, decisión 7):** media usa MSAA 2× y superficies sin textura; alta y ultra conservan todo.
+- **Antes → después** en media, mismas condiciones: `nocturno_lluvia` 54.2 → 62.7, `frontal_curva` 58.1 → 79.2, `alcance` 59.5 → 86.0 y `glorieta` 59.9 → 85.4 fps (`eval/results/e6_media_decision7_*.json`).
+- **Regla nueva en `CLAUDE.md`:** los ajustes solo de baja o media que cumplen §7.8 se deciden sin preguntar y se documentan con antes y después.
+
+**Siguiente paso:** E6 oficial completo (baja y media, todas las escenas) con el protocolo nuevo; luego revisar las capturas de CI y fusionar #20 a #24 en orden.
 
 1. `pnpm --filter @croquis/web build; node eval/e6_performance.mjs` (~70 min) en `feat/f8e-texturas`. Se corre en una terminal de PowerShell aparte, fuera de Claude Code: dentro de Claude Code, un proceso largo en segundo plano se detiene cuando falta memoria.
 2. Si `nocturno_lluvia` sigue por debajo de 60 fps en media, decidir con René qué entra en cada nivel de calidad. Es una decisión de alcance y no se toma sin él.
