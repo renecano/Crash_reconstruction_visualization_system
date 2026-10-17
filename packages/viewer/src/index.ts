@@ -70,3 +70,13 @@ export {
   type GhostLayer,
   type VehicleDiff,
 } from "./ghosts";
+export * from "./precipitation";
+export { buildPrecipitation, type PrecipitationAttachment } from "./precipitation-scene";
+export {
+  asphaltMaterial,
+  patchThreshold,
+  SURFACE_LOOK,
+  type AsphaltMaterial,
+  type SurfaceLook,
+} from "./road-surface";
+export * from "./night-lights";

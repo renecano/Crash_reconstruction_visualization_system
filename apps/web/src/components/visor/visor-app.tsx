@@ -24,6 +24,7 @@ import {
   step,
   togglePlay,
   type CameraMode,
+  type EventMarker,
   type QualityLevel,
   type TimelineState,
   type ViewerClock,
@@ -31,8 +32,16 @@ import {
 import type { RendererInfo, RendererPreference } from "@croquis/viewer/react";
 import dynamic from "next/dynamic";
 import { useRouter, useSearchParams } from "next/navigation";
-import { useCallback, useEffect, useMemo, useState, useSyncExternalStore } from "react";
+import {
+  useCallback,
+  useEffect,
+  useMemo,
+  useState,
+  useSyncExternalStore,
+  type ReactElement,
+} from "react";
 import { Legend } from "../legend";
+import { describeAmbiente, parseAmbiente } from "./ambiente";
 import type { PeopleAttachment } from "@croquis/viewer";
 import { EvidencePanel } from "./evidence-panel";
 import { HypothesisPanel, type Hipotesis } from "./hypothesis-panel";
@@ -118,11 +127,40 @@ function useClockState(clock: ViewerClock | null): TimelineState | null {
   );
 }
 
+/**
+ * Barra de tiempo suscrita al reloj. La suscripción vive aquí y no en `VisorApp`: el reloj avisa
+ * a la interfaz 15 veces por segundo durante la reproducción y, si `VisorApp` se suscribiera, cada
+ * aviso volvería a dibujar los paneles de resultados, que no cambian con el tiempo (E6: tirones de
+ * 50–70 ms en el hilo principal).
+ */
+function ClockedTimelineBar({
+  clock,
+  markers,
+}: {
+  clock: ViewerClock;
+  markers: EventMarker[];
+}): ReactElement | null {
+  const state = useClockState(clock);
+  if (!state) return null;
+  return (
+    <TimelineBar
+      state={state}
+      markers={markers}
+      onTogglePlay={() => clock.set(togglePlay)}
+      onSeek={(t) => clock.set((s) => seek(s, t))}
+      onStep={(n) => clock.set((s) => step(s, n))}
+      onSpeed={(v) => clock.set((s) => setSpeed(s, v))}
+    />
+  );
+}
+
 export function VisorApp() {
   const sp = useSearchParams();
   const router = useRouter();
   const params = useMemo(() => parseParams(new URLSearchParams(sp.toString())), [sp]);
   const spec = useMemo(() => loadFixture(params.escena), [params.escena]);
+  const searchKey = sp.toString();
+  const ambiente = useMemo(() => parseAmbiente(new URLSearchParams(searchKey)), [searchKey]);
   const [resultado, setResultado] = useState<{ name: FixtureName; r: Resultado } | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [info, setInfo] = useState<RendererInfo | null>(null);
@@ -159,7 +197,6 @@ export function VisorApp() {
       }),
     );
   }, [r, params.t, params.auto, params.bucle]);
-  const state = useClockState(clock);
 
   // Backend automático por medición (ADR 0006): WebGPU primero; si no llega a 60 fps se prueba
   // WebGL 2 y se queda el más rápido. La decisión se recuerda en este navegador.
@@ -343,6 +380,16 @@ export function VisorApp() {
         ) : null}
       </div>
 
+      {ambiente ? (
+        <p
+          role="status"
+          data-testid="ambiente-forzado"
+          className="rounded border border-amber-400 bg-amber-50 px-3 py-2 text-sm text-amber-900 dark:border-amber-700 dark:bg-amber-950 dark:text-amber-100"
+        >
+          {describeAmbiente(ambiente)}
+        </p>
+      ) : null}
+
       <div
         className={
           params.completa
@@ -366,6 +413,7 @@ export function VisorApp() {
             onRendererInfo={setInfo}
             onPeople={onPeople}
             hipotesis={ghostResults}
+            ambiente={ambiente ?? undefined}
             onError={() =>
               setError(
                 "Este navegador no pudo iniciar WebGPU ni WebGL 2; el visor 3D no está disponible.",
@@ -383,16 +431,7 @@ export function VisorApp() {
         </div>
       </div>
 
-      {state && clock ? (
-        <TimelineBar
-          state={state}
-          markers={markers}
-          onTogglePlay={() => clock.set(togglePlay)}
-          onSeek={(t) => clock.set((s) => seek(s, t))}
-          onStep={(n) => clock.set((s) => step(s, n))}
-          onSpeed={(v) => clock.set((s) => setSpeed(s, v))}
-        />
-      ) : null}
+      {clock ? <ClockedTimelineBar clock={clock} markers={markers} /> : null}
 
       {r ? <ResultPanel resultado={r} supuestosEntorno={env.supuestos} spec={spec} /> : null}
       {r ? <EvidencePanel resultado={r} /> : null}

@@ -130,6 +130,30 @@ export interface EnvironmentInput {
   alumbrado?: boolean;
   lat?: number;
   lon?: number;
+  /** `lugar.estado_superficie` declarado (seco, mojado, encharcado, grava_suelta, aceite, lodo). */
+  estadoSuperficie?: string;
+  /** `entorno.visibilidad` declarada, en metros. */
+  visibilidadM?: number;
+}
+
+export type Precipitation = "ninguna" | "lluvia_ligera" | "lluvia_fuerte" | "granizo";
+export type SurfaceState = "seco" | "mojado" | "encharcado" | "grava_suelta" | "aceite" | "lodo";
+const SURFACES: readonly SurfaceState[] = [
+  "seco",
+  "mojado",
+  "encharcado",
+  "grava_suelta",
+  "aceite",
+  "lodo",
+];
+
+/**
+ * Densidad de `FogExp2` cuya transmisión cae al 5 % a la visibilidad declarada: el alcance óptico
+ * meteorológico de la OMM se define con un umbral de contraste del 5 % (WMO-No. 8, cap. 9), y la
+ * niebla de three.js atenúa como exp(−(d·z)²), así que d = √(ln 20) / V.
+ */
+export function fogDensityForVisibility(visibilityM: number): number {
+  return Math.sqrt(Math.log(20)) / Math.max(visibilityM, 1);
 }
 
 export interface EnvironmentSettings {
@@ -144,7 +168,12 @@ export interface EnvironmentSettings {
   groundColor: string;
   fogDensity: number;
   night: boolean;
+  /** El piso está mojado (declarado o, si no se declara el estado, por la lluvia). */
   wet: boolean;
+  /** Estado del piso que se dibuja: el declarado o el que se supone por el clima. */
+  surface: SurfaceState;
+  /** Lo que cae del cielo; se dibuja con partículas (`precipitation.ts`). */
+  precipitation: Precipitation;
   streetLights: boolean;
   turbidity: number;
   supuestos: string[];
@@ -168,14 +197,31 @@ export function environmentFor(input: EnvironmentInput): EnvironmentSettings {
   const clima = input.clima ?? "despejado";
   const rain = clima === "lluvia_ligera" || clima === "lluvia_fuerte" || clima === "granizo";
   const overcast = rain || clima === "nublado" || clima === "niebla";
+  // Con visibilidad declarada, la niebla la respeta; sin ella, densidades ilustrativas por clima.
   const fogDensity =
-    clima === "niebla"
-      ? 0.035
-      : clima === "lluvia_fuerte"
-        ? 0.018
-        : clima === "lluvia_ligera"
-          ? 0.008
-          : 0.0015;
+    input.visibilidadM !== undefined && input.visibilidadM > 0
+      ? fogDensityForVisibility(input.visibilidadM)
+      : clima === "niebla"
+        ? 0.035
+        : clima === "lluvia_fuerte"
+          ? 0.018
+          : clima === "lluvia_ligera"
+            ? 0.008
+            : 0.0015;
+  const precipitation: Precipitation =
+    clima === "lluvia_ligera" || clima === "lluvia_fuerte" || clima === "granizo"
+      ? clima
+      : clima === "lluvia"
+        ? "lluvia_ligera"
+        : "ninguna";
+  const declared = SURFACES.find((x) => x === input.estadoSuperficie);
+  let surface: SurfaceState = declared ?? "seco";
+  if (declared === undefined && precipitation !== "ninguna") {
+    surface = precipitation === "lluvia_fuerte" ? "encharcado" : "mojado";
+    supuestos.push(
+      `Estado del piso no declarado: se dibuja ${surface === "encharcado" ? "encharcado" : "mojado"} por la lluvia.`,
+    );
+  }
   const moon: [number, number, number] = [-0.3, 0.4, 0.86];
   // Con el sol muy bajo la luz directa rasante deja la escena a oscuras: para iluminar la escena
   // (no para calcular nada) la luz direccional se eleva al menos 6° sobre el horizonte.
@@ -207,7 +253,9 @@ export function environmentFor(input: EnvironmentInput): EnvironmentSettings {
     groundColor: night ? "#2a3326" : "#5d6b4a",
     fogDensity,
     night,
-    wet: rain || (input.clima ?? "").includes("lluvia"),
+    wet: surface === "mojado" || surface === "encharcado",
+    surface,
+    precipitation,
     streetLights: night && (input.alumbrado ?? input.iluminacion === "noche_con_alumbrado"),
     turbidity: overcast ? 10 : 2.5,
     supuestos,

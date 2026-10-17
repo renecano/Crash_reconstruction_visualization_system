@@ -7,6 +7,7 @@
  * de `buildSceneGraph` (probado sin GPU); aquí solo se monta, se ilumina y se anima con el reloj.
  */
 import type { EscenaSpec, Resultado } from "@croquis/scene-schema";
+import { longitudM } from "@croquis/scene-schema";
 import { Canvas, useFrame, useThree } from "@react-three/fiber";
 import { useEffect, useMemo, useRef, type ReactElement } from "react";
 import {
@@ -24,6 +25,7 @@ import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
 import { SkyMesh } from "three/examples/jsm/objects/SkyMesh.js";
 import { CubeRenderTarget } from "three/webgpu";
 import {
+  actionBounds,
   cinematicCamera,
   damageCamera,
   personCamera,
@@ -35,6 +37,9 @@ import {
 } from "../cameras";
 import type { ViewerClock } from "../clock";
 import { environmentFor, type EnvironmentSettings } from "../environment";
+import { PRECIPITATION_HEIGHT, precipitationParams } from "../precipitation";
+import { buildPrecipitation } from "../precipitation-scene";
+import { toThree } from "../coords";
 import { QUALITY_PROFILES, type QualityLevel } from "../quality";
 import { attachDebris } from "../debris-scene";
 import { attachRollovers } from "../rollover-scene";
@@ -71,6 +76,19 @@ export interface SceneViewerProps {
   onPeople?: (people: PeopleAttachment) => void;
   /** Otras reconstrucciones de la misma escena: sus vehículos se dibujan como fantasmas. */
   hipotesis?: readonly Resultado[];
+  /**
+   * Ambiente forzado solo en la vista (capturas de clima, ADR 0020): reemplaza lo que dice la
+   * escena para dibujar, sin tocar la escena ni la reconstrucción.
+   */
+  ambiente?: AmbienteVisual;
+}
+
+/** Ambiente que se puede forzar en la vista. */
+export interface AmbienteVisual {
+  clima?: string;
+  iluminacion?: string;
+  estadoSuperficie?: string;
+  visibilidadM?: number;
 }
 
 /** Muestras de tiempo por cuadro para E6, expuestas en `window.__croquisPerf`. */
@@ -91,21 +109,32 @@ declare global {
     __croquisGhosts?: number;
     __croquisPeopleReady?: boolean;
     __croquisPeople?: PeopleAttachment;
+    /**
+     * Interruptores de diagnóstico para las evaluaciones (`eval/`); la página nunca los pone.
+     * `sombraLuna`: dibuja la sombra de la luna de noche, para medir que no se ve.
+     */
+    __croquisDiag?: { sombraLuna?: boolean };
     /** `performance.now()` del primer cuadro listo (E6: tiempo hasta interactivo). */
     __croquisReadyAt?: number;
   }
 }
 
-function environmentOf(spec: EscenaSpec): EnvironmentSettings {
+function environmentOf(spec: EscenaSpec, ambiente?: AmbienteVisual): EnvironmentSettings {
   const e = spec.entorno;
   const u = spec.lugar.ubicacion_real;
+  const iluminacion = ambiente?.iluminacion ?? e.iluminacion?.valor;
   return environmentFor({
-    fechaHora: e.fecha_hora?.valor,
-    iluminacion: e.iluminacion?.valor,
-    clima: e.clima?.valor,
-    alumbrado: e.alumbrado_publico?.valor,
+    fechaHora: ambiente?.iluminacion ? undefined : e.fecha_hora?.valor,
+    iluminacion,
+    clima: ambiente?.clima ?? e.clima?.valor,
+    // Una iluminación forzada trae su propio alumbrado; si no, el declarado.
+    alumbrado: ambiente?.iluminacion
+      ? ambiente.iluminacion === "noche_con_alumbrado"
+      : e.alumbrado_publico?.valor,
     lat: u?.lat,
     lon: u?.lon,
+    estadoSuperficie: ambiente?.estadoSuperficie ?? spec.lugar.estado_superficie?.valor,
+    visibilidadM: ambiente?.visibilidadM ?? (e.visibilidad ? longitudM(e.visibilidad) : undefined),
   });
 }
 
@@ -196,7 +225,11 @@ function SceneContent({
     const frame = sunShadowFrame(resultado, env.lightDirection);
     sun.position.copy(frame.position);
     sun.target.position.copy(frame.target);
-    sun.castShadow = profile.shadows;
+    // De noche la luz direccional es la luna (intensidad 0.45 contra 2.8 de día) y su sombra no se
+    // ve junto a los faros y el alumbrado (eval/results/e6_sombra_luna.json), pero cuesta un pase
+    // de sombras completo y su muestreo en cada píxel: de noche no se calcula.
+    const moonShadow = typeof window !== "undefined" && window.__croquisDiag?.sombraLuna === true;
+    sun.castShadow = profile.shadows && (!env.night || moonShadow);
     sun.shadow.camera.left = -frame.extent;
     sun.shadow.camera.right = frame.extent;
     sun.shadow.camera.top = frame.extent;
@@ -235,13 +268,15 @@ function SceneContent({
       skyScene.add(sky);
       cubeCamera.update(gl, skyScene);
       scene.background = target.texture;
+      graph.setReflections(target.texture);
     }
     return () => {
+      graph.setReflections(null);
       scene.fog = null;
       scene.background = null;
       target?.dispose();
     };
-  }, [scene, env, sky, gl]);
+  }, [scene, env, sky, gl, graph]);
 
   // Cámaras.
   const controls = useRef<OrbitControls | null>(null);
@@ -279,6 +314,22 @@ function SceneContent({
     return { v, eye };
   }, [resultado, driverVehicleId]);
 
+  // Lluvia y granizo (F8a): caja centrada en la acción, partículas según el nivel de calidad.
+  const precipitation = useMemo(() => {
+    const params = precipitationParams(env.precipitation, quality);
+    if (!params) return null;
+    const b = actionBounds(resultado);
+    const [cx, , cz] = toThree(b.cx, b.cy, 0);
+    const half = Math.min(45, Math.max(20, 0.6 * b.size));
+    return buildPrecipitation(
+      params,
+      { cx, cz, half, height: PRECIPITATION_HEIGHT },
+      spec.meta.semilla,
+      env.night,
+    );
+  }, [env, quality, resultado, spec.meta.semilla]);
+  useEffect(() => () => precipitation?.dispose(), [precipitation]);
+
   // Líneas de vista del conductor (solo en su cámara).
   const overlay = useMemo(() => buildVisibilityOverlay(resultado, graph), [resultado, graph]);
   useEffect(() => () => overlay.dispose(), [overlay]);
@@ -290,6 +341,7 @@ function SceneContent({
     clock.tick(Math.min(delta, 0.1), performance.now());
     const t = clock.get().t;
     graph.update(t);
+    precipitation?.setTime(t);
     for (const g of ghosts) g.update(t);
     const persp = cam as PerspectiveCamera;
     if (camera === "libre") controls.current?.update();
@@ -305,6 +357,7 @@ function SceneContent({
     <>
       <primitive object={graph.root} />
       <primitive object={lights} />
+      {precipitation ? <primitive object={precipitation.object} /> : null}
     </>
   );
 }
@@ -364,7 +417,10 @@ function PerfProbe({ backend }: { backend: () => RendererInfo["backend"] | undef
 
 export function SceneViewer(props: SceneViewerProps): ReactElement {
   const { renderer = "auto", onRendererInfo, onError, quality, className, ...rest } = props;
-  const env = useMemo(() => environmentOf(props.spec), [props.spec]);
+  const env = useMemo(
+    () => environmentOf(props.spec, props.ambiente),
+    [props.spec, props.ambiente],
+  );
   const profile = QUALITY_PROFILES[quality];
   const backendRef = useRef<RendererInfo["backend"] | undefined>(undefined);
   const dpr =

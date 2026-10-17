@@ -4,9 +4,9 @@ import type { EscenaSpec, Resultado } from "@croquis/scene-schema";
 import { compareHypotheses, GHOST_COLORS, MAX_HYPOTHESES } from "@croquis/viewer";
 import { useState } from "react";
 import { reconstruirEnNavegador } from "@/lib/reconstruct-client";
+import { fmtNumber } from "@/lib/format-number";
 
-const fmt = (v: number, d = 0) =>
-  v.toLocaleString("es-MX", { maximumFractionDigits: d, minimumFractionDigits: d });
+const fmt = fmtNumber;
 
 const COLOR_NAMES = ["azul", "naranja", "violeta"] as const;
 const css = (c: number) => `#${c.toString(16).padStart(6, "0")}`;

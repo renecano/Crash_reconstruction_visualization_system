@@ -1,5 +1,6 @@
 import type { EscenaSpec, Resultado } from "@croquis/scene-schema";
 import { AIRBAG_SOURCE, airbagForVehicle, PROFILES } from "@croquis/viewer";
+import { fmtNumber } from "@/lib/format-number";
 
 const CLASE: Record<string, string> = {
   sedan_compacto: "sedán compacto",
@@ -48,8 +49,7 @@ export function clockHour(hours: number): string {
   return `a las ${h === 0 ? 12 : h}`;
 }
 
-const fmt = (v: number, d = 0) =>
-  v.toLocaleString("es-MX", { maximumFractionDigits: d, minimumFractionDigits: d });
+const fmt = fmtNumber;
 
 interface Pct {
   p10: number;

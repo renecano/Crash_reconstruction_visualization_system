@@ -153,6 +153,68 @@ test.describe("capturas visuales", () => {
 });
 
 /**
+ * Ambiente forzado en la vista (ADR 0020): la URL cambia el clima, la luz o el piso solo en el
+ * dibujo, y la vista lo avisa. Corre en todas las plataformas (no compara imágenes).
+ */
+test.describe("ambiente forzado en la vista", () => {
+  test.describe.configure({ timeout: 120_000 });
+  test("granizo de noche sin alumbrado: carga sin errores y avisa", async ({ page }) => {
+    const errors: string[] = [];
+    page.on("pageerror", (e) => errors.push(e.message));
+    await page.goto(
+      "/visor?escena=lateral_interseccion&t=0&clima=granizo&iluminacion=noche_sin_alumbrado&piso=encharcado",
+    );
+    await waitReady(page);
+    const aviso = page.getByTestId("ambiente-forzado");
+    await expect(aviso).toContainText("granizo");
+    await expect(aviso).toContainText("noche sin alumbrado");
+    await expect(aviso).toContainText("La reconstrucción no cambia");
+    expect(errors).toEqual([]);
+  });
+
+  test("sin parámetros de ambiente no hay aviso", async ({ page }) => {
+    await page.goto("/visor?escena=poste&t=0");
+    await waitReady(page);
+    await expect(page.getByTestId("ambiente-forzado")).toHaveCount(0);
+  });
+});
+
+/**
+ * Capturas de clima (PLAN §13, F8): la misma vista libre en t = 0 con el ambiente forzado por URL.
+ * Niebla con visibilidad declarada, granizo, lluvia fuerte de día con charcos y noche sin
+ * alumbrado. Las referencias se generan en Linux (CI).
+ */
+const CLIMAS: { nombre: string; query: string }[] = [
+  { nombre: "niebla-60m", query: "escena=lateral_interseccion&clima=niebla&visibilidad=60" },
+  { nombre: "granizo", query: "escena=lateral_interseccion&clima=granizo" },
+  {
+    nombre: "lluvia-fuerte-dia",
+    query: "escena=alcance&clima=lluvia_fuerte&piso=encharcado&iluminacion=dia",
+  },
+  { nombre: "noche-sin-alumbrado", query: "escena=peaton_cruce&iluminacion=noche_sin_alumbrado" },
+];
+
+test.describe("capturas de clima", () => {
+  test.skip(
+    process.platform !== "linux",
+    "Las referencias visuales se generan y comparan en Linux",
+  );
+  test.use({ viewport: { width: 1280, height: 900 } });
+  test.setTimeout(120_000);
+  for (const c of CLIMAS) {
+    test(`clima: ${c.nombre}`, async ({ page }) => {
+      await page.goto(`/visor?${c.query}&t=0&camara=libre&calidad=media&renderer=webgl`);
+      await waitReady(page);
+      await page.waitForTimeout(1500);
+      await expect(page.getByTestId("visor-3d")).toHaveScreenshot(`clima-${c.nombre}.png`, {
+        maxDiffPixelRatio: 0.02,
+        timeout: 30_000,
+      });
+    });
+  }
+});
+
+/**
  * Capturas de daño (PLAN §13, F4): 1.5 s después del impacto, con el acercamiento al daño. Se ven
  * la deformación, la pintura transferida, vidrios, piezas desprendidas, marcas y bolsas de aire.
  */
