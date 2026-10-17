@@ -9,7 +9,7 @@
  */
 import { roadLayout, sceneLayout } from "@croquis/croquis-2d";
 import type { EscenaSpec, Resultado } from "@croquis/scene-schema";
-import { longitudM } from "@croquis/scene-schema";
+import { longitudM, velocidadKmh } from "@croquis/scene-schema";
 import {
   BoxGeometry,
   BufferAttribute,
@@ -20,11 +20,14 @@ import {
   DoubleSide,
   Group,
   IcosahedronGeometry,
+  InstancedMesh,
   type Material,
+  Matrix4,
   Mesh,
   MeshPhysicalMaterial,
   MeshStandardMaterial,
   PlaneGeometry,
+  Quaternion,
   Object3D,
   RingGeometry,
   SpotLight,
@@ -45,8 +48,15 @@ import {
   type GroundMarks,
   type TimedQuad,
 } from "./ground-marks";
-import { buildRoadGeometry, type Mesh2D } from "./road-geometry";
+import {
+  buildRoadGeometry,
+  CURB_HEIGHT,
+  dashPatternFor,
+  markingsFor,
+  type Mesh2D,
+} from "./road-geometry";
 import { asphaltMaterial, type AsphaltMaterial } from "./road-surface";
+import { buildDevice, type DeviceNode } from "./traffic-devices";
 import {
   HEADLIGHT_HALF_ANGLE_DEG,
   HEADLIGHT_INTENSITY,
@@ -141,6 +151,8 @@ function sceneMaterials(opts: SceneGraphOptions, asphalt: AsphaltMaterial) {
     trunk: std("#5b4636", 0.95),
     crown: std("#3e6b35", 0.9),
     concrete: std("#a5a39c", 0.9),
+    // Cara de la guarnición: concreto, visible por los dos lados (el segmento no tiene sentido).
+    curb: std("#b9b6ad", 0.9, 0, { side: DoubleSide }),
     metal: std("#8d9196", 0.45, 0.6),
     wall: std("#b7a68e", 0.95),
     signPlate: std("#e6e6e6", 0.5),
@@ -319,6 +331,8 @@ export function hash01(s: string): number {
   return (h >>> 0) / 0x1_0000_0000;
 }
 
+const TIEMPO_A_S: Record<string, number> = { s: 1, ms: 0.001, min: 60 };
+
 function place(obj: Group | Mesh, x: number, y: number, headingDeg = 0, height = 0): void {
   const [px, py, pz] = toThree(x, y, height);
   obj.position.set(px, py, pz);
@@ -376,16 +390,23 @@ export function buildSceneGraph(
       roadHeading: d.orientacion_deg ?? 0,
       roadWidth: mainWidth,
     }));
+  const devTipos = (lugar.dispositivos ?? []).map((d) => d.tipo);
+  const limite = (lugar.dispositivos ?? []).find((d) => d.limite_velocidad)?.limite_velocidad;
+  const dobleSentido = lugar.sentidos.valor === "doble_sentido";
   const road = buildRoadGeometry(layout, {
-    dobleSentido: lugar.sentidos.valor === "doble_sentido",
+    dobleSentido,
     banquetas: lugar.banquetas?.valor ?? false,
     crosswalks,
+    dash: dashPatternFor(lugar.tipo_via.valor, limite ? velocidadKmh(limite) : undefined),
+    markings: markingsFor(dobleSentido, devTipos),
+    guarniciones: lugar.guarniciones?.valor ?? false,
   });
   const roadGroup = new Group();
   roadGroup.name = "via";
   const layers: [string, Mesh2D, Material, number][] = [
     ["calzada", road.pavement, mats.asphalt, 0],
-    ["banqueta", road.sidewalk, mats.sidewalk, 0.15],
+    ["banqueta", road.sidewalk, mats.sidewalk, CURB_HEIGHT],
+    ["camellon", road.medians, mats.sidewalk, CURB_HEIGHT],
     ["rayas_blancas", road.whiteLines, mats.white, 0.012],
     ["rayas_amarillas", road.yellowLines, mats.yellow, 0.012],
     ["paso_peatonal", road.crosswalks, mats.crosswalk, 0.014],
@@ -416,6 +437,26 @@ export function buildSceneGraph(
       mesh.receiveShadow = false;
       roadGroup.add(mesh);
     }
+  }
+  // Caras verticales de las guarniciones (de la calzada a la banqueta o al camellón).
+  if (road.curbs.length > 0) {
+    const pos: number[] = [];
+    const idx: number[] = [];
+    for (const c of road.curbs) {
+      const base = pos.length / 3;
+      const [ax, , az] = toThree(c.a.x, c.a.y, 0);
+      const [bx, , bz] = toThree(c.b.x, c.b.y, 0);
+      pos.push(ax, 0, az, bx, 0, bz, bx, CURB_HEIGHT, bz, ax, CURB_HEIGHT, az);
+      idx.push(base, base + 1, base + 2, base, base + 2, base + 3);
+    }
+    const g = new BufferGeometry();
+    g.setAttribute("position", new BufferAttribute(new Float32Array(pos), 3));
+    g.setIndex(idx);
+    g.computeVertexNormals();
+    const curbs = new Mesh(g, mats.curb);
+    curbs.name = "guarniciones";
+    curbs.receiveShadow = true;
+    roadGroup.add(curbs);
   }
   root.add(roadGroup);
 
@@ -457,6 +498,17 @@ export function buildSceneGraph(
   const seedText = String(spec.meta.semilla);
   const solverObjects = new Map((resultado.objetos ?? []).map((g) => [g.id, g]));
   let trees = 0;
+  // Objetos que participan en un evento (p. ej. el árbol del choque): malla propia.
+  const actorIds = new Set(resultado.eventos.flatMap((e) => e.actores));
+  const decorTrees: {
+    x: number;
+    z: number;
+    d: number;
+    h: number;
+    crownR: number;
+    crownY: number;
+    yaw: number;
+  }[] = [];
   for (const o of spec.entorno.objetos ?? []) {
     const g = new Group();
     g.name = `objeto_${o.id}`;
@@ -475,9 +527,17 @@ export function buildSceneGraph(
       trunk.position.y = h / 2;
       trunk.userData.radius = d / 2;
       const crownR = geo?.copa?.radio_m ?? 1.8 + 1.6 * u + 2 * d;
+      const crownY = geo?.copa?.centro_m ?? h + crownR * 0.7;
+      if (!actorIds.has(o.id)) {
+        // Árbol que no participa en un evento: va en las mallas instanciadas (una llamada de
+        // dibujo para todos los troncos y otra para todas las copas).
+        const [px, , pz] = toThree(o.posicion.x, o.posicion.y, 0);
+        decorTrees.push({ x: px, z: pz, d, h, crownR, crownY, yaw: 2 * Math.PI * u });
+        continue;
+      }
       const crown = new Mesh(new IcosahedronGeometry(crownR, 1), mats.crown);
       crown.name = "copa";
-      crown.position.y = geo?.copa?.centro_m ?? h + crownR * 0.7;
+      crown.position.y = crownY;
       crown.rotation.y = 2 * Math.PI * u;
       for (const m of [trunk, crown]) m.castShadow = true;
       g.add(trunk, crown);
@@ -556,11 +616,44 @@ export function buildSceneGraph(
     place(g, o.posicion.x, o.posicion.y, o.rumbo_deg ?? 0);
     objGroup.add(g);
   }
+  if (decorTrees.length > 0) {
+    // Geometrías unitarias escaladas por instancia: tronco de radio 0.5 y alto 1, copa de radio 1.
+    const trunkGeo = new CylinderGeometry(0.5, 0.575, 1, 12);
+    trunkGeo.translate(0, 0.5, 0);
+    const crownGeo = new IcosahedronGeometry(1, 1);
+    const trunks = new InstancedMesh(trunkGeo, mats.trunk, decorTrees.length);
+    const crowns = new InstancedMesh(crownGeo, mats.crown, decorTrees.length);
+    trunks.name = "troncos";
+    crowns.name = "copas";
+    const m = new Matrix4();
+    const q = new Quaternion();
+    const up = new Vector3(0, 1, 0);
+    decorTrees.forEach((t, i) => {
+      q.setFromAxisAngle(up, t.yaw);
+      m.compose(new Vector3(t.x, 0, t.z), q, new Vector3(t.d, t.h, t.d));
+      trunks.setMatrixAt(i, m);
+      m.compose(new Vector3(t.x, t.crownY, t.z), q, new Vector3(t.crownR, t.crownR, t.crownR));
+      crowns.setMatrixAt(i, m);
+    });
+    for (const im of [trunks, crowns]) {
+      im.castShadow = true;
+      im.instanceMatrix.needsUpdate = true;
+      im.computeBoundingSphere();
+      objGroup.add(im);
+    }
+  }
   root.add(objGroup);
 
-  // Dispositivos de tránsito (básicos en F3; fases de semáforo y señalización completa en F8).
+  // Dispositivos de tránsito (F8c): semáforos con su fase en el tiempo y una placa por señal.
   const devGroup = new Group();
   devGroup.name = "dispositivos";
+  const devices: DeviceNode[] = [];
+  const firstPose = new Map(
+    resultado.vehiculos.map((v) => [
+      v.id,
+      { x: v.trayectoria.x[0] ?? 0, y: v.trayectoria.y[0] ?? 0 },
+    ]),
+  );
   for (const d of lugar.dispositivos ?? []) {
     if (
       d.tipo === "paso_peatonal" ||
@@ -569,35 +662,34 @@ export function buildSceneGraph(
     ) {
       continue;
     }
-    const g = new Group();
-    g.name = `dispositivo_${d.id}`;
-    if (d.tipo === "tope") {
-      const bump = new Mesh(new BoxGeometry(0.6, 0.08, mainWidth), mats.yellow);
-      bump.position.y = 0.04;
-      g.add(bump);
-    } else {
-      const h = d.tipo === "semaforo" ? 3.2 : 2.4;
-      const pole = new Mesh(new CylinderGeometry(0.06, 0.07, h, 8), mats.metal);
-      pole.position.y = h / 2;
-      pole.castShadow = true;
-      g.add(pole);
-      if (d.tipo === "semaforo") {
-        const head = new Mesh(new BoxGeometry(0.3, 0.9, 0.3), mats.dark);
-        head.name = "semaforo";
-        head.position.y = h + 0.35;
-        g.add(head);
-      } else {
-        const plate = new Mesh(
-          new BoxGeometry(0.04, 0.6, 0.6),
-          d.tipo === "alto" ? mats.signRed : mats.signPlate,
-        );
-        plate.name = "placa";
-        plate.position.y = h - 0.1;
-        g.add(plate);
-      }
-    }
-    place(g, d.posicion.x, d.posicion.y, d.orientacion_deg ?? 0);
-    devGroup.add(g);
+    const orient = ((d.orientacion_deg ?? 0) * Math.PI) / 180;
+    // Cada fase mira al vehículo cuyo flujo regula (su id en `movimiento` o en `aplica_a`); si no
+    // hay vehículo, las cabezas se reparten en cruz a partir de la orientación del dispositivo.
+    const fases = (d.fases ?? []).map((f, i) => {
+      const vid = firstPose.has(f.movimiento) ? f.movimiento : d.aplica_a?.[i];
+      const at = vid ? firstPose.get(vid) : undefined;
+      const yaw = at
+        ? Math.atan2(at.y - d.posicion.y, at.x - d.posicion.x) - orient
+        : (i * Math.PI) / 2;
+      const tau = f.tiempo_en_fase
+        ? f.tiempo_en_fase.valor * (TIEMPO_A_S[f.tiempo_en_fase.unidad] ?? 1)
+        : undefined;
+      return { phase: { color: f.color, tiempoEnFaseS: tau }, yaw };
+    });
+    const node = buildDevice(
+      {
+        tipo: d.tipo,
+        limiteKmh: d.limite_velocidad ? velocidadKmh(d.limite_velocidad) : undefined,
+        fases,
+        anchoTopeM: mainWidth,
+      },
+      mats.metal,
+    );
+    node.group.name = `dispositivo_${d.id}`;
+    place(node.group, d.posicion.x, d.posicion.y, d.orientacion_deg ?? 0);
+    devGroup.add(node.group);
+    disposables.push(...node.materials);
+    devices.push(node);
   }
   root.add(devGroup);
 
@@ -791,6 +883,7 @@ export function buildSceneGraph(
 
   function update(t: number): void {
     lastT = t;
+    for (const dv of devices) dv.update(t);
     for (const fn of extraUpdaters) fn(t);
     for (const m of markMeshes) m.mesh.geometry.setDrawRange(0, visibleCount(m.quads, t) * 6);
     for (const p of puddles) {
@@ -857,7 +950,9 @@ export function buildSceneGraph(
     if (o instanceof Mesh) {
       meshes++;
       const g = o.geometry as BufferGeometry;
-      triangles += (g.index ? g.index.count : (g.getAttribute("position")?.count ?? 0)) / 3;
+      const perInstance = (g.index ? g.index.count : (g.getAttribute("position")?.count ?? 0)) / 3;
+      // Una malla instanciada dibuja su geometría una vez por instancia.
+      triangles += perInstance * (o instanceof InstancedMesh ? o.count : 1);
     }
   });
 
