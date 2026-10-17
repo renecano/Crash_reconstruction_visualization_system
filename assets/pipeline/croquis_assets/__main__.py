@@ -85,8 +85,29 @@ def main(argv: list[str] | None = None) -> int:
     sub = parser.add_subparsers(dest="group", required=True)
     h = sub.add_parser("humans", help="Cuerpos de MakeHuman (CC0) para el visor")
     h.add_argument("action", choices=["download", "build", "check"])
+    tx = sub.add_parser("textures", help="Texturas PBR de Poly Haven (CC0) para el entorno")
+    tx.add_argument("action", choices=["download", "build", "check"])
     args = parser.parse_args(argv)
+    if args.group == "textures":
+        return _textures(args.action)
     return {"download": download, "build": build, "check": check}[args.action]()
+
+
+def _textures(action: str) -> int:
+    from croquis_assets import textures
+
+    if action == "download":
+        print(f"{len(textures.download())} mapas descargados y verificados (MD5 del lock)")
+        return 0
+    if action == "build":
+        print(f"{len(textures.build())} archivos escritos en {textures.OUT_DIR}")
+        return 0
+    bad = textures.check()
+    if bad:
+        print("Desactualizados: " + ", ".join(bad), file=sys.stderr)
+        return 1
+    print("Texturas al día.")
+    return 0
 
 
 if __name__ == "__main__":

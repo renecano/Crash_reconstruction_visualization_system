@@ -5,14 +5,15 @@ Reglas de trabajo: `CLAUDE.md`. Especificación: `PLAN.md`.
 
 ## Estado actual
 
-- **Fase actual:** pendientes físicos de F7, antes de F8. El pendiente 1 de F7 (test CISS de Relatos-MX y prompt v2) quedó hecho el 2026-10-14 (PR #11, ADR 0012); v2 es el prompt de producción.
+- **Fase actual: F8, entorno completo.** F8a a F8e están hechas en cuatro ramas encadenadas; falta medir E6 y fusionarlas en orden. Detalle y siguiente paso en «F8 — Estado», al final de este archivo.
+- **Pendientes físicos de F7:** hechos. El pendiente 1 (test CISS de Relatos-MX y prompt v2) quedó hecho el 2026-10-14 (PR #11, ADR 0012).
 - **Rigidez lateral, hecha** (PR #12, ADR 0013). Sale de 1,265 pruebas de barrera móvil de NHTSA. En el test de E3, el error en costados baja de 11.04 a 8.51 km/h.
 - **Rigidez trasera, hecha** (PR #13, ADR 0014). Sale de 136 pruebas FMVSS 301 con barrera rígida, modelos 1975–2004. En el test de E3, el error en traseros baja de 16.45 a 7.68 km/h; en conjunto, 8.85 km/h contra 8.19 de WinSMASH.
 - **Inercia de guiñada medida, hecha** (PR #15, ADR 0015). Viene de la base de parámetros inerciales de NHTSA, 164 vehículos medidos: el error de la inercia baja de 10.0 % con la placa uniforme a 5.3 %.
 - **Fase de las marcas, hecha** (rama `feat/f7-marcas-derrape`, ADR 0016). Contrato 1.1.0 con `evidencias[].fase`, resultado 1.5.0 y la evidencia nueva `marcas_despues` en la inversión.
 - **Moto caída, hecha** (rama `feat/f7-moto-caida`, ADR 0017): arrastre medido de Peck et al. 2014, muestreado en Monte Carlo y en la inversión; resultado 1.6.0.
 - **Fase de las marcas en la extracción, hecha** (rama `feat/f7-fase-extraccion`, ADR 0019): reglas y prompt v3, que pasa a producción.
-- **Siguiente paso concreto:** F8, entorno completo (PLAN §13): OSM real, clima, noche y faros, todos los dispositivos de tránsito, vehículos estacionados y piso mojado. Empezar por leer la fase en `PLAN.md` y escribir su plan aquí, en la rama `feat/f8-entorno`.
+- **Siguiente paso concreto:** medir E6 (ver «Bloqueo de E6» en «F8 — Estado») y fusionar #20, F8c, F8d y F8e en ese orden.
 - **E1 del prompt v2 en el primer test, hecho** (PR #14). Sonnet 0.875 → 0.919 y Haiku 0.852 → 0.896. Además, E1 ahora compara cada contrafactual con la repetición del mismo relato (McNemar por tipo): ningún tipo difiere del ruido, y las reglas cambian con el modelo del vehículo en 6 de 52 pares (ADR 0012 §10).
 - **F0** cerrado el 2026-10-10 (PR #1), **F1** el 2026-10-10 (PR #3), **F2** el 2026-10-13 (PR #4), **F3** el 2026-10-13 (PR #5), **F4** el 2026-10-13 (PR #6), **F5** el 2026-10-13 (PR #7), **F6** el 2026-10-14 (PR #8), **F7** el 2026-10-14 (PR #9; pendientes registrados); migración a Vercel el 2026-10-14 (PR #10); test CISS y prompt v2 el 2026-10-14 (PR #11).
 
@@ -1229,16 +1230,39 @@ Las ramas van una encima de otra y se fusionan en este orden, cada una con su PR
    - **Contrato y datos:** contrato 1.2.0 (fuente `mapa`, `lugar.red_vial`), `croquis-data osm` y la conversión de Overpass.
    - **Dibujo y física:** la red de OSM en 2D y 3D con atribución, y la revisión `fuera_de_la_via_del_mapa` en Python y TS (resultado 1.7.0).
    - **Escena `interseccion_toluca`:** la undécima. E7 compara 68,127 números en 11 escenas, sin diferencias de estructura.
-   - **Faltan** el PR, las capturas y la revisión visual en el navegador.
+   - Revisión visual en el navegador hecha: atribución visible, calles de OSM y semáforos en su lugar.
+   - **Faltan** el PR y las capturas.
+4. **`feat/f8e-texturas`, F8e** (ADR 0024):
+   - **Pipeline:** texturas PBR CC0 de Poly Haven (asfalto, concreto y pasto) con `croquis-assets textures`. Descarga fijada por MD5, WebP de 512 px reconstruido byte a byte en CI y registro en `assets/ASSETS.md`.
+   - **Calibración:** el visor escala cada textura para que su promedio sea el color y la rugosidad calibrados del material liso. La textura agrega detalle y relieve sin cambiar el tono (seco y mojado, día y noche).
+   - **Calidad y captura:** solo en calidad media y alta; `__croquisReady` espera a que se apliquen.
+   - **Evidencia local:** todos los pasos de CI en verde, incluidas las 203 pruebas del visor, `textures check` y pytest completo. Se revisaron las capturas en el navegador: cruce seco, alcance mojado con lluvia y Toluca al atardecer, comparada con la versión sin texturas, mismo tono.
+   - **Faltan** el PR, las capturas que cambian en calidad media (CI) y su revisión.
 
-**Bloqueo de E6:** dos corridas se detuvieron porque la laptop se quedó sin memoria (Claude Code detiene procesos en segundo plano cuando la sesión está inactiva). Opción recomendada para René: `! pnpm --filter @croquis/web build && node eval/e6_performance.mjs` en primer plano, sin otros programas pesados (~70 min). Con 11 escenas, E6 debe medirse antes de cambiar la fila de E6 del README.
+**E6 con F8 completo (2026-10-16): no cumple en calidad media** (ADR 0025).
+
+- **Resultado:** `nocturno_lluvia` quedó en 50.8 fps de promedio, contra ≥ 60. Alta y carga inicial sí cumplen. La corrida está en `eval/results/e6_performance_f8_antes.json`; el `e6_performance.json` oficial sigue siendo el de antes de F8.
+- **Ya corregido en `feat/f8-entorno` y llevado por merge a F8c, F8d y F8e:**
+  - Los paneles se volvían a dibujar 15 veces por segundo y causaban tirones de JavaScript.
+  - De noche ya no se calcula la sombra de la luna: no se ve (`eval/results/e6_sombra_luna.json`) y cuesta un pase completo.
+- **En `feat/f8e-texturas`:** se probó un corte de las texturas por nivel de mip. No se nota a la vista (`eval/results/e6_corte_texturas.json`), pero es más lento en la GPU de referencia, así que se revirtió.
+- **Segunda corrida de E6 (2026-10-17, René, terminal aparte):** no cumple. Media queda en 55.7 fps y alta en 27.3, las dos en `nocturno_lluvia` (`eval/results/e6_performance_f8_corte_mip.json`). Las escenas con más suelo bajaron aunque el equipo rindió más: el corte por mip las hizo más lentas en la GPU de referencia y se revirtió (ADR 0024 y 0025).
+- **Por qué no hay números nuevos:** durante la sesión la batería bajó de 34 % a 27 % estando conectada. La laptop limitó su rendimiento y las mediciones de tiempo dejaron de ser comparables.
+
+**Pendiente con René (en este orden, con la laptop cargada, fría y sin Chrome abierto):**
+
+1. `pnpm --filter @croquis/web build; node eval/e6_performance.mjs` (~70 min) en `feat/f8e-texturas`. Se corre en una terminal de PowerShell aparte, fuera de Claude Code: dentro de Claude Code, un proceso largo en segundo plano se detiene cuando falta memoria.
+2. Si `nocturno_lluvia` sigue por debajo de 60 fps en media, decidir con René qué entra en cada nivel de calidad. Es una decisión de alcance y no se toma sin él.
 
 **Siguiente paso concreto:**
 
 - Con E6 medido: fusionar #20 y abrir los PR de F8c y F8d en orden. Para cada uno, regenerar las capturas en CI, revisarlas y fusionar.
-- Después, F8e: texturas PBR CC0 (Poly Haven) dentro del presupuesto de carga de E6 (≤ 8 MB) y el cierre de F8.
+- Al final, el PR de F8e con sus capturas, E6 con las texturas (el peso de carga cuenta para el presupuesto de ≤ 8 MB) y el resumen de cierre de F8 para René.
 - **Pendientes de F8:**
   - OSM en producción (consultar al crear una escena del usuario con coordenadas, con caché);
   - rayas y banquetas sobre las calles de OSM;
   - semáforo peatonal;
-  - sombras de los focos en alta.
+  - sombras de los focos en alta;
+  - texturas en caras verticales (guarnición, barda) con proyección triplanar, si E9 muestra que hacen falta.
+  - grava suelta: las manchas de ruido de F8a (ADR 0020) se ven como camuflaje en el acercamiento de `objeto_fijo_arbol`; conviene una textura de grava CC0 en su lugar;
+  - corte del camellón en los cruces peatonales (refugio a nivel de calle), visto en la captura de `peaton_cruce`.

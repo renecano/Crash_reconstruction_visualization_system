@@ -36,3 +36,6 @@ packages/solver-ts/fixtures/
 
 # Extractos crudos de OSM: se verifican por SHA-256, deben quedar byte a byte.
 data/osm/*.overpass.json
+
+# Manifiesto de texturas generado por croquis-assets: `textures check` lo compara byte a byte.
+apps/web/public/texturas/texturas.json

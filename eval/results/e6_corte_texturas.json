@@ -1,0 +1,202 @@
+{
+  "name": "e6_corte_texturas",
+  "generated_at": "2026-10-17T13:33:51.661Z",
+  "git_commit": "3532af5",
+  "metodo": "Mismo cuadro (1920×1080, WebGL 2, cámara libre por omisión) con el corte por nivel de mip de las texturas y sin él; diferencia por píxel en gris Rec. 601 (0-255).",
+  "escenas": [
+    "alcance",
+    "frontal_curva",
+    "glorieta",
+    "interseccion_toluca",
+    "lateral_interseccion",
+    "motociclista",
+    "nocturno_lluvia",
+    "objeto_fijo_arbol",
+    "peaton_cruce",
+    "poste",
+    "volcadura"
+  ],
+  "resumen": {
+    "diferencia_max_niveles": 8.1,
+    "pct_pixeles_dif_ge_3_max": 1.728,
+    "pct_pixeles_dif_ge_8_max": 0
+  },
+  "casos": [
+    {
+      "escena": "alcance",
+      "calidad": "media",
+      "t": 0,
+      "diferencia_max_niveles": 2.2,
+      "pct_pixeles_dif_ge_3": 0,
+      "pct_pixeles_dif_ge_8": 0
+    },
+    {
+      "escena": "alcance",
+      "calidad": "alta",
+      "t": 0,
+      "diferencia_max_niveles": 1.9,
+      "pct_pixeles_dif_ge_3": 0,
+      "pct_pixeles_dif_ge_8": 0
+    },
+    {
+      "escena": "frontal_curva",
+      "calidad": "media",
+      "t": 0,
+      "diferencia_max_niveles": 8.1,
+      "pct_pixeles_dif_ge_3": 0.757,
+      "pct_pixeles_dif_ge_8": 0
+    },
+    {
+      "escena": "frontal_curva",
+      "calidad": "alta",
+      "t": 0,
+      "diferencia_max_niveles": 4.8,
+      "pct_pixeles_dif_ge_3": 0.013,
+      "pct_pixeles_dif_ge_8": 0
+    },
+    {
+      "escena": "glorieta",
+      "calidad": "media",
+      "t": 0,
+      "diferencia_max_niveles": 2.8,
+      "pct_pixeles_dif_ge_3": 0,
+      "pct_pixeles_dif_ge_8": 0
+    },
+    {
+      "escena": "glorieta",
+      "calidad": "alta",
+      "t": 0,
+      "diferencia_max_niveles": 3,
+      "pct_pixeles_dif_ge_3": 0,
+      "pct_pixeles_dif_ge_8": 0
+    },
+    {
+      "escena": "interseccion_toluca",
+      "calidad": "media",
+      "t": 0,
+      "diferencia_max_niveles": 3.9,
+      "pct_pixeles_dif_ge_3": 0.017,
+      "pct_pixeles_dif_ge_8": 0
+    },
+    {
+      "escena": "interseccion_toluca",
+      "calidad": "alta",
+      "t": 0,
+      "diferencia_max_niveles": 1.9,
+      "pct_pixeles_dif_ge_3": 0,
+      "pct_pixeles_dif_ge_8": 0
+    },
+    {
+      "escena": "lateral_interseccion",
+      "calidad": "media",
+      "t": 0,
+      "diferencia_max_niveles": 6.1,
+      "pct_pixeles_dif_ge_3": 0.06,
+      "pct_pixeles_dif_ge_8": 0
+    },
+    {
+      "escena": "lateral_interseccion",
+      "calidad": "alta",
+      "t": 0,
+      "diferencia_max_niveles": 3,
+      "pct_pixeles_dif_ge_3": 0,
+      "pct_pixeles_dif_ge_8": 0
+    },
+    {
+      "escena": "motociclista",
+      "calidad": "media",
+      "t": 0,
+      "diferencia_max_niveles": 5.9,
+      "pct_pixeles_dif_ge_3": 0.081,
+      "pct_pixeles_dif_ge_8": 0
+    },
+    {
+      "escena": "motociclista",
+      "calidad": "alta",
+      "t": 0,
+      "diferencia_max_niveles": 2.9,
+      "pct_pixeles_dif_ge_3": 0,
+      "pct_pixeles_dif_ge_8": 0
+    },
+    {
+      "escena": "nocturno_lluvia",
+      "calidad": "media",
+      "t": 0,
+      "diferencia_max_niveles": 2.6,
+      "pct_pixeles_dif_ge_3": 0,
+      "pct_pixeles_dif_ge_8": 0
+    },
+    {
+      "escena": "nocturno_lluvia",
+      "calidad": "alta",
+      "t": 0,
+      "diferencia_max_niveles": 0.9,
+      "pct_pixeles_dif_ge_3": 0,
+      "pct_pixeles_dif_ge_8": 0
+    },
+    {
+      "escena": "objeto_fijo_arbol",
+      "calidad": "media",
+      "t": 0,
+      "diferencia_max_niveles": 7.7,
+      "pct_pixeles_dif_ge_3": 0.628,
+      "pct_pixeles_dif_ge_8": 0
+    },
+    {
+      "escena": "objeto_fijo_arbol",
+      "calidad": "alta",
+      "t": 0,
+      "diferencia_max_niveles": 4.4,
+      "pct_pixeles_dif_ge_3": 0.006,
+      "pct_pixeles_dif_ge_8": 0
+    },
+    {
+      "escena": "peaton_cruce",
+      "calidad": "media",
+      "t": 0,
+      "diferencia_max_niveles": 3.3,
+      "pct_pixeles_dif_ge_3": 0.001,
+      "pct_pixeles_dif_ge_8": 0
+    },
+    {
+      "escena": "peaton_cruce",
+      "calidad": "alta",
+      "t": 0,
+      "diferencia_max_niveles": 2.9,
+      "pct_pixeles_dif_ge_3": 0,
+      "pct_pixeles_dif_ge_8": 0
+    },
+    {
+      "escena": "poste",
+      "calidad": "media",
+      "t": 0,
+      "diferencia_max_niveles": 3.7,
+      "pct_pixeles_dif_ge_3": 0.002,
+      "pct_pixeles_dif_ge_8": 0
+    },
+    {
+      "escena": "poste",
+      "calidad": "alta",
+      "t": 0,
+      "diferencia_max_niveles": 1,
+      "pct_pixeles_dif_ge_3": 0,
+      "pct_pixeles_dif_ge_8": 0
+    },
+    {
+      "escena": "volcadura",
+      "calidad": "media",
+      "t": 0,
+      "diferencia_max_niveles": 7.2,
+      "pct_pixeles_dif_ge_3": 1.728,
+      "pct_pixeles_dif_ge_8": 0
+    },
+    {
+      "escena": "volcadura",
+      "calidad": "alta",
+      "t": 0,
+      "diferencia_max_niveles": 6.8,
+      "pct_pixeles_dif_ge_3": 0.515,
+      "pct_pixeles_dif_ge_8": 0
+    }
+  ]
+}

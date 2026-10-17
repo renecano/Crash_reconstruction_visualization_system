@@ -1,0 +1,90 @@
+{
+  "_nota": "Texturas PBR de Poly Haven (CC0 1.0); ver assets/ASSETS.md y ADR 0024.",
+  "tamano_px": 512,
+  "texturas": {
+    "asfalto": {
+      "polyhaven": "asphalt_track",
+      "autor": "Dimitrios Savva",
+      "licencia": "CC0 1.0",
+      "url": "https://polyhaven.com/a/asphalt_track",
+      "mosaico_m": 4.0,
+      "uso": "Calzada",
+      "archivos": {
+        "diff": {
+          "archivo": "asfalto_diff.webp",
+          "sha256": "db959ec3e58db136f6755a20996dba11d5fbff4c2c0e4735dd88f8e90b5c2234",
+          "media": [
+            0.0164,
+            0.0132,
+            0.0122
+          ]
+        },
+        "nor_gl": {
+          "archivo": "asfalto_nor_gl.webp",
+          "sha256": "7732e7aae215aba4dce28b3ce89837df06808d890651af941f4d8e846dcb152e"
+        },
+        "rough": {
+          "archivo": "asfalto_rough.webp",
+          "sha256": "497491f6b2be3c81409e622d3eea701129532ccc58d9a503442cf23290a7c9bc",
+          "media": 0.8314
+        }
+      }
+    },
+    "concreto": {
+      "polyhaven": "concrete_pavement",
+      "autor": "Charlotte Baglioni",
+      "licencia": "CC0 1.0",
+      "url": "https://polyhaven.com/a/concrete_pavement",
+      "mosaico_m": 2.0,
+      "uso": "Banquetas y camellón",
+      "archivos": {
+        "diff": {
+          "archivo": "concreto_diff.webp",
+          "sha256": "f8706e534aa9982ccc5da745efdede017469f2304ffd2e36a3a95fc2b1aebb0b",
+          "media": [
+            0.2148,
+            0.1781,
+            0.1345
+          ]
+        },
+        "nor_gl": {
+          "archivo": "concreto_nor_gl.webp",
+          "sha256": "eeef5e9d12bcf4987fd8cd752ab8f99ac51310a963e86977d24266a5eaefd7d1"
+        },
+        "rough": {
+          "archivo": "concreto_rough.webp",
+          "sha256": "7137bb55afd48067aa50b79225c49befef399b4a9e0ade9a09df96aef1f1f3a6",
+          "media": 0.8626
+        }
+      }
+    },
+    "pasto": {
+      "polyhaven": "leafy_grass",
+      "autor": "Charlotte Baglioni",
+      "licencia": "CC0 1.0",
+      "url": "https://polyhaven.com/a/leafy_grass",
+      "mosaico_m": 8.0,
+      "uso": "Suelo fuera de la vía",
+      "archivos": {
+        "diff": {
+          "archivo": "pasto_diff.webp",
+          "sha256": "1acfd600a49eb48f4882fe8717b231f3586d4c841f91305896f247c00490ae46",
+          "media": [
+            0.3166,
+            0.2338,
+            0.1044
+          ]
+        },
+        "nor_gl": {
+          "archivo": "pasto_nor_gl.webp",
+          "sha256": "0651c094b93869b9d8332c1d06e27c988c8289f1cf12e5ddcf4576a078924ba5"
+        },
+        "rough": {
+          "archivo": "pasto_rough.webp",
+          "sha256": "7e4f0ae63e2ec844b6ec7a515a0226d2b78aa2d504c63b164d32aacc9b5ab6f4",
+          "media": 0.6859
+        }
+      }
+    }
+  }
+}
