@@ -15,7 +15,8 @@
  * corridas llega a ±15 %. Uso: `node eval/e6_performance.mjs [--seconds 6]
  * [--warmup 2] [--repeats 2] [--cooldown 8] [--scenes a,b] [--qualities media,alta] [--renderers webgpu,webgl]`.
  * Salida: eval/results/e6_performance.json (o la ruta de `--out`, para corridas de diagnóstico que
- * no deben reemplazar la medición oficial).
+ * no deben reemplazar la medición oficial). `--diag '{"texturasSinCorte":true}'` pone interruptores
+ * de diagnóstico del visor (`window.__croquisDiag`) para comparar variantes en el mismo build.
  *
  * Además de los fps se cuentan las tareas largas del hilo principal (> 50 ms, `longtask`): un
  * promedio bajo con mediana alta son tirones, y las tareas largas dicen si son de JavaScript.
@@ -62,6 +63,8 @@ const PORT = Number(arg("port", "3200"));
 const REPEATS = Number(arg("repeats", "2"));
 /** Pausa entre mediciones (s) para que el equipo no acumule calor entre escenas. */
 const COOLDOWN_S = Number(arg("cooldown", "8"));
+/** Interruptores de diagnóstico del visor (JSON); vacío en la medición oficial. */
+const DIAG = JSON.parse(arg("diag", "{}"));
 
 function percentile(sorted, p) {
   if (sorted.length === 0) return NaN;
@@ -119,6 +122,11 @@ async function measure(browser, base, scene, quality, renderer) {
     deviceScaleFactor: 1,
   });
   const page = await context.newPage();
+  if (Object.keys(DIAG).length > 0) {
+    await page.addInitScript((d) => {
+      window.__croquisDiag = d;
+    }, DIAG);
+  }
   const cdp = await context.newCDPSession(page);
   await cdp.send("Network.enable");
   let bytes = 0;
@@ -315,6 +323,7 @@ async function main() {
       },
       metodo: {
         resolucion: "1920x1080, deviceScaleFactor 1, visor a pantalla completa",
+        interruptores_diagnostico: DIAG,
         camara: "cinematográfica (en movimiento), reproducción en bucle a 1×",
         segundos_medidos: SECONDS,
         calentamiento_s: WARMUP,
