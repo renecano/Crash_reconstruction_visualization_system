@@ -5,7 +5,7 @@ Reglas de trabajo: `CLAUDE.md`. Especificación: `PLAN.md`.
 
 ## Estado actual
 
-- **Fase actual: F8, entorno completo.** F8a a F8e están hechas en cuatro ramas encadenadas; falta medir E6 y fusionarlas en orden. Detalle y siguiente paso en «F8 — Estado», al final de este archivo.
+- **Fase actual: cierre de F8.** F8a a F8f están hechas y E6 cumple (2026-10-17). Falta fusionar #20 a #24 en orden; después, F9. Detalle en «F8 — Estado», al final de este archivo.
 - **Pendientes físicos de F7:** hechos. El pendiente 1 (test CISS de Relatos-MX y prompt v2) quedó hecho el 2026-10-14 (PR #11, ADR 0012).
 - **Rigidez lateral, hecha** (PR #12, ADR 0013). Sale de 1,265 pruebas de barrera móvil de NHTSA. En el test de E3, el error en costados baja de 11.04 a 8.51 km/h.
 - **Rigidez trasera, hecha** (PR #13, ADR 0014). Sale de 136 pruebas FMVSS 301 con barrera rígida, modelos 1975–2004. En el test de E3, el error en traseros baja de 16.45 a 7.68 km/h; en conjunto, 8.85 km/h contra 8.19 de WinSMASH.
@@ -13,7 +13,7 @@ Reglas de trabajo: `CLAUDE.md`. Especificación: `PLAN.md`.
 - **Fase de las marcas, hecha** (rama `feat/f7-marcas-derrape`, ADR 0016). Contrato 1.1.0 con `evidencias[].fase`, resultado 1.5.0 y la evidencia nueva `marcas_despues` en la inversión.
 - **Moto caída, hecha** (rama `feat/f7-moto-caida`, ADR 0017): arrastre medido de Peck et al. 2014, muestreado en Monte Carlo y en la inversión; resultado 1.6.0.
 - **Fase de las marcas en la extracción, hecha** (rama `feat/f7-fase-extraccion`, ADR 0019): reglas y prompt v3, que pasa a producción.
-- **Siguiente paso concreto:** medir E6 (ver «Bloqueo de E6» en «F8 — Estado») y fusionar #20, F8c, F8d y F8e en ese orden.
+- **Siguiente paso concreto:** fusionar #20, #21, #22, #23 y #24 en ese orden y empezar F9.
 - **E1 del prompt v2 en el primer test, hecho** (PR #14). Sonnet 0.875 → 0.919 y Haiku 0.852 → 0.896. Además, E1 ahora compara cada contrafactual con la repetición del mismo relato (McNemar por tipo): ningún tipo difiere del ruido, y las reglas cambian con el modelo del vehículo en 6 de 52 pares (ADR 0012 §10).
 - **F0** cerrado el 2026-10-10 (PR #1), **F1** el 2026-10-10 (PR #3), **F2** el 2026-10-13 (PR #4), **F3** el 2026-10-13 (PR #5), **F4** el 2026-10-13 (PR #6), **F5** el 2026-10-13 (PR #7), **F6** el 2026-10-14 (PR #8), **F7** el 2026-10-14 (PR #9; pendientes registrados); migración a Vercel el 2026-10-14 (PR #10); test CISS y prompt v2 el 2026-10-14 (PR #11).
 
@@ -1275,7 +1275,26 @@ Las ramas van una encima de otra y se fusionan en este orden, cada una con su PR
 - **Antes → después** en media, mismas condiciones: `nocturno_lluvia` 54.2 → 62.7, `frontal_curva` 58.1 → 79.2, `alcance` 59.5 → 86.0 y `glorieta` 59.9 → 85.4 fps (`eval/results/e6_media_decision7_*.json`).
 - **Regla nueva en `CLAUDE.md`:** los ajustes solo de baja o media que cumplen §7.8 se deciden sin preguntar y se documentan con antes y después.
 
-**Siguiente paso:** E6 oficial completo (baja y media, todas las escenas) con el protocolo nuevo; luego revisar las capturas de CI y fusionar #20 a #24 en orden.
+**E6 oficial (2026-10-17, René, terminal aparte; `eval/results/e6_performance.json`, commit `78a9a5d`): cumple.**
+
+- **Mínimo entre las 11 escenas en modo automático:** baja 104.5 fps y media 69.8 (`poste`); carga inicial 3.13 MB.
+- **Condiciones válidas:** conectada al inicio y al final, «Mejor rendimiento» durante la medición y «Equilibrado» restaurado. Se re-midieron 21 repeticiones por tirones externos; quedan registradas.
+
+### Resumen para René (F8)
+
+- **Qué quedó:** entorno completo con su ADR y sus pruebas.
+  - Clima con niebla por visibilidad, lluvia, granizo y piso según su estado (ADR 0020).
+  - Faros y alumbrado con luz real (ADR 0021).
+  - Semáforos con fase, señales, rayas del manual, guarniciones, camellón y árboles instanciados (ADR 0022).
+  - Vía real de OpenStreetMap con la escena de Toluca y atribución ODbL (ADR 0023).
+  - Texturas PBR CC0 con tono calibrado (ADR 0024).
+  - Cuatro niveles de calidad, con alta y ultra completos: GTAO, resplandor, sombras de focos y luz de luna (ADR 0026).
+- **Rendimiento:** E6 cumple en la laptop (baja ≥ 30 y media ≥ 60). Las correcciones de rendimiento están en ADR 0025 y 0026.
+- **Cómo probarlo:** `pnpm dev` y abrir `/visor`. Para forzar ambientes: `?escena=nocturno_lluvia&calidad=ultra` o `?escena=interseccion_toluca`, y `?clima=granizo` o `?iluminacion=noche_sin_alumbrado`.
+- **Qué necesito de ti:** la computadora de demo, para medir alta y ultra (meta ≥ 60 fps; en «Bloqueado»).
+- **Pendientes de F8 que siguen abiertos** (lista de arriba): OSM en producción, rayas y banquetas sobre OSM, semáforo peatonal, textura de grava, corte del camellón en cruces y texturas en caras verticales.
+
+**Siguiente paso:** fusionar #20 a #24 en orden (cada uno con CI en verde) y empezar F9 con el plan de `docs/PROGRESS.md` (sección F9, que se agrega al empezar).
 
 1. `pnpm --filter @croquis/web build; node eval/e6_performance.mjs` (~70 min) en `feat/f8e-texturas`. Se corre en una terminal de PowerShell aparte, fuera de Claude Code: dentro de Claude Code, un proceso largo en segundo plano se detiene cuando falta memoria.
 2. Si `nocturno_lluvia` sigue por debajo de 60 fps en media, decidir con René qué entra en cada nivel de calidad. Es una decisión de alcance y no se toma sin él.
