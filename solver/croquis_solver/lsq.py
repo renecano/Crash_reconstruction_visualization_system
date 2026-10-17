@@ -157,7 +157,10 @@ def least_squares_soft_l1(
                 reduction = cost - cost_new
                 x, r, accepted = x_new, r_new, True
                 rho = reduction / predicted if predicted > 0.0 else 1.0
-                lam *= max(1.0 / 3.0, 1.0 - (2.0 * rho - 1.0) ** 3)
+                # (2ρ − 1)³ como multiplicaciones: `**` y `Math.pow` pueden diferir en el
+                # último bit.
+                d = 2.0 * rho - 1.0
+                lam *= max(1.0 / 3.0, 1.0 - d * d * d)
                 nu = 2.0
                 # Costo cero: el mínimo global de soft_l1 (ajuste exacto).
                 if cost_new == 0.0 or reduction <= FTOL * cost or step <= XTOL * (XTOL + size):

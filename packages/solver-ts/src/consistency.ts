@@ -11,6 +11,8 @@ import { G } from "./models";
 import { vehicleSpeedRangeFromThrow } from "./pedestrian";
 import { pyFixed } from "./reconstruct";
 import { pyRound, str } from "./pymath";
+import { Evidence, evidenceFromSpec, fitEvidence, invert, type Inversion } from "./inversion";
+import { monteCarlo } from "./montecarlo";
 
 type Json = Record<string, unknown>;
 
@@ -201,4 +203,139 @@ export function checkMap(spec: Json): Inconsistency[] {
 
 export function checkConsistencyBasic(spec: Json): Inconsistency[] {
   return [...checkStopped(spec), ...checkMarks(spec), ...checkThrow(spec), ...checkMap(spec)];
+}
+
+// --- Banderas que muestrean (Monte Carlo e inversión, F9) -------------------------------------
+
+const REST_SIGMAS = 3.0;
+const SIGMA_POSITION_M = 1.0;
+
+export function checkDamage(spec: Json, seed: number, samples: number): Inconsistency[] {
+  const out: Inconsistency[] = [];
+  const ev = evidenceFromSpec(spec, seed);
+  if (ev.damageDv.size === 0) return out;
+  if (!(spec.vehiculos as Json[]).every((v) => stated(v.velocidad_previa))) return out;
+  const mc = monteCarlo(spec, { samples, seed });
+  const byId = new Map((spec.vehiculos as Json[]).map((v) => [str(v.id), v]));
+  for (const [vid, dmg] of ev.damageDv) {
+    const sol = mc.vehiculos.get(vid)?.get("delta_v_kmh");
+    if (sol === undefined) continue;
+    if (sol.p90 < dmg.p10 || sol.p10 > dmg.p90) {
+      out.push({
+        codigo: "dano_vs_velocidad",
+        mensaje:
+          `El daño descrito en ${name(byId.get(vid)!)} corresponde a un cambio de velocidad ` +
+          `de ${pyFixed(dmg.p10, 0)} a ${pyFixed(dmg.p90, 0)} km/h, y con las velocidades indicadas sale ` +
+          `de ${pyFixed(sol.p10, 0)} a ${pyFixed(sol.p90, 0)} km/h. ¿Puedes revisar las velocidades o ` +
+          "describir de nuevo el daño?",
+        datos: {
+          vehiculo: vid,
+          dano_kmh: [dmg.p10, dmg.p90],
+          velocidades_kmh: [sol.p10, sol.p90],
+        },
+      });
+    }
+  }
+  return out;
+}
+
+export function checkRest(spec: Json, seed: number): Inconsistency[] {
+  const out: Inconsistency[] = [];
+  const ev = evidenceFromSpec(spec, seed);
+  if (ev.rest.size === 0) return out;
+  const fit = fitEvidence(spec, new Evidence(ev.rest, new Map(), new Map()));
+  const byId = new Map((spec.vehiculos as Json[]).map((v) => [str(v.id), v]));
+  for (const vid of ev.rest.keys()) {
+    const rx = fit.residuals.get(`reposo:${vid}:x`) ?? 0.0;
+    const ry = fit.residuals.get(`reposo:${vid}:y`) ?? 0.0;
+    const miss = Math.hypot(rx, ry) * SIGMA_POSITION_M;
+    if (miss > REST_SIGMAS * SIGMA_POSITION_M) {
+      out.push({
+        codigo: "reposo_inalcanzable",
+        mensaje:
+          `Con ninguna velocidad entre 0 y 200 km/h ${name(byId.get(vid)!)} termina donde ` +
+          `se indicó, aun llegando con otro ángulo: lo más cerca que llega queda a unos ` +
+          `${pyFixed(miss, 0)} m. ¿La posición final es correcta, o el vehículo pegó con algo ` +
+          "más o cambió de dirección antes?",
+        datos: { vehiculo: vid, distancia_minima_m: miss },
+      });
+    }
+  }
+  return out;
+}
+
+const EVIDENCE_WORDS: Readonly<Record<string, string>> = {
+  reposo: "dónde quedó",
+  rumbo_final: "hacia dónde quedó orientado",
+  marcas_frenado: "las marcas de frenado",
+  proyeccion: "la distancia a la que quedó la persona",
+  dano: "el daño descrito",
+};
+
+/** Velocidad declarada fuera del intervalo que fija la evidencia física (inversión). */
+export function checkSpeedEvidence(spec: Json, inv: Inversion): Inconsistency[] {
+  const out: Inconsistency[] = [];
+  const byId = new Map(
+    (spec.vehiculos as Json[]).map((v, i) => [str(v.id), [i, v] as [number, Json]]),
+  );
+  const kinds: string[] = [];
+  for (const label of inv.evidence) {
+    const k = label.split(":", 1)[0]!;
+    if (!kinds.includes(k)) kinds.push(k);
+  }
+  const words = kinds.filter((k) => k in EVIDENCE_WORDS).map((k) => EVIDENCE_WORDS[k]!);
+  if (words.length === 0) return out;
+  const said =
+    words.length === 1
+      ? words[0]!
+      : `${words.slice(0, -1).join(", ")} y ${words[words.length - 1]!}`;
+  for (const e of inv.estimates) {
+    if (e.param.kind !== "velocidad" || e.dist === null || !e.identifiable || e.atBound) continue;
+    const hit = byId.get(e.param.vehicle);
+    if (hit === undefined || !stated(hit[1].velocidad_previa)) continue;
+    const [idx, v] = hit;
+    const rng = speedRange(spec, idx);
+    if (rng === null || !(rng[1] < e.dist.p10 || rng[0] > e.dist.p90)) continue;
+    const frenado = (v.frenado ?? {}) as Json;
+    const aplico = (frenado.aplico ?? {}) as Json;
+    const braked = Boolean(aplico.valor) || inv.evidence.includes(`marcas_frenado:${str(v.id)}`);
+    const when = braked ? "antes de frenar" : "antes del choque";
+    out.push({
+      codigo: "velocidad_vs_evidencia",
+      mensaje:
+        `Por ${said}, ${name(v)} iría a unos ${pyFixed(e.dist.p10, 0)}–${pyFixed(e.dist.p90, 0)} km/h ` +
+        `${when}, y la velocidad indicada va de ${pyFixed(rng[0], 0)} a ${pyFixed(rng[1], 0)} km/h. ` +
+        "¿Puedes confirmar la velocidad, o alguno de esos datos?",
+      datos: {
+        vehiculo: str(v.id),
+        evidencia_kmh: [e.dist.p10, e.dist.p90],
+        declarada_kmh: [rng[0], rng[1]],
+        evidencia: [...inv.evidence],
+      },
+    });
+  }
+  return out;
+}
+
+/**
+ * Todas las banderas de consistencia de la escena, en orden fijo (port de `check_consistency`).
+ * `inversion` evita repetir la inversión si ya se calculó con la misma semilla.
+ */
+export function checkConsistency(
+  spec: Json,
+  opts: { seed?: number | null; samples?: number; inversion?: Inversion | null } = {},
+): Inconsistency[] {
+  const seed = opts.seed ?? Number((spec.meta as Json).semilla);
+  const samples = opts.samples ?? 32;
+  const basic = checkConsistencyBasic(spec);
+  let inversion = opts.inversion ?? null;
+  if (inversion === null && !evidenceFromSpec(spec, seed).empty()) {
+    inversion = invert(spec, { seed });
+  }
+  return [
+    ...basic,
+    ...checkDamage(spec, seed, samples),
+    ...checkRest(spec, seed),
+    ...(inversion !== null ? checkSpeedEvidence(spec, inversion) : []),
+  ];
 }

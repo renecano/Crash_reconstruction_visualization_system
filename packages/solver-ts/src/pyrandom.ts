@@ -9,10 +9,13 @@ const M = 397;
 const MATRIX_A = 0x9908b0df;
 const UPPER = 0x80000000;
 const LOWER = 0x7fffffff;
+const TWOPI = 2.0 * Math.PI;
 
 export class PyRandom {
   private readonly mt = new Uint32Array(N);
   private mti = N + 1;
+  /** Segundo valor de Box–Muller guardado por `gauss` (como `gauss_next` de CPython). */
+  private gaussNext: number | null = null;
 
   constructor(seed: number | bigint) {
     this.seed(seed);
@@ -65,6 +68,7 @@ export class PyRandom {
       n >>= 32n;
     }
     this.initByArray(key);
+    this.gaussNext = null;
   }
 
   private genrandUint32(): number {
@@ -101,5 +105,37 @@ export class PyRandom {
   /** `uniform(a, b)`. */
   uniform(a: number, b: number): number {
     return a + (b - a) * this.random();
+  }
+
+  /** `getrandbits(k)` para 0 ≤ k ≤ 32 (CPython: `genrand_uint32() >> (32 − k)`). */
+  getrandbits(k: number): number {
+    if (k < 0 || k > 32 || !Number.isInteger(k)) throw new RangeError("0 ≤ k ≤ 32");
+    if (k === 0) return 0;
+    return this.genrandUint32() >>> (32 - k);
+  }
+
+  /**
+   * `randrange(n)` con 0 < n < 2³²: `_randbelow_with_getrandbits` de CPython, que repite
+   * `getrandbits(n.bit_length())` hasta caer por debajo de n.
+   */
+  randrange(n: number): number {
+    if (!Number.isInteger(n) || n <= 0 || n >= 0x100000000) throw new RangeError("0 < n < 2³²");
+    const k = 32 - Math.clz32(n); // n.bit_length()
+    let r = this.getrandbits(k);
+    while (r >= n) r = this.getrandbits(k);
+    return r;
+  }
+
+  /** `gauss(mu, sigma)` de CPython: Box–Muller con el segundo valor guardado para la siguiente. */
+  gauss(mu = 0, sigma = 1): number {
+    let z = this.gaussNext;
+    this.gaussNext = null;
+    if (z === null) {
+      const x2pi = this.random() * TWOPI;
+      const g2rad = Math.sqrt(-2.0 * Math.log(1.0 - this.random()));
+      z = Math.cos(x2pi) * g2rad;
+      this.gaussNext = Math.sin(x2pi) * g2rad;
+    }
+    return mu + z * sigma;
   }
 }

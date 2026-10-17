@@ -159,3 +159,35 @@ export function pvariance(xs: readonly number[]): number {
   const denom = bn * bn * (1n << BigInt(2 * k));
   return ratioToDouble(numer, denom);
 }
+
+/** `statistics.median(data)` de CPython: el central, o el promedio de los dos centrales. */
+export function median(data: readonly number[]): number {
+  const s = [...data].sort((a, b) => a - b);
+  const n = s.length;
+  if (n === 0) throw new Error("no median for empty data");
+  if (n % 2 === 1) return s[(n - 1) / 2]!;
+  const i = n / 2;
+  return (s[i - 1]! + s[i]!) / 2;
+}
+
+/**
+ * `statistics.quantiles(data, n=n, method="inclusive")` de CPython: n − 1 cortes con el mínimo como
+ * percentil 0 y el máximo como 100, interpolando con `divmod(i·m, n)`.
+ */
+export function quantilesInclusive(data: readonly number[], n: number): number[] {
+  if (n < 1) throw new Error("n must be at least 1");
+  const s = [...data].sort((a, b) => a - b);
+  const ld = s.length;
+  if (ld < 2) {
+    if (ld === 1) return new Array<number>(n - 1).fill(s[0]!);
+    throw new Error("must have at least one data point");
+  }
+  const m = ld - 1;
+  const out: number[] = [];
+  for (let i = 1; i < n; i++) {
+    const j = Math.floor((i * m) / n);
+    const delta = i * m - j * n;
+    out.push((s[j]! * (n - delta) + s[j + 1]! * delta) / n);
+  }
+  return out;
+}

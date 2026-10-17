@@ -374,8 +374,13 @@ function num(campo: unknown, table: Readonly<Record<string, number>>, dflt: numb
   return Number(c.valor) * (table[str(c.unidad)] ?? 1.0);
 }
 
-function classes(): Record<string, Json> {
+/** Tabla de clases de vehículo (masa y medidas típicas, rangos); la usan la inversión y Monte Carlo. */
+export function vehicleClasses(): Record<string, Json> {
   return VEHICLE_CLASSES as unknown as Record<string, Json>;
+}
+
+function classes(): Record<string, Json> {
+  return vehicleClasses();
 }
 
 type Flag = (codigo: string, datos: Record<string, unknown>, mensaje: string) => void;

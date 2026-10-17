@@ -1,116 +1,206 @@
 {
   "name": "e7_parity",
-  "generated_at": "2026-10-16T20:09:20+00:00",
-  "git_commit": "4d399a9",
+  "generated_at": "2026-10-17T23:20:32+00:00",
+  "git_commit": "c2e94ea",
   "seed": null,
-  "descripcion": "E7: paridad del solver TS (packages/solver-ts) con la referencia Python en las escenas canónicas. Se comparan todos los números del resultado (trayectorias, impactos, daño, personas, ocupantes, visibilidad, eventos y parámetros) y los textos; los bloques de Monte Carlo, inversión y consistencia llegan al port en F9.",
+  "descripcion": "E7: paridad del solver TS (packages/solver-ts) con la referencia Python en las escenas canónicas. Se comparan todos los números del resultado completo (trayectorias, impactos, daño, personas, ocupantes, visibilidad, eventos, parámetros, Monte Carlo, inversión y consistencia) y los textos.",
   "tolerancia": {
     "relativa": 0.000001,
     "absoluta": 0.00001
   },
-  "numeros_comparados": 68127,
+  "tolerancia_bloques_de_ajuste": {
+    "rutas": [
+      "/inversion",
+      "/consistencia"
+    ],
+    "absoluta": 0.011,
+    "motivo": "gauss usa cos, sin y log, que pueden diferir en el último bit entre V8 y CPython; el optimizador lo amplifica hasta el último decimal reportado (ADR 0027)"
+  },
+  "numeros_comparados": 68557,
   "max_abs": 0.000041000000237545464,
   "max_rel_valores_mayores_a_una_milesima": 0.00003177225646568596,
   "diferencias_de_estructura_o_texto": 0,
+  "bloques_de_ajuste": {
+    "numeros_comparados": 217,
+    "max_abs": 0.010000000000019327,
+    "peor_ruta": "motociclista/inversion/parametros/2/estimacion/p50"
+  },
   "escenas": [
     {
       "escena": "alcance",
-      "numeros": 6455,
+      "numeros": 6498,
       "max_abs": 0,
       "max_rel": 0,
       "peor_ruta": "",
       "estructura": [],
-      "ms_ts": 159.4
+      "ajuste": {
+        "numeros": 3,
+        "max_abs": 0,
+        "max_rel": 0,
+        "peor_ruta": "",
+        "estructura": []
+      },
+      "ms_ts": 268.5
     },
     {
       "escena": "lateral_interseccion",
-      "numeros": 7274,
+      "numeros": 7317,
       "max_abs": 0,
       "max_rel": 0,
       "peor_ruta": "",
       "estructura": [],
-      "ms_ts": 78.3
+      "ajuste": {
+        "numeros": 44,
+        "max_abs": 0,
+        "max_rel": 0,
+        "peor_ruta": "",
+        "estructura": []
+      },
+      "ms_ts": 1738.3
     },
     {
       "escena": "frontal_curva",
-      "numeros": 5329,
+      "numeros": 5374,
       "max_abs": 0.000041000000237545464,
       "max_rel": 0.00003177225646568596,
       "peor_ruta": "/eventos/2/detalle/impulso_ns/1",
       "estructura": [],
-      "ms_ts": 124
+      "ajuste": {
+        "numeros": 4,
+        "max_abs": 0,
+        "max_rel": 0,
+        "peor_ruta": "",
+        "estructura": []
+      },
+      "ms_ts": 774.2
     },
     {
       "escena": "peaton_cruce",
-      "numeros": 4193,
+      "numeros": 4222,
       "max_abs": 0,
       "max_rel": 0,
       "peor_ruta": "",
       "estructura": [],
-      "ms_ts": 37.2
+      "ajuste": {
+        "numeros": 18,
+        "max_abs": 0,
+        "max_rel": 0,
+        "peor_ruta": "",
+        "estructura": []
+      },
+      "ms_ts": 258.4
     },
     {
       "escena": "motociclista",
-      "numeros": 7736,
+      "numeros": 7784,
       "max_abs": 0,
       "max_rel": 0,
       "peor_ruta": "",
       "estructura": [],
-      "ms_ts": 62
+      "ajuste": {
+        "numeros": 42,
+        "max_abs": 0.010000000000019327,
+        "max_rel": 0.008771929824561412,
+        "peor_ruta": "/inversion/parametros/2/estimacion/p50",
+        "estructura": []
+      },
+      "ms_ts": 931.2
     },
     {
       "escena": "objeto_fijo_arbol",
-      "numeros": 2601,
+      "numeros": 2627,
       "max_abs": 0,
       "max_rel": 0,
       "peor_ruta": "",
       "estructura": [],
-      "ms_ts": 25.2
+      "ajuste": {
+        "numeros": 9,
+        "max_abs": 0,
+        "max_rel": 0,
+        "peor_ruta": "",
+        "estructura": []
+      },
+      "ms_ts": 363.2
     },
     {
       "escena": "poste",
-      "numeros": 2268,
+      "numeros": 2292,
       "max_abs": 0,
       "max_rel": 0,
       "peor_ruta": "",
       "estructura": [],
-      "ms_ts": 25.8
+      "ajuste": {
+        "numeros": 8,
+        "max_abs": 0,
+        "max_rel": 0,
+        "peor_ruta": "",
+        "estructura": []
+      },
+      "ms_ts": 355.6
     },
     {
       "escena": "volcadura",
-      "numeros": 9294,
+      "numeros": 9337,
       "max_abs": 0.000014000004739500582,
       "max_rel": 0.000021984786527744804,
       "peor_ruta": "/eventos/0/detalle/energia_disipada_j",
       "estructura": [],
-      "ms_ts": 76.8
+      "ajuste": {
+        "numeros": 30,
+        "max_abs": 0,
+        "max_rel": 0,
+        "peor_ruta": "",
+        "estructura": []
+      },
+      "ms_ts": 1609.7
     },
     {
       "escena": "nocturno_lluvia",
-      "numeros": 9654,
+      "numeros": 9697,
       "max_abs": 0,
       "max_rel": 0,
       "peor_ruta": "",
       "estructura": [],
-      "ms_ts": 76
+      "ajuste": {
+        "numeros": 4,
+        "max_abs": 0,
+        "max_rel": 0,
+        "peor_ruta": "",
+        "estructura": []
+      },
+      "ms_ts": 367.6
     },
     {
       "escena": "glorieta",
-      "numeros": 7108,
+      "numeros": 7151,
       "max_abs": 0.0000010000003385357559,
       "max_rel": 0.00000135211328549839,
       "peor_ruta": "/eventos/0/detalle/energia_disipada_j",
       "estructura": [],
-      "ms_ts": 83.7
+      "ajuste": {
+        "numeros": 12,
+        "max_abs": 0,
+        "max_rel": 0,
+        "peor_ruta": "",
+        "estructura": []
+      },
+      "ms_ts": 1032.2
     },
     {
       "escena": "interseccion_toluca",
-      "numeros": 6215,
+      "numeros": 6258,
       "max_abs": 0,
       "max_rel": 0,
       "peor_ruta": "",
       "estructura": [],
-      "ms_ts": 44.9
+      "ajuste": {
+        "numeros": 43,
+        "max_abs": 0,
+        "max_rel": 0,
+        "peor_ruta": "",
+        "estructura": []
+      },
+      "ms_ts": 1878.7
     }
   ]
 }

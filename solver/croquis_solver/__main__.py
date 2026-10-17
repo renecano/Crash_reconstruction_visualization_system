@@ -20,7 +20,21 @@ def main(argv: list[str] | None = None) -> int:
     rec.add_argument("--all", action="store_true", help="Las escenas canónicas → resultados/")
     rec.add_argument("--check", action="store_true", help="Falla si los resultados no están al día")
     rec.add_argument("--json", type=Path, help="EscenaSpec en un archivo JSON")
+    num = sub.add_parser("numerics", help="Vectores de referencia de linalg y lsq para el port TS")
+    num.add_argument("--check", action="store_true", help="Falla si el archivo no está al día")
     args = parser.parse_args(argv)
+
+    if args.command == "numerics":
+        from croquis_solver import numerics_fixture
+
+        if args.check:
+            if not numerics_fixture.check():
+                print("Corre `uv run croquis-solver numerics`.", file=sys.stderr)
+                return 1
+            print("Vectores numéricos al día.")
+            return 0
+        print(numerics_fixture.write())
+        return 0
 
     if args.all or args.check:
         if args.check:
