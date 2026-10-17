@@ -13,7 +13,8 @@ Reglas de trabajo: `CLAUDE.md`. Especificación: `PLAN.md`.
 - **Fase de las marcas, hecha** (rama `feat/f7-marcas-derrape`, ADR 0016). Contrato 1.1.0 con `evidencias[].fase`, resultado 1.5.0 y la evidencia nueva `marcas_despues` en la inversión.
 - **Moto caída, hecha** (rama `feat/f7-moto-caida`, ADR 0017): arrastre medido de Peck et al. 2014, muestreado en Monte Carlo y en la inversión; resultado 1.6.0.
 - **Fase de las marcas en la extracción, hecha** (rama `feat/f7-fase-extraccion`, ADR 0019): reglas y prompt v3, que pasa a producción.
-- **Siguiente paso concreto:** F9, paso 1. Hacer el optimizador propio de la inversión en Python puro, con pruebas de propiedades contra SciPy (rama `feat/f9-optimizador`, ADR 0027).
+- **F9, paso 1 hecho** (rama `feat/f9-optimizador`, ADR 0027): la inversión usa álgebra lineal (`linalg.py`) y optimizador (`lsq.py`) propios, en Python puro. Frente a SciPy en las 8 escenas con inversión: converge en 8, costo total 24.273 contra 28.5212 y 118 evaluaciones contra 152; mejor en 2, igual en 3 y peor en 3 (`eval/results/f9_optimizador.json`).
+- **Siguiente paso concreto:** F9, paso 2. Portar `inversion.ts`, `montecarlo.ts`, `lsq.ts` y `linalg.ts`, y llevar E7 a todas las escenas sin excluir bloques.
 - **E1 del prompt v2 en el primer test, hecho** (PR #14). Sonnet 0.875 → 0.919 y Haiku 0.852 → 0.896. Además, E1 ahora compara cada contrafactual con la repetición del mismo relato (McNemar por tipo): ningún tipo difiere del ruido, y las reglas cambian con el modelo del vehículo en 6 de 52 pares (ADR 0012 §10).
 - **F8** cerrada el 2026-10-17 (PR #20 a #24). **F0** cerrado el 2026-10-10 (PR #1), **F1** el 2026-10-10 (PR #3), **F2** el 2026-10-13 (PR #4), **F3** el 2026-10-13 (PR #5), **F4** el 2026-10-13 (PR #6), **F5** el 2026-10-13 (PR #7), **F6** el 2026-10-14 (PR #8), **F7** el 2026-10-14 (PR #9; pendientes registrados); migración a Vercel el 2026-10-14 (PR #10); test CISS y prompt v2 el 2026-10-14 (PR #11).
 

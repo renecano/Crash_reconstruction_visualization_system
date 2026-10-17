@@ -24,7 +24,6 @@ Dos piezas:
 from __future__ import annotations
 
 import copy
-import importlib
 import json
 import math
 import random
@@ -35,10 +34,9 @@ from functools import cache
 from pathlib import Path
 from typing import Any
 
-import numpy as np
-
-from croquis_solver import friction
+from croquis_solver import friction, linalg
 from croquis_solver.crash3 import crush_energy, delta_v_barrier, delta_v_pair, uniform_crush_energy
+from croquis_solver.lsq import least_squares_soft_l1
 from croquis_solver.stiffness import sample_stiffness, stiffness_for, zona_from_cdc_side
 
 JsonObj = dict[str, Any]
@@ -505,7 +503,7 @@ class _Problem:
         self.spec, self.ev, self.params, self.fixed, self.dt = spec, ev, params, fixed, dt
         self.downed_mu = downed_mu
         self.names: list[str] = []
-        self._cache: dict[tuple[float, ...], np.ndarray] = {}
+        self._cache: dict[tuple[float, ...], list[float]] = {}
 
     def values(self, x: Sequence[float]) -> dict[str, float]:
         out = dict(self.fixed)
@@ -515,33 +513,35 @@ class _Problem:
     def raw(self, x: Sequence[float]) -> dict[str, float] | None:
         return _residuals(apply_values(self.spec, self.values(x)), self.ev, self.dt, self.downed_mu)
 
-    def __call__(self, x: np.ndarray) -> np.ndarray:
+    def __call__(self, x: Sequence[float]) -> list[float]:
         key = tuple(round(float(v), 9) for v in x)
         hit = self._cache.get(key)
         if hit is not None:
             return hit
-        res = self.raw(list(x))
+        res = self.raw([float(v) for v in x])
         if res is None:
-            out = np.full(max(len(self.names), 1), 1e3)
+            out = [1e3] * max(len(self.names), 1)
         else:
             if not self.names:
                 self.names.extend(sorted(res))
-            out = np.array([res.get(k, 1e3) for k in self.names], dtype=float)
+            out = [float(res.get(k, 1e3)) for k in self.names]
         self._cache[key] = out
         return out
 
-    def jac(self, x: np.ndarray) -> np.ndarray:
-        """Diferencias hacia adelante con paso fijo por tipo (hacia atrás junto al límite)."""
+    def jac(self, x: Sequence[float]) -> list[list[float]]:
+        """Jacobiano (filas: residuos; columnas: parámetros) por diferencias hacia adelante con paso
+        fijo por tipo (hacia atrás junto al límite)."""
         f0 = self(x)
-        cols: list[np.ndarray] = []
+        cols: list[list[float]] = []
         for k, p in enumerate(self.params):
             h = JAC_STEP[p.kind]
             if x[k] + h > p.hi:
                 h = -h
-            xk = np.array(x, dtype=float)
+            xk = [float(v) for v in x]
             xk[k] += h
-            cols.append((self(xk) - f0) / h)
-        return np.column_stack(cols) if cols else np.zeros((f0.size, 0))
+            fk = self(xk)
+            cols.append([(fk[i] - f0[i]) / h for i in range(len(f0))])
+        return [[cols[k][i] for k in range(len(cols))] for i in range(len(f0))]
 
 
 def fit_evidence(
@@ -568,11 +568,11 @@ def fit_evidence(
     if not free_params or ev.empty():
         res0 = _residuals(apply_values(base, x_start), ev, dt, downed_mu) or {}
         return Fit(x_start, res0, 0.0, True)
-    first = prob(np.array(x0))
+    first = prob(x0)
     if not prob.names:
         return Fit(x_start, {}, 0.0, True)
     x_best, cost, ok = _robust_least_squares(prob, x0, free_params, max_nfev)
-    best = prob(np.array(x_best))
+    best = prob(x_best)
     del first
     return Fit(
         prob.values(x_best),
@@ -585,19 +585,17 @@ def fit_evidence(
 def _robust_least_squares(
     prob: _Problem, x0: list[float], params: list[Param], max_nfev: int
 ) -> tuple[list[float], float, bool]:
-    """`scipy.optimize.least_squares` con pérdida `soft_l1` (SciPy no trae tipos)."""
-    least_squares: Any = importlib.import_module("scipy.optimize").least_squares
-    sol: Any = least_squares(
+    """Mínimos cuadrados con pérdida `soft_l1` y límites (optimizador propio, ADR 0027)."""
+    sol = least_squares_soft_l1(
         prob,
-        np.array(x0),
-        jac=prob.jac,
-        bounds=([p.lo for p in params], [p.hi for p in params]),
-        loss="soft_l1",
-        f_scale=1.0,
-        x_scale=np.array([SCALE[p.kind] for p in params]),
-        max_nfev=max_nfev,
+        prob.jac,
+        x0,
+        [p.lo for p in params],
+        [p.hi for p in params],
+        [SCALE[p.kind] for p in params],
+        max_nfev,
     )
-    return [float(v) for v in sol.x], float(sol.cost), bool(sol.success)
+    return sol.x, sol.cost, sol.success
 
 
 def local_sigma(spec: JsonObj, ev: Evidence, fit: Fit, *, dt: float = 0.1) -> dict[str, float]:
@@ -608,45 +606,54 @@ def local_sigma(spec: JsonObj, ev: Evidence, fit: Fit, *, dt: float = 0.1) -> di
     if not params:
         return {}
     prob = _Problem(base, ev, params, {}, dt)
-    x = np.array([min(max(fit.values.get(p.name, p.start), p.lo), p.hi) for p in params])
+    x = [min(max(fit.values.get(p.name, p.start), p.lo), p.hi) for p in params]
     j = prob.jac(x)
-    if j.size == 0 or not prob.names:
+    if not j or not prob.names:
         return {p.name: math.inf for p in params}
     return _laplace(j, params)
 
 
-def _laplace(j: np.ndarray, params: list[Param]) -> dict[str, float]:
-    jtj = j.T @ j
-    cov = np.linalg.pinv(jtj, rcond=1e-10)
+def _laplace(j: list[list[float]], params: list[Param]) -> dict[str, float]:
+    jtj = linalg.matmul(linalg.transpose(j), j)
+    cov = linalg.pinv(jtj, rcond=1e-10)
     out: dict[str, float] = {}
     for k, p in enumerate(params):
-        col = float(np.linalg.norm(j[:, k]))
-        var = float(cov[k, k])
+        acc = 0.0
+        for row in j:
+            acc += row[k] * row[k]
+        col = math.sqrt(acc)
+        var = cov[k][k]
         out[p.name] = math.inf if col < 1e-6 or var <= 0 else math.sqrt(var)
     return out
 
 
-def _chord_refit(prob: _Problem, x_best: list[float], j: np.ndarray) -> Fit | None:
+def _chord_refit(prob: _Problem, x_best: list[float], j: list[list[float]]) -> Fit | None:
     """Reajuste barato de una muestra perturbada: Gauss-Newton con el jacobiano del mejor ajuste
     (método de la cuerda), pesos de la pérdida `soft_l1` (ρ'(z) = 1/√(1+z)), pasos recortados a la
     mitad si no mejoran y dentro de los límites. Cerca del mejor ajuste converge como el ajuste
     completo con unas cuantas reconstrucciones en vez de decenas. Devuelve `None` si ningún paso
     mejora (la muestra se reajusta completa)."""
-    lo = np.array([p.lo for p in prob.params])
-    hi = np.array([p.hi for p in prob.params])
-    x = np.array(x_best, dtype=float)
+    lo = [p.lo for p in prob.params]
+    hi = [p.hi for p in prob.params]
+    x = [float(v) for v in x_best]
     r = prob(x)
 
-    def loss(v: np.ndarray) -> float:
-        return float(np.sum(np.sqrt(1.0 + v**2) - 1.0))
+    def loss(v: Sequence[float]) -> float:
+        # Σ (√(1 + v²) − 1) sin la cancelación para v chico (ver `lsq.soft_l1_cost`).
+        acc = 0.0
+        for e in v:
+            z = e * e
+            acc += z / (math.sqrt(1.0 + z) + 1.0)
+        return acc
 
     accepted = 0
     for _ in range(CHORD_ITER):
-        w = 1.0 / np.sqrt(np.sqrt(1.0 + r**2))  # raíz del peso IRLS de soft_l1
-        step = np.linalg.lstsq(j * w[:, None], -(r * w), rcond=None)[0]
+        w = [1.0 / math.sqrt(math.sqrt(1.0 + e * e)) for e in r]  # raíz del peso IRLS de soft_l1
+        a = [[w[i] * v for v in j[i]] for i in range(len(r))]
+        step = linalg.lstsq(a, [-(r[i] * w[i]) for i in range(len(r))])
         moved = False
         for frac in (1.0, 0.5, 0.25):
-            x_new = np.clip(x + frac * step, lo, hi)
+            x_new = [min(max(x[k] + frac * step[k], lo[k]), hi[k]) for k in range(len(x))]
             r_new = prob(x_new)
             if loss(r_new) < loss(r):
                 x, r, moved = x_new, r_new, True
@@ -654,7 +661,10 @@ def _chord_refit(prob: _Problem, x_best: list[float], j: np.ndarray) -> Fit | No
         if not moved:
             break
         accepted += 1
-        if float(np.max(np.abs(step))) < 0.05:
+        big = 0.0
+        for v in step:
+            big = max(big, abs(v))
+        if big < 0.05:
             break
     if accepted == 0:
         return None
@@ -814,9 +824,9 @@ def invert(
     x_best = [best.values[p.name] for p in free_params]
     fixed = {n: v for n, v in best.values.items() if n not in free}
     j_best = (
-        _Problem(with_marks(spec, ev), ev, free_params, fixed, dt).jac(np.array(x_best))
+        _Problem(with_marks(spec, ev), ev, free_params, fixed, dt).jac(x_best)
         if free_params
-        else np.zeros((0, 0))
+        else []
     )
     for _ in range(samples if free_params else 0):
         pert = perturbed(spec, ev, rng)

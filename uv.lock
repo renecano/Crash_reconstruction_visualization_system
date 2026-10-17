@@ -210,6 +210,7 @@ dev = [
     { name = "pytest" },
     { name = "pytest-cov" },
     { name = "ruff" },
+    { name = "scipy" },
 ]
 
 [package.metadata]
@@ -230,6 +231,7 @@ dev = [
     { name = "pytest", specifier = ">=9.1,<10" },
     { name = "pytest-cov", specifier = ">=7.1,<8" },
     { name = "ruff", specifier = ">=0.17,<0.18" },
+    { name = "scipy", specifier = ">=1.18,<2" },
 ]
 
 [[package]]
@@ -276,6 +278,7 @@ dependencies = [
     { name = "croquis-solver" },
     { name = "numpy" },
     { name = "polars" },
+    { name = "scipy" },
 ]
 
 [package.metadata]
@@ -285,6 +288,7 @@ requires-dist = [
     { name = "croquis-solver", editable = "solver" },
     { name = "numpy", specifier = ">=2.5,<3" },
     { name = "polars", specifier = ">=2.0,<3" },
+    { name = "scipy", specifier = ">=1.18,<2" },
 ]
 
 [[package]]
@@ -332,14 +336,12 @@ source = { editable = "solver" }
 dependencies = [
     { name = "croquis-scene-schema" },
     { name = "numpy" },
-    { name = "scipy" },
 ]
 
 [package.metadata]
 requires-dist = [
     { name = "croquis-scene-schema", editable = "packages/scene-schema/python" },
     { name = "numpy", specifier = ">=2.5,<3" },
-    { name = "scipy", specifier = ">=1.18,<2" },
 ]
 
 [[package]]

@@ -9,6 +9,7 @@ dependencies = [
   "croquis-extraction",
   "numpy>=2.5,<3",
   "polars>=2.0,<3",
+  "scipy>=1.18,<2",
 ]
 
 [tool.uv.sources]
