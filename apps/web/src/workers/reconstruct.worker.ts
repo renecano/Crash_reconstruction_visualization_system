@@ -1,19 +1,27 @@
 /**
  * Web Worker del solver TS: reconstruye una escena fuera del hilo principal para que el visor no
  * se congele (PLAN §3: el solver de producción corre en Web Workers).
+ *
+ * Con `completo`, responde dos veces: primero la reconstrucción (trayectorias y daño, lo que el
+ * visor necesita para dibujar, en décimas de segundo) y después el resultado completo con Monte
+ * Carlo, inversión y consistencia (F9, `fullResult`), que tarda unos segundos.
  */
-import { reconstruct, reconstructionToDict } from "@croquis/solver-ts";
+import { fullResult, reconstruct, reconstructionToDict } from "@croquis/solver-ts";
 
 interface Request {
   id: number;
   spec: Record<string, unknown>;
+  completo?: boolean;
 }
 
 self.onmessage = (ev: MessageEvent<Request>) => {
-  const { id, spec } = ev.data;
+  const { id, spec, completo } = ev.data;
   try {
     const resultado = reconstructionToDict(reconstruct(spec));
-    self.postMessage({ id, resultado });
+    self.postMessage({ id, fase: "reconstruccion", resultado });
+    if (completo) {
+      self.postMessage({ id, fase: "completo", resultado: fullResult(spec) });
+    }
   } catch (e) {
     self.postMessage({ id, error: e instanceof Error ? e.message : String(e) });
   }

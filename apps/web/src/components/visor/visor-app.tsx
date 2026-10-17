@@ -5,6 +5,7 @@ import {
   fixtureTitle,
   loadFixture,
   loadResultado,
+  type EscenaSpec,
   type FixtureName,
   type Resultado,
 } from "@croquis/scene-schema";
@@ -52,6 +53,8 @@ import { HypothesisPanel, type Hipotesis } from "./hypothesis-panel";
 import { PeoplePanel } from "./people-panel";
 import { ResultPanel } from "./result-panel";
 import { TimelineBar } from "./timeline-bar";
+import { leerEscenaPropia } from "@/lib/escena-propia";
+import { reconstruirCompletoEnNavegador } from "@/lib/reconstruct-client";
 
 const SceneViewer = dynamic(() => import("@croquis/viewer/react").then((m) => m.SceneViewer), {
   ssr: false,
@@ -59,9 +62,11 @@ const SceneViewer = dynamic(() => import("@croquis/viewer/react").then((m) => m.
 });
 
 type CalidadOpcion = QualityLevel | "auto";
+/** Una escena canónica o la escena propia de la persona usuaria (`escena=propia`). */
+type EscenaVisor = FixtureName | "propia";
 
 interface VisorParams {
-  escena: FixtureName;
+  escena: EscenaVisor;
   camara: string;
   calidad: CalidadOpcion;
   renderer: RendererPreference;
@@ -78,9 +83,12 @@ function parseParams(sp: URLSearchParams): VisorParams {
   const renderer = sp.get("renderer");
   const t = sp.get("t");
   return {
-    escena: FIXTURE_NAMES.includes(escena as FixtureName)
-      ? (escena as FixtureName)
-      : "lateral_interseccion",
+    escena:
+      escena === "propia"
+        ? "propia"
+        : FIXTURE_NAMES.includes(escena as FixtureName)
+          ? (escena as FixtureName)
+          : "lateral_interseccion",
     camara: sp.get("camara") ?? "libre",
     calidad: isQualityLevel(calidad) ? calidad : "auto",
     renderer: renderer === "webgl" || renderer === "webgpu" ? renderer : "auto",
@@ -161,14 +169,65 @@ function ClockedTimelineBar({
   );
 }
 
+const hydratedSnapshot = () => true;
+const serverSnapshot = () => false;
+
+/**
+ * Elige la escena: una canónica o la propia (guardada en esta pestaña desde el relato o el
+ * croquis). Sin escena propia explica cómo crearla.
+ */
 export function VisorApp() {
+  const sp = useSearchParams();
+  const escena = useMemo(() => parseParams(new URLSearchParams(sp.toString())).escena, [sp]);
+  const hidratado = useSyncExternalStore(noopSubscribe, hydratedSnapshot, serverSnapshot);
+  const propia = useSyncExternalStore(noopSubscribe, leerEscenaPropia, nullSnapshot);
+  const spec = useMemo(
+    () => (escena === "propia" ? propia : loadFixture(escena)),
+    [escena, propia],
+  );
+  if (!spec) {
+    return (
+      <div
+        className="grid min-h-[360px] place-items-center rounded-lg border border-neutral-300 p-6 text-center text-sm dark:border-neutral-700"
+        data-testid="sin-escena-propia"
+      >
+        {hidratado ? (
+          <p>
+            No hay una escena propia en esta pestaña. Escribe un relato en{" "}
+            <a className="underline" href="/relato">
+              /relato
+            </a>{" "}
+            o arma una en el{" "}
+            <a className="underline" href="/croquis">
+              croquis
+            </a>{" "}
+            y usa «Ver en 3D».
+          </p>
+        ) : (
+          <p>Cargando escena…</p>
+        )}
+      </div>
+    );
+  }
+  return <VisorEscena key={escena} spec={spec} hayPropia={propia !== null} />;
+}
+
+function VisorEscena({ spec, hayPropia }: { spec: EscenaSpec; hayPropia: boolean }) {
   const sp = useSearchParams();
   const router = useRouter();
   const params = useMemo(() => parseParams(new URLSearchParams(sp.toString())), [sp]);
-  const spec = useMemo(() => loadFixture(params.escena), [params.escena]);
   const searchKey = sp.toString();
   const ambiente = useMemo(() => parseAmbiente(new URLSearchParams(searchKey)), [searchKey]);
-  const [resultado, setResultado] = useState<{ name: FixtureName; r: Resultado } | null>(null);
+  // La escena propia se reconstruye en el navegador (Web Worker): primero la reconstrucción, que
+  // es lo que se dibuja, y luego el resultado completo (Monte Carlo, inversión y consistencia) para
+  // los paneles. El visor 3D se queda con la primera para no reconstruir la escena 3D al llegar la
+  // segunda (las trayectorias son las mismas).
+  const [resultado, setResultado] = useState<{
+    name: EscenaVisor;
+    dibujo: Resultado;
+    r: Resultado;
+    completo: boolean;
+  } | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [info, setInfo] = useState<RendererInfo | null>(null);
   // Modo automático (ADR 0026): arranca en el nivel que sugiere la GPU y luego lo ajustan los fps
@@ -180,39 +239,62 @@ export function VisorApp() {
 
   useEffect(() => {
     let alive = true;
-    loadResultado(params.escena)
-      .then((r) => {
-        if (alive) setResultado({ name: params.escena, r });
+    const name = params.escena;
+    const fail = (e: unknown) => {
+      if (alive) setError(e instanceof Error ? e.message : String(e));
+    };
+    if (name === "propia") {
+      reconstruirCompletoEnNavegador(spec, (parcial) => {
+        if (alive) setResultado({ name, dibujo: parcial, r: parcial, completo: false });
       })
-      .catch((e: unknown) => setError(e instanceof Error ? e.message : String(e)));
+        .then((completo) => {
+          if (alive) {
+            setResultado((prev) => ({
+              name,
+              dibujo: prev?.name === name ? prev.dibujo : completo,
+              r: completo,
+              completo: true,
+            }));
+          }
+        })
+        .catch(fail);
+    } else {
+      loadResultado(name)
+        .then((r) => {
+          if (alive) setResultado({ name, dibujo: r, r, completo: true });
+        })
+        .catch(fail);
+    }
     return () => {
       alive = false;
     };
-  }, [params.escena]);
+  }, [params.escena, spec]);
 
   const r = resultado?.name === params.escena ? resultado.r : null;
+  const dibujo = resultado?.name === params.escena ? resultado.dibujo : null;
+  const calculando = resultado?.name === params.escena && !resultado.completo;
   // Hipótesis alternativa de la escena actual (se descarta al cambiar de escena).
-  const [hyp, setHyp] = useState<{ escena: FixtureName; lista: Hipotesis[] } | null>(null);
+  const [hyp, setHyp] = useState<{ escena: EscenaVisor; lista: Hipotesis[] } | null>(null);
   const hipotesis = useMemo(
     () => (hyp?.escena === params.escena ? hyp.lista : []),
     [hyp, params.escena],
   );
   const ghostResults = useMemo(() => hipotesis.map((h) => h.resultado), [hipotesis]);
   const clock = useMemo(() => {
-    if (!r) return null;
+    if (!dibujo) return null;
     return createClock(
-      createTimeline(r.t_inicio, r.t_fin, r.dt, {
-        t: params.t ?? r.t_inicio,
+      createTimeline(dibujo.t_inicio, dibujo.t_fin, dibujo.dt, {
+        t: params.t ?? dibujo.t_inicio,
         playing: params.auto,
         loop: params.bucle,
       }),
     );
-  }, [r, params.t, params.auto, params.bucle]);
+  }, [dibujo, params.t, params.auto, params.bucle]);
 
   // Backend automático por medición (ADR 0006): WebGPU primero; si no llega a 60 fps se prueba
   // WebGL 2 y se queda el más rápido. La decisión se recuerda en este navegador.
   // Resultado del montaje de personas (ragdolls calibrados) para el panel.
-  const [people, setPeople] = useState<{ escena: FixtureName; data: PeopleAttachment } | null>(
+  const [people, setPeople] = useState<{ escena: EscenaVisor; data: PeopleAttachment } | null>(
     null,
   );
   const onPeople = useCallback(
@@ -220,7 +302,7 @@ export function VisorApp() {
     [params.escena],
   );
   // Una prueba por escena: lo que rinde en una escena puede no rendir en otra.
-  const [trialState, setTrialState] = useState<{ escena: FixtureName; trial: BackendTrial }>(
+  const [trialState, setTrialState] = useState<{ escena: EscenaVisor; trial: BackendTrial }>(
     () => ({
       escena: params.escena,
       trial: startTrial(readBackend()),
@@ -322,6 +404,9 @@ export function VisorApp() {
             className="rounded border border-neutral-400 bg-transparent px-2 py-1"
             aria-label="Escena"
           >
+            {hayPropia ? (
+              <option value="propia">Escena propia (del relato o el croquis)</option>
+            ) : null}
             {FIXTURE_NAMES.map((n) => (
               <option key={n} value={n}>
                 {fixtureTitle(n)}
@@ -418,10 +503,10 @@ export function VisorApp() {
           <p role="alert" className="grid h-full place-items-center p-6 text-center text-white">
             {error}
           </p>
-        ) : r && clock ? (
+        ) : dibujo && clock ? (
           <SceneViewer
             spec={spec}
-            resultado={r}
+            resultado={dibujo}
             clock={clock}
             camera={cameraMode}
             driverVehicleId={driverId}
@@ -454,6 +539,17 @@ export function VisorApp() {
       </div>
 
       {clock ? <ClockedTimelineBar clock={clock} markers={markers} /> : null}
+
+      {calculando ? (
+        <p
+          role="status"
+          data-testid="calculo-completo"
+          className="text-sm text-neutral-600 dark:text-neutral-400"
+        >
+          Calculando la incertidumbre (Monte Carlo), la inversión desde la evidencia y la
+          consistencia en este navegador…
+        </p>
+      ) : null}
 
       {r ? <ResultPanel resultado={r} supuestosEntorno={env.supuestos} spec={spec} /> : null}
       {r ? <EvidencePanel resultado={r} /> : null}
