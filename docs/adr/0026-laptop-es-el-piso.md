@@ -23,6 +23,12 @@
    - **Condiciones registradas:** si el equipo está conectado o en batería, la carga, el plan de energía, la memoria libre, la GPU y la versión del navegador, al inicio y al final.
    - **Alcance en la laptop:** baja y media son el criterio. Alta y ultra se miden solo como información; su meta es la computadora de demo.
 5. **Meta en la computadora de demo:** ≥ 60 fps en alta o ultra en todas las escenas canónicas. Queda en «Bloqueado — necesita a René» hasta que esa computadora esté disponible.
+6. **Condiciones de medición de E6** (decididas al medir la línea base, 2026-10-17):
+   - **Un navegador nuevo por medición.** Con uno solo para decenas de escenas, el proceso de GPU acumula estado. En la línea base larga, `frontal_curva` dio 58 fps de promedio contra 84 de mediana, y reintentar no ayudó. La misma escena sola, en un navegador nuevo, dio 61.2 fps con promedio igual a la mediana en las tres repeticiones.
+   - **Modo de energía «Mejor rendimiento» durante la medición.** En «Equilibrado» la GPU integrada cambia de frecuencia por su cuenta: medidas intercaladas de la misma escena saltaron entre ~54, ~57, ~63 y ~69 fps.
+     - **Cómo se aplica:** E6 guarda el modo que había, activa «Mejor rendimiento» con la API de Windows (`powrprof.dll`) y lo restaura al terminar, también si falla o se interrumpe (`eval/lib/power-mode.mjs`).
+     - **Registro:** el modo de antes y el de durante quedan en `condiciones.modo_energia`.
+     - **Por qué se decide sin preguntar:** es un cambio reversible que se restaura solo (regla de autonomía de `CLAUDE.md`).
 
 ## Consecuencias
 

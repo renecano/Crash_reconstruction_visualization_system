@@ -31,6 +31,7 @@ import { createRequire } from "node:module";
 import os from "node:os";
 import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
+import { useBestPerformance } from "./lib/power-mode.mjs";
 
 const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), "..");
 const WEB = join(ROOT, "apps", "web");
@@ -314,6 +315,9 @@ async function main() {
       }
     };
     const browser = await launch();
+    // Modo «Mejor rendimiento» durante la medición; se restaura al terminar (ADR 0026).
+    const energia = useBestPerformance();
+    globalThis.__e6RestoreEnergy = energia.restore;
     const condicionesInicio = conditions();
     if (condicionesInicio.conectada === false) {
       console.warn(
@@ -364,6 +368,7 @@ async function main() {
     const verificacionAuto = await autoChoice(browser, base);
     await browser.close();
     const condicionesFin = conditions();
+    energia.restore();
     const summary = {};
     for (const renderer of RENDERERS) {
       for (const quality of QUALITIES) {
@@ -436,6 +441,7 @@ async function main() {
         fin: condicionesFin,
         // Comparable solo si estuvo conectado a la corriente al inicio y al final.
         validas: condicionesInicio.conectada !== false && condicionesFin.conectada !== false,
+        modo_energia: energia.registro,
       },
       presupuesto: BUDGET,
       modo_automatico: automatico,
@@ -464,6 +470,8 @@ async function main() {
     );
   } finally {
     server.kill();
+    // Por si la medición falló antes de restaurarlo (la función es idempotente).
+    globalThis.__e6RestoreEnergy?.();
   }
 }
 

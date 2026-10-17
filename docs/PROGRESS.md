@@ -1258,7 +1258,14 @@ Las ramas van una encima de otra y se fusionan en este orden, cada una con su PR
 - **E6:** mediana de 3 repeticiones, re-medición si hay tirones externos y condiciones de la prueba registradas.
 - **Tercera corrida de E6 (sin el corte por mip):** no se usa como resultado. WebGPU en alta dio repeticiones contradictorias (~20 contra ~65 fps), y WebGL 2 en media tuvo 13–15 tareas largas por escena, contra 0–4 en la corrida anterior (`eval/results/e6_performance_f8_tercera.json`).
 
-**Siguiente paso (rama `feat/f8f-calidad`, encima de F8e):** E6 con el protocolo nuevo; nivel ultra con elección por GPU; alta y ultra completos; luego, optimizaciones de media sin cambio visible, medidas antes y después.
+**Estado de `feat/f8f-calidad` (PR #24):**
+
+- **Hecho:** cuatro niveles (ultra y elección por GPU); alta y ultra completos (sombra de la luna, sombras de focos, GTAO y resplandor); E6 robusto.
+- **Decisiones de medición** (ADR 0026, decisión 6): un navegador nuevo por medición y modo de energía «Mejor rendimiento» durante E6, restaurado al terminar.
+- **Línea base real de media**, con navegador nuevo, en «Equilibrado» y mediana de 3: `glorieta` 54.4, `nocturno_lluvia` 55.6, `frontal_curva` 59.3 y `alcance` 59.8 fps.
+- **Qué cuesta en `glorieta`:** sin las texturas del entorno gana ~4 ms por cuadro. El reparto entre color, normal, rugosidad y ruido no se pudo separar en «Equilibrado».
+
+**Siguiente paso:** repetir el reparto con «Mejor rendimiento» y luego optimizar media sin cambio visible, medido antes y después.
 
 1. `pnpm --filter @croquis/web build; node eval/e6_performance.mjs` (~70 min) en `feat/f8e-texturas`. Se corre en una terminal de PowerShell aparte, fuera de Claude Code: dentro de Claude Code, un proceso largo en segundo plano se detiene cuando falta memoria.
 2. Si `nocturno_lluvia` sigue por debajo de 60 fps en media, decidir con René qué entra en cada nivel de calidad. Es una decisión de alcance y no se toma sin él.

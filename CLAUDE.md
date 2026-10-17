@@ -22,7 +22,6 @@ Trabajas de forma autónoma. **No pidas visto bueno para planes, decisiones téc
 - Decisiones abiertas de `PLAN.md` §16: usa la opción por defecto marcada ahí y regístrala.
 - Dependencias y herramientas de desarrollo (npm, pip/uv, winget): instálalas tú y anota en `docs/PROGRESS.md` qué instalaste y para qué.
 - Si algo falla, depúralo hasta que funcione. No marques nada como hecho con pruebas en rojo, saltadas o borradas para que pase.
-
 - **No le preguntes a René decisiones técnicas, de medición, de herramientas ni de configuración.** Elige tú la opción que recomiendes, regístrala en `docs/PROGRESS.md` (y en un ADR si es de arquitectura) y sigue trabajando sin esperar.
 - Cambios en la computadora de René que sean reversibles y se restauren solos (por ejemplo, el modo de energía durante una medición) también los decides tú, siempre que quede registrado en el resultado.
 
