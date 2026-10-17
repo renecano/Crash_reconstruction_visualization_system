@@ -109,6 +109,11 @@ declare global {
     __croquisGhosts?: number;
     __croquisPeopleReady?: boolean;
     __croquisPeople?: PeopleAttachment;
+    /**
+     * Interruptores de diagnóstico para las evaluaciones (`eval/`); la página nunca los pone.
+     * `sombraLuna`: dibuja la sombra de la luna de noche, para medir que no se ve.
+     */
+    __croquisDiag?: { sombraLuna?: boolean };
     /** `performance.now()` del primer cuadro listo (E6: tiempo hasta interactivo). */
     __croquisReadyAt?: number;
   }
@@ -220,7 +225,11 @@ function SceneContent({
     const frame = sunShadowFrame(resultado, env.lightDirection);
     sun.position.copy(frame.position);
     sun.target.position.copy(frame.target);
-    sun.castShadow = profile.shadows;
+    // De noche la luz direccional es la luna (intensidad 0.45 contra 2.8 de día) y su sombra no se
+    // ve junto a los faros y el alumbrado (eval/results/e6_sombra_luna.json), pero cuesta un pase
+    // de sombras completo y su muestreo en cada píxel: de noche no se calcula.
+    const moonShadow = typeof window !== "undefined" && window.__croquisDiag?.sombraLuna === true;
+    sun.castShadow = profile.shadows && (!env.night || moonShadow);
     sun.shadow.camera.left = -frame.extent;
     sun.shadow.camera.right = frame.extent;
     sun.shadow.camera.top = frame.extent;
