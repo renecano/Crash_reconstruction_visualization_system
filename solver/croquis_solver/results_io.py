@@ -22,13 +22,14 @@ from croquis_solver.reconstruct import reconstruct
 
 REL_TOL = 1e-6
 ABS_TOL = 1e-5
-# La inversión es un ajuste iterativo con álgebra lineal (BLAS) cuyos núcleos cambian con el CPU:
-# entre máquinas sus números difieren en décimas. Sus percentiles salen de 12 reestimaciones, con
-# una incertidumbre estadística mucho mayor que eso, así que esos bloques se comparan con 5 %.
-# Estructura, booleanos (identificable, en el límite) y textos se siguen comparando exactos.
+# La inversión usa álgebra lineal y optimizador propios (ADR 0027): ya no depende de BLAS. Lo único
+# que cambia entre máquinas es el último bit de cos, sin, log y exp (gauss y el modelo de daño), que
+# el optimizador puede amplificar hasta el último decimal reportado de un percentil. Esos bloques se
+# comparan con una unidad de su resolución reportada, como E7 entre TS y Python. Estructura,
+# booleanos (identificable, en el límite) y textos se siguen comparando exactos.
 FIT_PREFIXES = ("/inversion", "/consistencia")
-FIT_REL_TOL = 0.05
-FIT_ABS_TOL = 0.05
+FIT_REL_TOL = 0.0
+FIT_ABS_TOL = 0.011
 
 
 def render(name: str) -> str:

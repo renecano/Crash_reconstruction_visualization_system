@@ -43,6 +43,17 @@ En las 8 escenas con inversión, con el mismo presupuesto de 40 evaluaciones:
 - **Por qué no coinciden siempre:** los problemas vienen de la simulación y son multimodales, así que dos algoritmos pueden caer en mínimos distintos.
 - **Los resultados canónicos se regeneraron** (`croquis-solver reconstruct --all`) y `eval/results/f7_inversion.json` se volvió a medir.
 
+## Port TS y paridad E7 (F9, paso 2)
+
+- **Módulos portados:** `linalg.ts`, `lsq.ts`, `inversion.ts`, `montecarlo.ts` y las banderas de consistencia que muestrean, más lo que usan de CPython: `random.gauss` y `randrange`, `statistics.quantiles` (inclusive) y `median`, y el bootstrap de la rigidez.
+- **Vectores de referencia:** `croquis-solver numerics` escribe `packages/solver-ts/fixtures/numerics.json` y CI lo revisa con `--check`.
+  - El álgebra lineal, el optimizador, `randrange` y los cuantiles coinciden **bit a bit**.
+  - `gauss` coincide a 12 cifras: usa cos, sin y log, que pueden diferir en el último bit entre V8 y la biblioteca matemática de CPython.
+- **E7 sobre el resultado completo** (`eval/results/e7_parity.json`):
+  - Núcleo y Monte Carlo: 68,557 números a relativa 1e-6, sin diferencias de estructura ni de texto.
+  - Inversión y consistencia: 217 números, con diferencia máxima 0.01 en `motociclista/inversion/parametros/2/estimacion/p50`. Es el último decimal de un percentil, donde la diferencia de bits de `gauss` cambia el redondeo en esa escena.
+  - Por eso esos dos bloques se comparan con una unidad de su resolución reportada (0.011). Es mucho más estricto que el 5 % con el que la referencia Python se comparaba entre máquinas cuando usaba BLAS.
+
 ## Consecuencias
 
 - **La inversión cambia sus números en las escenas canónicas,** porque el camino del optimizador ya no es el de SciPy. La comparación se publica tal cual; no se ajustó nada para imitar a SciPy.

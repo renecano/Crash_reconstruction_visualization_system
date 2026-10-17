@@ -20,3 +20,8 @@ export * from "./rollover";
 export * from "./visibility";
 export * from "./reconstruct";
 export * from "./consistency";
+export * from "./linalg";
+export * from "./lsq";
+export * from "./inversion";
+export * from "./montecarlo";
+export * from "./full-result";

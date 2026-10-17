@@ -57,9 +57,13 @@ def test_tolerancia_del_ajuste_solo_en_inversion_y_consistencia() -> None:
     from croquis_solver.results_io import differences
 
     base = {"vehiculos": [{"v": 16.07}], "inversion": {"s": 16.07, "ok": True}}
-    near = {"vehiculos": [{"v": 16.13}], "inversion": {"s": 16.13, "ok": True}}
+    # Una unidad del último decimal reportado pasa en la inversión, no en el resto del solver.
+    near = {"vehiculos": [{"v": 16.08}], "inversion": {"s": 16.08, "ok": True}}
     diffs = differences(base, near)
-    assert diffs == ["/vehiculos/0/v: 16.07 ≠ 16.13"]  # el solver se compara exacto
+    assert diffs == ["/vehiculos/0/v: 16.07 ≠ 16.08"]  # el solver se compara exacto
+    # Más que eso ya es una diferencia también en la inversión (antes, con BLAS, pasaba hasta 5 %).
+    beyond = {"vehiculos": [{"v": 16.07}], "inversion": {"s": 16.13, "ok": True}}
+    assert differences(base, beyond) == ["/inversion/s: 16.07 ≠ 16.13"]
     flipped = {"vehiculos": [{"v": 16.07}], "inversion": {"s": 16.07, "ok": False}}
     assert differences(base, flipped) == ["/inversion/ok: True ≠ False"]
     far = {"vehiculos": [{"v": 16.07}], "inversion": {"s": 18.0, "ok": True}}
