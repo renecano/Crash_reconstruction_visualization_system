@@ -92,6 +92,7 @@ jobs:
       - run: uv run croquis-scene-schema-generate --check
       - run: uv run croquis-data vehicles build --check
       - run: uv run croquis-solver reconstruct --check
+      - run: uv run croquis-solver numerics --check
       - name: Nombres de pila de DataMX reproducibles (descarga fijada por SHA-256)
         run: |
           uv run croquis-data nombres download
