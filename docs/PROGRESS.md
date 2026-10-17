@@ -1264,3 +1264,5 @@ Las ramas van una encima de otra y se fusionan en este orden, cada una con su PR
   - semáforo peatonal;
   - sombras de los focos en alta;
   - texturas en caras verticales (guarnición, barda) con proyección triplanar, si E9 muestra que hacen falta.
+  - grava suelta: las manchas de ruido de F8a (ADR 0020) se ven como camuflaje en el acercamiento de `objeto_fijo_arbol`; conviene una textura de grava CC0 en su lugar;
+  - corte del camellón en los cruces peatonales (refugio a nivel de calle), visto en la captura de `peaton_cruce`.
