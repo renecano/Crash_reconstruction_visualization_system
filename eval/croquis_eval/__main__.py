@@ -29,6 +29,7 @@ def main(argv: list[str] | None = None) -> int:
     )
     sub.add_parser("e3-ciss", help="E3: ΔV desde el daño contra el EDR y WinSmash (NHTSA CISS)")
     sub.add_parser("f7-inversion", help="F7: inversión, consistencia y tiempos en las escenas")
+    sub.add_parser("f9-optimizador", help="F9: optimizador propio contra SciPy en la inversión")
     e1 = sub.add_parser("e1-extraction", help="E1: extracción del relato en Relatos-MX")
     e1.add_argument("--split", choices=["dev", "test", "ciss"], default="test")
     e1.add_argument(
@@ -74,6 +75,11 @@ def main(argv: list[str] | None = None) -> int:
         from croquis_eval.e3_ciss import main as run_e3
 
         print(run_e3())
+        return 0
+    if args.command == "f9-optimizador":
+        from croquis_eval.f9_optimizer import main as run_f9
+
+        print(run_f9())
         return 0
     if args.command == "f7-inversion":
         from croquis_eval.f7_inversion import main as run_f7

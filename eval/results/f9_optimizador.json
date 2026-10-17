@@ -1,0 +1,267 @@
+{
+  "name": "f9_optimizador",
+  "generated_at": "2026-10-17T22:37:39+00:00",
+  "git_commit": "db3d06d",
+  "seed": null,
+  "descripcion": "F9: el optimizador propio de la inversión contra ``scipy.optimize.least_squares`` (ADR 0027).",
+  "metodo": "Mismo problema de fit_evidence por escena (residuos, inicio, límites, x_scale, max_nfev=40); costo = ½ Σ 2(√(1 + r²) − 1).",
+  "resumen": {
+    "escenas_con_inversion": 8,
+    "convergen": {
+      "scipy": 8,
+      "propio": 8
+    },
+    "propio_mejor": [
+      "interseccion_toluca",
+      "volcadura"
+    ],
+    "igual": [
+      "objeto_fijo_arbol",
+      "peaton_cruce",
+      "poste"
+    ],
+    "scipy_mejor": [
+      "glorieta",
+      "lateral_interseccion",
+      "motociclista"
+    ],
+    "costo_total": {
+      "scipy": 28.5212,
+      "propio": 24.273
+    },
+    "evaluaciones_totales": {
+      "scipy": 152,
+      "propio": 118
+    },
+    "tolerancia_igual": 0.0001
+  },
+  "casos": [
+    {
+      "escena": "glorieta",
+      "parametros": [
+        "velocidad:veh-a",
+        "velocidad:veh-b",
+        "rumbo:veh-a",
+        "rumbo:veh-b"
+      ],
+      "scipy": {
+        "costo": 2.775173,
+        "evaluaciones": 27,
+        "convergio": true,
+        "x": [
+          0.0,
+          25.203,
+          -56.615,
+          79.8
+        ]
+      },
+      "propio": {
+        "costo": 3.453062,
+        "evaluaciones": 21,
+        "convergio": true,
+        "x": [
+          0.0,
+          0.636,
+          -44.6,
+          78.367
+        ]
+      }
+    },
+    {
+      "escena": "interseccion_toluca",
+      "parametros": [
+        "velocidad:veh-a",
+        "velocidad:veh-b",
+        "rumbo:veh-a",
+        "rumbo:veh-b"
+      ],
+      "scipy": {
+        "costo": 8.002943,
+        "evaluaciones": 16,
+        "convergio": true,
+        "x": [
+          39.407,
+          37.532,
+          -1.529,
+          -91.059
+        ]
+      },
+      "propio": {
+        "costo": 3.059055,
+        "evaluaciones": 14,
+        "convergio": true,
+        "x": [
+          15.218,
+          0.0,
+          -9.504,
+          -84.301
+        ]
+      }
+    },
+    {
+      "escena": "lateral_interseccion",
+      "parametros": [
+        "velocidad:veh-a",
+        "velocidad:veh-b",
+        "rumbo:veh-a",
+        "rumbo:veh-b"
+      ],
+      "scipy": {
+        "costo": 1.95102,
+        "evaluaciones": 23,
+        "convergio": true,
+        "x": [
+          62.838,
+          5.912,
+          5.03,
+          84.62
+        ]
+      },
+      "propio": {
+        "costo": 1.951294,
+        "evaluaciones": 25,
+        "convergio": true,
+        "x": [
+          62.549,
+          5.927,
+          5.024,
+          84.544
+        ]
+      }
+    },
+    {
+      "escena": "motociclista",
+      "parametros": [
+        "velocidad:veh-a",
+        "velocidad:veh-b",
+        "rumbo:veh-a",
+        "rumbo:veh-b"
+      ],
+      "scipy": {
+        "costo": 3.5892,
+        "evaluaciones": 17,
+        "convergio": true,
+        "x": [
+          0.0,
+          35.391,
+          183.163,
+          -1.603
+        ]
+      },
+      "propio": {
+        "costo": 3.60782,
+        "evaluaciones": 11,
+        "convergio": true,
+        "x": [
+          0.0,
+          35.423,
+          182.416,
+          -1.864
+        ]
+      }
+    },
+    {
+      "escena": "objeto_fijo_arbol",
+      "parametros": [
+        "velocidad:veh-a",
+        "rumbo:veh-a"
+      ],
+      "scipy": {
+        "costo": 0.412327,
+        "evaluaciones": 20,
+        "convergio": true,
+        "x": [
+          47.908,
+          31.342
+        ]
+      },
+      "propio": {
+        "costo": 0.412327,
+        "evaluaciones": 11,
+        "convergio": true,
+        "x": [
+          47.887,
+          31.342
+        ]
+      }
+    },
+    {
+      "escena": "peaton_cruce",
+      "parametros": [
+        "velocidad:veh-a"
+      ],
+      "scipy": {
+        "costo": 0.0,
+        "evaluaciones": 10,
+        "convergio": true,
+        "x": [
+          53.269
+        ]
+      },
+      "propio": {
+        "costo": 0.0,
+        "evaluaciones": 7,
+        "convergio": true,
+        "x": [
+          53.269
+        ]
+      }
+    },
+    {
+      "escena": "poste",
+      "parametros": [
+        "velocidad:veh-a",
+        "rumbo:veh-a"
+      ],
+      "scipy": {
+        "costo": 0.335444,
+        "evaluaciones": 17,
+        "convergio": true,
+        "x": [
+          21.368,
+          -1.002
+        ]
+      },
+      "propio": {
+        "costo": 0.335444,
+        "evaluaciones": 15,
+        "convergio": true,
+        "x": [
+          10.116,
+          -1.002
+        ]
+      }
+    },
+    {
+      "escena": "volcadura",
+      "parametros": [
+        "velocidad:veh-a",
+        "velocidad:veh-b",
+        "rumbo:veh-a",
+        "rumbo:veh-b"
+      ],
+      "scipy": {
+        "costo": 11.455085,
+        "evaluaciones": 22,
+        "convergio": true,
+        "x": [
+          80.296,
+          91.398,
+          -20.0,
+          0.0
+        ]
+      },
+      "propio": {
+        "costo": 11.453996,
+        "evaluaciones": 14,
+        "convergio": true,
+        "x": [
+          80.302,
+          80.0,
+          -20.0,
+          0.0
+        ]
+      }
+    }
+  ]
+}
