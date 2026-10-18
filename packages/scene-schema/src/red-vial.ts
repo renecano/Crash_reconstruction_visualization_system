@@ -35,7 +35,11 @@ function segmentDistance(
   const dy = b.y - a.y;
   const L2 = dx * dx + dy * dy;
   const t = L2 > 0 ? Math.max(0, Math.min(1, ((p.x - a.x) * dx + (p.y - a.y) * dy) / L2)) : 0;
-  return Math.hypot(p.x - (a.x + t * dx), p.y - (a.y + t * dy));
+  // √ de la suma de cuadrados y no Math.hypot: la raíz es exacta en todos los motores y hypot no
+  // (el solver la usa y E8 exige el mismo resultado en cualquier navegador; ADR 0029).
+  const ex = p.x - (a.x + t * dx);
+  const ey = p.y - (a.y + t * dy);
+  return Math.sqrt(ex * ex + ey * ey);
 }
 
 /**

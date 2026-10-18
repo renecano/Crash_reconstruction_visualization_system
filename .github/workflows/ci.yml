@@ -75,6 +75,29 @@ jobs:
           path: apps/web/playwright-report
           retention-days: 7
 
+  e8:
+    name: E8 (mismo resultado en Chromium, Firefox y WebKit)
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v7
+      - uses: pnpm/action-setup@v6
+      - uses: actions/setup-node@v7
+        with:
+          node-version-file: .node-version
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm --filter @croquis/web exec playwright install --with-deps chromium firefox webkit
+      # Idéntico entre motores y repeticiones, y con los mismos hashes que el resultado versionado
+      # (medido en Windows): eval/results/e8_determinism.json debe estar al día con el solver.
+      - run: node eval/e8_determinism.mjs --out "$RUNNER_TEMP/e8.json" --esperado eval/results/e8_determinism.json --check
+      - uses: actions/upload-artifact@v7
+        if: always()
+        with:
+          name: e8-determinismo
+          path: ${{ runner.temp }}/e8.json
+          retention-days: 7
+
   python:
     name: Python (ruff, pyright, pytest) — ${{ matrix.os }}
     runs-on: ${{ matrix.os }}

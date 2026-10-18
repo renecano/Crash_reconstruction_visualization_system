@@ -5,6 +5,7 @@
 import { crushEnergy, profileForEnergy, type Stiffness, TRIANGULAR_SHAPES } from "./crash3";
 import type { Body2D } from "./models";
 import { isClose, radians } from "./pymath";
+import * as dmath from "./dmath";
 
 export const SPREAD_ANGLE_DEG = 45.0;
 /** Árboles y postes de madera con diámetro mayor se tratan como rígidos. */
@@ -96,7 +97,7 @@ export function narrowObject(
     vAfter = Math.sqrt((2.0 * remaining) / body.mass);
     deltaV = vImpact - vAfter;
   }
-  const tanA = Math.tan(radians(spreadAngleDeg));
+  const tanA = dmath.tan(radians(spreadAngleDeg));
   let width = Math.min(body.width, Math.max(diameterM, 0.3 * body.width));
   let profile = profileForEnergy(eVehicle, width, k, TRIANGULAR_SHAPES.poste);
   for (let i = 0; i < maxIter; i++) {

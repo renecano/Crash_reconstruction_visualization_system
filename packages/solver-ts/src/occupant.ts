@@ -7,6 +7,7 @@
  */
 import { G } from "./models";
 import { pyRound, radians } from "./pymath";
+import * as dmath from "./dmath";
 
 export const T_MIN = 0.06;
 export const T_MAX = 0.2;
@@ -45,19 +46,19 @@ export class CrashPulse {
 
   accel(t: number): number {
     if (t < 0 || t > this.durationS) return 0.0;
-    return this.peakAccel * Math.sin((Math.PI * t) / this.durationS);
+    return this.peakAccel * dmath.sin((Math.PI * t) / this.durationS);
   }
 
   velocityChange(t: number): number {
     const tt = Math.min(Math.max(t, 0.0), this.durationS);
-    return 0.5 * this.deltaV * (1.0 - Math.cos((Math.PI * tt) / this.durationS));
+    return 0.5 * this.deltaV * (1.0 - dmath.cos((Math.PI * tt) / this.durationS));
   }
 }
 
 /** Dirección del movimiento del ocupante para una PDOF en horas de reloj (12 = de frente). */
 export function directionFromPdof(pdofHours: number): [number, number] {
   const phi = radians(30.0 * pdofHours);
-  return [Math.cos(phi), -Math.sin(phi)];
+  return [dmath.cos(phi), -dmath.sin(phi)];
 }
 
 /** Pulso con duración T = 2C/ΔV acotada; null si ΔV es mínimo. */
@@ -84,7 +85,7 @@ export interface OccupantMotion {
 
 export function maxDisplacement(m: OccupantMotion): number {
   let best = 0.0;
-  for (let i = 0; i < m.dx.length; i++) best = Math.max(best, Math.hypot(m.dx[i]!, m.dy[i]!));
+  for (let i = 0; i < m.dx.length; i++) best = Math.max(best, dmath.hypot(m.dx[i]!, m.dy[i]!));
   return best;
 }
 

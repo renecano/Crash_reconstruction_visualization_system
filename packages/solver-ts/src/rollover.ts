@@ -5,6 +5,7 @@
  */
 import { G } from "./models";
 import { pyRound } from "./pymath";
+import * as dmath from "./dmath";
 
 /** Supuesto: h ≈ 0.37 × alto (SSF típico 1.0–1.5 según la clase). */
 export const CG_HEIGHT_FRACTION = 0.37;
@@ -45,7 +46,7 @@ export function criticalSlidingVelocity(track: number, cgHeight: number, k2: num
     throw new Error("Vía, altura del CG e inercia deben ser positivas");
   }
   const half = 0.5 * track;
-  const dz = Math.hypot(cgHeight, half) - cgHeight;
+  const dz = dmath.hypot(cgHeight, half) - cgHeight;
   const ip = k2 + cgHeight * cgHeight + half * half;
   return Math.sqrt((2.0 * G * dz * ip) / (cgHeight * cgHeight));
 }

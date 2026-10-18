@@ -75,6 +75,7 @@ import {
   pairSummary,
   SAMPLE_DT,
 } from "./visibility";
+import * as dmath from "./dmath";
 
 type Json = Record<string, unknown>;
 
@@ -462,13 +463,13 @@ function barrierNormal(obj: Json | null, point: Vec, axis: RoadAxis, st: State2D
   let n: Vec;
   if (obj !== null && obj.rumbo_deg !== undefined && obj.rumbo_deg !== null) {
     const r = radians(Number(obj.rumbo_deg));
-    n = [-Math.sin(r), Math.cos(r)];
+    n = [-dmath.sin(r), dmath.cos(r)];
   } else if (axis.kind === "recta") {
     n = [0.0, point[1] >= 0 ? 1.0 : -1.0];
   } else {
     const dx = point[0] - axis.center[0];
     const dy = point[1] - axis.center[1];
-    const d = Math.hypot(dx, dy) || 1.0;
+    const d = dmath.hypot(dx, dy) || 1.0;
     const outward = d >= axis.radius;
     n = outward ? [dx / d, dy / d] : [-dx / d, -dy / d];
   }
@@ -481,14 +482,14 @@ function targetPath(m: VehicleModel, target: Vec, offset: Vec): CompositePath | 
   const [x, y, yaw] = m.pose0;
   const dx = target[0] - x;
   const dy = target[1] - y;
-  const fwd = dx * Math.cos(yaw) + dy * Math.sin(yaw);
-  const left = -dx * Math.sin(yaw) + dy * Math.cos(yaw);
+  const fwd = dx * dmath.cos(yaw) + dy * dmath.sin(yaw);
+  const left = -dx * dmath.sin(yaw) + dy * dmath.cos(yaw);
   const lateral = left - offset[1];
   const reach = fwd - offset[0];
   if (reach < 15.0 || Math.abs(lateral) < 0.3) return null;
   const uHit = SEEK_CONTACT_FRACTION;
   const change = reach / uHit;
-  const total = lateral / (0.5 * (1.0 - Math.cos(Math.PI * uHit)));
+  const total = lateral / (0.5 * (1.0 - dmath.cos(Math.PI * uHit)));
   return thenStraight(new LaneChangePath([x, y], yaw, change, total));
 }
 
@@ -514,7 +515,7 @@ function poseAt(path: KinPath, s: number): [number, number, number, number] {
     return [p.x, p.y, p.heading, p.curvature];
   }
   const p = path.pose(0.0);
-  return [p.x + s * Math.cos(p.heading), p.y + s * Math.sin(p.heading), p.heading, 0.0];
+  return [p.x + s * dmath.cos(p.heading), p.y + s * dmath.sin(p.heading), p.heading, 0.0];
 }
 
 function primaryEvent(spec: Json): Json | null {
@@ -614,7 +615,15 @@ function samplePath(
       v = prof.v0;
     }
     const [x, y, yaw, kappa] = poseAt(path, s);
-    traj.append({ x, y, yaw, vx: v * Math.cos(yaw), vy: v * Math.sin(yaw), yawRate: v * kappa, t });
+    traj.append({
+      x,
+      y,
+      yaw,
+      vx: v * dmath.cos(yaw),
+      vy: v * dmath.sin(yaw),
+      yawRate: v * kappa,
+      t,
+    });
   }
   return traj;
 }
@@ -772,7 +781,7 @@ export function reconstruct(
       let lateral = 0.0;
       if (first instanceof LaneChangePath) {
         const u = SEEK_CONTACT_FRACTION;
-        lateral = first.lateral * 0.5 * (1.0 - Math.cos(Math.PI * u));
+        lateral = first.lateral * 0.5 * (1.0 - dmath.cos(Math.PI * u));
       }
       flag(
         "desvio_lateral",
@@ -922,7 +931,7 @@ export function reconstruct(
       launchSpeedKmh: msToKmh(launch),
       throwDistanceM: dNom,
       throwRangeM: [Math.min(dLo, dHi), Math.max(dLo, dHi)],
-      restPosition: [origin[0] + dNom * Math.cos(heading), origin[1] + dNom * Math.sin(heading)],
+      restPosition: [origin[0] + dNom * dmath.cos(heading), origin[1] + dNom * dmath.sin(heading)],
       contact: contactInfo,
       bandM: [band.dMin, band.dMax],
       muBody: [muP, muBody.low, muBody.high],
@@ -976,16 +985,16 @@ export function reconstruct(
         adherencia: res.sticking,
         friccion_contacto_usada: res.frictionUsed,
         energia_disipada_j: res.energyLoss,
-        velocidad_cierre_kmh: msToKmh(Math.hypot(sa.vx - sb.vx, sa.vy - sb.vy)),
+        velocidad_cierre_kmh: msToKmh(dmath.hypot(sa.vx - sb.vx, sa.vy - sb.vy)),
       },
     });
     // Jinetes de moto, scooter o bici: no van sujetos y salen proyectados.
     for (const m of [a, b]) {
       if (!TWO_WHEEL_CLASSES.has(m.clase)) continue;
       const sM = impactStates.get(m.id)!;
-      const vM = Math.hypot(sM.vx, sM.vy);
+      const vM = dmath.hypot(sM.vx, sM.vy);
       if (vM < 0.5) continue;
-      const headingM = Math.atan2(sM.vy, sM.vx);
+      const headingM = dmath.atan2(sM.vy, sM.vx);
       for (const pdoc of specPersons) {
         if (pdoc.vehiculo_id !== m.id || !RIDER_ROLES.has(String((pdoc.rol as Json).valor)))
           continue;
@@ -1063,7 +1072,7 @@ export function reconstruct(
       });
       deltaV.set(a.id, r.deltaV);
       pdof.set(a.id, 0.0);
-      const heading: Vec = [Math.cos(sa.yaw), Math.sin(sa.yaw)];
+      const heading: Vec = [dmath.cos(sa.yaw), dmath.sin(sa.yaw)];
       const sign = r.rigid ? -1.0 : 1.0;
       postStart.set(
         a.id,
@@ -1099,7 +1108,7 @@ export function reconstruct(
     const mPed = num(pedDoc.masa, MASS, DEFAULT_PERSON_MASS_KG);
     const launch = PEDESTRIAN_PROJECTION_FACTOR * vImp;
     const hCg = PEDESTRIAN_CG_HEIGHT_FACTOR * stature;
-    const heading: Vec = [Math.cos(sa.yaw), Math.sin(sa.yaw)];
+    const heading: Vec = [dmath.cos(sa.yaw), dmath.sin(sa.yaw)];
     const dvA = (mPed * launch) / (a.body.mass + mPed);
     deltaV.set(a.id, dvA);
     pdof.set(a.id, 0.0);
@@ -1404,7 +1413,7 @@ export function reconstruct(
     const sa = impactStates.get(a.id)!;
     const n = barrierNormal(obj, impactPoint, axis, sa);
     const vN = sa.vx * n[0] + sa.vy * n[1];
-    const left = -Math.sin(sa.yaw) * n[0] + Math.cos(sa.yaw) * n[1];
+    const left = -dmath.sin(sa.yaw) * n[0] + dmath.cos(sa.yaw) * n[1];
     const check = tripCheck(
       a.track,
       a.body.width,
@@ -1506,7 +1515,7 @@ function occupantDoc(
       duracion_s: r6(pulse.durationS),
       delta_v_kmh: r6(msToKmh(pulse.deltaV)),
       aceleracion_max_g: r6(peakG(pulse)),
-      direccion_deg: r6(degrees(Math.atan2(toward[1], toward[0]))),
+      direccion_deg: r6(degrees(dmath.atan2(toward[1], toward[0]))),
     },
     variantes: [] as Json[],
   };

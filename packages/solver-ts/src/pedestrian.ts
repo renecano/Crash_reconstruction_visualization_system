@@ -5,6 +5,7 @@
  */
 import { G } from "./models";
 import { degrees, radians } from "./pymath";
+import * as dmath from "./dmath";
 
 export { G };
 
@@ -34,7 +35,7 @@ export function searleSpeed(
 ): number {
   check(throwM, mu);
   const th = radians(launchAngleDeg);
-  const denom = Math.cos(th) + mu * Math.sin(th);
+  const denom = dmath.cos(th) + mu * dmath.sin(th);
   if (denom <= 0) throw new Error("Ángulo de lanzamiento fuera del dominio");
   return Math.sqrt(2.0 * mu * G * Math.max(throwM - mu * cgHeightM, 0.0)) / denom;
 }
@@ -46,13 +47,13 @@ export function searleRange(throwM: number, mu: number, cgHeightM = 0.0): ThrowS
   return {
     vMin: Math.sqrt(base / (1.0 + mu * mu)),
     vMax: Math.sqrt(base),
-    thetaMinDeg: degrees(Math.atan(mu)),
+    thetaMinDeg: degrees(dmath.atan(mu)),
   };
 }
 
 /** Límite superior del dominio de ángulos en el que v_max = v(0): 2·atan μ. */
 export function searleMaxAngleDeg(mu: number): number {
-  return degrees(2.0 * Math.atan(mu));
+  return degrees(2.0 * dmath.atan(mu));
 }
 
 export interface ThrowKinematics {
@@ -75,8 +76,8 @@ export function throwKinematics(
   if (v < 0) throw new Error("La velocidad no puede ser negativa");
   if (mu <= 0 || cgHeight < 0) throw new Error("μ debe ser positivo y la altura no negativa");
   const th = radians(thetaDeg);
-  const vx = v * Math.cos(th);
-  const vz = v * Math.sin(th);
+  const vx = v * dmath.cos(th);
+  const vz = v * dmath.sin(th);
   const tf = (vz + Math.sqrt(vz * vz + 2.0 * G * cgHeight)) / G;
   const vzLand = vz - G * tf;
   const u = Math.max(0.0, vx - mu * Math.abs(vzLand));

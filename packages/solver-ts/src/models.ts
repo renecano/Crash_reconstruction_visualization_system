@@ -5,13 +5,15 @@
  * Marco de referencia: X al este, Y al norte, ángulos en radianes antihorarios desde +X. Marco del
  * cuerpo: x hacia el frente, y hacia la izquierda.
  */
+import * as dmath from "./dmath";
+
 export const G = 9.80665;
 
 export type Vec = readonly [number, number];
 
 export function rot(v: Vec, angle: number): Vec {
-  const c = Math.cos(angle);
-  const s = Math.sin(angle);
+  const c = dmath.cos(angle);
+  const s = dmath.sin(angle);
   return [v[0] * c - v[1] * s, v[0] * s + v[1] * c];
 }
 
@@ -25,7 +27,7 @@ export function cross(a: Vec, b: Vec): number {
 }
 
 export function norm(v: Vec): number {
-  return Math.hypot(v[0], v[1]);
+  return dmath.hypot(v[0], v[1]);
 }
 
 export function unit(v: Vec): Vec {
@@ -93,7 +95,7 @@ export function state(p: Partial<State2D> = {}): State2D {
 }
 
 export function speed(s: State2D): number {
-  return Math.hypot(s.vx, s.vy);
+  return dmath.hypot(s.vx, s.vy);
 }
 
 /** Velocidad del punto material `point` (mundo) del cuerpo: v + ω × r. */

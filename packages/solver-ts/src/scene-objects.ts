@@ -5,6 +5,7 @@
  * semilla y el id, determinista.
  */
 import { pyRound, str } from "./pymath";
+import * as dmath from "./dmath";
 
 type Json = Record<string, unknown>;
 
@@ -212,5 +213,5 @@ export function sceneObjects(spec: Json): SceneObject[] {
 export function footprintRadius(o: SceneObject): number {
   if (o.forma === "arbol") return Math.max(o.radio, o.copaRadio);
   if (o.forma === "cilindro" || o.forma === "senal") return Math.max(o.radio, 0.5 * o.largo);
-  return 0.5 * Math.hypot(o.largo, o.ancho);
+  return 0.5 * dmath.hypot(o.largo, o.ancho);
 }

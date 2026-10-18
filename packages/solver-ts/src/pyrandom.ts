@@ -4,6 +4,7 @@
  * exactamente la misma secuencia que Python, así que el muestreo con semilla del port TS coincide
  * con el de la referencia.
  */
+import * as dmath from "./dmath";
 const N = 624;
 const M = 397;
 const MATRIX_A = 0x9908b0df;
@@ -132,9 +133,9 @@ export class PyRandom {
     this.gaussNext = null;
     if (z === null) {
       const x2pi = this.random() * TWOPI;
-      const g2rad = Math.sqrt(-2.0 * Math.log(1.0 - this.random()));
-      z = Math.cos(x2pi) * g2rad;
-      this.gaussNext = Math.sin(x2pi) * g2rad;
+      const g2rad = Math.sqrt(-2.0 * dmath.log(1.0 - this.random()));
+      z = dmath.cos(x2pi) * g2rad;
+      this.gaussNext = dmath.sin(x2pi) * g2rad;
     }
     return mu + z * sigma;
   }

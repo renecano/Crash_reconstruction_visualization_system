@@ -1,6 +1,7 @@
 /**
  * Aritmética con la semántica exacta de CPython donde difiere de JS (paridad E7).
  */
+import * as dmath from "./dmath";
 
 /**
  * `sum()` de CPython 3.12+ sobre flotantes: suma compensada de Neumaier (Kahan–Babuška
@@ -134,7 +135,7 @@ export function ratioToDouble(pIn: bigint, qIn: bigint): number {
   let mant = m >> 1n;
   const guard = m & 1n;
   if (guard === 1n && (rem !== 0n || (mant & 1n) === 1n)) mant += 1n;
-  const v = Number(mant) * 2 ** (1 - s);
+  const v = Number(mant) * dmath.pow2(1 - s);
   return neg ? -v : v;
 }
 

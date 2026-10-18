@@ -20,6 +20,7 @@ import {
   withVelocity,
 } from "./models";
 import { degrees, pyMod } from "./pymath";
+import * as dmath from "./dmath";
 
 /**
  * Velocidad tangencial relativa que se toma como cero: si la normal sale de la velocidad relativa,
@@ -54,7 +55,7 @@ export function pdofHours(deg: number): number {
 export function pdofDegrees(s: State2D, forceWorld: Vec): number {
   const fBody = rot(forceWorld, -s.yaw);
   const d: Vec = [-fBody[0], -fBody[1]];
-  const deg = pyMod(degrees(Math.atan2(-d[1], d[0])), 360.0);
+  const deg = pyMod(degrees(dmath.atan2(-d[1], d[0])), 360.0);
   return deg >= 360.0 - 1e-9 ? 0.0 : deg;
 }
 
@@ -195,7 +196,7 @@ export function planarImpact(
   }
   if (chosen === null) throw new Error("No se encontró un impulso que no gane energía");
   const [cand, impulse, aAfter, bAfter, loss] = chosen;
-  const jMag = Math.hypot(impulse[0], impulse[1]);
+  const jMag = dmath.hypot(impulse[0], impulse[1]);
   const forceOnA: Vec = jMag > 0 ? [-impulse[0], -impulse[1]] : [-n[0], -n[1]];
   const forceOnB: Vec = jMag > 0 ? impulse : n;
   return {

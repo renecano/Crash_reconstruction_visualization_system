@@ -5,6 +5,7 @@
  */
 import { str } from "./pymath";
 import { CurvedLanePath, type Path, StraightPath } from "./preimpact";
+import * as dmath from "./dmath";
 
 type Json = Record<string, unknown>;
 
@@ -81,12 +82,12 @@ export function laneFollowingPath(
   if (axis.kind === "recta") return null;
   const [x, y, yaw] = pose;
   const [cx, cy] = axis.center;
-  const r0 = Math.hypot(x - cx, y - cy);
+  const r0 = dmath.hypot(x - cx, y - cy);
   if (r0 < 1.0) return null;
-  const phi0 = Math.atan2(y - cy, x - cx);
+  const phi0 = dmath.atan2(y - cy, x - cx);
   // Tangente antihoraria en la pose: perpendicular al radio, girada +90°.
-  const ccwTangent = [-Math.sin(phi0), Math.cos(phi0)] as const;
-  let ccw = Math.cos(yaw) * ccwTangent[0] + Math.sin(yaw) * ccwTangent[1] >= 0;
+  const ccwTangent = [-dmath.sin(phi0), dmath.cos(phi0)] as const;
+  let ccw = dmath.cos(yaw) * ccwTangent[0] + dmath.sin(yaw) * ccwTangent[1] >= 0;
   if (axis.kind === "anillo") ccw = true;
   return new CurvedLanePath([cx, cy], r0, phi0, ccw, length, lateral, changeLength);
 }

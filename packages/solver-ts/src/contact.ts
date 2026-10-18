@@ -7,6 +7,7 @@
  */
 import { rot, type Vec } from "./models";
 import { pySum, str } from "./pymath";
+import * as dmath from "./dmath";
 
 const COARSE_SAMPLES = 800;
 const LOCAL_SAMPLES = 40;
@@ -165,7 +166,7 @@ export function resolveContact(loci: readonly Locus[], declared: Vec): ContactSo
   const cx = pySum(points.map((q) => q[0])) / points.length;
   const cy = pySum(points.map((q) => q[1])) / points.length;
   const p0 = points[0]!;
-  const gap = Math.max(...points.map((q) => Math.hypot(q[0] - p0[0], q[1] - p0[1])));
+  const gap = Math.max(...points.map((q) => dmath.hypot(q[0] - p0[0], q[1] - p0[1])));
   return { point: [cx, cy], params, gap };
 }
 
