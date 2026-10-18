@@ -85,8 +85,8 @@ const T_PRE_MAX = 6.0;
 const T_PRE_MIN = 3.0;
 const T_HOLD_AFTER_REST = 2.0;
 const T_POST_MAX = 30.0;
-const RESTITUTION_VV = 0.1;
-const IMPULSE_RATIO = 0.4;
+export const RESTITUTION_VV = 0.1;
+export const IMPULSE_RATIO = 0.4;
 const POST_IMPACT_DRAG_FRACTION = 0.35;
 const TURN_RADIUS_M = 8.0;
 const LANE_CHANGE_LENGTH_M = 40.0;
@@ -525,7 +525,8 @@ function primaryEvent(spec: Json): Json | null {
   return eventos.find((e) => String(e.tipo).startsWith("impacto_")) ?? null;
 }
 
-function crushShapeAndWidth(
+/** Forma y ancho del daño según la cara y la zona horizontal del CDC (también los usa E5). */
+export function crushShapeAndWidth(
   cdc: Json | null | undefined,
   body: Body2D,
 ): [readonly number[], number] {
@@ -562,7 +563,7 @@ const ALONG_SIDE: Readonly<Record<string, number>> = {
 };
 
 /** Centro del ancho dañado a lo largo de la cara (+ = izquierda en F/B, adelante en L/R). */
-function crushCenter(cdc: Json | null | undefined, body: Body2D, width: number): number {
+export function crushCenter(cdc: Json | null | undefined, body: Body2D, width: number): number {
   const lado = str((cdc ?? {}).lado, "F");
   const zona = str((cdc ?? {}).zona_horizontal, "D");
   let side: number;
