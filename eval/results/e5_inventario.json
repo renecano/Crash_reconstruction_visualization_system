@@ -1,7 +1,7 @@
 {
   "name": "e5_inventario",
-  "generated_at": "2026-10-18T04:15:19+00:00",
-  "git_commit": "5ec01e7",
+  "generated_at": "2026-10-18T04:26:23+00:00",
+  "git_commit": "2996926",
   "seed": null,
   "nhtsa": {
     "casos": 3620,
@@ -25,6 +25,17 @@
       "lateral": 1048,
       "alcance": 165,
       "poste": 96
+    },
+    "convencion_de_d": {
+      "frente_y_trasera": {
+        "total": 58,
+        "coincide": 39,
+        "no_coincide": 19
+      },
+      "costados": {
+        "total": 1,
+        "no_coincide": 1
+      }
     },
     "fotos": {
       "foto_por_nombre": {

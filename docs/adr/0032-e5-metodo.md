@@ -65,11 +65,23 @@ Croquis, en cambio, usa la forma según la zona del CDC (`profile_for_energy`) m
 
 ## Exclusiones (se cuentan y se reportan por tipo)
 
-1. Falta lo necesario para pasar D al marco de Croquis.
-   - **Para pasarlo:** la mitad de la batalla en CISS y la posición del CG en NHTSA.
-   - **Antes de usar la convención de NHTSA:** se verifica con un script cuyo resultado queda en `eval/results`, como se hizo con CISS en el inventario.
+1. Falta lo necesario para pasar D al marco de Croquis. En CISS se usa la mitad de la batalla, con la convención verificada en el inventario.
 2. CISS contra otro vehículo sin la clase o la masa del otro (no se puede repartir la energía).
 3. Clases sin malla en el visor (dos ruedas).
+
+## La posición del daño en NHTSA no se evalúa (decisión del 2026-10-17, antes de medir)
+
+**El problema:** el campo de NHTSA para D (`distancebetweencenterofDamagedareaandCGAxis`, «distancia del centro del daño al eje del CG») no trae convención de signo, y los datos no la confirman (`convencion_de_d` de NHTSA en `eval/results/e5_inventario.json`).
+
+- **Frente y parte trasera:** el signo de D coincide con la zona izquierda o derecha del CDC solo en una parte de los casos con D distinto de cero.
+- **Costados:** la zona del CDC casi nunca dice adelante o atrás, y la mediana de D contradice la geometría de las pruebas laterales. Ahí la barrera apunta adelante de la mitad de la batalla.
+
+**Qué se hace:** en NHTSA las seis estaciones medidas se centran en el centro del daño que predice Croquis, conservando el L medido.
+
+- **Lo que sí se compara:** la forma, la profundidad, el ancho y el área.
+- **Lo que no:** si Croquis pone el daño en el lugar correcto.
+
+En CISS, cuya convención sí se verificó, se compara todo, incluida la posición.
 
 ## Partición congelada
 
