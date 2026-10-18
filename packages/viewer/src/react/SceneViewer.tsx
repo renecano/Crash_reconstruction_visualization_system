@@ -51,6 +51,8 @@ import { loadEnvTextures, TEXTURE_BASE_URL, texturesWanted } from "../env-textur
 import { attachPeople, variantsFor, type PeopleAttachment } from "../people-scene";
 import { buildGhostLayer, GHOST_COLORS } from "../ghosts";
 import { buildSceneGraph } from "../scene-graph";
+import type { ViewerExportApi } from "../export/capture";
+import { seek } from "../timeline";
 import { seatHeight } from "../vehicle-geometry";
 
 export type RendererPreference = "auto" | "webgpu" | "webgl";
@@ -83,6 +85,8 @@ export interface SceneViewerProps {
    * escena para dibujar, sin tocar la escena ni la reconstrucción.
    */
   ambiente?: AmbienteVisual;
+  /** Recibe la API de exportación (cuadros y glTF) cuando el visor está montado; null al salir. */
+  onExport?: (api: ViewerExportApi | null) => void;
 }
 
 /** Ambiente que se puede forzar en la vista. */
@@ -153,6 +157,7 @@ function SceneContent({
   bodiesBaseUrl,
   onPeople,
   hipotesis,
+  onExport,
 }: Omit<SceneViewerProps, "renderer" | "onRendererInfo" | "onError" | "className"> & {
   env: EnvironmentSettings;
 }): ReactElement {
@@ -243,6 +248,55 @@ function SceneContent({
   }, [spec, resultado, graph, bodiesBaseUrl, onPeople]);
 
   const { scene, camera: cam, gl } = useThree();
+  const advance = useThree((s) => s.advance);
+  const size = useThree((s) => s.size);
+
+  // Exportación (F9): dibuja un instante a demanda y copia el cuadro en la misma tarea, antes de
+  // que el navegador presente el lienzo (sirve igual con WebGPU y con WebGL 2).
+  useEffect(() => {
+    if (!onExport) return undefined;
+    const api: ViewerExportApi = {
+      tStart: resultado.t_inicio,
+      tEnd: resultado.t_fin,
+      captureFrame({ t, width, height } = {}) {
+        const before = clock.get();
+        if (t !== undefined) clock.set((st) => ({ ...seek(st, t), playing: false }));
+        const persp = cam as PerspectiveCamera;
+        const canvas = gl.domElement;
+        const resize = width !== undefined && height !== undefined;
+        const ratio = gl.getPixelRatio();
+        if (resize) {
+          gl.setPixelRatio(1);
+          gl.setSize(width, height, false);
+          persp.aspect = width / height;
+          persp.updateProjectionMatrix();
+        }
+        try {
+          advance(performance.now(), true);
+          const out = document.createElement("canvas");
+          out.width = canvas.width;
+          out.height = canvas.height;
+          const ctx = out.getContext("2d");
+          if (!ctx) throw new Error("No hay contexto 2D para copiar el cuadro");
+          ctx.drawImage(canvas, 0, 0);
+          return out;
+        } finally {
+          if (resize) {
+            gl.setPixelRatio(ratio);
+            gl.setSize(size.width, size.height, false);
+            persp.aspect = size.width / size.height;
+            persp.updateProjectionMatrix();
+          }
+          if (t !== undefined) clock.set(() => before);
+        }
+      },
+      // GLTFExporter y SkeletonUtils se cargan solo al exportar (no pesan en la carga del visor).
+      exportGlb: async (legend) =>
+        (await import("../export/gltf")).exportSceneGlb(graph, { resultado, legend }),
+    };
+    onExport(api);
+    return () => onExport(null);
+  }, [onExport, resultado, clock, cam, gl, advance, size, graph]);
 
   // Cielo, niebla y luces.
   const lights = useMemo(() => {
