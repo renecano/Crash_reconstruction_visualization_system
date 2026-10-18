@@ -33,6 +33,10 @@ def main(argv: list[str] | None = None) -> int:
     sub.add_parser(
         "e5-inventario", help="E5 (F10): casos con aplastamiento medido, por fuente y tipo, y fotos"
     )
+    p_e5p = sub.add_parser(
+        "e5-particion", help="E5 (F10): partición congelada en desarrollo y test (ADR 0032)"
+    )
+    p_e5p.add_argument("--check", action="store_true", help="Solo verifica la partición congelada")
     e1 = sub.add_parser("e1-extraction", help="E1: extracción del relato en Relatos-MX")
     e1.add_argument("--split", choices=["dev", "test", "ciss"], default="test")
     e1.add_argument(
@@ -78,6 +82,11 @@ def main(argv: list[str] | None = None) -> int:
         from croquis_eval.e3_ciss import main as run_e3
 
         print(run_e3())
+        return 0
+    if args.command == "e5-particion":
+        from croquis_eval.e5_particion import main as run_e5_part
+
+        print(run_e5_part(check_only=args.check))
         return 0
     if args.command == "e5-inventario":
         from croquis_eval.e5_inventario import main as run_e5_inv

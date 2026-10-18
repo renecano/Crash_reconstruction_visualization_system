@@ -23,7 +23,8 @@ Reglas de trabajo: `CLAUDE.md`. Especificación: `PLAN.md`.
 - **F9, paso 6c hecho** (rama `feat/f9-croquis-export`, ADR 0031): el croquis se exporta en SVG, PNG y PDF desde el editor, con la marca, la semilla, el hash, la atribución de OSM, el norte y una barra de escala nueva.
 - **F9, paso 6d hecho** (rama `feat/f9-informe`, ADR 0031): informe PDF desde el visor. Los paneles y el informe comparten sus textos (`lib/textos-resultado.ts`) y los datos inciertos se dicen en palabras. **F9 cerrada.**
 - **F10, paso 1 hecho** (rama `feat/f10-inventario`): inventario de E5 en `docs/data.md` y en `eval/results/e5_inventario.json`. Hay 3,620 casos de NHTSA y 8,804 de CISS con perfil medido completo; los números por tipo están en el inventario. CISS ahora trae la posición del daño, con su convención comprobada.
-- **Siguiente paso concreto:** F10, paso 2. ADR 0032 (métricas, líneas base y reglas) y la partición congelada de NHTSA (lista del test con su SHA-256), antes de medir nada.
+- **F10, paso 2 hecho** (rama `feat/f10-particion`, ADR 0032): el método de E5 quedó escrito antes de medir y la partición está congelada (`eval/e5/particion.json`, SHA-256 `2a894e09…`).
+- **Siguiente paso concreto:** F10, paso 3. Reproductor en TS (`eval/js`): verificar la convención de D de NHTSA con un script, armar la energía, la forma y la malla de cada caso, medir en las estaciones reales y calcular las dos líneas base, con pruebas de solución conocida.
 - **E1 del prompt v2 en el primer test, hecho** (PR #14). Sonnet 0.875 → 0.919 y Haiku 0.852 → 0.896. Además, E1 ahora compara cada contrafactual con la repetición del mismo relato (McNemar por tipo): ningún tipo difiere del ruido, y las reglas cambian con el modelo del vehículo en 6 de 52 pares (ADR 0012 §10).
 - **F8** cerrada el 2026-10-17 (PR #20 a #24). **F0** cerrado el 2026-10-10 (PR #1), **F1** el 2026-10-10 (PR #3), **F2** el 2026-10-13 (PR #4), **F3** el 2026-10-13 (PR #5), **F4** el 2026-10-13 (PR #6), **F5** el 2026-10-13 (PR #7), **F6** el 2026-10-14 (PR #8), **F7** el 2026-10-14 (PR #9; pendientes registrados); migración a Vercel el 2026-10-14 (PR #10); test CISS y prompt v2 el 2026-10-14 (PR #11).
 
@@ -1545,3 +1546,15 @@ Las ramas van una encima de otra y se fusionan en este orden, cada una con su PR
   - `eval/croquis_eval/e5_casos.py`: casos y tipo de impacto, con reglas escritas antes de medir.
   - `e5_inventario.py`: conteos, estado de las fotos y la convención de D comprobada contra `FIELDLLOCATION`.
 - **Evidencia:** `uv run croquis-eval e5-inventario` y 28 pruebas nuevas (multimedia, casos e inventario); ruff, pyright y pytest de `data` y `eval` en verde.
+
+**Paso 2 — Método y partición congelada (2026-10-17, rama `feat/f10-particion`, ADR 0032):**
+
+- **ADR 0032**, escrito antes de medir:
+  - **Reproducción:** misma etapa de daño que la reconstrucción y misma malla del visor. Croquis no recibe el L ni el D medidos.
+  - **Métricas:** error por punto, profundidad máxima, ancho y área, por tipo, con IC del 90 % por bootstrap.
+  - **Líneas base:** uniforme y triangular, con la misma energía, ancho y centro.
+  - **Exclusiones, partición y galería.**
+- **Partición** (`eval/croquis_eval/e5_particion.py`, `croquis-eval e5-particion`):
+  - **NHTSA:** por vehículo (marca, modelo y año), para que un auto no caiga en los dos lados. 852 vehículos tienen más de una prueba. El 40 % de los vehículos va a test.
+  - **CISS:** por año, como E3.
+  - **Congelada:** archivo con SHA-256 fijo, `-text` en `.gitattributes` y fuera de Prettier. Hay pruebas de que coincide con su hash, de que los datos la reproducen y de que nunca parte un vehículo.

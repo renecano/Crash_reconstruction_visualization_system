@@ -10,3 +10,5 @@
 *.zip binary
 # Extractos crudos de OSM: verificados por SHA-256; git no debe tocar los bytes.
 data/osm/*.overpass.json -text
+# Partición congelada de E5: verificada por SHA-256 (ADR 0032); git no debe tocar los bytes.
+eval/e5/*.json -text
