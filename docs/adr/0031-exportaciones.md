@@ -39,7 +39,7 @@
    - **Lo que muestra:** el norte y una barra de escala (1-2-5 × 10ⁿ m, hasta una quinta parte del ancho).
    - **La marca:** la marca y los identificadores van en una franja clara abajo, para que se lean sobre el asfalto. La atribución de OSM, cuando aplica.
    - **PNG:** a 2× (20 px por metro), con la marca también en `iTXt`.
-   - **PDF:** con pdfmake 0.3.12 (MIT). El croquis va como vector y la marca va al pie de cada página y en los metadatos (`Subject`).
+   - **PDF:** con pdfmake 0.3.11 (MIT). El croquis va como vector y la marca va al pie de cada página y en los metadatos (`Subject`).
    - **La fuente del PDF:** Roboto 3.014 incrustada (SIL OFL 1.1, registrada en `assets/ASSETS.md`).
 
 ## Límites conocidos (glTF)

@@ -1447,7 +1447,7 @@ Las ramas van una encima de otra y se fusionan en este orden, cada una con su PR
   - **Pruebas:** 6 unitarias nuevas en `croquis-2d` y 3 e2e que abren cada archivo (el PDF con pdf.js).
   - **Revisión visual del PDF:** se corrigió la legibilidad de la marca sobre el asfalto con una franja clara.
 - **Instalado:**
-  - **En `apps/web`:** `pdfmake` 0.3.12 y, como dev, `@types/pdfmake` 0.3.3 y `pdfjs-dist` 6.4.299.
+  - **En `apps/web`:** `pdfmake` 0.3.11 y, como dev, `@types/pdfmake` 0.3.3 y `pdfjs-dist` 6.4.299.
   - **La fuente:** Roboto 3.014 (OFL 1.1), registrada en `assets/ASSETS.md`.
 
 **Pendientes de F8 que siguen abiertos:** OSM en producción, rayas y banquetas sobre calles de OSM, semáforo peatonal, textura de grava, corte del camellón en cruces y texturas en caras verticales. Las sombras de los focos ya están en alta y ultra (ADR 0026).

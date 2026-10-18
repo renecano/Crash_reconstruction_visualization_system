@@ -305,8 +305,8 @@ importers:
         specifier: 16.4.0
         version: 16.4.0(@babel/core@7.29.7)(@playwright/test@1.64.0)(@types/node@24.19.2)(react-dom@19.3.0(react@19.3.0))(react@19.3.0)
       pdfmake:
-        specifier: 0.3.12
-        version: 0.3.12
+        specifier: 0.3.11
+        version: 0.3.11
       react:
         specifier: 'catalog:'
         version: 19.3.0
@@ -2169,6 +2169,9 @@ packages:
   brotli@1.3.3:
     resolution: {integrity: sha512-oTKjJdShmDuGW94SyyaoQvAjf30dZaHnjJ8uAF+u2/vGJkJbJPJAT1gDiOJP5v1Zb6f9KEyW/1HpuaWIXtGHPg==}
 
+  browserify-zlib@0.2.0:
+    resolution: {integrity: sha512-Z942RysHXmJrhqk88FmKBVq/v5tqmSkDz7p54G/MGyjMnCFFnC79XWNbg+Vta8W6Wb2qtSZTSxIGkJrRpCFEiA==}
+
   browserslist@4.29.3:
     resolution: {integrity: sha512-1R4kiYKXGViqEN0CnoDrXc1StD9niAwu+j2dukWzrD4bJgsD4lDmEp0CRbc6E/vYJIfTHwPmwyaKtVSudICdPA==}
     engines: {node: ^6 || ^7 || ^8 || ^9 || ^10 || ^11 || ^12 || >=13.7}
@@ -2809,6 +2812,9 @@ packages:
     resolution: {integrity: sha512-AC/7JofJvZGrrneWNaEnJeOLUx+JlGt7tNa0wZiRPT4MY1wmfKjt2+6O2p2uz2+skll8OZZmJMNqeke7kKbNgQ==}
     hasBin: true
 
+  js-md5@0.8.3:
+    resolution: {integrity: sha512-qR0HB5uP6wCuRMrWPTrkMaev7MJZwJuuw4fnwAzRgP4J4/F8RwtodOKpGp4XpqsLBFzzgqIO42efFAyz2Et6KQ==}
+
   js-tokens@4.0.0:
     resolution: {integrity: sha512-RdJUflcE3cUzKiMqQgsCu06FPu9UdIJO0beYbPhHN4k6apgJtifcoCtT9bcxOpYBtpD2kCM6Sbzg4CausW/PKQ==}
 
@@ -3184,6 +3190,9 @@ packages:
   pako@0.2.9:
     resolution: {integrity: sha512-NUcwaKxUxWrZLpDG+z/xZaCgQITkA/Dv4V/T6bw7VON6l1Xz/VnrBqrYjZQ12TamKHzITTfOEIYUj48y2KXImA==}
 
+  pako@1.0.11:
+    resolution: {integrity: sha512-4hLB8Py4zZce5s4yd9XzopqwVv/yGNhV1Bl8NTmCq1763HeK2+EwVTv+leGeL13Dnh2wfbqowVPXCIO0z4taYw==}
+
   parse5@8.0.1:
     resolution: {integrity: sha512-z1e/HMG90obSGeidlli3hj7cbocou0/wa5HacvI3ASx34PecNjNQeaHNo5WIZpWofN9kgkqV1q5YvXe3F0FoPw==}
 
@@ -3206,11 +3215,11 @@ packages:
     resolution: {integrity: sha512-AVl138zALtfaAPvADulE0PZThbYzCBS79nL4pOSL/6Sm/4AH5A21BD9VHt97OlCuzJuCpmeZtAtkinisF4Vb1g==}
     engines: {node: '>=22.13.0 || >=24'}
 
-  pdfkit@0.20.2:
-    resolution: {integrity: sha512-Q/w03ICAQyXfHNfTsg1udp0ADerdBN0s7a6XSPL7J7Ro6ABnafoBOCDBstIO9U02mvzHEV8HrvFIw5iV5ejIRA==}
+  pdfkit@0.19.1:
+    resolution: {integrity: sha512-6Gzk+wDwTs4VSxsR5rCMTnIl5nlmkye1oWB0l2hDB1EX6ZNSIBroKQEv+2+fPPn+stVjyqzmsqRJVDfB9fo5DA==}
 
-  pdfmake@0.3.12:
-    resolution: {integrity: sha512-Rhqr/IWpYeEzrKCaZJOfdNxMtBAaHb4NfVXRpTHtH8DRo++hUua9QjwP5UNau7rOsHpgE0xfQLqVtkxrpdNqJQ==}
+  pdfmake@0.3.11:
+    resolution: {integrity: sha512-Uc49J9hUMyuqJk+U+PxlpBpPr96A4HOOfesGx609EPr2ue82+5/Smq/KTAkEqh0/jUGSi1fumvqZ5yAWijJTJg==}
     engines: {node: '>=20'}
 
   picocolors@1.1.1:
@@ -3234,8 +3243,8 @@ packages:
     engines: {node: '>=20'}
     hasBin: true
 
-  png-js@2.0.0:
-    resolution: {integrity: sha512-GdzJuUMc6ZSpxFJWVxtOH1bzYHym+TOnveqUjb+VJIbZWbZzyiRGFiKhbiielfpYbgMlhHVhsJ0FTazfuRFkMA==}
+  png-js@1.1.0:
+    resolution: {integrity: sha512-PM/uYGzGdNSzqeOgly68+6wKQDL1SY0a/N+OEa/+br6LnHWOAJB0Npiamnodfq3jd2LS/i2fMeOKSAILjA+m5Q==}
 
   possible-typed-array-names@1.1.0:
     resolution: {integrity: sha512-/+5VFTchJDoVj3bhoqi6UeymcD00DAwb1nJwamzPvHEszJ4FpF6SNNbUbOS8yI56qHzdV8eK0qEfOSiodkTdxg==}
@@ -5068,6 +5077,10 @@ snapshots:
     dependencies:
       base64-js: 1.5.1
 
+  browserify-zlib@0.2.0:
+    dependencies:
+      pako: 1.0.11
+
   browserslist@4.29.3:
     dependencies:
       baseline-browser-mapping: 2.11.28
@@ -5907,6 +5920,8 @@ snapshots:
 
   jiti@2.7.0: {}
 
+  js-md5@0.8.3: {}
+
   js-tokens@4.0.0: {}
 
   jsdom@30.1.2(@noble/hashes@2.4.0):
@@ -6249,6 +6264,8 @@ snapshots:
 
   pako@0.2.9: {}
 
+  pako@1.0.11: {}
+
   parse5@8.0.1:
     dependencies:
       entities: 8.1.0
@@ -6268,19 +6285,19 @@ snapshots:
     optionalDependencies:
       '@napi-rs/canvas': 1.0.11
 
-  pdfkit@0.20.2:
+  pdfkit@0.19.1:
     dependencies:
       '@noble/ciphers': 1.3.0
       '@noble/hashes': 1.8.0
-      fflate: 0.8.3
       fontkit: 2.0.4
+      js-md5: 0.8.3
       linebreak: 1.1.0
-      png-js: 2.0.0
+      png-js: 1.1.0
 
-  pdfmake@0.3.12:
+  pdfmake@0.3.11:
     dependencies:
       linebreak: 1.1.0
-      pdfkit: 0.20.2
+      pdfkit: 0.19.1
       xmldoc: 2.0.3
 
   picocolors@1.1.1: {}
@@ -6295,9 +6312,9 @@ snapshots:
     dependencies:
       playwright-core: 1.64.0
 
-  png-js@2.0.0:
+  png-js@1.1.0:
     dependencies:
-      fflate: 0.8.3
+      browserify-zlib: 0.2.0
 
   possible-typed-array-names@1.1.0: {}
 

@@ -19,7 +19,7 @@
     "@croquis/solver-ts": "workspace:*",
     "@croquis/viewer": "workspace:*",
     "next": "16.4.0",
-    "pdfmake": "0.3.12",
+    "pdfmake": "0.3.11",
     "react": "catalog:",
     "react-dom": "catalog:",
     "zod": "catalog:"
