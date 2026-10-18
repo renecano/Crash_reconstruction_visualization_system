@@ -45,6 +45,8 @@ describe("<ResultPanel /> con incertidumbre", () => {
     render(<ResultPanel resultado={r} supuestosEntorno={[]} />);
     const text = document.body.textContent ?? "";
     expect(text).toMatch(/80 %: \d+–\d+ km\/h/);
-    expect(screen.getByTestId("incertidumbre").textContent).toMatch(/velocidad_previa/);
+    expect(screen.getByTestId("incertidumbre").textContent).toMatch(
+      /Vehículo [A-Z]: velocidad previa, entre \d+ y \d+ km\/h/,
+    );
   });
 });

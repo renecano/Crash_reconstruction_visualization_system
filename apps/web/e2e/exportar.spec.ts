@@ -86,4 +86,51 @@ test.describe("exportar desde el visor", () => {
     expect(json.nodes.some((n) => n.name?.startsWith("vehiculo_"))).toBe(true);
     expect(json.animations?.[0]?.channels.length ?? 0).toBeGreaterThan(0);
   });
+
+  test("informe PDF: secciones, rangos, la marca al pie de cada página y en los metadatos", async ({
+    page,
+  }) => {
+    await page.goto("/visor?escena=lateral_interseccion&t=0&calidad=baja&renderer=webgl");
+    await waitReady(page);
+    await expect(page.getByTestId("export-informe")).toBeEnabled();
+    const [download] = await Promise.all([
+      page.waitForEvent("download", { timeout: 120_000 }),
+      page.getByTestId("export-informe").click(),
+    ]);
+    expect(download.suggestedFilename()).toBe("informe-lateral-interseccion.pdf");
+    const pdf = await bytesOf(download);
+    expect(pdf.subarray(0, 5).toString("latin1")).toBe("%PDF-");
+    const pdfjs = await import("pdfjs-dist/legacy/build/pdf.mjs");
+    const doc = await pdfjs.getDocument({ data: new Uint8Array(pdf) }).promise;
+    expect(doc.numPages).toBeGreaterThan(1);
+    const pages: string[] = [];
+    for (let i = 1; i <= doc.numPages; i++) {
+      const c = await (await doc.getPage(i)).getTextContent();
+      pages.push(
+        c.items
+          .map((it) => ("str" in it ? it.str : ""))
+          .join(" ")
+          .replace(/\s+/g, " "),
+      );
+    }
+    // La marca al pie de cada página.
+    for (const p of pages) expect(p).toContain(LEGEND);
+    const all = pages.join(" ");
+    for (const s of [
+      "Informe de reconstrucción ilustrativa",
+      "Línea de tiempo",
+      "Vehículos",
+      "Cambio de velocidad (ΔV)",
+      "Parámetros y su fuente",
+      "Supuestos y datos inciertos",
+      "Identificación",
+    ]) {
+      expect(all).toContain(s);
+    }
+    expect(all).toMatch(/80 %: [\d.,]+–[\d.,]+ km\/h/);
+    expect(all).toMatch(/[0-9a-f]{64}/); // SHA-256 de la escena
+    const info = (await doc.getMetadata()).info as { Subject?: string; Title?: string };
+    expect(info.Subject).toContain(LEGEND);
+    expect(info.Title).toMatch(/^Informe — /);
+  });
 });

@@ -551,6 +551,7 @@ function VisorEscena({ spec, hayPropia }: { spec: EscenaSpec; hayPropia: boolean
         clock={clock}
         legend={legend}
         nombre={params.escena === "propia" ? "escena-propia" : params.escena}
+        informe={{ spec, resultado: r, supuestosEntorno: env.supuestos, completo: !calculando }}
       />
 
       {calculando ? (
