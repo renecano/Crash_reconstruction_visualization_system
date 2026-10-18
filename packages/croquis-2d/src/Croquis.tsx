@@ -4,7 +4,13 @@
  * Arrastra vehículos, personas, objetos, dispositivos y puntos de evidencia; gira vehículos con el
  * asa frontal. Todo cambio pasa por `applyEdit` y vuelve como una escena nueva en `onChange`.
  */
-import type { EscenaSpec, TablaClases } from "@croquis/scene-schema";
+import {
+  LEGEND_TEXT,
+  legendFor,
+  legendLines,
+  type EscenaSpec,
+  type TablaClases,
+} from "@croquis/scene-schema";
 import {
   useCallback,
   useMemo,
@@ -17,8 +23,8 @@ import type { Vec2 } from "./geometry";
 import { sceneLayout, type LaneStrip } from "./layout";
 import { clientToWorld, makeViewport, worldToSvg, type Viewport } from "./viewport";
 
-export const CROQUIS_LEGEND =
-  "Reconstrucción ilustrativa generada a partir de un relato. No es un peritaje.";
+/** Leyenda de reconstrucción ilustrativa (PLAN §10); la misma de todo Croquis. */
+export const CROQUIS_LEGEND = LEGEND_TEXT;
 
 export interface CroquisProps {
   spec: EscenaSpec;
@@ -32,6 +38,11 @@ export interface CroquisProps {
   /** Píxeles por metro del SVG interno. */
   scale?: number;
   className?: string;
+  /**
+   * SVG autónomo para exportar (F9): con `xmlns`, tamaño en píxeles (`scale` por metro) y el fondo
+   * como rectángulo (los lectores de SVG y de PDF no aplican el `background` de CSS). Sin edición.
+   */
+  standalone?: boolean;
 }
 
 type DragTarget =
@@ -43,6 +54,7 @@ type DragTarget =
   | { kind: "evidence"; id: string; index: number }
   | { kind: "event"; id: string };
 
+const BACKGROUND = "#dfe7d8";
 const ROAD_FILL = "#5b5f66";
 const LINE_STROKE = "#f4f1e6";
 const MEDIAN_FILL = "#7a9a6a";
@@ -57,6 +69,7 @@ export function Croquis({
   onSelect,
   scale = 10,
   className,
+  standalone = false,
 }: CroquisProps) {
   const layout = useMemo(() => sceneLayout(spec, clases), [spec, clases]);
   const vp = useMemo(() => makeViewport(layout.bounds, scale), [layout.bounds, scale]);
@@ -79,7 +92,7 @@ export function Croquis({
   );
 
   const begin = (e: ReactPointerEvent, target: DragTarget) => {
-    if (readOnly) return;
+    if (readOnly || standalone) return;
     e.stopPropagation();
     e.currentTarget.setPointerCapture?.(e.pointerId);
     setDrag(target);
@@ -144,15 +157,32 @@ export function Croquis({
       data-testid="croquis"
       className={className}
       viewBox={`${vp.viewBox.x} ${vp.viewBox.y} ${vp.viewBox.width} ${vp.viewBox.height}`}
-      width="100%"
       role="img"
       aria-label={`Croquis de la escena ${spec.meta.titulo ?? spec.meta.id}`}
-      style={{ touchAction: "none", background: "#dfe7d8", userSelect: "none" }}
-      onPointerMove={onMove}
-      onPointerUp={onUp}
-      onPointerCancel={onUp}
-      onPointerDown={() => onSelect?.(undefined)}
+      {...(standalone
+        ? {
+            xmlns: "http://www.w3.org/2000/svg",
+            width: vp.viewBox.width,
+            height: vp.viewBox.height,
+          }
+        : {
+            width: "100%",
+            style: { touchAction: "none", background: BACKGROUND, userSelect: "none" },
+            onPointerMove: onMove,
+            onPointerUp: onUp,
+            onPointerCancel: onUp,
+            onPointerDown: () => onSelect?.(undefined),
+          })}
     >
+      {standalone ? (
+        <rect
+          x={vp.viewBox.x}
+          y={vp.viewBox.y}
+          width={vp.viewBox.width}
+          height={vp.viewBox.height}
+          fill={BACKGROUND}
+        />
+      ) : null}
       <Road layout={shownLayout} vp={vp} />
       {shownLayout.evidence.map((ev) => (
         <g key={ev.id} data-testid={`evidence-${ev.id}`}>
@@ -328,11 +358,22 @@ export function Croquis({
         );
       })}
       <NorthArrow vp={vp} />
+      <ScaleBar vp={vp} />
+      {/* Franja clara detrás de la marca y la atribución: se leen igual sobre el asfalto. */}
+      <rect
+        data-testid="franja-leyenda"
+        x={0}
+        y={vp.viewBox.height - (shownLayout.mapa ? m(4.6) : m(3.4))}
+        width={vp.viewBox.width}
+        height={shownLayout.mapa ? m(4.6) : m(3.4)}
+        fill="#ffffff"
+        opacity={0.82}
+      />
       {shownLayout.mapa ? (
         <text
           data-testid="atribucion-osm"
           x={m(1)}
-          y={vp.viewBox.height - m(2.3)}
+          y={vp.viewBox.height - m(3.4)}
           fontSize={m(0.9)}
           fill="#333"
           fontFamily="system-ui, sans-serif"
@@ -340,15 +381,22 @@ export function Croquis({
           {shownLayout.mapa.atribucion}
         </text>
       ) : null}
-      <text
-        x={m(1)}
-        y={vp.viewBox.height - m(0.8)}
-        fontSize={m(1.1)}
-        fill="#333"
-        fontFamily="system-ui, sans-serif"
-      >
-        {CROQUIS_LEGEND} · semilla {shown.meta.semilla}
-      </text>
+      {/* Marca de reconstrucción ilustrativa: texto, y semilla con el hash de entradas. */}
+      {legendLines(legendFor(shown))
+        .slice(0, 2)
+        .map((line, i) => (
+          <text
+            key={i}
+            data-testid={i === 0 ? "leyenda-croquis" : "ids-croquis"}
+            x={m(1)}
+            y={vp.viewBox.height - (i === 0 ? m(2.1) : m(0.8))}
+            fontSize={i === 0 ? m(1.1) : m(0.9)}
+            fill="#333"
+            fontFamily="system-ui, sans-serif"
+          >
+            {line}
+          </text>
+        ))}
     </svg>
   );
 }
@@ -688,6 +736,45 @@ function octagon(r: number): string {
     const a = (Math.PI / 8) * (2 * i + 1);
     return `${(r * Math.cos(a)).toFixed(2)},${(r * Math.sin(a)).toFixed(2)}`;
   }).join(" ");
+}
+
+/** Largo "redondo" de la barra de escala: el mayor de 1-2-5 × 10ⁿ que no pasa de una quinta parte. */
+export function scaleBarMeters(widthM: number): number {
+  const target = widthM / 5;
+  let best = 1;
+  for (const base of [1, 2, 5]) {
+    for (let p = -1; p <= 4; p++) {
+      const v = base * 10 ** p;
+      if (v <= target && v > best) best = v;
+    }
+  }
+  return best;
+}
+
+/** Barra de escala gráfica (parte de tránsito): arriba a la izquierda. */
+function ScaleBar({ vp }: { vp: Viewport }) {
+  const m = (v: number) => v * vp.scale;
+  const len = scaleBarMeters(vp.viewBox.width / vp.scale);
+  const x = m(1.5);
+  const y = m(2.5);
+  const tick = m(0.5);
+  return (
+    <g data-testid="escala" fontFamily="system-ui, sans-serif">
+      <line x1={x} y1={y} x2={x + m(len)} y2={y} stroke="#333" strokeWidth={m(0.15)} />
+      <line x1={x} y1={y - tick} x2={x} y2={y + tick} stroke="#333" strokeWidth={m(0.15)} />
+      <line
+        x1={x + m(len)}
+        y1={y - tick}
+        x2={x + m(len)}
+        y2={y + tick}
+        stroke="#333"
+        strokeWidth={m(0.15)}
+      />
+      <text x={x + m(len) / 2} y={y - m(0.8)} textAnchor="middle" fontSize={m(1)} fill="#333">
+        {len} m
+      </text>
+    </g>
+  );
 }
 
 function NorthArrow({ vp }: { vp: Viewport }) {
