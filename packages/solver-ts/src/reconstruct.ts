@@ -525,24 +525,48 @@ function primaryEvent(spec: Json): Json | null {
   return eventos.find((e) => String(e.tipo).startsWith("impacto_")) ?? null;
 }
 
+/**
+ * Forma y fracción del largo de la cara dañada por cara y zona horizontal del CDC. Los grupos
+ * ajustados con E5 en desarrollo (ADR 0033): frente/trasera C, y costados D, P, Z y B; el resto
+ * conserva la regla original, que E5 no pudo mejorar sin empeorar alguna métrica. Las letras de la
+ * otra cara (el esquema las acepta en cualquiera) conservan su regla original.
+ */
+const CRUSH_RULES: Readonly<
+  Record<"FB" | "LR", Readonly<Record<string, readonly [string, number]>>>
+> = {
+  FB: {
+    D: ["uniforme", 1.0],
+    Y: ["izquierda", 0.66],
+    Z: ["derecha", 0.66],
+    L: ["izquierda", 0.4],
+    R: ["derecha", 0.4],
+    C: ["uniforme", 0.89],
+    F: ["izquierda", 0.4],
+    B: ["derecha", 0.4],
+  },
+  LR: {
+    D: ["centro", 0.62],
+    Y: ["izquierda", 0.66],
+    Z: ["uniforme", 0.37],
+    F: ["izquierda", 0.4],
+    B: ["uniforme", 0.21],
+    P: ["centro", 0.52],
+    L: ["izquierda", 0.4],
+    R: ["derecha", 0.4],
+  },
+};
+
 /** Forma y ancho del daño según la cara y la zona horizontal del CDC (también los usa E5). */
 export function crushShapeAndWidth(
   cdc: Json | null | undefined,
   body: Body2D,
 ): [readonly number[], number] {
-  const lado = (cdc ?? {}).lado ?? "F";
-  const zonaH = (cdc ?? {}).zona_horizontal ?? "D";
-  const sideLen = lado === "F" || lado === "B" ? body.width : body.length;
-  if (zonaH === "D") return [TRIANGULAR_SHAPES.uniforme!, sideLen];
-  if (zonaH === "Y" || zonaH === "Z") {
-    return [
-      zonaH === "Y" ? TRIANGULAR_SHAPES.izquierda! : TRIANGULAR_SHAPES.derecha!,
-      0.66 * sideLen,
-    ];
-  }
-  if (zonaH === "L" || zonaH === "F") return [TRIANGULAR_SHAPES.izquierda!, 0.4 * sideLen];
-  if (zonaH === "R" || zonaH === "B") return [TRIANGULAR_SHAPES.derecha!, 0.4 * sideLen];
-  return [TRIANGULAR_SHAPES.centro!, 0.4 * sideLen];
+  const lado = str((cdc ?? {}).lado, "F");
+  const zonaH = str((cdc ?? {}).zona_horizontal, "D");
+  const face = lado === "F" || lado === "B" ? "FB" : "LR";
+  const sideLen = face === "FB" ? body.width : body.length;
+  const [shape, frac] = CRUSH_RULES[face][zonaH] ?? ["centro", 0.4];
+  return [TRIANGULAR_SHAPES[shape]!, frac * sideLen];
 }
 
 const ALONG_FRONT_BACK: Readonly<Record<string, number>> = {

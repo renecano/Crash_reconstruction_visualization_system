@@ -221,3 +221,36 @@ def test_sin_moto_no_hay_arrastre_de_moto_caida() -> None:
         if any(v["clase"]["valor"] in ("motocicleta", "scooter") for v in spec["vehiculos"]):
             continue
         assert "friccion_moto_caida" not in reconstruct(spec, dt=0.1).parametros, name
+
+
+@pytest.mark.parametrize(
+    ("lado", "zona", "forma", "fraccion"),
+    [
+        ("F", "D", "uniforme", 1.0),
+        ("F", "L", "izquierda", 0.4),
+        ("B", "Z", "derecha", 0.66),
+        ("F", "C", "uniforme", 0.89),
+        ("L", "D", "centro", 0.62),
+        ("R", "P", "centro", 0.52),
+        ("L", "Z", "uniforme", 0.37),
+        ("R", "B", "uniforme", 0.21),
+        ("L", "F", "izquierda", 0.4),
+        ("L", "Y", "izquierda", 0.66),
+        # Letra de la otra cara: conserva la regla original.
+        ("F", "P", "centro", 0.4),
+        ("L", "C", "centro", 0.4),
+    ],
+)
+def test_crush_rules_by_face_and_zone(lado: str, zona: str, forma: str, fraccion: float) -> None:
+    """Forma y ancho por cara y zona del CDC (ADR 0033)."""
+    from croquis_solver.crash3 import TRIANGULAR_SHAPES
+    from croquis_solver.models import Body2D
+    from croquis_solver.reconstruct import (
+        _crush_shape_and_width,  # pyright: ignore[reportPrivateUsage]
+    )
+
+    body = Body2D(1500.0, 2500.0, 4.5, 1.8)
+    shape, width = _crush_shape_and_width({"lado": lado, "zona_horizontal": zona}, body)
+    side = 1.8 if lado in {"F", "B"} else 4.5
+    assert shape == TRIANGULAR_SHAPES[forma]
+    assert width == pytest.approx(fraccion * side)
