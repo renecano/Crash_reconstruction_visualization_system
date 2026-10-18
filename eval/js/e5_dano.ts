@@ -81,6 +81,40 @@ function summarize(rs: Resultado[], rand: () => number) {
   return out;
 }
 
+/**
+ * Diagnóstico de desarrollo (ADR 0033), no una métrica de E5:
+ * - fidelidad de la malla: |malla − solver| en las estaciones del propio solver, por cara y zona
+ *   (casos con aplastamiento del solver > 2 cm);
+ * - D de CISS en frente y trasera: cuántos casos lo traen en 0 (se miden de esquina a esquina).
+ */
+function diagnostic(results: Resultado[], cases: Caso[]) {
+  const groups = new Map<string, number[]>();
+  for (const r of results) {
+    if (Math.max(...r.perfilSolver) <= 0.02) continue;
+    const key = `${r.lado === "F" || r.lado === "B" ? "FB" : "LR"}:${r.zona || "-"}`;
+    const err =
+      r.mallaEnEstacionesSolver.reduce((s, v, i) => s + Math.abs(v - r.perfilSolver[i]!), 0) / 6;
+    groups.set(key, [...(groups.get(key) ?? []), err]);
+  }
+  const fidelidad: Record<string, unknown> = {};
+  for (const [key, errs] of [...groups].sort()) {
+    if (errs.length < 15) continue;
+    const s = [...errs].sort((a, b) => a - b);
+    fidelidad[key] = {
+      n: errs.length,
+      mediana_cm: cm(median(errs)),
+      p95_cm: cm(s[Math.min(s.length - 1, Math.floor(0.95 * s.length))]!),
+    };
+  }
+  const fb = cases.filter(
+    (c) => c.fuente === "ciss" && (c.lado === "F" || c.lado === "B") && c.centro_dano_m !== null,
+  );
+  return {
+    fidelidad_malla: fidelidad,
+    ciss_frente_trasera_d: { n: fb.length, d_cero: fb.filter((c) => c.centro_dano_m === 0).length },
+  };
+}
+
 function main() {
   if (!existsSync(CASES))
     throw new Error("Falta eval/e5/casos.jsonl: corre `uv run croquis-eval e5-casos`");
@@ -156,6 +190,7 @@ function main() {
     evaluados: results.length,
     segundos: Math.round((Date.now() - t0) / 1000),
     resumen,
+    ...(testFinal ? {} : { diagnostico_desarrollo: diagnostic(results, cases) }),
   };
   if (!testFinal) {
     // Por caso, solo en desarrollo: es lo que se mira para ajustar (nunca el test).
