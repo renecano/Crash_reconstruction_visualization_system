@@ -29,7 +29,7 @@ members = ["packages/scene-schema/python", "solver", "extraction", "data", "eval
 dev = [
   "pytest>=9.1,<10",
   "pytest-cov>=7.1,<8",
-  "hypothesis>=6.168,<7",
+  "hypothesis>=6.169.2,<7",
   # Solo referencia en pruebas y evaluaciones; el solver no depende de SciPy (ADR 0027).
   "scipy>=1.18,<2",
   "ruff>=0.17,<0.18",
