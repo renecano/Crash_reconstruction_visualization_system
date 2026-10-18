@@ -94,7 +94,14 @@ function main() {
   const excl: Record<string, Record<string, number>> = {};
   const t0 = Date.now();
   cases.forEach((c, i) => {
-    const r = evaluate(c);
+    let r: ReturnType<typeof evaluate>;
+    try {
+      r = evaluate(c);
+    } catch (e) {
+      // Un error inesperado no tumba la corrida: se cuenta como exclusión y se reporta.
+      console.error(`${c.id}: ${e instanceof Error ? e.message : String(e)}`);
+      r = "error_inesperado";
+    }
     if (typeof r === "string") {
       const key = `${c.fuente}/${c.tipo}`;
       excl[key] ??= {};
@@ -124,6 +131,11 @@ function main() {
   let commit: string | null;
   try {
     commit = execFileSync("git", ["rev-parse", "--short", "HEAD"], { cwd: ROOT }).toString().trim();
+    // Con cambios sin commit, el resultado no corresponde a ese commit: se dice.
+    const dirty = execFileSync("git", ["status", "--porcelain", "--untracked-files=no"], {
+      cwd: ROOT,
+    }).toString();
+    if (dirty.trim()) commit += "-modificado";
   } catch {
     commit = null;
   }
@@ -145,6 +157,14 @@ function main() {
     segundos: Math.round((Date.now() - t0) / 1000),
     resumen,
   };
+  if (!testFinal) {
+    // Por caso, solo en desarrollo: es lo que se mira para ajustar (nunca el test).
+    writeFileSync(
+      resolve(ROOT, "eval/e5/resultados_desarrollo.jsonl"),
+      results.map((r) => `${JSON.stringify(r)}\n`).join(""),
+      "utf-8",
+    );
+  }
   const out = resolve(ROOT, `eval/results/${doc.name}.json`);
   writeFileSync(out, `${JSON.stringify(doc, null, 2)}\n`, "utf-8");
   console.log(out);

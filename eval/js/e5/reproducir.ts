@@ -87,24 +87,48 @@ export type Exclusion =
   | "sin_dv"
   | "obstaculo_desconocido"
   | "sin_posicion_del_dano"
-  | "clase_sin_malla";
+  | "clase_sin_malla"
+  | "datos_invalidos"
+  | "sin_barrera"
+  | "barrera_movil_no_calibrada"
+  | "error_inesperado";
 
-/** Dimensiones del vehículo: las medidas del caso o las típicas de su clase. */
+const inRange = (x: number | null, lo: number, hi: number) => x !== null && x >= lo && x <= hi;
+
+/**
+ * Dimensiones del vehículo: las medidas del caso o las típicas de su clase. Los centinelas y
+ * valores imposibles de la fuente (ancho −10 mm, largo de 1.6 m en un auto) no son medidas: se usa
+ * la típica (ADR 0032).
+ */
 export function dimensions(c: Caso) {
   const t = (VEHICLE_CLASSES as Record<string, { tipico: Record<string, number> }>)[c.clase]
     ?.tipico;
   if (!t) return null;
-  const length = c.largo_m ?? t.largo_m!;
+  const length = inRange(c.largo_m, 2.5, 20) ? c.largo_m! : t.largo_m!;
   return {
     length,
-    width: c.ancho_m ?? t.ancho_m!,
+    width: inRange(c.ancho_m, 1.2, 3) ? c.ancho_m! : t.ancho_m!,
     height: t.alto_m!,
-    wheelbase: c.batalla_m ?? (t.distancia_entre_ejes_m! * length) / t.largo_m!,
+    wheelbase: inRange(c.batalla_m, 1.5, 7)
+      ? c.batalla_m!
+      : (t.distancia_entre_ejes_m! * length) / t.largo_m!,
   };
 }
 
-function cdc(c: Caso) {
-  return { lado: c.lado, zona_horizontal: c.zona || "D" };
+/** Zonas horizontales del CDC que el esquema acepta en cada cara. */
+const ZONAS: Record<DamageSide, readonly string[]> = {
+  F: ["L", "C", "R", "Y", "Z", "D"],
+  B: ["L", "C", "R", "Y", "Z", "D"],
+  L: ["F", "P", "B", "Y", "Z", "D"],
+  R: ["F", "P", "B", "Y", "Z", "D"],
+};
+
+/**
+ * CDC que recibiría Croquis. Una zona que el esquema no acepta en esa cara (el «9» de desconocida)
+ * no llega al solver: se omite y el solver usa su valor por defecto (D), como en la reconstrucción.
+ */
+export function cdcFor(c: Caso) {
+  return { lado: c.lado, zona_horizontal: ZONAS[c.lado].includes(c.zona) ? c.zona : "D" };
 }
 
 /** Energía de cierre con restitución e, dado el ΔV de uno de los cuerpos (momento en 1 D). */
@@ -119,17 +143,28 @@ export function energyFromDeltaV(dvMs: number, m1: number, m2: number | null, e:
 }
 
 /** Lo que predice Croquis para el caso, o el motivo de exclusión (ADR 0032). */
+/** Un perfil o un ancho medido fuera de lo físico es un centinela de la fuente (9999 mm…). */
+export function validMeasurement(c: Caso): boolean {
+  return (
+    c.perfil_m.length === 6 &&
+    c.perfil_m.every((x) => x >= 0 && x <= 2) &&
+    c.ancho_dano_m > 0 &&
+    c.ancho_dano_m <= 20
+  );
+}
+
 export function predict(c: Caso): Prediccion | Exclusion {
+  if (!(c.masa_kg > 0) || !validMeasurement(c)) return "datos_invalidos";
   const d = dimensions(c);
   if (!d) return "clase_sin_malla";
   const body = bodyFor(c.clase, c.masa_kg, d.length, d.width);
   const own = stiffnessFor(c.clase, zonaFromCdcSide(c.lado));
-  const [shape, width] = crushShapeAndWidth(cdc(c), body);
+  const [shape, width] = crushShapeAndWidth(cdcFor(c), body);
   const shaped = (energy: number, k = own.stiffness): Prediccion => ({
     energiaJ: energy,
     perfil: profileForEnergy(energy, width, k, shape),
     ancho: width,
-    centro: crushCenter(cdc(c), body, width),
+    centro: crushCenter(cdcFor(c), body, width),
     k,
   });
   switch (c.obstaculo) {
@@ -140,7 +175,7 @@ export function predict(c: Caso): Prediccion | Exclusion {
       // barrera) sale de la PDOF del caso: 0° es de frente y crece en sentido horario, así que en el
       // marco del vehículo (x adelante, y a la izquierda) es (cos θ, −sin θ). Así entran las
       // barreras en ángulo.
-      const center = crushCenter(cdc(c), body, width);
+      const center = crushCenter(cdcFor(c), body, width);
       const th = ((c.pdof_deg ?? 0) * Math.PI) / 180;
       const res = planarImpact(
         body,
@@ -165,7 +200,7 @@ export function predict(c: Caso): Prediccion | Exclusion {
         energiaJ: r.energyAbsorbedVehicle,
         perfil: r.profile,
         ancho: r.damageWidth,
-        centro: crushCenter(cdc(c), body, r.damageWidth),
+        centro: crushCenter(cdcFor(c), body, r.damageWidth),
         k,
       };
     }
@@ -208,10 +243,13 @@ export function predict(c: Caso): Prediccion | Exclusion {
         energiaJ: r.energyAbsorbedVehicle,
         perfil: r.profile,
         ancho: r.damageWidth,
-        centro: crushCenter(cdc(c), body, r.damageWidth),
+        centro: crushCenter(cdcFor(c), body, r.damageWidth),
         k,
       };
     }
+    case "sin_barrera":
+    case "barrera_movil_no_calibrada":
+      return c.obstaculo;
     default:
       return "obstaculo_desconocido";
   }
@@ -332,9 +370,19 @@ export interface Resultado {
   croquis: Metricas;
   uniforme: Metricas;
   lineal: Metricas;
-  /** Para depurar y para la galería. */
+  /** Para depurar, ajustar en desarrollo y la galería. */
   medido: number[];
   predichoMalla: number[];
+  /** La malla en las estaciones del propio solver: fidelidad de la malla al perfil del solver. */
+  mallaEnEstacionesSolver: number[];
+  perfilSolver: number[];
+  anchoSolver: number;
+  anchoMalla: number;
+  anchoMedido: number;
+  obstaculo: string;
+  clase: string;
+  lado: string;
+  zona: string;
 }
 
 /** Reproduce y mide un caso completo. */
@@ -356,6 +404,8 @@ export function evaluate(c: Caso): Resultado | Exclusion {
   if (typeof stations === "string") return stations;
   const ordered = measuredInCroquisOrder(c);
   const onMesh = measureCrushAt(group, dmg.field, stations);
+  const ownStations = Array.from({ length: 6 }, (_, k) => pred.centro + (0.5 - k / 5) * pred.ancho);
+  const onOwnStations = measureCrushAt(group, dmg.field, ownStations);
   const meshWidth = measureDamagedWidth(group, dmg.field, WIDTH_THRESHOLD_M);
   const baseline = (shape: readonly number[]) => {
     const p = profileForEnergy(pred.energiaJ, pred.ancho, pred.k, shape);
@@ -377,5 +427,14 @@ export function evaluate(c: Caso): Resultado | Exclusion {
     lineal: metrics(lin.at, lin.width, c, ordered),
     medido: ordered ?? c.perfil_m,
     predichoMalla: onMesh,
+    mallaEnEstacionesSolver: onOwnStations,
+    perfilSolver: pred.perfil,
+    anchoSolver: pred.ancho,
+    anchoMalla: meshWidth,
+    anchoMedido: c.ancho_dano_m,
+    obstaculo: c.obstaculo,
+    clase: c.clase,
+    lado: c.lado,
+    zona: c.zona,
   };
 }

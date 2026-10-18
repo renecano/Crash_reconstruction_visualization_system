@@ -37,6 +37,7 @@ Cada caso se reproduce con la **misma etapa de daño que usa la reconstrucción*
   - **Energía total:** momento en una dimensión, ½ μ v².
   - **Cara deformable:** la barrera deformable se lleva la fracción de Johnson (2011) que usa `e2_mdb.py`.
   - **Barrera rígida:** no se lleva nada.
+  - **Otras barreras móviles** (aclarado al correr el reproductor por primera vez, antes de ver errores por caso de estas pruebas): una barrera plana rígida de cualquier masa se reproduce igual, porque una cara rígida no se lleva energía. Las caras deformables que no son la de FMVSS 214 (EEVC, IIHS, de investigación) y las contorneadas no tienen fracción de energía calibrada: se excluyen como `barrera_movil_no_calibrada`, y las pruebas sin fila de barrera como `sin_barrera`. Las dos se cuentan por tipo.
 - **Barrera desplazada deformable (EEVC):** Croquis la ve como un muro rígido, que es como la modelaría al reconstruir. El aplastamiento predicho tenderá a ser mayor que el real, y se reporta por tipo tal cual.
 - **NHTSA dentro de la muestra en la magnitud:** la rigidez de Croquis por clase y zona se calibró con pruebas de NHTSA (E2): frontal con las de barrera y lateral y trasera con las de barrera móvil. Por eso E5-NHTSA no es independiente en _cuánto_ se hunde el vehículo. Sí mide la forma, el ancho y la posición del daño sobre la malla.
 - **CISS fuera de la muestra:** es la prueba fuera de la muestra (rigidez de pruebas de laboratorio y choques reales de la calle). Las conclusiones de E5 se apoyan sobre todo en CISS.
@@ -68,6 +69,11 @@ Croquis, en cambio, usa la forma según la zona del CDC (`profile_for_energy`) m
 1. Falta lo necesario para pasar D al marco de Croquis. En CISS se usa la mitad de la batalla, con la convención verificada en el inventario.
 2. CISS contra otro vehículo sin la clase o la masa del otro (no se puede repartir la energía).
 3. Clases sin malla en el visor (dos ruedas).
+4. Masa no positiva: es un centinela de la fuente, no una medida. Lo mismo vale para las dimensiones imposibles (ancho de −10 mm o un auto de 1.6 m de largo), solo que esas no se excluyen: se usa la dimensión típica de la clase. Es una regla sobre la validez de los datos, no sobre resultados.
+5. Errores inesperados del reproductor: se cuentan y se reportan, no detienen la corrida.
+6. Perfil o ancho medido fuera de lo físico (aplastamiento negativo o de más de 2 m, L de más de 20 m): es el centinela 9999 de la fuente y se excluye como `datos_invalidos`. Se encontró en la primera corrida de desarrollo (32 casos traseros de CISS con L = 100 m) y es una regla de validez, no de resultados.
+
+Una zona horizontal que el esquema de Croquis no acepta en esa cara (el «9» de desconocida de CISS) no llega al solver: se omite y el solver usa su valor por defecto (D), como haría la reconstrucción.
 
 ## La posición del daño en NHTSA no se evalúa (decisión del 2026-10-17, antes de medir)
 

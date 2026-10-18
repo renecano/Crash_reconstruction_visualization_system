@@ -122,3 +122,23 @@ def test_ciss_cases_reads_profile_and_position(tmp_path: Path) -> None:
     assert c.perfil_m == pytest.approx((0, 0.05, 0.2, 0.22, 0.08, 0))
     assert (c.ancho_dano_m, c.centro_dano_m) == (1.8, -0.3)
     assert c.anio not in e5.CISS_DEV_YEARS
+
+
+@pytest.mark.parametrize(
+    ("model", "mass", "obstaculo"),
+    [
+        ("DEFORMABLE IMPACTOR", "1368", "barrera_movil_deformable"),
+        ("FLAT IMPACTOR", "1800", "barrera_movil_rigida"),
+        ("FLAT IMPACTOR", "1468", "barrera_movil_rigida"),
+        ("DEFORMABLE IMPACTOR", "1565", "barrera_movil_no_calibrada"),
+        ("RESEARCH MDB 2010B", "2491", "barrera_movil_no_calibrada"),
+        ("CONTOURED IMPACTOR", "4536", "barrera_movil_no_calibrada"),
+    ],
+)
+def test_moving_barrier(model: str, mass: str, obstaculo: str) -> None:
+    bar = {"make": "NHTSA", "model": model, "test_weight_kg": mass}
+    assert e5._moving_barrier(bar) == obstaculo  # pyright: ignore[reportPrivateUsage]
+
+
+def test_moving_barrier_missing() -> None:
+    assert e5._moving_barrier(None) == "sin_barrera"  # pyright: ignore[reportPrivateUsage]

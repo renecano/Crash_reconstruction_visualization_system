@@ -135,8 +135,26 @@ def _vtb_obstacle(tipo: str) -> str:
     return "barrera_desplazada" if tipo == "frontal_desplazado" else "barrera_rigida"
 
 
-def nhtsa_cases(vtb: Path = VTB_CSV, itv: Path = ITV_CSV) -> Iterator[Caso]:
+def _moving_barrier(bar: dict[str, str] | None) -> str:
+    """
+    Barrera móvil de una prueba ITV (ADR 0032). La de FMVSS 214 y la rígida plana de E2 se
+    reproducen; una plana rígida de otra masa también, porque una cara rígida no se lleva energía
+    con cualquier masa. Las caras deformables de otras barreras (EEVC, IIHS, de investigación) y las
+    contorneadas no tienen fracción de energía calibrada: se marcan para excluirlas.
+    """
     from croquis_eval.e2_mdb import _barrier_kind  # pyright: ignore[reportPrivateUsage]
+
+    if bar is None:
+        return "sin_barrera"
+    kind = _barrier_kind(bar)
+    if kind:
+        return f"barrera_movil_{kind}"
+    if "FLAT" in (bar.get("model") or "").upper():
+        return "barrera_movil_rigida"
+    return "barrera_movil_no_calibrada"
+
+
+def nhtsa_cases(vtb: Path = VTB_CSV, itv: Path = ITV_CSV) -> Iterator[Caso]:
 
     for path, config in ((vtb, "VTB"), (itv, "ITV")):
         if not path.exists():
@@ -172,11 +190,7 @@ def nhtsa_cases(vtb: Path = VTB_CSV, itv: Path = ITV_CSV) -> Iterator[Caso]:
                 continue
             d = _f(row, "damage_offset_mm")
             bar = barriers.get(row["test_no"])
-            if config == "VTB":
-                obstaculo = _vtb_obstacle(tipo)
-            else:
-                kind = _barrier_kind(bar) if bar is not None else None
-                obstaculo = f"barrera_movil_{kind}" if kind else ""
+            obstaculo = _vtb_obstacle(tipo) if config == "VTB" else _moving_barrier(bar)
             pole = _f(row, "pole_diameter_mm")
             yield Caso(
                 fuente="nhtsa",

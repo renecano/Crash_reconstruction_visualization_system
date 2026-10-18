@@ -62,3 +62,5 @@ apps/web/public/workers/
 
 # Casos de E5 exportados para el reproductor en TS (se regeneran con croquis-eval e5-casos)
 eval/e5/casos.jsonl
+# Resultado por caso del desarrollo de E5 (para el ajuste; se regenera con el reproductor)
+eval/e5/resultados_desarrollo.jsonl
