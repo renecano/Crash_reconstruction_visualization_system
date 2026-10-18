@@ -22,7 +22,8 @@ Reglas de trabajo: `CLAUDE.md`. Especificación: `PLAN.md`.
 - **F9, paso 6b hecho** (rama `feat/f9-video`, ADR 0031): video MP4 y WebM de toda la reconstrucción, dibujado cuadro por cuadro con WebCodecs y Mediabunny, con la marca en cada cuadro y en los metadatos. El respaldo con MediaRecorder se vuelve a fechar cuadro por cuadro.
 - **F9, paso 6c hecho** (rama `feat/f9-croquis-export`, ADR 0031): el croquis se exporta en SVG, PNG y PDF desde el editor, con la marca, la semilla, el hash, la atribución de OSM, el norte y una barra de escala nueva.
 - **F9, paso 6d hecho** (rama `feat/f9-informe`, ADR 0031): informe PDF desde el visor. Los paneles y el informe comparten sus textos (`lib/textos-resultado.ts`) y los datos inciertos se dicen en palabras. **F9 cerrada.**
-- **Siguiente paso concreto:** F10, paso 1. Inventario de E5 (rama `feat/f10-inventario`): lista de fotos de NHTSA por prueba, posición del daño en CISS y conteos en `docs/data.md`. El plan de F10 está al final de este archivo.
+- **F10, paso 1 hecho** (rama `feat/f10-inventario`): inventario de E5 en `docs/data.md` y en `eval/results/e5_inventario.json`. Hay 3,620 casos de NHTSA y 8,804 de CISS con perfil medido completo; los números por tipo están en el inventario. CISS ahora trae la posición del daño, con su convención comprobada.
+- **Siguiente paso concreto:** F10, paso 2. ADR 0032 (métricas, líneas base y reglas) y la partición congelada de NHTSA (lista del test con su SHA-256), antes de medir nada.
 - **E1 del prompt v2 en el primer test, hecho** (PR #14). Sonnet 0.875 → 0.919 y Haiku 0.852 → 0.896. Además, E1 ahora compara cada contrafactual con la repetición del mismo relato (McNemar por tipo): ningún tipo difiere del ruido, y las reglas cambian con el modelo del vehículo en 6 de 52 pares (ADR 0012 §10).
 - **F8** cerrada el 2026-10-17 (PR #20 a #24). **F0** cerrado el 2026-10-10 (PR #1), **F1** el 2026-10-10 (PR #3), **F2** el 2026-10-13 (PR #4), **F3** el 2026-10-13 (PR #5), **F4** el 2026-10-13 (PR #6), **F5** el 2026-10-13 (PR #7), **F6** el 2026-10-14 (PR #8), **F7** el 2026-10-14 (PR #9; pendientes registrados); migración a Vercel el 2026-10-14 (PR #10); test CISS y prompt v2 el 2026-10-14 (PR #11).
 
@@ -1533,3 +1534,14 @@ Las ramas van una encima de otra y se fusionan en este orden, cada una con su PR
 - **Llamadas a la API:** la lista de multimedia es una llamada por prueba (~5,500). Va con caché, pausas y reintentos.
 - **Espacio en la laptop:** las fotos pesan ~2 MB y se guardan en `D:`, solo las necesarias.
 - **CISS sin velocidad:** CISS no trae la velocidad de impacto. Se usa la energía del ΔV del EDR (como E3), así que E5-CISS mide la forma y el reparto, no la cinemática.
+
+**Paso 1 — Inventario (2026-10-17, rama `feat/f10-inventario`):**
+
+- **Lista de multimedia:** `croquis-data nhtsa media` descargó la de las 5,274 pruebas con perfil medido completo, sin fallas.
+  - **Hallazgo:** casi todos los laboratorios suben las fotos numeradas (`v10050P009.jpg`). La vista de cada número está en la lista de fotografías del reporte PDF, comprobado en la prueba 10050.
+  - **Consecuencia:** los reportes (varios MB cada uno) se leerán solo para la muestra de la galería.
+- **CISS:** columnas nuevas con la batalla, el CDC completo, la zona horizontal, el centro del daño D y CMAX. La tabla de E3 se regeneró (`ciss build --check` al día) y E3 no cambia: lee las columnas por nombre.
+- **Casos e inventario:**
+  - `eval/croquis_eval/e5_casos.py`: casos y tipo de impacto, con reglas escritas antes de medir.
+  - `e5_inventario.py`: conteos, estado de las fotos y la convención de D comprobada contra `FIELDLLOCATION`.
+- **Evidencia:** `uv run croquis-eval e5-inventario` y 28 pruebas nuevas (multimedia, casos e inventario); ruff, pyright y pytest de `data` y `eval` en verde.

@@ -1,0 +1,110 @@
+{
+  "name": "e5_inventario",
+  "generated_at": "2026-10-18T04:15:19+00:00",
+  "git_commit": "5ec01e7",
+  "seed": null,
+  "nhtsa": {
+    "casos": 3620,
+    "por_tipo": {
+      "frontal": 2095,
+      "frontal_desplazado": 216,
+      "lateral": 1048,
+      "alcance": 165,
+      "poste": 96
+    },
+    "con_centro_del_dano": {
+      "frontal": 1987,
+      "frontal_desplazado": 194,
+      "lateral": 1036,
+      "alcance": 164,
+      "poste": 96
+    },
+    "con_velocidad": {
+      "frontal": 2095,
+      "frontal_desplazado": 216,
+      "lateral": 1048,
+      "alcance": 165,
+      "poste": 96
+    },
+    "fotos": {
+      "foto_por_nombre": {
+        "frontal": 14,
+        "frontal_desplazado": 0,
+        "lateral": 12,
+        "alcance": 0,
+        "poste": 0
+      },
+      "fotos_numeradas": {
+        "frontal": 969,
+        "frontal_desplazado": 24,
+        "lateral": 581,
+        "alcance": 17,
+        "poste": 44
+      },
+      "sin_fotos": {
+        "frontal": 1111,
+        "frontal_desplazado": 192,
+        "lateral": 454,
+        "alcance": 148,
+        "poste": 52
+      },
+      "sin_vista_de_la_cara": {
+        "frontal": 1,
+        "frontal_desplazado": 0,
+        "lateral": 1,
+        "alcance": 0,
+        "poste": 0
+      }
+    }
+  },
+  "ciss": {
+    "casos": 8804,
+    "por_tipo": {
+      "frontal": 2836,
+      "frontal_desplazado": 2356,
+      "lateral": 1918,
+      "alcance": 1059,
+      "poste": 635
+    },
+    "con_centro_del_dano": {
+      "frontal": 2836,
+      "frontal_desplazado": 2355,
+      "lateral": 1915,
+      "alcance": 1057,
+      "poste": 634
+    },
+    "desarrollo_2017_2021": {
+      "frontal": 1467,
+      "frontal_desplazado": 1285,
+      "lateral": 989,
+      "alcance": 564,
+      "poste": 330
+    },
+    "test_2022_2024": {
+      "frontal": 1369,
+      "frontal_desplazado": 1071,
+      "lateral": 929,
+      "alcance": 495,
+      "poste": 305
+    },
+    "contra_vehiculo": 7936,
+    "contra_objeto_rigido": 868,
+    "convencion_de_d_2024": {
+      "disponible": true,
+      "frente_y_trasera": {
+        "total": 2866,
+        "coincide": 2866
+      },
+      "costados": {
+        "total": 1182,
+        "a_3_cm": 828,
+        "a_10_cm": 277,
+        "mas_de_10_cm": 77
+      }
+    }
+  },
+  "notas": [
+    "Un caso es un vehículo con C1–C6 (CISS) o DPD1–DPD6 (NHTSA), el largo del daño L, clase y masa; los tipos siguen las reglas de eval/croquis_eval/e5_casos.py.",
+    "Fotos: la mayoría de los laboratorios sube las fotos numeradas (v12345P004.jpg), sin la vista en el nombre; la vista de cada número está en la lista de fotografías del reporte PDF, que se lee solo para la muestra de la galería (no se descargan todos)."
+  ]
+}
