@@ -59,3 +59,6 @@ packages/extraction/grabaciones/*.tmp
 
 # Worker del solver empaquetado antes de next build (ADR 0030)
 apps/web/public/workers/
+
+# Casos de E5 exportados para el reproductor en TS (se regeneran con croquis-eval e5-casos)
+eval/e5/casos.jsonl

@@ -83,6 +83,18 @@ Croquis, en cambio, usa la forma según la zona del CDC (`profile_for_energy`) m
 
 En CISS, cuya convención sí se verificó, se compara todo, incluida la posición.
 
+## El orden de C1–C6 (decisión del 2026-10-17, antes de medir)
+
+Croquis pone C1 en el extremo izquierdo del frente y la parte trasera, y en el delantero de los costados. Las fuentes no siempre dicen dónde empezó la medición, y el error por punto depende del orden.
+
+- **CISS:**
+  - **Dónde está C1:** donde empieza la medición, según `FIELDLLOCATION` («Begins … extending right» o «LFBC to RFBC»; columna `c1_extremo`).
+  - **Varía por caso:** en los costados casi siempre se mide desde atrás. Muchos textos de años viejos («BC to BC») no lo dicen.
+  - **Qué se reporta:** el error por punto **solo** para los casos con el orden conocido. La profundidad máxima, el ancho y el área no dependen del orden y se reportan para todos.
+- **NHTSA:**
+  - **Lo que se sabe:** la API no documenta el orden de DPD1–DPD6. El reporte de la prueba 10050 lo confirma (DPD1 a la izquierda), pero la frase que lo dice no aparece en ninguno de los reportes legibles de una muestra de desarrollo (`eval/results/e5_orientacion.json`, `uv run croquis-eval e5-orientacion`).
+  - **Qué se reporta:** en NHTSA **no se reporta el error por punto**; sí la profundidad máxima, el ancho y el área.
+
 ## Partición congelada
 
 - **Archivo:** `eval/e5/particion.json`, SHA-256 `2a894e0915db754fa484f0dc83b809389b134760b02e00ba7b8c4d9b784b0213`. Lo genera `uv run croquis-eval e5-particion`; `--check` lo verifica y las pruebas fallan si cambia.

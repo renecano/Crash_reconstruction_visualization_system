@@ -54,3 +54,22 @@ def test_tabla_al_dia_si_hay_datos_crudos() -> None:
     if not all(ciss.zip_path(y).exists() for y in ciss.YEARS):
         pytest.skip("Sin los CSV de CISS en data/raw/ciss (uv run croquis-data ciss download)")
     assert ciss.build(check=True)
+
+
+@pytest.mark.parametrize(
+    ("location", "end"),
+    [
+        ("Begins 80cm left of center point, extending right", "izquierda"),
+        ("Begins 20cm right of center point, extending left", "derecha"),
+        ("Begins 62cm forward of front axle, extending rearward", "adelante"),
+        ("Begins 43cm forward of rear axle, extending forward", "atras"),
+        ("LFBC to RFBC", "izquierda"),
+        ("rrbc to lrbc", "derecha"),
+        ("BC to BC", ""),  # no dice el sentido
+        ("LFBC to LFBC", ""),
+        ("Unknown", ""),
+        ("", ""),
+    ],
+)
+def test_c1_end_reads_where_the_measurement_starts(location: str, end: str) -> None:
+    assert ciss.c1_end(location) == end

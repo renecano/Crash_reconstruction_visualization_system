@@ -1,0 +1,33 @@
+{
+  "name": "e5_orientacion",
+  "generated_at": "2026-10-18T04:36:44+00:00",
+  "git_commit": "a876450",
+  "seed": 20261017,
+  "semilla": 20261017,
+  "muestra": "pruebas de desarrollo (ADR 0032), hasta 12 reportes por tipo",
+  "por_tipo": {
+    "frontal": {
+      "reportes_leidos": 12,
+      "sin_frase": 12
+    },
+    "frontal_desplazado": {
+      "reportes_leidos": 12,
+      "sin_frase": 11,
+      "reporte_ilegible": 1
+    },
+    "poste": {
+      "reportes_leidos": 12,
+      "sin_frase": 12
+    },
+    "alcance": {
+      "reportes_leidos": 12,
+      "sin_frase": 9,
+      "reporte_ilegible": 3
+    },
+    "lateral": {
+      "reportes_leidos": 12,
+      "sin_frase": 12
+    }
+  },
+  "nota": "«reporte_ilegible»: el PDF descargado está dañado o truncado. «izquierda»: la frase del aplastamiento máximo confirma DPD1 a la izquierda; «derecha»: lo contradice; «no_concluye»: el DPD citado no es el máximo o está al centro; «sin_frase»: el reporte no trae la frase en sus primeras páginas."
+}
