@@ -24,7 +24,8 @@ Reglas de trabajo: `CLAUDE.md`. Especificación: `PLAN.md`.
 - **F9, paso 6d hecho** (rama `feat/f9-informe`, ADR 0031): informe PDF desde el visor. Los paneles y el informe comparten sus textos (`lib/textos-resultado.ts`) y los datos inciertos se dicen en palabras. **F9 cerrada.**
 - **F10, paso 1 hecho** (rama `feat/f10-inventario`): inventario de E5 en `docs/data.md` y en `eval/results/e5_inventario.json`. Hay 3,620 casos de NHTSA y 8,804 de CISS con perfil medido completo; los números por tipo están en el inventario. CISS ahora trae la posición del daño, con su convención comprobada.
 - **F10, paso 2 hecho** (rama `feat/f10-particion`, ADR 0032): el método de E5 quedó escrito antes de medir y la partición está congelada (`eval/e5/particion.json`, SHA-256 `2a894e09…`).
-- **Siguiente paso concreto:** F10, paso 3. Reproductor en TS (`eval/js`): verificar la convención de D de NHTSA con un script, armar la energía, la forma y la malla de cada caso, medir en las estaciones reales y calcular las dos líneas base, con pruebas de solución conocida.
+- **F10, pasos 3 y 4 hechos** (rama `feat/f10-reproductor`, ADR 0033): el reproductor de E5 en TS y el ajuste de la forma y el ancho del daño por zona, solo con desarrollo. La malla del visor sigue al solver con una mediana de ≤ 0.3 cm por estación. Cambian cinco grupos de zonas; en desarrollo, el error por punto en laterales de CISS baja de 4.99 a 4.67 cm (`eval/results/e5_desarrollo*.json`).
+- **Siguiente paso concreto:** F10, paso 5. Correr el test de E5 **una sola vez** (`pnpm --filter @croquis/eval-js e5 -- --test-final` → `eval/results/e5.json`), con todo ya fijo, y escribir la fila de E5 en el README y el resumen aquí.
 - **E1 del prompt v2 en el primer test, hecho** (PR #14). Sonnet 0.875 → 0.919 y Haiku 0.852 → 0.896. Además, E1 ahora compara cada contrafactual con la repetición del mismo relato (McNemar por tipo): ningún tipo difiere del ruido, y las reglas cambian con el modelo del vehículo en 6 de 52 pares (ADR 0012 §10).
 - **F8** cerrada el 2026-10-17 (PR #20 a #24). **F0** cerrado el 2026-10-10 (PR #1), **F1** el 2026-10-10 (PR #3), **F2** el 2026-10-13 (PR #4), **F3** el 2026-10-13 (PR #5), **F4** el 2026-10-13 (PR #6), **F5** el 2026-10-13 (PR #7), **F6** el 2026-10-14 (PR #8), **F7** el 2026-10-14 (PR #9; pendientes registrados); migración a Vercel el 2026-10-14 (PR #10); test CISS y prompt v2 el 2026-10-14 (PR #11).
 
@@ -1558,3 +1559,59 @@ Las ramas van una encima de otra y se fusionan en este orden, cada una con su PR
   - **NHTSA:** por vehículo (marca, modelo y año), para que un auto no caiga en los dos lados. 852 vehículos tienen más de una prueba. El 40 % de los vehículos va a test.
   - **CISS:** por año, como E3.
   - **Congelada:** archivo con SHA-256 fijo, `-text` en `.gitattributes` y fuera de Prettier. Hay pruebas de que coincide con su hash, de que los datos la reproducen y de que nunca parte un vehículo.
+
+**Paso 3 — Reproductor en TS (2026-10-18, rama `feat/f10-reproductor`):**
+
+- **`eval/js/e5/reproducir.ts`:** reproduce cada caso con la etapa de daño de la reconstrucción del solver TS:
+  - **Barreras:** `planarImpact` con la PDOF del caso.
+  - **Postes:** `narrowObject`.
+  - **Barrera móvil:** con el criterio de E2.
+  - **CISS:** la energía del ΔV del EDR, repartida por rigidez.
+  - **Medición:** la malla del visor se mide en las estaciones del vehículo real. Las dos líneas base comparten energía, ancho y centro.
+  - **Exportes del solver:** `crushShapeAndWidth`, `crushCenter` y sus constantes de impacto, sin cambio de comportamiento.
+- **`eval/js/e5_dano.ts`:** agrega por fuente y tipo, con IC del 90 % por bootstrap y diferencias pareadas. El test solo corre con `--test-final`. Si hay cambios sin commit, el commit del resultado lleva el sufijo `-modificado`.
+- **Reglas de validez, añadidas al ADR 0032 antes de cualquier corrida del test:**
+  - centinelas de la fuente (perfiles de 9999 mm, L de 100 m, ancho −10 mm, masa 0);
+  - zona «9» de CISS → la zona por defecto del solver;
+  - barreras móviles fuera de las dos de E2: una plana rígida de cualquier masa se reproduce, y las caras deformables sin calibrar se excluyen y se cuentan.
+- **Pruebas:**
+  - el reproductor con solución conocida: energía, orden de C1–C6, estaciones, y la ida y vuelta en frente y costado con error < 2 cm;
+  - la regla de adopción del ajuste;
+  - la clasificación de barreras en Python.
+
+**Paso 4 — Desarrollo y ajuste (2026-10-18, ADR 0033):**
+
+- **Hallazgos** (ADR 0033):
+  - **La malla no es la fuente del error:** reproduce el perfil del solver con una mediana de ≤ 0.3 cm por estación.
+  - **CISS mide frente y trasera de esquina a esquina de la defensa:** D = 0 y L ≈ 0.77 del ancho en todas las zonas.
+  - **Diferencia de convención de energía:** E2 calibró con ½ m ΔV² y el solver usa la energía disipada. Explica −4 cm de aplastamiento medio en NHTSA frontal, que está dentro de muestra. No se cambia: CISS y E3, que son choques reales, no tienen sesgo con la convención actual. Queda como límite de E5-NHTSA.
+- **Ajuste** (`eval/js/e5_ajuste.ts` → `eval/results/e5_ajuste.json`):
+  - **Candidatos:** ancho igual a la mediana medida, con las cinco formas de Croquis o la empírica de desarrollo.
+  - **Regla de adopción:** se adopta solo si ninguna métrica empeora.
+  - **Cambian:** frente/trasera C (uniforme, 0.89 del ancho) y costados D (centro, 0.62), P (centro, 0.52), Z (uniforme, 0.37) y B (uniforme, 0.21).
+  - **Se quedan como estaban:** las demás zonas del frente y la trasera, porque con el ancho real el error por punto empeoraba.
+  - **Código:** la regla es una tabla en el solver Python y en el port TS, con pruebas en los dos.
+- **Antes y después en desarrollo** (medianas en cm; `e5_desarrollo_antes_ajuste.json` en `1fb05ad`, `e5_desarrollo.json` en `54cba9f`):
+
+  | Fuente y tipo            | Métrica            | Antes | Después |
+  | ------------------------ | ------------------ | ----- | ------- |
+  | CISS lateral             | por punto          | 4.99  | 4.67    |
+  | CISS lateral             | ancho              | 93.43 | 78.67   |
+  | CISS lateral             | área               | 6.33  | 5.90    |
+  | NHTSA lateral            | profundidad máxima | 8.96  | 7.45    |
+  | NHTSA lateral            | ancho              | 65.73 | 57.27   |
+  | NHTSA frontal desplazado | profundidad máxima | 14.16 | 14.29   |
+  | NHTSA frontal desplazado | ancho              | 24.24 | 24.83   |
+
+  Los demás tipos no cambian. El frontal desplazado de NHTSA empeora poco y se reporta tal cual.
+
+- **Lo que dice el desarrollo, sin el test:**
+  - Croquis no le gana en todo a las líneas base.
+  - **Lineal simple:** con la misma energía, ancho y centro, tiene menor error en la profundidad máxima en NHTSA (8.76 contra 11.47 cm) y en el ancho de CISS (48.87 contra 55.53 cm).
+  - **Croquis:** gana en el error por punto en CISS (6.33 contra 6.66 de la uniforme y 7.21 de la lineal).
+  - El test dirá lo que sea y se publica igual.
+- **Regenerados:**
+  - **Resultados de las escenas:** cambian solo el perfil y el ancho del daño; las trayectorias son idénticas.
+  - **E8:** sigue cumpliendo, 11/11 en solver y horneado y en los tres navegadores, con hashes nuevos.
+  - **E7:** la paridad no cambia; solo variaron los tiempos, por la carga de la máquina, así que se conserva el resultado versionado.
+- **Incidente:** el sistema detuvo una corrida por falta de memoria. Se repitió una a la vez, sin otros procesos pesados.

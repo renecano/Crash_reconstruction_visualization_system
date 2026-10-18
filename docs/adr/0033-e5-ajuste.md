@@ -37,6 +37,14 @@ Por grupo (frente/trasera o costado, y zona), con `eval/js/e5_ajuste.ts`:
 
 **Cómo se decidió la regla de adopción:** después de una primera búsqueda solo con las formas existentes. Esa búsqueda mostró que el ancho real mejora mucho el error de ancho, pero empeora el error por punto en varios grupos: con el ancho real, las formas actuales caen menos que el perfil medido. Por eso se agregó la forma empírica y una regla que no deja empeorar ninguna métrica.
 
+## Resultado de la búsqueda
+
+`eval/results/e5_ajuste.json`:
+
+- **Se adoptan:** frente/trasera C (uniforme, 0.89 del ancho; 18 casos, sin error por punto) y costados D (centro, 0.62), P (centro, 0.52), Z (uniforme, 0.37) y B (uniforme, 0.21).
+- **Se quedan como estaban:** frente/trasera D, L, R, Y y Z, y costados F e Y. Ningún candidato mejoró sin empeorar alguna métrica.
+- **La confirmación sobre la malla** (antes y después por fuente y tipo) está en `docs/PROGRESS.md`, paso 4 de F10.
+
 ## Consecuencias
 
 - El cambio va al solver de referencia en Python y a su port TS a la vez, con las pruebas de paridad, los artefactos de E7/E8 y los snapshots actualizados.
