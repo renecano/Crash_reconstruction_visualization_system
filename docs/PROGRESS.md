@@ -17,7 +17,8 @@ Reglas de trabajo: `CLAUDE.md`. Especificación: `PLAN.md`.
 - **F9, paso 2 hecho** (rama `feat/f9-port-inversion`): el solver TS produce el resultado completo, con Monte Carlo, inversión y consistencia (`fullResult`). E7 lo compara entero: 68,557 números a 1e-6, más 217 de inversión y consistencia con diferencia máxima 0.01 (ADR 0027).
 - **F9, paso 3 hecho** (rama `feat/f9-workers`, ADR 0028): la escena propia (del relato o el croquis, con «Ver en 3D») se reconstruye en el navegador. El Web Worker responde dos veces: primero la reconstrucción para dibujar y después el resultado completo para los paneles; el visor 3D se queda con la primera y la página no se congela. Lo cubren 3 pruebas e2e.
 - **F9, paso 4 hecho** (rama `feat/f9-e8`, ADR 0029): E8 cumple. El resultado completo del solver y el horneado con Rapier (restos, volcaduras y ragdolls) son idénticos en Chromium, Firefox y WebKit en las 11 escenas (`eval/results/e8_determinism.json`); antes, con `Math` nativo, el solver coincidía en 8 de 11. Lo logra `dmath` (fdlibm en TS, igual a V8 bit a bit) y `dthree`; el solver completo cuesta ×1.22 en V8 (`e8_costo_dmath.json`), dentro del Web Worker. CI corre E8 en un trabajo propio.
-- **Siguiente paso concreto:** F9, paso 5. Service worker y modo sin red, con prueba e2e con la red cortada (`context.setOffline(true)`).
+- **F9, paso 5 hecho** (rama `feat/f9-offline`, ADR 0030): la demo funciona sin red. Serwist precarga 67 entradas (11.05 MB, `eval/results/f9_precarga.json`): trozos, cuerpos, texturas, el worker del solver y las páginas. La prueba e2e con la red cortada abre el inicio, el visor en alta (Rapier, ragdoll y texturas), el croquis con «Ver en 3D» (resultado completo en el worker) y el relato, que avisa que necesita red. En E6 (`e6_ab_sw_*.json`), sin costo medible en media; en baja con WebGPU, 0.10 ms por cuadro (85.5 contra 86.1 fps).
+- **Siguiente paso concreto:** F9, paso 6. Exportaciones: PDF, video (WebM y MP4), PNG, glTF y croquis en SVG, PNG y PDF, con la leyenda ilustrativa y pruebas que abren cada archivo.
 - **E1 del prompt v2 en el primer test, hecho** (PR #14). Sonnet 0.875 → 0.919 y Haiku 0.852 → 0.896. Además, E1 ahora compara cada contrafactual con la repetición del mismo relato (McNemar por tipo): ningún tipo difiere del ruido, y las reglas cambian con el modelo del vehículo en 6 de 52 pares (ADR 0012 §10).
 - **F8** cerrada el 2026-10-17 (PR #20 a #24). **F0** cerrado el 2026-10-10 (PR #1), **F1** el 2026-10-10 (PR #3), **F2** el 2026-10-13 (PR #4), **F3** el 2026-10-13 (PR #5), **F4** el 2026-10-13 (PR #6), **F5** el 2026-10-13 (PR #7), **F6** el 2026-10-14 (PR #8), **F7** el 2026-10-14 (PR #9; pendientes registrados); migración a Vercel el 2026-10-14 (PR #10); test CISS y prompt v2 el 2026-10-14 (PR #11).
 
@@ -1379,5 +1380,24 @@ Las ramas van una encima de otra y se fusionan en este orden, cada una con su PR
   - `node eval/e8_costo_dmath.mjs --rondas 5` → total 9,064 → 11,075 ms (×1.222), `resultado_identico_en_v8: true`.
   - `pnpm lint`, `pnpm typecheck`, `pnpm test` y `pnpm format:check` en verde.
 - **Instalado:** `esbuild` 0.28.2 como dependencia de desarrollo de la raíz (ADR 0001), y Firefox y WebKit de Playwright en `D:\dev-cache\ms-playwright`.
+
+**Paso 5 — Demo sin red (2026-10-17, rama `feat/f9-offline`, ADR 0030):**
+
+- **Service worker con Serwist 9.5.13.** Es la opción de la guía oficial de PWA de Next.js para Turbopack.
+  - `src/sw.ts` define la precarga, con los parámetros de `/visor` ignorados salvo `_rsc`, `/` como respaldo y `/api` fuera.
+  - `src/app/serwist/[path]/route.ts` lo genera en `next build`.
+  - Se registra después de `load` y con el navegador ocioso.
+  - Una versión nueva espera a que se cierren las pestañas.
+- **El worker del solver deja el arranque de Turbopack.**
+  - **El problema:** su configuración viaja en `#params=` y se pierde al servirlo desde la caché. Sin red, la escena propia fallaba con «Missing worker bootstrap config».
+  - **La solución:** `apps/web/scripts/build-worker.mjs` lo empaqueta en `public/workers/reconstruct.js` antes de `next build` y `next dev`. El archivo está en `.gitignore`.
+- **`/relato` sin red:** aviso y botón desactivado (`useEnLinea`), con prueba unitaria.
+- **Playwright:** `serviceWorkers: "block"` global, porque `page.route` no ve lo que atiende un service worker. `sin-red.spec.ts` lo permite.
+- **Evidencia:**
+  - **Precarga:** `node eval/f9_precarga.mjs` → `{"cumple":true,"entradas":67,"mb_archivos":11.05,"faltan":0}`.
+  - **Costo:** el A/B en E6 (con el service worker contra bloqueado) no muestra costo medible en media. En baja con WebGPU cuesta 0.10 ms por cuadro (IC 90 % 0.05 a 0.98). Ver la tabla del ADR 0030.
+  - **Pruebas:** e2e `sin-red`, `visor-propia` y `relato` en verde; lint, tipos y unitarias en verde.
+  - **WebGPU en media:** dio 37 fps en las dos variantes (GPU Intel; WebGL 75.2). Queda anotado para la próxima corrida completa de E6.
+- **Instalado:** `serwist` 9.5.13, `@serwist/turbopack` 9.5.13 y `esbuild` 0.28.2 en `apps/web` (dev, ADR 0001). También `e6_ab.mjs` acepta la variante de contexto `_serviceWorkers`.
 
 **Pendientes de F8 que siguen abiertos:** OSM en producción, rayas y banquetas sobre calles de OSM, semáforo peatonal, textura de grava, corte del camellón en cruces y texturas en caras verticales. Las sombras de los focos ya están en alta y ultra (ADR 0026).

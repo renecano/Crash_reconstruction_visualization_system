@@ -1,0 +1,357 @@
+{
+  "name": "f9_precarga",
+  "generated_at": "2026-10-18T01:16:39.590Z",
+  "git_commit": "fa14528",
+  "entradas": 67,
+  "paginas": 4,
+  "archivos_next": 48,
+  "archivos_public": 15,
+  "bytes_archivos": 11584820,
+  "mb_archivos": 11.05,
+  "mayor": {
+    "url": "/_next/static/chunks/0ei6ssfuz565g.js",
+    "tipo": "next",
+    "bytes": 4369395
+  },
+  "trozos_js_sin_precargar": [],
+  "archivos_public_sin_precargar": [],
+  "paginas_sin_precargar": [],
+  "cumple": true,
+  "lista": [
+    {
+      "url": "/_next/static/media/fef07dbb0973bf53-s.3p2_lha1f2xer.woff2",
+      "tipo": "next",
+      "bytes": 7252
+    },
+    {
+      "url": "/_next/static/media/favicon.117ezoe8m31dk.ico",
+      "tipo": "next",
+      "bytes": 15086
+    },
+    {
+      "url": "/_next/static/media/caa3a2e1cccd8315-s.p.0wgildi0cnwt9.woff2",
+      "tipo": "next",
+      "bytes": 29288
+    },
+    {
+      "url": "/_next/static/media/bbc41e54d2fcbd21-s.1rgnod-3esatf.woff2",
+      "tipo": "next",
+      "bytes": 14712
+    },
+    {
+      "url": "/_next/static/media/8a480f0b521d4e75-s.1qq4vpdcun5oj.woff2",
+      "tipo": "next",
+      "bytes": 14900
+    },
+    {
+      "url": "/_next/static/media/7d817b4c03b0c5f1-s.1uyisp29ctx0d.woff2",
+      "tipo": "next",
+      "bytes": 7728
+    },
+    {
+      "url": "/_next/static/media/797e433ab948586e-s.p.0r6juujl39pe6.woff2",
+      "tipo": "next",
+      "bytes": 23108
+    },
+    {
+      "url": "/_next/static/media/7178b3e590c64307-s.21jp631_3pja2.woff2",
+      "tipo": "next",
+      "bytes": 16540
+    },
+    {
+      "url": "/_next/static/media/6306c77e7c8268e4-s.2dbetqa9o8jxf.woff2",
+      "tipo": "next",
+      "bytes": 5892
+    },
+    {
+      "url": "/_next/static/media/5ce348bf30bf5439-s.31988l_ccedte.woff2",
+      "tipo": "next",
+      "bytes": 6204
+    },
+    {
+      "url": "/_next/static/media/53b9e256198e5412-s.390ncx5urfkfu.woff2",
+      "tipo": "next",
+      "bytes": 7968
+    },
+    {
+      "url": "/_next/static/media/4fa387ec64143e14-s.2tuy5pz7dlieh.woff2",
+      "tipo": "next",
+      "bytes": 12872
+    },
+    {
+      "url": "/_next/static/cRxmW_f4z5DXss2Prbhjs/_ssgManifest.js",
+      "tipo": "next",
+      "bytes": 107
+    },
+    {
+      "url": "/_next/static/cRxmW_f4z5DXss2Prbhjs/_clientMiddlewareManifest.js",
+      "tipo": "next",
+      "bytes": 96
+    },
+    {
+      "url": "/_next/static/cRxmW_f4z5DXss2Prbhjs/_buildManifest.js",
+      "tipo": "next",
+      "bytes": 219
+    },
+    {
+      "url": "/_next/static/chunks/turbopack-3-ry682tkyiqk.js",
+      "tipo": "next",
+      "bytes": 10030
+    },
+    {
+      "url": "/_next/static/chunks/3y5c7dj9eenh3.js",
+      "tipo": "next",
+      "bytes": 55868
+    },
+    {
+      "url": "/_next/static/chunks/3o3syi6am1bur.js",
+      "tipo": "next",
+      "bytes": 9892
+    },
+    {
+      "url": "/_next/static/chunks/3e93vbtox2ifs.js",
+      "tipo": "next",
+      "bytes": 76842
+    },
+    {
+      "url": "/_next/static/chunks/3cq5ksyk9v0-e.js",
+      "tipo": "next",
+      "bytes": 78086
+    },
+    {
+      "url": "/_next/static/chunks/39p91420rq_gc.js",
+      "tipo": "next",
+      "bytes": 46919
+    },
+    {
+      "url": "/_next/static/chunks/2xgwltt_5b_0g.js",
+      "tipo": "next",
+      "bytes": 13828
+    },
+    {
+      "url": "/_next/static/chunks/2vcsg_18mjyv2.js",
+      "tipo": "next",
+      "bytes": 1050118
+    },
+    {
+      "url": "/_next/static/chunks/2uy7w_uho55s-.js",
+      "tipo": "next",
+      "bytes": 49942
+    },
+    {
+      "url": "/_next/static/chunks/2pesx2c50gbzz.js",
+      "tipo": "next",
+      "bytes": 61147
+    },
+    {
+      "url": "/_next/static/chunks/2mj33p69vfz1v.js",
+      "tipo": "next",
+      "bytes": 176035
+    },
+    {
+      "url": "/_next/static/chunks/2lqyvdow5z4p5.js",
+      "tipo": "next",
+      "bytes": 47393
+    },
+    {
+      "url": "/_next/static/chunks/2flxdlha9xce9.js",
+      "tipo": "next",
+      "bytes": 31076
+    },
+    {
+      "url": "/_next/static/chunks/2eq2q9ns6w4r9.js",
+      "tipo": "next",
+      "bytes": 229821
+    },
+    {
+      "url": "/_next/static/chunks/2ahjprhtkt_kh.js",
+      "tipo": "next",
+      "bytes": 16811
+    },
+    {
+      "url": "/_next/static/chunks/20210556blxea.js",
+      "tipo": "next",
+      "bytes": 450934
+    },
+    {
+      "url": "/_next/static/chunks/1jmzlnf5tivbh.js",
+      "tipo": "next",
+      "bytes": 199
+    },
+    {
+      "url": "/_next/static/chunks/1hjspn876d3cq.js",
+      "tipo": "next",
+      "bytes": 215
+    },
+    {
+      "url": "/_next/static/chunks/1fxidn6a7ryib.js",
+      "tipo": "next",
+      "bytes": 589110
+    },
+    {
+      "url": "/_next/static/chunks/1etx5wy42l_-2.js",
+      "tipo": "next",
+      "bytes": 14500
+    },
+    {
+      "url": "/_next/static/chunks/1e6k4ayk4bjsu.js",
+      "tipo": "next",
+      "bytes": 20766
+    },
+    {
+      "url": "/_next/static/chunks/1d8xsy-pp9p_c.js",
+      "tipo": "next",
+      "bytes": 168186
+    },
+    {
+      "url": "/_next/static/chunks/1abi-6zpu1itl.js",
+      "tipo": "next",
+      "bytes": 7820
+    },
+    {
+      "url": "/_next/static/chunks/15y5ulilqj8fp.css",
+      "tipo": "next",
+      "bytes": 19250
+    },
+    {
+      "url": "/_next/static/chunks/130s-x69sx8lu.js",
+      "tipo": "next",
+      "bytes": 5361
+    },
+    {
+      "url": "/_next/static/chunks/0_s5vfqa1rctk.js",
+      "tipo": "next",
+      "bytes": 10217
+    },
+    {
+      "url": "/_next/static/chunks/0lg--1hrdhip_.js",
+      "tipo": "next",
+      "bytes": 49916
+    },
+    {
+      "url": "/_next/static/chunks/0g-43_47byvye.js",
+      "tipo": "next",
+      "bytes": 40517
+    },
+    {
+      "url": "/_next/static/chunks/0ei6ssfuz565g.js",
+      "tipo": "next",
+      "bytes": 4369395
+    },
+    {
+      "url": "/_next/static/chunks/0cz1d0mv5g_q7.js",
+      "tipo": "next",
+      "bytes": 112594
+    },
+    {
+      "url": "/_next/static/chunks/0bqdyaq_qkmah.js",
+      "tipo": "next",
+      "bytes": 57841
+    },
+    {
+      "url": "/_next/static/chunks/08df-buqqpg2l.js",
+      "tipo": "next",
+      "bytes": 28828
+    },
+    {
+      "url": "/_next/static/chunks/003f1vlzfvc0j.js",
+      "tipo": "next",
+      "bytes": 22743
+    },
+    {
+      "url": "/workers/reconstruct.js",
+      "tipo": "public",
+      "bytes": 769666
+    },
+    {
+      "url": "/texturas/texturas.json",
+      "tipo": "public",
+      "bytes": 2719
+    },
+    {
+      "url": "/texturas/pasto_rough.webp",
+      "tipo": "public",
+      "bytes": 7418
+    },
+    {
+      "url": "/texturas/pasto_nor_gl.webp",
+      "tipo": "public",
+      "bytes": 138736
+    },
+    {
+      "url": "/texturas/pasto_diff.webp",
+      "tipo": "public",
+      "bytes": 85476
+    },
+    {
+      "url": "/texturas/concreto_rough.webp",
+      "tipo": "public",
+      "bytes": 2170
+    },
+    {
+      "url": "/texturas/concreto_nor_gl.webp",
+      "tipo": "public",
+      "bytes": 83322
+    },
+    {
+      "url": "/texturas/concreto_diff.webp",
+      "tipo": "public",
+      "bytes": 44526
+    },
+    {
+      "url": "/texturas/asfalto_rough.webp",
+      "tipo": "public",
+      "bytes": 606
+    },
+    {
+      "url": "/texturas/asfalto_nor_gl.webp",
+      "tipo": "public",
+      "bytes": 30522
+    },
+    {
+      "url": "/texturas/asfalto_diff.webp",
+      "tipo": "public",
+      "bytes": 29270
+    },
+    {
+      "url": "/modelos/personas/personas.json",
+      "tipo": "public",
+      "bytes": 18989
+    },
+    {
+      "url": "/modelos/personas/nino.glb",
+      "tipo": "public",
+      "bytes": 762408
+    },
+    {
+      "url": "/modelos/personas/mayor.glb",
+      "tipo": "public",
+      "bytes": 762432
+    },
+    {
+      "url": "/modelos/personas/adulto.glb",
+      "tipo": "public",
+      "bytes": 762388
+    },
+    {
+      "url": "/",
+      "tipo": "pagina",
+      "bytes": null
+    },
+    {
+      "url": "/visor",
+      "tipo": "pagina",
+      "bytes": null
+    },
+    {
+      "url": "/croquis",
+      "tipo": "pagina",
+      "bytes": null
+    },
+    {
+      "url": "/relato",
+      "tipo": "pagina",
+      "bytes": null
+    }
+  ]
+}
