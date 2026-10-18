@@ -5,6 +5,7 @@ import type { EscenaSpec } from "@croquis/scene-schema";
 import { useRouter } from "next/navigation";
 import { useMemo, useState } from "react";
 import { Legend } from "@/components/legend";
+import { useEnLinea } from "@/lib/en-linea";
 import {
   ApiError,
   extraer,
@@ -74,6 +75,7 @@ export function RelatoApp({ fetcher }: RelatoAppProps) {
   const [error, setError] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
   const [progreso, setProgreso] = useState<Progreso | null>(null);
+  const enLinea = useEnLinea();
 
   // Todo esto corre en el navegador: nada del texto original sale de aquí.
   const red = useMemo(() => redact(texto), [texto]);
@@ -161,7 +163,7 @@ export function RelatoApp({ fetcher }: RelatoAppProps) {
           <button
             type="button"
             data-testid="entender"
-            disabled={busy || red.text.trim().length === 0}
+            disabled={busy || !enLinea || red.text.trim().length === 0}
             onClick={() => void entender()}
             className="rounded bg-neutral-900 px-4 py-2 font-medium text-white disabled:opacity-50 dark:bg-neutral-100 dark:text-neutral-900"
           >
@@ -198,6 +200,24 @@ export function RelatoApp({ fetcher }: RelatoAppProps) {
               ))}
             </ul>
           </div>
+        ) : null}
+        {!enLinea ? (
+          <p
+            role="status"
+            data-testid="sin-red"
+            className="rounded border border-amber-400 bg-amber-50 px-3 py-2 text-sm text-amber-900 dark:border-amber-700 dark:bg-amber-950 dark:text-amber-100"
+          >
+            Sin conexión. Entender el relato necesita internet (la extracción con Claude corre en el
+            servidor). Sin red puedes abrir las escenas precargadas en el{" "}
+            <a className="underline" href="/visor">
+              visor
+            </a>{" "}
+            o armar una escena en el{" "}
+            <a className="underline" href="/croquis">
+              croquis
+            </a>
+            ; se reconstruye en este dispositivo.
+          </p>
         ) : null}
         {error ? (
           <p role="alert" data-testid="error" className="text-sm text-red-700 dark:text-red-400">

@@ -12,6 +12,9 @@ export default defineConfig({
   use: {
     baseURL: `http://localhost:${PORT}`,
     trace: "on-first-retry",
+    // El service worker (ADR 0030) atiende peticiones que `page.route` no ve; solo la prueba sin red
+    // (`sin-red.spec.ts`) lo permite.
+    serviceWorkers: "block",
     locale: "es-MX",
   },
   projects: [{ name: "chromium", use: { ...devices["Desktop Chrome"] } }],

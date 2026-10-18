@@ -24,15 +24,19 @@ export async function measureViewer(
   base,
   { scene, quality, renderer, diag = {}, warmupS = 2, seconds = 6 },
 ) {
+  // `_serviceWorkers` va al contexto del navegador ("allow" o "block", ADR 0030); lo demás son
+  // interruptores de diagnóstico del visor (`window.__croquisDiag`).
+  const { _serviceWorkers: serviceWorkers = "allow", ...pageDiag } = diag;
   const context = await browser.newContext({
     viewport: { width: 1920, height: 1080 },
     deviceScaleFactor: 1,
+    serviceWorkers,
   });
   const page = await context.newPage();
-  if (Object.keys(diag).length > 0) {
+  if (Object.keys(pageDiag).length > 0) {
     await page.addInitScript((d) => {
       window.__croquisDiag = d;
-    }, diag);
+    }, pageDiag);
   }
   const cdp = await context.newCDPSession(page);
   await cdp.send("Network.enable");

@@ -1,3 +1,4 @@
+import { withSerwist } from "@serwist/turbopack";
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
@@ -21,4 +22,5 @@ const nextConfig: NextConfig = {
   },
 };
 
-export default nextConfig;
+// Service worker de la demo sin red (ADR 0030): esbuild queda fuera del empaquetado del servidor.
+export default withSerwist(nextConfig);

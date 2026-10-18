@@ -112,4 +112,20 @@ describe("<RelatoApp />", () => {
       expect(screen.getByTestId("error").textContent).toMatch(/No se pudo conectar/),
     );
   });
+
+  it("sin red avisa que entender el relato necesita internet y lo reactiva al volver", async () => {
+    const online = vi.spyOn(navigator, "onLine", "get").mockReturnValue(false);
+    try {
+      render(<RelatoApp fetcher={vi.fn() as unknown as typeof fetch} />);
+      fireEvent.change(screen.getByTestId("relato"), { target: { value: "Choqué." } });
+      expect(screen.getByTestId("sin-red").textContent).toMatch(/Sin conexión/);
+      expect(screen.getByTestId("entender")).toHaveProperty("disabled", true);
+      online.mockReturnValue(true);
+      fireEvent(window, new Event("online"));
+      await waitFor(() => expect(screen.queryByTestId("sin-red")).toBeNull());
+      expect(screen.getByTestId("entender")).toHaveProperty("disabled", false);
+    } finally {
+      online.mockRestore();
+    }
+  });
 });

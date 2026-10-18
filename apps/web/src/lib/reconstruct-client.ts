@@ -24,9 +24,9 @@ const pending = new Map<number, Pending>();
 
 function getWorker(): Worker {
   if (worker) return worker;
-  worker = new Worker(new URL("../workers/reconstruct.worker.ts", import.meta.url), {
-    type: "module",
-  });
+  // Archivo propio en `public/` (lo empaqueta `scripts/build-worker.mjs`): el service worker lo
+  // precarga y sin red arranca igual (ADR 0030).
+  worker = new Worker("/workers/reconstruct.js");
   worker.onmessage = (ev: MessageEvent<Reply>) => {
     const p = pending.get(ev.data.id);
     if (!p) return;

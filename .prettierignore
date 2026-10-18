@@ -39,3 +39,4 @@ data/osm/*.overpass.json
 
 # Manifiesto de texturas generado por croquis-assets: `textures check` lo compara byte a byte.
 apps/web/public/texturas/texturas.json
+apps/web/public/workers
