@@ -18,6 +18,18 @@ export interface CaptureOptions {
 export interface ViewerExportApi {
   /** Dibuja el instante pedido y devuelve una copia del cuadro (sin la marca). */
   captureFrame(opts?: CaptureOptions): HTMLCanvasElement;
+  /**
+   * Dibuja una secuencia de instantes a un tamaño fijo (video). Cambia el tamaño del lienzo una sola
+   * vez y lo restaura al final, igual que el reloj. `onFrame` recibe el lienzo recién dibujado: debe
+   * copiarlo antes de su primer `await` (después el navegador puede presentarlo y borrarlo). Se
+   * detiene si `signal` se aborta.
+   */
+  captureSequence(
+    times: readonly number[],
+    size: { width: number; height: number },
+    onFrame: (canvas: HTMLCanvasElement, index: number) => Promise<void> | void,
+    signal?: AbortSignal,
+  ): Promise<void>;
   /** Escena glTF (`.glb`) con su animación y la leyenda. */
   exportGlb(legend: LegendInfo): Promise<ArrayBuffer>;
   /** Intervalo de la reconstrucción y paso del solver (para video y cuadros). */

@@ -1,6 +1,6 @@
 # ADR 0031 — Exportaciones: cuadros, glTF, video, informe y croquis (F9)
 
-- **Estado:** aceptado (2026-10-17). Se completa por partes; esta versión cubre cuadros PNG y glTF, y fija la decisión del video.
+- **Estado:** aceptado (2026-10-17). Se completa por partes; esta versión cubre cuadros PNG, glTF y video.
 - **Criterio (PLAN §7.9, §10):**
   - **Qué se exporta:** video (WebM y MP4), cuadros PNG, escena glTF, informe PDF y croquis 2D (SVG, PNG y PDF).
   - **La marca:** todo lleva «Reconstrucción ilustrativa generada a partir de un relato. No es un peritaje.», más la semilla y el hash de entradas.
@@ -25,11 +25,14 @@
    - **La copia:** se exporta una copia (`SkeletonUtils.clone`), no la escena que se dibuja. Sus materiales de nodos pasan a los clásicos equivalentes, que es lo que entiende `GLTFExporter`. Los grupos de instancias vacíos se ocultan, porque `GLTFExporter` les escribiría accesores vacíos.
    - **La marca:** va en `asset.copyright` y en los `extras` de la escena.
    - **Carga diferida:** el exportador y `SkeletonUtils` se cargan solo al exportar, para no pesar en la carga del visor (E6).
-5. **Video:** WebCodecs con Mediabunny (MP4 H.264 y WebM VP9), dibujado cuadro por cuadro con la marca, con MediaRecorder (WebM) como respaldo. Se elige sobre ffmpeg.wasm, que nombra PLAN §7.9:
+5. **Video** (`export/video.ts`): WebCodecs con Mediabunny 1.61.6 (MP4, primero H.264; WebM, primero VP9), dibujado cuadro por cuadro con la marca en cada cuadro y en los metadatos (`comment` y `description`), con MediaRecorder (WebM) como respaldo. Se elige sobre ffmpeg.wasm, que nombra PLAN §7.9:
    - **Licencia:** `@ffmpeg/core` es GPL-2.0-or-later; Mediabunny es MPL-2.0.
    - **Tamaño:** el núcleo pesa unos 31 MB de WASM y tendría que entrar en la precarga sin red (ADR 0030). WebCodecs usa los codificadores del navegador.
    - **Calidad:** dibujar cuadro por cuadro con tiempos exactos da un video sin cuadros perdidos, que no depende de los fps de la máquina. Una grabación en tiempo real con MediaRecorder sí depende.
    - **Lo que no cambia:** se entregan los mismos formatos de PLAN (MP4 y WebM), así que no es un recorte.
+   - **Secuencia:** `captureSequence` cambia el tamaño del lienzo una sola vez, dibuja cada instante (k/fps) y copia el cuadro antes de ceder el hilo.
+   - **El respaldo sin WebCodecs:** MediaRecorder graba el lienzo compuesto, con un periodo completo después de cada cuadro (codifica en tiempo real y, con la CPU ocupada, puede soltar cuadros). Después, `retimeWebm` copia sus paquetes, sin recodificar, a un WebM nuevo con el cuadro k en k/fps y la marca en los metadatos. Así, el respaldo dura lo mismo que la reconstrucción aunque la máquina haya dibujado más lento. Si el navegador aun así pierde cuadros, el panel lo dice.
+   - **MP4 sin WebCodecs:** no se puede generar, y el panel lo dice.
 
 ## Límites conocidos (glTF)
 
@@ -43,6 +46,11 @@
   - PNG: CRC-32 conocido, ida y vuelta de texto UTF-8 con propiedades y detección de chunks alterados.
   - glTF de `volcadura`, reabierto con `GLTFLoader`: marca, duración, traslación, rotación, pesos del daño, vehículos y restos animados, y solo materiales clásicos.
   - glTF de `peaton_cruce`: cuerpo con esqueleto y pistas de sus huesos.
+- **Unitarias del video:** instantes de cada cuadro y orden de los códecs.
+- **e2e de video** (`exportar-video.spec.ts`, escena `poste`, 1280 × 720, 24 cuadros por segundo): cada video se abre con Mediabunny.
+  - **MP4 y WebM:** 124 cuadros, duración de 124/24 s, tamaño y marca en los metadatos.
+  - **WebM, además:** se decodifica un cuadro para ver la escena y la franja.
+  - **Respaldo sin `VideoEncoder`:** 124 cuadros refechados con la marca. Se repitió 3 veces en local sin perder cuadros.
 - **e2e** (`exportar.spec.ts`): descarga el PNG a 1280 × 720 y el `.glb` y los abre.
   - **PNG:** tamaño, marca en el texto del archivo, escena dibujada (no en blanco) y franja oscura abajo.
   - **`.glb`:** marca en `asset` y en la escena, vehículos y animación.

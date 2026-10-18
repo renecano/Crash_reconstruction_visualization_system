@@ -19,7 +19,8 @@ Reglas de trabajo: `CLAUDE.md`. Especificación: `PLAN.md`.
 - **F9, paso 4 hecho** (rama `feat/f9-e8`, ADR 0029): E8 cumple. El resultado completo del solver y el horneado con Rapier (restos, volcaduras y ragdolls) son idénticos en Chromium, Firefox y WebKit en las 11 escenas (`eval/results/e8_determinism.json`); antes, con `Math` nativo, el solver coincidía en 8 de 11. Lo logra `dmath` (fdlibm en TS, igual a V8 bit a bit) y `dthree`; el solver completo cuesta ×1.22 en V8 (`e8_costo_dmath.json`), dentro del Web Worker. CI corre E8 en un trabajo propio.
 - **F9, paso 5 hecho** (rama `feat/f9-offline`, ADR 0030): la demo funciona sin red. Serwist precarga 67 entradas (11.05 MB, `eval/results/f9_precarga.json`): trozos, cuerpos, texturas, el worker del solver y las páginas. La prueba e2e con la red cortada abre el inicio, el visor en alta (Rapier, ragdoll y texturas), el croquis con «Ver en 3D» (resultado completo en el worker) y el relato, que avisa que necesita red. En E6 (`e6_ab_sw_*.json`), sin costo medible en media; en baja con WebGPU, 0.10 ms por cuadro (85.5 contra 86.1 fps).
 - **F9, paso 6a hecho** (rama `feat/f9-exports`, ADR 0031): cuadro PNG (720p, 1080p, 4K o el del visor) y escena glTF con animación, desde el panel «Exportar» del visor. La leyenda vive en `@croquis/scene-schema` y va dibujada y como texto del archivo. Las pruebas e2e abren cada archivo descargado.
-- **Siguiente paso concreto:** F9, paso 6b. Video MP4 y WebM con WebCodecs y Mediabunny, cuadro por cuadro, con la marca; respaldo con MediaRecorder (ADR 0031). Después, el croquis en SVG, PNG y PDF (6c) y el informe PDF (6d).
+- **F9, paso 6b hecho** (rama `feat/f9-video`, ADR 0031): video MP4 y WebM de toda la reconstrucción, dibujado cuadro por cuadro con WebCodecs y Mediabunny, con la marca en cada cuadro y en los metadatos. El respaldo con MediaRecorder se vuelve a fechar cuadro por cuadro.
+- **Siguiente paso concreto:** F9, paso 6c. Croquis 2D en SVG, PNG y PDF con la marca; después, el informe PDF (6d).
 - **E1 del prompt v2 en el primer test, hecho** (PR #14). Sonnet 0.875 → 0.919 y Haiku 0.852 → 0.896. Además, E1 ahora compara cada contrafactual con la repetición del mismo relato (McNemar por tipo): ningún tipo difiere del ruido, y las reglas cambian con el modelo del vehículo en 6 de 52 pares (ADR 0012 §10).
 - **F8** cerrada el 2026-10-17 (PR #20 a #24). **F0** cerrado el 2026-10-10 (PR #1), **F1** el 2026-10-10 (PR #3), **F2** el 2026-10-13 (PR #4), **F3** el 2026-10-13 (PR #5), **F4** el 2026-10-13 (PR #6), **F5** el 2026-10-13 (PR #7), **F6** el 2026-10-14 (PR #8), **F7** el 2026-10-14 (PR #9; pendientes registrados); migración a Vercel el 2026-10-14 (PR #10); test CISS y prompt v2 el 2026-10-14 (PR #11).
 
@@ -1413,5 +1414,21 @@ Las ramas van una encima de otra y se fusionan en este orden, cada una con su PR
   - **e2e:** `exportar.spec.ts` (2), que abre el PNG y el `.glb` descargados.
   - **WebGPU:** revisión local con GPU real. WebGPU y WebGL 2 dan el mismo cuadro a 1920 × 1080 con la marca.
   - lint, tipos y pruebas de todos los paquetes en verde.
+
+**Paso 6b — Video (2026-10-17, rama `feat/f9-video`, ADR 0031):**
+
+- **Video** (`packages/viewer/src/export/video.ts`): `renderVideo` usa WebCodecs con Mediabunny (MP4 con H.264 primero; WebM con VP9 primero) y cae en `recordWithMediaRecorder` si no hay WebCodecs.
+  - **Cómo se recorre:** `captureSequence`, en el visor, cambia el tamaño una vez y dibuja cada instante k/fps.
+  - **Respaldo:** `retimeWebm` vuelve a fechar la grabación de MediaRecorder sin recodificar.
+- **Panel:** formato, tamaño (720p, 1080p, 4K), cuadros por segundo (24, 30, 60), avance y cancelar.
+- **Defectos que encontraron las pruebas:**
+  - **El respaldo grababa solo la cabecera.** El ciclo no cedía el hilo cuando dibujar tardaba más que un periodo.
+  - **El respaldo perdía un cuadro de 124.** MediaRecorder codifica en tiempo real con la CPU ocupada. Ahora espera un periodo completo después de cada cuadro y avisa si aun así se pierden.
+  - **Esperar el evento `start` bloqueaba.** Chrome no lo emite hasta recibir un cuadro; se descartó.
+- **Evidencia:**
+  - `exportar-video.spec.ts`: 3 en verde; el respaldo, 3 de 3 repeticiones con 124 cuadros.
+  - Unitarias del video en verde.
+- **Instalado:** `mediabunny` 1.61.6 (viewer; dev de web para las pruebas), registrado en ADR 0001.
+- **Observación:** en una corrida de `pnpm test` con todos los paquetes en paralelo, `extraction/src/pipeline-parity.test.ts` (1,264 relatos) falló una vez en la laptop. Sola y en la siguiente corrida completa pasó (816 de 816). No se tocó `extraction`. Queda anotado por si se repite (posible límite de 30 s con la máquina cargada).
 
 **Pendientes de F8 que siguen abiertos:** OSM en producción, rayas y banquetas sobre calles de OSM, semáforo peatonal, textura de grava, corte del camellón en cruces y texturas en caras verticales. Las sombras de los focos ya están en alta y ultra (ADR 0026).

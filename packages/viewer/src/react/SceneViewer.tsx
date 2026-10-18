@@ -255,22 +255,48 @@ function SceneContent({
   // que el navegador presente el lienzo (sirve igual con WebGPU y con WebGL 2).
   useEffect(() => {
     if (!onExport) return undefined;
+    const persp = cam as PerspectiveCamera;
+    /** Cambia el tamaño del lienzo (relación de píxeles 1) y devuelve cómo restaurarlo. */
+    const resizeTo = (width: number, height: number) => {
+      const ratio = gl.getPixelRatio();
+      gl.setPixelRatio(1);
+      gl.setSize(width, height, false);
+      persp.aspect = width / height;
+      persp.updateProjectionMatrix();
+      return () => {
+        gl.setPixelRatio(ratio);
+        gl.setSize(size.width, size.height, false);
+        persp.aspect = size.width / size.height;
+        persp.updateProjectionMatrix();
+      };
+    };
+    const drawAt = (t: number) => {
+      clock.set((st) => ({ ...seek(st, t), playing: false }));
+      advance(performance.now(), true);
+    };
     const api: ViewerExportApi = {
       tStart: resultado.t_inicio,
       tEnd: resultado.t_fin,
+      async captureSequence(times, { width, height }, onFrame, signal) {
+        const before = clock.get();
+        const restore = resizeTo(width, height);
+        try {
+          for (let i = 0; i < times.length; i++) {
+            if (signal?.aborted) throw new DOMException("Exportación cancelada", "AbortError");
+            drawAt(times[i]!);
+            await onFrame(gl.domElement, i);
+          }
+        } finally {
+          restore();
+          clock.set(() => before);
+        }
+      },
       captureFrame({ t, width, height } = {}) {
         const before = clock.get();
         if (t !== undefined) clock.set((st) => ({ ...seek(st, t), playing: false }));
-        const persp = cam as PerspectiveCamera;
         const canvas = gl.domElement;
-        const resize = width !== undefined && height !== undefined;
-        const ratio = gl.getPixelRatio();
-        if (resize) {
-          gl.setPixelRatio(1);
-          gl.setSize(width, height, false);
-          persp.aspect = width / height;
-          persp.updateProjectionMatrix();
-        }
+        const restore =
+          width !== undefined && height !== undefined ? resizeTo(width, height) : undefined;
         try {
           advance(performance.now(), true);
           const out = document.createElement("canvas");
@@ -281,12 +307,7 @@ function SceneContent({
           ctx.drawImage(canvas, 0, 0);
           return out;
         } finally {
-          if (resize) {
-            gl.setPixelRatio(ratio);
-            gl.setSize(size.width, size.height, false);
-            persp.aspect = size.width / size.height;
-            persp.updateProjectionMatrix();
-          }
+          restore?.();
           if (t !== undefined) clock.set(() => before);
         }
       },
