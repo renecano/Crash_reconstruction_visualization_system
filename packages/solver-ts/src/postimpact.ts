@@ -6,6 +6,7 @@
  */
 import { type Body2D, G, type State2D, Trajectory, wrapAngle } from "./models";
 import { pyRound } from "./pymath";
+import * as dmath from "./dmath";
 
 /** Fracción de N (llanta rodando libre, asfalto). */
 export const ROLLING_RESISTANCE = 0.015;
@@ -68,7 +69,7 @@ function tireForce(
   rollingDrag: number,
 ): [number, number] {
   if (locked) {
-    const speed = Math.hypot(uC, vC);
+    const speed = dmath.hypot(uC, vC);
     if (speed < 1e-9) return [0.0, 0.0];
     const f = mu * normalLoad;
     return [(-f * uC) / speed, (-f * vC) / speed];
@@ -108,8 +109,8 @@ export function integrate(
   let x = start.x;
   let y = start.y;
   let yaw = start.yaw;
-  let c = Math.cos(yaw);
-  let s = Math.sin(yaw);
+  let c = dmath.cos(yaw);
+  let s = dmath.sin(yaw);
   let u = start.vx * c + start.vy * s;
   let v = -start.vx * s + start.vy * c;
   let r = start.yawRate;
@@ -153,18 +154,18 @@ export function integrate(
     u = uNew;
     v = vNew;
     yaw = wrapAngle(yaw + r * dt);
-    c = Math.cos(yaw);
-    s = Math.sin(yaw);
+    c = dmath.cos(yaw);
+    s = dmath.sin(yaw);
     const vx = u * c - v * s;
     const vy = u * s + v * c;
     x += vx * dt;
     y += vy * dt;
     t += dt;
     step += 1;
-    const speed = Math.hypot(u, v);
+    const speed = dmath.hypot(u, v);
     if (step % stepsPerOut === 0) {
       traj.append({ x, y, yaw, vx, vy, yawRate: r, t });
-      distance += Math.hypot(x - xPrev, y - yPrev);
+      distance += dmath.hypot(x - xPrev, y - yPrev);
       xPrev = x;
       yPrev = y;
     }
@@ -172,7 +173,7 @@ export function integrate(
       stopped = true;
       if (step % stepsPerOut !== 0) {
         traj.append({ x, y, yaw, vx: 0.0, vy: 0.0, yawRate: 0.0, t });
-        distance += Math.hypot(x - xPrev, y - yPrev);
+        distance += dmath.hypot(x - xPrev, y - yPrev);
       }
       break;
     }

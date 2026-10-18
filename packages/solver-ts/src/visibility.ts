@@ -5,6 +5,7 @@
  */
 import { pyRound, radians } from "./pymath";
 import { footprintRadius, type SceneObject } from "./scene-objects";
+import * as dmath from "./dmath";
 
 export const SAMPLE_DT = 0.1;
 export const NIGHT_DETECTION_M = 30.0;
@@ -91,7 +92,7 @@ export function boxOccluder(
     yaw,
     hx: lx / 2,
     hy: ly / 2,
-    reach: 0.5 * Math.hypot(lx, ly),
+    reach: 0.5 * dmath.hypot(lx, ly),
   });
 }
 
@@ -220,8 +221,8 @@ export function segmentBlocked(occ: Occluder, p0: Point3, p1: Point3): boolean {
     return qx * qx + qy * qy + qz * qz <= occ.radius ** 2;
   }
   // Caja orientada: método de las placas en su marco local.
-  const c = Math.cos(occ.yaw);
-  const s = Math.sin(occ.yaw);
+  const c = dmath.cos(occ.yaw);
+  const s = dmath.sin(occ.yaw);
   const local = (p: Point3): Point3 => {
     const rx = p[0] - occ.cx;
     const ry = p[1] - occ.cy;
@@ -283,8 +284,8 @@ export class Actor {
         [x, y, Math.min(1.5, this.height)],
       ];
     }
-    const c = Math.cos(yaw);
-    const s = Math.sin(yaw);
+    const c = dmath.cos(yaw);
+    const s = dmath.sin(yaw);
     const pts: Point3[] = [];
     const corners: [number, number][] = [
       [0.5, 0.5],
@@ -321,8 +322,8 @@ export class Observer {
   eye(k: number): Point3 {
     const [x, y, yaw] = this.poses[k]!;
     const [ox, oy] = eyeOffset(this.clase, this.length, this.width);
-    const c = Math.cos(yaw);
-    const s = Math.sin(yaw);
+    const c = dmath.cos(yaw);
+    const s = dmath.sin(yaw);
     return [x + c * ox - s * oy, y + s * ox + c * oy, this.eyeHeight];
   }
 }
@@ -401,7 +402,7 @@ export function analyzePair(
     const eye = obs.eye(k);
     const pts = target.points(k);
     const [tx, ty] = target.poses[k]!;
-    const dist = Math.hypot(tx - eye[0], ty - eye[1]);
+    const dist = dmath.hypot(tx - eye[0], ty - eye[1]);
     const occ = staticOcc.filter((o) => !exclude.has(o.id));
     for (const mv of movers) {
       if (exclude.has(`vehiculo:${mv.id}`)) continue;
@@ -412,8 +413,8 @@ export function analyzePair(
     if (opts.metVisibilityM !== null && dist > opts.metVisibilityM) cause = "clima";
     else if (opts.nightUnlit && !(target.tipo === "vehiculo" && target.lights)) {
       const yaw = obs.poses[k]![2];
-      const bearing = Math.atan2(ty - eye[1], tx - eye[0]);
-      const off = Math.abs(Math.atan2(Math.sin(bearing - yaw), Math.cos(bearing - yaw)));
+      const bearing = dmath.atan2(ty - eye[1], tx - eye[0]);
+      const off = Math.abs(dmath.atan2(dmath.sin(bearing - yaw), dmath.cos(bearing - yaw)));
       if (!obs.lights || dist > nightDetectionM || off > half) cause = "noche";
     }
     let seen = 0;

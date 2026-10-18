@@ -16,7 +16,8 @@ Reglas de trabajo: `CLAUDE.md`. Especificación: `PLAN.md`.
 - **F9, paso 1 hecho** (rama `feat/f9-optimizador`, ADR 0027): la inversión usa álgebra lineal (`linalg.py`) y optimizador (`lsq.py`) propios, en Python puro. Frente a SciPy en las 8 escenas con inversión: converge en 8, costo total 24.273 contra 28.5212 y 118 evaluaciones contra 152; mejor en 2, igual en 3 y peor en 3 (`eval/results/f9_optimizador.json`).
 - **F9, paso 2 hecho** (rama `feat/f9-port-inversion`): el solver TS produce el resultado completo, con Monte Carlo, inversión y consistencia (`fullResult`). E7 lo compara entero: 68,557 números a 1e-6, más 217 de inversión y consistencia con diferencia máxima 0.01 (ADR 0027).
 - **F9, paso 3 hecho** (rama `feat/f9-workers`, ADR 0028): la escena propia (del relato o el croquis, con «Ver en 3D») se reconstruye en el navegador. El Web Worker responde dos veces: primero la reconstrucción para dibujar y después el resultado completo para los paneles; el visor 3D se queda con la primera y la página no se congela. Lo cubren 3 pruebas e2e.
-- **Siguiente paso concreto:** F9, paso 4. E8 (determinismo en Chromium, Firefox y WebKit) con `eval/e8_determinism.mjs` y su paso en CI.
+- **F9, paso 4 hecho** (rama `feat/f9-e8`, ADR 0029): E8 cumple. El resultado completo del solver y el horneado con Rapier (restos, volcaduras y ragdolls) son idénticos en Chromium, Firefox y WebKit en las 11 escenas (`eval/results/e8_determinism.json`); antes, con `Math` nativo, el solver coincidía en 8 de 11. Lo logra `dmath` (fdlibm en TS, igual a V8 bit a bit) y `dthree`; el solver completo cuesta ×1.22 en V8 (`e8_costo_dmath.json`), dentro del Web Worker. CI corre E8 en un trabajo propio.
+- **Siguiente paso concreto:** F9, paso 5. Service worker y modo sin red, con prueba e2e con la red cortada (`context.setOffline(true)`).
 - **E1 del prompt v2 en el primer test, hecho** (PR #14). Sonnet 0.875 → 0.919 y Haiku 0.852 → 0.896. Además, E1 ahora compara cada contrafactual con la repetición del mismo relato (McNemar por tipo): ningún tipo difiere del ruido, y las reglas cambian con el modelo del vehículo en 6 de 52 pares (ADR 0012 §10).
 - **F8** cerrada el 2026-10-17 (PR #20 a #24). **F0** cerrado el 2026-10-10 (PR #1), **F1** el 2026-10-10 (PR #3), **F2** el 2026-10-13 (PR #4), **F3** el 2026-10-13 (PR #5), **F4** el 2026-10-13 (PR #6), **F5** el 2026-10-13 (PR #7), **F6** el 2026-10-14 (PR #8), **F7** el 2026-10-14 (PR #9; pendientes registrados); migración a Vercel el 2026-10-14 (PR #10); test CISS y prompt v2 el 2026-10-14 (PR #11).
 
@@ -1360,5 +1361,23 @@ Las ramas van una encima de otra y se fusionan en este orden, cada una con su PR
 6. **Exportaciones:** PDF, video, PNG, glTF y croquis, con pruebas que abren cada archivo generado y verifican que lleva la leyenda.
 
 **Dependencias nuevas previstas** (se verifican en su documentación oficial y se registran en el ADR 0001 al instalarlas): un generador de PDF para el navegador, `@ffmpeg/ffmpeg` para MP4 y el `GLTFExporter` de three.js (ya incluido).
+
+**Paso 4 — E8 (2026-10-17, rama `feat/f9-e8`, ADR 0029):**
+
+- **Qué se midió primero:** con `Math` nativo, el solver daba el mismo resultado en Chromium, Firefox y WebKit en 8 de 11 escenas. Firefox difería en `frontal_curva`, `glorieta` y `motociclista` desde el sexto decimal (`eval/results/e8_determinism_antes_dmath.json`).
+- **Causa:** el estándar deja a cada motor la precisión de `Math.sin`, `cos`, `atan2`, `exp`, `log`, `hypot`, `pow`, etc. En el horneado, el ragdoll del motociclista también difería en Firefox en el último bit de `k` y de la distancia (`Math.hypot`).
+- **Qué se hizo:**
+  - `packages/solver-ts/src/dmath.ts`: port de fdlibm 5.3 (`sin`, `cos`, `tan`, `atan`, `atan2`, `acos`, `exp`, `log`) y `hypot`/`hypotN` con el algoritmo de V8. Es igual a `Math` de V8 bit a bit (pruebas con tabla de bits y propiedades), así que Chromium no cambia.
+  - `** 1.5` → `q·√q`, `pow2` exacto en `ratioToDouble` y `√` en la distancia a segmento de `red-vial.ts`.
+  - `packages/viewer/src/dthree.ts`: `quatFromAxisAngle`, `applyAxisAngle` y `slerp` de three.js r186 sobre `dmath`. Lo usan los archivos del horneado: restos, volcaduras, ragdolls, posturas y daño. El visor depende ahora de `@croquis/solver-ts` para usar `dmath`.
+  - Regla de ESLint en el solver y en esos archivos: prohíbe `Math` del motor, `**` no entero y los ayudantes trigonométricos de three.js.
+  - `eval/e8_determinism.mjs` empaqueta con esbuild el solver y el horneado (`eval/e8_hornear_entry.mjs`) y los corre en los tres navegadores con `page.route`; `--esperado` y `--check` para CI. Trabajo nuevo de CI: «E8 (mismo resultado en Chromium, Firefox y WebKit)».
+  - `eval/e8_costo_dmath.mjs`: costo por función y del solver completo contra el commit anterior (800d41b), y comprobación de que en V8 el resultado no cambia.
+  - Pendiente del paso 3: prueba e2e de que el cálculo completo no bloquea el hilo principal. Corre el worker del visor en una página sin 3D con la escena más costosa (`interseccion_toluca`) y exige que el cálculo dure más de 500 ms y que el mayor hueco entre latidos del hilo principal (cada 10 ms) sea menor que la mitad del cálculo.
+- **Evidencia:**
+  - `node eval/e8_determinism.mjs` → `{"cumple":true,"solver":"11/11","horneado":"11/11","igual_por_calidad":true}` (commit e840b4f).
+  - `node eval/e8_costo_dmath.mjs --rondas 5` → total 9,064 → 11,075 ms (×1.222), `resultado_identico_en_v8: true`.
+  - `pnpm lint`, `pnpm typecheck`, `pnpm test` y `pnpm format:check` en verde.
+- **Instalado:** `esbuild` 0.28.2 como dependencia de desarrollo de la raíz (ADR 0001), y Firefox y WebKit de Playwright en `D:\dev-cache\ms-playwright`.
 
 **Pendientes de F8 que siguen abiertos:** OSM en producción, rayas y banquetas sobre calles de OSM, semáforo peatonal, textura de grava, corte del camellón en cruces y texturas en caras verticales. Las sombras de los focos ya están en alta y ultra (ADR 0026).

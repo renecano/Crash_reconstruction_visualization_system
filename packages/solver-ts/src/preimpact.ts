@@ -5,6 +5,7 @@
  */
 import { G, type State2D, Trajectory, type Vec, wrapAngle } from "./models";
 import { pyRound, pySum } from "./pymath";
+import * as dmath from "./dmath";
 
 export interface Pose {
   x: number;
@@ -30,8 +31,8 @@ export class StraightPath implements Path {
 
   pose(s: number): Pose {
     return {
-      x: this.origin[0] + s * Math.cos(this.heading),
-      y: this.origin[1] + s * Math.sin(this.heading),
+      x: this.origin[0] + s * dmath.cos(this.heading),
+      y: this.origin[1] + s * dmath.sin(this.heading),
       heading: this.heading,
       curvature: 0.0,
     };
@@ -53,8 +54,8 @@ export class ArcPath implements Path {
   get center(): Vec {
     const sign = this.left ? 1.0 : -1.0;
     return [
-      this.start[0] - sign * this.radius * Math.sin(this.heading),
-      this.start[1] + sign * this.radius * Math.cos(this.heading),
+      this.start[0] - sign * this.radius * dmath.sin(this.heading),
+      this.start[1] + sign * this.radius * dmath.cos(this.heading),
     ];
   }
 
@@ -64,8 +65,8 @@ export class ArcPath implements Path {
     const h = this.heading + dtheta;
     const [cx, cy] = this.center;
     return {
-      x: cx + sign * this.radius * Math.sin(h),
-      y: cy - sign * this.radius * Math.cos(h),
+      x: cx + sign * this.radius * dmath.sin(h),
+      y: cy - sign * this.radius * dmath.cos(h),
       heading: wrapAngle(h),
       curvature: sign / this.radius,
     };
@@ -84,13 +85,15 @@ export class LaneChangePath implements Path {
   pose(sIn: number): Pose {
     const s = Math.min(Math.max(sIn, 0.0), this.length);
     const u = s / this.length;
-    const offset = 0.5 * this.lateral * (1.0 - Math.cos(Math.PI * u));
-    const dOffset = ((0.5 * this.lateral * Math.PI) / this.length) * Math.sin(Math.PI * u);
-    const ddOffset = 0.5 * this.lateral * (Math.PI / this.length) ** 2 * Math.cos(Math.PI * u);
-    const localHeading = Math.atan(dOffset);
-    const curvature = ddOffset / (1.0 + dOffset * dOffset) ** 1.5;
-    const c = Math.cos(this.heading);
-    const sn = Math.sin(this.heading);
+    const offset = 0.5 * this.lateral * (1.0 - dmath.cos(Math.PI * u));
+    const dOffset = ((0.5 * this.lateral * Math.PI) / this.length) * dmath.sin(Math.PI * u);
+    const ddOffset = 0.5 * this.lateral * (Math.PI / this.length) ** 2 * dmath.cos(Math.PI * u);
+    const localHeading = dmath.atan(dOffset);
+    // q^1.5 como q·√q: `**` con exponente no entero depende del motor (E8, ADR 0029).
+    const q = 1.0 + dOffset * dOffset;
+    const curvature = ddOffset / (q * Math.sqrt(q));
+    const c = dmath.cos(this.heading);
+    const sn = dmath.sin(this.heading);
     return {
       x: this.origin[0] + s * c - offset * sn,
       y: this.origin[1] + s * sn + offset * c,
@@ -120,8 +123,8 @@ export class CompositePath implements Path {
 
 /** Desaceleración (m/s²) de frenado a fondo: μ·g·factor·cos α ± g·sin α (subida frena más). */
 export function brakingDeceleration(mu: number, absFactor = 1.0, gradePercent = 0.0): number {
-  const alpha = Math.atan(gradePercent / 100.0);
-  return G * (mu * absFactor * Math.cos(alpha) + Math.sin(alpha));
+  const alpha = dmath.atan(gradePercent / 100.0);
+  return G * (mu * absFactor * dmath.cos(alpha) + dmath.sin(alpha));
 }
 
 /** Distancia para detenerse desde v0 con desaceleración constante: v0² / (2a). */
@@ -195,8 +198,8 @@ export function simulate(
       x: p.x,
       y: p.y,
       yaw: p.heading,
-      vx: v * Math.cos(p.heading),
-      vy: v * Math.sin(p.heading),
+      vx: v * dmath.cos(p.heading),
+      vy: v * dmath.sin(p.heading),
       yawRate: v * p.curvature,
       t,
     };
@@ -242,7 +245,7 @@ export class CurvedLanePath implements Path {
       0.5 *
       this.lateral *
       (1.0 -
-        Math.cos((Math.PI * Math.min(Math.max(u, 0.0), this.changeLength)) / this.changeLength));
+        dmath.cos((Math.PI * Math.min(Math.max(u, 0.0), this.changeLength)) / this.changeLength));
     // A la izquierda: hacia el centro si gira antihorario, hacia afuera si gira horario.
     return this.ccw ? this.r0 - d : this.r0 + d;
   }
@@ -250,7 +253,7 @@ export class CurvedLanePath implements Path {
   private point(u: number): Vec {
     const phi = this.phi0 + (this.ccw ? u / this.r0 : -u / this.r0);
     const r = this.radius(u);
-    return [this.center[0] + r * Math.cos(phi), this.center[1] + r * Math.sin(phi)];
+    return [this.center[0] + r * dmath.cos(phi), this.center[1] + r * dmath.sin(phi)];
   }
 
   private getTable(): [number[], number[]] {
@@ -262,7 +265,7 @@ export class CurvedLanePath implements Path {
       let prev = this.point(0.0);
       for (const u of us.slice(1)) {
         const p = this.point(u);
-        ss.push(ss[ss.length - 1]! + Math.hypot(p[0] - prev[0], p[1] - prev[1]));
+        ss.push(ss[ss.length - 1]! + dmath.hypot(p[0] - prev[0], p[1] - prev[1]));
         prev = p;
       }
       this.table = [us, ss];
@@ -285,14 +288,14 @@ export class CurvedLanePath implements Path {
     const h = 1e-3;
     const p0 = this.point(u - h);
     const p1 = this.point(u + h);
-    const heading = Math.atan2(p1[1] - p0[1], p1[0] - p0[0]);
+    const heading = dmath.atan2(p1[1] - p0[1], p1[0] - p0[0]);
     const q0 = this.point(u - 2 * h);
     const q1 = this.point(u + 2 * h);
     const pu = this.point(u);
-    const h0 = Math.atan2(pu[1] - q0[1], pu[0] - q0[0]);
-    const h1 = Math.atan2(q1[1] - pu[1], q1[0] - pu[0]);
-    const dist = Math.hypot(q1[0] - q0[0], q1[1] - q0[1]);
-    const dh = Math.atan2(Math.sin(h1 - h0), Math.cos(h1 - h0));
+    const h0 = dmath.atan2(pu[1] - q0[1], pu[0] - q0[0]);
+    const h1 = dmath.atan2(q1[1] - pu[1], q1[0] - pu[0]);
+    const dist = dmath.hypot(q1[0] - q0[0], q1[1] - q0[1]);
+    const dh = dmath.atan2(dmath.sin(h1 - h0), dmath.cos(h1 - h0));
     return { x: pu[0], y: pu[1], heading, curvature: dist > 0 ? dh / (dist / 2) : 0.0 };
   }
 }

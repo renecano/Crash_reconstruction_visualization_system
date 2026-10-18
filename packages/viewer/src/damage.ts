@@ -21,6 +21,7 @@
  */
 import { BufferAttribute, type BufferGeometry, type Group, Mesh, Vector3 } from "three";
 import { profileFor, type VehicleDimensions } from "./vehicle-geometry";
+import { dmath } from "@croquis/solver-ts";
 
 export type DamageSide = "F" | "B" | "L" | "R";
 
@@ -361,7 +362,7 @@ export function bakeMeshDamage(
         const bx = ox + (n.x - ox) * k;
         const by = oy + (n.y - oy) * k;
         const bz = oz + (n.z - oz) * k;
-        const l = Math.hypot(bx, by, bz) || 1;
+        const l = dmath.hypotN([bx, by, bz]) || 1;
         ndelta[3 * vi] = bx / l - ox;
         ndelta[3 * vi + 1] = by / l - oy;
         ndelta[3 * vi + 2] = bz / l - oz;

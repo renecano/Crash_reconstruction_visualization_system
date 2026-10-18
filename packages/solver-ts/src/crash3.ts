@@ -7,6 +7,7 @@
  * con G = A²/(2B) y w_seg = ancho / (N − 1). Unidades SI.
  */
 import { G as GRAVITY } from "./models";
+import * as dmath from "./dmath";
 
 export const KGF_PER_CM_TO_N_PER_M = GRAVITY * 100.0;
 export const KGF_PER_CM2_TO_N_PER_M2 = GRAVITY * 10_000.0;
@@ -36,7 +37,7 @@ export class Stiffness {
 /** Corrección (1 + tan²θ) acotada a `capDeg`. */
 export function angleFactor(pdofOffsetDeg: number, capDeg = 45.0): number {
   const th = (Math.min(Math.abs(pdofOffsetDeg), capDeg) * Math.PI) / 180;
-  return 1.0 + Math.tan(th) ** 2;
+  return 1.0 + dmath.tan(th) ** 2;
 }
 
 /** Energía absorbida (J) por un perfil de aplastamiento de N ≥ 2 puntos equiespaciados. */

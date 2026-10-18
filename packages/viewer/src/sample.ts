@@ -6,6 +6,7 @@
  * extremo más cercano. No hay física aquí: solo se lee lo que el solver calculó.
  */
 import { wrapAngle } from "./coords";
+import { dmath } from "@croquis/solver-ts";
 
 export interface VehiclePose {
   x: number;
@@ -85,7 +86,7 @@ export function sampleVehicle(tr: VehicleTrack, time: number): VehiclePose {
     vx,
     vy,
     yawRate: lerpAt(tr.vel_angular, i, f),
-    speed: Math.hypot(vx, vy),
+    speed: dmath.hypot(vx, vy),
   };
 }
 

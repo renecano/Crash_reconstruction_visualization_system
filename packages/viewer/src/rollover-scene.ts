@@ -15,6 +15,8 @@ import { toThree } from "./coords";
 import { loadRapier } from "./debris";
 import { sampleVehicle } from "./sample";
 import type { SceneGraph } from "./scene-graph";
+import { dmath } from "@croquis/solver-ts";
+import { quatFromAxisAngle, slerp } from "./dthree";
 
 export const ROLL_DT = 1 / 60;
 export const ROLL_MAX_SECONDS = 8;
@@ -42,7 +44,7 @@ export function minimumRollRate(
   const h = v.altura_cg_m;
   const half = v.via_m / 2;
   const k2 = (width * width + height * height) / 12;
-  const dz = Math.hypot(h, half) - h;
+  const dz = dmath.hypot(h, half) - h;
   return Math.sqrt((2 * 9.80665 * dz) / (k2 + h * h + half * half));
 }
 
@@ -83,7 +85,7 @@ export async function bakeRollover(
         .setFriction(BODY_GROUND_FRICTION),
     );
     const p = sampleVehicle(v.trayectoria, 0);
-    const yawQ = new Quaternion().setFromAxisAngle(new Vector3(0, 1, 0), p.yaw);
+    const yawQ = quatFromAxisAngle(new Vector3(0, 1, 0), p.yaw);
     const fwd = new Vector3(1, 0, 0).applyQuaternion(yawQ);
     const right = new Vector3(0, 0, 1).applyQuaternion(yawQ); // izquierda = −z local
     const side = roll.lado_tropiezo === "derecho" ? 1 : -1;
@@ -95,7 +97,7 @@ export async function bakeRollover(
       .add(new Vector3(0, -H / 2, 0))
       .addScaledVector(right, (side * W) / 2);
     // Conserva la velocidad hacia adelante; la lateral se convierte en el giro del tropiezo.
-    const vForward = Math.max(0, p.vx * Math.cos(p.yaw) + p.vy * Math.sin(p.yaw));
+    const vForward = Math.max(0, p.vx * dmath.cos(p.yaw) + p.vy * dmath.sin(p.yaw));
     const vel = fwd
       .clone()
       .multiplyScalar(vForward)
@@ -123,8 +125,8 @@ export async function bakeRollover(
       const ro = body.rotation();
       frames.set([tr.x, tr.y, tr.z, ro.x, ro.y, ro.z, ro.w], st * 7);
       const up = new Vector3(0, 1, 0).applyQuaternion(new Quaternion(ro.x, ro.y, ro.z, ro.w));
-      rollAngle += Math.acos(Math.max(-1, Math.min(1, up.dot(prevUp))));
-      maxTilt = Math.max(maxTilt, Math.acos(Math.max(-1, Math.min(1, up.y))));
+      rollAngle += dmath.acos(Math.max(-1, Math.min(1, up.dot(prevUp))));
+      maxTilt = Math.max(maxTilt, dmath.acos(Math.max(-1, Math.min(1, up.y))));
       prevUp = up;
       if (st < steps - 1) world.step();
     }
@@ -161,9 +163,11 @@ export function rolloverPoseAt(
     F[a + 1]! + (F[c + 1]! - F[a + 1]!) * f,
     F[a + 2]! + (F[c + 2]! - F[a + 2]!) * f,
   );
-  outQuat
-    .set(F[a + 3]!, F[a + 4]!, F[a + 5]!, F[a + 6]!)
-    .slerp(new Quaternion(F[c + 3], F[c + 4], F[c + 5], F[c + 6]), f);
+  slerp(
+    outQuat.set(F[a + 3]!, F[a + 4]!, F[a + 5]!, F[a + 6]!),
+    new Quaternion(F[c + 3], F[c + 4], F[c + 5], F[c + 6]),
+    f,
+  );
 }
 
 /** Simula y aplica las volcaduras de la escena (desde t = 0 la pose sale del horneado). */

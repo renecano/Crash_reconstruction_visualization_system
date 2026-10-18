@@ -13,6 +13,7 @@ import { pyFixed } from "./reconstruct";
 import { pyRound, str } from "./pymath";
 import { Evidence, evidenceFromSpec, fitEvidence, invert, type Inversion } from "./inversion";
 import { monteCarlo } from "./montecarlo";
+import * as dmath from "./dmath";
 
 type Json = Record<string, unknown>;
 
@@ -248,7 +249,7 @@ export function checkRest(spec: Json, seed: number): Inconsistency[] {
   for (const vid of ev.rest.keys()) {
     const rx = fit.residuals.get(`reposo:${vid}:x`) ?? 0.0;
     const ry = fit.residuals.get(`reposo:${vid}:y`) ?? 0.0;
-    const miss = Math.hypot(rx, ry) * SIGMA_POSITION_M;
+    const miss = dmath.hypot(rx, ry) * SIGMA_POSITION_M;
     if (miss > REST_SIGMAS * SIGMA_POSITION_M) {
       out.push({
         codigo: "reposo_inalcanzable",

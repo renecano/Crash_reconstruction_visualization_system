@@ -6,6 +6,7 @@
 import { G, type Trajectory, type Vec } from "./models";
 import { type ThrowKinematics, throwKinematics } from "./pedestrian";
 import { pyRound, radians } from "./pymath";
+import * as dmath from "./dmath";
 
 /** Altura del centro de masa de un cuerpo tendido (visual). */
 export const LYING_CG_HEIGHT_M = 0.15;
@@ -70,8 +71,8 @@ export function approachTrack(
 ): void {
   const dx = target[0] - start[0];
   const dy = target[1] - start[1];
-  const dist = Math.hypot(dx, dy);
-  const yaw = dist > 1e-9 ? Math.atan2(dy, dx) : 0.0;
+  const dist = dmath.hypot(dx, dy);
+  const yaw = dist > 1e-9 ? dmath.atan2(dy, dx) : 0.0;
   if (dist <= 1e-9 || speed <= 0) {
     for (const t of grid(tBegin, tArrive, dt)) track.append(t, target[0], target[1], cgHeight, yaw);
     track.addPhase("de_pie", tBegin, tArrive);
@@ -103,8 +104,8 @@ export function straightWalkTrack(
     const d = speed * (t - tBegin);
     track.append(
       t,
-      start[0] + d * Math.cos(heading),
-      start[1] + d * Math.sin(heading),
+      start[0] + d * dmath.cos(heading),
+      start[1] + d * dmath.sin(heading),
       cgHeight,
       heading,
     );
@@ -135,10 +136,10 @@ export function throwTrack(
 ): ThrowKinematics {
   const k = throwKinematics(v, thetaDeg, cgHeight, mu);
   const th = radians(thetaDeg);
-  const vx = v * Math.cos(th);
-  const vz = v * Math.sin(th);
-  const c = Math.cos(heading);
-  const s = Math.sin(heading);
+  const vx = v * dmath.cos(th);
+  const vz = v * dmath.sin(th);
+  const c = dmath.cos(heading);
+  const s = dmath.sin(heading);
   const tLand = t0 + k.flightTime;
   const tRest = tLand + k.slideTime;
   for (const t of grid(t0, tRest, dt)) {

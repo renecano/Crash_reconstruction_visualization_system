@@ -8,6 +8,7 @@
 import { Stiffness } from "./crash3";
 import type { PyRandom } from "./pyrandom";
 import table from "./data/stiffness_classes.json";
+import * as dmath from "./dmath";
 
 export const FALLBACK = Stiffness.fromKgfCm(55.0, 36.0);
 export const ZONAS = ["frontal", "trasera", "lateral"] as const;
@@ -66,10 +67,10 @@ export function sampleStiffness(entry: StiffnessEntry, rng: PyRandom, n: number)
     for (let i = 0; i < n; i++) out.push(entry.samples[rng.randrange(entry.samples.length)]!);
     return out;
   }
-  const lo = Math.log(FALLBACK_SLOPE_RANGE[0]);
-  const hi = Math.log(FALLBACK_SLOPE_RANGE[1]);
+  const lo = dmath.log(FALLBACK_SLOPE_RANGE[0]);
+  const hi = dmath.log(FALLBACK_SLOPE_RANGE[1]);
   for (let i = 0; i < n; i++) {
-    const s = Math.exp(rng.uniform(lo, hi));
+    const s = dmath.exp(rng.uniform(lo, hi));
     out.push(new Stiffness(entry.stiffness.a * s, entry.stiffness.b * s * s));
   }
   return out;

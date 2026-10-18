@@ -75,10 +75,11 @@ test.describe("visor 3D", () => {
   }) => {
     await page.goto("/visor?escena=peaton_cruce&t=0.5&camara=persona");
     await waitReady(page);
-    const ragdolls = await page.evaluate(
-      () =>
+    const ragdolls = await page.evaluate(() =>
+      (
         (window as unknown as { __croquisPeople?: { ragdolls: { inBand: boolean }[] } })
-          .__croquisPeople?.ragdolls ?? [],
+          .__croquisPeople?.ragdolls ?? []
+      ).map((r) => ({ inBand: r.inBand })),
     );
     expect(ragdolls).toHaveLength(1);
     expect(ragdolls[0]?.inBand).toBe(true);

@@ -20,6 +20,7 @@ import { PyRandom } from "./pyrandom";
 import { reconstruct, vehicleClasses, type Reconstruction } from "./reconstruct";
 import { sampleStiffness, stiffnessFor, zonaFromCdcSide } from "./stiffness";
 import calibration from "./data/inversion_calibration.json";
+import * as dmath from "./dmath";
 
 type Json = Record<string, unknown>;
 
@@ -124,7 +125,7 @@ export function deltaVFromDamage(
     } else {
       dv = deltaVBarrier(e1, m1, rng.uniform(RESTITUTION_RIGID[0], RESTITUTION_RIGID[1]));
     }
-    if (sModel > 0) dv *= Math.exp(rng.gauss(0.0, sModel));
+    if (sModel > 0) dv *= dmath.exp(rng.gauss(0.0, sModel));
     out.push(dv * KMH);
   }
   return distribution(out);

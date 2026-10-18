@@ -1,0 +1,349 @@
+{
+  "name": "e8_determinism",
+  "generated_at": "2026-10-17T23:53:56.420Z",
+  "git_commit": "310c7c0",
+  "criterio": "PLAN §8: igualdad exacta del resultado completo entre navegadores y repeticiones",
+  "navegadores": {
+    "chromium": "156.0.8078.4",
+    "firefox": "157.0",
+    "webkit": "27.2"
+  },
+  "repeticiones": 2,
+  "escenas_identicas": 8,
+  "escenas_total": 11,
+  "cumple": false,
+  "escenas": [
+    {
+      "escena": "alcance",
+      "identico": true,
+      "hashes": {
+        "chromium": [
+          "aa8d717b27443c087e3f76ed6c6c979e03f1786944b5a5e1a710964cd8977978",
+          "aa8d717b27443c087e3f76ed6c6c979e03f1786944b5a5e1a710964cd8977978"
+        ],
+        "firefox": [
+          "aa8d717b27443c087e3f76ed6c6c979e03f1786944b5a5e1a710964cd8977978",
+          "aa8d717b27443c087e3f76ed6c6c979e03f1786944b5a5e1a710964cd8977978"
+        ],
+        "webkit": [
+          "aa8d717b27443c087e3f76ed6c6c979e03f1786944b5a5e1a710964cd8977978",
+          "aa8d717b27443c087e3f76ed6c6c979e03f1786944b5a5e1a710964cd8977978"
+        ]
+      },
+      "diferencias": {}
+    },
+    {
+      "escena": "frontal_curva",
+      "identico": false,
+      "hashes": {
+        "chromium": [
+          "c4c75818305595ba2218a18145c80f89a9c72c202d8842582cf1e47946dd8886",
+          "c4c75818305595ba2218a18145c80f89a9c72c202d8842582cf1e47946dd8886"
+        ],
+        "firefox": [
+          "9aa0a9ed7f523753db2b59856962a633af1690b97c5a04be0770156d4caec4a2",
+          "9aa0a9ed7f523753db2b59856962a633af1690b97c5a04be0770156d4caec4a2"
+        ],
+        "webkit": [
+          "941add8962db406c3c4f9d6b9064e03ef1e8cbdd6412376b3c1c67a01cb09850",
+          "941add8962db406c3c4f9d6b9064e03ef1e8cbdd6412376b3c1c67a01cb09850"
+        ]
+      },
+      "diferencias": {
+        "firefox#1": {
+          "numeros_distintos": 22,
+          "primera": {
+            "ruta": "/vehiculos/0/trayectoria/vy/155",
+            "a": 1.726653,
+            "b": 1.726652
+          },
+          "max_abs": 0.00037200000951997936,
+          "ruta_max": "/eventos/2/detalle/energia_disipada_j"
+        },
+        "firefox#2": {
+          "numeros_distintos": 22,
+          "primera": {
+            "ruta": "/vehiculos/0/trayectoria/vy/155",
+            "a": 1.726653,
+            "b": 1.726652
+          },
+          "max_abs": 0.00037200000951997936,
+          "ruta_max": "/eventos/2/detalle/energia_disipada_j"
+        },
+        "webkit#1": {
+          "numeros_distintos": 23,
+          "primera": {
+            "ruta": "/vehiculos/0/trayectoria/vel_angular/119",
+            "a": 0.156735,
+            "b": 0.156736
+          },
+          "max_abs": 0.0010000000038417056,
+          "ruta_max": "/vehiculos/1/dano/energia_j"
+        },
+        "webkit#2": {
+          "numeros_distintos": 23,
+          "primera": {
+            "ruta": "/vehiculos/0/trayectoria/vel_angular/119",
+            "a": 0.156735,
+            "b": 0.156736
+          },
+          "max_abs": 0.0010000000038417056,
+          "ruta_max": "/vehiculos/1/dano/energia_j"
+        }
+      }
+    },
+    {
+      "escena": "glorieta",
+      "identico": false,
+      "hashes": {
+        "chromium": [
+          "d4c5cbe7b9f8b95c8f48c2271cd97e8a57811dc3317faca5adda59bc5231b7dd",
+          "d4c5cbe7b9f8b95c8f48c2271cd97e8a57811dc3317faca5adda59bc5231b7dd"
+        ],
+        "firefox": [
+          "3f349e3b14d035835f2b4283ca1bfac724d64975370af6ad69e32c00a338db28",
+          "3f349e3b14d035835f2b4283ca1bfac724d64975370af6ad69e32c00a338db28"
+        ],
+        "webkit": [
+          "3f349e3b14d035835f2b4283ca1bfac724d64975370af6ad69e32c00a338db28",
+          "3f349e3b14d035835f2b4283ca1bfac724d64975370af6ad69e32c00a338db28"
+        ]
+      },
+      "diferencias": {
+        "firefox#1": {
+          "numeros_distintos": 2,
+          "primera": {
+            "ruta": "/vehiculos/0/trayectoria/vy/199",
+            "a": -0.739583,
+            "b": -0.739582
+          },
+          "max_abs": 0.0000010000003385357559,
+          "ruta_max": "/eventos/0/detalle/energia_disipada_j"
+        },
+        "firefox#2": {
+          "numeros_distintos": 2,
+          "primera": {
+            "ruta": "/vehiculos/0/trayectoria/vy/199",
+            "a": -0.739583,
+            "b": -0.739582
+          },
+          "max_abs": 0.0000010000003385357559,
+          "ruta_max": "/eventos/0/detalle/energia_disipada_j"
+        },
+        "webkit#1": {
+          "numeros_distintos": 2,
+          "primera": {
+            "ruta": "/vehiculos/0/trayectoria/vy/199",
+            "a": -0.739583,
+            "b": -0.739582
+          },
+          "max_abs": 0.0000010000003385357559,
+          "ruta_max": "/eventos/0/detalle/energia_disipada_j"
+        },
+        "webkit#2": {
+          "numeros_distintos": 2,
+          "primera": {
+            "ruta": "/vehiculos/0/trayectoria/vy/199",
+            "a": -0.739583,
+            "b": -0.739582
+          },
+          "max_abs": 0.0000010000003385357559,
+          "ruta_max": "/eventos/0/detalle/energia_disipada_j"
+        }
+      }
+    },
+    {
+      "escena": "interseccion_toluca",
+      "identico": true,
+      "hashes": {
+        "chromium": [
+          "467b73aecb3eed03d20df52afb6252cd63a9fa938d44028a13fd81c4a0dad0af",
+          "467b73aecb3eed03d20df52afb6252cd63a9fa938d44028a13fd81c4a0dad0af"
+        ],
+        "firefox": [
+          "467b73aecb3eed03d20df52afb6252cd63a9fa938d44028a13fd81c4a0dad0af",
+          "467b73aecb3eed03d20df52afb6252cd63a9fa938d44028a13fd81c4a0dad0af"
+        ],
+        "webkit": [
+          "467b73aecb3eed03d20df52afb6252cd63a9fa938d44028a13fd81c4a0dad0af",
+          "467b73aecb3eed03d20df52afb6252cd63a9fa938d44028a13fd81c4a0dad0af"
+        ]
+      },
+      "diferencias": {}
+    },
+    {
+      "escena": "lateral_interseccion",
+      "identico": true,
+      "hashes": {
+        "chromium": [
+          "ac44f2e4c5313de006c068c2f0cb93c8d6fd99623af659b071d7c73209d81ee1",
+          "ac44f2e4c5313de006c068c2f0cb93c8d6fd99623af659b071d7c73209d81ee1"
+        ],
+        "firefox": [
+          "ac44f2e4c5313de006c068c2f0cb93c8d6fd99623af659b071d7c73209d81ee1",
+          "ac44f2e4c5313de006c068c2f0cb93c8d6fd99623af659b071d7c73209d81ee1"
+        ],
+        "webkit": [
+          "ac44f2e4c5313de006c068c2f0cb93c8d6fd99623af659b071d7c73209d81ee1",
+          "ac44f2e4c5313de006c068c2f0cb93c8d6fd99623af659b071d7c73209d81ee1"
+        ]
+      },
+      "diferencias": {}
+    },
+    {
+      "escena": "motociclista",
+      "identico": false,
+      "hashes": {
+        "chromium": [
+          "12baa33c9db4b220716eadc727e849196c0713764f77a380785cbfc0f638827b",
+          "12baa33c9db4b220716eadc727e849196c0713764f77a380785cbfc0f638827b"
+        ],
+        "firefox": [
+          "c482969b7b4c5aaed593417e8b56e6d8d9863cb2b5316f2c779bdd0f6d09d00a",
+          "c482969b7b4c5aaed593417e8b56e6d8d9863cb2b5316f2c779bdd0f6d09d00a"
+        ],
+        "webkit": [
+          "8faa31743beef04ff0dbeadea0582daa32acd3afa421c8a4b007ac356f58522f",
+          "8faa31743beef04ff0dbeadea0582daa32acd3afa421c8a4b007ac356f58522f"
+        ]
+      },
+      "diferencias": {
+        "firefox#1": {
+          "numeros_distintos": 13,
+          "primera": {
+            "ruta": "/inversion/parametros/1/estimacion/p90",
+            "a": 39.75,
+            "b": 39.74
+          },
+          "max_abs": 0.010000000000019327,
+          "ruta_max": "/inversion/parametros/2/estimacion/p10"
+        },
+        "firefox#2": {
+          "numeros_distintos": 13,
+          "primera": {
+            "ruta": "/inversion/parametros/1/estimacion/p90",
+            "a": 39.75,
+            "b": 39.74
+          },
+          "max_abs": 0.010000000000019327,
+          "ruta_max": "/inversion/parametros/2/estimacion/p10"
+        },
+        "webkit#1": {
+          "numeros_distintos": 10,
+          "primera": {
+            "ruta": "/inversion/parametros/1/estimacion/p90",
+            "a": 39.75,
+            "b": 39.74
+          },
+          "max_abs": 0.01999999999998181,
+          "ruta_max": "/inversion/parametros/2/estimacion/mejor"
+        },
+        "webkit#2": {
+          "numeros_distintos": 10,
+          "primera": {
+            "ruta": "/inversion/parametros/1/estimacion/p90",
+            "a": 39.75,
+            "b": 39.74
+          },
+          "max_abs": 0.01999999999998181,
+          "ruta_max": "/inversion/parametros/2/estimacion/mejor"
+        }
+      }
+    },
+    {
+      "escena": "nocturno_lluvia",
+      "identico": true,
+      "hashes": {
+        "chromium": [
+          "923b977e09ab4291047049e629f7d8be0f3d6385c752b14620a6c5b11062c4f3",
+          "923b977e09ab4291047049e629f7d8be0f3d6385c752b14620a6c5b11062c4f3"
+        ],
+        "firefox": [
+          "923b977e09ab4291047049e629f7d8be0f3d6385c752b14620a6c5b11062c4f3",
+          "923b977e09ab4291047049e629f7d8be0f3d6385c752b14620a6c5b11062c4f3"
+        ],
+        "webkit": [
+          "923b977e09ab4291047049e629f7d8be0f3d6385c752b14620a6c5b11062c4f3",
+          "923b977e09ab4291047049e629f7d8be0f3d6385c752b14620a6c5b11062c4f3"
+        ]
+      },
+      "diferencias": {}
+    },
+    {
+      "escena": "objeto_fijo_arbol",
+      "identico": true,
+      "hashes": {
+        "chromium": [
+          "d32cca4443ae6be1f39418d3cc3a05de4a6a32485915b60742683980d215b22f",
+          "d32cca4443ae6be1f39418d3cc3a05de4a6a32485915b60742683980d215b22f"
+        ],
+        "firefox": [
+          "d32cca4443ae6be1f39418d3cc3a05de4a6a32485915b60742683980d215b22f",
+          "d32cca4443ae6be1f39418d3cc3a05de4a6a32485915b60742683980d215b22f"
+        ],
+        "webkit": [
+          "d32cca4443ae6be1f39418d3cc3a05de4a6a32485915b60742683980d215b22f",
+          "d32cca4443ae6be1f39418d3cc3a05de4a6a32485915b60742683980d215b22f"
+        ]
+      },
+      "diferencias": {}
+    },
+    {
+      "escena": "peaton_cruce",
+      "identico": true,
+      "hashes": {
+        "chromium": [
+          "21d0ce0e932db158029d7b3473b71fda48c6338056365d8135b8673752d18401",
+          "21d0ce0e932db158029d7b3473b71fda48c6338056365d8135b8673752d18401"
+        ],
+        "firefox": [
+          "21d0ce0e932db158029d7b3473b71fda48c6338056365d8135b8673752d18401",
+          "21d0ce0e932db158029d7b3473b71fda48c6338056365d8135b8673752d18401"
+        ],
+        "webkit": [
+          "21d0ce0e932db158029d7b3473b71fda48c6338056365d8135b8673752d18401",
+          "21d0ce0e932db158029d7b3473b71fda48c6338056365d8135b8673752d18401"
+        ]
+      },
+      "diferencias": {}
+    },
+    {
+      "escena": "poste",
+      "identico": true,
+      "hashes": {
+        "chromium": [
+          "699705c09bfd369319b260846ce81125066796009a65fff58116dc5583ec8943",
+          "699705c09bfd369319b260846ce81125066796009a65fff58116dc5583ec8943"
+        ],
+        "firefox": [
+          "699705c09bfd369319b260846ce81125066796009a65fff58116dc5583ec8943",
+          "699705c09bfd369319b260846ce81125066796009a65fff58116dc5583ec8943"
+        ],
+        "webkit": [
+          "699705c09bfd369319b260846ce81125066796009a65fff58116dc5583ec8943",
+          "699705c09bfd369319b260846ce81125066796009a65fff58116dc5583ec8943"
+        ]
+      },
+      "diferencias": {}
+    },
+    {
+      "escena": "volcadura",
+      "identico": true,
+      "hashes": {
+        "chromium": [
+          "8f2c2460c8f01a24c9cfd3860dedd0a9304114373a88dad21c01962b9f2f172c",
+          "8f2c2460c8f01a24c9cfd3860dedd0a9304114373a88dad21c01962b9f2f172c"
+        ],
+        "firefox": [
+          "8f2c2460c8f01a24c9cfd3860dedd0a9304114373a88dad21c01962b9f2f172c",
+          "8f2c2460c8f01a24c9cfd3860dedd0a9304114373a88dad21c01962b9f2f172c"
+        ],
+        "webkit": [
+          "8f2c2460c8f01a24c9cfd3860dedd0a9304114373a88dad21c01962b9f2f172c",
+          "8f2c2460c8f01a24c9cfd3860dedd0a9304114373a88dad21c01962b9f2f172c"
+        ]
+      },
+      "diferencias": {}
+    }
+  ]
+}

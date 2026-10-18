@@ -22,6 +22,7 @@ import {
 } from "three";
 import { mergeGeometries } from "three/examples/jsm/utils/BufferGeometryUtils.js";
 import { loftGeometry, stationsAlong } from "./loft";
+import { dmath } from "@croquis/solver-ts";
 
 /** Paso de segmentación de las cajas y de las estaciones del loft (m). */
 const SEGMENT_M = 0.08;
@@ -373,7 +374,7 @@ function buildCar(p: CarProfile, d: VehicleDimensions): Group {
     ),
   );
   // Parabrisas como pieza propia (para la grieta de F4), sobre la cara inclinada del habitáculo.
-  const wsLen = Math.hypot(wsBase - wsTop, cabinTop - belt);
+  const wsLen = dmath.hypot(wsBase - wsTop, cabinTop - belt);
   const ws = box(
     "windshield",
     "vidrio",
@@ -383,7 +384,7 @@ function buildCar(p: CarProfile, d: VehicleDimensions): Group {
     (wsBase + wsTop) / 2 + 0.01,
     (belt + cabinTop) / 2,
   );
-  ws.rotation.z = Math.atan2(wsBase - wsTop, cabinTop - belt);
+  ws.rotation.z = dmath.atan2(wsBase - wsTop, cabinTop - belt);
   g.add(ws);
   if (p.style === "truck") {
     // Caja de carga detrás de la cabina.
