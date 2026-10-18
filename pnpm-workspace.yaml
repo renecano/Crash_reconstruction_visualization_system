@@ -5,6 +5,8 @@ packages:
 
 allowBuilds:
   esbuild: true
+  # Dependencia de @serwist/turbopack: su binario llega por dependencias opcionales (ADR 0030).
+  "@swc/core": false
   sharp: false
   unrs-resolver: false
 
