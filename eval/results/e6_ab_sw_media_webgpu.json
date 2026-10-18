@@ -1,0 +1,61 @@
+{
+  "name": "e6_ab",
+  "generated_at": "2026-10-18T01:13:31.909Z",
+  "git_commit": "fa14528",
+  "seed": 20261017,
+  "metodo": "Variantes intercaladas por ronda con orden rotado, navegador nuevo por medición, 1920×1080, cámara cinematográfica; diferencia en ms por cuadro contra la base pareada por ronda, mediana e IC 90 % por bootstrap (2000).",
+  "calidad": "media",
+  "renderer": "webgpu",
+  "rondas": 5,
+  "variantes": {
+    "base": {},
+    "sin_sw": {
+      "_serviceWorkers": "block"
+    }
+  },
+  "modo_energia": {
+    "cambiado": true,
+    "antes": {
+      "guid": "00000000-0000-0000-0000-000000000000",
+      "nombre": "equilibrado"
+    },
+    "durante": {
+      "guid": "ded574b5-45a0-4f42-8737-46345c09c238",
+      "nombre": "mejor_rendimiento"
+    }
+  },
+  "escenas": {
+    "nocturno_lluvia": {
+      "base": {
+        "fps_mediana_rondas": 37,
+        "ms_por_cuadro_rondas": [
+          31.35,
+          27.55,
+          26.39,
+          27.03,
+          25.77
+        ],
+        "dif_ms_vs_base": 0,
+        "dif_ms_ic90": [
+          0,
+          0
+        ]
+      },
+      "sin_sw": {
+        "fps_mediana_rondas": 37.8,
+        "ms_por_cuadro_rondas": [
+          30.03,
+          28.25,
+          26.25,
+          26.46,
+          19.49
+        ],
+        "dif_ms_vs_base": -0.57,
+        "dif_ms_ic90": [
+          -6.28,
+          0.7
+        ]
+      }
+    }
+  }
+}

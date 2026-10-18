@@ -2,7 +2,8 @@
  * E6 antes/después: compara variantes del visor en las mismas condiciones (ADR 0026).
  *
  * Cada variante es un juego de interruptores de diagnóstico (`window.__croquisDiag`) o el visor tal
- * cual. Las variantes se miden intercaladas ronda por ronda (A, B, C, A, B, C…, rotando el orden),
+ * cual; la clave `_serviceWorkers` ("allow" o "block") se aplica al contexto del navegador. Las
+ * variantes se miden intercaladas ronda por ronda (A, B, C, A, B, C…, rotando el orden),
  * cada medición en un navegador nuevo y con el modo de energía «Mejor rendimiento» (restaurado al
  * terminar). La diferencia se calcula **por pares dentro de cada ronda** (ms por cuadro de la
  * variante menos los de la base), lo que cancela la deriva térmica entre rondas, y se reporta su

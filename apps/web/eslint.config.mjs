@@ -12,6 +12,8 @@ const eslintConfig = defineConfig([
     "out/**",
     "build/**",
     "next-env.d.ts",
+    // Worker del solver empaquetado por scripts/build-worker.mjs (ADR 0030).
+    "public/workers/**",
   ]),
 ]);
 

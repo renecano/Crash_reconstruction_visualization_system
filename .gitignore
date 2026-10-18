@@ -56,3 +56,6 @@ Thumbs.db
 # Candado y temporales del libro de gasto (grabadores en paralelo)
 packages/extraction/grabaciones/*.lock
 packages/extraction/grabaciones/*.tmp
+
+# Worker del solver empaquetado antes de next build (ADR 0030)
+apps/web/public/workers/
