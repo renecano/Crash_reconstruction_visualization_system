@@ -64,6 +64,8 @@ class Caso:
     dv_kmh: float | None  # CISS: ΔV del EDR
     anio: int | None
     detalle: str  # barrera, configuración o contacto
+    # Vehículo (marca, modelo y año) para que el mismo auto no caiga en desarrollo y en test.
+    vehiculo: str = ""
 
 
 def _f(row: dict[str, str], key: str) -> float | None:
@@ -157,6 +159,9 @@ def nhtsa_cases(vtb: Path = VTB_CSV, itv: Path = ITV_CSV) -> Iterator[Caso]:
                     dv_kmh=None,
                     anio=int(_f(row, "model_year") or 0) or None,
                     detalle=f"{config}: {row.get('barrier_shape') or row.get('test_type') or ''}",
+                    vehiculo="|".join(
+                        (row.get(k) or "").strip().upper() for k in ("make", "model", "model_year")
+                    ),
                 )
 
 
