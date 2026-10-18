@@ -1,7 +1,7 @@
 {
   "name": "e5_desarrollo",
-  "generated_at": "2026-10-18T15:37:55.492Z",
-  "git_commit": "54cba9f",
+  "generated_at": "2026-10-18T17:02:26.123Z",
+  "git_commit": "ea0f4c2",
   "seed": 20261017,
   "particion": "desarrollo",
   "metodo": "ADR 0032: Croquis (etapa de daño del solver TS + malla del visor, medida en las estaciones reales), uniforme y lineal simple (misma energía, ancho y centro). Errores absolutos en cm (área en cm·m); mediana y media por caso, IC 90 % de la mediana por bootstrap (2,000, semilla 20261017); diferencia pareada línea base − Croquis (positiva: Croquis se equivoca menos). Error por punto solo en CISS con el orden de C1–C6 conocido; NHTSA centrado en lo predicho (sin posición).",
@@ -11,7 +11,7 @@
   },
   "casos": 6811,
   "evaluados": 6350,
-  "segundos": 609,
+  "segundos": 829,
   "resumen": {
     "nhtsa": {
       "frontal": {
@@ -1921,6 +1921,84 @@
           }
         }
       }
+    }
+  },
+  "diagnostico_desarrollo": {
+    "fidelidad_malla": {
+      "FB:-": {
+        "n": 37,
+        "mediana_cm": 0.31,
+        "p95_cm": 0.67
+      },
+      "FB:9": {
+        "n": 106,
+        "mediana_cm": 0.26,
+        "p95_cm": 0.61
+      },
+      "FB:C": {
+        "n": 70,
+        "mediana_cm": 0.86,
+        "p95_cm": 1.47
+      },
+      "FB:D": {
+        "n": 2657,
+        "mediana_cm": 0.19,
+        "p95_cm": 0.63
+      },
+      "FB:L": {
+        "n": 271,
+        "mediana_cm": 0.23,
+        "p95_cm": 0.94
+      },
+      "FB:R": {
+        "n": 274,
+        "mediana_cm": 0.23,
+        "p95_cm": 1.08
+      },
+      "FB:Y": {
+        "n": 521,
+        "mediana_cm": 0.15,
+        "p95_cm": 0.89
+      },
+      "FB:Z": {
+        "n": 488,
+        "mediana_cm": 0.15,
+        "p95_cm": 1
+      },
+      "LR:B": {
+        "n": 29,
+        "mediana_cm": 0.15,
+        "p95_cm": 0.68
+      },
+      "LR:D": {
+        "n": 84,
+        "mediana_cm": 0.04,
+        "p95_cm": 0.51
+      },
+      "LR:F": {
+        "n": 146,
+        "mediana_cm": 0.09,
+        "p95_cm": 0.41
+      },
+      "LR:P": {
+        "n": 632,
+        "mediana_cm": 0.17,
+        "p95_cm": 1
+      },
+      "LR:Y": {
+        "n": 300,
+        "mediana_cm": 0.09,
+        "p95_cm": 0.36
+      },
+      "LR:Z": {
+        "n": 146,
+        "mediana_cm": 0.14,
+        "p95_cm": 0.68
+      }
+    },
+    "ciss_frente_trasera_d": {
+      "n": 3609,
+      "d_cero": 3600
     }
   }
 }
