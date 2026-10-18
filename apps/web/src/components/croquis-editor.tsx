@@ -11,7 +11,9 @@ import {
   type FixtureName,
   type Problema,
 } from "@croquis/scene-schema";
+import { useRouter } from "next/navigation";
 import { useEffect, useMemo, useState } from "react";
+import { guardarEscenaPropia } from "@/lib/escena-propia";
 import { RELATO_SPEC_KEY } from "@/lib/relato-api";
 import { Legend } from "./legend";
 
@@ -20,6 +22,7 @@ function toJson(spec: EscenaSpec): string {
 }
 
 export function CroquisEditor({ initial = "alcance" }: { initial?: FixtureName }) {
+  const router = useRouter();
   const [name, setName] = useState<FixtureName>(initial);
   const [spec, setSpec] = useState<EscenaSpec>(() => loadFixture(initial));
   const [jsonText, setJsonText] = useState<string>(() => toJson(loadFixture(initial)));
@@ -178,6 +181,17 @@ export function CroquisEditor({ initial = "alcance" }: { initial?: FixtureName }
             onClick={download}
           >
             Descargar JSON
+          </button>
+          <button
+            type="button"
+            data-testid="ver-3d"
+            className="rounded border border-neutral-400 px-3 py-1 text-sm hover:bg-neutral-100 dark:hover:bg-neutral-800"
+            onClick={() => {
+              // La escena (con los cambios aplicados) se reconstruye en el navegador y se ve en 3D.
+              if (guardarEscenaPropia(spec)) router.push("/visor?escena=propia");
+            }}
+          >
+            Ver en 3D
           </button>
         </div>
         <textarea
