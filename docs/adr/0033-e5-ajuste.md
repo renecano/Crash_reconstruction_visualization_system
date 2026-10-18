@@ -7,10 +7,10 @@
 
 `eval/results/e5_desarrollo_antes_ajuste.json` (`pnpm --filter @croquis/eval-js e5`) y su resultado por caso (`eval/e5/resultados_desarrollo.jsonl`, no versionado):
 
-- **La malla no es la fuente del error.** En las estaciones del propio solver, la malla del visor reproduce su perfil con una mediana de ≤ 0.3 cm por estación en todas las caras y zonas (campo `mallaEnEstacionesSolver`). Los errores salen de las reglas de forma, ancho y centro del solver.
-- **Frente y trasera en CISS se miden de esquina a esquina de la defensa** («LFBC to RFBC»). Por eso D vale 0 en todos los casos de desarrollo y L es, en todas las zonas, cerca de 0.77 del ancho del vehículo. Croquis usa 1.0 en la zona D, 0.66 en Y/Z y 0.4 en L, R y C.
-- **Costados:** D sí varía, y su mediana coincide con los centros de Croquis (zona F ≈ +1/3 del largo, Y ≈ +1/6). Los anchos reales son menores que los de Croquis (F y B ≈ 0.2 del largo, P ≈ 0.5, D ≈ 0.6).
-- **Energía:** en CISS (fuera de muestra) el área del perfil no tiene sesgo apreciable. En NHTSA frontal (dentro de muestra) Croquis se queda corto: −4 cm de aplastamiento medio en la población de E2 y −14 cm en modelos anteriores a 1995, que E2 no usó. La causa de los −4 cm es una diferencia de convención:
+- **La malla no es la fuente del error.** En las estaciones del propio solver, la malla del visor reproduce su perfil con una mediana por zona de 0.04 a 0.31 cm por estación, salvo frente/trasera C con la regla nueva (0.86 cm), y un p95 de a lo más 1.47 cm (`diagnostico_desarrollo.fidelidad_malla` en `eval/results/e5_desarrollo.json`). Los errores salen de las reglas de forma, ancho y centro del solver.
+- **Frente y trasera en CISS se miden de esquina a esquina de la defensa** («LFBC to RFBC»). Por eso D vale 0 en 3,600 de 3,609 casos de desarrollo (`diagnostico_desarrollo.ciss_frente_trasera_d`) y la mediana de L va de 0.75 a 0.80 del ancho del vehículo en las zonas D, L, R, Y y Z (`e5_ajuste.json`). Croquis usa 1.0 en la zona D, 0.66 en Y/Z y 0.4 en L, R y C.
+- **Costados:** D sí varía. Los anchos reales son menores que los de Croquis: medianas de 0.20 del largo en F y B, 0.52 en P y 0.62 en D (`e5_ajuste.json`).
+- **Energía:** en CISS (fuera de muestra) el área del perfil no tiene sesgo apreciable. En NHTSA frontal (dentro de muestra) Croquis se queda corto: −4.3 cm de aplastamiento medio en la población de E2 y −13.8 cm en modelos anteriores a 1995, que E2 no usó (`uv run croquis-eval e5-energia` → `eval/results/e5_convencion_energia.json`). La causa de los −4.3 cm es una diferencia de convención; con la energía de CRASH3 el sesgo sería +0.4 cm:
   - **E2** calibró A y B con la energía de CRASH3, ½ m ΔV² con ΔV = v (1 + e).
   - **El solver** reparte la energía disipada, ½ m v² (1 − e²), como `crash3.delta_v_barrier`.
 
@@ -18,7 +18,7 @@
 
 ## Qué se ajusta y cómo se elige
 
-Solo la regla `crushShapeAndWidth` (forma y ancho por cara y zona del CDC; el ADR 0032 permite ajustar «la elección de forma por zona»). Los centros no cambian, porque los datos los confirman. Los postes y los objetos angostos no entran, porque su forma sale de `narrowObject`.
+Solo la regla `crushShapeAndWidth` (forma y ancho por cara y zona del CDC; el ADR 0032 permite ajustar «la elección de forma por zona»). Los centros no cambian: el ADR 0032 no los incluye entre lo que se puede ajustar. Los postes y los objetos angostos no entran, porque su forma sale de `narrowObject`.
 
 Por grupo (frente/trasera o costado, y zona), con `eval/js/e5_ajuste.ts`:
 

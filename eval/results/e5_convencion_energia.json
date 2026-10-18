@@ -1,0 +1,29 @@
+{
+  "name": "e5_convencion_energia",
+  "generated_at": "2026-10-18T17:02:29+00:00",
+  "git_commit": "ea0f4c2",
+  "seed": null,
+  "descripcion": "E5, diagnóstico de desarrollo (ADR 0033): mediana de (aplastamiento medio predicho − medido) en pruebas frontales de barrera rígida de NHTSA, perfil uniforme sobre el ancho del vehículo, con la energía disipada del solver y con la de CRASH3 con la que E2 calibró la rigidez.",
+  "particion": "desarrollo",
+  "restitucion": 0.1,
+  "grupos": {
+    "todos": {
+      "n": 1175,
+      "medido_medio_cm": 43.3,
+      "sesgo_disipada_cm": -6.4,
+      "sesgo_crash3_cm": -1.7
+    },
+    "poblacion_e2": {
+      "n": 794,
+      "medido_medio_cm": 42.9,
+      "sesgo_disipada_cm": -4.3,
+      "sesgo_crash3_cm": 0.4
+    },
+    "anteriores_a_1995": {
+      "n": 313,
+      "medido_medio_cm": 49.3,
+      "sesgo_disipada_cm": -13.8,
+      "sesgo_crash3_cm": -9.8
+    }
+  }
+}

@@ -24,8 +24,9 @@ Reglas de trabajo: `CLAUDE.md`. Especificación: `PLAN.md`.
 - **F9, paso 6d hecho** (rama `feat/f9-informe`, ADR 0031): informe PDF desde el visor. Los paneles y el informe comparten sus textos (`lib/textos-resultado.ts`) y los datos inciertos se dicen en palabras. **F9 cerrada.**
 - **F10, paso 1 hecho** (rama `feat/f10-inventario`): inventario de E5 en `docs/data.md` y en `eval/results/e5_inventario.json`. Hay 3,620 casos de NHTSA y 8,804 de CISS con perfil medido completo; los números por tipo están en el inventario. CISS ahora trae la posición del daño, con su convención comprobada.
 - **F10, paso 2 hecho** (rama `feat/f10-particion`, ADR 0032): el método de E5 quedó escrito antes de medir y la partición está congelada (`eval/e5/particion.json`, SHA-256 `2a894e09…`).
-- **F10, pasos 3 y 4 hechos** (rama `feat/f10-reproductor`, ADR 0033): el reproductor de E5 en TS y el ajuste de la forma y el ancho del daño por zona, solo con desarrollo. La malla del visor sigue al solver con una mediana de ≤ 0.3 cm por estación. Cambian cinco grupos de zonas; en desarrollo, el error por punto en laterales de CISS baja de 4.99 a 4.67 cm (`eval/results/e5_desarrollo*.json`).
-- **Siguiente paso concreto:** F10, paso 5. Correr el test de E5 **una sola vez** (`pnpm --filter @croquis/eval-js e5 -- --test-final` → `eval/results/e5.json`), con todo ya fijo, y escribir la fila de E5 en el README y el resumen aquí.
+- **F10, pasos 3 y 4 hechos** (rama `feat/f10-reproductor`, ADR 0033): el reproductor de E5 en TS y el ajuste de la forma y el ancho del daño por zona, solo con desarrollo. La malla del visor sigue al solver con una mediana por zona de 0.04 a 0.86 cm por estación. Cambian cinco grupos de zonas; en desarrollo, el error por punto en laterales de CISS baja de 4.99 a 4.67 cm (`eval/results/e5_desarrollo*.json`).
+- **F10, paso 5 hecho** (rama `feat/f10-test`): el test de E5 se corrió **una vez** en `e74d971`, con todo fijo (`eval/results/e5.json`). Los números y su lectura honesta están en el README.
+- **Siguiente paso concreto:** F10, paso 6. Galería: elegir una muestra del test de NHTSA estratificada por tipo, entre las pruebas con fotos; leer la lista de fotografías del reporte para dar con la foto posterior de la cara dañada; hacer renders de Croquis con una vista parecida y la marca ilustrativa; versionar derivados reducidos y registrar la fuente en `data/SOURCES.md`.
 - **E1 del prompt v2 en el primer test, hecho** (PR #14). Sonnet 0.875 → 0.919 y Haiku 0.852 → 0.896. Además, E1 ahora compara cada contrafactual con la repetición del mismo relato (McNemar por tipo): ningún tipo difiere del ruido, y las reglas cambian con el modelo del vehículo en 6 de 52 pares (ADR 0012 §10).
 - **F8** cerrada el 2026-10-17 (PR #20 a #24). **F0** cerrado el 2026-10-10 (PR #1), **F1** el 2026-10-10 (PR #3), **F2** el 2026-10-13 (PR #4), **F3** el 2026-10-13 (PR #5), **F4** el 2026-10-13 (PR #6), **F5** el 2026-10-13 (PR #7), **F6** el 2026-10-14 (PR #8), **F7** el 2026-10-14 (PR #9; pendientes registrados); migración a Vercel el 2026-10-14 (PR #10); test CISS y prompt v2 el 2026-10-14 (PR #11).
 
@@ -1582,9 +1583,9 @@ Las ramas van una encima de otra y se fusionan en este orden, cada una con su PR
 **Paso 4 — Desarrollo y ajuste (2026-10-18, ADR 0033):**
 
 - **Hallazgos** (ADR 0033):
-  - **La malla no es la fuente del error:** reproduce el perfil del solver con una mediana de ≤ 0.3 cm por estación.
-  - **CISS mide frente y trasera de esquina a esquina de la defensa:** D = 0 y L ≈ 0.77 del ancho en todas las zonas.
-  - **Diferencia de convención de energía:** E2 calibró con ½ m ΔV² y el solver usa la energía disipada. Explica −4 cm de aplastamiento medio en NHTSA frontal, que está dentro de muestra. No se cambia: CISS y E3, que son choques reales, no tienen sesgo con la convención actual. Queda como límite de E5-NHTSA.
+  - **La malla no es la fuente del error:** reproduce el perfil del solver con una mediana por zona de 0.04 a 0.31 cm por estación, salvo frente/trasera C con la regla nueva (0.86 cm); el p95 es de a lo más 1.47 cm (`e5_desarrollo.json`, `diagnostico_desarrollo`).
+  - **CISS mide frente y trasera de esquina a esquina de la defensa:** D = 0 en 3,600 de 3,609 casos y la mediana de L va de 0.75 a 0.80 del ancho.
+  - **Diferencia de convención de energía:** E2 calibró con ½ m ΔV² y el solver usa la energía disipada. Explica −4.3 cm de aplastamiento medio en NHTSA frontal, que está dentro de muestra; con la de CRASH3 serían +0.4 cm (`uv run croquis-eval e5-energia` → `e5_convencion_energia.json`). No se cambia: CISS y E3, que son choques reales, no tienen sesgo con la convención actual. Queda como límite de E5-NHTSA.
 - **Ajuste** (`eval/js/e5_ajuste.ts` → `eval/results/e5_ajuste.json`):
   - **Candidatos:** ancho igual a la mediana medida, con las cinco formas de Croquis o la empírica de desarrollo.
   - **Regla de adopción:** se adopta solo si ninguna métrica empeora.
@@ -1615,3 +1616,43 @@ Las ramas van una encima de otra y se fusionan en este orden, cada una con su PR
   - **E8:** sigue cumpliendo, 11/11 en solver y horneado y en los tres navegadores, con hashes nuevos.
   - **E7:** la paridad no cambia; solo variaron los tiempos, por la carga de la máquina, así que se conserva el resultado versionado.
 - **Incidente:** el sistema detuvo una corrida por falta de memoria. Se repitió una a la vez, sin otros procesos pesados.
+- **Corrección:** tres números de este paso salieron primero de análisis sueltos: la fidelidad de la malla, el D de CISS y el sesgo por la convención de energía. Ahora salen de scripts versionados (`e5_dano.ts` en desarrollo y `croquis-eval e5-energia`). Los valores medidos corrigen lo que decían antes: la fidelidad en frente/trasera C es de 0.86 cm, no ≤ 0.3, y D vale 0 en 3,600 de 3,609 casos, no en todos.
+- **CI:** cambió una sola referencia visual, `lateral_interseccion` con daño, que se regeneró en Linux y se revisó a ojo. El daño lateral de la pickup ahora se reparte en 0.62 del largo y es menos profundo (13.5 → 10.9 cm). Por eso la cámara de daño, que enfoca el aplastamiento mayor, muestra ahora el frente del hatchback. PR #44 fusionado con CI en verde.
+
+**Paso 5 — Test de E5, una sola corrida (2026-10-18, rama `feat/f10-test`):**
+
+- **Comprobaciones antes de correr:**
+  - `e5-particion --check` en verde;
+  - los casos reexportados son idénticos (mismo SHA-256);
+  - el árbol estaba limpio en `e74d971` (main con el PR #44).
+- **Corrida:** `pnpm --filter @croquis/eval-js e5 -- --test-final` → `eval/results/e5.json`. Fueron 5,613 casos, de los que se evaluaron 5,260, en 1,145 s. No se volvió a correr.
+- **Resultado** (medianas en cm; detalle por tipo, IC y diferencias pareadas en el JSON y en el README):
+
+  | Fuente             | Métrica            | Croquis  | Uniforme | Lineal simple |
+  | ------------------ | ------------------ | -------- | -------- | ------------- |
+  | CISS (3,208 casos) | por punto          | **7.50** | 7.69     | 8.03          |
+  | CISS (3,889)       | profundidad máxima | 9.77     | 9.66     | **8.81**      |
+  | CISS (3,889)       | ancho              | 52.24    | 50.57    | **45.91**     |
+  | CISS (3,889)       | área (cm·m)        | **6.63** | 6.79     | 6.97          |
+  | NHTSA (1,371)      | profundidad máxima | 11.38    | 11.99    | **8.71**      |
+  | NHTSA (1,371)      | ancho              | 32.51    | 35.40    | **30.34**     |
+  | NHTSA (1,371)      | área (cm·m)        | 13.76    | 13.98    | **13.22**     |
+
+- **Pendiente** (ya no se puede ajustar con este test): la lineal simple predice mejor la profundidad máxima y el ancho, porque los perfiles reales tienen un pico más marcado que las formas de Croquis.
+  - **Qué haría falta:** un modelo de forma con el pico más marcado.
+  - **Cómo validarlo:** con datos que el test no haya visto, por ejemplo CISS 2025 cuando se publique, o una partición nueva registrada antes de medir.
+  - **Poste:** queda peor que la uniforme en NHTSA (39 pruebas, IC amplio).
+
+### Resumen para René (F10, pasos 3 a 5)
+
+- **Qué quedó:** E5 medido.
+  - **Cómo se mide:** cada auto real se reproduce con el mismo cálculo de daño que la reconstrucción y la misma malla del visor, y se mide en los puntos donde se midió el auto real.
+  - **Muestra del test:** 5,260 casos (1,371 de NHTSA y 3,889 de CISS).
+  - **Croquis mejora a las dos líneas base:** en el perfil punto por punto y en el área.
+  - **Croquis queda peor:** en la profundidad máxima y el ancho, donde gana el perfil triangular.
+  - **Publicación:** el resultado se publica tal cual en el README.
+- **Cómo probarlo:**
+  1. `uv run croquis-eval e5-casos`.
+  2. `pnpm --filter @croquis/eval-js e5` para el desarrollo. El test ya se corrió y no se repite.
+  3. `uv run croquis-eval e5-energia`.
+- **Qué necesito de ti:** nada para el paso 6, la galería.
