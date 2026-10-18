@@ -19,6 +19,7 @@
     "@croquis/solver-ts": "workspace:*",
     "@croquis/viewer": "workspace:*",
     "next": "16.4.0",
+    "pdfmake": "0.3.11",
     "react": "catalog:",
     "react-dom": "catalog:",
     "zod": "catalog:"
@@ -29,6 +30,7 @@
     "@tailwindcss/turbopack": "catalog:",
     "@testing-library/react": "catalog:",
     "@types/node": "catalog:",
+    "@types/pdfmake": "0.3.3",
     "@types/react": "catalog:",
     "@types/react-dom": "catalog:",
     "@vitejs/plugin-react": "catalog:",
@@ -37,6 +39,7 @@
     "eslint-config-next": "16.4.0",
     "jsdom": "catalog:",
     "mediabunny": "1.61.6",
+    "pdfjs-dist": "6.4.299",
     "serwist": "9.5.13",
     "tailwindcss": "catalog:",
     "typescript": "catalog:",

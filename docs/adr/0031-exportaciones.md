@@ -1,6 +1,6 @@
 # ADR 0031 — Exportaciones: cuadros, glTF, video, informe y croquis (F9)
 
-- **Estado:** aceptado (2026-10-17). Se completa por partes; esta versión cubre cuadros PNG, glTF y video.
+- **Estado:** aceptado (2026-10-17). Se completa por partes; esta versión cubre cuadros PNG, glTF, video y el croquis 2D.
 - **Criterio (PLAN §7.9, §10):**
   - **Qué se exporta:** video (WebM y MP4), cuadros PNG, escena glTF, informe PDF y croquis 2D (SVG, PNG y PDF).
   - **La marca:** todo lleva «Reconstrucción ilustrativa generada a partir de un relato. No es un peritaje.», más la semilla y el hash de entradas.
@@ -34,6 +34,14 @@
    - **El respaldo sin WebCodecs:** MediaRecorder graba el lienzo compuesto, con un periodo completo después de cada cuadro (codifica en tiempo real y, con la CPU ocupada, puede soltar cuadros). Después, `retimeWebm` copia sus paquetes, sin recodificar, a un WebM nuevo con el cuadro k en k/fps y la marca en los metadatos. Así, el respaldo dura lo mismo que la reconstrucción aunque la máquina haya dibujado más lento. Si el navegador aun así pierde cuadros, el panel lo dice.
    - **MP4 sin WebCodecs:** no se puede generar, y el panel lo dice.
 
+6. **Croquis 2D** (SVG, PNG y PDF; PLAN §7.7):
+   - **El SVG:** `croquisSvg` (`@croquis/croquis-2d/export`) dibuja el mismo componente del editor en modo `standalone`, con `xmlns`, tamaño en píxeles y el fondo como rectángulo (los lectores de SVG y de PDF ignoran el `background` de CSS). No tiene edición y usa `renderToStaticMarkup`, como subruta aparte para no cargar `react-dom/server` en el editor.
+   - **Lo que muestra:** el norte y una barra de escala (1-2-5 × 10ⁿ m, hasta una quinta parte del ancho).
+   - **La marca:** la marca y los identificadores van en una franja clara abajo, para que se lean sobre el asfalto. La atribución de OSM, cuando aplica.
+   - **PNG:** a 2× (20 px por metro), con la marca también en `iTXt`.
+   - **PDF:** con pdfmake 0.3.11 (MIT). El croquis va como vector y la marca va al pie de cada página y en los metadatos (`Subject`).
+   - **La fuente del PDF:** Roboto 3.014 incrustada (SIL OFL 1.1, registrada en `assets/ASSETS.md`).
+
 ## Límites conocidos (glTF)
 
 - **Texturas procedurales:** los efectos TSL (texturas procedurales del asfalto) quedan como su color base.
@@ -41,6 +49,11 @@
 - **Lo que no entra:** el cielo, la lluvia y las luces del visor no se exportan. Son del entorno de dibujo, no de la reconstrucción.
 
 ## Pruebas
+
+- **Croquis:**
+  - **Unitarias:** SVG válido (`DOMParser`) con `xmlns`, tamaño, fondo y sin estilos ni eventos. Además, la marca, la semilla, el hash, la atribución de OSM, la escala y la barra de escala.
+  - **e2e `croquis-exportar.spec.ts`:** abre el SVG en el navegador, lee el PNG (tamaño e `iTXt`) y abre el PDF con pdf.js, que extrae el título, la marca al pie, `Subject` y el texto del croquis vectorial.
+  - **Revisión visual:** de la página del PDF dibujada con pdf.js.
 
 - **Unitarias (viewer):**
   - PNG: CRC-32 conocido, ida y vuelta de texto UTF-8 con propiedades y detección de chunks alterados.

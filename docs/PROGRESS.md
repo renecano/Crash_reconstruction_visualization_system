@@ -20,7 +20,8 @@ Reglas de trabajo: `CLAUDE.md`. Especificación: `PLAN.md`.
 - **F9, paso 5 hecho** (rama `feat/f9-offline`, ADR 0030): la demo funciona sin red. Serwist precarga 67 entradas (11.05 MB, `eval/results/f9_precarga.json`): trozos, cuerpos, texturas, el worker del solver y las páginas. La prueba e2e con la red cortada abre el inicio, el visor en alta (Rapier, ragdoll y texturas), el croquis con «Ver en 3D» (resultado completo en el worker) y el relato, que avisa que necesita red. En E6 (`e6_ab_sw_*.json`), sin costo medible en media; en baja con WebGPU, 0.10 ms por cuadro (85.5 contra 86.1 fps).
 - **F9, paso 6a hecho** (rama `feat/f9-exports`, ADR 0031): cuadro PNG (720p, 1080p, 4K o el del visor) y escena glTF con animación, desde el panel «Exportar» del visor. La leyenda vive en `@croquis/scene-schema` y va dibujada y como texto del archivo. Las pruebas e2e abren cada archivo descargado.
 - **F9, paso 6b hecho** (rama `feat/f9-video`, ADR 0031): video MP4 y WebM de toda la reconstrucción, dibujado cuadro por cuadro con WebCodecs y Mediabunny, con la marca en cada cuadro y en los metadatos. El respaldo con MediaRecorder se vuelve a fechar cuadro por cuadro.
-- **Siguiente paso concreto:** F9, paso 6c. Croquis 2D en SVG, PNG y PDF con la marca; después, el informe PDF (6d).
+- **F9, paso 6c hecho** (rama `feat/f9-croquis-export`, ADR 0031): el croquis se exporta en SVG, PNG y PDF desde el editor, con la marca, la semilla, el hash, la atribución de OSM, el norte y una barra de escala nueva.
+- **Siguiente paso concreto:** F9, paso 6d. Informe PDF: croquis, línea de tiempo, parámetros con fuente, supuestos, rangos, banderas, semilla, hash de entradas y leyenda (PLAN §7.9). Con él se cierra F9.
 - **E1 del prompt v2 en el primer test, hecho** (PR #14). Sonnet 0.875 → 0.919 y Haiku 0.852 → 0.896. Además, E1 ahora compara cada contrafactual con la repetición del mismo relato (McNemar por tipo): ningún tipo difiere del ruido, y las reglas cambian con el modelo del vehículo en 6 de 52 pares (ADR 0012 §10).
 - **F8** cerrada el 2026-10-17 (PR #20 a #24). **F0** cerrado el 2026-10-10 (PR #1), **F1** el 2026-10-10 (PR #3), **F2** el 2026-10-13 (PR #4), **F3** el 2026-10-13 (PR #5), **F4** el 2026-10-13 (PR #6), **F5** el 2026-10-13 (PR #7), **F6** el 2026-10-14 (PR #8), **F7** el 2026-10-14 (PR #9; pendientes registrados); migración a Vercel el 2026-10-14 (PR #10); test CISS y prompt v2 el 2026-10-14 (PR #11).
 
@@ -1430,5 +1431,23 @@ Las ramas van una encima de otra y se fusionan en este orden, cada una con su PR
   - Unitarias del video en verde.
 - **Instalado:** `mediabunny` 1.61.6 (viewer; dev de web para las pruebas), registrado en ADR 0001.
 - **Observación:** en una corrida de `pnpm test` con todos los paquetes en paralelo, `extraction/src/pipeline-parity.test.ts` (1,264 relatos) falló una vez en la laptop. Sola y en la siguiente corrida completa pasó (816 de 816). No se tocó `extraction`. Queda anotado por si se repite (posible límite de 30 s con la máquina cargada).
+
+**Paso 6c — Croquis exportable (2026-10-17, rama `feat/f9-croquis-export`, ADR 0031):**
+
+- **`croquis-2d`:**
+  - **Modo `standalone` del componente `Croquis`:** `xmlns`, tamaño en píxeles, fondo como rectángulo y sin edición.
+  - **Leyenda compartida y legible:** la de `@croquis/scene-schema` (texto, y semilla con el hash) sobre una franja clara.
+  - **Barra de escala nueva:** `scaleBarMeters`.
+  - **`croquisSvg`:** en la subruta `@croquis/croquis-2d/export`.
+- **Web:**
+  - **Botones en el croquis:** SVG, PNG y PDF.
+  - **`lib/croquis-export.ts`:** el PNG a 2× con `iTXt`.
+  - **`lib/pdf.ts`:** pdfmake con la marca al pie de cada página y en los metadatos.
+- **Evidencia:**
+  - **Pruebas:** 6 unitarias nuevas en `croquis-2d` y 3 e2e que abren cada archivo (el PDF con pdf.js).
+  - **Revisión visual del PDF:** se corrigió la legibilidad de la marca sobre el asfalto con una franja clara.
+- **Instalado:**
+  - **En `apps/web`:** `pdfmake` 0.3.11 y, como dev, `@types/pdfmake` 0.3.3 y `pdfjs-dist` 6.4.299.
+  - **La fuente:** Roboto 3.014 (OFL 1.1), registrada en `assets/ASSETS.md`.
 
 **Pendientes de F8 que siguen abiertos:** OSM en producción, rayas y banquetas sobre calles de OSM, semáforo peatonal, textura de grava, corte del camellón en cruces y texturas en caras verticales. Las sombras de los focos ya están en alta y ultra (ADR 0026).

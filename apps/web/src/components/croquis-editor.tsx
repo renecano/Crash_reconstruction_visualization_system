@@ -13,6 +13,8 @@ import {
 } from "@croquis/scene-schema";
 import { useRouter } from "next/navigation";
 import { useEffect, useMemo, useState } from "react";
+import { croquisPdf, croquisPng, croquisSvgFile } from "@/lib/croquis-export";
+import { downloadBytes, safeName } from "@/lib/download";
 import { guardarEscenaPropia } from "@/lib/escena-propia";
 import { RELATO_SPEC_KEY } from "@/lib/relato-api";
 import { Legend } from "./legend";
@@ -23,6 +25,8 @@ function toJson(spec: EscenaSpec): string {
 
 export function CroquisEditor({ initial = "alcance" }: { initial?: FixtureName }) {
   const router = useRouter();
+  const [exportando, setExportando] = useState(false);
+  const [exportError, setExportError] = useState<string | null>(null);
   const [name, setName] = useState<FixtureName>(initial);
   const [spec, setSpec] = useState<EscenaSpec>(() => loadFixture(initial));
   const [jsonText, setJsonText] = useState<string>(() => toJson(loadFixture(initial)));
@@ -71,6 +75,21 @@ export function CroquisEditor({ initial = "alcance" }: { initial?: FixtureName }
     setJsonText(toJson(result.spec));
     setFromRelato(true);
   }, []);
+
+  const exportCroquis = async (fmt: "svg" | "png" | "pdf") => {
+    setExportando(true);
+    setExportError(null);
+    const file = `croquis-${safeName(spec.meta.titulo ?? spec.meta.id)}.${fmt}`;
+    try {
+      if (fmt === "svg") downloadBytes(await croquisSvgFile(spec), file, "image/svg+xml");
+      else if (fmt === "png") downloadBytes(await croquisPng(spec), file, "image/png");
+      else downloadBytes(await croquisPdf(spec), file, "application/pdf");
+    } catch (e) {
+      setExportError(e instanceof Error ? e.message : String(e));
+    } finally {
+      setExportando(false);
+    }
+  };
 
   const applyJson = () => {
     let parsed: unknown;
@@ -193,6 +212,38 @@ export function CroquisEditor({ initial = "alcance" }: { initial?: FixtureName }
           >
             Ver en 3D
           </button>
+        </div>
+        <div
+          className="flex flex-wrap items-center gap-2 text-sm"
+          role="group"
+          aria-label="Exportar el croquis"
+        >
+          <span className="text-neutral-600 dark:text-neutral-400">
+            Exportar el croquis (con la marca de reconstrucción ilustrativa):
+          </span>
+          {(
+            [
+              ["svg", "SVG"],
+              ["png", "PNG"],
+              ["pdf", "PDF"],
+            ] as const
+          ).map(([fmt, label]) => (
+            <button
+              key={fmt}
+              type="button"
+              data-testid={`croquis-${fmt}`}
+              disabled={exportando}
+              className="rounded border border-neutral-400 px-3 py-1 hover:bg-neutral-100 disabled:opacity-50 dark:hover:bg-neutral-800"
+              onClick={() => void exportCroquis(fmt)}
+            >
+              {label}
+            </button>
+          ))}
+          {exportError ? (
+            <span role="alert" className="text-red-700 dark:text-red-400">
+              {exportError}
+            </span>
+          ) : null}
         </div>
         <textarea
           data-testid="json"
