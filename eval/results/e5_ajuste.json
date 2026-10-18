@@ -1,0 +1,848 @@
+{
+  "name": "e5_ajuste",
+  "generated_at": "2026-10-18T15:25:51.513Z",
+  "git_commit": "1fb05ad",
+  "particion": "desarrollo",
+  "metodo": "ADR 0033: ancho = mediana de L/largo de la cara; formas = las cinco de Croquis y la empírica de desarrollo; se adopta un candidato solo si ninguna métrica empeora respecto a la regla actual (por punto con ≥ 15 casos ordenados de CISS) y gana el de menor error por punto. Errores absolutos en cm (área en cm·m), perfil del solver en las estaciones reales.",
+  "grupos": {
+    "FB:C": {
+      "n": 18,
+      "fraccion_ancho_mediana": 0.888,
+      "forma_actual": "centro",
+      "forma_empirica": null,
+      "eleccion": "uniforme",
+      "forma_elegida": [
+        1,
+        1,
+        1,
+        1,
+        1,
+        1
+      ],
+      "actual": {
+        "n": 18,
+        "n_punto": 0,
+        "punto": null,
+        "maximo": 16.29,
+        "ancho": 94.49,
+        "area": 31.83
+      },
+      "candidatos": {
+        "uniforme": {
+          "n": 18,
+          "n_punto": 0,
+          "punto": null,
+          "maximo": 7.97,
+          "ancho": 14.58,
+          "area": 11.93
+        },
+        "izquierda": {
+          "n": 18,
+          "n_punto": 0,
+          "punto": null,
+          "maximo": 15.77,
+          "ancho": 18.59,
+          "area": 18.62
+        },
+        "derecha": {
+          "n": 18,
+          "n_punto": 0,
+          "punto": null,
+          "maximo": 15.77,
+          "ancho": 18.59,
+          "area": 18.62
+        },
+        "centro": {
+          "n": 18,
+          "n_punto": 0,
+          "punto": null,
+          "maximo": 8.47,
+          "ancho": 18.59,
+          "area": 12.75
+        },
+        "poste": {
+          "n": 18,
+          "n_punto": 0,
+          "punto": null,
+          "maximo": 15.92,
+          "ancho": 18.59,
+          "area": 17.58
+        }
+      }
+    },
+    "FB:D": {
+      "n": 3058,
+      "fraccion_ancho_mediana": 0.795,
+      "forma_actual": "uniforme",
+      "forma_empirica": {
+        "shape": [
+          0.75,
+          0.68,
+          1,
+          1,
+          0.68,
+          0.75
+        ],
+        "n": 239
+      },
+      "eleccion": "regla_actual",
+      "forma_elegida": null,
+      "actual": {
+        "n": 3057,
+        "n_punto": 238,
+        "punto": 7.62,
+        "maximo": 11.53,
+        "ancho": 44,
+        "area": 9.98
+      },
+      "candidatos": {
+        "uniforme": {
+          "n": 3057,
+          "n_punto": 238,
+          "punto": 8.44,
+          "maximo": 8.89,
+          "ancho": 17.93,
+          "area": 10.02
+        },
+        "izquierda": {
+          "n": 3057,
+          "n_punto": 238,
+          "punto": 9.16,
+          "maximo": 12.18,
+          "ancho": 19.12,
+          "area": 10.95
+        },
+        "derecha": {
+          "n": 3057,
+          "n_punto": 238,
+          "punto": 8.96,
+          "maximo": 12.18,
+          "ancho": 19.15,
+          "area": 10.95
+        },
+        "centro": {
+          "n": 3057,
+          "n_punto": 238,
+          "punto": 8.12,
+          "maximo": 9.06,
+          "ancho": 18.41,
+          "area": 9.94
+        },
+        "poste": {
+          "n": 3057,
+          "n_punto": 238,
+          "punto": 8.57,
+          "maximo": 13,
+          "ancho": 19.85,
+          "area": 10.38
+        },
+        "empirica": {
+          "n": 3057,
+          "n_punto": 238,
+          "punto": 8.03,
+          "maximo": 7.81,
+          "ancho": 18.19,
+          "area": 10.09
+        }
+      }
+    },
+    "FB:L": {
+      "n": 247,
+      "fraccion_ancho_mediana": 0.765,
+      "forma_actual": "izquierda",
+      "forma_empirica": {
+        "shape": [
+          1,
+          0.36,
+          0.33,
+          0.26,
+          0.15,
+          0.32
+        ],
+        "n": 62
+      },
+      "eleccion": "regla_actual",
+      "forma_elegida": null,
+      "actual": {
+        "n": 247,
+        "n_punto": 32,
+        "punto": 4.7,
+        "maximo": 9.61,
+        "ancho": 71.17,
+        "area": 3.63
+      },
+      "candidatos": {
+        "uniforme": {
+          "n": 247,
+          "n_punto": 32,
+          "punto": 5.8,
+          "maximo": 7.43,
+          "ancho": 18,
+          "area": 7.96
+        },
+        "izquierda": {
+          "n": 247,
+          "n_punto": 32,
+          "punto": 5.3,
+          "maximo": 8.22,
+          "ancho": 24.53,
+          "area": 5.66
+        },
+        "derecha": {
+          "n": 247,
+          "n_punto": 32,
+          "punto": 9.01,
+          "maximo": 9.23,
+          "ancho": 24.53,
+          "area": 8.55
+        },
+        "centro": {
+          "n": 247,
+          "n_punto": 32,
+          "punto": 6.83,
+          "maximo": 8.12,
+          "ancho": 20.17,
+          "area": 7.42
+        },
+        "poste": {
+          "n": 247,
+          "n_punto": 32,
+          "punto": 7.41,
+          "maximo": 9.04,
+          "ancho": 28.36,
+          "area": 7.23
+        },
+        "empirica": {
+          "n": 247,
+          "n_punto": 32,
+          "punto": 5.41,
+          "maximo": 8,
+          "ancho": 18.7,
+          "area": 5.78
+        }
+      }
+    },
+    "FB:R": {
+      "n": 229,
+      "fraccion_ancho_mediana": 0.773,
+      "forma_actual": "derecha",
+      "forma_empirica": {
+        "shape": [
+          0.32,
+          0.15,
+          0.26,
+          0.33,
+          0.36,
+          1
+        ],
+        "n": 62
+      },
+      "eleccion": "regla_actual",
+      "forma_elegida": null,
+      "actual": {
+        "n": 228,
+        "n_punto": 30,
+        "punto": 4.82,
+        "maximo": 10.25,
+        "ancho": 74.27,
+        "area": 3.55
+      },
+      "candidatos": {
+        "uniforme": {
+          "n": 228,
+          "n_punto": 30,
+          "punto": 6.01,
+          "maximo": 6.6,
+          "ancho": 16.64,
+          "area": 6.8
+        },
+        "izquierda": {
+          "n": 228,
+          "n_punto": 30,
+          "punto": 7.62,
+          "maximo": 8.76,
+          "ancho": 25.03,
+          "area": 6.79
+        },
+        "derecha": {
+          "n": 228,
+          "n_punto": 30,
+          "punto": 4.35,
+          "maximo": 7.95,
+          "ancho": 25.03,
+          "area": 5.36
+        },
+        "centro": {
+          "n": 228,
+          "n_punto": 30,
+          "punto": 6.48,
+          "maximo": 7.76,
+          "ancho": 18.52,
+          "area": 6.35
+        },
+        "poste": {
+          "n": 228,
+          "n_punto": 30,
+          "punto": 7.06,
+          "maximo": 8.5,
+          "ancho": 28.64,
+          "area": 6.44
+        },
+        "empirica": {
+          "n": 228,
+          "n_punto": 30,
+          "punto": 4.21,
+          "maximo": 6.74,
+          "ancho": 17.57,
+          "area": 5.77
+        }
+      }
+    },
+    "FB:Y": {
+      "n": 486,
+      "fraccion_ancho_mediana": 0.753,
+      "forma_actual": "izquierda",
+      "forma_empirica": {
+        "shape": [
+          1,
+          0.55,
+          0.57,
+          0.44,
+          0.3,
+          0.42
+        ],
+        "n": 105
+      },
+      "eleccion": "regla_actual",
+      "forma_elegida": null,
+      "actual": {
+        "n": 486,
+        "n_punto": 51,
+        "punto": 4.84,
+        "maximo": 8.69,
+        "ancho": 30.41,
+        "area": 5.69
+      },
+      "candidatos": {
+        "uniforme": {
+          "n": 486,
+          "n_punto": 51,
+          "punto": 6.39,
+          "maximo": 7.53,
+          "ancho": 19.9,
+          "area": 7
+        },
+        "izquierda": {
+          "n": 486,
+          "n_punto": 51,
+          "punto": 5.4,
+          "maximo": 8.27,
+          "ancho": 25.52,
+          "area": 5.82
+        },
+        "derecha": {
+          "n": 486,
+          "n_punto": 51,
+          "punto": 7.89,
+          "maximo": 9.41,
+          "ancho": 25.52,
+          "area": 7.76
+        },
+        "centro": {
+          "n": 486,
+          "n_punto": 51,
+          "punto": 6.27,
+          "maximo": 8.05,
+          "ancho": 21.41,
+          "area": 7.28
+        },
+        "poste": {
+          "n": 486,
+          "n_punto": 51,
+          "punto": 6.32,
+          "maximo": 9.21,
+          "ancho": 27.47,
+          "area": 7.1
+        },
+        "empirica": {
+          "n": 486,
+          "n_punto": 51,
+          "punto": 5.82,
+          "maximo": 7.79,
+          "ancho": 20.1,
+          "area": 6.28
+        }
+      }
+    },
+    "FB:Z": {
+      "n": 453,
+      "fraccion_ancho_mediana": 0.758,
+      "forma_actual": "derecha",
+      "forma_empirica": {
+        "shape": [
+          0.42,
+          0.3,
+          0.44,
+          0.57,
+          0.55,
+          1
+        ],
+        "n": 105
+      },
+      "eleccion": "regla_actual",
+      "forma_elegida": null,
+      "actual": {
+        "n": 453,
+        "n_punto": 54,
+        "punto": 5.74,
+        "maximo": 8.01,
+        "ancho": 30.87,
+        "area": 5.44
+      },
+      "candidatos": {
+        "uniforme": {
+          "n": 453,
+          "n_punto": 54,
+          "punto": 7.52,
+          "maximo": 7.49,
+          "ancho": 17.36,
+          "area": 6.82
+        },
+        "izquierda": {
+          "n": 453,
+          "n_punto": 54,
+          "punto": 9.44,
+          "maximo": 8.77,
+          "ancho": 23.64,
+          "area": 7.46
+        },
+        "derecha": {
+          "n": 453,
+          "n_punto": 54,
+          "punto": 5.89,
+          "maximo": 7.23,
+          "ancho": 23.64,
+          "area": 5.32
+        },
+        "centro": {
+          "n": 453,
+          "n_punto": 54,
+          "punto": 7.42,
+          "maximo": 7.43,
+          "ancho": 19.91,
+          "area": 6.86
+        },
+        "poste": {
+          "n": 453,
+          "n_punto": 54,
+          "punto": 7.84,
+          "maximo": 8.41,
+          "ancho": 26.14,
+          "area": 6.48
+        },
+        "empirica": {
+          "n": 453,
+          "n_punto": 54,
+          "punto": 6.44,
+          "maximo": 6.99,
+          "ancho": 18.12,
+          "area": 5.78
+        }
+      }
+    },
+    "LR:B": {
+      "n": 47,
+      "fraccion_ancho_mediana": 0.206,
+      "forma_actual": "derecha",
+      "forma_empirica": null,
+      "eleccion": "uniforme",
+      "forma_elegida": [
+        1,
+        1,
+        1,
+        1,
+        1,
+        1
+      ],
+      "actual": {
+        "n": 47,
+        "n_punto": 2,
+        "punto": 6.57,
+        "maximo": 9.77,
+        "ancho": 80.24,
+        "area": 4.9
+      },
+      "candidatos": {
+        "uniforme": {
+          "n": 47,
+          "n_punto": 2,
+          "punto": 5.92,
+          "maximo": 8.82,
+          "ancho": 57.72,
+          "area": 4.82
+        },
+        "izquierda": {
+          "n": 47,
+          "n_punto": 2,
+          "punto": 6.95,
+          "maximo": 9.4,
+          "ancho": 67.16,
+          "area": 4.82
+        },
+        "derecha": {
+          "n": 47,
+          "n_punto": 2,
+          "punto": 5.19,
+          "maximo": 8.97,
+          "ancho": 67.16,
+          "area": 4.29
+        },
+        "centro": {
+          "n": 47,
+          "n_punto": 2,
+          "punto": 5.05,
+          "maximo": 9,
+          "ancho": 60.72,
+          "area": 4.82
+        },
+        "poste": {
+          "n": 47,
+          "n_punto": 2,
+          "punto": 4.8,
+          "maximo": 9,
+          "ancho": 68,
+          "area": 4.82
+        }
+      }
+    },
+    "LR:D": {
+      "n": 111,
+      "fraccion_ancho_mediana": 0.618,
+      "forma_actual": "uniforme",
+      "forma_empirica": null,
+      "eleccion": "centro",
+      "forma_elegida": [
+        0.2,
+        0.6,
+        1,
+        1,
+        0.6,
+        0.2
+      ],
+      "actual": {
+        "n": 111,
+        "n_punto": 10,
+        "punto": 4.75,
+        "maximo": 8.57,
+        "ancho": 231,
+        "area": 10.09
+      },
+      "candidatos": {
+        "uniforme": {
+          "n": 111,
+          "n_punto": 10,
+          "punto": 4.46,
+          "maximo": 7.22,
+          "ancho": 107.9,
+          "area": 8.31
+        },
+        "izquierda": {
+          "n": 111,
+          "n_punto": 10,
+          "punto": 4.66,
+          "maximo": 6.02,
+          "ancho": 119.24,
+          "area": 9.17
+        },
+        "derecha": {
+          "n": 111,
+          "n_punto": 10,
+          "punto": 4.46,
+          "maximo": 6,
+          "ancho": 119.24,
+          "area": 9.07
+        },
+        "centro": {
+          "n": 111,
+          "n_punto": 10,
+          "punto": 4.59,
+          "maximo": 5.97,
+          "ancho": 107.9,
+          "area": 8.42
+        },
+        "poste": {
+          "n": 111,
+          "n_punto": 10,
+          "punto": 4.57,
+          "maximo": 5.58,
+          "ancho": 135.52,
+          "area": 8.34
+        }
+      }
+    },
+    "LR:F": {
+      "n": 150,
+      "fraccion_ancho_mediana": 0.203,
+      "forma_actual": "izquierda",
+      "forma_empirica": null,
+      "eleccion": "regla_actual",
+      "forma_elegida": null,
+      "actual": {
+        "n": 150,
+        "n_punto": 12,
+        "punto": 7.9,
+        "maximo": 7.83,
+        "ancho": 72.43,
+        "area": 4.25
+      },
+      "candidatos": {
+        "uniforme": {
+          "n": 150,
+          "n_punto": 12,
+          "punto": 9.09,
+          "maximo": 8.16,
+          "ancho": 17.78,
+          "area": 6.37
+        },
+        "izquierda": {
+          "n": 150,
+          "n_punto": 12,
+          "punto": 9.27,
+          "maximo": 11.21,
+          "ancho": 17.53,
+          "area": 4.83
+        },
+        "derecha": {
+          "n": 150,
+          "n_punto": 12,
+          "punto": 10.8,
+          "maximo": 11.96,
+          "ancho": 17.53,
+          "area": 5.16
+        },
+        "centro": {
+          "n": 150,
+          "n_punto": 12,
+          "punto": 9.87,
+          "maximo": 10.77,
+          "ancho": 17.28,
+          "area": 6.23
+        },
+        "poste": {
+          "n": 150,
+          "n_punto": 12,
+          "punto": 11.28,
+          "maximo": 12.59,
+          "ancho": 16.49,
+          "area": 5.7
+        }
+      }
+    },
+    "LR:P": {
+      "n": 620,
+      "fraccion_ancho_mediana": 0.515,
+      "forma_actual": "centro",
+      "forma_empirica": null,
+      "eleccion": "centro",
+      "forma_elegida": [
+        0.2,
+        0.6,
+        1,
+        1,
+        0.6,
+        0.2
+      ],
+      "actual": {
+        "n": 620,
+        "n_punto": 13,
+        "punto": 5.36,
+        "maximo": 8.18,
+        "ancho": 66.68,
+        "area": 11.54
+      },
+      "candidatos": {
+        "uniforme": {
+          "n": 620,
+          "n_punto": 13,
+          "punto": 5.04,
+          "maximo": 7.75,
+          "ancho": 59.09,
+          "area": 11.1
+        },
+        "izquierda": {
+          "n": 620,
+          "n_punto": 13,
+          "punto": 4.48,
+          "maximo": 8.64,
+          "ancho": 52.5,
+          "area": 10.48
+        },
+        "derecha": {
+          "n": 620,
+          "n_punto": 13,
+          "punto": 5.38,
+          "maximo": 8.57,
+          "ancho": 52.5,
+          "area": 10.3
+        },
+        "centro": {
+          "n": 620,
+          "n_punto": 13,
+          "punto": 4.84,
+          "maximo": 7.02,
+          "ancho": 54.93,
+          "area": 11.15
+        },
+        "poste": {
+          "n": 620,
+          "n_punto": 13,
+          "punto": 5.43,
+          "maximo": 8.54,
+          "ancho": 54.24,
+          "area": 11.12
+        }
+      }
+    },
+    "LR:Y": {
+      "n": 332,
+      "fraccion_ancho_mediana": 0.409,
+      "forma_actual": "izquierda",
+      "forma_empirica": {
+        "shape": [
+          0.79,
+          0.95,
+          1,
+          1,
+          0.63,
+          0.26
+        ],
+        "n": 26
+      },
+      "eleccion": "regla_actual",
+      "forma_elegida": null,
+      "actual": {
+        "n": 332,
+        "n_punto": 26,
+        "punto": 4.3,
+        "maximo": 6.45,
+        "ancho": 90.54,
+        "area": 7.14
+      },
+      "candidatos": {
+        "uniforme": {
+          "n": 332,
+          "n_punto": 26,
+          "punto": 5.71,
+          "maximo": 5.91,
+          "ancho": 39.31,
+          "area": 7.06
+        },
+        "izquierda": {
+          "n": 332,
+          "n_punto": 26,
+          "punto": 5.15,
+          "maximo": 6.73,
+          "ancho": 43.3,
+          "area": 7.47
+        },
+        "derecha": {
+          "n": 332,
+          "n_punto": 26,
+          "punto": 6.28,
+          "maximo": 6.66,
+          "ancho": 43.3,
+          "area": 6.26
+        },
+        "centro": {
+          "n": 332,
+          "n_punto": 26,
+          "punto": 5.24,
+          "maximo": 6.33,
+          "ancho": 39.99,
+          "area": 7.04
+        },
+        "poste": {
+          "n": 332,
+          "n_punto": 26,
+          "punto": 4.95,
+          "maximo": 6.8,
+          "ancho": 42.5,
+          "area": 7.21
+        },
+        "empirica": {
+          "n": 332,
+          "n_punto": 26,
+          "punto": 5.17,
+          "maximo": 5.99,
+          "ancho": 39.25,
+          "area": 7.29
+        }
+      }
+    },
+    "LR:Z": {
+      "n": 219,
+      "fraccion_ancho_mediana": 0.37,
+      "forma_actual": "derecha",
+      "forma_empirica": null,
+      "eleccion": "uniforme",
+      "forma_elegida": [
+        1,
+        1,
+        1,
+        1,
+        1,
+        1
+      ],
+      "actual": {
+        "n": 219,
+        "n_punto": 14,
+        "punto": 4.42,
+        "maximo": 8.21,
+        "ancho": 105.95,
+        "area": 8.11
+      },
+      "candidatos": {
+        "uniforme": {
+          "n": 219,
+          "n_punto": 14,
+          "punto": 4.08,
+          "maximo": 7.43,
+          "ancho": 77.56,
+          "area": 6.29
+        },
+        "izquierda": {
+          "n": 219,
+          "n_punto": 14,
+          "punto": 4.25,
+          "maximo": 7,
+          "ancho": 87,
+          "area": 6.43
+        },
+        "derecha": {
+          "n": 219,
+          "n_punto": 14,
+          "punto": 4.08,
+          "maximo": 6.94,
+          "ancho": 87,
+          "area": 6.96
+        },
+        "centro": {
+          "n": 219,
+          "n_punto": 14,
+          "punto": 4.08,
+          "maximo": 7,
+          "ancho": 78.13,
+          "area": 6.54
+        },
+        "poste": {
+          "n": 219,
+          "n_punto": 14,
+          "punto": 4.08,
+          "maximo": 6.55,
+          "ancho": 90.12,
+          "area": 6.58
+        }
+      }
+    }
+  }
+}
