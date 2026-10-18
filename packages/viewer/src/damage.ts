@@ -437,17 +437,18 @@ export function damageInfluence(t: number): number {
   return smoothstep(0, CONTACT_DURATION_S, t);
 }
 
+/** Punto de la superficie exterior: posición a lo largo de la cara y hundimiento hacia adentro. */
+interface SurfacePoint {
+  u: number;
+  disp: number;
+}
+
 /**
- * Mide el perfil de aplastamiento sobre la malla deformada (influencia 1) en las 6 estaciones del
- * solver. Toma los vértices de la superficie exterior (los más externos de su vecindad, dentro de
- * la banda vertical central de la zona) e interpola linealmente su desplazamiento hacia adentro
- * entre los vecinos a cada lado de la estación: mide la superficie, no un solo vértice.
+ * Vértices de la superficie exterior de la malla deformada (influencia 1) dentro de la banda
+ * vertical central de la zona: los más externos de su vecindad, con su posición a lo largo de la
+ * cara y su desplazamiento hacia adentro.
  */
-export function measureCrushProfile(
-  group: Group,
-  field: DisplacementField,
-  input: DamageInput,
-): number[] {
+function outerSurface(group: Group, field: DisplacementField): SurfacePoint[] {
   const [y0, y1] = field.band;
   const mid = (y0 + y1) / 2;
   const band = Math.max(0.05, Math.min(0.15, (y1 - y0) / 2));
@@ -477,37 +478,80 @@ export function measureCrushProfile(
     const b = Math.floor(q.u / BIN);
     bins.set(b, Math.max(bins.get(b) ?? -Infinity, q.before));
   }
-  const outer = pts.filter((q) => {
+  return pts.filter((q) => {
     const b = Math.floor(q.u / BIN);
     let localMax = -Infinity;
     for (let k = b - 5; k <= b + 5; k++) localMax = Math.max(localMax, bins.get(k) ?? -Infinity);
     return q.before >= localMax - 0.01;
   });
-  const out: number[] = [];
-  for (let k = 0; k < 6; k++) {
-    const u = input.centro + (0.5 - k / 5) * input.ancho;
-    let lo: { u: number; disp: number } | undefined;
-    let hi: { u: number; disp: number } | undefined;
-    for (const q of outer) {
-      if (q.u <= u && (!lo || q.u > lo.u || (q.u === lo.u && q.disp > lo.disp))) lo = q;
-      if (q.u >= u && (!hi || q.u < hi.u || (q.u === hi.u && q.disp > hi.disp))) hi = q;
-    }
-    if (lo && hi && hi.u !== lo.u) {
-      out.push(lo.disp + ((hi.disp - lo.disp) * (u - lo.u)) / (hi.u - lo.u));
-    } else if (lo && hi) {
-      out.push(Math.max(lo.disp, hi.disp));
-    } else {
-      // En el borde de la cara solo hay vértices de un lado: se extrapola con los dos más
-      // cercanos (exacto para un perfil lineal por tramos).
-      const side = outer
-        .filter((q) => (lo ? q.u <= u : q.u >= u))
-        .sort((a, b) => Math.abs(a.u - u) - Math.abs(b.u - u));
-      const a = side[0];
-      const b = side.find((q) => a && Math.abs(q.u - a.u) > 0.01);
-      if (!a) out.push(Number.NaN);
-      else if (!b) out.push(a.disp);
-      else out.push(Math.max(0, a.disp + ((b.disp - a.disp) * (u - a.u)) / (b.u - a.u)));
-    }
+}
+
+/** Hundimiento en u, interpolado linealmente entre los vecinos de la superficie a cada lado. */
+function interpolate(outer: readonly SurfacePoint[], u: number): number {
+  let lo: SurfacePoint | undefined;
+  let hi: SurfacePoint | undefined;
+  for (const q of outer) {
+    if (q.u <= u && (!lo || q.u > lo.u || (q.u === lo.u && q.disp > lo.disp))) lo = q;
+    if (q.u >= u && (!hi || q.u < hi.u || (q.u === hi.u && q.disp > hi.disp))) hi = q;
   }
-  return out;
+  if (lo && hi && hi.u !== lo.u)
+    return lo.disp + ((hi.disp - lo.disp) * (u - lo.u)) / (hi.u - lo.u);
+  if (lo && hi) return Math.max(lo.disp, hi.disp);
+  // En el borde de la cara solo hay vértices de un lado: se extrapola con los dos más cercanos
+  // (exacto para un perfil lineal por tramos).
+  const side = outer
+    .filter((q) => (lo ? q.u <= u : q.u >= u))
+    .sort((a, b) => Math.abs(a.u - u) - Math.abs(b.u - u));
+  const a = side[0];
+  const b = side.find((q) => a && Math.abs(q.u - a.u) > 0.01);
+  if (!a) return Number.NaN;
+  if (!b) return a.disp;
+  return Math.max(0, a.disp + ((b.disp - a.disp) * (u - a.u)) / (b.u - a.u));
+}
+
+/**
+ * Hundimiento de la malla deformada en posiciones arbitrarias a lo largo de la cara (m; mismo
+ * marco que `DamageInput.centro`). Mide la superficie, no un solo vértice (E5: las estaciones donde
+ * se midió el vehículo real).
+ */
+export function measureCrushAt(
+  group: Group,
+  field: DisplacementField,
+  positions: readonly number[],
+): number[] {
+  const outer = outerSurface(group, field);
+  return positions.map((u) => interpolate(outer, u));
+}
+
+/**
+ * Ancho dañado de la malla: extensión a lo largo de la cara donde la superficie se hunde al menos
+ * `threshold` (m). 0 si no se hunde en ningún lado.
+ */
+export function measureDamagedWidth(
+  group: Group,
+  field: DisplacementField,
+  threshold = 0.02,
+): number {
+  const hit = outerSurface(group, field).filter((q) => q.disp >= threshold);
+  if (hit.length === 0) return 0;
+  let lo = Infinity;
+  let hi = -Infinity;
+  for (const q of hit) {
+    lo = Math.min(lo, q.u);
+    hi = Math.max(hi, q.u);
+  }
+  return hi - lo;
+}
+
+/**
+ * Mide el perfil de aplastamiento sobre la malla deformada (influencia 1) en las 6 estaciones del
+ * solver (C1 en `centro + ancho/2`).
+ */
+export function measureCrushProfile(
+  group: Group,
+  field: DisplacementField,
+  input: DamageInput,
+): number[] {
+  const stations = Array.from({ length: 6 }, (_, k) => input.centro + (0.5 - k / 5) * input.ancho);
+  return measureCrushAt(group, field, stations);
 }

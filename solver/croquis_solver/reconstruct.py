@@ -553,20 +553,41 @@ def _primary_event(spec: JsonObj) -> JsonObj | None:
     return None
 
 
+# Forma y fracción del largo de la cara dañada por cara y zona horizontal del CDC. Los grupos
+# ajustados con E5 en desarrollo (ADR 0033): frente/trasera C, y costados D, P, Z y B; el resto
+# conserva la regla original, que E5 no pudo mejorar sin empeorar alguna métrica. Las letras de
+# la otra cara (el esquema las acepta en cualquiera) conservan su regla original.
+_CRUSH_RULES: dict[str, dict[str, tuple[str, float]]] = {
+    "FB": {
+        "D": ("uniforme", 1.0),
+        "Y": ("izquierda", 0.66),
+        "Z": ("derecha", 0.66),
+        "L": ("izquierda", 0.4),
+        "R": ("derecha", 0.4),
+        "C": ("uniforme", 0.89),
+        "F": ("izquierda", 0.4),
+        "B": ("derecha", 0.4),
+    },
+    "LR": {
+        "D": ("centro", 0.62),
+        "Y": ("izquierda", 0.66),
+        "Z": ("uniforme", 0.37),
+        "F": ("izquierda", 0.4),
+        "B": ("uniforme", 0.21),
+        "P": ("centro", 0.52),
+        "L": ("izquierda", 0.4),
+        "R": ("derecha", 0.4),
+    },
+}
+
+
 def _crush_shape_and_width(cdc: JsonObj | None, body: Body2D) -> tuple[list[float], float]:
     lado = (cdc or {}).get("lado", "F")
     zona_h = (cdc or {}).get("zona_horizontal", "D")
-    side_len = body.width if lado in {"F", "B"} else body.length
-    if zona_h == "D":
-        return TRIANGULAR_SHAPES["uniforme"], side_len
-    if zona_h in {"Y", "Z"}:
-        shape = TRIANGULAR_SHAPES["izquierda"] if zona_h == "Y" else TRIANGULAR_SHAPES["derecha"]
-        return shape, 0.66 * side_len
-    if zona_h in {"L", "F"}:
-        return TRIANGULAR_SHAPES["izquierda"], 0.4 * side_len
-    if zona_h in {"R", "B"}:
-        return TRIANGULAR_SHAPES["derecha"], 0.4 * side_len
-    return TRIANGULAR_SHAPES["centro"], 0.4 * side_len
+    face = "FB" if lado in {"F", "B"} else "LR"
+    side_len = body.width if face == "FB" else body.length
+    shape, frac = _CRUSH_RULES[face].get(str(zona_h), ("centro", 0.4))
+    return TRIANGULAR_SHAPES[shape], frac * side_len
 
 
 _ALONG_FRONT_BACK = {"L": 1 / 3, "C": 0.0, "R": -1 / 3, "Y": 1 / 6, "Z": -1 / 6, "D": 0.0}

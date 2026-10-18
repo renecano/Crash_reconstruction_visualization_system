@@ -1,0 +1,1926 @@
+{
+  "name": "e5_desarrollo",
+  "generated_at": "2026-10-18T15:37:55.492Z",
+  "git_commit": "54cba9f",
+  "seed": 20261017,
+  "particion": "desarrollo",
+  "metodo": "ADR 0032: Croquis (etapa de daño del solver TS + malla del visor, medida en las estaciones reales), uniforme y lineal simple (misma energía, ancho y centro). Errores absolutos en cm (área en cm·m); mediana y media por caso, IC 90 % de la mediana por bootstrap (2,000, semilla 20261017); diferencia pareada línea base − Croquis (positiva: Croquis se equivoca menos). Error por punto solo en CISS con el orden de C1–C6 conocido; NHTSA centrado en lo predicho (sin posición).",
+  "maquina": {
+    "cpus": 8,
+    "ram_gb": 8
+  },
+  "casos": 6811,
+  "evaluados": 6350,
+  "segundos": 609,
+  "resumen": {
+    "nhtsa": {
+      "frontal": {
+        "n": 1234,
+        "punto": {
+          "n": 0,
+          "nota": "menos de 5 casos con esta métrica"
+        },
+        "maximo": {
+          "n": 1234,
+          "croquis": {
+            "mediana": 13.34,
+            "media": 16.18,
+            "ic90_mediana": [
+              12.78,
+              13.81
+            ]
+          },
+          "uniforme": {
+            "mediana": 13.85,
+            "media": 17.58,
+            "ic90_mediana": [
+              13.4,
+              14.5
+            ]
+          },
+          "lineal": {
+            "mediana": 8.88,
+            "media": 13.9,
+            "ic90_mediana": [
+              8.42,
+              9.6
+            ]
+          },
+          "uniforme_menos_croquis": {
+            "mediana": 0.21,
+            "ic90": [
+              0.19,
+              0.25
+            ],
+            "croquis_mejor_en": 846
+          },
+          "lineal_menos_croquis": {
+            "mediana": -3.59,
+            "ic90": [
+              -5.15,
+              -2.59
+            ],
+            "croquis_mejor_en": 436
+          }
+        },
+        "ancho": {
+          "n": 1234,
+          "croquis": {
+            "mediana": 29.21,
+            "media": 66.54,
+            "ic90_mediana": [
+              28.11,
+              30.86
+            ]
+          },
+          "uniforme": {
+            "mediana": 33.95,
+            "media": 69.41,
+            "ic90_mediana": [
+              32.6,
+              35.9
+            ]
+          },
+          "lineal": {
+            "mediana": 28.24,
+            "media": 65.38,
+            "ic90_mediana": [
+              27.16,
+              30.15
+            ]
+          },
+          "uniforme_menos_croquis": {
+            "mediana": 3.56,
+            "ic90": [
+              3.54,
+              3.57
+            ],
+            "croquis_mejor_en": 1000
+          },
+          "lineal_menos_croquis": {
+            "mediana": -1.5,
+            "ic90": [
+              -1.54,
+              -1.47
+            ],
+            "croquis_mejor_en": 205
+          }
+        },
+        "area": {
+          "n": 1234,
+          "croquis": {
+            "mediana": 13.94,
+            "media": 23.94,
+            "ic90_mediana": [
+              13.14,
+              14.65
+            ]
+          },
+          "uniforme": {
+            "mediana": 14.29,
+            "media": 35.32,
+            "ic90_mediana": [
+              13.54,
+              15.01
+            ]
+          },
+          "lineal": {
+            "mediana": 13.61,
+            "media": 35.21,
+            "ic90_mediana": [
+              12.88,
+              14.35
+            ]
+          },
+          "uniforme_menos_croquis": {
+            "mediana": 0,
+            "ic90": [
+              0,
+              0.03
+            ],
+            "croquis_mejor_en": 618
+          },
+          "lineal_menos_croquis": {
+            "mediana": -0.03,
+            "ic90": [
+              -0.23,
+              0
+            ],
+            "croquis_mejor_en": 538
+          }
+        },
+        "exclusiones": {
+          "datos_invalidos": 4
+        }
+      },
+      "frontal_desplazado": {
+        "n": 117,
+        "punto": {
+          "n": 0,
+          "nota": "menos de 5 casos con esta métrica"
+        },
+        "maximo": {
+          "n": 117,
+          "croquis": {
+            "mediana": 14.29,
+            "media": 16.13,
+            "ic90_mediana": [
+              12.78,
+              16.23
+            ]
+          },
+          "uniforme": {
+            "mediana": 14.17,
+            "media": 15.39,
+            "ic90_mediana": [
+              12.78,
+              16.18
+            ]
+          },
+          "lineal": {
+            "mediana": 5.26,
+            "media": 10.13,
+            "ic90_mediana": [
+              4.17,
+              6.68
+            ]
+          },
+          "uniforme_menos_croquis": {
+            "mediana": 0.18,
+            "ic90": [
+              0.09,
+              0.26
+            ],
+            "croquis_mejor_en": 78
+          },
+          "lineal_menos_croquis": {
+            "mediana": -10.55,
+            "ic90": [
+              -12.21,
+              -7.3
+            ],
+            "croquis_mejor_en": 36
+          }
+        },
+        "ancho": {
+          "n": 117,
+          "croquis": {
+            "mediana": 24.83,
+            "media": 29.08,
+            "ic90_mediana": [
+              22.36,
+              26.99
+            ]
+          },
+          "uniforme": {
+            "mediana": 28.4,
+            "media": 33.16,
+            "ic90_mediana": [
+              26.5,
+              30.7
+            ]
+          },
+          "lineal": {
+            "mediana": 22.1,
+            "media": 28.46,
+            "ic90_mediana": [
+              20.3,
+              24.6
+            ]
+          },
+          "uniforme_menos_croquis": {
+            "mediana": 3.56,
+            "ic90": [
+              3.51,
+              3.6
+            ],
+            "croquis_mejor_en": 106
+          },
+          "lineal_menos_croquis": {
+            "mediana": -2.33,
+            "ic90": [
+              -2.54,
+              -1.89
+            ],
+            "croquis_mejor_en": 25
+          }
+        },
+        "area": {
+          "n": 117,
+          "croquis": {
+            "mediana": 11.76,
+            "media": 15.32,
+            "ic90_mediana": [
+              9.49,
+              13.15
+            ]
+          },
+          "uniforme": {
+            "mediana": 11.35,
+            "media": 16.43,
+            "ic90_mediana": [
+              9.68,
+              13.15
+            ]
+          },
+          "lineal": {
+            "mediana": 11.42,
+            "media": 15.25,
+            "ic90_mediana": [
+              10.09,
+              13.38
+            ]
+          },
+          "uniforme_menos_croquis": {
+            "mediana": 0.1,
+            "ic90": [
+              -0.01,
+              0.15
+            ],
+            "croquis_mejor_en": 67
+          },
+          "lineal_menos_croquis": {
+            "mediana": 0.16,
+            "ic90": [
+              -0.48,
+              0.55
+            ],
+            "croquis_mejor_en": 61
+          }
+        },
+        "exclusiones": {
+          "barrera_movil_no_calibrada": 4
+        }
+      },
+      "lateral": {
+        "n": 558,
+        "punto": {
+          "n": 0,
+          "nota": "menos de 5 casos con esta métrica"
+        },
+        "maximo": {
+          "n": 558,
+          "croquis": {
+            "mediana": 7.45,
+            "media": 9.25,
+            "ic90_mediana": [
+              6.95,
+              8.1
+            ]
+          },
+          "uniforme": {
+            "mediana": 8.64,
+            "media": 11.12,
+            "ic90_mediana": [
+              7.46,
+              9.39
+            ]
+          },
+          "lineal": {
+            "mediana": 8.49,
+            "media": 9.38,
+            "ic90_mediana": [
+              7.96,
+              8.97
+            ]
+          },
+          "uniforme_menos_croquis": {
+            "mediana": 4.42,
+            "ic90": [
+              3.84,
+              4.79
+            ],
+            "croquis_mejor_en": 369
+          },
+          "lineal_menos_croquis": {
+            "mediana": -0.1,
+            "ic90": [
+              -0.55,
+              0.78
+            ],
+            "croquis_mejor_en": 276
+          }
+        },
+        "ancho": {
+          "n": 558,
+          "croquis": {
+            "mediana": 57.27,
+            "media": 64.8,
+            "ic90_mediana": [
+              53.79,
+              61.53
+            ]
+          },
+          "uniforme": {
+            "mediana": 58.59,
+            "media": 66.57,
+            "ic90_mediana": [
+              53.98,
+              60.6
+            ]
+          },
+          "lineal": {
+            "mediana": 57.15,
+            "media": 67.87,
+            "ic90_mediana": [
+              52.88,
+              59.91
+            ]
+          },
+          "uniforme_menos_croquis": {
+            "mediana": 2.11,
+            "ic90": [
+              0.72,
+              2.86
+            ],
+            "croquis_mejor_en": 319
+          },
+          "lineal_menos_croquis": {
+            "mediana": 13.55,
+            "ic90": [
+              6.89,
+              14.59
+            ],
+            "croquis_mejor_en": 320
+          }
+        },
+        "area": {
+          "n": 558,
+          "croquis": {
+            "mediana": 13.38,
+            "media": 16.72,
+            "ic90_mediana": [
+              12.16,
+              14.35
+            ]
+          },
+          "uniforme": {
+            "mediana": 12.17,
+            "media": 17.05,
+            "ic90_mediana": [
+              11.56,
+              13.68
+            ]
+          },
+          "lineal": {
+            "mediana": 13.39,
+            "media": 17.05,
+            "ic90_mediana": [
+              12.46,
+              14.52
+            ]
+          },
+          "uniforme_menos_croquis": {
+            "mediana": 0.15,
+            "ic90": [
+              -0.3,
+              0.54
+            ],
+            "croquis_mejor_en": 286
+          },
+          "lineal_menos_croquis": {
+            "mediana": -0.04,
+            "ic90": [
+              -0.19,
+              0.14
+            ],
+            "croquis_mejor_en": 273
+          }
+        },
+        "exclusiones": {
+          "barrera_movil_no_calibrada": 81,
+          "sin_barrera": 16,
+          "datos_invalidos": 3
+        }
+      },
+      "alcance": {
+        "n": 70,
+        "punto": {
+          "n": 0,
+          "nota": "menos de 5 casos con esta métrica"
+        },
+        "maximo": {
+          "n": 70,
+          "croquis": {
+            "mediana": 5.71,
+            "media": 7.51,
+            "ic90_mediana": [
+              4.49,
+              8.11
+            ]
+          },
+          "uniforme": {
+            "mediana": 5.42,
+            "media": 7.55,
+            "ic90_mediana": [
+              4.63,
+              8.21
+            ]
+          },
+          "lineal": {
+            "mediana": 11.68,
+            "media": 11.43,
+            "ic90_mediana": [
+              8.7,
+              13.18
+            ]
+          },
+          "uniforme_menos_croquis": {
+            "mediana": 0.09,
+            "ic90": [
+              -0.02,
+              0.18
+            ],
+            "croquis_mejor_en": 39
+          },
+          "lineal_menos_croquis": {
+            "mediana": 7.4,
+            "ic90": [
+              1.77,
+              10.77
+            ],
+            "croquis_mejor_en": 45
+          }
+        },
+        "ancho": {
+          "n": 70,
+          "croquis": {
+            "mediana": 9.31,
+            "media": 9.2,
+            "ic90_mediana": [
+              5.94,
+              11.14
+            ]
+          },
+          "uniforme": {
+            "mediana": 12.95,
+            "media": 11.56,
+            "ic90_mediana": [
+              10.5,
+              14.8
+            ]
+          },
+          "lineal": {
+            "mediana": 7.33,
+            "media": 8.26,
+            "ic90_mediana": [
+              5.78,
+              8.53
+            ]
+          },
+          "uniforme_menos_croquis": {
+            "mediana": 3.33,
+            "ic90": [
+              3.27,
+              3.35
+            ],
+            "croquis_mejor_en": 58
+          },
+          "lineal_menos_croquis": {
+            "mediana": -1.99,
+            "ic90": [
+              -2.09,
+              -1.82
+            ],
+            "croquis_mejor_en": 21
+          }
+        },
+        "area": {
+          "n": 70,
+          "croquis": {
+            "mediana": 10.84,
+            "media": 11.58,
+            "ic90_mediana": [
+              6.85,
+              12.72
+            ]
+          },
+          "uniforme": {
+            "mediana": 10.57,
+            "media": 11.52,
+            "ic90_mediana": [
+              6.69,
+              12.93
+            ]
+          },
+          "lineal": {
+            "mediana": 9.43,
+            "media": 12.16,
+            "ic90_mediana": [
+              7.15,
+              12.54
+            ]
+          },
+          "uniforme_menos_croquis": {
+            "mediana": -0.04,
+            "ic90": [
+              -0.15,
+              0.1
+            ],
+            "croquis_mejor_en": 34
+          },
+          "lineal_menos_croquis": {
+            "mediana": 0.43,
+            "ic90": [
+              0.13,
+              0.96
+            ],
+            "croquis_mejor_en": 43
+          }
+        },
+        "exclusiones": {
+          "barrera_movil_no_calibrada": 1,
+          "datos_invalidos": 31
+        }
+      },
+      "poste": {
+        "n": 56,
+        "punto": {
+          "n": 0,
+          "nota": "menos de 5 casos con esta métrica"
+        },
+        "maximo": {
+          "n": 56,
+          "croquis": {
+            "mediana": 19.14,
+            "media": 19.21,
+            "ic90_mediana": [
+              16.53,
+              21.57
+            ]
+          },
+          "uniforme": {
+            "mediana": 17.45,
+            "media": 18.7,
+            "ic90_mediana": [
+              13,
+              21.36
+            ]
+          },
+          "lineal": {
+            "mediana": 17.9,
+            "media": 18.73,
+            "ic90_mediana": [
+              15.16,
+              20.82
+            ]
+          },
+          "uniforme_menos_croquis": {
+            "mediana": 2.25,
+            "ic90": [
+              -8.02,
+              7.07
+            ],
+            "croquis_mejor_en": 29
+          },
+          "lineal_menos_croquis": {
+            "mediana": -0.24,
+            "ic90": [
+              -2.16,
+              1.1
+            ],
+            "croquis_mejor_en": 26
+          }
+        },
+        "ancho": {
+          "n": 56,
+          "croquis": {
+            "mediana": 71.28,
+            "media": 119.09,
+            "ic90_mediana": [
+              60.53,
+              96.66
+            ]
+          },
+          "uniforme": {
+            "mediana": 69.08,
+            "media": 117.38,
+            "ic90_mediana": [
+              55.02,
+              94.38
+            ]
+          },
+          "lineal": {
+            "mediana": 68.66,
+            "media": 118.37,
+            "ic90_mediana": [
+              54.63,
+              89.94
+            ]
+          },
+          "uniforme_menos_croquis": {
+            "mediana": -3.48,
+            "ic90": [
+              -5.1,
+              -2.61
+            ],
+            "croquis_mejor_en": 16
+          },
+          "lineal_menos_croquis": {
+            "mediana": -0.66,
+            "ic90": [
+              -1.01,
+              0.76
+            ],
+            "croquis_mejor_en": 25
+          }
+        },
+        "area": {
+          "n": 56,
+          "croquis": {
+            "mediana": 13.28,
+            "media": 19.78,
+            "ic90_mediana": [
+              7.91,
+              17.48
+            ]
+          },
+          "uniforme": {
+            "mediana": 8.64,
+            "media": 13.57,
+            "ic90_mediana": [
+              4.87,
+              13.93
+            ]
+          },
+          "lineal": {
+            "mediana": 13.3,
+            "media": 18.15,
+            "ic90_mediana": [
+              7.14,
+              15.73
+            ]
+          },
+          "uniforme_menos_croquis": {
+            "mediana": -1.78,
+            "ic90": [
+              -4.16,
+              0.26
+            ],
+            "croquis_mejor_en": 24
+          },
+          "lineal_menos_croquis": {
+            "mediana": -0.42,
+            "ic90": [
+              -0.78,
+              -0.02
+            ],
+            "croquis_mejor_en": 20
+          }
+        },
+        "exclusiones": {
+          "datos_invalidos": 1
+        }
+      },
+      "todos": {
+        "n": 2035,
+        "punto": {
+          "n": 0,
+          "nota": "menos de 5 casos con esta métrica"
+        },
+        "maximo": {
+          "n": 2035,
+          "croquis": {
+            "mediana": 11.47,
+            "media": 14.06,
+            "ic90_mediana": [
+              11.07,
+              11.91
+            ]
+          },
+          "uniforme": {
+            "mediana": 12.33,
+            "media": 15.37,
+            "ic90_mediana": [
+              11.95,
+              12.78
+            ]
+          },
+          "lineal": {
+            "mediana": 8.76,
+            "media": 12.49,
+            "ic90_mediana": [
+              8.48,
+              9.21
+            ]
+          },
+          "uniforme_menos_croquis": {
+            "mediana": 0.27,
+            "ic90": [
+              0.25,
+              0.3
+            ],
+            "croquis_mejor_en": 1361
+          },
+          "lineal_menos_croquis": {
+            "mediana": -0.93,
+            "ic90": [
+              -1.19,
+              -0.76
+            ],
+            "croquis_mejor_en": 819
+          }
+        },
+        "ancho": {
+          "n": 2035,
+          "croquis": {
+            "mediana": 33.63,
+            "media": 63.38,
+            "ic90_mediana": [
+              32.02,
+              34.99
+            ]
+          },
+          "uniforme": {
+            "mediana": 37,
+            "media": 65.88,
+            "ic90_mediana": [
+              35.8,
+              38.4
+            ]
+          },
+          "lineal": {
+            "mediana": 32.41,
+            "media": 63.43,
+            "ic90_mediana": [
+              30.82,
+              33.67
+            ]
+          },
+          "uniforme_menos_croquis": {
+            "mediana": 3.52,
+            "ic90": [
+              3.49,
+              3.54
+            ],
+            "croquis_mejor_en": 1499
+          },
+          "lineal_menos_croquis": {
+            "mediana": -1.47,
+            "ic90": [
+              -1.51,
+              -1.45
+            ],
+            "croquis_mejor_en": 596
+          }
+        },
+        "area": {
+          "n": 2035,
+          "croquis": {
+            "mediana": 13.41,
+            "media": 20.92,
+            "ic90_mediana": [
+              12.83,
+              13.98
+            ]
+          },
+          "uniforme": {
+            "mediana": 13.29,
+            "media": 27.81,
+            "ic90_mediana": [
+              12.86,
+              13.88
+            ]
+          },
+          "lineal": {
+            "mediana": 13.31,
+            "media": 27.82,
+            "ic90_mediana": [
+              12.62,
+              13.76
+            ]
+          },
+          "uniforme_menos_croquis": {
+            "mediana": 0.01,
+            "ic90": [
+              0,
+              0.04
+            ],
+            "croquis_mejor_en": 1029
+          },
+          "lineal_menos_croquis": {
+            "mediana": -0.02,
+            "ic90": [
+              -0.1,
+              0
+            ],
+            "croquis_mejor_en": 935
+          }
+        }
+      }
+    },
+    "ciss": {
+      "frontal": {
+        "n": 1376,
+        "punto": {
+          "n": 195,
+          "croquis": {
+            "mediana": 7.44,
+            "media": 8.1,
+            "ic90_mediana": [
+              6.6,
+              8.03
+            ]
+          },
+          "uniforme": {
+            "mediana": 7.5,
+            "media": 8.1,
+            "ic90_mediana": [
+              6.53,
+              8.05
+            ]
+          },
+          "lineal": {
+            "mediana": 7.33,
+            "media": 8.42,
+            "ic90_mediana": [
+              6.94,
+              8.01
+            ]
+          },
+          "uniforme_menos_croquis": {
+            "mediana": 0,
+            "ic90": [
+              0,
+              0
+            ],
+            "croquis_mejor_en": 101
+          },
+          "lineal_menos_croquis": {
+            "mediana": 0,
+            "ic90": [
+              -0.13,
+              0.09
+            ],
+            "croquis_mejor_en": 96
+          }
+        },
+        "maximo": {
+          "n": 1376,
+          "croquis": {
+            "mediana": 9.56,
+            "media": 11.79,
+            "ic90_mediana": [
+              9.08,
+              10.17
+            ]
+          },
+          "uniforme": {
+            "mediana": 9.62,
+            "media": 11.85,
+            "ic90_mediana": [
+              9.09,
+              10.22
+            ]
+          },
+          "lineal": {
+            "mediana": 7.94,
+            "media": 9.92,
+            "ic90_mediana": [
+              7.5,
+              8.35
+            ]
+          },
+          "uniforme_menos_croquis": {
+            "mediana": 0.03,
+            "ic90": [
+              0.03,
+              0.04
+            ],
+            "croquis_mejor_en": 917
+          },
+          "lineal_menos_croquis": {
+            "mediana": -2.43,
+            "ic90": [
+              -2.71,
+              -2.21
+            ],
+            "croquis_mejor_en": 367
+          }
+        },
+        "ancho": {
+          "n": 1376,
+          "croquis": {
+            "mediana": 54.4,
+            "media": 58.74,
+            "ic90_mediana": [
+              52.48,
+              56.37
+            ]
+          },
+          "uniforme": {
+            "mediana": 58,
+            "media": 62.53,
+            "ic90_mediana": [
+              57,
+              60
+            ]
+          },
+          "lineal": {
+            "mediana": 39.37,
+            "media": 45.96,
+            "ic90_mediana": [
+              37.19,
+              40.84
+            ]
+          },
+          "uniforme_menos_croquis": {
+            "mediana": 3.66,
+            "ic90": [
+              3.66,
+              3.68
+            ],
+            "croquis_mejor_en": 1227
+          },
+          "lineal_menos_croquis": {
+            "mediana": -9.44,
+            "ic90": [
+              -9.78,
+              -8.72
+            ],
+            "croquis_mejor_en": 93
+          }
+        },
+        "area": {
+          "n": 1376,
+          "croquis": {
+            "mediana": 6.94,
+            "media": 9.14,
+            "ic90_mediana": [
+              6.66,
+              7.42
+            ]
+          },
+          "uniforme": {
+            "mediana": 6.96,
+            "media": 9.14,
+            "ic90_mediana": [
+              6.65,
+              7.35
+            ]
+          },
+          "lineal": {
+            "mediana": 7.6,
+            "media": 9.57,
+            "ic90_mediana": [
+              7.31,
+              7.89
+            ]
+          },
+          "uniforme_menos_croquis": {
+            "mediana": 0,
+            "ic90": [
+              0,
+              0
+            ],
+            "croquis_mejor_en": 684
+          },
+          "lineal_menos_croquis": {
+            "mediana": 0,
+            "ic90": [
+              0,
+              0
+            ],
+            "croquis_mejor_en": 656
+          }
+        },
+        "exclusiones": {
+          "sin_otro_vehiculo": 86,
+          "sin_dv": 5
+        }
+      },
+      "frontal_desplazado": {
+        "n": 1202,
+        "punto": {
+          "n": 144,
+          "croquis": {
+            "mediana": 4.85,
+            "media": 6.24,
+            "ic90_mediana": [
+              4.4,
+              5.47
+            ]
+          },
+          "uniforme": {
+            "mediana": 5.87,
+            "media": 6.84,
+            "ic90_mediana": [
+              5.3,
+              6.28
+            ]
+          },
+          "lineal": {
+            "mediana": 6.67,
+            "media": 7.65,
+            "ic90_mediana": [
+              6.03,
+              7.25
+            ]
+          },
+          "uniforme_menos_croquis": {
+            "mediana": 0.45,
+            "ic90": [
+              0.28,
+              0.59
+            ],
+            "croquis_mejor_en": 98
+          },
+          "lineal_menos_croquis": {
+            "mediana": 1.12,
+            "ic90": [
+              0.8,
+              1.48
+            ],
+            "croquis_mejor_en": 104
+          }
+        },
+        "maximo": {
+          "n": 1202,
+          "croquis": {
+            "mediana": 8.16,
+            "media": 11.01,
+            "ic90_mediana": [
+              7.6,
+              8.76
+            ]
+          },
+          "uniforme": {
+            "mediana": 7.28,
+            "media": 10.04,
+            "ic90_mediana": [
+              6.91,
+              7.91
+            ]
+          },
+          "lineal": {
+            "mediana": 9.04,
+            "media": 12.57,
+            "ic90_mediana": [
+              8.47,
+              9.59
+            ]
+          },
+          "uniforme_menos_croquis": {
+            "mediana": 0,
+            "ic90": [
+              -0.26,
+              0
+            ],
+            "croquis_mejor_en": 566
+          },
+          "lineal_menos_croquis": {
+            "mediana": 0.09,
+            "ic90": [
+              0,
+              0.14
+            ],
+            "croquis_mejor_en": 630
+          }
+        },
+        "ancho": {
+          "n": 1202,
+          "croquis": {
+            "mediana": 50.3,
+            "media": 54.99,
+            "ic90_mediana": [
+              48.64,
+              52.24
+            ]
+          },
+          "uniforme": {
+            "mediana": 36.8,
+            "media": 45.91,
+            "ic90_mediana": [
+              34.8,
+              38.2
+            ]
+          },
+          "lineal": {
+            "mediana": 48.43,
+            "media": 53.15,
+            "ic90_mediana": [
+              46.61,
+              50.28
+            ]
+          },
+          "uniforme_menos_croquis": {
+            "mediana": -6.56,
+            "ic90": [
+              -6.66,
+              -6.28
+            ],
+            "croquis_mejor_en": 240
+          },
+          "lineal_menos_croquis": {
+            "mediana": -1.94,
+            "ic90": [
+              -2.41,
+              -1.53
+            ],
+            "croquis_mejor_en": 385
+          }
+        },
+        "area": {
+          "n": 1202,
+          "croquis": {
+            "mediana": 4.6,
+            "media": 6.74,
+            "ic90_mediana": [
+              4.38,
+              4.91
+            ]
+          },
+          "uniforme": {
+            "mediana": 5.22,
+            "media": 7.16,
+            "ic90_mediana": [
+              4.89,
+              5.48
+            ]
+          },
+          "lineal": {
+            "mediana": 5.54,
+            "media": 7.49,
+            "ic90_mediana": [
+              5.22,
+              5.92
+            ]
+          },
+          "uniforme_menos_croquis": {
+            "mediana": 0.2,
+            "ic90": [
+              0.07,
+              0.36
+            ],
+            "croquis_mejor_en": 656
+          },
+          "lineal_menos_croquis": {
+            "mediana": 0.8,
+            "ic90": [
+              0.66,
+              0.96
+            ],
+            "croquis_mejor_en": 701
+          }
+        },
+        "exclusiones": {
+          "sin_otro_vehiculo": 77,
+          "sin_dv": 5,
+          "sin_posicion_del_dano": 1
+        }
+      },
+      "lateral": {
+        "n": 912,
+        "punto": {
+          "n": 77,
+          "croquis": {
+            "mediana": 4.67,
+            "media": 5.95,
+            "ic90_mediana": [
+              4.37,
+              5.23
+            ]
+          },
+          "uniforme": {
+            "mediana": 4.8,
+            "media": 6.32,
+            "ic90_mediana": [
+              4.67,
+              5.17
+            ]
+          },
+          "lineal": {
+            "mediana": 4.82,
+            "media": 6.75,
+            "ic90_mediana": [
+              4.57,
+              5.44
+            ]
+          },
+          "uniforme_menos_croquis": {
+            "mediana": 0,
+            "ic90": [
+              0,
+              0.11
+            ],
+            "croquis_mejor_en": 36
+          },
+          "lineal_menos_croquis": {
+            "mediana": 0.01,
+            "ic90": [
+              0,
+              0.18
+            ],
+            "croquis_mejor_en": 40
+          }
+        },
+        "maximo": {
+          "n": 912,
+          "croquis": {
+            "mediana": 6.71,
+            "media": 8.62,
+            "ic90_mediana": [
+              6.18,
+              7
+            ]
+          },
+          "uniforme": {
+            "mediana": 6.94,
+            "media": 8.89,
+            "ic90_mediana": [
+              6.51,
+              7.24
+            ]
+          },
+          "lineal": {
+            "mediana": 6.62,
+            "media": 8.27,
+            "ic90_mediana": [
+              6.21,
+              7
+            ]
+          },
+          "uniforme_menos_croquis": {
+            "mediana": 0.13,
+            "ic90": [
+              0.09,
+              0.18
+            ],
+            "croquis_mejor_en": 604
+          },
+          "lineal_menos_croquis": {
+            "mediana": -0.24,
+            "ic90": [
+              -0.31,
+              -0.17
+            ],
+            "croquis_mejor_en": 251
+          }
+        },
+        "ancho": {
+          "n": 912,
+          "croquis": {
+            "mediana": 78.67,
+            "media": 92.47,
+            "ic90_mediana": [
+              73.55,
+              81.99
+            ]
+          },
+          "uniforme": {
+            "mediana": 100.89,
+            "media": 110.11,
+            "ic90_mediana": [
+              95.66,
+              104.67
+            ]
+          },
+          "lineal": {
+            "mediana": 78.79,
+            "media": 92.7,
+            "ic90_mediana": [
+              74.21,
+              83.14
+            ]
+          },
+          "uniforme_menos_croquis": {
+            "mediana": 6.52,
+            "ic90": [
+              4.75,
+              9.76
+            ],
+            "croquis_mejor_en": 526
+          },
+          "lineal_menos_croquis": {
+            "mediana": 0,
+            "ic90": [
+              0,
+              0
+            ],
+            "croquis_mejor_en": 312
+          }
+        },
+        "area": {
+          "n": 912,
+          "croquis": {
+            "mediana": 5.9,
+            "media": 8.44,
+            "ic90_mediana": [
+              5.53,
+              6.33
+            ]
+          },
+          "uniforme": {
+            "mediana": 5.79,
+            "media": 8.39,
+            "ic90_mediana": [
+              5.54,
+              6.22
+            ]
+          },
+          "lineal": {
+            "mediana": 6.31,
+            "media": 9.14,
+            "ic90_mediana": [
+              5.8,
+              6.89
+            ]
+          },
+          "uniforme_menos_croquis": {
+            "mediana": 0,
+            "ic90": [
+              0,
+              0.01
+            ],
+            "croquis_mejor_en": 461
+          },
+          "lineal_menos_croquis": {
+            "mediana": 0,
+            "ic90": [
+              0,
+              0
+            ],
+            "croquis_mejor_en": 428
+          }
+        },
+        "exclusiones": {
+          "sin_otro_vehiculo": 75,
+          "sin_dv": 2
+        }
+      },
+      "alcance": {
+        "n": 499,
+        "punto": {
+          "n": 66,
+          "croquis": {
+            "mediana": 8.41,
+            "media": 11.25,
+            "ic90_mediana": [
+              6.45,
+              11.18
+            ]
+          },
+          "uniforme": {
+            "mediana": 8.18,
+            "media": 11.29,
+            "ic90_mediana": [
+              6.52,
+              10.94
+            ]
+          },
+          "lineal": {
+            "mediana": 8.82,
+            "media": 11.66,
+            "ic90_mediana": [
+              8.05,
+              11.1
+            ]
+          },
+          "uniforme_menos_croquis": {
+            "mediana": 0,
+            "ic90": [
+              -0.01,
+              0.01
+            ],
+            "croquis_mejor_en": 29
+          },
+          "lineal_menos_croquis": {
+            "mediana": 0.22,
+            "ic90": [
+              0,
+              0.95
+            ],
+            "croquis_mejor_en": 38
+          }
+        },
+        "maximo": {
+          "n": 499,
+          "croquis": {
+            "mediana": 9.84,
+            "media": 14.09,
+            "ic90_mediana": [
+              9.12,
+              10.66
+            ]
+          },
+          "uniforme": {
+            "mediana": 8.55,
+            "media": 12.08,
+            "ic90_mediana": [
+              7.83,
+              9.51
+            ]
+          },
+          "lineal": {
+            "mediana": 11.29,
+            "media": 15.32,
+            "ic90_mediana": [
+              10.24,
+              13.02
+            ]
+          },
+          "uniforme_menos_croquis": {
+            "mediana": -0.01,
+            "ic90": [
+              -0.04,
+              0
+            ],
+            "croquis_mejor_en": 201
+          },
+          "lineal_menos_croquis": {
+            "mediana": 0,
+            "ic90": [
+              -0.16,
+              0
+            ],
+            "croquis_mejor_en": 215
+          }
+        },
+        "ancho": {
+          "n": 499,
+          "croquis": {
+            "mediana": 47.12,
+            "media": 56.27,
+            "ic90_mediana": [
+              43.34,
+              50.67
+            ]
+          },
+          "uniforme": {
+            "mediana": 44.02,
+            "media": 55.6,
+            "ic90_mediana": [
+              41,
+              48
+            ]
+          },
+          "lineal": {
+            "mediana": 41.22,
+            "media": 50.81,
+            "ic90_mediana": [
+              37.43,
+              44.71
+            ]
+          },
+          "uniforme_menos_croquis": {
+            "mediana": 3.52,
+            "ic90": [
+              3.46,
+              3.56
+            ],
+            "croquis_mejor_en": 306
+          },
+          "lineal_menos_croquis": {
+            "mediana": -2.96,
+            "ic90": [
+              -3.41,
+              -2.54
+            ],
+            "croquis_mejor_en": 98
+          }
+        },
+        "area": {
+          "n": 499,
+          "croquis": {
+            "mediana": 8.62,
+            "media": 11.36,
+            "ic90_mediana": [
+              7.74,
+              9.36
+            ]
+          },
+          "uniforme": {
+            "mediana": 9.05,
+            "media": 12.07,
+            "ic90_mediana": [
+              8.22,
+              9.89
+            ]
+          },
+          "lineal": {
+            "mediana": 10.5,
+            "media": 13.51,
+            "ic90_mediana": [
+              9.59,
+              11.28
+            ]
+          },
+          "uniforme_menos_croquis": {
+            "mediana": 0.02,
+            "ic90": [
+              0,
+              0.05
+            ],
+            "croquis_mejor_en": 267
+          },
+          "lineal_menos_croquis": {
+            "mediana": 1.45,
+            "ic90": [
+              1.17,
+              1.63
+            ],
+            "croquis_mejor_en": 325
+          }
+        },
+        "exclusiones": {
+          "sin_dv": 14,
+          "sin_otro_vehiculo": 50,
+          "sin_posicion_del_dano": 1
+        }
+      },
+      "poste": {
+        "n": 326,
+        "punto": {
+          "n": 36,
+          "croquis": {
+            "mediana": 10.91,
+            "media": 16.35,
+            "ic90_mediana": [
+              9.02,
+              14.46
+            ]
+          },
+          "uniforme": {
+            "mediana": 10.43,
+            "media": 15.36,
+            "ic90_mediana": [
+              9.35,
+              13.67
+            ]
+          },
+          "lineal": {
+            "mediana": 10.42,
+            "media": 16.04,
+            "ic90_mediana": [
+              9.08,
+              14.07
+            ]
+          },
+          "uniforme_menos_croquis": {
+            "mediana": -0.37,
+            "ic90": [
+              -1.05,
+              0.17
+            ],
+            "croquis_mejor_en": 14
+          },
+          "lineal_menos_croquis": {
+            "mediana": 0.05,
+            "ic90": [
+              -0.26,
+              0.15
+            ],
+            "croquis_mejor_en": 21
+          }
+        },
+        "maximo": {
+          "n": 326,
+          "croquis": {
+            "mediana": 15.19,
+            "media": 19.43,
+            "ic90_mediana": [
+              13.46,
+              16.86
+            ]
+          },
+          "uniforme": {
+            "mediana": 11.56,
+            "media": 16.61,
+            "ic90_mediana": [
+              10.24,
+              12.72
+            ]
+          },
+          "lineal": {
+            "mediana": 13.52,
+            "media": 18.03,
+            "ic90_mediana": [
+              11.79,
+              14.81
+            ]
+          },
+          "uniforme_menos_croquis": {
+            "mediana": -1.9,
+            "ic90": [
+              -3.67,
+              -0.91
+            ],
+            "croquis_mejor_en": 123
+          },
+          "lineal_menos_croquis": {
+            "mediana": -1.75,
+            "ic90": [
+              -2.08,
+              -1.25
+            ],
+            "croquis_mejor_en": 100
+          }
+        },
+        "ancho": {
+          "n": 326,
+          "croquis": {
+            "mediana": 54.67,
+            "media": 62.7,
+            "ic90_mediana": [
+              47.53,
+              57.89
+            ]
+          },
+          "uniforme": {
+            "mediana": 47.61,
+            "media": 57.52,
+            "ic90_mediana": [
+              44.39,
+              52.92
+            ]
+          },
+          "lineal": {
+            "mediana": 49.93,
+            "media": 59.23,
+            "ic90_mediana": [
+              44.71,
+              56.23
+            ]
+          },
+          "uniforme_menos_croquis": {
+            "mediana": -3.7,
+            "ic90": [
+              -4.33,
+              -3.22
+            ],
+            "croquis_mejor_en": 61
+          },
+          "lineal_menos_croquis": {
+            "mediana": -3.63,
+            "ic90": [
+              -4.43,
+              -2.62
+            ],
+            "croquis_mejor_en": 80
+          }
+        },
+        "area": {
+          "n": 326,
+          "croquis": {
+            "mediana": 11.41,
+            "media": 15.87,
+            "ic90_mediana": [
+              10.06,
+              12.74
+            ]
+          },
+          "uniforme": {
+            "mediana": 10.59,
+            "media": 14.83,
+            "ic90_mediana": [
+              9.92,
+              12.14
+            ]
+          },
+          "lineal": {
+            "mediana": 11.58,
+            "media": 16,
+            "ic90_mediana": [
+              10.14,
+              12.83
+            ]
+          },
+          "uniforme_menos_croquis": {
+            "mediana": -0.25,
+            "ic90": [
+              -0.43,
+              -0.03
+            ],
+            "croquis_mejor_en": 129
+          },
+          "lineal_menos_croquis": {
+            "mediana": 0.06,
+            "ic90": [
+              0,
+              0.1
+            ],
+            "croquis_mejor_en": 178
+          }
+        },
+        "exclusiones": {
+          "sin_dv": 4
+        }
+      },
+      "todos": {
+        "n": 4315,
+        "punto": {
+          "n": 518,
+          "croquis": {
+            "mediana": 6.33,
+            "media": 8.24,
+            "ic90_mediana": [
+              5.76,
+              6.76
+            ]
+          },
+          "uniforme": {
+            "mediana": 6.66,
+            "media": 8.4,
+            "ic90_mediana": [
+              6.19,
+              7.16
+            ]
+          },
+          "lineal": {
+            "mediana": 7.21,
+            "media": 8.9,
+            "ic90_mediana": [
+              6.9,
+              7.68
+            ]
+          },
+          "uniforme_menos_croquis": {
+            "mediana": 0.01,
+            "ic90": [
+              0,
+              0.01
+            ],
+            "croquis_mejor_en": 278
+          },
+          "lineal_menos_croquis": {
+            "mediana": 0.17,
+            "ic90": [
+              0.06,
+              0.28
+            ],
+            "croquis_mejor_en": 299
+          }
+        },
+        "maximo": {
+          "n": 4315,
+          "croquis": {
+            "mediana": 8.69,
+            "media": 11.75,
+            "ic90_mediana": [
+              8.39,
+              9
+            ]
+          },
+          "uniforme": {
+            "mediana": 8.16,
+            "media": 11.11,
+            "ic90_mediana": [
+              8,
+              8.44
+            ]
+          },
+          "lineal": {
+            "mediana": 8.35,
+            "media": 11.55,
+            "ic90_mediana": [
+              8.08,
+              8.66
+            ]
+          },
+          "uniforme_menos_croquis": {
+            "mediana": 0.03,
+            "ic90": [
+              0.02,
+              0.03
+            ],
+            "croquis_mejor_en": 2411
+          },
+          "lineal_menos_croquis": {
+            "mediana": -0.35,
+            "ic90": [
+              -0.43,
+              -0.28
+            ],
+            "croquis_mejor_en": 1563
+          }
+        },
+        "ancho": {
+          "n": 4315,
+          "croquis": {
+            "mediana": 55.53,
+            "media": 64.84,
+            "ic90_mediana": [
+              54.38,
+              57
+            ]
+          },
+          "uniforme": {
+            "mediana": 55,
+            "media": 66.78,
+            "ic90_mediana": [
+              53.8,
+              56.8
+            ]
+          },
+          "lineal": {
+            "mediana": 48.87,
+            "media": 59.4,
+            "ic90_mediana": [
+              47.63,
+              49.97
+            ]
+          },
+          "uniforme_menos_croquis": {
+            "mediana": 3.38,
+            "ic90": [
+              1.92,
+              3.4
+            ],
+            "croquis_mejor_en": 2360
+          },
+          "lineal_menos_croquis": {
+            "mediana": -3.53,
+            "ic90": [
+              -3.76,
+              -3.28
+            ],
+            "croquis_mejor_en": 968
+          }
+        },
+        "area": {
+          "n": 4315,
+          "croquis": {
+            "mediana": 6.34,
+            "media": 9.09,
+            "ic90_mediana": [
+              6.17,
+              6.51
+            ]
+          },
+          "uniforme": {
+            "mediana": 6.56,
+            "media": 9.2,
+            "ic90_mediana": [
+              6.36,
+              6.75
+            ]
+          },
+          "lineal": {
+            "mediana": 7.2,
+            "media": 9.84,
+            "ic90_mediana": [
+              6.96,
+              7.41
+            ]
+          },
+          "uniforme_menos_croquis": {
+            "mediana": 0,
+            "ic90": [
+              0,
+              0.01
+            ],
+            "croquis_mejor_en": 2197
+          },
+          "lineal_menos_croquis": {
+            "mediana": 0.13,
+            "ic90": [
+              0.06,
+              0.2
+            ],
+            "croquis_mejor_en": 2288
+          }
+        }
+      }
+    }
+  }
+}

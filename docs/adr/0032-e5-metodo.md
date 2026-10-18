@@ -37,6 +37,7 @@ Cada caso se reproduce con la **misma etapa de daño que usa la reconstrucción*
   - **Energía total:** momento en una dimensión, ½ μ v².
   - **Cara deformable:** la barrera deformable se lleva la fracción de Johnson (2011) que usa `e2_mdb.py`.
   - **Barrera rígida:** no se lleva nada.
+  - **Otras barreras móviles** (aclarado al correr el reproductor por primera vez, antes de ver errores por caso de estas pruebas): una barrera plana rígida de cualquier masa se reproduce igual, porque una cara rígida no se lleva energía. Las caras deformables que no son la de FMVSS 214 (EEVC, IIHS, de investigación) y las contorneadas no tienen fracción de energía calibrada: se excluyen como `barrera_movil_no_calibrada`, y las pruebas sin fila de barrera como `sin_barrera`. Las dos se cuentan por tipo.
 - **Barrera desplazada deformable (EEVC):** Croquis la ve como un muro rígido, que es como la modelaría al reconstruir. El aplastamiento predicho tenderá a ser mayor que el real, y se reporta por tipo tal cual.
 - **NHTSA dentro de la muestra en la magnitud:** la rigidez de Croquis por clase y zona se calibró con pruebas de NHTSA (E2): frontal con las de barrera y lateral y trasera con las de barrera móvil. Por eso E5-NHTSA no es independiente en _cuánto_ se hunde el vehículo. Sí mide la forma, el ancho y la posición del daño sobre la malla.
 - **CISS fuera de la muestra:** es la prueba fuera de la muestra (rigidez de pruebas de laboratorio y choques reales de la calle). Las conclusiones de E5 se apoyan sobre todo en CISS.
@@ -65,11 +66,40 @@ Croquis, en cambio, usa la forma según la zona del CDC (`profile_for_energy`) m
 
 ## Exclusiones (se cuentan y se reportan por tipo)
 
-1. Falta lo necesario para pasar D al marco de Croquis.
-   - **Para pasarlo:** la mitad de la batalla en CISS y la posición del CG en NHTSA.
-   - **Antes de usar la convención de NHTSA:** se verifica con un script cuyo resultado queda en `eval/results`, como se hizo con CISS en el inventario.
+1. Falta lo necesario para pasar D al marco de Croquis. En CISS se usa la mitad de la batalla, con la convención verificada en el inventario.
 2. CISS contra otro vehículo sin la clase o la masa del otro (no se puede repartir la energía).
 3. Clases sin malla en el visor (dos ruedas).
+4. Masa no positiva: es un centinela de la fuente, no una medida. Lo mismo vale para las dimensiones imposibles (ancho de −10 mm o un auto de 1.6 m de largo), solo que esas no se excluyen: se usa la dimensión típica de la clase. Es una regla sobre la validez de los datos, no sobre resultados.
+5. Errores inesperados del reproductor: se cuentan y se reportan, no detienen la corrida.
+6. Perfil o ancho medido fuera de lo físico (aplastamiento negativo o de más de 2 m, L de más de 20 m): es el centinela 9999 de la fuente y se excluye como `datos_invalidos`. Se encontró en la primera corrida de desarrollo (32 casos traseros de CISS con L = 100 m) y es una regla de validez, no de resultados.
+
+Una zona horizontal que el esquema de Croquis no acepta en esa cara (el «9» de desconocida de CISS) no llega al solver: se omite y el solver usa su valor por defecto (D), como haría la reconstrucción.
+
+## La posición del daño en NHTSA no se evalúa (decisión del 2026-10-17, antes de medir)
+
+**El problema:** el campo de NHTSA para D (`distancebetweencenterofDamagedareaandCGAxis`, «distancia del centro del daño al eje del CG») no trae convención de signo, y los datos no la confirman (`convencion_de_d` de NHTSA en `eval/results/e5_inventario.json`).
+
+- **Frente y parte trasera:** el signo de D coincide con la zona izquierda o derecha del CDC solo en una parte de los casos con D distinto de cero.
+- **Costados:** la zona del CDC casi nunca dice adelante o atrás, y la mediana de D contradice la geometría de las pruebas laterales. Ahí la barrera apunta adelante de la mitad de la batalla.
+
+**Qué se hace:** en NHTSA las seis estaciones medidas se centran en el centro del daño que predice Croquis, conservando el L medido.
+
+- **Lo que sí se compara:** la forma, la profundidad, el ancho y el área.
+- **Lo que no:** si Croquis pone el daño en el lugar correcto.
+
+En CISS, cuya convención sí se verificó, se compara todo, incluida la posición.
+
+## El orden de C1–C6 (decisión del 2026-10-17, antes de medir)
+
+Croquis pone C1 en el extremo izquierdo del frente y la parte trasera, y en el delantero de los costados. Las fuentes no siempre dicen dónde empezó la medición, y el error por punto depende del orden.
+
+- **CISS:**
+  - **Dónde está C1:** donde empieza la medición, según `FIELDLLOCATION` («Begins … extending right» o «LFBC to RFBC»; columna `c1_extremo`).
+  - **Varía por caso:** en los costados casi siempre se mide desde atrás. Muchos textos de años viejos («BC to BC») no lo dicen.
+  - **Qué se reporta:** el error por punto **solo** para los casos con el orden conocido. La profundidad máxima, el ancho y el área no dependen del orden y se reportan para todos.
+- **NHTSA:**
+  - **Lo que se sabe:** la API no documenta el orden de DPD1–DPD6. El reporte de la prueba 10050 lo confirma (DPD1 a la izquierda), pero la frase que lo dice no aparece en ninguno de los reportes legibles de una muestra de desarrollo (`eval/results/e5_orientacion.json`, `uv run croquis-eval e5-orientacion`).
+  - **Qué se reporta:** en NHTSA **no se reporta el error por punto**; sí la profundidad máxima, el ancho y el área.
 
 ## Partición congelada
 

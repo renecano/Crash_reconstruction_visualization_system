@@ -20,6 +20,7 @@ import hashlib
 import io
 import json
 import math
+import re
 import zipfile
 from collections import Counter, defaultdict
 from collections.abc import Iterator
@@ -114,6 +115,9 @@ FIELDS = [
     "zona_horizontal",
     "centro_dano_cm",
     "cmax_cm",
+    # Extremo del daño donde está C1, leído de FIELDLLOCATION (izquierda, derecha, adelante o
+    # atras); vacío si el texto no lo dice (E5, ADR 0032).
+    "c1_extremo",
 ]
 
 
@@ -224,6 +228,31 @@ def damage_center(c: dict[str, str]) -> float | None:
     if d is None or d in (777, 999) or abs(d) > 400:
         return None
     return d
+
+
+_EXTENDING = re.compile(r"\bextending\s+(left|right|forward|rearward|rear)\b", re.IGNORECASE)
+_CORNERS = re.compile(r"\b([LR])([FR])BC\s+to\s+([LR])([FR])BC\b", re.IGNORECASE)
+
+
+def c1_end(location: str) -> str:
+    """Extremo del daño donde está C1, según FIELDLLOCATION.
+
+    C1 es donde empieza la medición: si se extiende hacia la derecha, C1 queda a la izquierda; si se
+    extiende hacia atrás (costados), C1 queda adelante. También se leen las esquinas de defensa
+    («LFBC to RFBC»: de izquierda a derecha). Si el texto no dice el sentido («BC to BC»), vacío."""
+    text = location or ""
+    if m := _EXTENDING.search(text):
+        return {
+            "right": "izquierda",
+            "left": "derecha",
+            "rearward": "adelante",
+            "rear": "adelante",
+        }.get(m.group(1).lower(), "atras")
+    if m := _CORNERS.search(text):
+        start, end = m.group(1).upper(), m.group(3).upper()
+        if start != end:
+            return "izquierda" if start == "L" else "derecha"
+    return ""
 
 
 def max_crush(c: dict[str, str]) -> float | None:
@@ -341,6 +370,7 @@ def build_year(year: int, raw_dir: Path = RAW_DIR) -> tuple[list[dict[str, Any]]
             "zona_horizontal": (c.get("CDCLONGLAT") or "").strip(),
             "centro_dano_cm": damage_center(c),
             "cmax_cm": max_crush(c),
+            "c1_extremo": c1_end(c.get("FIELDLLOCATION") or ""),
         }
         if 1 <= objcont <= 30:
             row["contacto"] = "vehiculo"

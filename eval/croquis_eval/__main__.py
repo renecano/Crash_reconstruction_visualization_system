@@ -33,6 +33,10 @@ def main(argv: list[str] | None = None) -> int:
     sub.add_parser(
         "e5-inventario", help="E5 (F10): casos con aplastamiento medido, por fuente y tipo, y fotos"
     )
+    sub.add_parser("e5-casos", help="E5 (F10): exporta los casos para el reproductor en TS")
+    sub.add_parser(
+        "e5-orientacion", help="E5 (F10): dónde está DPD1 según los reportes de NHTSA (desarrollo)"
+    )
     p_e5p = sub.add_parser(
         "e5-particion", help="E5 (F10): partición congelada en desarrollo y test (ADR 0032)"
     )
@@ -82,6 +86,16 @@ def main(argv: list[str] | None = None) -> int:
         from croquis_eval.e3_ciss import main as run_e3
 
         print(run_e3())
+        return 0
+    if args.command == "e5-casos":
+        from croquis_eval.e5_export import main as run_e5_export
+
+        print(run_e5_export())
+        return 0
+    if args.command == "e5-orientacion":
+        from croquis_eval.e5_orientacion import main as run_e5_ori
+
+        print(run_e5_ori())
         return 0
     if args.command == "e5-particion":
         from croquis_eval.e5_particion import main as run_e5_part

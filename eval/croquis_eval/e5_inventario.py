@@ -20,9 +20,11 @@ from typing import Any, cast
 from croquis_data.nhtsa_ctd import damaged_side_photo
 from croquis_eval.e5_casos import (
     CISS_DEV_YEARS,
+    ITV_CSV,
     MEDIA_DIR,
     ROOT,
     TIPOS,
+    VTB_CSV,
     Caso,
     ciss_cases,
     nhtsa_cases,
@@ -120,6 +122,37 @@ def ciss_d_convention(zip_path: Path = CISS_2024_ZIP) -> dict[str, Any]:
     }
 
 
+# Zona horizontal del CDC (4.º carácter) que dice de qué lado del centro está el daño.
+_FB_ZONE_SIGN = {"L": -1, "R": 1}  # frente y parte trasera: izquierda o derecha
+_LR_ZONE_SIGN = {"F": 1, "B": -1}  # costados: adelante o atrás
+
+
+def nhtsa_d_convention() -> dict[str, Any]:
+    """Comprueba el signo de ``damage_offset_mm`` (D) de NHTSA contra la zona horizontal del CDC.
+
+    Hipótesis (ADR 0032): en el frente y la parte trasera D se mide desde el eje central, + a la
+    derecha; en los costados, desde el CG, + hacia adelante. Si la hipótesis es buena, el daño en la
+    zona izquierda (L) del frente da D < 0 y el de la zona delantera (F) de un costado, D > 0.
+    Solo cuentan los casos con |D| > 20 mm (los de daño centrado no dicen nada del signo)."""
+    out: dict[str, Counter[str]] = {"frente_y_trasera": Counter(), "costados": Counter()}
+    for path in (VTB_CSV, ITV_CSV):
+        with path.open(encoding="utf-8", newline="") as f:
+            for r in csv.DictReader(f):
+                di = (r.get("damage_index") or "").upper()
+                d = _num(r.get("damage_offset_mm"))
+                if len(di) < 4 or d is None or abs(d) <= 20:
+                    continue
+                cara, zona = di[2], di[3]
+                if cara in ("F", "B") and zona in _FB_ZONE_SIGN:
+                    key, expected = "frente_y_trasera", _FB_ZONE_SIGN[zona]
+                elif cara in ("L", "R") and zona in _LR_ZONE_SIGN:
+                    key, expected = "costados", _LR_ZONE_SIGN[zona]
+                else:
+                    continue
+                out[key]["coincide" if (d > 0) == (expected > 0) else "no_coincide"] += 1
+    return {k: {"total": sum(v.values()), **v} for k, v in out.items()}
+
+
 def _by_type(counter: Counter[str]) -> dict[str, int]:
     return {t: counter.get(t, 0) for t in TIPOS}
 
@@ -138,6 +171,7 @@ def inventory(media_dir: Path = MEDIA_DIR) -> dict[str, Any]:
                 Counter(c.tipo for c in nhtsa if c.centro_dano_m is not None)
             ),
             "con_velocidad": _by_type(Counter(c.tipo for c in nhtsa if c.velocidad_kmh)),
+            "convencion_de_d": nhtsa_d_convention(),
             "fotos": {k: _by_type(v) for k, v in sorted(fotos.items())},
         },
         "ciss": {

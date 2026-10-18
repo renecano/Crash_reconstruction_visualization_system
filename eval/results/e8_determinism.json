@@ -1,7 +1,7 @@
 {
   "name": "e8_determinism",
-  "generated_at": "2026-10-18T00:45:00.423Z",
-  "git_commit": "e840b4f",
+  "generated_at": "2026-10-18T14:42:03.266Z",
+  "git_commit": "104745b",
   "criterio": "PLAN §8: igualdad exacta entre navegadores y repeticiones del resultado completo del solver y del horneado con Rapier (restos, volcaduras y ragdolls)",
   "navegadores": {
     "chromium": "156.0.8078.4",
@@ -59,16 +59,16 @@
       "identico": true,
       "hashes": {
         "chromium": [
-          "d4c5cbe7b9f8b95c8f48c2271cd97e8a57811dc3317faca5adda59bc5231b7dd",
-          "d4c5cbe7b9f8b95c8f48c2271cd97e8a57811dc3317faca5adda59bc5231b7dd"
+          "b0d063497f2a14765608446dd91262c5be849a4ff4bbd12c8fd10b6d5caa3f55",
+          "b0d063497f2a14765608446dd91262c5be849a4ff4bbd12c8fd10b6d5caa3f55"
         ],
         "firefox": [
-          "d4c5cbe7b9f8b95c8f48c2271cd97e8a57811dc3317faca5adda59bc5231b7dd",
-          "d4c5cbe7b9f8b95c8f48c2271cd97e8a57811dc3317faca5adda59bc5231b7dd"
+          "b0d063497f2a14765608446dd91262c5be849a4ff4bbd12c8fd10b6d5caa3f55",
+          "b0d063497f2a14765608446dd91262c5be849a4ff4bbd12c8fd10b6d5caa3f55"
         ],
         "webkit": [
-          "d4c5cbe7b9f8b95c8f48c2271cd97e8a57811dc3317faca5adda59bc5231b7dd",
-          "d4c5cbe7b9f8b95c8f48c2271cd97e8a57811dc3317faca5adda59bc5231b7dd"
+          "b0d063497f2a14765608446dd91262c5be849a4ff4bbd12c8fd10b6d5caa3f55",
+          "b0d063497f2a14765608446dd91262c5be849a4ff4bbd12c8fd10b6d5caa3f55"
         ]
       },
       "diferencias": {}
@@ -78,16 +78,16 @@
       "identico": true,
       "hashes": {
         "chromium": [
-          "467b73aecb3eed03d20df52afb6252cd63a9fa938d44028a13fd81c4a0dad0af",
-          "467b73aecb3eed03d20df52afb6252cd63a9fa938d44028a13fd81c4a0dad0af"
+          "a7c4075fe1a00e05d0cf158392d0301bc36cada93a1f0f0381588039309cc7b7",
+          "a7c4075fe1a00e05d0cf158392d0301bc36cada93a1f0f0381588039309cc7b7"
         ],
         "firefox": [
-          "467b73aecb3eed03d20df52afb6252cd63a9fa938d44028a13fd81c4a0dad0af",
-          "467b73aecb3eed03d20df52afb6252cd63a9fa938d44028a13fd81c4a0dad0af"
+          "a7c4075fe1a00e05d0cf158392d0301bc36cada93a1f0f0381588039309cc7b7",
+          "a7c4075fe1a00e05d0cf158392d0301bc36cada93a1f0f0381588039309cc7b7"
         ],
         "webkit": [
-          "467b73aecb3eed03d20df52afb6252cd63a9fa938d44028a13fd81c4a0dad0af",
-          "467b73aecb3eed03d20df52afb6252cd63a9fa938d44028a13fd81c4a0dad0af"
+          "a7c4075fe1a00e05d0cf158392d0301bc36cada93a1f0f0381588039309cc7b7",
+          "a7c4075fe1a00e05d0cf158392d0301bc36cada93a1f0f0381588039309cc7b7"
         ]
       },
       "diferencias": {}
@@ -97,16 +97,16 @@
       "identico": true,
       "hashes": {
         "chromium": [
-          "ac44f2e4c5313de006c068c2f0cb93c8d6fd99623af659b071d7c73209d81ee1",
-          "ac44f2e4c5313de006c068c2f0cb93c8d6fd99623af659b071d7c73209d81ee1"
+          "72175e7ff2e1ba85443801a813f2038897fd18c098a5aabbf66b8b4f50aa946c",
+          "72175e7ff2e1ba85443801a813f2038897fd18c098a5aabbf66b8b4f50aa946c"
         ],
         "firefox": [
-          "ac44f2e4c5313de006c068c2f0cb93c8d6fd99623af659b071d7c73209d81ee1",
-          "ac44f2e4c5313de006c068c2f0cb93c8d6fd99623af659b071d7c73209d81ee1"
+          "72175e7ff2e1ba85443801a813f2038897fd18c098a5aabbf66b8b4f50aa946c",
+          "72175e7ff2e1ba85443801a813f2038897fd18c098a5aabbf66b8b4f50aa946c"
         ],
         "webkit": [
-          "ac44f2e4c5313de006c068c2f0cb93c8d6fd99623af659b071d7c73209d81ee1",
-          "ac44f2e4c5313de006c068c2f0cb93c8d6fd99623af659b071d7c73209d81ee1"
+          "72175e7ff2e1ba85443801a813f2038897fd18c098a5aabbf66b8b4f50aa946c",
+          "72175e7ff2e1ba85443801a813f2038897fd18c098a5aabbf66b8b4f50aa946c"
         ]
       },
       "diferencias": {}
@@ -116,16 +116,16 @@
       "identico": true,
       "hashes": {
         "chromium": [
-          "151b59c6e0adce45884012f4a7cf03f5a564121f8b614688fd34e470becd4760",
-          "151b59c6e0adce45884012f4a7cf03f5a564121f8b614688fd34e470becd4760"
+          "d6a45b6fb41ca7a95a92958fdee48abdf9ab13523cb9067e0f36b367684267a1",
+          "d6a45b6fb41ca7a95a92958fdee48abdf9ab13523cb9067e0f36b367684267a1"
         ],
         "firefox": [
-          "151b59c6e0adce45884012f4a7cf03f5a564121f8b614688fd34e470becd4760",
-          "151b59c6e0adce45884012f4a7cf03f5a564121f8b614688fd34e470becd4760"
+          "d6a45b6fb41ca7a95a92958fdee48abdf9ab13523cb9067e0f36b367684267a1",
+          "d6a45b6fb41ca7a95a92958fdee48abdf9ab13523cb9067e0f36b367684267a1"
         ],
         "webkit": [
-          "151b59c6e0adce45884012f4a7cf03f5a564121f8b614688fd34e470becd4760",
-          "151b59c6e0adce45884012f4a7cf03f5a564121f8b614688fd34e470becd4760"
+          "d6a45b6fb41ca7a95a92958fdee48abdf9ab13523cb9067e0f36b367684267a1",
+          "d6a45b6fb41ca7a95a92958fdee48abdf9ab13523cb9067e0f36b367684267a1"
         ]
       },
       "diferencias": {}
@@ -135,16 +135,16 @@
       "identico": true,
       "hashes": {
         "chromium": [
-          "923b977e09ab4291047049e629f7d8be0f3d6385c752b14620a6c5b11062c4f3",
-          "923b977e09ab4291047049e629f7d8be0f3d6385c752b14620a6c5b11062c4f3"
+          "32252cafecfc1fe77c1a43394fb47e18f39446d306c9b2c89827fd30ed56694d",
+          "32252cafecfc1fe77c1a43394fb47e18f39446d306c9b2c89827fd30ed56694d"
         ],
         "firefox": [
-          "923b977e09ab4291047049e629f7d8be0f3d6385c752b14620a6c5b11062c4f3",
-          "923b977e09ab4291047049e629f7d8be0f3d6385c752b14620a6c5b11062c4f3"
+          "32252cafecfc1fe77c1a43394fb47e18f39446d306c9b2c89827fd30ed56694d",
+          "32252cafecfc1fe77c1a43394fb47e18f39446d306c9b2c89827fd30ed56694d"
         ],
         "webkit": [
-          "923b977e09ab4291047049e629f7d8be0f3d6385c752b14620a6c5b11062c4f3",
-          "923b977e09ab4291047049e629f7d8be0f3d6385c752b14620a6c5b11062c4f3"
+          "32252cafecfc1fe77c1a43394fb47e18f39446d306c9b2c89827fd30ed56694d",
+          "32252cafecfc1fe77c1a43394fb47e18f39446d306c9b2c89827fd30ed56694d"
         ]
       },
       "diferencias": {}
@@ -211,16 +211,16 @@
       "identico": true,
       "hashes": {
         "chromium": [
-          "a202e6d0ade5666df95c1238b55fbdeb92456044845d983732f676f45c746e3b",
-          "a202e6d0ade5666df95c1238b55fbdeb92456044845d983732f676f45c746e3b"
+          "417464d646bf6d53fb0129059dbbf04750385051ba6c6ad42ce4efb87b55babe",
+          "417464d646bf6d53fb0129059dbbf04750385051ba6c6ad42ce4efb87b55babe"
         ],
         "firefox": [
-          "a202e6d0ade5666df95c1238b55fbdeb92456044845d983732f676f45c746e3b",
-          "a202e6d0ade5666df95c1238b55fbdeb92456044845d983732f676f45c746e3b"
+          "417464d646bf6d53fb0129059dbbf04750385051ba6c6ad42ce4efb87b55babe",
+          "417464d646bf6d53fb0129059dbbf04750385051ba6c6ad42ce4efb87b55babe"
         ],
         "webkit": [
-          "a202e6d0ade5666df95c1238b55fbdeb92456044845d983732f676f45c746e3b",
-          "a202e6d0ade5666df95c1238b55fbdeb92456044845d983732f676f45c746e3b"
+          "417464d646bf6d53fb0129059dbbf04750385051ba6c6ad42ce4efb87b55babe",
+          "417464d646bf6d53fb0129059dbbf04750385051ba6c6ad42ce4efb87b55babe"
         ]
       },
       "diferencias": {}
@@ -340,23 +340,23 @@
       "identico": true,
       "hashes": {
         "chromium": [
-          "c264cc1122d874bf97e327dce4dbe0860280fb5733a2d476a6d49443de57f1e5",
-          "c264cc1122d874bf97e327dce4dbe0860280fb5733a2d476a6d49443de57f1e5"
+          "bd7039bbc5665f000c72901957cead4616d57b92448bdc2e947b4d22a5c40849",
+          "bd7039bbc5665f000c72901957cead4616d57b92448bdc2e947b4d22a5c40849"
         ],
         "firefox": [
-          "c264cc1122d874bf97e327dce4dbe0860280fb5733a2d476a6d49443de57f1e5",
-          "c264cc1122d874bf97e327dce4dbe0860280fb5733a2d476a6d49443de57f1e5"
+          "bd7039bbc5665f000c72901957cead4616d57b92448bdc2e947b4d22a5c40849",
+          "bd7039bbc5665f000c72901957cead4616d57b92448bdc2e947b4d22a5c40849"
         ],
         "webkit": [
-          "c264cc1122d874bf97e327dce4dbe0860280fb5733a2d476a6d49443de57f1e5",
-          "c264cc1122d874bf97e327dce4dbe0860280fb5733a2d476a6d49443de57f1e5"
+          "bd7039bbc5665f000c72901957cead4616d57b92448bdc2e947b4d22a5c40849",
+          "bd7039bbc5665f000c72901957cead4616d57b92448bdc2e947b4d22a5c40849"
         ]
       },
       "diferencias": {},
       "contenido": {
         "restos": {
-          "piezas": 150,
-          "sha256": "89d5e2eb9305790d63fa1bf18388fde35b95051d60f73df1bdd631f4b39352a1"
+          "piezas": 60,
+          "sha256": "f103fee57df2903a3448ff06df0eae130f0453bef7977850a8fa5ffbe96ad74a"
         },
         "volcaduras": [],
         "ragdolls": []
@@ -516,23 +516,23 @@
       "identico": true,
       "hashes": {
         "chromium": [
-          "30d61e5afe389065a5d96e5bf953e9c20ace9d5ff9e00c98b82ad6b30fed9ded",
-          "30d61e5afe389065a5d96e5bf953e9c20ace9d5ff9e00c98b82ad6b30fed9ded"
+          "ce2369b3e9f150cf9d59368ab16bb3310bc0c167ac49811a478c86f391aad903",
+          "ce2369b3e9f150cf9d59368ab16bb3310bc0c167ac49811a478c86f391aad903"
         ],
         "firefox": [
-          "30d61e5afe389065a5d96e5bf953e9c20ace9d5ff9e00c98b82ad6b30fed9ded",
-          "30d61e5afe389065a5d96e5bf953e9c20ace9d5ff9e00c98b82ad6b30fed9ded"
+          "ce2369b3e9f150cf9d59368ab16bb3310bc0c167ac49811a478c86f391aad903",
+          "ce2369b3e9f150cf9d59368ab16bb3310bc0c167ac49811a478c86f391aad903"
         ],
         "webkit": [
-          "30d61e5afe389065a5d96e5bf953e9c20ace9d5ff9e00c98b82ad6b30fed9ded",
-          "30d61e5afe389065a5d96e5bf953e9c20ace9d5ff9e00c98b82ad6b30fed9ded"
+          "ce2369b3e9f150cf9d59368ab16bb3310bc0c167ac49811a478c86f391aad903",
+          "ce2369b3e9f150cf9d59368ab16bb3310bc0c167ac49811a478c86f391aad903"
         ]
       },
       "diferencias": {},
       "contenido": {
         "restos": {
-          "piezas": 16,
-          "sha256": "bd27ceb0e2a94171b26df4e17556380b6836240664a8bf39b06ce67476b35d95"
+          "piezas": 105,
+          "sha256": "b088f789161c5a4e6b840eb51d40728e080e38b8bffc418fcdfa2a39a4276d8c"
         },
         "volcaduras": [
           {
