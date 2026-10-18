@@ -81,6 +81,7 @@ function porFuncion(D) {
     cos: [Math.cos, D.cos, 1],
     tan: [Math.tan, D.tan, 1],
     atan: [Math.atan, D.atan, 1],
+    acos: [(x) => Math.acos(x / 8), (x) => D.acos(x / 8), 1],
     atan2: [Math.atan2, D.atan2, 2],
     exp: [Math.exp, D.exp, 1],
     log: [(x) => Math.log(Math.abs(x)), (x) => D.log(Math.abs(x)), 1],

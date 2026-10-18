@@ -1,0 +1,140 @@
+{
+  "name": "e8_costo_dmath",
+  "generated_at": "2026-10-18T00:49:20.421Z",
+  "git_commit": "e840b4f",
+  "antes": "800d41b",
+  "motor": "Node v24.12.0 (V8 13.6.233.17-node.37)",
+  "rondas": 5,
+  "por_funcion": {
+    "sin": {
+      "math_ns": 33.9,
+      "dmath_ns": 57.2,
+      "max_ulps_vs_v8": 0
+    },
+    "cos": {
+      "math_ns": 33.4,
+      "dmath_ns": 57,
+      "max_ulps_vs_v8": 0
+    },
+    "tan": {
+      "math_ns": 40.5,
+      "dmath_ns": 73.4,
+      "max_ulps_vs_v8": 0
+    },
+    "atan": {
+      "math_ns": 24.3,
+      "dmath_ns": 29.1,
+      "max_ulps_vs_v8": 0
+    },
+    "acos": {
+      "math_ns": 24.8,
+      "dmath_ns": 37.7,
+      "max_ulps_vs_v8": 0
+    },
+    "atan2": {
+      "math_ns": 44.9,
+      "dmath_ns": 61.1,
+      "max_ulps_vs_v8": 0
+    },
+    "exp": {
+      "math_ns": 25.5,
+      "dmath_ns": 42.1,
+      "max_ulps_vs_v8": 0
+    },
+    "log": {
+      "math_ns": 23.6,
+      "dmath_ns": 47.8,
+      "max_ulps_vs_v8": 0
+    },
+    "hypot": {
+      "math_ns": 24.4,
+      "dmath_ns": 22.5,
+      "max_ulps_vs_v8": 0
+    }
+  },
+  "solver_completo": {
+    "total_antes_ms": 9064,
+    "total_despues_ms": 11075,
+    "razon_total": 1.222,
+    "resultado_identico_en_v8": true,
+    "escenas": [
+      {
+        "escena": "alcance",
+        "antes_ms": 176.8,
+        "despues_ms": 186.8,
+        "razon": 1.057,
+        "identico_v8": true
+      },
+      {
+        "escena": "frontal_curva",
+        "antes_ms": 707.2,
+        "despues_ms": 1257.4,
+        "razon": 1.778,
+        "identico_v8": true
+      },
+      {
+        "escena": "glorieta",
+        "antes_ms": 1002.5,
+        "despues_ms": 1362.2,
+        "razon": 1.359,
+        "identico_v8": true
+      },
+      {
+        "escena": "interseccion_toluca",
+        "antes_ms": 1841.9,
+        "despues_ms": 2058.2,
+        "razon": 1.117,
+        "identico_v8": true
+      },
+      {
+        "escena": "lateral_interseccion",
+        "antes_ms": 1603.8,
+        "despues_ms": 1784.8,
+        "razon": 1.113,
+        "identico_v8": true
+      },
+      {
+        "escena": "motociclista",
+        "antes_ms": 893.3,
+        "despues_ms": 1035,
+        "razon": 1.159,
+        "identico_v8": true
+      },
+      {
+        "escena": "nocturno_lluvia",
+        "antes_ms": 367.6,
+        "despues_ms": 401.5,
+        "razon": 1.092,
+        "identico_v8": true
+      },
+      {
+        "escena": "objeto_fijo_arbol",
+        "antes_ms": 345.6,
+        "despues_ms": 535.2,
+        "razon": 1.549,
+        "identico_v8": true
+      },
+      {
+        "escena": "peaton_cruce",
+        "antes_ms": 239,
+        "despues_ms": 256.5,
+        "razon": 1.073,
+        "identico_v8": true
+      },
+      {
+        "escena": "poste",
+        "antes_ms": 314.7,
+        "despues_ms": 395.4,
+        "razon": 1.256,
+        "identico_v8": true
+      },
+      {
+        "escena": "volcadura",
+        "antes_ms": 1571.1,
+        "despues_ms": 1802.4,
+        "razon": 1.147,
+        "identico_v8": true
+      }
+    ]
+  }
+}

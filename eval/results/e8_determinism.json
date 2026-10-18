@@ -1,0 +1,547 @@
+{
+  "name": "e8_determinism",
+  "generated_at": "2026-10-18T00:45:00.423Z",
+  "git_commit": "e840b4f",
+  "criterio": "PLAN §8: igualdad exacta entre navegadores y repeticiones del resultado completo del solver y del horneado con Rapier (restos, volcaduras y ragdolls)",
+  "navegadores": {
+    "chromium": "156.0.8078.4",
+    "firefox": "157.0",
+    "webkit": "27.2"
+  },
+  "repeticiones": 2,
+  "escenas_identicas": 11,
+  "escenas_total": 11,
+  "horneados_identicos": 11,
+  "calidad_horneado": "media",
+  "horneado_igual_en_baja_y_ultra": true,
+  "cumple": true,
+  "escenas": [
+    {
+      "escena": "alcance",
+      "identico": true,
+      "hashes": {
+        "chromium": [
+          "aa8d717b27443c087e3f76ed6c6c979e03f1786944b5a5e1a710964cd8977978",
+          "aa8d717b27443c087e3f76ed6c6c979e03f1786944b5a5e1a710964cd8977978"
+        ],
+        "firefox": [
+          "aa8d717b27443c087e3f76ed6c6c979e03f1786944b5a5e1a710964cd8977978",
+          "aa8d717b27443c087e3f76ed6c6c979e03f1786944b5a5e1a710964cd8977978"
+        ],
+        "webkit": [
+          "aa8d717b27443c087e3f76ed6c6c979e03f1786944b5a5e1a710964cd8977978",
+          "aa8d717b27443c087e3f76ed6c6c979e03f1786944b5a5e1a710964cd8977978"
+        ]
+      },
+      "diferencias": {}
+    },
+    {
+      "escena": "frontal_curva",
+      "identico": true,
+      "hashes": {
+        "chromium": [
+          "b65e3f4872c15972bcdc81a500e303ae42c89eb81f627d7054aa0f8fe7673972",
+          "b65e3f4872c15972bcdc81a500e303ae42c89eb81f627d7054aa0f8fe7673972"
+        ],
+        "firefox": [
+          "b65e3f4872c15972bcdc81a500e303ae42c89eb81f627d7054aa0f8fe7673972",
+          "b65e3f4872c15972bcdc81a500e303ae42c89eb81f627d7054aa0f8fe7673972"
+        ],
+        "webkit": [
+          "b65e3f4872c15972bcdc81a500e303ae42c89eb81f627d7054aa0f8fe7673972",
+          "b65e3f4872c15972bcdc81a500e303ae42c89eb81f627d7054aa0f8fe7673972"
+        ]
+      },
+      "diferencias": {}
+    },
+    {
+      "escena": "glorieta",
+      "identico": true,
+      "hashes": {
+        "chromium": [
+          "d4c5cbe7b9f8b95c8f48c2271cd97e8a57811dc3317faca5adda59bc5231b7dd",
+          "d4c5cbe7b9f8b95c8f48c2271cd97e8a57811dc3317faca5adda59bc5231b7dd"
+        ],
+        "firefox": [
+          "d4c5cbe7b9f8b95c8f48c2271cd97e8a57811dc3317faca5adda59bc5231b7dd",
+          "d4c5cbe7b9f8b95c8f48c2271cd97e8a57811dc3317faca5adda59bc5231b7dd"
+        ],
+        "webkit": [
+          "d4c5cbe7b9f8b95c8f48c2271cd97e8a57811dc3317faca5adda59bc5231b7dd",
+          "d4c5cbe7b9f8b95c8f48c2271cd97e8a57811dc3317faca5adda59bc5231b7dd"
+        ]
+      },
+      "diferencias": {}
+    },
+    {
+      "escena": "interseccion_toluca",
+      "identico": true,
+      "hashes": {
+        "chromium": [
+          "467b73aecb3eed03d20df52afb6252cd63a9fa938d44028a13fd81c4a0dad0af",
+          "467b73aecb3eed03d20df52afb6252cd63a9fa938d44028a13fd81c4a0dad0af"
+        ],
+        "firefox": [
+          "467b73aecb3eed03d20df52afb6252cd63a9fa938d44028a13fd81c4a0dad0af",
+          "467b73aecb3eed03d20df52afb6252cd63a9fa938d44028a13fd81c4a0dad0af"
+        ],
+        "webkit": [
+          "467b73aecb3eed03d20df52afb6252cd63a9fa938d44028a13fd81c4a0dad0af",
+          "467b73aecb3eed03d20df52afb6252cd63a9fa938d44028a13fd81c4a0dad0af"
+        ]
+      },
+      "diferencias": {}
+    },
+    {
+      "escena": "lateral_interseccion",
+      "identico": true,
+      "hashes": {
+        "chromium": [
+          "ac44f2e4c5313de006c068c2f0cb93c8d6fd99623af659b071d7c73209d81ee1",
+          "ac44f2e4c5313de006c068c2f0cb93c8d6fd99623af659b071d7c73209d81ee1"
+        ],
+        "firefox": [
+          "ac44f2e4c5313de006c068c2f0cb93c8d6fd99623af659b071d7c73209d81ee1",
+          "ac44f2e4c5313de006c068c2f0cb93c8d6fd99623af659b071d7c73209d81ee1"
+        ],
+        "webkit": [
+          "ac44f2e4c5313de006c068c2f0cb93c8d6fd99623af659b071d7c73209d81ee1",
+          "ac44f2e4c5313de006c068c2f0cb93c8d6fd99623af659b071d7c73209d81ee1"
+        ]
+      },
+      "diferencias": {}
+    },
+    {
+      "escena": "motociclista",
+      "identico": true,
+      "hashes": {
+        "chromium": [
+          "151b59c6e0adce45884012f4a7cf03f5a564121f8b614688fd34e470becd4760",
+          "151b59c6e0adce45884012f4a7cf03f5a564121f8b614688fd34e470becd4760"
+        ],
+        "firefox": [
+          "151b59c6e0adce45884012f4a7cf03f5a564121f8b614688fd34e470becd4760",
+          "151b59c6e0adce45884012f4a7cf03f5a564121f8b614688fd34e470becd4760"
+        ],
+        "webkit": [
+          "151b59c6e0adce45884012f4a7cf03f5a564121f8b614688fd34e470becd4760",
+          "151b59c6e0adce45884012f4a7cf03f5a564121f8b614688fd34e470becd4760"
+        ]
+      },
+      "diferencias": {}
+    },
+    {
+      "escena": "nocturno_lluvia",
+      "identico": true,
+      "hashes": {
+        "chromium": [
+          "923b977e09ab4291047049e629f7d8be0f3d6385c752b14620a6c5b11062c4f3",
+          "923b977e09ab4291047049e629f7d8be0f3d6385c752b14620a6c5b11062c4f3"
+        ],
+        "firefox": [
+          "923b977e09ab4291047049e629f7d8be0f3d6385c752b14620a6c5b11062c4f3",
+          "923b977e09ab4291047049e629f7d8be0f3d6385c752b14620a6c5b11062c4f3"
+        ],
+        "webkit": [
+          "923b977e09ab4291047049e629f7d8be0f3d6385c752b14620a6c5b11062c4f3",
+          "923b977e09ab4291047049e629f7d8be0f3d6385c752b14620a6c5b11062c4f3"
+        ]
+      },
+      "diferencias": {}
+    },
+    {
+      "escena": "objeto_fijo_arbol",
+      "identico": true,
+      "hashes": {
+        "chromium": [
+          "d32cca4443ae6be1f39418d3cc3a05de4a6a32485915b60742683980d215b22f",
+          "d32cca4443ae6be1f39418d3cc3a05de4a6a32485915b60742683980d215b22f"
+        ],
+        "firefox": [
+          "d32cca4443ae6be1f39418d3cc3a05de4a6a32485915b60742683980d215b22f",
+          "d32cca4443ae6be1f39418d3cc3a05de4a6a32485915b60742683980d215b22f"
+        ],
+        "webkit": [
+          "d32cca4443ae6be1f39418d3cc3a05de4a6a32485915b60742683980d215b22f",
+          "d32cca4443ae6be1f39418d3cc3a05de4a6a32485915b60742683980d215b22f"
+        ]
+      },
+      "diferencias": {}
+    },
+    {
+      "escena": "peaton_cruce",
+      "identico": true,
+      "hashes": {
+        "chromium": [
+          "21d0ce0e932db158029d7b3473b71fda48c6338056365d8135b8673752d18401",
+          "21d0ce0e932db158029d7b3473b71fda48c6338056365d8135b8673752d18401"
+        ],
+        "firefox": [
+          "21d0ce0e932db158029d7b3473b71fda48c6338056365d8135b8673752d18401",
+          "21d0ce0e932db158029d7b3473b71fda48c6338056365d8135b8673752d18401"
+        ],
+        "webkit": [
+          "21d0ce0e932db158029d7b3473b71fda48c6338056365d8135b8673752d18401",
+          "21d0ce0e932db158029d7b3473b71fda48c6338056365d8135b8673752d18401"
+        ]
+      },
+      "diferencias": {}
+    },
+    {
+      "escena": "poste",
+      "identico": true,
+      "hashes": {
+        "chromium": [
+          "699705c09bfd369319b260846ce81125066796009a65fff58116dc5583ec8943",
+          "699705c09bfd369319b260846ce81125066796009a65fff58116dc5583ec8943"
+        ],
+        "firefox": [
+          "699705c09bfd369319b260846ce81125066796009a65fff58116dc5583ec8943",
+          "699705c09bfd369319b260846ce81125066796009a65fff58116dc5583ec8943"
+        ],
+        "webkit": [
+          "699705c09bfd369319b260846ce81125066796009a65fff58116dc5583ec8943",
+          "699705c09bfd369319b260846ce81125066796009a65fff58116dc5583ec8943"
+        ]
+      },
+      "diferencias": {}
+    },
+    {
+      "escena": "volcadura",
+      "identico": true,
+      "hashes": {
+        "chromium": [
+          "a202e6d0ade5666df95c1238b55fbdeb92456044845d983732f676f45c746e3b",
+          "a202e6d0ade5666df95c1238b55fbdeb92456044845d983732f676f45c746e3b"
+        ],
+        "firefox": [
+          "a202e6d0ade5666df95c1238b55fbdeb92456044845d983732f676f45c746e3b",
+          "a202e6d0ade5666df95c1238b55fbdeb92456044845d983732f676f45c746e3b"
+        ],
+        "webkit": [
+          "a202e6d0ade5666df95c1238b55fbdeb92456044845d983732f676f45c746e3b",
+          "a202e6d0ade5666df95c1238b55fbdeb92456044845d983732f676f45c746e3b"
+        ]
+      },
+      "diferencias": {}
+    }
+  ],
+  "horneado": [
+    {
+      "escena": "alcance",
+      "identico": true,
+      "hashes": {
+        "chromium": [
+          "eecaaee47bcf20c7f5f0c051ce473fe06781011ecb3ad0d410eb541532264ba5",
+          "eecaaee47bcf20c7f5f0c051ce473fe06781011ecb3ad0d410eb541532264ba5"
+        ],
+        "firefox": [
+          "eecaaee47bcf20c7f5f0c051ce473fe06781011ecb3ad0d410eb541532264ba5",
+          "eecaaee47bcf20c7f5f0c051ce473fe06781011ecb3ad0d410eb541532264ba5"
+        ],
+        "webkit": [
+          "eecaaee47bcf20c7f5f0c051ce473fe06781011ecb3ad0d410eb541532264ba5",
+          "eecaaee47bcf20c7f5f0c051ce473fe06781011ecb3ad0d410eb541532264ba5"
+        ]
+      },
+      "diferencias": {},
+      "contenido": {
+        "restos": {
+          "piezas": 45,
+          "sha256": "4bc35c09822c06c5df4979ec660613befd2ce04fc5689e30caf53490fe4ba47d"
+        },
+        "volcaduras": [],
+        "ragdolls": []
+      }
+    },
+    {
+      "escena": "frontal_curva",
+      "identico": true,
+      "hashes": {
+        "chromium": [
+          "2db7cc3824954c3eecb08d643a76ed0b6f3215ba4d6112cd040af1fc290b9779",
+          "2db7cc3824954c3eecb08d643a76ed0b6f3215ba4d6112cd040af1fc290b9779"
+        ],
+        "firefox": [
+          "2db7cc3824954c3eecb08d643a76ed0b6f3215ba4d6112cd040af1fc290b9779",
+          "2db7cc3824954c3eecb08d643a76ed0b6f3215ba4d6112cd040af1fc290b9779"
+        ],
+        "webkit": [
+          "2db7cc3824954c3eecb08d643a76ed0b6f3215ba4d6112cd040af1fc290b9779",
+          "2db7cc3824954c3eecb08d643a76ed0b6f3215ba4d6112cd040af1fc290b9779"
+        ]
+      },
+      "diferencias": {},
+      "contenido": {
+        "restos": {
+          "piezas": 64,
+          "sha256": "a42516a0d8634a52b938494cd56fb64c4bbe6e5d678bd9b1a377f761ac3c186d"
+        },
+        "volcaduras": [],
+        "ragdolls": []
+      }
+    },
+    {
+      "escena": "glorieta",
+      "identico": true,
+      "hashes": {
+        "chromium": [
+          "c41f3a282337e47970d761572c6c92c8c12b051f130775c11b72a352ddafe37b",
+          "c41f3a282337e47970d761572c6c92c8c12b051f130775c11b72a352ddafe37b"
+        ],
+        "firefox": [
+          "c41f3a282337e47970d761572c6c92c8c12b051f130775c11b72a352ddafe37b",
+          "c41f3a282337e47970d761572c6c92c8c12b051f130775c11b72a352ddafe37b"
+        ],
+        "webkit": [
+          "c41f3a282337e47970d761572c6c92c8c12b051f130775c11b72a352ddafe37b",
+          "c41f3a282337e47970d761572c6c92c8c12b051f130775c11b72a352ddafe37b"
+        ]
+      },
+      "diferencias": {},
+      "contenido": {
+        "restos": {
+          "piezas": 30,
+          "sha256": "60968e42dab1a73cd19cb0f5cd5038193fac5259101032ebffdf1aab938aca05"
+        },
+        "volcaduras": [],
+        "ragdolls": []
+      }
+    },
+    {
+      "escena": "interseccion_toluca",
+      "identico": true,
+      "hashes": {
+        "chromium": [
+          "c68c2b2969d190006d53135768bcc8d6924ff70018bb0b26cdf0292435e23b9d",
+          "c68c2b2969d190006d53135768bcc8d6924ff70018bb0b26cdf0292435e23b9d"
+        ],
+        "firefox": [
+          "c68c2b2969d190006d53135768bcc8d6924ff70018bb0b26cdf0292435e23b9d",
+          "c68c2b2969d190006d53135768bcc8d6924ff70018bb0b26cdf0292435e23b9d"
+        ],
+        "webkit": [
+          "c68c2b2969d190006d53135768bcc8d6924ff70018bb0b26cdf0292435e23b9d",
+          "c68c2b2969d190006d53135768bcc8d6924ff70018bb0b26cdf0292435e23b9d"
+        ]
+      },
+      "diferencias": {},
+      "contenido": {
+        "restos": {
+          "piezas": 150,
+          "sha256": "40614f78ba6b574cf133783a9e6bfe5ea7217057faae153fc1ad0427789a96f9"
+        },
+        "volcaduras": [],
+        "ragdolls": []
+      }
+    },
+    {
+      "escena": "lateral_interseccion",
+      "identico": true,
+      "hashes": {
+        "chromium": [
+          "c264cc1122d874bf97e327dce4dbe0860280fb5733a2d476a6d49443de57f1e5",
+          "c264cc1122d874bf97e327dce4dbe0860280fb5733a2d476a6d49443de57f1e5"
+        ],
+        "firefox": [
+          "c264cc1122d874bf97e327dce4dbe0860280fb5733a2d476a6d49443de57f1e5",
+          "c264cc1122d874bf97e327dce4dbe0860280fb5733a2d476a6d49443de57f1e5"
+        ],
+        "webkit": [
+          "c264cc1122d874bf97e327dce4dbe0860280fb5733a2d476a6d49443de57f1e5",
+          "c264cc1122d874bf97e327dce4dbe0860280fb5733a2d476a6d49443de57f1e5"
+        ]
+      },
+      "diferencias": {},
+      "contenido": {
+        "restos": {
+          "piezas": 150,
+          "sha256": "89d5e2eb9305790d63fa1bf18388fde35b95051d60f73df1bdd631f4b39352a1"
+        },
+        "volcaduras": [],
+        "ragdolls": []
+      }
+    },
+    {
+      "escena": "motociclista",
+      "identico": true,
+      "hashes": {
+        "chromium": [
+          "be7fe61deee506ad1478c9031ada5153e8690474b7000302222a74f3808eb910",
+          "be7fe61deee506ad1478c9031ada5153e8690474b7000302222a74f3808eb910"
+        ],
+        "firefox": [
+          "be7fe61deee506ad1478c9031ada5153e8690474b7000302222a74f3808eb910",
+          "be7fe61deee506ad1478c9031ada5153e8690474b7000302222a74f3808eb910"
+        ],
+        "webkit": [
+          "be7fe61deee506ad1478c9031ada5153e8690474b7000302222a74f3808eb910",
+          "be7fe61deee506ad1478c9031ada5153e8690474b7000302222a74f3808eb910"
+        ]
+      },
+      "diferencias": {},
+      "contenido": {
+        "restos": {
+          "piezas": 30,
+          "sha256": "abedd3c56faae71ea855d7106b9d79656b2a982acc1783efe165dd925d0117fe"
+        },
+        "volcaduras": [],
+        "ragdolls": [
+          {
+            "persona": "per-b1",
+            "k": 0.9628154075132823,
+            "distancia": 16.425903078793613,
+            "sha256": "700098c957e22b71bb128f0823c79562562cdd0aaf18503cde506e933afbe851"
+          }
+        ]
+      }
+    },
+    {
+      "escena": "nocturno_lluvia",
+      "identico": true,
+      "hashes": {
+        "chromium": [
+          "ffa3974dbd572f2ce842092fd38ab872dc467159712bf1b9b7dd825370b777c1",
+          "ffa3974dbd572f2ce842092fd38ab872dc467159712bf1b9b7dd825370b777c1"
+        ],
+        "firefox": [
+          "ffa3974dbd572f2ce842092fd38ab872dc467159712bf1b9b7dd825370b777c1",
+          "ffa3974dbd572f2ce842092fd38ab872dc467159712bf1b9b7dd825370b777c1"
+        ],
+        "webkit": [
+          "ffa3974dbd572f2ce842092fd38ab872dc467159712bf1b9b7dd825370b777c1",
+          "ffa3974dbd572f2ce842092fd38ab872dc467159712bf1b9b7dd825370b777c1"
+        ]
+      },
+      "diferencias": {},
+      "contenido": {
+        "restos": {
+          "piezas": 47,
+          "sha256": "c2240b8aa2e7b936d663123b62f5e004a9331643411aaa656f17890d08f53a28"
+        },
+        "volcaduras": [],
+        "ragdolls": []
+      }
+    },
+    {
+      "escena": "objeto_fijo_arbol",
+      "identico": true,
+      "hashes": {
+        "chromium": [
+          "14a942b2a85dee7c326446d508eafeeb45371ea34897e07ea30883ef0ee01d8f",
+          "14a942b2a85dee7c326446d508eafeeb45371ea34897e07ea30883ef0ee01d8f"
+        ],
+        "firefox": [
+          "14a942b2a85dee7c326446d508eafeeb45371ea34897e07ea30883ef0ee01d8f",
+          "14a942b2a85dee7c326446d508eafeeb45371ea34897e07ea30883ef0ee01d8f"
+        ],
+        "webkit": [
+          "14a942b2a85dee7c326446d508eafeeb45371ea34897e07ea30883ef0ee01d8f",
+          "14a942b2a85dee7c326446d508eafeeb45371ea34897e07ea30883ef0ee01d8f"
+        ]
+      },
+      "diferencias": {},
+      "contenido": {
+        "restos": {
+          "piezas": 46,
+          "sha256": "0fc772e8e605bfd2e69a316f4716870fec001d1b425babc29aea1014b136acd5"
+        },
+        "volcaduras": [],
+        "ragdolls": []
+      }
+    },
+    {
+      "escena": "peaton_cruce",
+      "identico": true,
+      "hashes": {
+        "chromium": [
+          "a1e412c781a3df1d7d5e27e87e90d80da48b6d5e7379b69d6b6dc45ff24b4648",
+          "a1e412c781a3df1d7d5e27e87e90d80da48b6d5e7379b69d6b6dc45ff24b4648"
+        ],
+        "firefox": [
+          "a1e412c781a3df1d7d5e27e87e90d80da48b6d5e7379b69d6b6dc45ff24b4648",
+          "a1e412c781a3df1d7d5e27e87e90d80da48b6d5e7379b69d6b6dc45ff24b4648"
+        ],
+        "webkit": [
+          "a1e412c781a3df1d7d5e27e87e90d80da48b6d5e7379b69d6b6dc45ff24b4648",
+          "a1e412c781a3df1d7d5e27e87e90d80da48b6d5e7379b69d6b6dc45ff24b4648"
+        ]
+      },
+      "diferencias": {},
+      "contenido": {
+        "restos": {
+          "piezas": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "volcaduras": [],
+        "ragdolls": [
+          {
+            "persona": "per-peaton",
+            "k": 0.9417797099169876,
+            "distancia": 4.8058133875306766,
+            "sha256": "aee4be814a4ccaa56863ddb411193dfabd06db352db6443220af243b3a97954f"
+          }
+        ]
+      }
+    },
+    {
+      "escena": "poste",
+      "identico": true,
+      "hashes": {
+        "chromium": [
+          "4331ee319a169746fdebc979595c108d8d5deaa33d6a7aaac234b3f017199833",
+          "4331ee319a169746fdebc979595c108d8d5deaa33d6a7aaac234b3f017199833"
+        ],
+        "firefox": [
+          "4331ee319a169746fdebc979595c108d8d5deaa33d6a7aaac234b3f017199833",
+          "4331ee319a169746fdebc979595c108d8d5deaa33d6a7aaac234b3f017199833"
+        ],
+        "webkit": [
+          "4331ee319a169746fdebc979595c108d8d5deaa33d6a7aaac234b3f017199833",
+          "4331ee319a169746fdebc979595c108d8d5deaa33d6a7aaac234b3f017199833"
+        ]
+      },
+      "diferencias": {},
+      "contenido": {
+        "restos": {
+          "piezas": 16,
+          "sha256": "c0733e085546e62912c40c650dd57dec60ee71872d9f11c13a55b39bdc4f1804"
+        },
+        "volcaduras": [],
+        "ragdolls": []
+      }
+    },
+    {
+      "escena": "volcadura",
+      "identico": true,
+      "hashes": {
+        "chromium": [
+          "30d61e5afe389065a5d96e5bf953e9c20ace9d5ff9e00c98b82ad6b30fed9ded",
+          "30d61e5afe389065a5d96e5bf953e9c20ace9d5ff9e00c98b82ad6b30fed9ded"
+        ],
+        "firefox": [
+          "30d61e5afe389065a5d96e5bf953e9c20ace9d5ff9e00c98b82ad6b30fed9ded",
+          "30d61e5afe389065a5d96e5bf953e9c20ace9d5ff9e00c98b82ad6b30fed9ded"
+        ],
+        "webkit": [
+          "30d61e5afe389065a5d96e5bf953e9c20ace9d5ff9e00c98b82ad6b30fed9ded",
+          "30d61e5afe389065a5d96e5bf953e9c20ace9d5ff9e00c98b82ad6b30fed9ded"
+        ]
+      },
+      "diferencias": {},
+      "contenido": {
+        "restos": {
+          "piezas": 16,
+          "sha256": "bd27ceb0e2a94171b26df4e17556380b6836240664a8bf39b06ce67476b35d95"
+        },
+        "volcaduras": [
+          {
+            "vehiculo": "veh-a",
+            "sha256": "fc3cf086960d6bb8d84a88dee225b28727e2949a13e303f29c8d25c5e8a7f456"
+          }
+        ],
+        "ragdolls": []
+      }
+    }
+  ]
+}
