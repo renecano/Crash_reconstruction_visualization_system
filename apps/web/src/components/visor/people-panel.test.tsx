@@ -23,6 +23,7 @@ describe("<PeoplePanel />", () => {
               k: 0.98,
               iterations: 2,
               uncalibrated: 4.99,
+              frames: new Float32Array(0),
             },
           ],
         }}

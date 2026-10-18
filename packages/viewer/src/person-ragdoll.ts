@@ -19,6 +19,8 @@
 import { Quaternion, Vector3 } from "three";
 import { loadRapier, mulberry32, type KinematicBox, type StaticCollider } from "./debris";
 import type { BoneSpec } from "./person-pose";
+import { dmath } from "@croquis/solver-ts";
+import { quatFromAxisAngle, slerp } from "./dthree";
 
 export const RAGDOLL_DT = 1 / 60;
 export const RAGDOLL_MAX_SECONDS = 6;
@@ -97,7 +99,7 @@ function segmentKind(name: string): string {
 }
 
 function horizontalDistance(a: Vector3, b: Vector3): number {
-  return Math.hypot(b.x - a.x, b.z - a.z);
+  return dmath.hypot(b.x - a.x, b.z - a.z);
 }
 
 /** Descomposición balanceo-torsión de q alrededor del eje a (unitario). */
@@ -105,11 +107,11 @@ export function swingTwist(q: Quaternion, axis: Vector3): { swing: Quaternion; t
   const p = new Vector3(q.x, q.y, q.z);
   const proj = axis.clone().multiplyScalar(p.dot(axis));
   const twistQ = new Quaternion(proj.x, proj.y, proj.z, q.w);
-  const len = Math.hypot(twistQ.x, twistQ.y, twistQ.z, twistQ.w);
+  const len = dmath.hypotN([twistQ.x, twistQ.y, twistQ.z, twistQ.w]);
   if (len < 1e-9) return { swing: q.clone(), twist: 0 };
   twistQ.set(twistQ.x / len, twistQ.y / len, twistQ.z / len, twistQ.w / len);
   const swing = q.clone().multiply(twistQ.clone().invert());
-  let angle = 2 * Math.atan2(new Vector3(twistQ.x, twistQ.y, twistQ.z).dot(axis), twistQ.w);
+  let angle = 2 * dmath.atan2(new Vector3(twistQ.x, twistQ.y, twistQ.z).dot(axis), twistQ.w);
   if (angle > Math.PI) angle -= 2 * Math.PI;
   if (angle < -Math.PI) angle += 2 * Math.PI;
   return { swing, twist: angle };
@@ -127,11 +129,11 @@ export function clampRelative(qRel: Quaternion, rest: Vector3, kind: string): Qu
   // Ángulo sagital (+ al frente) y lateral del segmento, medidos desde la vertical de su lado:
   // hacia abajo para extremidades, hacia arriba para columna, cuello y cabeza.
   const sy = rest.y < 0 ? -1 : 1;
-  const wrap = (x: number): number => Math.atan2(Math.sin(x), Math.cos(x));
-  const flexRest = Math.atan2(rest.z, sy * rest.y);
-  const abdRest = Math.atan2(rest.x, Math.hypot(rest.y, rest.z));
-  const flexNow = Math.atan2(d.z, sy * d.y);
-  const abdNow = Math.atan2(d.x, Math.hypot(d.y, d.z));
+  const wrap = (x: number): number => dmath.atan2(dmath.sin(x), dmath.cos(x));
+  const flexRest = dmath.atan2(rest.z, sy * rest.y);
+  const abdRest = dmath.atan2(rest.x, dmath.hypot(rest.y, rest.z));
+  const flexNow = dmath.atan2(d.z, sy * d.y);
+  const abdNow = dmath.atan2(d.x, dmath.hypot(d.y, d.z));
   const sideSign = rest.x >= 0 ? 1 : -1; // abducción hacia afuera en ambos lados
   const hinge = kind === "pierna" || kind === "antebrazo";
   let flex = wrap(flexNow - flexRest) / DEG;
@@ -145,12 +147,12 @@ export function clampRelative(qRel: Quaternion, rest: Vector3, kind: string): Qu
   const f = (hinge ? -cf : cf) * DEG + flexRest;
   const a = ca * sideSign * DEG + abdRest;
   const target = new Vector3(
-    Math.sin(a),
-    sy * Math.cos(a) * Math.cos(f),
-    Math.cos(a) * Math.sin(f),
+    dmath.sin(a),
+    sy * dmath.cos(a) * dmath.cos(f),
+    dmath.cos(a) * dmath.sin(f),
   );
   const swingC = new Quaternion().setFromUnitVectors(rest, target.normalize());
-  const twistC = new Quaternion().setFromAxisAngle(rest, ct * DEG);
+  const twistC = quatFromAxisAngle(rest, ct * DEG);
   return swingC.multiply(twistC);
 }
 
@@ -182,7 +184,7 @@ export async function bakeRagdoll(input: RagdollInput, k: number): Promise<Ragdo
         .setFrictionCombineRule(R.CoefficientCombineRule.Average),
     );
     for (const st of input.statics) {
-      const q = new Quaternion().setFromAxisAngle(new Vector3(0, 1, 0), st.yaw);
+      const q = quatFromAxisAngle(new Vector3(0, 1, 0), st.yaw);
       const desc =
         st.kind === "cilindro"
           ? R.ColliderDesc.cylinder(st.size[1], st.size[0])
@@ -216,7 +218,11 @@ export async function bakeRagdoll(input: RagdollInput, k: number): Promise<Ragdo
       const init = input.initial.get(b.nombre)!;
       const len =
         s *
-        Math.hypot(b.punta[0] - b.cabeza[0], b.punta[1] - b.cabeza[1], b.punta[2] - b.cabeza[2]);
+        dmath.hypotN([
+          b.punta[0] - b.cabeza[0],
+          b.punta[1] - b.cabeza[1],
+          b.punta[2] - b.cabeza[2],
+        ]);
       const rest = new Vector3(
         b.punta[0] - b.cabeza[0],
         b.punta[1] - b.cabeza[1],
@@ -323,7 +329,7 @@ export async function bakeRagdoll(input: RagdollInput, k: number): Promise<Ragdo
       if (st === steps - 1) break;
       for (const kb of kin) {
         const p = kb.v.poseAt(t + RAGDOLL_DT);
-        q.setFromAxisAngle(new Vector3(0, 1, 0), p.yaw);
+        quatFromAxisAngle(new Vector3(0, 1, 0), p.yaw, q);
         kb.body.setNextKinematicTranslation({ x: p.position.x, y: p.position.y, z: p.position.z });
         kb.body.setNextKinematicRotation({ x: q.x, y: q.y, z: q.z, w: q.w });
       }
@@ -342,9 +348,9 @@ export async function bakeRagdoll(input: RagdollInput, k: number): Promise<Ragdo
         const targetWorld = qP.clone().multiply(clamped);
         const corr = targetWorld.multiply(qC.clone().invert());
         if (corr.w < 0) corr.set(-corr.x, -corr.y, -corr.z, -corr.w);
-        const angle = 2 * Math.acos(Math.min(1, corr.w));
+        const angle = 2 * dmath.acos(Math.min(1, corr.w));
         if (angle < 1e-5) continue;
-        const sn = Math.sin(angle / 2);
+        const sn = dmath.sin(angle / 2);
         const axis = new Vector3(corr.x / sn, corr.y / sn, corr.z / sn);
         const wP = p.body.angvel();
         const wC = seg.body.angvel();
@@ -374,7 +380,7 @@ export async function bakeRagdoll(input: RagdollInput, k: number): Promise<Ragdo
       // Reposo: todos los segmentos casi quietos durante 0.5 s.
       const still = segs.every((seg) => {
         const v = seg.body.linvel();
-        return Math.hypot(v.x, v.y, v.z) < 0.05;
+        return dmath.hypotN([v.x, v.y, v.z]) < 0.05;
       });
       restSteps = still ? restSteps + 1 : 0;
       if (restSteps === Math.round(0.5 / RAGDOLL_DT)) tRest = Math.min(tRest, t - 0.5 + RAGDOLL_DT);
@@ -471,7 +477,9 @@ export function ragdollPoseAt(
     F[a + 1]! + (F[b + 1]! - F[a + 1]!) * f,
     F[a + 2]! + (F[b + 2]! - F[a + 2]!) * f,
   );
-  outQuat
-    .set(F[a + 3]!, F[a + 4]!, F[a + 5]!, F[a + 6]!)
-    .slerp(new Quaternion(F[b + 3], F[b + 4], F[b + 5], F[b + 6]), f);
+  slerp(
+    outQuat.set(F[a + 3]!, F[a + 4]!, F[a + 5]!, F[a + 6]!),
+    new Quaternion(F[b + 3], F[b + 4], F[b + 5], F[b + 6]),
+    f,
+  );
 }

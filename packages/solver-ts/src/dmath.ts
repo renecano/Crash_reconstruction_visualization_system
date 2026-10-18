@@ -610,6 +610,61 @@ export function atan2(y: number, x: number): number {
   }
 }
 
+// --- Arco coseno --------------------------------------------------------------------------------
+
+const PIO2_HI = 1.5707963267948966;
+const PIO2_LO = 6.123233995736766e-17;
+const PS0 = 1.66666666666666657415e-1;
+const PS1 = -3.25565818622400915405e-1;
+const PS2 = 2.01212532134862925881e-1;
+const PS3 = -4.00555345006794114027e-2;
+const PS4 = 7.91534994289814532176e-4;
+const PS5 = 3.4793310759602116757e-5;
+const QS1 = -2.40339491173441421878;
+const QS2 = 2.02094576023350569471;
+const QS3 = -6.8828397160545329303e-1;
+const QS4 = 7.70381505559019352791e-2;
+
+/** Arco coseno determinista (fdlibm `__ieee754_acos`). */
+export function acos(x: number): number {
+  const hx = highWord(x);
+  const ix = hx & 0x7fffffff;
+  if (ix >= 0x3ff00000) {
+    // |x| ≥ 1
+    if (((ix - 0x3ff00000) | lowWord(x)) === 0) return hx > 0 ? 0.0 : PI + 2.0 * PIO2_LO;
+    return NaN;
+  }
+  if (ix < 0x3fe00000) {
+    // |x| < 0.5
+    if (ix <= 0x3c600000) return PIO2_HI + PIO2_LO; // |x| < 2^-57
+    const z = x * x;
+    const p = z * (PS0 + z * (PS1 + z * (PS2 + z * (PS3 + z * (PS4 + z * PS5)))));
+    const q = 1.0 + z * (QS1 + z * (QS2 + z * (QS3 + z * QS4)));
+    const r = p / q;
+    return PIO2_HI - (x - (PIO2_LO - x * r));
+  }
+  if (hx < 0) {
+    // x < −0.5
+    const z = (1.0 + x) * 0.5;
+    const p = z * (PS0 + z * (PS1 + z * (PS2 + z * (PS3 + z * (PS4 + z * PS5)))));
+    const q = 1.0 + z * (QS1 + z * (QS2 + z * (QS3 + z * QS4)));
+    const s = Math.sqrt(z);
+    const r = p / q;
+    const w = r * s - PIO2_LO;
+    return PI - 2.0 * (s + w);
+  }
+  // x > 0.5
+  const z = (1.0 - x) * 0.5;
+  const s = Math.sqrt(z);
+  const df = withLowWord(s, 0);
+  const c = (z - df * df) / (s + df);
+  const p = z * (PS0 + z * (PS1 + z * (PS2 + z * (PS3 + z * (PS4 + z * PS5)))));
+  const q = 1.0 + z * (QS1 + z * (QS2 + z * (QS3 + z * QS4)));
+  const r = p / q;
+  const w = r * s + c;
+  return 2.0 * (df + w);
+}
+
 // --- Exponencial y logaritmo --------------------------------------------------------------------
 
 const LN2_HI = [6.9314718036912381649e-1, -6.9314718036912381649e-1];
@@ -754,4 +809,31 @@ export function hypot(x: number, y: number): number {
   const na = a / max;
   const nb = b / max;
   return Math.sqrt(na * na + nb * nb) * max;
+}
+
+/**
+ * Hipotenusa de n valores, determinista: el mismo algoritmo de V8 que `hypot` (máximo, escala y
+ * suma de Kahan en el orden dado). Bit a bit igual a `Math.hypot(...values)` de Chromium.
+ */
+export function hypotN(values: readonly number[]): number {
+  let max = 0;
+  let nan = false;
+  for (const v of values) {
+    const a = Math.abs(v);
+    if (Number.isNaN(a)) nan = true;
+    else if (a > max) max = a;
+  }
+  if (max === Infinity) return Infinity;
+  if (nan) return NaN;
+  if (max === 0) return 0;
+  let sum = 0;
+  let compensation = 0;
+  for (const v of values) {
+    const n = Math.abs(v) / max;
+    const summand = n * n - compensation;
+    const preliminary = sum + summand;
+    compensation = preliminary - sum - summand;
+    sum = preliminary;
+  }
+  return Math.sqrt(sum) * max;
 }

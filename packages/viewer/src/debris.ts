@@ -12,6 +12,7 @@
  * faros rotos y restos plásticos en el punto de impacto.
  */
 import { Quaternion, Vector3 } from "three";
+import { quatFromAxisAngle, slerp } from "./dthree";
 
 export type DebrisKind = "pieza" | "vidrio" | "plastico";
 
@@ -100,7 +101,7 @@ export async function bakeDebris(
       R.ColliderDesc.cuboid(500, 0.5, 500).setTranslation(0, -0.5, 0).setFriction(0.8),
     );
     for (const s of statics) {
-      const q = new Quaternion().setFromAxisAngle(new Vector3(0, 1, 0), s.yaw);
+      const q = quatFromAxisAngle(new Vector3(0, 1, 0), s.yaw);
       const desc =
         s.kind === "cilindro"
           ? R.ColliderDesc.cylinder(s.size[1], s.size[0])
@@ -180,7 +181,7 @@ export async function bakeDebris(
       if (s === steps - 1) break;
       for (const k of kin) {
         const p = k.v.poseAt(t + DEBRIS_DT);
-        q.setFromAxisAngle(new Vector3(0, 1, 0), p.yaw);
+        quatFromAxisAngle(new Vector3(0, 1, 0), p.yaw, q);
         k.body.setNextKinematicTranslation({ x: p.position.x, y: p.position.y, z: p.position.z });
         k.body.setNextKinematicRotation({ x: q.x, y: q.y, z: q.z, w: q.w });
       }
@@ -214,5 +215,5 @@ export function debrisPoseAt(
   );
   const qa = new Quaternion(F[a + 3], F[a + 4], F[a + 5], F[a + 6]);
   const qb = new Quaternion(F[b + 3], F[b + 4], F[b + 5], F[b + 6]);
-  outQuat.copy(qa).slerp(qb, f);
+  slerp(outQuat.copy(qa), qb, f);
 }

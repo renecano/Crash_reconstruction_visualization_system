@@ -15,6 +15,7 @@
  * la estatura (proporción de uso común; supuesto) y la cadencia sale de la velocidad del solver.
  */
 import { Quaternion, Vector3 } from "three";
+import { dmath } from "@croquis/solver-ts";
 
 export interface BoneSpec {
   nombre: string;
@@ -178,18 +179,18 @@ export function poseFromDirections(
 /** Dirección en el plano sagital con un ángulo desde la vertical hacia abajo (+ = al frente). */
 function down(angleDeg: number, lateral = 0): Vector3 {
   const a = angleDeg * DEG;
-  return new Vector3(lateral, -Math.cos(a), Math.sin(a)).normalize();
+  return new Vector3(lateral, -dmath.cos(a), dmath.sin(a)).normalize();
 }
 
 function up(leanDeg: number): Vector3 {
   const a = leanDeg * DEG;
-  return new Vector3(0, Math.cos(a), Math.sin(a));
+  return new Vector3(0, dmath.cos(a), dmath.sin(a));
 }
 
 function footDir(legAngleDeg: number, ankleDeg: number): Vector3 {
   // El pie apunta al frente y ligeramente abajo; gira con la pierna y el tobillo.
   const a = (legAngleDeg + ankleDeg + 90 - 25) * DEG;
-  return new Vector3(0, -Math.cos(a), Math.sin(a)).normalize();
+  return new Vector3(0, -dmath.cos(a), dmath.sin(a)).normalize();
 }
 
 const SPINE_UP = { cadera: up(0), abdomen: up(0), pecho: up(0), cuello: up(4), cabeza: up(0) };
@@ -306,10 +307,10 @@ export function occupantLean(
   dy: number,
   torsoLength: number,
 ): Partial<Record<BoneName, Vector3>> {
-  const d = Math.hypot(dx, dy);
+  const d = dmath.hypot(dx, dy);
   if (d < 1e-6) return base;
   const out = { ...base };
-  const tilt = Math.atan2(d, torsoLength);
+  const tilt = dmath.atan2(d, torsoLength);
   for (const [bone, share] of [
     ["abdomen", 0.6],
     ["pecho", 1],
@@ -320,7 +321,7 @@ export function occupantLean(
     const a = tilt * share;
     // Inclinar hacia (dy → +x del cuerpo, dx → +z del cuerpo).
     const h = new Vector3(dy / d, 0, dx / d);
-    dir.multiplyScalar(Math.cos(a)).addScaledVector(h, Math.sin(a)).normalize();
+    dir.multiplyScalar(dmath.cos(a)).addScaledVector(h, dmath.sin(a)).normalize();
     out[bone] = dir;
   }
   return out;

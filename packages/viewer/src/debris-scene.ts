@@ -34,6 +34,8 @@ import { staticColliders } from "./people-scene";
 import { sampleVehicle } from "./sample";
 import type { SceneGraph } from "./scene-graph";
 import type { CarLayout } from "./vehicle-geometry";
+import { dmath } from "@croquis/solver-ts";
+import { applyAxisAngle, quatFromAxisAngle } from "./dthree";
 
 /** Defensas: se desprenden con este aplastamiento máximo (m, ilustrativo). */
 export const BUMPER_DETACH_M = 0.2;
@@ -69,10 +71,10 @@ export function planDebris(spec: EscenaSpec, resultado: Resultado, graph: SceneG
     const pos = new Vector3(...toThree(p.x, p.y, 0));
     const vlin = new Vector3(p.vx, 0, -p.vy);
     const omega = new Vector3(0, p.yawRate, 0);
-    const toWorld = (local: Vector3): Vector3 => local.clone().applyAxisAngle(Y, p.yaw).add(pos);
+    const toWorld = (local: Vector3): Vector3 => applyAxisAngle(local.clone(), Y, p.yaw).add(pos);
     const velAt = (world: Vector3): Vector3 =>
       vlin.clone().add(omega.clone().cross(world.clone().sub(pos)));
-    const outward = dmg.field.frame.outward.clone().applyAxisAngle(Y, p.yaw);
+    const outward = applyAxisAngle(dmg.field.frame.outward.clone(), Y, p.yaw);
     const profile = {
       perfil: v.dano.perfil_m,
       ancho: v.dano.ancho_m,
@@ -90,7 +92,7 @@ export function planDebris(spec: EscenaSpec, resultado: Resultado, graph: SceneG
         kind: "pieza",
         half: [prm.width / 2, prm.height / 2, prm.depth / 2],
         position: world,
-        quaternion: new Quaternion().setFromAxisAngle(Y, p.yaw),
+        quaternion: quatFromAxisAngle(Y, p.yaw),
         linvel: velAt(world)
           .addScaledVector(outward, rnd(1, 2.5))
           .add(new Vector3(rnd(-0.8, 0.8), rnd(1, 2), rnd(-0.8, 0.8))),
@@ -130,7 +132,7 @@ export function planDebris(spec: EscenaSpec, resultado: Resultado, graph: SceneG
           kind: "vidrio",
           half: [0.008, 0.008, 0.008],
           position: world,
-          quaternion: new Quaternion().setFromAxisAngle(Y, rnd(0, Math.PI)),
+          quaternion: quatFromAxisAngle(Y, rnd(0, Math.PI)),
           linvel: velAt(world)
             .addScaledVector(outward, rnd(-1.2, 1.5))
             .add(new Vector3(rnd(-0.6, 0.6), rnd(0.3, 1.5), rnd(-0.6, 0.6))),
@@ -152,7 +154,7 @@ export function planDebris(spec: EscenaSpec, resultado: Resultado, graph: SceneG
             kind: "vidrio",
             half: [0.01, 0.006, 0.01],
             position: world,
-            quaternion: new Quaternion().setFromAxisAngle(Y, rnd(0, Math.PI)),
+            quaternion: quatFromAxisAngle(Y, rnd(0, Math.PI)),
             linvel: velAt(world)
               .addScaledVector(outward, rnd(0.5, 2))
               .add(new Vector3(rnd(-0.8, 0.8), rnd(0.5, 1.5), rnd(-0.8, 0.8))),
@@ -185,11 +187,11 @@ export function planDebris(spec: EscenaSpec, resultado: Resultado, graph: SceneG
         kind: "plastico",
         half: [rnd(0.01, 0.035), rnd(0.004, 0.012), rnd(0.01, 0.03)],
         position: world,
-        quaternion: new Quaternion().setFromAxisAngle(Y, rnd(0, Math.PI)),
+        quaternion: quatFromAxisAngle(Y, rnd(0, Math.PI)),
         linvel: mean
           .clone()
           .multiplyScalar(0.6)
-          .add(new Vector3(Math.cos(a) * sp, rnd(0.5, 2.5), Math.sin(a) * sp)),
+          .add(new Vector3(dmath.cos(a) * sp, rnd(0.5, 2.5), dmath.sin(a) * sp)),
         angvel: new Vector3(rnd(-12, 12), rnd(-12, 12), rnd(-12, 12)),
         t0: DEBRIS_T0,
       });

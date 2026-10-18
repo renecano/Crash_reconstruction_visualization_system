@@ -24,8 +24,17 @@ function ulps(a: number, b: number): number {
   return Number(x > y ? x - y : y - x);
 }
 
-type Unaria = "sin" | "cos" | "tan" | "atan" | "exp" | "log";
+type Unaria = "sin" | "cos" | "tan" | "atan" | "acos" | "exp" | "log";
 const UNARIAS: [Unaria, number, string][] = [
+  ["acos", 0.1, "3ff787b22ce3f590"],
+  ["acos", 0.49, "3ff0f0764decac8b"],
+  ["acos", 0.5, "3ff0c152382d7366"],
+  ["acos", 0.75, "3fe720a392c1d955"],
+  ["acos", 0.9999, "3f8cf69d216bd74b"],
+  ["acos", -0.3, "3ffe0200bbc96ad8"],
+  ["acos", -0.5, "4000c152382d7366"],
+  ["acos", -0.9, "400586476251e745"],
+  ["acos", 1e-10, "3ff921fb543d4de0"],
   ["sin", 0.5, "3fdeaee8744b05f0"],
   ["sin", 1, "3feaed548f090cee"],
   ["sin", 2.5, "3fe326af0dcfcab0"],
@@ -96,6 +105,13 @@ describe("dmath: bits exactos de fdlibm", () => {
   it.each(BINARIAS)("%s(%s, %s)", (f, a, b, bits) => {
     expect(hex(dmath[f](a, b))).toBe(bits);
   });
+  it.each([
+    [[1, 2, 3], "400deeea11683f48"],
+    [[0.1, -0.2, 0.3, 0.4], "3fe186f174f88473"],
+    [[1e-200, 2e-200, 3e-200], "1686e994ecad50fe"],
+  ] as const)("hypotN(%j)", (xs, bits) => {
+    expect(hex(dmath.hypotN(xs))).toBe(bits);
+  });
 });
 
 describe("dmath: casos especiales de IEEE 754", () => {
@@ -133,6 +149,21 @@ describe("dmath: casos especiales de IEEE 754", () => {
     expect(dmath.atan2(1, -Infinity)).toBe(Math.PI);
     expect(dmath.atan2(NaN, 1)).toBeNaN();
   });
+  it("acos en los extremos y fuera del dominio", () => {
+    expect(dmath.acos(1)).toBe(0);
+    expect(dmath.acos(-1)).toBe(Math.PI);
+    expect(dmath.acos(0)).toBe(Math.PI / 2);
+    expect(dmath.acos(1.0000001)).toBeNaN();
+    expect(dmath.acos(-2)).toBeNaN();
+    expect(dmath.acos(NaN)).toBeNaN();
+  });
+  it("hypotN con ceros, infinitos y NaN", () => {
+    expect(dmath.hypotN([])).toBe(0);
+    expect(dmath.hypotN([-0, 0, -0])).toBe(0);
+    expect(dmath.hypotN([NaN, Infinity, 1])).toBe(Infinity);
+    expect(dmath.hypotN([NaN, 1, 2])).toBeNaN();
+    expect(dmath.hypotN([2, 3, 6])).toBe(7);
+  });
   it("hypot con ceros, infinitos y NaN", () => {
     expect(dmath.hypot(0, 0)).toBe(0);
     expect(dmath.hypot(-0, -0)).toBe(0);
@@ -157,6 +188,7 @@ describe("dmath: a lo más 1 ulp de Math (V8)", () => {
     ["cos", fin(-1e9, 1e9), dmath.cos, Math.cos],
     ["tan", fin(-1e6, 1e6), dmath.tan, Math.tan],
     ["atan", fin(-1e300, 1e300), dmath.atan, Math.atan],
+    ["acos", fin(-1, 1), dmath.acos, Math.acos],
     ["exp", fin(-745, 709), dmath.exp, Math.exp],
     ["log", fin(0, 1e308), dmath.log, Math.log],
   ];
@@ -174,6 +206,13 @@ describe("dmath: a lo más 1 ulp de Math (V8)", () => {
           ulps(dmath.hypot(x, y), Math.hypot(x, y)) <= 1
         );
       }),
+      { numRuns: 20000, seed: 20261017 },
+    );
+  });
+  it("hypotN de 3 y 4 valores", () => {
+    const xs = fc.array(fin(-1e150, 1e150), { minLength: 3, maxLength: 4 });
+    fc.assert(
+      fc.property(xs, (v) => ulps(dmath.hypotN(v), Math.hypot(...v)) <= 1),
       { numRuns: 20000, seed: 20261017 },
     );
   });

@@ -56,6 +56,8 @@ import {
 import { phaseAt, samplePerson, sampleVehicle } from "./sample";
 import type { SceneGraph } from "./scene-graph";
 import { profileFor, seatHeight } from "./vehicle-geometry";
+import { dmath } from "@croquis/solver-ts";
+import { applyAxisAngle, quatFromAxisAngle } from "./dthree";
 
 type PersonaResultado = Resultado["personas"][number];
 type PersonaSpec = EscenaSpec["personas"][number];
@@ -76,6 +78,8 @@ export interface RagdollReport {
   k: number;
   iterations: number;
   uncalibrated: number;
+  /** Cuadros horneados del ragdoll elegido (E8 compara sus bits entre navegadores). */
+  frames: Float32Array;
 }
 
 export interface PeopleAttachment {
@@ -287,7 +291,7 @@ function sampleSeries(t: readonly number[], v: readonly number[], x: number): nu
 function cumulative(tr: PersonaResultado["trayectoria"]): number[] {
   const out = [0];
   for (let i = 1; i < tr.t.length; i++) {
-    out.push(out[i - 1]! + Math.hypot(tr.x[i]! - tr.x[i - 1]!, tr.y[i]! - tr.y[i - 1]!));
+    out.push(out[i - 1]! + dmath.hypot(tr.x[i]! - tr.x[i - 1]!, tr.y[i]! - tr.y[i - 1]!));
   }
   return out;
 }
@@ -389,10 +393,10 @@ export function ragdollSetup(
     const d = dirs[key];
     if (!d) continue;
     const axis = new Vector3(rng() - 0.5, rng() - 0.5, rng() - 0.5).normalize();
-    dirs[key] = d.clone().applyAxisAngle(axis, jitter(SEED_POSE_JITTER_DEG) * DEGR);
+    dirs[key] = applyAxisAngle(d.clone(), axis, jitter(SEED_POSE_JITTER_DEG) * DEGR);
   }
   const joints = posedJoints(bones, poseFromDirections(bones, dirs));
-  const rot = new Quaternion().setFromAxisAngle(Y, placement.yaw);
+  const rot = quatFromAxisAngle(Y, placement.yaw);
   const initial = new Map<string, { head: Vector3; world: Quaternion }>();
   for (const [name, j] of joints) {
     initial.set(name, {
@@ -403,8 +407,12 @@ export function ragdollSetup(
   const h = (proj.rumbo_deg + jitter(SEED_HEADING_JITTER_DEG)) * DEGR;
   const th = proj.angulo_lanzamiento_deg * DEGR;
   const v = proj.velocidad_lanzamiento_kmh / 3.6;
-  const dir = new Vector3(Math.cos(h) * Math.cos(th), Math.sin(th), -Math.sin(h) * Math.cos(th));
-  const horiz = new Vector3(Math.cos(h), 0, -Math.sin(h));
+  const dir = new Vector3(
+    dmath.cos(h) * dmath.cos(th),
+    dmath.sin(th),
+    -dmath.sin(h) * dmath.cos(th),
+  );
+  const horiz = new Vector3(dmath.cos(h), 0, -dmath.sin(h));
   const omega = horiz
     .clone()
     .cross(Y)
@@ -510,9 +518,11 @@ export async function attachPeople(
       const seat = seatPlacement(data.ocupante.asiento, veh);
       const base = seat.driver ? drivingDirections() : passengerDirections();
       container.rotation.y = BODY_TO_HEADING;
-      const hipBody = new Vector3(...bones[0]!.cabeza)
-        .multiplyScalar(stature)
-        .applyAxisAngle(Y, BODY_TO_HEADING);
+      const hipBody = applyAxisAngle(
+        new Vector3(...bones[0]!.cabeza).multiplyScalar(stature),
+        Y,
+        BODY_TO_HEADING,
+      );
       container.position.copy(seat.hip).sub(hipBody);
       // Dentro de un vehículo cerrado la sombra la da la carrocería: el cuerpo no la proyecta
       // (ahorra un pase de sombras con piel por ocupante sin cambio visible).
@@ -536,7 +546,7 @@ export async function attachPeople(
           radius: 0.08,
           scaleAt: (t) => {
             const since = t - tContactOcc;
-            return since < 0 ? 0 : since < 0.6 ? 1 + 0.15 * Math.sin(8 * since) : 1;
+            return since < 0 ? 0 : since < 0.6 ? 1 + 0.15 * dmath.sin(8 * since) : 1;
           },
         });
       }
@@ -573,6 +583,7 @@ export async function attachPeople(
         k: result.k,
         iterations: result.iterations,
         uncalibrated: result.uncalibrated,
+        frames: result.bake.frames,
       });
       // Después del reposo del ragdoll la pose ya no cambia.
       const tHold = result.bake.t0 + (result.bake.steps - 1) * result.bake.dt;
@@ -665,7 +676,7 @@ function pedestrianMarkers(
   // Desplazamiento lateral de la persona respecto al eje del vehículo en el impacto.
   const pv = sampleVehicle(v.trayectoria, 0);
   const pp = samplePerson(data.trayectoria, 0);
-  const lateral = pp ? (pp.x - pv.x) * Math.sin(pv.yaw) - (pp.y - pv.y) * Math.cos(pv.yaw) : 0;
+  const lateral = pp ? (pp.x - pv.x) * dmath.sin(pv.yaw) - (pp.y - pv.y) * dmath.cos(pv.yaw) : 0;
   const z = Math.max(
     -v.dimensiones.ancho_m / 2 + 0.1,
     Math.min(v.dimensiones.ancho_m / 2 - 0.1, lateral),

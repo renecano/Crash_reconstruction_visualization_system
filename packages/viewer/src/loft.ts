@@ -11,6 +11,7 @@
  * Marco: x adelante, y arriba, z = −izquierda (igual que `vehicle-geometry.ts`).
  */
 import { BufferAttribute, BufferGeometry } from "three";
+import { dmath } from "@croquis/solver-ts";
 
 export interface LoftStation {
   x: number;
@@ -65,7 +66,7 @@ export function sectionPoints(st: LoftStation, n: number, radius: number): [numb
   for (let i = 1; i <= poly.length; i++) {
     const p = poly[i - 1] as [number, number];
     const q = poly[i % poly.length] as [number, number];
-    lens.push((lens[i - 1] ?? 0) + Math.hypot(q[0] - p[0], q[1] - p[1]));
+    lens.push((lens[i - 1] ?? 0) + dmath.hypot(q[0] - p[0], q[1] - p[1]));
   }
   const total = lens[lens.length - 1] ?? 1;
   const out: [number, number][] = [];
@@ -83,7 +84,7 @@ export function sectionPoints(st: LoftStation, n: number, radius: number): [numb
 }
 
 function norm(v: [number, number]): [number, number] {
-  const l = Math.hypot(v[0], v[1]) || 1;
+  const l = dmath.hypot(v[0], v[1]) || 1;
   return [v[0] / l, v[1] / l];
 }
 
@@ -91,7 +92,7 @@ function norm(v: [number, number]): [number, number] {
 export function loftGeometry(stations: readonly LoftStation[], opts: LoftOptions): BufferGeometry {
   if (stations.length < 2) throw new Error("Se necesitan al menos dos estaciones");
   const maxPerimeter = Math.max(
-    ...stations.map((s) => 2 * (s.w0 + s.w1) + 2 * Math.hypot(s.y1 - s.y0, s.w1 - s.w0)),
+    ...stations.map((s) => 2 * (s.w0 + s.w1) + 2 * dmath.hypot(s.y1 - s.y0, s.w1 - s.w0)),
   );
   const n = Math.max(16, Math.ceil(maxPerimeter / opts.step / 4) * 4);
   const positions: number[] = [];
