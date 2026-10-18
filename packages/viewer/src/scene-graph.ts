@@ -182,7 +182,8 @@ function wheelMaterial(): MeshStandardNodeMaterial {
   return m;
 }
 
-function vehicleMaterials(color: string, night: boolean): Record<PartRole, Material> {
+/** Materiales de la carrocería por papel de cada pieza (también los usa la galería de E5). */
+export function vehicleMaterials(color: string, night: boolean): Record<PartRole, Material> {
   return {
     pintura: new MeshPhysicalMaterial({
       color,

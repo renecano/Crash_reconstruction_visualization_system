@@ -37,6 +37,7 @@ def main(argv: list[str] | None = None) -> int:
     sub.add_parser(
         "e5-energia", help="E5 (F10): convención de energía de E2 y del solver (desarrollo)"
     )
+    sub.add_parser("e5-galeria", help="E5 (F10): fotos de la galería (muestra del test de NHTSA)")
     sub.add_parser(
         "e5-orientacion", help="E5 (F10): dónde está DPD1 según los reportes de NHTSA (desarrollo)"
     )
@@ -94,6 +95,11 @@ def main(argv: list[str] | None = None) -> int:
         from croquis_eval.e5_export import main as run_e5_export
 
         print(run_e5_export())
+        return 0
+    if args.command == "e5-galeria":
+        from croquis_eval.e5_galeria import main as run_e5_galeria
+
+        print(run_e5_galeria())
         return 0
     if args.command == "e5-energia":
         from croquis_eval.e5_energia import main as run_e5_energia

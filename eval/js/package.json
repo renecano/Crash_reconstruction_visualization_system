@@ -9,7 +9,8 @@
     "typecheck": "tsc -p tsconfig.json",
     "lint": "eslint .",
     "e5": "tsx e5_dano.ts",
-    "test": "vitest run"
+    "test": "vitest run",
+    "e5:galeria": "tsx e5_galeria.ts && prettier --write ../../docs/galeria-e5/README.md"
   },
   "dependencies": {
     "@croquis/scene-schema": "workspace:*",
@@ -18,12 +19,14 @@
     "three": "catalog:"
   },
   "devDependencies": {
+    "@playwright/test": "catalog:",
     "@types/node": "catalog:",
     "@types/three": "catalog:",
+    "esbuild": "0.28.2",
     "eslint": "catalog:",
+    "jsdom": "catalog:",
     "tsx": "catalog:",
     "typescript": "catalog:",
-    "vitest": "catalog:",
-    "jsdom": "catalog:"
+    "vitest": "catalog:"
   }
 }

@@ -1,0 +1,22 @@
+{
+  "_nota": "Revisión visual de la galería de E5: fotos cuya vista no es la que dice la lista del reporte (el número del reporte no siempre es el del archivo). La selección las salta y sigue con el siguiente caso. «aceptadas»: fotos revisadas a ojo que sí muestran la cara dañada después de la prueba.",
+  "rechazadas": {
+    "v11298P009.JPG": "frente sin daño: foto anterior a la prueba",
+    "v04887P007.jpg": "pie del maniquí, no el vehículo",
+    "v03850P002.jpg": "parte de abajo del vehículo",
+    "v04874P002.jpg": "maniquí y bolsa de aire, no el vehículo",
+    "v04483P007.jpg": "costado sin daño: foto anterior a la prueba",
+    "v11668P009.JPG": "frente sin daño, con el letrero «PRE-TEST»: foto anterior a la prueba"
+  },
+  "aceptadas": [
+    "v04285P006.jpg",
+    "v04389P006.jpg",
+    "v05436P006.jpg",
+    "v07071P008.jpg",
+    "v08314P008.jpg",
+    "v09064P006.jpg",
+    "v10157P006.jpg",
+    "v11295P009.jpg",
+    "v14990P009.JPG"
+  ]
+}

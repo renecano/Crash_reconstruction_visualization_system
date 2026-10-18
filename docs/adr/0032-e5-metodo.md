@@ -118,6 +118,15 @@ Croquis pone C1 en el extremo izquierdo del frente y la parte trasera, y en el d
   - **Cuando las fotos vienen numeradas:** el número sale de la lista de fotografías del reporte PDF.
   - **Al lado:** un render de Croquis con una vista parecida y la marca de reconstrucción ilustrativa.
 - **Lo que no se publica:** la galería es cualitativa y no lleva números que no salgan del script de E5.
+- **Cómo se hizo** (2026-10-18; `uv run croquis-eval e5-galeria` y `pnpm --filter @croquis/eval-js e5:galeria`):
+  - **Muestra:** 3 por tipo, con semilla, entre las pruebas del test que Croquis reproduce. Se leen a lo más 20 reportes por tipo.
+  - **Revisión visual:** el número de la lista de fotografías del reporte no siempre es el del archivo; a veces apunta a una foto anterior a la prueba, a un maniquí o a la parte de abajo. Por eso cada foto elegida se revisa a ojo. Las rechazadas, con su motivo, y las aceptadas quedan en `eval/e5/galeria_revision.json`, y la selección salta las rechazadas.
+  - **Render:**
+    - el vehículo se arma como en el visor: malla, materiales y pintura dañada, con el daño que predice Croquis;
+    - la carrocería va en color neutro y se encuadra desde la vista de la foto;
+    - se dibuja con WebGL por software (SwiftShader) en Chromium.
+  - **Leyenda:** la marca de PLAN §10 cambia «a partir de un relato» por «a partir de los datos de la prueba», que es lo que de verdad recibe Croquis aquí. Conserva «No es un peritaje.», la semilla y el hash de las entradas.
+  - **Fotos:** se versionan derivados de 960 px sin metadatos; los originales se quedan en `data/raw`. Fuente y licencia, en `data/SOURCES.md`.
 
 ## Consecuencias
 

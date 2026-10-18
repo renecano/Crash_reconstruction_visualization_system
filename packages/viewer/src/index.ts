@@ -37,6 +37,7 @@ export {
   type SceneGraph,
   type SceneGraphOptions,
   type VehicleNode,
+  vehicleMaterials,
 } from "./scene-graph";
 export * from "./airbag";
 export {
