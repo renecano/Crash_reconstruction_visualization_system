@@ -355,7 +355,8 @@ export function metrics(
   };
 }
 
-function seedFor(id: string): number {
+/** Semilla de las arrugas de la malla de cada caso (FNV-1a del id). */
+export function seedFor(id: string): number {
   let h = 2166136261;
   for (let i = 0; i < id.length; i++) h = Math.imul(h ^ id.charCodeAt(i), 16777619) >>> 0;
   return h;
