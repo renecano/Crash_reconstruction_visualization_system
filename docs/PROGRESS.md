@@ -22,7 +22,8 @@ Reglas de trabajo: `CLAUDE.md`. Especificación: `PLAN.md`.
 - **F9, paso 6b hecho** (rama `feat/f9-video`, ADR 0031): video MP4 y WebM de toda la reconstrucción, dibujado cuadro por cuadro con WebCodecs y Mediabunny, con la marca en cada cuadro y en los metadatos. El respaldo con MediaRecorder se vuelve a fechar cuadro por cuadro.
 - **F9, paso 6c hecho** (rama `feat/f9-croquis-export`, ADR 0031): el croquis se exporta en SVG, PNG y PDF desde el editor, con la marca, la semilla, el hash, la atribución de OSM, el norte y una barra de escala nueva.
 - **F9, paso 6d hecho** (rama `feat/f9-informe`, ADR 0031): informe PDF desde el visor. Los paneles y el informe comparten sus textos (`lib/textos-resultado.ts`) y los datos inciertos se dicen en palabras. **F9 cerrada.**
-- **Siguiente paso concreto:** F10 según PLAN §13. Leer la fase y su criterio, escribir su plan aquí y empezar.
+- **F10, paso 1 hecho** (rama `feat/f10-inventario`): inventario de E5 en `docs/data.md` y en `eval/results/e5_inventario.json`. Hay 3,620 casos de NHTSA y 8,804 de CISS con perfil medido completo; los números por tipo están en el inventario. CISS ahora trae la posición del daño, con su convención comprobada.
+- **Siguiente paso concreto:** F10, paso 2. ADR 0032 (métricas, líneas base y reglas) y la partición congelada de NHTSA (lista del test con su SHA-256), antes de medir nada.
 - **E1 del prompt v2 en el primer test, hecho** (PR #14). Sonnet 0.875 → 0.919 y Haiku 0.852 → 0.896. Además, E1 ahora compara cada contrafactual con la repetición del mismo relato (McNemar por tipo): ningún tipo difiere del ruido, y las reglas cambian con el modelo del vehículo en 6 de 52 pares (ADR 0012 §10).
 - **F8** cerrada el 2026-10-17 (PR #20 a #24). **F0** cerrado el 2026-10-10 (PR #1), **F1** el 2026-10-10 (PR #3), **F2** el 2026-10-13 (PR #4), **F3** el 2026-10-13 (PR #5), **F4** el 2026-10-13 (PR #6), **F5** el 2026-10-13 (PR #7), **F6** el 2026-10-14 (PR #8), **F7** el 2026-10-14 (PR #9; pendientes registrados); migración a Vercel el 2026-10-14 (PR #10); test CISS y prompt v2 el 2026-10-14 (PR #11).
 
@@ -1475,3 +1476,72 @@ Las ramas van una encima de otra y se fusionan en este orden, cada una con su PR
 - **Qué necesito de ti:** nada nuevo para F9. Sigue pendiente la computadora de la demo para medir alta y ultra (E6) y las pruebas con personas (E9).
 
 **Pendientes de F8 que siguen abiertos:** OSM en producción, rayas y banquetas sobre calles de OSM, semáforo peatonal, textura de grava, corte del camellón en cruces y texturas en caras verticales. Las sombras de los focos ya están en alta y ultra (ADR 0026).
+
+## F10 — Validación del daño contra autos reales (plan)
+
+**Criterio (PLAN §13):** E5 publicado con tamaño de muestra, error por tipo de impacto contra las dos líneas base y galería de comparaciones con las fotos reales. Corre en la laptop, sin software con licencia.
+
+**Qué existe (revisión del 2026-10-17):**
+
+- **NHTSA** (`data/processed/nhtsa/vtb_tests.csv`, `itv_tests.csv`):
+  - **Medidas:** perfil medido DPD1–DPD6, largo del daño L, desplazamiento D del centro, aplastamiento máximo y código CDC.
+  - **Cobertura:** 2,820 pruebas contra barrera con seis puntos y L. En las de impactor (laterales y traseras) hay que quitar las filas de la barrera móvil.
+  - **Fotos:** `get-multimedia-files/{prueba}` da fotos con nombre descriptivo («Post-Test Front View…») y el reporte PDF. Las pruebas viejas no traen fotos.
+- **CISS** (`data/processed/ciss/e3_vehiculos.csv`): 8,975 vehículos con C1–C6 y L. Falta la posición del daño en la cara (`FIELDLD`, `CDCLONGLAT`, `CDC`); se vuelve a extraer de los zips que ya están en `data/raw/ciss/`.
+- **Croquis:**
+  - **Solver:** calcula el perfil (`perfil_m`, `ancho_m`, `centro_m`) desde la energía, la rigidez por clase y la forma según la zona del CDC.
+  - **Visor:** deforma la malla y ya la mide con `measureCrushProfile` (prueba en `damage.test.ts`).
+  - **Línea base uniforme:** existe en el solver (`uniform_crush_for_energy`).
+
+**Definiciones (se fijan antes de medir, en el ADR 0032):**
+
+- **Tipos de impacto:** frontal completo, frontal desplazado, lateral, alcance (trasero) y poste.
+- **Reproducción:** cada caso se arma como escena de Croquis con la misma clase, masa, velocidad, ángulo y obstáculo (barrera rígida, barrera desplazada, poste o barrera móvil); en CISS, la energía del ΔV del EDR. El solver TS calcula el daño, el visor deforma la malla y el perfil se mide sobre la malla en las mismas seis estaciones donde se midió el vehículo real (D ± L/2).
+- **Métricas por caso:**
+  - error por punto (C1–C6, cm);
+  - error en profundidad máxima;
+  - error en ancho dañado (donde el aplastamiento pasa de 2 cm);
+  - error en área del perfil.
+
+  Se reportan por tipo de impacto, con mediana, media e IC del 90 % por bootstrap con semilla.
+
+- **Líneas base** (PLAN §8):
+  - **Deformación uniforme en la zona de impacto:** la misma energía repartida en profundidad constante sobre el ancho dañado.
+  - **Deformación lineal simple:** perfil triangular con la misma energía, máximo en el centro del daño y cero en los bordes.
+- **Desarrollo y test:**
+  - **CISS:** 2017–2021 son de desarrollo y 2022–2024 de test, como en E3.
+  - **NHTSA:** partición determinista por hash del número de prueba con semilla, 60/40 y estratificada por tipo.
+  - **Congelado:** la lista del test se versiona con su SHA-256 antes de cualquier medición y no se vuelve a tocar.
+  - **Ajuste:** caída, ancho y arrugas (y la elección de forma por zona del CDC) se ajustan solo con desarrollo.
+
+**Orden de trabajo (ramas `feat/f10-*`):**
+
+1. **Inventario:**
+   - en `nhtsa_ctd.py`, descargar con caché la lista de multimedia de cada prueba candidata, sin las fotos todavía;
+   - en `ciss.py`, extraer D, la zona horizontal y el CDC completo;
+   - `croquis-eval e5-inventario` → `eval/results/e5_inventario.json` y una sección E5 en `docs/data.md` con el tamaño de muestra por fuente y tipo, y cuántos casos tienen foto útil.
+2. **Partición congelada y ADR 0032:** métricas, líneas base y partición. La lista del test y su hash quedan versionados.
+3. **Reproductor en TS** (`eval/js`): escena → solver TS → malla deformada → perfil medido, más las dos líneas base. Pruebas unitarias del reproductor con casos sintéticos de solución conocida.
+4. **Desarrollo:** medición y ajuste de la deformación solo con desarrollo; cada cambio, con sus números de antes y después.
+5. **Test:** una sola corrida → `eval/results/e5.json`, la fila de E5 en el README y PROGRESS.
+6. **Galería** (PLAN E5 c):
+   - **Fotos:** se descarga solo la foto posterior a la prueba del lado dañado, para una muestra del test estratificada por tipo, en `data/raw`.
+   - **Render:** con la misma vista, generado con Playwright.
+   - **Publicación:** derivados reducidos versionados, página o documento de galería con la marca ilustrativa, y licencia y fuente en `data/SOURCES.md`.
+
+**Riesgos:**
+
+- **Llamadas a la API:** la lista de multimedia es una llamada por prueba (~5,500). Va con caché, pausas y reintentos.
+- **Espacio en la laptop:** las fotos pesan ~2 MB y se guardan en `D:`, solo las necesarias.
+- **CISS sin velocidad:** CISS no trae la velocidad de impacto. Se usa la energía del ΔV del EDR (como E3), así que E5-CISS mide la forma y el reparto, no la cinemática.
+
+**Paso 1 — Inventario (2026-10-17, rama `feat/f10-inventario`):**
+
+- **Lista de multimedia:** `croquis-data nhtsa media` descargó la de las 5,274 pruebas con perfil medido completo, sin fallas.
+  - **Hallazgo:** casi todos los laboratorios suben las fotos numeradas (`v10050P009.jpg`). La vista de cada número está en la lista de fotografías del reporte PDF, comprobado en la prueba 10050.
+  - **Consecuencia:** los reportes (varios MB cada uno) se leerán solo para la muestra de la galería.
+- **CISS:** columnas nuevas con la batalla, el CDC completo, la zona horizontal, el centro del daño D y CMAX. La tabla de E3 se regeneró (`ciss build --check` al día) y E3 no cambia: lee las columnas por nombre.
+- **Casos e inventario:**
+  - `eval/croquis_eval/e5_casos.py`: casos y tipo de impacto, con reglas escritas antes de medir.
+  - `e5_inventario.py`: conteos, estado de las fotos y la convención de D comprobada contra `FIELDLLOCATION`.
+- **Evidencia:** `uv run croquis-eval e5-inventario` y 28 pruebas nuevas (multimedia, casos e inventario); ruff, pyright y pytest de `data` y `eval` en verde.

@@ -224,6 +224,129 @@ def download(
     )
 
 
+MEDIA_DIR = RAW_DIR / "media"
+MEDIA_URL = f"{BASE_URL}/get-multimedia-files"
+
+
+def fetch_media(client: httpx.Client, test_no: int, media_dir: Path = MEDIA_DIR) -> dict[str, Any]:
+    """Lista de fotos y reportes de una prueba (o la de caché). No descarga las fotos (E5, F10)."""
+    path = media_dir / f"media_{test_no}.json"
+    if path.exists():
+        cached: dict[str, Any] = json.loads(path.read_text(encoding="utf-8"))
+        return cached
+    data = cast(dict[str, Any], _get_json(client, f"{MEDIA_URL}/{test_no}") or {})
+    first = _first(data.get("results"))
+    keep = ("fileName", "fileSize", "media", "thumbnail")
+
+    def files(kind: str) -> list[dict[str, Any]]:
+        items = cast(list[dict[str, Any]], first.get(kind) or [])
+        return [{k: item.get(k) for k in keep} for item in items]
+
+    doc: dict[str, Any] = {
+        "test_no": test_no,
+        "photos": files("photos"),
+        "reports": files("reports"),
+        "fetched_at": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
+    }
+    media_dir.mkdir(parents=True, exist_ok=True)
+    path.write_text(json.dumps(doc, ensure_ascii=False) + "\n", encoding="utf-8", newline="\n")
+    return doc
+
+
+def media_candidates(csv_paths: Iterable[Path] = (CSV_PATH, ITV_CSV_PATH)) -> list[int]:
+    """Pruebas con perfil medido completo (DPD1–DPD6 y largo del daño) de un vehículo real."""
+    out: set[int] = set()
+    for path in csv_paths:
+        if not path.exists():
+            continue
+        with path.open(encoding="utf-8", newline="") as f:
+            for row in csv.DictReader(f):
+                if (row.get("body_type") or "").strip().upper() == "NOT APPLICABLE":
+                    continue
+                dpd = [_num(row.get(f"dpd{i}_mm")) for i in range(1, 7)]
+                if (
+                    any(v is None for v in dpd)
+                    or _num(row.get("total_indentation_length_mm")) is None
+                ):
+                    continue
+                out.add(int(row["test_no"]))
+    return sorted(out)
+
+
+def download_media(
+    media_dir: Path = MEDIA_DIR,
+    *,
+    tests: list[int] | None = None,
+    workers: int = 4,
+    log: Callable[[str], None] | None = None,
+) -> DownloadStats:
+    """Lista de multimedia de las pruebas candidatas a E5. Reanudable (caché por prueba)."""
+    numbers = tests if tests is not None else media_candidates()
+    cached = sum(1 for n in numbers if (media_dir / f"media_{n}.json").exists())
+    todo = [n for n in numbers if not (media_dir / f"media_{n}.json").exists()]
+    failed = 0
+    done = 0
+
+    def work(n: int) -> bool:
+        with _client() as c:
+            try:
+                fetch_media(c, n, media_dir)
+                return True
+            except Exception as exc:  # se registra y se sigue con las demás
+                if log:
+                    log(f"multimedia de la prueba {n} falló: {exc}")
+                return False
+
+    with ThreadPoolExecutor(max_workers=workers) as pool:
+        for ok in pool.map(work, todo):
+            done += 1
+            if not ok:
+                failed += 1
+            if log and done % 200 == 0:
+                log(f"listas de multimedia {done}/{len(todo)} (fallidas {failed})")
+    return DownloadStats(
+        listed=len(numbers), fetched=len(todo) - failed, cached=cached, failed=failed
+    )
+
+
+# Vistas posteriores a la prueba que muestran cada cara dañada, en orden de preferencia.
+_SIDE_VIEWS: dict[str, tuple[str, ...]] = {
+    "F": ("front view", "front three-quarter", "front 3/4", "front"),
+    "B": ("rear view", "rear three-quarter", "rear 3/4", "rear"),
+    "L": ("left side", "left front three-quarter", "left rear three-quarter", "left"),
+    "R": ("right side", "right front three-quarter", "right rear three-quarter", "right"),
+}
+
+
+def _norm_name(name: str) -> str:
+    s = name.lower().replace("_", " ").replace("-", " ")
+    return " ".join(s.split())
+
+
+def damaged_side_photo(photos: list[dict[str, Any]], side: str) -> dict[str, Any] | None:
+    """La foto posterior a la prueba que mejor muestra la cara dañada (F, B, L o R), o None.
+
+    Los laboratorios nombran las fotos a mano («Post-Test Front View…», «POSTTEST LEFT SIDE»…):
+    se normaliza el nombre y se busca «post test» más la vista, en orden de preferencia."""
+    views = _SIDE_VIEWS.get(side.upper())
+    if not views:
+        return None
+    post = [
+        p
+        for p in photos
+        if "post test" in _norm_name(str(p.get("fileName", ""))).replace("posttest", "post test")
+    ]
+    for view in views:
+        for p in post:
+            name = _norm_name(str(p.get("fileName", ""))).replace("posttest", "post test")
+            # "front" no debe tomar "left front three-quarter" cuando se pide el frente puro.
+            if view in name and not (
+                side.upper() == "F" and view == "front" and ("left" in name or "right" in name)
+            ):
+                return p
+    return None
+
+
 def _num(v: Any) -> float | None:
     if v is None:
         return None

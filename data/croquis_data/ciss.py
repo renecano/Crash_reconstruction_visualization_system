@@ -106,6 +106,14 @@ FIELDS = [
     "dv_edr_lat_kmh",
     "dv_edr_kmh",
     "dv_edr_componentes",
+    # Posición del daño en la cara (E5, F10): batalla, CDC completo, zona horizontal, centro del
+    # daño D (cm; en F/B desde el centro, + a la derecha; en L/R desde la mitad de la batalla,
+    # + hacia adelante; verificado contra FIELDLLOCATION en 2024) y aplastamiento máximo.
+    "batalla_cm",
+    "cdc",
+    "zona_horizontal",
+    "centro_dano_cm",
+    "cmax_cm",
 ]
 
 
@@ -210,6 +218,22 @@ def edr_delta_v(
     return best
 
 
+def damage_center(c: dict[str, str]) -> float | None:
+    """D del CDC (cm): 777 y 999 son «no medido» y «desconocido»."""
+    d = num(c.get("FIELDLD"))
+    if d is None or d in (777, 999) or abs(d) > 400:
+        return None
+    return d
+
+
+def max_crush(c: dict[str, str]) -> float | None:
+    """CMAX (cm), sin los códigos de «no medido» y «desconocido»."""
+    v = num(c.get("CMAX"))
+    if v is None or v in (777, 999) or not 0 <= v <= 250:
+        return None
+    return v
+
+
 def build_year(year: int, raw_dir: Path = RAW_DIR) -> tuple[list[dict[str, Any]], Counter[str]]:
     z = zipfile.ZipFile(zip_path(year, raw_dir))
     counts: Counter[str] = Counter()
@@ -225,7 +249,10 @@ def build_year(year: int, raw_dir: Path = RAW_DIR) -> tuple[list[dict[str, Any]]
         key = (s["CASEID"], int(s["VEHNO"]))
         if key in veh:
             veh[key].update(
-                curb=num(s.get("CURBWT")), largo=num(s.get("OAL")), ancho=num(s.get("MAXWIDTH"))
+                curb=num(s.get("CURBWT")),
+                largo=num(s.get("OAL")),
+                ancho=num(s.get("MAXWIDTH")),
+                batalla=num(s.get("WHEELBASE")),
             )
     occ: Counter[tuple[str, int]] = Counter()
     for o in rows(z, "OCC"):
@@ -241,6 +268,8 @@ def build_year(year: int, raw_dir: Path = RAW_DIR) -> tuple[list[dict[str, Any]]
             curb = v.get("curb_gv")
         largo = v.get("largo") if v.get("largo") is not None and 100 <= v["largo"] <= 650 else None
         ancho = v.get("ancho") if v.get("ancho") is not None and 100 <= v["ancho"] <= 350 else None
+        batalla = v.get("batalla")
+        batalla = batalla if batalla is not None and 150 <= batalla <= 700 else None
         clase = clase_ciss(v["bodytype"], largo)
         if curb is None or not 450 <= curb <= 4536 or clase is None:
             return None
@@ -250,6 +279,7 @@ def build_year(year: int, raw_dir: Path = RAW_DIR) -> tuple[list[dict[str, Any]]
             "masa_kg": round(curb + OCCUPANT_KG * max(1, occ[key]), 1),
             "largo_cm": largo,
             "ancho_cm": ancho,
+            "batalla_cm": batalla,
             "peso_caso": v["peso"],
         }
 
@@ -307,6 +337,10 @@ def build_year(year: int, raw_dir: Path = RAW_DIR) -> tuple[list[dict[str, Any]]
             "pdof": int(pdof),
             "perfil_cm": json.dumps(prof),
             "ancho_dano_cm": width,
+            "cdc": (c.get("CDC") or "").strip(),
+            "zona_horizontal": (c.get("CDCLONGLAT") or "").strip(),
+            "centro_dano_cm": damage_center(c),
+            "cmax_cm": max_crush(c),
         }
         if 1 <= objcont <= 30:
             row["contacto"] = "vehiculo"

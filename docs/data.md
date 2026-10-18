@@ -11,17 +11,17 @@ El registro formal de cada fuente (origen, URL, fecha, licencia, script) está e
 
 ## Fuentes por uso
 
-| Uso                                                                        | Fuente                                                                                                                    | Fase | Estado                                                                                            |
-| -------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------- | ---- | ------------------------------------------------------------------------------------------------- |
-| Magnitud del problema y distribución de tipos de accidente para Relatos-MX | INEGI ATUS (datos abiertos 1997–2025)                                                                                     | F0   | **listo**: `eval/results/atus_summary.json`                                                       |
-| Rigidez CRASH3 por clase y validación E2                                   | NHTSA Vehicle Crash Test Database (API)                                                                                   | F2   | **listo**: `eval/results/e2_barrier.json`                                                         |
-| Validación E3 contra EDR                                                   | NHTSA CISS                                                                                                                | F7   | pendiente                                                                                         |
-| Dimensiones y masas por modelo común en México                             | Fichas técnicas de fabricantes (47 modelos)                                                                               | F1   | **listo**: `data/vehicles/models_raw.json`                                                        |
-| Coeficientes de fricción por superficie y estado                           | Literatura (cita por valor)                                                                                               | F2   | **listo**: `solver/croquis_solver/data/friction.json`                                             |
-| Geometría de vías reales                                                   | OpenStreetMap (ODbL, atribución visible)                                                                                  | F8   | pendiente                                                                                         |
-| Texturas, HDRI, modelos                                                    | Poly Haven, Quaternius, Kenney (CC0)                                                                                      | F3   | pendiente                                                                                         |
-| Personas                                                                   | MakeHuman / MPFB (CC0)                                                                                                    | F5   | pendiente                                                                                         |
-| Deformación medida en autos reales (E5)                                    | NHTSA Vehicle Crash Test Database (reportes con fotos y aplastamiento posterior a la prueba) y CISS (aplastamiento C1–C6) | F10  | pendiente: inventario de pruebas y casos con medidas completas y fotos útiles (PLAN §9, ADR 0018) |
+| Uso                                                                        | Fuente                                                                                                                    | Fase | Estado                                                                                           |
+| -------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------- | ---- | ------------------------------------------------------------------------------------------------ |
+| Magnitud del problema y distribución de tipos de accidente para Relatos-MX | INEGI ATUS (datos abiertos 1997–2025)                                                                                     | F0   | **listo**: `eval/results/atus_summary.json`                                                      |
+| Rigidez CRASH3 por clase y validación E2                                   | NHTSA Vehicle Crash Test Database (API)                                                                                   | F2   | **listo**: `eval/results/e2_barrier.json`                                                        |
+| Validación E3 contra EDR                                                   | NHTSA CISS                                                                                                                | F7   | **listo**: `eval/results/e3_ciss.json`                                                           |
+| Dimensiones y masas por modelo común en México                             | Fichas técnicas de fabricantes (47 modelos)                                                                               | F1   | **listo**: `data/vehicles/models_raw.json`                                                       |
+| Coeficientes de fricción por superficie y estado                           | Literatura (cita por valor)                                                                                               | F2   | **listo**: `solver/croquis_solver/data/friction.json`                                            |
+| Geometría de vías reales                                                   | OpenStreetMap (ODbL, atribución visible)                                                                                  | F8   | **listo**: extractos en `data/osm/` (ADR 0023); OSM en producción sigue pendiente                |
+| Texturas, HDRI, modelos                                                    | Poly Haven, Quaternius, Kenney (CC0)                                                                                      | F3   | **listo**: texturas de Poly Haven (`assets/ASSETS.md`); los vehículos son geométricos (ADR 0005) |
+| Personas                                                                   | MakeHuman / MPFB (CC0)                                                                                                    | F5   | **listo**: `apps/web/public/modelos/personas/` (`assets/ASSETS.md`)                              |
+| Deformación medida en autos reales (E5)                                    | NHTSA Vehicle Crash Test Database (reportes con fotos y aplastamiento posterior a la prueba) y CISS (aplastamiento C1–C6) | F10  | **inventario listo**: `eval/results/e5_inventario.json` (ver abajo)                              |
 
 ## INEGI ATUS
 
@@ -58,6 +58,46 @@ El zip trae un CSV por año (29 archivos, 2.85 GB descomprimidos). El script ext
 
 - Rigidez estructural (coeficientes A/B de CRASH3): sale de las pruebas de choque de NHTSA (sección siguiente).
 - Masa real al momento del percance (ocupantes y carga): el rango usa el PBV como tope.
+
+## Daño medido en autos reales (E5, F10)
+
+Inventario: `uv run croquis-eval e5-inventario` → `eval/results/e5_inventario.json`. Es el tamaño de muestra de E5 antes de medir nada (PLAN §8).
+
+**Qué es un caso:**
+
+- **El vehículo:** un vehículo con su perfil de aplastamiento medido en seis puntos (DPD1–DPD6 en NHTSA, C1–C6 en CISS), el largo del daño L, la clase y la masa.
+- **Su reproducción:** la velocidad de la prueba (NHTSA) o el ΔV del EDR (CISS).
+- **Tipo de impacto:** sale de reglas escritas antes de medir (`eval/croquis_eval/e5_casos.py`, ADR 0032).
+
+| Tipo               | NHTSA: casos | con centro del daño D | con fotos | CISS: casos | desarrollo (2017–2021) | test (2022–2024) |
+| ------------------ | -----------: | --------------------: | --------: | ----------: | ---------------------: | ---------------: |
+| Frontal            |        2,095 |                 1,987 |       983 |       2,836 |                  1,467 |            1,369 |
+| Frontal desplazado |          216 |                   194 |        24 |       2,356 |                  1,285 |            1,071 |
+| Lateral            |        1,048 |                 1,036 |       593 |       1,918 |                    989 |              929 |
+| Alcance (trasero)  |          165 |                   164 |        17 |       1,059 |                    564 |              495 |
+| Poste              |           96 |                    96 |        44 |         635 |                    330 |              305 |
+| **Total**          |    **3,620** |                 3,477 |     1,661 |   **8,804** |                  4,635 |            4,169 |
+
+**NHTSA** (`data/processed/nhtsa/vtb_tests.csv` e `itv_tests.csv`):
+
+- **Origen de los casos:**
+  - **Pruebas contra barrera:** de frente, desplazadas o en ángulo, y contra poste o luminaria.
+  - **Pruebas de impactor contra el costado o la parte trasera:** sin las filas de la barrera móvil.
+- **Fuera:** atenuadores de impacto y barreras «OTHER», porque no se sabe cómo se deforman.
+- **Fotos:**
+  - **Fuente:** la lista de multimedia de cada prueba se descarga con `uv run croquis-data nhtsa media` (`data/raw/nhtsa/media/`, sin versionar).
+  - **Nombres:** casi todos los laboratorios suben las fotos numeradas (`v10050P009.jpg`), sin la vista en el nombre. La vista de cada número está en la lista de fotografías del reporte PDF de la prueba. En el reporte de la prueba 10050, la figura 9 es «Post-Test Front View of Test Vehicle».
+  - **Qué se descarga:** los reportes pesan varios MB cada uno, así que no se bajan todos. Se leen solo los de la muestra de la galería de E5.
+
+**CISS** (`data/processed/ciss/e3_vehiculos.csv`):
+
+- **Selección:** los mismos vehículos de E3. Tienen un EDR con ΔV válido y chocan contra otro vehículo (7,936) o contra un objeto rígido (868).
+- **Columnas nuevas (F10):** la batalla, el CDC completo, la zona horizontal, el centro del daño D y CMAX.
+- **Convención de D** (`FIELDLD`, cm), comprobada contra la descripción textual `FIELDLLOCATION` de 2024 (`convencion_de_d_2024` en el inventario):
+  - **Frente y parte trasera:** se mide desde el centro de la cara, positivo a la derecha. Coincidió en 2,866 de 2,866 casos.
+  - **Costados:** se mide desde la mitad de la batalla, positivo hacia adelante. De 1,182 casos, 828 coincidieron a ±3 cm, 277 a ±10 cm y 77 por más de 10 cm. La batalla y la medición de la descripción no son exactas.
+  - **Códigos:** 777 y 999 son «no medido» y «desconocido».
+- **Partición:** como en E3, 2017–2021 es desarrollo y 2022–2024 es test.
 
 ## NHTSA Vehicle Crash Test Database (E2)
 
