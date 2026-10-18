@@ -7,7 +7,10 @@ import {
   crushAt,
   damageInfluence,
   displacementField,
+  measureCrushAt,
   measureCrushProfile,
+  measureDamagedWidth,
+  TAPER_M,
   valueNoise,
   type DamageInput,
   type DamageSide,
@@ -142,5 +145,51 @@ describe("deformación desde el perfil del solver", () => {
       expect(v).toBeGreaterThanOrEqual(-1);
       expect(v).toBeLessThanOrEqual(1);
     }
+  });
+});
+
+describe("medición sobre la malla en estaciones arbitrarias (E5)", () => {
+  const d = { length: 4.6, width: 1.8, height: 1.45, wheelbase: 2.7 };
+  const input: DamageInput = {
+    lado: "L",
+    perfil: [0.05, 0.12, 0.2, 0.2, 0.12, 0.05],
+    ancho: 1.6,
+    centro: 0.2,
+    seed: 11,
+  };
+
+  it("en las estaciones del solver da lo mismo que measureCrushProfile", () => {
+    const g = buildVehicle("sedan_mediano", d);
+    const dmg = applyVehicleDamage(g, "sedan_mediano", d, input);
+    const stations = Array.from(
+      { length: 6 },
+      (_, k) => input.centro + (0.5 - k / 5) * input.ancho,
+    );
+    expect(measureCrushAt(g, dmg.field, stations)).toEqual(
+      measureCrushProfile(g, dmg.field, input),
+    );
+  });
+
+  it("entre estaciones sigue el perfil, y fuera del daño la carrocería no se hunde", () => {
+    const g = buildVehicle("sedan_mediano", d);
+    const dmg = applyVehicleDamage(g, "sedan_mediano", d, input);
+    // Mitad entre C3 y C4 (centro del daño): 0.2 m, con la tolerancia de la prueba del solver.
+    const [mid, far] = measureCrushAt(g, dmg.field, [input.centro, input.centro - 2.0]);
+    expect(Math.abs(mid! - 0.2)).toBeLessThan(Math.max(0.02, 0.06 * 0.2));
+    expect(far!).toBeLessThan(0.005);
+  });
+
+  it("el ancho dañado (más de 2 cm) cae entre el ancho del perfil y el de su transición", () => {
+    const g = buildVehicle("sedan_mediano", d);
+    const dmg = applyVehicleDamage(g, "sedan_mediano", d, input);
+    const w = measureDamagedWidth(g, dmg.field, 0.02);
+    expect(w).toBeGreaterThan(input.ancho - 0.2);
+    expect(w).toBeLessThan(input.ancho + 2 * TAPER_M + 0.05);
+    const intact = buildVehicle("sedan_mediano", d);
+    const none = applyVehicleDamage(intact, "sedan_mediano", d, {
+      ...input,
+      perfil: [0, 0, 0, 0, 0, 0],
+    });
+    expect(measureDamagedWidth(intact, none.field, 0.02)).toBe(0);
   });
 });
