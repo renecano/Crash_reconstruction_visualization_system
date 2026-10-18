@@ -1,53 +1,9 @@
 import type { EscenaSpec, Resultado } from "@croquis/scene-schema";
 import { AIRBAG_SOURCE, airbagForVehicle, PROFILES } from "@croquis/viewer";
 import { fmtNumber } from "@/lib/format-number";
+import { campoIncierto, CLASE, clockHour, PARAM, rigidezTexto, TIPO } from "@/lib/textos-resultado";
 
-const CLASE: Record<string, string> = {
-  sedan_compacto: "sedán compacto",
-  sedan_mediano: "sedán mediano",
-  hatchback: "hatchback",
-  suv_compacta: "SUV compacta",
-  suv_grande: "SUV grande",
-  pickup: "pickup",
-  van: "van",
-  microbus_combi: "microbús o combi",
-  autobus: "autobús",
-  camion_unitario: "camión unitario",
-  tractocamion: "tractocamión",
-  motocicleta: "motocicleta",
-  bicicleta: "bicicleta",
-  scooter: "scooter",
-};
-
-const PARAM: Record<string, string> = {
-  friccion_llanta: "Fricción llanta–pavimento",
-  restitucion_vehiculo_vehiculo: "Restitución entre vehículos",
-  relacion_impulso_tangencial: "Fricción en el contacto",
-  arrastre_post_impacto: "Arrastre después del impacto (fracción de μ)",
-  factor_abs: "Factor de frenado con ABS",
-  aproximacion_previa_s: "Tiempo de aproximación mostrado (s)",
-  velocidad_peaton: "Velocidad al caminar (m/s)",
-  friccion_cuerpo_suelo: "Fricción cuerpo–suelo",
-  factor_proyeccion_jinete: "Factor de proyección del jinete",
-  friccion_moto_caida: "Arrastre de la moto caída",
-  altura_cg_volcadura: "Altura del centro de masa (fracción del alto)",
-  altura_ojo: "Altura del ojo del conductor (m)",
-  alcance_deteccion_nocturna: "Alcance de detección con luces bajas (m)",
-};
-
-const TIPO: Record<string, string> = {
-  primaria: "fuente primaria",
-  secundaria: "fuente secundaria",
-  supuesto: "supuesto",
-  relato: "del relato",
-  medido: "medido",
-};
-
-/** Dirección de la fuerza en horas de reloj, como se dice en reconstrucción ("a las 3"). */
-export function clockHour(hours: number): string {
-  const h = Math.round(hours) % 12;
-  return `a las ${h === 0 ? 12 : h}`;
-}
+export { clockHour };
 
 const fmt = fmtNumber;
 
@@ -113,13 +69,7 @@ export function ResultPanel({
                   {v.pdof_horas !== undefined ? clockHour(v.pdof_horas) : "—"}
                 </td>
                 <td className="py-1 pr-3">{fmt(v.dano.energia_j / 1000, 1)} kJ</td>
-                <td className="py-1">
-                  {v.dano.origen_rigidez === "nhtsa"
-                    ? "medida (pruebas de NHTSA)"
-                    : v.dano.origen_rigidez === "supuesto"
-                      ? "supuesto"
-                      : "—"}
-                </td>
+                <td className="py-1">{rigidezTexto(v.dano.origen_rigidez)}</td>
                 {spec ? (
                   <td className="py-1 text-xs">
                     {
@@ -155,9 +105,7 @@ export function ResultPanel({
           <summary className="cursor-pointer font-semibold">Datos inciertos y sus rangos</summary>
           <ul className="mt-1 list-disc pl-5">
             {inc.campos.map((c) => (
-              <li key={c.ruta}>
-                <code>{c.ruta}</code>: {fmt(c.min, 2)}–{fmt(c.max, 2)} ({c.nota})
-              </li>
+              <li key={c.ruta}>{campoIncierto(c, resultado)}</li>
             ))}
           </ul>
         </details>

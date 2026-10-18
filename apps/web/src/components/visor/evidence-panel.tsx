@@ -1,25 +1,13 @@
 import type { Resultado } from "@croquis/scene-schema";
 import { fmtNumber } from "@/lib/format-number";
+import { evidenceLabel, parametroInversion, unidadInversion } from "@/lib/textos-resultado";
 
 type Inversion = NonNullable<Resultado["inversion"]>;
 type Parametro = Inversion["parametros"][number];
 
 const fmt = fmtNumber;
 
-/** Evidencia de la inversión en palabras llanas. */
-const EVIDENCIA: Record<string, string> = {
-  reposo: "dónde quedó",
-  rumbo_final: "hacia dónde quedó orientado",
-  marcas_frenado: "marcas de frenado",
-  proyeccion: "distancia a la que quedó la persona",
-  dano: "daño descrito",
-};
-
-export function evidenceLabel(label: string, roles: Map<string, string>): string {
-  const [kind = "", id = ""] = label.split(":");
-  const who = roles.has(id) ? `vehículo ${roles.get(id)}` : "persona";
-  return `${EVIDENCIA[kind] ?? kind} (${who})`;
-}
+export { evidenceLabel };
 
 function Estimate({ p }: { p: Parametro }) {
   const unit = p.unidad === "deg" ? "°" : " km/h";
@@ -85,14 +73,10 @@ export function EvidencePanel({ resultado }: { resultado: Resultado }) {
                     className="border-b border-neutral-200 dark:border-neutral-800"
                   >
                     <td className="py-1 pr-3">{roles.get(p.vehiculo) ?? p.vehiculo}</td>
-                    <td className="py-1 pr-3">
-                      {p.parametro === "velocidad_previa"
-                        ? "Velocidad previa (antes de frenar, si frenó)"
-                        : "Dirección de llegada"}
-                    </td>
+                    <td className="py-1 pr-3">{parametroInversion(p)}</td>
                     <td className="py-1 pr-3">
                       {fmt(p.inicial)}
-                      {p.unidad === "deg" ? "°" : " km/h"}{" "}
+                      {unidadInversion(p)}{" "}
                       <span className="text-xs text-neutral-600 dark:text-neutral-400">
                         ({p.inicial_declarado ? "dicho" : "supuesto"})
                       </span>

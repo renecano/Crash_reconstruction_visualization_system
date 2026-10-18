@@ -1,6 +1,6 @@
 # ADR 0031 — Exportaciones: cuadros, glTF, video, informe y croquis (F9)
 
-- **Estado:** aceptado (2026-10-17). Se completa por partes; esta versión cubre cuadros PNG, glTF, video y el croquis 2D.
+- **Estado:** aceptado (2026-10-17). Cubre todas las exportaciones de PLAN §7.9: cuadros PNG, glTF, video, croquis 2D e informe PDF.
 - **Criterio (PLAN §7.9, §10):**
   - **Qué se exporta:** video (WebM y MP4), cuadros PNG, escena glTF, informe PDF y croquis 2D (SVG, PNG y PDF).
   - **La marca:** todo lleva «Reconstrucción ilustrativa generada a partir de un relato. No es un peritaje.», más la semilla y el hash de entradas.
@@ -42,6 +42,14 @@
    - **PDF:** con pdfmake 0.3.11 (MIT). El croquis va como vector y la marca va al pie de cada página y en los metadatos (`Subject`).
    - **La fuente del PDF:** Roboto 3.014 incrustada (SIL OFL 1.1, registrada en `assets/ASSETS.md`).
 
+7. **Informe PDF** (`apps/web/src/lib/informe.ts`, con pdfmake):
+   - **Contenido:** croquis vectorial, línea de tiempo (las etiquetas de eventos del visor), vehículos con su rango del 80 %, volcadura, lo que dice la evidencia (inversión y datos que no cuadran), avisos, parámetros con su fuente, supuestos y datos inciertos en palabras, e identificación.
+   - **Identificación:** escena, semilla, hash del relato, SHA-256 de la escena que recibió el solver, versión del resultado y atribución del mapa.
+   - **Las escenas canónicas:** no tienen relato. Por eso el informe agrega el SHA-256 de la `EscenaSpec`, que son las entradas del solver.
+   - **Mismos textos que el visor:** `lib/textos-resultado.ts`, que también usan los paneles. Los datos inciertos del Monte Carlo se dicen en palabras («Vehículo A: velocidad previa, entre 35 y 55 km/h») en el visor y en el informe.
+   - **Encabezado:** un aviso dice que no asigna culpas, no estima lesiones y no sustituye a un peritaje (PLAN §10).
+   - **Escena propia:** el botón espera el resultado completo (Monte Carlo e inversión) antes de habilitarse.
+
 ## Límites conocidos (glTF)
 
 - **Texturas procedurales:** los efectos TSL (texturas procedurales del asfalto) quedan como su color base.
@@ -49,6 +57,11 @@
 - **Lo que no entra:** el cielo, la lluvia y las luces del visor no se exportan. Son del entorno de dibujo, no de la reconstrucción.
 
 ## Pruebas
+
+- **Informe:**
+  - **Unitarias:** las secciones de PLAN §7.9, la marca, la semilla, el hash de la escena, los rangos, las fuentes, la línea de tiempo, la atribución, que no hable de culpa en cuatro escenas, y los datos inciertos en palabras para cada ruta del solver.
+  - **e2e:** abre el PDF con pdf.js y comprueba la marca al pie de cada página, las secciones, «ΔV» (la fuente lo cubre), los rangos, el SHA-256 y los metadatos.
+  - **Revisión visual:** de las dos páginas, dibujadas con pdf.js.
 
 - **Croquis:**
   - **Unitarias:** SVG válido (`DOMParser`) con `xmlns`, tamaño, fondo y sin estilos ni eventos. Además, la marca, la semilla, el hash, la atribución de OSM, la escala y la barra de escala.

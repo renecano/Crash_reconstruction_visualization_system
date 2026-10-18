@@ -1,6 +1,6 @@
 "use client";
 
-import type { LegendInfo } from "@croquis/scene-schema";
+import type { EscenaSpec, LegendInfo, Resultado } from "@croquis/scene-schema";
 import {
   framePng,
   renderVideo,
@@ -10,6 +10,7 @@ import {
 } from "@croquis/viewer";
 import { useRef, useState } from "react";
 import { downloadBytes, safeName } from "@/lib/download";
+import { informePdf } from "@/lib/informe";
 
 /** Resoluciones de los cuadros: la del visor o un tamaño fijo (16:9). */
 const RESOLUCIONES = [
@@ -41,13 +42,20 @@ export interface ExportPanelProps {
   legend: LegendInfo;
   /** Base del nombre de los archivos (la escena). */
   nombre: string;
+  /** Datos del informe PDF; `completo` es false mientras llega el resultado completo. */
+  informe?: {
+    spec: EscenaSpec;
+    resultado: Resultado | null;
+    supuestosEntorno: string[];
+    completo: boolean;
+  };
 }
 
 /**
  * Exportaciones del visor (F9, PLAN §7.9): cuadro PNG, video (MP4 o WebM) y escena glTF, generados
  * en el navegador y siempre con la marca de reconstrucción ilustrativa (PLAN §10).
  */
-export function ExportPanel({ api, clock, legend, nombre }: ExportPanelProps) {
+export function ExportPanel({ api, clock, legend, nombre, informe }: ExportPanelProps) {
   const [resolucion, setResolucion] = useState<Resolucion>("pantalla");
   const [estado, setEstado] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -123,7 +131,19 @@ export function ExportPanel({ api, clock, legend, nombre }: ExportPanelProps) {
       }
     });
 
+  const reporte = () =>
+    run("Generando el informe", async () => {
+      if (!informe?.resultado || !informe.completo) {
+        throw new Error("El resultado completo aún no está listo.");
+      }
+      const bytes = await informePdf(informe.spec, informe.resultado, informe.supuestosEntorno);
+      const file = `informe-${base}.pdf`;
+      downloadBytes(bytes, file, "application/pdf");
+      return `Listo: ${file}`;
+    });
+
   const disabled = !api || ocupado;
+  const informeListo = !!informe?.resultado && informe.completo;
   return (
     <section
       aria-label="Exportar"
@@ -169,6 +189,18 @@ export function ExportPanel({ api, clock, legend, nombre }: ExportPanelProps) {
         >
           Escena glTF con animación
         </button>
+        {informe ? (
+          <button
+            type="button"
+            data-testid="export-informe"
+            disabled={ocupado || !informeListo}
+            title={informeListo ? undefined : "Espera el resultado completo"}
+            onClick={() => void reporte()}
+            className="rounded border border-neutral-400 px-3 py-1 hover:bg-neutral-100 disabled:opacity-50 dark:hover:bg-neutral-800"
+          >
+            Informe PDF
+          </button>
+        ) : null}
       </div>
       <div className="flex flex-wrap items-end gap-2">
         <label className="flex flex-col gap-1">

@@ -40,6 +40,13 @@ Después de un percance, quien lo vivió tiene que explicarlo (a su aseguradora,
 - **Relatos-MX** (`data/relatos-mx`): 320 relatos sintéticos con su `EscenaSpec` de referencia, distribuidos como los tipos de accidente de ATUS, en cinco registros (coloquial, formal, con faltas, desordenado, breve), con datos personales sintéticos y 197 variantes contrafactuales. El test (160) está congelado por hash. Un segundo test congelado, de 150 relatos, toma la verdad de los campos codificados de NHTSA CISS 2024 y no de quien escribe (ADR 0012).
 - **Rangos, inversión y consistencia** (F7): cada resultado trae el intervalo del 80 % (Monte Carlo con semilla sobre velocidades, masas, fricción y frenado). La inversión busca las velocidades y direcciones con las que el solver reproduce la evidencia declarada (posiciones y orientación final, marcas de frenado, distancia de proyección, daño), y dice cuándo la evidencia no basta para estimar algo. Lo declarado que no cabe en ninguna solución física se marca en lenguaje llano, sin culpar, y en `/relato` se convierte en pregunta. En el visor se comparan hasta tres hipótesis ("¿y si iba a 60?") como vehículos fantasma, con la diferencia en un panel.
 - **Todo corre en Vercel** (ADR 0011): la comprensión del relato y el solver tienen port en TypeScript con paridad probada contra la referencia Python. La extracción coincide en todo Relatos-MX, con reglas y con las respuestas grabadas de Claude (E1 da las mismas métricas con los dos pipelines) y el solver reproduce las diez escenas (E7). Las rutas del relato son Route Handlers de Next.js, con la extracción en streaming. Las hipótesis y la escena propia del visor se reconstruyen en el navegador, en un Web Worker, y el resultado es el mismo en Chromium, Firefox y WebKit (E8, ADR 0029).
+- **Sin red** (F9, ADR 0030): un service worker precarga la demo (páginas, solver, visor, Rapier, resultados, cuerpos y texturas), que abre y reconstruye sin conexión. Solo entender el relato con Claude pide red, y la página lo dice.
+- **Exportaciones** (F9, ADR 0031), generadas en el navegador y siempre con la marca «Reconstrucción ilustrativa generada a partir de un relato. No es un peritaje.», la semilla y el hash de entradas:
+  - **Informe PDF:** croquis, línea de tiempo, resultados con su rango del 80 %, lo que dice la evidencia, avisos, parámetros con su fuente, supuestos e identificación.
+  - **Video MP4 o WebM:** se dibuja cuadro por cuadro con WebCodecs.
+  - **Cuadros PNG** de hasta 4K.
+  - **Escena glTF:** con la animación de vehículos, restos, personas y daño.
+  - **Croquis:** en SVG, PNG y PDF, con norte y barra de escala.
 - **El solver de referencia** (`solver/croquis_solver`): impacto por impulso entre cuerpos rígidos planos, energía de deformación CRASH3 con rigidez por clase medida en pruebas de NHTSA, frenado y trayectorias previas, movimiento posterior hasta el reposo, objetos fijos, proyección de peatones y jinetes (Searle), cinemática de ocupantes, visibilidad desde el ojo de cada conductor y criterio de inicio de volcadura. Reconstruye las diez escenas de forma determinista; la conservación de momento se prueba con Hypothesis.
 
 ## Cómo probarlo
@@ -60,7 +67,7 @@ pnpm --filter @croquis/web test:e2e   # Playwright (requiere `playwright install
 
 ### En vivo
 
-Todo se despliega en Vercel (web y API como Route Handlers; ADR 0011). Falta que René conecte el repositorio a su cuenta y configure las variables de entorno (ver `.env.example`).
+Producción: https://croquis-sage.vercel.app, desplegada desde `main` en Vercel (web y API como Route Handlers; ADR 0011). Cada rama tiene su vista previa. La extracción usa Claude con un tope de gasto diario y un límite por hora (ver `.env.example`).
 
 ## Resultados medidos
 
