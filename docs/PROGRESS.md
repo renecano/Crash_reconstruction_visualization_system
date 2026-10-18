@@ -5,7 +5,7 @@ Reglas de trabajo: `CLAUDE.md`. Especificación: `PLAN.md`.
 
 ## Estado actual
 
-- **Fase actual: F10** (ver PLAN §13). F9 quedó cerrada el 2026-10-17 (#25 a #41): demo sin red, E7 y E8 en verde y todas las exportaciones. F8 se cerró el mismo día (#20 a #24, E6 cumple).
+- **Fase actual: F11** (ver PLAN §13). F10 quedó cerrada el 2026-10-18 (#42 a #46): E5 publicado (test corrido una vez) y la galería con fotos reales. F9 quedó cerrada el 2026-10-17 (#25 a #41): demo sin red, E7 y E8 en verde y todas las exportaciones. F8 se cerró el mismo día (#20 a #24, E6 cumple).
 - **Pendientes físicos de F7:** hechos. El pendiente 1 (test CISS de Relatos-MX y prompt v2) quedó hecho el 2026-10-14 (PR #11, ADR 0012).
 - **Rigidez lateral, hecha** (PR #12, ADR 0013). Sale de 1,265 pruebas de barrera móvil de NHTSA. En el test de E3, el error en costados baja de 11.04 a 8.51 km/h.
 - **Rigidez trasera, hecha** (PR #13, ADR 0014). Sale de 136 pruebas FMVSS 301 con barrera rígida, modelos 1975–2004. En el test de E3, el error en traseros baja de 16.45 a 7.68 km/h; en conjunto, 8.85 km/h contra 8.19 de WinSMASH.
@@ -26,7 +26,8 @@ Reglas de trabajo: `CLAUDE.md`. Especificación: `PLAN.md`.
 - **F10, paso 2 hecho** (rama `feat/f10-particion`, ADR 0032): el método de E5 quedó escrito antes de medir y la partición está congelada (`eval/e5/particion.json`, SHA-256 `2a894e09…`).
 - **F10, pasos 3 y 4 hechos** (rama `feat/f10-reproductor`, ADR 0033): el reproductor de E5 en TS y el ajuste de la forma y el ancho del daño por zona, solo con desarrollo. La malla del visor sigue al solver con una mediana por zona de 0.04 a 0.86 cm por estación. Cambian cinco grupos de zonas; en desarrollo, el error por punto en laterales de CISS baja de 4.99 a 4.67 cm (`eval/results/e5_desarrollo*.json`).
 - **F10, paso 5 hecho** (rama `feat/f10-test`): el test de E5 se corrió **una vez** en `e74d971`, con todo fijo (`eval/results/e5.json`). Los números y su lectura honesta están en el README.
-- **Siguiente paso concreto:** F10, paso 6. Galería: elegir una muestra del test de NHTSA estratificada por tipo, entre las pruebas con fotos; leer la lista de fotografías del reporte para dar con la foto posterior de la cara dañada; hacer renders de Croquis con una vista parecida y la marca ilustrativa; versionar derivados reducidos y registrar la fuente en `data/SOURCES.md`.
+- **F10, paso 6 hecho** (rama `feat/f10-galeria`): la galería de E5 está en `docs/galeria-e5/README.md`. Tiene 9 pares de foto real y render de Croquis: 3 frontales, 3 laterales y 3 de poste. El frontal desplazado y el alcance no tienen foto verificable en el test. **F10 cerrada.**
+- **Siguiente paso concreto:** F11 (PLAN §13). Mientras llegan la computadora de demo y las pruebas con personas (E9), retomar los pendientes abiertos de F8 en `docs/PROGRESS.md`: OSM en producción, líneas y banquetas en calles de OSM, semáforo peatonal, textura de grava, corte del camellón en los cruces y texturas triplanares.
 - **E1 del prompt v2 en el primer test, hecho** (PR #14). Sonnet 0.875 → 0.919 y Haiku 0.852 → 0.896. Además, E1 ahora compara cada contrafactual con la repetición del mismo relato (McNemar por tipo): ningún tipo difiere del ruido, y las reglas cambian con el modelo del vehículo en 6 de 52 pares (ADR 0012 §10).
 - **F8** cerrada el 2026-10-17 (PR #20 a #24). **F0** cerrado el 2026-10-10 (PR #1), **F1** el 2026-10-10 (PR #3), **F2** el 2026-10-13 (PR #4), **F3** el 2026-10-13 (PR #5), **F4** el 2026-10-13 (PR #6), **F5** el 2026-10-13 (PR #7), **F6** el 2026-10-14 (PR #8), **F7** el 2026-10-14 (PR #9; pendientes registrados); migración a Vercel el 2026-10-14 (PR #10); test CISS y prompt v2 el 2026-10-14 (PR #11).
 
@@ -1656,3 +1657,36 @@ Las ramas van una encima de otra y se fusionan en este orden, cada una con su PR
   2. `pnpm --filter @croquis/eval-js e5` para el desarrollo. El test ya se corrió y no se repite.
   3. `uv run croquis-eval e5-energia`.
 - **Qué necesito de ti:** nada para el paso 6, la galería.
+
+**Paso 6 — Galería (2026-10-18, rama `feat/f10-galeria`):**
+
+- **`eval/croquis_eval/e5_galeria.py`** (`uv run croquis-eval e5-galeria` → `eval/results/e5_galeria.json`):
+  - toma una muestra con semilla del test de NHTSA, 3 por tipo, entre las pruebas que Croquis reproduce;
+  - busca la foto posterior de la cara dañada, por el nombre del archivo o en la lista de fotografías del reporte PDF;
+  - guarda derivados de 960 px sin metadatos.
+- **Hallazgos al armarla:**
+  - **Nombres de archivo:** en las pruebas viejas llevan el número de la prueba con ceros a la izquierda (`v04887P007.jpg`).
+  - **Números de foto:** el del reporte no siempre es el del archivo. Por eso hay revisión visual versionada (`eval/e5/galeria_revision.json`), con 6 fotos rechazadas: anteriores a la prueba, de maniquíes o de la parte de abajo.
+  - **Reportes ilegibles:** hay algunos que son archivos de Word y otros truncados; se cuentan como ilegibles.
+- **Renders** (`pnpm --filter @croquis/eval-js e5:galeria`):
+  - el vehículo con la malla, los materiales y la pintura dañada del visor (`vehicleMaterials` ahora se exporta), con el daño que predice Croquis;
+  - desde la vista de la foto, con la leyenda ilustrativa;
+  - en Chromium con SwiftShader.
+- **Resultado:** 9 pares (3 frontales, 3 laterales y 3 de poste). En frontal desplazado y alcance no hay foto verificable: casi ninguna prueba del test trae fotos, y las dos del desplazado que se encontraron eran de otra vista.
+- **Lectura cualitativa:**
+  - **Frontales:** Croquis deforma mucho menos que los autos reales, lo que coincide con E5.
+  - **Laterales y postes:** el lugar y la forma del hundimiento se reconocen.
+- **Fuentes:** fila nueva en `data/SOURCES.md` (reportes y fotos de NHTSA, datos públicos del gobierno de EE. UU.).
+- **Pruebas:** la lectura de la lista de fotografías, la vista que corresponde a cada cara y los nombres de archivo con y sin ceros.
+
+### Resumen para René (F10)
+
+- **Qué quedó:** E5 completo.
+  - **Medición:** cada auto real se reproduce con el mismo cálculo de daño y la misma malla del visor, y se mide en los puntos reales. Hay 5,260 casos en el test congelado.
+  - **Resultado:** Croquis mejora a las dos líneas base en el perfil punto por punto y en el área. Pierde contra el perfil triangular en la profundidad máxima y el ancho.
+  - **Publicación:** todo está en el README, con su lectura honesta, y la galería de fotos reales junto a Croquis está en `docs/galeria-e5/README.md`.
+- **Cómo probarlo:**
+  1. `uv run croquis-eval e5-casos`.
+  2. `pnpm --filter @croquis/eval-js e5` para el desarrollo; el test no se vuelve a correr.
+  3. `uv run croquis-eval e5-galeria` y `pnpm --filter @croquis/eval-js e5:galeria` para la galería.
+- **Qué necesito de ti:** nada para F10. Siguen pendientes la computadora de demo (E6 en alta y ultra) y las pruebas con personas (E9).
