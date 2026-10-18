@@ -56,3 +56,4 @@ export {
   type ResultadoValidation,
 } from "./resultado";
 export { outsideRedVialM, RED_VIAL_DEFAULTS, viaWidthM, type ViaMedida } from "./red-vial";
+export { LEGEND_TEXT, legendFor, legendLines, legendString, type LegendInfo } from "./legend";

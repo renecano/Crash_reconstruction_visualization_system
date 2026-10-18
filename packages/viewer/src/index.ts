@@ -84,3 +84,6 @@ export * from "./traffic-signals";
 export { buildDevice, type DeviceInput, type DeviceNode } from "./traffic-devices";
 export * from "./env-textures";
 export * from "./gpu-tier";
+export * from "./export/capture";
+export { addPngText, crc32, pngSize, readPngText } from "./export/png";
+export { drawLegendBand, legendFontPx, wrapLine } from "./export/legend-band";

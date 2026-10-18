@@ -18,7 +18,8 @@ Reglas de trabajo: `CLAUDE.md`. Especificación: `PLAN.md`.
 - **F9, paso 3 hecho** (rama `feat/f9-workers`, ADR 0028): la escena propia (del relato o el croquis, con «Ver en 3D») se reconstruye en el navegador. El Web Worker responde dos veces: primero la reconstrucción para dibujar y después el resultado completo para los paneles; el visor 3D se queda con la primera y la página no se congela. Lo cubren 3 pruebas e2e.
 - **F9, paso 4 hecho** (rama `feat/f9-e8`, ADR 0029): E8 cumple. El resultado completo del solver y el horneado con Rapier (restos, volcaduras y ragdolls) son idénticos en Chromium, Firefox y WebKit en las 11 escenas (`eval/results/e8_determinism.json`); antes, con `Math` nativo, el solver coincidía en 8 de 11. Lo logra `dmath` (fdlibm en TS, igual a V8 bit a bit) y `dthree`; el solver completo cuesta ×1.22 en V8 (`e8_costo_dmath.json`), dentro del Web Worker. CI corre E8 en un trabajo propio.
 - **F9, paso 5 hecho** (rama `feat/f9-offline`, ADR 0030): la demo funciona sin red. Serwist precarga 67 entradas (11.05 MB, `eval/results/f9_precarga.json`): trozos, cuerpos, texturas, el worker del solver y las páginas. La prueba e2e con la red cortada abre el inicio, el visor en alta (Rapier, ragdoll y texturas), el croquis con «Ver en 3D» (resultado completo en el worker) y el relato, que avisa que necesita red. En E6 (`e6_ab_sw_*.json`), sin costo medible en media; en baja con WebGPU, 0.10 ms por cuadro (85.5 contra 86.1 fps).
-- **Siguiente paso concreto:** F9, paso 6. Exportaciones: PDF, video (WebM y MP4), PNG, glTF y croquis en SVG, PNG y PDF, con la leyenda ilustrativa y pruebas que abren cada archivo.
+- **F9, paso 6a hecho** (rama `feat/f9-exports`, ADR 0031): cuadro PNG (720p, 1080p, 4K o el del visor) y escena glTF con animación, desde el panel «Exportar» del visor. La leyenda vive en `@croquis/scene-schema` y va dibujada y como texto del archivo. Las pruebas e2e abren cada archivo descargado.
+- **Siguiente paso concreto:** F9, paso 6b. Video MP4 y WebM con WebCodecs y Mediabunny, cuadro por cuadro, con la marca; respaldo con MediaRecorder (ADR 0031). Después, el croquis en SVG, PNG y PDF (6c) y el informe PDF (6d).
 - **E1 del prompt v2 en el primer test, hecho** (PR #14). Sonnet 0.875 → 0.919 y Haiku 0.852 → 0.896. Además, E1 ahora compara cada contrafactual con la repetición del mismo relato (McNemar por tipo): ningún tipo difiere del ruido, y las reglas cambian con el modelo del vehículo en 6 de 52 pares (ADR 0012 §10).
 - **F8** cerrada el 2026-10-17 (PR #20 a #24). **F0** cerrado el 2026-10-10 (PR #1), **F1** el 2026-10-10 (PR #3), **F2** el 2026-10-13 (PR #4), **F3** el 2026-10-13 (PR #5), **F4** el 2026-10-13 (PR #6), **F5** el 2026-10-13 (PR #7), **F6** el 2026-10-14 (PR #8), **F7** el 2026-10-14 (PR #9; pendientes registrados); migración a Vercel el 2026-10-14 (PR #10); test CISS y prompt v2 el 2026-10-14 (PR #11).
 
@@ -1399,5 +1400,18 @@ Las ramas van una encima de otra y se fusionan en este orden, cada una con su PR
   - **Pruebas:** e2e `sin-red`, `visor-propia` y `relato` en verde; lint, tipos y unitarias en verde.
   - **WebGPU en media:** dio 37 fps en las dos variantes (GPU Intel; WebGL 75.2). Queda anotado para la próxima corrida completa de E6.
 - **Instalado:** `serwist` 9.5.13, `@serwist/turbopack` 9.5.13 y `esbuild` 0.28.2 en `apps/web` (dev, ADR 0001). También `e6_ab.mjs` acepta la variante de contexto `_serviceWorkers`.
+
+**Paso 6a — Cuadros PNG y glTF (2026-10-17, rama `feat/f9-exports`, ADR 0031):**
+
+- **Leyenda compartida:** `packages/scene-schema/src/legend.ts` (`legendFor`, `legendLines` y `legendString`). La web la reexporta.
+- **Visor:**
+  - `SceneViewer` recibe `onExport` y entrega `captureFrame`, que dibuja un instante con `advance` y copia el lienzo en la misma tarea, y `exportGlb`.
+  - `packages/viewer/src/export/`: `png.ts` (iTXt UTF-8 con CRC-32), `legend-band.ts` (franja con la marca), `capture.ts` (PNG con la marca) y `gltf.ts` (copia con `SkeletonUtils`, materiales clásicos y animación de posición, rotación, escala y pesos de daño a 30 cuadros por segundo).
+- **Web:** panel «Exportar» (`export-panel.tsx`) y `lib/download.ts`.
+- **Evidencia:**
+  - **Unitarias:** 8 nuevas del viewer (PNG; glTF de `volcadura` y del peatón con esqueleto) y 3 de la leyenda.
+  - **e2e:** `exportar.spec.ts` (2), que abre el PNG y el `.glb` descargados.
+  - **WebGPU:** revisión local con GPU real. WebGPU y WebGL 2 dan el mismo cuadro a 1920 × 1080 con la marca.
+  - lint, tipos y pruebas de todos los paquetes en verde.
 
 **Pendientes de F8 que siguen abiertos:** OSM en producción, rayas y banquetas sobre calles de OSM, semáforo peatonal, textura de grava, corte del camellón en cruces y texturas en caras verticales. Las sombras de los focos ya están en alta y ultra (ADR 0026).

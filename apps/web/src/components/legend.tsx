@@ -2,8 +2,10 @@
  * Leyenda obligatoria (PLAN §10): se muestra en el visor y en toda exportación.
  * El texto es fijo; la semilla y el hash de entradas se agregan cuando existen.
  */
-export const LEGEND_TEXT =
-  "Reconstrucción ilustrativa generada a partir de un relato. No es un peritaje.";
+import { LEGEND_TEXT } from "@croquis/scene-schema";
+
+// El texto vive en @croquis/scene-schema: lo comparten el visor, las exportaciones y el croquis.
+export { LEGEND_TEXT };
 
 export interface LegendProps {
   seed?: number | string;

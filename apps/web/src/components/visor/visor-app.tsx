@@ -7,6 +7,7 @@ import {
   loadResultado,
   type EscenaSpec,
   type FixtureName,
+  legendFor,
   type Resultado,
 } from "@croquis/scene-schema";
 import {
@@ -33,6 +34,7 @@ import {
   type QualityLevel,
   type TimelineState,
   type ViewerClock,
+  type ViewerExportApi,
 } from "@croquis/viewer";
 import type { RendererInfo, RendererPreference } from "@croquis/viewer/react";
 import dynamic from "next/dynamic";
@@ -52,6 +54,7 @@ import { EvidencePanel } from "./evidence-panel";
 import { HypothesisPanel, type Hipotesis } from "./hypothesis-panel";
 import { PeoplePanel } from "./people-panel";
 import { ResultPanel } from "./result-panel";
+import { ExportPanel } from "./export-panel";
 import { TimelineBar } from "./timeline-bar";
 import { leerEscenaPropia } from "@/lib/escena-propia";
 import { reconstruirCompletoEnNavegador } from "@/lib/reconstruct-client";
@@ -230,6 +233,8 @@ function VisorEscena({ spec, hayPropia }: { spec: EscenaSpec; hayPropia: boolean
   } | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [info, setInfo] = useState<RendererInfo | null>(null);
+  const [exportApi, setExportApi] = useState<ViewerExportApi | null>(null);
+  const legend = useMemo(() => legendFor(spec), [spec]);
   // Modo automático (ADR 0026): arranca en el nivel que sugiere la GPU y luego lo ajustan los fps
   // medidos. En el prerender no hay GPU (null) y se usa media.
   const gpu = useSyncExternalStore(noopSubscribe, gpuTierSnapshot, nullSnapshot);
@@ -515,6 +520,7 @@ function VisorEscena({ spec, hayPropia }: { spec: EscenaSpec; hayPropia: boolean
             onRendererInfo={setInfo}
             onPeople={onPeople}
             hipotesis={ghostResults}
+            onExport={setExportApi}
             ambiente={ambiente ?? undefined}
             onError={() =>
               setError(
@@ -539,6 +545,13 @@ function VisorEscena({ spec, hayPropia }: { spec: EscenaSpec; hayPropia: boolean
       </div>
 
       {clock ? <ClockedTimelineBar clock={clock} markers={markers} /> : null}
+
+      <ExportPanel
+        api={exportApi}
+        clock={clock}
+        legend={legend}
+        nombre={params.escena === "propia" ? "escena-propia" : params.escena}
+      />
 
       {calculando ? (
         <p
