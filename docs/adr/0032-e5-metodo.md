@@ -31,6 +31,16 @@ Cada caso se reproduce con la **misma etapa de daño que usa la reconstrucción*
 2. **Forma, ancho y centro del daño:** las reglas de Croquis a partir de la cara y la zona horizontal del CDC, que es lo que contaría una persona («me pegaron adelante a la izquierda»). **No** se le dan a Croquis el L ni el D medidos: son lo que se predice.
 3. **Malla:** el visor deforma la malla de la clase con esas dimensiones y se mide el aplastamiento en las seis estaciones donde se midió el vehículo real (D ± L/2). Así, el error incluye la forma y la posición del daño.
 
+### Barreras que Croquis no tiene, y lo que E5 mide en cada fuente
+
+- **Barrera móvil de NHTSA** (laterales, FMVSS 301 y la oblicua de 15°): no es una clase de vehículo de Croquis. Se reproduce con el mismo criterio con el que E2 calibró la rigidez lateral y trasera (ADR 0013 y 0014):
+  - **Energía total:** momento en una dimensión, ½ μ v².
+  - **Cara deformable:** la barrera deformable se lleva la fracción de Johnson (2011) que usa `e2_mdb.py`.
+  - **Barrera rígida:** no se lleva nada.
+- **Barrera desplazada deformable (EEVC):** Croquis la ve como un muro rígido, que es como la modelaría al reconstruir. El aplastamiento predicho tenderá a ser mayor que el real, y se reporta por tipo tal cual.
+- **NHTSA dentro de la muestra en la magnitud:** la rigidez de Croquis por clase y zona se calibró con pruebas de NHTSA (E2): frontal con las de barrera y lateral y trasera con las de barrera móvil. Por eso E5-NHTSA no es independiente en _cuánto_ se hunde el vehículo. Sí mide la forma, el ancho y la posición del daño sobre la malla.
+- **CISS fuera de la muestra:** es la prueba fuera de la muestra (rigidez de pruebas de laboratorio y choques reales de la calle). Las conclusiones de E5 se apoyan sobre todo en CISS.
+
 ## Métricas por caso
 
 - **Error por punto:** media de |predicho − medido| en las seis estaciones (cm).
