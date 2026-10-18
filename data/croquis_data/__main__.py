@@ -48,6 +48,12 @@ def main(argv: list[str] | None = None) -> int:
     p_np = nh_sub.add_parser(
         "process", help="Escribe data/processed/nhtsa/vtb_tests.csv o itv_tests.csv"
     )
+    p_nm = nh_sub.add_parser(
+        "media",
+        help="Lista de fotos y reportes de las pruebas con perfil medido (E5), "
+        "en data/raw/nhtsa/media",
+    )
+    p_nm.add_argument("--workers", type=int, default=4)
     for p in (p_nd, p_np):
         p.add_argument(
             "--config",
@@ -153,6 +159,13 @@ def main(argv: list[str] | None = None) -> int:
     if args.source == "nhtsa":
         from croquis_data import nhtsa_ctd
 
+        if args.command == "media":
+            st = nhtsa_ctd.download_media(workers=args.workers, log=print)
+            print(
+                f"candidatas {st.listed}, nuevas {st.fetched}, "
+                f"en caché {st.cached}, fallidas {st.failed}"
+            )
+            return 1 if st.failed else 0
         if args.command == "download":
             st = nhtsa_ctd.download(
                 config=args.config, workers=args.workers, limit=args.limit, log=print
