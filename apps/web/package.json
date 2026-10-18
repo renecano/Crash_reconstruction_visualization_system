@@ -36,6 +36,7 @@
     "eslint": "catalog:",
     "eslint-config-next": "16.4.0",
     "jsdom": "catalog:",
+    "mediabunny": "1.61.6",
     "serwist": "9.5.13",
     "tailwindcss": "catalog:",
     "typescript": "catalog:",

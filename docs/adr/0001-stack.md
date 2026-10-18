@@ -31,6 +31,7 @@
 | esbuild                                                      | 0.28.2                             | Dev, raíz (F9): empaqueta el solver y el horneado del visor para E8 en Chromium, Firefox y WebKit, y el solver de un commit anterior para medir el costo de `dmath` (ADR 0029). Playwright instala también Firefox y WebKit para E8                                                 |
 | serwist / @serwist/turbopack                                 | 9.5.13 / 9.5.13                    | Dev de `apps/web` (F9): service worker de la demo sin red (ADR 0030). Es la opción que cita la guía oficial de PWA de Next.js para Turbopack; versiones estables (el ejemplo usa la preliminar 10). El worker se arma en un Route Handler (`app/serwist/[path]`) con esbuild nativo |
 | esbuild (en `apps/web`)                                      | 0.28.2                             | Dev: par de `@serwist/turbopack` y empaquetado del Web Worker del solver en `public/workers/` (ADR 0030)                                                                                                                                                                            |
+| mediabunny                                                   | 1.61.6                             | `packages/viewer` (y dev de `apps/web` para leer los videos en las pruebas): video MP4/WebM con WebCodecs y re-fechado del respaldo de MediaRecorder (ADR 0031). MPL-2.0; reemplaza a `mp4-muxer`, que su autor dejó de mantener. Se carga solo al exportar                         |
 
 ## Python (uv workspace en `pyproject.toml`)
 
