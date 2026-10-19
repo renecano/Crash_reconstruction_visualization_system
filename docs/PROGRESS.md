@@ -44,11 +44,12 @@ Reglas de trabajo: `CLAUDE.md`. Especificación: `PLAN.md`.
   - **Alta y ultra:** textura CC0 que solo se carga si la escena la usa.
   - **Costo** (E6 antes y después en `objeto_fijo_arbol`): 0.5 ms por cuadro en media y 0.27 ms en baja.
   - **Atribución corregida en `assets/ASSETS.md`:** el asfalto es de Dimitrios Savva y el pasto de Charlotte Baglioni.
-- **Siguiente paso concreto:** F11, paso 6b. Pendientes de F8 que quedan:
-  - corte del camellón en los cruces peatonales;
+- **F11, paso 6b hecho** (rama `feat/f8-camellon`, ADR 0037): el camellón se corta a nivel de calle en los pasos peatonales y las rayas centrales se interrumpen.
+- **Siguiente paso concreto:** F11, paso 6c. Pendientes de F8 que quedan:
   - semáforo peatonal;
   - rayas y banquetas sobre calles de OSM;
-  - OSM en producción.
+  - OSM en producción;
+  - revisar en el manual de la SEDATU/SCT si las orillas se interrumpen en los pasos.
 
   Las texturas triplanares esperan a lo que muestre E9.
 
@@ -1823,3 +1824,11 @@ Las ramas van una encima de otra y se fusionan en este orden, cada una con su PR
   - el relieve de las manchas con y sin textura de asfalto;
   - el interruptor de diagnóstico.
 - **Incidente:** una corrida local de las pruebas del visor dio 234 de 238 y tres más dieron 238 de 238. No se reprodujo. Se suma al antecedente de `debris.test.ts` (F3).
+
+**Paso 6b — Corte del camellón en los pasos peatonales (2026-10-18, rama `feat/f8-camellon`, ADR 0037):**
+
+- **El refugio:** donde un paso peatonal cruza el camellón, se corta a nivel de calle, sin guarniciones.
+- **Las rayas:** las centrales y de carril se interrumpen en el paso; las orillas siguen.
+- **Las demás escenas** tienen exactamente la misma geometría (prueba).
+- **Revisión visual:** con la GPU real, en la cámara de la persona de `peaton_cruce`. La cebra ya no pasa bajo el camellón ni bajo las rayas amarillas.
+- **Pruebas:** el área cortada es la del paso, no quedan guarniciones del camellón dentro del paso, las rayas centrales se interrumpen y sin pasos todo queda igual.

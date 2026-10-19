@@ -86,6 +86,9 @@ export function markingsFor(dobleSentido: boolean, tipos: readonly string[]): Ma
 }
 
 export const LINE_WIDTH = 0.12;
+/** Largo de las franjas del paso peatonal a lo largo de la vía (m). */
+export const CROSSWALK_LENGTH = 3.0;
+
 /** Altura de la guarnición, la banqueta y el camellón (m): 15 cm, la altura usual en México. */
 export const CURB_HEIGHT = 0.15;
 export const SIDEWALK_WIDTH = 2.5;
@@ -325,6 +328,26 @@ export function buildRoadGeometry(layout: RoadLayout, opts: RoadOptions): RoadGe
     maxY = Math.max(maxY, p.y);
   };
 
+  // Paso peatonal (franjas de 3 m a lo largo de la vía, a lo ancho de la calzada).
+  const insideCrosswalk = (p: Vec2): boolean =>
+    (opts.crosswalks ?? []).some((cw) => {
+      const d = dir(cw.roadHeading);
+      const rel = { x: p.x - cw.center.x, y: p.y - cw.center.y };
+      const along = rel.x * d.x + rel.y * d.y;
+      const across = -rel.x * d.y + rel.y * d.x;
+      return Math.abs(along) <= CROSSWALK_LENGTH / 2 && Math.abs(across) <= cw.roadWidth / 2;
+    });
+  /** ¿El tramo recto de a a b pasa por algún paso peatonal? (muestreo cada 0.25 m) */
+  const crossesWalk = (a: Vec2, b: Vec2): boolean => {
+    const n = Math.max(1, Math.ceil(Math.hypot(b.x - a.x, b.y - a.y) / 0.25));
+    for (let i = 0; i <= n; i++) {
+      if (insideCrosswalk({ x: a.x + ((b.x - a.x) * i) / n, y: a.y + ((b.y - a.y) * i) / n })) {
+        return true;
+      }
+    }
+    return false;
+  };
+
   const inIntersection =
     (owner: LaneStrip) =>
     (p: Vec2): boolean =>
@@ -380,26 +403,37 @@ export function buildRoadGeometry(layout: RoadLayout, opts: RoadOptions): RoadGe
           }
         }
         if (s.median > 0 && !blocked(at(a + l / 2, 0), 0.3)) {
-          orientedQuad(medians, at(a + l / 2, 0), d, l, s.median);
-          for (const side of [-1, 1]) {
-            const off = (side * s.median) / 2;
-            curbs.push({ a: at(a, off), b: at(a + l, off) });
+          // Donde un paso peatonal cruza el camellón, se corta a nivel de calle (refugio): el
+          // tramo se parte en piezas de 0.25 m y se omiten las que caen en el paso. Los tramos que
+          // no tocan un paso quedan igual que antes.
+          const pieces = crossesWalk(at(a, 0), at(a + l, 0)) ? Math.ceil(l / 0.25) : 1;
+          const pl = l / pieces;
+          for (let k = 0; k < pieces; k++) {
+            const pa = a + k * pl;
+            if (pieces > 1 && insideCrosswalk(at(pa + pl / 2, 0))) continue;
+            orientedQuad(medians, at(pa + pl / 2, 0), d, pl, s.median);
+            for (const side of [-1, 1]) {
+              const off = (side * s.median) / 2;
+              curbs.push({ a: at(pa, off), b: at(pa + pl, off) });
+            }
           }
         }
       }
     }
     const offsets = stripLineOffsets(s, opts.dobleSentido);
     const excl = inIntersection(s);
+    // Las rayas centrales y de carril se interrumpen en el paso peatonal; las orillas siguen.
+    const exclWalk = (p: Vec2): boolean => excl(p) || insideCrosswalk(p);
     for (const o of offsets.edges) lineAlongStrip(white, s, o, false, excl);
     // Raya central sencilla discontinua (se puede rebasar) solo sin camellón: con camellón las
     // rayas amarillas son sus orillas y siguen continuas.
     if (markings.centro === "discontinua" && offsets.center.length === 2 && !s.median) {
-      lineAlongStrip(yellow, s, 0, true, excl, dash);
+      lineAlongStrip(yellow, s, 0, true, exclWalk, dash);
     } else {
-      for (const o of offsets.center) lineAlongStrip(yellow, s, o, false, excl);
+      for (const o of offsets.center) lineAlongStrip(yellow, s, o, false, exclWalk);
     }
     for (const o of offsets.dashed)
-      lineAlongStrip(white, s, o, markings.carriles === "discontinua", excl, dash);
+      lineAlongStrip(white, s, o, markings.carriles === "discontinua", exclWalk, dash);
   }
 
   for (const a of layout.arcs) {
@@ -452,7 +486,7 @@ export function buildRoadGeometry(layout: RoadLayout, opts: RoadOptions): RoadGe
     for (let k = 0; k < stripes; k++) {
       const off = -cw.roadWidth / 2 + 0.5 + k * 1.0;
       const c = { x: cw.center.x + n.x * off, y: cw.center.y + n.y * off };
-      orientedQuad(crosswalks, c, d, 3.0, 0.5);
+      orientedQuad(crosswalks, c, d, CROSSWALK_LENGTH, 0.5);
     }
   }
 
