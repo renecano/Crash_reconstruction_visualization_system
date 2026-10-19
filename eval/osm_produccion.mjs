@@ -6,8 +6,9 @@
  * `INTENTOS` veces. Cada intento dice si llegó a Overpass (`X-Vercel-Cache` y `X-Croquis-Cache` en
  * MISS/miss), qué instancia respondió (`X-Croquis-Overpass`) y cuánto tardó. Después del primer
  * 200, una petición más debe salir de una caché. La respuesta se compara con el extracto
- * versionado. Con un radio que nadie haya pedido antes (`--radio`), mide una consulta real a
- * Overpass a través de Vercel.
+ * versionado: con un radio menor que el del extracto, deben llegar las calles del extracto que
+ * quedan dentro de ese radio y ninguna que no esté en él. Con un radio que nadie haya pedido antes
+ * (`--radio`), mide una consulta real a Overpass a través de Vercel.
  *
  * No corre en CI (CI nunca llama a servicios externos). Hace a lo más `INTENTOS` + 1 peticiones a
  * la ruta, dentro de la política de uso de las instancias públicas.
@@ -37,6 +38,9 @@ const manifest = JSON.parse(readFileSync(join(ROOT, "data", "osm", "manifest.jso
 const extracto = JSON.parse(
   readFileSync(join(ROOT, "data", "osm", `${ESCENA}.overpass.json`), "utf8"),
 );
+if (!(RADIO <= manifest.radio_m)) {
+  throw new Error(`El radio no puede pasar del del extracto (${manifest.radio_m} m)`);
+}
 const url = `${BASE}/api/osm?lat=${manifest.lat}&lon=${manifest.lon}&radio=${RADIO}`;
 
 async function pedir() {
@@ -78,10 +82,44 @@ const ordenado = (r) =>
   JSON.stringify(
     [...r.elements].sort((a, b) => `${a.type}${a.id}`.localeCompare(`${b.type}${b.id}`)),
   );
+/**
+ * Distancia (m) del punto que consulta la ruta (redondeado a 5 decimales) a cada calle del
+ * extracto, por sus tramos, en un plano local. Con un radio menor que el del extracto, las calles
+ * esperadas son las del extracto a esa distancia o menos; las que quedan a menos de `BORDE_M` del
+ * radio pueden salir o no (Overpass mide sobre el elipsoide).
+ */
+const BORDE_M = 1;
+const lat0 = Number(manifest.lat.toFixed(5));
+const lon0 = Number(manifest.lon.toFixed(5));
+const R = 6371008.8;
+const plano = (n) => ({
+  x: ((n.lon - lon0) * Math.PI * R * Math.cos((lat0 * Math.PI) / 180)) / 180,
+  y: ((n.lat - lat0) * Math.PI * R) / 180,
+});
+const nodos = new Map(extracto.elements.filter((e) => e.type === "node").map((n) => [n.id, n]));
+function distanciaVia(via) {
+  const pts = via.nodes.map((id) => plano(nodos.get(id)));
+  let best = Infinity;
+  for (let i = 0; i < pts.length; i++) {
+    const a = pts[i];
+    const b = pts[i + 1] ?? a;
+    const dx = b.x - a.x;
+    const dy = b.y - a.y;
+    const len2 = dx * dx + dy * dy;
+    const t = len2 > 0 ? Math.max(0, Math.min(1, -(a.x * dx + a.y * dy) / len2)) : 0;
+    best = Math.min(best, Math.hypot(a.x + t * dx, a.y + t * dy));
+  }
+  return best;
+}
+const distancias = new Map(
+  extracto.elements.filter((e) => e.type === "way").map((w) => [w.id, distanciaVia(w)]),
+);
+
 let comparacion = null;
 if (resp && Array.isArray(resp.elements)) {
   const prod = vias(resp);
   const ext = vias(extracto);
+  const soloEnExtracto = [...ext].filter((i) => !prod.has(i));
   comparacion = {
     datos_osm: resp.osm3s?.timestamp_osm_base ?? null,
     datos_osm_extracto: extracto.osm3s?.timestamp_osm_base ?? null,
@@ -90,7 +128,12 @@ if (resp && Array.isArray(resp.elements)) {
     vias: prod.size,
     vias_extracto: ext.size,
     vias_solo_en_produccion: [...prod].filter((i) => !ext.has(i)),
-    vias_solo_en_extracto: [...ext].filter((i) => !prod.has(i)),
+    vias_solo_en_extracto: soloEnExtracto.map((id) => ({
+      id,
+      distancia_m: Math.round(distancias.get(id) * 100) / 100,
+    })),
+    // Calles del extracto dentro del radio que no llegaron (fuera de la franja del borde).
+    faltan_dentro_del_radio: soloEnExtracto.filter((id) => distancias.get(id) < RADIO - BORDE_M),
     elementos_identicos: ordenado(resp) === ordenado(extracto),
   };
 }
@@ -114,7 +157,7 @@ const doc = {
   cumple:
     comparacion !== null &&
     comparacion.vias_solo_en_produccion.length === 0 &&
-    comparacion.vias_solo_en_extracto.length === 0 &&
+    comparacion.faltan_dentro_del_radio.length === 0 &&
     repeticion !== null &&
     repeticion.status === 200 &&
     desdeCache(repeticion),
