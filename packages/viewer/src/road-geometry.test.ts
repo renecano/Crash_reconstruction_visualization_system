@@ -3,6 +3,8 @@ import { FIXTURE_NAMES, loadFixture } from "@croquis/scene-schema";
 import { describe, expect, it } from "vitest";
 import {
   buildMapRoadGeometry,
+  type MapVia,
+  SIDEWALK_WIDTH,
   buildRoadGeometry,
   CROSSWALK_LENGTH,
   DASH_HASTA_50,
@@ -294,5 +296,166 @@ describe("calzada desde las calles del mapa (ADR 0023)", () => {
     expect(g.bounds[3]).toBeGreaterThanOrEqual(43.5);
     expect(g.curbs).toEqual([]);
     expect(g.whiteLines.indices).toEqual([]);
+  });
+});
+
+describe("rayas, banquetas y guarniciones en las calles del mapa (ADR 0039)", () => {
+  const recta = (puntos: [number, number][], extra: Partial<MapVia> = {}): MapVia => ({
+    puntos: puntos.map(([x, y]) => ({ x, y })),
+    ancho: 12,
+    ...extra,
+  });
+  /** Centros de los cuadros de una malla (las rayas y banquetas son rectángulos). */
+  const centros = (m: { positions: number[] }) => {
+    const out: { x: number; y: number }[] = [];
+    for (let i = 0; i < m.positions.length; i += 8) {
+      out.push({
+        x: (m.positions[i]! + m.positions[i + 4]!) / 2,
+        y: (m.positions[i + 1]! + m.positions[i + 5]!) / 2,
+      });
+    }
+    return out;
+  };
+
+  it("sin carriles de OSM no se pintan rayas; con ellos, como en las plantillas", () => {
+    const sin = buildMapRoadGeometry([
+      recta([
+        [-50, 0],
+        [50, 0],
+      ]),
+    ]);
+    expect(meshArea(sin.whiteLines)).toBe(0);
+    const doble = buildMapRoadGeometry([
+      recta(
+        [
+          [-50, 0],
+          [50, 0],
+        ],
+        { carriles: 4 },
+      ),
+    ]);
+    expect(meshArea(doble.yellowLines)).toBeGreaterThan(0);
+    expect(meshArea(doble.whiteLines)).toBeGreaterThan(0);
+    const uno = buildMapRoadGeometry([
+      recta(
+        [
+          [-50, 0],
+          [50, 0],
+        ],
+        { carriles: 3, unSentido: true },
+      ),
+    ]);
+    expect(meshArea(uno.yellowLines)).toBe(0);
+    expect(meshArea(uno.whiteLines)).toBeGreaterThan(0);
+  });
+
+  it("en un cruce, las rayas de una calle no atraviesan la calzada de la otra", () => {
+    const h = recta(
+      [
+        [-60, 0],
+        [60, 0],
+      ],
+      { carriles: 4 },
+    );
+    const v = recta(
+      [
+        [0, -60],
+        [0, 60],
+      ],
+      { carriles: 2, ancho: 8 },
+    );
+    const g = buildMapRoadGeometry([h, v]);
+    for (const c of centros(g.yellowLines)) {
+      const enH = Math.abs(c.y) <= 6;
+      const enV = Math.abs(c.x) <= 4;
+      expect(enH && enV).toBe(false);
+    }
+  });
+
+  it("una calle que sigue en otra vía de OSM, en línea, no se corta", () => {
+    const partida = buildMapRoadGeometry([
+      recta(
+        [
+          [-50, 0],
+          [0, 0],
+        ],
+        { carriles: 2 },
+      ),
+      recta(
+        [
+          [0, 0],
+          [50, 0],
+        ],
+        { carriles: 2 },
+      ),
+    ]);
+    const entera = buildMapRoadGeometry([
+      recta(
+        [
+          [-50, 0],
+          [50, 0],
+        ],
+        { carriles: 2 },
+      ),
+    ]);
+    expect(meshArea(partida.yellowLines)).toBeCloseTo(meshArea(entera.yellowLines), 6);
+  });
+
+  it("banquetas y guarniciones si la escena las declara, salvo en autopistas", () => {
+    const via = recta([
+      [-50, 0],
+      [50, 0],
+    ]);
+    expect(meshArea(buildMapRoadGeometry([via]).sidewalk)).toBe(0);
+    const con = buildMapRoadGeometry([via], { banquetas: true });
+    expect(meshArea(con.sidewalk)).toBeCloseTo(2 * 100 * SIDEWALK_WIDTH, 6);
+    expect(con.curbs.length).toBeGreaterThan(0);
+    const autopista = buildMapRoadGeometry([{ ...via, tipo: "motorway" }], { banquetas: true });
+    expect(meshArea(autopista.sidewalk)).toBe(0);
+  });
+
+  it("las banquetas se cortan donde cruza otra calle", () => {
+    const h = recta([
+      [-60, 0],
+      [60, 0],
+    ]);
+    const v = recta(
+      [
+        [0, -60],
+        [0, 60],
+      ],
+      { ancho: 8 },
+    );
+    const g = buildMapRoadGeometry([h, v], { banquetas: true });
+    for (const c of centros(g.sidewalk)) {
+      // Ninguna banqueta de la horizontal cae en la calzada de la vertical, ni al revés.
+      const enCalzadaV = Math.abs(c.x) < 4 && Math.abs(c.y) > 6;
+      const enCalzadaH = Math.abs(c.y) < 6 && Math.abs(c.x) > 4;
+      expect(enCalzadaV || enCalzadaH).toBe(false);
+    }
+  });
+
+  it("en una avenida de dos cuerpos muy juntos, la banqueta de uno no cae en el otro", () => {
+    const a = recta(
+      [
+        [-50, 0],
+        [50, 0],
+      ],
+      { ancho: 8 },
+    );
+    const b = recta(
+      [
+        [-50, 10],
+        [50, 10],
+      ],
+      { ancho: 8 },
+    );
+    const g = buildMapRoadGeometry([a, b], { banquetas: true });
+    for (const c of centros(g.sidewalk)) {
+      expect(Math.abs(c.y) < 4 || Math.abs(c.y - 10) < 4).toBe(false);
+    }
+    // La de afuera de cada cuerpo sigue entera.
+    expect(centros(g.sidewalk).some((c) => c.y < -4)).toBe(true);
+    expect(centros(g.sidewalk).some((c) => c.y > 14)).toBe(true);
   });
 });
