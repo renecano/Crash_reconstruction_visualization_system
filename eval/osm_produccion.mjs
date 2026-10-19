@@ -1,14 +1,16 @@
 /**
  * ADR 0040: prueba real de `GET /api/osm` en producción, contra Overpass de verdad.
  *
- * Pide las calles alrededor del cruce de la escena de Toluca (`data/osm/manifest.json`) dos veces
- * seguidas y compara la respuesta con el extracto versionado. La primera petición dice si llegó a
- * Overpass (`X-Vercel-Cache` y `X-Croquis-Cache` en MISS/miss) o si salió de una caché; la segunda
- * debe salir de la CDN. Con un radio que nadie haya pedido antes (`--radio`), la primera petición
- * mide una consulta real a Overpass a través de Vercel.
+ * Pide las calles alrededor del cruce de la escena de Toluca (`data/osm/manifest.json`) como lo
+ * haría una persona: si la ruta responde 502 (Overpass saturado), vuelve a intentar, hasta
+ * `INTENTOS` veces. Cada intento dice si llegó a Overpass (`X-Vercel-Cache` y `X-Croquis-Cache` en
+ * MISS/miss), qué instancia respondió (`X-Croquis-Overpass`) y cuánto tardó. Después del primer
+ * 200, una petición más debe salir de una caché. La respuesta se compara con el extracto
+ * versionado. Con un radio que nadie haya pedido antes (`--radio`), mide una consulta real a
+ * Overpass a través de Vercel.
  *
- * No corre en CI (CI nunca llama a servicios externos). Hace a lo más dos peticiones a la ruta, y
- * una sola consulta a Overpass, dentro de la política de uso de las instancias públicas.
+ * No corre en CI (CI nunca llama a servicios externos). Hace a lo más `INTENTOS` + 1 peticiones a
+ * la ruta, dentro de la política de uso de las instancias públicas.
  *
  * Uso: `node eval/osm_produccion.mjs [--base https://…] [--radio 150] [--out ruta.json]`.
  * Salida: eval/results/osm_produccion.json.
@@ -27,6 +29,7 @@ const BASE = arg("base", "https://croquis-sage.vercel.app");
 const RADIO = Number(arg("radio", "150"));
 const OUT = resolve(ROOT, arg("out", join("eval", "results", "osm_produccion.json")));
 const ESCENA = "toluca_carranza_juarez";
+const INTENTOS = 3;
 
 const manifest = JSON.parse(readFileSync(join(ROOT, "data", "osm", "manifest.json"), "utf8"))[
   ESCENA
@@ -61,8 +64,14 @@ async function pedir() {
   };
 }
 
-const primera = await pedir();
-const segunda = await pedir();
+const intentos = [];
+let resp = null;
+while (intentos.length < INTENTOS && resp === null) {
+  const r = await pedir();
+  intentos.push(r.registro);
+  resp = r.json;
+}
+const repeticion = resp ? (await pedir()).registro : null;
 
 const vias = (r) => new Set(r.elements.filter((e) => e.type === "way").map((e) => e.id));
 const ordenado = (r) =>
@@ -70,7 +79,6 @@ const ordenado = (r) =>
     [...r.elements].sort((a, b) => `${a.type}${a.id}`.localeCompare(`${b.type}${b.id}`)),
   );
 let comparacion = null;
-const resp = primera.json ?? segunda.json;
 if (resp && Array.isArray(resp.elements)) {
   const prod = vias(resp);
   const ext = vias(extracto);
@@ -87,8 +95,7 @@ if (resp && Array.isArray(resp.elements)) {
   };
 }
 
-const llegoAOverpass =
-  primera.registro.x_vercel_cache === "MISS" && primera.registro.x_croquis_cache === "miss";
+const desdeCache = (r) => r.x_vercel_cache === "HIT" || r.x_croquis_cache === "hit";
 const doc = {
   name: "osm_produccion",
   generated_at: new Date().toISOString(),
@@ -98,16 +105,19 @@ const doc = {
   url,
   escena: ESCENA,
   radio_m: RADIO,
-  primera: primera.registro,
-  primera_llego_a_overpass: llegoAOverpass,
-  segunda: segunda.registro,
-  segunda_desde_cdn: segunda.registro.x_vercel_cache === "HIT",
+  intentos,
+  intentos_hasta_200: resp ? intentos.length : null,
+  llego_a_overpass: intentos.some((r) => r.status === 200 && !desdeCache(r)),
+  repeticion,
+  repeticion_desde_cache: repeticion ? repeticion.status === 200 && desdeCache(repeticion) : false,
   comparacion,
   cumple:
-    primera.registro.status === 200 &&
-    segunda.registro.status === 200 &&
-    segunda.registro.x_vercel_cache === "HIT" &&
-    comparacion !== null,
+    comparacion !== null &&
+    comparacion.vias_solo_en_produccion.length === 0 &&
+    comparacion.vias_solo_en_extracto.length === 0 &&
+    repeticion !== null &&
+    repeticion.status === 200 &&
+    desdeCache(repeticion),
 };
 mkdirSync(dirname(OUT), { recursive: true });
 writeFileSync(OUT, `${JSON.stringify(doc, null, 2)}\n`, "utf8");
@@ -115,8 +125,8 @@ console.log(OUT);
 console.log(
   JSON.stringify({
     cumple: doc.cumple,
-    primera: doc.primera,
-    segunda_desde_cdn: doc.segunda_desde_cdn,
+    intentos: doc.intentos.map((r) => [r.status, r.segundos, r.instancia_overpass]),
+    repeticion_desde_cache: doc.repeticion_desde_cache,
     identicos: comparacion?.elementos_identicos,
   }),
 );

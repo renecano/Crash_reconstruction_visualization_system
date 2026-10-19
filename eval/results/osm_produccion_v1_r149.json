@@ -1,0 +1,28 @@
+{
+  "name": "osm_produccion",
+  "generated_at": "2026-10-19T17:15:27.275Z",
+  "git_commit": "9b247a7",
+  "url": "https://croquis-sage.vercel.app/api/osm?lat=19.278975&lon=-99.6539869&radio=149",
+  "escena": "toluca_carranza_juarez",
+  "radio_m": 149,
+  "primera": {
+    "fecha": "2026-10-19T17:14:56.069Z",
+    "status": 502,
+    "segundos": 16.57,
+    "x_vercel_cache": "MISS",
+    "x_croquis_cache": null,
+    "error": "OpenStreetMap no respondió: sus servidores públicos están saturados. Intenta en unos minutos; las escenas que ya tienen sus calles no lo necesitan."
+  },
+  "primera_llego_a_overpass": false,
+  "segunda": {
+    "fecha": "2026-10-19T17:15:27.275Z",
+    "status": 502,
+    "segundos": 31.2,
+    "x_vercel_cache": "MISS",
+    "x_croquis_cache": null,
+    "error": "OpenStreetMap no respondió: sus servidores públicos están saturados. Intenta en unos minutos; las escenas que ya tienen sus calles no lo necesitan."
+  },
+  "segunda_desde_cdn": false,
+  "comparacion": null,
+  "cumple": false
+}
