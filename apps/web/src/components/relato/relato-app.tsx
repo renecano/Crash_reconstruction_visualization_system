@@ -5,6 +5,7 @@ import type { EscenaSpec } from "@croquis/scene-schema";
 import { useRouter } from "next/navigation";
 import { useMemo, useState } from "react";
 import { Legend } from "@/components/legend";
+import { registrarE9 } from "@/lib/e9";
 import { useEnLinea } from "@/lib/en-linea";
 import {
   ApiError,
@@ -89,6 +90,7 @@ export function RelatoApp({ fetcher }: RelatoAppProps) {
     setError(e instanceof ApiError || e instanceof Error ? e.message : String(e));
 
   const entender = async () => {
+    registrarE9("relato_enviado");
     setBusy(true);
     setError(null);
     try {
@@ -115,6 +117,7 @@ export function RelatoApp({ fetcher }: RelatoAppProps) {
       setSpec(r.spec);
       setPreguntas(r.preguntas);
       setContestadas(ya);
+      registrarE9("preguntas_respondidas");
     } catch (e) {
       fail(e);
     } finally {
@@ -130,6 +133,7 @@ export function RelatoApp({ fetcher }: RelatoAppProps) {
       setError("El navegador no permitió guardar la escena para abrirla en el croquis.");
       return;
     }
+    registrarE9("croquis_abierto");
     router.push("/croquis?fuente=relato");
   };
 

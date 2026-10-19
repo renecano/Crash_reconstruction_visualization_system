@@ -36,19 +36,31 @@ Reglas de trabajo: `CLAUDE.md`. Especificación: `PLAN.md`.
   - IA responsable;
   - límites medidos y siguiente paso;
   - licencia y atribución (NHTSA, INEGI, OSM, Relatos-MX y assets).
-- **Siguiente paso concreto:** F11, paso 4. Guiones de los tres videos en `docs/guiones/`: presentación, demo de producto y recorrido técnico. Después, el kit de E9.
+- **F11, pasos 4 y 5 hechos** (rama `feat/f11-guiones`):
+  - **Guiones** de los tres videos en `docs/guiones/`.
+  - **Kit de E9 listo** para que René lo corra: protocolo, consentimiento, la página `/e9` que anota solo métricas en el dispositivo, y `uv run croquis-eval e9`.
+- **Siguiente paso concreto:** F11, paso 6. Pendientes abiertos de F8:
+  - OSM en producción;
+  - líneas y banquetas en calles de OSM;
+  - semáforo peatonal;
+  - textura de grava;
+  - corte del camellón en los cruces;
+  - texturas triplanares.
+
+  Mientras tanto, E9 y la computadora de demo dependen de René.
+
 - **E1 del prompt v2 en el primer test, hecho** (PR #14). Sonnet 0.875 → 0.919 y Haiku 0.852 → 0.896. Además, E1 ahora compara cada contrafactual con la repetición del mismo relato (McNemar por tipo): ningún tipo difiere del ruido, y las reglas cambian con el modelo del vehículo en 6 de 52 pares (ADR 0012 §10).
 - **F8** cerrada el 2026-10-17 (PR #20 a #24). **F0** cerrado el 2026-10-10 (PR #1), **F1** el 2026-10-10 (PR #3), **F2** el 2026-10-13 (PR #4), **F3** el 2026-10-13 (PR #5), **F4** el 2026-10-13 (PR #6), **F5** el 2026-10-13 (PR #7), **F6** el 2026-10-14 (PR #8), **F7** el 2026-10-14 (PR #9; pendientes registrados); migración a Vercel el 2026-10-14 (PR #10); test CISS y prompt v2 el 2026-10-14 (PR #11).
 
 ### Bloqueado — necesita a René
 
-| Qué                                                                                                                                                                                                                                 | Para qué                                                                                  | Estado                             |
-| ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------- | ---------------------------------- |
-| `ANTHROPIC_API_KEY`                                                                                                                                                                                                                 | F6 (extracción con Claude) y E1. CI usa respuestas grabadas, así que no bloquea hasta F6. | Recibida 2026-10-14 (`.env.local`) |
-| Confirmar licencia MIT del código y el nombre _Croquis_                                                                                                                                                                             | Se usan los valores por defecto de PLAN §16 (ADR 0002)                                    | Usando default                     |
-| Computadora de demo (GPU potente) para medir alta y ultra                                                                                                                                                                           | Meta de PLAN §7.8: ≥ 60 fps en alta o ultra en todas las escenas canónicas (ADR 0026)     | Pendiente                          |
-| Pruebas con ≥ 5 personas reales (E9)                                                                                                                                                                                                | F11                                                                                       | Pendiente                          |
-| Confirmar que el repositorio remoto correcto es `renecano/Crash_reconstruction_visualization_system` (público, lo creó René vacío el 2026-10-10). Se eligió por nombre y fecha; se puede cambiar con `git remote set-url origin …`. | Push y CI                                                                                 | Asumido y ya en uso                |
+| Qué                                                                                                                                                                                                                                 | Para qué                                                                                  | Estado                                                                                          |
+| ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------- |
+| `ANTHROPIC_API_KEY`                                                                                                                                                                                                                 | F6 (extracción con Claude) y E1. CI usa respuestas grabadas, así que no bloquea hasta F6. | Recibida 2026-10-14 (`.env.local`)                                                              |
+| Confirmar licencia MIT del código y el nombre _Croquis_                                                                                                                                                                             | Se usan los valores por defecto de PLAN §16 (ADR 0002)                                    | Usando default                                                                                  |
+| Computadora de demo (GPU potente) para medir alta y ultra                                                                                                                                                                           | Meta de PLAN §7.8: ≥ 60 fps en alta o ultra en todas las escenas canónicas (ADR 0026)     | Pendiente                                                                                       |
+| Pruebas con ≥ 5 personas reales (E9)                                                                                                                                                                                                | F11                                                                                       | Kit listo (`docs/e9/protocolo.md`, página `/e9`, `uv run croquis-eval e9`); faltan las sesiones |
+| Confirmar que el repositorio remoto correcto es `renecano/Crash_reconstruction_visualization_system` (público, lo creó René vacío el 2026-10-10). Se eligió por nombre y fecha; se puede cambiar con `git remote set-url origin …`. | Push y CI                                                                                 | Asumido y ya en uso                                                                             |
 
 ## Entorno de desarrollo (verificado 2026-10-10)
 
@@ -1769,3 +1781,26 @@ Las ramas van una encima de otra y se fusionan en este orden, cada una con su PR
 | Licencia y atribución                          | «Licencia y atribución»                                                                                      |
 
 - **Corrección:** el README decía «diez escenas canónicas»; son once desde la de Toluca (F8).
+
+**Paso 4 — Guiones de video (2026-10-18, rama `feat/f11-guiones`):**
+
+- **`docs/guiones/01-presentacion.md`** (≈ 2 min): de la historia de Toluca a CROQUIS, al recorrido técnico y a la leyenda.
+- **`docs/guiones/02-demo.md`** (≈ 4 min): la demo «Tú eres…», el croquis, el visor, las hipótesis y las exportaciones.
+- **`docs/guiones/03-recorrido-tecnico.md`** (≈ 6 min): E1–E8 con sus límites, los ADR y CI.
+- **Cifras:** cada guion dice que las suyas salen de `eval/results/` y que se revisan contra el README del día antes de grabar.
+
+**Paso 5 — Kit de E9 (2026-10-18):**
+
+- **`/e9`** (sin indexar), para quien facilita:
+  - código de participante y casilla de consentimiento;
+  - mientras dura la sesión, la app anota solo el momento de cinco eventos en `localStorage`: relato enviado, ronda contestada, croquis abierto, corrección en el croquis y primera reconstrucción visible en 3D;
+  - al final, el SUS (traducción propia, declarada como no validada), el resumen, la descarga del JSON y el borrado.
+- **Ganchos:** en el relato, el croquis y el visor. No hacen nada sin una sesión activa (`src/lib/e9.ts`).
+- **`uv run croquis-eval e9`** lee `data/e9/sesiones/` y calcula tiempo hasta la primera reconstrucción, correcciones, rondas y SUS, y si se cumple el mínimo de 5 personas.
+  - **Validación:** rechaza archivos con campos de más, como el texto del relato.
+  - **Sin sesiones:** no escribe nada, porque E9 sigue pendiente.
+- **Documentos:** `docs/e9/protocolo.md` (procedimiento, consigna, qué se anota y límites) y `docs/e9/consentimiento.md`.
+- **Pruebas:**
+  - unitarias de `e9.ts`, con el mismo caso que la de Python;
+  - pytest de la agregación y la validación;
+  - e2e: una sesión completa hasta el 3D, SUS y descarga con solo métricas.
