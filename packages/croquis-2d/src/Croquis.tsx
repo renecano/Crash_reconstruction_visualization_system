@@ -741,14 +741,15 @@ function DeviceIcon({ tipo, m }: { tipo: string; m: (v: number) => number }) {
         />
       );
     case "paso_peatonal":
+      // Símbolo con franjas de 40 cm separadas 40 cm, como la M-7 de la NOM-034 (ADR 0042).
       return (
         <g>
           {[-2, -1, 0, 1, 2].map((i) => (
             <rect
               key={i}
-              x={m(i * 0.8) - m(0.25)}
+              x={m(i * 0.8) - m(0.2)}
               y={-m(2)}
-              width={m(0.5)}
+              width={m(0.4)}
               height={m(4)}
               fill="#f4f1e6"
               opacity={0.9}
