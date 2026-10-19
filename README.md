@@ -1,11 +1,12 @@
 # Croquis
 
 > Reconstrucción 3D de percances viales a partir del relato de quien los vivió.
+> _Crash Reconstruction from Oral Queries Using Impact Simulation._ Cuenta. Reconoce. Ordena. ¿Qué falta? Ubica. Impacta. Simula.
 > **Reconstrucción ilustrativa. No es un peritaje, una prueba legal ni un dictamen de responsabilidad.**
 
 Croquis toma lo que una persona cuenta ("iba por Tollocan, el de la camioneta gris se me cerró…"), lo convierte con un LLM en una escena estructurada donde cada dato está ligado a la frase que lo respalda o marcado como supuesto, lo deja corregir en un croquis 2D, reconstruye la física con un solver propio y lo muestra en 3D en el navegador. **La IA traduce, la física decide y el visor muestra.**
 
-Estado: **F4 — Daño** (ver `docs/PROGRESS.md`). Este README se completa fase por fase siguiendo el estándar de PLAN §15; toda cifra que aparece aquí sale de un script en `eval/` con su salida en `eval/results/`.
+Estado: **F11 — Producto final** (ver `docs/PROGRESS.md`). Toda cifra que aparece aquí sale de un script en `eval/` con su salida versionada en `eval/results/`, y cada decisión técnica tiene su ADR en `docs/adr/`.
 
 ## Problema
 
@@ -30,16 +31,16 @@ Después de un percance, quien lo vivió tiene que explicarlo (a su aseguradora,
 ## Qué hay hoy
 
 - **El contrato `EscenaSpec` v1** (`packages/scene-schema/escena.schema.json`): cada dato lleva `fuente` (relato, usuario, supuesto o default), `confianza` y el fragmento literal del relato que lo respalda. Zod y Pydantic se generan desde el esquema y CI verifica que estén al día.
-- **Diez escenas canónicas** con relato (alcance, lateral en intersección, frontal en curva, peatón en cruce, motociclista, árbol, poste, volcadura, nocturno con lluvia, glorieta) que validan en TypeScript y en Python.
+- **Once escenas canónicas** con relato (alcance, lateral en intersección, frontal en curva, peatón en cruce, motociclista, árbol, poste, volcadura, nocturno con lluvia, glorieta y un cruce de Toluca sobre una vía real de OpenStreetMap) que validan en TypeScript y en Python.
 - **Un validador semántico** con paridad TS ↔ Python: referencias rotas, evidencia faltante, rangos declarados, masas y dimensiones fuera de la clase (tabla construida desde 47 fichas técnicas), velocidades implausibles, vehículos encimados, roles y eventos incoherentes. Los mensajes nunca asignan culpa.
-- **El visor 3D** (`/visor`): las diez escenas reconstruidas por el solver en el navegador, con vía, banquetas y rayas del mismo modelo que el croquis, vehículos genéricos sin marcas a sus dimensiones reales, personas articuladas, sol según fecha, hora y lugar, línea de tiempo con cámara lenta y cuadro por cuadro, cámaras libre, cenital, del conductor (con lo que podía ver), cinematográfica, de daño y que sigue a la persona, y la tabla de ΔV, dirección de la fuerza y energía con la fuente de cada parámetro. Usa `WebGPURenderer` de three.js y elige por medición entre WebGPU y WebGL 2.
+- **El visor 3D** (`/visor`): las once escenas reconstruidas por el solver en el navegador, con vía, banquetas y rayas del mismo modelo que el croquis, vehículos genéricos sin marcas a sus dimensiones reales, personas articuladas, sol según fecha, hora y lugar, línea de tiempo con cámara lenta y cuadro por cuadro, cámaras libre, cenital, del conductor (con lo que podía ver), cinematográfica, de daño y que sigue a la persona, y la tabla de ΔV, dirección de la fuerza y energía con la fuente de cada parámetro. Usa `WebGPURenderer` de three.js y elige por medición entre WebGPU y WebGL 2.
 - **El daño** que calcula el solver se ve en cada vehículo: la carrocería se hunde con la forma y la profundidad del perfil de aplastamiento C1–C6 (una prueba lo mide sobre la malla), con pintura transferida, rayones, parabrisas agrietado, vidrios y piezas desprendidas simulados con Rapier, bolsas de aire con umbrales del IIHS y marcas de frenado y derrape sacadas de las trayectorias. Las reglas que no salen del solver están marcadas como ilustrativas.
 - **Las personas** son cuerpos de MakeHuman (CC0), sin rasgos de sexo ni etnia y con ropa neutra; la edad elige la variante y la complexión sale de la masa y la estatura. Quien camina lo hace con una marcha de curvas biomecánicas publicadas. Quien es golpeado sale proyectado con un ragdoll de Rapier que cae dentro de los límites de Searle. Los ocupantes van en su asiento y se mueven en el impacto según el solver (con y sin cinturón), con aros azules neutros donde tocan el interior; Croquis no estima lesiones. La cámara del conductor marca qué podía ver y qué lo tapaba, y la volcadura se ve como secuencia ilustrativa.
 - **El croquis 2D** (`/croquis`): arrastra y gira vehículos, personas, objetos y marcas; el JSON y el dibujo son la misma escena y lo que la persona mueve queda marcado como suyo.
 - **El relato** (`/relato`): la persona escribe con sus palabras. Los nombres, placas, teléfonos, correos, CURP, RFC y números de domicilio se quitan en el navegador antes de enviar (el mismo redactor en Python y en TypeScript, con paridad probada en 517 textos). Un glosario de español mexicano reconoce expresiones como "se me cerró" o "le di un alcance". La extracción usa Claude con salida estructurada cuando hay llave (si no, una línea base de reglas) y siempre termina en el mismo constructor de `EscenaSpec`: cada dato del relato lleva su cita literal y lo que no tiene cita baja a `supuesto`. Después se pregunta, como máximo tres veces por ronda, solo lo que más cambia la reconstrucción (contradicciones que detecta el solver y sensibilidad con semilla), sin culpar a nadie, y la escena se abre en el croquis.
 - **Relatos-MX** (`data/relatos-mx`): 320 relatos sintéticos con su `EscenaSpec` de referencia, distribuidos como los tipos de accidente de ATUS, en cinco registros (coloquial, formal, con faltas, desordenado, breve), con datos personales sintéticos y 197 variantes contrafactuales. El test (160) está congelado por hash. Un segundo test congelado, de 150 relatos, toma la verdad de los campos codificados de NHTSA CISS 2024 y no de quien escribe (ADR 0012).
 - **Rangos, inversión y consistencia** (F7): cada resultado trae el intervalo del 80 % (Monte Carlo con semilla sobre velocidades, masas, fricción y frenado). La inversión busca las velocidades y direcciones con las que el solver reproduce la evidencia declarada (posiciones y orientación final, marcas de frenado, distancia de proyección, daño), y dice cuándo la evidencia no basta para estimar algo. Lo declarado que no cabe en ninguna solución física se marca en lenguaje llano, sin culpar, y en `/relato` se convierte en pregunta. En el visor se comparan hasta tres hipótesis ("¿y si iba a 60?") como vehículos fantasma, con la diferencia en un panel.
-- **Todo corre en Vercel** (ADR 0011): la comprensión del relato y el solver tienen port en TypeScript con paridad probada contra la referencia Python. La extracción coincide en todo Relatos-MX, con reglas y con las respuestas grabadas de Claude (E1 da las mismas métricas con los dos pipelines) y el solver reproduce las diez escenas (E7). Las rutas del relato son Route Handlers de Next.js, con la extracción en streaming. Las hipótesis y la escena propia del visor se reconstruyen en el navegador, en un Web Worker, y el resultado es el mismo en Chromium, Firefox y WebKit (E8, ADR 0029).
+- **Todo corre en Vercel** (ADR 0011): la comprensión del relato y el solver tienen port en TypeScript con paridad probada contra la referencia Python. La extracción coincide en todo Relatos-MX, con reglas y con las respuestas grabadas de Claude (E1 da las mismas métricas con los dos pipelines) y el solver reproduce las once escenas (E7). Las rutas del relato son Route Handlers de Next.js, con la extracción en streaming. Las hipótesis y la escena propia del visor se reconstruyen en el navegador, en un Web Worker, y el resultado es el mismo en Chromium, Firefox y WebKit (E8, ADR 0029).
 - **Sin red** (F9, ADR 0030): un service worker precarga la demo (páginas, solver, visor, Rapier, resultados, cuerpos y texturas), que abre y reconstruye sin conexión. Solo entender el relato con Claude pide red, y la página lo dice.
 - **Exportaciones** (F9, ADR 0031), generadas en el navegador y siempre con la marca «Reconstrucción ilustrativa generada a partir de un relato. No es un peritaje.», la semilla y el hash de entradas:
   - **Informe PDF:** croquis, línea de tiempo, resultados con su rango del 80 %, lo que dice la evidencia, avisos, parámetros con su fuente, supuestos e identificación.
@@ -47,7 +48,16 @@ Después de un percance, quien lo vivió tiene que explicarlo (a su aseguradora,
   - **Cuadros PNG** de hasta 4K.
   - **Escena glTF:** con la animación de vehículos, restos, personas y daño.
   - **Croquis:** en SVG, PNG y PDF, con norte y barra de escala.
-- **El solver de referencia** (`solver/croquis_solver`): impacto por impulso entre cuerpos rígidos planos, energía de deformación CRASH3 con rigidez por clase medida en pruebas de NHTSA, frenado y trayectorias previas, movimiento posterior hasta el reposo, objetos fijos, proyección de peatones y jinetes (Searle), cinemática de ocupantes, visibilidad desde el ojo de cada conductor y criterio de inicio de volcadura. Reconstruye las diez escenas de forma determinista; la conservación de momento se prueba con Hypothesis.
+- **Validación del daño contra autos reales** (F10, E5): el visor deforma la malla y se mide en los puntos donde se midió cada auto real.
+  - **Muestra:** pruebas de choque de NHTSA y choques reales de CISS.
+  - **Partición:** congelada antes de medir.
+  - **Ajuste:** solo con la partición de desarrollo; el test se corrió una sola vez.
+  - **Galería:** fotos reales junto a Croquis ([`docs/galeria-e5`](docs/galeria-e5/README.md)).
+- **Páginas para entender el proyecto** (F11):
+  - [historia](https://croquis-sage.vercel.app/historia): por qué existe Croquis, con datos de ATUS;
+  - [recorrido técnico](https://croquis-sage.vercel.app/recorrido): E1–E9 con gráficas generadas desde `eval/results/`;
+  - [demo «Tú eres…»](https://croquis-sage.vercel.app/demo): relatos de ejemplo con la respuesta grabada de Claude. Se contesta, se corrige y se ve en 3D sin servidor y sin red.
+- **El solver de referencia** (`solver/croquis_solver`): impacto por impulso entre cuerpos rígidos planos, energía de deformación CRASH3 con rigidez por clase medida en pruebas de NHTSA, frenado y trayectorias previas, movimiento posterior hasta el reposo, objetos fijos, proyección de peatones y jinetes (Searle), cinemática de ocupantes, visibilidad desde el ojo de cada conductor y criterio de inicio de volcadura. Reconstruye las once escenas de forma determinista; la conservación de momento se prueba con Hypothesis.
 
 ## Cómo probarlo
 
@@ -58,16 +68,18 @@ Requisitos: Node 24, pnpm 12, Python 3.14 y uv 0.13 (ver `docs/adr/0001-stack.md
 ```powershell
 pnpm install
 uv sync --all-packages --all-groups
-pnpm dev            # web y API en http://localhost:3000 (relato en /relato, croquis en /croquis, visor 3D en /visor)
+pnpm dev            # web y API en http://localhost:3000 (/demo, /relato, /croquis, /visor, /historia, /recorrido)
                     # con ANTHROPIC_API_KEY en .env.local el relato usa Claude; sin ella, la línea base de reglas
 uv run pytest       # pruebas Python (referencia del solver y de la extracción)
 pnpm test           # pruebas TypeScript
 pnpm --filter @croquis/web test:e2e   # Playwright (requiere `playwright install chromium`)
 ```
 
+Cada evaluación se reproduce con el comando que aparece junto a su resultado en «Resultados medidos».
+
 ### En vivo
 
-Producción: https://croquis-sage.vercel.app ([historia](https://croquis-sage.vercel.app/historia) · [recorrido técnico](https://croquis-sage.vercel.app/recorrido)), desplegada desde `main` en Vercel (web y API como Route Handlers; ADR 0011). Cada rama tiene su vista previa. La extracción usa Claude con un tope de gasto diario y un límite por hora (ver `.env.example`).
+Producción: https://croquis-sage.vercel.app ([demo «Tú eres…»](https://croquis-sage.vercel.app/demo) · [historia](https://croquis-sage.vercel.app/historia) · [recorrido técnico](https://croquis-sage.vercel.app/recorrido)), desplegada desde `main` en Vercel (web y API como Route Handlers; ADR 0011). Cada rama tiene su vista previa. La extracción usa Claude con un tope de gasto diario y un límite por hora (ver `.env.example`).
 
 ## Resultados medidos
 
@@ -148,14 +160,93 @@ Lectura honesta de E2: separar por clase y normalizar por masa y ancho mejora la
 
 ## Mapa del repo
 
-Ver PLAN §3.2. Resumen: `apps/web` (Next.js), `packages/scene-schema` (contrato, generadores, fixtures, validador), `packages/croquis-2d` (editor 2D), `packages/solver-ts` (solver de producción, con paridad E7), `packages/extraction` (comprensión del relato en TS: redactor, extracción con Claude, verificador y preguntas), `packages/viewer` (visor 3D), `apps/web/src/app/api` (Route Handlers), `solver` y `extraction` (referencias Python, no se despliegan), `data` y `eval` (datos y evidencia), `assets`, `docs`.
+Ver PLAN §3.2.
 
-## Datos, licencias e IA responsable
+- **Web y API:**
+  - `apps/web`: Next.js, con las páginas, el visor, el croquis, el relato, la demo y la historia;
+  - `apps/web/src/app/api`: Route Handlers del relato.
+- **Paquetes TS:**
+  - `packages/scene-schema`: contrato, generadores, fixtures y validador;
+  - `packages/croquis-2d`: editor 2D;
+  - `packages/solver-ts`: solver de producción, con paridad E7 y determinismo E8;
+  - `packages/extraction`: comprensión del relato (redactor, extracción con Claude, verificador y preguntas);
+  - `packages/viewer`: visor 3D, daño, personas y exportaciones.
+- **Referencias Python, que no se despliegan:** `solver` y `extraction`.
+- **Datos y evidencia:** `data`, con fuentes y procesamiento, y `eval`, con scripts y `eval/results/`.
+- **Assets:** `assets`, con su registro.
+- **Documentación:** `docs`.
+  - **Decisiones:** cada una tiene su ADR en `docs/adr/`.
+  - **Respaldo técnico:** la física, en `docs/physics.md`; los datos y su cobertura, en `docs/data.md`; la IA responsable, en `docs/responsible-ai.md`.
+  - **Bitácora:** `docs/PROGRESS.md`, con la evidencia de cada fase.
 
-- `data/SOURCES.md` y `assets/ASSETS.md` registran origen y licencia de cada dato y asset. Los datos de accidentes son del INEGI (ATUS) bajo sus Términos de Libre Uso; las masas y dimensiones de vehículos vienen de fichas técnicas públicas de los fabricantes (URL por modelo).
-- `docs/responsible-ai.md` detalla las medidas de PLAN §10.
-- Código bajo licencia MIT (`LICENSE`).
+## Pruebas
+
+- **TypeScript:** Vitest en cada paquete y en la web, con unitarias, de propiedades, de paridad y de componentes.
+- **Python:** pytest con Hypothesis para las propiedades físicas.
+- **e2e:** Playwright, con capturas de referencia generadas en Linux y la prueba de la demo sin red.
+- **CI** (`.github/workflows/ci.yml`, en cada PR y en `main`), en trabajos separados:
+  - formato, lint, tipos y pruebas TS, más el build;
+  - verificación de que lo generado está al día: Zod y Pydantic desde el contrato, prompts, tablas del solver, datos de las páginas y casos de la demo;
+  - Python en Ubuntu y Windows: ruff, pyright y pytest, con la reproducibilidad de los datos fijada por SHA-256;
+  - Playwright;
+  - E8 en Chromium, Firefox y WebKit.
+- **Sin API en CI:** nunca se llama a la API de Claude; se usan respuestas grabadas.
+- **Merge:** nada se fusiona a `main` con CI en rojo.
+
+## Datos y lo que no cubren
+
+- **Registro:** `data/SOURCES.md` lleva origen, URL, fecha, licencia y script de cada dato; `assets/ASSETS.md` hace lo mismo con cada asset. `docs/data.md` describe el procesamiento y el tamaño de muestra.
+- **ATUS (INEGI):** cuenta lo reportado por autoridades municipales en zonas urbanas y suburbanas. No incluye carreteras federales ni percances no reportados.
+- **NHTSA y CISS:** son vehículos y choques de Estados Unidos. La rigidez por clase y la validación del daño y del ΔV vienen de esa flota, no de la mexicana.
+  - **E5:** NHTSA está dentro de muestra en la magnitud, porque la rigidez se calibró con sus pruebas.
+  - **Galería:** frontal desplazado y alcance no tienen foto verificable en el test.
+- **Relatos-MX:** son relatos sintéticos escritos por agentes de IA. Miden español escrito por un modelo; E9 lo contrastará con personas.
+- **Fichas técnicas:** las masas y dimensiones de cada clase salen de fichas públicas de los fabricantes, con la URL por modelo.
+
+## IA responsable
+
+Detalle y dónde está cada medida: `docs/responsible-ai.md` (PLAN §10).
+
+- **La IA solo traduce:** produce `EscenaSpec`. La geometría, las trayectorias y los números físicos los decide el solver.
+- **Cada dato lleva su fuente:** la cita literal del relato, o se marca como supuesto. Un verificador revisa cada cita contra el texto.
+- **Nunca** asigna culpa ni estima lesiones, nunca se presenta como peritaje y no muestra contenido gráfico de personas lesionadas.
+- **Leyenda:** cada vista y cada exportación lleva «Reconstrucción ilustrativa generada a partir de un relato. No es un peritaje.», con la semilla y el hash de entradas.
+- **Datos personales:** se intentan quitar en el navegador antes de enviar el relato. Cuánto se escapa está medido en E1.
 
 ## Límites y siguiente paso
 
-Se documentan al cierre de cada fase en `docs/PROGRESS.md`.
+**Límites medidos** (detalle en «Resultados medidos» y en el [recorrido técnico](https://croquis-sage.vercel.app/recorrido)):
+
+- **E3:** WinSMASH estima el ΔV un poco mejor en promedio, y los choques con EDR ≥ 48 km/h se subestiman mucho.
+- **E5:** el perfil triangular simple predice mejor que Croquis la profundidad máxima y el ancho del daño. Croquis solo gana en el perfil punto por punto.
+- **E4:** se evaluó con pocos casos publicados.
+- **E6:** alta y ultra no se han medido: falta la computadora de demo.
+- **E9** (personas reales) sigue pendiente.
+
+**Límites de diseño:**
+
+- **Vehículos:** son genéricos por clase, sin marcas ni modelos.
+- **Escenas ilustrativas:** la volcadura y el movimiento de ocupantes son secuencias ilustrativas.
+- **Datos de otra flota:** los datos de rigidez y validación son de Estados Unidos.
+
+**Siguiente paso:**
+
+1. **E9 con personas reales,** con el protocolo listo para correrlo.
+2. **E6 en alta y ultra** en la computadora de demo.
+3. **Un modelo de forma del daño con el pico más marcado,** validado con datos que E5 no haya visto.
+4. **Entrada por fotos del daño** (PLAN §16, decisión 6).
+5. **Comparar la deformación contra elementos finitos** con software libre (OpenRadioss y modelos públicos de vehículos) cuando haya una máquina potente (PLAN §15).
+
+## Licencia y atribución
+
+- **Código:** MIT (`LICENSE`).
+- **Relatos-MX:** CC BY 4.0 (`data/relatos-mx/LICENSE`).
+- **Datos:**
+  - **INEGI ATUS:** Términos de Libre Uso del INEGI.
+  - **NHTSA:** Vehicle Crash Test Database, CISS y base de inercias; datos públicos del gobierno de EE. UU., se cita a NHTSA. Las fotos de la galería son derivados reducidos con la prueba citada.
+  - **OpenStreetMap:** © colaboradores de OpenStreetMap, bajo la Open Database License (ODbL). La atribución va en cada vista y exportación que usa una vía de OSM.
+- **Assets** (`assets/ASSETS.md`):
+  - **Cuerpos:** MakeHuman, CC0.
+  - **Texturas:** Poly Haven, CC0.
+  - **Fuentes:** Geist y Roboto, SIL OFL 1.1.
+  - **Vehículos:** son geometría procedural propia, sin marcas.
