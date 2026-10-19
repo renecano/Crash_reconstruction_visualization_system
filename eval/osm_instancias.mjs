@@ -24,9 +24,12 @@ const ESPERA_S = Number(arg("espera", "60"));
 const RADIO = Number(arg("radio", "150"));
 const OUT = resolve(ROOT, arg("out", join("eval", "results", "osm_instancias.json")));
 
-// Las mismas de `apps/web/src/server/osm.ts` (OVERPASS_URLS) y el mismo User-Agent.
+// Las mismas de `apps/web/src/server/osm.ts` (OVERPASS_INSTANCES), en su orden, y su User-Agent.
 const src = readFileSync(join(ROOT, "apps", "web", "src", "server", "osm.ts"), "utf8");
-const instancias = [...src.matchAll(/"(https:\/\/[^"]+\/interpreter)"/g)].map((m) => m[1]);
+const principal = /OVERPASS_URL = "([^"]+)"/.exec(src)?.[1];
+const instancias = [...src.matchAll(/\{ url: (?:"([^"]+)"|OVERPASS_URL), esperaS/g)].map(
+  (m) => m[1] ?? principal,
+);
 const userAgent = /USER_AGENT =\s*"([^"]+)"/.exec(src)?.[1];
 if (instancias.length === 0 || !userAgent) throw new Error("No se encontraron las instancias");
 

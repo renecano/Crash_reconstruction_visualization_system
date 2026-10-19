@@ -56,7 +56,7 @@ describe("calles de OSM en producción (ADR 0040)", () => {
     const d = deps([ok()]);
     const a = await callesCerca({ lat: 19.278975, lon: -99.6539869, radio: 150 }, "ip", d);
     expect(a.cache).toBe("miss");
-    expect(a.instancia).toBe("overpass-api.de");
+    expect(a.instancia).toBe("maps.mail.ru");
     expect((d.calls[0]!.headers as Record<string, string>)["User-Agent"]).toBe(USER_AGENT);
     const body = new URLSearchParams(d.calls[0]!.body as URLSearchParams).get("data");
     expect(body).toBe(
@@ -76,7 +76,8 @@ describe("calles de OSM en producción (ADR 0040)", () => {
     expect(r.cache).toBe("miss");
     expect(r.instancia).toBe("overpass.private.coffee");
     expect(d.urls).toEqual([...OVERPASS_URLS]);
-    expect(d.urls[0]).toBe(OVERPASS_URL);
+    // La principal va después del espejo que, saturado, falla en un segundo.
+    expect(d.urls[1]).toBe(OVERPASS_URL);
   });
 
   it("da una segunda vuelta: las fallas de las instancias públicas son intermitentes", async () => {
@@ -87,8 +88,8 @@ describe("calles de OSM en producción (ADR 0040)", () => {
       ok(),
     ]);
     const r = await callesCerca({ lat: 19.27, lon: -99.65, radio: 100 }, "ip", d);
-    expect(r.instancia).toBe("overpass-api.de");
-    expect(d.urls).toEqual([...OVERPASS_URLS, OVERPASS_URL]);
+    expect(r.instancia).toBe("maps.mail.ru");
+    expect(d.urls).toEqual([...OVERPASS_URLS, OVERPASS_URLS[0]]);
   });
 
   it("no pasa del tiempo total: cada espera se recorta a lo que queda", async () => {

@@ -21,18 +21,22 @@ import { z } from "zod";
 
 export const OVERPASS_URL = "https://overpass-api.de/api/interpreter";
 /**
- * Instancias públicas de Overpass, en orden: la principal y los dos espejos globales sin llave de
- * la lista de la wiki de OSM. Las públicas se saturan seguido (ADR 0040): si una no responde, se
- * prueba la siguiente. Van primero las que, saturadas, fallan rápido (502 o 504 en segundos) y al
- * final la que, saturada, no contesta y se lleva la espera completa (`eval/results/osm_instancias*`).
+ * Instancias públicas de Overpass: la principal y los dos espejos globales sin llave de la lista
+ * de la wiki de OSM, con la espera máxima de cada una (s). Las públicas se saturan seguido (ADR
+ * 0040): si una no responde, se prueba la siguiente. El orden y las esperas salen de lo medido
+ * (`eval/results/osm_instancias*.json`):
+ * - **VK Maps (mail.ru):** saturada, responde 504 en un segundo; va primero porque no cuesta tiempo
+ *   y le quita carga a la principal.
+ * - **La principal:** saturada, a veces falla en un segundo y a veces encola la consulta y responde
+ *   bien a los 41 s, así que se le da casi todo el tiempo.
+ * - **private.coffee:** saturada, no contesta; va al final y con una espera corta.
  */
-export const OVERPASS_URLS = [
-  OVERPASS_URL,
-  "https://maps.mail.ru/osm/tools/overpass/api/interpreter",
-  "https://overpass.private.coffee/api/interpreter",
+export const OVERPASS_INSTANCES = [
+  { url: "https://maps.mail.ru/osm/tools/overpass/api/interpreter", esperaS: 15 },
+  { url: OVERPASS_URL, esperaS: 45 },
+  { url: "https://overpass.private.coffee/api/interpreter", esperaS: 15 },
 ] as const;
-/** Espera máxima por instancia (s). */
-export const TIMEOUT_S = 15;
+export const OVERPASS_URLS = OVERPASS_INSTANCES.map((i) => i.url);
 /**
  * Vueltas por las instancias. Las fallas son intermitentes: el 2026-10-19 un segundo intento
  * inmediato entró después de un 502 (`eval/results/osm_produccion_v1_r148.json`).
@@ -140,7 +144,7 @@ export async function callesCerca(
   const now = deps.now ?? Date.now;
   const deadline = now() + BUDGET_S * 1000;
   rounds: for (let round = 0; round < ROUNDS; round++) {
-    for (const url of OVERPASS_URLS) {
+    for (const { url, esperaS } of OVERPASS_INSTANCES) {
       const left = deadline - now();
       if (left < 1000) break rounds;
       let res: Response;
@@ -152,7 +156,7 @@ export async function callesCerca(
             "Content-Type": "application/x-www-form-urlencoded",
           },
           body,
-          signal: AbortSignal.timeout(Math.min(TIMEOUT_S * 1000, left)),
+          signal: AbortSignal.timeout(Math.min(esperaS * 1000, left)),
         });
       } catch {
         continue; // sin respuesta a tiempo o sin red: la siguiente instancia
