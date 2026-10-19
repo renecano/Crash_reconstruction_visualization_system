@@ -358,7 +358,7 @@ def build_spec(
         evidencias.append(marcas)
     meta: JsonObj = {
         "id": spec_id,
-        "version_esquema": "1.2.0",
+        "version_esquema": "1.3.0",
         "idioma": "es-MX",
         "semilla": seed,
         "creado": CREATED,

@@ -581,7 +581,7 @@ class Meta(BaseModel):
         extra="forbid",
     )
     id: Annotated[str, Field(max_length=64, min_length=8, pattern="^[A-Za-z0-9_-]+$")]
-    version_esquema: Literal["1.2.0"]
+    version_esquema: Literal["1.3.0"]
     idioma: Literal["es-MX", "en"]
     semilla: Annotated[int, Field(ge=0, le=4294967295)]
     """
@@ -618,7 +618,7 @@ class FaseSemaforo(BaseModel):
 
 class Dispositivo(BaseModel):
     """
-    Dispositivo de control de tránsito.
+    Dispositivo de control de tránsito. En un `semaforo_peatonal` (desde 1.3.0), cada fase es para los peatones: verde es la figura que camina, rojo la figura detenida e intermitente la figura que camina destellando (despeje).
     """
 
     model_config = ConfigDict(
@@ -630,6 +630,7 @@ class Dispositivo(BaseModel):
     """
     tipo: Literal[
         "semaforo",
+        "semaforo_peatonal",
         "alto",
         "ceda_el_paso",
         "tope",

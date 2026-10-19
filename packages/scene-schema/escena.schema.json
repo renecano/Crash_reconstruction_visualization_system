@@ -520,7 +520,7 @@
       "required": ["id", "version_esquema", "idioma", "semilla", "creado"],
       "properties": {
         "id": { "type": "string", "minLength": 8, "maxLength": 64, "pattern": "^[A-Za-z0-9_-]+$" },
-        "version_esquema": { "type": "string", "const": "1.2.0" },
+        "version_esquema": { "type": "string", "const": "1.3.0" },
         "idioma": { "type": "string", "enum": ["es-MX", "en"] },
         "semilla": {
           "type": "integer",
@@ -566,7 +566,7 @@
     },
     "Dispositivo": {
       "type": "object",
-      "description": "Dispositivo de control de tránsito.",
+      "description": "Dispositivo de control de tránsito. En un `semaforo_peatonal` (desde 1.3.0), cada fase es para los peatones: verde es la figura que camina, rojo la figura detenida e intermitente la figura que camina destellando (despeje).",
       "additionalProperties": false,
       "required": ["id", "tipo", "posicion", "procedencia"],
       "properties": {
@@ -575,6 +575,7 @@
           "type": "string",
           "enum": [
             "semaforo",
+            "semaforo_peatonal",
             "alto",
             "ceda_el_paso",
             "tope",
