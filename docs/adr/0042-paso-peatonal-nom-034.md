@@ -15,7 +15,7 @@
   - carretera, 2 m;
   - calle primaria, 6 m;
   - calles secundaria y terciaria, 4 m.
-- **5.8, raya de alto (M-6):** 60 cm de ancho, 1.20 m antes del paso peatonal. Croquis todavía no la dibuja; queda como pendiente.
+- **5.8, raya de alto (M-6):** 60 cm de ancho, 1.20 m antes del paso peatonal; sin paso, entre 1.20 m y 5 m de la orilla de la vía que se cruza, en todos los carriles del mismo sentido. Croquis todavía no la dibuja; queda como pendiente. Antes hay que decidir qué accesos controla cada semáforo o alto de la escena: hoy un dispositivo tiene posición, pero no el acceso al que aplica.
 
 ## Decisión
 
