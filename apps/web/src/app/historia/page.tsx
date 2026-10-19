@@ -240,6 +240,9 @@ export default function HistoriaPage() {
           >
             Contar qué pasó
           </Link>
+          <Link href="/demo" className="rounded border border-neutral-400 px-4 py-2 font-medium">
+            Probar la demo
+          </Link>
           <Link
             href="/visor?escena=interseccion_toluca"
             className="rounded border border-neutral-400 px-4 py-2 font-medium"

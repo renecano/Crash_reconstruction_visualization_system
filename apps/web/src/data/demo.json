@@ -1,0 +1,1693 @@
+{
+  "_generado_por": "pnpm --filter @croquis/extraction demo (scripts/demo-casos.ts)",
+  "fuente": "Relatos-MX, partición de desarrollo: relatos sintéticos escritos por agentes de IA (data/relatos-mx)",
+  "metodo": "claude-sonnet-5-5, prompt extraccion_v3, respuesta grabada (sin llamar a la API)",
+  "casos": [
+    {
+      "id": "rmx-d001",
+      "titulo": "Alcance en Paseo Tollocan, con el piso mojado",
+      "tipo": "vv",
+      "texto": "Iba por Paseo Tollocan en mi Aveo gris, como a 50, y la camioneta de enfrente frenó de golpe en el semáforo. No alcancé a frenar y le pegué por detrás. Estaba chispeando y el piso mojado.",
+      "spec": {
+        "meta": {
+          "id": "demo-rmx-d001",
+          "version_esquema": "1.2.0",
+          "idioma": "es-MX",
+          "semilla": 507663,
+          "creado": "2026-10-13T00:00:00-06:00",
+          "relato": "Iba por Paseo Tollocan en mi Aveo gris, como a 50, y la camioneta de enfrente frenó de golpe en el semáforo. No alcancé a frenar y le pegué por detrás. Estaba chispeando y el piso mojado.",
+          "origen_relato": "escrito",
+          "sintetico": true
+        },
+        "lugar": {
+          "tipo_via": {
+            "valor": "recta",
+            "fuente": "default",
+            "confianza": 0.3
+          },
+          "carriles_por_sentido": {
+            "valor": 2,
+            "fuente": "default",
+            "confianza": 0.3
+          },
+          "ancho_carril": {
+            "valor": 3.5,
+            "unidad": "m",
+            "fuente": "default",
+            "confianza": 0.3
+          },
+          "sentidos": {
+            "valor": "doble_sentido",
+            "fuente": "default",
+            "confianza": 0.3
+          },
+          "superficie": {
+            "valor": "asfalto",
+            "fuente": "default",
+            "confianza": 0.3
+          },
+          "estado_superficie": {
+            "valor": "mojado",
+            "fuente": "relato",
+            "confianza": 0.9,
+            "evidencia": [
+              {
+                "inicio": 172,
+                "fin": 186,
+                "texto": "el piso mojado"
+              }
+            ]
+          },
+          "dispositivos": [
+            {
+              "id": "disp-1",
+              "tipo": "semaforo",
+              "posicion": {
+                "x": 0,
+                "y": 0
+              },
+              "procedencia": {
+                "fuente": "relato",
+                "confianza": 0.9,
+                "evidencia": [
+                  {
+                    "inicio": 99,
+                    "fin": 107,
+                    "texto": "semáforo"
+                  }
+                ]
+              }
+            }
+          ]
+        },
+        "entorno": {
+          "clima": {
+            "valor": "lluvia_ligera",
+            "fuente": "relato",
+            "confianza": 0.9,
+            "evidencia": [
+              {
+                "inicio": 159,
+                "fin": 169,
+                "texto": "chispeando"
+              }
+            ]
+          },
+          "iluminacion": {
+            "valor": "dia",
+            "fuente": "default",
+            "confianza": 0.3
+          }
+        },
+        "vehiculos": [
+          {
+            "id": "veh-a",
+            "rol": "A",
+            "clase": {
+              "valor": "sedan_compacto",
+              "fuente": "relato",
+              "confianza": 0.9,
+              "evidencia": [
+                {
+                  "inicio": 29,
+                  "fin": 33,
+                  "texto": "Aveo"
+                }
+              ]
+            },
+            "color": {
+              "nombre": {
+                "valor": "gris",
+                "fuente": "relato",
+                "confianza": 0.9,
+                "evidencia": [
+                  {
+                    "inicio": 34,
+                    "fin": 38,
+                    "texto": "gris"
+                  }
+                ]
+              },
+              "hex": "#8a8d91"
+            },
+            "maniobra": {
+              "valor": "recto",
+              "fuente": "default",
+              "confianza": 0.3
+            },
+            "velocidad_previa": {
+              "valor": 50,
+              "fuente": "relato",
+              "confianza": 0.9,
+              "evidencia": [
+                {
+                  "inicio": 40,
+                  "fin": 49,
+                  "texto": "como a 50"
+                }
+              ],
+              "unidad": "km/h"
+            },
+            "posicion_inicial": {
+              "x": -30,
+              "y": -1.75,
+              "rumbo_deg": 0,
+              "procedencia": {
+                "fuente": "supuesto",
+                "confianza": 0.3,
+                "nota": "Disposición genérica; ajústala en el croquis."
+              }
+            },
+            "frenado": {
+              "aplico": {
+                "valor": false,
+                "fuente": "relato",
+                "confianza": 0.9,
+                "evidencia": [
+                  {
+                    "inicio": 109,
+                    "fin": 128,
+                    "texto": "No alcancé a frenar"
+                  }
+                ]
+              }
+            },
+            "ocupantes": ["per-1"]
+          },
+          {
+            "id": "veh-b",
+            "rol": "B",
+            "clase": {
+              "valor": "suv_compacta",
+              "fuente": "supuesto",
+              "confianza": 0.4,
+              "evidencia": [
+                {
+                  "inicio": 56,
+                  "fin": 65,
+                  "texto": "camioneta"
+                }
+              ],
+              "nota": "El relato dice 'suv_o_pickup'; se precisó como 'suv_compacta' (confírmalo)."
+            },
+            "color": {
+              "nombre": {
+                "valor": "gris",
+                "fuente": "default",
+                "confianza": 0.3
+              },
+              "hex": "#8a8d91"
+            },
+            "maniobra": {
+              "valor": "recto",
+              "fuente": "default",
+              "confianza": 0.3
+            },
+            "velocidad_previa": {
+              "valor": 40,
+              "unidad": "km/h",
+              "fuente": "supuesto",
+              "confianza": 0.3
+            },
+            "posicion_inicial": {
+              "x": -12,
+              "y": -1.75,
+              "rumbo_deg": 0,
+              "procedencia": {
+                "fuente": "supuesto",
+                "confianza": 0.3,
+                "nota": "Disposición genérica; ajústala en el croquis."
+              }
+            },
+            "frenado": {
+              "aplico": {
+                "valor": true,
+                "fuente": "relato",
+                "confianza": 0.9,
+                "evidencia": [
+                  {
+                    "inicio": 78,
+                    "fin": 92,
+                    "texto": "frenó de golpe"
+                  }
+                ]
+              }
+            }
+          }
+        ],
+        "personas": [
+          {
+            "id": "per-1",
+            "rol": {
+              "valor": "conductor",
+              "fuente": "relato",
+              "confianza": 0.9,
+              "evidencia": [
+                {
+                  "inicio": 0,
+                  "fin": 38,
+                  "texto": "Iba por Paseo Tollocan en mi Aveo gris"
+                }
+              ],
+              "nota": "narrador"
+            },
+            "vehiculo_id": "veh-a",
+            "asiento": {
+              "valor": "conductor",
+              "fuente": "supuesto",
+              "confianza": 0.4
+            }
+          }
+        ],
+        "eventos": [
+          {
+            "id": "ev-1",
+            "orden": 0,
+            "tipo": "impacto_vehiculo_vehiculo",
+            "actores": ["veh-a", "veh-b"],
+            "procedencia": {
+              "fuente": "relato",
+              "confianza": 0.9,
+              "evidencia": [
+                {
+                  "inicio": 131,
+                  "fin": 150,
+                  "texto": "le pegué por detrás"
+                }
+              ]
+            },
+            "zonas_impacto": [
+              {
+                "vehiculo_id": "veh-a",
+                "cdc": {
+                  "lado": "F"
+                }
+              },
+              {
+                "vehiculo_id": "veh-b",
+                "cdc": {
+                  "lado": "B"
+                }
+              }
+            ]
+          }
+        ],
+        "danos_declarados": [],
+        "evidencias": []
+      },
+      "verificador": {
+        "revisados": 10,
+        "corregidos": 0,
+        "degradados": 0
+      },
+      "preguntas": [
+        {
+          "id": "frenado_distancia:veh-b",
+          "texto": "¿Desde dónde empezó a frenar el vehículo (B)? Un aproximado en metros o en largos de auto basta.",
+          "motivo": "contradiccion",
+          "campo": "vehiculos.1.frenado.distancia_antes_impacto"
+        },
+        {
+          "id": "velocidad:veh-b",
+          "texto": "¿A qué velocidad crees que iba el vehículo (B)?",
+          "motivo": "sensibilidad",
+          "campo": "vehiculos.1.velocidad_previa",
+          "reduccion": 0.995
+        },
+        {
+          "id": "glosario:camioneta",
+          "texto": "¿La camioneta era tipo SUV (cerrada), pickup (con caja) o van?",
+          "motivo": "ambiguedad",
+          "campo": "vehiculo.clase"
+        }
+      ]
+    },
+    {
+      "id": "rmx-d003",
+      "titulo": "Una moto y un taxi que da vuelta en la lateral de Periférico",
+      "tipo": "moto",
+      "texto": "Yo iba en mi moto por la lateral de Periférico como a 60 y un taxi se me cerró para dar vuelta a la derecha. Lo alcancé a esquivar poquito pero le di con el manubrio en la salpicadera y me caí. Traía casco, gracias a Dios.",
+      "spec": {
+        "meta": {
+          "id": "demo-rmx-d003",
+          "version_esquema": "1.2.0",
+          "idioma": "es-MX",
+          "semilla": 146821,
+          "creado": "2026-10-13T00:00:00-06:00",
+          "relato": "Yo iba en mi moto por la lateral de Periférico como a 60 y un taxi se me cerró para dar vuelta a la derecha. Lo alcancé a esquivar poquito pero le di con el manubrio en la salpicadera y me caí. Traía casco, gracias a Dios.",
+          "origen_relato": "escrito",
+          "sintetico": true
+        },
+        "lugar": {
+          "tipo_via": {
+            "valor": "incorporacion",
+            "fuente": "relato",
+            "confianza": 0.9,
+            "evidencia": [
+              {
+                "inicio": 22,
+                "fin": 46,
+                "texto": "la lateral de Periférico"
+              }
+            ]
+          },
+          "carriles_por_sentido": {
+            "valor": 2,
+            "fuente": "default",
+            "confianza": 0.3
+          },
+          "ancho_carril": {
+            "valor": 3.5,
+            "unidad": "m",
+            "fuente": "default",
+            "confianza": 0.3
+          },
+          "sentidos": {
+            "valor": "doble_sentido",
+            "fuente": "default",
+            "confianza": 0.3
+          },
+          "superficie": {
+            "valor": "asfalto",
+            "fuente": "default",
+            "confianza": 0.3
+          },
+          "estado_superficie": {
+            "valor": "seco",
+            "fuente": "default",
+            "confianza": 0.3
+          }
+        },
+        "entorno": {
+          "clima": {
+            "valor": "despejado",
+            "fuente": "default",
+            "confianza": 0.3
+          },
+          "iluminacion": {
+            "valor": "dia",
+            "fuente": "default",
+            "confianza": 0.3
+          }
+        },
+        "vehiculos": [
+          {
+            "id": "veh-a",
+            "rol": "A",
+            "clase": {
+              "valor": "motocicleta",
+              "fuente": "relato",
+              "confianza": 0.9,
+              "evidencia": [
+                {
+                  "inicio": 10,
+                  "fin": 17,
+                  "texto": "mi moto"
+                }
+              ]
+            },
+            "color": {
+              "nombre": {
+                "valor": "gris",
+                "fuente": "default",
+                "confianza": 0.3
+              },
+              "hex": "#8a8d91"
+            },
+            "maniobra": {
+              "valor": "recto",
+              "fuente": "default",
+              "confianza": 0.3
+            },
+            "velocidad_previa": {
+              "valor": 60,
+              "fuente": "relato",
+              "confianza": 0.9,
+              "evidencia": [
+                {
+                  "inicio": 47,
+                  "fin": 56,
+                  "texto": "como a 60"
+                }
+              ],
+              "unidad": "km/h"
+            },
+            "posicion_inicial": {
+              "x": -30,
+              "y": -1.75,
+              "rumbo_deg": 0,
+              "procedencia": {
+                "fuente": "supuesto",
+                "confianza": 0.3,
+                "nota": "Disposición genérica; ajústala en el croquis."
+              }
+            },
+            "ocupantes": ["per-1", "per-2"]
+          },
+          {
+            "id": "veh-b",
+            "rol": "B",
+            "clase": {
+              "valor": "sedan_compacto",
+              "fuente": "relato",
+              "confianza": 0.9,
+              "evidencia": [
+                {
+                  "inicio": 62,
+                  "fin": 66,
+                  "texto": "taxi"
+                }
+              ]
+            },
+            "color": {
+              "nombre": {
+                "valor": "gris",
+                "fuente": "default",
+                "confianza": 0.3
+              },
+              "hex": "#8a8d91"
+            },
+            "maniobra": {
+              "valor": "vuelta_derecha",
+              "fuente": "relato",
+              "confianza": 0.9,
+              "evidencia": [
+                {
+                  "inicio": 84,
+                  "fin": 107,
+                  "texto": "dar vuelta a la derecha"
+                }
+              ]
+            },
+            "velocidad_previa": {
+              "valor": 40,
+              "unidad": "km/h",
+              "fuente": "supuesto",
+              "confianza": 0.3
+            },
+            "posicion_inicial": {
+              "x": 25,
+              "y": 1.75,
+              "rumbo_deg": 180,
+              "procedencia": {
+                "fuente": "supuesto",
+                "confianza": 0.3,
+                "nota": "Disposición genérica; ajústala en el croquis."
+              }
+            }
+          }
+        ],
+        "personas": [
+          {
+            "id": "per-1",
+            "rol": {
+              "valor": "conductor",
+              "fuente": "supuesto",
+              "confianza": 0.4,
+              "nota": "narrador"
+            },
+            "vehiculo_id": "veh-a",
+            "asiento": {
+              "valor": "conductor",
+              "fuente": "supuesto",
+              "confianza": 0.4
+            }
+          },
+          {
+            "id": "per-2",
+            "rol": {
+              "valor": "motociclista",
+              "fuente": "relato",
+              "confianza": 0.9,
+              "evidencia": [
+                {
+                  "inicio": 0,
+                  "fin": 17,
+                  "texto": "Yo iba en mi moto"
+                }
+              ]
+            },
+            "vehiculo_id": "veh-a",
+            "casco": {
+              "valor": true,
+              "fuente": "relato",
+              "confianza": 0.9,
+              "evidencia": [
+                {
+                  "inicio": 194,
+                  "fin": 205,
+                  "texto": "Traía casco"
+                }
+              ]
+            }
+          }
+        ],
+        "eventos": [
+          {
+            "id": "ev-1",
+            "orden": 0,
+            "tipo": "impacto_vehiculo_vehiculo",
+            "actores": ["veh-a", "veh-b"],
+            "procedencia": {
+              "fuente": "relato",
+              "confianza": 0.9,
+              "evidencia": [
+                {
+                  "inicio": 144,
+                  "fin": 183,
+                  "texto": "le di con el manubrio en la salpicadera"
+                }
+              ]
+            }
+          }
+        ],
+        "danos_declarados": [],
+        "evidencias": []
+      },
+      "verificador": {
+        "revisados": 8,
+        "corregidos": 0,
+        "degradados": 0
+      },
+      "preguntas": [
+        {
+          "id": "zonas_impacto",
+          "texto": "Con las zonas de golpe indicadas los vehículos no llegan a tocarse. ¿En qué parte de cada vehículo fue el golpe?",
+          "motivo": "contradiccion",
+          "campo": "eventos.0.zonas_impacto",
+          "opciones": ["frente", "atrás", "lado izquierdo", "lado derecho"]
+        },
+        {
+          "id": "velocidad:veh-b",
+          "texto": "¿A qué velocidad crees que iba el auto (B)?",
+          "motivo": "sensibilidad",
+          "campo": "vehiculos.1.velocidad_previa",
+          "reduccion": 0.466
+        },
+        {
+          "id": "frenado:veh-a",
+          "texto": "¿Alcanzaste a frenar antes del golpe?",
+          "motivo": "sensibilidad",
+          "campo": "vehiculos.0.frenado.aplico",
+          "opciones": ["sí", "no", "no sé"],
+          "reduccion": 0.304
+        }
+      ]
+    },
+    {
+      "id": "rmx-d004",
+      "titulo": "Una camioneta contra un árbol en la carretera a Ixtlahuaca",
+      "tipo": "objeto",
+      "texto": "iba de regreso a mi casa en la noche, en la carretera a Ixtlahuaca, y en una curva se me fue la camioneta, perdi el control y me fui contra un arbol. no habia luz en esa parte y estaba llobiendo fuerte. creo q iba a unos 80",
+      "spec": {
+        "meta": {
+          "id": "demo-rmx-d004",
+          "version_esquema": "1.2.0",
+          "idioma": "es-MX",
+          "semilla": 629750,
+          "creado": "2026-10-13T00:00:00-06:00",
+          "relato": "iba de regreso a mi casa en la noche, en la carretera a Ixtlahuaca, y en una curva se me fue la camioneta, perdi el control y me fui contra un arbol. no habia luz en esa parte y estaba llobiendo fuerte. creo q iba a unos 80",
+          "origen_relato": "escrito",
+          "sintetico": true
+        },
+        "lugar": {
+          "tipo_via": {
+            "valor": "curva",
+            "fuente": "relato",
+            "confianza": 0.9,
+            "evidencia": [
+              {
+                "inicio": 70,
+                "fin": 82,
+                "texto": "en una curva"
+              }
+            ]
+          },
+          "carriles_por_sentido": {
+            "valor": 2,
+            "fuente": "default",
+            "confianza": 0.3
+          },
+          "ancho_carril": {
+            "valor": 3.5,
+            "unidad": "m",
+            "fuente": "default",
+            "confianza": 0.3
+          },
+          "sentidos": {
+            "valor": "doble_sentido",
+            "fuente": "default",
+            "confianza": 0.3
+          },
+          "superficie": {
+            "valor": "asfalto",
+            "fuente": "default",
+            "confianza": 0.3
+          },
+          "estado_superficie": {
+            "valor": "seco",
+            "fuente": "default",
+            "confianza": 0.3
+          }
+        },
+        "entorno": {
+          "clima": {
+            "valor": "lluvia_fuerte",
+            "fuente": "relato",
+            "confianza": 0.9,
+            "evidencia": [
+              {
+                "inicio": 185,
+                "fin": 201,
+                "texto": "llobiendo fuerte"
+              }
+            ]
+          },
+          "iluminacion": {
+            "valor": "noche_sin_alumbrado",
+            "fuente": "relato",
+            "confianza": 0.9,
+            "evidencia": [
+              {
+                "inicio": 150,
+                "fin": 175,
+                "texto": "no habia luz en esa parte"
+              }
+            ]
+          },
+          "objetos": [
+            {
+              "id": "obj-1",
+              "tipo": "arbol",
+              "posicion": {
+                "x": 6,
+                "y": -6
+              },
+              "procedencia": {
+                "fuente": "relato",
+                "confianza": 0.9,
+                "evidencia": [
+                  {
+                    "inicio": 143,
+                    "fin": 148,
+                    "texto": "arbol"
+                  }
+                ]
+              }
+            }
+          ]
+        },
+        "vehiculos": [
+          {
+            "id": "veh-a",
+            "rol": "A",
+            "clase": {
+              "valor": "suv_compacta",
+              "fuente": "supuesto",
+              "confianza": 0.4,
+              "evidencia": [
+                {
+                  "inicio": 96,
+                  "fin": 105,
+                  "texto": "camioneta"
+                }
+              ],
+              "nota": "El relato dice 'suv_o_pickup'; se precisó como 'suv_compacta' (confírmalo)."
+            },
+            "color": {
+              "nombre": {
+                "valor": "gris",
+                "fuente": "default",
+                "confianza": 0.3
+              },
+              "hex": "#8a8d91"
+            },
+            "maniobra": {
+              "valor": "recto",
+              "fuente": "default",
+              "confianza": 0.3
+            },
+            "velocidad_previa": {
+              "valor": 80,
+              "fuente": "relato",
+              "confianza": 0.9,
+              "evidencia": [
+                {
+                  "inicio": 210,
+                  "fin": 223,
+                  "texto": "iba a unos 80"
+                }
+              ],
+              "unidad": "km/h"
+            },
+            "posicion_inicial": {
+              "x": -30,
+              "y": -1.75,
+              "rumbo_deg": 0,
+              "procedencia": {
+                "fuente": "supuesto",
+                "confianza": 0.3,
+                "nota": "Disposición genérica; ajústala en el croquis."
+              }
+            },
+            "ocupantes": ["per-1"]
+          }
+        ],
+        "personas": [
+          {
+            "id": "per-1",
+            "rol": {
+              "valor": "conductor",
+              "fuente": "relato",
+              "confianza": 0.9,
+              "evidencia": [
+                {
+                  "inicio": 0,
+                  "fin": 24,
+                  "texto": "iba de regreso a mi casa"
+                }
+              ],
+              "nota": "narrador"
+            },
+            "vehiculo_id": "veh-a",
+            "asiento": {
+              "valor": "conductor",
+              "fuente": "supuesto",
+              "confianza": 0.4
+            }
+          }
+        ],
+        "eventos": [
+          {
+            "id": "ev-1",
+            "orden": 0,
+            "tipo": "impacto_vehiculo_objeto",
+            "actores": ["veh-a", "obj-1"],
+            "procedencia": {
+              "fuente": "relato",
+              "confianza": 0.9,
+              "evidencia": [
+                {
+                  "inicio": 126,
+                  "fin": 148,
+                  "texto": "me fui contra un arbol"
+                }
+              ]
+            },
+            "zonas_impacto": [
+              {
+                "vehiculo_id": "veh-a",
+                "cdc": {
+                  "lado": "F"
+                }
+              }
+            ]
+          }
+        ],
+        "danos_declarados": [],
+        "evidencias": []
+      },
+      "verificador": {
+        "revisados": 7,
+        "corregidos": 0,
+        "degradados": 0
+      },
+      "preguntas": [
+        {
+          "id": "maniobra:veh-a",
+          "texto": "Para llegar al punto del golpe tuviste que moverte unos 4 m hacia la derecha. ¿Cambiaste de carril o te abriste?",
+          "motivo": "contradiccion",
+          "campo": "vehiculos.0.maniobra",
+          "opciones": [
+            "cambió de carril a la izquierda",
+            "cambió de carril a la derecha",
+            "dio vuelta a la izquierda",
+            "dio vuelta a la derecha",
+            "siguió recto",
+            "no sé"
+          ]
+        },
+        {
+          "id": "frenado:veh-a",
+          "texto": "¿Alcanzaste a frenar antes del golpe?",
+          "motivo": "sensibilidad",
+          "campo": "vehiculos.0.frenado.aplico",
+          "opciones": ["sí", "no", "no sé"],
+          "reduccion": 0.745
+        },
+        {
+          "id": "glosario:noche",
+          "texto": "¿Había alumbrado público donde ocurrió?",
+          "motivo": "ambiguedad",
+          "campo": "entorno.iluminacion"
+        }
+      ]
+    },
+    {
+      "id": "rmx-d005",
+      "titulo": "Una peatona que cruza entre los autos en Hidalgo",
+      "tipo": "peaton",
+      "texto": "Venía manejando la Urvan de la ruta por Hidalgo, a vuelta de rueda porque había mucho tráfico, y una señora se atravesó corriendo entre los carros, fuera del paso de cebra. La golpeé con la defensa y cayó como a dos metros. Se levantó sola.",
+      "spec": {
+        "meta": {
+          "id": "demo-rmx-d005",
+          "version_esquema": "1.2.0",
+          "idioma": "es-MX",
+          "semilla": 753954,
+          "creado": "2026-10-13T00:00:00-06:00",
+          "relato": "Venía manejando la Urvan de la ruta por Hidalgo, a vuelta de rueda porque había mucho tráfico, y una señora se atravesó corriendo entre los carros, fuera del paso de cebra. La golpeé con la defensa y cayó como a dos metros. Se levantó sola.",
+          "origen_relato": "escrito",
+          "sintetico": true
+        },
+        "lugar": {
+          "tipo_via": {
+            "valor": "recta",
+            "fuente": "default",
+            "confianza": 0.3
+          },
+          "carriles_por_sentido": {
+            "valor": 2,
+            "fuente": "default",
+            "confianza": 0.3
+          },
+          "ancho_carril": {
+            "valor": 3.5,
+            "unidad": "m",
+            "fuente": "default",
+            "confianza": 0.3
+          },
+          "sentidos": {
+            "valor": "doble_sentido",
+            "fuente": "default",
+            "confianza": 0.3
+          },
+          "superficie": {
+            "valor": "asfalto",
+            "fuente": "default",
+            "confianza": 0.3
+          },
+          "estado_superficie": {
+            "valor": "seco",
+            "fuente": "default",
+            "confianza": 0.3
+          },
+          "dispositivos": [
+            {
+              "id": "disp-1",
+              "tipo": "paso_peatonal",
+              "posicion": {
+                "x": 0,
+                "y": 0
+              },
+              "procedencia": {
+                "fuente": "relato",
+                "confianza": 0.9,
+                "evidencia": [
+                  {
+                    "inicio": 148,
+                    "fin": 171,
+                    "texto": "fuera del paso de cebra"
+                  }
+                ]
+              }
+            }
+          ]
+        },
+        "entorno": {
+          "clima": {
+            "valor": "despejado",
+            "fuente": "default",
+            "confianza": 0.3
+          },
+          "iluminacion": {
+            "valor": "dia",
+            "fuente": "default",
+            "confianza": 0.3
+          }
+        },
+        "vehiculos": [
+          {
+            "id": "veh-a",
+            "rol": "A",
+            "clase": {
+              "valor": "microbus_combi",
+              "fuente": "relato",
+              "confianza": 0.9,
+              "evidencia": [
+                {
+                  "inicio": 19,
+                  "fin": 24,
+                  "texto": "Urvan"
+                }
+              ]
+            },
+            "color": {
+              "nombre": {
+                "valor": "gris",
+                "fuente": "default",
+                "confianza": 0.3
+              },
+              "hex": "#8a8d91"
+            },
+            "maniobra": {
+              "valor": "recto",
+              "fuente": "default",
+              "confianza": 0.3
+            },
+            "velocidad_previa": {
+              "valor": 8,
+              "fuente": "relato",
+              "confianza": 0.9,
+              "evidencia": [
+                {
+                  "inicio": 49,
+                  "fin": 66,
+                  "texto": "a vuelta de rueda"
+                }
+              ],
+              "unidad": "km/h"
+            },
+            "posicion_inicial": {
+              "x": -30,
+              "y": -1.75,
+              "rumbo_deg": 0,
+              "procedencia": {
+                "fuente": "supuesto",
+                "confianza": 0.3,
+                "nota": "Disposición genérica; ajústala en el croquis."
+              }
+            },
+            "ocupantes": ["per-1"]
+          }
+        ],
+        "personas": [
+          {
+            "id": "per-1",
+            "rol": {
+              "valor": "conductor",
+              "fuente": "relato",
+              "confianza": 0.9,
+              "evidencia": [
+                {
+                  "inicio": 0,
+                  "fin": 24,
+                  "texto": "Venía manejando la Urvan"
+                }
+              ],
+              "nota": "narrador"
+            },
+            "vehiculo_id": "veh-a",
+            "asiento": {
+              "valor": "conductor",
+              "fuente": "supuesto",
+              "confianza": 0.4
+            }
+          },
+          {
+            "id": "per-2",
+            "rol": {
+              "valor": "peaton",
+              "fuente": "relato",
+              "confianza": 0.9,
+              "evidencia": [
+                {
+                  "inicio": 97,
+                  "fin": 146,
+                  "texto": "una señora se atravesó corriendo entre los carros"
+                }
+              ]
+            },
+            "posicion_inicial": {
+              "x": 0,
+              "y": -5,
+              "rumbo_deg": 90,
+              "procedencia": {
+                "fuente": "supuesto",
+                "confianza": 0.3,
+                "nota": "Disposición genérica; ajústala en el croquis."
+              }
+            }
+          }
+        ],
+        "eventos": [
+          {
+            "id": "ev-1",
+            "orden": 0,
+            "tipo": "impacto_vehiculo_persona",
+            "actores": ["veh-a", "per-2"],
+            "procedencia": {
+              "fuente": "relato",
+              "confianza": 0.9,
+              "evidencia": [
+                {
+                  "inicio": 173,
+                  "fin": 197,
+                  "texto": "La golpeé con la defensa"
+                }
+              ]
+            },
+            "zonas_impacto": [
+              {
+                "vehiculo_id": "veh-a",
+                "cdc": {
+                  "lado": "F"
+                }
+              }
+            ]
+          }
+        ],
+        "danos_declarados": [],
+        "evidencias": [
+          {
+            "id": "evid-proyeccion",
+            "tipo": "distancia_proyeccion",
+            "longitud": {
+              "valor": 2,
+              "fuente": "relato",
+              "confianza": 0.9,
+              "evidencia": [
+                {
+                  "inicio": 200,
+                  "fin": 222,
+                  "texto": "cayó como a dos metros"
+                }
+              ],
+              "unidad": "m"
+            },
+            "procedencia": {
+              "fuente": "relato",
+              "confianza": 0.9,
+              "evidencia": [
+                {
+                  "inicio": 200,
+                  "fin": 222,
+                  "texto": "cayó como a dos metros"
+                }
+              ]
+            },
+            "persona_id": "per-2"
+          }
+        ]
+      },
+      "verificador": {
+        "revisados": 8,
+        "corregidos": 0,
+        "degradados": 0
+      },
+      "preguntas": [
+        {
+          "id": "proyeccion:veh-a",
+          "texto": "Que la persona quedara a unos 2 m corresponde a velocidades de 12 a 19 km/h, y la velocidad indicada de el vehículo A va de 7 a 9 km/h. ¿Puedes confirmar la distancia o la velocidad?",
+          "motivo": "contradiccion",
+          "campo": "evidencias.distancia_proyeccion"
+        },
+        {
+          "id": "zonas_impacto",
+          "texto": "Con las zonas de golpe indicadas los vehículos no llegan a tocarse. ¿En qué parte de cada vehículo fue el golpe?",
+          "motivo": "contradiccion",
+          "campo": "eventos.0.zonas_impacto",
+          "opciones": ["frente", "atrás", "lado izquierdo", "lado derecho"]
+        },
+        {
+          "id": "proyeccion:per-2",
+          "texto": "La persona quedó a unos 2 m, lo que suele corresponder a 13–17 km/h, y la velocidad indicada da 8 km/h. ¿Puedes confirmar la distancia o la velocidad?",
+          "motivo": "contradiccion",
+          "campo": "evidencias.distancia_proyeccion"
+        }
+      ]
+    },
+    {
+      "id": "rmx-d007",
+      "titulo": "Volcadura en la autopista México-Querétaro",
+      "tipo": "volcadura",
+      "texto": "En la autopista México-Querétaro un tráiler se me cerró y para no darle volanteé fuerte a la derecha. La camioneta se ladeó, pegó con la guarnición y se volteó, dio como dos vueltas. Iba como a 100. Mi esposa iba de copiloto con cinturón.",
+      "spec": {
+        "meta": {
+          "id": "demo-rmx-d007",
+          "version_esquema": "1.2.0",
+          "idioma": "es-MX",
+          "semilla": 178795,
+          "creado": "2026-10-13T00:00:00-06:00",
+          "relato": "En la autopista México-Querétaro un tráiler se me cerró y para no darle volanteé fuerte a la derecha. La camioneta se ladeó, pegó con la guarnición y se volteó, dio como dos vueltas. Iba como a 100. Mi esposa iba de copiloto con cinturón.",
+          "origen_relato": "escrito",
+          "sintetico": true
+        },
+        "lugar": {
+          "tipo_via": {
+            "valor": "autopista",
+            "fuente": "relato",
+            "confianza": 0.9,
+            "evidencia": [
+              {
+                "inicio": 6,
+                "fin": 15,
+                "texto": "autopista"
+              }
+            ]
+          },
+          "carriles_por_sentido": {
+            "valor": 2,
+            "fuente": "default",
+            "confianza": 0.3
+          },
+          "ancho_carril": {
+            "valor": 3.5,
+            "unidad": "m",
+            "fuente": "default",
+            "confianza": 0.3
+          },
+          "sentidos": {
+            "valor": "doble_sentido",
+            "fuente": "default",
+            "confianza": 0.3
+          },
+          "superficie": {
+            "valor": "asfalto",
+            "fuente": "default",
+            "confianza": 0.3
+          },
+          "estado_superficie": {
+            "valor": "seco",
+            "fuente": "default",
+            "confianza": 0.3
+          }
+        },
+        "entorno": {
+          "clima": {
+            "valor": "despejado",
+            "fuente": "default",
+            "confianza": 0.3
+          },
+          "iluminacion": {
+            "valor": "dia",
+            "fuente": "default",
+            "confianza": 0.3
+          },
+          "objetos": [
+            {
+              "id": "obj-1",
+              "tipo": "otro",
+              "posicion": {
+                "x": 6,
+                "y": -6
+              },
+              "procedencia": {
+                "fuente": "relato",
+                "confianza": 0.9,
+                "evidencia": [
+                  {
+                    "inicio": 137,
+                    "fin": 147,
+                    "texto": "guarnición"
+                  }
+                ]
+              }
+            }
+          ]
+        },
+        "vehiculos": [
+          {
+            "id": "veh-a",
+            "rol": "A",
+            "clase": {
+              "valor": "suv_compacta",
+              "fuente": "supuesto",
+              "confianza": 0.4,
+              "evidencia": [
+                {
+                  "inicio": 105,
+                  "fin": 114,
+                  "texto": "camioneta"
+                }
+              ],
+              "nota": "El relato dice 'suv_o_pickup'; se precisó como 'suv_compacta' (confírmalo)."
+            },
+            "color": {
+              "nombre": {
+                "valor": "gris",
+                "fuente": "default",
+                "confianza": 0.3
+              },
+              "hex": "#8a8d91"
+            },
+            "maniobra": {
+              "valor": "cambio_carril_derecha",
+              "fuente": "relato",
+              "confianza": 0.9,
+              "evidencia": [
+                {
+                  "inicio": 72,
+                  "fin": 100,
+                  "texto": "volanteé fuerte a la derecha"
+                }
+              ]
+            },
+            "velocidad_previa": {
+              "valor": 100,
+              "fuente": "relato",
+              "confianza": 0.9,
+              "evidencia": [
+                {
+                  "inicio": 183,
+                  "fin": 197,
+                  "texto": "Iba como a 100"
+                }
+              ],
+              "unidad": "km/h"
+            },
+            "posicion_inicial": {
+              "x": -30,
+              "y": -1.75,
+              "rumbo_deg": 0,
+              "procedencia": {
+                "fuente": "supuesto",
+                "confianza": 0.3,
+                "nota": "Disposición genérica; ajústala en el croquis."
+              }
+            },
+            "ocupantes": ["per-1", "per-2"]
+          },
+          {
+            "id": "veh-b",
+            "rol": "B",
+            "clase": {
+              "valor": "tractocamion",
+              "fuente": "relato",
+              "confianza": 0.9,
+              "evidencia": [
+                {
+                  "inicio": 36,
+                  "fin": 43,
+                  "texto": "tráiler"
+                }
+              ]
+            },
+            "color": {
+              "nombre": {
+                "valor": "gris",
+                "fuente": "default",
+                "confianza": 0.3
+              },
+              "hex": "#8a8d91"
+            },
+            "maniobra": {
+              "valor": "cambio_carril_izquierda",
+              "fuente": "supuesto",
+              "confianza": 0.4,
+              "evidencia": [
+                {
+                  "inicio": 44,
+                  "fin": 55,
+                  "texto": "se me cerró"
+                }
+              ],
+              "nota": "El relato dice 'cambio_carril'; se precisó como 'cambio_carril_izquierda' (confírmalo)."
+            },
+            "velocidad_previa": {
+              "valor": 40,
+              "unidad": "km/h",
+              "fuente": "supuesto",
+              "confianza": 0.3
+            },
+            "posicion_inicial": {
+              "x": 25,
+              "y": 1.75,
+              "rumbo_deg": 180,
+              "procedencia": {
+                "fuente": "supuesto",
+                "confianza": 0.3,
+                "nota": "Disposición genérica; ajústala en el croquis."
+              }
+            }
+          }
+        ],
+        "personas": [
+          {
+            "id": "per-1",
+            "rol": {
+              "valor": "conductor",
+              "fuente": "relato",
+              "confianza": 0.9,
+              "evidencia": [
+                {
+                  "inicio": 72,
+                  "fin": 100,
+                  "texto": "volanteé fuerte a la derecha"
+                }
+              ],
+              "nota": "narrador"
+            },
+            "vehiculo_id": "veh-a",
+            "asiento": {
+              "valor": "conductor",
+              "fuente": "supuesto",
+              "confianza": 0.4
+            }
+          },
+          {
+            "id": "per-2",
+            "rol": {
+              "valor": "pasajero",
+              "fuente": "relato",
+              "confianza": 0.9,
+              "evidencia": [
+                {
+                  "inicio": 199,
+                  "fin": 237,
+                  "texto": "Mi esposa iba de copiloto con cinturón"
+                }
+              ]
+            },
+            "vehiculo_id": "veh-a",
+            "asiento": {
+              "valor": "copiloto",
+              "fuente": "supuesto",
+              "confianza": 0.4
+            },
+            "cinturon": {
+              "valor": true,
+              "fuente": "relato",
+              "confianza": 0.9,
+              "evidencia": [
+                {
+                  "inicio": 225,
+                  "fin": 237,
+                  "texto": "con cinturón"
+                }
+              ]
+            }
+          }
+        ],
+        "eventos": [
+          {
+            "id": "ev-1",
+            "orden": 0,
+            "tipo": "impacto_vehiculo_objeto",
+            "actores": ["veh-a", "obj-1"],
+            "procedencia": {
+              "fuente": "relato",
+              "confianza": 0.9,
+              "evidencia": [
+                {
+                  "inicio": 125,
+                  "fin": 147,
+                  "texto": "pegó con la guarnición"
+                }
+              ]
+            }
+          }
+        ],
+        "danos_declarados": [],
+        "evidencias": []
+      },
+      "verificador": {
+        "revisados": 9,
+        "corregidos": 0,
+        "degradados": 0
+      },
+      "preguntas": [
+        {
+          "id": "maniobra:veh-a",
+          "texto": "Para llegar al punto del golpe tuviste que moverte unos 4 m hacia la derecha. ¿Cambiaste de carril o te abriste?",
+          "motivo": "contradiccion",
+          "campo": "vehiculos.0.maniobra",
+          "opciones": [
+            "cambió de carril a la izquierda",
+            "cambió de carril a la derecha",
+            "dio vuelta a la izquierda",
+            "dio vuelta a la derecha",
+            "siguió recto",
+            "no sé"
+          ]
+        },
+        {
+          "id": "frenado:veh-a",
+          "texto": "¿Alcanzaste a frenar antes del golpe?",
+          "motivo": "sensibilidad",
+          "campo": "vehiculos.0.frenado.aplico",
+          "opciones": ["sí", "no", "no sé"],
+          "reduccion": 0.442
+        },
+        {
+          "id": "velocidad:veh-b",
+          "texto": "¿A qué velocidad crees que iba el tráiler (B)?",
+          "motivo": "sensibilidad",
+          "campo": "vehiculos.1.velocidad_previa",
+          "reduccion": 0.397
+        }
+      ]
+    },
+    {
+      "id": "rmx-d012",
+      "titulo": "Una ciclista y un auto que da vuelta en Insurgentes",
+      "tipo": "ciclista",
+      "texto": "Circulaba en bicicleta por la ciclovía de avenida Insurgentes cuando un automóvil compacto dio vuelta a la derecha sin percatarse de mi presencia y me golpeó con su costado. Caí sobre el pavimento. Eran aproximadamente las 14:00 horas y el clima estaba despejado.",
+      "spec": {
+        "meta": {
+          "id": "demo-rmx-d012",
+          "version_esquema": "1.2.0",
+          "idioma": "es-MX",
+          "semilla": 32312,
+          "creado": "2026-10-13T00:00:00-06:00",
+          "relato": "Circulaba en bicicleta por la ciclovía de avenida Insurgentes cuando un automóvil compacto dio vuelta a la derecha sin percatarse de mi presencia y me golpeó con su costado. Caí sobre el pavimento. Eran aproximadamente las 14:00 horas y el clima estaba despejado.",
+          "origen_relato": "escrito",
+          "sintetico": true
+        },
+        "lugar": {
+          "tipo_via": {
+            "valor": "recta",
+            "fuente": "default",
+            "confianza": 0.3
+          },
+          "carriles_por_sentido": {
+            "valor": 2,
+            "fuente": "default",
+            "confianza": 0.3
+          },
+          "ancho_carril": {
+            "valor": 3.5,
+            "unidad": "m",
+            "fuente": "default",
+            "confianza": 0.3
+          },
+          "sentidos": {
+            "valor": "doble_sentido",
+            "fuente": "default",
+            "confianza": 0.3
+          },
+          "superficie": {
+            "valor": "asfalto",
+            "fuente": "default",
+            "confianza": 0.3
+          },
+          "estado_superficie": {
+            "valor": "seco",
+            "fuente": "default",
+            "confianza": 0.3
+          }
+        },
+        "entorno": {
+          "clima": {
+            "valor": "despejado",
+            "fuente": "relato",
+            "confianza": 0.9,
+            "evidencia": [
+              {
+                "inicio": 237,
+                "fin": 262,
+                "texto": "el clima estaba despejado"
+              }
+            ]
+          },
+          "iluminacion": {
+            "valor": "dia",
+            "fuente": "default",
+            "confianza": 0.3
+          }
+        },
+        "vehiculos": [
+          {
+            "id": "veh-a",
+            "rol": "A",
+            "clase": {
+              "valor": "bicicleta",
+              "fuente": "relato",
+              "confianza": 0.9,
+              "evidencia": [
+                {
+                  "inicio": 13,
+                  "fin": 22,
+                  "texto": "bicicleta"
+                }
+              ]
+            },
+            "color": {
+              "nombre": {
+                "valor": "gris",
+                "fuente": "default",
+                "confianza": 0.3
+              },
+              "hex": "#8a8d91"
+            },
+            "maniobra": {
+              "valor": "recto",
+              "fuente": "default",
+              "confianza": 0.3
+            },
+            "velocidad_previa": {
+              "valor": 40,
+              "unidad": "km/h",
+              "fuente": "supuesto",
+              "confianza": 0.3
+            },
+            "posicion_inicial": {
+              "x": -30,
+              "y": -1.75,
+              "rumbo_deg": 0,
+              "procedencia": {
+                "fuente": "supuesto",
+                "confianza": 0.3,
+                "nota": "Disposición genérica; ajústala en el croquis."
+              }
+            },
+            "ocupantes": ["per-1", "per-2"]
+          },
+          {
+            "id": "veh-b",
+            "rol": "B",
+            "clase": {
+              "valor": "sedan_compacto",
+              "fuente": "relato",
+              "confianza": 0.9,
+              "evidencia": [
+                {
+                  "inicio": 72,
+                  "fin": 90,
+                  "texto": "automóvil compacto"
+                }
+              ]
+            },
+            "color": {
+              "nombre": {
+                "valor": "gris",
+                "fuente": "default",
+                "confianza": 0.3
+              },
+              "hex": "#8a8d91"
+            },
+            "maniobra": {
+              "valor": "vuelta_derecha",
+              "fuente": "relato",
+              "confianza": 0.9,
+              "evidencia": [
+                {
+                  "inicio": 91,
+                  "fin": 114,
+                  "texto": "dio vuelta a la derecha"
+                }
+              ]
+            },
+            "velocidad_previa": {
+              "valor": 40,
+              "unidad": "km/h",
+              "fuente": "supuesto",
+              "confianza": 0.3
+            },
+            "posicion_inicial": {
+              "x": 25,
+              "y": 1.75,
+              "rumbo_deg": 180,
+              "procedencia": {
+                "fuente": "supuesto",
+                "confianza": 0.3,
+                "nota": "Disposición genérica; ajústala en el croquis."
+              }
+            }
+          }
+        ],
+        "personas": [
+          {
+            "id": "per-1",
+            "rol": {
+              "valor": "conductor",
+              "fuente": "supuesto",
+              "confianza": 0.4,
+              "nota": "narrador"
+            },
+            "vehiculo_id": "veh-a",
+            "asiento": {
+              "valor": "conductor",
+              "fuente": "supuesto",
+              "confianza": 0.4
+            }
+          },
+          {
+            "id": "per-2",
+            "rol": {
+              "valor": "ciclista",
+              "fuente": "relato",
+              "confianza": 0.9,
+              "evidencia": [
+                {
+                  "inicio": 0,
+                  "fin": 22,
+                  "texto": "Circulaba en bicicleta"
+                }
+              ]
+            },
+            "vehiculo_id": "veh-a"
+          }
+        ],
+        "eventos": [
+          {
+            "id": "ev-1",
+            "orden": 0,
+            "tipo": "impacto_vehiculo_vehiculo",
+            "actores": ["veh-a", "veh-b"],
+            "procedencia": {
+              "fuente": "relato",
+              "confianza": 0.9,
+              "evidencia": [
+                {
+                  "inicio": 148,
+                  "fin": 172,
+                  "texto": "me golpeó con su costado"
+                }
+              ]
+            }
+          }
+        ],
+        "danos_declarados": [],
+        "evidencias": []
+      },
+      "verificador": {
+        "revisados": 6,
+        "corregidos": 0,
+        "degradados": 0
+      },
+      "preguntas": [
+        {
+          "id": "zonas_impacto",
+          "texto": "Con las zonas de golpe indicadas los vehículos no llegan a tocarse. ¿En qué parte de cada vehículo fue el golpe?",
+          "motivo": "contradiccion",
+          "campo": "eventos.0.zonas_impacto",
+          "opciones": ["frente", "atrás", "lado izquierdo", "lado derecho"]
+        },
+        {
+          "id": "velocidad:veh-a",
+          "texto": "¿A qué velocidad aproximada ibas antes del golpe?",
+          "motivo": "sensibilidad",
+          "campo": "vehiculos.0.velocidad_previa",
+          "reduccion": 0.363
+        },
+        {
+          "id": "velocidad:veh-b",
+          "texto": "¿A qué velocidad crees que iba el auto (B)?",
+          "motivo": "sensibilidad",
+          "campo": "vehiculos.1.velocidad_previa",
+          "reduccion": 0.356
+        }
+      ]
+    }
+  ]
+}

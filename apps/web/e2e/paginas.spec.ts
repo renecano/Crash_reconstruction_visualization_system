@@ -74,3 +74,31 @@ test("recorrido técnico: E1–E9 con sus gráficas, la mejor marcada y el enlac
   await expect(page.getByRole("note")).toContainText("No es un peritaje");
   expect(errs).toEqual([]);
 });
+
+test("demo «Tú eres…»: elige un relato, contesta una ronda y lo ve en 3D sin servidor", async ({
+  page,
+}) => {
+  test.setTimeout(180_000);
+  const errs = errores(page);
+  const api: string[] = [];
+  page.on("request", (r) => {
+    if (new URL(r.url()).pathname.startsWith("/api/")) api.push(r.url());
+  });
+  await page.goto("/demo");
+  await page.getByTestId("demo-caso-rmx-d001").click();
+  await expect(page.getByTestId("demo-relato")).toContainText("Paseo Tollocan");
+  const velocidad = page
+    .getByTestId("preguntas")
+    .getByRole("listitem")
+    .filter({ hasText: "velocidad" })
+    .first();
+  await velocidad.getByRole("textbox").fill("20");
+  await page.getByTestId("responder").click();
+  await expect(page.getByTestId("demo-rondas")).toContainText("Rondas contestadas: 1");
+  await page.getByTestId("demo-3d").click();
+  await expect(page).toHaveURL(/\/visor\?escena=propia/);
+  await page.waitForFunction(() => window.__croquisReady === true, null, { timeout: 120_000 });
+  await expect(page.getByTestId("evidencia")).toBeVisible({ timeout: 120_000 });
+  expect(api).toEqual([]);
+  expect(errs).toEqual([]);
+});
