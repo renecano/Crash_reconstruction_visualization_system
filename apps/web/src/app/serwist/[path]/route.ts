@@ -15,7 +15,7 @@ function revision(): string {
 
 const rev = revision();
 /** Páginas que se abren sin red (todas las estáticas de la app). */
-const PAGINAS = ["/", "/visor", "/croquis", "/relato", "/historia", "/recorrido"];
+const PAGINAS = ["/", "/visor", "/croquis", "/relato", "/historia", "/recorrido", "/demo"];
 
 export const { dynamic, dynamicParams, revalidate, generateStaticParams, GET } = createSerwistRoute(
   {

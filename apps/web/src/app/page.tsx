@@ -16,6 +16,9 @@ export default function Page() {
         >
           Contar qué pasó
         </Link>
+        <Link href="/demo" className="rounded border border-neutral-400 px-4 py-2 font-medium">
+          Probar la demo: Tú eres…
+        </Link>
         <Link href="/visor" className="rounded border border-neutral-400 px-4 py-2 font-medium">
           Ver las escenas en 3D
         </Link>

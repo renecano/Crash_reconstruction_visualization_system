@@ -63,6 +63,13 @@ test.describe("demo sin red", () => {
     await waitReady(page);
     await expect(page.getByTestId("evidencia")).toBeVisible({ timeout: 120_000 });
 
+    // Demo «Tú eres…»: relato grabado, preguntas contestadas en el navegador, sin red.
+    await page.goto("/demo");
+    await page.getByTestId("demo-caso-rmx-d001").click();
+    await expect(page.getByTestId("demo-relato")).toContainText("Paseo Tollocan");
+    await page.getByTestId("responder").click();
+    await expect(page.getByTestId("demo-rondas")).toContainText("Rondas contestadas: 1");
+
     // Relato: lo único que pide red, y la interfaz lo dice.
     await page.goto("/relato");
     await expect(page.getByTestId("sin-red")).toContainText("Sin conexión");

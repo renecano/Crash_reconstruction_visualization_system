@@ -10,7 +10,6 @@
  */
 import {
   ask,
-  applyAnswers,
   buildSpec,
   extractSpec,
   factsFromOutput,
@@ -33,7 +32,7 @@ import {
   RedisBudgetStore,
   UpstashRateLimiter,
 } from "@croquis/extraction/server";
-import { schemaErrors } from "@croquis/scene-schema";
+import { InvalidSpecError, responder, type ResponderOut } from "@/lib/responder";
 import { join } from "node:path";
 import { z } from "zod";
 
@@ -224,32 +223,12 @@ function capitalize(s: string): string {
   return s ? s[0]!.toUpperCase() + s.slice(1) : s;
 }
 
-export class InvalidSpecError extends Error {
-  constructor(readonly errors: string[]) {
-    super("La escena no cumple el contrato");
-  }
-}
-
-export interface ResponderOut {
-  spec: Json;
-  aplicadas: string[];
-  preguntas: Json[];
-}
+export { InvalidSpecError, type ResponderOut };
 
 /** Aplica las respuestas (como dato de la persona) y propone la siguiente ronda. */
 export function responderRelato(body: z.infer<typeof ResponderIn>): ResponderOut {
-  const errs = schemaErrors(body.spec);
-  if (errs.length > 0) throw new InvalidSpecError(errs.slice(0, 10));
   const text = body.texto ? redact(body.texto).text : null;
-  const [spec, aplicadas] = applyAnswers(body.spec, body.respuestas);
-  const after = schemaErrors(spec);
-  if (after.length > 0) throw new InvalidSpecError(after.slice(0, 10));
-  const answered = new Set([...body.contestadas, ...Object.keys(body.respuestas)]);
-  return {
-    spec,
-    aplicadas,
-    preguntas: ask(spec, text, { answered }).map(preguntaToDict),
-  };
+  return responder(body.spec, text, body.respuestas, body.contestadas);
 }
 
 /** Cliente para el límite de peticiones: la primera IP de `x-forwarded-for` (Vercel la llena). */

@@ -28,7 +28,21 @@ Reglas de trabajo: `CLAUDE.md`. Especificación: `PLAN.md`.
 - **F10, paso 5 hecho** (rama `feat/f10-test`): el test de E5 se corrió **una vez** en `e74d971`, con todo fijo (`eval/results/e5.json`). Los números y su lectura honesta están en el README.
 - **F10, paso 6 hecho** (rama `feat/f10-galeria`): la galería de E5 está en `docs/galeria-e5/README.md`. Tiene 9 pares de foto real y render de Croquis: 3 frontales, 3 laterales y 3 de poste. El frontal desplazado y el alcance no tienen foto verificable en el test. **F10 cerrada.**
 - **F11, paso 1 hecho** (rama `feat/f11-recorrido`, ADR 0034): página de historia (`/historia`) y recorrido técnico (`/recorrido`), con datos generados desde `eval/results/` y una revisión en CI.
-- **Siguiente paso concreto:** F11, paso 2. La demo «Tú eres…» (PLAN §11). Casos precargados que corren sin servidor, con semilla: el visitante elige un relato, ve campo por campo qué entendió la IA desde una respuesta grabada, corrige el croquis, ve la reconstrucción y compara hipótesis.
+- **F11, paso 2 hecho** (rama `feat/f11-demo`, ADR 0035): la demo «Tú eres…» (`/demo`) usa seis relatos de ejemplo con la respuesta grabada de Claude. Las preguntas se contestan en el navegador, y la escena se abre en el croquis o en el visor 3D con hipótesis, sin servidor y sin red.
+- **Siguiente paso concreto:** F11, paso 3. Revisar el README contra el checklist de PLAN §15:
+  - problema con fuentes;
+  - cómo probarlo en vivo y en local;
+  - resultados E1–E9;
+  - mapa del repo;
+  - datos con fuente, licencia y lo que no cubren;
+  - IA responsable;
+  - límites y siguiente paso;
+  - respaldo de cada afirmación;
+  - pruebas;
+  - licencia y atribución.
+
+  Lo que falte se completa con enlaces.
+
 - **E1 del prompt v2 en el primer test, hecho** (PR #14). Sonnet 0.875 → 0.919 y Haiku 0.852 → 0.896. Además, E1 ahora compara cada contrafactual con la repetición del mismo relato (McNemar por tipo): ningún tipo difiere del ruido, y las reglas cambian con el modelo del vehículo en 6 de 52 pares (ADR 0012 §10).
 - **F8** cerrada el 2026-10-17 (PR #20 a #24). **F0** cerrado el 2026-10-10 (PR #1), **F1** el 2026-10-10 (PR #3), **F2** el 2026-10-13 (PR #4), **F3** el 2026-10-13 (PR #5), **F4** el 2026-10-13 (PR #6), **F5** el 2026-10-13 (PR #7), **F6** el 2026-10-14 (PR #8), **F7** el 2026-10-14 (PR #9; pendientes registrados); migración a Vercel el 2026-10-14 (PR #10); test CISS y prompt v2 el 2026-10-14 (PR #11).
 
@@ -1730,3 +1744,17 @@ Las ramas van una encima de otra y se fusionan en este orden, cada una con su PR
   - unitarias de formato y gráficas, incluida la que dibuja cada gráfica generada;
   - e2e de las dos páginas: textos, datos, imágenes cargadas, sin errores de consola y la mejor barra marcada en E3;
   - `sin-red` sigue en verde.
+
+**Paso 2 — Demo «Tú eres…» (2026-10-18, rama `feat/f11-demo`, ADR 0035):**
+
+- **Casos:** `pnpm --filter @croquis/extraction demo` → `apps/web/src/data/demo.json`, con `demo:check` en CI.
+  - Son seis relatos del dev de Relatos-MX (alcance, moto, objeto fijo, peatón, volcadura y ciclista), pasados por el pipeline TS de producción con la respuesta grabada de Claude Sonnet.
+  - Al generarlos, el verificador no corrigió ningún campo, y cada caso trae 3 preguntas en la primera ronda.
+- **`/demo`:** el visitante elige el relato y ve cada campo con su origen (del relato, supuesto o por omisión) y la cita de donde salió.
+  - **Preguntas:** las contesta en el navegador. `src/lib/responder.ts` ahora lo comparten la ruta del servidor y la demo.
+  - **Croquis y 3D:** abre el croquis o el visor 3D con la escena propia, y desde ahí compara hipótesis.
+- **Sin red:** la demo entra a la precarga, que queda en 83 entradas y 14.05 MiB (`f9_precarga.json`). La prueba `sin-red` contesta una ronda con la red cortada.
+- **Enlaces:** la portada y la historia enlazan la demo.
+- **Pruebas:**
+  - unitarias de `DemoApp`: elegir un caso, contestar sin servidor y abrir el visor;
+  - e2e: la demo completa hasta el visor sin ninguna petición a `/api/`, más `sin-red`, `relato` y `home`, todo en verde.

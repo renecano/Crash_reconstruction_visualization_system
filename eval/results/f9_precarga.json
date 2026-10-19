@@ -1,17 +1,17 @@
 {
   "name": "f9_precarga",
-  "generated_at": "2026-10-19T01:08:32.906Z",
-  "git_commit": "746a137",
-  "entradas": 80,
-  "paginas": 6,
-  "archivos_next": 57,
+  "generated_at": "2026-10-19T01:26:35.386Z",
+  "git_commit": "f583d7d",
+  "entradas": 83,
+  "paginas": 7,
+  "archivos_next": 59,
   "archivos_public": 17,
-  "bytes_archivos": 14574137,
-  "mb_archivos": 13.9,
+  "bytes_archivos": 14729062,
+  "mb_archivos": 14.05,
   "mib_por_modulo": {
-    "pdfmake": 1.01,
-    "mediabunny": 0.75,
-    "rapier": 4.33,
+    "pdfmake": 0.99,
+    "mediabunny": 0.73,
+    "rapier": 4.32,
     "three": 1.21,
     "imagenes_historia": 0.14
   },
@@ -106,24 +106,9 @@
       "bytes": 76711
     },
     {
-      "url": "/_next/static/chunks/3p0gp9628_l36.js",
+      "url": "/_next/static/chunks/3kiq0-r_39tdt.js",
       "tipo": "next",
-      "bytes": 1729
-    },
-    {
-      "url": "/_next/static/chunks/3ojxinhw5ct4v.js",
-      "tipo": "next",
-      "bytes": 49916
-    },
-    {
-      "url": "/_next/static/chunks/3lf6rblkd_qrj.js",
-      "tipo": "next",
-      "bytes": 44811
-    },
-    {
-      "url": "/_next/static/chunks/3jvhgfokez_ri.js",
-      "tipo": "next",
-      "bytes": 1863
+      "bytes": 28119
     },
     {
       "url": "/_next/static/chunks/3iwfubymmugfb.js",
@@ -146,6 +131,11 @@
       "bytes": 675411
     },
     {
+      "url": "/_next/static/chunks/369w84-vtwo58.js",
+      "tipo": "next",
+      "bytes": 40262
+    },
+    {
       "url": "/_next/static/chunks/308bfnkhocyau.js",
       "tipo": "next",
       "bytes": 39290
@@ -161,14 +151,24 @@
       "bytes": 13828
     },
     {
-      "url": "/_next/static/chunks/2wgwrtlog-gnj.css",
+      "url": "/_next/static/chunks/2uqckxpir3vfy.css",
       "tipo": "next",
-      "bytes": 21213
+      "bytes": 21374
+    },
+    {
+      "url": "/_next/static/chunks/2mwam7jcdbdbm.js",
+      "tipo": "next",
+      "bytes": 13378
     },
     {
       "url": "/_next/static/chunks/2lqyvdow5z4p5.js",
       "tipo": "next",
       "bytes": 47393
+    },
+    {
+      "url": "/_next/static/chunks/2kr8fiiaychk6.js",
+      "tipo": "next",
+      "bytes": 19191
     },
     {
       "url": "/_next/static/chunks/2hm7lfgbz-tq3.js",
@@ -191,19 +191,14 @@
       "bytes": 972197
     },
     {
-      "url": "/_next/static/chunks/1w74gg9i3nzqo.js",
+      "url": "/_next/static/chunks/2022o66jkuwmx.js",
       "tipo": "next",
-      "bytes": 10954
+      "bytes": 127530
     },
     {
-      "url": "/_next/static/chunks/1uat8m04zpon9.js",
+      "url": "/_next/static/chunks/1voxb58yy974u.js",
       "tipo": "next",
-      "bytes": 41461
-    },
-    {
-      "url": "/_next/static/chunks/1poaiv5dthl20.js",
-      "tipo": "next",
-      "bytes": 433606
+      "bytes": 162577
     },
     {
       "url": "/_next/static/chunks/1n2fj72hdh30t.js",
@@ -261,14 +256,24 @@
       "bytes": 229598
     },
     {
-      "url": "/_next/static/chunks/0_hra1qxlccp5.js",
+      "url": "/_next/static/chunks/11cmszv12-my5.js",
       "tipo": "next",
-      "bytes": 171282
+      "bytes": 20940
+    },
+    {
+      "url": "/_next/static/chunks/0ov8goh3e5vxo.js",
+      "tipo": "next",
+      "bytes": 38452
     },
     {
       "url": "/_next/static/chunks/0ifhaxcz0zhwd.js",
       "tipo": "next",
       "bytes": 316
+    },
+    {
+      "url": "/_next/static/chunks/0f7g-oaajbpa8.js",
+      "tipo": "next",
+      "bytes": 26308
     },
     {
       "url": "/_next/static/chunks/0ei6ssfuz565g.js",
@@ -286,6 +291,11 @@
       "bytes": 112594
     },
     {
+      "url": "/_next/static/chunks/0b3-y82uu68ah.js",
+      "tipo": "next",
+      "bytes": 433629
+    },
+    {
       "url": "/_next/static/chunks/02-ytlo92g2wo.js",
       "tipo": "next",
       "bytes": 698426
@@ -296,17 +306,17 @@
       "bytes": 22743
     },
     {
-      "url": "/_next/static/aF_-hc6HXAsRK6ikuhKXi/_ssgManifest.js",
+      "url": "/_next/static/-OHsRRLgcGh7i25_5YBjP/_ssgManifest.js",
       "tipo": "next",
       "bytes": 107
     },
     {
-      "url": "/_next/static/aF_-hc6HXAsRK6ikuhKXi/_clientMiddlewareManifest.js",
+      "url": "/_next/static/-OHsRRLgcGh7i25_5YBjP/_clientMiddlewareManifest.js",
       "tipo": "next",
       "bytes": 96
     },
     {
-      "url": "/_next/static/aF_-hc6HXAsRK6ikuhKXi/_buildManifest.js",
+      "url": "/_next/static/-OHsRRLgcGh7i25_5YBjP/_buildManifest.js",
       "tipo": "next",
       "bytes": 219
     },
@@ -422,6 +432,11 @@
     },
     {
       "url": "/recorrido",
+      "tipo": "pagina",
+      "bytes": null
+    },
+    {
+      "url": "/demo",
       "tipo": "pagina",
       "bytes": null
     }

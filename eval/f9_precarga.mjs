@@ -37,7 +37,7 @@ const urls = [...sw.matchAll(/\{([^{}]*)\}/g)]
   .filter((u) => u !== undefined);
 if (urls.length === 0) throw new Error("No se encontró la lista de precarga en sw.js");
 
-const PAGINAS = new Set(["/", "/visor", "/croquis", "/relato", "/historia", "/recorrido"]);
+const PAGINAS = new Set(["/", "/visor", "/croquis", "/relato", "/historia", "/recorrido", "/demo"]);
 const entradas = urls.map((url) => {
   if (PAGINAS.has(url)) return { url, tipo: "pagina", bytes: null };
   const file = url.startsWith("/_next/static/")

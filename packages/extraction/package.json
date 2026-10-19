@@ -13,7 +13,9 @@
     "typecheck": "tsc -p tsconfig.json",
     "test": "vitest run",
     "generate": "tsx scripts/generate-prompts.ts",
-    "generate:check": "tsx scripts/generate-prompts.ts --check"
+    "generate:check": "tsx scripts/generate-prompts.ts --check",
+    "demo": "tsx scripts/demo-casos.ts",
+    "demo:check": "tsx scripts/demo-casos.ts --check"
   },
   "devDependencies": {
     "@types/node": "catalog:",
