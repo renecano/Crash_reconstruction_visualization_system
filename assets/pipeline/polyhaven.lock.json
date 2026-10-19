@@ -40,5 +40,19 @@
       "url": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/leafy_grass/leafy_grass_rough_1k.jpg",
       "md5": "05f6bb1383e12b327727d313c5899cf2"
     }
+  },
+  "gravel_stones": {
+    "diff": {
+      "url": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/gravel_stones/gravel_stones_diff_1k.jpg",
+      "md5": "0e04ba65c86cbc55554877bad6a40354"
+    },
+    "nor_gl": {
+      "url": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/gravel_stones/gravel_stones_nor_gl_1k.jpg",
+      "md5": "ae11c45b9bf93346c4b521ab02ec165d"
+    },
+    "rough": {
+      "url": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/gravel_stones/gravel_stones_rough_1k.jpg",
+      "md5": "c1447058cea79417f1d19a4d8be8be28"
+    }
   }
 }

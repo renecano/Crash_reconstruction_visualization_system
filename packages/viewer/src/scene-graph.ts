@@ -57,7 +57,12 @@ import {
   type Mesh2D,
 } from "./road-geometry";
 import { asphaltMaterial, type AsphaltMaterial } from "./road-surface";
-import { texturedPlanarMaterial, type EnvTextures } from "./env-textures";
+import {
+  ENV_TEXTURE_NAMES,
+  texturedPlanarMaterial,
+  type EnvTextureName,
+  type EnvTextures,
+} from "./env-textures";
 import { buildDevice, type DeviceNode } from "./traffic-devices";
 import {
   HEADLIGHT_HALF_ANGLE_DEG,
@@ -82,6 +87,8 @@ import {
 
 export interface SceneGraphOptions {
   quality: QualityProfile;
+  /** Interruptores de diagnóstico de E6 (`window.__croquisDiag`); la página nunca los pone. */
+  diag?: { gravaPrevia?: boolean };
   env: Pick<EnvironmentSettings, "night" | "wet" | "groundColor" | "streetLights"> &
     Partial<Pick<EnvironmentSettings, "lightDirection" | "surface">>;
 }
@@ -120,6 +127,8 @@ export interface SceneGraph {
   readonly time: number;
   /** Mapa de entorno (cielo horneado) para que el piso mojado lo refleje; null lo quita. */
   setReflections(env: Texture | null): void;
+  /** Texturas que pide esta escena: las de siempre y, con `grava_suelta`, la grava. */
+  readonly wantedTextures: readonly EnvTextureName[];
   /** Texturas PBR del entorno (F8e): asfalto, concreto de banquetas y camellón, y pasto. */
   applyTextures(t: EnvTextures): void;
   dispose(): void;
@@ -367,7 +376,10 @@ export function buildSceneGraph(
   opts: SceneGraphOptions,
 ): SceneGraph {
   // Sin estado del piso (pruebas y llamadas antiguas): mojado o seco según `wet`.
-  const asphalt = asphaltMaterial(opts.env.surface ?? (opts.env.wet ? "mojado" : "seco"));
+  const asphalt = asphaltMaterial(
+    opts.env.surface ?? (opts.env.wet ? "mojado" : "seco"),
+    opts.diag?.gravaPrevia === true,
+  );
   const mats = sceneMaterials(opts, asphalt);
   const root = new Group();
   root.name = "escena";
@@ -993,8 +1005,12 @@ export function buildSceneGraph(
     setReflections(env: Texture | null) {
       asphalt.setReflections(env);
     },
+    wantedTextures: [
+      ...ENV_TEXTURE_NAMES,
+      ...(asphalt.look.patch?.grainM ? (["grava"] as const) : []),
+    ],
     applyTextures(t: EnvTextures) {
-      asphalt.applyTexture(t.asfalto ?? null);
+      asphalt.applyTexture(t.asfalto ?? null, t.grava ?? null);
       // Banqueta y camellón de concreto; suelo de pasto. Cada textura toma el color y la rugosidad
       // del material liso que reemplaza (seco o mojado, día o noche). La guarnición conserva su
       // material liso: en sus caras verticales la proyección en planta se vería rayada.

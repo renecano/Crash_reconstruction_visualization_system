@@ -85,6 +85,34 @@
           "media": 0.6859
         }
       }
+    },
+    "grava": {
+      "polyhaven": "gravel_stones",
+      "autor": "Amal Kumar",
+      "licencia": "CC0 1.0",
+      "url": "https://polyhaven.com/a/gravel_stones",
+      "mosaico_m": 2.0,
+      "uso": "Grava suelta sobre la calzada",
+      "archivos": {
+        "diff": {
+          "archivo": "grava_diff.webp",
+          "sha256": "a66c114b4b594103b04efd004ad4ac74f609809f80dbdf77572a39fa01bbf9a7",
+          "media": [
+            0.0797,
+            0.0798,
+            0.0746
+          ]
+        },
+        "nor_gl": {
+          "archivo": "grava_nor_gl.webp",
+          "sha256": "4753a0a9f3510f8fd7c511a6b03c141af08af77007c68e69d663451875b1158b"
+        },
+        "rough": {
+          "archivo": "grava_rough.webp",
+          "sha256": "a774898439db79db4f9e7a344514488626ca314dc97daca709e1844e86aab0b4",
+          "media": 0.7809
+        }
+      }
     }
   }
 }

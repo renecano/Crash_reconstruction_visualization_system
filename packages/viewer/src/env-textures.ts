@@ -36,7 +36,10 @@ import { QUALITY_PROFILES, type QualityLevel } from "./quality";
 
 export const TEXTURE_BASE_URL = "/texturas/";
 export const ENV_TEXTURE_NAMES = ["asfalto", "concreto", "pasto"] as const;
-export type EnvTextureName = (typeof ENV_TEXTURE_NAMES)[number];
+/** Texturas que solo se cargan si la escena las usa (la grava, con `grava_suelta`; ADR 0036). */
+export const OPTIONAL_TEXTURE_NAMES = ["grava"] as const;
+export type EnvTextureName =
+  (typeof ENV_TEXTURE_NAMES)[number] | (typeof OPTIONAL_TEXTURE_NAMES)[number];
 
 export interface EnvTexture {
   map: Texture;
@@ -78,17 +81,18 @@ function meanRoughOf(f: ManifestFile, name: string): number {
   return f.media;
 }
 
-/** Carga el manifiesto y los tres mapas de cada textura. */
+/** Carga el manifiesto y los tres mapas de cada textura pedida (por omisión, las de siempre). */
 export async function loadEnvTextures(
   baseUrl = TEXTURE_BASE_URL,
   fetchFn: typeof fetch = fetch,
   loadFn: (url: string) => Promise<Texture> = (url) => new TextureLoader().loadAsync(url),
+  names: readonly EnvTextureName[] = ENV_TEXTURE_NAMES,
 ): Promise<EnvTextures> {
   const res = await fetchFn(`${baseUrl}texturas.json`);
   if (!res.ok) throw new Error(`No se pudo leer ${baseUrl}texturas.json (${res.status})`);
   const manifest = (await res.json()) as Manifest;
   const out: EnvTextures = {};
-  for (const name of ENV_TEXTURE_NAMES) {
+  for (const name of names) {
     const entry = manifest.texturas[name];
     if (!entry) continue;
     const files = (["diff", "nor_gl", "rough"] as const).map((m) => {
