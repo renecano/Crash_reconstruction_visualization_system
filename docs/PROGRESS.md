@@ -39,15 +39,18 @@ Reglas de trabajo: `CLAUDE.md`. Especificación: `PLAN.md`.
 - **F11, pasos 4 y 5 hechos** (rama `feat/f11-guiones`):
   - **Guiones** de los tres videos en `docs/guiones/`.
   - **Kit de E9 listo** para que René lo corra: protocolo, consentimiento, la página `/e9` que anota solo métricas en el dispositivo, y `uv run croquis-eval e9`.
-- **Siguiente paso concreto:** F11, paso 6. Pendientes abiertos de F8:
-  - OSM en producción;
-  - líneas y banquetas en calles de OSM;
+- **F11, paso 6a hecho** (rama `feat/f8-grava`, ADR 0036): la grava suelta ya no se ve como camuflaje.
+  - **Todas las calidades:** manchas chicas con bordes suaves y grano de piedra.
+  - **Alta y ultra:** textura CC0 que solo se carga si la escena la usa.
+  - **Costo** (E6 antes y después en `objeto_fijo_arbol`): 0.5 ms por cuadro en media y 0.27 ms en baja.
+  - **Atribución corregida en `assets/ASSETS.md`:** el asfalto es de Dimitrios Savva y el pasto de Charlotte Baglioni.
+- **Siguiente paso concreto:** F11, paso 6b. Pendientes de F8 que quedan:
+  - corte del camellón en los cruces peatonales;
   - semáforo peatonal;
-  - textura de grava;
-  - corte del camellón en los cruces;
-  - texturas triplanares.
+  - rayas y banquetas sobre calles de OSM;
+  - OSM en producción.
 
-  Mientras tanto, E9 y la computadora de demo dependen de René.
+  Las texturas triplanares esperan a lo que muestre E9.
 
 - **E1 del prompt v2 en el primer test, hecho** (PR #14). Sonnet 0.875 → 0.919 y Haiku 0.852 → 0.896. Además, E1 ahora compara cada contrafactual con la repetición del mismo relato (McNemar por tipo): ningún tipo difiere del ruido, y las reglas cambian con el modelo del vehículo en 6 de 52 pares (ADR 0012 §10).
 - **F8** cerrada el 2026-10-17 (PR #20 a #24). **F0** cerrado el 2026-10-10 (PR #1), **F1** el 2026-10-10 (PR #3), **F2** el 2026-10-13 (PR #4), **F3** el 2026-10-13 (PR #5), **F4** el 2026-10-13 (PR #6), **F5** el 2026-10-13 (PR #7), **F6** el 2026-10-14 (PR #8), **F7** el 2026-10-14 (PR #9; pendientes registrados); migración a Vercel el 2026-10-14 (PR #10); test CISS y prompt v2 el 2026-10-14 (PR #11).
@@ -1804,3 +1807,19 @@ Las ramas van una encima de otra y se fusionan en este orden, cada una con su PR
   - unitarias de `e9.ts`, con el mismo caso que la de Python;
   - pytest de la agregación y la validación;
   - e2e: una sesión completa hasta el 3D, SUS y descarga con solo métricas.
+
+**Paso 6a — Grava suelta (2026-10-18, rama `feat/f8-grava`, ADR 0036):**
+
+- **`road-surface.ts`:** las manchas de grava tienen grano de piedra (2.5 cm), bordes suaves (`edge`) y opacidad parcial (`opacity`). Los demás estados del piso no cambian.
+- **Textura «Gravel Stones»** (Poly Haven, Amal Kumar, CC0): entra al pipeline (`polyhaven.lock.json`, `texturas.json`).
+  - **Cuándo se carga:** solo con `grava_suelta` (`SceneGraph.wantedTextures` y `loadEnvTextures(…, names)`).
+  - **Cómo se usa:** en alta y ultra llena las manchas con su color normalizado y su relieve.
+- **Diagnóstico y medición:** el interruptor `gravaPrevia` (`window.__croquisDiag`) dibuja las manchas de antes para medir en E6 (`e6_ab_grava_*_webgpu.json`, sobre `5157fee`).
+- **Precarga:** 87 entradas y 14.31 MiB (`f9_precarga.json`), porque la grava también se precarga para la demo sin red.
+- **Revisión visual:** capturas con la GPU real en media (grano) y alta (textura). Las referencias de CI de `objeto_fijo_arbol` se regeneran en Linux y se revisan.
+- **Pruebas:**
+  - el aspecto de la grava;
+  - la textura que solo se pide con grava;
+  - el relieve de las manchas con y sin textura de asfalto;
+  - el interruptor de diagnóstico.
+- **Incidente:** una corrida local de las pruebas del visor dio 234 de 238 y tres más dieron 238 de 238. No se reprodujo. Se suma al antecedente de `debris.test.ts` (F3).
