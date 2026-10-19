@@ -42,3 +42,6 @@ apps/web/public/texturas/texturas.json
 apps/web/public/workers
 # Partición congelada de E5: sus bytes tienen SHA-256 fijo (ADR 0032)
 eval/e5
+
+# Datos generados de las páginas (scripts/build-paginas.mjs y demo-casos.ts): se comparan byte a byte
+apps/web/src/data/
