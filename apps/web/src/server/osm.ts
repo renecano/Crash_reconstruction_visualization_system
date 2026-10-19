@@ -104,6 +104,8 @@ export class OsmError extends Error {
 export interface OsmOut {
   respuesta: OverpassResponse;
   cache: "hit" | "miss";
+  /** Host de la instancia de Overpass que respondió; null si salió de la caché. */
+  instancia: string | null;
 }
 
 /**
@@ -119,7 +121,7 @@ export async function callesCerca(
   const lon = Number(input.lon.toFixed(5));
   const key = cacheKey(lat, lon, input.radio);
   const cached = await deps.cache.get(key);
-  if (cached) return { respuesta: cached, cache: "hit" };
+  if (cached) return { respuesta: cached, cache: "hit", instancia: null };
   if (!(await deps.limiter.allow(clientKey))) {
     throw new OsmError(429, "Demasiadas consultas al mapa en una hora. Intenta más tarde.");
   }
@@ -145,7 +147,7 @@ export async function callesCerca(
       }
       if (!Array.isArray(respuesta.elements)) continue;
       await deps.cache.set(key, respuesta);
-      return { respuesta, cache: "miss" };
+      return { respuesta, cache: "miss", instancia: new URL(url).host };
     }
     if (res.status !== 429 && res.status < 500) break;
   }

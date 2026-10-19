@@ -54,6 +54,7 @@ async function pedir() {
       segundos,
       x_vercel_cache: res.headers.get("x-vercel-cache"),
       x_croquis_cache: res.headers.get("x-croquis-cache"),
+      instancia_overpass: res.headers.get("x-croquis-overpass"),
       error: res.ok ? null : (json?.error ?? cuerpo.slice(0, 200)),
     },
     json: res.ok ? json : null,
