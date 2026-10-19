@@ -10,6 +10,8 @@ import {
   OsmIn,
   OVERPASS_URL,
   OVERPASS_URLS,
+  ROUNDS,
+  BUDGET_S,
   USER_AGENT,
   type OsmDeps,
 } from "./osm";
@@ -72,20 +74,47 @@ describe("calles de OSM en producción (ADR 0040)", () => {
     const d = deps([new Response("", { status: 502 }), new Error("timeout"), ok()]);
     const r = await callesCerca({ lat: 19.27, lon: -99.65, radio: 100 }, "ip", d);
     expect(r.cache).toBe("miss");
-    expect(r.instancia).toBe("maps.mail.ru");
+    expect(r.instancia).toBe("overpass.private.coffee");
     expect(d.urls).toEqual([...OVERPASS_URLS]);
     expect(d.urls[0]).toBe(OVERPASS_URL);
   });
 
+  it("da una segunda vuelta: las fallas de las instancias públicas son intermitentes", async () => {
+    const d = deps([
+      new Response("", { status: 502 }),
+      new Response("", { status: 504 }),
+      new Error("timeout"),
+      ok(),
+    ]);
+    const r = await callesCerca({ lat: 19.27, lon: -99.65, radio: 100 }, "ip", d);
+    expect(r.instancia).toBe("overpass-api.de");
+    expect(d.urls).toEqual([...OVERPASS_URLS, OVERPASS_URL]);
+  });
+
+  it("no pasa del tiempo total: cada espera se recorta a lo que queda", async () => {
+    let t = 0;
+    const d = { ...deps([new Response("", { status: 502 }), ok()]), now: () => t };
+    const fetcher = d.fetcher;
+    d.fetcher = ((url: string, init: RequestInit) => {
+      t += (BUDGET_S - 0.5) * 1000; // la primera se lleva casi todo el tiempo
+      return fetcher(url, init);
+    }) as typeof fetch;
+    await expect(
+      callesCerca({ lat: 19.27, lon: -99.65, radio: 100 }, "ip", d),
+    ).rejects.toMatchObject({ status: 502 });
+    expect(d.urls).toHaveLength(1);
+  });
+
   it("si ninguna responde, 502 con un mensaje claro; un error de la consulta no se reintenta", async () => {
     const d = deps([
-      new Response("", { status: 504 }),
-      new Response("", { status: 500 }),
-      new Error("red"),
+      ...Array.from({ length: ROUNDS * OVERPASS_URLS.length }, (_, i) =>
+        i % 3 === 2 ? new Error("red") : new Response("", { status: 504 }),
+      ),
     ]);
     await expect(
       callesCerca({ lat: 19.27, lon: -99.65, radio: 100 }, "ip", d),
     ).rejects.toMatchObject({ status: 502 });
+    expect(d.urls).toHaveLength(ROUNDS * OVERPASS_URLS.length);
     const otra = deps([new Response("", { status: 400 })]);
     await expect(callesCerca({ lat: 19.27, lon: -99.65, radio: 100 }, "ip", otra)).rejects.toThrow(
       OsmError,

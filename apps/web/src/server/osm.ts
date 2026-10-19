@@ -21,17 +21,25 @@ import { z } from "zod";
 
 export const OVERPASS_URL = "https://overpass-api.de/api/interpreter";
 /**
- * Instancias públicas de Overpass, en orden: la principal y dos espejos públicos de la lista de la
- * wiki de OSM. Las públicas se saturan seguido (ADR 0040): si una no responde, se prueba la
- * siguiente.
+ * Instancias públicas de Overpass, en orden: la principal y los dos espejos globales sin llave de
+ * la lista de la wiki de OSM. Las públicas se saturan seguido (ADR 0040): si una no responde, se
+ * prueba la siguiente. Van primero las que, saturadas, fallan rápido (502 o 504 en segundos) y al
+ * final la que, saturada, no contesta y se lleva la espera completa (`eval/results/osm_instancias*`).
  */
 export const OVERPASS_URLS = [
   OVERPASS_URL,
-  "https://overpass.private.coffee/api/interpreter",
   "https://maps.mail.ru/osm/tools/overpass/api/interpreter",
+  "https://overpass.private.coffee/api/interpreter",
 ] as const;
-/** Espera por instancia (s): las tres caben en el límite de 60 s de la función. */
+/** Espera máxima por instancia (s). */
 export const TIMEOUT_S = 15;
+/**
+ * Vueltas por las instancias. Las fallas son intermitentes: el 2026-10-19 un segundo intento
+ * inmediato entró después de un 502 (`eval/results/osm_produccion_v1_r148.json`).
+ */
+export const ROUNDS = 2;
+/** Tiempo total para Overpass (s): deja margen dentro del límite de 60 s de la función. */
+export const BUDGET_S = 50;
 export const USER_AGENT =
   "Croquis/0.1 (reconstruccion ilustrativa de percances; proyecto academico)";
 /** Días que se guarda la respuesta de un punto: las calles cambian poco. */
@@ -66,6 +74,8 @@ export interface OsmDeps {
   fetcher: typeof fetch;
   cache: OsmCache;
   limiter: RateLimiter;
+  /** Reloj en ms (inyectable en las pruebas). */
+  now?: () => number;
 }
 
 export function defaultOsmDeps(env: NodeJS.ProcessEnv = process.env): OsmDeps {
@@ -110,7 +120,8 @@ export interface OsmOut {
 
 /**
  * Respuesta de Overpass para el punto. Usa la caché; si una instancia está saturada (429 o 5xx) o
- * no responde a tiempo, prueba la siguiente. Un error de la consulta (4xx) no se reintenta.
+ * no responde a tiempo, prueba la siguiente, hasta `ROUNDS` vueltas y `BUDGET_S` segundos en total.
+ * Un error de la consulta (4xx) no se reintenta.
  */
 export async function callesCerca(
   input: z.infer<typeof OsmIn>,
@@ -126,30 +137,39 @@ export async function callesCerca(
     throw new OsmError(429, "Demasiadas consultas al mapa en una hora. Intenta más tarde.");
   }
   const body = new URLSearchParams({ data: overpassQuery(lat, lon, input.radio) });
-  for (const url of OVERPASS_URLS) {
-    let res: Response;
-    try {
-      res = await deps.fetcher(url, {
-        method: "POST",
-        headers: { "User-Agent": USER_AGENT, "Content-Type": "application/x-www-form-urlencoded" },
-        body,
-        signal: AbortSignal.timeout(TIMEOUT_S * 1000),
-      });
-    } catch {
-      continue; // sin respuesta a tiempo o sin red: la siguiente instancia
-    }
-    if (res.ok) {
-      let respuesta: OverpassResponse;
+  const now = deps.now ?? Date.now;
+  const deadline = now() + BUDGET_S * 1000;
+  rounds: for (let round = 0; round < ROUNDS; round++) {
+    for (const url of OVERPASS_URLS) {
+      const left = deadline - now();
+      if (left < 1000) break rounds;
+      let res: Response;
       try {
-        respuesta = (await res.json()) as OverpassResponse;
+        res = await deps.fetcher(url, {
+          method: "POST",
+          headers: {
+            "User-Agent": USER_AGENT,
+            "Content-Type": "application/x-www-form-urlencoded",
+          },
+          body,
+          signal: AbortSignal.timeout(Math.min(TIMEOUT_S * 1000, left)),
+        });
       } catch {
-        continue;
+        continue; // sin respuesta a tiempo o sin red: la siguiente instancia
       }
-      if (!Array.isArray(respuesta.elements)) continue;
-      await deps.cache.set(key, respuesta);
-      return { respuesta, cache: "miss", instancia: new URL(url).host };
+      if (res.ok) {
+        let respuesta: OverpassResponse;
+        try {
+          respuesta = (await res.json()) as OverpassResponse;
+        } catch {
+          continue;
+        }
+        if (!Array.isArray(respuesta.elements)) continue;
+        await deps.cache.set(key, respuesta);
+        return { respuesta, cache: "miss", instancia: new URL(url).host };
+      }
+      if (res.status !== 429 && res.status < 500) break rounds;
     }
-    if (res.status !== 429 && res.status < 500) break;
   }
   throw new OsmError(
     502,
