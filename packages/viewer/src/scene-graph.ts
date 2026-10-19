@@ -51,6 +51,7 @@ import {
 import {
   buildMapRoadGeometry,
   buildRoadGeometry,
+  crosswalkLength,
   CURB_HEIGHT,
   dashPatternFor,
   markingsFor,
@@ -400,12 +401,18 @@ export function buildSceneGraph(
   const lugar = spec.lugar;
   const layout = roadLayout(lugar);
   const mainWidth = layout.strips[0]?.width ?? layout.arcs[0]?.width ?? 7;
+  const cwLength = crosswalkLength(
+    lugar.tipo_via.valor,
+    lugar.carriles_por_sentido.valor,
+    lugar.banquetas?.valor ?? false,
+  );
   const crosswalks = (lugar.dispositivos ?? [])
     .filter((d) => d.tipo === "paso_peatonal")
     .map((d) => ({
       center: { x: d.posicion.x, y: d.posicion.y },
       roadHeading: d.orientacion_deg ?? 0,
       roadWidth: mainWidth,
+      length: cwLength,
     }));
   const devTipos = (lugar.dispositivos ?? []).map((d) => d.tipo);
   const limite = (lugar.dispositivos ?? []).find((d) => d.limite_velocidad)?.limite_velocidad;
