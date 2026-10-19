@@ -61,6 +61,7 @@ Reglas de trabajo: `CLAUDE.md`. Especificación: `PLAN.md`.
   - **Dónde:** a 1.20 m de la vía que cruza o del paso peatonal, en los carriles del sentido del vehículo.
   - **En qué escenas:** las de plantilla y las del mapa, en el croquis y en el visor.
   - **Límite:** en una recta no se dibuja.
+  - **Referencias visuales:** se regeneraron en CI (Linux) las de `lateral_interseccion` e `interseccion_toluca` y se revisaron; las otras 22 salieron idénticas byte por byte.
 - **Pendientes menores:**
   - prompt v4 con el semáforo peatonal;
   - texturas triplanares, después de E9.
