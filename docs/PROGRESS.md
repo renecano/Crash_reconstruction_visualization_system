@@ -58,7 +58,6 @@ Reglas de trabajo: `CLAUDE.md`. Especificación: `PLAN.md`.
   - prompt v4 con el semáforo peatonal;
   - texturas triplanares, después de E9.
 - **Siguiente paso concreto:** F11 queda en lo que depende de René: E9 (el kit está listo) y la computadora de demo (E6 en alta y ultra). Mientras tanto:
-  - correr `node eval/osm_produccion.mjs --radio <uno sin pedir>` con la ruta nueva desplegada;
   - rayas de OSM en el croquis 2D y paso peatonal según la NOM-034 (PR #57, ADR 0041 y 0042).
 
 - **E1 del prompt v2 en el primer test, hecho** (PR #14). Sonnet 0.875 → 0.919 y Haiku 0.852 → 0.896. Además, E1 ahora compara cada contrafactual con la repetición del mismo relato (McNemar por tipo): ningún tipo difiere del ruido, y las reglas cambian con el modelo del vehículo en 6 de 52 pares (ADR 0012 §10).
@@ -1902,4 +1901,8 @@ Las ramas van una encima de otra y se fusionan en este orden, cada una con su PR
   - hasta dos vueltas en 50 s;
   - cabecera `X-Croquis-Overpass` con la instancia que contestó.
 - **Pruebas del servidor:** 7 (segunda vuelta y tiempo total nuevas).
-- **Pendiente:** correr `eval/osm_produccion.mjs` con la ruta nueva desplegada. Opción si las públicas siguen así: NextGIS (gratis, pero pide cuenta y llave; solo René).
+- **Ruta nueva desplegada:**
+  - **Radio 146 m:** 200 al primer intento, a los 45.87 s, desde VK Maps; las dos calles que faltan quedan fuera del radio (146.7 m y 147.7 m).
+  - **Radio 145 m:** tres 502.
+  - **Conclusión:** funciona, pero las públicas fallan seguido (`osm_produccion_v3_*.json`).
+- **Opción:** NextGIS (gratis, pero pide cuenta y llave; solo René).
