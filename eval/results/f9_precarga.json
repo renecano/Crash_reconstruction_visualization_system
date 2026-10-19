@@ -1,13 +1,20 @@
 {
   "name": "f9_precarga",
-  "generated_at": "2026-10-18T01:16:39.590Z",
-  "git_commit": "fa14528",
-  "entradas": 67,
-  "paginas": 4,
-  "archivos_next": 48,
-  "archivos_public": 15,
-  "bytes_archivos": 11584820,
-  "mb_archivos": 11.05,
+  "generated_at": "2026-10-19T01:08:32.906Z",
+  "git_commit": "746a137",
+  "entradas": 80,
+  "paginas": 6,
+  "archivos_next": 57,
+  "archivos_public": 17,
+  "bytes_archivos": 14574137,
+  "mb_archivos": 13.9,
+  "mib_por_modulo": {
+    "pdfmake": 1.01,
+    "mediabunny": 0.75,
+    "rapier": 4.33,
+    "three": 1.21,
+    "imagenes_historia": 0.14
+  },
   "mayor": {
     "url": "/_next/static/chunks/0ei6ssfuz565g.js",
     "tipo": "next",
@@ -79,44 +86,49 @@
       "bytes": 12872
     },
     {
-      "url": "/_next/static/cRxmW_f4z5DXss2Prbhjs/_ssgManifest.js",
-      "tipo": "next",
-      "bytes": 107
-    },
-    {
-      "url": "/_next/static/cRxmW_f4z5DXss2Prbhjs/_clientMiddlewareManifest.js",
-      "tipo": "next",
-      "bytes": 96
-    },
-    {
-      "url": "/_next/static/cRxmW_f4z5DXss2Prbhjs/_buildManifest.js",
-      "tipo": "next",
-      "bytes": 219
-    },
-    {
       "url": "/_next/static/chunks/turbopack-3-ry682tkyiqk.js",
       "tipo": "next",
       "bytes": 10030
     },
     {
-      "url": "/_next/static/chunks/3y5c7dj9eenh3.js",
+      "url": "/_next/static/chunks/43v3j-3rbjww8.js",
       "tipo": "next",
-      "bytes": 55868
+      "bytes": 49945
     },
     {
-      "url": "/_next/static/chunks/3o3syi6am1bur.js",
+      "url": "/_next/static/chunks/3t31z_rf4ymnb.js",
       "tipo": "next",
-      "bytes": 9892
+      "bytes": 32672
     },
     {
-      "url": "/_next/static/chunks/3e93vbtox2ifs.js",
+      "url": "/_next/static/chunks/3paz8ur32ej0-.js",
       "tipo": "next",
-      "bytes": 76842
+      "bytes": 76711
     },
     {
-      "url": "/_next/static/chunks/3cq5ksyk9v0-e.js",
+      "url": "/_next/static/chunks/3p0gp9628_l36.js",
       "tipo": "next",
-      "bytes": 78086
+      "bytes": 1729
+    },
+    {
+      "url": "/_next/static/chunks/3ojxinhw5ct4v.js",
+      "tipo": "next",
+      "bytes": 49916
+    },
+    {
+      "url": "/_next/static/chunks/3lf6rblkd_qrj.js",
+      "tipo": "next",
+      "bytes": 44811
+    },
+    {
+      "url": "/_next/static/chunks/3jvhgfokez_ri.js",
+      "tipo": "next",
+      "bytes": 1863
+    },
+    {
+      "url": "/_next/static/chunks/3iwfubymmugfb.js",
+      "tipo": "next",
+      "bytes": 78085
     },
     {
       "url": "/_next/static/chunks/39p91420rq_gc.js",
@@ -124,29 +136,34 @@
       "bytes": 46919
     },
     {
+      "url": "/_next/static/chunks/38znorp1klk3h.js",
+      "tipo": "next",
+      "bytes": 61132
+    },
+    {
+      "url": "/_next/static/chunks/36aw7cm77etg0.js",
+      "tipo": "next",
+      "bytes": 675411
+    },
+    {
+      "url": "/_next/static/chunks/308bfnkhocyau.js",
+      "tipo": "next",
+      "bytes": 39290
+    },
+    {
+      "url": "/_next/static/chunks/2_hrkglhx-1la.js",
+      "tipo": "next",
+      "bytes": 55871
+    },
+    {
       "url": "/_next/static/chunks/2xgwltt_5b_0g.js",
       "tipo": "next",
       "bytes": 13828
     },
     {
-      "url": "/_next/static/chunks/2vcsg_18mjyv2.js",
+      "url": "/_next/static/chunks/2wgwrtlog-gnj.css",
       "tipo": "next",
-      "bytes": 1050118
-    },
-    {
-      "url": "/_next/static/chunks/2uy7w_uho55s-.js",
-      "tipo": "next",
-      "bytes": 49942
-    },
-    {
-      "url": "/_next/static/chunks/2pesx2c50gbzz.js",
-      "tipo": "next",
-      "bytes": 61147
-    },
-    {
-      "url": "/_next/static/chunks/2mj33p69vfz1v.js",
-      "tipo": "next",
-      "bytes": 176035
+      "bytes": 21213
     },
     {
       "url": "/_next/static/chunks/2lqyvdow5z4p5.js",
@@ -154,39 +171,59 @@
       "bytes": 47393
     },
     {
+      "url": "/_next/static/chunks/2hm7lfgbz-tq3.js",
+      "tipo": "next",
+      "bytes": 590329
+    },
+    {
       "url": "/_next/static/chunks/2flxdlha9xce9.js",
       "tipo": "next",
       "bytes": 31076
     },
     {
-      "url": "/_next/static/chunks/2eq2q9ns6w4r9.js",
+      "url": "/_next/static/chunks/26w2u-kia79oe.js",
       "tipo": "next",
-      "bytes": 229821
+      "bytes": 5584
     },
     {
-      "url": "/_next/static/chunks/2ahjprhtkt_kh.js",
+      "url": "/_next/static/chunks/24g5ex4l7ysf2.js",
       "tipo": "next",
-      "bytes": 16811
+      "bytes": 972197
     },
     {
-      "url": "/_next/static/chunks/20210556blxea.js",
+      "url": "/_next/static/chunks/1w74gg9i3nzqo.js",
       "tipo": "next",
-      "bytes": 450934
+      "bytes": 10954
+    },
+    {
+      "url": "/_next/static/chunks/1uat8m04zpon9.js",
+      "tipo": "next",
+      "bytes": 41461
+    },
+    {
+      "url": "/_next/static/chunks/1poaiv5dthl20.js",
+      "tipo": "next",
+      "bytes": 433606
+    },
+    {
+      "url": "/_next/static/chunks/1n2fj72hdh30t.js",
+      "tipo": "next",
+      "bytes": 22525
+    },
+    {
+      "url": "/_next/static/chunks/1kyp3kjsc0r-i.js",
+      "tipo": "next",
+      "bytes": 377262
+    },
+    {
+      "url": "/_next/static/chunks/1k1k2zr7osl-d.js",
+      "tipo": "next",
+      "bytes": 164342
     },
     {
       "url": "/_next/static/chunks/1jmzlnf5tivbh.js",
       "tipo": "next",
       "bytes": 199
-    },
-    {
-      "url": "/_next/static/chunks/1hjspn876d3cq.js",
-      "tipo": "next",
-      "bytes": 215
-    },
-    {
-      "url": "/_next/static/chunks/1fxidn6a7ryib.js",
-      "tipo": "next",
-      "bytes": 589110
     },
     {
       "url": "/_next/static/chunks/1etx5wy42l_-2.js",
@@ -199,9 +236,14 @@
       "bytes": 20766
     },
     {
-      "url": "/_next/static/chunks/1d8xsy-pp9p_c.js",
+      "url": "/_next/static/chunks/1asp-im31uda7.js",
       "tipo": "next",
-      "bytes": 168186
+      "bytes": 51527
+    },
+    {
+      "url": "/_next/static/chunks/1alfyf3fq49id.js",
+      "tipo": "next",
+      "bytes": 854634
     },
     {
       "url": "/_next/static/chunks/1abi-6zpu1itl.js",
@@ -209,29 +251,24 @@
       "bytes": 7820
     },
     {
-      "url": "/_next/static/chunks/15y5ulilqj8fp.css",
+      "url": "/_next/static/chunks/17feh1kt7yj59.js",
       "tipo": "next",
-      "bytes": 19250
+      "bytes": 57842
     },
     {
-      "url": "/_next/static/chunks/130s-x69sx8lu.js",
+      "url": "/_next/static/chunks/16_885f846a6x.js",
       "tipo": "next",
-      "bytes": 5361
+      "bytes": 229598
     },
     {
-      "url": "/_next/static/chunks/0_s5vfqa1rctk.js",
+      "url": "/_next/static/chunks/0_hra1qxlccp5.js",
       "tipo": "next",
-      "bytes": 10217
+      "bytes": 171282
     },
     {
-      "url": "/_next/static/chunks/0lg--1hrdhip_.js",
+      "url": "/_next/static/chunks/0ifhaxcz0zhwd.js",
       "tipo": "next",
-      "bytes": 49916
-    },
-    {
-      "url": "/_next/static/chunks/0g-43_47byvye.js",
-      "tipo": "next",
-      "bytes": 40517
+      "bytes": 316
     },
     {
       "url": "/_next/static/chunks/0ei6ssfuz565g.js",
@@ -239,19 +276,19 @@
       "bytes": 4369395
     },
     {
+      "url": "/_next/static/chunks/0dpr73tl_6o1a.js",
+      "tipo": "next",
+      "bytes": 201939
+    },
+    {
       "url": "/_next/static/chunks/0cz1d0mv5g_q7.js",
       "tipo": "next",
       "bytes": 112594
     },
     {
-      "url": "/_next/static/chunks/0bqdyaq_qkmah.js",
+      "url": "/_next/static/chunks/02-ytlo92g2wo.js",
       "tipo": "next",
-      "bytes": 57841
-    },
-    {
-      "url": "/_next/static/chunks/08df-buqqpg2l.js",
-      "tipo": "next",
-      "bytes": 28828
+      "bytes": 698426
     },
     {
       "url": "/_next/static/chunks/003f1vlzfvc0j.js",
@@ -259,9 +296,24 @@
       "bytes": 22743
     },
     {
+      "url": "/_next/static/aF_-hc6HXAsRK6ikuhKXi/_ssgManifest.js",
+      "tipo": "next",
+      "bytes": 107
+    },
+    {
+      "url": "/_next/static/aF_-hc6HXAsRK6ikuhKXi/_clientMiddlewareManifest.js",
+      "tipo": "next",
+      "bytes": 96
+    },
+    {
+      "url": "/_next/static/aF_-hc6HXAsRK6ikuhKXi/_buildManifest.js",
+      "tipo": "next",
+      "bytes": 219
+    },
+    {
       "url": "/workers/reconstruct.js",
       "tipo": "public",
-      "bytes": 769666
+      "bytes": 769874
     },
     {
       "url": "/texturas/texturas.json",
@@ -334,6 +386,16 @@
       "bytes": 762388
     },
     {
+      "url": "/historia/toluca-dano.jpg",
+      "tipo": "public",
+      "bytes": 64246
+    },
+    {
+      "url": "/historia/toluca-cruce.jpg",
+      "tipo": "public",
+      "bytes": 77327
+    },
+    {
       "url": "/",
       "tipo": "pagina",
       "bytes": null
@@ -350,6 +412,16 @@
     },
     {
       "url": "/relato",
+      "tipo": "pagina",
+      "bytes": null
+    },
+    {
+      "url": "/historia",
+      "tipo": "pagina",
+      "bytes": null
+    },
+    {
+      "url": "/recorrido",
       "tipo": "pagina",
       "bytes": null
     }

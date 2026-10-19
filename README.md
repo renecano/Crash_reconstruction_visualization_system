@@ -67,7 +67,7 @@ pnpm --filter @croquis/web test:e2e   # Playwright (requiere `playwright install
 
 ### En vivo
 
-Producción: https://croquis-sage.vercel.app, desplegada desde `main` en Vercel (web y API como Route Handlers; ADR 0011). Cada rama tiene su vista previa. La extracción usa Claude con un tope de gasto diario y un límite por hora (ver `.env.example`).
+Producción: https://croquis-sage.vercel.app ([historia](https://croquis-sage.vercel.app/historia) · [recorrido técnico](https://croquis-sage.vercel.app/recorrido)), desplegada desde `main` en Vercel (web y API como Route Handlers; ADR 0011). Cada rama tiene su vista previa. La extracción usa Claude con un tope de gasto diario y un límite por hora (ver `.env.example`).
 
 ## Resultados medidos
 

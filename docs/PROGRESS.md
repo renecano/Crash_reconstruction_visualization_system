@@ -27,7 +27,8 @@ Reglas de trabajo: `CLAUDE.md`. Especificación: `PLAN.md`.
 - **F10, pasos 3 y 4 hechos** (rama `feat/f10-reproductor`, ADR 0033): el reproductor de E5 en TS y el ajuste de la forma y el ancho del daño por zona, solo con desarrollo. La malla del visor sigue al solver con una mediana por zona de 0.04 a 0.86 cm por estación. Cambian cinco grupos de zonas; en desarrollo, el error por punto en laterales de CISS baja de 4.99 a 4.67 cm (`eval/results/e5_desarrollo*.json`).
 - **F10, paso 5 hecho** (rama `feat/f10-test`): el test de E5 se corrió **una vez** en `e74d971`, con todo fijo (`eval/results/e5.json`). Los números y su lectura honesta están en el README.
 - **F10, paso 6 hecho** (rama `feat/f10-galeria`): la galería de E5 está en `docs/galeria-e5/README.md`. Tiene 9 pares de foto real y render de Croquis: 3 frontales, 3 laterales y 3 de poste. El frontal desplazado y el alcance no tienen foto verificable en el test. **F10 cerrada.**
-- **Siguiente paso concreto:** F11 (PLAN §13). Mientras llegan la computadora de demo y las pruebas con personas (E9), retomar los pendientes abiertos de F8 en `docs/PROGRESS.md`: OSM en producción, líneas y banquetas en calles de OSM, semáforo peatonal, textura de grava, corte del camellón en los cruces y texturas triplanares.
+- **F11, paso 1 hecho** (rama `feat/f11-recorrido`, ADR 0034): página de historia (`/historia`) y recorrido técnico (`/recorrido`), con datos generados desde `eval/results/` y una revisión en CI.
+- **Siguiente paso concreto:** F11, paso 2. La demo «Tú eres…» (PLAN §11). Casos precargados que corren sin servidor, con semilla: el visitante elige un relato, ve campo por campo qué entendió la IA desde una respuesta grabada, corrige el croquis, ve la reconstrucción y compara hipótesis.
 - **E1 del prompt v2 en el primer test, hecho** (PR #14). Sonnet 0.875 → 0.919 y Haiku 0.852 → 0.896. Además, E1 ahora compara cada contrafactual con la repetición del mismo relato (McNemar por tipo): ningún tipo difiere del ruido, y las reglas cambian con el modelo del vehículo en 6 de 52 pares (ADR 0012 §10).
 - **F8** cerrada el 2026-10-17 (PR #20 a #24). **F0** cerrado el 2026-10-10 (PR #1), **F1** el 2026-10-10 (PR #3), **F2** el 2026-10-13 (PR #4), **F3** el 2026-10-13 (PR #5), **F4** el 2026-10-13 (PR #6), **F5** el 2026-10-13 (PR #7), **F6** el 2026-10-14 (PR #8), **F7** el 2026-10-14 (PR #9; pendientes registrados); migración a Vercel el 2026-10-14 (PR #10); test CISS y prompt v2 el 2026-10-14 (PR #11).
 
@@ -1690,3 +1691,42 @@ Las ramas van una encima de otra y se fusionan en este orden, cada una con su PR
   2. `pnpm --filter @croquis/eval-js e5` para el desarrollo; el test no se vuelve a correr.
   3. `uv run croquis-eval e5-galeria` y `pnpm --filter @croquis/eval-js e5:galeria` para la galería.
 - **Qué necesito de ti:** nada para F10. Siguen pendientes la computadora de demo (E6 en alta y ultra) y las pruebas con personas (E9).
+
+## F11 — Producto final (plan)
+
+**Criterio (PLAN §13):**
+
+- página de historia, recorrido técnico, README completo y despliegue en Vercel (preview y producción);
+- E9 con usuarios reales y guiones de video;
+- el checklist del README (§15) completo con enlaces y el sitio en vivo.
+
+**Orden de trabajo (ramas `feat/f11-*`):**
+
+1. Historia y recorrido técnico (ADR 0034).
+2. Demo «Tú eres…» con casos precargados sin servidor.
+3. README contra el checklist de §15, con todos los enlaces.
+4. Guiones de los tres videos en `docs/guiones/`: presentación, demo y recorrido técnico.
+5. Kit de E9 listo para que René lo corra: protocolo, consentimiento, tareas, SUS e instrumentación del tiempo hasta la primera reconstrucción. La corrida con personas sigue «Bloqueado — necesita a René».
+6. Pendientes abiertos de F8.
+
+**Paso 1 — Historia y recorrido técnico (2026-10-18, rama `feat/f11-recorrido`, ADR 0034):**
+
+- **`/recorrido`:** E1–E9 con barras generadas desde `eval/results/`.
+  - La mejor barra se marca aunque no sea Croquis.
+  - Cada evaluación enlaza su resultado.
+  - E9 aparece como pendiente.
+- **`/historia`:** sigue a una persona ficticia en la escena de Toluca.
+  - **Datos de ATUS:** salen de `atus_summary.json`.
+  - **CROQUIS letra por letra:** cada letra enlaza a su parte del producto.
+  - **Imágenes:** dos capturas del visor en calidad alta (`scripts/capturas-historia.mjs`).
+  - **Cierre:** «Lo que Croquis no es».
+- **Generador y CI:** `apps/web/scripts/build-paginas.mjs`, con `--check` en CI (`pnpm --filter @croquis/web generate:check`).
+- **Portada:** enlaza las dos páginas.
+- **Sin red:** las dos páginas y sus imágenes entran a la precarga.
+  - **Precarga medida de nuevo:** 80 entradas y 13.9 MiB, contra 67 y 11.05 en F9.
+  - **Desglose por biblioteca** (`mib_por_modulo`): Rapier 4.33, three 1.21, pdfmake 1.01, Mediabunny 0.75 y las imágenes de la historia 0.14 MiB.
+  - **De dónde sale el crecimiento:** sobre todo de las exportaciones de F9, que llegaron después de esa medición.
+- **Pruebas:**
+  - unitarias de formato y gráficas, incluida la que dibuja cada gráfica generada;
+  - e2e de las dos páginas: textos, datos, imágenes cargadas, sin errores de consola y la mejor barra marcada en E3;
+  - `sin-red` sigue en verde.
