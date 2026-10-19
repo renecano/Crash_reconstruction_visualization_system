@@ -1,0 +1,675 @@
+# Relatos-MX, lote dev-007. Relatos sintéticos escritos por un agente de Croquis que no vio la línea base,
+# el glosario ni los prompts (ver README).
+# Cada hecho: [valor, "cita literal del relato"]; sin cita = inferido por quien anota (no se evalúa).
+# Este lote se enfoca en los semáforos: el de los vehículos (`semaforo`) y el de los peatones (`semaforo_peatonal`).
+# Mezcla: relatos que nombran solo el peatonal, relatos que nombran los dos, negativos difíciles con peatones o
+# ciclistas donde solo aparece el de los vehículos, y relatos donde el peatonal solo se deja entender (sin cita).
+
+[[relato]]
+id = "rmx-d191"
+tipo = "peaton"
+registro = "coloquial"
+texto = """
+Iba cruzando Eje Central a la altura de Bellas Artes, ya con el monito verde, cuando un taxi que daba vuelta a la derecha me aventó con la defensa. Caí de sentón y me raspé la mano, nada más. El taxista se paró y me ayudó a levantarme. Eran como las siete de la tarde y ya estaba oscureciendo.
+"""
+[relato.hechos]
+"entorno.iluminacion" = ["atardecer", "ya estaba oscureciendo"]
+"evento.tipo" = ["impacto_vehiculo_persona", "me aventó con la defensa"]
+dispositivos = [["semaforo_peatonal", "el monito verde"]]
+zonas = { "0" = ["F"] }
+[[relato.hechos.vehiculos]]
+clase = ["sedan_compacto", "un taxi"]
+maniobra = ["vuelta_derecha", "daba vuelta a la derecha"]
+[[relato.hechos.personas]]
+rol = ["peaton", "Iba cruzando Eje Central"]
+[[relato.hechos.personas]]
+rol = ["conductor", "El taxista"]
+vehiculo = 0
+
+[[relato]]
+id = "rmx-d192"
+tipo = "peaton"
+registro = "formal"
+texto = """
+Siendo aproximadamente las 08:15 horas del día 3 de marzo, el vehículo asegurado, un Nissan Sentra color gris con placas [[PLACA:SMR-318-A]], conducido por el C. [[NOMBRE:Héctor Garza Villarreal]], circulaba sobre la avenida Constitución, en Monterrey, Nuevo León, y al llegar a la intersección con la calle Zaragoza realizó vuelta a la izquierda a una velocidad aproximada de 15 km/h. En ese momento una peatona cruzaba por el paso peatonal con el semáforo peatonal en verde, y fue impactada con la parte frontal izquierda de la unidad. La peatona refirió dolor en la cadera y fue valorada en el lugar por paramédicos. El pavimento se encontraba seco y el clima era despejado.
+"""
+[relato.hechos]
+"lugar.tipo_via" = ["interseccion", "intersección con la calle Zaragoza"]
+"lugar.estado_superficie" = ["seco", "El pavimento se encontraba seco"]
+"entorno.clima" = ["despejado", "el clima era despejado"]
+"entorno.iluminacion" = ["dia", "08:15 horas"]
+"evento.tipo" = ["impacto_vehiculo_persona", "fue impactada con la parte frontal izquierda"]
+dispositivos = [["paso_peatonal", "el paso peatonal"], ["semaforo_peatonal", "el semáforo peatonal"]]
+zonas = { "0" = ["F", "la parte frontal izquierda"] }
+[[relato.hechos.vehiculos]]
+narrador = true
+clase = ["sedan_mediano", "Sentra"]
+color = ["gris", "gris"]
+velocidad_kmh = [15, "15 km/h"]
+maniobra = ["vuelta_izquierda", "realizó vuelta a la izquierda"]
+[[relato.hechos.personas]]
+rol = ["conductor", "conducido por"]
+vehiculo = 0
+[[relato.hechos.personas]]
+rol = ["peaton", "una peatona cruzaba"]
+
+[[relato]]
+id = "rmx-d193"
+tipo = "peaton"
+registro = "faltas"
+texto = """
+a mi hija la atropeyo una moto en la 11 sur en puebla, ella ya iba a la mitad de la calle con el muñekito verde y el de la moto se metio rapido para ganarle a los carros. le pego en la pierna y se callo, nomas se raspo y le quedo un moreton. el muchacho de la moto si se paro, traia casco
+"""
+[relato.hechos]
+"evento.tipo" = ["impacto_vehiculo_persona", "la atropeyo una moto"]
+dispositivos = [["semaforo_peatonal", "el muñekito verde"]]
+zonas = { "0" = ["F"] }
+[[relato.hechos.vehiculos]]
+clase = ["motocicleta", "una moto"]
+[[relato.hechos.personas]]
+rol = ["peaton", "ella ya iba a la mitad de la calle"]
+[[relato.hechos.personas]]
+rol = ["motociclista", "el muchacho de la moto"]
+vehiculo = 0
+casco = [true, "traia casco"]
+
+[[relato]]
+id = "rmx-d194"
+tipo = "peaton"
+registro = "desordenado"
+texto = """
+El semáforo de nosotros ya estaba en verde, eso lo vi bien. Fue en avenida Juárez y 16 de Septiembre, en Guadalajara, como a las diez de la noche. Bueno, primero: yo venía en mi Jetta, arrancando, despacito, y un muchacho con audífonos se atravesó corriendo. El semáforo de los peatones ya tenía la mano roja, o sea ya no le tocaba. Le di con la esquina del cofre, no tan fuerte, se levantó solo. Había buena luz, las lámparas de la calle sí servían.
+"""
+[relato.hechos]
+"lugar.tipo_via" = ["interseccion"]
+"entorno.iluminacion" = ["noche_con_alumbrado", "las lámparas de la calle sí servían"]
+"evento.tipo" = ["impacto_vehiculo_persona", "Le di con la esquina del cofre"]
+dispositivos = [["semaforo", "El semáforo de nosotros"], ["semaforo_peatonal", "El semáforo de los peatones"]]
+zonas = { "0" = ["F", "la esquina del cofre"] }
+[[relato.hechos.vehiculos]]
+narrador = true
+clase = ["sedan_mediano", "Jetta"]
+maniobra = ["recto"]
+[[relato.hechos.personas]]
+rol = ["conductor", "yo venía en mi Jetta"]
+vehiculo = 0
+[[relato.hechos.personas]]
+rol = ["peaton", "un muchacho con audífonos"]
+
+[[relato]]
+id = "rmx-d195"
+tipo = "ciclista"
+registro = "coloquial"
+texto = """
+Iba en mi bici por Zaragoza, en Querétaro, y me tocó cruzar por la cebra junto con la gente cuando el semáforo de peatones se puso en verde. A medio cruce una camioneta blanca dio vuelta a la izquierda y me pegó en la rueda de adelante. Me caí y me raspé el codo; traía casco. Era como la una de la tarde.
+"""
+[relato.hechos]
+"entorno.iluminacion" = ["dia", "la una de la tarde"]
+"evento.tipo" = ["impacto_vehiculo_vehiculo", "me pegó en la rueda de adelante"]
+dispositivos = [["paso_peatonal", "la cebra"], ["semaforo_peatonal", "el semáforo de peatones"]]
+zonas = { "0" = ["F", "la rueda de adelante"], "1" = ["F"] }
+[[relato.hechos.vehiculos]]
+narrador = true
+clase = ["bicicleta", "bici"]
+maniobra = ["recto"]
+[[relato.hechos.vehiculos]]
+clase = ["suv_o_pickup", "una camioneta blanca"]
+color = ["blanca", "blanca"]
+maniobra = ["vuelta_izquierda", "dio vuelta a la izquierda"]
+[[relato.hechos.personas]]
+rol = ["ciclista", "Iba en mi bici"]
+vehiculo = 0
+casco = [true, "traía casco"]
+
+[[relato]]
+id = "rmx-d196"
+tipo = "peaton"
+registro = "formal"
+texto = """
+Comparezco en calidad de testigo de los hechos ocurridos el día 14 de agosto, aproximadamente a las 21:10 horas, en el cruce de Paseo Tollocan y la avenida Jesús Carranza, en Toluca. Me encontraba esperando en la esquina cuando observé que un autobús de transporte público, que circulaba sobre Paseo Tollocan, no se detuvo ante la luz roja del semáforo y atropelló con su frente a {{edad:un señor de edad avanzada|un joven}} que cruzaba la avenida. El peatón cayó sobre el arroyo vehicular y fue atendido por paramédicos; presentaba raspones en los brazos. En ese momento llovía ligeramente y la vialidad contaba con alumbrado público.
+"""
+[relato.hechos]
+"lugar.tipo_via" = ["interseccion", "el cruce de Paseo Tollocan"]
+"entorno.clima" = ["lluvia_ligera", "llovía ligeramente"]
+"entorno.iluminacion" = ["noche_con_alumbrado", "contaba con alumbrado público"]
+"evento.tipo" = ["impacto_vehiculo_persona", "atropelló con su frente"]
+dispositivos = [["semaforo", "la luz roja del semáforo"]]
+zonas = { "0" = ["F", "con su frente"] }
+[[relato.hechos.vehiculos]]
+clase = ["autobus", "un autobús de transporte público"]
+maniobra = ["recto"]
+[[relato.hechos.personas]]
+rol = ["peaton", "que cruzaba la avenida"]
+
+[[relato]]
+id = "rmx-d197"
+tipo = "moto"
+registro = "faltas"
+texto = """
+me pare en la calle 60 de merida xq el semaforo para los q cruzan estaba en berde y abia una señora con su niño cruzando, y un carro rojo que benia atras no freno y me pego por atras. me cai de lado con todo y moto, traia casco, nomas me lastime el tobillo. la moto es una italika 150
+"""
+[relato.hechos]
+"evento.tipo" = ["impacto_vehiculo_vehiculo", "me pego por atras"]
+dispositivos = [["semaforo_peatonal", "el semaforo para los q cruzan"]]
+zonas = { "0" = ["B", "me pego por atras"], "1" = ["F"] }
+[[relato.hechos.vehiculos]]
+narrador = true
+clase = ["motocicleta", "italika"]
+maniobra = ["detenido", "me pare"]
+velocidad_kmh = [0, "me pare"]
+[[relato.hechos.vehiculos]]
+color = ["rojo", "rojo"]
+frenado = [false, "no freno"]
+[[relato.hechos.personas]]
+rol = ["motociclista", "me pare en la calle 60"]
+vehiculo = 0
+casco = [true, "traia casco"]
+
+[[relato]]
+id = "rmx-d198"
+tipo = "peaton"
+registro = "coloquial"
+texto = """
+Estaba cruzando la avenida Juárez en Oaxaca y como el semáforo ya estaba en rojo para los carros, me eché a cruzar. {{sexo:Un señor|Una señora}} en una Pointer gris se lo pasó y me alcanzó a pegar con el espejo en el brazo. No fue nada grave, nomás un moretón, pero me espanté bien feo. Estaba lloviendo fuerte y casi no se veía.
+"""
+[relato.hechos]
+"entorno.clima" = ["lluvia_fuerte", "lloviendo fuerte"]
+"evento.tipo" = ["impacto_vehiculo_persona", "me alcanzó a pegar con el espejo"]
+dispositivos = [["semaforo", "el semáforo"]]
+[[relato.hechos.vehiculos]]
+clase = ["hatchback", "Pointer"]
+color = ["gris", "gris"]
+maniobra = ["recto"]
+[[relato.hechos.personas]]
+rol = ["peaton", "Estaba cruzando la avenida Juárez"]
+[[relato.hechos.personas]]
+rol = ["conductor", "en una Pointer gris"]
+vehiculo = 0
+
+[[relato]]
+id = "rmx-d199"
+tipo = "peaton"
+registro = "breve"
+texto = """
+Crucé con la luz del peatón en verde y un repartidor en moto me tiró en Insurgentes, en la colonia Roma.
+"""
+[relato.hechos]
+"evento.tipo" = ["impacto_vehiculo_persona", "me tiró"]
+dispositivos = [["semaforo_peatonal", "la luz del peatón"]]
+zonas = { "0" = ["F"] }
+[[relato.hechos.vehiculos]]
+clase = ["motocicleta", "moto"]
+[[relato.hechos.personas]]
+rol = ["peaton", "Crucé"]
+[[relato.hechos.personas]]
+rol = ["motociclista", "un repartidor en moto"]
+vehiculo = 0
+
+[[relato]]
+id = "rmx-d200"
+tipo = "peaton"
+registro = "coloquial"
+texto = """
+Venía de la secundaria con mi mochila y en la esquina de Hidalgo y Morelos, en Pachuca, esperé a que me tocara pasar. Cuando por fin se puso mi verde, empecé a cruzar y un Tsuru que venía dando vuelta a la derecha me dio un aventón con el cofre. Me caí y me raspé las rodillas. El señor del Tsuru me llevó a la Cruz Roja.
+"""
+[relato.hechos]
+"lugar.tipo_via" = ["interseccion", "la esquina de Hidalgo y Morelos"]
+"evento.tipo" = ["impacto_vehiculo_persona", "me dio un aventón con el cofre"]
+dispositivos = [["semaforo_peatonal"]]
+zonas = { "0" = ["F", "con el cofre"] }
+[[relato.hechos.vehiculos]]
+clase = ["sedan_compacto", "un Tsuru"]
+maniobra = ["vuelta_derecha", "dando vuelta a la derecha"]
+[[relato.hechos.personas]]
+rol = ["peaton", "empecé a cruzar"]
+[[relato.hechos.personas]]
+rol = ["conductor", "El señor del Tsuru"]
+vehiculo = 0
+
+[[relato]]
+id = "rmx-d201"
+tipo = "vv"
+registro = "formal"
+texto = """
+Se hace constar que el día 22 de mayo, aproximadamente a las 13:30 horas, el vehículo asegurado, un Volkswagen Vento color blanco, circulaba sobre el bulevar Díaz Ordaz, en San Pedro Garza García, Nuevo León, y al llegar a la intersección con la calle Río Mississippi, con el semáforo vehicular en verde, inició maniobra de vuelta a la derecha. El asegurado detuvo la marcha para ceder el paso a dos peatones que cruzaban con la señal peatonal a su favor, momento en que una camioneta Chevrolet Suburban color negro que le seguía impactó con su frente la parte trasera de la unidad asegurada, a una velocidad estimada de 20 km/h. No se reportaron personas lesionadas. El asegurado, [[NOMBRE:Mauricio Leal Cantú]], proporcionó como contacto el correo [[CORREO:mleal.cantu@correo-ejemplo.mx]]. El clima era despejado.
+"""
+[relato.hechos]
+"lugar.tipo_via" = ["interseccion", "la intersección con la calle Río Mississippi"]
+"entorno.clima" = ["despejado", "El clima era despejado"]
+"entorno.iluminacion" = ["dia", "13:30 horas"]
+"evento.tipo" = ["impacto_vehiculo_vehiculo", "impactó con su frente la parte trasera"]
+dispositivos = [["semaforo", "el semáforo vehicular"], ["semaforo_peatonal", "la señal peatonal"]]
+zonas = { "0" = ["B", "la parte trasera"], "1" = ["F", "con su frente"] }
+[[relato.hechos.vehiculos]]
+narrador = true
+clase = ["sedan_compacto", "Vento"]
+color = ["blanco", "blanco"]
+maniobra = ["detenido", "detuvo la marcha"]
+velocidad_kmh = [0, "detuvo la marcha"]
+[[relato.hechos.vehiculos]]
+clase = ["suv_grande", "Suburban"]
+color = ["negro", "negro"]
+velocidad_kmh = [20, "20 km/h"]
+[[relato.hechos.personas]]
+rol = ["conductor", "El asegurado detuvo la marcha"]
+vehiculo = 0
+
+[[relato]]
+id = "rmx-d202"
+tipo = "ciclista"
+registro = "faltas"
+texto = """
+iba en mi bici x la avenida tecnologico en celaya y en el cruce con la ruiz cortines el semaforo estaba en verde pa mi, y un camion de la ruta se paso el rojo y me pego en la llanta de atras. sali volando y cai en el pasto del camellon. no traia casco pero gracias a dios nomas me raspe. eran como las 7 de la noche y ya estaba oscuro
+"""
+[relato.hechos]
+"lugar.tipo_via" = ["interseccion", "el cruce con la ruiz cortines"]
+"entorno.iluminacion" = ["noche", "ya estaba oscuro"]
+"evento.tipo" = ["impacto_vehiculo_vehiculo", "me pego en la llanta de atras"]
+dispositivos = [["semaforo", "el semaforo"]]
+zonas = { "0" = ["B", "la llanta de atras"], "1" = ["F"] }
+[[relato.hechos.vehiculos]]
+narrador = true
+clase = ["bicicleta", "bici"]
+maniobra = ["recto"]
+[[relato.hechos.vehiculos]]
+clase = ["autobus", "un camion de la ruta"]
+[[relato.hechos.personas]]
+rol = ["ciclista", "iba en mi bici"]
+vehiculo = 0
+casco = [false, "no traia casco"]
+
+[[relato]]
+id = "rmx-d203"
+tipo = "peaton"
+registro = "desordenado"
+texto = """
+Yo lo vi todo desde la tienda. Fue en la calle Madero de Morelia, enfrente de catedral. No, un poquito más allá, en la esquina con Abasolo. {{sexo:Una señora|Un señor}} con bolsas del mandado empezó a cruzar cuando se prendió el hombrecito verde, y una combi blanca que quería ganar la vuelta a la izquierda le pegó con la defensa en las piernas. {{sexo:La señora|El señor}} quedó {{sexo:sentada|sentado}} en el piso, consciente, platicando. El chofer de la combi se quiso ir pero la gente no lo dejó. Eran como las cinco de la tarde, haciendo calor.
+"""
+[relato.hechos]
+"lugar.tipo_via" = ["interseccion", "la esquina con Abasolo"]
+"entorno.iluminacion" = ["dia", "las cinco de la tarde"]
+"evento.tipo" = ["impacto_vehiculo_persona", "le pegó con la defensa en las piernas"]
+dispositivos = [["semaforo_peatonal", "el hombrecito verde"]]
+zonas = { "0" = ["F"] }
+[[relato.hechos.vehiculos]]
+clase = ["microbus_combi", "una combi blanca"]
+color = ["blanca", "blanca"]
+maniobra = ["vuelta_izquierda", "la vuelta a la izquierda"]
+[[relato.hechos.personas]]
+rol = ["peaton", "empezó a cruzar"]
+[[relato.hechos.personas]]
+rol = ["conductor", "El chofer de la combi"]
+vehiculo = 0
+
+[[relato]]
+id = "rmx-d204"
+tipo = "peaton"
+registro = "breve"
+texto = """
+Me atropelló una Hilux en Tijuana cuando el semaforito de los que vamos a pie me daba el paso.
+"""
+[relato.hechos]
+"evento.tipo" = ["impacto_vehiculo_persona", "Me atropelló"]
+dispositivos = [["semaforo_peatonal", "el semaforito de los que vamos a pie"]]
+zonas = { "0" = ["F"] }
+[[relato.hechos.vehiculos]]
+clase = ["pickup", "Hilux"]
+[[relato.hechos.personas]]
+rol = ["peaton", "Me atropelló"]
+
+[[relato]]
+id = "rmx-d205"
+tipo = "peaton"
+registro = "formal"
+texto = """
+Declaro que el día 9 de junio, aproximadamente a las 08:20 horas, me dirigía a mi trabajo y crucé el bulevar Juan Alonso de Torres, en León, Guanajuato, por el paso de cebra ubicado frente al mercado, una vez que el semáforo de cruce peatonal indicó el paso. Cuando me encontraba a la altura del segundo carril, una motocicleta de color rojo que circulaba por el bulevar me impactó en el costado izquierdo, haciéndome caer sobre el pavimento. Sufrí raspaduras en el brazo y en la pierna. El conductor de la motocicleta, quien se identificó como [[NOMBRE:Julio César Ramírez Patiño]], con teléfono [[TELEFONO:477 318 2045]], permaneció en el lugar hasta la llegada de la policía. El pavimento estaba mojado por la lluvia de la madrugada.
+"""
+[relato.hechos]
+"lugar.estado_superficie" = ["mojado", "El pavimento estaba mojado"]
+"entorno.iluminacion" = ["dia", "08:20 horas"]
+"evento.tipo" = ["impacto_vehiculo_persona", "me impactó en el costado izquierdo"]
+dispositivos = [["paso_peatonal", "el paso de cebra"], ["semaforo_peatonal", "el semáforo de cruce peatonal"]]
+zonas = { "0" = ["F"] }
+[[relato.hechos.vehiculos]]
+clase = ["motocicleta", "una motocicleta"]
+color = ["rojo", "rojo"]
+[[relato.hechos.personas]]
+rol = ["peaton", "crucé el bulevar"]
+[[relato.hechos.personas]]
+rol = ["motociclista", "El conductor de la motocicleta"]
+vehiculo = 0
+
+[[relato]]
+id = "rmx-d206"
+tipo = "moto"
+registro = "coloquial"
+texto = """
+Venía en mi moto por avenida Xalapa, en Xalapa, como a 35, con mi semáforo en verde, y un chavo se avienta a cruzar aunque el de peatones tenía la manita roja. Pa' no llevármelo me abrí a la izquierda y me fui a estampar contra la puerta de un Aveo gris que estaba esperando para dar vuelta. Traía casco, me lastimé la mano y la moto quedó con el faro roto. Al chavo no le pasó nada.
+"""
+[relato.hechos]
+"evento.tipo" = ["impacto_vehiculo_vehiculo", "me fui a estampar contra la puerta"]
+dispositivos = [["semaforo", "mi semáforo"], ["semaforo_peatonal", "el de peatones"]]
+zonas = { "0" = ["F"] }
+[[relato.hechos.vehiculos]]
+narrador = true
+clase = ["motocicleta", "mi moto"]
+velocidad_kmh = [35, "como a 35"]
+maniobra = ["cambio_carril_izquierda", "me abrí a la izquierda"]
+[[relato.hechos.vehiculos]]
+clase = ["sedan_compacto", "Aveo"]
+color = ["gris", "gris"]
+maniobra = ["detenido", "estaba esperando"]
+velocidad_kmh = [0, "estaba esperando"]
+[[relato.hechos.personas]]
+rol = ["motociclista", "Venía en mi moto"]
+vehiculo = 0
+casco = [true, "Traía casco"]
+[[relato.hechos.personas]]
+rol = ["peaton", "un chavo se avienta a cruzar"]
+
+[[relato]]
+id = "rmx-d207"
+tipo = "peaton"
+registro = "breve"
+texto = """
+Un taxi se pasó el alto del semáforo y atropelló a mi abuelo en la avenida Juárez, en Chihuahua.
+"""
+[relato.hechos]
+"evento.tipo" = ["impacto_vehiculo_persona", "atropelló a mi abuelo"]
+dispositivos = [["semaforo", "el alto del semáforo"]]
+zonas = { "0" = ["F"] }
+[[relato.hechos.vehiculos]]
+clase = ["sedan_compacto", "Un taxi"]
+maniobra = ["recto"]
+[[relato.hechos.personas]]
+rol = ["peaton", "mi abuelo"]
+
+[[relato]]
+id = "rmx-d208"
+tipo = "peaton"
+registro = "faltas"
+texto = """
+yo ya me tocaba pasar y los carros estaban parados, iba cruzando la av revolucion en tijuana y un uber que se metio x el carril de vuelta derecha no se paro y me dio en la cadera. me cai pero me levante solo, nomas me duele. el carro era un versa negro placas [[PLACA:BHN-472-C]]
+"""
+[relato.hechos]
+"evento.tipo" = ["impacto_vehiculo_persona", "me dio en la cadera"]
+dispositivos = [["semaforo_peatonal"]]
+zonas = { "0" = ["F"] }
+[[relato.hechos.vehiculos]]
+clase = ["sedan_compacto", "versa"]
+color = ["negro", "negro"]
+maniobra = ["vuelta_derecha", "vuelta derecha"]
+[[relato.hechos.personas]]
+rol = ["peaton", "iba cruzando la av revolucion"]
+
+[[relato]]
+id = "rmx-d209"
+tipo = "peaton"
+registro = "desordenado"
+texto = """
+Los números iban en doce, me acuerdo perfecto, los del semáforo de las personas, la cuenta para atrás. O sea, me daba tiempo. Fue en Morones Prieto, en Monterrey, ya de noche, como a las nueve. Iba cruzando y una Tahoe que dio vuelta a la izquierda me pegó en la pierna derecha. Traigo un moretón grande pero ya. El de la Tahoe sí se bajó, se llama [[NOMBRE:Rogelio Treviño]], y le habló a su aseguradora.
+"""
+[relato.hechos]
+"entorno.iluminacion" = ["noche", "ya de noche"]
+"evento.tipo" = ["impacto_vehiculo_persona", "me pegó en la pierna derecha"]
+dispositivos = [["semaforo_peatonal", "semáforo de las personas"]]
+zonas = { "0" = ["F"] }
+[[relato.hechos.vehiculos]]
+clase = ["suv_grande", "una Tahoe"]
+maniobra = ["vuelta_izquierda", "dio vuelta a la izquierda"]
+[[relato.hechos.personas]]
+rol = ["peaton", "Iba cruzando"]
+[[relato.hechos.personas]]
+rol = ["conductor", "El de la Tahoe"]
+vehiculo = 0
+
+[[relato]]
+id = "rmx-d210"
+tipo = "peaton"
+registro = "faltas"
+texto = """
+vi como atropeyaron a un señor en la av. 5 de febrero en queretaro. el semaforo de los carros ya estaba en rojo y el semaforo del muñequito en verde, el señor empeso a cruzar con su baston y una camioneta roja se siguio de largo y le pego con el lado del copiloto. el señor callo y se pego en el codo. la camioneta se paro mas adelante. eran como las 4 de la tarde
+"""
+[relato.hechos]
+"entorno.iluminacion" = ["dia", "las 4 de la tarde"]
+"evento.tipo" = ["impacto_vehiculo_persona", "le pego con el lado del copiloto"]
+dispositivos = [["semaforo", "el semaforo de los carros"], ["semaforo_peatonal", "el semaforo del muñequito"]]
+zonas = { "0" = ["R", "el lado del copiloto"] }
+[[relato.hechos.vehiculos]]
+clase = ["suv_o_pickup", "una camioneta roja"]
+color = ["roja", "roja"]
+maniobra = ["recto", "se siguio de largo"]
+[[relato.hechos.personas]]
+rol = ["peaton", "un señor"]
+
+[[relato]]
+id = "rmx-d211"
+tipo = "vv"
+registro = "desordenado"
+texto = """
+Me pegaron por detrás, eso primero. Estaba en la esquina de Reforma y 5 de Mayo, en Puebla, en mi Spark. Yo ya iba a arrancar pero vi que el monito caminando seguía prendido y había dos señoras a media calle, entonces me quedé. El de atrás, en un Sentra, no se fijó y me dio. Fue en la mañana, como a las once. Nadie se lastimó, nomás la defensa.
+"""
+[relato.hechos]
+"lugar.tipo_via" = ["interseccion", "la esquina de Reforma y 5 de Mayo"]
+"entorno.iluminacion" = ["dia", "en la mañana"]
+"evento.tipo" = ["impacto_vehiculo_vehiculo", "Me pegaron por detrás"]
+dispositivos = [["semaforo_peatonal", "el monito caminando"]]
+zonas = { "0" = ["B", "por detrás"], "1" = ["F"] }
+[[relato.hechos.vehiculos]]
+narrador = true
+clase = ["hatchback", "Spark"]
+maniobra = ["detenido", "me quedé"]
+velocidad_kmh = [0, "me quedé"]
+[[relato.hechos.vehiculos]]
+clase = ["sedan_mediano", "Sentra"]
+[[relato.hechos.personas]]
+rol = ["conductor", "Yo ya iba a arrancar"]
+vehiculo = 0
+
+[[relato]]
+id = "rmx-d212"
+tipo = "ciclista"
+registro = "breve"
+texto = """
+En Mexicali crucé la avenida en mi bici por el paso de cebra, con la figurita del peatón en verde, y un Vento me tumbó al dar vuelta a la derecha.
+"""
+[relato.hechos]
+"evento.tipo" = ["impacto_vehiculo_vehiculo", "me tumbó"]
+dispositivos = [["paso_peatonal", "el paso de cebra"], ["semaforo_peatonal", "la figurita del peatón"]]
+[[relato.hechos.vehiculos]]
+narrador = true
+clase = ["bicicleta", "bici"]
+maniobra = ["recto"]
+[[relato.hechos.vehiculos]]
+clase = ["sedan_compacto", "Vento"]
+maniobra = ["vuelta_derecha", "al dar vuelta a la derecha"]
+[[relato.hechos.personas]]
+rol = ["ciclista", "en mi bici"]
+vehiculo = 0
+
+[[relato]]
+id = "rmx-d213"
+tipo = "vv"
+registro = "breve"
+texto = """
+En Aguascalientes, sobre avenida Convención: tenía verde en el semáforo e iba a dar vuelta a la derecha, pero me frené porque el peatonal también estaba en verde y había gente cruzando; la Urvan de atrás me chocó en la cajuela.
+"""
+[relato.hechos]
+"evento.tipo" = ["impacto_vehiculo_vehiculo", "me chocó en la cajuela"]
+dispositivos = [["semaforo", "el semáforo"], ["semaforo_peatonal", "el peatonal"]]
+zonas = { "0" = ["B", "en la cajuela"], "1" = ["F"] }
+[[relato.hechos.vehiculos]]
+narrador = true
+maniobra = ["vuelta_derecha", "iba a dar vuelta a la derecha"]
+frenado = [true, "me frené"]
+[[relato.hechos.vehiculos]]
+clase = ["van", "Urvan"]
+[[relato.hechos.personas]]
+rol = ["conductor", "me frené"]
+vehiculo = 0
+
+[[relato]]
+id = "rmx-d214"
+tipo = "moto"
+registro = "coloquial"
+texto = """
+Iba en la moto por la calzada Independencia en Guadalajara y se puso la luz en amarillo; frené porque ya venía una señora con su carriola queriendo cruzar, y el taxi de atrás no frenó y me aventó. Me caí de lado; traía casco y chamarra, nomás me lastimé el hombro. La señora se quedó en la banqueta, a ella no le pasó nada.
+"""
+[relato.hechos]
+"evento.tipo" = ["impacto_vehiculo_vehiculo", "me aventó"]
+dispositivos = [["semaforo", "la luz"]]
+zonas = { "0" = ["B"], "1" = ["F"] }
+[[relato.hechos.vehiculos]]
+narrador = true
+clase = ["motocicleta", "la moto"]
+frenado = [true, "frené"]
+[[relato.hechos.vehiculos]]
+clase = ["sedan_compacto", "el taxi"]
+frenado = [false, "no frenó"]
+[[relato.hechos.personas]]
+rol = ["motociclista", "Iba en la moto"]
+vehiculo = 0
+casco = [true, "traía casco"]
+
+[[relato]]
+id = "rmx-d215"
+tipo = "peaton"
+registro = "desordenado"
+texto = """
+No me acuerdo bien de la placa. Era un Tsuru blanco, taxi, de esos de Cuernavaca. Yo crucé con mi verde, de eso sí estoy segura, en la avenida Morelos, frente a la farmacia. Bueno, enfrente no, en la esquina. El taxi venía rápido y me rozó la mano con el espejo, se me cayó el celular. Ni se paró. Estaba nublado, como a mediodía.
+"""
+[relato.hechos]
+"lugar.tipo_via" = ["interseccion", "en la esquina"]
+"entorno.clima" = ["nublado", "Estaba nublado"]
+"entorno.iluminacion" = ["dia", "a mediodía"]
+"evento.tipo" = ["impacto_vehiculo_persona", "me rozó la mano con el espejo"]
+dispositivos = [["semaforo_peatonal"]]
+[[relato.hechos.vehiculos]]
+clase = ["sedan_compacto", "Tsuru"]
+color = ["blanco", "blanco"]
+maniobra = ["recto"]
+[[relato.hechos.personas]]
+rol = ["peaton", "Yo crucé"]
+
+[[relato]]
+id = "rmx-d216"
+tipo = "ciclista"
+registro = "formal"
+texto = """
+Se hace constar que el día 5 de noviembre, aproximadamente a las 18:50 horas, el ciclista [[NOMBRE:Andrés Molina Cruz]] circulaba en su bicicleta sobre la avenida Revolución, en la Ciudad de México, en dirección al norte. Al llegar a la intersección con la calle Barranca del Muerto, con el semáforo en verde para su sentido de circulación, fue impactado en el costado izquierdo por un automóvil Kia Rio color azul que realizaba vuelta a la izquierda. El conductor del automóvil manifestó que esperaba a que terminaran de cruzar unos peatones, quienes aún tenían a su favor el semáforo para peatones, y que no observó al ciclista. El ciclista portaba casco y presentó escoriaciones en la rodilla. La zona cuenta con alumbrado público.
+"""
+[relato.hechos]
+"lugar.tipo_via" = ["interseccion", "la intersección con la calle Barranca del Muerto"]
+"entorno.iluminacion" = ["noche_con_alumbrado", "cuenta con alumbrado público"]
+"evento.tipo" = ["impacto_vehiculo_vehiculo", "fue impactado en el costado izquierdo"]
+dispositivos = [["semaforo", "el semáforo en verde"], ["semaforo_peatonal", "el semáforo para peatones"]]
+zonas = { "0" = ["L", "en el costado izquierdo"], "1" = ["F"] }
+[[relato.hechos.vehiculos]]
+clase = ["bicicleta", "su bicicleta"]
+maniobra = ["recto"]
+[[relato.hechos.vehiculos]]
+clase = ["sedan_compacto", "Kia Rio"]
+color = ["azul", "azul"]
+maniobra = ["vuelta_izquierda", "realizaba vuelta a la izquierda"]
+[[relato.hechos.personas]]
+rol = ["ciclista", "circulaba en su bicicleta"]
+vehiculo = 0
+casco = [true, "portaba casco"]
+[[relato.hechos.personas]]
+rol = ["conductor", "El conductor del automóvil"]
+vehiculo = 1
+
+[[relato]]
+id = "rmx-d217"
+tipo = "peaton"
+registro = "faltas"
+texto = """
+mi tio es invidente y siempre cruza en la esquina de su casa en san luis potosi xq ay un semaforo que suena para los ciegos. ayer el semaforo sonoro ya estaba pitando para pasar y un muchacho en una motoneta le pego en la pierna con la llanta de adelante. mi tio se callo y se lastimo la muñeca. el de la motoneta se quedo a ayudar
+"""
+[relato.hechos]
+"lugar.tipo_via" = ["interseccion", "la esquina"]
+"evento.tipo" = ["impacto_vehiculo_persona", "le pego en la pierna"]
+dispositivos = [["semaforo_peatonal", "el semaforo sonoro"]]
+zonas = { "0" = ["F", "la llanta de adelante"] }
+[[relato.hechos.vehiculos]]
+clase = ["scooter", "una motoneta"]
+[[relato.hechos.personas]]
+rol = ["peaton", "mi tio es invidente"]
+[[relato.hechos.personas]]
+rol = ["motociclista", "un muchacho en una motoneta"]
+vehiculo = 0
+
+[[relato]]
+id = "rmx-d218"
+tipo = "peaton"
+registro = "formal"
+texto = """
+Se reporta que el día 17 de julio, aproximadamente a las 10:05 horas, el vehículo asegurado, una camioneta Toyota RAV4 color plata, circulaba sobre la avenida Vallarta, en Zapopan, Jalisco, a una velocidad aproximada de 30 km/h. De acuerdo con la declaración del asegurado, el semáforo se encontraba en luz verde para su circulación cuando una persona de sexo masculino descendió de la banqueta y cruzó frente a la unidad, siendo impactada con la parte frontal derecha. El asegurado accionó el freno. El peatón presentó contusión en la rodilla derecha y fue trasladado por paramédicos para su valoración. El pavimento se encontraba seco.
+"""
+[relato.hechos]
+"lugar.estado_superficie" = ["seco", "El pavimento se encontraba seco"]
+"entorno.iluminacion" = ["dia", "10:05 horas"]
+"evento.tipo" = ["impacto_vehiculo_persona", "siendo impactada con la parte frontal derecha"]
+dispositivos = [["semaforo", "el semáforo"]]
+zonas = { "0" = ["F", "la parte frontal derecha"] }
+[[relato.hechos.vehiculos]]
+narrador = true
+clase = ["suv_compacta", "RAV4"]
+color = ["plata", "plata"]
+velocidad_kmh = [30, "30 km/h"]
+frenado = [true, "accionó el freno"]
+maniobra = ["recto"]
+[[relato.hechos.personas]]
+rol = ["conductor", "El asegurado accionó el freno"]
+vehiculo = 0
+[[relato.hechos.personas]]
+rol = ["peaton", "una persona de sexo masculino"]
+
+[[relato]]
+id = "rmx-d219"
+tipo = "vv"
+registro = "breve"
+texto = """
+Me detuve en el crucero de Gómez Morín, en Juárez, porque a la gente le tocaba pasar, y una Frontier me pegó por atrás.
+"""
+[relato.hechos]
+"lugar.tipo_via" = ["interseccion", "el crucero"]
+"evento.tipo" = ["impacto_vehiculo_vehiculo", "me pegó por atrás"]
+dispositivos = [["semaforo_peatonal"]]
+zonas = { "0" = ["B", "por atrás"], "1" = ["F"] }
+[[relato.hechos.vehiculos]]
+narrador = true
+maniobra = ["detenido", "Me detuve"]
+velocidad_kmh = [0, "Me detuve"]
+[[relato.hechos.vehiculos]]
+clase = ["pickup", "Frontier"]
+[[relato.hechos.personas]]
+rol = ["conductor", "Me detuve"]
+vehiculo = 0
+
+[[relato]]
+id = "rmx-d220"
+tipo = "moto"
+registro = "desordenado"
+texto = """
+Total que la moto quedó tirada a media calle. Empiezo bien: iba por la avenida Venustiano Carranza en Saltillo, en mi Vento... no, en la moto, el Vento es de mi hermana. Ya, en la moto. En el cruce con Purísima me paré porque se puso en verde el semáforo de a pie y empezaron a pasar unos niños de la escuela. Una Explorer negra que venía atrás se frenó tarde y me aventó tantito, como a 10 por hora, suficiente para tirarme. Traía casco. Me raspé la pierna.
+"""
+[relato.hechos]
+"lugar.tipo_via" = ["interseccion", "el cruce con Purísima"]
+"evento.tipo" = ["impacto_vehiculo_vehiculo", "me aventó tantito"]
+dispositivos = [["semaforo_peatonal", "el semáforo de a pie"]]
+zonas = { "0" = ["B"], "1" = ["F"] }
+[[relato.hechos.vehiculos]]
+narrador = true
+clase = ["motocicleta", "la moto"]
+maniobra = ["detenido", "me paré"]
+velocidad_kmh = [0, "me paré"]
+[[relato.hechos.vehiculos]]
+clase = ["suv_grande", "Explorer"]
+color = ["negra", "negra"]
+velocidad_kmh = [10, "como a 10 por hora"]
+frenado = [true, "se frenó tarde"]
+[[relato.hechos.personas]]
+rol = ["motociclista", "iba por la avenida Venustiano Carranza"]
+vehiculo = 0
+casco = [true, "Traía casco"]
