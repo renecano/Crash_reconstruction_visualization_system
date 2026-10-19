@@ -44,11 +44,12 @@ Reglas de trabajo: `CLAUDE.md`. Especificación: `PLAN.md`.
   - **Alta y ultra:** textura CC0 que solo se carga si la escena la usa.
   - **Costo** (E6 antes y después en `objeto_fijo_arbol`): 0.5 ms por cuadro en media y 0.27 ms en baja.
   - **Atribución corregida en `assets/ASSETS.md`:** el asfalto es de Dimitrios Savva y el pasto de Charlotte Baglioni.
-- **Siguiente paso concreto:** F11, paso 6b. Pendientes de F8 que quedan:
-  - corte del camellón en los cruces peatonales;
+- **F11, paso 6b hecho** (rama `feat/f8-camellon`, ADR 0037): el camellón se corta a nivel de calle en los pasos peatonales y las rayas centrales se interrumpen.
+- **Siguiente paso concreto:** F11, paso 6c. Pendientes de F8 que quedan:
   - semáforo peatonal;
   - rayas y banquetas sobre calles de OSM;
-  - OSM en producción.
+  - OSM en producción;
+  - revisar en el manual de la SEDATU/SCT si las orillas se interrumpen en los pasos.
 
   Las texturas triplanares esperan a lo que muestre E9.
 
