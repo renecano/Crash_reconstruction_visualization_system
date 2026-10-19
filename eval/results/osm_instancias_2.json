@@ -1,0 +1,32 @@
+{
+  "name": "osm_instancias",
+  "generated_at": "2026-10-19T17:55:53.901Z",
+  "git_commit": "7ce52f1",
+  "espera_s": 60,
+  "radio_m": 150,
+  "consulta": "[out:json][timeout:25];way(around:150,19.27897,-99.65399)[\"highway\"];out body;>;out skel qt;",
+  "instancias": [
+    {
+      "url": "https://maps.mail.ru/osm/tools/overpass/api/interpreter",
+      "fecha": "2026-10-19T17:53:57.939Z",
+      "status": 200,
+      "vias": 22,
+      "segundos": 13.36
+    },
+    {
+      "url": "https://overpass-api.de/api/interpreter",
+      "fecha": "2026-10-19T17:54:11.301Z",
+      "status": 200,
+      "vias": 22,
+      "segundos": 42.59
+    },
+    {
+      "url": "https://overpass.private.coffee/api/interpreter",
+      "fecha": "2026-10-19T17:54:53.895Z",
+      "status": null,
+      "error": "TimeoutError",
+      "segundos": 60.01
+    }
+  ],
+  "respondieron": 2
+}
