@@ -29,20 +29,14 @@ Reglas de trabajo: `CLAUDE.md`. Especificación: `PLAN.md`.
 - **F10, paso 6 hecho** (rama `feat/f10-galeria`): la galería de E5 está en `docs/galeria-e5/README.md`. Tiene 9 pares de foto real y render de Croquis: 3 frontales, 3 laterales y 3 de poste. El frontal desplazado y el alcance no tienen foto verificable en el test. **F10 cerrada.**
 - **F11, paso 1 hecho** (rama `feat/f11-recorrido`, ADR 0034): página de historia (`/historia`) y recorrido técnico (`/recorrido`), con datos generados desde `eval/results/` y una revisión en CI.
 - **F11, paso 2 hecho** (rama `feat/f11-demo`, ADR 0035): la demo «Tú eres…» (`/demo`) usa seis relatos de ejemplo con la respuesta grabada de Claude. Las preguntas se contestan en el navegador, y la escena se abre en el croquis o en el visor 3D con hipótesis, sin servidor y sin red.
-- **Siguiente paso concreto:** F11, paso 3. Revisar el README contra el checklist de PLAN §15:
-  - problema con fuentes;
-  - cómo probarlo en vivo y en local;
-  - resultados E1–E9;
-  - mapa del repo;
-  - datos con fuente, licencia y lo que no cubren;
-  - IA responsable;
-  - límites y siguiente paso;
-  - respaldo de cada afirmación;
+- **F11, paso 3 hecho** (rama `feat/f11-readme`): el README queda completo contra el checklist de PLAN §15. Lleva el subtítulo, el estado al día y las páginas nuevas, y se agregaron estas secciones:
+  - mapa del repo con la documentación de respaldo;
   - pruebas;
-  - licencia y atribución.
-
-  Lo que falte se completa con enlaces.
-
+  - datos y lo que no cubren;
+  - IA responsable;
+  - límites medidos y siguiente paso;
+  - licencia y atribución (NHTSA, INEGI, OSM, Relatos-MX y assets).
+- **Siguiente paso concreto:** F11, paso 4. Guiones de los tres videos en `docs/guiones/`: presentación, demo de producto y recorrido técnico. Después, el kit de E9.
 - **E1 del prompt v2 en el primer test, hecho** (PR #14). Sonnet 0.875 → 0.919 y Haiku 0.852 → 0.896. Además, E1 ahora compara cada contrafactual con la repetición del mismo relato (McNemar por tipo): ningún tipo difiere del ruido, y las reglas cambian con el modelo del vehículo en 6 de 52 pares (ADR 0012 §10).
 - **F8** cerrada el 2026-10-17 (PR #20 a #24). **F0** cerrado el 2026-10-10 (PR #1), **F1** el 2026-10-10 (PR #3), **F2** el 2026-10-13 (PR #4), **F3** el 2026-10-13 (PR #5), **F4** el 2026-10-13 (PR #6), **F5** el 2026-10-13 (PR #7), **F6** el 2026-10-14 (PR #8), **F7** el 2026-10-14 (PR #9; pendientes registrados); migración a Vercel el 2026-10-14 (PR #10); test CISS y prompt v2 el 2026-10-14 (PR #11).
 
@@ -1758,3 +1752,20 @@ Las ramas van una encima de otra y se fusionan en este orden, cada una con su PR
 - **Pruebas:**
   - unitarias de `DemoApp`: elegir un caso, contestar sin servidor y abrir el visor;
   - e2e: la demo completa hasta el visor sin ninguna petición a `/api/`, más `sin-red`, `relato` y `home`, todo en verde.
+
+**Paso 3 — README contra PLAN §15 (2026-10-18, rama `feat/f11-readme`):**
+
+| Punto de §15                                   | Dónde está                                                                                                   |
+| ---------------------------------------------- | ------------------------------------------------------------------------------------------------------------ |
+| Problema con fuentes                           | «Problema» (ATUS, `atus_summary.json`)                                                                       |
+| Cómo probarlo en vivo y en local               | «Cómo probarlo»: producción con demo, historia y recorrido; comandos locales; cada evaluación con su comando |
+| Resultados contra alternativas simples (E1–E9) | «Resultados medidos» y el recorrido técnico; E9 pendiente                                                    |
+| Mapa del repo                                  | «Mapa del repo»                                                                                              |
+| Datos con fuente y licencia y lo que no cubren | «Datos y lo que no cubren», `data/SOURCES.md` y `docs/data.md`                                               |
+| IA responsable                                 | «IA responsable» y `docs/responsible-ai.md`                                                                  |
+| Límites y siguiente paso                       | «Límites y siguiente paso» (medidos y de diseño)                                                             |
+| Respaldo de cada afirmación                    | `eval/results/`, ADR, `docs/physics.md` y `PROGRESS.md` (en «Mapa del repo»)                                 |
+| Pruebas                                        | «Pruebas»                                                                                                    |
+| Licencia y atribución                          | «Licencia y atribución»                                                                                      |
+
+- **Corrección:** el README decía «diez escenas canónicas»; son once desde la de Toluca (F8).
