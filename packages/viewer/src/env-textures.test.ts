@@ -9,10 +9,10 @@ import { buildSceneGraph } from "./scene-graph";
 const MANIFEST = {
   tamano_px: 512,
   texturas: Object.fromEntries(
-    (["asfalto", "concreto", "pasto"] as const).map((n, i) => [
+    (["asfalto", "concreto", "pasto", "grava"] as const).map((n, i) => [
       n,
       {
-        mosaico_m: [4, 2, 6][i],
+        mosaico_m: [4, 2, 6, 2][i],
         archivos: {
           diff: { archivo: `${n}_diff.webp`, media: [0.02, 0.016, 0.014] },
           nor_gl: { archivo: `${n}_nor_gl.webp` },
@@ -108,6 +108,49 @@ describe("texturas del entorno (F8e)", () => {
     expect(banqueta).toBeInstanceOf(MeshStandardNodeMaterial);
     expect(banqueta.normalNode).toBeTruthy();
     expect(mat("suelo")).toBeInstanceOf(MeshStandardNodeMaterial);
+    sg.dispose();
+  });
+
+  it("la grava solo se carga si se pide (ADR 0036)", async () => {
+    const porOmision: string[] = [];
+    const t = await loadEnvTextures("/texturas/", fakeFetch, fakeLoad(porOmision));
+    expect(t.grava).toBeUndefined();
+    expect(porOmision.some((u) => u.includes("grava"))).toBe(false);
+    const conGrava: string[] = [];
+    const g = await loadEnvTextures("/texturas/", fakeFetch, fakeLoad(conGrava), [
+      "asfalto",
+      "grava",
+    ]);
+    expect(g.grava?.tileM).toBe(2);
+    expect(conGrava.filter((u) => u.includes("grava"))).toHaveLength(3);
+    expect(g.concreto).toBeUndefined();
+  });
+
+  it("solo la escena con grava suelta pide la textura de grava y la usa en sus manchas", async () => {
+    const opts = (surface: "seco" | "grava_suelta") => ({
+      quality: QUALITY_PROFILES.alta,
+      env: { night: false, wet: false, groundColor: "#5d6b4a", streetLights: false, surface },
+    });
+    const seco = buildSceneGraph(
+      loadFixture("alcance"),
+      await loadResultado("alcance"),
+      opts("seco"),
+    );
+    expect(seco.wantedTextures).not.toContain("grava");
+    seco.dispose();
+    const spec = loadFixture("objeto_fijo_arbol");
+    const sg = buildSceneGraph(
+      spec,
+      await loadResultado("objeto_fijo_arbol"),
+      opts("grava_suelta"),
+    );
+    expect(sg.wantedTextures).toContain("grava");
+    const t = await loadEnvTextures("/texturas/", fakeFetch, fakeLoad([]), sg.wantedTextures);
+    sg.applyTextures(t);
+    const calzada = (
+      (sg.root.getObjectByName("calzada") ?? sg.root.getObjectByName("calzada_sin_sombra")) as Mesh
+    ).material as MeshStandardNodeMaterial;
+    expect(calzada.normalNode).toBeTruthy();
     sg.dispose();
   });
 });

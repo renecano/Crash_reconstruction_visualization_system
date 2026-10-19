@@ -60,6 +60,8 @@ TEXTURAS = [
     Textura("asfalto", "asphalt_track", "Dimitrios Savva", 4.0, "Calzada"),
     Textura("concreto", "concrete_pavement", "Charlotte Baglioni", 2.0, "Banquetas y camellón"),
     Textura("pasto", "leafy_grass", "Charlotte Baglioni", 8.0, "Suelo fuera de la vía"),
+    # Solo se carga en escenas con `grava_suelta`, dentro de las manchas de grava (ADR 0036).
+    Textura("grava", "gravel_stones", "Amal Kumar", 2.0, "Grava suelta sobre la calzada"),
 ]
 
 

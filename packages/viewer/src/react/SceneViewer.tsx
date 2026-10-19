@@ -120,8 +120,9 @@ declare global {
     /**
      * Interruptores de diagnóstico para las evaluaciones (`eval/`); la página nunca los pone.
      * `sombraLuna`: dibuja la sombra de la luna de noche, para medir que no se ve.
+     * `gravaPrevia`: las manchas de grava de antes de ADR 0036, para medir el costo del cambio.
      */
-    __croquisDiag?: { sombraLuna?: boolean };
+    __croquisDiag?: { sombraLuna?: boolean; gravaPrevia?: boolean };
     /** `performance.now()` del primer cuadro listo (E6: tiempo hasta interactivo). */
     __croquisReadyAt?: number;
   }
@@ -163,7 +164,14 @@ function SceneContent({
 }): ReactElement {
   const profile = QUALITY_PROFILES[quality];
   const graph = useMemo(
-    () => buildSceneGraph(spec, resultado, { quality: profile, env }),
+    () =>
+      buildSceneGraph(spec, resultado, {
+        quality: profile,
+        env,
+        diag: {
+          gravaPrevia: typeof window !== "undefined" && window.__croquisDiag?.gravaPrevia === true,
+        },
+      }),
     [spec, resultado, profile, env],
   );
   useEffect(() => () => graph.dispose(), [graph]);
@@ -209,7 +217,7 @@ function SceneContent({
       window.__croquisTexturesReady = true;
       return undefined;
     }
-    loadEnvTextures(TEXTURE_BASE_URL)
+    loadEnvTextures(TEXTURE_BASE_URL, fetch, undefined, graph.wantedTextures)
       .then((t) => {
         if (!alive) return;
         graph.applyTextures(t);
