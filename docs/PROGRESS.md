@@ -46,12 +46,12 @@ Reglas de trabajo: `CLAUDE.md`. Especificación: `PLAN.md`.
   - **Atribución corregida en `assets/ASSETS.md`:** el asfalto es de Dimitrios Savva y el pasto de Charlotte Baglioni.
 - **F11, paso 6b hecho** (rama `feat/f8-camellon`, ADR 0037): el camellón se corta a nivel de calle en los pasos peatonales y las rayas centrales se interrumpen.
 - **F11, paso 6c hecho** (rama `feat/f8-semaforo-peatonal`, ADR 0038): semáforo peatonal con el contrato 1.3.0. Queda fuera del esquema del LLM, así que los prompts v1–v3 y sus grabaciones no cambian.
-- **Siguiente paso concreto:** F11, paso 6d. Pendientes de F8 que quedan:
-  - rayas y banquetas sobre calles de OSM;
-  - OSM en producción;
-  - revisar en el manual de la SEDATU/SCT si las orillas se interrumpen en los pasos.
-
-  Las texturas triplanares esperan a lo que muestre E9; que el LLM lea el semáforo peatonal pide un prompt v4.
+- **F11, paso 6d hecho** (rama `feat/f8-osm-rayas`, ADR 0039): las calles de OSM llevan rayas cuando OSM trae `lanes`, y banquetas y guarniciones según la escena. Todo se corta en los cruces.
+- **Siguiente paso concreto:** F11, paso 6e, OSM en producción: consultar las calles al crear una escena del usuario con coordenadas, con caché. Pendientes menores:
+  - revisar en el manual de la SEDATU/SCT las orillas en los pasos;
+  - rayas de OSM en el croquis 2D;
+  - prompt v4 con el semáforo peatonal;
+  - texturas triplanares, después de E9.
 
 - **E1 del prompt v2 en el primer test, hecho** (PR #14). Sonnet 0.875 → 0.919 y Haiku 0.852 → 0.896. Además, E1 ahora compara cada contrafactual con la repetición del mismo relato (McNemar por tipo): ningún tipo difiere del ruido, y las reglas cambian con el modelo del vehículo en 6 de 52 pares (ADR 0012 §10).
 - **F8** cerrada el 2026-10-17 (PR #20 a #24). **F0** cerrado el 2026-10-10 (PR #1), **F1** el 2026-10-10 (PR #3), **F2** el 2026-10-13 (PR #4), **F3** el 2026-10-13 (PR #5), **F4** el 2026-10-13 (PR #6), **F5** el 2026-10-13 (PR #7), **F6** el 2026-10-14 (PR #8), **F7** el 2026-10-14 (PR #9; pendientes registrados); migración a Vercel el 2026-10-14 (PR #10); test CISS y prompt v2 el 2026-10-14 (PR #11).
@@ -1846,3 +1846,17 @@ Las ramas van una encima de otra y se fusionan en este orden, cada una con su PR
   - las fases peatonales;
   - la cabeza con sus dos figuras y la orientación hacia la persona en la escena;
   - las migraciones (TS y Python) hasta 1.3.0.
+
+**Paso 6d — Rayas, banquetas y guarniciones en las calles de OSM (2026-10-19, rama `feat/f8-osm-rayas`, ADR 0039):**
+
+- **Rayas:** solo en las calles con `lanes` de OSM, con las reglas de las plantillas.
+- **Banquetas y guarniciones:** según la escena, salvo en autopistas.
+- **Cortes:** en los cruces de más de 30°, sin cortar las continuaciones. Las banquetas nunca caen sobre otra calzada.
+- **El croquis 2D sigue sin rayas** en las calles del mapa (pendiente).
+- **E6 antes y después** en `interseccion_toluca` (interruptor `osmSoloCalzada`): 0.62 ms por cuadro en media (71.4 fps) y nada medible en baja.
+- **Imágenes de la historia** capturadas de nuevo. Las referencias de CI de `interseccion_toluca` se regeneran y se revisan.
+- **Pruebas:**
+  - sin `lanes` no hay rayas;
+  - doble y un sentido;
+  - las rayas no cruzan otra calzada y las continuaciones no se cortan;
+  - banquetas según la escena y no en autopistas, cortadas en los cruces y fuera del otro cuerpo de una avenida.
