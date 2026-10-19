@@ -45,13 +45,13 @@ Reglas de trabajo: `CLAUDE.md`. Especificación: `PLAN.md`.
   - **Costo** (E6 antes y después en `objeto_fijo_arbol`): 0.5 ms por cuadro en media y 0.27 ms en baja.
   - **Atribución corregida en `assets/ASSETS.md`:** el asfalto es de Dimitrios Savva y el pasto de Charlotte Baglioni.
 - **F11, paso 6b hecho** (rama `feat/f8-camellon`, ADR 0037): el camellón se corta a nivel de calle en los pasos peatonales y las rayas centrales se interrumpen.
-- **Siguiente paso concreto:** F11, paso 6c. Pendientes de F8 que quedan:
-  - semáforo peatonal;
+- **F11, paso 6c hecho** (rama `feat/f8-semaforo-peatonal`, ADR 0038): semáforo peatonal con el contrato 1.3.0. Queda fuera del esquema del LLM, así que los prompts v1–v3 y sus grabaciones no cambian.
+- **Siguiente paso concreto:** F11, paso 6d. Pendientes de F8 que quedan:
   - rayas y banquetas sobre calles de OSM;
   - OSM en producción;
   - revisar en el manual de la SEDATU/SCT si las orillas se interrumpen en los pasos.
 
-  Las texturas triplanares esperan a lo que muestre E9.
+  Las texturas triplanares esperan a lo que muestre E9; que el LLM lea el semáforo peatonal pide un prompt v4.
 
 - **E1 del prompt v2 en el primer test, hecho** (PR #14). Sonnet 0.875 → 0.919 y Haiku 0.852 → 0.896. Además, E1 ahora compara cada contrafactual con la repetición del mismo relato (McNemar por tipo): ningún tipo difiere del ruido, y las reglas cambian con el modelo del vehículo en 6 de 52 pares (ADR 0012 §10).
 - **F8** cerrada el 2026-10-17 (PR #20 a #24). **F0** cerrado el 2026-10-10 (PR #1), **F1** el 2026-10-10 (PR #3), **F2** el 2026-10-13 (PR #4), **F3** el 2026-10-13 (PR #5), **F4** el 2026-10-13 (PR #6), **F5** el 2026-10-13 (PR #7), **F6** el 2026-10-14 (PR #8), **F7** el 2026-10-14 (PR #9; pendientes registrados); migración a Vercel el 2026-10-14 (PR #10); test CISS y prompt v2 el 2026-10-14 (PR #11).
@@ -1832,3 +1832,17 @@ Las ramas van una encima de otra y se fusionan en este orden, cada una con su PR
 - **Las demás escenas** tienen exactamente la misma geometría (prueba).
 - **Revisión visual:** con la GPU real, en la cámara de la persona de `peaton_cruce`. La cebra ya no pasa bajo el camellón ni bajo las rayas amarillas.
 - **Pruebas:** el área cortada es la del paso, no quedan guarniciones del camellón dentro del paso, las rayas centrales se interrumpen y sin pasos todo queda igual.
+
+**Paso 6c — Semáforo peatonal (2026-10-19, rama `feat/f8-semaforo-peatonal`, ADR 0038):**
+
+- **Contrato 1.3.0:** `semaforo_peatonal`, con migración identidad en TS y Python.
+  - **Regenerados:** Zod y Pydantic, escenas canónicas, constructores de spec, Relatos-MX (candados de test intactos), salidas doradas y demo.
+  - **Sin cambios:** los resultados del solver (`reconstruct --check`), así que E7 y E8 no cambian.
+- **Fuera del esquema del LLM** (`NOT_ASKED_DEVICES` en TS y Python): la prueba de la huella del prompt sigue en verde y las respuestas grabadas siguen valiendo.
+- **Visor:** cabeza con la figura detenida y la que camina, encendidas según la fase (`pedLampAt`), mirando a la persona de su fase.
+- **Croquis:** icono con dos lentes.
+- **Revisión visual:** una escena de prueba (`peaton_cruce` con un semáforo peatonal) en calidad alta. La figura que camina se ve encendida en verde y la cabeza mira al peatón.
+- **Pruebas:**
+  - las fases peatonales;
+  - la cabeza con sus dos figuras y la orientación hacia la persona en la escena;
+  - las migraciones (TS y Python) hasta 1.3.0.
