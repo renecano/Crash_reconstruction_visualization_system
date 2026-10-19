@@ -52,14 +52,19 @@ Reglas de trabajo: `CLAUDE.md`. Especificación: `PLAN.md`.
   - **Resultado:** llegó a Overpass y trajo las mismas 22 calles del extracto versionado; la repetición salió de la CDN (`eval/results/osm_produccion_v1_*.json`).
   - **Instancias públicas:** fallan a ratos. La principal encola y responde a los 41–43 s, y private.coffee no contesta (`osm_instancias_*.json`).
   - **Cambios en la ruta:** dos vueltas en 50 s, mail.ru primero, la principal con hasta 45 s, y la cabecera `X-Croquis-Overpass`.
-- **Pendientes de F8 cerrados** salvo los menores:
-  - revisar en el manual de la SEDATU/SCT las orillas en los pasos;
-  - rayas de OSM en el croquis 2D;
+- **F11, paso 6g hecho** (rama `feat/f8-paso-peatonal-nom`, ADR 0041): las calles de OSM llevan rayas de carril también en el croquis 2D. La geometría de rayas y cruces se movió del visor a `@croquis/croquis-2d`, así que los dos cortan en el mismo lugar.
+- **F11, paso 6h hecho** (misma rama, ADR 0042): paso peatonal según la NOM-034-SCT2/SEDATU-2022, consultada en el DOF.
+  - **Franjas:** de 40 cm, separadas 40 cm.
+  - **Largo:** el de la Tabla 8 (6 m en calle primaria).
+  - **Orillas:** siguen continuas (5.5.1), lo que cierra el pendiente del ADR 0037.
+- **Pendientes menores:**
+  - raya de alto (M-6) con semáforo o alto. Falta decidir qué accesos controla cada dispositivo; ver ADR 0042;
   - prompt v4 con el semáforo peatonal;
   - texturas triplanares, después de E9.
-- **Siguiente paso concreto:** F11 queda en lo que depende de René: E9 (el kit está listo) y la computadora de demo (E6 en alta y ultra). Mientras tanto:
-  - correr `node eval/osm_produccion.mjs --radio <uno sin pedir>` con la ruta nueva desplegada;
-  - rayas de OSM en el croquis 2D y paso peatonal según la NOM-034 (PR #57, ADR 0041 y 0042).
+- **Siguiente paso concreto:** F11 queda en lo que depende de René: E9 (el kit está listo) y la computadora de demo (E6 en alta y ultra). Mientras tanto, prompt v4. Diseño previsto:
+  - **Glosario por versión:** el glosario entra en el prompt de todas las versiones, así que una entrada nueva debe ir solo en v4, como `SINCE_V3` con los campos; si no, cambian las huellas de v1–v3.
+  - **Lote de dev:** Relatos-MX no menciona semáforos peatonales, así que hace falta un lote escrito por un agente que no vea los prompts, como `dev-006`.
+  - **Costo estimado:** unos 8 USD en dev y el test CISS.
 
 - **E1 del prompt v2 en el primer test, hecho** (PR #14). Sonnet 0.875 → 0.919 y Haiku 0.852 → 0.896. Además, E1 ahora compara cada contrafactual con la repetición del mismo relato (McNemar por tipo): ningún tipo difiere del ruido, y las reglas cambian con el modelo del vehículo en 6 de 52 pares (ADR 0012 §10).
 - **F8** cerrada el 2026-10-17 (PR #20 a #24). **F0** cerrado el 2026-10-10 (PR #1), **F1** el 2026-10-10 (PR #3), **F2** el 2026-10-13 (PR #4), **F3** el 2026-10-13 (PR #5), **F4** el 2026-10-13 (PR #6), **F5** el 2026-10-13 (PR #7), **F6** el 2026-10-14 (PR #8), **F7** el 2026-10-14 (PR #9; pendientes registrados); migración a Vercel el 2026-10-14 (PR #10); test CISS y prompt v2 el 2026-10-14 (PR #11).
@@ -1903,3 +1908,18 @@ Las ramas van una encima de otra y se fusionan en este orden, cada una con su PR
   - cabecera `X-Croquis-Overpass` con la instancia que contestó.
 - **Pruebas del servidor:** 7 (segunda vuelta y tiempo total nuevas).
 - **Pendiente:** correr `eval/osm_produccion.mjs` con la ruta nueva desplegada. Opción si las públicas siguen así: NextGIS (gratis, pero pide cuenta y llave; solo René).
+
+**Pasos 6g y 6h — Rayas de OSM en el croquis 2D y paso peatonal según la NOM-034 (2026-10-19, rama `feat/f8-paso-peatonal-nom`, ADR 0041 y 0042):**
+
+- **Rayas en 2D (ADR 0041):**
+  - `map-roads.ts` en `croquis-2d` reúne `MapVia`, `stripLineOffsets`, `mapCrossings` y `mapLaneLines`; el visor la usa sin cambios de comportamiento.
+  - El croquis dibuja las rayas interiores con el trazo de las plantillas, solo en calles con `lanes`, cortadas en los cruces.
+  - Se calculan una vez por escena, no en cada arrastre.
+  - **Pruebas:** 4 nuevas en `map-roads.test.ts`, una de ellas una propiedad con fast-check (semilla 41, 200 casos), y la red de Toluca en `Croquis.test.tsx`.
+- **Paso peatonal (ADR 0042):** NOM-034-SCT2/SEDATU-2022, DOF del 19 de septiembre de 2023, consultada el 2026-10-19.
+  - **Franjas:** de 40 cm cada 80 cm, centradas en la calzada.
+  - **Largo (Tabla 8):** 2 m en carretera, 6 m en calle primaria y 4 m en secundaria; nunca menos que la banqueta.
+  - **Supuesto:** se toma como primaria la calle de dos carriles o más por sentido.
+  - **Orillas:** continuas (5.5.1).
+  - **Croquis 2D:** las franjas del símbolo pasan a 40 cm.
+  - **Referencias visuales:** cambian solo las de `peaton_cruce` (las dos). Se regeneraron en CI (Linux) y se revisaron; las otras 24 salieron idénticas byte por byte.

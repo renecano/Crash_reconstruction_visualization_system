@@ -6,7 +6,9 @@ import {
   type MapVia,
   SIDEWALK_WIDTH,
   buildRoadGeometry,
-  CROSSWALK_LENGTH,
+  CROSSWALK_GAP,
+  CROSSWALK_STRIPE,
+  crosswalkLength,
   DASH_HASTA_50,
   DASH_MAS_50,
   dashPatternFor,
@@ -102,10 +104,26 @@ describe("geometría de la vía", () => {
     const g = buildRoadGeometry(lay, {
       dobleSentido: true,
       banquetas: true,
-      crosswalks: [{ center: { x: 0, y: 0 }, roadHeading: 0, roadWidth: 12 }],
+      crosswalks: [{ center: { x: 0, y: 0 }, roadHeading: 0, roadWidth: 12, length: 4 }],
     });
-    expect(g.crosswalks.indices.length / 6).toBe(12);
-    expect(meshArea(g.crosswalks)).toBeCloseTo(12 * 3 * 0.5, 9);
+    // NOM-034, 5.9: franjas de 40 cm separadas 40 cm en todo el ancho (12 m → 15 franjas).
+    expect(g.crosswalks.indices.length / 6).toBe(15);
+    expect(meshArea(g.crosswalks)).toBeCloseTo(15 * 4 * 0.4, 9);
+    // Centradas en la calzada y sin salirse de ella.
+    const ys: number[] = [];
+    for (let i = 1; i < g.crosswalks.positions.length; i += 2) ys.push(g.crosswalks.positions[i]!);
+    expect(Math.min(...ys)).toBeCloseTo(-Math.max(...ys), 9);
+    expect(Math.max(...ys)).toBeLessThanOrEqual(6);
+  });
+
+  it("el largo del paso sigue la Tabla 8 de la NOM-034 y no es menor que la banqueta", () => {
+    expect(CROSSWALK_STRIPE).toBe(0.4);
+    expect(CROSSWALK_GAP).toBe(0.4);
+    expect(crosswalkLength("interseccion_x", 2, false)).toBe(6);
+    expect(crosswalkLength("recta", 1, false)).toBe(4);
+    expect(crosswalkLength("carretera_dos_carriles", 1, false)).toBe(2);
+    expect(crosswalkLength("carretera_dos_carriles", 1, true)).toBe(SIDEWALK_WIDTH);
+    expect(crosswalkLength("autopista", 3, false)).toBe(2);
   });
 });
 
@@ -178,11 +196,13 @@ describe("guarniciones y camellón (F8c)", () => {
     const sin = buildRoadGeometry(layout, opts);
     const con = buildRoadGeometry(layout, {
       ...opts,
-      crosswalks: [{ center: strip.center, roadHeading: strip.heading, roadWidth: strip.width }],
+      crosswalks: [
+        { center: strip.center, roadHeading: strip.heading, roadWidth: strip.width, length: 6 },
+      ],
     });
     const corte = meshArea(sin.medians) - meshArea(con.medians);
-    // Se quita la franja del paso (3 m a lo largo de la vía) a lo ancho del camellón.
-    expect(corte).toBeCloseTo(CROSSWALK_LENGTH * strip.median, 0);
+    // Se quita la franja del paso (6 m a lo largo de la vía) a lo ancho del camellón.
+    expect(corte).toBeCloseTo(6 * strip.median, 0);
     // Tampoco quedan guarniciones del camellón dentro del paso (las del refugio se quitan).
     const h = (strip.heading * Math.PI) / 180;
     const local = (q: { x: number; y: number }) => {
@@ -195,10 +215,7 @@ describe("guarniciones y camellón (F8c)", () => {
     };
     const delCamellonEnElPaso = con.curbs.filter((c) => {
       const m = local({ x: (c.a.x + c.b.x) / 2, y: (c.a.y + c.b.y) / 2 });
-      return (
-        Math.abs(m.across) <= strip.median / 2 + 0.01 &&
-        Math.abs(m.along) < CROSSWALK_LENGTH / 2 - 0.2
-      );
+      return Math.abs(m.across) <= strip.median / 2 + 0.01 && Math.abs(m.along) < 6 / 2 - 0.2;
     });
     expect(delCamellonEnElPaso).toHaveLength(0);
     expect(sin.curbs.some((c) => Math.abs(local(c.a).along) < 1)).toBe(true);
@@ -212,7 +229,9 @@ describe("guarniciones y camellón (F8c)", () => {
     const sin = buildRoadGeometry(layout, opts);
     const con = buildRoadGeometry(layout, {
       ...opts,
-      crosswalks: [{ center: strip.center, roadHeading: strip.heading, roadWidth: strip.width }],
+      crosswalks: [
+        { center: strip.center, roadHeading: strip.heading, roadWidth: strip.width, length: 6 },
+      ],
     });
     expect(meshArea(con.yellowLines)).toBeLessThan(meshArea(sin.yellowLines));
     expect(meshArea(con.yellowLines)).toBeGreaterThan(0.9 * meshArea(sin.yellowLines));

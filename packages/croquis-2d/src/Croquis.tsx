@@ -20,6 +20,7 @@ import {
 } from "react";
 import { applyEdit, type EditOp, type PoseKind } from "./edit";
 import type { Vec2 } from "./geometry";
+import { mapLaneLines, type MapLaneLine } from "./map-roads";
 import { sceneLayout, type LaneStrip } from "./layout";
 import { clientToWorld, makeViewport, worldToSvg, type Viewport } from "./viewport";
 
@@ -73,6 +74,11 @@ export function Croquis({
 }: CroquisProps) {
   const layout = useMemo(() => sceneLayout(spec, clases), [spec, clases]);
   const vp = useMemo(() => makeViewport(layout.bounds, scale), [layout.bounds, scale]);
+  // Las ediciones no cambian el mapa: las rayas se calculan una vez por escena, no en cada arrastre.
+  const laneLines = useMemo(
+    () => (layout.mapa ? mapLaneLines(layout.mapa.vias) : []),
+    [layout.mapa],
+  );
   const svgRef = useRef<SVGSVGElement>(null);
   const [drag, setDrag] = useState<DragTarget | null>(null);
   const [preview, setPreview] = useState<EscenaSpec | null>(null);
@@ -183,7 +189,7 @@ export function Croquis({
           fill={BACKGROUND}
         />
       ) : null}
-      <Road layout={shownLayout} vp={vp} />
+      <Road layout={shownLayout} vp={vp} laneLines={laneLines} />
       {shownLayout.evidence.map((ev) => (
         <g key={ev.id} data-testid={`evidence-${ev.id}`}>
           <polyline
@@ -405,7 +411,15 @@ function sub(a: Vec2, b: Vec2): Vec2 {
   return { x: a.x - b.x, y: a.y - b.y };
 }
 
-function Road({ layout, vp }: { layout: ReturnType<typeof sceneLayout>; vp: Viewport }) {
+function Road({
+  layout,
+  vp,
+  laneLines,
+}: {
+  layout: ReturnType<typeof sceneLayout>;
+  vp: Viewport;
+  laneLines: MapLaneLine[];
+}) {
   const m = (v: number) => v * vp.scale;
   const P = (p: Vec2) => worldToSvg(vp, p);
   if (layout.mapa) {
@@ -429,6 +443,25 @@ function Road({ layout, vp }: { layout: ReturnType<typeof sceneLayout>; vp: View
             strokeLinejoin="round"
           />
         ))}
+        {/* Rayas de carril (ADR 0041): solo con `carriles` de OSM, cortadas en los cruces. */}
+        {laneLines.map((l, i) => {
+          const a = P(l.a);
+          const b = P(l.b);
+          return (
+            <line
+              key={`raya-${i}`}
+              data-testid={`raya-${layout.mapa!.vias[l.via]!.id}`}
+              x1={a.x}
+              y1={a.y}
+              x2={b.x}
+              y2={b.y}
+              stroke={LINE_STROKE}
+              strokeWidth={m(0.12)}
+              strokeDasharray={`${m(3)} ${m(3)}`}
+              opacity={0.8}
+            />
+          );
+        })}
       </g>
     );
   }
@@ -708,14 +741,15 @@ function DeviceIcon({ tipo, m }: { tipo: string; m: (v: number) => number }) {
         />
       );
     case "paso_peatonal":
+      // Símbolo con franjas de 40 cm separadas 40 cm, como la M-7 de la NOM-034 (ADR 0042).
       return (
         <g>
           {[-2, -1, 0, 1, 2].map((i) => (
             <rect
               key={i}
-              x={m(i * 0.8) - m(0.25)}
+              x={m(i * 0.8) - m(0.2)}
               y={-m(2)}
-              width={m(0.5)}
+              width={m(0.4)}
               height={m(4)}
               fill="#f4f1e6"
               opacity={0.9}

@@ -127,6 +127,14 @@ describe("<Croquis /> con la red vial del mapa (ADR 0023)", () => {
     const juarez = lay.mapa!.vias.find((v) => v.id === 614145444)!;
     expect(juarez.ancho).toBeCloseTo(4 * longitudM(spec.lugar.ancho_carril), 9);
     expect(screen.getByTestId("atribucion-osm").textContent).toBe(OSM_ATTRIBUTION);
+    // Rayas (ADR 0041): las calles con `lanes` en OSM las llevan; las que no, ninguna.
+    const conCarriles = lay.mapa!.vias.filter((v) => v.carriles !== undefined);
+    expect(conCarriles.length).toBeGreaterThan(0);
+    const rayas = conCarriles.flatMap((v) => screen.queryAllByTestId(`raya-${v.id}`));
+    expect(rayas.length).toBeGreaterThan(0);
+    for (const v of lay.mapa!.vias.filter((x) => x.carriles === undefined)) {
+      expect(screen.queryAllByTestId(`raya-${v.id}`)).toHaveLength(0);
+    }
   });
 
   it("sin red vial no hay atribución", () => {
