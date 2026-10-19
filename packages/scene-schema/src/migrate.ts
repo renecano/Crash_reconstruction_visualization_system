@@ -34,6 +34,13 @@ export const MIGRATIONS: Migration[] = [
     // Campos nuevos opcionales: ningún documento cambia de significado.
     aplicar: (doc) => doc,
   },
+  {
+    desde: "1.2.0",
+    hasta: "1.3.0",
+    descripcion: "dispositivo 'semaforo_peatonal'; los documentos no cambian",
+    // Un tipo nuevo en el enum: ningún documento anterior lo usa.
+    aplicar: (doc) => doc,
+  },
 ];
 
 export interface MigrationResult {

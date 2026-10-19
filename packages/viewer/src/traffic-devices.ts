@@ -31,7 +31,7 @@ import {
   SRGBColorSpace,
   type Material,
 } from "three";
-import { lampAt, type Lamp, type SignalPhase } from "./traffic-signals";
+import { lampAt, type Lamp, type SignalPhase, pedLampAt, type PedLamp } from "./traffic-signals";
 
 export const RESTRICTIVE_BOARD_M = 0.71;
 export const RESTRICTIVE_CIRCLE_M = 0.62;
@@ -46,6 +46,87 @@ const LAMP_COLORS: Record<Lamp, string> = {
   verde: "#1fd36b",
 };
 const LAMPS: Lamp[] = ["rojo", "amarillo", "verde"];
+/** Lente del semáforo peatonal (m): cuadrada, de 20 cm. */
+export const PED_LENS_M = 0.2;
+const PED_LAMPS: PedLamp[] = ["detenido", "camina"];
+const PED_LAMP_COLORS: Record<PedLamp, string> = {
+  detenido: "#ff3b1f",
+  camina: "#2bd96e",
+};
+
+/**
+ * Figura del semáforo peatonal en blanco sobre negro, para el mapa emisivo (solo en el navegador;
+ * en pruebas sin DOM la lente se enciende completa). Detenida: de frente y con los brazos abajo.
+ * Camina: de perfil, con un paso abierto.
+ */
+function figureTexture(kind: PedLamp): CanvasTexture | null {
+  if (typeof document === "undefined") return null;
+  const c = document.createElement("canvas");
+  c.width = 128;
+  c.height = 128;
+  const ctx = c.getContext("2d");
+  if (!ctx) return null;
+  ctx.fillStyle = "#000000";
+  ctx.fillRect(0, 0, 128, 128);
+  ctx.strokeStyle = "#ffffff";
+  ctx.fillStyle = "#ffffff";
+  ctx.lineCap = "round";
+  ctx.lineWidth = 12;
+  ctx.beginPath();
+  ctx.arc(64, 22, 11, 0, 2 * Math.PI);
+  ctx.fill();
+  const line = (pts: [number, number][]) => {
+    ctx.beginPath();
+    pts.forEach(([x, y], i) => (i === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y)));
+    ctx.stroke();
+  };
+  if (kind === "detenido") {
+    line([
+      [64, 40],
+      [64, 80],
+    ]);
+    line([
+      [50, 44],
+      [44, 76],
+    ]);
+    line([
+      [78, 44],
+      [84, 76],
+    ]);
+    line([
+      [58, 82],
+      [56, 116],
+    ]);
+    line([
+      [70, 82],
+      [72, 116],
+    ]);
+  } else {
+    line([
+      [62, 40],
+      [58, 78],
+    ]);
+    line([
+      [60, 46],
+      [42, 66],
+    ]);
+    line([
+      [62, 46],
+      [82, 62],
+    ]);
+    line([
+      [58, 78],
+      [40, 114],
+    ]);
+    line([
+      [58, 78],
+      [80, 114],
+    ]);
+  }
+  const tex = new CanvasTexture(c);
+  tex.colorSpace = SRGBColorSpace;
+  return tex;
+}
 
 export interface DeviceInput {
   tipo: string;
@@ -63,7 +144,7 @@ export interface DeviceNode {
   update(t: number): void;
   materials: Material[];
   /** Lámparas encendidas por cabeza en el último update (pruebas y panel). */
-  lit(): (Lamp | null)[];
+  lit(): (Lamp | PedLamp | null)[];
 }
 
 function mat(color: string, extra: Partial<MeshStandardMaterial> = {}): MeshStandardMaterial {
@@ -121,8 +202,12 @@ export function buildDevice(d: DeviceInput, metal: Material): DeviceNode {
     materials.push(m);
     return m;
   };
-  const heads: { phase: SignalPhase; lamps: Map<Lamp, MeshStandardMaterial>; lit: Lamp | null }[] =
-    [];
+  // Cada cabeza: qué lámpara toca en t, sus materiales y su color encendido.
+  const heads: {
+    at: (t: number) => string | null;
+    lamps: Map<string, { m: MeshStandardMaterial; color: string }>;
+    lit: string | null;
+  }[] = [];
 
   if (d.tipo === "tope") {
     const bump = new Mesh(
@@ -148,7 +233,7 @@ export function buildDevice(d: DeviceInput, metal: Material): DeviceNode {
       const box = new Mesh(new BoxGeometry(0.32, 1.05, 0.38), housing);
       box.position.set(0.16, 0, 0);
       head.add(box);
-      const lamps = new Map<Lamp, MeshStandardMaterial>();
+      const lamps = new Map<string, { m: MeshStandardMaterial; color: string }>();
       LAMPS.forEach((l, i) => {
         const m = keep(
           mat("#2a2b2d", { emissive: new Color(LAMP_COLORS[l]), emissiveIntensity: 0 }),
@@ -158,11 +243,50 @@ export function buildDevice(d: DeviceInput, metal: Material): DeviceNode {
         lens.rotation.y = Math.PI / 2;
         lens.position.set(0.325, 0.33 - i * 0.33, 0);
         head.add(lens);
-        lamps.set(l, m);
+        lamps.set(l, { m, color: LAMP_COLORS[l] });
       });
       head.position.y = h + 0.5;
       group.add(head);
-      heads.push({ phase: f.phase, lamps, lit: null });
+      heads.push({ at: (t) => lampAt(f.phase, t), lamps, lit: null });
+    }
+  } else if (d.tipo === "semaforo_peatonal") {
+    // Poste más bajo que el vehicular y una cabeza con dos lentes cuadradas: arriba la figura
+    // detenida (roja) y abajo la que camina (verde), dibujadas en una textura de lienzo.
+    const h = 2.5;
+    const pole = new Mesh(new CylinderGeometry(0.05, 0.06, h, 10), metal);
+    pole.position.y = h / 2;
+    pole.castShadow = true;
+    group.add(pole);
+    const fases =
+      d.fases && d.fases.length > 0 ? d.fases : [{ phase: { color: "apagado" as const }, yaw: 0 }];
+    const housing = keep(mat("#1d1f22", { roughness: 0.7 }));
+    for (const f of fases) {
+      const head = new Group();
+      head.name = "cabeza_semaforo_peatonal";
+      head.rotation.y = f.yaw;
+      const box = new Mesh(new BoxGeometry(0.25, 0.62, 0.32), housing);
+      box.position.set(0.125, 0, 0);
+      head.add(box);
+      const lamps = new Map<string, { m: MeshStandardMaterial; color: string }>();
+      PED_LAMPS.forEach((l, i) => {
+        const figure = figureTexture(l);
+        const m = keep(
+          mat("#2a2b2d", {
+            emissive: new Color(PED_LAMP_COLORS[l]),
+            emissiveIntensity: 0,
+            ...(figure ? { emissiveMap: figure } : {}),
+          }),
+        );
+        const lens = new Mesh(new PlaneGeometry(PED_LENS_M, PED_LENS_M), m);
+        lens.name = `lampara_peatonal_${l}`;
+        lens.rotation.y = Math.PI / 2;
+        lens.position.set(0.252, 0.15 - i * 0.3, 0);
+        head.add(lens);
+        lamps.set(l, { m, color: PED_LAMP_COLORS[l] });
+      });
+      head.position.y = h + 0.1;
+      group.add(head);
+      heads.push({ at: (t) => pedLampAt(f.phase, t), lamps, lit: null });
     }
   } else if (
     d.tipo === "alto" ||
@@ -279,18 +403,18 @@ export function buildDevice(d: DeviceInput, metal: Material): DeviceNode {
     materials,
     update(t: number) {
       for (const head of heads) {
-        const on = lampAt(head.phase, t);
+        const on = head.at(t);
         if (on === head.lit) continue;
         head.lit = on;
         // Cambio de propiedades, no de material: sin compilar sombreadores a media reproducción.
-        for (const [l, m] of head.lamps) {
+        for (const [l, { m, color }] of head.lamps) {
           m.emissiveIntensity = l === on ? 3 : 0;
-          m.color.set(l === on ? LAMP_COLORS[l] : "#2a2b2d");
+          m.color.set(l === on ? color : "#2a2b2d");
         }
       }
     },
     lit() {
-      return heads.map((h) => h.lit);
+      return heads.map((h) => h.lit as Lamp | PedLamp | null);
     },
   };
 }

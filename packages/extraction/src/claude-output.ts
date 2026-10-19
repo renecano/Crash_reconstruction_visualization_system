@@ -61,6 +61,12 @@ export const SCALAR_CAMPOS = [
  * 1.1.0, ADR 0019), así su esquema y su huella no cambian y sus grabaciones siguen valiendo.
  */
 const SINCE_V3 = new Set(["evidencias.marcas_fase"]);
+/**
+ * Dispositivos del contrato que ningún prompt vigente pide (llegan del croquis): el semáforo
+ * peatonal (contrato 1.3.0, ADR 0038). Si entraran al esquema de salida, cambiaría la huella de
+ * los prompts v1-v3 y sus respuestas grabadas dejarían de valer.
+ */
+export const NOT_ASKED_DEVICES = new Set(["semaforo_peatonal"]);
 export const VEHICLE_CAMPOS = [
   "vehiculo.clase",
   "vehiculo.maniobra",
@@ -124,7 +130,7 @@ export function allowedValues(): Record<string, readonly string[]> {
     "vehiculo.maniobra": [...schemaEnum("CampoManiobra"), "cambio_carril"],
     "vehiculo.zona_impacto": schemaEnum("ZonaCDC", "lado"),
     "persona.rol": schemaEnum("CampoRolPersona"),
-    "dispositivo.tipo": schemaEnum("Dispositivo", "tipo"),
+    "dispositivo.tipo": schemaEnum("Dispositivo", "tipo").filter((t) => !NOT_ASKED_DEVICES.has(t)),
   };
   return allowed;
 }

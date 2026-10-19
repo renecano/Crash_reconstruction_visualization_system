@@ -3,7 +3,7 @@
 import { z } from "zod";
 
 export const SCHEMA_ID = "https://croquis.mx/schemas/escena/1.0.0/escena.schema.json";
-export const SCHEMA_VERSION = "1.2.0" as const;
+export const SCHEMA_VERSION = "1.3.0" as const;
 
 /** Confianza en el valor, de 0 (adivinado) a 1 (seguro). */
 export const Confianza = z.number().min(0).max(1);
@@ -379,11 +379,12 @@ export type FaseSemaforo = z.infer<typeof FaseSemaforo>;
 export const Punto2D = z.strictObject({ x: z.number(), y: z.number() });
 export type Punto2D = z.infer<typeof Punto2D>;
 
-/** Dispositivo de control de tránsito. */
+/** Dispositivo de control de tránsito. En un `semaforo_peatonal` (desde 1.3.0), cada fase es para los peatones: verde es la figura que camina, rojo la figura detenida e intermitente la figura que camina destellando (despeje). */
 export const Dispositivo = z.strictObject({
   id: Id,
   tipo: z.enum([
     "semaforo",
+    "semaforo_peatonal",
     "alto",
     "ceda_el_paso",
     "tope",
@@ -569,7 +570,7 @@ export type Lugar = z.infer<typeof Lugar>;
 
 export const Meta = z.strictObject({
   id: z.string().min(8).max(64).regex(new RegExp("^[A-Za-z0-9_-]+$")),
-  version_esquema: z.literal("1.2.0"),
+  version_esquema: z.literal("1.3.0"),
   idioma: z.enum(["es-MX", "en"]),
   semilla: z.int().min(0).max(4294967295),
   creado: z.iso.datetime({ offset: true }),

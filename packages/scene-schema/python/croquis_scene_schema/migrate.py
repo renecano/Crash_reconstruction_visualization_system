@@ -52,6 +52,11 @@ def _v110_a_120(doc: JsonObj) -> JsonObj:
     return doc
 
 
+def _v120_a_130(doc: JsonObj) -> JsonObj:
+    """1.3.0 agrega el dispositivo ``semaforo_peatonal``: ningún documento anterior lo usa."""
+    return doc
+
+
 MIGRATIONS: list[Migration] = [
     Migration(
         "1.0.0",
@@ -64,6 +69,12 @@ MIGRATIONS: list[Migration] = [
         "1.2.0",
         "fuente 'mapa' y lugar.red_vial opcional (calles de OSM); los documentos no cambian",
         _v110_a_120,
+    ),
+    Migration(
+        "1.2.0",
+        "1.3.0",
+        "dispositivo 'semaforo_peatonal'; los documentos no cambian",
+        _v120_a_130,
     ),
 ]
 

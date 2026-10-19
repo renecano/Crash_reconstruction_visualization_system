@@ -129,6 +129,12 @@ def _schema_enum(defname: str, prop: str = "valor") -> tuple[str, ...]:
     return tuple(s["$defs"][defname]["properties"][prop]["enum"])
 
 
+# Dispositivos del contrato que ningún prompt vigente pide (llegan del croquis): el
+# semáforo peatonal (contrato 1.3.0, ADR 0038). Si entraran al esquema de salida, cambiaría la
+# huella de los prompts v1-v3 y sus respuestas grabadas dejarían de valer.
+NOT_ASKED_DEVICES = frozenset({"semaforo_peatonal"})
+
+
 @cache
 def allowed_values() -> dict[str, tuple[str, ...]]:
     """Valores válidos por campo: los del contrato más los genéricos que acepta el constructor."""
@@ -145,7 +151,9 @@ def allowed_values() -> dict[str, tuple[str, ...]]:
         "vehiculo.maniobra": (*_schema_enum("CampoManiobra"), "cambio_carril"),
         "vehiculo.zona_impacto": _schema_enum("ZonaCDC", "lado"),
         "persona.rol": _schema_enum("CampoRolPersona"),
-        "dispositivo.tipo": _schema_enum("Dispositivo", "tipo"),
+        "dispositivo.tipo": tuple(
+            t for t in _schema_enum("Dispositivo", "tipo") if t not in NOT_ASKED_DEVICES
+        ),
     }
 
 

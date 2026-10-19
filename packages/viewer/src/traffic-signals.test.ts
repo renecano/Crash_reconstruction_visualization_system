@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { AMBER_S, FLASHES_PER_MIN, lampAt, phaseChanges } from "./traffic-signals";
+import { AMBER_S, FLASHES_PER_MIN, lampAt, pedLampAt, phaseChanges } from "./traffic-signals";
 
 describe("semáforo en el tiempo", () => {
   it("sin tiempo en fase el color declarado se mantiene toda la escena", () => {
@@ -43,5 +43,24 @@ describe("semáforo en el tiempo", () => {
     const n = 6000;
     for (let i = 0; i < n; i++) if (lampAt({ color: "intermitente" }, (i / n) * 60) !== null) on++;
     expect(on / n).toBeCloseTo(0.5, 2);
+  });
+});
+
+describe("semáforo peatonal (contrato 1.3.0, ADR 0038)", () => {
+  it("verde camina, rojo detenido y apagado nada, toda la escena", () => {
+    for (const t of [-5, 0, 3]) {
+      expect(pedLampAt({ color: "verde" }, t)).toBe("camina");
+      expect(pedLampAt({ color: "rojo", tiempoEnFaseS: 2 }, t)).toBe("detenido");
+      expect(pedLampAt({ color: "apagado" }, t)).toBeNull();
+    }
+  });
+
+  it("intermitente (y amarillo, que no existe para peatones) es la figura que camina destellando", () => {
+    const half = 60 / FLASHES_PER_MIN / 2;
+    for (const color of ["intermitente", "amarillo"] as const) {
+      expect(pedLampAt({ color }, 0)).toBe("camina");
+      expect(pedLampAt({ color }, half + 0.01)).toBeNull();
+      expect(pedLampAt({ color }, 2 * half + 0.01)).toBe("camina");
+    }
   });
 });
