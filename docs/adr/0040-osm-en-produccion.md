@@ -53,10 +53,15 @@ Los resultados están en `eval/results/`. Salen de dos scripts que no corren en 
 
    La principal no estaba caída, sino encolando: con 15 s de espera, la ruta la cortaba antes de que respondiera. De ahí el orden y las esperas actuales.
 
-**Pendiente:**
+4. **Producción, ruta nueva** (orden y esperas de arriba, dos vueltas en 50 s):
+   - **Radio 146 m** (`osm_produccion_v3_r146.json`): 200 al primer intento, a los 45.87 s, desde VK Maps; la repetición salió de la CDN.
+     - Faltan dos calles del extracto, a 146.7 m y 147.7 m del punto: quedan fuera del radio, y no llegó ninguna que no esté en el extracto.
+     - El criterio del script se corrigió para comparar por radio con la geometría del extracto, en vez de exigir el extracto completo.
+   - **Radio 145 m** (`osm_produccion_v3_r145.json`): tres intentos y tres 502, a los 50.74 s, 50.64 s y 32.85 s. La ruta agotó sus vueltas y su tiempo como se diseñó.
 
-- volver a correr `eval/osm_produccion.mjs` con la ruta nueva desplegada;
-- si las públicas siguen así, NextGIS ofrece una instancia global sin pago, pero pide cuenta y llave, y eso solo lo puede dar René.
+**Conclusión:** la ruta funciona contra Overpass real y trae las calles correctas, pero las instancias públicas fallan seguido: hay que contar con que a veces la persona tenga que volver a intentar, y la interfaz se lo dice.
+
+**Opción para más disponibilidad:** NextGIS ofrece una instancia global sin pago, pero pide cuenta y llave, y eso solo lo puede dar René.
 
 ## Pruebas
 

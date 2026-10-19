@@ -1907,7 +1907,11 @@ Las ramas van una encima de otra y se fusionan en este orden, cada una con su PR
   - hasta dos vueltas en 50 s;
   - cabecera `X-Croquis-Overpass` con la instancia que contestó.
 - **Pruebas del servidor:** 7 (segunda vuelta y tiempo total nuevas).
-- **Pendiente:** correr `eval/osm_produccion.mjs` con la ruta nueva desplegada. Opción si las públicas siguen así: NextGIS (gratis, pero pide cuenta y llave; solo René).
+- **Ruta nueva desplegada:**
+  - **Radio 146 m:** 200 al primer intento, a los 45.87 s, desde VK Maps; las dos calles que faltan quedan fuera del radio (146.7 m y 147.7 m).
+  - **Radio 145 m:** tres 502.
+  - **Conclusión:** funciona, pero las públicas fallan seguido (`osm_produccion_v3_*.json`).
+- **Opción:** NextGIS (gratis, pero pide cuenta y llave; solo René).
 
 **Pasos 6g y 6h — Rayas de OSM en el croquis 2D y paso peatonal según la NOM-034 (2026-10-19, rama `feat/f8-paso-peatonal-nom`, ADR 0041 y 0042):**
 
