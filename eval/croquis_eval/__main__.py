@@ -38,6 +38,7 @@ def main(argv: list[str] | None = None) -> int:
         "e5-energia", help="E5 (F10): convención de energía de E2 y del solver (desarrollo)"
     )
     sub.add_parser("e5-galeria", help="E5 (F10): fotos de la galería (muestra del test de NHTSA)")
+    sub.add_parser("e9", help="E9 (F11): usabilidad desde las sesiones de /e9 (data/e9/sesiones)")
     sub.add_parser(
         "e5-orientacion", help="E5 (F10): dónde está DPD1 según los reportes de NHTSA (desarrollo)"
     )
@@ -95,6 +96,16 @@ def main(argv: list[str] | None = None) -> int:
         from croquis_eval.e5_export import main as run_e5_export
 
         print(run_e5_export())
+        return 0
+    if args.command == "e9":
+        from croquis_eval.e9 import SessionError
+        from croquis_eval.e9 import main as run_e9
+
+        try:
+            print(run_e9())
+        except SessionError as e:
+            print(e)
+            return 1
         return 0
     if args.command == "e5-galeria":
         from croquis_eval.e5_galeria import main as run_e5_galeria

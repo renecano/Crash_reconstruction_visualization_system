@@ -56,6 +56,7 @@ import { PeoplePanel } from "./people-panel";
 import { ResultPanel } from "./result-panel";
 import { ExportPanel } from "./export-panel";
 import { TimelineBar } from "./timeline-bar";
+import { leerE9, registrarE9 } from "@/lib/e9";
 import { leerEscenaPropia } from "@/lib/escena-propia";
 import { reconstruirCompletoEnNavegador } from "@/lib/reconstruct-client";
 
@@ -315,6 +316,17 @@ function VisorEscena({ spec, hayPropia }: { spec: EscenaSpec; hayPropia: boolean
   );
   const trial = trialState.escena === params.escena ? trialState.trial : startTrial(readBackend());
   const escena = params.escena;
+  // E9: la primera vez que la escena propia queda lista en 3D (solo con una sesión activa).
+  useEffect(() => {
+    if (escena !== "propia" || !leerE9()) return undefined;
+    const id = window.setInterval(() => {
+      if (window.__croquisReady) {
+        registrarE9("reconstruccion_visible");
+        window.clearInterval(id);
+      }
+    }, 250);
+    return () => window.clearInterval(id);
+  }, [escena]);
   const setTrial = useCallback(
     (update: (t: BackendTrial) => BackendTrial): void =>
       setTrialState((s) => ({

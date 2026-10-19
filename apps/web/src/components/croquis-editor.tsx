@@ -15,6 +15,7 @@ import { useRouter } from "next/navigation";
 import { useEffect, useMemo, useState } from "react";
 import { croquisPdf, croquisPng, croquisSvgFile } from "@/lib/croquis-export";
 import { downloadBytes, safeName } from "@/lib/download";
+import { registrarE9 } from "@/lib/e9";
 import { guardarEscenaPropia } from "@/lib/escena-propia";
 import { RELATO_SPEC_KEY } from "@/lib/relato-api";
 import { Legend } from "./legend";
@@ -165,7 +166,10 @@ export function CroquisEditor({ initial = "alcance" }: { initial?: FixtureName }
         <div className="overflow-hidden rounded-lg border border-neutral-300 dark:border-neutral-700">
           <Croquis
             spec={spec}
-            onChange={applySpec}
+            onChange={(next) => {
+              registrarE9("correccion_croquis");
+              applySpec(next);
+            }}
             showFinal={showFinal}
             selectedId={selected}
             onSelect={setSelected}
