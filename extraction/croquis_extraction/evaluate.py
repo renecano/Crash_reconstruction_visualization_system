@@ -63,6 +63,15 @@ def _errors() -> dict[str, list[float]]:
     return {}
 
 
+# Semáforo peatonal (contrato 1.3.0, ADR 0043). Las anotaciones anteriores al tipo dicen
+# `semaforo` aunque el relato hable del peatonal, y v1-v3 no pueden darlo: en la métrica común
+# cuenta como `semaforo`, para que las versiones y los tests congelados sigan comparables. Aparte,
+# `semaforo_peatonal` se mide con su etiqueta exacta solo donde la anotación ya conoce el tipo
+# (dev), y no entra en el F1 micro ni en el macro.
+DEVICE_COLLAPSE = {"semaforo_peatonal": "semaforo"}
+NEW_TYPE_KEYS = frozenset({"semaforo_peatonal"})
+
+
 @dataclass
 class Score:
     tp: Counter[str] = field(default_factory=_counter)
@@ -104,7 +113,8 @@ class Score:
         self.stories += other.stories
 
     def report(self) -> dict[str, Any]:
-        keys = sorted(set(self.tp) | set(self.fp) | set(self.fn))
+        all_keys = sorted(set(self.tp) | set(self.fp) | set(self.fn))
+        keys = [k for k in all_keys if k not in NEW_TYPE_KEYS]
         per: dict[str, Any] = {}
         for k in keys:
             tp, fp, fn = self.tp[k], self.fp[k], self.fn[k]
@@ -122,13 +132,26 @@ class Score:
             if self.abs_err.get(k):
                 entry["error_absoluto_medio"] = _r(statistics.fmean(self.abs_err[k]))
             per[k] = entry
-        tp = sum(self.tp.values())
-        fp = sum(self.fp.values())
-        fn = sum(self.fn.values())
+        macro = statistics.fmean([per[k]["f1"] for k in keys]) if keys else 0.0
+        for k in [k for k in all_keys if k in NEW_TYPE_KEYS]:
+            tp, fp, fn = self.tp[k], self.fp[k], self.fn[k]
+            p = tp / (tp + fp) if tp + fp else math.nan
+            r = tp / (tp + fn) if tp + fn else math.nan
+            f1 = 2 * p * r / (p + r) if p == p and r == r and p + r else 0.0
+            per[k] = {
+                "tp": tp,
+                "fp": fp,
+                "fn": fn,
+                "precision": _r(p),
+                "exhaustividad": _r(r),
+                "f1": _r(f1),
+            }
+        tp = sum(self.tp[k] for k in keys)
+        fp = sum(self.fp[k] for k in keys)
+        fn = sum(self.fn[k] for k in keys)
         p = tp / (tp + fp) if tp + fp else math.nan
         r = tp / (tp + fn) if tp + fn else math.nan
         micro = 2 * p * r / (p + r) if p == p and r == r and p + r else 0.0
-        macro = statistics.fmean([v["f1"] for v in per.values()]) if per else 0.0
         # Sin los campos que solo anota parte de la referencia: compara versiones del prompt que
         # no los conocen (v1 y v2 no pueden dar la fase de las marcas).
         tp0 = tp - sum(self.tp[k] for k in ANNOTATED_ONLY)
@@ -197,19 +220,38 @@ def match_vehicles(ref: Facts, pred: Facts) -> list[tuple[int | None, int | None
     return pairs
 
 
-def score_story(ref: Facts, pred: Facts) -> Score:
+def _devices(facts: Facts, stated: bool, collapse: bool) -> Counter[str]:
+    out: Counter[str] = Counter()
+    for d in facts.dispositivos:
+        if _stated(d) == stated:
+            v = str(d.valor)
+            out[DEVICE_COLLAPSE.get(v, v) if collapse else v] += 1
+    return out
+
+
+def score_story(ref: Facts, pred: Facts, new_types: bool = False) -> Score:
+    """Puntaje de un relato. `new_types`: la anotación ya conoce los tipos nuevos del contrato
+    (el semáforo peatonal), así que también se miden con su etiqueta exacta (ADR 0043)."""
     sc = Score(stories=1)
     for key in SCALAR_FIELDS:
         if key in ANNOTATED_ONLY and key not in ref.escalares:
             continue
         sc.add(key, ref.escalares.get(key), pred.escalares.get(key))
-    rset = Counter(str(d.valor) for d in ref.dispositivos if _stated(d))
-    rinf = Counter(str(d.valor) for d in ref.dispositivos if not _stated(d))
-    pset = Counter(str(d.valor) for d in pred.dispositivos if _stated(d))
+    rset = _devices(ref, stated=True, collapse=True)
+    rinf = _devices(ref, stated=False, collapse=True)
+    pset = _devices(pred, stated=True, collapse=True)
     inter = rset & pset
     sc.tp["dispositivos"] += sum(inter.values())
     sc.fp["dispositivos"] += sum((pset - rset - rinf).values())
     sc.fn["dispositivos"] += sum((rset - pset).values())
+    if new_types:
+        for k in NEW_TYPE_KEYS:
+            r = _devices(ref, stated=True, collapse=False)[k]
+            ri = _devices(ref, stated=False, collapse=False)[k]
+            p = _devices(pred, stated=True, collapse=False)[k]
+            sc.tp[k] += min(r, p)
+            sc.fp[k] += max(0, p - r - ri)
+            sc.fn[k] += max(0, r - p)
     pairs = match_vehicles(ref, pred)
     for i, j in pairs:
         rv = ref.vehiculos[i] if i is not None else {}

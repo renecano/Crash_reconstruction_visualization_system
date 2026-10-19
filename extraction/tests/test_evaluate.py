@@ -182,3 +182,36 @@ def test_f1_sin_campos_parciales_ignora_la_fase() -> None:
     rep = score_story(ref, pred).report()
     assert rep["f1_micro"] < 1.0
     assert rep["f1_micro_sin_campos_parciales"] == 1.0
+
+
+def test_semaforo_peatonal_cuenta_como_semaforo_en_la_metrica_comun() -> None:
+    """ADR 0043: los tests congelados anotan `semaforo` donde el relato habla del peatonal; en la
+    métrica común los dos son `semaforo`, y el tipo exacto solo se mide donde la anotación lo
+    conoce (dev), sin entrar en el F1 micro ni en el macro."""
+    vieja = Facts()
+    vieja.dispositivos.append(Fact("semaforo", "semáforo peatonal"))
+    pred = Facts()
+    pred.dispositivos.append(Fact("semaforo_peatonal", "semáforo peatonal"))
+    sc = score_story(vieja, pred)
+    assert (sc.tp["dispositivos"], sc.fp["dispositivos"], sc.fn["dispositivos"]) == (1, 0, 0)
+    assert "semaforo_peatonal" not in sc.report()["por_campo"]
+
+    nueva = Facts()
+    nueva.dispositivos.append(Fact("semaforo_peatonal", "semáforo peatonal"))
+    v3 = Facts()
+    v3.dispositivos.append(Fact("semaforo", "semáforo peatonal"))
+    sc = score_story(nueva, v3, new_types=True)
+    assert sc.tp["dispositivos"] == 1
+    assert (sc.tp["semaforo_peatonal"], sc.fn["semaforo_peatonal"]) == (0, 1)
+    rep = sc.report()
+    assert rep["f1_micro"] == 1.0
+    assert rep["f1_macro"] == score_story(nueva, v3).report()["f1_macro"]
+    assert rep["por_campo"]["semaforo_peatonal"]["f1"] == 0.0
+
+    sc = score_story(nueva, pred, new_types=True)
+    assert (sc.tp["semaforo_peatonal"], sc.fp["semaforo_peatonal"]) == (1, 0)
+    # Un semáforo peatonal que el relato no tiene resta en dev.
+    sin = Facts()
+    sin.dispositivos.append(Fact("semaforo", "el semáforo"))
+    sc = score_story(sin, pred, new_types=True)
+    assert sc.fp["semaforo_peatonal"] == 1

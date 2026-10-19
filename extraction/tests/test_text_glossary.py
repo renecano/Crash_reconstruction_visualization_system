@@ -3,7 +3,7 @@ import itertools
 from hypothesis import given
 from hypothesis import strategies as st
 
-from croquis_extraction.glossary import find_terms, glossary_version
+from croquis_extraction.glossary import find_terms, glossary_entries, glossary_version
 from croquis_extraction.text import fold, load_json
 
 
@@ -64,3 +64,24 @@ def test_entradas_del_glosario_bien_formadas() -> None:
             assert e.get("pregunta"), f"{e['id']}: ambigua sin pregunta"
         for p in e["patrones"]:
             assert p == fold(p), f"{e['id']}: patrón sin plegar {p!r}"
+
+
+def test_el_semaforo_peatonal_gana_al_semaforo_y_es_solo_desde_v4() -> None:
+    """ADR 0043: la coincidencia más larga gana, así que "semáforo peatonal" no da `semaforo`; la
+    entrada solo entra en el prompt de v4, y v1-v3 ven la versión del glosario de sus
+    grabaciones."""
+    terms = find_terms("Crucé con el semáforo peatonal en verde; el muñequito ya estaba.")
+    ids = [t.id for t in terms]
+    assert ids.count("semaforo_peatonal") == 2
+    assert "semaforo" not in ids
+    assert [t.texto for t in terms if t.id == "semaforo_peatonal"] == [
+        "semáforo peatonal",
+        "muñequito",
+    ]
+    assert "semaforo" in [t.id for t in find_terms("El semáforo estaba en rojo.")]
+    for p in ("extraccion_v1", "extraccion_v2", "extraccion_v3"):
+        assert "semaforo_peatonal" not in [e["id"] for e in glossary_entries(p)]
+        assert glossary_version(p) == "1.4.0"
+    assert "semaforo_peatonal" in [e["id"] for e in glossary_entries("extraccion_v4")]
+    assert glossary_version("extraccion_v4") == glossary_version() == "1.5.0"
+    assert len(glossary_entries()) == len(glossary_entries("extraccion_v4"))

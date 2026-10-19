@@ -349,7 +349,7 @@ Comparezco en calidad de testigo. Aproximadamente a las 13:40 horas me encontrab
 "entorno.iluminacion" = ["dia", "13:40 horas"]
 "evento.tipo" = ["impacto_vehiculo_persona", "atropelló"]
 "evidencias.distancia_proyeccion_m" = [1, "aproximadamente un metro"]
-dispositivos = [["paso_peatonal", "paso peatonal"], ["semaforo", "semáforo peatonal"]]
+dispositivos = [["paso_peatonal", "paso peatonal"], ["semaforo_peatonal", "semáforo peatonal"]]
 zonas = { "0" = ["F", "con la parte frontal"] }
 [[relato.hechos.vehiculos]]
 clase = ["sedan_compacto", "automóvil compacto"]

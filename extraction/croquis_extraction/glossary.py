@@ -34,8 +34,29 @@ def _compiled() -> list[tuple[dict[str, Any], re.Pattern[str]]]:
     return out
 
 
-def glossary_version() -> str:
-    return str(load_json("glosario.json")["version"])
+def _prompt_n(prompt: str) -> int:
+    """Número de una versión del prompt (`extraccion_v4` → 4)."""
+    return int(prompt.rsplit("_v", 1)[1])
+
+
+def glossary_version(prompt: str | None = None) -> str:
+    """Versión del glosario; para un prompt anterior a sus últimas entradas, la que vio ese prompt
+    (`version_por_prompt`), así su huella no cambia (ADR 0043)."""
+    g = load_json("glosario.json")
+    if prompt is not None and prompt in g.get("version_por_prompt", {}):
+        return str(g["version_por_prompt"][prompt])
+    return str(g["version"])
+
+
+def glossary_entries(prompt: str | None = None) -> list[dict[str, Any]]:
+    """Entradas del glosario; con un prompt, solo las que ese prompt conoce (las que tienen
+    `desde` entran en esa versión y las siguientes). La línea base de reglas usa todas."""
+    out: list[dict[str, Any]] = []
+    for e in load_json("glosario.json")["entradas"]:
+        desde = e.get("desde")
+        if prompt is None or desde is None or _prompt_n(prompt) >= _prompt_n(str(desde)):
+            out.append(e)
+    return out
 
 
 def find_terms(text: str) -> list[Term]:

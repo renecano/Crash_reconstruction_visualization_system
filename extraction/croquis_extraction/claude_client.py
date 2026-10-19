@@ -33,7 +33,7 @@ from pathlib import Path
 from typing import Any
 
 from croquis_extraction.facts import Fact, Facts
-from croquis_extraction.glossary import glossary_version
+from croquis_extraction.glossary import glossary_entries, glossary_version
 from croquis_extraction.text import load_json
 
 ROOT = Path(__file__).resolve().parents[2]
@@ -41,11 +41,11 @@ RECORDINGS = ROOT / "packages" / "extraction" / "grabaciones"
 LEDGER = RECORDINGS / "gasto.json"
 PROMPTS_DIR = ROOT / "packages" / "extraction" / "prompts"
 # v3 es el prompt de producción: v2 más la fase de las marcas; no empeoró en dev ni en el test
-# CISS (ADR 0019). v2 lo fue antes (ADR 0012).
+# CISS (ADR 0019). v2 lo fue antes (ADR 0012). v4 agrega el semáforo peatonal (ADR 0043).
 # Las grabaciones de v1 viven en grabaciones/<modelo>/ y las de otras versiones en
 # grabaciones/<versión>/<modelo>/.
 PROMPT_VERSION = "extraccion_v3"
-PROMPT_VERSIONS = ("extraccion_v1", "extraccion_v2", "extraccion_v3")
+PROMPT_VERSIONS = ("extraccion_v1", "extraccion_v2", "extraccion_v3", "extraccion_v4")
 SCHEMA_FILE = ROOT / "packages" / "scene-schema" / "escena.schema.json"
 DEFAULT_MODEL = "claude-sonnet-5-5"
 MODELS = ("claude-sonnet-5-5", "claude-haiku-5-5")
@@ -129,10 +129,10 @@ def _schema_enum(defname: str, prop: str = "valor") -> tuple[str, ...]:
     return tuple(s["$defs"][defname]["properties"][prop]["enum"])
 
 
-# Dispositivos del contrato que ningún prompt vigente pide (llegan del croquis): el
-# semáforo peatonal (contrato 1.3.0, ADR 0038). Si entraran al esquema de salida, cambiaría la
-# huella de los prompts v1-v3 y sus respuestas grabadas dejarían de valer.
-NOT_ASKED_DEVICES = frozenset({"semaforo_peatonal"})
+# Dispositivos que solo pide v4 en adelante: el semáforo peatonal (contrato 1.3.0, ADR 0038 y
+# 0043). Si entraran al esquema de v1-v3, cambiaría su huella y sus respuestas grabadas dejarían
+# de valer.
+SINCE_V4_DEVICES = frozenset({"semaforo_peatonal"})
 
 
 @cache
@@ -151,10 +151,16 @@ def allowed_values() -> dict[str, tuple[str, ...]]:
         "vehiculo.maniobra": (*_schema_enum("CampoManiobra"), "cambio_carril"),
         "vehiculo.zona_impacto": _schema_enum("ZonaCDC", "lado"),
         "persona.rol": _schema_enum("CampoRolPersona"),
-        "dispositivo.tipo": tuple(
-            t for t in _schema_enum("Dispositivo", "tipo") if t not in NOT_ASKED_DEVICES
-        ),
+        "dispositivo.tipo": _schema_enum("Dispositivo", "tipo"),
     }
+
+
+def devices_for(prompt: str) -> tuple[str, ...]:
+    """Dispositivos que pide una versión del prompt."""
+    devices = allowed_values()["dispositivo.tipo"]
+    if prompt in ("extraccion_v1", "extraccion_v2", "extraccion_v3"):
+        return tuple(t for t in devices if t not in SINCE_V4_DEVICES)
+    return devices
 
 
 def output_schema(prompt: str = PROMPT_VERSION) -> dict[str, Any]:
@@ -205,7 +211,7 @@ def output_schema(prompt: str = PROMPT_VERSION) -> dict[str, Any]:
                 "items": {
                     "type": "object",
                     "properties": {
-                        "tipo": {"type": "string", "enum": list(av["dispositivo.tipo"])},
+                        "tipo": {"type": "string", "enum": list(devices_for(prompt))},
                         "cita": {"type": "string"},
                     },
                     "required": ["tipo", "cita"],
@@ -257,7 +263,7 @@ def system_prompt(prompt: str = PROMPT_VERSION) -> str:
     v2, la tabla de modelos."""
     _check_prompt(prompt)
     lines: list[str] = []
-    for e in load_json("glosario.json")["entradas"]:
+    for e in glossary_entries(prompt):
         effects = ", ".join(f"{x['campo']}={x['valor']}" for x in e["efectos"])
         lines.append(f"- {e['significado']}" + (f" → {effects}" if effects else ""))
     gl = "\n".join(lines)
@@ -271,7 +277,7 @@ def prompt_fingerprint(prompt: str = PROMPT_VERSION) -> str:
     payload = (
         system_prompt(prompt)
         + json.dumps(output_schema(prompt), sort_keys=True)
-        + glossary_version()
+        + glossary_version(prompt)
     )
     return hashlib.sha256(payload.encode("utf-8")).hexdigest()[:16]
 

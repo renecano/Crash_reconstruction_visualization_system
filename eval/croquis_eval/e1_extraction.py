@@ -374,8 +374,10 @@ def evaluate_method(
         sin_cita += run.sin_cita
         verified_down += run.degraded
         preds[it["id"]] = facts_from_spec(run.spec)
-        score.merge(score_story(ref, preds[it["id"]]))
-        score_verified.merge(score_story(ref, facts_from_spec(run.verified)))
+        # Solo dev conoce el semáforo peatonal; los tests se anotaron antes del tipo (ADR 0043).
+        new_types = split == "dev"
+        score.merge(score_story(ref, preds[it["id"]], new_types))
+        score_verified.merge(score_story(ref, facts_from_spec(run.verified), new_types))
         ids = [v["id"] for v in run.spec["vehiculos"]]
         errs = error_topics(ref, preds[it["id"]], ids)
         if run.asked is None:
