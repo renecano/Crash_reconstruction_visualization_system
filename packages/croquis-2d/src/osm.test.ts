@@ -1,11 +1,15 @@
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
 import { describe, expect, it } from "vitest";
+import { loadFixture } from "@croquis/scene-schema";
 import {
+  applyMap,
   crossingAt,
   distinctArms,
   enu,
+  nearestCrossing,
   OSM_ATTRIBUTION,
+  overpassQuery,
   redVialFrom,
   rotateDeg,
   templateFromCrossing,
@@ -93,5 +97,55 @@ describe("OpenStreetMap a red vial (ADR 0023)", () => {
     expect(redVialFrom(resp, { lat: 0, lon: 0, radioM: 100, rotacionDeg: 0 }).vias).toEqual([]);
     expect(() => crossingAt(resp, 1)).toThrow(/no es parte/);
     expect(() => crossingAt(resp, 99)).toThrow(/no está/);
+  });
+});
+
+describe("calles reales en producción (ADR 0040)", () => {
+  const MANIFEST = JSON.parse(
+    readFileSync(join(process.cwd(), "../../data/osm/manifest.json"), "utf-8"),
+  ) as Record<string, { consulta: string; lat: number; lon: number; radio_m: number }>;
+
+  it("la consulta es la misma que la del extracto versionado", () => {
+    const m = MANIFEST.toluca_carranza_juarez!;
+    expect(overpassQuery(m.lat, m.lon, m.radio_m)).toBe(m.consulta);
+  });
+
+  it("el cruce más cercano a unas coordenadas cerca de la esquina es el del extracto", () => {
+    // ~20 m al norte del cruce.
+    expect(nearestCrossing(RESP, ORIGEN.lat + 0.00018, ORIGEN.lon)).toBe(NODO);
+    // A más de 60 m de cualquier cruce: ninguno.
+    expect(nearestCrossing(RESP, ORIGEN.lat + 0.01, ORIGEN.lon + 0.01)).toBeNull();
+  });
+
+  it("aplicar el mapa a una escena reproduce la red y la plantilla de la escena de Toluca", () => {
+    const toluca = loadFixture("interseccion_toluca");
+    const base = structuredClone(toluca);
+    delete (base.lugar as { red_vial?: unknown }).red_vial;
+    const r = applyMap(base, RESP, {
+      lat: ORIGEN.lat + 0.00009,
+      lon: ORIGEN.lon - 0.00009,
+      radioM: toluca.lugar.ubicacion_real?.radio_m ?? 150,
+    });
+    expect(r.nodo).toBe(NODO);
+    expect(r.spec.lugar.red_vial).toEqual(toluca.lugar.red_vial);
+    expect(r.spec.lugar.ubicacion_real?.rotacion_deg).toBe(
+      toluca.lugar.ubicacion_real?.rotacion_deg,
+    );
+    expect(r.spec.lugar.tipo_via.valor).toBe(toluca.lugar.tipo_via.valor);
+    expect(r.spec.lugar.tipo_via.fuente).toBe("mapa");
+    // La evidencia del relato se conserva.
+    expect(r.spec.lugar.tipo_via.evidencia).toEqual(toluca.lugar.tipo_via.evidencia);
+    expect(r.spec.lugar.sentidos.valor).toBe(toluca.lugar.sentidos.valor);
+    expect(r.spec.lugar.carriles_por_sentido?.valor).toBe(toluca.lugar.carriles_por_sentido?.valor);
+    expect(r.vias).toBe(toluca.lugar.red_vial!.vias.length);
+    // La escena original no cambia.
+    expect((base.lugar as { red_vial?: unknown }).red_vial).toBeUndefined();
+  });
+
+  it("sin un cruce cerca, error en vez de inventar una orientación", () => {
+    const spec = loadFixture("alcance");
+    expect(() =>
+      applyMap(spec, RESP, { lat: ORIGEN.lat + 0.01, lon: ORIGEN.lon, radioM: 150 }),
+    ).toThrow(/cruce/);
   });
 });

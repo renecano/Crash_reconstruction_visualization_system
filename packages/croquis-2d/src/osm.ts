@@ -7,6 +7,7 @@
  * se gira `−rotacion_deg` para que el eje de la calle principal quede sobre +X, como en las
  * plantillas paramétricas (ADR 0006).
  */
+import type { EscenaSpec } from "@croquis/scene-schema";
 
 export const EARTH_RADIUS_M = 6_371_008.8;
 export const OSM_ATTRIBUTION =
@@ -268,4 +269,137 @@ export function templateFromCrossing(c: Crossing): TemplateFromMap {
   const w = widthOf(c.main);
   if (w !== undefined) t.ancho_carril_m = Math.round((w / lanes) * 100) / 100;
   return t;
+}
+
+/**
+ * Consulta Overpass QL de las calles a menos de `radioM` del punto, con sus nodos: la misma que usa
+ * `croquis-data osm` (ADR 0023), para que producción y los extractos versionados coincidan.
+ */
+export function overpassQuery(lat: number, lon: number, radioM: number): string {
+  return (
+    `[out:json][timeout:25];way(around:${radioM},${lat},${lon})["highway"];` +
+    "out body;>;out skel qt;"
+  );
+}
+
+/**
+ * Nodo de cruce más cercano al punto (a menos de `maxM`): un nodo compartido por dos o más calles,
+ * con al menos tres brazos distintos (una T o una X). null si no hay ninguno.
+ */
+export function nearestCrossing(
+  resp: OverpassResponse,
+  lat: number,
+  lon: number,
+  maxM = 60,
+): number | null {
+  const { nodes, ways } = parts(resp);
+  const count = new Map<number, number>();
+  for (const w of ways) {
+    for (const id of new Set(w.nodes)) count.set(id, (count.get(id) ?? 0) + 1);
+  }
+  let best: { id: number; d: number } | null = null;
+  for (const [id, n] of count) {
+    if (n < 2) continue;
+    const node = nodes.get(id);
+    if (!node) continue;
+    const p = enu(node.lat, node.lon, lat, lon);
+    const d = Math.hypot(p.x, p.y);
+    if (d > maxM || (best && d >= best.d)) continue;
+    if (distinctArms(crossingAt(resp, id).arms) < 3) continue;
+    best = { id, d };
+  }
+  return best?.id ?? null;
+}
+
+/** Calles del mapa ya puestas en la escena. */
+export interface MapaAplicado {
+  spec: EscenaSpec;
+  nodo: number;
+  vias: number;
+}
+
+/**
+ * Pone en la escena las calles reales alrededor del punto (ADR 0040): el cruce más cercano queda en
+ * el origen con la calle principal sobre +X, la plantilla paramétrica (tipo, sentidos, carriles y
+ * ancho de carril si OSM lo trae) se deriva del cruce, y la red se guarda en `lugar.red_vial` para
+ * que la escena sea determinista y funcione sin red. Los campos que salen del mapa llevan la fuente
+ * `mapa` y conservan la evidencia del relato que tuvieran. Sin cruce cerca, error: no se inventa
+ * una orientación.
+ */
+export function applyMap(
+  spec: EscenaSpec,
+  resp: OverpassResponse,
+  o: { lat: number; lon: number; radioM: number },
+): MapaAplicado {
+  const nodo = nearestCrossing(resp, o.lat, o.lon);
+  if (nodo === null) {
+    throw new Error(
+      "No encontré un cruce de calles a menos de 60 m de esas coordenadas. Ponlas sobre el cruce.",
+    );
+  }
+  const { nodes } = parts(resp);
+  const c = nodes.get(nodo)!;
+  const cruce = crossingAt(resp, nodo);
+  const t = templateFromCrossing(cruce);
+  const red = redVialFrom(resp, {
+    lat: c.lat,
+    lon: c.lon,
+    radioM: o.radioM,
+    rotacionDeg: t.rotacion_deg,
+    nodoCruce: nodo,
+  });
+  const out = structuredClone(spec);
+  const lugar = out.lugar as unknown as Record<string, unknown>;
+  const field = (key: string, valor: unknown, confianza: number, nota: string, extra = {}) => {
+    const prev = lugar[key] as { evidencia?: unknown } | undefined;
+    lugar[key] = {
+      valor,
+      fuente: "mapa",
+      confianza,
+      ...(prev?.evidencia ? { evidencia: prev.evidencia } : {}),
+      nota,
+      ...extra,
+    };
+  };
+  const principal = cruce.main.tags?.name ?? "la calle principal";
+  field("tipo_via", t.tipo_via, 0.9, `Del cruce en OpenStreetMap (nodo ${nodo}, ADR 0040).`);
+  field("sentidos", t.sentidos, 0.85, `Sentido de ${principal} en OSM (oneway).`);
+  field(
+    "carriles_por_sentido",
+    t.carriles_por_sentido,
+    0.85,
+    `Carriles de ${principal} en OSM (lanes, o el valor usual si no viene).`,
+  );
+  if (t.carriles_por_sentido_secundaria !== undefined) {
+    field(
+      "carriles_por_sentido_secundaria",
+      t.carriles_por_sentido_secundaria,
+      0.85,
+      `Carriles de ${cruce.secondary?.tags?.name ?? "la calle secundaria"} en OSM (lanes).`,
+    );
+  }
+  if (t.ancho_carril_m !== undefined) {
+    field(
+      "ancho_carril",
+      t.ancho_carril_m,
+      0.8,
+      `Ancho de ${principal} en OSM entre sus carriles.`,
+      {
+        unidad: "m",
+      },
+    );
+  }
+  lugar.ubicacion_real = {
+    lat: c.lat,
+    lon: c.lon,
+    radio_m: o.radioM,
+    rotacion_deg: t.rotacion_deg,
+    procedencia: {
+      fuente: "usuario",
+      confianza: 1,
+      nota: `Coordenadas que dio la persona; el origen es el cruce más cercano en OSM (nodo ${nodo}).`,
+    },
+  };
+  lugar.red_vial = red;
+  return { spec: out, nodo, vias: red.vias.length };
 }
