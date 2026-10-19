@@ -21,6 +21,7 @@ import {
 import { applyEdit, type EditOp, type PoseKind } from "./edit";
 import type { Vec2 } from "./geometry";
 import { mapLaneLines, type MapLaneLine } from "./map-roads";
+import { sceneCrosswalks, STOP_LINE_WIDTH, stopLines, type StopLine } from "./markings";
 import { sceneLayout, type LaneStrip } from "./layout";
 import { clientToWorld, makeViewport, worldToSvg, type Viewport } from "./viewport";
 
@@ -79,6 +80,12 @@ export function Croquis({
     () => (layout.mapa ? mapLaneLines(layout.mapa.vias) : []),
     [layout.mapa],
   );
+  // Rayas de alto (ADR 0044): dependen de dónde arrancan los vehículos, así que se recalculan con
+  // cada edición confirmada, no durante el arrastre.
+  const stops = useMemo(() => {
+    const mainWidth = layout.road.strips[0]?.width ?? layout.road.arcs[0]?.width ?? 7;
+    return stopLines(spec, layout.road, layout.mapa?.vias, sceneCrosswalks(spec.lugar, mainWidth));
+  }, [spec, layout.road, layout.mapa]);
   const svgRef = useRef<SVGSVGElement>(null);
   const [drag, setDrag] = useState<DragTarget | null>(null);
   const [preview, setPreview] = useState<EscenaSpec | null>(null);
@@ -189,7 +196,7 @@ export function Croquis({
           fill={BACKGROUND}
         />
       ) : null}
-      <Road layout={shownLayout} vp={vp} laneLines={laneLines} />
+      <Road layout={shownLayout} vp={vp} laneLines={laneLines} stops={stops} />
       {shownLayout.evidence.map((ev) => (
         <g key={ev.id} data-testid={`evidence-${ev.id}`}>
           <polyline
@@ -415,10 +422,12 @@ function Road({
   layout,
   vp,
   laneLines,
+  stops,
 }: {
   layout: ReturnType<typeof sceneLayout>;
   vp: Viewport;
   laneLines: MapLaneLine[];
+  stops: StopLine[];
 }) {
   const m = (v: number) => v * vp.scale;
   const P = (p: Vec2) => worldToSvg(vp, p);
@@ -462,6 +471,7 @@ function Road({
             />
           );
         })}
+        <StopLines stops={stops} vp={vp} />
       </g>
     );
   }
@@ -498,7 +508,32 @@ function Road({
       {layout.road.strips.map((s, i) => (
         <Strip key={i} s={s} vp={vp} />
       ))}
+      <StopLines stops={stops} vp={vp} />
     </g>
+  );
+}
+
+/** Rayas de alto (M-6, ADR 0044): 60 cm a lo largo del tránsito, a lo ancho de sus carriles. */
+function StopLines({ stops, vp }: { stops: StopLine[]; vp: Viewport }) {
+  const m = (v: number) => v * vp.scale;
+  return (
+    <>
+      {stops.map((l, i) => {
+        const c = worldToSvg(vp, l.center);
+        return (
+          <rect
+            key={`alto-${i}`}
+            data-testid="raya-alto"
+            transform={`translate(${c.x} ${c.y}) rotate(${-l.heading})`}
+            x={-m(STOP_LINE_WIDTH) / 2}
+            y={-m(l.length) / 2}
+            width={m(STOP_LINE_WIDTH)}
+            height={m(l.length)}
+            fill={LINE_STROKE}
+          />
+        );
+      })}
+    </>
   );
 }
 

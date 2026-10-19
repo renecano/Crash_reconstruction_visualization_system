@@ -27,4 +27,5 @@ export {
   type ViewBox,
 } from "./viewport";
 export * from "./map-roads";
+export * from "./markings";
 export * from "./osm";

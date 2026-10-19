@@ -57,8 +57,11 @@ Reglas de trabajo: `CLAUDE.md`. Especificación: `PLAN.md`.
   - **Franjas:** de 40 cm, separadas 40 cm.
   - **Largo:** el de la Tabla 8 (6 m en calle primaria).
   - **Orillas:** siguen continuas (5.5.1), lo que cierra el pendiente del ADR 0037.
+- **F11, paso 6i hecho** (rama `feat/f8-raya-alto`, ADR 0044): raya de alto (M-6) en los accesos que controla un semáforo o un alto, según `aplica_a` y las fases.
+  - **Dónde:** a 1.20 m de la vía que cruza o del paso peatonal, en los carriles del sentido del vehículo.
+  - **En qué escenas:** las de plantilla y las del mapa, en el croquis y en el visor.
+  - **Límite:** en una recta no se dibuja.
 - **Pendientes menores:**
-  - raya de alto (M-6) con semáforo o alto. Falta decidir qué accesos controla cada dispositivo; ver ADR 0042;
   - prompt v4 con el semáforo peatonal;
   - texturas triplanares, después de E9.
 - **Siguiente paso concreto:** F11 queda en lo que depende de René: E9 (el kit está listo) y la computadora de demo (E6 en alta y ultra). Mientras tanto, prompt v4. Diseño previsto:

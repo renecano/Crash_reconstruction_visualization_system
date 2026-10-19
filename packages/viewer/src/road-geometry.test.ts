@@ -116,6 +116,19 @@ describe("geometría de la vía", () => {
     expect(Math.max(...ys)).toBeLessThanOrEqual(6);
   });
 
+  it("las rayas de alto son rayas blancas de 60 cm a lo ancho de sus carriles (ADR 0044)", () => {
+    const lay = roadLayout(loadFixture("lateral_interseccion").lugar);
+    const opts = { dobleSentido: false, banquetas: false };
+    const sin = buildRoadGeometry(lay, opts);
+    const con = buildRoadGeometry(lay, {
+      ...opts,
+      stopLines: [{ center: { x: -3.15, y: 0 }, heading: 0, length: 6.6 }],
+    });
+    expect(meshArea(con.whiteLines) - meshArea(sin.whiteLines)).toBeCloseTo(0.6 * 6.6, 9);
+    expect(pointInMesh(con.whiteLines, -3.15, 3.2)).toBe(true);
+    expect(pointInMesh(con.whiteLines, -3.5, 0)).toBe(false);
+  });
+
   it("el largo del paso sigue la Tabla 8 de la NOM-034 y no es menor que la banqueta", () => {
     expect(CROSSWALK_STRIPE).toBe(0.4);
     expect(CROSSWALK_GAP).toBe(0.4);

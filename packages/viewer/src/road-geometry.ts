@@ -9,18 +9,36 @@
  * una elección visual, no una cita de norma.
  */
 import {
+  CROSSWALK_GAP,
+  CROSSWALK_LENGTH_M,
+  CROSSWALK_STRIPE,
+  crosswalkLength,
   LINE_WIDTH,
   mapCrossings,
   mapViaLineOffsets,
+  SIDEWALK_WIDTH,
+  STOP_LINE_WIDTH,
   stripLineOffsets,
+  type Crosswalk,
   type LaneStrip,
   type MapVia,
   type Ring,
   type RoadLayout,
+  type StopLine,
   type Vec2,
 } from "@croquis/croquis-2d";
 
-export { LINE_WIDTH, stripLineOffsets, type MapVia };
+export {
+  CROSSWALK_GAP,
+  CROSSWALK_LENGTH_M,
+  CROSSWALK_STRIPE,
+  crosswalkLength,
+  LINE_WIDTH,
+  SIDEWALK_WIDTH,
+  stripLineOffsets,
+  type Crosswalk,
+  type MapVia,
+};
 
 export interface Mesh2D {
   /** Vértices (x, y) en metros, marco del mundo. */
@@ -48,8 +66,10 @@ export interface RoadOptions {
   banquetas: boolean;
   /** Guarnición en la orilla de la calzada aunque no haya banqueta (PLAN §7.1). */
   guarniciones?: boolean;
-  /** Pasos peatonales (`crosswalkFor`). */
+  /** Pasos peatonales (`sceneCrosswalks`). */
   crosswalks?: Crosswalk[];
+  /** Rayas de alto (`stopLines`, ADR 0044). */
+  stopLines?: StopLine[];
   /** Largo y separación de los segmentos de las rayas discontinuas (por omisión, calle ≤ 50 km/h). */
   dash?: DashPattern;
   /** Cómo van las rayas según los dispositivos de línea de la escena (`markingsFor`). */
@@ -96,43 +116,9 @@ export function markingsFor(dobleSentido: boolean, tipos: readonly string[]): Ma
   return { centro: "doble_continua", carriles: continua ? "continua" : "discontinua" };
 }
 
-/**
- * Paso peatonal (M-7) de la NOM-034-SCT2/SEDATU-2022, inciso 5.9 (ADR 0042): franjas de 40 cm
- * separadas 40 cm, paralelas a la trayectoria de los vehículos y en todo el ancho de la calle.
- */
-export const CROSSWALK_STRIPE = 0.4;
-export const CROSSWALK_GAP = 0.4;
-/**
- * Longitud mínima de las franjas (NOM-034, Tabla 8): carretera 2 m, calle primaria 6 m y calles
- * secundaria y terciaria 4 m.
- */
-export const CROSSWALK_LENGTH_M = { carretera: 2, primaria: 6, secundaria: 4 } as const;
-
-/** Un paso peatonal: centro, rumbo y ancho de la vía que cruza, y largo de sus franjas (m). */
-export interface Crosswalk {
-  center: Vec2;
-  roadHeading: number;
-  roadWidth: number;
-  length: number;
-}
-
-/**
- * Largo de las franjas del paso peatonal según la vía (NOM-034, 5.9 y Tabla 8), nunca menor que
- * el ancho de las banquetas que une. La escena no dice si la calle es primaria: se toma como
- * primaria la de dos carriles o más por sentido (supuesto del ADR 0042).
- */
-export function crosswalkLength(
-  tipoVia: string | undefined,
-  carrilesPorSentido: number,
-  banquetas: boolean,
-): number {
-  const base =
-    tipoVia === "carretera_dos_carriles" || tipoVia === "autopista"
-      ? CROSSWALK_LENGTH_M.carretera
-      : carrilesPorSentido >= 2
-        ? CROSSWALK_LENGTH_M.primaria
-        : CROSSWALK_LENGTH_M.secundaria;
-  return banquetas ? Math.max(base, SIDEWALK_WIDTH) : base;
+/** Raya de alto: 60 cm a lo largo del tránsito, a lo ancho de los carriles que detiene. */
+function stopLineQuad(m: Mesh2D, l: StopLine): void {
+  orientedQuad(m, l.center, dir(l.heading), STOP_LINE_WIDTH, l.length);
 }
 
 /** Franjas del paso, centradas en el ancho de la calzada. */
@@ -156,7 +142,6 @@ function crosswalkStripes(m: Mesh2D, cw: Crosswalk): void {
 
 /** Altura de la guarnición, la banqueta y el camellón (m): 15 cm, la altura usual en México. */
 export const CURB_HEIGHT = 0.15;
-export const SIDEWALK_WIDTH = 2.5;
 const ARC_SEGMENT_M = 2;
 
 function emptyMesh(): Mesh2D {
@@ -283,7 +268,7 @@ function lineAlongArc(
   }
 }
 
-export interface MapRoadOptions extends Pick<RoadOptions, "crosswalks"> {
+export interface MapRoadOptions extends Pick<RoadOptions, "crosswalks" | "stopLines"> {
   /** Banquetas y guarniciones de la escena (`lugar`), como en las plantillas. */
   banquetas?: boolean;
   guarniciones?: boolean;
@@ -405,6 +390,7 @@ export function buildMapRoadGeometry(
     }
   }
   for (const cw of opts.crosswalks ?? []) crosswalkStripes(crosswalks, cw);
+  for (const l of opts.stopLines ?? []) stopLineQuad(white, l);
   if (!Number.isFinite(minX)) {
     minX = -10;
     minY = -10;
@@ -596,6 +582,7 @@ export function buildRoadGeometry(layout: RoadLayout, opts: RoadOptions): RoadGe
   }
 
   for (const cw of opts.crosswalks ?? []) crosswalkStripes(crosswalks, cw);
+  for (const l of opts.stopLines ?? []) stopLineQuad(white, l);
 
   if (!Number.isFinite(minX)) {
     minX = -10;
