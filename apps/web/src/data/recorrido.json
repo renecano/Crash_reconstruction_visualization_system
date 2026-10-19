@@ -1,0 +1,530 @@
+{
+  "evaluaciones": [
+    {
+      "id": "E1",
+      "titulo": "La IA entiende el relato",
+      "pregunta": "¿Qué tan bien convierte el relato en datos, campo por campo?",
+      "graficas": [
+        {
+          "tipo": "barras",
+          "titulo": "Test congelado de Relatos-MX (160 relatos)",
+          "metrica": "F1 micro",
+          "mejor": "mayor",
+          "unidad": "",
+          "barras": [
+            {
+              "etiqueta": "Claude Sonnet",
+              "valor": 0.9239,
+              "croquis": true
+            },
+            {
+              "etiqueta": "Claude Haiku",
+              "valor": 0.9024,
+              "croquis": true
+            },
+            {
+              "etiqueta": "Reglas",
+              "valor": 0.7141,
+              "croquis": false
+            }
+          ]
+        },
+        {
+          "tipo": "barras",
+          "titulo": "Test CISS: verdad de los campos codificados de NHTSA (150 relatos)",
+          "metrica": "F1 micro",
+          "mejor": "mayor",
+          "unidad": "",
+          "barras": [
+            {
+              "etiqueta": "Claude Sonnet",
+              "valor": 0.9926,
+              "croquis": true
+            },
+            {
+              "etiqueta": "Claude Haiku",
+              "valor": 0.9871,
+              "croquis": true
+            },
+            {
+              "etiqueta": "Reglas",
+              "valor": 0.6903,
+              "croquis": false
+            }
+          ]
+        }
+      ],
+      "fuentes": [
+        {
+          "archivo": "eval/results/e1_extraction_v3.json",
+          "url": "https://github.com/renecano/Crash_reconstruction_visualization_system/blob/main/eval/results/e1_extraction_v3.json"
+        },
+        {
+          "archivo": "eval/results/e1_extraction_ciss_v3.json",
+          "url": "https://github.com/renecano/Crash_reconstruction_visualization_system/blob/main/eval/results/e1_extraction_ciss_v3.json"
+        }
+      ],
+      "nota": "Los relatos del primer test los escribieron agentes de IA: mide español escrito por un modelo. E9 lo contrastará con personas."
+    },
+    {
+      "id": "E2",
+      "titulo": "La rigidez de cada clase de vehículo",
+      "pregunta": "¿Qué tan bien estima la velocidad a partir del aplastamiento en pruebas de choque reales?",
+      "graficas": [
+        {
+          "tipo": "barras",
+          "titulo": "Barrera frontal rígida, dejar uno fuera (1,316 pruebas de NHTSA)",
+          "metrica": "Error absoluto medio",
+          "mejor": "menor",
+          "unidad": "km/h",
+          "barras": [
+            {
+              "etiqueta": "Croquis",
+              "valor": 8.1,
+              "croquis": true
+            },
+            {
+              "etiqueta": "Recta global",
+              "valor": 9.03,
+              "croquis": false
+            },
+            {
+              "etiqueta": "Regla de Emori",
+              "valor": 27.74,
+              "croquis": false
+            }
+          ]
+        },
+        {
+          "tipo": "grupos",
+          "titulo": "Barrera móvil y trasera: ΔV de cada prueba con la rigidez de las demás de su clase",
+          "metrica": "Error absoluto medio",
+          "mejor": "menor",
+          "unidad": "km/h",
+          "grupos": [
+            {
+              "grupo": "Lateral (1,265)",
+              "barras": [
+                {
+                  "etiqueta": "Croquis",
+                  "valor": 6.19,
+                  "croquis": true
+                },
+                {
+                  "etiqueta": "Respaldo genérico",
+                  "valor": 14.95,
+                  "croquis": false
+                }
+              ]
+            },
+            {
+              "grupo": "Trasera (134)",
+              "barras": [
+                {
+                  "etiqueta": "Croquis",
+                  "valor": 4.57,
+                  "croquis": true
+                },
+                {
+                  "etiqueta": "Respaldo genérico",
+                  "valor": 33.94,
+                  "croquis": false
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "fuentes": [
+        {
+          "archivo": "eval/results/e2_barrier.json",
+          "url": "https://github.com/renecano/Crash_reconstruction_visualization_system/blob/main/eval/results/e2_barrier.json"
+        },
+        {
+          "archivo": "eval/results/e2_mdb.json",
+          "url": "https://github.com/renecano/Crash_reconstruction_visualization_system/blob/main/eval/results/e2_mdb.json"
+        }
+      ],
+      "nota": "La dispersión de rigidez dentro de cada clase domina el error; por eso Croquis reporta rangos."
+    },
+    {
+      "id": "E3",
+      "titulo": "ΔV contra la caja negra del auto",
+      "pregunta": "¿Qué tan cerca queda el ΔV estimado desde el daño del que registró el EDR en choques reales?",
+      "graficas": [
+        {
+          "tipo": "barras",
+          "titulo": "Test CISS 2022–2024 (2,205 vehículos)",
+          "metrica": "Error absoluto medio",
+          "mejor": "menor",
+          "unidad": "km/h",
+          "barras": [
+            {
+              "etiqueta": "Croquis",
+              "valor": 8.85,
+              "croquis": true
+            },
+            {
+              "etiqueta": "WinSMASH",
+              "valor": 8.19,
+              "croquis": false
+            }
+          ]
+        }
+      ],
+      "fuentes": [
+        {
+          "archivo": "eval/results/e3_ciss.json",
+          "url": "https://github.com/renecano/Crash_reconstruction_visualization_system/blob/main/eval/results/e3_ciss.json"
+        }
+      ],
+      "nota": "WinSMASH, el programa con el que la propia NHTSA reconstruye estos casos, se equivoca un poco menos en promedio; Croquis tiene menos sesgo."
+    },
+    {
+      "id": "E4",
+      "titulo": "Atropellamiento: velocidad desde la distancia de proyección",
+      "pregunta": "¿Qué tan bien recupera la velocidad del vehículo a partir de dónde quedó el peatón?",
+      "graficas": [
+        {
+          "tipo": "barras",
+          "titulo": "Casos publicados en el dominio del modelo (17)",
+          "metrica": "Error absoluto medio",
+          "mejor": "menor",
+          "unidad": "km/h",
+          "barras": [
+            {
+              "etiqueta": "Croquis",
+              "valor": 5.215,
+              "croquis": true
+            },
+            {
+              "etiqueta": "Searle sola",
+              "valor": 5.813,
+              "croquis": false
+            },
+            {
+              "etiqueta": "Wood",
+              "valor": 6.156,
+              "croquis": false
+            }
+          ]
+        }
+      ],
+      "fuentes": [
+        {
+          "archivo": "eval/results/e4_pedestrian.json",
+          "url": "https://github.com/renecano/Crash_reconstruction_visualization_system/blob/main/eval/results/e4_pedestrian.json"
+        }
+      ],
+      "nota": "Muestra pequeña: los intervalos importan más que el promedio."
+    },
+    {
+      "id": "E5",
+      "titulo": "La deformación contra autos reales",
+      "pregunta": "¿Se parece la malla deformada del visor al aplastamiento medido en el auto real?",
+      "graficas": [
+        {
+          "tipo": "grupos",
+          "titulo": "Test CISS: error por punto, por tipo de impacto (casos con el orden de los puntos conocido)",
+          "metrica": "Error por punto, mediana",
+          "mejor": "menor",
+          "unidad": "cm",
+          "grupos": [
+            {
+              "grupo": "Frontal (1,027)",
+              "barras": [
+                {
+                  "etiqueta": "Croquis",
+                  "valor": 8.26,
+                  "croquis": true
+                },
+                {
+                  "etiqueta": "Uniforme",
+                  "valor": 8.27,
+                  "croquis": false
+                },
+                {
+                  "etiqueta": "Lineal simple",
+                  "valor": 8.18,
+                  "croquis": false
+                }
+              ]
+            },
+            {
+              "grupo": "Desplazado (827)",
+              "barras": [
+                {
+                  "etiqueta": "Croquis",
+                  "valor": 6.97,
+                  "croquis": true
+                },
+                {
+                  "etiqueta": "Uniforme",
+                  "valor": 7.17,
+                  "croquis": false
+                },
+                {
+                  "etiqueta": "Lineal simple",
+                  "valor": 7.99,
+                  "croquis": false
+                }
+              ]
+            },
+            {
+              "grupo": "Lateral (726)",
+              "barras": [
+                {
+                  "etiqueta": "Croquis",
+                  "valor": 5.38,
+                  "croquis": true
+                },
+                {
+                  "etiqueta": "Uniforme",
+                  "valor": 5.68,
+                  "croquis": false
+                },
+                {
+                  "etiqueta": "Lineal simple",
+                  "valor": 6,
+                  "croquis": false
+                }
+              ]
+            },
+            {
+              "grupo": "Alcance (382)",
+              "barras": [
+                {
+                  "etiqueta": "Croquis",
+                  "valor": 9.29,
+                  "croquis": true
+                },
+                {
+                  "etiqueta": "Uniforme",
+                  "valor": 9.43,
+                  "croquis": false
+                },
+                {
+                  "etiqueta": "Lineal simple",
+                  "valor": 10.73,
+                  "croquis": false
+                }
+              ]
+            },
+            {
+              "grupo": "Poste (246)",
+              "barras": [
+                {
+                  "etiqueta": "Croquis",
+                  "valor": 14.32,
+                  "croquis": true
+                },
+                {
+                  "etiqueta": "Uniforme",
+                  "valor": 14.89,
+                  "croquis": false
+                },
+                {
+                  "etiqueta": "Lineal simple",
+                  "valor": 14.6,
+                  "croquis": false
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "tipo": "grupos",
+          "titulo": "Profundidad máxima, todos los tipos",
+          "metrica": "Error, mediana",
+          "mejor": "menor",
+          "unidad": "cm",
+          "grupos": [
+            {
+              "grupo": "CISS (3,889)",
+              "barras": [
+                {
+                  "etiqueta": "Croquis",
+                  "valor": 9.77,
+                  "croquis": true
+                },
+                {
+                  "etiqueta": "Uniforme",
+                  "valor": 9.66,
+                  "croquis": false
+                },
+                {
+                  "etiqueta": "Lineal simple",
+                  "valor": 8.81,
+                  "croquis": false
+                }
+              ]
+            },
+            {
+              "grupo": "NHTSA (1,371)",
+              "barras": [
+                {
+                  "etiqueta": "Croquis",
+                  "valor": 11.38,
+                  "croquis": true
+                },
+                {
+                  "etiqueta": "Uniforme",
+                  "valor": 11.99,
+                  "croquis": false
+                },
+                {
+                  "etiqueta": "Lineal simple",
+                  "valor": 8.71,
+                  "croquis": false
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "fuentes": [
+        {
+          "archivo": "eval/results/e5.json",
+          "url": "https://github.com/renecano/Crash_reconstruction_visualization_system/blob/main/eval/results/e5.json"
+        },
+        {
+          "archivo": "docs/galeria-e5/README.md",
+          "url": "https://github.com/renecano/Crash_reconstruction_visualization_system/blob/main/docs/galeria-e5/README.md"
+        }
+      ],
+      "nota": "Croquis gana en el perfil punto por punto, pero el perfil triangular predice mejor la profundidad máxima y el ancho. El test se corrió una sola vez."
+    },
+    {
+      "id": "E6",
+      "titulo": "Rendimiento en una laptop de 8 GB",
+      "pregunta": "¿Cuántos cuadros por segundo da el visor en la escena más lenta?",
+      "graficas": [
+        {
+          "tipo": "barras",
+          "titulo": "Modo automático, 1920×1080, Intel Core i5-10210U",
+          "metrica": "fps mínimo entre escenas",
+          "mejor": "mayor",
+          "unidad": "fps",
+          "barras": [
+            {
+              "etiqueta": "Calidad baja",
+              "valor": 104.5,
+              "croquis": true
+            },
+            {
+              "etiqueta": "Calidad media",
+              "valor": 69.8,
+              "croquis": true
+            }
+          ],
+          "metas": [
+            {
+              "etiqueta": "Meta baja",
+              "valor": 30
+            },
+            {
+              "etiqueta": "Meta media",
+              "valor": 60
+            }
+          ]
+        }
+      ],
+      "fuentes": [
+        {
+          "archivo": "eval/results/e6_performance.json",
+          "url": "https://github.com/renecano/Crash_reconstruction_visualization_system/blob/main/eval/results/e6_performance.json"
+        }
+      ],
+      "nota": "Alta y ultra se miden en la computadora de demo (pendiente)."
+    },
+    {
+      "id": "E7",
+      "titulo": "El solver del navegador es el de referencia",
+      "pregunta": "¿Da lo mismo el solver TS de producción que la referencia en Python?",
+      "graficas": [
+        {
+          "tipo": "cifras",
+          "cifras": [
+            {
+              "etiqueta": "Números comparados",
+              "valor": 68557,
+              "formato": "entero"
+            },
+            {
+              "etiqueta": "Diferencia máxima",
+              "valor": 0.000041000000237545464,
+              "formato": "cientifico"
+            },
+            {
+              "etiqueta": "Diferencias de estructura o texto",
+              "valor": 0,
+              "formato": "entero"
+            }
+          ]
+        }
+      ],
+      "fuentes": [
+        {
+          "archivo": "eval/results/e7_parity.json",
+          "url": "https://github.com/renecano/Crash_reconstruction_visualization_system/blob/main/eval/results/e7_parity.json"
+        }
+      ],
+      "nota": "Las 11 escenas canónicas, completas: trayectorias, daño, personas, visibilidad, Monte Carlo, inversión y consistencia."
+    },
+    {
+      "id": "E8",
+      "titulo": "El mismo resultado en todos los navegadores",
+      "pregunta": "¿Sale idéntico, bit a bit, en Chromium, Firefox y WebKit?",
+      "graficas": [
+        {
+          "tipo": "cifras",
+          "cifras": [
+            {
+              "etiqueta": "Escenas del solver idénticas",
+              "valor": "11 de 11",
+              "formato": "texto"
+            },
+            {
+              "etiqueta": "Horneados con Rapier idénticos",
+              "valor": "11 de 11",
+              "formato": "texto"
+            },
+            {
+              "etiqueta": "Navegadores",
+              "valor": 3,
+              "formato": "entero"
+            }
+          ]
+        }
+      ],
+      "fuentes": [
+        {
+          "archivo": "eval/results/e8_determinism.json",
+          "url": "https://github.com/renecano/Crash_reconstruction_visualization_system/blob/main/eval/results/e8_determinism.json"
+        }
+      ],
+      "nota": "Con funciones matemáticas propias (fdlibm en TypeScript), porque Math.sin y compañía cambian entre motores."
+    },
+    {
+      "id": "E9",
+      "titulo": "Personas reales",
+      "pregunta": "¿Cuánto tarda alguien en llegar a su primera reconstrucción y qué tan usable le resulta?",
+      "graficas": [],
+      "fuentes": [],
+      "nota": "Pendiente: necesita a cinco o más personas reales (F11)."
+    }
+  ],
+  "resultados": [
+    "atus_summary",
+    "e1_extraction_ciss_v3",
+    "e1_extraction_v3",
+    "e2_barrier",
+    "e2_mdb",
+    "e3_ciss",
+    "e4_pedestrian",
+    "e5",
+    "e6_performance",
+    "e7_parity",
+    "e8_determinism"
+  ]
+}

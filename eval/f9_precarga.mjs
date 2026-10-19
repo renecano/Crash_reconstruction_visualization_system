@@ -37,7 +37,7 @@ const urls = [...sw.matchAll(/\{([^{}]*)\}/g)]
   .filter((u) => u !== undefined);
 if (urls.length === 0) throw new Error("No se encontró la lista de precarga en sw.js");
 
-const PAGINAS = new Set(["/", "/visor", "/croquis", "/relato"]);
+const PAGINAS = new Set(["/", "/visor", "/croquis", "/relato", "/historia", "/recorrido"]);
 const entradas = urls.map((url) => {
   if (PAGINAS.has(url)) return { url, tipo: "pagina", bytes: null };
   const file = url.startsWith("/_next/static/")
@@ -58,6 +58,33 @@ const faltan = [...chunks, ...publicos].filter((u) => !precargadas.has(u));
 const paginasFaltan = [...PAGINAS].filter((p) => !precargadas.has(p));
 
 const suma = (xs) => xs.reduce((n, e) => n + (e.bytes ?? 0), 0);
+// Cuánto se llevan las bibliotecas grandes: MiB de los trozos precargados que contienen cada una
+// (un trozo puede contener varias) y las imágenes de la página de historia.
+const MODULOS = {
+  pdfmake: ["pdfmake"],
+  mediabunny: ["Mp4OutputFormat", "EncodedPacketSink"],
+  rapier: ["RigidBodyDesc"],
+  three: ["WebGPURenderer"],
+};
+const mib = (b) => Math.round((b / 1048576) * 100) / 100;
+const porModulo = Object.fromEntries(
+  Object.entries(MODULOS).map(([nombre, marcas]) => [
+    nombre,
+    mib(
+      suma(
+        entradas.filter((e) => {
+          if (e.tipo !== "next" || !e.url.endsWith(".js")) return false;
+          const text = readFileSync(
+            join(WEB, ".next", "static", e.url.slice("/_next/static/".length)),
+            "utf8",
+          );
+          return marcas.some((m) => text.includes(m));
+        }),
+      ),
+    ),
+  ]),
+);
+porModulo.imagenes_historia = mib(suma(entradas.filter((e) => e.url.startsWith("/historia/"))));
 const doc = {
   name: "f9_precarga",
   generated_at: new Date().toISOString(),
@@ -70,6 +97,7 @@ const doc = {
   archivos_public: entradas.filter((e) => e.tipo === "public").length,
   bytes_archivos: suma(entradas),
   mb_archivos: Math.round((suma(entradas) / 1048576) * 100) / 100,
+  mib_por_modulo: porModulo,
   mayor: entradas.reduce((a, e) => ((e.bytes ?? 0) > (a.bytes ?? 0) ? e : a)),
   trozos_js_sin_precargar: faltan.filter((u) => u.startsWith("/_next/")),
   archivos_public_sin_precargar: faltan.filter((u) => !u.startsWith("/_next/")),

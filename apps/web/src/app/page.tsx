@@ -23,6 +23,14 @@ export default function Page() {
           Editar el croquis 2D
         </Link>
       </nav>
+      <nav aria-label="Más" className="flex flex-wrap gap-4 text-sm">
+        <Link href="/historia" className="underline">
+          Por qué existe Croquis
+        </Link>
+        <Link href="/recorrido" className="underline">
+          Recorrido técnico: cómo se mide
+        </Link>
+      </nav>
       <Legend />
     </main>
   );
