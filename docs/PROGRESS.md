@@ -47,11 +47,16 @@ Reglas de trabajo: `CLAUDE.md`. Especificación: `PLAN.md`.
 - **F11, paso 6b hecho** (rama `feat/f8-camellon`, ADR 0037): el camellón se corta a nivel de calle en los pasos peatonales y las rayas centrales se interrumpen.
 - **F11, paso 6c hecho** (rama `feat/f8-semaforo-peatonal`, ADR 0038): semáforo peatonal con el contrato 1.3.0. Queda fuera del esquema del LLM, así que los prompts v1–v3 y sus grabaciones no cambian.
 - **F11, paso 6d hecho** (rama `feat/f8-osm-rayas`, ADR 0039): las calles de OSM llevan rayas cuando OSM trae `lanes`, y banquetas y guarniciones según la escena. Todo se corta en los cruces.
-- **Siguiente paso concreto:** F11, paso 6e, OSM en producción: consultar las calles al crear una escena del usuario con coordenadas, con caché. Pendientes menores:
+- **F11, paso 6e hecho** (rama `feat/f8-osm-produccion`, ADR 0040): calles de OSM en producción. El croquis trae las calles del cruce real a partir de coordenadas, con caché, límite por IP y tres instancias de Overpass. Pendiente: repetir la prueba real cuando las instancias públicas respondan; el 2026-10-19 no respondían.
+- **Pendientes de F8 cerrados** salvo los menores:
   - revisar en el manual de la SEDATU/SCT las orillas en los pasos;
   - rayas de OSM en el croquis 2D;
   - prompt v4 con el semáforo peatonal;
   - texturas triplanares, después de E9.
+- **Siguiente paso concreto:** F11 queda en lo que depende de René: E9 (el kit está listo) y la computadora de demo (E6 en alta y ultra). Mientras tanto:
+  - repetir la prueba real de `/api/osm`;
+  - llevar la geometría del mapa al croquis 2D, para que tenga rayas;
+  - revisar el manual de la SEDATU/SCT.
 
 - **E1 del prompt v2 en el primer test, hecho** (PR #14). Sonnet 0.875 → 0.919 y Haiku 0.852 → 0.896. Además, E1 ahora compara cada contrafactual con la repetición del mismo relato (McNemar por tipo): ningún tipo difiere del ruido, y las reglas cambian con el modelo del vehículo en 6 de 52 pares (ADR 0012 §10).
 - **F8** cerrada el 2026-10-17 (PR #20 a #24). **F0** cerrado el 2026-10-10 (PR #1), **F1** el 2026-10-10 (PR #3), **F2** el 2026-10-13 (PR #4), **F3** el 2026-10-13 (PR #5), **F4** el 2026-10-13 (PR #6), **F5** el 2026-10-13 (PR #7), **F6** el 2026-10-14 (PR #8), **F7** el 2026-10-14 (PR #9; pendientes registrados); migración a Vercel el 2026-10-14 (PR #10); test CISS y prompt v2 el 2026-10-14 (PR #11).
@@ -1860,3 +1865,17 @@ Las ramas van una encima de otra y se fusionan en este orden, cada una con su PR
   - doble y un sentido;
   - las rayas no cruzan otra calzada y las continuaciones no se cortan;
   - banquetas según la escena y no en autopistas, cortadas en los cruces y fuera del otro cuerpo de una avenida.
+
+**Paso 6e — OSM en producción (2026-10-19, rama `feat/f8-osm-produccion`, ADR 0040):**
+
+- **Interfaz:** sección «Calles reales (OpenStreetMap)» en el croquis, con coordenadas y radio. Necesita red, y la interfaz lo dice.
+- **`GET /api/osm`:**
+  - valida y redondea el punto;
+  - usa la consulta de los extractos;
+  - cachea en Redis o en memoria y en la CDN (30 días);
+  - limita a 60 consultas por hora por IP;
+  - prueba tres instancias de Overpass, 15 s cada una, y responde un 502 claro si ninguna contesta.
+- **`applyMap`:** con el cruce más cercano en el origen, pone la plantilla, `ubicacion_real` y `red_vial` (fuente `mapa`, conservando la evidencia). Reproduce la red de Toluca desde coordenadas cercanas a su cruce (prueba).
+- **Prueba real (2026-10-19, 15:06 UTC):** las tres instancias públicas fallaban (502, 500 y 504 o sin respuesta). La ruta respondió su 502. Queda pendiente repetirla.
+- **Pruebas:** `croquis-2d` (4 nuevas), servidor (5), navegador (4) y e2e (2, con `/api/osm` simulado por el extracto).
+- **Fuentes:** fila nueva en `data/SOURCES.md`.
