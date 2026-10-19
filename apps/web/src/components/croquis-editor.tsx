@@ -18,6 +18,7 @@ import { downloadBytes, safeName } from "@/lib/download";
 import { registrarE9 } from "@/lib/e9";
 import { guardarEscenaPropia } from "@/lib/escena-propia";
 import { RELATO_SPEC_KEY } from "@/lib/relato-api";
+import { CallesReales } from "./calles-reales";
 import { Legend } from "./legend";
 
 function toJson(spec: EscenaSpec): string {
@@ -179,6 +180,7 @@ export function CroquisEditor({ initial = "alcance" }: { initial?: FixtureName }
           Arrastra vehículos, personas, objetos y marcas; gira un vehículo con el asa naranja. Cada
           cambio queda marcado como <code>fuente: usuario</code> en el JSON.
         </p>
+        <CallesReales spec={spec} onApply={applySpec} />
         <Legend
           seed={spec.meta.semilla}
           inputHash={spec.meta.hash_relato}
