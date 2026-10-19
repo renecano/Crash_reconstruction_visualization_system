@@ -8,8 +8,19 @@
  * el área de una intersección. El patrón de raya discontinua (3 m de trazo y 6 m de espacio) es
  * una elección visual, no una cita de norma.
  */
-import type { Vec2 } from "@croquis/croquis-2d";
-import type { LaneStrip, Ring, RoadLayout } from "@croquis/croquis-2d";
+import {
+  LINE_WIDTH,
+  mapCrossings,
+  mapViaLineOffsets,
+  stripLineOffsets,
+  type LaneStrip,
+  type MapVia,
+  type Ring,
+  type RoadLayout,
+  type Vec2,
+} from "@croquis/croquis-2d";
+
+export { LINE_WIDTH, stripLineOffsets, type MapVia };
 
 export interface Mesh2D {
   /** Vértices (x, y) en metros, marco del mundo. */
@@ -85,7 +96,6 @@ export function markingsFor(dobleSentido: boolean, tipos: readonly string[]): Ma
   return { centro: "doble_continua", carriles: continua ? "continua" : "discontinua" };
 }
 
-export const LINE_WIDTH = 0.12;
 /** Largo de las franjas del paso peatonal a lo largo de la vía (m). */
 export const CROSSWALK_LENGTH = 3.0;
 
@@ -174,29 +184,6 @@ function insideRing(p: Vec2, r: Ring): boolean {
   return Math.hypot(p.x - r.center.x, p.y - r.center.y) <= r.outerRadius;
 }
 
-/** Desplazamientos transversales de las rayas de una franja. */
-export function stripLineOffsets(
-  s: LaneStrip,
-  dobleSentido: boolean,
-): { edges: number[]; center: number[]; dashed: number[] } {
-  const half = s.width / 2;
-  const edges = [-half + LINE_WIDTH, half - LINE_WIDTH];
-  const lanesTotal = Math.max(1, s.lanes);
-  if (dobleSentido) {
-    const perSide = Math.max(1, Math.round(lanesTotal / 2));
-    const laneW = (s.width - s.median) / (2 * perSide);
-    const m = s.median / 2;
-    const center = s.median > 0 ? [-m, m] : [-0.1, 0.1];
-    const dashed: number[] = [];
-    for (let k = 1; k < perSide; k++) dashed.push(m + k * laneW, -(m + k * laneW));
-    return { edges, center, dashed };
-  }
-  const laneW = s.width / lanesTotal;
-  const dashed: number[] = [];
-  for (let k = 1; k < lanesTotal; k++) dashed.push(-half + k * laneW);
-  return { edges, center: [], dashed };
-}
-
 function lineAlongStrip(
   m: Mesh2D,
   s: LaneStrip,
@@ -241,17 +228,6 @@ function lineAlongArc(
   }
 }
 
-/** Una calle del mapa (ADR 0023): eje, ancho y, si OSM los trae, carriles, sentido y tipo. */
-export interface MapVia {
-  puntos: readonly Vec2[];
-  ancho: number;
-  /** `lanes` de OSM; sin él no se pintan rayas (no se inventan). */
-  carriles?: number;
-  unSentido?: boolean;
-  /** `highway` de OSM. */
-  tipo?: string;
-}
-
 export interface MapRoadOptions extends Pick<RoadOptions, "crosswalks"> {
   /** Banquetas y guarniciones de la escena (`lugar`), como en las plantillas. */
   banquetas?: boolean;
@@ -261,17 +237,6 @@ export interface MapRoadOptions extends Pick<RoadOptions, "crosswalks"> {
 
 /** Vías de OSM sin banqueta (autopistas y vías rápidas, con sus enlaces). */
 const NO_SIDEWALK = /^(motorway|trunk)(_link)?$/;
-/** Dos tramos casi paralelos (menos de 30°) se continúan: no es un cruce. */
-const PARALLEL_COS = Math.cos((30 * Math.PI) / 180);
-
-/** Distancia de p al segmento ab y la dirección unitaria del segmento. */
-function segmentDistance(p: Vec2, a: Vec2, b: Vec2): { dist: number; d: Vec2 } {
-  const len = Math.hypot(b.x - a.x, b.y - a.y);
-  if (len < 1e-9) return { dist: Math.hypot(p.x - a.x, p.y - a.y), d: { x: 1, y: 0 } };
-  const d = { x: (b.x - a.x) / len, y: (b.y - a.y) / len };
-  const t = Math.min(len, Math.max(0, (p.x - a.x) * d.x + (p.y - a.y) * d.y));
-  return { dist: Math.hypot(p.x - (a.x + d.x * t), p.y - (a.y + d.y * t)), d };
-}
 
 /**
  * Calzada desde las calles del mapa (ADR 0023): un rectángulo por segmento de cada calle y un
@@ -302,33 +267,7 @@ export function buildMapRoadGeometry(
   let minY = Infinity;
   let maxX = -Infinity;
   let maxY = -Infinity;
-
-  /** ¿p cae en la calzada de otra calle que cruza a la dirección `d` (no que la continúa)? */
-  const inCrossing = (p: Vec2, self: MapVia, d: Vec2, margin: number): boolean =>
-    vias.some((o) => {
-      if (o === self) return false;
-      for (let i = 0; i + 1 < o.puntos.length; i++) {
-        const r = segmentDistance(p, o.puntos[i]!, o.puntos[i + 1]!);
-        if (r.dist <= o.ancho / 2 + margin && Math.abs(r.d.x * d.x + r.d.y * d.y) < PARALLEL_COS) {
-          return true;
-        }
-      }
-      return false;
-    });
-  /**
-   * ¿p cae sobre la calzada de otra calle, con cualquier ángulo? Para banquetas y guarniciones:
-   * una calle que sigue en línea no las corta (quedan fuera de su eje), pero dos calzadas paralelas
-   * muy juntas (una avenida de dos cuerpos) sí.
-   */
-  const onOtherPavement = (p: Vec2, self: MapVia, margin: number): boolean =>
-    vias.some(
-      (o) =>
-        o !== self &&
-        o.puntos.some((q, i) => {
-          const b = o.puntos[i + 1];
-          return b !== undefined && segmentDistance(p, q, b).dist < o.ancho / 2 + margin;
-        }),
-    );
+  const { inCrossing, onOtherPavement } = mapCrossings(vias);
   const inCrosswalk = (p: Vec2): boolean =>
     (opts.crosswalks ?? []).some((cw) => {
       const d = dir(cw.roadHeading);
@@ -362,20 +301,7 @@ export function buildMapRoadGeometry(
   for (const v of vias) {
     const r = v.ancho / 2;
     const sidewalks = (opts.banquetas ?? false) && !NO_SIDEWALK.test(v.tipo ?? "");
-    const offsets =
-      v.carriles !== undefined
-        ? stripLineOffsets(
-            {
-              center: { x: 0, y: 0 },
-              length: 0,
-              heading: 0,
-              width: v.ancho,
-              lanes: v.carriles,
-              median: 0,
-            },
-            !(v.unSentido ?? false),
-          )
-        : null;
+    const offsets = mapViaLineOffsets(v);
     for (let i = 0; i < v.puntos.length; i++) {
       const a = v.puntos[i]!;
       minX = Math.min(minX, a.x - r);
