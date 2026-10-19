@@ -15,7 +15,7 @@ function revision(): string {
 
 const rev = revision();
 /** Páginas que se abren sin red (todas las estáticas de la app). */
-const PAGINAS = ["/", "/visor", "/croquis", "/relato"];
+const PAGINAS = ["/", "/visor", "/croquis", "/relato", "/historia", "/recorrido"];
 
 export const { dynamic, dynamicParams, revalidate, generateStaticParams, GET } = createSerwistRoute(
   {
@@ -25,7 +25,7 @@ export const { dynamic, dynamicParams, revalidate, generateStaticParams, GET } =
     additionalPrecacheEntries: PAGINAS.map((url) => ({ url, revision: rev })),
     globPatterns: [
       ".next/static/**/*.{js,css,woff2,ico,png,svg,webp,json}",
-      "public/**/*.{glb,json,webp,png,svg,ico,js}",
+      "public/**/*.{glb,json,webp,png,jpg,svg,ico,js}",
     ],
     // Rapier trae su WASM dentro de un trozo de JavaScript de más de 4 MB; el límite por omisión
     // (2 MiB) lo dejaría fuera y el horneado no funcionaría sin red.

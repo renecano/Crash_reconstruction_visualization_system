@@ -10,7 +10,9 @@
     "typecheck": "next typegen && tsc --noEmit",
     "test": "vitest run",
     "test:watch": "vitest",
-    "test:e2e": "playwright test"
+    "test:e2e": "playwright test",
+    "paginas": "node scripts/build-paginas.mjs",
+    "generate:check": "node scripts/build-paginas.mjs --check"
   },
   "dependencies": {
     "@croquis/croquis-2d": "workspace:*",

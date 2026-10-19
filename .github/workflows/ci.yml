@@ -30,6 +30,7 @@ jobs:
       - run: pnpm --filter @croquis/extraction generate:check
       - run: pnpm --filter @croquis/solver-ts generate:check
       - run: pnpm --filter @croquis/croquis-2d generate:check
+      - run: pnpm --filter @croquis/web generate:check
       - run: pnpm lint
       - run: pnpm typecheck
       - run: pnpm test

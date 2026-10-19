@@ -1,0 +1,166 @@
+{
+  "fuente": {
+    "nombre": "INEGI, Accidentes de Tránsito Terrestre en Zonas Urbanas y Suburbanas (ATUS), datos abiertos 1997–2025",
+    "url": "https://www.inegi.org.mx/contenidos/programas/accidentes/datosabiertos/conjunto_de_datos_atus_anual_csv.zip",
+    "licencia": "https://www.inegi.org.mx/inegi/terminos.html",
+    "nota": "Se excluyen los registros 'Certificado cero'. 'Muertos' son fallecidos en el lugar del accidente, como define ATUS.",
+    "archivo": "eval/results/atus_summary.json",
+    "url_resultado": "https://github.com/renecano/Crash_reconstruction_visualization_system/blob/main/eval/results/atus_summary.json"
+  },
+  "anio": 2025,
+  "nacional": {
+    "accidentes": 380391,
+    "muertos": 4571,
+    "heridos": 86956
+  },
+  "estado_de_mexico": {
+    "lugar_por_muertos": 1,
+    "muertos": 460,
+    "accidentes": 25032
+  },
+  "tipos": [
+    {
+      "tipo": "Colisión con vehículo automotor",
+      "accidentes": 222241,
+      "participacion": 0.5842
+    },
+    {
+      "tipo": "Colisión con motocicleta",
+      "accidentes": 68505,
+      "participacion": 0.1801
+    },
+    {
+      "tipo": "Colisión con objeto fijo",
+      "accidentes": 43336,
+      "participacion": 0.1139
+    },
+    {
+      "tipo": "Volcadura",
+      "accidentes": 15412,
+      "participacion": 0.0405
+    },
+    {
+      "tipo": "Colisión con peatón (atropellamiento)",
+      "accidentes": 10612,
+      "participacion": 0.0279
+    }
+  ],
+  "serie": [
+    {
+      "anio": 1997,
+      "accidentes": 248114
+    },
+    {
+      "anio": 1998,
+      "accidentes": 262687
+    },
+    {
+      "anio": 1999,
+      "accidentes": 285494
+    },
+    {
+      "anio": 2000,
+      "accidentes": 311938
+    },
+    {
+      "anio": 2001,
+      "accidentes": 364869
+    },
+    {
+      "anio": 2002,
+      "accidentes": 399002
+    },
+    {
+      "anio": 2003,
+      "accidentes": 424490
+    },
+    {
+      "anio": 2004,
+      "accidentes": 443607
+    },
+    {
+      "anio": 2005,
+      "accidentes": 452233
+    },
+    {
+      "anio": 2006,
+      "accidentes": 471272
+    },
+    {
+      "anio": 2007,
+      "accidentes": 476279
+    },
+    {
+      "anio": 2008,
+      "accidentes": 466435
+    },
+    {
+      "anio": 2009,
+      "accidentes": 428467
+    },
+    {
+      "anio": 2010,
+      "accidentes": 427267
+    },
+    {
+      "anio": 2011,
+      "accidentes": 387185
+    },
+    {
+      "anio": 2012,
+      "accidentes": 390411
+    },
+    {
+      "anio": 2013,
+      "accidentes": 385772
+    },
+    {
+      "anio": 2014,
+      "accidentes": 380573
+    },
+    {
+      "anio": 2015,
+      "accidentes": 382066
+    },
+    {
+      "anio": 2016,
+      "accidentes": 360051
+    },
+    {
+      "anio": 2017,
+      "accidentes": 367789
+    },
+    {
+      "anio": 2018,
+      "accidentes": 365281
+    },
+    {
+      "anio": 2019,
+      "accidentes": 362729
+    },
+    {
+      "anio": 2020,
+      "accidentes": 301678
+    },
+    {
+      "anio": 2021,
+      "accidentes": 340415
+    },
+    {
+      "anio": 2022,
+      "accidentes": 377231
+    },
+    {
+      "anio": 2023,
+      "accidentes": 381048
+    },
+    {
+      "anio": 2024,
+      "accidentes": 374949
+    },
+    {
+      "anio": 2025,
+      "accidentes": 380391
+    }
+  ]
+}
