@@ -687,6 +687,12 @@ export function buildSceneGraph(
       { x: v.trayectoria.x[0] ?? 0, y: v.trayectoria.y[0] ?? 0 },
     ]),
   );
+  // Personas con trayectoria propia (los ocupantes van en su vehículo y no la tienen).
+  const personPose = new Map(
+    resultado.personas
+      .filter((p) => p.trayectoria.x.length > 0)
+      .map((p) => [p.id, { x: p.trayectoria.x[0]!, y: p.trayectoria.y[0]! }]),
+  );
   for (const d of lugar.dispositivos ?? []) {
     if (
       d.tipo === "paso_peatonal" ||
@@ -698,12 +704,15 @@ export function buildSceneGraph(
     const orient = ((d.orientacion_deg ?? 0) * Math.PI) / 180;
     // Cada fase mira al vehículo cuyo flujo regula (su id en `movimiento` o en `aplica_a`); si no
     // hay vehículo, las cabezas se reparten en cruz a partir de la orientación del dispositivo.
+    // En el semáforo peatonal, cada cabeza mira a la persona de su fase (su id en `movimiento`);
+    // si no hay persona, las cabezas quedan espalda con espalda, como en las dos banquetas.
+    const peatonal = d.tipo === "semaforo_peatonal";
     const fases = (d.fases ?? []).map((f, i) => {
       const vid = firstPose.has(f.movimiento) ? f.movimiento : d.aplica_a?.[i];
-      const at = vid ? firstPose.get(vid) : undefined;
+      const at = peatonal ? personPose.get(f.movimiento) : vid ? firstPose.get(vid) : undefined;
       const yaw = at
         ? Math.atan2(at.y - d.posicion.y, at.x - d.posicion.x) - orient
-        : (i * Math.PI) / 2;
+        : (i * Math.PI) / (peatonal ? 1 : 2);
       const tau = f.tiempo_en_fase
         ? f.tiempo_en_fase.valor * (TIEMPO_A_S[f.tiempo_en_fase.unidad] ?? 1)
         : undefined;

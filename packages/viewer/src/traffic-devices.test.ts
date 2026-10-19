@@ -64,6 +64,58 @@ describe("dispositivos de tránsito (F8c)", () => {
     expect(red.emissiveIntensity).toBeGreaterThan(0);
   });
 
+  it("semáforo peatonal: dos figuras por cabeza; la de su fase se enciende", () => {
+    const d = buildDevice(
+      {
+        tipo: "semaforo_peatonal",
+        fases: [
+          { phase: { color: "verde" }, yaw: 0 },
+          { phase: { color: "rojo" }, yaw: Math.PI },
+        ],
+      },
+      METAL,
+    );
+    const heads = named(d.group, "cabeza_semaforo_peatonal") as Group[];
+    expect(heads).toHaveLength(2);
+    expect(named(heads[0]!, "lampara_peatonal_")).toHaveLength(2);
+    d.update(0);
+    expect(d.lit()).toEqual(["camina", "detenido"]);
+    const camina = (named(heads[0]!, "lampara_peatonal_camina")[0] as Mesh)
+      .material as MeshStandardMaterial;
+    const detenido = (named(heads[0]!, "lampara_peatonal_detenido")[0] as Mesh)
+      .material as MeshStandardMaterial;
+    expect(camina.emissiveIntensity).toBeGreaterThan(0);
+    expect(detenido.emissiveIntensity).toBe(0);
+  });
+
+  it("en la escena, la cabeza peatonal mira a la persona de su fase", async () => {
+    const spec = structuredClone(loadFixture("peaton_cruce"));
+    const r = await loadResultado("peaton_cruce");
+    const persona = r.personas.find((p) => (p.trayectoria?.x.length ?? 0) > 0)!;
+    const px = persona.trayectoria.x[0]!;
+    const py = persona.trayectoria.y[0]!;
+    spec.lugar.dispositivos = [
+      ...(spec.lugar.dispositivos ?? []),
+      {
+        id: "sp-1",
+        tipo: "semaforo_peatonal",
+        posicion: { x: px + 6, y: py },
+        orientacion_deg: 0,
+        fases: [{ movimiento: persona.id, color: "verde" }],
+        procedencia: { fuente: "usuario", confianza: 1 },
+      },
+    ];
+    const sg = buildSceneGraph(spec, r, {
+      quality: QUALITY_PROFILES.baja,
+      env: { night: false, wet: false, groundColor: "#5d6b4a", streetLights: false },
+    });
+    const head = named(sg.root, "cabeza_semaforo_peatonal")[0]!;
+    // La persona está a −x del poste: la cabeza (que mira a +x local) gira 180°.
+    expect(Math.abs(Math.cos(head.rotation.y) + 1)).toBeLessThan(1e-9);
+    sg.update(0);
+    sg.dispose();
+  });
+
   it("sin fases el semáforo queda apagado", () => {
     const d = buildDevice({ tipo: "semaforo" }, METAL);
     d.update(0);

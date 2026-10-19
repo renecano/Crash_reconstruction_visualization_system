@@ -65,3 +65,29 @@ export function phaseChanges(phase: SignalPhase, t0: number, t1: number): number
         : [];
   return cands.filter((x) => x >= t0 && x <= t1);
 }
+
+/** Figura encendida del semáforo peatonal: la que camina o la que está detenida. */
+export type PedLamp = "camina" | "detenido";
+
+/**
+ * Figura encendida del semáforo peatonal en el instante t (contrato 1.3.0, ADR 0038). Verde es la
+ * figura que camina y rojo la detenida. Intermitente es la figura que camina destellando
+ * (despeje), con el mismo ritmo que el destello vehicular. Amarillo no existe en un semáforo
+ * peatonal: se toma como despeje. No se infieren cambios en el tiempo: el color declarado se
+ * mantiene toda la escena.
+ */
+export function pedLampAt(phase: SignalPhase, t: number): PedLamp | null {
+  switch (phase.color) {
+    case "apagado":
+      return null;
+    case "verde":
+      return "camina";
+    case "rojo":
+      return "detenido";
+    case "intermitente":
+    case "amarillo": {
+      const cycles = (t * FLASHES_PER_MIN) / 60;
+      return cycles - Math.floor(cycles) < 0.5 ? "camina" : null;
+    }
+  }
+}

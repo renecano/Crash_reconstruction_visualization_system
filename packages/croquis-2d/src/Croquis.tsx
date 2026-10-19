@@ -685,6 +685,15 @@ function DeviceIcon({ tipo, m }: { tipo: string; m: (v: number) => number }) {
           <circle cx={0} cy={m(0.55)} r={m(0.2)} fill="#43a047" />
         </g>
       );
+    case "semaforo_peatonal":
+      // Dos lentes: arriba la figura detenida (roja) y abajo la que camina (verde).
+      return (
+        <g>
+          <rect x={-m(0.3)} y={-m(0.65)} width={m(0.6)} height={m(1.3)} rx={m(0.08)} fill="#222" />
+          <rect x={-m(0.2)} y={-m(0.5)} width={m(0.4)} height={m(0.4)} fill="#e53935" />
+          <rect x={-m(0.2)} y={m(0.1)} width={m(0.4)} height={m(0.4)} fill="#43a047" />
+        </g>
+      );
     case "alto":
       return (
         <polygon points={octagon(m(0.7))} fill="#c62828" stroke="#fff" strokeWidth={m(0.08)} />
