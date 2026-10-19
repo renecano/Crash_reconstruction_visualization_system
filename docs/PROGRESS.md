@@ -47,16 +47,19 @@ Reglas de trabajo: `CLAUDE.md`. Especificación: `PLAN.md`.
 - **F11, paso 6b hecho** (rama `feat/f8-camellon`, ADR 0037): el camellón se corta a nivel de calle en los pasos peatonales y las rayas centrales se interrumpen.
 - **F11, paso 6c hecho** (rama `feat/f8-semaforo-peatonal`, ADR 0038): semáforo peatonal con el contrato 1.3.0. Queda fuera del esquema del LLM, así que los prompts v1–v3 y sus grabaciones no cambian.
 - **F11, paso 6d hecho** (rama `feat/f8-osm-rayas`, ADR 0039): las calles de OSM llevan rayas cuando OSM trae `lanes`, y banquetas y guarniciones según la escena. Todo se corta en los cruces.
-- **F11, paso 6e hecho** (rama `feat/f8-osm-produccion`, ADR 0040): calles de OSM en producción. El croquis trae las calles del cruce real a partir de coordenadas, con caché, límite por IP y tres instancias de Overpass. Pendiente: repetir la prueba real cuando las instancias públicas respondan; el 2026-10-19 no respondían.
+- **F11, paso 6e hecho** (rama `feat/f8-osm-produccion`, ADR 0040): calles de OSM en producción. El croquis trae las calles del cruce real a partir de coordenadas, con caché, límite por IP y tres instancias de Overpass.
+- **F11, paso 6f hecho** (PR #56 y rama `feat/f11-osm-reintentos`, ADR 0040): prueba real de `/api/osm` en producción.
+  - **Resultado:** llegó a Overpass y trajo las mismas 22 calles del extracto versionado; la repetición salió de la CDN (`eval/results/osm_produccion_v1_*.json`).
+  - **Instancias públicas:** fallan a ratos. La principal encola y responde a los 41–43 s, y private.coffee no contesta (`osm_instancias_*.json`).
+  - **Cambios en la ruta:** dos vueltas en 50 s, mail.ru primero, la principal con hasta 45 s, y la cabecera `X-Croquis-Overpass`.
 - **Pendientes de F8 cerrados** salvo los menores:
   - revisar en el manual de la SEDATU/SCT las orillas en los pasos;
   - rayas de OSM en el croquis 2D;
   - prompt v4 con el semáforo peatonal;
   - texturas triplanares, después de E9.
 - **Siguiente paso concreto:** F11 queda en lo que depende de René: E9 (el kit está listo) y la computadora de demo (E6 en alta y ultra). Mientras tanto:
-  - repetir la prueba real de `/api/osm`;
-  - llevar la geometría del mapa al croquis 2D, para que tenga rayas;
-  - revisar el manual de la SEDATU/SCT.
+  - correr `node eval/osm_produccion.mjs --radio <uno sin pedir>` con la ruta nueva desplegada;
+  - rayas de OSM en el croquis 2D y paso peatonal según la NOM-034 (PR #57, ADR 0041 y 0042).
 
 - **E1 del prompt v2 en el primer test, hecho** (PR #14). Sonnet 0.875 → 0.919 y Haiku 0.852 → 0.896. Además, E1 ahora compara cada contrafactual con la repetición del mismo relato (McNemar por tipo): ningún tipo difiere del ruido, y las reglas cambian con el modelo del vehículo en 6 de 52 pares (ADR 0012 §10).
 - **F8** cerrada el 2026-10-17 (PR #20 a #24). **F0** cerrado el 2026-10-10 (PR #1), **F1** el 2026-10-10 (PR #3), **F2** el 2026-10-13 (PR #4), **F3** el 2026-10-13 (PR #5), **F4** el 2026-10-13 (PR #6), **F5** el 2026-10-13 (PR #7), **F6** el 2026-10-14 (PR #8), **F7** el 2026-10-14 (PR #9; pendientes registrados); migración a Vercel el 2026-10-14 (PR #10); test CISS y prompt v2 el 2026-10-14 (PR #11).
@@ -68,6 +71,7 @@ Reglas de trabajo: `CLAUDE.md`. Especificación: `PLAN.md`.
 | `ANTHROPIC_API_KEY`                                                                                                                                                                                                                 | F6 (extracción con Claude) y E1. CI usa respuestas grabadas, así que no bloquea hasta F6. | Recibida 2026-10-14 (`.env.local`)                                                              |
 | Confirmar licencia MIT del código y el nombre _Croquis_                                                                                                                                                                             | Se usan los valores por defecto de PLAN §16 (ADR 0002)                                    | Usando default                                                                                  |
 | Computadora de demo (GPU potente) para medir alta y ultra                                                                                                                                                                           | Meta de PLAN §7.8: ≥ 60 fps en alta o ultra en todas las escenas canónicas (ADR 0026)     | Pendiente                                                                                       |
+| Cuenta y llave de NextGIS (opcional)                                                                                                                                                                                                | Instancia de Overpass sin pago si las públicas siguen saturadas (ADR 0040)                | Opcional; la ruta funciona con las públicas cuando responden                                    |
 | Pruebas con ≥ 5 personas reales (E9)                                                                                                                                                                                                | F11                                                                                       | Kit listo (`docs/e9/protocolo.md`, página `/e9`, `uv run croquis-eval e9`); faltan las sesiones |
 | Confirmar que el repositorio remoto correcto es `renecano/Crash_reconstruction_visualization_system` (público, lo creó René vacío el 2026-10-10). Se eligió por nombre y fecha; se puede cambiar con `git remote set-url origin …`. | Push y CI                                                                                 | Asumido y ya en uso                                                                             |
 
@@ -1876,6 +1880,26 @@ Las ramas van una encima de otra y se fusionan en este orden, cada una con su PR
   - limita a 60 consultas por hora por IP;
   - prueba tres instancias de Overpass, 15 s cada una, y responde un 502 claro si ninguna contesta.
 - **`applyMap`:** con el cruce más cercano en el origen, pone la plantilla, `ubicacion_real` y `red_vial` (fuente `mapa`, conservando la evidencia). Reproduce la red de Toluca desde coordenadas cercanas a su cruce (prueba).
-- **Prueba real (2026-10-19, 15:06 UTC):** las tres instancias públicas fallaban (502, 500 y 504 o sin respuesta). La ruta respondió su 502. Queda pendiente repetirla.
+- **Prueba real (2026-10-19, 15:06 UTC):** las tres instancias públicas fallaban (502, 500 y 504 o sin respuesta). La ruta respondió su 502. Se repitió en el paso 6f.
 - **Pruebas:** `croquis-2d` (4 nuevas), servidor (5), navegador (4) y e2e (2, con `/api/osm` simulado por el extracto).
 - **Fuentes:** fila nueva en `data/SOURCES.md`.
+
+**Paso 6f — Prueba real de OSM en producción (2026-10-19, PR #56 y rama `feat/f11-osm-reintentos`, ADR 0040):**
+
+- **Scripts** (no corren en CI):
+  - `eval/osm_produccion.mjs` pide las calles de Toluca a la ruta en producción, reintenta como lo haría una persona y compara con el extracto;
+  - `eval/osm_instancias.mjs` manda la consulta una vez a cada instancia.
+- **Producción, primera versión de la ruta:**
+  - con radio 150 m, la respuesta es idéntica al extracto (22 calles, 80 elementos) y la repetición sale de la CDN;
+  - con 148 m, un 502 y luego 200 a los 44.23 s;
+  - con 149 m y 147 m, solo 502.
+- **Instancias** (dos mediciones):
+  - la principal responde 200 a los 40.93 s y 42.59 s;
+  - VK Maps da 504 en 1.06 s y 200 en 13.36 s;
+  - private.coffee no contesta en 60 s.
+- **Cambio en la ruta:**
+  - mail.ru primero (15 s), la principal después (45 s) y private.coffee al final (15 s);
+  - hasta dos vueltas en 50 s;
+  - cabecera `X-Croquis-Overpass` con la instancia que contestó.
+- **Pruebas del servidor:** 7 (segunda vuelta y tiempo total nuevas).
+- **Pendiente:** correr `eval/osm_produccion.mjs` con la ruta nueva desplegada. Opción si las públicas siguen así: NextGIS (gratis, pero pide cuenta y llave; solo René).

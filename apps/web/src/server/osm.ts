@@ -27,8 +27,8 @@ export const OVERPASS_URL = "https://overpass-api.de/api/interpreter";
  * (`eval/results/osm_instancias*.json`):
  * - **VK Maps (mail.ru):** saturada, responde 504 en un segundo; va primero porque no cuesta tiempo
  *   y le quita carga a la principal.
- * - **La principal:** saturada, a veces falla en un segundo y a veces encola la consulta y responde
- *   bien a los 41 s, así que se le da casi todo el tiempo.
+ * - **La principal:** saturada, encola la consulta y responde bien a los 41 s o 43 s, así que se le
+ *   da casi todo el tiempo.
  * - **private.coffee:** saturada, no contesta; va al final y con una espera corta.
  */
 export const OVERPASS_INSTANCES = [
