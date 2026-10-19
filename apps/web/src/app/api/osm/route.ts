@@ -26,6 +26,7 @@ export async function GET(request: Request): Promise<Response> {
       headers: {
         "Cache-Control": `public, s-maxage=${CACHE_DAYS * 86_400}, stale-while-revalidate=86400`,
         "X-Croquis-Cache": r.cache,
+        ...(r.instancia ? { "X-Croquis-Overpass": r.instancia } : {}),
       },
     });
   } catch (e) {

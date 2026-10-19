@@ -54,6 +54,7 @@ describe("calles de OSM en producción (ADR 0040)", () => {
     const d = deps([ok()]);
     const a = await callesCerca({ lat: 19.278975, lon: -99.6539869, radio: 150 }, "ip", d);
     expect(a.cache).toBe("miss");
+    expect(a.instancia).toBe("overpass-api.de");
     expect((d.calls[0]!.headers as Record<string, string>)["User-Agent"]).toBe(USER_AGENT);
     const body = new URLSearchParams(d.calls[0]!.body as URLSearchParams).get("data");
     expect(body).toBe(
@@ -62,6 +63,7 @@ describe("calles de OSM en producción (ADR 0040)", () => {
     // El mismo punto (redondeado a ~1 m) no vuelve a Overpass.
     const b = await callesCerca({ lat: 19.2789749, lon: -99.6539869, radio: 150 }, "ip", d);
     expect(b.cache).toBe("hit");
+    expect(b.instancia).toBeNull();
     expect(d.calls).toHaveLength(1);
     expect(cacheKey(19.278975, -99.6539869, 150)).toBe("croquis:osm:19.27897:-99.65399:150");
   });
@@ -70,6 +72,7 @@ describe("calles de OSM en producción (ADR 0040)", () => {
     const d = deps([new Response("", { status: 502 }), new Error("timeout"), ok()]);
     const r = await callesCerca({ lat: 19.27, lon: -99.65, radio: 100 }, "ip", d);
     expect(r.cache).toBe("miss");
+    expect(r.instancia).toBe("maps.mail.ru");
     expect(d.urls).toEqual([...OVERPASS_URLS]);
     expect(d.urls[0]).toBe(OVERPASS_URL);
   });
