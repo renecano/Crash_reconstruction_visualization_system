@@ -121,8 +121,9 @@ declare global {
      * Interruptores de diagnóstico para las evaluaciones (`eval/`); la página nunca los pone.
      * `sombraLuna`: dibuja la sombra de la luna de noche, para medir que no se ve.
      * `gravaPrevia`: las manchas de grava de antes de ADR 0036, para medir el costo del cambio.
+     * `osmSoloCalzada`: la red del mapa sin rayas, banquetas ni guarniciones (antes de ADR 0039).
      */
-    __croquisDiag?: { sombraLuna?: boolean; gravaPrevia?: boolean };
+    __croquisDiag?: { sombraLuna?: boolean; gravaPrevia?: boolean; osmSoloCalzada?: boolean };
     /** `performance.now()` del primer cuadro listo (E6: tiempo hasta interactivo). */
     __croquisReadyAt?: number;
   }
@@ -170,6 +171,8 @@ function SceneContent({
         env,
         diag: {
           gravaPrevia: typeof window !== "undefined" && window.__croquisDiag?.gravaPrevia === true,
+          osmSoloCalzada:
+            typeof window !== "undefined" && window.__croquisDiag?.osmSoloCalzada === true,
         },
       }),
     [spec, resultado, profile, env],

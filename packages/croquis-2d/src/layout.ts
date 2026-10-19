@@ -85,7 +85,16 @@ export interface EventMarker {
 
 /** Calles de OpenStreetMap para dibujar (ADR 0023): el dibujo usa estas, la física la plantilla. */
 export interface MapLayout {
-  vias: { id: number; puntos: Vec2[]; ancho: number; nombre?: string }[];
+  vias: {
+    id: number;
+    puntos: Vec2[];
+    ancho: number;
+    nombre?: string;
+    /** `lanes`, `oneway` y `highway` de OSM, si vienen (ADR 0039). */
+    carriles?: number;
+    unSentido?: boolean;
+    tipo?: string;
+  }[];
   atribucion: string;
 }
 
@@ -348,6 +357,9 @@ export function sceneLayout(spec: EscenaSpec, clases?: TablaClases): SceneLayout
           puntos: v.puntos.map((p) => ({ x: p.x, y: p.y })),
           ancho: viaWidthM(v, lane),
           nombre: v.nombre,
+          carriles: v.carriles,
+          unSentido: v.un_sentido,
+          tipo: v.tipo,
         })),
         atribucion: red.atribucion,
       }

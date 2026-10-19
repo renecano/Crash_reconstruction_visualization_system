@@ -241,23 +241,141 @@ function lineAlongArc(
   }
 }
 
+/** Una calle del mapa (ADR 0023): eje, ancho y, si OSM los trae, carriles, sentido y tipo. */
+export interface MapVia {
+  puntos: readonly Vec2[];
+  ancho: number;
+  /** `lanes` de OSM; sin él no se pintan rayas (no se inventan). */
+  carriles?: number;
+  unSentido?: boolean;
+  /** `highway` de OSM. */
+  tipo?: string;
+}
+
+export interface MapRoadOptions extends Pick<RoadOptions, "crosswalks"> {
+  /** Banquetas y guarniciones de la escena (`lugar`), como en las plantillas. */
+  banquetas?: boolean;
+  guarniciones?: boolean;
+  dash?: DashPattern;
+}
+
+/** Vías de OSM sin banqueta (autopistas y vías rápidas, con sus enlaces). */
+const NO_SIDEWALK = /^(motorway|trunk)(_link)?$/;
+/** Dos tramos casi paralelos (menos de 30°) se continúan: no es un cruce. */
+const PARALLEL_COS = Math.cos((30 * Math.PI) / 180);
+
+/** Distancia de p al segmento ab y la dirección unitaria del segmento. */
+function segmentDistance(p: Vec2, a: Vec2, b: Vec2): { dist: number; d: Vec2 } {
+  const len = Math.hypot(b.x - a.x, b.y - a.y);
+  if (len < 1e-9) return { dist: Math.hypot(p.x - a.x, p.y - a.y), d: { x: 1, y: 0 } };
+  const d = { x: (b.x - a.x) / len, y: (b.y - a.y) / len };
+  const t = Math.min(len, Math.max(0, (p.x - a.x) * d.x + (p.y - a.y) * d.y));
+  return { dist: Math.hypot(p.x - (a.x + d.x * t), p.y - (a.y + d.y * t)), d };
+}
+
 /**
  * Calzada desde las calles del mapa (ADR 0023): un rectángulo por segmento de cada calle y un
- * disco en cada vértice para cerrar las uniones. Solo la calzada: las rayas y banquetas de OSM no
- * se infieren (no vienen en los datos), y los pasos peatonales siguen saliendo de los dispositivos.
+ * disco en cada vértice para cerrar las uniones.
+ *
+ * Rayas, banquetas y guarniciones (ADR 0039):
+ * - **Rayas:** solo en las calles con `carriles` de OSM, con las mismas reglas que las plantillas
+ *   (orillas, doble amarilla al centro en doble sentido y discontinuas entre carriles). Sin ese
+ *   dato no se pinta nada.
+ * - **Banquetas y guarniciones:** si la escena las declara, excepto en autopistas y vías rápidas.
+ * - **Cruces:** todo se corta donde otra calle cruza (otra calle con un ángulo de más de 30°). Una
+ *   calle que sigue en otra vía de OSM, casi en línea, no corta nada. Las rayas centrales y de
+ *   carril también se cortan en los pasos peatonales.
  */
 export function buildMapRoadGeometry(
-  vias: readonly { puntos: readonly Vec2[]; ancho: number }[],
-  crosswalkOpts: Pick<RoadOptions, "crosswalks"> = {},
+  vias: readonly MapVia[],
+  opts: MapRoadOptions = {},
 ): RoadGeometry {
+  const dash = opts.dash ?? DASH_HASTA_50;
   const pavement = emptyMesh();
+  const sidewalk = emptyMesh();
+  const white = emptyMesh();
+  const yellow = emptyMesh();
   const crosswalks = emptyMesh();
+  const curbs: { a: Vec2; b: Vec2 }[] = [];
+  const withCurbs = (opts.banquetas ?? false) || (opts.guarniciones ?? false);
   let minX = Infinity;
   let minY = Infinity;
   let maxX = -Infinity;
   let maxY = -Infinity;
+
+  /** ¿p cae en la calzada de otra calle que cruza a la dirección `d` (no que la continúa)? */
+  const inCrossing = (p: Vec2, self: MapVia, d: Vec2, margin: number): boolean =>
+    vias.some((o) => {
+      if (o === self) return false;
+      for (let i = 0; i + 1 < o.puntos.length; i++) {
+        const r = segmentDistance(p, o.puntos[i]!, o.puntos[i + 1]!);
+        if (r.dist <= o.ancho / 2 + margin && Math.abs(r.d.x * d.x + r.d.y * d.y) < PARALLEL_COS) {
+          return true;
+        }
+      }
+      return false;
+    });
+  /**
+   * ¿p cae sobre la calzada de otra calle, con cualquier ángulo? Para banquetas y guarniciones:
+   * una calle que sigue en línea no las corta (quedan fuera de su eje), pero dos calzadas paralelas
+   * muy juntas (una avenida de dos cuerpos) sí.
+   */
+  const onOtherPavement = (p: Vec2, self: MapVia, margin: number): boolean =>
+    vias.some(
+      (o) =>
+        o !== self &&
+        o.puntos.some((q, i) => {
+          const b = o.puntos[i + 1];
+          return b !== undefined && segmentDistance(p, q, b).dist < o.ancho / 2 + margin;
+        }),
+    );
+  const inCrosswalk = (p: Vec2): boolean =>
+    (opts.crosswalks ?? []).some((cw) => {
+      const d = dir(cw.roadHeading);
+      const rel = { x: p.x - cw.center.x, y: p.y - cw.center.y };
+      return (
+        Math.abs(rel.x * d.x + rel.y * d.y) <= CROSSWALK_LENGTH / 2 &&
+        Math.abs(-rel.x * d.y + rel.y * d.x) <= cw.roadWidth / 2
+      );
+    });
+
+  /** Piezas a lo largo de un segmento, a `off` del eje (sólidas de `step` m o discontinuas). */
+  const along = (
+    a: Vec2,
+    b: Vec2,
+    off: number,
+    piece: number,
+    gap: number,
+    draw: (c: Vec2, d: Vec2, len: number, s0: number) => void,
+  ): void => {
+    const len = Math.hypot(b.x - a.x, b.y - a.y);
+    if (len < 1e-6) return;
+    const d = { x: (b.x - a.x) / len, y: (b.y - a.y) / len };
+    const n = { x: -d.y, y: d.x };
+    for (let s0 = 0; s0 < len - 1e-9; s0 += piece + gap) {
+      const l = Math.min(piece, len - s0);
+      const mid = s0 + l / 2;
+      draw({ x: a.x + d.x * mid + n.x * off, y: a.y + d.y * mid + n.y * off }, d, l, s0);
+    }
+  };
+
   for (const v of vias) {
     const r = v.ancho / 2;
+    const sidewalks = (opts.banquetas ?? false) && !NO_SIDEWALK.test(v.tipo ?? "");
+    const offsets =
+      v.carriles !== undefined
+        ? stripLineOffsets(
+            {
+              center: { x: 0, y: 0 },
+              length: 0,
+              heading: 0,
+              width: v.ancho,
+              lanes: v.carriles,
+              median: 0,
+            },
+            !(v.unSentido ?? false),
+          )
+        : null;
     for (let i = 0; i < v.puntos.length; i++) {
       const a = v.puntos[i]!;
       minX = Math.min(minX, a.x - r);
@@ -271,9 +389,41 @@ export function buildMapRoadGeometry(
       if (len < 1e-6) continue;
       const d = { x: (b.x - a.x) / len, y: (b.y - a.y) / len };
       orientedQuad(pavement, { x: (a.x + b.x) / 2, y: (a.y + b.y) / 2 }, d, len, v.ancho);
+      if (offsets) {
+        const solid = (mesh: Mesh2D, off: number, walk: boolean) =>
+          along(a, b, off, 1, 0, (c, dd, l) => {
+            if (inCrossing(c, v, dd, 0.5) || (walk && inCrosswalk(c))) return;
+            orientedQuad(mesh, c, dd, l, LINE_WIDTH);
+          });
+        for (const o of offsets.edges) solid(white, o, false);
+        for (const o of offsets.center) solid(yellow, o, true);
+        for (const o of offsets.dashed) {
+          along(a, b, o, dash.length, dash.gap, (c, dd, l) => {
+            if (inCrossing(c, v, dd, 0.5) || inCrosswalk(c)) return;
+            orientedQuad(white, c, dd, l, LINE_WIDTH);
+          });
+        }
+      }
+      for (const side of [-1, 1]) {
+        if (sidewalks) {
+          along(a, b, side * (r + SIDEWALK_WIDTH / 2), 2, 0, (c, dd, l) => {
+            if (inCrossing(c, v, dd, SIDEWALK_WIDTH / 2) || onOtherPavement(c, v, 0)) return;
+            orientedQuad(sidewalk, c, dd, l, SIDEWALK_WIDTH);
+          });
+        }
+        if (withCurbs) {
+          along(a, b, side * r, 2, 0, (c, dd, l) => {
+            if (inCrossing(c, v, dd, 0.3) || onOtherPavement(c, v, -0.05)) return;
+            curbs.push({
+              a: { x: c.x - (dd.x * l) / 2, y: c.y - (dd.y * l) / 2 },
+              b: { x: c.x + (dd.x * l) / 2, y: c.y + (dd.y * l) / 2 },
+            });
+          });
+        }
+      }
     }
   }
-  for (const cw of crosswalkOpts.crosswalks ?? []) {
+  for (const cw of opts.crosswalks ?? []) {
     const d = dir(cw.roadHeading);
     const n = { x: -d.y, y: d.x };
     const stripes = Math.floor(cw.roadWidth / 1.0);
@@ -283,7 +433,7 @@ export function buildMapRoadGeometry(
         crosswalks,
         { x: cw.center.x + n.x * off, y: cw.center.y + n.y * off },
         d,
-        3.0,
+        CROSSWALK_LENGTH,
         0.5,
       );
     }
@@ -296,12 +446,12 @@ export function buildMapRoadGeometry(
   }
   return {
     pavement,
-    sidewalk: emptyMesh(),
-    whiteLines: emptyMesh(),
-    yellowLines: emptyMesh(),
+    sidewalk,
+    whiteLines: white,
+    yellowLines: yellow,
     crosswalks,
     medians: emptyMesh(),
-    curbs: [],
+    curbs,
     bounds: [minX, minY, maxX, maxY],
   };
 }

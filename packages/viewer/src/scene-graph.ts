@@ -88,7 +88,7 @@ import {
 export interface SceneGraphOptions {
   quality: QualityProfile;
   /** Interruptores de diagnóstico de E6 (`window.__croquisDiag`); la página nunca los pone. */
-  diag?: { gravaPrevia?: boolean };
+  diag?: { gravaPrevia?: boolean; osmSoloCalzada?: boolean };
   env: Pick<EnvironmentSettings, "night" | "wet" | "groundColor" | "streetLights"> &
     Partial<Pick<EnvironmentSettings, "lightDirection" | "surface">>;
 }
@@ -412,13 +412,24 @@ export function buildSceneGraph(
   const dobleSentido = lugar.sentidos.valor === "doble_sentido";
   // Con calles del mapa (ADR 0023) se dibuja la red de OSM; la plantilla queda para la física.
   const mapa = sceneLayout(spec).mapa;
+  const dash = dashPatternFor(lugar.tipo_via.valor, limite ? velocidadKmh(limite) : undefined);
+  // `osmSoloCalzada` (diagnóstico de E6): la red del mapa como antes de ADR 0039, solo calzada.
+  const soloCalzada = opts.diag?.osmSoloCalzada === true;
   const road = mapa
-    ? buildMapRoadGeometry(mapa.vias, { crosswalks })
+    ? buildMapRoadGeometry(
+        soloCalzada ? mapa.vias.map((v) => ({ ...v, carriles: undefined })) : mapa.vias,
+        {
+          crosswalks,
+          banquetas: !soloCalzada && (lugar.banquetas?.valor ?? false),
+          guarniciones: !soloCalzada && (lugar.guarniciones?.valor ?? false),
+          dash,
+        },
+      )
     : buildRoadGeometry(layout, {
         dobleSentido,
         banquetas: lugar.banquetas?.valor ?? false,
         crosswalks,
-        dash: dashPatternFor(lugar.tipo_via.valor, limite ? velocidadKmh(limite) : undefined),
+        dash,
         markings: markingsFor(dobleSentido, devTipos),
         guarniciones: lugar.guarniciones?.valor ?? false,
       });
