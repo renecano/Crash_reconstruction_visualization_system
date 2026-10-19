@@ -4,6 +4,7 @@ import { describe, expect, it } from "vitest";
 import {
   buildMapRoadGeometry,
   buildRoadGeometry,
+  CROSSWALK_LENGTH,
   DASH_HASTA_50,
   DASH_MAS_50,
   dashPatternFor,
@@ -161,6 +162,70 @@ describe("guarniciones y camellón (F8c)", () => {
     const strip = roadLayout(spec.lugar).strips[0]!;
     expect(meshArea(g.medians)).toBeGreaterThan(0.9 * strip.median * strip.length);
     expect(g.curbs.length).toBeGreaterThan(0);
+  });
+
+  it("donde un paso peatonal cruza el camellón, se corta a nivel de calle (refugio)", () => {
+    const spec = loadFixture("poste");
+    const layout = roadLayout(spec.lugar);
+    const strip = layout.strips[0]!;
+    const opts = {
+      dobleSentido: true,
+      banquetas: spec.lugar.banquetas?.valor ?? false,
+      guarniciones: true,
+    };
+    const sin = buildRoadGeometry(layout, opts);
+    const con = buildRoadGeometry(layout, {
+      ...opts,
+      crosswalks: [{ center: strip.center, roadHeading: strip.heading, roadWidth: strip.width }],
+    });
+    const corte = meshArea(sin.medians) - meshArea(con.medians);
+    // Se quita la franja del paso (3 m a lo largo de la vía) a lo ancho del camellón.
+    expect(corte).toBeCloseTo(CROSSWALK_LENGTH * strip.median, 0);
+    // Tampoco quedan guarniciones del camellón dentro del paso (las del refugio se quitan).
+    const h = (strip.heading * Math.PI) / 180;
+    const local = (q: { x: number; y: number }) => {
+      const rx = q.x - strip.center.x;
+      const ry = q.y - strip.center.y;
+      return {
+        along: rx * Math.cos(h) + ry * Math.sin(h),
+        across: -rx * Math.sin(h) + ry * Math.cos(h),
+      };
+    };
+    const delCamellonEnElPaso = con.curbs.filter((c) => {
+      const m = local({ x: (c.a.x + c.b.x) / 2, y: (c.a.y + c.b.y) / 2 });
+      return (
+        Math.abs(m.across) <= strip.median / 2 + 0.01 &&
+        Math.abs(m.along) < CROSSWALK_LENGTH / 2 - 0.2
+      );
+    });
+    expect(delCamellonEnElPaso).toHaveLength(0);
+    expect(sin.curbs.some((c) => Math.abs(local(c.a).along) < 1)).toBe(true);
+  });
+
+  it("las rayas centrales se interrumpen en el paso peatonal; las orillas siguen", () => {
+    const spec = loadFixture("poste");
+    const layout = roadLayout(spec.lugar);
+    const strip = layout.strips[0]!;
+    const opts = { dobleSentido: true, banquetas: false, guarniciones: true };
+    const sin = buildRoadGeometry(layout, opts);
+    const con = buildRoadGeometry(layout, {
+      ...opts,
+      crosswalks: [{ center: strip.center, roadHeading: strip.heading, roadWidth: strip.width }],
+    });
+    expect(meshArea(con.yellowLines)).toBeLessThan(meshArea(sin.yellowLines));
+    expect(meshArea(con.yellowLines)).toBeGreaterThan(0.9 * meshArea(sin.yellowLines));
+  });
+
+  it("sin pasos peatonales el camellón queda igual que antes", () => {
+    const { g } = road("poste");
+    const spec = loadFixture("poste");
+    const again = buildRoadGeometry(roadLayout(spec.lugar), {
+      dobleSentido: spec.lugar.sentidos.valor === "doble_sentido",
+      banquetas: spec.lugar.banquetas?.valor ?? false,
+      guarniciones: spec.lugar.guarniciones?.valor ?? false,
+      crosswalks: [],
+    });
+    expect(again.medians.positions).toEqual(g.medians.positions);
   });
 
   it("sin banquetas ni guarniciones no hay guarniciones", () => {

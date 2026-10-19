@@ -1823,3 +1823,11 @@ Las ramas van una encima de otra y se fusionan en este orden, cada una con su PR
   - el relieve de las manchas con y sin textura de asfalto;
   - el interruptor de diagnóstico.
 - **Incidente:** una corrida local de las pruebas del visor dio 234 de 238 y tres más dieron 238 de 238. No se reprodujo. Se suma al antecedente de `debris.test.ts` (F3).
+
+**Paso 6b — Corte del camellón en los pasos peatonales (2026-10-18, rama `feat/f8-camellon`, ADR 0037):**
+
+- **El refugio:** donde un paso peatonal cruza el camellón, se corta a nivel de calle, sin guarniciones.
+- **Las rayas:** las centrales y de carril se interrumpen en el paso; las orillas siguen.
+- **Las demás escenas** tienen exactamente la misma geometría (prueba).
+- **Revisión visual:** con la GPU real, en la cámara de la persona de `peaton_cruce`. La cebra ya no pasa bajo el camellón ni bajo las rayas amarillas.
+- **Pruebas:** el área cortada es la del paso, no quedan guarniciones del camellón dentro del paso, las rayas centrales se interrumpen y sin pasos todo queda igual.
