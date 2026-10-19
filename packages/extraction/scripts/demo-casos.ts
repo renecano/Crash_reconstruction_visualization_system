@@ -80,15 +80,13 @@ if (process.argv.includes("--check")) {
   }
   if (current !== text) {
     // La primera línea distinta, para ver qué cambió sin tener que regenerar.
-    const a = current.split("
-");
-    const b = text.split("
-");
+    const a = current.split("\n");
+    const b = text.split("\n");
     const i = a.findIndex((l, k) => l !== b[k]);
     const at = i < 0 ? Math.min(a.length, b.length) : i;
-    console.error(`línea ${at + 1}
-  versionado: ${a[at]?.slice(0, 200)}
-  generado:   ${b[at]?.slice(0, 200)}`);
+    console.error(`línea ${at + 1}`);
+    console.error(`  versionado: ${a[at]?.slice(0, 200)}`);
+    console.error(`  generado:   ${b[at]?.slice(0, 200)}`);
     console.error(`${OUT} no está al día: corre pnpm --filter @croquis/extraction demo`);
     process.exit(1);
   }
