@@ -64,11 +64,17 @@
   - el resultado se carga aparte.
 - **CSS en el HTML** (`experimental.inlineCss`): el primer pintado no espera otra ida y vuelta de red.
 - **`/cuenta` sale del servidor:** el paso se lee de la URL al montar y se cambia con `history.pushState`, que Next integra a su router. `useSearchParams` obligaba a dibujar el flujo solo en el navegador.
+- **Nada salta al cargar (CLS):**
+  - **La fuente se precarga** desde el documento raíz (`preload` de React DOM). Sin eso llegaba después del primer pintado y el texto se volvía a acomodar: en `/en` el lema ganaba un renglón y en `/croquis` la barra de herramientas otro.
+  - **`/medicion` sale del servidor** igual que `/cuenta`: la configuración de la URL se lee al montar.
+  - **`/visor` reserva su lugar:** sigue leyendo la URL con `useSearchParams`, porque sus controles viven ahí. Mientras se dibuja en el navegador, el hueco mide lo mismo que el selector de escena y el marco del visor, y el pie no salta.
+  - **Lo que queda:** si la fuente tarda más que el primer pintado, una línea larga puede cambiar de renglón. Un respaldo con métricas ajustadas necesitaría cuatro caras (por ancho y peso), afinadas para una sola fuente del sistema, y el corrimiento que queda ya está debajo de la meta.
 - **Cómo se mide** (`eval/f11_portada.mjs`, decisión de medición):
   - **Configuración:** Lighthouse en modo celular con red 4G y CPU 4×, en el build de producción, 3 corridas por página.
   - **El criterio se evalúa con la limitación aplicada** (`devtools`): Chrome recibe la red 4G de Lighthouse y se mide lo que pasa.
   - **La estimación de Lantern** (`simulate`, la de PageSpeed Insights) se reporta al lado. En estas páginas su LCP queda varias veces arriba del medido, porque suma al LCP los scripts que se piden al inicio aunque el LCP ya ocurrió.
   - **Verificación independiente:** se registraron las entradas de LCP en el navegador con las mismas condiciones de red y CPU. Hay una sola entrada, en el primer pintado, que coincide con la medición aplicada.
+  - **Con la laptop conectada:** la CPU 4× se aplica encima del CPU real. Con batería y el modo de eficiencia de Windows, el CPU va mucho más lento y las cifras de la misma página salen varias veces peores, así que no se comparan. En la portada, la lluvia anima cada cuadro y Lighthouse nunca ve el CPU en reposo; a los 45 s sigue adelante y una comprobación que deja pendiente falla con «Target closed». El script anota en cada corrida el `benchmarkIndex` de Lighthouse y si había corriente, y no mide con batería salvo con `--bateria`.
 
 ### 6. Accesibilidad
 
