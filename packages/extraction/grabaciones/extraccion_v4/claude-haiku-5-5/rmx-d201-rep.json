@@ -1,0 +1,132 @@
+{
+ "costo_estimado_con": "claude-haiku-5-5",
+ "costo_usd": 0.0019714,
+ "esfuerzo": "medium",
+ "grabado": "2026-10-20T01:25:43+00:00",
+ "huella_prompt": "613dc7f7bc958502",
+ "latencia_ms": 15786.2,
+ "modelo": "claude-haiku-5-5",
+ "modelo_respuesta": "claude-haiku-5-5",
+ "prompt": "extraccion_v4",
+ "request_id": "req_011CgCcmTCnMvpchdDEa22B1",
+ "salida": {
+  "dispositivos": [
+   {
+    "cita": "con el semáforo vehicular en verde",
+    "tipo": "semaforo"
+   },
+   {
+    "cita": "con la señal peatonal a su favor",
+    "tipo": "semaforo_peatonal"
+   }
+  ],
+  "hechos": [
+   {
+    "campo": "vehiculo.clase",
+    "cita": "Volkswagen Vento",
+    "persona": -1,
+    "valor": "sedan_compacto",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.color",
+    "cita": "color blanco",
+    "persona": -1,
+    "valor": "blanco",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.maniobra",
+    "cita": "inició maniobra de vuelta a la derecha",
+    "persona": -1,
+    "valor": "vuelta_derecha",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.zona_impacto",
+    "cita": "la parte trasera de la unidad asegurada",
+    "persona": -1,
+    "valor": "B",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.clase",
+    "cita": "Chevrolet Suburban",
+    "persona": -1,
+    "valor": "suv_grande",
+    "vehiculo": 1
+   },
+   {
+    "campo": "vehiculo.color",
+    "cita": "color negro",
+    "persona": -1,
+    "valor": "negro",
+    "vehiculo": 1
+   },
+   {
+    "campo": "vehiculo.velocidad_kmh",
+    "cita": "a una velocidad estimada de 20 km/h",
+    "persona": -1,
+    "valor": "20",
+    "vehiculo": 1
+   },
+   {
+    "campo": "evento.tipo",
+    "cita": "impactó con su frente la parte trasera de la unidad asegurada",
+    "persona": -1,
+    "valor": "impacto_vehiculo_vehiculo",
+    "vehiculo": -1
+   },
+   {
+    "campo": "lugar.tipo_via",
+    "cita": "a la intersección con la calle Río Mississippi",
+    "persona": -1,
+    "valor": "interseccion",
+    "vehiculo": -1
+   },
+   {
+    "campo": "entorno.clima",
+    "cita": "El clima era despejado.",
+    "persona": -1,
+    "valor": "despejado",
+    "vehiculo": -1
+   }
+  ],
+  "personas": [
+   {
+    "cita": "El asegurado",
+    "rol": "conductor",
+    "vehiculo": 0
+   },
+   {
+    "cita": "dos peatones que cruzaban con la señal peatonal a su favor",
+    "rol": "peaton",
+    "vehiculo": -1
+   },
+   {
+    "cita": "dos peatones que cruzaban con la señal peatonal a su favor",
+    "rol": "peaton",
+    "vehiculo": -1
+   }
+  ],
+  "preguntas": [
+   "¿A qué velocidad circulaba el Volkswagen Vento al iniciar la vuelta a la derecha?",
+   "¿Quién conducía la camioneta Chevrolet Suburban y a qué velocidad venía antes del impacto?"
+  ],
+  "vehiculos": [
+   {
+    "narrador": false
+   },
+   {
+    "narrador": false
+   }
+  ]
+ },
+ "texto_sha256": "72f06581a4df649de25df0f9ffbcd64e4a5ddb72bff17f3c352d1d1bb5d23231",
+ "usage": {
+  "cache_creation_input_tokens": 0,
+  "cache_read_input_tokens": 7350,
+  "input_tokens": 329,
+  "output_tokens": 3730
+ }
+}

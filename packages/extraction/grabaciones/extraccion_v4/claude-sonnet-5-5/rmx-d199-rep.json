@@ -1,0 +1,60 @@
+{
+ "costo_estimado_con": "claude-sonnet-5-5",
+ "costo_usd": 0.004422,
+ "esfuerzo": "medium",
+ "grabado": "2026-10-19T23:18:57+00:00",
+ "huella_prompt": "613dc7f7bc958502",
+ "latencia_ms": 2741.2,
+ "modelo": "claude-sonnet-5-5",
+ "modelo_respuesta": "claude-sonnet-5-5",
+ "prompt": "extraccion_v4",
+ "request_id": "req_011CgCT7iUSVh3THqqQ2qV9E",
+ "salida": {
+  "dispositivos": [
+   {
+    "cita": "la luz del peatón en verde",
+    "tipo": "semaforo_peatonal"
+   }
+  ],
+  "hechos": [
+   {
+    "campo": "vehiculo.clase",
+    "cita": "moto",
+    "persona": -1,
+    "valor": "motocicleta",
+    "vehiculo": 0
+   },
+   {
+    "campo": "evento.tipo",
+    "cita": "me tiró",
+    "persona": -1,
+    "valor": "impacto_vehiculo_persona",
+    "vehiculo": -1
+   }
+  ],
+  "personas": [
+   {
+    "cita": "Crucé",
+    "rol": "peaton",
+    "vehiculo": -1
+   }
+  ],
+  "preguntas": [
+   "¿Cruzaba por un paso peatonal o a media calle?",
+   "¿Qué luz tenía el semáforo de los vehículos?",
+   "¿A qué velocidad aproximada venía la moto?"
+  ],
+  "vehiculos": [
+   {
+    "narrador": false
+   }
+  ]
+ },
+ "texto_sha256": "90e2df6dc6d98b78d66f5bb12c334e4b1213360677b979ae9fb1fb2572c4ba9e",
+ "usage": {
+  "cache_creation_input_tokens": 0,
+  "cache_read_input_tokens": 7350,
+  "input_tokens": 56,
+  "output_tokens": 284
+ }
+}

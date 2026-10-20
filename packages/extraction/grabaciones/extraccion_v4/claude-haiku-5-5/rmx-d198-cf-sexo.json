@@ -1,0 +1,78 @@
+{
+ "costo_estimado_con": "claude-haiku-5-5",
+ "costo_usd": 0.0011237,
+ "esfuerzo": "medium",
+ "grabado": "2026-10-19T23:02:18+00:00",
+ "huella_prompt": "613dc7f7bc958502",
+ "latencia_ms": 11026.6,
+ "modelo": "claude-haiku-5-5",
+ "modelo_respuesta": "claude-haiku-5-5",
+ "prompt": "extraccion_v4",
+ "request_id": "req_011CgCRqV2F3Qper9Yy2FCzQ",
+ "salida": {
+  "dispositivos": [
+   {
+    "cita": "el semáforo ya estaba en rojo para los carros",
+    "tipo": "semaforo"
+   }
+  ],
+  "hechos": [
+   {
+    "campo": "vehiculo.clase",
+    "cita": "Pointer",
+    "persona": -1,
+    "valor": "sedan_compacto",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.color",
+    "cita": "Pointer gris",
+    "persona": -1,
+    "valor": "gris",
+    "vehiculo": 0
+   },
+   {
+    "campo": "evento.tipo",
+    "cita": "me alcanzó a pegar con el espejo en el brazo",
+    "persona": -1,
+    "valor": "impacto_vehiculo_persona",
+    "vehiculo": -1
+   },
+   {
+    "campo": "entorno.clima",
+    "cita": "lloviendo fuerte",
+    "persona": -1,
+    "valor": "lluvia_fuerte",
+    "vehiculo": -1
+   }
+  ],
+  "personas": [
+   {
+    "cita": "Estaba cruzando la avenida Juárez",
+    "rol": "peaton",
+    "vehiculo": -1
+   },
+   {
+    "cita": "una señora en una Pointer gris",
+    "rol": "conductor",
+    "vehiculo": 0
+   }
+  ],
+  "preguntas": [
+   "¿A qué velocidad iba la Pointer al pasar el semáforo?",
+   "¿Dónde estaba el peatón respecto al carril al momento del impacto?"
+  ],
+  "vehiculos": [
+   {
+    "narrador": false
+   }
+  ]
+ },
+ "texto_sha256": "86d3acde81586e7626f2c60bb22e225b2a8cc195e1d138358fb1990c42a6f8a8",
+ "usage": {
+  "cache_creation_input_tokens": 0,
+  "cache_read_input_tokens": 7350,
+  "input_tokens": 152,
+  "output_tokens": 2070
+ }
+}

@@ -62,13 +62,14 @@ Reglas de trabajo: `CLAUDE.md`. Especificación: `PLAN.md`.
   - **En qué escenas:** las de plantilla y las del mapa, en el croquis y en el visor.
   - **Límite:** en una recta no se dibuja.
   - **Referencias visuales:** se regeneraron en CI (Linux) las de `lateral_interseccion` e `interseccion_toluca` y se revisaron; las otras 22 salieron idénticas byte por byte.
+- **F11, paso 6j hecho** (rama `feat/f11-prompt-v4`, ADR 0043): prompt v4 con el semáforo peatonal, medido con el criterio fijado antes.
+  - **Resultado:** **no pasa a producción**. Lee el semáforo peatonal con F1 0.978 en los dos modelos, pero con Sonnet baja el F1 micro común de 0.9354 a 0.9328 en dev; dos corridas de v3 difieren 0.0054.
+  - **Lo que se hizo:** lote `dev-007` (30 relatos, escrito y revisado por agentes que no vieron las reglas ni los prompts), glosario por versión (las huellas de v1–v3 no cambian) y E1 con la métrica común.
+  - **Gasto:** 5.58 USD.
+  - **Criterio con ruido:** queda fijado para el próximo cambio de prompt.
 - **Pendientes menores:**
-  - prompt v4 con el semáforo peatonal;
   - texturas triplanares, después de E9.
-- **Siguiente paso concreto:** F11 queda en lo que depende de René: E9 (el kit está listo) y la computadora de demo (E6 en alta y ultra). Mientras tanto, prompt v4. Diseño previsto:
-  - **Glosario por versión:** el glosario entra en el prompt de todas las versiones, así que una entrada nueva debe ir solo en v4, como `SINCE_V3` con los campos; si no, cambian las huellas de v1–v3.
-  - **Lote de dev:** Relatos-MX no menciona semáforos peatonales, así que hace falta un lote escrito por un agente que no vea los prompts, como `dev-006`.
-  - **Costo estimado:** unos 8 USD en dev y el test CISS.
+- **Siguiente paso concreto:** F11 queda en lo que depende de René: E9 (el kit está listo) y la computadora de demo (E6 en alta y ultra). Lo que queda sin René son pendientes menores: texturas triplanares (después de E9) y una v5 del prompt con el criterio con ruido del ADR 0043, si se quiere volver a intentar el semáforo peatonal.
 
 - **E1 del prompt v2 en el primer test, hecho** (PR #14). Sonnet 0.875 → 0.919 y Haiku 0.852 → 0.896. Además, E1 ahora compara cada contrafactual con la repetición del mismo relato (McNemar por tipo): ningún tipo difiere del ruido, y las reglas cambian con el modelo del vehículo en 6 de 52 pares (ADR 0012 §10).
 - **F8** cerrada el 2026-10-17 (PR #20 a #24). **F0** cerrado el 2026-10-10 (PR #1), **F1** el 2026-10-10 (PR #3), **F2** el 2026-10-13 (PR #4), **F3** el 2026-10-13 (PR #5), **F4** el 2026-10-13 (PR #6), **F5** el 2026-10-13 (PR #7), **F6** el 2026-10-14 (PR #8), **F7** el 2026-10-14 (PR #9; pendientes registrados); migración a Vercel el 2026-10-14 (PR #10); test CISS y prompt v2 el 2026-10-14 (PR #11).
@@ -1931,3 +1932,25 @@ Las ramas van una encima de otra y se fusionan en este orden, cada una con su PR
   - **Orillas:** continuas (5.5.1).
   - **Croquis 2D:** las franjas del símbolo pasan a 40 cm.
   - **Referencias visuales:** cambian solo las de `peaton_cruce` (las dos). Se regeneraron en CI (Linux) y se revisaron; las otras 24 salieron idénticas byte por byte.
+
+**Paso 6j — Prompt v4: semáforo peatonal (2026-10-19, rama `feat/f11-prompt-v4`, ADR 0043):**
+
+- **Orden de trabajo, con commits:**
+  1. diseño, reglas, prompt y criterio (`2bc0f26`);
+  2. el lote `dev-007` (`2b36b3b`);
+  3. las grabaciones y la medición.
+- **Huellas:** v1–v3 no cambian (prueba en Python y TS); la de v4 es 613dc7f7bc958502.
+- **Tests congelados intactos:** con la métrica común, E1 de v3 en CISS y en el primer test da los mismos números que antes.
+- **Dev de 220** (`e1_extraction_dev_v{3,4}_dev007.json`), F1 micro común:
+  - **Sonnet:** 0.9354 → 0.9328;
+  - **Haiku:** 0.9185 → 0.9218;
+  - **reglas:** 0.7442.
+- **`semaforo_peatonal`:**
+  - **v4:** F1 0.9778 con los dos modelos;
+  - **reglas:** 0.5333, con 8 de 22.
+- **Repetición puntuada contra la referencia:**
+  - **Sonnet:** v3 0.9300, v4 0.9360;
+  - **Haiku:** v3 0.9138, v4 0.9196.
+- **Decisión:** v4 no pasa (criterio 1). Por eso no se midieron los tests con v4.
+- **Grabaciones:** las de v4 en `grabaciones/extraccion_v4`, y las de v3 de `dev-007`.
+- **Gasto del día:** 5.58 USD (`gasto.json`).

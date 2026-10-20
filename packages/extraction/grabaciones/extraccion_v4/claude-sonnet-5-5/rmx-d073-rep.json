@@ -1,0 +1,79 @@
+{
+ "costo_estimado_con": "claude-sonnet-5-5",
+ "costo_usd": 0.006644,
+ "esfuerzo": "medium",
+ "grabado": "2026-10-19T23:08:23+00:00",
+ "huella_prompt": "613dc7f7bc958502",
+ "latencia_ms": 3799.5,
+ "modelo": "claude-sonnet-5-5",
+ "modelo_respuesta": "claude-sonnet-5-5",
+ "prompt": "extraccion_v4",
+ "request_id": "req_011CgCSJv9qd3ZhxJXNgpe7p",
+ "salida": {
+  "dispositivos": [],
+  "hechos": [
+   {
+    "campo": "vehiculo.maniobra",
+    "cita": "metiéndome de reversa",
+    "persona": -1,
+    "valor": "reversa",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.clase",
+    "cita": "Gol",
+    "persona": -1,
+    "valor": "hatchback",
+    "vehiculo": 1
+   },
+   {
+    "campo": "evento.tipo",
+    "cita": "le pegué en la puerta del copiloto con mi defensa trasera",
+    "persona": -1,
+    "valor": "impacto_vehiculo_vehiculo",
+    "vehiculo": -1
+   },
+   {
+    "campo": "vehiculo.zona_impacto",
+    "cita": "con mi defensa trasera",
+    "persona": -1,
+    "valor": "B",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.velocidad_kmh",
+    "cita": "vuelta de rueda",
+    "persona": -1,
+    "valor": "8",
+    "vehiculo": 0
+   }
+  ],
+  "personas": [
+   {
+    "cita": "Estaba metiéndome de reversa",
+    "rol": "conductor",
+    "vehiculo": 0
+   }
+  ],
+  "preguntas": [
+   "¿El Gol venía circulando de izquierda a derecha o de derecha a izquierda respecto a su vehículo?",
+   "¿Qué tan rápido iba aproximadamente el Gol al pasar?",
+   "¿El cajón de estacionamiento era en batería o en cordón?"
+  ],
+  "vehiculos": [
+   {
+    "narrador": true
+   },
+   {
+    "narrador": false
+   }
+  ]
+ },
+ "texto_sha256": "f0b49b176913ed9a35c2534a373f90e34cea23466eb7b9789d2e6f791834c9c8",
+ "usage": {
+  "cache_creation_input_tokens": 0,
+  "cache_read_input_tokens": 7350,
+  "input_tokens": 162,
+  "output_tokens": 485
+ }
+}

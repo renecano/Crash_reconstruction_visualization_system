@@ -1,0 +1,123 @@
+{
+ "costo_estimado_con": "claude-sonnet-5-5",
+ "costo_usd": 0.010062,
+ "esfuerzo": "medium",
+ "grabado": "2026-10-19T22:11:24+00:00",
+ "huella_prompt": "613dc7f7bc958502",
+ "latencia_ms": 5405.6,
+ "modelo": "claude-sonnet-5-5",
+ "modelo_respuesta": "claude-sonnet-5-5",
+ "prompt": "extraccion_v4",
+ "request_id": "req_011CgCMxoCcefPow9H2LvS4x",
+ "salida": {
+  "dispositivos": [],
+  "hechos": [
+   {
+    "campo": "lugar.tipo_via",
+    "cita": "En la carretera de Zacatecas a Saltillo",
+    "persona": -1,
+    "valor": "carretera_dos_carriles",
+    "vehiculo": -1
+   },
+   {
+    "campo": "entorno.iluminacion",
+    "cita": "de noche",
+    "persona": -1,
+    "valor": "noche",
+    "vehiculo": -1
+   },
+   {
+    "campo": "evento.tipo",
+    "cita": "Se volteó la camioneta",
+    "persona": -1,
+    "valor": "volcadura",
+    "vehiculo": -1
+   },
+   {
+    "campo": "evento.tipo",
+    "cita": "la Tacoma se derrapó",
+    "persona": -1,
+    "valor": "derrape",
+    "vehiculo": -1
+   },
+   {
+    "campo": "vehiculo.clase",
+    "cita": "Tacoma",
+    "persona": -1,
+    "valor": "pickup",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.velocidad_kmh",
+    "cita": "Iba a unos 100",
+    "persona": -1,
+    "valor": "100",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.frenado",
+    "cita": "pisé el freno hasta el fondo",
+    "persona": -1,
+    "valor": "true",
+    "vehiculo": 0
+   },
+   {
+    "campo": "evidencias.marcas_m",
+    "cita": "como veinte metros de marcas",
+    "persona": -1,
+    "valor": "20",
+    "vehiculo": -1
+   },
+   {
+    "campo": "evidencias.marcas_fase",
+    "cita": "se derrapó, dejó como veinte metros de marcas, y luego se volteó",
+    "persona": -1,
+    "valor": "antes_impacto",
+    "vehiculo": -1
+   },
+   {
+    "campo": "persona.cinturon",
+    "cita": "Traía el cinturón",
+    "persona": 0,
+    "valor": "true",
+    "vehiculo": -1
+   },
+   {
+    "campo": "persona.cinturon",
+    "cita": "mi compadre también",
+    "persona": 1,
+    "valor": "true",
+    "vehiculo": -1
+   }
+  ],
+  "personas": [
+   {
+    "cita": "Traía el cinturón",
+    "rol": "conductor",
+    "vehiculo": 0
+   },
+   {
+    "cita": "mi compadre también, de copiloto",
+    "rol": "pasajero",
+    "vehiculo": 0
+   }
+  ],
+  "preguntas": [
+   "¿Cuántos carriles tenía la carretera en el sentido en que circulaba?",
+   "¿Cómo estaba la superficie de la carretera (seca, mojada)?",
+   "¿Hubo contacto con el venado o solo se cruzó?"
+  ],
+  "vehiculos": [
+   {
+    "narrador": true
+   }
+  ]
+ },
+ "texto_sha256": "f1e3708c1f1dcccedcb4ba03a5434f675cae70acb6e66038c5a357f7aaefc876",
+ "usage": {
+  "cache_creation_input_tokens": 0,
+  "cache_read_input_tokens": 7350,
+  "input_tokens": 161,
+  "output_tokens": 827
+ }
+}

@@ -1,0 +1,100 @@
+{
+ "costo_estimado_con": "claude-haiku-5-5",
+ "costo_usd": 0.001214,
+ "esfuerzo": "medium",
+ "grabado": "2026-10-20T01:28:31+00:00",
+ "huella_prompt": "613dc7f7bc958502",
+ "latencia_ms": 10839.6,
+ "modelo": "claude-haiku-5-5",
+ "modelo_respuesta": "claude-haiku-5-5",
+ "prompt": "extraccion_v4",
+ "request_id": "req_011CgCczG3B9nMnjmj2nAGvA",
+ "salida": {
+  "dispositivos": [
+   {
+    "cita": "el semáforo se encontraba en luz verde",
+    "tipo": "semaforo"
+   }
+  ],
+  "hechos": [
+   {
+    "campo": "vehiculo.clase",
+    "cita": "RAV4",
+    "persona": -1,
+    "valor": "suv_compacta",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.color",
+    "cita": "color plata",
+    "persona": -1,
+    "valor": "plata",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.velocidad_kmh",
+    "cita": "a una velocidad aproximada de 30 km/h",
+    "persona": -1,
+    "valor": "30",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.frenado",
+    "cita": "El asegurado accionó el freno",
+    "persona": -1,
+    "valor": "true",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.zona_impacto",
+    "cita": "siendo impactada con la parte frontal derecha",
+    "persona": -1,
+    "valor": "F",
+    "vehiculo": 0
+   },
+   {
+    "campo": "evento.tipo",
+    "cita": "siendo impactada con la parte frontal derecha",
+    "persona": -1,
+    "valor": "impacto_vehiculo_persona",
+    "vehiculo": -1
+   },
+   {
+    "campo": "lugar.estado_superficie",
+    "cita": "El pavimento se encontraba seco",
+    "persona": -1,
+    "valor": "seco",
+    "vehiculo": -1
+   }
+  ],
+  "personas": [
+   {
+    "cita": "El asegurado accionó el freno",
+    "rol": "conductor",
+    "vehiculo": 0
+   },
+   {
+    "cita": "una persona de sexo masculino descendió de la banqueta y cruzó frente a la unidad",
+    "rol": "peaton",
+    "vehiculo": -1
+   }
+  ],
+  "preguntas": [
+   "¿El peatón cruzó por un paso peatonal o fuera de él?",
+   "¿Hubo marcas de frenado en el pavimento y de qué largo?",
+   "¿El vehículo circulaba en línea recta o realizaba alguna maniobra antes del impacto?"
+  ],
+  "vehiculos": [
+   {
+    "narrador": false
+   }
+  ]
+ },
+ "texto_sha256": "139eee9e9ee0b72a1fdf506d63922cd8e41aaec403df3ac241c9910f9c5a555a",
+ "usage": {
+  "cache_creation_input_tokens": 0,
+  "cache_read_input_tokens": 7350,
+  "input_tokens": 270,
+  "output_tokens": 2227
+ }
+}

@@ -1,0 +1,77 @@
+{
+ "costo_estimado_con": "claude-haiku-5-5",
+ "costo_usd": 0.0011843,
+ "esfuerzo": "medium",
+ "grabado": "2026-10-19T22:53:31+00:00",
+ "huella_prompt": "613dc7f7bc958502",
+ "latencia_ms": 10398.8,
+ "modelo": "claude-haiku-5-5",
+ "modelo_respuesta": "claude-haiku-5-5",
+ "prompt": "extraccion_v4",
+ "request_id": "req_011CgCRAhjdddUfiFw44qbR6",
+ "salida": {
+  "dispositivos": [
+   {
+    "cita": "el semaforo de los carros ya estaba en rojo",
+    "tipo": "semaforo"
+   },
+   {
+    "cita": "el semaforo del muñequito en verde",
+    "tipo": "semaforo_peatonal"
+   }
+  ],
+  "hechos": [
+   {
+    "campo": "vehiculo.clase",
+    "cita": "una camioneta roja",
+    "persona": -1,
+    "valor": "suv_o_pickup",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.color",
+    "cita": "una camioneta roja",
+    "persona": -1,
+    "valor": "roja",
+    "vehiculo": 0
+   },
+   {
+    "campo": "evento.tipo",
+    "cita": "le pego con el lado del copiloto",
+    "persona": -1,
+    "valor": "impacto_vehiculo_persona",
+    "vehiculo": -1
+   },
+   {
+    "campo": "vehiculo.zona_impacto",
+    "cita": "le pego con el lado del copiloto",
+    "persona": -1,
+    "valor": "R",
+    "vehiculo": 0
+   }
+  ],
+  "personas": [
+   {
+    "cita": "el señor empeso a cruzar con su baston",
+    "rol": "peaton",
+    "vehiculo": -1
+   }
+  ],
+  "preguntas": [
+   "¿A qué velocidad iba la camioneta antes de llegar al cruce?",
+   "¿Dónde quedó el señor después de caer, en relación con la camioneta?"
+  ],
+  "vehiculos": [
+   {
+    "narrador": false
+   }
+  ]
+ },
+ "texto_sha256": "1cba8ccdc2bff814a90d82f3deb35f796963edccf6ea890d2730e6151c92fd6b",
+ "usage": {
+  "cache_creation_input_tokens": 0,
+  "cache_read_input_tokens": 7350,
+  "input_tokens": 158,
+  "output_tokens": 2190
+ }
+}

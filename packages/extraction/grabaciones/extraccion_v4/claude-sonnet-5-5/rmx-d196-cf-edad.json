@@ -1,0 +1,88 @@
+{
+ "costo_estimado_con": "claude-sonnet-5-5",
+ "costo_usd": 0.00779,
+ "esfuerzo": "medium",
+ "grabado": "2026-10-19T22:17:21+00:00",
+ "huella_prompt": "613dc7f7bc958502",
+ "latencia_ms": 3860.8,
+ "modelo": "claude-sonnet-5-5",
+ "modelo_respuesta": "claude-sonnet-5-5",
+ "prompt": "extraccion_v4",
+ "request_id": "req_011CgCNRAVFSz2FfSCXLxbtj",
+ "salida": {
+  "dispositivos": [
+   {
+    "cita": "la luz roja del semáforo",
+    "tipo": "semaforo"
+   }
+  ],
+  "hechos": [
+   {
+    "campo": "lugar.tipo_via",
+    "cita": "en el cruce de Paseo Tollocan y la avenida Jesús Carranza",
+    "persona": -1,
+    "valor": "interseccion",
+    "vehiculo": -1
+   },
+   {
+    "campo": "entorno.clima",
+    "cita": "llovía ligeramente",
+    "persona": -1,
+    "valor": "lluvia_ligera",
+    "vehiculo": -1
+   },
+   {
+    "campo": "entorno.iluminacion",
+    "cita": "la vialidad contaba con alumbrado público",
+    "persona": -1,
+    "valor": "noche_con_alumbrado",
+    "vehiculo": -1
+   },
+   {
+    "campo": "evento.tipo",
+    "cita": "atropelló con su frente a un joven que cruzaba la avenida",
+    "persona": -1,
+    "valor": "impacto_vehiculo_persona",
+    "vehiculo": -1
+   },
+   {
+    "campo": "vehiculo.clase",
+    "cita": "un autobús de transporte público",
+    "persona": -1,
+    "valor": "autobus",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.zona_impacto",
+    "cita": "atropelló con su frente",
+    "persona": -1,
+    "valor": "F",
+    "vehiculo": 0
+   }
+  ],
+  "personas": [
+   {
+    "cita": "un joven que cruzaba la avenida",
+    "rol": "peaton",
+    "vehiculo": -1
+   }
+  ],
+  "preguntas": [
+   "¿El peatón cruzaba con la luz del semáforo peatonal en verde o en rojo?",
+   "¿A qué velocidad aproximada circulaba el autobús?",
+   "¿El autobús frenó antes de golpear al peatón?"
+  ],
+  "vehiculos": [
+   {
+    "narrador": false
+   }
+  ]
+ },
+ "texto_sha256": "ed977823b74e98a3b940fa39dfc4850c2068b88a174315c9d788c7d48bbbe340",
+ "usage": {
+  "cache_creation_input_tokens": 0,
+  "cache_read_input_tokens": 7350,
+  "input_tokens": 260,
+  "output_tokens": 580
+ }
+}

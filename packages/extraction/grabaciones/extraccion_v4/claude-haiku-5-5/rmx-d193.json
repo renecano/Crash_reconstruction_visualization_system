@@ -1,0 +1,64 @@
+{
+ "costo_estimado_con": "claude-haiku-5-5",
+ "costo_usd": 0.0009595,
+ "esfuerzo": "medium",
+ "grabado": "2026-10-19T22:50:51+00:00",
+ "huella_prompt": "613dc7f7bc958502",
+ "latencia_ms": 8739.6,
+ "modelo": "claude-haiku-5-5",
+ "modelo_respuesta": "claude-haiku-5-5",
+ "prompt": "extraccion_v4",
+ "request_id": "req_011CgCQxzxe3h6oKzMECx7nx",
+ "salida": {
+  "dispositivos": [
+   {
+    "cita": "el muñekito verde",
+    "tipo": "semaforo_peatonal"
+   }
+  ],
+  "hechos": [
+   {
+    "campo": "evento.tipo",
+    "cita": "la atropeyo una moto",
+    "persona": -1,
+    "valor": "impacto_vehiculo_persona",
+    "vehiculo": -1
+   },
+   {
+    "campo": "persona.casco",
+    "cita": "traia casco",
+    "persona": 1,
+    "valor": "true",
+    "vehiculo": -1
+   }
+  ],
+  "personas": [
+   {
+    "cita": "a mi hija la atropeyo",
+    "rol": "peaton",
+    "vehiculo": -1
+   },
+   {
+    "cita": "el muchacho de la moto",
+    "rol": "motociclista",
+    "vehiculo": 0
+   }
+  ],
+  "preguntas": [
+   "¿A qué velocidad iba la motocicleta al momento del impacto?",
+   "¿El semáforo peatonal estaba en verde para la persona cuando inició el cruce?"
+  ],
+  "vehiculos": [
+   {
+    "narrador": false
+   }
+  ]
+ },
+ "texto_sha256": "6d78f540d0792daca4753f5f9e53204e946928758434cca3b85bd4e8a68feba4",
+ "usage": {
+  "cache_creation_input_tokens": 0,
+  "cache_read_input_tokens": 7350,
+  "input_tokens": 130,
+  "output_tokens": 1746
+ }
+}

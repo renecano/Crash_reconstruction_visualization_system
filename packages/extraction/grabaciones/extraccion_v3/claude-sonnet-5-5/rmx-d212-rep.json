@@ -1,0 +1,81 @@
+{
+ "costo_estimado_con": "claude-sonnet-5-5",
+ "costo_usd": 0.0061642,
+ "esfuerzo": "medium",
+ "grabado": "2026-10-20T01:39:14+00:00",
+ "huella_prompt": "86f6a54999b8cbf7",
+ "latencia_ms": 3389.1,
+ "modelo": "claude-sonnet-5-5",
+ "modelo_respuesta": "claude-sonnet-5-5",
+ "prompt": "extraccion_v3",
+ "request_id": "req_011CgCdp9uvPYjhbXkTyxZHv",
+ "salida": {
+  "dispositivos": [
+   {
+    "cita": "paso de cebra",
+    "tipo": "paso_peatonal"
+   },
+   {
+    "cita": "la figurita del peatón en verde",
+    "tipo": "semaforo"
+   }
+  ],
+  "hechos": [
+   {
+    "campo": "vehiculo.clase",
+    "cita": "bici",
+    "persona": -1,
+    "valor": "bicicleta",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.clase",
+    "cita": "Vento",
+    "persona": -1,
+    "valor": "sedan_compacto",
+    "vehiculo": 1
+   },
+   {
+    "campo": "vehiculo.maniobra",
+    "cita": "dar vuelta a la derecha",
+    "persona": -1,
+    "valor": "vuelta_derecha",
+    "vehiculo": 1
+   },
+   {
+    "campo": "evento.tipo",
+    "cita": "un Vento me tumbó",
+    "persona": -1,
+    "valor": "impacto_vehiculo_vehiculo",
+    "vehiculo": -1
+   }
+  ],
+  "personas": [
+   {
+    "cita": "crucé la avenida en mi bici",
+    "rol": "ciclista",
+    "vehiculo": 0
+   }
+  ],
+  "preguntas": [
+   "¿Qué lado de la bicicleta recibió el golpe del Vento?",
+   "¿A qué velocidad aproximada iba el Vento al dar la vuelta?",
+   "¿Cuántos carriles tenía la avenida por sentido?"
+  ],
+  "vehiculos": [
+   {
+    "narrador": true
+   },
+   {
+    "narrador": false
+   }
+  ]
+ },
+ "texto_sha256": "bde0776bd95755c177ddaba0427b92377b8dc8cb27dbb856275ef2650c64daf5",
+ "usage": {
+  "cache_creation_input_tokens": 0,
+  "cache_read_input_tokens": 7131,
+  "input_tokens": 74,
+  "output_tokens": 459
+ }
+}

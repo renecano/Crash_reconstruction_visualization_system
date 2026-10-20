@@ -1,0 +1,72 @@
+{
+ "costo_estimado_con": "claude-sonnet-5-5",
+ "costo_usd": 0.0118862,
+ "esfuerzo": "medium",
+ "grabado": "2026-10-20T01:31:26+00:00",
+ "huella_prompt": "86f6a54999b8cbf7",
+ "latencia_ms": 7670.8,
+ "modelo": "claude-sonnet-5-5",
+ "modelo_respuesta": "claude-sonnet-5-5",
+ "prompt": "extraccion_v3",
+ "request_id": "req_011CgCdDLPUgy2L1twCxGruf",
+ "salida": {
+  "dispositivos": [
+   {
+    "cita": "un semaforo que suena para los ciegos",
+    "tipo": "semaforo"
+   }
+  ],
+  "hechos": [
+   {
+    "campo": "evento.tipo",
+    "cita": "le pego en la pierna con la llanta de adelante",
+    "persona": -1,
+    "valor": "impacto_vehiculo_persona",
+    "vehiculo": -1
+   },
+   {
+    "campo": "vehiculo.clase",
+    "cita": "motoneta",
+    "persona": -1,
+    "valor": "scooter",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.zona_impacto",
+    "cita": "con la llanta de adelante",
+    "persona": -1,
+    "valor": "F",
+    "vehiculo": 0
+   }
+  ],
+  "personas": [
+   {
+    "cita": "mi tio es invidente",
+    "rol": "peaton",
+    "vehiculo": -1
+   },
+   {
+    "cita": "un muchacho en una motoneta",
+    "rol": "conductor",
+    "vehiculo": 0
+   }
+  ],
+  "preguntas": [
+   "¿Qué tan rápido iba la motoneta al llegar al cruce?",
+   "¿Cuántos carriles tenía la calle que cruzaba su tío?",
+   "¿Qué luz tenía el semáforo para los vehículos cuando la motoneta avanzó?"
+  ],
+  "vehiculos": [
+   {
+    "narrador": false
+   }
+  ]
+ },
+ "texto_sha256": "5838bf5849c1add6e70b14b125ef1346b7834af5c482abdf02faa656228c8d39",
+ "usage": {
+  "cache_creation_input_tokens": 0,
+  "cache_read_input_tokens": 7131,
+  "input_tokens": 150,
+  "output_tokens": 1016
+ }
+}

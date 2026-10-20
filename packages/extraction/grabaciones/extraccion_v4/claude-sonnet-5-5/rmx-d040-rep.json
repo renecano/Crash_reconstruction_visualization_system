@@ -1,0 +1,119 @@
+{
+ "costo_estimado_con": "claude-sonnet-5-5",
+ "costo_usd": 0.00935,
+ "esfuerzo": "medium",
+ "grabado": "2026-10-19T23:05:45+00:00",
+ "huella_prompt": "613dc7f7bc958502",
+ "latencia_ms": 5363.6,
+ "modelo": "claude-sonnet-5-5",
+ "modelo_respuesta": "claude-sonnet-5-5",
+ "prompt": "extraccion_v4",
+ "request_id": "req_011CgCS7AVE3P5tiCDvmhMgR",
+ "salida": {
+  "dispositivos": [],
+  "hechos": [
+   {
+    "campo": "lugar.tipo_via",
+    "cita": "en la autopista",
+    "persona": -1,
+    "valor": "autopista",
+    "vehiculo": -1
+   },
+   {
+    "campo": "entorno.clima",
+    "cita": "cayó un aguacero de esos que no ves nada",
+    "persona": -1,
+    "valor": "lluvia_fuerte",
+    "vehiculo": -1
+   },
+   {
+    "campo": "vehiculo.clase",
+    "cita": "Versa",
+    "persona": -1,
+    "valor": "sedan_compacto",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.velocidad_kmh",
+    "cita": "como a ochenta",
+    "persona": -1,
+    "valor": "80",
+    "vehiculo": 0
+   },
+   {
+    "campo": "evento.tipo",
+    "cita": "se me fue de lado",
+    "persona": -1,
+    "valor": "derrape",
+    "vehiculo": -1
+   },
+   {
+    "campo": "persona.cinturon",
+    "cita": "todos con cinturón",
+    "persona": 0,
+    "valor": "true",
+    "vehiculo": -1
+   },
+   {
+    "campo": "persona.cinturon",
+    "cita": "todos con cinturón",
+    "persona": 1,
+    "valor": "true",
+    "vehiculo": -1
+   },
+   {
+    "campo": "persona.cinturon",
+    "cita": "todos con cinturón",
+    "persona": 2,
+    "valor": "true",
+    "vehiculo": -1
+   },
+   {
+    "campo": "persona.cinturon",
+    "cita": "todos con cinturón",
+    "persona": 3,
+    "valor": "true",
+    "vehiculo": -1
+   }
+  ],
+  "personas": [
+   {
+    "cita": "Yo iba en mi Versa",
+    "rol": "conductor",
+    "vehiculo": 0
+   },
+   {
+    "cita": "Iba con mi esposa",
+    "rol": "pasajero",
+    "vehiculo": 0
+   },
+   {
+    "cita": "mis dos hijos atrás",
+    "rol": "pasajero",
+    "vehiculo": 0
+   },
+   {
+    "cita": "mis dos hijos atrás",
+    "rol": "pasajero",
+    "vehiculo": 0
+   }
+  ],
+  "preguntas": [
+   "¿Frenaste o hiciste alguna maniobra antes de que el carro se fuera de lado?",
+   "¿Quedaron marcas en el pavimento o en el pasto? ¿De qué largo?",
+   "¿Qué tan lejos del carril quedó tu Versa en el pasto?"
+  ],
+  "vehiculos": [
+   {
+    "narrador": true
+   }
+  ]
+ },
+ "texto_sha256": "280eb432653cad4d96ffbf7f27676c8d4c6fce586001102fb8c640cfb1de9199",
+ "usage": {
+  "cache_creation_input_tokens": 0,
+  "cache_read_input_tokens": 7350,
+  "input_tokens": 165,
+  "output_tokens": 755
+ }
+}

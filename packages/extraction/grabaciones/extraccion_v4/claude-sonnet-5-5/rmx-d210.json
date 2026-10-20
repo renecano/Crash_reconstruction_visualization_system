@@ -1,0 +1,78 @@
+{
+ "costo_estimado_con": "claude-sonnet-5-5",
+ "costo_usd": 0.012946,
+ "esfuerzo": "medium",
+ "grabado": "2026-10-19T22:13:16+00:00",
+ "huella_prompt": "613dc7f7bc958502",
+ "latencia_ms": 8019.1,
+ "modelo": "claude-sonnet-5-5",
+ "modelo_respuesta": "claude-sonnet-5-5",
+ "prompt": "extraccion_v4",
+ "request_id": "req_011CgCN6rhwD8sV5bmYfcLVA",
+ "salida": {
+  "dispositivos": [
+   {
+    "cita": "semaforo de los carros",
+    "tipo": "semaforo"
+   },
+   {
+    "cita": "semaforo del muñequito",
+    "tipo": "semaforo_peatonal"
+   }
+  ],
+  "hechos": [
+   {
+    "campo": "evento.tipo",
+    "cita": "atropeyaron a un señor",
+    "persona": -1,
+    "valor": "impacto_vehiculo_persona",
+    "vehiculo": -1
+   },
+   {
+    "campo": "vehiculo.clase",
+    "cita": "camioneta",
+    "persona": -1,
+    "valor": "suv_o_pickup",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.color",
+    "cita": "camioneta roja",
+    "persona": -1,
+    "valor": "roja",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.zona_impacto",
+    "cita": "lado del copiloto",
+    "persona": -1,
+    "valor": "R",
+    "vehiculo": 0
+   }
+  ],
+  "personas": [
+   {
+    "cita": "un señor",
+    "rol": "peaton",
+    "vehiculo": -1
+   }
+  ],
+  "preguntas": [
+   "¿Aproximadamente a qué velocidad iba la camioneta?",
+   "¿La camioneta frenó o intentó esquivar al señor antes del golpe?",
+   "¿El cruce estaba en una esquina o a mitad de la avenida?"
+  ],
+  "vehiculos": [
+   {
+    "narrador": false
+   }
+  ]
+ },
+ "texto_sha256": "1cba8ccdc2bff814a90d82f3deb35f796963edccf6ea890d2730e6151c92fd6b",
+ "usage": {
+  "cache_creation_input_tokens": 0,
+  "cache_read_input_tokens": 7350,
+  "input_tokens": 158,
+  "output_tokens": 1116
+ }
+}

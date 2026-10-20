@@ -1,0 +1,126 @@
+{
+ "costo_estimado_con": "claude-sonnet-5-5",
+ "costo_usd": 0.010284,
+ "esfuerzo": "medium",
+ "grabado": "2026-10-19T23:20:15+00:00",
+ "huella_prompt": "613dc7f7bc958502",
+ "latencia_ms": 4870.7,
+ "modelo": "claude-sonnet-5-5",
+ "modelo_respuesta": "claude-sonnet-5-5",
+ "prompt": "extraccion_v4",
+ "request_id": "req_011CgCTDJ3vqVSX7V9CSZFYP",
+ "salida": {
+  "dispositivos": [
+   {
+    "cita": "el semáforo en verde",
+    "tipo": "semaforo"
+   },
+   {
+    "cita": "el semáforo para peatones",
+    "tipo": "semaforo_peatonal"
+   }
+  ],
+  "hechos": [
+   {
+    "campo": "vehiculo.clase",
+    "cita": "bicicleta",
+    "persona": -1,
+    "valor": "bicicleta",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.clase",
+    "cita": "Kia Rio",
+    "persona": -1,
+    "valor": "sedan_compacto",
+    "vehiculo": 1
+   },
+   {
+    "campo": "vehiculo.color",
+    "cita": "azul",
+    "persona": -1,
+    "valor": "azul",
+    "vehiculo": 1
+   },
+   {
+    "campo": "vehiculo.maniobra",
+    "cita": "vuelta a la izquierda",
+    "persona": -1,
+    "valor": "vuelta_izquierda",
+    "vehiculo": 1
+   },
+   {
+    "campo": "vehiculo.zona_impacto",
+    "cita": "en el costado izquierdo",
+    "persona": -1,
+    "valor": "L",
+    "vehiculo": 0
+   },
+   {
+    "campo": "lugar.tipo_via",
+    "cita": "la intersección",
+    "persona": -1,
+    "valor": "interseccion",
+    "vehiculo": -1
+   },
+   {
+    "campo": "evento.tipo",
+    "cita": "fue impactado",
+    "persona": -1,
+    "valor": "impacto_vehiculo_vehiculo",
+    "vehiculo": -1
+   },
+   {
+    "campo": "entorno.iluminacion",
+    "cita": "La zona cuenta con alumbrado público",
+    "persona": -1,
+    "valor": "noche_con_alumbrado",
+    "vehiculo": -1
+   },
+   {
+    "campo": "persona.casco",
+    "cita": "portaba casco",
+    "persona": 0,
+    "valor": "true",
+    "vehiculo": -1
+   }
+  ],
+  "personas": [
+   {
+    "cita": "el ciclista [NOMBRE] circulaba en su bicicleta",
+    "rol": "ciclista",
+    "vehiculo": 0
+   },
+   {
+    "cita": "El conductor del automóvil",
+    "rol": "conductor",
+    "vehiculo": 1
+   },
+   {
+    "cita": "unos peatones",
+    "rol": "peaton",
+    "vehiculo": -1
+   }
+  ],
+  "preguntas": [
+   "¿El automóvil ya estaba avanzando en la vuelta o se había detenido antes de impactar al ciclista?",
+   "¿A qué velocidad aproximada iban la bicicleta y el automóvil?",
+   "¿El ciclista circulaba por el carril de la vía o por una ciclovía?"
+  ],
+  "vehiculos": [
+   {
+    "narrador": false
+   },
+   {
+    "narrador": false
+   }
+  ]
+ },
+ "texto_sha256": "e1a7c68b1b6b494d03d82b4af7d5df66b9cd77c8f0fa11907a380fc60c8ecacd",
+ "usage": {
+  "cache_creation_input_tokens": 0,
+  "cache_read_input_tokens": 7350,
+  "input_tokens": 297,
+  "output_tokens": 822
+ }
+}

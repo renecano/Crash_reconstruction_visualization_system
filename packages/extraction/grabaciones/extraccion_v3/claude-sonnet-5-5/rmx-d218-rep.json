@@ -1,0 +1,100 @@
+{
+ "costo_estimado_con": "claude-sonnet-5-5",
+ "costo_usd": 0.0080662,
+ "esfuerzo": "medium",
+ "grabado": "2026-10-20T01:39:43+00:00",
+ "huella_prompt": "86f6a54999b8cbf7",
+ "latencia_ms": 4784.7,
+ "modelo": "claude-sonnet-5-5",
+ "modelo_respuesta": "claude-sonnet-5-5",
+ "prompt": "extraccion_v3",
+ "request_id": "req_011CgCdrE3mK7vqW3Cp9YMVH",
+ "salida": {
+  "dispositivos": [
+   {
+    "cita": "el semáforo se encontraba en luz verde",
+    "tipo": "semaforo"
+   }
+  ],
+  "hechos": [
+   {
+    "campo": "vehiculo.clase",
+    "cita": "RAV4",
+    "persona": -1,
+    "valor": "suv_compacta",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.color",
+    "cita": "color plata",
+    "persona": -1,
+    "valor": "plata",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.velocidad_kmh",
+    "cita": "30 km/h",
+    "persona": -1,
+    "valor": "30",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.frenado",
+    "cita": "accionó el freno",
+    "persona": -1,
+    "valor": "true",
+    "vehiculo": 0
+   },
+   {
+    "campo": "evento.tipo",
+    "cita": "siendo impactada con la parte frontal derecha",
+    "persona": -1,
+    "valor": "impacto_vehiculo_persona",
+    "vehiculo": -1
+   },
+   {
+    "campo": "vehiculo.zona_impacto",
+    "cita": "parte frontal derecha",
+    "persona": -1,
+    "valor": "F",
+    "vehiculo": 0
+   },
+   {
+    "campo": "lugar.estado_superficie",
+    "cita": "El pavimento se encontraba seco",
+    "persona": -1,
+    "valor": "seco",
+    "vehiculo": -1
+   }
+  ],
+  "personas": [
+   {
+    "cita": "el vehículo asegurado",
+    "rol": "conductor",
+    "vehiculo": 0
+   },
+   {
+    "cita": "una persona de sexo masculino",
+    "rol": "peaton",
+    "vehiculo": -1
+   }
+  ],
+  "preguntas": [
+   "¿El peatón cruzaba por un paso peatonal?",
+   "¿De cuántos carriles por sentido es la avenida en ese tramo?",
+   "¿Hacia qué lado venía el peatón al descender de la banqueta?"
+  ],
+  "vehiculos": [
+   {
+    "narrador": true
+   }
+  ]
+ },
+ "texto_sha256": "139eee9e9ee0b72a1fdf506d63922cd8e41aaec403df3ac241c9910f9c5a555a",
+ "usage": {
+  "cache_creation_input_tokens": 0,
+  "cache_read_input_tokens": 7131,
+  "input_tokens": 270,
+  "output_tokens": 610
+ }
+}

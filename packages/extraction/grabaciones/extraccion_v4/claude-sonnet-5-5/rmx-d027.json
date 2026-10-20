@@ -1,0 +1,88 @@
+{
+ "costo_estimado_con": "claude-sonnet-5-5",
+ "costo_usd": 0.007868,
+ "esfuerzo": "medium",
+ "grabado": "2026-10-19T21:58:07+00:00",
+ "huella_prompt": "613dc7f7bc958502",
+ "latencia_ms": 4436.4,
+ "modelo": "claude-sonnet-5-5",
+ "modelo_respuesta": "claude-sonnet-5-5",
+ "prompt": "extraccion_v4",
+ "request_id": "req_011CgCLx5dh47QRy1LDgXLd5",
+ "salida": {
+  "dispositivos": [
+   {
+    "cita": "el paso peatonal",
+    "tipo": "paso_peatonal"
+   }
+  ],
+  "hechos": [
+   {
+    "campo": "lugar.tipo_via",
+    "cita": "en la esquina de las calles Morelos y Porfirio Díaz",
+    "persona": -1,
+    "valor": "interseccion",
+    "vehiculo": -1
+   },
+   {
+    "campo": "entorno.iluminacion",
+    "cita": "La calle cuenta con alumbrado, aunque escaso",
+    "persona": -1,
+    "valor": "noche_con_alumbrado",
+    "vehiculo": -1
+   },
+   {
+    "campo": "evento.tipo",
+    "cita": "atropelló a una joven",
+    "persona": -1,
+    "valor": "impacto_vehiculo_persona",
+    "vehiculo": -1
+   },
+   {
+    "campo": "evidencias.distancia_proyeccion_m",
+    "cita": "cayó a unos cuatro metros del punto del impacto",
+    "persona": -1,
+    "valor": "4",
+    "vehiculo": -1
+   },
+   {
+    "campo": "vehiculo.clase",
+    "cita": "taxi",
+    "persona": -1,
+    "valor": "sedan_compacto",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.zona_impacto",
+    "cita": "atropelló a una joven",
+    "persona": -1,
+    "valor": "F",
+    "vehiculo": 0
+   }
+  ],
+  "personas": [
+   {
+    "cita": "una joven que cruzaba por el paso peatonal",
+    "rol": "peaton",
+    "vehiculo": -1
+   }
+  ],
+  "preguntas": [
+   "¿El taxi frenó o intentó esquivar a la joven antes del impacto?",
+   "¿Aproximadamente a qué velocidad en km/h circulaba el taxi?",
+   "¿El semáforo estaba en funcionamiento y qué luz mostraba para el taxi y para la peatona?"
+  ],
+  "vehiculos": [
+   {
+    "narrador": false
+   }
+  ]
+ },
+ "texto_sha256": "19e8a10febee6ec141375b61b1fe74cc75b84779a0f4495cee57a1dc0868d0b0",
+ "usage": {
+  "cache_creation_input_tokens": 0,
+  "cache_read_input_tokens": 7350,
+  "input_tokens": 189,
+  "output_tokens": 602
+ }
+}

@@ -1,0 +1,59 @@
+{
+ "costo_estimado_con": "claude-haiku-5-5",
+ "costo_usd": 0.0006968,
+ "esfuerzo": "medium",
+ "grabado": "2026-10-19T22:53:02+00:00",
+ "huella_prompt": "613dc7f7bc958502",
+ "latencia_ms": 6167.3,
+ "modelo": "claude-haiku-5-5",
+ "modelo_respuesta": "claude-haiku-5-5",
+ "prompt": "extraccion_v4",
+ "request_id": "req_011CgCR8sWCTBJ3yB52LgniT",
+ "salida": {
+  "dispositivos": [
+   {
+    "cita": "semáforo",
+    "tipo": "semaforo"
+   }
+  ],
+  "hechos": [
+   {
+    "campo": "evento.tipo",
+    "cita": "atropelló a mi abuelo",
+    "persona": -1,
+    "valor": "impacto_vehiculo_persona",
+    "vehiculo": -1
+   },
+   {
+    "campo": "vehiculo.clase",
+    "cita": "taxi",
+    "persona": -1,
+    "valor": "sedan_compacto",
+    "vehiculo": 0
+   }
+  ],
+  "personas": [
+   {
+    "cita": "atropelló a mi abuelo",
+    "rol": "peaton",
+    "vehiculo": -1
+   }
+  ],
+  "preguntas": [
+   "¿A qué velocidad circulaba el taxi al momento del atropello?",
+   "¿El semáforo estaba en verde para los vehículos o en rojo?"
+  ],
+  "vehiculos": [
+   {
+    "narrador": false
+   }
+  ]
+ },
+ "texto_sha256": "91b03440717172157ddbe0aac31bf4dc13b11ce3c88e63bfe48a8cfa86866684",
+ "usage": {
+  "cache_creation_input_tokens": 0,
+  "cache_read_input_tokens": 7350,
+  "input_tokens": 58,
+  "output_tokens": 1235
+ }
+}

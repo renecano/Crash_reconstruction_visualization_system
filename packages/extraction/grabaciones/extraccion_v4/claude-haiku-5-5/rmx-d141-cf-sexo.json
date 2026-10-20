@@ -1,0 +1,99 @@
+{
+ "costo_estimado_con": "claude-haiku-5-5",
+ "costo_usd": 0.0011141,
+ "esfuerzo": "medium",
+ "grabado": "2026-10-19T23:00:53+00:00",
+ "huella_prompt": "613dc7f7bc958502",
+ "latencia_ms": 8651.9,
+ "modelo": "claude-haiku-5-5",
+ "modelo_respuesta": "claude-haiku-5-5",
+ "prompt": "extraccion_v4",
+ "request_id": "req_011CgCRjR3DhDK3F7oZ9UTNH",
+ "salida": {
+  "dispositivos": [
+   {
+    "cita": "por el paso peatonal",
+    "tipo": "paso_peatonal"
+   },
+   {
+    "cita": "el semáforo peatonal en verde",
+    "tipo": "semaforo_peatonal"
+   }
+  ],
+  "hechos": [
+   {
+    "campo": "lugar.tipo_via",
+    "cita": "en la esquina de la calle Victoria y la calle Allende",
+    "persona": -1,
+    "valor": "interseccion",
+    "vehiculo": -1
+   },
+   {
+    "campo": "evento.tipo",
+    "cita": "atropelló a dicha señora con la parte frontal",
+    "persona": -1,
+    "valor": "impacto_vehiculo_persona",
+    "vehiculo": -1
+   },
+   {
+    "campo": "vehiculo.clase",
+    "cita": "Un automóvil compacto",
+    "persona": -1,
+    "valor": "sedan_compacto",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.color",
+    "cita": "de color gris",
+    "persona": -1,
+    "valor": "gris",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.maniobra",
+    "cita": "dio vuelta a la izquierda",
+    "persona": -1,
+    "valor": "vuelta_izquierda",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.zona_impacto",
+    "cita": "con la parte frontal",
+    "persona": -1,
+    "valor": "F",
+    "vehiculo": 0
+   },
+   {
+    "campo": "evidencias.distancia_proyeccion_m",
+    "cita": "cayó a aproximadamente un metro del vehículo",
+    "persona": -1,
+    "valor": "1",
+    "vehiculo": -1
+   }
+  ],
+  "personas": [
+   {
+    "cita": "una mujer de edad avanzada cruzaba por el paso peatonal",
+    "rol": "peaton",
+    "vehiculo": -1
+   }
+  ],
+  "preguntas": [
+   "¿A qué velocidad circulaba el automóvil al dar vuelta a la izquierda?",
+   "¿El automóvil frenó antes del impacto o quedaron marcas en el pavimento?",
+   "¿En qué estado se encontraba el semáforo para los vehículos en la calle Allende?"
+  ],
+  "vehiculos": [
+   {
+    "narrador": false
+   }
+  ]
+ },
+ "texto_sha256": "c59d92c8be2718ac4e7839c9a38a5a544dc106bf4f42f402d572e246ff4714c4",
+ "usage": {
+  "cache_creation_input_tokens": 0,
+  "cache_read_input_tokens": 7350,
+  "input_tokens": 216,
+  "output_tokens": 2038
+ }
+}

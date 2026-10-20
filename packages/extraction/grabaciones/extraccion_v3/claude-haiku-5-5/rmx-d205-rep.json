@@ -1,0 +1,90 @@
+{
+ "costo_estimado_con": "claude-haiku-5-5",
+ "costo_usd": 0.00123991,
+ "esfuerzo": "medium",
+ "grabado": "2026-10-20T01:42:21+00:00",
+ "huella_prompt": "86f6a54999b8cbf7",
+ "latencia_ms": 10061.6,
+ "modelo": "claude-haiku-5-5",
+ "modelo_respuesta": "claude-haiku-5-5",
+ "prompt": "extraccion_v3",
+ "request_id": "req_011CgCe3UZCgmFJNZr2bZ8TE",
+ "salida": {
+  "dispositivos": [
+   {
+    "cita": "el semáforo de cruce peatonal",
+    "tipo": "semaforo"
+   },
+   {
+    "cita": "paso de cebra",
+    "tipo": "paso_peatonal"
+   }
+  ],
+  "hechos": [
+   {
+    "campo": "lugar.estado_superficie",
+    "cita": "El pavimento estaba mojado",
+    "persona": -1,
+    "valor": "mojado",
+    "vehiculo": -1
+   },
+   {
+    "campo": "entorno.clima",
+    "cita": "por la lluvia de la madrugada",
+    "persona": -1,
+    "valor": "lluvia",
+    "vehiculo": -1
+   },
+   {
+    "campo": "evento.tipo",
+    "cita": "me impactó en el costado izquierdo",
+    "persona": -1,
+    "valor": "impacto_vehiculo_persona",
+    "vehiculo": -1
+   },
+   {
+    "campo": "vehiculo.clase",
+    "cita": "una motocicleta",
+    "persona": -1,
+    "valor": "motocicleta",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.color",
+    "cita": "de color rojo",
+    "persona": -1,
+    "valor": "rojo",
+    "vehiculo": 0
+   }
+  ],
+  "personas": [
+   {
+    "cita": "me dirigía a mi trabajo",
+    "rol": "peaton",
+    "vehiculo": -1
+   },
+   {
+    "cita": "El conductor de la motocicleta",
+    "rol": "conductor",
+    "vehiculo": 0
+   }
+  ],
+  "preguntas": [
+   "¿La motocicleta circulaba con el semáforo en verde o en rojo para vehículos?",
+   "¿Qué velocidad llevaba la motocicleta al momento del impacto?",
+   "¿La motocicleta iba recta o estaba cambiando de carril?"
+  ],
+  "vehiculos": [
+   {
+    "narrador": false
+   }
+  ]
+ },
+ "texto_sha256": "726b88307eaf3f39dd6298073e98a1fa604b2eaeed5c0b12f8426b5bae739e2d",
+ "usage": {
+  "cache_creation_input_tokens": 0,
+  "cache_read_input_tokens": 7131,
+  "input_tokens": 306,
+  "output_tokens": 2276
+ }
+}

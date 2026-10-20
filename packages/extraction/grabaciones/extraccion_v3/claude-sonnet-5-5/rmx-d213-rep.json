@@ -1,0 +1,107 @@
+{
+ "costo_estimado_con": "claude-sonnet-5-5",
+ "costo_usd": 0.0090162,
+ "esfuerzo": "medium",
+ "grabado": "2026-10-20T01:39:19+00:00",
+ "huella_prompt": "86f6a54999b8cbf7",
+ "latencia_ms": 5183.7,
+ "modelo": "claude-sonnet-5-5",
+ "modelo_respuesta": "claude-sonnet-5-5",
+ "prompt": "extraccion_v3",
+ "request_id": "req_011CgCdpQTmyLcUs12iRVPf5",
+ "salida": {
+  "dispositivos": [
+   {
+    "cita": "tenía verde en el semáforo",
+    "tipo": "semaforo"
+   },
+   {
+    "cita": "el peatonal también estaba en verde",
+    "tipo": "paso_peatonal"
+   }
+  ],
+  "hechos": [
+   {
+    "campo": "lugar.tipo_via",
+    "cita": "tenía verde en el semáforo e iba a dar vuelta a la derecha, pero me frené porque el peatonal también estaba en verde y había gente cruzando",
+    "persona": -1,
+    "valor": "interseccion",
+    "vehiculo": -1
+   },
+   {
+    "campo": "vehiculo.maniobra",
+    "cita": "iba a dar vuelta a la derecha",
+    "persona": -1,
+    "valor": "vuelta_derecha",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.frenado",
+    "cita": "me frené",
+    "persona": -1,
+    "valor": "true",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.clase",
+    "cita": "Urvan",
+    "persona": -1,
+    "valor": "microbus_combi",
+    "vehiculo": 1
+   },
+   {
+    "campo": "evento.tipo",
+    "cita": "me chocó en la cajuela",
+    "persona": -1,
+    "valor": "impacto_vehiculo_vehiculo",
+    "vehiculo": -1
+   },
+   {
+    "campo": "vehiculo.zona_impacto",
+    "cita": "me chocó en la cajuela",
+    "persona": -1,
+    "valor": "B",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.zona_impacto",
+    "cita": "la Urvan de atrás me chocó",
+    "persona": -1,
+    "valor": "F",
+    "vehiculo": 1
+   }
+  ],
+  "personas": [
+   {
+    "cita": "tenía verde en el semáforo e iba a dar vuelta a la derecha, pero me frené",
+    "rol": "conductor",
+    "vehiculo": 0
+   },
+   {
+    "cita": "había gente cruzando",
+    "rol": "peaton",
+    "vehiculo": -1
+   }
+  ],
+  "preguntas": [
+   "¿Qué tipo de vehículo era el suyo?",
+   "¿A qué velocidad aproximada iba la Urvan antes del golpe?",
+   "¿Su vehículo estaba detenido o aún avanzaba cuando fue golpeado?"
+  ],
+  "vehiculos": [
+   {
+    "narrador": true
+   },
+   {
+    "narrador": false
+   }
+  ]
+ },
+ "texto_sha256": "089fd119f9cbcc7fcdf999cd46fe48eff71986ed524cc96923907c39df98387d",
+ "usage": {
+  "cache_creation_input_tokens": 0,
+  "cache_read_input_tokens": 7131,
+  "input_tokens": 105,
+  "output_tokens": 738
+ }
+}

@@ -1,0 +1,90 @@
+{
+ "costo_estimado_con": "claude-sonnet-5-5",
+ "costo_usd": 0.007672,
+ "esfuerzo": "medium",
+ "grabado": "2026-10-19T22:12:53+00:00",
+ "huella_prompt": "613dc7f7bc958502",
+ "latencia_ms": 4116.5,
+ "modelo": "claude-sonnet-5-5",
+ "modelo_respuesta": "claude-sonnet-5-5",
+ "prompt": "extraccion_v4",
+ "request_id": "req_011CgCN5RwsYZvBm9Jn6gS8V",
+ "salida": {
+  "dispositivos": [
+   {
+    "cita": "paso de cebra",
+    "tipo": "paso_peatonal"
+   },
+   {
+    "cita": "semáforo de cruce peatonal",
+    "tipo": "semaforo_peatonal"
+   }
+  ],
+  "hechos": [
+   {
+    "campo": "vehiculo.clase",
+    "cita": "motocicleta",
+    "persona": -1,
+    "valor": "motocicleta",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.color",
+    "cita": "de color rojo",
+    "persona": -1,
+    "valor": "rojo",
+    "vehiculo": 0
+   },
+   {
+    "campo": "evento.tipo",
+    "cita": "una motocicleta de color rojo que circulaba por el bulevar me impactó",
+    "persona": -1,
+    "valor": "impacto_vehiculo_persona",
+    "vehiculo": -1
+   },
+   {
+    "campo": "lugar.estado_superficie",
+    "cita": "El pavimento estaba mojado",
+    "persona": -1,
+    "valor": "mojado",
+    "vehiculo": -1
+   },
+   {
+    "campo": "lugar.superficie",
+    "cita": "pavimento",
+    "persona": -1,
+    "valor": "asfalto",
+    "vehiculo": -1
+   }
+  ],
+  "personas": [
+   {
+    "cita": "crucé el bulevar Juan Alonso de Torres",
+    "rol": "peaton",
+    "vehiculo": -1
+   },
+   {
+    "cita": "El conductor de la motocicleta",
+    "rol": "conductor",
+    "vehiculo": 0
+   }
+  ],
+  "preguntas": [
+   "¿La motocicleta venía frenando o a qué velocidad aproximada circulaba?",
+   "¿Cuántos carriles tiene el bulevar en cada sentido?",
+   "¿Con qué parte de la motocicleta fue el golpe?"
+  ],
+  "vehiculos": [
+   {
+    "narrador": false
+   }
+  ]
+ },
+ "texto_sha256": "726b88307eaf3f39dd6298073e98a1fa604b2eaeed5c0b12f8426b5bae739e2d",
+ "usage": {
+  "cache_creation_input_tokens": 0,
+  "cache_read_input_tokens": 7350,
+  "input_tokens": 306,
+  "output_tokens": 559
+ }
+}

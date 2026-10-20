@@ -1,0 +1,79 @@
+{
+ "costo_estimado_con": "claude-haiku-5-5",
+ "costo_usd": 0.001044,
+ "esfuerzo": "medium",
+ "grabado": "2026-10-19T22:51:55+00:00",
+ "huella_prompt": "613dc7f7bc958502",
+ "latencia_ms": 8136.5,
+ "modelo": "claude-haiku-5-5",
+ "modelo_respuesta": "claude-haiku-5-5",
+ "prompt": "extraccion_v4",
+ "request_id": "req_011CgCR3mEnMxFP2fUH3Kb6N",
+ "salida": {
+  "dispositivos": [
+   {
+    "cita": "se puso mi verde",
+    "tipo": "semaforo"
+   }
+  ],
+  "hechos": [
+   {
+    "campo": "vehiculo.clase",
+    "cita": "un Tsuru",
+    "persona": -1,
+    "valor": "sedan_compacto",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.maniobra",
+    "cita": "dando vuelta a la derecha",
+    "persona": -1,
+    "valor": "vuelta_derecha",
+    "vehiculo": 0
+   },
+   {
+    "campo": "evento.tipo",
+    "cita": "me dio un aventón con el cofre",
+    "persona": -1,
+    "valor": "impacto_vehiculo_persona",
+    "vehiculo": -1
+   },
+   {
+    "campo": "vehiculo.zona_impacto",
+    "cita": "con el cofre",
+    "persona": -1,
+    "valor": "F",
+    "vehiculo": 0
+   }
+  ],
+  "personas": [
+   {
+    "cita": "empecé a cruzar",
+    "rol": "peaton",
+    "vehiculo": -1
+   },
+   {
+    "cita": "El señor del Tsuru",
+    "rol": "conductor",
+    "vehiculo": 0
+   }
+  ],
+  "preguntas": [
+   "¿El semáforo que se puso en verde era el de peatones o el de vehículos?",
+   "¿A qué velocidad venía el Tsuru al dar vuelta?",
+   "¿Dónde quedó usted después del golpe?"
+  ],
+  "vehiculos": [
+   {
+    "narrador": false
+   }
+  ]
+ },
+ "texto_sha256": "081e517ebd1bce98f918bf48ad577d500c20f51f1b778af02c2c25b4fa424c3d",
+ "usage": {
+  "cache_creation_input_tokens": 0,
+  "cache_read_input_tokens": 7350,
+  "input_tokens": 160,
+  "output_tokens": 1909
+ }
+}

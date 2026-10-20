@@ -1,6 +1,6 @@
 # ADR 0043 — Prompt v4: la extracción lee el semáforo peatonal
 
-- **Estado:** propuesto (2026-10-19). El método y el criterio quedaron escritos antes de escribir el lote nuevo y antes de medir. La decisión se agrega al final cuando haya números.
+- **Estado:** decidido (2026-10-19): **v4 no pasa a producción**; sigue v3. El método y el criterio quedaron escritos antes de escribir el lote nuevo y antes de medir (commit `2bc0f26`); el lote, en `2b36b3b`. Ver «Resultado».
 - **Contexto:** el contrato 1.3.0 agregó `semaforo_peatonal` (ADR 0038), pero ningún prompt lo pedía. El semáforo peatonal solo llegaba si la persona lo ponía en el croquis. Los prompts v1–v3 no podían pedirlo sin cambiar su huella y perder sus grabaciones.
 
 ## Diseño
@@ -55,3 +55,37 @@ Con el costo por relato de v3 (`costo_usd_por_1000` en `e1_extraction_*_v3.json`
 - el test CISS en v4: unos 3 USD.
 
 El primer test, que se mide después de decidir, cuesta aparte. Todo cabe en el tope diario de 20 USD en local.
+
+## Resultado (2026-10-19)
+
+Dev de 220 relatos (los 190 de antes y `dev-007`), pipeline TS. Los resultados están en `eval/results/e1_extraction_dev_v3_dev007.json` y `e1_extraction_dev_v4_dev007.json`. Se generaron con `--sufijo _dev007`, para no reemplazar los de 190 relatos que cita el README.
+
+| Método | F1 micro común, v3 | F1 micro común, v4 | `semaforo_peatonal`, v3             | `semaforo_peatonal`, v4               |
+| ------ | ------------------ | ------------------ | ----------------------------------- | ------------------------------------- |
+| Reglas | 0.7442             | 0.7442             | F1 0.5333 (8 de 22, sin inventados) | igual                                 |
+| Sonnet | 0.9354             | **0.9328**         | 0 (no puede darlo)                  | F1 **0.9778** (22 de 22, 1 inventado) |
+| Haiku  | 0.9185             | **0.9218**         | 0                                   | F1 **0.9778** (22 de 22, 1 inventado) |
+
+- **Criterio 1, no se cumple:** con Sonnet, v4 baja el F1 micro común 0.0026. Por el orden fijado, **v4 no pasa a producción** y los tests (CISS y el primero) no se midieron con v4; no se gastó en ellos.
+- **Dispositivos en la métrica común:** mejoran con los dos modelos (Sonnet: 76 aciertos, 4 inventados y 7 no leídos con v3, contra 82, 2 y 1 con v4).
+  - **Dónde cae Sonnet:** en campos que el cambio no toca, repartido entre varios: `maniobra` con 8 inventados más, `lugar.superficie` con 2, la iluminación y otros.
+- **Ruido de una corrida a otra:** E1 ahora puntúa también la repetición de cada relato contra la referencia (`repeticion.f1_micro`).
+
+  | Modelo | v3     | v3, repetición | v4     | v4, repetición |
+  | ------ | ------ | -------------- | ------ | -------------- |
+  | Sonnet | 0.9354 | 0.9300         | 0.9328 | 0.9360         |
+  | Haiku  | 0.9185 | 0.9138         | 0.9218 | 0.9196         |
+  - **Lo que muestra:** la baja de v4 con Sonnet (0.0026) es menor que la diferencia entre dos corridas de v3 (0.0054), y la repetición de v4 queda arriba de las dos de v3.
+  - **Por qué no cambia la decisión:** el criterio compara las corridas base y se fijó antes de medir. Cambiarlo después de ver los números lo invalidaría.
+
+- **Reglas:** la entrada nueva del glosario encuentra 8 de los 22 semáforos peatonales citados del dev, sin inventar ninguno. Entre las formas que no conoce están «el monito caminando», «el hombrecito verde», «la figurita del peatón» y «muñekito», con faltas. Sus patrones no se ajustaron al lote, para no sobreajustarlos.
+- **Costo:** el día quedó en 5.58 USD en `grabaciones/gasto.json`, con todas las grabaciones de dev de v4 y las de `dev-007` en v3.
+
+## Siguiente paso
+
+- **Producción sigue con v3:** el semáforo peatonal sigue llegando solo desde el croquis (ADR 0038).
+- **Las grabaciones de v4 se conservan:** valen mientras no cambie su huella (613dc7f7bc958502).
+- **Criterio con ruido para el próximo cambio de prompt:** se fija desde ahora y no se aplica a v4.
+  - **Qué compara:** el promedio del F1 micro de la corrida base y la repetición, en dev y en el test CISS.
+  - **Cuándo pasa:** si el promedio de la versión nueva no queda abajo del de la anterior por más de la mitad de la diferencia entre sus dos corridas.
+  - **Cómo se usa:** una v5 que vuelva a pedir el semáforo peatonal se mide con ese criterio desde el principio.
