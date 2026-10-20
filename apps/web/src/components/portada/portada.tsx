@@ -274,7 +274,12 @@ export function Portada({ datos }: { datos: DatosPortada }) {
         role="note"
         className="t-nota pointer-events-none fixed inset-x-0 top-16 z-20 px-4 py-1 text-texto md:hidden"
       >
-        {t.leyendaCorta} · <span data-testid="atribucion-mapa">{t.osmCorta}</span>
+        {/* Cada parte en su renglón: si la atribución siguiera a la leyenda en el mismo renglón,
+            al llegar la fuente saltaría de un renglón a otro (CLS, ADR 0045 §5). */}
+        {t.leyendaCorta}{" "}
+        <span className="block" data-testid="atribucion-mapa">
+          {t.osmCorta}
+        </span>
       </p>
       <div className="vidrio pointer-events-none fixed right-14 bottom-3 z-20 hidden px-3 py-2 md:block">
         <p role="note" className="t-nota text-texto">
@@ -308,7 +313,9 @@ export function Portada({ datos }: { datos: DatosPortada }) {
       <div className="relative z-10">
         {seccion(
           "apertura",
-          <div className="flex flex-col items-center gap-8">
+          // A todo lo ancho: si la columna midiera lo que su contenido, cambiaría de ancho (y de
+          // lugar) al llegar la fuente.
+          <div className="flex w-full flex-col items-center gap-8">
             <h1 className="sr-only">Croquis</h1>
             <Logotipo
               ancho={420}
@@ -317,12 +324,17 @@ export function Portada({ datos }: { datos: DatosPortada }) {
               prioridad
               className="h-auto w-[min(78vw,420px)]"
             />
-            <p className="t-lanzamiento">
-              {/* Un renglón por frase; el espacio entre ellas se conserva para lectores de pantalla. */}
-              {t.lema.split(/(?<=\.)\s+/).map((frase, i) => (
-                <span key={frase} className="block">
+            <p className="t-lanzamiento lema w-full">
+              {/* Renglones fijos (ver .lema); los espacios se conservan para lectores de pantalla. */}
+              {t.lema.map((frase, i) => (
+                <span key={frase.join(" ")} className="lema-frase">
                   {i > 0 ? " " : null}
-                  {frase}
+                  {frase.map((trozo, j) => (
+                    <span key={trozo} className="lema-trozo">
+                      {j > 0 ? " " : null}
+                      {trozo}
+                    </span>
+                  ))}
                 </span>
               ))}
             </p>

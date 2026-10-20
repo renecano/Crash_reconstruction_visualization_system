@@ -25,7 +25,7 @@
     --evidencia: var(--marca-naranja-marcaje);
 
     /* Tipografía: una sola familia variable (ancho = font-stretch, peso = font-weight). */
-    --fuente: "Anybody Variable", ui-sans-serif, system-ui, sans-serif;
+    --fuente: "Anybody Variable", "Anybody Respaldo", ui-sans-serif, system-ui, sans-serif;
     --t-lanzamiento: clamp(2.5rem, 6vw, 5.75rem);
     --t-capitulo: clamp(2rem, 4vw, 3.6rem);
     --t-letra: clamp(3.5rem, 12vw, 12rem);
@@ -169,12 +169,37 @@
   .t-titulo {
     overflow-wrap: break-word;
   }
+  .t-lanzamiento,
+  .t-letra {
+    font-family: "Anybody Bloque", "Anybody Respaldo", ui-sans-serif, system-ui, sans-serif;
+  }
   .t-lanzamiento {
     font-size: var(--t-lanzamiento);
     font-stretch: 150%;
     font-weight: 760;
     line-height: 0.98;
     letter-spacing: 0.01em;
+  }
+  /* El lema de la portada tiene renglones fijos: si se acomodara solo, la fuente de respaldo
+     (más angosta) lo dejaría en menos renglones que Anybody, y al llegar la fuente la portada
+     saltaría (CLS, ADR 0045 §5). En el celular, cada trozo va en su renglón; en pantallas anchas,
+     cada frase. El tamaño baja lo necesario para que el renglón más ancho quepa en Anybody: 8.8 em
+     el trozo («happened.») y 16.9 em la frase («Tell what happened.»), medidos con la fuente. */
+  .lema {
+    font-size: min(var(--t-lanzamiento), calc((100vw - 2 * var(--margen)) / 9));
+  }
+  .lema-frase,
+  .lema-trozo {
+    display: block;
+    white-space: nowrap;
+  }
+  @media (min-width: 48rem) {
+    .lema {
+      font-size: min(var(--t-lanzamiento), calc((100vw - 2 * var(--margen)) / 17.5));
+    }
+    .lema-trozo {
+      display: inline;
+    }
   }
   .t-capitulo {
     font-size: var(--t-capitulo);

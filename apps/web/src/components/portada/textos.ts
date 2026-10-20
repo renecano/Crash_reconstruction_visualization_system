@@ -6,7 +6,11 @@ import { textos } from "@/i18n";
 
 export const TEXTOS_PORTADA = textos(
   {
-    lema: "Cuenta lo que pasó. Míralo pasar.",
+    // Una frase por renglón en pantallas anchas; en el celular, cada trozo en su renglón (ver .lema).
+    lema: [
+      ["Cuenta lo", "que pasó."],
+      ["Míralo", "pasar."],
+    ],
     leyendaCorta: "Reconstrucción ilustrativa. No es un peritaje.",
     osmCorta: "Calles © colaboradores de OpenStreetMap (ODbL)",
     cuenta: "Cuenta qué pasó",
@@ -110,7 +114,10 @@ export const TEXTOS_PORTADA = textos(
     },
   },
   {
-    lema: "Tell what happened. Watch it happen.",
+    lema: [
+      ["Tell what", "happened."],
+      ["Watch it", "happen."],
+    ],
     leyendaCorta: "Illustrative reconstruction, not a forensic report.",
     osmCorta: "Streets © OpenStreetMap contributors (ODbL)",
     cuenta: "Tell what happened",

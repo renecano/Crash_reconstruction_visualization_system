@@ -132,7 +132,13 @@ async function medir(port, url, metodo) {
   const res = await lighthouse(
     url,
     { port, output: "json", logLevel: "error", onlyCategories: ["accessibility", "performance"] },
-    { extends: "lighthouse:default", settings: { throttlingMethod: metodo } },
+    {
+      extends: "lighthouse:default",
+      // La portada arma su escena 3D en tareas cortas durante ~30 s con la CPU 4×: con el límite
+      // por omisión (45 s) Lighthouse no alcanza a ver el CPU en reposo. Esperar más no cambia
+      // cómo se calculan LCP ni CLS; el CLS se observa en una ventana más larga (más estricto).
+      settings: { throttlingMethod: metodo, maxWaitForLoad: 120_000 },
+    },
   );
   const lhr = res.lhr;
   // Una corrida fallida no se promedia: Lighthouse la reporta en runtimeError con métricas vacías.
@@ -173,7 +179,7 @@ async function medir(port, url, metodo) {
 const UNIR = process.argv.includes("--unir");
 if (!UNIR && corriente() === "bateria" && !process.argv.includes("--bateria")) {
   console.error(
-    "La laptop está con batería: el CPU va más lento y las cifras no se comparan con las demás. Conéctala (o pasa --bateria y anótalo).",
+    "La laptop está con batería: el CPU va más lento y las cifras no se pueden comparar con las demás. Conéctala (o pasa --bateria y anótalo).",
   );
   process.exit(1);
 }
@@ -258,7 +264,7 @@ const resultado = {
   generado_por: "node eval/f11_portada.mjs",
   momento: new Date().toISOString(),
   metas: META,
-  metodo: `Lighthouse en modo celular por omisión con red 4G, build de producción, ${REPEATS} corridas por página y por método; se reporta la corrida mediana por LCP. El criterio se evalúa con la limitación aplicada (devtools); la estimación de Lantern (simulate) va en «lantern» de cada página.`,
+  metodo: `Lighthouse en modo celular por omisión con red 4G, build de producción, ${REPEATS} corridas por página y por método, con hasta 120 s de espera a que la página quede en reposo; se reporta la corrida mediana por LCP. El criterio se evalúa con la limitación aplicada (devtools); la estimación de Lantern (simulate) va en «lantern» de cada página.`,
   maquina: {
     cpu: os.cpus()[0]?.model ?? null,
     memoria_gb: r2(os.totalmem() / 1073741824, 1),

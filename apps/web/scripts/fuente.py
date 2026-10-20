@@ -7,6 +7,9 @@ del corte latino de `@fontsource-variable/anybody`, dibuja el acento de la «í�
 grande, centrado sobre el fuste y separado de él; nada más cambia (las variaciones de un compuesto
 se aplican a sus componentes y a su desplazamiento, así que la «í» sigue al peso y al ancho).
 
+Además, los ejes se recortan a lo que usa el sitio (peso 400–800 y ancho 100–150 %): de 57 a 39 KB,
+con las mismas formas en ese rango (ADR 0045 §5).
+
 La licencia SIL OFL 1.1 permite versiones modificadas; como lo es, la copia cambia su nombre interno
 a «Anybody Croquis» (el CSS la sigue llamando «Anybody Variable»).
 
@@ -23,6 +26,7 @@ from pathlib import Path
 
 from fontTools.pens.boundsPen import BoundsPen
 from fontTools.ttLib import TTFont
+from fontTools.varLib.instancer import instantiateVariableFont
 
 WEB = Path(__file__).resolve().parent.parent
 ORIGEN = WEB / "node_modules/@fontsource-variable/anybody/files/anybody-latin-standard-normal.woff2"
@@ -31,6 +35,8 @@ HUELLA = WEB / "public/fuente/fuente.json"
 ESCALA = 1.4
 SEPARACION = 120  # unidades (2000 por em) entre el fuste y el acento: ~1 px a 16 px
 NOMBRE = "Anybody Croquis"
+# Lo que usa el sitio (los roles de `src/styles/sistema.css`); el CSS declara el mismo rango.
+EJES = {"wght": (400, 800), "wdth": (100, 150)}
 
 
 def main() -> None:
@@ -51,6 +57,8 @@ def main() -> None:
     acento.transform = [[ESCALA, 0], [0, ESCALA]]
     acento.x = round((fx0 + fx1) / 2 - ESCALA * (x0 + x1) / 2)
     acento.y = round(fy1 + SEPARACION - ESCALA * y0)
+    # Recorta los ejes (después de cambiar la «í», que el recorte respeta como cualquier glifo).
+    f = instantiateVariableFont(f, EJES)
     # Las cajas del glifo y de la fuente se recalculan al guardar (recalcBBoxes).
     for registro in f["name"].names:
         if registro.nameID in (1, 4, 16, 21) and NOMBRE not in registro.toUnicode():
@@ -67,6 +75,7 @@ def main() -> None:
                 "sha256_origen": hashlib.sha256(ORIGEN.read_bytes()).hexdigest(),
                 "escala_acento_iacute": ESCALA,
                 "separacion_acento_iacute": SEPARACION,
+                "ejes": {k: list(v) for k, v in EJES.items()},
             },
             indent=2,
         )
