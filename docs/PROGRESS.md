@@ -16,6 +16,16 @@ Reglas de trabajo: `CLAUDE.md`. Especificación: `PLAN.md`.
     6. despliegue y la nota «listo para E9».
   - **Interpretación registrada:** `/medicion` es una página para medir E6 en el navegador de la computadora de demo; PLAN §11.5 la nombra pero no la define.
   - **Necesita a René:** la prueba piloto informal con una persona, porque requiere a alguien real.
+  - **Avance (2026-10-19, rama `feat/f11a-diseno`):**
+    - **Hecho — base:** tokens generados desde `tokens.json`, Anybody autoalojada, marca copiada tal cual, íconos, favicon y manifiesto (`pnpm marca`, comprobados en `generate:check`), rutas `app/(es)` y `app/(en)/en` y el marco del sitio.
+    - **Hecho — flujo y visor:** `/cuenta` con sus 4 pasos (`/relato` redirige a `/cuenta`), visor con lecturas, traza y pantalla dividida, croquis sobre papel, y los mensajes del sistema en inglés con su prueba de cobertura. Los paneles de resultados y el informe PDF son bilingües.
+    - **Siguiente:**
+      1. portada de lanzamiento (`src/paginas/inicio.tsx`, hoy provisional);
+      2. demo, recorrido, historia, `/e9` y `/medicion` (hoy provisional);
+      3. datos bilingües en `build-paginas.mjs`;
+      4. imagen para redes y cuadro estático;
+      5. «semilla» en las leyendas de PNG, video y glTF (en `scene-schema`) y el croquis del PDF en inglés;
+      6. e2e (cambian los nombres de los botones), capturas, axe, Lighthouse, LCP y CLS, E6 y revisión independiente.
 - **Fase actual: F11** (ver PLAN §13). F10 quedó cerrada el 2026-10-18 (#42 a #46): E5 publicado (test corrido una vez) y la galería con fotos reales. F9 quedó cerrada el 2026-10-17 (#25 a #41): demo sin red, E7 y E8 en verde y todas las exportaciones. F8 se cerró el mismo día (#20 a #24, E6 cumple).
 - **Pendientes físicos de F7:** hechos. El pendiente 1 (test CISS de Relatos-MX y prompt v2) quedó hecho el 2026-10-14 (PR #11, ADR 0012).
 - **Rigidez lateral, hecha** (PR #12, ADR 0013). Sale de 1,265 pruebas de barrera móvil de NHTSA. En el test de E3, el error en costados baja de 11.04 a 8.51 km/h.
