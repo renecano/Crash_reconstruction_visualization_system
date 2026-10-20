@@ -8,7 +8,7 @@
  * entrada lleva su revisión). La extracción del relato con Claude (`/api/*`) no pasa por aquí:
  * necesita red y la interfaz lo dice.
  */
-import { type PrecacheEntry, Serwist, type SerwistGlobalConfig } from "serwist";
+import { NetworkOnly, type PrecacheEntry, Serwist, type SerwistGlobalConfig } from "serwist";
 
 declare global {
   interface WorkerGlobalScope extends SerwistGlobalConfig {
@@ -25,9 +25,30 @@ const serwist = new Serwist({
     // `/visor?escena=…&calidad=…` usa el HTML precargado de `/visor`. `_rsc` no se ignora: esas
     // peticiones esperan la carga RSC, no HTML; sin red fallan y Next navega con el documento.
     ignoreURLParametersMatching: [/^(?!_rsc$).+$/],
-    // Una ruta sin precargar abre el inicio (sin red no hay más que mostrar).
-    navigateFallback: "/",
-    navigateFallbackDenylist: [/^\/api\//, /^\/serwist\//],
+  },
+  // Las páginas sin precargar van a la red. Solo si la red falla se abre el inicio en su idioma
+  // (antes, `navigateFallback` servía el inicio aunque hubiera red: `/en/…` y `/cuenta?paso=…`
+  // abrían la portada en español al recargar).
+  runtimeCaching: [
+    {
+      matcher: ({ request, url }) =>
+        request.mode === "navigate" && !/^\/(api|serwist)\//.test(url.pathname),
+      handler: new NetworkOnly(),
+    },
+  ],
+  fallbacks: {
+    entries: [
+      {
+        url: "/en",
+        matcher: ({ request }) =>
+          request.destination === "document" && /^\/en(\/|$)/.test(new URL(request.url).pathname),
+      },
+      {
+        url: "/",
+        matcher: ({ request }) =>
+          request.destination === "document" && !/^\/en(\/|$)/.test(new URL(request.url).pathname),
+      },
+    ],
   },
   // Una versión nueva espera a que se cierren las pestañas de la anterior: así una página abierta no
   // pide trozos que la limpieza de la caché ya borró. La primera instalación toma la página actual.

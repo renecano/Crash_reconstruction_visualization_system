@@ -4,6 +4,7 @@
  * cada dato y parámetros del solver. Lo usan los paneles, la demo y el informe PDF, para que digan
  * lo mismo. El español conserva los textos que ya tenían esos lugares.
  */
+import { fixtureTitle, type FixtureName } from "@croquis/scene-schema";
 import type { Lang } from "./index";
 
 type Vocab = Record<string, { es: string; en: string }>;
@@ -152,4 +153,24 @@ export function palabra(vocab: Vocab, valor: unknown, lang: Lang): string {
 /** Solo el español de un vocabulario, para los lugares que aún reciben `Record<string, string>`. */
 export function soloEs(vocab: Vocab): Record<string, string> {
   return Object.fromEntries(Object.entries(vocab).map(([k, v]) => [k, v.es]));
+}
+
+/** Títulos de las escenas canónicas en inglés (en español, los de cada escena: `meta.titulo`). */
+export const TITULO_ESCENA_EN: Record<FixtureName, string> = {
+  alcance: "Rear-end collision on Paseo Tollocan at a red light",
+  lateral_interseccion: "Side collision at a signalized intersection (downtown Toluca)",
+  frontal_curva: "Head-on collision on a curve of the road to Temoaya",
+  peaton_cruce: "Pedestrian hit on a crosswalk at dusk",
+  motociclista: "Left turn in front of a motorcycle",
+  objeto_fijo_arbol: "Running off the road into a tree on a curve",
+  poste: "Crash into a concrete pole at night on a wet road",
+  volcadura: "Large SUV rollover on the México-Toluca freeway",
+  nocturno_lluvia: "A minibus cutting in at night in heavy rain",
+  glorieta: "Entering a roundabout without yielding",
+  interseccion_toluca: "Side collision at Carranza and Juárez (Toluca, OpenStreetMap street)",
+};
+
+/** Título de una escena canónica en el idioma de la página. */
+export function tituloEscena(name: FixtureName, lang: Lang): string {
+  return lang === "en" ? TITULO_ESCENA_EN[name] : fixtureTitle(name);
 }

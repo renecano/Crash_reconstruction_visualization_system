@@ -20,7 +20,7 @@ export function Pie({ lang }: { lang: Lang }) {
         </div>
         <nav aria-label={t.pie.herramientas} className="md:col-span-2">
           <h2 className="t-interfaz mb-3 text-texto">{t.pie.herramientas}</h2>
-          <ul className="t-nota flex flex-col gap-2">
+          <ul className="t-nota flex flex-col gap-1 [&_a]:inline-flex [&_a]:min-h-11 [&_a]:items-center">
             <li>
               <Link href={r("/visor")}>{t.pie.visor}</Link>
             </li>
@@ -34,7 +34,7 @@ export function Pie({ lang }: { lang: Lang }) {
         </nav>
         <nav aria-label={t.pie.proyecto} className="md:col-span-2">
           <h2 className="t-interfaz mb-3 text-texto">{t.pie.proyecto}</h2>
-          <ul className="t-nota flex flex-col gap-2">
+          <ul className="t-nota flex flex-col gap-1 [&_a]:inline-flex [&_a]:min-h-11 [&_a]:items-center">
             <li>
               <Link href={r("/historia")}>{t.nav.historia}</Link>
             </li>
@@ -48,7 +48,7 @@ export function Pie({ lang }: { lang: Lang }) {
         </nav>
         <div className="md:col-span-3">
           <h2 className="t-interfaz mb-3 text-texto">{t.pie.fuentes}</h2>
-          <ul className="t-nota flex flex-col gap-2">
+          <ul className="t-nota flex flex-col gap-1 [&_a]:inline-flex [&_a]:min-h-11 [&_a]:items-center">
             <li>{t.pie.osm}</li>
             <li>{t.pie.datos}</li>
             <li>{t.pie.fuente}</li>

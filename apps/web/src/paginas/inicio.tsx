@@ -46,9 +46,10 @@ function datosPortada(): DatosPortada {
     relatoEn: portada.relato_en,
     preguntas: portada.preguntas as Pregunta[],
     galeria: {
-      prueba: "9064",
-      foto: "/portada/e5-9064-foto.jpg",
-      render: "/portada/e5-9064-croquis.jpg",
+      // Prueba de poste en el costado: la foto y el render tienen la misma vista (galería de E5).
+      prueba: "4389",
+      foto: "/portada/e5-4389-foto.jpg",
+      render: "/portada/e5-4389-croquis.jpg",
     },
   };
 }

@@ -7,6 +7,8 @@ import { textos } from "@/i18n";
 export const TEXTOS_PORTADA = textos(
   {
     lema: "Cuenta lo que pasó. Míralo pasar.",
+    leyendaCorta: "Reconstrucción ilustrativa. No es un peritaje.",
+    osmCorta: "Calles © colaboradores de OpenStreetMap (ODbL)",
     cuenta: "Cuenta qué pasó",
     ejemplo: "Ver un ejemplo",
     riel: "Capítulos",
@@ -50,8 +52,9 @@ export const TEXTOS_PORTADA = textos(
       despues: "después",
     },
     q: {
-      titulo: "Una sola pregunta.",
-      cuerpo: "La que más cambia el resultado. Si no lo sabes, la dejas en blanco.",
+      titulo: "La pregunta que más importa.",
+      cuerpo:
+        "Croquis pregunta primero lo que más cambia el resultado. Si no lo sabes, lo dejas en blanco.",
     },
     u: {
       titulo: "Lo acomodas en el croquis.",
@@ -63,10 +66,11 @@ export const TEXTOS_PORTADA = textos(
       cuerpo:
         "Frenado, contacto, deformación y hasta dónde llega cada quien. Nada de esto es una animación hecha a mano.",
       tiempo: "t",
-      velocidad: "Velocidad de A",
+      velocidad: "Velocidad de A antes de frenar",
       recalcula: "Cámbiala: el solver lo vuelve a calcular en tu dispositivo.",
-      resultado: (dvA: string, dvB: string, reposo: string) =>
-        `Cambio de velocidad en el choque (ΔV): A ${dvA} km/h, B ${dvB} km/h. A queda a ${reposo} m del impacto.`,
+      resultado: (impacto: string, reposo: string) =>
+        `A llega al impacto a ${impacto} km/h y queda a ${reposo} m del punto de impacto.`,
+      fija: "Con movimiento reducido la imagen es fija: el resultado se ve en cifras.",
       calculando: "Recalculando…",
     },
     s: {
@@ -81,6 +85,9 @@ export const TEXTOS_PORTADA = textos(
       e1: "Extracción del relato (F1, test congelado)",
       e3: "Error de ΔV contra la caja negra del auto",
       e3Nota: "Aquí WinSMASH se equivoca menos que Croquis.",
+      menos: "menos es mejor",
+      mas: "más es mejor",
+      mejor: "mejor valor",
       e5: "Deformación lateral contra autos reales, error por punto",
       croquis: "Croquis",
       fuente: "Ver la evaluación",
@@ -89,7 +96,7 @@ export const TEXTOS_PORTADA = textos(
       comparar:
         "Desliza para comparar la foto de una prueba de choque real con la abolladura que calcula Croquis",
       fotoFuente: (prueba: string) =>
-        `Foto: NHTSA, prueba ${prueba}. Croquis: la misma prueba, con el daño del visor.`,
+        `Foto: NHTSA, prueba ${prueba} (poste en el costado). Croquis: la misma prueba, con el daño que calcula el visor.`,
     },
     noes: {
       titulo: "Lo que Croquis no es.",
@@ -104,6 +111,8 @@ export const TEXTOS_PORTADA = textos(
   },
   {
     lema: "Tell what happened. Watch it happen.",
+    leyendaCorta: "Illustrative reconstruction, not a forensic report.",
+    osmCorta: "Streets © OpenStreetMap contributors (ODbL)",
     cuenta: "Tell what happened",
     ejemplo: "See an example",
     riel: "Chapters",
@@ -141,14 +150,15 @@ export const TEXTOS_PORTADA = textos(
         "The orange underline shows where each fact came from. What you did not say is marked as assumed.",
     },
     o: {
-      titulo: "Before, the impact, after.",
+      titulo: "Before. Impact. After.",
       antes: "before",
       impacto: "impact",
       despues: "after",
     },
     q: {
-      titulo: "One single question.",
-      cuerpo: "The one that changes the result the most. If you don't know, you leave it blank.",
+      titulo: "The question that matters most.",
+      cuerpo:
+        "Croquis first asks what changes the result the most. If you don't know, you leave it blank.",
     },
     u: {
       titulo: "You arrange it on the sketch.",
@@ -160,10 +170,11 @@ export const TEXTOS_PORTADA = textos(
       cuerpo:
         "Braking, contact, deformation and how far everyone ends up. None of this is a hand-made animation.",
       tiempo: "t",
-      velocidad: "Speed of A",
+      velocidad: "Speed of A before braking",
       recalcula: "Change it: the solver computes it again on your device.",
-      resultado: (dvA: string, dvB: string, reposo: string) =>
-        `Change of velocity in the crash (ΔV): A ${dvA} km/h, B ${dvB} km/h. A ends up ${reposo} m from the impact.`,
+      resultado: (impacto: string, reposo: string) =>
+        `A reaches the impact at ${impacto} km/h and ends up ${reposo} m from the point of impact.`,
+      fija: "With reduced motion the image stays still: the result is shown in numbers.",
       calculando: "Recomputing…",
     },
     s: {
@@ -174,9 +185,12 @@ export const TEXTOS_PORTADA = textos(
     },
     pruebas: {
       titulo: "Measured, not assumed.",
-      e1: "Narrative extraction (F1, frozen test)",
+      e1: "Narrative extraction (F1, frozen test set)",
       e3: "ΔV error against the car's black box",
-      e3Nota: "Here WinSMASH errs less than Croquis.",
+      e3Nota: "Here, WinSMASH is more accurate than Croquis.",
+      menos: "lower is better",
+      mas: "higher is better",
+      mejor: "best value",
       e5: "Side deformation against real cars, error per point",
       croquis: "Croquis",
       fuente: "See the evaluation",
@@ -184,7 +198,7 @@ export const TEXTOS_PORTADA = textos(
       render: "Croquis dent",
       comparar: "Slide to compare the photo of a real crash test with the dent Croquis computes",
       fotoFuente: (prueba: string) =>
-        `Photo: NHTSA, test ${prueba}. Croquis: the same test, with the viewer's damage.`,
+        `Photo: NHTSA, test ${prueba} (side pole impact). Croquis: the same test, with the damage computed in the viewer.`,
     },
     noes: {
       titulo: "What Croquis is not.",

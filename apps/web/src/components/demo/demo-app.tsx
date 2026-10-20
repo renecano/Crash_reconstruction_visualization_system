@@ -9,6 +9,7 @@
  * Los relatos son de Relatos-MX y se quedan en su español original (`lang="es-MX"`); todo lo demás
  * va en el idioma de la página.
  */
+import { Croquis } from "@croquis/croquis-2d";
 import type { EscenaSpec } from "@croquis/scene-schema";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
@@ -152,25 +153,33 @@ export function DemoApp({ casos, fuente, metodo }: DemoAppProps) {
         <h2 id="demo-elige" className="t-titulo">
           {t.elige}
         </h2>
-        <ul className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+        {/* Una lista sobre la retícula, cada caso con su croquis calculado (no tarjetas iguales). */}
+        <ul className="grid gap-x-8 border-t border-linea md:grid-cols-2">
           {casos.map((c) => {
             const activo = caso?.id === c.id;
             return (
-              <li key={c.id}>
+              <li key={c.id} className="border-b border-linea">
                 <button
                   type="button"
                   data-testid={`demo-caso-${c.id}`}
                   aria-pressed={activo}
                   onClick={() => elegir(c)}
-                  className={`flex min-h-24 w-full flex-col gap-1 rounded-panel border px-4 py-3 text-left transition-colors ${
-                    activo
-                      ? "border-texto bg-superficie-alta"
-                      : "border-linea bg-superficie hover:border-texto-3"
+                  className={`grid w-full grid-cols-[8.5rem_1fr] items-center gap-4 border-l-2 py-3 pr-2 pl-3 text-left transition-colors ${
+                    activo ? "border-texto bg-superficie" : "border-transparent hover:bg-superficie"
                   }`}
                 >
-                  <span className="t-nota">{t.tipos[c.tipo] ?? c.tipo}</span>
-                  <span className="t-interfaz text-texto">
-                    {lang === "es" ? c.titulo : c.titulo_en}
+                  <span
+                    aria-hidden="true"
+                    data-tema="papel"
+                    className="pointer-events-none block h-24 overflow-hidden rounded-control bg-[var(--marca-papel)] [&_svg]:h-full [&_svg]:w-full"
+                  >
+                    <Croquis spec={c.spec as EscenaSpec} readOnly scale={3} />
+                  </span>
+                  <span className="flex flex-col gap-1">
+                    <span className="t-nota">{t.tipos[c.tipo] ?? c.tipo}</span>
+                    <span className="t-interfaz text-texto">
+                      {lang === "es" ? c.titulo : c.titulo_en}
+                    </span>
                   </span>
                 </button>
               </li>

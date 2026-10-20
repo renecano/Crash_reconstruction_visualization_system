@@ -2,6 +2,8 @@ import fc from "fast-check";
 import { describe, expect, it } from "vitest";
 import {
   CAPITULOS,
+  centroPantalla,
+  conMarcas,
   indiceDe,
   linger,
   N,
@@ -100,5 +102,34 @@ describe("cámara y tiempo de la portada", () => {
         if (j !== k) expect(opacidadTexto(p, j)).toBe(0);
       });
     });
+  });
+
+  it("la acción queda del lado contrario al texto y el centro cambia sin saltos", () => {
+    // Escritorio: texto a la izquierda, acción a la derecha; celular: texto abajo, acción arriba.
+    expect(centroPantalla(indiceDe("i") + 0.5, 16 / 9)[0]).toBeGreaterThan(0.6);
+    expect(centroPantalla(indiceDe("i") + 0.5, 390 / 844)[1]).toBeLessThan(0.4);
+    expect(centroPantalla(0.5, 16 / 9)).toEqual([0.5, 0.5]);
+    fc.assert(
+      fc.property(
+        fc.double({ min: 0, max: N - 0.01, noNaN: true }),
+        fc.constantFrom(16 / 9, 390 / 844),
+        (p, a) => {
+          const [x0, y0] = centroPantalla(p, a);
+          const [x1, y1] = centroPantalla(p + 0.005, a);
+          for (const v of [x0, y0]) {
+            expect(v).toBeGreaterThanOrEqual(0.25);
+            expect(v).toBeLessThanOrEqual(0.75);
+          }
+          expect(Math.abs(x1 - x0) + Math.abs(y1 - y0)).toBeLessThan(0.05);
+        },
+      ),
+      OPC,
+    );
+  });
+
+  it("el punto de impacto no se marca antes del croquis", () => {
+    expect(conMarcas(indiceDe("r") + 0.5)).toBe(false);
+    expect(conMarcas(indiceDe("u") + 0.5)).toBe(true);
+    expect(conMarcas(indiceDe("i") + 0.5)).toBe(true);
   });
 });

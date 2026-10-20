@@ -13,7 +13,7 @@
     "test:e2e": "playwright test",
     "paginas": "node scripts/build-paginas.mjs",
     "marca": "node scripts/tokens.mjs && node scripts/iconos.mjs",
-    "generate:check": "node scripts/build-paginas.mjs --check && node scripts/tokens.mjs --check && node scripts/iconos.mjs --check && node scripts/portada.mjs --check",
+    "generate:check": "node scripts/build-paginas.mjs --check && node scripts/tokens.mjs --check && node scripts/iconos.mjs --check && node scripts/portada.mjs --check && node scripts/fuente.mjs --check",
     "portada": "node scripts/portada.mjs"
   },
   "dependencies": {

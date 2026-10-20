@@ -255,7 +255,7 @@ export function Traza({
         onChange={(e) => onSeek(Number(e.target.value))}
         aria-label={t.tiempo}
         aria-valuetext={formatTime(state.t)}
-        className="w-full accent-[var(--accion)]"
+        className="h-11 w-full cursor-pointer accent-[var(--accion)]"
       />
       <nav aria-label={t.eventos}>
         <ul className="t-nota flex flex-wrap gap-x-4 gap-y-1">
@@ -263,7 +263,7 @@ export function Traza({
             <li key={m.id}>
               <button
                 type="button"
-                className="underline underline-offset-4 hover:text-texto"
+                className="min-h-11 underline underline-offset-4 hover:text-texto"
                 onClick={() => onSeek(m.t)}
               >
                 {etiquetaEvento(m, lang)} ({formatTime(m.t)})

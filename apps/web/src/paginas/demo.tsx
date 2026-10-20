@@ -12,7 +12,7 @@ export default function DemoPagina({ lang }: { lang: Lang }) {
       <div className="pagina py-10 md:py-14">
         <CabeceraPagina titulo={t.titulo} intro={t.intro}>
           <p>
-            <Link href={ruta(lang, "/cuenta")} className="t-interfaz">
+            <Link href={ruta(lang, "/cuenta")} className="t-interfaz underline underline-offset-4">
               {t.propio}
             </Link>
           </p>

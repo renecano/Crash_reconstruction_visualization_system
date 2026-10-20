@@ -36,16 +36,25 @@ const POSES: { pos: [number, number, number]; mira: [number, number, number] }[]
   { pos: [-26, -34, 38], mira: [0, 2, 0] }, // el problema: arriba y lejos (velo fuerte)
   { pos: [24, -30, 26], mira: [0, 4, 0] }, // C (velo fuerte)
   { pos: [30, 10, 28], mira: [0, 4, 0] }, // R (velo fuerte)
-  // Desde aquí la acción queda en la mitad derecha de la pantalla: el texto ocupa la izquierda.
-  { pos: [-26, 26, 16], mira: [-6, 6, 0] }, // O
-  { pos: [-30, -8, 18], mira: [-8, 8, 0] }, // Q
-  { pos: [-9, 2.4, 52], mira: [-9.4, 2.4, 0] }, // U: cenital, el croquis pintado
-  { pos: [-20, -8, 3], mira: [-4, 4, 0.8] }, // I: a la altura de la calle, el impacto a la derecha
-  { pos: [-18, 10, 5], mira: [-1, 7, 0.8] }, // S: a un lado del cruce, sin postes enfrente
+  // Desde aquí la cámara mira la acción y `centroPantalla` la pone del lado contrario al texto.
+  { pos: [-22, 24, 15], mira: [0, 3, 0] }, // O
+  { pos: [-26, -12, 17], mira: [0, 4, 0] }, // Q
+  // U: cenital, sobre el centro del croquis pintado (de dónde salió cada auto a dónde quedó).
+  { pos: [-11.5, 18, 72], mira: [-11.6, 18, 0] },
+  { pos: [-12, -8, 3.4], mira: [0, 2.5, 0.4] }, // I: a la altura de la calle, junto al impacto
+  { pos: [-16, 9, 4.5], mira: [1, 1.5, 0.7] }, // S: a un lado del cruce, sin postes enfrente
   { pos: [-30, 22, 24], mira: [0, 2, 0] }, // las pruebas (velo fuerte)
   { pos: [-36, -20, 30], mira: [0, 2, 0] }, // lo que no es (velo fuerte)
   { pos: [-46, -1.5, 3.2], mira: [0, 2.2, 1.1] }, // cierre
 ];
+
+/**
+ * Dónde queda en la pantalla el punto que mira la cámara, por capítulo (fracciones del ancho y
+ * del alto). En escritorio el texto va a la izquierda y la acción a la derecha; en el celular el
+ * texto va abajo y la acción arriba. La apertura, las pruebas y el cierre van al centro.
+ */
+const CENTRO_ANCHO = [0.5, 0.5, 0.62, 0.62, 0.66, 0.66, 0.72, 0.64, 0.66, 0.5, 0.62, 0.5];
+const CENTRO_ALTO = [0.5, 0.4, 0.32, 0.3, 0.34, 0.34, 0.36, 0.36, 0.34, 0.5, 0.34, 0.5];
 
 const clamp = (x: number, a = 0, b = 1) => Math.min(b, Math.max(a, x));
 export const smooth = (x: number) => {
@@ -168,4 +177,19 @@ export function velo(p: number): number {
 
 export function indiceDe(c: Capitulo): number {
   return IDX[c];
+}
+
+/** El punto que mira la cámara, en fracciones de la pantalla, a lo largo del viaje. */
+export function centroPantalla(p: number, aspecto: number): readonly [number, number] {
+  const tabla = aspecto < 1 ? CENTRO_ALTO : CENTRO_ANCHO;
+  const x = u(p);
+  const i = Math.min(N - 2, Math.floor(x));
+  const f = clamp(x - i);
+  const v = tabla[i]! + (tabla[i + 1]! - tabla[i]!) * smooth(f);
+  return aspecto < 1 ? [0.5, v] : [v, 0.5];
+}
+
+/** Las marcas del choque (punto de impacto) aparecen con el croquis: antes no hay evidencia. */
+export function conMarcas(p: number): boolean {
+  return p >= IDX.u - 0.4;
 }

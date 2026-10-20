@@ -8,7 +8,6 @@ import { Croquis } from "@croquis/croquis-2d";
 import {
   FIXTURE_NAMES,
   checkEscena,
-  fixtureTitle,
   loadFixture,
   validateEscena,
   type EscenaSpec,
@@ -27,6 +26,7 @@ import { mensaje } from "@/lib/mensajes";
 import { RELATO_SPEC_KEY } from "@/lib/relato-api";
 import { CallesReales } from "./calles-reales";
 import { Legend, useTextosCroquis } from "./legend";
+import { tituloEscena } from "@/i18n/vocabulario";
 
 const T = textos(
   {
@@ -220,16 +220,17 @@ export function CroquisEditor({ initial = "alcance" }: { initial?: FixtureName }
             >
               {FIXTURE_NAMES.map((n) => (
                 <option key={n} value={n}>
-                  {fixtureTitle(n)}
+                  {tituloEscena(n, lang)}
                 </option>
               ))}
             </select>
           </label>
-          <label className="t-interfaz flex items-center gap-2 pb-3">
+          <label className="t-interfaz flex min-h-11 cursor-pointer items-center gap-3 pb-3">
             <input
               type="checkbox"
               checked={showFinal}
               onChange={(e) => setShowFinal(e.target.checked)}
+              className="h-5 w-5 accent-[var(--accion)]"
             />
             {t.finales}
           </label>

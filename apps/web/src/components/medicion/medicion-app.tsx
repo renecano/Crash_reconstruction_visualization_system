@@ -31,6 +31,10 @@ import {
 const T = textos(
   {
     equipo: "Este equipo",
+    niveles: { baja: "Baja", media: "Media", alta: "Alta", ultra: "Ultra" } as Record<
+      CalidadE6,
+      string
+    >,
     gpu: "GPU",
     webgpu: "WebGPU",
     disponible: "disponible",
@@ -78,6 +82,10 @@ const T = textos(
   },
   {
     equipo: "This computer",
+    niveles: { baja: "Low", media: "Medium", alta: "High", ultra: "Ultra" } as Record<
+      CalidadE6,
+      string
+    >,
     gpu: "GPU",
     webgpu: "WebGPU",
     disponible: "available",
@@ -439,10 +447,10 @@ export function MedicionApp() {
                 type="checkbox"
                 checked={config.calidades.includes(c)}
                 onChange={() => alterna("calidades", c)}
-                className="h-4 w-4 accent-[var(--accion)]"
+                className="h-5 w-5 accent-[var(--accion)]"
                 data-testid={`medicion-calidad-${c}`}
               />
-              {c}
+              {t.niveles[c]}
             </label>
           ))}
         </fieldset>
@@ -454,7 +462,7 @@ export function MedicionApp() {
                 type="checkbox"
                 checked={config.renderers.includes(r)}
                 onChange={() => alterna("renderers", r)}
-                className="h-4 w-4 accent-[var(--accion)]"
+                className="h-5 w-5 accent-[var(--accion)]"
               />
               {r === "webgpu" ? "WebGPU" : "WebGL 2"}
             </label>
@@ -568,7 +576,7 @@ export function MedicionApp() {
                     className="t-interfaz border-b border-linea"
                   >
                     <td className="py-2 pr-4">{r.escena}</td>
-                    <td className="py-2 pr-4">{r.calidad}</td>
+                    <td className="py-2 pr-4">{t.niveles[r.calidad]}</td>
                     <td className="py-2 pr-4">{r.renderer}</td>
                     <td className="py-2 pr-4 text-texto-2">{r.backend ?? "—"}</td>
                     <td className="t-cota py-2 pr-4 text-right">

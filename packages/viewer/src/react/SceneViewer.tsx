@@ -104,6 +104,16 @@ export interface SceneViewerProps {
 export interface Guiada {
   pose: (t: number) => CameraPose | null;
   revelado: () => number;
+  /**
+   * Dónde queda en la pantalla el punto que mira la cámara, en fracciones del ancho y del alto
+   * (0.5, 0.5 = el centro). Desplaza la proyección (`setViewOffset`) para que la acción quede del
+   * lado contrario al texto sin girar la cámara.
+   */
+  centro?: () => readonly [number, number];
+  /** Mostrar las marcas del choque (el punto de impacto): antes del croquis no hay evidencia. */
+  marcas?: () => boolean;
+  /** Color del cielo y de la niebla en lugar del que da el ambiente (sin cielo físico). */
+  cielo?: string;
 }
 
 /** Ambiente que se puede forzar en la vista. */
@@ -390,8 +400,9 @@ function SceneContent({
   // El cielo físico (con nubes) se hornea una vez en un mapa cúbico: dibujarlo en cada cuadro
   // cuesta un cálculo por píxel que en GPU integrada no cabe en el presupuesto de E6.
   useEffect(() => {
-    scene.fog = new FogExp2(env.skyColor, env.fogDensity);
-    scene.background = new Color(env.skyColor);
+    const cielo = guiada?.cielo ?? env.skyColor;
+    scene.fog = new FogExp2(cielo, env.fogDensity);
+    scene.background = new Color(cielo);
     let target: CubeRenderTarget | null = null;
     if (sky) {
       target = new CubeRenderTarget(256);
@@ -408,7 +419,7 @@ function SceneContent({
       scene.background = null;
       target?.dispose();
     };
-  }, [scene, env, sky, gl, graph]);
+  }, [scene, env, sky, gl, graph, guiada?.cielo]);
 
   // Cámaras.
   const controls = useRef<OrbitControls | null>(null);
@@ -515,7 +526,9 @@ function SceneContent({
     overlay.setObserver(camera === "conductor" ? driver?.v.id : undefined);
   }, [overlay, camera, driver]);
 
-  useFrame((_, delta) => {
+  const puntoImpacto = useMemo(() => graph.root.getObjectByName("punto_impacto") ?? null, [graph]);
+
+  useFrame((state, delta) => {
     clock.tick(Math.min(delta, 0.1), performance.now());
     const t = clock.get().t;
     graph.update(t);
@@ -537,9 +550,23 @@ function SceneContent({
         p.group.visible = r > 0.02 && (p.mode === "trayectoria" || p.mode === "a_bordo_visible");
       }
       pintura?.setOpacity(1 - r);
+      // La lluvia cae en vertical: vista desde arriba se confunde con la pintura del croquis.
+      if (precipitation) precipitation.object.visible = r > 0.98;
+      if (puntoImpacto && guiada.marcas) puntoImpacto.visible = guiada.marcas();
       const pose = guiada.pose(t);
       if (pose) {
         applyPose(persp, pose);
+        const [cx, cy] = guiada.centro?.() ?? [0.5, 0.5];
+        const { width: w, height: h } = state.size;
+        if (Math.abs(cx - 0.5) < 1e-3 && Math.abs(cy - 0.5) < 1e-3) {
+          if (persp.view?.enabled) persp.clearViewOffset();
+        } else {
+          // Una imagen virtual más ancha (o más alta) con el punto en su centro, de la que se
+          // muestra la ventana donde ese punto cae en (cx, cy).
+          const fw = w * (1 + 2 * Math.abs(cx - 0.5));
+          const fh = h * (1 + 2 * Math.abs(cy - 0.5));
+          persp.setViewOffset(fw, fh, cx > 0.5 ? 0 : fw - w, cy > 0.5 ? 0 : fh - h, w, h);
+        }
         return;
       }
     }

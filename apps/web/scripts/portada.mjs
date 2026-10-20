@@ -123,12 +123,12 @@ if (check) {
   });
   mkdirSync(OUT, { recursive: true });
 
-  /** Abre la portada en `calidad=alta`, sin texto ni capas encima, con el 3D listo. */
+  /** Abre la portada en `calidad=media`, sin texto ni capas encima, con el 3D listo. */
   async function abrir(viewport, escala) {
     const page = await browser.newPage({ viewport, deviceScaleFactor: escala });
     const errores = [];
     page.on("pageerror", (e) => errores.push(String(e)));
-    await page.goto(`${URL_BASE}/?calidad=alta`, { waitUntil: "networkidle" });
+    await page.goto(`${URL_BASE}/?calidad=media`, { waitUntil: "networkidle" });
     await page.addStyleTag({
       content: `header, footer, nav, [data-velo], [data-testid="portada"] .pagina, [role="note"],
         [data-testid="lecturas"], [data-testid="cuadro-portada"], nextjs-portal { display: none !important; }`,

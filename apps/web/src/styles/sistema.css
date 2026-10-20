@@ -28,7 +28,7 @@
     --fuente: "Anybody Variable", ui-sans-serif, system-ui, sans-serif;
     --t-lanzamiento: clamp(2.5rem, 6vw, 5.75rem);
     --t-capitulo: clamp(2rem, 4vw, 3.6rem);
-    --t-letra: clamp(5rem, 14vw, 12rem);
+    --t-letra: clamp(3.5rem, 12vw, 12rem);
     --t-titulo: clamp(1.9rem, 3.6vw, 3rem);
     --t-subtitulo: 1.375rem;
     --t-cuerpo: 1.0625rem;
@@ -160,6 +160,14 @@
   .t-letra,
   .t-titulo {
     text-wrap: balance;
+  }
+  /* Los titulares son anchos: una palabra larga («Atropellamiento:») no debe desbordar una columna
+     angosta. Solo se parte si no cabe; donde hace falta dividir con guion, la columna lo pide
+     (`hyphens-auto`), porque en titulares cortos el guion se ve como error («cal-cula»). */
+  .t-lanzamiento,
+  .t-capitulo,
+  .t-titulo {
+    overflow-wrap: break-word;
   }
   .t-lanzamiento {
     font-size: var(--t-lanzamiento);
@@ -355,6 +363,10 @@
   /* Barras de borde a borde (encabezado): vidrio sin radio. */
   .vidrio.barra {
     border-radius: 0;
+    /* El encabezado sobre la escena: más opaco que un panel, para que el texto que pasa debajo al
+       hacer scroll no se lea a través. */
+    background:
+      var(--efecto-vidrio-oscuro-background), color-mix(in srgb, var(--fondo) 88%, transparent);
   }
 
   /* ---------- Evidencia ---------- */

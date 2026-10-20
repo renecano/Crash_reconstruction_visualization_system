@@ -130,7 +130,21 @@ export function estimacionTexto(p: Parametro, lang: Lang = "es"): string {
       : `La evidencia lleva este dato hasta el límite del modelo (${fmtNumber(e.mejor)}${unit}), así que no cabe bien con lo demás. Conviene revisar los datos.`;
   }
   const mejor = en ? "best fit" : "mejor ajuste";
-  return `${fmtNumber(e.p10)}–${fmtNumber(e.p90)}${unit} (${mejor} ${fmtNumber(e.mejor)}${unit})`;
+  return `${rangoTexto(e.p10, e.p90, unit, lang)} (${mejor} ${signo(e.mejor)}${unit})`;
+}
+
+/** Un número con el signo menos tipográfico (−), no el guion. */
+function signo(v: number): string {
+  return fmtNumber(v).replace(/^-/, "−");
+}
+
+/**
+ * Un intervalo legible: «12–18 km/h»; con negativos, «−88° a −83°» («to» en inglés), porque
+ * «-88–-83°» no se lee.
+ */
+export function rangoTexto(a: number, b: number, unit: string, lang: Lang = "es"): string {
+  if (a < 0 || b < 0) return `${signo(a)}${unit} ${lang === "en" ? "to" : "a"} ${signo(b)}${unit}`;
+  return `${fmtNumber(a)}–${fmtNumber(b)}${unit}`;
 }
 
 /** Datos inciertos del Monte Carlo en palabras: qué dato, de quién, unidad y decimales. */

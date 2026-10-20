@@ -64,14 +64,14 @@ export default function RecorridoPage({ lang }: { lang: Lang }) {
             aria-labelledby={`${e.id}-titulo`}
             className="grid scroll-mt-24 gap-6 border-t border-linea pt-8 lg:grid-cols-12"
           >
-            <div className="flex flex-col gap-3 lg:col-span-4">
+            <div className="flex flex-col gap-3 lg:col-span-5">
               <p className="t-cota text-texto-3">{e.id}</p>
-              <h2 id={`${e.id}-titulo`} className="t-titulo">
+              <h2 id={`${e.id}-titulo`} className="t-titulo text-[clamp(1.6rem,2.4vw,2.25rem)]">
                 {e.titulo[lang]}
               </h2>
               <p className="t-cuerpo text-texto-2">{e.pregunta[lang]}</p>
             </div>
-            <div className="flex flex-col gap-8 lg:col-span-8">
+            <div className="flex flex-col gap-8 lg:col-span-7">
               {e.graficas.map((g, i) => (
                 <GraficaVista key={i} g={g} lang={lang} />
               ))}

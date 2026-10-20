@@ -10,7 +10,6 @@
  */
 import {
   FIXTURE_NAMES,
-  fixtureTitle,
   loadFixture,
   loadResultado,
   type EscenaSpec,
@@ -69,6 +68,7 @@ import { Lecturas, useClockState } from "./lecturas";
 import { PeoplePanel } from "./people-panel";
 import { ResultPanel } from "./result-panel";
 import { Traza } from "./traza";
+import { tituloEscena } from "@/i18n/vocabulario";
 
 const T = textos(
   {
@@ -586,7 +586,7 @@ export function VisorEscena({
             {hayPropia ? <option value="propia">{t.propia}</option> : null}
             {FIXTURE_NAMES.map((n) => (
               <option key={n} value={n}>
-                {fixtureTitle(n)}
+                {tituloEscena(n, lang)}
               </option>
             ))}
           </select>
@@ -627,7 +627,8 @@ export function VisorEscena({
           ) : (
             <div className="t-nota grid h-full place-items-center">{t.cargando}</div>
           )}
-          {dibujo && clock && !error ? <Lecturas clock={clock} resultado={dibujo} /> : null}
+          {/* Las lecturas toman el resultado completo cuando llega: ΔV con su intervalo. */}
+          {dibujo && clock && !error ? <Lecturas clock={clock} resultado={r ?? dibujo} /> : null}
           {comparar ? (
             <span className="t-nota vidrio absolute top-3 right-3 px-3 py-1 text-texto">
               {t.original}
@@ -692,8 +693,37 @@ export function VisorEscena({
 
       {clock && dibujo ? <TrazaConReloj clock={clock} resultado={dibujo} /> : null}
 
+      {/* Primero lo que pasó y qué cambia con otra hipótesis; después la evidencia, las
+          personas, las exportaciones y los ajustes de dibujo. */}
+      {calculando ? (
+        <p role="status" data-testid="calculo-completo" className="t-nota">
+          {t.calculando}
+        </p>
+      ) : null}
+      {r ? <ResultPanel resultado={r} supuestosEntorno={env.supuestos} spec={spec} /> : null}
+      {r ? (
+        <HypothesisPanel
+          spec={spec}
+          resultado={r}
+          hipotesis={hipotesis}
+          onChange={(lista) => setHyp({ escena, lista })}
+        />
+      ) : null}
+      {r ? <EvidencePanel resultado={r} /> : null}
+      {r ? (
+        <PeoplePanel resultado={r} people={people?.escena === escena ? people.data : null} />
+      ) : null}
+      <ExportPanel
+        api={exportApi}
+        clock={clock}
+        legend={legend}
+        nombre={escena === "propia" ? "escena-propia" : escena}
+        informe={{ spec, resultado: r, supuestosEntorno: env.supuestos, completo: !calculando }}
+      />
       <details className="border-t border-linea pt-4">
-        <summary className="t-interfaz cursor-pointer">{t.ajustes}</summary>
+        <summary className="t-interfaz flex min-h-11 cursor-pointer items-center">
+          {t.ajustes}
+        </summary>
         <div className="mt-4 flex flex-wrap items-end gap-4">
           <label className="t-nota flex flex-col gap-1">
             {t.calidad}
@@ -748,34 +778,6 @@ export function VisorEscena({
           ) : null}
         </div>
       </details>
-
-      <ExportPanel
-        api={exportApi}
-        clock={clock}
-        legend={legend}
-        nombre={escena === "propia" ? "escena-propia" : escena}
-        informe={{ spec, resultado: r, supuestosEntorno: env.supuestos, completo: !calculando }}
-      />
-
-      {calculando ? (
-        <p role="status" data-testid="calculo-completo" className="t-nota">
-          {t.calculando}
-        </p>
-      ) : null}
-
-      {r ? <ResultPanel resultado={r} supuestosEntorno={env.supuestos} spec={spec} /> : null}
-      {r ? <EvidencePanel resultado={r} /> : null}
-      {r ? (
-        <HypothesisPanel
-          spec={spec}
-          resultado={r}
-          hipotesis={hipotesis}
-          onChange={(lista) => setHyp({ escena, lista })}
-        />
-      ) : null}
-      {r ? (
-        <PeoplePanel resultado={r} people={people?.escena === escena ? people.data : null} />
-      ) : null}
     </div>
   );
 }

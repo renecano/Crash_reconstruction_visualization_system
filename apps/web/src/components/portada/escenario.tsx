@@ -21,12 +21,15 @@ import type { Guiada } from "@croquis/viewer/react";
 import dynamic from "next/dynamic";
 import { useEffect, useMemo, useState, type MutableRefObject } from "react";
 import { Lecturas } from "@/components/visor/lecturas";
-import { poseCamara, revelado, tiempoEscena } from "./camara";
+import { centroPantalla, conMarcas, poseCamara, revelado, tiempoEscena } from "./camara";
 
 const SceneViewer = dynamic(() => import("@croquis/viewer/react").then((m) => m.SceneViewer), {
   ssr: false,
   loading: () => null,
 });
+
+/** Cielo y niebla de la portada: entre asfalto-noche y asfalto-mojado (tokens de la marca). */
+const CIELO = "#101316";
 
 /** La noche con lluvia de la apertura: solo cambia el dibujo, no la reconstrucción (ADR 0020). */
 const AMBIENTE = {
@@ -163,6 +166,11 @@ function Escena3D({
     () => ({
       pose: () => poseCamara(progreso.current, window.innerWidth / Math.max(1, window.innerHeight)),
       revelado: () => revelado(progreso.current),
+      centro: () =>
+        centroPantalla(progreso.current, window.innerWidth / Math.max(1, window.innerHeight)),
+      marcas: () => conMarcas(progreso.current),
+      // La noche de la portada: el asfalto-noche de la marca, no el azul del cielo del visor.
+      cielo: CIELO,
     }),
     [progreso],
   );
@@ -186,7 +194,7 @@ function Escena3D({
         />
       </div>
       {enImpacta && listo ? (
-        <div className="pointer-events-none absolute inset-0 pt-20 pr-[max(3rem,4vw)]">
+        <div className="pointer-events-none absolute inset-0 pt-28 pr-[max(3rem,4vw)] md:pt-20">
           <div className="relative h-full w-full">
             <Lecturas clock={clock} resultado={resultado} lado="derecha" />
           </div>

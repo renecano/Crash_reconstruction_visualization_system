@@ -9,7 +9,7 @@
  *   preguntas respondidas, croquis abierto, corrección en el croquis y reconstrucción visible).
  */
 import type { EscenaSpec } from "@croquis/scene-schema";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useIdioma, useTextos } from "@/i18n/cliente";
 import { registrarE9 } from "@/lib/e9";
 import { useEnLinea } from "@/lib/en-linea";
@@ -174,14 +174,13 @@ export function FlujoApp({
     setEstado((s) => ({ ...s, spec: next }));
   }, []);
 
-  const titulo = useMemo(() => t.pasos[paso], [t, paso]);
-
   return (
     <div className="flex flex-col gap-10" data-testid="flujo" data-paso={paso}>
+      {/* Un H1 por paso: al cambiar de paso se anuncia y la página dice dónde está. */}
+      <h1 className="t-titulo carril" aria-live="polite">
+        {t.titulos[paso]}
+      </h1>
       <PasosDelFlujo actual={paso} alcanzado={alcanzado} onIr={ir} />
-      <h2 className="sr-only" aria-live="polite">
-        {titulo}
-      </h2>
       {error ? (
         <p role="alert" data-testid="error" className="t-interfaz border-l-2 border-texto pl-4">
           {error}

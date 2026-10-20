@@ -84,4 +84,31 @@ test.describe("demo sin red", () => {
     expect(failed).toEqual([]);
     expect(errors).toEqual([]);
   });
+
+  test("con el service worker activo y con red, cada página es la suya; sin red, el inicio en su idioma", async ({
+    page,
+    context,
+  }) => {
+    await page.goto("/");
+    await page.evaluate(async () => (await navigator.serviceWorker.ready).scope);
+    // Recargar páginas en inglés, con parámetros o sin precargar no debe abrir la portada.
+    await page.goto("/en/cuenta");
+    await expect(page.locator("html")).toHaveAttribute("lang", "en");
+    await expect(page.getByRole("heading", { level: 1 })).toHaveText("Tell what happened");
+    await page.goto("/cuenta?paso=falta");
+    await expect(page.getByTestId("flujo")).toBeVisible();
+    await page.goto("/e9");
+    await expect(page.getByTestId("e9-iniciar")).toBeVisible();
+    await page.goto("/en/medicion");
+    await expect(page.getByTestId("medicion-empezar")).toBeVisible();
+
+    // Sin red, una página sin precargar abre el inicio en su idioma.
+    await context.setOffline(true);
+    await page.goto("/e9");
+    await expect(page.locator("html")).toHaveAttribute("lang", "es-MX");
+    await expect(page.getByTestId("portada")).toBeVisible();
+    await page.goto("/en/e9");
+    await expect(page.locator("html")).toHaveAttribute("lang", "en");
+    await expect(page.getByTestId("portada")).toBeVisible();
+  });
 });

@@ -114,8 +114,26 @@ export function PasoUbica({
   return (
     <div className="grid gap-10 lg:grid-cols-12">
       <div className="flex flex-col gap-4 lg:col-span-8">
-        <p className="t-cuerpo text-texto-2">{tf.ayuda}</p>
+        <p className="t-interfaz text-texto-2">{tf.ayuda}</p>
+        {/* El croquis primero (en el celular, sin bajar): es lo que se toca en este paso. */}
+        <div
+          className="overflow-hidden rounded-panel"
+          data-tema="papel"
+          data-testid="croquis-flujo"
+        >
+          <Croquis
+            spec={spec}
+            onChange={cambiar}
+            showFinal={showFinal}
+            selectedId={selected}
+            onSelect={setSelected}
+            textos={textosCroquis}
+          />
+        </div>
         <div className="flex flex-wrap items-center gap-4">
+          <button type="button" data-testid="ver-3d" className="boton-principal" onClick={onVer}>
+            {tf.ver}
+          </button>
           <button
             type="button"
             className="boton-secundario min-h-11 px-4"
@@ -125,11 +143,12 @@ export function PasoUbica({
           >
             {t.deshacer}
           </button>
-          <label className="t-interfaz flex items-center gap-2">
+          <label className="t-interfaz flex min-h-11 cursor-pointer items-center gap-3">
             <input
               type="checkbox"
               checked={showFinal}
               onChange={(e) => setShowFinal(e.target.checked)}
+              className="h-5 w-5 accent-[var(--accion)]"
             />
             {t.finales}
           </label>
@@ -147,7 +166,8 @@ export function PasoUbica({
               <li>{t.guia.arrastrar}</li>
               <li>{t.guia.girar}</li>
               <li>{t.guia.final}</li>
-              <li>{t.guia.deshacerAtajo}</li>
+              {/* El atajo de teclado no aplica en pantallas táctiles. */}
+              <li className="[@media(hover:none)]:hidden">{t.guia.deshacerAtajo}</li>
             </ol>
             <div>
               <button type="button" className="boton-secundario min-h-11 px-4" onClick={cerrarGuia}>
@@ -156,27 +176,8 @@ export function PasoUbica({
             </div>
           </section>
         ) : null}
-        <div
-          className="overflow-hidden rounded-panel"
-          data-tema="papel"
-          data-testid="croquis-flujo"
-        >
-          <Croquis
-            spec={spec}
-            onChange={cambiar}
-            showFinal={showFinal}
-            selectedId={selected}
-            onSelect={setSelected}
-            textos={textosCroquis}
-          />
-        </div>
       </div>
       <div className="flex flex-col gap-8 lg:col-span-4">
-        <div>
-          <button type="button" data-testid="ver-3d" className="boton-principal" onClick={onVer}>
-            {tf.ver}
-          </button>
-        </div>
         <CallesReales spec={spec} onApply={cambiar} />
       </div>
     </div>

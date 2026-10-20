@@ -13,13 +13,12 @@ import type { EscenaSpec, Resultado } from "@croquis/scene-schema";
 import { formatTime } from "@croquis/viewer";
 import Link from "next/link";
 import { useCallback, useEffect, useRef, useState, useSyncExternalStore } from "react";
-import { RelatoConCitas } from "@/components/relato/relato-con-citas";
 import { Cota } from "@/components/sitio/cota";
-import { Legend } from "@/components/legend";
 import { Logotipo } from "@/components/sitio/logo";
 import { useIdioma, useTextos } from "@/i18n/cliente";
 import { opcionEtiqueta, preguntaVista } from "@/lib/mensajes";
 import { reconstruirEnNavegador, withSpeed } from "@/lib/reconstruct-client";
+import { velocidadEn } from "@/lib/telemetria";
 import type { Pregunta } from "@/lib/relato-api";
 import {
   CAPITULOS,
@@ -31,6 +30,7 @@ import {
   velo,
   type Capitulo,
 } from "./camara";
+import { CitasACampos } from "./citas-a-campos";
 import { CroquisAMano } from "./croquis-a-mano";
 import { Escenario } from "./escenario";
 import { TEXTOS_PORTADA } from "./textos";
@@ -234,9 +234,12 @@ export function Portada({ datos }: { datos: DatosPortada }) {
       </section>
     );
   };
+  // La letra del acrónimo con su palabra (C — Cuenta…): la letra sola, a lo ancho, puede leerse
+  // como un bloque (la I).
   const letra = (c: Capitulo, l: string) => (
-    <p aria-hidden="true" className="t-letra text-texto/90 mb-2 select-none" data-letra={c}>
-      {l}
+    <p aria-hidden="true" className="mb-2 flex items-baseline gap-4 select-none" data-letra={c}>
+      <span className="t-letra text-texto/90">{l}</span>
+      <span className="t-subtitulo text-texto-2">{t.capitulos[c]}</span>
     </p>
   );
   const columna = "carril flex max-w-2xl flex-col gap-5";
@@ -265,8 +268,21 @@ export function Portada({ datos }: { datos: DatosPortada }) {
       />
 
       {/* Leyenda obligatoria sobre la escena (PLAN §10) y atribución de la calle (ODbL). */}
-      <div className="pointer-events-none fixed top-16 left-0 z-20 max-w-[min(34rem,100vw)] px-4 py-2 md:top-auto md:right-14 md:bottom-3 md:left-auto md:text-right">
-        <Legend tone="clara" atribucion={spec.lugar.red_vial?.atribucion} />
+      {/* Compacta para no tapar la escena: en el celular, bajo el encabezado; en escritorio, en un
+          panel de vidrio abajo a la derecha. La leyenda completa va en el pie y en cada exportación. */}
+      <p
+        role="note"
+        className="t-nota pointer-events-none fixed inset-x-0 top-16 z-20 px-4 py-1 text-texto md:hidden"
+      >
+        {t.leyendaCorta} · <span data-testid="atribucion-mapa">{t.osmCorta}</span>
+      </p>
+      <div className="vidrio pointer-events-none fixed right-14 bottom-3 z-20 hidden px-3 py-2 md:block">
+        <p role="note" className="t-nota text-texto">
+          {t.leyendaCorta}
+          <span className="block" data-testid="atribucion-mapa">
+            {t.osmCorta}
+          </span>
+        </p>
       </div>
 
       <nav
@@ -371,9 +387,7 @@ export function Portada({ datos }: { datos: DatosPortada }) {
           <div className={columna}>
             {letra("r", "R")}
             <h2 className="t-capitulo">{t.r.titulo}</h2>
-            <div lang="es-MX">
-              <RelatoConCitas texto={datos.relato} spec={spec} />
-            </div>
+            <CitasACampos texto={datos.relato} spec={spec} lang={lang} />
             <p className="t-nota">{t.r.cuerpo}</p>
           </div>,
         )}
@@ -439,7 +453,8 @@ export function Portada({ datos }: { datos: DatosPortada }) {
           <div className={columna}>
             {letra("i", "I")}
             <h2 className="t-capitulo">{t.i.titulo}</h2>
-            <p className="t-cuerpo text-texto-2">{t.i.cuerpo}</p>
+            {/* En el celular el capítulo es alto: el control y el tiempo van primero. */}
+            <p className="t-cuerpo hidden text-texto-2 md:block">{t.i.cuerpo}</p>
             <p className="t-cota text-4xl" data-testid="tiempo-portada" aria-live="off">
               {t.i.tiempo} = {formatTime(tiempo)}
             </p>
@@ -457,7 +472,7 @@ export function Portada({ datos }: { datos: DatosPortada }) {
                 step={1}
                 value={kmh}
                 onChange={(e) => setKmh(Number(e.target.value))}
-                className="w-full accent-[var(--accion)]"
+                className="h-11 w-full cursor-pointer accent-[var(--accion)]"
                 data-testid="control-velocidad"
               />
               <span className="t-nota" aria-live="polite">
@@ -470,6 +485,7 @@ export function Portada({ datos }: { datos: DatosPortada }) {
                 {resumenImpacto(resultado, (x, d) => fmt(x, d), t.i.resultado)}
               </p>
             ) : null}
+            {reducido ? <p className="t-nota">{t.i.fija}</p> : null}
           </div>,
         )}
 
@@ -498,6 +514,9 @@ export function Portada({ datos }: { datos: DatosPortada }) {
               <h2 className="t-capitulo">{t.pruebas.titulo}</h2>
               <Cota
                 etiqueta={t.pruebas.e1}
+                mejor="mayor"
+                sentido={t.pruebas.mas}
+                textoMejor={t.pruebas.mejor}
                 filas={[
                   {
                     nombre: t.pruebas.croquis,
@@ -516,6 +535,9 @@ export function Portada({ datos }: { datos: DatosPortada }) {
               />
               <Cota
                 etiqueta={t.pruebas.e3}
+                mejor="menor"
+                sentido={t.pruebas.menos}
+                textoMejor={t.pruebas.mejor}
                 filas={[
                   {
                     nombre: t.pruebas.croquis,
@@ -538,6 +560,9 @@ export function Portada({ datos }: { datos: DatosPortada }) {
             <div className="flex flex-col gap-6">
               <Cota
                 etiqueta={t.pruebas.e5}
+                mejor="menor"
+                sentido={t.pruebas.menos}
+                textoMejor={t.pruebas.mejor}
                 filas={[
                   {
                     nombre: t.pruebas.croquis,
@@ -612,19 +637,21 @@ export function Portada({ datos }: { datos: DatosPortada }) {
   );
 }
 
-/** ΔV de A y B y a qué distancia del impacto queda A, para el texto bajo el control de velocidad. */
+/**
+ * Lo que cambia con la velocidad de A, para el texto bajo el control: a qué velocidad llega al
+ * impacto (después de frenar) y a qué distancia del punto de impacto queda.
+ */
 function resumenImpacto(
   r: Resultado,
   fmt: (x: number, d: number) => string,
-  texto: (dvA: string, dvB: string, reposo: string) => string,
+  texto: (impacto: string, reposo: string) => string,
 ): string {
   const a = r.vehiculos.find((v) => v.rol === "A");
-  const b = r.vehiculos.find((v) => v.rol === "B");
   const p = r.punto_impacto;
-  if (!a || !b || !p) return "";
+  if (!a || !p) return "";
   const n = a.trayectoria.t.length - 1;
   const reposo = Math.hypot(a.trayectoria.x[n]! - p.x, a.trayectoria.y[n]! - p.y);
-  return texto(fmt(a.delta_v_kmh, 0), fmt(b.delta_v_kmh, 0), fmt(reposo, 1));
+  return texto(fmt(velocidadEn(a.trayectoria, 0), 0), fmt(reposo, 1));
 }
 
 /** El relato que «se escribe en vivo» al llegar al capítulo C (completo con movimiento reducido). */
@@ -697,7 +724,7 @@ function Comparador({
         value={corte}
         onChange={(e) => setCorte(Number(e.target.value))}
         aria-label={etiqueta}
-        className="w-full accent-[var(--accion)]"
+        className="h-11 w-full cursor-pointer accent-[var(--accion)]"
       />
       <figcaption className="t-nota">{fuente}</figcaption>
     </figure>

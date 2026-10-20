@@ -18,14 +18,16 @@ const T = textos(
     vehiculo: (rol: string) => `Vehículo ${rol}`,
     rapidez: "rapidez",
     dv: "ΔV",
-    intervalo: (a: string, b: string) => `80 %: ${a}–${b}`,
+    ahora: "ahora",
+    intervalo: (a: string, b: string) => `(${a}–${b}, 80 %)`,
   },
   {
     etiqueta: "Readouts for each vehicle",
     vehiculo: (rol: string) => `Vehicle ${rol}`,
     rapidez: "speed",
     dv: "ΔV",
-    intervalo: (a: string, b: string) => `80%: ${a}–${b}`,
+    ahora: "now",
+    intervalo: (a: string, b: string) => `(${a}–${b}, 80%)`,
   },
 );
 
@@ -59,8 +61,8 @@ export function Lecturas({
     <section
       aria-label={t.etiqueta}
       data-testid="lecturas"
-      className={`vidrio pointer-events-none absolute top-3 flex max-w-[calc(100%-1.5rem)] flex-wrap gap-x-6 gap-y-2 px-4 py-3 ${
-        lado === "derecha" ? "right-3" : "left-3"
+      className={`vidrio pointer-events-none absolute top-2 flex max-w-[calc(100%-1rem)] flex-wrap gap-x-5 gap-y-1 px-3 py-2 md:top-3 md:gap-x-6 md:gap-y-2 md:px-4 md:py-3 ${
+        lado === "derecha" ? "right-2 md:right-3" : "left-2 md:left-3"
       }`}
     >
       {vehiculos.map((v) => {
@@ -68,13 +70,13 @@ export function Lecturas({
         return (
           <div key={v.id} className="flex flex-col" data-testid={`lectura-${v.id}`}>
             <span className="t-nota text-texto">{t.vehiculo(v.rol)}</span>
-            <span className="t-cota text-2xl leading-tight text-texto">
+            <span className="t-cota text-xl leading-tight text-texto md:text-2xl">
               {fmtNumber(velocidadEn(v.trayectoria, state.t), 0)}
-              <span className="t-nota ml-1">km/h</span>
+              <span className="t-nota ml-1">km/h {t.ahora}</span>
             </span>
             <span className="t-nota cifras">
               {t.dv} {fmtNumber(v.delta_v_kmh, 0)} km/h
-              {r ? ` · ${t.intervalo(fmtNumber(r.p10, 0), fmtNumber(r.p90, 0))}` : ""}
+              {r ? ` ${t.intervalo(fmtNumber(r.p10, 0), fmtNumber(r.p90, 0))}` : ""}
             </span>
           </div>
         );

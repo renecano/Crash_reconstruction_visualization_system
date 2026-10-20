@@ -40,8 +40,21 @@ export function tramosDeEvidencia(spec: EscenaSpec, largo: number): Tramo[] {
   return merged;
 }
 
-export function RelatoConCitas({ texto, spec }: { texto: string; spec: EscenaSpec }) {
-  const tramos = tramosDeEvidencia(spec, texto.length);
+export function RelatoConCitas({
+  texto,
+  spec,
+  tramos: elegidos,
+  className = "t-cuerpo",
+}: {
+  texto: string;
+  spec: EscenaSpec;
+  /** Solo estas citas (por omisión, todas las de la escena). */
+  tramos?: Tramo[];
+  className?: string;
+}) {
+  const tramos = elegidos
+    ? [...elegidos].sort((a, b) => a.inicio - b.inicio)
+    : tramosDeEvidencia(spec, texto.length);
   const partes: { texto: string; cita: boolean }[] = [];
   let i = 0;
   for (const t of tramos) {
@@ -51,7 +64,7 @@ export function RelatoConCitas({ texto, spec }: { texto: string; spec: EscenaSpe
   }
   if (i < texto.length) partes.push({ texto: texto.slice(i), cita: false });
   return (
-    <p data-testid="relato-citas" className="t-cuerpo whitespace-pre-wrap">
+    <p data-testid="relato-citas" className={`${className} whitespace-pre-wrap`}>
       {partes.map((p, k) =>
         p.cita ? (
           <mark key={k} className="cita bg-transparent text-texto">

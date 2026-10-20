@@ -27,15 +27,24 @@ export function PasosDelFlujo({
     <nav aria-label={t.etiqueta} data-testid="pasos">
       <ol className="grid grid-cols-4 gap-2 sm:gap-4">
         {PASOS.map((p, i) => {
+          // Hecho = antes del actual; disponible = después, pero ya se puede abrir (sin visitar).
           const estado =
-            i === iActual ? "actual" : i < iActual || i <= iAlcanzado ? "hecho" : "pendiente";
+            i === iActual
+              ? "actual"
+              : i < iActual
+                ? "hecho"
+                : i <= iAlcanzado
+                  ? "disponible"
+                  : "pendiente";
           const alcanzable = i <= iAlcanzado;
           const raya =
             estado === "actual"
               ? "bg-texto"
               : estado === "hecho"
                 ? "raya-discontinua opacity-80"
-                : "raya-discontinua opacity-25";
+                : estado === "disponible"
+                  ? "raya-discontinua opacity-50"
+                  : "raya-discontinua opacity-25";
           return (
             <li key={p} className="flex flex-col gap-2">
               <span aria-hidden="true" className={`block h-[3px] w-full ${raya}`} />
@@ -45,7 +54,7 @@ export function PasosDelFlujo({
                 aria-current={estado === "actual" ? "step" : undefined}
                 onClick={() => onIr(p)}
                 data-testid={`paso-${p}`}
-                className={`t-interfaz text-left disabled:cursor-default ${
+                className={`t-interfaz flex min-h-11 items-center text-left disabled:cursor-default ${
                   estado === "actual"
                     ? "text-texto"
                     : alcanzable
@@ -54,10 +63,7 @@ export function PasosDelFlujo({
                 }`}
               >
                 <span>{t[p]}</span>
-                <span className="sr-only">
-                  {" "}
-                  ({estado === "actual" ? t.actual : estado === "hecho" ? t.hecho : t.pendiente})
-                </span>
+                <span className="sr-only"> ({t[estado]})</span>
               </button>
             </li>
           );

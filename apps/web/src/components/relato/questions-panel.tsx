@@ -42,6 +42,13 @@ const T = textos(
   },
 );
 
+/** La unidad de una pregunta numérica, por su id (velocidad en km/h; distancias en metros). */
+export function unidadPregunta(id: string): string | null {
+  if (id.startsWith("velocidad")) return "km/h";
+  if (id.includes("distancia")) return "m";
+  return null;
+}
+
 export interface QuestionsPanelProps {
   preguntas: Pregunta[];
   /** Escena actual: con ella se nombran los vehículos de las preguntas en inglés. */
@@ -125,16 +132,20 @@ export function QuestionsPanel({
                   })}
                 </div>
               ) : (
-                <input
-                  id={`q-${p.id}`}
-                  type="text"
-                  inputMode={
-                    p.id.startsWith("velocidad") || p.id.includes("distancia") ? "decimal" : "text"
-                  }
-                  className="campo max-w-xs"
-                  value={values[p.id] ?? ""}
-                  onChange={(e) => set(p.id, e.target.value)}
-                />
+                // Los datos numéricos llevan su unidad a la vista (km/h o m) para no adivinarla.
+                <span className="flex items-center gap-3">
+                  <input
+                    id={`q-${p.id}`}
+                    type="text"
+                    inputMode={unidadPregunta(p.id) ? "decimal" : "text"}
+                    className="campo max-w-xs"
+                    value={values[p.id] ?? ""}
+                    onChange={(e) => set(p.id, e.target.value)}
+                  />
+                  {unidadPregunta(p.id) ? (
+                    <span className="t-interfaz text-texto-2">{unidadPregunta(p.id)}</span>
+                  ) : null}
+                </span>
               )}
             </li>
           );

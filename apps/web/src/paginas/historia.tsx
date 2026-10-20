@@ -36,7 +36,7 @@ const T = textos(
     serieAlt: (a: string, aa: number, b: string, bb: number) =>
       `Serie anual de hechos de tránsito, de ${a} en ${aa} a ${b} en ${bb}`,
     fuente: "Fuente:",
-    abiertos: "datos abiertos",
+    abiertos: "descarga",
     resultado: "Resultado:",
     noBasta: "Un croquis a mano no basta. Una animación genérica, tampoco",
     noBasta1:
@@ -121,7 +121,7 @@ const T = textos(
     serieAlt: (a: string, aa: number, b: string, bb: number) =>
       `Annual series of road traffic incidents, from ${a} in ${aa} to ${b} in ${bb}`,
     fuente: "Source:",
-    abiertos: "open data",
+    abiertos: "download",
     resultado: "Result:",
     noBasta: "A hand drawing is not enough. Neither is a generic animation",
     noBasta1:

@@ -4,6 +4,13 @@ import { textos } from "@/i18n";
 export const TEXTOS_FLUJO = textos(
   {
     titulo: "Cuenta qué pasó",
+    // El título de cada paso (H1 de la página mientras se está en él).
+    titulos: {
+      cuenta: "Cuenta qué pasó",
+      falta: "¿Qué falta?",
+      ubica: "Acomoda el croquis",
+      simula: "Tu reconstrucción",
+    },
     pasos: {
       etiqueta: "Pasos",
       cuenta: "Cuenta",
@@ -12,6 +19,7 @@ export const TEXTOS_FLUJO = textos(
       simula: "Simula",
       actual: "paso actual",
       hecho: "hecho",
+      disponible: "disponible",
       pendiente: "todavía no",
     },
     cuenta: {
@@ -85,6 +93,12 @@ export const TEXTOS_FLUJO = textos(
   },
   {
     titulo: "Tell what happened",
+    titulos: {
+      cuenta: "Tell what happened",
+      falta: "What's missing?",
+      ubica: "Arrange the sketch",
+      simula: "Your reconstruction",
+    },
     pasos: {
       etiqueta: "Steps",
       cuenta: "Tell",
@@ -93,6 +107,7 @@ export const TEXTOS_FLUJO = textos(
       simula: "Simulate",
       actual: "current step",
       hecho: "done",
+      disponible: "available",
       pendiente: "not yet",
     },
     cuenta: {
@@ -110,7 +125,7 @@ export const TEXTOS_FLUJO = textos(
         "Offline: reading the narrative needs internet. Offline you can open the example scenes in the viewer or build one in the sketch.",
       entiende: "What is already understood",
       entiendeNota:
-        "With Mexican Spanish rules, on your device. When it reads your narrative, the AI completes it. The extractor reads Spanish best.",
+        "Read on your device with rules for Mexican Spanish; when you send it, the AI fills in the rest. It reads Spanish best.",
       entiendeVacio:
         "Nothing yet. Write which vehicles there were, where they were going and what happened.",
       vehiculos: (n: number) => (n === 1 ? "1 vehicle" : `${n} vehicles`),

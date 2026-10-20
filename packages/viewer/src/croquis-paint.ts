@@ -11,9 +11,15 @@ type Vec2 = { x: number; y: number };
 
 /** Ancho de los trazos de pintura (m): el de una raya de carril. */
 export const PAINT_WIDTH = 0.15;
-/** Trazo y espacio de lo discontinuo (m): la trayectoria y dónde quedó. */
+/** Trazo y espacio de lo discontinuo (m): la trayectoria. */
 const DASH = 1.0;
 const GAP = 0.8;
+/**
+ * Trazo y espacio del contorno de dónde quedó: más cortos que los de la trayectoria, para que un
+ * auto de 4 m se lea como un rectángulo discontinuo y no como rayas sueltas.
+ */
+const DASH_CONTORNO = 0.45;
+const GAP_CONTORNO = 0.25;
 
 function emptyMesh(): Mesh2D {
   return { positions: [], indices: [] };
@@ -31,13 +37,20 @@ function segment(m: Mesh2D, a: Vec2, b: Vec2, w: number): void {
 }
 
 /** Una polilínea, continua o discontinua. */
-function polyline(m: Mesh2D, pts: readonly Vec2[], w: number, dashed: boolean): void {
+function polyline(
+  m: Mesh2D,
+  pts: readonly Vec2[],
+  w: number,
+  dashed: boolean,
+  dash = DASH,
+  gap = GAP,
+): void {
   if (!dashed) {
     for (let i = 0; i + 1 < pts.length; i++) segment(m, pts[i]!, pts[i + 1]!, w);
     return;
   }
   let on = true;
-  let left = DASH;
+  let left = dash;
   for (let i = 0; i + 1 < pts.length; i++) {
     let a = pts[i]!;
     const b = pts[i + 1]!;
@@ -52,7 +65,7 @@ function polyline(m: Mesh2D, pts: readonly Vec2[], w: number, dashed: boolean): 
       left -= step;
       if (left <= 1e-6) {
         on = !on;
-        left = on ? DASH : GAP;
+        left = on ? dash : gap;
       }
     }
   }
@@ -75,7 +88,7 @@ function outline(
     y: p.y + u.y * s * (largo / 2) + n.y * t * (ancho / 2),
   });
   const pts = [c(1, 1), c(-1, 1), c(-1, -1), c(1, -1), c(1, 1)];
-  polyline(m, pts, PAINT_WIDTH, dashed);
+  polyline(m, pts, PAINT_WIDTH, dashed, DASH_CONTORNO, GAP_CONTORNO);
   // Una raya al frente: de qué lado va la defensa delantera.
   segment(m, c(0.78, 0.8), c(0.78, -0.8), PAINT_WIDTH);
 }

@@ -1,4 +1,6 @@
 import {
+  FIXTURE_NAMES,
+  fixtureTitle,
   LEGEND_TEXT,
   legendFor,
   legendLines,
@@ -7,8 +9,10 @@ import {
 } from "@croquis/scene-schema";
 import { AIRBAG_SOURCE, airbagDecision } from "@croquis/viewer";
 import { describe, expect, it } from "vitest";
+import { tituloEscena } from "@/i18n/vocabulario";
 import {
   AIRBAG_SOURCE_EN,
+  rangoTexto,
   textosCroquisEn,
   airbagTexto,
   campoIncierto,
@@ -284,5 +288,18 @@ describe("marca de las exportaciones", () => {
     expect(svg).toContain(`seed ${spec.meta.semilla}`);
     expect(svg).toContain("Contains information from OpenStreetMap");
     expect(svg).not.toMatch(/semilla|Contiene|peritaje/);
+  });
+
+  it("los intervalos con negativos se escriben con el signo menos y «a»", () => {
+    expect(rangoTexto(12, 18, " km/h")).toBe("12–18 km/h");
+    expect(rangoTexto(-88, -83, "°")).toBe("−88° a −83°");
+    expect(rangoTexto(-88, -83, "°", "en")).toBe("−88° to −83°");
+  });
+
+  it("todas las escenas canónicas tienen título en inglés", () => {
+    for (const n of FIXTURE_NAMES) {
+      expect(tituloEscena(n, "en")).toMatch(/^[A-Z]/);
+      expect(tituloEscena(n, "es")).toBe(fixtureTitle(n));
+    }
   });
 });

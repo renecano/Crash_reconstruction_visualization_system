@@ -49,7 +49,7 @@
   - solo la copia visible recibe el puntero;
   - con teclado, enfocar algo de un capítulo lleva el scroll a ese capítulo.
 - **Primero el cuadro, después el 3D:**
-  - cada capítulo tiene un cuadro fijo (horizontal y vertical) que renderiza el visor real (`scripts/portada.mjs`, en calidad alta);
+  - cada capítulo tiene un cuadro fijo (horizontal y vertical) que renderiza el visor real (`scripts/portada.mjs`, en calidad media: la que recibe un celular, para que el paso al 3D en vivo no sea un salto hacia abajo);
   - el cuadro viene en el HTML del servidor y el 3D se monta cuando la página está quieta y ya cargó el resultado;
   - con movimiento reducido no hay 3D ni suavizado: se ve el cuadro fijo de cada capítulo, y el control de velocidad sigue dando su resultado en cifras;
   - la leyenda ilustrativa y la atribución de OSM están siempre sobre la escena.

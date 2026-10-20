@@ -16,7 +16,13 @@ import { TEXTOS_FLUJO } from "./textos";
 
 export function PasoSimula({ spec, onVolver }: { spec: EscenaSpec; onVolver: () => void }) {
   const t = useTextos(TEXTOS_FLUJO).simula;
-  const [controles, setControles] = useState<ControlesVisor>(CONTROLES_INICIALES);
+  // Se abre con la cámara que sigue a los vehículos y reproduciendo: desde el primer cuadro se ve
+  // el choque (la cámara libre arranca lejos y antes del impacto).
+  const [controles, setControles] = useState<ControlesVisor>({
+    ...CONTROLES_INICIALES,
+    camara: "cinematica",
+    auto: true,
+  });
   return (
     <div className="flex flex-col gap-6">
       <div>
