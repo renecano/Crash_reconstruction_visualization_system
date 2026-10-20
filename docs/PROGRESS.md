@@ -57,8 +57,12 @@ Reglas de trabajo: `CLAUDE.md`. Especificación: `PLAN.md`.
   - **Franjas:** de 40 cm, separadas 40 cm.
   - **Largo:** el de la Tabla 8 (6 m en calle primaria).
   - **Orillas:** siguen continuas (5.5.1), lo que cierra el pendiente del ADR 0037.
+- **F11, paso 6i hecho** (rama `feat/f8-raya-alto`, ADR 0044): raya de alto (M-6) en los accesos que controla un semáforo o un alto, según `aplica_a` y las fases.
+  - **Dónde:** a 1.20 m de la vía que cruza o del paso peatonal, en los carriles del sentido del vehículo.
+  - **En qué escenas:** las de plantilla y las del mapa, en el croquis y en el visor.
+  - **Límite:** en una recta no se dibuja.
+  - **Referencias visuales:** se regeneraron en CI (Linux) las de `lateral_interseccion` e `interseccion_toluca` y se revisaron; las otras 22 salieron idénticas byte por byte.
 - **Pendientes menores:**
-  - raya de alto (M-6) con semáforo o alto. Falta decidir qué accesos controla cada dispositivo; ver ADR 0042;
   - prompt v4 con el semáforo peatonal;
   - texturas triplanares, después de E9.
 - **Siguiente paso concreto:** F11 queda en lo que depende de René: E9 (el kit está listo) y la computadora de demo (E6 en alta y ultra). Mientras tanto, prompt v4. Diseño previsto:
@@ -1907,7 +1911,11 @@ Las ramas van una encima de otra y se fusionan en este orden, cada una con su PR
   - hasta dos vueltas en 50 s;
   - cabecera `X-Croquis-Overpass` con la instancia que contestó.
 - **Pruebas del servidor:** 7 (segunda vuelta y tiempo total nuevas).
-- **Pendiente:** correr `eval/osm_produccion.mjs` con la ruta nueva desplegada. Opción si las públicas siguen así: NextGIS (gratis, pero pide cuenta y llave; solo René).
+- **Ruta nueva desplegada:**
+  - **Radio 146 m:** 200 al primer intento, a los 45.87 s, desde VK Maps; las dos calles que faltan quedan fuera del radio (146.7 m y 147.7 m).
+  - **Radio 145 m:** tres 502.
+  - **Conclusión:** funciona, pero las públicas fallan seguido (`osm_produccion_v3_*.json`).
+- **Opción:** NextGIS (gratis, pero pide cuenta y llave; solo René).
 
 **Pasos 6g y 6h — Rayas de OSM en el croquis 2D y paso peatonal según la NOM-034 (2026-10-19, rama `feat/f8-paso-peatonal-nom`, ADR 0041 y 0042):**
 

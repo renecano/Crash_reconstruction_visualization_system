@@ -1,0 +1,46 @@
+{
+  "name": "osm_produccion",
+  "generated_at": "2026-10-19T18:13:46.701Z",
+  "git_commit": "a1ea9f6",
+  "url": "https://croquis-sage.vercel.app/api/osm?lat=19.278975&lon=-99.6539869&radio=146",
+  "escena": "toluca_carranza_juarez",
+  "radio_m": 146,
+  "intentos": [
+    {
+      "fecha": "2026-10-19T18:13:46.524Z",
+      "status": 200,
+      "segundos": 45.87,
+      "x_vercel_cache": "MISS",
+      "x_croquis_cache": "miss",
+      "instancia_overpass": "maps.mail.ru",
+      "error": null
+    }
+  ],
+  "intentos_hasta_200": 1,
+  "llego_a_overpass": true,
+  "repeticion": {
+    "fecha": "2026-10-19T18:13:46.676Z",
+    "status": 200,
+    "segundos": 0.15,
+    "x_vercel_cache": "HIT",
+    "x_croquis_cache": "miss",
+    "instancia_overpass": "maps.mail.ru",
+    "error": null
+  },
+  "repeticion_desde_cache": true,
+  "comparacion": {
+    "datos_osm": "2026-10-19T18:11:51Z",
+    "datos_osm_extracto": "2026-10-16T18:30:24Z",
+    "elementos": 70,
+    "elementos_extracto": 80,
+    "vias": 20,
+    "vias_extracto": 22,
+    "vias_solo_en_produccion": [],
+    "vias_solo_en_extracto": [
+      32250746,
+      842864223
+    ],
+    "elementos_identicos": false
+  },
+  "cumple": false
+}

@@ -7,7 +7,7 @@
  * el solver entregó. Al no depender del renderer se prueba en Node (posiciones, giros, fases) y
  * funciona igual con WebGPU o con el respaldo WebGL 2.
  */
-import { roadLayout, sceneLayout } from "@croquis/croquis-2d";
+import { roadLayout, sceneCrosswalks, sceneLayout, stopLines } from "@croquis/croquis-2d";
 import type { EscenaSpec, Resultado } from "@croquis/scene-schema";
 import { longitudM, velocidadKmh } from "@croquis/scene-schema";
 import {
@@ -51,7 +51,6 @@ import {
 import {
   buildMapRoadGeometry,
   buildRoadGeometry,
-  crosswalkLength,
   CURB_HEIGHT,
   dashPatternFor,
   markingsFor,
@@ -401,19 +400,7 @@ export function buildSceneGraph(
   const lugar = spec.lugar;
   const layout = roadLayout(lugar);
   const mainWidth = layout.strips[0]?.width ?? layout.arcs[0]?.width ?? 7;
-  const cwLength = crosswalkLength(
-    lugar.tipo_via.valor,
-    lugar.carriles_por_sentido.valor,
-    lugar.banquetas?.valor ?? false,
-  );
-  const crosswalks = (lugar.dispositivos ?? [])
-    .filter((d) => d.tipo === "paso_peatonal")
-    .map((d) => ({
-      center: { x: d.posicion.x, y: d.posicion.y },
-      roadHeading: d.orientacion_deg ?? 0,
-      roadWidth: mainWidth,
-      length: cwLength,
-    }));
+  const crosswalks = sceneCrosswalks(lugar, mainWidth);
   const devTipos = (lugar.dispositivos ?? []).map((d) => d.tipo);
   const limite = (lugar.dispositivos ?? []).find((d) => d.limite_velocidad)?.limite_velocidad;
   const dobleSentido = lugar.sentidos.valor === "doble_sentido";
@@ -422,11 +409,14 @@ export function buildSceneGraph(
   const dash = dashPatternFor(lugar.tipo_via.valor, limite ? velocidadKmh(limite) : undefined);
   // `osmSoloCalzada` (diagnóstico de E6): la red del mapa como antes de ADR 0039, solo calzada.
   const soloCalzada = opts.diag?.osmSoloCalzada === true;
+  // Rayas de alto en los accesos que controla un semáforo o un alto (ADR 0044).
+  const stops = stopLines(spec, layout, mapa?.vias, crosswalks);
   const road = mapa
     ? buildMapRoadGeometry(
         soloCalzada ? mapa.vias.map((v) => ({ ...v, carriles: undefined })) : mapa.vias,
         {
           crosswalks,
+          stopLines: stops,
           banquetas: !soloCalzada && (lugar.banquetas?.valor ?? false),
           guarniciones: !soloCalzada && (lugar.guarniciones?.valor ?? false),
           dash,
@@ -436,6 +426,7 @@ export function buildSceneGraph(
         dobleSentido,
         banquetas: lugar.banquetas?.valor ?? false,
         crosswalks,
+        stopLines: stops,
         dash,
         markings: markingsFor(dobleSentido, devTipos),
         guarniciones: lugar.guarniciones?.valor ?? false,
