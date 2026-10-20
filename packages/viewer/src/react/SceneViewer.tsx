@@ -15,6 +15,9 @@ import {
   CubeCamera,
   DirectionalLight,
   FogExp2,
+  Group,
+  Mesh,
+  MeshBasicMaterial,
   HemisphereLight,
   Object3D,
   PerspectiveCamera,
@@ -50,7 +53,8 @@ import { PostEffects } from "./PostEffects";
 import { loadEnvTextures, TEXTURE_BASE_URL, texturesWanted } from "../env-textures";
 import { attachPeople, variantsFor, type PeopleAttachment } from "../people-scene";
 import { buildGhostLayer, GHOST_COLORS } from "../ghosts";
-import { buildSceneGraph } from "../scene-graph";
+import { buildCroquisPaint } from "../croquis-paint";
+import { buildSceneGraph, mesh2DToGeometry } from "../scene-graph";
 import type { ViewerExportApi } from "../export/capture";
 import { seek } from "../timeline";
 import { seatHeight } from "../vehicle-geometry";
@@ -87,6 +91,19 @@ export interface SceneViewerProps {
   ambiente?: AmbienteVisual;
   /** Recibe la API de exportación (cuadros y glTF) cuando el visor está montado; null al salir. */
   onExport?: (api: ViewerExportApi | null) => void;
+  /**
+   * Escena guiada desde afuera (portada, PLAN §11.3). Con ella, la cámara sigue `pose` en cada
+   * cuadro (en vez del modo de `camera`), el croquis se pinta sobre el asfalto y `revelado`
+   * (0 = solo la pintura, 1 = la escena 3D) levanta los vehículos y las personas desde el piso.
+   * Sin ella, el visor se comporta como siempre.
+   */
+  guiada?: Guiada;
+}
+
+/** Control externo del visor para la portada; ver `SceneViewerProps.guiada`. */
+export interface Guiada {
+  pose: (t: number) => CameraPose | null;
+  revelado: () => number;
 }
 
 /** Ambiente que se puede forzar en la vista. */
@@ -160,6 +177,7 @@ function SceneContent({
   onPeople,
   hipotesis,
   onExport,
+  guiada,
 }: Omit<SceneViewerProps, "renderer" | "onRendererInfo" | "onError" | "className"> & {
   env: EnvironmentSettings;
 }): ReactElement {
@@ -398,7 +416,7 @@ function SceneContent({
     const persp = cam as PerspectiveCamera;
     persp.far = 5000;
     persp.near = 0.1;
-    if (camera !== "libre") return undefined;
+    if (camera !== "libre" || guiada) return undefined;
     const start = freeCameraStart(resultado);
     applyPose(persp, start);
     const oc = new OrbitControls(persp, gl.domElement);
@@ -411,7 +429,7 @@ function SceneContent({
       oc.dispose();
       controls.current = null;
     };
-  }, [camera, cam, gl, resultado]);
+  }, [camera, cam, gl, resultado, guiada]);
 
   const driver = useMemo(() => {
     const v = resultado.vehiculos.find((x) => x.id === driverVehicleId) ?? resultado.vehiculos[0];
@@ -427,6 +445,52 @@ function SceneContent({
       }) + 0.62;
     return { v, eye };
   }, [resultado, driverVehicleId]);
+
+  // El croquis pintado sobre el asfalto (solo en la escena guiada de la portada).
+  const pintura = useMemo(() => {
+    if (!guiada) return null;
+    const p = buildCroquisPaint(resultado);
+    const group = new Group();
+    group.name = "croquis_pintado";
+    const blanco = new MeshBasicMaterial({
+      color: "#F4F2EC",
+      transparent: true,
+      depthWrite: false,
+      fog: false,
+    });
+    const naranja = new MeshBasicMaterial({
+      color: "#FF6A13",
+      transparent: true,
+      depthWrite: false,
+      fog: false,
+    });
+    const geoLineas = mesh2DToGeometry(p.lines, 0.03);
+    const geoImpacto = mesh2DToGeometry(p.impact, 0.035);
+    group.add(new Mesh(geoLineas, blanco), new Mesh(geoImpacto, naranja));
+    group.renderOrder = 3;
+    return {
+      group,
+      setOpacity(o: number) {
+        blanco.opacity = o;
+        naranja.opacity = o;
+        group.visible = o > 0.001;
+      },
+      dispose() {
+        geoLineas.dispose();
+        geoImpacto.dispose();
+        blanco.dispose();
+        naranja.dispose();
+      },
+    };
+  }, [guiada, resultado]);
+  useEffect(() => {
+    if (!pintura) return undefined;
+    graph.root.add(pintura.group);
+    return () => {
+      graph.root.remove(pintura.group);
+      pintura.dispose();
+    };
+  }, [graph, pintura]);
 
   // Lluvia y granizo (F8a): caja centrada en la acción, partículas según el nivel de calidad.
   const precipitation = useMemo(() => {
@@ -458,6 +522,27 @@ function SceneContent({
     precipitation?.setTime(t);
     for (const g of ghosts) g.update(t);
     const persp = cam as PerspectiveCamera;
+    if (guiada) {
+      // Revelado: la escena se levanta desde la pintura (después de colocarla en el instante t).
+      const r = Math.min(1, Math.max(0, guiada.revelado()));
+      const sy = Math.max(1e-3, r);
+      // Aplastados del todo no se dibujan: la pintura del croquis queda sola sobre el asfalto.
+      for (const v of graph.vehicles) {
+        v.group.scale.y = sy;
+        v.group.visible = r > 0.02;
+      }
+      for (const p of graph.persons) {
+        p.group.scale.y = sy;
+        // Respeta a quien va oculto a bordo (scene-graph decide su visibilidad por modo).
+        p.group.visible = r > 0.02 && (p.mode === "trayectoria" || p.mode === "a_bordo_visible");
+      }
+      pintura?.setOpacity(1 - r);
+      const pose = guiada.pose(t);
+      if (pose) {
+        applyPose(persp, pose);
+        return;
+      }
+    }
     if (camera === "libre") controls.current?.update();
     else if (camera === "cenital") applyPose(persp, overheadCamera(resultado));
     else if (camera === "conductor" && driver)

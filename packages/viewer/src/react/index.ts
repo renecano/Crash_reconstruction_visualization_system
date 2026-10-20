@@ -2,6 +2,7 @@
 export {
   SceneViewer,
   type AmbienteVisual,
+  type Guiada,
   type PerfSample,
   type RendererInfo,
   type RendererPreference,

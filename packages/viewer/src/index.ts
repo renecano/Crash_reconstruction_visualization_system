@@ -40,6 +40,7 @@ export {
   vehicleMaterials,
 } from "./scene-graph";
 export * from "./airbag";
+export { buildCroquisPaint, PAINT_WIDTH, type CroquisPaint } from "./croquis-paint";
 export {
   applyVehicleDamage,
   CONTACT_DURATION_S,
