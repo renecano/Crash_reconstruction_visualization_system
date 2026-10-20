@@ -10,6 +10,7 @@ import { useSearchParams } from "next/navigation";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { textos } from "@/i18n";
 import { useIdioma, useTextos } from "@/i18n/cliente";
+import { Desplazable } from "@/components/sitio/desplazable";
 import {
   configDesdeUrl,
   frecuenciaPantalla,
@@ -547,7 +548,7 @@ export function MedicionApp() {
                 : t.noCumple}
             </p>
           ) : null}
-          <div className="overflow-x-auto">
+          <Desplazable etiqueta={t.resultados}>
             <table className="w-full min-w-[44rem] border-collapse text-left">
               <thead>
                 <tr className="t-nota border-b border-linea">
@@ -580,7 +581,7 @@ export function MedicionApp() {
                 ))}
               </tbody>
             </table>
-          </div>
+          </Desplazable>
           <p className="t-nota">{t.nota}</p>
           <button
             type="button"

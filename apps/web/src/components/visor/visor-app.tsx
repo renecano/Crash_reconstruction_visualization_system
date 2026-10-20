@@ -702,7 +702,7 @@ export function VisorEscena({
               onChange={(e) =>
                 onControl("calidad", e.target.value === "auto" ? null : e.target.value)
               }
-              className="campo w-auto"
+              className="campo w-auto max-w-full"
               aria-label={t.calidad}
             >
               <option value="auto">
@@ -722,7 +722,7 @@ export function VisorEscena({
               onChange={(e) =>
                 onControl("renderer", e.target.value === "auto" ? null : e.target.value)
               }
-              className="campo w-auto"
+              className="campo w-auto max-w-full"
               aria-label={t.render}
             >
               <option value="auto">{t.renderAuto}</option>

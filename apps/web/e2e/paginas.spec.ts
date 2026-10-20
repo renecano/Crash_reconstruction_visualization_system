@@ -15,12 +15,19 @@ function errores(page: Page): string[] {
   return out;
 }
 
-test("la portada enlaza a la historia y al recorrido técnico", async ({ page }) => {
+test("el encabezado enlaza a la historia y al recorrido técnico", async ({ page, isMobile }) => {
+  const nav = page.getByRole("banner");
+  // En el celular los enlaces viven en el menú.
+  const abrirMenu = async () => {
+    if (isMobile) await nav.getByRole("button", { name: "Menú" }).click();
+  };
   await page.goto("/");
-  await page.getByRole("link", { name: "Por qué existe Croquis" }).click();
+  await abrirMenu();
+  await nav.getByRole("link", { name: "Por qué existe", exact: true }).click();
   await expect(page).toHaveURL(/\/historia$/);
   await page.goto("/");
-  await page.getByRole("link", { name: /Recorrido técnico/ }).click();
+  await abrirMenu();
+  await nav.getByRole("link", { name: "Cómo se mide", exact: true }).click();
   await expect(page).toHaveURL(/\/recorrido$/);
 });
 
@@ -102,3 +109,28 @@ test("demo «Tú eres…»: elige un relato, contesta una ronda y lo ve en 3D si
   expect(api).toEqual([]);
   expect(errs).toEqual([]);
 });
+
+/** Ninguna página se desplaza de lado: todo cabe a lo ancho, también en el celular. */
+for (const ruta of [
+  "/",
+  "/cuenta",
+  "/demo",
+  "/croquis",
+  "/visor?escena=interseccion_toluca",
+  "/recorrido",
+  "/historia",
+  "/e9",
+  "/medicion",
+  "/en",
+  "/en/croquis",
+  "/en/recorrido",
+]) {
+  test(`sin desplazamiento horizontal: ${ruta}`, async ({ page }) => {
+    await page.goto(ruta);
+    await page.waitForLoadState("networkidle");
+    const sobra = await page.evaluate(
+      () => document.documentElement.scrollWidth - document.documentElement.clientWidth,
+    );
+    expect(sobra).toBeLessThanOrEqual(0);
+  });
+}

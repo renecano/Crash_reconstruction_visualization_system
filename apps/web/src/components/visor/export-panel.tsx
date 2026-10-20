@@ -273,7 +273,7 @@ export function ExportPanel({ api, clock, legend: legendEs, nombre, informe }: E
           <select
             value={formato}
             onChange={(e) => setFormato(e.target.value as VideoFormat)}
-            className="campo w-auto"
+            className="campo w-auto max-w-full"
             data-testid="export-video-formato"
           >
             <option value="mp4">MP4</option>

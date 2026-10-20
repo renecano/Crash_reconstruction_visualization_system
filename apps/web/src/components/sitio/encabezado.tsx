@@ -75,7 +75,7 @@ export function Encabezado({ sobreEscena = false }: { sobreEscena?: boolean }) {
             href={rutaEn(otro, pathname)}
             hrefLang={otro === "es" ? "es-MX" : "en"}
             lang={otro === "es" ? "es-MX" : "en"}
-            aria-label={t.sitio.idiomaEtiqueta}
+            title={t.sitio.idiomaEtiqueta}
             className="t-interfaz text-texto-2 no-underline hover:text-texto"
           >
             {t.sitio.idioma}

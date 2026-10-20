@@ -94,6 +94,13 @@
     line-height: 1.55;
   }
 
+  /* Los hijos de una cuadrícula pueden encogerse: sin esto, un renglón largo (el JSON, una tabla)
+     ensancha la columna y la página entera se desplaza de lado en el celular. Especificidad cero:
+     cualquier utilidad lo cambia. */
+  :where(.grid) > * {
+    min-width: 0;
+  }
+
   ::selection {
     background: color-mix(in srgb, var(--accion) 38%, transparent);
     color: var(--texto);

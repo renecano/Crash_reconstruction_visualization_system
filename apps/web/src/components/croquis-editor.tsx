@@ -203,7 +203,7 @@ export function CroquisEditor({ initial = "alcance" }: { initial?: FixtureName }
 
   return (
     <div className="grid gap-10 lg:grid-cols-12">
-      <section aria-label={t.croquis} className="flex flex-col gap-4 lg:col-span-7">
+      <section aria-label={t.croquis} className="flex min-w-0 flex-col gap-4 lg:col-span-7">
         <div className="flex flex-wrap items-end gap-4">
           {fromRelato ? (
             <span data-testid="escena-relato" className="t-interfaz border-l-2 border-texto pl-3">
@@ -214,7 +214,7 @@ export function CroquisEditor({ initial = "alcance" }: { initial?: FixtureName }
             <span>{t.escena}</span>
             <select
               data-testid="scene-select"
-              className="campo w-auto"
+              className="campo w-full max-w-xl"
               value={name}
               onChange={(e) => pick(e.target.value as FixtureName)}
             >
@@ -264,7 +264,7 @@ export function CroquisEditor({ initial = "alcance" }: { initial?: FixtureName }
         />
       </section>
 
-      <section aria-label={t.json} className="flex flex-col gap-4 lg:col-span-5">
+      <section aria-label={t.json} className="flex min-w-0 flex-col gap-4 lg:col-span-5">
         <div className="flex flex-wrap items-center gap-2">
           <h2 className="t-subtitulo mr-auto">EscenaSpec</h2>
           <button

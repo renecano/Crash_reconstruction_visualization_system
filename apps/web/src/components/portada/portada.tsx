@@ -303,8 +303,10 @@ export function Portada({ datos }: { datos: DatosPortada }) {
               className="h-auto w-[min(78vw,420px)]"
             />
             <p className="t-lanzamiento">
-              {t.lema.split(/(?<=\.)\s+/).map((frase) => (
+              {/* Un renglón por frase; el espacio entre ellas se conserva para lectores de pantalla. */}
+              {t.lema.split(/(?<=\.)\s+/).map((frase, i) => (
                 <span key={frase} className="block">
+                  {i > 0 ? " " : null}
                   {frase}
                 </span>
               ))}
@@ -348,8 +350,9 @@ export function Portada({ datos }: { datos: DatosPortada }) {
               className="campo t-cuerpo min-h-40 whitespace-pre-wrap"
               lang="es-MX"
               data-testid="relato-en-vivo"
-              aria-label={datos.relato}
             >
+              {/* Para lectores de pantalla, el relato completo; a la vista, el que se va escribiendo. */}
+              <span className="sr-only">{datos.relato}</span>
               <span aria-hidden="true">{datos.relato.slice(0, caracteres)}</span>
               <span
                 aria-hidden="true"

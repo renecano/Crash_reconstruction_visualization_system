@@ -30,6 +30,7 @@
     "zod": "catalog:"
   },
   "devDependencies": {
+    "@axe-core/playwright": "4.14.0",
     "@playwright/test": "catalog:",
     "@serwist/turbopack": "9.5.13",
     "@tailwindcss/turbopack": "catalog:",
@@ -39,11 +40,13 @@
     "@types/react": "catalog:",
     "@types/react-dom": "catalog:",
     "@vitejs/plugin-react": "catalog:",
+    "chrome-launcher": "1.2.2",
     "esbuild": "0.28.2",
     "eslint": "catalog:",
     "eslint-config-next": "16.4.0",
     "fast-check": "catalog:",
     "jsdom": "catalog:",
+    "lighthouse": "13.5.0",
     "mediabunny": "1.61.6",
     "pdfjs-dist": "6.4.299",
     "serwist": "9.5.13",

@@ -110,7 +110,7 @@ export function CallesReales({ spec, onApply, fetcher }: CallesRealesProps) {
               aria-label={t.radio}
               value={radio}
               onChange={(e) => setRadio(Number(e.target.value))}
-              className="campo w-auto"
+              className="campo w-auto max-w-full"
             >
               {[100, 150, 200].map((r) => (
                 <option key={r} value={r}>

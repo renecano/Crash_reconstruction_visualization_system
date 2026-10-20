@@ -6,6 +6,7 @@ import { textos } from "@/i18n";
 import { useIdioma, useTextos } from "@/i18n/cliente";
 import { fmtNumber } from "@/lib/format-number";
 import { mensaje } from "@/lib/mensajes";
+import { Desplazable } from "@/components/sitio/desplazable";
 import {
   AIRBAG_SOURCE_EN,
   airbagTexto,
@@ -107,7 +108,7 @@ export function ResultPanel({
   const incV = new Map((inc?.vehiculos ?? []).map((v) => [v.id, v]));
   return (
     <section className="t-interfaz flex flex-col gap-6" aria-label={t.region}>
-      <div className="overflow-x-auto">
+      <Desplazable etiqueta={t.vehiculos}>
         <table className="w-full border-collapse text-left">
           <caption className="t-subtitulo mb-3 text-left">{t.vehiculos}</caption>
           <thead>
@@ -169,7 +170,7 @@ export function ResultPanel({
           {inc ? t.notaRangos(inc.validas, inc.semilla) : t.nominales}
           {spec ? t.notaBolsas(lang === "en" ? AIRBAG_SOURCE_EN : AIRBAG_SOURCE) : ""}
         </p>
-      </div>
+      </Desplazable>
       {inc && inc.campos.length > 0 ? (
         <details data-testid="incertidumbre" className="border-t border-linea pt-3">
           <summary className="t-interfaz cursor-pointer">{t.inciertos}</summary>

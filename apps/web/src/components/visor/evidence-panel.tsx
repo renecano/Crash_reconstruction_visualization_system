@@ -5,6 +5,7 @@ import { textos } from "@/i18n";
 import { useIdioma, useTextos } from "@/i18n/cliente";
 import { fmtNumber } from "@/lib/format-number";
 import { mensaje } from "@/lib/mensajes";
+import { Desplazable } from "@/components/sitio/desplazable";
 import {
   evidenceLabel,
   inicialTexto,
@@ -102,7 +103,7 @@ export function EvidencePanel({ resultado }: { resultado: Resultado }) {
       {inv && inv.evidencia.length > 0 ? (
         <>
           <p>{t.declarada(inv.evidencia.map((l) => evidenceLabel(l, roles, lang)).join(", "))}</p>
-          <div className="overflow-x-auto">
+          <Desplazable etiqueta={t.titulo}>
             <table className="w-full border-collapse text-left">
               <thead>
                 <tr className="border-b border-linea">
@@ -129,7 +130,7 @@ export function EvidencePanel({ resultado }: { resultado: Resultado }) {
                 ))}
               </tbody>
             </table>
-          </div>
+          </Desplazable>
           <p className="t-nota">{t.nota(inv.muestras, inv.semilla)}</p>
         </>
       ) : (

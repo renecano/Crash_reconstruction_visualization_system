@@ -7,6 +7,7 @@ import { textos } from "@/i18n";
 import { useTextos } from "@/i18n/cliente";
 import { reconstruirEnNavegador } from "@/lib/reconstruct-client";
 import { fmtNumber } from "@/lib/format-number";
+import { Desplazable } from "@/components/sitio/desplazable";
 
 const fmt = fmtNumber;
 
@@ -142,7 +143,7 @@ export function HypothesisPanel({
         <label className="flex flex-col gap-1">
           <span className="t-nota">{t.vehiculo}</span>
           <select
-            className="campo w-auto"
+            className="campo w-auto max-w-full"
             value={vehicleId}
             onChange={(e) => setVehicleId(e.target.value)}
           >
@@ -180,7 +181,7 @@ export function HypothesisPanel({
         </p>
       ) : null}
       {hipotesis.length > 0 ? (
-        <div className="overflow-x-auto">
+        <Desplazable etiqueta={t.leyenda}>
           <table data-testid="hipotesis-diferencias" className="w-full border-collapse text-left">
             <caption className="t-nota mb-2 text-left">{t.leyenda}</caption>
             <thead>
@@ -235,7 +236,7 @@ export function HypothesisPanel({
               );
             })}
           </table>
-        </div>
+        </Desplazable>
       ) : null}
     </section>
   );

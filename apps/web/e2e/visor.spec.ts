@@ -59,14 +59,13 @@ test.describe("visor 3D", () => {
   test("cambiar de cámara y de escena queda en la URL", async ({ page }) => {
     await page.goto("/visor?escena=glorieta");
     await waitReady(page);
-    await page.getByLabel("Cámara", { exact: true }).selectOption("cenital");
+    const camaras = page.getByRole("radiogroup", { name: "Cámara" });
+    await camaras.getByRole("radio", { name: "Cenital" }).click();
     await expect(page).toHaveURL(/camara=cenital/);
     await page.getByLabel("Escena", { exact: true }).selectOption("poste");
     await expect(page).toHaveURL(/escena=poste/);
     await waitReady(page);
-    await page
-      .getByLabel("Cámara", { exact: true })
-      .selectOption({ label: "Vista del conductor A" });
+    await camaras.getByRole("radio", { name: "Conductor A" }).click();
     await expect(page).toHaveURL(/camara=conductor-veh-a/);
   });
 
@@ -83,7 +82,11 @@ test.describe("visor 3D", () => {
     );
     expect(ragdolls).toHaveLength(1);
     expect(ragdolls[0]?.inBand).toBe(true);
-    await expect(page.getByLabel("Cámara", { exact: true })).toHaveValue("persona");
+    await expect(
+      page
+        .getByRole("radiogroup", { name: "Cámara" })
+        .getByRole("radio", { name: "Seguir a la persona" }),
+    ).toHaveAttribute("aria-checked", "true");
     await expect(page.getByTestId("personas")).toContainText("Proyección (Searle)");
     await expect(page.getByTestId("personas")).toContainText("dentro de la banda");
     await expect(page.getByTestId("visibilidad")).toContainText("el vehículo estacionado");
