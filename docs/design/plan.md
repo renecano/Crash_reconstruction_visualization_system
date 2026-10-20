@@ -264,3 +264,33 @@ Cada estilo por defecto de páginas generadas, comparado con este plan y con lo 
 | Texto de relleno de marketing («revoluciona», «potencia») | Medio. | El texto habla como persona (§11.1.7), con frases cortas que dicen qué hace el sistema y cuánto mide. Cada número enlaza a su fuente. |
 | Héroe con ilustración o video | — | El héroe es la escena real calculada en vivo; antes de cargar se ve un cuadro real del mismo visor, no una ilustración. |
 | Pila de tipografías genéricas (Inter o del sistema) | — | Anybody variable autoalojada, con el eje de ancho como voz de la marca (titulares anchos, lectura normal). |
+
+## 11. Revisión independiente (§11.7, paso 8; 2026-10-20)
+
+Un agente que no participó en el diseño revisó el build de producción con capturas a 1440, 1920, celular (Pixel 7) y movimiento reducido, contra §11, BRAND.md y este plan. Encontró 23 puntos. Qué se hizo con cada uno:
+
+| # | Hallazgo | Qué se hizo |
+| --- | --- | --- |
+| 1 | El service worker servía la portada en lugar de `/cuenta` y de las páginas `/en/…` al recargar | Corregido: las páginas sin precargar van a la red; el inicio en su idioma solo sin red. Prueba e2e nueva. |
+| 2 | En el celular la leyenda tapaba el texto y las lecturas | Leyenda compacta (dos renglones cortos) bajo el encabezado en el celular y en un panel de vidrio en escritorio; las lecturas bajan; encabezado más opaco al hacer scroll. |
+| 3 | La revelación no se leía: la acción quedaba detrás del texto | La proyección se desplaza (`setViewOffset`) para poner la acción del lado contrario al texto; contornos con trazos más cortos; sin lluvia mientras se ve el croquis pintado; cámara de «Impacta» más cerca y con menos cielo. |
+| 4 | «Simula» empezaba sin autos; lecturas tapaban; ΔV sin intervalo | «Simula» abre con la cámara que sigue a los vehículos y reproduciendo; lecturas compactas y con el resultado completo (ΔV con intervalo). |
+| 5 | Titulares de `/recorrido` desbordados | Columna más ancha y titular a la medida de la columna. |
+| 6 | La «I» se veía como un rectángulo | Cada letra lleva su palabra. |
+| 7 | Demasiado naranja en «Reconoce»; faltaban los campos | Cinco citas con su campo y valor; solo ellas van subrayadas. |
+| 8 | Las cotas no decían si más es mejor; la foto y el render no coincidían | Cada cota dice «menos es mejor»/«más es mejor» y marca el mejor valor con ★; el comparador usa la prueba 4389, con la misma vista en la foto y en el render. |
+| 9 | Lecturas contradictorias; el modo sin movimiento engañaba | «ahora» y «antes de frenar»; el resultado dice a qué velocidad llega A al impacto y dónde queda; aviso de imagen fija con movimiento reducido. |
+| 10 | «Una sola pregunta» contra varias en el flujo | «La pregunta que más importa»: pregunta primero lo que más cambia el resultado (PLAN §11.3 pide mostrar una). |
+| 11 | Jerarquía del flujo | Un H1 por paso; en «Ubica» el croquis va primero; el atajo Ctrl+Z no se muestra en pantallas táctiles; el riel distingue «hecho» de «disponible»; en el visor, resultados e hipótesis antes de exportar. |
+| 12 | `/demo` con tarjetas iguales | Lista sobre la retícula, cada caso con su croquis calculado. |
+| 13 | `/historia` repite la portada | **No se cambió.** Este plan (§6) define la historia como la versión extendida de la portada: el texto largo de cada letra. |
+| 14 | La «í» de Anybody se lee «i» a tamaño de lectura | Copia de Anybody con el acento de la «í» más grande y separado (`scripts/fuente.py`, OFL 1.1). |
+| 15 | Inglés poco natural y español sin marcar | Traducción al lado de los relatos, títulos de escena, niveles de calidad, intervalos con signo menos y frases corregidas. «narrative» se queda: es el término de todo el sitio. |
+| 16 | Cielo azul y pasto oliva fuera de los tokens | El cielo de la portada pasa a asfalto-noche. El suelo del visor **no se cambió**: es la escena física de cada caso, no interfaz. |
+| 17 | El 3D en vivo se veía peor que el cuadro fijo | Los cuadros fijos se renderizan en calidad media, la que recibe un celular. |
+| 18 | Abolladuras como ruido | Se vio con render por software (SwiftShader). En los cuadros fijos, renderizados con GPU, la zona de contacto se ve arrugada; se vuelve a revisar en la computadora de demo. |
+| 19 | Áreas táctiles menores de 44 px | Pasos del flujo, deslizadores, marcadores de la traza, casillas, ajustes del visor y enlaces del pie. |
+| 20 | Leyenda de escritorio sin velo | Panel de vidrio, texto a la izquierda. |
+| 21 | El anillo de impacto aparecía antes del croquis | Aparece a partir de «Ubica». |
+| 22 | Preguntas sin unidades | km/h o m junto al campo. |
+| 23 | Texto secundario sobre la escena | Concreto claro en las cotas sobre la escena. |

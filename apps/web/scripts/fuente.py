@@ -34,7 +34,8 @@ NOMBRE = "Anybody Croquis"
 
 
 def main() -> None:
-    f = TTFont(str(ORIGEN))
+    # Sin sello de fecha: la misma entrada da el mismo archivo, byte a byte.
+    f = TTFont(str(ORIGEN), recalcTimestamp=False)
     glifo = f["glyf"]["iacute"]
     assert glifo.isComposite(), "se esperaba la «í» compuesta de ı y el acento"
     acento = next(c for c in glifo.components if c.glyphName == "acute")
@@ -71,6 +72,7 @@ def main() -> None:
         )
         + "\n",
         encoding="utf-8",
+        newline="\n",
     )
     print(SALIDA)
 

@@ -131,7 +131,7 @@ if (check) {
     await page.goto(`${URL_BASE}/?calidad=media`, { waitUntil: "networkidle" });
     await page.addStyleTag({
       content: `header, footer, nav, [data-velo], [data-testid="portada"] .pagina, [role="note"],
-        [data-testid="lecturas"], [data-testid="cuadro-portada"], nextjs-portal { display: none !important; }`,
+        [data-testid="lecturas"], [data-testid="cuadro-portada"], .vidrio, nextjs-portal { display: none !important; }`,
     });
     await page.waitForFunction(() => window.__croquisReady === true, null, { timeout: 180000 });
     return { page, errores };
