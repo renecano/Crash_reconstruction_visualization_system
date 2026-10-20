@@ -9,8 +9,9 @@
 import type { EscenaSpec, Resultado } from "@croquis/scene-schema";
 import { longitudM } from "@croquis/scene-schema";
 import { Canvas, useFrame, useThree } from "@react-three/fiber";
-import { useEffect, useMemo, useRef, type ReactElement } from "react";
+import { useEffect, useMemo, useRef, useState, type ReactElement } from "react";
 import {
+  type Camera,
   Color,
   CubeCamera,
   DirectionalLight,
@@ -138,6 +139,8 @@ declare global {
     __croquisReady?: boolean;
     /** Restos horneados y agregados a la escena. */
     __croquisDebrisReady?: boolean;
+    /** Materiales de la escena compilados y la escena montada (ver `SceneContent`). */
+    __croquisCompiled?: boolean;
     /** Fantasmas de la hipótesis montados en la escena (e2e). */
     __croquisGhosts?: number;
     __croquisPeopleReady?: boolean;
@@ -528,6 +531,50 @@ function SceneContent({
 
   const puntoImpacto = useMemo(() => graph.root.getObjectByName("punto_impacto") ?? null, [graph]);
 
+  // Los materiales se compilan antes de que la escena entre al lienzo, con `compileAsync`, que
+  // cede el hilo principal entre objetos. Compilarlos en el primer cuadro congelaba la página
+  // varios segundos en un celular (ADR 0046). Va después del cielo, la niebla y los reflejos, que
+  // cambian los materiales. Se compila todo: también lo que la cámara aún no ve y lo que por
+  // ahora está oculto (los vehículos de la portada antes del revelado); visibilidad y recorte se
+  // restauran en cuanto termina la parte síncrona de la llamada, la que arma la lista de objetos.
+  const [compilado, setCompilado] = useState<typeof graph | null>(null);
+  useEffect(() => {
+    let alive = true;
+    window.__croquisCompiled = false;
+    const restaurar: Array<() => void> = [];
+    graph.root.traverse((o) => {
+      if (!o.visible) {
+        o.visible = true;
+        restaurar.push(() => (o.visible = false));
+      }
+      if ((o as Mesh).isMesh && o.frustumCulled) {
+        o.frustumCulled = false;
+        restaurar.push(() => (o.frustumCulled = true));
+      }
+    });
+    let compilacion: Promise<void>;
+    try {
+      compilacion = (
+        gl as unknown as { compileAsync(o: Object3D, c: Camera, s: Scene): Promise<void> }
+      ).compileAsync(graph.root, cam, scene);
+    } catch (err) {
+      compilacion = Promise.reject(err);
+    } finally {
+      for (const r of restaurar) r();
+    }
+    compilacion
+      // Si falla, el primer cuadro compila como antes.
+      .catch((err: unknown) => console.error("No se pudo compilar la escena por adelantado", err))
+      .finally(() => {
+        if (!alive) return;
+        setCompilado(graph);
+        window.__croquisCompiled = true;
+      });
+    return () => {
+      alive = false;
+    };
+  }, [graph, gl, cam, scene]);
+
   useFrame((state, delta) => {
     clock.tick(Math.min(delta, 0.1), performance.now());
     const t = clock.get().t;
@@ -581,7 +628,7 @@ function SceneContent({
 
   return (
     <>
-      <primitive object={graph.root} />
+      {compilado === graph ? <primitive object={graph.root} /> : null}
       <primitive object={lights} />
       {precipitation ? <primitive object={precipitation.object} /> : null}
     </>
@@ -635,6 +682,7 @@ function PerfProbe({ backend }: { backend: () => RendererInfo["backend"] | undef
       info.reset?.();
     }
     if (
+      !window.__croquisCompiled ||
       !window.__croquisDebrisReady ||
       !window.__croquisPeopleReady ||
       !window.__croquisTexturesReady

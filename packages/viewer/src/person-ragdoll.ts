@@ -21,6 +21,7 @@ import { loadRapier, mulberry32, type KinematicBox, type StaticCollider } from "
 import type { BoneSpec } from "./person-pose";
 import { dmath } from "@croquis/solver-ts";
 import { quatFromAxisAngle, slerp } from "./dthree";
+import { cedente } from "./ceder";
 
 export const RAGDOLL_DT = 1 / 60;
 export const RAGDOLL_MAX_SECONDS = 6;
@@ -319,7 +320,11 @@ export async function bakeRagdoll(input: RagdollInput, k: number): Promise<Ragdo
     let tRest = input.t0 + duration;
     let restSteps = 0;
     const q = new Quaternion();
+    const ceder = cedente();
     for (let st = 0; st < steps; st++) {
+      // Cede el hilo principal cada ~8 ms: el horneado no congela la página (ADR 0046).
+      const pausa = ceder();
+      if (pausa) await pausa;
       const t = input.t0 + st * RAGDOLL_DT;
       segs.forEach((seg, i) => {
         const tr = seg.body.translation();

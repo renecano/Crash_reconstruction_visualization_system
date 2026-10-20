@@ -17,6 +17,7 @@ import { sampleVehicle } from "./sample";
 import type { SceneGraph } from "./scene-graph";
 import { dmath } from "@croquis/solver-ts";
 import { quatFromAxisAngle, slerp } from "./dthree";
+import { cedente } from "./ceder";
 
 export const ROLL_DT = 1 / 60;
 export const ROLL_MAX_SECONDS = 8;
@@ -120,7 +121,11 @@ export async function bakeRollover(
     let rollAngle = 0;
     let maxTilt = 0;
     let prevUp = new Vector3(0, 1, 0);
+    const ceder = cedente();
     for (let st = 0; st < steps; st++) {
+      // Cede el hilo principal cada ~8 ms: el horneado no congela la página (ADR 0046).
+      const pausa = ceder();
+      if (pausa) await pausa;
       const tr = body.translation();
       const ro = body.rotation();
       frames.set([tr.x, tr.y, tr.z, ro.x, ro.y, ro.z, ro.w], st * 7);
