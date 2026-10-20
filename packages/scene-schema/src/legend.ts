@@ -15,6 +15,8 @@ export interface LegendInfo {
   hash?: string;
   /** Atribución de los datos del mapa, si la escena usa una vía de OpenStreetMap. */
   atribucion?: string;
+  /** Palabra antes de la semilla en el idioma de la exportación («semilla» por omisión). */
+  etiquetaSemilla?: string;
 }
 
 export function legendFor(spec: EscenaSpec): LegendInfo {
@@ -30,7 +32,10 @@ export function legendFor(spec: EscenaSpec): LegendInfo {
 
 /** Renglones de la marca para imágenes y documentos: texto, semilla y hash, y atribución. */
 export function legendLines(info: LegendInfo): string[] {
-  const ids = [`semilla ${info.semilla}`, ...(info.hash ? [`hash ${info.hash}`] : [])].join(" · ");
+  const ids = [
+    `${info.etiquetaSemilla ?? "semilla"} ${info.semilla}`,
+    ...(info.hash ? [`hash ${info.hash}`] : []),
+  ].join(" · ");
   return [info.texto, ids, ...(info.atribucion ? [info.atribucion] : [])];
 }
 

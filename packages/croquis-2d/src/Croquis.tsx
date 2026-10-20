@@ -420,8 +420,11 @@ export function Croquis({
         </text>
       ) : null}
       {/* Marca de reconstrucción ilustrativa: texto, y semilla con el hash de entradas. */}
-      {legendLines({ ...legendFor(shown), ...(textos?.leyenda ? { texto: textos.leyenda } : {}) })
-        .map((l, i) => (i === 1 && textos?.semilla ? l.replace(/^semilla/, textos.semilla) : l))
+      {legendLines({
+        ...legendFor(shown),
+        ...(textos?.leyenda ? { texto: textos.leyenda } : {}),
+        ...(textos?.semilla ? { etiquetaSemilla: textos.semilla } : {}),
+      })
         .slice(0, 2)
         .map((line, i) => (
           <text

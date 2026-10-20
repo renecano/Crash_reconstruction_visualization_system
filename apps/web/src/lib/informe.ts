@@ -24,6 +24,7 @@ import {
   evidenceLabel,
   inicialTexto,
   leyendaIdioma,
+  textosCroquisEn,
   lineasLeyenda,
   paramTexto,
   parametroInversion,
@@ -396,7 +397,9 @@ export async function informePdf(
     spec,
     resultado,
     supuestosEntorno,
-    croquisSvg: croquisSvg(spec).markup,
+    croquisSvg: croquisSvg(spec, {
+      textos: lang === "en" ? textosCroquisEn(spec) : undefined,
+    }).markup,
     hashEscena: await sha256Hex(JSON.stringify(spec)),
     generado: new Date(),
     lang,

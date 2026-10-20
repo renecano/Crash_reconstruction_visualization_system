@@ -5,7 +5,14 @@
  * Cada función recibe el idioma (`lang`, español por omisión). El español es el texto de siempre;
  * el inglés es su traducción para el sitio bajo `/en` (PLAN §11.5, ADR 0045).
  */
-import { LEGEND_TEXT, type LegendInfo, type Resultado } from "@croquis/scene-schema";
+import {
+  LEGEND_TEXT,
+  legendFor,
+  legendLines,
+  type EscenaSpec,
+  type LegendInfo,
+  type Resultado,
+} from "@croquis/scene-schema";
 import { dict, type Lang } from "@/i18n";
 import {
   CLASE as VOCAB_CLASE,
@@ -299,13 +306,24 @@ export function leyendaIdioma(legend: LegendInfo, lang: Lang = "es"): LegendInfo
   if (lang === "es") return legend;
   const texto = legend.texto === LEGEND_TEXT ? dict("en").leyenda.texto : legend.texto;
   const atribucion = legend.atribucion?.startsWith(OSM_ES) ? OSM_EN : legend.atribucion;
-  return { ...legend, texto, ...(atribucion ? { atribucion } : {}) };
+  return { ...legend, texto, etiquetaSemilla: "seed", ...(atribucion ? { atribucion } : {}) };
 }
 
 /** Renglones de la marca para documentos: texto, semilla y hash, y atribución. */
 export function lineasLeyenda(legend: LegendInfo, lang: Lang = "es"): string[] {
-  const l = leyendaIdioma(legend, lang);
-  const semilla = lang === "en" ? "seed" : "semilla";
-  const ids = [`${semilla} ${l.semilla}`, ...(l.hash ? [`hash ${l.hash}`] : [])].join(" · ");
-  return [l.texto, ids, ...(l.atribucion ? [l.atribucion] : [])];
+  return legendLines(leyendaIdioma(legend, lang));
+}
+
+/** Textos del croquis 2D en inglés para documentos (leyenda, atribución y «seed»). */
+export function textosCroquisEn(spec: EscenaSpec): {
+  leyenda: string;
+  atribucion?: string;
+  semilla: string;
+} {
+  const l = leyendaIdioma(legendFor(spec), "en");
+  return {
+    leyenda: l.texto,
+    semilla: "seed",
+    ...(l.atribucion ? { atribucion: l.atribucion } : {}),
+  };
 }

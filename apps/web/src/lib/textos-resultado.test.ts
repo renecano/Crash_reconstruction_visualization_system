@@ -9,6 +9,7 @@ import { AIRBAG_SOURCE, airbagDecision } from "@croquis/viewer";
 import { describe, expect, it } from "vitest";
 import {
   AIRBAG_SOURCE_EN,
+  textosCroquisEn,
   airbagTexto,
   campoIncierto,
   CLASE,
@@ -274,5 +275,14 @@ describe("marca de las exportaciones", () => {
     expect(lineas[1]).toBe(`seed ${legend.semilla} · hash ${"f".repeat(16)}`);
     expect(lineas.join(" ")).not.toContain(LEGEND_TEXT);
     expect(lineas.join(" ")).not.toMatch(/semilla|Contiene/);
+  });
+
+  it("el croquis del informe en inglés no lleva texto en español", async () => {
+    const { croquisSvg } = await import("@croquis/croquis-2d/export");
+    const spec = loadFixture("interseccion_toluca");
+    const svg = croquisSvg(spec, { textos: textosCroquisEn(spec) }).markup;
+    expect(svg).toContain(`seed ${spec.meta.semilla}`);
+    expect(svg).toContain("Contains information from OpenStreetMap");
+    expect(svg).not.toMatch(/semilla|Contiene|peritaje/);
   });
 });
