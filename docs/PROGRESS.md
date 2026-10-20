@@ -23,9 +23,10 @@ Reglas de trabajo: `CLAUDE.md`. Especificación: `PLAN.md`.
     - **Hecho — demás páginas:** demo, `/e9`, recorrido e historia bilingües en el sistema; datos de las páginas en `{ es, en }` desde `eval/results`; `/medicion` (E6 en el navegador) con `eval/e6_navegador.mjs`. Exportaciones en inglés sin «semilla».
     - **Hecho — pruebas:** e2e de portada, flujo con los 5 eventos de E9, accesibilidad con axe en todas las páginas y pasos, capturas visuales de cada capítulo y paso (referencias en Linux), proyecto de celular, movimiento reducido, sin errores de consola y sin desplazamiento horizontal. Correcciones que salieron de ahí: nombre del enlace de idioma, regiones con desplazamiento enfocables y desbordamiento del croquis en el celular.
     - **Hecho — carga:** three.js y Zod fuera del JavaScript inicial, CSS dentro del HTML y `/cuenta` dibujado en el servidor (ADR 0045 §5).
+    - **Hecho — revisión independiente:** 23 hallazgos; 21 corregidos y 2 que no se cambian, con su razón (`docs/design/plan.md` §11). Entre los corregidos: el service worker servía la portada al recargar `/en/…` y `/cuenta`, y la «í» de Anybody se leía «i» a tamaño de lectura (copia corregida con `scripts/fuente.py`).
     - **Siguiente:**
-      1. atender la revisión independiente de diseño (en curso);
-      2. correr `eval/f11_portada.mjs` (Lighthouse) y confirmar E6 y E1 sin cambios;
+      1. e2e completo en escritorio y celular con el build actual;
+      2. correr `eval/f11_portada.mjs` (Lighthouse), `eval/f9_precarga.mjs` (la precarga cambió) y E6; E1 no cambia (la extracción no se tocó);
       3. PR, CI con las referencias visuales nuevas, merge y despliegue en Vercel;
       4. nota «listo para E9».
 - **Fase actual: F11** (ver PLAN §13). F10 quedó cerrada el 2026-10-18 (#42 a #46): E5 publicado (test corrido una vez) y la galería con fotos reales. F9 quedó cerrada el 2026-10-17 (#25 a #41): demo sin red, E7 y E8 en verde y todas las exportaciones. F8 se cerró el mismo día (#20 a #24, E6 cumple).

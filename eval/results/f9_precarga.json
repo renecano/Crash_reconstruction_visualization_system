@@ -1,19 +1,19 @@
 {
   "name": "f9_precarga",
-  "generated_at": "2026-10-19T03:18:51.824Z",
-  "git_commit": "5157fee",
-  "entradas": 87,
-  "paginas": 7,
-  "archivos_next": 60,
-  "archivos_public": 20,
-  "bytes_archivos": 15007511,
-  "mb_archivos": 14.31,
+  "generated_at": "2026-10-20T16:13:05.015Z",
+  "git_commit": "ebc6765",
+  "entradas": 155,
+  "paginas": 15,
+  "archivos_next": 66,
+  "archivos_public": 74,
+  "bytes_archivos": 17466978,
+  "mb_archivos": 16.66,
   "mib_por_modulo": {
-    "pdfmake": 0.99,
-    "mediabunny": 0.73,
-    "rapier": 4.32,
-    "three": 1.21,
-    "imagenes_historia": 0.14
+    "pdfmake": 1.01,
+    "mediabunny": 0.74,
+    "rapier": 4.87,
+    "three": 1.35,
+    "imagenes_historia": 0.16
   },
   "mayor": {
     "url": "/_next/static/chunks/0ei6ssfuz565g.js",
@@ -26,64 +26,34 @@
   "cumple": true,
   "lista": [
     {
-      "url": "/_next/static/media/fef07dbb0973bf53-s.3p2_lha1f2xer.woff2",
+      "url": "/_next/static/media/anybody-vietnamese-standard-normal.2mq99c8aqxtv9.woff2",
       "tipo": "next",
-      "bytes": 7252
+      "bytes": 15420
     },
     {
-      "url": "/_next/static/media/favicon.117ezoe8m31dk.ico",
+      "url": "/_next/static/media/anybody-latin-standard-normal.3z0s25i8j7idp.woff2",
       "tipo": "next",
-      "bytes": 15086
+      "bytes": 56888
     },
     {
-      "url": "/_next/static/media/caa3a2e1cccd8315-s.p.0wgildi0cnwt9.woff2",
+      "url": "/_next/static/media/anybody-latin-ext-standard-normal.3k5wmqp62du3t.woff2",
       "tipo": "next",
-      "bytes": 29288
+      "bytes": 45500
     },
     {
-      "url": "/_next/static/media/bbc41e54d2fcbd21-s.1rgnod-3esatf.woff2",
+      "url": "/_next/static/i27pz4JweYG9HPNieiWNo/_ssgManifest.js",
       "tipo": "next",
-      "bytes": 14712
+      "bytes": 107
     },
     {
-      "url": "/_next/static/media/8a480f0b521d4e75-s.1qq4vpdcun5oj.woff2",
+      "url": "/_next/static/i27pz4JweYG9HPNieiWNo/_clientMiddlewareManifest.js",
       "tipo": "next",
-      "bytes": 14900
+      "bytes": 96
     },
     {
-      "url": "/_next/static/media/7d817b4c03b0c5f1-s.1uyisp29ctx0d.woff2",
+      "url": "/_next/static/i27pz4JweYG9HPNieiWNo/_buildManifest.js",
       "tipo": "next",
-      "bytes": 7728
-    },
-    {
-      "url": "/_next/static/media/797e433ab948586e-s.p.0r6juujl39pe6.woff2",
-      "tipo": "next",
-      "bytes": 23108
-    },
-    {
-      "url": "/_next/static/media/7178b3e590c64307-s.21jp631_3pja2.woff2",
-      "tipo": "next",
-      "bytes": 16540
-    },
-    {
-      "url": "/_next/static/media/6306c77e7c8268e4-s.2dbetqa9o8jxf.woff2",
-      "tipo": "next",
-      "bytes": 5892
-    },
-    {
-      "url": "/_next/static/media/5ce348bf30bf5439-s.31988l_ccedte.woff2",
-      "tipo": "next",
-      "bytes": 6204
-    },
-    {
-      "url": "/_next/static/media/53b9e256198e5412-s.390ncx5urfkfu.woff2",
-      "tipo": "next",
-      "bytes": 7968
-    },
-    {
-      "url": "/_next/static/media/4fa387ec64143e14-s.2tuy5pz7dlieh.woff2",
-      "tipo": "next",
-      "bytes": 12872
+      "bytes": 219
     },
     {
       "url": "/_next/static/chunks/turbopack-3-ry682tkyiqk.js",
@@ -96,14 +66,29 @@
       "bytes": 49945
     },
     {
-      "url": "/_next/static/chunks/3xbelin36tuze.js",
+      "url": "/_next/static/chunks/43ipoz4-ufeen.js",
       "tipo": "next",
-      "bytes": 40581
+      "bytes": 73308
     },
     {
-      "url": "/_next/static/chunks/3t31z_rf4ymnb.js",
+      "url": "/_next/static/chunks/40izaw5d-8am4.js",
       "tipo": "next",
-      "bytes": 32672
+      "bytes": 94683
+    },
+    {
+      "url": "/_next/static/chunks/3_nrpknxerc6m.js",
+      "tipo": "next",
+      "bytes": 201955
+    },
+    {
+      "url": "/_next/static/chunks/3y8x-hpcqdch0.js",
+      "tipo": "next",
+      "bytes": 1828
+    },
+    {
+      "url": "/_next/static/chunks/3sah9nc_kwxo3.js",
+      "tipo": "next",
+      "bytes": 75886
     },
     {
       "url": "/_next/static/chunks/3paz8ur32ej0-.js",
@@ -111,14 +96,34 @@
       "bytes": 76711
     },
     {
-      "url": "/_next/static/chunks/3mqb3h8km1ylu.js",
+      "url": "/_next/static/chunks/3oek9014uyvpd.js",
       "tipo": "next",
-      "bytes": 590417
+      "bytes": 174250
     },
     {
       "url": "/_next/static/chunks/3iwfubymmugfb.js",
       "tipo": "next",
       "bytes": 78085
+    },
+    {
+      "url": "/_next/static/chunks/3fpd8ksyts5d2.js",
+      "tipo": "next",
+      "bytes": 8859
+    },
+    {
+      "url": "/_next/static/chunks/3c-l2d9p4_iqr.js",
+      "tipo": "next",
+      "bytes": 8181
+    },
+    {
+      "url": "/_next/static/chunks/3bzc_oy478jsu.js",
+      "tipo": "next",
+      "bytes": 621
+    },
+    {
+      "url": "/_next/static/chunks/3a_tsab9g69gg.js",
+      "tipo": "next",
+      "bytes": 13819
     },
     {
       "url": "/_next/static/chunks/39p91420rq_gc.js",
@@ -131,24 +136,19 @@
       "bytes": 61132
     },
     {
-      "url": "/_next/static/chunks/37ei476p_qwok.js",
-      "tipo": "next",
-      "bytes": 26308
-    },
-    {
       "url": "/_next/static/chunks/36aw7cm77etg0.js",
       "tipo": "next",
       "bytes": 675411
     },
     {
-      "url": "/_next/static/chunks/369w84-vtwo58.js",
+      "url": "/_next/static/chunks/34wvpgutb_q9i.js",
       "tipo": "next",
-      "bytes": 40262
+      "bytes": 43399
     },
     {
-      "url": "/_next/static/chunks/308bfnkhocyau.js",
+      "url": "/_next/static/chunks/30jm-locvyl_r.js",
       "tipo": "next",
-      "bytes": 39290
+      "bytes": 49026
     },
     {
       "url": "/_next/static/chunks/2_hrkglhx-1la.js",
@@ -156,19 +156,24 @@
       "bytes": 55871
     },
     {
-      "url": "/_next/static/chunks/2xgwltt_5b_0g.js",
+      "url": "/_next/static/chunks/2_bu-ajvx_i3i.js",
       "tipo": "next",
-      "bytes": 13828
+      "bytes": 37302
     },
     {
-      "url": "/_next/static/chunks/2mwam7jcdbdbm.js",
+      "url": "/_next/static/chunks/2zhjl2sgnuutf.js",
       "tipo": "next",
-      "bytes": 13378
+      "bytes": 735748
     },
     {
-      "url": "/_next/static/chunks/2ml813s_88bay.js",
+      "url": "/_next/static/chunks/2wkuvg60ix308.js",
       "tipo": "next",
-      "bytes": 163347
+      "bytes": 892
+    },
+    {
+      "url": "/_next/static/chunks/2pvzmjt4m8vmf.js",
+      "tipo": "next",
+      "bytes": 59262
     },
     {
       "url": "/_next/static/chunks/2lqyvdow5z4p5.js",
@@ -176,14 +181,14 @@
       "bytes": 47393
     },
     {
-      "url": "/_next/static/chunks/2louyyeub7sob.js",
+      "url": "/_next/static/chunks/2hw9njxiobuj5.js",
       "tipo": "next",
-      "bytes": 19242
+      "bytes": 28208
     },
     {
-      "url": "/_next/static/chunks/2k1kpar3jhn_d.css",
+      "url": "/_next/static/chunks/2h5kh25dns2j0.js",
       "tipo": "next",
-      "bytes": 21665
+      "bytes": 29143
     },
     {
       "url": "/_next/static/chunks/2flxdlha9xce9.js",
@@ -191,9 +196,9 @@
       "bytes": 31076
     },
     {
-      "url": "/_next/static/chunks/26w2u-kia79oe.js",
+      "url": "/_next/static/chunks/2cm0d3ti7h07q.js",
       "tipo": "next",
-      "bytes": 5584
+      "bytes": 38108
     },
     {
       "url": "/_next/static/chunks/24g5ex4l7ysf2.js",
@@ -201,14 +206,34 @@
       "bytes": 972197
     },
     {
-      "url": "/_next/static/chunks/2022o66jkuwmx.js",
+      "url": "/_next/static/chunks/22x9a33sb28ud.js",
       "tipo": "next",
-      "bytes": 127530
+      "bytes": 19199
     },
     {
-      "url": "/_next/static/chunks/1n2fj72hdh30t.js",
+      "url": "/_next/static/chunks/1z162jtj-oxi5.js",
       "tipo": "next",
-      "bytes": 22525
+      "bytes": 120594
+    },
+    {
+      "url": "/_next/static/chunks/1ri__15yjqj47.js",
+      "tipo": "next",
+      "bytes": 13824
+    },
+    {
+      "url": "/_next/static/chunks/1rci-_1ot_t4i.js",
+      "tipo": "next",
+      "bytes": 229595
+    },
+    {
+      "url": "/_next/static/chunks/1o69br79o0q1i.js",
+      "tipo": "next",
+      "bytes": 57396
+    },
+    {
+      "url": "/_next/static/chunks/1mneip8hpk7t0.js",
+      "tipo": "next",
+      "bytes": 41232
     },
     {
       "url": "/_next/static/chunks/1kyp3kjsc0r-i.js",
@@ -216,19 +241,14 @@
       "bytes": 377262
     },
     {
-      "url": "/_next/static/chunks/1k1k2zr7osl-d.js",
-      "tipo": "next",
-      "bytes": 164342
-    },
-    {
       "url": "/_next/static/chunks/1jmzlnf5tivbh.js",
       "tipo": "next",
       "bytes": 199
     },
     {
-      "url": "/_next/static/chunks/1etx5wy42l_-2.js",
+      "url": "/_next/static/chunks/1f3rfkmfyi2ap.js",
       "tipo": "next",
-      "bytes": 14500
+      "bytes": 27374
     },
     {
       "url": "/_next/static/chunks/1e6k4ayk4bjsu.js",
@@ -236,19 +256,9 @@
       "bytes": 20766
     },
     {
-      "url": "/_next/static/chunks/1cxdulagoaa3k.js",
-      "tipo": "next",
-      "bytes": 30248
-    },
-    {
       "url": "/_next/static/chunks/1alfyf3fq49id.js",
       "tipo": "next",
       "bytes": 854634
-    },
-    {
-      "url": "/_next/static/chunks/1abi-6zpu1itl.js",
-      "tipo": "next",
-      "bytes": 7820
     },
     {
       "url": "/_next/static/chunks/17feh1kt7yj59.js",
@@ -256,19 +266,54 @@
       "bytes": 57842
     },
     {
-      "url": "/_next/static/chunks/16_885f846a6x.js",
+      "url": "/_next/static/chunks/14pmd_i4fp5cg.js",
       "tipo": "next",
-      "bytes": 229598
+      "bytes": 41493
     },
     {
-      "url": "/_next/static/chunks/11tsxgf1kr6ob.js",
+      "url": "/_next/static/chunks/106phvldqcgpm.js",
       "tipo": "next",
-      "bytes": 23181
+      "bytes": 39279
     },
     {
-      "url": "/_next/static/chunks/0ifhaxcz0zhwd.js",
+      "url": "/_next/static/chunks/0ytkjtd5_a10y.js",
       "tipo": "next",
-      "bytes": 316
+      "bytes": 32248
+    },
+    {
+      "url": "/_next/static/chunks/0y8f8mnaal2ik.js",
+      "tipo": "next",
+      "bytes": 27595
+    },
+    {
+      "url": "/_next/static/chunks/0xy2djue7i4xv.js",
+      "tipo": "next",
+      "bytes": 12888
+    },
+    {
+      "url": "/_next/static/chunks/0w8jbaa4gjqlx.js",
+      "tipo": "next",
+      "bytes": 5512
+    },
+    {
+      "url": "/_next/static/chunks/0vvq5epvfho8n.js",
+      "tipo": "next",
+      "bytes": 925
+    },
+    {
+      "url": "/_next/static/chunks/0shvn7r69h5x2.js",
+      "tipo": "next",
+      "bytes": 171136
+    },
+    {
+      "url": "/_next/static/chunks/0rmkuk3icdk47.js",
+      "tipo": "next",
+      "bytes": 129311
+    },
+    {
+      "url": "/_next/static/chunks/0f356yt86bpgs.js",
+      "tipo": "next",
+      "bytes": 35749
     },
     {
       "url": "/_next/static/chunks/0ei6ssfuz565g.js",
@@ -276,29 +321,29 @@
       "bytes": 4369395
     },
     {
-      "url": "/_next/static/chunks/0egxfn983r4qm.js",
-      "tipo": "next",
-      "bytes": 14602
-    },
-    {
-      "url": "/_next/static/chunks/0e8kuwxxaemwx.js",
-      "tipo": "next",
-      "bytes": 51764
-    },
-    {
-      "url": "/_next/static/chunks/0dpr73tl_6o1a.js",
-      "tipo": "next",
-      "bytes": 201939
-    },
-    {
       "url": "/_next/static/chunks/0cz1d0mv5g_q7.js",
       "tipo": "next",
       "bytes": 112594
     },
     {
-      "url": "/_next/static/chunks/0b3-y82uu68ah.js",
+      "url": "/_next/static/chunks/0b-5-9hmqsbus.js",
       "tipo": "next",
-      "bytes": 433629
+      "bytes": 547
+    },
+    {
+      "url": "/_next/static/chunks/0asip4qy9h5ng.css",
+      "tipo": "next",
+      "bytes": 34633
+    },
+    {
+      "url": "/_next/static/chunks/0anhzs1gqb7rp.js",
+      "tipo": "next",
+      "bytes": 22233
+    },
+    {
+      "url": "/_next/static/chunks/03juoc06opgby.js",
+      "tipo": "next",
+      "bytes": 51556
     },
     {
       "url": "/_next/static/chunks/02-ytlo92g2wo.js",
@@ -311,24 +356,24 @@
       "bytes": 22743
     },
     {
-      "url": "/_next/static/6uJqD-jjXhKx_FSQZESaf/_ssgManifest.js",
-      "tipo": "next",
-      "bytes": 107
+      "url": "/redes.png",
+      "tipo": "public",
+      "bytes": 204246
     },
     {
-      "url": "/_next/static/6uJqD-jjXhKx_FSQZESaf/_clientMiddlewareManifest.js",
-      "tipo": "next",
-      "bytes": 96
+      "url": "/manifest.webmanifest",
+      "tipo": "public",
+      "bytes": 761
     },
     {
-      "url": "/_next/static/6uJqD-jjXhKx_FSQZESaf/_buildManifest.js",
-      "tipo": "next",
-      "bytes": 219
+      "url": "/favicon.ico",
+      "tipo": "public",
+      "bytes": 3368
     },
     {
       "url": "/workers/reconstruct.js",
       "tipo": "public",
-      "bytes": 769874
+      "bytes": 162120
     },
     {
       "url": "/texturas/texturas.json",
@@ -396,6 +441,141 @@
       "bytes": 29270
     },
     {
+      "url": "/portada/u-ancho.jpg",
+      "tipo": "public",
+      "bytes": 49758
+    },
+    {
+      "url": "/portada/u-alto.jpg",
+      "tipo": "public",
+      "bytes": 45451
+    },
+    {
+      "url": "/portada/s-ancho.jpg",
+      "tipo": "public",
+      "bytes": 73922
+    },
+    {
+      "url": "/portada/s-alto.jpg",
+      "tipo": "public",
+      "bytes": 47414
+    },
+    {
+      "url": "/portada/r-ancho.jpg",
+      "tipo": "public",
+      "bytes": 93732
+    },
+    {
+      "url": "/portada/r-alto.jpg",
+      "tipo": "public",
+      "bytes": 58546
+    },
+    {
+      "url": "/portada/q-ancho.jpg",
+      "tipo": "public",
+      "bytes": 102995
+    },
+    {
+      "url": "/portada/q-alto.jpg",
+      "tipo": "public",
+      "bytes": 63837
+    },
+    {
+      "url": "/portada/pruebas-ancho.jpg",
+      "tipo": "public",
+      "bytes": 109282
+    },
+    {
+      "url": "/portada/pruebas-alto.jpg",
+      "tipo": "public",
+      "bytes": 63396
+    },
+    {
+      "url": "/portada/problema-ancho.jpg",
+      "tipo": "public",
+      "bytes": 103322
+    },
+    {
+      "url": "/portada/problema-alto.jpg",
+      "tipo": "public",
+      "bytes": 60586
+    },
+    {
+      "url": "/portada/o-ancho.jpg",
+      "tipo": "public",
+      "bytes": 111511
+    },
+    {
+      "url": "/portada/o-alto.jpg",
+      "tipo": "public",
+      "bytes": 53099
+    },
+    {
+      "url": "/portada/noes-ancho.jpg",
+      "tipo": "public",
+      "bytes": 104213
+    },
+    {
+      "url": "/portada/noes-alto.jpg",
+      "tipo": "public",
+      "bytes": 60149
+    },
+    {
+      "url": "/portada/i-ancho.jpg",
+      "tipo": "public",
+      "bytes": 73571
+    },
+    {
+      "url": "/portada/i-alto.jpg",
+      "tipo": "public",
+      "bytes": 46256
+    },
+    {
+      "url": "/portada/fuente.json",
+      "tipo": "public",
+      "bytes": 494
+    },
+    {
+      "url": "/portada/e5-4389-foto.jpg",
+      "tipo": "public",
+      "bytes": 132166
+    },
+    {
+      "url": "/portada/e5-4389-croquis.jpg",
+      "tipo": "public",
+      "bytes": 25560
+    },
+    {
+      "url": "/portada/cierre-ancho.jpg",
+      "tipo": "public",
+      "bytes": 71118
+    },
+    {
+      "url": "/portada/cierre-alto.jpg",
+      "tipo": "public",
+      "bytes": 43613
+    },
+    {
+      "url": "/portada/c-ancho.jpg",
+      "tipo": "public",
+      "bytes": 111296
+    },
+    {
+      "url": "/portada/c-alto.jpg",
+      "tipo": "public",
+      "bytes": 64196
+    },
+    {
+      "url": "/portada/apertura-ancho.jpg",
+      "tipo": "public",
+      "bytes": 58012
+    },
+    {
+      "url": "/portada/apertura-alto.jpg",
+      "tipo": "public",
+      "bytes": 36263
+    },
+    {
       "url": "/modelos/personas/personas.json",
       "tipo": "public",
       "bytes": 18989
@@ -416,17 +596,142 @@
       "bytes": 762388
     },
     {
+      "url": "/marca/simbolo.svg",
+      "tipo": "public",
+      "bytes": 8185
+    },
+    {
+      "url": "/marca/simbolo-sobre-claro.svg",
+      "tipo": "public",
+      "bytes": 8185
+    },
+    {
+      "url": "/marca/simbolo-negro.svg",
+      "tipo": "public",
+      "bytes": 8185
+    },
+    {
+      "url": "/marca/simbolo-efectos.svg",
+      "tipo": "public",
+      "bytes": 9024
+    },
+    {
+      "url": "/marca/simbolo-blanco.svg",
+      "tipo": "public",
+      "bytes": 8185
+    },
+    {
+      "url": "/marca/logotipo.svg",
+      "tipo": "public",
+      "bytes": 15011
+    },
+    {
+      "url": "/marca/logotipo-sobre-claro.svg",
+      "tipo": "public",
+      "bytes": 15011
+    },
+    {
+      "url": "/marca/logotipo-negro.svg",
+      "tipo": "public",
+      "bytes": 15011
+    },
+    {
+      "url": "/marca/logotipo-integrado.svg",
+      "tipo": "public",
+      "bytes": 13805
+    },
+    {
+      "url": "/marca/logotipo-integrado-sobre-claro.svg",
+      "tipo": "public",
+      "bytes": 13805
+    },
+    {
+      "url": "/marca/logotipo-efectos.svg",
+      "tipo": "public",
+      "bytes": 15854
+    },
+    {
+      "url": "/marca/logotipo-blanco.svg",
+      "tipo": "public",
+      "bytes": 15011
+    },
+    {
+      "url": "/marca/favicon.svg",
+      "tipo": "public",
+      "bytes": 8267
+    },
+    {
+      "url": "/marca/app-icon.svg",
+      "tipo": "public",
+      "bytes": 9583
+    },
+    {
+      "url": "/iconos/icono-512.png",
+      "tipo": "public",
+      "bytes": 145775
+    },
+    {
+      "url": "/iconos/icono-512-maskable.png",
+      "tipo": "public",
+      "bytes": 129246
+    },
+    {
+      "url": "/iconos/icono-48.png",
+      "tipo": "public",
+      "bytes": 1626
+    },
+    {
+      "url": "/iconos/icono-32.png",
+      "tipo": "public",
+      "bytes": 1108
+    },
+    {
+      "url": "/iconos/icono-192.png",
+      "tipo": "public",
+      "bytes": 28292
+    },
+    {
+      "url": "/iconos/icono-180.png",
+      "tipo": "public",
+      "bytes": 25153
+    },
+    {
+      "url": "/iconos/icono-16.png",
+      "tipo": "public",
+      "bytes": 580
+    },
+    {
+      "url": "/iconos/fuente.json",
+      "tipo": "public",
+      "bytes": 174
+    },
+    {
       "url": "/historia/toluca-dano.jpg",
       "tipo": "public",
-      "bytes": 64246
+      "bytes": 70037
     },
     {
       "url": "/historia/toluca-cruce.jpg",
       "tipo": "public",
-      "bytes": 77327
+      "bytes": 97974
+    },
+    {
+      "url": "/fuente/fuente.json",
+      "tipo": "public",
+      "bytes": 207
+    },
+    {
+      "url": "/fuente/anybody-latin-croquis.woff2",
+      "tipo": "public",
+      "bytes": 56880
     },
     {
       "url": "/",
+      "tipo": "pagina",
+      "bytes": null
+    },
+    {
+      "url": "/cuenta",
       "tipo": "pagina",
       "bytes": null
     },
@@ -437,11 +742,6 @@
     },
     {
       "url": "/croquis",
-      "tipo": "pagina",
-      "bytes": null
-    },
-    {
-      "url": "/relato",
       "tipo": "pagina",
       "bytes": null
     },
@@ -457,6 +757,46 @@
     },
     {
       "url": "/demo",
+      "tipo": "pagina",
+      "bytes": null
+    },
+    {
+      "url": "/relato",
+      "tipo": "pagina",
+      "bytes": null
+    },
+    {
+      "url": "/en",
+      "tipo": "pagina",
+      "bytes": null
+    },
+    {
+      "url": "/en/cuenta",
+      "tipo": "pagina",
+      "bytes": null
+    },
+    {
+      "url": "/en/visor",
+      "tipo": "pagina",
+      "bytes": null
+    },
+    {
+      "url": "/en/croquis",
+      "tipo": "pagina",
+      "bytes": null
+    },
+    {
+      "url": "/en/historia",
+      "tipo": "pagina",
+      "bytes": null
+    },
+    {
+      "url": "/en/recorrido",
+      "tipo": "pagina",
+      "bytes": null
+    },
+    {
+      "url": "/en/demo",
       "tipo": "pagina",
       "bytes": null
     }

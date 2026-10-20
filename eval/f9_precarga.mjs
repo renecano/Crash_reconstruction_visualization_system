@@ -37,7 +37,10 @@ const urls = [...sw.matchAll(/\{([^{}]*)\}/g)]
   .filter((u) => u !== undefined);
 if (urls.length === 0) throw new Error("No se encontró la lista de precarga en sw.js");
 
-const PAGINAS = new Set(["/", "/visor", "/croquis", "/relato", "/historia", "/recorrido", "/demo"]);
+// Las mismas páginas que precarga `apps/web/src/app/serwist/[path]/route.ts`: las de la demo en los
+// dos idiomas (F11a) y `/relato`, que redirige a `/cuenta`.
+const DEMO = ["/", "/cuenta", "/visor", "/croquis", "/historia", "/recorrido", "/demo"];
+const PAGINAS = new Set([...DEMO, "/relato", ...DEMO.map((u) => (u === "/" ? "/en" : `/en${u}`))]);
 const entradas = urls.map((url) => {
   if (PAGINAS.has(url)) return { url, tipo: "pagina", bytes: null };
   const file = url.startsWith("/_next/static/")
