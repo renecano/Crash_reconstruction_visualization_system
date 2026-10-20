@@ -505,7 +505,11 @@ def evaluate(split: str, pipeline: str = "ts", prompt: str = PROMPT_VERSION) -> 
     }
 
 
-def main(split: str = "test", pipeline: str = "ts", prompt: str = PROMPT_VERSION) -> str:
+def main(
+    split: str = "test", pipeline: str = "ts", prompt: str = PROMPT_VERSION, sufijo: str = ""
+) -> str:
+    """`sufijo` se agrega al nombre del resultado: deja intacto uno anterior del mismo split y
+    prompt cuando cambia el conjunto (p. ej. el dev con el lote `dev-007`, ADR 0043)."""
     if split in relatos_mx.LOCKS:
         frozen = relatos_mx.frozen_hash(split)
         if frozen is None:
@@ -529,7 +533,7 @@ def main(split: str = "test", pipeline: str = "ts", prompt: str = PROMPT_VERSION
     suffix = ("" if prompt == BASE_PROMPT else "_" + prompt.removeprefix("extraccion_")) + (
         "" if pipeline == "ts" else "_py"
     )
-    name = ("e1_extraction" if split == "test" else f"e1_extraction_{split}") + suffix
+    name = ("e1_extraction" if split == "test" else f"e1_extraction_{split}") + suffix + sufijo
     return str(write_result(name, payload))
 
 
