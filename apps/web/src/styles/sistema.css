@@ -94,6 +94,24 @@
     line-height: 1.55;
   }
 
+  /* El fondo de las páginas es asfalto, no un color plano (docs/design/plan.md §10): la misma
+     textura del visor (Poly Haven, CC0, ya precargada), casi imperceptible y sin color. La escena 3D
+     de la portada la tapa; el tema de papel no la usa. */
+  body {
+    position: relative;
+    isolation: isolate;
+  }
+  body::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    z-index: -1;
+    pointer-events: none;
+    background: url("/texturas/asfalto_diff.webp") 0 0 / 512px repeat;
+    filter: grayscale(1);
+    opacity: 0.05;
+  }
+
   /* Los hijos de una cuadrícula pueden encogerse: sin esto, un renglón largo (el JSON, una tabla)
      ensancha la columna y la página entera se desplaza de lado en el celular. Especificidad cero:
      cualquier utilidad lo cambia. */

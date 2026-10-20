@@ -44,6 +44,8 @@ export interface DatosPortada {
   /** La escena de Toluca, ya validada al generar `portada.json` (sin Zod en el navegador). */
   spec: EscenaSpec;
   relato: string;
+  /** Traducción del relato para la portada en inglés (la escena sale del original). */
+  relatoEn: string;
   preguntas: Pregunta[];
   galeria: { prueba: string; foto: string; render: string };
 }
@@ -356,6 +358,11 @@ export function Portada({ datos }: { datos: DatosPortada }) {
                 className="ml-0.5 inline-block h-5 w-[2px] translate-y-1 animate-pulse bg-texto"
               />
             </p>
+            {lang === "en" ? (
+              <p className="t-nota max-w-xl" data-testid="relato-traduccion">
+                {t.c.traduccion} {datos.relatoEn}
+              </p>
+            ) : null}
           </div>,
         )}
 

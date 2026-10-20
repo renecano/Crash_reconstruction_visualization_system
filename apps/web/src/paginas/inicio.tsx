@@ -43,6 +43,7 @@ function datosPortada(): DatosPortada {
     },
     spec: portada.spec as unknown as EscenaSpec,
     relato: portada.relato,
+    relatoEn: portada.relato_en,
     preguntas: portada.preguntas as Pregunta[],
     galeria: {
       prueba: "9064",

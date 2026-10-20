@@ -36,6 +36,7 @@ export const TEXTOS_PORTADA = textos(
     c: {
       titulo: "Lo dices con tus palabras.",
       cuerpo: "Como se lo contarías a alguien. Los datos personales se quitan en tu dispositivo.",
+      traduccion: "",
     },
     r: {
       titulo: "Cada dato sale de una frase.",
@@ -132,6 +133,7 @@ export const TEXTOS_PORTADA = textos(
     c: {
       titulo: "You tell it in your own words.",
       cuerpo: "The way you would tell someone. Personal data is removed on your device.",
+      traduccion: "Translation (Croquis reads the original, in Mexican Spanish):",
     },
     r: {
       titulo: "Every fact comes from a sentence.",

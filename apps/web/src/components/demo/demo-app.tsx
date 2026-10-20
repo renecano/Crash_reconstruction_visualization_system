@@ -27,6 +27,8 @@ export interface CasoDemo {
   titulo_en: string;
   tipo: string;
   texto: string;
+  /** Traducción para la página en inglés; la IA lee el original. */
+  texto_en?: string;
   spec: unknown;
   preguntas: unknown[];
 }
@@ -44,6 +46,7 @@ const T = textos(
     elige: "Elige un relato",
     origen: (fuente: string, metodo: string) => `${fuente}. Lo que entendió la IA: ${metodo}.`,
     imagina: "Imagina que te pasó a ti",
+    traduccion: "",
     entendio: "Lo que entendió la IA, campo por campo",
     falta: "Lo que falta",
     rondas: (n: number) =>
@@ -70,6 +73,7 @@ const T = textos(
     elige: "Choose a narrative",
     origen: (fuente: string, metodo: string) => `${fuente}. What the AI understood: ${metodo}.`,
     imagina: "Imagine it happened to you",
+    traduccion: "Translation (Croquis reads the original, in Mexican Spanish):",
     entendio: "What the AI understood, field by field",
     falta: "What's missing",
     rondas: (n: number) =>
@@ -189,6 +193,12 @@ export function DemoApp({ casos, fuente, metodo }: DemoAppProps) {
             >
               {caso.texto}
             </blockquote>
+            {lang === "en" && caso.texto_en ? (
+              <p className="t-interfaz max-w-[68ch] text-texto-2" data-testid="demo-traduccion">
+                <span className="t-nota block">{t.traduccion}</span>
+                {caso.texto_en}
+              </p>
+            ) : null}
           </section>
 
           <section aria-labelledby="demo-entendio" className="flex flex-col gap-4">

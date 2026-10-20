@@ -70,11 +70,16 @@ test.describe("demo sin red", () => {
     await page.getByTestId("responder").click();
     await expect(page.getByTestId("demo-rondas")).toContainText("Rondas contestadas: 1");
 
-    // Relato: lo único que pide red, y la interfaz lo dice.
-    await page.goto("/relato");
+    // Relato: lo único que pide red, y la interfaz lo dice (flujo guiado, F11a).
+    await page.goto("/cuenta");
     await expect(page.getByTestId("sin-red")).toContainText("Sin conexión");
     await page.getByTestId("relato").fill("Iba en mi carro y me pegaron por un lado.");
     await expect(page.getByTestId("entender")).toBeDisabled();
+
+    // La versión en inglés también abre sin red.
+    await page.goto("/en/cuenta");
+    await expect(page.locator("html")).toHaveAttribute("lang", "en");
+    await expect(page.getByTestId("sin-red")).toContainText("Offline");
 
     expect(failed).toEqual([]);
     expect(errors).toEqual([]);

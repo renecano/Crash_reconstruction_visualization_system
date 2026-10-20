@@ -218,7 +218,7 @@ la línea de tiempo…», con lo que de verdad va pasando (eventos NDJSON del se
 - **El relato:**
   - **Sigue en español de México:** el extractor y el glosario son de español mexicano.
   - **Qué dice la versión en inglés:** lo explica, y los ejemplos de la demo se muestran en su idioma original con una traducción al lado.
-  - **Sin cambios:** la leyenda de las exportaciones sigue como está (§10).
+  - **Exportaciones:** en la página en inglés, la leyenda, la atribución y la semilla de las exportaciones van en inglés; en español siguen igual (§10, ADR 0045 §3).
 
 ## 8. Rendimiento y accesibilidad (§11.6)
 
@@ -228,7 +228,7 @@ la línea de tiempo…», con lo que de verdad va pasando (eventos NDJSON del se
   - **axe:** sin problemas serios en cada página, con `@axe-core/playwright` en los e2e.
   - **Lighthouse:** 95 o más en accesibilidad.
   - **Teclado y foco:** foco visible en amarillo vial (2 px más 2 px de separación) y navegación completa con teclado.
-  - **Capítulos:** cada uno tiene su texto alternativo.
+  - **Capítulos:** el texto de cada capítulo describe lo que se ve. La escena y sus cuadros fijos son decorativos para lectores de pantalla (`aria-hidden` y `alt` vacío), para no repetirlo dos veces.
 - **E6 sin cambios:** el visor no cambia de costo. La capa de croquis y el revelado solo se montan en la portada, y E6 se vuelve a medir para comprobarlo.
 
 ## 9. Proceso y pruebas
