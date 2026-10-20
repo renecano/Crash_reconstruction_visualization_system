@@ -406,13 +406,20 @@ def evaluate_method(
     # Piso de ruido: el mismo relato otra vez. Las reglas son deterministas; los modelos no
     # aceptan temperatura 0, así que parte de la diferencia contrafactual puede ser variación.
     rep_diffs = rep_pairs = 0
+    # La repetición también se puntúa contra la referencia: cuánto cambia el F1 de una corrida a
+    # otra del mismo prompt (ADR 0043).
+    score_rep = Score()
     for it in items:
         base = preds.get(it["id"])
         run = recs.run(name, it["id"] + "-rep" if name != "reglas" else it["id"])
         if base is None or run is None:
             continue
         rep_pairs += 1
-        rep_diffs += int(counterfactual_diff(base, facts_from_spec(run.spec)))
+        rep_facts = facts_from_spec(run.spec)
+        rep_diffs += int(counterfactual_diff(base, rep_facts))
+        ref = facts_from_annotation({**it["hechos"], "tipo": it["tipo"]})
+        score_rep.merge(score_story(ref, rep_facts, split == "dev"))
+    rep_report = score_rep.report()
     return {
         "estado": "medido" if missing == 0 else "parcial",
         "relatos": evaluated,
@@ -436,6 +443,10 @@ def evaluate_method(
             "pares": rep_pairs,
             "con_diferencia": rep_diffs,
             "tasa": round(rep_diffs / rep_pairs, 4) if rep_pairs else None,
+            "f1_micro": rep_report["f1_micro"] if rep_pairs else None,
+            "f1_micro_sin_campos_parciales": rep_report["f1_micro_sin_campos_parciales"]
+            if rep_pairs
+            else None,
         },
         "contrafactual_por_tipo": counterfactual_by_kind(
             name, cfs, preds, recs, {str(it["id"]): str(it["texto"]) for it in items}
