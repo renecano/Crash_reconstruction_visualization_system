@@ -6,6 +6,7 @@
     {
       "id": "rmx-d001",
       "titulo": "Alcance en Paseo Tollocan, con el piso mojado",
+      "titulo_en": "Rear-end collision on Paseo Tollocan, on a wet road",
       "tipo": "vv",
       "texto": "Iba por Paseo Tollocan en mi Aveo gris, como a 50, y la camioneta de enfrente frenó de golpe en el semáforo. No alcancé a frenar y le pegué por detrás. Estaba chispeando y el piso mojado.",
       "spec": {
@@ -172,7 +173,9 @@
                 ]
               }
             },
-            "ocupantes": ["per-1"]
+            "ocupantes": [
+              "per-1"
+            ]
           },
           {
             "id": "veh-b",
@@ -264,7 +267,10 @@
             "id": "ev-1",
             "orden": 0,
             "tipo": "impacto_vehiculo_vehiculo",
-            "actores": ["veh-a", "veh-b"],
+            "actores": [
+              "veh-a",
+              "veh-b"
+            ],
             "procedencia": {
               "fuente": "relato",
               "confianza": 0.9,
@@ -325,6 +331,7 @@
     {
       "id": "rmx-d003",
       "titulo": "Una moto y un taxi que da vuelta en la lateral de Periférico",
+      "titulo_en": "A motorcycle and a taxi turning on the Periférico service road",
       "tipo": "moto",
       "texto": "Yo iba en mi moto por la lateral de Periférico como a 60 y un taxi se me cerró para dar vuelta a la derecha. Lo alcancé a esquivar poquito pero le di con el manubrio en la salpicadera y me caí. Traía casco, gracias a Dios.",
       "spec": {
@@ -442,7 +449,10 @@
                 "nota": "Disposición genérica; ajústala en el croquis."
               }
             },
-            "ocupantes": ["per-1", "per-2"]
+            "ocupantes": [
+              "per-1",
+              "per-2"
+            ]
           },
           {
             "id": "veh-b",
@@ -547,7 +557,10 @@
             "id": "ev-1",
             "orden": 0,
             "tipo": "impacto_vehiculo_vehiculo",
-            "actores": ["veh-a", "veh-b"],
+            "actores": [
+              "veh-a",
+              "veh-b"
+            ],
             "procedencia": {
               "fuente": "relato",
               "confianza": 0.9,
@@ -575,7 +588,12 @@
           "texto": "Con las zonas de golpe indicadas los vehículos no llegan a tocarse. ¿En qué parte de cada vehículo fue el golpe?",
           "motivo": "contradiccion",
           "campo": "eventos.0.zonas_impacto",
-          "opciones": ["frente", "atrás", "lado izquierdo", "lado derecho"]
+          "opciones": [
+            "frente",
+            "atrás",
+            "lado izquierdo",
+            "lado derecho"
+          ]
         },
         {
           "id": "velocidad:veh-b",
@@ -589,7 +607,11 @@
           "texto": "¿Alcanzaste a frenar antes del golpe?",
           "motivo": "sensibilidad",
           "campo": "vehiculos.0.frenado.aplico",
-          "opciones": ["sí", "no", "no sé"],
+          "opciones": [
+            "sí",
+            "no",
+            "no sé"
+          ],
           "reduccion": 0.304
         }
       ]
@@ -597,6 +619,7 @@
     {
       "id": "rmx-d004",
       "titulo": "Una camioneta contra un árbol en la carretera a Ixtlahuaca",
+      "titulo_en": "An SUV against a tree on the Ixtlahuaca highway",
       "tipo": "objeto",
       "texto": "iba de regreso a mi casa en la noche, en la carretera a Ixtlahuaca, y en una curva se me fue la camioneta, perdi el control y me fui contra un arbol. no habia luz en esa parte y estaba llobiendo fuerte. creo q iba a unos 80",
       "spec": {
@@ -750,7 +773,9 @@
                 "nota": "Disposición genérica; ajústala en el croquis."
               }
             },
-            "ocupantes": ["per-1"]
+            "ocupantes": [
+              "per-1"
+            ]
           }
         ],
         "personas": [
@@ -782,7 +807,10 @@
             "id": "ev-1",
             "orden": 0,
             "tipo": "impacto_vehiculo_objeto",
-            "actores": ["veh-a", "obj-1"],
+            "actores": [
+              "veh-a",
+              "obj-1"
+            ],
             "procedencia": {
               "fuente": "relato",
               "confianza": 0.9,
@@ -832,7 +860,11 @@
           "texto": "¿Alcanzaste a frenar antes del golpe?",
           "motivo": "sensibilidad",
           "campo": "vehiculos.0.frenado.aplico",
-          "opciones": ["sí", "no", "no sé"],
+          "opciones": [
+            "sí",
+            "no",
+            "no sé"
+          ],
           "reduccion": 0.745
         },
         {
@@ -846,6 +878,7 @@
     {
       "id": "rmx-d005",
       "titulo": "Una peatona que cruza entre los autos en Hidalgo",
+      "titulo_en": "A woman crossing between cars on Hidalgo",
       "tipo": "peaton",
       "texto": "Venía manejando la Urvan de la ruta por Hidalgo, a vuelta de rueda porque había mucho tráfico, y una señora se atravesó corriendo entre los carros, fuera del paso de cebra. La golpeé con la defensa y cayó como a dos metros. Se levantó sola.",
       "spec": {
@@ -977,7 +1010,9 @@
                 "nota": "Disposición genérica; ajústala en el croquis."
               }
             },
-            "ocupantes": ["per-1"]
+            "ocupantes": [
+              "per-1"
+            ]
           }
         ],
         "personas": [
@@ -1034,7 +1069,10 @@
             "id": "ev-1",
             "orden": 0,
             "tipo": "impacto_vehiculo_persona",
-            "actores": ["veh-a", "per-2"],
+            "actores": [
+              "veh-a",
+              "per-2"
+            ],
             "procedencia": {
               "fuente": "relato",
               "confianza": 0.9,
@@ -1106,7 +1144,12 @@
           "texto": "Con las zonas de golpe indicadas los vehículos no llegan a tocarse. ¿En qué parte de cada vehículo fue el golpe?",
           "motivo": "contradiccion",
           "campo": "eventos.0.zonas_impacto",
-          "opciones": ["frente", "atrás", "lado izquierdo", "lado derecho"]
+          "opciones": [
+            "frente",
+            "atrás",
+            "lado izquierdo",
+            "lado derecho"
+          ]
         },
         {
           "id": "proyeccion:per-2",
@@ -1119,6 +1162,7 @@
     {
       "id": "rmx-d007",
       "titulo": "Volcadura en la autopista México-Querétaro",
+      "titulo_en": "Rollover on the México-Querétaro freeway",
       "tipo": "volcadura",
       "texto": "En la autopista México-Querétaro un tráiler se me cerró y para no darle volanteé fuerte a la derecha. La camioneta se ladeó, pegó con la guarnición y se volteó, dio como dos vueltas. Iba como a 100. Mi esposa iba de copiloto con cinturón.",
       "spec": {
@@ -1265,7 +1309,10 @@
                 "nota": "Disposición genérica; ajústala en el croquis."
               }
             },
-            "ocupantes": ["per-1", "per-2"]
+            "ocupantes": [
+              "per-1",
+              "per-2"
+            ]
           },
           {
             "id": "veh-b",
@@ -1383,7 +1430,10 @@
             "id": "ev-1",
             "orden": 0,
             "tipo": "impacto_vehiculo_objeto",
-            "actores": ["veh-a", "obj-1"],
+            "actores": [
+              "veh-a",
+              "obj-1"
+            ],
             "procedencia": {
               "fuente": "relato",
               "confianza": 0.9,
@@ -1425,7 +1475,11 @@
           "texto": "¿Alcanzaste a frenar antes del golpe?",
           "motivo": "sensibilidad",
           "campo": "vehiculos.0.frenado.aplico",
-          "opciones": ["sí", "no", "no sé"],
+          "opciones": [
+            "sí",
+            "no",
+            "no sé"
+          ],
           "reduccion": 0.442
         },
         {
@@ -1440,6 +1494,7 @@
     {
       "id": "rmx-d012",
       "titulo": "Una ciclista y un auto que da vuelta en Insurgentes",
+      "titulo_en": "A cyclist and a car turning on Insurgentes",
       "tipo": "ciclista",
       "texto": "Circulaba en bicicleta por la ciclovía de avenida Insurgentes cuando un automóvil compacto dio vuelta a la derecha sin percatarse de mi presencia y me golpeó con su costado. Caí sobre el pavimento. Eran aproximadamente las 14:00 horas y el clima estaba despejado.",
       "spec": {
@@ -1550,7 +1605,10 @@
                 "nota": "Disposición genérica; ajústala en el croquis."
               }
             },
-            "ocupantes": ["per-1", "per-2"]
+            "ocupantes": [
+              "per-1",
+              "per-2"
+            ]
           },
           {
             "id": "veh-b",
@@ -1643,7 +1701,10 @@
             "id": "ev-1",
             "orden": 0,
             "tipo": "impacto_vehiculo_vehiculo",
-            "actores": ["veh-a", "veh-b"],
+            "actores": [
+              "veh-a",
+              "veh-b"
+            ],
             "procedencia": {
               "fuente": "relato",
               "confianza": 0.9,
@@ -1671,7 +1732,12 @@
           "texto": "Con las zonas de golpe indicadas los vehículos no llegan a tocarse. ¿En qué parte de cada vehículo fue el golpe?",
           "motivo": "contradiccion",
           "campo": "eventos.0.zonas_impacto",
-          "opciones": ["frente", "atrás", "lado izquierdo", "lado derecho"]
+          "opciones": [
+            "frente",
+            "atrás",
+            "lado izquierdo",
+            "lado derecho"
+          ]
         },
         {
           "id": "velocidad:veh-a",
