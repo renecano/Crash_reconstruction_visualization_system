@@ -12,7 +12,7 @@ export const HTML_LANG: Record<Lang, string> = { es: "es-MX", en: "en" };
 
 /** El diccionario del español con sus hojas como `string` (o funciones que devuelven texto). */
 export type Dict = Widen<typeof es>;
-type Widen<T> = T extends string
+export type Widen<T> = T extends string
   ? string
   : T extends (...args: infer A) => string
     ? (...args: A) => string
@@ -39,4 +39,22 @@ export function rutaEn(lang: Lang, pathname: string): string {
 
 export function isLang(x: unknown): x is Lang {
   return x === "es" || x === "en";
+}
+
+/**
+ * Textos de un componente en los dos idiomas, lado a lado. El inglés debe tener exactamente las
+ * claves del español (el tipo lo exige).
+ */
+export interface Textos<T> {
+  es: T;
+  en: Widen<T>;
+}
+
+export function textos<T>(es: T, en: Widen<T>): Textos<T> {
+  return { es, en };
+}
+
+/** Los textos de un componente en el idioma pedido. */
+export function textosEn<T>(t: Textos<T>, lang: Lang): Widen<T> {
+  return t[lang] as Widen<T>;
 }

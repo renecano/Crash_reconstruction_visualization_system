@@ -1,11 +1,31 @@
+"use client";
 /**
- * Leyenda obligatoria (PLAN §10): se muestra en el visor y en toda exportación.
- * El texto es fijo; la semilla y el hash de entradas se agregan cuando existen.
+ * Leyenda obligatoria (PLAN §10): se muestra en el visor, el croquis y toda exportación. En la
+ * página va en su idioma; las exportaciones siguen usando `LEGEND_TEXT` de @croquis/scene-schema.
+ * La semilla y el hash de entradas se agregan cuando existen.
  */
 import { LEGEND_TEXT } from "@croquis/scene-schema";
+import { textos } from "@/i18n";
+import { useIdioma, useTextos } from "@/i18n/cliente";
 
 // El texto vive en @croquis/scene-schema: lo comparten el visor, las exportaciones y el croquis.
 export { LEGEND_TEXT };
+
+const T = textos(
+  {
+    etiqueta: "Leyenda de reconstrucción ilustrativa",
+    semilla: "semilla",
+    osm: "Contiene información de OpenStreetMap, disponible en openstreetmap.org bajo la Open Database License (ODbL).",
+  },
+  {
+    etiqueta: "Illustrative reconstruction notice",
+    semilla: "seed",
+    osm: "Contains information from OpenStreetMap, available at openstreetmap.org under the Open Database License (ODbL).",
+  },
+);
+
+const LEYENDA_EN =
+  "Illustrative reconstruction generated from a narrative. It is not a forensic report.";
 
 export interface LegendProps {
   seed?: number | string;
@@ -17,22 +37,44 @@ export interface LegendProps {
 }
 
 export function Legend({ seed, inputHash, tone = "normal", atribucion }: LegendProps) {
+  const { lang } = useIdioma();
+  const t = useTextos(T);
+  const texto = lang === "es" ? LEGEND_TEXT : LEYENDA_EN;
+  // La atribución de OSM se traduce si es la estándar; cualquier otra se muestra tal cual.
+  const attr = atribucion
+    ? atribucion.startsWith("Contiene información de OpenStreetMap")
+      ? t.osm
+      : atribucion
+    : undefined;
   return (
     <p
       role="note"
-      aria-label="Leyenda de reconstrucción ilustrativa"
-      className={
-        tone === "clara" ? "text-sm text-white" : "text-sm text-neutral-600 dark:text-neutral-400"
-      }
+      aria-label={t.etiqueta}
+      className={`t-nota ${tone === "clara" ? "text-texto" : "text-texto-2"}`}
     >
-      {LEGEND_TEXT}
-      {seed !== undefined ? <span className="ml-2 font-mono">semilla {String(seed)}</span> : null}
-      {inputHash ? <span className="ml-2 font-mono">hash {inputHash.slice(0, 12)}</span> : null}
-      {atribucion ? (
-        <span className="block text-xs" data-testid="atribucion-mapa">
-          {atribucion}
+      {texto}
+      {seed !== undefined ? (
+        <span className="cifras ml-2">
+          {t.semilla} {String(seed)}
+        </span>
+      ) : null}
+      {inputHash ? <span className="cifras ml-2">hash {inputHash.slice(0, 12)}</span> : null}
+      {attr ? (
+        <span className="block" data-testid="atribucion-mapa">
+          {attr}
         </span>
       ) : null}
     </p>
   );
+}
+
+/**
+ * Los textos de la marca para el croquis 2D en el idioma de la página. En español no cambia nada
+ * (el croquis usa los de la escena, que son los de sus exportaciones).
+ */
+export function useTextosCroquis():
+  { leyenda?: string; atribucion?: string; semilla?: string } | undefined {
+  const { lang } = useIdioma();
+  const t = useTextos(T);
+  return lang === "es" ? undefined : { leyenda: LEYENDA_EN, atribucion: t.osm, semilla: t.semilla };
 }

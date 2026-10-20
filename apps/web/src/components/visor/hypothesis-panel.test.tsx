@@ -2,6 +2,7 @@ import { loadFixture, loadResultado, type EscenaSpec, type Resultado } from "@cr
 import { reconstruct, reconstructionToDict } from "@croquis/solver-ts";
 import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { describe, expect, it, vi } from "vitest";
+import { IdiomaProvider } from "@/i18n/cliente";
 import { HypothesisPanel, withSpeed } from "./hypothesis-panel";
 
 /** El solver TS sin Web Worker (jsdom no tiene workers): el mismo cálculo que hace el navegador. */
@@ -89,5 +90,43 @@ describe("<HypothesisPanel />", () => {
     await waitFor(() =>
       expect(screen.getByRole("alert").textContent).toMatch(/No se pudo reconstruir.*sin memoria/),
     );
+  });
+});
+
+describe("<HypothesisPanel /> en inglés", () => {
+  it("controles, etiqueta de la hipótesis y diferencias en inglés", async () => {
+    const spec = loadFixture("lateral_interseccion");
+    const base = await loadResultado("lateral_interseccion");
+    const onChange = vi.fn();
+    const { rerender } = render(
+      <IdiomaProvider lang="en">
+        <HypothesisPanel
+          spec={spec}
+          resultado={base}
+          hipotesis={[]}
+          onChange={onChange}
+          reconstructor={() => Promise.resolve(base)}
+        />
+      </IdiomaProvider>,
+    );
+    expect(screen.getByRole("region", { name: "Compare hypotheses" })).toBeDefined();
+    fireEvent.change(screen.getByTestId("hipotesis-velocidad"), { target: { value: "500" } });
+    fireEvent.click(screen.getByTestId("hipotesis-comparar"));
+    expect(screen.getByRole("alert").textContent).toBe("Enter a speed between 0 and 200 km/h.");
+    fireEvent.change(screen.getByRole("combobox"), { target: { value: "veh-b" } });
+    fireEvent.change(screen.getByTestId("hipotesis-velocidad"), { target: { value: "60" } });
+    fireEvent.click(screen.getByTestId("hipotesis-comparar"));
+    await waitFor(() => expect(onChange).toHaveBeenCalledTimes(1));
+    const [lista] = onChange.mock.calls[0] as [{ etiqueta: string; resultado: Resultado }[]];
+    expect(lista[0]!.etiqueta).toBe("B at 60 km/h");
+    rerender(
+      <IdiomaProvider lang="en">
+        <HypothesisPanel spec={spec} resultado={base} hipotesis={lista} onChange={onChange} />
+      </IdiomaProvider>,
+    );
+    expect(screen.getByTestId("hipotesis-diferencias").textContent).toMatch(
+      /ends up [\d.]+ m away/,
+    );
+    expect(screen.getByRole("button", { name: "Remove" })).toBeDefined();
   });
 });

@@ -1,5 +1,13 @@
 "use client";
-
+/**
+ * El visor (PLAN §11.4). `VisorApp` es la herramienta avanzada de `/visor` (escena y controles en
+ * la URL); `VisorEscena` es el visor en sí, que también usa el paso «Simula» del flujo guiado con
+ * sus propios controles.
+ *
+ * Arriba de la escena van las lecturas de cada vehículo y la leyenda, que siempre está visible;
+ * debajo, las cámaras predefinidas, la traza de telemetría y los paneles. Con una hipótesis se
+ * puede comparar en pantalla dividida.
+ */
 import {
   FIXTURE_NAMES,
   fixtureTitle,
@@ -30,14 +38,13 @@ import {
   step,
   togglePlay,
   type CameraMode,
-  type EventMarker,
   type QualityLevel,
-  type TimelineState,
   type ViewerClock,
   type ViewerExportApi,
 } from "@croquis/viewer";
-import type { RendererInfo, RendererPreference } from "@croquis/viewer/react";
+import type { AmbienteVisual, RendererInfo, RendererPreference } from "@croquis/viewer/react";
 import dynamic from "next/dynamic";
+import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import {
   useCallback,
@@ -47,30 +54,121 @@ import {
   useSyncExternalStore,
   type ReactElement,
 } from "react";
-import { Legend } from "../legend";
-import { describeAmbiente, parseAmbiente } from "./ambiente";
-import type { PeopleAttachment } from "@croquis/viewer";
-import { EvidencePanel } from "./evidence-panel";
-import { HypothesisPanel, type Hipotesis } from "./hypothesis-panel";
-import { PeoplePanel } from "./people-panel";
-import { ResultPanel } from "./result-panel";
-import { ExportPanel } from "./export-panel";
-import { TimelineBar } from "./timeline-bar";
+import { textos } from "@/i18n";
+import { useIdioma, useTextos } from "@/i18n/cliente";
 import { leerE9, registrarE9 } from "@/lib/e9";
 import { leerEscenaPropia } from "@/lib/escena-propia";
 import { reconstruirCompletoEnNavegador } from "@/lib/reconstruct-client";
+import type { PeopleAttachment } from "@croquis/viewer";
+import { Legend } from "../legend";
+import { describeAmbiente, parseAmbiente } from "./ambiente";
+import { EvidencePanel } from "./evidence-panel";
+import { ExportPanel } from "./export-panel";
+import { HypothesisPanel, type Hipotesis } from "./hypothesis-panel";
+import { Lecturas, useClockState } from "./lecturas";
+import { PeoplePanel } from "./people-panel";
+import { ResultPanel } from "./result-panel";
+import { Traza } from "./traza";
+
+const T = textos(
+  {
+    cargandoVisor: "Cargando el visor 3D…",
+    cargando: "Cargando la reconstrucción…",
+    cargandoEscena: "Cargando la escena…",
+    sinPropia: {
+      antes: "No hay una escena propia en esta pestaña.",
+      cuenta: "Cuenta qué pasó",
+      o: "o arma una en el",
+      croquis: "croquis",
+      despues: "y usa «Ver tu reconstrucción».",
+    },
+    escena: "Escena",
+    propia: "Tu escena (del relato o el croquis)",
+    camara: "Cámara",
+    camaras: {
+      libre: "Libre",
+      libreAyuda: "arrastra para girar",
+      cenital: "Cenital",
+      cinematica: "Cinematográfica",
+      dano: "Daño",
+      persona: "Seguir a la persona",
+      conductor: (rol: string) => `Conductor ${rol}`,
+    },
+    ajustes: "Ajustes de dibujo",
+    calidad: "Calidad",
+    automatica: "Automática",
+    niveles: { baja: "Baja", media: "Media", alta: "Alta", ultra: "Ultra" },
+    render: "Render",
+    renderAuto: "Automático (elige el más rápido)",
+    forzarWebgpu: "Forzar WebGPU",
+    forzarWebgl: "Forzar WebGL 2",
+    elegido: (lista: string) => `elegido por medición (${lista})`,
+    sinGpu: "Este navegador no pudo iniciar WebGPU ni WebGL 2; el visor 3D no está disponible.",
+    calculando:
+      "Calculando la incertidumbre (Monte Carlo), la inversión desde la evidencia y la consistencia en este navegador…",
+    dividida: "Comparar lado a lado",
+    unida: "Ver una sola escena",
+    original: "Tu reconstrucción",
+    hipotesis: (titulo: string) => `Hipótesis: ${titulo}`,
+  },
+  {
+    cargandoVisor: "Loading the 3D viewer…",
+    cargando: "Loading the reconstruction…",
+    cargandoEscena: "Loading the scene…",
+    sinPropia: {
+      antes: "There is no scene of your own in this tab.",
+      cuenta: "Tell what happened",
+      o: "or build one in the",
+      croquis: "sketch",
+      despues: "and use “See your reconstruction”.",
+    },
+    escena: "Scene",
+    propia: "Your scene (from the narrative or the sketch)",
+    camara: "Camera",
+    camaras: {
+      libre: "Free",
+      libreAyuda: "drag to rotate",
+      cenital: "Overhead",
+      cinematica: "Cinematic",
+      dano: "Damage",
+      persona: "Follow the person",
+      conductor: (rol: string) => `Driver ${rol}`,
+    },
+    ajustes: "Rendering settings",
+    calidad: "Quality",
+    automatica: "Automatic",
+    niveles: { baja: "Low", media: "Medium", alta: "High", ultra: "Ultra" },
+    render: "Renderer",
+    renderAuto: "Automatic (picks the fastest)",
+    forzarWebgpu: "Force WebGPU",
+    forzarWebgl: "Force WebGL 2",
+    elegido: (lista: string) => `chosen by measurement (${lista})`,
+    sinGpu: "This browser could not start WebGPU or WebGL 2; the 3D viewer is not available.",
+    calculando:
+      "Computing the uncertainty (Monte Carlo), the inversion from the evidence and the consistency in this browser…",
+    dividida: "Compare side by side",
+    unida: "Show a single scene",
+    original: "Your reconstruction",
+    hipotesis: (titulo: string) => `Hypothesis: ${titulo}`,
+  },
+);
+
+function CargandoVisor() {
+  const t = useTextos(T);
+  return <div className="t-nota grid h-full place-items-center">{t.cargandoVisor}</div>;
+}
 
 const SceneViewer = dynamic(() => import("@croquis/viewer/react").then((m) => m.SceneViewer), {
   ssr: false,
-  loading: () => <div className="grid h-full place-items-center text-sm">Cargando visor 3D…</div>,
+  loading: () => <CargandoVisor />,
 });
 
 type CalidadOpcion = QualityLevel | "auto";
 /** Una escena canónica o la escena propia de la persona usuaria (`escena=propia`). */
 type EscenaVisor = FixtureName | "propia";
 
-interface VisorParams {
-  escena: EscenaVisor;
+/** Lo que se puede controlar del visor; en `/visor` vive en la URL, en el flujo en el estado. */
+export interface ControlesVisor {
   camara: string;
   calidad: CalidadOpcion;
   renderer: RendererPreference;
@@ -81,7 +179,17 @@ interface VisorParams {
   bucle: boolean;
 }
 
-function parseParams(sp: URLSearchParams): VisorParams {
+export const CONTROLES_INICIALES: ControlesVisor = {
+  camara: "libre",
+  calidad: "auto",
+  renderer: "auto",
+  t: undefined,
+  auto: false,
+  completa: false,
+  bucle: false,
+};
+
+function parseControles(sp: URLSearchParams): ControlesVisor & { escena: EscenaVisor } {
   const escena = sp.get("escena");
   const calidad = sp.get("calidad");
   const renderer = sp.get("renderer");
@@ -123,13 +231,7 @@ function saveBackend(b: Backend): void {
   }
 }
 
-const CAMARAS: { value: CameraMode; label: string }[] = [
-  { value: "libre", label: "Libre (arrastra para girar)" },
-  { value: "cenital", label: "Cenital" },
-  { value: "cinematica", label: "Cinematográfica" },
-  { value: "dano", label: "Acercamiento al daño" },
-  { value: "persona", label: "Seguir a la persona" },
-];
+const CAMARAS = ["libre", "cenital", "cinematica", "dano", "persona"] as const;
 
 const noopSubscribe = () => () => undefined;
 const nullSnapshot = () => null;
@@ -137,34 +239,36 @@ const nullSnapshot = () => null;
 let gpuTierCache: GpuTier | null = null;
 const gpuTierSnapshot = (): GpuTier => (gpuTierCache ??= qualityForGpu(readGpuRenderer()));
 
-/** Estado del reloj como almacén externo (avisos limitados por el propio reloj). */
-function useClockState(clock: ViewerClock | null): TimelineState | null {
-  return useSyncExternalStore(
-    clock ? clock.subscribe : noopSubscribe,
-    clock ? clock.get : nullSnapshot,
-    nullSnapshot,
-  );
-}
-
 /**
- * Barra de tiempo suscrita al reloj. La suscripción vive aquí y no en `VisorApp`: el reloj avisa
- * a la interfaz 15 veces por segundo durante la reproducción y, si `VisorApp` se suscribiera, cada
- * aviso volvería a dibujar los paneles de resultados, que no cambian con el tiempo (E6: tirones de
+ * Traza suscrita al reloj. La suscripción vive aquí y no en `VisorEscena`: el reloj avisa a la
+ * interfaz 15 veces por segundo durante la reproducción y, si el visor se suscribiera, cada aviso
+ * volvería a dibujar los paneles de resultados, que no cambian con el tiempo (E6: tirones de
  * 50–70 ms en el hilo principal).
  */
-function ClockedTimelineBar({
+function TrazaConReloj({
   clock,
-  markers,
+  resultado,
 }: {
   clock: ViewerClock;
-  markers: EventMarker[];
+  resultado: Resultado;
 }): ReactElement | null {
+  const { lang } = useIdioma();
   const state = useClockState(clock);
+  const markers = useMemo(() => {
+    const rol = new Map([
+      ...resultado.vehiculos.map((v) => [v.id, v.rol] as const),
+      ...resultado.personas.map((p) => [p.id, lang === "es" ? "peatón" : "pedestrian"] as const),
+    ]);
+    return eventMarkers(resultado.eventos, resultado.t_inicio, resultado.t_fin, (id) =>
+      rol.get(id),
+    );
+  }, [resultado, lang]);
   if (!state) return null;
   return (
-    <TimelineBar
+    <Traza
       state={state}
       markers={markers}
+      vehiculos={resultado.vehiculos.filter((v) => v.involucrado)}
       onTogglePlay={() => clock.set(togglePlay)}
       onSeek={(t) => clock.set((s) => seek(s, t))}
       onStep={(n) => clock.set((s) => step(s, n))}
@@ -177,57 +281,96 @@ const hydratedSnapshot = () => true;
 const serverSnapshot = () => false;
 
 /**
- * Elige la escena: una canónica o la propia (guardada en esta pestaña desde el relato o el
- * croquis). Sin escena propia explica cómo crearla.
+ * `/visor`: elige la escena (una canónica o la propia, guardada en esta pestaña desde el flujo o
+ * el croquis) y guarda los controles en la URL. Sin escena propia explica cómo crearla.
  */
 export function VisorApp() {
+  const t = useTextos(T);
+  const { ruta } = useIdioma();
   const sp = useSearchParams();
-  const escena = useMemo(() => parseParams(new URLSearchParams(sp.toString())).escena, [sp]);
+  const router = useRouter();
+  const params = useMemo(() => parseControles(new URLSearchParams(sp.toString())), [sp]);
+  const ambiente = useMemo(() => parseAmbiente(new URLSearchParams(sp.toString())), [sp]);
   const hidratado = useSyncExternalStore(noopSubscribe, hydratedSnapshot, serverSnapshot);
   const propia = useSyncExternalStore(noopSubscribe, leerEscenaPropia, nullSnapshot);
   const spec = useMemo(
-    () => (escena === "propia" ? propia : loadFixture(escena)),
-    [escena, propia],
+    () => (params.escena === "propia" ? propia : loadFixture(params.escena)),
+    [params.escena, propia],
+  );
+  const setParam = useCallback(
+    (key: string, value: string | null) => {
+      const next = new URLSearchParams(sp.toString());
+      if (value === null) next.delete(key);
+      else next.set(key, value);
+      if (key === "escena") next.delete("t");
+      router.replace(`${ruta("/visor")}?${next.toString()}`, { scroll: false });
+    },
+    [sp, router, ruta],
   );
   if (!spec) {
     return (
       <div
-        className="grid min-h-[360px] place-items-center rounded-lg border border-neutral-300 p-6 text-center text-sm dark:border-neutral-700"
+        className="t-cuerpo grid min-h-[360px] place-items-center border border-linea p-6 text-center"
         data-testid="sin-escena-propia"
       >
         {hidratado ? (
           <p>
-            No hay una escena propia en esta pestaña. Escribe un relato en{" "}
-            <a className="underline" href="/relato">
-              /relato
-            </a>{" "}
-            o arma una en el{" "}
-            <a className="underline" href="/croquis">
-              croquis
-            </a>{" "}
-            y usa «Ver en 3D».
+            {t.sinPropia.antes} <Link href={ruta("/cuenta")}>{t.sinPropia.cuenta}</Link>{" "}
+            {t.sinPropia.o} <Link href={ruta("/croquis")}>{t.sinPropia.croquis}</Link>{" "}
+            {t.sinPropia.despues}
           </p>
         ) : (
-          <p>Cargando escena…</p>
+          <p>{t.cargandoEscena}</p>
         )}
       </div>
     );
   }
-  return <VisorEscena key={escena} spec={spec} hayPropia={propia !== null} />;
+  return (
+    <VisorEscena
+      key={params.escena}
+      spec={spec}
+      escena={params.escena}
+      hayPropia={propia !== null}
+      controles={params}
+      onControl={(k, v) =>
+        setParam(k === "completa" ? "pantalla" : k, k === "completa" ? (v ? "completa" : null) : v)
+      }
+      onEscena={(e) => setParam("escena", e)}
+      ambiente={ambiente}
+    />
+  );
 }
 
-function VisorEscena({ spec, hayPropia }: { spec: EscenaSpec; hayPropia: boolean }) {
-  const sp = useSearchParams();
-  const router = useRouter();
-  const params = useMemo(() => parseParams(new URLSearchParams(sp.toString())), [sp]);
-  const searchKey = sp.toString();
-  const ambiente = useMemo(() => parseAmbiente(new URLSearchParams(searchKey)), [searchKey]);
+export interface VisorEscenaProps {
+  spec: EscenaSpec;
+  escena: EscenaVisor;
+  controles: ControlesVisor;
+  /** Cambia un control (`camara`, `calidad` o `renderer`); null vuelve al valor automático. */
+  onControl: (key: "camara" | "calidad" | "renderer" | "completa", value: string | null) => void;
+  /** Si existe, se muestra el selector de escena (herramienta avanzada). */
+  onEscena?: (e: EscenaVisor) => void;
+  hayPropia?: boolean;
+  ambiente?: AmbienteVisual | null;
+}
+
+export function VisorEscena({
+  spec,
+  escena,
+  controles,
+  onControl,
+  onEscena,
+  hayPropia = false,
+  ambiente = null,
+}: VisorEscenaProps) {
+  const t = useTextos(T);
+  const { lang } = useIdioma();
   // La escena propia se reconstruye en el navegador (Web Worker): primero la reconstrucción, que
   // es lo que se dibuja, y luego el resultado completo (Monte Carlo, inversión y consistencia) para
   // los paneles. El visor 3D se queda con la primera para no reconstruir la escena 3D al llegar la
   // segunda (las trayectorias son las mismas).
   const [resultado, setResultado] = useState<{
     name: EscenaVisor;
+    spec: EscenaSpec;
     dibujo: Resultado;
     r: Resultado;
     completo: boolean;
@@ -241,23 +384,24 @@ function VisorEscena({ spec, hayPropia }: { spec: EscenaSpec; hayPropia: boolean
   const gpu = useSyncExternalStore(noopSubscribe, gpuTierSnapshot, nullSnapshot);
   const [autoAjustada, setAutoAjustada] = useState<QualityLevel | null>(null);
   const autoCalidad: QualityLevel = autoAjustada ?? gpu?.level ?? "media";
-  const calidad: QualityLevel = params.calidad === "auto" ? autoCalidad : params.calidad;
+  const calidad: QualityLevel = controles.calidad === "auto" ? autoCalidad : controles.calidad;
 
   useEffect(() => {
     let alive = true;
-    const name = params.escena;
     const fail = (e: unknown) => {
       if (alive) setError(e instanceof Error ? e.message : String(e));
     };
-    if (name === "propia") {
+    if (escena === "propia") {
       reconstruirCompletoEnNavegador(spec, (parcial) => {
-        if (alive) setResultado({ name, dibujo: parcial, r: parcial, completo: false });
+        if (alive)
+          setResultado({ name: escena, spec, dibujo: parcial, r: parcial, completo: false });
       })
         .then((completo) => {
           if (alive) {
             setResultado((prev) => ({
-              name,
-              dibujo: prev?.name === name ? prev.dibujo : completo,
+              name: escena,
+              spec,
+              dibujo: prev?.name === escena && prev.spec === spec ? prev.dibujo : completo,
               r: completo,
               completo: true,
             }));
@@ -265,57 +409,53 @@ function VisorEscena({ spec, hayPropia }: { spec: EscenaSpec; hayPropia: boolean
         })
         .catch(fail);
     } else {
-      loadResultado(name)
+      loadResultado(escena)
         .then((r) => {
-          if (alive) setResultado({ name, dibujo: r, r, completo: true });
+          if (alive) setResultado({ name: escena, spec, dibujo: r, r, completo: true });
         })
         .catch(fail);
     }
     return () => {
       alive = false;
     };
-  }, [params.escena, spec]);
+  }, [escena, spec]);
 
-  const r = resultado?.name === params.escena ? resultado.r : null;
-  const dibujo = resultado?.name === params.escena ? resultado.dibujo : null;
-  const calculando = resultado?.name === params.escena && !resultado.completo;
+  const vigente = resultado?.name === escena && resultado.spec === spec ? resultado : null;
+  const r = vigente?.r ?? null;
+  const dibujo = vigente?.dibujo ?? null;
+  const calculando = vigente !== null && !vigente.completo;
   // Hipótesis alternativa de la escena actual (se descarta al cambiar de escena).
   const [hyp, setHyp] = useState<{ escena: EscenaVisor; lista: Hipotesis[] } | null>(null);
-  const hipotesis = useMemo(
-    () => (hyp?.escena === params.escena ? hyp.lista : []),
-    [hyp, params.escena],
-  );
+  const hipotesis = useMemo(() => (hyp?.escena === escena ? hyp.lista : []), [hyp, escena]);
   const ghostResults = useMemo(() => hipotesis.map((h) => h.resultado), [hipotesis]);
+  const [dividida, setDividida] = useState(false);
+  const comparar = dividida && hipotesis.length > 0;
   const clock = useMemo(() => {
     if (!dibujo) return null;
     return createClock(
       createTimeline(dibujo.t_inicio, dibujo.t_fin, dibujo.dt, {
-        t: params.t ?? dibujo.t_inicio,
-        playing: params.auto,
-        loop: params.bucle,
+        t: controles.t ?? dibujo.t_inicio,
+        playing: controles.auto,
+        loop: controles.bucle,
       }),
     );
-  }, [dibujo, params.t, params.auto, params.bucle]);
+  }, [dibujo, controles.t, controles.auto, controles.bucle]);
 
-  // Backend automático por medición (ADR 0006): WebGPU primero; si no llega a 60 fps se prueba
-  // WebGL 2 y se queda el más rápido. La decisión se recuerda en este navegador.
   // Resultado del montaje de personas (ragdolls calibrados) para el panel.
   const [people, setPeople] = useState<{ escena: EscenaVisor; data: PeopleAttachment } | null>(
     null,
   );
-  const onPeople = useCallback(
-    (data: PeopleAttachment) => setPeople({ escena: params.escena, data }),
-    [params.escena],
-  );
-  // Una prueba por escena: lo que rinde en una escena puede no rendir en otra.
+  const onPeople = useCallback((data: PeopleAttachment) => setPeople({ escena, data }), [escena]);
+  // Backend automático por medición (ADR 0006): WebGPU primero; si no llega a 60 fps se prueba
+  // WebGL 2 y se queda el más rápido. La decisión se recuerda en este navegador. Una prueba por
+  // escena: lo que rinde en una escena puede no rendir en otra.
   const [trialState, setTrialState] = useState<{ escena: EscenaVisor; trial: BackendTrial }>(
     () => ({
-      escena: params.escena,
+      escena,
       trial: startTrial(readBackend()),
     }),
   );
-  const trial = trialState.escena === params.escena ? trialState.trial : startTrial(readBackend());
-  const escena = params.escena;
+  const trial = trialState.escena === escena ? trialState.trial : startTrial(readBackend());
   // E9: la primera vez que la escena propia queda lista en 3D (solo con una sesión activa).
   useEffect(() => {
     if (escena !== "propia" || !leerE9()) return undefined;
@@ -336,26 +476,26 @@ function VisorEscena({ spec, hayPropia }: { spec: EscenaSpec; hayPropia: boolean
     [escena],
   );
   const effectiveRenderer: RendererPreference =
-    params.renderer === "auto" ? trial.current : params.renderer;
+    controles.renderer === "auto" ? trial.current : controles.renderer;
   useEffect(() => {
-    if (params.renderer !== "auto" || trial.decided || !info) return undefined;
+    if (controles.renderer !== "auto" || trial.decided || !info) return undefined;
     const id = window.setInterval(() => {
       const perf = window.__croquisPerf;
       if (!perf || perf.frameMs.length < 240) return;
       const fps = recentFps(perf.frameMs, 120);
       if (!Number.isFinite(fps)) return;
-      setTrial((t) => {
-        const next = recordTrial(t, fps, info.backend);
+      setTrial((tr) => {
+        const next = recordTrial(tr, fps, info.backend);
         if (next.decided) saveBackend(next.current);
         return next;
       });
     }, 1000);
     return () => window.clearInterval(id);
-  }, [params.renderer, trial.decided, info, setTrial]);
+  }, [controles.renderer, trial.decided, info, setTrial]);
 
   // Calidad automática con histéresis según los fps medidos (PLAN §7.8), una vez elegido el backend.
   useEffect(() => {
-    if (params.calidad !== "auto" || (params.renderer === "auto" && !trial.decided))
+    if (controles.calidad !== "auto" || (controles.renderer === "auto" && !trial.decided))
       return undefined;
     const id = window.setInterval(() => {
       const fps = recentFps(window.__croquisPerf?.frameMs ?? [], 90);
@@ -364,7 +504,7 @@ function VisorEscena({ spec, hayPropia }: { spec: EscenaSpec; hayPropia: boolean
       }
     }, 3000);
     return () => window.clearInterval(id);
-  }, [params.calidad, params.renderer, trial.decided, gpu]);
+  }, [controles.calidad, controles.renderer, trial.decided, gpu]);
 
   const env = useMemo(
     () =>
@@ -379,51 +519,71 @@ function VisorEscena({ spec, hayPropia }: { spec: EscenaSpec; hayPropia: boolean
     [spec],
   );
 
-  const setParam = (key: string, value: string | null) => {
-    const next = new URLSearchParams(sp.toString());
-    if (value === null) next.delete(key);
-    else next.set(key, value);
-    if (key === "escena") next.delete("t");
-    router.replace(`/visor?${next.toString()}`, { scroll: false });
-  };
-
-  const [mode, driverId] = params.camara.startsWith("conductor-")
-    ? (["conductor", params.camara.slice("conductor-".length)] as const)
-    : ([params.camara as CameraMode, undefined] as const);
-  const cameraMode: CameraMode = [
-    "libre",
-    "cenital",
-    "conductor",
-    "cinematica",
-    "dano",
-    "persona",
-  ].includes(mode)
-    ? mode
+  const [mode, driverId] = controles.camara.startsWith("conductor-")
+    ? (["conductor", controles.camara.slice("conductor-".length)] as const)
+    : ([controles.camara as CameraMode, undefined] as const);
+  const cameraMode: CameraMode = (
+    ["libre", "cenital", "conductor", "cinematica", "dano", "persona"] as const
+  ).includes(mode as CameraMode)
+    ? (mode as CameraMode)
     : "libre";
+  const opcionesCamara = [
+    ...CAMARAS.filter((c) => c !== "persona" || spec.personas.some((p) => !p.vehiculo_id)).map(
+      (c) => ({
+        valor: c as string,
+        texto: t.camaras[c],
+      }),
+    ),
+    ...spec.vehiculos.map((v) => ({
+      valor: `conductor-${v.id}`,
+      texto: t.camaras.conductor(v.rol),
+    })),
+  ];
 
-  const markers = useMemo(() => {
-    if (!r) return [];
-    const rol = new Map([
-      ...r.vehiculos.map((v) => [v.id, v.rol] as const),
-      ...r.personas.map((p) => [p.id, "peatón"] as const),
-    ]);
-    return eventMarkers(r.eventos, r.t_inicio, r.t_fin, (id) => rol.get(id));
-  }, [r]);
+  const leyenda = (
+    <div className="pointer-events-none absolute inset-x-0 bottom-0 bg-[color-mix(in_srgb,var(--fondo)_72%,transparent)] px-4 py-2">
+      <Legend
+        seed={spec.meta.semilla}
+        inputHash={spec.meta.hash_relato}
+        tone="clara"
+        atribucion={spec.lugar.red_vial?.atribucion}
+      />
+    </div>
+  );
+  const visor = (res: Resultado, principal: boolean) =>
+    clock ? (
+      <SceneViewer
+        spec={spec}
+        resultado={res}
+        clock={clock}
+        camera={cameraMode}
+        driverVehicleId={driverId}
+        quality={
+          principal ? calidad : calidad === "ultra" || calidad === "alta" ? "media" : calidad
+        }
+        renderer={effectiveRenderer}
+        onRendererInfo={principal ? setInfo : undefined}
+        onPeople={principal ? onPeople : undefined}
+        hipotesis={principal && !comparar ? ghostResults : undefined}
+        onExport={principal ? setExportApi : undefined}
+        ambiente={ambiente ?? undefined}
+        onError={() => setError(t.sinGpu)}
+        className="h-full w-full"
+      />
+    ) : null;
 
   return (
-    <div className="flex flex-col gap-4">
-      <div className="flex flex-wrap items-end gap-4 text-sm">
-        <label className="flex flex-col gap-1">
-          Escena
+    <div className="flex flex-col gap-6">
+      {onEscena ? (
+        <label className="t-interfaz flex max-w-md flex-col gap-1">
+          {t.escena}
           <select
-            value={params.escena}
-            onChange={(e) => setParam("escena", e.target.value)}
-            className="rounded border border-neutral-400 bg-transparent px-2 py-1"
-            aria-label="Escena"
+            value={escena}
+            onChange={(e) => onEscena(e.target.value as EscenaVisor)}
+            className="campo"
+            aria-label={t.escena}
           >
-            {hayPropia ? (
-              <option value="propia">Escena propia (del relato o el croquis)</option>
-            ) : null}
+            {hayPropia ? <option value="propia">{t.propia}</option> : null}
             {FIXTURE_NAMES.map((n) => (
               <option key={n} value={n}>
                 {fixtureTitle(n)}
@@ -431,149 +591,175 @@ function VisorEscena({ spec, hayPropia }: { spec: EscenaSpec; hayPropia: boolean
             ))}
           </select>
         </label>
-        <label className="flex flex-col gap-1">
-          Cámara
-          <select
-            value={params.camara}
-            onChange={(e) => setParam("camara", e.target.value)}
-            className="rounded border border-neutral-400 bg-transparent px-2 py-1"
-            aria-label="Cámara"
-          >
-            {CAMARAS.map((c) => (
-              <option key={c.value} value={c.value}>
-                {c.label}
-              </option>
-            ))}
-            {spec.vehiculos.map((v) => (
-              <option key={v.id} value={`conductor-${v.id}`}>
-                Vista del conductor {v.rol}
-              </option>
-            ))}
-          </select>
-        </label>
-        <label className="flex flex-col gap-1">
-          Calidad
-          <select
-            value={params.calidad}
-            onChange={(e) => setParam("calidad", e.target.value === "auto" ? null : e.target.value)}
-            className="rounded border border-neutral-400 bg-transparent px-2 py-1"
-            aria-label="Calidad"
-          >
-            <option value="auto">
-              Automática ({calidad}
-              {gpu ? ` · ${gpu.kind}` : ""})
-            </option>
-            <option value="baja">Baja</option>
-            <option value="media">Media</option>
-            <option value="alta">Alta</option>
-            <option value="ultra">Ultra</option>
-          </select>
-        </label>
-        <label className="flex flex-col gap-1">
-          Render
-          <select
-            value={params.renderer}
-            onChange={(e) =>
-              setParam("renderer", e.target.value === "auto" ? null : e.target.value)
-            }
-            className="rounded border border-neutral-400 bg-transparent px-2 py-1"
-            aria-label="Render"
-          >
-            <option value="auto">Automático (elige el más rápido)</option>
-            <option value="webgpu">Forzar WebGPU</option>
-            <option value="webgl">Forzar WebGL 2</option>
-          </select>
-        </label>
-        {info ? (
-          <span
-            className="pb-1 font-mono text-xs text-neutral-600 dark:text-neutral-400"
-            data-testid="backend"
-          >
-            {info.backend === "webgpu" ? "WebGPU" : "WebGL 2"}
-            {params.renderer === "auto" && trial.decided && Object.keys(trial.measured).length > 0
-              ? ` · elegido por medición (${Object.entries(trial.measured)
-                  .map(([k, v]) => `${k === "webgpu" ? "WebGPU" : "WebGL 2"} ${Math.round(v)} fps`)
-                  .join(", ")})`
-              : ""}
-          </span>
-        ) : null}
-      </div>
+      ) : null}
 
       {ambiente ? (
         <p
           role="status"
           data-testid="ambiente-forzado"
-          className="rounded border border-amber-400 bg-amber-50 px-3 py-2 text-sm text-amber-900 dark:border-amber-700 dark:bg-amber-950 dark:text-amber-100"
+          className="t-interfaz border-l-2 border-texto-2 pl-4"
         >
-          {describeAmbiente(ambiente)}
+          {describeAmbiente(ambiente, lang)}
         </p>
       ) : null}
 
       <div
         className={
-          params.completa
-            ? "fixed inset-0 z-50 bg-neutral-900"
-            : "relative h-[60vh] min-h-[360px] w-full overflow-hidden rounded-lg border border-neutral-300 bg-neutral-900 dark:border-neutral-700"
+          controles.completa
+            ? "fixed inset-0 z-50 bg-fondo"
+            : `grid gap-2 ${comparar ? "md:grid-cols-2" : ""}`
         }
       >
-        {error ? (
-          <p role="alert" className="grid h-full place-items-center p-6 text-center text-white">
-            {error}
-          </p>
-        ) : dibujo && clock ? (
-          <SceneViewer
-            spec={spec}
-            resultado={dibujo}
-            clock={clock}
-            camera={cameraMode}
-            driverVehicleId={driverId}
-            quality={calidad}
-            renderer={effectiveRenderer}
-            onRendererInfo={setInfo}
-            onPeople={onPeople}
-            hipotesis={ghostResults}
-            onExport={setExportApi}
-            ambiente={ambiente ?? undefined}
-            onError={() =>
-              setError(
-                "Este navegador no pudo iniciar WebGPU ni WebGL 2; el visor 3D no está disponible.",
-              )
-            }
-            className="h-full w-full"
-          />
-        ) : (
-          <div className="grid h-full place-items-center text-sm text-white">
-            Cargando reconstrucción…
-          </div>
-        )}
-        <div className="pointer-events-none absolute inset-x-0 bottom-0 bg-black/55 px-3 py-1.5 text-white">
-          <Legend
-            seed={spec.meta.semilla}
-            inputHash={spec.meta.hash_relato}
-            tone="clara"
-            atribucion={spec.lugar.red_vial?.atribucion}
-          />
+        <div
+          className={
+            controles.completa
+              ? "relative h-full w-full"
+              : "relative h-[62vh] min-h-[360px] w-full overflow-hidden rounded-panel bg-superficie"
+          }
+          data-testid="marco-visor"
+        >
+          {error ? (
+            <p role="alert" className="t-interfaz grid h-full place-items-center p-6 text-center">
+              {error}
+            </p>
+          ) : dibujo && clock ? (
+            visor(dibujo, true)
+          ) : (
+            <div className="t-nota grid h-full place-items-center">{t.cargando}</div>
+          )}
+          {dibujo && clock && !error ? <Lecturas clock={clock} resultado={dibujo} /> : null}
+          {comparar ? (
+            <span className="t-nota vidrio absolute top-3 right-3 px-3 py-1 text-texto">
+              {t.original}
+            </span>
+          ) : null}
+          {leyenda}
         </div>
+        {comparar && hipotesis[0] ? (
+          <div
+            className="relative h-[62vh] min-h-[360px] w-full overflow-hidden rounded-panel bg-superficie"
+            data-testid="visor-hipotesis"
+          >
+            {visor(hipotesis[0].resultado, false)}
+            {clock ? <Lecturas clock={clock} resultado={hipotesis[0].resultado} /> : null}
+            <span className="t-nota vidrio absolute top-3 right-3 px-3 py-1 text-texto">
+              {t.hipotesis(hipotesis[0].etiqueta)}
+            </span>
+            {leyenda}
+          </div>
+        ) : null}
       </div>
 
-      {clock ? <ClockedTimelineBar clock={clock} markers={markers} /> : null}
+      <div className="flex flex-wrap items-center justify-between gap-4">
+        <fieldset className="flex flex-wrap items-center gap-2">
+          <legend className="t-nota mb-2">{t.camara}</legend>
+          <div
+            role="radiogroup"
+            aria-label={t.camara}
+            className="flex flex-wrap gap-2"
+            data-testid="camaras"
+          >
+            {opcionesCamara.map((o) => {
+              const sel = controles.camara === o.valor;
+              return (
+                <button
+                  key={o.valor}
+                  type="button"
+                  role="radio"
+                  aria-checked={sel}
+                  title={o.valor === "libre" ? t.camaras.libreAyuda : undefined}
+                  onClick={() => onControl("camara", o.valor)}
+                  className={`boton-secundario min-h-11 px-4 ${sel ? "border-texto bg-superficie-alta" : ""}`}
+                >
+                  {o.texto}
+                </button>
+              );
+            })}
+          </div>
+        </fieldset>
+        {hipotesis.length > 0 ? (
+          <button
+            type="button"
+            className="boton-secundario"
+            aria-pressed={comparar}
+            data-testid="comparar-lado-a-lado"
+            onClick={() => setDividida((d) => !d)}
+          >
+            {comparar ? t.unida : t.dividida}
+          </button>
+        ) : null}
+      </div>
+
+      {clock && dibujo ? <TrazaConReloj clock={clock} resultado={dibujo} /> : null}
+
+      <details className="border-t border-linea pt-4">
+        <summary className="t-interfaz cursor-pointer">{t.ajustes}</summary>
+        <div className="mt-4 flex flex-wrap items-end gap-4">
+          <label className="t-nota flex flex-col gap-1">
+            {t.calidad}
+            <select
+              value={controles.calidad}
+              onChange={(e) =>
+                onControl("calidad", e.target.value === "auto" ? null : e.target.value)
+              }
+              className="campo w-auto"
+              aria-label={t.calidad}
+            >
+              <option value="auto">
+                {t.automatica} ({t.niveles[calidad]}
+                {gpu ? ` · ${gpu.kind}` : ""})
+              </option>
+              <option value="baja">{t.niveles.baja}</option>
+              <option value="media">{t.niveles.media}</option>
+              <option value="alta">{t.niveles.alta}</option>
+              <option value="ultra">{t.niveles.ultra}</option>
+            </select>
+          </label>
+          <label className="t-nota flex flex-col gap-1">
+            {t.render}
+            <select
+              value={controles.renderer}
+              onChange={(e) =>
+                onControl("renderer", e.target.value === "auto" ? null : e.target.value)
+              }
+              className="campo w-auto"
+              aria-label={t.render}
+            >
+              <option value="auto">{t.renderAuto}</option>
+              <option value="webgpu">{t.forzarWebgpu}</option>
+              <option value="webgl">{t.forzarWebgl}</option>
+            </select>
+          </label>
+          {info ? (
+            <span className="t-nota cifras pb-3" data-testid="backend">
+              {info.backend === "webgpu" ? "WebGPU" : "WebGL 2"}
+              {controles.renderer === "auto" &&
+              trial.decided &&
+              Object.keys(trial.measured).length > 0
+                ? ` · ${t.elegido(
+                    Object.entries(trial.measured)
+                      .map(
+                        ([k, v]) => `${k === "webgpu" ? "WebGPU" : "WebGL 2"} ${Math.round(v)} fps`,
+                      )
+                      .join(", "),
+                  )}`
+                : ""}
+            </span>
+          ) : null}
+        </div>
+      </details>
 
       <ExportPanel
         api={exportApi}
         clock={clock}
         legend={legend}
-        nombre={params.escena === "propia" ? "escena-propia" : params.escena}
+        nombre={escena === "propia" ? "escena-propia" : escena}
         informe={{ spec, resultado: r, supuestosEntorno: env.supuestos, completo: !calculando }}
       />
 
       {calculando ? (
-        <p
-          role="status"
-          data-testid="calculo-completo"
-          className="text-sm text-neutral-600 dark:text-neutral-400"
-        >
-          Calculando la incertidumbre (Monte Carlo), la inversión desde la evidencia y la
-          consistencia en este navegador…
+        <p role="status" data-testid="calculo-completo" className="t-nota">
+          {t.calculando}
         </p>
       ) : null}
 
@@ -584,11 +770,11 @@ function VisorEscena({ spec, hayPropia }: { spec: EscenaSpec; hayPropia: boolean
           spec={spec}
           resultado={r}
           hipotesis={hipotesis}
-          onChange={(lista) => setHyp({ escena: params.escena, lista })}
+          onChange={(lista) => setHyp({ escena, lista })}
         />
       ) : null}
       {r ? (
-        <PeoplePanel resultado={r} people={people?.escena === params.escena ? people.data : null} />
+        <PeoplePanel resultado={r} people={people?.escena === escena ? people.data : null} />
       ) : null}
     </div>
   );

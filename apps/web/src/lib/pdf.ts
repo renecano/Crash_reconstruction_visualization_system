@@ -12,11 +12,14 @@ export interface PdfOptions {
   legend: LegendInfo;
   content: Content;
   pageOrientation?: "portrait" | "landscape";
+  /** Renglones de la marca ya escritos (p. ej. en inglés); por omisión, `legendLines(legend)`. */
+  lines?: string[];
+  /** Palabras clave de los metadatos; por omisión, en español. */
+  keywords?: string;
 }
 
 /** Pie de cada página: la marca completa y el número de página. */
-export function legendFooter(legend: LegendInfo) {
-  const lines = legendLines(legend);
+export function legendFooter(legend: LegendInfo, lines: string[] = legendLines(legend)) {
   return (page: number, pages: number): Content => ({
     margin: [40, 6, 40, 0],
     columns: [
@@ -30,20 +33,20 @@ export function legendFooter(legend: LegendInfo) {
 }
 
 export function pdfDefinition(opts: PdfOptions): TDocumentDefinitions {
-  const lines = legendLines(opts.legend);
+  const lines = opts.lines ?? legendLines(opts.legend);
   return {
     pageSize: "A4",
     pageOrientation: opts.pageOrientation ?? "portrait",
     pageMargins: [40, 40, 40, 30 + lines.length * 10],
     info: {
       title: opts.title,
-      subject: legendString(opts.legend),
-      keywords: "reconstrucción ilustrativa; no es un peritaje",
+      subject: opts.lines ? lines.join(" — ") : legendString(opts.legend),
+      keywords: opts.keywords ?? "reconstrucción ilustrativa; no es un peritaje",
       creator: "Croquis",
       producer: "Croquis (pdfmake)",
     },
     defaultStyle: { font: "Roboto", fontSize: 10 },
-    footer: legendFooter(opts.legend),
+    footer: legendFooter(opts.legend, lines),
     content: opts.content,
   };
 }

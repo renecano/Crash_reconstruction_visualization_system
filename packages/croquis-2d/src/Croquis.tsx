@@ -45,6 +45,11 @@ export interface CroquisProps {
    * como rectángulo (los lectores de SVG y de PDF no aplican el `background` de CSS). Sin edición.
    */
   standalone?: boolean;
+  /**
+   * Textos de la marca en el idioma de la página (la leyenda y la atribución del mapa). Por omisión,
+   * los de la escena; las exportaciones no los cambian.
+   */
+  textos?: { leyenda?: string; atribucion?: string; semilla?: string };
 }
 
 type DragTarget =
@@ -56,10 +61,29 @@ type DragTarget =
   | { kind: "evidence"; id: string; index: number }
   | { kind: "event"; id: string };
 
-const BACKGROUND = "#dfe7d8";
-const ROAD_FILL = "#5b5f66";
-const LINE_STROKE = "#f4f1e6";
-const MEDIAN_FILL = "#7a9a6a";
+/**
+ * Colores del croquis: el papel del parte de tránsito (PLAN §11.2, tema claro). Son los valores de
+ * `assets/brand/tokens.json` escritos aquí porque el croquis se exporta como SVG autónomo (sin las
+ * variables CSS del sitio); una prueba de la app web comprueba que sigan iguales a los tokens.
+ */
+export const COLORES_CROQUIS = {
+  papel: "#EFEBE1",
+  tinta: "#15181B",
+  /** Solo evidencia: punto de impacto, marcas y puntos de evidencia. */
+  evidencia: "#FF6A13",
+  /** Solo acciones del usuario: el asa para girar. */
+  accion: "#F2B705",
+  blancoVial: "#F4F2EC",
+} as const;
+const BACKGROUND = COLORES_CROQUIS.papel;
+/** Calzada: tinta al 62 % sobre papel, para que la pintura vial se lea encima. */
+const ROAD_FILL = "#686866";
+const LINE_STROKE = COLORES_CROQUIS.blancoVial;
+/** Camellón: tinta al 22 % sobre papel. */
+const MEDIAN_FILL = "#C1BDB4";
+const TINTA = COLORES_CROQUIS.tinta;
+const EVIDENCIA = COLORES_CROQUIS.evidencia;
+const ACCION = COLORES_CROQUIS.accion;
 
 export function Croquis({
   spec,
@@ -72,6 +96,7 @@ export function Croquis({
   scale = 10,
   className,
   standalone = false,
+  textos,
 }: CroquisProps) {
   const layout = useMemo(() => sceneLayout(spec, clases), [spec, clases]);
   const vp = useMemo(() => makeViewport(layout.bounds, scale), [layout.bounds, scale]);
@@ -202,7 +227,7 @@ export function Croquis({
           <polyline
             points={ev.puntos.map((p) => `${P(p).x},${P(p).y}`).join(" ")}
             fill="none"
-            stroke={ev.tipo.startsWith("marcas") ? "#1f1f1f" : "#b05a00"}
+            stroke={ev.tipo.startsWith("marcas") ? TINTA : EVIDENCIA}
             strokeWidth={ev.tipo.startsWith("marcas") ? m(0.25) : m(0.1)}
             strokeDasharray={ev.tipo.startsWith("marcas") ? undefined : `${m(0.4)} ${m(0.4)}`}
             opacity={0.8}
@@ -213,8 +238,8 @@ export function Croquis({
               cx={P(p).x}
               cy={P(p).y}
               r={m(0.35)}
-              fill="#b05a00"
-              stroke="#fff"
+              fill={EVIDENCIA}
+              stroke={COLORES_CROQUIS.papel}
               strokeWidth={m(0.08)}
               cursor={readOnly ? "default" : "move"}
               data-testid={`evidence-point-${ev.id}-${i}`}
@@ -356,7 +381,7 @@ export function Croquis({
               y1={c.y - m(0.7)}
               x2={c.x + m(0.7)}
               y2={c.y + m(0.7)}
-              stroke="#c0392b"
+              stroke={EVIDENCIA}
               strokeWidth={m(0.18)}
             />
             <line
@@ -364,7 +389,7 @@ export function Croquis({
               y1={c.y + m(0.7)}
               x2={c.x + m(0.7)}
               y2={c.y - m(0.7)}
-              stroke="#c0392b"
+              stroke={EVIDENCIA}
               strokeWidth={m(0.18)}
             />
           </g>
@@ -379,8 +404,8 @@ export function Croquis({
         y={vp.viewBox.height - (shownLayout.mapa ? m(4.6) : m(3.4))}
         width={vp.viewBox.width}
         height={shownLayout.mapa ? m(4.6) : m(3.4)}
-        fill="#ffffff"
-        opacity={0.82}
+        fill={COLORES_CROQUIS.papel}
+        opacity={0.88}
       />
       {shownLayout.mapa ? (
         <text
@@ -388,14 +413,15 @@ export function Croquis({
           x={m(1)}
           y={vp.viewBox.height - m(3.4)}
           fontSize={m(0.9)}
-          fill="#333"
+          fill={TINTA}
           fontFamily="system-ui, sans-serif"
         >
-          {shownLayout.mapa.atribucion}
+          {textos?.atribucion ?? shownLayout.mapa.atribucion}
         </text>
       ) : null}
       {/* Marca de reconstrucción ilustrativa: texto, y semilla con el hash de entradas. */}
-      {legendLines(legendFor(shown))
+      {legendLines({ ...legendFor(shown), ...(textos?.leyenda ? { texto: textos.leyenda } : {}) })
+        .map((l, i) => (i === 1 && textos?.semilla ? l.replace(/^semilla/, textos.semilla) : l))
         .slice(0, 2)
         .map((line, i) => (
           <text
@@ -404,7 +430,7 @@ export function Croquis({
             x={m(1)}
             y={vp.viewBox.height - (i === 0 ? m(2.1) : m(0.8))}
             fontSize={i === 0 ? m(1.1) : m(0.9)}
-            fill="#333"
+            fill={TINTA}
             fontFamily="system-ui, sans-serif"
           >
             {line}
@@ -624,8 +650,8 @@ function VehicleShape({
         height={W}
         rx={m(0.25)}
         fill={color}
-        stroke={selected ? "#ff8800" : "#111"}
-        strokeWidth={m(selected ? 0.2 : 0.1)}
+        stroke={TINTA}
+        strokeWidth={m(selected ? 0.3 : 0.1)}
         cursor={readOnly ? "default" : "move"}
         onPointerDown={onDown}
       />
@@ -656,8 +682,8 @@ function VehicleShape({
           cx={L / 2 + m(0.9)}
           cy={0}
           r={m(0.4)}
-          fill="#ff8800"
-          stroke="#fff"
+          fill={ACCION}
+          stroke={TINTA}
           strokeWidth={m(0.08)}
           cursor="grab"
           onPointerDown={onRotate}
@@ -682,7 +708,9 @@ function ObjectGlyphView({
 }) {
   const m = (v: number) => v * vp.scale;
   const c = worldToSvg(vp, o.posicion);
-  const stroke = selected ? "#ff8800" : "#2b2b2b";
+  const stroke = TINTA;
+  // Seleccionado: el mismo trazo de tinta, más grueso (el color queda para evidencia y acciones).
+  const grueso = selected ? 2.5 : 1;
   const cursor = readOnly ? "default" : "move";
   if (o.tipo === "arbol") {
     return (
@@ -694,7 +722,7 @@ function ObjectGlyphView({
           fill="#5f9a4b"
           opacity={0.75}
           stroke={stroke}
-          strokeWidth={m(0.08)}
+          strokeWidth={m(0.08 * grueso)}
         />
         <circle cx={c.x} cy={c.y} r={m(Math.max(0.15, (o.diametro ?? 0.3) / 2))} fill="#5a3a1a" />
       </g>
@@ -709,7 +737,7 @@ function ObjectGlyphView({
           r={m(Math.max(0.2, (o.diametro ?? 0.3) / 2) + 0.1)}
           fill="#9aa0a6"
           stroke={stroke}
-          strokeWidth={m(0.1)}
+          strokeWidth={m(0.1 * grueso)}
         />
       </g>
     );
@@ -838,17 +866,17 @@ function ScaleBar({ vp }: { vp: Viewport }) {
   const tick = m(0.5);
   return (
     <g data-testid="escala" fontFamily="system-ui, sans-serif">
-      <line x1={x} y1={y} x2={x + m(len)} y2={y} stroke="#333" strokeWidth={m(0.15)} />
-      <line x1={x} y1={y - tick} x2={x} y2={y + tick} stroke="#333" strokeWidth={m(0.15)} />
+      <line x1={x} y1={y} x2={x + m(len)} y2={y} stroke={TINTA} strokeWidth={m(0.15)} />
+      <line x1={x} y1={y - tick} x2={x} y2={y + tick} stroke={TINTA} strokeWidth={m(0.15)} />
       <line
         x1={x + m(len)}
         y1={y - tick}
         x2={x + m(len)}
         y2={y + tick}
-        stroke="#333"
+        stroke={TINTA}
         strokeWidth={m(0.15)}
       />
-      <text x={x + m(len) / 2} y={y - m(0.8)} textAnchor="middle" fontSize={m(1)} fill="#333">
+      <text x={x + m(len) / 2} y={y - m(0.8)} textAnchor="middle" fontSize={m(1)} fill={TINTA}>
         {len} m
       </text>
     </g>
@@ -861,12 +889,12 @@ function NorthArrow({ vp }: { vp: Viewport }) {
   const y = m(3);
   return (
     <g data-testid="north" fontFamily="system-ui, sans-serif">
-      <line x1={x} y1={y + m(1.5)} x2={x} y2={y - m(1.5)} stroke="#333" strokeWidth={m(0.15)} />
+      <line x1={x} y1={y + m(1.5)} x2={x} y2={y - m(1.5)} stroke={TINTA} strokeWidth={m(0.15)} />
       <polygon
         points={`${x},${y - m(2)} ${x - m(0.5)},${y - m(1)} ${x + m(0.5)},${y - m(1)}`}
-        fill="#333"
+        fill={TINTA}
       />
-      <text x={x} y={y + m(2.8)} textAnchor="middle" fontSize={m(1)} fill="#333">
+      <text x={x} y={y + m(2.8)} textAnchor="middle" fontSize={m(1)} fill={TINTA}>
         N
       </text>
     </g>

@@ -1,6 +1,7 @@
 import { loadResultado } from "@croquis/scene-schema";
 import { render, screen } from "@testing-library/react";
 import { describe, expect, it } from "vitest";
+import { IdiomaProvider } from "@/i18n/cliente";
 import { EvidencePanel, evidenceLabel } from "./evidence-panel";
 
 const BLAME = /culpa|culpable|responsable|imprudente|debió|mintió/i;
@@ -39,5 +40,25 @@ describe("<EvidencePanel />", () => {
     expect(evidenceLabel("proyeccion:per-1", roles)).toBe(
       "distancia a la que quedó la persona (persona)",
     );
+  });
+});
+
+describe("<EvidencePanel /> en inglés", () => {
+  it("la evidencia y los datos que no cuadran en inglés, marcados con su idioma", async () => {
+    const r = await loadResultado("peaton_cruce");
+    render(
+      <IdiomaProvider lang="en">
+        <EvidencePanel resultado={r} />
+      </IdiomaProvider>,
+    );
+    const panel = screen.getByRole("region", { name: "What the physical evidence says" });
+    expect(panel.textContent).toContain("skid marks (vehicle A)");
+    expect(panel.textContent).toMatch(/Initial speed/);
+    expect(panel.textContent).toMatch(/best fit/);
+    expect(panel.textContent).toMatch(/\d+–\d+ km\/h/);
+    const flags = screen.getByTestId("consistencia");
+    expect(flags.textContent).toContain("before braking");
+    expect(flags.querySelector("li")?.getAttribute("lang")).toBe("en");
+    expect(panel.textContent).not.toMatch(/Evidencia declarada|Velocidad previa|mejor ajuste/);
   });
 });

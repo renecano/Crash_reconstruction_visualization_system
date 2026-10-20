@@ -7,7 +7,9 @@
 /* Capas de Tailwind: los estilos de elementos van en base y las clases en components, para que
    las utilidades (md:hidden, etc.) siempre puedan sobrescribirlas. */
 @layer base {
-  :root {
+  /* El tema oscuro es el de todo el sitio; `data-tema="oscuro"` lo vuelve a poner dentro del papel. */
+  :root,
+  [data-tema="oscuro"] {
     color-scheme: dark;
 
     /* Roles de color: los componentes usan estos, nunca los nombres de marca. */
@@ -225,6 +227,15 @@
     );
   }
 
+  /* Raya discontinua horizontal (tramos del flujo, cotas): el mismo ritmo de la raya de carril. */
+  .raya-discontinua {
+    background: repeating-linear-gradient(
+      to right,
+      var(--texto) 0 var(--carril-trazo),
+      transparent var(--carril-trazo) calc(var(--carril-trazo) + var(--carril-hueco))
+    );
+  }
+
   .separador {
     border: 0;
     border-top: 1px solid var(--linea);
@@ -271,11 +282,19 @@
     border-color: var(--texto);
     text-decoration: none;
   }
+  /* Deshabilitado: sin el amarillo (no es una acción disponible) y sin filtros que lo enturbien. */
   .boton-principal:disabled,
-  .boton-secundario:disabled,
   .boton-principal[aria-disabled="true"] {
     cursor: not-allowed;
-    filter: saturate(0.4) brightness(0.75);
+    background: var(--superficie-alta);
+    box-shadow: none;
+    color: var(--texto-3);
+    filter: none;
+  }
+  .boton-secundario:disabled {
+    cursor: not-allowed;
+    border-color: var(--linea);
+    color: var(--texto-3);
   }
 
   .campo {
