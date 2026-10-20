@@ -12,7 +12,8 @@
     "test:watch": "vitest",
     "test:e2e": "playwright test",
     "paginas": "node scripts/build-paginas.mjs",
-    "generate:check": "node scripts/build-paginas.mjs --check"
+    "marca": "node scripts/tokens.mjs && node scripts/iconos.mjs",
+    "generate:check": "node scripts/build-paginas.mjs --check && node scripts/tokens.mjs --check && node scripts/iconos.mjs --check"
   },
   "dependencies": {
     "@croquis/croquis-2d": "workspace:*",

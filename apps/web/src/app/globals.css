@@ -1,26 +1,21 @@
 @import "tailwindcss";
+@import "@fontsource-variable/anybody/standard.css";
+@import "../styles/tokens.css";
+@import "../styles/sistema.css";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
-
+/* Los roles del sistema como utilidades de Tailwind (bg-superficie, text-texto-2, …): los
+   componentes no usan colores sueltos (ADR 0045). */
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
-}
-
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  --color-fondo: var(--fondo);
+  --color-superficie: var(--superficie);
+  --color-superficie-alta: var(--superficie-alta);
+  --color-linea: var(--linea);
+  --color-texto: var(--texto);
+  --color-texto-2: var(--texto-2);
+  --color-texto-3: var(--texto-3);
+  --color-accion: var(--accion);
+  --color-evidencia: var(--evidencia);
+  --font-sans: var(--fuente);
+  --radius-control: var(--radio-control);
+  --radius-panel: var(--radio-panel);
 }

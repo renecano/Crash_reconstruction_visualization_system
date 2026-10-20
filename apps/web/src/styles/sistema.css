@@ -1,0 +1,327 @@
+/*
+ * Sistema de diseño de Croquis (PLAN §11.2, docs/design/plan.md, ADR 0045).
+ * Los colores y efectos vienen de tokens.css (generado desde assets/brand/tokens.json); aquí solo
+ * se les da un rol y se definen la escala tipográfica, el espacio y las piezas básicas.
+ */
+
+/* Capas de Tailwind: los estilos de elementos van en base y las clases en components, para que
+   las utilidades (md:hidden, etc.) siempre puedan sobrescribirlas. */
+@layer base {
+  :root {
+    color-scheme: dark;
+
+    /* Roles de color: los componentes usan estos, nunca los nombres de marca. */
+    --fondo: var(--marca-asfalto-noche);
+    --superficie: var(--marca-asfalto-mojado);
+    --superficie-alta: var(--marca-asfalto);
+    --linea: var(--marca-asfalto);
+    --texto: var(--marca-blanco-vial);
+    --texto-2: var(--marca-concreto-claro);
+    --texto-3: var(--marca-concreto);
+    --accion: var(--marca-amarillo-vial);
+    --accion-texto: var(--marca-tinta);
+    --evidencia: var(--marca-naranja-marcaje);
+
+    /* Tipografía: una sola familia variable (ancho = font-stretch, peso = font-weight). */
+    --fuente: "Anybody Variable", ui-sans-serif, system-ui, sans-serif;
+    --t-lanzamiento: clamp(2.75rem, 7.5vw, 7rem);
+    --t-capitulo: clamp(2.25rem, 5.5vw, 4.75rem);
+    --t-letra: clamp(5rem, 14vw, 12rem);
+    --t-titulo: clamp(1.9rem, 3.6vw, 3rem);
+    --t-subtitulo: 1.375rem;
+    --t-cuerpo: 1.0625rem;
+    --t-interfaz: 1rem;
+    --t-nota: 0.875rem;
+
+    /* Espacio: escala de 4 px. */
+    --e-1: 4px;
+    --e-2: 8px;
+    --e-3: 12px;
+    --e-4: 16px;
+    --e-5: 20px;
+    --e-6: 24px;
+    --e-8: 32px;
+    --e-10: 40px;
+    --e-12: 48px;
+    --e-16: 64px;
+    --e-24: 96px;
+    --e-32: 128px;
+
+    /* Retícula. */
+    --margen: clamp(20px, 6vw, 96px);
+    --columna: 64ch;
+    /* La línea de carril: raya de 2 px con el ritmo de la raya de carril (2.5 : 5). */
+    --carril-trazo: 10px;
+    --carril-hueco: 20px;
+
+    --radio-control: 2px;
+    --radio-panel: 4px;
+    --transicion: 120ms ease-out;
+  }
+
+  /* Tema papel (el parte de tránsito): croquis 2D y exportaciones. Los tonos intermedios se
+     mezclan desde papel y tinta; no hay colores nuevos. */
+  [data-tema="papel"] {
+    color-scheme: light;
+    --fondo: var(--marca-papel);
+    --superficie: color-mix(in srgb, var(--marca-tinta) 5%, var(--marca-papel));
+    --superficie-alta: color-mix(in srgb, var(--marca-tinta) 12%, var(--marca-papel));
+    --linea: color-mix(in srgb, var(--marca-tinta) 22%, var(--marca-papel));
+    --texto: var(--marca-tinta);
+    --texto-2: color-mix(in srgb, var(--marca-tinta) 78%, var(--marca-papel));
+    --texto-3: color-mix(in srgb, var(--marca-tinta) 62%, var(--marca-papel));
+  }
+
+  html {
+    background: var(--fondo);
+    color: var(--texto);
+    font-family: var(--fuente);
+    font-size: 100%;
+    font-stretch: 104%;
+    font-weight: 420;
+    font-optical-sizing: auto;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+  }
+
+  body {
+    background: var(--fondo);
+    color: var(--texto);
+    font-size: var(--t-cuerpo);
+    line-height: 1.55;
+  }
+
+  ::selection {
+    background: color-mix(in srgb, var(--accion) 38%, transparent);
+    color: var(--texto);
+  }
+
+  /* Foco visible en amarillo vial: es una acción del usuario. */
+  :focus-visible {
+    outline: 2px solid var(--accion);
+    outline-offset: 2px;
+    border-radius: var(--radio-control);
+  }
+
+  a {
+    color: inherit;
+    text-decoration-thickness: 1px;
+    text-underline-offset: 0.22em;
+  }
+  a:hover {
+    text-decoration-thickness: 2px;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      transition-duration: 0.01ms !important;
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      scroll-behavior: auto !important;
+    }
+  }
+}
+
+@layer components {
+  /* ---------- Escala tipográfica ---------- */
+
+  .t-lanzamiento,
+  .t-capitulo,
+  .t-letra,
+  .t-titulo {
+    text-wrap: balance;
+  }
+  .t-lanzamiento {
+    font-size: var(--t-lanzamiento);
+    font-stretch: 150%;
+    font-weight: 760;
+    line-height: 0.98;
+    letter-spacing: 0.01em;
+  }
+  .t-capitulo {
+    font-size: var(--t-capitulo);
+    font-stretch: 140%;
+    font-weight: 700;
+    line-height: 1.02;
+    letter-spacing: 0.012em;
+  }
+  .t-letra {
+    font-size: var(--t-letra);
+    font-stretch: 150%;
+    font-weight: 800;
+    line-height: 0.9;
+  }
+  .t-titulo {
+    font-size: var(--t-titulo);
+    font-stretch: 125%;
+    font-weight: 650;
+    line-height: 1.08;
+    letter-spacing: 0.01em;
+  }
+  .t-subtitulo {
+    font-size: var(--t-subtitulo);
+    font-stretch: 112%;
+    font-weight: 600;
+    line-height: 1.2;
+  }
+  .t-cuerpo {
+    font-size: var(--t-cuerpo);
+    font-stretch: 104%;
+    font-weight: 420;
+    line-height: 1.55;
+    max-width: var(--columna);
+  }
+  .t-interfaz {
+    font-size: var(--t-interfaz);
+    font-stretch: 104%;
+    font-weight: 480;
+    line-height: 1.4;
+  }
+  .t-nota {
+    font-size: var(--t-nota);
+    font-stretch: 100%;
+    font-weight: 420;
+    line-height: 1.45;
+    letter-spacing: 0.005em;
+    color: var(--texto-2);
+  }
+  .t-cota {
+    font-stretch: 112%;
+    font-weight: 560;
+    line-height: 1.1;
+    letter-spacing: 0.02em;
+    font-variant-numeric: tabular-nums;
+  }
+  .cifras {
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* ---------- Retícula ---------- */
+
+  .pagina {
+    width: 100%;
+    padding-inline: var(--margen);
+  }
+
+  /* La línea de carril: ancla vertical de la columna de texto. */
+  .carril {
+    position: relative;
+    padding-left: var(--e-6);
+  }
+  .carril::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 2px;
+    background: repeating-linear-gradient(
+      to bottom,
+      color-mix(in srgb, var(--texto) 55%, transparent) 0 var(--carril-trazo),
+      transparent var(--carril-trazo) calc(var(--carril-trazo) + var(--carril-hueco))
+    );
+  }
+
+  .separador {
+    border: 0;
+    border-top: 1px solid var(--linea);
+  }
+
+  /* ---------- Controles ---------- */
+
+  .boton-principal,
+  .boton-secundario {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--e-2);
+    min-height: 48px;
+    padding: 0 var(--e-6);
+    border-radius: var(--radio-control);
+    font-size: var(--t-interfaz);
+    font-stretch: 112%;
+    font-weight: 620;
+    letter-spacing: 0.01em;
+    text-decoration: none;
+    cursor: pointer;
+    transition:
+      filter var(--transicion),
+      border-color var(--transicion),
+      background-color var(--transicion);
+  }
+  .boton-principal {
+    border: 0;
+    background: var(--efecto-boton-principal-background);
+    box-shadow: var(--efecto-boton-principal-box-shadow);
+    color: var(--efecto-boton-principal-color);
+  }
+  .boton-principal:hover {
+    filter: brightness(1.05);
+    text-decoration: none;
+  }
+  .boton-secundario {
+    border: 1px solid color-mix(in srgb, var(--texto) 40%, transparent);
+    background: transparent;
+    color: var(--texto);
+  }
+  .boton-secundario:hover {
+    border-color: var(--texto);
+    text-decoration: none;
+  }
+  .boton-principal:disabled,
+  .boton-secundario:disabled,
+  .boton-principal[aria-disabled="true"] {
+    cursor: not-allowed;
+    filter: saturate(0.4) brightness(0.75);
+  }
+
+  .campo {
+    width: 100%;
+    min-height: 44px;
+    padding: var(--e-3) var(--e-4);
+    border: 1px solid var(--linea);
+    border-radius: var(--radio-control);
+    background: var(--superficie);
+    color: var(--texto);
+    font: inherit;
+    font-size: var(--t-cuerpo);
+  }
+  .campo::placeholder {
+    color: var(--texto-3);
+  }
+  .campo:hover {
+    border-color: color-mix(in srgb, var(--texto) 30%, var(--linea));
+  }
+
+  /* ---------- Superficies ---------- */
+
+  /* Paneles sobre la escena 3D: vidrio oscuro con filo de luz (tokens). */
+  .vidrio {
+    background:
+      var(--efecto-vidrio-oscuro-background), color-mix(in srgb, var(--fondo) 72%, transparent);
+    box-shadow: var(--efecto-vidrio-oscuro-box-shadow), var(--efecto-filo-luz);
+    border-radius: var(--radio-panel);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+  }
+
+  /* Barras de borde a borde (encabezado): vidrio sin radio. */
+  .vidrio.barra {
+    border-radius: 0;
+  }
+
+  /* ---------- Evidencia ---------- */
+
+  /* Fragmento del relato que respalda un dato: solo evidencia lleva naranja. */
+  .cita {
+    text-decoration: underline 2px var(--evidencia);
+    text-underline-offset: 0.25em;
+    text-decoration-skip-ink: none;
+  }
+  .marca-evidencia {
+    color: var(--evidencia);
+  }
+}
