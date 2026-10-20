@@ -50,7 +50,13 @@ function esPaso(x: string | null): x is Paso {
   return x !== null && (PASOS as readonly string[]).includes(x);
 }
 
-export function FlujoApp({ ejemplos, fetcher }: { ejemplos: readonly Ejemplo[]; fetcher?: typeof fetch }) {
+export function FlujoApp({
+  ejemplos,
+  fetcher,
+}: {
+  ejemplos: readonly Ejemplo[];
+  fetcher?: typeof fetch;
+}) {
   const { ruta } = useIdioma();
   const t = useTextos(TEXTOS_FLUJO);
   const router = useRouter();
@@ -80,16 +86,20 @@ export function FlujoApp({ ejemplos, fetcher }: { ejemplos: readonly Ejemplo[]; 
 
   const alcanzado: Paso = estado.spec ? "simula" : "cuenta";
   const pedido = sp.get("paso");
-  const paso: Paso = esPaso(pedido) && PASOS.indexOf(pedido) <= PASOS.indexOf(alcanzado) ? pedido : "cuenta";
+  const paso: Paso =
+    esPaso(pedido) && PASOS.indexOf(pedido) <= PASOS.indexOf(alcanzado) ? pedido : "cuenta";
 
   const ir = useCallback(
     (p: Paso) => {
-      router.push(p === "cuenta" ? ruta("/cuenta") : `${ruta("/cuenta")}?paso=${p}`, { scroll: true });
+      router.push(p === "cuenta" ? ruta("/cuenta") : `${ruta("/cuenta")}?paso=${p}`, {
+        scroll: true,
+      });
     },
     [router, ruta],
   );
 
-  const fail = (e: unknown) => setError(e instanceof ApiError || e instanceof Error ? e.message : String(e));
+  const fail = (e: unknown) =>
+    setError(e instanceof ApiError || e instanceof Error ? e.message : String(e));
 
   const leer = async () => {
     registrarE9("relato_enviado");
@@ -100,7 +110,13 @@ export function FlujoApp({ ejemplos, fetcher }: { ejemplos: readonly Ejemplo[]; 
       const r = await extraer(red.text, "auto", fetcher, setProgreso);
       setEstado((s) => ({
         ...s,
-        lectura: { texto: r.texto, metodo: r.metodo, motivo: r.motivo, verificador: r.verificador, glosario: r.glosario },
+        lectura: {
+          texto: r.texto,
+          metodo: r.metodo,
+          motivo: r.motivo,
+          verificador: r.verificador,
+          glosario: r.glosario,
+        },
         spec: r.spec,
         preguntas: r.preguntas,
         contestadas: [],

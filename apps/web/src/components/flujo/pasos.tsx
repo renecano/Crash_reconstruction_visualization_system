@@ -27,7 +27,8 @@ export function PasosDelFlujo({
     <nav aria-label={t.etiqueta} data-testid="pasos">
       <ol className="grid grid-cols-4 gap-2 sm:gap-4">
         {PASOS.map((p, i) => {
-          const estado = i === iActual ? "actual" : i < iActual || i <= iAlcanzado ? "hecho" : "pendiente";
+          const estado =
+            i === iActual ? "actual" : i < iActual || i <= iAlcanzado ? "hecho" : "pendiente";
           const alcanzable = i <= iAlcanzado;
           const raya =
             estado === "actual"
@@ -45,7 +46,11 @@ export function PasosDelFlujo({
                 onClick={() => onIr(p)}
                 data-testid={`paso-${p}`}
                 className={`t-interfaz text-left disabled:cursor-default ${
-                  estado === "actual" ? "text-texto" : alcanzable ? "text-texto-2 hover:text-texto" : "text-texto-3"
+                  estado === "actual"
+                    ? "text-texto"
+                    : alcanzable
+                      ? "text-texto-2 hover:text-texto"
+                      : "text-texto-3"
                 }`}
               >
                 <span>{t[p]}</span>

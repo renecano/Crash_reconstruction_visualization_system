@@ -41,17 +41,24 @@ const UNIDAD: Record<string, string> = {
   "evidencias.distancia_proyeccion_m": "m",
 };
 
-function entendidos(texto: string, lang: "es" | "en"): { lista: Entendido[]; vehiculos: number; personas: number } {
+function entendidos(
+  texto: string,
+  lang: "es" | "en",
+): { lista: Entendido[]; vehiculos: number; personas: number } {
   const f = extractFacts(texto);
   const lista: Entendido[] = [];
   const add = (clave: string, x: Fact | undefined, unidad?: string) => {
     if (!x?.cita) return;
-    const v = typeof x.valor === "number" ? `${x.valor}${unidad ? ` ${unidad}` : ""}` : palabra(VALOR, x.valor, lang);
+    const v =
+      typeof x.valor === "number"
+        ? `${x.valor}${unidad ? ` ${unidad}` : ""}`
+        : palabra(VALOR, x.valor, lang);
     lista.push({ clave, valor: v, cita: x.cita });
   };
   for (const [k, x] of f.escalares) add(k, x, UNIDAD[k]);
   f.vehiculos.forEach((v, i) => {
-    for (const campo of ["clase", "maniobra", "velocidad_kmh"]) add(`v${i}.${campo}`, v.get(campo), UNIDAD[campo]);
+    for (const campo of ["clase", "maniobra", "velocidad_kmh"])
+      add(`v${i}.${campo}`, v.get(campo), UNIDAD[campo]);
   });
   f.dispositivos.forEach((d, i) => add(`d${i}`, d));
   return { lista, vehiculos: f.vehiculos.length, personas: f.personas.length };
@@ -146,7 +153,11 @@ export function PasoCuenta({
           </p>
         ) : null}
         {!enLinea ? (
-          <p role="status" data-testid="sin-red" className="t-interfaz border-l-2 border-accion pl-4">
+          <p
+            role="status"
+            data-testid="sin-red"
+            className="t-interfaz border-l-2 border-accion pl-4"
+          >
             {t.sinRed}
           </p>
         ) : null}
@@ -169,7 +180,11 @@ export function PasoCuenta({
         </div>
       </div>
 
-      <aside aria-labelledby="entendido-titulo" className="carril self-start lg:col-span-5" data-testid="entendido">
+      <aside
+        aria-labelledby="entendido-titulo"
+        className="carril self-start lg:col-span-5"
+        data-testid="entendido"
+      >
         <h2 id="entendido-titulo" className="t-subtitulo">
           {t.entiende}
         </h2>

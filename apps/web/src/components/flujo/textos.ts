@@ -35,7 +35,7 @@ export const TEXTOS_FLUJO = textos(
       marcadores: {
         nombre: "nombre",
         placa: "placa",
-        "teléfono": "teléfono",
+        teléfono: "teléfono",
         correo: "correo",
         CURP: "CURP",
         RFC: "RFC",
@@ -56,7 +56,8 @@ export const TEXTOS_FLUJO = textos(
     },
     falta: {
       metodoClaude: "Lo leyó Claude y cada cita se verificó contra tu texto.",
-      metodoReglas: "Lo leyeron las reglas de español mexicano y cada cita se verificó contra tu texto.",
+      metodoReglas:
+        "Lo leyeron las reglas de español mexicano y cada cita se verificó contra tu texto.",
       verificador: (revisados: number, corregidos: number) =>
         corregidos > 0
           ? `Se revisaron ${revisados} citas y se corrigieron ${corregidos}.`
@@ -78,7 +79,8 @@ export const TEXTOS_FLUJO = textos(
       otro: "Contar otro",
     },
     errores: {
-      guardar: "El navegador no permitió guardar la escena en esta pestaña. Revisa que no esté en modo privado estricto.",
+      guardar:
+        "El navegador no permitió guardar la escena en esta pestaña. Revisa que no esté en modo privado estricto.",
     },
   },
   {
@@ -95,10 +97,12 @@ export const TEXTOS_FLUJO = textos(
     },
     cuenta: {
       etiqueta: "Your narrative",
-      ayuda: "Write it the way you would tell someone: where you were going, what happened and how it ended.",
+      ayuda:
+        "Write it the way you would tell someone: where you were going, what happened and how it ended.",
       ejemplos: "Or start with an example:",
       caracteres: (n: number, max: number) => `${n} of ${max} characters`,
-      privacidadVacia: "Names, plates, phone numbers and emails are removed here, on your device, before sending.",
+      privacidadVacia:
+        "Names, plates, phone numbers and emails are removed here, on your device, before sending.",
       privacidad: (lista: string) => `Removed on your device: ${lista}.`,
       verEnvio: "See what is sent",
       leer: "Read my narrative",
@@ -107,13 +111,14 @@ export const TEXTOS_FLUJO = textos(
       entiende: "What is already understood",
       entiendeNota:
         "With Mexican Spanish rules, on your device. When it reads your narrative, the AI completes it. The extractor reads Spanish best.",
-      entiendeVacio: "Nothing yet. Write which vehicles there were, where they were going and what happened.",
+      entiendeVacio:
+        "Nothing yet. Write which vehicles there were, where they were going and what happened.",
       vehiculos: (n: number) => (n === 1 ? "1 vehicle" : `${n} vehicles`),
       personas: (n: number) => (n === 1 ? "1 person" : `${n} people`),
       marcadores: {
         nombre: "name",
         placa: "plate",
-        "teléfono": "phone number",
+        teléfono: "phone number",
         correo: "email",
         CURP: "CURP",
         RFC: "RFC",
@@ -134,7 +139,8 @@ export const TEXTOS_FLUJO = textos(
     },
     falta: {
       metodoClaude: "Claude read it and every quote was checked against your text.",
-      metodoReglas: "The Mexican Spanish rules read it and every quote was checked against your text.",
+      metodoReglas:
+        "The Mexican Spanish rules read it and every quote was checked against your text.",
       verificador: (revisados: number, corregidos: number) =>
         corregidos > 0
           ? `${revisados} quotes were checked and ${corregidos} were corrected.`
@@ -155,7 +161,8 @@ export const TEXTOS_FLUJO = textos(
       otro: "Tell another one",
     },
     errores: {
-      guardar: "The browser did not allow saving the scene in this tab. Check that it is not in strict private mode.",
+      guardar:
+        "The browser did not allow saving the scene in this tab. Check that it is not in strict private mode.",
     },
   },
 );

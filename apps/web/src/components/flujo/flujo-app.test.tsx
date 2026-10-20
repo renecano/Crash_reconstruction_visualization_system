@@ -27,7 +27,14 @@ const extraida: ExtraerRespuesta = {
   redacciones_servidor: 0,
   verificador: { revisados: 10, corregidos: 0, degradados: 0 },
   glosario: [
-    { id: "se_me_cerro", texto: "Se me cerró", inicio: 0, fin: 11, ambiguo: true, pregunta: "¿De qué lado?" },
+    {
+      id: "se_me_cerro",
+      texto: "Se me cerró",
+      inicio: 0,
+      fin: 11,
+      ambiguo: true,
+      pregunta: "¿De qué lado?",
+    },
   ],
   preguntas: [
     {
@@ -69,7 +76,10 @@ function fakeFetch(responses: unknown[]) {
 function renderFlujo(fetcher: typeof fetch, lang: "es" | "en" = "es") {
   const view = (): ReactElement => (
     <IdiomaProvider lang={lang}>
-      <FlujoApp ejemplos={[{ id: "ej", titulo: "Ejemplo", texto: "Choqué en el cruce." }]} fetcher={fetcher} />
+      <FlujoApp
+        ejemplos={[{ id: "ej", titulo: "Ejemplo", texto: "Choqué en el cruce." }]}
+        fetcher={fetcher}
+      />
     </IdiomaProvider>
   );
   const r = render(view());
@@ -141,7 +151,9 @@ describe("flujo guiado /cuenta", () => {
     // Ver la reconstrucción guarda la escena propia y abre el paso Simula.
     fireEvent.click(screen.getByTestId("ver-3d"));
     expect(await screen.findByTestId("visor-simula")).toBeTruthy();
-    expect(JSON.parse(sessionStorage.getItem("croquis:escena-propia") ?? "{}").meta?.id).toBe(spec.meta.id);
+    expect(JSON.parse(sessionStorage.getItem("croquis:escena-propia") ?? "{}").meta?.id).toBe(
+      spec.meta.id,
+    );
     // Todo el flujo queda en esta pestaña: se puede volver a cualquier paso sin perder nada.
     expect(JSON.parse(sessionStorage.getItem(FLUJO_KEY) ?? "{}").spec.meta.id).toBe(spec.meta.id);
     act(() => {
@@ -171,7 +183,9 @@ describe("flujo guiado /cuenta", () => {
     renderFlujo(fetcher as unknown as typeof fetch);
     fireEvent.change(screen.getByTestId("relato"), { target: { value: "Choqué." } });
     fireEvent.click(screen.getByTestId("entender"));
-    await waitFor(() => expect(screen.getByTestId("error").textContent).toMatch(/No se pudo conectar/));
+    await waitFor(() =>
+      expect(screen.getByTestId("error").textContent).toMatch(/No se pudo conectar/),
+    );
   });
 
   it("sin red avisa que leer el relato necesita internet y lo reactiva al volver", async () => {

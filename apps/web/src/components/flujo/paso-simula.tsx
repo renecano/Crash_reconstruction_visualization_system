@@ -7,7 +7,11 @@
 import type { EscenaSpec } from "@croquis/scene-schema";
 import { useState } from "react";
 import { useTextos } from "@/i18n/cliente";
-import { CONTROLES_INICIALES, type ControlesVisor, VisorEscena } from "@/components/visor/visor-app";
+import {
+  CONTROLES_INICIALES,
+  type ControlesVisor,
+  VisorEscena,
+} from "@/components/visor/visor-app";
 import { TEXTOS_FLUJO } from "./textos";
 
 export function PasoSimula({ spec, onVolver }: { spec: EscenaSpec; onVolver: () => void }) {
@@ -16,7 +20,12 @@ export function PasoSimula({ spec, onVolver }: { spec: EscenaSpec; onVolver: () 
   return (
     <div className="flex flex-col gap-6">
       <div>
-        <button type="button" className="boton-secundario" data-testid="volver-croquis" onClick={onVolver}>
+        <button
+          type="button"
+          className="boton-secundario"
+          data-testid="volver-croquis"
+          onClick={onVolver}
+        >
           {t.volver}
         </button>
       </div>
@@ -28,7 +37,8 @@ export function PasoSimula({ spec, onVolver }: { spec: EscenaSpec; onVolver: () 
           setControles((c) => {
             if (k === "completa") return { ...c, completa: v !== null };
             if (k === "camara") return { ...c, camara: v ?? "libre" };
-            if (k === "calidad") return { ...c, calidad: (v ?? "auto") as ControlesVisor["calidad"] };
+            if (k === "calidad")
+              return { ...c, calidad: (v ?? "auto") as ControlesVisor["calidad"] };
             return { ...c, renderer: (v ?? "auto") as ControlesVisor["renderer"] };
           })
         }

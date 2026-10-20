@@ -19,7 +19,10 @@ export function ProgresoLectura({ progreso }: { progreso: Progreso | null }) {
     {
       id: "lectura",
       texto: metodo === "reglas" ? t.reglas : t.claude,
-      detalle: metodo === "claude" && progreso && progreso.caracteres > 0 ? t.escritos(progreso.caracteres) : undefined,
+      detalle:
+        metodo === "claude" && progreso && progreso.caracteres > 0
+          ? t.escritos(progreso.caracteres)
+          : undefined,
       estado: "enCurso",
     },
     { id: "citas", texto: t.citas, estado: "pendiente" },
@@ -32,7 +35,11 @@ export function ProgresoLectura({ progreso }: { progreso: Progreso | null }) {
       </h2>
       <ol className="flex flex-col gap-4" aria-live="polite">
         {filas.map((f) => (
-          <li key={f.id} data-estado={f.estado} className="grid grid-cols-[1.25rem_1fr] items-baseline gap-3">
+          <li
+            key={f.id}
+            data-estado={f.estado}
+            className="grid grid-cols-[1.25rem_1fr] items-baseline gap-3"
+          >
             <span
               aria-hidden="true"
               className={`inline-block h-2.5 w-2.5 rounded-full ${

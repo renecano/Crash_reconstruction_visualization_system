@@ -24,7 +24,10 @@ const T = textos(
   },
 );
 
-export type Lectura = Pick<ExtraerRespuesta, "texto" | "metodo" | "motivo" | "verificador" | "glosario">;
+export type Lectura = Pick<
+  ExtraerRespuesta,
+  "texto" | "metodo" | "motivo" | "verificador" | "glosario"
+>;
 
 export function PasoFalta({
   lectura,
@@ -54,7 +57,12 @@ export function PasoFalta({
     URL.revokeObjectURL(url);
   };
   const seguir = (
-    <button type="button" data-testid="abrir-croquis" className="boton-secundario" onClick={onSeguir}>
+    <button
+      type="button"
+      data-testid="abrir-croquis"
+      className="boton-secundario"
+      onClick={onSeguir}
+    >
       {preguntas.length > 0 ? t.saltar : t.seguir}
     </button>
   );
@@ -98,7 +106,12 @@ export function PasoFalta({
           />
           {preguntas.length === 0 ? (
             <div>
-              <button type="button" data-testid="abrir-croquis" className="boton-principal" onClick={onSeguir}>
+              <button
+                type="button"
+                data-testid="abrir-croquis"
+                className="boton-principal"
+                onClick={onSeguir}
+              >
                 {t.seguir}
               </button>
             </div>
@@ -108,7 +121,12 @@ export function PasoFalta({
       <div className="flex flex-col gap-8 lg:col-span-5">
         <FactsPanel spec={spec} />
         <div className="flex flex-col gap-4 border-t border-linea pt-4">
-          <button type="button" data-testid="descargar" className="t-interfaz self-start underline" onClick={descargar}>
+          <button
+            type="button"
+            data-testid="descargar"
+            className="t-interfaz self-start underline"
+            onClick={descargar}
+          >
             {tl.descargar}
           </button>
           <Legend seed={spec.meta.semilla} atribucion={spec.lugar.red_vial?.atribucion} />

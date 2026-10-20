@@ -126,12 +126,20 @@ export function PasoUbica({
             {t.deshacer}
           </button>
           <label className="t-interfaz flex items-center gap-2">
-            <input type="checkbox" checked={showFinal} onChange={(e) => setShowFinal(e.target.checked)} />
+            <input
+              type="checkbox"
+              checked={showFinal}
+              onChange={(e) => setShowFinal(e.target.checked)}
+            />
             {t.finales}
           </label>
         </div>
         {mostrarGuia ? (
-          <section aria-labelledby="guia-titulo" data-testid="guia-croquis" className="carril flex flex-col gap-2">
+          <section
+            aria-labelledby="guia-titulo"
+            data-testid="guia-croquis"
+            className="carril flex flex-col gap-2"
+          >
             <h3 id="guia-titulo" className="t-interfaz">
               {t.guia.titulo}
             </h3>
@@ -148,7 +156,11 @@ export function PasoUbica({
             </div>
           </section>
         ) : null}
-        <div className="overflow-hidden rounded-panel" data-tema="papel" data-testid="croquis-flujo">
+        <div
+          className="overflow-hidden rounded-panel"
+          data-tema="papel"
+          data-testid="croquis-flujo"
+        >
           <Croquis
             spec={spec}
             onChange={cambiar}
