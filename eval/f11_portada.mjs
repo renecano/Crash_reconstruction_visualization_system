@@ -18,11 +18,13 @@
  *
  * Requisito: `pnpm --filter @croquis/web build`. El script levanta `next start` en `--port` (3200)
  * si no hay un servidor ahí y usa el Chromium de Playwright.
- * Uso: `node eval/f11_portada.mjs [--repeats 3] [--paginas /,/en] [--port 3200] [--out ruta]`.
- * Salida: `eval/results/f11_portada.json`.
+ * Uso: `node eval/f11_portada.mjs [--repeats 3] [--paginas /,/en] [--port 3200] [--out ruta] [--bateria]`.
+ * Cada página se guarda al terminar en `eval/results/f11_portada/<página>.json`, así una corrida
+ * puede ir por partes (en la laptop de 8 GB, una corrida larga en segundo plano se puede cortar por
+ * memoria); `node eval/f11_portada.mjs --unir` junta las páginas en `eval/results/f11_portada.json`.
  */
-import { spawn } from "node:child_process";
-import { writeFileSync } from "node:fs";
+import { execFileSync, spawn, spawnSync } from "node:child_process";
+import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { createRequire } from "node:module";
 import os from "node:os";
 import { dirname, join, resolve } from "node:path";
@@ -48,6 +50,14 @@ const PAGINAS = arg(
   "/,/en,/cuenta,/demo,/recorrido,/historia,/croquis,/visor?escena=interseccion_toluca,/e9,/medicion",
 ).split(",");
 const OUT = arg("out", join(ROOT, "eval", "results", "f11_portada.json"));
+const PARTES = join(ROOT, "eval", "results", "f11_portada");
+const slug = (ruta) =>
+  ruta === "/"
+    ? "inicio"
+    : ruta
+        .replace(/^\//, "")
+        .replace(/[^a-z0-9]+/gi, "-")
+        .replace(/-$/, "");
 /** Metas de PLAN §11.6 y §7.8. */
 const META = { accesibilidad: 95, lcp_ms: 2500, cls: 0.1, carga_mb: 8 };
 
@@ -64,7 +74,7 @@ async function arriba() {
 
 async function servidor() {
   if (await arriba()) return null;
-  const proc = spawn("pnpm", ["start", "--port", String(PORT)], {
+  const proc = spawn(`pnpm start --port ${PORT}`, {
     cwd: WEB,
     shell: true,
     stdio: "ignore",
@@ -100,6 +110,22 @@ function nodoLcp(audits) {
   );
 }
 
+/** ¿La laptop está conectada? Con batería el CPU va más lento y las cifras no son comparables. */
+function corriente() {
+  if (process.platform !== "win32") return null;
+  try {
+    const estado = execFileSync(
+      "powershell",
+      ["-NoProfile", "-Command", "(Get-CimInstance Win32_Battery).BatteryStatus"],
+      { encoding: "utf8" },
+    ).trim();
+    // Win32_Battery.BatteryStatus: 1 = descargándose (con batería); sin batería no hay valor.
+    return estado === "" ? "ca" : estado === "1" ? "bateria" : "ca";
+  } catch {
+    return null;
+  }
+}
+
 async function medir(port, url, metodo) {
   // Celular con 4G: la configuración móvil por omisión de Lighthouse, con el método de limitación
   // pedido (devtools = aplicada; simulate = Lantern).
@@ -109,6 +135,10 @@ async function medir(port, url, metodo) {
     { extends: "lighthouse:default", settings: { throttlingMethod: metodo } },
   );
   const lhr = res.lhr;
+  // Una corrida fallida no se promedia: Lighthouse la reporta en runtimeError con métricas vacías.
+  if (lhr.runtimeError) {
+    throw new Error(`${url} (${metodo}): ${lhr.runtimeError.code} ${lhr.runtimeError.message}`);
+  }
   const a = lhr.audits;
   return {
     accesibilidad: r2(lhr.categories.accessibility.score * 100, 0),
@@ -129,6 +159,9 @@ async function medir(port, url, metodo) {
       )
       .map((x) => x.id),
     lighthouse: lhr.lighthouseVersion,
+    // Velocidad del CPU de esta máquina en ese momento (la CPU 4× se aplica encima).
+    benchmark_index: lhr.environment?.benchmarkIndex ?? null,
+    corriente: corriente(),
     entorno: {
       formFactor: lhr.configSettings.formFactor,
       throttlingMethod: lhr.configSettings.throttlingMethod,
@@ -137,14 +170,41 @@ async function medir(port, url, metodo) {
   };
 }
 
-const proc = await servidor();
-const chrome = await chromeLauncher.launch({
-  chromePath: chromium.executablePath(),
-  chromeFlags: ["--headless=new", "--no-first-run", "--disable-extensions"],
+const UNIR = process.argv.includes("--unir");
+if (!UNIR && corriente() === "bateria" && !process.argv.includes("--bateria")) {
+  console.error(
+    "La laptop está con batería: el CPU va más lento y las cifras no se comparan con las demás. Conéctala (o pasa --bateria y anótalo).",
+  );
+  process.exit(1);
+}
+const proc = UNIR ? null : await servidor();
+const chrome = UNIR
+  ? null
+  : await chromeLauncher.launch({
+      chromePath: chromium.executablePath(),
+      chromeFlags: ["--headless=new", "--no-first-run", "--disable-extensions"],
+    });
+let cerrado = false;
+async function cerrar() {
+  if (cerrado) return;
+  cerrado = true;
+  await chrome?.kill();
+  // Con shell: true, proc es la consola; en Windows hay que cerrar también a next start, su hijo.
+  if (proc && process.platform === "win32") {
+    spawnSync("taskkill", ["/PID", String(proc.pid), "/T", "/F"], { stdio: "ignore" });
+  } else if (proc) proc.kill();
+}
+// Lighthouse a veces rechaza una promesa que no espera nadie (p. ej. «Target closed»): sin esto el
+// proceso terminaría sin cerrar Chrome ni el servidor.
+process.on("uncaughtException", async (e) => {
+  console.error(e);
+  await cerrar();
+  process.exit(1);
 });
 const paginas = [];
+mkdirSync(PARTES, { recursive: true });
 try {
-  for (const ruta of PAGINAS) {
+  for (const ruta of UNIR ? [] : PAGINAS) {
     const corridas = { devtools: [], simulate: [] };
     for (let k = 0; k < REPEATS; k++) {
       for (const metodo of ["devtools", "simulate"]) {
@@ -173,10 +233,24 @@ try {
       },
       corridas,
     });
+    writeFileSync(
+      join(PARTES, `${slug(ruta)}.json`),
+      `${JSON.stringify(paginas.at(-1), null, 2)}
+`,
+    );
   }
 } finally {
-  await chrome.kill();
-  if (proc) proc.kill();
+  await cerrar();
+}
+if (!UNIR) {
+  console.log(`Páginas guardadas en ${PARTES}; únelas con --unir.`);
+  process.exit(0);
+}
+// --unir: las páginas medidas, en el orden de PAGINAS (todas tienen que estar).
+for (const ruta of PAGINAS) {
+  const f = join(PARTES, `${slug(ruta)}.json`);
+  if (!existsSync(f)) throw new Error(`Falta la medición de ${ruta} (${f})`);
+  paginas.push(JSON.parse(readFileSync(f, "utf8")));
 }
 
 const resultado = {

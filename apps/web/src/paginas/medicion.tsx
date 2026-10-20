@@ -1,4 +1,3 @@
-import { Suspense } from "react";
 import { MedicionApp } from "@/components/medicion/medicion-app";
 import { CabeceraPagina } from "@/components/sitio/cabecera-pagina";
 import { Marco } from "@/components/sitio/marco";
@@ -23,10 +22,7 @@ export default function MedicionPagina({ lang }: { lang: Lang }) {
     <Marco lang={lang}>
       <div className="pagina py-10 md:py-14">
         <CabeceraPagina titulo={t.titulo} intro={t.intro} />
-        {/* Lee la configuración de la URL: se dibuja en el navegador. */}
-        <Suspense>
-          <MedicionApp />
-        </Suspense>
+        <MedicionApp />
       </div>
     </Marco>
   );

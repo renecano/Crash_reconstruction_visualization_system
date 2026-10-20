@@ -4,6 +4,7 @@
  */
 import type { Metadata, Viewport } from "next";
 import type { ReactNode } from "react";
+import { preload } from "react-dom";
 import { ServiceWorkerRegistration } from "@/components/service-worker";
 import { HTML_LANG, dict, ruta, type Lang } from "@/i18n";
 import { IdiomaProvider } from "@/i18n/cliente";
@@ -60,6 +61,13 @@ export function metadatos(
 }
 
 export function Documento({ lang, children }: { lang: Lang; children: ReactNode }) {
+  // La fuente se pide junto con el HTML: si llega después del primer pintado, el texto se vuelve a
+  // acomodar y la página salta (CLS, PLAN §11.6).
+  preload("/fuente/anybody-latin-croquis.woff2", {
+    as: "font",
+    type: "font/woff2",
+    crossOrigin: "anonymous",
+  });
   return (
     <html lang={HTML_LANG[lang]} className="h-full">
       <body className="flex min-h-full flex-col">

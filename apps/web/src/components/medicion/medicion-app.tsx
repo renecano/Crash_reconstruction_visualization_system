@@ -6,12 +6,12 @@
  * el resultado versionado. Nada sale del equipo hasta que se descarga el archivo.
  */
 import { readGpuRenderer } from "@croquis/viewer";
-import { useSearchParams } from "next/navigation";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { textos } from "@/i18n";
 import { useIdioma, useTextos } from "@/i18n/cliente";
 import { Desplazable } from "@/components/sitio/desplazable";
 import {
+  CONFIG_DEMO,
   configDesdeUrl,
   frecuenciaPantalla,
   META_DEMO_FPS,
@@ -183,11 +183,14 @@ export function MedicionApp() {
   const { lang } = useIdioma();
   const t = useTextos(T);
   const [equipo, setEquipo] = useState<Equipo | null>(null);
-  // La configuración de E6, o la que diga la URL (corridas cortas de diagnóstico o de e2e).
-  const sp = useSearchParams();
-  const [config, setConfig] = useState<ConfigMedicion>(() =>
-    configDesdeUrl(new URLSearchParams(sp.toString())),
-  );
+  // La configuración de E6, o la que diga la URL (corridas cortas de diagnóstico o de e2e). La URL
+  // se lee al montar: con useSearchParams la página entera se dibujaría solo en el navegador y el
+  // pie saltaría al aparecer (CLS, PLAN §11.6).
+  const [config, setConfig] = useState<ConfigMedicion>(CONFIG_DEMO);
+  useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- sincroniza con la URL al montar
+    setConfig(configDesdeUrl(new URLSearchParams(window.location.search)));
+  }, []);
   const [corriendo, setCorriendo] = useState(false);
   const [estado, setEstado] = useState<{
     i: number;
