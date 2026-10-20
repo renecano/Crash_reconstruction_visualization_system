@@ -64,6 +64,8 @@ export const TEXTOS_PORTADA = textos(
       tiempo: "t",
       velocidad: "Velocidad de A",
       recalcula: "Cámbiala: el solver lo vuelve a calcular en tu dispositivo.",
+      resultado: (dvA: string, dvB: string, reposo: string) =>
+        `Cambio de velocidad en el choque (ΔV): A ${dvA} km/h, B ${dvB} km/h. A queda a ${reposo} m del impacto.`,
       calculando: "Recalculando…",
     },
     s: {
@@ -158,6 +160,8 @@ export const TEXTOS_PORTADA = textos(
       tiempo: "t",
       velocidad: "Speed of A",
       recalcula: "Change it: the solver computes it again on your device.",
+      resultado: (dvA: string, dvB: string, reposo: string) =>
+        `Change of velocity in the crash (ΔV): A ${dvA} km/h, B ${dvB} km/h. A ends up ${reposo} m from the impact.`,
       calculando: "Recomputing…",
     },
     s: {

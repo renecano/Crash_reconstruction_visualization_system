@@ -457,6 +457,12 @@ export function Portada({ datos }: { datos: DatosPortada }) {
                 {calculando ? t.i.calculando : t.i.recalcula}
               </span>
             </label>
+            {/* El resultado en cifras: se ve también sin 3D (movimiento reducido o sin WebGL). */}
+            {resultado ? (
+              <p className="t-interfaz cifras" data-testid="resultado-portada" aria-live="polite">
+                {resumenImpacto(resultado, (x, d) => fmt(x, d), t.i.resultado)}
+              </p>
+            ) : null}
           </div>,
         )}
 
@@ -599,6 +605,21 @@ export function Portada({ datos }: { datos: DatosPortada }) {
   );
 }
 
+/** ΔV de A y B y a qué distancia del impacto queda A, para el texto bajo el control de velocidad. */
+function resumenImpacto(
+  r: Resultado,
+  fmt: (x: number, d: number) => string,
+  texto: (dvA: string, dvB: string, reposo: string) => string,
+): string {
+  const a = r.vehiculos.find((v) => v.rol === "A");
+  const b = r.vehiculos.find((v) => v.rol === "B");
+  const p = r.punto_impacto;
+  if (!a || !b || !p) return "";
+  const n = a.trayectoria.t.length - 1;
+  const reposo = Math.hypot(a.trayectoria.x[n]! - p.x, a.trayectoria.y[n]! - p.y);
+  return texto(fmt(a.delta_v_kmh, 0), fmt(b.delta_v_kmh, 0), fmt(reposo, 1));
+}
+
 /** El relato que «se escribe en vivo» al llegar al capítulo C (completo con movimiento reducido). */
 function useTipeo(texto: string, activo: boolean, reducido: boolean): number {
   const [n, setN] = useState(0);
@@ -632,7 +653,7 @@ function Comparador({
 }) {
   const [corte, setCorte] = useState(50);
   return (
-    <figure className="m-0 flex flex-col gap-2" data-testid="comparador">
+    <figure className="m-0 flex w-full max-w-md flex-col gap-2" data-testid="comparador">
       <div className="relative aspect-[3/2] w-full overflow-hidden rounded-panel bg-superficie">
         {/* eslint-disable-next-line @next/next/no-img-element -- foto de NHTSA de la galería de E5 */}
         <img
