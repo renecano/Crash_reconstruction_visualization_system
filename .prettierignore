@@ -45,3 +45,5 @@ eval/e5
 
 # Datos generados de las páginas (scripts/build-paginas.mjs y demo-casos.ts): se comparan byte a byte
 apps/web/src/data/
+# Marca aprobada (PLAN §11.2): se usa tal cual, sin reformatear.
+assets/brand/
