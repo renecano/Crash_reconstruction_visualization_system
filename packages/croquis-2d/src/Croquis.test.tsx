@@ -137,6 +137,14 @@ describe("<Croquis /> con la red vial del mapa (ADR 0023)", () => {
     }
   });
 
+  it("rayas de alto en los accesos con semáforo (ADR 0044); en una recta, ninguna", () => {
+    const { unmount } = render(<Croquis spec={loadFixture("lateral_interseccion")} />);
+    expect(screen.getAllByTestId("raya-alto")).toHaveLength(2);
+    unmount();
+    render(<Croquis spec={loadFixture("alcance")} />);
+    expect(screen.queryAllByTestId("raya-alto")).toHaveLength(0);
+  });
+
   it("sin red vial no hay atribución", () => {
     render(<Croquis spec={loadFixture("alcance")} />);
     expect(screen.queryByTestId("atribucion-osm")).toBeNull();
