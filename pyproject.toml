@@ -46,7 +46,8 @@ filterwarnings = ["error"]
 [tool.ruff]
 line-length = 100
 target-version = "py314"
-extend-exclude = ["data/raw", "data/processed", "eval/results", "node_modules", ".venv"]
+# assets/brand se usa tal cual (PLAN §11.2): su herramienta no se reformatea.
+extend-exclude = ["data/raw", "data/processed", "eval/results", "node_modules", ".venv", "assets/brand"]
 
 [tool.ruff.lint]
 select = ["E", "F", "W", "I", "B", "UP", "N", "SIM", "RUF", "C4", "PT", "ARG", "PIE", "RET", "T20"]

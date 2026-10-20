@@ -14,6 +14,7 @@ Lee este archivo y `PLAN.md` al inicio de cada sesión. `PLAN.md` dice **qué** 
 4. Todo dato externo se registra en `data/SOURCES.md` (origen, URL, fecha de descarga, licencia, script). Todo asset en `assets/ASSETS.md` (autor, licencia, URL).
 5. Nada de logotipos ni marcas en los modelos 3D. Nada de contenido gráfico de personas lesionadas.
 6. Respeta §10 de `PLAN.md` (IA responsable): sin culpas, sin diagnósticos, leyenda ilustrativa en vistas y exportaciones.
+7. Diseño: §11 de `PLAN.md` es el estándar visual. Nada de estilos por defecto de plantillas, nada de video, maquetas ni imágenes de stock: todo lo que se ve lo calcula el sistema. Inspiración en las presentaciones de lanzamiento de primer nivel, sin copiar logotipos, tipografías ni recursos de ninguna empresa.
 
 ## Autonomía
 Trabajas de forma autónoma. **No pidas visto bueno para planes, decisiones técnicas ni para pasar de fase.** Las pruebas son la aprobación: si una fase cumple su criterio de aceptación con todo en verde, haz merge y sigue con la siguiente.

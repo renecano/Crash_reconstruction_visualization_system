@@ -385,22 +385,112 @@ Notas:
 
 ---
 
-## 11. Historia y demo
+## 11. Experiencia, diseño e historia
 
-Lecciones de `aprendizajes-hackathon`: ingeniería real + historia visual.
+**El estándar:** la presentación de Croquis debe sentirse como un lanzamiento de producto de primer nivel, al estilo de las presentaciones de las empresas de Elon Musk: escenario oscuro, el producto real como protagonista, tipografía enorme, muy pocas palabras por pantalla, un gran momento de revelación y la demo en vivo. **Inspiración, no imitación:** nada de logotipos, tipografías, nombres ni recursos de esas empresas; la identidad sale del mundo de Croquis.
 
-- **Acrónimos.** Subtítulo en inglés (README y portafolio): *Crash Reconstruction from Oral Queries Using Impact Simulation*. Lema en español: *Cuenta. Reconoce. Ordena. ¿Qué falta? Ubica. Impacta. Simula.* La página de historia lleva una sección por letra:
-  - **C — Cuenta.** Lo dices con tus palabras, como se lo contarías a alguien.
-  - **R — Reconoce.** La IA convierte tu relato en datos y marca de qué frase salió cada uno.
-  - **O — Ordena.** Arma la línea de tiempo: antes, impacto y después.
-  - **Q — ¿Qué falta?** Te pregunta solo lo que de verdad cambia el resultado.
-  - **U — Ubica.** Acomodas autos, personas y calles en el croquis.
-  - **I — Impacta.** La física calcula el choque, la deformación y hacia dónde salió cada quien.
-  - **S — Simula.** Lo ves pasar en 3D, desde cualquier ángulo y en cámara lenta.
-- **Página de historia** con scroll: una persona ficticia del valle de Toluca que choca en una avenida real, la dificultad de explicar lo que pasó, datos de ATUS en el momento justo, por qué un croquis a mano y una animación genérica no bastan, y luego el producto.
-- **Demo "Tú eres…"**: el visitante escribe (o elige) un relato, ve en vivo qué entendió la IA campo por campo, corrige el croquis, ve la reconstrucción y compara hipótesis. Casos precargados que corren sin servidor, con semilla.
-- **Recorrido técnico**: página que muestra evaluaciones E1–E9 con gráficas generadas desde `eval/results/`.
-- Tres videos: presentación, demo de producto y recorrido técnico (guion en `docs/`).
+**Lo que nadie puede copiar:** el estilo se puede imitar; el sistema que hay detrás, no. Por eso, **nada en el sitio es video, maqueta ni imagen de stock.** Cada choque que se ve lo calcula en vivo el solver; cada abolladura sale del perfil C1–C6; cada número sale de `eval/results/`; las calles son de Toluca (OSM) y las marcas viales siguen la NOM-034. El sitio entero es una demostración de que el sistema existe y funciona.
+
+### 11.1 Principios de diseño
+
+1. **El espectáculo es la precisión, no la violencia.** Muchas personas que usen Croquis vivieron un percance. Nada de sonidos de choque por defecto, explosiones, cámara lenta morbosa ni personas lastimadas. El asombro viene de ver la física exacta, la deformación medida y el dato con su fuente.
+2. **Una idea por pantalla.** Una frase, un dato o una imagen. Si una pantalla necesita dos ideas, son dos pantallas.
+3. **El producto real es la imagen.** El fondo de la portada es la escena 3D en tiempo real, no un color plano ni una ilustración.
+4. **La audacia en un solo lugar:** la transición del croquis al mundo 3D (§11.3). Todo lo demás, sobrio y disciplinado.
+5. **Movimiento con propósito.** Una sola secuencia de apertura orquestada y el movimiento de cámara guiado por el scroll. Nada de animaciones de entrada en cada sección ni efectos al pasar el mouse por todos lados.
+6. **Cada número es una medición.** Los datos se presentan como cotas de dibujo técnico (líneas de medida con sus extremos), cada una con enlace a su evaluación y fuente.
+7. **El texto habla como persona.** Español de México, frases cortas, verbos activos, mayúscula solo al inicio, sin etiquetas en mayúsculas sobre los títulos. Los botones dicen exactamente lo que pasa ("Cuenta qué pasó", "Ver tu reconstrucción").
+
+### 11.2 Sistema de diseño (aprobado por René; Claude Code lo implementa y lo registra en un ADR)
+
+**La marca ya está diseñada y es fija:** `assets/brand/` contiene los SVG maestros, `tokens.json` y la guía `BRAND.md`. Se usan esos archivos tal cual; no se redibuja el logo ni se recrea el logotipo con texto.
+
+- **Mundo visual:** el asfalto de noche con lluvia, la pintura vial iluminada por los faros, el croquis del parte de tránsito y las marcas de spray que hacen los peritos en el pavimento.
+- **Logo:** una C hecha con tres rayas de pintura vial (también se lee como una trayectoria) y una X naranja en la abertura, como marcan los peritos el punto de impacto. Logotipo *CROQUIS* en mayúsculas extendidas con espaciado amplio. Variante integrada donde el símbolo hace de C.
+- **Color (tokens con significado, no decoración; valores exactos en `assets/brand/tokens.json`):**
+  - *Asfalto de noche* `#0B0D0F`, *asfalto mojado* `#171B1F` y *asfalto* `#2A2D30`: los fondos. En la portada no son colores planos sino el material PBR real de la escena.
+  - *Blanco vial* `#F4F2EC`: texto y trazos del croquis.
+  - *Amarillo vial* `#F2B705`: solo acciones del usuario (botones principales, foco).
+  - *Naranja marcaje* `#FF6A13`: lo que el sistema marca como evidencia (la X del logo, citas del relato, punto de impacto, banderas de inconsistencia). Nunca decorativo.
+  - *Concreto* `#8A8F94` y *concreto claro* `#B7BCC1`: texto secundario (el claro sobre fondos oscuros para cumplir contraste AA).
+  - Tema claro alterno, *papel del parte* `#EFEBE1` con *tinta* `#15181B`: el mismo sistema sobre papel, útil para el croquis 2D y las exportaciones.
+- **Luz y profundidad (el lenguaje de lanzamiento):** la pintura vial con degradado de faro (blanco a acero), la X naranja con brillo de baliza, sombras profundas que despegan los objetos del asfalto, botón principal amarillo con brillo cálido y filo de luz superior, superficies de vidrio oscuro con borde de luz de 1 px. Los efectos exactos están en `tokens.json`. Se usan con medida: en la portada, los íconos, la imagen para redes, el video y los elementos principales; nunca en texto corrido, en tamaños menores a 48 px ni en impresos. La versión plana del logo es la principal.
+- **Tipografía:** Anybody (libre, SIL OFL 1.1), una sola familia variable con eje de ancho. Se sirve desde el propio sitio con `@fontsource-variable/anybody` (no desde Google Fonts, por privacidad y para que funcione sin red).
+  - *Titulares de lanzamiento:* ancho 125–150, peso 600–800, mayúscula solo al inicio de la frase (sentence case), tracking ligeramente positivo.
+  - *Logotipo:* nunca se escribe con la fuente; se usa el SVG.
+  - *Texto de interfaz y lectura:* ancho 100–112, peso 400–500, 16–18 px, líneas de menos de 80 caracteres.
+  - *Mediciones:* cifras tabulares (`font-variant-numeric: tabular-nums` si la fuente las trae; si no, alineación con ancho fijo).
+  - Escala tipográfica definida en tokens, no tamaños sueltos.
+- **Retícula:** alineada a la izquierda en la app y el contenido; centrada solo en los momentos de presentación (apertura, cierre). La columna de texto se ancla a una "línea de carril" vertical de la escena; las cotas y anotaciones se dibujan sobre la misma retícula.
+- **Favicon, íconos de app e imagen para redes:** se generan con un script a partir de `assets/brand/favicon.svg` y `assets/brand/app-icon.svg` (PNG 16, 32, 180, 192, 512 y `favicon.ico`); la imagen para redes (1200 × 630) usa el logotipo con efectos sobre un cuadro renderizado de una escena real.
+
+### 11.3 La portada: el lanzamiento
+
+Una sola página continua con una cámara que recorre la escena (técnica de mundo por scroll: el scroll controla el tiempo, una curva de cámara continua sin cortes, pausa en cada capítulo para el texto, suavizado y versión sin movimiento). Los capítulos siguen el acrónimo, así que la numeración C-R-O-Q-U-I-S sí es una secuencia real:
+
+| Capítulo | Qué se ve |
+|---|---|
+| Apertura | Noche, lluvia, una intersección real de Toluca. Los faros de un auto revelan la escena; aparece *Croquis* y una línea: "Cuenta lo que pasó. Míralo pasar." Un solo botón. |
+| El problema | Un dato de ATUS calculado desde el archivo, solo. Luego, un croquis hecho a mano como el de un parte: así se explica hoy un percance. |
+| C — Cuenta | Un relato se escribe en vivo, con palabras de verdad ("se me cerró", "le di por el lado del copiloto"). |
+| R — Reconoce | Fragmentos del relato se marcan en naranja y viajan a sus campos; cada dato queda pegado a su frase. |
+| O — Ordena | Se forma la línea de tiempo: antes, impacto, después. |
+| Q — ¿Qué falta? | Aparece una sola pregunta: la que más cambia el resultado. |
+| U — Ubica | Vista cenital: el croquis se pinta sobre el asfalto como pintura vial. |
+| **I — Impacta** | **El momento de revelación.** La cámara baja del croquis al nivel de la calle y las líneas se levantan hasta convertirse en la escena 3D. El scroll recorre el tiempo del choque con un contador (t = −1.2 s … 0 … +2.4 s): frenado, contacto, deformación, trayectorias hasta el reposo, con ΔV y velocidades como lecturas de telemetría. Un control deja al visitante cambiar la velocidad y el solver recalcula el resultado en vivo. |
+| S — Simula | Cámara libre, vista del conductor con su línea de visión, hipótesis fantasma sobrepuesta. |
+| Las pruebas | Resultados medidos como cotas: precisión de extracción, error de ΔV contra la caja negra (EDR), deformación contra autos reales. Un deslizador compara la foto de una prueba de choque real de NHTSA con la abolladura de Croquis (E5). |
+| Lo que no es | No es peritaje, no decide culpas, no estima lesiones. Dicho con la misma claridad que lo demás. |
+| Cierre | "Cuenta qué pasó" y "Ver un ejemplo". |
+
+La página de historia (`/historia`) se integra a esta portada o se convierte en su versión extendida, sin duplicar contenido.
+
+### 11.4 La app: el flujo guiado
+
+- **Un solo flujo con pasos visibles:** Cuenta → ¿Qué falta? → Ubica → Simula (Reconoce, Ordena e Impacta ocurren solos y se muestran mientras pasan). Siempre hay un único botón principal de "siguiente"; se puede volver a cualquier paso sin perder nada. Las páginas sueltas de croquis y visor quedan como herramientas avanzadas.
+- **Relato:** ejemplos de cómo escribir, contador de lo que la IA va entendiendo, cada dato con su cita marcada en el texto.
+- **Mientras la IA trabaja (5–10 s):** se muestra qué está pasando paso a paso, no un spinner.
+- **Croquis:** guía corta la primera vez (arrastrar, rotar, dibujar trayectoria), con deshacer.
+- **Visor:** lecturas de telemetría por vehículo (velocidad, ΔV con intervalo), línea de tiempo tipo traza de telemetría con marcadores de eventos (inicio de frenado, impacto, reposo), cámaras predefinidas, comparación de hipótesis en pantalla dividida, leyenda de reconstrucción ilustrativa siempre visible.
+- **Errores y estados vacíos:** dicen qué pasó y qué hacer, sin disculpas ni vaguedades.
+- **Celular y teclado:** todo el flujo funciona en un teléfono y sin mouse.
+
+### 11.5 Las demás páginas
+
+- **Demo "Tú eres…":** misma identidad; casos precargados sin servidor y con semilla.
+- **Recorrido técnico:** las evaluaciones E1–E9 con gráficas consistentes generadas desde `eval/results/`, en el mismo sistema visual.
+- **`/e9` y `/medicion`:** mismo sistema, con prioridad a la claridad.
+- **Bilingüe:** español de México por defecto, inglés completo.
+
+### 11.6 Rendimiento y accesibilidad de la experiencia
+
+- La portada muestra primero un cuadro estático renderizado de la escena real (generado en el build) y luego activa el 3D en vivo; el texto se lee antes de que cargue el 3D.
+- Carga inicial ≤ 8 MB; LCP ≤ 2.5 s y CLS < 0.1 en celular con red 4G simulada; los niveles de calidad de §7.8 aplican también a la portada.
+- Con movimiento reducido: los capítulos se recorren paso a paso con cuadros estáticos de la escena real.
+- Contraste AA, foco visible, navegación completa con teclado, textos alternativos para cada capítulo.
+
+### 11.7 Proceso de diseño
+
+1. **Plan en `docs/design/plan.md`:** tokens, escala tipográfica, retícula y bocetos ASCII de cada capítulo y de cada paso del flujo.
+2. **Revisión contra lo genérico:** antes de construir, comparar el plan con los estilos por defecto de páginas generadas (fondo negro con un solo acento chillón, tarjetas redondeadas idénticas con sombra gris, etiquetas en mayúsculas sobre cada título, gradientes decorativos, numeraciones que no son secuencia) y cambiar lo que se parezca. Documentar qué se cambió y por qué.
+3. **Construir y criticar con capturas** en 1440 px, 1920 px, 390 px (celular) y con movimiento reducido. Quitar todo adorno que no sirva.
+4. **Revisión independiente:** un agente que no participó en el diseño revisa las capturas contra este §11 y lista problemas; se corrigen antes de cerrar.
+
+### 11.8 Videos
+
+Tres videos (presentación de lanzamiento, demo de producto y recorrido técnico) con guion en `docs/videos/`. Las tomas de la portada y del visor se capturan directamente de la app en calidad ultra en la computadora de demo, sin edición que muestre algo que el sistema no calcula.
+
+### 11.9 Acrónimos
+
+Subtítulo en inglés (README y portafolio): *Crash Reconstruction from Oral Queries Using Impact Simulation*. Lema en español: *Cuenta. Reconoce. Ordena. ¿Qué falta? Ubica. Impacta. Simula.*
+
+- **C — Cuenta.** Lo dices con tus palabras, como se lo contarías a alguien.
+- **R — Reconoce.** La IA convierte tu relato en datos y marca de qué frase salió cada uno.
+- **O — Ordena.** Arma la línea de tiempo: antes, impacto y después.
+- **Q — ¿Qué falta?** Te pregunta solo lo que de verdad cambia el resultado.
+- **U — Ubica.** Acomodas autos, personas y calles en el croquis.
+- **I — Impacta.** La física calcula el choque, la deformación y hacia dónde salió cada quien.
+- **S — Simula.** Lo ves pasar en 3D, desde cualquier ángulo y en cámara lenta.
 
 ---
 
@@ -463,9 +553,15 @@ Port TS completo del solver (todos los módulos de §6, incluidos inversión y M
 Ingesta de reportes de pruebas de NHTSA (fotos y aplastamiento medido) y de casos CISS con aplastamiento C1–C6; reproducción de cada caso en Croquis con la misma clase, masa, velocidad y ángulo; medición del perfil sobre la malla deformada; comparaciones lado a lado contra las fotos; ajuste de la deformación (caída, ancho, arrugas) solo con el conjunto de desarrollo y evaluación final en un conjunto de prueba separado y congelado antes de medir. Corre en la laptop; no requiere software externo con licencia.
 ✅ E5 publicado con tamaño de muestra, error por tipo de impacto contra las dos líneas base y galería de comparaciones con las fotos reales.
 
-**F11 — Producto final**
-Página de historia, recorrido técnico, README completo, despliegue en Vercel (preview y producción), E9 con usuarios reales, guiones de video.
-✅ Checklist del README (§15) completo con enlaces; sitio en vivo.
+**F11 — Producto final.** Se hace en dos partes, en este orden:
+
+**F11a — Experiencia y diseño (antes de E9)**
+Todo §11.1–§11.7: marca de `assets/brand/` aplicada en todo el sitio (logo, favicon, íconos de app, imagen para redes, tipografía Anybody autoalojada y tokens), plan de diseño y revisión contra lo genérico, sistema de diseño, portada de lanzamiento con la transición del croquis al 3D calculada en vivo y el control de velocidad, flujo guiado de la app con todos sus estados, demo, recorrido técnico, `/e9` y `/medicion` en el mismo sistema, bilingüe. Actualizar `docs/e9/protocolo.md` con los nombres nuevos de los botones.
+✅ Plan de diseño y revisión documentados en `docs/design/` con ADR; e2e de todo el flujo en escritorio y celular; snapshots visuales de cada capítulo y cada paso; revisión de accesibilidad (axe) sin problemas serios y Lighthouse de accesibilidad ≥ 95; LCP y CLS dentro de §11.6; versión con movimiento reducido probada; sin errores de consola; revisión independiente de diseño atendida; `/e9` sigue registrando los 5 eventos; E1, E6 y demás evaluaciones sin cambios; prueba piloto informal con una persona (no cuenta para E9): tras 5 segundos en la portada puede decir qué hace Croquis. Desplegado en Vercel y anotado en PROGRESS.md como "listo para E9".
+
+**F11b — Validación con personas y cierre**
+E9 con al menos 5 personas sobre la versión de F11a, correcciones de lo que aparezca en más de una persona, README completo, guiones de video y despliegue final.
+✅ Checklist del README (§15) completo con enlaces; E9 publicado; sitio en vivo.
 
 ---
 
