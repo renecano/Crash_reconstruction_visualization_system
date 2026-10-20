@@ -5,7 +5,10 @@ import { compareHypotheses, GHOST_COLORS, MAX_HYPOTHESES } from "@croquis/viewer
 import { useState } from "react";
 import { textos } from "@/i18n";
 import { useTextos } from "@/i18n/cliente";
-import { reconstruirEnNavegador } from "@/lib/reconstruct-client";
+// `withSpeed` vive en reconstruct-client: la portada la usa sin cargar three.js.
+import { reconstruirEnNavegador, withSpeed } from "@/lib/reconstruct-client";
+
+export { withSpeed };
 import { fmtNumber } from "@/lib/format-number";
 import { Desplazable } from "@/components/sitio/desplazable";
 
@@ -64,16 +67,6 @@ const T = textos(
 export interface Hipotesis {
   etiqueta: string;
   resultado: Resultado;
-}
-
-/** Escena con otra velocidad previa para un vehículo (lo demás igual). */
-export function withSpeed(spec: EscenaSpec, vehicleId: string, kmh: number): EscenaSpec {
-  const next = structuredClone(spec);
-  const v = next.vehiculos.find((x) => x.id === vehicleId);
-  if (v) {
-    v.velocidad_previa = { valor: kmh, unidad: "km/h", fuente: "usuario", confianza: 0.9 };
-  }
-  return next;
 }
 
 export interface HypothesisPanelProps {

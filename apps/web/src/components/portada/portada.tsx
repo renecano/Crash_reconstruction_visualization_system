@@ -9,18 +9,17 @@
  * - **Control de velocidad:** cambia la velocidad de A y el solver lo recalcula en el navegador.
  * - **Movimiento reducido:** sin suavizado ni transiciones; el escenario es el cuadro fijo del capítulo.
  */
-import { loadFixture, loadResultado, type Resultado } from "@croquis/scene-schema";
+import type { EscenaSpec, Resultado } from "@croquis/scene-schema";
 import { formatTime } from "@croquis/viewer";
 import Link from "next/link";
-import { useCallback, useEffect, useMemo, useRef, useState, useSyncExternalStore } from "react";
+import { useCallback, useEffect, useRef, useState, useSyncExternalStore } from "react";
 import { RelatoConCitas } from "@/components/relato/relato-con-citas";
 import { Cota } from "@/components/sitio/cota";
 import { Legend } from "@/components/legend";
 import { Logotipo } from "@/components/sitio/logo";
-import { withSpeed } from "@/components/visor/hypothesis-panel";
 import { useIdioma, useTextos } from "@/i18n/cliente";
 import { opcionEtiqueta, preguntaVista } from "@/lib/mensajes";
-import { reconstruirEnNavegador } from "@/lib/reconstruct-client";
+import { reconstruirEnNavegador, withSpeed } from "@/lib/reconstruct-client";
 import type { Pregunta } from "@/lib/relato-api";
 import {
   CAPITULOS,
@@ -42,6 +41,8 @@ export interface DatosPortada {
   e1: { croquis: number; reglas: number };
   e3: { croquis: number; winsmash: number };
   e5: { croquis: number; uniforme: number; lineal: number };
+  /** La escena de Toluca, ya validada al generar `portada.json` (sin Zod en el navegador). */
+  spec: EscenaSpec;
   relato: string;
   preguntas: Pregunta[];
   galeria: { prueba: string; foto: string; render: string };
@@ -64,7 +65,7 @@ export function Portada({ datos }: { datos: DatosPortada }) {
     () => window.matchMedia(reducidoQuery).matches,
     () => false,
   );
-  const spec = useMemo(() => loadFixture("interseccion_toluca"), []);
+  const spec = datos.spec;
   const [base, setBase] = useState<Resultado | null>(null);
   // La escena recalculada con otra velocidad de A (se sigue viendo la anterior mientras se calcula).
   const [recalculado, setRecalculado] = useState<{ kmh: number; r: Resultado } | null>(null);
@@ -85,10 +86,13 @@ export function Portada({ datos }: { datos: DatosPortada }) {
 
   useEffect(() => {
     let alive = true;
-    loadResultado("interseccion_toluca").then((r) => {
-      if (!alive) return;
-      setBase(r);
-    });
+    // El resultado (y Zod, que lo valida) llega aparte, después del primer pintado.
+    import("@croquis/scene-schema")
+      .then((m) => m.loadResultado("interseccion_toluca"))
+      .then((r) => {
+        if (!alive) return;
+        setBase(r);
+      });
     return () => {
       alive = false;
     };
@@ -237,25 +241,18 @@ export function Portada({ datos }: { datos: DatosPortada }) {
 
   return (
     <div className="relative" data-testid="portada" data-capitulo={capitulo}>
-      {resultado ? (
-        <Escenario
-          spec={spec}
-          resultado={resultado}
-          hipotesis={capitulo === "s" ? hipotesis : []}
-          progreso={progreso}
-          enImpacta={capitulo === "i"}
-          reducido={reducido}
-          // Cuadro fijo del capítulo mientras no hay 3D (o en su lugar, con movimiento reducido).
-          cuadro={`/portada/${listoEn ?? capitulo}`}
-          onListo={alListo}
-        />
-      ) : (
-        <div
-          className="fixed inset-0 -z-0"
-          aria-hidden="true"
-          style={{ background: "var(--efecto-luz-escena)" }}
-        />
-      )}
+      {/* El cuadro fijo viene en el HTML del servidor (LCP); el 3D llega cuando carga el resultado. */}
+      <Escenario
+        spec={spec}
+        resultado={resultado}
+        hipotesis={capitulo === "s" ? hipotesis : []}
+        progreso={progreso}
+        enImpacta={capitulo === "i"}
+        reducido={reducido}
+        // Cuadro fijo del capítulo mientras no hay 3D (o en su lugar, con movimiento reducido).
+        cuadro={`/portada/${listoEn ?? capitulo}`}
+        onListo={alListo}
+      />
       {/* Velo para leer el texto sobre la escena: a la izquierda en escritorio, abajo en celular. */}
       <div
         ref={veloRef}

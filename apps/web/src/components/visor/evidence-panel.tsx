@@ -23,6 +23,7 @@ export { evidenceLabel };
 const T = textos(
   {
     titulo: "Lo que dice la evidencia física",
+    tabla: "Tabla de la evidencia y su velocidad estimada",
     noBasta: "La evidencia no basta para estimarlo.",
     enLimite: (valor: string) =>
       `La evidencia lleva este dato hasta el límite del modelo (${valor}), así que no cabe bien con lo demás. Conviene revisar los datos.`,
@@ -40,6 +41,7 @@ const T = textos(
   },
   {
     titulo: "What the physical evidence says",
+    tabla: "Table of the evidence and its estimated speed",
     noBasta: "The evidence is not enough to estimate it.",
     enLimite: (valor: string) =>
       `The evidence pushes this value to the limit of the model (${valor}), so it does not fit well with the rest. It is worth checking the data.`,
@@ -103,7 +105,7 @@ export function EvidencePanel({ resultado }: { resultado: Resultado }) {
       {inv && inv.evidencia.length > 0 ? (
         <>
           <p>{t.declarada(inv.evidencia.map((l) => evidenceLabel(l, roles, lang)).join(", "))}</p>
-          <Desplazable etiqueta={t.titulo}>
+          <Desplazable etiqueta={t.tabla}>
             <table className="w-full border-collapse text-left">
               <thead>
                 <tr className="border-b border-linea">

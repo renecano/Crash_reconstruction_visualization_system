@@ -1,7 +1,15 @@
 #!/usr/bin/env node
 /**
- * F11a — Accesibilidad y carga de las páginas (PLAN §11.6): Lighthouse en modo celular con red 4G
- * simulada (su configuración móvil por omisión), sobre el build de producción.
+ * F11a — Accesibilidad y carga de las páginas (PLAN §11.6): Lighthouse en modo celular (Moto G
+ * Power emulado, CPU 4×) con red 4G, sobre el build de producción, de dos formas:
+ *
+ * - **Limitación aplicada** (`throttlingMethod: "devtools"`): Chrome de verdad recibe la red 4G de
+ *   Lighthouse (562.5 ms de ida y vuelta, 1.47 Mbps) y la CPU 4× más lenta, y se mide lo que pasa.
+ *   Con esta se evalúa el criterio (ADR 0045).
+ * - **Estimación de Lantern** (`"simulate"`, la de PageSpeed Insights): carga sin limitar y estima
+ *   el tiempo con un modelo. En estas páginas su LCP queda varias veces arriba del medido porque
+ *   suma al LCP los scripts que se piden al inicio aunque el LCP ocurra antes de que terminen. Se
+ *   reporta junto a la medición, sin esconderla.
  *
  * Para cada página mide: puntaje de accesibilidad (meta ≥ 95), LCP (≤ 2.5 s), CLS (< 0.1), bytes
  * transferidos durante la carga (≤ 8 MB) y, como información, el puntaje de rendimiento y el TBT.
@@ -18,14 +26,16 @@ import { writeFileSync } from "node:fs";
 import { createRequire } from "node:module";
 import os from "node:os";
 import { dirname, join, resolve } from "node:path";
-import { fileURLToPath } from "node:url";
+import { fileURLToPath, pathToFileURL } from "node:url";
 
 const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), "..");
 const WEB = join(ROOT, "apps", "web");
 const require = createRequire(join(WEB, "package.json"));
 const { chromium } = require("@playwright/test");
-const lighthouse = (await import(require.resolve("lighthouse"))).default;
-const chromeLauncher = await import(require.resolve("chrome-launcher"));
+// Lighthouse y chrome-launcher son módulos ES instalados en apps/web.
+const desdeWeb = (m) => import(pathToFileURL(require.resolve(m)).href);
+const lighthouse = (await desdeWeb("lighthouse")).default;
+const chromeLauncher = await desdeWeb("chrome-launcher");
 
 function arg(name, fallback) {
   const i = process.argv.indexOf(`--${name}`);
@@ -73,15 +83,31 @@ function mediana(lista, clave) {
 
 const r2 = (x, d = 2) => (Number.isFinite(x) ? Math.round(x * 10 ** d) / 10 ** d : null);
 
-async function medir(port, url) {
-  const res = await lighthouse(url, {
-    port,
-    output: "json",
-    logLevel: "error",
-    onlyCategories: ["accessibility", "performance"],
-    // Celular con 4G simulada: es la configuración por omisión de Lighthouse (formFactor mobile,
-    // throttlingMethod simulate).
-  });
+/** El elemento LCP: Lighthouse 13 lo reporta en sus «insights» como un nodo con su fragmento. */
+function nodoLcp(audits) {
+  const buscar = (x) => {
+    if (!x || typeof x !== "object") return null;
+    if (x.type === "node" && typeof x.snippet === "string") return x.snippet;
+    for (const v of Object.values(x)) {
+      const r = buscar(v);
+      if (r) return r;
+    }
+    return null;
+  };
+  return (
+    buscar(audits["lcp-breakdown-insight"]?.details) ??
+    buscar(audits["largest-contentful-paint"]?.details)
+  );
+}
+
+async function medir(port, url, metodo) {
+  // Celular con 4G: la configuración móvil por omisión de Lighthouse, con el método de limitación
+  // pedido (devtools = aplicada; simulate = Lantern).
+  const res = await lighthouse(
+    url,
+    { port, output: "json", logLevel: "error", onlyCategories: ["accessibility", "performance"] },
+    { extends: "lighthouse:default", settings: { throttlingMethod: metodo } },
+  );
   const lhr = res.lhr;
   const a = lhr.audits;
   return {
@@ -92,8 +118,7 @@ async function medir(port, url) {
     tbt_ms: r2(a["total-blocking-time"].numericValue, 0),
     fcp_ms: r2(a["first-contentful-paint"].numericValue, 0),
     carga_mb: r2(a["total-byte-weight"].numericValue / 1048576, 2),
-    elemento_lcp:
-      a["largest-contentful-paint-element"]?.details?.items?.[0]?.items?.[0]?.node?.snippet ?? null,
+    elemento_lcp: nodoLcp(a),
     accesibilidad_fallas: Object.values(a)
       .filter(
         (x) =>
@@ -120,12 +145,15 @@ const chrome = await chromeLauncher.launch({
 const paginas = [];
 try {
   for (const ruta of PAGINAS) {
-    const corridas = [];
+    const corridas = { devtools: [], simulate: [] };
     for (let k = 0; k < REPEATS; k++) {
-      corridas.push(await medir(chrome.port, `${BASE}${ruta}`));
-      console.log(ruta, k + 1, JSON.stringify(corridas.at(-1)).slice(0, 160));
+      for (const metodo of ["devtools", "simulate"]) {
+        corridas[metodo].push(await medir(chrome.port, `${BASE}${ruta}`, metodo));
+        console.log(ruta, metodo, k + 1, JSON.stringify(corridas[metodo].at(-1)).slice(0, 150));
+      }
     }
-    const m = mediana(corridas, "lcp_ms");
+    const m = mediana(corridas.devtools, "lcp_ms");
+    const lantern = mediana(corridas.simulate, "lcp_ms");
     paginas.push({
       ruta,
       ...m,
@@ -134,6 +162,14 @@ try {
         lcp: m.lcp_ms <= META.lcp_ms,
         cls: m.cls < META.cls,
         carga: m.carga_mb <= META.carga_mb,
+      },
+      lantern: {
+        lcp_ms: lantern.lcp_ms,
+        fcp_ms: lantern.fcp_ms,
+        tbt_ms: lantern.tbt_ms,
+        cls: lantern.cls,
+        rendimiento: lantern.rendimiento,
+        lcp_cumpliria: lantern.lcp_ms <= META.lcp_ms,
       },
       corridas,
     });
@@ -148,7 +184,7 @@ const resultado = {
   generado_por: "node eval/f11_portada.mjs",
   momento: new Date().toISOString(),
   metas: META,
-  metodo: `Lighthouse en modo celular por omisión (4G simulada), build de producción, ${REPEATS} corridas por página; se reporta la mediana por LCP.`,
+  metodo: `Lighthouse en modo celular por omisión con red 4G, build de producción, ${REPEATS} corridas por página y por método; se reporta la corrida mediana por LCP. El criterio se evalúa con la limitación aplicada (devtools); la estimación de Lantern (simulate) va en «lantern» de cada página.`,
   maquina: {
     cpu: os.cpus()[0]?.model ?? null,
     memoria_gb: r2(os.totalmem() / 1073741824, 1),
@@ -161,6 +197,6 @@ writeFileSync(OUT, `${JSON.stringify(resultado, null, 2)}\n`);
 console.log(`${OUT}: ${resultado.cumple_todo ? "cumple" : "NO cumple"} todas las metas.`);
 for (const p of paginas) {
   console.log(
-    `${p.ruta.padEnd(36)} a11y ${p.accesibilidad}  LCP ${p.lcp_ms} ms  CLS ${p.cls}  ${p.carga_mb} MB`,
+    `${p.ruta.padEnd(36)} a11y ${p.accesibilidad}  LCP ${p.lcp_ms} ms (Lantern ${p.lantern.lcp_ms})  CLS ${p.cls}  ${p.carga_mb} MB`,
   );
 }

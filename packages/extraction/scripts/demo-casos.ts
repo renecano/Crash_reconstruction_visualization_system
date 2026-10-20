@@ -109,6 +109,8 @@ const relatoToluca = String((toluca.meta as Json).relato);
 const portada = {
   _generado_por: "pnpm --filter @croquis/extraction demo (scripts/demo-casos.ts)",
   escena: "interseccion_toluca",
+  // La escena ya validada (loadFixture): la portada la usa sin cargar Zod en el navegador.
+  spec: toluca,
   relato: relatoToluca,
   preguntas: ask(toluca, relatoToluca).map(preguntaToDict),
 };

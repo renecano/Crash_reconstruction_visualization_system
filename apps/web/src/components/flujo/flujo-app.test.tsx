@@ -82,17 +82,12 @@ function renderFlujo(fetcher: typeof fetch, lang: "es" | "en" = "es") {
       />
     </IdiomaProvider>
   );
-  const r = render(view());
-  // Cada cambio de URL vuelve a dibujar el flujo, como haría Next.
-  push.mockImplementation((url: string) => {
-    search = new URLSearchParams(url.split("?")[1] ?? "");
-    r.rerender(view());
-  });
-  return r;
+  return render(view());
 }
 
 beforeEach(() => {
   search = new URLSearchParams();
+  window.history.replaceState(null, "", "/cuenta");
   sessionStorage.clear();
   push.mockClear();
 });
@@ -135,7 +130,8 @@ describe("flujo guiado /cuenta", () => {
     fireEvent.change(screen.getByTestId("relato"), { target: { value: "Choqué en el cruce." } });
     fireEvent.click(screen.getByTestId("entender"));
     await screen.findByTestId("preguntas");
-    expect(push).toHaveBeenLastCalledWith("/cuenta?paso=falta", { scroll: true });
+    // El paso queda en la URL (pushState, integrado al router de Next).
+    expect(window.location.pathname + window.location.search).toBe("/cuenta?paso=falta");
     expect(screen.getByTestId("metodo").textContent).toMatch(/reglas/);
     expect(screen.getByTestId("hechos").textContent).toMatch(/del relato/);
     fireEvent.change(screen.getByLabelText(/velocidad crees/), { target: { value: "45" } });

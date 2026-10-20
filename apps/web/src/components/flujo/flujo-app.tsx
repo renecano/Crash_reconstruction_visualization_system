@@ -9,7 +9,6 @@
  *   preguntas respondidas, croquis abierto, corrección en el croquis y reconstrucción visible).
  */
 import type { EscenaSpec } from "@croquis/scene-schema";
-import { useRouter, useSearchParams } from "next/navigation";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useIdioma, useTextos } from "@/i18n/cliente";
 import { registrarE9 } from "@/lib/e9";
@@ -59,8 +58,9 @@ export function FlujoApp({
 }) {
   const { ruta } = useIdioma();
   const t = useTextos(TEXTOS_FLUJO);
-  const router = useRouter();
-  const sp = useSearchParams();
+  // El paso pedido en la URL (`?paso=`). Se lee al montar y con «atrás»/«adelante»: así el primer
+  // paso viene en el HTML del servidor (useSearchParams obligaría a dibujarlo solo en el navegador).
+  const [pedido, setPedido] = useState<string | null>(null);
   const enLinea = useEnLinea();
   const [estado, setEstado] = useState<Estado>(VACIO);
   const [restaurado, setRestaurado] = useState(false);
@@ -73,7 +73,11 @@ export function FlujoApp({
     const s = leerEstado();
     // eslint-disable-next-line react-hooks/set-state-in-effect -- sincroniza con sessionStorage al montar
     if (s) setEstado(s);
+    setPedido(new URLSearchParams(window.location.search).get("paso"));
     setRestaurado(true);
+    const alVolver = () => setPedido(new URLSearchParams(window.location.search).get("paso"));
+    window.addEventListener("popstate", alVolver);
+    return () => window.removeEventListener("popstate", alVolver);
   }, []);
   useEffect(() => {
     if (!restaurado) return;
@@ -85,17 +89,21 @@ export function FlujoApp({
   }, [estado, restaurado]);
 
   const alcanzado: Paso = estado.spec ? "simula" : "cuenta";
-  const pedido = sp.get("paso");
   const paso: Paso =
     esPaso(pedido) && PASOS.indexOf(pedido) <= PASOS.indexOf(alcanzado) ? pedido : "cuenta";
 
   const ir = useCallback(
     (p: Paso) => {
-      router.push(p === "cuenta" ? ruta("/cuenta") : `${ruta("/cuenta")}?paso=${p}`, {
-        scroll: true,
-      });
+      // pushState se integra al router de Next (sincroniza la URL sin recargar).
+      window.history.pushState(
+        null,
+        "",
+        p === "cuenta" ? ruta("/cuenta") : `${ruta("/cuenta")}?paso=${p}`,
+      );
+      setPedido(p);
+      window.scrollTo({ top: 0 });
     },
-    [router, ruta],
+    [ruta],
   );
 
   const fail = (e: unknown) =>

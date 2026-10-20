@@ -73,3 +73,13 @@ export function reconstruirCompletoEnNavegador(
     getWorker().postMessage({ id, spec, completo: true });
   });
 }
+
+/** Escena con otra velocidad previa para un vehículo (lo demás igual). */
+export function withSpeed(spec: EscenaSpec, vehicleId: string, kmh: number): EscenaSpec {
+  const next = structuredClone(spec);
+  const v = next.vehiculos.find((x) => x.id === vehicleId);
+  if (v) {
+    v.velocidad_previa = { valor: kmh, unidad: "km/h", fuente: "usuario", confianza: 0.9 };
+  }
+  return next;
+}

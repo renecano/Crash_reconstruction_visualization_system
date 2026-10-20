@@ -4,6 +4,7 @@
   "private": true,
   "description": "EscenaSpec: JSON Schema (fuente única), Zod generado y fixtures canónicas",
   "type": "module",
+  "sideEffects": false,
   "exports": {
     ".": "./src/index.ts"
   },

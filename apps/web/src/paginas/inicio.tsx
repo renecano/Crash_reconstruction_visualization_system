@@ -3,6 +3,7 @@ import { Marco } from "@/components/sitio/marco";
 import historia from "@/data/historia.json";
 import portada from "@/data/portada.json";
 import recorrido from "@/data/recorrido.json";
+import type { EscenaSpec } from "@croquis/scene-schema";
 import type { Lang } from "@/i18n";
 import type { Pregunta } from "@/lib/relato-api";
 
@@ -40,6 +41,7 @@ function datosPortada(): DatosPortada {
       uniforme: cifra("E5", "Uniforme", "Lateral"),
       lineal: cifra("E5", "Lineal simple", "Lateral"),
     },
+    spec: portada.spec as unknown as EscenaSpec,
     relato: portada.relato,
     preguntas: portada.preguntas as Pregunta[],
     galeria: {
