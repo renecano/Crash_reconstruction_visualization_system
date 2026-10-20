@@ -1,0 +1,120 @@
+{
+ "costo_estimado_con": "claude-haiku-5-5",
+ "costo_usd": 0.0013911,
+ "esfuerzo": "medium",
+ "grabado": "2026-10-20T01:16:47+00:00",
+ "huella_prompt": "613dc7f7bc958502",
+ "latencia_ms": 10172.3,
+ "modelo": "claude-haiku-5-5",
+ "modelo_respuesta": "claude-haiku-5-5",
+ "prompt": "extraccion_v4",
+ "request_id": "req_011CgCc6LytLW5Sch7n1Lb1C",
+ "salida": {
+  "dispositivos": [],
+  "hechos": [
+   {
+    "campo": "lugar.estado_superficie",
+    "cita": "el piso estaba encharcado",
+    "persona": -1,
+    "valor": "encharcado",
+    "vehiculo": -1
+   },
+   {
+    "campo": "entorno.clima",
+    "cita": "llovía bastante",
+    "persona": -1,
+    "valor": "lluvia",
+    "vehiculo": -1
+   },
+   {
+    "campo": "entorno.iluminacion",
+    "cita": "Eran como las siete de la noche",
+    "persona": -1,
+    "valor": "noche",
+    "vehiculo": -1
+   },
+   {
+    "campo": "evento.tipo",
+    "cita": "le pegué con el frente",
+    "persona": -1,
+    "valor": "impacto_vehiculo_vehiculo",
+    "vehiculo": -1
+   },
+   {
+    "campo": "vehiculo.clase",
+    "cita": "Sentra",
+    "persona": -1,
+    "valor": "sedan_mediano",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.clase",
+    "cita": "Tornado",
+    "persona": -1,
+    "valor": "pickup",
+    "vehiculo": 1
+   },
+   {
+    "campo": "vehiculo.color",
+    "cita": "una Tornado gris",
+    "persona": -1,
+    "valor": "gris",
+    "vehiculo": 1
+   },
+   {
+    "campo": "vehiculo.maniobra",
+    "cita": "salió de una gasolinera para meterse a la avenida",
+    "persona": -1,
+    "valor": "incorporacion",
+    "vehiculo": 1
+   },
+   {
+    "campo": "vehiculo.velocidad_kmh",
+    "cita": "Yo iba como a cincuenta",
+    "persona": -1,
+    "valor": "50",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.frenado",
+    "cita": "yo frené",
+    "persona": -1,
+    "valor": "true",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.zona_impacto",
+    "cita": "le pegué con el frente en su costado izquierdo",
+    "persona": -1,
+    "valor": "L",
+    "vehiculo": 1
+   }
+  ],
+  "personas": [
+   {
+    "cita": "Yo venía en mi Sentra",
+    "rol": "conductor",
+    "vehiculo": 0
+   }
+  ],
+  "preguntas": [
+   "¿A qué velocidad salió la Tornado de la gasolinera?",
+   "¿Había alguien a bordo de la Tornado?"
+  ],
+  "vehiculos": [
+   {
+    "narrador": true
+   },
+   {
+    "narrador": false
+   }
+  ]
+ },
+ "texto_sha256": "68c7878b14653a0e8ad3e75c64a09982e09670ceffc61d47e625e4ffb403b70e",
+ "usage": {
+  "cache_creation_input_tokens": 0,
+  "cache_read_input_tokens": 7350,
+  "input_tokens": 191,
+  "output_tokens": 2597
+ }
+}

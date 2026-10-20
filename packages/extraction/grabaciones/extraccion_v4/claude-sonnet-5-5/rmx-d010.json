@@ -1,0 +1,91 @@
+{
+ "costo_estimado_con": "claude-sonnet-5-5",
+ "costo_usd": 0.007188,
+ "esfuerzo": "medium",
+ "grabado": "2026-10-19T21:56:48+00:00",
+ "huella_prompt": "613dc7f7bc958502",
+ "latencia_ms": 3589.1,
+ "modelo": "claude-sonnet-5-5",
+ "modelo_respuesta": "claude-sonnet-5-5",
+ "prompt": "extraccion_v4",
+ "request_id": "req_011CgCLrKZRaLdhLVBj4icqJ",
+ "salida": {
+  "dispositivos": [],
+  "hechos": [
+   {
+    "campo": "vehiculo.clase",
+    "cita": "moto",
+    "persona": -1,
+    "valor": "motocicleta",
+    "vehiculo": 1
+   },
+   {
+    "campo": "vehiculo.maniobra",
+    "cita": "saliendo de mi cochera en reversa",
+    "persona": -1,
+    "valor": "reversa",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.zona_impacto",
+    "cita": "me pego en la parte de atras del lado derecho",
+    "persona": -1,
+    "valor": "B",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.zona_impacto",
+    "cita": "me pego en la parte de atras del lado derecho",
+    "persona": -1,
+    "valor": "R",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.zona_impacto",
+    "cita": "me pego",
+    "persona": -1,
+    "valor": "F",
+    "vehiculo": 1
+   },
+   {
+    "campo": "evento.tipo",
+    "cita": "me pego en la parte de atras del lado derecho",
+    "persona": -1,
+    "valor": "impacto_vehiculo_vehiculo",
+    "vehiculo": -1
+   }
+  ],
+  "personas": [
+   {
+    "cita": "yo iva saliendo de mi cochera en reversa",
+    "rol": "conductor",
+    "vehiculo": 0
+   },
+   {
+    "cita": "el de la moto",
+    "rol": "motociclista",
+    "vehiculo": 1
+   }
+  ],
+  "preguntas": [
+   "¿La moto frenó o trató de esquivar antes del golpe?",
+   "¿Aproximadamente a qué velocidad iba la moto?",
+   "¿Cuántos carriles tiene la calle angosta?"
+  ],
+  "vehiculos": [
+   {
+    "narrador": true
+   },
+   {
+    "narrador": false
+   }
+  ]
+ },
+ "texto_sha256": "05664232dc1200a3075f9368158938cfe910b8f5b8abf90980eac30580d41245",
+ "usage": {
+  "cache_creation_input_tokens": 0,
+  "cache_read_input_tokens": 7350,
+  "input_tokens": 84,
+  "output_tokens": 555
+ }
+}

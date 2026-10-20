@@ -1,0 +1,104 @@
+{
+ "costo_estimado_con": "claude-sonnet-5-5",
+ "costo_usd": 0.0085542,
+ "esfuerzo": "medium",
+ "grabado": "2026-10-20T01:31:58+00:00",
+ "huella_prompt": "86f6a54999b8cbf7",
+ "latencia_ms": 5032.3,
+ "modelo": "claude-sonnet-5-5",
+ "modelo_respuesta": "claude-sonnet-5-5",
+ "prompt": "extraccion_v3",
+ "request_id": "req_011CgCdFsY38EdbmKyV33ndT",
+ "salida": {
+  "dispositivos": [
+   {
+    "cita": "cuando se prendió el hombrecito verde",
+    "tipo": "semaforo"
+   },
+   {
+    "cita": "empezó a cruzar",
+    "tipo": "paso_peatonal"
+   }
+  ],
+  "hechos": [
+   {
+    "campo": "lugar.tipo_via",
+    "cita": "en la esquina con Abasolo",
+    "persona": -1,
+    "valor": "interseccion",
+    "vehiculo": -1
+   },
+   {
+    "campo": "entorno.iluminacion",
+    "cita": "Eran como las cinco de la tarde",
+    "persona": -1,
+    "valor": "dia",
+    "vehiculo": -1
+   },
+   {
+    "campo": "evento.tipo",
+    "cita": "le pegó con la defensa en las piernas",
+    "persona": -1,
+    "valor": "impacto_vehiculo_persona",
+    "vehiculo": -1
+   },
+   {
+    "campo": "vehiculo.clase",
+    "cita": "combi",
+    "persona": -1,
+    "valor": "microbus_combi",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.color",
+    "cita": "blanca",
+    "persona": -1,
+    "valor": "blanca",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.maniobra",
+    "cita": "ganar la vuelta a la izquierda",
+    "persona": -1,
+    "valor": "vuelta_izquierda",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.zona_impacto",
+    "cita": "con la defensa",
+    "persona": -1,
+    "valor": "F",
+    "vehiculo": 0
+   }
+  ],
+  "personas": [
+   {
+    "cita": "Un señor con bolsas del mandado",
+    "rol": "peaton",
+    "vehiculo": -1
+   },
+   {
+    "cita": "El chofer de la combi",
+    "rol": "conductor",
+    "vehiculo": 0
+   }
+  ],
+  "preguntas": [
+   "¿La combi alcanzó a frenar antes de tocar al peatón?",
+   "¿Aproximadamente a qué velocidad iba la combi al dar la vuelta?",
+   "¿La combi venía de frente o de la misma dirección que el peatón al cruzar?"
+  ],
+  "vehiculos": [
+   {
+    "narrador": false
+   }
+  ]
+ },
+ "texto_sha256": "26560a6e3f9b33f2f099c51a81d1ba2d72b28417e1d12e2369c28c62c3e0fb40",
+ "usage": {
+  "cache_creation_input_tokens": 0,
+  "cache_read_input_tokens": 7131,
+  "input_tokens": 219,
+  "output_tokens": 669
+ }
+}

@@ -1,0 +1,75 @@
+{
+ "costo_estimado_con": "claude-haiku-5-5",
+ "costo_usd": 0.0007906,
+ "esfuerzo": "medium",
+ "grabado": "2026-10-20T01:06:24+00:00",
+ "huella_prompt": "613dc7f7bc958502",
+ "latencia_ms": 6947.7,
+ "modelo": "claude-haiku-5-5",
+ "modelo_respuesta": "claude-haiku-5-5",
+ "prompt": "extraccion_v4",
+ "request_id": "req_011CgCbJiFXLtVTF8UUiM4ov",
+ "salida": {
+  "dispositivos": [],
+  "hechos": [
+   {
+    "campo": "lugar.tipo_via",
+    "cita": "en la lateral",
+    "persona": -1,
+    "valor": "incorporacion",
+    "vehiculo": -1
+   },
+   {
+    "campo": "vehiculo.clase",
+    "cita": "una Lobo",
+    "persona": -1,
+    "valor": "pickup",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.velocidad_kmh",
+    "cita": "Iba como a 35",
+    "persona": -1,
+    "valor": "35",
+    "vehiculo": 0
+   },
+   {
+    "campo": "evento.tipo",
+    "cita": "Le di a un puesto de tacos",
+    "persona": -1,
+    "valor": "impacto_vehiculo_objeto",
+    "vehiculo": -1
+   },
+   {
+    "campo": "evento.objeto",
+    "cita": "Le di a un puesto de tacos",
+    "persona": -1,
+    "valor": "puesto",
+    "vehiculo": -1
+   }
+  ],
+  "personas": [
+   {
+    "cita": "Me llevé la troca de mi papá",
+    "rol": "conductor",
+    "vehiculo": 0
+   }
+  ],
+  "preguntas": [
+   "¿Hubo algún frenado antes de llegar al puesto de tacos?",
+   "¿El puesto quedó dañado y en qué lado de la camioneta fue el contacto?"
+  ],
+  "vehiculos": [
+   {
+    "narrador": true
+   }
+  ]
+ },
+ "texto_sha256": "9d45288f66fa04512f7a76ddb855a07376f0615ab9da9d7cc2ae3424e35f6d9f",
+ "usage": {
+  "cache_creation_input_tokens": 0,
+  "cache_read_input_tokens": 7350,
+  "input_tokens": 141,
+  "output_tokens": 1406
+ }
+}

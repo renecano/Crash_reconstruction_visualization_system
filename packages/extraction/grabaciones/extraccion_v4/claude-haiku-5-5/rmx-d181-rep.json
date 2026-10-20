@@ -1,0 +1,111 @@
+{
+ "costo_estimado_con": "claude-haiku-5-5",
+ "costo_usd": 0.0015072,
+ "esfuerzo": "medium",
+ "grabado": "2026-10-20T01:22:32+00:00",
+ "huella_prompt": "613dc7f7bc958502",
+ "latencia_ms": 12188.1,
+ "modelo": "claude-haiku-5-5",
+ "modelo_respuesta": "claude-haiku-5-5",
+ "prompt": "extraccion_v4",
+ "request_id": "req_011CgCcXgmiawH4KTp9s4jnK",
+ "salida": {
+  "dispositivos": [],
+  "hechos": [
+   {
+    "campo": "lugar.tipo_via",
+    "cita": "agarre la curva",
+    "persona": -1,
+    "valor": "curva",
+    "vehiculo": -1
+   },
+   {
+    "campo": "entorno.iluminacion",
+    "cita": "era como la 1 de la mañana",
+    "persona": -1,
+    "valor": "noche",
+    "vehiculo": -1
+   },
+   {
+    "campo": "entorno.clima",
+    "cita": "estaba lloviznando",
+    "persona": -1,
+    "valor": "lluvia_ligera",
+    "vehiculo": -1
+   },
+   {
+    "campo": "evento.tipo",
+    "cita": "derrape como doce metros",
+    "persona": -1,
+    "valor": "derrape",
+    "vehiculo": 0
+   },
+   {
+    "campo": "evidencias.marcas_m",
+    "cita": "derrape como doce metros",
+    "persona": -1,
+    "valor": "12",
+    "vehiculo": -1
+   },
+   {
+    "campo": "evidencias.marcas_fase",
+    "cita": "derrape como doce metros y fui a dar contra la barda",
+    "persona": -1,
+    "valor": "antes_impacto",
+    "vehiculo": -1
+   },
+   {
+    "campo": "evento.tipo",
+    "cita": "fui a dar contra la barda",
+    "persona": -1,
+    "valor": "impacto_vehiculo_objeto",
+    "vehiculo": 0
+   },
+   {
+    "campo": "evento.objeto",
+    "cita": "contra la barda de una casa",
+    "persona": -1,
+    "valor": "barda",
+    "vehiculo": -1
+   },
+   {
+    "campo": "vehiculo.clase",
+    "cita": "jetta",
+    "persona": -1,
+    "valor": "sedan_mediano",
+    "vehiculo": 0
+   },
+   {
+    "campo": "persona.cinturon",
+    "cita": "no traia el cinturon",
+    "persona": 0,
+    "valor": "false",
+    "vehiculo": -1
+   }
+  ],
+  "personas": [
+   {
+    "cita": "agarre la curva de la avenida insurgentes muy rapido en la jetta",
+    "rol": "conductor",
+    "vehiculo": 0
+   }
+  ],
+  "preguntas": [
+   "¿A qué velocidad aproximada iba al tomar la curva?",
+   "¿Hubo otros vehículos o peatones involucrados?",
+   "¿La barda pertenecía a la casa o a otro terreno?"
+  ],
+  "vehiculos": [
+   {
+    "narrador": true
+   }
+  ]
+ },
+ "texto_sha256": "590d1a39e331d6660f9fd6660665c52d0af3611d8b70920dc97b1466627c2800",
+ "usage": {
+  "cache_creation_input_tokens": 0,
+  "cache_read_input_tokens": 7350,
+  "input_tokens": 127,
+  "output_tokens": 2842
+ }
+}

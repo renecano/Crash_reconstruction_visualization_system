@@ -1,0 +1,102 @@
+{
+ "costo_estimado_con": "claude-sonnet-5-5",
+ "costo_usd": 0.008304,
+ "esfuerzo": "medium",
+ "grabado": "2026-10-19T23:16:48+00:00",
+ "huella_prompt": "613dc7f7bc958502",
+ "latencia_ms": 4591.4,
+ "modelo": "claude-sonnet-5-5",
+ "modelo_respuesta": "claude-sonnet-5-5",
+ "prompt": "extraccion_v4",
+ "request_id": "req_011CgCSx7VkcL9uePTmPYFXL",
+ "salida": {
+  "dispositivos": [],
+  "hechos": [
+   {
+    "campo": "vehiculo.clase",
+    "cita": "aveo",
+    "persona": -1,
+    "valor": "sedan_compacto",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.velocidad_kmh",
+    "cita": "como a 30",
+    "persona": -1,
+    "valor": "30",
+    "vehiculo": 0
+   },
+   {
+    "campo": "evento.tipo",
+    "cita": "le pegue con el cofre",
+    "persona": -1,
+    "valor": "impacto_vehiculo_persona",
+    "vehiculo": -1
+   },
+   {
+    "campo": "vehiculo.zona_impacto",
+    "cita": "con el cofre",
+    "persona": -1,
+    "valor": "F",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.frenado",
+    "cita": "ya despues frene",
+    "persona": -1,
+    "valor": "true",
+    "vehiculo": 0
+   },
+   {
+    "campo": "evidencias.marcas_m",
+    "cita": "como 6 metros de llanta",
+    "persona": -1,
+    "valor": "6",
+    "vehiculo": -1
+   },
+   {
+    "campo": "evidencias.marcas_fase",
+    "cita": "ya despues frene, dejo como 6 metros de llanta",
+    "persona": -1,
+    "valor": "despues_impacto",
+    "vehiculo": -1
+   },
+   {
+    "campo": "entorno.iluminacion",
+    "cita": "era de dia",
+    "persona": -1,
+    "valor": "dia",
+    "vehiculo": -1
+   }
+  ],
+  "personas": [
+   {
+    "cita": "iba en el aveo de mi esposa",
+    "rol": "conductor",
+    "vehiculo": 0
+   },
+   {
+    "cita": "un señor se atraveso corriendo",
+    "rol": "peaton",
+    "vehiculo": -1
+   }
+  ],
+  "preguntas": [
+   "¿El peatón cruzó por un paso peatonal o a media cuadra sin paso marcado?",
+   "¿Cuántos carriles tiene la calle 5 de Mayo en ese tramo?",
+   "¿La superficie de la calle estaba seca o mojada?"
+  ],
+  "vehiculos": [
+   {
+    "narrador": true
+   }
+  ]
+ },
+ "texto_sha256": "e3834c272628c10a888f6e4bae2b0cfdae0faf9e203a672be5529998a663c2b4",
+ "usage": {
+  "cache_creation_input_tokens": 0,
+  "cache_read_input_tokens": 7350,
+  "input_tokens": 132,
+  "output_tokens": 657
+ }
+}

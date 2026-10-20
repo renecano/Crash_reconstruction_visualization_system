@@ -1,0 +1,98 @@
+{
+ "costo_estimado_con": "claude-haiku-5-5",
+ "costo_usd": 0.0011641,
+ "esfuerzo": "medium",
+ "grabado": "2026-10-19T22:19:59+00:00",
+ "huella_prompt": "613dc7f7bc958502",
+ "latencia_ms": 9808.7,
+ "modelo": "claude-haiku-5-5",
+ "modelo_respuesta": "claude-haiku-5-5",
+ "prompt": "extraccion_v4",
+ "request_id": "req_011CgCNcNb5vtBuquJRTowZN",
+ "salida": {
+  "dispositivos": [
+   {
+    "cita": "con el verde",
+    "tipo": "semaforo"
+   }
+  ],
+  "hechos": [
+   {
+    "campo": "lugar.tipo_via",
+    "cita": "en el crucero",
+    "persona": -1,
+    "valor": "interseccion",
+    "vehiculo": -1
+   },
+   {
+    "campo": "entorno.clima",
+    "cita": "Llovía poquito",
+    "persona": -1,
+    "valor": "lluvia_ligera",
+    "vehiculo": -1
+   },
+   {
+    "campo": "vehiculo.velocidad_kmh",
+    "cita": "a 40",
+    "persona": -1,
+    "valor": "40",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.clase",
+    "cita": "Sienna",
+    "persona": -1,
+    "valor": "van",
+    "vehiculo": 1
+   },
+   {
+    "campo": "vehiculo.color",
+    "cita": "gris",
+    "persona": -1,
+    "valor": "gris",
+    "vehiculo": 1
+   },
+   {
+    "campo": "evento.tipo",
+    "cita": "me pegó",
+    "persona": -1,
+    "valor": "impacto_vehiculo_vehiculo",
+    "vehiculo": -1
+   },
+   {
+    "campo": "vehiculo.zona_impacto",
+    "cita": "en la puerta del copiloto",
+    "persona": -1,
+    "valor": "R",
+    "vehiculo": 0
+   }
+  ],
+  "personas": [
+   {
+    "cita": "Yo venía",
+    "rol": "conductor",
+    "vehiculo": 0
+   }
+  ],
+  "preguntas": [
+   "¿A qué velocidad iba la Sienna?",
+   "¿Quién manejaba la Sienna?",
+   "¿El semáforo de su sentido estaba en rojo cuando llegó la Sienna?"
+  ],
+  "vehiculos": [
+   {
+    "narrador": true
+   },
+   {
+    "narrador": false
+   }
+  ]
+ },
+ "texto_sha256": "c048a61f84e537efd1592d21b599f1e853d6914950b61ed446791d57a716a5e6",
+ "usage": {
+  "cache_creation_input_tokens": 0,
+  "cache_read_input_tokens": 7350,
+  "input_tokens": 96,
+  "output_tokens": 2162
+ }
+}

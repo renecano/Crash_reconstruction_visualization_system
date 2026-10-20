@@ -1,0 +1,103 @@
+{
+ "costo_estimado_con": "claude-haiku-5-5",
+ "costo_usd": 0.0013198,
+ "esfuerzo": "medium",
+ "grabado": "2026-10-19T22:57:17+00:00",
+ "huella_prompt": "613dc7f7bc958502",
+ "latencia_ms": 10904.8,
+ "modelo": "claude-haiku-5-5",
+ "modelo_respuesta": "claude-haiku-5-5",
+ "prompt": "extraccion_v4",
+ "request_id": "req_011CgCRTGfVTfuJ3ijxafSJy",
+ "salida": {
+  "dispositivos": [
+   {
+    "cita": "se pasó el alto",
+    "tipo": "alto"
+   }
+  ],
+  "hechos": [
+   {
+    "campo": "lugar.tipo_via",
+    "cita": "En el cruce con Simón Bolívar",
+    "persona": -1,
+    "valor": "interseccion",
+    "vehiculo": -1
+   },
+   {
+    "campo": "lugar.estado_superficie",
+    "cita": "ya se estaba encharcando todo",
+    "persona": -1,
+    "valor": "encharcado",
+    "vehiculo": -1
+   },
+   {
+    "campo": "entorno.clima",
+    "cita": "Estaba cayendo un aguacero",
+    "persona": -1,
+    "valor": "lluvia",
+    "vehiculo": -1
+   },
+   {
+    "campo": "evento.tipo",
+    "cita": "me pegó en la puerta de atrás de mi lado",
+    "persona": -1,
+    "valor": "impacto_vehiculo_vehiculo",
+    "vehiculo": -1
+   },
+   {
+    "campo": "vehiculo.clase",
+    "cita": "Aveo",
+    "persona": -1,
+    "valor": "sedan_compacto",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.clase",
+    "cita": "Spark",
+    "persona": -1,
+    "valor": "hatchback",
+    "vehiculo": 1
+   },
+   {
+    "campo": "vehiculo.frenado",
+    "cita": "no le dio tiempo de frenar",
+    "persona": -1,
+    "valor": "false",
+    "vehiculo": 1
+   }
+  ],
+  "personas": [
+   {
+    "cita": "en mi Aveo",
+    "rol": "conductor",
+    "vehiculo": 0
+   },
+   {
+    "cita": "un muchacho en un Spark",
+    "rol": "conductor",
+    "vehiculo": 1
+   }
+  ],
+  "preguntas": [
+   "¿A qué velocidad iba el Spark al entrar al cruce?",
+   "¿El golpe en la puerta de atrás fue del lado izquierdo o derecho del Aveo?",
+   "¿Qué parte del Spark chocó contra el Aveo?"
+  ],
+  "vehiculos": [
+   {
+    "narrador": true
+   },
+   {
+    "narrador": false
+   }
+  ]
+ },
+ "texto_sha256": "1dd2aa025b4d2ac7838d99422cff89adafb11feb30b2dedd7a7c386d03aa6789",
+ "usage": {
+  "cache_creation_input_tokens": 0,
+  "cache_read_input_tokens": 7350,
+  "input_tokens": 158,
+  "output_tokens": 2461
+ }
+}

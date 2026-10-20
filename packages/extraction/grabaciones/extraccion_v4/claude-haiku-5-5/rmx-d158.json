@@ -1,0 +1,93 @@
+{
+ "costo_estimado_con": "claude-haiku-5-5",
+ "costo_usd": 0.0014226,
+ "esfuerzo": "medium",
+ "grabado": "2026-10-19T22:44:30+00:00",
+ "huella_prompt": "613dc7f7bc958502",
+ "latencia_ms": 11225.3,
+ "modelo": "claude-haiku-5-5",
+ "modelo_respuesta": "claude-haiku-5-5",
+ "prompt": "extraccion_v4",
+ "request_id": "req_011CgCQUiE3DBGuUGSvHkZjD",
+ "salida": {
+  "dispositivos": [],
+  "hechos": [
+   {
+    "campo": "lugar.tipo_via",
+    "cita": "en la esquina con la Juárez",
+    "persona": -1,
+    "valor": "interseccion",
+    "vehiculo": -1
+   },
+   {
+    "campo": "evento.tipo",
+    "cita": "Choqué contra un puesto de elotes",
+    "persona": -1,
+    "valor": "impacto_vehiculo_objeto",
+    "vehiculo": -1
+   },
+   {
+    "campo": "evento.objeto",
+    "cita": "puesto de elotes",
+    "persona": -1,
+    "valor": "puesto",
+    "vehiculo": -1
+   },
+   {
+    "campo": "vehiculo.clase",
+    "cita": "Corolla",
+    "persona": -1,
+    "valor": "sedan_mediano",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.zona_impacto",
+    "cita": "Le di con el frente al puesto",
+    "persona": -1,
+    "valor": "F",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.maniobra",
+    "cita": "un carro se me echó encima",
+    "persona": -1,
+    "valor": "cambio_carril",
+    "vehiculo": 1
+   },
+   {
+    "campo": "vehiculo.velocidad_kmh",
+    "cita": "Iba como a sesenta, creo.",
+    "persona": -1,
+    "valor": "60",
+    "vehiculo": 1
+   }
+  ],
+  "personas": [
+   {
+    "cita": "Choqué",
+    "rol": "conductor",
+    "vehiculo": 0
+   }
+  ],
+  "preguntas": [
+   "¿Había alumbrado público en la esquina a esa hora?",
+   "¿El otro carro iba en sentido contrario o en el mismo sentido que usted?",
+   "¿Hubo algún frenado antes del impacto con el puesto?"
+  ],
+  "vehiculos": [
+   {
+    "narrador": true
+   },
+   {
+    "narrador": false
+   }
+  ]
+ },
+ "texto_sha256": "0ef2a1676d62d4e6aa2c4ce8018a546e1d4ec69533cb9ebfadcee6f48cc30594",
+ "usage": {
+  "cache_creation_input_tokens": 0,
+  "cache_read_input_tokens": 7350,
+  "input_tokens": 206,
+  "output_tokens": 2657
+ }
+}

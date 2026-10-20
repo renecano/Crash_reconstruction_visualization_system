@@ -600,7 +600,7 @@ Iba cruzando la calle Juárez en Tlaquepaque con mi mamá, por el paso de cebra 
 [relato.hechos]
 "entorno.iluminacion" = ["noche", "las ocho de la noche"]
 "evento.tipo" = ["impacto_vehiculo_persona", "le pegó con el espejo"]
-dispositivos = [["paso_peatonal", "paso de cebra"], ["semaforo", "semáforo peatonal"]]
+dispositivos = [["paso_peatonal", "paso de cebra"], ["semaforo_peatonal", "semáforo peatonal"]]
 zonas = { "0" = ["R"] }
 [[relato.hechos.vehiculos]]
 clase = ["sedan_compacto", "Aveo"]

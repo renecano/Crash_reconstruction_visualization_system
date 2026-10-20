@@ -1,0 +1,86 @@
+{
+ "costo_estimado_con": "claude-haiku-5-5",
+ "costo_usd": 0.0011858,
+ "esfuerzo": "medium",
+ "grabado": "2026-10-20T01:12:09+00:00",
+ "huella_prompt": "613dc7f7bc958502",
+ "latencia_ms": 9410.2,
+ "modelo": "claude-haiku-5-5",
+ "modelo_respuesta": "claude-haiku-5-5",
+ "prompt": "extraccion_v4",
+ "request_id": "req_011CgCbjvWfTJKJvncHzfLza",
+ "salida": {
+  "dispositivos": [],
+  "hechos": [
+   {
+    "campo": "entorno.iluminacion",
+    "cita": "eran como las 11 de la noche",
+    "persona": -1,
+    "valor": "noche",
+    "vehiculo": -1
+   },
+   {
+    "campo": "evento.tipo",
+    "cita": "me fui contra un puesto de tacos",
+    "persona": -1,
+    "valor": "impacto_vehiculo_objeto",
+    "vehiculo": -1
+   },
+   {
+    "campo": "evento.objeto",
+    "cita": "me fui contra un puesto de tacos",
+    "persona": -1,
+    "valor": "puesto",
+    "vehiculo": -1
+   },
+   {
+    "campo": "vehiculo.clase",
+    "cita": "tsuru",
+    "persona": -1,
+    "valor": "sedan_compacto",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.maniobra",
+    "cita": "me sali de mi carril",
+    "persona": -1,
+    "valor": "cambio_carril",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.velocidad_kmh",
+    "cita": "iba en el tsuru como a 50",
+    "persona": -1,
+    "valor": "50",
+    "vehiculo": 0
+   }
+  ],
+  "personas": [
+   {
+    "cita": "iba en el tsuru",
+    "rol": "conductor",
+    "vehiculo": 0
+   }
+  ],
+  "preguntas": [
+   "¿Qué tipo de vehículo era el carro que venía de frente con las luces altas?",
+   "¿El puesto estaba sobre la banqueta o sobre el arroyo de la calle?",
+   "¿Hubo frenado antes del impacto?"
+  ],
+  "vehiculos": [
+   {
+    "narrador": true
+   },
+   {
+    "narrador": false
+   }
+  ]
+ },
+ "texto_sha256": "ecb830a987f33e4aac97a7f4c792e4dc23e2d949f9727a09f91c89ee7d6fb3f0",
+ "usage": {
+  "cache_creation_input_tokens": 0,
+  "cache_read_input_tokens": 7350,
+  "input_tokens": 133,
+  "output_tokens": 2198
+ }
+}

@@ -1,0 +1,79 @@
+{
+ "costo_estimado_con": "claude-sonnet-5-5",
+ "costo_usd": 0.006468,
+ "esfuerzo": "medium",
+ "grabado": "2026-10-19T23:19:40+00:00",
+ "huella_prompt": "613dc7f7bc958502",
+ "latencia_ms": 3215.1,
+ "modelo": "claude-sonnet-5-5",
+ "modelo_respuesta": "claude-sonnet-5-5",
+ "prompt": "extraccion_v4",
+ "request_id": "req_011CgCTAt8wFC3gk4UCWen5m",
+ "salida": {
+  "dispositivos": [
+   {
+    "cita": "los del semáforo de las personas",
+    "tipo": "semaforo_peatonal"
+   }
+  ],
+  "hechos": [
+   {
+    "campo": "entorno.iluminacion",
+    "cita": "ya de noche",
+    "persona": -1,
+    "valor": "noche",
+    "vehiculo": -1
+   },
+   {
+    "campo": "vehiculo.clase",
+    "cita": "Tahoe",
+    "persona": -1,
+    "valor": "suv_grande",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.maniobra",
+    "cita": "dio vuelta a la izquierda",
+    "persona": -1,
+    "valor": "vuelta_izquierda",
+    "vehiculo": 0
+   },
+   {
+    "campo": "evento.tipo",
+    "cita": "me pegó en la pierna derecha",
+    "persona": -1,
+    "valor": "impacto_vehiculo_persona",
+    "vehiculo": -1
+   }
+  ],
+  "personas": [
+   {
+    "cita": "Iba cruzando",
+    "rol": "peaton",
+    "vehiculo": -1
+   },
+   {
+    "cita": "El de la Tahoe",
+    "rol": "conductor",
+    "vehiculo": 0
+   }
+  ],
+  "preguntas": [
+   "¿Qué color o señal mostraba el semáforo de los vehículos?",
+   "¿Cuántos carriles tenía la calle que ibas cruzando?",
+   "¿A qué velocidad aproximada iba la Tahoe al dar la vuelta?"
+  ],
+  "vehiculos": [
+   {
+    "narrador": false
+   }
+  ]
+ },
+ "texto_sha256": "e11e518435ff02a03427c5de31d167471b4c5fb7d76f002a8877dead9b3bab51",
+ "usage": {
+  "cache_creation_input_tokens": 0,
+  "cache_read_input_tokens": 7350,
+  "input_tokens": 189,
+  "output_tokens": 462
+ }
+}

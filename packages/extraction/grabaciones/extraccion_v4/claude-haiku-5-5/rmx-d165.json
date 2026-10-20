@@ -1,0 +1,85 @@
+{
+ "costo_estimado_con": "claude-haiku-5-5",
+ "costo_usd": 0.0012243,
+ "esfuerzo": "medium",
+ "grabado": "2026-10-19T22:45:57+00:00",
+ "huella_prompt": "613dc7f7bc958502",
+ "latencia_ms": 9389.8,
+ "modelo": "claude-haiku-5-5",
+ "modelo_respuesta": "claude-haiku-5-5",
+ "prompt": "extraccion_v4",
+ "request_id": "req_011CgCQbFwgikJ2F7mj1w3C4",
+ "salida": {
+  "dispositivos": [],
+  "hechos": [
+   {
+    "campo": "vehiculo.clase",
+    "cita": "la moto",
+    "persona": -1,
+    "valor": "motocicleta",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.clase",
+    "cita": "taxi",
+    "persona": -1,
+    "valor": "sedan_compacto",
+    "vehiculo": 1
+   },
+   {
+    "campo": "vehiculo.maniobra",
+    "cita": "al cambiarse de carril",
+    "persona": -1,
+    "valor": "cambio_carril",
+    "vehiculo": 1
+   },
+   {
+    "campo": "evento.tipo",
+    "cita": "me tumbó",
+    "persona": -1,
+    "valor": "impacto_vehiculo_vehiculo",
+    "vehiculo": -1
+   },
+   {
+    "campo": "evidencias.marcas_m",
+    "cita": "una raspadura de 7 metros",
+    "persona": -1,
+    "valor": "7",
+    "vehiculo": -1
+   },
+   {
+    "campo": "evidencias.marcas_fase",
+    "cita": "quedó una raspadura de 7 metros hasta donde paró la moto",
+    "persona": -1,
+    "valor": "despues_impacto",
+    "vehiculo": -1
+   }
+  ],
+  "personas": [
+   {
+    "cita": "me tumbó",
+    "rol": "motociclista",
+    "vehiculo": 0
+   }
+  ],
+  "preguntas": [
+   "¿La moto iba en el mismo sentido que el taxi?",
+   "¿A qué velocidad iba la moto al momento del golpe?"
+  ],
+  "vehiculos": [
+   {
+    "narrador": true
+   },
+   {
+    "narrador": false
+   }
+  ]
+ },
+ "texto_sha256": "a8591f807a6d5a20338d0a8e9f209f07ddbeb27671d2ff8894eceec44095b4bb",
+ "usage": {
+  "cache_creation_input_tokens": 0,
+  "cache_read_input_tokens": 7350,
+  "input_tokens": 63,
+  "output_tokens": 2289
+ }
+}

@@ -1,0 +1,90 @@
+{
+ "costo_estimado_con": "claude-haiku-5-5",
+ "costo_usd": 0.0008593,
+ "esfuerzo": "medium",
+ "grabado": "2026-10-19T23:21:07+00:00",
+ "huella_prompt": "613dc7f7bc958502",
+ "latencia_ms": 6558.0,
+ "modelo": "claude-haiku-5-5",
+ "modelo_respuesta": "claude-haiku-5-5",
+ "prompt": "extraccion_v4",
+ "request_id": "req_011CgCTH3k4fmUevA3V5uqAr",
+ "salida": {
+  "dispositivos": [],
+  "hechos": [
+   {
+    "campo": "lugar.tipo_via",
+    "cita": "en una curva",
+    "persona": -1,
+    "valor": "curva",
+    "vehiculo": -1
+   },
+   {
+    "campo": "entorno.iluminacion",
+    "cita": "no habia luz en esa parte",
+    "persona": -1,
+    "valor": "noche_sin_alumbrado",
+    "vehiculo": -1
+   },
+   {
+    "campo": "entorno.clima",
+    "cita": "estaba llobiendo fuerte",
+    "persona": -1,
+    "valor": "lluvia_fuerte",
+    "vehiculo": -1
+   },
+   {
+    "campo": "evento.tipo",
+    "cita": "me fui contra un arbol",
+    "persona": -1,
+    "valor": "impacto_vehiculo_objeto",
+    "vehiculo": -1
+   },
+   {
+    "campo": "evento.objeto",
+    "cita": "un arbol",
+    "persona": -1,
+    "valor": "arbol",
+    "vehiculo": -1
+   },
+   {
+    "campo": "vehiculo.clase",
+    "cita": "camioneta",
+    "persona": -1,
+    "valor": "suv_o_pickup",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.velocidad_kmh",
+    "cita": "creo q iba a unos 80",
+    "persona": -1,
+    "valor": "80",
+    "vehiculo": 0
+   }
+  ],
+  "personas": [
+   {
+    "cita": "iba de regreso a mi casa",
+    "rol": "conductor",
+    "vehiculo": 0
+   }
+  ],
+  "preguntas": [
+   "¿Quedaron marcas de frenado o derrape en el pavimento antes del árbol?",
+   "¿Qué parte de la camioneta recibió el golpe contra el árbol?",
+   "¿Llevaba cinturón de seguridad?"
+  ],
+  "vehiculos": [
+   {
+    "narrador": true
+   }
+  ]
+ },
+ "texto_sha256": "700e31e6a52676f0a1836204020b8ccd0c1e237039fa3289fbe9c02abde3c209",
+ "usage": {
+  "cache_creation_input_tokens": 0,
+  "cache_read_input_tokens": 7350,
+  "input_tokens": 108,
+  "output_tokens": 1550
+ }
+}

@@ -1,0 +1,102 @@
+{
+ "costo_estimado_con": "claude-sonnet-5-5",
+ "costo_usd": 0.008144,
+ "esfuerzo": "medium",
+ "grabado": "2026-10-19T22:09:22+00:00",
+ "huella_prompt": "613dc7f7bc958502",
+ "latencia_ms": 4480.6,
+ "modelo": "claude-sonnet-5-5",
+ "modelo_respuesta": "claude-sonnet-5-5",
+ "prompt": "extraccion_v4",
+ "request_id": "req_011CgCMopG7R18qTcqu8aBsC",
+ "salida": {
+  "dispositivos": [
+   {
+    "cita": "ya me tocaba el verde",
+    "tipo": "semaforo"
+   },
+   {
+    "cita": "se paso el rojo",
+    "tipo": "semaforo"
+   }
+  ],
+  "hechos": [
+   {
+    "campo": "vehiculo.clase",
+    "cita": "chevy",
+    "persona": -1,
+    "valor": "hatchback",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.clase",
+    "cita": "urban de pasajeros",
+    "persona": -1,
+    "valor": "microbus_combi",
+    "vehiculo": 1
+   },
+   {
+    "campo": "evento.tipo",
+    "cita": "me pego en la puerta de mi lado",
+    "persona": -1,
+    "valor": "impacto_vehiculo_vehiculo",
+    "vehiculo": -1
+   },
+   {
+    "campo": "vehiculo.zona_impacto",
+    "cita": "me pego en la puerta de mi lado",
+    "persona": -1,
+    "valor": "L",
+    "vehiculo": 0
+   },
+   {
+    "campo": "evidencias.marcas_m",
+    "cita": "como 6 metros de marcas",
+    "persona": -1,
+    "valor": "6",
+    "vehiculo": -1
+   },
+   {
+    "campo": "evidencias.marcas_fase",
+    "cita": "despues del golpe",
+    "persona": -1,
+    "valor": "despues_impacto",
+    "vehiculo": -1
+   },
+   {
+    "campo": "persona.cinturon",
+    "cita": "yo traia el cinturon",
+    "persona": 0,
+    "valor": "true",
+    "vehiculo": -1
+   }
+  ],
+  "personas": [
+   {
+    "cita": "iba x la calzada de tlalpan en mi chevy",
+    "rol": "conductor",
+    "vehiculo": 0
+   }
+  ],
+  "preguntas": [
+   "¿Hacia qué lado de la calzada iba la urban y desde dónde llegó al cruce?",
+   "¿A qué velocidad aproximada iba cada vehículo?",
+   "¿Cuántos carriles tiene la calzada de Tlalpan en ese punto?"
+  ],
+  "vehiculos": [
+   {
+    "narrador": true
+   },
+   {
+    "narrador": false
+   }
+  ]
+ },
+ "texto_sha256": "60f33d88bd7f5f294091932acc7e4dcd209f6fac559689d674970e657b27f10b",
+ "usage": {
+  "cache_creation_input_tokens": 0,
+  "cache_read_input_tokens": 7350,
+  "input_tokens": 127,
+  "output_tokens": 642
+ }
+}

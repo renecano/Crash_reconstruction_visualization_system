@@ -1,0 +1,81 @@
+{
+ "costo_estimado_con": "claude-haiku-5-5",
+ "costo_usd": 0.00123741,
+ "esfuerzo": "medium",
+ "grabado": "2026-10-20T01:43:57+00:00",
+ "huella_prompt": "86f6a54999b8cbf7",
+ "latencia_ms": 10990.0,
+ "modelo": "claude-haiku-5-5",
+ "modelo_respuesta": "claude-haiku-5-5",
+ "prompt": "extraccion_v3",
+ "request_id": "req_011CgCeATCY4sGPfjzUq9HZo",
+ "salida": {
+  "dispositivos": [
+   {
+    "cita": "mi verde",
+    "tipo": "semaforo"
+   }
+  ],
+  "hechos": [
+   {
+    "campo": "vehiculo.clase",
+    "cita": "Tsuru",
+    "persona": -1,
+    "valor": "sedan_compacto",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.color",
+    "cita": "Tsuru blanco",
+    "persona": -1,
+    "valor": "blanco",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.velocidad_kmh",
+    "cita": "El taxi venía rápido",
+    "persona": -1,
+    "valor": "alta",
+    "vehiculo": 0
+   },
+   {
+    "campo": "entorno.clima",
+    "cita": "Estaba nublado",
+    "persona": -1,
+    "valor": "nublado",
+    "vehiculo": -1
+   },
+   {
+    "campo": "evento.tipo",
+    "cita": "me rozó la mano con el espejo",
+    "persona": -1,
+    "valor": "impacto_vehiculo_persona",
+    "vehiculo": -1
+   }
+  ],
+  "personas": [
+   {
+    "cita": "Yo crucé con mi verde",
+    "rol": "peaton",
+    "vehiculo": -1
+   }
+  ],
+  "preguntas": [
+   "¿El taxi venía por la misma avenida o cruzaba en otra dirección?",
+   "¿Iba el taxi con pasajeros a bordo?",
+   "¿Usted iba a pie al momento del roce con el espejo o iba dentro de un vehículo?"
+  ],
+  "vehiculos": [
+   {
+    "narrador": false
+   }
+  ]
+ },
+ "texto_sha256": "be014af8f15fb6fe06cd8047003affc7084bbc8287748882f3bbd8c6954cb8af",
+ "usage": {
+  "cache_creation_input_tokens": 0,
+  "cache_read_input_tokens": 7131,
+  "input_tokens": 166,
+  "output_tokens": 2299
+ }
+}

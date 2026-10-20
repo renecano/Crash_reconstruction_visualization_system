@@ -1,0 +1,74 @@
+{
+ "costo_estimado_con": "claude-sonnet-5-5",
+ "costo_usd": 0.00632,
+ "esfuerzo": "medium",
+ "grabado": "2026-10-19T22:13:52+00:00",
+ "huella_prompt": "613dc7f7bc958502",
+ "latencia_ms": 3407.4,
+ "modelo": "claude-sonnet-5-5",
+ "modelo_respuesta": "claude-sonnet-5-5",
+ "prompt": "extraccion_v4",
+ "request_id": "req_011CgCN9nNJtEBzAn7aJ3sTr",
+ "salida": {
+  "dispositivos": [
+   {
+    "cita": "un semaforo que suena para los ciegos",
+    "tipo": "semaforo_peatonal"
+   }
+  ],
+  "hechos": [
+   {
+    "campo": "vehiculo.clase",
+    "cita": "motoneta",
+    "persona": -1,
+    "valor": "scooter",
+    "vehiculo": 0
+   },
+   {
+    "campo": "evento.tipo",
+    "cita": "un muchacho en una motoneta le pego en la pierna con la llanta de adelante",
+    "persona": -1,
+    "valor": "impacto_vehiculo_persona",
+    "vehiculo": -1
+   },
+   {
+    "campo": "vehiculo.zona_impacto",
+    "cita": "le pego en la pierna con la llanta de adelante",
+    "persona": -1,
+    "valor": "F",
+    "vehiculo": 0
+   },
+   {
+    "campo": "lugar.tipo_via",
+    "cita": "en la esquina de su casa",
+    "persona": -1,
+    "valor": "interseccion",
+    "vehiculo": -1
+   }
+  ],
+  "personas": [
+   {
+    "cita": "mi tio es invidente",
+    "rol": "peaton",
+    "vehiculo": -1
+   }
+  ],
+  "preguntas": [
+   "¿El muchacho en la motoneta venía recto o iba dando vuelta?",
+   "¿A qué velocidad aproximada iba la motoneta?",
+   "¿Estaba el semáforo para vehículos en rojo cuando ocurrió el golpe?"
+  ],
+  "vehiculos": [
+   {
+    "narrador": false
+   }
+  ]
+ },
+ "texto_sha256": "5838bf5849c1add6e70b14b125ef1346b7834af5c482abdf02faa656228c8d39",
+ "usage": {
+  "cache_creation_input_tokens": 0,
+  "cache_read_input_tokens": 7350,
+  "input_tokens": 150,
+  "output_tokens": 455
+ }
+}

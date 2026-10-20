@@ -1,0 +1,78 @@
+{
+ "costo_estimado_con": "claude-haiku-5-5",
+ "costo_usd": 0.0013109,
+ "esfuerzo": "medium",
+ "grabado": "2026-10-19T23:23:37+00:00",
+ "huella_prompt": "613dc7f7bc958502",
+ "latencia_ms": 10820.6,
+ "modelo": "claude-haiku-5-5",
+ "modelo_respuesta": "claude-haiku-5-5",
+ "prompt": "extraccion_v4",
+ "request_id": "req_011CgCTTnDTyPpezkFatQTRE",
+ "salida": {
+  "dispositivos": [],
+  "hechos": [
+   {
+    "campo": "vehiculo.maniobra",
+    "cita": "para incorporarme a la avenida",
+    "persona": -1,
+    "valor": "incorporacion",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.clase",
+    "cita": "venía una combi",
+    "persona": -1,
+    "valor": "microbus_combi",
+    "vehiculo": 1
+   },
+   {
+    "campo": "vehiculo.velocidad_kmh",
+    "cita": "él como a 50, creo",
+    "persona": -1,
+    "valor": "50",
+    "vehiculo": 1
+   },
+   {
+    "campo": "evento.tipo",
+    "cita": "Me pegó en la defensa delantera del lado izquierdo",
+    "persona": -1,
+    "valor": "impacto_vehiculo_vehiculo",
+    "vehiculo": -1
+   },
+   {
+    "campo": "vehiculo.zona_impacto",
+    "cita": "Me pegó en la defensa delantera del lado izquierdo",
+    "persona": -1,
+    "valor": "F",
+    "vehiculo": 0
+   }
+  ],
+  "personas": [
+   {
+    "cita": "Iba saliendo de la gasolinera",
+    "rol": "conductor",
+    "vehiculo": 0
+   }
+  ],
+  "preguntas": [
+   "¿A qué velocidad iba la combi según lo que usted observó, ya que menciona que fue alrededor de 50 km/h?",
+   "¿La combi venía por la avenida en el mismo sentido en que usted se incorporaba o en sentido contrario?"
+  ],
+  "vehiculos": [
+   {
+    "narrador": true
+   },
+   {
+    "narrador": false
+   }
+  ]
+ },
+ "texto_sha256": "9b57ae322a69120ed87b0cfeffd811df9a58432479e6286159b75c447ddfe7d1",
+ "usage": {
+  "cache_creation_input_tokens": 0,
+  "cache_read_input_tokens": 7350,
+  "input_tokens": 89,
+  "output_tokens": 2457
+ }
+}

@@ -1,0 +1,81 @@
+{
+ "costo_estimado_con": "claude-sonnet-5-5",
+ "costo_usd": 0.007048,
+ "esfuerzo": "medium",
+ "grabado": "2026-10-19T23:04:50+00:00",
+ "huella_prompt": "613dc7f7bc958502",
+ "latencia_ms": 4167.1,
+ "modelo": "claude-sonnet-5-5",
+ "modelo_respuesta": "claude-sonnet-5-5",
+ "prompt": "extraccion_v4",
+ "request_id": "req_011CgCS3AS8gLrVxWJYikGGK",
+ "salida": {
+  "dispositivos": [
+   {
+    "cita": "paso peatonal",
+    "tipo": "paso_peatonal"
+   }
+  ],
+  "hechos": [
+   {
+    "campo": "lugar.tipo_via",
+    "cita": "en la esquina de las calles Morelos y Porfirio Díaz",
+    "persona": -1,
+    "valor": "interseccion",
+    "vehiculo": -1
+   },
+   {
+    "campo": "entorno.iluminacion",
+    "cita": "La calle cuenta con alumbrado, aunque escaso",
+    "persona": -1,
+    "valor": "noche_con_alumbrado",
+    "vehiculo": -1
+   },
+   {
+    "campo": "evento.tipo",
+    "cita": "atropelló a una joven",
+    "persona": -1,
+    "valor": "impacto_vehiculo_persona",
+    "vehiculo": -1
+   },
+   {
+    "campo": "evidencias.distancia_proyeccion_m",
+    "cita": "cayó a unos cuatro metros del punto del impacto",
+    "persona": -1,
+    "valor": "4",
+    "vehiculo": -1
+   },
+   {
+    "campo": "vehiculo.clase",
+    "cita": "taxi",
+    "persona": -1,
+    "valor": "sedan_compacto",
+    "vehiculo": 0
+   }
+  ],
+  "personas": [
+   {
+    "cita": "una joven que cruzaba por el paso peatonal",
+    "rol": "peaton",
+    "vehiculo": -1
+   }
+  ],
+  "preguntas": [
+   "¿A qué velocidad aproximada iba el taxi colectivo?",
+   "¿Qué señalización o semáforo había en el cruce?",
+   "¿El taxi frenó o maniobró antes de golpear a la persona?"
+  ],
+  "vehiculos": [
+   {
+    "narrador": false
+   }
+  ]
+ },
+ "texto_sha256": "19e8a10febee6ec141375b61b1fe74cc75b84779a0f4495cee57a1dc0868d0b0",
+ "usage": {
+  "cache_creation_input_tokens": 0,
+  "cache_read_input_tokens": 7350,
+  "input_tokens": 189,
+  "output_tokens": 520
+ }
+}

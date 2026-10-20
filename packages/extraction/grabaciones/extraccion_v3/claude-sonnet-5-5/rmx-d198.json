@@ -1,0 +1,74 @@
+{
+ "costo_estimado_con": "claude-sonnet-5-5",
+ "costo_usd": 0.0060202,
+ "esfuerzo": "medium",
+ "grabado": "2026-10-20T01:29:46+00:00",
+ "huella_prompt": "86f6a54999b8cbf7",
+ "latencia_ms": 4037.2,
+ "modelo": "claude-sonnet-5-5",
+ "modelo_respuesta": "claude-sonnet-5-5",
+ "prompt": "extraccion_v3",
+ "request_id": "req_011CgCd6HD37TJwA15D2vEKj",
+ "salida": {
+  "dispositivos": [
+   {
+    "cita": "el semáforo ya estaba en rojo para los carros",
+    "tipo": "semaforo"
+   }
+  ],
+  "hechos": [
+   {
+    "campo": "vehiculo.clase",
+    "cita": "Pointer",
+    "persona": -1,
+    "valor": "hatchback",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.color",
+    "cita": "gris",
+    "persona": -1,
+    "valor": "gris",
+    "vehiculo": 0
+   },
+   {
+    "campo": "evento.tipo",
+    "cita": "me alcanzó a pegar con el espejo en el brazo",
+    "persona": -1,
+    "valor": "impacto_vehiculo_persona",
+    "vehiculo": -1
+   },
+   {
+    "campo": "entorno.clima",
+    "cita": "Estaba lloviendo fuerte",
+    "persona": -1,
+    "valor": "lluvia_fuerte",
+    "vehiculo": -1
+   }
+  ],
+  "personas": [
+   {
+    "cita": "Estaba cruzando la avenida Juárez",
+    "rol": "peaton",
+    "vehiculo": -1
+   }
+  ],
+  "preguntas": [
+   "¿El golpe fue con el lado izquierdo o derecho de la Pointer?",
+   "¿Era de día o de noche cuando ocurrió?",
+   "¿A qué velocidad aproximada iba la Pointer?"
+  ],
+  "vehiculos": [
+   {
+    "narrador": false
+   }
+  ]
+ },
+ "texto_sha256": "f3e7d5e468b0e1acee643c2aaca13de8092d0864fcd35a63f137ca039c3a90fe",
+ "usage": {
+  "cache_creation_input_tokens": 0,
+  "cache_read_input_tokens": 7131,
+  "input_tokens": 152,
+  "output_tokens": 429
+ }
+}

@@ -287,6 +287,40 @@ def test_v3_pide_la_fase_de_las_marcas_y_v1_v2_no_cambian() -> None:
     assert cc.prompt_fingerprint("extraccion_v2") == "5816b86ad0e718ee"
 
 
+def test_v4_pide_el_semaforo_peatonal_sin_cambiar_las_huellas_anteriores() -> None:
+    """ADR 0043: el tipo y su entrada del glosario solo entran en v4; v1-v3 siguen con la huella
+    de sus grabaciones."""
+
+    def devices(p: str) -> list[str]:
+        disp = cc.output_schema(p)["properties"]["dispositivos"]
+        return list(disp["items"]["properties"]["tipo"]["enum"])
+
+    assert "semaforo_peatonal" in devices("extraccion_v4")
+    assert "Semáforo peatonal" in cc.system_prompt("extraccion_v4")
+    assert "13. Semáforos:" in cc.system_prompt("extraccion_v4")
+    for p in ("extraccion_v1", "extraccion_v2", "extraccion_v3"):
+        assert "semaforo_peatonal" not in devices(p)
+        assert "Semáforo peatonal" not in cc.system_prompt(p)
+    assert cc.prompt_fingerprint("extraccion_v1") == "f6b693169a4199c3"
+    assert cc.prompt_fingerprint("extraccion_v2") == "5816b86ad0e718ee"
+    assert cc.prompt_fingerprint("extraccion_v3") == "86f6a54999b8cbf7"
+    assert cc.prompt_fingerprint("extraccion_v4") != cc.prompt_fingerprint("extraccion_v3")
+
+
+def test_el_semaforo_peatonal_de_claude_llega_a_los_hechos() -> None:
+    text = "Crucé con el muñequito en verde y el carro se pasó."
+    out = {
+        "vehiculos": [{"narrador": False}],
+        "personas": [],
+        "hechos": [],
+        "dispositivos": [{"tipo": "semaforo_peatonal", "cita": "el muñequito"}],
+        "preguntas": [],
+    }
+    facts, _ = cc.facts_from_output(out, text)
+    assert [d.valor for d in facts.dispositivos] == ["semaforo_peatonal"]
+    assert facts.dispositivos[0].cita == "el muñequito"
+
+
 def test_la_fase_de_claude_llega_a_la_spec_con_su_cita() -> None:
     text = "Me pegaron por detrás y ya después frené; quedaron 6 metros de marca."
     out = {

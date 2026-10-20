@@ -9,11 +9,10 @@
  * y las grabaciones están en `server/`.
  */
 import { ESCENA_JSON_SCHEMA } from "@croquis/scene-schema";
-import glosario from "../data/glosario.json";
 import modelos from "../data/modelos.json";
 import { emptyFacts, fact, type Fact, type Facts, type FactValue } from "./facts";
 import { PROMPTS } from "./generated/prompts";
-import { glossaryVersion } from "./glossary";
+import { glossaryEntries, glossaryVersion } from "./glossary";
 import { sha256Hex } from "./hash";
 import { pyJsonDumps } from "./pyjson";
 import { pyStr } from "./spec-builder";
@@ -24,7 +23,12 @@ import { pyStr } from "./spec-builder";
  * Las grabaciones de v1 viven en `grabaciones/<modelo>/` y las de otras versiones en
  * `grabaciones/<versión>/<modelo>/`.
  */
-export const PROMPT_VERSIONS = ["extraccion_v1", "extraccion_v2", "extraccion_v3"] as const;
+export const PROMPT_VERSIONS = [
+  "extraccion_v1",
+  "extraccion_v2",
+  "extraccion_v3",
+  "extraccion_v4",
+] as const;
 export type PromptVersion = (typeof PROMPT_VERSIONS)[number];
 export const PROMPT_VERSION: PromptVersion = "extraccion_v3";
 export const DEFAULT_MODEL = "claude-sonnet-5-5";
@@ -62,11 +66,11 @@ export const SCALAR_CAMPOS = [
  */
 const SINCE_V3 = new Set(["evidencias.marcas_fase"]);
 /**
- * Dispositivos del contrato que ningún prompt vigente pide (llegan del croquis): el semáforo
- * peatonal (contrato 1.3.0, ADR 0038). Si entraran al esquema de salida, cambiaría la huella de
- * los prompts v1-v3 y sus respuestas grabadas dejarían de valer.
+ * Dispositivos que solo pide v4 en adelante: el semáforo peatonal (contrato 1.3.0, ADR 0038 y
+ * 0043). Si entraran al esquema de v1-v3, cambiaría su huella y sus respuestas grabadas dejarían
+ * de valer.
  */
-export const NOT_ASKED_DEVICES = new Set(["semaforo_peatonal"]);
+export const SINCE_V4_DEVICES = new Set(["semaforo_peatonal"]);
 export const VEHICLE_CAMPOS = [
   "vehiculo.clase",
   "vehiculo.maniobra",
@@ -130,9 +134,18 @@ export function allowedValues(): Record<string, readonly string[]> {
     "vehiculo.maniobra": [...schemaEnum("CampoManiobra"), "cambio_carril"],
     "vehiculo.zona_impacto": schemaEnum("ZonaCDC", "lado"),
     "persona.rol": schemaEnum("CampoRolPersona"),
-    "dispositivo.tipo": schemaEnum("Dispositivo", "tipo").filter((t) => !NOT_ASKED_DEVICES.has(t)),
+    "dispositivo.tipo": schemaEnum("Dispositivo", "tipo"),
   };
   return allowed;
+}
+
+/** Dispositivos que pide una versión del prompt. */
+export function devicesFor(prompt: string): readonly string[] {
+  const devices = allowedValues()["dispositivo.tipo"]!;
+  if (prompt === "extraccion_v1" || prompt === "extraccion_v2" || prompt === "extraccion_v3") {
+    return devices.filter((t) => !SINCE_V4_DEVICES.has(t));
+  }
+  return devices;
 }
 
 /** Esquema de la salida estructurada; sin uniones: lo opcional es una lista que puede faltar. */
@@ -183,7 +196,7 @@ export function outputSchema(prompt: string = PROMPT_VERSION): Record<string, un
         items: {
           type: "object",
           properties: {
-            tipo: { type: "string", enum: [...av["dispositivo.tipo"]!] },
+            tipo: { type: "string", enum: [...devicesFor(prompt)] },
             cita: { type: "string" },
           },
           required: ["tipo", "cita"],
@@ -245,7 +258,7 @@ export function systemPrompt(prompt: string = PROMPT_VERSION): string {
   const version = checkPrompt(prompt);
   const cached = systems.get(version);
   if (cached !== undefined) return cached;
-  const lines = (glosario as { entradas: GlossaryEntry[] }).entradas.map((e) => {
+  const lines = (glossaryEntries(version) as GlossaryEntry[]).map((e) => {
     const effects = e.efectos.map((x) => `${x.campo}=${pyStr(x.valor)}`).join(", ");
     return `- ${e.significado}` + (effects ? ` → ${effects}` : "");
   });
@@ -259,7 +272,8 @@ export function systemPrompt(prompt: string = PROMPT_VERSION): string {
 
 /** Huella del prompt y del esquema: una grabación solo vale para la misma huella. */
 export function promptFingerprint(prompt: string = PROMPT_VERSION): string {
-  const payload = systemPrompt(prompt) + pyJsonDumps(outputSchema(prompt)) + glossaryVersion();
+  const payload =
+    systemPrompt(prompt) + pyJsonDumps(outputSchema(prompt)) + glossaryVersion(prompt);
   return sha256Hex(payload).slice(0, 16);
 }
 

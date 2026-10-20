@@ -1,0 +1,111 @@
+{
+ "costo_estimado_con": "claude-haiku-5-5",
+ "costo_usd": 0.001501,
+ "esfuerzo": "medium",
+ "grabado": "2026-10-20T01:08:10+00:00",
+ "huella_prompt": "613dc7f7bc958502",
+ "latencia_ms": 11101.6,
+ "modelo": "claude-haiku-5-5",
+ "modelo_respuesta": "claude-haiku-5-5",
+ "prompt": "extraccion_v4",
+ "request_id": "req_011CgCbSCGCyoCtZjnoqg6eA",
+ "salida": {
+  "dispositivos": [],
+  "hechos": [
+   {
+    "campo": "vehiculo.clase",
+    "cita": "mi chevy",
+    "persona": -1,
+    "valor": "hatchback",
+    "vehiculo": 0
+   },
+   {
+    "campo": "evento.tipo",
+    "cita": "le di un llegue atras",
+    "persona": -1,
+    "valor": "impacto_vehiculo_vehiculo",
+    "vehiculo": -1
+   },
+   {
+    "campo": "vehiculo.zona_impacto",
+    "cita": "le di un llegue atras",
+    "persona": -1,
+    "valor": "F",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.zona_impacto",
+    "cita": "le di un llegue atras",
+    "persona": -1,
+    "valor": "B",
+    "vehiculo": 1
+   },
+   {
+    "campo": "vehiculo.velocidad_kmh",
+    "cita": "ibamos los 2 como a 30 nomas",
+    "persona": -1,
+    "valor": "30",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.velocidad_kmh",
+    "cita": "ibamos los 2 como a 30 nomas",
+    "persona": -1,
+    "valor": "30",
+    "vehiculo": 1
+   },
+   {
+    "campo": "vehiculo.frenado",
+    "cita": "yo no alcanse a frenar",
+    "persona": -1,
+    "valor": "false",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.frenado",
+    "cita": "freno de la nada",
+    "persona": -1,
+    "valor": "true",
+    "vehiculo": 1
+   },
+   {
+    "campo": "evento.objeto",
+    "cita": "se le atraveso un perro",
+    "persona": -1,
+    "valor": "otro",
+    "vehiculo": -1
+   }
+  ],
+  "personas": [
+   {
+    "cita": "yo no alcanse a frenar",
+    "rol": "conductor",
+    "vehiculo": 0
+   },
+   {
+    "cita": "el wey se bajo bien enojado",
+    "rol": "conductor",
+    "vehiculo": 1
+   }
+  ],
+  "preguntas": [
+   "¿Qué tan lejos iba el vehículo de adelante cuando el perro se atravesó?",
+   "¿Quedaron marcas de frenado en el pavimento y de qué largo?"
+  ],
+  "vehiculos": [
+   {
+    "narrador": true
+   },
+   {
+    "narrador": false
+   }
+  ]
+ },
+ "texto_sha256": "f3a8c2ebe6289ace06ffb544ac26af460523e04d5760051847a2739d91010316",
+ "usage": {
+  "cache_creation_input_tokens": 0,
+  "cache_read_input_tokens": 7350,
+  "input_tokens": 130,
+  "output_tokens": 2829
+ }
+}

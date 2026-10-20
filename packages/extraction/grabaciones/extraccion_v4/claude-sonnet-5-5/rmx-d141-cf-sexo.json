@@ -1,0 +1,106 @@
+{
+ "costo_estimado_con": "claude-sonnet-5-5",
+ "costo_usd": 0.009192,
+ "esfuerzo": "medium",
+ "grabado": "2026-10-19T22:16:50+00:00",
+ "huella_prompt": "613dc7f7bc958502",
+ "latencia_ms": 4802.8,
+ "modelo": "claude-sonnet-5-5",
+ "modelo_respuesta": "claude-sonnet-5-5",
+ "prompt": "extraccion_v4",
+ "request_id": "req_011CgCNNqXSKtnGcymLg7jhf",
+ "salida": {
+  "dispositivos": [
+   {
+    "cita": "paso peatonal",
+    "tipo": "paso_peatonal"
+   },
+   {
+    "cita": "semáforo peatonal en verde",
+    "tipo": "semaforo_peatonal"
+   }
+  ],
+  "hechos": [
+   {
+    "campo": "lugar.tipo_via",
+    "cita": "en la esquina de la calle Victoria y la calle Allende",
+    "persona": -1,
+    "valor": "interseccion",
+    "vehiculo": -1
+   },
+   {
+    "campo": "entorno.iluminacion",
+    "cita": "Aproximadamente a las 13:40 horas",
+    "persona": -1,
+    "valor": "dia",
+    "vehiculo": -1
+   },
+   {
+    "campo": "evento.tipo",
+    "cita": "atropelló a dicha señora con la parte frontal",
+    "persona": -1,
+    "valor": "impacto_vehiculo_persona",
+    "vehiculo": -1
+   },
+   {
+    "campo": "vehiculo.clase",
+    "cita": "Un automóvil compacto",
+    "persona": -1,
+    "valor": "sedan_compacto",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.color",
+    "cita": "de color gris",
+    "persona": -1,
+    "valor": "gris",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.maniobra",
+    "cita": "dio vuelta a la izquierda",
+    "persona": -1,
+    "valor": "vuelta_izquierda",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.zona_impacto",
+    "cita": "con la parte frontal",
+    "persona": -1,
+    "valor": "F",
+    "vehiculo": 0
+   },
+   {
+    "campo": "evidencias.distancia_proyeccion_m",
+    "cita": "cayó a aproximadamente un metro del vehículo",
+    "persona": -1,
+    "valor": "1",
+    "vehiculo": -1
+   }
+  ],
+  "personas": [
+   {
+    "cita": "una mujer de edad avanzada cruzaba por el paso peatonal",
+    "rol": "peaton",
+    "vehiculo": -1
+   }
+  ],
+  "preguntas": [
+   "¿El semáforo de los vehículos en Allende qué luz mostraba?",
+   "¿A qué velocidad aproximada iba el automóvil al dar la vuelta?",
+   "¿El automóvil frenó antes del impacto?"
+  ],
+  "vehiculos": [
+   {
+    "narrador": false
+   }
+  ]
+ },
+ "texto_sha256": "c59d92c8be2718ac4e7839c9a38a5a544dc106bf4f42f402d572e246ff4714c4",
+ "usage": {
+  "cache_creation_input_tokens": 0,
+  "cache_read_input_tokens": 7350,
+  "input_tokens": 216,
+  "output_tokens": 729
+ }
+}

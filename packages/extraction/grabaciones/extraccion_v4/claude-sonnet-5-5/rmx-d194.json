@@ -1,0 +1,104 @@
+{
+ "costo_estimado_con": "claude-sonnet-5-5",
+ "costo_usd": 0.008852,
+ "esfuerzo": "medium",
+ "grabado": "2026-10-19T22:12:07+00:00",
+ "huella_prompt": "613dc7f7bc958502",
+ "latencia_ms": 4259.1,
+ "modelo": "claude-sonnet-5-5",
+ "modelo_respuesta": "claude-sonnet-5-5",
+ "prompt": "extraccion_v4",
+ "request_id": "req_011CgCN2155Fgd63eth2hVpf",
+ "salida": {
+  "dispositivos": [
+   {
+    "cita": "El semáforo de nosotros ya estaba en verde",
+    "tipo": "semaforo"
+   },
+   {
+    "cita": "El semáforo de los peatones ya tenía la mano roja",
+    "tipo": "semaforo_peatonal"
+   }
+  ],
+  "hechos": [
+   {
+    "campo": "lugar.tipo_via",
+    "cita": "avenida Juárez y 16 de Septiembre",
+    "persona": -1,
+    "valor": "interseccion",
+    "vehiculo": -1
+   },
+   {
+    "campo": "entorno.iluminacion",
+    "cita": "las lámparas de la calle sí servían",
+    "persona": -1,
+    "valor": "noche_con_alumbrado",
+    "vehiculo": -1
+   },
+   {
+    "campo": "vehiculo.clase",
+    "cita": "Jetta",
+    "persona": -1,
+    "valor": "sedan_mediano",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.maniobra",
+    "cita": "arrancando, despacito",
+    "persona": -1,
+    "valor": "recto",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.velocidad_kmh",
+    "cita": "despacito",
+    "persona": -1,
+    "valor": "8",
+    "vehiculo": 0
+   },
+   {
+    "campo": "evento.tipo",
+    "cita": "Le di con la esquina del cofre",
+    "persona": -1,
+    "valor": "impacto_vehiculo_persona",
+    "vehiculo": -1
+   },
+   {
+    "campo": "vehiculo.zona_impacto",
+    "cita": "Le di con la esquina del cofre",
+    "persona": -1,
+    "valor": "F",
+    "vehiculo": 0
+   }
+  ],
+  "personas": [
+   {
+    "cita": "yo venía en mi Jetta",
+    "rol": "conductor",
+    "vehiculo": 0
+   },
+   {
+    "cita": "un muchacho con audífonos",
+    "rol": "peaton",
+    "vehiculo": -1
+   }
+  ],
+  "preguntas": [
+   "¿Hacia qué lado del vehículo venía el peatón al cruzar?",
+   "¿Cuántos carriles tiene la avenida Juárez en ese cruce?",
+   "¿El peatón venía de la izquierda o de la derecha del conductor?"
+  ],
+  "vehiculos": [
+   {
+    "narrador": true
+   }
+  ]
+ },
+ "texto_sha256": "b56cf4cdadcc4770e1c32689d6ab6a4de8d710198f9f4b363f4daa13a30d7816",
+ "usage": {
+  "cache_creation_input_tokens": 0,
+  "cache_read_input_tokens": 7350,
+  "input_tokens": 211,
+  "output_tokens": 696
+ }
+}

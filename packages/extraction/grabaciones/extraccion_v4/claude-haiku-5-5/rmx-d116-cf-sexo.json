@@ -1,0 +1,86 @@
+{
+ "costo_estimado_con": "claude-haiku-5-5",
+ "costo_usd": 0.0013416,
+ "esfuerzo": "medium",
+ "grabado": "2026-10-19T22:59:52+00:00",
+ "huella_prompt": "613dc7f7bc958502",
+ "latencia_ms": 10904.0,
+ "modelo": "claude-haiku-5-5",
+ "modelo_respuesta": "claude-haiku-5-5",
+ "prompt": "extraccion_v4",
+ "request_id": "req_011CgCRem18JtoVBdhcma3D6",
+ "salida": {
+  "dispositivos": [
+   {
+    "cita": "hay un montón de topes",
+    "tipo": "tope"
+   }
+  ],
+  "hechos": [
+   {
+    "campo": "entorno.iluminacion",
+    "cita": "ya oscureciendo",
+    "persona": -1,
+    "valor": "atardecer",
+    "vehiculo": -1
+   },
+   {
+    "campo": "vehiculo.velocidad_kmh",
+    "cita": "como a 30",
+    "persona": -1,
+    "valor": "30",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.frenado",
+    "cita": "Frené",
+    "persona": -1,
+    "valor": "true",
+    "vehiculo": 0
+   },
+   {
+    "campo": "evento.tipo",
+    "cita": "alcancé a darle con el espejo",
+    "persona": -1,
+    "valor": "impacto_vehiculo_persona",
+    "vehiculo": -1
+   },
+   {
+    "campo": "evidencias.distancia_proyeccion_m",
+    "cita": "cayó como a un metro",
+    "persona": -1,
+    "valor": "1",
+    "vehiculo": -1
+   }
+  ],
+  "personas": [
+   {
+    "cita": "Iba por la avenida Carranza",
+    "rol": "conductor",
+    "vehiculo": 0
+   },
+   {
+    "cita": "un muchacho salió de entre dos carros estacionados viendo su celular",
+    "rol": "peaton",
+    "vehiculo": -1
+   }
+  ],
+  "preguntas": [
+   "¿El muchacho cruzaba por un paso peatonal o por otro lugar?",
+   "¿Qué parte del vehículo recibió el golpe: el frente, el costado o la esquina?",
+   "¿Quedaron marcas de frenado en el pavimento y de qué largo?"
+  ],
+  "vehiculos": [
+   {
+    "narrador": true
+   }
+  ]
+ },
+ "texto_sha256": "17381990a2dd5e55953d5b9ebf0c54e4c7d51ac8fc8fd7d2b18c749138b204e8",
+ "usage": {
+  "cache_creation_input_tokens": 0,
+  "cache_read_input_tokens": 7350,
+  "input_tokens": 161,
+  "output_tokens": 2504
+ }
+}

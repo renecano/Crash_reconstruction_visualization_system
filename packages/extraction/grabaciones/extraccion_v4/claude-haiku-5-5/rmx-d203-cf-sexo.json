@@ -1,0 +1,95 @@
+{
+ "costo_estimado_con": "claude-haiku-5-5",
+ "costo_usd": 0.0010479,
+ "esfuerzo": "medium",
+ "grabado": "2026-10-19T23:02:26+00:00",
+ "huella_prompt": "613dc7f7bc958502",
+ "latencia_ms": 8014.5,
+ "modelo": "claude-haiku-5-5",
+ "modelo_respuesta": "claude-haiku-5-5",
+ "prompt": "extraccion_v4",
+ "request_id": "req_011CgCRrJfviePwnDeSM35SG",
+ "salida": {
+  "dispositivos": [
+   {
+    "cita": "se prendió el hombrecito verde",
+    "tipo": "semaforo_peatonal"
+   }
+  ],
+  "hechos": [
+   {
+    "campo": "lugar.tipo_via",
+    "cita": "en la esquina con Abasolo",
+    "persona": -1,
+    "valor": "interseccion",
+    "vehiculo": -1
+   },
+   {
+    "campo": "evento.tipo",
+    "cita": "le pegó con la defensa en las piernas",
+    "persona": -1,
+    "valor": "impacto_vehiculo_persona",
+    "vehiculo": -1
+   },
+   {
+    "campo": "vehiculo.clase",
+    "cita": "una combi blanca",
+    "persona": -1,
+    "valor": "microbus_combi",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.color",
+    "cita": "una combi blanca",
+    "persona": -1,
+    "valor": "blanca",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.maniobra",
+    "cita": "quería ganar la vuelta a la izquierda",
+    "persona": -1,
+    "valor": "vuelta_izquierda",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.zona_impacto",
+    "cita": "le pegó con la defensa en las piernas",
+    "persona": -1,
+    "valor": "F",
+    "vehiculo": 0
+   }
+  ],
+  "personas": [
+   {
+    "cita": "Un señor con bolsas del mandado",
+    "rol": "peaton",
+    "vehiculo": -1
+   },
+   {
+    "cita": "El chofer de la combi",
+    "rol": "conductor",
+    "vehiculo": 0
+   }
+  ],
+  "preguntas": [
+   "¿A qué velocidad iba la combi al dar la vuelta a la izquierda?",
+   "¿En qué color estaba el semáforo para los vehículos cuando la combi giró?"
+  ],
+  "vehiculos": [
+   {
+    "narrador": false
+   },
+   {
+    "narrador": false
+   }
+  ]
+ },
+ "texto_sha256": "26560a6e3f9b33f2f099c51a81d1ba2d72b28417e1d12e2369c28c62c3e0fb40",
+ "usage": {
+  "cache_creation_input_tokens": 0,
+  "cache_read_input_tokens": 7350,
+  "input_tokens": 219,
+  "output_tokens": 1905
+ }
+}

@@ -1,0 +1,100 @@
+{
+ "costo_estimado_con": "claude-sonnet-5-5",
+ "costo_usd": 0.008042,
+ "esfuerzo": "medium",
+ "grabado": "2026-10-19T22:08:20+00:00",
+ "huella_prompt": "613dc7f7bc958502",
+ "latencia_ms": 4603.6,
+ "modelo": "claude-sonnet-5-5",
+ "modelo_respuesta": "claude-sonnet-5-5",
+ "prompt": "extraccion_v4",
+ "request_id": "req_011CgCMjH1JrvaLHCrJkMDCP",
+ "salida": {
+  "dispositivos": [],
+  "hechos": [
+   {
+    "campo": "vehiculo.clase",
+    "cita": "moto",
+    "persona": -1,
+    "valor": "motocicleta",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.velocidad_kmh",
+    "cita": "como a 30",
+    "persona": -1,
+    "valor": "30",
+    "vehiculo": 0
+   },
+   {
+    "campo": "persona.casco",
+    "cita": "si trayia casco",
+    "persona": 0,
+    "valor": "true",
+    "vehiculo": -1
+   },
+   {
+    "campo": "vehiculo.color",
+    "cita": "carro blanco",
+    "persona": -1,
+    "valor": "blanco",
+    "vehiculo": 1
+   },
+   {
+    "campo": "vehiculo.maniobra",
+    "cita": "salio de un estacionamiento",
+    "persona": -1,
+    "valor": "incorporacion",
+    "vehiculo": 1
+   },
+   {
+    "campo": "evento.tipo",
+    "cita": "lo tumbo",
+    "persona": -1,
+    "valor": "impacto_vehiculo_vehiculo",
+    "vehiculo": -1
+   },
+   {
+    "campo": "vehiculo.zona_impacto",
+    "cita": "le pego en la llanta de adelante",
+    "persona": -1,
+    "valor": "F",
+    "vehiculo": 0
+   },
+   {
+    "campo": "lugar.tipo_via",
+    "cita": "salio de un estacionamiento",
+    "persona": -1,
+    "valor": "estacionamiento",
+    "vehiculo": -1
+   }
+  ],
+  "personas": [
+   {
+    "cita": "mi primo [NOMBRE] iba en su moto",
+    "rol": "motociclista",
+    "vehiculo": 0
+   }
+  ],
+  "preguntas": [
+   "¿El carro salió de frente o en reversa del estacionamiento?",
+   "¿Por qué lado de la moto o del carro ocurrió el golpe (derecho o izquierdo)?",
+   "¿La moto o el carro venía por el mismo carril o cruzando?"
+  ],
+  "vehiculos": [
+   {
+    "narrador": false
+   },
+   {
+    "narrador": false
+   }
+  ]
+ },
+ "texto_sha256": "46a8327a0d38ef221d14370584a08f9c27caffe0fb22596975d2cdb072851dad",
+ "usage": {
+  "cache_creation_input_tokens": 0,
+  "cache_read_input_tokens": 7350,
+  "input_tokens": 161,
+  "output_tokens": 625
+ }
+}

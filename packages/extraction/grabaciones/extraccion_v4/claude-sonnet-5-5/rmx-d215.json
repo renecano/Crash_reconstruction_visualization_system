@@ -1,0 +1,81 @@
+{
+ "costo_estimado_con": "claude-sonnet-5-5",
+ "costo_usd": 0.006562,
+ "esfuerzo": "medium",
+ "grabado": "2026-10-19T22:13:37+00:00",
+ "huella_prompt": "613dc7f7bc958502",
+ "latencia_ms": 3713.6,
+ "modelo": "claude-sonnet-5-5",
+ "modelo_respuesta": "claude-sonnet-5-5",
+ "prompt": "extraccion_v4",
+ "request_id": "req_011CgCN8hPu6ZWyV4LTcuNX7",
+ "salida": {
+  "dispositivos": [
+   {
+    "cita": "Yo crucé con mi verde",
+    "tipo": "semaforo_peatonal"
+   }
+  ],
+  "hechos": [
+   {
+    "campo": "vehiculo.clase",
+    "cita": "Tsuru",
+    "persona": -1,
+    "valor": "sedan_compacto",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.color",
+    "cita": "blanco",
+    "persona": -1,
+    "valor": "blanco",
+    "vehiculo": 0
+   },
+   {
+    "campo": "entorno.clima",
+    "cita": "Estaba nublado",
+    "persona": -1,
+    "valor": "nublado",
+    "vehiculo": -1
+   },
+   {
+    "campo": "lugar.tipo_via",
+    "cita": "en la esquina",
+    "persona": -1,
+    "valor": "interseccion",
+    "vehiculo": -1
+   },
+   {
+    "campo": "evento.tipo",
+    "cita": "me rozó la mano con el espejo",
+    "persona": -1,
+    "valor": "impacto_vehiculo_persona",
+    "vehiculo": -1
+   }
+  ],
+  "personas": [
+   {
+    "cita": "Yo crucé con mi verde",
+    "rol": "peaton",
+    "vehiculo": -1
+   }
+  ],
+  "preguntas": [
+   "¿Cuál era la velocidad aproximada del taxi al pasar?",
+   "¿En qué sentido venía el taxi respecto a usted al cruzar?",
+   "¿La luz verde era la del semáforo peatonal o la del semáforo de los vehículos?"
+  ],
+  "vehiculos": [
+   {
+    "narrador": false
+   }
+  ]
+ },
+ "texto_sha256": "be014af8f15fb6fe06cd8047003affc7084bbc8287748882f3bbd8c6954cb8af",
+ "usage": {
+  "cache_creation_input_tokens": 0,
+  "cache_read_input_tokens": 7350,
+  "input_tokens": 166,
+  "output_tokens": 476
+ }
+}

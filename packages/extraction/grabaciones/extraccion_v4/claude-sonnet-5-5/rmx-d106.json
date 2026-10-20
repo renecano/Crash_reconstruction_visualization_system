@@ -1,0 +1,114 @@
+{
+ "costo_estimado_con": "claude-sonnet-5-5",
+ "costo_usd": 0.009584,
+ "esfuerzo": "medium",
+ "grabado": "2026-10-19T22:04:36+00:00",
+ "huella_prompt": "613dc7f7bc958502",
+ "latencia_ms": 7165.8,
+ "modelo": "claude-sonnet-5-5",
+ "modelo_respuesta": "claude-sonnet-5-5",
+ "prompt": "extraccion_v4",
+ "request_id": "req_011CgCMSa2m8fvPdjYiNYnSQ",
+ "salida": {
+  "dispositivos": [],
+  "hechos": [
+   {
+    "campo": "vehiculo.clase",
+    "cita": "Sportage",
+    "persona": -1,
+    "valor": "suv_compacta",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.color",
+    "cita": "color blanco",
+    "persona": -1,
+    "valor": "blanco",
+    "vehiculo": 0
+   },
+   {
+    "campo": "entorno.iluminacion",
+    "cita": "La vía contaba con alumbrado público",
+    "persona": -1,
+    "valor": "noche_con_alumbrado",
+    "vehiculo": -1
+   },
+   {
+    "campo": "vehiculo.maniobra",
+    "cita": "me desvié hacia la derecha",
+    "persona": -1,
+    "valor": "cambio_carril_derecha",
+    "vehiculo": 0
+   },
+   {
+    "campo": "evento.tipo",
+    "cita": "impacté con la parte frontal derecha de mi unidad a un vehículo estacionado",
+    "persona": -1,
+    "valor": "impacto_vehiculo_vehiculo",
+    "vehiculo": -1
+   },
+   {
+    "campo": "vehiculo.zona_impacto",
+    "cita": "la parte frontal derecha de mi unidad",
+    "persona": -1,
+    "valor": "F",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.velocidad_kmh",
+    "cita": "35 km/h",
+    "persona": -1,
+    "valor": "35",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.clase",
+    "cita": "sedán",
+    "persona": -1,
+    "valor": "sedan_mediano",
+    "vehiculo": 1
+   },
+   {
+    "campo": "vehiculo.color",
+    "cita": "de color verde",
+    "persona": -1,
+    "valor": "verde",
+    "vehiculo": 1
+   },
+   {
+    "campo": "vehiculo.maniobra",
+    "cita": "estacionado",
+    "persona": -1,
+    "valor": "estacionado",
+    "vehiculo": 1
+   }
+  ],
+  "personas": [
+   {
+    "cita": "al circular en mi vehículo Kia Sportage",
+    "rol": "conductor",
+    "vehiculo": 0
+   }
+  ],
+  "preguntas": [
+   "¿El sedán estacionado quedó golpeado de frente, de atrás o de algún costado?",
+   "¿Hubo marcas de frenado en el pavimento antes del impacto?",
+   "¿La calle tiene uno o más carriles por sentido?"
+  ],
+  "vehiculos": [
+   {
+    "narrador": true
+   },
+   {
+    "narrador": false
+   }
+  ]
+ },
+ "texto_sha256": "aafea786890faba17eab12331f3b8df9b009279980bd486e7916ddda3aae66ec",
+ "usage": {
+  "cache_creation_input_tokens": 0,
+  "cache_read_input_tokens": 7350,
+  "input_tokens": 237,
+  "output_tokens": 764
+ }
+}

@@ -1,0 +1,94 @@
+{
+ "costo_estimado_con": "claude-haiku-5-5",
+ "costo_usd": 0.0011222,
+ "esfuerzo": "medium",
+ "grabado": "2026-10-19T22:24:57+00:00",
+ "huella_prompt": "613dc7f7bc958502",
+ "latencia_ms": 9072.8,
+ "modelo": "claude-haiku-5-5",
+ "modelo_respuesta": "claude-haiku-5-5",
+ "prompt": "extraccion_v4",
+ "request_id": "req_011CgCNzRwcQZ8qYH2gajTGa",
+ "salida": {
+  "dispositivos": [
+   {
+    "cita": "por el paso de cebra",
+    "tipo": "paso_peatonal"
+   },
+   {
+    "cita": "con el semáforo peatonal en verde",
+    "tipo": "semaforo_peatonal"
+   }
+  ],
+  "hechos": [
+   {
+    "campo": "vehiculo.clase",
+    "cita": "Aveo",
+    "persona": -1,
+    "valor": "sedan_compacto",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.maniobra",
+    "cita": "dio vuelta a la derecha",
+    "persona": -1,
+    "valor": "vuelta_derecha",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.velocidad_kmh",
+    "cita": "como a 20",
+    "persona": -1,
+    "valor": "20",
+    "vehiculo": 0
+   },
+   {
+    "campo": "evento.tipo",
+    "cita": "le pegó con el espejo en el brazo",
+    "persona": -1,
+    "valor": "impacto_vehiculo_persona",
+    "vehiculo": -1
+   },
+   {
+    "campo": "entorno.iluminacion",
+    "cita": "Eran como las ocho de la noche",
+    "persona": -1,
+    "valor": "noche",
+    "vehiculo": -1
+   }
+  ],
+  "personas": [
+   {
+    "cita": "Iba cruzando la calle Juárez en Tlaquepaque con mi mamá",
+    "rol": "peaton",
+    "vehiculo": -1
+   },
+   {
+    "cita": "con mi mamá",
+    "rol": "peaton",
+    "vehiculo": -1
+   },
+   {
+    "cita": "un muchacho en un Aveo",
+    "rol": "conductor",
+    "vehiculo": 0
+   }
+  ],
+  "preguntas": [
+   "¿El Aveo se detuvo o frenó antes de que el espejo tocara a la mamá?",
+   "¿Quedaron marcas de frenado o de llanta en el pavimento?"
+  ],
+  "vehiculos": [
+   {
+    "narrador": false
+   }
+  ]
+ },
+ "texto_sha256": "1df112d9b372f636e872a1d3f0b8b7da605ef65a1a493692bf6a5d7602cc8a70",
+ "usage": {
+  "cache_creation_input_tokens": 0,
+  "cache_read_input_tokens": 7350,
+  "input_tokens": 182,
+  "output_tokens": 2061
+ }
+}

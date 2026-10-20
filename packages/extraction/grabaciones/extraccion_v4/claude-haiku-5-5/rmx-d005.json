@@ -1,0 +1,78 @@
+{
+ "costo_estimado_con": "claude-haiku-5-5",
+ "costo_usd": 0.0009339,
+ "esfuerzo": "medium",
+ "grabado": "2026-10-19T22:18:16+00:00",
+ "huella_prompt": "613dc7f7bc958502",
+ "latencia_ms": 7725.4,
+ "modelo": "claude-haiku-5-5",
+ "modelo_respuesta": "claude-haiku-5-5",
+ "prompt": "extraccion_v4",
+ "request_id": "req_011CgCNUxuMSTgw7PC8SKLpy",
+ "salida": {
+  "dispositivos": [
+   {
+    "cita": "fuera del paso de cebra",
+    "tipo": "paso_peatonal"
+   }
+  ],
+  "hechos": [
+   {
+    "campo": "vehiculo.clase",
+    "cita": "Urvan",
+    "persona": -1,
+    "valor": "microbus_combi",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.velocidad_kmh",
+    "cita": "a vuelta de rueda",
+    "persona": -1,
+    "valor": "8",
+    "vehiculo": 0
+   },
+   {
+    "campo": "evento.tipo",
+    "cita": "La golpeé con la defensa",
+    "persona": -1,
+    "valor": "impacto_vehiculo_persona",
+    "vehiculo": 0
+   },
+   {
+    "campo": "evidencias.distancia_proyeccion_m",
+    "cita": "cayó como a dos metros",
+    "persona": -1,
+    "valor": "2",
+    "vehiculo": -1
+   }
+  ],
+  "personas": [
+   {
+    "cita": "Venía manejando",
+    "rol": "conductor",
+    "vehiculo": 0
+   },
+   {
+    "cita": "una señora se atravesó corriendo",
+    "rol": "peaton",
+    "vehiculo": -1
+   }
+  ],
+  "preguntas": [
+   "¿La señora cruzó desde la banqueta o desde el camellón?",
+   "¿Frenó usted antes del impacto y, si lo hizo, cuántos metros de marcas quedaron?"
+  ],
+  "vehiculos": [
+   {
+    "narrador": true
+   }
+  ]
+ },
+ "texto_sha256": "48d7ac21db8a4735b9c50467f6c2f394072ec723f2485e07260475756a35f116",
+ "usage": {
+  "cache_creation_input_tokens": 0,
+  "cache_read_input_tokens": 7350,
+  "input_tokens": 114,
+  "output_tokens": 1698
+ }
+}

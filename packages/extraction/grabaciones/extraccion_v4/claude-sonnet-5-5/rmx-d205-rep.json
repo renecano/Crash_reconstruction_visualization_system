@@ -1,0 +1,97 @@
+{
+ "costo_estimado_con": "claude-sonnet-5-5",
+ "costo_usd": 0.008322,
+ "esfuerzo": "medium",
+ "grabado": "2026-10-19T23:19:25+00:00",
+ "huella_prompt": "613dc7f7bc958502",
+ "latencia_ms": 6829.1,
+ "modelo": "claude-sonnet-5-5",
+ "modelo_respuesta": "claude-sonnet-5-5",
+ "prompt": "extraccion_v4",
+ "request_id": "req_011CgCT9UQu5PooqdaqAZgFC",
+ "salida": {
+  "dispositivos": [
+   {
+    "cita": "por el paso de cebra",
+    "tipo": "paso_peatonal"
+   },
+   {
+    "cita": "el semáforo de cruce peatonal indicó el paso",
+    "tipo": "semaforo_peatonal"
+   }
+  ],
+  "hechos": [
+   {
+    "campo": "vehiculo.clase",
+    "cita": "una motocicleta",
+    "persona": -1,
+    "valor": "motocicleta",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.color",
+    "cita": "de color rojo",
+    "persona": -1,
+    "valor": "rojo",
+    "vehiculo": 0
+   },
+   {
+    "campo": "evento.tipo",
+    "cita": "me impactó en el costado izquierdo",
+    "persona": -1,
+    "valor": "impacto_vehiculo_persona",
+    "vehiculo": -1
+   },
+   {
+    "campo": "lugar.estado_superficie",
+    "cita": "El pavimento estaba mojado",
+    "persona": -1,
+    "valor": "mojado",
+    "vehiculo": -1
+   },
+   {
+    "campo": "vehiculo.maniobra",
+    "cita": "que circulaba por el bulevar",
+    "persona": -1,
+    "valor": "recto",
+    "vehiculo": 0
+   },
+   {
+    "campo": "entorno.iluminacion",
+    "cita": "aproximadamente a las 08:20 horas",
+    "persona": -1,
+    "valor": "dia",
+    "vehiculo": -1
+   }
+  ],
+  "personas": [
+   {
+    "cita": "crucé el bulevar Juan Alonso de Torres",
+    "rol": "peaton",
+    "vehiculo": -1
+   },
+   {
+    "cita": "El conductor de la motocicleta",
+    "rol": "motociclista",
+    "vehiculo": 0
+   }
+  ],
+  "preguntas": [
+   "¿A qué velocidad aproximada circulaba la motocicleta?",
+   "¿La motocicleta frenó o realizó alguna maniobra antes del impacto?",
+   "¿Cuántos carriles tiene el bulevar por sentido?"
+  ],
+  "vehiculos": [
+   {
+    "narrador": false
+   }
+  ]
+ },
+ "texto_sha256": "726b88307eaf3f39dd6298073e98a1fa604b2eaeed5c0b12f8426b5bae739e2d",
+ "usage": {
+  "cache_creation_input_tokens": 0,
+  "cache_read_input_tokens": 7350,
+  "input_tokens": 306,
+  "output_tokens": 624
+ }
+}

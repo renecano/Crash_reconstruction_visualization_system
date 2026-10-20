@@ -374,8 +374,10 @@ def evaluate_method(
         sin_cita += run.sin_cita
         verified_down += run.degraded
         preds[it["id"]] = facts_from_spec(run.spec)
-        score.merge(score_story(ref, preds[it["id"]]))
-        score_verified.merge(score_story(ref, facts_from_spec(run.verified)))
+        # Solo dev conoce el semáforo peatonal; los tests se anotaron antes del tipo (ADR 0043).
+        new_types = split == "dev"
+        score.merge(score_story(ref, preds[it["id"]], new_types))
+        score_verified.merge(score_story(ref, facts_from_spec(run.verified), new_types))
         ids = [v["id"] for v in run.spec["vehiculos"]]
         errs = error_topics(ref, preds[it["id"]], ids)
         if run.asked is None:
@@ -404,13 +406,20 @@ def evaluate_method(
     # Piso de ruido: el mismo relato otra vez. Las reglas son deterministas; los modelos no
     # aceptan temperatura 0, así que parte de la diferencia contrafactual puede ser variación.
     rep_diffs = rep_pairs = 0
+    # La repetición también se puntúa contra la referencia: cuánto cambia el F1 de una corrida a
+    # otra del mismo prompt (ADR 0043).
+    score_rep = Score()
     for it in items:
         base = preds.get(it["id"])
         run = recs.run(name, it["id"] + "-rep" if name != "reglas" else it["id"])
         if base is None or run is None:
             continue
         rep_pairs += 1
-        rep_diffs += int(counterfactual_diff(base, facts_from_spec(run.spec)))
+        rep_facts = facts_from_spec(run.spec)
+        rep_diffs += int(counterfactual_diff(base, rep_facts))
+        ref = facts_from_annotation({**it["hechos"], "tipo": it["tipo"]})
+        score_rep.merge(score_story(ref, rep_facts, split == "dev"))
+    rep_report = score_rep.report()
     return {
         "estado": "medido" if missing == 0 else "parcial",
         "relatos": evaluated,
@@ -434,6 +443,10 @@ def evaluate_method(
             "pares": rep_pairs,
             "con_diferencia": rep_diffs,
             "tasa": round(rep_diffs / rep_pairs, 4) if rep_pairs else None,
+            "f1_micro": rep_report["f1_micro"] if rep_pairs else None,
+            "f1_micro_sin_campos_parciales": rep_report["f1_micro_sin_campos_parciales"]
+            if rep_pairs
+            else None,
         },
         "contrafactual_por_tipo": counterfactual_by_kind(
             name, cfs, preds, recs, {str(it["id"]): str(it["texto"]) for it in items}
@@ -492,7 +505,11 @@ def evaluate(split: str, pipeline: str = "ts", prompt: str = PROMPT_VERSION) -> 
     }
 
 
-def main(split: str = "test", pipeline: str = "ts", prompt: str = PROMPT_VERSION) -> str:
+def main(
+    split: str = "test", pipeline: str = "ts", prompt: str = PROMPT_VERSION, sufijo: str = ""
+) -> str:
+    """`sufijo` se agrega al nombre del resultado: deja intacto uno anterior del mismo split y
+    prompt cuando cambia el conjunto (p. ej. el dev con el lote `dev-007`, ADR 0043)."""
     if split in relatos_mx.LOCKS:
         frozen = relatos_mx.frozen_hash(split)
         if frozen is None:
@@ -516,7 +533,7 @@ def main(split: str = "test", pipeline: str = "ts", prompt: str = PROMPT_VERSION
     suffix = ("" if prompt == BASE_PROMPT else "_" + prompt.removeprefix("extraccion_")) + (
         "" if pipeline == "ts" else "_py"
     )
-    name = ("e1_extraction" if split == "test" else f"e1_extraction_{split}") + suffix
+    name = ("e1_extraction" if split == "test" else f"e1_extraction_{split}") + suffix + sufijo
     return str(write_result(name, payload))
 
 

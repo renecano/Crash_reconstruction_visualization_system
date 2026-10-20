@@ -1,0 +1,86 @@
+{
+ "costo_estimado_con": "claude-sonnet-5-5",
+ "costo_usd": 0.007008,
+ "esfuerzo": "medium",
+ "grabado": "2026-10-19T21:56:23+00:00",
+ "huella_prompt": "613dc7f7bc958502",
+ "latencia_ms": 3649.8,
+ "modelo": "claude-sonnet-5-5",
+ "modelo_respuesta": "claude-sonnet-5-5",
+ "prompt": "extraccion_v4",
+ "request_id": "req_011CgCLpWXR9fqyXoZ8Bpvtn",
+ "salida": {
+  "dispositivos": [
+   {
+    "cita": "fuera del paso de cebra",
+    "tipo": "paso_peatonal"
+   }
+  ],
+  "hechos": [
+   {
+    "campo": "vehiculo.clase",
+    "cita": "Urvan",
+    "persona": -1,
+    "valor": "microbus_combi",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.velocidad_kmh",
+    "cita": "a vuelta de rueda",
+    "persona": -1,
+    "valor": "8",
+    "vehiculo": 0
+   },
+   {
+    "campo": "evento.tipo",
+    "cita": "La golpeé con la defensa",
+    "persona": -1,
+    "valor": "impacto_vehiculo_persona",
+    "vehiculo": -1
+   },
+   {
+    "campo": "vehiculo.zona_impacto",
+    "cita": "La golpeé con la defensa",
+    "persona": -1,
+    "valor": "F",
+    "vehiculo": 0
+   },
+   {
+    "campo": "evidencias.distancia_proyeccion_m",
+    "cita": "cayó como a dos metros",
+    "persona": -1,
+    "valor": "2",
+    "vehiculo": -1
+   }
+  ],
+  "personas": [
+   {
+    "cita": "Venía manejando la Urvan",
+    "rol": "conductor",
+    "vehiculo": 0
+   },
+   {
+    "cita": "una señora se atravesó corriendo entre los carros",
+    "rol": "peaton",
+    "vehiculo": -1
+   }
+  ],
+  "preguntas": [
+   "¿La señora cruzó de izquierda a derecha o de derecha a izquierda respecto a tu vehículo?",
+   "¿Cuántos carriles tenía la calle en ese tramo?",
+   "¿Pudiste frenar antes de golpearla?"
+  ],
+  "vehiculos": [
+   {
+    "narrador": true
+   }
+  ]
+ },
+ "texto_sha256": "48d7ac21db8a4735b9c50467f6c2f394072ec723f2485e07260475756a35f116",
+ "usage": {
+  "cache_creation_input_tokens": 0,
+  "cache_read_input_tokens": 7350,
+  "input_tokens": 114,
+  "output_tokens": 531
+ }
+}

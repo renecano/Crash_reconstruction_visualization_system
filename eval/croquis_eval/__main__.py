@@ -61,6 +61,11 @@ def main(argv: list[str] | None = None) -> int:
         help="Versión del prompt cuyas respuestas grabadas se puntúan (por omisión, la de "
         "producción)",
     )
+    e1.add_argument(
+        "--sufijo",
+        default="",
+        help="Se agrega al nombre del resultado, para no reemplazar uno anterior (ADR 0043)",
+    )
     args = parser.parse_args(argv)
     if args.command == "atus-summary":
         from croquis_eval.atus_summary import main as run
@@ -85,7 +90,7 @@ def main(argv: list[str] | None = None) -> int:
     if args.command == "e1-extraction":
         from croquis_eval.e1_extraction import main as run_e1
 
-        print(run_e1(args.split, args.pipeline, args.prompt))
+        print(run_e1(args.split, args.pipeline, args.prompt, args.sufijo))
         return 0
     if args.command == "e3-ciss":
         from croquis_eval.e3_ciss import main as run_e3

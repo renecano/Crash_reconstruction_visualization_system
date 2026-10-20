@@ -1,0 +1,91 @@
+{
+ "costo_estimado_con": "claude-haiku-5-5",
+ "costo_usd": 0.0010694,
+ "esfuerzo": "medium",
+ "grabado": "2026-10-19T22:22:18+00:00",
+ "huella_prompt": "613dc7f7bc958502",
+ "latencia_ms": 8807.4,
+ "modelo": "claude-haiku-5-5",
+ "modelo_respuesta": "claude-haiku-5-5",
+ "prompt": "extraccion_v4",
+ "request_id": "req_011CgCNnkXDj9Sy1muDosGYS",
+ "salida": {
+  "dispositivos": [],
+  "hechos": [
+   {
+    "campo": "vehiculo.clase",
+    "cita": "Polo",
+    "persona": -1,
+    "valor": "hatchback",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.color",
+    "cita": "Polo plata",
+    "persona": -1,
+    "valor": "plata",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.clase",
+    "cita": "Gol",
+    "persona": -1,
+    "valor": "hatchback",
+    "vehiculo": 1
+   },
+   {
+    "campo": "vehiculo.maniobra",
+    "cita": "se quiso pasar por mi lado",
+    "persona": -1,
+    "valor": "cambio_carril",
+    "vehiculo": 1
+   },
+   {
+    "campo": "evento.tipo",
+    "cita": "me rayó el costado izquierdo",
+    "persona": -1,
+    "valor": "impacto_vehiculo_vehiculo",
+    "vehiculo": -1
+   },
+   {
+    "campo": "vehiculo.zona_impacto",
+    "cita": "me rayó el costado izquierdo",
+    "persona": -1,
+    "valor": "L",
+    "vehiculo": 0
+   }
+  ],
+  "personas": [
+   {
+    "cita": "Estaba esperando",
+    "rol": "conductor",
+    "vehiculo": 0
+   },
+   {
+    "cita": "el de atrás, en un Gol",
+    "rol": "conductor",
+    "vehiculo": 1
+   }
+  ],
+  "preguntas": [
+   "¿Qué parte del Gol tuvo contacto con el Polo?",
+   "¿El Polo estaba detenido al momento del impacto?",
+   "¿A qué velocidad iba aproximadamente el Gol?"
+  ],
+  "vehiculos": [
+   {
+    "narrador": true
+   },
+   {
+    "narrador": false
+   }
+  ]
+ },
+ "texto_sha256": "16a20b79e8dc500f9d011c66102a83af955ab7bdb54672c0f4c1effc45e1a439",
+ "usage": {
+  "cache_creation_input_tokens": 0,
+  "cache_read_input_tokens": 7350,
+  "input_tokens": 134,
+  "output_tokens": 1965
+ }
+}

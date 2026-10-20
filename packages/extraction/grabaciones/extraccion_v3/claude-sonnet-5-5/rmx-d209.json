@@ -1,0 +1,74 @@
+{
+ "costo_estimado_con": "claude-sonnet-5-5",
+ "costo_usd": 0.0059842,
+ "esfuerzo": "medium",
+ "grabado": "2026-10-20T01:30:38+00:00",
+ "huella_prompt": "86f6a54999b8cbf7",
+ "latencia_ms": 3138.4,
+ "modelo": "claude-sonnet-5-5",
+ "modelo_respuesta": "claude-sonnet-5-5",
+ "prompt": "extraccion_v3",
+ "request_id": "req_011CgCdAARNN44VCB1HGLJ94",
+ "salida": {
+  "dispositivos": [
+   {
+    "cita": "los del semáforo de las personas",
+    "tipo": "semaforo"
+   }
+  ],
+  "hechos": [
+   {
+    "campo": "entorno.iluminacion",
+    "cita": "ya de noche",
+    "persona": -1,
+    "valor": "noche",
+    "vehiculo": -1
+   },
+   {
+    "campo": "vehiculo.clase",
+    "cita": "Tahoe",
+    "persona": -1,
+    "valor": "suv_grande",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.maniobra",
+    "cita": "dio vuelta a la izquierda",
+    "persona": -1,
+    "valor": "vuelta_izquierda",
+    "vehiculo": 0
+   },
+   {
+    "campo": "evento.tipo",
+    "cita": "me pegó en la pierna derecha",
+    "persona": -1,
+    "valor": "impacto_vehiculo_persona",
+    "vehiculo": -1
+   }
+  ],
+  "personas": [
+   {
+    "cita": "Iba cruzando",
+    "rol": "peaton",
+    "vehiculo": -1
+   }
+  ],
+  "preguntas": [
+   "¿La Tahoe venía de frente o de un lado respecto a su dirección al cruzar?",
+   "¿Qué parte de la Tahoe lo golpeó?",
+   "¿Era una intersección con varios carriles por sentido?"
+  ],
+  "vehiculos": [
+   {
+    "narrador": false
+   }
+  ]
+ },
+ "texto_sha256": "e11e518435ff02a03427c5de31d167471b4c5fb7d76f002a8877dead9b3bab51",
+ "usage": {
+  "cache_creation_input_tokens": 0,
+  "cache_read_input_tokens": 7131,
+  "input_tokens": 189,
+  "output_tokens": 418
+ }
+}

@@ -42,8 +42,34 @@ function rules(): { entry: Entry; rx: RegExp }[] {
   return compiled;
 }
 
-export function glossaryVersion(): string {
-  return (glosario as { version: string }).version;
+interface GlossaryDoc {
+  version: string;
+  version_por_prompt?: Record<string, string>;
+  entradas: (Entry & { desde?: string })[];
+}
+
+/** Número de una versión del prompt (`extraccion_v4` → 4). */
+function promptN(prompt: string): number {
+  return Number(prompt.slice(prompt.lastIndexOf("_v") + 2));
+}
+
+/**
+ * Versión del glosario; para un prompt anterior a sus últimas entradas, la que vio ese prompt
+ * (`version_por_prompt`), así su huella no cambia (ADR 0043).
+ */
+export function glossaryVersion(prompt?: string): string {
+  const g = glosario as GlossaryDoc;
+  return (prompt !== undefined ? g.version_por_prompt?.[prompt] : undefined) ?? g.version;
+}
+
+/**
+ * Entradas del glosario; con un prompt, solo las que ese prompt conoce (las que tienen `desde`
+ * entran en esa versión y las siguientes). La línea base de reglas usa todas.
+ */
+export function glossaryEntries(prompt?: string): GlossaryDoc["entradas"] {
+  return (glosario as GlossaryDoc).entradas.filter(
+    (e) => prompt === undefined || e.desde === undefined || promptN(prompt) >= promptN(e.desde),
+  );
 }
 
 function cmp(a: string, b: string): number {

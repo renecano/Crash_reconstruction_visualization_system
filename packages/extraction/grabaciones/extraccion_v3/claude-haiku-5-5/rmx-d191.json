@@ -1,0 +1,85 @@
+{
+ "costo_estimado_con": "claude-haiku-5-5",
+ "costo_usd": 0.00178117,
+ "esfuerzo": "medium",
+ "grabado": "2026-10-20T01:32:08+00:00",
+ "huella_prompt": "86f6a54999b8cbf7",
+ "latencia_ms": 8263.0,
+ "modelo": "claude-haiku-5-5",
+ "modelo_respuesta": "claude-haiku-5-5",
+ "prompt": "extraccion_v3",
+ "request_id": "req_011CgCdGP5HTg8ayQXgwh2Ex",
+ "salida": {
+  "dispositivos": [
+   {
+    "cita": "ya con el monito verde",
+    "tipo": "semaforo"
+   }
+  ],
+  "hechos": [
+   {
+    "campo": "vehiculo.clase",
+    "cita": "un taxi",
+    "persona": -1,
+    "valor": "sedan_compacto",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.maniobra",
+    "cita": "daba vuelta a la derecha",
+    "persona": -1,
+    "valor": "vuelta_derecha",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.zona_impacto",
+    "cita": "me aventó con la defensa",
+    "persona": -1,
+    "valor": "F",
+    "vehiculo": 0
+   },
+   {
+    "campo": "evento.tipo",
+    "cita": "me aventó con la defensa",
+    "persona": -1,
+    "valor": "impacto_vehiculo_persona",
+    "vehiculo": -1
+   },
+   {
+    "campo": "entorno.iluminacion",
+    "cita": "ya estaba oscureciendo",
+    "persona": -1,
+    "valor": "atardecer",
+    "vehiculo": -1
+   }
+  ],
+  "personas": [
+   {
+    "cita": "Iba cruzando Eje Central",
+    "rol": "peaton",
+    "vehiculo": -1
+   },
+   {
+    "cita": "El taxista se paró",
+    "rol": "conductor",
+    "vehiculo": 0
+   }
+  ],
+  "preguntas": [
+   "¿A qué velocidad iba el taxi al dar vuelta a la derecha?",
+   "¿El taxi tenía señal de alto o semáforo en su sentido al dar vuelta?"
+  ],
+  "vehiculos": [
+   {
+    "narrador": false
+   }
+  ]
+ },
+ "texto_sha256": "249fadc05db2f6dbda76cdcb5a2a334861b4a1d4b6a6e5449fe08b0027576440",
+ "usage": {
+  "cache_creation_input_tokens": 7131,
+  "cache_read_input_tokens": 0,
+  "input_tokens": 138,
+  "output_tokens": 1752
+ }
+}

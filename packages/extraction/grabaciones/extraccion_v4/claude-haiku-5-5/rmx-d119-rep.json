@@ -1,0 +1,112 @@
+{
+ "costo_estimado_con": "claude-haiku-5-5",
+ "costo_usd": 0.0013059,
+ "esfuerzo": "medium",
+ "grabado": "2026-10-20T01:11:49+00:00",
+ "huella_prompt": "613dc7f7bc958502",
+ "latencia_ms": 10178.2,
+ "modelo": "claude-haiku-5-5",
+ "modelo_respuesta": "claude-haiku-5-5",
+ "prompt": "extraccion_v4",
+ "request_id": "req_011CgCbiStE4T29Bx91mTcvT",
+ "salida": {
+  "dispositivos": [
+   {
+    "cita": "señal de alto",
+    "tipo": "alto"
+   }
+  ],
+  "hechos": [
+   {
+    "campo": "lugar.tipo_via",
+    "cita": "en el cruce de la avenida Insurgentes y la calle Allende",
+    "persona": -1,
+    "valor": "interseccion",
+    "vehiculo": -1
+   },
+   {
+    "campo": "vehiculo.clase",
+    "cita": "motocicleta",
+    "persona": -1,
+    "valor": "motocicleta",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.color",
+    "cita": "color negro",
+    "persona": -1,
+    "valor": "negro",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.clase",
+    "cita": "NP300",
+    "persona": -1,
+    "valor": "pickup",
+    "vehiculo": 1
+   },
+   {
+    "campo": "vehiculo.color",
+    "cita": "color blanco",
+    "persona": -1,
+    "valor": "blanco",
+    "vehiculo": 1
+   },
+   {
+    "campo": "evento.tipo",
+    "cita": "impactando el costado izquierdo de la motocicleta",
+    "persona": -1,
+    "valor": "impacto_vehiculo_vehiculo",
+    "vehiculo": -1
+   },
+   {
+    "campo": "vehiculo.zona_impacto",
+    "cita": "impactando el costado izquierdo de la motocicleta",
+    "persona": -1,
+    "valor": "L",
+    "vehiculo": 0
+   },
+   {
+    "campo": "evidencias.marcas_m",
+    "cita": "marcas de frenado de aproximadamente 6 metros",
+    "persona": -1,
+    "valor": "6",
+    "vehiculo": -1
+   },
+   {
+    "campo": "persona.casco",
+    "cita": "El motociclista portaba casco",
+    "persona": 0,
+    "valor": "true",
+    "vehiculo": -1
+   }
+  ],
+  "personas": [
+   {
+    "cita": "El motociclista",
+    "rol": "motociclista",
+    "vehiculo": 0
+   }
+  ],
+  "preguntas": [
+   "¿A qué velocidad circulaban la camioneta y la motocicleta?",
+   "¿Las marcas de 6 metros quedaron antes o después del impacto?",
+   "¿La camioneta llevaba frenos aplicados antes del golpe?"
+  ],
+  "vehiculos": [
+   {
+    "narrador": false
+   },
+   {
+    "narrador": false
+   }
+  ]
+ },
+ "texto_sha256": "b393b9598fb2a21b34b70e46623bb466aea82530304423b2d3bf8adb65a72d92",
+ "usage": {
+  "cache_creation_input_tokens": 0,
+  "cache_read_input_tokens": 7350,
+  "input_tokens": 304,
+  "output_tokens": 2404
+ }
+}

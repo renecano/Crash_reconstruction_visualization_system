@@ -1,6 +1,11 @@
 {
-  "version": "1.4.0",
-  "descripcion": "Glosario de expresiones del español de México en relatos de percances viales. Cada entrada dice qué significa y a qué campo de EscenaSpec apunta. Los patrones se buscan sobre el texto en minúsculas y sin acentos; las coincidencias conservan su posición en el texto original para citarlas como evidencia. Las entradas ambiguas no fijan un valor: sugieren una pregunta. Ninguna entrada asigna culpa.",
+  "version": "1.5.0",
+  "version_por_prompt": {
+    "extraccion_v1": "1.4.0",
+    "extraccion_v2": "1.4.0",
+    "extraccion_v3": "1.4.0"
+  },
+  "descripcion": "Glosario de expresiones del español de México en relatos de percances viales. Cada entrada dice qué significa y a qué campo de EscenaSpec apunta. Los patrones se buscan sobre el texto en minúsculas y sin acentos; las coincidencias conservan su posición en el texto original para citarlas como evidencia. Las entradas ambiguas no fijan un valor: sugieren una pregunta. Ninguna entrada asigna culpa. Una entrada con `desde` solo entra en el prompt de esa versión y las siguientes; `version_por_prompt` guarda la versión del glosario que vio cada prompt anterior, para que su huella no cambie (ADR 0043).",
   "entradas": [
     {
       "id": "se_me_cerro",
@@ -750,6 +755,34 @@
         {
           "campo": "dispositivo.tipo",
           "valor": "semaforo"
+        }
+      ]
+    },
+    {
+      "id": "semaforo_peatonal",
+      "desde": "extraccion_v4",
+      "patrones": [
+        "semaforo peatonal",
+        "semaforos peatonales",
+        "semaforo de peatones",
+        "semaforo de los peatones",
+        "semaforo para peatones",
+        "semaforo para los peatones",
+        "luz de peatones",
+        "luz de los peatones",
+        "luz peatonal",
+        "munequito",
+        "munequitos",
+        "monito verde",
+        "monito rojo",
+        "monito en verde",
+        "monito en rojo"
+      ],
+      "significado": "Semáforo peatonal (el de la figura de una persona, \"el muñequito\").",
+      "efectos": [
+        {
+          "campo": "dispositivo.tipo",
+          "valor": "semaforo_peatonal"
         }
       ]
     },

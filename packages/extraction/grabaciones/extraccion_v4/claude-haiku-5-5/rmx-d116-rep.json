@@ -1,0 +1,85 @@
+{
+ "costo_estimado_con": "claude-haiku-5-5",
+ "costo_usd": 0.0011831,
+ "esfuerzo": "medium",
+ "grabado": "2026-10-20T01:11:16+00:00",
+ "huella_prompt": "613dc7f7bc958502",
+ "latencia_ms": 10107.4,
+ "modelo": "claude-haiku-5-5",
+ "modelo_respuesta": "claude-haiku-5-5",
+ "prompt": "extraccion_v4",
+ "request_id": "req_011CgCbfwQPWf8EareoBfHQo",
+ "salida": {
+  "dispositivos": [
+   {
+    "cita": "hay un montón de topes",
+    "tipo": "tope"
+   }
+  ],
+  "hechos": [
+   {
+    "campo": "entorno.iluminacion",
+    "cita": "ya oscureciendo",
+    "persona": -1,
+    "valor": "atardecer",
+    "vehiculo": -1
+   },
+   {
+    "campo": "vehiculo.velocidad_kmh",
+    "cita": "como a 30",
+    "persona": -1,
+    "valor": "30",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.frenado",
+    "cita": "Frené",
+    "persona": -1,
+    "valor": "true",
+    "vehiculo": 0
+   },
+   {
+    "campo": "evento.tipo",
+    "cita": "alcancé a darle con el espejo",
+    "persona": -1,
+    "valor": "impacto_vehiculo_persona",
+    "vehiculo": -1
+   },
+   {
+    "campo": "evidencias.distancia_proyeccion_m",
+    "cita": "ella cayó como a un metro",
+    "persona": -1,
+    "valor": "1",
+    "vehiculo": -1
+   }
+  ],
+  "personas": [
+   {
+    "cita": "Iba por la avenida Carranza",
+    "rol": "conductor",
+    "vehiculo": 0
+   },
+   {
+    "cita": "una muchacha salió de entre dos carros estacionados",
+    "rol": "peaton",
+    "vehiculo": -1
+   }
+  ],
+  "preguntas": [
+   "¿La muchacha cruzaba la calle o caminaba junto a los carros estacionados al momento del impacto?",
+   "¿Qué parte del vehículo tuvo contacto con la muchacha, el costado o el frente?"
+  ],
+  "vehiculos": [
+   {
+    "narrador": true
+   }
+  ]
+ },
+ "texto_sha256": "1365cebbc03979c787ddb051a71690c9bd808ea1acbc00ecfce19db4cee06966",
+ "usage": {
+  "cache_creation_input_tokens": 0,
+  "cache_read_input_tokens": 7350,
+  "input_tokens": 161,
+  "output_tokens": 2187
+ }
+}

@@ -1,0 +1,96 @@
+{
+ "costo_estimado_con": "claude-sonnet-5-5",
+ "costo_usd": 0.00677,
+ "esfuerzo": "medium",
+ "grabado": "2026-10-19T22:00:11+00:00",
+ "huella_prompt": "613dc7f7bc958502",
+ "latencia_ms": 4046.1,
+ "modelo": "claude-sonnet-5-5",
+ "modelo_respuesta": "claude-sonnet-5-5",
+ "prompt": "extraccion_v4",
+ "request_id": "req_011CgCM7FbE1vWxN9EnL5j3b",
+ "salida": {
+  "dispositivos": [
+   {
+    "cita": "tope",
+    "tipo": "tope"
+   }
+  ],
+  "hechos": [
+   {
+    "campo": "vehiculo.clase",
+    "cita": "motociclista",
+    "persona": -1,
+    "valor": "motocicleta",
+    "vehiculo": 1
+   },
+   {
+    "campo": "evento.tipo",
+    "cita": "se me estampó en la cajuela",
+    "persona": -1,
+    "valor": "impacto_vehiculo_vehiculo",
+    "vehiculo": -1
+   },
+   {
+    "campo": "vehiculo.zona_impacto",
+    "cita": "en la cajuela",
+    "persona": -1,
+    "valor": "B",
+    "vehiculo": 0
+   },
+   {
+    "campo": "vehiculo.zona_impacto",
+    "cita": "se me estampó",
+    "persona": -1,
+    "valor": "F",
+    "vehiculo": 1
+   },
+   {
+    "campo": "vehiculo.frenado",
+    "cita": "frené",
+    "persona": -1,
+    "valor": "true",
+    "vehiculo": 0
+   },
+   {
+    "campo": "persona.casco",
+    "cita": "Iba sin casco",
+    "persona": 1,
+    "valor": "false",
+    "vehiculo": -1
+   }
+  ],
+  "personas": [
+   {
+    "cita": "me",
+    "rol": "conductor",
+    "vehiculo": 0
+   },
+   {
+    "cita": "Un motociclista",
+    "rol": "motociclista",
+    "vehiculo": 1
+   }
+  ],
+  "preguntas": [
+   "¿A qué velocidad aproximada iba cada vehículo?",
+   "¿Qué tipo de vía era y cuántos carriles tenía?",
+   "¿Qué tan cerca venía la moto cuando frenaste?"
+  ],
+  "vehiculos": [
+   {
+    "narrador": true
+   },
+   {
+    "narrador": false
+   }
+  ]
+ },
+ "texto_sha256": "67c0c74c2bb439168c59f4a4ade592e5253db1629b7e7d22bf7d1b15a7fc5a38",
+ "usage": {
+  "cache_creation_input_tokens": 0,
+  "cache_read_input_tokens": 7350,
+  "input_tokens": 55,
+  "output_tokens": 519
+ }
+}

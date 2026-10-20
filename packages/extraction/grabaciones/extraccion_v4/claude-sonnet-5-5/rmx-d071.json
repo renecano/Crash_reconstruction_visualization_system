@@ -1,0 +1,77 @@
+{
+ "costo_estimado_con": "claude-sonnet-5-5",
+ "costo_usd": 0.005844,
+ "esfuerzo": "medium",
+ "grabado": "2026-10-19T22:01:45+00:00",
+ "huella_prompt": "613dc7f7bc958502",
+ "latencia_ms": 3178.1,
+ "modelo": "claude-sonnet-5-5",
+ "modelo_respuesta": "claude-sonnet-5-5",
+ "prompt": "extraccion_v4",
+ "request_id": "req_011CgCMEFPktUkV15utu58vq",
+ "salida": {
+  "dispositivos": [
+   {
+    "cita": "semáforo",
+    "tipo": "semaforo"
+   }
+  ],
+  "hechos": [
+   {
+    "campo": "lugar.tipo_via",
+    "cita": "En el crucero de Venustiano Carranza y Nazario Ortiz",
+    "persona": -1,
+    "valor": "interseccion",
+    "vehiculo": -1
+   },
+   {
+    "campo": "vehiculo.clase",
+    "cita": "combi",
+    "persona": -1,
+    "valor": "microbus_combi",
+    "vehiculo": 1
+   },
+   {
+    "campo": "evento.tipo",
+    "cita": "me dio en el costado izquierdo",
+    "persona": -1,
+    "valor": "impacto_vehiculo_vehiculo",
+    "vehiculo": -1
+   },
+   {
+    "campo": "vehiculo.zona_impacto",
+    "cita": "costado izquierdo",
+    "persona": -1,
+    "valor": "L",
+    "vehiculo": 0
+   }
+  ],
+  "personas": [
+   {
+    "cita": "me dio",
+    "rol": "conductor",
+    "vehiculo": 0
+   }
+  ],
+  "preguntas": [
+   "¿En qué sentido circulaba cada vehículo al llegar al cruce?",
+   "¿A qué velocidad aproximada iban ambos vehículos?",
+   "¿Qué color tenía el semáforo para quien narra?"
+  ],
+  "vehiculos": [
+   {
+    "narrador": true
+   },
+   {
+    "narrador": false
+   }
+  ]
+ },
+ "texto_sha256": "7417eaf302ba39047bdf7932e6be3ceb62c9266c1396c77c1a0fcc81b285fe64",
+ "usage": {
+  "cache_creation_input_tokens": 0,
+  "cache_read_input_tokens": 7350,
+  "input_tokens": 62,
+  "output_tokens": 425
+ }
+}
