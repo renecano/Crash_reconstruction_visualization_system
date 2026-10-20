@@ -17,7 +17,11 @@ export default function DemoPagina({ lang }: { lang: Lang }) {
             </Link>
           </p>
         </CabeceraPagina>
-        <DemoApp casos={datos.casos as CasoDemo[]} metodo={datos.metodo} fuente={datos.fuente} />
+        <DemoApp
+          casos={datos.casos as CasoDemo[]}
+          fuente={lang === "es" ? datos.fuente : datos.fuente_en}
+          metodo={lang === "es" ? datos.metodo : datos.metodo_en}
+        />
       </div>
     </Marco>
   );

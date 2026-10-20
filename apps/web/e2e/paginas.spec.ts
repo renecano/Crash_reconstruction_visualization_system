@@ -62,7 +62,7 @@ test("recorrido técnico: E1–E9 con sus gráficas, la mejor marcada y el enlac
   await page.goto("/recorrido");
   for (const e of recorrido.evaluaciones) {
     const sec = page.locator(`section#${e.id}`);
-    await expect(sec.getByRole("heading", { level: 2 })).toHaveText(e.titulo);
+    await expect(sec.getByRole("heading", { level: 2 })).toHaveText(e.titulo.es);
     for (const f of e.fuentes)
       await expect(sec.getByRole("link", { name: f.archivo })).toBeVisible();
   }

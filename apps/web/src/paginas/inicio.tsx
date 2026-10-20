@@ -7,12 +7,12 @@ import type { Lang } from "@/i18n";
 import type { Pregunta } from "@/lib/relato-api";
 
 interface Barra {
-  etiqueta: string;
+  etiqueta: { es: string };
   valor: number;
 }
 interface Grafica {
   barras?: Barra[];
-  grupos?: { grupo: string; barras: Barra[] }[];
+  grupos?: { grupo: { es: string }; barras: Barra[] }[];
 }
 
 /** Una cifra de una evaluación por su etiqueta; si no está, el build falla (nada se inventa). */
@@ -20,9 +20,9 @@ function cifra(id: string, etiqueta: string, grupo?: string): number {
   const e = recorrido.evaluaciones.find((x) => x.id === id);
   const g = (e?.graficas ?? []) as Grafica[];
   const barras = grupo
-    ? g.flatMap((x) => x.grupos ?? []).find((x) => x.grupo.startsWith(grupo))?.barras
+    ? g.flatMap((x) => x.grupos ?? []).find((x) => x.grupo.es.startsWith(grupo))?.barras
     : g[0]?.barras;
-  const b = barras?.find((x) => x.etiqueta === etiqueta);
+  const b = barras?.find((x) => x.etiqueta.es === etiqueta);
   if (!b)
     throw new Error(`Falta ${etiqueta}${grupo ? ` (${grupo})` : ""} en ${id} de recorrido.json`);
   return b.valor;

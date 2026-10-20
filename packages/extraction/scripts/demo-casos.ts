@@ -94,7 +94,10 @@ const doc = {
   _generado_por: "pnpm --filter @croquis/extraction demo (scripts/demo-casos.ts)",
   fuente:
     "Relatos-MX, partición de desarrollo: relatos sintéticos escritos por agentes de IA (data/relatos-mx)",
+  fuente_en:
+    "Relatos-MX, development split: synthetic narratives written by AI agents (data/relatos-mx)",
   metodo: `${MODEL}, prompt ${PROMPT_VERSION}, respuesta grabada (sin llamar a la API)`,
+  metodo_en: `${MODEL}, prompt ${PROMPT_VERSION}, recorded response (no API call)`,
   casos,
 };
 /**
