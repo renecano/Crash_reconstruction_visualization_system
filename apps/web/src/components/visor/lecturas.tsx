@@ -40,7 +40,16 @@ export function useClockState(clock: ViewerClock | null): TimelineState | null {
   );
 }
 
-export function Lecturas({ clock, resultado }: { clock: ViewerClock; resultado: Resultado }) {
+export function Lecturas({
+  clock,
+  resultado,
+  lado = "izquierda",
+}: {
+  clock: ViewerClock;
+  resultado: Resultado;
+  /** Esquina donde va el panel (en la portada, a la derecha: el texto ocupa la izquierda). */
+  lado?: "izquierda" | "derecha";
+}) {
   const t = useTextos(T);
   const state = useClockState(clock);
   if (!state) return null;
@@ -50,7 +59,9 @@ export function Lecturas({ clock, resultado }: { clock: ViewerClock; resultado: 
     <section
       aria-label={t.etiqueta}
       data-testid="lecturas"
-      className="vidrio pointer-events-none absolute top-3 left-3 flex max-w-[calc(100%-1.5rem)] flex-wrap gap-x-6 gap-y-2 px-4 py-3"
+      className={`vidrio pointer-events-none absolute top-3 flex max-w-[calc(100%-1.5rem)] flex-wrap gap-x-6 gap-y-2 px-4 py-3 ${
+        lado === "derecha" ? "right-3" : "left-3"
+      }`}
     >
       {vehiculos.map((v) => {
         const r = inc.get(v.id)?.delta_v_kmh;

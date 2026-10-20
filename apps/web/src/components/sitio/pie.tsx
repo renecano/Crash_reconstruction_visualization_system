@@ -9,7 +9,10 @@ export function Pie({ lang }: { lang: Lang }) {
   const t = dict(lang).sitio;
   const r = (p: string) => ruta(lang, p);
   return (
-    <footer className="pagina mt-auto border-t border-linea pt-12 pb-16" data-testid="pie">
+    <footer
+      className="pagina relative z-20 mt-auto border-t border-linea bg-fondo pt-12 pb-16"
+      data-testid="pie"
+    >
       <div className="grid gap-10 md:grid-cols-12">
         <div className="flex flex-col gap-4 md:col-span-5">
           <Logotipo ancho={160} alt="Croquis" />
