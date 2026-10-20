@@ -5,6 +5,17 @@ Reglas de trabajo: `CLAUDE.md`. Especificación: `PLAN.md`.
 
 ## Estado actual
 
+- **Fase actual: F11a — experiencia y diseño** (PLAN §11, iniciada el 2026-10-19; rama `feat/f11a-diseno`).
+  - **Plan:** `docs/design/plan.md`, con la revisión contra lo genérico. Las decisiones van en el ADR 0045.
+  - **Orden de trabajo:**
+    1. base: tokens desde `assets/brand/tokens.json`, Anybody autoalojada, marca, íconos, imagen para redes, encabezado, pie e idioma;
+    2. flujo guiado `/cuenta` y visor;
+    3. portada con cámara por scroll, capa de croquis, revelado y control de velocidad;
+    4. demo, recorrido, `/e9`, `/medicion` e historia;
+    5. pruebas (e2e escritorio y celular, capturas, axe y movimiento reducido), crítica con capturas, revisión independiente, Lighthouse, LCP y CLS, y E6;
+    6. despliegue y la nota «listo para E9».
+  - **Interpretación registrada:** `/medicion` es una página para medir E6 en el navegador de la computadora de demo; PLAN §11.5 la nombra pero no la define.
+  - **Necesita a René:** la prueba piloto informal con una persona, porque requiere a alguien real.
 - **Fase actual: F11** (ver PLAN §13). F10 quedó cerrada el 2026-10-18 (#42 a #46): E5 publicado (test corrido una vez) y la galería con fotos reales. F9 quedó cerrada el 2026-10-17 (#25 a #41): demo sin red, E7 y E8 en verde y todas las exportaciones. F8 se cerró el mismo día (#20 a #24, E6 cumple).
 - **Pendientes físicos de F7:** hechos. El pendiente 1 (test CISS de Relatos-MX y prompt v2) quedó hecho el 2026-10-14 (PR #11, ADR 0012).
 - **Rigidez lateral, hecha** (PR #12, ADR 0013). Sale de 1,265 pruebas de barrera móvil de NHTSA. En el test de E3, el error en costados baja de 11.04 a 8.51 km/h.

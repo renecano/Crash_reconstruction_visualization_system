@@ -268,6 +268,9 @@ importers:
       '@eslint/js':
         specifier: 'catalog:'
         version: 10.0.1(eslint@10.12.0(jiti@2.7.0))
+      '@fontsource-variable/anybody':
+        specifier: 5.3.0
+        version: 5.3.0
       esbuild:
         specifier: 0.28.2
         version: 0.28.2
@@ -301,6 +304,9 @@ importers:
       '@croquis/viewer':
         specifier: workspace:*
         version: link:../../packages/viewer
+      '@fontsource-variable/anybody':
+        specifier: 5.3.0
+        version: 5.3.0
       next:
         specifier: 16.4.0
         version: 16.4.0(@babel/core@7.29.7)(@playwright/test@1.64.0)(@types/node@24.19.2)(react-dom@19.3.0(react@19.3.0))(react@19.3.0)
@@ -1000,6 +1006,9 @@ packages:
     peerDependenciesMeta:
       '@noble/hashes':
         optional: true
+
+  '@fontsource-variable/anybody@5.3.0':
+    resolution: {integrity: sha512-3u/FSV3mGv9xW3x+CdK9lAZYT1Y3NaRA1bexeoIuk9s5QE8sD8OOTcofvpPx0Z6M0Fq1WAJ06ZAw8hivdRQWHQ==}
 
   '@humanfs/core@0.19.2':
     resolution: {integrity: sha512-UhXNm+CFMWcbChXywFwkmhqjs3PRCmcSa/hfBgLIb7oQ5HNb1wS0icWsGtSAUNgefHeI+eBrA8I1fxmbHsGdvA==}
@@ -4147,6 +4156,8 @@ snapshots:
   '@exodus/bytes@1.16.0(@noble/hashes@2.4.0)':
     optionalDependencies:
       '@noble/hashes': 2.4.0
+
+  '@fontsource-variable/anybody@5.3.0': {}
 
   '@humanfs/core@0.19.2':
     dependencies:
