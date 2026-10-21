@@ -1,0 +1,204 @@
+{
+  "ruta": "/",
+  "accesibilidad": 100,
+  "rendimiento": 58,
+  "lcp_ms": 2332,
+  "cls": 0,
+  "tbt_ms": 28247,
+  "fcp_ms": 1232,
+  "carga_mb": 0.5,
+  "elemento_lcp": "<img src=\"/marca/logotipo-efectos.svg\" width=\"420\" height=\"66\" alt=\"Croquis\" class=\"h-auto w-[min(78vw,420px)]\" decoding=\"async\" fetchpriority=\"high\">",
+  "accesibilidad_fallas": [],
+  "lighthouse": "13.5.0",
+  "benchmark_index": 901.5,
+  "corriente": "ca",
+  "entorno": {
+    "formFactor": "mobile",
+    "throttlingMethod": "devtools",
+    "throttling": {
+      "rttMs": 150,
+      "throughputKbps": 1638.4,
+      "requestLatencyMs": 562.5,
+      "downloadThroughputKbps": 1474.5600000000002,
+      "uploadThroughputKbps": 675,
+      "cpuSlowdownMultiplier": 4
+    }
+  },
+  "cumple": {
+    "accesibilidad": true,
+    "lcp": true,
+    "cls": true,
+    "carga": true
+  },
+  "lantern": {
+    "lcp_ms": 6787,
+    "fcp_ms": 1081,
+    "tbt_ms": 17269,
+    "cls": 0,
+    "rendimiento": 39,
+    "lcp_cumpliria": false
+  },
+  "corridas": {
+    "devtools": [
+      {
+        "accesibilidad": 100,
+        "rendimiento": 36,
+        "lcp_ms": 4731,
+        "cls": 0,
+        "tbt_ms": 32271,
+        "fcp_ms": 3665,
+        "carga_mb": 0.71,
+        "elemento_lcp": "<img src=\"/marca/logotipo-efectos.svg\" width=\"420\" height=\"66\" alt=\"Croquis\" class=\"h-auto w-[min(78vw,420px)]\" decoding=\"async\" fetchpriority=\"high\">",
+        "accesibilidad_fallas": [],
+        "lighthouse": "13.5.0",
+        "benchmark_index": 718,
+        "corriente": "ca",
+        "entorno": {
+          "formFactor": "mobile",
+          "throttlingMethod": "devtools",
+          "throttling": {
+            "rttMs": 150,
+            "throughputKbps": 1638.4,
+            "requestLatencyMs": 562.5,
+            "downloadThroughputKbps": 1474.5600000000002,
+            "uploadThroughputKbps": 675,
+            "cpuSlowdownMultiplier": 4
+          }
+        }
+      },
+      {
+        "accesibilidad": 100,
+        "rendimiento": 60,
+        "lcp_ms": 2093,
+        "cls": 0,
+        "tbt_ms": 24558,
+        "fcp_ms": 1210,
+        "carga_mb": 0.52,
+        "elemento_lcp": "<img src=\"/marca/logotipo-efectos.svg\" width=\"420\" height=\"66\" alt=\"Croquis\" class=\"h-auto w-[min(78vw,420px)]\" decoding=\"async\" fetchpriority=\"high\">",
+        "accesibilidad_fallas": [],
+        "lighthouse": "13.5.0",
+        "benchmark_index": 1070,
+        "corriente": "ca",
+        "entorno": {
+          "formFactor": "mobile",
+          "throttlingMethod": "devtools",
+          "throttling": {
+            "rttMs": 150,
+            "throughputKbps": 1638.4,
+            "requestLatencyMs": 562.5,
+            "downloadThroughputKbps": 1474.5600000000002,
+            "uploadThroughputKbps": 675,
+            "cpuSlowdownMultiplier": 4
+          }
+        }
+      },
+      {
+        "accesibilidad": 100,
+        "rendimiento": 58,
+        "lcp_ms": 2332,
+        "cls": 0,
+        "tbt_ms": 28247,
+        "fcp_ms": 1232,
+        "carga_mb": 0.5,
+        "elemento_lcp": "<img src=\"/marca/logotipo-efectos.svg\" width=\"420\" height=\"66\" alt=\"Croquis\" class=\"h-auto w-[min(78vw,420px)]\" decoding=\"async\" fetchpriority=\"high\">",
+        "accesibilidad_fallas": [],
+        "lighthouse": "13.5.0",
+        "benchmark_index": 901.5,
+        "corriente": "ca",
+        "entorno": {
+          "formFactor": "mobile",
+          "throttlingMethod": "devtools",
+          "throttling": {
+            "rttMs": 150,
+            "throughputKbps": 1638.4,
+            "requestLatencyMs": 562.5,
+            "downloadThroughputKbps": 1474.5600000000002,
+            "uploadThroughputKbps": 675,
+            "cpuSlowdownMultiplier": 4
+          }
+        }
+      }
+    ],
+    "simulate": [
+      {
+        "accesibilidad": 100,
+        "rendimiento": 39,
+        "lcp_ms": 6787,
+        "cls": 0,
+        "tbt_ms": 17269,
+        "fcp_ms": 1081,
+        "carga_mb": 1.22,
+        "elemento_lcp": "<img src=\"/marca/logotipo-efectos.svg\" width=\"420\" height=\"66\" alt=\"Croquis\" class=\"h-auto w-[min(78vw,420px)]\" decoding=\"async\" fetchpriority=\"high\">",
+        "accesibilidad_fallas": [],
+        "lighthouse": "13.5.0",
+        "benchmark_index": 971.5,
+        "corriente": "ca",
+        "entorno": {
+          "formFactor": "mobile",
+          "throttlingMethod": "simulate",
+          "throttling": {
+            "rttMs": 150,
+            "throughputKbps": 1638.4,
+            "requestLatencyMs": 562.5,
+            "downloadThroughputKbps": 1474.5600000000002,
+            "uploadThroughputKbps": 675,
+            "cpuSlowdownMultiplier": 4
+          }
+        }
+      },
+      {
+        "accesibilidad": 100,
+        "rendimiento": 43,
+        "lcp_ms": 6392,
+        "cls": 0,
+        "tbt_ms": 18985,
+        "fcp_ms": 1177,
+        "carga_mb": 1.22,
+        "elemento_lcp": "<img src=\"/marca/logotipo-efectos.svg\" width=\"420\" height=\"66\" alt=\"Croquis\" class=\"h-auto w-[min(78vw,420px)]\" decoding=\"async\" fetchpriority=\"high\">",
+        "accesibilidad_fallas": [],
+        "lighthouse": "13.5.0",
+        "benchmark_index": 1082,
+        "corriente": "ca",
+        "entorno": {
+          "formFactor": "mobile",
+          "throttlingMethod": "simulate",
+          "throttling": {
+            "rttMs": 150,
+            "throughputKbps": 1638.4,
+            "requestLatencyMs": 562.5,
+            "downloadThroughputKbps": 1474.5600000000002,
+            "uploadThroughputKbps": 675,
+            "cpuSlowdownMultiplier": 4
+          }
+        }
+      },
+      {
+        "accesibilidad": 100,
+        "rendimiento": 38,
+        "lcp_ms": 7237,
+        "cls": 0,
+        "tbt_ms": 19340,
+        "fcp_ms": 1296,
+        "carga_mb": 2.8,
+        "elemento_lcp": "<img src=\"/marca/logotipo-efectos.svg\" width=\"420\" height=\"66\" alt=\"Croquis\" class=\"h-auto w-[min(78vw,420px)]\" decoding=\"async\" fetchpriority=\"high\">",
+        "accesibilidad_fallas": [],
+        "lighthouse": "13.5.0",
+        "benchmark_index": 923.5,
+        "corriente": "ca",
+        "entorno": {
+          "formFactor": "mobile",
+          "throttlingMethod": "simulate",
+          "throttling": {
+            "rttMs": 150,
+            "throughputKbps": 1638.4,
+            "requestLatencyMs": 562.5,
+            "downloadThroughputKbps": 1474.5600000000002,
+            "uploadThroughputKbps": 675,
+            "cpuSlowdownMultiplier": 4
+          }
+        }
+      }
+    ]
+  },
+  "corridas_fallidas": []
+}
