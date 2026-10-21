@@ -58,3 +58,6 @@ apps/web/src/data/portada.json
 
 # Tramo de OSM precargado para la demo de CESVI (data/cesvi/scripts/tramo.mjs)
 data/cesvi/casos/*-tramo.json
+
+# Maquetas del rediseño de /cesvi, tal como las entregó René (ADR 0054)
+docs/cesvi/rediseno/

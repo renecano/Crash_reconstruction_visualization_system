@@ -167,12 +167,65 @@ function poseEn(v: VersionCroquis, letra: "A" | "B", t: number): Pose {
 const poligono = (p: Pose, m: Medidas): [number, number][] =>
   rectanguloVehiculo(p.punto, p.rumbo, m.largo, m.ancho);
 
+/** Ancho de la banda de la zona de restos en el mapa (ilustrativo; el dictamen da su largo). */
+const ANCHO_RESTOS_M = 1.6;
+
+/** La zona de restos como banda (rayada en el mapa), o nada si mide menos de 5 cm. */
+function bandaRestos(inicio: LonLat, fin: LonLat): Feature | null {
+  const d = distanciaM(inicio, fin);
+  if (d < 0.05) return null;
+  const centro: LonLat = [(inicio[0] + fin[0]) / 2, (inicio[1] + fin[1]) / 2];
+  return {
+    type: "Feature",
+    properties: { tipo: "restos" },
+    geometry: {
+      type: "Polygon",
+      coordinates: [rectanguloVehiculo(centro, rumboDeg(inicio, fin), d, ANCHO_RESTOS_M)],
+    },
+  };
+}
+
+/** El recorrido de cada vehículo: de la posición inicial al impacto y a la final. */
+function trayectorias(v: VersionCroquis, tipo: "trayectoria" | "superpuesta"): Feature[] {
+  return (["A", "B"] as const).flatMap((letra) => {
+    const p = v.vehiculos[letra];
+    const puntos = [p.inicial.punto, p.impacto.punto, p.final.punto].filter(
+      (q, i, todos) => i === 0 || distanciaM(todos[i - 1]!, q) > 0.05,
+    );
+    if (puntos.length < 2) return [];
+    return [
+      {
+        type: "Feature",
+        properties: { tipo, letra },
+        geometry: { type: "LineString", coordinates: puntos as unknown as Position[] },
+      } satisfies Feature,
+    ];
+  });
+}
+
 function geojsonCompleto(
   v: VersionCroquis,
   medidas: Record<"A" | "B", Medidas>,
   sel: Seleccion | null,
+  superpuesta: VersionCroquis | null,
 ) {
   const features: Feature[] = [];
+  if (superpuesta) {
+    features.push(...trayectorias(superpuesta, "superpuesta"));
+    for (const letra of ["A", "B"] as const) {
+      features.push({
+        type: "Feature",
+        properties: { tipo: "superpuesta", letra },
+        geometry: {
+          type: "Polygon",
+          coordinates: [poligono(superpuesta.vehiculos[letra].final, medidas[letra])],
+        },
+      });
+    }
+  }
+  const banda = bandaRestos(v.restos.inicio, v.restos.fin);
+  if (banda) features.push(banda);
+  features.push(...trayectorias(v, "trayectoria"));
   for (const letra of ["A", "B"] as const) {
     for (const fase of FASES) {
       const elegida = sel?.tipo === "pose" && sel.letra === letra && sel.fase === fase;
@@ -186,40 +239,48 @@ function geojsonCompleto(
       });
     }
   }
-  features.push({
-    type: "Feature",
-    properties: { tipo: "restos" },
-    geometry: {
-      type: "LineString",
-      coordinates: [v.restos.inicio, v.restos.fin] as unknown as Position[],
-    },
-  });
   return { type: "FeatureCollection" as const, features };
 }
 
 function geojsonAnimado(v: VersionCroquis, medidas: Record<"A" | "B", Medidas>, t: number) {
-  const features: Feature[] = (["A", "B"] as const).map((letra) => ({
-    type: "Feature",
-    properties: { tipo: "vehiculo", letra, fase: "final", elegida: false },
-    geometry: { type: "Polygon", coordinates: [poligono(poseEn(v, letra, t), medidas[letra])] },
-  }));
+  const features: Feature[] = [];
   // Los restos aparecen con el impacto y crecen con el desplazamiento.
   if (t >= 0.5) {
     const f = Math.min(1, (t - 0.5) / 0.5);
-    const fin: [number, number] = [
+    const fin: LonLat = [
       v.restos.inicio[0] + (v.restos.fin[0] - v.restos.inicio[0]) * f,
       v.restos.inicio[1] + (v.restos.fin[1] - v.restos.inicio[1]) * f,
     ];
+    const banda = bandaRestos(v.restos.inicio, fin);
+    if (banda) features.push(banda);
+  }
+  features.push(...trayectorias(v, "trayectoria"));
+  for (const letra of ["A", "B"] as const) {
     features.push({
       type: "Feature",
-      properties: { tipo: "restos" },
-      geometry: {
-        type: "LineString",
-        coordinates: [v.restos.inicio, fin] as unknown as Position[],
-      },
+      properties: { tipo: "vehiculo", letra, fase: "final", elegida: false },
+      geometry: { type: "Polygon", coordinates: [poligono(poseEn(v, letra, t), medidas[letra])] },
     });
   }
   return { type: "FeatureCollection" as const, features };
+}
+
+/** El rayado de la zona de restos (maqueta del paso 4): diagonales claras sobre transparente. */
+function rayado(color: string): { width: number; height: number; data: Uint8Array } {
+  const n = 8;
+  const data = new Uint8Array(n * n * 4);
+  const [r, g, b] = [1, 3, 5].map((i) => Number.parseInt(color.slice(i, i + 2), 16));
+  for (let y = 0; y < n; y++) {
+    for (let x = 0; x < n; x++) {
+      const k = (y * n + x) * 4;
+      const linea = (x + y) % n < 2;
+      data[k] = r!;
+      data[k + 1] = g!;
+      data[k + 2] = b!;
+      data[k + 3] = linea ? 110 : 10;
+    }
+  }
+  return { width: n, height: n, data };
 }
 
 /** Las calles de los mosaicos ya cargados a menos de `radioM` del punto (OpenMapTiles). */
@@ -251,6 +312,7 @@ export function MapaRecorrido({
   camara,
   calles,
   version,
+  superpuesta = null,
   medidas,
   nombres,
   animacion,
@@ -263,6 +325,8 @@ export function MapaRecorrido({
   camara: Camara | null;
   calles: Calle[];
   version: VersionCroquis | null;
+  /** La otra versión, punteada debajo («Superponer la declarada»). */
+  superpuesta?: VersionCroquis | null;
   medidas: Record<"A" | "B", Medidas>;
   /** «A · Silverado», «B · Tacoma». */
   nombres: Record<"A" | "B", string>;
@@ -280,7 +344,7 @@ export function MapaRecorrido({
   const mapa = useRef<MapaMl | null>(null);
   const marcas = useRef<Marker[]>([]);
   const [listo, setListo] = useState(false);
-  const coloresVehiculo = useRef({ A: "#2b8cff", B: "#a05cff", evidencia: "#ff6a1a" });
+  const coloresVehiculo = useRef({ A: "#5AA9FF", B: "#FFC24B", evidencia: "#FF5B2E" });
   // La capa de etiquetas (HTML sobre el mapa) y lo que muestra; se redibuja al mover el mapa.
   const etiquetas = useRef<ItemEtiqueta[]>([]);
   const dibujarEtiquetas = useRef<() => void>(() => {});
@@ -300,7 +364,8 @@ export function MapaRecorrido({
         style: ESTILO_MAPA,
         center: [-102.5, 23.6],
         zoom: 4,
-        attributionControl: { compact: true },
+        // La atribución va en el pie del recorrido (OpenStreetMap, OpenFreeMap, OpenMapTiles).
+        attributionControl: false,
         canvasContextAttributes: { preserveDrawingBuffer: true },
       });
       instancia.on("click", (e) => avisos.current.onClic?.([e.lngLat.lng, e.lngLat.lat]));
@@ -308,8 +373,8 @@ export function MapaRecorrido({
         if (!vivo || !instancia) return;
         const c = colores();
         const s = getComputedStyle(document.documentElement);
-        const colorA = s.getPropertyValue("--vehiculo-a").trim() || "#2b8cff";
-        const colorB = s.getPropertyValue("--vehiculo-b").trim() || "#a05cff";
+        const colorA = s.getPropertyValue("--marca-vehiculo-a").trim() || "#5AA9FF";
+        const colorB = s.getPropertyValue("--marca-vehiculo-b").trim() || "#FFC24B";
         const porVehiculo = ["match", ["get", "letra"], "A", colorA, colorB] as unknown as string;
         coloresVehiculo.current = { A: colorA, B: colorB, evidencia: c.evidencia };
         dibujarEtiquetas.current = capaDeEtiquetas(instancia, etiquetas);
@@ -323,6 +388,29 @@ export function MapaRecorrido({
           paint: { "line-color": c.texto2, "line-width": 2, "line-opacity": 0.8 },
         });
         instancia.addSource("croquis", { type: "geojson", data: vacio });
+        instancia.addImage("rayado", rayado(c.texto2.startsWith("#") ? c.texto2 : "#A4A9B3"));
+        instancia.addLayer({
+          id: "restos",
+          type: "fill",
+          source: "croquis",
+          filter: ["==", ["get", "tipo"], "restos"],
+          paint: { "fill-pattern": "rayado" },
+        });
+        instancia.addLayer({
+          id: "superpuesta",
+          type: "line",
+          source: "croquis",
+          filter: ["==", ["get", "tipo"], "superpuesta"],
+          paint: { "line-color": c.texto3, "line-width": 1.5, "line-dasharray": [3, 3] },
+        });
+        instancia.addLayer({
+          id: "trayectorias",
+          type: "line",
+          source: "croquis",
+          filter: ["==", ["get", "tipo"], "trayectoria"],
+          layout: { "line-cap": "round", "line-join": "round" },
+          paint: { "line-color": porVehiculo, "line-width": 3, "line-opacity": 0.85 },
+        });
         instancia.addLayer({
           id: "vehiculos",
           type: "fill",
@@ -330,7 +418,7 @@ export function MapaRecorrido({
           filter: ["==", ["get", "tipo"], "vehiculo"],
           paint: {
             "fill-color": porVehiculo,
-            "fill-opacity": ["match", ["get", "fase"], "final", 0.7, "impacto", 0.35, 0.15],
+            "fill-opacity": ["match", ["get", "fase"], "final", 0.95, "impacto", 0.3, 0],
           },
         });
         instancia.addLayer({
@@ -339,23 +427,17 @@ export function MapaRecorrido({
           source: "croquis",
           filter: ["==", ["get", "tipo"], "vehiculo"],
           paint: {
-            "line-color": ["case", ["get", "elegida"], c.accion, porVehiculo] as unknown as string,
-            "line-width": ["case", ["get", "elegida"], 3, 1.5] as unknown as number,
+            "line-color": ["case", ["get", "elegida"], c.texto, porVehiculo] as unknown as string,
+            "line-width": ["case", ["get", "elegida"], 2.5, 1.5] as unknown as number,
+            "line-opacity": ["match", ["get", "fase"], "final", 1, 0.75],
             "line-dasharray": [
               "match",
               ["get", "fase"],
               "inicial",
-              ["literal", [2, 2]],
+              ["literal", [2.5, 2]],
               ["literal", [1, 0]],
             ],
           },
-        });
-        instancia.addLayer({
-          id: "restos",
-          type: "line",
-          source: "croquis",
-          filter: ["==", ["get", "tipo"], "restos"],
-          paint: { "line-color": c.evidencia, "line-width": 4, "line-dasharray": [1, 1] },
         });
         mapa.current = instancia;
         setListo(true);
@@ -419,10 +501,46 @@ export function MapaRecorrido({
       version === null
         ? vacio
         : animacion === null
-          ? geojsonCompleto(version, medidas, seleccion)
+          ? geojsonCompleto(version, medidas, seleccion, superpuesta)
           : geojsonAnimado(version, medidas, animacion),
     );
-  }, [listo, calles, version, medidas, animacion, seleccion]);
+  }, [listo, calles, version, superpuesta, medidas, animacion, seleccion]);
+
+  // La X del impacto (con su resplandor) y la medida de la zona de restos, cuando no se edita: en
+  // la edición, la X es el punto que se arrastra.
+  const fijos = useRef<Marker[]>([]);
+  useEffect(() => {
+    const m = mapa.current;
+    for (const mk of fijos.current) mk.remove();
+    fijos.current = [];
+    if (!m || !listo || !version) return;
+    let vivo = true;
+    void import("maplibre-gl").then(({ Marker }) => {
+      if (!vivo) return;
+      const editando = edicion !== null && animacion === null;
+      if (!editando && (animacion === null || animacion >= 0.5)) {
+        const x = marcador("✕", "punto-mapa punto-impacto");
+        x.setAttribute("aria-hidden", "true");
+        x.style.pointerEvents = "none";
+        fijos.current.push(new Marker({ element: x }).setLngLat(version.impacto.punto).addTo(m));
+      }
+      const d = distanciaM(version.restos.inicio, version.restos.fin);
+      if (animacion === null && d >= 0.05) {
+        const medio: LonLat = [
+          (version.restos.inicio[0] + version.restos.fin[0]) / 2,
+          (version.restos.inicio[1] + version.restos.fin[1]) / 2,
+        ];
+        const el = marcador(`${d.toFixed(2)} m`, "pildora-medida");
+        el.dataset.testid = "medida-restos";
+        fijos.current.push(
+          new Marker({ element: el, offset: [-64, 0] }).setLngLat([medio[0], medio[1]]).addTo(m),
+        );
+      }
+    });
+    return () => {
+      vivo = false;
+    };
+  }, [listo, version, edicion, animacion]);
 
   // Las etiquetas: el nombre de cada vehículo («A · Silverado», también mientras se anima) y, al
   // editar, una por marca («A · final», «✕ impacto», «R1 restos»). Van en dos columnas con una

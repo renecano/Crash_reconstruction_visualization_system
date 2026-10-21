@@ -49,7 +49,10 @@ import {
   PasoNumeros,
   PasoSugerencia,
   PasoVersiones,
+  Leyenda,
+  Reproductor,
 } from "./pasos";
+import { ProveedorRecorrido } from "./marco";
 import { PanelDetalle } from "./piezas";
 
 const PASOS = [
@@ -61,6 +64,18 @@ const PASOS = [
   "Los números",
   "La sugerencia",
   "El dictamen",
+] as const;
+
+/** Los nombres de la barra de pasos, cortos para que quepan en una fila (maquetas). */
+const PASOS_CORTOS = [
+  "Caso",
+  "Narración",
+  "Lugar",
+  "Versiones",
+  "Daños",
+  "Números",
+  "Sugerencia",
+  "Dictamen",
 ] as const;
 
 const DURACION_ANIMACION_MS = 4500;
@@ -77,20 +92,22 @@ const NOMBRE_VERSION: Record<ClaveVersion, string> = {
   evidencia: "versión de la evidencia",
 };
 
-/** Lo elegido en el mapa, en palabras: «A · Silverado · posición final · versión declarada». */
+/** Lo elegido en el mapa, en palabras: «B · Tacoma · posición inicial» y su versión. */
 function describirSeleccion(
   s: Seleccion,
   nombres: Record<"A" | "B", string>,
   version: ClaveVersion,
-): { texto: string; letra: "A" | "B" | null } {
-  const que =
+): { titulo: string; detalle: string; letra: "A" | "B" | null } {
+  const titulo =
     s.tipo === "pose"
       ? `${nombres[s.letra]} · ${NOMBRE_FASE[s.fase]}`
       : s.tipo === "impacto"
         ? "Punto de impacto (✕)"
         : `Zona de restos · ${s.extremo === "inicio" ? "inicio (R1)" : "fin (R2)"}`;
+  const v = NOMBRE_VERSION[version];
   return {
-    texto: `${que} · ${NOMBRE_VERSION[version]}`,
+    titulo,
+    detalle: `${v[0]!.toUpperCase()}${v.slice(1)} · arrastra el punto para moverlo`,
     letra: s.tipo === "pose" ? s.letra : null,
   };
 }
@@ -241,23 +258,33 @@ export function Recorrido({ caso, reproduccion }: { caso: CasoCesvi; reproduccio
     });
   };
 
-  // La animación de la versión a la vista (paso 4).
+  // La animación de la versión a la vista (paso 4): se reproduce desde un momento, se pausa y
+  // se fija con la línea de tiempo. `animacion` null es la versión completa (y editable).
   const id = useRef(0);
-  const animar = useCallback(() => {
+  const [reproduciendo, setReproduciendo] = useState(false);
+  const animar = useCallback((desde = 0) => {
+    cancelAnimationFrame(id.current);
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
       setAnimacion(null);
+      setReproduciendo(false);
       return;
     }
-    const inicio = performance.now();
+    const inicio = performance.now() - desde * DURACION_ANIMACION_MS;
     const cuadro = (ahora: number) => {
       const t = Math.min(1, (ahora - inicio) / DURACION_ANIMACION_MS);
       setAnimacion(t < 1 ? t : null);
       if (t < 1) id.current = requestAnimationFrame(cuadro);
+      else setReproduciendo(false);
     };
-    cancelAnimationFrame(id.current);
+    setReproduciendo(true);
     id.current = requestAnimationFrame(cuadro);
   }, []);
+  const pausar = useCallback(() => {
+    cancelAnimationFrame(id.current);
+    setReproduciendo(false);
+  }, []);
   useEffect(() => () => cancelAnimationFrame(id.current), []);
+  const [superponer, setSuperponer] = useState(true);
   const version = versiones?.[activa] ?? null;
   const restosM = version ? distanciaM(version.restos.inicio, version.restos.fin) : null;
 
@@ -451,14 +478,14 @@ export function Recorrido({ caso, reproduccion }: { caso: CasoCesvi; reproduccio
       setPaso(destino);
       // La animación corre al entrar al paso 4 (y al cambiar de versión); fuera de él se detiene.
       if (destino === 3) animar();
-      else cancelAnimationFrame(id.current);
+      else pausar();
       if (destino === 1 && !leido.current) {
         leido.current = true;
         void leerConIa();
       }
       if (destino === 7) void generarPdf();
     },
-    [leerConIa, generarPdf, animar],
+    [leerConIa, generarPdf, animar, pausar],
   );
 
   // Teclado: ← y → cambian de paso (salvo mientras se escribe en un campo).
@@ -477,10 +504,10 @@ export function Recorrido({ caso, reproduccion }: { caso: CasoCesvi; reproduccio
   const frase = [
     `Siniestro ${caso.id} de ${caso.aseguradora}: alcance entre una ${caso.vehiculos.A.tipo} y una ${caso.vehiculos.B.tipo}; el conductor de A declara una reversa.`,
     "Croquis lee la declaración: subraya cada frase, la convierte en datos y pregunta lo que falta.",
-    `El lugar: km ${caso.lugar.kilometro}, tramo Los Mochis–Navojoa. Marca el punto de impacto sobre la carretera federal 15.`,
+    "Tramo Los Mochis–Navojoa de la carretera federal 15. Marca el punto de impacto: las calles salen del mapa, sin esperar.",
     activa === "declarada"
-      ? `Versión declarada: A retrocede ${reversaDibujada} m y B lo impacta; sin desplazamiento después.`
-      : `Versión de la evidencia: B alcanza a A y la desplaza; los restos cubren ${caso.evidencia.restos.distancia_m.valor} m.`,
+      ? `Versión declarada: ${nombres.A} retrocede ${reversaDibujada} m y ${nombres.B} lo impacta; sin desplazamiento después.`
+      : `Versión de la evidencia: ${nombres.B} alcanza a ${nombres.A} y lo desplaza; los restos cubren ${caso.evidencia.restos.distancia_m.valor} m.`,
     "Los daños se acentúan a un lado (izquierdo en A, derecho en B); una reversa los dejaría al centro.",
     impactoKmh !== null && desplazamientoKmh !== null
       ? `${impactoKmh.toFixed(2)} km/h por los daños y ${desplazamientoKmh.toFixed(2)} km/h por el desplazamiento: ${resultados?.comparacion?.significativa ? "difieren" : "no difieren"} de forma significativa.`
@@ -490,11 +517,21 @@ export function Recorrido({ caso, reproduccion }: { caso: CasoCesvi; reproduccio
   ][paso]!;
 
   const tituloDetalle = paso === 5 ? "Ver cálculo" : "Ver detalle";
+  const restosDe = versiones
+    ? {
+        declarada: distanciaM(versiones.declarada.restos.inicio, versiones.declarada.restos.fin),
+        evidencia: distanciaM(versiones.evidencia.restos.inicio, versiones.evidencia.restos.fin),
+      }
+    : null;
+  const via = viaCercana
+    ? `Vía más cercana: ${viaCercana.nombre ?? viaCercana.tipo} (${FUENTE_CALLE[viaCercana.fuente]}).`
+    : null;
   const escena = [
-    <PasoCaso key="caso" caso={caso} nombres={nombres} />,
+    <PasoCaso key="caso" caso={caso} nombres={nombres} frase={frase} />,
     <PasoNarracion
       key="narracion"
       declaracion={caso.declaracion.texto}
+      conductor={nombres[caso.declaracion.conductor as "A" | "B"] ?? caso.declaracion.conductor}
       interpretacion={interpretacion}
       notas={notas}
       onNotas={setNotas}
@@ -503,12 +540,16 @@ export function Recorrido({ caso, reproduccion }: { caso: CasoCesvi; reproduccio
       reversaM={respuestas.reversaM ?? null}
       onReversaM={cambiarReversa}
       onImpacta={(v) => setRespuestas((r) => ({ ...r, impacta: v }))}
+      frase={frase}
     />,
     <PasoLugar
       key="lugar"
+      kilometro={caso.lugar.kilometro}
+      frase={frase}
       marcado={versiones !== null}
       aviso={avisoLugar}
       msCalles={msCalles}
+      via={via}
       onCoordenadas={(lat, lon) => fijarImpacto([lon, lat])}
     />,
     <PasoVersiones
@@ -518,14 +559,14 @@ export function Recorrido({ caso, reproduccion }: { caso: CasoCesvi; reproduccio
         setActiva(k);
         animar();
       }}
-      restosM={restosM}
+      restos={restosDe}
       restosDictamen={caso.evidencia.restos.distancia_m.valor}
-      nombres={nombres}
+      superponer={superponer}
+      onSuperponer={setSuperponer}
       seleccion={
         animacion === null && versiones ? describirSeleccion(seleccion, nombres, activa) : null
       }
-      animando={animacion !== null}
-      onRepetir={animar}
+      frase={frase}
       onUsarRestos={() => {
         if (restosM === null) return;
         setDistancia({ valor: restosM.toFixed(2), fuente: "perito" });
@@ -537,21 +578,30 @@ export function Recorrido({ caso, reproduccion }: { caso: CasoCesvi; reproduccio
       nombres={nombres}
       zonas={zonas}
       onZonas={(l, z) => setZonas((zs) => ({ ...zs, [l]: z }))}
+      frase={frase}
     />,
     <PasoNumeros
       key="numeros"
       impactoKmh={impactoKmh}
       desplazamientoKmh={desplazamientoKmh}
+      distanciaM={Number.isFinite(distanciaNum) ? distanciaNum : null}
+      coeficiente={caso.calculos.desplazamiento.a.valor}
       nombres={nombres}
       comparacion={resultados?.comparacion ?? null}
+      filas={reproducir(caso).filas}
+      frase={frase}
     />,
     <PasoSugerencia
       key="sugerencia"
       sugerencia={sugerencia}
       pasoDeRazon={{ velocidades: 5, desplazamiento: 3, ubicacion_danos: 4 }}
-      onIrA={irA}
       validacion={validacion}
       onValidar={setValidacion}
+      nombres={nombres}
+      zonas={zonas}
+      impactoKmh={impactoKmh}
+      desplazamientoKmh={desplazamientoKmh}
+      restosEvidencia={Number.isFinite(distanciaNum) ? distanciaNum : null}
     />,
     <PasoDictamen
       key="dictamen"
@@ -566,7 +616,8 @@ export function Recorrido({ caso, reproduccion }: { caso: CasoCesvi; reproduccio
           "application/pdf",
         )
       }
-      validado={validacion !== null}
+      validacion={validacion}
+      frase={frase}
     />,
   ][paso];
   const sobreMapa = paso === 2 || paso === 3;
@@ -574,317 +625,367 @@ export function Recorrido({ caso, reproduccion }: { caso: CasoCesvi; reproduccio
   // posición final de A).
   const poseElegida =
     seleccion.tipo === "pose" ? seleccion : ({ tipo: "pose", letra: "A", fase: "final" } as const);
+  const nav = useMemo(
+    () => ({
+      paso,
+      total: PASOS.length,
+      irA,
+      abrirDetalle: () => setDetalle(true),
+      tituloDetalle,
+    }),
+    [paso, irA, tituloDetalle],
+  );
+  const otra: ClaveVersion = activa === "declarada" ? "evidencia" : "declarada";
 
   return (
-    <div className="fixed inset-0 flex flex-col bg-fondo">
-      <header className="flex flex-wrap items-center gap-4 border-b border-linea px-4 py-3 md:px-8">
-        <Logotipo ancho={120} />
-        <nav aria-label="Pasos del recorrido" className="flex flex-1 gap-1 overflow-x-auto">
-          {PASOS.map((nombre, i) => (
-            <button
-              key={nombre}
-              type="button"
-              aria-current={paso === i ? "step" : undefined}
-              onClick={() => irA(i)}
-              className={`t-nota flex min-h-11 shrink-0 flex-col justify-end border-t-2 px-2 pt-1 text-left transition-colors ${
-                paso === i
-                  ? "border-accion text-texto"
-                  : i < paso
-                    ? "border-texto-3 text-texto-2"
-                    : "border-linea text-texto-3"
-              }`}
-              data-testid={`paso-${i + 1}`}
-            >
-              <span className="cifras">{i + 1}</span>
-              {nombre}
-            </button>
-          ))}
-        </nav>
-      </header>
-
-      <main
-        id="contenido"
-        className="relative min-h-0 flex-1 overflow-hidden"
-        aria-label={PASOS[paso]}
-      >
-        <MapaRecorrido
-          camara={camara}
-          calles={calles}
-          version={version}
-          medidas={MEDIDAS}
-          nombres={nombres}
-          animacion={paso === 3 ? animacion : null}
-          edicion={edicion}
-          onClic={(p) => {
-            if (paso === 2 && !versiones) fijarImpacto(p);
-          }}
-          onCaptura={alCapturar}
-          onConsultaCalles={alConsultarCalles}
-          atenuado={!sobreMapa}
-        />
-        <div
-          key={paso}
-          className={`aparecer absolute inset-0 ${sobreMapa ? "pointer-events-none" : "bg-fondo/80"}`}
-        >
-          <div className="h-full">{escena}</div>
-        </div>
-      </main>
-
-      <footer className="flex flex-wrap items-center gap-4 border-t border-linea px-4 py-3 md:px-8">
-        <p className="t-interfaz min-w-0 flex-1" aria-live="polite" data-testid="frase">
-          {frase}
-        </p>
-        <button
-          type="button"
-          className="boton-secundario min-h-11 px-4"
-          onClick={() => setDetalle(true)}
-          data-testid="ver-detalle"
-        >
-          {tituloDetalle}
-        </button>
-        <button
-          type="button"
-          className="boton-secundario min-h-11 px-4"
-          onClick={() => irA(paso - 1)}
-          disabled={paso === 0}
-          aria-label="Paso anterior"
-        >
-          ←
-        </button>
-        <button
-          type="button"
-          className="boton-principal"
-          onClick={() => irA(paso + 1)}
-          disabled={paso === PASOS.length - 1}
-          data-testid="siguiente"
-        >
-          Siguiente →
-        </button>
-      </footer>
-
-      <PanelDetalle
-        titulo={`${PASOS[paso]}: ${tituloDetalle.toLowerCase()}`}
-        abierto={detalle}
-        onCerrar={() => setDetalle(false)}
-      >
-        {paso === 0 ? <Expediente caso={caso} /> : null}
-        {paso === 1 ? (
-          <section className="flex flex-col gap-3">
-            <h3 className="t-subtitulo">El orden de los hechos según la declaración</h3>
-            <ol className="t-cuerpo flex list-decimal flex-col gap-1 pl-5">
-              {interpretacion.hechos.map((h) => (
-                <li key={h.orden}>
-                  {h.texto}: «{h.frase.texto}»
-                </li>
-              ))}
-            </ol>
-            <p className="t-nota text-texto-2">
-              La lectura usa la extracción de «Cuenta qué pasó» (
-              {extraccion
-                ? extraccion.metodo === "claude"
-                  ? "con Claude"
-                  : "con reglas"
-                : "todavía sin leer"}
-              ) y detectores para declaraciones de dictamen. La IA no produce números finales.
-            </p>
-          </section>
-        ) : null}
-        {paso === 2 ? (
-          <section className="t-cuerpo flex flex-col gap-3">
-            <p>{caso.lugar.descripcion}</p>
-            <p>
-              {caso.lugar.arroyos.length} arroyos de {caso.lugar.ancho_arroyo_m.valor} m.{" "}
-              {caso.lugar.separacion.valor} {caso.lugar.carpeta.valor}
-            </p>
-            {viaCercana ? (
-              <p data-testid="via-cercana">
-                Vía más cercana: {viaCercana.nombre ?? viaCercana.tipo}
-                {viaCercana.carriles ? `, ${viaCercana.carriles} carriles` : ""}
-                {viaCercana.anchoM ? `, ${viaCercana.anchoM} m de ancho` : ""} (
-                {FUENTE_CALLE[viaCercana.fuente]}).
-              </p>
-            ) : null}
-            <p className="t-nota text-texto-2">
-              El dictamen no da coordenadas del km {caso.lugar.kilometro} y OpenStreetMap no tiene
-              marcas de kilómetro en el tramo: el perito marca el punto.
-            </p>
-          </section>
-        ) : null}
-        {paso === 3 && version ? (
-          <section className="flex flex-col gap-4">
-            <p className="t-cuerpo">{version.descripcion}</p>
-            <div className="flex flex-wrap gap-3">
-              <label className="t-nota flex flex-col gap-1 text-texto-2">
-                Vehículo
-                <select
-                  className="campo w-40"
-                  value={poseElegida.letra}
-                  onChange={(e) =>
-                    setSeleccion({ ...poseElegida, letra: e.target.value as "A" | "B" })
-                  }
-                >
-                  <option value="A">{nombres.A}</option>
-                  <option value="B">{nombres.B}</option>
-                </select>
-              </label>
-              <label className="t-nota flex flex-col gap-1 text-texto-2">
-                Fase
-                <select
-                  className="campo w-44"
-                  value={poseElegida.fase}
-                  onChange={(e) => setSeleccion({ ...poseElegida, fase: e.target.value as Fase })}
-                >
-                  {FASES.map((f) => (
-                    <option key={f} value={f}>
-                      {NOMBRE_FASE[f]}
-                    </option>
-                  ))}
-                </select>
-              </label>
-              <label className="t-nota flex flex-col gap-1 text-texto-2">
-                Rumbo (°)
-                <input
-                  type="number"
-                  className="campo cifras w-24"
-                  value={Math.round(version.vehiculos[poseElegida.letra][poseElegida.fase].rumbo)}
-                  onChange={(e) =>
-                    setVersiones((vs) =>
-                      vs
-                        ? {
-                            ...vs,
-                            [activa]: moverPose(vs[activa], poseElegida.letra, poseElegida.fase, {
-                              rumbo: Number(e.target.value) || 0,
-                            }),
-                          }
-                        : vs,
-                    )
-                  }
-                />
-              </label>
-            </div>
-            <p className="t-nota text-texto-2">
-              En el mapa: toca o arrastra cualquier marca (posición inicial, impacto o final de cada
-              vehículo, ✕ punto de impacto, R1 y R2 zona de restos).
-            </p>
-            <table className="t-interfaz w-full border-collapse text-left">
-              <thead>
-                <tr className="t-nota border-b border-linea">
-                  <th className="py-1 font-normal">Vehículo</th>
-                  <th className="py-1 font-normal">Fase</th>
-                  <th className="py-1 font-normal">Fuente</th>
-                </tr>
-              </thead>
-              <tbody>
-                {(["A", "B"] as const).flatMap((l) =>
-                  FASES.map((f) => (
-                    <tr key={`${l}-${f}`} className="border-b border-linea">
-                      <td className={`py-1 ${l === "A" ? "text-vehiculo-a" : "text-vehiculo-b"}`}>
-                        {nombres[l]}
-                      </td>
-                      <td className="py-1">{NOMBRE_FASE[f]}</td>
-                      <td className="py-1">{version.vehiculos[l][f].fuente}</td>
-                    </tr>
-                  )),
-                )}
-              </tbody>
-            </table>
-            <ul className="t-nota flex flex-col gap-1 text-texto-2">
-              {version.supuestos.map((s) => (
-                <li key={s}>Supuesto: {s}</li>
-              ))}
-              <li>
-                Medidas de los vehículos: las típicas de la clase pickup ({MEDIDAS_PICKUP.largo} ×{" "}
-                {MEDIDAS_PICKUP.ancho} m); el dictamen no las da.
-              </li>
-            </ul>
-          </section>
-        ) : null}
-        {paso === 4 ? (
-          <section className="grid gap-8 md:grid-cols-2">
-            {(["A", "B"] as const).map((l) => (
-              <Criterios
-                key={l}
-                letra={l}
-                valores={criterios[l]}
-                onCambio={(clave, v) =>
-                  setCriterios((cs) => ({ ...cs, [l]: { ...cs[l], [clave]: v } }))
-                }
-              />
-            ))}
-          </section>
-        ) : null}
-        {/* Los cálculos se quedan montados: los usan los pasos 6 a 8 aunque el panel esté cerrado. */}
-        <div hidden={paso !== 5} className="flex flex-col gap-12">
-          <Calculos
-            caso={caso}
-            distancia={distancia}
-            onDistancia={setDistancia}
-            onResultados={setResultados}
-          />
-          {reproduccion}
-        </div>
-        {paso === 6 ? (
-          <section className="flex flex-col gap-3">
-            <ul className="t-cuerpo flex flex-col gap-3">
-              {sugerencia.razones.map((r) => (
-                <li key={r.clave}>
-                  {r.texto} <span className="t-nota text-texto-2">({r.evidencia})</span>
-                </li>
-              ))}
-            </ul>
-            <p className="t-nota text-texto-2">{sugerencia.regla}</p>
-          </section>
-        ) : null}
-        {paso === 7 ? (
-          <section className="flex flex-col gap-3">
-            <h3 className="t-subtitulo">Consideraciones (borrador con Claude)</h3>
-            <p className="t-nota text-texto-2">
-              Claude redacta con los números que ya calculó Croquis; no calcula nada. El perito
-              revisa y corrige.
-            </p>
-            <button
-              type="button"
-              className="boton-secundario min-h-11 self-start px-4"
-              onClick={() => void pedirBorrador()}
-              data-testid="pedir-borrador"
-            >
-              {borrador ? "Volver a redactar" : "Redactar el borrador"}
-            </button>
-            {estadoBorrador ? (
-              <p role="status" className="t-interfaz" data-testid="estado-borrador">
-                {estadoBorrador}
-              </p>
-            ) : null}
-            {borrador ? (
-              <>
-                <textarea
-                  className="campo min-h-64"
-                  value={borrador}
-                  onChange={(e) => setBorrador(e.target.value)}
-                  aria-label="Borrador de las consideraciones"
-                  data-testid="texto-borrador"
-                />
-                <label className="t-interfaz flex min-h-11 items-center gap-3">
-                  <input
-                    type="checkbox"
-                    checked={revisado}
-                    onChange={(e) => setRevisado(e.target.checked)}
-                    className="h-5 w-5 accent-[var(--accion)]"
-                  />
-                  Revisé y corregí el borrador
-                </label>
+    <ProveedorRecorrido value={nav}>
+      <div className="fixed inset-0 flex flex-col bg-fondo">
+        <header className="vidrio barra relative z-30 flex h-16 shrink-0 items-center gap-4 px-4 md:gap-6 md:px-6">
+          <Logotipo ancho={112} />
+          <nav
+            aria-label="Pasos del recorrido"
+            className="flex min-w-0 flex-1 items-center justify-center-safe gap-1 overflow-x-auto"
+          >
+            {PASOS.map((nombre, i) => {
+              const actual = paso === i;
+              const hecho = i < paso;
+              return (
                 <button
+                  key={nombre}
                   type="button"
-                  className="boton-principal self-start"
-                  onClick={() => void generarPdf()}
+                  aria-label={`Paso ${i + 1}: ${nombre}`}
+                  aria-current={actual ? "step" : undefined}
+                  onClick={() => irA(i)}
+                  className={`flex h-9 shrink-0 items-center gap-2 rounded-full text-[0.8125rem] transition-colors ${
+                    actual
+                      ? "bg-accion pr-3.5 pl-2 font-semibold text-accion-texto"
+                      : `px-3 font-medium hover:bg-superficie-alta ${hecho ? "text-texto-2" : "text-texto-3"}`
+                  }`}
+                  data-testid={`paso-${i + 1}`}
                 >
-                  Pasarlo al dictamen
+                  <span
+                    className={`grid h-5 w-5 place-items-center rounded-full text-[0.6875rem] ${
+                      actual
+                        ? "bg-fondo text-texto"
+                        : hecho
+                          ? "bg-superficie-alta text-texto-2"
+                          : "border border-linea"
+                    }`}
+                    aria-hidden="true"
+                  >
+                    {hecho ? "✓" : i + 1}
+                  </span>
+                  {PASOS_CORTOS[i]}
                 </button>
-              </>
-            ) : null}
-          </section>
-        ) : null}
-      </PanelDetalle>
-    </div>
+              );
+            })}
+          </nav>
+          <div className="hidden shrink-0 items-center gap-3 xl:flex">
+            <span className="text-[0.8125rem] font-medium text-texto-2">
+              {caso.aseguradora} · {caso.modalidad_dictaminada[0]!.toUpperCase()}
+              {caso.modalidad_dictaminada.slice(1)} · {caso.lugar.municipio}, {caso.lugar.estado}
+            </span>
+            <button
+              type="button"
+              className="boton-secundario boton-compacto h-9 min-h-9"
+              onClick={() => irA(PASOS.length - 1)}
+            >
+              Exportar
+            </button>
+          </div>
+        </header>
+
+        <main
+          id="contenido"
+          className="relative min-h-0 flex-1 overflow-hidden"
+          aria-label={PASOS[paso]}
+        >
+          <MapaRecorrido
+            camara={camara}
+            calles={calles}
+            version={version}
+            superpuesta={paso === 3 && superponer && versiones ? versiones[otra] : null}
+            medidas={MEDIDAS}
+            nombres={nombres}
+            animacion={paso === 3 ? animacion : null}
+            edicion={edicion}
+            onClic={(p) => {
+              if (paso === 2 && !versiones) fijarImpacto(p);
+            }}
+            onCaptura={alCapturar}
+            onConsultaCalles={alConsultarCalles}
+            atenuado={!sobreMapa}
+          />
+          <div
+            key={paso}
+            className={`aparecer absolute inset-0 ${sobreMapa ? "pointer-events-none" : ""}`}
+          >
+            {sobreMapa ? (
+              <div className="relative h-full">
+                <div className="absolute inset-y-4 left-4 flex sm:inset-y-6 sm:left-6">
+                  {escena}
+                </div>
+                {paso === 3 ? (
+                  <div className="absolute top-6 right-6">
+                    <Leyenda nombres={nombres} />
+                  </div>
+                ) : null}
+                {paso === 3 && versiones ? (
+                  <div className="absolute inset-x-4 bottom-4 flex justify-center sm:bottom-6 lg:left-[408px] 2xl:left-0">
+                    <Reproductor
+                      t={animacion ?? 1}
+                      reproduciendo={reproduciendo}
+                      duracionS={DURACION_ANIMACION_MS / 1000}
+                      onReproducir={() =>
+                        animar(animacion !== null && animacion < 1 ? animacion : 0)
+                      }
+                      onPausar={pausar}
+                      onT={(t) => {
+                        pausar();
+                        setAnimacion(t >= 1 ? null : t);
+                      }}
+                    />
+                  </div>
+                ) : null}
+                <p className="pointer-events-auto absolute right-6 bottom-6 hidden w-[300px] text-right text-[0.6875rem] leading-relaxed text-texto-3 2xl:block">
+                  Reconstrucción de apoyo · el dictamen es del perito
+                  <br />
+                  Calles © OpenStreetMap (ODbL) · mosaicos © OpenFreeMap, OpenMapTiles
+                </p>
+                <p className="pointer-events-auto absolute top-1.5 right-6 text-[0.6875rem] text-texto-3 2xl:hidden">
+                  Reconstrucción de apoyo · © OpenStreetMap, OpenFreeMap, OpenMapTiles
+                </p>
+              </div>
+            ) : (
+              escena
+            )}
+          </div>
+        </main>
+
+        <PanelDetalle
+          titulo={`${PASOS[paso]}: ${tituloDetalle.toLowerCase()}`}
+          abierto={detalle}
+          onCerrar={() => setDetalle(false)}
+        >
+          {paso === 0 ? <Expediente caso={caso} /> : null}
+          {paso === 1 ? (
+            <section className="flex flex-col gap-3">
+              <h3 className="t-subtitulo">El orden de los hechos según la declaración</h3>
+              <ol className="t-cuerpo flex list-decimal flex-col gap-1 pl-5">
+                {interpretacion.hechos.map((h) => (
+                  <li key={h.orden}>
+                    {h.texto}: «{h.frase.texto}»
+                  </li>
+                ))}
+              </ol>
+              <p className="t-nota text-texto-2">
+                La lectura usa la extracción de «Cuenta qué pasó» (
+                {extraccion
+                  ? extraccion.metodo === "claude"
+                    ? "con Claude"
+                    : "con reglas"
+                  : "todavía sin leer"}
+                ) y detectores para declaraciones de dictamen. La IA no produce números finales.
+              </p>
+            </section>
+          ) : null}
+          {paso === 2 ? (
+            <section className="t-cuerpo flex flex-col gap-3">
+              <p>{caso.lugar.descripcion}</p>
+              <p>
+                {caso.lugar.arroyos.length} arroyos de {caso.lugar.ancho_arroyo_m.valor} m.{" "}
+                {caso.lugar.separacion.valor} {caso.lugar.carpeta.valor}
+              </p>
+              {viaCercana ? (
+                <p data-testid="via-cercana">
+                  Vía más cercana: {viaCercana.nombre ?? viaCercana.tipo}
+                  {viaCercana.carriles ? `, ${viaCercana.carriles} carriles` : ""}
+                  {viaCercana.anchoM ? `, ${viaCercana.anchoM} m de ancho` : ""} (
+                  {FUENTE_CALLE[viaCercana.fuente]}).
+                </p>
+              ) : null}
+              <p className="t-nota text-texto-2">
+                El dictamen no da coordenadas del km {caso.lugar.kilometro} y OpenStreetMap no tiene
+                marcas de kilómetro en el tramo: el perito marca el punto.
+              </p>
+            </section>
+          ) : null}
+          {paso === 3 && version ? (
+            <section className="flex flex-col gap-4">
+              <p className="t-cuerpo">{version.descripcion}</p>
+              <div className="flex flex-wrap gap-3">
+                <label className="t-nota flex flex-col gap-1 text-texto-2">
+                  Vehículo
+                  <select
+                    className="campo w-40"
+                    value={poseElegida.letra}
+                    onChange={(e) =>
+                      setSeleccion({ ...poseElegida, letra: e.target.value as "A" | "B" })
+                    }
+                  >
+                    <option value="A">{nombres.A}</option>
+                    <option value="B">{nombres.B}</option>
+                  </select>
+                </label>
+                <label className="t-nota flex flex-col gap-1 text-texto-2">
+                  Fase
+                  <select
+                    className="campo w-44"
+                    value={poseElegida.fase}
+                    onChange={(e) => setSeleccion({ ...poseElegida, fase: e.target.value as Fase })}
+                  >
+                    {FASES.map((f) => (
+                      <option key={f} value={f}>
+                        {NOMBRE_FASE[f]}
+                      </option>
+                    ))}
+                  </select>
+                </label>
+                <label className="t-nota flex flex-col gap-1 text-texto-2">
+                  Rumbo (°)
+                  <input
+                    type="number"
+                    className="campo cifras w-24"
+                    value={Math.round(version.vehiculos[poseElegida.letra][poseElegida.fase].rumbo)}
+                    onChange={(e) =>
+                      setVersiones((vs) =>
+                        vs
+                          ? {
+                              ...vs,
+                              [activa]: moverPose(vs[activa], poseElegida.letra, poseElegida.fase, {
+                                rumbo: Number(e.target.value) || 0,
+                              }),
+                            }
+                          : vs,
+                      )
+                    }
+                  />
+                </label>
+              </div>
+              <p className="t-nota text-texto-2">
+                En el mapa: toca o arrastra cualquier marca (posición inicial, impacto o final de
+                cada vehículo, ✕ punto de impacto, R1 y R2 zona de restos).
+              </p>
+              <table className="t-interfaz w-full border-collapse text-left">
+                <thead>
+                  <tr className="t-nota border-b border-linea">
+                    <th className="py-1 font-normal">Vehículo</th>
+                    <th className="py-1 font-normal">Fase</th>
+                    <th className="py-1 font-normal">Fuente</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {(["A", "B"] as const).flatMap((l) =>
+                    FASES.map((f) => (
+                      <tr key={`${l}-${f}`} className="border-b border-linea">
+                        <td className={`py-1 ${l === "A" ? "text-vehiculo-a" : "text-vehiculo-b"}`}>
+                          {nombres[l]}
+                        </td>
+                        <td className="py-1">{NOMBRE_FASE[f]}</td>
+                        <td className="py-1">{version.vehiculos[l][f].fuente}</td>
+                      </tr>
+                    )),
+                  )}
+                </tbody>
+              </table>
+              <ul className="t-nota flex flex-col gap-1 text-texto-2">
+                {version.supuestos.map((s) => (
+                  <li key={s}>Supuesto: {s}</li>
+                ))}
+                <li>
+                  Medidas de los vehículos: las típicas de la clase pickup ({MEDIDAS_PICKUP.largo} ×{" "}
+                  {MEDIDAS_PICKUP.ancho} m); el dictamen no las da.
+                </li>
+              </ul>
+            </section>
+          ) : null}
+          {paso === 4 ? (
+            <section className="grid gap-8 md:grid-cols-2">
+              {(["A", "B"] as const).map((l) => (
+                <Criterios
+                  key={l}
+                  letra={l}
+                  valores={criterios[l]}
+                  onCambio={(clave, v) =>
+                    setCriterios((cs) => ({ ...cs, [l]: { ...cs[l], [clave]: v } }))
+                  }
+                />
+              ))}
+            </section>
+          ) : null}
+          {/* Los cálculos se quedan montados: los usan los pasos 6 a 8 aunque el panel esté cerrado. */}
+          <div hidden={paso !== 5} className="flex flex-col gap-12">
+            <Calculos
+              caso={caso}
+              distancia={distancia}
+              onDistancia={setDistancia}
+              onResultados={setResultados}
+            />
+            {reproduccion}
+          </div>
+          {paso === 6 ? (
+            <section className="flex flex-col gap-3">
+              <ul className="t-cuerpo flex flex-col gap-3">
+                {sugerencia.razones.map((r) => (
+                  <li key={r.clave}>
+                    {r.texto} <span className="t-nota text-texto-2">({r.evidencia})</span>
+                  </li>
+                ))}
+              </ul>
+              <p className="t-nota text-texto-2">{sugerencia.regla}</p>
+            </section>
+          ) : null}
+          {paso === 7 ? (
+            <section className="flex flex-col gap-3">
+              <h3 className="t-subtitulo">Consideraciones (borrador con Claude)</h3>
+              <p className="t-nota text-texto-2">
+                Claude redacta con los números que ya calculó Croquis; no calcula nada. El perito
+                revisa y corrige.
+              </p>
+              <button
+                type="button"
+                className="boton-secundario min-h-11 self-start px-4"
+                onClick={() => void pedirBorrador()}
+                data-testid="pedir-borrador"
+              >
+                {borrador ? "Volver a redactar" : "Redactar el borrador"}
+              </button>
+              {estadoBorrador ? (
+                <p role="status" className="t-interfaz" data-testid="estado-borrador">
+                  {estadoBorrador}
+                </p>
+              ) : null}
+              {borrador ? (
+                <>
+                  <textarea
+                    className="campo min-h-64"
+                    value={borrador}
+                    onChange={(e) => setBorrador(e.target.value)}
+                    aria-label="Borrador de las consideraciones"
+                    data-testid="texto-borrador"
+                  />
+                  <label className="t-interfaz flex min-h-11 items-center gap-3">
+                    <input
+                      type="checkbox"
+                      checked={revisado}
+                      onChange={(e) => setRevisado(e.target.checked)}
+                      className="h-5 w-5 accent-[var(--accion)]"
+                    />
+                    Revisé y corregí el borrador
+                  </label>
+                  <button
+                    type="button"
+                    className="boton-principal self-start"
+                    onClick={() => void generarPdf()}
+                  >
+                    Pasarlo al dictamen
+                  </button>
+                </>
+              ) : null}
+            </section>
+          ) : null}
+        </PanelDetalle>
+      </div>
+    </ProveedorRecorrido>
   );
 }

@@ -56,14 +56,22 @@ export function viasDe(respuesta: unknown): Calle[] {
 
 export const vacio: FeatureCollection = { type: "FeatureCollection", features: [] };
 
-export function colores(): { texto: string; texto2: string; evidencia: string; accion: string } {
+export function colores(): {
+  texto: string;
+  texto2: string;
+  texto3: string;
+  evidencia: string;
+  accion: string;
+} {
   const s = getComputedStyle(document.documentElement);
   const v = (n: string, d: string) => s.getPropertyValue(n).trim() || d;
+  // Los roles apuntan a tokens (`var(--marca-…)`): se leen ya resueltos en <html>.
   return {
-    texto: v("--texto", "#f2f0e9"),
-    texto2: v("--texto-2", "#a7aab0"),
-    evidencia: v("--evidencia", "#ff6a1a"),
-    accion: v("--accion", "#ffc21a"),
+    texto: v("--marca-blanco", "#F2F3F5"),
+    texto2: v("--marca-gris", "#A4A9B3"),
+    texto3: v("--marca-gris-oscuro", "#7B818C"),
+    evidencia: v("--marca-senal", "#FF5B2E"),
+    accion: v("--marca-blanco", "#F2F3F5"),
   };
 }
 

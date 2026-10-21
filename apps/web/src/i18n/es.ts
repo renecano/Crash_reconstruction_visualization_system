@@ -30,7 +30,7 @@ export const es = {
       fuentes: "Datos y atribuciones",
       osm: "Calles: © colaboradores de OpenStreetMap (ODbL)",
       datos: "Datos de choques: NHTSA e INEGI (ATUS)",
-      fuente: "Tipografía: Anybody (SIL OFL 1.1)",
+      fuente: "Tipografía: Geist y Geist Mono; logotipo con Anybody (SIL OFL 1.1)",
     },
   },
   leyenda: {

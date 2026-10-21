@@ -1,0 +1,112 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<title>Paso 6 · Los números</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Anybody:wdth,wght@50..150,100..900&amp;family=Geist:wght@400..700&amp;family=Geist+Mono:wght@400..600&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#0B0C0F}
+button,a,[role=tab]{cursor:pointer}
+button:hover{filter:brightness(1.08)}
+a{color:#A4A9B3}a:hover{color:#F2F3F5}
+</style>
+</helmet>
+<div style="position: relative; width: 100%; min-height: 900px; background: #0B0C0F; color: #F2F3F5; font-family: Geist, system-ui, sans-serif">
+
+<header style="position: sticky; top: 0; z-index: 2; height: 64px; display: flex; align-items: center; justify-content: space-between; gap: 24px; padding: 0 24px; background: rgba(11, 12, 15, 0.82); backdrop-filter: blur(16px); border-bottom: 1px solid rgba(255, 255, 255, 0.06)">
+<div style="display: flex; align-items: center; gap: 10px">
+<svg viewBox="0 0 120 120" width="26" height="26" aria-hidden="true"><path d="M91.11 28.89 A44 44 0 1 0 91.11 91.11" fill="none" stroke="#F2F3F5" stroke-width="13" stroke-dasharray="52 25.6"></path><path d="M91 51 L109 69 M109 51 L91 69" stroke="#FF5B2E" stroke-width="7" stroke-linecap="round"></path></svg>
+<span style="font-family: Anybody, sans-serif; font-stretch: 150%; font-weight: 600; letter-spacing: 0.16em; font-size: 15px">CROQUIS</span>
+</div>
+<nav aria-label="Pasos del recorrido" style="display: flex; align-items: center; gap: 4px">
+<button style="display: flex; align-items: center; gap: 8px; height: 36px; padding: 0 12px; border: 0; border-radius: 18px; background: transparent; color: #A4A9B3; font: 500 13px Geist, sans-serif"><span style="width: 20px; height: 20px; border-radius: 10px; background: #23262D; font-size: 11px; display: grid; place-items: center">✓</span>Caso</button>
+<button style="display: flex; align-items: center; gap: 8px; height: 36px; padding: 0 12px; border: 0; border-radius: 18px; background: transparent; color: #A4A9B3; font: 500 13px Geist, sans-serif"><span style="width: 20px; height: 20px; border-radius: 10px; background: #23262D; font-size: 11px; display: grid; place-items: center">✓</span>Narración</button>
+<button style="display: flex; align-items: center; gap: 8px; height: 36px; padding: 0 12px; border: 0; border-radius: 18px; background: transparent; color: #A4A9B3; font: 500 13px Geist, sans-serif"><span style="width: 20px; height: 20px; border-radius: 10px; background: #23262D; font-size: 11px; display: grid; place-items: center">✓</span>Lugar</button>
+<button style="display: flex; align-items: center; gap: 8px; height: 36px; padding: 0 12px; border: 0; border-radius: 18px; background: transparent; color: #A4A9B3; font: 500 13px Geist, sans-serif"><span style="width: 20px; height: 20px; border-radius: 10px; background: #23262D; font-size: 11px; display: grid; place-items: center">✓</span>Versiones</button>
+<button style="display: flex; align-items: center; gap: 8px; height: 36px; padding: 0 12px; border: 0; border-radius: 18px; background: transparent; color: #A4A9B3; font: 500 13px Geist, sans-serif"><span style="width: 20px; height: 20px; border-radius: 10px; background: #23262D; font-size: 11px; display: grid; place-items: center">✓</span>Daños</button>
+<button aria-current="step" style="display: flex; align-items: center; gap: 8px; height: 36px; padding: 0 14px 0 8px; border: 0; border-radius: 18px; background: #F2F3F5; color: #0B0C0F; font: 600 13px Geist, sans-serif"><span style="width: 20px; height: 20px; border-radius: 10px; background: #0B0C0F; color: #F2F3F5; font-size: 11px; display: grid; place-items: center">6</span>Números</button>
+<button style="display: flex; align-items: center; gap: 8px; height: 36px; padding: 0 12px; border: 0; border-radius: 18px; background: transparent; color: #7B818C; font: 500 13px Geist, sans-serif"><span style="width: 20px; height: 20px; border-radius: 10px; border: 1px solid #2A2E35; font-size: 11px; display: grid; place-items: center">7</span>Sugerencia</button>
+<button style="display: flex; align-items: center; gap: 8px; height: 36px; padding: 0 12px; border: 0; border-radius: 18px; background: transparent; color: #7B818C; font: 500 13px Geist, sans-serif"><span style="width: 20px; height: 20px; border-radius: 10px; border: 1px solid #2A2E35; font-size: 11px; display: grid; place-items: center">8</span>Dictamen</button>
+</nav>
+<div style="display: flex; align-items: center; gap: 12px">
+<span style="font: 500 13px Geist, sans-serif; color: #A4A9B3">AXA · Alcance · Ahome, Sin.</span>
+<button style="height: 36px; padding: 0 14px; border-radius: 18px; border: 1px solid #2A2E35; background: transparent; color: #F2F3F5; font: 500 13px Geist, sans-serif">Exportar</button>
+</div>
+</header>
+
+<main style="max-width: 1200px; margin: 0 auto; padding: 48px 24px 0; box-sizing: border-box; display: flex; flex-direction: column; align-items: center; gap: 36px">
+<div style="display: flex; flex-direction: column; align-items: center; gap: 12px; text-align: center">
+<div style="font: 500 12px Geist Mono, monospace; letter-spacing: 0.08em; color: #7B818C">PASO 6 DE 8</div>
+<h1 style="margin: 0; font: 600 40px/1.08 Geist, sans-serif; letter-spacing: -0.025em">Dos cálculos independientes llegan casi al mismo número</h1>
+</div>
+
+<div style="width: 100%; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 24px">
+<div style="padding: 32px; border-radius: 24px; background: #121418; border: 1px solid #1E2127; display: flex; flex-direction: column; gap: 10px">
+<span style="font: 500 14px Geist, sans-serif; color: #A4A9B3">Por la deformación del frente de B</span>
+<div style="display: flex; align-items: baseline; gap: 12px"><span style="font: 600 104px/1 Geist Mono, monospace; letter-spacing: -0.04em">63.15</span><span style="font: 500 22px Geist, sans-serif; color: #A4A9B3">km/h</span></div>
+<span style="font: 400 13px Geist Mono, monospace; color: #7B818C">Método McHenry · 4 medidas · C1–C4</span>
+</div>
+<div style="padding: 32px; border-radius: 24px; background: #121418; border: 1px solid #1E2127; display: flex; flex-direction: column; gap: 10px">
+<span style="font: 500 14px Geist, sans-serif; color: #A4A9B3">Por los 15.89 m de restos</span>
+<div style="display: flex; align-items: baseline; gap: 12px"><span style="font: 600 104px/1 Geist Mono, monospace; letter-spacing: -0.04em">60.27</span><span style="font: 500 22px Geist, sans-serif; color: #A4A9B3">km/h</span></div>
+<span style="font: 400 13px Geist Mono, monospace; color: #7B818C">v = √(2 · a · g · D) · a = 0.9</span>
+</div>
+</div>
+
+<div style="width: 100%; display: flex; flex-direction: column; gap: 14px">
+<div style="position: relative; height: 56px">
+<div style="position: absolute; left: 0; right: 0; top: 26px; height: 4px; border-radius: 2px; background: #1E2127"></div>
+<div style="position: absolute; left: 60.27%; width: 2.88%; top: 18px; height: 20px; border-radius: 6px; background: rgba(242, 243, 245, 0.14); border: 1px solid rgba(242, 243, 245, 0.4)"></div>
+<span style="position: absolute; left: 60.27%; top: 0; transform: translateX(-100%); padding-right: 8px; font: 500 12px Geist Mono, monospace; color: #A4A9B3">60.27</span>
+<span style="position: absolute; left: 63.15%; top: 0; padding-left: 8px; font: 500 12px Geist Mono, monospace; color: #F2F3F5">63.15</span>
+<span style="position: absolute; left: 0; top: 40px; font: 400 12px Geist Mono, monospace; color: #7B818C">0</span>
+<span style="position: absolute; right: 0; top: 40px; font: 400 12px Geist Mono, monospace; color: #7B818C">100 km/h</span>
+</div>
+<div style="display: flex; align-items: center; justify-content: center; gap: 16px; flex-wrap: wrap">
+<span style="display: inline-flex; align-items: center; gap: 8px; height: 40px; padding: 0 18px; border-radius: 20px; background: #F2F3F5; color: #0B0C0F; font: 600 15px Geist, sans-serif">Sin diferencia significativa</span>
+<span style="font: 500 15px Geist Mono, monospace; color: #A4A9B3">Δ 2.88 km/h · 4.6 %</span>
+<button style="height: 40px; padding: 0 14px; border-radius: 20px; border: 1px solid #2A2E35; background: transparent; color: #A4A9B3; font: 500 13px Geist, sans-serif">Umbral del perito: 10 %</button>
+</div>
+</div>
+</main>
+
+<section aria-label="Ver cálculo" style="max-width: 1200px; margin: 40px auto 0; box-sizing: border-box; padding: 0 24px 32px">
+<div style="border-radius: 24px 24px 20px 20px; background: #121418; border: 1px solid #1E2127; overflow: hidden">
+<div style="display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 18px 24px; border-bottom: 1px solid #1E2127">
+<span style="font: 600 15px Geist, sans-serif">Reproducción del dictamen</span>
+<div style="display: flex; gap: 8px"><button style="height: 36px; padding: 0 14px; border-radius: 18px; border: 1px solid #2A2E35; background: transparent; color: #F2F3F5; font: 500 13px Geist, sans-serif">Ver fórmulas</button><button aria-label="Cerrar" style="height: 36px; width: 36px; border-radius: 18px; border: 1px solid #2A2E35; background: transparent; color: #A4A9B3; font: 500 14px Geist, sans-serif">✕</button></div>
+</div>
+<div style="overflow-x: auto">
+<table style="width: 100%; border-collapse: collapse; font: 400 14px Geist, sans-serif">
+<thead><tr style="color: #7B818C; font-size: 12px; text-align: left"><th style="padding: 12px 24px; font-weight: 500">Valor</th><th style="padding: 12px 24px; font-weight: 500; text-align: right">Dictamen</th><th style="padding: 12px 24px; font-weight: 500; text-align: right">Croquis</th><th style="padding: 12px 24px; font-weight: 500; text-align: right">Diferencia</th></tr></thead>
+<tbody style="font-family: Geist Mono, monospace">
+<tr style="border-top: 1px solid #1E2127"><td style="padding: 14px 24px; font-family: Geist, sans-serif">Energía de deformación <span style="color: #7B818C">· datos impresos</span></td><td style="padding: 14px 24px; text-align: right">220.19 kJ</td><td style="padding: 14px 24px; text-align: right">225.45 kJ</td><td style="padding: 14px 24px; text-align: right; color: #FFB199">+2.39 %</td></tr>
+<tr style="border-top: 1px solid #1E2127"><td style="padding: 14px 24px; font-family: Geist, sans-serif">Velocidad de impacto <span style="color: #7B818C">· desde la energía del dictamen</span></td><td style="padding: 14px 24px; text-align: right">63.15 km/h</td><td style="padding: 14px 24px; text-align: right">63.15 km/h</td><td style="padding: 14px 24px; text-align: right; color: #A4A9B3">0.00 %</td></tr>
+<tr style="border-top: 1px solid #1E2127"><td style="padding: 14px 24px; font-family: Geist, sans-serif">Velocidad de impacto <span style="color: #7B818C">· datos impresos</span></td><td style="padding: 14px 24px; text-align: right">63.15 km/h</td><td style="padding: 14px 24px; text-align: right">63.90 km/h</td><td style="padding: 14px 24px; text-align: right; color: #FFB199">+1.19 %</td></tr>
+<tr style="border-top: 1px solid #1E2127"><td style="padding: 14px 24px; font-family: Geist, sans-serif">Velocidad por restos</td><td style="padding: 14px 24px; text-align: right">60.27 km/h</td><td style="padding: 14px 24px; text-align: right">60.27 km/h</td><td style="padding: 14px 24px; text-align: right; color: #A4A9B3">0.00 %</td></tr>
+</tbody>
+</table>
+</div>
+</div>
+<div style="display: flex; justify-content: space-between; gap: 12px; margin-top: 24px">
+<button style="height: 48px; padding: 0 24px; border-radius: 24px; border: 1px solid #2A2E35; background: transparent; color: #F2F3F5; font: 500 15px Geist, sans-serif">← Anterior</button>
+<button style="height: 48px; padding: 0 28px; border-radius: 24px; border: 0; background: #F2F3F5; color: #0B0C0F; font: 600 15px Geist, sans-serif">Siguiente →</button>
+</div>
+</section>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1440,"height":900}}'>
+class Component extends DCLogic {
+renderVals() {
+return {};
+}
+}
+</script>
+</body>
+</html>

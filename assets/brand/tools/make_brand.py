@@ -17,14 +17,15 @@ from fontTools.varLib import instancer
 FONT, OUT = Path(sys.argv[1]), Path(sys.argv[2])
 OUT.mkdir(parents=True, exist_ok=True)
 
-# Colores (ver tokens.json)
+# Colores (ver tokens.json; la X usa la señal desde el ADR 0054)
 ASFALTO_NOCHE = "#0B0D0F"
 ASFALTO_MOJADO = "#171B1F"
 ASFALTO = "#2A2D30"
 BLANCO_VIAL = "#F4F2EC"
 TINTA = "#15181B"
 AMARILLO_VIAL = "#F2B705"
-NARANJA_MARCAJE = "#FF6A13"
+# La señal de la marca (rediseño de /cesvi, ADR 0054): la X del símbolo.
+NARANJA_MARCAJE = "#FF5B2E"
 
 # Geometría del símbolo (viewBox 0 0 120 120)
 ARC = "M91.11 28.89 A44 44 0 1 0 91.11 91.11"
