@@ -16,8 +16,6 @@ describe("expediente de CESVI suelto (contrato v2)", () => {
     expect(expedienteErrors({ ...minimo, vehiculos: [{ id: "v1" }] })).toEqual([
       '/vehiculos/0/id: must match pattern "^[A-Z][A-Z0-9]{0,3}$"',
     ]);
-    expect(expedienteErrors({ vehiculos: [] })).toEqual([
-      "/: must have required property 'caso'",
-    ]);
+    expect(expedienteErrors({ vehiculos: [] })).toEqual(["/: must have required property 'caso'"]);
   });
 });
