@@ -32,8 +32,29 @@ Reglas de trabajo: `CLAUDE.md`. Especificación: `PLAN.md`.
   - **Cómo probarlo:** en «Correspondencia y dictamen», escribir un nombre, aceptar la sugerencia, pedir el borrador y exportar el dictamen.
   - **Pruebas:** `packages/cesvi` (sugerencia y borrador con cliente falso), `apps/web/src/lib/dictamen-cesvi.test.ts` y la e2e `@flujo` hasta la descarga del PDF.
   - **Qué necesito de René:** nada nuevo. El borrador usa la llave y el tope de gasto de producción que ya están en Vercel.
+- **Ajustes al recorrido tras la revisión de René (2026-10-21)** (rama `feat/cesvi-ajustes-recorrido`, ADR 0053):
+  - **Liga:** https://croquis-sage.vercel.app/cesvi, ahora pública: sin usuario ni clave.
+  - **Qué cambió:**
+    - **Acceso:** se quitaron `proxy.ts` y las variables `CROQUIS_CESVI_*` de Vercel (ADR 0049, reemplazado). El borrador con Claude sigue con el tope de gasto diario y el límite por hora.
+    - **Paso 3:** marcar el impacto ya no espera a Overpass.
+      - **De dónde salen las calles:** del tramo precargado de la MEX 15 Los Mochis–Navojoa, de OSM (`data/cesvi/casos/A2010930-tramo.json`, registrado en `data/SOURCES.md`), y de los mosaicos que el mapa ya cargó.
+      - **Overpass:** llega después y solo agrega nombre, carriles y ancho.
+      - **Sin Nominatim:** la cámara encuadra el tramo precargado.
+    - **Paso 4:**
+      - cada vehículo lleva su nombre («A · Silverado», «B · Tacoma») y su color fijo, en todo el recorrido y en el PDF;
+      - cada punto tiene su etiqueta en dos columnas, con una línea al punto;
+      - lo elegido se resalta y dice qué es y de qué versión;
+      - hay una leyenda abajo a la derecha.
+  - **Cómo probarlo:**
+    1. En el paso 3, escribir `25.97385, -109.03543` (sobre la MEX 15) o tocar la carretera: las calles y los vehículos aparecen al instante.
+    2. En el paso 4, tocar cualquier etiqueta o punto, arrastrar un punto y alternar las versiones.
+  - **Pruebas:**
+    - **E2E:** la del recorrido retiene Overpass y comprueba que el paso 3 dibuja las calles en menos de 1 s y que después llega el ancho de la vía. También revisa los nombres A y B, las etiquetas de cada marca, el resaltado y la leyenda.
+    - **Unitarias:** `tramo.test.ts` (tramo y calles cercanas), `etiquetas-mapa.test.ts` (nueve puntos en el mismo lugar no se enciman) y `vehiculos-cesvi.test.ts` (nombres, y el mismo color en el CSS y el PDF).
+  - **Medición:** `node eval/cesvi_lugar.mjs` mide del clic a las calles en producción, con Overpass sin responder → `eval/results/cesvi_lugar.json`.
+  - **Diferencia con `docs/cesvi/PROTOTIPO.md`:** el documento todavía dice que la demo va con protección de acceso. No lo edité porque es tuyo; si la página pública es lo que quieres, conviene ajustar esa línea.
 - **Hito 4 — el recorrido del perito** (rama `feat/cesvi-recorrido`, ADR 0052):
-  - **Liga:** https://croquis-sage.vercel.app/cesvi (pide usuario y clave).
+  - **Liga:** https://croquis-sage.vercel.app/cesvi (hasta el 2026-10-21 pedía usuario y clave).
   - **Qué hay:** `/cesvi` es ahora un recorrido de 8 pasos.
     1. El caso, con los vehículos vistos desde arriba y la declaración.
     2. Lo que entiende la IA: frases subrayadas, datos con su fuente y preguntas.

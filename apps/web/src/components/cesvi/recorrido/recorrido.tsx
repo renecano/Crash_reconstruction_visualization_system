@@ -7,17 +7,19 @@
  * PDF.
  */
 import {
+  callesCerca,
   distanciaM,
   interpretarDeclaracion,
   moverPose,
   proponerVersiones,
   reproducir,
-  rumboCercano,
   rumboHaciaElNorte,
   sugerir,
+  tramoDelCaso,
   zonasDeDanos,
   criteriosVacios,
   FASES,
+  type Calle,
   type CasoCesvi,
   type ClaveVersion,
   type ExtraccionRelato,
@@ -32,19 +34,12 @@ import { useCallback, useEffect, useMemo, useRef, useState, type ReactNode } fro
 import { Logotipo } from "@/components/sitio/logo";
 import { downloadBytes } from "@/lib/download";
 import { extraer } from "@/lib/relato-api";
+import { nombresVehiculos } from "@/lib/vehiculos-cesvi";
 import { Calculos, type DistanciaRestos, type ResultadosCalculo } from "../calculos";
 import { Criterios } from "../correspondencia";
 import { Expediente } from "../expediente";
-import {
-  MEDIDAS_PICKUP,
-  NOMBRE_FASE,
-  NOMINATIM,
-  RADIO_OSM_M,
-  REVERSA_INICIAL_M,
-  viasDe,
-  type ViaOsm,
-} from "../mapa-comun";
-import { MapaRecorrido, type Camara, type EdicionMapa } from "./mapa-recorrido";
+import { MEDIDAS_PICKUP, NOMBRE_FASE, RADIO_OSM_M, REVERSA_INICIAL_M, viasDe } from "../mapa-comun";
+import { MapaRecorrido, type Camara, type EdicionMapa, type Seleccion } from "./mapa-recorrido";
 import {
   PasoCaso,
   PasoDanos,
@@ -71,6 +66,34 @@ const PASOS = [
 const DURACION_ANIMACION_MS = 4500;
 const MEDIDAS = { A: MEDIDAS_PICKUP, B: MEDIDAS_PICKUP };
 const VISTA_MEXICO: Camara = { tipo: "vista", centro: [-102.5, 23.6], zoom: 4 };
+
+const FUENTE_CALLE: Record<Calle["fuente"], string> = {
+  tramo: "tramo precargado de OpenStreetMap",
+  mosaicos: "mosaicos del mapa, de OpenStreetMap",
+  overpass: "OpenStreetMap vía Overpass",
+};
+const NOMBRE_VERSION: Record<ClaveVersion, string> = {
+  declarada: "versión declarada",
+  evidencia: "versión de la evidencia",
+};
+
+/** Lo elegido en el mapa, en palabras: «A · Silverado · posición final · versión declarada». */
+function describirSeleccion(
+  s: Seleccion,
+  nombres: Record<"A" | "B", string>,
+  version: ClaveVersion,
+): { texto: string; letra: "A" | "B" | null } {
+  const que =
+    s.tipo === "pose"
+      ? `${nombres[s.letra]} · ${NOMBRE_FASE[s.fase]}`
+      : s.tipo === "impacto"
+        ? "Punto de impacto (✕)"
+        : `Zona de restos · ${s.extremo === "inicio" ? "inicio (R1)" : "fin (R2)"}`;
+  return {
+    texto: `${que} · ${NOMBRE_VERSION[version]}`,
+    letra: s.tipo === "pose" ? s.letra : null,
+  };
+}
 
 const enCampo = (t: EventTarget | null) =>
   t instanceof HTMLElement &&
@@ -112,53 +135,48 @@ export function Recorrido({ caso, reproduccion }: { caso: CasoCesvi; reproduccio
     }
   }, [caso]);
 
-  // Pasos 3 y 4: el lugar, las calles de OSM y las dos versiones.
-  const [tramo, setTramo] = useState<LonLat[] | null>(null);
-  const [vias, setVias] = useState<ViaOsm[]>([]);
+  // Pasos 3 y 4: el lugar, las calles y las dos versiones.
+  const nombres = useMemo(() => nombresVehiculos(caso), [caso]);
+  // El tramo del caso, precargado de OSM (ADR 0053): la demo no depende de un servidor externo.
+  const tramo = useMemo(() => tramoDelCaso(caso.id), [caso]);
+  const [calles, setCalles] = useState<Calle[]>([]);
   const [avisoLugar, setAvisoLugar] = useState<string | null>(null);
-  const [viaCercana, setViaCercana] = useState<string | null>(null);
+  const [viaCercana, setViaCercana] = useState<Calle | null>(null);
+  const [msCalles, setMsCalles] = useState<number | null>(null);
   const [versiones, setVersiones] = useState<Record<ClaveVersion, VersionCroquis> | null>(null);
   const [activa, setActiva] = useState<ClaveVersion>("declarada");
   const [animacion, setAnimacion] = useState<number | null>(null);
-  const [seleccion, setSeleccion] = useState<{ letra: "A" | "B"; fase: Fase }>({
+  const [seleccion, setSeleccion] = useState<Seleccion>({
+    tipo: "pose",
     letra: "A",
     fase: "final",
   });
   const reversaDibujada = interpretacion.dinamica.reversaM ?? REVERSA_INICIAL_M;
+  const consultaMosaicos = useRef<(p: LonLat, radioM: number) => Calle[]>(() => []);
+  const alConsultarCalles = useCallback((f: (p: LonLat, radioM: number) => Calle[]) => {
+    consultaMosaicos.current = f;
+  }, []);
+  const marcaActual = useRef(0);
 
+  // Marcar el impacto no espera a la red: las calles salen del tramo precargado y de los mosaicos
+  // que el mapa ya cargó, y con ellas se dibujan las versiones. Overpass corre detrás y solo
+  // enriquece (carriles, ancho, nombre) cuando llega.
   const fijarImpacto = useCallback(
-    async (p: LonLat) => {
-      setAvisoLugar("Importando las calles de OpenStreetMap…");
-      let lista: ViaOsm[] = [];
-      try {
-        const r = await fetch(`/api/osm?lat=${p[1]}&lon=${p[0]}&radio=${RADIO_OSM_M}`);
-        if (!r.ok) throw new Error(`HTTP ${r.status}`);
-        lista = viasDe(await r.json());
-        setAvisoLugar(
-          lista.length
-            ? null
-            : `OpenStreetMap no tiene calles a ${RADIO_OSM_M} m: se usa el rumbo norte.`,
-        );
-      } catch (e) {
-        setAvisoLugar(
-          `No se pudieron importar las calles (${e instanceof Error ? e.message : String(e)}).`,
-        );
-      }
-      setVias(lista);
-      let rumbo = 0;
-      let mejor = Number.POSITIVE_INFINITY;
-      let nombre: string | null = null;
-      for (const v of lista) {
-        const c = rumboCercano(v.puntos, p);
-        if (c && c.distancia < mejor) {
-          mejor = c.distancia;
-          rumbo = c.rumbo;
-          nombre = `${v.nombre ?? v.tipo} (a ${c.distancia.toFixed(1)} m)`;
-        }
-      }
-      setViaCercana(nombre);
+    (p: LonLat) => {
+      const t0 = performance.now();
+      const marca = ++marcaActual.current;
+      const delTramo = callesCerca(tramo, p, RADIO_OSM_M);
+      const deMosaicos = callesCerca(consultaMosaicos.current(p, RADIO_OSM_M), p, RADIO_OSM_M);
+      const cercana = delTramo.cercana ?? deMosaicos.cercana;
+      setCalles([...delTramo.calles, ...deMosaicos.calles]);
+      setViaCercana(cercana?.calle ?? null);
+      setAvisoLugar(
+        cercana
+          ? null
+          : `No hay calles a ${RADIO_OSM_M} m en el tramo ni en el mapa: se usa el rumbo norte.`,
+      );
       const haciaElSur = interpretacion.dinamica.sentido?.hacia === "sur";
-      const rumboA = (rumboHaciaElNorte(rumbo) + (haciaElSur ? 180 : 0)) % 360;
+      const rumboA = (rumboHaciaElNorte(cercana?.rumbo ?? 0) + (haciaElSur ? 180 : 0)) % 360;
       setVersiones(
         proponerVersiones({
           impacto: p,
@@ -168,27 +186,30 @@ export function Recorrido({ caso, reproduccion }: { caso: CasoCesvi; reproduccio
           reversaM: reversaDibujada,
         }),
       );
-    },
-    [caso, interpretacion.dinamica.sentido, reversaDibujada],
-  );
+      // Cuánto tarda del clic a ver las calles (meta: menos de 1 s), tras el siguiente cuadro.
+      requestAnimationFrame(() =>
+        requestAnimationFrame(() => {
+          if (marca === marcaActual.current) setMsCalles(performance.now() - t0);
+        }),
+      );
 
-  // El tramo Los Mochis–Navojoa (el dictamen no da coordenadas del km 47+800).
-  useEffect(() => {
-    if (paso !== 2 || tramo) return;
-    let vivo = true;
-    const buscar = (q: string) =>
-      fetch(`${NOMINATIM}?format=jsonv2&limit=1&countrycodes=mx&q=${encodeURIComponent(q)}`)
-        .then((r) => r.json() as Promise<{ lat: string; lon: string }[]>)
-        .then((l) => (l[0] ? ([Number(l[0].lon), Number(l[0].lat)] as LonLat) : null));
-    void Promise.all([buscar(`Los Mochis, ${caso.lugar.estado}`), buscar("Navojoa, Sonora")])
-      .then((ps) => {
-        if (vivo) setTramo(ps.filter((x): x is LonLat => x !== null));
-      })
-      .catch(() => vivo && setTramo([]));
-    return () => {
-      vivo = false;
-    };
-  }, [paso, tramo, caso]);
+      void fetch(`/api/osm?lat=${p[1]}&lon=${p[0]}&radio=${RADIO_OSM_M}`)
+        .then((r) => (r.ok ? r.json() : Promise.reject(new Error(`HTTP ${r.status}`))))
+        .then((d: unknown) => {
+          if (marca !== marcaActual.current) return;
+          const osm = callesCerca(viasDe(d), p, RADIO_OSM_M);
+          if (!osm.calles.length) return;
+          // Las calles completas de OSM reemplazan a las del tramo y los mosaicos; las versiones
+          // no se mueven (el perito pudo haberlas editado ya).
+          setCalles(osm.calles);
+          setViaCercana((v) => osm.cercana?.calle ?? v);
+        })
+        .catch(() => {
+          // Sin Overpass no se pierde nada: ya están las calles del tramo y de los mosaicos.
+        });
+    },
+    [caso, tramo, interpretacion.dinamica.sentido, reversaDibujada],
+  );
 
   // La versión declarada sigue a los metros de reversa que fija el perito.
   const cambiarReversa = (m: number | null) => {
@@ -245,29 +266,25 @@ export function Recorrido({ caso, reproduccion }: { caso: CasoCesvi; reproduccio
       paso === 3 && versiones
         ? {
             seleccion,
-            onMover: (c) =>
+            onSeleccion: setSeleccion,
+            onMover: (sel, p) => {
+              setSeleccion(sel);
               setVersiones((vs) => {
                 if (!vs) return vs;
-                let v = vs[activa];
-                if (c.impacto)
-                  v = { ...v, impacto: { punto: [c.impacto[0], c.impacto[1]], fuente: "perito" } };
-                if (c.restos)
-                  v = {
-                    ...v,
-                    restos: {
-                      inicio: c.restos.inicio
-                        ? [c.restos.inicio[0], c.restos.inicio[1]]
-                        : v.restos.inicio,
-                      fin: c.restos.fin ? [c.restos.fin[0], c.restos.fin[1]] : v.restos.fin,
-                      fuente: "perito",
-                    },
-                  };
-                if (c.pose)
-                  v = moverPose(v, seleccion.letra, seleccion.fase, {
-                    punto: [c.pose[0], c.pose[1]],
-                  });
-                return { ...vs, [activa]: v };
-              }),
+                const v = vs[activa];
+                const punto: [number, number] = [p[0], p[1]];
+                const movida =
+                  sel.tipo === "pose"
+                    ? moverPose(v, sel.letra, sel.fase, { punto })
+                    : sel.tipo === "impacto"
+                      ? { ...v, impacto: { punto, fuente: "perito" as const } }
+                      : {
+                          ...v,
+                          restos: { ...v.restos, [sel.extremo]: punto, fuente: "perito" as const },
+                        };
+                return { ...vs, [activa]: movida };
+              });
+            },
           }
         : null,
     [paso, versiones, seleccion, activa],
@@ -285,7 +302,8 @@ export function Recorrido({ caso, reproduccion }: { caso: CasoCesvi; reproduccio
         ]);
         return { tipo: "encuadre", puntos, zoomMax: 20.5 };
       }
-      if (tramo?.length) return { tipo: "encuadre", puntos: tramo, zoomMax: 11 };
+      if (tramo.length)
+        return { tipo: "encuadre", puntos: tramo.flatMap((c) => c.puntos), zoomMax: 11 };
     }
     return null;
   }, [paso, versiones, tramo]);
@@ -459,7 +477,7 @@ export function Recorrido({ caso, reproduccion }: { caso: CasoCesvi; reproduccio
   const frase = [
     `Siniestro ${caso.id} de ${caso.aseguradora}: alcance entre una ${caso.vehiculos.A.tipo} y una ${caso.vehiculos.B.tipo}; el conductor de A declara una reversa.`,
     "Croquis lee la declaración: subraya cada frase, la convierte en datos y pregunta lo que falta.",
-    `El lugar: km ${caso.lugar.kilometro}, tramo Los Mochis–Navojoa. Marca el punto de impacto; la vía viene de OpenStreetMap.`,
+    `El lugar: km ${caso.lugar.kilometro}, tramo Los Mochis–Navojoa. Marca el punto de impacto sobre la carretera federal 15.`,
     activa === "declarada"
       ? `Versión declarada: A retrocede ${reversaDibujada} m y B lo impacta; sin desplazamiento después.`
       : `Versión de la evidencia: B alcanza a A y la desplaza; los restos cubren ${caso.evidencia.restos.distancia_m.valor} m.`,
@@ -473,7 +491,7 @@ export function Recorrido({ caso, reproduccion }: { caso: CasoCesvi; reproduccio
 
   const tituloDetalle = paso === 5 ? "Ver cálculo" : "Ver detalle";
   const escena = [
-    <PasoCaso key="caso" caso={caso} />,
+    <PasoCaso key="caso" caso={caso} nombres={nombres} />,
     <PasoNarracion
       key="narracion"
       declaracion={caso.declaracion.texto}
@@ -490,7 +508,8 @@ export function Recorrido({ caso, reproduccion }: { caso: CasoCesvi; reproduccio
       key="lugar"
       marcado={versiones !== null}
       aviso={avisoLugar}
-      onCoordenadas={(lat, lon) => void fijarImpacto([lon, lat])}
+      msCalles={msCalles}
+      onCoordenadas={(lat, lon) => fijarImpacto([lon, lat])}
     />,
     <PasoVersiones
       key="versiones"
@@ -501,6 +520,10 @@ export function Recorrido({ caso, reproduccion }: { caso: CasoCesvi; reproduccio
       }}
       restosM={restosM}
       restosDictamen={caso.evidencia.restos.distancia_m.valor}
+      nombres={nombres}
+      seleccion={
+        animacion === null && versiones ? describirSeleccion(seleccion, nombres, activa) : null
+      }
       animando={animacion !== null}
       onRepetir={animar}
       onUsarRestos={() => {
@@ -511,7 +534,7 @@ export function Recorrido({ caso, reproduccion }: { caso: CasoCesvi; reproduccio
     />,
     <PasoDanos
       key="danos"
-      caso={caso}
+      nombres={nombres}
       zonas={zonas}
       onZonas={(l, z) => setZonas((zs) => ({ ...zs, [l]: z }))}
     />,
@@ -519,6 +542,7 @@ export function Recorrido({ caso, reproduccion }: { caso: CasoCesvi; reproduccio
       key="numeros"
       impactoKmh={impactoKmh}
       desplazamientoKmh={desplazamientoKmh}
+      nombres={nombres}
       comparacion={resultados?.comparacion ?? null}
     />,
     <PasoSugerencia
@@ -546,6 +570,10 @@ export function Recorrido({ caso, reproduccion }: { caso: CasoCesvi; reproduccio
     />,
   ][paso];
   const sobreMapa = paso === 2 || paso === 3;
+  // La pose que edita el panel: la elegida en el mapa (si se eligió el impacto o los restos, la
+  // posición final de A).
+  const poseElegida =
+    seleccion.tipo === "pose" ? seleccion : ({ tipo: "pose", letra: "A", fase: "final" } as const);
 
   return (
     <div className="fixed inset-0 flex flex-col bg-fondo">
@@ -581,15 +609,17 @@ export function Recorrido({ caso, reproduccion }: { caso: CasoCesvi; reproduccio
       >
         <MapaRecorrido
           camara={camara}
-          vias={vias}
+          calles={calles}
           version={version}
           medidas={MEDIDAS}
+          nombres={nombres}
           animacion={paso === 3 ? animacion : null}
           edicion={edicion}
           onClic={(p) => {
-            if (paso === 2 && !versiones) void fijarImpacto(p);
+            if (paso === 2 && !versiones) fijarImpacto(p);
           }}
           onCaptura={alCapturar}
+          onConsultaCalles={alConsultarCalles}
           atenuado={!sobreMapa}
         />
         <div
@@ -666,7 +696,14 @@ export function Recorrido({ caso, reproduccion }: { caso: CasoCesvi; reproduccio
               {caso.lugar.arroyos.length} arroyos de {caso.lugar.ancho_arroyo_m.valor} m.{" "}
               {caso.lugar.separacion.valor} {caso.lugar.carpeta.valor}
             </p>
-            {viaCercana ? <p>Vía más cercana en OSM: {viaCercana}.</p> : null}
+            {viaCercana ? (
+              <p data-testid="via-cercana">
+                Vía más cercana: {viaCercana.nombre ?? viaCercana.tipo}
+                {viaCercana.carriles ? `, ${viaCercana.carriles} carriles` : ""}
+                {viaCercana.anchoM ? `, ${viaCercana.anchoM} m de ancho` : ""} (
+                {FUENTE_CALLE[viaCercana.fuente]}).
+              </p>
+            ) : null}
             <p className="t-nota text-texto-2">
               El dictamen no da coordenadas del km {caso.lugar.kilometro} y OpenStreetMap no tiene
               marcas de kilómetro en el tramo: el perito marca el punto.
@@ -680,22 +717,22 @@ export function Recorrido({ caso, reproduccion }: { caso: CasoCesvi; reproduccio
               <label className="t-nota flex flex-col gap-1 text-texto-2">
                 Vehículo
                 <select
-                  className="campo w-24"
-                  value={seleccion.letra}
+                  className="campo w-40"
+                  value={poseElegida.letra}
                   onChange={(e) =>
-                    setSeleccion((s) => ({ ...s, letra: e.target.value as "A" | "B" }))
+                    setSeleccion({ ...poseElegida, letra: e.target.value as "A" | "B" })
                   }
                 >
-                  <option value="A">A</option>
-                  <option value="B">B</option>
+                  <option value="A">{nombres.A}</option>
+                  <option value="B">{nombres.B}</option>
                 </select>
               </label>
               <label className="t-nota flex flex-col gap-1 text-texto-2">
                 Fase
                 <select
                   className="campo w-44"
-                  value={seleccion.fase}
-                  onChange={(e) => setSeleccion((s) => ({ ...s, fase: e.target.value as Fase }))}
+                  value={poseElegida.fase}
+                  onChange={(e) => setSeleccion({ ...poseElegida, fase: e.target.value as Fase })}
                 >
                   {FASES.map((f) => (
                     <option key={f} value={f}>
@@ -709,13 +746,13 @@ export function Recorrido({ caso, reproduccion }: { caso: CasoCesvi; reproduccio
                 <input
                   type="number"
                   className="campo cifras w-24"
-                  value={Math.round(version.vehiculos[seleccion.letra][seleccion.fase].rumbo)}
+                  value={Math.round(version.vehiculos[poseElegida.letra][poseElegida.fase].rumbo)}
                   onChange={(e) =>
                     setVersiones((vs) =>
                       vs
                         ? {
                             ...vs,
-                            [activa]: moverPose(vs[activa], seleccion.letra, seleccion.fase, {
+                            [activa]: moverPose(vs[activa], poseElegida.letra, poseElegida.fase, {
                               rumbo: Number(e.target.value) || 0,
                             }),
                           }
@@ -726,8 +763,8 @@ export function Recorrido({ caso, reproduccion }: { caso: CasoCesvi; reproduccio
               </label>
             </div>
             <p className="t-nota text-texto-2">
-              En el mapa: arrastra la marca del vehículo elegido, ✕ (punto de impacto) y R1, R2
-              (zona de restos).
+              En el mapa: toca o arrastra cualquier marca (posición inicial, impacto o final de cada
+              vehículo, ✕ punto de impacto, R1 y R2 zona de restos).
             </p>
             <table className="t-interfaz w-full border-collapse text-left">
               <thead>
@@ -741,7 +778,9 @@ export function Recorrido({ caso, reproduccion }: { caso: CasoCesvi; reproduccio
                 {(["A", "B"] as const).flatMap((l) =>
                   FASES.map((f) => (
                     <tr key={`${l}-${f}`} className="border-b border-linea">
-                      <td className="py-1">{l}</td>
+                      <td className={`py-1 ${l === "A" ? "text-vehiculo-a" : "text-vehiculo-b"}`}>
+                        {nombres[l]}
+                      </td>
                       <td className="py-1">{NOMBRE_FASE[f]}</td>
                       <td className="py-1">{version.vehiculos[l][f].fuente}</td>
                     </tr>

@@ -1,16 +1,23 @@
 "use client";
 /**
- * El mapa del recorrido del perito (ADR 0052): una sola instancia de MapLibre para todos los pasos,
- * así la cámara vuela de un paso al siguiente. Dibuja las calles de OSM, la versión a la vista
- * (completa, o animada de la posición inicial al impacto y a la final) y la zona de restos; en los
- * pasos que lo permiten, el perito arrastra el punto de impacto, los extremos de los restos y el
- * vehículo elegido.
+ * El mapa del recorrido del perito (ADR 0052 y 0053): una sola instancia de MapLibre para todos los
+ * pasos, así la cámara vuela de un paso al siguiente.
+ *
+ * - Dibuja las calles, la versión a la vista (completa, o animada de la posición inicial al impacto
+ *   y a la final) y la zona de restos. Cada vehículo va en su color y con su nombre («A · Silverado»).
+ * - En los pasos que lo permiten, el perito elige y arrastra el punto de impacto, los extremos de
+ *   los restos y las tres posiciones de cada vehículo. Cada punto lleva su etiqueta (en dos columnas,
+ *   con una línea al punto); lo elegido se resalta.
+ * - Entrega una consulta de las calles de los mosaicos ya cargados, para no esperar a Overpass.
  */
 import {
   avanzar,
   distanciaM,
+  FASES,
   rectanguloVehiculo,
+  rumboCercano,
   rumboDeg,
+  type Calle,
   type Fase,
   type LonLat,
   type Medidas,
@@ -21,23 +28,128 @@ import type { Feature, Position } from "geojson";
 import type { GeoJSONSource, Map as MapaMl, Marker } from "maplibre-gl";
 import { useEffect, useRef, useState } from "react";
 import "maplibre-gl/dist/maplibre-gl.css";
-import { colores, ESTILO_MAPA, geojson, marcador, vacio, type ViaOsm } from "../mapa-comun";
+import { colores, ESTILO_MAPA, marcador, vacio } from "../mapa-comun";
+import { acomodarEtiquetas, ALTO_ETIQUETA } from "./etiquetas-mapa";
 
 export type Camara =
   | { tipo: "vista"; centro: LonLat; zoom: number }
   | { tipo: "encuadre"; puntos: LonLat[]; zoomMax: number };
 
+/** Lo que el perito puede elegir y mover en el mapa. */
+export type Seleccion =
+  | { tipo: "pose"; letra: "A" | "B"; fase: Fase }
+  | { tipo: "impacto" }
+  | { tipo: "restos"; extremo: "inicio" | "fin" };
+
 export interface EdicionMapa {
-  seleccion: { letra: "A" | "B"; fase: Fase };
-  onMover: (cambio: {
-    impacto?: LonLat;
-    restos?: { inicio?: LonLat; fin?: LonLat };
-    pose?: LonLat;
-  }) => void;
+  seleccion: Seleccion;
+  onSeleccion: (s: Seleccion) => void;
+  onMover: (s: Seleccion, p: LonLat) => void;
 }
 
+type Lado = "izq" | "der";
+const LADO: Record<"A" | "B", Lado> = { A: "izq", B: "der" };
+
+interface ItemEtiqueta {
+  /** También es su `data-testid`. */
+  id: string;
+  texto: string;
+  clase: string;
+  lado: Lado;
+  punto: LonLat;
+  /** Color de la línea que la une con su punto. */
+  color: string;
+  elegida?: boolean;
+  onClick?: () => void;
+}
+
+const idMarca = (s: Seleccion) =>
+  s.tipo === "pose"
+    ? `marca-${s.letra}-${s.fase}`
+    : s.tipo === "impacto"
+      ? "marca-impacto"
+      : `marca-restos-${s.extremo}`;
+
+/**
+ * Crea la capa de etiquetas sobre el mapa y devuelve la función que la dibuja con lo que haya en
+ * `items`: sincroniza los elementos, los acomoda en dos columnas y traza la línea a cada punto.
+ */
+function capaDeEtiquetas(m: MapaMl, items: { current: ItemEtiqueta[] }): () => void {
+  const capa = document.createElement("div");
+  capa.className = "capa-etiquetas";
+  const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+  svg.setAttribute("aria-hidden", "true");
+  capa.appendChild(svg);
+  m.getContainer().appendChild(capa);
+  const elementos = new Map<string, HTMLElement>();
+  const clics = new Map<string, (() => void) | undefined>();
+  return () => {
+    const lista = items.current;
+    for (const [id, el] of elementos) {
+      if (!lista.some((it) => it.id === id)) {
+        el.remove();
+        elementos.delete(id);
+      }
+    }
+    for (const it of lista) {
+      let el = elementos.get(it.id);
+      if (!el) {
+        el = document.createElement(it.onClick ? "button" : "div");
+        if (el instanceof HTMLButtonElement) el.type = "button";
+        el.dataset.testid = it.id;
+        el.addEventListener("click", (e) => {
+          e.stopPropagation();
+          clics.get(it.id)?.();
+        });
+        capa.appendChild(el);
+        elementos.set(it.id, el);
+      }
+      clics.set(it.id, it.onClick);
+      el.className = `etiqueta-mapa ${it.clase}${it.elegida ? " marca-elegida" : ""}`;
+      if (el.textContent !== it.texto) el.textContent = it.texto;
+      if (it.elegida) el.setAttribute("aria-pressed", "true");
+      else el.removeAttribute("aria-pressed");
+    }
+    const colocadas = acomodarEtiquetas(
+      lista.map((it) => {
+        const p = m.project([it.punto[0], it.punto[1]]);
+        return {
+          id: it.id,
+          lado: it.lado,
+          punto: { x: p.x, y: p.y },
+          ancho: elementos.get(it.id)!.offsetWidth,
+        };
+      }),
+      { ancho: capa.clientWidth, alto: capa.clientHeight },
+    );
+    const lineas: string[] = [];
+    for (const c of colocadas) {
+      const el = elementos.get(c.id)!;
+      const it = lista.find((x) => x.id === c.id)!;
+      el.style.transform = `translate(${c.x.toFixed(1)}px, ${c.y.toFixed(1)}px)`;
+      const borde = it.lado === "izq" ? c.x + el.offsetWidth : c.x;
+      const y = c.y + ALTO_ETIQUETA / 2;
+      lineas.push(
+        `<line x1="${borde.toFixed(1)}" y1="${y.toFixed(1)}" x2="${c.ancla.x.toFixed(1)}" y2="${c.ancla.y.toFixed(1)}" stroke="${it.color}" stroke-width="${it.elegida ? 2.5 : 1.5}" stroke-opacity="0.8"/>`,
+        `<circle cx="${c.ancla.x.toFixed(1)}" cy="${c.ancla.y.toFixed(1)}" r="3" fill="${it.color}"/>`,
+      );
+    }
+    svg.innerHTML = lineas.join("");
+  };
+}
+
+const ETIQUETA_FASE: Record<Fase, string> = {
+  inicial: "inicial",
+  impacto: "impacto",
+  final: "final",
+};
 const movimientoReducido = () =>
   typeof window !== "undefined" && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+export const igualSeleccion = (a: Seleccion, b: Seleccion) =>
+  a.tipo === b.tipo &&
+  (a.tipo !== "pose" || (b.tipo === "pose" && a.letra === b.letra && a.fase === b.fase)) &&
+  (a.tipo !== "restos" || (b.tipo === "restos" && a.extremo === b.extremo));
 
 /** La pose de un vehículo en el instante t∈[0,1]: de la inicial al impacto y del impacto a la final. */
 function poseEn(v: VersionCroquis, letra: "A" | "B", t: number): Pose {
@@ -52,21 +164,45 @@ function poseEn(v: VersionCroquis, letra: "A" | "B", t: number): Pose {
   return { punto, rumbo: a.rumbo + (b.rumbo - a.rumbo) * s, fuente: a.fuente };
 }
 
-function geojsonAnimado(v: VersionCroquis, medidas: Record<"A" | "B", Medidas>, t: number) {
+const poligono = (p: Pose, m: Medidas): [number, number][] =>
+  rectanguloVehiculo(p.punto, p.rumbo, m.largo, m.ancho);
+
+function geojsonCompleto(
+  v: VersionCroquis,
+  medidas: Record<"A" | "B", Medidas>,
+  sel: Seleccion | null,
+) {
   const features: Feature[] = [];
   for (const letra of ["A", "B"] as const) {
-    const p = poseEn(v, letra, t);
-    features.push({
-      type: "Feature",
-      properties: { tipo: "vehiculo", letra, fase: "final" },
-      geometry: {
-        type: "Polygon",
-        coordinates: [
-          rectanguloVehiculo(p.punto, p.rumbo, medidas[letra].largo, medidas[letra].ancho),
-        ],
-      },
-    });
+    for (const fase of FASES) {
+      const elegida = sel?.tipo === "pose" && sel.letra === letra && sel.fase === fase;
+      features.push({
+        type: "Feature",
+        properties: { tipo: "vehiculo", letra, fase, elegida },
+        geometry: {
+          type: "Polygon",
+          coordinates: [poligono(v.vehiculos[letra][fase], medidas[letra])],
+        },
+      });
+    }
   }
+  features.push({
+    type: "Feature",
+    properties: { tipo: "restos" },
+    geometry: {
+      type: "LineString",
+      coordinates: [v.restos.inicio, v.restos.fin] as unknown as Position[],
+    },
+  });
+  return { type: "FeatureCollection" as const, features };
+}
+
+function geojsonAnimado(v: VersionCroquis, medidas: Record<"A" | "B", Medidas>, t: number) {
+  const features: Feature[] = (["A", "B"] as const).map((letra) => ({
+    type: "Feature",
+    properties: { tipo: "vehiculo", letra, fase: "final", elegida: false },
+    geometry: { type: "Polygon", coordinates: [poligono(poseEn(v, letra, t), medidas[letra])] },
+  }));
   // Los restos aparecen con el impacto y crecen con el desplazamiento.
   if (t >= 0.5) {
     const f = Math.min(1, (t - 0.5) / 0.5);
@@ -86,37 +222,72 @@ function geojsonAnimado(v: VersionCroquis, medidas: Record<"A" | "B", Medidas>, 
   return { type: "FeatureCollection" as const, features };
 }
 
+/** Las calles de los mosaicos ya cargados a menos de `radioM` del punto (OpenMapTiles). */
+function callesDeMosaicos(m: MapaMl, p: LonLat, radioM: number): Calle[] {
+  const fuente = Object.keys(m.getStyle()?.sources ?? {}).find((s) => s === "openmaptiles");
+  if (!fuente) return [];
+  const out: Calle[] = [];
+  for (const f of m.querySourceFeatures(fuente, { sourceLayer: "transportation" })) {
+    const g = f.geometry;
+    const lineas =
+      g.type === "LineString" ? [g.coordinates] : g.type === "MultiLineString" ? g.coordinates : [];
+    for (const l of lineas) {
+      const puntos = l.map((c) => [c[0], c[1]] as LonLat);
+      const r = rumboCercano(puntos, p);
+      if (!r || r.distancia > radioM) continue;
+      const props = f.properties as Record<string, unknown>;
+      out.push({
+        tipo: String(props.class ?? "calle"),
+        ...(props.name ? { nombre: String(props.name) } : {}),
+        puntos,
+        fuente: "mosaicos",
+      });
+    }
+  }
+  return out;
+}
+
 export function MapaRecorrido({
   camara,
-  vias,
+  calles,
   version,
   medidas,
+  nombres,
   animacion,
   edicion,
   onClic,
   onCaptura,
+  onConsultaCalles,
   atenuado,
 }: {
   camara: Camara | null;
-  vias: ViaOsm[];
+  calles: Calle[];
   version: VersionCroquis | null;
   medidas: Record<"A" | "B", Medidas>;
+  /** «A · Silverado», «B · Tacoma». */
+  nombres: Record<"A" | "B", string>;
   /** Progreso de la animación (0 a 1); null dibuja la versión completa. */
   animacion: number | null;
   edicion: EdicionMapa | null;
   onClic?: (p: LonLat) => void;
   onCaptura?: (capturar: () => string | null) => void;
+  /** Entrega la consulta de las calles de los mosaicos (inmediata, sin red). */
+  onConsultaCalles?: (consultar: (p: LonLat, radioM: number) => Calle[]) => void;
   /** El mapa queda detrás, oscurecido (pasos que no son del mapa). */
   atenuado: boolean;
 }) {
   const contenedor = useRef<HTMLDivElement>(null);
   const mapa = useRef<MapaMl | null>(null);
-  const marcadores = useRef<Marker[]>([]);
+  const marcas = useRef<Marker[]>([]);
   const [listo, setListo] = useState(false);
-  const avisos = useRef({ onClic, onCaptura });
+  const coloresVehiculo = useRef({ A: "#2b8cff", B: "#a05cff", evidencia: "#ff6a1a" });
+  // La capa de etiquetas (HTML sobre el mapa) y lo que muestra; se redibuja al mover el mapa.
+  const etiquetas = useRef<ItemEtiqueta[]>([]);
+  const dibujarEtiquetas = useRef<() => void>(() => {});
+  const avisos = useRef({ onClic, onCaptura, onConsultaCalles });
   useEffect(() => {
-    avisos.current = { onClic, onCaptura };
-  }, [onClic, onCaptura]);
+    avisos.current = { onClic, onCaptura, onConsultaCalles };
+  }, [onClic, onCaptura, onConsultaCalles]);
 
   useEffect(() => {
     let vivo = true;
@@ -136,6 +307,14 @@ export function MapaRecorrido({
       instancia.on("load", () => {
         if (!vivo || !instancia) return;
         const c = colores();
+        const s = getComputedStyle(document.documentElement);
+        const colorA = s.getPropertyValue("--vehiculo-a").trim() || "#2b8cff";
+        const colorB = s.getPropertyValue("--vehiculo-b").trim() || "#a05cff";
+        const porVehiculo = ["match", ["get", "letra"], "A", colorA, colorB] as unknown as string;
+        coloresVehiculo.current = { A: colorA, B: colorB, evidencia: c.evidencia };
+        dibujarEtiquetas.current = capaDeEtiquetas(instancia, etiquetas);
+        instancia.on("move", () => dibujarEtiquetas.current());
+        instancia.on("resize", () => dibujarEtiquetas.current());
         instancia.addSource("calles", { type: "geojson", data: vacio });
         instancia.addLayer({
           id: "calles",
@@ -150,8 +329,8 @@ export function MapaRecorrido({
           source: "croquis",
           filter: ["==", ["get", "tipo"], "vehiculo"],
           paint: {
-            "fill-color": c.texto,
-            "fill-opacity": ["match", ["get", "fase"], "final", 0.6, "impacto", 0.3, 0.12],
+            "fill-color": porVehiculo,
+            "fill-opacity": ["match", ["get", "fase"], "final", 0.7, "impacto", 0.35, 0.15],
           },
         });
         instancia.addLayer({
@@ -160,8 +339,8 @@ export function MapaRecorrido({
           source: "croquis",
           filter: ["==", ["get", "tipo"], "vehiculo"],
           paint: {
-            "line-color": c.texto,
-            "line-width": 1.5,
+            "line-color": ["case", ["get", "elegida"], c.accion, porVehiculo] as unknown as string,
+            "line-width": ["case", ["get", "elegida"], 3, 1.5] as unknown as number,
             "line-dasharray": [
               "match",
               ["get", "fase"],
@@ -181,6 +360,9 @@ export function MapaRecorrido({
         mapa.current = instancia;
         setListo(true);
         avisos.current.onCaptura?.(() => mapa.current?.getCanvas().toDataURL("image/png") ?? null);
+        avisos.current.onConsultaCalles?.((p, radioM) =>
+          mapa.current ? callesDeMosaicos(mapa.current, p, radioM) : [],
+        );
       });
     });
     return () => {
@@ -209,9 +391,10 @@ export function MapaRecorrido({
           [Math.min(...lons), Math.min(...lats)],
           [Math.max(...lons), Math.max(...lats)],
         ],
-        // Deja libres el selector de versión (arriba) y la tarjeta de los restos (abajo a la izquierda).
+        // Deja libres el selector de versión (arriba), la tarjeta de los restos (abajo a la
+        // izquierda) y la leyenda (abajo a la derecha).
         {
-          padding: { top: 150, bottom: 90, left: 300, right: 90 },
+          padding: { top: 150, bottom: 110, left: 300, right: 220 },
           maxZoom: camara.zoomMax,
           duration: duracion,
         },
@@ -220,12 +403,13 @@ export function MapaRecorrido({
   }, [listo, camara]);
 
   // Calles y croquis (completo o animado).
+  const seleccion = edicion?.seleccion ?? null;
   useEffect(() => {
     const m = mapa.current;
     if (!m || !listo) return;
     (m.getSource("calles") as GeoJSONSource | undefined)?.setData({
       type: "FeatureCollection",
-      features: vias.map((v) => ({
+      features: calles.map((v) => ({
         type: "Feature",
         properties: {},
         geometry: { type: "LineString", coordinates: v.puntos as unknown as Position[] },
@@ -235,64 +419,128 @@ export function MapaRecorrido({
       version === null
         ? vacio
         : animacion === null
-          ? geojson(version, medidas, [])
+          ? geojsonCompleto(version, medidas, seleccion)
           : geojsonAnimado(version, medidas, animacion),
     );
-  }, [listo, vias, version, medidas, animacion]);
+  }, [listo, calles, version, medidas, animacion, seleccion]);
 
-  // Marcas que el perito arrastra (solo en los pasos que lo permiten y sin animación).
+  // Las etiquetas: el nombre de cada vehículo («A · Silverado», también mientras se anima) y, al
+  // editar, una por marca («A · final», «✕ impacto», «R1 restos»). Van en dos columnas con una
+  // línea a su punto, porque los puntos de una versión pueden coincidir (etiquetas-mapa.ts).
   useEffect(() => {
     const m = mapa.current;
-    for (const mk of marcadores.current) mk.remove();
-    marcadores.current = [];
-    if (!m || !listo || !version || !edicion || animacion !== null) return;
-    void import("maplibre-gl").then(({ Marker }) => {
-      const nuevo = (
-        el: HTMLElement,
-        p: LonLat,
-        alSoltar: (q: LonLat) => void,
-        offset: [number, number] = [0, 0],
-      ) => {
-        const mk = new Marker({ element: el, draggable: true, offset })
-          .setLngLat([p[0], p[1]])
-          .addTo(m);
-        mk.on("dragend", () => {
-          const ll = mk.getLngLat();
-          alSoltar([ll.lng, ll.lat]);
-        });
-        marcadores.current.push(mk);
-      };
+    if (!m || !listo) return;
+    const col = coloresVehiculo.current;
+    const items: ItemEtiqueta[] = [];
+    if (version) {
       for (const letra of ["A", "B"] as const) {
-        const final = version.vehiculos[letra].final.punto;
-        marcadores.current.push(
-          new Marker({ element: marcador(letra, "marca-etiqueta"), offset: [34, 0] })
-            .setLngLat([final[0], final[1]])
-            .addTo(m),
+        const pose =
+          animacion === null ? version.vehiculos[letra].final : poseEn(version, letra, animacion);
+        items.push({
+          id: `nombre-${letra}`,
+          texto: nombres[letra],
+          clase: `etiqueta-nombre etiqueta-nombre-${letra.toLowerCase()}`,
+          lado: LADO[letra],
+          punto: pose.punto,
+          color: col[letra],
+        });
+      }
+      if (edicion && animacion === null) {
+        const nueva = (sel: Seleccion, texto: string, clase: string, lado: Lado, punto: LonLat) =>
+          items.push({
+            id: idMarca(sel),
+            texto,
+            clase,
+            lado,
+            punto,
+            color: sel.tipo === "pose" ? col[sel.letra] : col.evidencia,
+            elegida: igualSeleccion(sel, edicion.seleccion),
+            onClick: () => edicion.onSeleccion(sel),
+          });
+        for (const letra of ["A", "B"] as const) {
+          for (const fase of FASES) {
+            nueva(
+              { tipo: "pose", letra, fase },
+              `${letra} · ${ETIQUETA_FASE[fase]}`,
+              `etiqueta-fase etiqueta-fase-${letra.toLowerCase()}`,
+              LADO[letra],
+              version.vehiculos[letra][fase].punto,
+            );
+          }
+        }
+        nueva({ tipo: "impacto" }, "✕ impacto", "etiqueta-evidencia", "der", version.impacto.punto);
+        nueva(
+          { tipo: "restos", extremo: "inicio" },
+          "R1 restos",
+          "etiqueta-evidencia",
+          "izq",
+          version.restos.inicio,
+        );
+        nueva(
+          { tipo: "restos", extremo: "fin" },
+          "R2 restos",
+          "etiqueta-evidencia",
+          "izq",
+          version.restos.fin,
         );
       }
-      const { letra, fase } = edicion.seleccion;
-      nuevo(
-        marcador(letra, "marca-mapa marca-vehiculo"),
-        version.vehiculos[letra][fase].punto,
-        (q) => edicion.onMover({ pose: q }),
-        [-34, 0],
-      );
-      nuevo(marcador("✕", "marca-mapa marca-impacto"), version.impacto.punto, (q) =>
-        edicion.onMover({ impacto: q }),
-      );
-      nuevo(
-        marcador("R1", "marca-mapa marca-restos"),
-        version.restos.inicio,
-        (q) => edicion.onMover({ restos: { inicio: q } }),
-        [34, 22],
-      );
-      nuevo(
-        marcador("R2", "marca-mapa marca-restos"),
-        version.restos.fin,
-        (q) => edicion.onMover({ restos: { fin: q } }),
-        [34, -22],
-      );
+    }
+    etiquetas.current = items;
+    dibujarEtiquetas.current();
+  }, [listo, version, edicion, animacion, nombres]);
+
+  // Los puntos que el perito arrastra (sin animación), justo en su lugar: las tres posiciones de
+  // cada vehículo, el punto de impacto y los extremos de los restos. El elegido queda encima.
+  useEffect(() => {
+    const m = mapa.current;
+    for (const mk of marcas.current) mk.remove();
+    marcas.current = [];
+    if (!m || !listo || !version || !edicion || animacion !== null) return;
+    let vivo = true;
+    void import("maplibre-gl").then(({ Marker }) => {
+      if (!vivo) return;
+      const nuevo = (sel: Seleccion, clase: string, texto: string, p: LonLat) => {
+        const elegida = igualSeleccion(sel, edicion.seleccion);
+        const el = marcador(texto, `punto-mapa ${clase}${elegida ? " marca-elegida" : ""}`);
+        el.setAttribute("aria-hidden", "true");
+        el.dataset.testid = `punto-${idMarca(sel).slice("marca-".length)}`;
+        el.style.zIndex = elegida ? "3" : "1";
+        const mk = new Marker({ element: el, draggable: true }).setLngLat([p[0], p[1]]).addTo(m);
+        el.addEventListener("click", (e) => {
+          e.stopPropagation();
+          edicion.onSeleccion(sel);
+        });
+        mk.on("dragstart", () => edicion.onSeleccion(sel));
+        // La línea de su etiqueta sigue al punto mientras se arrastra.
+        mk.on("drag", () => {
+          const ll = mk.getLngLat();
+          const it = etiquetas.current.find((x) => x.id === idMarca(sel));
+          if (it) it.punto = [ll.lng, ll.lat];
+          dibujarEtiquetas.current();
+        });
+        mk.on("dragend", () => {
+          const ll = mk.getLngLat();
+          edicion.onMover(sel, [ll.lng, ll.lat]);
+        });
+        marcas.current.push(mk);
+      };
+      for (const letra of ["A", "B"] as const) {
+        for (const fase of FASES) {
+          nuevo(
+            { tipo: "pose", letra, fase },
+            `punto-${letra.toLowerCase()}`,
+            "",
+            version.vehiculos[letra][fase].punto,
+          );
+        }
+      }
+      nuevo({ tipo: "impacto" }, "punto-impacto", "✕", version.impacto.punto);
+      nuevo({ tipo: "restos", extremo: "inicio" }, "punto-evidencia", "", version.restos.inicio);
+      nuevo({ tipo: "restos", extremo: "fin" }, "punto-evidencia", "", version.restos.fin);
     });
+    return () => {
+      vivo = false;
+    };
   }, [listo, version, edicion, animacion]);
 
   return (

@@ -55,3 +55,6 @@ apps/web/public/marca/
 # Generados por packages/extraction/scripts/demo-casos.ts (se verifican byte a byte con demo:check)
 apps/web/src/data/demo.json
 apps/web/src/data/portada.json
+
+# Tramo de OSM precargado para la demo de CESVI (data/cesvi/scripts/tramo.mjs)
+data/cesvi/casos/*-tramo.json

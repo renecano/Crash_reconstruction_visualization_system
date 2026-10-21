@@ -8,3 +8,4 @@ export * from "./geo";
 export * from "./versiones";
 export * from "./correspondencia";
 export * from "./declaracion";
+export * from "./tramo";

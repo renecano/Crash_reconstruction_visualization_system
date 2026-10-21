@@ -24,6 +24,7 @@ import {
 } from "@croquis/cesvi";
 import type { Content, TableCell, TDocumentDefinitions } from "pdfmake/interfaces";
 import { pdfBytes } from "./pdf";
+import { COLOR_VEHICULO, nombreVehiculo, type Letra } from "./vehiculos-cesvi";
 
 export const LEYENDA_DICTAMEN =
   "Elaborado con apoyo de Croquis. El dictamen es responsabilidad del perito que lo firma.";
@@ -62,6 +63,8 @@ const titulo = (t: string): Content => ({
   margin: [0, 14, 0, 6],
 });
 const subtitulo = (t: string): Content => ({ text: t, bold: true, margin: [0, 8, 0, 4] });
+/** El cuadro de color de cada vehículo, el mismo del recorrido (ADR 0053). */
+const cuadro = (letra: Letra) => ({ text: "■ ", color: COLOR_VEHICULO[letra] });
 const parrafo = (t: string): Content => ({ text: t, margin: [0, 0, 0, 6] });
 const formula = (p: PasoFormula, etiqueta?: string): Content => ({
   stack: [
@@ -74,12 +77,19 @@ const formula = (p: PasoFormula, etiqueta?: string): Content => ({
   margin: [12, 2, 0, 8],
 });
 
-function tabla(encabezados: string[], filas: TableCell[][], anchos?: (string | number)[]): Content {
+function tabla(
+  encabezados: (string | TableCell)[],
+  filas: TableCell[][],
+  anchos?: (string | number)[],
+): Content {
   return {
     table: {
       headerRows: 1,
       widths: anchos ?? encabezados.map(() => "*"),
-      body: [encabezados.map((h) => ({ text: h, bold: true, fontSize: 9 })), ...filas],
+      body: [
+        encabezados.map((h) => (typeof h === "string" ? { text: h, bold: true, fontSize: 9 } : h)),
+        ...filas,
+      ],
     },
     layout: "lightHorizontalLines",
     fontSize: 9,
@@ -93,6 +103,11 @@ export function dictamenContenido(d: DatosDictamen): Content[] {
   const validado = d.validacion !== null;
   const modalidad = c.modalidad_dictaminada.toUpperCase();
   const vehiculos = [c.vehiculos.A, c.vehiculos.B];
+  const encabezadoVehiculos: TableCell[] = (["A", "B"] as const).map((l) => ({
+    text: [cuadro(l), nombreVehiculo(c, l)],
+    bold: true,
+    fontSize: 9,
+  }));
   const out: Content[] = [];
 
   if (!validado) {
@@ -129,7 +144,7 @@ export function dictamenContenido(d: DatosDictamen): Content[] {
   out.push(titulo("Características de los vehículos"));
   out.push(
     tabla(
-      ["", "Vehículo A", "Vehículo B"],
+      ["", ...encabezadoVehiculos],
       [
         ["Marca", ...vehiculos.map((v) => v.marca)],
         ["Tipo", ...vehiculos.map((v) => v.tipo)],
@@ -145,7 +160,11 @@ export function dictamenContenido(d: DatosDictamen): Content[] {
   out.push(titulo("Observación de daños en los vehículos"));
   (["A", "B"] as const).forEach((letra, i) => {
     const v = vehiculos[i]!;
-    out.push(subtitulo(`Vehículo ${letra}: ${v.marca} ${v.tipo}`));
+    out.push({
+      text: [cuadro(letra), `${nombreVehiculo(c, letra)}: ${v.marca} ${v.tipo}`],
+      bold: true,
+      margin: [0, 8, 0, 4],
+    });
     for (const dn of v.danos) {
       out.push(
         parrafo(
@@ -175,7 +194,13 @@ export function dictamenContenido(d: DatosDictamen): Content[] {
   if (d.croquis) {
     out.push({ image: d.croquis.imagen, width: 515, margin: [0, 4, 0, 2] });
     out.push({
-      text: `Croquis a escala sobre el mapa: ${d.croquis.version}. Mapa © OpenStreetMap (ODbL), mosaicos OpenFreeMap / OpenMapTiles.`,
+      text: [
+        `Croquis a escala sobre el mapa: ${d.croquis.version}. `,
+        cuadro("A"),
+        `${nombreVehiculo(c, "A")}, `,
+        cuadro("B"),
+        `${nombreVehiculo(c, "B")}. Mapa © OpenStreetMap (ODbL), mosaicos OpenFreeMap / OpenMapTiles.`,
+      ],
       fontSize: 8,
       color: "#444444",
       margin: [0, 0, 0, 8],
@@ -220,7 +245,7 @@ export function dictamenContenido(d: DatosDictamen): Content[] {
   out.push(subtitulo("4. Correspondencia de daños"));
   out.push(
     tabla(
-      ["Criterio", "Vehículo A", "Vehículo B"],
+      ["Criterio", ...encabezadoVehiculos],
       CRITERIOS.map((cr) => [
         cr.nombre,
         ...(["A", "B"] as const).map((l) => {

@@ -133,6 +133,8 @@
   --color-texto-3: var(--texto-3);
   --color-accion: var(--accion);
   --color-evidencia: var(--evidencia);
+  --color-vehiculo-a: var(--vehiculo-a);
+  --color-vehiculo-b: var(--vehiculo-b);
   --font-sans: var(--fuente);
   --radius-control: var(--radio-control);
   --radius-panel: var(--radio-panel);

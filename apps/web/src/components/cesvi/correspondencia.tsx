@@ -13,17 +13,24 @@ import { useId } from "react";
 
 export function Criterios({
   letra,
+  nombre,
   valores,
   onCambio,
 }: {
   letra: "A" | "B";
+  /** «A · Silverado». */
+  nombre?: string;
   valores: Record<ClaveCriterio, CriterioMarcado>;
   onCambio: (clave: ClaveCriterio, v: CriterioMarcado) => void;
 }) {
   const id = useId();
   return (
     <fieldset className="flex flex-col gap-3">
-      <legend className="t-subtitulo mb-2">Vehículo {letra}</legend>
+      <legend
+        className={`t-subtitulo mb-2 ${letra === "A" ? "text-vehiculo-a" : "text-vehiculo-b"}`}
+      >
+        {nombre ?? `Vehículo ${letra}`}
+      </legend>
       {CRITERIOS.map((c) => (
         <div key={c.clave} className="flex flex-col gap-1 border-b border-linea pb-3">
           <label htmlFor={`${id}-${c.clave}`} className="t-interfaz">
