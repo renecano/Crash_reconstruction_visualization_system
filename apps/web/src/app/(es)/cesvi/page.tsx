@@ -5,7 +5,7 @@
  */
 import type { Metadata } from "next";
 import { caso, CASO_INICIAL } from "@croquis/cesvi";
-import { Calculos } from "@/components/cesvi/calculos";
+import { CasoInteractivo } from "@/components/cesvi/caso-interactivo";
 import { Expediente } from "@/components/cesvi/expediente";
 import { Reproduccion } from "@/components/cesvi/reproduccion";
 import { Logotipo } from "@/components/sitio/logo";
@@ -43,7 +43,7 @@ export default function CesviPage() {
           </p>
         </header>
         <Expediente caso={c} />
-        <Calculos caso={c} />
+        <CasoInteractivo caso={c} />
         <Reproduccion caso={c} />
       </main>
       <footer className="pagina border-t border-linea py-6">

@@ -21,6 +21,16 @@ Reglas de trabajo: `CLAUDE.md`. Especificación: `PLAN.md`.
   - **Qué necesito de René:**
     - pasar el usuario y la clave a quien vea la demo: están en `.env.local` (`CROQUIS_CESVI_USUARIO`, `CROQUIS_CESVI_CLAVE`) y en Vercel;
     - las preguntas para CESVI que muestra la página, empezando por el PDF original o la hoja de cálculo del dictamen.
+- **Hito 2 — el lugar y el croquis sobre el mapa** (rama `feat/cesvi-hito2`, ADR 0050):
+  - **Liga:** https://croquis-sage.vercel.app/cesvi, sección «El lugar y el croquis» (pide usuario y clave).
+  - **Qué hay:**
+    - mapa con MapLibre GL y mosaicos de OpenFreeMap;
+    - búsqueda del lugar (Nominatim) o coordenadas, y el punto de impacto; Croquis importa las calles de OSM y toma el rumbo de la vía;
+    - las dos versiones a escala: la de la evidencia (A termina a 15.89 m y los restos van del impacto a ahí) y la declarada (A retrocede «unos metros» y no hay desplazamiento);
+    - herramientas para mover y girar cada vehículo en cada fase, mover el punto de impacto y los extremos de la zona de restos, medir distancias y llevar la separación medida al cálculo 2; cada posición dice su fuente.
+  - **Cómo probarlo:** en «El lugar y el croquis», buscar el lugar o escribir coordenadas y tocar el punto de impacto. Cambiar entre las dos versiones: en la de la evidencia, R1–R2 mide 15.89 m; en la declarada, 0 m. Con «Usar esta distancia en el cálculo 2», V3 pasa de 60.27 km/h a 0 km/h en la declarada.
+  - **Pruebas:** `packages/cesvi/src/versiones.test.ts` (geometría y versiones) y la e2e `@flujo` de `/cesvi`, con mapa y vía sintéticos.
+  - **Qué necesito de René:** la ubicación del km 47+800 (coordenadas o una foto aérea); el dictamen no la da y está en las preguntas para CESVI. Mientras, el perito marca el punto a mano.
 - **Incidente de estilos en producción (2026-10-20), resuelto:** el despliegue del PR #63 salió con el CSS de la plantilla de Next (fondo #0a0a0a, Arial, sin `--fondo` ni Anybody) aunque el código era el nuevo. No faltaba nada en git: el build de Vercel restauró la caché de un despliegue anterior a F11a, y el siguiente (PR #64) salió bien. En la laptop y en CI el build siempre estuvo bien.
   - **Comprobado en producción:** en `:root`, `--fondo` vale `#0b0d0f`, el texto va en Anybody y la portada y `/cuenta` se ven como en local.
   - **Para que no se repita:** `apps/web/scripts/css-check.mjs` corre dentro de `pnpm build` (en Vercel y en CI) y falla si el CSS generado no trae `--fondo`, los tokens de la marca, Anybody y las clases del sistema. Tarda milisegundos. Contra el CSS del despliegue malo falla en los 6 requisitos.
@@ -136,7 +146,7 @@ Lo que se pospone por el trabajo con CESVI no se borra: queda aquí para despué
   - reproducibilidad de los datos de Python (DataMX, CISS, inercias de NHTSA, OSM, MakeHuman, Poly Haven) y Python en Windows.
 - **Lighthouse, axe y E-series como requisito:** `eval/f11_portada.mjs` y las demás evaluaciones siguen en el repo; se corren cuando René lo pida.
 - **En pausa:** el visor 3D, la portada de lanzamiento y la historia (de F11a solo se usan tokens, marca y componentes); E6 en baja y media después de F11a; F11b (E9 con personas).
-- **Del prototipo de CESVI:** el mapa con mosaicos propios (privacidad completa), la importación automática de cualquier dictamen, interpenetración, impactos múltiples y generalidad del método.
+- **Del prototipo de CESVI:** el mapa con mosaicos propios (privacidad completa), la importación automática de cualquier dictamen, interpenetración, impactos múltiples y generalidad del método; autenticación con cuentas para cuando los peritos usen sus propios casos (hoy el acceso es con usuario y clave, ADR 0049).
 
 ### Bloqueado — necesita a René
 
