@@ -3,7 +3,7 @@
  * (`/visor?escena=propia`). Vive en `sessionStorage` de esta pestaña, nunca sale del navegador, y
  * se valida contra el contrato al leerla.
  */
-import { validateEscena, type EscenaSpec } from "@croquis/scene-schema";
+import { migrateEscena, validateEscena, type EscenaSpec } from "@croquis/scene-schema";
 
 export const ESCENA_PROPIA_KEY = "croquis:escena-propia";
 
@@ -36,7 +36,8 @@ export function leerEscenaPropia(): EscenaSpec | null {
   cacheSpec = null;
   if (!raw) return null;
   try {
-    const result = validateEscena(JSON.parse(raw) as unknown);
+    // Una escena guardada con un contrato anterior (p. ej. 1.3.0) se migra antes de validarla.
+    const result = validateEscena(migrateEscena(JSON.parse(raw) as unknown).doc);
     cacheSpec = result.ok ? result.spec : null;
   } catch {
     cacheSpec = null;

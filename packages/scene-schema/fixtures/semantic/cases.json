@@ -331,6 +331,1296 @@
       ],
       "errores": [],
       "advertencias": [["W003", "/vehiculos"]]
+    },
+    {
+      "nombre": "expediente_limpio",
+      "base": "alcance",
+      "mutaciones": [
+        {
+          "op": "set",
+          "ruta": "/expediente",
+          "valor": {
+            "caso": {
+              "aseguradora": {
+                "valor": "AXA",
+                "fuente": "dictamen_importado"
+              },
+              "modalidades": ["alcance"]
+            },
+            "vehiculos": [
+              {
+                "id": "A",
+                "marca": {
+                  "valor": "Chevrolet",
+                  "fuente": "dictamen_importado"
+                },
+                "anio": 2007,
+                "clase": "pickup"
+              },
+              {
+                "id": "B",
+                "clase": "pickup"
+              }
+            ],
+            "danos": [
+              {
+                "vehiculo": "A",
+                "zona": {
+                  "cara": "posterior",
+                  "tercio": "izquierdo",
+                  "vertice": "posterior_izquierdo"
+                },
+                "altura_cm": {
+                  "min": 45,
+                  "max": 95
+                },
+                "direcciones": ["de_atras_hacia_adelante"],
+                "tipos": ["hundimiento"],
+                "fuente": "dictamen_importado"
+              },
+              {
+                "vehiculo": "B",
+                "zona": {
+                  "cara": "frontal",
+                  "tercio": "derecho"
+                },
+                "direcciones": ["de_adelante_hacia_atras"],
+                "magnitud": {
+                  "c_m": [0.96, 0.86, 0.52, 0.2],
+                  "l_m": 1.689
+                },
+                "fuente": "dictamen_importado"
+              }
+            ],
+            "impactos": [
+              {
+                "orden": 1,
+                "vehiculos": ["B", "A"],
+                "zonas": [
+                  {
+                    "vehiculo": "A",
+                    "zona": {
+                      "cara": "posterior"
+                    }
+                  },
+                  {
+                    "vehiculo": "B",
+                    "zona": {
+                      "cara": "frontal"
+                    }
+                  }
+                ],
+                "fuente": "perito"
+              }
+            ],
+            "versiones": [
+              {
+                "tipo": "evidencia"
+              },
+              {
+                "tipo": "declarada",
+                "declarante": "A",
+                "declaracion": {
+                  "texto": "reversie unos metros"
+                },
+                "maniobras": [
+                  {
+                    "vehiculo": "A",
+                    "tipo": "reversa"
+                  }
+                ]
+              }
+            ],
+            "calculos": [
+              {
+                "metodo": "mchenry",
+                "vehiculo": "B",
+                "resultado": {
+                  "valor": 220.19,
+                  "unidad": "kJ",
+                  "fuente": "dictamen_importado"
+                }
+              }
+            ],
+            "criterios": [
+              {
+                "criterio": "direccion",
+                "estado": "no_corresponde"
+              }
+            ],
+            "resultado": {
+              "conclusion": {
+                "veredicto": "no_se_sostiene",
+                "fuente": "dictamen_importado"
+              }
+            }
+          }
+        }
+      ],
+      "errores": [],
+      "advertencias": []
+    },
+    {
+      "nombre": "expediente_vehiculo_repetido",
+      "base": "alcance",
+      "mutaciones": [
+        {
+          "op": "set",
+          "ruta": "/expediente",
+          "valor": {
+            "caso": {
+              "aseguradora": {
+                "valor": "AXA",
+                "fuente": "dictamen_importado"
+              },
+              "modalidades": ["alcance"]
+            },
+            "vehiculos": [
+              {
+                "id": "A",
+                "marca": {
+                  "valor": "Chevrolet",
+                  "fuente": "dictamen_importado"
+                },
+                "anio": 2007,
+                "clase": "pickup"
+              },
+              {
+                "id": "B",
+                "clase": "pickup"
+              },
+              {
+                "id": "A"
+              }
+            ],
+            "danos": [
+              {
+                "vehiculo": "A",
+                "zona": {
+                  "cara": "posterior",
+                  "tercio": "izquierdo",
+                  "vertice": "posterior_izquierdo"
+                },
+                "altura_cm": {
+                  "min": 45,
+                  "max": 95
+                },
+                "direcciones": ["de_atras_hacia_adelante"],
+                "tipos": ["hundimiento"],
+                "fuente": "dictamen_importado"
+              },
+              {
+                "vehiculo": "B",
+                "zona": {
+                  "cara": "frontal",
+                  "tercio": "derecho"
+                },
+                "direcciones": ["de_adelante_hacia_atras"],
+                "magnitud": {
+                  "c_m": [0.96, 0.86, 0.52, 0.2],
+                  "l_m": 1.689
+                },
+                "fuente": "dictamen_importado"
+              }
+            ],
+            "impactos": [
+              {
+                "orden": 1,
+                "vehiculos": ["B", "A"],
+                "zonas": [
+                  {
+                    "vehiculo": "A",
+                    "zona": {
+                      "cara": "posterior"
+                    }
+                  },
+                  {
+                    "vehiculo": "B",
+                    "zona": {
+                      "cara": "frontal"
+                    }
+                  }
+                ],
+                "fuente": "perito"
+              }
+            ],
+            "versiones": [
+              {
+                "tipo": "evidencia"
+              },
+              {
+                "tipo": "declarada",
+                "declarante": "A",
+                "declaracion": {
+                  "texto": "reversie unos metros"
+                },
+                "maniobras": [
+                  {
+                    "vehiculo": "A",
+                    "tipo": "reversa"
+                  }
+                ]
+              }
+            ],
+            "calculos": [
+              {
+                "metodo": "mchenry",
+                "vehiculo": "B",
+                "resultado": {
+                  "valor": 220.19,
+                  "unidad": "kJ",
+                  "fuente": "dictamen_importado"
+                }
+              }
+            ],
+            "criterios": [
+              {
+                "criterio": "direccion",
+                "estado": "no_corresponde"
+              }
+            ],
+            "resultado": {
+              "conclusion": {
+                "veredicto": "no_se_sostiene",
+                "fuente": "dictamen_importado"
+              }
+            }
+          }
+        }
+      ],
+      "errores": [["X001", "/expediente/vehiculos/2/id"]],
+      "advertencias": []
+    },
+    {
+      "nombre": "expediente_vehiculo_desconocido",
+      "base": "alcance",
+      "mutaciones": [
+        {
+          "op": "set",
+          "ruta": "/expediente",
+          "valor": {
+            "caso": {
+              "aseguradora": {
+                "valor": "AXA",
+                "fuente": "dictamen_importado"
+              },
+              "modalidades": ["alcance"]
+            },
+            "vehiculos": [
+              {
+                "id": "A",
+                "marca": {
+                  "valor": "Chevrolet",
+                  "fuente": "dictamen_importado"
+                },
+                "anio": 2007,
+                "clase": "pickup"
+              },
+              {
+                "id": "B",
+                "clase": "pickup"
+              }
+            ],
+            "danos": [
+              {
+                "vehiculo": "C",
+                "zona": {
+                  "cara": "posterior",
+                  "tercio": "izquierdo",
+                  "vertice": "posterior_izquierdo"
+                },
+                "altura_cm": {
+                  "min": 45,
+                  "max": 95
+                },
+                "direcciones": ["de_atras_hacia_adelante"],
+                "tipos": ["hundimiento"],
+                "fuente": "dictamen_importado"
+              },
+              {
+                "vehiculo": "B",
+                "zona": {
+                  "cara": "frontal",
+                  "tercio": "derecho"
+                },
+                "direcciones": ["de_adelante_hacia_atras"],
+                "magnitud": {
+                  "c_m": [0.96, 0.86, 0.52, 0.2],
+                  "l_m": 1.689
+                },
+                "fuente": "dictamen_importado"
+              }
+            ],
+            "impactos": [
+              {
+                "orden": 1,
+                "vehiculos": ["B", "A"],
+                "zonas": [
+                  {
+                    "vehiculo": "A",
+                    "zona": {
+                      "cara": "posterior"
+                    }
+                  },
+                  {
+                    "vehiculo": "B",
+                    "zona": {
+                      "cara": "frontal"
+                    }
+                  }
+                ],
+                "fuente": "perito"
+              }
+            ],
+            "versiones": [
+              {
+                "tipo": "evidencia"
+              },
+              {
+                "tipo": "declarada",
+                "declarante": "A",
+                "declaracion": {
+                  "texto": "reversie unos metros"
+                },
+                "maniobras": [
+                  {
+                    "vehiculo": "A",
+                    "tipo": "reversa"
+                  }
+                ]
+              }
+            ],
+            "calculos": [
+              {
+                "metodo": "mchenry",
+                "vehiculo": "B",
+                "resultado": {
+                  "valor": 220.19,
+                  "unidad": "kJ",
+                  "fuente": "dictamen_importado"
+                }
+              }
+            ],
+            "criterios": [
+              {
+                "criterio": "direccion",
+                "estado": "no_corresponde"
+              }
+            ],
+            "resultado": {
+              "conclusion": {
+                "veredicto": "no_se_sostiene",
+                "fuente": "dictamen_importado"
+              }
+            }
+          }
+        }
+      ],
+      "errores": [["X002", "/expediente/danos/0/vehiculo"]],
+      "advertencias": []
+    },
+    {
+      "nombre": "expediente_orden_impactos",
+      "base": "alcance",
+      "mutaciones": [
+        {
+          "op": "set",
+          "ruta": "/expediente",
+          "valor": {
+            "caso": {
+              "aseguradora": {
+                "valor": "AXA",
+                "fuente": "dictamen_importado"
+              },
+              "modalidades": ["alcance"]
+            },
+            "vehiculos": [
+              {
+                "id": "A",
+                "marca": {
+                  "valor": "Chevrolet",
+                  "fuente": "dictamen_importado"
+                },
+                "anio": 2007,
+                "clase": "pickup"
+              },
+              {
+                "id": "B",
+                "clase": "pickup"
+              }
+            ],
+            "danos": [
+              {
+                "vehiculo": "A",
+                "zona": {
+                  "cara": "posterior",
+                  "tercio": "izquierdo",
+                  "vertice": "posterior_izquierdo"
+                },
+                "altura_cm": {
+                  "min": 45,
+                  "max": 95
+                },
+                "direcciones": ["de_atras_hacia_adelante"],
+                "tipos": ["hundimiento"],
+                "fuente": "dictamen_importado"
+              },
+              {
+                "vehiculo": "B",
+                "zona": {
+                  "cara": "frontal",
+                  "tercio": "derecho"
+                },
+                "direcciones": ["de_adelante_hacia_atras"],
+                "magnitud": {
+                  "c_m": [0.96, 0.86, 0.52, 0.2],
+                  "l_m": 1.689
+                },
+                "fuente": "dictamen_importado"
+              }
+            ],
+            "impactos": [
+              {
+                "orden": 1,
+                "vehiculos": ["B", "A"],
+                "zonas": [
+                  {
+                    "vehiculo": "A",
+                    "zona": {
+                      "cara": "posterior"
+                    }
+                  },
+                  {
+                    "vehiculo": "B",
+                    "zona": {
+                      "cara": "frontal"
+                    }
+                  }
+                ],
+                "fuente": "perito"
+              },
+              {
+                "orden": 1,
+                "vehiculos": ["A", "B"],
+                "fuente": "perito"
+              }
+            ],
+            "versiones": [
+              {
+                "tipo": "evidencia"
+              },
+              {
+                "tipo": "declarada",
+                "declarante": "A",
+                "declaracion": {
+                  "texto": "reversie unos metros"
+                },
+                "maniobras": [
+                  {
+                    "vehiculo": "A",
+                    "tipo": "reversa"
+                  }
+                ]
+              }
+            ],
+            "calculos": [
+              {
+                "metodo": "mchenry",
+                "vehiculo": "B",
+                "resultado": {
+                  "valor": 220.19,
+                  "unidad": "kJ",
+                  "fuente": "dictamen_importado"
+                }
+              }
+            ],
+            "criterios": [
+              {
+                "criterio": "direccion",
+                "estado": "no_corresponde"
+              }
+            ],
+            "resultado": {
+              "conclusion": {
+                "veredicto": "no_se_sostiene",
+                "fuente": "dictamen_importado"
+              }
+            }
+          }
+        }
+      ],
+      "errores": [["X003", "/expediente/impactos/1/orden"]],
+      "advertencias": []
+    },
+    {
+      "nombre": "expediente_impacto_un_participante",
+      "base": "alcance",
+      "mutaciones": [
+        {
+          "op": "set",
+          "ruta": "/expediente",
+          "valor": {
+            "caso": {
+              "aseguradora": {
+                "valor": "AXA",
+                "fuente": "dictamen_importado"
+              },
+              "modalidades": ["alcance"]
+            },
+            "vehiculos": [
+              {
+                "id": "A",
+                "marca": {
+                  "valor": "Chevrolet",
+                  "fuente": "dictamen_importado"
+                },
+                "anio": 2007,
+                "clase": "pickup"
+              },
+              {
+                "id": "B",
+                "clase": "pickup"
+              }
+            ],
+            "danos": [
+              {
+                "vehiculo": "A",
+                "zona": {
+                  "cara": "posterior",
+                  "tercio": "izquierdo",
+                  "vertice": "posterior_izquierdo"
+                },
+                "altura_cm": {
+                  "min": 45,
+                  "max": 95
+                },
+                "direcciones": ["de_atras_hacia_adelante"],
+                "tipos": ["hundimiento"],
+                "fuente": "dictamen_importado"
+              },
+              {
+                "vehiculo": "B",
+                "zona": {
+                  "cara": "frontal",
+                  "tercio": "derecho"
+                },
+                "direcciones": ["de_adelante_hacia_atras"],
+                "magnitud": {
+                  "c_m": [0.96, 0.86, 0.52, 0.2],
+                  "l_m": 1.689
+                },
+                "fuente": "dictamen_importado"
+              }
+            ],
+            "impactos": [
+              {
+                "orden": 1,
+                "vehiculos": ["A"],
+                "zonas": [
+                  {
+                    "vehiculo": "A",
+                    "zona": {
+                      "cara": "posterior"
+                    }
+                  },
+                  {
+                    "vehiculo": "B",
+                    "zona": {
+                      "cara": "frontal"
+                    }
+                  }
+                ],
+                "fuente": "perito"
+              }
+            ],
+            "versiones": [
+              {
+                "tipo": "evidencia"
+              },
+              {
+                "tipo": "declarada",
+                "declarante": "A",
+                "declaracion": {
+                  "texto": "reversie unos metros"
+                },
+                "maniobras": [
+                  {
+                    "vehiculo": "A",
+                    "tipo": "reversa"
+                  }
+                ]
+              }
+            ],
+            "calculos": [
+              {
+                "metodo": "mchenry",
+                "vehiculo": "B",
+                "resultado": {
+                  "valor": 220.19,
+                  "unidad": "kJ",
+                  "fuente": "dictamen_importado"
+                }
+              }
+            ],
+            "criterios": [
+              {
+                "criterio": "direccion",
+                "estado": "no_corresponde"
+              }
+            ],
+            "resultado": {
+              "conclusion": {
+                "veredicto": "no_se_sostiene",
+                "fuente": "dictamen_importado"
+              }
+            }
+          }
+        }
+      ],
+      "errores": [["X004", "/expediente/impactos/0"]],
+      "advertencias": []
+    },
+    {
+      "nombre": "expediente_dos_evidencias",
+      "base": "alcance",
+      "mutaciones": [
+        {
+          "op": "set",
+          "ruta": "/expediente",
+          "valor": {
+            "caso": {
+              "aseguradora": {
+                "valor": "AXA",
+                "fuente": "dictamen_importado"
+              },
+              "modalidades": ["alcance"]
+            },
+            "vehiculos": [
+              {
+                "id": "A",
+                "marca": {
+                  "valor": "Chevrolet",
+                  "fuente": "dictamen_importado"
+                },
+                "anio": 2007,
+                "clase": "pickup"
+              },
+              {
+                "id": "B",
+                "clase": "pickup"
+              }
+            ],
+            "danos": [
+              {
+                "vehiculo": "A",
+                "zona": {
+                  "cara": "posterior",
+                  "tercio": "izquierdo",
+                  "vertice": "posterior_izquierdo"
+                },
+                "altura_cm": {
+                  "min": 45,
+                  "max": 95
+                },
+                "direcciones": ["de_atras_hacia_adelante"],
+                "tipos": ["hundimiento"],
+                "fuente": "dictamen_importado"
+              },
+              {
+                "vehiculo": "B",
+                "zona": {
+                  "cara": "frontal",
+                  "tercio": "derecho"
+                },
+                "direcciones": ["de_adelante_hacia_atras"],
+                "magnitud": {
+                  "c_m": [0.96, 0.86, 0.52, 0.2],
+                  "l_m": 1.689
+                },
+                "fuente": "dictamen_importado"
+              }
+            ],
+            "impactos": [
+              {
+                "orden": 1,
+                "vehiculos": ["B", "A"],
+                "zonas": [
+                  {
+                    "vehiculo": "A",
+                    "zona": {
+                      "cara": "posterior"
+                    }
+                  },
+                  {
+                    "vehiculo": "B",
+                    "zona": {
+                      "cara": "frontal"
+                    }
+                  }
+                ],
+                "fuente": "perito"
+              }
+            ],
+            "versiones": [
+              {
+                "tipo": "evidencia"
+              },
+              {
+                "tipo": "declarada",
+                "declarante": "A",
+                "declaracion": {
+                  "texto": "reversie unos metros"
+                },
+                "maniobras": [
+                  {
+                    "vehiculo": "A",
+                    "tipo": "reversa"
+                  }
+                ]
+              },
+              {
+                "tipo": "evidencia"
+              }
+            ],
+            "calculos": [
+              {
+                "metodo": "mchenry",
+                "vehiculo": "B",
+                "resultado": {
+                  "valor": 220.19,
+                  "unidad": "kJ",
+                  "fuente": "dictamen_importado"
+                }
+              }
+            ],
+            "criterios": [
+              {
+                "criterio": "direccion",
+                "estado": "no_corresponde"
+              }
+            ],
+            "resultado": {
+              "conclusion": {
+                "veredicto": "no_se_sostiene",
+                "fuente": "dictamen_importado"
+              }
+            }
+          }
+        }
+      ],
+      "errores": [["X005", "/expediente/versiones/2"]],
+      "advertencias": []
+    },
+    {
+      "nombre": "expediente_declarada_sin_declarante",
+      "base": "alcance",
+      "mutaciones": [
+        {
+          "op": "set",
+          "ruta": "/expediente",
+          "valor": {
+            "caso": {
+              "aseguradora": {
+                "valor": "AXA",
+                "fuente": "dictamen_importado"
+              },
+              "modalidades": ["alcance"]
+            },
+            "vehiculos": [
+              {
+                "id": "A",
+                "marca": {
+                  "valor": "Chevrolet",
+                  "fuente": "dictamen_importado"
+                },
+                "anio": 2007,
+                "clase": "pickup"
+              },
+              {
+                "id": "B",
+                "clase": "pickup"
+              }
+            ],
+            "danos": [
+              {
+                "vehiculo": "A",
+                "zona": {
+                  "cara": "posterior",
+                  "tercio": "izquierdo",
+                  "vertice": "posterior_izquierdo"
+                },
+                "altura_cm": {
+                  "min": 45,
+                  "max": 95
+                },
+                "direcciones": ["de_atras_hacia_adelante"],
+                "tipos": ["hundimiento"],
+                "fuente": "dictamen_importado"
+              },
+              {
+                "vehiculo": "B",
+                "zona": {
+                  "cara": "frontal",
+                  "tercio": "derecho"
+                },
+                "direcciones": ["de_adelante_hacia_atras"],
+                "magnitud": {
+                  "c_m": [0.96, 0.86, 0.52, 0.2],
+                  "l_m": 1.689
+                },
+                "fuente": "dictamen_importado"
+              }
+            ],
+            "impactos": [
+              {
+                "orden": 1,
+                "vehiculos": ["B", "A"],
+                "zonas": [
+                  {
+                    "vehiculo": "A",
+                    "zona": {
+                      "cara": "posterior"
+                    }
+                  },
+                  {
+                    "vehiculo": "B",
+                    "zona": {
+                      "cara": "frontal"
+                    }
+                  }
+                ],
+                "fuente": "perito"
+              }
+            ],
+            "versiones": [
+              {
+                "tipo": "evidencia"
+              },
+              {
+                "tipo": "declarada",
+                "declaracion": {
+                  "texto": "reversie unos metros"
+                },
+                "maniobras": [
+                  {
+                    "vehiculo": "A",
+                    "tipo": "reversa"
+                  }
+                ]
+              }
+            ],
+            "calculos": [
+              {
+                "metodo": "mchenry",
+                "vehiculo": "B",
+                "resultado": {
+                  "valor": 220.19,
+                  "unidad": "kJ",
+                  "fuente": "dictamen_importado"
+                }
+              }
+            ],
+            "criterios": [
+              {
+                "criterio": "direccion",
+                "estado": "no_corresponde"
+              }
+            ],
+            "resultado": {
+              "conclusion": {
+                "veredicto": "no_se_sostiene",
+                "fuente": "dictamen_importado"
+              }
+            }
+          }
+        }
+      ],
+      "errores": [["X006", "/expediente/versiones/1"]],
+      "advertencias": []
+    },
+    {
+      "nombre": "expediente_altura_invertida",
+      "base": "alcance",
+      "mutaciones": [
+        {
+          "op": "set",
+          "ruta": "/expediente",
+          "valor": {
+            "caso": {
+              "aseguradora": {
+                "valor": "AXA",
+                "fuente": "dictamen_importado"
+              },
+              "modalidades": ["alcance"]
+            },
+            "vehiculos": [
+              {
+                "id": "A",
+                "marca": {
+                  "valor": "Chevrolet",
+                  "fuente": "dictamen_importado"
+                },
+                "anio": 2007,
+                "clase": "pickup"
+              },
+              {
+                "id": "B",
+                "clase": "pickup"
+              }
+            ],
+            "danos": [
+              {
+                "vehiculo": "A",
+                "zona": {
+                  "cara": "posterior",
+                  "tercio": "izquierdo",
+                  "vertice": "posterior_izquierdo"
+                },
+                "altura_cm": {
+                  "min": 95,
+                  "max": 45
+                },
+                "direcciones": ["de_atras_hacia_adelante"],
+                "tipos": ["hundimiento"],
+                "fuente": "dictamen_importado"
+              },
+              {
+                "vehiculo": "B",
+                "zona": {
+                  "cara": "frontal",
+                  "tercio": "derecho"
+                },
+                "direcciones": ["de_adelante_hacia_atras"],
+                "magnitud": {
+                  "c_m": [0.96, 0.86, 0.52, 0.2],
+                  "l_m": 1.689
+                },
+                "fuente": "dictamen_importado"
+              }
+            ],
+            "impactos": [
+              {
+                "orden": 1,
+                "vehiculos": ["B", "A"],
+                "zonas": [
+                  {
+                    "vehiculo": "A",
+                    "zona": {
+                      "cara": "posterior"
+                    }
+                  },
+                  {
+                    "vehiculo": "B",
+                    "zona": {
+                      "cara": "frontal"
+                    }
+                  }
+                ],
+                "fuente": "perito"
+              }
+            ],
+            "versiones": [
+              {
+                "tipo": "evidencia"
+              },
+              {
+                "tipo": "declarada",
+                "declarante": "A",
+                "declaracion": {
+                  "texto": "reversie unos metros"
+                },
+                "maniobras": [
+                  {
+                    "vehiculo": "A",
+                    "tipo": "reversa"
+                  }
+                ]
+              }
+            ],
+            "calculos": [
+              {
+                "metodo": "mchenry",
+                "vehiculo": "B",
+                "resultado": {
+                  "valor": 220.19,
+                  "unidad": "kJ",
+                  "fuente": "dictamen_importado"
+                }
+              }
+            ],
+            "criterios": [
+              {
+                "criterio": "direccion",
+                "estado": "no_corresponde"
+              }
+            ],
+            "resultado": {
+              "conclusion": {
+                "veredicto": "no_se_sostiene",
+                "fuente": "dictamen_importado"
+              }
+            }
+          }
+        }
+      ],
+      "errores": [["X007", "/expediente/danos/0/altura_cm"]],
+      "advertencias": []
+    },
+    {
+      "nombre": "expediente_tercio_de_otra_cara",
+      "base": "alcance",
+      "mutaciones": [
+        {
+          "op": "set",
+          "ruta": "/expediente",
+          "valor": {
+            "caso": {
+              "aseguradora": {
+                "valor": "AXA",
+                "fuente": "dictamen_importado"
+              },
+              "modalidades": ["alcance"]
+            },
+            "vehiculos": [
+              {
+                "id": "A",
+                "marca": {
+                  "valor": "Chevrolet",
+                  "fuente": "dictamen_importado"
+                },
+                "anio": 2007,
+                "clase": "pickup"
+              },
+              {
+                "id": "B",
+                "clase": "pickup"
+              }
+            ],
+            "danos": [
+              {
+                "vehiculo": "A",
+                "zona": {
+                  "cara": "posterior",
+                  "tercio": "izquierdo",
+                  "vertice": "posterior_izquierdo"
+                },
+                "altura_cm": {
+                  "min": 45,
+                  "max": 95
+                },
+                "direcciones": ["de_atras_hacia_adelante"],
+                "tipos": ["hundimiento"],
+                "fuente": "dictamen_importado"
+              },
+              {
+                "vehiculo": "B",
+                "zona": {
+                  "cara": "frontal",
+                  "tercio": "medio"
+                },
+                "direcciones": ["de_adelante_hacia_atras"],
+                "magnitud": {
+                  "c_m": [0.96, 0.86, 0.52, 0.2],
+                  "l_m": 1.689
+                },
+                "fuente": "dictamen_importado"
+              }
+            ],
+            "impactos": [
+              {
+                "orden": 1,
+                "vehiculos": ["B", "A"],
+                "zonas": [
+                  {
+                    "vehiculo": "A",
+                    "zona": {
+                      "cara": "posterior"
+                    }
+                  },
+                  {
+                    "vehiculo": "B",
+                    "zona": {
+                      "cara": "frontal"
+                    }
+                  }
+                ],
+                "fuente": "perito"
+              }
+            ],
+            "versiones": [
+              {
+                "tipo": "evidencia"
+              },
+              {
+                "tipo": "declarada",
+                "declarante": "A",
+                "declaracion": {
+                  "texto": "reversie unos metros"
+                },
+                "maniobras": [
+                  {
+                    "vehiculo": "A",
+                    "tipo": "reversa"
+                  }
+                ]
+              }
+            ],
+            "calculos": [
+              {
+                "metodo": "mchenry",
+                "vehiculo": "B",
+                "resultado": {
+                  "valor": 220.19,
+                  "unidad": "kJ",
+                  "fuente": "dictamen_importado"
+                }
+              }
+            ],
+            "criterios": [
+              {
+                "criterio": "direccion",
+                "estado": "no_corresponde"
+              }
+            ],
+            "resultado": {
+              "conclusion": {
+                "veredicto": "no_se_sostiene",
+                "fuente": "dictamen_importado"
+              }
+            }
+          }
+        }
+      ],
+      "errores": [["X009", "/expediente/danos/1/zona/tercio"]],
+      "advertencias": []
+    },
+    {
+      "nombre": "expediente_mchenry_tres_medidas",
+      "base": "alcance",
+      "mutaciones": [
+        {
+          "op": "set",
+          "ruta": "/expediente",
+          "valor": {
+            "caso": {
+              "aseguradora": {
+                "valor": "AXA",
+                "fuente": "dictamen_importado"
+              },
+              "modalidades": ["alcance"]
+            },
+            "vehiculos": [
+              {
+                "id": "A",
+                "marca": {
+                  "valor": "Chevrolet",
+                  "fuente": "dictamen_importado"
+                },
+                "anio": 2007,
+                "clase": "pickup"
+              },
+              {
+                "id": "B",
+                "clase": "pickup"
+              }
+            ],
+            "danos": [
+              {
+                "vehiculo": "A",
+                "zona": {
+                  "cara": "posterior",
+                  "tercio": "izquierdo",
+                  "vertice": "posterior_izquierdo"
+                },
+                "altura_cm": {
+                  "min": 45,
+                  "max": 95
+                },
+                "direcciones": ["de_atras_hacia_adelante"],
+                "tipos": ["hundimiento"],
+                "fuente": "dictamen_importado"
+              },
+              {
+                "vehiculo": "B",
+                "zona": {
+                  "cara": "frontal",
+                  "tercio": "derecho"
+                },
+                "direcciones": ["de_adelante_hacia_atras"],
+                "magnitud": {
+                  "c_m": [0.9, 0.5, 0.2],
+                  "l_m": 1.689
+                },
+                "fuente": "dictamen_importado"
+              }
+            ],
+            "impactos": [
+              {
+                "orden": 1,
+                "vehiculos": ["B", "A"],
+                "zonas": [
+                  {
+                    "vehiculo": "A",
+                    "zona": {
+                      "cara": "posterior"
+                    }
+                  },
+                  {
+                    "vehiculo": "B",
+                    "zona": {
+                      "cara": "frontal"
+                    }
+                  }
+                ],
+                "fuente": "perito"
+              }
+            ],
+            "versiones": [
+              {
+                "tipo": "evidencia"
+              },
+              {
+                "tipo": "declarada",
+                "declarante": "A",
+                "declaracion": {
+                  "texto": "reversie unos metros"
+                },
+                "maniobras": [
+                  {
+                    "vehiculo": "A",
+                    "tipo": "reversa"
+                  }
+                ]
+              }
+            ],
+            "calculos": [
+              {
+                "metodo": "mchenry",
+                "vehiculo": "B",
+                "resultado": {
+                  "valor": 220.19,
+                  "unidad": "kJ",
+                  "fuente": "dictamen_importado"
+                }
+              }
+            ],
+            "criterios": [
+              {
+                "criterio": "direccion",
+                "estado": "no_corresponde"
+              }
+            ],
+            "resultado": {
+              "conclusion": {
+                "veredicto": "no_se_sostiene",
+                "fuente": "dictamen_importado"
+              }
+            }
+          }
+        }
+      ],
+      "errores": [],
+      "advertencias": [["X008", "/expediente/danos/1/magnitud/c_m"]]
     }
   ]
 }

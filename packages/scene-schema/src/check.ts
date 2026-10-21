@@ -7,6 +7,7 @@
  */
 import type { EscenaSpec, Pose2D } from "./generated/escena.zod";
 import { SCHEMA_VERSION } from "./generated/escena.zod";
+import { checkExpediente } from "./check-expediente";
 import { DEFAULT_CLASES } from "./vehicle-classes";
 
 export type Severidad = "error" | "advertencia";
@@ -396,6 +397,9 @@ export function checkEscena(spec: EscenaSpec, options: CheckOptions = {}): Probl
         "Un impacto con objeto necesita al menos un vehículo como actor.",
       );
   });
+
+  // --- Expediente de CESVI (contrato v2) -------------------------------------------------
+  if (spec.expediente) problemas.push(...checkExpediente(spec.expediente));
 
   problemas.sort((a, b) =>
     a.ruta < b.ruta

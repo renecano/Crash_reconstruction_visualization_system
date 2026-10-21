@@ -34,12 +34,15 @@ from croquis_extraction.facts import facts_from_annotation
 from croquis_extraction.spec_builder import build_spec
 from croquis_scene_schema import schema_errors
 from croquis_scene_schema.check import check_escena, errores_de
+from croquis_scene_schema.migrate import migrate_escena
 
 ROOT = Path(__file__).resolve().parents[2]
 DATA = ROOT / "data" / "relatos-mx"
 SOURCE = DATA / "fuente"
 BUILD = DATA / "build"
 LOCKS = {"test": DATA / "test.lock", "ciss": DATA / "ciss.lock"}
+#: Versión del contrato de las escenas esperadas del benchmark: la de cuando se congeló.
+VERSION_CONGELADA = "1.3.0"
 LOCK = LOCKS["test"]
 FICHAS = DATA / "ciss" / "fichas.jsonl"
 SPLITS = ("dev", "test", "ciss")
@@ -110,7 +113,16 @@ def load_all() -> list[JsonObj]:
 def build_item(it: JsonObj) -> JsonObj:
     r = render(it["texto"])
     facts = facts_from_annotation({**it["hechos"], "tipo": it["tipo"]})
-    spec = build_spec(facts, r.text, spec_id=it["id"], titulo=it.get("titulo"), origen="escrito")
+    # Las escenas esperadas conservan la versión del contrato con que se congeló el benchmark
+    # (CLAUDE.md: el test congelado no se modifica); quien las valide las migra antes.
+    spec = build_spec(
+        facts,
+        r.text,
+        spec_id=it["id"],
+        titulo=it.get("titulo"),
+        origen="escrito",
+        version_esquema=VERSION_CONGELADA,
+    )
     return {
         "id": it["id"],
         "split": it["split"],
@@ -255,10 +267,12 @@ def problems(items: list[JsonObj]) -> list[str]:
         except (ValueError, KeyError) as e:
             out.append(f"{rid}: {e}")
             continue
-        errs = schema_errors(b["spec"])
+        # La escena esperada está en la versión congelada: se valida ya migrada a la vigente.
+        vigente = migrate_escena(b["spec"]).doc
+        errs = schema_errors(vigente)
         if errs:
             out.append(f"{rid}: esquema: {errs[0]}")
-        sem = errores_de(check_escena(b["spec"]))
+        sem = errores_de(check_escena(vigente))
         if sem:
             out.append(f"{rid}: semántica: {sem[0].codigo} {sem[0].mensaje}")
     return out

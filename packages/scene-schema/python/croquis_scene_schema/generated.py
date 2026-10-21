@@ -581,7 +581,7 @@ class Meta(BaseModel):
         extra="forbid",
     )
     id: Annotated[str, Field(max_length=64, min_length=8, pattern="^[A-Za-z0-9_-]+$")]
-    version_esquema: Literal["1.3.0"]
+    version_esquema: Literal["2.0.0"]
     idioma: Literal["es-MX", "en"]
     semilla: Annotated[int, Field(ge=0, le=4294967295)]
     """
@@ -936,6 +936,752 @@ class EvidenciaFisica(BaseModel):
     procedencia: Procedencia
 
 
+class IdVehiculoExpediente(RootModel[str]):
+    root: Annotated[str, Field(pattern="^[A-Z][A-Z0-9]{0,3}$")]
+    """
+    Identificador del vehículo en el expediente: A, B, C… (o V1, V2… en un dictamen importado).
+    """
+
+
+class Cita(BaseModel):
+    """
+    La frase literal de donde sale un dato, y la página si es de un PDF.
+    """
+
+    model_config = ConfigDict(
+        extra="forbid",
+    )
+    texto: Annotated[str, Field(max_length=1200, min_length=1)]
+    """
+    Fragmento literal.
+    """
+    pagina: Annotated[int | None, Field(ge=1)] = None
+    """
+    Página del PDF.
+    """
+
+
+class DatoExpediente(BaseModel):
+    """
+    Un dato de texto con su fuente y su cita.
+    """
+
+    model_config = ConfigDict(
+        extra="forbid",
+    )
+    valor: Annotated[str, Field(max_length=600, min_length=1)]
+    """
+    El dato.
+    """
+    fuente: Literal["perito", "conductor", "expediente", "dictamen_importado", "supuesto", "mapa"]
+    """
+    De dónde sale un dato del expediente de CESVI (v2): lo escribió el perito, lo dijo un conductor, viene del expediente del caso, de un dictamen importado, lo supuso el sistema o salió del mapa.
+    """
+    cita: Cita | None = None
+
+
+class MedidaExpediente(BaseModel):
+    """
+    Un número con unidad, su fuente y su cita.
+    """
+
+    model_config = ConfigDict(
+        extra="forbid",
+    )
+    valor: float
+    """
+    El número.
+    """
+    unidad: Annotated[str, Field(max_length=20, min_length=1)]
+    """
+    Unidad (m, cm, km/h, m/s, kJ, kg, N/m, N/m², g…).
+    """
+    fuente: Literal["perito", "conductor", "expediente", "dictamen_importado", "supuesto", "mapa"]
+    """
+    De dónde sale un dato del expediente de CESVI (v2): lo escribió el perito, lo dijo un conductor, viene del expediente del caso, de un dictamen importado, lo supuso el sistema o salió del mapa.
+    """
+    cita: Cita | None = None
+
+
+class Coordenadas(BaseModel):
+    """
+    Un punto en el mapa (WGS84).
+    """
+
+    model_config = ConfigDict(
+        extra="forbid",
+    )
+    lat: Annotated[float, Field(ge=-90.0, le=90.0)]
+    """
+    Latitud.
+    """
+    lon: Annotated[float, Field(ge=-180.0, le=180.0)]
+    """
+    Longitud.
+    """
+
+
+class Lugar1(BaseModel):
+    """
+    Dónde fue.
+    """
+
+    model_config = ConfigDict(
+        extra="forbid",
+    )
+    descripcion: DatoExpediente | None = None
+    coordenadas: Coordenadas | None = None
+    via: DatoExpediente | None = None
+    carriles: Annotated[int | None, Field(ge=1, le=12)] = None
+    """
+    Carriles por sentido.
+    """
+    municipio: DatoExpediente | None = None
+    estado: DatoExpediente | None = None
+
+
+class CasoExpediente(BaseModel):
+    """
+    Los datos del caso: aseguradora, siniestro, fecha, lugar y modalidades. Sin nombres de personas.
+    """
+
+    model_config = ConfigDict(
+        extra="forbid",
+    )
+    aseguradora: DatoExpediente | None = None
+    siniestro: DatoExpediente | None = None
+    fecha_hora: DatoExpediente | None = None
+    lugar: Lugar1 | None = None
+    """
+    Dónde fue.
+    """
+    modalidades: Annotated[
+        list[
+            Literal[
+                "alcance",
+                "lateral",
+                "frontal",
+                "crucero",
+                "reversa",
+                "volcadura",
+                "salida_de_camino",
+                "objeto_fijo",
+                "atropellamiento",
+                "carambola",
+                "otra",
+            ]
+        ],
+        Field(max_length=6),
+    ]
+    """
+    Modalidad o modalidades del hecho.
+    """
+
+
+class Rigidez(BaseModel):
+    """
+    Coeficientes de rigidez A (N/m) y B (N/m²) con su fuente.
+    """
+
+    model_config = ConfigDict(
+        extra="forbid",
+    )
+    A: Annotated[float, Field(ge=0.0)]
+    """
+    Coeficiente A (N/m).
+    """
+    B: Annotated[float, Field(ge=0.0)]
+    """
+    Coeficiente B (N/m²).
+    """
+    fuente: Literal["dictamen", "tabla_cesvi", "nhtsa_e2", "perito"]
+    """
+    Del dictamen, de una tabla de CESVI o de NHTSA E2 (marcada como tal).
+    """
+    cita: Cita | None = None
+
+
+class AlturaDefensaCm(BaseModel):
+    """
+    Altura de las defensas medida (cm desde el piso).
+    """
+
+    model_config = ConfigDict(
+        extra="forbid",
+    )
+    delantera: Annotated[float | None, Field(ge=0.0, le=300.0)] = None
+    """
+    Delantera (cm).
+    """
+    trasera: Annotated[float | None, Field(ge=0.0, le=300.0)] = None
+    """
+    Trasera (cm).
+    """
+
+
+class VehiculoExpediente(BaseModel):
+    """
+    Un vehículo del expediente. Sin placas, VIN ni nombres.
+    """
+
+    model_config = ConfigDict(
+        extra="forbid",
+    )
+    id: Annotated[str, Field(pattern="^[A-Z][A-Z0-9]{0,3}$")]
+    """
+    Identificador del vehículo en el expediente: A, B, C… (o V1, V2… en un dictamen importado).
+    """
+    marca: DatoExpediente | None = None
+    modelo: DatoExpediente | None = None
+    anio: Annotated[int | None, Field(ge=1900, le=2100)] = None
+    """
+    Año modelo.
+    """
+    clase: (
+        Literal[
+            "sedan_compacto",
+            "sedan_mediano",
+            "hatchback",
+            "suv_compacta",
+            "suv_grande",
+            "pickup",
+            "van",
+            "microbus_combi",
+            "autobus",
+            "camion_unitario",
+            "tractocamion",
+            "motocicleta",
+            "bicicleta",
+            "scooter",
+        ]
+        | None
+    ) = None
+    """
+    Clase del vehículo (las mismas del contrato: sedan_compacto, pickup…).
+    """
+    masa: MedidaExpediente | None = None
+    rigidez: Rigidez | None = None
+    altura_defensa_cm: AlturaDefensaCm | None = None
+    """
+    Altura de las defensas medida (cm desde el piso).
+    """
+
+
+class ZonaDiagrama(BaseModel):
+    """
+    La zona en el diagrama estándar del vehículo: cara, tercio y vértice.
+    """
+
+    model_config = ConfigDict(
+        extra="forbid",
+    )
+    cara: Literal[
+        "frontal",
+        "posterior",
+        "lateral_izquierdo",
+        "lateral_derecho",
+        "techo",
+        "inferior",
+    ]
+    tercio: Literal["izquierdo", "centro", "derecho", "delantero", "medio", "trasero"] | None = None
+    """
+    En el frente y la parte posterior: izquierdo, centro, derecho. En los laterales: delantero, medio, trasero.
+    """
+    vertice: (
+        Literal[
+            "delantero_izquierdo",
+            "delantero_derecho",
+            "posterior_izquierdo",
+            "posterior_derecho",
+        ]
+        | None
+    ) = None
+
+
+class AlturaCm(BaseModel):
+    """
+    Altura mínima y máxima del daño desde el piso (cm).
+    """
+
+    model_config = ConfigDict(
+        extra="forbid",
+    )
+    min: Annotated[float | None, Field(ge=0.0, le=400.0)] = None
+    """
+    Mínima (cm).
+    """
+    max: Annotated[float | None, Field(ge=0.0, le=400.0)] = None
+    """
+    Máxima (cm).
+    """
+
+
+class CMItem(RootModel[float]):
+    root: Annotated[float, Field(ge=0.0, le=5.0)]
+    """
+    Profundidad C (m).
+    """
+
+
+class Magnitud(BaseModel):
+    """
+    Magnitud del daño: cualitativa y, si las hay, las medidas de profundidad C y el ancho L.
+    """
+
+    model_config = ConfigDict(
+        extra="forbid",
+    )
+    cualitativa: Literal["leve", "moderada", "severa"] | None = None
+    c_m: Annotated[list[CMItem] | None, Field(max_length=6)] = None
+    """
+    Medidas C1…C6 (m).
+    """
+    l_m: Annotated[float | None, Field(ge=0.0, le=10.0)] = None
+    """
+    Ancho del daño L (m).
+    """
+
+
+class IntercambioMaterial(BaseModel):
+    """
+    Transferencia de material: color y sobre qué zona.
+    """
+
+    model_config = ConfigDict(
+        extra="forbid",
+    )
+    color: Annotated[str | None, Field(max_length=60, min_length=1)] = None
+    """
+    Color transferido.
+    """
+    sobre: Annotated[str | None, Field(max_length=200, min_length=1)] = None
+    """
+    Sobre qué zona o pieza.
+    """
+
+
+class Foto(RootModel[str]):
+    root: Annotated[str, Field(max_length=300, min_length=1)]
+    """
+    Referencia a una foto del caso.
+    """
+
+
+class DanoExpediente(BaseModel):
+    """
+    Un daño de un vehículo: zona, altura, dirección, magnitud, intercambio de material y daño previo.
+    """
+
+    model_config = ConfigDict(
+        extra="forbid",
+    )
+    vehiculo: Annotated[str, Field(pattern="^[A-Z][A-Z0-9]{0,3}$")]
+    """
+    Identificador del vehículo en el expediente: A, B, C… (o V1, V2… en un dictamen importado).
+    """
+    zona: ZonaDiagrama
+    altura_cm: AlturaCm | None = None
+    """
+    Altura mínima y máxima del daño desde el piso (cm).
+    """
+    direcciones: Annotated[
+        list[
+            Literal[
+                "de_adelante_hacia_atras",
+                "de_atras_hacia_adelante",
+                "de_izquierda_a_derecha",
+                "de_derecha_a_izquierda",
+                "de_arriba_hacia_abajo",
+                "de_abajo_hacia_arriba",
+            ]
+        ]
+        | None,
+        Field(max_length=4),
+    ] = None
+    """
+    Dirección o direcciones de la deformación.
+    """
+    tipos: Annotated[
+        list[
+            Literal[
+                "hundimiento",
+                "tallon",
+                "ruptura",
+                "desprendimiento",
+                "deformacion",
+                "fractura",
+                "impregnacion_pintura",
+            ]
+        ]
+        | None,
+        Field(max_length=7),
+    ] = None
+    """
+    Tipo de daño.
+    """
+    magnitud: Magnitud | None = None
+    """
+    Magnitud del daño: cualitativa y, si las hay, las medidas de profundidad C y el ancho L.
+    """
+    intercambio_material: IntercambioMaterial | None = None
+    """
+    Transferencia de material: color y sobre qué zona.
+    """
+    dano_previo: bool | None = None
+    """
+    Daño previo u óxido sin relación con el hecho.
+    """
+    descripcion: DatoExpediente | None = None
+    fotos: Annotated[list[Foto] | None, Field(max_length=50)] = None
+    """
+    Fotos asociadas.
+    """
+    fuente: Literal["perito", "conductor", "expediente", "dictamen_importado", "supuesto", "mapa"]
+    """
+    De dónde sale un dato del expediente de CESVI (v2): lo escribió el perito, lo dijo un conductor, viene del expediente del caso, de un dictamen importado, lo supuso el sistema o salió del mapa.
+    """
+    cita: Cita | None = None
+
+
+class Zona(BaseModel):
+    """
+    Zona de contacto de un vehículo.
+    """
+
+    model_config = ConfigDict(
+        extra="forbid",
+    )
+    vehiculo: Annotated[str, Field(pattern="^[A-Z][A-Z0-9]{0,3}$")]
+    """
+    Identificador del vehículo en el expediente: A, B, C… (o V1, V2… en un dictamen importado).
+    """
+    zona: ZonaDiagrama
+
+
+class ImpactoExpediente(BaseModel):
+    """
+    Un impacto, en orden: qué vehículos u objeto fijo, sus zonas de contacto, dónde y cuándo. Una carambola tiene más de uno.
+    """
+
+    model_config = ConfigDict(
+        extra="forbid",
+    )
+    orden: Annotated[int, Field(ge=1, le=50)]
+    """
+    1, 2, 3… en la secuencia.
+    """
+    vehiculos: Annotated[list[IdVehiculoExpediente] | None, Field(max_length=6)] = None
+    """
+    Vehículos que participan.
+    """
+    objeto_fijo: Annotated[str | None, Field(max_length=120, min_length=1)] = None
+    """
+    Objeto fijo, si lo hay (poste, muro, árbol…).
+    """
+    zonas: Annotated[list[Zona] | None, Field(max_length=6)] = None
+    """
+    Zonas de contacto.
+    """
+    punto: Coordenadas | None = None
+    fuente: Literal["perito", "conductor", "expediente", "dictamen_importado", "supuesto", "mapa"]
+    """
+    De dónde sale un dato del expediente de CESVI (v2): lo escribió el perito, lo dijo un conductor, viene del expediente del caso, de un dictamen importado, lo supuso el sistema o salió del mapa.
+    """
+    cita: Cita | None = None
+
+
+class PosicionExpediente(BaseModel):
+    """
+    Posición de un vehículo en una fase de una versión.
+    """
+
+    model_config = ConfigDict(
+        extra="forbid",
+    )
+    vehiculo: Annotated[str, Field(pattern="^[A-Z][A-Z0-9]{0,3}$")]
+    """
+    Identificador del vehículo en el expediente: A, B, C… (o V1, V2… en un dictamen importado).
+    """
+    fase: Literal["inicial", "impacto", "final"]
+    punto: Coordenadas
+    rumbo: Annotated[float, Field(ge=0.0, le=360.0)]
+    """
+    Rumbo del frente, grados desde el norte.
+    """
+    fuente: Literal["perito", "conductor", "expediente", "dictamen_importado", "supuesto", "mapa"]
+    """
+    De dónde sale un dato del expediente de CESVI (v2): lo escribió el perito, lo dijo un conductor, viene del expediente del caso, de un dictamen importado, lo supuso el sistema o salió del mapa.
+    """
+
+
+class ManiobraExpediente(BaseModel):
+    """
+    Una maniobra de un vehículo en una versión.
+    """
+
+    model_config = ConfigDict(
+        extra="forbid",
+    )
+    vehiculo: Annotated[str, Field(pattern="^[A-Z][A-Z0-9]{0,3}$")]
+    """
+    Identificador del vehículo en el expediente: A, B, C… (o V1, V2… en un dictamen importado).
+    """
+    tipo: Literal[
+        "circula",
+        "se_detiene",
+        "reversa",
+        "frena",
+        "vira_izquierda",
+        "vira_derecha",
+        "cambia_carril",
+        "evasiva",
+        "otra",
+    ]
+    metros: Annotated[float | None, Field(ge=0.0, le=10000.0)] = None
+    """
+    Metros, si se dicen.
+    """
+    cita: Cita | None = None
+
+
+class VersionExpediente(BaseModel):
+    """
+    Una versión del hecho: la de la evidencia (la arma el perito) o la de un conductor (cita literal y maniobras).
+    """
+
+    model_config = ConfigDict(
+        extra="forbid",
+    )
+    tipo: Literal["evidencia", "declarada"]
+    declarante: Annotated[str | None, Field(pattern="^[A-Z][A-Z0-9]{0,3}$")] = None
+    """
+    Identificador del vehículo en el expediente: A, B, C… (o V1, V2… en un dictamen importado).
+    """
+    declaracion: Cita | None = None
+    maniobras: Annotated[list[ManiobraExpediente] | None, Field(max_length=20)] = None
+    """
+    Maniobras en orden.
+    """
+    posiciones: Annotated[list[PosicionExpediente] | None, Field(max_length=60)] = None
+    """
+    Posiciones por vehículo y fase.
+    """
+
+
+class Restos(BaseModel):
+    """
+    Zona de restos.
+    """
+
+    model_config = ConfigDict(
+        extra="forbid",
+    )
+    inicio: Coordenadas | None = None
+    fin: Coordenadas | None = None
+    longitud: MedidaExpediente | None = None
+    cita: Cita | None = None
+
+
+class Huella(BaseModel):
+    """
+    Huella de frenado, derrape o arrastre.
+    """
+
+    model_config = ConfigDict(
+        extra="forbid",
+    )
+    tipo: Literal["frenado", "derrape", "arrastre"]
+    vehiculo: Annotated[str | None, Field(pattern="^[A-Z][A-Z0-9]{0,3}$")] = None
+    """
+    Identificador del vehículo en el expediente: A, B, C… (o V1, V2… en un dictamen importado).
+    """
+    longitud: MedidaExpediente | None = None
+    cita: Cita | None = None
+
+
+class ObjetosFijosDanado(RootModel[str]):
+    root: Annotated[str, Field(max_length=200, min_length=1)]
+    """
+    Objeto fijo dañado.
+    """
+
+
+class EvidenciasLugar(BaseModel):
+    """
+    Evidencias del lugar.
+    """
+
+    model_config = ConfigDict(
+        extra="forbid",
+    )
+    restos: Restos | None = None
+    """
+    Zona de restos.
+    """
+    huellas: Annotated[list[Huella] | None, Field(max_length=20)] = None
+    """
+    Huellas.
+    """
+    objetos_fijos_danados: Annotated[list[ObjetosFijosDanado] | None, Field(max_length=20)] = None
+    """
+    Objetos fijos dañados.
+    """
+
+
+class Entrada(BaseModel):
+    """
+    Una entrada del cálculo.
+    """
+
+    model_config = ConfigDict(
+        extra="forbid",
+    )
+    nombre: Annotated[str, Field(max_length=40, min_length=1)]
+    """
+    Símbolo o nombre (L, A, B, C1, m, D, a…).
+    """
+    valor: MedidaExpediente
+
+
+class CalculoExpediente(BaseModel):
+    """
+    Un cálculo del dictamen o del motor: método, entradas con valor y resultado.
+    """
+
+    model_config = ConfigDict(
+        extra="forbid",
+    )
+    metodo: Literal[
+        "mchenry",
+        "ebs",
+        "desplazamiento",
+        "frenado_huellas",
+        "cantidad_movimiento",
+        "bolsas_aire",
+        "prueba_choque",
+        "otro",
+    ]
+    entradas: Annotated[list[Entrada] | None, Field(max_length=20)] = None
+    """
+    Entradas.
+    """
+    resultado: MedidaExpediente | None = None
+    vehiculo: Annotated[str | None, Field(pattern="^[A-Z][A-Z0-9]{0,3}$")] = None
+    """
+    Identificador del vehículo en el expediente: A, B, C… (o V1, V2… en un dictamen importado).
+    """
+    cita: Cita | None = None
+
+
+class CriterioExpediente(BaseModel):
+    """
+    Un criterio de correspondencia con su estado y su evidencia.
+    """
+
+    model_config = ConfigDict(
+        extra="forbid",
+    )
+    criterio: Literal[
+        "altura",
+        "forma",
+        "direccion",
+        "magnitud",
+        "intercambio_material",
+        "dano_previo",
+        "lugar",
+    ]
+    estado: Literal["corresponde", "no_corresponde", "sin_dato"]
+    evidencia: Annotated[str | None, Field(max_length=1200, min_length=1)] = None
+    """
+    Por qué.
+    """
+    cita: Cita | None = None
+
+
+class Conclusion(BaseModel):
+    """
+    La conclusión sobre la versión declarada.
+    """
+
+    model_config = ConfigDict(
+        extra="forbid",
+    )
+    veredicto: Literal["se_sostiene", "no_se_sostiene", "parcial", "sin_juicio"]
+    cita: Cita | None = None
+    fuente: Literal["perito", "conductor", "expediente", "dictamen_importado", "supuesto", "mapa"]
+    """
+    De dónde sale un dato del expediente de CESVI (v2): lo escribió el perito, lo dijo un conductor, viene del expediente del caso, de un dictamen importado, lo supuso el sistema o salió del mapa.
+    """
+
+
+class ResultadoExpediente(BaseModel):
+    """
+    El resultado: conclusión, sugerencia, decisión del perito, quién validó y la huella de las entradas.
+    """
+
+    model_config = ConfigDict(
+        extra="forbid",
+    )
+    conclusion: Conclusion | None = None
+    """
+    La conclusión sobre la versión declarada.
+    """
+    sugerencia: Annotated[str | None, Field(max_length=2000, min_length=1)] = None
+    """
+    La sugerencia de Croquis.
+    """
+    decision: Literal["aceptada", "editada", "rechazada"] | None = None
+    validado_por: Annotated[str | None, Field(max_length=120, min_length=1)] = None
+    """
+    Quién validó (cargo o «perito»; sin nombres en el repositorio).
+    """
+    fecha_validacion: AwareDatetime | None = None
+    """
+    Cuándo.
+    """
+    huella_entradas: Annotated[str | None, Field(pattern="^[0-9a-f]{8,64}$")] = None
+    """
+    SHA-256 (o su prefijo) de las entradas.
+    """
+
+
+class Expediente(BaseModel):
+    """
+    El expediente de CESVI (contrato v2, docs/cesvi/PLAN-CESVI.md §4): caso, vehículos 1..N, daños, impactos 1..M en orden, versiones, evidencias del lugar, cálculos, criterios y resultado.
+    """
+
+    model_config = ConfigDict(
+        extra="forbid",
+    )
+    caso: CasoExpediente
+    vehiculos: Annotated[list[VehiculoExpediente], Field(max_length=20)]
+    """
+    Vehículos 1..N.
+    """
+    danos: Annotated[list[DanoExpediente] | None, Field(max_length=200)] = None
+    """
+    Daños por vehículo.
+    """
+    impactos: Annotated[list[ImpactoExpediente] | None, Field(max_length=50)] = None
+    """
+    Impactos en orden.
+    """
+    versiones: Annotated[list[VersionExpediente] | None, Field(max_length=20)] = None
+    """
+    Versiones: la de la evidencia y una por declaración.
+    """
+    evidencias: EvidenciasLugar | None = None
+    calculos: Annotated[list[CalculoExpediente] | None, Field(max_length=60)] = None
+    """
+    Cálculos.
+    """
+    criterios: Annotated[list[CriterioExpediente] | None, Field(max_length=40)] = None
+    """
+    Criterios de correspondencia.
+    """
+    resultado: ResultadoExpediente | None = None
+
+
 class RedVial(BaseModel):
     """
     Calles de OpenStreetMap alrededor de `ubicacion_real`, proyectadas a metros en el marco local de la escena (desde 1.2.0). Se guardan en la escena para que sea determinista y funcione sin red.
@@ -1044,3 +1790,7 @@ class EscenaSpec(BaseModel):
     """
     danos_declarados: Annotated[list[DanoDeclarado], Field(max_length=32)]
     evidencias: Annotated[list[EvidenciaFisica], Field(max_length=64)]
+    expediente: Expediente | None = None
+    """
+    El expediente de CESVI (desde 2.0.0): opcional; una escena del relato no lo trae.
+    """
