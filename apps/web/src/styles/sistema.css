@@ -378,6 +378,22 @@
   /* Paneles sobre la escena 3D: vidrio oscuro con filo de luz (tokens). */
   /* Marcas que el perito arrastra sobre el mapa de /cesvi: el vehículo elegido, el punto de
      impacto (la X naranja de la marca: es evidencia) y los extremos de la zona de restos. */
+  /* Entrada de cada paso del recorrido de /cesvi (sin movimiento si así lo pide la persona). */
+  .aparecer {
+    animation: aparecer 600ms ease-out both;
+  }
+  @keyframes aparecer {
+    from {
+      opacity: 0;
+      transform: translateY(12px);
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .aparecer {
+      animation: none;
+    }
+  }
+
   .marca-mapa {
     display: grid;
     place-items: center;

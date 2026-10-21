@@ -83,6 +83,38 @@ Con la fórmula de 4 medidas que el propio reporte escribe, los datos impresos d
 - **Exportar el dictamen a PDF** con la estructura de CESVI: título con la modalidad, objetivos, fundamentos, características de los vehículos, observación de daños, lugar de los hechos con el croquis sobre el mapa, consideraciones (declaración, dinámica declarada, análisis de deformaciones con los cálculos sustituidos, desplazamiento, correspondencia), conclusiones numeradas y validación del perito.
 - Leyenda: "Elaborado con apoyo de Croquis. El dictamen es responsabilidad del perito que lo firma."
 
+## Recorrido del perito (2026-10-21)
+
+Los hitos 1 a 3 ya están construidos y desplegados como una sola página larga. `/cesvi` se convierte en un **recorrido guiado**, más demo y menos texto, que reusa todo lo hecho (módulo de cálculo, versiones, sugerencia, borrador y PDF).
+
+**Reglas del recorrido**
+- Una pantalla por paso, con avance por botón y por teclado (→ ←) y una barra de pasos arriba.
+- El mapa o el dibujo ocupa casi toda la pantalla; el texto visible por paso es una frase corta (máximo ~25 palabras).
+- Fórmulas, tabla de reproducción y datos completos van en un panel de "Ver cálculo" o "Ver detalle".
+- Los números aparecen animados, y los cambios entre pasos son transiciones (la cámara del mapa vuela, los vehículos se mueven).
+- Todo en 2D sobre el mapa; el 3D sigue en pausa.
+- Marca y tokens de F11a. Cada paso deja editar al perito sin salir del recorrido.
+
+**Pasos**
+1. **El caso:** siniestro, aseguradora, fecha y los dos vehículos vistos desde arriba. La declaración como cita.
+2. **La narración y lo que entiende la IA** (nuevo).
+   - Entradas: la declaración del conductor (literal del dictamen) y un campo para la narración o notas del perito.
+   - Reusa el pipeline de extracción de "Cuenta qué pasó", adaptado a declaraciones de dictamen.
+   - Muestra el texto con las frases subrayadas y, a un lado, los datos que entendió, ligados a su frase: vehículos, sentido, maniobras, orden de los hechos, quién impacta a quién. Cada dato lleva su fuente (declaración, perito o supuesto).
+   - Lo que falte o sea ambiguo se pregunta ("¿cuántos metros de reversa?"). El perito corrige.
+   - Con eso se genera la versión declarada en el mapa.
+   - La IA no produce números finales. En CI usa respuestas grabadas.
+3. **El lugar:** el mapa vuela al km 47+800 y aparecen la vía y los vehículos. *Nota:* el dictamen no da coordenadas y OpenStreetMap no tiene marcas de kilómetro en el tramo; mientras CESVI no dé la ubicación, el mapa vuela al tramo Los Mochis–Navojoa y el perito marca el punto.
+4. **Las dos versiones:** animación de la declarada (reversa) y de la evidencia (alcance), con un selector para alternarlas. Aparecen la zona de restos y la medida de 15.89 m.
+5. **Los daños:** siluetas vistas desde arriba con las zonas dañadas iluminadas. Al lado, dónde estarían los daños si la declaración fuera cierta (centro trasero de A, centro frontal de B) contra dónde están (lado izquierdo de A, lado derecho de B).
+6. **Los números:** 63.15 y 60.27 km/h en grande, con la conclusión "sin diferencia significativa". "Ver cálculo" abre McHenry sustituido y la tabla de reproducción con porcentajes.
+7. **La sugerencia:** "La versión declarada no se sostiene", con 3 razones, cada una con un enlace a su paso. El perito acepta, edita o rechaza.
+8. **El dictamen:** vista previa del PDF y descarga.
+
+**Ajuste de los hitos:** los hitos 1 a 3 quedan como base; el recorrido es el **Hito 4** y se despliega al terminar. La e2e de `/cesvi` pasa a ser una sola en Chromium que recorre los 8 pasos.
+
+**Prueba:** una sola e2e en Chromium que recorra los 8 pasos. Lo demás, según "Para quién y qué tan lejos".
+
 ## Fuera del prototipo (pospuesto, no borrado)
 
 El visor 3D, la portada y la historia, las evaluaciones largas, las pruebas en varios navegadores, las capturas de referencia, la versión del mapa con mosaicos propios, la importación automática de cualquier dictamen y los demás pendientes ya acordados (interpenetración, impactos múltiples, generalidad). Todo va a "Endurecimiento pendiente" en `docs/PROGRESS.md`.

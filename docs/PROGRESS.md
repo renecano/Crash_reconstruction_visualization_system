@@ -32,7 +32,24 @@ Reglas de trabajo: `CLAUDE.md`. Especificación: `PLAN.md`.
   - **Cómo probarlo:** en «Correspondencia y dictamen», escribir un nombre, aceptar la sugerencia, pedir el borrador y exportar el dictamen.
   - **Pruebas:** `packages/cesvi` (sugerencia y borrador con cliente falso), `apps/web/src/lib/dictamen-cesvi.test.ts` y la e2e `@flujo` hasta la descarga del PDF.
   - **Qué necesito de René:** nada nuevo. El borrador usa la llave y el tope de gasto de producción que ya están en Vercel.
-- **Siguiente: el recorrido del perito.** René pidió convertir `/cesvi` en un recorrido guiado de 8 pasos («Recorrido del perito» en `docs/cesvi/PROTOTIPO.md`), reusando lo hecho.
+- **Hito 4 — el recorrido del perito** (rama `feat/cesvi-recorrido`, ADR 0052):
+  - **Liga:** https://croquis-sage.vercel.app/cesvi (pide usuario y clave).
+  - **Qué hay:** `/cesvi` es ahora un recorrido de 8 pasos.
+    1. El caso, con los vehículos vistos desde arriba y la declaración.
+    2. Lo que entiende la IA: frases subrayadas, datos con su fuente y preguntas.
+    3. El lugar: el mapa vuela al tramo y el perito marca el punto.
+    4. Las dos versiones animadas, con la zona de restos.
+    5. Los daños: dónde están contra dónde estarían.
+    6. Los dos números en grande, con «Ver cálculo».
+    7. La sugerencia con sus tres razones.
+    8. El dictamen en PDF.
+
+    Barra de pasos arriba, ← → con el teclado, una frase por paso y el detalle en un panel.
+
+  - **Cómo probarlo:** abrir la liga y avanzar con →. En el paso 2, contestar «¿Cuántos metros de reversa?». En el paso 3, tocar el punto de impacto en el mapa. En el 4, alternar las versiones. En el 7, escribir un nombre y aceptar. En el 8, descargar.
+  - **Pruebas:** `packages/cesvi/src/declaracion.test.ts` (con la respuesta grabada de Claude) y una sola e2e que recorre los 8 pasos.
+  - **Gasto:** 0.0214 USD para grabar la lectura de la declaración con Claude.
+  - **Qué necesito de René:** la ubicación del km 47+800, con coordenadas o una foto aérea (OSM no tiene marcas de kilómetro en el tramo); mientras, el perito marca el punto. La vista previa del PDF se ve en Chrome, Edge o Safari de escritorio.
 - **Hito 2 — el lugar y el croquis sobre el mapa** (rama `feat/cesvi-hito2`, ADR 0050):
   - **Liga:** https://croquis-sage.vercel.app/cesvi, sección «El lugar y el croquis» (pide usuario y clave).
   - **Qué hay:**
