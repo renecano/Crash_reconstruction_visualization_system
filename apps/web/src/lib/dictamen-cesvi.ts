@@ -97,6 +97,21 @@ function tabla(
   };
 }
 
+/**
+ * Roboto (la fuente del PDF) no trae la flecha «→», que viene en los datos del caso («sur→norte»):
+ * en el PDF se escribe «a» («sur a norte») en lugar de un cuadro vacío.
+ */
+function conGlifosDeRoboto<T>(c: T): T {
+  if (typeof c === "string") return c.replace(/\s*→\s*/g, " a ") as T;
+  if (Array.isArray(c)) return c.map(conGlifosDeRoboto) as T;
+  if (c && typeof c === "object" && !(c instanceof Uint8Array)) {
+    return Object.fromEntries(
+      Object.entries(c).map(([k, v]) => [k, k === "image" ? v : conGlifosDeRoboto(v)]),
+    ) as T;
+  }
+  return c;
+}
+
 /** El contenido del dictamen, en el orden de los dictámenes de CESVI. */
 export function dictamenContenido(d: DatosDictamen): Content[] {
   const c = d.caso;
@@ -299,7 +314,7 @@ export function dictamenContenido(d: DatosDictamen): Content[] {
     out.push(parrafo("Sin validar."));
   }
   out.push({ text: "\n\n______________________________\nFirma del perito", margin: [0, 16, 0, 0] });
-  return out;
+  return out.map(conGlifosDeRoboto);
 }
 
 export function dictamenDefinicion(d: DatosDictamen): TDocumentDefinitions {
