@@ -212,9 +212,22 @@ mkdirSync(PARTES, { recursive: true });
 try {
   for (const ruta of UNIR ? [] : PAGINAS) {
     const corridas = { devtools: [], simulate: [] };
+    // Una corrida que Lighthouse no termina (p. ej. PAGE_HUNG: el visor dibuja la escena 3D sin
+    // parar y con la CPU 4× algún cuadro pasa del segundo que espera) se repite hasta 2 veces; cada
+    // falla queda anotada en el resultado.
+    const fallidas = [];
     for (let k = 0; k < REPEATS; k++) {
       for (const metodo of ["devtools", "simulate"]) {
-        corridas[metodo].push(await medir(chrome.port, `${BASE}${ruta}`, metodo));
+        for (let intento = 1; ; intento++) {
+          try {
+            corridas[metodo].push(await medir(chrome.port, `${BASE}${ruta}`, metodo));
+            break;
+          } catch (e) {
+            if (intento === 3) throw e;
+            fallidas.push({ metodo, corrida: k + 1, intento, error: String(e.message ?? e) });
+            console.log(ruta, metodo, k + 1, `falló (intento ${intento}), se repite:`, e.message);
+          }
+        }
         console.log(ruta, metodo, k + 1, JSON.stringify(corridas[metodo].at(-1)).slice(0, 150));
       }
     }
@@ -238,6 +251,7 @@ try {
         lcp_cumpliria: lantern.lcp_ms <= META.lcp_ms,
       },
       corridas,
+      corridas_fallidas: fallidas,
     });
     writeFileSync(
       join(PARTES, `${slug(ruta)}.json`),

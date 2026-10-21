@@ -1,17 +1,22 @@
 /**
- * F11a (ADR 0046): cuánto bloquea el hilo principal la portada mientras arma su escena 3D, con los
- * materiales compilados por adelantado (`compileAsync`) y sin eso (`__croquisDiag.sinPrecompilar`,
- * como antes del ADR). Los horneados ceden el hilo en las dos variantes.
+ * F11a (ADR 0046): cuánto bloquea el hilo principal la portada mientras arma su escena 3D.
  *
  * Método: celular (412×823, táctil) con la CPU 4× de Lighthouse, Chromium sin interfaz (uno nuevo
  * por corrida, como en una primera visita) y build de producción. Cada corrida abre la portada y
  * registra durante VENTANA_MS las tareas largas (PerformanceObserver «longtask», > 50 ms) y el
- * momento en que la escena queda lista (`__croquisReadyAt`). Las variantes se alternan, `--repeats` veces cada una (3 por omisión), y se
- * reporta la mediana de cada cifra.
+ * momento en que la escena queda lista (`__croquisReadyAt`). Se reporta la mediana de cada cifra
+ * de `--repeats` corridas (3 por omisión).
+ *
+ * Con `--diag <interruptor>` compara el build tal cual contra el mismo build con
+ * `window.__croquisDiag[interruptor] = true`, en orden alterno. Así se midió la compilación de
+ * materiales por adelantado que el ADR 0046 descartó (`--diag sinPrecompilar`, en el commit
+ * 9442473; resultado en `eval/results/f11_tareas_largas_precompilacion.json`, donde «precompilada»
+ * es el build tal cual).
  *
  * Requisito: `pnpm --filter @croquis/web build`. Levanta `next start` en `--port` (3200) si no hay
  * un servidor ahí. Como `f11_portada.mjs`, no mide con la laptop en batería salvo con `--bateria`.
- * Uso: `node eval/f11_tareas_largas.mjs [--repeats 3] [--port 3200] [--bateria]`.
+ * Uso: `node eval/f11_tareas_largas.mjs [--diag nombre] [--repeats 3] [--port 3200] [--out ruta]
+ * [--bateria]`.
  */
 import { execFileSync, spawn, spawnSync } from "node:child_process";
 import { writeFileSync } from "node:fs";
@@ -31,7 +36,8 @@ function arg(name, fallback) {
 }
 const REPEATS = Number(arg("repeats", "3"));
 const PORT = Number(arg("port", "3200"));
-const OUT = join(ROOT, "eval", "results", "f11_tareas_largas.json");
+const OUT = arg("out", join(ROOT, "eval", "results", "f11_tareas_largas.json"));
+const DIAG = arg("diag", null);
 const BASE = `http://localhost:${PORT}`;
 const VENTANA_MS = 60_000;
 const CPU = 4;
@@ -78,7 +84,7 @@ function cerrarServidor(proc) {
   } else proc.kill();
 }
 
-async function corrida(sinPrecompilar) {
+async function corrida(diag) {
   // Un navegador nuevo por corrida: sin la caché HTTP ni la de shaders de la anterior (una visita
   // por primera vez).
   const browser = await chromium.launch({ channel: "chromium" });
@@ -90,13 +96,13 @@ async function corrida(sinPrecompilar) {
   const page = await ctx.newPage();
   const cdp = await ctx.newCDPSession(page);
   await cdp.send("Emulation.setCPUThrottlingRate", { rate: CPU });
-  await page.addInitScript((sin) => {
-    if (sin) window.__croquisDiag = { sinPrecompilar: true };
+  await page.addInitScript((d) => {
+    if (d) window.__croquisDiag = { [d]: true };
     window.__tareas = [];
     new PerformanceObserver((l) => {
       for (const e of l.getEntries()) window.__tareas.push(e.duration);
     }).observe({ type: "longtask", buffered: true });
-  }, sinPrecompilar);
+  }, diag);
   await page.goto(`${BASE}/`);
   await page.waitForTimeout(VENTANA_MS);
   const r = await page.evaluate(() => ({
@@ -122,19 +128,16 @@ const mediana = (xs) => {
 };
 
 const proc = await servidor();
-const corridas = { precompilada: [], sin_precompilar: [] };
+const VARIANTES = DIAG ? ["build", `diag:${DIAG}`] : ["build"];
+const corridas = Object.fromEntries(VARIANTES.map((v) => [v, []]));
 try {
   for (let k = 0; k < REPEATS; k++) {
     // Orden alterno: el calor o la memoria no favorecen siempre a la misma variante.
-    const orden = k % 2 === 0 ? [false, true] : [true, false];
-    for (const sin of orden) {
-      const r = await corrida(sin);
-      corridas[sin ? "sin_precompilar" : "precompilada"].push(r);
-      console.log(
-        sin ? "sin precompilar" : "precompilada  ",
-        k + 1,
-        JSON.stringify(r).slice(0, 160),
-      );
+    const orden = k % 2 === 0 ? VARIANTES : [...VARIANTES].reverse();
+    for (const v of orden) {
+      const r = await corrida(v === "build" ? null : DIAG);
+      corridas[v].push(r);
+      console.log(v.padEnd(24), k + 1, JSON.stringify(r).slice(0, 150));
     }
   }
 } finally {
@@ -148,9 +151,8 @@ const resumen = (lista) => ({
   bloqueo_total_ms: mediana(lista.map((r) => r.bloqueo_total_ms)),
 });
 const resultado = {
-  evaluacion:
-    "F11a: bloqueo del hilo principal mientras la portada arma su escena 3D (ADR 0046), con y sin compilar los materiales por adelantado",
-  generado_por: "node eval/f11_tareas_largas.mjs",
+  evaluacion: "F11a: bloqueo del hilo principal mientras la portada arma su escena 3D (ADR 0046)",
+  generado_por: `node eval/f11_tareas_largas.mjs${DIAG ? ` --diag ${DIAG}` : ""}`,
   momento: new Date().toISOString(),
   metodo: `Portada en celular (412×823) con CPU ${CPU}×, Chromium sin interfaz (uno nuevo por corrida, sin cachés) y build de producción; tareas largas (> 50 ms) durante ${VENTANA_MS / 1000} s desde la navegación y el momento en que la escena queda lista; ${REPEATS} corridas por variante en orden alterno, mediana de cada cifra.`,
   maquina: {
@@ -158,11 +160,13 @@ const resultado = {
     memoria_gb: Math.round((os.totalmem() / 1073741824) * 10) / 10,
     sistema: `${os.platform()} ${os.release()}`,
   },
-  precompilada: resumen(corridas.precompilada),
-  sin_precompilar: resumen(corridas.sin_precompilar),
+  resumen: Object.fromEntries(VARIANTES.map((v) => [v, resumen(corridas[v])])),
   corridas,
 };
-writeFileSync(OUT, `${JSON.stringify(resultado, null, 2)}\n`);
+writeFileSync(
+  OUT,
+  `${JSON.stringify(resultado, null, 2)}
+`,
+);
 console.log(OUT);
-console.log("precompilada   ", JSON.stringify(resultado.precompilada));
-console.log("sin precompilar", JSON.stringify(resultado.sin_precompilar));
+for (const v of VARIANTES) console.log(v.padEnd(24), JSON.stringify(resultado.resumen[v]));
