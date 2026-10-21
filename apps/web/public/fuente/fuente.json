@@ -4,13 +4,7 @@
   "escala_acento_iacute": 1.4,
   "separacion_acento_iacute": 120,
   "ejes": {
-    "wght": [
-      400,
-      800
-    ],
-    "wdth": [
-      100,
-      150
-    ]
+    "wght": "400 800",
+    "wdth": "100 150"
   }
 }

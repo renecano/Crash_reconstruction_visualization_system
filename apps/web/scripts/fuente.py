@@ -75,7 +75,8 @@ def main() -> None:
                 "sha256_origen": hashlib.sha256(ORIGEN.read_bytes()).hexdigest(),
                 "escala_acento_iacute": ESCALA,
                 "separacion_acento_iacute": SEPARACION,
-                "ejes": {k: list(v) for k, v in EJES.items()},
+                # Como en los descriptores del CSS («400 800»): Prettier lo deja igual.
+                "ejes": {k: f"{v[0]} {v[1]}" for k, v in EJES.items()},
             },
             indent=2,
         )
