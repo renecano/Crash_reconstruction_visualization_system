@@ -33,6 +33,19 @@
     /* Cada vehículo con su color en todo el recorrido (ADR 0053 y 0054). */
     --vehiculo-a: var(--marca-vehiculo-a);
     --vehiculo-b: var(--marca-vehiculo-b);
+    /* El texto sobre la etiqueta de un vehículo («A · Silverado»). */
+    --sobre-vehiculo: var(--marca-grafito);
+    /* Superficies que cambian con el tema (ADR 0057). */
+    --hundido: #0f1114;
+    --falta-fondo: #17140f;
+    --texto-cita: #c9cdd4;
+    --flotante: #15171c;
+    --borde-supuesto: #3a3f47;
+    --vidrio-fondo: var(--efecto-vidrio-oscuro-background);
+    --vidrio-borde: var(--efecto-vidrio-oscuro-border);
+    --barra-fondo: color-mix(in srgb, var(--fondo) 82%, transparent);
+    /* El punto de «IA lista» (no es texto). */
+    --ok: #3dd68c;
 
     /* Tipografía: Geist para la interfaz y Geist Mono para cifras y rótulos (`next/font`, con
        respaldo de métricas ajustadas). Anybody queda solo en el logotipo (SVG). */
@@ -73,6 +86,37 @@
     --radio-control: 12px;
     --radio-panel: 20px;
     --transicion: 120ms ease-out;
+  }
+
+  /* Tema claro del recorrido de /cesvi (ADR 0057): el de la maqueta Paso2Claro. El botón principal
+     es oscuro con texto blanco; la señal para texto es más oscura que la de las marcas. */
+  [data-tema="claro"] {
+    color-scheme: light;
+    --fondo: var(--marca-claro-fondo);
+    --superficie: var(--marca-claro-superficie);
+    --superficie-alta: var(--marca-claro-elevado);
+    --linea-suave: var(--marca-claro-linea-suave);
+    --linea: var(--marca-claro-linea);
+    --texto: var(--marca-claro-texto);
+    --texto-2: var(--marca-claro-texto-2);
+    --texto-3: var(--marca-claro-texto-3);
+    --accion: var(--marca-claro-texto);
+    --accion-texto: #ffffff;
+    --foco: var(--marca-claro-vehiculo-a);
+    --senal: var(--marca-claro-senal);
+    --senal-texto: var(--marca-claro-senal-texto);
+    --vehiculo-a: var(--marca-claro-vehiculo-a);
+    --vehiculo-b: var(--marca-claro-vehiculo-b);
+    --sobre-vehiculo: #ffffff;
+    --hundido: #f7f8fa;
+    --falta-fondo: #fff5f1;
+    --texto-cita: var(--marca-claro-texto);
+    --flotante: #ffffff;
+    --borde-supuesto: #b8bdc6;
+    --vidrio-fondo: rgba(255, 255, 255, 0.88);
+    --vidrio-borde: 1px solid rgba(21, 24, 29, 0.08);
+    --barra-fondo: color-mix(in srgb, var(--superficie) 90%, transparent);
+    --ok: #1e8e4f;
   }
 
   /* Tema papel (el parte de tránsito): croquis 2D y exportaciones. Los tonos intermedios se
@@ -442,7 +486,7 @@
   }
   .insignia-supuesto {
     background: transparent;
-    border: 1px dashed #3a3f47;
+    border: 1px dashed var(--borde-supuesto);
   }
   .insignia-senal {
     background: color-mix(in srgb, var(--senal) 14%, transparent);
@@ -456,7 +500,7 @@
     height: 28px;
     padding: 0 12px;
     border-radius: 14px;
-    color: var(--fondo);
+    color: var(--sobre-vehiculo);
     font-size: 0.8125rem;
     font-weight: 600;
     white-space: nowrap;
@@ -478,14 +522,14 @@
   /* Un recuadro dentro de una tarjeta o un panel (cifras de los restos, mini gráficas). */
   .hundido {
     border-radius: 14px;
-    background: #0f1114;
+    background: var(--hundido);
     border: 1px solid var(--linea-suave);
   }
 
   /* Paneles sobre el mapa: vidrio grafito (tokens). */
   .vidrio {
-    background: var(--efecto-vidrio-oscuro-background);
-    border: var(--efecto-vidrio-oscuro-border);
+    background: var(--vidrio-fondo);
+    border: var(--vidrio-borde);
     border-radius: var(--radio-panel);
     backdrop-filter: var(--efecto-vidrio-oscuro-backdrop-filter);
     -webkit-backdrop-filter: var(--efecto-vidrio-oscuro-backdrop-filter);
@@ -495,8 +539,8 @@
   .vidrio.barra {
     border-radius: 0;
     border-width: 0 0 1px;
-    border-color: rgba(255, 255, 255, 0.06);
-    background: color-mix(in srgb, var(--fondo) 82%, transparent);
+    border-color: var(--linea-suave);
+    background: var(--barra-fondo);
   }
 
   /* Entrada de cada paso del recorrido de /cesvi (sin movimiento si así lo pide la persona). */
@@ -627,7 +671,7 @@
     padding: 0 12px;
     border-radius: 14px;
     border: 1px solid var(--linea);
-    background: #15171c;
+    background: var(--flotante);
     color: var(--texto);
     font: 500 0.75rem/1 var(--fuente);
     white-space: nowrap;
@@ -640,7 +684,7 @@
   }
   .etiqueta-nombre {
     border: 0;
-    color: var(--fondo);
+    color: var(--sobre-vehiculo);
     font-size: 0.8125rem;
     font-weight: 600;
   }

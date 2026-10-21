@@ -7,6 +7,8 @@ import { VEHICLE_CLASSES } from "@croquis/scene-schema";
 import type { FeatureCollection } from "geojson";
 
 export const ESTILO_MAPA = "https://tiles.openfreemap.org/styles/dark";
+/** El estilo del tema claro (ADR 0057). */
+export const ESTILO_MAPA_CLARO = "https://tiles.openfreemap.org/styles/positron";
 export const RADIO_OSM_M = 250;
 /** «Unos metros»: valor con que se dibuja la reversa declarada; el perito lo cambia. */
 export const REVERSA_INICIAL_M = 3;

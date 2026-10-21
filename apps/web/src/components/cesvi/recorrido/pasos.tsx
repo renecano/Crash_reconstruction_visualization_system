@@ -10,8 +10,11 @@ import {
   NOMBRE_ZONA,
   type CasoCesvi,
   type ClaveVersion,
+  type Comparacion,
   type ComparacionVelocidades,
+  type Completitud,
   type DatoHecho,
+  type EventoLinea,
   type FilaReproduccion,
   type FuenteHecho,
   type InterpretacionHecho,
@@ -37,6 +40,7 @@ import {
   useRecorrido,
 } from "./marco";
 import { NumeroAnimado, Silueta } from "./piezas";
+import { TablaCambios } from "./trabajo";
 
 export { TEXTO_VEHICULO };
 
@@ -157,7 +161,7 @@ function TextoResaltado({
   partes.push(texto.slice(desde));
   return (
     <p
-      className="leading-[1.7] whitespace-pre-wrap text-[#c9cdd4]"
+      className="leading-[1.7] whitespace-pre-wrap text-[var(--texto-cita)]"
       lang="es-MX"
       data-testid={testid}
     >
@@ -176,6 +180,11 @@ function TarjetaDato({ d }: { d: DatoHecho }) {
       <span className="flex min-w-0 flex-1 flex-col">
         <span className="t-nota text-texto-3">{d.etiqueta}</span>
         <span className="t-interfaz text-[0.9375rem]">{d.valor}</span>
+        {d.tramo ? (
+          <span className="t-nota mt-0.5 text-texto-2" data-testid={`frase-${d.clave}`}>
+            «{d.tramo.texto}»
+          </span>
+        ) : null}
       </span>
       <Insignia tipo={d.fuente === "supuesto" ? "supuesto" : "normal"}>
         {FUENTE[d.fuente]} · {LEIDO[d.leidoPor]}
@@ -217,7 +226,7 @@ function TarjetaTexto({
   const mostrarLeido = vigente && !editando;
   return (
     <article
-      className={`tarjeta flex flex-col gap-4 ${principal ? "p-7" : "border-dashed bg-[#0f1114] px-7 py-6"}`}
+      className={`tarjeta flex flex-col gap-4 ${principal ? "p-7" : "border-dashed bg-[var(--hundido)] px-7 py-6"}`}
     >
       <div className="flex flex-wrap items-center justify-between gap-2">
         <label
@@ -295,9 +304,14 @@ function TarjetaTexto({
 /** Una pregunta técnica: opciones, un número o un texto. Las contestadas se pueden cambiar. */
 function TarjetaPregunta({
   p,
+  i,
+  n,
   onResponder,
 }: {
   p: PreguntaHecho;
+  /** Su lugar entre las preguntas (para «¿Qué falta? · 1 de 2»). */
+  i: number;
+  n: number;
   onResponder: (clave: string, v: string | number | null) => void;
 }) {
   const id = useId();
@@ -305,9 +319,12 @@ function TarjetaPregunta({
   const pendiente = p.respuesta === null;
   return (
     <div
-      className={`flex flex-col gap-3 rounded-2xl border p-4 ${pendiente ? "border-senal/45 bg-[#17140f]" : "border-linea-suave bg-superficie"}`}
+      className={`flex flex-col gap-3 rounded-2xl border p-4 ${pendiente ? "border-senal/45 bg-[var(--falta-fondo)]" : "border-linea-suave bg-superficie"}`}
       data-testid={`pregunta-${p.clave.replace(/[^a-z_]/gi, "-")}`}
     >
+      <p className={`t-rotulo ${pendiente ? "text-senal-texto" : ""}`}>
+        ¿Qué falta? · {i + 1} de {n}
+      </p>
       <div className="flex items-start justify-between gap-3">
         <label htmlFor={`${id}-r`} className="t-interfaz text-base font-semibold">
           {p.texto}
@@ -316,8 +333,13 @@ function TarjetaPregunta({
           {pendiente ? "falta un dato" : "perito"}
         </Insignia>
       </div>
-      <p className="t-nota -mt-2 text-texto-3">
-        Para la versión {p.version === "evidencia" ? "de la evidencia" : "declarada"}
+      <p
+        className="t-nota -mt-1 text-texto-2"
+        data-testid={`por-que-${p.clave.replace(/[^a-z_]/gi, "-")}`}
+      >
+        Por qué importa:{" "}
+        {p.porQue ||
+          `va en la versión ${p.version === "evidencia" ? "de la evidencia" : "declarada"}.`}
       </p>
       {p.tipo === "opciones" ? (
         <div className="flex flex-wrap gap-2" role="group" aria-label={p.texto}>
@@ -332,6 +354,7 @@ function TarjetaPregunta({
               {o.etiqueta}
             </button>
           ))}
+          <NoSe p={p} onResponder={onResponder} />
         </div>
       ) : p.tipo === "numero" ? (
         <div className="flex flex-wrap gap-2">
@@ -342,7 +365,7 @@ function TarjetaPregunta({
               min={0}
               step={0.5}
               className="cifras w-16 border-0 bg-transparent text-[1.0625rem] font-semibold text-texto outline-none"
-              value={p.respuesta ?? ""}
+              value={typeof p.respuesta === "number" ? p.respuesta : ""}
               onChange={(e) =>
                 onResponder(
                   p.clave,
@@ -353,13 +376,7 @@ function TarjetaPregunta({
             />
             <span className="t-nota text-texto-3">m</span>
           </span>
-          <button
-            type="button"
-            className="boton-secundario boton-compacto h-11 rounded-control text-texto-2"
-            onClick={() => onResponder(p.clave, null)}
-          >
-            No lo dice
-          </button>
+          <NoSe p={p} onResponder={onResponder} />
         </div>
       ) : (
         <form
@@ -378,9 +395,31 @@ function TarjetaPregunta({
           <button type="submit" className="boton-secundario boton-compacto">
             Guardar
           </button>
+          <NoSe p={p} onResponder={onResponder} />
         </form>
       )}
     </div>
+  );
+}
+
+/** «No sé»: siempre está; el dato queda como supuesto. */
+function NoSe({
+  p,
+  onResponder,
+}: {
+  p: PreguntaHecho;
+  onResponder: (clave: string, v: string | number | null) => void;
+}) {
+  return (
+    <button
+      type="button"
+      className="boton-secundario boton-compacto h-11 rounded-control text-texto-2"
+      aria-pressed={p.respuesta === "no_se"}
+      onClick={() => onResponder(p.clave, "no_se")}
+      data-testid={`no-se-${p.clave.replace(/[^a-z_]/gi, "-")}`}
+    >
+      No sé
+    </button>
   );
 }
 
@@ -395,7 +434,9 @@ export function PasoHecho({
   onResponder,
   declarante,
   frase,
+  completitud,
 }: {
+  completitud: Completitud;
   textos: Record<TipoTexto, string>;
   onTexto: (tipo: TipoTexto, t: string) => void;
   /** El texto tal como se leyó por última vez (null si no se ha leído). */
@@ -482,17 +523,48 @@ export function PasoHecho({
           aria-label="Lo que entendió Croquis"
           className="flex min-w-0 flex-[1_1_400px] flex-col gap-5"
         >
-          <div className="flex items-center justify-between px-1">
-            <span className="t-subtitulo">Lo que entendió</span>
+          <div className="flex flex-col gap-2 px-1">
+            <div className="flex items-center justify-between">
+              <span className="t-subtitulo">Lo que entendió</span>
+              <span className="cifras text-sm" data-testid="completitud">
+                {completitud.presentes}/{completitud.total}
+              </span>
+            </div>
+            <div className="h-1 rounded-full bg-linea" aria-hidden="true">
+              <div
+                className="h-1 rounded-full bg-texto transition-[width]"
+                style={{ width: `${(completitud.presentes / completitud.total) * 100}%` }}
+              />
+            </div>
             <span className="t-nota text-texto-3">
               {i.evidencia.length + i.declarada.length} datos · {pendientes}{" "}
               {pendientes === 1 ? "pregunta" : "preguntas"}
             </span>
           </div>
+          {completitud.faltan.length ? (
+            <ul className="flex flex-col gap-2" aria-label="Lo que falta">
+              {completitud.faltan.map((f) => (
+                <li
+                  key={f.clave}
+                  className="flex items-center justify-between rounded-[14px] border border-dashed border-linea px-4 py-3 text-sm text-texto-2"
+                  data-testid={`falta-${f.clave}`}
+                >
+                  {f.etiqueta}
+                  <span className="text-texto-3">{f.noSe ? "El perito no lo sabe" : "Falta"}</span>
+                </li>
+              ))}
+            </ul>
+          ) : null}
           {i.preguntas.length ? (
             <div className="flex flex-col gap-3" aria-label="Preguntas técnicas">
-              {i.preguntas.map((p) => (
-                <TarjetaPregunta key={p.clave} p={p} onResponder={onResponder} />
+              {i.preguntas.map((p, k) => (
+                <TarjetaPregunta
+                  key={p.clave}
+                  p={p}
+                  i={k}
+                  n={i.preguntas.length}
+                  onResponder={onResponder}
+                />
               ))}
             </div>
           ) : null}
@@ -869,7 +941,7 @@ export function PasoVersiones({
       </p>
       {seleccion ? (
         <div
-          className="flex flex-col gap-0.5 rounded-control border border-linea bg-[#15171c] px-4 py-3"
+          className="flex flex-col gap-0.5 rounded-control border border-linea bg-[var(--flotante)] px-4 py-3"
           aria-live="polite"
           data-testid="seleccion-mapa"
         >
@@ -940,25 +1012,47 @@ export function Leyenda({ nombres }: { nombres: Nombres }) {
   );
 }
 
-/** El reproductor de la versión: reproducir y una línea de tiempo con el impacto a la mitad. */
+export const VELOCIDADES = [0.1, 0.25, 1] as const;
+export type Velocidad = (typeof VELOCIDADES)[number];
+
+/**
+ * El reproductor de la versión (ADR 0057): reproducir o pausar, una línea de tiempo con sus eventos
+ * (aproximación, impacto, reposo de cada vehículo) y la velocidad (0.1×, 0.25×, 1×). Los eventos que
+ * caen en el mismo momento van juntos.
+ */
 export function Reproductor({
   t,
   reproduciendo,
-  duracionS,
+  eventos,
+  velocidad,
+  onVelocidad,
   onReproducir,
   onPausar,
   onT,
+  ancho = "w-[640px]",
 }: {
   /** Progreso de 0 a 1. */
   t: number;
   reproduciendo: boolean;
-  duracionS: number;
+  eventos: EventoLinea[];
+  velocidad: Velocidad;
+  onVelocidad: (v: Velocidad) => void;
   onReproducir: () => void;
   onPausar: () => void;
   onT: (t: number) => void;
+  ancho?: string;
 }) {
+  const grupos: EventoLinea[] = [];
+  for (const e of eventos) {
+    const g = grupos.find((x) => Math.abs(x.t - e.t) < 0.04);
+    if (g) g.etiqueta = `${g.etiqueta} · ${e.etiqueta.toLowerCase()}`;
+    else grupos.push({ ...e });
+  }
   return (
-    <div className="vidrio pointer-events-auto flex w-[600px] max-w-full items-center gap-4 rounded-[32px] py-3 pr-5 pl-3">
+    <div
+      className={`vidrio pointer-events-auto flex ${ancho} max-w-full items-center gap-4 rounded-[32px] py-3 pr-3 pl-3`}
+      data-testid="reproductor"
+    >
       <button
         type="button"
         className="grid h-11 w-11 flex-none place-items-center rounded-full bg-accion text-sm text-accion-texto"
@@ -968,17 +1062,21 @@ export function Reproductor({
       >
         {reproduciendo ? "❚❚" : "▶"}
       </button>
-      <div className="flex min-w-0 flex-1 flex-col gap-2">
+      <div className="flex min-w-0 flex-1 flex-col gap-1.5">
         <div className="relative h-4">
           <div className="absolute inset-x-0 top-1.5 h-1 rounded-full bg-linea" />
           <div
             className="absolute top-1.5 left-0 h-1 rounded-full bg-texto"
             style={{ width: `${t * 100}%` }}
           />
-          <span
-            className="absolute top-0.5 left-1/2 -ml-1.5 h-3 w-3 rounded-full bg-senal"
-            aria-hidden="true"
-          />
+          {grupos.slice(1).map((e) => (
+            <span
+              key={e.etiqueta}
+              className={`absolute top-0.5 -ml-1.5 h-3 w-3 rounded-full ${/^Impacto/.test(e.etiqueta) ? "bg-senal" : "border-2 border-texto-2 bg-fondo"}`}
+              style={{ left: `${e.t * 100}%` }}
+              aria-hidden="true"
+            />
+          ))}
           <input
             type="range"
             min={0}
@@ -989,15 +1087,32 @@ export function Reproductor({
             className="linea-tiempo absolute inset-0 w-full"
           />
         </div>
-        <div className="flex justify-between text-xs text-texto-3">
-          <span>Inicio</span>
-          <span className={t >= 0.45 && t <= 0.55 ? "text-texto" : ""}>Impacto</span>
-          <span>Posiciones finales</span>
-        </div>
+        <ol className="relative h-4 text-xs text-texto-3" data-testid="eventos">
+          {grupos.map((e, i) => (
+            <li
+              key={e.etiqueta}
+              className={`absolute whitespace-nowrap ${i === 0 ? "" : e.t > 0.9 ? "-translate-x-full" : "-translate-x-1/2"} ${Math.abs(t - e.t) < 0.04 ? "text-texto" : ""}`}
+              style={{ left: `${e.t * 100}%` }}
+            >
+              {e.etiqueta}
+            </li>
+          ))}
+        </ol>
       </div>
-      <span className="cifras w-12 text-right text-[0.8125rem] text-texto-2">
-        {(t * duracionS).toFixed(1)} s
-      </span>
+      <div className="flex gap-1" role="group" aria-label="Velocidad">
+        {VELOCIDADES.map((v) => (
+          <button
+            key={v}
+            type="button"
+            className={`cifras h-9 rounded-control border px-2 text-xs ${velocidad === v ? "border-linea bg-superficie-alta text-texto" : "border-linea-suave text-texto-2"}`}
+            aria-pressed={velocidad === v}
+            onClick={() => onVelocidad(v)}
+            data-testid={`velocidad-${v}`}
+          >
+            {v}×
+          </button>
+        ))}
+      </div>
     </div>
   );
 }
@@ -1011,13 +1126,15 @@ export function PasoDanos({
   zonas,
   onZonas,
   frase,
+  esperadas,
 }: {
+  /** Los daños que dejaría la maniobra declarada (`zonasEsperadasDeclarada`). */
+  esperadas: Record<Letra, Zona[]>;
   nombres: Nombres;
   zonas: Record<Letra, Zona[]>;
   onZonas: (l: Letra, z: Zona[]) => void;
   frase: string;
 }) {
-  const esperadas: Record<Letra, Zona[]> = { A: ["posterior_centro"], B: ["frontal_centro"] };
   return (
     <Pagina>
       <header className="flex max-w-[820px] flex-col gap-3">
@@ -1339,7 +1456,9 @@ export function PasoSugerencia({
   impactoKmh,
   desplazamientoKmh,
   restosEvidencia,
+  cambios,
 }: {
+  cambios: Comparacion;
   sugerencia: Sugerencia;
   pasoDeRazon: Record<string, number>;
   validacion: Validacion | null;
@@ -1456,6 +1575,7 @@ export function PasoSugerencia({
           </li>
         ))}
       </ol>
+      <TablaCambios c={cambios} />
       <section className="tarjeta flex flex-col gap-4 rounded-[22px] px-6 py-5">
         <div className="flex flex-wrap items-center justify-between gap-6">
           <div className="flex flex-col gap-1">
@@ -1538,82 +1658,210 @@ export function PasoSugerencia({
 /* Paso 8: el dictamen                                                                        */
 /* ------------------------------------------------------------------------------------------ */
 
+export interface IncluirPaso {
+  croquisAmbas: boolean;
+  calculos: boolean;
+  tablaDatos: boolean;
+  notasInternas: boolean;
+}
+
 export function PasoDictamen({
   url,
   estado,
   onGenerar,
   onDescargar,
+  onWord,
+  onPng,
+  onJson,
   validacion,
   frase,
+  incluir,
+  onIncluir,
+  trazabilidad,
+  antesDeFirmar,
+  notas,
+  onNotas,
+  hayCroquis,
 }: {
   url: string | null;
   estado: string | null;
   onGenerar: () => void;
   onDescargar: () => void;
+  onWord: () => void;
+  onPng: () => void;
+  onJson: () => void;
   validacion: Validacion | null;
   frase: string;
+  incluir: IncluirPaso;
+  onIncluir: (i: IncluirPaso) => void;
+  trazabilidad: { metodo: string; huella: string; sugerencia: string; valido: string };
+  antesDeFirmar: { texto: string; paso: number }[];
+  notas: string;
+  onNotas: (t: string) => void;
+  hayCroquis: boolean;
 }) {
+  const { irA } = useRecorrido();
+  const [copiado, setCopiado] = useState(false);
+  const casillas: [keyof IncluirPaso, string][] = [
+    ["croquisAmbas", "Croquis de ambas versiones"],
+    ["calculos", "Cálculos con valores sustituidos"],
+    ["tablaDatos", "Tabla de datos y su fuente"],
+    ["notasInternas", "Notas internas del perito"],
+  ];
+  const textoTraza = `Método: ${trazabilidad.metodo}\nHuella de entradas: ${trazabilidad.huella}\nSugerencia: ${trazabilidad.sugerencia}\nValidó: ${trazabilidad.valido}`;
   return (
     <Pagina ancho="max-w-[1320px]">
       <div className="flex flex-wrap items-start gap-8">
-        <div className="flex min-w-0 flex-[1_1_400px] flex-col items-start gap-6">
-          <header className="flex flex-col gap-3">
-            <Rotulo />
-            <h1 className="t-titulo">El dictamen, listo para revisar y firmar</h1>
+        <div className="tarjeta flex min-h-[78vh] min-w-0 flex-[999_1_560px] flex-col rounded-3xl p-6">
+          {url ? (
+            <iframe
+              title="Vista previa del dictamen"
+              src={url}
+              className="min-h-[74vh] w-full flex-1 rounded-control bg-white"
+              data-testid="vista-previa"
+            />
+          ) : (
+            <div className="t-nota grid flex-1 place-items-center">Armando el dictamen…</div>
+          )}
+        </div>
+        <div className="flex min-w-0 flex-[1_1_360px] flex-col gap-4">
+          <header className="flex flex-col gap-2">
+            <Rotulo extra="Dictamen" />
+            <h1 className="t-titulo">
+              {validacion ? "Listo para firmar" : "Borrador del dictamen"}
+            </h1>
             <Frase>{frase}</Frase>
           </header>
-          <div className="tarjeta flex flex-col items-start gap-2 self-stretch p-5">
-            {validacion ? (
-              <>
-                <Insignia>Validado</Insignia>
-                <p className="t-interfaz">
-                  <TextoValidacion validacion={validacion} />
-                </p>
-              </>
-            ) : (
-              <>
-                <Insignia tipo="senal">Borrador</Insignia>
-                <p className="t-nota">
-                  Falta la validación del perito (paso 7): el PDF sale marcado como borrador.
-                </p>
-              </>
-            )}
+          {antesDeFirmar.length ? (
+            <section
+              className="flex flex-col gap-2 rounded-[18px] border border-senal/45 bg-[var(--falta-fondo)] p-4"
+              data-testid="antes-de-firmar"
+            >
+              <p className="t-rotulo text-senal-texto">
+                Antes de firmar · {antesDeFirmar.length}{" "}
+                {antesDeFirmar.length === 1 ? "nota" : "notas"}
+              </p>
+              <ul className="flex flex-col gap-2">
+                {antesDeFirmar.map((n) => (
+                  <li key={n.texto} className="text-sm">
+                    {n.texto}{" "}
+                    <button type="button" className="underline" onClick={() => irA(n.paso)}>
+                      Revisar en el paso {n.paso + 1} →
+                    </button>
+                  </li>
+                ))}
+              </ul>
+            </section>
+          ) : null}
+          <section className="tarjeta flex flex-col gap-3 p-4">
+            <button
+              type="button"
+              className="boton-principal h-14 text-base"
+              onClick={onDescargar}
+              data-testid="descargar-pdf"
+              disabled={!url}
+            >
+              Descargar PDF
+            </button>
+            <div className="grid grid-cols-3 gap-2">
+              <button
+                type="button"
+                className="boton-secundario boton-compacto"
+                onClick={onWord}
+                data-testid="descargar-word"
+              >
+                Word
+              </button>
+              <button
+                type="button"
+                className="boton-secundario boton-compacto"
+                onClick={onPng}
+                disabled={!hayCroquis}
+                data-testid="descargar-png"
+              >
+                Croquis PNG
+              </button>
+              <button
+                type="button"
+                className="boton-secundario boton-compacto"
+                onClick={onJson}
+                data-testid="descargar-json"
+              >
+                Caso JSON
+              </button>
+            </div>
             {estado ? (
               <p role="status" className="t-nota">
                 {estado}
               </p>
             ) : null}
-          </div>
-          <div className="flex flex-wrap gap-3">
+          </section>
+          <section className="tarjeta flex flex-col gap-2.5 p-4" aria-label="Incluir">
+            <p className="t-rotulo">Incluir</p>
+            {casillas.map(([k, texto]) => (
+              <label
+                key={k}
+                className="flex items-center justify-between gap-3 text-sm text-texto-2"
+              >
+                {texto}
+                <input
+                  type="checkbox"
+                  checked={incluir[k]}
+                  onChange={(e) => onIncluir({ ...incluir, [k]: e.target.checked })}
+                  className="h-[18px] w-[18px] accent-[var(--texto)]"
+                  data-testid={`incluir-${k}`}
+                />
+              </label>
+            ))}
+            {incluir.notasInternas ? (
+              <textarea
+                className="campo min-h-20 text-sm"
+                value={notas}
+                onChange={(e) => onNotas(e.target.value)}
+                onBlur={onGenerar}
+                placeholder="Notas internas del perito (van en el dictamen solo si esta casilla está marcada)"
+                aria-label="Notas internas del perito"
+              />
+            ) : null}
+          </section>
+          <section
+            className="tarjeta flex flex-col gap-2 p-4"
+            aria-label="Trazabilidad"
+            data-testid="trazabilidad"
+          >
+            <p className="t-rotulo">Trazabilidad</p>
+            <dl className="grid grid-cols-[auto_1fr] gap-x-4 gap-y-1.5 text-sm">
+              <dt className="text-texto-2">Método</dt>
+              <dd className="cifras text-right">{trazabilidad.metodo}</dd>
+              <dt className="text-texto-2">Huella de entradas</dt>
+              <dd className="cifras text-right">{trazabilidad.huella}</dd>
+              <dt className="text-texto-2">Sugerencia</dt>
+              <dd className="text-right">{trazabilidad.sugerencia}</dd>
+              <dt className="text-texto-2">Validó</dt>
+              <dd className="text-right">{trazabilidad.valido}</dd>
+            </dl>
             <button
               type="button"
-              className="boton-principal"
-              onClick={onDescargar}
-              data-testid="descargar-pdf"
-              disabled={!url}
+              className="boton-secundario boton-compacto mt-1"
+              onClick={() =>
+                void navigator.clipboard
+                  .writeText(textoTraza)
+                  .then(() => setCopiado(true))
+                  .catch(() => setCopiado(false))
+              }
             >
-              Descargar el dictamen
+              {copiado ? "Copiado" : "Copiar datos de trazabilidad"}
             </button>
-            <button type="button" className="boton-secundario" onClick={onGenerar}>
-              Actualizar la vista previa
-            </button>
+          </section>
+          {validacion ? (
+            <p className="t-nota">
+              <TextoValidacion validacion={validacion} />
+            </p>
+          ) : null}
+          <div className="flex flex-wrap items-center gap-3">
+            <Navegacion />
+            <BotonDetalle />
           </div>
-          <BotonDetalle className="self-start" />
-          <Navegacion />
-        </div>
-        <div className="flex min-h-[70vh] min-w-0 flex-[999_1_560px] flex-col">
-          {url ? (
-            <iframe
-              title="Vista previa del dictamen"
-              src={url}
-              className="tarjeta min-h-[70vh] w-full flex-1"
-              data-testid="vista-previa"
-            />
-          ) : (
-            <div className="tarjeta t-nota grid flex-1 place-items-center">
-              Armando el dictamen…
-            </div>
-          )}
         </div>
       </div>
     </Pagina>
