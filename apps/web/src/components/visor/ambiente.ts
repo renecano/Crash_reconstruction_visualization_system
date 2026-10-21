@@ -51,9 +51,37 @@ const NOMBRES: Record<string, string> = {
   lodo: "con lodo",
 };
 
-/** Texto del aviso en la vista. */
-export function describeAmbiente(a: AmbienteVisual): string {
+const NAMES_EN: Record<string, string> = {
+  despejado: "clear",
+  nublado: "cloudy",
+  lluvia_ligera: "light rain",
+  lluvia_fuerte: "heavy rain",
+  niebla: "fog",
+  granizo: "hail",
+  dia: "daytime",
+  amanecer: "dawn",
+  atardecer: "dusk",
+  noche_con_alumbrado: "night with street lighting",
+  noche_sin_alumbrado: "night without street lighting",
+  seco: "dry",
+  mojado: "wet",
+  encharcado: "flooded",
+  grava_suelta: "loose gravel",
+  aceite: "oily",
+  lodo: "muddy",
+};
+
+/** Texto del aviso en la vista, en el idioma de la página. */
+export function describeAmbiente(a: AmbienteVisual, lang: "es" | "en" = "es"): string {
   const partes: string[] = [];
+  if (lang === "en") {
+    if (a.clima) partes.push(NAMES_EN[a.clima] ?? a.clima);
+    if (a.iluminacion) partes.push(NAMES_EN[a.iluminacion] ?? a.iluminacion);
+    if (a.estadoSuperficie)
+      partes.push(`${NAMES_EN[a.estadoSuperficie] ?? a.estadoSuperficie} surface`);
+    if (a.visibilidadM !== undefined) partes.push(`visibility ${a.visibilidadM} m`);
+    return `Conditions changed only in the view: ${partes.join(", ")}. The reconstruction does not change.`;
+  }
   if (a.clima) partes.push(NOMBRES[a.clima] ?? a.clima);
   if (a.iluminacion) partes.push(NOMBRES[a.iluminacion] ?? a.iluminacion);
   if (a.estadoSuperficie) partes.push(`piso ${NOMBRES[a.estadoSuperficie] ?? a.estadoSuperficie}`);

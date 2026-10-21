@@ -1,0 +1,203 @@
+{
+  "ruta": "/croquis",
+  "accesibilidad": 100,
+  "rendimiento": 72,
+  "lcp_ms": 1165,
+  "cls": 0.02,
+  "tbt_ms": 2172,
+  "fcp_ms": 1165,
+  "carga_mb": 0.44,
+  "elemento_lcp": "<p class=\"t-cuerpo text-texto-2\">",
+  "accesibilidad_fallas": [],
+  "lighthouse": "13.5.0",
+  "benchmark_index": 1298,
+  "corriente": "ca",
+  "entorno": {
+    "formFactor": "mobile",
+    "throttlingMethod": "devtools",
+    "throttling": {
+      "rttMs": 150,
+      "throughputKbps": 1638.4,
+      "requestLatencyMs": 562.5,
+      "downloadThroughputKbps": 1474.5600000000002,
+      "uploadThroughputKbps": 675,
+      "cpuSlowdownMultiplier": 4
+    }
+  },
+  "cumple": {
+    "accesibilidad": true,
+    "lcp": true,
+    "cls": true,
+    "carga": true
+  },
+  "lantern": {
+    "lcp_ms": 3878,
+    "fcp_ms": 1181,
+    "tbt_ms": 624,
+    "cls": 0.02,
+    "rendimiento": 71,
+    "lcp_cumpliria": false
+  },
+  "corridas": {
+    "devtools": [
+      {
+        "accesibilidad": 100,
+        "rendimiento": 72,
+        "lcp_ms": 1165,
+        "cls": 0.02,
+        "tbt_ms": 2172,
+        "fcp_ms": 1165,
+        "carga_mb": 0.44,
+        "elemento_lcp": "<p class=\"t-cuerpo text-texto-2\">",
+        "accesibilidad_fallas": [],
+        "lighthouse": "13.5.0",
+        "benchmark_index": 1298,
+        "corriente": "ca",
+        "entorno": {
+          "formFactor": "mobile",
+          "throttlingMethod": "devtools",
+          "throttling": {
+            "rttMs": 150,
+            "throughputKbps": 1638.4,
+            "requestLatencyMs": 562.5,
+            "downloadThroughputKbps": 1474.5600000000002,
+            "uploadThroughputKbps": 675,
+            "cpuSlowdownMultiplier": 4
+          }
+        }
+      },
+      {
+        "accesibilidad": 100,
+        "rendimiento": 73,
+        "lcp_ms": 1284,
+        "cls": 0.02,
+        "tbt_ms": 1610,
+        "fcp_ms": 1284,
+        "carga_mb": 0.44,
+        "elemento_lcp": "<p class=\"t-cuerpo text-texto-2\">",
+        "accesibilidad_fallas": [],
+        "lighthouse": "13.5.0",
+        "benchmark_index": 1196,
+        "corriente": "ca",
+        "entorno": {
+          "formFactor": "mobile",
+          "throttlingMethod": "devtools",
+          "throttling": {
+            "rttMs": 150,
+            "throughputKbps": 1638.4,
+            "requestLatencyMs": 562.5,
+            "downloadThroughputKbps": 1474.5600000000002,
+            "uploadThroughputKbps": 675,
+            "cpuSlowdownMultiplier": 4
+          }
+        }
+      },
+      {
+        "accesibilidad": 100,
+        "rendimiento": 75,
+        "lcp_ms": 873,
+        "cls": 0.02,
+        "tbt_ms": 1285,
+        "fcp_ms": 873,
+        "carga_mb": 0.44,
+        "elemento_lcp": "<p class=\"t-cuerpo text-texto-2\">",
+        "accesibilidad_fallas": [],
+        "lighthouse": "13.5.0",
+        "benchmark_index": 1350.5,
+        "corriente": "ca",
+        "entorno": {
+          "formFactor": "mobile",
+          "throttlingMethod": "devtools",
+          "throttling": {
+            "rttMs": 150,
+            "throughputKbps": 1638.4,
+            "requestLatencyMs": 562.5,
+            "downloadThroughputKbps": 1474.5600000000002,
+            "uploadThroughputKbps": 675,
+            "cpuSlowdownMultiplier": 4
+          }
+        }
+      }
+    ],
+    "simulate": [
+      {
+        "accesibilidad": 100,
+        "rendimiento": 70,
+        "lcp_ms": 3923,
+        "cls": 0.02,
+        "tbt_ms": 673,
+        "fcp_ms": 1064,
+        "carga_mb": 0.44,
+        "elemento_lcp": "<p class=\"t-cuerpo text-texto-2\">",
+        "accesibilidad_fallas": [],
+        "lighthouse": "13.5.0",
+        "benchmark_index": 1254,
+        "corriente": "ca",
+        "entorno": {
+          "formFactor": "mobile",
+          "throttlingMethod": "simulate",
+          "throttling": {
+            "rttMs": 150,
+            "throughputKbps": 1638.4,
+            "requestLatencyMs": 562.5,
+            "downloadThroughputKbps": 1474.5600000000002,
+            "uploadThroughputKbps": 675,
+            "cpuSlowdownMultiplier": 4
+          }
+        }
+      },
+      {
+        "accesibilidad": 100,
+        "rendimiento": 68,
+        "lcp_ms": 3406,
+        "cls": 0.02,
+        "tbt_ms": 1104,
+        "fcp_ms": 1271,
+        "carga_mb": 0.44,
+        "elemento_lcp": "<p class=\"t-cuerpo text-texto-2\">",
+        "accesibilidad_fallas": [],
+        "lighthouse": "13.5.0",
+        "benchmark_index": 1283,
+        "corriente": "ca",
+        "entorno": {
+          "formFactor": "mobile",
+          "throttlingMethod": "simulate",
+          "throttling": {
+            "rttMs": 150,
+            "throughputKbps": 1638.4,
+            "requestLatencyMs": 562.5,
+            "downloadThroughputKbps": 1474.5600000000002,
+            "uploadThroughputKbps": 675,
+            "cpuSlowdownMultiplier": 4
+          }
+        }
+      },
+      {
+        "accesibilidad": 100,
+        "rendimiento": 71,
+        "lcp_ms": 3878,
+        "cls": 0.02,
+        "tbt_ms": 624,
+        "fcp_ms": 1181,
+        "carga_mb": 0.44,
+        "elemento_lcp": "<p class=\"t-cuerpo text-texto-2\">",
+        "accesibilidad_fallas": [],
+        "lighthouse": "13.5.0",
+        "benchmark_index": 1363,
+        "corriente": "ca",
+        "entorno": {
+          "formFactor": "mobile",
+          "throttlingMethod": "simulate",
+          "throttling": {
+            "rttMs": 150,
+            "throughputKbps": 1638.4,
+            "requestLatencyMs": 562.5,
+            "downloadThroughputKbps": 1474.5600000000002,
+            "uploadThroughputKbps": 675,
+            "cpuSlowdownMultiplier": 4
+          }
+        }
+      }
+    ]
+  }
+}

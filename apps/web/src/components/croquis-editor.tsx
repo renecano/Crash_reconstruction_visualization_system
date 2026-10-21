@@ -1,10 +1,13 @@
 "use client";
-
+/**
+ * Editor del croquis (herramienta avanzada de `/croquis`, PLAN §11.4): las escenas de ejemplo o la
+ * del relato, el croquis sobre el papel del parte sincronizado con la `EscenaSpec` en JSON, la
+ * revisión de la escena, calles reales y exportaciones. El flujo guiado usa solo el croquis.
+ */
 import { Croquis } from "@croquis/croquis-2d";
 import {
   FIXTURE_NAMES,
   checkEscena,
-  fixtureTitle,
   loadFixture,
   validateEscena,
   type EscenaSpec,
@@ -13,19 +16,97 @@ import {
 } from "@croquis/scene-schema";
 import { useRouter } from "next/navigation";
 import { useEffect, useMemo, useState } from "react";
+import { textos } from "@/i18n";
+import { useIdioma, useTextos } from "@/i18n/cliente";
 import { croquisPdf, croquisPng, croquisSvgFile } from "@/lib/croquis-export";
 import { downloadBytes, safeName } from "@/lib/download";
 import { registrarE9 } from "@/lib/e9";
 import { guardarEscenaPropia } from "@/lib/escena-propia";
+import { mensaje } from "@/lib/mensajes";
 import { RELATO_SPEC_KEY } from "@/lib/relato-api";
 import { CallesReales } from "./calles-reales";
-import { Legend } from "./legend";
+import { Legend, useTextosCroquis } from "./legend";
+import { tituloEscena } from "@/i18n/vocabulario";
+
+const T = textos(
+  {
+    croquis: "Croquis editable",
+    deRelato: "Escena de tu relato",
+    escena: "Escena",
+    finales: "Mostrar posiciones finales",
+    restablecer: "Restablecer",
+    ayuda:
+      "Arrastra vehículos, personas, objetos y marcas; gira un vehículo con el asa amarilla. Cada cambio queda marcado como «fuente: usuario» en el JSON.",
+    json: "EscenaSpec en JSON",
+    aplicar: "Aplicar JSON",
+    descargar: "Descargar JSON",
+    ver3d: "Ver en 3D",
+    exportar: "Exportar el croquis (con la marca de reconstrucción ilustrativa):",
+    exportarGrupo: "Exportar el croquis",
+    malFormado: (e: string) => `JSON mal formado: ${e}`,
+    revision: "Revisión de la escena",
+    sinProblemas: "Sin problemas: la escena es coherente.",
+    errores: "Errores",
+    avisos: "Avisos",
+  },
+  {
+    croquis: "Editable sketch",
+    deRelato: "Scene from your narrative",
+    escena: "Scene",
+    finales: "Show final positions",
+    restablecer: "Reset",
+    ayuda:
+      "Drag vehicles, people, objects and marks; rotate a vehicle with the yellow handle. Every change is marked as “fuente: usuario” in the JSON.",
+    json: "EscenaSpec as JSON",
+    aplicar: "Apply JSON",
+    descargar: "Download JSON",
+    ver3d: "View in 3D",
+    exportar: "Export the sketch (with the illustrative reconstruction notice):",
+    exportarGrupo: "Export the sketch",
+    malFormado: (e: string) => `Malformed JSON: ${e}`,
+    revision: "Scene review",
+    sinProblemas: "No problems: the scene is consistent.",
+    errores: "Errors",
+    avisos: "Warnings",
+  },
+);
 
 function toJson(spec: EscenaSpec): string {
   return JSON.stringify(spec, null, 2);
 }
 
+function Problemas({
+  lista,
+  titulo,
+  lang,
+}: {
+  lista: Problema[];
+  titulo: string;
+  lang: "es" | "en";
+}) {
+  if (lista.length === 0) return null;
+  return (
+    <div className="mt-3">
+      <h4 className="t-nota mb-1">{titulo}</h4>
+      <ul className="t-nota flex flex-col gap-1 text-texto">
+        {lista.map((p) => {
+          const m = mensaje(p.mensaje, lang);
+          return (
+            <li key={`${p.codigo}${p.ruta}`}>
+              <code className="cifras">{p.codigo}</code> <span lang={m.lang}>{m.texto}</span>{" "}
+              <span className="text-texto-3">({p.ruta})</span>
+            </li>
+          );
+        })}
+      </ul>
+    </div>
+  );
+}
+
 export function CroquisEditor({ initial = "alcance" }: { initial?: FixtureName }) {
+  const { lang, ruta } = useIdioma();
+  const t = useTextos(T);
+  const textosCroquis = useTextosCroquis();
   const router = useRouter();
   const [exportando, setExportando] = useState(false);
   const [exportError, setExportError] = useState<string | null>(null);
@@ -53,7 +134,7 @@ export function CroquisEditor({ initial = "alcance" }: { initial?: FixtureName }
     applySpec(loadFixture(n));
   };
 
-  // Escena que llega desde la página del relato (`/croquis?fuente=relato`).
+  // Escena que llega desde el relato (`/croquis?fuente=relato`).
   const [fromRelato, setFromRelato] = useState(false);
   useEffect(() => {
     if (new URLSearchParams(window.location.search).get("fuente") !== "relato") return;
@@ -98,7 +179,7 @@ export function CroquisEditor({ initial = "alcance" }: { initial?: FixtureName }
     try {
       parsed = JSON.parse(jsonText);
     } catch (e) {
-      setJsonErrors([`JSON mal formado: ${(e as Error).message}`]);
+      setJsonErrors([t.malFormado((e as Error).message)]);
       return;
     }
     const result = validateEscena(parsed);
@@ -121,50 +202,48 @@ export function CroquisEditor({ initial = "alcance" }: { initial?: FixtureName }
   };
 
   return (
-    <div className="grid gap-6 lg:grid-cols-[minmax(0,3fr)_minmax(0,2fr)]">
-      <section aria-label="Croquis editable" className="flex flex-col gap-3">
-        <div className="flex flex-wrap items-center gap-3">
+    <div className="grid gap-10 lg:grid-cols-12">
+      <section aria-label={t.croquis} className="flex min-w-0 flex-col gap-4 lg:col-span-7">
+        <div className="flex flex-wrap items-end gap-4">
           {fromRelato ? (
-            <span
-              data-testid="escena-relato"
-              className="rounded bg-green-100 px-2 py-1 text-sm text-green-900"
-            >
-              Escena de tu relato
+            <span data-testid="escena-relato" className="t-interfaz border-l-2 border-texto pl-3">
+              {t.deRelato}
             </span>
           ) : null}
-          <label className="flex items-center gap-2 text-sm">
-            <span>Escena</span>
+          <label className="t-nota flex flex-col gap-1">
+            <span>{t.escena}</span>
             <select
               data-testid="scene-select"
-              className="rounded border border-neutral-300 bg-white px-2 py-1 text-neutral-900"
+              className="campo w-full max-w-xl"
               value={name}
               onChange={(e) => pick(e.target.value as FixtureName)}
             >
               {FIXTURE_NAMES.map((n) => (
                 <option key={n} value={n}>
-                  {fixtureTitle(n)}
+                  {tituloEscena(n, lang)}
                 </option>
               ))}
             </select>
           </label>
-          <label className="flex items-center gap-2 text-sm">
+          <label className="t-interfaz flex min-h-11 cursor-pointer items-center gap-3 pb-3">
             <input
               type="checkbox"
               checked={showFinal}
               onChange={(e) => setShowFinal(e.target.checked)}
+              className="h-5 w-5 accent-[var(--accion)]"
             />
-            Mostrar posiciones finales
+            {t.finales}
           </label>
           <button
             type="button"
             data-testid="reset"
-            className="rounded border border-neutral-400 px-3 py-1 text-sm hover:bg-neutral-100 dark:hover:bg-neutral-800"
+            className="boton-secundario mb-1 min-h-11 px-4"
             onClick={() => pick(name)}
           >
-            Restablecer
+            {t.restablecer}
           </button>
         </div>
-        <div className="overflow-hidden rounded-lg border border-neutral-300 dark:border-neutral-700">
+        <div className="overflow-hidden rounded-panel" data-tema="papel">
           <Croquis
             spec={spec}
             onChange={(next) => {
@@ -174,12 +253,10 @@ export function CroquisEditor({ initial = "alcance" }: { initial?: FixtureName }
             showFinal={showFinal}
             selectedId={selected}
             onSelect={setSelected}
+            textos={textosCroquis}
           />
         </div>
-        <p className="text-sm text-neutral-600 dark:text-neutral-400">
-          Arrastra vehículos, personas, objetos y marcas; gira un vehículo con el asa naranja. Cada
-          cambio queda marcado como <code>fuente: usuario</code> en el JSON.
-        </p>
+        <p className="t-nota">{t.ayuda}</p>
         <CallesReales spec={spec} onApply={applySpec} />
         <Legend
           seed={spec.meta.semilla}
@@ -188,117 +265,95 @@ export function CroquisEditor({ initial = "alcance" }: { initial?: FixtureName }
         />
       </section>
 
-      <section aria-label="EscenaSpec en JSON" className="flex flex-col gap-3">
+      <section aria-label={t.json} className="flex min-w-0 flex-col gap-4 lg:col-span-5">
         <div className="flex flex-wrap items-center gap-2">
-          <h2 className="text-lg font-semibold">EscenaSpec</h2>
+          <h2 className="t-subtitulo mr-auto">EscenaSpec</h2>
+          <button
+            type="button"
+            data-testid="ver-3d"
+            className="boton-principal"
+            onClick={() => {
+              // La escena (con los cambios aplicados) se reconstruye en el navegador y se ve en 3D.
+              if (guardarEscenaPropia(spec)) router.push(`${ruta("/visor")}?escena=propia`);
+            }}
+          >
+            {t.ver3d}
+          </button>
+        </div>
+        <div className="flex flex-wrap gap-2">
           <button
             type="button"
             data-testid="apply-json"
-            className="rounded bg-neutral-900 px-3 py-1 text-sm text-white hover:bg-neutral-700 dark:bg-neutral-100 dark:text-neutral-900"
+            className="boton-secundario min-h-11 px-4"
             onClick={applyJson}
           >
-            Aplicar JSON
+            {t.aplicar}
           </button>
           <button
             type="button"
             data-testid="download-json"
-            className="rounded border border-neutral-400 px-3 py-1 text-sm hover:bg-neutral-100 dark:hover:bg-neutral-800"
+            className="boton-secundario min-h-11 px-4"
             onClick={download}
           >
-            Descargar JSON
-          </button>
-          <button
-            type="button"
-            data-testid="ver-3d"
-            className="rounded border border-neutral-400 px-3 py-1 text-sm hover:bg-neutral-100 dark:hover:bg-neutral-800"
-            onClick={() => {
-              // La escena (con los cambios aplicados) se reconstruye en el navegador y se ve en 3D.
-              if (guardarEscenaPropia(spec)) router.push("/visor?escena=propia");
-            }}
-          >
-            Ver en 3D
+            {t.descargar}
           </button>
         </div>
-        <div
-          className="flex flex-wrap items-center gap-2 text-sm"
-          role="group"
-          aria-label="Exportar el croquis"
-        >
-          <span className="text-neutral-600 dark:text-neutral-400">
-            Exportar el croquis (con la marca de reconstrucción ilustrativa):
-          </span>
-          {(
-            [
-              ["svg", "SVG"],
-              ["png", "PNG"],
-              ["pdf", "PDF"],
-            ] as const
-          ).map(([fmt, label]) => (
-            <button
-              key={fmt}
-              type="button"
-              data-testid={`croquis-${fmt}`}
-              disabled={exportando}
-              className="rounded border border-neutral-400 px-3 py-1 hover:bg-neutral-100 disabled:opacity-50 dark:hover:bg-neutral-800"
-              onClick={() => void exportCroquis(fmt)}
-            >
-              {label}
-            </button>
-          ))}
+        <div className="flex flex-col gap-2" role="group" aria-label={t.exportarGrupo}>
+          <span className="t-nota">{t.exportar}</span>
+          <div className="flex flex-wrap gap-2">
+            {(
+              [
+                ["svg", "SVG"],
+                ["png", "PNG"],
+                ["pdf", "PDF"],
+              ] as const
+            ).map(([fmt, label]) => (
+              <button
+                key={fmt}
+                type="button"
+                data-testid={`croquis-${fmt}`}
+                disabled={exportando}
+                className="boton-secundario min-h-11 px-4"
+                onClick={() => void exportCroquis(fmt)}
+              >
+                {label}
+              </button>
+            ))}
+          </div>
           {exportError ? (
-            <span role="alert" className="text-red-700 dark:text-red-400">
+            <span role="alert" className="t-nota border-l-2 border-texto pl-3 text-texto">
               {exportError}
             </span>
           ) : null}
         </div>
         <textarea
           data-testid="json"
-          aria-label="EscenaSpec en JSON"
+          aria-label={t.json}
           spellCheck={false}
-          className="h-[28rem] w-full resize-y rounded border border-neutral-300 bg-white p-2 font-mono text-xs text-neutral-900 dark:border-neutral-700 dark:bg-neutral-950 dark:text-neutral-100"
+          className="campo h-[28rem] resize-y font-mono text-xs leading-relaxed"
           value={jsonText}
           onChange={(e) => setJsonText(e.target.value)}
         />
         {jsonErrors.length > 0 && (
           <ul
             data-testid="json-errors"
-            className="list-disc space-y-1 pl-5 text-sm text-red-700 dark:text-red-400"
+            className="t-nota flex flex-col gap-1 border-l-2 border-texto pl-3 text-texto"
           >
             {jsonErrors.slice(0, 12).map((e, i) => (
               <li key={i}>{e}</li>
             ))}
           </ul>
         )}
-        <div
-          data-testid="problemas"
-          className="rounded border border-neutral-300 p-3 text-sm dark:border-neutral-700"
-        >
-          <h3 className="font-semibold">Revisión de la escena</h3>
+        <div data-testid="problemas" className="border-t border-linea pt-4">
+          <h3 className="t-interfaz">{t.revision}</h3>
           {problemas.length === 0 ? (
-            <p data-testid="sin-problemas" className="text-green-700 dark:text-green-400">
-              Sin problemas: la escena es coherente.
+            <p data-testid="sin-problemas" className="t-nota mt-2">
+              {t.sinProblemas}
             </p>
           ) : (
             <>
-              {errores.length > 0 && (
-                <ul className="mt-2 list-disc space-y-1 pl-5 text-red-700 dark:text-red-400">
-                  {errores.map((p) => (
-                    <li key={`${p.codigo}${p.ruta}`}>
-                      <code>{p.codigo}</code> {p.mensaje}{" "}
-                      <span className="text-neutral-500">({p.ruta})</span>
-                    </li>
-                  ))}
-                </ul>
-              )}
-              {avisos.length > 0 && (
-                <ul className="mt-2 list-disc space-y-1 pl-5 text-amber-700 dark:text-amber-400">
-                  {avisos.map((p) => (
-                    <li key={`${p.codigo}${p.ruta}`}>
-                      <code>{p.codigo}</code> {p.mensaje}
-                    </li>
-                  ))}
-                </ul>
-              )}
+              <Problemas lista={errores} titulo={t.errores} lang={lang} />
+              <Problemas lista={avisos} titulo={t.avisos} lang={lang} />
             </>
           )}
         </div>

@@ -1,5 +1,6 @@
 import { readFileSync } from "node:fs";
 import { expect, test } from "@playwright/test";
+import { simularApi } from "./api-simulada";
 
 /**
  * E9 (F11): la sesión de usabilidad anota solo momentos de eventos y el SUS, y el archivo que se
@@ -52,4 +53,55 @@ test("sesión de E9: del inicio a la primera reconstrucción, SUS y descarga sin
 
   await page.getByTestId("e9-borrar").click();
   await expect(page.getByTestId("e9-iniciar")).toBeVisible();
+});
+
+test("el flujo guiado anota los cinco eventos de E9", async ({ page }) => {
+  test.setTimeout(180_000);
+  await simularApi(page);
+  await page.goto("/e9");
+  await page.getByTestId("e9-codigo").fill("P08");
+  await page.getByTestId("e9-consentimiento").check();
+  await page.getByTestId("e9-iniciar").click();
+  await page.getByRole("link", { name: "Ir a contar qué pasó" }).click();
+  await expect(page).toHaveURL(/\/cuenta$/);
+
+  await page.getByTestId("relato").fill("Iba por la glorieta y un auto se me cerró y le pegué.");
+  await page.getByRole("button", { name: "Leer mi relato" }).click();
+  await page.getByRole("radio", { name: "mojado" }).click();
+  await page.getByTestId("responder").click();
+  await page.getByRole("button", { name: "Acomodar el croquis" }).click();
+  // Una corrección en el croquis: arrastrar un vehículo.
+  const vehiculo = page.locator('[data-testid$="-inicial"]').first().locator("rect").first();
+  await vehiculo.scrollIntoViewIfNeeded();
+  const caja = (await vehiculo.boundingBox())!;
+  await page.mouse.move(caja.x + caja.width / 2, caja.y + caja.height / 2);
+  await page.mouse.down();
+  await page.mouse.move(caja.x + caja.width / 2 + 30, caja.y + caja.height / 2 + 10, { steps: 5 });
+  await page.mouse.up();
+  await page.getByRole("button", { name: "Ver tu reconstrucción" }).click();
+  await page.waitForFunction(() => window.__croquisReady === true, null, { timeout: 120_000 });
+
+  const tipos = () =>
+    page.evaluate(() =>
+      [
+        ...new Set(
+          (
+            JSON.parse(localStorage.getItem("croquis:e9") ?? "{}") as {
+              eventos?: { tipo: string }[];
+            }
+          ).eventos?.map((e) => e.tipo),
+        ),
+      ].sort(),
+    );
+  await expect
+    .poll(tipos, { timeout: 30_000 })
+    .toEqual(
+      [
+        "croquis_abierto",
+        "correccion_croquis",
+        "preguntas_respondidas",
+        "reconstruccion_visible",
+        "relato_enviado",
+      ].sort(),
+    );
 });

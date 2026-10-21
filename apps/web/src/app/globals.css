@@ -1,26 +1,139 @@
 @import "tailwindcss";
+@import "@fontsource-variable/anybody/standard.css";
+@import "../styles/tokens.css";
+@import "../styles/sistema.css";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
+/* Anybody con la «í» legible y los ejes recortados a lo que usa el sitio, peso 400–800 y ancho
+   100–150 % (scripts/fuente.py, ADR 0045 §1 y §5): reemplaza el corte latino de fontsource. Con los
+   mismos descriptores y el mismo rango, la cara declarada al final es la que se usa (y la única que
+   se descarga); el navegador lleva cualquier valor fuera de los ejes recortados a su límite. */
+@font-face {
+  font-family: "Anybody Variable";
+  font-style: normal;
+  font-display: swap;
+  font-weight: 100 900;
+  font-stretch: 50% 150%;
+  src: url("/fuente/anybody-latin-croquis.woff2") format("woff2-variations");
+  unicode-range:
+    U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329,
+    U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+/* El mismo archivo (una sola descarga) para los textos más anchos, al 150 %: el lema de la portada
+   y las letras de los capítulos. Ninguna fuente del sistema es tan ancha y tan baja a la vez: el
+   respaldo con su ancho tendría letras más altas que el interlineado del lema y los renglones se
+   encimarían. Por eso esperan a Anybody sin mostrarse (block, hasta 3 s) y mientras tanto ocupan
+   lo que ocuparán, con las medidas del respaldo: nada salta al llegar. */
+@font-face {
+  font-family: "Anybody Bloque";
+  font-style: normal;
+  font-display: block;
+  font-weight: 100 900;
+  font-stretch: 50% 150%;
+  src: url("/fuente/anybody-latin-croquis.woff2") format("woff2-variations");
+  unicode-range:
+    U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329,
+    U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
 }
 
+/* Respaldo con las medidas de Anybody, mientras llega (ADR 0045 §5). Sin él, el texto ocupa otro
+   ancho con la fuente del sistema y, al llegar Anybody, cambia de renglones y la página salta.
+   Anybody es mucho más ancha según el rol (cuerpo al 104 %, portada al 150 %), así que hay una
+   cara por rango de ancho y peso: el navegador elige la que corresponde a cada texto. Cada
+   size-adjust iguala el ancho de Anybody en ese rol contra Arial (o Arial Bold): se calculó con
+   fontTools sobre una muestra de textos del sitio y se ajustó midiendo en el navegador
+   (`t-nota`, al 100 %, aparte del cuerpo y la interfaz, al 104 %; `t-titulo`, al 125 %, aparte
+   de `t-capitulo`, al 130 %). Las métricas verticales son las de Anybody (ascenso 0.795 y
+   descenso 0.24, divididos entre el size-adjust). Liberation Sans tiene las medidas de Arial;
+   Roboto, el respaldo en Android, es parecida. */
+@font-face {
+  font-family: "Anybody Respaldo";
+  font-weight: 100 549;
+  font-stretch: 50% 102%;
+  src: local("Arial"), local("ArialMT"), local("Liberation Sans"), local("Roboto");
+  size-adjust: 109%;
+  ascent-override: 72.9%;
+  descent-override: 22%;
+  line-gap-override: 0%;
+}
+@font-face {
+  font-family: "Anybody Respaldo";
+  font-weight: 100 549;
+  font-stretch: 102.1% 110%;
+  src: local("Arial"), local("ArialMT"), local("Liberation Sans"), local("Roboto");
+  size-adjust: 115.5%;
+  ascent-override: 68.8%;
+  descent-override: 20.8%;
+  line-gap-override: 0%;
+}
+@font-face {
+  font-family: "Anybody Respaldo";
+  font-weight: 550 900;
+  font-stretch: 50% 110%;
+  src:
+    local("Arial Bold"), local("Arial-BoldMT"), local("Liberation Sans Bold"), local("Roboto Bold");
+  size-adjust: 112%;
+  ascent-override: 71%;
+  descent-override: 21.4%;
+  line-gap-override: 0%;
+}
+@font-face {
+  font-family: "Anybody Respaldo";
+  font-weight: 100 900;
+  font-stretch: 110.1% 120%;
+  src:
+    local("Arial Bold"), local("Arial-BoldMT"), local("Liberation Sans Bold"), local("Roboto Bold");
+  size-adjust: 123%;
+  ascent-override: 64.6%;
+  descent-override: 19.5%;
+  line-gap-override: 0%;
+}
+@font-face {
+  font-family: "Anybody Respaldo";
+  font-weight: 100 900;
+  font-stretch: 120.1% 127.5%;
+  src:
+    local("Arial Bold"), local("Arial-BoldMT"), local("Liberation Sans Bold"), local("Roboto Bold");
+  size-adjust: 142%;
+  ascent-override: 56%;
+  descent-override: 16.9%;
+  line-gap-override: 0%;
+}
+@font-face {
+  font-family: "Anybody Respaldo";
+  font-weight: 100 900;
+  font-stretch: 127.6% 140%;
+  src:
+    local("Arial Bold"), local("Arial-BoldMT"), local("Liberation Sans Bold"), local("Roboto Bold");
+  size-adjust: 150%;
+  ascent-override: 53%;
+  descent-override: 16%;
+  line-gap-override: 0%;
+}
+@font-face {
+  font-family: "Anybody Respaldo";
+  font-weight: 100 900;
+  font-stretch: 140.1% 200%;
+  src:
+    local("Arial Bold"), local("Arial-BoldMT"), local("Liberation Sans Bold"), local("Roboto Bold");
+  size-adjust: 178%;
+  ascent-override: 44.7%;
+  descent-override: 13.5%;
+  line-gap-override: 0%;
+}
+
+/* Los roles del sistema como utilidades de Tailwind (bg-superficie, text-texto-2, …): los
+   componentes no usan colores sueltos (ADR 0045). */
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
-}
-
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  --color-fondo: var(--fondo);
+  --color-superficie: var(--superficie);
+  --color-superficie-alta: var(--superficie-alta);
+  --color-linea: var(--linea);
+  --color-texto: var(--texto);
+  --color-texto-2: var(--texto-2);
+  --color-texto-3: var(--texto-3);
+  --color-accion: var(--accion);
+  --color-evidencia: var(--evidencia);
+  --font-sans: var(--fuente);
+  --radius-control: var(--radio-control);
+  --radius-panel: var(--radio-panel);
 }

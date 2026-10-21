@@ -24,7 +24,13 @@ Son **al menos 5 personas reales**, contando un percance propio o ficticio. No h
 3. **Tarea (hasta 15 min).** Darle solo esta consigna, en voz alta:
 
    > «Cuéntale a Croquis un percance vial que hayas vivido o que te inventes, como se lo contarías a alguien. Luego trata de llegar a verlo en 3D. Si algo no te queda claro, dilo en voz alta.»
-   - **Qué hace el facilitador:** pulsar «Ir a contar qué pasó» y ceder el teclado.
+   - **Qué hace el facilitador:** pulsar «Ir a contar qué pasó» y ceder el teclado. Abre `/cuenta`, el flujo guiado de cuatro pasos (F11a).
+   - **Lo que verá la persona, para reconocer dónde se atora** (nombres de los botones):
+     1. **Cuenta:** escribe en «Tu relato» y pulsa «Leer mi relato». «Ver lo que se envía» muestra el texto ya sin datos personales.
+     2. **¿Qué falta?:** contesta las preguntas y pulsa «Responder». Puede seguir sin contestar con «Seguir sin contestar». Cuando ya no hay preguntas, el botón principal es «Acomodar el croquis».
+     3. **Ubica:** acomoda vehículos y personas en el croquis arrastrándolos (cada arrastre es una corrección; «Deshacer» o Ctrl+Z la regresa) y pulsa «Ver tu reconstrucción».
+     4. **Simula:** la escena en 3D. Aquí se anota la primera reconstrucción. «Volver al croquis» regresa al paso anterior.
+   - **La barra de pasos** de arriba permite volver a cualquier paso ya hecho sin perder nada.
    - **No ayudar.** Si la persona se atora más de 2 minutos, se anota «se atoró en…», se le da una pista y se sigue.
    - **Pedir que piense en voz alta.** El facilitador anota a mano lo que dice; esas notas no van al JSON.
    - **Datos personales:** no deben usarse nombres ni placas reales, aunque el redactor intente quitarlos.

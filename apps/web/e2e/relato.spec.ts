@@ -1,66 +1,26 @@
-import { readFileSync } from "node:fs";
-import { resolve } from "node:path";
 import { expect, test } from "@playwright/test";
+import { simularApi, SPEC_GLORIETA as spec } from "./api-simulada";
 
-// Playwright corre desde apps/web.
-const spec = JSON.parse(
-  readFileSync(
-    resolve(process.cwd(), "../../packages/scene-schema/fixtures/glorieta.json"),
-    "utf-8",
-  ),
-) as { meta: { id: string } };
-
-test("relato: redacta en el navegador, pregunta y abre la escena en el croquis", async ({
+test("flujo guiado: redacta en el navegador, pregunta, acomoda el croquis y llega al 3D", async ({
   page,
 }) => {
-  const enviados: string[] = [];
-  // Las rutas se simulan: esta prueba mira la web (las rutas tienen sus propias pruebas).
-  // La extracción responde en NDJSON (inicio, progreso y resultado), como la Route Handler.
-  await page.route("**/api/relato/extraer", async (route) => {
-    const body = route.request().postDataJSON() as { texto: string };
-    enviados.push(body.texto);
-    const datos = {
-      spec,
-      texto: body.texto,
-      metodo: "reglas",
-      motivo: null,
-      redacciones_servidor: 0,
-      verificador: { revisados: 12, corregidos: 0, degradados: 0 },
-      glosario: [],
-      preguntas: [
-        {
-          id: "estado_superficie",
-          texto: "¿El piso estaba seco o mojado?",
-          motivo: "sensibilidad",
-          campo: "lugar.estado_superficie",
-          opciones: ["seco", "mojado", "encharcado"],
-        },
-      ],
-    };
-    const eventos = [
-      { tipo: "inicio", metodo: "reglas" },
-      { tipo: "resultado", datos },
-    ];
-    await route.fulfill({
-      contentType: "application/x-ndjson",
-      body: eventos.map((ev) => JSON.stringify(ev)).join(String.fromCharCode(10)),
-    });
-  });
-  await page.route("**/api/relato/responder", async (route) => {
-    await route.fulfill({ json: { spec, aplicadas: ["estado_superficie"], preguntas: [] } });
-  });
+  test.setTimeout(180_000);
+  const enviados = await simularApi(page);
 
   await page.goto("/");
-  await page.getByRole("link", { name: "Contar qué pasó" }).click();
-  await expect(page.getByRole("heading", { level: 1 })).toHaveText("Tu relato");
+  await page.getByTestId("cta-apertura").click();
+  await expect(page).toHaveURL(/\/cuenta$/);
+  await expect(page.getByRole("heading", { level: 1 })).toHaveText("Cuenta qué pasó");
 
   await page
     .getByTestId("relato")
     .fill("Me llamo Ana López, tel 722 123 4567. Se me cerró una camioneta y le pegué por detrás.");
+  await page.getByRole("button", { name: "Ver lo que se envía" }).click();
   await expect(page.getByTestId("texto-redactado")).toHaveText(
     "Me llamo [NOMBRE], tel [TELEFONO]. Se me cerró una camioneta y le pegué por detrás.",
   );
-  await page.getByTestId("entender").click();
+  await page.getByRole("button", { name: "Leer mi relato" }).click();
+  await expect(page).toHaveURL(/paso=falta/);
   await expect(page.getByTestId("hechos")).toBeVisible();
   expect(enviados[0]).not.toContain("Ana");
   expect(enviados[0]).not.toContain("722 123 4567");
@@ -68,11 +28,15 @@ test("relato: redacta en el navegador, pregunta y abre la escena en el croquis",
   await page.getByRole("radio", { name: "mojado" }).click();
   await page.getByTestId("responder").click();
   await expect(page.getByTestId("sin-preguntas")).toBeVisible();
-  await expect(page.getByRole("note")).toContainText("No es un peritaje");
+  await expect(page.getByRole("note").first()).toContainText("No es un peritaje");
 
-  await page.getByTestId("abrir-croquis").click();
-  await expect(page).toHaveURL(/\/croquis\?fuente=relato/);
-  await expect(page.getByTestId("escena-relato")).toBeVisible();
-  const json = JSON.parse(await page.getByTestId("json").inputValue()) as { meta: { id: string } };
-  expect(json.meta.id).toBe(spec.meta.id);
+  await page.getByRole("button", { name: "Acomodar el croquis" }).click();
+  await expect(page).toHaveURL(/paso=ubica/);
+  await expect(page.getByTestId("croquis-flujo")).toBeVisible();
+  await page.getByRole("button", { name: "Ver tu reconstrucción" }).click();
+  await expect(page).toHaveURL(/paso=simula/);
+  await expect(page.getByTestId("volver-croquis")).toBeVisible();
+  await page.waitForFunction(() => window.__croquisReady === true, null, { timeout: 120_000 });
+  const guardada = await page.evaluate(() => sessionStorage.getItem("croquis:flujo"));
+  expect(guardada).toContain(spec.meta.id);
 });

@@ -4,6 +4,7 @@
   "private": true,
   "description": "Editor 2D del croquis (vista cenital editable sincronizada con EscenaSpec)",
   "type": "module",
+  "sideEffects": false,
   "exports": {
     ".": "./src/index.ts",
     "./export": "./src/export.tsx"

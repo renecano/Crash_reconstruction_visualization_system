@@ -3,28 +3,70 @@
 import type { EscenaSpec, Resultado } from "@croquis/scene-schema";
 import { compareHypotheses, GHOST_COLORS, MAX_HYPOTHESES } from "@croquis/viewer";
 import { useState } from "react";
-import { reconstruirEnNavegador } from "@/lib/reconstruct-client";
+import { textos } from "@/i18n";
+import { useTextos } from "@/i18n/cliente";
+// `withSpeed` vive en reconstruct-client: la portada la usa sin cargar three.js.
+import { reconstruirEnNavegador, withSpeed } from "@/lib/reconstruct-client";
+
+export { withSpeed };
 import { fmtNumber } from "@/lib/format-number";
+import { Desplazable } from "@/components/sitio/desplazable";
 
 const fmt = fmtNumber;
 
-const COLOR_NAMES = ["azul", "naranja", "violeta"] as const;
 const css = (c: number) => `#${c.toString(16).padStart(6, "0")}`;
+
+const T = textos(
+  {
+    titulo: "Comparar hipótesis",
+    vehiculo: "Vehículo",
+    yaSi: "¿Y si iba a…? (km/h)",
+    agregar: "Agregar hipótesis",
+    reconstruyendo: "Reconstruyendo…",
+    lleno: (max: number) =>
+      `Se comparan hasta ${max} hipótesis a la vez; quita una para agregar otra.`,
+    rango: "Escribe una velocidad entre 0 y 200 km/h.",
+    fallo: (detalle: string) => `No se pudo reconstruir la hipótesis: ${detalle}`,
+    etiqueta: (rol: string, kmh: string) => `${rol} a ${kmh} km/h`,
+    leyenda:
+      "Cada hipótesis se ve como vehículos translúcidos de su color sobre la escena. A la izquierda de cada flecha, la reconstrucción principal.",
+    hipotesis: "Hipótesis",
+    velocidadImpacto: "Velocidad al impacto",
+    deltaV: "ΔV",
+    posicionFinal: "Posición final",
+    fantasma: (color: string) => ` (fantasma ${color})`,
+    colores: ["azul", "naranja", "violeta"],
+    quitar: "Quitar",
+    queda: (m: string) => `queda a ${m} m`,
+  },
+  {
+    titulo: "Compare hypotheses",
+    vehiculo: "Vehicle",
+    yaSi: "What if it was going…? (km/h)",
+    agregar: "Add hypothesis",
+    reconstruyendo: "Reconstructing…",
+    lleno: (max: number) =>
+      `Up to ${max} hypotheses are compared at a time; remove one to add another.`,
+    rango: "Enter a speed between 0 and 200 km/h.",
+    fallo: (detalle: string) => `The hypothesis could not be reconstructed: ${detalle}`,
+    etiqueta: (rol: string, kmh: string) => `${rol} at ${kmh} km/h`,
+    leyenda:
+      "Each hypothesis shows as translucent vehicles in its color over the scene. Left of each arrow, the main reconstruction.",
+    hipotesis: "Hypothesis",
+    velocidadImpacto: "Impact speed",
+    deltaV: "ΔV",
+    posicionFinal: "Final position",
+    fantasma: (color: string) => ` (${color} ghost)`,
+    colores: ["blue", "orange", "violet"],
+    quitar: "Remove",
+    queda: (m: string) => `ends up ${m} m away`,
+  },
+);
 
 /** Una hipótesis: la escena con otra velocidad previa para un vehículo, ya reconstruida. */
 export interface Hipotesis {
   etiqueta: string;
   resultado: Resultado;
-}
-
-/** Escena con otra velocidad previa para un vehículo (lo demás igual). */
-export function withSpeed(spec: EscenaSpec, vehicleId: string, kmh: number): EscenaSpec {
-  const next = structuredClone(spec);
-  const v = next.vehiculos.find((x) => x.id === vehicleId);
-  if (v) {
-    v.velocidad_previa = { valor: kmh, unidad: "km/h", fuente: "usuario", confianza: 0.9 };
-  }
-  return next;
 }
 
 export interface HypothesisPanelProps {
@@ -35,6 +77,9 @@ export interface HypothesisPanelProps {
   /** Reconstruye una escena (por omisión, el solver TS en un Web Worker). */
   reconstructor?: (spec: EscenaSpec) => Promise<Resultado>;
 }
+
+const TH = "t-nota py-2 pr-3 align-bottom font-normal";
+const TD = "py-2 pr-3 align-top";
 
 /**
  * Comparar hipótesis (PLAN §7.6): "¿y si iba a 60 en vez de 40?". El solver TS reconstruye la
@@ -49,6 +94,7 @@ export function HypothesisPanel({
   onChange,
   reconstructor = reconstruirEnNavegador,
 }: HypothesisPanelProps) {
+  const t = useTextos(T);
   const moving = spec.vehiculos.filter(
     (v) => !["detenido", "estacionado"].includes(v.maniobra.valor),
   );
@@ -62,7 +108,7 @@ export function HypothesisPanel({
   const add = async () => {
     const value = Number(kmh.replace(",", "."));
     if (!Number.isFinite(value) || value < 0 || value > 200) {
-      setError("Escribe una velocidad entre 0 y 200 km/h.");
+      setError(t.rango);
       return;
     }
     setBusy(true);
@@ -70,12 +116,10 @@ export function HypothesisPanel({
     try {
       const resultadoH = await reconstructor(withSpeed(spec, vehicleId, value));
       const rol = spec.vehiculos.find((v) => v.id === vehicleId)?.rol ?? vehicleId;
-      onChange([...hipotesis, { etiqueta: `${rol} a ${fmt(value)} km/h`, resultado: resultadoH }]);
+      onChange([...hipotesis, { etiqueta: t.etiqueta(rol, fmt(value)), resultado: resultadoH }]);
       setKmh("");
     } catch (e) {
-      setError(
-        `No se pudo reconstruir la hipótesis: ${e instanceof Error ? e.message : String(e)}`,
-      );
+      setError(t.fallo(e instanceof Error ? e.message : String(e)));
     } finally {
       setBusy(false);
     }
@@ -83,16 +127,16 @@ export function HypothesisPanel({
 
   return (
     <section
-      aria-label="Comparar hipótesis"
+      aria-label={t.titulo}
       data-testid="hipotesis"
-      className="flex flex-col gap-3 text-sm"
+      className="t-interfaz flex flex-col gap-4"
     >
-      <h3 className="font-semibold">Comparar hipótesis</h3>
-      <div className="flex flex-wrap items-end gap-2">
+      <h3 className="t-subtitulo">{t.titulo}</h3>
+      <div className="flex flex-wrap items-end gap-3">
         <label className="flex flex-col gap-1">
-          <span>Vehículo</span>
+          <span className="t-nota">{t.vehiculo}</span>
           <select
-            className="rounded border border-neutral-300 bg-white px-2 py-1 text-neutral-900"
+            className="campo w-auto max-w-full"
             value={vehicleId}
             onChange={(e) => setVehicleId(e.target.value)}
           >
@@ -104,11 +148,11 @@ export function HypothesisPanel({
           </select>
         </label>
         <label className="flex flex-col gap-1">
-          <span>¿Y si iba a…? (km/h)</span>
+          <span className="t-nota">{t.yaSi}</span>
           <input
             data-testid="hipotesis-velocidad"
             inputMode="decimal"
-            className="w-24 rounded border border-neutral-300 bg-white px-2 py-1 text-neutral-900"
+            className="campo cifras w-28"
             value={kmh}
             onChange={(e) => setKmh(e.target.value)}
           />
@@ -118,79 +162,74 @@ export function HypothesisPanel({
           data-testid="hipotesis-comparar"
           disabled={busy || !kmh || full}
           onClick={() => void add()}
-          className="rounded bg-neutral-900 px-3 py-1 text-white disabled:opacity-50 dark:bg-neutral-100 dark:text-neutral-900"
+          className="boton-secundario"
         >
-          {busy ? "Reconstruyendo…" : "Agregar hipótesis"}
+          {busy ? t.reconstruyendo : t.agregar}
         </button>
       </div>
-      {full ? (
-        <p className="text-xs text-neutral-600 dark:text-neutral-400">
-          Se comparan hasta {MAX_HYPOTHESES} hipótesis a la vez; quita una para agregar otra.
-        </p>
-      ) : null}
+      {full ? <p className="t-nota">{t.lleno(MAX_HYPOTHESES)}</p> : null}
       {error ? (
-        <p role="alert" className="text-red-700 dark:text-red-400">
+        <p role="alert" className="border-l-2 border-texto pl-3 text-texto">
           {error}
         </p>
       ) : null}
       {hipotesis.length > 0 ? (
-        <table data-testid="hipotesis-diferencias" className="w-full border-collapse text-left">
-          <caption className="mb-1 text-left text-xs text-neutral-600 dark:text-neutral-400">
-            Cada hipótesis se ve como vehículos translúcidos de su color sobre la escena. A la
-            izquierda de cada flecha, la reconstrucción principal.
-          </caption>
-          <thead>
-            <tr className="border-b border-neutral-300 dark:border-neutral-700">
-              <th className="py-1 pr-3">Hipótesis</th>
-              <th className="py-1 pr-3">Vehículo</th>
-              <th className="py-1 pr-3">Velocidad al impacto</th>
-              <th className="py-1 pr-3">ΔV</th>
-              <th className="py-1">Posición final</th>
-            </tr>
-          </thead>
-          {hipotesis.map((h, i) => {
-            const color = GHOST_COLORS[i % GHOST_COLORS.length]!;
-            const diffs = compareHypotheses(resultado, h.resultado);
-            return (
-              <tbody key={`${h.etiqueta}-${i}`} data-testid={`hipotesis-${i}`}>
-                {diffs.map((d, j) => (
-                  <tr key={d.id} className="border-b border-neutral-200 dark:border-neutral-800">
-                    {j === 0 ? (
-                      <th scope="rowgroup" rowSpan={diffs.length} className="py-1 pr-3 align-top">
-                        <span className="flex items-center gap-2 font-normal">
-                          <span
-                            aria-hidden
-                            className="inline-block h-3 w-3 rounded-sm"
-                            style={{ backgroundColor: css(color) }}
-                          />
-                          <span>
-                            {h.etiqueta}
-                            <span className="sr-only"> (fantasma {COLOR_NAMES[i]})</span>
+        <Desplazable etiqueta={t.leyenda}>
+          <table data-testid="hipotesis-diferencias" className="w-full border-collapse text-left">
+            <caption className="t-nota mb-2 text-left">{t.leyenda}</caption>
+            <thead>
+              <tr className="border-b border-linea">
+                <th className={TH}>{t.hipotesis}</th>
+                <th className={TH}>{t.vehiculo}</th>
+                <th className={TH}>{t.velocidadImpacto}</th>
+                <th className={TH}>{t.deltaV}</th>
+                <th className={TH}>{t.posicionFinal}</th>
+              </tr>
+            </thead>
+            {hipotesis.map((h, i) => {
+              const color = GHOST_COLORS[i % GHOST_COLORS.length]!;
+              const diffs = compareHypotheses(resultado, h.resultado);
+              return (
+                <tbody key={`${h.etiqueta}-${i}`} data-testid={`hipotesis-${i}`}>
+                  {diffs.map((d, j) => (
+                    <tr key={d.id} className="border-b border-linea">
+                      {j === 0 ? (
+                        <th scope="rowgroup" rowSpan={diffs.length} className={`${TD} font-normal`}>
+                          <span className="flex items-center gap-2">
+                            <span
+                              aria-hidden
+                              className="inline-block h-3 w-3 rounded-control"
+                              style={{ backgroundColor: css(color) }}
+                            />
+                            <span className="cifras">
+                              {h.etiqueta}
+                              <span className="sr-only">{t.fantasma(t.colores[i] ?? "")}</span>
+                            </span>
                           </span>
-                        </span>
-                        <button
-                          type="button"
-                          className="mt-1 text-xs underline"
-                          onClick={() => onChange(hipotesis.filter((_, k) => k !== i))}
-                        >
-                          Quitar
-                        </button>
-                      </th>
-                    ) : null}
-                    <td className="py-1 pr-3">{d.rol}</td>
-                    <td className="py-1 pr-3">
-                      {fmt(d.v_impacto_kmh[0])} → {fmt(d.v_impacto_kmh[1])} km/h
-                    </td>
-                    <td className="py-1 pr-3">
-                      {fmt(d.delta_v_kmh[0])} → {fmt(d.delta_v_kmh[1])} km/h
-                    </td>
-                    <td className="py-1">queda a {fmt(d.separacion_reposo_m, 1)} m</td>
-                  </tr>
-                ))}
-              </tbody>
-            );
-          })}
-        </table>
+                          <button
+                            type="button"
+                            className="t-nota mt-1 underline hover:text-texto"
+                            onClick={() => onChange(hipotesis.filter((_, k) => k !== i))}
+                          >
+                            {t.quitar}
+                          </button>
+                        </th>
+                      ) : null}
+                      <td className={TD}>{d.rol}</td>
+                      <td className={`${TD} cifras`}>
+                        {fmt(d.v_impacto_kmh[0])} → {fmt(d.v_impacto_kmh[1])} km/h
+                      </td>
+                      <td className={`${TD} cifras`}>
+                        {fmt(d.delta_v_kmh[0])} → {fmt(d.delta_v_kmh[1])} km/h
+                      </td>
+                      <td className={`${TD} cifras`}>{t.queda(fmt(d.separacion_reposo_m, 1))}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              );
+            })}
+          </table>
+        </Desplazable>
       ) : null}
     </section>
   );

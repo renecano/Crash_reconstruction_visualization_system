@@ -13,6 +13,7 @@
  */
 import { Quaternion, Vector3 } from "three";
 import { quatFromAxisAngle, slerp } from "./dthree";
+import { cedente } from "./ceder";
 
 export type DebrisKind = "pieza" | "vidrio" | "plastico";
 
@@ -150,7 +151,11 @@ export async function bakeDebris(
       live[i] = body;
     };
     const q = new Quaternion();
+    const ceder = cedente();
     for (let s = 0; s < steps; s++) {
+      // Cede el hilo principal cada ~8 ms: el horneado no congela la página (ADR 0046).
+      const pausa = ceder();
+      if (pausa) await pausa;
       const t = t0 + s * DEBRIS_DT;
       bodies.forEach((b, i) => {
         if (!live[i] && b.t0 <= t + 1e-9) spawn(i);

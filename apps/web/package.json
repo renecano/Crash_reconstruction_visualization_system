@@ -12,7 +12,9 @@
     "test:watch": "vitest",
     "test:e2e": "playwright test",
     "paginas": "node scripts/build-paginas.mjs",
-    "generate:check": "node scripts/build-paginas.mjs --check"
+    "marca": "node scripts/tokens.mjs && node scripts/iconos.mjs",
+    "generate:check": "node scripts/build-paginas.mjs --check && node scripts/tokens.mjs --check && node scripts/iconos.mjs --check && node scripts/portada.mjs --check && node scripts/fuente.mjs --check",
+    "portada": "node scripts/portada.mjs"
   },
   "dependencies": {
     "@croquis/croquis-2d": "workspace:*",
@@ -20,6 +22,7 @@
     "@croquis/scene-schema": "workspace:*",
     "@croquis/solver-ts": "workspace:*",
     "@croquis/viewer": "workspace:*",
+    "@fontsource-variable/anybody": "5.3.0",
     "next": "16.4.0",
     "pdfmake": "0.3.11",
     "react": "catalog:",
@@ -27,6 +30,7 @@
     "zod": "catalog:"
   },
   "devDependencies": {
+    "@axe-core/playwright": "4.14.0",
     "@playwright/test": "catalog:",
     "@serwist/turbopack": "9.5.13",
     "@tailwindcss/turbopack": "catalog:",
@@ -36,10 +40,13 @@
     "@types/react": "catalog:",
     "@types/react-dom": "catalog:",
     "@vitejs/plugin-react": "catalog:",
+    "chrome-launcher": "1.2.2",
     "esbuild": "0.28.2",
     "eslint": "catalog:",
     "eslint-config-next": "16.4.0",
+    "fast-check": "catalog:",
     "jsdom": "catalog:",
+    "lighthouse": "13.5.0",
     "mediabunny": "1.61.6",
     "pdfjs-dist": "6.4.299",
     "serwist": "9.5.13",

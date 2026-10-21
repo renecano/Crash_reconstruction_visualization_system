@@ -19,8 +19,12 @@ import {
 import { toThree } from "./coords";
 import { sampleVehicle } from "./sample";
 
-/** Colores de las hipótesis (azul, naranja, violeta): distinguibles con daltonismo común. */
-export const GHOST_COLORS = [0x2b8cff, 0xff8a1f, 0xa05cff] as const;
+/**
+ * Colores de las hipótesis (concreto claro, azul, violeta): distinguibles con daltonismo común
+ * (uno sin tono y dos con tonos y luminancias distintos). Son colores de datos, no de marca: el
+ * naranja queda reservado para la evidencia que marca el sistema (BRAND.md, ADR 0045).
+ */
+export const GHOST_COLORS = [0xb7bcc1, 0x2b8cff, 0xa05cff] as const;
 export const GHOST_COLOR = GHOST_COLORS[0];
 /** Máximo de hipótesis sobrepuestas a la vez (más se vuelve ilegible). */
 export const MAX_HYPOTHESES = GHOST_COLORS.length;

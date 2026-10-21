@@ -26,4 +26,12 @@ describe("leyenda de las exportaciones (PLAN §10)", () => {
     delete meta.hash_relato;
     expect(legendLines(legendFor({ ...spec, meta }))[1]).toBe(`semilla ${spec.meta.semilla}`);
   });
+
+  it("la palabra de la semilla sigue el idioma de la exportación", () => {
+    const spec = loadFixture("alcance");
+    const meta = { ...spec.meta };
+    delete meta.hash_relato;
+    const info = { ...legendFor({ ...spec, meta }), etiquetaSemilla: "seed" };
+    expect(legendLines(info)[1]).toBe(`seed ${spec.meta.semilla}`);
+  });
 });

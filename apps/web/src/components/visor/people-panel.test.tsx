@@ -1,6 +1,7 @@
 import { loadResultado } from "@croquis/scene-schema";
 import { render, screen } from "@testing-library/react";
 import { describe, expect, it } from "vitest";
+import { IdiomaProvider } from "@/i18n/cliente";
 import { causeWords, directionWords, PeoplePanel } from "./people-panel";
 
 describe("<PeoplePanel />", () => {
@@ -58,5 +59,44 @@ describe("<PeoplePanel />", () => {
     const r = await loadResultado("peaton_cruce");
     expect(causeWords(r, "noche")).toMatch(/faros/);
     expect(causeWords(r, "objeto:camion-estacionado")).toBe("el vehículo estacionado");
+  });
+});
+
+describe("<PeoplePanel /> en inglés", () => {
+  it("ocupantes y visibilidad en inglés, con las mismas cifras", async () => {
+    const r = await loadResultado("lateral_interseccion");
+    const { unmount } = render(<PeoplePanel resultado={r} />);
+    const es = screen.getByTestId("personas").textContent ?? "";
+    unmount();
+    render(
+      <IdiomaProvider lang="en">
+        <PeoplePanel resultado={r} />
+      </IdiomaProvider>,
+    );
+    const en = screen.getByTestId("personas").textContent ?? "";
+    expect(en).toMatch(/Seated at the wheel/);
+    expect(en).toMatch(/does not say whether they wore a seat belt/);
+    expect(en).toMatch(/With seat belt/);
+    expect(en).toMatch(/Without seat belt/);
+    expect(en).toMatch(/the door and window on the/);
+    expect(en).not.toMatch(/cinturón|Sentado|alcanza/);
+    expect(en.match(/\d+/g)).toEqual(es.match(/\d+/g));
+  });
+
+  it("dirección y causas en inglés", async () => {
+    expect(directionWords(0, "en")).toBe("forward");
+    expect(directionWords(-90, "en")).toBe("to the right");
+    const r = await loadResultado("peaton_cruce");
+    expect(causeWords(r, "noche", "en")).toMatch(/headlights/);
+    expect(causeWords(r, "objeto:camion-estacionado", "en")).toBe("the parked vehicle");
+    render(
+      <IdiomaProvider lang="en">
+        <PeoplePanel resultado={r} />
+      </IdiomaProvider>,
+    );
+    const vis = screen.getByTestId("visibilidad").textContent ?? "";
+    expect(vis).toMatch(/From vehicle [A-Z]:/);
+    expect(vis).toMatch(/the parked vehicle/);
+    expect(vis).not.toMatch(/se veía|Desde el vehículo/);
   });
 });

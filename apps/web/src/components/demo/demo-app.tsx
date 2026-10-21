@@ -1,17 +1,23 @@
 "use client";
 
 /**
- * Demo «Tú eres…» (PLAN §11): el visitante elige un relato, ve campo por campo qué entendió la IA
+ * Demo «Tú eres…» (PLAN §11.5): el visitante elige un relato, ve campo por campo qué entendió la IA
  * (respuesta grabada de Claude, sin llamar a la API), contesta las preguntas, corrige el croquis,
  * ve la reconstrucción y compara hipótesis. Todo corre en el navegador, sin servidor: las rondas de
  * preguntas con `responder` y la reconstrucción en el Web Worker del visor.
+ *
+ * Los relatos son de Relatos-MX y se quedan en su español original (`lang="es-MX"`); todo lo demás
+ * va en el idioma de la página.
  */
+import { Croquis } from "@croquis/croquis-2d";
 import type { EscenaSpec } from "@croquis/scene-schema";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { Legend } from "@/components/legend";
 import { FactsPanel } from "@/components/relato/facts-panel";
 import { QuestionsPanel } from "@/components/relato/questions-panel";
+import { textos } from "@/i18n";
+import { useIdioma, useTextos } from "@/i18n/cliente";
 import { guardarEscenaPropia } from "@/lib/escena-propia";
 import { RELATO_SPEC_KEY, type Pregunta } from "@/lib/relato-api";
 import { responder } from "@/lib/responder";
@@ -19,29 +25,82 @@ import { responder } from "@/lib/responder";
 export interface CasoDemo {
   id: string;
   titulo: string;
+  titulo_en: string;
   tipo: string;
   texto: string;
+  /** Traducción para la página en inglés; la IA lee el original. */
+  texto_en?: string;
   spec: unknown;
   preguntas: unknown[];
 }
 
-const TIPO: Record<string, string> = {
-  vv: "Entre vehículos",
-  moto: "Motocicleta",
-  objeto: "Contra un objeto",
-  peaton: "Peatón",
-  volcadura: "Volcadura",
-  ciclista: "Ciclista",
-};
+const T = textos(
+  {
+    tipos: {
+      vv: "Entre vehículos",
+      moto: "Motocicleta",
+      objeto: "Contra un objeto",
+      peaton: "Peatón",
+      volcadura: "Volcadura",
+      ciclista: "Ciclista",
+    } as Record<string, string>,
+    elige: "Elige un relato",
+    origen: (fuente: string, metodo: string) => `${fuente}. Lo que entendió la IA: ${metodo}.`,
+    imagina: "Imagina que te pasó a ti",
+    traduccion: "",
+    entendio: "Lo que entendió la IA, campo por campo",
+    falta: "Lo que falta",
+    rondas: (n: number) =>
+      `Rondas contestadas: ${n}. Tus respuestas ya están en la escena, marcadas como dato tuyo.`,
+    corrige: "Corrige y míralo",
+    corrigeCuerpo:
+      "En el croquis acomodas autos y calles; en el visor lo ves en 3D y, en el panel de hipótesis, comparas qué cambia si la velocidad fuera otra. Todo se calcula aquí, en este dispositivo.",
+    croquis: "Corregir en el croquis",
+    ver3d: "Ver en 3D y comparar hipótesis",
+    sinGuardar: (donde: string) =>
+      `El navegador no permitió guardar la escena para abrirla en ${donde}.`,
+    enCroquis: "el croquis",
+    enVisor: "el visor",
+  },
+  {
+    tipos: {
+      vv: "Between vehicles",
+      moto: "Motorcycle",
+      objeto: "Against an object",
+      peaton: "Pedestrian",
+      volcadura: "Rollover",
+      ciclista: "Cyclist",
+    } as Record<string, string>,
+    elige: "Choose a narrative",
+    origen: (fuente: string, metodo: string) => `${fuente}. What the AI understood: ${metodo}.`,
+    imagina: "Imagine it happened to you",
+    traduccion: "Translation (Croquis reads the original, in Mexican Spanish):",
+    entendio: "What the AI understood, field by field",
+    falta: "What's missing",
+    rondas: (n: number) =>
+      `Rounds answered: ${n}. Your answers are already in the scene, marked as your input.`,
+    corrige: "Correct it and watch it",
+    corrigeCuerpo:
+      "In the sketch you arrange cars and streets; in the viewer you see it in 3D and, in the hypothesis panel, compare what changes if the speed were different. Everything is computed here, on this device.",
+    croquis: "Correct it in the sketch",
+    ver3d: "See it in 3D and compare hypotheses",
+    sinGuardar: (donde: string) =>
+      `The browser did not allow saving the scene to open it in ${donde}.`,
+    enCroquis: "the sketch",
+    enVisor: "the viewer",
+  },
+);
 
 export interface DemoAppProps {
   casos: CasoDemo[];
-  metodo: string;
   fuente: string;
+  metodo: string;
 }
 
-export function DemoApp({ casos, metodo, fuente }: DemoAppProps) {
+export function DemoApp({ casos, fuente, metodo }: DemoAppProps) {
   const router = useRouter();
+  const { lang, ruta } = useIdioma();
+  const t = useTextos(T);
   const [caso, setCaso] = useState<CasoDemo | null>(null);
   const [spec, setSpec] = useState<EscenaSpec | null>(null);
   const [preguntas, setPreguntas] = useState<Pregunta[]>([]);
@@ -76,101 +135,121 @@ export function DemoApp({ casos, metodo, fuente }: DemoAppProps) {
     if (!spec) return;
     try {
       sessionStorage.setItem(RELATO_SPEC_KEY, JSON.stringify(spec));
-      router.push("/croquis?fuente=relato");
+      router.push(`${ruta("/croquis")}?fuente=relato`);
     } catch {
-      setError("El navegador no permitió guardar la escena para abrirla en el croquis.");
+      setError(t.sinGuardar(t.enCroquis));
     }
   };
 
   const ver3d = () => {
     if (!spec) return;
-    if (guardarEscenaPropia(spec)) router.push("/visor?escena=propia");
-    else setError("El navegador no permitió guardar la escena para abrirla en el visor.");
+    if (guardarEscenaPropia(spec)) router.push(`${ruta("/visor")}?escena=propia`);
+    else setError(t.sinGuardar(t.enVisor));
   };
 
   return (
-    <div className="flex flex-col gap-8">
-      <section aria-label="Elige un relato" className="flex flex-col gap-3">
-        <h2 className="text-lg font-semibold">1. Elige un relato</h2>
-        <ul className="grid gap-2 sm:grid-cols-2">
-          {casos.map((c) => (
-            <li key={c.id}>
-              <button
-                type="button"
-                data-testid={`demo-caso-${c.id}`}
-                aria-pressed={caso?.id === c.id}
-                onClick={() => elegir(c)}
-                className={`w-full rounded border px-3 py-2 text-left text-sm ${
-                  caso?.id === c.id
-                    ? "border-neutral-900 bg-neutral-900 text-white dark:border-neutral-100 dark:bg-neutral-100 dark:text-neutral-900"
-                    : "border-neutral-300 dark:border-neutral-700"
-                }`}
-              >
-                <span className="block text-xs opacity-70">{TIPO[c.tipo] ?? c.tipo}</span>
-                {c.titulo}
-              </button>
-            </li>
-          ))}
+    <div className="flex flex-col gap-12">
+      <section aria-labelledby="demo-elige" className="flex flex-col gap-4">
+        <h2 id="demo-elige" className="t-titulo">
+          {t.elige}
+        </h2>
+        {/* Una lista sobre la retícula, cada caso con su croquis calculado (no tarjetas iguales). */}
+        <ul className="grid gap-x-8 border-t border-linea md:grid-cols-2">
+          {casos.map((c) => {
+            const activo = caso?.id === c.id;
+            return (
+              <li key={c.id} className="border-b border-linea">
+                <button
+                  type="button"
+                  data-testid={`demo-caso-${c.id}`}
+                  aria-pressed={activo}
+                  onClick={() => elegir(c)}
+                  className={`grid w-full grid-cols-[8.5rem_1fr] items-center gap-4 border-l-2 py-3 pr-2 pl-3 text-left transition-colors ${
+                    activo ? "border-texto bg-superficie" : "border-transparent hover:bg-superficie"
+                  }`}
+                >
+                  <span
+                    aria-hidden="true"
+                    data-tema="papel"
+                    className="pointer-events-none block h-24 overflow-hidden rounded-control bg-[var(--marca-papel)] [&_svg]:h-full [&_svg]:w-full"
+                  >
+                    <Croquis spec={c.spec as EscenaSpec} readOnly scale={3} />
+                  </span>
+                  <span className="flex flex-col gap-1">
+                    <span className="t-nota">{t.tipos[c.tipo] ?? c.tipo}</span>
+                    <span className="t-interfaz text-texto">
+                      {lang === "es" ? c.titulo : c.titulo_en}
+                    </span>
+                  </span>
+                </button>
+              </li>
+            );
+          })}
         </ul>
-        <p className="text-xs text-neutral-500">
-          {fuente}. Lo que entendió la IA: {metodo}.
-        </p>
+        <p className="t-nota">{t.origen(fuente, metodo)}</p>
       </section>
 
       {caso && spec ? (
         <>
-          <section aria-label="El relato" className="flex flex-col gap-2">
-            <h2 className="text-lg font-semibold">2. Imagina que te pasó a ti</h2>
+          <section aria-labelledby="demo-imagina" className="flex flex-col gap-4">
+            <h2 id="demo-imagina" className="t-titulo">
+              {t.imagina}
+            </h2>
             <blockquote
               data-testid="demo-relato"
-              className="border-l-4 border-neutral-300 pl-3 leading-relaxed italic dark:border-neutral-700"
+              lang="es-MX"
+              className="t-cuerpo max-w-[68ch] border-l-2 border-linea pl-4"
             >
               {caso.texto}
             </blockquote>
+            {lang === "en" && caso.texto_en ? (
+              <p className="t-interfaz max-w-[68ch] text-texto-2" data-testid="demo-traduccion">
+                <span className="t-nota block">{t.traduccion}</span>
+                {caso.texto_en}
+              </p>
+            ) : null}
           </section>
 
-          <section aria-label="Lo que entendió la IA" className="flex flex-col gap-3">
-            <h2 className="text-lg font-semibold">3. Lo que entendió la IA, campo por campo</h2>
+          <section aria-labelledby="demo-entendio" className="flex flex-col gap-4">
+            <h2 id="demo-entendio" className="t-titulo">
+              {t.entendio}
+            </h2>
             <FactsPanel spec={spec} />
           </section>
 
-          <section aria-label="Preguntas" className="flex flex-col gap-3">
-            <h2 className="text-lg font-semibold">4. Lo que falta</h2>
+          <section aria-labelledby="demo-falta" className="flex flex-col gap-4">
+            <h2 id="demo-falta" className="t-titulo">
+              {t.falta}
+            </h2>
             {rondas > 0 ? (
-              <p
-                data-testid="demo-rondas"
-                className="text-sm text-neutral-600 dark:text-neutral-400"
-              >
-                Rondas contestadas: {rondas}. Tus respuestas ya están en la escena, marcadas como
-                dato tuyo.
+              <p data-testid="demo-rondas" className="t-interfaz text-texto-2">
+                {t.rondas(rondas)}
               </p>
             ) : null}
-            <QuestionsPanel preguntas={preguntas} onSubmit={contestar} />
+            <QuestionsPanel preguntas={preguntas} spec={spec} onSubmit={contestar} />
           </section>
 
-          <section aria-label="Siguiente" className="flex flex-col gap-3">
-            <h2 className="text-lg font-semibold">5. Corrige y míralo</h2>
-            <p className="text-sm text-neutral-700 dark:text-neutral-300">
-              En el croquis acomodas autos y calles; en el visor lo ves en 3D y, en el panel de
-              hipótesis, comparas qué cambia si la velocidad fuera otra. Todo se calcula aquí, en
-              este dispositivo.
-            </p>
-            <div className="flex flex-wrap gap-2">
-              <button
-                type="button"
-                data-testid="demo-croquis"
-                onClick={abrirCroquis}
-                className="rounded border border-neutral-400 px-4 py-2 font-medium"
-              >
-                Corregir en el croquis
-              </button>
+          <section aria-labelledby="demo-corrige" className="flex flex-col gap-4">
+            <h2 id="demo-corrige" className="t-titulo">
+              {t.corrige}
+            </h2>
+            <p className="t-cuerpo max-w-[68ch] text-texto-2">{t.corrigeCuerpo}</p>
+            <div className="flex flex-wrap gap-3">
               <button
                 type="button"
                 data-testid="demo-3d"
                 onClick={ver3d}
-                className="rounded bg-neutral-900 px-4 py-2 font-medium text-white dark:bg-neutral-100 dark:text-neutral-900"
+                className="boton-principal"
               >
-                Ver en 3D y comparar hipótesis
+                {t.ver3d}
+              </button>
+              <button
+                type="button"
+                data-testid="demo-croquis"
+                onClick={abrirCroquis}
+                className="boton-secundario"
+              >
+                {t.croquis}
               </button>
             </div>
           </section>
@@ -178,7 +257,7 @@ export function DemoApp({ casos, metodo, fuente }: DemoAppProps) {
       ) : null}
 
       {error ? (
-        <p role="alert" className="text-sm text-red-700 dark:text-red-400">
+        <p role="alert" className="t-interfaz border-l-2 border-texto pl-3">
           {error}
         </p>
       ) : null}

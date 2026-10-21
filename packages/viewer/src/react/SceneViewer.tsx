@@ -15,6 +15,9 @@ import {
   CubeCamera,
   DirectionalLight,
   FogExp2,
+  Group,
+  Mesh,
+  MeshBasicMaterial,
   HemisphereLight,
   Object3D,
   PerspectiveCamera,
@@ -50,7 +53,8 @@ import { PostEffects } from "./PostEffects";
 import { loadEnvTextures, TEXTURE_BASE_URL, texturesWanted } from "../env-textures";
 import { attachPeople, variantsFor, type PeopleAttachment } from "../people-scene";
 import { buildGhostLayer, GHOST_COLORS } from "../ghosts";
-import { buildSceneGraph } from "../scene-graph";
+import { buildCroquisPaint } from "../croquis-paint";
+import { buildSceneGraph, mesh2DToGeometry } from "../scene-graph";
 import type { ViewerExportApi } from "../export/capture";
 import { seek } from "../timeline";
 import { seatHeight } from "../vehicle-geometry";
@@ -87,6 +91,29 @@ export interface SceneViewerProps {
   ambiente?: AmbienteVisual;
   /** Recibe la API de exportación (cuadros y glTF) cuando el visor está montado; null al salir. */
   onExport?: (api: ViewerExportApi | null) => void;
+  /**
+   * Escena guiada desde afuera (portada, PLAN §11.3). Con ella, la cámara sigue `pose` en cada
+   * cuadro (en vez del modo de `camera`), el croquis se pinta sobre el asfalto y `revelado`
+   * (0 = solo la pintura, 1 = la escena 3D) levanta los vehículos y las personas desde el piso.
+   * Sin ella, el visor se comporta como siempre.
+   */
+  guiada?: Guiada;
+}
+
+/** Control externo del visor para la portada; ver `SceneViewerProps.guiada`. */
+export interface Guiada {
+  pose: (t: number) => CameraPose | null;
+  revelado: () => number;
+  /**
+   * Dónde queda en la pantalla el punto que mira la cámara, en fracciones del ancho y del alto
+   * (0.5, 0.5 = el centro). Desplaza la proyección (`setViewOffset`) para que la acción quede del
+   * lado contrario al texto sin girar la cámara.
+   */
+  centro?: () => readonly [number, number];
+  /** Mostrar las marcas del choque (el punto de impacto): antes del croquis no hay evidencia. */
+  marcas?: () => boolean;
+  /** Color del cielo y de la niebla en lugar del que da el ambiente (sin cielo físico). */
+  cielo?: string;
 }
 
 /** Ambiente que se puede forzar en la vista. */
@@ -160,6 +187,7 @@ function SceneContent({
   onPeople,
   hipotesis,
   onExport,
+  guiada,
 }: Omit<SceneViewerProps, "renderer" | "onRendererInfo" | "onError" | "className"> & {
   env: EnvironmentSettings;
 }): ReactElement {
@@ -372,8 +400,9 @@ function SceneContent({
   // El cielo físico (con nubes) se hornea una vez en un mapa cúbico: dibujarlo en cada cuadro
   // cuesta un cálculo por píxel que en GPU integrada no cabe en el presupuesto de E6.
   useEffect(() => {
-    scene.fog = new FogExp2(env.skyColor, env.fogDensity);
-    scene.background = new Color(env.skyColor);
+    const cielo = guiada?.cielo ?? env.skyColor;
+    scene.fog = new FogExp2(cielo, env.fogDensity);
+    scene.background = new Color(cielo);
     let target: CubeRenderTarget | null = null;
     if (sky) {
       target = new CubeRenderTarget(256);
@@ -390,7 +419,7 @@ function SceneContent({
       scene.background = null;
       target?.dispose();
     };
-  }, [scene, env, sky, gl, graph]);
+  }, [scene, env, sky, gl, graph, guiada?.cielo]);
 
   // Cámaras.
   const controls = useRef<OrbitControls | null>(null);
@@ -398,7 +427,7 @@ function SceneContent({
     const persp = cam as PerspectiveCamera;
     persp.far = 5000;
     persp.near = 0.1;
-    if (camera !== "libre") return undefined;
+    if (camera !== "libre" || guiada) return undefined;
     const start = freeCameraStart(resultado);
     applyPose(persp, start);
     const oc = new OrbitControls(persp, gl.domElement);
@@ -411,7 +440,7 @@ function SceneContent({
       oc.dispose();
       controls.current = null;
     };
-  }, [camera, cam, gl, resultado]);
+  }, [camera, cam, gl, resultado, guiada]);
 
   const driver = useMemo(() => {
     const v = resultado.vehiculos.find((x) => x.id === driverVehicleId) ?? resultado.vehiculos[0];
@@ -427,6 +456,52 @@ function SceneContent({
       }) + 0.62;
     return { v, eye };
   }, [resultado, driverVehicleId]);
+
+  // El croquis pintado sobre el asfalto (solo en la escena guiada de la portada).
+  const pintura = useMemo(() => {
+    if (!guiada) return null;
+    const p = buildCroquisPaint(resultado);
+    const group = new Group();
+    group.name = "croquis_pintado";
+    const blanco = new MeshBasicMaterial({
+      color: "#F4F2EC",
+      transparent: true,
+      depthWrite: false,
+      fog: false,
+    });
+    const naranja = new MeshBasicMaterial({
+      color: "#FF6A13",
+      transparent: true,
+      depthWrite: false,
+      fog: false,
+    });
+    const geoLineas = mesh2DToGeometry(p.lines, 0.03);
+    const geoImpacto = mesh2DToGeometry(p.impact, 0.035);
+    group.add(new Mesh(geoLineas, blanco), new Mesh(geoImpacto, naranja));
+    group.renderOrder = 3;
+    return {
+      group,
+      setOpacity(o: number) {
+        blanco.opacity = o;
+        naranja.opacity = o;
+        group.visible = o > 0.001;
+      },
+      dispose() {
+        geoLineas.dispose();
+        geoImpacto.dispose();
+        blanco.dispose();
+        naranja.dispose();
+      },
+    };
+  }, [guiada, resultado]);
+  useEffect(() => {
+    if (!pintura) return undefined;
+    graph.root.add(pintura.group);
+    return () => {
+      graph.root.remove(pintura.group);
+      pintura.dispose();
+    };
+  }, [graph, pintura]);
 
   // Lluvia y granizo (F8a): caja centrada en la acción, partículas según el nivel de calidad.
   const precipitation = useMemo(() => {
@@ -451,13 +526,50 @@ function SceneContent({
     overlay.setObserver(camera === "conductor" ? driver?.v.id : undefined);
   }, [overlay, camera, driver]);
 
-  useFrame((_, delta) => {
+  const puntoImpacto = useMemo(() => graph.root.getObjectByName("punto_impacto") ?? null, [graph]);
+
+  useFrame((state, delta) => {
     clock.tick(Math.min(delta, 0.1), performance.now());
     const t = clock.get().t;
     graph.update(t);
     precipitation?.setTime(t);
     for (const g of ghosts) g.update(t);
     const persp = cam as PerspectiveCamera;
+    if (guiada) {
+      // Revelado: la escena se levanta desde la pintura (después de colocarla en el instante t).
+      const r = Math.min(1, Math.max(0, guiada.revelado()));
+      const sy = Math.max(1e-3, r);
+      // Aplastados del todo no se dibujan: la pintura del croquis queda sola sobre el asfalto.
+      for (const v of graph.vehicles) {
+        v.group.scale.y = sy;
+        v.group.visible = r > 0.02;
+      }
+      for (const p of graph.persons) {
+        p.group.scale.y = sy;
+        // Respeta a quien va oculto a bordo (scene-graph decide su visibilidad por modo).
+        p.group.visible = r > 0.02 && (p.mode === "trayectoria" || p.mode === "a_bordo_visible");
+      }
+      pintura?.setOpacity(1 - r);
+      // La lluvia cae en vertical: vista desde arriba se confunde con la pintura del croquis.
+      if (precipitation) precipitation.object.visible = r > 0.98;
+      if (puntoImpacto && guiada.marcas) puntoImpacto.visible = guiada.marcas();
+      const pose = guiada.pose(t);
+      if (pose) {
+        applyPose(persp, pose);
+        const [cx, cy] = guiada.centro?.() ?? [0.5, 0.5];
+        const { width: w, height: h } = state.size;
+        if (Math.abs(cx - 0.5) < 1e-3 && Math.abs(cy - 0.5) < 1e-3) {
+          if (persp.view?.enabled) persp.clearViewOffset();
+        } else {
+          // Una imagen virtual más ancha (o más alta) con el punto en su centro, de la que se
+          // muestra la ventana donde ese punto cae en (cx, cy).
+          const fw = w * (1 + 2 * Math.abs(cx - 0.5));
+          const fh = h * (1 + 2 * Math.abs(cy - 0.5));
+          persp.setViewOffset(fw, fh, cx > 0.5 ? 0 : fw - w, cy > 0.5 ? 0 : fh - h, w, h);
+        }
+        return;
+      }
+    }
     if (camera === "libre") controls.current?.update();
     else if (camera === "cenital") applyPose(persp, overheadCamera(resultado));
     else if (camera === "conductor" && driver)

@@ -13,6 +13,8 @@ export interface CroquisSvgOptions {
   scale?: number;
   /** Dibujar también las posiciones finales (fantasmas). */
   showFinal?: boolean;
+  /** Leyenda, atribución y «semilla» en el idioma del documento (como en el editor). */
+  textos?: { leyenda?: string; atribucion?: string; semilla?: string };
 }
 
 export interface CroquisSvg {
@@ -31,6 +33,7 @@ export function croquisSvg(spec: EscenaSpec, opts: CroquisSvgOptions = {}): Croq
       clases={opts.clases}
       scale={opts.scale ?? 10}
       showFinal={opts.showFinal ?? true}
+      textos={opts.textos}
       readOnly
       standalone
     />,

@@ -1,0 +1,1047 @@
+{
+  "_generado_por": "pnpm --filter @croquis/extraction demo (scripts/demo-casos.ts)",
+  "escena": "interseccion_toluca",
+  "spec": {
+    "meta": {
+      "id": "fx-interseccion-toluca",
+      "version_esquema": "1.3.0",
+      "idioma": "es-MX",
+      "semilla": 111,
+      "creado": "2026-10-16T13:00:00-06:00",
+      "titulo": "Choque lateral en Carranza y Juárez (Toluca, vía de OpenStreetMap)",
+      "relato": "Iba en mi Versa gris por Benito Juárez hacia el sur, en el segundo carril, como a 35, con el semáforo en verde. En el cruce con Venustiano Carranza un taxi Aveo blanco que venía por Carranza se pasó el rojo y me pegó del lado del chofer, en la puerta. Mi carro se fue de lado y quedó en el carril de la derecha; el taxi quedó a media calle. Iba sola y con el cinturón puesto. Fue como a las seis de la tarde y estaba nublado.",
+      "origen_relato": "precargado",
+      "sintetico": true
+    },
+    "lugar": {
+      "nombre_via": {
+        "valor": "Benito Juárez",
+        "fuente": "relato",
+        "confianza": 0.9,
+        "evidencia": [
+          {
+            "inicio": 25,
+            "fin": 38,
+            "texto": "Benito Juárez"
+          }
+        ]
+      },
+      "nombre_via_secundaria": {
+        "valor": "Venustiano Carranza",
+        "fuente": "relato",
+        "confianza": 0.9,
+        "evidencia": [
+          {
+            "inicio": 128,
+            "fin": 147,
+            "texto": "Venustiano Carranza"
+          }
+        ]
+      },
+      "tipo_via": {
+        "valor": "interseccion_x",
+        "fuente": "mapa",
+        "confianza": 0.9,
+        "evidencia": [
+          {
+            "inicio": 112,
+            "fin": 147,
+            "texto": "En el cruce con Venustiano Carranza"
+          }
+        ],
+        "nota": "Del cruce en OpenStreetMap (nodo 305269145, ADR 0023)."
+      },
+      "carriles_por_sentido": {
+        "valor": 4,
+        "fuente": "mapa",
+        "confianza": 0.85,
+        "nota": "Etiqueta lanes=4 de Calle Benito Juárez García en OSM."
+      },
+      "carriles_por_sentido_secundaria": {
+        "valor": 3,
+        "fuente": "mapa",
+        "confianza": 0.85,
+        "nota": "Etiqueta lanes=3 de Av. General Venustiano Carranza en OSM."
+      },
+      "ancho_carril": {
+        "valor": 3.3,
+        "unidad": "m",
+        "fuente": "default",
+        "confianza": 0.5
+      },
+      "sentidos": {
+        "valor": "un_sentido",
+        "fuente": "mapa",
+        "confianza": 0.85,
+        "nota": "Las dos calles son de un sentido en OSM (oneway=yes)."
+      },
+      "banquetas": {
+        "valor": true,
+        "fuente": "default",
+        "confianza": 0.7
+      },
+      "guarniciones": {
+        "valor": true,
+        "fuente": "default",
+        "confianza": 0.7
+      },
+      "superficie": {
+        "valor": "asfalto",
+        "fuente": "default",
+        "confianza": 0.7
+      },
+      "estado_superficie": {
+        "valor": "seco",
+        "fuente": "default",
+        "confianza": 0.6
+      },
+      "dispositivos": [
+        {
+          "id": "semaforo-juarez",
+          "tipo": "semaforo",
+          "posicion": {
+            "x": -6.5,
+            "y": -8
+          },
+          "aplica_a": [
+            "veh-a"
+          ],
+          "fases": [
+            {
+              "movimiento": "veh-a",
+              "color": "verde"
+            }
+          ],
+          "procedencia": {
+            "fuente": "relato",
+            "confianza": 0.85,
+            "evidencia": [
+              {
+                "inicio": 86,
+                "fin": 110,
+                "texto": "con el semáforo en verde"
+              }
+            ]
+          }
+        },
+        {
+          "id": "semaforo-carranza",
+          "tipo": "semaforo",
+          "posicion": {
+            "x": -6.5,
+            "y": 8
+          },
+          "orientacion_deg": 90,
+          "aplica_a": [
+            "veh-b"
+          ],
+          "fases": [
+            {
+              "movimiento": "veh-b",
+              "color": "rojo"
+            }
+          ],
+          "procedencia": {
+            "fuente": "relato",
+            "confianza": 0.85,
+            "evidencia": [
+              {
+                "inicio": 191,
+                "fin": 206,
+                "texto": "se pasó el rojo"
+              }
+            ]
+          }
+        }
+      ],
+      "ubicacion_real": {
+        "lat": 19.278975,
+        "lon": -99.6539869,
+        "radio_m": 150,
+        "rotacion_deg": 273.15,
+        "procedencia": {
+          "fuente": "mapa",
+          "confianza": 0.9,
+          "nota": "Cruce de Av. General Venustiano Carranza y Calle Benito Juárez García, Toluca; la calle principal queda sobre +X."
+        }
+      },
+      "red_vial": {
+        "fuente_datos": "OpenStreetMap",
+        "licencia": "ODbL-1.0",
+        "atribucion": "Contiene información de OpenStreetMap, disponible en openstreetmap.org bajo la Open Database License (ODbL)",
+        "consultado": "2026-10-16T18:30:24Z",
+        "nodo_cruce": 305269145,
+        "vias": [
+          {
+            "id_osm": 614145444,
+            "tipo": "secondary",
+            "nombre": "Calle Benito Juárez Garcia",
+            "carriles": 4,
+            "un_sentido": true,
+            "puntos": [
+              {
+                "x": 0,
+                "y": 0
+              },
+              {
+                "x": 8.586,
+                "y": 0.001
+              }
+            ]
+          },
+          {
+            "id_osm": 616106026,
+            "tipo": "secondary",
+            "nombre": "Avenida General Venustiano Carranza",
+            "carriles": 3,
+            "un_sentido": true,
+            "puntos": [
+              {
+                "x": 8.586,
+                "y": 0.001
+              },
+              {
+                "x": 10.922,
+                "y": 71.184
+              },
+              {
+                "x": 12.7,
+                "y": 146.593
+              },
+              {
+                "x": 15.554,
+                "y": 210.989
+              },
+              {
+                "x": 15.844,
+                "y": 217.48
+              }
+            ]
+          },
+          {
+            "id_osm": 1334343292,
+            "tipo": "secondary",
+            "nombre": "Avenida General Venustiano Carranza",
+            "carriles": 3,
+            "un_sentido": true,
+            "puntos": [
+              {
+                "x": 0,
+                "y": 0
+              },
+              {
+                "x": -4.063,
+                "y": -79.088
+              },
+              {
+                "x": -4.465,
+                "y": -86.792
+              },
+              {
+                "x": -7.121,
+                "y": -165.821
+              }
+            ]
+          },
+          {
+            "id_osm": 1334343293,
+            "tipo": "secondary",
+            "nombre": "Calle Benito Juárez Garcia",
+            "carriles": 4,
+            "un_sentido": true,
+            "puntos": [
+              {
+                "x": -222.934,
+                "y": 4.322
+              },
+              {
+                "x": -109.875,
+                "y": 2.147
+              },
+              {
+                "x": 0,
+                "y": 0
+              }
+            ]
+          },
+          {
+            "id_osm": 1363846372,
+            "tipo": "secondary",
+            "nombre": "Avenida General Venustiano Carranza",
+            "carriles": 3,
+            "un_sentido": true,
+            "puntos": [
+              {
+                "x": 2.865,
+                "y": -166.486
+              },
+              {
+                "x": 4.955,
+                "y": -94.112
+              },
+              {
+                "x": 5.16,
+                "y": -87.143
+              }
+            ]
+          },
+          {
+            "id_osm": 1363846373,
+            "tipo": "secondary",
+            "nombre": "Calle Benito Juárez Garcia",
+            "carriles": 4,
+            "un_sentido": true,
+            "puntos": [
+              {
+                "x": 8.586,
+                "y": 0.001
+              },
+              {
+                "x": 137.344,
+                "y": -3.858
+              }
+            ]
+          },
+          {
+            "id_osm": 1367914357,
+            "tipo": "secondary",
+            "nombre": "Avenida General Venustiano Carranza",
+            "carriles": 3,
+            "un_sentido": true,
+            "puntos": [
+              {
+                "x": 5.609,
+                "y": 217.265
+              },
+              {
+                "x": 2.529,
+                "y": 146.322
+              },
+              {
+                "x": 0.462,
+                "y": 71.928
+              },
+              {
+                "x": 0,
+                "y": 0
+              }
+            ]
+          },
+          {
+            "id_osm": 1415729384,
+            "tipo": "secondary",
+            "nombre": "Avenida General Venustiano Carranza",
+            "carriles": 3,
+            "un_sentido": true,
+            "puntos": [
+              {
+                "x": 5.16,
+                "y": -87.143
+              },
+              {
+                "x": 8.586,
+                "y": 0.001
+              }
+            ]
+          },
+          {
+            "id_osm": 32250368,
+            "tipo": "residential",
+            "nombre": "Calle Juan Aldama",
+            "carriles": 3,
+            "un_sentido": true,
+            "puntos": [
+              {
+                "x": 135.001,
+                "y": -92.565
+              },
+              {
+                "x": 14.36,
+                "y": -87.523
+              },
+              {
+                "x": 5.16,
+                "y": -87.143
+              }
+            ]
+          },
+          {
+            "id_osm": 32250745,
+            "tipo": "residential",
+            "nombre": "Calle Juan Fernández Albarrán",
+            "carriles": 4,
+            "puntos": [
+              {
+                "x": 141.855,
+                "y": 141.461
+              },
+              {
+                "x": 140.223,
+                "y": 68.904
+              },
+              {
+                "x": 137.344,
+                "y": -3.858
+              }
+            ]
+          },
+          {
+            "id_osm": 32250746,
+            "tipo": "residential",
+            "nombre": "Calle Ignacio López Rayón",
+            "carriles": 3,
+            "un_sentido": true,
+            "puntos": [
+              {
+                "x": -148.574,
+                "y": 151.894
+              },
+              {
+                "x": -125.664,
+                "y": 151.327
+              },
+              {
+                "x": -103.388,
+                "y": 150.785
+              },
+              {
+                "x": 2.529,
+                "y": 146.322
+              },
+              {
+                "x": 12.7,
+                "y": 146.593
+              },
+              {
+                "x": 141.855,
+                "y": 141.461
+              }
+            ]
+          },
+          {
+            "id_osm": 144960114,
+            "tipo": "residential",
+            "nombre": "Calle Pablo Sidar",
+            "carriles": 3,
+            "un_sentido": true,
+            "puntos": [
+              {
+                "x": 10.922,
+                "y": 71.184
+              },
+              {
+                "x": 0.462,
+                "y": 71.928
+              },
+              {
+                "x": -107.032,
+                "y": 75.878
+              }
+            ]
+          },
+          {
+            "id_osm": 840623317,
+            "tipo": "residential",
+            "nombre": "Calle Pablo Sidar",
+            "carriles": 3,
+            "un_sentido": true,
+            "puntos": [
+              {
+                "x": 34.229,
+                "y": 71.152
+              },
+              {
+                "x": 10.922,
+                "y": 71.184
+              }
+            ]
+          },
+          {
+            "id_osm": 840623318,
+            "tipo": "residential",
+            "nombre": "Calle Pablo Sidar",
+            "carriles": 3,
+            "un_sentido": true,
+            "puntos": [
+              {
+                "x": 140.223,
+                "y": 68.904
+              },
+              {
+                "x": 34.229,
+                "y": 71.152
+              }
+            ]
+          },
+          {
+            "id_osm": 841427161,
+            "tipo": "residential",
+            "nombre": "Calle Juan Aldama",
+            "carriles": 3,
+            "un_sentido": true,
+            "puntos": [
+              {
+                "x": -82.441,
+                "y": -85.371
+              },
+              {
+                "x": -112.984,
+                "y": -83.879
+              }
+            ]
+          },
+          {
+            "id_osm": 841427162,
+            "tipo": "residential",
+            "nombre": "Calle Juan Aldama",
+            "carriles": 3,
+            "un_sentido": true,
+            "puntos": [
+              {
+                "x": -112.984,
+                "y": -83.879
+              },
+              {
+                "x": -195.732,
+                "y": -80.734
+              }
+            ]
+          },
+          {
+            "id_osm": 842769178,
+            "tipo": "residential",
+            "nombre": "Calle Rafael Miguel Hidalgo",
+            "carriles": 3,
+            "un_sentido": true,
+            "puntos": [
+              {
+                "x": -105.937,
+                "y": 102.034
+              },
+              {
+                "x": -107.032,
+                "y": 75.878
+              }
+            ]
+          },
+          {
+            "id_osm": 842769179,
+            "tipo": "residential",
+            "nombre": "Calle Rafael Miguel Hidalgo",
+            "carriles": 3,
+            "un_sentido": true,
+            "puntos": [
+              {
+                "x": -107.032,
+                "y": 75.878
+              },
+              {
+                "x": -109.875,
+                "y": 2.147
+              },
+              {
+                "x": -112.984,
+                "y": -83.879
+              },
+              {
+                "x": -114.346,
+                "y": -160.036
+              }
+            ]
+          },
+          {
+            "id_osm": 842864223,
+            "tipo": "residential",
+            "nombre": "Calle Rafael Miguel Hidalgo",
+            "carriles": 3,
+            "un_sentido": true,
+            "puntos": [
+              {
+                "x": -103.388,
+                "y": 150.785
+              },
+              {
+                "x": -105.937,
+                "y": 102.034
+              }
+            ]
+          },
+          {
+            "id_osm": 1363663229,
+            "tipo": "residential",
+            "nombre": "Calle Juan Fernández Albarrán",
+            "carriles": 4,
+            "puntos": [
+              {
+                "x": 137.344,
+                "y": -3.858
+              },
+              {
+                "x": 135.001,
+                "y": -92.565
+              },
+              {
+                "x": 131.995,
+                "y": -170.46
+              }
+            ]
+          },
+          {
+            "id_osm": 1415729385,
+            "tipo": "residential",
+            "nombre": "Calle Juan Aldama",
+            "carriles": 3,
+            "un_sentido": true,
+            "puntos": [
+              {
+                "x": 5.16,
+                "y": -87.143
+              },
+              {
+                "x": -4.465,
+                "y": -86.792
+              },
+              {
+                "x": -82.441,
+                "y": -85.371
+              }
+            ]
+          }
+        ]
+      }
+    },
+    "entorno": {
+      "fecha_hora": {
+        "valor": "18:00",
+        "fuente": "relato",
+        "confianza": 0.7,
+        "evidencia": [
+          {
+            "inicio": 380,
+            "fin": 407,
+            "texto": "como a las seis de la tarde"
+          }
+        ]
+      },
+      "clima": {
+        "valor": "nublado",
+        "fuente": "relato",
+        "confianza": 0.9,
+        "evidencia": [
+          {
+            "inicio": 410,
+            "fin": 424,
+            "texto": "estaba nublado"
+          }
+        ]
+      },
+      "iluminacion": {
+        "valor": "atardecer",
+        "fuente": "supuesto",
+        "confianza": 0.5,
+        "nota": "Seis de la tarde; el visor calcula el sol con la fecha y el lugar."
+      }
+    },
+    "vehiculos": [
+      {
+        "id": "veh-a",
+        "rol": "A",
+        "clase": {
+          "valor": "sedan_compacto",
+          "fuente": "relato",
+          "confianza": 0.9,
+          "evidencia": [
+            {
+              "inicio": 7,
+              "fin": 20,
+              "texto": "mi Versa gris"
+            }
+          ]
+        },
+        "modelo": {
+          "valor": "Versa",
+          "fuente": "relato",
+          "confianza": 0.9,
+          "evidencia": [
+            {
+              "inicio": 10,
+              "fin": 15,
+              "texto": "Versa"
+            }
+          ]
+        },
+        "color": {
+          "nombre": {
+            "valor": "gris",
+            "fuente": "relato",
+            "confianza": 0.9,
+            "evidencia": [
+              {
+                "inicio": 16,
+                "fin": 20,
+                "texto": "gris"
+              }
+            ]
+          },
+          "hex": "#8a8d91"
+        },
+        "maniobra": {
+          "valor": "recto",
+          "fuente": "relato",
+          "confianza": 0.9,
+          "evidencia": [
+            {
+              "inicio": 21,
+              "fin": 51,
+              "texto": "por Benito Juárez hacia el sur"
+            }
+          ]
+        },
+        "velocidad_previa": {
+          "valor": 35,
+          "unidad": "km/h",
+          "rango": [
+            25,
+            45
+          ],
+          "fuente": "relato",
+          "confianza": 0.7,
+          "evidencia": [
+            {
+              "inicio": 75,
+              "fin": 84,
+              "texto": "como a 35"
+            }
+          ]
+        },
+        "carril": {
+          "valor": 2,
+          "fuente": "relato",
+          "confianza": 0.8,
+          "evidencia": [
+            {
+              "inicio": 53,
+              "fin": 73,
+              "texto": "en el segundo carril"
+            }
+          ]
+        },
+        "posicion_inicial": {
+          "x": -28,
+          "y": 1.65,
+          "rumbo_deg": 0,
+          "procedencia": {
+            "fuente": "supuesto",
+            "confianza": 0.5,
+            "nota": "Segundo carril desde la izquierda de Juárez, de cuatro."
+          }
+        },
+        "posicion_final": {
+          "x": 8,
+          "y": -3.5,
+          "rumbo_deg": -15,
+          "procedencia": {
+            "fuente": "relato",
+            "confianza": 0.4,
+            "evidencia": [
+              {
+                "inicio": 278,
+                "fin": 310,
+                "texto": "quedó en el carril de la derecha"
+              }
+            ]
+          }
+        },
+        "ocupantes": [
+          "per-a1"
+        ]
+      },
+      {
+        "id": "veh-b",
+        "rol": "B",
+        "clase": {
+          "valor": "sedan_compacto",
+          "fuente": "relato",
+          "confianza": 0.9,
+          "evidencia": [
+            {
+              "inicio": 148,
+              "fin": 167,
+              "texto": "un taxi Aveo blanco"
+            }
+          ]
+        },
+        "modelo": {
+          "valor": "Aveo",
+          "fuente": "relato",
+          "confianza": 0.9,
+          "evidencia": [
+            {
+              "inicio": 156,
+              "fin": 160,
+              "texto": "Aveo"
+            }
+          ]
+        },
+        "color": {
+          "nombre": {
+            "valor": "blanco",
+            "fuente": "relato",
+            "confianza": 0.9,
+            "evidencia": [
+              {
+                "inicio": 161,
+                "fin": 167,
+                "texto": "blanco"
+              }
+            ]
+          },
+          "hex": "#f4f4f4"
+        },
+        "maniobra": {
+          "valor": "recto",
+          "fuente": "relato",
+          "confianza": 0.85,
+          "evidencia": [
+            {
+              "inicio": 172,
+              "fin": 190,
+              "texto": "venía por Carranza"
+            }
+          ]
+        },
+        "velocidad_previa": {
+          "valor": 40,
+          "unidad": "km/h",
+          "rango": [
+            25,
+            60
+          ],
+          "fuente": "supuesto",
+          "confianza": 0.3,
+          "nota": "La narradora no estima la velocidad del taxi; es la primera pregunta por sensibilidad."
+        },
+        "posicion_inicial": {
+          "x": 0,
+          "y": 26,
+          "rumbo_deg": -90,
+          "procedencia": {
+            "fuente": "supuesto",
+            "confianza": 0.5,
+            "nota": "Carril central de Carranza, de tres; Carranza corre hacia −Y en este marco (poniente)."
+          }
+        },
+        "posicion_final": {
+          "x": 2,
+          "y": 1,
+          "rumbo_deg": -120,
+          "procedencia": {
+            "fuente": "relato",
+            "confianza": 0.4,
+            "evidencia": [
+              {
+                "inicio": 312,
+                "fin": 339,
+                "texto": "el taxi quedó a media calle"
+              }
+            ]
+          }
+        },
+        "ocupantes": [
+          "per-b1"
+        ]
+      }
+    ],
+    "personas": [
+      {
+        "id": "per-a1",
+        "rol": {
+          "valor": "conductor",
+          "fuente": "relato",
+          "confianza": 1,
+          "evidencia": [
+            {
+              "inicio": 0,
+              "fin": 20,
+              "texto": "Iba en mi Versa gris"
+            }
+          ]
+        },
+        "vehiculo_id": "veh-a",
+        "asiento": {
+          "valor": "conductor",
+          "fuente": "supuesto",
+          "confianza": 1
+        },
+        "cinturon": {
+          "valor": true,
+          "fuente": "relato",
+          "confianza": 0.9,
+          "evidencia": [
+            {
+              "inicio": 352,
+              "fin": 374,
+              "texto": "con el cinturón puesto"
+            }
+          ]
+        }
+      },
+      {
+        "id": "per-b1",
+        "rol": {
+          "valor": "conductor",
+          "fuente": "supuesto",
+          "confianza": 0.9
+        },
+        "vehiculo_id": "veh-b",
+        "asiento": {
+          "valor": "conductor",
+          "fuente": "supuesto",
+          "confianza": 0.9
+        }
+      }
+    ],
+    "eventos": [
+      {
+        "id": "ev-impacto",
+        "orden": 0,
+        "tipo": "impacto_vehiculo_vehiculo",
+        "t": {
+          "valor": 0,
+          "unidad": "s",
+          "fuente": "default",
+          "confianza": 1
+        },
+        "actores": [
+          "veh-a",
+          "veh-b"
+        ],
+        "zonas_impacto": [
+          {
+            "vehiculo_id": "veh-a",
+            "cdc": {
+              "lado": "L",
+              "zona_horizontal": "P",
+              "zona_vertical": "E",
+              "extension": 3
+            },
+            "pdof_horas": {
+              "valor": 9,
+              "fuente": "supuesto",
+              "confianza": 0.6
+            }
+          },
+          {
+            "vehiculo_id": "veh-b",
+            "cdc": {
+              "lado": "F",
+              "zona_horizontal": "D",
+              "zona_vertical": "E",
+              "extension": 4
+            },
+            "pdof_horas": {
+              "valor": 12,
+              "fuente": "supuesto",
+              "confianza": 0.6
+            }
+          }
+        ],
+        "punto_impacto": {
+          "x": 0,
+          "y": 2.5
+        },
+        "descripcion": "Frente del taxi contra el costado izquierdo de A, en la puerta del chofer.",
+        "procedencia": {
+          "fuente": "relato",
+          "confianza": 0.9,
+          "evidencia": [
+            {
+              "inicio": 209,
+              "fin": 250,
+              "texto": "me pegó del lado del chofer, en la puerta"
+            }
+          ]
+        }
+      },
+      {
+        "id": "ev-reposo",
+        "orden": 1,
+        "tipo": "reposo",
+        "actores": [
+          "veh-a",
+          "veh-b"
+        ],
+        "procedencia": {
+          "fuente": "relato",
+          "confianza": 0.7,
+          "evidencia": [
+            {
+              "inicio": 278,
+              "fin": 310,
+              "texto": "quedó en el carril de la derecha"
+            }
+          ]
+        }
+      }
+    ],
+    "danos_declarados": [
+      {
+        "vehiculo_id": "veh-a",
+        "zona": {
+          "lado": "L",
+          "zona_horizontal": "P",
+          "zona_vertical": "E",
+          "extension": 3
+        },
+        "severidad": "moderado",
+        "procedencia": {
+          "fuente": "relato",
+          "confianza": 0.8,
+          "evidencia": [
+            {
+              "inicio": 209,
+              "fin": 250,
+              "texto": "me pegó del lado del chofer, en la puerta"
+            }
+          ]
+        }
+      }
+    ],
+    "evidencias": []
+  },
+  "relato": "Iba en mi Versa gris por Benito Juárez hacia el sur, en el segundo carril, como a 35, con el semáforo en verde. En el cruce con Venustiano Carranza un taxi Aveo blanco que venía por Carranza se pasó el rojo y me pegó del lado del chofer, en la puerta. Mi carro se fue de lado y quedó en el carril de la derecha; el taxi quedó a media calle. Iba sola y con el cinturón puesto. Fue como a las seis de la tarde y estaba nublado.",
+  "relato_en": "I was driving my gray Versa south on Benito Juárez, in the second lane, at about 35, with a green light. At the intersection with Venustiano Carranza a white Aveo taxi coming down Carranza ran the red light and hit me on the driver's side, on the door. My car spun sideways and ended up in the right lane; the taxi stopped in the middle of the street. I was alone and wearing my seatbelt. It was around six in the evening and it was cloudy.",
+  "preguntas": [
+    {
+      "id": "frenado:veh-b",
+      "texto": "¿Viste si el auto (B) frenó antes del golpe?",
+      "motivo": "sensibilidad",
+      "campo": "vehiculos.1.frenado.aplico",
+      "opciones": [
+        "sí",
+        "no",
+        "no sé"
+      ],
+      "reduccion": 0.325
+    },
+    {
+      "id": "velocidad:veh-b",
+      "texto": "¿A qué velocidad crees que iba el auto (B)?",
+      "motivo": "sensibilidad",
+      "campo": "vehiculos.1.velocidad_previa",
+      "reduccion": 0.323
+    },
+    {
+      "id": "frenado:veh-a",
+      "texto": "¿Alcanzaste a frenar antes del golpe?",
+      "motivo": "sensibilidad",
+      "campo": "vehiculos.0.frenado.aplico",
+      "opciones": [
+        "sí",
+        "no",
+        "no sé"
+      ],
+      "reduccion": 0.287
+    }
+  ]
+}

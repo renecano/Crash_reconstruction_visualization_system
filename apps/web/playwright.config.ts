@@ -17,7 +17,15 @@ export default defineConfig({
     serviceWorkers: "block",
     locale: "es-MX",
   },
-  projects: [{ name: "chromium", use: { ...devices["Desktop Chrome"] } }],
+  projects: [
+    { name: "chromium", use: { ...devices["Desktop Chrome"] } },
+    // Celular (F11a): la portada, el flujo guiado, las páginas y la accesibilidad, en táctil.
+    {
+      name: "movil",
+      use: { ...devices["Pixel 7"] },
+      testMatch: /(portada|relato|paginas|e9|accesibilidad|capturas-diseno)\.spec\.ts$/,
+    },
+  ],
   webServer: {
     command: "pnpm build && pnpm start",
     url: `http://localhost:${PORT}`,

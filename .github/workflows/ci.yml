@@ -1,5 +1,10 @@
 name: CI
 
+# Lo que cuenta para hacer merge (CLAUDE.md, ADR 0047): lint, tipos, pruebas unitarias de lógica y
+# cálculos, y una e2e por flujo principal en Chromium; todo en menos de 10 minutos. Lo demás
+# (otros navegadores, capturas de referencia, E8, la reproducibilidad de los datos y los generados)
+# vive en `completo.yml` y corre a mano: cuando René lo pide o antes de una demo con CESVI.
+
 on:
   push:
     branches: [main]
@@ -14,9 +19,9 @@ permissions:
 
 jobs:
   web:
-    name: Web y paquetes TS (lint, tipos, pruebas, build)
+    name: Web y paquetes TS (lint, tipos, pruebas unitarias)
     runs-on: ubuntu-latest
-    timeout-minutes: 25
+    timeout-minutes: 10
     steps:
       - uses: actions/checkout@v7
       - uses: pnpm/action-setup@v6
@@ -26,21 +31,14 @@ jobs:
           cache: pnpm
       - run: pnpm install --frozen-lockfile
       - run: pnpm format:check
-      - run: pnpm --filter @croquis/scene-schema generate:check
-      - run: pnpm --filter @croquis/extraction generate:check
-      - run: pnpm --filter @croquis/solver-ts generate:check
-      - run: pnpm --filter @croquis/croquis-2d generate:check
-      - run: pnpm --filter @croquis/web generate:check
-      - run: pnpm --filter @croquis/extraction demo:check
       - run: pnpm lint
       - run: pnpm typecheck
       - run: pnpm test
-      - run: pnpm build
 
   e2e:
-    name: Playwright (e2e)
+    name: E2E de los flujos principales (Chromium)
     runs-on: ubuntu-latest
-    timeout-minutes: 25
+    timeout-minutes: 10
     steps:
       - uses: actions/checkout@v7
       - uses: pnpm/action-setup@v6
@@ -50,26 +48,10 @@ jobs:
           cache: pnpm
       - run: pnpm install --frozen-lockfile
       - run: pnpm --filter @croquis/web exec playwright install --with-deps chromium
-      - run: pnpm --filter @croquis/web exec playwright test --update-snapshots=missing
+      # Una prueba por flujo principal, marcada con @flujo en su título.
+      - run: pnpm --filter @croquis/web exec playwright test --project=chromium --grep @flujo --pass-with-no-tests
         env:
           CI: "true"
-      # Las referencias visuales se generan aquí (Linux) la primera vez: si faltaba alguna, se
-      # sube como artefacto para versionarla y el trabajo falla (nunca se aceptan en silencio).
-      - name: Verificar que las referencias visuales estén versionadas
-        id: snapshots
-        run: |
-          nuevas=$(git status --porcelain --untracked-files=all apps/web/e2e | grep -- '-snapshots/' || true)
-          if [ -n "$nuevas" ]; then
-            echo "Referencias visuales nuevas sin versionar:"; echo "$nuevas"
-            echo "nuevas=1" >> "$GITHUB_OUTPUT"
-            exit 1
-          fi
-      - uses: actions/upload-artifact@v7
-        if: failure() && steps.snapshots.outputs.nuevas == '1'
-        with:
-          name: referencias-visuales
-          path: apps/web/e2e/*-snapshots/
-          retention-days: 7
       - uses: actions/upload-artifact@v7
         if: failure()
         with:
@@ -77,71 +59,16 @@ jobs:
           path: apps/web/playwright-report
           retention-days: 7
 
-  e8:
-    name: E8 (mismo resultado en Chromium, Firefox y WebKit)
-    runs-on: ubuntu-latest
-    timeout-minutes: 20
-    steps:
-      - uses: actions/checkout@v7
-      - uses: pnpm/action-setup@v6
-      - uses: actions/setup-node@v7
-        with:
-          node-version-file: .node-version
-          cache: pnpm
-      - run: pnpm install --frozen-lockfile
-      - run: pnpm --filter @croquis/web exec playwright install --with-deps chromium firefox webkit
-      # Idéntico entre motores y repeticiones, y con los mismos hashes que el resultado versionado
-      # (medido en Windows): eval/results/e8_determinism.json debe estar al día con el solver.
-      - run: node eval/e8_determinism.mjs --out "$RUNNER_TEMP/e8.json" --esperado eval/results/e8_determinism.json --check
-      - uses: actions/upload-artifact@v7
-        if: always()
-        with:
-          name: e8-determinismo
-          path: ${{ runner.temp }}/e8.json
-          retention-days: 7
-
   python:
-    name: Python (ruff, pyright, pytest) — ${{ matrix.os }}
-    runs-on: ${{ matrix.os }}
-    timeout-minutes: 25
-    strategy:
-      fail-fast: false
-      matrix:
-        os: [ubuntu-latest, windows-latest]
+    name: Python (ruff, pyright, pytest)
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
     steps:
       - uses: actions/checkout@v7
       - uses: astral-sh/setup-uv@v10.3.0
         with:
           enable-cache: true
       - run: uv sync --all-packages --all-groups --locked
-      - run: uv run croquis-scene-schema-generate --check
-      - run: uv run croquis-data vehicles build --check
-      - run: uv run croquis-solver reconstruct --check
-      - run: uv run croquis-solver numerics --check
-      - name: Nombres de pila de DataMX reproducibles (descarga fijada por SHA-256)
-        run: |
-          uv run croquis-data nombres download
-          uv run croquis-data nombres build --check
-      - name: CISS 2017–2024 reproducible (descarga fijada por SHA-256 y tabla de E3)
-        run: |
-          uv run croquis-data ciss download
-          uv run croquis-data ciss build --check
-      - name: Base de inercias de NHTSA reproducible (descarga fijada por SHA-256)
-        run: |
-          uv run croquis-data inercia download
-          uv run croquis-data inercia build --check
-      - name: Extractos de OpenStreetMap íntegros (SHA-256 del manifiesto)
-        run: uv run croquis-data osm check
-      - run: uv run croquis-extraction relatos check
-      - run: uv run croquis-extraction golden check
-      - name: Cuerpos de MakeHuman reproducibles (descarga fijada y reconstrucción byte a byte)
-        run: |
-          uv run croquis-assets humans download
-          uv run croquis-assets humans check
-      - name: Texturas de Poly Haven reproducibles (descarga fijada por MD5 y reconstrucción byte a byte)
-        run: |
-          uv run croquis-assets textures download
-          uv run croquis-assets textures check
       - run: uv run ruff check .
       - run: uv run ruff format --check .
       - run: uv run pyright

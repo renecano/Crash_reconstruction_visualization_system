@@ -6,8 +6,55 @@
  */
 import type { EscenaSpec } from "@croquis/scene-schema";
 import { useState } from "react";
+import { textos } from "@/i18n";
+import { useIdioma, useTextos } from "@/i18n/cliente";
 import { useEnLinea } from "@/lib/en-linea";
 import { MapaError, parseCoordenadas, traerCalles } from "@/lib/mapa";
+
+const T = textos(
+  {
+    titulo: "Calles reales (OpenStreetMap)",
+    ayuda:
+      "Pega las coordenadas del cruce (por ejemplo, desde un mapa: «19.27897, -99.65399»). Las calles se guardan en la escena; después funciona sin red.",
+    coordenadas: "Coordenadas del cruce",
+    radio: "Radio",
+    traer: "Traer calles",
+    consultando: "Consultando…",
+    sinRed: "Sin conexión: traer calles necesita internet.",
+    listo: (n: number) => `Se trajeron ${n} calles de OpenStreetMap; el cruce quedó en el origen.`,
+  },
+  {
+    titulo: "Real streets (OpenStreetMap)",
+    ayuda:
+      "Paste the coordinates of the intersection (for example, from a map: “19.27897, -99.65399”). The streets are saved in the scene; after that it works offline.",
+    coordenadas: "Coordinates of the intersection",
+    radio: "Radius",
+    traer: "Get streets",
+    consultando: "Querying…",
+    sinRed: "Offline: getting streets needs internet.",
+    listo: (n: number) =>
+      `${n} streets came from OpenStreetMap; the intersection is now at the origin.`,
+  },
+);
+
+/** Los errores conocidos del mapa (servidor y `applyMap`) en inglés. */
+const ERRORES_EN: [RegExp, string][] = [
+  [
+    /^OpenStreetMap no respondió/,
+    "OpenStreetMap did not respond: its public servers are overloaded. Try again in a few minutes; scenes that already have their streets do not need it.",
+  ],
+  [/^Demasiadas consultas al mapa/, "Too many map queries in one hour. Try again later."],
+  [
+    /^No encontré un cruce de calles a menos de 60 m/,
+    "No intersection was found within 60 m of those coordinates. Put them on the intersection.",
+  ],
+  [/^No se pudo consultar OpenStreetMap/, "OpenStreetMap could not be queried."],
+  [
+    /^La escena con las calles no cumple el contrato/,
+    "The scene with the streets does not meet the scene contract.",
+  ],
+  [/^Coordenadas inválidas/, "Invalid coordinates."],
+];
 
 export interface CallesRealesProps {
   spec: EscenaSpec;
@@ -16,6 +63,8 @@ export interface CallesRealesProps {
 }
 
 export function CallesReales({ spec, onApply, fetcher }: CallesRealesProps) {
+  const { lang } = useIdioma();
+  const t = useTextos(T);
   const enLinea = useEnLinea();
   const [texto, setTexto] = useState("");
   const [radio, setRadio] = useState(150);
@@ -30,44 +79,38 @@ export function CallesReales({ spec, onApply, fetcher }: CallesRealesProps) {
     try {
       const r = await traerCalles(spec, coords, radio, fetcher);
       onApply(r.spec);
-      setMensaje({
-        ok: true,
-        texto: `Se trajeron ${r.vias} calles de OpenStreetMap; el cruce quedó en el origen.`,
-      });
+      setMensaje({ ok: true, texto: t.listo(r.vias) });
     } catch (e) {
-      setMensaje({
-        ok: false,
-        texto: e instanceof MapaError || e instanceof Error ? e.message : String(e),
-      });
+      const es = e instanceof MapaError || e instanceof Error ? e.message : String(e);
+      const en = lang === "en" ? ERRORES_EN.find(([re]) => re.test(es))?.[1] : undefined;
+      setMensaje({ ok: false, texto: en ?? es });
     } finally {
       setBusy(false);
     }
   };
 
   return (
-    <details className="rounded border border-neutral-300 p-3 text-sm dark:border-neutral-700">
-      <summary className="cursor-pointer font-medium">Calles reales (OpenStreetMap)</summary>
-      <div className="mt-3 flex flex-col gap-2">
-        <p className="text-neutral-600 dark:text-neutral-400">
-          Pega las coordenadas del cruce (por ejemplo, desde un mapa: «19.27897, -99.65399»). Las
-          calles se guardan en la escena; después funciona sin red.
-        </p>
-        <div className="flex flex-wrap items-center gap-2">
+    <details className="border-t border-linea pt-4">
+      <summary className="t-interfaz cursor-pointer">{t.titulo}</summary>
+      <div className="mt-4 flex flex-col gap-3">
+        <p className="t-nota">{t.ayuda}</p>
+        <div className="flex flex-wrap items-end gap-3">
           <input
             data-testid="mapa-coordenadas"
-            aria-label="Coordenadas del cruce"
+            aria-label={t.coordenadas}
             value={texto}
             onChange={(e) => setTexto(e.target.value)}
             placeholder="19.27897, -99.65399"
-            className="w-56 rounded border border-neutral-300 bg-white px-2 py-1 text-neutral-900 dark:border-neutral-700 dark:bg-neutral-950 dark:text-neutral-100"
+            inputMode="decimal"
+            className="campo w-60 cifras"
           />
-          <label className="flex items-center gap-1">
-            <span>Radio</span>
+          <label className="t-nota flex flex-col gap-1">
+            <span>{t.radio}</span>
             <select
-              aria-label="Radio"
+              aria-label={t.radio}
               value={radio}
               onChange={(e) => setRadio(Number(e.target.value))}
-              className="rounded border border-neutral-300 bg-white px-2 py-1 text-neutral-900"
+              className="campo w-auto max-w-full"
             >
               {[100, 150, 200].map((r) => (
                 <option key={r} value={r}>
@@ -81,23 +124,17 @@ export function CallesReales({ spec, onApply, fetcher }: CallesRealesProps) {
             data-testid="mapa-traer"
             disabled={!coords || busy || !enLinea}
             onClick={() => void traer()}
-            className="rounded bg-neutral-900 px-3 py-1 text-white disabled:opacity-50 dark:bg-neutral-100 dark:text-neutral-900"
+            className="boton-secundario"
           >
-            {busy ? "Consultando…" : "Traer calles"}
+            {busy ? t.consultando : t.traer}
           </button>
         </div>
-        {!enLinea ? (
-          <p className="text-amber-800 dark:text-amber-200">
-            Sin conexión: traer calles necesita internet.
-          </p>
-        ) : null}
+        {!enLinea ? <p className="t-nota border-l-2 border-texto-2 pl-3">{t.sinRed}</p> : null}
         {mensaje ? (
           <p
             role={mensaje.ok ? "status" : "alert"}
             data-testid="mapa-mensaje"
-            className={
-              mensaje.ok ? "text-green-800 dark:text-green-300" : "text-red-700 dark:text-red-400"
-            }
+            className={`t-nota border-l-2 pl-3 text-texto ${mensaje.ok ? "border-texto-2" : "border-texto"}`}
           >
             {mensaje.texto}
           </p>

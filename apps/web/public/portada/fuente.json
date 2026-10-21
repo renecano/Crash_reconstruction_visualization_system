@@ -1,0 +1,6 @@
+{
+  "packages/scene-schema/fixtures/interseccion_toluca.json": "94ebc112c79a61d2b3f3adf4e3d69652ed3569aa04e27383d1a5a28370f167e9",
+  "packages/scene-schema/fixtures/resultados/interseccion_toluca.json": "178b0eeceae2d71a6eb5e5fff7e8da5743d0c731a093bd9b41ea6c0c03cfe100",
+  "apps/web/src/components/portada/camara.ts": "57f6e4b5138dc5c6500bcb851c10be583be5d9dac03bbb74085dcc47052939f4",
+  "assets/brand/logotipo-efectos.svg": "41dc3c6989658c6034bb34fe9b07260dc0c3465fd9e6bffe1764604d587352ab"
+}

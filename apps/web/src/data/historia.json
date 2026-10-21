@@ -4,6 +4,8 @@
     "url": "https://www.inegi.org.mx/contenidos/programas/accidentes/datosabiertos/conjunto_de_datos_atus_anual_csv.zip",
     "licencia": "https://www.inegi.org.mx/inegi/terminos.html",
     "nota": "Se excluyen los registros 'Certificado cero'. 'Muertos' son fallecidos en el lugar del accidente, como define ATUS.",
+    "nombre_en": "INEGI, Road Traffic Incidents in Urban and Suburban Areas (ATUS), open data 1997–2025",
+    "nota_en": "Records marked 'Certificado cero' (no incidents reported) are excluded. 'Deaths' are people who died at the scene, as ATUS defines them.",
     "archivo": "eval/results/atus_summary.json",
     "url_resultado": "https://github.com/renecano/Crash_reconstruction_visualization_system/blob/main/eval/results/atus_summary.json"
   },
@@ -20,27 +22,42 @@
   },
   "tipos": [
     {
-      "tipo": "Colisión con vehículo automotor",
+      "tipo": {
+        "es": "Colisión con vehículo automotor",
+        "en": "Collision with a motor vehicle"
+      },
       "accidentes": 222241,
       "participacion": 0.5842
     },
     {
-      "tipo": "Colisión con motocicleta",
+      "tipo": {
+        "es": "Colisión con motocicleta",
+        "en": "Collision with a motorcycle"
+      },
       "accidentes": 68505,
       "participacion": 0.1801
     },
     {
-      "tipo": "Colisión con objeto fijo",
+      "tipo": {
+        "es": "Colisión con objeto fijo",
+        "en": "Collision with a fixed object"
+      },
       "accidentes": 43336,
       "participacion": 0.1139
     },
     {
-      "tipo": "Volcadura",
+      "tipo": {
+        "es": "Volcadura",
+        "en": "Rollover"
+      },
       "accidentes": 15412,
       "participacion": 0.0405
     },
     {
-      "tipo": "Colisión con peatón (atropellamiento)",
+      "tipo": {
+        "es": "Colisión con peatón (atropellamiento)",
+        "en": "Collision with a pedestrian"
+      },
       "accidentes": 10612,
       "participacion": 0.0279
     }

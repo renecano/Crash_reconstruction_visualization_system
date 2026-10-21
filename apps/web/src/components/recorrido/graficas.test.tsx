@@ -10,14 +10,17 @@ describe("formato", () => {
     expect(numero(8.1)).toBe("8.1");
   });
   it("cifras enteras, científicas y de texto", () => {
-    expect(cifra({ etiqueta: "a", valor: 11, formato: "entero" })).toBe("11");
-    expect(cifra({ etiqueta: "a", valor: 4.1e-5, formato: "cientifico" })).toBe("4.1 × 10⁻⁵");
-    expect(cifra({ etiqueta: "a", valor: "11 de 11", formato: "texto" })).toBe("11 de 11");
+    const a = { es: "a", en: "a" };
+    expect(cifra({ etiqueta: a, valor: 11, formato: "entero" })).toBe("11");
+    expect(cifra({ etiqueta: a, valor: 4.1e-5, formato: "cientifico" })).toBe("4.1 × 10⁻⁵");
+    const texto = { es: "11 de 11", en: "11 of 11" };
+    expect(cifra({ etiqueta: a, valor: texto, formato: "texto" })).toBe("11 de 11");
+    expect(cifra({ etiqueta: a, valor: texto, formato: "texto" }, "en")).toBe("11 of 11");
   });
   it("el mejor valor depende de si la métrica sube o baja", () => {
     const barras = [
-      { etiqueta: "Croquis", valor: 8.85, croquis: true },
-      { etiqueta: "WinSMASH", valor: 8.19, croquis: false },
+      { etiqueta: { es: "Croquis", en: "Croquis" }, valor: 8.85, croquis: true },
+      { etiqueta: { es: "WinSMASH", en: "WinSMASH" }, valor: 8.19, croquis: false },
     ];
     expect(mejorIndice(barras, "menor")).toBe(1);
     expect(mejorIndice(barras, "mayor")).toBe(0);
@@ -27,13 +30,13 @@ describe("formato", () => {
 describe("GraficaVista", () => {
   const g: Grafica = {
     tipo: "barras",
-    titulo: "Test CISS",
-    metrica: "Error absoluto medio",
+    titulo: { es: "Test CISS", en: "CISS test" },
+    metrica: { es: "Error absoluto medio", en: "Mean absolute error" },
     mejor: "menor",
     unidad: "km/h",
     barras: [
-      { etiqueta: "Croquis", valor: 8.85, croquis: true },
-      { etiqueta: "WinSMASH", valor: 8.19, croquis: false },
+      { etiqueta: { es: "Croquis", en: "Croquis" }, valor: 8.85, croquis: true },
+      { etiqueta: { es: "WinSMASH", en: "WinSMASH" }, valor: 8.19, croquis: false },
     ],
   };
 
@@ -41,17 +44,26 @@ describe("GraficaVista", () => {
     render(<GraficaVista g={g} />);
     const filas = screen.getAllByRole("listitem");
     expect(filas).toHaveLength(2);
-    expect(within(filas[0]!).getByText(/8\.85 km\/h/)).toBeTruthy();
+    expect(filas[0]!.textContent).toMatch(/8\.85\s*km\/h/);
     expect(within(filas[1]!).getByTitle("mejor valor")).toBeTruthy();
     expect(within(filas[0]!).queryByTitle("mejor valor")).toBeNull();
     expect(screen.getByText(/menos es mejor/)).toBeTruthy();
   });
 
+  it("en inglés usa los textos generados en inglés", () => {
+    render(<GraficaVista g={g} lang="en" />);
+    expect(screen.getByText("CISS test")).toBeTruthy();
+    expect(screen.getByText(/lower is better/)).toBeTruthy();
+    expect(screen.getAllByTitle("best value")).toHaveLength(1);
+  });
+
   it("todas las gráficas generadas desde eval/results se dibujan", () => {
     for (const e of datos.evaluaciones) {
       for (const graf of e.graficas as Grafica[]) {
-        const { unmount } = render(<GraficaVista g={graf} />);
-        unmount();
+        for (const lang of ["es", "en"] as const) {
+          const { unmount } = render(<GraficaVista g={graf} lang={lang} />);
+          unmount();
+        }
       }
     }
     expect(datos.evaluaciones.map((e) => e.id)).toEqual([
