@@ -32,7 +32,7 @@ export const en: Dict = {
       fuentes: "Data and attributions",
       osm: "Streets: © OpenStreetMap contributors (ODbL)",
       datos: "Crash data: NHTSA and INEGI (ATUS)",
-      fuente: "Typeface: Anybody (SIL OFL 1.1)",
+      fuente: "Typefaces: Geist and Geist Mono; logotype with Anybody (SIL OFL 1.1)",
     },
   },
   leyenda: {

@@ -114,8 +114,8 @@ test("@flujo /cesvi: el recorrido del perito, del caso al dictamen en PDF", asyn
 
   // 4. Las dos versiones y la zona de restos.
   await page.getByTestId("siguiente").click();
-  await expect(page.getByTestId("version-declarada")).toHaveAttribute("aria-pressed", "true");
-  await expect(frase).toContainText("A retrocede 4 m");
+  await expect(page.getByTestId("version-declarada")).toHaveAttribute("aria-selected", "true");
+  await expect(frase).toContainText("retrocede 4 m");
   // Cada vehículo con su nombre, cada marca con lo que es, y la leyenda.
   await expect(page.getByTestId("nombre-A")).toHaveText("A · Silverado");
   await expect(page.getByTestId("nombre-B")).toHaveText("B · Tacoma");
@@ -129,9 +129,8 @@ test("@flujo /cesvi: el recorrido del perito, del caso al dictamen en PDF", asyn
   // Al elegir una marca se resalta y dice qué es y de qué versión.
   await page.getByTestId("marca-B-inicial").click();
   await expect(page.getByTestId("marca-B-inicial")).toHaveClass(/marca-elegida/);
-  await expect(page.getByTestId("seleccion-mapa")).toContainText(
-    "B · Tacoma · posición inicial · versión declarada",
-  );
+  await expect(page.getByTestId("seleccion-mapa")).toContainText("B · Tacoma · posición inicial");
+  await expect(page.getByTestId("seleccion-mapa")).toContainText("Versión declarada");
   await expect(page.getByTestId("restos-mapa").locator("[data-valor]")).toHaveAttribute(
     "data-valor",
     "0.00",
@@ -166,15 +165,15 @@ test("@flujo /cesvi: el recorrido del perito, del caso al dictamen en PDF", asyn
   await expect(panel.locator('[data-fila="energia"]')).toContainText("+2.39 %");
   await page.keyboard.press("Escape");
 
-  // 7. La sugerencia, validada por el perito.
+  // 7. La sugerencia, validada por el perito: «Aceptar y seguir» lleva al dictamen.
   await page.getByTestId("siguiente").click();
   await expect(page.getByTestId("sugerencia")).toContainText("no se sostiene");
   await page.getByTestId("perito").fill("Perito de prueba");
   await page.getByTestId("aceptar").click();
-  await expect(page.getByTestId("validacion")).toContainText("Perito de prueba aceptó");
 
-  // 8. El dictamen: vista previa, borrador de consideraciones y descarga.
-  await page.getByTestId("siguiente").click();
+  // 8. El dictamen: validado, con vista previa, borrador de consideraciones y descarga.
+  await expect(page.getByTestId("paso-8")).toHaveAttribute("aria-current", "step");
+  await expect(page.getByTestId("validacion")).toContainText("Perito de prueba aceptó");
   await expect(page.getByTestId("vista-previa")).toBeVisible({ timeout: 20_000 });
   await page.getByTestId("ver-detalle").click();
   await page.getByTestId("pedir-borrador").click();

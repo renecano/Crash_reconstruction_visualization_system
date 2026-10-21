@@ -1,5 +1,5 @@
 /**
- * Después de `next build`: el CSS generado trae el sistema de diseño (ADR 0045). Si falta, el build
+ * Después de `next build`: el CSS generado trae el sistema de diseño (ADR 0045 y 0054). Si falta, el build
  * falla y Vercel no publica.
  *
  * Por qué existe: el 2026-10-20 un despliegue de producción salió con el CSS de la plantilla de Next
@@ -34,7 +34,8 @@ try {
 const requisitos = [
   ["el token --fondo definido", /--fondo:\s*[^;]+;/],
   ["los tokens de la marca", /--marca-[a-z-]+:/],
-  ["la fuente Anybody", /Anybody/],
+  ["el token --fondo con el grafito del rediseño", /--marca-grafito:\s*#0B0C0F/i],
+  ["la fuente Geist (next/font)", /Geist/],
   ["el rol de título (.t-titulo)", /\.t-titulo\b/],
   ["el botón principal (.boton-principal)", /\.boton-principal\b/],
   ["las utilidades de roles de color (.bg-fondo)", /\.bg-fondo\b/],

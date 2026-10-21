@@ -13,7 +13,7 @@ Que un perito de CESVI vea en Croquis **uno de sus propios dictámenes reproduci
 
 - **Los dictámenes de CESVI** están en `data/raw/cesvi/` (ignorado por git: nunca se suben). Son 4 lotes en Markdown (OCR de los PDF, 671 documentos separados por encabezados `# Document: <archivo>`), más dos PDF de contexto técnico y el *Manual de Proyecto Geométrico de Carreteras* de la SCT (2018).
 - **Permiso:** René confirmó que CESVI permite usar todos los datos de sus reportes. Aun así, el repositorio solo guarda datos derivados del caso (por ejemplo, el JSON del caso) y no los documentos originales.
-- **Datos personales:** placas, VIN, nombres de personas y de peritos no van ni en el repositorio, ni en el fixture, ni en la demo desplegada. Se muestran como "omitido". La demo en Vercel va con protección de acceso (Deployment Protection o contraseña) porque es un caso real.
+- **Datos personales:** placas, VIN, nombres de personas y de peritos no van ni en el repositorio, ni en el fixture, ni en la demo desplegada. Se muestran como "omitido". La demo en Vercel es pública (sin usuario ni clave, desde el 2026-10-21); por eso no lleva ningún dato personal del caso, y el borrador con Claude tiene tope de gasto diario y límite de peticiones.
 - **Fixture del caso:** crea `data/cesvi/casos/A2010930.json` con los datos de abajo, y una prueba que verifique cada valor contra el texto del lote.
 
 ## El caso: AXA, siniestro A2010930

@@ -1,0 +1,93 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<title>Sistema visual de Croquis</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Anybody:wdth,wght@50..150,100..900&amp;family=Geist:wght@400..700&amp;family=Geist+Mono:wght@400..600&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#0B0C0F}
+button,a,[role=tab]{cursor:pointer}
+button:hover{filter:brightness(1.08)}
+a{color:#A4A9B3}a:hover{color:#F2F3F5}
+</style>
+</helmet>
+<div style="width: 100%; min-height: 980px; box-sizing: border-box; padding: 56px 64px; background: #0B0C0F; color: #F2F3F5; font-family: Geist, system-ui, sans-serif; display: flex; flex-direction: column; gap: 48px">
+
+<div style="display: flex; align-items: flex-end; justify-content: space-between; gap: 24px; flex-wrap: wrap">
+<div style="display: flex; flex-direction: column; gap: 10px">
+<div style="font: 500 12px Geist Mono, monospace; letter-spacing: 0.08em; color: #7B818C">SISTEMA VISUAL</div>
+<h1 style="margin: 0; font: 600 44px/1.05 Geist, sans-serif; letter-spacing: -0.03em">Grafito, blanco y una sola señal</h1>
+</div>
+<div style="display: flex; align-items: center; gap: 14px">
+<svg viewBox="0 0 120 120" width="44" height="44" aria-hidden="true"><path d="M91.11 28.89 A44 44 0 1 0 91.11 91.11" fill="none" stroke="#F2F3F5" stroke-width="13" stroke-dasharray="52 25.6"></path><path d="M91 51 L109 69 M109 51 L91 69" stroke="#FF5B2E" stroke-width="7" stroke-linecap="round"></path></svg>
+<span style="font-family: Anybody, sans-serif; font-stretch: 150%; font-weight: 600; letter-spacing: 0.16em; font-size: 26px">CROQUIS</span>
+</div>
+</div>
+
+<section style="display: flex; flex-direction: column; gap: 16px">
+<h2 style="margin: 0; font: 600 15px Geist, sans-serif; color: #A4A9B3">Color</h2>
+<div style="display: grid; grid-template-columns: repeat(8, minmax(0, 1fr)); gap: 12px">
+<div style="display: flex; flex-direction: column; gap: 8px"><div style="height: 88px; border-radius: 14px; background: #0B0C0F; border: 1px solid #23262D"></div><div style="font: 600 13px Geist, sans-serif">Fondo</div><div style="font: 400 12px Geist Mono, monospace; color: #7B818C">#0B0C0F</div></div>
+<div style="display: flex; flex-direction: column; gap: 8px"><div style="height: 88px; border-radius: 14px; background: #121418; border: 1px solid #23262D"></div><div style="font: 600 13px Geist, sans-serif">Superficie</div><div style="font: 400 12px Geist Mono, monospace; color: #7B818C">#121418</div></div>
+<div style="display: flex; flex-direction: column; gap: 8px"><div style="height: 88px; border-radius: 14px; background: #2A2E35"></div><div style="font: 600 13px Geist, sans-serif">Línea</div><div style="font: 400 12px Geist Mono, monospace; color: #7B818C">#2A2E35</div></div>
+<div style="display: flex; flex-direction: column; gap: 8px"><div style="height: 88px; border-radius: 14px; background: #7B818C"></div><div style="font: 600 13px Geist, sans-serif">Texto 3</div><div style="font: 400 12px Geist Mono, monospace; color: #7B818C">#7B818C</div></div>
+<div style="display: flex; flex-direction: column; gap: 8px"><div style="height: 88px; border-radius: 14px; background: #F2F3F5"></div><div style="font: 600 13px Geist, sans-serif">Texto y acción</div><div style="font: 400 12px Geist Mono, monospace; color: #7B818C">#F2F3F5</div></div>
+<div style="display: flex; flex-direction: column; gap: 8px"><div style="height: 88px; border-radius: 14px; background: #FF5B2E"></div><div style="font: 600 13px Geist, sans-serif">Señal · impacto</div><div style="font: 400 12px Geist Mono, monospace; color: #7B818C">#FF5B2E</div></div>
+<div style="display: flex; flex-direction: column; gap: 8px"><div style="height: 88px; border-radius: 14px; background: #5AA9FF"></div><div style="font: 600 13px Geist, sans-serif">Vehículo A</div><div style="font: 400 12px Geist Mono, monospace; color: #7B818C">#5AA9FF</div></div>
+<div style="display: flex; flex-direction: column; gap: 8px"><div style="height: 88px; border-radius: 14px; background: #FFC24B"></div><div style="font: 600 13px Geist, sans-serif">Vehículo B</div><div style="font: 400 12px Geist Mono, monospace; color: #7B818C">#FFC24B</div></div>
+</div>
+</section>
+
+<div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 48px">
+<section style="display: flex; flex-direction: column; gap: 16px">
+<h2 style="margin: 0; font: 600 15px Geist, sans-serif; color: #A4A9B3">Tipografía</h2>
+<div style="display: flex; flex-direction: column; gap: 18px; padding: 28px; border-radius: 20px; background: #121418; border: 1px solid #1E2127">
+<div style="display: flex; align-items: baseline; justify-content: space-between; gap: 16px"><span style="font: 600 48px/1 Geist, sans-serif; letter-spacing: -0.03em">No se sostiene.</span><span style="font: 400 12px Geist Mono, monospace; color: #7B818C">Geist 600 · 48–64</span></div>
+<div style="display: flex; align-items: baseline; justify-content: space-between; gap: 16px"><span style="font: 600 28px/1.1 Geist, sans-serif; letter-spacing: -0.02em">Dos versiones del mismo choque</span><span style="font: 400 12px Geist Mono, monospace; color: #7B818C">Geist 600 · 28–40</span></div>
+<div style="display: flex; align-items: baseline; justify-content: space-between; gap: 16px"><span style="font: 400 16px/1.5 Geist, sans-serif; color: #A4A9B3">Una frase por paso; el resto, en Ver detalle.</span><span style="font: 400 12px Geist Mono, monospace; color: #7B818C">Geist 400 · 15–17</span></div>
+<div style="display: flex; align-items: baseline; justify-content: space-between; gap: 16px"><span style="font: 600 40px/1 Geist Mono, monospace; letter-spacing: -0.03em">63.15 km/h</span><span style="font: 400 12px Geist Mono, monospace; color: #7B818C">Geist Mono · cifras</span></div>
+<div style="display: flex; align-items: baseline; justify-content: space-between; gap: 16px"><span style="font-family: Anybody, sans-serif; font-stretch: 150%; font-weight: 600; letter-spacing: 0.16em; font-size: 20px">CROQUIS</span><span style="font: 400 12px Geist Mono, monospace; color: #7B818C">Anybody · solo la marca</span></div>
+</div>
+</section>
+
+<section style="display: flex; flex-direction: column; gap: 16px">
+<h2 style="margin: 0; font: 600 15px Geist, sans-serif; color: #A4A9B3">Controles · todo lo que se puede tocar muestra la mano</h2>
+<div style="display: flex; flex-direction: column; gap: 20px; padding: 28px; border-radius: 20px; background: #121418; border: 1px solid #1E2127">
+<div style="display: flex; flex-wrap: wrap; align-items: center; gap: 12px">
+<button style="height: 48px; padding: 0 28px; border-radius: 24px; border: 0; background: #F2F3F5; color: #0B0C0F; font: 600 15px Geist, sans-serif">Principal</button>
+<button style="height: 48px; padding: 0 24px; border-radius: 24px; border: 1px solid #2A2E35; background: transparent; color: #F2F3F5; font: 500 15px Geist, sans-serif">Secundario</button>
+<button style="height: 48px; padding: 0 28px; border-radius: 24px; border: 0; background: #F2F3F5; color: #0B0C0F; font: 600 15px Geist, sans-serif; box-shadow: 0 0 0 3px #0B0C0F, 0 0 0 5px #5AA9FF">Con foco</button>
+<button disabled style="height: 48px; padding: 0 24px; border-radius: 24px; border: 0; background: #23262D; color: #7B818C; font: 500 15px Geist, sans-serif; cursor: not-allowed">Desactivado</button>
+</div>
+<div style="display: flex; flex-wrap: wrap; align-items: center; gap: 10px">
+<span style="height: 28px; padding: 0 14px; border-radius: 14px; background: #5AA9FF; color: #0B0C0F; font: 600 13px/28px Geist, sans-serif">A · Silverado</span>
+<span style="height: 28px; padding: 0 14px; border-radius: 14px; background: #FFC24B; color: #0B0C0F; font: 600 13px/28px Geist, sans-serif">B · Tacoma</span>
+<span style="height: 28px; padding: 0 12px; border-radius: 14px; background: #15171C; border: 1px solid rgba(255, 91, 46, 0.6); font: 500 12px/26px Geist, sans-serif">Impacto</span>
+<span style="font: 500 11px Geist Mono, monospace; color: #A4A9B3; padding: 5px 9px; border-radius: 8px; background: #1C1F25">DECLARACIÓN</span>
+<span style="font: 500 11px Geist Mono, monospace; color: #A4A9B3; padding: 5px 9px; border-radius: 8px; background: #1C1F25">PERITO</span>
+<span style="font: 500 11px Geist Mono, monospace; color: #A4A9B3; padding: 4px 8px; border-radius: 8px; border: 1px dashed #3A3F47">SUPUESTO</span>
+</div>
+<div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); padding: 4px; border-radius: 14px; background: #0B0C0F; border: 1px solid #23262D; max-width: 320px">
+<button style="height: 40px; border: 0; border-radius: 10px; background: transparent; color: #A4A9B3; font: 500 14px Geist, sans-serif">Declarada</button>
+<button style="height: 40px; border: 0; border-radius: 10px; background: #23262D; color: #F2F3F5; font: 600 14px Geist, sans-serif">Evidencia</button>
+</div>
+</div>
+</section>
+</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1440,"height":980}}'>
+class Component extends DCLogic {
+renderVals() {
+return {};
+}
+}
+</script>
+</body>
+</html>

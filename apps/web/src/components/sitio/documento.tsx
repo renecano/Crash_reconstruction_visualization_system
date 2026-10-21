@@ -1,7 +1,9 @@
 /**
  * Documento raíz de cada idioma (los layouts raíz de `app/(es)` y `app/(en)`): `<html lang>`,
- * la marca en los metadatos, el idioma para los componentes de cliente y el service worker.
+ * las fuentes (Geist y Geist Mono, ADR 0054), la marca en los metadatos, el idioma para los componentes de cliente y el service worker.
  */
+import { GeistMono } from "geist/font/mono";
+import { GeistSans } from "geist/font/sans";
 import type { Metadata, Viewport } from "next";
 import type { ReactNode } from "react";
 import { ServiceWorkerRegistration } from "@/components/service-worker";
@@ -11,7 +13,7 @@ import { IdiomaProvider } from "@/i18n/cliente";
 const SITIO = process.env.NEXT_PUBLIC_SITE_URL ?? "https://croquis-sage.vercel.app";
 
 export const viewport: Viewport = {
-  themeColor: "#0B0D0F",
+  themeColor: "#0B0C0F",
   colorScheme: "dark",
 };
 
@@ -61,7 +63,7 @@ export function metadatos(
 
 export function Documento({ lang, children }: { lang: Lang; children: ReactNode }) {
   return (
-    <html lang={HTML_LANG[lang]} className="h-full">
+    <html lang={HTML_LANG[lang]} className={`h-full ${GeistSans.variable} ${GeistMono.variable}`}>
       <body className="flex min-h-full flex-col">
         <IdiomaProvider lang={lang}>{children}</IdiomaProvider>
         <ServiceWorkerRegistration />

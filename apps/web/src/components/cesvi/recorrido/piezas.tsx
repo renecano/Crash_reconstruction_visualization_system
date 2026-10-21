@@ -1,6 +1,6 @@
 "use client";
 /**
- * Piezas del recorrido del perito (ADR 0052): números que se cuentan al aparecer, la silueta de un
+ * Piezas del recorrido del perito (ADR 0052 y 0054): números que se cuentan al aparecer, la silueta de un
  * vehículo vista desde arriba con sus zonas de daño, y el panel lateral de «Ver detalle».
  */
 import { NOMBRE_ZONA, type Zona } from "@croquis/cesvi";
@@ -69,11 +69,15 @@ export function Silueta({
 }: {
   zonas: readonly Zona[];
   etiqueta: string;
-  /** El vehículo, para pintar su contorno con su color (ADR 0053). */
+  /** El vehículo: su contorno y sus daños van en su color (ADR 0053 y 0054). */
   letra?: "A" | "B";
   onCambio?: (z: Zona[]) => void;
   testid?: string;
 }) {
+  const trazo =
+    letra === "A" ? "stroke-vehiculo-a" : letra === "B" ? "stroke-vehiculo-b" : "stroke-texto-3";
+  const relleno =
+    letra === "A" ? "fill-vehiculo-a" : letra === "B" ? "fill-vehiculo-b" : "fill-senal";
   return (
     <svg
       viewBox="0 0 100 200"
@@ -87,12 +91,12 @@ export function Silueta({
         y="6"
         width="84"
         height="188"
-        rx="22"
-        className={`fill-superficie ${letra === "A" ? "stroke-vehiculo-a" : letra === "B" ? "stroke-vehiculo-b" : "stroke-texto-3"}`}
+        rx="20"
+        className={`fill-superficie-alta ${trazo}`}
         strokeWidth={letra ? 3 : 1.5}
       />
-      <rect x="20" y="48" width="60" height="30" rx="6" className="fill-fondo stroke-linea" />
-      <rect x="20" y="120" width="60" height="22" rx="6" className="fill-fondo stroke-linea" />
+      <rect x="20" y="48" width="60" height="30" rx="6" className="fill-fondo" opacity="0.55" />
+      <rect x="20" y="120" width="60" height="22" rx="6" className="fill-fondo" opacity="0.35" />
       {(Object.keys(ZONAS_SVG) as Zona[]).map((z) => {
         const [x, y, w, h] = ZONAS_SVG[z];
         const activa = zonas.includes(z);
@@ -105,8 +109,8 @@ export function Silueta({
             width={w}
             height={h}
             rx="4"
-            className={`transition-[fill-opacity] duration-500 ${activa ? "fill-evidencia" : "fill-transparent"} ${onCambio ? "cursor-pointer hover:stroke-texto-2" : ""}`}
-            fillOpacity={activa ? 0.8 : 0}
+            className={`transition-[fill-opacity] duration-500 ${activa ? relleno : "fill-transparent"} ${onCambio ? "cursor-pointer hover:stroke-texto-2" : ""}`}
+            fillOpacity={activa ? 0.9 : 0}
             stroke="transparent"
             strokeWidth="1.5"
             role={onCambio ? "checkbox" : undefined}
@@ -157,13 +161,18 @@ export function PanelDetalle({
       aria-label={titulo}
       aria-hidden={!abierto}
       inert={!abierto}
-      className={`vidrio fixed inset-y-0 right-0 z-40 flex w-full max-w-3xl flex-col gap-6 overflow-y-auto p-6 outline-none transition-transform duration-500 md:p-10 ${abierto ? "translate-x-0" : "translate-x-full"}`}
+      className={`fixed inset-y-0 right-0 z-40 flex w-full max-w-3xl flex-col gap-6 overflow-y-auto border-l border-linea-suave bg-superficie p-6 shadow-2xl outline-none transition-transform duration-500 md:p-10 ${abierto ? "translate-x-0" : "translate-x-full"}`}
       data-testid="panel-detalle"
     >
       <div className="flex items-start justify-between gap-4">
-        <h2 className="t-titulo">{titulo}</h2>
-        <button type="button" className="boton-secundario min-h-11 px-4" onClick={onCerrar}>
-          Cerrar
+        <h2 className="t-panel">{titulo}</h2>
+        <button
+          type="button"
+          className="boton-secundario boton-compacto h-10 w-10 shrink-0 px-0"
+          onClick={onCerrar}
+          aria-label="Cerrar"
+        >
+          ✕
         </button>
       </div>
       {/* Siempre montado: lo que calcula el panel (p. ej. los cálculos) lo usan los demás pasos. */}

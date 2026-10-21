@@ -32,6 +32,31 @@ Reglas de trabajo: `CLAUDE.md`. Especificación: `PLAN.md`.
   - **Cómo probarlo:** en «Correspondencia y dictamen», escribir un nombre, aceptar la sugerencia, pedir el borrador y exportar el dictamen.
   - **Pruebas:** `packages/cesvi` (sugerencia y borrador con cliente falso), `apps/web/src/lib/dictamen-cesvi.test.ts` y la e2e `@flujo` hasta la descarga del PDF.
   - **Qué necesito de René:** nada nuevo. El borrador usa la llave y el tope de gasto de producción que ya están en Vercel.
+- **Rediseño visual de /cesvi (2026-10-21)** (rama `feat/cesvi-rediseno`, ADR 0054; maquetas en `docs/cesvi/rediseno/`):
+  - **Liga:** https://croquis-sage.vercel.app/cesvi
+  - **Qué cambió:**
+    - **Tokens nuevos** en `assets/brand/tokens.json`: grafito, blanco y una sola señal (#FF5B2E). A es #5AA9FF y B es #FFC24B. La acción principal es un botón blanco con texto grafito. Una prueba revisa el contraste de 4.5:1 desde los tokens.
+    - **Tipografía:** Geist para la interfaz y Geist Mono para cifras y rótulos (paquete `geist` 1.8.1, OFL, registrado en `assets/ASSETS.md` y en el ADR 0001). Anybody queda solo en el logotipo.
+    - **Puntero:** una regla global en la capa base pone la mano en todo lo que se toca o se arrastra, y `not-allowed` en lo desactivado.
+    - **Composición como en las maquetas:**
+      - barra de pasos en una fila, con el caso y «Exportar» a la derecha;
+      - pasos 3 y 4 con paneles de vidrio sobre el mapa; en el 4, leyenda arriba a la derecha y reproductor con línea de tiempo abajo;
+      - pasos 1, 2, 5, 6, 7 y 8 en página: el 2, el 6 y el 7 siguen su maqueta, y el 1, el 5 y el 8 usan el mismo sistema;
+      - en cada pantalla, una frase, «Ver detalle» y Anterior · Siguiente.
+    - **A y B con su color y su etiqueta en todo el recorrido:** mapa, frases de la narración, daños, números, sugerencia y PDF.
+    - **El mapa, como la maqueta:**
+      - posición final sólida e inicial punteada;
+      - trayectorias;
+      - restos como banda rayada con su medida;
+      - la X con resplandor;
+      - la otra versión superpuesta (casilla «Superponer»).
+    - **Marca:** la X pasa a #FF5B2E; el símbolo y el logotipo no cambian. Se regeneraron los SVG con `make_brand.py`; salvo la X, son idénticos a los anteriores. Íconos, favicon y manifiesto, con `pnpm marca`.
+    - **`PROTOTIPO.md`:** ya dice que la demo es pública y sin datos personales.
+  - **Cómo probarlo:** abrir la liga y recorrer los 8 pasos con →.
+    - **Paso 2:** las frases van en el color de quien las dice; lo que falta, en señal.
+    - **Paso 4:** reproducir, arrastrar la línea de tiempo, alternar Declarada · Evidencia y la casilla «Superponer».
+    - **Paso 7:** «Aceptar y seguir» lleva al dictamen.
+  - **Pruebas:** la e2e del recorrido en verde, adaptada a la composición nueva, y la prueba de contraste y colores. No hay capturas de referencia.
 - **Ajustes al recorrido tras la revisión de René (2026-10-21)** (rama `feat/cesvi-ajustes-recorrido`, ADR 0053):
   - **Liga:** https://croquis-sage.vercel.app/cesvi, ahora pública: sin usuario ni clave.
   - **Qué cambió:**
@@ -55,7 +80,7 @@ Reglas de trabajo: `CLAUDE.md`. Especificación: `PLAN.md`.
     - **Del clic a las calles, según la página:** mediana 396 ms, máximo 477 ms. Cumple la meta de menos de 1 s.
     - **Visto desde Playwright:** de 1122 a 1484 ms. Esa cifra suma lo que Playwright tarda en hacer el clic y en consultar la página; Chromium corre sin GPU (SwiftShader).
     - **Antes:** marcar el punto esperaba a Overpass, unos 45 s en producción (lo que se vio en la revisión).
-  - **Diferencia con `docs/cesvi/PROTOTIPO.md`:** el documento todavía dice que la demo va con protección de acceso. No lo edité porque es tuyo; si la página pública es lo que quieres, conviene ajustar esa línea.
+  - **`docs/cesvi/PROTOTIPO.md`:** a pedido de René, ya dice que la demo es pública y sin datos personales (rama `feat/cesvi-rediseno`).
 - **Hito 4 — el recorrido del perito** (rama `feat/cesvi-recorrido`, ADR 0052):
   - **Liga:** https://croquis-sage.vercel.app/cesvi (hasta el 2026-10-21 pedía usuario y clave).
   - **Qué hay:** `/cesvi` es ahora un recorrido de 8 pasos.
@@ -197,6 +222,7 @@ Lo que se pospone por el trabajo con CESVI no se borra: queda aquí para despué
   - E8 en Chromium, Firefox y WebKit;
   - generados al día (`generate:check` de scene-schema, extraction, solver-ts, croquis-2d y web) y la demo grabada (`demo:check`);
   - reproducibilidad de los datos de Python (DataMX, CISS, inercias de NHTSA, OSM, MakeHuman, Poly Haven) y Python en Windows.
+- **El resto del sitio con los tokens del rediseño (ADR 0054):** portada, historia, visor 3D y «Cuenta qué pasó» heredan la paleta y Geist sin rediseñarse; la portada y la historia están en pausa. Cuando se reactiven, hay que revisarlas con el sistema nuevo (por ejemplo, los tamaños del lema estaban medidos con Anybody).
 - **Lighthouse, axe y E-series como requisito:** `eval/f11_portada.mjs` y las demás evaluaciones siguen en el repo; se corren cuando René lo pida.
 - **En pausa:** el visor 3D, la portada de lanzamiento y la historia (de F11a solo se usan tokens, marca y componentes); E6 en baja y media después de F11a; F11b (E9 con personas).
 - **Del prototipo de CESVI:** el mapa con mosaicos propios (privacidad completa), la importación automática de cualquier dictamen, interpenetración, impactos múltiples y generalidad del método; autenticación con cuentas para cuando los peritos usen sus propios casos (hoy el acceso es con usuario y clave, ADR 0049).

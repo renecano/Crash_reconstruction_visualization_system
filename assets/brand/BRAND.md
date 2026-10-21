@@ -5,7 +5,7 @@ Guía de uso del logo y del sistema visual. Es la referencia fija para la app, e
 ## Qué significa
 
 - **La C** está hecha con tres rayas de pintura vial, como las líneas de carril. También se lee como la trayectoria de un vehículo.
-- **La X naranja** en la abertura es como marcan los peritos el punto de impacto en un croquis.
+- **La X de señal** en la abertura es como marcan los peritos el punto de impacto en un croquis.
 - **El logotipo CROQUIS** va en mayúsculas extendidas con espaciado amplio: técnico, sobrio, de lanzamiento.
 
 El logo cuenta lo que hace el producto (calle, trayectoria, punto de impacto) sin mostrar un choque. Es coherente con el principio "el espectáculo es la precisión, no la violencia".
@@ -40,10 +40,9 @@ El logo cuenta lo que hace el producto (calle, trayectoria, punto de impacto) si
 
 ## Color
 
-- La X siempre es naranja marcaje, salvo en las versiones de una tinta (todo blanco o todo negro).
-- Los trazos son blanco vial sobre oscuro o tinta sobre claro.
-- **El amarillo vial nunca va en el logo**: está reservado a las acciones del usuario.
-- El naranja marcaje solo señala evidencia; no se usa para decorar.
+- La X siempre es de color señal (#FF5B2E desde el 2026-10-21, ADR 0054; antes naranja marcaje #FF6A13), salvo en las versiones de una tinta (todo blanco o todo negro).
+- Los trazos son blanco vial sobre oscuro o tinta sobre claro. El símbolo y el logotipo no cambiaron con el rediseño.
+- **El sistema es grafito, blanco y una sola señal:** la acción principal es un botón blanco con texto grafito; la señal solo marca el impacto, lo que falta o lo que difiere; los vehículos A y B tienen su color (#5AA9FF y #FFC24B) y no se usan para otra cosa.
 
 ## Luz y efectos
 
@@ -61,15 +60,15 @@ Las versiones con efectos usan:
 
 ## Tipografía
 
-- **Familia:** Anybody (SIL OFL 1.1), autoalojada con `@fontsource-variable/anybody`.
-- **Titulares de lanzamiento:** ancho 125–150, peso 600–800, mayúscula solo al inicio.
-- **Interfaz y lectura:** ancho 100–112, peso 400–500, 16–18 px.
+- **Interfaz:** Geist (SIL OFL 1.1), con el paquete `geist` de Vercel. Títulos en 600 con tracking negativo; cuerpo en 400–500, 15–17 px.
+- **Cifras y rótulos:** Geist Mono (SIL OFL 1.1). Los rótulos van en mayúsculas con tracking 0.08 em («PASO 4 DE 8»).
+- **Anybody** queda solo en el logotipo, convertida a contornos (ver Construcción).
 - **El nombre CROQUIS nunca se escribe con la fuente:** se usa el SVG.
 
 ## No hacer
 
 - Deformar, rotar, recortar o cambiar las proporciones del logo.
-- Cambiar la X a otro color que no sea naranja marcaje (o la tinta única de las versiones mono).
+- Cambiar la X a otro color que no sea el de señal (o la tinta única de las versiones mono).
 - Ponerlo sobre fondos con poco contraste o sobre fotos con mucho detalle sin un velo.
 - Agregar efectos distintos a los descritos (biseles, contornos, degradados de colores).
 - Recrear el logotipo escribiendo "CROQUIS" con la fuente.

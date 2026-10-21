@@ -1,0 +1,173 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<title>Paso 4 · Las dos versiones</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Anybody:wdth,wght@50..150,100..900&amp;family=Geist:wght@400..700&amp;family=Geist+Mono:wght@400..600&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#0B0C0F}
+button,a,[role=tab]{cursor:pointer}
+button:hover{filter:brightness(1.08)}
+a{color:#A4A9B3}a:hover{color:#F2F3F5}
+</style>
+</helmet>
+<div style="position: relative; width: 100%; height: 900px; overflow: hidden; background: #0B0C0F; color: #F2F3F5; font-family: Geist, system-ui, sans-serif">
+
+<svg viewBox="0 0 1440 900" preserveAspectRatio="xMidYMid slice" role="img" aria-label="Mapa del tramo con la versión de la evidencia: B (Tacoma) alcanza a A (Silverado); restos a lo largo de 15.89 metros" style="position: absolute; inset: 0; width: 100%; height: 100%">
+<defs>
+<pattern id="hatch" width="8" height="8" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><rect width="8" height="8" fill="#F2F3F5" fill-opacity="0.04"></rect><line x1="0" y1="0" x2="0" y2="8" stroke="#F2F3F5" stroke-opacity="0.35" stroke-width="2"></line></pattern>
+<radialGradient id="glow"><stop offset="0" stop-color="#FF5B2E" stop-opacity="0.55"></stop><stop offset="1" stop-color="#FF5B2E" stop-opacity="0"></stop></radialGradient>
+</defs>
+<rect width="1440" height="900" fill="#0D0F12"></rect>
+<path d="M0 120 L520 90 L540 330 L0 360 Z" fill="#101317" stroke="#15181D"></path>
+<path d="M0 380 L540 350 L548 620 L0 650 Z" fill="#0F1215" stroke="#15181D"></path>
+<path d="M0 670 L548 640 L556 900 L0 900 Z" fill="#101317" stroke="#15181D"></path>
+<path d="M900 60 L1440 40 L1440 420 L912 450 Z" fill="#101317" stroke="#15181D"></path>
+<path d="M914 470 L1440 440 L1440 900 L926 900 Z" fill="#0F1215" stroke="#15181D"></path>
+<path d="M0 365 C300 350 420 340 556 336" stroke="#141820" stroke-width="10" fill="none"></path>
+<path d="M1440 430 C1200 444 1020 452 882 456" stroke="#0F1922" stroke-width="6" fill="none"></path>
+<rect x="560" y="0" width="120" height="900" fill="#1A1D22"></rect>
+<rect x="680" y="0" width="80" height="900" fill="#111417"></rect>
+<rect x="760" y="0" width="120" height="900" fill="#1C1F25"></rect>
+<line x1="563" y1="0" x2="563" y2="900" stroke="#3A3F47" stroke-width="2"></line>
+<line x1="677" y1="0" x2="677" y2="900" stroke="#3A3F47" stroke-width="2"></line>
+<line x1="763" y1="0" x2="763" y2="900" stroke="#3A3F47" stroke-width="2"></line>
+<line x1="877" y1="0" x2="877" y2="900" stroke="#3A3F47" stroke-width="2"></line>
+<line x1="620" y1="0" x2="620" y2="900" stroke="#555B66" stroke-width="2" stroke-dasharray="22 30"></line>
+<line x1="820" y1="0" x2="820" y2="900" stroke="#555B66" stroke-width="2" stroke-dasharray="22 30"></line>
+<text x="820" y="40" text-anchor="middle" fill="#7B818C" font-size="12" letter-spacing="1.5" font-family="Geist Mono, monospace">↑ NAVOJOA</text>
+<text x="620" y="880" text-anchor="middle" fill="#7B818C" font-size="12" letter-spacing="1.5" font-family="Geist Mono, monospace">↓ LOS MOCHIS</text>
+<rect x="904" y="506" width="92" height="26" rx="13" fill="#15171C" stroke="#2A2E35"></rect>
+<text x="950" y="523" text-anchor="middle" fill="#A4A9B3" font-size="12" font-family="Geist Mono, monospace">km 47+800</text>
+
+<rect x="770" y="262" width="40" height="300" rx="6" fill="url(#hatch)"></rect>
+<line x1="752" y1="262" x2="752" y2="562" stroke="#F2F3F5" stroke-width="1.5"></line>
+<line x1="744" y1="262" x2="760" y2="262" stroke="#F2F3F5" stroke-width="1.5"></line>
+<line x1="744" y1="562" x2="760" y2="562" stroke="#F2F3F5" stroke-width="1.5"></line>
+<rect x="676" y="396" width="76" height="30" rx="15" fill="#F2F3F5"></rect>
+<text x="714" y="416" text-anchor="middle" fill="#0B0C0F" font-size="13" font-weight="600" font-family="Geist Mono, monospace">15.89 m</text>
+
+<path d="M835 470 L835 540" stroke="#7B818C" stroke-width="2" stroke-dasharray="4 6" fill="none"></path>
+<path d="M829 532 L835 544 L841 532" stroke="#7B818C" stroke-width="2" fill="none"></path>
+
+<path d="M840 846 L840 600" stroke="{{colorB}}" stroke-width="3" stroke-linecap="round" fill="none" opacity="0.85"></path>
+<path d="M835 525 C834 420 812 330 800 244" stroke="{{colorA}}" stroke-width="3" stroke-linecap="round" fill="none" opacity="0.85"></path>
+
+<rect x="816" y="473" width="38" height="104" rx="8" fill="none" stroke="{{colorA}}" stroke-width="1.5" stroke-dasharray="5 4" opacity="0.7"></rect>
+<rect x="821" y="742" width="38" height="104" rx="8" fill="none" stroke="{{colorB}}" stroke-width="1.5" stroke-dasharray="5 4" opacity="0.7"></rect>
+<text x="866" y="530" fill="#A4A9B3" font-size="12" font-family="Geist, sans-serif">A · inicial</text>
+<text x="871" y="798" fill="#A4A9B3" font-size="12" font-family="Geist, sans-serif">B · inicial</text>
+
+<g transform="rotate(4 842 610)">
+<rect x="823" y="566" width="38" height="104" rx="8" fill="{{colorB}}"></rect>
+<rect x="828" y="586" width="28" height="16" rx="4" fill="#0B0C0F" opacity="0.55"></rect>
+<rect x="828" y="610" width="28" height="22" rx="3" fill="#0B0C0F" opacity="0.18"></rect>
+</g>
+<rect x="880" y="626" width="112" height="28" rx="14" fill="{{colorB}}"></rect>
+<text x="936" y="645" text-anchor="middle" fill="#0B0C0F" font-size="13" font-weight="600" font-family="Geist, sans-serif">B · Tacoma</text>
+
+<g transform="rotate(-8 800 240)">
+<rect x="781" y="188" width="38" height="104" rx="8" fill="{{colorA}}"></rect>
+<rect x="786" y="208" width="28" height="16" rx="4" fill="#0B0C0F" opacity="0.55"></rect>
+<rect x="786" y="236" width="28" height="48" rx="3" fill="#0B0C0F" opacity="0.18"></rect>
+<rect x="773" y="180" width="54" height="120" rx="12" fill="none" stroke="#F2F3F5" stroke-width="1.5"></rect>
+<rect x="769" y="176" width="8" height="8" rx="2" fill="#F2F3F5"></rect>
+<rect x="823" y="176" width="8" height="8" rx="2" fill="#F2F3F5"></rect>
+<rect x="769" y="296" width="8" height="8" rx="2" fill="#F2F3F5"></rect>
+<rect x="823" y="296" width="8" height="8" rx="2" fill="#F2F3F5"></rect>
+<line x1="800" y1="180" x2="800" y2="156" stroke="#F2F3F5" stroke-width="1.5"></line>
+<circle cx="800" cy="150" r="6" fill="#0B0C0F" stroke="#F2F3F5" stroke-width="1.5"></circle>
+</g>
+<rect x="848" y="226" width="120" height="28" rx="14" fill="{{colorA}}"></rect>
+<text x="908" y="245" text-anchor="middle" fill="#0B0C0F" font-size="13" font-weight="600" font-family="Geist, sans-serif">A · Silverado</text>
+
+<rect x="500" y="132" width="236" height="56" rx="12" fill="#15171C" stroke="#2A2E35"></rect>
+<text x="516" y="156" fill="#F2F3F5" font-size="13" font-weight="600" font-family="Geist, sans-serif">A · posición final</text>
+<text x="516" y="176" fill="#A4A9B3" font-size="12" font-family="Geist, sans-serif">Versión evidencia · arrastra o gira</text>
+<line x1="736" y1="168" x2="770" y2="190" stroke="#2A2E35" stroke-width="1.5"></line>
+
+<circle cx="836" cy="566" r="34" fill="url(#glow)"></circle>
+<path d="M826 556 L846 576 M846 556 L826 576" stroke="#FF5B2E" stroke-width="5" stroke-linecap="round"></path>
+<rect x="588" y="552" width="84" height="28" rx="14" fill="#15171C" stroke="#FF5B2E" stroke-opacity="0.6"></rect>
+<text x="630" y="571" text-anchor="middle" fill="#F2F3F5" font-size="12" font-weight="500" font-family="Geist, sans-serif">Impacto</text>
+<line x1="672" y1="566" x2="822" y2="566" stroke="#FF5B2E" stroke-opacity="0.5" stroke-width="1" stroke-dasharray="3 4"></line>
+</svg>
+
+<header style="position: absolute; top: 0; left: 0; right: 0; height: 64px; display: flex; align-items: center; justify-content: space-between; gap: 24px; padding: 0 24px; background: rgba(11, 12, 15, 0.82); backdrop-filter: blur(16px); border-bottom: 1px solid rgba(255, 255, 255, 0.06)">
+<div style="display: flex; align-items: center; gap: 10px">
+<svg viewBox="0 0 120 120" width="26" height="26" aria-hidden="true"><path d="M91.11 28.89 A44 44 0 1 0 91.11 91.11" fill="none" stroke="#F2F3F5" stroke-width="13" stroke-dasharray="52 25.6"></path><path d="M91 51 L109 69 M109 51 L91 69" stroke="#FF5B2E" stroke-width="7" stroke-linecap="round"></path></svg>
+<span style="font-family: Anybody, sans-serif; font-stretch: 150%; font-weight: 600; letter-spacing: 0.16em; font-size: 15px">CROQUIS</span>
+</div>
+<nav aria-label="Pasos del recorrido" style="display: flex; align-items: center; gap: 4px">
+<button style="display: flex; align-items: center; gap: 8px; height: 36px; padding: 0 12px; border: 0; border-radius: 18px; background: transparent; color: #A4A9B3; font: 500 13px Geist, sans-serif"><span style="width: 20px; height: 20px; border-radius: 10px; background: #23262D; color: #A4A9B3; font-size: 11px; display: grid; place-items: center">✓</span>Caso</button>
+<button style="display: flex; align-items: center; gap: 8px; height: 36px; padding: 0 12px; border: 0; border-radius: 18px; background: transparent; color: #A4A9B3; font: 500 13px Geist, sans-serif"><span style="width: 20px; height: 20px; border-radius: 10px; background: #23262D; color: #A4A9B3; font-size: 11px; display: grid; place-items: center">✓</span>Narración</button>
+<button style="display: flex; align-items: center; gap: 8px; height: 36px; padding: 0 12px; border: 0; border-radius: 18px; background: transparent; color: #A4A9B3; font: 500 13px Geist, sans-serif"><span style="width: 20px; height: 20px; border-radius: 10px; background: #23262D; color: #A4A9B3; font-size: 11px; display: grid; place-items: center">✓</span>Lugar</button>
+<button aria-current="step" style="display: flex; align-items: center; gap: 8px; height: 36px; padding: 0 14px 0 8px; border: 0; border-radius: 18px; background: #F2F3F5; color: #0B0C0F; font: 600 13px Geist, sans-serif"><span style="width: 20px; height: 20px; border-radius: 10px; background: #0B0C0F; color: #F2F3F5; font-size: 11px; display: grid; place-items: center">4</span>Versiones</button>
+<button style="display: flex; align-items: center; gap: 8px; height: 36px; padding: 0 12px; border: 0; border-radius: 18px; background: transparent; color: #7B818C; font: 500 13px Geist, sans-serif"><span style="width: 20px; height: 20px; border-radius: 10px; border: 1px solid #2A2E35; font-size: 11px; display: grid; place-items: center">5</span>Daños</button>
+<button style="display: flex; align-items: center; gap: 8px; height: 36px; padding: 0 12px; border: 0; border-radius: 18px; background: transparent; color: #7B818C; font: 500 13px Geist, sans-serif"><span style="width: 20px; height: 20px; border-radius: 10px; border: 1px solid #2A2E35; font-size: 11px; display: grid; place-items: center">6</span>Números</button>
+<button style="display: flex; align-items: center; gap: 8px; height: 36px; padding: 0 12px; border: 0; border-radius: 18px; background: transparent; color: #7B818C; font: 500 13px Geist, sans-serif"><span style="width: 20px; height: 20px; border-radius: 10px; border: 1px solid #2A2E35; font-size: 11px; display: grid; place-items: center">7</span>Sugerencia</button>
+<button style="display: flex; align-items: center; gap: 8px; height: 36px; padding: 0 12px; border: 0; border-radius: 18px; background: transparent; color: #7B818C; font: 500 13px Geist, sans-serif"><span style="width: 20px; height: 20px; border-radius: 10px; border: 1px solid #2A2E35; font-size: 11px; display: grid; place-items: center">8</span>Dictamen</button>
+</nav>
+<div style="display: flex; align-items: center; gap: 12px">
+<span style="font: 500 13px Geist, sans-serif; color: #A4A9B3">AXA · Alcance · Ahome, Sin.</span>
+<button style="height: 36px; padding: 0 14px; border-radius: 18px; border: 1px solid #2A2E35; background: transparent; color: #F2F3F5; font: 500 13px Geist, sans-serif">Exportar</button>
+</div>
+</header>
+
+<section style="position: absolute; left: 24px; top: 88px; width: 360px; box-sizing: border-box; padding: 24px; border-radius: 20px; background: rgba(21, 23, 28, 0.78); backdrop-filter: blur(20px); border: 1px solid rgba(255, 255, 255, 0.08); display: flex; flex-direction: column; gap: 20px">
+<div style="font: 500 12px Geist Mono, monospace; letter-spacing: 0.08em; color: #7B818C">PASO 4 DE 8</div>
+<h1 style="margin: 0; font: 600 30px/1.1 Geist, sans-serif; letter-spacing: -0.02em">Dos versiones del mismo choque</h1>
+<p style="margin: 0; font: 400 15px/1.5 Geist, sans-serif; color: #A4A9B3">Una reversa no lanza restos 15.89 m. Un alcance, sí.</p>
+<div role="tablist" aria-label="Versión" style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); padding: 4px; border-radius: 14px; background: #0B0C0F; border: 1px solid #23262D">
+<button role="tab" aria-selected="false" style="height: 40px; border: 0; border-radius: 10px; background: transparent; color: #A4A9B3; font: 500 14px Geist, sans-serif">Declarada</button>
+<button role="tab" aria-selected="true" style="height: 40px; border: 0; border-radius: 10px; background: #23262D; color: #F2F3F5; font: 600 14px Geist, sans-serif">Evidencia</button>
+</div>
+<div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px">
+<div style="padding: 14px; border-radius: 14px; background: #0F1114; border: 1px solid #1E2127"><div style="font: 400 12px Geist, sans-serif; color: #7B818C">Restos · declarada</div><div style="margin-top: 6px; font: 600 26px Geist Mono, monospace; color: #A4A9B3">0 m</div></div>
+<div style="padding: 14px; border-radius: 14px; background: #0F1114; border: 1px solid #1E2127"><div style="font: 400 12px Geist, sans-serif; color: #7B818C">Restos · evidencia</div><div style="margin-top: 6px; font: 600 26px Geist Mono, monospace">15.89 m</div></div>
+</div>
+<label style="display: flex; align-items: center; justify-content: space-between; font: 500 14px Geist, sans-serif; color: #A4A9B3">Superponer la declarada<input type="checkbox" checked style="width: 18px; height: 18px; accent-color: #F2F3F5"></label>
+<button style="height: 40px; border-radius: 12px; border: 1px solid #2A2E35; background: transparent; color: #F2F3F5; font: 500 14px Geist, sans-serif">Ver detalle</button>
+<div style="display: flex; gap: 12px">
+<button style="flex: 1; height: 48px; border-radius: 24px; border: 1px solid #2A2E35; background: transparent; color: #F2F3F5; font: 500 15px Geist, sans-serif">← Anterior</button>
+<button style="flex: 1.4; height: 48px; border-radius: 24px; border: 0; background: #F2F3F5; color: #0B0C0F; font: 600 15px Geist, sans-serif">Siguiente →</button>
+</div>
+</section>
+
+<aside aria-label="Leyenda" style="position: absolute; right: 24px; top: 88px; width: 232px; box-sizing: border-box; padding: 18px; border-radius: 18px; background: rgba(21, 23, 28, 0.78); backdrop-filter: blur(20px); border: 1px solid rgba(255, 255, 255, 0.08); display: flex; flex-direction: column; gap: 12px; font: 400 13px Geist, sans-serif; color: #A4A9B3">
+<div style="font: 500 12px Geist Mono, monospace; letter-spacing: 0.08em; color: #7B818C">LEYENDA</div>
+<div style="display: flex; align-items: center; gap: 10px"><span style="width: 12px; height: 26px; border-radius: 4px; background: {{colorA}}"></span><span style="color: #F2F3F5">A · Silverado</span></div>
+<div style="display: flex; align-items: center; gap: 10px"><span style="width: 12px; height: 26px; border-radius: 4px; background: {{colorB}}"></span><span style="color: #F2F3F5">B · Tacoma</span></div>
+<div style="display: flex; align-items: center; gap: 10px"><span style="width: 12px; height: 26px; border-radius: 4px; border: 1.5px dashed #7B818C; box-sizing: border-box"></span>Posición inicial</div>
+<div style="display: flex; align-items: center; gap: 10px"><span style="width: 12px; color: #FF5B2E; font-weight: 700; text-align: center">✕</span>Punto de impacto</div>
+<div style="display: flex; align-items: center; gap: 10px"><span style="width: 12px; height: 12px; border-radius: 3px; background: repeating-linear-gradient(45deg, #A4A9B3 0 2px, transparent 2px 5px)"></span>Zona de restos</div>
+<div style="display: flex; align-items: center; gap: 10px"><span style="width: 12px; border-top: 2px dashed #7B818C"></span>Maniobra declarada</div>
+</aside>
+
+<div style="position: absolute; left: 50%; bottom: 24px; transform: translateX(-50%); width: 600px; max-width: calc(100% - 48px); box-sizing: border-box; display: flex; align-items: center; gap: 16px; padding: 12px 20px 12px 12px; border-radius: 32px; background: rgba(21, 23, 28, 0.82); backdrop-filter: blur(20px); border: 1px solid rgba(255, 255, 255, 0.08)">
+<button aria-label="Reproducir" style="width: 44px; height: 44px; flex: none; border-radius: 22px; border: 0; background: #F2F3F5; color: #0B0C0F; font-size: 14px">▶</button>
+<div style="flex: 1; display: flex; flex-direction: column; gap: 8px">
+<div style="position: relative; height: 4px; border-radius: 2px; background: #2A2E35"><div style="position: absolute; left: 0; top: 0; bottom: 0; width: 62%; border-radius: 2px; background: #F2F3F5"></div><span style="position: absolute; left: 38%; top: -4px; width: 12px; height: 12px; margin-left: -6px; border-radius: 6px; background: #FF5B2E"></span><span style="position: absolute; left: 62%; top: -6px; width: 16px; height: 16px; margin-left: -8px; border-radius: 8px; background: #F2F3F5; box-shadow: 0 0 0 4px rgba(242, 243, 245, 0.15)"></span></div>
+<div style="display: flex; justify-content: space-between; font: 400 12px Geist, sans-serif; color: #7B818C"><span>Inicio</span><span style="color: #F2F3F5">Impacto</span><span>Posiciones finales</span></div>
+</div>
+<span style="font: 500 13px Geist Mono, monospace; color: #A4A9B3">1.9 s</span>
+</div>
+
+<div style="position: absolute; right: 24px; bottom: 24px; text-align: right; font: 400 11px/1.6 Geist, sans-serif; color: #7B818C">Reconstrucción de apoyo · el dictamen es del perito<br>Calles © OpenStreetMap (ODbL)</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"colorA":{"editor":"color","default":"#5AA9FF","options":["#5AA9FF","#7C8CFF","#3DD6B5"],"section":"Vehículos"},"colorB":{"editor":"color","default":"#FFC24B","options":["#FFC24B","#F2F3F5","#FF8FB1"],"section":"Vehículos"},"$preview":{"width":1440,"height":900}}'>
+class Component extends DCLogic {
+renderVals() {
+return { colorA: this.props.colorA ?? '#5AA9FF', colorB: this.props.colorB ?? '#FFC24B' };
+}
+}
+</script>
+</body>
+</html>

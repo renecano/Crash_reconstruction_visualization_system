@@ -26,7 +26,7 @@ const OUT = join(PUB, "iconos");
 const check = process.argv.includes("--check");
 
 const tokens = JSON.parse(readFileSync(join(BRAND, "tokens.json"), "utf8"));
-const FONDO = tokens.color["asfalto-noche"].value;
+const FONDO = tokens.color.grafito.value;
 
 const FUENTES = ["favicon.svg", "app-icon.svg"];
 const sha = (f) =>

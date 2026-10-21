@@ -1,7 +1,8 @@
 /*
- * Sistema de diseño de Croquis (PLAN §11.2, docs/design/plan.md, ADR 0045).
- * Los colores y efectos vienen de tokens.css (generado desde assets/brand/tokens.json); aquí solo
- * se les da un rol y se definen la escala tipográfica, el espacio y las piezas básicas.
+ * Sistema de diseño de Croquis: grafito, blanco y una sola señal (rediseño de /cesvi, ADR 0054;
+ * maquetas en docs/cesvi/rediseno/). Los colores vienen de tokens.css (generado desde
+ * assets/brand/tokens.json); aquí solo se les da un rol y se definen la escala tipográfica, el
+ * espacio y las piezas básicas.
  */
 
 /* Capas de Tailwind: los estilos de elementos van en base y las clases en components, para que
@@ -13,32 +14,40 @@
     color-scheme: dark;
 
     /* Roles de color: los componentes usan estos, nunca los nombres de marca. */
-    --fondo: var(--marca-asfalto-noche);
-    --superficie: var(--marca-asfalto-mojado);
-    --superficie-alta: var(--marca-asfalto);
-    --linea: var(--marca-asfalto);
-    --texto: var(--marca-blanco-vial);
-    --texto-2: var(--marca-concreto-claro);
-    --texto-3: var(--marca-concreto);
-    --accion: var(--marca-amarillo-vial);
-    --accion-texto: var(--marca-tinta);
-    --evidencia: var(--marca-naranja-marcaje);
-    /* Colores de datos para cada vehículo de un caso (/cesvi, ADR 0053): los mismos del mapa, los
-       daños, los números y el PDF. Son los de las hipótesis del visor (ADR 0045), distinguibles
-       con daltonismo común; no compiten con el amarillo (acciones) ni con el naranja (evidencia). */
-    --vehiculo-a: #2b8cff;
-    --vehiculo-b: #a05cff;
+    --fondo: var(--marca-grafito);
+    --superficie: var(--marca-grafito-superficie);
+    --superficie-alta: var(--marca-grafito-elevado);
+    --linea-suave: var(--marca-linea-suave);
+    --linea: var(--marca-linea);
+    --texto: var(--marca-blanco);
+    --texto-2: var(--marca-gris);
+    --texto-3: var(--marca-gris-oscuro);
+    /* La acción principal es blanca con texto grafito; el foco, un anillo azul separado del botón. */
+    --accion: var(--marca-blanco);
+    --accion-texto: var(--marca-grafito);
+    --foco: var(--marca-vehiculo-a);
+    /* La única señal: punto de impacto, lo que falta, lo que difiere. `--evidencia` es su alias. */
+    --senal: var(--marca-senal);
+    --senal-texto: #ffb199;
+    --evidencia: var(--senal);
+    /* Cada vehículo con su color en todo el recorrido (ADR 0053 y 0054). */
+    --vehiculo-a: var(--marca-vehiculo-a);
+    --vehiculo-b: var(--marca-vehiculo-b);
 
-    /* Tipografía: una sola familia variable (ancho = font-stretch, peso = font-weight). */
-    --fuente: "Anybody Variable", "Anybody Respaldo", ui-sans-serif, system-ui, sans-serif;
-    --t-lanzamiento: clamp(2.5rem, 6vw, 5.75rem);
-    --t-capitulo: clamp(2rem, 4vw, 3.6rem);
+    /* Tipografía: Geist para la interfaz y Geist Mono para cifras y rótulos (`next/font`, con
+       respaldo de métricas ajustadas). Anybody queda solo en el logotipo (SVG). */
+    --fuente: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
+    --fuente-mono: var(--font-geist-mono), ui-monospace, "SFMono-Regular", Menlo, monospace;
+    --t-lanzamiento: clamp(2.5rem, 5vw, 4rem);
+    --t-capitulo: clamp(2rem, 4vw, 3.25rem);
     --t-letra: clamp(3.5rem, 12vw, 12rem);
-    --t-titulo: clamp(1.9rem, 3.6vw, 3rem);
-    --t-subtitulo: 1.375rem;
+    --t-titulo: clamp(1.75rem, 3vw, 2.5rem);
+    --t-panel: 1.875rem;
+    --t-subtitulo: 1.25rem;
     --t-cuerpo: 1.0625rem;
-    --t-interfaz: 1rem;
-    --t-nota: 0.875rem;
+    --t-interfaz: 0.9375rem;
+    --t-nota: 0.8125rem;
+    --t-rotulo: 0.75rem;
 
     /* Espacio: escala de 4 px. */
     --e-1: 4px;
@@ -61,8 +70,8 @@
     --carril-trazo: 10px;
     --carril-hueco: 20px;
 
-    --radio-control: 2px;
-    --radio-panel: 4px;
+    --radio-control: 12px;
+    --radio-panel: 20px;
     --transicion: 120ms ease-out;
   }
 
@@ -73,10 +82,13 @@
     --fondo: var(--marca-papel);
     --superficie: color-mix(in srgb, var(--marca-tinta) 5%, var(--marca-papel));
     --superficie-alta: color-mix(in srgb, var(--marca-tinta) 12%, var(--marca-papel));
+    --linea-suave: color-mix(in srgb, var(--marca-tinta) 14%, var(--marca-papel));
     --linea: color-mix(in srgb, var(--marca-tinta) 22%, var(--marca-papel));
     --texto: var(--marca-tinta);
     --texto-2: color-mix(in srgb, var(--marca-tinta) 78%, var(--marca-papel));
     --texto-3: color-mix(in srgb, var(--marca-tinta) 62%, var(--marca-papel));
+    --accion: var(--marca-tinta);
+    --accion-texto: var(--marca-papel);
   }
 
   html {
@@ -84,9 +96,7 @@
     color: var(--texto);
     font-family: var(--fuente);
     font-size: 100%;
-    font-stretch: 104%;
-    font-weight: 420;
-    font-optical-sizing: auto;
+    font-weight: 400;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     text-rendering: optimizeLegibility;
@@ -99,22 +109,32 @@
     line-height: 1.55;
   }
 
-  /* El fondo de las páginas es asfalto, no un color plano (docs/design/plan.md §10): la misma
-     textura del visor (Poly Haven, CC0, ya precargada), casi imperceptible y sin color. La escena 3D
-     de la portada la tapa; el tema de papel no la usa. */
-  body {
-    position: relative;
-    isolation: isolate;
+  /* Todo lo que se puede tocar muestra la mano (Tailwind 4 la quitó de los botones); lo
+     desactivado, que no se puede. */
+  button,
+  a[href],
+  [role="button"],
+  [role="tab"],
+  [role="checkbox"],
+  [role="switch"],
+  [role="option"],
+  summary,
+  select,
+  label:has(input, select, textarea),
+  input[type="checkbox"],
+  input[type="radio"],
+  input[type="range"],
+  input[type="file"],
+  [draggable="true"],
+  .maplibregl-marker[draggable],
+  .punto-mapa {
+    cursor: pointer;
   }
-  body::before {
-    content: "";
-    position: fixed;
-    inset: 0;
-    z-index: -1;
-    pointer-events: none;
-    background: url("/texturas/asfalto_diff.webp") 0 0 / 512px repeat;
-    filter: grayscale(1);
-    opacity: 0.05;
+  :disabled,
+  [aria-disabled="true"],
+  :disabled + label,
+  label:has(:disabled) {
+    cursor: not-allowed;
   }
 
   /* Los hijos de una cuadrícula pueden encogerse: sin esto, un renglón largo (el JSON, una tabla)
@@ -125,15 +145,14 @@
   }
 
   ::selection {
-    background: color-mix(in srgb, var(--accion) 38%, transparent);
+    background: color-mix(in srgb, var(--foco) 38%, transparent);
     color: var(--texto);
   }
 
-  /* Foco visible en amarillo vial: es una acción del usuario. */
+  /* Foco visible: un anillo azul separado del control (maqueta «Con foco»). */
   :focus-visible {
-    outline: 2px solid var(--accion);
-    outline-offset: 2px;
-    border-radius: var(--radio-control);
+    outline: 2px solid var(--foco);
+    outline-offset: 3px;
   }
 
   a {
@@ -163,35 +182,21 @@
   .t-lanzamiento,
   .t-capitulo,
   .t-letra,
-  .t-titulo {
+  .t-titulo,
+  .t-panel {
     text-wrap: balance;
-  }
-  /* Los titulares son anchos: una palabra larga («Atropellamiento:») no debe desbordar una columna
-     angosta. Solo se parte si no cabe; donde hace falta dividir con guion, la columna lo pide
-     (`hyphens-auto`), porque en titulares cortos el guion se ve como error («cal-cula»). */
-  .t-lanzamiento,
-  .t-capitulo,
-  .t-titulo {
     overflow-wrap: break-word;
-  }
-  .t-lanzamiento,
-  .t-letra {
-    font-family: "Anybody Bloque", "Anybody Respaldo", ui-sans-serif, system-ui, sans-serif;
+    font-weight: 600;
   }
   .t-lanzamiento {
     font-size: var(--t-lanzamiento);
-    font-stretch: 150%;
-    font-weight: 760;
-    line-height: 0.98;
-    letter-spacing: 0.01em;
+    line-height: 1.02;
+    letter-spacing: -0.035em;
   }
-  /* El lema de la portada tiene renglones fijos: si se acomodara solo, la fuente de respaldo
-     (más angosta) lo dejaría en menos renglones que Anybody, y al llegar la fuente la portada
-     saltaría (CLS, ADR 0045 §5). En el celular, cada trozo va en su renglón; en pantallas anchas,
-     cada frase. El tamaño baja lo necesario para que el renglón más ancho quepa en Anybody: 8.8 em
-     el trozo («happened.») y 16.9 em la frase («Tell what happened.»), medidos con la fuente. */
+  /* El lema de la portada: un renglón por trozo en el celular y uno por frase en pantallas
+     anchas. */
   .lema {
-    font-size: min(var(--t-lanzamiento), calc((100vw - 2 * var(--margen)) / 9));
+    font-size: min(var(--t-lanzamiento), calc((100vw - 2 * var(--margen)) / 7));
   }
   .lema-frase,
   .lema-trozo {
@@ -200,7 +205,7 @@
   }
   @media (min-width: 48rem) {
     .lema {
-      font-size: min(var(--t-lanzamiento), calc((100vw - 2 * var(--margen)) / 17.5));
+      font-size: min(var(--t-lanzamiento), calc((100vw - 2 * var(--margen)) / 13));
     }
     .lema-trozo {
       display: inline;
@@ -208,59 +213,75 @@
   }
   .t-capitulo {
     font-size: var(--t-capitulo);
-    font-stretch: 130%;
-    font-weight: 700;
-    line-height: 1.02;
-    letter-spacing: 0.012em;
+    line-height: 1.04;
+    letter-spacing: -0.03em;
   }
   .t-letra {
     font-size: var(--t-letra);
-    font-stretch: 150%;
-    font-weight: 800;
     line-height: 0.9;
+    letter-spacing: -0.04em;
   }
   .t-titulo {
     font-size: var(--t-titulo);
-    font-stretch: 125%;
-    font-weight: 650;
     line-height: 1.08;
-    letter-spacing: 0.01em;
+    letter-spacing: -0.025em;
+  }
+  .t-panel {
+    font-size: var(--t-panel);
+    line-height: 1.1;
+    letter-spacing: -0.02em;
   }
   .t-subtitulo {
     font-size: var(--t-subtitulo);
-    font-stretch: 112%;
     font-weight: 600;
-    line-height: 1.2;
+    line-height: 1.25;
+    letter-spacing: -0.015em;
   }
   .t-cuerpo {
     font-size: var(--t-cuerpo);
-    font-stretch: 104%;
-    font-weight: 420;
+    font-weight: 400;
     line-height: 1.55;
     max-width: var(--columna);
   }
   .t-interfaz {
     font-size: var(--t-interfaz);
-    font-stretch: 104%;
-    font-weight: 480;
+    font-weight: 500;
     line-height: 1.4;
   }
   .t-nota {
     font-size: var(--t-nota);
-    font-stretch: 100%;
-    font-weight: 420;
-    line-height: 1.45;
-    letter-spacing: 0.005em;
+    font-weight: 400;
+    line-height: 1.5;
     color: var(--texto-2);
   }
+  /* Rótulos en Geist Mono, en mayúsculas («PASO 4 DE 8», «LEYENDA»). */
+  .t-rotulo {
+    font-family: var(--fuente-mono);
+    font-size: var(--t-rotulo);
+    font-weight: 500;
+    line-height: 1.3;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--texto-3);
+  }
   .t-cota {
-    font-stretch: 112%;
-    font-weight: 560;
+    font-family: var(--fuente-mono);
+    font-weight: 500;
     line-height: 1.1;
-    letter-spacing: 0.02em;
     font-variant-numeric: tabular-nums;
   }
+  /* Las cifras van en Geist Mono. */
   .cifras {
+    font-family: var(--fuente-mono);
+    font-variant-numeric: tabular-nums;
+  }
+  /* Los números grandes del recorrido (maqueta del paso 6). */
+  .t-numero {
+    font-family: var(--fuente-mono);
+    font-size: clamp(3.5rem, 8vw, 6.5rem);
+    font-weight: 600;
+    line-height: 1;
+    letter-spacing: -0.04em;
     font-variant-numeric: tabular-nums;
   }
 
@@ -314,83 +335,178 @@
     gap: var(--e-2);
     min-height: 48px;
     padding: 0 var(--e-6);
-    border-radius: var(--radio-control);
+    border-radius: 999px;
     font-size: var(--t-interfaz);
-    font-stretch: 112%;
-    font-weight: 620;
-    letter-spacing: 0.01em;
+    font-weight: 500;
     text-decoration: none;
-    cursor: pointer;
+    white-space: nowrap;
     transition:
       filter var(--transicion),
       border-color var(--transicion),
       background-color var(--transicion);
   }
   .boton-principal {
+    padding: 0 28px;
     border: 0;
-    background: var(--efecto-boton-principal-background);
-    box-shadow: var(--efecto-boton-principal-box-shadow);
-    color: var(--efecto-boton-principal-color);
+    background: var(--accion);
+    color: var(--accion-texto);
+    font-weight: 600;
   }
   .boton-principal:hover {
-    filter: brightness(1.05);
+    filter: brightness(0.92);
     text-decoration: none;
   }
   .boton-secundario {
-    border: 1px solid color-mix(in srgb, var(--texto) 40%, transparent);
+    border: 1px solid var(--linea);
     background: transparent;
     color: var(--texto);
   }
   .boton-secundario:hover {
-    border-color: var(--texto);
+    border-color: var(--texto-3);
+    background: color-mix(in srgb, var(--texto) 4%, transparent);
     text-decoration: none;
   }
-  /* Deshabilitado: sin el amarillo (no es una acción disponible) y sin filtros que lo enturbien. */
+  /* Botones de una barra o de un panel (36–40 px de alto). */
+  .boton-compacto {
+    min-height: 40px;
+    padding: 0 var(--e-4);
+    font-size: 0.875rem;
+  }
   .boton-principal:disabled,
-  .boton-principal[aria-disabled="true"] {
-    cursor: not-allowed;
+  .boton-principal[aria-disabled="true"],
+  .boton-secundario:disabled {
+    border-color: transparent;
     background: var(--superficie-alta);
-    box-shadow: none;
     color: var(--texto-3);
     filter: none;
-  }
-  .boton-secundario:disabled {
-    cursor: not-allowed;
-    border-color: var(--linea);
-    color: var(--texto-3);
   }
 
   .campo {
     width: 100%;
     min-height: 44px;
-    padding: var(--e-3) var(--e-4);
+    padding: var(--e-2) var(--e-4);
     border: 1px solid var(--linea);
     border-radius: var(--radio-control);
-    background: var(--superficie);
+    background: var(--fondo);
     color: var(--texto);
     font: inherit;
-    font-size: var(--t-cuerpo);
+    font-size: var(--t-interfaz);
   }
   .campo::placeholder {
     color: var(--texto-3);
   }
   .campo:hover {
-    border-color: color-mix(in srgb, var(--texto) 30%, var(--linea));
+    border-color: var(--texto-3);
+  }
+
+  /* Control segmentado (Declarada · Evidencia). */
+  .segmentado {
+    display: grid;
+    grid-auto-columns: minmax(0, 1fr);
+    grid-auto-flow: column;
+    padding: 4px;
+    border-radius: 14px;
+    background: var(--fondo);
+    border: 1px solid var(--linea-suave);
+  }
+  .segmentado > button {
+    min-height: 40px;
+    border: 0;
+    border-radius: 10px;
+    background: transparent;
+    color: var(--texto-2);
+    font-size: 0.875rem;
+    font-weight: 500;
+  }
+  .segmentado > button[aria-selected="true"],
+  .segmentado > button[aria-pressed="true"] {
+    background: var(--superficie-alta);
+    color: var(--texto);
+    font-weight: 600;
+  }
+
+  /* Insignias: la fuente de un dato (DECLARACIÓN, PERITO, SUPUESTO…). */
+  .insignia {
+    display: inline-flex;
+    align-items: center;
+    padding: 4px 8px;
+    border-radius: 8px;
+    background: var(--superficie-alta);
+    color: var(--texto-2);
+    font-family: var(--fuente-mono);
+    font-size: 0.6875rem;
+    font-weight: 500;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    white-space: nowrap;
+  }
+  .insignia-supuesto {
+    background: transparent;
+    border: 1px dashed #3a3f47;
+  }
+  .insignia-senal {
+    background: color-mix(in srgb, var(--senal) 14%, transparent);
+    color: var(--senal-texto);
+  }
+
+  /* La etiqueta de un vehículo: «A · Silverado» en su color, con texto grafito. */
+  .etiqueta-vehiculo {
+    display: inline-flex;
+    align-items: center;
+    height: 28px;
+    padding: 0 12px;
+    border-radius: 14px;
+    color: var(--fondo);
+    font-size: 0.8125rem;
+    font-weight: 600;
+    white-space: nowrap;
+  }
+  .etiqueta-vehiculo-a {
+    background: var(--vehiculo-a);
+  }
+  .etiqueta-vehiculo-b {
+    background: var(--vehiculo-b);
   }
 
   /* ---------- Superficies ---------- */
 
-  /* Paneles sobre la escena 3D: vidrio oscuro con filo de luz (tokens). */
-  /* Marcas que el perito arrastra sobre el mapa de /cesvi: el vehículo elegido, el punto de
-     impacto (la X naranja de la marca: es evidencia) y los extremos de la zona de restos. */
+  .tarjeta {
+    border-radius: var(--radio-panel);
+    background: var(--superficie);
+    border: 1px solid var(--linea-suave);
+  }
+  /* Un recuadro dentro de una tarjeta o un panel (cifras de los restos, mini gráficas). */
+  .hundido {
+    border-radius: 14px;
+    background: #0f1114;
+    border: 1px solid var(--linea-suave);
+  }
+
+  /* Paneles sobre el mapa: vidrio grafito (tokens). */
+  .vidrio {
+    background: var(--efecto-vidrio-oscuro-background);
+    border: var(--efecto-vidrio-oscuro-border);
+    border-radius: var(--radio-panel);
+    backdrop-filter: var(--efecto-vidrio-oscuro-backdrop-filter);
+    -webkit-backdrop-filter: var(--efecto-vidrio-oscuro-backdrop-filter);
+  }
+
+  /* Barras de borde a borde (encabezado): vidrio sin radio, más opaco. */
+  .vidrio.barra {
+    border-radius: 0;
+    border-width: 0 0 1px;
+    border-color: rgba(255, 255, 255, 0.06);
+    background: color-mix(in srgb, var(--fondo) 82%, transparent);
+  }
+
   /* Entrada de cada paso del recorrido de /cesvi (sin movimiento si así lo pide la persona). */
   .aparecer {
-    animation: aparecer 600ms ease-out both;
+    animation: aparecer 500ms ease-out both;
   }
   @keyframes aparecer {
     from {
       opacity: 0;
-      transform: translateY(12px);
+      transform: translateY(10px);
     }
   }
   @media (prefers-reduced-motion: reduce) {
@@ -399,9 +515,43 @@
     }
   }
 
-  /* El mapa del recorrido (ADR 0053). Los puntos que el perito arrastra, justo en su lugar, con el
-     color de su vehículo (o naranja de evidencia para el impacto y los restos). El área táctil
-     llega a 44 px aunque el punto se vea de 20. */
+  /* La línea de tiempo del reproductor (paso 4): la pista la dibuja el componente; aquí, el
+     control nativo queda transparente salvo su perilla blanca. */
+  .linea-tiempo {
+    appearance: none;
+    -webkit-appearance: none;
+    margin: 0;
+    background: transparent;
+  }
+  .linea-tiempo::-webkit-slider-runnable-track {
+    height: 16px;
+    background: transparent;
+  }
+  .linea-tiempo::-moz-range-track {
+    height: 16px;
+    background: transparent;
+  }
+  .linea-tiempo::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 16px;
+    height: 16px;
+    border-radius: 999px;
+    background: var(--texto);
+    box-shadow: 0 0 0 4px color-mix(in srgb, var(--texto) 15%, transparent);
+  }
+  .linea-tiempo::-moz-range-thumb {
+    width: 16px;
+    height: 16px;
+    border: 0;
+    border-radius: 999px;
+    background: var(--texto);
+    box-shadow: 0 0 0 4px color-mix(in srgb, var(--texto) 15%, transparent);
+  }
+
+  /* ---------- El mapa del recorrido (ADR 0053 y 0054) ---------- */
+
+  /* Los puntos que el perito arrastra, justo en su lugar, con el color de su vehículo. El área
+     táctil llega a 44 px aunque el punto se vea de 20. */
   .punto-mapa {
     position: relative;
     display: grid;
@@ -411,9 +561,8 @@
     border-radius: 999px;
     border: 3px solid var(--texto-2);
     background: var(--fondo);
-    color: var(--evidencia);
+    color: var(--senal);
     font: 700 0.75rem/1 var(--fuente);
-    cursor: grab;
     touch-action: none;
   }
   .punto-mapa::after {
@@ -427,10 +576,33 @@
   .punto-b {
     border-color: var(--vehiculo-b);
   }
-  .punto-impacto,
   .punto-evidencia {
-    border-color: var(--evidencia);
+    border-color: var(--senal);
   }
+  /* El punto de impacto: la X de señal con su resplandor (maqueta del paso 4). */
+  .punto-impacto {
+    width: 40px;
+    height: 40px;
+    border: 0;
+    background: radial-gradient(
+      circle,
+      color-mix(in srgb, var(--senal) 55%, transparent) 0,
+      transparent 70%
+    );
+    font-size: 1.5rem;
+    font-weight: 800;
+  }
+  /* La medida de la zona de restos sobre el mapa. */
+  .pildora-medida {
+    padding: 6px 12px;
+    border-radius: 999px;
+    background: var(--texto);
+    color: var(--fondo);
+    font: 600 0.8125rem/1 var(--fuente-mono);
+    white-space: nowrap;
+    pointer-events: none;
+  }
+
   /* Las etiquetas, en dos columnas con una línea a su punto (etiquetas-mapa.ts). */
   .capa-etiquetas {
     position: absolute;
@@ -452,20 +624,25 @@
     display: flex;
     align-items: center;
     height: 28px;
-    padding: 0 0.65rem;
-    border-radius: 999px;
-    border: 2px solid transparent;
-    background: var(--fondo);
-    font: 700 0.8rem/1 var(--fuente);
-    font-stretch: 112%;
+    padding: 0 12px;
+    border-radius: 14px;
+    border: 1px solid var(--linea);
+    background: #15171c;
+    color: var(--texto);
+    font: 500 0.75rem/1 var(--fuente);
     white-space: nowrap;
   }
   button.etiqueta-mapa {
     pointer-events: auto;
-    cursor: pointer;
+  }
+  button.etiqueta-mapa:hover {
+    border-color: var(--texto-3);
   }
   .etiqueta-nombre {
+    border: 0;
     color: var(--fondo);
+    font-size: 0.8125rem;
+    font-weight: 600;
   }
   .etiqueta-nombre-a {
     background: var(--vehiculo-a);
@@ -474,52 +651,52 @@
     background: var(--vehiculo-b);
   }
   .etiqueta-fase-a {
-    color: var(--vehiculo-a);
-    border-color: var(--vehiculo-a);
+    border-color: color-mix(in srgb, var(--vehiculo-a) 70%, transparent);
   }
   .etiqueta-fase-b {
-    color: var(--vehiculo-b);
-    border-color: var(--vehiculo-b);
+    border-color: color-mix(in srgb, var(--vehiculo-b) 70%, transparent);
   }
   .etiqueta-evidencia {
-    color: var(--evidencia);
-    border-color: var(--evidencia);
+    border-color: color-mix(in srgb, var(--senal) 60%, transparent);
   }
-  /* Lo elegido o lo que se arrastra: amarillo de acción, por encima de lo demás. */
+  /* Lo elegido o lo que se arrastra: un anillo blanco separado, por encima de lo demás. */
   .marca-elegida {
     box-shadow:
-      0 0 0 3px var(--accion),
-      0 0 18px color-mix(in srgb, var(--accion) 60%, transparent);
+      0 0 0 2px var(--fondo),
+      0 0 0 4px var(--texto);
     z-index: 3;
-  }
-
-  .vidrio {
-    background:
-      var(--efecto-vidrio-oscuro-background), color-mix(in srgb, var(--fondo) 72%, transparent);
-    box-shadow: var(--efecto-vidrio-oscuro-box-shadow), var(--efecto-filo-luz);
-    border-radius: var(--radio-panel);
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
-  }
-
-  /* Barras de borde a borde (encabezado): vidrio sin radio. */
-  .vidrio.barra {
-    border-radius: 0;
-    /* El encabezado sobre la escena: más opaco que un panel, para que el texto que pasa debajo al
-       hacer scroll no se lea a través. */
-    background:
-      var(--efecto-vidrio-oscuro-background), color-mix(in srgb, var(--fondo) 88%, transparent);
   }
 
   /* ---------- Evidencia ---------- */
 
-  /* Fragmento del relato que respalda un dato: solo evidencia lleva naranja. */
+  /* Fragmento del relato que respalda un dato: subrayado de señal. */
   .cita {
-    text-decoration: underline 2px var(--evidencia);
+    text-decoration: underline 2px var(--senal);
     text-underline-offset: 0.25em;
     text-decoration-skip-ink: none;
   }
   .marca-evidencia {
-    color: var(--evidencia);
+    color: var(--senal);
+  }
+  /* Frase de una declaración con el color de quien la dice o de lo que falta (maqueta del paso 2). */
+  .frase-a,
+  .frase-b,
+  .frase-senal {
+    border-radius: 4px;
+    padding: 0 3px;
+    color: var(--texto);
+    background: color-mix(in srgb, var(--color-frase) 16%, transparent);
+    box-shadow: inset 0 -2px 0 var(--color-frase);
+    -webkit-box-decoration-break: clone;
+    box-decoration-break: clone;
+  }
+  .frase-a {
+    --color-frase: var(--vehiculo-a);
+  }
+  .frase-b {
+    --color-frase: var(--vehiculo-b);
+  }
+  .frase-senal {
+    --color-frase: var(--senal);
   }
 }
