@@ -1,0 +1,50 @@
+{
+  "fecha": "2026-10-21T15:03:41.302Z",
+  "url": "https://croquis-sage.vercel.app",
+  "repeticiones": 5,
+  "condiciones": "Chromium sin interfaz (SwiftShader), 1280×800, navegador nuevo por corrida, Overpass sin responder, mosaicos reales de OpenFreeMap",
+  "meta_ms": 1000,
+  "ms_del_clic_a_las_calles": {
+    "mediana": 396,
+    "minimo": 363,
+    "maximo": 477
+  },
+  "cumple": true,
+  "corridas": [
+    {
+      "msPagina": 363,
+      "msPlaywright": 1484,
+      "pedidasOverpass": 1,
+      "via": "Vía más cercana: MEX 15, Carretera Los Mochis - Cd. Obregón, 2 carriles (tramo precargado de OpenStreetMap).",
+      "errores": []
+    },
+    {
+      "msPagina": 390,
+      "msPlaywright": 1258,
+      "pedidasOverpass": 1,
+      "via": "Vía más cercana: MEX 15, Carretera Los Mochis - Cd. Obregón, 2 carriles (tramo precargado de OpenStreetMap).",
+      "errores": []
+    },
+    {
+      "msPagina": 477,
+      "msPlaywright": 1122,
+      "pedidasOverpass": 1,
+      "via": "Vía más cercana: MEX 15, Carretera Los Mochis - Cd. Obregón, 2 carriles (tramo precargado de OpenStreetMap).",
+      "errores": []
+    },
+    {
+      "msPagina": 396,
+      "msPlaywright": 1259,
+      "pedidasOverpass": 1,
+      "via": "Vía más cercana: MEX 15, Carretera Los Mochis - Cd. Obregón, 2 carriles (tramo precargado de OpenStreetMap).",
+      "errores": []
+    },
+    {
+      "msPagina": 401,
+      "msPlaywright": 1411,
+      "pedidasOverpass": 1,
+      "via": "Vía más cercana: MEX 15, Carretera Los Mochis - Cd. Obregón, 2 carriles (tramo precargado de OpenStreetMap).",
+      "errores": []
+    }
+  ]
+}
