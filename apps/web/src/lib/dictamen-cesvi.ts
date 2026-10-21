@@ -41,7 +41,12 @@ export interface DatosDictamen {
   distanciaRestos: { valor: number; fuente: string } | null;
   reproduccion: FilaReproduccion[];
   /** Imagen PNG (data URL) del croquis sobre el mapa, con la versión que se ve. */
-  croquis: { imagen: string; version: string } | null;
+  croquis: {
+    imagen: string;
+    version: string;
+    /** El punto de impacto del croquis; `ilustrativo` si es la ubicación ilustrativa (ADR 0056). */
+    punto?: { lat: number; lon: number; ilustrativo: boolean };
+  } | null;
   criterios: Record<"A" | "B", Record<ClaveCriterio, CriterioMarcado>>;
   zonas: Record<"A" | "B", Zona[]>;
   sugerencia: Sugerencia;
@@ -215,6 +220,15 @@ export function dictamenContenido(d: DatosDictamen): Content[] {
         `${nombreVehiculo(c, "A")}, `,
         cuadro("B"),
         `${nombreVehiculo(c, "B")}. Mapa © OpenStreetMap (ODbL), mosaicos OpenFreeMap / OpenMapTiles.`,
+        ...(d.croquis.punto
+          ? [
+              ` Punto de impacto: ${d.croquis.punto.lat.toFixed(5)}, ${d.croquis.punto.lon.toFixed(5)}${
+                d.croquis.punto.ilustrativo
+                  ? ` (ubicación ilustrativa: el dictamen no da coordenadas del km ${c.lugar.kilometro}; no es el lugar real).`
+                  : " (marcado por el perito)."
+              }`,
+            ]
+          : []),
       ],
       fontSize: 8,
       color: "#444444",

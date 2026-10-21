@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { avanzar, distanciaM, type LonLat } from "./geo";
+import { esUbicacionIlustrativa, ubicacionIlustrativa } from "./ejemplo";
 import { callesCerca, tramoDelCaso } from "./tramo";
 
 describe("tramo precargado del caso A2010930", () => {
@@ -39,5 +40,20 @@ describe("tramo precargado del caso A2010930", () => {
 
   it("un caso sin tramo precargado no trae calles", () => {
     expect(tramoDelCaso("otro")).toEqual([]);
+  });
+});
+
+describe("ubicación ilustrativa del km 47+800 (ADR 0056)", () => {
+  const u = ubicacionIlustrativa("A2010930")!;
+
+  it("está sobre la carretera federal 15, en el tramo precargado", () => {
+    const r = callesCerca(tramoDelCaso("A2010930"), [u.lon, u.lat], 250);
+    expect(r.cercana?.calle.nombre).toMatch(/^MEX 15/);
+    expect(r.cercana!.distanciaM).toBeLessThan(5);
+  });
+
+  it("se reconoce con la precisión de sus 5 decimales, y un punto movido ya no lo es", () => {
+    expect(esUbicacionIlustrativa("A2010930", [u.lon, u.lat])).toBe(true);
+    expect(esUbicacionIlustrativa("A2010930", avanzar([u.lon, u.lat], 0, 20))).toBe(false);
   });
 });

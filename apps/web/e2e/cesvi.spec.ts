@@ -117,8 +117,9 @@ test("@flujo /cesvi: el recorrido del perito, del caso al dictamen en PDF", asyn
   // 3. El lugar: el perito marca el punto de impacto sobre la MEX 15. Overpass sigue retenido: las
   // calles salen del tramo precargado en menos de 1 s.
   await page.getByTestId("siguiente").click();
-  await page.getByTestId("coordenadas").fill("25.97385, -109.03543");
-  await page.getByRole("button", { name: "Marcar el impacto" }).click();
+  // El dictamen no da coordenadas: la ubicación ilustrativa del km 47+800 (ADR 0056).
+  await expect(page.getByTestId("ubicacion-ilustrativa")).toContainText("26.20915, -109.05970");
+  await page.getByTestId("usar-ilustrativa").click();
   const marcado = page.getByTestId("impacto-marcado");
   await expect(marcado).toHaveAttribute("data-ms", /^\d+$/);
   expect(Number(await marcado.getAttribute("data-ms"))).toBeLessThan(1000);
@@ -134,26 +135,29 @@ test("@flujo /cesvi: el recorrido del perito, del caso al dictamen en PDF", asyn
 
   // El perito corrige el punto: lo cambia de lugar, deshace, rehace (botones y teclado) y lo quita.
   const punto = page.getByTestId("coordenadas-impacto");
-  await expect(punto).toHaveText("25.97385, -109.03543");
+  await expect(punto).toHaveText("26.20915, -109.05970");
+  await expect(page.getByTestId("aviso-ilustrativa")).toContainText("Ubicación ilustrativa");
   await page.getByTestId("cambiar-ubicacion").click();
-  await page.getByTestId("coordenadas-nuevas").fill("25.97600, -109.03390");
+  await page.getByTestId("coordenadas-nuevas").fill("26.22848, -109.05424");
   await page.getByRole("button", { name: "Mover el punto" }).click();
-  await expect(punto).toHaveText("25.97600, -109.03390");
+  await expect(punto).toHaveText("26.22848, -109.05424");
+  // Movido por el perito, deja de ser la ubicación ilustrativa.
+  await expect(page.getByTestId("aviso-ilustrativa")).toHaveCount(0);
   await page.getByTestId("deshacer").click();
-  await expect(punto).toHaveText("25.97385, -109.03543");
+  await expect(punto).toHaveText("26.20915, -109.05970");
   await page.getByTestId("rehacer").click();
-  await expect(punto).toHaveText("25.97600, -109.03390");
+  await expect(punto).toHaveText("26.22848, -109.05424");
   await page.keyboard.press("Control+z");
-  await expect(punto).toHaveText("25.97385, -109.03543");
+  await expect(punto).toHaveText("26.20915, -109.05970");
   await page.keyboard.press("Control+Shift+z");
-  await expect(punto).toHaveText("25.97600, -109.03390");
+  await expect(punto).toHaveText("26.22848, -109.05424");
   await page.getByRole("button", { name: "Listo" }).click();
   await page.getByTestId("quitar-punto").click();
   await expect(page.getByTestId("coordenadas")).toBeVisible();
   await page.getByTestId("deshacer").click();
-  await expect(punto).toHaveText("25.97600, -109.03390");
+  await expect(punto).toHaveText("26.22848, -109.05424");
   await page.getByTestId("restablecer").click();
-  await expect(punto).toHaveText("25.97600, -109.03390");
+  await expect(punto).toHaveText("26.22848, -109.05424");
 
   // 4. Las dos versiones y la zona de restos.
   await page.getByTestId("siguiente").click();

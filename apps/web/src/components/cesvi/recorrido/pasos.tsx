@@ -634,7 +634,13 @@ export function PasoLugar({
   via,
   onCoordenadas,
   edicion,
+  ilustrativa,
+  puntoIlustrativo,
 }: {
+  /** La ubicación ilustrativa del lugar (ADR 0056): el dictamen no da coordenadas. */
+  ilustrativa: { lat: number; lon: number; via: string } | null;
+  /** Si el punto marcado es esa ubicación ilustrativa. */
+  puntoIlustrativo: boolean;
   kilometro: string;
   frase: string;
   /** El punto de impacto marcado (null si aún no hay). */
@@ -660,17 +666,27 @@ export function PasoLugar({
       {punto ? (
         <>
           <div className="hundido flex flex-col gap-1 p-3.5">
-            <p
-              className="t-interfaz"
-              data-testid="impacto-marcado"
-              data-ms={msCalles === null ? undefined : msCalles.toFixed(0)}
-            >
-              Punto de impacto
-            </p>
+            <div className="flex items-center justify-between gap-2">
+              <p
+                className="t-interfaz"
+                data-testid="impacto-marcado"
+                data-ms={msCalles === null ? undefined : msCalles.toFixed(0)}
+              >
+                Punto de impacto
+              </p>
+              <Insignia tipo={puntoIlustrativo ? "supuesto" : "normal"}>
+                {puntoIlustrativo ? "ilustrativa" : "perito"}
+              </Insignia>
+            </div>
             <p className="cifras t-nota text-texto" data-testid="coordenadas-impacto">
               {punto[1].toFixed(5)}, {punto[0].toFixed(5)}
             </p>
             {via ? <p className="t-nota">{via}</p> : null}
+            {puntoIlustrativo ? (
+              <p className="t-nota text-texto-3" data-testid="aviso-ilustrativa">
+                Ubicación ilustrativa: el dictamen no da coordenadas del km {kilometro}.
+              </p>
+            ) : null}
           </div>
           {reubicando ? (
             <div className="flex flex-col gap-3">
@@ -714,11 +730,41 @@ export function PasoLugar({
           )}
         </>
       ) : (
-        <FormaCoordenadas
-          boton="Marcar el impacto"
-          onCoordenadas={onCoordenadas}
-          testid="coordenadas"
-        />
+        <>
+          {ilustrativa ? (
+            <div className="hundido flex flex-col gap-2 p-3.5" data-testid="ubicacion-ilustrativa">
+              <div className="flex items-center justify-between gap-2">
+                <p className="t-interfaz">Km {kilometro}, ubicación ilustrativa</p>
+                <Insignia tipo="supuesto">supuesto</Insignia>
+              </div>
+              <p className="cifras t-nota text-texto">
+                {ilustrativa.lat.toFixed(5)}, {ilustrativa.lon.toFixed(5)}
+              </p>
+              <p className="t-nota">
+                El dictamen no da coordenadas: es un punto de la {ilustrativa.via} para mostrar el
+                recorrido. No es el lugar real.
+              </p>
+              <button
+                type="button"
+                className="boton-principal boton-compacto"
+                onClick={() => onCoordenadas(ilustrativa.lat, ilustrativa.lon)}
+                data-testid="usar-ilustrativa"
+              >
+                Usar esta ubicación
+              </button>
+            </div>
+          ) : null}
+          <FormaCoordenadas
+            boton="Marcar el impacto"
+            onCoordenadas={onCoordenadas}
+            testid="coordenadas"
+            nota={
+              ilustrativa
+                ? "O toca el punto sobre la carretera, o escribe sus coordenadas."
+                : undefined
+            }
+          />
+        </>
       )}
       <BarraEdicion e={edicion} restablecer={punto !== null} />
       {aviso ? (
