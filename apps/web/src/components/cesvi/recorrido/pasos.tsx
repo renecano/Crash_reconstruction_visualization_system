@@ -30,13 +30,17 @@ const POR: Record<DatoEntendido["entendidoPor"], string> = {
   perito: "perito",
 };
 
+type Nombres = Record<"A" | "B", string>;
+/** El color fijo de cada vehículo en todo el recorrido (ADR 0053). */
+export const TEXTO_VEHICULO = { A: "text-vehiculo-a", B: "text-vehiculo-b" } as const;
+
 const fecha = (iso: string) =>
   new Intl.DateTimeFormat("es-MX", { dateStyle: "long", timeZone: "UTC" }).format(
     new Date(`${iso.slice(0, 10)}T00:00:00Z`),
   );
 
 /** Paso 1: el caso, los dos vehículos vistos desde arriba y la declaración como cita. */
-export function PasoCaso({ caso }: { caso: CasoCesvi }) {
+export function PasoCaso({ caso, nombres }: { caso: CasoCesvi; nombres: Nombres }) {
   return (
     <div className="flex h-full flex-col items-center justify-center gap-8 px-4 text-center">
       <p className="t-cota text-texto-2">
@@ -47,9 +51,11 @@ export function PasoCaso({ caso }: { caso: CasoCesvi }) {
       <div className="flex items-end justify-center gap-10 md:gap-20">
         {(["A", "B"] as const).map((l) => (
           <figure key={l} className="flex h-[38vh] flex-col items-center gap-3">
-            <Silueta zonas={[]} etiqueta={`Vehículo ${l}`} />
+            <Silueta zonas={[]} etiqueta={nombres[l]} letra={l} />
             <figcaption className="t-interfaz">
-              <span className="t-titulo block">{l}</span>
+              <span className={`t-titulo block ${TEXTO_VEHICULO[l]}`} data-testid={`caso-${l}`}>
+                {nombres[l]}
+              </span>
               {caso.vehiculos[l].marca} {caso.vehiculos[l].tipo} {caso.vehiculos[l].modelo}
             </figcaption>
           </figure>
@@ -234,10 +240,13 @@ export function PasoNarracion({
 export function PasoLugar({
   marcado,
   aviso,
+  msCalles,
   onCoordenadas,
 }: {
   marcado: boolean;
   aviso: string | null;
+  /** Del clic a ver las calles, en milisegundos (meta: menos de 1 s). */
+  msCalles: number | null;
   onCoordenadas: (lat: number, lon: number) => void;
 }) {
   const [texto, setTexto] = useState("");
@@ -246,7 +255,13 @@ export function PasoLugar({
     <div className="pointer-events-none flex h-full items-start justify-end p-4">
       <div className="vidrio pointer-events-auto flex max-w-sm flex-col gap-3 p-4">
         {marcado ? (
-          <p className="t-interfaz">Punto de impacto marcado. Puedes moverlo en el paso 4.</p>
+          <p
+            className="t-interfaz"
+            data-testid="impacto-marcado"
+            data-ms={msCalles === null ? undefined : msCalles.toFixed(0)}
+          >
+            Punto de impacto marcado. Puedes moverlo en el paso 4.
+          </p>
         ) : (
           <form
             className="flex flex-col gap-2"
@@ -296,6 +311,8 @@ export function PasoVersiones({
   onActiva,
   restosM,
   restosDictamen,
+  nombres,
+  seleccion,
   animando,
   onRepetir,
   onUsarRestos,
@@ -304,6 +321,9 @@ export function PasoVersiones({
   onActiva: (k: ClaveVersion) => void;
   restosM: number | null;
   restosDictamen: number;
+  nombres: Nombres;
+  /** Lo elegido en el mapa, en palabras («A · Silverado · posición final · versión declarada»). */
+  seleccion: { texto: string; letra: "A" | "B" | null } | null;
   animando: boolean;
   onRepetir: () => void;
   onUsarRestos: () => void;
@@ -336,35 +356,102 @@ export function PasoVersiones({
           Repetir
         </button>
       </div>
-      {restosM !== null ? (
-        <div className="vidrio pointer-events-auto flex flex-col gap-2 self-start p-4">
-          <p className="t-nota text-texto-2">Zona de restos</p>
-          <p className="t-titulo text-evidencia" data-testid="restos-mapa">
-            <NumeroAnimado key={`${activa}-${restosM.toFixed(2)}`} valor={restosM} decimales={2} />{" "}
-            m
-          </p>
-          <p className="t-nota text-texto-2">El dictamen midió {restosDictamen} m.</p>
-          <button
-            type="button"
-            className="boton-secundario min-h-11 px-4"
-            onClick={onUsarRestos}
-            data-testid="usar-restos"
-          >
-            Usar en el cálculo
-          </button>
-        </div>
+      {seleccion ? (
+        <p
+          className="vidrio t-interfaz self-center px-4 py-2"
+          aria-live="polite"
+          data-testid="seleccion-mapa"
+        >
+          <span className="text-texto-2">Elegido: </span>
+          <span className={seleccion.letra ? TEXTO_VEHICULO[seleccion.letra] : "text-evidencia"}>
+            {seleccion.texto}
+          </span>
+        </p>
       ) : null}
+      <div className="mt-auto flex items-end justify-between gap-4">
+        {restosM !== null ? (
+          <div className="vidrio pointer-events-auto flex flex-col gap-2 self-start p-4">
+            <p className="t-nota text-texto-2">Zona de restos</p>
+            <p className="t-titulo text-evidencia" data-testid="restos-mapa">
+              <NumeroAnimado
+                key={`${activa}-${restosM.toFixed(2)}`}
+                valor={restosM}
+                decimales={2}
+              />{" "}
+              m
+            </p>
+            <p className="t-nota text-texto-2">El dictamen midió {restosDictamen} m.</p>
+            <button
+              type="button"
+              className="boton-secundario min-h-11 px-4"
+              onClick={onUsarRestos}
+              data-testid="usar-restos"
+            >
+              Usar en el cálculo
+            </button>
+          </div>
+        ) : (
+          <span />
+        )}
+        <Leyenda nombres={nombres} />
+      </div>
     </div>
+  );
+}
+
+/** La leyenda del mapa: el color de cada vehículo y qué es cada trazo y cada marca. */
+function Leyenda({ nombres }: { nombres: Nombres }) {
+  return (
+    <dl
+      className="vidrio t-nota mb-8 grid grid-cols-[auto_1fr] items-center gap-x-2 gap-y-1 p-3"
+      aria-label="Leyenda del mapa"
+      data-testid="leyenda"
+    >
+      {(["A", "B"] as const).map((l) => (
+        <div key={l} className="contents">
+          <dt>
+            <span
+              className={`block h-3 w-5 ${l === "A" ? "bg-vehiculo-a" : "bg-vehiculo-b"}`}
+              aria-hidden="true"
+            />
+          </dt>
+          <dd className={TEXTO_VEHICULO[l]}>{nombres[l]}</dd>
+        </div>
+      ))}
+      <dt>
+        <span className="block h-3 w-5 border border-dashed border-texto-2" aria-hidden="true" />
+      </dt>
+      <dd className="text-texto-2">posición inicial</dd>
+      <dt>
+        <span className="block h-3 w-5 border border-texto-2 bg-texto-2/30" aria-hidden="true" />
+      </dt>
+      <dd className="text-texto-2">impacto</dd>
+      <dt>
+        <span className="block h-3 w-5 bg-texto-2" aria-hidden="true" />
+      </dt>
+      <dd className="text-texto-2">posición final</dd>
+      <dt className="text-center text-evidencia" aria-hidden="true">
+        ✕
+      </dt>
+      <dd className="text-texto-2">punto de impacto</dd>
+      <dt>
+        <span
+          className="block h-0 w-5 border-t-2 border-dashed border-evidencia"
+          aria-hidden="true"
+        />
+      </dt>
+      <dd className="text-texto-2">zona de restos (R1–R2)</dd>
+    </dl>
   );
 }
 
 /** Paso 5: dónde están los daños contra dónde estarían si la declaración fuera cierta. */
 export function PasoDanos({
-  caso,
+  nombres,
   zonas,
   onZonas,
 }: {
-  caso: CasoCesvi;
+  nombres: Nombres;
   zonas: Record<"A" | "B", Zona[]>;
   onZonas: (l: "A" | "B", z: Zona[]) => void;
 }) {
@@ -384,12 +471,13 @@ export function PasoDanos({
               <figure key={l} className="flex h-full flex-col items-center gap-2">
                 <Silueta
                   zonas={z[l]}
-                  etiqueta={`Vehículo ${l}, ${titulo.toLowerCase()}`}
+                  etiqueta={`${nombres[l]}, ${titulo.toLowerCase()}`}
+                  letra={l}
                   onCambio={editable ? (nuevas) => onZonas(l, nuevas) : undefined}
                   testid={`silueta-${editable ? "real" : "declarada"}-${l}`}
                 />
                 <figcaption className="t-nota text-center text-texto-2">
-                  {l} · {caso.vehiculos[l].tipo}
+                  <span className={`t-interfaz block ${TEXTO_VEHICULO[l]}`}>{nombres[l]}</span>
                   <span className="block">
                     {z[l].length ? z[l].map((q) => NOMBRE_ZONA[q]).join(", ") : "sin daño marcado"}
                   </span>
@@ -407,10 +495,12 @@ export function PasoDanos({
 export function PasoNumeros({
   impactoKmh,
   desplazamientoKmh,
+  nombres,
   comparacion,
 }: {
   impactoKmh: number | null;
   desplazamientoKmh: number | null;
+  nombres: Nombres;
   comparacion: ComparacionVelocidades | null;
 }) {
   return (
@@ -418,15 +508,17 @@ export function PasoNumeros({
       <div className="flex flex-wrap items-end justify-center gap-12 md:gap-24">
         {(
           [
-            ["Por los daños de B", impactoKmh, "numero-impacto"],
-            ["Por el desplazamiento de A", desplazamientoKmh, "numero-desplazamiento"],
+            ["Por los daños de", "B", impactoKmh, "numero-impacto"],
+            ["Por el desplazamiento de", "A", desplazamientoKmh, "numero-desplazamiento"],
           ] as const
-        ).map(([etiqueta, valor, testid]) => (
+        ).map(([etiqueta, letra, valor, testid]) => (
           <div key={testid} className="flex flex-col gap-2">
-            <span className="t-lanzamiento">
+            <span className={`t-lanzamiento ${TEXTO_VEHICULO[letra]}`}>
               {valor === null ? "—" : <NumeroAnimado valor={valor} decimales={2} testid={testid} />}
             </span>
-            <span className="t-interfaz text-texto-2">km/h · {etiqueta}</span>
+            <span className="t-interfaz text-texto-2">
+              km/h · {etiqueta} <span className={TEXTO_VEHICULO[letra]}>{nombres[letra]}</span>
+            </span>
           </div>
         ))}
       </div>

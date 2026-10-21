@@ -1,6 +1,6 @@
 # ADR 0049 — Protección de acceso del prototipo para CESVI
 
-- **Estado:** aceptado (2026-10-20).
+- **Estado:** reemplazado (2026-10-21). René pidió quitar el usuario y la clave: `/cesvi` y `/api/cesvi/consideraciones` son públicas. El borrador con Claude lo siguen cuidando el tope de gasto diario y el límite de peticiones por hora. El caso no lleva placas, VIN ni nombres. Lo de abajo queda como registro.
 - **Contexto:** `docs/cesvi/PROTOTIPO.md` pide que la demo en Vercel vaya con protección de acceso, porque muestra un caso real. La contraseña de Vercel para despliegues es de un plan de pago, y su protección gratuita deja público el dominio de producción.
 
 ## Decisión

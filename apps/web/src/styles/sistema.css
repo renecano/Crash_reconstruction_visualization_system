@@ -23,6 +23,11 @@
     --accion: var(--marca-amarillo-vial);
     --accion-texto: var(--marca-tinta);
     --evidencia: var(--marca-naranja-marcaje);
+    /* Colores de datos para cada vehículo de un caso (/cesvi, ADR 0053): los mismos del mapa, los
+       daños, los números y el PDF. Son los de las hipótesis del visor (ADR 0045), distinguibles
+       con daltonismo común; no compiten con el amarillo (acciones) ni con el naranja (evidencia). */
+    --vehiculo-a: #2b8cff;
+    --vehiculo-b: #a05cff;
 
     /* Tipografía: una sola familia variable (ancho = font-stretch, peso = font-weight). */
     --fuente: "Anybody Variable", "Anybody Respaldo", ui-sans-serif, system-ui, sans-serif;
@@ -394,37 +399,98 @@
     }
   }
 
-  .marca-mapa {
+  /* El mapa del recorrido (ADR 0053). Los puntos que el perito arrastra, justo en su lugar, con el
+     color de su vehículo (o naranja de evidencia para el impacto y los restos). El área táctil
+     llega a 44 px aunque el punto se vea de 20. */
+  .punto-mapa {
+    position: relative;
     display: grid;
     place-items: center;
-    min-width: 44px;
-    min-height: 44px;
+    width: 20px;
+    height: 20px;
     border-radius: 999px;
-    font: 700 0.85rem/1 var(--fuente);
-    font-stretch: 112%;
+    border: 3px solid var(--texto-2);
+    background: var(--fondo);
+    color: var(--evidencia);
+    font: 700 0.75rem/1 var(--fuente);
     cursor: grab;
     touch-action: none;
   }
-  .marca-vehiculo {
-    background: var(--texto);
-    color: var(--fondo);
-    box-shadow: 0 0 0 2px var(--fondo);
+  .punto-mapa::after {
+    content: "";
+    position: absolute;
+    inset: -12px;
   }
-  .marca-impacto {
-    color: var(--evidencia);
-    font-size: 1.6rem;
-    text-shadow: 0 0 4px var(--fondo);
+  .punto-a {
+    border-color: var(--vehiculo-a);
   }
-  .marca-etiqueta {
-    font: 700 0.8rem/1 var(--fuente);
-    font-stretch: 112%;
-    color: var(--texto-2);
+  .punto-b {
+    border-color: var(--vehiculo-b);
+  }
+  .punto-impacto,
+  .punto-evidencia {
+    border-color: var(--evidencia);
+  }
+  /* Las etiquetas, en dos columnas con una línea a su punto (etiquetas-mapa.ts). */
+  .capa-etiquetas {
+    position: absolute;
+    inset: 0;
+    z-index: 2;
     pointer-events: none;
   }
-  .marca-restos {
+  .capa-etiquetas svg {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    overflow: visible;
+  }
+  .etiqueta-mapa {
+    position: absolute;
+    top: 0;
+    left: 0;
+    display: flex;
+    align-items: center;
+    height: 28px;
+    padding: 0 0.65rem;
+    border-radius: 999px;
+    border: 2px solid transparent;
     background: var(--fondo);
+    font: 700 0.8rem/1 var(--fuente);
+    font-stretch: 112%;
+    white-space: nowrap;
+  }
+  button.etiqueta-mapa {
+    pointer-events: auto;
+    cursor: pointer;
+  }
+  .etiqueta-nombre {
+    color: var(--fondo);
+  }
+  .etiqueta-nombre-a {
+    background: var(--vehiculo-a);
+  }
+  .etiqueta-nombre-b {
+    background: var(--vehiculo-b);
+  }
+  .etiqueta-fase-a {
+    color: var(--vehiculo-a);
+    border-color: var(--vehiculo-a);
+  }
+  .etiqueta-fase-b {
+    color: var(--vehiculo-b);
+    border-color: var(--vehiculo-b);
+  }
+  .etiqueta-evidencia {
     color: var(--evidencia);
-    border: 2px solid var(--evidencia);
+    border-color: var(--evidencia);
+  }
+  /* Lo elegido o lo que se arrastra: amarillo de acción, por encima de lo demás. */
+  .marca-elegida {
+    box-shadow:
+      0 0 0 3px var(--accion),
+      0 0 18px color-mix(in srgb, var(--accion) 60%, transparent);
+    z-index: 3;
   }
 
   .vidrio {

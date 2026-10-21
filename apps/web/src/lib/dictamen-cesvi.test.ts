@@ -130,4 +130,10 @@ describe("dictamen en PDF con la estructura de CESVI", () => {
     const pie = dictamenDefinicion(datos()).footer as (p: number, n: number) => unknown;
     expect(textOf(pie(1, 3))).toContain(LEYENDA_DICTAMEN);
   });
+
+  it("sin caracteres que Roboto no trae: la flecha de los datos se escribe «a»", () => {
+    const t = textOf(dictamenContenido(datos()));
+    expect(t).not.toContain("→");
+    expect(t).toContain("sur a norte");
+  });
 });

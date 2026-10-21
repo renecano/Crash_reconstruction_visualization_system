@@ -63,11 +63,14 @@ const ZONAS_SVG: Record<Zona, [number, number, number, number]> = {
 export function Silueta({
   zonas,
   etiqueta,
+  letra,
   onCambio,
   testid,
 }: {
   zonas: readonly Zona[];
   etiqueta: string;
+  /** El vehículo, para pintar su contorno con su color (ADR 0053). */
+  letra?: "A" | "B";
   onCambio?: (z: Zona[]) => void;
   testid?: string;
 }) {
@@ -85,8 +88,8 @@ export function Silueta({
         width="84"
         height="188"
         rx="22"
-        className="fill-superficie stroke-texto-3"
-        strokeWidth="1.5"
+        className={`fill-superficie ${letra === "A" ? "stroke-vehiculo-a" : letra === "B" ? "stroke-vehiculo-b" : "stroke-texto-3"}`}
+        strokeWidth={letra ? 3 : 1.5}
       />
       <rect x="20" y="48" width="60" height="30" rx="6" className="fill-fondo stroke-linea" />
       <rect x="20" y="120" width="60" height="22" rx="6" className="fill-fondo stroke-linea" />

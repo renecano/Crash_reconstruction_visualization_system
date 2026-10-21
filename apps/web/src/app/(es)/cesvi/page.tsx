@@ -1,7 +1,7 @@
 /**
  * `/cesvi`: el prototipo para los peritos de CESVI (docs/cesvi/PROTOTIPO.md), como recorrido guiado
- * de ocho pasos (ADR 0052). Reproduce el dictamen A2010930 con su método y sus números. Va con
- * protección de acceso (`src/proxy.ts`) porque es un caso real, y sin placas, VIN ni nombres.
+ * de ocho pasos (ADR 0052). Reproduce el dictamen A2010930 con su método y sus números, sin placas,
+ * VIN ni nombres. Es pública desde el 2026-10-21, a pedido de René (ADR 0049).
  */
 import type { Metadata } from "next";
 import { caso, CASO_INICIAL } from "@croquis/cesvi";
