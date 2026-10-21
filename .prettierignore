@@ -49,3 +49,7 @@ apps/web/src/data/
 assets/brand/
 apps/web/src/styles/tokens.css
 apps/web/public/marca/
+
+# Generados por packages/extraction/scripts/demo-casos.ts (se verifican byte a byte con demo:check)
+apps/web/src/data/demo.json
+apps/web/src/data/portada.json
