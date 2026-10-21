@@ -24,12 +24,17 @@ Reglas de trabajo: `CLAUDE.md`. Especificación: `PLAN.md`.
     - **Hecho — pruebas:** e2e de portada, flujo con los 5 eventos de E9, accesibilidad con axe en todas las páginas y pasos, capturas visuales de cada capítulo y paso (referencias en Linux), proyecto de celular, movimiento reducido, sin errores de consola y sin desplazamiento horizontal. Correcciones que salieron de ahí: nombre del enlace de idioma, regiones con desplazamiento enfocables y desbordamiento del croquis en el celular.
     - **Hecho — carga:** three.js y Zod fuera del JavaScript inicial, CSS dentro del HTML y `/cuenta` dibujado en el servidor (ADR 0045 §5).
     - **Hecho — revisión independiente:** 23 hallazgos; 21 corregidos y 2 que no se cambian, con su razón (`docs/design/plan.md` §11). Entre los corregidos: el service worker servía la portada al recargar `/en/…` y `/cuenta`, y la «í» de Anybody se leía «i» a tamaño de lectura (copia corregida con `scripts/fuente.py`).
-    - **Hecho — CLS:** la primera medición de Lighthouse dio CLS arriba de 0.1 en `/en`, `/historia`, `/croquis`, `/visor` y `/medicion`. Las causas eran la fuente que llegaba tarde y páginas dibujadas solo en el navegador; se precarga la fuente y esas páginas ya no saltan (ADR 0045 §5). `eval/results/f9_precarga.json` ya está al día con la precarga nueva.
+    - **Hecho — CLS y carga:** la primera medición de Lighthouse dio CLS arriba de 0.1 en `/en`, `/historia`, `/croquis`, `/visor` y `/medicion`. Las causas eran la fuente que llegaba tarde y páginas dibujadas solo en el navegador (ADR 0045 §5):
+      - **Fuente:** no se precarga, porque retrasaba el primer pintado. El respaldo tiene las medidas de Anybody en cada rol, los textos al 150 % esperan a Anybody, y los ejes van recortados.
+      - **Portada:** el lema tiene renglones fijos y la leyenda del celular va en dos renglones.
+      - **Páginas del navegador:** `/medicion` sale del servidor y `/visor` reserva su lugar.
+      - **Medición:** `eval/f11_portada.mjs` espera hasta 120 s a que la página quede en reposo y repite las corridas que Lighthouse no termina, anotándolas.
+    - **Hecho — la portada ya no se congela por los horneados** (ADR 0046): los horneados con Rapier ceden el hilo principal. La precompilación de materiales se midió y se descartó (`eval/results/f11_tareas_largas*.json`).
+    - **Hecho — e2e completo** en escritorio y celular, por bloques, con el build de la fuente nueva. `eval/results/f9_precarga.json` está al día.
     - **Siguiente:**
-      1. e2e completo en escritorio y celular con el build actual;
-      2. volver a medir las 10 páginas con `eval/f11_portada.mjs` **con la laptop conectada** (con batería el script se niega: el CPU va más lento y las cifras no se comparan) y unirlas con `--unir`. E1 no cambia (la extracción no se tocó). E6 en baja y media queda para René (ver «Bloqueado»): la ruta del visor solo cambió en cómo se empaqueta, y medirla aquí con poca memoria libre hizo que Claude Code cortara la corrida;
-      3. PR, CI con las referencias visuales nuevas, merge y despliegue en Vercel;
-      4. nota «listo para E9».
+      1. con la laptop conectada, volver a medir con Lighthouse `/en` y `/visor` (el build cambió desde que se midieron: sin precompilación); las otras 8 páginas ya están medidas con este código o con uno que no cambia la carga. Después, `node eval/f11_portada.mjs --unir`. E1 no cambia (la extracción no se tocó). E6 queda para René (ver «Bloqueado»);
+      2. PR, CI con las referencias visuales nuevas, merge y despliegue en Vercel;
+      3. nota «listo para E9».
 - **Fase actual: F11** (ver PLAN §13). F10 quedó cerrada el 2026-10-18 (#42 a #46): E5 publicado (test corrido una vez) y la galería con fotos reales. F9 quedó cerrada el 2026-10-17 (#25 a #41): demo sin red, E7 y E8 en verde y todas las exportaciones. F8 se cerró el mismo día (#20 a #24, E6 cumple).
 - **Pendientes físicos de F7:** hechos. El pendiente 1 (test CISS de Relatos-MX y prompt v2) quedó hecho el 2026-10-14 (PR #11, ADR 0012).
 - **Rigidez lateral, hecha** (PR #12, ADR 0013). Sale de 1,265 pruebas de barrera móvil de NHTSA. En el test de E3, el error en costados baja de 11.04 a 8.51 km/h.

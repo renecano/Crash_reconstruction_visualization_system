@@ -1,13 +1,13 @@
 {
   "name": "f9_precarga",
-  "generated_at": "2026-10-20T16:13:05.015Z",
-  "git_commit": "ebc6765",
+  "generated_at": "2026-10-21T02:06:18.769Z",
+  "git_commit": "0e9e253",
   "entradas": 155,
   "paginas": 15,
   "archivos_next": 66,
   "archivos_public": 74,
-  "bytes_archivos": 17466978,
-  "mb_archivos": 16.66,
+  "bytes_archivos": 17452753,
+  "mb_archivos": 16.64,
   "mib_por_modulo": {
     "pdfmake": 1.01,
     "mediabunny": 0.74,
@@ -26,6 +26,21 @@
   "cumple": true,
   "lista": [
     {
+      "url": "/_next/static/VFdh924gAt9CQnoS-uBDc/_ssgManifest.js",
+      "tipo": "next",
+      "bytes": 107
+    },
+    {
+      "url": "/_next/static/VFdh924gAt9CQnoS-uBDc/_clientMiddlewareManifest.js",
+      "tipo": "next",
+      "bytes": 96
+    },
+    {
+      "url": "/_next/static/VFdh924gAt9CQnoS-uBDc/_buildManifest.js",
+      "tipo": "next",
+      "bytes": 219
+    },
+    {
       "url": "/_next/static/media/anybody-vietnamese-standard-normal.2mq99c8aqxtv9.woff2",
       "tipo": "next",
       "bytes": 15420
@@ -41,24 +56,14 @@
       "bytes": 45500
     },
     {
-      "url": "/_next/static/i27pz4JweYG9HPNieiWNo/_ssgManifest.js",
-      "tipo": "next",
-      "bytes": 107
-    },
-    {
-      "url": "/_next/static/i27pz4JweYG9HPNieiWNo/_clientMiddlewareManifest.js",
-      "tipo": "next",
-      "bytes": 96
-    },
-    {
-      "url": "/_next/static/i27pz4JweYG9HPNieiWNo/_buildManifest.js",
-      "tipo": "next",
-      "bytes": 219
-    },
-    {
       "url": "/_next/static/chunks/turbopack-3-ry682tkyiqk.js",
       "tipo": "next",
       "bytes": 10030
+    },
+    {
+      "url": "/_next/static/chunks/44vf6iz5anqax.js",
+      "tipo": "next",
+      "bytes": 29142
     },
     {
       "url": "/_next/static/chunks/43v3j-3rbjww8.js",
@@ -79,11 +84,6 @@
       "url": "/_next/static/chunks/3_nrpknxerc6m.js",
       "tipo": "next",
       "bytes": 201955
-    },
-    {
-      "url": "/_next/static/chunks/3y8x-hpcqdch0.js",
-      "tipo": "next",
-      "bytes": 1828
     },
     {
       "url": "/_next/static/chunks/3sah9nc_kwxo3.js",
@@ -109,6 +109,11 @@
       "url": "/_next/static/chunks/3fpd8ksyts5d2.js",
       "tipo": "next",
       "bytes": 8859
+    },
+    {
+      "url": "/_next/static/chunks/3dr0ytmccjk9r.js",
+      "tipo": "next",
+      "bytes": 32385
     },
     {
       "url": "/_next/static/chunks/3c-l2d9p4_iqr.js",
@@ -161,11 +166,6 @@
       "bytes": 37302
     },
     {
-      "url": "/_next/static/chunks/2zhjl2sgnuutf.js",
-      "tipo": "next",
-      "bytes": 735748
-    },
-    {
       "url": "/_next/static/chunks/2wkuvg60ix308.js",
       "tipo": "next",
       "bytes": 892
@@ -186,11 +186,6 @@
       "bytes": 28208
     },
     {
-      "url": "/_next/static/chunks/2h5kh25dns2j0.js",
-      "tipo": "next",
-      "bytes": 29143
-    },
-    {
       "url": "/_next/static/chunks/2flxdlha9xce9.js",
       "tipo": "next",
       "bytes": 31076
@@ -199,6 +194,11 @@
       "url": "/_next/static/chunks/2cm0d3ti7h07q.js",
       "tipo": "next",
       "bytes": 38108
+    },
+    {
+      "url": "/_next/static/chunks/25za3v24k76ya.js",
+      "tipo": "next",
+      "bytes": 1828
     },
     {
       "url": "/_next/static/chunks/24g5ex4l7ysf2.js",
@@ -211,14 +211,14 @@
       "bytes": 19199
     },
     {
+      "url": "/_next/static/chunks/222mbp8jef07o.js",
+      "tipo": "next",
+      "bytes": 547
+    },
+    {
       "url": "/_next/static/chunks/1z162jtj-oxi5.js",
       "tipo": "next",
       "bytes": 120594
-    },
-    {
-      "url": "/_next/static/chunks/1ri__15yjqj47.js",
-      "tipo": "next",
-      "bytes": 13824
     },
     {
       "url": "/_next/static/chunks/1rci-_1ot_t4i.js",
@@ -261,6 +261,11 @@
       "bytes": 854634
     },
     {
+      "url": "/_next/static/chunks/19_upyou2ahdv.js",
+      "tipo": "next",
+      "bytes": 13824
+    },
+    {
       "url": "/_next/static/chunks/17feh1kt7yj59.js",
       "tipo": "next",
       "bytes": 57842
@@ -271,14 +276,14 @@
       "bytes": 41493
     },
     {
+      "url": "/_next/static/chunks/13lhyjj3e78jf.js",
+      "tipo": "next",
+      "bytes": 736052
+    },
+    {
       "url": "/_next/static/chunks/106phvldqcgpm.js",
       "tipo": "next",
       "bytes": 39279
-    },
-    {
-      "url": "/_next/static/chunks/0ytkjtd5_a10y.js",
-      "tipo": "next",
-      "bytes": 32248
     },
     {
       "url": "/_next/static/chunks/0y8f8mnaal2ik.js",
@@ -311,6 +316,11 @@
       "bytes": 129311
     },
     {
+      "url": "/_next/static/chunks/0k06gqi4kbvs6.css",
+      "tipo": "next",
+      "bytes": 37144
+    },
+    {
       "url": "/_next/static/chunks/0f356yt86bpgs.js",
       "tipo": "next",
       "bytes": 35749
@@ -324,16 +334,6 @@
       "url": "/_next/static/chunks/0cz1d0mv5g_q7.js",
       "tipo": "next",
       "bytes": 112594
-    },
-    {
-      "url": "/_next/static/chunks/0b-5-9hmqsbus.js",
-      "tipo": "next",
-      "bytes": 547
-    },
-    {
-      "url": "/_next/static/chunks/0asip4qy9h5ng.css",
-      "tipo": "next",
-      "bytes": 34633
     },
     {
       "url": "/_next/static/chunks/0anhzs1gqb7rp.js",
@@ -718,12 +718,12 @@
     {
       "url": "/fuente/fuente.json",
       "tipo": "public",
-      "bytes": 207
+      "bytes": 307
     },
     {
       "url": "/fuente/anybody-latin-croquis.woff2",
       "tipo": "public",
-      "bytes": 56880
+      "bytes": 39604
     },
     {
       "url": "/",

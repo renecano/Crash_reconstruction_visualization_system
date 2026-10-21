@@ -65,16 +65,20 @@
 - **CSS en el HTML** (`experimental.inlineCss`): el primer pintado no espera otra ida y vuelta de red.
 - **`/cuenta` sale del servidor:** el paso se lee de la URL al montar y se cambia con `history.pushState`, que Next integra a su router. `useSearchParams` obligaba a dibujar el flujo solo en el navegador.
 - **Nada salta al cargar (CLS):**
-  - **La fuente se precarga** desde el documento raíz (`preload` de React DOM). Sin eso llegaba después del primer pintado y el texto se volvía a acomodar: en `/en` el lema ganaba un renglón y en `/croquis` la barra de herramientas otro.
+  - **La fuente no se precarga; el respaldo tiene sus medidas.** Precargarla evitaba que el texto se acomodara otra vez, pero retrasaba el primer pintado (con la fuente bloqueada, el FCP salía antes). En su lugar:
+    - **«Anybody Respaldo»:** caras locales de Arial (o Arial Bold, Liberation Sans o Roboto) por rango de ancho y peso, con un `size-adjust` que iguala el ancho de Anybody en cada rol tipográfico. Se calculó con fontTools sobre textos del sitio y se ajustó midiendo en el navegador. Las métricas verticales son las de Anybody. El texto conserva sus renglones cuando llega la fuente.
+    - **Los textos más anchos esperan a Anybody:** el lema y las letras de los capítulos, al 150 %. Ninguna fuente del sistema es tan ancha y tan baja: con su ancho, las letras del respaldo eran más altas que el interlineado del lema y los renglones se encimaban. Usan el mismo archivo con `font-display: block`, así que no se muestran hasta 3 s y mientras tanto ocupan lo que ocuparán.
+    - **La fuente pesa menos:** `scripts/fuente.py` recorta los ejes a lo que usa el sitio (peso 400–800 y ancho 100–150 %), con las mismas formas en ese rango.
+    - **El lema tiene renglones fijos:** en el celular, cada trozo («Cuenta lo / que pasó.») va en su renglón; en pantallas anchas, cada frase. El tamaño baja lo necesario para que el renglón más ancho quepa con Anybody.
+    - **La leyenda del celular va en dos renglones:** la atribución de OSM ya no sigue a la leyenda en el mismo renglón, donde saltaba de un renglón a otro al cambiar la fuente.
   - **`/medicion` sale del servidor** igual que `/cuenta`: la configuración de la URL se lee al montar.
   - **`/visor` reserva su lugar:** sigue leyendo la URL con `useSearchParams`, porque sus controles viven ahí. Mientras se dibuja en el navegador, el hueco mide lo mismo que el selector de escena y el marco del visor, y el pie no salta.
-  - **Lo que queda:** si la fuente tarda más que el primer pintado, una línea larga puede cambiar de renglón. Un respaldo con métricas ajustadas necesitaría cuatro caras (por ancho y peso), afinadas para una sola fuente del sistema, y el corrimiento que queda ya está debajo de la meta.
 - **Cómo se mide** (`eval/f11_portada.mjs`, decisión de medición):
-  - **Configuración:** Lighthouse en modo celular con red 4G y CPU 4×, en el build de producción, 3 corridas por página.
+  - **Configuración:** Lighthouse en modo celular con red 4G y CPU 4×, en el build de producción, 3 corridas por página. Espera hasta 120 s a que la página quede en reposo (la portada arma su escena 3D en tareas cortas durante varios segundos; con los 45 s por omisión, Lighthouse no alcanzaba a verla en reposo). Si Lighthouse no termina una corrida, se repite hasta 2 veces y la falla queda anotada en el resultado.
   - **El criterio se evalúa con la limitación aplicada** (`devtools`): Chrome recibe la red 4G de Lighthouse y se mide lo que pasa.
   - **La estimación de Lantern** (`simulate`, la de PageSpeed Insights) se reporta al lado. En estas páginas su LCP queda varias veces arriba del medido, porque suma al LCP los scripts que se piden al inicio aunque el LCP ya ocurrió.
   - **Verificación independiente:** se registraron las entradas de LCP en el navegador con las mismas condiciones de red y CPU. Hay una sola entrada, en el primer pintado, que coincide con la medición aplicada.
-  - **Con la laptop conectada:** la CPU 4× se aplica encima del CPU real. Con batería y el modo de eficiencia de Windows, el CPU va mucho más lento y las cifras de la misma página salen varias veces peores, así que no se comparan. En la portada, la lluvia anima cada cuadro y Lighthouse nunca ve el CPU en reposo; a los 45 s sigue adelante y una comprobación que deja pendiente falla con «Target closed». El script anota en cada corrida el `benchmarkIndex` de Lighthouse y si había corriente, y no mide con batería salvo con `--bateria`.
+  - **Con la laptop conectada:** la CPU 4× se aplica encima del CPU real. Con batería y el modo de eficiencia de Windows, el CPU va mucho más lento y las cifras de la misma página salen varias veces peores, así que no se comparan. El script anota en cada corrida el `benchmarkIndex` de Lighthouse y si había corriente, y no mide con batería salvo con `--bateria`.
 
 ### 6. Accesibilidad
 
@@ -104,5 +108,5 @@
   - E9 verifica que el flujo nuevo anote los cinco eventos.
 - **Los cuadros de la portada dependen de la cámara:** si cambian `camara.ts`, la escena, su resultado o el logotipo, `pnpm portada` los vuelve a generar y `generate:check` lo exige.
 - **Límites:**
-  - El TBT de la portada en el celular es alto mientras se arma la escena 3D. No es parte del criterio y el cuadro fijo cubre ese tiempo, pero la escena tarda en responder en equipos modestos.
+  - El TBT de la portada en el celular es alto mientras se arma la escena 3D. No es parte del criterio y el cuadro fijo cubre ese tiempo, pero la escena tarda en responder en equipos modestos. Los horneados ya ceden el hilo principal; lo que queda es la construcción del grafo de escena y de los materiales (ADR 0046, con sus cifras).
   - La estimación de Lantern no cumple la meta de LCP; queda reportada junto a la medición.
