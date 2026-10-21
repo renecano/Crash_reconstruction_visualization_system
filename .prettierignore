@@ -65,3 +65,6 @@ docs/cesvi/rediseno/
 # Glosario de CESVI y lecturas grabadas, tal como los escriben sus scripts (ADR 0055)
 data/cesvi/glosario.json
 data/cesvi/grabaciones/
+
+# Plan de la versión real para CESVI, tal como lo escribió René
+docs/cesvi/PLAN-CESVI.md
