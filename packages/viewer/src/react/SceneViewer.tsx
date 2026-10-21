@@ -152,8 +152,14 @@ declare global {
      * `sombraLuna`: dibuja la sombra de la luna de noche, para medir que no se ve.
      * `gravaPrevia`: las manchas de grava de antes de ADR 0036, para medir el costo del cambio.
      * `osmSoloCalzada`: la red del mapa sin rayas, banquetas ni guarniciones (antes de ADR 0039).
+     * `sinPrecompilar`: los materiales se compilan en el primer cuadro (antes de ADR 0046).
      */
-    __croquisDiag?: { sombraLuna?: boolean; gravaPrevia?: boolean; osmSoloCalzada?: boolean };
+    __croquisDiag?: {
+      sombraLuna?: boolean;
+      gravaPrevia?: boolean;
+      osmSoloCalzada?: boolean;
+      sinPrecompilar?: boolean;
+    };
     /** `performance.now()` del primer cuadro listo (E6: tiempo hasta interactivo). */
     __croquisReadyAt?: number;
   }
@@ -539,6 +545,11 @@ function SceneContent({
   // restauran en cuanto termina la parte síncrona de la llamada, la que arma la lista de objetos.
   const [compilado, setCompilado] = useState<typeof graph | null>(null);
   useEffect(() => {
+    if (window.__croquisDiag?.sinPrecompilar === true) {
+      setCompilado(graph);
+      window.__croquisCompiled = true;
+      return undefined;
+    }
     let alive = true;
     window.__croquisCompiled = false;
     const restaurar: Array<() => void> = [];
@@ -558,7 +569,7 @@ function SceneContent({
         gl as unknown as { compileAsync(o: Object3D, c: Camera, s: Scene): Promise<void> }
       ).compileAsync(graph.root, cam, scene);
     } catch (err) {
-      compilacion = Promise.reject(err);
+      compilacion = Promise.reject(err instanceof Error ? err : new Error(String(err)));
     } finally {
       for (const r of restaurar) r();
     }
