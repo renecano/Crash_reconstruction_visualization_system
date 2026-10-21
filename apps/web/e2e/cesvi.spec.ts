@@ -35,7 +35,7 @@ async function sinRedExterna(page: Page) {
 // El flujo principal del prototipo para CESVI (docs/cesvi/PROTOTIPO.md): abrir el dictamen
 // reproducido, ver los números del reporte junto a los de Croquis, recalcular con los datos del
 // perito y medir la zona de restos en el croquis sobre el mapa de cada versión.
-test("@flujo /cesvi reproduce el dictamen A2010930, recalcula y mide sobre el mapa", async ({
+test("@flujo /cesvi reproduce el dictamen A2010930, mide sobre el mapa y exporta el dictamen", async ({
   page,
 }) => {
   const errores: string[] = [];
@@ -75,13 +75,47 @@ test("@flujo /cesvi reproduce el dictamen A2010930, recalcula y mide sobre el ma
   // Evidencia: los restos van del impacto a la posición final de A (15.89 m del dictamen).
   await expect(page.getByTestId("restos-mapa")).toContainText("De R1 a R2: 15.89 m");
   await page.getByTestId("usar-restos").click();
-  await expect(page.getByText("medida por el perito")).toBeVisible();
+  await expect(page.getByText("D, separación de los restos (medida por el perito)")).toBeVisible();
   await expect(v3).toHaveText("V3 = 16.74 m/s = 60.27 km/h");
   // Declarada: sin desplazamiento después del impacto, no hay separación de restos.
   await page.getByTestId("version-declarada").click();
   await expect(page.getByTestId("restos-mapa")).toContainText("De R1 a R2: 0.00 m");
   await page.getByTestId("usar-restos").click();
   await expect(v3).toHaveText("V3 = 0.00 m/s = 0.00 km/h");
+
+  // Correspondencia y dictamen: con los datos del dictamen, la versión declarada no se sostiene.
+  await page.getByRole("button", { name: "Volver a los datos del dictamen" }).click();
+  await expect(page.getByTestId("sugerencia")).toContainText("no se sostiene");
+  await page.getByTestId("criterio-A-direccion").selectOption("corresponde");
+  await page.getByTestId("perito").fill("Perito de prueba");
+  await page.getByTestId("aceptar").click();
+  await expect(page.getByTestId("validacion")).toContainText(
+    "Perito de prueba aceptó la sugerencia",
+  );
+
+  // Borrador de las consideraciones (sin llamar a la API en la prueba): avisa de cifras ajenas.
+  await page.route("**/api/cesvi/consideraciones", (r) =>
+    r.fulfill({
+      contentType: "application/json",
+      body: JSON.stringify({
+        texto:
+          "1. Se analizará la declaración del conductor.\n\n2. La velocidad de impacto es de 63.15 km/h y la batea mide 2.40 m.",
+        numerosNoReconocidos: ["2.40"],
+      }),
+    }),
+  );
+  await page.getByTestId("pedir-borrador").click();
+  await expect(page.getByTestId("texto-borrador")).toHaveValue(/63\.15 km\/h/);
+  await expect(page.getByTestId("numeros-no-reconocidos")).toContainText("2.40");
+
+  // El dictamen en PDF, validado (sin la marca de borrador en el nombre).
+  const descarga = page.waitForEvent("download");
+  await page.getByTestId("exportar-pdf").click();
+  const archivo = await descarga;
+  expect(archivo.suggestedFilename()).toBe("dictamen-A2010930.pdf");
+  const ruta = await archivo.path();
+  const { readFileSync } = await import("node:fs");
+  expect(readFileSync(ruta).subarray(0, 5).toString()).toBe("%PDF-");
 
   expect(errores).toEqual([]);
 });

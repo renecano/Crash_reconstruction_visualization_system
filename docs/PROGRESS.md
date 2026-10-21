@@ -21,6 +21,18 @@ Reglas de trabajo: `CLAUDE.md`. Especificación: `PLAN.md`.
   - **Qué necesito de René:**
     - pasar el usuario y la clave a quien vea la demo: están en `.env.local` (`CROQUIS_CESVI_USUARIO`, `CROQUIS_CESVI_CLAVE`) y en Vercel;
     - las preguntas para CESVI que muestra la página, empezando por el PDF original o la hoja de cálculo del dictamen.
+- **Hito 3 — correspondencia, sugerencia y dictamen exportable** (rama `feat/cesvi-hito3`, ADR 0051):
+  - **Liga:** https://croquis-sage.vercel.app/cesvi, sección «Correspondencia y dictamen» (pide usuario y clave).
+  - **Qué hay:**
+    - criterios de correspondencia de CESVI por vehículo, con nota;
+    - diagrama de zonas de daño;
+    - la sugerencia de Croquis con sus tres razones y la regla con que concluye; el perito la acepta, edita o rechaza, y queda quién y cuándo;
+    - el borrador de las consideraciones con Claude, editable, con aviso de las cifras que no vienen de los cálculos;
+    - el dictamen en PDF con la estructura de CESVI.
+  - **Cómo probarlo:** en «Correspondencia y dictamen», escribir un nombre, aceptar la sugerencia, pedir el borrador y exportar el dictamen.
+  - **Pruebas:** `packages/cesvi` (sugerencia y borrador con cliente falso), `apps/web/src/lib/dictamen-cesvi.test.ts` y la e2e `@flujo` hasta la descarga del PDF.
+  - **Qué necesito de René:** nada nuevo. El borrador usa la llave y el tope de gasto de producción que ya están en Vercel.
+- **Siguiente: el recorrido del perito.** René pidió convertir `/cesvi` en un recorrido guiado de 8 pasos («Recorrido del perito» en `docs/cesvi/PROTOTIPO.md`), reusando lo hecho.
 - **Hito 2 — el lugar y el croquis sobre el mapa** (rama `feat/cesvi-hito2`, ADR 0050):
   - **Liga:** https://croquis-sage.vercel.app/cesvi, sección «El lugar y el croquis» (pide usuario y clave).
   - **Qué hay:**

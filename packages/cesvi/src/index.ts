@@ -6,3 +6,4 @@ export * from "./segunda-opinion";
 export * from "./discrepancia";
 export * from "./geo";
 export * from "./versiones";
+export * from "./correspondencia";

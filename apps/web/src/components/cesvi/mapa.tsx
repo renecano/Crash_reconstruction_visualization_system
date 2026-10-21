@@ -138,10 +138,13 @@ function marcador(texto: string, clase: string): HTMLElement {
 export function MapaCroquis({
   caso,
   onDistanciaRestos,
+  onCaptura,
 }: {
   caso: CasoCesvi;
   /** La separación de los restos medida por el perito, para el cálculo 2. */
   onDistanciaRestos: (metros: number) => void;
+  /** Entrega la función que captura el croquis sobre el mapa (para el dictamen en PDF). */
+  onCaptura?: (capturar: () => { imagen: string; version: string } | null) => void;
 }) {
   const contenedor = useRef<HTMLDivElement>(null);
   const mapa = useRef<MapaMl | null>(null);
@@ -165,6 +168,16 @@ export function MapaCroquis({
   const medidas = useMemo(() => ({ A: MEDIDAS_PICKUP, B: MEDIDAS_PICKUP }), []);
   const distanciaDictamen = caso.evidencia.restos.distancia_m.valor;
   const version = versiones?.[activa] ?? null;
+  // El mapa se crea una sola vez: la función para avisar de la captura se lee de una ref.
+  const avisarCaptura = useRef(onCaptura);
+  useEffect(() => {
+    avisarCaptura.current = onCaptura;
+  }, [onCaptura]);
+  // La versión a la vista, para el pie del croquis en el PDF (la captura no se rehace al cambiarla).
+  const tituloVersion = useRef<string | null>(null);
+  useEffect(() => {
+    tituloVersion.current = version ? version.titulo.toLowerCase() : null;
+  }, [version]);
 
   // El mapa se crea una vez; MapLibre se carga solo en el navegador y solo en esta página.
   useEffect(() => {
@@ -177,6 +190,8 @@ export function MapaCroquis({
       instancia = new Map({
         container: contenedor.current,
         style: ESTILO_MAPA,
+        // Para poder copiar el lienzo al PDF del dictamen.
+        canvasContextAttributes: { preserveDrawingBuffer: true },
         center: [-102.5, 23.6],
         zoom: 4,
         attributionControl: { compact: false },
@@ -235,6 +250,11 @@ export function MapaCroquis({
         });
         mapa.current = instancia;
         setListo(true);
+        avisarCaptura.current?.(() => {
+          const m = mapa.current;
+          if (!m || !tituloVersion.current) return null;
+          return { imagen: m.getCanvas().toDataURL("image/png"), version: tituloVersion.current };
+        });
       });
     });
     return () => {

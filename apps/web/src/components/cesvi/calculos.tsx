@@ -12,8 +12,11 @@ import {
   MEDIDAS_PERMITIDAS,
   UMBRAL_INICIAL_PCT,
   type CasoCesvi,
+  type ComparacionVelocidades,
+  type PasoEnergia,
+  type PasoVelocidad,
 } from "@croquis/cesvi";
-import { useId, useMemo, useState } from "react";
+import { useEffect, useId, useMemo, useState } from "react";
 import { Formula } from "./formula";
 
 interface Datos {
@@ -85,6 +88,16 @@ function intentar<T>(f: () => T): { ok: true; valor: T } | { ok: false; error: s
   }
 }
 
+/** Lo que calculan los cálculos, para la sugerencia, el borrador y el dictamen en PDF. */
+export interface ResultadosCalculo {
+  mcHenry: PasoEnergia | null;
+  ebsDatos: PasoVelocidad | null;
+  ebsReporte: PasoVelocidad | null;
+  v3: PasoVelocidad | null;
+  /** Velocidad de impacto partiendo de la energía del reporte contra la de desplazamiento. */
+  comparacion: ComparacionVelocidades | null;
+}
+
 /** La separación de los restos para el cálculo 2: la del dictamen o la que mide el perito. */
 export interface DistanciaRestos {
   valor: string;
@@ -95,10 +108,12 @@ export function Calculos({
   caso,
   distancia,
   onDistancia,
+  onResultados,
 }: {
   caso: CasoCesvi;
   distancia: DistanciaRestos;
   onDistancia: (d: DistanciaRestos) => void;
+  onResultados?: (r: ResultadosCalculo) => void;
 }) {
   const [datos, setDatos] = useState<Datos>(() => iniciales(caso));
   const cambia = (k: keyof Omit<Datos, "C">) => (v: string) => setDatos((d) => ({ ...d, [k]: v }));
@@ -138,6 +153,22 @@ export function Calculos({
     [datos.a, datos.g, distancia.valor],
   );
   const umbral = num(datos.umbral);
+
+  // Avisa al padre (sugerencia, borrador y PDF) cada vez que cambian los resultados.
+  useEffect(() => {
+    if (!onResultados) return;
+    const vImpacto = ebsReporte.ok ? ebsReporte.valor.calculo.kmh : null;
+    onResultados({
+      mcHenry: mc.ok ? mc.valor : null,
+      ebsDatos: ebsDatos.ok ? ebsDatos.valor : null,
+      ebsReporte: ebsReporte.ok ? ebsReporte.valor : null,
+      v3: v3.ok ? v3.valor : null,
+      comparacion:
+        vImpacto !== null && v3.ok && umbral >= 0
+          ? compararVelocidades(vImpacto, v3.valor.calculo.kmh, umbral)
+          : null,
+    });
+  }, [onResultados, mc, ebsDatos, ebsReporte, v3, umbral]);
 
   const comparar = (etiqueta: string, v1: number | null, testid: string) => {
     if (v1 === null || !v3.ok || !(umbral >= 0)) return null;

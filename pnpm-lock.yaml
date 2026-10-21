@@ -450,6 +450,12 @@ importers:
 
   packages/cesvi:
     dependencies:
+      '@anthropic-ai/sdk':
+        specifier: 'catalog:'
+        version: 0.133.0(zod@4.6.5)
+      '@croquis/extraction':
+        specifier: workspace:*
+        version: link:../extraction
       '@croquis/solver-ts':
         specifier: workspace:*
         version: link:../solver-ts

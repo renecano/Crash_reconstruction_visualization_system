@@ -43,8 +43,7 @@ export default function CesviPage() {
           </p>
         </header>
         <Expediente caso={c} />
-        <CasoInteractivo caso={c} />
-        <Reproduccion caso={c} />
+        <CasoInteractivo caso={c} reproduccion={<Reproduccion caso={c} />} />
       </main>
       <footer className="pagina border-t border-linea py-6">
         <p className="t-nota text-texto-2">
