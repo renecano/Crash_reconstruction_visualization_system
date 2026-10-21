@@ -32,6 +32,28 @@ Reglas de trabajo: `CLAUDE.md`. Especificación: `PLAN.md`.
   - **Cómo probarlo:** en «Correspondencia y dictamen», escribir un nombre, aceptar la sugerencia, pedir el borrador y exportar el dictamen.
   - **Pruebas:** `packages/cesvi` (sugerencia y borrador con cliente falso), `apps/web/src/lib/dictamen-cesvi.test.ts` y la e2e `@flujo` hasta la descarga del PDF.
   - **Qué necesito de René:** nada nuevo. El borrador usa la llave y el tope de gasto de producción que ya están en Vercel.
+- **El hecho y el punto editable (2026-10-21)** (rama `feat/cesvi-hecho-y-lugar`, ADR 0055):
+  - **Liga:** https://croquis-sage.vercel.app/cesvi
+  - **Qué cambió:**
+    - **Paso 2, «El hecho»:**
+      - **Las entradas:** la descripción técnica del perito, la principal, arma la versión de la evidencia. La versión declarada del conductor, la secundaria, arma la declarada.
+      - **La lectura:** con Claude y un prompt en lenguaje técnico de CESVI, que lleva el glosario de 114 términos con su frecuencia en los 671 dictámenes (`data/cesvi/glosario.json`; el texto de los dictámenes no se sube). Sin Claude, la hace con reglas sobre el mismo glosario.
+      - **Los datos:** cada uno lleva su fuente (perito, conductor, expediente o supuesto) y su frase resaltada en el color de su vehículo. Si la frase no está en el texto, el dato se descarta. Un número que no está en su frase, se quita.
+      - **Las preguntas:** son técnicas («¿Carril de A al momento del impacto?», «¿Cuántos metros de reversa?») y las contestadas se pueden cambiar.
+      - **Sin palabras de la versión para el público** («relato», «Cuenta qué pasó», «tu dispositivo»).
+    - **Paso 3:**
+      - **«Cambiar ubicación»:** se arrastra la ✕, se toca el mapa o se escriben coordenadas, y los vehículos se mueven y giran con el punto.
+      - **Calles al moverlo:** se traen al instante del tramo precargado y de los mosaicos, sin esperar a Overpass.
+      - **Más controles:** «Quitar punto», «Restablecer posiciones», y deshacer y rehacer con botones y con Ctrl+Z, Ctrl+Shift+Z y Ctrl+Y en los pasos 3 y 4.
+    - **Ejemplo del caso AXA:** una descripción técnica escrita por Croquis con palabras propias (`data/cesvi/casos/A2010930-hecho.json`; no copia el dictamen ni dice el carril). Su lectura con Claude y la de la declaración están grabadas, y se usan en CI.
+  - **Gasto:** 0.0527 USD en grabar las lecturas.
+  - **Cómo probarlo:**
+    1. **Paso 2:** «Usar el ejemplo del caso», «Leer la descripción», contestar el carril y los metros de reversa.
+    2. **Paso 3:** marcar el punto, «Cambiar ubicación» y mover el punto; luego Ctrl+Z, Ctrl+Shift+Z, «Quitar punto», «Deshacer» y «Restablecer posiciones».
+  - **Pruebas:**
+    - **Unitarias:** el glosario, las citas, la lectura con reglas, la validación, la interpretación con la grabación de Claude, el historial y el traslado del punto.
+    - **E2E:** la del recorrido, ampliada. Llena la descripción técnica, mueve el punto, deshace y rehace con botones y teclado, y lo quita y lo restablece.
+  - **La maqueta `docs/cesvi/rediseno/Paso2.html`:** la del disco es idéntica a la que ya estaba en el repositorio (git no ve cambios). No encontré una versión más nueva, así que el paso 2 sigue el sistema del rediseño. En cuanto René guarde la nueva, se sube y se ajusta el paso.
 - **Rediseño visual de /cesvi (2026-10-21)** (rama `feat/cesvi-rediseno`, ADR 0054; maquetas en `docs/cesvi/rediseno/`):
   - **Liga:** https://croquis-sage.vercel.app/cesvi
   - **Qué cambió:**
@@ -231,6 +253,7 @@ Lo que se pospone por el trabajo con CESVI no se borra: queda aquí para despué
 
 | Qué                                                                                                                                                                                                                                 | Para qué                                                                                  | Estado                                                                                                                                                                |
 | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| La maqueta actualizada de `docs/cesvi/rediseno/Paso2.html`                                                                                                                                                                          | Subirla tal como está y ajustar el paso 2 («El hecho») a ella                             | Pendiente: la del disco es idéntica a la del repositorio (2026-10-21)                                                                                                 |
 | `ANTHROPIC_API_KEY`                                                                                                                                                                                                                 | F6 (extracción con Claude) y E1. CI usa respuestas grabadas, así que no bloquea hasta F6. | Recibida 2026-10-14 (`.env.local`)                                                                                                                                    |
 | Confirmar licencia MIT del código y el nombre _Croquis_                                                                                                                                                                             | Se usan los valores por defecto de PLAN §16 (ADR 0002)                                    | Usando default                                                                                                                                                        |
 | Computadora de demo (GPU potente) para medir alta y ultra                                                                                                                                                                           | Meta de PLAN §7.8: ≥ 60 fps en alta o ultra en todas las escenas canónicas (ADR 0026)     | Pendiente; ya se puede medir sin instalar nada: abrir `/medicion` en esa computadora, descargar el JSON y correr `node eval/e6_navegador.mjs <archivo>` (ADR 0045 §7) |

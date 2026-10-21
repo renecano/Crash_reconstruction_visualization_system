@@ -8,7 +8,14 @@ import {
   rumboDeg,
   type LonLat,
 } from "./geo";
-import { moverPose, proponerVersiones, rumboHaciaElNorte } from "./versiones";
+import {
+  FASES,
+  giroEntreVias,
+  moverPose,
+  proponerVersiones,
+  rumboHaciaElNorte,
+  trasladarVersion,
+} from "./versiones";
 
 // Un punto cualquiera en Sinaloa: las pruebas solo usan distancias y rumbos relativos a él.
 const P: LonLat = [-109.0, 25.8];
@@ -89,5 +96,60 @@ describe("las dos versiones del caso", () => {
     const movida = moverPose(v.evidencia, "B", "final", { rumbo: 20 });
     expect(movida.vehiculos.B.final).toMatchObject({ rumbo: 20, fuente: "perito" });
     expect(movida.vehiculos.A.final.fuente).toBe("dictamen");
+  });
+});
+
+describe("mover el punto de impacto (ADR 0055)", () => {
+  const P: LonLat = [-109.0354, 25.9738];
+  const medidas = { A: { largo: 5.34, ancho: 1.86 }, B: { largo: 5.34, ancho: 1.86 } };
+  const v = proponerVersiones({
+    impacto: P,
+    rumboVia: 30,
+    rumboDeclarada: 30,
+    medidas,
+    distanciaRestos: 15.89,
+    reversaM: 3,
+  }).evidencia;
+
+  it("las posiciones se mueven con el punto: mismas distancias al impacto y entre sí", () => {
+    const nuevo = avanzar(P, 120, 250);
+    const m = trasladarVersion(v, nuevo, 25);
+    expect(distanciaM(m.impacto.punto, nuevo)).toBeLessThan(1e-6);
+    for (const l of ["A", "B"] as const) {
+      for (const f of FASES) {
+        expect(distanciaM(m.vehiculos[l][f].punto, nuevo)).toBeCloseTo(
+          distanciaM(v.vehiculos[l][f].punto, P),
+          3,
+        );
+        expect(m.vehiculos[l][f].rumbo).toBeCloseTo((v.vehiculos[l][f].rumbo + 25) % 360, 6);
+      }
+    }
+    expect(distanciaM(m.restos.inicio, m.restos.fin)).toBeCloseTo(15.89, 3);
+    expect(rumboDeg(m.restos.inicio, m.restos.fin)).toBeCloseTo(55, 1);
+  });
+
+  it("sin giro, solo se trasladan", () => {
+    const m = trasladarVersion(v, avanzar(P, 0, 10));
+    expect(rumboDeg(m.vehiculos.A.impacto.punto, m.vehiculos.A.final.punto)).toBeCloseTo(30, 1);
+  });
+
+  it("el giro entre dos vías es el más chico y no voltea el sentido", () => {
+    expect(giroEntreVias(10, 40)).toBeCloseTo(30);
+    expect(giroEntreVias(10, 190)).toBeCloseTo(0);
+    expect(giroEntreVias(350, 20)).toBeCloseTo(30);
+    expect(giroEntreVias(0, 100)).toBeCloseTo(-80);
+  });
+
+  it("la versión declarada puede ir en otro sentido que la de la evidencia", () => {
+    const vs = proponerVersiones({
+      impacto: P,
+      rumboVia: 0,
+      rumboDeclarada: 180,
+      medidas,
+      distanciaRestos: 15.89,
+      reversaM: 3,
+    });
+    expect(vs.declarada.vehiculos.A.impacto.rumbo).toBe(180);
+    expect(vs.evidencia.vehiculos.A.impacto.rumbo).toBe(0);
   });
 });

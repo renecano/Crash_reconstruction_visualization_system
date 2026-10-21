@@ -104,7 +104,7 @@ export async function redactarConsideraciones(
     messages: [{ role: "user" as const, content: mensaje(hechos) }],
     output_config: { effort: "medium" as const },
   };
-  // Respaldo del servidor si los clasificadores declinan (como en la extracción del relato).
+  // Respaldo del servidor si los clasificadores declinan (como en las demás llamadas a Claude).
   const stream =
     o.modelo === "claude-sonnet-5-5"
       ? cliente.beta.messages.stream({

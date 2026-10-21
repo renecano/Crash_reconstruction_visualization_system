@@ -61,3 +61,7 @@ data/cesvi/casos/*-tramo.json
 
 # Maquetas del rediseño de /cesvi, tal como las entregó René (ADR 0054)
 docs/cesvi/rediseno/
+
+# Glosario de CESVI y lecturas grabadas, tal como los escriben sus scripts (ADR 0055)
+data/cesvi/glosario.json
+data/cesvi/grabaciones/

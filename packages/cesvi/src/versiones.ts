@@ -10,7 +10,7 @@
  * impacto. Lo que el dictamen no da (posiciones iniciales en la versión de la evidencia, la final
  * de B, cuántos metros son «unos metros») queda marcado como supuesto para que el perito lo fije.
  */
-import { avanzar, type LonLat } from "./geo";
+import { avanzar, distanciaM, rumboDeg, type LonLat } from "./geo";
 
 export type Fase = "inicial" | "impacto" | "final";
 export const FASES: readonly Fase[] = ["inicial", "impacto", "final"];
@@ -45,11 +45,15 @@ export interface VersionCroquis {
 export interface ParametrosVersiones {
   /** Punto de impacto que marca el perito en el mapa. */
   impacto: LonLat;
-  /** Rumbo de la vía en el sentido en que circulaba A (sur a norte en el caso). */
+  /** Rumbo de la vía en el sentido en que circulaba A según la evidencia (sur a norte en el caso). */
   rumboVia: number;
+  /** El mismo rumbo según la declaración, si dice otro sentido (ADR 0055); si no, `rumboVia`. */
+  rumboDeclarada?: number;
   medidas: Record<"A" | "B", Medidas>;
-  /** Separación de los restos del dictamen (m): de dónde termina A en la versión de la evidencia. */
+  /** Separación de los restos (m): de dónde termina A en la versión de la evidencia. */
   distanciaRestos: number;
+  /** De dónde sale esa separación: la descripción del perito o el dictamen. */
+  fuenteRestos?: Fuente;
   /** Cuántos metros retrocede A en la versión declarada («unos metros»: no lo precisa). */
   reversaM: number;
 }
@@ -75,6 +79,11 @@ export function proponerVersiones(p: ParametrosVersiones): Record<ClaveVersion, 
   const finRestos = avanzar(x, r, p.distanciaRestos);
   // De dónde viene B: el dictamen no lo da; se dibuja dos largos atrás para que se vea llegar.
   const bInicial = avanzar(bImpacto, r, -2 * p.medidas.B.largo);
+  const fr = p.fuenteRestos ?? "dictamen";
+  const rd = p.rumboDeclarada ?? r;
+  const aImpactoD = avanzar(x, rd, p.medidas.A.largo / 2);
+  const bImpactoD = avanzar(x, rd, -p.medidas.B.largo / 2);
+  const bInicialD = avanzar(bImpactoD, rd, -2 * p.medidas.B.largo);
 
   const evidencia: VersionCroquis = {
     clave: "evidencia",
@@ -86,7 +95,7 @@ export function proponerVersiones(p: ParametrosVersiones): Record<ClaveVersion, 
       A: {
         inicial: pose(aImpacto, r, "croquis"),
         impacto: pose(aImpacto, r, "croquis"),
-        final: pose(avanzar(aImpacto, r, p.distanciaRestos), r, "dictamen"),
+        final: pose(avanzar(aImpacto, r, p.distanciaRestos), r, fr),
       },
       B: {
         inicial: pose(bInicial, r, "croquis"),
@@ -94,7 +103,7 @@ export function proponerVersiones(p: ParametrosVersiones): Record<ClaveVersion, 
         final: pose(bImpacto, r, "croquis"),
       },
     },
-    restos: { inicio: x, fin: finRestos, fuente: "dictamen" },
+    restos: { inicio: x, fin: finRestos, fuente: fr },
     supuestos: [
       "El dictamen no da las posiciones iniciales: A se dibuja en el impacto y B dos largos atrás, para que el perito las marque.",
       "El dictamen no da la posición final de B: se dibuja en el impacto.",
@@ -109,14 +118,14 @@ export function proponerVersiones(p: ParametrosVersiones): Record<ClaveVersion, 
     impacto: { punto: x, fuente: "perito" },
     vehiculos: {
       A: {
-        inicial: pose(avanzar(aImpacto, r, p.reversaM), r, "croquis"),
-        impacto: pose(aImpacto, r, "croquis"),
-        final: pose(aImpacto, r, "croquis"),
+        inicial: pose(avanzar(aImpactoD, rd, p.reversaM), rd, "croquis"),
+        impacto: pose(aImpactoD, rd, "croquis"),
+        final: pose(aImpactoD, rd, "croquis"),
       },
       B: {
-        inicial: pose(bInicial, r, "croquis"),
-        impacto: pose(bImpacto, r, "croquis"),
-        final: pose(bImpacto, r, "croquis"),
+        inicial: pose(bInicialD, rd, "croquis"),
+        impacto: pose(bImpactoD, rd, "croquis"),
+        final: pose(bImpactoD, rd, "croquis"),
       },
     },
     restos: { inicio: x, fin: x, fuente: "croquis" },
@@ -147,4 +156,41 @@ export function moverPose(
       },
     },
   };
+}
+
+/**
+ * Mueve el punto de impacto y, con él, todo lo demás (ADR 0055): cada posición, la zona de restos
+ * y el impacto se trasladan al punto nuevo y giran `giro` grados alrededor de él (para seguir el
+ * rumbo de la vía nueva). Las distancias y los ángulos entre posiciones no cambian.
+ */
+export function trasladarVersion(v: VersionCroquis, nuevo: LonLat, giro = 0): VersionCroquis {
+  const origen = v.impacto.punto;
+  const lleva = (q: [number, number]): [number, number] => {
+    const d = distanciaM(origen, q);
+    return d < 1e-6 ? [nuevo[0], nuevo[1]] : avanzar(nuevo, rumboDeg(origen, q) + giro, d);
+  };
+  const gira = (r: number) => (((r + giro) % 360) + 360) % 360;
+  const vehiculo = (poses: Record<Fase, Pose>): Record<Fase, Pose> =>
+    Object.fromEntries(
+      FASES.map((f) => [
+        f,
+        { ...poses[f], punto: lleva(poses[f].punto), rumbo: gira(poses[f].rumbo) },
+      ]),
+    ) as Record<Fase, Pose>;
+  return {
+    ...v,
+    impacto: { punto: [nuevo[0], nuevo[1]], fuente: "perito" },
+    vehiculos: { A: vehiculo(v.vehiculos.A), B: vehiculo(v.vehiculos.B) },
+    restos: { ...v.restos, inicio: lleva(v.restos.inicio), fin: lleva(v.restos.fin) },
+  };
+}
+
+/**
+ * Cuánto girar al pasar de una vía con rumbo `antes` a una con rumbo `despues`: el giro más chico,
+ * sin voltear el sentido de circulación (una vía se puede leer en sus dos sentidos).
+ */
+export function giroEntreVias(antes: number, despues: number): number {
+  let g = (((despues - antes) % 180) + 180) % 180;
+  if (g > 90) g -= 180;
+  return g;
 }

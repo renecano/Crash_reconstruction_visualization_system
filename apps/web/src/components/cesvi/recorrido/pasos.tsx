@@ -11,10 +11,14 @@ import {
   type CasoCesvi,
   type ClaveVersion,
   type ComparacionVelocidades,
-  type DatoEntendido,
+  type DatoHecho,
   type FilaReproduccion,
-  type Interpretacion,
+  type FuenteHecho,
+  type InterpretacionHecho,
+  type LeidoPor,
+  type PreguntaHecho,
   type Sugerencia,
+  type TipoTexto,
   type Validacion,
   type Zona,
 } from "@croquis/cesvi";
@@ -38,18 +42,6 @@ export { TEXTO_VEHICULO };
 
 type Letra = "A" | "B";
 type Nombres = Record<Letra, string>;
-
-const FUENTE: Record<DatoEntendido["fuente"], string> = {
-  declaracion: "declaración",
-  expediente: "expediente",
-  perito: "perito",
-  supuesto: "supuesto",
-};
-const POR: Record<DatoEntendido["entendidoPor"], string> = {
-  ia: "IA",
-  reglas: "reglas",
-  perito: "perito",
-};
 
 const fecha = (iso: string) =>
   new Intl.DateTimeFormat("es-MX", { dateStyle: "long", timeZone: "UTC" }).format(
@@ -125,159 +117,361 @@ export function PasoCaso({
 }
 
 /* ------------------------------------------------------------------------------------------ */
-/* Paso 2: la narración y lo que entiende la IA (maqueta Paso2)                               */
+/* Paso 2: el hecho (ADR 0055)                                                                */
 /* ------------------------------------------------------------------------------------------ */
 
-/** De quién es una frase o un dato: A, B, o la señal si falta un dato. */
-function colorDe(d: DatoEntendido, i: Interpretacion): Letra | "senal" | "perito" {
-  const falta = i.preguntas.some(
-    (p) => p.clave === d.clave || (d.clave === "maniobra_a" && p.clave === "reversa"),
-  );
-  if (falta) return "senal";
-  if (d.clave === "vehiculo_b" || d.clave === "impacta") return "B";
-  if (d.fuente === "perito") return "perito";
-  return "A";
-}
-const CLASE_FRASE = { A: "frase-a", B: "frase-b", senal: "frase-senal", perito: "frase-a" };
-const BARRA = { A: "bg-vehiculo-a", B: "bg-vehiculo-b", senal: "bg-senal", perito: "bg-texto-2" };
+const FUENTE: Record<FuenteHecho, string> = {
+  perito: "perito",
+  conductor: "conductor",
+  expediente: "expediente",
+  supuesto: "supuesto",
+};
+const LEIDO: Record<LeidoPor, string> = { ia: "IA", reglas: "reglas", perito: "perito" };
+const BARRA_DATO = { A: "bg-vehiculo-a", B: "bg-vehiculo-b", hecho: "bg-texto-2" };
+const FRASE_DATO = { A: "frase-a", B: "frase-b", hecho: "frase-hecho" };
 
-/** El texto con las frases que entendió Croquis resaltadas en el color de quien las dice. */
-function TextoSubrayado({
+/** Un texto leído, con cada frase que respalda un dato resaltada en el color de su vehículo. */
+function TextoResaltado({
   texto,
-  interpretacion,
+  datos,
+  testid,
 }: {
   texto: string;
-  interpretacion: Interpretacion;
+  datos: DatoHecho[];
+  testid: string;
 }) {
-  const frases = interpretacion.datos
-    .filter((d) => d.frase)
-    .sort((a, b) => a.frase!.inicio - b.frase!.inicio);
+  const frases = datos.filter((d) => d.tramo).sort((a, b) => a.tramo!.inicio - b.tramo!.inicio);
   const partes: ReactNode[] = [];
   let desde = 0;
   for (const d of frases) {
-    const f = d.frase!;
-    if (f.inicio < desde) continue;
-    partes.push(texto.slice(desde, f.inicio));
+    const t = d.tramo!;
+    if (t.inicio < desde) continue;
+    partes.push(texto.slice(desde, t.inicio));
     partes.push(
-      <mark key={d.clave} className={CLASE_FRASE[colorDe(d, interpretacion)]} data-dato={d.clave}>
-        {texto.slice(f.inicio, f.fin)}
+      <mark key={d.clave} className={FRASE_DATO[d.vehiculo ?? "hecho"]} data-dato={d.clave}>
+        {texto.slice(t.inicio, t.fin)}
       </mark>,
     );
-    desde = f.fin;
+    desde = t.fin;
   }
   partes.push(texto.slice(desde));
-  return <>{partes}</>;
+  return (
+    <p
+      className="leading-[1.7] whitespace-pre-wrap text-[#c9cdd4]"
+      lang="es-MX"
+      data-testid={testid}
+    >
+      {partes}
+    </p>
+  );
 }
 
-function TarjetaDato({ d, interpretacion }: { d: DatoEntendido; interpretacion: Interpretacion }) {
+function TarjetaDato({ d }: { d: DatoHecho }) {
   return (
-    <li className="tarjeta flex items-center gap-4 rounded-[14px] px-4 py-3.5">
+    <li className="tarjeta flex items-center gap-4 rounded-[14px] px-4 py-3">
       <span
-        className={`w-1 self-stretch rounded-full ${BARRA[colorDe(d, interpretacion)]}`}
+        className={`w-1 self-stretch rounded-full ${BARRA_DATO[d.vehiculo ?? "hecho"]}`}
         aria-hidden="true"
       />
       <span className="flex min-w-0 flex-1 flex-col">
         <span className="t-nota text-texto-3">{d.etiqueta}</span>
-        <span className="t-interfaz text-base">{d.valor}</span>
+        <span className="t-interfaz text-[0.9375rem]">{d.valor}</span>
       </span>
       <Insignia tipo={d.fuente === "supuesto" ? "supuesto" : "normal"}>
-        {FUENTE[d.fuente]} · {POR[d.entendidoPor]}
+        {FUENTE[d.fuente]} · {LEIDO[d.leidoPor]}
       </Insignia>
     </li>
   );
 }
 
-const METROS_RAPIDOS = [1, 3, 5];
-
-export function PasoNarracion({
-  declaracion,
-  conductor,
-  interpretacion,
-  notas,
-  onNotas,
+/** Una tarjeta de texto del expediente: se escribe, se lee y se muestra con sus frases resaltadas. */
+function TarjetaTexto({
+  tipo,
+  titulo,
+  fuente,
+  principal,
+  texto,
+  onTexto,
+  leido,
+  datos,
   estado,
   onLeer,
-  reversaM,
-  onReversaM,
-  onImpacta,
-  frase,
+  ejemplo,
 }: {
-  declaracion: string;
-  conductor: string;
-  interpretacion: Interpretacion;
-  notas: string;
-  onNotas: (t: string) => void;
+  tipo: TipoTexto;
+  titulo: string;
+  fuente: string;
+  principal: boolean;
+  texto: string;
+  onTexto: (t: string) => void;
+  /** El texto tal como se leyó (si cambia, hay que volver a leer). */
+  leido: string | null;
+  datos: DatoHecho[];
   estado: string | null;
   onLeer: () => void;
-  reversaM: number | null;
-  onReversaM: (m: number | null) => void;
-  onImpacta: (v: "B_a_A" | "A_a_B") => void;
-  frase: string;
+  ejemplo?: () => void;
 }) {
   const id = useId();
-  const preguntaReversa = interpretacion.preguntas.find((p) => p.clave === "reversa");
-  const hayReversa = Boolean(preguntaReversa) || interpretacion.dinamica.maniobraA === "reversa";
-  const preguntaImpacta = interpretacion.preguntas.find((p) => p.clave === "impacta");
-  const otras = interpretacion.preguntas.filter(
-    (p) => p.clave !== "reversa" && p.clave !== "impacta",
+  const [editando, setEditando] = useState(false);
+  const vigente = leido !== null && leido === texto;
+  const mostrarLeido = vigente && !editando;
+  return (
+    <article
+      className={`tarjeta flex flex-col gap-4 ${principal ? "p-7" : "border-dashed bg-[#0f1114] px-7 py-6"}`}
+    >
+      <div className="flex flex-wrap items-center justify-between gap-2">
+        <label
+          htmlFor={`${id}-texto`}
+          className={principal ? "t-subtitulo" : "t-interfaz text-texto-2"}
+        >
+          {titulo}
+        </label>
+        <span className="t-rotulo normal-case tracking-normal">{fuente}</span>
+      </div>
+      {mostrarLeido ? (
+        <div className={principal ? "text-[1.1875rem]" : "text-[1.0625rem]"}>
+          <TextoResaltado texto={texto} datos={datos} testid={`texto-${tipo}`} />
+        </div>
+      ) : (
+        <textarea
+          id={`${id}-texto`}
+          rows={principal ? 8 : 3}
+          className="campo resize-y text-[1.0625rem] leading-relaxed"
+          value={texto}
+          onChange={(e) => onTexto(e.target.value)}
+          placeholder={
+            principal
+              ? "Modalidad, sentido y carril de cada vehículo, zona de contacto con su acentuación y vértice, dirección de la fuerza, maniobras, restos y huellas, posiciones finales y condiciones de la vía."
+              : "La cita literal de lo que declara cada conductor."
+          }
+          data-testid={`entrada-${tipo}`}
+        />
+      )}
+      <div className="flex flex-wrap items-center gap-3">
+        {mostrarLeido ? (
+          <button
+            type="button"
+            className="boton-secundario boton-compacto"
+            onClick={() => setEditando(true)}
+          >
+            Editar
+          </button>
+        ) : (
+          <button
+            type="button"
+            className={
+              principal ? "boton-principal boton-compacto" : "boton-secundario boton-compacto"
+            }
+            onClick={() => {
+              setEditando(false);
+              onLeer();
+            }}
+            disabled={texto.trim().length < 10}
+            data-testid={`leer-${tipo}`}
+          >
+            {tipo === "descripcion" ? "Leer la descripción" : "Leer la declaración"}
+          </button>
+        )}
+        {ejemplo && !texto.trim() ? (
+          <button
+            type="button"
+            className="boton-secundario boton-compacto"
+            onClick={ejemplo}
+            data-testid="ejemplo-descripcion"
+          >
+            Usar el ejemplo del caso
+          </button>
+        ) : null}
+        {estado ? (
+          <p role="status" className="t-nota" data-testid={`estado-${tipo}`}>
+            {estado}
+          </p>
+        ) : null}
+      </div>
+    </article>
   );
-  const valorReversa = reversaM ?? (preguntaReversa ? null : interpretacion.dinamica.reversaM);
+}
+
+/** Una pregunta técnica: opciones, un número o un texto. Las contestadas se pueden cambiar. */
+function TarjetaPregunta({
+  p,
+  onResponder,
+}: {
+  p: PreguntaHecho;
+  onResponder: (clave: string, v: string | number | null) => void;
+}) {
+  const id = useId();
+  const [texto, setTexto] = useState(String(p.respuesta ?? ""));
+  const pendiente = p.respuesta === null;
+  return (
+    <div
+      className={`flex flex-col gap-3 rounded-2xl border p-4 ${pendiente ? "border-senal/45 bg-[#17140f]" : "border-linea-suave bg-superficie"}`}
+      data-testid={`pregunta-${p.clave.replace(/[^a-z_]/gi, "-")}`}
+    >
+      <div className="flex items-start justify-between gap-3">
+        <label htmlFor={`${id}-r`} className="t-interfaz text-base font-semibold">
+          {p.texto}
+        </label>
+        <Insignia tipo={pendiente ? "senal" : "normal"}>
+          {pendiente ? "falta un dato" : "perito"}
+        </Insignia>
+      </div>
+      <p className="t-nota -mt-2 text-texto-3">
+        Para la versión {p.version === "evidencia" ? "de la evidencia" : "declarada"}
+      </p>
+      {p.tipo === "opciones" ? (
+        <div className="flex flex-wrap gap-2" role="group" aria-label={p.texto}>
+          {p.opciones!.map((o) => (
+            <button
+              key={o.valor}
+              type="button"
+              className="boton-secundario boton-compacto rounded-control"
+              aria-pressed={p.respuesta === o.valor}
+              onClick={() => onResponder(p.clave, o.valor)}
+            >
+              {o.etiqueta}
+            </button>
+          ))}
+        </div>
+      ) : p.tipo === "numero" ? (
+        <div className="flex flex-wrap gap-2">
+          <span className="flex h-11 items-center gap-1.5 rounded-control border border-linea bg-fondo px-3.5">
+            <input
+              id={`${id}-r`}
+              type="number"
+              min={0}
+              step={0.5}
+              className="cifras w-16 border-0 bg-transparent text-[1.0625rem] font-semibold text-texto outline-none"
+              value={p.respuesta ?? ""}
+              onChange={(e) =>
+                onResponder(
+                  p.clave,
+                  e.target.value === "" ? null : Math.max(0, Number(e.target.value)),
+                )
+              }
+              data-testid={`respuesta-${p.clave}`}
+            />
+            <span className="t-nota text-texto-3">m</span>
+          </span>
+          <button
+            type="button"
+            className="boton-secundario boton-compacto h-11 rounded-control text-texto-2"
+            onClick={() => onResponder(p.clave, null)}
+          >
+            No lo dice
+          </button>
+        </div>
+      ) : (
+        <form
+          className="flex gap-2"
+          onSubmit={(e) => {
+            e.preventDefault();
+            onResponder(p.clave, texto.trim() || null);
+          }}
+        >
+          <input
+            id={`${id}-r`}
+            className="campo"
+            value={texto}
+            onChange={(e) => setTexto(e.target.value)}
+          />
+          <button type="submit" className="boton-secundario boton-compacto">
+            Guardar
+          </button>
+        </form>
+      )}
+    </div>
+  );
+}
+
+export function PasoHecho({
+  textos,
+  onTexto,
+  leidos,
+  interpretacion,
+  estados,
+  onLeer,
+  onEjemplo,
+  onResponder,
+  declarante,
+  frase,
+}: {
+  textos: Record<TipoTexto, string>;
+  onTexto: (tipo: TipoTexto, t: string) => void;
+  /** El texto tal como se leyó por última vez (null si no se ha leído). */
+  leidos: Record<TipoTexto, string | null>;
+  interpretacion: InterpretacionHecho;
+  estados: Record<TipoTexto, string | null>;
+  onLeer: (tipo: TipoTexto) => void;
+  onEjemplo: (() => void) | null;
+  onResponder: (clave: string, v: string | number | null) => void;
+  declarante: string;
+  frase: string;
+}) {
+  const i = interpretacion;
+  const pendientes = i.preguntas.filter((p) => p.respuesta === null).length;
+  const grupo = (
+    titulo: string,
+    nota: string,
+    datos: DatoHecho[],
+    testid: string,
+    vacio: string,
+  ) => (
+    <section className="flex flex-col gap-2.5" aria-label={titulo}>
+      <div className="flex items-baseline justify-between gap-3 px-1">
+        <h2 className="t-interfaz font-semibold">{titulo}</h2>
+        <span className="t-nota text-texto-3">{nota}</span>
+      </div>
+      {datos.length ? (
+        <ol className="flex flex-col gap-2" data-testid={testid}>
+          {datos.map((d) => (
+            <TarjetaDato key={d.clave} d={d} />
+          ))}
+        </ol>
+      ) : (
+        <p
+          className="t-nota rounded-[14px] border border-dashed border-linea px-4 py-3"
+          data-testid={testid}
+        >
+          {vacio}
+        </p>
+      )}
+    </section>
+  );
   return (
     <Pagina ancho="max-w-[1320px]">
       <div className="flex flex-wrap items-start gap-8">
         <div className="flex min-w-0 flex-[999_1_560px] flex-col gap-6">
           <header className="flex flex-col gap-3">
             <Rotulo />
-            <h1 className="t-titulo">
-              Lo que dice el conductor,
-              <br />y lo que Croquis entiende
-            </h1>
+            <h1 className="t-titulo">El hecho</h1>
             <Frase>{frase}</Frase>
           </header>
-          <article className="tarjeta flex flex-col gap-4 p-7">
-            <div className="flex flex-wrap items-center justify-between gap-2">
-              <span className="t-interfaz text-texto-2">
-                Declaración del conductor de {conductor} · literal
-              </span>
-              <span className="t-rotulo normal-case tracking-normal">Fuente: dictamen</span>
-            </div>
-            <p
-              className="text-[clamp(1.25rem,2.2vw,1.625rem)] leading-[1.6] tracking-[-0.01em] text-[#c9cdd4]"
-              lang="es-MX"
-              data-testid="texto-subrayado"
-            >
-              “<TextoSubrayado texto={declaracion} interpretacion={interpretacion} />”
-            </p>
-            <div className="flex flex-wrap items-center gap-3">
-              {estado ? (
-                <p role="status" className="t-nota">
-                  {estado}
-                </p>
-              ) : null}
-              <button
-                type="button"
-                className="boton-secundario boton-compacto"
-                onClick={onLeer}
-                data-testid="leer-ia"
-              >
-                Leer otra vez con IA
-              </button>
-            </div>
-          </article>
-          <article className="flex flex-col gap-2.5 rounded-panel border border-dashed border-linea bg-[#0f1114] px-7 py-6">
-            <label htmlFor={`${id}-notas`} className="t-interfaz text-texto-2">
-              Notas del perito
-            </label>
-            <textarea
-              id={`${id}-notas`}
-              rows={2}
-              className="resize-none border-0 bg-transparent p-0 text-[1.0625rem] leading-relaxed text-texto outline-none placeholder:text-texto-3"
-              value={notas}
-              onChange={(e) => onNotas(e.target.value)}
-              placeholder="Por ejemplo: según el croquis de tránsito, retrocedió 3 m"
-              data-testid="notas-perito"
-            />
-          </article>
+          <TarjetaTexto
+            tipo="descripcion"
+            titulo="Descripción técnica del hecho"
+            fuente="Perito"
+            principal
+            texto={textos.descripcion}
+            onTexto={(t) => onTexto("descripcion", t)}
+            leido={leidos.descripcion}
+            datos={i.evidencia}
+            estado={estados.descripcion}
+            onLeer={() => onLeer("descripcion")}
+            ejemplo={onEjemplo ?? undefined}
+          />
+          <TarjetaTexto
+            tipo="declaracion"
+            titulo="Versión declarada a analizar"
+            fuente={`Conductor de ${declarante} · literal`}
+            principal={false}
+            texto={textos.declaracion}
+            onTexto={(t) => onTexto("declaracion", t)}
+            leido={leidos.declaracion}
+            datos={i.declarada}
+            estado={estados.declaracion}
+            onLeer={() => onLeer("declaracion")}
+          />
           <div className="flex flex-wrap items-center gap-3">
             <Navegacion siguiente="Ver en el mapa" />
             <BotonDetalle />
@@ -286,112 +480,40 @@ export function PasoNarracion({
 
         <aside
           aria-label="Lo que entendió Croquis"
-          className="flex min-w-0 flex-[1_1_400px] flex-col gap-3"
+          className="flex min-w-0 flex-[1_1_400px] flex-col gap-5"
         >
-          <div className="flex items-center justify-between px-1 pb-2">
-            <span className="t-interfaz font-semibold">Lo que entendió</span>
+          <div className="flex items-center justify-between px-1">
+            <span className="t-subtitulo">Lo que entendió</span>
             <span className="t-nota text-texto-3">
-              {interpretacion.datos.length} datos · {interpretacion.preguntas.length}{" "}
-              {interpretacion.preguntas.length === 1 ? "pregunta" : "preguntas"}
+              {i.evidencia.length + i.declarada.length} datos · {pendientes}{" "}
+              {pendientes === 1 ? "pregunta" : "preguntas"}
             </span>
           </div>
-          <ol className="flex flex-col gap-3" data-testid="datos-entendidos">
-            {interpretacion.datos.map((d) => (
-              <TarjetaDato key={d.clave} d={d} interpretacion={interpretacion} />
-            ))}
-          </ol>
-
-          {hayReversa ? (
-            <div
-              className={`flex flex-col gap-3.5 rounded-2xl border p-4 ${preguntaReversa ? "border-senal/45 bg-[#17140f]" : "border-linea-suave bg-superficie"}`}
-            >
-              <div className="flex items-center gap-3.5">
-                <span
-                  className={`w-1 self-stretch rounded-full ${preguntaReversa ? "bg-senal" : "bg-vehiculo-a"}`}
-                  aria-hidden="true"
-                />
-                <span className="flex-1">
-                  <span className="t-nota block text-texto-3">A · Maniobra</span>
-                  <span className="t-interfaz text-base">Reversa</span>
-                </span>
-                {preguntaReversa ? (
-                  <Insignia tipo="senal">Falta un dato</Insignia>
-                ) : (
-                  <Insignia>perito</Insignia>
-                )}
-              </div>
-              <label htmlFor={`${id}-metros`} className="t-subtitulo text-lg">
-                {preguntaReversa?.texto ?? "Metros de reversa"}
-              </label>
-              <div className="flex flex-wrap gap-2">
-                <span className="flex h-11 items-center gap-1.5 rounded-control border border-linea bg-fondo px-3.5">
-                  <input
-                    id={`${id}-metros`}
-                    type="number"
-                    min={0}
-                    step={0.5}
-                    className="cifras w-14 border-0 bg-transparent text-[1.0625rem] font-semibold text-texto outline-none"
-                    value={valorReversa ?? ""}
-                    onChange={(e) =>
-                      onReversaM(e.target.value === "" ? null : Math.max(0, Number(e.target.value)))
-                    }
-                    data-testid="respuesta-reversa"
-                  />
-                  <span className="t-nota text-texto-3">m</span>
-                </span>
-                {METROS_RAPIDOS.map((m) => (
-                  <button
-                    key={m}
-                    type="button"
-                    className="boton-secundario boton-compacto h-11 rounded-control text-texto-2"
-                    aria-pressed={reversaM === m}
-                    onClick={() => onReversaM(m)}
-                  >
-                    {m} m
-                  </button>
-                ))}
-                <button
-                  type="button"
-                  className="boton-secundario boton-compacto h-11 rounded-control text-texto-2"
-                  aria-pressed={reversaM === null}
-                  onClick={() => onReversaM(null)}
-                >
-                  No lo dice
-                </button>
-              </div>
-              <p className="t-nota">Mueve la versión declarada en el mapa.</p>
+          {i.preguntas.length ? (
+            <div className="flex flex-col gap-3" aria-label="Preguntas técnicas">
+              {i.preguntas.map((p) => (
+                <TarjetaPregunta key={p.clave} p={p} onResponder={onResponder} />
+              ))}
             </div>
           ) : null}
-
-          {preguntaImpacta ? (
-            <div className="flex flex-col gap-3 rounded-2xl border border-senal/45 bg-[#17140f] p-4">
-              <p className="t-subtitulo text-lg">{preguntaImpacta.texto}</p>
-              <div className="flex flex-wrap gap-2">
-                <button
-                  type="button"
-                  className="boton-secundario boton-compacto rounded-control"
-                  onClick={() => onImpacta("B_a_A")}
-                >
-                  B impacta a A
-                </button>
-                <button
-                  type="button"
-                  className="boton-secundario boton-compacto rounded-control"
-                  onClick={() => onImpacta("A_a_B")}
-                >
-                  A impacta a B
-                </button>
-              </div>
-            </div>
-          ) : null}
-          {otras.map((p) => (
-            <p key={p.clave} className="t-nota rounded-control border border-senal/45 p-3">
-              {p.texto}
-            </p>
-          ))}
+          {grupo(
+            "Versión de la evidencia",
+            "de la descripción del perito",
+            i.evidencia,
+            "datos-evidencia",
+            "Escribe o pega la descripción técnica y léela: con ella se arma la versión de la evidencia.",
+          )}
+          {grupo(
+            "Versión declarada",
+            "de la declaración",
+            i.declarada,
+            "datos-declarada",
+            "Lee la declaración: con ella se arma la versión declarada.",
+          )}
+          {grupo("Expediente", "", i.expediente, "datos-expediente", "")}
           <p className="t-nota px-1 text-texto-3">
-            La IA solo ordena lo que se dijo. Los números y la conclusión salen del cálculo y del
-            perito.
+            La IA solo ordena lo que dice cada texto, con el vocabulario de los dictámenes de CESVI.
+            Los números salen del texto o del perito; la conclusión, del cálculo y del perito.
           </p>
         </aside>
       </div>
@@ -403,76 +525,202 @@ export function PasoNarracion({
 /* Paso 3: el lugar (panel sobre el mapa)                                                     */
 /* ------------------------------------------------------------------------------------------ */
 
+/** Deshacer, rehacer y restablecer las posiciones (pasos 3 y 4; también Ctrl+Z y Ctrl+Shift+Z). */
+export interface EdicionPasos {
+  puedeDeshacer: boolean;
+  puedeRehacer: boolean;
+  onDeshacer: () => void;
+  onRehacer: () => void;
+  onRestablecer: () => void;
+}
+
+export function BarraEdicion({ e, restablecer }: { e: EdicionPasos; restablecer: boolean }) {
+  return (
+    <div className="flex flex-wrap items-center gap-2" role="group" aria-label="Edición">
+      <button
+        type="button"
+        className="boton-secundario boton-compacto"
+        onClick={e.onDeshacer}
+        disabled={!e.puedeDeshacer}
+        title="Deshacer (Ctrl+Z)"
+        data-testid="deshacer"
+      >
+        ↶ Deshacer
+      </button>
+      <button
+        type="button"
+        className="boton-secundario boton-compacto"
+        onClick={e.onRehacer}
+        disabled={!e.puedeRehacer}
+        title="Rehacer (Ctrl+Shift+Z)"
+        data-testid="rehacer"
+      >
+        ↷ Rehacer
+      </button>
+      {restablecer ? (
+        <button
+          type="button"
+          className="boton-secundario boton-compacto"
+          onClick={e.onRestablecer}
+          data-testid="restablecer"
+        >
+          Restablecer posiciones
+        </button>
+      ) : null}
+    </div>
+  );
+}
+
+/** Coordenadas escritas a mano: «25.97385, -109.03543». */
+function FormaCoordenadas({
+  boton,
+  onCoordenadas,
+  testid,
+  nota = "Toca el punto sobre la carretera o escribe sus coordenadas.",
+}: {
+  /** La instrucción sobre el campo (null: sin instrucción, porque ya la hay arriba). */
+  nota?: string | null;
+  boton: string;
+  onCoordenadas: (lat: number, lon: number) => void;
+  testid: string;
+}) {
+  const [texto, setTexto] = useState("");
+  const [error, setError] = useState<string | null>(null);
+  const id = useId();
+  return (
+    <form
+      className="flex flex-col gap-3"
+      onSubmit={(e) => {
+        e.preventDefault();
+        const m = /^\s*(-?\d+(?:\.\d+)?)\s*[,\s]\s*(-?\d+(?:\.\d+)?)\s*$/.exec(texto);
+        const lat = m ? Number(m[1]) : Number.NaN;
+        const lon = m ? Number(m[2]) : Number.NaN;
+        if (!(Math.abs(lat) <= 90 && Math.abs(lon) <= 180)) {
+          setError("Latitud y longitud en grados decimales, por ejemplo 25.97, -109.03.");
+          return;
+        }
+        setError(null);
+        onCoordenadas(lat, lon);
+      }}
+    >
+      <label htmlFor={id} className={nota ? "t-nota" : "sr-only"}>
+        {nota ?? "Coordenadas del punto nuevo (latitud, longitud)"}
+      </label>
+      <input
+        id={id}
+        className="campo cifras"
+        value={texto}
+        onChange={(e) => setTexto(e.target.value)}
+        placeholder="25.97385, -109.03543"
+        data-testid={testid}
+      />
+      <button type="submit" className="boton-principal">
+        {boton}
+      </button>
+      {error ? <p className="t-nota text-senal-texto">{error}</p> : null}
+    </form>
+  );
+}
+
 export function PasoLugar({
   kilometro,
   frase,
-  marcado,
+  punto,
+  reubicando,
+  onReubicar,
+  onQuitar,
   aviso,
   msCalles,
   via,
   onCoordenadas,
+  edicion,
 }: {
   kilometro: string;
   frase: string;
-  marcado: boolean;
+  /** El punto de impacto marcado (null si aún no hay). */
+  punto: [number, number] | null;
+  /** «Cambiar ubicación»: el siguiente clic en el mapa (o las coordenadas) mueve el punto. */
+  reubicando: boolean;
+  onReubicar: (v: boolean) => void;
+  onQuitar: () => void;
   aviso: string | null;
   /** Del clic a ver las calles, en milisegundos (meta: menos de 1 s). */
   msCalles: number | null;
   /** La vía más cercana, en palabras. */
   via: string | null;
+  /** Marca el punto, o lo mueve si ya hay uno. */
   onCoordenadas: (lat: number, lon: number) => void;
+  edicion: EdicionPasos;
 }) {
-  const [texto, setTexto] = useState("");
-  const [error, setError] = useState<string | null>(null);
   return (
     <PanelMapa>
       <Rotulo />
       <h1 className="t-panel">El lugar: km {kilometro}</h1>
       <Frase className="text-[0.9375rem]">{frase}</Frase>
-      {marcado ? (
-        <div className="hundido flex flex-col gap-1 p-3.5">
-          <p
-            className="t-interfaz"
-            data-testid="impacto-marcado"
-            data-ms={msCalles === null ? undefined : msCalles.toFixed(0)}
-          >
-            Punto de impacto marcado. Puedes moverlo en el paso 4.
-          </p>
-          {via ? <p className="t-nota">{via}</p> : null}
-        </div>
+      {punto ? (
+        <>
+          <div className="hundido flex flex-col gap-1 p-3.5">
+            <p
+              className="t-interfaz"
+              data-testid="impacto-marcado"
+              data-ms={msCalles === null ? undefined : msCalles.toFixed(0)}
+            >
+              Punto de impacto
+            </p>
+            <p className="cifras t-nota text-texto" data-testid="coordenadas-impacto">
+              {punto[1].toFixed(5)}, {punto[0].toFixed(5)}
+            </p>
+            {via ? <p className="t-nota">{via}</p> : null}
+          </div>
+          {reubicando ? (
+            <div className="flex flex-col gap-3">
+              <p className="t-nota text-texto">
+                Arrastra la ✕, toca el punto nuevo en el mapa o escribe sus coordenadas. Los
+                vehículos se mueven con él.
+              </p>
+              <FormaCoordenadas
+                boton="Mover el punto"
+                nota={null}
+                onCoordenadas={onCoordenadas}
+                testid="coordenadas-nuevas"
+              />
+              <button
+                type="button"
+                className="boton-secundario boton-compacto"
+                onClick={() => onReubicar(false)}
+              >
+                Listo
+              </button>
+            </div>
+          ) : (
+            <div className="flex flex-wrap gap-2">
+              <button
+                type="button"
+                className="boton-secundario boton-compacto"
+                onClick={() => onReubicar(true)}
+                data-testid="cambiar-ubicacion"
+              >
+                Cambiar ubicación
+              </button>
+              <button
+                type="button"
+                className="boton-secundario boton-compacto"
+                onClick={onQuitar}
+                data-testid="quitar-punto"
+              >
+                Quitar punto
+              </button>
+            </div>
+          )}
+        </>
       ) : (
-        <form
-          className="flex flex-col gap-3"
-          onSubmit={(e) => {
-            e.preventDefault();
-            const m = /^\s*(-?\d+(?:\.\d+)?)\s*[,\s]\s*(-?\d+(?:\.\d+)?)\s*$/.exec(texto);
-            const lat = m ? Number(m[1]) : Number.NaN;
-            const lon = m ? Number(m[2]) : Number.NaN;
-            if (!(Math.abs(lat) <= 90 && Math.abs(lon) <= 180)) {
-              setError("Latitud y longitud en grados decimales, por ejemplo 25.97, -109.03.");
-              return;
-            }
-            setError(null);
-            onCoordenadas(lat, lon);
-          }}
-        >
-          <label htmlFor="coordenadas-impacto" className="t-nota">
-            Toca el punto de impacto sobre la carretera o escribe sus coordenadas.
-          </label>
-          <input
-            id="coordenadas-impacto"
-            className="campo cifras"
-            value={texto}
-            onChange={(e) => setTexto(e.target.value)}
-            placeholder="25.97385, -109.03543"
-            data-testid="coordenadas"
-          />
-          <button type="submit" className="boton-principal">
-            Marcar el impacto
-          </button>
-          {error ? <p className="t-nota text-senal-texto">{error}</p> : null}
-        </form>
+        <FormaCoordenadas
+          boton="Marcar el impacto"
+          onCoordenadas={onCoordenadas}
+          testid="coordenadas"
+        />
       )}
+      <BarraEdicion e={edicion} restablecer={punto !== null} />
       {aviso ? (
         <p role="status" className="t-nota">
           {aviso}
@@ -503,7 +751,9 @@ export function PasoVersiones({
   seleccion,
   frase,
   onUsarRestos,
+  edicion,
 }: {
+  edicion: EdicionPasos;
   activa: ClaveVersion;
   onActiva: (k: ClaveVersion) => void;
   /** La zona de restos de cada versión, en metros (null si aún no hay versiones). */
@@ -585,6 +835,7 @@ export function PasoVersiones({
           <span className="t-nota">{seleccion.detalle}</span>
         </div>
       ) : null}
+      <BarraEdicion e={edicion} restablecer />
       <label className="t-interfaz flex items-center justify-between gap-3 text-texto-2">
         Superponer la {activa === "evidencia" ? "declarada" : "evidencia"}
         <input

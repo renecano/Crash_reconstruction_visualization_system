@@ -2,7 +2,7 @@
  * POST /api/cesvi/consideraciones — borrador de las consideraciones del dictamen con Claude
  * (Hito 3, ADR 0051). Recibe los hechos que ya calculó el módulo de cálculo y lo que marcó el
  * perito; devuelve el texto como borrador y los números que no venían en los datos. Es pública, como
- * /cesvi; la cuidan el tope de gasto diario y el límite de peticiones por hora del relato.
+ * /cesvi; la cuidan el tope de gasto diario y el límite de peticiones por hora.
  */
 import { redactarConsideraciones } from "@croquis/cesvi/server";
 import { LLMError } from "@croquis/extraction";
