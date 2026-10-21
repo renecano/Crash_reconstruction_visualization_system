@@ -15,6 +15,8 @@ playwright-report
 test-results
 CLAUDE.md
 PLAN.md
+# Documento de René, versionado tal cual
+docs/cesvi/PROTOTIPO.md
 packages/scene-schema/vehicle_classes.json
 solver/croquis_solver/data/stiffness_classes.json
 solver/croquis_solver/data/inversion_calibration.json
