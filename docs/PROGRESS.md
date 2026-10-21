@@ -32,6 +32,19 @@ Reglas de trabajo: `CLAUDE.md`. Especificación: `PLAN.md`.
   - **Cómo probarlo:** en «Correspondencia y dictamen», escribir un nombre, aceptar la sugerencia, pedir el borrador y exportar el dictamen.
   - **Pruebas:** `packages/cesvi` (sugerencia y borrador con cliente falso), `apps/web/src/lib/dictamen-cesvi.test.ts` y la e2e `@flujo` hasta la descarga del PDF.
   - **Qué necesito de René:** nada nuevo. El borrador usa la llave y el tope de gasto de producción que ya están en Vercel.
+- **Ubicación ilustrativa y maqueta de «El hecho» (2026-10-21)** (rama `feat/cesvi-ubicacion-ilustrativa`, ADR 0056):
+  - **Liga:** https://croquis-sage.vercel.app/cesvi
+  - **Qué cambió:**
+    - **Ubicación ilustrativa del km 47+800**, a pedido de René, para mostrar que funcionan las coordenadas: 26.20915, −109.05970, sobre la carretera federal 15 (MEX 15D), en el arroyo que va hacia el norte, a 47.0 km de Los Mochis. La genera `data/cesvi/scripts/ubicacion-ilustrativa.mjs` desde el tramo precargado.
+    - **Dónde se dice que no es el lugar real:** en el paso 3, con la insignia «supuesto» y un aviso; en el punto marcado, con la insignia «ilustrativa»; y en el pie del croquis del PDF.
+    - **La maqueta `docs/cesvi/rediseno/Paso2.html`:** la reescribió Croquis con la pantalla de «El hecho» y el ejemplo del caso, en el formato de las demás maquetas.
+  - **Cómo probarlo:**
+    1. En el paso 3, «Usar esta ubicación».
+    2. Luego «Cambiar ubicación», escribir `26.22848, -109.05424` y «Mover el punto»: el aviso de ilustrativa desaparece.
+    3. En el paso 8, el PDF dice el punto de impacto.
+  - **Pruebas:**
+    - **Unitarias:** la ubicación está sobre la MEX 15 del tramo; un punto movido ya no es la ilustrativa; el PDF la dice ilustrativa.
+    - **E2E:** la del recorrido usa la ubicación ilustrativa y luego la mueve.
 - **El hecho y el punto editable (2026-10-21)** (rama `feat/cesvi-hecho-y-lugar`, ADR 0055):
   - **Liga:** https://croquis-sage.vercel.app/cesvi
   - **Qué cambió:**
@@ -53,7 +66,7 @@ Reglas de trabajo: `CLAUDE.md`. Especificación: `PLAN.md`.
   - **Pruebas:**
     - **Unitarias:** el glosario, las citas, la lectura con reglas, la validación, la interpretación con la grabación de Claude, el historial y el traslado del punto.
     - **E2E:** la del recorrido, ampliada. Llena la descripción técnica, mueve el punto, deshace y rehace con botones y teclado, y lo quita y lo restablece.
-  - **La maqueta `docs/cesvi/rediseno/Paso2.html`:** la del disco es idéntica a la que ya estaba en el repositorio (git no ve cambios). No encontré una versión más nueva, así que el paso 2 sigue el sistema del rediseño. En cuanto René guarde la nueva, se sube y se ajusta el paso.
+  - **La maqueta `docs/cesvi/rediseno/Paso2.html`:** no había versión nueva en el disco; René pidió que la hiciera Croquis (ADR 0056).
 - **Rediseño visual de /cesvi (2026-10-21)** (rama `feat/cesvi-rediseno`, ADR 0054; maquetas en `docs/cesvi/rediseno/`):
   - **Liga:** https://croquis-sage.vercel.app/cesvi
   - **Qué cambió:**

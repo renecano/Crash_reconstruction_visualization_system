@@ -1,0 +1,13 @@
+{
+  "_nota": "Ubicación ILUSTRATIVA del km 47+800, inventada a pedido de René para la demo (2026-10-21): el dictamen no da coordenadas. No es la ubicación real del hecho.",
+  "caso": "A2010930",
+  "lat": 26.20915,
+  "lon": -109.0597,
+  "via": {
+    "ref": "MEX 15D",
+    "nombre": "Carretera Los Mochis - Cd. Obregón (Cuota)",
+    "id_osm": 626882568
+  },
+  "distancia_a_los_mochis_km": 47,
+  "generado_por": "node data/cesvi/scripts/ubicacion-ilustrativa.mjs"
+}

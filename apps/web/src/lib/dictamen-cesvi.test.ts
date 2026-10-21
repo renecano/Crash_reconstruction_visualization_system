@@ -61,7 +61,11 @@ function datos(extra: Partial<DatosDictamen> = {}): DatosDictamen {
     },
     distanciaRestos: { valor: 15.89, fuente: "del dictamen" },
     reproduccion: reproducir(c).filas,
-    croquis: { imagen: "data:image/png;base64,AAAA", version: "versión de la evidencia" },
+    croquis: {
+      imagen: "data:image/png;base64,AAAA",
+      version: "versión de la evidencia",
+      punto: { lat: 26.20915, lon: -109.0597, ilustrativo: true },
+    },
     criterios: { A: criteriosVacios(), B: criteriosVacios() },
     zonas,
     sugerencia,
@@ -129,6 +133,13 @@ describe("dictamen en PDF con la estructura de CESVI", () => {
     expect(t).toContain("omitidas");
     const pie = dictamenDefinicion(datos()).footer as (p: number, n: number) => unknown;
     expect(textOf(pie(1, 3))).toContain(LEYENDA_DICTAMEN);
+  });
+
+  it("el punto de impacto ilustrativo se dice ilustrativo en el PDF (ADR 0056)", () => {
+    const t = textOf(dictamenContenido(datos())).replace(/\s+/g, " ");
+    expect(t).toContain("Punto de impacto: 26.20915, -109.05970");
+    expect(t).toContain("ubicación ilustrativa");
+    expect(t).toContain("no es el lugar real");
   });
 
   it("sin caracteres que Roboto no trae: la flecha de los datos se escribe «a»", () => {

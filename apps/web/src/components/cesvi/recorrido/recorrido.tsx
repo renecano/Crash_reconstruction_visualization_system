@@ -12,6 +12,7 @@ import {
   deshacer,
   distanciaM,
   ejemploHecho,
+  esUbicacionIlustrativa,
   giroEntreVias,
   GLOSARIO,
   historial,
@@ -23,6 +24,7 @@ import {
   reproducir,
   rumboHaciaElNorte,
   trasladarVersion,
+  ubicacionIlustrativa,
   validarLectura,
   sugerir,
   tramoDelCaso,
@@ -168,6 +170,7 @@ export function Recorrido({ caso, reproduccion }: { caso: CasoCesvi; reproduccio
   );
   const declarante: "A" | "B" = caso.declaracion.conductor === "B" ? "B" : "A";
   const ejemplo = useMemo(() => ejemploHecho(caso.id), [caso]);
+  const ilustrativa = useMemo(() => ubicacionIlustrativa(caso.id), [caso]);
   const [textos, setTextos] = useState<Record<TipoTexto, string>>({
     descripcion: "",
     declaracion: caso.declaracion.texto,
@@ -622,7 +625,13 @@ export function Recorrido({ caso, reproduccion }: { caso: CasoCesvi; reproduccio
         reproduccion: reproducir(caso).filas,
         croquis: (() => {
           const imagen = versiones ? captura.current() : null;
-          return imagen && version ? { imagen, version: version.titulo.toLowerCase() } : null;
+          if (!imagen || !version) return null;
+          const [lon, lat] = version.impacto.punto;
+          return {
+            imagen,
+            version: version.titulo.toLowerCase(),
+            punto: { lat, lon, ilustrativo: esUbicacionIlustrativa(caso.id, [lon, lat]) },
+          };
         })(),
         criterios,
         zonas,
@@ -815,6 +824,18 @@ export function Recorrido({ caso, reproduccion }: { caso: CasoCesvi; reproduccio
       via={via}
       onCoordenadas={(lat, lon) => (versiones ? moverPunto([lon, lat]) : fijarImpacto([lon, lat]))}
       edicion={edicionPasos}
+      ilustrativa={
+        ilustrativa
+          ? {
+              lat: ilustrativa.lat,
+              lon: ilustrativa.lon,
+              via: `carretera federal 15 (${ilustrativa.via.ref}), arroyo hacia el norte`,
+            }
+          : null
+      }
+      puntoIlustrativo={
+        versiones !== null && esUbicacionIlustrativa(caso.id, versiones.evidencia.impacto.punto)
+      }
     />,
     <PasoVersiones
       key="versiones"
