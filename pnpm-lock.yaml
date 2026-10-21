@@ -289,6 +289,9 @@ importers:
 
   apps/web:
     dependencies:
+      '@croquis/cesvi':
+        specifier: workspace:*
+        version: link:../../packages/cesvi
       '@croquis/croquis-2d':
         specifier: workspace:*
         version: link:../../packages/croquis-2d
@@ -432,6 +435,25 @@ importers:
       tsx:
         specifier: 'catalog:'
         version: 4.23.15
+      typescript:
+        specifier: 'catalog:'
+        version: 6.0.3
+      vitest:
+        specifier: 'catalog:'
+        version: 5.0.3(@opentelemetry/api@1.9.1)(@types/node@24.19.2)(jsdom@30.1.2(@noble/hashes@2.4.0))(vite@8.3.4(@types/node@24.19.2)(esbuild@0.28.2)(jiti@2.7.0)(tsx@4.23.15))
+
+  packages/cesvi:
+    dependencies:
+      '@croquis/solver-ts':
+        specifier: workspace:*
+        version: link:../solver-ts
+    devDependencies:
+      '@types/node':
+        specifier: 'catalog:'
+        version: 24.19.2
+      eslint:
+        specifier: 'catalog:'
+        version: 10.12.0(jiti@2.7.0)
       typescript:
         specifier: 'catalog:'
         version: 6.0.3

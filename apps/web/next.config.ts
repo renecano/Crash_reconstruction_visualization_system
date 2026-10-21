@@ -6,6 +6,7 @@ const nextConfig: NextConfig = {
   agentRules: false,
   // Los paquetes del monorepo se consumen como fuente TypeScript (sin paso de build).
   transpilePackages: [
+    "@croquis/cesvi",
     "@croquis/scene-schema",
     "@croquis/solver-ts",
     "@croquis/viewer",

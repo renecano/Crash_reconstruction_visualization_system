@@ -1,0 +1,25 @@
+{
+  "name": "@croquis/cesvi",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Método de cálculo de los dictámenes de CESVI y la reproducción de un dictamen (prototipo CESVI)",
+  "type": "module",
+  "sideEffects": false,
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "scripts": {
+    "lint": "eslint .",
+    "typecheck": "tsc -p tsconfig.json",
+    "test": "vitest run"
+  },
+  "devDependencies": {
+    "@types/node": "catalog:",
+    "eslint": "catalog:",
+    "typescript": "catalog:",
+    "vitest": "catalog:"
+  },
+  "dependencies": {
+    "@croquis/solver-ts": "workspace:*"
+  }
+}
