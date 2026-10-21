@@ -176,7 +176,9 @@
                 ]
               }
             },
-            "ocupantes": ["per-1"]
+            "ocupantes": [
+              "per-1"
+            ]
           },
           {
             "id": "veh-b",
@@ -268,7 +270,10 @@
             "id": "ev-1",
             "orden": 0,
             "tipo": "impacto_vehiculo_vehiculo",
-            "actores": ["veh-a", "veh-b"],
+            "actores": [
+              "veh-a",
+              "veh-b"
+            ],
             "procedencia": {
               "fuente": "relato",
               "confianza": 0.9,
@@ -448,7 +453,10 @@
                 "nota": "Disposición genérica; ajústala en el croquis."
               }
             },
-            "ocupantes": ["per-1", "per-2"]
+            "ocupantes": [
+              "per-1",
+              "per-2"
+            ]
           },
           {
             "id": "veh-b",
@@ -553,7 +561,10 @@
             "id": "ev-1",
             "orden": 0,
             "tipo": "impacto_vehiculo_vehiculo",
-            "actores": ["veh-a", "veh-b"],
+            "actores": [
+              "veh-a",
+              "veh-b"
+            ],
             "procedencia": {
               "fuente": "relato",
               "confianza": 0.9,
@@ -581,7 +592,12 @@
           "texto": "Con las zonas de golpe indicadas los vehículos no llegan a tocarse. ¿En qué parte de cada vehículo fue el golpe?",
           "motivo": "contradiccion",
           "campo": "eventos.0.zonas_impacto",
-          "opciones": ["frente", "atrás", "lado izquierdo", "lado derecho"]
+          "opciones": [
+            "frente",
+            "atrás",
+            "lado izquierdo",
+            "lado derecho"
+          ]
         },
         {
           "id": "velocidad:veh-b",
@@ -595,7 +611,11 @@
           "texto": "¿Alcanzaste a frenar antes del golpe?",
           "motivo": "sensibilidad",
           "campo": "vehiculos.0.frenado.aplico",
-          "opciones": ["sí", "no", "no sé"],
+          "opciones": [
+            "sí",
+            "no",
+            "no sé"
+          ],
           "reduccion": 0.304
         }
       ]
@@ -758,7 +778,9 @@
                 "nota": "Disposición genérica; ajústala en el croquis."
               }
             },
-            "ocupantes": ["per-1"]
+            "ocupantes": [
+              "per-1"
+            ]
           }
         ],
         "personas": [
@@ -790,7 +812,10 @@
             "id": "ev-1",
             "orden": 0,
             "tipo": "impacto_vehiculo_objeto",
-            "actores": ["veh-a", "obj-1"],
+            "actores": [
+              "veh-a",
+              "obj-1"
+            ],
             "procedencia": {
               "fuente": "relato",
               "confianza": 0.9,
@@ -840,7 +865,11 @@
           "texto": "¿Alcanzaste a frenar antes del golpe?",
           "motivo": "sensibilidad",
           "campo": "vehiculos.0.frenado.aplico",
-          "opciones": ["sí", "no", "no sé"],
+          "opciones": [
+            "sí",
+            "no",
+            "no sé"
+          ],
           "reduccion": 0.745
         },
         {
@@ -987,7 +1016,9 @@
                 "nota": "Disposición genérica; ajústala en el croquis."
               }
             },
-            "ocupantes": ["per-1"]
+            "ocupantes": [
+              "per-1"
+            ]
           }
         ],
         "personas": [
@@ -1044,7 +1075,10 @@
             "id": "ev-1",
             "orden": 0,
             "tipo": "impacto_vehiculo_persona",
-            "actores": ["veh-a", "per-2"],
+            "actores": [
+              "veh-a",
+              "per-2"
+            ],
             "procedencia": {
               "fuente": "relato",
               "confianza": 0.9,
@@ -1116,7 +1150,12 @@
           "texto": "Con las zonas de golpe indicadas los vehículos no llegan a tocarse. ¿En qué parte de cada vehículo fue el golpe?",
           "motivo": "contradiccion",
           "campo": "eventos.0.zonas_impacto",
-          "opciones": ["frente", "atrás", "lado izquierdo", "lado derecho"]
+          "opciones": [
+            "frente",
+            "atrás",
+            "lado izquierdo",
+            "lado derecho"
+          ]
         },
         {
           "id": "proyeccion:per-2",
@@ -1277,7 +1316,10 @@
                 "nota": "Disposición genérica; ajústala en el croquis."
               }
             },
-            "ocupantes": ["per-1", "per-2"]
+            "ocupantes": [
+              "per-1",
+              "per-2"
+            ]
           },
           {
             "id": "veh-b",
@@ -1395,7 +1437,10 @@
             "id": "ev-1",
             "orden": 0,
             "tipo": "impacto_vehiculo_objeto",
-            "actores": ["veh-a", "obj-1"],
+            "actores": [
+              "veh-a",
+              "obj-1"
+            ],
             "procedencia": {
               "fuente": "relato",
               "confianza": 0.9,
@@ -1437,7 +1482,11 @@
           "texto": "¿Alcanzaste a frenar antes del golpe?",
           "motivo": "sensibilidad",
           "campo": "vehiculos.0.frenado.aplico",
-          "opciones": ["sí", "no", "no sé"],
+          "opciones": [
+            "sí",
+            "no",
+            "no sé"
+          ],
           "reduccion": 0.442
         },
         {
@@ -1564,7 +1613,10 @@
                 "nota": "Disposición genérica; ajústala en el croquis."
               }
             },
-            "ocupantes": ["per-1", "per-2"]
+            "ocupantes": [
+              "per-1",
+              "per-2"
+            ]
           },
           {
             "id": "veh-b",
@@ -1657,7 +1709,10 @@
             "id": "ev-1",
             "orden": 0,
             "tipo": "impacto_vehiculo_vehiculo",
-            "actores": ["veh-a", "veh-b"],
+            "actores": [
+              "veh-a",
+              "veh-b"
+            ],
             "procedencia": {
               "fuente": "relato",
               "confianza": 0.9,
@@ -1685,7 +1740,12 @@
           "texto": "Con las zonas de golpe indicadas los vehículos no llegan a tocarse. ¿En qué parte de cada vehículo fue el golpe?",
           "motivo": "contradiccion",
           "campo": "eventos.0.zonas_impacto",
-          "opciones": ["frente", "atrás", "lado izquierdo", "lado derecho"]
+          "opciones": [
+            "frente",
+            "atrás",
+            "lado izquierdo",
+            "lado derecho"
+          ]
         },
         {
           "id": "velocidad:veh-a",
