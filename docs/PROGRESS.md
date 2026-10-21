@@ -5,7 +5,12 @@ Reglas de trabajo: `CLAUDE.md`. Especificación: `PLAN.md`.
 
 ## Estado actual
 
-- **Fase actual: F11a — experiencia y diseño** (PLAN §11, iniciada el 2026-10-19; rama `feat/f11a-diseno`).
+- **Ahora: prototipo para CESVI** (desde el 2026-10-20). Croquis es para los peritos de CESVI México; el alcance lo pone CESVI (`CLAUDE.md`). La especificación es `docs/cesvi/PROTOTIPO.md`, que manda sobre `PLAN.md` en lo que se contradigan.
+  - **Orden:** Hito 1 (el caso A2010930 y sus cálculos en `/cesvi`), Hito 2 (el lugar y el croquis sobre el mapa) y Hito 3 (correspondencia, sugerencia y dictamen en PDF). Cada uno se despliega al terminar.
+  - **CI:** para hacer merge solo cuentan lint, tipos, pruebas unitarias y una e2e por flujo principal en Chromium; lo demás corre a mano (ADR 0047).
+  - **Datos de CESVI:** en `data/raw/cesvi/`, que git ignora (`.gitignore`: `data/raw/*`). El repositorio solo guarda datos derivados del caso, sin placas, VIN ni nombres.
+- **F11a cerrada** (PR #63). **F11b (E9 con personas) en pausa** mientras dure el trabajo con CESVI; el kit de E9 sigue listo.
+- **F11a — experiencia y diseño** (PLAN §11, iniciada el 2026-10-19; rama `feat/f11a-diseno`).
   - **Plan:** `docs/design/plan.md`, con la revisión contra lo genérico. Las decisiones van en el ADR 0045.
   - **Orden de trabajo:**
     1. base: tokens desde `assets/brand/tokens.json`, Anybody autoalojada, marca, íconos, imagen para redes, encabezado, pie e idioma;
@@ -103,6 +108,19 @@ Reglas de trabajo: `CLAUDE.md`. Especificación: `PLAN.md`.
 
 - **E1 del prompt v2 en el primer test, hecho** (PR #14). Sonnet 0.875 → 0.919 y Haiku 0.852 → 0.896. Además, E1 ahora compara cada contrafactual con la repetición del mismo relato (McNemar por tipo): ningún tipo difiere del ruido, y las reglas cambian con el modelo del vehículo en 6 de 52 pares (ADR 0012 §10).
 - **F8** cerrada el 2026-10-17 (PR #20 a #24). **F0** cerrado el 2026-10-10 (PR #1), **F1** el 2026-10-10 (PR #3), **F2** el 2026-10-13 (PR #4), **F3** el 2026-10-13 (PR #5), **F4** el 2026-10-13 (PR #6), **F5** el 2026-10-13 (PR #7), **F6** el 2026-10-14 (PR #8), **F7** el 2026-10-14 (PR #9; pendientes registrados); migración a Vercel el 2026-10-14 (PR #10); test CISS y prompt v2 el 2026-10-14 (PR #11).
+
+### Endurecimiento pendiente (después del prototipo)
+
+Lo que se pospone por el trabajo con CESVI no se borra: queda aquí para después.
+
+- **Fuera de la CI de cada PR** (ADR 0047; corre a mano con `completo.yml`, o antes de una demo con CESVI):
+  - e2e completa en escritorio y celular, y las referencias visuales de `capturas-diseno` (aún sin versionar: la primera corrida completa las genera como artefacto para revisarlas y versionarlas);
+  - E8 en Chromium, Firefox y WebKit;
+  - generados al día (`generate:check` de scene-schema, extraction, solver-ts, croquis-2d y web) y la demo grabada (`demo:check`);
+  - reproducibilidad de los datos de Python (DataMX, CISS, inercias de NHTSA, OSM, MakeHuman, Poly Haven) y Python en Windows.
+- **Lighthouse, axe y E-series como requisito:** `eval/f11_portada.mjs` y las demás evaluaciones siguen en el repo; se corren cuando René lo pida.
+- **En pausa:** el visor 3D, la portada de lanzamiento y la historia (de F11a solo se usan tokens, marca y componentes); E6 en baja y media después de F11a; F11b (E9 con personas).
+- **Del prototipo de CESVI:** el mapa con mosaicos propios (privacidad completa), la importación automática de cualquier dictamen, interpenetración, impactos múltiples y generalidad del método.
 
 ### Bloqueado — necesita a René
 
