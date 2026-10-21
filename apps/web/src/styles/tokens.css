@@ -13,6 +13,18 @@
   --marca-vehiculo-b: #FFC24B;
   --marca-papel: #EFEBE1;
   --marca-tinta: #15181B;
+  --marca-claro-fondo: #F3F4F6;
+  --marca-claro-superficie: #FFFFFF;
+  --marca-claro-elevado: #ECEEF1;
+  --marca-claro-linea-suave: #E4E7EB;
+  --marca-claro-linea: #D9DCE1;
+  --marca-claro-texto: #15181D;
+  --marca-claro-texto-2: #555B66;
+  --marca-claro-texto-3: #636974;
+  --marca-claro-senal: #D9431A;
+  --marca-claro-senal-texto: #B8360F;
+  --marca-claro-vehiculo-a: #2257C9;
+  --marca-claro-vehiculo-b: #A35A00;
   --efecto-pintura-faro: linear-gradient(135deg, #FFFFFF 0%, #ECE9E1 55%, #A9ADB2 100%);
   --efecto-metal-texto: linear-gradient(180deg, #FFFFFF 0%, #E9E6DE 55%, #9EA3A8 100%);
   --efecto-brillo-baliza: drop-shadow(0 0 6px rgba(255,91,46,0.75));

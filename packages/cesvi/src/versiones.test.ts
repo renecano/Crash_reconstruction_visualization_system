@@ -9,11 +9,14 @@ import {
   type LonLat,
 } from "./geo";
 import {
+  eventosDeLinea,
   FASES,
   giroEntreVias,
   moverPose,
   proponerVersiones,
+  poseEnInstante,
   rumboHaciaElNorte,
+  tiemposDeReposo,
   trasladarVersion,
 } from "./versiones";
 
@@ -151,5 +154,50 @@ describe("mover el punto de impacto (ADR 0055)", () => {
     });
     expect(vs.declarada.vehiculos.A.impacto.rumbo).toBe(180);
     expect(vs.evidencia.vehiculos.A.impacto.rumbo).toBe(0);
+  });
+});
+
+describe("línea de tiempo (ADR 0057)", () => {
+  const P: LonLat = [-109.0597, 26.20915];
+  const medidas = { A: { largo: 5.34, ancho: 1.86 }, B: { largo: 5.34, ancho: 1.86 } };
+  const vs = proponerVersiones({
+    impacto: P,
+    rumboVia: 0,
+    medidas,
+    distanciaRestos: 15.89,
+    reversaM: 3,
+  });
+
+  it("evidencia: A se desplaza 15.89 m y queda en reposo al final; B, en el impacto", () => {
+    expect(tiemposDeReposo(vs.evidencia)).toEqual({ A: 1, B: 0.5 });
+    expect(eventosDeLinea(vs.evidencia).map((e) => e.etiqueta)).toEqual([
+      "Aproximación",
+      "Impacto",
+      "Reposo de B",
+      "Reposo de A",
+    ]);
+  });
+
+  it("declarada: sin desplazamiento, los dos quedan en reposo en el impacto", () => {
+    expect(eventosDeLinea(vs.declarada).map((e) => [e.etiqueta, e.t])).toEqual([
+      ["Aproximación", 0],
+      ["Impacto", 0.5],
+      ["Reposo de A y B", 0.5],
+    ]);
+  });
+
+  it("la pose recorre inicial → impacto → final", () => {
+    const v = vs.evidencia;
+    expect(distanciaM(poseEnInstante(v, "B", 0).punto, v.vehiculos.B.inicial.punto)).toBeLessThan(
+      1e-6,
+    );
+    expect(distanciaM(poseEnInstante(v, "A", 0.5).punto, v.vehiculos.A.impacto.punto)).toBeLessThan(
+      1e-6,
+    );
+    expect(distanciaM(poseEnInstante(v, "A", 1).punto, v.vehiculos.A.final.punto)).toBeLessThan(
+      1e-6,
+    );
+    const medio = distanciaM(v.vehiculos.A.impacto.punto, poseEnInstante(v, "A", 0.75).punto);
+    expect(medio).toBeGreaterThan(15.89 / 2);
   });
 });

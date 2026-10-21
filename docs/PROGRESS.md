@@ -32,6 +32,23 @@ Reglas de trabajo: `CLAUDE.md`. Especificación: `PLAN.md`.
   - **Cómo probarlo:** en «Correspondencia y dictamen», escribir un nombre, aceptar la sugerencia, pedir el borrador y exportar el dictamen.
   - **Pruebas:** `packages/cesvi` (sugerencia y borrador con cliente falso), `apps/web/src/lib/dictamen-cesvi.test.ts` y la e2e `@flujo` hasta la descarga del PDF.
   - **Qué necesito de René:** nada nuevo. El borrador usa la llave y el tope de gasto de producción que ya están en Vercel.
+- **UI unificada (2026-10-21)** (rama `feat/cesvi-ui-unificada`, ADR 0057; maquetas Paso4Trabajo, Paso8 y Paso2Claro):
+  - **Liga:** https://croquis-sage.vercel.app/cesvi
+  - **Qué hay:**
+    - **Modos Presentar y Trabajar** con los mismos datos. Trabajar tiene herramientas de colocación, las vistas Declarada, Evidencia, Superponer y Lado a lado, el objeto elegido en metros desde el impacto (rumbo y fuente editables), «Restablecer posición» y deshacer.
+    - **Línea de tiempo** con eventos y velocidades de 0.1×, 0.25× y 1×.
+    - **«Qué cambia entre versiones»** en Trabajar y en el paso 7.
+    - **Paso 2:** la frase bajo cada dato, la completitud, las casillas de lo que falta y «¿Qué falta?» con «por qué importa» y «No sé».
+    - **Barra superior:** el estado de la IA y «Llenar a mano».
+    - **Paso 8:** vista previa; PDF, Word, croquis PNG y caso JSON; qué incluir; trazabilidad; y «Antes de firmar».
+    - **Tema claro y oscuro** con interruptor: claro al trabajar y oscuro al presentar, recordado por modo.
+  - **Cómo probarlo:**
+    1. En el paso 4, «Trabajar». Elegir «A · posición inicial / final» y cambiar «y desde el impacto»; probar «Lado a lado» y 0.25×.
+    2. Interruptor ◐.
+    3. En el paso 8, Word y Caso JSON.
+  - **Pruebas:**
+    - **Unitarias:** comparación, completitud, llenado a mano, «No sé», eventos y contraste del tema claro.
+    - **E2E:** la del recorrido cambia de modo y de tema y exporta PDF, Word y JSON.
 - **Ubicación ilustrativa y maqueta de «El hecho» (2026-10-21)** (rama `feat/cesvi-ubicacion-ilustrativa`, ADR 0056):
   - **Liga:** https://croquis-sage.vercel.app/cesvi
   - **Qué cambió:**

@@ -13,3 +13,4 @@ export * from "./hecho";
 export * from "./historial";
 export * from "./ejemplo";
 export * from "./tramo";
+export * from "./comparacion-versiones";

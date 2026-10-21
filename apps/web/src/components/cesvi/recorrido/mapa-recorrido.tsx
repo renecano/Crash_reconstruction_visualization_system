@@ -11,9 +11,9 @@
  * - Entrega una consulta de las calles de los mosaicos ya cargados, para no esperar a Overpass.
  */
 import {
-  avanzar,
   distanciaM,
   FASES,
+  poseEnInstante,
   rectanguloVehiculo,
   rumboCercano,
   rumboDeg,
@@ -28,7 +28,7 @@ import type { Feature, Position } from "geojson";
 import type { GeoJSONSource, Map as MapaMl, Marker } from "maplibre-gl";
 import { useEffect, useRef, useState } from "react";
 import "maplibre-gl/dist/maplibre-gl.css";
-import { colores, ESTILO_MAPA, marcador, vacio } from "../mapa-comun";
+import { ESTILO_MAPA, ESTILO_MAPA_CLARO, marcador, vacio } from "../mapa-comun";
 import { acomodarEtiquetas, ALTO_ETIQUETA } from "./etiquetas-mapa";
 
 export type Camara =
@@ -153,19 +153,6 @@ export const igualSeleccion = (a: Seleccion, b: Seleccion) =>
   (a.tipo !== "pose" || (b.tipo === "pose" && a.letra === b.letra && a.fase === b.fase)) &&
   (a.tipo !== "restos" || (b.tipo === "restos" && a.extremo === b.extremo));
 
-/** La pose de un vehículo en el instante t∈[0,1]: de la inicial al impacto y del impacto a la final. */
-function poseEn(v: VersionCroquis, letra: "A" | "B", t: number): Pose {
-  const p = v.vehiculos[letra];
-  const [a, b, f] =
-    t < 0.5 ? [p.inicial, p.impacto, t / 0.5] : [p.impacto, p.final, (t - 0.5) / 0.5];
-  const s = f * f * (3 - 2 * f);
-  const d = distanciaM(a.punto, b.punto);
-  // En línea recta de a a b (a la escala de un hecho de tránsito basta).
-  const punto: [number, number] =
-    d > 0 ? avanzar(a.punto, rumboDeg(a.punto, b.punto), d * s) : [a.punto[0], a.punto[1]];
-  return { punto, rumbo: a.rumbo + (b.rumbo - a.rumbo) * s, fuente: a.fuente };
-}
-
 const poligono = (p: Pose, m: Medidas): [number, number][] =>
   rectanguloVehiculo(p.punto, p.rumbo, m.largo, m.ancho);
 
@@ -261,7 +248,10 @@ function geojsonAnimado(v: VersionCroquis, medidas: Record<"A" | "B", Medidas>, 
     features.push({
       type: "Feature",
       properties: { tipo: "vehiculo", letra, fase: "final", elegida: false },
-      geometry: { type: "Polygon", coordinates: [poligono(poseEn(v, letra, t), medidas[letra])] },
+      geometry: {
+        type: "Polygon",
+        coordinates: [poligono(poseEnInstante(v, letra, t), medidas[letra])],
+      },
     });
   }
   return { type: "FeatureCollection" as const, features };
@@ -323,7 +313,18 @@ export function MapaRecorrido({
   onCaptura,
   onConsultaCalles,
   atenuado,
+  tema = "oscuro",
+  medicion = [],
+  relleno = { top: 150, bottom: 110, left: 300, right: 220 },
+  testid = "mapa",
 }: {
+  /** El tema: cambia el estilo de los mosaicos y los colores de las capas (ADR 0057). */
+  tema?: "claro" | "oscuro";
+  /** «Medir distancia»: los puntos que marcó el perito (0, 1 o 2). */
+  medicion?: LonLat[];
+  /** Espacio libre alrededor del encuadre (lo que tapan los paneles). */
+  relleno?: { top: number; bottom: number; left: number; right: number };
+  testid?: string;
   camara: Camara | null;
   calles: Calle[];
   version: VersionCroquis | null;
@@ -350,6 +351,91 @@ export function MapaRecorrido({
   // La capa de etiquetas (HTML sobre el mapa) y lo que muestra; se redibuja al mover el mapa.
   const etiquetas = useRef<ItemEtiqueta[]>([]);
   const dibujarEtiquetas = useRef<() => void>(() => {});
+  const [estilo, setEstilo] = useState(0);
+  const capas = (instancia: MapaMl) => {
+    if (instancia.getSource("croquis")) return;
+    // Los colores del tema que se ve: los roles resueltos en el contenedor del mapa.
+    const s = getComputedStyle(contenedor.current ?? document.documentElement);
+    const v = (n: string, d: string) => s.getPropertyValue(n).trim() || d;
+    const c = {
+      texto: v("--texto", "#F2F3F5"),
+      texto2: v("--texto-2", "#A4A9B3"),
+      texto3: v("--texto-3", "#7B818C"),
+      evidencia: v("--senal", "#FF5B2E"),
+    };
+    const colorA = v("--vehiculo-a", "#5AA9FF");
+    const colorB = v("--vehiculo-b", "#FFC24B");
+    const porVehiculo = ["match", ["get", "letra"], "A", colorA, colorB] as unknown as string;
+    coloresVehiculo.current = { A: colorA, B: colorB, evidencia: c.evidencia };
+    instancia.addSource("calles", { type: "geojson", data: vacio });
+    instancia.addLayer({
+      id: "calles",
+      type: "line",
+      source: "calles",
+      paint: { "line-color": c.texto2, "line-width": 2, "line-opacity": 0.8 },
+    });
+    instancia.addSource("croquis", { type: "geojson", data: vacio });
+    if (!instancia.hasImage("rayado")) {
+      instancia.addImage("rayado", rayado(c.texto2.startsWith("#") ? c.texto2 : "#A4A9B3"));
+    }
+    instancia.addLayer({
+      id: "restos",
+      type: "fill",
+      source: "croquis",
+      filter: ["==", ["get", "tipo"], "restos"],
+      paint: { "fill-pattern": "rayado" },
+    });
+    instancia.addLayer({
+      id: "superpuesta",
+      type: "line",
+      source: "croquis",
+      filter: ["==", ["get", "tipo"], "superpuesta"],
+      paint: { "line-color": c.texto3, "line-width": 1.5, "line-dasharray": [3, 3] },
+    });
+    instancia.addLayer({
+      id: "trayectorias",
+      type: "line",
+      source: "croquis",
+      filter: ["==", ["get", "tipo"], "trayectoria"],
+      layout: { "line-cap": "round", "line-join": "round" },
+      paint: { "line-color": porVehiculo, "line-width": 3, "line-opacity": 0.85 },
+    });
+    instancia.addLayer({
+      id: "vehiculos",
+      type: "fill",
+      source: "croquis",
+      filter: ["==", ["get", "tipo"], "vehiculo"],
+      paint: {
+        "fill-color": porVehiculo,
+        "fill-opacity": ["match", ["get", "fase"], "final", 0.95, "impacto", 0.3, 0],
+      },
+    });
+    instancia.addLayer({
+      id: "vehiculos-borde",
+      type: "line",
+      source: "croquis",
+      filter: ["==", ["get", "tipo"], "vehiculo"],
+      paint: {
+        "line-color": ["case", ["get", "elegida"], c.texto, porVehiculo] as unknown as string,
+        "line-width": ["case", ["get", "elegida"], 2.5, 1.5] as unknown as number,
+        "line-opacity": ["match", ["get", "fase"], "final", 1, 0.75],
+        "line-dasharray": [
+          "match",
+          ["get", "fase"],
+          "inicial",
+          ["literal", [2.5, 2]],
+          ["literal", [1, 0]],
+        ],
+      },
+    });
+    instancia.addLayer({
+      id: "medicion",
+      type: "line",
+      source: "croquis",
+      filter: ["==", ["get", "tipo"], "medicion"],
+      paint: { "line-color": c.texto, "line-width": 2, "line-dasharray": [2, 1.5] },
+    });
+  };
   const avisos = useRef({ onClic, onCaptura, onConsultaCalles });
   useEffect(() => {
     avisos.current = { onClic, onCaptura, onConsultaCalles };
@@ -363,7 +449,7 @@ export function MapaRecorrido({
       setWorkerUrl(`/maplibre/worker-${getVersion()}.mjs`);
       instancia = new Map({
         container: contenedor.current,
-        style: ESTILO_MAPA,
+        style: tema === "claro" ? ESTILO_MAPA_CLARO : ESTILO_MAPA,
         center: [-102.5, 23.6],
         zoom: 4,
         // La atribución va en el pie del recorrido (OpenStreetMap, OpenFreeMap, OpenMapTiles).
@@ -371,76 +457,17 @@ export function MapaRecorrido({
         canvasContextAttributes: { preserveDrawingBuffer: true },
       });
       instancia.on("click", (e) => avisos.current.onClic?.([e.lngLat.lng, e.lngLat.lat]));
+      // Las capas del croquis se ponen con cada estilo (al cargar y al cambiar de tema).
+      instancia.on("style.load", () => {
+        if (!vivo || !instancia) return;
+        capas(instancia);
+        setEstilo((n) => n + 1);
+      });
       instancia.on("load", () => {
         if (!vivo || !instancia) return;
-        const c = colores();
-        const s = getComputedStyle(document.documentElement);
-        const colorA = s.getPropertyValue("--marca-vehiculo-a").trim() || "#5AA9FF";
-        const colorB = s.getPropertyValue("--marca-vehiculo-b").trim() || "#FFC24B";
-        const porVehiculo = ["match", ["get", "letra"], "A", colorA, colorB] as unknown as string;
-        coloresVehiculo.current = { A: colorA, B: colorB, evidencia: c.evidencia };
         dibujarEtiquetas.current = capaDeEtiquetas(instancia, etiquetas);
         instancia.on("move", () => dibujarEtiquetas.current());
         instancia.on("resize", () => dibujarEtiquetas.current());
-        instancia.addSource("calles", { type: "geojson", data: vacio });
-        instancia.addLayer({
-          id: "calles",
-          type: "line",
-          source: "calles",
-          paint: { "line-color": c.texto2, "line-width": 2, "line-opacity": 0.8 },
-        });
-        instancia.addSource("croquis", { type: "geojson", data: vacio });
-        instancia.addImage("rayado", rayado(c.texto2.startsWith("#") ? c.texto2 : "#A4A9B3"));
-        instancia.addLayer({
-          id: "restos",
-          type: "fill",
-          source: "croquis",
-          filter: ["==", ["get", "tipo"], "restos"],
-          paint: { "fill-pattern": "rayado" },
-        });
-        instancia.addLayer({
-          id: "superpuesta",
-          type: "line",
-          source: "croquis",
-          filter: ["==", ["get", "tipo"], "superpuesta"],
-          paint: { "line-color": c.texto3, "line-width": 1.5, "line-dasharray": [3, 3] },
-        });
-        instancia.addLayer({
-          id: "trayectorias",
-          type: "line",
-          source: "croquis",
-          filter: ["==", ["get", "tipo"], "trayectoria"],
-          layout: { "line-cap": "round", "line-join": "round" },
-          paint: { "line-color": porVehiculo, "line-width": 3, "line-opacity": 0.85 },
-        });
-        instancia.addLayer({
-          id: "vehiculos",
-          type: "fill",
-          source: "croquis",
-          filter: ["==", ["get", "tipo"], "vehiculo"],
-          paint: {
-            "fill-color": porVehiculo,
-            "fill-opacity": ["match", ["get", "fase"], "final", 0.95, "impacto", 0.3, 0],
-          },
-        });
-        instancia.addLayer({
-          id: "vehiculos-borde",
-          type: "line",
-          source: "croquis",
-          filter: ["==", ["get", "tipo"], "vehiculo"],
-          paint: {
-            "line-color": ["case", ["get", "elegida"], c.texto, porVehiculo] as unknown as string,
-            "line-width": ["case", ["get", "elegida"], 2.5, 1.5] as unknown as number,
-            "line-opacity": ["match", ["get", "fase"], "final", 1, 0.75],
-            "line-dasharray": [
-              "match",
-              ["get", "fase"],
-              "inicial",
-              ["literal", [2.5, 2]],
-              ["literal", [1, 0]],
-            ],
-          },
-        });
         mapa.current = instancia;
         setListo(true);
         avisos.current.onCaptura?.(() => mapa.current?.getCanvas().toDataURL("image/png") ?? null);
@@ -454,7 +481,17 @@ export function MapaRecorrido({
       instancia?.remove();
       mapa.current = null;
     };
+    // El tema inicial se lee una vez; los cambios de tema van por setStyle (efecto de abajo).
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  const temaPuesto = useRef(tema);
+  useEffect(() => {
+    const m = mapa.current;
+    if (!m || !listo || temaPuesto.current === tema) return;
+    temaPuesto.current = tema;
+    m.setStyle(tema === "claro" ? ESTILO_MAPA_CLARO : ESTILO_MAPA);
+  }, [listo, tema]);
 
   // La cámara vuela a lo que pide el paso.
   useEffect(() => {
@@ -477,13 +514,10 @@ export function MapaRecorrido({
         ],
         // Deja libres el selector de versión (arriba), la tarjeta de los restos (abajo a la
         // izquierda) y la leyenda (abajo a la derecha).
-        {
-          padding: { top: 150, bottom: 110, left: 300, right: 220 },
-          maxZoom: camara.zoomMax,
-          duration: duracion,
-        },
+        { padding: relleno, maxZoom: camara.zoomMax, duration: duracion },
       );
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- el relleno acompaña a la cámara
   }, [listo, camara]);
 
   // Calles y croquis (completo o animado).
@@ -499,14 +533,53 @@ export function MapaRecorrido({
         geometry: { type: "LineString", coordinates: v.puntos as unknown as Position[] },
       })),
     });
-    (m.getSource("croquis") as GeoJSONSource | undefined)?.setData(
+    const croquis =
       version === null
         ? vacio
         : animacion === null
           ? geojsonCompleto(version, medidas, seleccion, superpuesta)
-          : geojsonAnimado(version, medidas, animacion),
-    );
-  }, [listo, calles, version, superpuesta, medidas, animacion, seleccion]);
+          : geojsonAnimado(version, medidas, animacion);
+    const conMedicion =
+      medicion.length === 2
+        ? {
+            ...croquis,
+            features: [
+              ...croquis.features,
+              {
+                type: "Feature" as const,
+                properties: { tipo: "medicion" },
+                geometry: {
+                  type: "LineString" as const,
+                  coordinates: medicion as unknown as Position[],
+                },
+              },
+            ],
+          }
+        : croquis;
+    (m.getSource("croquis") as GeoJSONSource | undefined)?.setData(conMedicion);
+  }, [listo, estilo, calles, version, superpuesta, medidas, animacion, seleccion, medicion]);
+
+  // La medida de «Medir distancia», en una píldora a media línea.
+  const pildora = useRef<Marker | null>(null);
+  useEffect(() => {
+    const m = mapa.current;
+    pildora.current?.remove();
+    pildora.current = null;
+    if (!m || !listo || medicion.length !== 2) return;
+    let vivo = true;
+    void import("maplibre-gl").then(({ Marker }) => {
+      if (!vivo) return;
+      const [a, b] = medicion as [LonLat, LonLat];
+      const el = marcador(`${distanciaM(a, b).toFixed(2)} m`, "pildora-medida");
+      el.dataset.testid = "medida-perito";
+      pildora.current = new Marker({ element: el, offset: [0, -18] })
+        .setLngLat([(a[0] + b[0]) / 2, (a[1] + b[1]) / 2])
+        .addTo(m);
+    });
+    return () => {
+      vivo = false;
+    };
+  }, [listo, medicion]);
 
   // La X del impacto (con su resplandor) y la medida de la zona de restos, cuando no se edita: en
   // la edición, la X es el punto que se arrastra.
@@ -555,7 +628,9 @@ export function MapaRecorrido({
     if (version) {
       for (const letra of ["A", "B"] as const) {
         const pose =
-          animacion === null ? version.vehiculos[letra].final : poseEn(version, letra, animacion);
+          animacion === null
+            ? version.vehiculos[letra].final
+            : poseEnInstante(version, letra, animacion);
         items.push({
           id: `nombre-${letra}`,
           texto: nombres[letra],
@@ -670,8 +745,8 @@ export function MapaRecorrido({
   return (
     <div
       ref={contenedor}
-      className={`absolute inset-0 transition-[filter,opacity] duration-700 ${atenuado ? "opacity-30 saturate-50" : "opacity-100"}`}
-      data-testid="mapa"
+      className={`absolute inset-0 h-full w-full transition-[filter,opacity] duration-700 ${atenuado ? "opacity-30 saturate-50" : "opacity-100"}`}
+      data-testid={testid}
     />
   );
 }

@@ -9,6 +9,10 @@
  */
 import {
   callesCerca,
+  compararVersiones,
+  completitud as completitudHecho,
+  eventosDeLinea,
+  zonasEsperadasDeclarada,
   deshacer,
   distanciaM,
   ejemploHecho,
@@ -50,7 +54,10 @@ import {
 import { useCallback, useEffect, useMemo, useRef, useState, type ReactNode } from "react";
 import { Logotipo } from "@/components/sitio/logo";
 import { downloadBytes } from "@/lib/download";
-import { nombresVehiculos } from "@/lib/vehiculos-cesvi";
+import { COLOR_VEHICULO, nombresVehiculos } from "@/lib/vehiculos-cesvi";
+import type { DatosDictamen, IncluirDictamen } from "@/lib/dictamen-cesvi";
+import { croquisEsquema, dictamenDocx, huellaEntradas } from "@/lib/exportar-cesvi";
+import { guardarTema, useTema, type Modo } from "@/lib/preferencias-cesvi";
 import { Calculos, type DistanciaRestos, type ResultadosCalculo } from "../calculos";
 import { Criterios } from "../correspondencia";
 import { Expediente } from "../expediente";
@@ -65,11 +72,22 @@ import {
   PasoNumeros,
   PasoSugerencia,
   PasoVersiones,
+  BarraEdicion,
   Leyenda,
   Reproductor,
   type EdicionPasos,
+  type Velocidad,
 } from "./pasos";
+import { PanelManual } from "./manual";
 import { ProveedorRecorrido } from "./marco";
+import {
+  Herramientas,
+  PanelObjeto,
+  PestanasVista,
+  TablaCambios,
+  type Herramienta,
+  type VistaTrabajo,
+} from "./trabajo";
 import { PanelDetalle } from "./piezas";
 
 const PASOS = [
@@ -149,6 +167,36 @@ function rumboHacia(via: number, hacia: Hacia | null): number {
   const otra = (via + 180) % 360;
   return dif(via) <= dif(otra) ? via : otra;
 }
+
+/** Los parámetros de las dos versiones desde los del hecho, el punto y el rumbo de la vía. */
+function parametrosDeVersiones(p: ParametrosHecho, impacto: LonLat, via: number) {
+  return {
+    impacto,
+    rumboVia: rumboHacia(via, p.evidencia.hacia),
+    rumboDeclarada: rumboHacia(via, p.declarada.hacia ?? p.evidencia.hacia),
+    medidas: MEDIDAS,
+    distanciaRestos: p.evidencia.distanciaRestos ?? 0,
+    fuenteRestos: (p.evidencia.distanciaRestos === null ? "croquis" : "perito") as
+      "croquis" | "perito",
+    reversaM: p.declarada.reversaM ?? REVERSA_INICIAL_M,
+  };
+}
+
+const ESTADO_IA = {
+  espera: "IA en espera",
+  entendiendo: "IA entendiendo…",
+  lista: "IA lista",
+  reglas: "Sin IA: reglas",
+  error: "IA con error",
+} as const;
+
+/** Qué incluir en el dictamen por omisión (igual que en `lib/dictamen-cesvi.ts`). */
+const INCLUIR_POR_OMISION: IncluirDictamen = {
+  croquisAmbas: true,
+  calculos: true,
+  tablaDatos: true,
+  notasInternas: false,
+};
 
 const enCampo = (t: EventTarget | null) =>
   t instanceof HTMLElement &&
@@ -285,15 +333,7 @@ export function Recorrido({ caso, reproduccion }: { caso: CasoCesvi; reproduccio
       evidencia: JSON.stringify(p.evidencia),
       declarada: JSON.stringify(p.declarada),
     };
-    return proponerVersiones({
-      impacto,
-      rumboVia: rumboHacia(via, p.evidencia.hacia),
-      rumboDeclarada: rumboHacia(via, p.declarada.hacia ?? p.evidencia.hacia),
-      medidas: MEDIDAS,
-      distanciaRestos: p.evidencia.distanciaRestos ?? 0,
-      fuenteRestos: p.evidencia.distanciaRestos === null ? "croquis" : "perito",
-      reversaM: p.declarada.reversaM ?? REVERSA_INICIAL_M,
-    });
+    return proponerVersiones(parametrosDeVersiones(p, impacto, via));
   }, []);
 
   /** Aplica un estado del historial; si el punto cambió, trae las calles del punto nuevo. */
@@ -481,6 +521,10 @@ export function Recorrido({ caso, reproduccion }: { caso: CasoCesvi; reproduccio
   // se fija con la línea de tiempo. `animacion` null es la versión completa (y editable).
   const id = useRef(0);
   const [reproduciendo, setReproduciendo] = useState(false);
+  // Velocidad de la animación (ADR 0057): 1× dura DURACION_ANIMACION_MS; 0.25× y 0.1×, más.
+  const [velocidad, setVelocidad] = useState<Velocidad>(1);
+  const velocidadRef = useRef<Velocidad>(1);
+  const tRef = useRef(0);
   const animar = useCallback((desde = 0) => {
     cancelAnimationFrame(id.current);
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
@@ -488,9 +532,11 @@ export function Recorrido({ caso, reproduccion }: { caso: CasoCesvi; reproduccio
       setReproduciendo(false);
       return;
     }
-    const inicio = performance.now() - desde * DURACION_ANIMACION_MS;
+    const duracion = DURACION_ANIMACION_MS / velocidadRef.current;
+    const inicio = performance.now() - desde * duracion;
     const cuadro = (ahora: number) => {
-      const t = Math.min(1, (ahora - inicio) / DURACION_ANIMACION_MS);
+      const t = Math.min(1, (ahora - inicio) / duracion);
+      tRef.current = t;
       setAnimacion(t < 1 ? t : null);
       if (t < 1) id.current = requestAnimationFrame(cuadro);
       else setReproduciendo(false);
@@ -503,10 +549,47 @@ export function Recorrido({ caso, reproduccion }: { caso: CasoCesvi; reproduccio
     setReproduciendo(false);
   }, []);
   useEffect(() => () => cancelAnimationFrame(id.current), []);
+  const cambiarVelocidad = (v: Velocidad) => {
+    velocidadRef.current = v;
+    setVelocidad(v);
+    if (reproduciendo) animar(tRef.current);
+  };
   const [superponer, setSuperponer] = useState(true);
   const version = versiones?.[activa] ?? null;
   const restosM = version ? distanciaM(version.restos.inicio, version.restos.fin) : null;
 
+  /** Mover algo de una versión (el objeto elegido) a un punto. */
+  const moverEn = useCallback(
+    (clave: ClaveVersion, sel: Seleccion, p: LonLat) =>
+      cambiar((vs) => {
+        if (!vs) return vs;
+        const v = vs[clave];
+        const punto: [number, number] = [p[0], p[1]];
+        const movida =
+          sel.tipo === "pose"
+            ? moverPose(v, sel.letra, sel.fase, { punto })
+            : sel.tipo === "impacto"
+              ? { ...v, impacto: { punto, fuente: "perito" as const } }
+              : { ...v, restos: { ...v.restos, [sel.extremo]: punto, fuente: "perito" as const } };
+        return { ...vs, [clave]: movida };
+      }),
+    [cambiar],
+  );
+  const edicionPara = useCallback(
+    (clave: ClaveVersion): EdicionMapa => ({
+      seleccion,
+      onSeleccion: (sel) => {
+        setSeleccion(sel);
+        setActiva(clave);
+      },
+      onMover: (sel, p) => {
+        setSeleccion(sel);
+        setActiva(clave);
+        moverEn(clave, sel, p);
+      },
+    }),
+    [seleccion, moverEn],
+  );
   const edicion: EdicionMapa | null = useMemo(() => {
     if (!versiones) return null;
     // Paso 3: solo el punto de impacto, que se arrastra y lleva todo con él.
@@ -519,29 +602,8 @@ export function Recorrido({ caso, reproduccion }: { caso: CasoCesvi; reproduccio
       };
     }
     if (paso !== 3) return null;
-    return {
-      seleccion,
-      onSeleccion: setSeleccion,
-      onMover: (sel, p) => {
-        setSeleccion(sel);
-        cambiar((vs) => {
-          if (!vs) return vs;
-          const v = vs[activa];
-          const punto: [number, number] = [p[0], p[1]];
-          const movida =
-            sel.tipo === "pose"
-              ? moverPose(v, sel.letra, sel.fase, { punto })
-              : sel.tipo === "impacto"
-                ? { ...v, impacto: { punto, fuente: "perito" as const } }
-                : {
-                    ...v,
-                    restos: { ...v.restos, [sel.extremo]: punto, fuente: "perito" as const },
-                  };
-          return { ...vs, [activa]: movida };
-        });
-      },
-    };
-  }, [paso, versiones, seleccion, activa, cambiar, moverPunto]);
+    return edicionPara(activa);
+  }, [paso, versiones, activa, moverPunto, edicionPara]);
   const edicionPasos: EdicionPasos = {
     puedeDeshacer: hist.pasado.length > 0,
     puedeRehacer: hist.futuro.length > 0,
@@ -567,6 +629,97 @@ export function Recorrido({ caso, reproduccion }: { caso: CasoCesvi; reproduccio
     }
     return null;
   }, [paso, versiones, tramo]);
+
+  // Modo Presentar / Trabajar y tema (ADR 0057): los mismos datos en los dos modos.
+  const [modo, setModo] = useState<Modo>("presentar");
+  const tema = useTema(modo);
+  const [manualAbierto, setManualAbierto] = useState(false);
+  const [herramienta, setHerramienta] = useState<Herramienta | null>(null);
+  const [vista, setVista] = useState<VistaTrabajo>("superponer");
+  const [medicion, setMedicion] = useState<LonLat[]>([]);
+  const estadoIA = Object.values(estados).some((e) => e?.startsWith("Leyendo"))
+    ? "entendiendo"
+    : Object.values(estados).some((e) => e?.startsWith("No se pudo"))
+      ? "error"
+      : [lecturas.descripcion, lecturas.declaracion].some((l) => l?.leidoPor === "reglas")
+        ? "reglas"
+        : [lecturas.descripcion, lecturas.declaracion].some((l) => l?.leidoPor === "ia")
+          ? "lista"
+          : "espera";
+  const completitud = useMemo(() => completitudHecho(interpretacion), [interpretacion]);
+
+  /** Restablecer la posición del objeto elegido: la que propone Croquis con los datos del hecho. */
+  const restablecerObjeto = useCallback(() => {
+    const actual = histRef.current.presente;
+    if (!actual) return;
+    const punto = actual.evidencia.impacto.punto;
+    const propuestas = proponerVersiones(
+      parametrosDeVersiones(
+        interpretar(lecturasRef.current, respuestasRef.current).parametros,
+        punto,
+        rumboViaEn(punto),
+      ),
+    );
+    const s = seleccion;
+    cambiar((vs) => {
+      if (!vs) return vs;
+      const v = vs[activa];
+      const p = propuestas[activa];
+      const nueva =
+        s.tipo === "pose"
+          ? {
+              ...v,
+              vehiculos: {
+                ...v.vehiculos,
+                [s.letra]: { ...v.vehiculos[s.letra], [s.fase]: p.vehiculos[s.letra][s.fase] },
+              },
+            }
+          : s.tipo === "restos"
+            ? { ...v, restos: { ...v.restos, [s.extremo]: p.restos[s.extremo] } }
+            : v;
+      return { ...vs, [activa]: nueva };
+    });
+  }, [seleccion, activa, cambiar, interpretar, rumboViaEn]);
+
+  const elegirHerramienta = (h: Herramienta) => {
+    setHerramienta(h);
+    if (h === "medir") {
+      setMedicion([]);
+      return;
+    }
+    setSeleccion((s) =>
+      h === "impacto"
+        ? { tipo: "impacto" }
+        : h === "restos"
+          ? {
+              tipo: "restos",
+              extremo: s.tipo === "restos" && s.extremo === "fin" ? "inicio" : "fin",
+            }
+          : {
+              tipo: "pose",
+              letra: h,
+              fase: s.tipo === "pose" && s.letra === h && s.fase === "final" ? "inicial" : "final",
+            },
+    );
+  };
+  /** Un clic en el mapa del modo Trabajar: coloca lo que diga la herramienta. */
+  const clicTrabajo = (clave: ClaveVersion, p: LonLat) => {
+    if (!histRef.current.presente) return fijarImpacto(p);
+    if (herramienta === "medir") {
+      setMedicion((m) => (m.length >= 2 ? [p] : [...m, p]));
+      return;
+    }
+    if (herramienta === "impacto") return moverPunto(p);
+    if (herramienta) {
+      setActiva(clave);
+      moverEn(clave, seleccion, p);
+    }
+  };
+  const cambiarVista = (v: VistaTrabajo) => {
+    setVista(v);
+    if (v === "declarada") setActiva("declarada");
+    if (v === "evidencia" || v === "superponer") setActiva("evidencia");
+  };
 
   // Pasos 5 a 8: daños, números, sugerencia y dictamen.
   const [zonas, setZonas] = useState<Record<"A" | "B", Zona[]>>(() => ({
@@ -603,64 +756,148 @@ export function Recorrido({ caso, reproduccion }: { caso: CasoCesvi; reproduccio
   }, []);
   const [pdf, setPdf] = useState<{ url: string; bytes: Uint8Array<ArrayBuffer> } | null>(null);
   const [estadoPdf, setEstadoPdf] = useState<string | null>(null);
-  const generarPdf = useCallback(async () => {
-    setEstadoPdf("Armando el dictamen…");
-    try {
-      const { dictamenPdf } = await import("@/lib/dictamen-cesvi");
-      const comparacion = resultados?.comparacion;
-      const bytes = await dictamenPdf({
-        caso,
-        calculos: {
-          mcHenry: resultados?.mcHenry ?? null,
-          ebsReporte: resultados?.ebsReporte ?? null,
-          ebsDatos: resultados?.ebsDatos ?? null,
-          v3: resultados?.v3 ?? null,
-          comparacionTexto: comparacion
-            ? `Las velocidades difieren ${comparacion.diferenciaPct.toFixed(2)} %: ${comparacion.significativa ? "sí" : "no"} es una diferencia significativa con el umbral de ${comparacion.umbralPct} % que fijó el perito.`
-            : null,
-        },
-        distanciaRestos: Number.isFinite(distanciaNum)
-          ? { valor: distanciaNum, fuente: fuenteDistancia }
-          : null,
-        reproduccion: reproducir(caso).filas,
-        croquis: (() => {
-          const imagen = versiones ? captura.current() : null;
-          if (!imagen || !version) return null;
-          const [lon, lat] = version.impacto.punto;
-          return {
-            imagen,
-            version: version.titulo.toLowerCase(),
-            punto: { lat, lon, ilustrativo: esUbicacionIlustrativa(caso.id, [lon, lat]) },
-          };
-        })(),
-        criterios,
+  // Trazabilidad (ADR 0057): método, huella de las entradas, sugerencia y quién validó.
+  const huella = useMemo(
+    () =>
+      huellaEntradas({
+        caso: caso.id,
+        textos,
+        respuestas,
+        versiones,
         zonas,
-        sugerencia,
-        validacion,
-        consideraciones: borrador.trim() ? { texto: borrador.trim(), revisadas: revisado } : null,
-      });
-      setPdf((anterior) => {
-        if (anterior) URL.revokeObjectURL(anterior.url);
-        return { url: URL.createObjectURL(new Blob([bytes], { type: "application/pdf" })), bytes };
-      });
-      setEstadoPdf(null);
-    } catch (e) {
-      setEstadoPdf(`No se pudo armar el dictamen: ${e instanceof Error ? e.message : String(e)}`);
-    }
-  }, [
-    caso,
-    resultados,
-    distanciaNum,
-    fuenteDistancia,
-    versiones,
-    version,
-    criterios,
-    zonas,
-    sugerencia,
-    validacion,
-    borrador,
-    revisado,
-  ]);
+        criterios,
+        distancia: distancia.valor,
+      }),
+    [caso, textos, respuestas, versiones, zonas, criterios, distancia],
+  );
+  const trazabilidad = {
+    metodo: "CESVI · McHenry 4 medidas",
+    huella,
+    sugerencia: validacion
+      ? {
+          aceptada: "aceptada por el perito",
+          editada: "editada por el perito",
+          rechazada: "rechazada por el perito",
+        }[validacion.decision]
+      : "sin validar",
+    valido: validacion
+      ? `${validacion.perito} · ${new Date(validacion.fecha).toLocaleString("es-MX", { dateStyle: "long", timeStyle: "short" })}`
+      : "pendiente",
+  };
+  const [incluir, setIncluir] = useState<IncluirDictamen>(INCLUIR_POR_OMISION);
+  const [notasInternas, setNotasInternas] = useState("");
+  /** Lo que lleva el dictamen (PDF y Word): los mismos datos. */
+  const datosDictamen = (opciones: IncluirDictamen): DatosDictamen => {
+    const comparacion = resultados?.comparacion;
+    const papel = {
+      fondo: "#FFFFFF",
+      calle: "#C9CDD4",
+      texto: "#15181D",
+      A: COLOR_VEHICULO.A,
+      B: COLOR_VEHICULO.B,
+      senal: "#D9431A",
+    };
+    return {
+      caso,
+      calculos: {
+        mcHenry: resultados?.mcHenry ?? null,
+        ebsReporte: resultados?.ebsReporte ?? null,
+        ebsDatos: resultados?.ebsDatos ?? null,
+        v3: resultados?.v3 ?? null,
+        comparacionTexto: comparacion
+          ? `Las velocidades difieren ${comparacion.diferenciaPct.toFixed(2)} %: ${comparacion.significativa ? "sí" : "no"} es una diferencia significativa con el umbral de ${comparacion.umbralPct} % que fijó el perito.`
+          : null,
+      },
+      distanciaRestos: Number.isFinite(distanciaNum)
+        ? { valor: distanciaNum, fuente: fuenteDistancia }
+        : null,
+      reproduccion: reproducir(caso).filas,
+      croquis: (() => {
+        const imagen = versiones ? captura.current() : null;
+        if (!imagen || !version) return null;
+        const [lon, lat] = version.impacto.punto;
+        return {
+          imagen,
+          version: version.titulo.toLowerCase(),
+          punto: { lat, lon, ilustrativo: esUbicacionIlustrativa(caso.id, [lon, lat]) },
+        };
+      })(),
+      criterios,
+      zonas,
+      sugerencia,
+      validacion,
+      consideraciones: borrador.trim() ? { texto: borrador.trim(), revisadas: revisado } : null,
+      incluir: opciones,
+      croquisVersiones: versiones
+        ? {
+            declarada: croquisEsquema(
+              versiones.declarada,
+              calles,
+              MEDIDAS,
+              nombres,
+              papel,
+              "Versión declarada",
+            ),
+            evidencia: croquisEsquema(
+              versiones.evidencia,
+              calles,
+              MEDIDAS,
+              nombres,
+              papel,
+              "Versión de la evidencia",
+            ),
+          }
+        : undefined,
+      datosHecho: [...interpretacion.evidencia, ...interpretacion.declarada].map((d) => ({
+        etiqueta: d.etiqueta,
+        valor: d.valor,
+        fuente: d.fuente,
+        version: interpretacion.declarada.includes(d) ? "declarada" : "evidencia",
+      })),
+      notasInternas,
+      trazabilidad,
+    };
+  };
+  const generarPdf = useCallback(
+    async (opciones?: IncluirDictamen) => {
+      setEstadoPdf("Armando el dictamen…");
+      try {
+        const { dictamenPdf } = await import("@/lib/dictamen-cesvi");
+        const bytes = await dictamenPdf(datosDictamen(opciones ?? incluir));
+        setPdf((anterior) => {
+          if (anterior) URL.revokeObjectURL(anterior.url);
+          return {
+            url: URL.createObjectURL(new Blob([bytes], { type: "application/pdf" })),
+            bytes,
+          };
+        });
+        setEstadoPdf(null);
+      } catch (e) {
+        setEstadoPdf(`No se pudo armar el dictamen: ${e instanceof Error ? e.message : String(e)}`);
+      }
+    },
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- datosDictamen lee el estado vigente
+    [
+      incluir,
+      notasInternas,
+      calles,
+      interpretacion,
+      nombres,
+      trazabilidad,
+      caso,
+      resultados,
+      distanciaNum,
+      fuenteDistancia,
+      versiones,
+      version,
+      criterios,
+      zonas,
+      sugerencia,
+      validacion,
+      borrador,
+      revisado,
+    ],
+  );
 
   const pedirBorrador = async () => {
     setEstadoBorrador("Redactando con Claude…");
@@ -753,6 +990,110 @@ export function Recorrido({ caso, reproduccion }: { caso: CasoCesvi; reproduccio
   }, [detalle, irA, deshacerCambio, rehacerCambio]);
 
   const impactoKmh = resultados?.ebsReporte?.calculo.kmh ?? null;
+  const restosDeVersiones = versiones
+    ? {
+        declarada: distanciaM(versiones.declarada.restos.inicio, versiones.declarada.restos.fin),
+        evidencia: distanciaM(versiones.evidencia.restos.inicio, versiones.evidencia.restos.fin),
+      }
+    : null;
+  const esperadas = zonasEsperadasDeclarada(interpretacion.parametros.declarada.maniobraA);
+  const comparacionVersiones = compararVersiones({
+    restos: restosDeVersiones,
+    zonas,
+    esperadas,
+    velocidades:
+      impactoKmh !== null && resultados?.v3
+        ? { deformacion: impactoKmh, desplazamiento: resultados.v3.calculo.kmh }
+        : null,
+    velocidadDeclarada: null,
+  });
+  const eventos = version ? eventosDeLinea(version) : [];
+  const filaEnergia = reproducir(caso).filas.find((f) => f.clave === "energia");
+  const puntoIlustrativo =
+    versiones !== null && esUbicacionIlustrativa(caso.id, versiones.evidencia.impacto.punto);
+  const antesDeFirmar = [
+    ...(filaEnergia && Math.abs(filaEnergia.diferenciaPct) >= 0.005
+      ? [
+          {
+            texto: `La energía del dictamen difiere ${Math.abs(filaEnergia.diferenciaPct).toFixed(2)} % de la calculada con los datos impresos.`,
+            paso: 5,
+          },
+        ]
+      : []),
+    ...(completitud.faltan.length
+      ? [
+          {
+            texto: `Faltan ${completitud.faltan.length} datos del hecho: ${completitud.faltan.map((f) => f.etiqueta).join(", ")}.`,
+            paso: 1,
+          },
+        ]
+      : []),
+    ...(puntoIlustrativo
+      ? [{ texto: "El punto de impacto es la ubicación ilustrativa, no el lugar real.", paso: 2 }]
+      : []),
+    ...(!validacion
+      ? [{ texto: "La sugerencia de Croquis no está validada por el perito.", paso: 6 }]
+      : []),
+  ];
+  const descargarWord = async () => {
+    const { dictamenContenido, LEYENDA_DICTAMEN } = await import("@/lib/dictamen-cesvi");
+    const bytes = await dictamenDocx(dictamenContenido(datosDictamen(incluir)), LEYENDA_DICTAMEN);
+    downloadBytes(
+      bytes as Uint8Array<ArrayBuffer>,
+      `dictamen-${caso.id}${validacion ? "" : "-borrador"}.docx`,
+      "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+    );
+  };
+  const descargarPng = () => {
+    if (!version) return;
+    const url = croquisEsquema(
+      version,
+      calles,
+      MEDIDAS,
+      nombres,
+      {
+        fondo: "#FFFFFF",
+        calle: "#C9CDD4",
+        texto: "#15181D",
+        A: COLOR_VEHICULO.A,
+        B: COLOR_VEHICULO.B,
+        senal: "#D9431A",
+      },
+      `${version.titulo} · ${caso.id}`,
+      1600,
+      1000,
+    );
+    if (!url) return;
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `croquis-${caso.id}-${version.clave}.png`;
+    a.click();
+  };
+  const descargarJson = () => {
+    const datos = {
+      caso: caso.id,
+      generado: new Date().toISOString(),
+      huella_entradas: huella,
+      textos,
+      respuestas,
+      datos_hecho: { evidencia: interpretacion.evidencia, declarada: interpretacion.declarada },
+      versiones,
+      zonas,
+      criterios,
+      distancia_restos: distancia,
+      calculos: resultados
+        ? { impacto_kmh: impactoKmh, desplazamiento_kmh: resultados.v3?.calculo.kmh ?? null }
+        : null,
+      que_cambia: comparacionVersiones,
+      sugerencia,
+      validacion,
+    };
+    downloadBytes(
+      new TextEncoder().encode(`${JSON.stringify(datos, null, 2)}\n`) as Uint8Array<ArrayBuffer>,
+      `caso-${caso.id}.json`,
+      "application/json",
+    );
+  };
   const desplazamientoKmh = resultados?.v3?.calculo.kmh ?? null;
   const frase = [
     `Siniestro ${caso.id} de ${caso.aseguradora}: alcance entre una ${caso.vehiculos.A.tipo} y una ${caso.vehiculos.B.tipo}; el conductor de A declara una reversa.`,
@@ -785,6 +1126,7 @@ export function Recorrido({ caso, reproduccion }: { caso: CasoCesvi; reproduccio
     <PasoCaso key="caso" caso={caso} nombres={nombres} frase={frase} />,
     <PasoHecho
       key="hecho"
+      completitud={completitud}
       textos={textos}
       onTexto={(tipo, t) => {
         const nuevos = { ...textosRef.current, [tipo]: t };
@@ -861,6 +1203,7 @@ export function Recorrido({ caso, reproduccion }: { caso: CasoCesvi; reproduccio
     />,
     <PasoDanos
       key="danos"
+      esperadas={esperadas}
       nombres={nombres}
       zonas={zonas}
       onZonas={(l, z) => setZonas((zs) => ({ ...zs, [l]: z }))}
@@ -879,6 +1222,7 @@ export function Recorrido({ caso, reproduccion }: { caso: CasoCesvi; reproduccio
     />,
     <PasoSugerencia
       key="sugerencia"
+      cambios={comparacionVersiones}
       sugerencia={sugerencia}
       pasoDeRazon={{ velocidades: 5, desplazamiento: 3, ubicacion_danos: 4 }}
       validacion={validacion}
@@ -904,6 +1248,19 @@ export function Recorrido({ caso, reproduccion }: { caso: CasoCesvi; reproduccio
       }
       validacion={validacion}
       frase={frase}
+      onWord={() => void descargarWord()}
+      onPng={descargarPng}
+      onJson={descargarJson}
+      incluir={incluir}
+      onIncluir={(i) => {
+        setIncluir(i);
+        void generarPdf(i);
+      }}
+      trazabilidad={trazabilidad}
+      antesDeFirmar={antesDeFirmar}
+      notas={notasInternas}
+      onNotas={setNotasInternas}
+      hayCroquis={version !== null}
     />,
   ][paso];
   const sobreMapa = paso === 2 || paso === 3;
@@ -922,134 +1279,353 @@ export function Recorrido({ caso, reproduccion }: { caso: CasoCesvi; reproduccio
     [paso, irA, tituloDetalle],
   );
   const otra: ClaveVersion = activa === "declarada" ? "evidencia" : "declarada";
+  const resumenCaso = `${caso.aseguradora} · ${caso.modalidad_dictaminada[0]!.toUpperCase()}${caso.modalidad_dictaminada.slice(1)} · ${caso.lugar.municipio}, ${caso.lugar.estado}`;
+  const cambiarModo = (m: Modo) => {
+    setModo(m);
+    // Trabajar es para colocar (pasos 3 y 4): se entra a las versiones.
+    if (m === "trabajar" && paso !== 2 && paso !== 3) irA(3);
+  };
+  const camaraTrabajo: Camara | null = useMemo(() => {
+    if (versiones) {
+      const puntos = (["declarada", "evidencia"] as const).flatMap((k) => [
+        ...(["A", "B"] as const).flatMap((l) =>
+          FASES.map((f) => versiones[k].vehiculos[l][f].punto),
+        ),
+        versiones[k].restos.fin,
+      ]);
+      return { tipo: "encuadre", puntos, zoomMax: 20.5 };
+    }
+    return tramo.length
+      ? { tipo: "encuadre", puntos: tramo.flatMap((c) => c.puntos), zoomMax: 11 }
+      : null;
+  }, [versiones, tramo]);
+  const reproductor = (
+    <Reproductor
+      t={animacion ?? 1}
+      reproduciendo={reproduciendo}
+      eventos={eventos}
+      velocidad={velocidad}
+      onVelocidad={cambiarVelocidad}
+      onReproducir={() => animar(animacion !== null && animacion < 1 ? animacion : 0)}
+      onPausar={pausar}
+      onT={(t) => {
+        pausar();
+        setAnimacion(t >= 1 ? null : t);
+      }}
+      ancho={modo === "trabajar" ? "w-full" : "w-[680px]"}
+    />
+  );
 
   return (
     <ProveedorRecorrido value={nav}>
-      <div className="fixed inset-0 flex flex-col bg-fondo">
-        <header className="vidrio barra relative z-30 flex h-16 shrink-0 items-center gap-4 px-4 md:gap-6 md:px-6">
-          <Logotipo ancho={112} />
-          <nav
-            aria-label="Pasos del recorrido"
-            className="flex min-w-0 flex-1 items-center justify-center-safe gap-1 overflow-x-auto"
-          >
-            {PASOS.map((nombre, i) => {
-              const actual = paso === i;
-              const hecho = i < paso;
-              return (
-                <button
-                  key={nombre}
-                  type="button"
-                  aria-label={`Paso ${i + 1}: ${nombre}`}
-                  aria-current={actual ? "step" : undefined}
-                  onClick={() => irA(i)}
-                  className={`flex h-9 shrink-0 items-center gap-2 rounded-full text-[0.8125rem] transition-colors ${
-                    actual
-                      ? "bg-accion pr-3.5 pl-2 font-semibold text-accion-texto"
-                      : `px-3 font-medium hover:bg-superficie-alta ${hecho ? "text-texto-2" : "text-texto-3"}`
-                  }`}
-                  data-testid={`paso-${i + 1}`}
-                >
-                  <span
-                    className={`grid h-5 w-5 place-items-center rounded-full text-[0.6875rem] ${
-                      actual
-                        ? "bg-fondo text-texto"
-                        : hecho
-                          ? "bg-superficie-alta text-texto-2"
-                          : "border border-linea"
-                    }`}
-                    aria-hidden="true"
-                  >
-                    {hecho ? "✓" : i + 1}
-                  </span>
-                  {PASOS_CORTOS[i]}
-                </button>
-              );
-            })}
-          </nav>
-          <div className="hidden shrink-0 items-center gap-3 xl:flex">
-            <span className="text-[0.8125rem] font-medium text-texto-2">
-              {caso.aseguradora} · {caso.modalidad_dictaminada[0]!.toUpperCase()}
-              {caso.modalidad_dictaminada.slice(1)} · {caso.lugar.municipio}, {caso.lugar.estado}
+      <div
+        className="fixed inset-0 flex flex-col bg-fondo text-texto"
+        data-tema={tema}
+        data-modo={modo}
+        data-testid="recorrido"
+      >
+        <header className="vidrio barra relative z-30 flex h-16 shrink-0 items-center gap-3 px-4 md:px-6">
+          <Logotipo ancho={112} variante={tema === "claro" ? "logotipo-sobre-claro" : "logotipo"} />
+          {modo === "trabajar" ? (
+            <span className="hidden text-[0.8125rem] font-medium text-texto-2 lg:inline">
+              {resumenCaso}
             </span>
+          ) : null}
+          {modo === "presentar" ? (
+            <nav
+              aria-label="Pasos del recorrido"
+              className="flex min-w-0 flex-1 items-center justify-center-safe gap-1 overflow-x-auto"
+            >
+              {PASOS.map((nombre, i) => {
+                const actual = paso === i;
+                const hecho = i < paso;
+                return (
+                  <button
+                    key={nombre}
+                    type="button"
+                    aria-label={`Paso ${i + 1}: ${nombre}`}
+                    aria-current={actual ? "step" : undefined}
+                    onClick={() => irA(i)}
+                    className={`flex h-9 shrink-0 items-center gap-2 rounded-full text-[0.8125rem] transition-colors ${
+                      actual
+                        ? "bg-accion pr-3.5 pl-2 font-semibold text-accion-texto"
+                        : `px-2.5 font-medium hover:bg-superficie-alta ${hecho ? "text-texto-2" : "text-texto-3"}`
+                    }`}
+                    data-testid={`paso-${i + 1}`}
+                  >
+                    <span
+                      className={`grid h-5 w-5 place-items-center rounded-full text-[0.6875rem] ${
+                        actual
+                          ? "bg-fondo text-texto"
+                          : hecho
+                            ? "bg-superficie-alta text-texto-2"
+                            : "border border-linea"
+                      }`}
+                      aria-hidden="true"
+                    >
+                      {hecho ? "✓" : i + 1}
+                    </span>
+                    <span className={actual ? "" : "hidden 2xl:inline"}>{PASOS_CORTOS[i]}</span>
+                  </button>
+                );
+              })}
+            </nav>
+          ) : (
+            <span className="flex-1" />
+          )}
+          <div className="segmentado shrink-0" role="tablist" aria-label="Modo">
+            {(["presentar", "trabajar"] as const).map((m) => (
+              <button
+                key={m}
+                type="button"
+                role="tab"
+                aria-selected={modo === m}
+                className="px-4"
+                onClick={() => cambiarModo(m)}
+                data-testid={`modo-${m}`}
+              >
+                {m === "presentar" ? "Presentar" : "Trabajar"}
+              </button>
+            ))}
+          </div>
+          <span
+            className="hidden shrink-0 items-center gap-2 text-[0.8125rem] text-texto-2 md:flex"
+            role="status"
+            data-testid="estado-ia"
+            data-estado={estadoIA}
+          >
+            <span
+              className={`h-2 w-2 rounded-full ${estadoIA === "lista" ? "bg-[var(--ok)]" : estadoIA === "error" ? "bg-senal" : estadoIA === "entendiendo" ? "animate-pulse bg-texto-2" : "bg-texto-3"}`}
+              aria-hidden="true"
+            />
+            {ESTADO_IA[estadoIA]}
+          </span>
+          <button
+            type="button"
+            className="boton-secundario boton-compacto h-9 min-h-9 shrink-0"
+            onClick={() => setManualAbierto(true)}
+            data-testid="llenar-a-mano"
+          >
+            Llenar a mano
+          </button>
+          {modo === "trabajar" ? (
             <button
               type="button"
-              className="boton-secundario boton-compacto h-9 min-h-9"
-              onClick={() => irA(PASOS.length - 1)}
+              className="boton-secundario boton-compacto h-9 min-h-9 shrink-0"
+              onClick={deshacerCambio}
+              disabled={hist.pasado.length === 0}
             >
-              Exportar
+              ↶ Deshacer
             </button>
-          </div>
+          ) : null}
+          <button
+            type="button"
+            className="boton-secundario boton-compacto grid h-9 min-h-9 w-9 shrink-0 place-items-center px-0"
+            onClick={() => guardarTema(modo, tema === "claro" ? "oscuro" : "claro")}
+            aria-label={tema === "claro" ? "Cambiar a tema oscuro" : "Cambiar a tema claro"}
+            data-testid="tema"
+          >
+            ◐
+          </button>
+          <button
+            type="button"
+            className={`${modo === "trabajar" ? "boton-principal" : "boton-secundario"} boton-compacto h-9 min-h-9 shrink-0`}
+            onClick={() => {
+              setModo("presentar");
+              irA(PASOS.length - 1);
+            }}
+          >
+            Exportar
+          </button>
         </header>
 
-        <main
-          id="contenido"
-          className="relative min-h-0 flex-1 overflow-hidden"
-          aria-label={PASOS[paso]}
-        >
-          <MapaRecorrido
-            camara={camara}
-            calles={calles}
-            version={version}
-            superpuesta={paso === 3 && superponer && versiones ? versiones[otra] : null}
-            medidas={MEDIDAS}
-            nombres={nombres}
-            animacion={paso === 3 ? animacion : null}
-            edicion={edicion}
-            onClic={(p) => {
-              if (paso !== 2) return;
-              if (!versiones) fijarImpacto(p);
-              else if (reubicando) moverPunto(p);
-            }}
-            onCaptura={alCapturar}
-            onConsultaCalles={alConsultarCalles}
-            atenuado={!sobreMapa}
-          />
-          <div
-            key={paso}
-            className={`aparecer absolute inset-0 ${sobreMapa ? "pointer-events-none" : ""}`}
+        {modo === "presentar" ? (
+          <main
+            id="contenido"
+            className="relative min-h-0 flex-1 overflow-hidden"
+            aria-label={PASOS[paso]}
           >
-            {sobreMapa ? (
-              <div className="relative h-full">
-                <div className="absolute inset-y-4 left-4 flex sm:inset-y-6 sm:left-6">
-                  {escena}
+            <MapaRecorrido
+              camara={camara}
+              calles={calles}
+              version={version}
+              superpuesta={paso === 3 && superponer && versiones ? versiones[otra] : null}
+              medidas={MEDIDAS}
+              nombres={nombres}
+              animacion={paso === 3 ? animacion : null}
+              edicion={edicion}
+              onClic={(p) => {
+                if (paso !== 2) return;
+                if (!versiones) fijarImpacto(p);
+                else if (reubicando) moverPunto(p);
+              }}
+              onCaptura={alCapturar}
+              onConsultaCalles={alConsultarCalles}
+              atenuado={!sobreMapa}
+              tema={tema}
+            />
+            <div
+              key={paso}
+              className={`aparecer absolute inset-0 ${sobreMapa ? "pointer-events-none" : ""}`}
+            >
+              {sobreMapa ? (
+                <div className="relative h-full">
+                  <div className="absolute inset-y-4 left-4 flex sm:inset-y-6 sm:left-6">
+                    {escena}
+                  </div>
+                  {paso === 3 ? (
+                    <div className="absolute top-6 right-6">
+                      <Leyenda nombres={nombres} />
+                    </div>
+                  ) : null}
+                  {paso === 3 && versiones ? (
+                    <div className="absolute inset-x-4 bottom-4 flex justify-center sm:bottom-6 lg:left-[408px] 2xl:left-0">
+                      {reproductor}
+                    </div>
+                  ) : null}
+                  <p className="pointer-events-auto absolute right-6 bottom-6 hidden w-[300px] text-right text-[0.6875rem] leading-relaxed text-texto-3 2xl:block">
+                    Reconstrucción de apoyo · el dictamen es del perito
+                    <br />
+                    Calles © OpenStreetMap (ODbL) · mosaicos © OpenFreeMap, OpenMapTiles
+                  </p>
+                  <p className="pointer-events-auto absolute top-1.5 right-6 text-[0.6875rem] text-texto-3 2xl:hidden">
+                    Reconstrucción de apoyo · © OpenStreetMap, OpenFreeMap, OpenMapTiles
+                  </p>
                 </div>
-                {paso === 3 ? (
-                  <div className="absolute top-6 right-6">
-                    <Leyenda nombres={nombres} />
-                  </div>
-                ) : null}
-                {paso === 3 && versiones ? (
-                  <div className="absolute inset-x-4 bottom-4 flex justify-center sm:bottom-6 lg:left-[408px] 2xl:left-0">
-                    <Reproductor
-                      t={animacion ?? 1}
-                      reproduciendo={reproduciendo}
-                      duracionS={DURACION_ANIMACION_MS / 1000}
-                      onReproducir={() =>
-                        animar(animacion !== null && animacion < 1 ? animacion : 0)
-                      }
-                      onPausar={pausar}
-                      onT={(t) => {
-                        pausar();
-                        setAnimacion(t >= 1 ? null : t);
-                      }}
-                    />
-                  </div>
-                ) : null}
-                <p className="pointer-events-auto absolute right-6 bottom-6 hidden w-[300px] text-right text-[0.6875rem] leading-relaxed text-texto-3 2xl:block">
-                  Reconstrucción de apoyo · el dictamen es del perito
-                  <br />
-                  Calles © OpenStreetMap (ODbL) · mosaicos © OpenFreeMap, OpenMapTiles
-                </p>
-                <p className="pointer-events-auto absolute top-1.5 right-6 text-[0.6875rem] text-texto-3 2xl:hidden">
-                  Reconstrucción de apoyo · © OpenStreetMap, OpenFreeMap, OpenMapTiles
+              ) : (
+                escena
+              )}
+            </div>
+          </main>
+        ) : (
+          <main
+            id="contenido"
+            className="grid min-h-0 flex-1 grid-cols-1 gap-4 overflow-y-auto p-4 lg:grid-cols-[260px_minmax(0,1fr)_320px] lg:overflow-hidden"
+            aria-label="Trabajar: colocación en el croquis"
+            data-testid="espacio-trabajo"
+          >
+            <aside className="min-h-0 overflow-y-auto">
+              <Herramientas
+                activa={herramienta}
+                onHerramienta={elegirHerramienta}
+                completitud={completitud}
+                onVerHecho={() => {
+                  setModo("presentar");
+                  irA(1);
+                }}
+              />
+            </aside>
+            <section className="flex min-h-[60vh] min-w-0 flex-col gap-3 lg:min-h-0">
+              <div className="flex flex-wrap items-center justify-between gap-3">
+                <PestanasVista vista={vista} onVista={cambiarVista} />
+                <p className="t-nota">
+                  {herramienta === "medir"
+                    ? "Toca dos puntos para medir."
+                    : versiones
+                      ? "Elige una herramienta y toca el mapa, o arrastra vehículos y marcadores."
+                      : "Elige «Punto de impacto» y toca la carretera para empezar."}
                 </p>
               </div>
-            ) : (
-              escena
-            )}
-          </div>
-        </main>
+              <div
+                className={`relative min-h-0 flex-1 overflow-hidden rounded-panel border border-linea-suave ${vista === "lado" ? "grid grid-cols-2 grid-rows-[minmax(0,1fr)] gap-px bg-linea" : ""}`}
+              >
+                {(vista === "lado" ? (["declarada", "evidencia"] as const) : [activa]).map(
+                  (clave) => (
+                    <div
+                      key={clave}
+                      className={vista === "lado" ? "relative min-h-0" : "absolute inset-0"}
+                    >
+                      <MapaRecorrido
+                        camara={camaraTrabajo}
+                        calles={calles}
+                        version={versiones ? versiones[clave] : null}
+                        superpuesta={
+                          vista === "superponer" && versiones ? versiones.declarada : null
+                        }
+                        medidas={MEDIDAS}
+                        nombres={nombres}
+                        animacion={animacion}
+                        edicion={versiones && animacion === null ? edicionPara(clave) : null}
+                        onClic={(p) => clicTrabajo(clave, p)}
+                        onCaptura={
+                          vista === "lado" && clave === "declarada" ? undefined : alCapturar
+                        }
+                        onConsultaCalles={alConsultarCalles}
+                        atenuado={false}
+                        tema={tema}
+                        medicion={medicion}
+                        relleno={{ top: 48, bottom: 48, left: 48, right: 48 }}
+                        testid={vista === "lado" ? `mapa-trabajo-${clave}` : "mapa-trabajo"}
+                      />
+                      {vista === "lado" ? (
+                        <span className="vidrio pointer-events-none absolute top-3 left-3 px-3 py-1 text-xs font-medium">
+                          {clave === "declarada" ? "Versión declarada" : "Versión de la evidencia"}
+                        </span>
+                      ) : null}
+                    </div>
+                  ),
+                )}
+                {!versiones && ilustrativa ? (
+                  <div className="vidrio absolute bottom-4 left-4 flex max-w-sm flex-col gap-2 p-4">
+                    <p className="t-nota">
+                      Km {caso.lugar.kilometro}: el dictamen no da coordenadas. Ubicación
+                      ilustrativa sobre la carretera federal 15 (no es el lugar real).
+                    </p>
+                    <button
+                      type="button"
+                      className="boton-principal boton-compacto self-start"
+                      onClick={() => fijarImpacto([ilustrativa.lon, ilustrativa.lat])}
+                      data-testid="usar-ilustrativa-trabajo"
+                    >
+                      Usar esta ubicación
+                    </button>
+                  </div>
+                ) : null}
+              </div>
+              {versiones ? reproductor : null}
+            </section>
+            <aside className="flex min-h-0 flex-col gap-4 overflow-y-auto">
+              {versiones && version ? (
+                <PanelObjeto
+                  version={version}
+                  clave={activa}
+                  seleccion={seleccion}
+                  nombres={nombres}
+                  onPunto={(p) => moverEn(activa, seleccion, p)}
+                  onRumbo={(r) =>
+                    seleccion.tipo === "pose" &&
+                    cambiar((vs) =>
+                      vs
+                        ? {
+                            ...vs,
+                            [activa]: moverPose(vs[activa], seleccion.letra, seleccion.fase, {
+                              rumbo: r,
+                            }),
+                          }
+                        : vs,
+                    )
+                  }
+                  onRestablecer={restablecerObjeto}
+                />
+              ) : null}
+              <BarraEdicion e={edicionPasos} restablecer={versiones !== null} />
+              <TablaCambios c={comparacionVersiones} />
+            </aside>
+          </main>
+        )}
+        {modo === "trabajar" ? (
+          <footer className="flex shrink-0 justify-between gap-4 px-6 pb-3 font-mono text-[0.6875rem] text-texto-3">
+            <span>Reconstrucción de apoyo · el dictamen es del perito</span>
+            <span data-testid="huella">Método CESVI · huella de entradas {huella}</span>
+          </footer>
+        ) : null}
 
+        <PanelManual
+          abierto={manualAbierto}
+          onCerrar={() => setManualAbierto(false)}
+          respuestas={respuestas}
+          onResponder={responder}
+        />
         <PanelDetalle
           titulo={`${PASOS[paso]}: ${tituloDetalle.toLowerCase()}`}
           abierto={detalle}

@@ -27,9 +27,9 @@ describe("vehículos del recorrido", () => {
     expect(nombresVehiculos(caso("A2010930"))).toEqual({ A: "A · Silverado", B: "B · Tacoma" });
   });
 
-  it("el PDF usa los mismos colores que los tokens de la marca", () => {
-    expect(COLOR_VEHICULO.A).toBe(color("vehiculo-a"));
-    expect(COLOR_VEHICULO.B).toBe(color("vehiculo-b"));
+  it("el PDF (papel blanco) usa los colores del tema claro de la marca", () => {
+    expect(COLOR_VEHICULO.A).toBe(color("claro-vehiculo-a"));
+    expect(COLOR_VEHICULO.B).toBe(color("claro-vehiculo-b"));
   });
 });
 
@@ -44,4 +44,24 @@ describe("contraste del sistema (ADR 0054): 4.5:1 o más", () => {
   it.each(["blanco", "vehiculo-a", "vehiculo-b"])("texto grafito sobre %s", (f) => {
     expect(contraste(color("grafito"), color(f))).toBeGreaterThanOrEqual(4.5);
   });
+});
+
+describe("contraste del tema claro (ADR 0057): 4.5:1 o más", () => {
+  const fondos = ["claro-fondo", "claro-superficie"];
+  it.each([
+    "claro-texto",
+    "claro-texto-2",
+    "claro-texto-3",
+    "claro-senal-texto",
+    "claro-vehiculo-a",
+    "claro-vehiculo-b",
+  ])("%s sobre el fondo y las superficies", (texto) => {
+    for (const f of fondos) expect(contraste(color(texto), color(f))).toBeGreaterThanOrEqual(4.5);
+  });
+  it.each(["claro-texto", "claro-vehiculo-a", "claro-vehiculo-b"])(
+    "texto blanco sobre %s (botón principal y etiquetas de vehículo)",
+    (f) => {
+      expect(contraste("#FFFFFF", color(f))).toBeGreaterThanOrEqual(4.5);
+    },
+  );
 });

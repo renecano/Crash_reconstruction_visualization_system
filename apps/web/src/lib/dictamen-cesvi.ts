@@ -53,6 +53,16 @@ export interface DatosDictamen {
   validacion: Validacion | null;
   /** Consideraciones redactadas (borrador de Claude revisado por el perito), si las hay. */
   consideraciones: { texto: string; revisadas: boolean } | null;
+  /** Qué incluir (paso 8, ADR 0057); por omisión, todo menos las notas internas. */
+  incluir?: Partial<IncluirDictamen>;
+  /** El croquis a escala de cada versión (PNG), para «Croquis de ambas versiones». */
+  croquisVersiones?: { declarada: string | null; evidencia: string | null };
+  /** Los datos del hecho con su fuente (paso 2), para «Tabla de datos y su fuente». */
+  datosHecho?: { etiqueta: string; valor: string; fuente: string; version: string }[];
+  /** Notas internas del perito (no van salvo que se pidan). */
+  notasInternas?: string;
+  /** Método, huella de las entradas, sugerencia y validación. */
+  trazabilidad?: { metodo: string; huella: string; sugerencia: string; valido: string };
 }
 
 const MARCA: Record<string, string> = {
@@ -71,7 +81,19 @@ const subtitulo = (t: string): Content => ({ text: t, bold: true, margin: [0, 8,
 /** El cuadro de color de cada vehículo, el mismo del recorrido (ADR 0053). */
 const cuadro = (letra: Letra) => ({ text: "■ ", color: COLOR_VEHICULO[letra] });
 const parrafo = (t: string): Content => ({ text: t, margin: [0, 0, 0, 6] });
-const formula = (p: PasoFormula, etiqueta?: string): Content => ({
+/** Con «Cálculos con valores sustituidos» apagado, solo el resultado de cada fórmula. */
+let soloResultados = false;
+const formula = (p: PasoFormula, etiqueta?: string): Content =>
+  soloResultados
+    ? {
+        stack: [
+          ...(etiqueta ? [{ text: etiqueta, italics: true, fontSize: 9 }] : []),
+          { text: p.resultado, bold: true, fontSize: 10 },
+        ],
+        margin: [0, 0, 0, 6],
+      }
+    : formulaCompleta(p, etiqueta);
+const formulaCompleta = (p: PasoFormula, etiqueta?: string): Content => ({
   stack: [
     ...(etiqueta ? [{ text: etiqueta, italics: true, fontSize: 9 }] : []),
     { text: p.general, fontSize: 9, color: "#444444" },
@@ -117,9 +139,24 @@ function conGlifosDeRoboto<T>(c: T): T {
   return c;
 }
 
+export interface IncluirDictamen {
+  croquisAmbas: boolean;
+  calculos: boolean;
+  tablaDatos: boolean;
+  notasInternas: boolean;
+}
+export const INCLUIR_POR_OMISION: IncluirDictamen = {
+  croquisAmbas: true,
+  calculos: true,
+  tablaDatos: true,
+  notasInternas: false,
+};
+
 /** El contenido del dictamen, en el orden de los dictámenes de CESVI. */
 export function dictamenContenido(d: DatosDictamen): Content[] {
   const c = d.caso;
+  const incluir = { ...INCLUIR_POR_OMISION, ...d.incluir };
+  soloResultados = !incluir.calculos;
   const validado = d.validacion !== null;
   const modalidad = c.modalidad_dictaminada.toUpperCase();
   const vehiculos = [c.vehiculos.A, c.vehiculos.B];
@@ -237,6 +274,39 @@ export function dictamenContenido(d: DatosDictamen): Content[] {
   } else {
     out.push(parrafo("[El perito no marcó el croquis sobre el mapa.]"));
   }
+  const cv = d.croquisVersiones;
+  if (incluir.croquisAmbas && cv && (cv.declarada || cv.evidencia)) {
+    out.push(subtitulo("Croquis de ambas versiones, a escala"));
+    out.push({
+      columns: (
+        [
+          ["Versión declarada", cv.declarada],
+          ["Versión de la evidencia", cv.evidencia],
+        ] as const
+      ).map(([nombre, img]) =>
+        img
+          ? {
+              stack: [
+                { image: img, width: 250 },
+                { text: nombre, fontSize: 8, color: "#444444" },
+              ],
+            }
+          : { text: `${nombre}: sin croquis.`, fontSize: 9 },
+      ),
+      columnGap: 12,
+      margin: [0, 0, 0, 8],
+    });
+  }
+  if (incluir.tablaDatos && d.datosHecho?.length) {
+    out.push(subtitulo("Datos del hecho y su fuente"));
+    out.push(
+      tabla(
+        ["Dato", "Valor", "Fuente", "Versión"],
+        d.datosHecho.map((x) => [x.etiqueta, x.valor, x.fuente, x.version]),
+        [110, "*", 70, 70],
+      ),
+    );
+  }
 
   out.push(titulo("Consideraciones"));
   out.push(subtitulo("1. Declaración y dinámica declarada"));
@@ -328,6 +398,19 @@ export function dictamenContenido(d: DatosDictamen): Content[] {
     out.push(parrafo("Sin validar."));
   }
   out.push({ text: "\n\n______________________________\nFirma del perito", margin: [0, 16, 0, 0] });
+  if (incluir.notasInternas && d.notasInternas?.trim()) {
+    out.push(titulo("Notas internas del perito"));
+    out.push(parrafo(d.notasInternas.trim()));
+  }
+  if (d.trazabilidad) {
+    const t = d.trazabilidad;
+    out.push({
+      text: `Trazabilidad: método ${t.metodo} · huella de entradas ${t.huella} · sugerencia ${t.sugerencia} · validó ${t.valido}.`,
+      fontSize: 7,
+      color: "#555555",
+      margin: [0, 12, 0, 0],
+    });
+  }
   return out.map(conGlifosDeRoboto);
 }
 

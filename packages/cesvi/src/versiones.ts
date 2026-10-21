@@ -194,3 +194,55 @@ export function giroEntreVias(antes: number, despues: number): number {
   if (g > 90) g -= 180;
   return g;
 }
+
+/**
+ * Cuándo queda en reposo cada vehículo en la animación, de 0 (inicio) a 1 (fin), con el impacto en
+ * 0.5 (ADR 0057). Sin velocidades en el croquis, se supone la misma desaceleración para los dos: el
+ * tiempo de frenado va con la raíz de lo que se desplaza después del impacto (d = a·t²/2). El que
+ * más se desplaza termina en 1. Es un tiempo relativo, no segundos del hecho.
+ */
+export function tiemposDeReposo(v: VersionCroquis): Record<"A" | "B", number> {
+  const d = (l: "A" | "B") => distanciaM(v.vehiculos[l].impacto.punto, v.vehiculos[l].final.punto);
+  const max = Math.max(d("A"), d("B"));
+  const t = (l: "A" | "B") => (max < 0.05 ? 0.5 : 0.5 + 0.5 * Math.sqrt(d(l) / max));
+  return { A: t("A"), B: t("B") };
+}
+
+export interface EventoLinea {
+  t: number;
+  etiqueta: string;
+}
+
+/** Los eventos de la línea de tiempo: aproximación, impacto y el reposo de cada vehículo. */
+export function eventosDeLinea(v: VersionCroquis): EventoLinea[] {
+  const r = tiemposDeReposo(v);
+  const reposos: EventoLinea[] =
+    Math.abs(r.A - r.B) < 0.02
+      ? [{ t: Math.max(r.A, r.B), etiqueta: "Reposo de A y B" }]
+      : (["A", "B"] as const)
+          .map((l) => ({ t: r[l], etiqueta: `Reposo de ${l}` }))
+          .sort((a, b) => a.t - b.t);
+  return [{ t: 0, etiqueta: "Aproximación" }, { t: 0.5, etiqueta: "Impacto" }, ...reposos];
+}
+
+/**
+ * La pose de un vehículo en el instante t∈[0,1]: de la inicial al impacto (hasta 0.5) y del
+ * impacto a la final, desacelerando, hasta su reposo (`tiemposDeReposo`).
+ */
+export function poseEnInstante(v: VersionCroquis, letra: "A" | "B", t: number): Pose {
+  const p = v.vehiculos[letra];
+  const fin = tiemposDeReposo(v)[letra];
+  const tramo = (a: Pose, b: Pose, f: number): Pose => {
+    const d = distanciaM(a.punto, b.punto);
+    const punto: [number, number] =
+      d > 0 ? avanzar(a.punto, rumboDeg(a.punto, b.punto), d * f) : [a.punto[0], a.punto[1]];
+    return { punto, rumbo: a.rumbo + (b.rumbo - a.rumbo) * f, fuente: a.fuente };
+  };
+  if (t <= 0.5) {
+    const x = t / 0.5;
+    return tramo(p.inicial, p.impacto, x * x * (3 - 2 * x));
+  }
+  if (t >= fin || fin <= 0.5) return p.final;
+  const x = (t - 0.5) / (fin - 0.5);
+  return tramo(p.impacto, p.final, 1 - (1 - x) * (1 - x));
+}

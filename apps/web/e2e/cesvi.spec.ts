@@ -113,6 +113,14 @@ test("@flujo /cesvi: el recorrido del perito, del caso al dictamen en PDF", asyn
   await expect(page.getByTestId("pregunta-reversa")).toContainText("¿Cuántos metros de reversa?");
   await page.getByTestId("respuesta-reversa").fill("4");
   await expect(declarada).toContainText("4 m");
+  // Completitud, la frase que respalda cada dato y «por qué importa» (ADR 0057).
+  await expect(page.getByTestId("completitud")).toHaveText("9/9");
+  await expect(page.getByTestId("frase-vertice_a")).toHaveText("«vértice posterior izquierdo»");
+  await expect(page.getByTestId("por-que-carril_a")).toContainText("Por qué importa");
+  // «Llenar a mano»: el formulario por si la IA no está disponible.
+  await page.getByTestId("llenar-a-mano").click();
+  await expect(page.getByTestId("panel-manual")).toBeVisible();
+  await page.keyboard.press("Escape");
 
   // 3. El lugar: el perito marca el punto de impacto sobre la MEX 15. Overpass sigue retenido: las
   // calles salen del tramo precargado en menos de 1 s.
@@ -188,6 +196,34 @@ test("@flujo /cesvi: el recorrido del perito, del caso al dictamen en PDF", asyn
     "15.89",
   );
 
+  // Modo Trabajar (ADR 0057): los mismos datos, con herramientas, el objeto elegido, la línea de
+  // tiempo con velocidades y qué cambia entre versiones; tema claro por defecto al trabajar.
+  const recorrido = page.getByTestId("recorrido");
+  await expect(recorrido).toHaveAttribute("data-tema", "oscuro");
+  await page.getByTestId("modo-trabajar").click();
+  await expect(recorrido).toHaveAttribute("data-modo", "trabajar");
+  await expect(recorrido).toHaveAttribute("data-tema", "claro");
+  await expect(page.getByTestId("resumen-cambios")).toHaveText(
+    "3 de 4 no coinciden con la versión declarada.",
+  );
+  await page.getByTestId("herramienta-A").click();
+  await expect(page.getByTestId("panel-objeto")).toContainText("A · Silverado");
+  await expect(page.getByTestId("panel-objeto")).toContainText("posición final");
+  await expect(page.getByTestId("eventos")).toContainText("Impacto");
+  await page.getByTestId("velocidad-0.25").click();
+  await expect(page.getByTestId("velocidad-0.25")).toHaveAttribute("aria-pressed", "true");
+  await page.getByTestId("velocidad-1").click();
+  await page.getByTestId("vista-lado").click();
+  await expect(page.getByTestId("mapa-trabajo-declarada")).toBeVisible();
+  await expect(page.getByTestId("mapa-trabajo-evidencia")).toBeVisible();
+  // El tema se cambia con el interruptor y se recuerda por modo.
+  await page.getByTestId("tema").click();
+  await expect(recorrido).toHaveAttribute("data-tema", "oscuro");
+  await page.getByTestId("tema").click();
+  await expect(recorrido).toHaveAttribute("data-tema", "claro");
+  await page.getByTestId("modo-presentar").click();
+  await expect(recorrido).toHaveAttribute("data-tema", "oscuro");
+
   // 5. Los daños: dónde están contra dónde estarían.
   await page.getByTestId("siguiente").click();
   await expect(page.getByTestId("silueta-real-A")).toHaveAttribute(
@@ -235,6 +271,22 @@ test("@flujo /cesvi: el recorrido del perito, del caso al dictamen en PDF", asyn
       .subarray(0, 5)
       .toString(),
   ).toBe("%PDF-");
+  // Word, caso JSON, antes de firmar y trazabilidad (ADR 0057).
+  const word = page.waitForEvent("download");
+  await page.getByTestId("descargar-word").click();
+  const docx = await word;
+  expect(docx.suggestedFilename()).toBe("dictamen-A2010930.docx");
+  expect(
+    readFileSync(await docx.path())
+      .subarray(0, 2)
+      .toString(),
+  ).toBe("PK");
+  const json = page.waitForEvent("download");
+  await page.getByTestId("descargar-json").click();
+  const casoJson = JSON.parse(readFileSync(await (await json).path(), "utf8")) as { caso: string };
+  expect(casoJson.caso).toBe("A2010930");
+  await expect(page.getByTestId("antes-de-firmar")).toContainText("2.39 %");
+  await expect(page.getByTestId("trazabilidad")).toContainText("Perito de prueba");
 
   expect(errores).toEqual([]);
 });

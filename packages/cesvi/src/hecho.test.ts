@@ -10,7 +10,7 @@ import {
   type LecturaHecho,
 } from "./hecho-lectura";
 import { leerConReglas } from "./hecho-reglas";
-import { interpretarHecho } from "./hecho";
+import { completitud, interpretarHecho, NO_SE } from "./hecho";
 
 const c = caso("A2010930");
 const ejemplo = ejemploHecho("A2010930")!;
@@ -173,5 +173,85 @@ describe("la lectura grabada de Claude (CI no llama a la API)", () => {
       ]),
     );
     expect(i.preguntas.every((p) => p.version === "evidencia" || p.clave === "reversa")).toBe(true);
+  });
+});
+
+describe("llenar a mano, «No sé» y completitud (ADR 0057)", () => {
+  const L = grabacion.lecturas as unknown as Record<
+    "descripcion" | "declaracion",
+    { texto: string; lectura: LecturaHecho }
+  >;
+  const leer = (t: "descripcion" | "declaracion") => ({
+    lectura: validarLectura(L[t].lectura, L[t].texto),
+    leidoPor: "ia" as const,
+  });
+  const base = { expediente: vehiculos, declarante: "A" as const };
+
+  it("sin ninguna lectura (Claude falló), lo que llena el perito arma las dos versiones", () => {
+    const i = interpretarHecho({
+      ...base,
+      descripcion: null,
+      declaracion: null,
+      respuestas: {
+        modalidad: "alcance",
+        sentido_a: "norte",
+        zona_contacto_a: "parte posterior",
+        restos: 15.89,
+        maniobra_declarada: "reversa",
+        reversa: 3,
+      },
+    });
+    expect(i.parametros.evidencia).toEqual({ hacia: "norte", distanciaRestos: 15.89 });
+    expect(i.parametros.declarada).toMatchObject({ reversaM: 3, maniobraA: "reversa" });
+    expect(i.evidencia.every((d) => d.fuente === "perito" && d.leidoPor === "perito")).toBe(true);
+    expect(i.preguntas.find((p) => p.clave === "carril_a")?.respuesta).toBeNull();
+  });
+
+  it("lo que llena el perito gana a lo leído", () => {
+    const i = interpretarHecho({
+      ...base,
+      descripcion: leer("descripcion"),
+      declaracion: null,
+      respuestas: { zona_contacto_a: "lado izquierdo" },
+    });
+    const z = i.evidencia.filter((d) => d.clave === "zona_contacto_a");
+    expect(z).toHaveLength(1);
+    expect(z[0]).toMatchObject({ valor: "lado izquierdo", fuente: "perito" });
+  });
+
+  it("«No sé» deja el dato como supuesto y cierra la pregunta; cada pregunta dice por qué importa", () => {
+    const i = interpretarHecho({
+      ...base,
+      descripcion: leer("descripcion"),
+      declaracion: leer("declaracion"),
+      respuestas: { carril_a: NO_SE },
+    });
+    const carril = i.preguntas.find((p) => p.clave === "carril_a")!;
+    expect(carril.respuesta).toBe(NO_SE);
+    expect(carril.porQue).toMatch(/tabla de datos del dictamen/);
+    expect(i.evidencia.find((d) => d.clave === "carril_a")).toMatchObject({ fuente: "supuesto" });
+    expect(i.preguntas.find((p) => p.clave === "reversa")!.porQue).toMatch(/versión declarada/);
+  });
+
+  it("completitud: 7 de 9 con las lecturas grabadas; 9 de 9 al contestar carril y reversa", () => {
+    const antes = completitud(
+      interpretarHecho({
+        ...base,
+        descripcion: leer("descripcion"),
+        declaracion: leer("declaracion"),
+        respuestas: {},
+      }),
+    );
+    expect([antes.presentes, antes.total]).toEqual([7, 9]);
+    expect(antes.faltan.map((f) => f.clave)).toEqual(["carril_a", "reversa"]);
+    const despues = completitud(
+      interpretarHecho({
+        ...base,
+        descripcion: leer("descripcion"),
+        declaracion: leer("declaracion"),
+        respuestas: { carril_a: "derecho", reversa: 4 },
+      }),
+    );
+    expect([despues.presentes, despues.total]).toEqual([9, 9]);
   });
 });
