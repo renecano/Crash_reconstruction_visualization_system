@@ -28,11 +28,13 @@ export {
 } from "./fixtures";
 export {
   escenaSchema,
+  expedienteErrors,
   isValidEscena,
   schemaErrors,
   validateEscena,
   type ValidationResult,
 } from "./validate";
+export { checkExpediente } from "./check-expediente";
 export { MIGRATIONS, migrateEscena, type Migration, type MigrationResult } from "./migrate";
 /** El contrato tal cual (`escena.schema.json`), para leer sus enumeraciones. */
 export { default as ESCENA_JSON_SCHEMA } from "../escena.schema.json";

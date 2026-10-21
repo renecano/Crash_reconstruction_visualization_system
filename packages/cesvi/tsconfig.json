@@ -1,5 +1,5 @@
 {
   "extends": "../../tsconfig.base.json",
   "compilerOptions": { "types": ["node"], "resolveJsonModule": true },
-  "include": ["src", "vitest.config.ts"]
+  "include": ["src", "vitest.config.ts", "../../data/cesvi/scripts/corpus.mts"]
 }
