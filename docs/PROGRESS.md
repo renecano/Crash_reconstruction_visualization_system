@@ -9,6 +9,18 @@ Reglas de trabajo: `CLAUDE.md`. Especificación: `PLAN.md`.
   - **Orden:** Hito 1 (el caso A2010930 y sus cálculos en `/cesvi`), Hito 2 (el lugar y el croquis sobre el mapa) y Hito 3 (correspondencia, sugerencia y dictamen en PDF). Cada uno se despliega al terminar.
   - **CI:** para hacer merge solo cuentan lint, tipos, pruebas unitarias y una e2e por flujo principal en Chromium; lo demás corre a mano (ADR 0047).
   - **Datos de CESVI:** en `data/raw/cesvi/`, que git ignora (`.gitignore`: `data/raw/*`). El repositorio solo guarda datos derivados del caso, sin placas, VIN ni nombres.
+- **Hito 1 — el caso y sus cálculos** (rama `feat/cesvi-hito1`, ADR 0048 y 0049):
+  - **Liga:** https://croquis-sage.vercel.app/cesvi (pide usuario y clave).
+  - **Qué hay:**
+    - el expediente del caso A2010930 sin placas, VIN ni nombres;
+    - los cálculos con el método de CESVI (McHenry de 2, 4 y 6 medidas, EBS, velocidad por desplazamiento y la comparación con un umbral que fija el perito), cada fórmula con sus valores sustituidos y los datos editables;
+    - la tabla «Reproducción del dictamen»;
+    - la discrepancia de la energía explicada, las preguntas para CESVI y la segunda opinión con la rigidez de NHTSA.
+  - **Cómo probarlo:** abrir la liga; en la tabla, 60.27 y 63.15 km/h coinciden y la energía difiere (+2.39 %); cambiar «D, separación de los restos» recalcula V3, y cambiar el umbral cambia si la diferencia es significativa.
+  - **Pruebas:** `pnpm --filter @croquis/cesvi test` (las fórmulas con los números del caso y las citas contra el lote), `apps/web/src/proxy.test.ts` y la e2e `@flujo` de `/cesvi`.
+  - **Qué necesito de René:**
+    - pasar el usuario y la clave a quien vea la demo: están en `.env.local` (`CROQUIS_CESVI_USUARIO`, `CROQUIS_CESVI_CLAVE`) y en Vercel;
+    - las preguntas para CESVI que muestra la página, empezando por el PDF original o la hoja de cálculo del dictamen.
 - **F11a cerrada** (PR #63). **F11b (E9 con personas) en pausa** mientras dure el trabajo con CESVI; el kit de E9 sigue listo.
 - **F11a — experiencia y diseño** (PLAN §11, iniciada el 2026-10-19; rama `feat/f11a-diseno`).
   - **Plan:** `docs/design/plan.md`, con la revisión contra lo genérico. Las decisiones van en el ADR 0045.

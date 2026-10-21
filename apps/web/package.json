@@ -17,6 +17,7 @@
     "portada": "node scripts/portada.mjs"
   },
   "dependencies": {
+    "@croquis/cesvi": "workspace:*",
     "@croquis/croquis-2d": "workspace:*",
     "@croquis/extraction": "workspace:*",
     "@croquis/scene-schema": "workspace:*",

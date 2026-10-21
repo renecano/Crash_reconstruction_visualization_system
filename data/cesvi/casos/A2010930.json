@@ -1,0 +1,231 @@
+{
+  "_fuente": {
+    "lote": "data/raw/cesvi/crash_reports_batch_01.md",
+    "documento": "AXA SINIESTRO A2010930.pdf",
+    "nota": "Datos derivados del dictamen (OCR del PDF). El documento original no se versiona, y aquí no van placas, VIN ni nombres (docs/cesvi/PROTOTIPO.md). Cada valor lleva su cita literal; packages/cesvi/src/caso.test.ts la busca en el lote cuando está en la máquina."
+  },
+  "id": "A2010930",
+  "aseguradora": "AXA",
+  "modalidad_dictaminada": "alcance",
+  "fecha_hora": {
+    "valor": "2010-06-17T11:30",
+    "aproximada": true,
+    "cita": "17 DE JUNIO DE 2010 APROXIMADAMENTE A\nLAS 11:30 HRS"
+  },
+  "fecha_dictamen": {
+    "valor": "2010-06-30",
+    "cita": "Miércoles, 30 de Junio de 2010"
+  },
+  "autor_dictamen": "perito de CESVI (nombre omitido)",
+  "objetivo": {
+    "valor": "Determinar si los daños presentados en los vehículos corresponden a una maniobra de reversa.",
+    "cita": "determinar si los daños presentados en los\nvehículos corresponden a una maniobra de reversa"
+  },
+  "lugar": {
+    "descripcion": "Carretera Internacional México-Nogales, km 47+800, tramo Los Mochis–Navojoa, Ahome, Sinaloa.",
+    "cita": "carretera Internacional\nMéxico-Nogales, km 47+800, del tramo Los Mochis-Navojoa, Ahome, Sinaloa",
+    "kilometro": "47+800",
+    "municipio": "Ahome",
+    "estado": "Sinaloa",
+    "arroyos": [
+      {
+        "sentido": "sur a norte",
+        "hacia": "Navojoa"
+      },
+      {
+        "sentido": "norte a sur",
+        "hacia": "Los Mochis"
+      }
+    ],
+    "ancho_arroyo_m": {
+      "valor": 6.47,
+      "cita": "amplitud de 6.47\nmetros"
+    },
+    "separacion": {
+      "valor": "Área de terracería y hierbas con desniveles entre ambos arroyos.",
+      "cita": "separados por un área de terracería y hiervas en la parte central"
+    },
+    "carpeta": {
+      "valor": "El arroyo sur→norte tiene carpeta asfáltica con mantenimiento reciente y solo líneas discontinuas blancas.",
+      "cita": "solamente presenta líneas\ndiscontinuas de color blanco"
+    }
+  },
+  "vehiculos": {
+    "A": {
+      "marca": "Chevrolet",
+      "tipo": "Silverado 2500",
+      "modelo": 2007,
+      "color": "arena",
+      "placas": "omitidas",
+      "servicio": "particular",
+      "cita": "| Tipo | SILVERADO 2500 | TACOMA |",
+      "danos": [
+        {
+          "zona": "posterior",
+          "acento": "izquierda",
+          "descripcion": "Tapa de batea desacoplada; hundimiento de atrás hacia adelante en el vértice posterior izquierdo; unidad de luces posterior izquierda rota; defensa posterior hundida.",
+          "cita": "hundimiento con dirección de atrás hacia delante sobre\nel vértice posterior izquierdo"
+        },
+        {
+          "zona": "batea",
+          "descripcion": "Batea desplazada de izquierda a derecha y de atrás hacia adelante.",
+          "cita": "con dirección de izquierda a derecha y de atrás hacia a delante"
+        }
+      ]
+    },
+    "B": {
+      "marca": "Toyota",
+      "tipo": "Tacoma",
+      "modelo": 1997,
+      "color": "blanco",
+      "placas": "no disponibles en el reporte",
+      "servicio": "particular",
+      "cita": "| Modelo | 2007 | 1997 |",
+      "masa_kg": {
+        "valor": 1431.083,
+        "cita": "m = 1431.083 kg"
+      },
+      "danos": [
+        {
+          "zona": "frontal",
+          "acento": "derecha",
+          "descripcion": "Daño considerable por cuerpo duro, de adelante hacia atrás; falta la unidad de luces derecha, la parrilla y la defensa; suspensión delantera derecha desplazada.",
+          "cita": "daño de magnitudes\nconsiderables ocasionadas por cuerpo duro y generado de adelante hacia atrás"
+        },
+        {
+          "zona": "habitaculo",
+          "descripcion": "Bolsa de aire del conductor activada; cinturones sin tensar.",
+          "cita": "el airbag del\nconductor se observa activada"
+        }
+      ]
+    }
+  },
+  "declaracion": {
+    "conductor": "A",
+    "texto": "venia de sur a norte cuando vi un accidente de un tráiler y me pare, reversie unos metros cuando llego la camioneta y me impacto",
+    "cita": "venia de sur a norte cuando vi un accidente\nde un tráiler y me pare, reversie unos metros cuando llego la camioneta y me\nimpacto"
+  },
+  "evidencia": {
+    "restos": {
+      "descripcion": "Restos de ambos vehículos, en su mayoría sobre el extremo izquierdo.",
+      "distancia_m": {
+        "valor": 15.89,
+        "cita": "una distancia de separación entre ellos de 15.89 metros"
+      }
+    }
+  },
+  "calculos": {
+    "deformacion_B": {
+      "metodo": "mchenry_4",
+      "L_m": {
+        "valor": 1.689,
+        "cita": "L = 1.689 m."
+      },
+      "A": {
+        "valor": 55.405,
+        "unidad_impresa": "N/m",
+        "cita": "A = 55.405 N/m"
+      },
+      "B": {
+        "valor": 385.336,
+        "unidad_impresa": "N/m",
+        "cita": "B = 385.336 N/m"
+      },
+      "C_m": [
+        {
+          "valor": 0.96,
+          "cita": "C1 = 0.96 m"
+        },
+        {
+          "valor": 0.86,
+          "cita": "C2 = 0.86 m"
+        },
+        {
+          "valor": 0.52,
+          "cita": "C3 = 0.52 m"
+        },
+        {
+          "valor": 0.2,
+          "cita": "C4 = 0.20 m"
+        }
+      ],
+      "reporte": {
+        "energia": {
+          "valor": 220.1900228,
+          "cita": "EDeformación = 220.1900228 Julios."
+        },
+        "ebs_ms": {
+          "valor": 17.542,
+          "cita": "Vimpacto = 17.5420 m/s"
+        },
+        "ebs_kmh": {
+          "valor": 63.15,
+          "cita": "17.5420 m/s = 63.15 km/h"
+        }
+      }
+    },
+    "desplazamiento": {
+      "D_m": {
+        "valor": 15.89,
+        "cita": "D = 15.89 m"
+      },
+      "a": {
+        "valor": 0.9,
+        "cita": "a = 0.9"
+      },
+      "g_ms2": {
+        "valor": 9.8,
+        "cita": "g = 9.8 m/s2"
+      },
+      "reporte": {
+        "v_ms": {
+          "valor": 16.74,
+          "cita": "V3 = 16.74 m/s"
+        },
+        "v_kmh": {
+          "valor": 60.27,
+          "cita": "V3 = 16.74 x (3.6) = 60.27 km/h"
+        }
+      }
+    }
+  },
+  "conclusiones": [
+    {
+      "n": 1,
+      "texto": "Por la magnitud y profundidad de los daños de la Tacoma, su velocidad de impacto es de 63.15 km/h.",
+      "cita": "su velocidad de impacto es de 63.15 km/h"
+    },
+    {
+      "n": 2,
+      "texto": "Por la separación de los restos y la posición final de la Silverado, esta fue impactada por alcance a 60.27 km/h.",
+      "cita": "fue impactada por alcance a una velocidad de 60.27 km/h"
+    },
+    {
+      "n": 3,
+      "texto": "La modalidad es un alcance de la Tacoma a la Silverado.",
+      "cita": "la modalidad del hecho de tránsito en estudio es un alcance"
+    },
+    {
+      "n": 4,
+      "texto": "Los hechos no sucedieron como los declara el conductor de la Silverado.",
+      "cita": "no sucedieron como lo declara el\nconductor del vehículo tipo Silverado"
+    }
+  ],
+  "razonamiento": [
+    {
+      "clave": "velocidades_sin_diferencia",
+      "texto": "Las dos velocidades calculadas no difieren de forma significativa: es un alcance y no una reversa.",
+      "cita": "ambas velocidades calculadas no presentan diferencia\nsignificativa"
+    },
+    {
+      "clave": "reversa_sin_desplazamiento",
+      "texto": "En una reversa no habría desplazamiento entre los vehículos (o sería mínimo) y los restos quedarían en la posición final.",
+      "cita": "las fuerzas actuantes hacen que no hubiera existido un desplazamiento\nentre ambos vehículo"
+    },
+    {
+      "clave": "acentuacion_de_danos",
+      "texto": "En una reversa los daños estarían centrados en la parte posterior de A y en el frente de B; aparecen acentuados al lado izquierdo de A y al derecho de B (maniobra evasiva).",
+      "cita": "denotan la\nacción de una maniobra evasiva"
+    }
+  ]
+}

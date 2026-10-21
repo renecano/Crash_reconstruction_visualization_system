@@ -1,0 +1,219 @@
+{
+  "evaluacion": "Prototipo CESVI: discrepancia de la energía de deformación del dictamen A2010930",
+  "generado_por": "node eval/cesvi_discrepancia.mjs",
+  "momento": "2026-10-21T03:03:03.993Z",
+  "datos": {
+    "L": 1.689,
+    "A": 55.405,
+    "B": 385.336,
+    "C": [
+      0.96,
+      0.86,
+      0.52,
+      0.2
+    ],
+    "masa_t": 1.431083
+  },
+  "energia_reporte": 220.1900228,
+  "energia_datos_impresos": 225.4541194,
+  "diferencia": 5.2640966,
+  "diferencia_pct": 2.3907,
+  "ebs_kmh": {
+    "desde_energia_del_reporte": 63.1515,
+    "desde_datos_impresos": 63.902,
+    "diferencia_pct": 1.1908
+  },
+  "hipotesis": {
+    "redondeo_de_C": {
+      "minimo": 222.8683067,
+      "maximo": 228.0562028,
+      "contiene_al_reporte": false
+    },
+    "un_digito_en_L_A_o_B": {
+      "probadas": 135,
+      "mas_cercanas": [
+        {
+          "parametro": "L",
+          "impreso": "1.689",
+          "leido": "1.649",
+          "energia": 220.1147678,
+          "diferencia": -0.075255
+        },
+        {
+          "parametro": "A",
+          "impreso": "55.405",
+          "leido": "51.405",
+          "energia": 220.1038628,
+          "diferencia": -0.08616
+        },
+        {
+          "parametro": "A",
+          "impreso": "55.405",
+          "leido": "52.405",
+          "energia": 221.4348522,
+          "diferencia": 1.2448294
+        },
+        {
+          "parametro": "L",
+          "impreso": "1.689",
+          "leido": "1.659",
+          "energia": 221.4496057,
+          "diferencia": 1.2595829
+        },
+        {
+          "parametro": "B",
+          "impreso": "385.336",
+          "leido": "375.336",
+          "energia": 221.5437285,
+          "diferencia": 1.3537057
+        }
+      ]
+    },
+    "una_o_dos_C_a_0_01": {
+      "mas_cercanas": [
+        {
+          "cambio": {
+            "C1": 0.95,
+            "C4": 0.11
+          },
+          "energia": 220.1919548,
+          "diferencia": 0.001932
+        },
+        {
+          "cambio": {
+            "C2": 0.51,
+            "C4": 0.97
+          },
+          "energia": 220.1930265,
+          "diferencia": 0.0030037
+        },
+        {
+          "cambio": {
+            "C1": 0.31,
+            "C4": 0.93
+          },
+          "energia": 220.1935149,
+          "diferencia": 0.0034921
+        },
+        {
+          "cambio": {
+            "C1": 0.76,
+            "C4": 0.48
+          },
+          "energia": 220.1935149,
+          "diferencia": 0.0034921
+        },
+        {
+          "cambio": {
+            "C1": 1.13,
+            "C3": 0.32
+          },
+          "energia": 220.1856053,
+          "diferencia": -0.0044175
+        }
+      ]
+    },
+    "variantes_de_formula": {
+      "probadas": 7680,
+      "mas_cercanas": [
+        {
+          "wl": [
+            2,
+            1,
+            1,
+            1
+          ],
+          "wq": [
+            2,
+            1,
+            2,
+            2
+          ],
+          "vecinos": 1,
+          "umbral": 0,
+          "k": 3,
+          "energia": 220.2029541,
+          "diferencia": 0.0129313
+        },
+        {
+          "wl": [
+            1,
+            2,
+            2,
+            1
+          ],
+          "wq": [
+            1,
+            2,
+            2,
+            2
+          ],
+          "vecinos": 1,
+          "umbral": 0,
+          "k": 3,
+          "energia": 220.1728475,
+          "diferencia": -0.0171753
+        },
+        {
+          "wl": [
+            2,
+            1,
+            2,
+            2
+          ],
+          "wq": [
+            2,
+            1,
+            1,
+            1
+          ],
+          "vecinos": 1,
+          "umbral": 0,
+          "k": 3,
+          "energia": 220.2091945,
+          "diferencia": 0.0191717
+        },
+        {
+          "wl": [
+            2,
+            1,
+            2,
+            1
+          ],
+          "wq": [
+            2,
+            2,
+            1,
+            1
+          ],
+          "vecinos": 2,
+          "umbral": 0,
+          "k": 4,
+          "energia": 220.2099994,
+          "diferencia": 0.0199766
+        },
+        {
+          "wl": [
+            1,
+            2,
+            2,
+            2
+          ],
+          "wq": [
+            1,
+            2,
+            1,
+            2
+          ],
+          "vecinos": 1,
+          "umbral": 3,
+          "k": 3,
+          "energia": 220.2427648,
+          "diferencia": 0.052742
+        }
+      ]
+    }
+  },
+  "explicaciones_exactas": [],
+  "lectura": "Ninguna hipótesis reproduce los 7 decimales impresos: la energía del reporte no sale de sus datos impresos con la fórmula impresa ni con un error de lectura o de redondeo. Lo probable es que se calculara con datos que el reporte no imprime (medidas sin redondear u hoja de cálculo); hay que pedir a CESVI el PDF original o su hoja."
+}
