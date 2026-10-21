@@ -73,6 +73,8 @@ export function proponerVersiones(p: ParametrosVersiones): Record<ClaveVersion, 
   const aImpacto = avanzar(x, r, p.medidas.A.largo / 2);
   const bImpacto = avanzar(x, r, -p.medidas.B.largo / 2);
   const finRestos = avanzar(x, r, p.distanciaRestos);
+  // De dónde viene B: el dictamen no lo da; se dibuja dos largos atrás para que se vea llegar.
+  const bInicial = avanzar(bImpacto, r, -2 * p.medidas.B.largo);
 
   const evidencia: VersionCroquis = {
     clave: "evidencia",
@@ -87,14 +89,14 @@ export function proponerVersiones(p: ParametrosVersiones): Record<ClaveVersion, 
         final: pose(avanzar(aImpacto, r, p.distanciaRestos), r, "dictamen"),
       },
       B: {
-        inicial: pose(bImpacto, r, "croquis"),
+        inicial: pose(bInicial, r, "croquis"),
         impacto: pose(bImpacto, r, "croquis"),
         final: pose(bImpacto, r, "croquis"),
       },
     },
     restos: { inicio: x, fin: finRestos, fuente: "dictamen" },
     supuestos: [
-      "El dictamen no da las posiciones iniciales: se dibujan en el impacto para que el perito las marque.",
+      "El dictamen no da las posiciones iniciales: A se dibuja en el impacto y B dos largos atrás, para que el perito las marque.",
       "El dictamen no da la posición final de B: se dibuja en el impacto.",
     ],
   };
@@ -112,7 +114,7 @@ export function proponerVersiones(p: ParametrosVersiones): Record<ClaveVersion, 
         final: pose(aImpacto, r, "croquis"),
       },
       B: {
-        inicial: pose(bImpacto, r, "croquis"),
+        inicial: pose(bInicial, r, "croquis"),
         impacto: pose(bImpacto, r, "croquis"),
         final: pose(bImpacto, r, "croquis"),
       },
@@ -120,7 +122,7 @@ export function proponerVersiones(p: ParametrosVersiones): Record<ClaveVersion, 
     restos: { inicio: x, fin: x, fuente: "croquis" },
     supuestos: [
       `La declaración dice «unos metros»: la reversa se dibuja con ${p.reversaM} m, que el perito ajusta.`,
-      "La declaración no dice dónde estaba B antes del impacto: se dibuja en el impacto.",
+      "La declaración no dice dónde estaba B antes del impacto: se dibuja dos largos atrás.",
     ],
   };
 

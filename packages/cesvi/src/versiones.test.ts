@@ -77,6 +77,14 @@ describe("las dos versiones del caso", () => {
     expect(v.declarada.supuestos.join(" ")).toContain("3 m");
   });
 
+  it("B llega desde dos largos atrás del impacto (supuesto para verlo llegar)", () => {
+    for (const version of [v.evidencia, v.declarada]) {
+      const b = version.vehiculos.B;
+      expect(distanciaM(b.inicial.punto, b.impacto.punto)).toBeCloseTo(2 * 5.34, 2);
+      expect(b.inicial.fuente).toBe("croquis");
+    }
+  });
+
   it("lo que mueve el perito queda con fuente «perito»", () => {
     const movida = moverPose(v.evidencia, "B", "final", { rumbo: 20 });
     expect(movida.vehiculos.B.final).toMatchObject({ rumbo: 20, fuente: "perito" });

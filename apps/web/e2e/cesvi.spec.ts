@@ -1,8 +1,16 @@
+import { readFileSync } from "node:fs";
+import { join } from "node:path";
 import { expect, test, type Page } from "@playwright/test";
 
+/** La respuesta grabada de Claude para la declaración del dictamen (CI no llama a la API). */
+const GRABACION = readFileSync(
+  join(__dirname, "../../../data/cesvi/grabaciones/declaracion-A2010930.ndjson"),
+  "utf8",
+);
+
 /**
- * Sin red externa en la prueba: un estilo de mapa vacío en lugar de OpenFreeMap y una vía recta de
- * sur a norte en lugar de Overpass (`/api/osm`), alrededor del punto que se marca.
+ * Sin red externa: un estilo de mapa vacío en lugar de OpenFreeMap, una vía recta de sur a norte en
+ * lugar de Overpass, Nominatim simulado, la extracción grabada y un borrador simulado.
  */
 async function sinRedExterna(page: Page) {
   await page.route("https://tiles.openfreemap.org/**", (r) =>
@@ -15,11 +23,18 @@ async function sinRedExterna(page: Page) {
       }),
     }),
   );
+  await page.route("https://nominatim.openstreetmap.org/**", (r) => {
+    const q = new URL(r.request().url()).searchParams.get("q") ?? "";
+    const p = q.startsWith("Navojoa")
+      ? { lat: "27.07", lon: "-109.44" }
+      : { lat: "25.79", lon: "-108.99" };
+    return r.fulfill({ contentType: "application/json", body: JSON.stringify([p]) });
+  });
   await page.route("**/api/osm?**", (r) => {
     const u = new URL(r.request().url());
     const lat = Number(u.searchParams.get("lat"));
     const lon = Number(u.searchParams.get("lon"));
-    r.fulfill({
+    return r.fulfill({
       contentType: "application/json",
       body: JSON.stringify({
         elements: [
@@ -30,92 +45,115 @@ async function sinRedExterna(page: Page) {
       }),
     });
   });
-}
-
-// El flujo principal del prototipo para CESVI (docs/cesvi/PROTOTIPO.md): abrir el dictamen
-// reproducido, ver los números del reporte junto a los de Croquis, recalcular con los datos del
-// perito y medir la zona de restos en el croquis sobre el mapa de cada versión.
-test("@flujo /cesvi reproduce el dictamen A2010930, mide sobre el mapa y exporta el dictamen", async ({
-  page,
-}) => {
-  const errores: string[] = [];
-  page.on("pageerror", (e) => errores.push(e.message));
-  await sinRedExterna(page);
-  await page.goto("/cesvi");
-  await expect(page.getByRole("heading", { level: 1 })).toContainText("reversa declarada");
-
-  // Tabla de reproducción: 60.27 y 63.15 km/h coinciden; la energía difiere, con su porcentaje.
-  const tabla = page.getByTestId("reproduccion");
-  await expect(tabla.locator('[data-fila="v3_kmh"]')).toContainText("60.27 km/h");
-  await expect(tabla.locator('[data-fila="v3_kmh"]')).toContainText("Coincide");
-  await expect(tabla.locator('[data-fila="ebs_kmh_reporte"]')).toContainText("63.15 km/h");
-  await expect(tabla.locator('[data-fila="ebs_kmh_reporte"]')).toContainText("Coincide");
-  await expect(tabla.locator('[data-fila="energia"]')).toContainText("Difiere");
-  await expect(tabla.locator('[data-fila="energia"]')).toContainText("+2.39 %");
-
-  // Con la separación de los restos del dictamen, V3 = 60.27 km/h; con otra, se recalcula.
-  const v3 = page.locator("#calculo-2").locator("..").getByTestId("resultado-formula");
-  await expect(v3).toHaveText("V3 = 16.74 m/s = 60.27 km/h");
-  await page.getByTestId("distancia-restos").fill("10");
-  await expect(v3).toHaveText("V3 = 13.28 m/s = 47.81 km/h");
-
-  // El umbral de diferencia significativa lo decide el perito.
-  const comparacion = page.getByTestId("comparacion-reporte");
-  await page.getByTestId("distancia-restos").fill("15.89");
-  await expect(comparacion).toContainText("no significativa");
-  await page.getByTestId("umbral").fill("4");
-  await expect(comparacion).toContainText("significativa con el umbral de 4 %");
-  await expect(comparacion).not.toContainText("no significativa");
-
-  // El croquis sobre el mapa: el perito marca el impacto y Croquis propone las dos versiones.
-  await page.getByTestId("coordenadas").fill("25.79, -108.99");
-  await page.getByRole("button", { name: "Marcar el impacto" }).click();
-  await expect(page.getByTestId("version-evidencia")).toHaveAttribute("aria-pressed", "true");
-  await expect(page.getByText("Vía más cercana en OSM: MEX 15")).toBeVisible();
-  // Evidencia: los restos van del impacto a la posición final de A (15.89 m del dictamen).
-  await expect(page.getByTestId("restos-mapa")).toContainText("De R1 a R2: 15.89 m");
-  await page.getByTestId("usar-restos").click();
-  await expect(page.getByText("D, separación de los restos (medida por el perito)")).toBeVisible();
-  await expect(v3).toHaveText("V3 = 16.74 m/s = 60.27 km/h");
-  // Declarada: sin desplazamiento después del impacto, no hay separación de restos.
-  await page.getByTestId("version-declarada").click();
-  await expect(page.getByTestId("restos-mapa")).toContainText("De R1 a R2: 0.00 m");
-  await page.getByTestId("usar-restos").click();
-  await expect(v3).toHaveText("V3 = 0.00 m/s = 0.00 km/h");
-
-  // Correspondencia y dictamen: con los datos del dictamen, la versión declarada no se sostiene.
-  await page.getByRole("button", { name: "Volver a los datos del dictamen" }).click();
-  await expect(page.getByTestId("sugerencia")).toContainText("no se sostiene");
-  await page.getByTestId("criterio-A-direccion").selectOption("corresponde");
-  await page.getByTestId("perito").fill("Perito de prueba");
-  await page.getByTestId("aceptar").click();
-  await expect(page.getByTestId("validacion")).toContainText(
-    "Perito de prueba aceptó la sugerencia",
+  await page.route("**/api/relato/extraer", (r) =>
+    r.fulfill({ contentType: "application/x-ndjson; charset=utf-8", body: GRABACION }),
   );
-
-  // Borrador de las consideraciones (sin llamar a la API en la prueba): avisa de cifras ajenas.
   await page.route("**/api/cesvi/consideraciones", (r) =>
     r.fulfill({
       contentType: "application/json",
       body: JSON.stringify({
         texto:
-          "1. Se analizará la declaración del conductor.\n\n2. La velocidad de impacto es de 63.15 km/h y la batea mide 2.40 m.",
+          "1. Se analizará la declaración del conductor.\n\n2. La velocidad de impacto es de 63.15 km/h.",
         numerosNoReconocidos: ["2.40"],
       }),
     }),
   );
-  await page.getByTestId("pedir-borrador").click();
-  await expect(page.getByTestId("texto-borrador")).toHaveValue(/63\.15 km\/h/);
-  await expect(page.getByTestId("numeros-no-reconocidos")).toContainText("2.40");
+}
 
-  // El dictamen en PDF, validado (sin la marca de borrador en el nombre).
+// El recorrido del perito (docs/cesvi/PROTOTIPO.md): los ocho pasos, de la declaración al dictamen.
+test("@flujo /cesvi: el recorrido del perito, del caso al dictamen en PDF", async ({ page }) => {
+  test.setTimeout(90_000);
+  const errores: string[] = [];
+  page.on("pageerror", (e) => errores.push(e.message));
+  await sinRedExterna(page);
+  await page.goto("/cesvi");
+  const frase = page.getByTestId("frase");
+
+  // 1. El caso.
+  await expect(frase).toContainText("Siniestro A2010930 de AXA");
+  await expect(page.getByTestId("declaracion")).toContainText("reversie unos metros");
+
+  // 2. La narración y lo que entiende la IA (con el teclado).
+  await page.keyboard.press("ArrowRight");
+  await expect(page.getByTestId("paso-2")).toHaveAttribute("aria-current", "step");
+  const datos = page.getByTestId("datos-entendidos");
+  await expect(datos).toContainText("reversa");
+  await expect(datos).toContainText("IA");
+  await expect(datos).toContainText("B impacta a A");
+  await expect(
+    page.getByTestId("texto-subrayado").locator('mark[data-dato="maniobra_a"]'),
+  ).toHaveText(/reversie unos metros/);
+  await expect(page.getByText("¿Cuántos metros de reversa?")).toBeVisible();
+  await page.getByTestId("respuesta-reversa").fill("4");
+  await expect(datos).toContainText("4 m");
+
+  // 3. El lugar: el perito marca el punto de impacto.
+  await page.getByTestId("siguiente").click();
+  await page.getByTestId("coordenadas").fill("25.79, -108.99");
+  await page.getByRole("button", { name: "Marcar el impacto" }).click();
+  await expect(page.getByText("Punto de impacto marcado")).toBeVisible();
+
+  // 4. Las dos versiones y la zona de restos.
+  await page.getByTestId("siguiente").click();
+  await expect(page.getByTestId("version-declarada")).toHaveAttribute("aria-pressed", "true");
+  await expect(frase).toContainText("A retrocede 4 m");
+  await expect(page.getByTestId("restos-mapa").locator("[data-valor]")).toHaveAttribute(
+    "data-valor",
+    "0.00",
+  );
+  await page.getByTestId("version-evidencia").click();
+  await expect(page.getByTestId("restos-mapa").locator("[data-valor]")).toHaveAttribute(
+    "data-valor",
+    "15.89",
+  );
+
+  // 5. Los daños: dónde están contra dónde estarían.
+  await page.getByTestId("siguiente").click();
+  await expect(page.getByTestId("silueta-real-A")).toHaveAttribute(
+    "aria-label",
+    /posterior izquierda/,
+  );
+  await expect(page.getByTestId("silueta-declarada-A")).toHaveAttribute(
+    "aria-label",
+    /posterior central/,
+  );
+
+  // 6. Los números, y el cálculo completo en «Ver cálculo».
+  await page.keyboard.press("ArrowRight");
+  await expect(page.getByTestId("numero-impacto")).toHaveAttribute("data-valor", "63.15");
+  await expect(page.getByTestId("numero-desplazamiento")).toHaveAttribute("data-valor", "60.27");
+  await expect(page.getByTestId("conclusion-numeros")).toContainText(
+    "Sin diferencia significativa",
+  );
+  await page.getByTestId("ver-detalle").click();
+  const panel = page.getByTestId("panel-detalle");
+  await expect(panel.getByText("V3 = 16.74 m/s = 60.27 km/h")).toBeVisible();
+  await expect(panel.locator('[data-fila="energia"]')).toContainText("+2.39 %");
+  await page.keyboard.press("Escape");
+
+  // 7. La sugerencia, validada por el perito.
+  await page.getByTestId("siguiente").click();
+  await expect(page.getByTestId("sugerencia")).toContainText("no se sostiene");
+  await page.getByTestId("perito").fill("Perito de prueba");
+  await page.getByTestId("aceptar").click();
+  await expect(page.getByTestId("validacion")).toContainText("Perito de prueba aceptó");
+
+  // 8. El dictamen: vista previa, borrador de consideraciones y descarga.
+  await page.getByTestId("siguiente").click();
+  await expect(page.getByTestId("vista-previa")).toBeVisible({ timeout: 20_000 });
+  await page.getByTestId("ver-detalle").click();
+  await page.getByTestId("pedir-borrador").click();
+  await expect(page.getByTestId("estado-borrador")).toContainText("2.40");
+  await page.keyboard.press("Escape");
   const descarga = page.waitForEvent("download");
-  await page.getByTestId("exportar-pdf").click();
+  await page.getByTestId("descargar-pdf").click();
   const archivo = await descarga;
   expect(archivo.suggestedFilename()).toBe("dictamen-A2010930.pdf");
-  const ruta = await archivo.path();
-  const { readFileSync } = await import("node:fs");
-  expect(readFileSync(ruta).subarray(0, 5).toString()).toBe("%PDF-");
+  expect(
+    readFileSync(await archivo.path())
+      .subarray(0, 5)
+      .toString(),
+  ).toBe("%PDF-");
 
   expect(errores).toEqual([]);
 });

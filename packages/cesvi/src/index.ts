@@ -7,3 +7,4 @@ export * from "./discrepancia";
 export * from "./geo";
 export * from "./versiones";
 export * from "./correspondencia";
+export * from "./declaracion";
