@@ -376,6 +376,41 @@
   /* ---------- Superficies ---------- */
 
   /* Paneles sobre la escena 3D: vidrio oscuro con filo de luz (tokens). */
+  /* Marcas que el perito arrastra sobre el mapa de /cesvi: el vehículo elegido, el punto de
+     impacto (la X naranja de la marca: es evidencia) y los extremos de la zona de restos. */
+  .marca-mapa {
+    display: grid;
+    place-items: center;
+    min-width: 44px;
+    min-height: 44px;
+    border-radius: 999px;
+    font: 700 0.85rem/1 var(--fuente);
+    font-stretch: 112%;
+    cursor: grab;
+    touch-action: none;
+  }
+  .marca-vehiculo {
+    background: var(--texto);
+    color: var(--fondo);
+    box-shadow: 0 0 0 2px var(--fondo);
+  }
+  .marca-impacto {
+    color: var(--evidencia);
+    font-size: 1.6rem;
+    text-shadow: 0 0 4px var(--fondo);
+  }
+  .marca-etiqueta {
+    font: 700 0.8rem/1 var(--fuente);
+    font-stretch: 112%;
+    color: var(--texto-2);
+    pointer-events: none;
+  }
+  .marca-restos {
+    background: var(--fondo);
+    color: var(--evidencia);
+    border: 2px solid var(--evidencia);
+  }
+
   .vidrio {
     background:
       var(--efecto-vidrio-oscuro-background), color-mix(in srgb, var(--fondo) 72%, transparent);

@@ -1,12 +1,46 @@
-import { expect, test } from "@playwright/test";
+import { expect, test, type Page } from "@playwright/test";
+
+/**
+ * Sin red externa en la prueba: un estilo de mapa vacío en lugar de OpenFreeMap y una vía recta de
+ * sur a norte en lugar de Overpass (`/api/osm`), alrededor del punto que se marca.
+ */
+async function sinRedExterna(page: Page) {
+  await page.route("https://tiles.openfreemap.org/**", (r) =>
+    r.fulfill({
+      contentType: "application/json",
+      body: JSON.stringify({
+        version: 8,
+        sources: {},
+        layers: [{ id: "fondo", type: "background", paint: { "background-color": "#111" } }],
+      }),
+    }),
+  );
+  await page.route("**/api/osm?**", (r) => {
+    const u = new URL(r.request().url());
+    const lat = Number(u.searchParams.get("lat"));
+    const lon = Number(u.searchParams.get("lon"));
+    r.fulfill({
+      contentType: "application/json",
+      body: JSON.stringify({
+        elements: [
+          { type: "node", id: 1, lat: lat - 0.002, lon },
+          { type: "node", id: 2, lat: lat + 0.002, lon },
+          { type: "way", id: 10, nodes: [1, 2], tags: { highway: "trunk", ref: "MEX 15" } },
+        ],
+      }),
+    });
+  });
+}
 
 // El flujo principal del prototipo para CESVI (docs/cesvi/PROTOTIPO.md): abrir el dictamen
-// reproducido, ver los números del reporte junto a los de Croquis y recalcular al cambiar un dato.
-test("@flujo /cesvi reproduce el dictamen A2010930 y recalcula con los datos del perito", async ({
+// reproducido, ver los números del reporte junto a los de Croquis, recalcular con los datos del
+// perito y medir la zona de restos en el croquis sobre el mapa de cada versión.
+test("@flujo /cesvi reproduce el dictamen A2010930, recalcula y mide sobre el mapa", async ({
   page,
 }) => {
   const errores: string[] = [];
   page.on("pageerror", (e) => errores.push(e.message));
+  await sinRedExterna(page);
   await page.goto("/cesvi");
   await expect(page.getByRole("heading", { level: 1 })).toContainText("reversa declarada");
 
@@ -32,6 +66,22 @@ test("@flujo /cesvi reproduce el dictamen A2010930 y recalcula con los datos del
   await page.getByTestId("umbral").fill("4");
   await expect(comparacion).toContainText("significativa con el umbral de 4 %");
   await expect(comparacion).not.toContainText("no significativa");
+
+  // El croquis sobre el mapa: el perito marca el impacto y Croquis propone las dos versiones.
+  await page.getByTestId("coordenadas").fill("25.79, -108.99");
+  await page.getByRole("button", { name: "Marcar el impacto" }).click();
+  await expect(page.getByTestId("version-evidencia")).toHaveAttribute("aria-pressed", "true");
+  await expect(page.getByText("Vía más cercana en OSM: MEX 15")).toBeVisible();
+  // Evidencia: los restos van del impacto a la posición final de A (15.89 m del dictamen).
+  await expect(page.getByTestId("restos-mapa")).toContainText("De R1 a R2: 15.89 m");
+  await page.getByTestId("usar-restos").click();
+  await expect(page.getByText("medida por el perito")).toBeVisible();
+  await expect(v3).toHaveText("V3 = 16.74 m/s = 60.27 km/h");
+  // Declarada: sin desplazamiento después del impacto, no hay separación de restos.
+  await page.getByTestId("version-declarada").click();
+  await expect(page.getByTestId("restos-mapa")).toContainText("De R1 a R2: 0.00 m");
+  await page.getByTestId("usar-restos").click();
+  await expect(v3).toHaveText("V3 = 0.00 m/s = 0.00 km/h");
 
   expect(errores).toEqual([]);
 });

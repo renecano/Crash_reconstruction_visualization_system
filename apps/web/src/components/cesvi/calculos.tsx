@@ -22,7 +22,6 @@ interface Datos {
   B: string;
   C: string[];
   masaKg: string;
-  D: string;
   a: string;
   g: string;
   umbral: string;
@@ -37,7 +36,6 @@ function iniciales(c: CasoCesvi): Datos {
     B: String(d.B.valor),
     C: d.C_m.map((x) => x.valor.toFixed(2)),
     masaKg: String(c.vehiculos.B.masa_kg?.valor ?? ""),
-    D: String(z.D_m.valor),
     a: String(z.a.valor),
     g: String(z.g_ms2.valor),
     umbral: String(UMBRAL_INICIAL_PCT),
@@ -87,7 +85,21 @@ function intentar<T>(f: () => T): { ok: true; valor: T } | { ok: false; error: s
   }
 }
 
-export function Calculos({ caso }: { caso: CasoCesvi }) {
+/** La separación de los restos para el cálculo 2: la del dictamen o la que mide el perito. */
+export interface DistanciaRestos {
+  valor: string;
+  fuente: "dictamen" | "perito";
+}
+
+export function Calculos({
+  caso,
+  distancia,
+  onDistancia,
+}: {
+  caso: CasoCesvi;
+  distancia: DistanciaRestos;
+  onDistancia: (d: DistanciaRestos) => void;
+}) {
   const [datos, setDatos] = useState<Datos>(() => iniciales(caso));
   const cambia = (k: keyof Omit<Datos, "C">) => (v: string) => setDatos((d) => ({ ...d, [k]: v }));
   const reporte = caso.calculos.deformacion_B.reporte;
@@ -122,8 +134,8 @@ export function Calculos({ caso }: { caso: CasoCesvi }) {
     [reporte.energia.valor, masaT],
   );
   const v3 = useMemo(
-    () => intentar(() => formulaDesplazamiento(num(datos.a), num(datos.g), num(datos.D))),
-    [datos.a, datos.g, datos.D],
+    () => intentar(() => formulaDesplazamiento(num(datos.a), num(datos.g), num(distancia.valor))),
+    [datos.a, datos.g, distancia.valor],
   );
   const umbral = num(datos.umbral);
 
@@ -155,7 +167,13 @@ export function Calculos({ caso }: { caso: CasoCesvi }) {
         <button
           type="button"
           className="boton-secundario min-h-11 px-4"
-          onClick={() => setDatos(iniciales(caso))}
+          onClick={() => {
+            setDatos(iniciales(caso));
+            onDistancia({
+              valor: String(caso.calculos.desplazamiento.D_m.valor),
+              fuente: "dictamen",
+            });
+          }}
         >
           Volver a los datos del dictamen
         </button>
@@ -241,10 +259,10 @@ export function Calculos({ caso }: { caso: CasoCesvi }) {
         </h3>
         <div className="flex flex-wrap gap-4">
           <Campo
-            etiqueta="D, separación de los restos"
+            etiqueta={`D, separación de los restos (${distancia.fuente === "perito" ? "medida por el perito" : "del dictamen"})`}
             unidad="m"
-            valor={datos.D}
-            onCambio={cambia("D")}
+            valor={distancia.valor}
+            onCambio={(v) => onDistancia({ valor: v, fuente: "perito" })}
             testid="distancia-restos"
           />
           <Campo etiqueta="a, coeficiente de adherencia" valor={datos.a} onCambio={cambia("a")} />

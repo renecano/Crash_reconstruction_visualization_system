@@ -71,6 +71,11 @@ export const PREGUNTAS_PARA_CESVI: readonly { tema: string; pregunta: string }[]
       "La EBS de 17.54209 m/s aparece como 17.5420: ¿sus hojas truncan los decimales en lugar de redondearlos?",
   },
   {
+    tema: "Ubicación",
+    pregunta:
+      "¿Tienen las coordenadas o una foto aérea del km 47+800 del tramo Los Mochis–Navojoa? El dictamen no las da, y para el croquis sobre el mapa el perito tiene que marcar el punto a mano.",
+  },
+  {
     tema: "Diferencia significativa",
     pregunta:
       "El dictamen dice que 63.15 y 60.27 km/h no difieren de forma significativa. ¿Qué criterio usan sus peritos (porcentaje, km/h, otro)?",
