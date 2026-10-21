@@ -1,0 +1,141 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<title>Paso 4 · Modo trabajo</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Anybody:wdth,wght@50..150,100..900&amp;family=Geist:wght@400..700&amp;family=Geist+Mono:wght@400..600&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#0B0C0F}
+button,a,[role=tab]{cursor:pointer}
+button:hover{filter:brightness(1.08)}
+a{color:#A4A9B3}a:hover{color:#F2F3F5}
+</style>
+</helmet>
+<div style="width: 100%; min-height: 1000px; background: #0B0C0F; color: #F2F3F5; font-family: Geist, system-ui, sans-serif; display: flex; flex-direction: column">
+
+<header style="height: 64px; display: flex; align-items: center; justify-content: space-between; gap: 24px; padding: 0 24px; border-bottom: 1px solid rgba(255, 255, 255, 0.06); flex-wrap: wrap">
+<div style="display: flex; align-items: center; gap: 10px">
+<svg viewBox="0 0 120 120" width="26" height="26" aria-hidden="true"><path d="M91.11 28.89 A44 44 0 1 0 91.11 91.11" fill="none" stroke="#F2F3F5" stroke-width="13" stroke-dasharray="52 25.6"></path><path d="M91 51 L109 69 M109 51 L91 69" stroke="#FF5B2E" stroke-width="7" stroke-linecap="round"></path></svg>
+<span style="font-family: Anybody, sans-serif; font-stretch: 150%; font-weight: 600; letter-spacing: 0.16em; font-size: 15px">CROQUIS</span>
+<span style="margin-left: 12px; font: 500 13px Geist, sans-serif; color: #A4A9B3">AXA · Alcance · Ahome, Sin.</span>
+</div>
+<div role="tablist" aria-label="Modo" style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); padding: 3px; border-radius: 12px; background: #121418; border: 1px solid #23262D; width: 240px">
+<button role="tab" aria-selected="false" style="height: 34px; border: 0; border-radius: 9px; background: transparent; color: #A4A9B3; font: 500 13px Geist, sans-serif">Presentar</button>
+<button role="tab" aria-selected="true" style="height: 34px; border: 0; border-radius: 9px; background: #23262D; color: #F2F3F5; font: 600 13px Geist, sans-serif">Trabajar</button>
+</div>
+<div style="display: flex; align-items: center; gap: 12px">
+<span style="display: inline-flex; align-items: center; gap: 8px; font: 500 13px Geist, sans-serif; color: #A4A9B3"><span style="width: 8px; height: 8px; border-radius: 4px; background: #3DD68C"></span>IA lista</span>
+<button style="height: 36px; padding: 0 14px; border-radius: 18px; border: 1px solid #2A2E35; background: transparent; color: #F2F3F5; font: 500 13px Geist, sans-serif">Llenar a mano</button>
+<button style="height: 36px; padding: 0 14px; border-radius: 18px; border: 1px solid #2A2E35; background: transparent; color: #F2F3F5; font: 500 13px Geist, sans-serif">↶ Deshacer</button>
+<button style="height: 36px; padding: 0 14px; border-radius: 18px; border: 0; background: #F2F3F5; color: #0B0C0F; font: 600 13px Geist, sans-serif">Exportar</button>
+</div>
+</header>
+
+<div style="flex: 1; display: flex; flex-wrap: wrap; gap: 16px; padding: 16px">
+
+<aside aria-label="Herramientas" style="flex: 1 1 260px; max-width: 280px; display: flex; flex-direction: column; gap: 12px">
+<div style="padding: 16px; border-radius: 16px; background: #121418; border: 1px solid #1E2127; display: flex; flex-direction: column; gap: 10px">
+<span style="font: 500 12px Geist Mono, monospace; letter-spacing: 0.08em; color: #7B818C">COLOCAR</span>
+<button style="height: 44px; display: flex; align-items: center; gap: 10px; padding: 0 12px; border-radius: 12px; border: 1px solid #2A2E35; background: #1C1F25; color: #F2F3F5; font: 500 14px Geist, sans-serif"><span style="width: 10px; height: 22px; border-radius: 3px; background: #5AA9FF"></span>A · posición inicial / final</button>
+<button style="height: 44px; display: flex; align-items: center; gap: 10px; padding: 0 12px; border-radius: 12px; border: 1px solid #2A2E35; background: transparent; color: #F2F3F5; font: 500 14px Geist, sans-serif"><span style="width: 10px; height: 22px; border-radius: 3px; background: #FFC24B"></span>B · posición inicial / final</button>
+<button style="height: 44px; display: flex; align-items: center; gap: 10px; padding: 0 12px; border-radius: 12px; border: 1px solid #2A2E35; background: transparent; color: #F2F3F5; font: 500 14px Geist, sans-serif"><span style="width: 10px; color: #FF5B2E; font-weight: 700">✕</span>Punto de impacto</button>
+<button style="height: 44px; display: flex; align-items: center; gap: 10px; padding: 0 12px; border-radius: 12px; border: 1px solid #2A2E35; background: transparent; color: #F2F3F5; font: 500 14px Geist, sans-serif"><span style="width: 10px; height: 10px; border-radius: 2px; background: repeating-linear-gradient(45deg, #A4A9B3 0 2px, transparent 2px 5px)"></span>Zona de restos</button>
+<button style="height: 44px; display: flex; align-items: center; gap: 10px; padding: 0 12px; border-radius: 12px; border: 1px solid #2A2E35; background: transparent; color: #F2F3F5; font: 500 14px Geist, sans-serif"><span style="width: 10px; border-top: 2px solid #F2F3F5"></span>Medir distancia</button>
+</div>
+<div style="padding: 16px; border-radius: 16px; background: #121418; border: 1px solid #1E2127; display: flex; flex-direction: column; gap: 10px">
+<div style="display: flex; justify-content: space-between"><span style="font: 500 12px Geist Mono, monospace; letter-spacing: 0.08em; color: #7B818C">LO QUE ENTENDIÓ</span><span style="font: 500 12px Geist Mono, monospace; color: #A4A9B3">8/9</span></div>
+<div style="height: 4px; border-radius: 2px; background: #23262D"><div style="width: 89%; height: 4px; border-radius: 2px; background: #F2F3F5"></div></div>
+<div style="font: 400 13px/1.5 Geist, sans-serif; color: #A4A9B3">Falta: carril de A al impacto.</div>
+<a href="Paso2.dc.html" style="font: 500 13px Geist, sans-serif">Ver el hecho →</a>
+</div>
+</aside>
+
+<main style="flex: 999 1 520px; min-width: 0; display: flex; flex-direction: column; gap: 12px">
+<div style="display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap">
+<div role="tablist" aria-label="Versión" style="display: flex; gap: 4px; padding: 3px; border-radius: 12px; background: #121418; border: 1px solid #23262D">
+<button role="tab" aria-selected="false" style="height: 34px; padding: 0 14px; border: 0; border-radius: 9px; background: transparent; color: #A4A9B3; font: 500 13px Geist, sans-serif">Declarada</button>
+<button role="tab" aria-selected="false" style="height: 34px; padding: 0 14px; border: 0; border-radius: 9px; background: transparent; color: #A4A9B3; font: 500 13px Geist, sans-serif">Evidencia</button>
+<button role="tab" aria-selected="true" style="height: 34px; padding: 0 14px; border: 0; border-radius: 9px; background: #23262D; color: #F2F3F5; font: 600 13px Geist, sans-serif">Superponer</button>
+<button role="tab" aria-selected="false" style="height: 34px; padding: 0 14px; border: 0; border-radius: 9px; background: transparent; color: #A4A9B3; font: 500 13px Geist, sans-serif">Lado a lado</button>
+</div>
+<span style="font: 400 12px Geist, sans-serif; color: #7B818C">Arrastra vehículos y marcadores · R para girar</span>
+</div>
+
+<div style="position: relative; height: 470px; border-radius: 18px; overflow: hidden; border: 1px solid #1E2127; background: #0D0F12">
+<svg viewBox="560 120 440 640" preserveAspectRatio="xMidYMid slice" role="img" aria-label="Croquis superpuesto: evidencia en sólido y declarada en punteado" style="position: absolute; inset: 0; width: 100%; height: 100%">
+<defs><pattern id="hatch2" width="8" height="8" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><line x1="0" y1="0" x2="0" y2="8" stroke="#F2F3F5" stroke-opacity="0.35" stroke-width="2"></line></pattern></defs>
+<rect x="0" y="0" width="1440" height="900" fill="#0D0F12"></rect>
+<rect x="560" y="0" width="120" height="900" fill="#1A1D22"></rect><rect x="680" y="0" width="80" height="900" fill="#111417"></rect><rect x="760" y="0" width="120" height="900" fill="#1C1F25"></rect>
+<line x1="763" y1="0" x2="763" y2="900" stroke="#3A3F47" stroke-width="2"></line><line x1="877" y1="0" x2="877" y2="900" stroke="#3A3F47" stroke-width="2"></line><line x1="677" y1="0" x2="677" y2="900" stroke="#3A3F47" stroke-width="2"></line>
+<line x1="820" y1="0" x2="820" y2="900" stroke="#555B66" stroke-width="2" stroke-dasharray="22 30"></line><line x1="620" y1="0" x2="620" y2="900" stroke="#555B66" stroke-width="2" stroke-dasharray="22 30"></line>
+<rect x="770" y="262" width="40" height="300" rx="6" fill="url(#hatch2)"></rect>
+<rect x="816" y="440" width="38" height="104" rx="8" fill="none" stroke="#5AA9FF" stroke-width="1.5" stroke-dasharray="3 5"></rect>
+<rect x="821" y="560" width="38" height="104" rx="8" fill="none" stroke="#FFC24B" stroke-width="1.5" stroke-dasharray="3 5"></rect>
+<text x="866" y="470" fill="#A4A9B3" font-size="12" font-family="Geist, sans-serif">A · declarada</text>
+<path d="M840 846 L840 600" stroke="#FFC24B" stroke-width="3" fill="none" opacity="0.85"></path>
+<path d="M835 525 C834 420 812 330 800 244" stroke="#5AA9FF" stroke-width="3" fill="none" opacity="0.85"></path>
+<g transform="rotate(4 842 640)"><rect x="823" y="600" width="38" height="104" rx="8" fill="#FFC24B"></rect></g>
+<rect x="878" y="660" width="104" height="26" rx="13" fill="#FFC24B"></rect><text x="930" y="677" text-anchor="middle" fill="#0B0C0F" font-size="12" font-weight="600" font-family="Geist, sans-serif">B · Tacoma</text>
+<g transform="rotate(-8 800 240)"><rect x="781" y="188" width="38" height="104" rx="8" fill="#5AA9FF"></rect><rect x="773" y="180" width="54" height="120" rx="12" fill="none" stroke="#F2F3F5" stroke-width="1.5"></rect></g>
+<rect x="848" y="226" width="112" height="26" rx="13" fill="#5AA9FF"></rect><text x="904" y="243" text-anchor="middle" fill="#0B0C0F" font-size="12" font-weight="600" font-family="Geist, sans-serif">A · Silverado</text>
+<path d="M826 556 L846 576 M846 556 L826 576" stroke="#FF5B2E" stroke-width="5" stroke-linecap="round"></path>
+<line x1="752" y1="262" x2="752" y2="562" stroke="#F2F3F5" stroke-width="1.5"></line><rect x="676" y="396" width="76" height="28" rx="14" fill="#F2F3F5"></rect><text x="714" y="415" text-anchor="middle" fill="#0B0C0F" font-size="12" font-weight="600" font-family="Geist Mono, monospace">15.89 m</text>
+</svg>
+<div style="position: absolute; right: 12px; bottom: 12px; display: flex; flex-direction: column; gap: 6px"><button aria-label="Acercar" style="width: 36px; height: 36px; border-radius: 10px; border: 1px solid #2A2E35; background: #15171C; color: #F2F3F5">+</button><button aria-label="Alejar" style="width: 36px; height: 36px; border-radius: 10px; border: 1px solid #2A2E35; background: #15171C; color: #F2F3F5">−</button></div>
+<div style="position: absolute; left: 12px; bottom: 12px; font: 400 11px Geist, sans-serif; color: #7B818C">© OpenStreetMap (ODbL)</div>
+</div>
+
+<div style="display: flex; align-items: center; gap: 14px; padding: 12px 16px; border-radius: 16px; background: #121418; border: 1px solid #1E2127; flex-wrap: wrap">
+<button aria-label="Reproducir" style="width: 40px; height: 40px; border-radius: 20px; border: 0; background: #F2F3F5; color: #0B0C0F">▶</button>
+<div style="flex: 1; min-width: 240px; display: flex; flex-direction: column; gap: 8px">
+<div style="position: relative; height: 4px; border-radius: 2px; background: #2A2E35"><div style="position: absolute; left: 0; top: 0; bottom: 0; width: 46%; border-radius: 2px; background: #F2F3F5"></div><span style="position: absolute; left: 46%; top: -4px; width: 12px; height: 12px; margin-left: -6px; border-radius: 6px; background: #FF5B2E"></span><span style="position: absolute; left: 82%; top: -3px; width: 10px; height: 10px; margin-left: -5px; border-radius: 5px; background: #FFC24B"></span><span style="position: absolute; left: 96%; top: -3px; width: 10px; height: 10px; margin-left: -5px; border-radius: 5px; background: #5AA9FF"></span></div>
+<div style="display: flex; justify-content: space-between; font: 400 12px Geist, sans-serif; color: #7B818C"><span>Aproximación</span><span style="color: #F2F3F5">Impacto</span><span>Reposo de B</span><span>Reposo de A</span></div>
+</div>
+<div role="group" aria-label="Velocidad de reproducción" style="display: flex; gap: 4px"><button style="height: 32px; padding: 0 10px; border-radius: 8px; border: 1px solid #2A2E35; background: transparent; color: #A4A9B3; font: 500 12px Geist Mono, monospace">0.1×</button><button style="height: 32px; padding: 0 10px; border-radius: 8px; border: 0; background: #23262D; color: #F2F3F5; font: 500 12px Geist Mono, monospace">0.25×</button><button style="height: 32px; padding: 0 10px; border-radius: 8px; border: 1px solid #2A2E35; background: transparent; color: #A4A9B3; font: 500 12px Geist Mono, monospace">1×</button></div>
+</div>
+</main>
+
+<aside aria-label="Seleccionado" style="flex: 1 1 300px; max-width: 340px; display: flex; flex-direction: column; gap: 12px">
+<div style="padding: 18px; border-radius: 16px; background: #121418; border: 1px solid #1E2127; display: flex; flex-direction: column; gap: 14px">
+<div style="display: flex; align-items: center; gap: 10px"><span style="width: 12px; height: 28px; border-radius: 4px; background: #5AA9FF"></span><div><div style="font: 600 16px Geist, sans-serif">A · Silverado 2500</div><div style="font: 400 12px Geist, sans-serif; color: #7B818C">Posición final · versión evidencia</div></div></div>
+<div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px">
+<label style="display: flex; flex-direction: column; gap: 4px; font: 400 12px Geist, sans-serif; color: #7B818C">x desde el impacto<input value="[x] m" style="height: 40px; padding: 0 10px; border-radius: 10px; border: 1px solid #2A2E35; background: #0B0C0F; color: #F2F3F5; font: 500 14px Geist Mono, monospace"></label>
+<label style="display: flex; flex-direction: column; gap: 4px; font: 400 12px Geist, sans-serif; color: #7B818C">y desde el impacto<input value="[y] m" style="height: 40px; padding: 0 10px; border-radius: 10px; border: 1px solid #2A2E35; background: #0B0C0F; color: #F2F3F5; font: 500 14px Geist Mono, monospace"></label>
+<label style="display: flex; flex-direction: column; gap: 4px; font: 400 12px Geist, sans-serif; color: #7B818C">Rumbo<input value="[°]" style="height: 40px; padding: 0 10px; border-radius: 10px; border: 1px solid #2A2E35; background: #0B0C0F; color: #F2F3F5; font: 500 14px Geist Mono, monospace"></label>
+<div style="display: flex; flex-direction: column; gap: 4px; font: 400 12px Geist, sans-serif; color: #7B818C">Fuente<span style="height: 40px; display: flex; align-items: center"><span style="font: 500 11px Geist Mono, monospace; color: #A4A9B3; padding: 5px 9px; border-radius: 8px; background: #1C1F25">PERITO</span></span></div>
+</div>
+<button style="height: 40px; border-radius: 12px; border: 1px solid #2A2E35; background: transparent; color: #A4A9B3; font: 500 13px Geist, sans-serif">Restablecer posición</button>
+</div>
+
+<div style="padding: 18px; border-radius: 16px; background: #121418; border: 1px solid #1E2127; display: flex; flex-direction: column; gap: 10px">
+<span style="font: 500 12px Geist Mono, monospace; letter-spacing: 0.08em; color: #7B818C">QUÉ CAMBIA ENTRE VERSIONES</span>
+<div style="display: grid; grid-template-columns: 1.2fr 1fr 1fr; gap: 8px 10px; font: 400 13px Geist, sans-serif; align-items: baseline">
+<span style="color: #7B818C; font-size: 11px"></span><span style="color: #7B818C; font-size: 11px">Declarada</span><span style="color: #7B818C; font-size: 11px">Evidencia</span>
+<span style="color: #A4A9B3">Restos</span><span style="font-family: Geist Mono, monospace">0 m</span><span style="font-family: Geist Mono, monospace">15.89 m</span>
+<span style="color: #A4A9B3">Daño en A</span><span>Posterior, centro</span><span>Vértice post. izq.</span>
+<span style="color: #A4A9B3">Daño en B</span><span>Frontal, centro</span><span>Frontal, derecho</span>
+<span style="color: #A4A9B3">V. de B</span><span style="color: #7B818C">Sin dato</span><span style="font-family: Geist Mono, monospace">60–63 km/h</span>
+</div>
+<div style="margin-top: 4px; padding: 10px 12px; border-radius: 10px; background: rgba(255, 91, 46, 0.10); font: 500 13px/1.45 Geist, sans-serif">3 de 4 no coinciden con la versión declarada.</div>
+</div>
+</aside>
+</div>
+
+<footer style="display: flex; justify-content: space-between; gap: 16px; padding: 10px 24px 16px; font: 400 11px Geist Mono, monospace; color: #7B818C; flex-wrap: wrap"><span>Reconstrucción de apoyo · el dictamen es del perito</span><span>Método CESVI · huella de entradas [huella]</span></footer>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1440,"height":1000}}'>
+class Component extends DCLogic {
+renderVals() {
+return {};
+}
+}
+</script>
+</body>
+</html>
