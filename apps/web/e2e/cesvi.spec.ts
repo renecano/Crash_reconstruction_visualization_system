@@ -2,11 +2,14 @@ import { readFileSync } from "node:fs";
 import { join } from "node:path";
 import { expect, test, type Page } from "@playwright/test";
 
-/** La respuesta grabada de Claude para la declaración del dictamen (CI no llama a la API). */
-const GRABACION = readFileSync(
-  join(__dirname, "../../../data/cesvi/grabaciones/declaracion-A2010930.ndjson"),
-  "utf8",
-);
+/**
+ * Las lecturas grabadas de Claude de la descripción técnica de ejemplo y de la declaración del
+ * caso (ADR 0055; CI no llama a la API).
+ */
+const GRABACION = JSON.parse(
+  readFileSync(join(__dirname, "../../../data/cesvi/grabaciones/hecho-A2010930.json"), "utf8"),
+) as { lecturas: Record<"descripcion" | "declaracion", { texto: string }> };
+const DESCRIPCION = GRABACION.lecturas.descripcion.texto;
 
 /**
  * Sin red externa: un estilo de mapa vacío en lugar de OpenFreeMap, la extracción grabada y un
@@ -49,9 +52,13 @@ async function sinRedExterna(page: Page) {
       }),
     });
   });
-  await page.route("**/api/relato/extraer", (r) =>
-    r.fulfill({ contentType: "application/x-ndjson; charset=utf-8", body: GRABACION }),
-  );
+  await page.route("**/api/cesvi/hecho", (r) => {
+    const { tipo } = r.request().postDataJSON() as { tipo: "descripcion" | "declaracion" };
+    return r.fulfill({
+      contentType: "application/json",
+      body: JSON.stringify(GRABACION.lecturas[tipo]),
+    });
+  });
   await page.route("**/api/cesvi/consideraciones", (r) =>
     r.fulfill({
       contentType: "application/json",
@@ -80,19 +87,32 @@ test("@flujo /cesvi: el recorrido del perito, del caso al dictamen en PDF", asyn
   await expect(page.getByTestId("caso-A")).toHaveText("A · Silverado");
   await expect(page.getByTestId("caso-B")).toHaveText("B · Tacoma");
 
-  // 2. La narración y lo que entiende la IA (con el teclado).
+  // 2. El hecho: la declaración se lee al entrar; el perito escribe la descripción técnica.
   await page.keyboard.press("ArrowRight");
   await expect(page.getByTestId("paso-2")).toHaveAttribute("aria-current", "step");
-  const datos = page.getByTestId("datos-entendidos");
-  await expect(datos).toContainText("reversa");
-  await expect(datos).toContainText("IA");
-  await expect(datos).toContainText("B impacta a A");
+  const declarada = page.getByTestId("datos-declarada");
+  await expect(declarada).toContainText("reversa");
+  await expect(declarada).toContainText("conductor · IA");
+  await expect(page.getByTestId("texto-declaracion").locator("mark")).toContainText([
+    "reversie unos metros",
+  ]);
+  await page.getByTestId("entrada-descripcion").fill(DESCRIPCION);
+  await page.getByTestId("leer-descripcion").click();
+  const evidencia = page.getByTestId("datos-evidencia");
+  await expect(evidencia).toContainText("vértice posterior izquierdo");
+  await expect(evidencia).toContainText("de atrás hacia adelante");
+  await expect(evidencia).toContainText("perito · IA");
   await expect(
-    page.getByTestId("texto-subrayado").locator('mark[data-dato="maniobra_a"]'),
-  ).toHaveText(/reversie unos metros/);
-  await expect(page.getByText("¿Cuántos metros de reversa?")).toBeVisible();
+    page.getByTestId("texto-descripcion").locator('mark[data-dato="vertice_a"]'),
+  ).toHaveText("vértice posterior izquierdo");
+  // Las preguntas son técnicas; lo que contesta el perito entra con su fuente.
+  const carril = page.getByTestId("pregunta-carril_a");
+  await expect(carril).toContainText("¿Carril de A al momento del impacto?");
+  await carril.getByRole("button", { name: "Derecho" }).click();
+  await expect(evidencia).toContainText("carril derecho");
+  await expect(page.getByTestId("pregunta-reversa")).toContainText("¿Cuántos metros de reversa?");
   await page.getByTestId("respuesta-reversa").fill("4");
-  await expect(datos).toContainText("4 m");
+  await expect(declarada).toContainText("4 m");
 
   // 3. El lugar: el perito marca el punto de impacto sobre la MEX 15. Overpass sigue retenido: las
   // calles salen del tramo precargado en menos de 1 s.
@@ -111,6 +131,29 @@ test("@flujo /cesvi: el recorrido del perito, del caso al dictamen en PDF", asyn
   await expect(via).toContainText("7.5 m de ancho");
   await expect(via).toContainText("Overpass");
   await page.keyboard.press("Escape");
+
+  // El perito corrige el punto: lo cambia de lugar, deshace, rehace (botones y teclado) y lo quita.
+  const punto = page.getByTestId("coordenadas-impacto");
+  await expect(punto).toHaveText("25.97385, -109.03543");
+  await page.getByTestId("cambiar-ubicacion").click();
+  await page.getByTestId("coordenadas-nuevas").fill("25.97600, -109.03390");
+  await page.getByRole("button", { name: "Mover el punto" }).click();
+  await expect(punto).toHaveText("25.97600, -109.03390");
+  await page.getByTestId("deshacer").click();
+  await expect(punto).toHaveText("25.97385, -109.03543");
+  await page.getByTestId("rehacer").click();
+  await expect(punto).toHaveText("25.97600, -109.03390");
+  await page.keyboard.press("Control+z");
+  await expect(punto).toHaveText("25.97385, -109.03543");
+  await page.keyboard.press("Control+Shift+z");
+  await expect(punto).toHaveText("25.97600, -109.03390");
+  await page.getByRole("button", { name: "Listo" }).click();
+  await page.getByTestId("quitar-punto").click();
+  await expect(page.getByTestId("coordenadas")).toBeVisible();
+  await page.getByTestId("deshacer").click();
+  await expect(punto).toHaveText("25.97600, -109.03390");
+  await page.getByTestId("restablecer").click();
+  await expect(punto).toHaveText("25.97600, -109.03390");
 
   // 4. Las dos versiones y la zona de restos.
   await page.getByTestId("siguiente").click();

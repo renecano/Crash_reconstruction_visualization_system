@@ -1,6 +1,7 @@
 "use client";
 /**
- * `/cesvi`: el recorrido del perito (docs/cesvi/PROTOTIPO.md, «Recorrido del perito»; ADR 0052).
+ * `/cesvi`: el recorrido del perito (docs/cesvi/PROTOTIPO.md, «Recorrido del perito»; ADR 0052,
+ * 0054 y 0055).
  * Ocho pantallas, una por paso, con avance por botón y por teclado (← →), una barra de pasos arriba,
  * el mapa o el dibujo a casi toda la pantalla, una frase por paso y lo demás en «Ver detalle».
  * Reúsa lo de los hitos 1 a 3: el módulo de cálculo, las versiones, la sugerencia, el borrador y el
@@ -8,12 +9,21 @@
  */
 import {
   callesCerca,
+  deshacer,
   distanciaM,
-  interpretarDeclaracion,
+  ejemploHecho,
+  giroEntreVias,
+  GLOSARIO,
+  historial,
+  interpretarHecho,
   moverPose,
   proponerVersiones,
+  registrar,
+  rehacer,
   reproducir,
   rumboHaciaElNorte,
+  trasladarVersion,
+  validarLectura,
   sugerir,
   tramoDelCaso,
   zonasDeDanos,
@@ -22,10 +32,15 @@ import {
   type Calle,
   type CasoCesvi,
   type ClaveVersion,
-  type ExtraccionRelato,
   type Fase,
+  type Hacia,
+  type Historial,
+  type LecturaHecho,
+  type LecturaValidada,
   type LonLat,
-  type RespuestasPerito,
+  type ParametrosHecho,
+  type RespuestasHecho,
+  type TipoTexto,
   type Validacion,
   type VersionCroquis,
   type Zona,
@@ -33,7 +48,6 @@ import {
 import { useCallback, useEffect, useMemo, useRef, useState, type ReactNode } from "react";
 import { Logotipo } from "@/components/sitio/logo";
 import { downloadBytes } from "@/lib/download";
-import { extraer } from "@/lib/relato-api";
 import { nombresVehiculos } from "@/lib/vehiculos-cesvi";
 import { Calculos, type DistanciaRestos, type ResultadosCalculo } from "../calculos";
 import { Criterios } from "../correspondencia";
@@ -44,20 +58,21 @@ import {
   PasoCaso,
   PasoDanos,
   PasoDictamen,
+  PasoHecho,
   PasoLugar,
-  PasoNarracion,
   PasoNumeros,
   PasoSugerencia,
   PasoVersiones,
   Leyenda,
   Reproductor,
+  type EdicionPasos,
 } from "./pasos";
 import { ProveedorRecorrido } from "./marco";
 import { PanelDetalle } from "./piezas";
 
 const PASOS = [
   "El caso",
-  "La narración",
+  "El hecho",
   "El lugar",
   "Las versiones",
   "Los daños",
@@ -69,7 +84,7 @@ const PASOS = [
 /** Los nombres de la barra de pasos, cortos para que quepan en una fila (maquetas). */
 const PASOS_CORTOS = [
   "Caso",
-  "Narración",
+  "Hecho",
   "Lugar",
   "Versiones",
   "Daños",
@@ -112,6 +127,27 @@ function describirSeleccion(
   };
 }
 
+type Versiones = Record<ClaveVersion, VersionCroquis>;
+
+/** Una lectura validada, con el texto tal como se leyó (si el perito lo cambia, se vuelve a leer). */
+interface LecturaGuardada {
+  lectura: LecturaValidada;
+  leidoPor: "ia" | "reglas";
+  texto: string;
+}
+
+/**
+ * El rumbo con que circula un vehículo que va «hacia» un punto cardinal por una vía de rumbo `via`
+ * (cualquiera de sus dos sentidos): el sentido de la vía más cercano a ese punto. Sin dato, hacia
+ * el norte (supuesto).
+ */
+function rumboHacia(via: number, hacia: Hacia | null): number {
+  const meta = { norte: 0, oriente: 90, sur: 180, poniente: 270 }[hacia ?? "norte"];
+  const dif = (r: number) => Math.abs(((r - meta + 540) % 360) - 180);
+  const otra = (via + 180) % 360;
+  return dif(via) <= dif(otra) ? via : otra;
+}
+
 const enCampo = (t: EventTarget | null) =>
   t instanceof HTMLElement &&
   (t.isContentEditable || ["INPUT", "TEXTAREA", "SELECT"].includes(t.tagName));
@@ -120,47 +156,62 @@ export function Recorrido({ caso, reproduccion }: { caso: CasoCesvi; reproduccio
   const [paso, setPaso] = useState(0);
   const [detalle, setDetalle] = useState(false);
 
-  // Paso 2: la declaración, lo que entiende la IA y lo que dice el perito.
-  const [extraccion, setExtraccion] = useState<ExtraccionRelato | null>(null);
-  const [estadoIa, setEstadoIa] = useState<string | null>(null);
-  const [notas, setNotas] = useState("");
-  const [respuestas, setRespuestas] = useState<RespuestasPerito>({});
-  const expediente = {
-    textoA: `${caso.vehiculos.A.marca} ${caso.vehiculos.A.tipo}`,
-    textoB: `${caso.vehiculos.B.marca} ${caso.vehiculos.B.tipo}`,
-  };
-  const interpretacion = useMemo(
-    () => interpretarDeclaracion(caso.declaracion.texto, expediente, extraccion, notas, respuestas),
-    // eslint-disable-next-line react-hooks/exhaustive-deps -- el expediente sale del caso
-    [caso, extraccion, notas, respuestas],
-  );
-  const leido = useRef(false);
-  const leerConIa = useCallback(async () => {
-    setEstadoIa("Leyendo la declaración…");
-    try {
-      const r = await extraer(caso.declaracion.texto, "auto");
-      setExtraccion(r as unknown as ExtraccionRelato);
-      setEstadoIa(
-        r.metodo === "claude"
-          ? "Leída con IA (Claude). La IA no produce números finales."
-          : `Leída con reglas${r.motivo ? `: ${r.motivo}` : "."}`,
-      );
-    } catch (e) {
-      setEstadoIa(
-        `No se pudo leer con IA (${e instanceof Error ? e.message : String(e)}); se usan las reglas.`,
-      );
-    }
-  }, [caso]);
-
-  // Pasos 3 y 4: el lugar, las calles y las dos versiones.
+  // Paso 2: el hecho (ADR 0055). La descripción técnica del perito arma la versión de la
+  // evidencia; la versión declarada del conductor, la declarada. Cada una se lee por separado.
   const nombres = useMemo(() => nombresVehiculos(caso), [caso]);
+  const vehiculosExpediente = useMemo(
+    () => ({
+      A: `${caso.vehiculos.A.marca} ${caso.vehiculos.A.tipo}`,
+      B: `${caso.vehiculos.B.marca} ${caso.vehiculos.B.tipo}`,
+    }),
+    [caso],
+  );
+  const declarante: "A" | "B" = caso.declaracion.conductor === "B" ? "B" : "A";
+  const ejemplo = useMemo(() => ejemploHecho(caso.id), [caso]);
+  const [textos, setTextos] = useState<Record<TipoTexto, string>>({
+    descripcion: "",
+    declaracion: caso.declaracion.texto,
+  });
+  const [lecturas, setLecturas] = useState<Record<TipoTexto, LecturaGuardada | null>>({
+    descripcion: null,
+    declaracion: null,
+  });
+  const [estados, setEstados] = useState<Record<TipoTexto, string | null>>({
+    descripcion: null,
+    declaracion: null,
+  });
+  const [respuestas, setRespuestas] = useState<RespuestasHecho>({});
+  const textosRef = useRef(textos);
+  // Lo último de cada estado para los manejadores asíncronos (leer, responder, mover).
+  const lecturasRef = useRef(lecturas);
+  const respuestasRef = useRef(respuestas);
+  const interpretar = useCallback(
+    (l: Record<TipoTexto, LecturaGuardada | null>, r: RespuestasHecho) =>
+      interpretarHecho({
+        expediente: vehiculosExpediente,
+        declarante,
+        descripcion: l.descripcion,
+        declaracion: l.declaracion,
+        respuestas: r,
+      }),
+    [vehiculosExpediente, declarante],
+  );
+  const interpretacion = useMemo(
+    () => interpretar(lecturas, respuestas),
+    [interpretar, lecturas, respuestas],
+  );
+
+  // Pasos 3 y 4: el lugar, las calles y las dos versiones, con deshacer y rehacer.
   // El tramo del caso, precargado de OSM (ADR 0053): la demo no depende de un servidor externo.
   const tramo = useMemo(() => tramoDelCaso(caso.id), [caso]);
   const [calles, setCalles] = useState<Calle[]>([]);
   const [avisoLugar, setAvisoLugar] = useState<string | null>(null);
   const [viaCercana, setViaCercana] = useState<Calle | null>(null);
   const [msCalles, setMsCalles] = useState<number | null>(null);
-  const [versiones, setVersiones] = useState<Record<ClaveVersion, VersionCroquis> | null>(null);
+  const [hist, setHist] = useState(() => historial<Versiones | null>(null));
+  const histRef = useRef(hist);
+  const versiones = hist.presente;
+  const [reubicando, setReubicando] = useState(false);
   const [activa, setActiva] = useState<ClaveVersion>("declarada");
   const [animacion, setAnimacion] = useState<number | null>(null);
   const [seleccion, setSeleccion] = useState<Seleccion>({
@@ -168,19 +219,22 @@ export function Recorrido({ caso, reproduccion }: { caso: CasoCesvi; reproduccio
     letra: "A",
     fase: "final",
   });
-  const reversaDibujada = interpretacion.dinamica.reversaM ?? REVERSA_INICIAL_M;
+  const reversaDibujada = interpretacion.parametros.declarada.reversaM ?? REVERSA_INICIAL_M;
   const consultaMosaicos = useRef<(p: LonLat, radioM: number) => Calle[]>(() => []);
   const alConsultarCalles = useCallback((f: (p: LonLat, radioM: number) => Calle[]) => {
     consultaMosaicos.current = f;
   }, []);
   const marcaActual = useRef(0);
+  // Con qué parámetros del hecho se armó cada versión: si cambian, se vuelve a armar esa.
+  const firmas = useRef<Record<ClaveVersion, string>>({ evidencia: "", declarada: "" });
 
-  // Marcar el impacto no espera a la red: las calles salen del tramo precargado y de los mosaicos
-  // que el mapa ya cargó, y con ellas se dibujan las versiones. Overpass corre detrás y solo
-  // enriquece (carriles, ancho, nombre) cuando llega.
-  const fijarImpacto = useCallback(
-    (p: LonLat) => {
-      const t0 = performance.now();
+  /**
+   * Las calles alrededor del punto, sin esperar a la red: el tramo precargado y los mosaicos que
+   * el mapa ya cargó. Overpass corre detrás y solo enriquece (carriles, ancho, nombre). Devuelve el
+   * rumbo de la vía más cercana, hacia el norte.
+   */
+  const callesEn = useCallback(
+    (p: LonLat): number => {
       const marca = ++marcaActual.current;
       const delTramo = callesCerca(tramo, p, RADIO_OSM_M);
       const deMosaicos = callesCerca(consultaMosaicos.current(p, RADIO_OSM_M), p, RADIO_OSM_M);
@@ -192,24 +246,6 @@ export function Recorrido({ caso, reproduccion }: { caso: CasoCesvi; reproduccio
           ? null
           : `No hay calles a ${RADIO_OSM_M} m en el tramo ni en el mapa: se usa el rumbo norte.`,
       );
-      const haciaElSur = interpretacion.dinamica.sentido?.hacia === "sur";
-      const rumboA = (rumboHaciaElNorte(cercana?.rumbo ?? 0) + (haciaElSur ? 180 : 0)) % 360;
-      setVersiones(
-        proponerVersiones({
-          impacto: p,
-          rumboVia: rumboA,
-          medidas: MEDIDAS,
-          distanciaRestos: caso.evidencia.restos.distancia_m.valor,
-          reversaM: reversaDibujada,
-        }),
-      );
-      // Cuánto tarda del clic a ver las calles (meta: menos de 1 s), tras el siguiente cuadro.
-      requestAnimationFrame(() =>
-        requestAnimationFrame(() => {
-          if (marca === marcaActual.current) setMsCalles(performance.now() - t0);
-        }),
-      );
-
       void fetch(`/api/osm?lat=${p[1]}&lon=${p[0]}&radio=${RADIO_OSM_M}`)
         .then((r) => (r.ok ? r.json() : Promise.reject(new Error(`HTTP ${r.status}`))))
         .then((d: unknown) => {
@@ -224,39 +260,219 @@ export function Recorrido({ caso, reproduccion }: { caso: CasoCesvi; reproduccio
         .catch(() => {
           // Sin Overpass no se pierde nada: ya están las calles del tramo y de los mosaicos.
         });
+      return rumboHaciaElNorte(cercana?.rumbo ?? 0);
     },
-    [caso, tramo, interpretacion.dinamica.sentido, reversaDibujada],
+    [tramo],
   );
 
-  // La versión declarada sigue a los metros de reversa que fija el perito.
-  const cambiarReversa = (m: number | null) => {
-    setRespuestas((r) => ({ ...r, reversaM: m }));
-    const metros = m ?? REVERSA_INICIAL_M;
-    setVersiones((vs) => {
-      if (!vs) return vs;
-      const a = vs.declarada.vehiculos.A.impacto;
-      const movida = moverPose(vs.declarada, "A", "inicial", {
-        punto: proponerVersiones({
-          impacto: vs.declarada.impacto.punto,
-          rumboVia: a.rumbo,
-          medidas: MEDIDAS,
-          distanciaRestos: 0,
-          reversaM: metros,
-        }).declarada.vehiculos.A.inicial.punto,
-      });
-      return {
-        ...vs,
-        declarada: {
-          ...movida,
-          supuestos: movida.supuestos.map((s) =>
-            s.startsWith("La declaración dice")
-              ? `La declaración dice «unos metros»: la reversa se dibuja con ${metros} m${m === null ? ", que el perito ajusta" : " (perito)"}.`
-              : s,
-          ),
-        },
-      };
+  /** El rumbo de la vía en un punto (sin tocar las calles a la vista). */
+  const rumboViaEn = useCallback(
+    (p: LonLat): number => {
+      const c =
+        callesCerca(tramo, p, RADIO_OSM_M).cercana ??
+        callesCerca(consultaMosaicos.current(p, RADIO_OSM_M), p, RADIO_OSM_M).cercana;
+      return rumboHaciaElNorte(c?.rumbo ?? 0);
+    },
+    [tramo],
+  );
+
+  /** Las dos versiones desde cero, con los parámetros del hecho. */
+  const construir = useCallback((p: ParametrosHecho, impacto: LonLat, via: number): Versiones => {
+    firmas.current = {
+      evidencia: JSON.stringify(p.evidencia),
+      declarada: JSON.stringify(p.declarada),
+    };
+    return proponerVersiones({
+      impacto,
+      rumboVia: rumboHacia(via, p.evidencia.hacia),
+      rumboDeclarada: rumboHacia(via, p.declarada.hacia ?? p.evidencia.hacia),
+      medidas: MEDIDAS,
+      distanciaRestos: p.evidencia.distanciaRestos ?? 0,
+      fuenteRestos: p.evidencia.distanciaRestos === null ? "croquis" : "perito",
+      reversaM: p.declarada.reversaM ?? REVERSA_INICIAL_M,
     });
-  };
+  }, []);
+
+  /** Aplica un estado del historial; si el punto cambió, trae las calles del punto nuevo. */
+  const aplicar = useCallback(
+    (sig: Historial<Versiones | null>) => {
+      const antes = histRef.current.presente?.evidencia.impacto.punto ?? null;
+      histRef.current = sig;
+      setHist(sig);
+      const despues = sig.presente?.evidencia.impacto.punto ?? null;
+      if (!despues) {
+        marcaActual.current++;
+        setCalles([]);
+        setViaCercana(null);
+        setMsCalles(null);
+      } else if (!antes || antes[0] !== despues[0] || antes[1] !== despues[1]) {
+        callesEn(despues);
+      }
+    },
+    [callesEn],
+  );
+  const cambiar = useCallback(
+    (f: (vs: Versiones | null) => Versiones | null) =>
+      aplicar(registrar(histRef.current, f(histRef.current.presente))),
+    [aplicar],
+  );
+  const deshacerCambio = useCallback(() => aplicar(deshacer(histRef.current)), [aplicar]);
+  const rehacerCambio = useCallback(() => aplicar(rehacer(histRef.current)), [aplicar]);
+
+  // Marcar el impacto no espera a la red (ADR 0053): con las calles del tramo y de los mosaicos
+  // se dibujan las versiones al instante.
+  const fijarImpacto = useCallback(
+    (p: LonLat) => {
+      const t0 = performance.now();
+      const via = callesEn(p);
+      const marca = marcaActual.current;
+      const vs = construir(
+        interpretar(lecturasRef.current, respuestasRef.current).parametros,
+        p,
+        via,
+      );
+      const sig = registrar(histRef.current, vs);
+      histRef.current = sig;
+      setHist(sig);
+      // Cuánto tarda del clic a ver las calles (meta: menos de 1 s), tras el siguiente cuadro.
+      requestAnimationFrame(() =>
+        requestAnimationFrame(() => {
+          if (marca === marcaActual.current) setMsCalles(performance.now() - t0);
+        }),
+      );
+    },
+    [callesEn, construir, interpretar],
+  );
+
+  /**
+   * «Cambiar ubicación»: el punto se mueve y los vehículos con él (sus posiciones son relativas al
+   * punto), girando lo que gire la vía del lugar nuevo. Las calles se traen por la vía rápida.
+   */
+  const moverPunto = useCallback(
+    (p: LonLat) => {
+      const actual = histRef.current.presente;
+      if (!actual) return fijarImpacto(p);
+      const giro = giroEntreVias(rumboViaEn(actual.evidencia.impacto.punto), rumboViaEn(p));
+      cambiar((vs) =>
+        vs
+          ? {
+              declarada: trasladarVersion(vs.declarada, p, giro),
+              evidencia: trasladarVersion(vs.evidencia, p, giro),
+            }
+          : vs,
+      );
+    },
+    [cambiar, fijarImpacto, rumboViaEn],
+  );
+  const quitarPunto = useCallback(() => {
+    setReubicando(false);
+    cambiar(() => null);
+  }, [cambiar]);
+  const restablecer = useCallback(() => {
+    const actual = histRef.current.presente;
+    if (!actual) return;
+    const p = actual.evidencia.impacto.punto;
+    cambiar(() =>
+      construir(
+        interpretar(lecturasRef.current, respuestasRef.current).parametros,
+        p,
+        rumboViaEn(p),
+      ),
+    );
+  }, [cambiar, construir, interpretar, rumboViaEn]);
+
+  /**
+   * Si cambian los parámetros del hecho (una lectura nueva, una respuesta del perito), se vuelve a
+   * armar solo la versión cuyos parámetros cambiaron; la otra conserva lo que movió el perito.
+   */
+  const rearmar = useCallback(
+    (l: Record<TipoTexto, LecturaGuardada | null>, r: RespuestasHecho) => {
+      const actual = histRef.current.presente;
+      if (!actual) return;
+      const p = interpretar(l, r).parametros;
+      const cambio = (["evidencia", "declarada"] as const).filter(
+        (k) => JSON.stringify(p[k]) !== firmas.current[k],
+      );
+      if (!cambio.length) return;
+      const viejas = { ...firmas.current };
+      const nuevas = construir(
+        p,
+        actual.evidencia.impacto.punto,
+        rumboViaEn(actual.evidencia.impacto.punto),
+      );
+      firmas.current = {
+        evidencia: cambio.includes("evidencia") ? firmas.current.evidencia : viejas.evidencia,
+        declarada: cambio.includes("declarada") ? firmas.current.declarada : viejas.declarada,
+      };
+      cambiar((vs) =>
+        vs
+          ? {
+              evidencia: cambio.includes("evidencia") ? nuevas.evidencia : vs.evidencia,
+              declarada: cambio.includes("declarada") ? nuevas.declarada : vs.declarada,
+            }
+          : vs,
+      );
+    },
+    [cambiar, construir, interpretar, rumboViaEn],
+  );
+
+  const leer = useCallback(
+    async (tipo: TipoTexto, texto: string) => {
+      setEstados((e) => ({
+        ...e,
+        [tipo]: tipo === "descripcion" ? "Leyendo la descripción…" : "Leyendo la declaración…",
+      }));
+      try {
+        const r = await fetch("/api/cesvi/hecho", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ tipo, texto, vehiculos: vehiculosExpediente, declarante }),
+        });
+        const d = (await r.json()) as {
+          metodo?: "claude" | "reglas";
+          motivo?: string;
+          lectura?: LecturaHecho;
+          error?: string;
+        };
+        if (!r.ok || !d.lectura) throw new Error(d.error ?? `HTTP ${r.status}`);
+        const lectura = validarLectura(d.lectura, texto);
+        const guardada: LecturaGuardada = {
+          lectura,
+          leidoPor: d.metodo === "claude" ? "ia" : "reglas",
+          texto,
+        };
+        const nuevas = { ...lecturasRef.current, [tipo]: guardada };
+        lecturasRef.current = nuevas;
+        setLecturas(nuevas);
+        const descartados = lectura.descartados
+          ? ` Se descartaron ${lectura.descartados} datos sin frase en el texto.`
+          : "";
+        setEstados((e) => ({
+          ...e,
+          [tipo]:
+            d.metodo === "claude"
+              ? `Leída con IA (Claude), con el glosario de CESVI. No produce números.${descartados}`
+              : `Leída con las reglas del glosario de CESVI${d.motivo ? ` (${d.motivo})` : ""}.`,
+        }));
+        rearmar(nuevas, respuestasRef.current);
+      } catch (e) {
+        setEstados((s) => ({
+          ...s,
+          [tipo]: `No se pudo leer: ${e instanceof Error ? e.message : String(e)}.`,
+        }));
+      }
+    },
+    [vehiculosExpediente, declarante, rearmar],
+  );
+  const responder = useCallback(
+    (clave: string, v: string | number | null) => {
+      const nuevas = { ...respuestasRef.current, [clave]: v };
+      respuestasRef.current = nuevas;
+      setRespuestas(nuevas);
+      rearmar(lecturasRef.current, nuevas);
+    },
+    [rearmar],
+  );
 
   // La animación de la versión a la vista (paso 4): se reproduce desde un momento, se pausa y
   // se fija con la línea de tiempo. `animacion` null es la versión completa (y editable).
@@ -288,34 +504,48 @@ export function Recorrido({ caso, reproduccion }: { caso: CasoCesvi; reproduccio
   const version = versiones?.[activa] ?? null;
   const restosM = version ? distanciaM(version.restos.inicio, version.restos.fin) : null;
 
-  const edicion: EdicionMapa | null = useMemo(
-    () =>
-      paso === 3 && versiones
-        ? {
-            seleccion,
-            onSeleccion: setSeleccion,
-            onMover: (sel, p) => {
-              setSeleccion(sel);
-              setVersiones((vs) => {
-                if (!vs) return vs;
-                const v = vs[activa];
-                const punto: [number, number] = [p[0], p[1]];
-                const movida =
-                  sel.tipo === "pose"
-                    ? moverPose(v, sel.letra, sel.fase, { punto })
-                    : sel.tipo === "impacto"
-                      ? { ...v, impacto: { punto, fuente: "perito" as const } }
-                      : {
-                          ...v,
-                          restos: { ...v.restos, [sel.extremo]: punto, fuente: "perito" as const },
-                        };
-                return { ...vs, [activa]: movida };
-              });
-            },
-          }
-        : null,
-    [paso, versiones, seleccion, activa],
-  );
+  const edicion: EdicionMapa | null = useMemo(() => {
+    if (!versiones) return null;
+    // Paso 3: solo el punto de impacto, que se arrastra y lleva todo con él.
+    if (paso === 2) {
+      return {
+        soloImpacto: true,
+        seleccion: { tipo: "impacto" },
+        onSeleccion: () => setReubicando(true),
+        onMover: (_sel, p) => moverPunto(p),
+      };
+    }
+    if (paso !== 3) return null;
+    return {
+      seleccion,
+      onSeleccion: setSeleccion,
+      onMover: (sel, p) => {
+        setSeleccion(sel);
+        cambiar((vs) => {
+          if (!vs) return vs;
+          const v = vs[activa];
+          const punto: [number, number] = [p[0], p[1]];
+          const movida =
+            sel.tipo === "pose"
+              ? moverPose(v, sel.letra, sel.fase, { punto })
+              : sel.tipo === "impacto"
+                ? { ...v, impacto: { punto, fuente: "perito" as const } }
+                : {
+                    ...v,
+                    restos: { ...v.restos, [sel.extremo]: punto, fuente: "perito" as const },
+                  };
+          return { ...vs, [activa]: movida };
+        });
+      },
+    };
+  }, [paso, versiones, seleccion, activa, cambiar, moverPunto]);
+  const edicionPasos: EdicionPasos = {
+    puedeDeshacer: hist.pasado.length > 0,
+    puedeRehacer: hist.futuro.length > 0,
+    onDeshacer: deshacerCambio,
+    onRehacer: rehacerCambio,
+    onRestablecer: restablecer,
+  };
 
   const camara: Camara | null = useMemo(() => {
     if (paso < 2) return VISTA_MEXICO;
@@ -433,8 +663,9 @@ export function Recorrido({ caso, reproduccion }: { caso: CasoCesvi; reproduccio
           hechos: {
             caso: caso.id,
             modalidad_dictaminada: caso.modalidad_dictaminada,
-            declaracion: caso.declaracion.texto,
-            lo_que_entiende_croquis: interpretacion.datos.map(
+            declaracion: textos.declaracion,
+            descripcion_tecnica_del_perito: textos.descripcion || null,
+            lo_que_entiende_croquis: [...interpretacion.evidencia, ...interpretacion.declarada].map(
               (d) => `${d.etiqueta}: ${d.valor} (${d.fuente})`,
             ),
             calculos: {
@@ -471,6 +702,7 @@ export function Recorrido({ caso, reproduccion }: { caso: CasoCesvi; reproduccio
   // Cambiar de paso, y lo que hace cada paso al entrar: leer la declaración (una vez) y armar el
   // dictamen. Todos los cambios de paso pasan por aquí (botones, barra, teclado y enlaces).
   const pasoActual = useRef(0);
+  const declaracionLeida = useRef(false);
   const irA = useCallback(
     (n: number) => {
       const destino = Math.max(0, Math.min(PASOS.length - 1, n));
@@ -479,35 +711,49 @@ export function Recorrido({ caso, reproduccion }: { caso: CasoCesvi; reproduccio
       // La animación corre al entrar al paso 4 (y al cambiar de versión); fuera de él se detiene.
       if (destino === 3) animar();
       else pausar();
-      if (destino === 1 && !leido.current) {
-        leido.current = true;
-        void leerConIa();
+      // Al entrar al hecho se lee la declaración (una vez); la descripción la escribe el perito.
+      if (destino === 1 && !declaracionLeida.current) {
+        declaracionLeida.current = true;
+        void leer("declaracion", textosRef.current.declaracion);
       }
+      if (destino !== 2) setReubicando(false);
       if (destino === 7) void generarPdf();
     },
-    [leerConIa, generarPdf, animar, pausar],
+    [leer, generarPdf, animar, pausar],
   );
 
   // Teclado: ← y → cambian de paso (salvo mientras se escribe en un campo).
   useEffect(() => {
     const tecla = (e: KeyboardEvent) => {
       if (enCampo(e.target) || detalle) return;
+      // Deshacer y rehacer en los pasos 3 y 4: Ctrl+Z, Ctrl+Shift+Z y Ctrl+Y.
+      if ((e.ctrlKey || e.metaKey) && (pasoActual.current === 2 || pasoActual.current === 3)) {
+        const k = e.key.toLowerCase();
+        if (k === "z" || k === "y") {
+          e.preventDefault();
+          if (k === "y" || e.shiftKey) rehacerCambio();
+          else deshacerCambio();
+        }
+        return;
+      }
       if (e.key === "ArrowRight") irA(pasoActual.current + 1);
       if (e.key === "ArrowLeft") irA(pasoActual.current - 1);
     };
     window.addEventListener("keydown", tecla);
     return () => window.removeEventListener("keydown", tecla);
-  }, [detalle, irA]);
+  }, [detalle, irA, deshacerCambio, rehacerCambio]);
 
   const impactoKmh = resultados?.ebsReporte?.calculo.kmh ?? null;
   const desplazamientoKmh = resultados?.v3?.calculo.kmh ?? null;
   const frase = [
     `Siniestro ${caso.id} de ${caso.aseguradora}: alcance entre una ${caso.vehiculos.A.tipo} y una ${caso.vehiculos.B.tipo}; el conductor de A declara una reversa.`,
-    "Croquis lee la declaración: subraya cada frase, la convierte en datos y pregunta lo que falta.",
+    "La descripción técnica del perito arma la versión de la evidencia; la declaración, la versión declarada. Croquis pregunta lo que falta.",
     "Tramo Los Mochis–Navojoa de la carretera federal 15. Marca el punto de impacto: las calles salen del mapa, sin esperar.",
     activa === "declarada"
       ? `Versión declarada: ${nombres.A} retrocede ${reversaDibujada} m y ${nombres.B} lo impacta; sin desplazamiento después.`
-      : `Versión de la evidencia: ${nombres.B} alcanza a ${nombres.A} y lo desplaza; los restos cubren ${caso.evidencia.restos.distancia_m.valor} m.`,
+      : interpretacion.parametros.evidencia.distanciaRestos === null
+        ? `Versión de la evidencia: ${nombres.B} alcanza a ${nombres.A}; la descripción técnica aún no da la longitud de los restos.`
+        : `Versión de la evidencia: ${nombres.B} alcanza a ${nombres.A} y lo desplaza; los restos cubren ${interpretacion.parametros.evidencia.distanciaRestos} m.`,
     "Los daños se acentúan a un lado (izquierdo en A, derecho en B); una reversa los dejaría al centro.",
     impactoKmh !== null && desplazamientoKmh !== null
       ? `${impactoKmh.toFixed(2)} km/h por los daños y ${desplazamientoKmh.toFixed(2)} km/h por el desplazamiento: ${resultados?.comparacion?.significativa ? "difieren" : "no difieren"} de forma significativa.`
@@ -528,29 +774,47 @@ export function Recorrido({ caso, reproduccion }: { caso: CasoCesvi; reproduccio
     : null;
   const escena = [
     <PasoCaso key="caso" caso={caso} nombres={nombres} frase={frase} />,
-    <PasoNarracion
-      key="narracion"
-      declaracion={caso.declaracion.texto}
-      conductor={nombres[caso.declaracion.conductor as "A" | "B"] ?? caso.declaracion.conductor}
+    <PasoHecho
+      key="hecho"
+      textos={textos}
+      onTexto={(tipo, t) => {
+        const nuevos = { ...textosRef.current, [tipo]: t };
+        textosRef.current = nuevos;
+        setTextos(nuevos);
+      }}
+      leidos={{
+        descripcion: lecturas.descripcion?.texto ?? null,
+        declaracion: lecturas.declaracion?.texto ?? null,
+      }}
       interpretacion={interpretacion}
-      notas={notas}
-      onNotas={setNotas}
-      estado={estadoIa}
-      onLeer={() => void leerConIa()}
-      reversaM={respuestas.reversaM ?? null}
-      onReversaM={cambiarReversa}
-      onImpacta={(v) => setRespuestas((r) => ({ ...r, impacta: v }))}
+      estados={estados}
+      onLeer={(tipo) => void leer(tipo, textosRef.current[tipo])}
+      onEjemplo={
+        ejemplo
+          ? () => {
+              const nuevos = { ...textosRef.current, descripcion: ejemplo.descripcion };
+              textosRef.current = nuevos;
+              setTextos(nuevos);
+            }
+          : null
+      }
+      onResponder={responder}
+      declarante={nombres[declarante]}
       frase={frase}
     />,
     <PasoLugar
       key="lugar"
       kilometro={caso.lugar.kilometro}
       frase={frase}
-      marcado={versiones !== null}
+      punto={versiones?.evidencia.impacto.punto ?? null}
+      reubicando={reubicando}
+      onReubicar={setReubicando}
+      onQuitar={quitarPunto}
       aviso={avisoLugar}
       msCalles={msCalles}
       via={via}
-      onCoordenadas={(lat, lon) => fijarImpacto([lon, lat])}
+      onCoordenadas={(lat, lon) => (versiones ? moverPunto([lon, lat]) : fijarImpacto([lon, lat]))}
+      edicion={edicionPasos}
     />,
     <PasoVersiones
       key="versiones"
@@ -572,6 +836,7 @@ export function Recorrido({ caso, reproduccion }: { caso: CasoCesvi; reproduccio
         setDistancia({ valor: restosM.toFixed(2), fuente: "perito" });
         irA(5);
       }}
+      edicion={edicionPasos}
     />,
     <PasoDanos
       key="danos"
@@ -710,7 +975,9 @@ export function Recorrido({ caso, reproduccion }: { caso: CasoCesvi; reproduccio
             animacion={paso === 3 ? animacion : null}
             edicion={edicion}
             onClic={(p) => {
-              if (paso === 2 && !versiones) fijarImpacto(p);
+              if (paso !== 2) return;
+              if (!versiones) fijarImpacto(p);
+              else if (reubicando) moverPunto(p);
             }}
             onCaptura={alCapturar}
             onConsultaCalles={alConsultarCalles}
@@ -769,23 +1036,23 @@ export function Recorrido({ caso, reproduccion }: { caso: CasoCesvi; reproduccio
         >
           {paso === 0 ? <Expediente caso={caso} /> : null}
           {paso === 1 ? (
-            <section className="flex flex-col gap-3">
-              <h3 className="t-subtitulo">El orden de los hechos según la declaración</h3>
-              <ol className="t-cuerpo flex list-decimal flex-col gap-1 pl-5">
-                {interpretacion.hechos.map((h) => (
-                  <li key={h.orden}>
-                    {h.texto}: «{h.frase.texto}»
-                  </li>
-                ))}
-              </ol>
-              <p className="t-nota text-texto-2">
-                La lectura usa la extracción de «Cuenta qué pasó» (
-                {extraccion
-                  ? extraccion.metodo === "claude"
-                    ? "con Claude"
-                    : "con reglas"
-                  : "todavía sin leer"}
-                ) y detectores para declaraciones de dictamen. La IA no produce números finales.
+            <section className="t-cuerpo flex flex-col gap-4">
+              <p>
+                Croquis lee cada texto por separado: la descripción técnica del perito arma la
+                versión de la evidencia, y la declaración del conductor, la versión declarada. Cada
+                dato lleva su fuente (perito, conductor, expediente o supuesto) y la frase de donde
+                sale; si la frase no está en el texto, el dato se descarta.
+              </p>
+              <p>
+                La lectura usa el vocabulario de los dictámenes de CESVI: un glosario de{" "}
+                {Object.values(GLOSARIO.glosario).flat().length} términos, con en cuántos de los{" "}
+                {GLOSARIO.dictamenes} dictámenes aparece cada uno (modalidad, zona de contacto,
+                acentuación y vértice, dirección de la fuerza, sentido y carril, maniobras, restos y
+                huellas, posiciones y vía).
+              </p>
+              <p className="t-nota">
+                Con Claude si hay llave y tope de gasto; si no, con reglas sobre el mismo glosario.
+                La IA no produce números: los metros solo cuentan si están escritos en la frase.
               </p>
             </section>
           ) : null}
@@ -848,7 +1115,7 @@ export function Recorrido({ caso, reproduccion }: { caso: CasoCesvi; reproduccio
                     className="campo cifras w-24"
                     value={Math.round(version.vehiculos[poseElegida.letra][poseElegida.fase].rumbo)}
                     onChange={(e) =>
-                      setVersiones((vs) =>
+                      cambiar((vs) =>
                         vs
                           ? {
                               ...vs,

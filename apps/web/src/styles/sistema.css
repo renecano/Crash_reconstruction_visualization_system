@@ -681,7 +681,8 @@
   /* Frase de una declaración con el color de quien la dice o de lo que falta (maqueta del paso 2). */
   .frase-a,
   .frase-b,
-  .frase-senal {
+  .frase-senal,
+  .frase-hecho {
     border-radius: 4px;
     padding: 0 3px;
     color: var(--texto);
@@ -698,5 +699,8 @@
   }
   .frase-senal {
     --color-frase: var(--senal);
+  }
+  .frase-hecho {
+    --color-frase: var(--texto-2);
   }
 }

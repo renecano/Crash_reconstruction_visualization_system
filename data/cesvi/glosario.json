@@ -1,0 +1,793 @@
+{
+  "_fuente": {
+    "descripcion": "Términos técnicos de los dictámenes de CESVI México y en cuántos dictámenes aparece cada uno. Solo términos y conteos: ningún texto de los dictámenes.",
+    "corpus": "671 dictámenes (data/raw/cesvi/, no se versiona)",
+    "generado_por": "node data/cesvi/scripts/glosario.mjs",
+    "busqueda": "frase completa, sin acentos y sin distinguir mayúsculas"
+  },
+  "dictamenes": 671,
+  "glosario": {
+    "modalidad": [
+      {
+        "termino": "cuerpo duro",
+        "variantes": [],
+        "documentos": 564,
+        "apariciones": 4234
+      },
+      {
+        "termino": "dinámica de colisión",
+        "variantes": [],
+        "documentos": 291,
+        "apariciones": 515
+      },
+      {
+        "termino": "alcance",
+        "variantes": [],
+        "documentos": 217,
+        "apariciones": 933
+      },
+      {
+        "termino": "modalidad de colisión",
+        "variantes": [],
+        "documentos": 217,
+        "apariciones": 402
+      },
+      {
+        "termino": "colisión lateral",
+        "variantes": [
+          "choque lateral",
+          "impacto lateral"
+        ],
+        "documentos": 119,
+        "apariciones": 346
+      },
+      {
+        "termino": "colisión frontal",
+        "variantes": [
+          "choque frontal",
+          "impacto frontal"
+        ],
+        "documentos": 98,
+        "apariciones": 209
+      },
+      {
+        "termino": "volcadura",
+        "variantes": [],
+        "documentos": 68,
+        "apariciones": 531
+      },
+      {
+        "termino": "crucero",
+        "variantes": [],
+        "documentos": 54,
+        "apariciones": 110
+      },
+      {
+        "termino": "colisión contra objeto fijo",
+        "variantes": [
+          "impacto contra objeto fijo"
+        ],
+        "documentos": 27,
+        "apariciones": 59
+      },
+      {
+        "termino": "salida de camino",
+        "variantes": [],
+        "documentos": 14,
+        "apariciones": 38
+      },
+      {
+        "termino": "atropellamiento",
+        "variantes": [],
+        "documentos": 2,
+        "apariciones": 13
+      },
+      {
+        "termino": "estrellamiento",
+        "variantes": [],
+        "documentos": 1,
+        "apariciones": 3
+      }
+    ],
+    "tipo_de_dano": [
+      {
+        "termino": "hundimiento",
+        "variantes": [
+          "hundimientos"
+        ],
+        "documentos": 601,
+        "apariciones": 7327
+      },
+      {
+        "termino": "tallón",
+        "variantes": [
+          "tallónes"
+        ],
+        "documentos": 536,
+        "apariciones": 4788
+      },
+      {
+        "termino": "ruptura",
+        "variantes": [
+          "rupturas"
+        ],
+        "documentos": 438,
+        "apariciones": 2665
+      },
+      {
+        "termino": "desprendimiento",
+        "variantes": [],
+        "documentos": 408,
+        "apariciones": 2064
+      },
+      {
+        "termino": "intercambio de materiales",
+        "variantes": [],
+        "documentos": 348,
+        "apariciones": 687
+      },
+      {
+        "termino": "impregnación de pintura",
+        "variantes": [
+          "impregnaciónes de pintura"
+        ],
+        "documentos": 319,
+        "apariciones": 1837
+      },
+      {
+        "termino": "desprendimiento de pintura",
+        "variantes": [],
+        "documentos": 292,
+        "apariciones": 1028
+      },
+      {
+        "termino": "deformación",
+        "variantes": [
+          "deformaciones"
+        ],
+        "documentos": 241,
+        "apariciones": 966
+      },
+      {
+        "termino": "fractura",
+        "variantes": [
+          "fracturas"
+        ],
+        "documentos": 58,
+        "apariciones": 162
+      },
+      {
+        "termino": "daño previo",
+        "variantes": [
+          "daños previos"
+        ],
+        "documentos": 1,
+        "apariciones": 1
+      }
+    ],
+    "zona_de_contacto": [
+      {
+        "termino": "parte frontal",
+        "variantes": [
+          "parte delantera"
+        ],
+        "documentos": 641,
+        "apariciones": 6208
+      },
+      {
+        "termino": "lado derecho",
+        "variantes": [
+          "costado derecho"
+        ],
+        "documentos": 611,
+        "apariciones": 5217
+      },
+      {
+        "termino": "parte posterior",
+        "variantes": [
+          "parte trasera"
+        ],
+        "documentos": 599,
+        "apariciones": 5092
+      },
+      {
+        "termino": "lado izquierdo",
+        "variantes": [
+          "costado izquierdo"
+        ],
+        "documentos": 599,
+        "apariciones": 4636
+      },
+      {
+        "termino": "cofre",
+        "variantes": [],
+        "documentos": 500,
+        "apariciones": 2691
+      },
+      {
+        "termino": "salpicadera",
+        "variantes": [],
+        "documentos": 460,
+        "apariciones": 2581
+      },
+      {
+        "termino": "parte inferior",
+        "variantes": [
+          "partes bajas"
+        ],
+        "documentos": 395,
+        "apariciones": 1364
+      },
+      {
+        "termino": "parrilla",
+        "variantes": [],
+        "documentos": 334,
+        "apariciones": 836
+      },
+      {
+        "termino": "unidad de luces",
+        "variantes": [
+          "calavera",
+          "faro"
+        ],
+        "documentos": 329,
+        "apariciones": 1189
+      },
+      {
+        "termino": "parte media",
+        "variantes": [],
+        "documentos": 316,
+        "apariciones": 1063
+      },
+      {
+        "termino": "fascia delantera",
+        "variantes": [],
+        "documentos": 247,
+        "apariciones": 858
+      },
+      {
+        "termino": "parte superior",
+        "variantes": [],
+        "documentos": 215,
+        "apariciones": 491
+      },
+      {
+        "termino": "fascia trasera",
+        "variantes": [
+          "fascia posterior"
+        ],
+        "documentos": 212,
+        "apariciones": 734
+      },
+      {
+        "termino": "puerta delantera",
+        "variantes": [],
+        "documentos": 206,
+        "apariciones": 671
+      },
+      {
+        "termino": "tapa cajuela",
+        "variantes": [],
+        "documentos": 184,
+        "apariciones": 572
+      },
+      {
+        "termino": "vértice delantero izquierdo",
+        "variantes": [],
+        "documentos": 115,
+        "apariciones": 273
+      },
+      {
+        "termino": "vértice delantero derecho",
+        "variantes": [],
+        "documentos": 100,
+        "apariciones": 210
+      },
+      {
+        "termino": "puerta trasera",
+        "variantes": [],
+        "documentos": 93,
+        "apariciones": 262
+      },
+      {
+        "termino": "defensa delantera",
+        "variantes": [],
+        "documentos": 80,
+        "apariciones": 213
+      },
+      {
+        "termino": "vértice posterior izquierdo",
+        "variantes": [
+          "vértice trasero izquierdo"
+        ],
+        "documentos": 72,
+        "apariciones": 144
+      },
+      {
+        "termino": "defensa trasera",
+        "variantes": [
+          "defensa posterior"
+        ],
+        "documentos": 68,
+        "apariciones": 190
+      },
+      {
+        "termino": "vértice posterior derecho",
+        "variantes": [
+          "vértice trasero derecho"
+        ],
+        "documentos": 44,
+        "apariciones": 93
+      },
+      {
+        "termino": "batea",
+        "variantes": [],
+        "documentos": 39,
+        "apariciones": 193
+      }
+    ],
+    "acentuacion": [
+      {
+        "termino": "acentuación",
+        "variantes": [
+          "acentuado",
+          "acentuada"
+        ],
+        "documentos": 145,
+        "apariciones": 267
+      },
+      {
+        "termino": "mayor magnitud",
+        "variantes": [],
+        "documentos": 56,
+        "apariciones": 74
+      },
+      {
+        "termino": "zona de contacto",
+        "variantes": [],
+        "documentos": 22,
+        "apariciones": 25
+      },
+      {
+        "termino": "área de contacto",
+        "variantes": [],
+        "documentos": 6,
+        "apariciones": 8
+      }
+    ],
+    "direccion_de_la_fuerza": [
+      {
+        "termino": "de adelante hacia atrás",
+        "variantes": [],
+        "documentos": 555,
+        "apariciones": 3269
+      },
+      {
+        "termino": "de atrás hacia adelante",
+        "variantes": [
+          "de atrás hacia delante"
+        ],
+        "documentos": 333,
+        "apariciones": 1185
+      },
+      {
+        "termino": "de izquierda a derecha",
+        "variantes": [],
+        "documentos": 296,
+        "apariciones": 961
+      },
+      {
+        "termino": "de derecha a izquierda",
+        "variantes": [],
+        "documentos": 290,
+        "apariciones": 972
+      },
+      {
+        "termino": "de arriba hacia abajo",
+        "variantes": [],
+        "documentos": 205,
+        "apariciones": 623
+      },
+      {
+        "termino": "de abajo hacia arriba",
+        "variantes": [],
+        "documentos": 133,
+        "apariciones": 280
+      },
+      {
+        "termino": "dirección de la fuerza",
+        "variantes": [],
+        "documentos": 2,
+        "apariciones": 2
+      }
+    ],
+    "sentido_y_carril": [
+      {
+        "termino": "arroyo vehicular",
+        "variantes": [
+          "arroyo de circulación"
+        ],
+        "documentos": 214,
+        "apariciones": 374
+      },
+      {
+        "termino": "sentido de circulación",
+        "variantes": [],
+        "documentos": 213,
+        "apariciones": 431
+      },
+      {
+        "termino": "dos carriles",
+        "variantes": [],
+        "documentos": 197,
+        "apariciones": 257
+      },
+      {
+        "termino": "de norte a sur",
+        "variantes": [],
+        "documentos": 189,
+        "apariciones": 389
+      },
+      {
+        "termino": "de sur a norte",
+        "variantes": [],
+        "documentos": 174,
+        "apariciones": 358
+      },
+      {
+        "termino": "carriles de circulación",
+        "variantes": [],
+        "documentos": 169,
+        "apariciones": 227
+      },
+      {
+        "termino": "camellón",
+        "variantes": [],
+        "documentos": 167,
+        "apariciones": 469
+      },
+      {
+        "termino": "de poniente a oriente",
+        "variantes": [],
+        "documentos": 118,
+        "apariciones": 225
+      },
+      {
+        "termino": "de oriente a poniente",
+        "variantes": [],
+        "documentos": 104,
+        "apariciones": 196
+      },
+      {
+        "termino": "tres carriles",
+        "variantes": [],
+        "documentos": 75,
+        "apariciones": 103
+      },
+      {
+        "termino": "intersección",
+        "variantes": [],
+        "documentos": 75,
+        "apariciones": 155
+      },
+      {
+        "termino": "acotamiento",
+        "variantes": [],
+        "documentos": 59,
+        "apariciones": 167
+      },
+      {
+        "termino": "doble sentido",
+        "variantes": [],
+        "documentos": 32,
+        "apariciones": 42
+      },
+      {
+        "termino": "carril izquierdo",
+        "variantes": [],
+        "documentos": 30,
+        "apariciones": 45
+      },
+      {
+        "termino": "carril derecho",
+        "variantes": [],
+        "documentos": 25,
+        "apariciones": 46
+      },
+      {
+        "termino": "carril central",
+        "variantes": [],
+        "documentos": 23,
+        "apariciones": 41
+      }
+    ],
+    "maniobras": [
+      {
+        "termino": "incorporación",
+        "variantes": [
+          "incorporarse"
+        ],
+        "documentos": 75,
+        "apariciones": 179
+      },
+      {
+        "termino": "reversa",
+        "variantes": [],
+        "documentos": 68,
+        "apariciones": 388
+      },
+      {
+        "termino": "frenado",
+        "variantes": [
+          "frenada"
+        ],
+        "documentos": 64,
+        "apariciones": 184
+      },
+      {
+        "termino": "detenido",
+        "variantes": [
+          "detenida"
+        ],
+        "documentos": 47,
+        "apariciones": 76
+      },
+      {
+        "termino": "rebase",
+        "variantes": [
+          "rebasar"
+        ],
+        "documentos": 33,
+        "apariciones": 61
+      },
+      {
+        "termino": "maniobra evasiva",
+        "variantes": [
+          "maniobra de evasión"
+        ],
+        "documentos": 27,
+        "apariciones": 38
+      },
+      {
+        "termino": "viraje",
+        "variantes": [],
+        "documentos": 14,
+        "apariciones": 20
+      },
+      {
+        "termino": "alto total",
+        "variantes": [],
+        "documentos": 14,
+        "apariciones": 15
+      },
+      {
+        "termino": "vuelta a la izquierda",
+        "variantes": [],
+        "documentos": 12,
+        "apariciones": 17
+      },
+      {
+        "termino": "vuelta a la derecha",
+        "variantes": [],
+        "documentos": 10,
+        "apariciones": 12
+      },
+      {
+        "termino": "cambio de carril",
+        "variantes": [],
+        "documentos": 7,
+        "apariciones": 12
+      }
+    ],
+    "restos_y_huellas": [
+      {
+        "termino": "restos",
+        "variantes": [],
+        "documentos": 377,
+        "apariciones": 1963
+      },
+      {
+        "termino": "punto de impacto",
+        "variantes": [],
+        "documentos": 72,
+        "apariciones": 112
+      },
+      {
+        "termino": "fragmentos",
+        "variantes": [],
+        "documentos": 37,
+        "apariciones": 83
+      },
+      {
+        "termino": "zona de impacto",
+        "variantes": [
+          "área de impacto"
+        ],
+        "documentos": 35,
+        "apariciones": 47
+      },
+      {
+        "termino": "derrapamiento",
+        "variantes": [
+          "derrape"
+        ],
+        "documentos": 25,
+        "apariciones": 62
+      },
+      {
+        "termino": "líquidos",
+        "variantes": [
+          "fluidos"
+        ],
+        "documentos": 24,
+        "apariciones": 47
+      },
+      {
+        "termino": "huella de frenado",
+        "variantes": [
+          "huellas de frenado"
+        ],
+        "documentos": 23,
+        "apariciones": 52
+      },
+      {
+        "termino": "huella de arrastre",
+        "variantes": [
+          "huellas de arrastre"
+        ],
+        "documentos": 13,
+        "apariciones": 26
+      },
+      {
+        "termino": "esparcimiento",
+        "variantes": [],
+        "documentos": 1,
+        "apariciones": 1
+      }
+    ],
+    "posiciones": [
+      {
+        "termino": "posición original",
+        "variantes": [],
+        "documentos": 462,
+        "apariciones": 2215
+      },
+      {
+        "termino": "posición inicial",
+        "variantes": [],
+        "documentos": 294,
+        "apariciones": 317
+      },
+      {
+        "termino": "posición final",
+        "variantes": [
+          "posiciones finales"
+        ],
+        "documentos": 236,
+        "apariciones": 485
+      },
+      {
+        "termino": "desplazamiento",
+        "variantes": [],
+        "documentos": 206,
+        "apariciones": 617
+      },
+      {
+        "termino": "proyección",
+        "variantes": [],
+        "documentos": 89,
+        "apariciones": 287
+      },
+      {
+        "termino": "posición de impacto",
+        "variantes": [],
+        "documentos": 3,
+        "apariciones": 3
+      }
+    ],
+    "via": [
+      {
+        "termino": "pendiente",
+        "variantes": [],
+        "documentos": 99,
+        "apariciones": 195
+      },
+      {
+        "termino": "curva",
+        "variantes": [],
+        "documentos": 95,
+        "apariciones": 316
+      },
+      {
+        "termino": "señalamiento",
+        "variantes": [],
+        "documentos": 94,
+        "apariciones": 252
+      },
+      {
+        "termino": "carpeta asfáltica",
+        "variantes": [],
+        "documentos": 74,
+        "apariciones": 161
+      },
+      {
+        "termino": "pavimento",
+        "variantes": [],
+        "documentos": 68,
+        "apariciones": 128
+      },
+      {
+        "termino": "visibilidad",
+        "variantes": [],
+        "documentos": 59,
+        "apariciones": 90
+      },
+      {
+        "termino": "línea continua",
+        "variantes": [],
+        "documentos": 43,
+        "apariciones": 51
+      },
+      {
+        "termino": "semáforo",
+        "variantes": [],
+        "documentos": 43,
+        "apariciones": 80
+      },
+      {
+        "termino": "terracería",
+        "variantes": [],
+        "documentos": 40,
+        "apariciones": 135
+      },
+      {
+        "termino": "tope",
+        "variantes": [],
+        "documentos": 39,
+        "apariciones": 154
+      },
+      {
+        "termino": "concreto hidráulico",
+        "variantes": [],
+        "documentos": 27,
+        "apariciones": 59
+      },
+      {
+        "termino": "línea discontinua",
+        "variantes": [],
+        "documentos": 27,
+        "apariciones": 29
+      },
+      {
+        "termino": "tramo recto",
+        "variantes": [
+          "en recta"
+        ],
+        "documentos": 20,
+        "apariciones": 23
+      },
+      {
+        "termino": "iluminación",
+        "variantes": [],
+        "documentos": 4,
+        "apariciones": 25
+      },
+      {
+        "termino": "superficie seca",
+        "variantes": [
+          "pavimento seco"
+        ],
+        "documentos": 4,
+        "apariciones": 9
+      },
+      {
+        "termino": "superficie mojada",
+        "variantes": [
+          "pavimento mojado"
+        ],
+        "documentos": 3,
+        "apariciones": 4
+      }
+    ]
+  }
+}

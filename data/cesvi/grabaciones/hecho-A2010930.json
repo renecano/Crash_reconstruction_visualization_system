@@ -1,0 +1,452 @@
+{
+  "caso": "A2010930",
+  "grabado": "2026-10-21T16:36:23.860Z",
+  "costoUsd": 0.0221004,
+  "lecturas": {
+    "descripcion": {
+      "texto": "Hecho de tránsito en la modalidad de alcance en el arroyo que corre de sur a norte de la carretera México-Nogales, a la altura del km 47+800, tramo Los Mochis–Navojoa. Los dos vehículos avanzaban hacia Navojoa; el vehículo B (Toyota Tacoma) iba detrás del vehículo A (Chevrolet Silverado 2500). El vehículo A tiene la zona de contacto en la parte posterior, acentuada hacia el lado izquierdo, con el hundimiento concentrado en el vértice posterior izquierdo y la fuerza de atrás hacia adelante; la batea quedó desplazada de izquierda a derecha. El vehículo B tiene la zona de contacto en la parte frontal, acentuada hacia el lado derecho, deformada por cuerpo duro de adelante hacia atrás. Los restos de ambos vehículos quedaron sobre el extremo izquierdo, repartidos a lo largo de 15.89 m. El arroyo tiene carpeta asfáltica en buen estado, 6.47 m de ancho y líneas discontinuas, separado del arroyo contrario por terracería.",
+      "metodo": "claude",
+      "lectura": {
+        "modalidad": {
+          "valor": "alcance",
+          "cita": "modalidad de alcance"
+        },
+        "vehiculos": {
+          "A": {
+            "sentido": {
+              "valor": "de sur a norte",
+              "cita": "arroyo que corre de sur a norte",
+              "hacia": "norte"
+            },
+            "carril": null,
+            "zona_contacto": {
+              "valor": "parte posterior",
+              "cita": "El vehículo A tiene la zona de contacto en la parte posterior"
+            },
+            "acentuacion": {
+              "valor": "lado izquierdo",
+              "cita": "acentuada hacia el lado izquierdo"
+            },
+            "vertice": {
+              "valor": "vértice posterior izquierdo",
+              "cita": "vértice posterior izquierdo"
+            },
+            "direccion_fuerza": {
+              "valor": "de atrás hacia adelante",
+              "cita": "la fuerza de atrás hacia adelante"
+            },
+            "maniobras": [],
+            "posicion_final": null
+          },
+          "B": {
+            "sentido": {
+              "valor": "de sur a norte",
+              "cita": "arroyo que corre de sur a norte",
+              "hacia": "norte"
+            },
+            "carril": null,
+            "zona_contacto": {
+              "valor": "parte frontal",
+              "cita": "El vehículo B tiene la zona de contacto en la parte frontal"
+            },
+            "acentuacion": {
+              "valor": "lado derecho",
+              "cita": "acentuada hacia el lado derecho"
+            },
+            "vertice": null,
+            "direccion_fuerza": {
+              "valor": "de adelante hacia atrás",
+              "cita": "de adelante hacia atrás"
+            },
+            "maniobras": [],
+            "posicion_final": null
+          }
+        },
+        "restos": [
+          {
+            "valor": "restos",
+            "cita": "repartidos a lo largo de 15.89 m",
+            "metros": 15.89
+          }
+        ],
+        "huellas": [],
+        "via": [
+          {
+            "valor": "carpeta asfáltica",
+            "cita": "carpeta asfáltica en buen estado"
+          },
+          {
+            "valor": "línea discontinua",
+            "cita": "líneas discontinuas"
+          },
+          {
+            "valor": "terracería",
+            "cita": "separado del arroyo contrario por terracería"
+          }
+        ],
+        "preguntas": [
+          {
+            "clave": "carril_a",
+            "texto": "¿Carril de A al momento del impacto?"
+          },
+          {
+            "clave": "carril_b",
+            "texto": "¿Carril de B al momento del impacto?"
+          },
+          {
+            "clave": "maniobra_a",
+            "texto": "¿Qué maniobra realizaba A antes del impacto (frenado, detenido, circulaba)?"
+          },
+          {
+            "clave": "maniobra_b",
+            "texto": "¿Qué maniobra realizaba B antes del impacto (frenado, evasiva)?"
+          },
+          {
+            "clave": "posicion_final",
+            "texto": "¿Posición final de A y de B?"
+          },
+          {
+            "clave": "huellas",
+            "texto": "¿Hay huellas de frenado o de arrastre y de qué longitud?"
+          },
+          {
+            "clave": "carriles",
+            "texto": "¿Cuántos carriles de circulación tiene el arroyo?"
+          }
+        ]
+      },
+      "salida": {
+        "datos": [
+          {
+            "campo": "modalidad",
+            "vehiculo": "ninguno",
+            "valor": "alcance",
+            "cita": "modalidad de alcance",
+            "hacia": "no_aplica",
+            "maniobra": "no_aplica",
+            "metros": null
+          },
+          {
+            "campo": "sentido",
+            "vehiculo": "A",
+            "valor": "de sur a norte",
+            "cita": "arroyo que corre de sur a norte",
+            "hacia": "norte",
+            "maniobra": "no_aplica",
+            "metros": null
+          },
+          {
+            "campo": "sentido",
+            "vehiculo": "B",
+            "valor": "de sur a norte",
+            "cita": "arroyo que corre de sur a norte",
+            "hacia": "norte",
+            "maniobra": "no_aplica",
+            "metros": null
+          },
+          {
+            "campo": "zona_contacto",
+            "vehiculo": "A",
+            "valor": "parte posterior",
+            "cita": "El vehículo A tiene la zona de contacto en la parte posterior",
+            "hacia": "no_aplica",
+            "maniobra": "no_aplica",
+            "metros": null
+          },
+          {
+            "campo": "acentuacion",
+            "vehiculo": "A",
+            "valor": "lado izquierdo",
+            "cita": "acentuada hacia el lado izquierdo",
+            "hacia": "no_aplica",
+            "maniobra": "no_aplica",
+            "metros": null
+          },
+          {
+            "campo": "vertice",
+            "vehiculo": "A",
+            "valor": "vértice posterior izquierdo",
+            "cita": "vértice posterior izquierdo",
+            "hacia": "no_aplica",
+            "maniobra": "no_aplica",
+            "metros": null
+          },
+          {
+            "campo": "direccion_fuerza",
+            "vehiculo": "A",
+            "valor": "de atrás hacia adelante",
+            "cita": "la fuerza de atrás hacia adelante",
+            "hacia": "no_aplica",
+            "maniobra": "no_aplica",
+            "metros": null
+          },
+          {
+            "campo": "zona_contacto",
+            "vehiculo": "B",
+            "valor": "parte frontal",
+            "cita": "El vehículo B tiene la zona de contacto en la parte frontal",
+            "hacia": "no_aplica",
+            "maniobra": "no_aplica",
+            "metros": null
+          },
+          {
+            "campo": "acentuacion",
+            "vehiculo": "B",
+            "valor": "lado derecho",
+            "cita": "acentuada hacia el lado derecho",
+            "hacia": "no_aplica",
+            "maniobra": "no_aplica",
+            "metros": null
+          },
+          {
+            "campo": "direccion_fuerza",
+            "vehiculo": "B",
+            "valor": "de adelante hacia atrás",
+            "cita": "de adelante hacia atrás",
+            "hacia": "no_aplica",
+            "maniobra": "no_aplica",
+            "metros": null
+          },
+          {
+            "campo": "restos",
+            "vehiculo": "ninguno",
+            "valor": "restos",
+            "cita": "repartidos a lo largo de 15.89 m",
+            "hacia": "no_aplica",
+            "maniobra": "no_aplica",
+            "metros": 15.89
+          },
+          {
+            "campo": "via",
+            "vehiculo": "ninguno",
+            "valor": "carpeta asfáltica",
+            "cita": "carpeta asfáltica en buen estado",
+            "hacia": "no_aplica",
+            "maniobra": "no_aplica",
+            "metros": null
+          },
+          {
+            "campo": "via",
+            "vehiculo": "ninguno",
+            "valor": "línea discontinua",
+            "cita": "líneas discontinuas",
+            "hacia": "no_aplica",
+            "maniobra": "no_aplica",
+            "metros": null
+          },
+          {
+            "campo": "via",
+            "vehiculo": "ninguno",
+            "valor": "terracería",
+            "cita": "separado del arroyo contrario por terracería",
+            "hacia": "no_aplica",
+            "maniobra": "no_aplica",
+            "metros": null
+          }
+        ],
+        "preguntas": [
+          {
+            "clave": "carril_a",
+            "texto": "¿Carril de A al momento del impacto?"
+          },
+          {
+            "clave": "carril_b",
+            "texto": "¿Carril de B al momento del impacto?"
+          },
+          {
+            "clave": "maniobra_a",
+            "texto": "¿Qué maniobra realizaba A antes del impacto (frenado, detenido, circulaba)?"
+          },
+          {
+            "clave": "maniobra_b",
+            "texto": "¿Qué maniobra realizaba B antes del impacto (frenado, evasiva)?"
+          },
+          {
+            "clave": "posicion_final",
+            "texto": "¿Posición final de A y de B?"
+          },
+          {
+            "clave": "huellas",
+            "texto": "¿Hay huellas de frenado o de arrastre y de qué longitud?"
+          },
+          {
+            "clave": "carriles",
+            "texto": "¿Cuántos carriles de circulación tiene el arroyo?"
+          }
+        ]
+      },
+      "modelo": "claude-sonnet-5-5",
+      "modeloRespuesta": "claude-sonnet-5-5",
+      "version": "hecho-cesvi-v1",
+      "costoUsd": 0.0155982
+    },
+    "declaracion": {
+      "texto": "venia de sur a norte cuando vi un accidente de un tráiler y me pare, reversie unos metros cuando llego la camioneta y me impacto",
+      "metodo": "claude",
+      "lectura": {
+        "modalidad": null,
+        "vehiculos": {
+          "A": {
+            "sentido": {
+              "valor": "de sur a norte",
+              "cita": "venia de sur a norte",
+              "hacia": "norte"
+            },
+            "carril": null,
+            "zona_contacto": null,
+            "acentuacion": null,
+            "vertice": null,
+            "direccion_fuerza": null,
+            "maniobras": [
+              {
+                "valor": "detenido",
+                "cita": "me pare",
+                "tipo": "se_detiene",
+                "metros": null
+              },
+              {
+                "valor": "reversa",
+                "cita": "reversie unos metros",
+                "tipo": "reversa",
+                "metros": null
+              }
+            ],
+            "posicion_final": null
+          },
+          "B": {
+            "sentido": null,
+            "carril": null,
+            "zona_contacto": null,
+            "acentuacion": null,
+            "vertice": null,
+            "direccion_fuerza": null,
+            "maniobras": [],
+            "posicion_final": null
+          }
+        },
+        "restos": [],
+        "huellas": [],
+        "via": [],
+        "preguntas": [
+          {
+            "clave": "reversa",
+            "texto": "¿Cuántos metros de reversa recorrió A?"
+          },
+          {
+            "clave": "carril_a",
+            "texto": "¿Carril de A al momento del impacto?"
+          },
+          {
+            "clave": "sentido_b",
+            "texto": "¿Sentido de circulación de B?"
+          },
+          {
+            "clave": "zona_contacto_a",
+            "texto": "¿Zona de contacto de A y su acentuación?"
+          },
+          {
+            "clave": "zona_contacto_b",
+            "texto": "¿Zona de contacto de B y su acentuación?"
+          },
+          {
+            "clave": "direccion_fuerza",
+            "texto": "¿Dirección de la fuerza en A?"
+          },
+          {
+            "clave": "modalidad",
+            "texto": "¿Modalidad de colisión?"
+          },
+          {
+            "clave": "posicion_final",
+            "texto": "¿Posición final de A y B?"
+          },
+          {
+            "clave": "via",
+            "texto": "¿Condiciones de la vía (carriles, carpeta, visibilidad)?"
+          },
+          {
+            "clave": "maniobra_b",
+            "texto": "¿Maniobra de B previa al impacto?"
+          }
+        ]
+      },
+      "salida": {
+        "datos": [
+          {
+            "campo": "sentido",
+            "vehiculo": "A",
+            "valor": "de sur a norte",
+            "cita": "venia de sur a norte",
+            "hacia": "norte",
+            "maniobra": "no_aplica",
+            "metros": null
+          },
+          {
+            "campo": "maniobra",
+            "vehiculo": "A",
+            "valor": "detenido",
+            "cita": "me pare",
+            "hacia": "no_aplica",
+            "maniobra": "se_detiene",
+            "metros": null
+          },
+          {
+            "campo": "maniobra",
+            "vehiculo": "A",
+            "valor": "reversa",
+            "cita": "reversie unos metros",
+            "hacia": "no_aplica",
+            "maniobra": "reversa",
+            "metros": null
+          }
+        ],
+        "preguntas": [
+          {
+            "clave": "reversa",
+            "texto": "¿Cuántos metros de reversa recorrió A?"
+          },
+          {
+            "clave": "carril_a",
+            "texto": "¿Carril de A al momento del impacto?"
+          },
+          {
+            "clave": "sentido_b",
+            "texto": "¿Sentido de circulación de B?"
+          },
+          {
+            "clave": "zona_contacto_a",
+            "texto": "¿Zona de contacto de A y su acentuación?"
+          },
+          {
+            "clave": "zona_contacto_b",
+            "texto": "¿Zona de contacto de B y su acentuación?"
+          },
+          {
+            "clave": "direccion_fuerza",
+            "texto": "¿Dirección de la fuerza en A?"
+          },
+          {
+            "clave": "modalidad",
+            "texto": "¿Modalidad de colisión?"
+          },
+          {
+            "clave": "posicion_final",
+            "texto": "¿Posición final de A y B?"
+          },
+          {
+            "clave": "via",
+            "texto": "¿Condiciones de la vía (carriles, carpeta, visibilidad)?"
+          },
+          {
+            "clave": "maniobra_b",
+            "texto": "¿Maniobra de B previa al impacto?"
+          }
+        ]
+      },
+      "modelo": "claude-sonnet-5-5",
+      "modeloRespuesta": "claude-sonnet-5-5",
+      "version": "hecho-cesvi-v1",
+      "costoUsd": 0.0065022
+    }
+  }
+}

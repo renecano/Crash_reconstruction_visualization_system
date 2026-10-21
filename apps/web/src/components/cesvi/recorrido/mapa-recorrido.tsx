@@ -42,6 +42,8 @@ export type Seleccion =
   | { tipo: "restos"; extremo: "inicio" | "fin" };
 
 export interface EdicionMapa {
+  /** Paso 3: solo el punto de impacto se arrastra (y lleva todo con él). */
+  soloImpacto?: boolean;
   seleccion: Seleccion;
   onSeleccion: (s: Seleccion) => void;
   onMover: (s: Seleccion, p: LonLat) => void;
@@ -563,7 +565,7 @@ export function MapaRecorrido({
           color: col[letra],
         });
       }
-      if (edicion && animacion === null) {
+      if (edicion && animacion === null && !edicion.soloImpacto) {
         const nueva = (sel: Seleccion, texto: string, clase: string, lado: Lado, punto: LonLat) =>
           items.push({
             id: idMarca(sel),
@@ -642,6 +644,10 @@ export function MapaRecorrido({
         });
         marcas.current.push(mk);
       };
+      if (edicion.soloImpacto) {
+        nuevo({ tipo: "impacto" }, "punto-impacto", "✕", version.impacto.punto);
+        return;
+      }
       for (const letra of ["A", "B"] as const) {
         for (const fase of FASES) {
           nuevo(
