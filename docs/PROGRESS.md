@@ -51,7 +51,10 @@ Reglas de trabajo: `CLAUDE.md`. Especificación: `PLAN.md`.
   - **Pruebas:**
     - **E2E:** la del recorrido retiene Overpass y comprueba que el paso 3 dibuja las calles en menos de 1 s y que después llega el ancho de la vía. También revisa los nombres A y B, las etiquetas de cada marca, el resaltado y la leyenda.
     - **Unitarias:** `tramo.test.ts` (tramo y calles cercanas), `etiquetas-mapa.test.ts` (nueve puntos en el mismo lugar no se enciman) y `vehiculos-cesvi.test.ts` (nombres, y el mismo color en el CSS y el PDF).
-  - **Medición:** `node eval/cesvi_lugar.mjs` mide del clic a las calles en producción, con Overpass sin responder → `eval/results/cesvi_lugar.json`.
+  - **Medición en producción** (`node eval/cesvi_lugar.mjs`, 5 corridas con navegador nuevo, Overpass sin responder → `eval/results/cesvi_lugar.json`):
+    - **Del clic a las calles, según la página:** mediana 396 ms, máximo 477 ms. Cumple la meta de menos de 1 s.
+    - **Visto desde Playwright:** de 1122 a 1484 ms. Esa cifra suma lo que Playwright tarda en hacer el clic y en consultar la página; Chromium corre sin GPU (SwiftShader).
+    - **Antes:** marcar el punto esperaba a Overpass, unos 45 s en producción (lo que se vio en la revisión).
   - **Diferencia con `docs/cesvi/PROTOTIPO.md`:** el documento todavía dice que la demo va con protección de acceso. No lo edité porque es tuyo; si la página pública es lo que quieres, conviene ajustar esa línea.
 - **Hito 4 — el recorrido del perito** (rama `feat/cesvi-recorrido`, ADR 0052):
   - **Liga:** https://croquis-sage.vercel.app/cesvi (hasta el 2026-10-21 pedía usuario y clave).
