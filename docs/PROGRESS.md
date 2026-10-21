@@ -21,6 +21,10 @@ Reglas de trabajo: `CLAUDE.md`. Especificación: `PLAN.md`.
   - **Qué necesito de René:**
     - pasar el usuario y la clave a quien vea la demo: están en `.env.local` (`CROQUIS_CESVI_USUARIO`, `CROQUIS_CESVI_CLAVE`) y en Vercel;
     - las preguntas para CESVI que muestra la página, empezando por el PDF original o la hoja de cálculo del dictamen.
+- **Incidente de estilos en producción (2026-10-20), resuelto:** el despliegue del PR #63 salió con el CSS de la plantilla de Next (fondo #0a0a0a, Arial, sin `--fondo` ni Anybody) aunque el código era el nuevo. No faltaba nada en git: el build de Vercel restauró la caché de un despliegue anterior a F11a, y el siguiente (PR #64) salió bien. En la laptop y en CI el build siempre estuvo bien.
+  - **Comprobado en producción:** en `:root`, `--fondo` vale `#0b0d0f`, el texto va en Anybody y la portada y `/cuenta` se ven como en local.
+  - **Para que no se repita:** `apps/web/scripts/css-check.mjs` corre dentro de `pnpm build` (en Vercel y en CI) y falla si el CSS generado no trae `--fondo`, los tokens de la marca, Anybody y las clases del sistema. Tarda milisegundos. Contra el CSS del despliegue malo falla en los 6 requisitos.
+  - **Además:** producción construye sin caché (`VERCEL_FORCE_NO_BUILD_CACHE=1` en Vercel): cada despliegue tarda un poco más, pero no reutiliza nada de un build anterior.
 - **F11a cerrada** (PR #63). **F11b (E9 con personas) en pausa** mientras dure el trabajo con CESVI; el kit de E9 sigue listo.
 - **F11a — experiencia y diseño** (PLAN §11, iniciada el 2026-10-19; rama `feat/f11a-diseno`).
   - **Plan:** `docs/design/plan.md`, con la revisión contra lo genérico. Las decisiones van en el ADR 0045.
