@@ -12,7 +12,7 @@
   - las pruebas unitarias de lógica y cálculos (`pnpm test` y `pytest`);
   - una e2e por flujo principal, en Chromium: las pruebas marcadas con `@flujo` en su título. El build de producción lo hace esta misma e2e.
 - **Lo demás corre a mano** (`.github/workflows/completo.yml`, `workflow_dispatch`): cuando René lo pide o antes de una demo con CESVI. Son los generados al día, la demo grabada, la e2e completa con las referencias visuales, E8, la reproducibilidad de los datos y Python en Windows.
-- **Nada se borra:** cada cosa que salió de la CI está en `docs/PROGRESS.md`, sección «Endurecimiento pendiente (después del prototipo)».
+- **Nada se borra:** cada cosa que salió de la CI está en `docs/PROGRESS.md`, sección «Endurecimiento pendiente».
 
 ## Consecuencias
 
