@@ -58,12 +58,16 @@ function sumaSustituida(C: readonly number[], cuadrado: boolean): string {
   return terminos.join(" + ");
 }
 
+/** Una fórmula de energía o de velocidad, con su resultado numérico. */
+export type PasoEnergia = PasoFormula & { calculo: ResultadoMcHenry };
+export type PasoVelocidad = PasoFormula & { calculo: Velocidad };
+
 /** Energía de deformación de McHenry con sus valores sustituidos. */
 export function formulaMcHenry(
   m: MedicionDeformacion,
   unidadEnergia: string,
   decimales = 3,
-): PasoFormula & { calculo: ResultadoMcHenry } {
+): PasoEnergia {
   const r = mcHenry(m);
   const n = r.medidas;
   const k = n - 1;
@@ -93,7 +97,7 @@ export function formulaEbs(
   masa: number,
   textoEnergia = dato(energia),
   textoMasa = dato(masa),
-): PasoFormula & { calculo: Velocidad } {
+): PasoVelocidad {
   const v = ebs(energia, masa);
   return {
     general: "EBS = √(2 · E / m)",
@@ -105,11 +109,7 @@ export function formulaEbs(
 }
 
 /** V = √(2·a·g·D) con sus valores sustituidos. */
-export function formulaDesplazamiento(
-  a: number,
-  g: number,
-  D: number,
-): PasoFormula & { calculo: Velocidad } {
+export function formulaDesplazamiento(a: number, g: number, D: number): PasoVelocidad {
   const v = velocidadDesplazamiento(a, g, D);
   return {
     general: "V3 = √(2 · a · g · D)",

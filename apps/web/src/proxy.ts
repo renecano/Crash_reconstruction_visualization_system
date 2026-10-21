@@ -1,7 +1,7 @@
 /**
  * Protección de acceso del prototipo para CESVI (docs/cesvi/PROTOTIPO.md: es un caso real). Pide
- * usuario y clave (HTTP Basic) en `/cesvi` y lo que cuelgue de ahí. Las credenciales viven en las
- * variables de entorno `CROQUIS_CESVI_USUARIO` y `CROQUIS_CESVI_CLAVE` (ADR 0049).
+ * usuario y clave (HTTP Basic) en `/cesvi`, lo que cuelgue de ahí y `/api/cesvi`. Las credenciales
+ * viven en las variables de entorno `CROQUIS_CESVI_USUARIO` y `CROQUIS_CESVI_CLAVE` (ADR 0049).
  *
  * Sin clave configurada: en Vercel la página no abre (falla cerrada, nunca queda pública por
  * descuido); en desarrollo y en las pruebas abre sin pedir nada.
@@ -51,5 +51,5 @@ export function proxy(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/cesvi", "/cesvi/:path*"],
+  matcher: ["/cesvi", "/cesvi/:path*", "/api/cesvi/:path*"],
 };
