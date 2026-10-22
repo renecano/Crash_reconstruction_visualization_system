@@ -22,6 +22,8 @@ export interface EventMarker {
   tipo: string;
   t: number;
   etiqueta: string;
+  /** En una carambola (más de un impacto), el número del impacto en orden: 1, 2… (ADR 0066). */
+  numero?: number;
 }
 
 function clamp(v: number, lo: number, hi: number): number {
@@ -86,14 +88,17 @@ const LABELS: Record<string, string> = {
   reposo: "Reposo",
 };
 
-/** Marcadores de eventos para la barra de tiempo, ordenados y dentro del intervalo. */
+/**
+ * Marcadores de eventos para la barra de tiempo, ordenados y dentro del intervalo. Si hay más de un
+ * impacto (carambola, ADR 0066), van numerados en orden: «Impacto 1», «Impacto 2»…
+ */
 export function eventMarkers(
   eventos: readonly { id: string; tipo: string; t: number; actores: readonly string[] }[],
   tStart: number,
   tEnd: number,
   rolDe: (id: string) => string | undefined = () => undefined,
 ): EventMarker[] {
-  return eventos
+  const markers: EventMarker[] = eventos
     .filter((e) => e.t >= tStart - 1e-9 && e.t <= tEnd + 1e-9)
     .map((e) => {
       const base = LABELS[e.tipo] ?? e.tipo;
@@ -102,6 +107,14 @@ export function eventMarkers(
       return { id: e.id, tipo: e.tipo, t: e.t, etiqueta: who ? `${base} (${who})` : base };
     })
     .sort((a, b) => a.t - b.t || a.id.localeCompare(b.id));
+  const impactos = markers.filter((m) => m.tipo.startsWith("impacto_"));
+  if (impactos.length > 1) {
+    impactos.forEach((m, k) => {
+      m.numero = k + 1;
+      m.etiqueta = `${m.etiqueta} ${k + 1}`;
+    });
+  }
+  return markers;
 }
 
 /** Tiempo relativo al impacto, p. ej. "−1.24 s", "0.00 s" o "+0.50 s". */

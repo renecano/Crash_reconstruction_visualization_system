@@ -1,0 +1,250 @@
+{
+  "id": "carambola-e2e",
+  "modalidad_c0": "carambola",
+  "version_prompt": "escena-narracion-v1",
+  "modelo": "claude-sonnet-5-5",
+  "uso": {
+    "input_tokens": 522,
+    "output_tokens": 1835,
+    "cache_creation_input_tokens": 3462,
+    "cache_read_input_tokens": 0
+  },
+  "costo_usd": 0.028049,
+  "narracion": "El hecho se ubica sobre Paseo Tollocan, en sentido poniente a oriente, en la ciudad de Toluca, Estado de México, aproximadamente a las 19:40 horas. La vialidad es de corte recto, con tres carriles de circulación en ese sentido, carpeta asfáltica mojada y semáforo.\n\nIntervienen el vehículo A, marca Nissan, tipo Versa, color gris; el vehículo B, marca Mazda, tipo CX-3, color blanco; y el vehículo C, marca Chevrolet, tipo Aveo, color rojo. Los tres circulaban por el carril central. El vehículo B y el vehículo C se encontraban detenidos por el semáforo en rojo, el vehículo C delante del vehículo B.\n\nEl vehículo A presenta en su parte frontal derecha un daño tipo hundimiento de magnitud media, de adelante hacia atrás. El vehículo B presenta en su parte posterior un daño tipo hundimiento de magnitud media, de atrás hacia adelante, y en su parte frontal un daño leve tipo hundimiento, de adelante hacia atrás. El vehículo C presenta en su parte posterior un daño leve tipo hundimiento, de atrás hacia adelante.\n\nPrimer impacto: la parte frontal del vehículo A contra la parte posterior del vehículo B. Segundo impacto: por el empuje, la parte frontal del vehículo B contra la parte posterior del vehículo C.",
+  "salida": {
+    "datos": [
+      {
+        "seccion": "caso",
+        "n": 1,
+        "vehiculo": "ninguno",
+        "campo": "lugar",
+        "valor": "Paseo Tollocan, en sentido poniente a oriente",
+        "cita": "El hecho se ubica sobre Paseo Tollocan, en sentido poniente a oriente, en la ciudad de Toluca, Estado de México"
+      },
+      {
+        "seccion": "caso",
+        "n": 1,
+        "vehiculo": "ninguno",
+        "campo": "municipio",
+        "valor": "Toluca",
+        "cita": ""
+      },
+      {
+        "seccion": "caso",
+        "n": 1,
+        "vehiculo": "ninguno",
+        "campo": "entidad",
+        "valor": "Estado de México",
+        "cita": ""
+      },
+      {
+        "seccion": "caso",
+        "n": 1,
+        "vehiculo": "ninguno",
+        "campo": "fecha_hora",
+        "valor": "aproximadamente a las 19:40 horas",
+        "cita": "aproximadamente a las 19:40 horas"
+      },
+      {
+        "seccion": "vehiculo",
+        "n": 1,
+        "vehiculo": "V1",
+        "campo": "marca",
+        "valor": "Nissan",
+        "cita": "el vehículo A, marca Nissan, tipo Versa, color gris"
+      },
+      {
+        "seccion": "vehiculo",
+        "n": 1,
+        "vehiculo": "V1",
+        "campo": "modelo",
+        "valor": "Versa",
+        "cita": ""
+      },
+      {
+        "seccion": "vehiculo",
+        "n": 2,
+        "vehiculo": "V2",
+        "campo": "marca",
+        "valor": "Mazda",
+        "cita": "el vehículo B, marca Mazda, tipo CX-3, color blanco"
+      },
+      {
+        "seccion": "vehiculo",
+        "n": 2,
+        "vehiculo": "V2",
+        "campo": "modelo",
+        "valor": "CX-3",
+        "cita": ""
+      },
+      {
+        "seccion": "vehiculo",
+        "n": 3,
+        "vehiculo": "V3",
+        "campo": "marca",
+        "valor": "Chevrolet",
+        "cita": "el vehículo C, marca Chevrolet, tipo Aveo, color rojo"
+      },
+      {
+        "seccion": "vehiculo",
+        "n": 3,
+        "vehiculo": "V3",
+        "campo": "modelo",
+        "valor": "Aveo",
+        "cita": ""
+      },
+      {
+        "seccion": "dano",
+        "n": 1,
+        "vehiculo": "V1",
+        "campo": "cara",
+        "valor": "frontal",
+        "cita": "El vehículo A presenta en su parte frontal derecha un daño tipo hundimiento de magnitud media, de adelante hacia atrás"
+      },
+      {
+        "seccion": "dano",
+        "n": 1,
+        "vehiculo": "V1",
+        "campo": "tercio",
+        "valor": "derecho",
+        "cita": ""
+      },
+      {
+        "seccion": "dano",
+        "n": 1,
+        "vehiculo": "V1",
+        "campo": "tipo",
+        "valor": "hundimiento",
+        "cita": ""
+      },
+      {
+        "seccion": "dano",
+        "n": 1,
+        "vehiculo": "V1",
+        "campo": "direccion",
+        "valor": "de_adelante_hacia_atras",
+        "cita": ""
+      },
+      {
+        "seccion": "dano",
+        "n": 2,
+        "vehiculo": "V2",
+        "campo": "cara",
+        "valor": "posterior",
+        "cita": "El vehículo B presenta en su parte posterior un daño tipo hundimiento de magnitud media, de atrás hacia adelante"
+      },
+      {
+        "seccion": "dano",
+        "n": 2,
+        "vehiculo": "V2",
+        "campo": "tipo",
+        "valor": "hundimiento",
+        "cita": ""
+      },
+      {
+        "seccion": "dano",
+        "n": 2,
+        "vehiculo": "V2",
+        "campo": "direccion",
+        "valor": "de_atras_hacia_adelante",
+        "cita": ""
+      },
+      {
+        "seccion": "dano",
+        "n": 3,
+        "vehiculo": "V2",
+        "campo": "cara",
+        "valor": "frontal",
+        "cita": "en su parte frontal un daño leve tipo hundimiento, de adelante hacia atrás"
+      },
+      {
+        "seccion": "dano",
+        "n": 3,
+        "vehiculo": "V2",
+        "campo": "tipo",
+        "valor": "hundimiento",
+        "cita": ""
+      },
+      {
+        "seccion": "dano",
+        "n": 3,
+        "vehiculo": "V2",
+        "campo": "magnitud",
+        "valor": "leve",
+        "cita": ""
+      },
+      {
+        "seccion": "dano",
+        "n": 3,
+        "vehiculo": "V2",
+        "campo": "direccion",
+        "valor": "de_adelante_hacia_atras",
+        "cita": ""
+      },
+      {
+        "seccion": "dano",
+        "n": 4,
+        "vehiculo": "V3",
+        "campo": "cara",
+        "valor": "posterior",
+        "cita": "El vehículo C presenta en su parte posterior un daño leve tipo hundimiento, de atrás hacia adelante"
+      },
+      {
+        "seccion": "dano",
+        "n": 4,
+        "vehiculo": "V3",
+        "campo": "tipo",
+        "valor": "hundimiento",
+        "cita": ""
+      },
+      {
+        "seccion": "dano",
+        "n": 4,
+        "vehiculo": "V3",
+        "campo": "magnitud",
+        "valor": "leve",
+        "cita": ""
+      },
+      {
+        "seccion": "dano",
+        "n": 4,
+        "vehiculo": "V3",
+        "campo": "direccion",
+        "valor": "de_atras_hacia_adelante",
+        "cita": ""
+      },
+      {
+        "seccion": "impacto",
+        "n": 1,
+        "vehiculo": "V1",
+        "campo": "participante",
+        "valor": "V1",
+        "cita": "Primer impacto: la parte frontal del vehículo A contra la parte posterior del vehículo B"
+      },
+      {
+        "seccion": "impacto",
+        "n": 1,
+        "vehiculo": "V2",
+        "campo": "participante",
+        "valor": "V2",
+        "cita": ""
+      },
+      {
+        "seccion": "impacto",
+        "n": 2,
+        "vehiculo": "V2",
+        "campo": "participante",
+        "valor": "V2",
+        "cita": "Segundo impacto: por el empuje, la parte frontal del vehículo B contra la parte posterior del vehículo C"
+      },
+      {
+        "seccion": "impacto",
+        "n": 2,
+        "vehiculo": "V3",
+        "campo": "participante",
+        "valor": "V3",
+        "cita": ""
+      }
+    ]
+  }
+}

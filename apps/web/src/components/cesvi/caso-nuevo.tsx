@@ -24,7 +24,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { downloadBytes } from "@/lib/download";
 import ejemplo from "../../../../../data/cesvi/grabaciones/escenas/cesvi-e814f085db.json";
 import { ESTILO_MAPA_CLARO, marcador } from "./mapa-comun";
-import { ReconstruccionCaso, type PosicionMovil } from "./reconstruccion-caso";
+import { type MarcaImpacto, ReconstruccionCaso, type PosicionMovil } from "./reconstruccion-caso";
 
 type Id = Expediente["vehiculos"][number]["id"];
 type Fase = "impacto" | "final";
@@ -59,17 +59,21 @@ function claseVehiculo(id: string): string {
 function MapaEscena({
   posiciones,
   moviles = [],
+  impactos = [],
   onClic,
 }: {
   posiciones: { vehiculo: Id; fase: string; punto: { lat: number; lon: number } }[];
   /** Los vehículos en el instante del 3D (el croquis sigue al reloj de la reconstrucción). */
   moviles?: PosicionMovil[];
+  /** Los impactos de la reconstrucción, en orden: X1, X2… (R6). */
+  impactos?: MarcaImpacto[];
   onClic: (p: { lat: number; lon: number }) => void;
 }) {
   const contenedor = useRef<HTMLDivElement>(null);
   const mapa = useRef<MapaMl | null>(null);
   const marcas = useRef<Marker[]>([]);
   const marcasMoviles = useRef<Marker[]>([]);
+  const marcasImpacto = useRef<Marker[]>([]);
   const [listo, setListo] = useState(false);
   const clic = useRef(onClic);
   useEffect(() => {
@@ -140,6 +144,20 @@ function MapaEscena({
       });
     });
   }, [moviles, listo]);
+  useEffect(() => {
+    const m = mapa.current;
+    if (!m || !listo) return;
+    void import("maplibre-gl").then(({ Marker }) => {
+      for (const x of marcasImpacto.current) x.remove();
+      marcasImpacto.current = impactos.map((i) => {
+        const el = marcador(`X${i.numero}`, "punto-mapa punto-impacto");
+        el.title = `Impacto ${i.numero}`;
+        el.dataset.impacto = String(i.numero);
+        el.style.pointerEvents = "none";
+        return new Marker({ element: el }).setLngLat([i.punto.lon, i.punto.lat]).addTo(m);
+      });
+    });
+  }, [impactos, listo]);
   return (
     <div className="relative h-[420px] overflow-hidden rounded-panel border border-linea-suave">
       <div ref={contenedor} className="h-full w-full" data-testid="mapa-escena" />
@@ -223,6 +241,7 @@ export function CasoNuevo() {
   const [herramienta, setHerramienta] = useState<{ vehiculo: Id; fase: Fase } | null>(null);
   const [rumbo, setRumbo] = useState("");
   const [moviles, setMoviles] = useState<PosicionMovil[]>([]);
+  const [impactosMapa, setImpactosMapa] = useState<MarcaImpacto[]>([]);
 
   const leer = async () => {
     setEstado("Leyendo la narración…");
@@ -445,7 +464,12 @@ export function CasoNuevo() {
                     : "Toca el mapa para colocar."}
                 </p>
               </div>
-              <MapaEscena posiciones={posiciones} moviles={moviles} onClic={colocar} />
+              <MapaEscena
+                posiciones={posiciones}
+                moviles={moviles}
+                impactos={impactosMapa}
+                onClic={colocar}
+              />
               <p className="t-nota" data-testid="colocados">
                 {posiciones.length === 1
                   ? "1 posición colocada por el perito."
@@ -469,7 +493,11 @@ export function CasoNuevo() {
               </button>
             </section>
 
-            <ReconstruccionCaso expediente={expediente} onPosiciones={setMoviles} />
+            <ReconstruccionCaso
+              expediente={expediente}
+              onPosiciones={setMoviles}
+              onImpactos={setImpactosMapa}
+            />
           </>
         ) : null}
         <p className="t-nota text-texto-3">Reconstrucción de apoyo · el dictamen es del perito.</p>

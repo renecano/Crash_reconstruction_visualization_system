@@ -242,16 +242,16 @@ export interface MeshDamage {
   maxDisplacement: number;
 }
 
-/**
- * Hornea la deformación como morph target relativo (posiciones y normales) y agrega los
- * atributos `dano` (0–1) y `transferencia` (0–1) para el material. Devuelve el desplazamiento
- * máximo. No toca la geometría base: con influencia 0 el vehículo queda intacto.
- */
-export function bakeMeshDamage(
-  mesh: Mesh,
-  field: DisplacementField,
-  input: DamageInput,
-): MeshDamage {
+/** La deformación de una malla para un impacto, en su marco: posiciones, normales y atributos. */
+interface MeshDelta {
+  delta: Float32Array;
+  ndelta: Float32Array | null;
+  dano: Float32Array;
+  transfer: Float32Array;
+  maxDisp: number;
+}
+
+function meshDelta(mesh: Mesh, field: DisplacementField, input: DamageInput): MeshDelta {
   const geo = mesh.geometry;
   mesh.updateMatrix();
   const pos = geo.getAttribute("position") as BufferAttribute;
@@ -329,11 +329,10 @@ export function bakeMeshDamage(
       transfer[i] = Math.min(1, (weight[id] ?? 0) * 1.4);
     }
   }
-  geo.morphAttributes.position = [new BufferAttribute(delta, 3)];
-  geo.morphTargetsRelative = true;
+  let ndelta: Float32Array | null = null;
   if (nor) {
     // Normales del estado deformado: facetadas donde hay daño, las originales donde no.
-    const ndelta = new Float32Array(pos.count * 3);
+    const nd = new Float32Array(pos.count * 3);
     const a = new Vector3();
     const b = new Vector3();
     const c = new Vector3();
@@ -363,19 +362,69 @@ export function bakeMeshDamage(
         const by = oy + (n.y - oy) * k;
         const bz = oz + (n.z - oz) * k;
         const l = dmath.hypotN([bx, by, bz]) || 1;
-        ndelta[3 * vi] = bx / l - ox;
-        ndelta[3 * vi + 1] = by / l - oy;
-        ndelta[3 * vi + 2] = bz / l - oz;
+        nd[3 * vi] = bx / l - ox;
+        nd[3 * vi + 1] = by / l - oy;
+        nd[3 * vi + 2] = bz / l - oz;
       }
     }
-    geo.morphAttributes.normal = [new BufferAttribute(ndelta, 3)];
+    ndelta = nd;
   }
-  geo.setAttribute("dano", new BufferAttribute(dano, 1));
-  geo.setAttribute("transferencia", new BufferAttribute(transfer, 1));
+  return { delta, ndelta, dano, transfer, maxDisp };
+}
+
+/**
+ * Hornea la deformación como morph target relativo (posiciones y normales) y agrega los
+ * atributos `dano` (0–1) y `transferencia` (0–1) para el material. Devuelve el desplazamiento
+ * máximo. No toca la geometría base: con influencia 0 el vehículo queda intacto.
+ */
+export function bakeMeshDamage(
+  mesh: Mesh,
+  field: DisplacementField,
+  input: DamageInput,
+): MeshDamage {
+  const d = meshDelta(mesh, field, input);
+  const geo = mesh.geometry;
+  geo.morphAttributes.position = [new BufferAttribute(d.delta, 3)];
+  geo.morphTargetsRelative = true;
+  if (d.ndelta) geo.morphAttributes.normal = [new BufferAttribute(d.ndelta, 3)];
+  geo.setAttribute("dano", new BufferAttribute(d.dano, 1));
+  geo.setAttribute("transferencia", new BufferAttribute(d.transfer, 1));
   mesh.updateMorphTargets();
   mesh.morphTargetInfluences = [0];
-  mesh.userData.damaged = maxDisp > 0;
-  return { mesh, maxDisplacement: maxDisp };
+  mesh.userData.damaged = d.maxDisp > 0;
+  return { mesh, maxDisplacement: d.maxDisp };
+}
+
+/**
+ * La deformación de otro impacto (carambola, ADR 0066) como un morph target más, después de los
+ * que ya tiene la malla: cada uno se anima desde su instante. Los atributos `dano` y
+ * `transferencia` quedan con el mayor de los dos.
+ */
+export function addMeshDamage(
+  mesh: Mesh,
+  field: DisplacementField,
+  input: DamageInput,
+): MeshDamage {
+  const geo = mesh.geometry;
+  const positions = geo.morphAttributes.position;
+  if (!positions || positions.length === 0) return bakeMeshDamage(mesh, field, input);
+  const d = meshDelta(mesh, field, input);
+  positions.push(new BufferAttribute(d.delta, 3));
+  const normals = geo.morphAttributes.normal;
+  if (normals && d.ndelta) normals.push(new BufferAttribute(d.ndelta, 3));
+  for (const [name, values] of [
+    ["dano", d.dano],
+    ["transferencia", d.transfer],
+  ] as const) {
+    const prev = geo.getAttribute(name) as BufferAttribute | undefined;
+    if (prev)
+      for (let i = 0; i < values.length; i++) values[i] = Math.max(values[i]!, prev.getX(i));
+    geo.setAttribute(name, new BufferAttribute(values, 1));
+  }
+  mesh.updateMorphTargets();
+  mesh.morphTargetInfluences = positions.map(() => 0);
+  mesh.userData.damaged = Boolean(mesh.userData.damaged) || d.maxDisp > 0;
+  return { mesh, maxDisplacement: d.maxDisp };
 }
 
 export interface WheelDamage {
@@ -393,19 +442,23 @@ export interface VehicleDamage {
   field: DisplacementField;
 }
 
-/** Aplica la deformación a todas las mallas visibles del vehículo (salvo llantas). */
+/**
+ * Aplica la deformación a todas las mallas visibles del vehículo (salvo llantas). Con `add`, la
+ * agrega como un morph target más a las que ya tienen daño (carambola, ADR 0066).
+ */
 export function applyVehicleDamage(
   group: Group,
   clase: string,
   d: VehicleDimensions,
   input: DamageInput,
+  add = false,
 ): VehicleDamage {
   const field = displacementField(input, clase, d);
   const meshes: MeshDamage[] = [];
   const wheels: WheelDamage[] = [];
+  const bake = add ? addMeshDamage : bakeMeshDamage;
   for (const child of group.children) {
-    if (child instanceof Mesh && child.visible)
-      meshes.push(bakeMeshDamage(child as Mesh, field, input));
+    if (child instanceof Mesh && child.visible) meshes.push(bake(child as Mesh, field, input));
   }
   // Llantas: si el aplastamiento alcanza la llanta, se recorre hacia adentro y se tuerce.
   group.traverse((o) => {

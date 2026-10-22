@@ -68,6 +68,23 @@ describe("línea de tiempo", () => {
     expect(m.map((x) => x.etiqueta)).toEqual(["Inicio de frenado (A)", "Impacto", "Reposo (A)"]);
   });
 
+  it("numera los impactos de una carambola en orden", () => {
+    const m = eventMarkers(
+      [
+        { id: "ev-2", tipo: "impacto_vehiculo_vehiculo", t: 0.29, actores: ["veh-b", "veh-c"] },
+        { id: "ev-1", tipo: "impacto_vehiculo_vehiculo", t: 0, actores: ["veh-a", "veh-b"] },
+        { id: "reposo-veh-c", tipo: "reposo", t: 1.8, actores: ["veh-c"] },
+      ],
+      -3,
+      2,
+    );
+    expect(m.map((x) => [x.etiqueta, x.numero])).toEqual([
+      ["Impacto 1", 1],
+      ["Impacto 2", 2],
+      ["Reposo", undefined],
+    ]);
+  });
+
   it("formatea el tiempo relativo al impacto", () => {
     expect(formatTime(-1.234)).toBe("−1.23 s");
     expect(formatTime(0.001)).toBe("0.00 s");
