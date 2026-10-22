@@ -4,7 +4,7 @@ import { expect, test } from "@playwright/test";
  * «Reproducción de dictámenes» (R4): la lista de los casos de la prueba congelada que Croquis
  * reconstruye, y un caso con lo que concluyó CESVI y lo que obtuvo Croquis, en 2D y 3D.
  */
-test("@flujo /cesvi/reproduccion: un dictamen de CESVI y la reconstrucción de Croquis, lado a lado", async ({
+test("@flujo /cesvi/reproduccion: un reporte de CESVI y la reconstrucción de Croquis, lado a lado", async ({
   page,
 }) => {
   const errores: string[] = [];

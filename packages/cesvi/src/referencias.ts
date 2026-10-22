@@ -1,5 +1,5 @@
 /**
- * Los umbrales y las pruebas de choque que citan los dictámenes de CESVI (C1). Croquis no fija
+ * Los umbrales y las pruebas de choque que citan los reportes de CESVI (C1). Croquis no fija
  * ninguno: el perito elige uno de estos, con los dictámenes que lo citan, o escribe el suyo, y la
  * comparación la hace `compararConUmbral`.
  */

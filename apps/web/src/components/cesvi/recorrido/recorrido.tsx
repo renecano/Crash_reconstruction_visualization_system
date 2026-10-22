@@ -99,7 +99,7 @@ const PASOS = [
   "La reconstrucción",
   "Los daños",
   "Los números",
-  "Croquis contra el dictamen",
+  "Croquis contra el reporte de CESVI",
   "El dictamen",
 ] as const;
 
@@ -111,7 +111,7 @@ const PASOS_CORTOS = [
   "Reconstrucción",
   "Daños",
   "Números",
-  "Contra dictamen",
+  "Contra el reporte",
   "Dictamen",
 ] as const;
 
@@ -745,7 +745,8 @@ export function Recorrido({ caso, reproduccion }: { caso: CasoCesvi; reproduccio
   });
   const [resultados, setResultados] = useState<ResultadosCalculo | null>(null);
   const distanciaNum = Number(distancia.valor.replace(",", "."));
-  const fuenteDistancia = distancia.fuente === "perito" ? "medida por el perito" : "del dictamen";
+  const fuenteDistancia =
+    distancia.fuente === "perito" ? "medida por el perito" : "del reporte de CESVI";
   const sugerencia = useMemo(
     () =>
       sugerir({
@@ -930,12 +931,12 @@ export function Recorrido({ caso, reproduccion }: { caso: CasoCesvi; reproduccio
             ),
             calculos: {
               energia: resultados?.mcHenry?.resultado ?? null,
-              energia_del_dictamen_original: caso.calculos.deformacion_B.reporte.energia.valor,
+              energia_del_reporte_de_cesvi: caso.calculos.deformacion_B.reporte.energia.valor,
               velocidad_impacto: resultados?.ebsReporte?.resultado ?? null,
               desplazamiento: resultados?.v3?.resultado ?? null,
             },
             separacion_restos: { metros: distancia.valor, fuente: fuenteDistancia },
-            comparacion_con_el_dictamen: {
+            comparacion_con_el_reporte_de_cesvi: {
               resumen: contra.resumen,
               puntos: contra.filas.map((f) => ({
                 punto: f.concepto,
@@ -1037,7 +1038,7 @@ export function Recorrido({ caso, reproduccion }: { caso: CasoCesvi; reproduccio
     ...(filaEnergia && Math.abs(filaEnergia.diferenciaPct) >= 0.005
       ? [
           {
-            texto: `La energía del dictamen difiere ${Math.abs(filaEnergia.diferenciaPct).toFixed(2)} % de la calculada con los datos impresos.`,
+            texto: `La energía del reporte de CESVI difiere ${Math.abs(filaEnergia.diferenciaPct).toFixed(2)} % de la calculada con los datos impresos.`,
             paso: 5,
           },
         ]
@@ -1054,7 +1055,7 @@ export function Recorrido({ caso, reproduccion }: { caso: CasoCesvi; reproduccio
       ? [{ texto: "El punto de impacto es la ubicación ilustrativa, no el lugar real.", paso: 2 }]
       : []),
     ...(!validacion
-      ? [{ texto: "El perito no ha validado la comparación con el dictamen.", paso: 6 }]
+      ? [{ texto: "El perito no ha validado la comparación con el reporte de CESVI.", paso: 6 }]
       : []),
   ];
   const descargarWord = async () => {
@@ -1133,10 +1134,10 @@ export function Recorrido({ caso, reproduccion }: { caso: CasoCesvi; reproduccio
       : interpretacion.parametros.evidencia.distanciaRestos === null
         ? `Reconstrucción de Croquis: ${nombres.B} alcanza a ${nombres.A}; la descripción técnica aún no da la longitud de los restos.`
         : `Reconstrucción de Croquis: ${nombres.B} alcanza a ${nombres.A} y lo desplaza; los restos cubren ${interpretacion.parametros.evidencia.distanciaRestos} m.`,
-    "Los daños se acentúan a un lado: izquierdo en A, derecho en B. Así los observó el dictamen.",
+    "Los daños se acentúan a un lado: izquierdo en A, derecho en B. Así los observó el reporte de CESVI.",
     impactoKmh !== null && desplazamientoKmh !== null
       ? `${impactoKmh.toFixed(2)} km/h por los daños y ${desplazamientoKmh.toFixed(2)} km/h por el desplazamiento: ${resultados?.comparacion?.significativa ? "difieren" : "no difieren"} de forma significativa.`
-      : "Los números del dictamen, calculados con el método de CESVI.",
+      : "Los números del reporte, calculados con el método de CESVI.",
     "Lo que concluyó CESVI contra lo que obtuvo Croquis, punto por punto. El perito concluye.",
     "El dictamen con la estructura de CESVI: revísalo, fírmalo y descárgalo.",
   ][paso]!;
@@ -1610,7 +1611,7 @@ export function Recorrido({ caso, reproduccion }: { caso: CasoCesvi; reproduccio
                 {!versiones && ilustrativa ? (
                   <div className="vidrio absolute bottom-4 left-4 flex max-w-sm flex-col gap-2 p-4">
                     <p className="t-nota">
-                      Km {caso.lugar.kilometro}: el dictamen no da coordenadas. Ubicación
+                      Km {caso.lugar.kilometro}: el reporte de CESVI no da coordenadas. Ubicación
                       ilustrativa sobre la carretera federal 15 (no es el lugar real).
                     </p>
                     <button
@@ -1684,11 +1685,11 @@ export function Recorrido({ caso, reproduccion }: { caso: CasoCesvi; reproduccio
                 el texto, el dato se descarta.
               </p>
               <p>
-                La lectura usa el vocabulario de los dictámenes de CESVI: un glosario de{" "}
+                La lectura usa el vocabulario de los reportes de CESVI: un glosario de{" "}
                 {Object.values(GLOSARIO.glosario).flat().length} términos, con en cuántos de los{" "}
-                {GLOSARIO.dictamenes} dictámenes aparece cada uno (modalidad, zona de contacto,
-                acentuación y vértice, dirección de la fuerza, sentido y carril, maniobras, restos y
-                huellas, posiciones y vía).
+                {GLOSARIO.dictamenes} reportes de CESVI aparece cada uno (modalidad, zona de
+                contacto, acentuación y vértice, dirección de la fuerza, sentido y carril,
+                maniobras, restos y huellas, posiciones y vía).
               </p>
               <p className="t-nota">
                 Con Claude si hay llave y tope de gasto; si no, con reglas sobre el mismo glosario.
@@ -1712,8 +1713,8 @@ export function Recorrido({ caso, reproduccion }: { caso: CasoCesvi; reproduccio
                 </p>
               ) : null}
               <p className="t-nota text-texto-2">
-                El dictamen no da coordenadas del km {caso.lugar.kilometro} y OpenStreetMap no tiene
-                marcas de kilómetro en el tramo: el perito marca el punto.
+                El reporte de CESVI no da coordenadas del km {caso.lugar.kilometro} y OpenStreetMap
+                no tiene marcas de kilómetro en el tramo: el perito marca el punto.
               </p>
             </section>
           ) : null}
@@ -1801,7 +1802,7 @@ export function Recorrido({ caso, reproduccion }: { caso: CasoCesvi; reproduccio
                 ))}
                 <li>
                   Medidas de los vehículos: las típicas de la clase pickup ({MEDIDAS_PICKUP.largo} ×{" "}
-                  {MEDIDAS_PICKUP.ancho} m); el dictamen no las da.
+                  {MEDIDAS_PICKUP.ancho} m); el reporte de CESVI no las da.
                 </li>
               </ul>
             </section>

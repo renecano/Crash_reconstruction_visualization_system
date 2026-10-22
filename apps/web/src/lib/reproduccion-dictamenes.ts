@@ -1,5 +1,5 @@
 /**
- * Los datos de la página «Reproducción de dictámenes» (R4, ADR 0067): los casos de la prueba
+ * Los datos de la página «Reproducción de reportes» (R4, ADR 0067): los casos de la prueba
  * congelada que Croquis reconstruye, con lo que concluyó CESVI, la escena que Croquis leyó de la
  * narración sin conclusiones y la comparación. Los escribe
  * `eval/cesvi_r4_reproduccion.mts medir prueba` en `data/cesvi/r4/pagina.json`; solo se leen en el
@@ -63,4 +63,4 @@ export const CARA: Record<string, string> = {
 };
 
 /** El nombre corto de un caso: los últimos caracteres de su id del corpus. */
-export const nombreCaso = (id: string) => `Dictamen ${id.replace("cesvi-", "").slice(0, 6)}`;
+export const nombreCaso = (id: string) => `Reporte ${id.replace("cesvi-", "").slice(0, 6)}`;

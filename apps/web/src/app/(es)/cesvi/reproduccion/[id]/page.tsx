@@ -18,7 +18,7 @@ export async function generateMetadata({
 }): Promise<Metadata> {
   const { id } = await params;
   return {
-    title: `${nombreCaso(id)} · Reproducción de dictámenes`,
+    title: `${nombreCaso(id)} · Reproducción de reportes`,
     robots: { index: false, follow: false },
   };
 }

@@ -94,7 +94,8 @@ export function compararVersiones(e: EntradaComparacion): Comparacion {
           : mismas(esperadas, reales)
             ? "coincide"
             : "no_coincide",
-      fuente: "Observación de daños del dictamen contra los que dejaría la maniobra declarada",
+      fuente:
+        "Observación de daños del reporte de CESVI contra los que dejaría la maniobra declarada",
     });
   }
   const v = e.velocidades;

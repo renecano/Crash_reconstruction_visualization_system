@@ -1,7 +1,7 @@
 /**
  * La lectura de un texto del expediente con Claude (ADR 0055): la descripción técnica del perito o
  * la versión declarada de un conductor, en la estructura de `hecho-lectura.ts`, con el glosario de
- * los dictámenes de CESVI en el prompt. Solo servidor: usa la llave de la API y el tope de gasto.
+ * los reportes de CESVI en el prompt. Solo servidor: usa la llave de la API y el tope de gasto.
  * Croquis valida la lectura contra el texto al volver (`validarLectura`).
  */
 import Anthropic from "@anthropic-ai/sdk";

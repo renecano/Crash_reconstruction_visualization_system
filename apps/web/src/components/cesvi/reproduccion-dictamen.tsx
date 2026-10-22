@@ -79,12 +79,12 @@ export function ReproduccionDictamen({ caso }: { caso: CasoReproduccion }) {
       <div className="mx-auto flex max-w-[1200px] flex-col gap-8" data-testid="reproduccion-caso">
         <header className="flex flex-col gap-3">
           <Link href="/cesvi/reproduccion" className="t-nota underline underline-offset-2">
-            ← Reproducción de dictámenes
+            ← Reproducción de reportes
           </Link>
           <h1 className="t-titulo">{nombreCaso(caso.id)}</h1>
           <details className="tarjeta p-5">
             <summary className="t-interfaz cursor-pointer font-medium">
-              La narración que recibió Croquis (sin las conclusiones del dictamen)
+              La narración que recibió Croquis (sin las conclusiones del reporte)
             </summary>
             <p className="t-interfaz mt-3 whitespace-pre-line text-texto-2">{caso.narracion}</p>
           </details>
@@ -109,7 +109,7 @@ export function ReproduccionDictamen({ caso }: { caso: CasoReproduccion }) {
                   ))}
                 </ul>
               ) : (
-                <p className="t-nota text-texto-3">El dictamen no las concluye.</p>
+                <p className="t-nota text-texto-3">El reporte no las concluye.</p>
               )}
             </div>
             <div>
@@ -127,7 +127,7 @@ export function ReproduccionDictamen({ caso }: { caso: CasoReproduccion }) {
                     ))}
                 </ol>
               ) : (
-                <p className="t-nota text-texto-3">El dictamen no la concluye.</p>
+                <p className="t-nota text-texto-3">El reporte no la concluye.</p>
               )}
             </div>
             {c.velocidades.length ? (

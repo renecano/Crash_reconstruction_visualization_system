@@ -1,5 +1,5 @@
 /**
- * «Reproducción del dictamen»: cada número del reporte junto al de Croquis, con la diferencia
+ * «Reproducción del reporte»: cada número del reporte junto al de Croquis, con la diferencia
  * absoluta y en porcentaje; la discrepancia de la energía, explicada; las preguntas para CESVI y la
  * segunda opinión de Croquis, aparte (docs/cesvi/PROTOTIPO.md, ADR 0048).
  */
@@ -39,14 +39,14 @@ export function Reproduccion({ caso }: { caso: CasoCesvi }) {
     <section aria-labelledby="reproduccion" className="flex flex-col gap-8">
       <div className="flex flex-col gap-2">
         <h2 id="reproduccion" className="t-titulo">
-          Reproducción del dictamen
+          Reproducción del reporte
         </h2>
         <p className="t-cuerpo max-w-[72ch] text-texto-2">
           Cada número del reporte junto al que calcula Croquis con el mismo método y los mismos
           datos. Nada se ajusta para que cuadre.
         </p>
       </div>
-      <Desplazable etiqueta="Tabla de reproducción del dictamen">
+      <Desplazable etiqueta="Tabla de reproducción del reporte">
         <table
           className="w-full min-w-[48rem] border-collapse text-left"
           data-testid="reproduccion"
@@ -91,7 +91,7 @@ export function Reproduccion({ caso }: { caso: CasoCesvi }) {
           Por qué la energía difiere
         </h3>
         <p className="t-cuerpo max-w-[72ch]">
-          Con la fórmula de 4 medidas que imprime el dictamen y sus propios datos, la energía es{" "}
+          Con la fórmula de 4 medidas que imprime el reporte y sus propios datos, la energía es{" "}
           <span className="cifras">{d.energiaDatosImpresos.toFixed(3)} kJ</span>, no{" "}
           <span className="cifras">{d.energiaReporte}</span> (
           <span className="cifras">{signo(d.diferenciaPct, 2)} %</span>). El paso de energía a
@@ -147,11 +147,11 @@ export function Reproduccion({ caso }: { caso: CasoCesvi }) {
         <p className="t-cuerpo max-w-[72ch]">
           La misma deformación con la rigidez que Croquis midió para pickups en{" "}
           <span className="cifras">{segunda.pruebas}</span> pruebas de choque frontales de NHTSA, en
-          lugar de los coeficientes del dictamen: A ={" "}
+          lugar de los coeficientes del reporte: A ={" "}
           <span className="cifras">{(segunda.A / 1000).toFixed(1)} kN/m</span> y B ={" "}
           <span className="cifras">{(segunda.B / 1000).toFixed(1)} kN/m²</span> (mediana), contra{" "}
           <span className="cifras">{deformacion.A.valor}</span> y{" "}
-          <span className="cifras">{deformacion.B.valor}</span> del dictamen.
+          <span className="cifras">{deformacion.B.valor}</span> del reporte.
         </p>
         <p className="t-interfaz" data-testid="segunda-opinion">
           Energía de <span className="cifras">{(segunda.energiaJ / 1000).toFixed(1)} kJ</span> y
@@ -169,7 +169,7 @@ export function Reproduccion({ caso }: { caso: CasoCesvi }) {
         <p className="t-nota max-w-[72ch] text-texto-2">
           La diferencia viene de los coeficientes de rigidez, no del método: las pruebas de NHTSA
           son de vehículos de Estados Unidos contra una barrera rígida, y no se sabe de dónde salen
-          los del dictamen (ver las preguntas). Es una referencia para el perito, no una corrección.
+          los del reporte (ver las preguntas). Es una referencia para el perito, no una corrección.
         </p>
       </section>
     </section>

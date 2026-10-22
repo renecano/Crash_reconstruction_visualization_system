@@ -105,8 +105,8 @@ export function proponerVersiones(p: ParametrosVersiones): Record<ClaveVersion, 
     },
     restos: { inicio: x, fin: finRestos, fuente: fr },
     supuestos: [
-      "El dictamen no da las posiciones iniciales: A se dibuja en el impacto y B dos largos atrás, para que el perito las marque.",
-      "El dictamen no da la posición final de B: se dibuja en el impacto.",
+      "El reporte de CESVI no da las posiciones iniciales: A se dibuja en el impacto y B dos largos atrás, para que el perito las marque.",
+      "El reporte de CESVI no da la posición final de B: se dibuja en el impacto.",
     ],
   };
 

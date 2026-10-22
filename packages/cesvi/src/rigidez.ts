@@ -42,7 +42,7 @@ export function rigidezPorVehiculo(e: EntradaRigidez): Rigidez {
       A: e.dictamen.A,
       B: e.dictamen.B,
       fuente: "dictamen",
-      nota: "La que escribe el dictamen.",
+      nota: "La que escribe el reporte de CESVI.",
       ...(e.dictamen.cita ? { cita: e.dictamen.cita } : {}),
     };
   }

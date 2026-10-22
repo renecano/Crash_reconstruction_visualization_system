@@ -184,7 +184,7 @@ function CampoNumero({
 
 const FUENTE_POSE: Record<string, string> = {
   perito: "perito",
-  dictamen: "dictamen",
+  dictamen: "reporte de CESVI",
   croquis: "supuesto",
 };
 

@@ -206,7 +206,7 @@ export function Calculos({
             });
           }}
         >
-          Volver a los datos del dictamen
+          Volver a los datos del reporte
         </button>
       </div>
 
@@ -259,7 +259,7 @@ export function Calculos({
           </div>
         </fieldset>
         <p className="t-nota max-w-[72ch] text-texto-2">
-          El dictamen imprime A y B en «N/m» y la energía en «Julios», pero divide entre la masa en
+          El reporte imprime A y B en «N/m» y la energía en «Julios», pero divide entre la masa en
           toneladas: eso solo es consistente con A en kN/m, B en kN/m² y la energía en kJ, y así se
           muestran aquí. La de 6 medidas va en su forma de libro, sin las erratas de la fórmula
           impresa (ADR 0048).
@@ -290,7 +290,7 @@ export function Calculos({
         </h3>
         <div className="flex flex-wrap gap-4">
           <Campo
-            etiqueta={`D, separación de los restos (${distancia.fuente === "perito" ? "medida por el perito" : "del dictamen"})`}
+            etiqueta={`D, separación de los restos (${distancia.fuente === "perito" ? "medida por el perito" : "del reporte"})`}
             unidad="m"
             valor={distancia.valor}
             onCambio={(v) => onDistancia({ valor: v, fuente: "perito" })}
@@ -321,8 +321,8 @@ export function Calculos({
             testid="umbral"
           />
           <p className="t-nota max-w-[56ch] text-texto-2">
-            El dictamen no dice qué criterio usa. El umbral lo fija el perito; {UMBRAL_INICIAL_PCT}{" "}
-            % es solo el valor con que abre la página. La diferencia se mide respecto a la mayor de
+            El reporte no dice qué criterio usa. El umbral lo fija el perito; {UMBRAL_INICIAL_PCT} %
+            es solo el valor con que abre la página. La diferencia se mide respecto a la mayor de
             las dos velocidades.
           </p>
         </div>

@@ -2,6 +2,7 @@ import {
   caso,
   compararVelocidades,
   criteriosVacios,
+  croquisContraDictamen,
   formulaDesplazamiento,
   formulaEbs,
   formulaMcHenry,
@@ -16,6 +17,7 @@ import {
   LEYENDA_DICTAMEN,
   type DatosDictamen,
 } from "./dictamen-cesvi";
+import { terminosProhibidos } from "./terminologia";
 
 /** Todo el texto de un contenido de pdfmake, en orden. */
 function textOf(node: unknown): string {
@@ -40,7 +42,7 @@ const v3 = formulaDesplazamiento(0.9, 9.8, 15.89);
 const sugerencia = sugerir({
   comparacion: compararVelocidades(ebsReporte.calculo.kmh, v3.calculo.kmh, 10),
   distanciaRestos: 15.89,
-  fuenteDistancia: "del dictamen",
+  fuenteDistancia: "del reporte de CESVI",
   zonasA: zonas.A,
   zonasB: zonas.B,
 });
@@ -59,7 +61,7 @@ function datos(extra: Partial<DatosDictamen> = {}): DatosDictamen {
       v3,
       comparacionTexto: "Las velocidades difieren 4.56 %: no significativa con el umbral de 10 %.",
     },
-    distanciaRestos: { valor: 15.89, fuente: "del dictamen" },
+    distanciaRestos: { valor: 15.89, fuente: "del reporte de CESVI" },
     reproduccion: reproducir(c).filas,
     croquis: {
       imagen: "data:image/png;base64,AAAA",
@@ -124,9 +126,34 @@ describe("dictamen en PDF con la estructura de CESVI", () => {
     );
     expect(validado).not.toContain("BORRADOR");
     expect(validado).toContain(
-      "El perito Perito de prueba aceptó la comparación de Croquis con el dictamen",
+      "El perito Perito de prueba aceptó la comparación de Croquis con el reporte de CESVI",
     );
     expect(validado).toContain(sugerencia.texto);
+  });
+
+  it("llama «reporte de CESVI» al documento de CESVI, nunca dictamen (docs/cesvi/glosario.md)", () => {
+    const filas = reproducir(c).filas;
+    const de = (k: string) => filas.find((f) => f.clave === k)!.croquis;
+    const t = textOf(
+      dictamenContenido(
+        datos({
+          contraDictamen: croquisContraDictamen(c, {
+            modalidad: "Alcance",
+            deformacionKmh: de("ebs_kmh_datos"),
+            restosKmh: de("v3_kmh"),
+            restosM: 15.89,
+          }),
+          validacion: {
+            decision: "aceptada",
+            conclusion: sugerencia.texto,
+            perito: "Perito de prueba",
+            fecha: "2026-10-21T10:00:00Z",
+          },
+        }),
+      ),
+    );
+    expect(t).toContain("Reconstrucción de Croquis contra el reporte de CESVI");
+    expect(terminosProhibidos(t)).toEqual([]);
   });
 
   it("sin placas en el documento y con la leyenda de responsabilidad del perito en cada página", () => {

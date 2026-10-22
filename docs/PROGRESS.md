@@ -108,6 +108,31 @@ Reglas de trabajo: `CLAUDE.md`. Especificación: `PLAN.md`.
     - **Corpus estructurado** de los 671 dictámenes con Claude (salida estructurada, caché, semilla), validado contra el esquema, con partición congelada del 30 % y etiquetas de la conclusión revisadas en una muestra.
     - **Mediciones:** las proporciones del §2 en `eval/results/cesvi_corpus.json`; desde ahí se pueden citar.
     - **Costo:** antes de correr el corpus se estima y se anota aquí. Si pasa de 30 USD, se pregunta a René.
+  - **Terminología de CESVI** (pedido de CESVI tras ver el video, 2026-10-22; rama `feat/terminologia-reporte`):
+    - **La regla:** lo que tiene CESVI es el «reporte»; el «dictamen» es lo que produce Croquis (paso 8, PDF y Word). «Declaración» sigue siendo lo que dice el conductor. Está en `docs/cesvi/glosario.md`.
+    - **Qué cambió:**
+      - **`/cesvi`:**
+        - paso 7: «Croquis contra el reporte de CESVI»; en la barra, «Contra el reporte»;
+        - «Reproducción del reporte», «Fuente: reporte de CESVI»;
+        - los avisos («el reporte de CESVI no da coordenadas…») y la validación del perito.
+      - **El resto de la aplicación:**
+        - `/cesvi/caso`: «como en un reporte de CESVI»;
+        - `/cesvi/reproduccion`: «Reproducción de reportes»;
+        - `/cesvi/importar`: ya decía reporte.
+      - **PDF y Word:** «Reproducción de los números del reporte de CESVI» y «Reconstrucción de Croquis contra el reporte de CESVI».
+      - **El prompt de las consideraciones:** pasa a `consideraciones-v3`, que no llama dictamen al reporte; su texto sale en el dictamen.
+      - **Guion del video, maquetas de `docs/cesvi/rediseno/`, `PLAN-CESVI.md` y `CLAUDE.md`:**
+        - R4 es «Croquis reproduce los reportes de CESVI»;
+        - R5 es «Cargar un reporte»;
+        - R8 es «Dictamen», porque es lo que sale de Croquis.
+      - **Lo que no cambió:** el paso 8 sigue siendo «Dictamen», y los identificadores y nombres de archivos de datos siguen igual.
+    - **Pruebas:**
+      - `apps/web/src/lib/terminologia.test.ts` falla si la interfaz, el código del PDF y el Word, el paquete `cesvi`, el guion o las maquetas dicen «dictamen de CESVI», «dictamen original», «contra el dictamen» o «reproducción del dictamen»;
+      - `dictamen-cesvi.test.ts` revisa el dictamen armado;
+      - las e2e de `/cesvi`, `/cesvi/reproduccion` y `/cesvi/importar` pasan con los textos nuevos.
+    - **Excepciones, con su razón en el glosario:**
+      - **Los prompts versionados de Claude** (`SISTEMA_*`) no se ven y cambiarlos invalidaría E-R1 y E-R4.
+      - **En «Reproducción de reportes»,** 46 de 205 narraciones (redactadas en R0 con el prompt congelado) dicen «el dictamen». Se muestran tal como las recibió Croquis.
   - **Resumen de R5 para René** (rama `feat/r5-cargar-dictamen`, ADR 0068):
     - **Qué quedó:** `/cesvi/importar` carga un reporte de CESVI en PDF, Markdown o texto.
       - **El texto se saca en el navegador:** el PDF con pdf.js; el archivo no sale del equipo.

@@ -1,5 +1,5 @@
 /**
- * El dictamen en PDF con la estructura de los dictámenes de CESVI (Hito 3, docs/cesvi/PROTOTIPO.md,
+ * El dictamen en PDF con la estructura de los reportes de CESVI (Hito 3, docs/cesvi/PROTOTIPO.md,
  * ADR 0051): título con la modalidad, objetivos, fundamentos, características de los vehículos,
  * observación de daños, lugar de los hechos con el croquis sobre el mapa, consideraciones,
  * conclusiones numeradas y validación del perito. Sin placas, VIN ni nombres del caso; el único
@@ -157,7 +157,7 @@ export const INCLUIR_POR_OMISION: IncluirDictamen = {
   notasInternas: false,
 };
 
-/** El contenido del dictamen, en el orden de los dictámenes de CESVI. */
+/** El contenido del dictamen, en el orden de los reportes de CESVI. */
 export function dictamenContenido(d: DatosDictamen): Content[] {
   const c = d.caso;
   const incluir = { ...INCLUIR_POR_OMISION, ...d.incluir };
@@ -266,7 +266,7 @@ export function dictamenContenido(d: DatosDictamen): Content[] {
           ? [
               ` Punto de impacto: ${d.croquis.punto.lat.toFixed(5)}, ${d.croquis.punto.lon.toFixed(5)}${
                 d.croquis.punto.ilustrativo
-                  ? ` (ubicación ilustrativa: el dictamen no da coordenadas del km ${c.lugar.kilometro}; no es el lugar real).`
+                  ? ` (ubicación ilustrativa: el reporte de CESVI no da coordenadas del km ${c.lugar.kilometro}; no es el lugar real).`
                   : " (marcado por el perito)."
               }`,
             ]
@@ -325,14 +325,17 @@ export function dictamenContenido(d: DatosDictamen): Content[] {
     out.push(formula(d.calculos.mcHenry, "Energía de deformación de la Tacoma"));
   if (d.calculos.ebsReporte)
     out.push(
-      formula(d.calculos.ebsReporte, "Velocidad de impacto partiendo de la energía del dictamen"),
+      formula(
+        d.calculos.ebsReporte,
+        "Velocidad de impacto partiendo de la energía del reporte de CESVI",
+      ),
     );
   if (d.calculos.ebsDatos)
     out.push(formula(d.calculos.ebsDatos, "Velocidad de impacto con la energía calculada arriba"));
   out.push(subtitulo("3. Velocidad por desplazamiento"));
   if (d.calculos.v3) out.push(formula(d.calculos.v3));
   if (d.calculos.comparacionTexto) out.push(parrafo(d.calculos.comparacionTexto));
-  out.push(subtitulo("Reproducción de los números del dictamen original"));
+  out.push(subtitulo("Reproducción de los números del reporte de CESVI"));
   out.push(
     tabla(
       ["Concepto", "Original", "Croquis", "Diferencia", "%"],
@@ -375,7 +378,7 @@ export function dictamenContenido(d: DatosDictamen): Content[] {
   out.push(titulo("Conclusiones"));
   const conclusiones = [
     d.calculos.ebsReporte
-      ? `De acuerdo con la magnitud y profundidad de los daños del vehículo B, su velocidad de impacto es de ${d.calculos.ebsReporte.calculo.kmh.toFixed(2)} km/h (partiendo de la energía del dictamen; con los datos impresos, ${d.calculos.ebsDatos ? `${d.calculos.ebsDatos.calculo.kmh.toFixed(2)} km/h` : "sin calcular"}).`
+      ? `De acuerdo con la magnitud y profundidad de los daños del vehículo B, su velocidad de impacto es de ${d.calculos.ebsReporte.calculo.kmh.toFixed(2)} km/h (partiendo de la energía del reporte de CESVI; con los datos impresos, ${d.calculos.ebsDatos ? `${d.calculos.ebsDatos.calculo.kmh.toFixed(2)} km/h` : "sin calcular"}).`
       : null,
     d.calculos.v3
       ? `De acuerdo con la separación de los restos, el vehículo A fue desplazado con una velocidad de ${d.calculos.v3.calculo.kmh.toFixed(2)} km/h.`
@@ -387,7 +390,7 @@ export function dictamenContenido(d: DatosDictamen): Content[] {
   out.push({ ol: conclusiones, margin: [0, 0, 0, 8] });
   const cd = d.contraDictamen;
   if (cd) {
-    out.push(subtitulo("Reconstrucción de Croquis contra el dictamen original"));
+    out.push(subtitulo("Reconstrucción de Croquis contra el reporte de CESVI"));
     out.push(
       tabla(
         ["Punto", "Concluyó CESVI", "Obtuvo Croquis", "Diferencia"],
@@ -408,7 +411,7 @@ export function dictamenContenido(d: DatosDictamen): Content[] {
     );
     if (cd.energia) {
       out.push({
-        text: `Diferencia de energía: con los datos impresos la energía de deformación es ${cd.energia.croquis.toFixed(3)} y el dictamen imprime ${cd.energia.dictamen.toFixed(3)} (${cd.energia.diferenciaPct >= 0 ? "+" : "−"}${Math.abs(cd.energia.diferenciaPct).toFixed(2)} %). ${cd.energia.lectura}`,
+        text: `Diferencia de energía: con los datos impresos la energía de deformación es ${cd.energia.croquis.toFixed(3)} y el reporte de CESVI imprime ${cd.energia.dictamen.toFixed(3)} (${cd.energia.diferenciaPct >= 0 ? "+" : "−"}${Math.abs(cd.energia.diferenciaPct).toFixed(2)} %). ${cd.energia.lectura}`,
         fontSize: 8,
         color: "#444444",
         margin: [0, 4, 0, 8],
@@ -436,7 +439,7 @@ export function dictamenContenido(d: DatosDictamen): Content[] {
     ];
     out.push(
       parrafo(
-        `El perito ${d.validacion.perito} ${decision} la comparación de Croquis con el dictamen el ${new Date(d.validacion.fecha).toLocaleString("es-MX", { dateStyle: "long", timeStyle: "short" })}.`,
+        `El perito ${d.validacion.perito} ${decision} la comparación de Croquis con el reporte de CESVI el ${new Date(d.validacion.fecha).toLocaleString("es-MX", { dateStyle: "long", timeStyle: "short" })}.`,
       ),
     );
   } else {

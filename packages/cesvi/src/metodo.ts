@@ -1,5 +1,5 @@
 /**
- * El método de cálculo de los dictámenes de CESVI (docs/cesvi/PROTOTIPO.md, ADR 0048): energía de
+ * El método de cálculo de los reportes de CESVI (docs/cesvi/PROTOTIPO.md, ADR 0048): energía de
  * deformación de McHenry con 2, 4 o 6 medidas, velocidad equivalente de barrera (EBS), velocidad por
  * desplazamiento y la comparación entre velocidades.
  *

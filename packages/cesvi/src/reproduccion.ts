@@ -1,5 +1,5 @@
 /**
- * La tabla «Reproducción del dictamen»: cada número del reporte junto al que calcula Croquis con el
+ * La tabla «Reproducción del reporte»: cada número del reporte junto al que calcula Croquis con el
  * mismo método, con la diferencia absoluta y en porcentaje. Nada se ajusta para que cuadre: la
  * energía de la Tacoma con los datos impresos no da la del reporte, y la tabla lo muestra (ADR 0048).
  */

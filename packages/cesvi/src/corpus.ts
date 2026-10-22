@@ -1,5 +1,5 @@
 /**
- * El corpus estructurado de los dictámenes de CESVI (C0, docs/cesvi/PLAN-CESVI.md §3): cada dictamen
+ * El corpus estructurado de los reportes de CESVI (C0, docs/cesvi/PLAN-CESVI.md §3): cada dictamen
  * se lee con Claude en una lista plana de datos (`ESQUEMA_CORPUS`) y Croquis la convierte en un
  * expediente del contrato v2 (`expedienteDeSalida`).
  *

@@ -1,5 +1,5 @@
 /**
- * `/cesvi/reproduccion`: «Reproducción de dictámenes» (R4, ADR 0067). Los dictámenes de la prueba
+ * `/cesvi/reproduccion`: «Reproducción de reportes» (R4, ADR 0067). Los reportes de la prueba
  * congelada que Croquis reconstruye: lo que concluyó CESVI y lo que obtuvo Croquis de la narración
  * sin conclusiones, con lo que coincide y lo que no. Pública, como `/cesvi`.
  */
@@ -8,7 +8,7 @@ import Link from "next/link";
 import { CARA, MODALIDAD, nombreCaso, PAGINA } from "@/lib/reproduccion-dictamenes";
 
 export const metadata: Metadata = {
-  title: "Reproducción de dictámenes · Croquis para CESVI",
+  title: "Reproducción de reportes · Croquis para CESVI",
   description: "Lo que concluyó CESVI y lo que reconstruyó Croquis, lado a lado.",
   robots: { index: false, follow: false },
 };
@@ -31,12 +31,12 @@ export default function ReproduccionPage() {
     <main className="min-h-screen bg-fondo px-4 py-10 text-texto md:px-8" data-tema="claro">
       <div className="mx-auto flex max-w-[1200px] flex-col gap-8">
         <header className="flex flex-col gap-3">
-          <p className="t-rotulo">Croquis para CESVI · reproducción de dictámenes</p>
+          <p className="t-rotulo">Croquis para CESVI · reproducción de reportes</p>
           <h1 className="t-titulo">Esto lo analizaron ustedes; esto lo reconstruyó Croquis</h1>
           <p className="t-interfaz max-w-[70ch] text-texto-2">
-            Croquis recibió solo la narración de cada dictamen, sin sus conclusiones. Leyó la
-            escena, la reconstruyó y aquí se compara con lo que concluyó CESVI. Son dictámenes de la
-            prueba congelada, que no se usaron para ajustar las reglas.
+            Croquis recibió solo la narración de cada reporte de CESVI, sin sus conclusiones. Leyó
+            la escena, la reconstruyó y aquí se compara con lo que concluyó CESVI. Son dictámenes de
+            la prueba congelada, que no se usaron para ajustar las reglas.
           </p>
         </header>
 
@@ -74,7 +74,7 @@ export default function ReproduccionPage() {
           </div>
         </section>
         <p className="t-nota text-texto-3">
-          {PAGINA.dictamenes} dictámenes de la prueba; {PAGINA.casos.length} se reconstruyen y están
+          {PAGINA.dictamenes} reportes de la prueba; {PAGINA.casos.length} se reconstruyen y están
           abajo. Medición: <code>eval/results/cesvi_r4_reproduccion_prueba.json</code> (
           {PAGINA.fecha.slice(0, 10)}).
         </p>
@@ -83,7 +83,7 @@ export default function ReproduccionPage() {
           <table className="w-full border-collapse text-sm">
             <thead>
               <tr className="text-left text-xs text-texto-3">
-                <th className="px-4 py-3 font-medium">Dictamen</th>
+                <th className="px-4 py-3 font-medium">Reporte</th>
                 <th className="px-4 py-3 font-medium">Modalidad de CESVI</th>
                 <th className="px-4 py-3 font-medium">Croquis</th>
                 <th className="px-4 py-3 font-medium">Zonas de contacto</th>

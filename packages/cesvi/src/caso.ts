@@ -1,5 +1,5 @@
 /**
- * Un dictamen de CESVI como datos (`data/cesvi/casos/<id>.json`), sin placas, VIN ni nombres de
+ * Un reporte de CESVI como datos (`data/cesvi/casos/<id>.json`), sin placas, VIN ni nombres de
  * personas (docs/cesvi/PROTOTIPO.md). Cada valor trae su cita literal del dictamen; `caso.test.ts`
  * las busca en el lote original cuando está en la máquina (el lote no se versiona).
  */
