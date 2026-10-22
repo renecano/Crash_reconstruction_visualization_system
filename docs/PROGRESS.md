@@ -72,11 +72,40 @@ Reglas de trabajo: `CLAUDE.md`. Especificación: `PLAN.md`.
     - **C0:** pasa a R0. Falta lo nuevo: la descripción de los hechos sin conclusiones, con su revisión de fuga, y lo que concluyó CESVI, estructurado.
     - **C1:** es el módulo de verificación CESVI de R2, con su reproducción (E-C1) ya corrida.
     - **C2–C8:** se reacomodan en R1–R9.
-  - **Fase actual: R2** (reconstrucción física desde la evidencia del perito). R0 y R1 quedaron cerradas el 2026-10-21. C0 y C1 de la v1 quedaron cerradas el 2026-10-21. El plan de C0 fue:
+  - **Fase actual: R3** (3D de la reconstrucción). R0, R1 y R2 quedaron cerradas el 2026-10-21. C0 y C1 de la v1 quedaron cerradas el 2026-10-21. El plan de C0 fue:
     - **Contrato v2:** `escena.schema.json` ampliado, con migración desde v1.3, Zod y Pydantic generados y un validador semántico (N vehículos, M impactos, versiones).
     - **Corpus estructurado** de los 671 dictámenes con Claude (salida estructurada, caché, semilla), validado contra el esquema, con partición congelada del 30 % y etiquetas de la conclusión revisadas en una muestra.
     - **Mediciones:** las proporciones del §2 en `eval/results/cesvi_corpus.json`; desde ahí se pueden citar.
     - **Costo:** antes de correr el corpus se estima y se anota aquí. Si pasa de 30 USD, se pregunta a René.
+  - **Resumen de R2 para René** (rama `feat/r2-reconstruccion`, ADR 0062):
+    - **Qué quedó:**
+      - **«Caso nuevo» reconstruye con física:** el solver de producción corre en el navegador sobre la escena del perito.
+      - **Velocidades:** da cada velocidad con sus percentiles y la evidencia que la fija (p. ej. «posición final de V1»). Sin evidencia no inventa nada: lo dice y pide la evidencia que falta.
+      - **Límites en pantalla:** por ejemplo, con más de un impacto calcula el primero, porque las carambolas son R6.
+      - **Verificación CESVI al lado:** McHenry y EBS con la fórmula sustituida cuando hay medidas, masa y rigidez. Si falta un dato, dice cuál.
+      - **El solver no cambió:** la paridad Python/TS sigue igual.
+    - **Números medidos** (`eval/results/cesvi_r2_reconstruccion.json`):
+      - 11 de 11 escenas (las 10 de R1 y el caso de AXA) válidas y reconstruidas con incertidumbre; mediana de 425 ms.
+      - Ninguna fija velocidades sin posiciones del perito, como debe ser. Con posiciones, la prueba unitaria y la e2e las fijan con percentiles.
+      - La verificación con el caso de AXA da 225.454 kJ y 63.90 km/h, lo mismo que C1.
+    - **Cómo probarlo:**
+      1. En `/cesvi/caso`, narración de ejemplo, «Leer la narración».
+      2. Acercar el mapa y colocar a V1 y V2 en el impacto y al final, con su rumbo.
+      3. «Reconstruir».
+      - Pruebas: `pnpm --filter @croquis/cesvi test` y la e2e `@flujo` de `/cesvi/caso`.
+    - **Qué necesito de René:** nada nuevo.
+    - **Siguiente:** R3, el 3D de la reconstrucción.
+  - **Lo que se planeó para R2:**
+    - **Adaptador del expediente (contrato 2.0.0) a la escena del solver (v1):** `buildSpec` da la base válida con sus valores por omisión marcados; encima va la evidencia del perito como declarada:
+      - posiciones de impacto y finales en metros desde el punto de impacto;
+      - masas;
+      - medidas C1–C6 y L como daño declarado;
+      - huellas de frenado o derrape.
+    - **Reconstrucción:** la inversión existente (velocidades con percentiles y qué fija la evidencia), Monte Carlo y trayectorias. El solver no se toca, así que la paridad Python/TS no se arriesga.
+    - **Límites en pantalla:** lo que el solver no cubra (más de un impacto antes de R6, por ejemplo) se dice, no se simula a medias.
+    - **«Caso nuevo»** (`/cesvi/caso`) muestra la reconstrucción con rangos y, al lado, la verificación CESVI (C1) con la fórmula sustituida cuando hay medidas.
+    - **E-R2:** las 10 escenas de R1 (con lo que fija su evidencia) y el caso de AXA como expediente, contra sus números impresos.
+    - **Riesgo:** sin posiciones ni medidas del perito, la evidencia no fija las velocidades; se dice así, sin inventar.
   - **Resumen de R1 para René** (rama `feat/r1-escena`, ADR 0061):
     - **Qué quedó:**
       - **«Caso nuevo» en `/cesvi/caso`:**
@@ -445,6 +474,7 @@ Lo que se pospone por el trabajo con CESVI no se borra: queda aquí para despué
 - **El resto del sitio con los tokens del rediseño (ADR 0054):** portada, historia, visor 3D y «Cuenta qué pasó» heredan la paleta y Geist sin rediseñarse; la portada y la historia están en pausa. Cuando se reactiven, hay que revisarlas con el sistema nuevo (por ejemplo, los tamaños del lema estaban medidos con Anybody).
 - **Lighthouse, axe y E-series como requisito:** `eval/f11_portada.mjs` y las demás evaluaciones siguen en el repo; se corren cuando René lo pida.
 - **En pausa:** la portada de lanzamiento y la historia (el visor 3D se reactiva con el plan v2, R3) (de F11a solo se usan tokens, marca y componentes); E6 en baja y media después de F11a; F11b (E9 con personas).
+- **«Caso nuevo» (R1 y R2):** buscar el lugar en el mapa (hoy el perito navega a mano hasta el punto), y generalizar el recorrido de ocho pasos a N vehículos para que use la misma escena.
 - **Del prototipo de CESVI:** el mapa con mosaicos propios (privacidad completa), la importación automática de cualquier dictamen, interpenetración, impactos múltiples y generalidad del método; autenticación con cuentas para cuando los peritos usen sus propios casos (hoy el acceso es con usuario y clave, ADR 0049).
 
 ### Bloqueado — necesita a René

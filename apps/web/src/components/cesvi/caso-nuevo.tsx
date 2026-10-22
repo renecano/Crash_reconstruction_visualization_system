@@ -22,6 +22,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { downloadBytes } from "@/lib/download";
 import ejemplo from "../../../../../data/cesvi/grabaciones/escenas/cesvi-e814f085db.json";
 import { ESTILO_MAPA_CLARO, marcador } from "./mapa-comun";
+import { ReconstruccionCaso } from "./reconstruccion-caso";
 
 type Id = Expediente["vehiculos"][number]["id"];
 type Fase = "impacto" | "final";
@@ -412,8 +413,9 @@ export function CasoNuevo() {
               </div>
               <MapaEscena posiciones={posiciones} onClic={colocar} />
               <p className="t-nota" data-testid="colocados">
-                {posiciones.length} posición{posiciones.length === 1 ? "" : "es"} colocada
-                {posiciones.length === 1 ? "" : "s"} por el perito.
+                {posiciones.length === 1
+                  ? "1 posición colocada por el perito."
+                  : `${posiciones.length} posiciones colocadas por el perito.`}
               </p>
               <button
                 type="button"
@@ -432,6 +434,8 @@ export function CasoNuevo() {
                 Descargar la escena (JSON)
               </button>
             </section>
+
+            <ReconstruccionCaso expediente={expediente} />
           </>
         ) : null}
         <p className="t-nota text-texto-3">Reconstrucción de apoyo · el dictamen es del perito.</p>

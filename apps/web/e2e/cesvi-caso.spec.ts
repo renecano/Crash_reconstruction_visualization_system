@@ -54,17 +54,38 @@ test("@flujo /cesvi/caso: de la narración del perito al mapa y a la escena", as
   await page.getByTestId("pregunta-masa-V2").getByRole("button", { name: "Usar" }).click();
   await expect(page.getByTestId("vehiculos")).toContainText("1450 kg");
 
-  // 3. El mapa: V1 en su posición final, con su rumbo; queda con fuente perito.
-  await page.getByTestId("herramienta-escena").selectOption("V1:final");
-  await page.getByTestId("rumbo-escena").fill("315");
+  // 3. El mapa: primero se acerca (doble clic; sin rumbo, un clic no coloca nada) para que las
+  // posiciones queden a metros. Luego V1 y V2 en el impacto y en su posición final, con su rumbo.
   const mapa = page.getByTestId("mapa-escena");
   await expect(mapa.locator("canvas")).toBeVisible({ timeout: 20_000 });
-  await mapa.click({ position: { x: 200, y: 150 } });
+  for (let k = 0; k < 7; k++) {
+    await mapa.dblclick({ position: { x: 300, y: 200 } });
+    await page.waitForTimeout(400);
+  }
+  await expect(page.getByTestId("colocados")).toHaveText("0 posiciones colocadas por el perito.");
+  const colocar = async (herramienta: string, rumbo: string, x: number, y: number) => {
+    await page.getByTestId("herramienta-escena").selectOption(herramienta);
+    await page.getByTestId("rumbo-escena").fill(rumbo);
+    await mapa.click({ position: { x, y } });
+  };
+  await colocar("V1:final", "315", 330, 170);
   await expect(page.getByTestId("colocados")).toHaveText("1 posición colocada por el perito.");
   await expect(page.getByTestId("pregunta-final-V1")).toHaveCount(0);
+  await colocar("V1:impacto", "0", 300, 205);
+  await colocar("V2:impacto", "90", 305, 200);
+  await colocar("V2:final", "80", 345, 185);
+  await expect(page.getByTestId("colocados")).toHaveText("4 posiciones colocadas por el perito.");
   await expect(page.getByTestId("validez")).toHaveText("La escena es válida contra el contrato.");
 
-  // 4. La escena, descargada: contrato 2.0.0 con lo que marcó el perito.
+  // 4. La reconstrucción física: las posiciones del perito fijan las velocidades, con percentiles,
+  // y al lado la verificación CESVI dice qué le falta.
+  await page.getByTestId("reconstruir").click();
+  await expect(page.getByTestId("velocidades")).toBeVisible({ timeout: 60_000 });
+  await expect(page.getByTestId("velocidad-V1")).toContainText(/\d+\.\d \(/);
+  await expect(page.getByTestId("evidencia-usada")).toContainText("posición final de V1");
+  await expect(page.getByTestId("verificacion-cesvi")).toContainText("Falta:");
+
+  // 5. La escena, descargada: contrato 2.0.0 con lo que marcó el perito.
   const descarga = page.waitForEvent("download");
   await page.getByTestId("descargar-escena").click();
   const archivo = await descarga;
@@ -78,8 +99,9 @@ test("@flujo /cesvi/caso: de la narración del perito al mapa y a la escena", as
     };
   };
   expect(d.expediente.impactos[0]!.fuente).toBe("perito");
-  expect(d.expediente.versiones[0]!.posiciones).toEqual([
-    expect.objectContaining({ vehiculo: "V1", fase: "final", fuente: "perito", rumbo: 315 }),
-  ]);
+  const posiciones = d.expediente.versiones[0]!.posiciones;
+  expect(posiciones).toHaveLength(4);
+  expect(posiciones.every((p) => p.fuente === "perito")).toBe(true);
+  expect(posiciones.find((p) => p.vehiculo === "V1" && p.fase === "final")!.rumbo).toBe(315);
   expect(errores).toEqual([]);
 });
