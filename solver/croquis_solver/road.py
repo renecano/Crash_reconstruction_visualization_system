@@ -15,10 +15,10 @@ concéntrico al eje de la vía, en el sentido que coincide con su rumbo declarad
 
 from __future__ import annotations
 
-import math
 from dataclasses import dataclass
 from typing import Any
 
+from croquis_solver import dmath
 from croquis_solver.preimpact import CurvedLanePath, Path, StraightPath
 
 DEFAULT_CURVE_RADIUS_M = 25.0
@@ -88,13 +88,13 @@ def lane_following_path(
         return None
     x, y, yaw = pose
     cx, cy = axis.center
-    r0 = math.hypot(x - cx, y - cy)
+    r0 = dmath.hypot(x - cx, y - cy)
     if r0 < 1.0:
         return None
-    phi0 = math.atan2(y - cy, x - cx)
+    phi0 = dmath.atan2(y - cy, x - cx)
     # Tangente antihoraria en la pose: perpendicular al radio, girada +90°.
-    ccw_tangent = (-math.sin(phi0), math.cos(phi0))
-    ccw = math.cos(yaw) * ccw_tangent[0] + math.sin(yaw) * ccw_tangent[1] >= 0
+    ccw_tangent = (-dmath.sin(phi0), dmath.cos(phi0))
+    ccw = dmath.cos(yaw) * ccw_tangent[0] + dmath.sin(yaw) * ccw_tangent[1] >= 0
     if axis.kind == "anillo":
         ccw = True
     return CurvedLanePath(

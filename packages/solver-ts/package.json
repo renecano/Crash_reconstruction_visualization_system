@@ -11,8 +11,8 @@
     "lint": "eslint .",
     "typecheck": "tsc -p tsconfig.json",
     "test": "vitest run",
-    "generate": "tsx scripts/generate-data.ts",
-    "generate:check": "tsx scripts/generate-data.ts --check",
+    "generate": "tsx scripts/generate-data.ts && tsx scripts/dmath-fixture.ts",
+    "generate:check": "tsx scripts/generate-data.ts --check && tsx scripts/dmath-fixture.ts --check",
     "e7": "tsx scripts/e7-parity.ts"
   },
   "devDependencies": {

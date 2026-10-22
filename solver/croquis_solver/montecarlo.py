@@ -21,11 +21,10 @@ Los porcentajes son supuestos de este módulo y se documentan en docs/physics.md
 from __future__ import annotations
 
 import copy
-import random
 from dataclasses import dataclass, field
 from typing import Any
 
-from croquis_solver import friction
+from croquis_solver import dmath, friction
 from croquis_solver.inversion import Distribution, distribution
 
 JsonObj = dict[str, Any]
@@ -186,7 +185,7 @@ def monte_carlo(
     from croquis_solver.reconstruct import reconstruct
 
     seed = int(spec["meta"]["semilla"]) if seed is None else seed
-    rng = random.Random(seed)
+    rng = dmath.Random(seed)
     campos = ranges(spec)
     acc_v: dict[str, dict[str, list[float]]] = {}
     acc_p: dict[str, dict[str, list[float]]] = {}

@@ -34,7 +34,7 @@ from functools import cache
 from pathlib import Path
 from typing import Any
 
-from croquis_solver import friction, linalg
+from croquis_solver import dmath, friction, linalg
 from croquis_solver.crash3 import crush_energy, delta_v_barrier, delta_v_pair, uniform_crush_energy
 from croquis_solver.lsq import least_squares_soft_l1
 from croquis_solver.stiffness import sample_stiffness, stiffness_for, zona_from_cdc_side
@@ -149,7 +149,7 @@ def delta_v_from_damage(
     if other is None and not rigid:
         msg = "Entre dos vehículos hace falta el daño del otro (o usa rigid=True)"
         raise ValueError(msg)
-    rng = random.Random(seed)
+    rng = dmath.Random(seed)
     own_k = sample_stiffness(stiffness_for(own.clase, zona_from_cdc_side(own.plano)), rng, n)
     oth_k = (
         sample_stiffness(stiffness_for(other.clase, zona_from_cdc_side(other.plano)), rng, n)
@@ -167,7 +167,7 @@ def delta_v_from_damage(
         else:
             dv = delta_v_barrier(e1, m1, rng.uniform(*RESTITUTION_RIGID))
         if s_model > 0:
-            dv *= math.exp(rng.gauss(0.0, s_model))
+            dv *= dmath.exp(rng.gauss(0.0, s_model))
         out.append(dv * KMH)
     return distribution(out)
 
@@ -817,7 +817,7 @@ def invert(
         # Lo que la evidencia no fija vuelve a su valor inicial y se reajusta lo demás.
         start = {p.name: (best.values[p.name] if p.name in free else p.start) for p in params}
         best = fit_evidence(spec, ev, dt=dt, start=start, free=free)
-    rng = random.Random(seed)
+    rng = dmath.Random(seed)
     fits: list[Fit] = []
     impacts: dict[str, list[float]] = {}
     free_params = [p for p in params if p.name in free]

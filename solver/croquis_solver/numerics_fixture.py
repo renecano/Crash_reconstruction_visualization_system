@@ -16,7 +16,7 @@ import statistics
 from pathlib import Path
 from typing import Any
 
-from croquis_solver import linalg
+from croquis_solver import dmath, linalg
 from croquis_solver.lsq import least_squares_soft_l1
 
 ROOT = Path(__file__).resolve().parents[2]
@@ -140,7 +140,7 @@ def _random_cases() -> list[dict[str, Any]]:
     guarda con 12 cifras significativas para que el archivo sea el mismo en cualquier sistema."""
     cases: list[dict[str, Any]] = []
     for seed in (0, 1, 12345, 2**40 + 7):
-        rng = random.Random(seed)
+        rng = dmath.Random(seed)
         draws: dict[str, list[int]] = {}
         for n in (1, 2, 3, 10, 300, 1000):
             draws[str(n)] = [rng.randrange(n) for _ in range(25)]
@@ -161,7 +161,7 @@ def _statistics_cases(rng: random.Random) -> list[dict[str, Any]]:
 
 
 def build() -> dict[str, Any]:
-    rng = random.Random(SEED)
+    rng = dmath.Random(SEED)
     return {
         "_generado_por": (
             "uv run croquis-solver numerics (solver/croquis_solver/numerics_fixture.py)"

@@ -22,6 +22,7 @@ import math
 from collections.abc import Sequence
 from dataclasses import dataclass, field
 
+from croquis_solver import dmath
 from croquis_solver.models import Body2D, G, State2D, Trajectory, Vec, wrap_angle
 
 ROLLING_RESISTANCE = 0.015  # fracción de N (llanta rodando libre, asfalto)
@@ -87,7 +88,7 @@ def _tire_force(
     Devuelve newtons.
     """
     if locked:
-        speed = math.hypot(u_c, v_c)
+        speed = dmath.hypot(u_c, v_c)
         if speed < 1e-9:
             return (0.0, 0.0)
         f = mu * normal_load
@@ -162,7 +163,7 @@ def integrate(
         raise ValueError(msg)
     m, inertia = body.mass, body.inertia
     x, y, yaw = start.x, start.y, start.yaw
-    c, s = math.cos(yaw), math.sin(yaw)
+    c, s = dmath.cos(yaw), dmath.sin(yaw)
     u = start.vx * c + start.vy * s
     v = -start.vx * s + start.vy * c
     r = start.yaw_rate
@@ -178,23 +179,23 @@ def integrate(
     while t < start.t + t_max - 1e-12:
         u, v, r = _advance(body, wheels, mu, rolling_drag, u, v, r, dt)
         yaw = wrap_angle(yaw + r * dt)
-        c, s = math.cos(yaw), math.sin(yaw)
+        c, s = dmath.cos(yaw), dmath.sin(yaw)
         vx = u * c - v * s
         vy = u * s + v * c
         x += vx * dt
         y += vy * dt
         t += dt
         step += 1
-        speed = math.hypot(u, v)
+        speed = dmath.hypot(u, v)
         if step % steps_per_out == 0:
             traj.append(State2D(x, y, yaw, vx, vy, r, t))
-            distance += math.hypot(x - x_prev, y - y_prev)
+            distance += dmath.hypot(x - x_prev, y - y_prev)
             x_prev, y_prev = x, y
         if speed < STOP_SPEED and abs(r) < STOP_YAW_RATE:
             stopped = True
             if step % steps_per_out != 0:
                 traj.append(State2D(x, y, yaw, 0.0, 0.0, 0.0, t))
-                distance += math.hypot(x - x_prev, y - y_prev)
+                distance += dmath.hypot(x - x_prev, y - y_prev)
             break
     ke1 = 0.5 * m * (u * u + v * v) + 0.5 * inertia * r * r
     return PostImpactResult(traj, stopped, distance, t - start.t, max(ke0 - ke1, 0.0))
@@ -244,7 +245,10 @@ def deformed_extents(length: float, width: float, crush: float, face: str) -> Ex
 
 def box_corners(x: float, y: float, yaw: float, extents: Extents) -> list[Vec]:
     """Esquinas de la caja con esas distancias a sus caras, en el mundo (CG en (x, y))."""
-    c, s = math.cos(yaw), math.sin(yaw)
+    return _corners(x, y, dmath.cos(yaw), dmath.sin(yaw), extents)
+
+
+def _corners(x: float, y: float, c: float, s: float, extents: Extents) -> list[Vec]:
     front, rear, left, right = extents
     return [
         (x + a * c - b * s, y + a * s + b * c)
@@ -264,7 +268,7 @@ def axis_overlaps(a: Sequence[Vec], b: Sequence[Vec]) -> list[tuple[float, Vec]]
         for i in range(4):
             p, q = poly[i], poly[(i + 1) % 4]
             nx, ny = q[1] - p[1], p[0] - q[0]
-            ln = math.hypot(nx, ny)
+            ln = dmath.hypot(nx, ny)
             ex, ey = nx / ln, ny / ln
             pa = [vx * ex + vy * ey for vx, vy in a]
             pb = [vx * ex + vy * ey for vx, vy in b]
@@ -324,7 +328,7 @@ class JointState:
     def from_body(cls, spec: JointBody) -> JointState:
         """Estado inicial: velocidades al marco del cuerpo; en reposo si arranca sin velocidad."""
         st = spec.start
-        c, s = math.cos(st.yaw), math.sin(st.yaw)
+        c, s = dmath.cos(st.yaw), dmath.sin(st.yaw)
         u = st.vx * c + st.vy * s
         v = -st.vx * s + st.vy * c
         r = st.yaw_rate
@@ -342,7 +346,8 @@ class JointState:
 
 
 def _corners_of(j: JointState) -> list[Vec]:
-    return box_corners(j.x, j.y, j.yaw, j.extents)
+    # j.c y j.s son siempre cos y sin de j.yaw: los mismos bits, sin volver a calcularlos.
+    return _corners(j.x, j.y, j.c, j.s, j.extents)
 
 
 def _kinetic(j: JointState) -> float:
@@ -390,8 +395,8 @@ def resolve_secondary_contact(
         impulse = -v_rel / (wa + wb)
         ax, ay = a.vx - impulse * wa * n[0], a.vy - impulse * wa * n[1]
         bx, by = b.vx + impulse * wb * n[0], b.vy + impulse * wb * n[1]
-        a_moves = a.active or math.hypot(ax, ay) >= STOP_SPEED
-        b_moves = b.active or math.hypot(bx, by) >= STOP_SPEED
+        a_moves = a.active or dmath.hypot(ax, ay) >= STOP_SPEED
+        b_moves = b.active or dmath.hypot(bx, by) >= STOP_SPEED
         if a_moves and b_moves:
             _set_world_velocity(a, ax, ay)
             _set_world_velocity(b, bx, by)
@@ -417,7 +422,7 @@ def resolve_secondary_contact(
 
 def _sample(j: JointState, state: State2D) -> None:
     j.traj.append(state)
-    j.distance += math.hypot(j.x - j.x_prev, j.y - j.y_prev)
+    j.distance += dmath.hypot(j.x - j.x_prev, j.y - j.y_prev)
     j.x_prev, j.y_prev = j.x, j.y
 
 
@@ -476,7 +481,7 @@ def integrate_joint(
             sp = j.spec
             j.u, j.v, j.r = _advance(sp.body, sp.wheels, sp.mu, sp.rolling_drag, j.u, j.v, j.r, dt)
             j.yaw = wrap_angle(j.yaw + j.r * dt)
-            j.c, j.s = math.cos(j.yaw), math.sin(j.yaw)
+            j.c, j.s = dmath.cos(j.yaw), dmath.sin(j.yaw)
             j.vx = j.u * j.c - j.v * j.s
             j.vy = j.u * j.s + j.v * j.c
             j.x += j.vx * dt
@@ -489,7 +494,7 @@ def integrate_joint(
         on_grid = step % steps_per_out == 0
         for j in joints:
             if j.active:
-                speed = math.hypot(j.u, j.v)
+                speed = dmath.hypot(j.u, j.v)
                 if on_grid:
                     _sample(j, State2D(j.x, j.y, j.yaw, j.vx, j.vy, j.r, t))
                 if speed < STOP_SPEED and abs(j.r) < STOP_YAW_RATE:

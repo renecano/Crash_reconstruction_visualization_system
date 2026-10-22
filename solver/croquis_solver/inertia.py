@@ -42,7 +42,8 @@ def yaw_inertia(clase: str, mass: float, length: float, width: float) -> YawIner
     entry = table.get("grupos", {}).get(group) if group else None
     if entry:
         c = float(entry["c"])
-        return YawInertia(mass * (c * length) ** 2, "nhtsa", c)
+        radius = c * length
+        return YawInertia(mass * (radius * radius), "nhtsa", c)
     return YawInertia(Body2D.box_inertia(mass, length, width), "supuesto")
 
 

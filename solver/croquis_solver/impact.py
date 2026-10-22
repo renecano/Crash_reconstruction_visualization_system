@@ -19,6 +19,7 @@ from __future__ import annotations
 import math
 from dataclasses import dataclass
 
+from croquis_solver import dmath
 from croquis_solver.models import Body2D, State2D, Vec, cross, dot, perp, rot, unit
 
 # Velocidad tangencial relativa que se toma como cero: si la normal sale de la velocidad
@@ -63,7 +64,7 @@ def pdof_degrees(state: State2D, force_world: Vec) -> float:
     """Dirección de la que viene la fuerza, en el marco del cuerpo, grados horarios (0 = frente)."""
     f_body = rot(force_world, -state.yaw)
     d = (-f_body[0], -f_body[1])  # de dónde viene la fuerza
-    deg = math.degrees(math.atan2(-d[1], d[0])) % 360.0
+    deg = math.degrees(dmath.atan2(-d[1], d[0])) % 360.0
     return 0.0 if deg >= 360.0 - 1e-9 else deg
 
 
@@ -86,7 +87,9 @@ def _apply(body: Body2D, state: State2D, point: Vec, impulse: Vec) -> State2D:
 
 
 def _ke(body: Body2D, state: State2D) -> float:
-    return 0.5 * body.mass * (state.vx**2 + state.vy**2) + 0.5 * body.inertia * state.yaw_rate**2
+    return 0.5 * body.mass * (state.vx * state.vx + state.vy * state.vy) + 0.5 * body.inertia * (
+        state.yaw_rate * state.yaw_rate
+    )
 
 
 @dataclass(frozen=True)
@@ -201,7 +204,7 @@ def planar_impact(
         msg = "No se encontró un impulso que no gane energía"
         raise RuntimeError(msg)
     cand, impulse, a_after, b_after, loss = chosen
-    j_mag = math.hypot(*impulse)
+    j_mag = dmath.hypot(impulse[0], impulse[1])
     force_on_a = (-impulse[0], -impulse[1]) if j_mag > 0 else (-n[0], -n[1])
     force_on_b = impulse if j_mag > 0 else n
     return ImpactResult(

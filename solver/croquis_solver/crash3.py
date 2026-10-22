@@ -16,6 +16,7 @@ import math
 from collections.abc import Sequence
 from dataclasses import dataclass
 
+from croquis_solver import dmath
 from croquis_solver.models import G as GRAVITY
 
 KGF_PER_CM_TO_N_PER_M = GRAVITY * 100.0
@@ -52,7 +53,8 @@ class Stiffness:
 def angle_factor(pdof_offset_deg: float, cap_deg: float = 45.0) -> float:
     """Corrección (1 + tan²θ) acotada a `cap_deg`."""
     th = math.radians(min(abs(pdof_offset_deg), cap_deg))
-    return 1.0 + math.tan(th) ** 2
+    t = dmath.tan(th)
+    return 1.0 + t * t
 
 
 def crush_energy(

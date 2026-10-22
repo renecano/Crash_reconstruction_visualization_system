@@ -264,8 +264,10 @@ export function deformedExtents(
 
 /** Esquinas de la caja con esas distancias a sus caras, en el mundo (CG en (x, y)). */
 export function boxCorners(x: number, y: number, yaw: number, extents: Extents): Vec[] {
-  const c = dmath.cos(yaw);
-  const s = dmath.sin(yaw);
+  return corners(x, y, dmath.cos(yaw), dmath.sin(yaw), extents);
+}
+
+function corners(x: number, y: number, c: number, s: number, extents: Extents): Vec[] {
   const [front, rear, left, right] = extents;
   const local: [number, number][] = [
     [front, left],
@@ -394,7 +396,8 @@ export class JointState {
 }
 
 function cornersOf(j: JointState): Vec[] {
-  return boxCorners(j.x, j.y, j.yaw, j.extents);
+  // j.c y j.s son siempre cos y sin de j.yaw: los mismos bits, sin volver a calcularlos.
+  return corners(j.x, j.y, j.c, j.s, j.extents);
 }
 
 function kinetic(j: JointState): number {
