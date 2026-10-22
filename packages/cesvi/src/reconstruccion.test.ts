@@ -6,7 +6,12 @@ import { describe, expect, it } from "vitest";
 import type { Expediente, SalidaCorpus } from "./corpus";
 import { conMasa, conPosicion, escenaDeNarracion } from "./escena-narracion";
 import { mcHenry } from "./metodo";
-import { especDeExpediente, reconstruirExpediente, rumboEscena } from "./reconstruccion";
+import {
+  especDeExpediente,
+  especReconstruida,
+  reconstruirExpediente,
+  rumboEscena,
+} from "./reconstruccion";
 import { verificacionCesvi } from "./verificacion";
 
 type Json = Record<string, unknown>;
@@ -177,5 +182,17 @@ describe("verificación CESVI al lado de la reconstrucción", () => {
     expect(v1!.pasos).toHaveLength(2);
     expect(v2!.pasos).toEqual([]);
     expect(v2!.falta).toEqual(["las medidas C (2, 4 o 6) y L de la deformación", "la masa"]);
+  });
+});
+
+describe("la escena para el 3D", () => {
+  it("lleva las velocidades estimadas como supuesto con su rango, y sigue siendo válida", () => {
+    const r = reconstruirExpediente(colocado());
+    const spec = especReconstruida(r) as Json & { vehiculos: Json[] };
+    expect(validateEscena(spec).ok).toBe(true);
+    const v = spec.vehiculos[0]!.velocidad_previa as Json;
+    expect(v).toMatchObject({ fuente: "supuesto", unidad: "km/h" });
+    expect(v.valor).toBeCloseTo(r.velocidades[0]!.previa!.mejor, 1);
+    expect((v.rango as number[])[0]).toBeLessThanOrEqual((v.rango as number[])[1]!);
   });
 });

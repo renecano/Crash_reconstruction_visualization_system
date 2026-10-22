@@ -258,3 +258,29 @@ export function reconstruirExpediente(e: Expediente, specId?: string): Reconstru
   const base = especDeExpediente(e, specId);
   return interpretarResultado(base, fullResult(base.spec));
 }
+
+/**
+ * La escena del solver con las velocidades que la inversión estimó (las que reproducen la evidencia
+ * del perito), para dibujar la reconstrucción en 3D. Van con fuente «supuesto» y una nota con sus
+ * percentiles: son un cálculo de Croquis, no un dato del perito. Las que la evidencia no fija quedan
+ * como estaban.
+ */
+export function especReconstruida(r: Reconstruccion): Json {
+  const spec = structuredClone(r.spec) as Json & { vehiculos: Json[] };
+  for (const sv of spec.vehiculos) {
+    const v = r.velocidades.find((x) => x.vehiculo === r.ids[String(sv.id)]);
+    if (!v?.previa) continue;
+    const { mejor, p10, p90 } = v.previa;
+    sv.velocidad_previa = {
+      valor: Math.round(mejor * 100) / 100,
+      unidad: "km/h",
+      ...(p10 !== undefined && p90 !== undefined
+        ? { rango: [Math.round(p10 * 100) / 100, Math.round(p90 * 100) / 100] }
+        : {}),
+      fuente: "supuesto",
+      confianza: 0.7,
+      nota: "Velocidad que reproduce la evidencia del perito (inversión de Croquis, p10–p90 en el rango).",
+    };
+  }
+  return spec;
+}
