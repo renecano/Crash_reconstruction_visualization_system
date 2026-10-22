@@ -6,9 +6,21 @@
  *
  * Los vehículos de un choque entre vehículos se integran juntos (`integrateJoint`, ADR 0063):
  * avanzan al mismo paso y, si sus contornos se encajan más de lo permitido, se resuelve el contacto
- * secundario (impulso plástico en la normal y separación de lo que sobra).
+ * secundario (impulso plástico en la normal y separación de lo que sobra). En una carambola, los
+ * impactos declarados después del primero ocurren en esa misma integración, cuando los contornos
+ * del par se tocan acercándose, con el impulso del primer impacto (`planarImpact`, ADR 0066).
  */
-import { type Body2D, G, type State2D, Trajectory, type Vec, wrapAngle } from "./models";
+import { type ImpactResult, planarImpact } from "./impact";
+import {
+  type Body2D,
+  G,
+  type State2D,
+  Trajectory,
+  type Vec,
+  speed,
+  velocityAt,
+  wrapAngle,
+} from "./models";
 import { pyRound } from "./pymath";
 import * as dmath from "./dmath";
 
@@ -225,6 +237,9 @@ export function integrate(
  * la profundidad máxima de su perfil de daño (m) y `crushFace` la cara dañada según el lado de su
  * CDC (F, B, L o R): su contorno para el contacto secundario es la caja con esa cara hundida esa
  * profundidad.
+ *
+ * `dragAfterImpact`: en una carambola, un vehículo que todavía no choca rueda con `rollingDrag` y
+ * pasa a este arrastre desde su primer impacto (ADR 0066). Sin él, siempre `rollingDrag`.
  */
 export interface JointBody {
   body: Body2D;
@@ -234,6 +249,7 @@ export interface JointBody {
   rollingDrag?: number;
   crush?: number;
   crushFace?: string;
+  dragAfterImpact?: number | null;
 }
 
 /** Adelante, atrás, izquierda, derecha (m, desde el CG). */
@@ -332,6 +348,7 @@ export class JointState {
   distance = 0.0;
   xPrev = 0.0;
   yPrev = 0.0;
+  drag = 0.0;
 
   private constructor(
     readonly spec: JointBody,
@@ -384,6 +401,7 @@ export class JointState {
       active,
       ke0,
     );
+    j.drag = spec.rollingDrag ?? ROLLING_RESISTANCE;
     if (!active) {
       j.ke1 = ke0;
       j.u = j.v = j.r = j.vx = j.vy = 0.0;
@@ -474,6 +492,121 @@ export function resolveSecondaryContact(
   return [allowance, k];
 }
 
+/**
+ * Un impacto declarado después del primero, entre los cuerpos `a` y `b` (índices en la integración
+ * conjunta): ocurre la primera vez que sus contornos se tocan acercándose.
+ */
+export interface PlannedImpact {
+  a: number;
+  b: number;
+  eventId: string;
+  restitution: number;
+  friction: number;
+}
+
+/** Un impacto posterior que ocurrió: cuándo, dónde, entre quiénes y su impulso. */
+export interface JointImpact {
+  eventId: string;
+  t: number;
+  a: number;
+  b: number;
+  point: Vec;
+  /** De `a` hacia `b`. */
+  normal: Vec;
+  aBefore: State2D;
+  bBefore: State2D;
+  result: ImpactResult;
+}
+
+/** Si `p` está dentro del cuadrilátero convexo `poly` (o en su borde). */
+function inside(p: Vec, poly: readonly Vec[]): boolean {
+  let sign = 0.0;
+  for (let i = 0; i < 4; i++) {
+    const q = poly[i]!;
+    const r = poly[(i + 1) % 4]!;
+    const cr = (r[0] - q[0]) * (p[1] - q[1]) - (r[1] - q[1]) * (p[0] - q[0]);
+    if (cr === 0) continue;
+    if (sign === 0) sign = cr;
+    else if (cr > 0 !== sign > 0) return false;
+  }
+  return true;
+}
+
+const mean = (pts: readonly Vec[]): Vec => [
+  pts.reduce((acc, q) => acc + q[0], 0) / pts.length,
+  pts.reduce((acc, q) => acc + q[1], 0) / pts.length,
+];
+
+/**
+ * Punto de contacto de dos contornos que se encajan: el promedio de las esquinas de cada uno que
+ * quedan dentro del otro; si ninguna queda dentro (se cruzan solo las aristas), el punto medio
+ * entre los centros de los dos.
+ */
+export function contactPoint(a: readonly Vec[], b: readonly Vec[]): Vec {
+  let pts = [...a.filter((p) => inside(p, b)), ...b.filter((p) => inside(p, a))];
+  if (pts.length === 0) pts = [mean(a), mean(b)];
+  return mean(pts);
+}
+
+function stateOf(j: JointState, t: number): State2D {
+  return { x: j.x, y: j.y, yaw: j.yaw, vx: j.vx, vy: j.vy, yawRate: j.r, t };
+}
+
+/** Las velocidades de `st` (mundo) en el cuerpo; activo si con ellas no está en reposo. */
+function setMotion(j: JointState, st: State2D): void {
+  setWorldVelocity(j, st.vx, st.vy);
+  j.r = st.yawRate;
+  j.active = speed(st) > STOP_SPEED || Math.abs(st.yawRate) > STOP_YAW_RATE;
+  if (!j.active) j.u = j.v = j.r = j.vx = j.vy = 0.0;
+}
+
+/**
+ * El impacto declarado entre `a` y `b` si sus contornos se tocan y se acercan en el punto de
+ * contacto; aplica el impulso a los dos. null si todavía no ocurre.
+ */
+function tryImpact(
+  a: JointState,
+  b: JointState,
+  plan: PlannedImpact,
+  t: number,
+): JointImpact | null {
+  const ca = cornersOf(a);
+  const cb = cornersOf(b);
+  const ov = axisOverlaps(ca, cb);
+  if (ov === null) return null;
+  const n = ov[argmin(ov)]![1];
+  const point = contactPoint(ca, cb);
+  const sa = stateOf(a, t);
+  const sb = stateOf(b, t);
+  const va = velocityAt(sa, point);
+  const vb = velocityAt(sb, point);
+  if ((vb[0] - va[0]) * n[0] + (vb[1] - va[1]) * n[1] >= 0) return null;
+  const res = planarImpact(a.spec.body, sa, b.spec.body, sb, point, n, {
+    restitution: plan.restitution,
+    friction: plan.friction,
+  });
+  for (const [j, st] of [
+    [a, res.aAfter],
+    [b, res.bAfter!],
+  ] as const) {
+    setMotion(j, st);
+    j.moved = true;
+    if (j.spec.dragAfterImpact !== undefined && j.spec.dragAfterImpact !== null)
+      j.drag = j.spec.dragAfterImpact;
+  }
+  return {
+    eventId: plan.eventId,
+    t,
+    a: plan.a,
+    b: plan.b,
+    point,
+    normal: n,
+    aBefore: sa,
+    bBefore: sb,
+    result: res,
+  };
+}
+
 function sample(j: JointState, s: State2D): void {
   j.traj.append(s);
   j.distance += dmath.hypot(j.x - j.xPrev, j.y - j.yPrev);
@@ -489,33 +622,50 @@ export interface JointOptions {
   dt?: number;
   dtOut?: number;
   tMax?: number;
+  /** Impactos declarados después del primero (carambola, ADR 0066). */
+  impacts?: readonly PlannedImpact[];
 }
 
-/**
- * Integra juntos los vehículos de un choque entre vehículos, con contacto secundario (port de
- * `croquis_solver.postimpact.integrate_joint`; ver ahí el modelo y sus límites, y el ADR 0063).
- * Sin contacto, cada resultado es idéntico al de `integrate`.
- */
+/** `integrateJointImpacts` sin impactos posteriores: solo las trayectorias. */
 export function integrateJoint(
   bodies: readonly JointBody[],
   opts: JointOptions = {},
 ): PostImpactResult[] {
-  const { dt = 0.002, dtOut = 0.02, tMax = 30.0 } = opts;
+  return integrateJointImpacts(bodies, opts)[0];
+}
+
+/**
+ * Integra juntos los vehículos de un choque entre vehículos, con contacto secundario (port de
+ * `croquis_solver.postimpact.integrate_joint_impacts`; ver ahí el modelo y sus límites, y los ADR
+ * 0063 y 0066). Sin contacto, cada resultado es idéntico al de `integrate`. Devuelve también los
+ * impactos posteriores que ocurrieron, en orden.
+ */
+export function integrateJointImpacts(
+  bodies: readonly JointBody[],
+  opts: JointOptions = {},
+): [PostImpactResult[], JointImpact[]] {
+  const { dt = 0.002, dtOut = 0.02, tMax = 30.0, impacts = [] } = opts;
   if (dt <= 0 || dtOut < dt) throw new Error("dt debe ser positivo y dt_out ≥ dt");
   const t0 = bodies.length > 0 ? bodies[0]!.start.t : 0.0;
   const joints = bodies.map((spec) => JointState.fromBody(spec));
   const pairs: [JointState, JointState][] = [];
   const allowances: number[] = [];
   const axes: (number | null)[] = [];
+  const pending = new Map<number, PlannedImpact>();
   for (let i = 0; i < joints.length; i++) {
     for (let k = i + 1; k < joints.length; k++) {
       const a = joints[i]!;
       const b = joints[k]!;
+      for (const plan of impacts) {
+        const samePair = (plan.a === i && plan.b === k) || (plan.a === k && plan.b === i);
+        if (samePair && !pending.has(pairs.length)) pending.set(pairs.length, plan);
+      }
       pairs.push([a, b]);
       allowances.push(boxPenetration(cornersOf(a), cornersOf(b))[0]);
       axes.push(null);
     }
   }
+  const happened: JointImpact[] = [];
   const stepsPerOut = Math.max(1, pyRound(dtOut / dt));
   let step = 0;
   let t = t0;
@@ -524,16 +674,7 @@ export function integrateJoint(
     for (const j of joints) {
       if (!j.active) continue;
       const sp = j.spec;
-      [j.u, j.v, j.r] = advance(
-        sp.body,
-        sp.wheels,
-        sp.mu,
-        sp.rollingDrag ?? ROLLING_RESISTANCE,
-        j.u,
-        j.v,
-        j.r,
-        dt,
-      );
+      [j.u, j.v, j.r] = advance(sp.body, sp.wheels, sp.mu, j.drag, j.u, j.v, j.r, dt);
       j.yaw = wrapAngle(j.yaw + j.r * dt);
       j.c = dmath.cos(j.yaw);
       j.s = dmath.sin(j.yaw);
@@ -546,6 +687,21 @@ export function integrateJoint(
     step += 1;
     for (let k = 0; k < pairs.length; k++) {
       const [a, b] = pairs[k]!;
+      const plan = pending.get(k);
+      if (plan !== undefined) {
+        const hit = tryImpact(joints[plan.a]!, joints[plan.b]!, plan, t);
+        if (hit !== null) {
+          happened.push(hit);
+          pending.delete(k);
+          // Desde ahí el encaje de ese instante es el permitido, como en el primero.
+          const ov = axisOverlaps(cornersOf(a), cornersOf(b));
+          if (ov !== null) {
+            const ax = argmin(ov);
+            axes[k] = ax;
+            allowances[k] = Math.max(allowances[k]!, ov[ax]![0]);
+          }
+        }
+      }
       const [left, axis] = resolveSecondaryContact(a, b, allowances[k]!, axes[k] ?? null);
       axes[k] = axis;
       allowances[k] = Math.max(0.0, Math.min(allowances[k]!, left) - relax);
@@ -572,7 +728,7 @@ export function integrateJoint(
       }
     }
   }
-  return joints.map((j) => {
+  const results = joints.map((j) => {
     if (j.moved) {
       sample(j, { x: j.x, y: j.y, yaw: j.yaw, vx: 0.0, vy: 0.0, yawRate: 0.0, t });
       j.keep = j.traj.length;
@@ -589,4 +745,5 @@ export function integrateJoint(
       energyDissipated: Math.max(j.ke0 - j.ke1, 0.0),
     };
   });
+  return [results, happened];
 }

@@ -51,8 +51,9 @@ import {
 import {
   fourWheels,
   integrate,
-  integrateJoint,
+  integrateJointImpacts,
   type JointBody,
+  type PlannedImpact,
   type PostImpactResult,
   ROLLING_RESISTANCE,
 } from "./postimpact";
@@ -86,7 +87,7 @@ import * as dmath from "./dmath";
 
 type Json = Record<string, unknown>;
 
-export const RESULT_VERSION = "1.8.0";
+export const RESULT_VERSION = "1.9.0";
 export const DT_OUT = 0.02;
 const T_PRE_MAX = 6.0;
 const T_PRE_MIN = 3.0;
@@ -183,6 +184,22 @@ export interface VehicleOutcome {
   restPose: readonly [number, number, number];
   distancePostM: number;
   rollover: RolloverCheck | null;
+  /** Daños de impactos posteriores en un vehículo que ya tenía daño (carambola, ADR 0066). */
+  laterDamage?: LaterDamage[];
+}
+
+/** El daño de un impacto posterior en un vehículo que ya tenía daño (carambola, ADR 0066). */
+export interface LaterDamage {
+  eventId: string;
+  t: number;
+  profileM: number[];
+  widthM: number;
+  centerM: number;
+  energyJ: number;
+  stiffnessOrigen: string;
+  cdc: Json | null;
+  deltaVKmh: number;
+  pdofHours: number | null;
 }
 
 export interface ThrowOutcome {
@@ -276,22 +293,41 @@ export function reconstructionToDict(rec: Reconstruction): Json {
   return out;
 }
 
+function danoDict(
+  profile: readonly number[],
+  width: number,
+  center: number,
+  energy: number,
+  origen: string,
+  cdc: Json | null,
+): Json {
+  const dano: Json = {
+    perfil_m: profile.map((c) => r6(c)),
+    ancho_m: r6(width),
+    centro_m: r6(center),
+    energia_j: r6(energy, 3),
+    origen_rigidez: origen,
+  };
+  if (cdc) {
+    const out: Json = {};
+    for (const k of ["lado", "zona_horizontal", "zona_vertical", "extension"]) {
+      if (k in cdc) out[k] = cdc[k];
+    }
+    dano.cdc = out;
+  }
+  return dano;
+}
+
 function vehicleDict(v: VehicleOutcome): Json {
   const tr = v.trajectory;
-  const dano: Json = {
-    perfil_m: v.crushProfileM.map((c) => r6(c)),
-    ancho_m: r6(v.crushWidthM),
-    centro_m: r6(v.crushCenterM),
-    energia_j: r6(v.crushEnergyJ, 3),
-    origen_rigidez: v.stiffnessOrigen,
-  };
-  if (v.cdc) {
-    const cdc: Json = {};
-    for (const k of ["lado", "zona_horizontal", "zona_vertical", "extension"]) {
-      if (k in v.cdc) cdc[k] = v.cdc[k];
-    }
-    dano.cdc = cdc;
-  }
+  const dano = danoDict(
+    v.crushProfileM,
+    v.crushWidthM,
+    v.crushCenterM,
+    v.crushEnergyJ,
+    v.stiffnessOrigen,
+    v.cdc,
+  );
   const d: Json = {
     id: v.id,
     rol: v.rol,
@@ -318,6 +354,17 @@ function vehicleDict(v: VehicleOutcome): Json {
   };
   if (v.pdofHours !== null) d.pdof_horas = r6(v.pdofHours);
   d.dano = dano;
+  if (v.laterDamage && v.laterDamage.length > 0) {
+    d.danos_posteriores = v.laterDamage.map((ld) => {
+      const dp: Json = { evento_id: ld.eventId, t: r6(ld.t) };
+      dp.delta_v_kmh = r6(ld.deltaVKmh);
+      if (ld.pdofHours !== null) dp.pdof_horas = r6(ld.pdofHours);
+      return {
+        ...dp,
+        ...danoDict(ld.profileM, ld.widthM, ld.centerM, ld.energyJ, ld.stiffnessOrigen, ld.cdc),
+      };
+    });
+  }
   d.en_reposo = v.stopped;
   d.pose_final = { x: r6(v.restPose[0]), y: r6(v.restPose[1]), rumbo_deg: r6(v.restPose[2]) };
   d.distancia_post_m = r6(v.distancePostM);
@@ -532,6 +579,47 @@ function primaryEvent(spec: Json): Json | null {
   return eventos.find((e) => String(e.tipo).startsWith("impacto_")) ?? null;
 }
 
+/** Los dos primeros vehículos entre los actores de un evento. */
+function pairOf(event: Json, vehicleIds: ReadonlyMap<string, unknown>): string[] {
+  return (event.actores as unknown[])
+    .map(String)
+    .filter((a) => vehicleIds.has(a))
+    .slice(0, 2);
+}
+
+/**
+ * Los impactos entre vehículos declarados después del primero, en orden (carambola, ADR 0066):
+ * los eventos `impacto_vehiculo_vehiculo` o `segundo_impacto` con al menos dos vehículos entre sus
+ * actores y un orden posterior al del primer impacto.
+ */
+function laterImpacts(
+  spec: Json,
+  primary: Json | null,
+  vehicleIds: ReadonlyMap<string, unknown>,
+): Json[] {
+  if (primary === null) return [];
+  const eventos = [...(spec.eventos as Json[])].sort(
+    (a, b) => Math.trunc(Number(a.orden)) - Math.trunc(Number(b.orden)),
+  );
+  return eventos.filter(
+    (e) =>
+      e !== primary &&
+      Math.trunc(Number(e.orden)) >= Math.trunc(Number(primary.orden)) &&
+      (e.tipo === "impacto_vehiculo_vehiculo" || e.tipo === "segundo_impacto") &&
+      pairOf(e, vehicleIds).length === 2,
+  );
+}
+
+/** La cara del vehículo (F, B, L o R) que mira hacia `n` (unitaria, mundo). */
+function sideToward(n: Vec, yaw: number): string {
+  const c = dmath.cos(yaw);
+  const s = dmath.sin(yaw);
+  const lx = n[0] * c + n[1] * s;
+  const ly = -n[0] * s + n[1] * c;
+  if (Math.abs(lx) >= Math.abs(ly)) return lx > 0 ? "F" : "B";
+  return ly > 0 ? "L" : "R";
+}
+
 /**
  * Forma y fracción del largo de la cara dañada por cara y zona horizontal del CDC. Los grupos
  * ajustados con E5 en desarrollo (ADR 0033): frente/trasera C, y costados D, P, Z y B; el resto
@@ -730,6 +818,10 @@ export function reconstruct(
   for (const z of ((event ?? {}).zonas_impacto ?? []) as Json[]) {
     zonas.set(String(z.vehiculo_id), (z.cdc as Json | undefined) ?? null);
   }
+  // Carambola: los impactos entre vehículos después del primero (ADR 0066). Sus vehículos se
+  // integran juntos con los del primero; cada impacto ocurre cuando su par se toca.
+  const later = laterImpacts(spec, event, byId);
+  const participantes = new Set([...actores, ...later.flatMap((e) => pairOf(e, byId))]);
   const axis = roadAxis(lugar);
   const candidates = new Map(models.map((m) => [m.id, pathCandidates(m, laneWidth, axis)]));
   const paths = new Map(models.map((m) => [m.id, candidates.get(m.id)![0]!]));
@@ -1215,28 +1307,146 @@ export function reconstruct(
         ? ROLLING_RESISTANCE
         : Math.max(ROLLING_RESISTANCE, POST_IMPACT_DRAG_FRACTION * mu);
     const muPost = downed ? (opts.downedMu ?? muDowned.nominal) : mu;
+    // Un vehículo que todavía no choca (solo está en un impacto posterior) rueda libre hasta su
+    // primer impacto (ADR 0066).
+    const waits = !actores.includes(m.id);
     return {
       body: m.body,
       start: { ...start, t: 0.0 },
       wheels,
       mu: muPost,
-      rollingDrag: drag,
+      rollingDrag: waits ? ROLLING_RESISTANCE : drag,
       crush: Math.max(0.0, ...crush.get(m.id)![0]),
       crushFace: str((zonas.get(m.id) ?? {}).lado, "F"),
+      dragAfterImpact: waits ? drag : null,
     };
   };
 
   // Los vehículos de un choque entre vehículos se mueven juntos: si después de separarse se
   // vuelven a encajar más que su aplastamiento, el contacto secundario los detiene (ADR 0063).
-  const jointResults = integrateJoint(
-    jointIds.map((i) => postBody(byId.get(i)!)),
-    { dtOut: dt, tMax: T_POST_MAX },
+  // En una carambola entran también los de los impactos posteriores (ADR 0066).
+  const group: string[] = [...jointIds];
+  if (later.length > 0) {
+    for (const vid of [
+      ...involved.slice(0, 1).map((m) => m.id),
+      ...later.flatMap((e) => pairOf(e, byId)),
+    ]) {
+      if (!group.includes(vid)) group.push(vid);
+    }
+  }
+  const samePairAsFirst = (pa: string, pb: string): boolean =>
+    jointIds.length === 2 && jointIds.includes(pa) && jointIds.includes(pb) && pa !== pb;
+  const plans: PlannedImpact[] = [];
+  for (const e of later) {
+    const [pa, pb] = pairOf(e, byId) as [string, string];
+    // El mismo par del primero: lo cubre el contacto secundario.
+    if (!samePairAsFirst(pa, pb)) {
+      plans.push({
+        a: group.indexOf(pa),
+        b: group.indexOf(pb),
+        eventId: String(e.id),
+        restitution: RESTITUTION_VV,
+        friction: IMPULSE_RATIO,
+      });
+    }
+  }
+  const [jointResults, jointHits] = integrateJointImpacts(
+    group.map((i) => postBody(byId.get(i)!)),
+    { dtOut: dt, tMax: T_POST_MAX, impacts: plans },
   );
-  const jointPost = new Map<string, PostImpactResult>(
-    jointIds.map((i, k) => [i, jointResults[k]!]),
-  );
+  const jointPost = new Map<string, PostImpactResult>(group.map((i, k) => [i, jointResults[k]!]));
+
+  // Los impactos posteriores que ocurrieron: daño, delta-v y evento, como el primero.
+  const laterDamage = new Map<string, LaterDamage[]>(models.map((m) => [m.id, []]));
+  const vImpactAt = new Map<string, number>();
+  const laterById = new Map(later.map((e) => [String(e.id), e]));
+  for (const hit of jointHits) {
+    const ev = laterById.get(hit.eventId)!;
+    const zonasEv = new Map<string, Json | null>();
+    for (const z of (ev.zonas_impacto ?? []) as Json[]) {
+      zonasEv.set(String(z.vehiculo_id), (z.cdc as Json | undefined) ?? null);
+    }
+    const res2 = hit.result;
+    const ids2 = [group[hit.a]!, group[hit.b]!] as const;
+    const sides = [
+      [ids2[0], hit.aBefore, hit.normal, res2.deltaVA, pdofHours(res2.pdofADeg)],
+      [
+        ids2[1],
+        hit.bBefore,
+        [-hit.normal[0], -hit.normal[1]],
+        res2.deltaVB,
+        pdofHours(res2.pdofBDeg),
+      ],
+    ] as const;
+    const cdcs = new Map<string, Json>();
+    const ks = new Map<string, ReturnType<typeof stiffnessFor>>();
+    for (const [vid, before, toward] of sides) {
+      const cdcV = zonasEv.get(vid) ?? { lado: sideToward(toward, before.yaw) };
+      cdcs.set(vid, cdcV);
+      ks.set(vid, stiffnessFor(byId.get(vid)!.clase, zonaFromCdcSide(str(cdcV.lado, "F"))));
+    }
+    const w = new Map(ids2.map((vid) => [vid, 1.0 / ks.get(vid)!.stiffness.b]));
+    for (const [vid, before, , dv, pd] of sides) {
+      const m = byId.get(vid)!;
+      const energy = (res2.energyLoss * w.get(vid)!) / (w.get(ids2[0])! + w.get(ids2[1])!);
+      const cdcV = cdcs.get(vid)!;
+      const k = ks.get(vid)!;
+      const [shape, width] = crushShapeAndWidth(cdcV, m.body);
+      const prof = profileForEnergy(energy, width, k.stiffness, shape);
+      if (crush.get(vid)![3] === "sin impacto") {
+        // Su primer impacto: va en su daño, su delta-v y su velocidad de impacto.
+        crush.set(vid, [prof, width, energy, k.origen]);
+        deltaV.set(vid, dv);
+        pdof.set(vid, pd);
+        zonas.set(vid, cdcV);
+        vImpactAt.set(vid, stateSpeed(before));
+      } else {
+        laterDamage.get(vid)!.push({
+          eventId: hit.eventId,
+          t: hit.t,
+          profileM: prof,
+          widthM: width,
+          centerM: crushCenter(cdcV, m.body, width),
+          energyJ: energy,
+          stiffnessOrigen: k.origen,
+          cdc: cdcV,
+          deltaVKmh: msToKmh(dv),
+          pdofHours: pd,
+        });
+      }
+    }
+    const sa2 = hit.aBefore;
+    const sb2 = hit.bBefore;
+    eventosOut.push({
+      id: hit.eventId,
+      tipo: "impacto_vehiculo_vehiculo",
+      t: hit.t,
+      actores: [...ids2],
+      detalle: {
+        impulso_ns: [res2.impulse[0], res2.impulse[1]],
+        adherencia: res2.sticking,
+        friccion_contacto_usada: res2.frictionUsed,
+        energia_disipada_j: res2.energyLoss,
+        velocidad_cierre_kmh: msToKmh(dmath.hypot(sa2.vx - sb2.vx, sa2.vy - sb2.vy)),
+        punto_m: [hit.point[0], hit.point[1]],
+      },
+    });
+  }
+  for (const e of later) {
+    const [pa, pb] = pairOf(e, byId) as [string, string];
+    if (!samePairAsFirst(pa, pb) && !jointHits.some((h) => h.eventId === String(e.id))) {
+      flag(
+        "impacto_no_ocurre",
+        { evento: e.id, vehiculos: [pa, pb] },
+        `El impacto entre los vehículos ${byId.get(pa)!.rol} y ${byId.get(pb)!.rol} declarado ` +
+          "después del primero no ocurre en la reconstrucción: sus trayectorias no llegan a " +
+          "tocarse.",
+      );
+    }
+  }
+
   for (const m of models) {
-    if (!actores.includes(m.id)) continue;
+    if (!participantes.has(m.id)) continue;
     const start = postStart.get(m.id)!;
     let resPost: PostImpactResult | undefined = jointPost.get(m.id);
     if (resPost === undefined && (stateSpeed(start) > 0.05 || Math.abs(start.yawRate) > 0.05)) {
@@ -1262,7 +1472,7 @@ export function reconstruct(
     const trPost = post.get(m.id)![0];
     tFin = Math.max(tFin, trPost.length > 0 ? trPost.t[trPost.length - 1]! : 0.0);
   }
-  if (models.some((m) => actores.includes(m.id) && DOWNED_SLIDE_CLASSES.has(m.clase))) {
+  if (models.some((m) => participantes.has(m.id) && DOWNED_SLIDE_CLASSES.has(m.clase))) {
     params.friccion_moto_caida = {
       valor: opts.downedMu ?? muDowned.nominal,
       rango: [muDowned.low, muDowned.high],
@@ -1387,7 +1597,7 @@ export function reconstruct(
     full.extend(pre.get(m.id)!);
     let stopped: boolean;
     let distPost: number;
-    if (actores.includes(m.id)) {
+    if (participantes.has(m.id)) {
       const [tr, st, dp] = post.get(m.id)!;
       stopped = st;
       distPost = dp;
@@ -1410,14 +1620,14 @@ export function reconstruct(
       id: m.id,
       rol: m.rol,
       clase: m.clase,
-      involucrado: actores.includes(m.id),
+      involucrado: participantes.has(m.id),
       length: m.body.length,
       width: m.body.width,
       height: m.height,
       wheelbase: m.wheelbase,
       mass: m.body.mass,
       trajectory: full,
-      vImpactKmh: msToKmh(stateSpeed(impactStates.get(m.id)!)),
+      vImpactKmh: msToKmh(vImpactAt.get(m.id) ?? stateSpeed(impactStates.get(m.id)!)),
       deltaVKmh: msToKmh(deltaV.get(m.id)!),
       pdofHours: pdof.get(m.id)!,
       crushProfileM: prof,
@@ -1430,6 +1640,7 @@ export function reconstruct(
       restPose: [last.x, last.y, degrees(last.yaw)],
       distancePostM: distPost,
       rollover: null,
+      laterDamage: laterDamage.get(m.id)!,
     });
     if (m.braking && m.v0 > 0 && sContact.has(m.id)) {
       const tb = profiles.get(m.id)!.tBrake;
@@ -1443,7 +1654,7 @@ export function reconstruct(
         });
       }
     }
-    if (actores.includes(m.id)) {
+    if (participantes.has(m.id)) {
       const trPost = post.get(m.id)![0];
       const tStop = trPost.length > 0 ? trPost.t[trPost.length - 1]! : 0.0;
       eventosOut.push({
