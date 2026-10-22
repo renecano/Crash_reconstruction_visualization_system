@@ -75,7 +75,8 @@ quote-style = "double"
 pythonVersion = "3.14"
 typeCheckingMode = "strict"
 include = ["packages/scene-schema/python", "solver", "extraction", "data", "eval", "assets/pipeline"]
-exclude = ["**/node_modules", "**/__pycache__", "**/.venv", "data/raw", "data/processed", "eval/results"]
+# eval/voz_video.py corre con Kokoro y Whisper, instalados fuera del proyecto (docs/PROGRESS.md).
+exclude = ["**/node_modules", "**/__pycache__", "**/.venv", "data/raw", "data/processed", "eval/results", "eval/voz_video.py"]
 venvPath = "."
 venv = ".venv"
 reportMissingModuleSource = "warning"
