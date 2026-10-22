@@ -9,6 +9,7 @@
     "../../eval/cesvi_concordancia.mts",
     "../../eval/cesvi_reproduccion.mts",
     "../../eval/cesvi_r1_escenas.mts",
-    "../../eval/cesvi_r2_reconstruccion.mts"
+    "../../eval/cesvi_r2_reconstruccion.mts",
+    "../../eval/r3_interpenetracion.mts"
   ]
 }

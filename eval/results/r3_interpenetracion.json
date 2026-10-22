@@ -1,0 +1,117 @@
+{
+  "fecha": "2026-10-22T03:58:17.908Z",
+  "descripcion": "Penetración de las cajas de los vehículos (rectángulos orientados) en las escenas canónicas reconstruidas con el solver TS; exceso = lo que pasa de la suma de los aplastamientos máximos del par.",
+  "pares": 8,
+  "con_exceso": 3,
+  "exceso_max_m": 1.438,
+  "escenas": [
+    {
+      "escena": "alcance",
+      "pares": [
+        {
+          "par": "veh-a/veh-b",
+          "penetracion_max_m": 0,
+          "t_s": 0,
+          "aplastamiento_m": 0.233,
+          "exceso_m": 0
+        }
+      ]
+    },
+    {
+      "escena": "frontal_curva",
+      "pares": [
+        {
+          "par": "veh-a/veh-b",
+          "penetracion_max_m": 0.095,
+          "t_s": 0,
+          "aplastamiento_m": 1.226,
+          "exceso_m": 0
+        }
+      ]
+    },
+    {
+      "escena": "glorieta",
+      "pares": [
+        {
+          "par": "veh-a/veh-b",
+          "penetracion_max_m": 0.168,
+          "t_s": 0.72,
+          "aplastamiento_m": 0.096,
+          "exceso_m": 0.072
+        }
+      ]
+    },
+    {
+      "escena": "interseccion_toluca",
+      "pares": [
+        {
+          "par": "veh-a/veh-b",
+          "penetracion_max_m": 0.001,
+          "t_s": 0.02,
+          "aplastamiento_m": 0.236,
+          "exceso_m": 0
+        }
+      ]
+    },
+    {
+      "escena": "lateral_interseccion",
+      "pares": [
+        {
+          "par": "veh-a/veh-b",
+          "penetracion_max_m": 0.04,
+          "t_s": 0.06,
+          "aplastamiento_m": 0.223,
+          "exceso_m": 0
+        }
+      ]
+    },
+    {
+      "escena": "motociclista",
+      "pares": [
+        {
+          "par": "veh-a/veh-b",
+          "penetracion_max_m": 0.195,
+          "t_s": 0,
+          "aplastamiento_m": 0.112,
+          "exceso_m": 0.083
+        }
+      ]
+    },
+    {
+      "escena": "nocturno_lluvia",
+      "pares": [
+        {
+          "par": "veh-a/veh-b",
+          "penetracion_max_m": 1.8,
+          "t_s": 1.3,
+          "aplastamiento_m": 0.362,
+          "exceso_m": 1.438
+        }
+      ]
+    },
+    {
+      "escena": "objeto_fijo_arbol",
+      "pares": []
+    },
+    {
+      "escena": "peaton_cruce",
+      "pares": []
+    },
+    {
+      "escena": "poste",
+      "pares": []
+    },
+    {
+      "escena": "volcadura",
+      "pares": [
+        {
+          "par": "veh-a/veh-b",
+          "penetracion_max_m": 0,
+          "t_s": 0,
+          "aplastamiento_m": 0.167,
+          "exceso_m": 0
+        }
+      ]
+    }
+  ]
+}
