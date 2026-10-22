@@ -13,6 +13,7 @@ import {
   problemasExpediente,
   VALORES,
   type Conteos,
+  type Conversion,
   type Expediente,
   type PosicionDescrita,
   type SalidaCorpus,
@@ -147,7 +148,15 @@ const enPalabras = (z: Zona) =>
   [z.cara.replace("_", " "), z.tercio, z.vertice?.replace("_", " ")].filter(Boolean).join(" ");
 
 export function escenaDeNarracion(s: SalidaCorpus, narracion: string): EscenaNarrada {
-  const c = expedienteDeSalida(s, narracion, "perito");
+  return escenaDeConversion(expedienteDeSalida(s, narracion, "perito"));
+}
+
+/**
+ * La escena de un expediente ya convertido (la narración del perito o un dictamen importado, R5):
+ * las zonas de contacto, el impacto que se puede suponer y lo que más cambia la reconstrucción y el
+ * texto no dice.
+ */
+export function escenaDeConversion(c: Conversion): EscenaNarrada {
   const leido = conZonas(c.expediente);
   const preguntas: PreguntaEscena[] = [];
   const propuesto = leido.expediente.impactos?.length ? null : impactoPropuesto(leido.expediente);

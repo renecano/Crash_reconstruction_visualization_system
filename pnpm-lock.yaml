@@ -322,6 +322,9 @@ importers:
       next:
         specifier: 16.4.2
         version: 16.4.2(@babel/core@7.29.7)(@opentelemetry/api@1.9.1)(@playwright/test@1.64.0)(@types/node@24.19.2)(react-dom@19.3.0(react@19.3.0))(react@19.3.0)
+      pdfjs-dist:
+        specifier: 6.4.299
+        version: 6.4.299
       pdfmake:
         specifier: 0.3.11
         version: 0.3.11
@@ -392,9 +395,6 @@ importers:
       mediabunny:
         specifier: 1.61.6
         version: 1.61.6
-      pdfjs-dist:
-        specifier: 6.4.299
-        version: 6.4.299
       serwist:
         specifier: 9.5.13
         version: 9.5.13(browserslist@4.29.3)(typescript@6.0.3)
