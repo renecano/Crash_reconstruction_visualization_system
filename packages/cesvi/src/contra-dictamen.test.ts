@@ -32,8 +32,9 @@ describe("Croquis contra el dictamen A2010930", () => {
 
   it("explica la discrepancia de energía con lo medido y lo resume sin juzgar a nadie", () => {
     expect(r.energia!.diferenciaPct).toBeCloseTo(2.39, 2);
-    expect(r.resumen).toMatch(/^Croquis llega a lo mismo que el dictamen en modalidad, /);
-    expect(r.resumen).toMatch(/Difiere en velocidad por deformación .*\(\+\d+\.\d\d %\)\./);
+    expect(r.resumen).toBe(
+      "Croquis llega a lo mismo que el dictamen en la modalidad, la velocidad por restos y la dinámica del impacto. Difiere en la velocidad por deformación (+1.19 %).",
+    );
     expect(r.resumen).not.toMatch(/sostiene|miente|culpa|declar/i);
   });
 

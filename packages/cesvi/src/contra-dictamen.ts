@@ -43,6 +43,13 @@ export interface ContraDictamen {
 
 /** Diferencias menores a esto se reportan como coincidencia al redondeo del dictamen. */
 const IGUAL_PCT = 0.005;
+/** Cómo se nombra cada punto dentro de una oración. */
+const EN_FRASE: Record<FilaContraDictamen["clave"], string> = {
+  modalidad: "la modalidad",
+  deformacion: "la velocidad por deformación",
+  restos: "la velocidad por restos",
+  dinamica: "la dinámica del impacto",
+};
 const pct = (croquis: number, cesvi: number) => (100 * (croquis - cesvi)) / cesvi;
 const kmh = (x: number) => `${x.toFixed(2)} km/h`;
 const normal = (t: string) =>
@@ -122,13 +129,13 @@ export function croquisContraDictamen(c: CasoCesvi, d: DeCroquis): ContraDictame
           lectura: r.lectura,
         }
       : null;
-  const coinciden = filas.filter((f) => f.coincide === true).map((f) => f.concepto.toLowerCase());
+  const coinciden = filas.filter((f) => f.coincide === true).map((f) => EN_FRASE[f.clave]);
   const difieren = filas
     .filter((f) => f.coincide === false)
     .map((f) =>
       f.diferenciaPct === null
-        ? f.concepto.toLowerCase()
-        : `${f.concepto.toLowerCase()} (${f.diferenciaPct >= 0 ? "+" : "−"}${Math.abs(f.diferenciaPct).toFixed(2)} %)`,
+        ? EN_FRASE[f.clave]
+        : `${EN_FRASE[f.clave]} (${f.diferenciaPct >= 0 ? "+" : "−"}${Math.abs(f.diferenciaPct).toFixed(2)} %)`,
     );
   const resumen = [
     coinciden.length ? `Croquis llega a lo mismo que el dictamen en ${lista(coinciden)}.` : null,

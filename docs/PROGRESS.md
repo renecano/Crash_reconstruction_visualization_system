@@ -9,6 +9,36 @@ Reglas de trabajo: `CLAUDE.md`. Especificación: `PLAN.md`.
   - **Orden:** Hito 1 (el caso A2010930 y sus cálculos en `/cesvi`), Hito 2 (el lugar y el croquis sobre el mapa) y Hito 3 (correspondencia, sugerencia y dictamen en PDF). Cada uno se despliega al terminar.
   - **CI:** para hacer merge solo cuentan lint, tipos, pruebas unitarias y una e2e por flujo principal en Chromium; lo demás corre a mano (ADR 0047).
   - **Datos de CESVI:** en `data/raw/cesvi/`, que git ignora (`.gitignore`: `data/raw/*`). El repositorio solo guarda datos derivados del caso, sin placas, VIN ni nombres.
+- **`/cesvi` con el mensaje del plan v2 (2026-10-21, para la demo)** (rama `feat/cesvi-reconstruccion`, PR #78):
+  - **Liga:** https://croquis-sage.vercel.app/cesvi (pide usuario y clave).
+  - **Qué cambió:**
+    - **Paso 4, «La reconstrucción»:**
+      - se abre en la reconstrucción de Croquis, el nombre nuevo de la «versión de la evidencia»;
+      - la versión declarada es una capa opcional, apagada al inicio: «Comparar con la declaración del conductor». Encendida, vuelven las pestañas, superponer, y en Trabajar las vistas y «Qué cambia entre versiones».
+    - **Paso 7, «Croquis contra el dictamen»:**
+      - **Tabla punto por punto** de lo que concluyó CESVI contra lo que obtuvo Croquis, con la diferencia en %:
+        - modalidad: alcance contra alcance, coincide;
+        - velocidad por deformación: 63.15 contra 63.90 km/h, +1.19 %;
+        - velocidad por restos: 60.27 contra 60.27 km/h, +0.00 %;
+        - dinámica del impacto: 15.89 m de restos en ambos.
+      - **La diferencia de energía, explicada:** 225.454 con los datos impresos contra 220.190 del dictamen, +2.39 %.
+      - **El perito concluye:** valida la comparación o escribe su conclusión.
+      - **La comparación con la declaración** va abajo, plegada; la sugerencia sobre la declaración solo aparece si el perito la pide.
+    - **Textos:** nada juzga al conductor. Esto vale para:
+      - el paso 2 («Para la reconstrucción» y «Declaración del conductor · opcional»);
+      - el paso 5 («Con la maniobra declarada, para comparar»);
+      - las frases del recorrido;
+      - el PDF y el Word: tabla «Reconstrucción de Croquis contra el dictamen original», la declaración solo si el perito encendió la comparación y sin veredicto;
+      - el prompt del borrador de consideraciones (v2).
+    - **Maqueta:** `docs/cesvi/rediseno/Paso7.html` con el título y la tabla nuevos.
+    - **Sin 3D en esta demo.**
+  - **Cómo probarlo:**
+    1. Paso 4: se ve solo la reconstrucción (restos 15.89 m); encender «Comparar con la declaración del conductor» muestra la versión declarada.
+    2. Paso 7: la tabla y la explicación de la energía; abrir «Comparación con la declaración del conductor · opcional»; escribir un nombre y «Aceptar y seguir».
+    3. Paso 8: el PDF lleva la tabla.
+  - **Pruebas:**
+    - `packages/cesvi/src/contra-dictamen.test.ts` (los números de la tabla y un resumen sin juicios sobre el conductor);
+    - la e2e `@flujo` de `/cesvi`, actualizada.
 - **Hito 1 — el caso y sus cálculos** (rama `feat/cesvi-hito1`, ADR 0048 y 0049):
   - **Liga:** https://croquis-sage.vercel.app/cesvi (pide usuario y clave).
   - **Qué hay:**
