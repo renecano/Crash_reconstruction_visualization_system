@@ -1,0 +1,105 @@
+{
+  "fecha": "2026-10-22T01:21:57.395Z",
+  "version_prompt": "corpus-cesvi-v3",
+  "modelo": "claude-sonnet-5-5",
+  "dictamenes": 671,
+  "leidos": 671,
+  "sin_leer": 0,
+  "validos": 668,
+  "proporcion_validos": 0.9955,
+  "invalidos": [
+    {
+      "id": "cesvi-7428ec8394",
+      "motivos": [
+        "X004 /expediente/impactos/0: Un impacto necesita dos vehículos, o un vehículo y un objeto fijo."
+      ]
+    },
+    {
+      "id": "cesvi-9014f1cb9c",
+      "motivos": [
+        "X004 /expediente/impactos/0: Un impacto necesita dos vehículos, o un vehículo y un objeto fijo."
+      ]
+    },
+    {
+      "id": "cesvi-24dea99d84",
+      "motivos": [
+        "esquema /danos/0/altura_cm/max: must be <= 400",
+        "esquema /danos/0/altura_cm/min: must be <= 400"
+      ]
+    }
+  ],
+  "filas": {
+    "total": 31457,
+    "valores_invalidos": 44
+  },
+  "citas": {
+    "total": 15800,
+    "fuera_del_texto": 406,
+    "proporcion_fuera": 0.0257
+  },
+  "numeros": {
+    "total": 3129,
+    "fuera_de_su_cita": 313,
+    "proporcion_fuera": 0.1
+  },
+  "datos_personales_tras_redactar": 0,
+  "costo_usd": 18.4693,
+  "costo_lote_usd": 15.5892,
+  "particion": {
+    "prueba": 205,
+    "desarrollo": 466
+  },
+  "estructura": {
+    "modalidad_principal": {
+      "alcance": 186,
+      "carambola": 3,
+      "crucero": 10,
+      "frontal": 27,
+      "lateral": 126,
+      "objeto_fijo": 81,
+      "otra": 120,
+      "reversa": 32,
+      "salida_de_camino": 31,
+      "sin_modalidad": 18,
+      "volcadura": 34
+    },
+    "conclusion": {
+      "no_se_sostiene": 332,
+      "parcial": 103,
+      "se_sostiene": 157,
+      "sin_conclusion": 11,
+      "sin_juicio": 65
+    },
+    "tres_o_mas_vehiculos": {
+      "dictamenes": 104,
+      "proporcion": 0.1557
+    },
+    "mas_de_un_impacto": {
+      "dictamenes": 144,
+      "proporcion": 0.2156
+    },
+    "con_declaracion": {
+      "dictamenes": 581,
+      "proporcion": 0.8698
+    },
+    "metodo_de_calculo": {
+      "bolsas_aire": 15,
+      "cantidad_movimiento": 3,
+      "desplazamiento": 14,
+      "ebs": 8,
+      "frenado_huellas": 6,
+      "mchenry": 3,
+      "otro": 114,
+      "prueba_choque": 18
+    },
+    "criterio_analizado": {
+      "altura": 385,
+      "dano_previo": 115,
+      "direccion": 195,
+      "forma": 396,
+      "intercambio_material": 476,
+      "lugar": 111,
+      "magnitud": 291
+    }
+  }
+}

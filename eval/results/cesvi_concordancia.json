@@ -1,0 +1,97 @@
+{
+  "fecha": "2026-10-22T01:23:47.106Z",
+  "descripcion": "Concordancia de la etiqueta de la conclusión: la que propone Claude (corpus) contra la que puso Claude Code a mano, a ciegas, al leer la conclusión del dictamen. Muestra de la partición de desarrollo, estratificada por la etiqueta del modelo.",
+  "muestra": 47,
+  "por_estrato": 10,
+  "acuerdos": 35,
+  "concordancia": 0.7447,
+  "kappa_cohen": 0.6795,
+  "confusion_modelo_vs_mano": {
+    "no_se_sostiene": {
+      "no_se_sostiene": 7,
+      "parcial": 2,
+      "sin_juicio": 1
+    },
+    "sin_juicio": {
+      "se_sostiene": 2,
+      "sin_juicio": 7,
+      "parcial": 1
+    },
+    "parcial": {
+      "parcial": 7,
+      "sin_juicio": 2,
+      "no_se_sostiene": 1
+    },
+    "se_sostiene": {
+      "se_sostiene": 8,
+      "parcial": 1,
+      "sin_conclusion": 1
+    },
+    "sin_conclusion": {
+      "sin_conclusion": 6,
+      "se_sostiene": 1
+    }
+  },
+  "desacuerdos": [
+    {
+      "id": "cesvi-7214733ff2",
+      "modelo": "sin_juicio",
+      "mano": "se_sostiene"
+    },
+    {
+      "id": "cesvi-61906b19ba",
+      "modelo": "no_se_sostiene",
+      "mano": "parcial"
+    },
+    {
+      "id": "cesvi-f489cf7716",
+      "modelo": "no_se_sostiene",
+      "mano": "sin_juicio"
+    },
+    {
+      "id": "cesvi-e3d81875a4",
+      "modelo": "no_se_sostiene",
+      "mano": "parcial"
+    },
+    {
+      "id": "cesvi-b1f0cc0698",
+      "modelo": "se_sostiene",
+      "mano": "parcial"
+    },
+    {
+      "id": "cesvi-3093487f36",
+      "modelo": "parcial",
+      "mano": "sin_juicio"
+    },
+    {
+      "id": "cesvi-b055bf5c8d",
+      "modelo": "se_sostiene",
+      "mano": "sin_conclusion"
+    },
+    {
+      "id": "cesvi-6a09a017fd",
+      "modelo": "sin_juicio",
+      "mano": "se_sostiene"
+    },
+    {
+      "id": "cesvi-77a5e61e03",
+      "modelo": "parcial",
+      "mano": "no_se_sostiene"
+    },
+    {
+      "id": "cesvi-c09aa9dee5",
+      "modelo": "parcial",
+      "mano": "sin_juicio"
+    },
+    {
+      "id": "cesvi-6ae76c9e2f",
+      "modelo": "sin_juicio",
+      "mano": "parcial"
+    },
+    {
+      "id": "cesvi-0e288a9e68",
+      "modelo": "sin_conclusion",
+      "mano": "se_sostiene"
+    }
+  ]
+}

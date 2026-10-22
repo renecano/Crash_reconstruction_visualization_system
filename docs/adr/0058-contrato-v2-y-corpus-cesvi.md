@@ -50,7 +50,36 @@
 - **Costo:**
   - **Piloto de 5 dictámenes** con la API normal: 0.26 USD.
   - **Los 666 restantes** van con la API de lotes (mitad de precio). El estimado de 18.29 USD sale de la razón salida/entrada del piloto y del conteo de tokens de entrada (7 948 773, gratis); está por debajo del tope de 30 USD que puso René.
-  - **El costo real** queda en el resultado y en PROGRESS.
+  - **El costo real** queda en el resultado y en PROGRESS: 18.47 USD con la relectura de abajo.
+
+### Lo que se ajustó con el corpus completo
+
+- **Prompt v3 y relectura solo de los inválidos.** Con la v2, 42 de 671 no validaban:
+  - 39 por X004: volcaduras, salidas de camino, baches o «cuerpo duro» sin una contraparte nombrada;
+  - 2 por X006;
+  - 1 por una altura en mm leída como cm.
+- **Qué cambió en la v3:** dice cómo nombrar la contraparte de un impacto de un solo vehículo («superficie de rodamiento», «bache», «talud», «cuerpo duro no identificado») y cuál es el vehículo del declarante.
+- **Se releyeron solo esos 41** (1.76 USD), no los 671. El corpus acepta lecturas de la v2 y de la v3 (`VERSIONES_ACEPTADAS`), y cada registro dice con cuál se leyó.
+- **Quedan 3 inválidos, con su motivo en el resultado:**
+  - 2 dictámenes de un solo vehículo que no nombran contra qué fue el impacto;
+  - 1 que escribe «110 y 130 metros» como altura del daño. No se corrige, porque sería inventar el número.
+- **Lectura de números:**
+  - **Unidades:** «mm» pegado al número («700mm») se reconoce.
+  - **Miles con espacio:** «50 600 kgs» se lee como 50 600 kg; antes se leía 50 con unidad «600 kgs».
+- **Redacción ampliada** (`redactar`), medida contra el texto crudo:
+  - **Formatos de placa nuevos:** con guion largo, partidas en dos renglones, de otros estados (6 a 8 caracteres con letra y número), y lo que sigue a «placas de circulación» o «matrícula».
+  - **Otros datos:** el VIN y los números de siniestro, póliza o folio.
+  - **Se conservan** los modelos después de «tipo» o «modelo» («FLD-120») y las normas («NOM-012-SCT»).
+  - **En el corpus versionado** no queda ninguna forma de placa o VIN; solo «T3-S2», que es una configuración de tractocamión.
+
+### Revisión ciega de la conclusión
+
+- **Muestra:** 47 dictámenes de la partición de desarrollo, hasta 10 por etiqueta del modelo. Solo se ve la parte de conclusiones, redactada; la hoja queda fuera de git.
+- **Quién etiquetó:** Claude Code, sin ver la etiqueta del modelo.
+- **Resultado:** 35 de 47 de acuerdo (74.5 %), kappa de Cohen 0.68 (`eval/results/cesvi_concordancia.json`).
+- **Dónde está el desacuerdo:** en la frontera entre «parcial», «no se sostiene» y «sin juicio» (por ejemplo, «hubo contacto, pero no como se declaró»).
+- **7 dictámenes no traen conclusiones:** el texto termina en el encabezado, porque se perdieron al convertir el PDF. En uno de ellos el modelo puso una etiqueta deducida de otra parte del dictamen.
+- **Consecuencia:** la etiqueta sirve para estratificar y describir el corpus. No sirve como verdad fina para evaluar la sugerencia de Croquis; para eso se usan los criterios con su cita, o las etiquetas de un perito si René las consigue.
 
 ## Consecuencias
 
