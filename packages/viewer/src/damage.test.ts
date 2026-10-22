@@ -138,6 +138,26 @@ describe("deformación desde el perfil del solver", () => {
     expect(anyTransfer).toBe(true);
   });
 
+  it("otro impacto (carambola) agrega su propio morph target sin perder el primero", () => {
+    const d = { length: 4.5, width: 1.8, height: 1.5, wheelbase: 2.6 };
+    const g = buildVehicle("sedan_mediano", d);
+    const body = g.getObjectByName("fusion_pintura") as Mesh;
+    const base = { perfil: [0.2, 0.3, 0.4, 0.4, 0.3, 0.2], ancho: 1.8, centro: 0, seed: 3 };
+    applyVehicleDamage(g, "sedan_mediano", d, { ...base, lado: "B" });
+    const first = Float32Array.from(body.geometry.morphAttributes.position![0]!.array);
+    applyVehicleDamage(g, "sedan_mediano", d, { ...base, lado: "F" }, true);
+    const geo = body.geometry;
+    expect(geo.morphAttributes.position).toHaveLength(2);
+    expect(geo.morphAttributes.normal).toHaveLength(2);
+    expect(body.morphTargetInfluences).toEqual([0, 0]);
+    expect(geo.morphAttributes.position![0]!.array).toEqual(first);
+    // El segundo deforma el frente: hunde hacia atrás (−x) lo que el primero no tocaba.
+    const second = geo.morphAttributes.position![1]!.array;
+    let minX = 0;
+    for (let i = 0; i < second.length; i += 3) minX = Math.min(minX, second[i]!);
+    expect(minX).toBeLessThan(-0.3);
+  });
+
   it("el ruido de las arrugas es determinista y acotado", () => {
     expect(valueNoise(1.3, 2.7, -0.4, 5)).toBe(valueNoise(1.3, 2.7, -0.4, 5));
     for (let i = 0; i < 200; i++) {

@@ -9,6 +9,9 @@
  *    el punto de impacto), las masas, las medidas C y L como daño declarado y las huellas.
  *
  * El solver no cambia (la paridad Python/TS se conserva). Lo que no cubre se declara como límite.
+ *
+ * Carambolas (R6, ADR 0066): los impactos entre vehículos después del primero pasan a la escena como
+ * eventos posteriores (`segundo_impacto`); el solver los resuelve cuando el par se toca.
  */
 import { buildSpec, fact, emptyFacts, type Fact } from "@croquis/extraction";
 import { fullResult } from "@croquis/solver-ts";
@@ -84,13 +87,8 @@ export interface EscenaSolver {
 /** La escena del solver a partir del expediente (sin correr el solver). */
 export function especDeExpediente(e: Expediente, specId = "caso-nuevo"): EscenaSolver {
   const limites: string[] = [];
-  const impactos = e.impactos ?? [];
+  const impactos = [...(e.impactos ?? [])].sort((a, b) => a.orden - b.orden);
   const primero = impactos.find((i) => i.orden === 1) ?? impactos[0];
-  if (impactos.length > 1) {
-    limites.push(
-      `El expediente tiene ${impactos.length} impactos; esta reconstrucción calcula el primero. Los impactos en secuencia (carambolas) llegan con R6.`,
-    );
-  }
   // Los vehículos del primer impacto van primero (A, B…), como los ordena la escena v1.
   const enImpacto = (primero?.vehiculos ?? []).filter((v) => e.vehiculos.some((x) => x.id === v));
   const orden = [
@@ -135,10 +133,14 @@ export function especDeExpediente(e: Expediente, specId = "caso-nuevo"): EscenaS
       .find((v) => v.tipo === "evidencia")
       ?.posiciones?.filter((p) => p.fuente === "perito") ?? [];
   const deImpacto = posiciones.filter((p) => p.fase === "impacto");
-  const origen: LonLat | null = deImpacto.length
+  // El origen es el primer impacto: el promedio de las posiciones de impacto de sus vehículos (o
+  // de todas, si el perito no colocó a ninguno de ellos).
+  const delPrimero = deImpacto.filter((p) => enImpacto.includes(p.vehiculo));
+  const base = delPrimero.length ? delPrimero : deImpacto;
+  const origen: LonLat | null = base.length
     ? [
-        deImpacto.reduce((a, p) => a + p.punto.lon, 0) / deImpacto.length,
-        deImpacto.reduce((a, p) => a + p.punto.lat, 0) / deImpacto.length,
+        base.reduce((a, p) => a + p.punto.lon, 0) / base.length,
+        base.reduce((a, p) => a + p.punto.lat, 0) / base.length,
       ]
     : null;
   const local = (p: { lat: number; lon: number }) => {
@@ -150,6 +152,7 @@ export function especDeExpediente(e: Expediente, specId = "caso-nuevo"): EscenaS
       "Sin las posiciones de impacto, las posiciones finales no se pueden medir desde el punto de impacto: coloca a los vehículos en el impacto.",
     );
   }
+  const detenidos: Id[] = [];
   for (const v of vehiculos) {
     const sv = spec.vehiculos[orden.indexOf(v.id)]!;
     if (v.masa && v.masa.unidad === "kg") {
@@ -157,7 +160,23 @@ export function especDeExpediente(e: Expediente, specId = "caso-nuevo"): EscenaS
     }
     if (!origen) continue;
     const imp = deImpacto.find((p) => p.vehiculo === v.id);
-    if (imp) {
+    if (imp && enImpacto.length && !enImpacto.includes(v.id)) {
+      // Solo está en un impacto posterior: empieza detenido donde el perito lo colocó en su
+      // impacto, como el que espera en una fila (supuesto, se dice en los límites).
+      const { x, y } = local(imp.punto);
+      sv.posicion_inicial = {
+        x,
+        y,
+        rumbo_deg: rumboEscena(imp.rumbo),
+        procedencia: {
+          fuente: "supuesto",
+          confianza: 0.5,
+          nota: "Detenido en la posición de impacto que colocó el perito (impacto posterior).",
+        },
+      };
+      sv.velocidad_previa = { valor: 0, unidad: "km/h", fuente: "supuesto", confianza: 0.5 };
+      detenidos.push(v.id);
+    } else if (imp) {
       const { x, y } = local(imp.punto);
       const r = rumboEscena(imp.rumbo);
       const rad = (r * Math.PI) / 180;
@@ -189,6 +208,41 @@ export function especDeExpediente(e: Expediente, specId = "caso-nuevo"): EscenaS
     const zona = primero?.zonas?.find((x) => x.vehiculo === id)?.zona;
     const h = zona ? zonaHorizontal(zona) : null;
     if (h) z.cdc.zona_horizontal = h;
+  }
+  if (detenidos.length) {
+    limites.push(
+      `${detenidos.join(", ")}: solo ${detenidos.length === 1 ? "está" : "están"} en un impacto posterior y ${detenidos.length === 1 ? "empieza detenido" : "empiezan detenidos"} en la posición de impacto que colocó el perito (supuesto).`,
+    );
+  }
+
+  // Carambola (R6): los impactos entre vehículos después del primero, como eventos posteriores.
+  let ordenEvento = Math.max(...spec.eventos.map((ev) => Number(ev.orden ?? 0)));
+  for (const imp of impactos) {
+    if (imp === primero) continue;
+    const par = (imp.vehiculos ?? []).filter((v) => orden.includes(v)).slice(0, 2);
+    if (imp.objeto_fijo || par.length < 2) {
+      limites.push(
+        `El impacto ${imp.orden} no es entre dos vehículos${imp.objeto_fijo ? ` (${imp.objeto_fijo})` : ""}: la reconstrucción no lo calcula.`,
+      );
+      continue;
+    }
+    const zonas = par.flatMap((v) => {
+      const zona = imp.zonas?.find((x) => x.vehiculo === v)?.zona;
+      const lado = zona ? LADO[zona.cara] : undefined;
+      if (!zona || !lado || !["F", "B", "L", "R"].includes(lado)) return [];
+      const h = zonaHorizontal(zona);
+      return [{ vehiculo_id: idEscena(v), cdc: h ? { lado, zona_horizontal: h } : { lado } }];
+    });
+    ordenEvento += 1;
+    spec.eventos.push({
+      id: `ev-impacto-${imp.orden}`,
+      orden: ordenEvento,
+      tipo: "segundo_impacto",
+      actores: par.map(idEscena),
+      ...(zonas.length ? { zonas_impacto: zonas } : {}),
+      procedencia:
+        imp.fuente === "perito" ? { ...DEL_PERITO } : { fuente: "supuesto", confianza: 0.5 },
+    });
   }
 
   for (const d of e.danos ?? []) {
@@ -231,10 +285,19 @@ export interface VelocidadReconstruida {
   impacto: { p10?: number; p50?: number; p90?: number } | null;
 }
 
+/** Un impacto reconstruido, en orden: cuándo (s; el primero es 0) y entre qué vehículos. */
+export interface ImpactoReconstruido {
+  numero: number;
+  t: number;
+  vehiculos: Id[];
+}
+
 export interface Reconstruccion extends EscenaSolver {
   /** El resultado completo del solver (trayectorias, incertidumbre, inversión, consistencia). */
   resultado: Json;
   velocidades: VelocidadReconstruida[];
+  /** Los impactos que ocurrieron en la reconstrucción, en orden (más de uno en una carambola). */
+  impactos: ImpactoReconstruido[];
   /** La evidencia que usó la inversión, con sus nombres del solver. */
   evidencia: string[];
 }
@@ -262,6 +325,30 @@ export function interpretarResultado(base: EscenaSolver, resultado: Json): Recon
       "La evidencia del perito todavía no fija ninguna velocidad: coloca las posiciones de impacto y finales, o captura las medidas C y L de la deformación.",
     );
   }
+  const eventos = (resultado.eventos ?? []) as {
+    id: string;
+    tipo: string;
+    t: number;
+    actores: string[];
+  }[];
+  const impactos = eventos
+    .filter((ev) => ev.tipo.startsWith("impacto_"))
+    .sort((a, b) => a.t - b.t)
+    .map((ev, k) => ({
+      numero: k + 1,
+      t: ev.t,
+      vehiculos: ev.actores.flatMap((a) => (base.ids[a] ? [base.ids[a]] : [])),
+    }));
+  // Un impacto posterior que el solver no alcanzó a resolver se le dice al perito (R6).
+  const primerPar = new Set(impactos[0]?.vehiculos ?? []);
+  for (const ev of (base.spec.eventos ?? []) as { id: string; tipo: string; actores: string[] }[]) {
+    if (ev.tipo !== "segundo_impacto" || eventos.some((x) => x.id === ev.id)) continue;
+    const vs = ev.actores.map((a) => base.ids[a] ?? a);
+    if (vs.every((v) => primerPar.has(v))) continue; // el mismo par: es el contacto de siempre
+    limites.push(
+      `El impacto ${ev.id.replace("ev-impacto-", "")} (${vs.join(" con ")}) no ocurre en la reconstrucción: con estas posiciones, sus trayectorias no llegan a tocarse.`,
+    );
+  }
   const velocidades = Object.entries(base.ids).map(([sid, id]) => {
     const p = inv.parametros.find((x) => x.vehiculo === sid && x.parametro === "velocidad_previa");
     const i = inv.velocidad_impacto.find((x) => x.vehiculo === sid);
@@ -271,7 +358,7 @@ export function interpretarResultado(base: EscenaSolver, resultado: Json): Recon
       impacto: inv.evidencia.length && i ? { p10: i.p10, p50: i.p50, p90: i.p90 } : null,
     };
   });
-  return { ...base, limites, resultado, velocidades, evidencia: inv.evidencia };
+  return { ...base, limites, resultado, velocidades, impactos, evidencia: inv.evidencia };
 }
 
 /** La evidencia del solver en palabras («reposo:veh-a» → «posición final de V1»). */
@@ -345,6 +432,34 @@ function enT(ts: number[], xs: number[], t: number): number {
  * solver (metros desde el punto de impacto) de vuelta a latitud y longitud, con el rumbo en grados
  * desde el norte. Para sincronizar el croquis 2D con el reloj del 3D. Vacío sin punto de impacto.
  */
+/**
+ * Los impactos en el mapa, en orden (X1, X2…): el primero en el origen de la escena y los
+ * posteriores en el punto de contacto que dio el solver (carambola, ADR 0066). Vacío sin origen.
+ */
+export function impactosEnMapa(
+  base: EscenaSolver,
+  resultado: Json,
+): { numero: number; punto: { lat: number; lon: number } }[] {
+  if (!base.origen) return [];
+  const origen = base.origen;
+  const eventos = (
+    (resultado.eventos ?? []) as {
+      tipo: string;
+      t: number;
+      detalle?: { punto_m?: number[] };
+    }[]
+  )
+    .filter((ev) => ev.tipo.startsWith("impacto_"))
+    .sort((a, b) => a.t - b.t);
+  const pi = resultado.punto_impacto as { x: number; y: number } | undefined;
+  return eventos.flatMap((ev, k) => {
+    const xy = k === 0 ? (pi ? [pi.x, pi.y] : [0, 0]) : ev.detalle?.punto_m;
+    if (!xy || xy.length < 2) return [];
+    const [lon, lat] = avanzar(avanzar(origen, 0, xy[1]!), 90, xy[0]!);
+    return [{ numero: k + 1, punto: { lat, lon } }];
+  });
+}
+
 export function posicionesEnTiempo(
   base: EscenaSolver,
   resultado: Json,

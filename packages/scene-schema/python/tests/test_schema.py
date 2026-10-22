@@ -21,6 +21,7 @@ from croquis_scene_schema import (
 
 EXPECTED = [
     "alcance",
+    "carambola",
     "frontal_curva",
     "glorieta",
     "interseccion_toluca",
@@ -97,8 +98,9 @@ def test_escenas_canonicas_con_ids_unicos() -> None:
     names = list_fixtures()
     assert names == EXPECTED
     ids = {load_fixture(n)["meta"]["id"] for n in names}
-    # Las diez de F1 y la de Toluca con vía de OpenStreetMap (F8, ADR 0023).
-    assert len(ids) == 11
+    # Las diez de F1, la de Toluca con vía de OpenStreetMap (F8, ADR 0023) y la carambola
+    # (R6, ADR 0066).
+    assert len(ids) == 12
 
 
 @pytest.mark.parametrize("name", EXPECTED)

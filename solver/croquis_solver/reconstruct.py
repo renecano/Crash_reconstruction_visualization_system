@@ -17,7 +17,7 @@ from __future__ import annotations
 import itertools
 import json
 import math
-from collections.abc import Callable
+from collections.abc import Callable, Container
 from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any
@@ -39,10 +39,11 @@ from croquis_solver.person_motion import (
 from croquis_solver.postimpact import (
     ROLLING_RESISTANCE,
     JointBody,
+    PlannedImpact,
     PostImpactResult,
     WheelConfig,
     integrate,
-    integrate_joint,
+    integrate_joint_impacts,
 )
 from croquis_solver.preimpact import (
     ArcPath,
@@ -62,7 +63,7 @@ from croquis_solver.units import ms_to_kmh
 
 JsonObj = dict[str, Any]
 
-RESULT_VERSION = "1.8.0"
+RESULT_VERSION = "1.9.0"
 DT_OUT = 0.02
 T_PRE_MAX = 6.0
 T_PRE_MIN = 3.0  # contexto mínimo antes del impacto para el visor
@@ -150,6 +151,23 @@ class VehicleOutcome:
     rest_pose: tuple[float, float, float]
     distance_post_m: float
     rollover: rollover.RolloverCheck | None = None
+    later_damage: list[LaterDamage] = field(default_factory=lambda: list[LaterDamage]())
+
+
+@dataclass
+class LaterDamage:
+    """El daño de un impacto posterior en un vehículo que ya tenía daño (carambola, ADR 0066)."""
+
+    event_id: str
+    t: float
+    profile_m: list[float]
+    width_m: float
+    center_m: float
+    energy_j: float
+    stiffness_origen: str
+    cdc: JsonObj | None
+    delta_v_kmh: float
+    pdof_hours: float | None
 
 
 @dataclass
@@ -293,21 +311,38 @@ class Reconstruction:
         return json.dumps(self.to_dict(), ensure_ascii=False, indent=1)
 
 
+def _dano_dict(
+    profile: list[float],
+    width: float,
+    center: float,
+    energy: float,
+    origen: str,
+    cdc: JsonObj | None,
+) -> JsonObj:
+    dano: JsonObj = {
+        "perfil_m": [_r(c) for c in profile],
+        "ancho_m": _r(width),
+        "centro_m": _r(center),
+        "energia_j": _r(energy, 3),
+        "origen_rigidez": origen,
+    }
+    if cdc:
+        dano["cdc"] = {
+            k: cdc[k] for k in ("lado", "zona_horizontal", "zona_vertical", "extension") if k in cdc
+        }
+    return dano
+
+
 def _vehicle_dict(v: VehicleOutcome) -> JsonObj:
     tr = v.trajectory
-    dano: JsonObj = {
-        "perfil_m": [_r(c) for c in v.crush_profile_m],
-        "ancho_m": _r(v.crush_width_m),
-        "centro_m": _r(v.crush_center_m),
-        "energia_j": _r(v.crush_energy_j, 3),
-        "origen_rigidez": v.stiffness_origen,
-    }
-    if v.cdc:
-        dano["cdc"] = {
-            k: v.cdc[k]
-            for k in ("lado", "zona_horizontal", "zona_vertical", "extension")
-            if k in v.cdc
-        }
+    dano = _dano_dict(
+        v.crush_profile_m,
+        v.crush_width_m,
+        v.crush_center_m,
+        v.crush_energy_j,
+        v.stiffness_origen,
+        v.cdc,
+    )
     d: JsonObj = {
         "id": v.id,
         "rol": v.rol,
@@ -335,6 +370,25 @@ def _vehicle_dict(v: VehicleOutcome) -> JsonObj:
     if v.pdof_hours is not None:
         d["pdof_horas"] = _r(v.pdof_hours)
     d["dano"] = dano
+    if v.later_damage:
+        posteriores: list[JsonObj] = []
+        for ld in v.later_damage:
+            dp: JsonObj = {"evento_id": ld.event_id, "t": _r(ld.t)}
+            dp["delta_v_kmh"] = _r(ld.delta_v_kmh)
+            if ld.pdof_hours is not None:
+                dp["pdof_horas"] = _r(ld.pdof_hours)
+            dp.update(
+                _dano_dict(
+                    ld.profile_m,
+                    ld.width_m,
+                    ld.center_m,
+                    ld.energy_j,
+                    ld.stiffness_origen,
+                    ld.cdc,
+                )
+            )
+            posteriores.append(dp)
+        d["danos_posteriores"] = posteriores
     d["en_reposo"] = v.stopped
     d["pose_final"] = {
         "x": _r(v.rest_pose[0]),
@@ -560,6 +614,41 @@ def _primary_event(spec: JsonObj) -> JsonObj | None:
     return None
 
 
+def _pair(event: JsonObj, vehicle_ids: Container[str]) -> list[str]:
+    """Los dos primeros vehículos entre los actores de un evento."""
+    return [str(a) for a in event["actores"] if a in vehicle_ids][:2]
+
+
+def _later_impacts(
+    spec: JsonObj, primary: JsonObj | None, vehicle_ids: Container[str]
+) -> list[JsonObj]:
+    """Los impactos entre vehículos declarados después del primero, en orden (carambola, ADR 0066).
+
+    Cuentan los eventos `impacto_vehiculo_vehiculo` o `segundo_impacto` con al menos dos vehículos
+    entre sus actores y un orden posterior al del primer impacto.
+    """
+    if primary is None:
+        return []
+    out: list[JsonObj] = []
+    for e in sorted(spec["eventos"], key=lambda e: int(e["orden"])):
+        if e is primary or int(e["orden"]) < int(primary["orden"]):
+            continue
+        tipo_ok = e["tipo"] in ("impacto_vehiculo_vehiculo", "segundo_impacto")
+        if tipo_ok and len(_pair(e, vehicle_ids)) == 2:
+            out.append(e)
+    return out
+
+
+def _side_toward(n: Vec, yaw: float) -> str:
+    """La cara del vehículo (F, B, L o R) que mira hacia `n` (unitaria, mundo)."""
+    c, s = dmath.cos(yaw), dmath.sin(yaw)
+    lx = n[0] * c + n[1] * s
+    ly = -n[0] * s + n[1] * c
+    if abs(lx) >= abs(ly):
+        return "F" if lx > 0 else "B"
+    return "L" if ly > 0 else "R"
+
+
 # Forma y fracción del largo de la cara dañada por cara y zona horizontal del CDC. Los grupos
 # ajustados con E5 en desarrollo (ADR 0033): frente/trasera C, y costados D, P, Z y B; el resto
 # conserva la regla original, que E5 no pudo mejorar sin empeorar alguna métrica. Las letras de
@@ -700,6 +789,10 @@ def reconstruct(
     zonas: dict[str, JsonObj | None] = {
         z["vehiculo_id"]: z.get("cdc") for z in (event or {}).get("zonas_impacto", [])
     }
+    # Carambola: los impactos entre vehículos después del primero (ADR 0066). Sus vehículos se
+    # integran juntos con los del primero; cada impacto ocurre cuando su par se toca.
+    later = _later_impacts(spec, event, by_id)
+    participantes = set(actores) | {v for e in later for v in _pair(e, by_id)}
     axis = road_axis(lugar)
     candidates: dict[str, list[KinPath]] = {
         m.id: _path_candidates(m, lane_width, axis) for m in models
@@ -1165,27 +1258,131 @@ def reconstruct(
             else max(ROLLING_RESISTANCE, POST_IMPACT_DRAG_FRACTION * mu)
         )
         mu_post = (mu_downed.nominal if downed_mu is None else downed_mu) if downed else mu
+        # Un vehículo que todavía no choca (solo está en un impacto posterior) rueda libre hasta
+        # su primer impacto (ADR 0066).
+        waits = m.id not in actores
         return JointBody(
             m.body,
             State2D(start.x, start.y, start.yaw, start.vx, start.vy, start.yaw_rate, 0.0),
             wheels,
             mu_post,
-            drag,
+            ROLLING_RESISTANCE if waits else drag,
             max(0.0, *crush[m.id][0]),
             str((zonas.get(m.id) or {}).get("lado", "F")),
+            drag if waits else None,
         )
 
     # Los vehículos de un choque entre vehículos se mueven juntos: si después de separarse se
     # vuelven a encajar más que su aplastamiento, el contacto secundario los detiene (ADR 0063).
-    joint_post: dict[str, PostImpactResult] = dict(
-        zip(
-            joint_ids,
-            integrate_joint([post_body(by_id[i]) for i in joint_ids], dt_out=dt, t_max=T_POST_MAX),
-            strict=True,
-        )
+    # En una carambola entran también los de los impactos posteriores (ADR 0066).
+    group: list[str] = list(joint_ids)
+    if later:
+        for vid in [*(m.id for m in involved[:1]), *(v for e in later for v in _pair(e, by_id))]:
+            if vid not in group:
+                group.append(vid)
+    plans: list[PlannedImpact] = []
+    for e in later:
+        pa, pb = _pair(e, by_id)
+        if {pa, pb} != set(joint_ids):  # el mismo par del primero: lo cubre el contacto secundario
+            plans.append(
+                PlannedImpact(
+                    group.index(pa), group.index(pb), str(e["id"]), RESTITUTION_VV, IMPULSE_RATIO
+                )
+            )
+    joint_list, joint_hits = integrate_joint_impacts(
+        [post_body(by_id[i]) for i in group], impacts=plans, dt_out=dt, t_max=T_POST_MAX
     )
+    joint_post: dict[str, PostImpactResult] = dict(zip(group, joint_list, strict=True))
+
+    # Los impactos posteriores que ocurrieron: daño, delta-v y evento, como el primero.
+    later_damage: dict[str, list[LaterDamage]] = {m.id: [] for m in models}
+    v_impact_at: dict[str, float] = {}
+    later_by_id = {str(e["id"]): e for e in later}
+    for hit in joint_hits:
+        ev = later_by_id[hit.event_id]
+        zonas_ev: dict[str, JsonObj | None] = {
+            z["vehiculo_id"]: z.get("cdc") for z in ev.get("zonas_impacto", [])
+        }
+        res2 = hit.result
+        ids2 = (group[hit.a], group[hit.b])
+        sides = (
+            (ids2[0], hit.a_before, hit.normal, res2.delta_v_a, res2.pdof_a_hours),
+            (
+                ids2[1],
+                hit.b_before,
+                (-hit.normal[0], -hit.normal[1]),
+                res2.delta_v_b,
+                res2.pdof_b_hours,
+            ),
+        )
+        cdcs: dict[str, JsonObj] = {}
+        ks: dict[str, Any] = {}
+        for vid, before, toward, _, _ in sides:
+            cdc_v = zonas_ev.get(vid) or {"lado": _side_toward(toward, before.yaw)}
+            cdcs[vid] = cdc_v
+            ks[vid] = stiffness_for(
+                by_id[vid].clase, zona_from_cdc_side(str(cdc_v.get("lado", "F")))
+            )
+        w = {vid: 1.0 / ks[vid].stiffness.b for vid in ids2}
+        for vid, before, _, dv, pd in sides:
+            m = by_id[vid]
+            energy = res2.energy_loss * w[vid] / (w[ids2[0]] + w[ids2[1]])
+            shape, width = _crush_shape_and_width(cdcs[vid], m.body)
+            prof = profile_for_energy(energy, width, ks[vid].stiffness, shape)
+            if crush[vid][3] == "sin impacto":
+                # Su primer impacto: va en su daño, su delta-v y su velocidad de impacto.
+                crush[vid] = (prof, width, energy, ks[vid].origen)
+                delta_v[vid], pdof[vid] = dv, pd
+                zonas[vid] = cdcs[vid]
+                v_impact_at[vid] = before.speed
+            else:
+                later_damage[vid].append(
+                    LaterDamage(
+                        hit.event_id,
+                        hit.t,
+                        prof,
+                        width,
+                        _crush_center(cdcs[vid], m.body, width),
+                        energy,
+                        ks[vid].origen,
+                        cdcs[vid],
+                        ms_to_kmh(dv),
+                        pd,
+                    )
+                )
+        sa2, sb2 = hit.a_before, hit.b_before
+        eventos_out.append(
+            EventOutcome(
+                hit.event_id,
+                "impacto_vehiculo_vehiculo",
+                hit.t,
+                list(ids2),
+                {
+                    "impulso_ns": [res2.impulse[0], res2.impulse[1]],
+                    "adherencia": res2.sticking,
+                    "friccion_contacto_usada": res2.friction_used,
+                    "energia_disipada_j": res2.energy_loss,
+                    "velocidad_cierre_kmh": ms_to_kmh(
+                        dmath.hypot(sa2.vx - sb2.vx, sa2.vy - sb2.vy)
+                    ),
+                    "punto_m": [hit.point[0], hit.point[1]],
+                },
+            )
+        )
+    for e in later:
+        pa, pb = _pair(e, by_id)
+        planned = {pa, pb} != set(joint_ids)
+        if planned and not any(h.event_id == e["id"] for h in joint_hits):
+            flag(
+                "impacto_no_ocurre",
+                {"evento": e["id"], "vehiculos": [pa, pb]},
+                f"El impacto entre los vehículos {by_id[pa].rol} y {by_id[pb].rol} declarado "
+                "después del primero no ocurre en la reconstrucción: sus trayectorias no llegan a "
+                "tocarse.",
+            )
+
     for m in models:
-        if m.id not in actores:
+        if m.id not in participantes:
             continue
         start = post_start[m.id]
         res_post: PostImpactResult | None = joint_post.get(m.id)
@@ -1212,7 +1409,7 @@ def reconstruct(
             post[m.id] = (Trajectory(), True, 0.0)
         tr_post = post[m.id][0]
         t_fin = max(t_fin, tr_post.t[-1] if len(tr_post) else 0.0)
-    if any(m.id in actores and m.clase in friction.DOWNED_SLIDE_CLASSES for m in models):
+    if any(m.id in participantes and m.clase in friction.DOWNED_SLIDE_CLASSES for m in models):
         params["friccion_moto_caida"] = {
             "valor": mu_downed.nominal if downed_mu is None else downed_mu,
             "rango": [mu_downed.low, mu_downed.high],
@@ -1324,7 +1521,7 @@ def reconstruct(
     for m in models:
         full = Trajectory()
         full.extend(pre[m.id])
-        if m.id in actores:
+        if m.id in participantes:
             tr, stopped, dist_post = post[m.id]
             for i in range(1, len(tr)):
                 full.append(tr.state(i))
@@ -1345,14 +1542,14 @@ def reconstruct(
                 id=m.id,
                 rol=m.rol,
                 clase=m.clase,
-                involucrado=m.id in actores,
+                involucrado=m.id in participantes,
                 length=m.body.length,
                 width=m.body.width,
                 height=m.height,
                 wheelbase=m.wheelbase,
                 mass=m.body.mass,
                 trajectory=full,
-                v_impact_kmh=ms_to_kmh(impact_states[m.id].speed),
+                v_impact_kmh=ms_to_kmh(v_impact_at.get(m.id, impact_states[m.id].speed)),
                 delta_v_kmh=ms_to_kmh(delta_v[m.id]),
                 pdof_hours=pdof[m.id],
                 crush_profile_m=prof,
@@ -1364,6 +1561,7 @@ def reconstruct(
                 stopped=stopped,
                 rest_pose=(last.x, last.y, math.degrees(last.yaw)),
                 distance_post_m=dist_post,
+                later_damage=later_damage[m.id],
             )
         )
         if m.braking and m.v0 > 0 and m.id in s_contact:
@@ -1371,7 +1569,7 @@ def reconstruct(
             if not math.isinf(tb):
                 t_ev = round(tb - t_to_impact[m.id], 6)
                 eventos_out.append(EventOutcome(f"frenado-{m.id}", "inicio_frenado", t_ev, [m.id]))
-        if m.id in actores:
+        if m.id in participantes:
             tr_post = post[m.id][0]
             t_stop = tr_post.t[-1] if len(tr_post) else 0.0
             eventos_out.append(EventOutcome(f"reposo-{m.id}", "reposo", t_stop, [m.id]))

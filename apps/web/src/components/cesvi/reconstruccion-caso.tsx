@@ -8,6 +8,7 @@ import {
   especDeExpediente,
   especReconstruida,
   evidenciaEnPalabras,
+  impactosEnMapa,
   interpretarResultado,
   posicionesEnTiempo,
   verificacionCesvi,
@@ -26,14 +27,18 @@ import { reconstruirCompletoEnNavegador } from "@/lib/reconstruct-client";
 const kmh = (x?: number) => (x === undefined ? "—" : x.toFixed(1));
 
 export type PosicionMovil = ReturnType<typeof posicionesEnTiempo>[number];
+export type MarcaImpacto = ReturnType<typeof impactosEnMapa>[number];
 
 export function ReconstruccionCaso({
   expediente,
   onPosiciones,
+  onImpactos,
 }: {
   expediente: Expediente;
   /** Dónde están los vehículos en el instante del 3D, para dibujarlos en el mapa (vacío sin 3D). */
   onPosiciones?: (ps: PosicionMovil[]) => void;
+  /** Dónde ocurrió cada impacto (X1, X2…), para marcarlo en el mapa (vacío sin reconstrucción). */
+  onImpactos?: (ms: MarcaImpacto[]) => void;
 }) {
   const [estado, setEstado] = useState<string | null>(null);
   const [r, setR] = useState<Reconstruccion | null>(null);
@@ -52,10 +57,13 @@ export function ReconstruccionCaso({
     setR(null);
     setVer3d(false);
     onPosiciones?.([]);
+    onImpactos?.([]);
     try {
       const base = especDeExpediente(expediente);
       const resultado = await reconstruirCompletoEnNavegador(base.spec as unknown as EscenaSpec);
-      setR(interpretarResultado(base, resultado as unknown as Record<string, unknown>));
+      const json = resultado as unknown as Record<string, unknown>;
+      setR(interpretarResultado(base, json));
+      onImpactos?.(impactosEnMapa(base, json));
       setEstado(null);
     } catch (e) {
       setEstado(`El solver no pudo reconstruir la escena: ${(e as Error).message}`);
@@ -129,6 +137,17 @@ export function ReconstruccionCaso({
                 ? `Evidencia que fija el resultado: ${r.evidencia.map((x) => evidenciaEnPalabras(x, r.ids)).join(", ")}.`
                 : "Sin evidencia que fije las velocidades."}
             </p>
+            {r.impactos.length > 1 ? (
+              <ol className="t-nota flex flex-col gap-1" data-testid="impactos-reconstruidos">
+                {r.impactos.map((i) => (
+                  <li key={i.numero} data-impacto={i.numero}>
+                    <span className="font-medium text-texto">X{i.numero}</span> ·{" "}
+                    <span className="cifras">{i.t === 0 ? "0.00 s" : `+${i.t.toFixed(2)} s`}</span>{" "}
+                    · {i.vehiculos.join(" con ")}
+                  </li>
+                ))}
+              </ol>
+            ) : null}
             {r.limites.length ? (
               <ul className="flex flex-col gap-1.5" data-testid="limites">
                 {r.limites.map((l) => (

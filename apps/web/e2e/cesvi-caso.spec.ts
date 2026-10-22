@@ -119,3 +119,79 @@ test("@flujo /cesvi/caso: de la narración del perito al mapa y a la escena", as
   expect(posiciones.find((p) => p.vehiculo === "V1" && p.fase === "final")!.rumbo).toBe(315);
   expect(errores).toEqual([]);
 });
+
+/** La lectura grabada de una carambola narrada con su secuencia de impactos (E-R6). */
+const CARAMBOLA = JSON.parse(
+  readFileSync(
+    join(__dirname, "../../../data/cesvi/grabaciones/carambola/carambola-e2e.json"),
+    "utf8",
+  ),
+) as { narracion: string; salida: unknown };
+
+test("@flujo /cesvi/caso: una carambola, con sus impactos en orden hasta el 3D", async ({
+  page,
+}) => {
+  const errores: string[] = [];
+  page.on("pageerror", (e) => errores.push(e.message));
+  await page.route("https://tiles.openfreemap.org/**", (r) =>
+    r.fulfill({
+      contentType: "application/json",
+      body: JSON.stringify({
+        version: 8,
+        sources: {},
+        layers: [{ id: "fondo", type: "background", paint: { "background-color": "#eee" } }],
+      }),
+    }),
+  );
+  await page.route("**/api/cesvi/escena", (r) =>
+    r.fulfill({
+      contentType: "application/json",
+      body: JSON.stringify({ metodo: "claude", salida: CARAMBOLA.salida }),
+    }),
+  );
+  await page.goto("/cesvi/caso");
+
+  // 1. La narración del perito, con la secuencia: A contra B y, por el empuje, B contra C.
+  await page.getByTestId("narracion").fill(CARAMBOLA.narracion);
+  await page.getByTestId("leer-narracion").click();
+  await expect(page.getByTestId("escena")).toContainText("3 vehículos · 2 impactos");
+
+  // 2. El mapa, a metros (zoom 18, unos 0.28 m por pixel): los tres en fila hacia el oriente, B y
+  // C detenidos en el semáforo; la misma disposición que la escena canónica `carambola`.
+  const mapa = page.getByTestId("mapa-escena");
+  await expect(mapa.locator("canvas")).toBeVisible({ timeout: 20_000 });
+  for (let k = 0; k < 7; k++) {
+    await mapa.dblclick({ position: { x: 300, y: 200 } });
+    await page.waitForTimeout(400);
+  }
+  const colocar = async (herramienta: string, rumbo: string, dx: number) => {
+    await page.getByTestId("herramienta-escena").selectOption(herramienta);
+    await page.getByTestId("rumbo-escena").fill(rumbo);
+    await mapa.click({ position: { x: 300 + dx, y: 200 } });
+  };
+  await colocar("V1:impacto", "90", -15);
+  await colocar("V2:impacto", "90", 0);
+  await colocar("V3:impacto", "90", 21);
+  await colocar("V1:final", "78", -9);
+  await colocar("V2:final", "85", 12);
+  await colocar("V3:final", "97", 28);
+  await expect(page.getByTestId("colocados")).toHaveText("6 posiciones colocadas por el perito.");
+
+  // 3. La reconstrucción: el segundo impacto ocurre después del primero, y el mapa marca los dos.
+  await page.getByTestId("reconstruir").click();
+  await expect(page.getByTestId("velocidades")).toBeVisible({ timeout: 60_000 });
+  const impactos = page.getByTestId("impactos-reconstruidos");
+  await expect(impactos.locator('[data-impacto="1"]')).toContainText("V1 con V2");
+  await expect(impactos.locator('[data-impacto="2"]')).toContainText("V2 con V3");
+  await expect(impactos.locator('[data-impacto="2"]')).toContainText(/\+\d\.\d\d s/);
+  await expect(mapa.locator('[data-impacto="1"]')).toHaveText("X1");
+  await expect(mapa.locator('[data-impacto="2"]')).toHaveText("X2");
+  await expect(page.getByTestId("limites")).toContainText("V3: solo está en un impacto posterior");
+
+  // 4. El 3D de la carambola, con los tres vehículos moviéndose en el mapa.
+  await page.getByTestId("ver-3d").click();
+  const visor = page.getByTestId("visor-caso");
+  await expect(visor.locator("canvas").first()).toBeVisible({ timeout: 60_000 });
+  await expect(mapa.locator('[data-movil="V3"]')).toHaveCount(1, { timeout: 30_000 });
+  expect(errores).toEqual([]);
+});

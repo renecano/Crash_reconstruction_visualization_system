@@ -9,6 +9,7 @@ import { mcHenry } from "./metodo";
 import {
   especDeExpediente,
   especReconstruida,
+  impactosEnMapa,
   reconstruirExpediente,
   posicionesEnTiempo,
   rumboEscena,
@@ -102,7 +103,7 @@ describe("del expediente a la escena del solver (R2)", () => {
     expect((a!.posicion_inicial as Json).procedencia).toMatchObject({ fuente: "supuesto" });
   });
 
-  it("las medidas C y L van como daño declarado; más de un impacto se dice como límite", () => {
+  it("las medidas C y L van como daño declarado; un impacto posterior contra un objeto se dice como límite", () => {
     const danos = base.danos!.map((d, k) =>
       k === 0 ? { ...d, magnitud: { c_m: [0.3, 0.42, 0.25], l_m: 1.2 } } : d,
     );
@@ -124,27 +125,96 @@ describe("del expediente a la escena del solver (R2)", () => {
       fuente: "usuario",
     });
     expect(danosDeclarados[0]!.ancho_danado).toMatchObject({ valor: 1.2, fuente: "usuario" });
-    expect(limites[0]).toMatch(/2 impactos/);
+    expect(limites[0]).toBe(
+      "El impacto 2 no es entre dos vehículos (poste): la reconstrucción no lo calcula.",
+    );
   });
 
-  it("sin evidencia no inventa velocidades; con las posiciones del perito las fija con rangos", () => {
-    const sin = reconstruirExpediente(base);
-    expect(sin.evidencia).toEqual([]);
-    expect(sin.velocidades.every((v) => v.previa === null)).toBe(true);
-    expect(sin.limites.at(-1)).toMatch(/todavía no fija ninguna velocidad/);
-
-    const con = reconstruirExpediente(colocado());
-    expect(con.evidencia).toEqual([
-      "reposo:veh-a",
-      "reposo:veh-b",
-      "rumbo_final:veh-a",
-      "rumbo_final:veh-b",
-    ]);
-    for (const v of con.velocidades) {
-      expect(v.previa).not.toBeNull();
-      expect(v.previa!.p10!).toBeLessThanOrEqual(v.previa!.p90!);
-    }
+  it("carambola (R6): el impacto posterior entre vehículos pasa a la escena y el tercero espera detenido", () => {
+    // El crucero con el perito y un tercero (V3) al que V2 pega con su frente después.
+    let e = colocado();
+    e = {
+      ...e,
+      vehiculos: [...e.vehiculos, { ...e.vehiculos[1]!, id: "V3" }],
+      impactos: [
+        ...e.impactos!,
+        {
+          orden: 2,
+          vehiculos: ["V2", "V3"],
+          zonas: [
+            { vehiculo: "V2", zona: { cara: "frontal" } },
+            { vehiculo: "V3", zona: { cara: "posterior", tercio: "centro" } },
+          ],
+          fuente: "perito",
+        },
+      ],
+    };
+    e = conPosicion(e, { vehiculo: "V3", fase: "impacto", punto: m(0, 12), rumbo: 90 });
+    const { spec, ids, limites, origen } = especDeExpediente(e);
+    expect(validateEscena(spec).ok).toBe(true);
+    const eventos = spec.eventos as Json[];
+    const segundo = eventos.find((ev) => ev.tipo === "segundo_impacto")!;
+    const idDe = (v: string) => Object.keys(ids).find((k) => ids[k] === v)!;
+    expect(segundo).toMatchObject({
+      id: "ev-impacto-2",
+      actores: [idDe("V2"), idDe("V3")],
+      zonas_impacto: [
+        { vehiculo_id: idDe("V2"), cdc: { lado: "F" } },
+        { vehiculo_id: idDe("V3"), cdc: { lado: "B", zona_horizontal: "C" } },
+      ],
+      procedencia: { fuente: "usuario" },
+    });
+    expect(Number(segundo.orden)).toBeGreaterThan(Number(eventos[0]!.orden));
+    // El origen es el primer impacto (V1 y V2), no el promedio con V3.
+    expect(origen).not.toBeNull();
+    const v3 = (spec.vehiculos as Json[]).find((v) => v.id === idDe("V3"))!;
+    expect(v3.velocidad_previa).toMatchObject({ valor: 0, fuente: "supuesto" });
+    expect(v3.posicion_inicial).toMatchObject({ rumbo_deg: 0 });
+    expect(limites).toContain(
+      "V3: solo está en un impacto posterior y empieza detenido en la posición de impacto que colocó el perito (supuesto).",
+    );
   });
+
+  it("los impactos en el mapa: X1 en el origen y los posteriores en su punto de contacto", () => {
+    const base1 = { spec: {}, ids: {}, limites: [], origen: [P.lon, P.lat] as [number, number] };
+    const marcas = impactosEnMapa(base1, {
+      punto_impacto: { x: 0, y: 0 },
+      eventos: [
+        { tipo: "reposo", t: 2 },
+        { tipo: "impacto_vehiculo_vehiculo", t: 0.3, detalle: { punto_m: [10, 0] } },
+        { tipo: "impacto_vehiculo_vehiculo", t: 0 },
+      ],
+    });
+    expect(marcas.map((x) => x.numero)).toEqual([1, 2]);
+    expect(marcas[0]!.punto.lat).toBeCloseTo(P.lat, 9);
+    expect(marcas[1]!.punto.lon).toBeGreaterThan(P.lon); // 10 m al este
+    expect(impactosEnMapa({ ...base1, origen: null }, { eventos: [] })).toEqual([]);
+  });
+
+  // Corre el solver completo (Monte Carlo e inversión) dos veces: más que los 5 s por omisión en
+  // la laptop de desarrollo.
+  it(
+    "sin evidencia no inventa velocidades; con las posiciones del perito las fija con rangos",
+    { timeout: 20_000 },
+    () => {
+      const sin = reconstruirExpediente(base);
+      expect(sin.evidencia).toEqual([]);
+      expect(sin.velocidades.every((v) => v.previa === null)).toBe(true);
+      expect(sin.limites.at(-1)).toMatch(/todavía no fija ninguna velocidad/);
+
+      const con = reconstruirExpediente(colocado());
+      expect(con.evidencia).toEqual([
+        "reposo:veh-a",
+        "reposo:veh-b",
+        "rumbo_final:veh-a",
+        "rumbo_final:veh-b",
+      ]);
+      for (const v of con.velocidades) {
+        expect(v.previa).not.toBeNull();
+        expect(v.previa!.p10!).toBeLessThanOrEqual(v.previa!.p90!);
+      }
+    },
+  );
 });
 
 describe("verificación CESVI al lado de la reconstrucción", () => {
@@ -215,15 +285,20 @@ describe("verificación CESVI al lado de la reconstrucción", () => {
 });
 
 describe("la escena para el 3D", () => {
-  it("lleva las velocidades estimadas como supuesto con su rango, y sigue siendo válida", () => {
-    const r = reconstruirExpediente(colocado());
-    const spec = especReconstruida(r) as Json & { vehiculos: Json[] };
-    expect(validateEscena(spec).ok).toBe(true);
-    const v = spec.vehiculos[0]!.velocidad_previa as Json;
-    expect(v).toMatchObject({ fuente: "supuesto", unidad: "km/h" });
-    expect(v.valor).toBeCloseTo(r.velocidades[0]!.previa!.mejor, 1);
-    expect((v.rango as number[])[0]).toBeLessThanOrEqual((v.rango as number[])[1]!);
-  });
+  // Corre el solver completo dos veces: más que los 5 s por omisión en la laptop de desarrollo.
+  it(
+    "lleva las velocidades estimadas como supuesto con su rango, y sigue siendo válida",
+    { timeout: 20_000 },
+    () => {
+      const r = reconstruirExpediente(colocado());
+      const spec = especReconstruida(r) as Json & { vehiculos: Json[] };
+      expect(validateEscena(spec).ok).toBe(true);
+      const v = spec.vehiculos[0]!.velocidad_previa as Json;
+      expect(v).toMatchObject({ fuente: "supuesto", unidad: "km/h" });
+      expect(v.valor).toBeCloseTo(r.velocidades[0]!.previa!.mejor, 1);
+      expect((v.rango as number[])[0]).toBeLessThanOrEqual((v.rango as number[])[1]!);
+    },
+  );
 });
 
 describe("el croquis 2D sigue al reloj del 3D", () => {

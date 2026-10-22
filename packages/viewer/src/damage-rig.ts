@@ -3,6 +3,9 @@
  * rotos, parabrisas agrietado, llantas desplazadas y bolsas de aire, todo animado con
  * `update(t)` a partir del instante del impacto. Las reglas que no salen del solver (cuándo se
  * agrieta un parabrisas o se rompe un faro) son ilustrativas y están documentadas en ADR 0007.
+ *
+ * En una carambola (ADR 0066) un vehículo puede tener más de un daño: cada uno se hornea como un
+ * morph target propio y se anima desde el instante de su impacto.
  */
 import type { EscenaSpec, Resultado } from "@croquis/scene-schema";
 import {
@@ -23,11 +26,13 @@ import {
   type DamageInput,
   type DamageSide,
   type VehicleDamage,
+  type WheelDamage,
 } from "./damage";
 import { crackedGlassMaterial, damagedPaintMaterial } from "./damage-material";
 import { profileFor, type CarLayout, type VehicleDimensions } from "./vehicle-geometry";
 
 type VehicleResult = Resultado["vehiculos"][number];
+type EventResult = Resultado["eventos"][number];
 
 /** Aplastamiento mínimo para deformar (m). */
 export const MIN_CRUSH_M = 0.002;
@@ -38,6 +43,7 @@ export const WINDSHIELD_CRACK_M = 0.3;
 /** Las grietas crecen durante este tiempo después del impacto (s). */
 export const CRACK_GROWTH_S = 0.25;
 const BROKEN_LIGHT = new Color("#2b2d30");
+const SIDES = ["F", "B", "L", "R"];
 
 export interface DamageRig {
   damage: VehicleDamage | null;
@@ -57,20 +63,31 @@ export interface DamageRigContext {
   seed: number;
 }
 
-function primaryEvent(r: Resultado) {
-  return r.eventos.find((e) => e.tipo.startsWith("impacto_"));
+/** Un daño y el instante de su impacto (s). */
+export interface TimedDamage {
+  input: DamageInput;
+  t: number;
+}
+
+/** El primer impacto en el que participa el vehículo (en una carambola, puede no ser el de t = 0). */
+function firstImpact(id: string, r: Resultado): EventResult | undefined {
+  return r.eventos
+    .filter((e) => e.tipo.startsWith("impacto_") && e.actores.includes(id))
+    .reduce<EventResult | undefined>(
+      (best, e) => (best === undefined || e.t < best.t ? e : best),
+      undefined,
+    );
+}
+
+function otherColor(ev: EventResult | undefined, id: string, ctx: DamageRigContext) {
+  if (ev?.tipo !== "impacto_vehiculo_vehiculo" || !ev.actores.includes(id)) return undefined;
+  const other = ev.actores.find((a) => a !== id);
+  return other ? ctx.colorOf(other) : undefined;
 }
 
 export function damageInputFor(v: VehicleResult, ctx: DamageRigContext): DamageInput | null {
   const lado = v.dano.cdc?.lado ?? "F";
-  if (!["F", "B", "L", "R"].includes(lado) || Math.max(...v.dano.perfil_m) < MIN_CRUSH_M)
-    return null;
-  const ev = primaryEvent(ctx.resultado);
-  let otherColor: string | undefined;
-  if (ev?.tipo === "impacto_vehiculo_vehiculo" && ev.actores.includes(v.id)) {
-    const other = ev.actores.find((a) => a !== v.id);
-    otherColor = other ? ctx.colorOf(other) : undefined;
-  }
+  if (!SIDES.includes(lado) || Math.max(...v.dano.perfil_m) < MIN_CRUSH_M) return null;
   return {
     lado: lado as DamageSide,
     perfil: v.dano.perfil_m,
@@ -78,8 +95,33 @@ export function damageInputFor(v: VehicleResult, ctx: DamageRigContext): DamageI
     centro: v.dano.centro_m,
     zonaVertical: v.dano.cdc?.zona_vertical,
     seed: ctx.seed,
-    otherColor,
+    otherColor: otherColor(firstImpact(v.id, ctx.resultado), v.id, ctx),
   };
+}
+
+/** Los daños del vehículo en orden, cada uno con el instante de su impacto. */
+export function damageInputsFor(v: VehicleResult, ctx: DamageRigContext): TimedDamage[] {
+  const out: TimedDamage[] = [];
+  const main = damageInputFor(v, ctx);
+  if (main) out.push({ input: main, t: firstImpact(v.id, ctx.resultado)?.t ?? 0 });
+  for (const dp of v.danos_posteriores ?? []) {
+    const lado = dp.cdc?.lado ?? "F";
+    if (!SIDES.includes(lado) || Math.max(...dp.perfil_m) < MIN_CRUSH_M) continue;
+    const ev = ctx.resultado.eventos.find((e) => e.id === dp.evento_id);
+    out.push({
+      input: {
+        lado: lado as DamageSide,
+        perfil: dp.perfil_m,
+        ancho: dp.ancho_m,
+        centro: dp.centro_m,
+        zonaVertical: dp.cdc?.zona_vertical,
+        seed: ctx.seed + out.length,
+        otherColor: otherColor(ev, v.id, ctx),
+      },
+      t: dp.t,
+    });
+  }
+  return out;
 }
 
 export function buildDamageRig(
@@ -92,52 +134,59 @@ export function buildDamageRig(
   const notas: string[] = [];
   const materials: Material[] = [];
   const influences: { value: number }[] = [];
-  const morphMeshes: Mesh[] = [];
+  const morphMeshes = new Set<Mesh>();
   // Faros rotos: material propio por faro y cambio de propiedades (no de material), así no se
-  // compila un sombreador nuevo a media reproducción.
-  const broken: { mat: MeshStandardMaterial; color: Color; emissive: number }[] = [];
+  // compila un sombreador nuevo a media reproducción. Cada uno se rompe en su impacto.
+  const broken: { mat: MeshStandardMaterial; color: Color; emissive: number; t: number }[] = [];
   const cracks: { value: number }[] = [];
   const twoWheel = profileFor(v.clase).kind === "two_wheel";
-  const input = damageInputFor(v, ctx);
+  const timed = damageInputsFor(v, ctx);
+  const input = timed[0]?.input ?? null;
+  /** Instante del primer impacto del vehículo: desde ahí se agrieta el vidrio y salen las bolsas. */
+  const t0 = firstImpact(v.id, ctx.resultado)?.t ?? 0;
   let damage: VehicleDamage | null = null;
   const wheelBase = new Map<Group, { pos: Vector3; rotY: number }>();
+  const wheelShifts: { w: WheelDamage; t: number }[] = [];
 
-  if (input) {
-    damage = applyVehicleDamage(group, v.clase, dims, input);
-    for (const md of damage.meshes) {
-      if (!md.mesh.userData.damaged) continue;
-      morphMeshes.push(md.mesh);
-      if (md.mesh.userData.role === "pintura") {
-        const paint = damagedPaintMaterial(paintHex, input.otherColor);
-        md.mesh.material = paint.material;
-        materials.push(paint.material);
-        influences.push(paint.influence);
-      }
+  timed.forEach(({ input: inp, t }, i) => {
+    const d = applyVehicleDamage(group, v.clase, dims, inp, i > 0);
+    damage ??= d;
+    for (const md of d.meshes) if (md.mesh.userData.damaged) morphMeshes.add(md.mesh);
+    for (const w of d.wheels) {
+      if (!wheelBase.has(w.obj))
+        wheelBase.set(w.obj, { pos: w.obj.position.clone(), rotY: w.obj.rotation.y });
+      wheelShifts.push({ w, t });
     }
-    for (const w of damage.wheels)
-      wheelBase.set(w.obj, { pos: w.obj.position.clone(), rotY: w.obj.rotation.y });
-    if (damage.wheels.length > 0) notas.push("Una llanta queda desplazada por el aplastamiento.");
     // Faros rotos donde el aplastamiento los alcanza.
-    if (input.lado === "F" || input.lado === "B") {
+    if (inp.lado === "F") {
       for (const name of ["headlight_l", "headlight_r"]) {
         const m = group.getObjectByName(name);
-        if (!(m instanceof Mesh) || input.lado !== "F") continue;
-        const u = -m.position.z;
-        if (crushAt(input, u) >= HEADLIGHT_BREAK_M) {
+        if (!(m instanceof Mesh) || broken.some((b) => b.mat.name === name)) continue;
+        if (crushAt(inp, -m.position.z) >= HEADLIGHT_BREAK_M) {
           const own = ((m as Mesh).material as MeshStandardMaterial).clone();
+          own.name = name;
           (m as Mesh).material = own;
           materials.push(own);
-          broken.push({ mat: own, color: own.color.clone(), emissive: own.emissiveIntensity });
+          broken.push({ mat: own, color: own.color.clone(), emissive: own.emissiveIntensity, t });
         }
       }
-      if (broken.length > 0)
-        notas.push(`Faro${broken.length > 1 ? "s" : ""} roto${broken.length > 1 ? "s" : ""}.`);
     }
+  });
+  const paintOther = timed.find((x) => x.input.otherColor)?.input.otherColor;
+  for (const mesh of morphMeshes) {
+    if (mesh.userData.role !== "pintura") continue;
+    const paint = damagedPaintMaterial(paintHex, paintOther);
+    mesh.material = paint.material;
+    materials.push(paint.material);
+    influences.push(paint.influence);
   }
+  if (wheelShifts.length > 0) notas.push("Una llanta queda desplazada por el aplastamiento.");
+  if (broken.length > 0)
+    notas.push(`Faro${broken.length > 1 ? "s" : ""} roto${broken.length > 1 ? "s" : ""}.`);
 
   // Parabrisas: contacto de la cabeza de un peatón o deformación frontal fuerte (ilustrativo).
   const windshield = group.getObjectByName("windshield");
-  const ev = primaryEvent(ctx.resultado);
+  const ev = ctx.resultado.eventos.find((e) => e.tipo.startsWith("impacto_"));
   const headOnGlass =
     ev?.tipo === "impacto_vehiculo_persona" &&
     ev.actores.includes(v.id) &&
@@ -206,6 +255,7 @@ export function buildDamageRig(
   const headlightCount = ["headlight_l", "headlight_r", "headlight_c"].filter((n) =>
     group.getObjectByName(n),
   ).length;
+  const times = timed.map((x) => x.t);
   return {
     damage,
     airbag,
@@ -213,28 +263,35 @@ export function buildDamageRig(
     materials,
     workingHeadlights(t: number) {
       if (headlightCount === 0) return 0;
-      const rotos = damageInfluence(t) > 0.5 ? broken.length : 0;
+      const rotos = broken.filter((b) => damageInfluence(t - b.t) > 0.5).length;
       return Math.max(0, headlightCount - rotos) / headlightCount;
     },
     update(t: number) {
-      const k = damageInfluence(t);
-      for (const m of morphMeshes) if (m.morphTargetInfluences) m.morphTargetInfluences[0] = k;
-      for (const u of influences) u.value = k;
+      const ks = times.map((ti) => damageInfluence(t - ti));
+      for (const m of morphMeshes) {
+        const inf = m.morphTargetInfluences;
+        if (inf) for (let i = 0; i < inf.length; i++) inf[i] = ks[i] ?? 0;
+      }
+      const kMax = Math.max(0, ...ks);
+      for (const u of influences) u.value = kMax;
       for (const [obj, base] of wheelBase) {
-        const w = damage?.wheels.find((x) => x.obj === obj);
-        if (!w) continue;
-        obj.position.copy(base.pos).addScaledVector(w.shift, k);
-        obj.rotation.y = base.rotY + w.toe * k;
+        obj.position.copy(base.pos);
+        obj.rotation.y = base.rotY;
+      }
+      for (const { w, t: tw } of wheelShifts) {
+        const k = damageInfluence(t - tw);
+        w.obj.position.addScaledVector(w.shift, k);
+        w.obj.rotation.y += w.toe * k;
       }
       for (const b of broken) {
-        const isBroken = k > 0.5;
+        const isBroken = damageInfluence(t - b.t) > 0.5;
         b.mat.emissiveIntensity = isBroken ? 0 : b.emissive;
         b.mat.color.copy(isBroken ? BROKEN_LIGHT : b.color);
         b.mat.roughness = isBroken ? 0.9 : 0.2;
       }
-      const crack = Math.min(1, Math.max(0, t / CRACK_GROWTH_S));
+      const crack = Math.min(1, Math.max(0, (t - t0) / CRACK_GROWTH_S));
       for (const c of cracks) c.value = crack;
-      const sc = airbagScale(t);
+      const sc = airbagScale(t - t0);
       for (const b of bags) b.scale.setScalar(sc);
     },
   };

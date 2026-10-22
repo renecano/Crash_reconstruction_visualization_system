@@ -168,6 +168,7 @@ export const TITULO_ESCENA_EN: Record<FixtureName, string> = {
   nocturno_lluvia: "A minibus cutting in at night in heavy rain",
   glorieta: "Entering a roundabout without yielding",
   interseccion_toluca: "Side collision at Carranza and Juárez (Toluca, OpenStreetMap street)",
+  carambola: "Chain collision on Paseo Tollocan at a red light",
 };
 
 /** Título de una escena canónica en el idioma de la página. */

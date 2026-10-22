@@ -103,11 +103,55 @@ Reglas de trabajo: `CLAUDE.md`. Especificación: `PLAN.md`.
     - **C0:** pasa a R0. Falta lo nuevo: la descripción de los hechos sin conclusiones, con su revisión de fuga, y lo que concluyó CESVI, estructurado.
     - **C1:** es el módulo de verificación CESVI de R2, con su reproducción (E-C1) ya corrida.
     - **C2–C8:** se reacomodan en R1–R9.
-  - **Fase actual: R6** (carambolas, antes de R4 por orden de René). R3 quedó cerrada el 2026-10-22; R0, R1 y R2, el 2026-10-21. C0 y C1 de la v1 quedaron cerradas el 2026-10-21. El plan de C0 fue:
+  - **Fase actual: R4** (evaluación contra los dictámenes). R6 quedó cerrada el 2026-10-22, y R3 también; R0, R1 y R2, el 2026-10-21. C0 y C1 de la v1 quedaron cerradas el 2026-10-21. El plan de C0 fue:
     - **Contrato v2:** `escena.schema.json` ampliado, con migración desde v1.3, Zod y Pydantic generados y un validador semántico (N vehículos, M impactos, versiones).
     - **Corpus estructurado** de los 671 dictámenes con Claude (salida estructurada, caché, semilla), validado contra el esquema, con partición congelada del 30 % y etiquetas de la conclusión revisadas en una muestra.
     - **Mediciones:** las proporciones del §2 en `eval/results/cesvi_corpus.json`; desde ahí se pueden citar.
     - **Costo:** antes de correr el corpus se estima y se anota aquí. Si pasa de 30 USD, se pregunta a René.
+  - **Resumen de R6 para René** (rama `feat/r6-carambolas`, ADR 0066):
+    - **Qué quedó:**
+      - **El solver resuelve impactos en secuencia** (Python y TS, con paridad):
+        - cada impacto entre vehículos posterior al primero ocurre cuando el par se toca, con el mismo impulso del primero;
+        - el daño de cada impacto queda en su vehículo, y si un impacto declarado no ocurre, se dice;
+        - resultado 1.9.0 y escena canónica nueva `carambola`;
+        - las once escenas anteriores no cambian sus números.
+      - **«Caso nuevo»:** los impactos 2..M de la narración pasan a la reconstrucción. El mapa marca X1, X2… y la reconstrucción lista cada impacto con su instante. Un vehículo que solo está en un impacto posterior empieza detenido donde lo colocó el perito (supuesto, se dice).
+      - **3D:** cada daño se deforma desde el instante de su impacto.
+      - **Línea de tiempo:** numera los impactos.
+    - **Números medidos** (E-R6, `eval/results/cesvi_r6_carambolas.json`):
+      - **Expedientes:** los 105 del corpus con 3 o más vehículos son escenas válidas, se reconstruyen con todos sus vehículos y quedan listos para el 3D.
+      - **Impactos posteriores:** 88 llegan a la escena; sin posiciones del perito, ocurren 7. Los otros quedan dichos como «no ocurre»: la disposición genérica no junta a los vehículos.
+      - **Tiempo por escena:** mediana de 7,314 ms y máximo de 34,371 ms (8 vehículos).
+    - **Cómo probarlo:**
+      1. En `/cesvi/caso`, pegar la narración de una carambola que diga el orden de los impactos (la de la e2e está en `data/cesvi/grabaciones/carambola/carambola-e2e.json`).
+      2. Colocar a los tres vehículos en fila, en el impacto y en su posición final.
+      3. «Reconstruir»: aparecen X1 y X2 en el mapa y en la lista. «Ver la reconstrucción en 3D» la muestra.
+    - **Pruebas:**
+      - `solver/tests/test_carambola.py` y su espejo `packages/solver-ts/src/carambola.test.ts`;
+      - la paridad de las 12 escenas canónicas;
+      - el morph target por impacto en el visor y los impactos numerados en la línea de tiempo;
+      - el adaptador y `impactosEnMapa` en `packages/cesvi`;
+      - la e2e `@flujo` de una carambola en `/cesvi/caso`.
+    - **Gasto de API:** 0.0280 USD, la lectura grabada de la narración de la e2e.
+    - **Qué necesito de René:** nada.
+    - **Siguiente:** R4, la evaluación contra los dictámenes (ya puede cubrir los de más de un impacto).
+  - **Lo que se planeó para R6:**
+    1. **Solver (Python de referencia y port TS, con paridad):**
+       - **Qué cuenta como impacto posterior:** los eventos de impacto entre vehículos que vienen después del primero en la escena.
+       - **Cuándo ocurre:** en la fase posterior conjunta (ADR 0063), cuando los contornos de ese par se tocan acercándose. Se resuelve con el mismo impulso del primer impacto (`planar_impact`): restitución, fricción, delta-v, PDOF y energía.
+       - **El daño de cada vehículo:** el primero va en `dano`, y los siguientes en `danos_posteriores`. El resultado sube a 1.9.0.
+       - **Si un impacto declarado no ocurre,** una bandera lo dice.
+       - **Escena canónica nueva:** `carambola`, un alcance en cadena con tres vehículos.
+    2. **«Caso nuevo»:**
+       - el adaptador del expediente pasa los impactos 2..M a la escena;
+       - el mapa marca X1, X2…;
+       - el 3D deforma cada zona golpeada;
+       - la línea de tiempo muestra cada impacto en su instante.
+    3. **E-R6:** los dictámenes del corpus con 3 o más vehículos, reconstruidos con el solver de producción: cuántos son válidos, cuántos se reconstruyen y cuántos de sus impactos ocurren. Va en `eval/results/cesvi_r6_carambolas.json`.
+    4. **e2e:** una carambola en `/cesvi/caso`, hasta el 3D.
+    - **Riesgos:**
+      - el costo de integrar N vehículos juntos (pares × paso de 2 ms), sobre todo en Python con `dmath`;
+      - sin posiciones del perito, la disposición de los vehículos de impactos posteriores es un supuesto y se marca así.
   - **Resumen de R3 para René** (rama `feat/r3-visor-3d`; ADR 0063, 0064 y 0065):
     - **Qué quedó:**
       - **El 3D en «Caso nuevo»:** después de «Reconstruir», «Ver la reconstrucción en 3D» abre el visor con la escena reconstruida. Las velocidades de la inversión van marcadas como supuesto, con su rango.
@@ -547,6 +591,13 @@ Lo que se pospone por el trabajo con CESVI no se borra: queda aquí para despué
   - el contorno es rectangular, con la cara dañada hundida de forma pareja;
   - con más evidencia, revisar el ajuste de la inversión en `lateral_interseccion` (A 81.95 km/h, con bandera);
   - regenerar a mano E7 y E8, y los cuadros de la portada en pausa, con el resultado 1.8.0.
+- **De las carambolas de R6** (ADR 0066, «Límites»):
+  - impactos posteriores contra objetos o personas;
+  - un vehículo que espera y en realidad venía en movimiento;
+  - el contorno con daño en dos caras;
+  - el debris del segundo impacto;
+  - el tiempo de las escenas con muchos vehículos (hasta 34 s en E-R6);
+  - en «Caso nuevo», una forma de declarar a mano los impactos cuando la narración no dice su orden.
 - **Reversa en la reconstrucción** (encontrado al grabar el video, 2026-10-22):
   - **El caso:** en `cesvi-3a0125cb81`, A mira al norte y retrocede hacia el sur hasta pegar con B.
   - **Lo que pasa:** con esas posiciones, la inversión no identifica ninguna velocidad y deja las dos en el valor por defecto de 40 km/h. La página lo dice («la evidencia no la fija»), pero no reconstruye la maniobra.

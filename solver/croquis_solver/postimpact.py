@@ -13,7 +13,9 @@ Integración semi-implícita de Euler con paso fijo (determinista), hasta reposo
 
 Los vehículos de un choque entre vehículos se integran juntos (`integrate_joint`, ADR 0063): avanzan
 al mismo paso y, si sus cajas se encajan más que lo que permite su aplastamiento, se resuelve el
-contacto secundario (impulso plástico en la normal y separación de lo que sobra).
+contacto secundario (impulso plástico en la normal y separación de lo que sobra). En una carambola,
+los impactos declarados después del primero ocurren en esa misma integración, cuando los contornos
+del par se tocan acercándose, con el impulso del primer impacto (`planar_impact`, ADR 0066).
 """
 
 from __future__ import annotations
@@ -23,6 +25,7 @@ from collections.abc import Sequence
 from dataclasses import dataclass, field
 
 from croquis_solver import dmath
+from croquis_solver.impact import ImpactResult, planar_impact
 from croquis_solver.models import Body2D, G, State2D, Trajectory, Vec, wrap_angle
 
 ROLLING_RESISTANCE = 0.015  # fracción de N (llanta rodando libre, asfalto)
@@ -211,6 +214,10 @@ class JointBody:
     `crush` es la profundidad máxima de su perfil de daño (m) y `crush_face` la cara dañada según
     el lado de su CDC (F, B, L o R): su contorno para el contacto secundario es la caja con esa
     cara hundida esa profundidad.
+
+    `drag_after_impact`: en una carambola, un vehículo que todavía no choca rueda con
+    `rolling_drag` y pasa a este arrastre desde su primer impacto (ADR 0066). None: siempre
+    `rolling_drag`.
     """
 
     body: Body2D
@@ -220,6 +227,7 @@ class JointBody:
     rolling_drag: float = ROLLING_RESISTANCE
     crush: float = 0.0
     crush_face: str = "F"
+    drag_after_impact: float | None = None
 
 
 Extents = tuple[float, float, float, float]  # adelante, atrás, izquierda, derecha (m, desde el CG)
@@ -323,6 +331,7 @@ class JointState:
     distance: float = 0.0
     x_prev: float = 0.0
     y_prev: float = 0.0
+    drag: float = 0.0
 
     @classmethod
     def from_body(cls, spec: JointBody) -> JointState:
@@ -337,6 +346,7 @@ class JointState:
         active = st.speed > STOP_SPEED or abs(st.yaw_rate) > STOP_YAW_RATE
         ext = deformed_extents(spec.body.length, spec.body.width, spec.crush, spec.crush_face)
         j = cls(spec, ext, st.x, st.y, st.yaw, c, s, u, v, r, st.vx, st.vy, active, ke0)
+        j.drag = spec.rolling_drag
         if not active:
             j.ke1 = ke0
             j.u = j.v = j.r = j.vx = j.vy = 0.0
@@ -420,6 +430,107 @@ def resolve_secondary_contact(
     return allowance, k
 
 
+@dataclass(frozen=True)
+class PlannedImpact:
+    """Un impacto declarado después del primero, entre los cuerpos `a` y `b` (índices en la
+    integración conjunta): ocurre la primera vez que sus contornos se tocan acercándose."""
+
+    a: int
+    b: int
+    event_id: str
+    restitution: float
+    friction: float
+
+
+@dataclass(frozen=True)
+class JointImpact:
+    """Un impacto posterior que ocurrió: cuándo, dónde, entre quiénes y su impulso."""
+
+    event_id: str
+    t: float
+    a: int
+    b: int
+    point: Vec
+    normal: Vec  # de `a` hacia `b`
+    a_before: State2D
+    b_before: State2D
+    result: ImpactResult
+
+
+def _inside(p: Vec, poly: Sequence[Vec]) -> bool:
+    """Si `p` está dentro del cuadrilátero convexo `poly` (o en su borde)."""
+    sign = 0.0
+    for i in range(4):
+        q, r = poly[i], poly[(i + 1) % 4]
+        cr = (r[0] - q[0]) * (p[1] - q[1]) - (r[1] - q[1]) * (p[0] - q[0])
+        if cr == 0:
+            continue
+        if sign == 0:
+            sign = cr
+        elif (cr > 0) != (sign > 0):
+            return False
+    return True
+
+
+def contact_point(a: Sequence[Vec], b: Sequence[Vec]) -> Vec:
+    """Punto de contacto de dos contornos que se encajan: el promedio de las esquinas de cada uno
+    que quedan dentro del otro; si ninguna queda dentro (se cruzan solo las aristas), el punto
+    medio entre los centros de los dos."""
+    pts = [p for p in a if _inside(p, b)] + [p for p in b if _inside(p, a)]
+    if not pts:
+        pts = [
+            (sum(q[0] for q in a) / 4, sum(q[1] for q in a) / 4),
+            (sum(q[0] for q in b) / 4, sum(q[1] for q in b) / 4),
+        ]
+    n = len(pts)
+    return (sum(q[0] for q in pts) / n, sum(q[1] for q in pts) / n)
+
+
+def _state_of(j: JointState, t: float) -> State2D:
+    return State2D(j.x, j.y, j.yaw, j.vx, j.vy, j.r, t)
+
+
+def _set_motion(j: JointState, st: State2D) -> None:
+    """Las velocidades de `st` (mundo) en el cuerpo; activo si con ellas no está en reposo."""
+    _set_world_velocity(j, st.vx, st.vy)
+    j.r = st.yaw_rate
+    j.active = st.speed > STOP_SPEED or abs(st.yaw_rate) > STOP_YAW_RATE
+    if not j.active:
+        j.u = j.v = j.r = j.vx = j.vy = 0.0
+
+
+def _try_impact(a: JointState, b: JointState, plan: PlannedImpact, t: float) -> JointImpact | None:
+    """El impacto declarado entre `a` y `b` si sus contornos se tocan y se acercan en el punto de
+    contacto; aplica el impulso a los dos. None si todavía no ocurre."""
+    ca, cb = _corners_of(a), _corners_of(b)
+    ov = axis_overlaps(ca, cb)
+    if ov is None:
+        return None
+    n = ov[_argmin(ov)][1]
+    point = contact_point(ca, cb)
+    sa, sb = _state_of(a, t), _state_of(b, t)
+    va, vb = sa.velocity_at(point), sb.velocity_at(point)
+    if (vb[0] - va[0]) * n[0] + (vb[1] - va[1]) * n[1] >= 0:
+        return None
+    res = planar_impact(
+        a.spec.body,
+        sa,
+        b.spec.body,
+        sb,
+        point,
+        n,
+        restitution=plan.restitution,
+        friction=plan.friction,
+    )
+    assert res.b_after is not None
+    for j, st in ((a, res.a_after), (b, res.b_after)):
+        _set_motion(j, st)
+        j.moved = True
+        if j.spec.drag_after_impact is not None:
+            j.drag = j.spec.drag_after_impact
+    return JointImpact(plan.event_id, t, plan.a, plan.b, point, n, sa, sb, res)
+
+
 def _sample(j: JointState, state: State2D) -> None:
     j.traj.append(state)
     j.distance += dmath.hypot(j.x - j.x_prev, j.y - j.y_prev)
@@ -433,6 +544,18 @@ def integrate_joint(
     dt_out: float = 0.02,
     t_max: float = 30.0,
 ) -> list[PostImpactResult]:
+    """`integrate_joint_impacts` sin impactos posteriores: solo las trayectorias."""
+    return integrate_joint_impacts(bodies, dt=dt, dt_out=dt_out, t_max=t_max)[0]
+
+
+def integrate_joint_impacts(
+    bodies: Sequence[JointBody],
+    *,
+    impacts: Sequence[PlannedImpact] = (),
+    dt: float = 0.002,
+    dt_out: float = 0.02,
+    t_max: float = 30.0,
+) -> tuple[list[PostImpactResult], list[JointImpact]]:
     """Integra juntos los vehículos de un choque entre vehículos, con contacto secundario.
 
     Cada cuerpo avanza con el mismo modelo de llantas que `integrate` y al mismo paso que los
@@ -451,6 +574,12 @@ def integrate_joint(
     trayectoria se muestrea como en `integrate` (cada `dt_out` y en el instante del reposo) y
     termina en su último reposo. Sin contacto, cada resultado es idéntico al de `integrate`.
 
+    Carambolas (ADR 0066): cada impacto de `impacts` ocurre la primera vez que los contornos de su
+    par se tocan acercándose en el punto de contacto (`_try_impact`), con el impulso de
+    `planar_impact` (restitución y fricción del impacto) en ese punto y con la normal del menor
+    traslape. Desde ahí, el par sigue con el contacto secundario de siempre, con el encaje de ese
+    instante como permitido. Devuelve también los impactos que ocurrieron, en orden.
+
     Límites (ADR 0063): impulso lineal en los centros (no acopla la guiñada), sin fricción entre
     carrocerías, y el contorno es una caja rectangular con la cara dañada hundida de forma pareja
     (su aplastamiento máximo, no el perfil).
@@ -463,11 +592,16 @@ def integrate_joint(
     pairs: list[tuple[JointState, JointState]] = []
     allowances: list[float] = []
     axes: list[int | None] = []
+    pending: dict[int, PlannedImpact] = {}
     for i, a in enumerate(joints):
-        for b in joints[i + 1 :]:
+        for k, b in enumerate(joints[i + 1 :], start=i + 1):
+            for plan in impacts:
+                if {plan.a, plan.b} == {i, k} and len(pairs) not in pending:
+                    pending[len(pairs)] = plan
             pairs.append((a, b))
             allowances.append(box_penetration(_corners_of(a), _corners_of(b))[0])
             axes.append(None)
+    happened: list[JointImpact] = []
     steps_per_out = max(1, round(dt_out / dt))
     step = 0
     t = t0
@@ -479,7 +613,7 @@ def integrate_joint(
             if not j.active:
                 continue
             sp = j.spec
-            j.u, j.v, j.r = _advance(sp.body, sp.wheels, sp.mu, sp.rolling_drag, j.u, j.v, j.r, dt)
+            j.u, j.v, j.r = _advance(sp.body, sp.wheels, sp.mu, j.drag, j.u, j.v, j.r, dt)
             j.yaw = wrap_angle(j.yaw + j.r * dt)
             j.c, j.s = dmath.cos(j.yaw), dmath.sin(j.yaw)
             j.vx = j.u * j.c - j.v * j.s
@@ -489,6 +623,18 @@ def integrate_joint(
         t += dt
         step += 1
         for k, (a, b) in enumerate(pairs):
+            plan = pending.get(k)
+            if plan is not None:
+                hit = _try_impact(joints[plan.a], joints[plan.b], plan, t)
+                if hit is not None:
+                    happened.append(hit)
+                    del pending[k]
+                    # Desde ahí el encaje de ese instante es el permitido, como en el primero.
+                    ov = axis_overlaps(_corners_of(a), _corners_of(b))
+                    if ov is not None:
+                        ax = _argmin(ov)
+                        axes[k] = ax
+                        allowances[k] = max(allowances[k], ov[ax][0])
             left, axes[k] = resolve_secondary_contact(a, b, allowances[k], axes[k])
             allowances[k] = max(0.0, min(allowances[k], left) - relax)
         on_grid = step % steps_per_out == 0
@@ -526,4 +672,4 @@ def integrate_joint(
                 tr, not j.active, j.distance, end - j.spec.start.t, max(j.ke0 - j.ke1, 0.0)
             )
         )
-    return out
+    return out, happened

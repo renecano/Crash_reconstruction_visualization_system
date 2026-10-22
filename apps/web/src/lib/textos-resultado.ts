@@ -233,12 +233,13 @@ const EVENTO: Vocab = {
  * pedido. En español es la etiqueta del visor tal cual; en inglés se arma con el tipo y quién.
  */
 export function eventoEtiqueta(
-  m: { tipo: string; etiqueta: string },
+  m: { tipo: string; etiqueta: string; numero?: number },
   quien: string | undefined,
   lang: Lang = "es",
 ): string {
   if (lang === "es") return m.etiqueta;
   const base = de(EVENTO, m.tipo, "en");
+  if (m.numero !== undefined) return `${base} ${m.numero}`;
   const named = m.tipo === "inicio_frenado" || m.tipo === "reposo";
   return named && quien ? `${base} (${quien})` : base;
 }
