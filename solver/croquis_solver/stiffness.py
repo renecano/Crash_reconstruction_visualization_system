@@ -8,13 +8,13 @@ datos, se usa el respaldo genérico marcado ``supuesto`` y el resultado lo infor
 from __future__ import annotations
 
 import json
-import math
 import random
 from dataclasses import dataclass, field
 from functools import cache
 from pathlib import Path
 from typing import Any
 
+from croquis_solver import dmath
 from croquis_solver.crash3 import Stiffness
 
 DATA_PATH = Path(__file__).resolve().parent / "data" / "stiffness_classes.json"
@@ -78,10 +78,10 @@ def sample_stiffness(entry: StiffnessEntry, rng: random.Random, n: int) -> list[
     respaldo con la pendiente escalada en `FALLBACK_SLOPE_RANGE`."""
     if entry.samples:
         return [entry.samples[rng.randrange(len(entry.samples))] for _ in range(n)]
-    lo, hi = (math.log(x) for x in FALLBACK_SLOPE_RANGE)
+    lo, hi = (dmath.log(x) for x in FALLBACK_SLOPE_RANGE)
     out: list[Stiffness] = []
     for _ in range(n):
-        s = math.exp(rng.uniform(lo, hi))
+        s = dmath.exp(rng.uniform(lo, hi))
         out.append(Stiffness(entry.stiffness.a * s, entry.stiffness.b * s * s))
     return out
 

@@ -5,7 +5,9 @@
  * cajas (largo × ancho, rectángulos orientados) por el teorema del eje separador: el traslape mínimo
  * entre los cuatro ejes. En el impacto, penetrar hasta la profundidad de aplastamiento es físico (es
  * la deformación); lo que pasa de ahí es atravesarse. Se reporta, por escena, el exceso máximo sobre
- * la suma de los aplastamientos máximos del par y en qué instante.
+ * la suma de los aplastamientos máximos del par y en qué instante, y aparte el máximo después del
+ * impacto (t > 0): el de t = 0 es la configuración del impacto que fija el punto de contacto, y el
+ * de después es el que corrige el contacto secundario (ADR 0063).
  *
  * Uso (desde packages/cesvi): pnpm exec tsx ../../eval/r3_interpenetracion.mts
  *   → eval/results/r3_interpenetracion.json
@@ -71,6 +73,7 @@ function medir(nombre: string, resultado: { vehiculos: Vehiculo[] }) {
       const aplast =
         Math.max(0, ...(a.dano?.perfil_m ?? [0])) + Math.max(0, ...(b.dano?.perfil_m ?? [0]));
       let peor = { t: 0, penetracion: 0 };
+      let peorPost = { t: 0, penetracion: 0 };
       const n = Math.min(a.trayectoria.t.length, b.trayectoria.t.length);
       for (let k = 0; k < n; k++) {
         const ea = esquinas(
@@ -89,6 +92,9 @@ function medir(nombre: string, resultado: { vehiculos: Vehiculo[] }) {
         );
         const p = penetracion(ea, eb);
         if (p > peor.penetracion) peor = { t: a.trayectoria.t[k]!, penetracion: p };
+        if (a.trayectoria.t[k]! > 1e-9 && p > peorPost.penetracion) {
+          peorPost = { t: a.trayectoria.t[k]!, penetracion: p };
+        }
       }
       pares.push({
         par: `${a.id}/${b.id}`,
@@ -96,6 +102,8 @@ function medir(nombre: string, resultado: { vehiculos: Vehiculo[] }) {
         t_s: Number(peor.t.toFixed(3)),
         aplastamiento_m: Number(aplast.toFixed(3)),
         exceso_m: Number(Math.max(0, peor.penetracion - aplast).toFixed(3)),
+        exceso_posterior_m: Number(Math.max(0, peorPost.penetracion - aplast).toFixed(3)),
+        t_posterior_s: Number(peorPost.t.toFixed(3)),
       });
     }
   }
@@ -113,7 +121,7 @@ const escenas = readdirSync(FIXTURES)
     return medir(f.replace(".json", ""), r);
   });
 
-const pares = escenas.flatMap((e) => e.pares as { exceso_m: number }[]);
+const pares = escenas.flatMap((e) => e.pares as { exceso_m: number; exceso_posterior_m: number }[]);
 const resultado = {
   fecha: new Date().toISOString(),
   descripcion:
@@ -121,6 +129,8 @@ const resultado = {
   pares: pares.length,
   con_exceso: pares.filter((p) => p.exceso_m > 0.01).length,
   exceso_max_m: Math.max(0, ...pares.map((p) => p.exceso_m)),
+  con_exceso_posterior: pares.filter((p) => p.exceso_posterior_m > 0.01).length,
+  exceso_posterior_max_m: Math.max(0, ...pares.map((p) => p.exceso_posterior_m)),
   escenas,
 };
 writeFileSync(
@@ -128,6 +138,7 @@ writeFileSync(
   `${JSON.stringify(resultado, null, 2)}\n`,
 );
 console.log(
-  `${resultado.con_exceso}/${resultado.pares} pares se atraviesan más de 1 cm; exceso máximo ${resultado.exceso_max_m} m`,
+  `${resultado.con_exceso}/${resultado.pares} pares se atraviesan más de 1 cm; exceso máximo ${resultado.exceso_max_m} m; ` +
+    `después del impacto, ${resultado.con_exceso_posterior}/${resultado.pares} (máximo ${resultado.exceso_posterior_max_m} m)`,
 );
 for (const e of escenas) for (const p of e.pares) console.log(e.escena, JSON.stringify(p));

@@ -68,3 +68,6 @@ data/cesvi/grabaciones/
 
 # Plan de la versión real para CESVI, tal como lo escribió René
 docs/cesvi/PLAN-CESVI.md
+
+# Valores de referencia de dmath para el port Python (packages/solver-ts/scripts/dmath-fixture.ts, ADR 0065)
+solver/tests/data/dmath_ts.json

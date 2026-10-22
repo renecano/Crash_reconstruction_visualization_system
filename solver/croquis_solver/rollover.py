@@ -24,6 +24,7 @@ from __future__ import annotations
 import math
 from dataclasses import dataclass
 
+from croquis_solver import dmath
 from croquis_solver.models import G
 
 CG_HEIGHT_FRACTION = 0.37  # supuesto: h ≈ 0.37 × alto (SSF típico 1.0–1.5 según la clase)
@@ -64,7 +65,7 @@ def critical_sliding_velocity(track: float, cg_height: float, k2: float) -> floa
         msg = "Vía, altura del CG e inercia deben ser positivas"
         raise ValueError(msg)
     half = 0.5 * track
-    dz = math.hypot(cg_height, half) - cg_height
+    dz = dmath.hypot(cg_height, half) - cg_height
     ip = k2 + cg_height * cg_height + half * half
     return math.sqrt(2.0 * G * dz * ip / (cg_height * cg_height))
 

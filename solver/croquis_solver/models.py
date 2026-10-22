@@ -9,6 +9,8 @@ from __future__ import annotations
 import math
 from dataclasses import dataclass, field, replace
 
+from croquis_solver import dmath
+
 G = 9.80665  # m/s², gravedad estándar
 
 Vec = tuple[float, float]
@@ -16,7 +18,7 @@ Vec = tuple[float, float]
 
 def rot(v: Vec, angle: float) -> Vec:
     """Rota un vector `angle` radianes en sentido antihorario."""
-    c, s = math.cos(angle), math.sin(angle)
+    c, s = dmath.cos(angle), dmath.sin(angle)
     return (v[0] * c - v[1] * s, v[0] * s + v[1] * c)
 
 
@@ -30,7 +32,7 @@ def cross(a: Vec, b: Vec) -> float:
 
 
 def norm(v: Vec) -> float:
-    return math.hypot(v[0], v[1])
+    return dmath.hypot(v[0], v[1])
 
 
 def unit(v: Vec) -> Vec:
@@ -71,7 +73,7 @@ class Body2D:
     @staticmethod
     def box_inertia(mass: float, length: float, width: float) -> float:
         """Inercia de guiñada de una placa rectangular uniforme (aproximación documentada)."""
-        return mass * (length**2 + width**2) / 12
+        return mass * (length * length + width * width) / 12
 
     @classmethod
     def from_dimensions(cls, mass: float, length: float, width: float) -> Body2D:
@@ -102,7 +104,7 @@ class State2D:
 
     @property
     def speed(self) -> float:
-        return math.hypot(self.vx, self.vy)
+        return dmath.hypot(self.vx, self.vy)
 
     def velocity_at(self, point: Vec) -> Vec:
         """Velocidad del punto material `point` (mundo) del cuerpo: v + ω × r."""
@@ -121,7 +123,9 @@ class State2D:
 
 
 def kinetic_energy(body: Body2D, state: State2D) -> float:
-    return 0.5 * body.mass * (state.vx**2 + state.vy**2) + 0.5 * body.inertia * state.yaw_rate**2
+    return 0.5 * body.mass * (state.vx * state.vx + state.vy * state.vy) + 0.5 * body.inertia * (
+        state.yaw_rate * state.yaw_rate
+    )
 
 
 def linear_momentum(body: Body2D, state: State2D) -> Vec:

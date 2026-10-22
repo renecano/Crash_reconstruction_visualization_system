@@ -1022,14 +1022,14 @@
         "no",
         "no sé"
       ],
-      "reduccion": 0.325
+      "reduccion": 0.322
     },
     {
       "id": "velocidad:veh-b",
       "texto": "¿A qué velocidad crees que iba el auto (B)?",
       "motivo": "sensibilidad",
       "campo": "vehiculos.1.velocidad_previa",
-      "reduccion": 0.323
+      "reduccion": 0.317
     },
     {
       "id": "frenado:veh-a",
@@ -1041,7 +1041,7 @@
         "no",
         "no sé"
       ],
-      "reduccion": 0.287
+      "reduccion": 0.295
     }
   ]
 }

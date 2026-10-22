@@ -1,9 +1,11 @@
 {
-  "fecha": "2026-10-22T03:58:17.908Z",
+  "fecha": "2026-10-22T13:33:55.801Z",
   "descripcion": "Penetración de las cajas de los vehículos (rectángulos orientados) en las escenas canónicas reconstruidas con el solver TS; exceso = lo que pasa de la suma de los aplastamientos máximos del par.",
   "pares": 8,
-  "con_exceso": 3,
-  "exceso_max_m": 1.438,
+  "con_exceso": 1,
+  "exceso_max_m": 0.083,
+  "con_exceso_posterior": 1,
+  "exceso_posterior_max_m": 0.031,
   "escenas": [
     {
       "escena": "alcance",
@@ -13,7 +15,9 @@
           "penetracion_max_m": 0,
           "t_s": 0,
           "aplastamiento_m": 0.233,
-          "exceso_m": 0
+          "exceso_m": 0,
+          "exceso_posterior_m": 0,
+          "t_posterior_s": 0
         }
       ]
     },
@@ -25,7 +29,9 @@
           "penetracion_max_m": 0.095,
           "t_s": 0,
           "aplastamiento_m": 1.226,
-          "exceso_m": 0
+          "exceso_m": 0,
+          "exceso_posterior_m": 0,
+          "t_posterior_s": 0.02
         }
       ]
     },
@@ -34,10 +40,12 @@
       "pares": [
         {
           "par": "veh-a/veh-b",
-          "penetracion_max_m": 0.168,
-          "t_s": 0.72,
+          "penetracion_max_m": 0.095,
+          "t_s": 0.16,
           "aplastamiento_m": 0.096,
-          "exceso_m": 0.072
+          "exceso_m": 0,
+          "exceso_posterior_m": 0,
+          "t_posterior_s": 0.16
         }
       ]
     },
@@ -49,7 +57,9 @@
           "penetracion_max_m": 0.001,
           "t_s": 0.02,
           "aplastamiento_m": 0.236,
-          "exceso_m": 0
+          "exceso_m": 0,
+          "exceso_posterior_m": 0,
+          "t_posterior_s": 0.02
         }
       ]
     },
@@ -61,7 +71,9 @@
           "penetracion_max_m": 0.04,
           "t_s": 0.06,
           "aplastamiento_m": 0.223,
-          "exceso_m": 0
+          "exceso_m": 0,
+          "exceso_posterior_m": 0,
+          "t_posterior_s": 0.06
         }
       ]
     },
@@ -73,7 +85,9 @@
           "penetracion_max_m": 0.195,
           "t_s": 0,
           "aplastamiento_m": 0.112,
-          "exceso_m": 0.083
+          "exceso_m": 0.083,
+          "exceso_posterior_m": 0.031,
+          "t_posterior_s": 0.02
         }
       ]
     },
@@ -82,10 +96,12 @@
       "pares": [
         {
           "par": "veh-a/veh-b",
-          "penetracion_max_m": 1.8,
-          "t_s": 1.3,
+          "penetracion_max_m": 0.297,
+          "t_s": 0,
           "aplastamiento_m": 0.362,
-          "exceso_m": 1.438
+          "exceso_m": 0,
+          "exceso_posterior_m": 0,
+          "t_posterior_s": 0.02
         }
       ]
     },
@@ -109,7 +125,9 @@
           "penetracion_max_m": 0,
           "t_s": 0,
           "aplastamiento_m": 0.167,
-          "exceso_m": 0
+          "exceso_m": 0,
+          "exceso_posterior_m": 0,
+          "t_posterior_s": 0
         }
       ]
     }

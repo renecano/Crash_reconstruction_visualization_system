@@ -19,6 +19,7 @@ from __future__ import annotations
 import math
 from dataclasses import dataclass, field
 
+from croquis_solver import dmath
 from croquis_solver.models import G, Trajectory, Vec
 from croquis_solver.pedestrian import ThrowKinematics, throw_kinematics
 
@@ -93,8 +94,8 @@ def approach_track(
     Si no alcanza a recorrer la distancia en [t_begin, t_arrive], arranca ya en camino.
     """
     dx, dy = target[0] - start[0], target[1] - start[1]
-    dist = math.hypot(dx, dy)
-    yaw = math.atan2(dy, dx) if dist > 1e-9 else 0.0
+    dist = dmath.hypot(dx, dy)
+    yaw = dmath.atan2(dy, dx) if dist > 1e-9 else 0.0
     if dist <= 1e-9 or speed <= 0:
         for t in _grid(t_begin, t_arrive, dt):
             track.append(t, target[0], target[1], cg_height, yaw)
@@ -126,8 +127,8 @@ def straight_walk_track(
         d = speed * (t - t_begin)
         track.append(
             t,
-            start[0] + d * math.cos(heading),
-            start[1] + d * math.sin(heading),
+            start[0] + d * dmath.cos(heading),
+            start[1] + d * dmath.sin(heading),
             cg_height,
             heading,
         )
@@ -157,8 +158,8 @@ def throw_track(
     """Agrega vuelo y deslizamiento desde `origin` en t0 a lo largo de `heading`."""
     k = throw_kinematics(v, theta_deg, cg_height, mu)
     th = math.radians(theta_deg)
-    vx, vz = v * math.cos(th), v * math.sin(th)
-    c, s = math.cos(heading), math.sin(heading)
+    vx, vz = v * dmath.cos(th), v * dmath.sin(th)
+    c, s = dmath.cos(heading), dmath.sin(heading)
     t_land = t0 + k.flight_time
     t_rest = t_land + k.slide_time
     for t in _grid(t0, t_rest, dt):

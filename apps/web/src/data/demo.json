@@ -321,7 +321,7 @@
           "texto": "¿A qué velocidad crees que iba el vehículo (B)?",
           "motivo": "sensibilidad",
           "campo": "vehiculos.1.velocidad_previa",
-          "reduccion": 0.995
+          "reduccion": 0.968
         },
         {
           "id": "glosario:camioneta",

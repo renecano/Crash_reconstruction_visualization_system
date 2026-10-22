@@ -31,7 +31,7 @@ from typing import Any
 
 from croquis_scene_schema.red_vial import defaults as red_vial_defaults
 from croquis_scene_schema.red_vial import outside_red_vial_m
-from croquis_solver import friction, pedestrian
+from croquis_solver import dmath, friction, pedestrian
 from croquis_solver.inversion import (
     SIGMA_POSITION_M,
     Evidence,
@@ -269,7 +269,7 @@ def check_rest(spec: JsonObj, seed: int) -> list[Inconsistency]:
     for vid in ev.rest:
         rx = fit.residuals.get(f"reposo:{vid}:x", 0.0)
         ry = fit.residuals.get(f"reposo:{vid}:y", 0.0)
-        miss = math.hypot(rx, ry) * SIGMA_POSITION_M
+        miss = dmath.hypot(rx, ry) * SIGMA_POSITION_M
         if miss > REST_SIGMAS * SIGMA_POSITION_M:
             out.append(
                 Inconsistency(

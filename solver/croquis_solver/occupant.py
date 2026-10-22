@@ -29,6 +29,7 @@ from __future__ import annotations
 import math
 from dataclasses import dataclass, field
 
+from croquis_solver import dmath
 from croquis_solver.models import G
 
 T_MIN = 0.06  # s
@@ -69,12 +70,12 @@ class CrashPulse:
         """Magnitud de la aceleración del vehículo en t (m/s²)."""
         if t < 0 or t > self.duration_s:
             return 0.0
-        return self.peak_accel * math.sin(math.pi * t / self.duration_s)
+        return self.peak_accel * dmath.sin(math.pi * t / self.duration_s)
 
     def velocity_change(self, t: float) -> float:
         """ΔV acumulado hasta t (m/s)."""
         tt = min(max(t, 0.0), self.duration_s)
-        return 0.5 * self.delta_v * (1.0 - math.cos(math.pi * tt / self.duration_s))
+        return 0.5 * self.delta_v * (1.0 - dmath.cos(math.pi * tt / self.duration_s))
 
 
 def direction_from_pdof(pdof_hours: float) -> tuple[float, float]:
@@ -84,7 +85,7 @@ def direction_from_pdof(pdof_hours: float) -> tuple[float, float]:
     El ocupante se mueve hacia ese lado: a las 12, hacia adelante; a las 3, hacia la derecha.
     """
     phi = math.radians(30.0 * pdof_hours)  # en sentido horario desde el frente
-    return (math.cos(phi), -math.sin(phi))
+    return (dmath.cos(phi), -dmath.sin(phi))
 
 
 def pulse_for(delta_v: float, crush_max_m: float, pdof_hours: float) -> CrashPulse | None:
@@ -113,7 +114,7 @@ class OccupantMotion:
 
     @property
     def max_displacement(self) -> float:
-        return max((math.hypot(a, b) for a, b in zip(self.dx, self.dy, strict=True)), default=0.0)
+        return max((dmath.hypot(a, b) for a, b in zip(self.dx, self.dy, strict=True)), default=0.0)
 
 
 def _zone(seat: str, axis: str, sign: float) -> str:

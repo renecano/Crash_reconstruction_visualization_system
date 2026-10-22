@@ -29,6 +29,7 @@ from __future__ import annotations
 import math
 from dataclasses import dataclass
 
+from croquis_solver import dmath
 from croquis_solver.models import G
 
 
@@ -48,7 +49,7 @@ def searle_speed(
     """Velocidad de lanzamiento para un ángulo dado (ecuación de Searle)."""
     _check(throw_m, mu)
     th = math.radians(launch_angle_deg)
-    denom = math.cos(th) + mu * math.sin(th)
+    denom = dmath.cos(th) + mu * dmath.sin(th)
     if denom <= 0:
         msg = "Ángulo de lanzamiento fuera del dominio"
         raise ValueError(msg)
@@ -62,13 +63,13 @@ def searle_range(throw_m: float, mu: float, cg_height_m: float = 0.0) -> ThrowSp
     return ThrowSpeedRange(
         v_min=math.sqrt(base / (1.0 + mu * mu)),
         v_max=math.sqrt(base),
-        theta_min_deg=math.degrees(math.atan(mu)),
+        theta_min_deg=math.degrees(dmath.atan(mu)),
     )
 
 
 def searle_max_angle_deg(mu: float) -> float:
     """Límite superior del dominio de ángulos en el que v_max = v(0): 2·atan μ."""
-    return math.degrees(2.0 * math.atan(mu))
+    return math.degrees(2.0 * dmath.atan(mu))
 
 
 def searle_throw(
@@ -108,7 +109,7 @@ def throw_kinematics(v: float, theta_deg: float, cg_height: float, mu: float) ->
         msg = "μ debe ser positivo y la altura no negativa"
         raise ValueError(msg)
     th = math.radians(theta_deg)
-    vx, vz = v * math.cos(th), v * math.sin(th)
+    vx, vz = v * dmath.cos(th), v * dmath.sin(th)
     t_f = (vz + math.sqrt(vz * vz + 2.0 * G * cg_height)) / G
     vz_land = vz - G * t_f
     u = max(0.0, vx - mu * abs(vz_land))

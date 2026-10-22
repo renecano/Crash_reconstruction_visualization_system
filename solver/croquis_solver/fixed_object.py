@@ -15,6 +15,7 @@ from __future__ import annotations
 import math
 from dataclasses import dataclass
 
+from croquis_solver import dmath
 from croquis_solver.crash3 import TRIANGULAR_SHAPES, Stiffness, crush_energy, profile_for_energy
 from croquis_solver.models import Body2D
 
@@ -50,7 +51,7 @@ def rigid_barrier(
         msg = "La velocidad de impacto no puede ser negativa"
         raise ValueError(msg)
     w = damage_width if damage_width is not None else body.width
-    energy = 0.5 * body.mass * v_impact**2 * (1.0 - restitution**2)
+    energy = 0.5 * body.mass * (v_impact * v_impact) * (1.0 - restitution * restitution)
     profile = profile_for_energy(energy, w, k, TRIANGULAR_SHAPES["uniforme"])
     return FixedObjectResult(
         delta_v=v_impact * (1.0 + restitution),
@@ -90,9 +91,9 @@ def narrow_object(
         msg = "Velocidad no negativa y diámetro positivo"
         raise ValueError(msg)
     rigid = is_rigid(material, diameter_m)
-    kinetic = 0.5 * body.mass * v_impact**2
+    kinetic = 0.5 * body.mass * (v_impact * v_impact)
     if rigid:
-        e_vehicle = kinetic * (1.0 - restitution**2)
+        e_vehicle = kinetic * (1.0 - restitution * restitution)
         e_object = 0.0
         v_after = v_impact * restitution
         delta_v = v_impact * (1.0 + restitution)
@@ -104,7 +105,7 @@ def narrow_object(
         remaining = max(kinetic - e_object - e_vehicle, 0.0)
         v_after = math.sqrt(2.0 * remaining / body.mass)
         delta_v = v_impact - v_after
-    tan_a = math.tan(math.radians(spread_angle_deg))
+    tan_a = dmath.tan(math.radians(spread_angle_deg))
     width = min(body.width, max(diameter_m, 0.3 * body.width))
     profile = profile_for_energy(e_vehicle, width, k, TRIANGULAR_SHAPES["poste"])
     for _ in range(max_iter):
