@@ -34,8 +34,13 @@ Reglas de trabajo: `CLAUDE.md`. Especificación: `PLAN.md`.
   - **Qué necesito de René:** nada nuevo. El borrador usa la llave y el tope de gasto de producción que ya están en Vercel.
 - **Versión real para CESVI (desde 2026-10-21):** el plan es `docs/cesvi/PLAN-CESVI.md`; `docs/cesvi/PROTOTIPO.md` queda como historial.
   - **El prototipo desplegado se queda como está** para la demo con CESVI de esta semana. La versión real se trabaja en ramas y entra a `main` solo con la e2e del prototipo en verde.
-  - **Orden:** C0 → C1 → C2 → C3 → C4 → C6 → C5 → C7 → C8.
-  - **Fase actual: C1** (motor de cálculo). C0 (corpus y contrato v2) quedó cerrada el 2026-10-21; su plan fue:
+  - **Plan v2 (2026-10-21):** René lo cambió el mismo día. El centro es la reconstrucción con física y su 3D a partir de lo que narra el perito; los dictámenes sirven para demostrar que Croquis reproduce lo que CESVI ya analizó, y la comparación con la declaración del conductor queda como complemento opcional (R7). `CLAUDE.md` cambió con él: el visor 3D se reactiva.
+  - **Orden:** R0 → R1 → R2 → R3 → R4 → R5 → R6 → R7 → R8 → R9.
+  - **Cómo quedan las fases C de la v1:**
+    - **C0:** pasa a R0. Falta lo nuevo: la descripción de los hechos sin conclusiones, con su revisión de fuga, y lo que concluyó CESVI, estructurado.
+    - **C1:** es el módulo de verificación CESVI de R2, con su reproducción (E-C1) ya corrida.
+    - **C2–C8:** se reacomodan en R1–R9.
+  - **Fase actual: R0** (termina el corpus con la descripción sin conclusiones y las conclusiones de CESVI). C0 y C1 de la v1 quedaron cerradas el 2026-10-21. El plan de C0 fue:
     - **Contrato v2:** `escena.schema.json` ampliado, con migración desde v1.3, Zod y Pydantic generados y un validador semántico (N vehículos, M impactos, versiones).
     - **Corpus estructurado** de los 671 dictámenes con Claude (salida estructurada, caché, semilla), validado contra el esquema, con partición congelada del 30 % y etiquetas de la conclusión revisadas en una muestra.
     - **Mediciones:** las proporciones del §2 en `eval/results/cesvi_corpus.json`; desde ahí se pueden citar.
@@ -73,7 +78,37 @@ Reglas de trabajo: `CLAUDE.md`. Especificación: `PLAN.md`.
       - `pnpm --filter @croquis/cesvi corpus armar` rearma el corpus desde la caché local, sin costo; requiere `data/raw/cesvi/`.
     - **Qué necesito de René:**
       - **Opcional:** que un perito de CESVI etiquete la hoja ciega (47 conclusiones, `data/raw/cesvi/revision-ciega.md`, fuera de git) para medir el acuerdo con una persona.
-    - **Siguiente:** C1, el motor de cálculo. Los casos de frenado con transferencia y velocidad crítica en curva del corpus ya están ubicados.
+    - **Siguiente:** C1 (hecha, abajo).
+  - **Resumen de C1 para René** (rama `feat/c1-calculo`, ADR 0059):
+    - **Qué quedó:**
+      - **Motor** (`packages/cesvi/src/calculos.ts`): los métodos que usan los dictámenes, además de McHenry, EBS y desplazamiento:
+        - frenado por huellas, derrape con fricción equivalente y frenado con arrastre;
+        - velocidad crítica en curva (la forma de CESVI con 11.27 y la completa), radio por cuerda y flecha, y vuelco;
+        - tiro parabólico, trabajo de fricción, velocidad por energías y energía cinética;
+        - distancias de reacción y de frenado;
+        - cantidad de movimiento colineal y en el plano;
+        - comparación con un umbral.
+        - Cada uno con su fórmula sustituida (`formulas.ts`).
+      - **Rigidez por vehículo** (`rigidez.ts`): perito, dictamen, tabla de CESVI o E2. Siempre dice de dónde sale, y el respaldo sin pruebas va marcado como supuesto.
+      - **Umbrales y pruebas de choque citados** en los dictámenes, con quién los cita (`data/cesvi/calculos/referencias.json`); Croquis no fija ninguno.
+      - **E-C1:** `eval/cesvi_reproduccion.mts` con 148 fichas transcritas de 39 dictámenes (`data/cesvi/calculos/fichas.json`).
+    - **Números medidos** (`eval/results/cesvi_reproduccion.json`):
+      - **Métodos:** reproducen 79 de 98 recalculados dentro de 0.5 % (desarrollo 61 de 75, prueba 18 de 23).
+      - **Las 19 que no,** con su motivo revisado contra el texto:
+        - 7 con una fórmula distinta a la impresa (6 de ellas en dos dictámenes casi iguales);
+        - 5 erratas del dictamen (tan en radianes, tan α impresa y no sumada, 4S² contra 2S², V sin cuadrado);
+        - 3 de redondeo;
+        - 3 sin explicar, entre ellas la energía de A2010930;
+        - 1 sin la sustitución.
+      - **No se pudieron recalcular 30:** 16 por datos que no se imprimen (sobre todo McHenry hecho con un programa), 6 por OCR, 4 con datos sin definir y 4 comparaciones sin número.
+      - **Aritmética:** 20 de 20.
+    - **Cómo probarlo:**
+      - `pnpm --filter @croquis/cesvi test` (97 pruebas, con casos de desarrollo citados por ficha);
+      - E-C1: `cd packages/cesvi && pnpm exec tsx ../../eval/cesvi_reproduccion.mts`.
+    - **Qué necesito de René:**
+      - la tabla de rigideces de CESVI (ya estaba en «Bloqueado»);
+      - si se puede, preguntarle a CESVI por los hallazgos de las erratas (lista en ADR 0059).
+    - **Siguiente (plan v2):** R0, que agrega al corpus la descripción sin conclusiones y lo que concluyó CESVI. Antes de procesarlo con Claude se estima el costo y se anota aquí.
 - **UI unificada (2026-10-21)** (rama `feat/cesvi-ui-unificada`, ADR 0057; maquetas Paso4Trabajo, Paso8 y Paso2Claro):
   - **Liga:** https://croquis-sage.vercel.app/cesvi
   - **Qué hay:**
@@ -318,7 +353,7 @@ Lo que se pospone por el trabajo con CESVI no se borra: queda aquí para despué
   - reproducibilidad de los datos de Python (DataMX, CISS, inercias de NHTSA, OSM, MakeHuman, Poly Haven) y Python en Windows.
 - **El resto del sitio con los tokens del rediseño (ADR 0054):** portada, historia, visor 3D y «Cuenta qué pasó» heredan la paleta y Geist sin rediseñarse; la portada y la historia están en pausa. Cuando se reactiven, hay que revisarlas con el sistema nuevo (por ejemplo, los tamaños del lema estaban medidos con Anybody).
 - **Lighthouse, axe y E-series como requisito:** `eval/f11_portada.mjs` y las demás evaluaciones siguen en el repo; se corren cuando René lo pida.
-- **En pausa:** el visor 3D, la portada de lanzamiento y la historia (de F11a solo se usan tokens, marca y componentes); E6 en baja y media después de F11a; F11b (E9 con personas).
+- **En pausa:** la portada de lanzamiento y la historia (el visor 3D se reactiva con el plan v2, R3) (de F11a solo se usan tokens, marca y componentes); E6 en baja y media después de F11a; F11b (E9 con personas).
 - **Del prototipo de CESVI:** el mapa con mosaicos propios (privacidad completa), la importación automática de cualquier dictamen, interpenetración, impactos múltiples y generalidad del método; autenticación con cuentas para cuando los peritos usen sus propios casos (hoy el acceso es con usuario y clave, ADR 0049).
 
 ### Bloqueado — necesita a René

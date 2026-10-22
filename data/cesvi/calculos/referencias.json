@@ -1,0 +1,66 @@
+{
+  "descripcion": "Umbrales y pruebas de choque que citan los dictámenes de CESVI con cálculos (los 53 de E-C1), con los dictámenes que los citan. Salen de las fichas y de los dictámenes sin cálculo de fichas.json; no son valores de Croquis. Ver ADR 0059.",
+  "bolsas_de_aire": [
+    {
+      "kmh": 25,
+      "texto": "Activación de las bolsas frontales al impactar contra cuerpo duro a más de 25 km/h",
+      "dictamenes": [
+        "cesvi-03e36e3e67",
+        "cesvi-0ddf4bf046",
+        "cesvi-1133bc17f5",
+        "cesvi-644837b23b",
+        "cesvi-b701201375"
+      ]
+    },
+    {
+      "kmh": 20,
+      "texto": "Umbral del sensor de 1.8 g, «es decir, 20 km/hr»",
+      "dictamenes": ["cesvi-060bd46915"]
+    },
+    {
+      "kmh": 35,
+      "texto": "Sin activación de las bolsas, el impacto fue a menos de 35 km/h",
+      "dictamenes": ["cesvi-231384d434"]
+    }
+  ],
+  "pruebas_de_choque": [
+    {
+      "kmh": 15,
+      "texto": "Prueba de CESVI México a baja velocidad (frontal o trasera, contra muro o barrera)",
+      "valores_impresos_kmh": [15, 15.01, 15.54, 15.55],
+      "dictamenes": [
+        "cesvi-060bd46915",
+        "cesvi-0c23741f66",
+        "cesvi-1717e7bb25",
+        "cesvi-54558a2caa",
+        "cesvi-8bc045f603",
+        "cesvi-e6067d3d1b"
+      ]
+    },
+    {
+      "kmh": 64.4,
+      "texto": "Prueba del IIHS contra objeto fijo",
+      "dictamenes": ["cesvi-3c398f659a", "cesvi-84add85a0e", "cesvi-e984ff56d3"]
+    },
+    {
+      "kmh": 64,
+      "texto": "Prueba de Euro NCAP",
+      "dictamenes": ["cesvi-e6067d3d1b"]
+    },
+    {
+      "kmh": 60,
+      "texto": "Prueba del IIHS frontal",
+      "dictamenes": ["cesvi-e9c4e081fe"]
+    },
+    {
+      "kmh": 65,
+      "texto": "Prueba contra muro indeformable",
+      "dictamenes": ["cesvi-cc81cc9bea"]
+    },
+    {
+      "kmh": 16,
+      "texto": "Prueba contra muro indeformable de 30 t a velocidad controlada; el dictamen toma el doble como velocidad real",
+      "dictamenes": ["cesvi-5317d852ab"]
+    }
+  ]
+}

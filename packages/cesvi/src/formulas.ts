@@ -4,6 +4,14 @@
  * salen de `metodo.ts`, aquí solo se escriben.
  */
 import {
+  cantidadMovimientoColineal,
+  frenadoHuellas,
+  radioCurva,
+  tiroParabolico,
+  trabajoFriccion,
+  velocidadCriticaCurva,
+} from "./calculos";
+import {
   ebs,
   mcHenry,
   velocidadDesplazamiento,
@@ -116,6 +124,92 @@ export function formulaDesplazamiento(a: number, g: number, D: number): PasoVelo
     sustituida: `V3 = √(2 · ${dato(a)} · ${dato(g)} · ${dato(D)})`,
     intermedios: [],
     resultado: `V3 = ${cifra(v.ms, 2)} m/s = ${cifra(v.kmh, 2)} km/h`,
+    calculo: v,
+  };
+}
+
+/** V = √(Vf² + 2·μ·g·d) con sus valores sustituidos (sin Vf si el vehículo se detiene). */
+export function formulaFrenado(mu: number, g: number, d: number, vFinalMs = 0): PasoVelocidad {
+  const v = frenadoHuellas(mu, g, d, vFinalMs);
+  const conVf = vFinalMs > 0;
+  return {
+    general: conVf ? "V = √(Vf² + 2 · μ · g · d)" : "V = √(2 · μ · g · d)",
+    sustituida: `V = √(${conVf ? `${dato(vFinalMs)}² + ` : ""}2 · ${dato(mu)} · ${dato(g)} · ${dato(d)})`,
+    intermedios: [],
+    resultado: `V = ${cifra(v.ms, 2)} m/s = ${cifra(v.kmh, 2)} km/h`,
+    calculo: v,
+  };
+}
+
+/** Velocidad crítica en curva, con o sin peralte, con sus valores sustituidos. */
+export function formulaCurva(mu: number, g: number, R: number, peralte = 0): PasoVelocidad {
+  const v = velocidadCriticaCurva(mu, g, R, peralte);
+  const conPeralte = peralte !== 0;
+  return {
+    general: conPeralte ? "V = √(g · R · (μ + e) / (1 − μ · e))" : "V = √(μ · g · R)",
+    sustituida: conPeralte
+      ? `V = √(${dato(g)} · ${dato(R)} · (${dato(mu)} + ${dato(peralte)}) / (1 − ${dato(mu)} · ${dato(peralte)}))`
+      : `V = √(${dato(mu)} · ${dato(g)} · ${dato(R)})`,
+    intermedios: [],
+    resultado: `V = ${cifra(v.ms, 2)} m/s = ${cifra(v.kmh, 2)} km/h`,
+    calculo: v,
+  };
+}
+
+/** R = C²/(8·M) + M/2 con sus valores sustituidos. */
+export function formulaRadio(cuerda: number, flecha: number): PasoFormula & { calculo: number } {
+  const R = radioCurva(cuerda, flecha);
+  return {
+    general: "R = C² / (8 · M) + M / 2",
+    sustituida: `R = ${dato(cuerda)}² / (8 · ${dato(flecha)}) + ${dato(flecha)} / 2`,
+    intermedios: [],
+    resultado: `R = ${cifra(R, 2)} m`,
+    calculo: R,
+  };
+}
+
+/** V = d·√(g/(2·h)) con sus valores sustituidos. */
+export function formulaTiroParabolico(d: number, h: number, g: number): PasoVelocidad {
+  const v = tiroParabolico(d, h, g);
+  return {
+    general: "V = d · √(g / (2 · h))",
+    sustituida: `V = ${dato(d)} · √(${dato(g)} / (2 · ${dato(h)}))`,
+    intermedios: [],
+    resultado: `V = ${cifra(v.ms, 2)} m/s = ${cifra(v.kmh, 2)} km/h`,
+    calculo: v,
+  };
+}
+
+/** E = μ·m·g·d con sus valores sustituidos. */
+export function formulaTrabajoFriccion(
+  mu: number,
+  m: number,
+  g: number,
+  d: number,
+): PasoFormula & { calculo: number } {
+  const E = trabajoFriccion(mu, m, g, d);
+  return {
+    general: "E = μ · m · g · d",
+    sustituida: `E = ${dato(mu)} · ${dato(m)} · ${dato(g)} · ${dato(d)}`,
+    intermedios: [],
+    resultado: `E = ${cifra(E, 2)} J`,
+    calculo: E,
+  };
+}
+
+/** V1 = ((m1 + m2)·V' − m2·V2)/m1 con sus valores sustituidos. */
+export function formulaCantidadMovimiento(
+  m1: number,
+  m2: number,
+  v2Ms: number,
+  vComunMs: number,
+): PasoVelocidad {
+  const v = cantidadMovimientoColineal(m1, m2, v2Ms, vComunMs);
+  return {
+    general: "V1 = ((m1 + m2) · V' − m2 · V2) / m1",
+    sustituida: `V1 = ((${dato(m1)} + ${dato(m2)}) · ${dato(vComunMs)} − ${dato(m2)} · ${dato(v2Ms)}) / ${dato(m1)}`,
+    intermedios: [],
+    resultado: `V1 = ${cifra(v.ms, 2)} m/s = ${cifra(v.kmh, 2)} km/h`,
     calculo: v,
   };
 }

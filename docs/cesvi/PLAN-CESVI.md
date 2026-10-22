@@ -1,157 +1,161 @@
-# Croquis para CESVI · plan de la versión real
+# Croquis para CESVI · plan de la versión real (v2)
 
-> Este plan sustituye al prototipo (`docs/cesvi/PROTOTIPO.md`, que queda como historial) y manda sobre `PLAN.md` en lo que se contradigan. `PLAN.md` sigue valiendo para lo que ya está construido (solver, contrato, evaluaciones E1–E8) y para lo que este plan no toca. Las reglas de trabajo siguen en `CLAUDE.md`, sección «Para quién y qué tan lejos».
+> **v2, 2026-10-21.** René aclaró el objetivo y este plan reemplaza a la v1 del mismo día. La v1 ponía el veredicto sobre la declaración del conductor en el centro; eso pasa a ser un complemento opcional.
+>
+> Este plan manda sobre `PLAN.md` en lo que se contradigan. `PLAN.md` sigue valiendo para lo que ya está construido: solver, contrato, visor 3D, evaluaciones E1–E8 y niveles de calidad §7.8. `docs/cesvi/PROTOTIPO.md` queda como historial y el prototipo desplegado se conserva para la demo. Las reglas de trabajo siguen en `CLAUDE.md`.
 
-## 1. Qué es y para quién
+## 1. Qué es Croquis
 
-**Croquis es la mesa de trabajo del perito de CESVI.** El perito abre un caso nuevo o carga un dictamen y hace cuatro cosas:
-1. Describe el hecho con lenguaje técnico.
-2. Ubica el lugar y coloca los vehículos en el mapa.
-3. Registra los daños.
-4. Revisa la correspondencia y los cálculos.
+**El perito narra el hecho y Croquis lo reconstruye con física y lo muestra en 3D.**
 
-Croquis le sugiere si la versión declarada se sostiene, con sus razones; el perito confirma, corrige y firma. Al final sale un dictamen con la estructura de CESVI.
+1. **El perito describe el hecho con lenguaje técnico:** modalidad, vehículos, sentidos, maniobras, zonas de contacto, daños, restos, huellas y posiciones finales. Ubica el lugar en el mapa y corrige posiciones si hace falta.
+2. **Croquis entiende la descripción.** La IA solo traduce el texto a la escena (contrato); nunca inventa números físicos.
+3. **La física reconstruye:**
+   - el solver calcula velocidades, trayectorias, el impacto o los impactos y las posiciones finales, con rangos;
+   - usa como evidencia lo que el perito dio (punto de impacto, posiciones finales, restos, huellas y daños);
+   - los métodos de CESVI (McHenry, EBS, desplazamiento, huellas, cantidad de movimiento) se muestran al lado como verificación.
+4. **Croquis muestra la reconstrucción** en 3D y en el croquis 2D sobre el mapa, sincronizados en una línea de tiempo.
+5. **Sale un reporte** con la reconstrucción, los cálculos y su trazabilidad.
 
-La primera versión real debe poder:
-1. Atender **cualquier caso nuevo**, no solo el de AXA, de cualquier modalidad.
-2. **Cargar un dictamen** (PDF, Markdown o texto) y llenar el expediente, que el perito revisa.
-3. Atender **carambolas**: más de dos vehículos e impactos múltiples.
+**El papel de los dictámenes de CESVI:** demostrarles a los peritos que un hecho que ellos ya analizaron y probaron, Croquis lo reconstruye y llega a lo mismo. Se usan para:
+- evaluar a Croquis contra sus conclusiones (§5, R4);
+- la demo: el dictamen y la reconstrucción de Croquis, lado a lado.
 
-**Usuario:** el perito de CESVI. Opina sobre lo que ve, no sobre lo técnico; las decisiones técnicas las toma Claude Code (CLAUDE.md, Autonomía).
+**El complemento opcional** (R7): el perito puede cargar la declaración de un conductor y ver en 3D, lado a lado o superpuesta, esa versión contra la reconstrucción, con lo que cambia entre ambas. Croquis no declara culpables ni dice quién miente. Si se muestra una sugerencia, el perito la confirma o la descarta.
 
-## 2. Lo que dicen los 671 dictámenes (y por qué cambia el foco)
+## 2. Lo que ya existe y se reutiliza
 
-Un conteo preliminar por palabras clave sobre los lotes de `data/raw/cesvi/` dio esto. **Es aproximado y no va en ningún documento hasta que `eval/` lo mida** (regla 3 de CLAUDE.md):
-
-- **Correspondencia de daños:** casi todos los dictámenes la analizan.
-  - Dirección del daño y forma: en casi 9 de cada 10.
-  - Magnitud: en 2 de cada 3.
-  - Altura de los daños: en cerca de la mitad.
-  - Intercambio de material: en cerca de 6 de cada 10.
-- **Daño previo u óxido:** cerca de 1 de cada 4 lo revisa.
-- **Bolsas de aire:** cerca de 1 de cada 4 las menciona.
-- **Fotografías:** casi todos las usan.
-- **Cálculos de velocidad (McHenry, EBS, desplazamiento, huellas, cantidad de movimiento):** solo una minoría pequeña.
-- **Tres o más vehículos:** poco frecuente, pero presente.
-
-**Conclusión:** el corazón del trabajo de CESVI es la **correspondencia de daños**: si la forma, la altura, la dirección y la magnitud de los daños de un vehículo corresponden con las del otro, y con la dinámica que declara el conductor. Los cálculos de velocidad son apoyo en pocos casos. La versión real se construye alrededor de la correspondencia, con los cálculos como módulo.
+- **Solver y port a TS:**
+  - impulso, CRASH3 con rigideces de NHTSA, post-impacto y Monte Carlo;
+  - inversión con Levenberg–Marquardt;
+  - determinismo y paridad;
+  - medido contra registradores de choques reales (E3) y atropellos (E4).
+- **Visor 3D:** WebGPU, niveles baja / media / alta / ultra, daño y cámaras. Estaba en pausa: **se reactiva.**
+- **Extracción con Claude:** salida estructurada, fuentes por dato y preguntas de lo que falta, ya adaptada al lenguaje técnico del perito, con un glosario de 114 términos.
+- **El recorrido de `/cesvi`:** 8 pasos, modo Presentar / Trabajar, mapa con el punto editable, posiciones del perito, deshacer, temas y dictamen en PDF.
+- **Contrato 2.0.0:** expediente, N vehículos, M impactos y versiones.
+- **C0 en curso:** el corpus estructurado de los 671 dictámenes. Se conserva tal cual y se amplía en R0.
 
 ## 3. Datos
 
-- **Licencia:** René confirmó que los dictámenes que entregó CESVI son de uso libre para este proyecto. Muchos son casos elaborados por CESVI con ese fin, con cálculos correctos.
-  - Se pueden usar en fixtures, pruebas, evaluaciones y demos.
-  - Regístralo en `data/SOURCES.md` con esa declaración y la fecha.
-  - Los lotes crudos siguen fuera de git, por tamaño.
-- **Corpus estructurado (fase C0):** un script en `data/` convierte cada dictamen en un registro JSON:
-  - modalidad, vehículos, daños por vehículo (zona, dirección, altura, magnitud);
-  - versión declarada, evidencias, cálculos con sus valores, criterios analizados;
-  - conclusión (se sostiene / no se sostiene / parcial / sin juicio);
-  - la cita del texto de donde sale cada campo.
-  - Se hace con Claude y salida estructurada, con caché y semilla, y se valida contra el esquema. El costo estimado y el real se anotan en PROGRESS.
-- **Partición fija:** entrenamiento/desarrollo y prueba congelada (30 %, estratificada por modalidad y conclusión). La prueba no se mira para ajustar nada; se congela como Relatos-MX.
-- **Etiquetas de la conclusión:** las propone Claude con su cita. Claude Code revisa a mano una muestra estratificada y reporta la concordancia en `eval/results/`. Si es baja, se corrige el extractor antes de usar las etiquetas.
+- **Licencia:** los dictámenes de CESVI son de uso libre para este proyecto (René, 2026-10-21; muchos son casos elaborados por CESVI). Se registran en `data/SOURCES.md`.
+- **Corpus estructurado (R0):** a lo que ya extrae C0 se le agrega, por dictamen:
+  - **Descripción de los hechos sin conclusiones:** solo hechos, lugar, daños, evidencias y medidas, sin velocidades calculadas ni conclusiones. Es lo que se le da a Croquis como «narración del perito» en la evaluación. Debe pasar una revisión automática de fuga: no puede contener cifras de velocidad ni frases de conclusión.
+  - **Lo que concluyó CESVI, para comparar:** modalidad, zonas de contacto por vehículo, secuencia de impactos, velocidades calculadas (si las hay) y posiciones finales (si se describen).
+- **Partición:** la prueba congelada (30 %) de C0 se mantiene y no se usa para ajustar nada.
 
-## 4. Modelo: el expediente (contrato v2)
+## 4. Principios que no cambian
 
-Amplía `escena.schema.json`, que sigue siendo el único contrato, con migración desde v1.3. Zod y Pydantic se generan.
-
-- **Caso:** aseguradora, siniestro, fecha y hora, lugar (coordenadas, vía, carriles), modalidad o modalidades, perito.
-- **Vehículos 1..N:** marca, modelo, año, clase, masa (con fuente), rigidez A y B (con fuente: dictamen, tabla CESVI o NHTSA E2), altura de defensas si se mide.
-- **Daños por vehículo:** zona en un diagrama estándar (frontal, posterior, lateral izquierdo o derecho, con tercios y vértices); altura mínima y máxima desde el piso (cm); dirección de la deformación; magnitud o medidas C1–C6 y L; intercambio de material (color y sobre qué zona); daño previo u óxido; fotos referenciadas.
-- **Impactos 1..M, con orden:** qué vehículos o qué objeto fijo, zonas de contacto, punto en el mapa, momento en la secuencia. Una carambola es M > 1.
-- **Versiones:**
-  - la de la evidencia, que arma el perito;
-  - una por cada declaración de conductor (cita literal y maniobras extraídas);
-  - en cada una: posiciones inicial, de impacto y final de cada vehículo.
-- **Evidencias del lugar:** restos (inicio, fin, longitud), huellas de frenado o derrape, posiciones finales, objetos fijos dañados.
-- **Fuente por dato:** perito, conductor, expediente, dictamen importado, supuesto o mapa, con su cita cuando aplique.
-- **Resultado:** criterios de correspondencia, cálculos, sugerencia, decisión del perito, quién validó y cuándo, y la huella de las entradas.
+- La IA traduce, la física decide, el visor muestra.
+- Ningún número inventado.
+- Cada resultado lleva su rango y su fuente; toda diferencia con un dictamen se muestra con su valor y su porcentaje.
+- Reconstrucción de apoyo: el análisis y la firma son del perito.
 
 ## 5. Fases
 
-Cada fase se cierra con su criterio en verde, merge y despliegue, y con su resumen en PROGRESS (CLAUDE.md, Flujo por fase). Las evaluaciones son scripts en `eval/` que se corren a mano al cerrar la fase; no bloquean CI.
+Cada fase se cierra con su criterio en verde, merge y despliegue, y con su resumen en PROGRESS. Las evaluaciones son scripts en `eval/` que se corren al cerrar la fase y no bloquean CI. Pruebas según «Para quién y qué tan lejos» de CLAUDE.md.
 
-### C0 · Corpus y contrato v2
-- Contrato v2 con migración y un validador semántico para lo nuevo (N vehículos, M impactos, versiones).
-- Corpus estructurado de los 671 dictámenes, con partición y etiquetas (§3).
-- Glosario técnico de CESVI con frecuencias, derivado del corpus; lo usan los prompts.
-- Medición en `eval/results/cesvi_corpus.json` de las proporciones del §2. Desde aquí, esas cifras sí se pueden citar.
-- **Listo cuando:** el corpus valida al 100 % contra el esquema (los que no validan quedan listados con su motivo), la concordancia de las etiquetas está medida y existe la partición congelada.
+### R0 · Corpus (continúa C0)
+- Termina lo de C0: corpus validado, partición congelada, etiquetas revisadas en una muestra y mediciones en `eval/results/cesvi_corpus.json`.
+- Agrega los dos campos del §3 (descripción sin conclusiones y lo que concluyó CESVI), con la revisión de fuga.
+- **Listo cuando:** el corpus completo valida y cada dictamen de la prueba congelada tiene su descripción limpia y sus conclusiones estructuradas.
 
-### C1 · Motor de cálculo CESVI completo
-- Métodos que aparecen en el corpus, cada uno con fórmula sustituida, unidades y fuente:
-  - McHenry de 2, 4 y 6 medidas;
-  - EBS y velocidad de impacto;
-  - desplazamiento √(2·a·g·D);
-  - frenado por huellas √(2·μ·g·d);
-  - cantidad de movimiento, para dos vehículos y por impacto en carambolas;
-  - umbral de activación de bolsas de aire;
-  - comparación con pruebas de choque de CESVI.
-  - Los umbrales y las referencias se toman de lo que cite el corpus, con su cita; no se inventan.
-- Rigidez A y B por vehículo: la del dictamen si viene, si no la tabla que CESVI dé, y si no NHTSA E2 marcada como tal. El perito puede cambiarla.
-- **Evaluación E-C1, reproducción:** todo dictamen del corpus que imprime entradas y resultados se recalcula. Se reporta cuántos reproduce dentro de 0.5 %, cuántos no y por qué (dato que no se imprime, errata, OCR). Ningún ajuste para que cuadre.
-- **Listo cuando:** cada método tiene pruebas unitarias con casos del corpus y E-C1 está corrida.
+### R1 · De la narración del perito a la escena
+- El paso «El hecho» genera la escena completa (contrato v2), no solo datos sueltos:
+  - N vehículos con clase y masa;
+  - M impactos con zonas de contacto;
+  - objetos fijos (poste, muro, barda, árbol, guarnición);
+  - maniobras, restos, huellas y posiciones finales.
+- El perito corrige en el mapa: posición inicial, de impacto y final de cada vehículo, restos y huellas. Lo que marca tiene fuente `perito` y la física lo usa como evidencia.
+- Preguntas solo de lo que más cambia la reconstrucción, con «No sé».
+- **Listo cuando:** las descripciones de 10 dictámenes de desarrollo, de modalidades distintas, generan escenas válidas, y una e2e recorre narración → mapa → escena.
 
-### C2 · Motor de correspondencia (el núcleo)
-- Criterios con estado (corresponde / no corresponde / sin dato) y la evidencia de cada uno:
-  - **Altura:** los rangos de altura de los daños de los dos vehículos se traslapan, con la tolerancia por cabeceo al frenar documentada.
-  - **Forma:** la geometría del daño corresponde al otro vehículo o al objeto fijo (defensa, poste, muro, esquina).
-  - **Dirección:** la dirección de la deformación de cada vehículo concuerda con el movimiento relativo de la versión analizada (por ejemplo, de atrás hacia adelante en un alcance).
-  - **Magnitud:** la energía o la profundidad del daño concuerda con las velocidades de la versión; usa C1 cuando hay medidas.
-  - **Intercambio de material:** el color y la zona de la transferencia corresponden.
-  - **Daño previo:** óxido o daños sin relación con el hecho.
-  - **Lugar:** el lugar y las evidencias explican el daño.
-- Reglas deterministas en TS. La IA no decide criterios: solo extrae datos y redacta. Cada regla documenta de qué patrón del corpus sale.
-- **Listo cuando:** pruebas unitarias por criterio con casos del corpus de entrenamiento.
+### R2 · Reconstrucción física desde la evidencia del perito
+- La inversión usa las posiciones y medidas del perito (punto de impacto, posiciones finales, longitud de restos, huellas, profundidad de daño) para estimar velocidades y trayectorias con rangos.
+- Choques contra objeto fijo.
+- Modalidades frecuentes en el corpus: alcance, lateral, frontal, reversa, volcadura y salida del camino. Lo que el solver no cubra se declara en pantalla como límite, no se simula a medias.
+- Módulo de verificación CESVI al lado del resultado físico: McHenry de 2, 4 y 6 medidas, EBS, desplazamiento, huellas y cantidad de movimiento, con la fórmula sustituida.
+  - **Reproducción:** todo dictamen del corpus que imprime entradas y resultados se recalcula, y se reporta cuántos coinciden dentro de 0.5 %. Ningún ajuste para que cuadre.
+- El solver Python es la referencia. Cada cambio lleva su port a TS y pruebas de paridad.
+- **Listo cuando:** las escenas de R1 se reconstruyen con resultados y rangos, y la verificación CESVI está corrida sobre el corpus.
 
-### C3 · Caso nuevo, de cualquier modalidad
-- Generaliza el recorrido y el modo trabajo, que ya existen, a N vehículos y cualquier modalidad: alcance, lateral, frontal, reversa, volcadura, contra objeto fijo y las demás que aparezcan en el corpus.
-- Paso «El hecho»: la descripción técnica del perito y las declaraciones (ya construido), ahora para N vehículos y M impactos.
-- Paso «Daños»: diagrama de zonas por vehículo con altura, dirección, magnitud e intercambio de material, más carga de fotos asociadas a cada daño.
-- Guardado de casos en el dispositivo (IndexedDB): lista de casos, duplicar, borrar, y exportar e importar el caso en JSON. Las fotos se guardan con el caso.
-- **Listo cuando:** la e2e en Chromium crea un caso nuevo de una modalidad distinta al alcance, de principio a fin, y exporta su dictamen.
+### R3 · 3D de la reconstrucción
+- Se reactiva el visor 3D y se integra al recorrido (paso de las versiones y modo trabajo):
+  - lo que calculó el solver;
+  - daño en las zonas que describió el perito;
+  - restos, huellas y objetos fijos;
+  - cámaras libre, cenital y de conductor;
+  - línea de tiempo sincronizada con el croquis 2D.
+- Corrige la interpenetración: en el impacto los cuerpos no se atraviesan.
+- Respeta los niveles de §7.8: la laptop es el piso, alta y ultra no se recortan.
+- Pruebas: la e2e del recorrido abre el 3D en Chromium. Las capturas y los fps se miden a mano antes de una demo.
+- **Listo cuando:** cualquier escena de R2 se ve en 3D y en 2D sincronizadas y sin interpenetración.
 
-### C4 · Cargar un dictamen
-- Acepta PDF, Markdown o texto. El PDF se manda a Claude como documento (texto e imágenes, incluidas las fórmulas como imagen), con salida estructurada al expediente v2 y la página y la cita de cada campo.
-- Pantalla de revisión: cada campo con su cita resaltada; el perito acepta o corrige; lo que falta queda punteado.
-- **Evaluación E-C4, extracción:** sobre la prueba congelada, exactitud por campo (modalidad, vehículos, zonas, alturas, valores de cálculo, conclusión) contra el corpus estructurado revisado. Los PDF originales se evalúan cuando René los consiga (ver §7); mientras, se evalúa con Markdown.
-- **Listo cuando:** importar cualquier dictamen del corpus abre su caso completo en el recorrido y E-C4 está corrida.
+### R4 · Croquis reproduce los dictámenes (evaluación y demo)
+- **Evaluación E-R4,** sobre la prueba congelada. A Croquis se le da solo la descripción sin conclusiones y se compara con lo que concluyó CESVI:
+  - modalidad;
+  - zonas de contacto por vehículo;
+  - secuencia de impactos;
+  - velocidades, cuando el dictamen las calcula (error absoluto y porcentaje);
+  - posiciones finales, cuando se describen.
+  - **Contra líneas base simples:** la modalidad más frecuente y una velocidad fija promedio. Se publica en `eval/results/` con lo que sale bien y lo que no.
+- **Página «Reproducción de dictámenes»:** lista de casos con el dictamen y la reconstrucción de Croquis lado a lado (2D y 3D), con las diferencias en porcentaje. Para la demo: «esto lo analizaron ustedes, esto lo reconstruyó Croquis».
+- **Listo cuando:** E-R4 está corrida y publicada, y la página tiene al menos los casos de la prueba congelada que Croquis puede reconstruir.
 
-### C5 · Carambolas
-- **Croquis:** N vehículos, impactos numerados (X1, X2…) en el mapa y en la línea de tiempo.
-- **Correspondencia y cálculos:** por impacto.
-- **Solver:** impactos en secuencia en Python (la referencia), port a TS y pruebas de paridad (CLAUDE.md, Reglas técnicas). Arreglar de paso que los cuerpos no se atraviesen en el croquis.
-- **Listo cuando:** los dictámenes del corpus con 3 o más vehículos se cargan y se reconstruyen, con una e2e de una carambola.
+### R5 · Cargar un dictamen
+- PDF, Markdown o texto. Croquis llena el expediente y la narración con la cita de cada dato, y el perito revisa y reconstruye.
+- **Evaluación E-R5:** exactitud por campo en la prueba congelada; con PDF originales cuando René los consiga.
+- **Listo cuando:** importar un dictamen del corpus lo deja listo para reconstruir.
 
-### C6 · Sugerencia de veredicto
-- Combina los criterios de C2 con los cálculos de C1 en una sugerencia («se sostiene», «no se sostiene», «parcialmente», «sin datos suficientes»). Cada razón lleva el enlace a su paso.
-- **Evaluación E-C6:** sobre la prueba congelada, concordancia con la conclusión de CESVI y matriz de confusión.
-  - **Contra dos líneas base:** decir siempre la clase más frecuente, y una regla de solo zonas de daño. Si no supera la línea base de la clase más frecuente, se dice así.
-  - **Lo que no se hace:** ajustar con la prueba congelada.
-- **Listo cuando:** E-C6 está corrida y publicada en `eval/results/` con sus líneas base.
+### R6 · Carambolas
+- Impactos en secuencia en el solver (Python y TS, con paridad), en el croquis (X1, X2…), en el 3D y en la línea de tiempo.
+- **Listo cuando:** los dictámenes del corpus con 3 o más vehículos se reconstruyen y se ven en 3D, con una e2e de una carambola.
 
-### C7 · Dictamen para cualquier caso
-- Plantilla con la estructura de CESVI: título con la modalidad, objetivo, fundamentos, características, observación de daños, lugar, consideraciones, conclusiones numeradas y validación.
-- Variantes por modalidad, sacadas del corpus.
-- Consideraciones redactadas por Claude con los números del motor, marcadas como borrador hasta que el perito las acepte.
-- PDF y Word (.docx).
-- Trazabilidad (ya diseñada en el paso 8).
-- **Listo cuando:** la e2e exporta el PDF y el Word de un caso nuevo y de uno importado.
+### R7 · Comparación con la declaración del conductor (opcional)
+- El perito pega una o más declaraciones. Croquis arma esa versión y la muestra en 3D y 2D, lado a lado o superpuesta, contra la reconstrucción.
+- Muestra «Qué cambia entre versiones»: posiciones, restos, zonas de contacto esperadas contra observadas, velocidades.
+- Indicadores de correspondencia de daños (dirección, zona, altura) como información para el perito.
+- Una sugerencia de si la versión se sostiene solo si el perito la activa; él la confirma o la descarta. Sin culpas.
+- Reutiliza lo que ya hace el prototipo para el caso de AXA.
+- **Listo cuando:** la e2e carga una declaración y la compara en 3D.
 
-### C8 · Endurecimiento y lo que diga CESVI
-- Lo anotado en «Endurecimiento pendiente».
-- Los cambios que pida CESVI después de ver la demo.
+### R8 · Reporte
+- PDF y Word con:
+  - la narración del perito;
+  - el croquis 2D y cuadros del 3D;
+  - los resultados con rangos;
+  - la verificación CESVI;
+  - la comparación de R7, si se usó;
+  - la trazabilidad (método, huella de entradas, quién validó y cuándo).
+- Estructura de dictamen de CESVI cuando el perito lo pida.
+- **Listo cuando:** la e2e exporta el PDF y el Word de una reconstrucción.
 
-**Orden:** C0 → C1 → C2 → C3 → C4 → C6 → C5 → C7 → C8. C0 va primero porque el corpus alimenta las pruebas de todo lo demás. C5 va después de C6 porque las carambolas son poco frecuentes, pero no se recorta.
+### R9 · Diseño, endurecimiento y lo que diga CESVI
+- **Pase de diseño (pedido por René el 2026-10-21).** Todo lo nuevo de R0–R8 lleva el diseño del prototipo con el mismo nivel que el recorrido de 8 pasos:
+  - maquetas de `docs/cesvi/rediseno/`;
+  - modo Presentar / Trabajar;
+  - tema claro y oscuro.
+  - Pantallas que lo necesitan:
+    - visor 3D en el recorrido;
+    - lista de casos;
+    - importar dictamen;
+    - reproducción de dictámenes;
+    - carambolas;
+    - comparación;
+    - reporte.
+  - Pide a René una revisión visual antes de cerrarlo.
+- Lo anotado en «Endurecimiento pendiente» y los cambios que pida CESVI.
 
-## 6. Lo que no entra en esta versión
+**Orden:** R0 → R1 → R2 → R3 → R4 → R5 → R6 → R7 → R8 → R9.
 
-El visor 3D y la portada (en pausa), cuentas de usuario y nube para los casos (se decide con CESVI), el chat de «Preguntar», el dictado por voz y la app móvil. Se anotan como pendientes, no se borran.
+## 6. Fuera de esta versión
+
+La portada y la historia de lanzamiento (siguen en pausa), cuentas de usuario y nube para los casos, el chat de «Preguntar», el dictado por voz y la app móvil. Se anotan como pendientes, no se borran.
 
 ## 7. Bloqueado: necesita a René
 
-- PDF originales de algunos dictámenes, para evaluar la carga de PDF con imágenes y fórmulas.
-- Tabla de coeficientes de rigidez A y B que usa CESVI, si la tienen.
-- PDF original u hoja de cálculo del dictamen de AXA (diferencia de energía).
-- Comentarios de CESVI tras la demo.
-- Saldo de la API de Claude para procesar el corpus en C0 (Claude Code estima el costo antes de correrlo).
+- PDF originales de algunos dictámenes (R5).
+- Tabla de rigideces A y B de CESVI, si la tienen (R2).
+- PDF u hoja de cálculo del dictamen de AXA (diferencia de energía).
+- Computadora de demo con GPU para medir alta y ultra (R3).
+- Comentarios de CESVI tras la demo (R9).
