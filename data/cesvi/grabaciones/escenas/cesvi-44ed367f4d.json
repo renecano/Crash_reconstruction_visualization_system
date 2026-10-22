@@ -1,0 +1,538 @@
+{
+  "id": "cesvi-44ed367f4d",
+  "modalidad_c0": "alcance",
+  "version_prompt": "escena-narracion-v1",
+  "modelo": "claude-sonnet-5-5",
+  "uso": {
+    "input_tokens": 1385,
+    "output_tokens": 6009,
+    "cache_creation_input_tokens": 0,
+    "cache_read_input_tokens": 3462
+  },
+  "costo_usd": 0.0635524,
+  "narracion": "El hecho de tránsito se ubica en las inmediaciones del kilómetro 22 de la carretera federal Texcoco – Lechería, municipio de Texcoco, Estado de México, a las 19:15 horas. La vía es de corte recto, con dos arroyos vehiculares, uno con circulación de Sur a Norte y otro de Norte a Sur; cada arroyo cuenta con tres carriles de circulación divididos por líneas discontinuas.\n\nIntervienen tres vehículos: el vehículo A, marca Chevrolet, tipo Astra, modelo 2006, color rojo, de servicio particular; el vehículo B, marca BMW, tipo 120i, modelo 2005, color gris plata, de servicio particular; y el vehículo C, marca Dodge, tipo Caravan, modelo 1997, color blanco, de servicio particular.\n\nEl vehículo A presenta en la parte frontal daños tipo ruptura y desprendimiento en el vértice derecho de la fascia delantera, con dirección de adelante hacia atrás; el faro derecho está roto y desacoplado de su lugar; la parrilla central superior está desacoplada; la parte anterior del cofre presenta un daño de baja magnitud acentuado en el lado derecho; el extremo derecho del alma de la defensa tiene un doblez de adelante hacia atrás en su parte superior y el extremo izquierdo no tiene daño; algunos cables de la instalación eléctrica del lado derecho se observan quemados. En la parte derecha, la salpicadera delantera presenta hundimiento de adelante hacia atrás de magnitud media, con abombamiento, y tallón con pérdida de pintura a una altura de entre 0.60m a 0.80m, con intercambio de material de lo que parece ser pintura color negro; la fascia está desprendida de la sujeción con la salpicadera. El daño más intenso de la parte frontal derecha está a una altura de entre 0.40m a 0.80m sobre el nivel de piso.\n\nDel vehículo B las fotografías muestran solo la parte dañada, ya reparada con aplicación de primer. En la parte derecha, la salpicadera presenta tallón de baja magnitud con dirección de adelante hacia atrás e intercambio de lo que parece ser pintura color blanco, a una altura de 0.68m en el borde de la salpicadera delantera derecha; la fascia delantera está desprendida de la sujeción derecha y el costado derecho de la fascia presenta tallón de baja magnitud con desprendimiento de pintura; la parte posterior del costado derecho muestra indicios de reparación reciente. En la parte posterior, el lado izquierdo de la fascia presenta ruptura, tallón con desprendimiento de pintura e intercambio de pintura color rojo, con dirección de derecha a izquierda en la parte posterior y de adelante hacia atrás en el costado izquierdo; la moldura de la fascia está desprendida del lado izquierdo, la calavera izquierda está rota y el spoiler trasero desprendido de la sujeción izquierda. Los daños de la parte posterior están a una altura de entre 0.40m a 0.75m. En la parte izquierda solo se observa tallón de baja magnitud con pérdida de pintura en la zona posterior.\n\nEl vehículo C no presenta daños a simple vista en la parte frontal. En la parte izquierda presenta hundimiento de magnitud baja con dirección de izquierda a derecha e intercambio de lo que parece ser pintura color rojo en el costado a la altura del tapón del tanque de combustible; también presenta tallón con hundimiento de mediana intensidad en el lienzo de la puerta delantera izquierda, justo arriba de la moldura de puerta, con dirección de adelante hacia atrás, a una altura de 0.70m. En el costado izquierdo se aprecian tallones con intercambio de pintura color roja a una altura de entre 0.69m y 1.0m, sin intercambio de pintura color gris.",
+  "salida": {
+    "datos": [
+      {
+        "seccion": "caso",
+        "n": 1,
+        "vehiculo": "ninguno",
+        "campo": "lugar",
+        "valor": "kilómetro 22 de la carretera federal Texcoco – Lechería",
+        "cita": "El hecho de tránsito se ubica en las inmediaciones del kilómetro 22 de la carretera federal Texcoco – Lechería"
+      },
+      {
+        "seccion": "caso",
+        "n": 1,
+        "vehiculo": "ninguno",
+        "campo": "municipio",
+        "valor": "Texcoco",
+        "cita": "municipio de Texcoco, Estado de México, a las 19:15 horas"
+      },
+      {
+        "seccion": "caso",
+        "n": 1,
+        "vehiculo": "ninguno",
+        "campo": "entidad",
+        "valor": "Estado de México",
+        "cita": ""
+      },
+      {
+        "seccion": "caso",
+        "n": 1,
+        "vehiculo": "ninguno",
+        "campo": "fecha_hora",
+        "valor": "19:15 horas",
+        "cita": ""
+      },
+      {
+        "seccion": "vehiculo",
+        "n": 1,
+        "vehiculo": "V1",
+        "campo": "marca",
+        "valor": "Chevrolet",
+        "cita": "el vehículo A, marca Chevrolet, tipo Astra, modelo 2006"
+      },
+      {
+        "seccion": "vehiculo",
+        "n": 1,
+        "vehiculo": "V1",
+        "campo": "modelo",
+        "valor": "Astra",
+        "cita": ""
+      },
+      {
+        "seccion": "vehiculo",
+        "n": 1,
+        "vehiculo": "V1",
+        "campo": "anio",
+        "valor": "2006",
+        "cita": ""
+      },
+      {
+        "seccion": "vehiculo",
+        "n": 2,
+        "vehiculo": "V2",
+        "campo": "marca",
+        "valor": "BMW",
+        "cita": "el vehículo B, marca BMW, tipo 120i, modelo 2005"
+      },
+      {
+        "seccion": "vehiculo",
+        "n": 2,
+        "vehiculo": "V2",
+        "campo": "modelo",
+        "valor": "120i",
+        "cita": ""
+      },
+      {
+        "seccion": "vehiculo",
+        "n": 2,
+        "vehiculo": "V2",
+        "campo": "anio",
+        "valor": "2005",
+        "cita": ""
+      },
+      {
+        "seccion": "vehiculo",
+        "n": 3,
+        "vehiculo": "V3",
+        "campo": "marca",
+        "valor": "Dodge",
+        "cita": "el vehículo C, marca Dodge, tipo Caravan, modelo 1997"
+      },
+      {
+        "seccion": "vehiculo",
+        "n": 3,
+        "vehiculo": "V3",
+        "campo": "modelo",
+        "valor": "Caravan",
+        "cita": ""
+      },
+      {
+        "seccion": "vehiculo",
+        "n": 3,
+        "vehiculo": "V3",
+        "campo": "anio",
+        "valor": "1997",
+        "cita": ""
+      },
+      {
+        "seccion": "dano",
+        "n": 1,
+        "vehiculo": "V1",
+        "campo": "cara",
+        "valor": "frontal",
+        "cita": "daños tipo ruptura y desprendimiento en el vértice derecho de la fascia delantera, con dirección de adelante hacia atrás"
+      },
+      {
+        "seccion": "dano",
+        "n": 1,
+        "vehiculo": "V1",
+        "campo": "vertice",
+        "valor": "delantero_derecho",
+        "cita": ""
+      },
+      {
+        "seccion": "dano",
+        "n": 1,
+        "vehiculo": "V1",
+        "campo": "tipo",
+        "valor": "ruptura",
+        "cita": ""
+      },
+      {
+        "seccion": "dano",
+        "n": 1,
+        "vehiculo": "V1",
+        "campo": "tipo",
+        "valor": "desprendimiento",
+        "cita": ""
+      },
+      {
+        "seccion": "dano",
+        "n": 1,
+        "vehiculo": "V1",
+        "campo": "direccion",
+        "valor": "de_adelante_hacia_atras",
+        "cita": ""
+      },
+      {
+        "seccion": "dano",
+        "n": 1,
+        "vehiculo": "V1",
+        "campo": "magnitud",
+        "valor": "leve",
+        "cita": "la parte anterior del cofre presenta un daño de baja magnitud acentuado en el lado derecho"
+      },
+      {
+        "seccion": "dano",
+        "n": 1,
+        "vehiculo": "V1",
+        "campo": "tipo",
+        "valor": "deformacion",
+        "cita": "el extremo derecho del alma de la defensa tiene un doblez de adelante hacia atrás en su parte superior"
+      },
+      {
+        "seccion": "dano",
+        "n": 1,
+        "vehiculo": "V1",
+        "campo": "altura",
+        "valor": "40 a 80 cm",
+        "cita": "El daño más intenso de la parte frontal derecha está a una altura de entre 0.40m a 0.80m sobre el nivel de piso"
+      },
+      {
+        "seccion": "dano",
+        "n": 2,
+        "vehiculo": "V1",
+        "campo": "cara",
+        "valor": "lateral_derecho",
+        "cita": "la salpicadera delantera presenta hundimiento de adelante hacia atrás de magnitud media, con abombamiento, y tallón con pérdida de pintura a una altura de entre 0.60m a 0.80m"
+      },
+      {
+        "seccion": "dano",
+        "n": 2,
+        "vehiculo": "V1",
+        "campo": "tercio",
+        "valor": "delantero",
+        "cita": ""
+      },
+      {
+        "seccion": "dano",
+        "n": 2,
+        "vehiculo": "V1",
+        "campo": "tipo",
+        "valor": "hundimiento",
+        "cita": ""
+      },
+      {
+        "seccion": "dano",
+        "n": 2,
+        "vehiculo": "V1",
+        "campo": "tipo",
+        "valor": "tallon",
+        "cita": ""
+      },
+      {
+        "seccion": "dano",
+        "n": 2,
+        "vehiculo": "V1",
+        "campo": "direccion",
+        "valor": "de_adelante_hacia_atras",
+        "cita": ""
+      },
+      {
+        "seccion": "dano",
+        "n": 2,
+        "vehiculo": "V1",
+        "campo": "magnitud",
+        "valor": "moderada",
+        "cita": ""
+      },
+      {
+        "seccion": "dano",
+        "n": 2,
+        "vehiculo": "V1",
+        "campo": "altura",
+        "valor": "60 a 80 cm",
+        "cita": ""
+      },
+      {
+        "seccion": "dano",
+        "n": 2,
+        "vehiculo": "V1",
+        "campo": "intercambio",
+        "valor": "pintura color negro",
+        "cita": "con intercambio de material de lo que parece ser pintura color negro"
+      },
+      {
+        "seccion": "dano",
+        "n": 3,
+        "vehiculo": "V2",
+        "campo": "cara",
+        "valor": "lateral_derecho",
+        "cita": "la salpicadera presenta tallón de baja magnitud con dirección de adelante hacia atrás e intercambio de lo que parece ser pintura color blanco, a una altura de 0.68m"
+      },
+      {
+        "seccion": "dano",
+        "n": 3,
+        "vehiculo": "V2",
+        "campo": "tercio",
+        "valor": "delantero",
+        "cita": ""
+      },
+      {
+        "seccion": "dano",
+        "n": 3,
+        "vehiculo": "V2",
+        "campo": "tipo",
+        "valor": "tallon",
+        "cita": ""
+      },
+      {
+        "seccion": "dano",
+        "n": 3,
+        "vehiculo": "V2",
+        "campo": "magnitud",
+        "valor": "leve",
+        "cita": ""
+      },
+      {
+        "seccion": "dano",
+        "n": 3,
+        "vehiculo": "V2",
+        "campo": "direccion",
+        "valor": "de_adelante_hacia_atras",
+        "cita": ""
+      },
+      {
+        "seccion": "dano",
+        "n": 3,
+        "vehiculo": "V2",
+        "campo": "altura",
+        "valor": "68 cm",
+        "cita": ""
+      },
+      {
+        "seccion": "dano",
+        "n": 3,
+        "vehiculo": "V2",
+        "campo": "intercambio",
+        "valor": "pintura color blanco",
+        "cita": ""
+      },
+      {
+        "seccion": "dano",
+        "n": 4,
+        "vehiculo": "V2",
+        "campo": "cara",
+        "valor": "posterior",
+        "cita": "el lado izquierdo de la fascia presenta ruptura, tallón con desprendimiento de pintura e intercambio de pintura color rojo, con dirección de derecha a izquierda en la parte posterior y de adelante hacia atrás en el costado izquierdo"
+      },
+      {
+        "seccion": "dano",
+        "n": 4,
+        "vehiculo": "V2",
+        "campo": "tercio",
+        "valor": "izquierdo",
+        "cita": ""
+      },
+      {
+        "seccion": "dano",
+        "n": 4,
+        "vehiculo": "V2",
+        "campo": "tipo",
+        "valor": "ruptura",
+        "cita": ""
+      },
+      {
+        "seccion": "dano",
+        "n": 4,
+        "vehiculo": "V2",
+        "campo": "tipo",
+        "valor": "tallon",
+        "cita": ""
+      },
+      {
+        "seccion": "dano",
+        "n": 4,
+        "vehiculo": "V2",
+        "campo": "tipo",
+        "valor": "desprendimiento",
+        "cita": ""
+      },
+      {
+        "seccion": "dano",
+        "n": 4,
+        "vehiculo": "V2",
+        "campo": "direccion",
+        "valor": "de_derecha_a_izquierda",
+        "cita": ""
+      },
+      {
+        "seccion": "dano",
+        "n": 4,
+        "vehiculo": "V2",
+        "campo": "direccion",
+        "valor": "de_adelante_hacia_atras",
+        "cita": ""
+      },
+      {
+        "seccion": "dano",
+        "n": 4,
+        "vehiculo": "V2",
+        "campo": "intercambio",
+        "valor": "pintura color rojo",
+        "cita": ""
+      },
+      {
+        "seccion": "dano",
+        "n": 4,
+        "vehiculo": "V2",
+        "campo": "altura",
+        "valor": "40 a 75 cm",
+        "cita": "Los daños de la parte posterior están a una altura de entre 0.40m a 0.75m"
+      },
+      {
+        "seccion": "dano",
+        "n": 5,
+        "vehiculo": "V2",
+        "campo": "cara",
+        "valor": "lateral_izquierdo",
+        "cita": "En la parte izquierda solo se observa tallón de baja magnitud con pérdida de pintura en la zona posterior"
+      },
+      {
+        "seccion": "dano",
+        "n": 5,
+        "vehiculo": "V2",
+        "campo": "tercio",
+        "valor": "trasero",
+        "cita": ""
+      },
+      {
+        "seccion": "dano",
+        "n": 5,
+        "vehiculo": "V2",
+        "campo": "tipo",
+        "valor": "tallon",
+        "cita": ""
+      },
+      {
+        "seccion": "dano",
+        "n": 5,
+        "vehiculo": "V2",
+        "campo": "magnitud",
+        "valor": "leve",
+        "cita": ""
+      },
+      {
+        "seccion": "dano",
+        "n": 6,
+        "vehiculo": "V3",
+        "campo": "cara",
+        "valor": "lateral_izquierdo",
+        "cita": "En la parte izquierda presenta hundimiento de magnitud baja con dirección de izquierda a derecha e intercambio de lo que parece ser pintura color rojo"
+      },
+      {
+        "seccion": "dano",
+        "n": 6,
+        "vehiculo": "V3",
+        "campo": "tipo",
+        "valor": "hundimiento",
+        "cita": ""
+      },
+      {
+        "seccion": "dano",
+        "n": 6,
+        "vehiculo": "V3",
+        "campo": "magnitud",
+        "valor": "leve",
+        "cita": ""
+      },
+      {
+        "seccion": "dano",
+        "n": 6,
+        "vehiculo": "V3",
+        "campo": "direccion",
+        "valor": "de_izquierda_a_derecha",
+        "cita": ""
+      },
+      {
+        "seccion": "dano",
+        "n": 6,
+        "vehiculo": "V3",
+        "campo": "intercambio",
+        "valor": "pintura color rojo",
+        "cita": ""
+      },
+      {
+        "seccion": "dano",
+        "n": 7,
+        "vehiculo": "V3",
+        "campo": "cara",
+        "valor": "lateral_izquierdo",
+        "cita": "tallón con hundimiento de mediana intensidad en el lienzo de la puerta delantera izquierda, justo arriba de la moldura de puerta, con dirección de adelante hacia atrás, a una altura de 0.70m"
+      },
+      {
+        "seccion": "dano",
+        "n": 7,
+        "vehiculo": "V3",
+        "campo": "tercio",
+        "valor": "delantero",
+        "cita": ""
+      },
+      {
+        "seccion": "dano",
+        "n": 7,
+        "vehiculo": "V3",
+        "campo": "tipo",
+        "valor": "tallon",
+        "cita": ""
+      },
+      {
+        "seccion": "dano",
+        "n": 7,
+        "vehiculo": "V3",
+        "campo": "tipo",
+        "valor": "hundimiento",
+        "cita": ""
+      },
+      {
+        "seccion": "dano",
+        "n": 7,
+        "vehiculo": "V3",
+        "campo": "magnitud",
+        "valor": "moderada",
+        "cita": ""
+      },
+      {
+        "seccion": "dano",
+        "n": 7,
+        "vehiculo": "V3",
+        "campo": "direccion",
+        "valor": "de_adelante_hacia_atras",
+        "cita": ""
+      },
+      {
+        "seccion": "dano",
+        "n": 7,
+        "vehiculo": "V3",
+        "campo": "altura",
+        "valor": "70 cm",
+        "cita": ""
+      },
+      {
+        "seccion": "dano",
+        "n": 8,
+        "vehiculo": "V3",
+        "campo": "cara",
+        "valor": "lateral_izquierdo",
+        "cita": "En el costado izquierdo se aprecian tallones con intercambio de pintura color roja a una altura de entre 0.69m y 1.0m, sin intercambio de pintura color gris"
+      },
+      {
+        "seccion": "dano",
+        "n": 8,
+        "vehiculo": "V3",
+        "campo": "tipo",
+        "valor": "tallon",
+        "cita": ""
+      },
+      {
+        "seccion": "dano",
+        "n": 8,
+        "vehiculo": "V3",
+        "campo": "altura",
+        "valor": "0.69m a 1.0m",
+        "cita": ""
+      },
+      {
+        "seccion": "dano",
+        "n": 8,
+        "vehiculo": "V3",
+        "campo": "intercambio",
+        "valor": "pintura color roja, sin intercambio de pintura color gris",
+        "cita": ""
+      }
+    ]
+  }
+}

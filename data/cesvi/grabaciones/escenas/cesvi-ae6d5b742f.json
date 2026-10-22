@@ -1,0 +1,218 @@
+{
+  "id": "cesvi-ae6d5b742f",
+  "modalidad_c0": "objeto_fijo",
+  "version_prompt": "escena-narracion-v1",
+  "modelo": "claude-sonnet-5-5",
+  "uso": {
+    "input_tokens": 1288,
+    "output_tokens": 1938,
+    "cache_creation_input_tokens": 0,
+    "cache_read_input_tokens": 3462
+  },
+  "costo_usd": 0.0226484,
+  "narracion": "El lugar de los hechos se localiza sobre la lateral del Periférico, entre la Calle 12 y la Calle 16, en la colonia San Pedro de los Pinos, delegación [NOMBRE], D.F., aproximadamente a las 12:30 horas. La lateral consta de 1 arroyo vehicular con sentido 15° Noreste hacia Periférico Norte y 195° Suroeste hacia Periférico Sur, de carpeta asfáltica, sin delimitación de carriles, con una amplitud de 6.38 metros. Sobre la lateral se observa una incorporación hacia los carriles centrales, delimitada en el extremo derecho por una acera de concreto con amplitud variable, en promedio de 1.14 metros, y una altura de 0.17 metros; sobre la acera hay otra guarnición con una altura de 0.38 metros. Posteriormente se localiza un muro de contención de concreto y acero; el concreto tiene una amplitud de 0.37 metros y una altura de 0.67 metros sobre la acera, y de 0.84 metros con respecto al arroyo vehicular. La parte metálica tiene una altura de 1.20 metros con respecto a la acera en su primer nivel y de 1.37 metros con respecto al arroyo vehicular. En el extremo derecho del arroyo vehicular hay una acera de concreto con una amplitud de 1.68 metros. El muro de contención presenta daños tipo ruptura y fractura en la base de concreto, de gran severidad, con dirección de atrás hacia adelante, y daños en la estructura de acero. Las guarniciones de la acera de concreto presentan daños tipo tallón con desprendimiento de pintura.\n\nEl vehículo A es un Honda tipo Accord Crosstour, modelo 2010, de servicio particular y 5 pasajeros. En la parte frontal presenta daños desde una altura inicial de 0.18 metros hasta una altura final de 0.94 metros, con magnitud severa y dirección de adelante hacia atrás. Se observa hundimiento con dirección de arriba hacia abajo en el lado derecho del cofre. La unidad de luces delantera izquierda presenta ruptura. La fascia frontal está desacoplada de su posición original y presenta ruptura y hundimiento con dirección de adelante hacia atrás en el lado izquierdo. El spoiler inferior presenta daños tipo tallón con impregnaciones de pintura de color amarillo. También hay ruptura en el guardafangos delantero izquierdo y en el soporte exterior izquierdo de la fascia frontal.\n\nEn el lado derecho presenta ruptura y desacoplamiento de la salpicadera. El conjunto rin-neumático delantero está desacoplado. Las puertas delantera y posterior presentan desplazamiento de adelante hacia atrás. La puerta delantera tiene hundimiento con dirección de derecha a izquierda, y la moldura inferior del estribo está desacoplada. En el lado izquierdo se observan el cofre y la fascia frontal desacoplados, y el neumático delantero con falta de aire. La parte posterior no presenta daño por impacto. El toldo presenta hundimiento con dirección de arriba hacia abajo en el lado derecho delantero.\n\nEn los elementos mecánicos se observa ruptura de la suspensión delantera derecha, con afectación del brazo superior e inferior, el conjunto de flecha motriz, las juntas homocinéticas, la horquilla del amortiguador y el amortiguador. En el habitáculo se observan activados ambos airbags frontales y ruptura en el tablero de instrumentos y en el volante de dirección. El parabrisas no presenta impacto alguno.",
+  "salida": {
+    "datos": [
+      {
+        "seccion": "caso",
+        "n": 1,
+        "vehiculo": "ninguno",
+        "campo": "lugar",
+        "valor": "lateral del Periférico, entre la Calle 12 y la Calle 16, colonia San Pedro de los Pinos",
+        "cita": "El lugar de los hechos se localiza sobre la lateral del Periférico, entre la Calle 12 y la Calle 16, en la colonia San Pedro de los Pinos"
+      },
+      {
+        "seccion": "caso",
+        "n": 1,
+        "vehiculo": "ninguno",
+        "campo": "fecha_hora",
+        "valor": "aproximadamente a las 12:30 horas",
+        "cita": "aproximadamente a las 12:30 horas"
+      },
+      {
+        "seccion": "caso",
+        "n": 1,
+        "vehiculo": "ninguno",
+        "campo": "entidad",
+        "valor": "D.F.",
+        "cita": "delegación [NOMBRE], D.F., aproximadamente a las 12:30 horas"
+      },
+      {
+        "seccion": "vehiculo",
+        "n": 1,
+        "vehiculo": "V1",
+        "campo": "marca",
+        "valor": "Honda",
+        "cita": "El vehículo A es un Honda tipo Accord Crosstour, modelo 2010, de servicio particular y 5 pasajeros"
+      },
+      {
+        "seccion": "vehiculo",
+        "n": 1,
+        "vehiculo": "V1",
+        "campo": "modelo",
+        "valor": "Accord Crosstour",
+        "cita": ""
+      },
+      {
+        "seccion": "vehiculo",
+        "n": 1,
+        "vehiculo": "V1",
+        "campo": "anio",
+        "valor": "2010",
+        "cita": ""
+      },
+      {
+        "seccion": "dano",
+        "n": 1,
+        "vehiculo": "V1",
+        "campo": "cara",
+        "valor": "frontal",
+        "cita": "En la parte frontal presenta daños desde una altura inicial de 0.18 metros hasta una altura final de 0.94 metros, con magnitud severa y dirección de adelante hacia atrás"
+      },
+      {
+        "seccion": "dano",
+        "n": 1,
+        "vehiculo": "V1",
+        "campo": "altura",
+        "valor": "0.18 a 0.94 m",
+        "cita": ""
+      },
+      {
+        "seccion": "dano",
+        "n": 1,
+        "vehiculo": "V1",
+        "campo": "magnitud",
+        "valor": "severa",
+        "cita": ""
+      },
+      {
+        "seccion": "dano",
+        "n": 1,
+        "vehiculo": "V1",
+        "campo": "direccion",
+        "valor": "de_adelante_hacia_atras",
+        "cita": ""
+      },
+      {
+        "seccion": "dano",
+        "n": 1,
+        "vehiculo": "V1",
+        "campo": "tipo",
+        "valor": "hundimiento",
+        "cita": "Se observa hundimiento con dirección de arriba hacia abajo en el lado derecho del cofre"
+      },
+      {
+        "seccion": "dano",
+        "n": 1,
+        "vehiculo": "V1",
+        "campo": "direccion",
+        "valor": "de_arriba_hacia_abajo",
+        "cita": ""
+      },
+      {
+        "seccion": "dano",
+        "n": 1,
+        "vehiculo": "V1",
+        "campo": "tipo",
+        "valor": "ruptura",
+        "cita": "La unidad de luces delantera izquierda presenta ruptura"
+      },
+      {
+        "seccion": "dano",
+        "n": 1,
+        "vehiculo": "V1",
+        "campo": "tipo",
+        "valor": "tallon",
+        "cita": "El spoiler inferior presenta daños tipo tallón con impregnaciones de pintura de color amarillo"
+      },
+      {
+        "seccion": "dano",
+        "n": 1,
+        "vehiculo": "V1",
+        "campo": "tipo",
+        "valor": "impregnacion_pintura",
+        "cita": ""
+      },
+      {
+        "seccion": "dano",
+        "n": 2,
+        "vehiculo": "V1",
+        "campo": "cara",
+        "valor": "lateral_derecho",
+        "cita": "En el lado derecho presenta ruptura y desacoplamiento de la salpicadera"
+      },
+      {
+        "seccion": "dano",
+        "n": 2,
+        "vehiculo": "V1",
+        "campo": "tipo",
+        "valor": "ruptura",
+        "cita": ""
+      },
+      {
+        "seccion": "dano",
+        "n": 2,
+        "vehiculo": "V1",
+        "campo": "direccion",
+        "valor": "de_adelante_hacia_atras",
+        "cita": "Las puertas delantera y posterior presentan desplazamiento de adelante hacia atrás"
+      },
+      {
+        "seccion": "dano",
+        "n": 2,
+        "vehiculo": "V1",
+        "campo": "tipo",
+        "valor": "hundimiento",
+        "cita": "La puerta delantera tiene hundimiento con dirección de derecha a izquierda"
+      },
+      {
+        "seccion": "dano",
+        "n": 2,
+        "vehiculo": "V1",
+        "campo": "direccion",
+        "valor": "de_derecha_a_izquierda",
+        "cita": ""
+      },
+      {
+        "seccion": "dano",
+        "n": 3,
+        "vehiculo": "V1",
+        "campo": "cara",
+        "valor": "techo",
+        "cita": "El toldo presenta hundimiento con dirección de arriba hacia abajo en el lado derecho delantero"
+      },
+      {
+        "seccion": "dano",
+        "n": 3,
+        "vehiculo": "V1",
+        "campo": "tipo",
+        "valor": "hundimiento",
+        "cita": ""
+      },
+      {
+        "seccion": "dano",
+        "n": 3,
+        "vehiculo": "V1",
+        "campo": "direccion",
+        "valor": "de_arriba_hacia_abajo",
+        "cita": ""
+      },
+      {
+        "seccion": "objeto_fijo",
+        "n": 1,
+        "vehiculo": "ninguno",
+        "campo": "descripcion",
+        "valor": "muro de contención de concreto y acero, con daños tipo ruptura y fractura en la base de concreto, de gran severidad, y daños en la estructura de acero",
+        "cita": "El muro de contención presenta daños tipo ruptura y fractura en la base de concreto, de gran severidad, con dirección de atrás hacia adelante, y daños en la estructura de acero"
+      },
+      {
+        "seccion": "objeto_fijo",
+        "n": 2,
+        "vehiculo": "ninguno",
+        "campo": "descripcion",
+        "valor": "guarniciones de la acera de concreto, con daños tipo tallón con desprendimiento de pintura",
+        "cita": "Las guarniciones de la acera de concreto presentan daños tipo tallón con desprendimiento de pintura"
+      }
+    ]
+  }
+}

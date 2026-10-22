@@ -1,0 +1,642 @@
+{
+  "id": "cesvi-644f4d909d",
+  "modalidad_c0": "carambola",
+  "version_prompt": "escena-narracion-v1",
+  "modelo": "claude-sonnet-5-5",
+  "uso": {
+    "input_tokens": 1719,
+    "output_tokens": 6925,
+    "cache_creation_input_tokens": 0,
+    "cache_read_input_tokens": 3462
+  },
+  "costo_usd": 0.0733804,
+  "narracion": "El hecho se registró el 26 de febrero de 2011, aproximadamente a las 12:30 horas, en Periférico Norte, Ciudad Satélite, Municipio de Naucalpan de Juárez, Estado de México. Los vehículos se ubican sobre los carriles centrales de Periférico. Intervienen el vehículo A, marca Honda, tipo Civic, modelo 2005, color gris; el vehículo B, marca Mazda, tipo 3, modelo 2007, color gris; el vehículo C, marca Volkswagen, tipo Corsar, modelo 1986, color gris; el vehículo D, marca Volkswagen, tipo Pointer Pick Up, modelo 1999, color blanco; y el vehículo E, marca Ford, tipo Freestar, modelo 2005, color vino. Todos son de servicio particular. El dictamen se basa en fotografías de los daños. No se describen medidas de deformación C1 a C6 ni L, ni huellas de frenado, restos o posiciones finales en el lugar.\n\nEl vehículo A presenta en la parte frontal un daño tipo hundimiento de grandes magnitudes, en dirección de adelante hacia atrás. El cofre presenta hundimiento con corrimiento de material. La fascia, ambos faros y la parrilla están desacoplados de su posición original, y el alma de fascia está expuesta y hundida. En el lado derecho hay desacoplamiento de la fascia delantera y del conjunto de luces, y en el lado medio derecho daños tipo tallón en dirección de adelante hacia atrás. En el lado delantero derecho hay tallón con impregnaciones de pintura color negro, a una altura de 48 centímetros con respecto al nivel del piso. En el vértice delantero izquierdo y el lado delantero izquierdo hay hundimiento en dirección de adelante hacia atrás, que afecta salpicadera, conjunto rin-neumático y conjunto de luces. La parte posterior presenta solo ligeros tallones sobre la fascia. En el habitáculo se observan activadas las bolsas de aire frontales y el parabrisas resquebrajado. En la parte frontal hay tallón con impregnación y desprendimiento de pintura color gris. Las mayores deformaciones se ubican de 40 cm a 80 cm con respecto al nivel del piso, según el vehículo de muestra.\n\nEl vehículo B presenta en la parte frontal hundimiento en dirección de arriba hacia abajo y tallones diagonales de adelante hacia atrás. En la parte frontal derecha hay tallón y el conjunto faro desacoplado. En la parte media inferior, la fascia delantera tiene ruptura que afecta la rejilla inferior, con desprendimiento de material y lo que parece ser pintura color blanco. En el lado derecho hay desacoplamiento de fascia delantera, cofre, luces y salpicadera. En el lado medio derecho hay hundimiento en dirección de derecha a izquierda, con tallón y desacoplamiento de la puerta delantera. En el lado posterior derecho la fascia posterior está desacoplada, con hundimiento de atrás hacia delante. La parte posterior presenta hundimiento de grandes magnitudes de atrás hacia delante, que deforma fascia posterior, tapa cajuela, tolva calaveras, piso cajuela y conjunto de luces, con ruptura del medallón. También hay tallón con desprendimiento e impregnación de pintura color gris. El lado posterior izquierdo muestra daño por repercusión. En el lado delantero izquierdo hay tallón en el poste delantero izquierdo y en la salpicadera. El toldo presenta tallón y deformación, y el parabrisas ralladuras y resquebrajamiento. Las mayores deformaciones posteriores se ubican de 40 cm a 80 cm con respecto al nivel del piso.\n\nEl vehículo D no presenta en la parte frontal daños del evento. En el lado derecho hay tallón de adelante hacia atrás y desacoplamiento del camper de la batea. En la parte posterior hay corrimiento en dirección de izquierda a derecha, que repercute en el camper y en la batea. El costado izquierdo presenta impacto de izquierda a derecha, con desacoplamiento del camper, desacoplamiento de la fascia y ruptura de la calavera. En el lado delantero izquierdo hay hundimiento de izquierda a derecha sobre la parte posterior de la salpicadera, y en la fascia delantera tallón con desprendimiento de material.\n\nEl vehículo C no presenta daños del evento en la parte frontal. En el lado delantero izquierdo hay tallones sobre la fascia delantera, la puerta delantera, la moldura de puerta y la parte posterior de la salpicadera, con desprendimiento de material. El costado posterior izquierdo no presenta daños relacionados. Del vehículo E no se cuenta con fotografías.",
+  "salida": {
+    "datos": [
+      {
+        "seccion": "caso",
+        "n": 1,
+        "vehiculo": "ninguno",
+        "campo": "fecha_hora",
+        "valor": "26 de febrero de 2011, aproximadamente a las 12:30 horas",
+        "cita": "El hecho se registró el 26 de febrero de 2011, aproximadamente a las 12:30 horas, en Periférico Norte, Ciudad Satélite, Municipio de Naucalpan de Juárez, Estado de México"
+      },
+      {
+        "seccion": "caso",
+        "n": 1,
+        "vehiculo": "ninguno",
+        "campo": "lugar",
+        "valor": "Periférico Norte, Ciudad Satélite",
+        "cita": ""
+      },
+      {
+        "seccion": "caso",
+        "n": 1,
+        "vehiculo": "ninguno",
+        "campo": "municipio",
+        "valor": "Naucalpan de Juárez",
+        "cita": ""
+      },
+      {
+        "seccion": "caso",
+        "n": 1,
+        "vehiculo": "ninguno",
+        "campo": "entidad",
+        "valor": "Estado de México",
+        "cita": ""
+      },
+      {
+        "seccion": "vehiculo",
+        "n": 1,
+        "vehiculo": "V1",
+        "campo": "marca",
+        "valor": "Honda",
+        "cita": "el vehículo A, marca Honda, tipo Civic, modelo 2005, color gris"
+      },
+      {
+        "seccion": "vehiculo",
+        "n": 1,
+        "vehiculo": "V1",
+        "campo": "modelo",
+        "valor": "Civic",
+        "cita": ""
+      },
+      {
+        "seccion": "vehiculo",
+        "n": 1,
+        "vehiculo": "V1",
+        "campo": "anio",
+        "valor": "2005",
+        "cita": ""
+      },
+      {
+        "seccion": "vehiculo",
+        "n": 2,
+        "vehiculo": "V2",
+        "campo": "marca",
+        "valor": "Mazda",
+        "cita": "el vehículo B, marca Mazda, tipo 3, modelo 2007, color gris"
+      },
+      {
+        "seccion": "vehiculo",
+        "n": 2,
+        "vehiculo": "V2",
+        "campo": "modelo",
+        "valor": "3",
+        "cita": ""
+      },
+      {
+        "seccion": "vehiculo",
+        "n": 2,
+        "vehiculo": "V2",
+        "campo": "anio",
+        "valor": "2007",
+        "cita": ""
+      },
+      {
+        "seccion": "vehiculo",
+        "n": 3,
+        "vehiculo": "V3",
+        "campo": "marca",
+        "valor": "Volkswagen",
+        "cita": "el vehículo C, marca Volkswagen, tipo Corsar, modelo 1986, color gris"
+      },
+      {
+        "seccion": "vehiculo",
+        "n": 3,
+        "vehiculo": "V3",
+        "campo": "modelo",
+        "valor": "Corsar",
+        "cita": ""
+      },
+      {
+        "seccion": "vehiculo",
+        "n": 3,
+        "vehiculo": "V3",
+        "campo": "anio",
+        "valor": "1986",
+        "cita": ""
+      },
+      {
+        "seccion": "vehiculo",
+        "n": 4,
+        "vehiculo": "V4",
+        "campo": "marca",
+        "valor": "Volkswagen",
+        "cita": "el vehículo D, marca Volkswagen, tipo Pointer Pick Up, modelo 1999, color blanco"
+      },
+      {
+        "seccion": "vehiculo",
+        "n": 4,
+        "vehiculo": "V4",
+        "campo": "modelo",
+        "valor": "Pointer Pick Up",
+        "cita": ""
+      },
+      {
+        "seccion": "vehiculo",
+        "n": 4,
+        "vehiculo": "V4",
+        "campo": "anio",
+        "valor": "1999",
+        "cita": ""
+      },
+      {
+        "seccion": "vehiculo",
+        "n": 4,
+        "vehiculo": "V4",
+        "campo": "clase",
+        "valor": "pickup",
+        "cita": ""
+      },
+      {
+        "seccion": "vehiculo",
+        "n": 5,
+        "vehiculo": "V5",
+        "campo": "marca",
+        "valor": "Ford",
+        "cita": "el vehículo E, marca Ford, tipo Freestar, modelo 2005, color vino"
+      },
+      {
+        "seccion": "vehiculo",
+        "n": 5,
+        "vehiculo": "V5",
+        "campo": "modelo",
+        "valor": "Freestar",
+        "cita": ""
+      },
+      {
+        "seccion": "vehiculo",
+        "n": 5,
+        "vehiculo": "V5",
+        "campo": "anio",
+        "valor": "2005",
+        "cita": ""
+      },
+      {
+        "seccion": "dano",
+        "n": 1,
+        "vehiculo": "V1",
+        "campo": "cara",
+        "valor": "frontal",
+        "cita": "El vehículo A presenta en la parte frontal un daño tipo hundimiento de grandes magnitudes, en dirección de adelante hacia atrás"
+      },
+      {
+        "seccion": "dano",
+        "n": 1,
+        "vehiculo": "V1",
+        "campo": "tipo",
+        "valor": "hundimiento",
+        "cita": ""
+      },
+      {
+        "seccion": "dano",
+        "n": 1,
+        "vehiculo": "V1",
+        "campo": "magnitud",
+        "valor": "severa",
+        "cita": ""
+      },
+      {
+        "seccion": "dano",
+        "n": 1,
+        "vehiculo": "V1",
+        "campo": "direccion",
+        "valor": "de_adelante_hacia_atras",
+        "cita": ""
+      },
+      {
+        "seccion": "dano",
+        "n": 1,
+        "vehiculo": "V1",
+        "campo": "altura",
+        "valor": "40 a 80 cm",
+        "cita": "Las mayores deformaciones se ubican de 40 cm a 80 cm con respecto al nivel del piso"
+      },
+      {
+        "seccion": "dano",
+        "n": 1,
+        "vehiculo": "V1",
+        "campo": "tipo",
+        "valor": "tallon",
+        "cita": "En la parte frontal hay tallón con impregnación y desprendimiento de pintura color gris"
+      },
+      {
+        "seccion": "dano",
+        "n": 1,
+        "vehiculo": "V1",
+        "campo": "tipo",
+        "valor": "impregnacion_pintura",
+        "cita": ""
+      },
+      {
+        "seccion": "dano",
+        "n": 1,
+        "vehiculo": "V1",
+        "campo": "tipo",
+        "valor": "desprendimiento",
+        "cita": ""
+      },
+      {
+        "seccion": "dano",
+        "n": 2,
+        "vehiculo": "V1",
+        "campo": "cara",
+        "valor": "lateral_derecho",
+        "cita": "en el lado medio derecho daños tipo tallón en dirección de adelante hacia atrás"
+      },
+      {
+        "seccion": "dano",
+        "n": 2,
+        "vehiculo": "V1",
+        "campo": "tercio",
+        "valor": "medio",
+        "cita": ""
+      },
+      {
+        "seccion": "dano",
+        "n": 2,
+        "vehiculo": "V1",
+        "campo": "tipo",
+        "valor": "tallon",
+        "cita": ""
+      },
+      {
+        "seccion": "dano",
+        "n": 2,
+        "vehiculo": "V1",
+        "campo": "direccion",
+        "valor": "de_adelante_hacia_atras",
+        "cita": ""
+      },
+      {
+        "seccion": "dano",
+        "n": 3,
+        "vehiculo": "V1",
+        "campo": "cara",
+        "valor": "lateral_derecho",
+        "cita": "En el lado delantero derecho hay tallón con impregnaciones de pintura color negro, a una altura de 48 centímetros con respecto al nivel del piso"
+      },
+      {
+        "seccion": "dano",
+        "n": 3,
+        "vehiculo": "V1",
+        "campo": "tercio",
+        "valor": "delantero",
+        "cita": ""
+      },
+      {
+        "seccion": "dano",
+        "n": 3,
+        "vehiculo": "V1",
+        "campo": "tipo",
+        "valor": "tallon",
+        "cita": ""
+      },
+      {
+        "seccion": "dano",
+        "n": 3,
+        "vehiculo": "V1",
+        "campo": "tipo",
+        "valor": "impregnacion_pintura",
+        "cita": ""
+      },
+      {
+        "seccion": "dano",
+        "n": 3,
+        "vehiculo": "V1",
+        "campo": "altura",
+        "valor": "48 cm",
+        "cita": ""
+      },
+      {
+        "seccion": "dano",
+        "n": 4,
+        "vehiculo": "V1",
+        "campo": "vertice",
+        "valor": "delantero_izquierdo",
+        "cita": "En el vértice delantero izquierdo y el lado delantero izquierdo hay hundimiento en dirección de adelante hacia atrás"
+      },
+      {
+        "seccion": "dano",
+        "n": 4,
+        "vehiculo": "V1",
+        "campo": "tipo",
+        "valor": "hundimiento",
+        "cita": ""
+      },
+      {
+        "seccion": "dano",
+        "n": 4,
+        "vehiculo": "V1",
+        "campo": "direccion",
+        "valor": "de_adelante_hacia_atras",
+        "cita": ""
+      },
+      {
+        "seccion": "dano",
+        "n": 5,
+        "vehiculo": "V1",
+        "campo": "cara",
+        "valor": "posterior",
+        "cita": "La parte posterior presenta solo ligeros tallones sobre la fascia"
+      },
+      {
+        "seccion": "dano",
+        "n": 5,
+        "vehiculo": "V1",
+        "campo": "tipo",
+        "valor": "tallon",
+        "cita": ""
+      },
+      {
+        "seccion": "dano",
+        "n": 5,
+        "vehiculo": "V1",
+        "campo": "magnitud",
+        "valor": "leve",
+        "cita": ""
+      },
+      {
+        "seccion": "dano",
+        "n": 6,
+        "vehiculo": "V2",
+        "campo": "cara",
+        "valor": "frontal",
+        "cita": "El vehículo B presenta en la parte frontal hundimiento en dirección de arriba hacia abajo y tallones diagonales de adelante hacia atrás"
+      },
+      {
+        "seccion": "dano",
+        "n": 6,
+        "vehiculo": "V2",
+        "campo": "tipo",
+        "valor": "hundimiento",
+        "cita": ""
+      },
+      {
+        "seccion": "dano",
+        "n": 6,
+        "vehiculo": "V2",
+        "campo": "tipo",
+        "valor": "tallon",
+        "cita": ""
+      },
+      {
+        "seccion": "dano",
+        "n": 6,
+        "vehiculo": "V2",
+        "campo": "direccion",
+        "valor": "de_arriba_hacia_abajo",
+        "cita": ""
+      },
+      {
+        "seccion": "dano",
+        "n": 6,
+        "vehiculo": "V2",
+        "campo": "direccion",
+        "valor": "de_adelante_hacia_atras",
+        "cita": ""
+      },
+      {
+        "seccion": "dano",
+        "n": 7,
+        "vehiculo": "V2",
+        "campo": "cara",
+        "valor": "posterior",
+        "cita": "La parte posterior presenta hundimiento de grandes magnitudes de atrás hacia delante"
+      },
+      {
+        "seccion": "dano",
+        "n": 7,
+        "vehiculo": "V2",
+        "campo": "tipo",
+        "valor": "hundimiento",
+        "cita": ""
+      },
+      {
+        "seccion": "dano",
+        "n": 7,
+        "vehiculo": "V2",
+        "campo": "magnitud",
+        "valor": "severa",
+        "cita": ""
+      },
+      {
+        "seccion": "dano",
+        "n": 7,
+        "vehiculo": "V2",
+        "campo": "direccion",
+        "valor": "de_atras_hacia_adelante",
+        "cita": ""
+      },
+      {
+        "seccion": "dano",
+        "n": 7,
+        "vehiculo": "V2",
+        "campo": "altura",
+        "valor": "40 a 80 cm",
+        "cita": "Las mayores deformaciones posteriores se ubican de 40 cm a 80 cm con respecto al nivel del piso"
+      },
+      {
+        "seccion": "dano",
+        "n": 8,
+        "vehiculo": "V2",
+        "campo": "cara",
+        "valor": "lateral_derecho",
+        "cita": "En el lado medio derecho hay hundimiento en dirección de derecha a izquierda, con tallón y desacoplamiento de la puerta delantera"
+      },
+      {
+        "seccion": "dano",
+        "n": 8,
+        "vehiculo": "V2",
+        "campo": "tercio",
+        "valor": "medio",
+        "cita": ""
+      },
+      {
+        "seccion": "dano",
+        "n": 8,
+        "vehiculo": "V2",
+        "campo": "tipo",
+        "valor": "hundimiento",
+        "cita": ""
+      },
+      {
+        "seccion": "dano",
+        "n": 8,
+        "vehiculo": "V2",
+        "campo": "tipo",
+        "valor": "tallon",
+        "cita": ""
+      },
+      {
+        "seccion": "dano",
+        "n": 8,
+        "vehiculo": "V2",
+        "campo": "direccion",
+        "valor": "de_derecha_a_izquierda",
+        "cita": ""
+      },
+      {
+        "seccion": "dano",
+        "n": 9,
+        "vehiculo": "V2",
+        "campo": "cara",
+        "valor": "lateral_derecho",
+        "cita": "En el lado posterior derecho la fascia posterior está desacoplada, con hundimiento de atrás hacia delante"
+      },
+      {
+        "seccion": "dano",
+        "n": 9,
+        "vehiculo": "V2",
+        "campo": "tercio",
+        "valor": "trasero",
+        "cita": ""
+      },
+      {
+        "seccion": "dano",
+        "n": 9,
+        "vehiculo": "V2",
+        "campo": "tipo",
+        "valor": "hundimiento",
+        "cita": ""
+      },
+      {
+        "seccion": "dano",
+        "n": 9,
+        "vehiculo": "V2",
+        "campo": "direccion",
+        "valor": "de_atras_hacia_adelante",
+        "cita": ""
+      },
+      {
+        "seccion": "dano",
+        "n": 10,
+        "vehiculo": "V4",
+        "campo": "cara",
+        "valor": "lateral_derecho",
+        "cita": "En el lado derecho hay tallón de adelante hacia atrás y desacoplamiento del camper de la batea"
+      },
+      {
+        "seccion": "dano",
+        "n": 10,
+        "vehiculo": "V4",
+        "campo": "tipo",
+        "valor": "tallon",
+        "cita": ""
+      },
+      {
+        "seccion": "dano",
+        "n": 10,
+        "vehiculo": "V4",
+        "campo": "direccion",
+        "valor": "de_adelante_hacia_atras",
+        "cita": ""
+      },
+      {
+        "seccion": "dano",
+        "n": 11,
+        "vehiculo": "V4",
+        "campo": "cara",
+        "valor": "posterior",
+        "cita": "En la parte posterior hay corrimiento en dirección de izquierda a derecha, que repercute en el camper y en la batea"
+      },
+      {
+        "seccion": "dano",
+        "n": 11,
+        "vehiculo": "V4",
+        "campo": "direccion",
+        "valor": "de_izquierda_a_derecha",
+        "cita": ""
+      },
+      {
+        "seccion": "dano",
+        "n": 12,
+        "vehiculo": "V4",
+        "campo": "cara",
+        "valor": "lateral_izquierdo",
+        "cita": "El costado izquierdo presenta impacto de izquierda a derecha, con desacoplamiento del camper, desacoplamiento de la fascia y ruptura de la calavera"
+      },
+      {
+        "seccion": "dano",
+        "n": 12,
+        "vehiculo": "V4",
+        "campo": "direccion",
+        "valor": "de_izquierda_a_derecha",
+        "cita": ""
+      },
+      {
+        "seccion": "dano",
+        "n": 12,
+        "vehiculo": "V4",
+        "campo": "tipo",
+        "valor": "ruptura",
+        "cita": ""
+      },
+      {
+        "seccion": "dano",
+        "n": 13,
+        "vehiculo": "V4",
+        "campo": "cara",
+        "valor": "lateral_izquierdo",
+        "cita": "En el lado delantero izquierdo hay hundimiento de izquierda a derecha sobre la parte posterior de la salpicadera"
+      },
+      {
+        "seccion": "dano",
+        "n": 13,
+        "vehiculo": "V4",
+        "campo": "tercio",
+        "valor": "delantero",
+        "cita": ""
+      },
+      {
+        "seccion": "dano",
+        "n": 13,
+        "vehiculo": "V4",
+        "campo": "tipo",
+        "valor": "hundimiento",
+        "cita": ""
+      },
+      {
+        "seccion": "dano",
+        "n": 13,
+        "vehiculo": "V4",
+        "campo": "direccion",
+        "valor": "de_izquierda_a_derecha",
+        "cita": ""
+      },
+      {
+        "seccion": "dano",
+        "n": 14,
+        "vehiculo": "V3",
+        "campo": "cara",
+        "valor": "lateral_izquierdo",
+        "cita": "En el lado delantero izquierdo hay tallones sobre la fascia delantera, la puerta delantera, la moldura de puerta y la parte posterior de la salpicadera, con desprendimiento de material"
+      },
+      {
+        "seccion": "dano",
+        "n": 14,
+        "vehiculo": "V3",
+        "campo": "tercio",
+        "valor": "delantero",
+        "cita": ""
+      },
+      {
+        "seccion": "dano",
+        "n": 14,
+        "vehiculo": "V3",
+        "campo": "tipo",
+        "valor": "tallon",
+        "cita": ""
+      },
+      {
+        "seccion": "dano",
+        "n": 14,
+        "vehiculo": "V3",
+        "campo": "tipo",
+        "valor": "desprendimiento",
+        "cita": ""
+      }
+    ]
+  }
+}

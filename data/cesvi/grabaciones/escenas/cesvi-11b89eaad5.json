@@ -1,0 +1,298 @@
+{
+  "id": "cesvi-11b89eaad5",
+  "modalidad_c0": "salida_de_camino",
+  "version_prompt": "escena-narracion-v1",
+  "modelo": "claude-sonnet-5-5",
+  "uso": {
+    "input_tokens": 1116,
+    "output_tokens": 2461,
+    "cache_creation_input_tokens": 0,
+    "cache_read_input_tokens": 3462
+  },
+  "costo_usd": 0.0275344,
+  "narracion": "El lugar de los hechos se ubica en la carretera Alto Tío Diego - Carretera Alto [NOMBRE], Jalapa, Estado de Veracruz, a 5 km después de Alto [NOMBRE] con dirección a Jalapa. Se trata de una vía de un solo arroyo de circulación con dos carriles, uno por sentido, separados por línea central continua en la curva donde ocurren los hechos. El arroyo de circulación mide 7 metros de ancho y no cuenta con acotamiento, ya que la vía es muy angosta. No hay señalamientos restrictivos que indiquen los límites de velocidad máximos. La vía tiene una pendiente descendente de 5 grados en dirección hacia Jalapa.\n\nEl vehículo A es un Chevrolet tipo Corsa, modelo 2003, color azul, de servicio particular. En la parte frontal presenta la fascia delantera rota en la parte inferior, ambos faros delanteros rotos, el cofre con daño de tipo hundimiento generado por cuerpo duro en dirección de adelante hacia atrás y de arriba hacia abajo, y el parabrisas estrellado con el daño acentuado en el lado derecho. En el lado derecho, la salpicadera presenta hundimiento por cuerpo duro en dirección de izquierda a derecha; en el poste delantero derecho hay un daño por cuerpo duro en dirección de derecha a izquierda y de arriba hacia abajo. Ambas puertas derechas están descuadradas, con hundimiento en su parte inferior, al igual que el estribo derecho. La base del espejo lateral derecho está dañada y el espejo se observa caído. La moldura cantonera posterior derecha y el tapón del tanque de combustible están desprendidos de su posición original, y la llanta posterior está sin presión de aire.\n\nEn la parte posterior, la tapa de la cajuela está descuadrada. En el lado izquierdo, el vértice posterior izquierdo presenta la calavera izquierda rota; el costado izquierdo muestra un hundimiento por cuerpo duro en dirección de izquierda a derecha y de arriba hacia abajo; ambas puertas izquierdas están descuadradas, el espejo lateral izquierdo desprendido de su posición original y la salpicadera izquierda con hundimiento y corrimiento por cuerpo duro en dirección de izquierda a derecha. El toldo presenta daños de gran intensidad, de tipo hundimiento por cuerpo duro en dirección de arriba hacia abajo, con restos de arbustos y tierra; en el habitáculo el toldo muestra hundimiento de afuera hacia adentro que daña el cielo, con restos de arbustos en el interior. En las partes bajas hay daños de tipo corrimiento por cuerpo duro en dirección de adelante hacia atrás.\n\nEn el lugar se observa a simple vista una huella de rodadura dejada por el vehículo al salir del camino. Hay restos de pintura azul en unas piedras del voladero y se encontró la carcasa de uno de los espejos laterales. Las fotografías muestran el vehículo en el voladero en su posición final, sobre sus 4 ruedas.",
+  "salida": {
+    "datos": [
+      {
+        "seccion": "caso",
+        "n": 1,
+        "vehiculo": "ninguno",
+        "campo": "modalidad",
+        "valor": "salida_de_camino",
+        "cita": "una huella de rodadura dejada por el vehículo al salir del camino"
+      },
+      {
+        "seccion": "caso",
+        "n": 1,
+        "vehiculo": "ninguno",
+        "campo": "lugar",
+        "valor": "carretera Alto Tío Diego - Carretera Alto [NOMBRE], a 5 km después de Alto [NOMBRE] con dirección a Jalapa",
+        "cita": "se ubica en la carretera Alto Tío Diego - Carretera Alto [NOMBRE], Jalapa, Estado de Veracruz, a 5 km después de Alto [NOMBRE] con dirección a Jalapa"
+      },
+      {
+        "seccion": "caso",
+        "n": 1,
+        "vehiculo": "ninguno",
+        "campo": "municipio",
+        "valor": "Jalapa",
+        "cita": ""
+      },
+      {
+        "seccion": "caso",
+        "n": 1,
+        "vehiculo": "ninguno",
+        "campo": "entidad",
+        "valor": "Veracruz",
+        "cita": ""
+      },
+      {
+        "seccion": "vehiculo",
+        "n": 1,
+        "vehiculo": "V1",
+        "campo": "marca",
+        "valor": "Chevrolet",
+        "cita": "El vehículo A es un Chevrolet tipo Corsa, modelo 2003, color azul"
+      },
+      {
+        "seccion": "vehiculo",
+        "n": 1,
+        "vehiculo": "V1",
+        "campo": "modelo",
+        "valor": "Corsa",
+        "cita": ""
+      },
+      {
+        "seccion": "vehiculo",
+        "n": 1,
+        "vehiculo": "V1",
+        "campo": "anio",
+        "valor": "2003",
+        "cita": ""
+      },
+      {
+        "seccion": "dano",
+        "n": 1,
+        "vehiculo": "V1",
+        "campo": "cara",
+        "valor": "frontal",
+        "cita": "En la parte frontal presenta la fascia delantera rota en la parte inferior"
+      },
+      {
+        "seccion": "dano",
+        "n": 1,
+        "vehiculo": "V1",
+        "campo": "tipo",
+        "valor": "ruptura",
+        "cita": ""
+      },
+      {
+        "seccion": "dano",
+        "n": 1,
+        "vehiculo": "V1",
+        "campo": "tipo",
+        "valor": "hundimiento",
+        "cita": "el cofre con daño de tipo hundimiento generado por cuerpo duro en dirección de adelante hacia atrás y de arriba hacia abajo"
+      },
+      {
+        "seccion": "dano",
+        "n": 1,
+        "vehiculo": "V1",
+        "campo": "direccion",
+        "valor": "de_adelante_hacia_atras",
+        "cita": ""
+      },
+      {
+        "seccion": "dano",
+        "n": 1,
+        "vehiculo": "V1",
+        "campo": "direccion",
+        "valor": "de_arriba_hacia_abajo",
+        "cita": ""
+      },
+      {
+        "seccion": "dano",
+        "n": 2,
+        "vehiculo": "V1",
+        "campo": "cara",
+        "valor": "lateral_derecho",
+        "cita": "En el lado derecho, la salpicadera presenta hundimiento por cuerpo duro en dirección de izquierda a derecha"
+      },
+      {
+        "seccion": "dano",
+        "n": 2,
+        "vehiculo": "V1",
+        "campo": "tipo",
+        "valor": "hundimiento",
+        "cita": ""
+      },
+      {
+        "seccion": "dano",
+        "n": 2,
+        "vehiculo": "V1",
+        "campo": "direccion",
+        "valor": "de_izquierda_a_derecha",
+        "cita": ""
+      },
+      {
+        "seccion": "dano",
+        "n": 2,
+        "vehiculo": "V1",
+        "campo": "direccion",
+        "valor": "de_derecha_a_izquierda",
+        "cita": "en el poste delantero derecho hay un daño por cuerpo duro en dirección de derecha a izquierda y de arriba hacia abajo"
+      },
+      {
+        "seccion": "dano",
+        "n": 2,
+        "vehiculo": "V1",
+        "campo": "direccion",
+        "valor": "de_arriba_hacia_abajo",
+        "cita": ""
+      },
+      {
+        "seccion": "dano",
+        "n": 3,
+        "vehiculo": "V1",
+        "campo": "cara",
+        "valor": "posterior",
+        "cita": "En la parte posterior, la tapa de la cajuela está descuadrada"
+      },
+      {
+        "seccion": "dano",
+        "n": 4,
+        "vehiculo": "V1",
+        "campo": "cara",
+        "valor": "lateral_izquierdo",
+        "cita": "En el lado izquierdo, el vértice posterior izquierdo presenta la calavera izquierda rota"
+      },
+      {
+        "seccion": "dano",
+        "n": 4,
+        "vehiculo": "V1",
+        "campo": "vertice",
+        "valor": "posterior_izquierdo",
+        "cita": ""
+      },
+      {
+        "seccion": "dano",
+        "n": 4,
+        "vehiculo": "V1",
+        "campo": "tipo",
+        "valor": "ruptura",
+        "cita": ""
+      },
+      {
+        "seccion": "dano",
+        "n": 4,
+        "vehiculo": "V1",
+        "campo": "tipo",
+        "valor": "hundimiento",
+        "cita": "el costado izquierdo muestra un hundimiento por cuerpo duro en dirección de izquierda a derecha y de arriba hacia abajo"
+      },
+      {
+        "seccion": "dano",
+        "n": 4,
+        "vehiculo": "V1",
+        "campo": "direccion",
+        "valor": "de_izquierda_a_derecha",
+        "cita": ""
+      },
+      {
+        "seccion": "dano",
+        "n": 4,
+        "vehiculo": "V1",
+        "campo": "direccion",
+        "valor": "de_arriba_hacia_abajo",
+        "cita": ""
+      },
+      {
+        "seccion": "dano",
+        "n": 5,
+        "vehiculo": "V1",
+        "campo": "cara",
+        "valor": "techo",
+        "cita": "El toldo presenta daños de gran intensidad, de tipo hundimiento por cuerpo duro en dirección de arriba hacia abajo"
+      },
+      {
+        "seccion": "dano",
+        "n": 5,
+        "vehiculo": "V1",
+        "campo": "tipo",
+        "valor": "hundimiento",
+        "cita": ""
+      },
+      {
+        "seccion": "dano",
+        "n": 5,
+        "vehiculo": "V1",
+        "campo": "direccion",
+        "valor": "de_arriba_hacia_abajo",
+        "cita": ""
+      },
+      {
+        "seccion": "dano",
+        "n": 5,
+        "vehiculo": "V1",
+        "campo": "magnitud",
+        "valor": "severa",
+        "cita": "daños de gran intensidad"
+      },
+      {
+        "seccion": "dano",
+        "n": 6,
+        "vehiculo": "V1",
+        "campo": "cara",
+        "valor": "inferior",
+        "cita": "En las partes bajas hay daños de tipo corrimiento por cuerpo duro en dirección de adelante hacia atrás"
+      },
+      {
+        "seccion": "dano",
+        "n": 6,
+        "vehiculo": "V1",
+        "campo": "direccion",
+        "valor": "de_adelante_hacia_atras",
+        "cita": ""
+      },
+      {
+        "seccion": "impacto",
+        "n": 1,
+        "vehiculo": "V1",
+        "campo": "participante",
+        "valor": "V1",
+        "cita": "una huella de rodadura dejada por el vehículo al salir del camino"
+      },
+      {
+        "seccion": "impacto",
+        "n": 1,
+        "vehiculo": "ninguno",
+        "campo": "objeto_fijo",
+        "valor": "piedras del voladero",
+        "cita": "Hay restos de pintura azul en unas piedras del voladero"
+      },
+      {
+        "seccion": "huella",
+        "n": 1,
+        "vehiculo": "V1",
+        "campo": "tipo_huella",
+        "valor": "arrastre",
+        "cita": "una huella de rodadura dejada por el vehículo al salir del camino"
+      },
+      {
+        "seccion": "posicion",
+        "n": 1,
+        "vehiculo": "V1",
+        "campo": "fase",
+        "valor": "final",
+        "cita": "Las fotografías muestran el vehículo en el voladero en su posición final, sobre sus 4 ruedas"
+      },
+      {
+        "seccion": "posicion",
+        "n": 1,
+        "vehiculo": "V1",
+        "campo": "descripcion",
+        "valor": "en el voladero, sobre sus 4 ruedas",
+        "cita": ""
+      }
+    ]
+  }
+}

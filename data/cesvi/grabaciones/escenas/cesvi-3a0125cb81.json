@@ -1,0 +1,250 @@
+{
+  "id": "cesvi-3a0125cb81",
+  "modalidad_c0": "reversa",
+  "version_prompt": "escena-narracion-v1",
+  "modelo": "claude-sonnet-5-5",
+  "uso": {
+    "input_tokens": 911,
+    "output_tokens": 1974,
+    "cache_creation_input_tokens": 0,
+    "cache_read_input_tokens": 3462
+  },
+  "costo_usd": 0.0222544,
+  "narracion": "El hecho se ubica en el cruce de la carretera Yecapixtla-Agua Hedionda con el libramiento Yecapixtla-Tetela, municipio de Yecapixtla, Estado de Morelos, aproximadamente a las 9:50 horas. La carretera Yecapixtla-Agua Hedionda es una vía de corte recto con arroyo vehicular dividido en dos carriles, uno con circulación de Norte a Sur y otro de Sur a Norte, sin línea de división de carriles observable. El libramiento Yecapixtla-Tetela es una vía de corte recto con arroyo vehicular dividido en dos carriles, uno con circulación de Oriente a Poniente y otro de Poniente a Oriente, sin líneas de división de carriles.\n\nIntervienen el vehículo A, marca Jeep, tipo Grand Cherokee, modelo 1998, color blanco, de servicio particular, y el vehículo B, marca Nissan, tipo Sentra, modelo 2008, color gris, de servicio particular.\n\nLa parte posterior del vehículo A presenta daños tipo hundimiento de muy baja magnitud, de atrás hacia adelante, con pérdida de pintura a la altura de los topes de fascia, que están a una altura de aproximadamente 0.71m; también se aprecian daños menores propios del uso normal. El depósito de combustible no presenta daños ni indicios de ellos y no se observa intercambio de materiales en la fascia posterior.\n\nLa parte frontal del vehículo B presenta daños tipo tallón de adelante hacia atrás de magnitud media, con intercambio de lo que parece ser pintura color blanco en la parte frontal derecha y pérdida de pintura en la parte frontal media. La fascia está desprendida de la sujeción superior izquierda y rota de la sujeción superior derecha. El cofre presenta daño tipo hundimiento de adelante hacia atrás de magnitud media, con abombamiento en su parte central. El faro derecho está desprendido, y la parrilla frontal y la placa están desprendidas y fuera de su lugar. En la parte derecha, la salpicadera está abombada en su parte frontal, de magnitud media, con el faro desprendido y la fascia desprendida de la sujeción con la salpicadera. En la parte izquierda, el cofre presenta abombamiento y la fascia está desprendida de la sujeción con la salpicadera izquierda. Las alturas de los daños del vehículo B están comprendidas entre 0.35m y 0.60m, y la fascia del vehículo A se encuentra entre 0.45m y 0.71m.",
+  "salida": {
+    "datos": [
+      {
+        "seccion": "caso",
+        "n": 1,
+        "vehiculo": "ninguno",
+        "campo": "lugar",
+        "valor": "cruce de la carretera Yecapixtla-Agua Hedionda con el libramiento Yecapixtla-Tetela",
+        "cita": "El hecho se ubica en el cruce de la carretera Yecapixtla-Agua Hedionda con el libramiento Yecapixtla-Tetela"
+      },
+      {
+        "seccion": "caso",
+        "n": 1,
+        "vehiculo": "ninguno",
+        "campo": "municipio",
+        "valor": "Yecapixtla",
+        "cita": "municipio de Yecapixtla, Estado de Morelos"
+      },
+      {
+        "seccion": "caso",
+        "n": 1,
+        "vehiculo": "ninguno",
+        "campo": "entidad",
+        "valor": "Morelos",
+        "cita": ""
+      },
+      {
+        "seccion": "caso",
+        "n": 1,
+        "vehiculo": "ninguno",
+        "campo": "fecha_hora",
+        "valor": "9:50 horas",
+        "cita": "aproximadamente a las 9:50 horas"
+      },
+      {
+        "seccion": "vehiculo",
+        "n": 1,
+        "vehiculo": "V1",
+        "campo": "marca",
+        "valor": "Jeep",
+        "cita": "Intervienen el vehículo A, marca Jeep, tipo Grand Cherokee, modelo 1998"
+      },
+      {
+        "seccion": "vehiculo",
+        "n": 1,
+        "vehiculo": "V1",
+        "campo": "modelo",
+        "valor": "Grand Cherokee",
+        "cita": ""
+      },
+      {
+        "seccion": "vehiculo",
+        "n": 1,
+        "vehiculo": "V1",
+        "campo": "anio",
+        "valor": "1998",
+        "cita": ""
+      },
+      {
+        "seccion": "vehiculo",
+        "n": 2,
+        "vehiculo": "V2",
+        "campo": "marca",
+        "valor": "Nissan",
+        "cita": "el vehículo B, marca Nissan, tipo Sentra, modelo 2008"
+      },
+      {
+        "seccion": "vehiculo",
+        "n": 2,
+        "vehiculo": "V2",
+        "campo": "modelo",
+        "valor": "Sentra",
+        "cita": ""
+      },
+      {
+        "seccion": "vehiculo",
+        "n": 2,
+        "vehiculo": "V2",
+        "campo": "anio",
+        "valor": "2008",
+        "cita": ""
+      },
+      {
+        "seccion": "dano",
+        "n": 1,
+        "vehiculo": "V1",
+        "campo": "cara",
+        "valor": "posterior",
+        "cita": "La parte posterior del vehículo A presenta daños tipo hundimiento de muy baja magnitud, de atrás hacia adelante"
+      },
+      {
+        "seccion": "dano",
+        "n": 1,
+        "vehiculo": "V1",
+        "campo": "tipo",
+        "valor": "hundimiento",
+        "cita": ""
+      },
+      {
+        "seccion": "dano",
+        "n": 1,
+        "vehiculo": "V1",
+        "campo": "magnitud",
+        "valor": "leve",
+        "cita": ""
+      },
+      {
+        "seccion": "dano",
+        "n": 1,
+        "vehiculo": "V1",
+        "campo": "direccion",
+        "valor": "de_atras_hacia_adelante",
+        "cita": ""
+      },
+      {
+        "seccion": "dano",
+        "n": 1,
+        "vehiculo": "V1",
+        "campo": "altura",
+        "valor": "0.45 a 0.71 m",
+        "cita": "la fascia del vehículo A se encuentra entre 0.45m y 0.71m"
+      },
+      {
+        "seccion": "dano",
+        "n": 1,
+        "vehiculo": "V1",
+        "campo": "intercambio",
+        "valor": "no se observa intercambio de materiales en la fascia posterior",
+        "cita": "no se observa intercambio de materiales en la fascia posterior"
+      },
+      {
+        "seccion": "dano",
+        "n": 2,
+        "vehiculo": "V2",
+        "campo": "cara",
+        "valor": "frontal",
+        "cita": "La parte frontal del vehículo B presenta daños tipo tallón de adelante hacia atrás de magnitud media"
+      },
+      {
+        "seccion": "dano",
+        "n": 2,
+        "vehiculo": "V2",
+        "campo": "tipo",
+        "valor": "tallon",
+        "cita": ""
+      },
+      {
+        "seccion": "dano",
+        "n": 2,
+        "vehiculo": "V2",
+        "campo": "direccion",
+        "valor": "de_adelante_hacia_atras",
+        "cita": ""
+      },
+      {
+        "seccion": "dano",
+        "n": 2,
+        "vehiculo": "V2",
+        "campo": "magnitud",
+        "valor": "moderada",
+        "cita": ""
+      },
+      {
+        "seccion": "dano",
+        "n": 2,
+        "vehiculo": "V2",
+        "campo": "altura",
+        "valor": "0.35 a 0.60 m",
+        "cita": "Las alturas de los daños del vehículo B están comprendidas entre 0.35m y 0.60m"
+      },
+      {
+        "seccion": "dano",
+        "n": 2,
+        "vehiculo": "V2",
+        "campo": "intercambio",
+        "valor": "pintura color blanco en la parte frontal derecha",
+        "cita": "con intercambio de lo que parece ser pintura color blanco en la parte frontal derecha"
+      },
+      {
+        "seccion": "dano",
+        "n": 3,
+        "vehiculo": "V2",
+        "campo": "cara",
+        "valor": "lateral_derecho",
+        "cita": "En la parte derecha, la salpicadera está abombada en su parte frontal, de magnitud media"
+      },
+      {
+        "seccion": "dano",
+        "n": 3,
+        "vehiculo": "V2",
+        "campo": "tercio",
+        "valor": "delantero",
+        "cita": ""
+      },
+      {
+        "seccion": "dano",
+        "n": 3,
+        "vehiculo": "V2",
+        "campo": "magnitud",
+        "valor": "moderada",
+        "cita": ""
+      },
+      {
+        "seccion": "dano",
+        "n": 4,
+        "vehiculo": "V2",
+        "campo": "cara",
+        "valor": "lateral_izquierdo",
+        "cita": "En la parte izquierda, el cofre presenta abombamiento y la fascia está desprendida de la sujeción con la salpicadera izquierda"
+      },
+      {
+        "seccion": "dano",
+        "n": 4,
+        "vehiculo": "V2",
+        "campo": "tipo",
+        "valor": "desprendimiento",
+        "cita": ""
+      },
+      {
+        "seccion": "impacto",
+        "n": 1,
+        "vehiculo": "ninguno",
+        "campo": "participante",
+        "valor": "V1",
+        "cita": "Intervienen el vehículo A, marca Jeep, tipo Grand Cherokee"
+      },
+      {
+        "seccion": "impacto",
+        "n": 1,
+        "vehiculo": "ninguno",
+        "campo": "participante",
+        "valor": "V2",
+        "cita": ""
+      }
+    ]
+  }
+}

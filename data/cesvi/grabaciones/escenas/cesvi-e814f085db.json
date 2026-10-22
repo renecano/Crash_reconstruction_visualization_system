@@ -1,0 +1,306 @@
+{
+  "id": "cesvi-e814f085db",
+  "modalidad_c0": "crucero",
+  "version_prompt": "escena-narracion-v1",
+  "modelo": "claude-sonnet-5-5",
+  "uso": {
+    "input_tokens": 972,
+    "output_tokens": 2327,
+    "cache_creation_input_tokens": 0,
+    "cache_read_input_tokens": 3462
+  },
+  "costo_usd": 0.0259064,
+  "narracion": "El hecho se ubica en el crucero de la calle Azucena esquina con Av. Reforma, colonia Lomas San Lorenzo, delegación Iztapalapa, aproximadamente a las 22:30 horas. La calle Azucena consta de un arroyo de circulación con dos carriles asfaltados, con sentido de circulación de Sureste a Noroeste y viceversa; los carriles adyacentes se ocupan de estacionamiento. La Av. Reforma consta de un arroyo de circulación de cuatro carriles asfaltados, divididos por líneas longitudinales de color blanco, con sentido de circulación de Sur a Norte.\n\nSe observan dos vehículos: el vehículo A, marca VW, tipo Jetta, modelo 2002, color azul, de servicio particular, y el vehículo B, marca GM, tipo Camaro, modelo 1995, color rojo, de servicio particular.\n\nEl vehículo A presenta en la parte frontal un daño con características de hundimiento en dirección de adelante hacia atrás, acentuado sobre su costado delantero derecho y en el vértice delantero izquierdo, a una altura de 0.80 metros con respecto del piso. Presenta también un daño tipo tallón en dirección de adelante hacia atrás, con desprendimiento de pintura, sobre el vértice delantero inferior de la fascia. El conjunto de luces de ambos lados, la fascia y la parrilla se observan desacoplados de su posición original. En el vértice delantero izquierdo se describe además un hundimiento con desprendimiento de pintura a una altura de 0.73 metros, y en otra fotografía una altura de 0.72 metros. En el costado derecho no se aprecian daños por impacto contra cuerpo duro y se observa la ausencia del cuarto delantero derecho. En el habitáculo, las bolsas de aire del conductor y del copiloto se encuentran activadas. En el daño del vehículo A solo se observa desprendimiento de material, sin restos de pintura color rojo.\n\nEl vehículo B no presenta daños por impacto contra cuerpo duro en los costados delantero y medio derechos. En la parte posterior derecha se observa un ligero daño tipo hundimiento sobre la salpicadera posterior, en dirección de derecha a izquierda, con un daño tipo tallón en dirección de adelante hacia atrás con desprendimiento de pintura. Se observa también desprendimiento de pintura sobre la parte media de la puerta y la parte media de la salpicadera trasera, este último a una altura de 0.73 metros. En otra medición se registra el daño a una altura de 0.67 metros con respecto del piso. No se describen restos de pintura color azul sobre el vehículo B. No se describen huellas de frenado, restos ni posiciones finales.",
+  "salida": {
+    "datos": [
+      {
+        "seccion": "caso",
+        "n": 1,
+        "vehiculo": "ninguno",
+        "campo": "modalidad",
+        "valor": "crucero",
+        "cita": "El hecho se ubica en el crucero de la calle Azucena esquina con Av. Reforma"
+      },
+      {
+        "seccion": "caso",
+        "n": 1,
+        "vehiculo": "ninguno",
+        "campo": "fecha_hora",
+        "valor": "aproximadamente a las 22:30 horas",
+        "cita": "aproximadamente a las 22:30 horas"
+      },
+      {
+        "seccion": "caso",
+        "n": 1,
+        "vehiculo": "ninguno",
+        "campo": "lugar",
+        "valor": "crucero de la calle Azucena esquina con Av. Reforma, colonia Lomas San Lorenzo",
+        "cita": "crucero de la calle Azucena esquina con Av. Reforma, colonia Lomas San Lorenzo"
+      },
+      {
+        "seccion": "caso",
+        "n": 1,
+        "vehiculo": "ninguno",
+        "campo": "municipio",
+        "valor": "Iztapalapa",
+        "cita": "delegación Iztapalapa"
+      },
+      {
+        "seccion": "vehiculo",
+        "n": 1,
+        "vehiculo": "V1",
+        "campo": "marca",
+        "valor": "VW",
+        "cita": "el vehículo A, marca VW, tipo Jetta, modelo 2002"
+      },
+      {
+        "seccion": "vehiculo",
+        "n": 1,
+        "vehiculo": "V1",
+        "campo": "modelo",
+        "valor": "Jetta",
+        "cita": ""
+      },
+      {
+        "seccion": "vehiculo",
+        "n": 1,
+        "vehiculo": "V1",
+        "campo": "anio",
+        "valor": "2002",
+        "cita": ""
+      },
+      {
+        "seccion": "vehiculo",
+        "n": 2,
+        "vehiculo": "V2",
+        "campo": "marca",
+        "valor": "GM",
+        "cita": "el vehículo B, marca GM, tipo Camaro, modelo 1995"
+      },
+      {
+        "seccion": "vehiculo",
+        "n": 2,
+        "vehiculo": "V2",
+        "campo": "modelo",
+        "valor": "Camaro",
+        "cita": ""
+      },
+      {
+        "seccion": "vehiculo",
+        "n": 2,
+        "vehiculo": "V2",
+        "campo": "anio",
+        "valor": "1995",
+        "cita": ""
+      },
+      {
+        "seccion": "dano",
+        "n": 1,
+        "vehiculo": "V1",
+        "campo": "cara",
+        "valor": "frontal",
+        "cita": "El vehículo A presenta en la parte frontal un daño con características de hundimiento en dirección de adelante hacia atrás"
+      },
+      {
+        "seccion": "dano",
+        "n": 1,
+        "vehiculo": "V1",
+        "campo": "tipo",
+        "valor": "hundimiento",
+        "cita": ""
+      },
+      {
+        "seccion": "dano",
+        "n": 1,
+        "vehiculo": "V1",
+        "campo": "direccion",
+        "valor": "de_adelante_hacia_atras",
+        "cita": ""
+      },
+      {
+        "seccion": "dano",
+        "n": 1,
+        "vehiculo": "V1",
+        "campo": "altura",
+        "valor": "0.80 metros",
+        "cita": "a una altura de 0.80 metros con respecto del piso"
+      },
+      {
+        "seccion": "dano",
+        "n": 2,
+        "vehiculo": "V1",
+        "campo": "cara",
+        "valor": "frontal",
+        "cita": "Presenta también un daño tipo tallón en dirección de adelante hacia atrás, con desprendimiento de pintura, sobre el vértice delantero inferior de la fascia"
+      },
+      {
+        "seccion": "dano",
+        "n": 2,
+        "vehiculo": "V1",
+        "campo": "tipo",
+        "valor": "tallon",
+        "cita": ""
+      },
+      {
+        "seccion": "dano",
+        "n": 2,
+        "vehiculo": "V1",
+        "campo": "tipo",
+        "valor": "desprendimiento",
+        "cita": ""
+      },
+      {
+        "seccion": "dano",
+        "n": 2,
+        "vehiculo": "V1",
+        "campo": "direccion",
+        "valor": "de_adelante_hacia_atras",
+        "cita": ""
+      },
+      {
+        "seccion": "dano",
+        "n": 3,
+        "vehiculo": "V1",
+        "campo": "vertice",
+        "valor": "delantero_izquierdo",
+        "cita": "En el vértice delantero izquierdo se describe además un hundimiento con desprendimiento de pintura a una altura de 0.73 metros"
+      },
+      {
+        "seccion": "dano",
+        "n": 3,
+        "vehiculo": "V1",
+        "campo": "tipo",
+        "valor": "hundimiento",
+        "cita": ""
+      },
+      {
+        "seccion": "dano",
+        "n": 3,
+        "vehiculo": "V1",
+        "campo": "tipo",
+        "valor": "desprendimiento",
+        "cita": ""
+      },
+      {
+        "seccion": "dano",
+        "n": 3,
+        "vehiculo": "V1",
+        "campo": "altura",
+        "valor": "0.73 metros",
+        "cita": ""
+      },
+      {
+        "seccion": "dano",
+        "n": 3,
+        "vehiculo": "V1",
+        "campo": "altura",
+        "valor": "0.72 metros",
+        "cita": "en otra fotografía una altura de 0.72 metros"
+      },
+      {
+        "seccion": "dano",
+        "n": 4,
+        "vehiculo": "V2",
+        "campo": "cara",
+        "valor": "lateral_derecho",
+        "cita": "En la parte posterior derecha se observa un ligero daño tipo hundimiento sobre la salpicadera posterior, en dirección de derecha a izquierda"
+      },
+      {
+        "seccion": "dano",
+        "n": 4,
+        "vehiculo": "V2",
+        "campo": "tercio",
+        "valor": "trasero",
+        "cita": ""
+      },
+      {
+        "seccion": "dano",
+        "n": 4,
+        "vehiculo": "V2",
+        "campo": "tipo",
+        "valor": "hundimiento",
+        "cita": ""
+      },
+      {
+        "seccion": "dano",
+        "n": 4,
+        "vehiculo": "V2",
+        "campo": "magnitud",
+        "valor": "leve",
+        "cita": ""
+      },
+      {
+        "seccion": "dano",
+        "n": 4,
+        "vehiculo": "V2",
+        "campo": "direccion",
+        "valor": "de_derecha_a_izquierda",
+        "cita": ""
+      },
+      {
+        "seccion": "dano",
+        "n": 4,
+        "vehiculo": "V2",
+        "campo": "tipo",
+        "valor": "tallon",
+        "cita": "con un daño tipo tallón en dirección de adelante hacia atrás con desprendimiento de pintura"
+      },
+      {
+        "seccion": "dano",
+        "n": 4,
+        "vehiculo": "V2",
+        "campo": "direccion",
+        "valor": "de_adelante_hacia_atras",
+        "cita": ""
+      },
+      {
+        "seccion": "dano",
+        "n": 4,
+        "vehiculo": "V2",
+        "campo": "tipo",
+        "valor": "desprendimiento",
+        "cita": ""
+      },
+      {
+        "seccion": "dano",
+        "n": 5,
+        "vehiculo": "V2",
+        "campo": "cara",
+        "valor": "lateral_derecho",
+        "cita": "desprendimiento de pintura sobre la parte media de la puerta y la parte media de la salpicadera trasera, este último a una altura de 0.73 metros"
+      },
+      {
+        "seccion": "dano",
+        "n": 5,
+        "vehiculo": "V2",
+        "campo": "tercio",
+        "valor": "medio",
+        "cita": ""
+      },
+      {
+        "seccion": "dano",
+        "n": 5,
+        "vehiculo": "V2",
+        "campo": "tipo",
+        "valor": "desprendimiento",
+        "cita": ""
+      },
+      {
+        "seccion": "dano",
+        "n": 5,
+        "vehiculo": "V2",
+        "campo": "altura",
+        "valor": "0.73 metros",
+        "cita": ""
+      },
+      {
+        "seccion": "dano",
+        "n": 5,
+        "vehiculo": "V2",
+        "campo": "altura",
+        "valor": "0.67 metros",
+        "cita": "En otra medición se registra el daño a una altura de 0.67 metros con respecto del piso"
+      }
+    ]
+  }
+}
