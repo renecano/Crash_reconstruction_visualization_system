@@ -36,7 +36,14 @@ from croquis_solver.person_motion import (
     straight_walk_track,
     throw_track,
 )
-from croquis_solver.postimpact import ROLLING_RESISTANCE, WheelConfig, integrate
+from croquis_solver.postimpact import (
+    ROLLING_RESISTANCE,
+    JointBody,
+    PostImpactResult,
+    WheelConfig,
+    integrate,
+    integrate_joint,
+)
 from croquis_solver.preimpact import (
     ArcPath,
     CompositePath,
@@ -55,7 +62,7 @@ from croquis_solver.units import ms_to_kmh
 
 JsonObj = dict[str, Any]
 
-RESULT_VERSION = "1.7.0"
+RESULT_VERSION = "1.8.0"
 DT_OUT = 0.02
 T_PRE_MAX = 6.0
 T_PRE_MIN = 3.0  # contexto mínimo antes del impacto para el visor
@@ -855,6 +862,7 @@ def reconstruct(
         m.id: ([0.0] * 6, m.body.width, 0.0, "sin impacto") for m in models
     }
     throws: list[ThrowInfo] = []
+    joint_ids: list[str] = []  # vehículos de un choque entre vehículos: fase posterior conjunta
     mu_body = friction.pedestrian_friction(lugar["superficie"]["valor"])
 
     def declared_throw_for(pid: str) -> JsonObj | None:
@@ -935,6 +943,7 @@ def reconstruct(
             friction=IMPULSE_RATIO,
         )
         assert res.b_after is not None
+        joint_ids = [a.id, b.id]
         post_start[a.id] = res.a_after
         post_start[b.id] = res.b_after
         delta_v[a.id], delta_v[b.id] = res.delta_v_a, res.delta_v_b
@@ -1142,31 +1151,56 @@ def reconstruct(
     t_fin = dt
     post: dict[str, tuple[Trajectory, bool, float]] = {}
     mu_downed = friction.downed_motorcycle_friction(lugar["superficie"]["valor"])
+
+    def post_body(m: VehicleModel) -> JointBody:
+        start = post_start[m.id]
+        downed = m.clase in friction.DOWNED_SLIDE_CLASSES
+        # Caída, se arrastra de lado: todo el contacto desliza con el arrastre medido.
+        wheels = WheelConfig.four_wheels(
+            m.wheelbase, m.track, m.cg_from_front, locked=m.braking or downed
+        )
+        drag = (
+            ROLLING_RESISTANCE
+            if m.braking or downed
+            else max(ROLLING_RESISTANCE, POST_IMPACT_DRAG_FRACTION * mu)
+        )
+        mu_post = (mu_downed.nominal if downed_mu is None else downed_mu) if downed else mu
+        return JointBody(
+            m.body,
+            State2D(start.x, start.y, start.yaw, start.vx, start.vy, start.yaw_rate, 0.0),
+            wheels,
+            mu_post,
+            drag,
+            max(0.0, *crush[m.id][0]),
+            str((zonas.get(m.id) or {}).get("lado", "F")),
+        )
+
+    # Los vehículos de un choque entre vehículos se mueven juntos: si después de separarse se
+    # vuelven a encajar más que su aplastamiento, el contacto secundario los detiene (ADR 0063).
+    joint_post: dict[str, PostImpactResult] = dict(
+        zip(
+            joint_ids,
+            integrate_joint([post_body(by_id[i]) for i in joint_ids], dt_out=dt, t_max=T_POST_MAX),
+            strict=True,
+        )
+    )
     for m in models:
         if m.id not in actores:
             continue
         start = post_start[m.id]
-        if start.speed > 0.05 or abs(start.yaw_rate) > 0.05:
-            downed = m.clase in friction.DOWNED_SLIDE_CLASSES
-            # Caída, se arrastra de lado: todo el contacto desliza con el arrastre medido.
-            wheels = WheelConfig.four_wheels(
-                m.wheelbase, m.track, m.cg_from_front, locked=m.braking or downed
-            )
-            drag = (
-                ROLLING_RESISTANCE
-                if m.braking or downed
-                else max(ROLLING_RESISTANCE, POST_IMPACT_DRAG_FRACTION * mu)
-            )
-            mu_post = (mu_downed.nominal if downed_mu is None else downed_mu) if downed else mu
+        res_post: PostImpactResult | None = joint_post.get(m.id)
+        if res_post is None and (start.speed > 0.05 or abs(start.yaw_rate) > 0.05):
+            pb = post_body(m)
             res_post = integrate(
-                m.body,
-                State2D(start.x, start.y, start.yaw, start.vx, start.vy, start.yaw_rate, 0.0),
-                wheels,
-                mu_post,
+                pb.body,
+                pb.start,
+                pb.wheels,
+                pb.mu,
                 dt_out=dt,
                 t_max=T_POST_MAX,
-                rolling_drag=drag,
+                rolling_drag=pb.rolling_drag,
             )
+        if res_post is not None:
             post[m.id] = (res_post.trajectory, res_post.stopped, res_post.distance)
             if not res_post.stopped:
                 flag(
