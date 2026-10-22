@@ -77,6 +77,17 @@ Reglas de trabajo: `CLAUDE.md`. Especificación: `PLAN.md`.
     - **Corpus estructurado** de los 671 dictámenes con Claude (salida estructurada, caché, semilla), validado contra el esquema, con partición congelada del 30 % y etiquetas de la conclusión revisadas en una muestra.
     - **Mediciones:** las proporciones del §2 en `eval/results/cesvi_corpus.json`; desde ahí se pueden citar.
     - **Costo:** antes de correr el corpus se estima y se anota aquí. Si pasa de 30 USD, se pregunta a René.
+  - **R2 en curso: reconstrucción física desde la evidencia del perito** (rama `feat/r2-reconstruccion`). Plan:
+    - **Adaptador del expediente (contrato 2.0.0) a la escena del solver (v1):** `buildSpec` da la base válida con sus valores por omisión marcados; encima va la evidencia del perito como declarada:
+      - posiciones de impacto y finales en metros desde el punto de impacto;
+      - masas;
+      - medidas C1–C6 y L como daño declarado;
+      - huellas de frenado o derrape.
+    - **Reconstrucción:** la inversión existente (velocidades con percentiles y qué fija la evidencia), Monte Carlo y trayectorias. El solver no se toca, así que la paridad Python/TS no se arriesga.
+    - **Límites en pantalla:** lo que el solver no cubra (más de un impacto antes de R6, por ejemplo) se dice, no se simula a medias.
+    - **«Caso nuevo»** (`/cesvi/caso`) muestra la reconstrucción con rangos y, al lado, la verificación CESVI (C1) con la fórmula sustituida cuando hay medidas.
+    - **E-R2:** las 10 escenas de R1 (con lo que fija su evidencia) y el caso de AXA como expediente, contra sus números impresos.
+    - **Riesgo:** sin posiciones ni medidas del perito, la evidencia no fija las velocidades; se dice así, sin inventar.
   - **Resumen de R1 para René** (rama `feat/r1-escena`, ADR 0061):
     - **Qué quedó:**
       - **«Caso nuevo» en `/cesvi/caso`:**
