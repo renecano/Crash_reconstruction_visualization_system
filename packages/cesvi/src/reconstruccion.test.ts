@@ -146,6 +146,31 @@ describe("verificación CESVI al lado de la reconstrucción", () => {
     );
   });
 
+  it("la rigidez de dictamen en kN/m (el caso de AXA) da kJ y EBS con la masa en toneladas, como C1", () => {
+    const e: Expediente = {
+      ...base,
+      vehiculos: base.vehiculos.map((v) =>
+        v.id === "V1"
+          ? {
+              ...v,
+              masa: { valor: 1431.083, unidad: "kg", fuente: "dictamen_importado" },
+              rigidez: { A: 55.405, B: 385.336, fuente: "dictamen" },
+            }
+          : v,
+      ),
+      danos: base.danos!.map((d) =>
+        d.vehiculo === "V1" && d.zona.cara === "frontal"
+          ? { ...d, magnitud: { c_m: [0.96, 0.86, 0.52, 0.2], l_m: 1.689 } }
+          : d,
+      ),
+    };
+    const [v1] = verificacionCesvi(e);
+    expect(v1!.notas[0]).toMatch(/kN\/m/);
+    expect(v1!.pasos[0]!.paso.resultado).toBe("E = 225.454 kJ");
+    // La misma velocidad que la fila «con los datos impresos» de C1 (63.90 km/h).
+    expect((v1!.pasos[1]!.paso.calculo as { kmh: number }).kmh).toBeCloseTo(63.9, 1);
+  });
+
   it("sin rigidez propia la toma de NHTSA E2 marcada; sin medidas dice qué falta", () => {
     const [v1, v2] = verificacionCesvi(conMedidas());
     expect(["nhtsa_e2", "supuesto"]).toContain(v1!.rigidez!.fuente);

@@ -413,8 +413,9 @@ export function CasoNuevo() {
               </div>
               <MapaEscena posiciones={posiciones} onClic={colocar} />
               <p className="t-nota" data-testid="colocados">
-                {posiciones.length} posición{posiciones.length === 1 ? "" : "es"} colocada
-                {posiciones.length === 1 ? "" : "s"} por el perito.
+                {posiciones.length === 1
+                  ? "1 posición colocada por el perito."
+                  : `${posiciones.length} posiciones colocadas por el perito.`}
               </p>
               <button
                 type="button"

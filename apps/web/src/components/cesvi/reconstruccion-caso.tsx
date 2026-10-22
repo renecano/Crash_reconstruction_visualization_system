@@ -134,6 +134,11 @@ export function ReconstruccionCaso({ expediente }: { expediente: Expediente }) {
             {v.rigidez && v.pasos.length ? (
               <span className="t-nota">Rigidez: {v.rigidez.nota}</span>
             ) : null}
+            {v.notas.map((n) => (
+              <span key={n} className="t-nota">
+                {n}
+              </span>
+            ))}
             {v.falta.length ? (
               <span className="t-nota text-texto-3">Falta: {v.falta.join("; ")}.</span>
             ) : null}

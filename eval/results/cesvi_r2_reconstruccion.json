@@ -1,0 +1,369 @@
+{
+  "fecha": "2026-10-22T03:32:06.651Z",
+  "descripcion": "E-R2: escenas de R1 (sin posiciones del perito) y el caso de AXA del corpus, reconstruidas con el solver TS de producción. Reconstruida = trayectoria de cada vehículo; velocidades fijadas = las que la evidencia identifica.",
+  "escenas": 11,
+  "validas": 11,
+  "reconstruidas": 11,
+  "con_incertidumbre": 11,
+  "con_velocidad_fijada": 0,
+  "ms_mediana": 425,
+  "detalle": [
+    {
+      "id": "cesvi-11b89eaad5",
+      "origen": "R1 · salida_de_camino",
+      "escena_valida": true,
+      "vehiculos": 1,
+      "reconstruida": true,
+      "con_incertidumbre": true,
+      "evidencia": [],
+      "velocidades_fijadas": 0,
+      "limites": [
+        "La evidencia del perito todavía no fija ninguna velocidad: coloca las posiciones de impacto y finales, o captura las medidas C y L de la deformación."
+      ],
+      "verificacion_cesvi": [
+        {
+          "vehiculo": "V1",
+          "metodos": 0,
+          "falta": [
+            "las medidas C (2, 4 o 6) y L de la deformación",
+            "la masa"
+          ]
+        }
+      ],
+      "ms": 561
+    },
+    {
+      "id": "cesvi-3a0125cb81",
+      "origen": "R1 · reversa",
+      "escena_valida": true,
+      "vehiculos": 2,
+      "reconstruida": true,
+      "con_incertidumbre": true,
+      "evidencia": [],
+      "velocidades_fijadas": 0,
+      "limites": [
+        "La evidencia del perito todavía no fija ninguna velocidad: coloca las posiciones de impacto y finales, o captura las medidas C y L de la deformación."
+      ],
+      "verificacion_cesvi": [
+        {
+          "vehiculo": "V1",
+          "metodos": 0,
+          "falta": [
+            "las medidas C (2, 4 o 6) y L de la deformación",
+            "la masa"
+          ]
+        },
+        {
+          "vehiculo": "V2",
+          "metodos": 0,
+          "falta": [
+            "las medidas C (2, 4 o 6) y L de la deformación",
+            "la masa"
+          ]
+        }
+      ],
+      "ms": 611
+    },
+    {
+      "id": "cesvi-44ed367f4d",
+      "origen": "R1 · alcance",
+      "escena_valida": true,
+      "vehiculos": 3,
+      "reconstruida": true,
+      "con_incertidumbre": true,
+      "evidencia": [],
+      "velocidades_fijadas": 0,
+      "limites": [
+        "La evidencia del perito todavía no fija ninguna velocidad: coloca las posiciones de impacto y finales, o captura las medidas C y L de la deformación."
+      ],
+      "verificacion_cesvi": [
+        {
+          "vehiculo": "V1",
+          "metodos": 0,
+          "falta": [
+            "las medidas C (2, 4 o 6) y L de la deformación",
+            "la masa"
+          ]
+        },
+        {
+          "vehiculo": "V2",
+          "metodos": 0,
+          "falta": [
+            "las medidas C (2, 4 o 6) y L de la deformación",
+            "la masa"
+          ]
+        },
+        {
+          "vehiculo": "V3",
+          "metodos": 0,
+          "falta": [
+            "las medidas C (2, 4 o 6) y L de la deformación",
+            "la masa"
+          ]
+        }
+      ],
+      "ms": 860
+    },
+    {
+      "id": "cesvi-644f4d909d",
+      "origen": "R1 · carambola",
+      "escena_valida": true,
+      "vehiculos": 5,
+      "reconstruida": true,
+      "con_incertidumbre": true,
+      "evidencia": [],
+      "velocidades_fijadas": 0,
+      "limites": [
+        "La evidencia del perito todavía no fija ninguna velocidad: coloca las posiciones de impacto y finales, o captura las medidas C y L de la deformación."
+      ],
+      "verificacion_cesvi": [
+        {
+          "vehiculo": "V1",
+          "metodos": 0,
+          "falta": [
+            "las medidas C (2, 4 o 6) y L de la deformación",
+            "la masa"
+          ]
+        },
+        {
+          "vehiculo": "V2",
+          "metodos": 0,
+          "falta": [
+            "las medidas C (2, 4 o 6) y L de la deformación",
+            "la masa"
+          ]
+        },
+        {
+          "vehiculo": "V3",
+          "metodos": 0,
+          "falta": [
+            "las medidas C (2, 4 o 6) y L de la deformación",
+            "la masa"
+          ]
+        },
+        {
+          "vehiculo": "V4",
+          "metodos": 0,
+          "falta": [
+            "las medidas C (2, 4 o 6) y L de la deformación",
+            "la masa"
+          ]
+        },
+        {
+          "vehiculo": "V5",
+          "metodos": 0,
+          "falta": [
+            "las medidas C (2, 4 o 6) y L de la deformación",
+            "la masa"
+          ]
+        }
+      ],
+      "ms": 1869
+    },
+    {
+      "id": "cesvi-697d4ae885",
+      "origen": "R1 · lateral",
+      "escena_valida": true,
+      "vehiculos": 2,
+      "reconstruida": true,
+      "con_incertidumbre": true,
+      "evidencia": [],
+      "velocidades_fijadas": 0,
+      "limites": [
+        "La evidencia del perito todavía no fija ninguna velocidad: coloca las posiciones de impacto y finales, o captura las medidas C y L de la deformación."
+      ],
+      "verificacion_cesvi": [
+        {
+          "vehiculo": "V1",
+          "metodos": 0,
+          "falta": [
+            "las medidas C (2, 4 o 6) y L de la deformación",
+            "la masa"
+          ]
+        },
+        {
+          "vehiculo": "V2",
+          "metodos": 0,
+          "falta": [
+            "las medidas C (2, 4 o 6) y L de la deformación",
+            "la masa"
+          ]
+        }
+      ],
+      "ms": 425
+    },
+    {
+      "id": "cesvi-86f04e3202",
+      "origen": "R1 · frontal",
+      "escena_valida": true,
+      "vehiculos": 2,
+      "reconstruida": true,
+      "con_incertidumbre": true,
+      "evidencia": [],
+      "velocidades_fijadas": 0,
+      "limites": [
+        "La evidencia del perito todavía no fija ninguna velocidad: coloca las posiciones de impacto y finales, o captura las medidas C y L de la deformación."
+      ],
+      "verificacion_cesvi": [
+        {
+          "vehiculo": "V1",
+          "metodos": 0,
+          "falta": [
+            "las medidas C (2, 4 o 6) y L de la deformación",
+            "la masa"
+          ]
+        },
+        {
+          "vehiculo": "V2",
+          "metodos": 0,
+          "falta": [
+            "las medidas C (2, 4 o 6) y L de la deformación",
+            "la masa"
+          ]
+        }
+      ],
+      "ms": 378
+    },
+    {
+      "id": "cesvi-89f891c2e0",
+      "origen": "R1 · volcadura",
+      "escena_valida": true,
+      "vehiculos": 1,
+      "reconstruida": true,
+      "con_incertidumbre": true,
+      "evidencia": [],
+      "velocidades_fijadas": 0,
+      "limites": [
+        "La evidencia del perito todavía no fija ninguna velocidad: coloca las posiciones de impacto y finales, o captura las medidas C y L de la deformación."
+      ],
+      "verificacion_cesvi": [
+        {
+          "vehiculo": "V1",
+          "metodos": 0,
+          "falta": [
+            "las medidas C (2, 4 o 6) y L de la deformación",
+            "la masa"
+          ]
+        }
+      ],
+      "ms": 368
+    },
+    {
+      "id": "cesvi-ae6d5b742f",
+      "origen": "R1 · objeto_fijo",
+      "escena_valida": true,
+      "vehiculos": 1,
+      "reconstruida": true,
+      "con_incertidumbre": true,
+      "evidencia": [],
+      "velocidades_fijadas": 0,
+      "limites": [
+        "La evidencia del perito todavía no fija ninguna velocidad: coloca las posiciones de impacto y finales, o captura las medidas C y L de la deformación."
+      ],
+      "verificacion_cesvi": [
+        {
+          "vehiculo": "V1",
+          "metodos": 0,
+          "falta": [
+            "las medidas C (2, 4 o 6) y L de la deformación",
+            "la masa"
+          ]
+        }
+      ],
+      "ms": 41
+    },
+    {
+      "id": "cesvi-c0e29d646d",
+      "origen": "R1 · otra",
+      "escena_valida": true,
+      "vehiculos": 2,
+      "reconstruida": true,
+      "con_incertidumbre": true,
+      "evidencia": [],
+      "velocidades_fijadas": 0,
+      "limites": [
+        "La evidencia del perito todavía no fija ninguna velocidad: coloca las posiciones de impacto y finales, o captura las medidas C y L de la deformación."
+      ],
+      "verificacion_cesvi": [
+        {
+          "vehiculo": "V1",
+          "metodos": 0,
+          "falta": [
+            "las medidas C (2, 4 o 6) y L de la deformación",
+            "la masa"
+          ]
+        },
+        {
+          "vehiculo": "V2",
+          "metodos": 0,
+          "falta": [
+            "las medidas C (2, 4 o 6) y L de la deformación",
+            "la masa"
+          ]
+        }
+      ],
+      "ms": 409
+    },
+    {
+      "id": "cesvi-e814f085db",
+      "origen": "R1 · crucero",
+      "escena_valida": true,
+      "vehiculos": 2,
+      "reconstruida": true,
+      "con_incertidumbre": true,
+      "evidencia": [],
+      "velocidades_fijadas": 0,
+      "limites": [
+        "La evidencia del perito todavía no fija ninguna velocidad: coloca las posiciones de impacto y finales, o captura las medidas C y L de la deformación."
+      ],
+      "verificacion_cesvi": [
+        {
+          "vehiculo": "V1",
+          "metodos": 0,
+          "falta": [
+            "las medidas C (2, 4 o 6) y L de la deformación",
+            "la masa"
+          ]
+        },
+        {
+          "vehiculo": "V2",
+          "metodos": 0,
+          "falta": [
+            "las medidas C (2, 4 o 6) y L de la deformación",
+            "la masa"
+          ]
+        }
+      ],
+      "ms": 427
+    },
+    {
+      "id": "cesvi-4dcc3ceaf6",
+      "origen": "corpus · caso A2010930 (AXA)",
+      "escena_valida": true,
+      "vehiculos": 2,
+      "reconstruida": true,
+      "con_incertidumbre": true,
+      "evidencia": [],
+      "velocidades_fijadas": 0,
+      "limites": [
+        "La evidencia del perito todavía no fija ninguna velocidad: coloca las posiciones de impacto y finales, o captura las medidas C y L de la deformación."
+      ],
+      "verificacion_cesvi": [
+        {
+          "vehiculo": "V1",
+          "metodos": 0,
+          "falta": [
+            "las medidas C (2, 4 o 6) y L de la deformación",
+            "la masa"
+          ]
+        },
+        {
+          "vehiculo": "V2",
+          "metodos": 2,
+          "falta": []
+        }
+      ],
+      "ms": 407
+    }
+  ]
+}

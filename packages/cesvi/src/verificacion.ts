@@ -24,11 +24,23 @@ export interface VerificacionVehiculo {
   rigidez: Rigidez | null;
   /** Lo que falta para calcular, en palabras. */
   falta: string[];
+  /** Cómo se leyeron los datos (p. ej. las unidades de la rigidez). */
+  notas: string[];
+}
+
+/**
+ * Una rigidez de dictamen con A por debajo de 1000 está en kN/m (y B en kN/m²): los coeficientes de
+ * un vehículo en N/m son del orden de decenas de miles. Así la escriben los dictámenes de CESVI
+ * aunque impriman «N/m» (ADR 0048): con ella la energía sale en kJ y la masa va en toneladas.
+ */
+export function rigidezEnKilo(A: number): boolean {
+  return A < 1000;
 }
 
 export function verificacionCesvi(e: Expediente): VerificacionVehiculo[] {
   return e.vehiculos.map((v) => {
     const falta: string[] = [];
+    const notas: string[] = [];
     const pasos: VerificacionVehiculo["pasos"] = [];
     const dano = (e.danos ?? []).find(
       (d) =>
@@ -56,10 +68,16 @@ export function verificacionCesvi(e: Expediente): VerificacionVehiculo[] {
       falta.push("la rigidez A y B, o la clase del vehículo para tomarla de NHTSA (E2)");
     }
     if (dano && rigidez && masaKg !== undefined) {
+      const kilo = rigidezEnKilo(rigidez.A);
+      if (kilo) {
+        notas.push(
+          `La rigidez (A = ${rigidez.A}) está en kN/m: la energía sale en kJ y la masa va en toneladas, como en los dictámenes de CESVI.`,
+        );
+      }
       const mc = formulaMcHenry(
         { L: dano.magnitud!.l_m!, A: rigidez.A, B: rigidez.B, C: dano.magnitud!.c_m! },
-        "J",
-        1,
+        kilo ? "kJ" : "J",
+        kilo ? 3 : 1,
       );
       pasos.push({
         titulo: `Energía de deformación (McHenry, ${mc.calculo.medidas} medidas)`,
@@ -67,9 +85,16 @@ export function verificacionCesvi(e: Expediente): VerificacionVehiculo[] {
       });
       pasos.push({
         titulo: "Velocidad equivalente de barrera (EBS)",
-        paso: formulaEbs(mc.calculo.energia, masaKg, mc.calculo.energia.toFixed(1)),
+        paso: kilo
+          ? formulaEbs(
+              mc.calculo.energia,
+              masaKg / 1000,
+              mc.calculo.energia.toFixed(3),
+              String(masaKg / 1000),
+            )
+          : formulaEbs(mc.calculo.energia, masaKg, mc.calculo.energia.toFixed(1)),
       });
     }
-    return { vehiculo: v.id, pasos, rigidez, falta };
+    return { vehiculo: v.id, pasos, rigidez, falta, notas };
   });
 }
