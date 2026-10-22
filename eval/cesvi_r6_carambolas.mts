@@ -113,7 +113,8 @@ function medir() {
       posteriores_en_escena: posterioresEnEscena.length,
       posteriores_ocurridos: ocurridos.length,
       escena_valida: validateEscena(r.spec).ok,
-      reconstruida: vs.length === e.vehiculos.length && vs.every((v) => (v.trayectoria?.t ?? []).length > 1),
+      reconstruida:
+        vs.length === e.vehiculos.length && vs.every((v) => (v.trayectoria?.t ?? []).length > 1),
       resultado_valido: validateResultado(r.resultado).ok,
       escena_3d_valida: validateEscena(especReconstruida(r)).ok,
       velocidades_fijadas: r.velocidades.filter((v) => v.previa !== null).length,
@@ -122,14 +123,17 @@ function medir() {
     };
   });
   const n = (f: (d: (typeof detalle)[number]) => boolean) => detalle.filter(f).length;
-  const suma = (f: (d: (typeof detalle)[number]) => number) => detalle.reduce((a, d) => a + f(d), 0);
+  const suma = (f: (d: (typeof detalle)[number]) => number) =>
+    detalle.reduce((a, d) => a + f(d), 0);
   const out = {
     fecha: new Date().toISOString(),
     descripcion:
       "E-R6: los expedientes del corpus de C0 con 3 o más vehículos (impactos y zonas importados del dictamen, sin posiciones del perito), reconstruidos con el solver TS de producción como «Caso nuevo». En 3D = resultado y escena para el visor válidos contra el contrato.",
     expedientes: detalle.length,
     por_vehiculos: Object.fromEntries(
-      [...new Set(detalle.map((d) => d.vehiculos))].sort((a, b) => a - b).map((k) => [k, n((d) => d.vehiculos === k)]),
+      [...new Set(detalle.map((d) => d.vehiculos))]
+        .sort((a, b) => a - b)
+        .map((k) => [k, n((d) => d.vehiculos === k)]),
     ),
     escenas_validas: n((d) => d.escena_valida),
     reconstruidas: n((d) => d.reconstruida),
