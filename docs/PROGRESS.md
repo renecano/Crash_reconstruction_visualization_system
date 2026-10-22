@@ -62,6 +62,34 @@ Reglas de trabajo: `CLAUDE.md`. Especificación: `PLAN.md`.
   - **Cómo probarlo:** en «Correspondencia y dictamen», escribir un nombre, aceptar la sugerencia, pedir el borrador y exportar el dictamen.
   - **Pruebas:** `packages/cesvi` (sugerencia y borrador con cliente falso), `apps/web/src/lib/dictamen-cesvi.test.ts` y la e2e `@flujo` hasta la descarga del PDF.
   - **Qué necesito de René:** nada nuevo. El borrador usa la llave y el tope de gasto de producción que ya están en Vercel.
+- **Video demo narrado de `/cesvi` para CESVI (2026-10-22)** (rama `feat/video-demo`; no es prueba de CI):
+  - **Dónde quedó:** `demo/video/croquis-cesvi-demo.mp4` (1920×1080 a 30 cuadros, H.264 y AAC estéreo a 48 kHz, 4.21 min) y los subtítulos en `demo/video/croquis-cesvi-demo.srt`. Los dos están fuera de git: el MP4 pesa 20.3 MB, más de 20 MB, y el `.srt` se regenera con el montaje.
+  - **Qué muestra:**
+    - la entrada con la marca;
+    - los ocho pasos del recorrido, con el modo Trabajar y el tema;
+    - «Caso nuevo» con un crucero (otra modalidad que el alcance de AXA);
+    - el cierre: «Lo que sigue: el 3D de la reconstrucción y cualquier caso, no solo este».
+  - **Guion:** `docs/cesvi/video/guion.md`, en 19 segmentos. Es el mismo texto de la voz y de los subtítulos; solo trae cifras que muestra el sistema.
+  - **Voz:** Piper con la voz `es_MX-claude-high`, registrada en `assets/ASSETS.md`. Sin música.
+  - **Las lecturas de Claude son las grabadas** (`hecho-A2010930.json` y la escena `cesvi-e814f085db`): el video no gasta API.
+  - **Cómo regrabarlo completo** (PowerShell o Git Bash, desde la raíz):
+    1. `pnpm --filter @croquis/web build`, y luego `pnpm --filter @croquis/web start` en otra terminal (servidor de producción en `http://localhost:3000`).
+    2. `node demo/video/voz.mjs`: un WAV por segmento y su duración medida (`demo/video/salida/voz.json`). Solo hace falta si cambia el guion.
+    3. `node demo/video/grabar.mjs`, con `PLAYWRIGHT_BROWSERS_PATH=D:\dev-cache\ms-playwright`: Chromium completo en headless nuevo, a 1920×1080. Cada segmento espera su voz más 1.3 s de lectura. Escribe `salida/recorrido.webm` y `salida/linea-de-tiempo.json`. Con `CROQUIS_VIDEO_RAPIDO=1` hace un ensayo rápido de las acciones, sin esperas; ese ensayo no sirve para el video.
+    4. `node demo/video/montar.mjs`: pone cada voz donde empezó su segmento y escribe el MP4 y el `.srt`.
+  - **Herramientas instaladas fuera del repositorio** (en D:, porque C: está casi lleno; las rutas se pueden cambiar con variables de entorno, ver `demo/video/comun.mjs`):
+    - ffmpeg 9.0.2 essentials en `D:\dev-cache\tools\ffmpeg\` (`CROQUIS_FFMPEG_DIR`);
+    - Piper 1.8.0 (piper-tts, en un venv de Python 3.12) en `D:\dev-cache\tools\piper-venv\` (`CROQUIS_PIPER`);
+    - la voz en `D:\dev-cache\tools\piper-voices\es_MX-claude-high.onnx` (`CROQUIS_PIPER_VOZ`).
+  - **Lo que arregló la grabación en «Caso nuevo»** (con su prueba en `e2e/cesvi-caso.spec.ts`):
+    - las posiciones que coloca el perito no se veían en el mapa, porque faltaba la hoja de estilos de MapLibre;
+    - ahora cada posición se ve con el número y el color del vehículo, y el impacto con borde punteado;
+    - el clic pasa al mapa aunque caiga junto a otra posición.
+  - **Lo que encontró y queda pendiente** (ver «Endurecimiento pendiente»): en una reversa, el solver no reconstruye al vehículo que retrocede.
+  - **Falta regrabarlo una vez:**
+    - en el MP4 actual (grabado con el Chromium del shell headless), la vista previa del paso 8 sale en blanco, porque ese Chromium no trae visor de PDF;
+    - `grabar.mjs` ya usa el Chromium completo (`channel: "chromium"`), que sí lo muestra (probado con un PDF de prueba);
+    - la regrabación se cortó porque la laptop se quedó sin memoria (2.1 GB libres de 7.8 GB): hay que correr los pasos 1, 3 y 4 de arriba con todo lo demás cerrado.
 - **Versión real para CESVI (desde 2026-10-21):** el plan es `docs/cesvi/PLAN-CESVI.md`; `docs/cesvi/PROTOTIPO.md` queda como historial.
   - **El prototipo desplegado se queda como está** para la demo con CESVI de esta semana. La versión real se trabaja en ramas y entra a `main` solo con la e2e del prototipo en verde.
   - **Plan v2 (2026-10-21):** René lo cambió el mismo día. El centro es la reconstrucción con física y su 3D a partir de lo que narra el perito; los dictámenes sirven para demostrar que Croquis reproduce lo que CESVI ya analizó, y la comparación con la declaración del conductor queda como complemento opcional (R7). `CLAUDE.md` cambió con él: el visor 3D se reactiva.
@@ -475,6 +503,10 @@ Lo que se pospone por el trabajo con CESVI no se borra: queda aquí para despué
 - **Lighthouse, axe y E-series como requisito:** `eval/f11_portada.mjs` y las demás evaluaciones siguen en el repo; se corren cuando René lo pida.
 - **En pausa:** la portada de lanzamiento y la historia (el visor 3D se reactiva con el plan v2, R3) (de F11a solo se usan tokens, marca y componentes); E6 en baja y media después de F11a; F11b (E9 con personas).
 - **«Caso nuevo» (R1 y R2):** buscar el lugar en el mapa (hoy el perito navega a mano hasta el punto), y generalizar el recorrido de ocho pasos a N vehículos para que use la misma escena.
+- **Reversa en la reconstrucción** (encontrado al grabar el video, 2026-10-22):
+  - **El caso:** en `cesvi-3a0125cb81`, A mira al norte y retrocede hacia el sur hasta pegar con B.
+  - **Lo que pasa:** con esas posiciones, la inversión no identifica ninguna velocidad y deja las dos en el valor por defecto de 40 km/h. La página lo dice («la evidencia no la fija»), pero no reconstruye la maniobra.
+  - **Lo que falta:** el contrato y el solver necesitan el sentido de marcha separado del rumbo del frente. Va con R4 o R6, junto con las otras modalidades del corpus.
 - **Del prototipo de CESVI:** el mapa con mosaicos propios (privacidad completa), la importación automática de cualquier dictamen, interpenetración, impactos múltiples y generalidad del método; autenticación con cuentas para cuando los peritos usen sus propios casos (hoy el acceso es con usuario y clave, ADR 0049).
 
 ### Bloqueado — necesita a René

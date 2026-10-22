@@ -75,6 +75,11 @@ test("@flujo /cesvi/caso: de la narración del perito al mapa y a la escena", as
   await colocar("V2:impacto", "90", 305, 200);
   await colocar("V2:final", "80", 345, 185);
   await expect(page.getByTestId("colocados")).toHaveText("4 posiciones colocadas por el perito.");
+  // Cada posición se ve en el mapa, donde el perito la puso (no fuera de él).
+  const cajaMapa = (await mapa.boundingBox())!;
+  const punto = (await page.locator('[data-posicion="V1:final"]').boundingBox())!;
+  expect(Math.abs(punto.x + punto.width / 2 - (cajaMapa.x + 330))).toBeLessThan(4);
+  expect(Math.abs(punto.y + punto.height / 2 - (cajaMapa.y + 170))).toBeLessThan(4);
   await expect(page.getByTestId("validez")).toHaveText("La escena es válida contra el contrato.");
 
   // 4. La reconstrucción física: las posiciones del perito fijan las velocidades, con percentiles,
