@@ -63,7 +63,7 @@ Reglas de trabajo: `CLAUDE.md`. Especificación: `PLAN.md`.
   - **Pruebas:** `packages/cesvi` (sugerencia y borrador con cliente falso), `apps/web/src/lib/dictamen-cesvi.test.ts` y la e2e `@flujo` hasta la descarga del PDF.
   - **Qué necesito de René:** nada nuevo. El borrador usa la llave y el tope de gasto de producción que ya están en Vercel.
 - **Video demo narrado de `/cesvi` para CESVI (2026-10-22)** (rama `feat/video-demo`; no es prueba de CI):
-  - **Dónde quedó:** `demo/video/croquis-cesvi-demo.mp4` (1920×1080 a 30 cuadros, H.264 y AAC estéreo a 48 kHz, 4.21 min) y los subtítulos en `demo/video/croquis-cesvi-demo.srt`. Los dos están fuera de git: el MP4 pesa 20.3 MB, más de 20 MB, y el `.srt` se regenera con el montaje.
+  - **Dónde quedó:** `demo/video/croquis-cesvi-demo.mp4` (1920×1080 a 30 cuadros, H.264 y AAC estéreo a 48 kHz, 4.10 min) y los subtítulos en `demo/video/croquis-cesvi-demo.srt`. Los dos están fuera de git: el MP4 pesa 20.9 MB, más de 20 MB, y el `.srt` se regenera con el montaje.
   - **Qué muestra:**
     - la entrada con la marca;
     - los ocho pasos del recorrido, con el modo Trabajar y el tema;
@@ -86,10 +86,7 @@ Reglas de trabajo: `CLAUDE.md`. Especificación: `PLAN.md`.
     - ahora cada posición se ve con el número y el color del vehículo, y el impacto con borde punteado;
     - el clic pasa al mapa aunque caiga junto a otra posición.
   - **Lo que encontró y queda pendiente** (ver «Endurecimiento pendiente»): en una reversa, el solver no reconstruye al vehículo que retrocede.
-  - **Falta regrabarlo una vez:**
-    - en el MP4 actual (grabado con el Chromium del shell headless), la vista previa del paso 8 sale en blanco, porque ese Chromium no trae visor de PDF;
-    - `grabar.mjs` ya usa el Chromium completo (`channel: "chromium"`), que sí lo muestra (probado con un PDF de prueba);
-    - la regrabación se cortó porque la laptop se quedó sin memoria (2.1 GB libres de 7.8 GB): hay que correr los pasos 1, 3 y 4 de arriba con todo lo demás cerrado.
+  - **Regrabado el 2026-10-22** con el Chromium completo (`channel: "chromium"`): la vista previa del paso 8 muestra el PDF. El Chromium del shell headless no trae visor de PDF, y en él salía en blanco.
 - **Versión real para CESVI (desde 2026-10-21):** el plan es `docs/cesvi/PLAN-CESVI.md`; `docs/cesvi/PROTOTIPO.md` queda como historial.
   - **El prototipo desplegado se queda como está** para la demo con CESVI de esta semana. La versión real se trabaja en ramas y entra a `main` solo con la e2e del prototipo en verde.
   - **Plan v2 (2026-10-21):** René lo cambió el mismo día. El centro es la reconstrucción con física y su 3D a partir de lo que narra el perito; los dictámenes sirven para demostrar que Croquis reproduce lo que CESVI ya analizó, y la comparación con la declaración del conductor queda como complemento opcional (R7). `CLAUDE.md` cambió con él: el visor 3D se reactiva.
