@@ -103,12 +103,39 @@ Reglas de trabajo: `CLAUDE.md`. Especificación: `PLAN.md`.
     - **C0:** pasa a R0. Falta lo nuevo: la descripción de los hechos sin conclusiones, con su revisión de fuga, y lo que concluyó CESVI, estructurado.
     - **C1:** es el módulo de verificación CESVI de R2, con su reproducción (E-C1) ya corrida.
     - **C2–C8:** se reacomodan en R1–R9.
-  - **Fase actual: R4** (evaluación contra los dictámenes). R6 quedó cerrada el 2026-10-22, y R3 también; R0, R1 y R2, el 2026-10-21. C0 y C1 de la v1 quedaron cerradas el 2026-10-21. El plan de C0 fue:
+  - **Fase actual: R5** (cargar un dictamen). R4 y R6 quedaron cerradas el 2026-10-22, y R3 también; R0, R1 y R2, el 2026-10-21. C0 y C1 de la v1 quedaron cerradas el 2026-10-21. El plan de C0 fue:
     - **Contrato v2:** `escena.schema.json` ampliado, con migración desde v1.3, Zod y Pydantic generados y un validador semántico (N vehículos, M impactos, versiones).
     - **Corpus estructurado** de los 671 dictámenes con Claude (salida estructurada, caché, semilla), validado contra el esquema, con partición congelada del 30 % y etiquetas de la conclusión revisadas en una muestra.
     - **Mediciones:** las proporciones del §2 en `eval/results/cesvi_corpus.json`; desde ahí se pueden citar.
     - **Costo:** antes de correr el corpus se estima y se anota aquí. Si pasa de 30 USD, se pregunta a René.
-  - **R4 en curso: Croquis reproduce los dictámenes** (rama `feat/r4-reproduccion`). Plan:
+  - **Resumen de R4 para René** (rama `feat/r4-reproduccion`, ADR 0067):
+    - **Qué quedó:**
+      - **E-R4:** Croquis recibe solo la narración sin conclusiones de cada dictamen de la prueba congelada; la lee a escena como en «Caso nuevo», la reconstruye y se compara con lo que concluyó CESVI.
+      - **Desarrollo antes que prueba:** las reglas se ajustaron con 80 dictámenes de desarrollo y se congelaron en un commit antes de medir la prueba, que se midió una sola vez.
+      - **La página `/cesvi/reproduccion`:**
+        - los 205 dictámenes de la prueba, con lo que concluyó CESVI y lo que obtuvo Croquis lado a lado;
+        - lo que coincide y lo que no;
+        - la reconstrucción en 2D y 3D.
+    - **Números medidos** (`eval/results/cesvi_r4_reproduccion_prueba.json`, 205 dictámenes):
+      - **Modalidad:** 34.2 % (65 de 190), contra 35.3 % de decir siempre «otra». Croquis no infiere «otra», que en los dictámenes es una clase de casos variados.
+        - **Solo las modalidades físicas:** 52.8 % (65 de 123), contra 37.4 % de decir siempre «alcance».
+        - **Por modalidad:** alcance 34 de 46, lateral 17 de 25, frontal 4 de 6, objeto fijo 6 de 17, salida del camino 2 de 10, volcadura 2 de 10, reversa 0 de 9.
+      - **Zonas de contacto:** Croquis tiene 69.2 % de las de CESVI (216 de 312), con precisión de 59.7 %.
+      - **Secuencia:** primer impacto 63.7 % (86 de 135); secuencia completa 49.6 %.
+      - **Posiciones finales:** Croquis tiene 53.4 % (31 de 58).
+      - **Velocidades:** hay 5 por deformación en la prueba y Croquis no calcula ninguna, porque esas narraciones no traen las medidas C y L ni la masa. La línea base de 61.62 km/h se equivoca en una mediana de 11.72 km/h.
+      - **Reconstrucción:** los 205 se reconstruyen en 3D, con mediana de 359 ms.
+      - **Gasto de API:** 3.6760 USD con lotes (estimado: 5.60 USD).
+    - **Cómo probarlo:**
+      1. Abrir `/cesvi/reproduccion` y entrar a un dictamen.
+      2. Leer los dos lados.
+      3. «Reconstruir» para ver el 2D y el 3D.
+    - **Pruebas:**
+      - `packages/cesvi/src/dictamenes-r4.test.ts`: reglas, comparación y líneas base;
+      - la e2e `@flujo` de la página.
+    - **Qué necesito de René:** nada.
+    - **Siguiente:** R5, cargar un dictamen.
+  - **Lo que se planeó para R4:**
     1. **Comparación** (`packages/cesvi/src/reproduccion.ts`): a partir de la escena que Croquis lee de la narración sin conclusiones (R0 → R1), contra lo que concluyó CESVI (R0):
        - **modalidad:** Croquis la infiere de la escena (vehículos, caras y dirección de los daños, objeto fijo) y de lo que dice la narración;
        - **zonas de contacto:** por vehículo y cara;
@@ -621,6 +648,16 @@ Lo que se pospone por el trabajo con CESVI no se borra: queda aquí para despué
   - el debris del segundo impacto;
   - el tiempo de las escenas con muchos vehículos (hasta 34 s en E-R6);
   - en «Caso nuevo», una forma de declarar a mano los impactos cuando la narración no dice su orden.
+- **De E-R4** (ADR 0067, «Límites»):
+  - **Modalidades:**
+    - la reversa (0 de 9);
+    - objeto fijo contra salida del camino cuando la narración no dice qué se golpeó.
+  - **Lo que no se mide todavía:**
+    - las velocidades (las narraciones de la prueba no traen medidas);
+    - el texto de las posiciones finales (hoy solo su presencia).
+  - **La página:**
+    - reconstruye con la disposición genérica;
+    - un enlace para abrir el caso en «Caso nuevo» y colocar a los vehículos.
 - **Reversa en la reconstrucción** (encontrado al grabar el video, 2026-10-22):
   - **El caso:** en `cesvi-3a0125cb81`, A mira al norte y retrocede hacia el sur hasta pegar con B.
   - **Lo que pasa:** con esas posiciones, la inversión no identifica ninguna velocidad y deja las dos en el valor por defecto de 40 km/h. La página lo dice («la evidencia no la fija»), pero no reconstruye la maniobra.
