@@ -1,6 +1,6 @@
 # CLAUDE.md — Reglas permanentes de Croquis
 
-Lee este archivo y `PLAN.md` al inicio de cada sesión. `PLAN.md` dice **qué** construir; este archivo dice **cómo** trabajar.
+Lee este archivo y `docs/cesvi/PLAN-CESVI.md` al inicio de cada sesión. `PLAN-CESVI.md` dice **qué** construir y manda sobre `PLAN.md` (que sigue valiendo para lo ya construido); este archivo dice **cómo** trabajar.
 
 ## Contexto
 - Dueño: René (ITC, Tec de Monterrey Campus Toluca). Producto para los peritos de CESVI México.
@@ -11,14 +11,14 @@ Lee este archivo y `PLAN.md` al inicio de cada sesión. `PLAN.md` dice **qué** 
 
 Croquis es para los **peritos de CESVI México**. El alcance lo define lo que ellos necesitan y van a usar, no lo que sería impresionante. Desde el 20 de octubre de 2026 estas reglas son permanentes y mandan sobre cualquier otra de este archivo o de `PLAN.md` que las contradiga:
 
-- **Funciona como CESVI lo pide.** Que los números sean correctos, que el flujo del perito sea claro y que el dictamen salga como ellos lo hacen: esa es la calidad que importa. No construyas funciones, variantes ni pulido que un perito no vaya a usar. Si dudas, pregúntate si aparece en un dictamen de CESVI o en `docs/cesvi/`; si no, no va.
+- **Funciona como CESVI lo pide.** Que los números sean correctos, que el flujo del perito sea claro y que el dictamen salga como ellos lo hacen: esa es la calidad que importa. No construyas funciones, variantes ni pulido que un perito no vaya a usar. Si dudas, pregúntate si aparece en un dictamen de CESVI o en `docs/cesvi/`; si no, no va. El centro es la reconstrucción con física y su visualización en 3D a partir de lo que narra el perito (PLAN-CESVI §1); los dictámenes de CESVI sirven para demostrar que Croquis reproduce lo que ellos ya analizaron, y la comparación con la declaración del conductor es un complemento opcional.
 - **Las pruebas cuestan menos que el código.** Si una tarea toma 1 hora de código, sus pruebas no toman 8.
   - **Bloquean el merge solo:** lint, tipos, pruebas unitarias de lógica y cálculos (en especial, las que reproducen los números de los dictámenes) y una e2e por flujo principal, solo en Chromium.
   - **CI completo en menos de 10 minutos.** Si tarda más, recorta lo que lo hace lento, no las pruebas de cálculo.
   - **No se hacen por defecto:** Firefox y WebKit, capturas de referencia, Lighthouse y axe, evaluaciones largas (E-series), barridos, Hypothesis en código de interfaz, revisión independiente de diseño, pulido visual fino. Corren solo a mano, cuando René lo pide o antes de una demo con CESVI.
   - **No esperes CI con los brazos cruzados:** si CI tarda, sigue con la siguiente tarea.
-- **El 3D, la portada de lanzamiento y la historia quedan en pausa** hasta que René los reactive. Del diseño de F11a se usa lo ya hecho (tokens, marca, componentes).
-- **Lo que no cambia nunca:** ningún número inventado; toda diferencia con un dictamen se muestra con su valor y su porcentaje; los datos de CESVI (y placas, VIN, nombres) nunca se suben al repositorio ni salen en la demo; IA responsable (§10).
+- **El visor 3D se reactiva** (PLAN-CESVI R3) y es central. La portada de lanzamiento y la historia siguen en pausa hasta que René las reactive.
+- **Lo que no cambia nunca:** ningún número inventado; toda diferencia con un dictamen se muestra con su valor y su porcentaje; los dictámenes de CESVI son de uso libre para este proyecto (CESVI los entregó con ese fin; muchos son casos elaborados por ellos): se pueden usar en fixtures, pruebas, evaluaciones y demos, y los lotes crudos siguen fuera de git solo por tamaño; IA responsable (§10).
 - **Lo que se pospone no se borra:** anótalo en `docs/PROGRESS.md`, sección "Endurecimiento pendiente".
 - Trabaja directo, con commits frecuentes, y despliega a Vercel en cuanto haya algo que mostrar.
 
