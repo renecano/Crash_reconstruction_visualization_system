@@ -62,6 +62,12 @@ Reglas de trabajo: `CLAUDE.md`. Especificación: `PLAN.md`.
   - **Cómo probarlo:** en «Correspondencia y dictamen», escribir un nombre, aceptar la sugerencia, pedir el borrador y exportar el dictamen.
   - **Pruebas:** `packages/cesvi` (sugerencia y borrador con cliente falso), `apps/web/src/lib/dictamen-cesvi.test.ts` y la e2e `@flujo` hasta la descarga del PDF.
   - **Qué necesito de René:** nada nuevo. El borrador usa la llave y el tope de gasto de producción que ya están en Vercel.
+- **Next.js 16.4.0 → 16.4.2 por seguridad (2026-10-22, rama `fix/next-security`):**
+  - **Cómo se encontró:** `next build` se detuvo con un aviso de vulnerabilidad, y `pnpm audit --prod` lo confirmó.
+  - **Lo que corrige 16.4.2** (y `eslint-config-next` 16.4.2 con él):
+    - dos ejecuciones remotas de código sin autenticación: la optimización de imágenes con SVG (GHSA-2464-fhr4-w9xw) y las funciones `use cache` que devuelven arreglos tipados (GHSA-673q-mjm6-r5xr);
+    - una denegación de servicio con Server Actions (GHSA-p3m5-59mp-jv5r).
+  - **Resultado:** `pnpm audit --prod` ya no encuentra vulnerabilidades. Versión registrada en el ADR 0001.
 - **Video demo narrado de `/cesvi` para CESVI (2026-10-22)** (rama `feat/video-demo`; no es prueba de CI):
   - **Dónde quedó:** `demo/video/croquis-cesvi-demo.mp4` (1920×1080 a 30 cuadros, H.264 y AAC estéreo a 48 kHz, 4.10 min) y los subtítulos en `demo/video/croquis-cesvi-demo.srt`. Los dos están fuera de git: el MP4 pesa 20.9 MB, más de 20 MB, y el `.srt` se regenera con el montaje.
   - **Qué muestra:**
