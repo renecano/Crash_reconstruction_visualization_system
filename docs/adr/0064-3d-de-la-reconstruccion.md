@@ -27,7 +27,7 @@
   - **De vuelta al mapa:** `posicionesEnTiempo` interpola la trayectoria del solver en ese instante y la regresa al mapa desde el punto de impacto (latitud, longitud y rumbo desde el norte).
   - **En «Caso nuevo»:** el mapa dibuja ahí a cada vehículo.
 - **Restos, huellas y objetos fijos:**
-  - las huellas y los restos que dibuja el visor salen de las trayectorias del solver (ADR 0030 y siguientes);
+  - las huellas y los restos que dibuja el visor salen de las trayectorias del solver (visor de F4 a F8);
   - el objeto fijo narrado entra a la escena como objeto del entorno (`buildSpec`).
 
   No se dibuja una zona de restos con la longitud narrada sin su ubicación en el mapa: no se inventa dónde está.
