@@ -169,7 +169,9 @@ Cada fase se cierra con su criterio en verde, merge y despliegue, y con su resum
 - Los recursos son los mismos de R10.
 - **Listo cuando:** un caso del corpus sale como video de calidad cinematográfica con un solo comando en la computadora de la demo, y René aprueba el resultado.
 
-**Orden:** R0 → R1 → R2 → R3 → R4 → R5 → R6 → R7 → R8 → R9 → R10 → R11.
+**Orden:** R0 → R1 → R2 → R3 → R6 → R4 → R5 → R7 → R8 → R9 → R10 → R11.
+
+R6 (carambolas) va después de R3 y antes de R4 (René, 2026-10-21): el corpus tiene 104 dictámenes con 3 o más vehículos y 144 con más de un impacto, y la evaluación de R4 debe cubrirlos.
 
 ## 6. Fuera de esta versión
 

@@ -65,16 +65,48 @@ Reglas de trabajo: `CLAUDE.md`. Especificación: `PLAN.md`.
 - **Versión real para CESVI (desde 2026-10-21):** el plan es `docs/cesvi/PLAN-CESVI.md`; `docs/cesvi/PROTOTIPO.md` queda como historial.
   - **El prototipo desplegado se queda como está** para la demo con CESVI de esta semana. La versión real se trabaja en ramas y entra a `main` solo con la e2e del prototipo en verde.
   - **Plan v2 (2026-10-21):** René lo cambió el mismo día. El centro es la reconstrucción con física y su 3D a partir de lo que narra el perito; los dictámenes sirven para demostrar que Croquis reproduce lo que CESVI ya analizó, y la comparación con la declaración del conductor queda como complemento opcional (R7). `CLAUDE.md` cambió con él: el visor 3D se reactiva.
-  - **Orden:** R0 → R1 → R2 → R3 → R4 → R5 → R6 → R7 → R8 → R9 → R10 → R11. R10 (calidad visual del 3D) y R11 (video cinematográfico con Blender) van al final.
+  - **Orden:** R0 → R1 → R2 → R3 → R6 → R4 → R5 → R7 → R8 → R9 → R10 → R11.
+    - **R6 (carambolas) va antes de R4** (René, 2026-10-21): la evaluación de R4 debe cubrir los 104 dictámenes con 3 o más vehículos y los 144 con más de un impacto (`eval/results/cesvi_corpus_extraccion.json`).
+    - **R10** (calidad visual del 3D) y **R11** (video cinematográfico con Blender) van al final.
   - **Cómo quedan las fases C de la v1:**
     - **C0:** pasa a R0. Falta lo nuevo: la descripción de los hechos sin conclusiones, con su revisión de fuga, y lo que concluyó CESVI, estructurado.
     - **C1:** es el módulo de verificación CESVI de R2, con su reproducción (E-C1) ya corrida.
     - **C2–C8:** se reacomodan en R1–R9.
-  - **Fase actual: R0** (termina el corpus con la descripción sin conclusiones y las conclusiones de CESVI). C0 y C1 de la v1 quedaron cerradas el 2026-10-21. El plan de C0 fue:
+  - **Fase actual: R1** (de la narración del perito a la escena). R0 quedó cerrada el 2026-10-21. C0 y C1 de la v1 quedaron cerradas el 2026-10-21. El plan de C0 fue:
     - **Contrato v2:** `escena.schema.json` ampliado, con migración desde v1.3, Zod y Pydantic generados y un validador semántico (N vehículos, M impactos, versiones).
     - **Corpus estructurado** de los 671 dictámenes con Claude (salida estructurada, caché, semilla), validado contra el esquema, con partición congelada del 30 % y etiquetas de la conclusión revisadas en una muestra.
     - **Mediciones:** las proporciones del §2 en `eval/results/cesvi_corpus.json`; desde ahí se pueden citar.
     - **Costo:** antes de correr el corpus se estima y se anota aquí. Si pasa de 30 USD, se pregunta a René.
+  - **Resumen de R0 para René** (rama `feat/r0-narracion`, ADR 0060):
+    - **Qué quedó:** por cada uno de los 671 dictámenes, en `data/cesvi/corpus/narraciones.jsonl`:
+      - la narración de los hechos sin conclusiones, revisada contra fugas;
+      - lo que concluyó CESVI (modalidad, zonas de contacto, secuencia de impactos, velocidades y posiciones finales), cada dato con su cita verificada contra el texto.
+    - **Números medidos** (`eval/results/cesvi_narraciones.json`):
+      - **Narraciones limpias:** 664 de 671; 3 con fuga (todas de desarrollo) y 4 de dictámenes que solo traen conclusiones.
+      - **Prueba congelada:** las 205 narraciones están limpias, y 193 traen conclusiones estructuradas. De las otras 12:
+        - 8 son dictámenes que no concluyen modalidad, zonas ni secuencia;
+        - en 4 el OCR revolvió el texto y las citas no se pueden verificar.
+
+        Están listadas con su motivo.
+
+      - **Citas fuera del texto:** 90 de 2 513, descartadas. **Velocidades descartadas:** 10 de 97.
+      - **Costo real:** 10.27 USD; estimado 11.06.
+    - **Cómo probarlo:**
+      - `pnpm --filter @croquis/cesvi test` (revisión de fuga, citas y conversión, sin la API);
+      - `pnpm --filter @croquis/cesvi narracion armar` rearma desde la caché local, sin costo.
+    - **Qué necesito de René:** nada nuevo.
+    - **Siguiente:** R1, de la narración del perito a la escena.
+  - **Lo que se planeó para R0:**
+    - **Plan:**
+      - **Por dictamen, dos campos más:**
+        - la narración del perito sin conclusiones: hechos, lugar, daños, evidencias y medidas, con su revisión automática de fuga (sin cifras de velocidad o energía, métodos ni frases de conclusión);
+        - lo que concluyó CESVI: modalidad, zonas de contacto, secuencia de impactos, velocidades y posiciones finales, cada dato con su cita revisada contra el texto.
+      - **Código:** `packages/cesvi/src/narracion.ts` y `data/cesvi/scripts/narracion.mts`.
+      - **Salida:** `data/cesvi/corpus/narraciones.jsonl` y `eval/results/cesvi_narraciones.json`.
+    - **Estimado de costo (antes de correr):**
+      - **Entrada:** 6 691 319 tokens (conteo de la API, gratis).
+      - **Piloto de 5 dictámenes** con la API normal: 0.1412 USD, con 1 327 tokens de salida en promedio, sin fugas y sin citas fuera del texto.
+      - **Los 666 restantes con la API de lotes: ~11.1 USD,** por debajo del tope de 30 USD; se envía con tope de 15 USD.
   - **Resumen de C0 para René** (rama `feat/c0-corpus`, ADR 0058):
     - **Qué quedó:**
       - **Contrato 2.0.0:** `expediente` opcional (N vehículos, M impactos, versiones, cálculos, criterios), migración identidad 1.3.0 → 2.0.0 en TS y Python, Zod y Pydantic generados y validador semántico X001–X009 con paridad. Relatos-MX conserva sus escenas congeladas en 1.3.0 y las valida migradas.

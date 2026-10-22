@@ -5,6 +5,7 @@
     "src",
     "vitest.config.ts",
     "../../data/cesvi/scripts/corpus.mts",
+    "../../data/cesvi/scripts/narracion.mts",
     "../../eval/cesvi_concordancia.mts",
     "../../eval/cesvi_reproduccion.mts"
   ]

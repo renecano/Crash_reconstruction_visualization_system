@@ -1,0 +1,123 @@
+{
+  "fecha": "2026-10-22T02:29:52.902Z",
+  "version_prompt": "narracion-cesvi-v1",
+  "modelo": "claude-sonnet-5-5",
+  "dictamenes": 671,
+  "leidos": 671,
+  "sin_leer": 0,
+  "fuga": {
+    "con_fuga": 3,
+    "proporcion": 0.0045,
+    "por_patron": {
+      "velocidad": 1,
+      "energia": 0,
+      "metodo": 0,
+      "conclusion": 0,
+      "correspondencia": 2,
+      "declaracion": 0,
+      "modalidad": 0
+    },
+    "ids": [
+      {
+        "id": "cesvi-43aa75bae0",
+        "fugas": [
+          "velocidad"
+        ]
+      },
+      {
+        "id": "cesvi-68b3588e5e",
+        "fugas": [
+          "correspondencia"
+        ]
+      },
+      {
+        "id": "cesvi-d8dbcbbf19",
+        "fugas": [
+          "correspondencia"
+        ]
+      }
+    ]
+  },
+  "solo_conclusiones": [
+    "cesvi-dfa79f2bc0",
+    "cesvi-b06af62701",
+    "cesvi-4f112d8c74",
+    "cesvi-1769d5f676"
+  ],
+  "descripcion_limpia": 664,
+  "prueba_congelada": {
+    "dictamenes": 205,
+    "leidos": 205,
+    "solo_conclusiones": 0,
+    "descripcion_limpia": 205,
+    "con_conclusiones": 193,
+    "sin_conclusiones": [
+      {
+        "id": "cesvi-285a38dbd1",
+        "motivo": "el_dictamen_no_concluye"
+      },
+      {
+        "id": "cesvi-ce2e6cce75",
+        "motivo": "el_dictamen_no_concluye"
+      },
+      {
+        "id": "cesvi-faa8a2bde0",
+        "motivo": "el_dictamen_no_concluye"
+      },
+      {
+        "id": "cesvi-9200983dab",
+        "motivo": "el_dictamen_no_concluye"
+      },
+      {
+        "id": "cesvi-5242a129c5",
+        "motivo": "citas_no_verificables"
+      },
+      {
+        "id": "cesvi-d0c7ed3ad8",
+        "motivo": "el_dictamen_no_concluye"
+      },
+      {
+        "id": "cesvi-6dbc809e80",
+        "motivo": "el_dictamen_no_concluye"
+      },
+      {
+        "id": "cesvi-0eeebbed82",
+        "motivo": "el_dictamen_no_concluye"
+      },
+      {
+        "id": "cesvi-466c13a262",
+        "motivo": "citas_no_verificables"
+      },
+      {
+        "id": "cesvi-edc4d70d79",
+        "motivo": "el_dictamen_no_concluye"
+      },
+      {
+        "id": "cesvi-bdf8899ada",
+        "motivo": "citas_no_verificables"
+      },
+      {
+        "id": "cesvi-eb4d9c1c4e",
+        "motivo": "citas_no_verificables"
+      }
+    ]
+  },
+  "citas": {
+    "total": 2513,
+    "fuera_del_texto": 90
+  },
+  "velocidades": {
+    "total": 97,
+    "descartadas": 10
+  },
+  "conclusiones": {
+    "con_modalidad": 612,
+    "con_zonas_contacto": 482,
+    "con_secuencia": 426,
+    "con_velocidades": 60,
+    "con_posiciones_finales": 155
+  },
+  "datos_personales_tras_redactar": 0,
+  "costo_usd": 10.2705,
+  "costo_lote_usd": 10.1293
+}
