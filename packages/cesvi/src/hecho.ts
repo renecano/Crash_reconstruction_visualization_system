@@ -285,10 +285,10 @@ export const CAMPOS_MANUALES = [
 export type ClaveManual = (typeof CAMPOS_MANUALES)[number]["clave"];
 
 const POR_QUE: Record<string, string> = {
-  sentido_a: "Orienta a los dos vehículos en la versión de la evidencia.",
+  sentido_a: "Orienta a los dos vehículos en la reconstrucción.",
   carril_a:
     "Va en la tabla de datos del dictamen: dice por dónde circulaba A al momento del impacto.",
-  restos: "Fija dónde termina A en la versión de la evidencia (la zona de restos).",
+  restos: "Fija dónde termina A en la reconstrucción (la zona de restos).",
   reversa: "Mueve la posición inicial de A en la versión declarada.",
 };
 

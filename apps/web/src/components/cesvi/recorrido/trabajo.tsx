@@ -106,7 +106,7 @@ export function PestanasVista({
 }) {
   const nombres: Record<VistaTrabajo, string> = {
     declarada: "Declarada",
-    evidencia: "Evidencia",
+    evidencia: "Reconstrucción",
     superponer: "Superponer",
     lado: "Lado a lado",
   };
@@ -208,7 +208,7 @@ export function PanelObjeto({
 }) {
   const origen = version.impacto.punto;
   const base = version.vehiculos.A.impacto.rumbo;
-  const nombreVersion = clave === "declarada" ? "versión declarada" : "versión evidencia";
+  const nombreVersion = clave === "declarada" ? "versión declarada" : "reconstrucción de Croquis";
   let titulo: string;
   let detalle: string;
   let punto: [number, number] | null = null;
@@ -319,7 +319,7 @@ export function TablaCambios({ c, compacta = false }: { c: Comparacion; compacta
           <tr className="text-left text-xs text-texto-3">
             <th className="py-1 font-normal" />
             <th className="py-1 font-normal">Declarada</th>
-            <th className="py-1 font-normal">Evidencia</th>
+            <th className="py-1 font-normal">Reconstrucción</th>
           </tr>
         </thead>
         <tbody>
@@ -339,5 +339,30 @@ export function TablaCambios({ c, compacta = false }: { c: Comparacion; compacta
         {c.resumen}
       </p>
     </section>
+  );
+}
+
+/**
+ * La capa opcional de la declaración del conductor (plan v2, R7): apagada, se ve solo la
+ * reconstrucción de Croquis; encendida, la versión declarada se puede ver, superponer y comparar.
+ */
+export function InterruptorComparar({
+  comparar,
+  onComparar,
+}: {
+  comparar: boolean;
+  onComparar: (v: boolean) => void;
+}) {
+  return (
+    <label className="t-interfaz flex items-center justify-between gap-3 text-texto-2">
+      Comparar con la declaración del conductor
+      <input
+        type="checkbox"
+        checked={comparar}
+        onChange={(e) => onComparar(e.target.checked)}
+        className="h-[18px] w-[18px] accent-[var(--texto)]"
+        data-testid="comparar-declaracion"
+      />
+    </label>
   );
 }

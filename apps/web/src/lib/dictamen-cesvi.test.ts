@@ -123,7 +123,9 @@ describe("dictamen en PDF con la estructura de CESVI", () => {
       ),
     );
     expect(validado).not.toContain("BORRADOR");
-    expect(validado).toContain("El perito Perito de prueba aceptó la sugerencia");
+    expect(validado).toContain(
+      "El perito Perito de prueba aceptó la comparación de Croquis con el dictamen",
+    );
     expect(validado).toContain(sugerencia.texto);
   });
 

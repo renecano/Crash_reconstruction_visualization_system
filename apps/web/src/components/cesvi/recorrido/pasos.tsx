@@ -11,6 +11,8 @@ import {
   type CasoCesvi,
   type ClaveVersion,
   type Comparacion,
+  type ContraDictamen,
+  type FilaContraDictamen,
   type ComparacionVelocidades,
   type Completitud,
   type DatoHecho,
@@ -40,7 +42,7 @@ import {
   useRecorrido,
 } from "./marco";
 import { NumeroAnimado, Silueta } from "./piezas";
-import { TablaCambios } from "./trabajo";
+import { InterruptorComparar, TablaCambios } from "./trabajo";
 
 export { TEXTO_VEHICULO };
 
@@ -503,7 +505,7 @@ export function PasoHecho({
           />
           <TarjetaTexto
             tipo="declaracion"
-            titulo="Versión declarada a analizar"
+            titulo="Declaración del conductor · opcional"
             fuente={`Conductor de ${declarante} · literal`}
             principal={false}
             texto={textos.declaracion}
@@ -569,18 +571,18 @@ export function PasoHecho({
             </div>
           ) : null}
           {grupo(
-            "Versión de la evidencia",
+            "Para la reconstrucción",
             "de la descripción del perito",
             i.evidencia,
             "datos-evidencia",
-            "Escribe o pega la descripción técnica y léela: con ella se arma la versión de la evidencia.",
+            "Escribe o pega la descripción técnica y léela: con ella Croquis arma la reconstrucción.",
           )}
           {grupo(
-            "Versión declarada",
-            "de la declaración",
+            "Declaración del conductor · opcional",
+            "para comparar",
             i.declarada,
             "datos-declarada",
-            "Lee la declaración: con ella se arma la versión declarada.",
+            "Si la pegas y la lees, Croquis arma esa versión para compararla con la reconstrucción.",
           )}
           {grupo("Expediente", "", i.expediente, "datos-expediente", "")}
           <p className="t-nota px-1 text-texto-3">
@@ -856,7 +858,7 @@ export function PasoLugar({
 
 const NOMBRE_VERSION: Record<ClaveVersion, string> = {
   declarada: "Declarada",
-  evidencia: "Evidencia",
+  evidencia: "Reconstrucción",
 };
 
 export function PasoVersiones({
@@ -870,8 +872,13 @@ export function PasoVersiones({
   frase,
   onUsarRestos,
   edicion,
+  comparar,
+  onComparar,
 }: {
   edicion: EdicionPasos;
+  /** ¿Se compara con la declaración del conductor? Apagado, solo se ve la reconstrucción. */
+  comparar: boolean;
+  onComparar: (v: boolean) => void;
   activa: ClaveVersion;
   onActiva: (k: ClaveVersion) => void;
   /** La zona de restos de cada versión, en metros (null si aún no hay versiones). */
@@ -887,45 +894,49 @@ export function PasoVersiones({
   return (
     <PanelMapa>
       <Rotulo />
-      <h1 className="t-panel">Dos versiones del mismo choque</h1>
+      <h1 className="t-panel">La reconstrucción de Croquis</h1>
       <Frase className="text-[0.9375rem]">{frase}</Frase>
-      <div className="segmentado" role="tablist" aria-label="Versión">
-        {(["declarada", "evidencia"] as const).map((k) => (
-          <button
-            key={k}
-            type="button"
-            role="tab"
-            aria-selected={activa === k}
-            onClick={() => onActiva(k)}
-            data-testid={`version-${k}`}
-          >
-            {NOMBRE_VERSION[k]}
-          </button>
-        ))}
-      </div>
-      {restos ? (
-        <div className="grid grid-cols-2 gap-3">
-          {(["declarada", "evidencia"] as const).map((k) => (
-            <div
+      {comparar ? (
+        <div className="segmentado" role="tablist" aria-label="Versión">
+          {(["evidencia", "declarada"] as const).map((k) => (
+            <button
               key={k}
-              className={`hundido flex flex-col gap-1.5 p-3.5 ${activa === k ? "border-linea" : ""}`}
-              data-testid={activa === k ? "restos-mapa" : undefined}
+              type="button"
+              role="tab"
+              aria-selected={activa === k}
+              onClick={() => onActiva(k)}
+              data-testid={`version-${k}`}
             >
-              <span className="t-nota text-texto-3">
-                Restos · {NOMBRE_VERSION[k].toLowerCase()}
-              </span>
-              <span
-                className={`cifras text-[1.625rem] font-semibold leading-none ${activa === k ? "text-texto" : "text-texto-2"}`}
-              >
-                <NumeroAnimado
-                  key={`${k}-${restos[k].toFixed(2)}`}
-                  valor={restos[k]}
-                  decimales={2}
-                />{" "}
-                m
-              </span>
-            </div>
+              {NOMBRE_VERSION[k]}
+            </button>
           ))}
+        </div>
+      ) : null}
+      {restos ? (
+        <div className={`grid gap-3 ${comparar ? "grid-cols-2" : "grid-cols-1"}`}>
+          {(comparar ? (["evidencia", "declarada"] as const) : (["evidencia"] as const)).map(
+            (k) => (
+              <div
+                key={k}
+                className={`hundido flex flex-col gap-1.5 p-3.5 ${activa === k ? "border-linea" : ""}`}
+                data-testid={activa === k ? "restos-mapa" : undefined}
+              >
+                <span className="t-nota text-texto-3">
+                  Restos · {NOMBRE_VERSION[k].toLowerCase()}
+                </span>
+                <span
+                  className={`cifras text-[1.625rem] font-semibold leading-none ${activa === k ? "text-texto" : "text-texto-2"}`}
+                >
+                  <NumeroAnimado
+                    key={`${k}-${restos[k].toFixed(2)}`}
+                    valor={restos[k]}
+                    decimales={2}
+                  />{" "}
+                  m
+                </span>
+              </div>
+            ),
+          )}
         </div>
       ) : null}
       <p className="t-nota -mt-2">
@@ -954,16 +965,19 @@ export function PasoVersiones({
         </div>
       ) : null}
       <BarraEdicion e={edicion} restablecer />
-      <label className="t-interfaz flex items-center justify-between gap-3 text-texto-2">
-        Superponer la {activa === "evidencia" ? "declarada" : "evidencia"}
-        <input
-          type="checkbox"
-          checked={superponer}
-          onChange={(e) => onSuperponer(e.target.checked)}
-          className="h-[18px] w-[18px] accent-[var(--texto)]"
-          data-testid="superponer"
-        />
-      </label>
+      <InterruptorComparar comparar={comparar} onComparar={onComparar} />
+      {comparar ? (
+        <label className="t-interfaz flex items-center justify-between gap-3 text-texto-2">
+          Superponer la {activa === "evidencia" ? "versión declarada" : "reconstrucción"}
+          <input
+            type="checkbox"
+            checked={superponer}
+            onChange={(e) => onSuperponer(e.target.checked)}
+            className="h-[18px] w-[18px] accent-[var(--texto)]"
+            data-testid="superponer"
+          />
+        </label>
+      ) : null}
       <BotonDetalle />
       <Navegacion ancho />
     </PanelMapa>
@@ -1139,7 +1153,7 @@ export function PasoDanos({
     <Pagina>
       <header className="flex max-w-[820px] flex-col gap-3">
         <Rotulo />
-        <h1 className="t-titulo">Dónde están los daños, y dónde estarían</h1>
+        <h1 className="t-titulo">Dónde están los daños</h1>
         <Frase>{frase}</Frase>
       </header>
       <div className="grid gap-5 md:grid-cols-2">
@@ -1152,8 +1166,8 @@ export function PasoDanos({
               true,
             ],
             [
-              "Si la declaración fuera cierta",
-              "Una reversa deja los daños al centro.",
+              "Con la maniobra declarada, para comparar",
+              "Una reversa deja los daños al centro. Es información para el perito.",
               esperadas,
               false,
             ],
@@ -1418,15 +1432,16 @@ export function PasoNumeros({
 }
 
 /* ------------------------------------------------------------------------------------------ */
-/* Paso 7: la sugerencia (maqueta Paso7)                                                      */
+/* Paso 7: Croquis contra el dictamen (maqueta Paso7)                                         */
 /* ------------------------------------------------------------------------------------------ */
 
 /** La primera oración de un texto (con su punto). */
 const primeraFrase = (t: string) => /^.*?\.(?=\s|$)/.exec(t)?.[0] ?? t;
 
+/** Qué indica cada razón respecto a la declaración, sin juzgar a nadie. */
 const SENTIDO = {
-  contra_declarada: "en contra",
-  a_favor_declarada: "a favor",
+  contra_declarada: "no coincide con la declaración",
+  a_favor_declarada: "coincide con la declaración",
   sin_dato: "sin dato",
 } as const;
 const NOMBRE_RAZON = {
@@ -1440,53 +1455,51 @@ const DECISION = { aceptada: "aceptó", editada: "editó", rechazada: "rechazó"
 export function TextoValidacion({ validacion }: { validacion: Validacion }) {
   return (
     <span role="status" data-testid="validacion">
-      {validacion.perito} {DECISION[validacion.decision]} la sugerencia el{" "}
+      {validacion.perito} {DECISION[validacion.decision]} la comparación con el dictamen el{" "}
       {new Intl.DateTimeFormat("es-MX", { dateStyle: "long" }).format(new Date(validacion.fecha))}.
     </span>
   );
 }
 
-export function PasoSugerencia({
+/** La diferencia de una fila: el porcentaje si es numérica; si no, si llegan a lo mismo. */
+function Diferencia({ f }: { f: FilaContraDictamen }) {
+  if (f.coincide === null) return <span className="text-texto-3">—</span>;
+  if (f.diferenciaPct === null) {
+    return (
+      <span className={f.coincide ? "text-texto-2" : "font-semibold text-senal-texto"}>
+        {f.coincide ? "Coincide" : "Difiere"}
+      </span>
+    );
+  }
+  return (
+    <span className={f.coincide ? "text-texto-2" : "font-semibold text-senal-texto"}>
+      {signo(f.diferenciaPct, 2)} %
+    </span>
+  );
+}
+
+/** El razonamiento de la declaración, como indicadores para el perito (complemento opcional). */
+function ComparacionDeclaracion({
   sugerencia,
+  cambios,
   pasoDeRazon,
-  validacion,
-  onValidar,
   nombres,
   zonas,
   impactoKmh,
   desplazamientoKmh,
   restosEvidencia,
-  cambios,
 }: {
-  cambios: Comparacion;
   sugerencia: Sugerencia;
+  cambios: Comparacion;
   pasoDeRazon: Record<string, number>;
-  validacion: Validacion | null;
-  onValidar: (v: Validacion) => void;
   nombres: Nombres;
   zonas: Record<Letra, Zona[]>;
   impactoKmh: number | null;
   desplazamientoKmh: number | null;
   restosEvidencia: number | null;
 }) {
-  const { irA, paso } = useRecorrido();
-  const [perito, setPerito] = useState("");
-  const [modo, setModo] = useState<"ver" | "editada" | "rechazada">("ver");
-  const [texto, setTexto] = useState("");
-  const [error, setError] = useState<string | null>(null);
-  const validar = (decision: Validacion["decision"]) => {
-    if (!perito.trim()) return setError("Escribe tu nombre para validar.");
-    if (decision !== "aceptada" && !texto.trim()) return setError("Escribe la conclusión.");
-    setError(null);
-    onValidar({
-      decision,
-      conclusion: decision === "aceptada" ? sugerencia.texto : texto.trim(),
-      perito: perito.trim(),
-      fecha: new Date().toISOString(),
-    });
-    setModo("ver");
-    irA(paso + 1);
-  };
+  const { irA } = useRecorrido();
+  const [verSugerencia, setVerSugerencia] = useState(false);
   const miniatura = (clave: keyof typeof NOMBRE_RAZON): ReactNode => {
     if (clave === "desplazamiento") {
       const maximo = Math.max(restosEvidencia ?? 0, 1);
@@ -1495,11 +1508,11 @@ export function PasoSugerencia({
           {(
             [
               ["Declarada", 0],
-              ["Evidencia", restosEvidencia],
+              ["Reconstrucción", restosEvidencia],
             ] as const
           ).map(([nombre, m]) => (
             <div key={nombre} className="flex items-center gap-2.5 text-xs text-texto-2">
-              <span className="w-[76px]">{nombre}</span>
+              <span className="w-[96px]">{nombre}</span>
               <span
                 className="h-2 rounded bg-texto"
                 style={{ width: m ? `${(m / maximo) * 50}%` : "4px", opacity: m ? 1 : 0.3 }}
@@ -1542,44 +1555,178 @@ export function PasoSugerencia({
     );
   };
   return (
+    <details className="tarjeta rounded-[22px] px-6 py-5" data-testid="comparacion-declaracion">
+      <summary className="t-interfaz cursor-pointer font-semibold">
+        Comparación con la declaración del conductor · opcional
+      </summary>
+      <div className="mt-5 flex flex-col gap-5">
+        <p className="t-nota max-w-[70ch]">
+          Lo que cambia entre la declaración y la reconstrucción de Croquis, como información para
+          el perito. Croquis no dice quién tiene razón: el perito concluye.
+        </p>
+        <ol className="grid gap-5 md:grid-cols-3">
+          {sugerencia.razones.map((r, i) => (
+            <li key={r.clave} className="hundido flex flex-col gap-[18px] rounded-[18px] p-5">
+              <span className="t-rotulo flex flex-wrap items-center justify-between gap-2 text-[0.8125rem]">
+                <span>
+                  {String(i + 1).padStart(2, "0")} · {NOMBRE_RAZON[r.clave]}
+                </span>
+                <Insignia tipo={r.sentido === "contra_declarada" ? "normal" : "supuesto"}>
+                  {SENTIDO[r.sentido]}
+                </Insignia>
+              </span>
+              <div className="rounded-[14px] bg-fondo p-4">{miniatura(r.clave)}</div>
+              <p className="text-base leading-snug font-medium">{primeraFrase(r.texto)}</p>
+              {pasoDeRazon[r.clave] !== undefined ? (
+                <button
+                  type="button"
+                  className="t-interfaz mt-auto self-start text-texto-2 hover:text-texto"
+                  onClick={() => irA(pasoDeRazon[r.clave]!)}
+                >
+                  Ver en el paso {pasoDeRazon[r.clave]! + 1} →
+                </button>
+              ) : null}
+            </li>
+          ))}
+        </ol>
+        <TablaCambios c={cambios} />
+        {verSugerencia ? (
+          <div className="hundido flex flex-col gap-1.5 p-4" data-testid="sugerencia">
+            <span className="t-rotulo">Sugerencia de Croquis sobre la declaración</span>
+            <p className="t-interfaz">{sugerencia.texto}</p>
+            <p className="t-nota">{sugerencia.regla}</p>
+          </div>
+        ) : (
+          <button
+            type="button"
+            className="boton-secundario boton-compacto self-start"
+            onClick={() => setVerSugerencia(true)}
+            data-testid="ver-sugerencia"
+          >
+            Ver la sugerencia de Croquis sobre la declaración
+          </button>
+        )}
+      </div>
+    </details>
+  );
+}
+
+export function PasoContraDictamen({
+  contra,
+  sugerencia,
+  pasoDeRazon,
+  validacion,
+  onValidar,
+  nombres,
+  zonas,
+  impactoKmh,
+  desplazamientoKmh,
+  restosEvidencia,
+  cambios,
+}: {
+  contra: ContraDictamen;
+  cambios: Comparacion;
+  sugerencia: Sugerencia;
+  pasoDeRazon: Record<string, number>;
+  validacion: Validacion | null;
+  onValidar: (v: Validacion) => void;
+  nombres: Nombres;
+  zonas: Record<Letra, Zona[]>;
+  impactoKmh: number | null;
+  desplazamientoKmh: number | null;
+  restosEvidencia: number | null;
+}) {
+  const { irA, paso } = useRecorrido();
+  const [perito, setPerito] = useState("");
+  const [modo, setModo] = useState<"ver" | "editada" | "rechazada">("ver");
+  const [texto, setTexto] = useState("");
+  const [error, setError] = useState<string | null>(null);
+  const validar = (decision: Validacion["decision"]) => {
+    if (!perito.trim()) return setError("Escribe tu nombre para validar.");
+    if (decision !== "aceptada" && !texto.trim()) return setError("Escribe la conclusión.");
+    setError(null);
+    onValidar({
+      decision,
+      conclusion: decision === "aceptada" ? contra.resumen : texto.trim(),
+      perito: perito.trim(),
+      fecha: new Date().toISOString(),
+    });
+    setModo("ver");
+    irA(paso + 1);
+  };
+  const e = contra.energia;
+  return (
     <Pagina>
       <header className="flex max-w-[820px] flex-col gap-4">
-        <Rotulo extra="Sugerencia de Croquis" senal />
-        <h1 className="t-lanzamiento" data-testid="sugerencia">
-          {sugerencia.texto.split(":")[0]}.
+        <Rotulo extra="Reproducción del dictamen" senal />
+        <h1 className="t-lanzamiento" data-testid="titulo-contra">
+          Croquis contra el dictamen
         </h1>
-        <Frase>Tres razones independientes. La conclusión la confirma el perito.</Frase>
+        <div data-testid="resumen-contra">
+          <Frase>{contra.resumen}</Frase>
+        </div>
       </header>
-      <ol className="grid gap-5 md:grid-cols-3">
-        {sugerencia.razones.map((r, i) => (
-          <li key={r.clave} className="tarjeta flex flex-col gap-[18px] rounded-[22px] p-6">
-            <span className="t-rotulo flex flex-wrap items-center justify-between gap-2 text-[0.8125rem]">
-              <span>
-                {String(i + 1).padStart(2, "0")} · {NOMBRE_RAZON[r.clave]}
-              </span>
-              <Insignia tipo={r.sentido === "contra_declarada" ? "normal" : "supuesto"}>
-                {SENTIDO[r.sentido]}
-              </Insignia>
-            </span>
-            <div className="rounded-[14px] bg-fondo p-4">{miniatura(r.clave)}</div>
-            <p className="text-lg leading-snug font-medium">{primeraFrase(r.texto)}</p>
-            {pasoDeRazon[r.clave] !== undefined ? (
-              <button
-                type="button"
-                className="t-interfaz mt-auto self-start text-texto-2 hover:text-texto"
-                onClick={() => irA(pasoDeRazon[r.clave]!)}
-              >
-                Ver en el paso {pasoDeRazon[r.clave]! + 1} →
-              </button>
-            ) : null}
-          </li>
-        ))}
-      </ol>
-      <TablaCambios c={cambios} />
+      <section
+        aria-label="Croquis contra el dictamen"
+        className="tarjeta overflow-hidden rounded-3xl"
+        data-testid="contra-dictamen"
+      >
+        <div className="overflow-x-auto">
+          <table className="w-full min-w-[44rem] border-collapse text-sm">
+            <thead>
+              <tr className="text-left text-xs text-texto-3">
+                <th className="px-6 py-3 font-medium">Punto</th>
+                <th className="px-6 py-3 font-medium">Concluyó CESVI</th>
+                <th className="px-6 py-3 font-medium">Obtuvo Croquis</th>
+                <th className="px-6 py-3 text-right font-medium">Diferencia</th>
+              </tr>
+            </thead>
+            <tbody>
+              {contra.filas.map((f) => (
+                <tr
+                  key={f.clave}
+                  className="border-t border-linea-suave align-top"
+                  data-fila={f.clave}
+                  title={f.fuente}
+                >
+                  <td className="px-6 py-3.5 font-medium">{f.concepto}</td>
+                  <td className="cifras px-6 py-3.5">{f.cesvi}</td>
+                  <td className="cifras px-6 py-3.5">{f.croquis}</td>
+                  <td className="cifras px-6 py-3.5 text-right">
+                    <Diferencia f={f} />
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </section>
+      {e ? (
+        <section
+          className="tarjeta flex flex-col gap-3 rounded-[22px] px-6 py-5"
+          data-testid="discrepancia-energia"
+        >
+          <span className="t-interfaz font-semibold">La diferencia de energía, explicada</span>
+          <p className="t-cuerpo max-w-[75ch]">
+            Con los datos que imprime el dictamen (L, A, B y C1–C4), la energía de deformación es{" "}
+            <span className="cifras">{e.croquis.toFixed(3)}</span>; el dictamen imprime{" "}
+            <span className="cifras">{e.dictamen.toFixed(3)}</span> (
+            <span className="cifras">{signo(e.diferenciaPct, 2)} %</span>). Por eso la velocidad por
+            deformación de Croquis difiere de la del dictamen. {e.lectura}
+          </p>
+          <button
+            type="button"
+            className="t-interfaz self-start text-texto-2 hover:text-texto"
+            onClick={() => irA(5)}
+          >
+            Ver el cálculo en el paso 6 →
+          </button>
+        </section>
+      ) : null}
       <section className="tarjeta flex flex-col gap-4 rounded-[22px] px-6 py-5">
         <div className="flex flex-wrap items-center justify-between gap-6">
           <div className="flex flex-col gap-1">
-            <span className="t-interfaz font-semibold">Validación del perito</span>
+            <span className="t-interfaz font-semibold">El perito concluye</span>
             <span className="t-nota text-texto-3">
               {validacion ? (
                 <TextoValidacion validacion={validacion} />
@@ -1592,7 +1739,7 @@ export function PasoSugerencia({
             <input
               className="campo h-12 w-56 rounded-full px-5"
               value={perito}
-              onChange={(e) => setPerito(e.target.value)}
+              onChange={(ev) => setPerito(ev.target.value)}
               placeholder="Nombre del perito"
               aria-label="Nombre del perito que valida"
               data-testid="perito"
@@ -1612,7 +1759,7 @@ export function PasoSugerencia({
               className="boton-secundario"
               onClick={() => {
                 setModo("editada");
-                setTexto(sugerencia.texto);
+                setTexto(contra.resumen);
               }}
             >
               Editar
@@ -1632,7 +1779,7 @@ export function PasoSugerencia({
             <textarea
               className="campo min-h-20"
               value={texto}
-              onChange={(e) => setTexto(e.target.value)}
+              onChange={(ev) => setTexto(ev.target.value)}
               aria-label="Conclusión del perito"
             />
             <button
@@ -1646,6 +1793,16 @@ export function PasoSugerencia({
         ) : null}
         {error ? <p className="t-nota text-senal-texto">{error}</p> : null}
       </section>
+      <ComparacionDeclaracion
+        sugerencia={sugerencia}
+        cambios={cambios}
+        pasoDeRazon={pasoDeRazon}
+        nombres={nombres}
+        zonas={zonas}
+        impactoKmh={impactoKmh}
+        desplazamientoKmh={desplazamientoKmh}
+        restosEvidencia={restosEvidencia}
+      />
       <div className="flex flex-wrap items-center gap-3">
         <Navegacion />
         <BotonDetalle />
@@ -1694,7 +1851,7 @@ export function PasoDictamen({
   frase: string;
   incluir: IncluirPaso;
   onIncluir: (i: IncluirPaso) => void;
-  trazabilidad: { metodo: string; huella: string; sugerencia: string; valido: string };
+  trazabilidad: { metodo: string; huella: string; comparacion: string; valido: string };
   antesDeFirmar: { texto: string; paso: number }[];
   notas: string;
   onNotas: (t: string) => void;
@@ -1708,7 +1865,7 @@ export function PasoDictamen({
     ["tablaDatos", "Tabla de datos y su fuente"],
     ["notasInternas", "Notas internas del perito"],
   ];
-  const textoTraza = `Método: ${trazabilidad.metodo}\nHuella de entradas: ${trazabilidad.huella}\nSugerencia: ${trazabilidad.sugerencia}\nValidó: ${trazabilidad.valido}`;
+  const textoTraza = `Método: ${trazabilidad.metodo}\nHuella de entradas: ${trazabilidad.huella}\nComparación con el dictamen: ${trazabilidad.comparacion}\nValidó: ${trazabilidad.valido}`;
   return (
     <Pagina ancho="max-w-[1320px]">
       <div className="flex flex-wrap items-start gap-8">
@@ -1835,8 +1992,8 @@ export function PasoDictamen({
               <dd className="cifras text-right">{trazabilidad.metodo}</dd>
               <dt className="text-texto-2">Huella de entradas</dt>
               <dd className="cifras text-right">{trazabilidad.huella}</dd>
-              <dt className="text-texto-2">Sugerencia</dt>
-              <dd className="text-right">{trazabilidad.sugerencia}</dd>
+              <dt className="text-texto-2">Comparación con el dictamen</dt>
+              <dd className="text-right">{trazabilidad.comparacion}</dd>
               <dt className="text-texto-2">Validó</dt>
               <dd className="text-right">{trazabilidad.valido}</dd>
             </dl>
