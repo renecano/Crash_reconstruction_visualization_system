@@ -72,12 +72,32 @@ Reglas de trabajo: `CLAUDE.md`. Especificación: `PLAN.md`.
     - **C0:** pasa a R0. Falta lo nuevo: la descripción de los hechos sin conclusiones, con su revisión de fuga, y lo que concluyó CESVI, estructurado.
     - **C1:** es el módulo de verificación CESVI de R2, con su reproducción (E-C1) ya corrida.
     - **C2–C8:** se reacomodan en R1–R9.
-  - **Fase actual: R1** (de la narración del perito a la escena). R0 quedó cerrada el 2026-10-21. C0 y C1 de la v1 quedaron cerradas el 2026-10-21. El plan de C0 fue:
+  - **Fase actual: R2** (reconstrucción física desde la evidencia del perito). R0 y R1 quedaron cerradas el 2026-10-21. C0 y C1 de la v1 quedaron cerradas el 2026-10-21. El plan de C0 fue:
     - **Contrato v2:** `escena.schema.json` ampliado, con migración desde v1.3, Zod y Pydantic generados y un validador semántico (N vehículos, M impactos, versiones).
     - **Corpus estructurado** de los 671 dictámenes con Claude (salida estructurada, caché, semilla), validado contra el esquema, con partición congelada del 30 % y etiquetas de la conclusión revisadas en una muestra.
     - **Mediciones:** las proporciones del §2 en `eval/results/cesvi_corpus.json`; desde ahí se pueden citar.
     - **Costo:** antes de correr el corpus se estima y se anota aquí. Si pasa de 30 USD, se pregunta a René.
-  - **R1 en curso: de la narración del perito a la escena** (rama `feat/r1-escena`). Plan:
+  - **Resumen de R1 para René** (rama `feat/r1-escena`, ADR 0061):
+    - **Qué quedó:**
+      - **«Caso nuevo» en `/cesvi/caso`:**
+        - el perito pega su narración técnica y Croquis la ordena en la escena del contrato 2.0.0 (N vehículos, M impactos con zonas de contacto, objetos fijos, restos, huellas y la descripción de las posiciones);
+        - Croquis pregunta solo lo que más cambia la reconstrucción, siempre con «No sé»;
+        - el perito coloca a cada vehículo en el mapa con su rumbo.
+      - **Fuentes:** lo que marca el perito lleva fuente `perito`; lo que supone Croquis, `supuesto`, hasta que el perito lo confirma.
+      - **El caso de AXA sigue igual en `/cesvi`.**
+    - **Números medidos** (`eval/results/cesvi_r1_escenas.json`):
+      - **Escenas válidas:** 10 de 10 contra el esquema y el validador, de 10 modalidades distintas (narraciones de desarrollo de R0; respuestas grabadas, 0.34 USD).
+      - **Impactos:** en 3 la narración dice qué entró en contacto, en 1 Croquis lo supone y pide confirmarlo, y en 6 lo pregunta.
+      - **Masas:** ninguna narración las trae; se preguntan.
+    - **Cómo probarlo:**
+      - abrir `/cesvi/caso`, «Usar una narración de ejemplo» y «Leer la narración»;
+      - confirmar el impacto, dar o no saber las masas;
+      - elegir «V1 · posición final», escribir el rumbo y tocar el mapa;
+      - «Descargar la escena (JSON)».
+      - Pruebas: `pnpm --filter @croquis/cesvi test` y la e2e `@flujo` de `/cesvi/caso`.
+    - **Qué necesito de René:** nada nuevo.
+    - **Siguiente:** R2, la reconstrucción física desde la evidencia del perito.
+  - **Lo que se planeó para R1:**
     - **Lectura de la narración a expediente (contrato 2.0.0):** reutiliza el extractor de C0 (filas planas, citas y números revisados contra el texto) con un prompt para la narración del perito. Da N vehículos con clase y masa, M impactos con zonas de contacto, objetos fijos, maniobras, restos, huellas y la descripción de las posiciones finales.
     - **Posiciones:** el contrato las pide con coordenadas, que pone el perito en el mapa (fuente `perito`). De la narración solo salen como descripción, para guiar dónde colocarlas; no se inventan coordenadas.
     - **Preguntas:** solo lo que más cambia la reconstrucción (participantes y zonas de contacto de cada impacto, masas, longitud de restos y huellas, posiciones finales), con «No sé».
