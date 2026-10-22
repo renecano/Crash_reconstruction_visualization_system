@@ -75,6 +75,17 @@ Reglas de trabajo: `CLAUDE.md`. Especificación: `PLAN.md`.
     - **Corpus estructurado** de los 671 dictámenes con Claude (salida estructurada, caché, semilla), validado contra el esquema, con partición congelada del 30 % y etiquetas de la conclusión revisadas en una muestra.
     - **Mediciones:** las proporciones del §2 en `eval/results/cesvi_corpus.json`; desde ahí se pueden citar.
     - **Costo:** antes de correr el corpus se estima y se anota aquí. Si pasa de 30 USD, se pregunta a René.
+  - **R0 en curso** (rama `feat/r0-narracion`):
+    - **Plan:**
+      - **Por dictamen, dos campos más:**
+        - la narración del perito sin conclusiones: hechos, lugar, daños, evidencias y medidas, con su revisión automática de fuga (sin cifras de velocidad o energía, métodos ni frases de conclusión);
+        - lo que concluyó CESVI: modalidad, zonas de contacto, secuencia de impactos, velocidades y posiciones finales, cada dato con su cita revisada contra el texto.
+      - **Código:** `packages/cesvi/src/narracion.ts` y `data/cesvi/scripts/narracion.mts`.
+      - **Salida:** `data/cesvi/corpus/narraciones.jsonl` y `eval/results/cesvi_narraciones.json`.
+    - **Estimado de costo (antes de correr):**
+      - **Entrada:** 6 691 319 tokens (conteo de la API, gratis).
+      - **Piloto de 5 dictámenes** con la API normal: 0.1412 USD, con 1 327 tokens de salida en promedio, sin fugas y sin citas fuera del texto.
+      - **Los 666 restantes con la API de lotes: ~11.1 USD,** por debajo del tope de 30 USD; se envía con tope de 15 USD.
   - **Resumen de C0 para René** (rama `feat/c0-corpus`, ADR 0058):
     - **Qué quedó:**
       - **Contrato 2.0.0:** `expediente` opcional (N vehículos, M impactos, versiones, cálculos, criterios), migración identidad 1.3.0 → 2.0.0 en TS y Python, Zod y Pydantic generados y validador semántico X001–X009 con paridad. Relatos-MX conserva sus escenas congeladas en 1.3.0 y las valida migradas.
