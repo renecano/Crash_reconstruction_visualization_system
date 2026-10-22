@@ -216,3 +216,68 @@ export function escenaDeNarracion(s: SalidaCorpus, narracion: string): EscenaNar
     preguntas,
   };
 }
+
+export { problemasExpediente } from "./corpus";
+export type { Expediente, PosicionDescrita, SalidaCorpus } from "./corpus";
+
+// --- Lo que corrige el perito -------------------------------------------------------------------
+
+type Fase = "inicial" | "impacto" | "final";
+
+/**
+ * Coloca un vehículo en una fase sobre el mapa (fuente «perito»): reemplaza su posición anterior en
+ * esa fase dentro de la versión de la evidencia, que se crea si no existe.
+ */
+export function conPosicion(
+  e: Expediente,
+  p: { vehiculo: Id; fase: Fase; punto: { lat: number; lon: number }; rumbo: number },
+): Expediente {
+  const versiones = [...(e.versiones ?? [])];
+  let i = versiones.findIndex((v) => v.tipo === "evidencia");
+  if (i < 0) {
+    versiones.unshift({ tipo: "evidencia" });
+    i = 0;
+  }
+  const v = versiones[i]!;
+  const rumbo = ((p.rumbo % 360) + 360) % 360;
+  versiones[i] = {
+    ...v,
+    posiciones: [
+      ...(v.posiciones ?? []).filter((x) => !(x.vehiculo === p.vehiculo && x.fase === p.fase)),
+      { vehiculo: p.vehiculo, fase: p.fase, punto: p.punto, rumbo, fuente: "perito" },
+    ],
+  };
+  return { ...e, versiones };
+}
+
+/** La masa que da el perito (kg). */
+export function conMasa(e: Expediente, vehiculo: Id, kg: number): Expediente {
+  return {
+    ...e,
+    vehiculos: e.vehiculos.map((v) =>
+      v.id === vehiculo ? { ...v, masa: { valor: kg, unidad: "kg", fuente: "perito" } } : v,
+    ),
+  };
+}
+
+/** La longitud de la zona de restos que mide el perito (m). */
+export function conRestos(e: Expediente, m: number): Expediente {
+  const ev = e.evidencias ?? {};
+  return {
+    ...e,
+    evidencias: {
+      ...ev,
+      restos: { ...ev.restos, longitud: { valor: m, unidad: "m", fuente: "perito" } },
+    },
+  };
+}
+
+/** El perito confirma un impacto que Croquis supuso: deja de ser supuesto. */
+export function confirmarImpacto(e: Expediente, orden: number): Expediente {
+  return {
+    ...e,
+    impactos: e.impactos?.map((i) =>
+      i.orden === orden && i.fuente === "supuesto" ? { ...i, fuente: "perito" } : i,
+    ),
+  };
+}

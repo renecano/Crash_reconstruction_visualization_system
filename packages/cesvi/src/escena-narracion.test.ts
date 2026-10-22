@@ -3,7 +3,14 @@ import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import { describe, expect, it } from "vitest";
 import type { FilaCorpus, SalidaCorpus } from "./corpus";
-import { escenaDeNarracion } from "./escena-narracion";
+import {
+  confirmarImpacto,
+  conMasa,
+  conPosicion,
+  conRestos,
+  escenaDeNarracion,
+  problemasExpediente,
+} from "./escena-narracion";
 
 const GRABACIONES = resolve(
   dirname(fileURLToPath(import.meta.url)),
@@ -164,5 +171,60 @@ describe("de la narración del perito a la escena (R1)", () => {
       expect(e.expediente.vehiculos.length, f).toBeGreaterThan(0);
     }
     expect(modalidades.size).toBe(10);
+  });
+});
+
+describe("lo que corrige el perito en la escena", () => {
+  const base = escenaDeNarracion(datos(), NARRACION).expediente;
+
+  it("coloca cada vehículo por fase en la versión de la evidencia, con fuente perito", () => {
+    let e = conPosicion(base, {
+      vehiculo: "V1",
+      fase: "final",
+      punto: { lat: 19.3, lon: -99.1 },
+      rumbo: 370,
+    });
+    e = conPosicion(e, {
+      vehiculo: "V1",
+      fase: "final",
+      punto: { lat: 19.31, lon: -99.1 },
+      rumbo: 90,
+    });
+    e = conPosicion(e, {
+      vehiculo: "V2",
+      fase: "impacto",
+      punto: { lat: 19.3, lon: -99.11 },
+      rumbo: 0,
+    });
+    const v = e.versiones!.find((x) => x.tipo === "evidencia")!;
+    expect(v.posiciones).toEqual([
+      {
+        vehiculo: "V1",
+        fase: "final",
+        punto: { lat: 19.31, lon: -99.1 },
+        rumbo: 90,
+        fuente: "perito",
+      },
+      {
+        vehiculo: "V2",
+        fase: "impacto",
+        punto: { lat: 19.3, lon: -99.11 },
+        rumbo: 0,
+        fuente: "perito",
+      },
+    ]);
+    expect(problemasExpediente(e)).toEqual([]);
+  });
+
+  it("masa, restos y la confirmación del impacto supuesto quedan con fuente perito", () => {
+    const e = confirmarImpacto(conRestos(conMasa(base, "V2", 1350), 14), 1);
+    expect(e.vehiculos.find((v) => v.id === "V2")!.masa).toEqual({
+      valor: 1350,
+      unidad: "kg",
+      fuente: "perito",
+    });
+    expect(e.evidencias!.restos!.longitud).toEqual({ valor: 14, unidad: "m", fuente: "perito" });
+    expect(e.impactos![0]!.fuente).toBe("perito");
+    expect(problemasExpediente(e)).toEqual([]);
   });
 });
