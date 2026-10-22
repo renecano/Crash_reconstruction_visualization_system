@@ -11,6 +11,7 @@ import {
   especReconstruida,
   reconstruirExpediente,
   rumboEscena,
+  zonaHorizontal,
 } from "./reconstruccion";
 import { verificacionCesvi } from "./verificacion";
 
@@ -48,6 +49,31 @@ describe("del expediente a la escena del solver (R2)", () => {
     expect(rumboEscena(90)).toBe(0);
     expect(rumboEscena(180)).toBe(-90);
     expect(rumboEscena(270)).toBe(180);
+  });
+
+  it("el tercio o el vértice que narró el perito pasa a la zona horizontal CDC del impacto", () => {
+    expect(zonaHorizontal({ cara: "frontal", tercio: "derecho" })).toBe("R");
+    expect(zonaHorizontal({ cara: "posterior", vertice: "posterior_izquierdo" })).toBe("L");
+    expect(zonaHorizontal({ cara: "lateral_derecho", tercio: "trasero" })).toBe("B");
+    expect(zonaHorizontal({ cara: "lateral_izquierdo", vertice: "delantero_izquierdo" })).toBe("F");
+    expect(zonaHorizontal({ cara: "frontal" })).toBeNull();
+    const e: Expediente = {
+      ...base,
+      impactos: base.impactos!.map((i) => ({
+        ...i,
+        zonas: [
+          { vehiculo: "V1", zona: { cara: "frontal", tercio: "izquierdo" } },
+          { vehiculo: "V2", zona: { cara: "lateral_derecho", tercio: "medio" } },
+        ],
+      })),
+    };
+    const { spec } = especDeExpediente(e);
+    expect(validateEscena(spec).ok).toBe(true);
+    const zonas = ((spec.eventos as Json[])[0]!.zonas_impacto as { cdc: Json }[]).map((z) => z.cdc);
+    expect(zonas).toEqual([
+      { lado: "F", zona_horizontal: "L" },
+      { lado: "R", zona_horizontal: "P" },
+    ]);
   });
 
   it("sin posiciones, la escena es válida y todo lo no dicho es supuesto o por omisión", () => {

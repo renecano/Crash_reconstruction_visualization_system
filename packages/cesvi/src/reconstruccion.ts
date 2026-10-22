@@ -39,6 +39,32 @@ const DEL_PERITO = { fuente: "usuario", confianza: 0.9 } as const;
 /** Sin posición inicial del perito, el vehículo empieza 12 m antes del impacto en su rumbo. */
 const ANTES_DEL_IMPACTO_M = 12;
 
+/**
+ * La zona horizontal CDC (SAE J224) de una zona del diagrama del perito: en el frente y la parte
+ * posterior, L, C o R por el tercio o el vértice; en los costados, F, P o B. null si no la dice.
+ */
+export function zonaHorizontal(z: {
+  cara: string;
+  tercio?: string;
+  vertice?: string;
+}): string | null {
+  const frenteAtras = z.cara === "frontal" || z.cara === "posterior";
+  const costado = z.cara === "lateral_izquierdo" || z.cara === "lateral_derecho";
+  if (frenteAtras) {
+    const t = { izquierdo: "L", centro: "C", derecho: "R" }[z.tercio ?? ""];
+    if (t) return t;
+    if (z.vertice?.endsWith("izquierdo")) return "L";
+    if (z.vertice?.endsWith("derecho")) return "R";
+  }
+  if (costado) {
+    const t = { delantero: "F", medio: "P", trasero: "B" }[z.tercio ?? ""];
+    if (t) return t;
+    if (z.vertice?.startsWith("delantero")) return "F";
+    if (z.vertice?.startsWith("posterior")) return "B";
+  }
+  return null;
+}
+
 /** Rumbo del contrato 2.0.0 (grados desde el norte, horario) al de la escena v1 (desde +X, antihorario). */
 export function rumboEscena(rumboNorte: number): number {
   const r = (((90 - rumboNorte) % 360) + 360) % 360;
@@ -154,6 +180,14 @@ export function especDeExpediente(e: Expediente, specId = "caso-nuevo"): EscenaS
   }
   const evento = spec.eventos[0]!;
   if (origen) evento.punto_impacto = { x: 0, y: 0 };
+  // La zona dentro de la cara que narró el perito (tercio o vértice) va como zona horizontal CDC:
+  // con ella el solver centra el daño ahí y el 3D lo deforma en ese lugar.
+  for (const z of (evento.zonas_impacto ?? []) as { vehiculo_id: string; cdc: Json }[]) {
+    const id = ids[z.vehiculo_id];
+    const zona = primero?.zonas?.find((x) => x.vehiculo === id)?.zona;
+    const h = zona ? zonaHorizontal(zona) : null;
+    if (h) z.cdc.zona_horizontal = h;
+  }
 
   for (const d of e.danos ?? []) {
     const lado = LADO[d.zona.cara];
