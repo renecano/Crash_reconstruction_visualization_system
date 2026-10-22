@@ -77,6 +77,13 @@ Reglas de trabajo: `CLAUDE.md`. Especificación: `PLAN.md`.
     - **Corpus estructurado** de los 671 dictámenes con Claude (salida estructurada, caché, semilla), validado contra el esquema, con partición congelada del 30 % y etiquetas de la conclusión revisadas en una muestra.
     - **Mediciones:** las proporciones del §2 en `eval/results/cesvi_corpus.json`; desde ahí se pueden citar.
     - **Costo:** antes de correr el corpus se estima y se anota aquí. Si pasa de 30 USD, se pregunta a René.
+  - **R3 en curso: 3D de la reconstrucción** (rama `feat/r3-visor-3d`). Plan:
+    1. **El 3D en «Caso nuevo»:** el visor embebible (`VisorEscena`) con la escena reconstruida, con las velocidades que estimó la inversión, marcadas como supuesto con su rango. Cámaras libre, cenital, de conductor y cinemática.
+    2. **El daño en la zona que narró el perito:** el tercio de la cara pasa a la zona CDC del impacto (hoy el visor deforma por lado, con el perfil del solver).
+    3. **La línea de tiempo sincronizada con el 2D:** el reloj del 3D mueve a los vehículos sobre el mapa de «Caso nuevo».
+    4. **La interpenetración:** una medida de cuánto se atraviesan las cajas de los vehículos en el impacto en las escenas canónicas, y la corrección para que no se atraviesen; con prueba.
+    - **Calidad:** respeta los niveles de §7.8 (la laptop es el piso; alta y ultra no se recortan).
+    - **Prueba:** la e2e de `/cesvi/caso` abre el 3D en Chromium. Capturas y fps se miden a mano antes de una demo.
   - **Resumen de R2 para René** (rama `feat/r2-reconstruccion`, ADR 0062):
     - **Qué quedó:**
       - **«Caso nuevo» reconstruye con física:** el solver de producción corre en el navegador sobre la escena del perito.
