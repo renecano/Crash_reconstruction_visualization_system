@@ -108,6 +108,29 @@ Reglas de trabajo: `CLAUDE.md`. Especificación: `PLAN.md`.
     - **Corpus estructurado** de los 671 dictámenes con Claude (salida estructurada, caché, semilla), validado contra el esquema, con partición congelada del 30 % y etiquetas de la conclusión revisadas en una muestra.
     - **Mediciones:** las proporciones del §2 en `eval/results/cesvi_corpus.json`; desde ahí se pueden citar.
     - **Costo:** antes de correr el corpus se estima y se anota aquí. Si pasa de 30 USD, se pregunta a René.
+  - **R4 en curso: Croquis reproduce los dictámenes** (rama `feat/r4-reproduccion`). Plan:
+    1. **Comparación** (`packages/cesvi/src/reproduccion.ts`): a partir de la escena que Croquis lee de la narración sin conclusiones (R0 → R1), contra lo que concluyó CESVI (R0):
+       - **modalidad:** Croquis la infiere de la escena (vehículos, caras y dirección de los daños, objeto fijo) y de lo que dice la narración;
+       - **zonas de contacto:** por vehículo y cara;
+       - **secuencia de impactos:** participantes de cada impacto en orden;
+       - **velocidades:** cuando el dictamen las calcula y Croquis puede calcularlas (verificación CESVI con las medidas, o la reconstrucción), con error absoluto y porcentaje;
+       - **posiciones finales:** si Croquis las tiene por vehículo.
+       - **Líneas base:** la modalidad más frecuente y la velocidad promedio, las dos tomadas de desarrollo.
+    2. **Desarrollo antes que prueba:**
+       - las reglas se ajustan con una muestra de dictámenes de desarrollo;
+       - se congelan con un commit;
+       - la prueba congelada (205) se lee y se mide una sola vez.
+    3. **Lecturas con Claude** (la lectura de R1, con la API de lotes): el estimado de costo se anota aquí antes de enviar; si pasa de 30 USD, se pregunta a René.
+       - **Estimado del 2026-10-22** (`cesvi_r4_reproduccion.mts estimar`: tokens de entrada contados con la API y salida media de las lecturas de R1):
+         - desarrollo, 80 narraciones: 366,324 tokens de entrada, ~1.57 USD;
+         - prueba, 205: 942,623 tokens de entrada, ~4.03 USD.
+       - **Total:** ~5.60 USD, bajo el tope de 30 USD.
+       - **La prueba se lee al mismo tiempo,** porque el lote tarda, pero se mide una sola vez, ya con las reglas congeladas.
+    4. **Página «Reproducción de dictámenes»** (`/cesvi/reproduccion`): los casos de la prueba que Croquis reconstruye, con lo que concluyó CESVI y lo que obtuvo Croquis lado a lado (2D y 3D) y las diferencias en porcentaje, más una e2e.
+    - **Riesgos:**
+      - las narraciones casi nunca nombran la modalidad (3 de 205), así que la inferencia depende de las zonas;
+      - sin posiciones medidas, la física no fija velocidades;
+      - solo 17 dictámenes de la prueba tienen velocidades calculadas.
   - **Resumen de R6 para René** (rama `feat/r6-carambolas`, ADR 0066):
     - **Qué quedó:**
       - **El solver resuelve impactos en secuencia** (Python y TS, con paridad):
