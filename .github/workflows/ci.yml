@@ -39,6 +39,11 @@ jobs:
     name: E2E de los flujos principales (Chromium)
     runs-on: ubuntu-latest
     timeout-minutes: 10
+    # La imagen oficial de Playwright ya trae Chromium y sus paquetes del sistema: sin ella, el
+    # paso de apt de `--with-deps` llegó a tardar más de 8 min (2026-10-22) y cortaba el trabajo.
+    # Su versión va con la de @playwright/test del catálogo (pnpm-workspace.yaml).
+    container:
+      image: mcr.microsoft.com/playwright:v1.64.0-noble
     steps:
       - uses: actions/checkout@v7
       - uses: pnpm/action-setup@v6
@@ -47,7 +52,6 @@ jobs:
           node-version-file: .node-version
           cache: pnpm
       - run: pnpm install --frozen-lockfile
-      - run: pnpm --filter @croquis/web exec playwright install --with-deps chromium
       # Una prueba por flujo principal, marcada con @flujo en su título.
       - run: pnpm --filter @croquis/web exec playwright test --project=chromium --grep @flujo --pass-with-no-tests
         env:
