@@ -6,6 +6,7 @@
 import Anthropic from "@anthropic-ai/sdk";
 import { costUsd, LLMError, PRICES } from "@croquis/extraction";
 import { ESQUEMA_CORPUS, mensajeCorpus, SISTEMA_CORPUS, type SalidaCorpus } from "../corpus";
+import { ESQUEMA_NARRACION, mensajeNarracion, SISTEMA_NARRACION } from "../narracion";
 import type { ClienteClaude } from "./consideraciones";
 
 export const MODELO_CORPUS = "claude-sonnet-5-5";
@@ -22,25 +23,47 @@ export interface UsoTokens {
   cache_read_input_tokens: number;
 }
 
-/** La petición para un dictamen; el sistema (reglas y glosario) va en caché. */
-export function pedidoCorpus(textoDictamen: string, modelo = MODELO_CORPUS) {
+/** Una petición de lectura de un dictamen con salida estructurada; el sistema va en caché. */
+export function pedidoLectura(
+  sistema: string,
+  mensaje: string,
+  esquema: Record<string, unknown>,
+  modelo = MODELO_CORPUS,
+) {
   return {
     model: modelo,
     max_tokens: 32000,
     system: [
       {
         type: "text" as const,
-        text: SISTEMA_CORPUS,
+        text: sistema,
         cache_control: { type: "ephemeral" as const },
       },
     ],
-    messages: [{ role: "user" as const, content: mensajeCorpus(textoDictamen) }],
+    messages: [{ role: "user" as const, content: mensaje }],
     output_config: {
       effort: "medium" as const,
-      format: { type: "json_schema" as const, schema: ESQUEMA_CORPUS },
+      format: { type: "json_schema" as const, schema: esquema },
     },
   };
 }
+
+/** La petición del corpus (C0) para un dictamen: reglas y glosario en caché. */
+export function pedidoCorpus(textoDictamen: string, modelo = MODELO_CORPUS) {
+  return pedidoLectura(SISTEMA_CORPUS, mensajeCorpus(textoDictamen), ESQUEMA_CORPUS, modelo);
+}
+
+/** La petición de la narración sin conclusiones y las conclusiones de CESVI (R0). */
+export function pedidoNarracion(textoDictamen: string, modelo = MODELO_CORPUS) {
+  return pedidoLectura(
+    SISTEMA_NARRACION,
+    mensajeNarracion(textoDictamen),
+    ESQUEMA_NARRACION,
+    modelo,
+  );
+}
+
+export type Pedido = ReturnType<typeof pedidoLectura>;
 
 interface MensajeFinal {
   stop_reason: string | null;
@@ -55,8 +78,8 @@ interface MensajeFinal {
   };
 }
 
-export interface LecturaDictamen {
-  salida: SalidaCorpus;
+export interface LecturaDictamen<T = SalidaCorpus> {
+  salida: T;
   modeloRespuesta: string;
   uso: UsoTokens;
   costoUsd: number;
@@ -68,8 +91,11 @@ export function costoCorpus(modelo: string, uso: UsoTokens, lote: boolean): numb
   return lote ? Number((c / 2).toFixed(8)) : c;
 }
 
-/** La respuesta del modelo como salida del corpus (falla si se negó, se truncó o no es JSON). */
-export function lecturaDeMensaje(r: MensajeFinal, lote: boolean): LecturaDictamen {
+/** La respuesta del modelo como salida estructurada (falla si se negó, se truncó o no es JSON). */
+export function lecturaDeMensaje<T = SalidaCorpus>(
+  r: MensajeFinal,
+  lote: boolean,
+): LecturaDictamen<T> {
   if (r.stop_reason === "refusal") {
     throw new LLMError(
       `El modelo declinó la petición (${JSON.stringify(r.stop_details ?? null)}).`,
@@ -77,9 +103,9 @@ export function lecturaDeMensaje(r: MensajeFinal, lote: boolean): LecturaDictame
   }
   if (r.stop_reason === "max_tokens") throw new LLMError("La lectura se truncó en max_tokens.");
   const cuerpo = r.content.find((b) => b.type === "text")?.text ?? "";
-  let salida: SalidaCorpus;
+  let salida: T;
   try {
-    salida = JSON.parse(cuerpo) as SalidaCorpus;
+    salida = JSON.parse(cuerpo) as T;
   } catch {
     throw new LLMError("La salida estructurada no es JSON válido.");
   }
@@ -98,8 +124,16 @@ export async function leerDictamen(
   cliente: ClienteClaude = new Anthropic(),
   modelo = MODELO_CORPUS,
 ): Promise<LecturaDictamen> {
-  const stream = cliente.messages.stream(pedidoCorpus(textoDictamen, modelo));
-  return lecturaDeMensaje(await stream.finalMessage(), false);
+  return leerConPedido(pedidoCorpus(textoDictamen, modelo), cliente);
+}
+
+/** Manda una petición con la API normal y lee su salida estructurada. */
+export async function leerConPedido<T = SalidaCorpus>(
+  pedido: Pedido,
+  cliente: ClienteClaude = new Anthropic(),
+): Promise<LecturaDictamen<T>> {
+  const stream = cliente.messages.stream(pedido);
+  return lecturaDeMensaje<T>(await stream.finalMessage(), false);
 }
 
 /** Tokens de entrada de la petición de un dictamen (la API de conteo no cobra). */
@@ -108,7 +142,14 @@ export async function tokensDeEntrada(
   cliente: ClienteClaude = new Anthropic(),
   modelo = MODELO_CORPUS,
 ): Promise<number> {
-  const p = pedidoCorpus(textoDictamen, modelo);
+  return tokensDePedido(pedidoCorpus(textoDictamen, modelo), cliente);
+}
+
+/** Tokens de entrada de una petición (la API de conteo no cobra). */
+export async function tokensDePedido(
+  p: Pedido,
+  cliente: ClienteClaude = new Anthropic(),
+): Promise<number> {
   const r = await cliente.messages.countTokens({
     model: p.model,
     system: p.system,

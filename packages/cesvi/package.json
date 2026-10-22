@@ -13,7 +13,8 @@
     "lint": "eslint .",
     "typecheck": "tsc -p tsconfig.json",
     "test": "vitest run",
-    "corpus": "tsx ../../data/cesvi/scripts/corpus.mts"
+    "corpus": "tsx ../../data/cesvi/scripts/corpus.mts",
+    "narracion": "tsx ../../data/cesvi/scripts/narracion.mts"
   },
   "devDependencies": {
     "@types/node": "catalog:",
