@@ -105,18 +105,35 @@ export function mensajeNarracion(textoDictamen: string): string {
 
 // --- Revisión de fuga ---------------------------------------------------------------------------
 
-/**
- * Lo que no puede aparecer en la narración sin conclusiones: cifras de velocidad o de energía y
- * frases de conclusión. Cada patrón tiene nombre para reportar cuál saltó.
- */
 /** Una palabra completa: `\b` de JS no ve las letras con acento («declaró»). */
 const palabra = (cuerpo: string) =>
-  new RegExp(`(?<![\\p{L}\\d])(?:${cuerpo})(?![\\p{L}\\d])`, "iu");
+  new RegExp(`(?<![\\p{L}\\d])(?:${cuerpo})(?![\\p{L}\\d])`, "giu");
 
-export const PATRONES_FUGA: readonly { nombre: string; rx: RegExp }[] = [
+/**
+ * Una velocidad del lugar, no del hecho: el límite de un señalamiento («restrictivo de 40 km/h»,
+ * «velocidad máxima de 80 km/h», «SR 09»). Se busca en las palabras que van antes de la cifra.
+ */
+const LIMITE_DE_VELOCIDAD =
+  /(?:m[aá]xim|l[ií]mit|restrictiv|señal|SR\s*-?\s*\d|SP\s*-?\s*\d|permitid|reductor)/iu;
+
+/**
+ * Lo que no puede aparecer en la narración sin conclusiones: cifras de velocidad (salvo los límites
+ * señalados en el lugar) o de energía, métodos de cálculo y frases de conclusión. Cada patrón tiene
+ * nombre para reportar cuál saltó. «Corresponde a» (es) y «el apartado de conclusiones» no cuentan:
+ * no adelantan ninguna conclusión del dictamen. Revisado a mano contra las 48 marcas de la primera
+ * lectura (ADR 0060).
+ */
+export const PATRONES_FUGA: readonly {
+  nombre: string;
+  rx: RegExp;
+  /** Si la coincidencia no cuenta según lo que va antes y después de ella. */
+  excepto?: (antes: string, despues: string) => boolean;
+}[] = [
   {
     nombre: "velocidad",
     rx: palabra(String.raw`\d[\d.,]*\s*(?:km\s*/\s*h(?:r|rs)?|kph|m\s*/\s*s(?:eg)?)`),
+    excepto: (antes, despues) =>
+      LIMITE_DE_VELOCIDAD.test(antes.slice(-60)) || /^\s*(?:como )?m[aá]xim/iu.test(despues),
   },
   {
     nombre: "energia",
@@ -126,17 +143,32 @@ export const PATRONES_FUGA: readonly { nombre: string; rx: RegExp }[] = [
   {
     nombre: "conclusion",
     rx: palabra("se (?:concluye|determina|establece que|infiere)|conclu(?:sión|siones|ye)"),
+    excepto: (antes) => /apartado de\s*$/iu.test(antes),
   },
   {
     nombre: "correspondencia",
-    rx: palabra("(?:no )?(?:corresponden?|se sostiene|son consistentes)"),
+    rx: palabra(
+      "no corresponden?|corresponden? (?:en [\\p{L}]+(?: y [\\p{L}]+)? )?con|en correspondencia|son consistentes|(?:versión|declaración)[^.]{0,40}se sostiene",
+    ),
   },
   { nombre: "declaracion", rx: palabra("declar(?:a|ó|ación|ado|ada|aron)") },
   { nombre: "modalidad", rx: palabra("modalidad de") },
 ];
 
 export function fugas(descripcion: string): string[] {
-  return PATRONES_FUGA.filter((p) => p.rx.test(descripcion)).map((p) => p.nombre);
+  return PATRONES_FUGA.filter((p) =>
+    [...descripcion.matchAll(p.rx)].some(
+      (m) => !p.excepto?.(descripcion.slice(0, m.index), descripcion.slice(m.index + m[0].length)),
+    ),
+  ).map((p) => p.nombre);
+}
+
+/**
+ * El texto convertido del dictamen solo trae las conclusiones (lo dice la narración): no hay hechos
+ * que narrar, así que no sirve como entrada de E-R4. No es una fuga.
+ */
+export function soloConclusiones(descripcion: string): boolean {
+  return /(?:únicamente|solo|sólo)[^.]{0,30}apartado de conclusiones/iu.test(descripcion);
 }
 
 // --- Revisión al volver -------------------------------------------------------------------------
@@ -145,6 +177,8 @@ export interface Narracion {
   id: string;
   descripcion: string;
   fugas: string[];
+  /** El texto del dictamen solo trae las conclusiones: no hay hechos que narrar. */
+  solo_conclusiones: boolean;
   conclusiones: {
     modalidad: string | null;
     zonas_contacto: { vehiculo: IdVehiculo; cara: string; tercio: string | null; cita: string }[];
@@ -207,6 +241,7 @@ export function narracionDeSalida(s: SalidaNarracion, doc: DocumentoCrudo): Narr
     id: doc.id,
     descripcion,
     fugas: fugas(descripcion),
+    solo_conclusiones: soloConclusiones(descripcion),
     conclusiones: {
       modalidad: k.modalidad !== "sin_dato" && modalidadCita ? k.modalidad : null,
       zonas_contacto: k.zonas_contacto.flatMap((z) => {

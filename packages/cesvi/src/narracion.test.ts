@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import {
   aKmh,
+  soloConclusiones,
   ESQUEMA_NARRACION,
   fugas,
   narracionDeSalida,
@@ -65,6 +66,29 @@ describe("narración sin conclusiones y conclusiones de CESVI (R0)", () => {
       "correspondencia",
     ]);
     expect(fugas("El conductor declaró que retrocedía.")).toEqual(["declaracion"]);
+    // Lo revisado a mano en la primera lectura: no adelantan ninguna conclusión del dictamen.
+    expect(fugas("Hay un señalamiento restrictivo de velocidad de 40 km/h máximo.")).toEqual([]);
+    expect(fugas("Una señal SR 09 (limitada a 80 km/h) antes del cruce.")).toEqual([]);
+    expect(
+      fugas("Hay letreros a la orilla de la carretera, que marcan 40Km/h como máximo."),
+    ).toEqual([]);
+    expect(
+      fugas("El lugar corresponde a una curva; el vehículo se sostiene por su estructura."),
+    ).toEqual([]);
+    expect(fugas("El texto contiene únicamente el apartado de conclusiones.")).toEqual([]);
+    // Y lo que sí adelanta el análisis.
+    expect(fugas("El velocímetro registró 38 Km/h.")).toEqual(["velocidad"]);
+    expect(fugas("La pintura azul corresponde en color con las impregnaciones.")).toEqual([
+      "correspondencia",
+    ]);
+    expect(fugas("Los daños no corresponden entre sí.")).toEqual(["correspondencia"]);
+  });
+
+  it("reconoce el dictamen que solo trae las conclusiones", () => {
+    expect(
+      soloConclusiones("El dictamen disponible contiene únicamente el apartado de conclusiones."),
+    ).toBe(true);
+    expect(soloConclusiones("Los restos cubren 15.89 m.")).toBe(false);
   });
 
   it("lee la velocidad con su unidad y la pasa a km/h", () => {

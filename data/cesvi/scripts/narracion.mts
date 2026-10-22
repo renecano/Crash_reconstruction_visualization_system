@@ -219,6 +219,8 @@ function armar() {
       .prueba,
   );
   const filas: Narracion[] = [];
+  /** Lo que el modelo concluyó antes de revisar las citas (para saber por qué falta). */
+  const concluyoElModelo = new Map<string, boolean>();
   const sinLeer: string[] = [];
   let costo = 0;
   let costoLote = 0;
@@ -231,6 +233,11 @@ function armar() {
     costo += c.costo_usd;
     if (c.lote) costoLote += c.costo_usd;
     filas.push(narracionDeSalida(c.salida, d));
+    const k0 = c.salida.conclusiones;
+    concluyoElModelo.set(
+      d.id,
+      k0.modalidad !== "sin_dato" || k0.zonas_contacto.length > 0 || k0.secuencia.length > 0,
+    );
   }
   writeFileSync(
     join(CORPUS, "narraciones.jsonl"),
@@ -244,9 +251,12 @@ function armar() {
     PATRONES_FUGA.map((p) => [p.nombre, filas.filter((f) => f.fugas.includes(p.nombre)).length]),
   );
   const limpias = (ids: Set<string> | null) =>
-    filas.filter((f) => (ids ? ids.has(f.id) : true) && !f.fugas.length).length;
+    filas.filter((f) => (ids ? ids.has(f.id) : true) && !f.fugas.length && !f.solo_conclusiones)
+      .length;
   const restosPii = filas.filter((f) => redactar(f.descripcion) !== f.descripcion).length;
   const k = (f: Narracion) => f.conclusiones;
+  const concluye = (f: Narracion) =>
+    k(f).modalidad !== null || k(f).zonas_contacto.length > 0 || k(f).secuencia.length > 0;
   const resultado = {
     fecha: new Date().toISOString(),
     version_prompt: VERSION_PROMPT_NARRACION,
@@ -260,15 +270,22 @@ function armar() {
       por_patron: porPatron,
       ids: conFuga.map((f) => ({ id: f.id, fugas: f.fugas })),
     },
+    solo_conclusiones: filas.filter((f) => f.solo_conclusiones).map((f) => f.id),
+    descripcion_limpia: limpias(null),
     prueba_congelada: {
       dictamenes: prueba.size,
       leidos: filas.filter((f) => prueba.has(f.id)).length,
+      solo_conclusiones: filas.filter((f) => prueba.has(f.id) && f.solo_conclusiones).length,
       descripcion_limpia: limpias(prueba),
-      con_conclusiones: filas.filter(
-        (f) =>
-          prueba.has(f.id) &&
-          (k(f).modalidad !== null || k(f).zonas_contacto.length || k(f).secuencia.length),
-      ).length,
+      con_conclusiones: filas.filter((f) => prueba.has(f.id) && concluye(f)).length,
+      // Sin modalidad, zonas ni secuencia: o el dictamen no concluye ninguna (el modelo dijo
+      // «sin_dato»), o las citas no se pudieron verificar contra el texto (OCR revuelto).
+      sin_conclusiones: filas
+        .filter((f) => prueba.has(f.id) && !concluye(f))
+        .map((f) => ({
+          id: f.id,
+          motivo: concluyoElModelo.get(f.id) ? "citas_no_verificables" : "el_dictamen_no_concluye",
+        })),
     },
     citas: { total: suma("citas"), fuera_del_texto: suma("citas_fuera") },
     velocidades: { total: suma("velocidades"), descartadas: suma("velocidades_fuera") },

@@ -72,12 +72,31 @@ Reglas de trabajo: `CLAUDE.md`. Especificación: `PLAN.md`.
     - **C0:** pasa a R0. Falta lo nuevo: la descripción de los hechos sin conclusiones, con su revisión de fuga, y lo que concluyó CESVI, estructurado.
     - **C1:** es el módulo de verificación CESVI de R2, con su reproducción (E-C1) ya corrida.
     - **C2–C8:** se reacomodan en R1–R9.
-  - **Fase actual: R0** (termina el corpus con la descripción sin conclusiones y las conclusiones de CESVI). C0 y C1 de la v1 quedaron cerradas el 2026-10-21. El plan de C0 fue:
+  - **Fase actual: R1** (de la narración del perito a la escena). R0 quedó cerrada el 2026-10-21. C0 y C1 de la v1 quedaron cerradas el 2026-10-21. El plan de C0 fue:
     - **Contrato v2:** `escena.schema.json` ampliado, con migración desde v1.3, Zod y Pydantic generados y un validador semántico (N vehículos, M impactos, versiones).
     - **Corpus estructurado** de los 671 dictámenes con Claude (salida estructurada, caché, semilla), validado contra el esquema, con partición congelada del 30 % y etiquetas de la conclusión revisadas en una muestra.
     - **Mediciones:** las proporciones del §2 en `eval/results/cesvi_corpus.json`; desde ahí se pueden citar.
     - **Costo:** antes de correr el corpus se estima y se anota aquí. Si pasa de 30 USD, se pregunta a René.
-  - **R0 en curso** (rama `feat/r0-narracion`):
+  - **Resumen de R0 para René** (rama `feat/r0-narracion`, ADR 0060):
+    - **Qué quedó:** por cada uno de los 671 dictámenes, en `data/cesvi/corpus/narraciones.jsonl`:
+      - la narración de los hechos sin conclusiones, revisada contra fugas;
+      - lo que concluyó CESVI (modalidad, zonas de contacto, secuencia de impactos, velocidades y posiciones finales), cada dato con su cita verificada contra el texto.
+    - **Números medidos** (`eval/results/cesvi_narraciones.json`):
+      - **Narraciones limpias:** 664 de 671; 3 con fuga (todas de desarrollo) y 4 de dictámenes que solo traen conclusiones.
+      - **Prueba congelada:** las 205 narraciones están limpias, y 193 traen conclusiones estructuradas. De las otras 12:
+        - 8 son dictámenes que no concluyen modalidad, zonas ni secuencia;
+        - en 4 el OCR revolvió el texto y las citas no se pueden verificar.
+
+        Están listadas con su motivo.
+
+      - **Citas fuera del texto:** 90 de 2 513, descartadas. **Velocidades descartadas:** 10 de 97.
+      - **Costo real:** 10.27 USD; estimado 11.06.
+    - **Cómo probarlo:**
+      - `pnpm --filter @croquis/cesvi test` (revisión de fuga, citas y conversión, sin la API);
+      - `pnpm --filter @croquis/cesvi narracion armar` rearma desde la caché local, sin costo.
+    - **Qué necesito de René:** nada nuevo.
+    - **Siguiente:** R1, de la narración del perito a la escena.
+  - **Lo que se planeó para R0:**
     - **Plan:**
       - **Por dictamen, dos campos más:**
         - la narración del perito sin conclusiones: hechos, lugar, daños, evidencias y medidas, con su revisión automática de fuga (sin cifras de velocidad o energía, métodos ni frases de conclusión);
