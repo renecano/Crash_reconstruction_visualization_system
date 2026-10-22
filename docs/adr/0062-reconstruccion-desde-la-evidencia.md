@@ -1,12 +1,12 @@
 # ADR 0062 — Reconstrucción física desde la evidencia del perito (R2)
 
 - **Estado:** aceptado (2026-10-21).
-- **Contexto:** R2 de `docs/cesvi/PLAN-CESVI.md` (plan v2). R1 deja la escena del caso en el expediente (contrato 2.0.0, ADR 0061), con lo que el perito coloca en el mapa. El solver de producción (port TS, con paridad contra Python) reconstruye escenas del contrato v1 (`EscenaSpec`) y ya invierte la evidencia declarada para dar velocidades con percentiles (ADR 0027).
+- **Contexto:** R2 de `docs/cesvi/PLAN-CESVI.md` (plan v2). R1 deja la escena del caso en el expediente (contrato 2.0.0, ADR 0061), con lo que el perito coloca en el mapa. El solver de producción (port TS, con paridad contra Python) reconstruye escenas del contrato v1 (`EscenaSpec`) y ya invierte la evidencia declarada para dar velocidades con percentiles (ADR 0010; optimizador propio, ADR 0027).
 
 ## Decisión
 
 - **Un adaptador, no un solver nuevo** (`packages/cesvi/src/reconstruccion.ts`, `especDeExpediente`). La escena del solver se arma en dos capas:
-  1. **Base:** `buildSpec` de `@croquis/extraction` da una escena v1 válida a partir de la clase, las zonas de contacto y el tipo de impacto. Lo que el expediente no dice queda como valor por omisión o supuesto, igual que en el relato (ADR 0006).
+  1. **Base:** `buildSpec` de `@croquis/extraction` da una escena v1 válida a partir de la clase, las zonas de contacto y el tipo de impacto. Lo que el expediente no dice queda como valor por omisión o supuesto, igual que en el relato (ADR 0009).
   2. **Evidencia del perito,** con fuente `usuario` en la escena v1, la que la inversión toma como declarada:
      - **Posiciones finales y su rumbo,** en metros desde el punto de impacto (el promedio de las posiciones de impacto que colocó). El rumbo del contrato 2.0.0 (desde el norte, horario) se pasa al de la escena v1 (desde +X, antihorario).
      - **Masas.**
