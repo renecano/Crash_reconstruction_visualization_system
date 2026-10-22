@@ -73,17 +73,21 @@ describe("del expediente a la escena del solver (R2)", () => {
     const e: Expediente = {
       ...base,
       danos,
-      impactos: [...base.impactos!, { orden: 2, vehiculos: ["V1"], objeto_fijo: "poste" }],
+      impactos: [
+        ...base.impactos!,
+        { orden: 2, vehiculos: ["V1"], objeto_fijo: "poste", fuente: "perito" },
+      ],
     };
     const { spec, limites } = especDeExpediente(e);
     expect(validateEscena(spec).ok).toBe(true);
-    expect(spec.danos_declarados).toEqual([
-      expect.objectContaining({
-        vehiculo_id: "veh-a",
-        profundidad_aplastamiento: expect.objectContaining({ valor: 0.42, fuente: "usuario" }),
-        ancho_danado: expect.objectContaining({ valor: 1.2, fuente: "usuario" }),
-      }),
-    ]);
+    const danosDeclarados = spec.danos_declarados as Json[];
+    expect(danosDeclarados).toHaveLength(1);
+    expect(danosDeclarados[0]!.vehiculo_id).toBe("veh-a");
+    expect(danosDeclarados[0]!.profundidad_aplastamiento).toMatchObject({
+      valor: 0.42,
+      fuente: "usuario",
+    });
+    expect(danosDeclarados[0]!.ancho_danado).toMatchObject({ valor: 1.2, fuente: "usuario" });
     expect(limites[0]).toMatch(/2 impactos/);
   });
 
