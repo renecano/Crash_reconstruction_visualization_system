@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://croquis.local/schema/resultado/1.8.0",
+  "$id": "https://croquis.local/schema/resultado/1.9.0",
   "title": "Resultado",
   "description": "Reconstrucción producida por el solver a partir de una EscenaSpec: trayectorias, impulsos, daños, personas (proyección y ocupantes), visibilidad, objetos del entorno, eventos, banderas, parámetros con su fuente incertidumbre por Monte Carlo (percentiles con semilla), inversión desde la evidencia y banderas de consistencia. Unidades SI; tiempo con t = 0 en el impacto principal; rumbos en radianes antihorario desde +X (salvo los campos que terminan en _deg).",
   "type": "object",
@@ -22,7 +22,7 @@
   ],
   "properties": {
     "version_resultado": {
-      "const": "1.8.0"
+      "const": "1.9.0"
     },
     "escena_id": {
       "$ref": "#/$defs/Id"
@@ -323,6 +323,14 @@
         "dano": {
           "$ref": "#/$defs/Dano"
         },
+        "danos_posteriores": {
+          "type": "array",
+          "description": "Daños de impactos posteriores, en orden (desde 1.9.0). El primer impacto del vehículo va en `dano`.",
+          "items": {
+            "$ref": "#/$defs/DanoPosterior"
+          },
+          "maxItems": 8
+        },
         "en_reposo": {
           "type": "boolean"
         },
@@ -571,6 +579,15 @@
           "items": {
             "type": "number",
             "minimum": 0
+          },
+          "minItems": 2,
+          "maxItems": 2
+        },
+        "punto_m": {
+          "type": "array",
+          "description": "Punto de contacto de un impacto posterior (x, y en metros; desde 1.9.0).",
+          "items": {
+            "type": "number"
           },
           "minItems": 2,
           "maxItems": 2
@@ -1422,6 +1439,66 @@
             "minLength": 1,
             "maxLength": 80
           }
+        }
+      }
+    },
+    "DanoPosterior": {
+      "type": "object",
+      "description": "El daño de un impacto posterior (carambola) en un vehículo que ya tenía daño de un impacto anterior: el mismo perfil que `Dano`, con el evento, el instante, el delta-v y la PDOF de ese impacto (desde 1.9.0, ADR 0066).",
+      "additionalProperties": false,
+      "required": [
+        "evento_id",
+        "t",
+        "delta_v_kmh",
+        "perfil_m",
+        "ancho_m",
+        "centro_m",
+        "energia_j",
+        "origen_rigidez"
+      ],
+      "properties": {
+        "evento_id": {
+          "$ref": "#/$defs/Id"
+        },
+        "t": {
+          "type": "number",
+          "description": "Instante del impacto (s; el primer impacto es t = 0)."
+        },
+        "delta_v_kmh": {
+          "type": "number",
+          "minimum": 0
+        },
+        "pdof_horas": {
+          "type": "number"
+        },
+        "perfil_m": {
+          "type": "array",
+          "items": {
+            "type": "number",
+            "minimum": 0
+          },
+          "minItems": 6,
+          "maxItems": 6,
+          "description": "C1 a C6 equiespaciados sobre el ancho dañado: de izquierda a derecha del vehículo en el frente y en la parte trasera, de adelante hacia atrás en los costados (convención CRASH3)."
+        },
+        "ancho_m": {
+          "type": "number",
+          "minimum": 0
+        },
+        "centro_m": {
+          "type": "number",
+          "description": "Centro del ancho dañado a lo largo de la cara golpeada (m): positivo hacia la izquierda en el frente o la parte trasera, hacia adelante en los costados."
+        },
+        "energia_j": {
+          "type": "number",
+          "minimum": 0
+        },
+        "origen_rigidez": {
+          "type": "string",
+          "enum": ["nhtsa", "supuesto", "sin impacto"]
+        },
+        "cdc": {
+          "$ref": "#/$defs/ZonaCDC"
         }
       }
     }

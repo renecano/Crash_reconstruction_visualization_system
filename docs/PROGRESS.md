@@ -102,6 +102,23 @@ Reglas de trabajo: `CLAUDE.md`. Especificación: `PLAN.md`.
     - **Corpus estructurado** de los 671 dictámenes con Claude (salida estructurada, caché, semilla), validado contra el esquema, con partición congelada del 30 % y etiquetas de la conclusión revisadas en una muestra.
     - **Mediciones:** las proporciones del §2 en `eval/results/cesvi_corpus.json`; desde ahí se pueden citar.
     - **Costo:** antes de correr el corpus se estima y se anota aquí. Si pasa de 30 USD, se pregunta a René.
+  - **R6 en curso: carambolas** (rama `feat/r6-carambolas`). Plan:
+    1. **Solver (Python de referencia y port TS, con paridad):**
+       - **Qué cuenta como impacto posterior:** los eventos de impacto entre vehículos que vienen después del primero en la escena.
+       - **Cuándo ocurre:** en la fase posterior conjunta (ADR 0063), cuando los contornos de ese par se tocan acercándose. Se resuelve con el mismo impulso del primer impacto (`planar_impact`): restitución, fricción, delta-v, PDOF y energía.
+       - **El daño de cada vehículo:** el primero va en `dano`, y los siguientes en `danos_posteriores`. El resultado sube a 1.9.0.
+       - **Si un impacto declarado no ocurre,** una bandera lo dice.
+       - **Escena canónica nueva:** `carambola`, un alcance en cadena con tres vehículos.
+    2. **«Caso nuevo»:**
+       - el adaptador del expediente pasa los impactos 2..M a la escena;
+       - el mapa marca X1, X2…;
+       - el 3D deforma cada zona golpeada;
+       - la línea de tiempo muestra cada impacto en su instante.
+    3. **E-R6:** los dictámenes del corpus con 3 o más vehículos, reconstruidos con el solver de producción: cuántos son válidos, cuántos se reconstruyen y cuántos de sus impactos ocurren. Va en `eval/results/cesvi_r6_carambolas.json`.
+    4. **e2e:** una carambola en `/cesvi/caso`, hasta el 3D.
+    - **Riesgos:**
+      - el costo de integrar N vehículos juntos (pares × paso de 2 ms), sobre todo en Python con `dmath`;
+      - sin posiciones del perito, la disposición de los vehículos de impactos posteriores es un supuesto y se marca así.
   - **Resumen de R3 para René** (rama `feat/r3-visor-3d`; ADR 0063, 0064 y 0065):
     - **Qué quedó:**
       - **El 3D en «Caso nuevo»:** después de «Reconstruir», «Ver la reconstrucción en 3D» abre el visor con la escena reconstruida. Las velocidades de la inversión van marcadas como supuesto, con su rango.

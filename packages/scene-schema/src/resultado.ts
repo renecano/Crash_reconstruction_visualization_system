@@ -69,6 +69,7 @@ export const RESULT_LOADERS: Record<FixtureName, () => Promise<unknown>> = {
   glorieta: () => import("../fixtures/resultados/glorieta.json").then((m) => m.default),
   interseccion_toluca: () =>
     import("../fixtures/resultados/interseccion_toluca.json").then((m) => m.default),
+  carambola: () => import("../fixtures/resultados/carambola.json").then((m) => m.default),
 };
 
 /** Carga y valida el resultado versionado de una escena canónica. */

@@ -2,8 +2,8 @@
 // Regenera con `pnpm --filter @croquis/scene-schema generate`.
 import { z } from "zod";
 
-export const RESULTADO_SCHEMA_ID = "https://croquis.local/schema/resultado/1.8.0";
-export const RESULT_VERSION = "1.8.0" as const;
+export const RESULTADO_SCHEMA_ID = "https://croquis.local/schema/resultado/1.9.0";
+export const RESULT_VERSION = "1.9.0" as const;
 
 export const CampoMuestreado = z.strictObject({
   ruta: z.string().min(1).max(120),
@@ -51,6 +51,28 @@ export type Dano = z.infer<typeof Dano>;
 export const Id = z.string().regex(new RegExp("^[a-z0-9][a-z0-9_-]{0,63}$"));
 export type Id = z.infer<typeof Id>;
 
+/** El daño de un impacto posterior (carambola) en un vehículo que ya tenía daño de un impacto anterior: el mismo perfil que `Dano`, con el evento, el instante, el delta-v y la PDOF de ese impacto (desde 1.9.0, ADR 0066). */
+export const DanoPosterior = z.strictObject({
+  evento_id: Id,
+  t: z.number(),
+  delta_v_kmh: z.number().min(0),
+  pdof_horas: z.number().optional(),
+  perfil_m: z.tuple([
+    z.number().min(0),
+    z.number().min(0),
+    z.number().min(0),
+    z.number().min(0),
+    z.number().min(0),
+    z.number().min(0),
+  ]),
+  ancho_m: z.number().min(0),
+  centro_m: z.number(),
+  energia_j: z.number().min(0),
+  origen_rigidez: z.enum(["nhtsa", "supuesto", "sin impacto"]),
+  cdc: ZonaCDC.optional(),
+});
+export type DanoPosterior = z.infer<typeof DanoPosterior>;
+
 /** Números detrás de la bandera (km/h y m); los pares son [mínimo, máximo]. */
 export const DatosInconsistencia = z.strictObject({
   vehiculo: Id,
@@ -81,6 +103,7 @@ export const DetalleEvento = z.strictObject({
   aplastamiento_max_m: z.number().min(0).optional(),
   distancia_proyeccion_m: z.number().min(0).optional(),
   rango_m: z.tuple([z.number().min(0), z.number().min(0)]).optional(),
+  punto_m: z.tuple([z.number(), z.number()]).optional(),
 });
 export type DetalleEvento = z.infer<typeof DetalleEvento>;
 
@@ -402,6 +425,7 @@ export const VehiculoResultado = z.strictObject({
   delta_v_kmh: z.number().min(0),
   pdof_horas: z.number().min(0).max(12).optional(),
   dano: Dano,
+  danos_posteriores: z.array(DanoPosterior).max(8).optional(),
   en_reposo: z.boolean(),
   pose_final: Pose,
   distancia_post_m: z.number().min(0),
@@ -434,7 +458,7 @@ export type Visibilidad = z.infer<typeof Visibilidad>;
 
 /** Reconstrucción producida por el solver a partir de una EscenaSpec: trayectorias, impulsos, daños, personas (proyección y ocupantes), visibilidad, objetos del entorno, eventos, banderas, parámetros con su fuente incertidumbre por Monte Carlo (percentiles con semilla), inversión desde la evidencia y banderas de consistencia. Unidades SI; tiempo con t = 0 en el impacto principal; rumbos en radianes antihorario desde +X (salvo los campos que terminan en _deg). */
 export const ResultadoSchema = z.strictObject({
-  version_resultado: z.literal("1.8.0"),
+  version_resultado: z.literal("1.9.0"),
   escena_id: Id,
   semilla: z.int().min(0),
   dt: z.number().max(1).gt(0),
