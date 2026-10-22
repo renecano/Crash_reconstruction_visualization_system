@@ -84,7 +84,7 @@ Paso seis, los números, con el método de CESVI. 63 punto 15 kilómetros por ho
 
 > En pantalla: paso 7, «Croquis contra el reporte de CESVI».
 
-Paso siete: Croquis contra el reporte de CESVI. Croquis llega a lo mismo que ustedes en la modalidad, la velocidad por restos y la dinámica del impacto. La velocidad por deformación difiere 1 punto 19 por ciento, porque la energía calculada con los datos impresos difiere 2 punto 39 por ciento de la del dictamen. La diferencia queda a la vista, con su valor.
+Paso siete: Croquis contra el reporte de CESVI. Croquis llega a lo mismo que ustedes en la modalidad, la velocidad por restos y la dinámica del impacto. La velocidad por deformación difiere 1 punto 19 por ciento, porque la energía calculada con los datos impresos difiere 2 punto 39 por ciento de la de su reporte. La diferencia queda a la vista, con su valor.
 
 ## dictamen
 

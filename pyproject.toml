@@ -57,6 +57,9 @@ ignore = ["RUF001", "RUF002", "RUF003"]
 "**/tests/**" = ["ARG", "PT011"]
 "**/scripts/**" = ["T20"]
 "**/__main__.py" = ["T20"]
+# Scripts que se corren a mano e informan su avance.
+"eval/voz_video.py" = ["T20"]
+"demo/video/*.py" = ["T20"]
 "extraction/croquis_extraction/validate_ciss.py" = ["T20"]
 "**/generated.py" = ["E501", "N815", "UP"]
 # Tablas de expresiones regulares en español: partirlas las vuelve ilegibles.
