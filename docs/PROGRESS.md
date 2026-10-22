@@ -65,7 +65,9 @@ Reglas de trabajo: `CLAUDE.md`. Especificación: `PLAN.md`.
 - **Versión real para CESVI (desde 2026-10-21):** el plan es `docs/cesvi/PLAN-CESVI.md`; `docs/cesvi/PROTOTIPO.md` queda como historial.
   - **El prototipo desplegado se queda como está** para la demo con CESVI de esta semana. La versión real se trabaja en ramas y entra a `main` solo con la e2e del prototipo en verde.
   - **Plan v2 (2026-10-21):** René lo cambió el mismo día. El centro es la reconstrucción con física y su 3D a partir de lo que narra el perito; los dictámenes sirven para demostrar que Croquis reproduce lo que CESVI ya analizó, y la comparación con la declaración del conductor queda como complemento opcional (R7). `CLAUDE.md` cambió con él: el visor 3D se reactiva.
-  - **Orden:** R0 → R1 → R2 → R3 → R4 → R5 → R6 → R7 → R8 → R9 → R10 → R11. R10 (calidad visual del 3D) y R11 (video cinematográfico con Blender) van al final.
+  - **Orden:** R0 → R1 → R2 → R3 → R6 → R4 → R5 → R7 → R8 → R9 → R10 → R11.
+    - **R6 (carambolas) va antes de R4** (René, 2026-10-21): la evaluación de R4 debe cubrir los 104 dictámenes con 3 o más vehículos y los 144 con más de un impacto (`eval/results/cesvi_corpus_extraccion.json`).
+    - **R10** (calidad visual del 3D) y **R11** (video cinematográfico con Blender) van al final.
   - **Cómo quedan las fases C de la v1:**
     - **C0:** pasa a R0. Falta lo nuevo: la descripción de los hechos sin conclusiones, con su revisión de fuga, y lo que concluyó CESVI, estructurado.
     - **C1:** es el módulo de verificación CESVI de R2, con su reproducción (E-C1) ya corrida.
