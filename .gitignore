@@ -71,3 +71,5 @@ eval/e5/resultados_desarrollo.jsonl
 demo/video/salida/
 demo/video/*.mp4
 demo/video/*.srt
+# Worker de pdf.js copiado de node_modules en cada build (scripts/pdfjs-worker.mjs)
+apps/web/public/pdfjs/

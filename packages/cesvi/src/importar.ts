@@ -7,24 +7,15 @@
  * Con el expediente, el perito coloca a los vehículos y reconstruye como en «Caso nuevo»; con las
  * conclusiones, compara lo que reconstruyó con lo que concluyó el dictamen.
  */
-import {
-  expedienteDeSalida,
-  problemasExpediente,
-  type Conteos,
-  type Expediente,
-  type PosicionDescrita,
-  type SalidaCorpus,
-} from "./corpus";
+import { expedienteDeSalida, type SalidaCorpus } from "./corpus";
+import { escenaDeConversion, type EscenaNarrada } from "./escena-narracion";
 import { narracionDeSalida, type Narracion, type SalidaNarracion } from "./narracion";
 
-export interface DictamenImportado {
-  expediente: Expediente;
-  /** Las posiciones que describe el dictamen, en palabras (guía para colocar a cada vehículo). */
-  posiciones: PosicionDescrita[];
-  /** Citas y números del expediente revisados contra el texto. */
-  conteos: Conteos;
-  /** Errores del contrato o del validador semántico (vacío si el expediente es válido). */
-  problemas: string[];
+/**
+ * La escena del dictamen (expediente, posiciones descritas, citas revisadas, problemas y lo que más
+ * cambia la reconstrucción, como en «Caso nuevo») y la narración con lo que concluyó CESVI.
+ */
+export interface DictamenImportado extends EscenaNarrada {
   narracion: Narracion;
 }
 
@@ -35,12 +26,8 @@ export function importarDictamen(
   narracion: SalidaNarracion,
   archivo = "dictamen",
 ): DictamenImportado {
-  const conv = expedienteDeSalida(corpus, texto, "dictamen_importado");
   return {
-    expediente: conv.expediente,
-    posiciones: conv.posiciones,
-    conteos: conv.conteos,
-    problemas: problemasExpediente(conv.expediente),
+    ...escenaDeConversion(expedienteDeSalida(corpus, texto, "dictamen_importado")),
     narracion: narracionDeSalida(narracion, { id: "importado", archivo, texto }),
   };
 }
@@ -50,3 +37,4 @@ export function resumenTexto(texto: string): { caracteres: number; palabras: num
   const t = texto.trim();
   return { caracteres: t.length, palabras: t ? t.split(/\s+/).length : 0 };
 }
+export type { SalidaNarracion } from "./narracion";

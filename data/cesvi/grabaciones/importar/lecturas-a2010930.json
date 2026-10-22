@@ -1,0 +1,491 @@
+{
+  "corpus": {
+    "datos": [
+      {
+        "seccion": "caso",
+        "n": 1,
+        "vehiculo": "ninguno",
+        "campo": "modalidad",
+        "valor": "alcance",
+        "cita": "DICTAMEN TÉCNICO DEL HECHO DE TRÁNSITO EN SU MODALIDAD DE ALCANCE, SUSCITADO EL DÍA 17 DE JUNIO DE 2010"
+      },
+      {
+        "seccion": "caso",
+        "n": 1,
+        "vehiculo": "ninguno",
+        "campo": "aseguradora",
+        "valor": "AXA",
+        "cita": "en información proporcionada por la compañía de seguros AXA"
+      },
+      {
+        "seccion": "caso",
+        "n": 1,
+        "vehiculo": "ninguno",
+        "campo": "fecha_hora",
+        "valor": "17 de junio de 2010, 11:30 hrs",
+        "cita": "SUSCITADO EL DÍA 17 DE JUNIO DE 2010 APROXIMADAMENTE A LAS 11:30 HRS"
+      },
+      {
+        "seccion": "caso",
+        "n": 1,
+        "vehiculo": "ninguno",
+        "campo": "lugar",
+        "valor": "carretera Internacional México-Nogales, km 47+800, tramo Los Mochis-Navojoa",
+        "cita": "EN LA CARRETERA INTERNACIONAL MÉXICO NOGALES, KM 47+800, DEL TRAMO LOS MOCHIS-NAVOJA, AHOME, SINALOA"
+      },
+      {
+        "seccion": "caso",
+        "n": 1,
+        "vehiculo": "ninguno",
+        "campo": "municipio",
+        "valor": "Ahome",
+        "cita": ""
+      },
+      {
+        "seccion": "caso",
+        "n": 1,
+        "vehiculo": "ninguno",
+        "campo": "entidad",
+        "valor": "Sinaloa",
+        "cita": ""
+      },
+      {
+        "seccion": "vehiculo",
+        "n": 1,
+        "vehiculo": "V1",
+        "campo": "marca",
+        "valor": "Chevrolet",
+        "cita": "el vehículo marca Chevrolet, tipo Silverado 2500, modelo 2007,"
+      },
+      {
+        "seccion": "vehiculo",
+        "n": 1,
+        "vehiculo": "V1",
+        "campo": "modelo",
+        "valor": "Silverado 2500",
+        "cita": ""
+      },
+      {
+        "seccion": "vehiculo",
+        "n": 1,
+        "vehiculo": "V1",
+        "campo": "anio",
+        "valor": "2007",
+        "cita": ""
+      },
+      {
+        "seccion": "vehiculo",
+        "n": 1,
+        "vehiculo": "V1",
+        "campo": "clase",
+        "valor": "pickup",
+        "cita": ""
+      },
+      {
+        "seccion": "vehiculo",
+        "n": 2,
+        "vehiculo": "V2",
+        "campo": "marca",
+        "valor": "Toyota",
+        "cita": "el vehículo marca Toyota, tipo Tacoma, modelo 1997, color Blanco"
+      },
+      {
+        "seccion": "vehiculo",
+        "n": 2,
+        "vehiculo": "V2",
+        "campo": "modelo",
+        "valor": "Tacoma",
+        "cita": ""
+      },
+      {
+        "seccion": "vehiculo",
+        "n": 2,
+        "vehiculo": "V2",
+        "campo": "anio",
+        "valor": "1997",
+        "cita": ""
+      },
+      {
+        "seccion": "vehiculo",
+        "n": 2,
+        "vehiculo": "V2",
+        "campo": "clase",
+        "valor": "pickup",
+        "cita": ""
+      },
+      {
+        "seccion": "vehiculo",
+        "n": 2,
+        "vehiculo": "V2",
+        "campo": "masa",
+        "valor": "1431.083 kg",
+        "cita": "m = 1431.083 kg"
+      },
+      {
+        "seccion": "vehiculo",
+        "n": 2,
+        "vehiculo": "V2",
+        "campo": "rigidez",
+        "valor": "A = 55.405 N/m, B = 385.336 N/m",
+        "cita": "A = 55.405 N/m B = 385.336 N/m"
+      },
+      {
+        "seccion": "dano",
+        "n": 1,
+        "vehiculo": "V1",
+        "campo": "cara",
+        "valor": "posterior",
+        "cita": "en la parte posterior presenta la tapa batea desacoplada de la posición original y con daños tipo hundimiento con dirección de atrás hacia delante sobre el vértice posterior izquierdo"
+      },
+      {
+        "seccion": "dano",
+        "n": 1,
+        "vehiculo": "V1",
+        "campo": "vertice",
+        "valor": "posterior_izquierdo",
+        "cita": ""
+      },
+      {
+        "seccion": "dano",
+        "n": 1,
+        "vehiculo": "V1",
+        "campo": "direccion",
+        "valor": "de_atras_hacia_adelante",
+        "cita": ""
+      },
+      {
+        "seccion": "dano",
+        "n": 1,
+        "vehiculo": "V1",
+        "campo": "tipo",
+        "valor": "hundimiento",
+        "cita": ""
+      },
+      {
+        "seccion": "dano",
+        "n": 1,
+        "vehiculo": "V1",
+        "campo": "tipo",
+        "valor": "ruptura",
+        "cita": "la unidad de luces posteriores del lado izquierdo con daños tipo ruptura"
+      },
+      {
+        "seccion": "dano",
+        "n": 2,
+        "vehiculo": "V1",
+        "campo": "cara",
+        "valor": "lateral_izquierdo",
+        "cita": "desacoplamiento de la posición original de la puerta delantera, así como daños tipo hundimiento con dirección de atrás hacia delante del panel del poste posterior del habitáculo"
+      },
+      {
+        "seccion": "dano",
+        "n": 2,
+        "vehiculo": "V1",
+        "campo": "direccion",
+        "valor": "de_atras_hacia_adelante",
+        "cita": ""
+      },
+      {
+        "seccion": "dano",
+        "n": 2,
+        "vehiculo": "V1",
+        "campo": "direccion",
+        "valor": "de_izquierda_a_derecha",
+        "cita": "daño tipo hundimiento en la parte central con dirección de izquierda a derecha"
+      },
+      {
+        "seccion": "dano",
+        "n": 2,
+        "vehiculo": "V1",
+        "campo": "tipo",
+        "valor": "hundimiento",
+        "cita": ""
+      },
+      {
+        "seccion": "dano",
+        "n": 3,
+        "vehiculo": "V2",
+        "campo": "cara",
+        "valor": "frontal",
+        "cita": "En la parte frontal del vehículo tipo Tacoma, se observa un daño de magnitudes considerables ocasionadas por cuerpo duro y generado de adelante hacia atrás"
+      },
+      {
+        "seccion": "dano",
+        "n": 3,
+        "vehiculo": "V2",
+        "campo": "direccion",
+        "valor": "de_adelante_hacia_atras",
+        "cita": ""
+      },
+      {
+        "seccion": "dano",
+        "n": 3,
+        "vehiculo": "V2",
+        "campo": "tipo",
+        "valor": "ruptura",
+        "cita": "presenta daños tipo ruptura con esquirlas y desacoplamiento de la posición original del parabrisas"
+      },
+      {
+        "seccion": "dano",
+        "n": 3,
+        "vehiculo": "V2",
+        "campo": "tipo",
+        "valor": "hundimiento",
+        "cita": "el cofre se observa con daño tipo hundimiento con dirección de adelante hacia atrás"
+      },
+      {
+        "seccion": "dano",
+        "n": 3,
+        "vehiculo": "V2",
+        "campo": "tipo",
+        "valor": "desprendimiento",
+        "cita": ""
+      },
+      {
+        "seccion": "dano",
+        "n": 3,
+        "vehiculo": "V2",
+        "campo": "medidas",
+        "valor": "C1 0.96 m, C2 0.86 m, C3 0.52 m, C4 0.20 m, L 1.689 m",
+        "cita": "L = 1.689 m. A = 55.405 N/m B = 385.336 N/m C1 = 0.96 m C2 = 0.86 m C3 = 0.52 m C4 = 0.20 m"
+      },
+      {
+        "seccion": "dano",
+        "n": 4,
+        "vehiculo": "V2",
+        "campo": "cara",
+        "valor": "lateral_derecho",
+        "cita": "El lado derecho del vehículo tipo Tacoma, presenta daños tipo hundimiento con dirección de adelante hacia atrás en la salpicadera"
+      },
+      {
+        "seccion": "dano",
+        "n": 4,
+        "vehiculo": "V2",
+        "campo": "direccion",
+        "valor": "de_adelante_hacia_atras",
+        "cita": ""
+      },
+      {
+        "seccion": "dano",
+        "n": 4,
+        "vehiculo": "V2",
+        "campo": "tipo",
+        "valor": "hundimiento",
+        "cita": ""
+      },
+      {
+        "seccion": "dano",
+        "n": 5,
+        "vehiculo": "V2",
+        "campo": "cara",
+        "valor": "lateral_izquierdo",
+        "cita": "presenta la salpicadera delantera un desplazamiento con dirección de adelante hacia atrás y desacoplamiento de la posición original"
+      },
+      {
+        "seccion": "dano",
+        "n": 5,
+        "vehiculo": "V2",
+        "campo": "direccion",
+        "valor": "de_adelante_hacia_atras",
+        "cita": ""
+      },
+      {
+        "seccion": "impacto",
+        "n": 1,
+        "vehiculo": "ninguno",
+        "campo": "participante",
+        "valor": "V2",
+        "cita": "la modalidad del hecho de tránsito en estudio es un alcance, generado por parte del vehículo tipo Tacoma al vehículo tipo Silverado 2500"
+      },
+      {
+        "seccion": "impacto",
+        "n": 1,
+        "vehiculo": "ninguno",
+        "campo": "participante",
+        "valor": "V1",
+        "cita": ""
+      },
+      {
+        "seccion": "declaracion",
+        "n": 1,
+        "vehiculo": "V1",
+        "campo": "version",
+        "valor": "",
+        "cita": "venia de sur a norte cuando vi un accidente de un tráiler y me pare, reversie unos metros cuando llego la camioneta y me impacto"
+      },
+      {
+        "seccion": "declaracion",
+        "n": 1,
+        "vehiculo": "V1",
+        "campo": "maniobra",
+        "valor": "circula",
+        "cita": ""
+      },
+      {
+        "seccion": "declaracion",
+        "n": 1,
+        "vehiculo": "V1",
+        "campo": "maniobra",
+        "valor": "se_detiene",
+        "cita": ""
+      },
+      {
+        "seccion": "declaracion",
+        "n": 1,
+        "vehiculo": "V1",
+        "campo": "maniobra",
+        "valor": "reversa",
+        "cita": ""
+      },
+      {
+        "seccion": "restos",
+        "n": 1,
+        "vehiculo": "ninguno",
+        "campo": "longitud",
+        "valor": "15.89 metros",
+        "cita": "existe entre el inicio de los restos localizados y el final de estos una distancia de separación entre ellos de 15.89 metros"
+      },
+      {
+        "seccion": "calculo",
+        "n": 1,
+        "vehiculo": "V2",
+        "campo": "metodo",
+        "valor": "mchenry",
+        "cita": "Para el hecho de tránsito en estudio ocuparemos la fórmula de cuatro medidas"
+      },
+      {
+        "seccion": "calculo",
+        "n": 1,
+        "vehiculo": "V2",
+        "campo": "entradas",
+        "valor": "L = 1.689 m; A = 55.405 N/m; B = 385.336 N/m; C1 = 0.96 m; C2 = 0.86 m; C3 = 0.52 m; C4 = 0.20 m",
+        "cita": "L = 1.689 m. A = 55.405 N/m B = 385.336 N/m C1 = 0.96 m C2 = 0.86 m C3 = 0.52 m C4 = 0.20 m"
+      },
+      {
+        "seccion": "calculo",
+        "n": 2,
+        "vehiculo": "V2",
+        "campo": "metodo",
+        "valor": "ebs",
+        "cita": "Vimpacto = 17.5420 m/s = 63.15 km/h"
+      },
+      {
+        "seccion": "calculo",
+        "n": 2,
+        "vehiculo": "V2",
+        "campo": "resultado",
+        "valor": "63.15 km/h",
+        "cita": ""
+      },
+      {
+        "seccion": "calculo",
+        "n": 2,
+        "vehiculo": "V2",
+        "campo": "entradas",
+        "valor": "m = 1431.083 kg",
+        "cita": "m = 1431.083 kg"
+      },
+      {
+        "seccion": "calculo",
+        "n": 3,
+        "vehiculo": "V1",
+        "campo": "metodo",
+        "valor": "desplazamiento",
+        "cita": "V3 = 16.74 x (3.6) = 60.27 km/h"
+      },
+      {
+        "seccion": "calculo",
+        "n": 3,
+        "vehiculo": "V1",
+        "campo": "resultado",
+        "valor": "60.27 km/h",
+        "cita": ""
+      },
+      {
+        "seccion": "calculo",
+        "n": 3,
+        "vehiculo": "V1",
+        "campo": "entradas",
+        "valor": "D = 15.89 m; a = 0.9; g = 9.8 m/s2",
+        "cita": "D = 15.89 m a = 0.9 g = 9.8 m/s2"
+      },
+      {
+        "seccion": "criterio",
+        "n": 1,
+        "vehiculo": "ninguno",
+        "campo": "criterio",
+        "valor": "direccion",
+        "cita": "los daños que deberían presentar ambos vehículos deberían estar localizados en las partes centrales tanto posterior del vehículo tipo Silverado 2500"
+      },
+      {
+        "seccion": "criterio",
+        "n": 1,
+        "vehiculo": "ninguno",
+        "campo": "estado",
+        "valor": "no_corresponde",
+        "cita": ""
+      },
+      {
+        "seccion": "conclusion",
+        "n": 1,
+        "vehiculo": "ninguno",
+        "campo": "veredicto",
+        "valor": "no_se_sostiene",
+        "cita": "Se concluye que los hechos del siniestro bajo estudio no sucedieron como lo declara el conductor del vehículo tipo Silverado"
+      }
+    ]
+  },
+  "narracion": {
+    "descripcion": "El hecho se ubica sobre la carretera Internacional México-Nogales, km 47+800, tramo Los Mochis-Navojoa, en Ahome, Sinaloa, aproximadamente a las 11:30 horas. El tramo consta de 2 arroyos vehiculares, con sentido de Sur a Norte hacia Navojoa y de Norte a Sur hacia Los Mochis; cada arroyo tiene una amplitud de 6.47 metros. El arroyo con sentido de Sur a Norte presenta reciente mantenimiento sobre la carpeta asfáltica y solamente líneas discontinuas de color blanco que indican separación de carriles. Ambos arroyos están separados por un área de terracería y hierbas en la parte central, con diversos desniveles. El arroyo está delimitado en el extremo derecho por un área de terracería con desniveles y material de mantenimiento reciente, y en el extremo izquierdo por el área de terracería y hierbas que divide ambos arroyos.\n\nSe localizaron restos de piezas de los vehículos, la gran mayoría sobre el extremo izquierdo, con una distancia de separación de 15.89 metros entre el inicio de los restos localizados y el final de estos.\n\nEl vehículo A es una camioneta marca Chevrolet, tipo Silverado 2500, modelo 2007, color arena, de servicio particular. El vehículo B es una camioneta marca Toyota, tipo Tacoma, modelo 1997, color blanco, de servicio particular. Se anota una masa de 1431.083 kg para el vehículo B.\n\nEl vehículo A presenta la parte frontal sin daño por impacto. En el lado derecho, la batea está desplazada de izquierda a derecha. En la parte posterior, la tapa batea está desacoplada de la posición original y con hundimiento de atrás hacia delante sobre el vértice posterior izquierdo; la unidad de luces posteriores izquierda presenta ruptura y la defensa posterior hundimiento de atrás hacia delante, con falta de la cubierta plástica superior. En el lado izquierdo, la puerta delantera está desacoplada, el panel del poste posterior del habitáculo presenta hundimiento de atrás hacia delante, la tapa batea está desplazada de atrás hacia delante con hundimiento en la parte central de izquierda a derecha, la batea en la parte izquierda posterior tiene hundimiento de atrás hacia delante y el neumático posterior izquierdo presenta falta de aire. La ventanilla posterior izquierda del habitáculo presenta ruptura con esquirlas, y la batea desplazamiento de izquierda a derecha y de atrás hacia delante, con abombamiento de la parte inferior.\n\nEl vehículo B presenta en la parte frontal un daño de magnitudes considerables generado de adelante hacia atrás: parabrisas con ruptura con esquirlas y desacoplado, cofre con hundimiento de adelante hacia atrás y doblez en la parte central, marco radiador y radiador con hundimiento de adelante hacia atrás, falta de la unidad de luces delanteras derecha, la izquierda desacoplada, y falta de parrilla central y defensa delantera. En el lado derecho, la salpicadera presenta hundimiento de adelante hacia atrás, el neumático delantero falta de aire, la puerta delantera desacoplada y desplazada de adelante hacia atrás con ruptura de ventanilla y hundimiento del panel, el habitáculo desplazado de adelante hacia atrás y el estribo con hundimiento de arriba hacia abajo. En el lado izquierdo, la salpicadera delantera está desplazada de adelante hacia atrás y desacoplada, y el habitáculo desplazado de adelante hacia atrás. En la parte posterior falta la placa y la batea presenta un desnivel con inclinación hacia el lado izquierdo. En el habitáculo, el tablero de instrumentos está desplazado de adelante hacia atrás con mayor acentuación sobre el lado derecho y la parte central, el airbag del conductor está activado, los asientos tienen esquirlas de vidrio y los cinturones de seguridad no están tensados. En elementos mecánicos presenta ruptura en radiador, condensador, ventilador, bases y soporte del conjunto de poleas del alternador y mangueras del sistema de enfriamiento, desacoplamiento de partes plásticas del motor y desplazamiento de adelante hacia atrás de la suspensión delantera derecha. Las medidas de deformación del frente del vehículo B son L = 1.689 m, C1 = 0.96 m, C2 = 0.86 m, C3 = 0.52 m y C4 = 0.20 m.",
+    "conclusiones": {
+      "modalidad": "alcance",
+      "modalidad_cita": "la modalidad del hecho de tránsito en estudio es un alcance, generado por parte del vehículo tipo Tacoma al vehículo tipo Silverado 2500",
+      "zonas_contacto": [
+        {
+          "vehiculo": "V1",
+          "cara": "posterior",
+          "tercio": "izquierdo",
+          "cita": "los daños que presenta el vehículo tipo Silverado en la parte posterior con acentuación hacia el lado izquierdo"
+        },
+        {
+          "vehiculo": "V2",
+          "cara": "frontal",
+          "tercio": "derecho",
+          "cita": "los del vehículo tipo Tacoma en la parte frontal con acentuación hacia el lado derecho"
+        }
+      ],
+      "secuencia": [
+        {
+          "orden": 1,
+          "participantes": [
+            "V2",
+            "V1"
+          ],
+          "objeto_fijo": "",
+          "cita": "la modalidad del hecho de tránsito en estudio es un alcance, generado por parte del vehículo tipo Tacoma al vehículo tipo Silverado 2500"
+        }
+      ],
+      "velocidades": [
+        {
+          "vehiculo": "V2",
+          "valor": "63.15 km/h",
+          "que": "velocidad de impacto por deformación (método de McHenry)",
+          "cita": "de acuerdo a la magnitud y profundidad de los daños que presenta el vehículo tipo Tacoma en la parte frontal su velocidad de impacto es de 63.15 km/h"
+        },
+        {
+          "vehiculo": "V2",
+          "valor": "60.27 km/h",
+          "que": "velocidad de alcance por desplazamiento de los restos",
+          "cita": "esta fue impactada por alcance a una velocidad de 60.27 km/h"
+        }
+      ],
+      "posiciones_finales": []
+    }
+  },
+  "modelo": "claude-sonnet-5-5",
+  "versiones": {
+    "corpus": "corpus-cesvi-v3",
+    "narracion": "narracion-cesvi-v1"
+  },
+  "costoUsd": 0.1205915
+}

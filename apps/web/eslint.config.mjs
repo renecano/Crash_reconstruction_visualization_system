@@ -15,6 +15,7 @@ const eslintConfig = defineConfig([
     // Worker del solver empaquetado por scripts/build-worker.mjs (ADR 0030).
     "public/workers/**",
     "public/maplibre/**",
+    "public/pdfjs/**",
   ]),
 ]);
 

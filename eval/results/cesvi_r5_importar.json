@@ -1,0 +1,5983 @@
+{
+ "fecha": "2026-10-22T22:57:39.184Z",
+ "descripcion": "E-R5: la importación de un reporte de CESVI (lectura corpus-cesvi-v3 y revisión de citas) sobre los 205 de la prueba congelada, con las lecturas de C0 (sin API). La exactitud contra los PDF originales espera a esos PDF.",
+ "reportes": 205,
+ "expedientes_validos": 205,
+ "escenas_validas": 205,
+ "listos_para_reconstruir": 204,
+ "con_error": 0,
+ "ms_mediana": 340,
+ "cobertura": {
+  "vehiculos_con_clase_pct": 22.4,
+  "vehiculos_con_masa_pct": 2.4,
+  "vehiculos_con_rigidez_pct": 0,
+  "reportes_con_danos_pct": 97.1,
+  "danos_con_medidas_c_y_l_pct": 0,
+  "reportes_con_impactos_pct": 92.2,
+  "reportes_con_modalidad_pct": 97.6,
+  "reportes_con_restos_pct": 3.4,
+  "reportes_con_huellas_pct": 7.8,
+  "reportes_con_calculos_pct": 22.9
+ },
+ "verificable": {
+  "citas": 4844,
+  "citas_fuera_del_texto": 76,
+  "citas_en_el_texto_pct": 98.4,
+  "numeros": 913,
+  "numeros_fuera_de_su_cita": 54,
+  "numeros_en_su_cita_pct": 94.1
+ },
+ "campos_de_calculo_e_c1_prueba": {
+  "fichas": 36,
+  "recalculadas": 23,
+  "reproducen_a_0_5_pct": 18,
+  "proporcion": 78.3
+ },
+ "detalle": [
+  {
+   "id": "cesvi-4e4d78194f",
+   "expediente_valido": true,
+   "escena_valida": true,
+   "lista_para_reconstruir": true,
+   "error": null,
+   "ms": 422,
+   "campos": {
+    "vehiculos": 1,
+    "clase": 0,
+    "masa": 0,
+    "rigidez": 0,
+    "danos": 3,
+    "medidas_c_y_l": 0,
+    "impactos": 2,
+    "modalidad": true,
+    "restos": false,
+    "huellas": 0,
+    "calculos": 0
+   },
+   "conteos": {
+    "filas": 35,
+    "valores_invalidos": 0,
+    "citas": 22,
+    "citas_fuera": 0,
+    "numeros": 3,
+    "numeros_fuera": 0
+   }
+  },
+  {
+   "id": "cesvi-ec1c390b10",
+   "expediente_valido": true,
+   "escena_valida": true,
+   "lista_para_reconstruir": true,
+   "error": null,
+   "ms": 339,
+   "campos": {
+    "vehiculos": 2,
+    "clase": 0,
+    "masa": 0,
+    "rigidez": 0,
+    "danos": 6,
+    "medidas_c_y_l": 0,
+    "impactos": 1,
+    "modalidad": true,
+    "restos": false,
+    "huellas": 0,
+    "calculos": 0
+   },
+   "conteos": {
+    "filas": 56,
+    "valores_invalidos": 0,
+    "citas": 30,
+    "citas_fuera": 0,
+    "numeros": 3,
+    "numeros_fuera": 0
+   }
+  },
+  {
+   "id": "cesvi-644837b23b",
+   "expediente_valido": true,
+   "escena_valida": true,
+   "lista_para_reconstruir": true,
+   "error": null,
+   "ms": 286,
+   "campos": {
+    "vehiculos": 2,
+    "clase": 0,
+    "masa": 0,
+    "rigidez": 0,
+    "danos": 7,
+    "medidas_c_y_l": 0,
+    "impactos": 1,
+    "modalidad": true,
+    "restos": false,
+    "huellas": 0,
+    "calculos": 1
+   },
+   "conteos": {
+    "filas": 54,
+    "valores_invalidos": 0,
+    "citas": 25,
+    "citas_fuera": 0,
+    "numeros": 6,
+    "numeros_fuera": 1
+   }
+  },
+  {
+   "id": "cesvi-581f3c5f7e",
+   "expediente_valido": true,
+   "escena_valida": true,
+   "lista_para_reconstruir": true,
+   "error": null,
+   "ms": 280,
+   "campos": {
+    "vehiculos": 2,
+    "clase": 2,
+    "masa": 0,
+    "rigidez": 0,
+    "danos": 6,
+    "medidas_c_y_l": 0,
+    "impactos": 1,
+    "modalidad": true,
+    "restos": false,
+    "huellas": 0,
+    "calculos": 0
+   },
+   "conteos": {
+    "filas": 51,
+    "valores_invalidos": 0,
+    "citas": 25,
+    "citas_fuera": 0,
+    "numeros": 5,
+    "numeros_fuera": 0
+   }
+  },
+  {
+   "id": "cesvi-037dde2760",
+   "expediente_valido": true,
+   "escena_valida": true,
+   "lista_para_reconstruir": true,
+   "error": null,
+   "ms": 343,
+   "campos": {
+    "vehiculos": 2,
+    "clase": 0,
+    "masa": 0,
+    "rigidez": 0,
+    "danos": 2,
+    "medidas_c_y_l": 0,
+    "impactos": 1,
+    "modalidad": true,
+    "restos": false,
+    "huellas": 0,
+    "calculos": 0
+   },
+   "conteos": {
+    "filas": 41,
+    "valores_invalidos": 0,
+    "citas": 20,
+    "citas_fuera": 0,
+    "numeros": 5,
+    "numeros_fuera": 0
+   }
+  },
+  {
+   "id": "cesvi-cf708e9fed",
+   "expediente_valido": true,
+   "escena_valida": true,
+   "lista_para_reconstruir": true,
+   "error": null,
+   "ms": 293,
+   "campos": {
+    "vehiculos": 2,
+    "clase": 0,
+    "masa": 0,
+    "rigidez": 0,
+    "danos": 9,
+    "medidas_c_y_l": 0,
+    "impactos": 1,
+    "modalidad": true,
+    "restos": false,
+    "huellas": 0,
+    "calculos": 0
+   },
+   "conteos": {
+    "filas": 72,
+    "valores_invalidos": 0,
+    "citas": 23,
+    "citas_fuera": 1,
+    "numeros": 1,
+    "numeros_fuera": 1
+   }
+  },
+  {
+   "id": "cesvi-cb04fdb41b",
+   "expediente_valido": true,
+   "escena_valida": true,
+   "lista_para_reconstruir": true,
+   "error": null,
+   "ms": 2976,
+   "campos": {
+    "vehiculos": 2,
+    "clase": 0,
+    "masa": 0,
+    "rigidez": 0,
+    "danos": 6,
+    "medidas_c_y_l": 0,
+    "impactos": 2,
+    "modalidad": true,
+    "restos": false,
+    "huellas": 0,
+    "calculos": 0
+   },
+   "conteos": {
+    "filas": 59,
+    "valores_invalidos": 0,
+    "citas": 30,
+    "citas_fuera": 0,
+    "numeros": 3,
+    "numeros_fuera": 0
+   }
+  },
+  {
+   "id": "cesvi-12f0cdba9c",
+   "expediente_valido": true,
+   "escena_valida": true,
+   "lista_para_reconstruir": true,
+   "error": null,
+   "ms": 340,
+   "campos": {
+    "vehiculos": 2,
+    "clase": 0,
+    "masa": 0,
+    "rigidez": 0,
+    "danos": 11,
+    "medidas_c_y_l": 0,
+    "impactos": 1,
+    "modalidad": true,
+    "restos": false,
+    "huellas": 0,
+    "calculos": 0
+   },
+   "conteos": {
+    "filas": 69,
+    "valores_invalidos": 0,
+    "citas": 25,
+    "citas_fuera": 0,
+    "numeros": 4,
+    "numeros_fuera": 0
+   }
+  },
+  {
+   "id": "cesvi-e9c4e081fe",
+   "expediente_valido": true,
+   "escena_valida": true,
+   "lista_para_reconstruir": true,
+   "error": null,
+   "ms": 336,
+   "campos": {
+    "vehiculos": 2,
+    "clase": 0,
+    "masa": 0,
+    "rigidez": 0,
+    "danos": 2,
+    "medidas_c_y_l": 0,
+    "impactos": 1,
+    "modalidad": true,
+    "restos": false,
+    "huellas": 0,
+    "calculos": 2
+   },
+   "conteos": {
+    "filas": 41,
+    "valores_invalidos": 0,
+    "citas": 21,
+    "citas_fuera": 0,
+    "numeros": 8,
+    "numeros_fuera": 0
+   }
+  },
+  {
+   "id": "cesvi-285a38dbd1",
+   "expediente_valido": true,
+   "escena_valida": true,
+   "lista_para_reconstruir": true,
+   "error": null,
+   "ms": 19,
+   "campos": {
+    "vehiculos": 1,
+    "clase": 0,
+    "masa": 0,
+    "rigidez": 0,
+    "danos": 2,
+    "medidas_c_y_l": 0,
+    "impactos": 0,
+    "modalidad": true,
+    "restos": false,
+    "huellas": 0,
+    "calculos": 1
+   },
+   "conteos": {
+    "filas": 24,
+    "valores_invalidos": 0,
+    "citas": 14,
+    "citas_fuera": 0,
+    "numeros": 2,
+    "numeros_fuera": 0
+   }
+  },
+  {
+   "id": "cesvi-cd894debf8",
+   "expediente_valido": true,
+   "escena_valida": true,
+   "lista_para_reconstruir": true,
+   "error": null,
+   "ms": 331,
+   "campos": {
+    "vehiculos": 2,
+    "clase": 0,
+    "masa": 0,
+    "rigidez": 0,
+    "danos": 4,
+    "medidas_c_y_l": 0,
+    "impactos": 2,
+    "modalidad": true,
+    "restos": false,
+    "huellas": 0,
+    "calculos": 0
+   },
+   "conteos": {
+    "filas": 52,
+    "valores_invalidos": 0,
+    "citas": 26,
+    "citas_fuera": 0,
+    "numeros": 4,
+    "numeros_fuera": 0
+   }
+  },
+  {
+   "id": "cesvi-7968cc5df9",
+   "expediente_valido": true,
+   "escena_valida": true,
+   "lista_para_reconstruir": true,
+   "error": null,
+   "ms": 325,
+   "campos": {
+    "vehiculos": 2,
+    "clase": 0,
+    "masa": 0,
+    "rigidez": 0,
+    "danos": 4,
+    "medidas_c_y_l": 0,
+    "impactos": 1,
+    "modalidad": true,
+    "restos": false,
+    "huellas": 0,
+    "calculos": 0
+   },
+   "conteos": {
+    "filas": 48,
+    "valores_invalidos": 0,
+    "citas": 23,
+    "citas_fuera": 0,
+    "numeros": 6,
+    "numeros_fuera": 0
+   }
+  },
+  {
+   "id": "cesvi-352e083b8a",
+   "expediente_valido": true,
+   "escena_valida": true,
+   "lista_para_reconstruir": true,
+   "error": null,
+   "ms": 315,
+   "campos": {
+    "vehiculos": 2,
+    "clase": 0,
+    "masa": 0,
+    "rigidez": 0,
+    "danos": 9,
+    "medidas_c_y_l": 0,
+    "impactos": 1,
+    "modalidad": true,
+    "restos": false,
+    "huellas": 0,
+    "calculos": 0
+   },
+   "conteos": {
+    "filas": 67,
+    "valores_invalidos": 0,
+    "citas": 30,
+    "citas_fuera": 0,
+    "numeros": 7,
+    "numeros_fuera": 2
+   }
+  },
+  {
+   "id": "cesvi-5863ef5531",
+   "expediente_valido": true,
+   "escena_valida": true,
+   "lista_para_reconstruir": true,
+   "error": null,
+   "ms": 406,
+   "campos": {
+    "vehiculos": 2,
+    "clase": 0,
+    "masa": 0,
+    "rigidez": 0,
+    "danos": 10,
+    "medidas_c_y_l": 0,
+    "impactos": 1,
+    "modalidad": true,
+    "restos": false,
+    "huellas": 0,
+    "calculos": 0
+   },
+   "conteos": {
+    "filas": 68,
+    "valores_invalidos": 1,
+    "citas": 32,
+    "citas_fuera": 0,
+    "numeros": 5,
+    "numeros_fuera": 0
+   }
+  },
+  {
+   "id": "cesvi-f344a46f3f",
+   "expediente_valido": true,
+   "escena_valida": true,
+   "lista_para_reconstruir": true,
+   "error": null,
+   "ms": 21,
+   "campos": {
+    "vehiculos": 1,
+    "clase": 1,
+    "masa": 0,
+    "rigidez": 0,
+    "danos": 1,
+    "medidas_c_y_l": 0,
+    "impactos": 0,
+    "modalidad": true,
+    "restos": false,
+    "huellas": 0,
+    "calculos": 0
+   },
+   "conteos": {
+    "filas": 10,
+    "valores_invalidos": 0,
+    "citas": 8,
+    "citas_fuera": 0,
+    "numeros": 1,
+    "numeros_fuera": 0
+   }
+  },
+  {
+   "id": "cesvi-aee9753bf1",
+   "expediente_valido": true,
+   "escena_valida": true,
+   "lista_para_reconstruir": true,
+   "error": null,
+   "ms": 454,
+   "campos": {
+    "vehiculos": 3,
+    "clase": 0,
+    "masa": 0,
+    "rigidez": 0,
+    "danos": 6,
+    "medidas_c_y_l": 0,
+    "impactos": 1,
+    "modalidad": true,
+    "restos": false,
+    "huellas": 0,
+    "calculos": 0
+   },
+   "conteos": {
+    "filas": 44,
+    "valores_invalidos": 0,
+    "citas": 24,
+    "citas_fuera": 0,
+    "numeros": 2,
+    "numeros_fuera": 0
+   }
+  },
+  {
+   "id": "cesvi-d8a73cd0be",
+   "expediente_valido": true,
+   "escena_valida": true,
+   "lista_para_reconstruir": true,
+   "error": null,
+   "ms": 353,
+   "campos": {
+    "vehiculos": 2,
+    "clase": 0,
+    "masa": 0,
+    "rigidez": 0,
+    "danos": 6,
+    "medidas_c_y_l": 0,
+    "impactos": 1,
+    "modalidad": true,
+    "restos": false,
+    "huellas": 0,
+    "calculos": 0
+   },
+   "conteos": {
+    "filas": 55,
+    "valores_invalidos": 0,
+    "citas": 28,
+    "citas_fuera": 0,
+    "numeros": 4,
+    "numeros_fuera": 0
+   }
+  },
+  {
+   "id": "cesvi-c9ea862641",
+   "expediente_valido": true,
+   "escena_valida": true,
+   "lista_para_reconstruir": true,
+   "error": null,
+   "ms": 338,
+   "campos": {
+    "vehiculos": 2,
+    "clase": 0,
+    "masa": 0,
+    "rigidez": 0,
+    "danos": 2,
+    "medidas_c_y_l": 0,
+    "impactos": 1,
+    "modalidad": true,
+    "restos": false,
+    "huellas": 0,
+    "calculos": 0
+   },
+   "conteos": {
+    "filas": 29,
+    "valores_invalidos": 0,
+    "citas": 18,
+    "citas_fuera": 0,
+    "numeros": 1,
+    "numeros_fuera": 0
+   }
+  },
+  {
+   "id": "cesvi-eed00406c6",
+   "expediente_valido": true,
+   "escena_valida": true,
+   "lista_para_reconstruir": true,
+   "error": null,
+   "ms": 5598,
+   "campos": {
+    "vehiculos": 4,
+    "clase": 2,
+    "masa": 0,
+    "rigidez": 0,
+    "danos": 3,
+    "medidas_c_y_l": 0,
+    "impactos": 2,
+    "modalidad": true,
+    "restos": false,
+    "huellas": 0,
+    "calculos": 2
+   },
+   "conteos": {
+    "filas": 44,
+    "valores_invalidos": 0,
+    "citas": 25,
+    "citas_fuera": 1,
+    "numeros": 7,
+    "numeros_fuera": 4
+   }
+  },
+  {
+   "id": "cesvi-a8b1cf4c43",
+   "expediente_valido": true,
+   "escena_valida": true,
+   "lista_para_reconstruir": true,
+   "error": null,
+   "ms": 1042,
+   "campos": {
+    "vehiculos": 4,
+    "clase": 2,
+    "masa": 0,
+    "rigidez": 0,
+    "danos": 6,
+    "medidas_c_y_l": 0,
+    "impactos": 1,
+    "modalidad": true,
+    "restos": false,
+    "huellas": 1,
+    "calculos": 2
+   },
+   "conteos": {
+    "filas": 53,
+    "valores_invalidos": 0,
+    "citas": 25,
+    "citas_fuera": 0,
+    "numeros": 6,
+    "numeros_fuera": 0
+   }
+  },
+  {
+   "id": "cesvi-84cfa78565",
+   "expediente_valido": true,
+   "escena_valida": true,
+   "lista_para_reconstruir": true,
+   "error": null,
+   "ms": 344,
+   "campos": {
+    "vehiculos": 2,
+    "clase": 0,
+    "masa": 0,
+    "rigidez": 0,
+    "danos": 5,
+    "medidas_c_y_l": 0,
+    "impactos": 1,
+    "modalidad": true,
+    "restos": false,
+    "huellas": 0,
+    "calculos": 0
+   },
+   "conteos": {
+    "filas": 50,
+    "valores_invalidos": 0,
+    "citas": 25,
+    "citas_fuera": 0,
+    "numeros": 6,
+    "numeros_fuera": 0
+   }
+  },
+  {
+   "id": "cesvi-b7834ff8b0",
+   "expediente_valido": true,
+   "escena_valida": true,
+   "lista_para_reconstruir": true,
+   "error": null,
+   "ms": 474,
+   "campos": {
+    "vehiculos": 2,
+    "clase": 1,
+    "masa": 0,
+    "rigidez": 0,
+    "danos": 2,
+    "medidas_c_y_l": 0,
+    "impactos": 1,
+    "modalidad": true,
+    "restos": false,
+    "huellas": 0,
+    "calculos": 0
+   },
+   "conteos": {
+    "filas": 27,
+    "valores_invalidos": 0,
+    "citas": 16,
+    "citas_fuera": 0,
+    "numeros": 2,
+    "numeros_fuera": 2
+   }
+  },
+  {
+   "id": "cesvi-52de2b4555",
+   "expediente_valido": true,
+   "escena_valida": true,
+   "lista_para_reconstruir": true,
+   "error": null,
+   "ms": 208,
+   "campos": {
+    "vehiculos": 1,
+    "clase": 0,
+    "masa": 0,
+    "rigidez": 0,
+    "danos": 6,
+    "medidas_c_y_l": 0,
+    "impactos": 1,
+    "modalidad": true,
+    "restos": false,
+    "huellas": 0,
+    "calculos": 0
+   },
+   "conteos": {
+    "filas": 46,
+    "valores_invalidos": 1,
+    "citas": 17,
+    "citas_fuera": 0,
+    "numeros": 1,
+    "numeros_fuera": 0
+   }
+  },
+  {
+   "id": "cesvi-ce2e6cce75",
+   "expediente_valido": true,
+   "escena_valida": true,
+   "lista_para_reconstruir": true,
+   "error": null,
+   "ms": 24,
+   "campos": {
+    "vehiculos": 1,
+    "clase": 0,
+    "masa": 0,
+    "rigidez": 0,
+    "danos": 0,
+    "medidas_c_y_l": 0,
+    "impactos": 0,
+    "modalidad": false,
+    "restos": false,
+    "huellas": 0,
+    "calculos": 0
+   },
+   "conteos": {
+    "filas": 3,
+    "valores_invalidos": 0,
+    "citas": 2,
+    "citas_fuera": 0,
+    "numeros": 1,
+    "numeros_fuera": 0
+   }
+  },
+  {
+   "id": "cesvi-639ce6d42f",
+   "expediente_valido": true,
+   "escena_valida": true,
+   "lista_para_reconstruir": true,
+   "error": null,
+   "ms": 184,
+   "campos": {
+    "vehiculos": 1,
+    "clase": 0,
+    "masa": 0,
+    "rigidez": 0,
+    "danos": 3,
+    "medidas_c_y_l": 0,
+    "impactos": 1,
+    "modalidad": true,
+    "restos": false,
+    "huellas": 0,
+    "calculos": 0
+   },
+   "conteos": {
+    "filas": 27,
+    "valores_invalidos": 0,
+    "citas": 13,
+    "citas_fuera": 0,
+    "numeros": 1,
+    "numeros_fuera": 0
+   }
+  },
+  {
+   "id": "cesvi-059b27d89d",
+   "expediente_valido": true,
+   "escena_valida": true,
+   "lista_para_reconstruir": true,
+   "error": null,
+   "ms": 477,
+   "campos": {
+    "vehiculos": 2,
+    "clase": 0,
+    "masa": 0,
+    "rigidez": 0,
+    "danos": 7,
+    "medidas_c_y_l": 0,
+    "impactos": 1,
+    "modalidad": true,
+    "restos": false,
+    "huellas": 0,
+    "calculos": 0
+   },
+   "conteos": {
+    "filas": 49,
+    "valores_invalidos": 0,
+    "citas": 24,
+    "citas_fuera": 0,
+    "numeros": 2,
+    "numeros_fuera": 0
+   }
+  },
+  {
+   "id": "cesvi-460d7f3120",
+   "expediente_valido": true,
+   "escena_valida": true,
+   "lista_para_reconstruir": true,
+   "error": null,
+   "ms": 251,
+   "campos": {
+    "vehiculos": 1,
+    "clase": 1,
+    "masa": 0,
+    "rigidez": 0,
+    "danos": 3,
+    "medidas_c_y_l": 0,
+    "impactos": 1,
+    "modalidad": true,
+    "restos": false,
+    "huellas": 0,
+    "calculos": 0
+   },
+   "conteos": {
+    "filas": 40,
+    "valores_invalidos": 1,
+    "citas": 22,
+    "citas_fuera": 0,
+    "numeros": 4,
+    "numeros_fuera": 0
+   }
+  },
+  {
+   "id": "cesvi-73ea769d2f",
+   "expediente_valido": true,
+   "escena_valida": true,
+   "lista_para_reconstruir": true,
+   "error": null,
+   "ms": 350,
+   "campos": {
+    "vehiculos": 2,
+    "clase": 0,
+    "masa": 0,
+    "rigidez": 0,
+    "danos": 11,
+    "medidas_c_y_l": 0,
+    "impactos": 1,
+    "modalidad": true,
+    "restos": false,
+    "huellas": 0,
+    "calculos": 0
+   },
+   "conteos": {
+    "filas": 64,
+    "valores_invalidos": 0,
+    "citas": 31,
+    "citas_fuera": 0,
+    "numeros": 5,
+    "numeros_fuera": 0
+   }
+  },
+  {
+   "id": "cesvi-b641fb6657",
+   "expediente_valido": true,
+   "escena_valida": true,
+   "lista_para_reconstruir": true,
+   "error": null,
+   "ms": 17,
+   "campos": {
+    "vehiculos": 1,
+    "clase": 0,
+    "masa": 0,
+    "rigidez": 0,
+    "danos": 2,
+    "medidas_c_y_l": 0,
+    "impactos": 0,
+    "modalidad": true,
+    "restos": false,
+    "huellas": 0,
+    "calculos": 1
+   },
+   "conteos": {
+    "filas": 26,
+    "valores_invalidos": 0,
+    "citas": 15,
+    "citas_fuera": 0,
+    "numeros": 4,
+    "numeros_fuera": 1
+   }
+  },
+  {
+   "id": "cesvi-9f15522337",
+   "expediente_valido": true,
+   "escena_valida": true,
+   "lista_para_reconstruir": true,
+   "error": null,
+   "ms": 354,
+   "campos": {
+    "vehiculos": 2,
+    "clase": 0,
+    "masa": 0,
+    "rigidez": 0,
+    "danos": 3,
+    "medidas_c_y_l": 0,
+    "impactos": 1,
+    "modalidad": true,
+    "restos": false,
+    "huellas": 0,
+    "calculos": 0
+   },
+   "conteos": {
+    "filas": 45,
+    "valores_invalidos": 0,
+    "citas": 23,
+    "citas_fuera": 0,
+    "numeros": 4,
+    "numeros_fuera": 0
+   }
+  },
+  {
+   "id": "cesvi-6256dba174",
+   "expediente_valido": true,
+   "escena_valida": true,
+   "lista_para_reconstruir": true,
+   "error": null,
+   "ms": 22,
+   "campos": {
+    "vehiculos": 1,
+    "clase": 0,
+    "masa": 0,
+    "rigidez": 0,
+    "danos": 1,
+    "medidas_c_y_l": 0,
+    "impactos": 0,
+    "modalidad": true,
+    "restos": false,
+    "huellas": 0,
+    "calculos": 0
+   },
+   "conteos": {
+    "filas": 12,
+    "valores_invalidos": 0,
+    "citas": 9,
+    "citas_fuera": 0,
+    "numeros": 1,
+    "numeros_fuera": 0
+   }
+  },
+  {
+   "id": "cesvi-d2c5cede7c",
+   "expediente_valido": true,
+   "escena_valida": true,
+   "lista_para_reconstruir": true,
+   "error": null,
+   "ms": 306,
+   "campos": {
+    "vehiculos": 2,
+    "clase": 1,
+    "masa": 0,
+    "rigidez": 0,
+    "danos": 4,
+    "medidas_c_y_l": 0,
+    "impactos": 2,
+    "modalidad": true,
+    "restos": false,
+    "huellas": 0,
+    "calculos": 0
+   },
+   "conteos": {
+    "filas": 59,
+    "valores_invalidos": 0,
+    "citas": 30,
+    "citas_fuera": 0,
+    "numeros": 7,
+    "numeros_fuera": 0
+   }
+  },
+  {
+   "id": "cesvi-ab666b294f",
+   "expediente_valido": true,
+   "escena_valida": true,
+   "lista_para_reconstruir": true,
+   "error": null,
+   "ms": 302,
+   "campos": {
+    "vehiculos": 2,
+    "clase": 1,
+    "masa": 0,
+    "rigidez": 0,
+    "danos": 6,
+    "medidas_c_y_l": 0,
+    "impactos": 2,
+    "modalidad": true,
+    "restos": false,
+    "huellas": 0,
+    "calculos": 0
+   },
+   "conteos": {
+    "filas": 68,
+    "valores_invalidos": 0,
+    "citas": 37,
+    "citas_fuera": 0,
+    "numeros": 7,
+    "numeros_fuera": 1
+   }
+  },
+  {
+   "id": "cesvi-faa8a2bde0",
+   "expediente_valido": true,
+   "escena_valida": true,
+   "lista_para_reconstruir": true,
+   "error": null,
+   "ms": 149,
+   "campos": {
+    "vehiculos": 1,
+    "clase": 0,
+    "masa": 0,
+    "rigidez": 0,
+    "danos": 2,
+    "medidas_c_y_l": 0,
+    "impactos": 1,
+    "modalidad": true,
+    "restos": false,
+    "huellas": 0,
+    "calculos": 0
+   },
+   "conteos": {
+    "filas": 23,
+    "valores_invalidos": 0,
+    "citas": 17,
+    "citas_fuera": 1,
+    "numeros": 2,
+    "numeros_fuera": 0
+   }
+  },
+  {
+   "id": "cesvi-7d5dbd5fdb",
+   "expediente_valido": true,
+   "escena_valida": true,
+   "lista_para_reconstruir": true,
+   "error": null,
+   "ms": 289,
+   "campos": {
+    "vehiculos": 2,
+    "clase": 1,
+    "masa": 0,
+    "rigidez": 0,
+    "danos": 8,
+    "medidas_c_y_l": 0,
+    "impactos": 1,
+    "modalidad": true,
+    "restos": false,
+    "huellas": 0,
+    "calculos": 0
+   },
+   "conteos": {
+    "filas": 66,
+    "valores_invalidos": 0,
+    "citas": 32,
+    "citas_fuera": 0,
+    "numeros": 5,
+    "numeros_fuera": 0
+   }
+  },
+  {
+   "id": "cesvi-662e6d9423",
+   "expediente_valido": true,
+   "escena_valida": true,
+   "lista_para_reconstruir": true,
+   "error": null,
+   "ms": 487,
+   "campos": {
+    "vehiculos": 2,
+    "clase": 1,
+    "masa": 0,
+    "rigidez": 0,
+    "danos": 5,
+    "medidas_c_y_l": 0,
+    "impactos": 1,
+    "modalidad": true,
+    "restos": false,
+    "huellas": 1,
+    "calculos": 0
+   },
+   "conteos": {
+    "filas": 55,
+    "valores_invalidos": 0,
+    "citas": 28,
+    "citas_fuera": 0,
+    "numeros": 4,
+    "numeros_fuera": 0
+   }
+  },
+  {
+   "id": "cesvi-cade1c89cb",
+   "expediente_valido": true,
+   "escena_valida": true,
+   "lista_para_reconstruir": true,
+   "error": null,
+   "ms": 11013,
+   "campos": {
+    "vehiculos": 4,
+    "clase": 0,
+    "masa": 0,
+    "rigidez": 0,
+    "danos": 10,
+    "medidas_c_y_l": 0,
+    "impactos": 3,
+    "modalidad": true,
+    "restos": true,
+    "huellas": 2,
+    "calculos": 0
+   },
+   "conteos": {
+    "filas": 83,
+    "valores_invalidos": 0,
+    "citas": 38,
+    "citas_fuera": 0,
+    "numeros": 7,
+    "numeros_fuera": 0
+   }
+  },
+  {
+   "id": "cesvi-1bc2829bb6",
+   "expediente_valido": true,
+   "escena_valida": true,
+   "lista_para_reconstruir": true,
+   "error": null,
+   "ms": 197,
+   "campos": {
+    "vehiculos": 1,
+    "clase": 0,
+    "masa": 0,
+    "rigidez": 0,
+    "danos": 4,
+    "medidas_c_y_l": 0,
+    "impactos": 1,
+    "modalidad": true,
+    "restos": true,
+    "huellas": 0,
+    "calculos": 1
+   },
+   "conteos": {
+    "filas": 48,
+    "valores_invalidos": 0,
+    "citas": 26,
+    "citas_fuera": 0,
+    "numeros": 5,
+    "numeros_fuera": 1
+   }
+  },
+  {
+   "id": "cesvi-85b5b83442",
+   "expediente_valido": true,
+   "escena_valida": true,
+   "lista_para_reconstruir": true,
+   "error": null,
+   "ms": 353,
+   "campos": {
+    "vehiculos": 2,
+    "clase": 0,
+    "masa": 0,
+    "rigidez": 0,
+    "danos": 4,
+    "medidas_c_y_l": 0,
+    "impactos": 1,
+    "modalidad": true,
+    "restos": false,
+    "huellas": 0,
+    "calculos": 0
+   },
+   "conteos": {
+    "filas": 40,
+    "valores_invalidos": 0,
+    "citas": 22,
+    "citas_fuera": 0,
+    "numeros": 5,
+    "numeros_fuera": 0
+   }
+  },
+  {
+   "id": "cesvi-9200983dab",
+   "expediente_valido": true,
+   "escena_valida": true,
+   "lista_para_reconstruir": true,
+   "error": null,
+   "ms": 17,
+   "campos": {
+    "vehiculos": 1,
+    "clase": 0,
+    "masa": 0,
+    "rigidez": 0,
+    "danos": 0,
+    "medidas_c_y_l": 0,
+    "impactos": 0,
+    "modalidad": false,
+    "restos": false,
+    "huellas": 0,
+    "calculos": 0
+   },
+   "conteos": {
+    "filas": 6,
+    "valores_invalidos": 0,
+    "citas": 6,
+    "citas_fuera": 0,
+    "numeros": 0,
+    "numeros_fuera": 0
+   }
+  },
+  {
+   "id": "cesvi-05a7c05640",
+   "expediente_valido": true,
+   "escena_valida": true,
+   "lista_para_reconstruir": true,
+   "error": null,
+   "ms": 360,
+   "campos": {
+    "vehiculos": 2,
+    "clase": 0,
+    "masa": 0,
+    "rigidez": 0,
+    "danos": 6,
+    "medidas_c_y_l": 0,
+    "impactos": 1,
+    "modalidad": true,
+    "restos": false,
+    "huellas": 0,
+    "calculos": 1
+   },
+   "conteos": {
+    "filas": 57,
+    "valores_invalidos": 1,
+    "citas": 23,
+    "citas_fuera": 0,
+    "numeros": 5,
+    "numeros_fuera": 0
+   }
+  },
+  {
+   "id": "cesvi-af71476614",
+   "expediente_valido": true,
+   "escena_valida": true,
+   "lista_para_reconstruir": true,
+   "error": null,
+   "ms": 352,
+   "campos": {
+    "vehiculos": 2,
+    "clase": 0,
+    "masa": 0,
+    "rigidez": 0,
+    "danos": 4,
+    "medidas_c_y_l": 0,
+    "impactos": 1,
+    "modalidad": true,
+    "restos": false,
+    "huellas": 0,
+    "calculos": 0
+   },
+   "conteos": {
+    "filas": 53,
+    "valores_invalidos": 0,
+    "citas": 27,
+    "citas_fuera": 0,
+    "numeros": 4,
+    "numeros_fuera": 0
+   }
+  },
+  {
+   "id": "cesvi-bf10fcba2f",
+   "expediente_valido": true,
+   "escena_valida": true,
+   "lista_para_reconstruir": true,
+   "error": null,
+   "ms": 433,
+   "campos": {
+    "vehiculos": 2,
+    "clase": 0,
+    "masa": 0,
+    "rigidez": 0,
+    "danos": 2,
+    "medidas_c_y_l": 0,
+    "impactos": 2,
+    "modalidad": true,
+    "restos": false,
+    "huellas": 0,
+    "calculos": 1
+   },
+   "conteos": {
+    "filas": 33,
+    "valores_invalidos": 1,
+    "citas": 14,
+    "citas_fuera": 0,
+    "numeros": 2,
+    "numeros_fuera": 0
+   }
+  },
+  {
+   "id": "cesvi-147df2914c",
+   "expediente_valido": true,
+   "escena_valida": true,
+   "lista_para_reconstruir": true,
+   "error": null,
+   "ms": 512,
+   "campos": {
+    "vehiculos": 2,
+    "clase": 0,
+    "masa": 0,
+    "rigidez": 0,
+    "danos": 4,
+    "medidas_c_y_l": 0,
+    "impactos": 1,
+    "modalidad": true,
+    "restos": false,
+    "huellas": 0,
+    "calculos": 0
+   },
+   "conteos": {
+    "filas": 47,
+    "valores_invalidos": 1,
+    "citas": 21,
+    "citas_fuera": 0,
+    "numeros": 3,
+    "numeros_fuera": 0
+   }
+  },
+  {
+   "id": "cesvi-476cf1439b",
+   "expediente_valido": true,
+   "escena_valida": true,
+   "lista_para_reconstruir": true,
+   "error": null,
+   "ms": 317,
+   "campos": {
+    "vehiculos": 2,
+    "clase": 1,
+    "masa": 0,
+    "rigidez": 0,
+    "danos": 5,
+    "medidas_c_y_l": 0,
+    "impactos": 1,
+    "modalidad": true,
+    "restos": false,
+    "huellas": 0,
+    "calculos": 0
+   },
+   "conteos": {
+    "filas": 50,
+    "valores_invalidos": 0,
+    "citas": 26,
+    "citas_fuera": 0,
+    "numeros": 3,
+    "numeros_fuera": 0
+   }
+  },
+  {
+   "id": "cesvi-3eab5db876",
+   "expediente_valido": true,
+   "escena_valida": true,
+   "lista_para_reconstruir": true,
+   "error": null,
+   "ms": 349,
+   "campos": {
+    "vehiculos": 2,
+    "clase": 0,
+    "masa": 0,
+    "rigidez": 0,
+    "danos": 4,
+    "medidas_c_y_l": 0,
+    "impactos": 1,
+    "modalidad": true,
+    "restos": false,
+    "huellas": 0,
+    "calculos": 0
+   },
+   "conteos": {
+    "filas": 48,
+    "valores_invalidos": 0,
+    "citas": 22,
+    "citas_fuera": 0,
+    "numeros": 2,
+    "numeros_fuera": 0
+   }
+  },
+  {
+   "id": "cesvi-d4b38174d1",
+   "expediente_valido": true,
+   "escena_valida": true,
+   "lista_para_reconstruir": true,
+   "error": null,
+   "ms": 361,
+   "campos": {
+    "vehiculos": 2,
+    "clase": 0,
+    "masa": 0,
+    "rigidez": 0,
+    "danos": 4,
+    "medidas_c_y_l": 0,
+    "impactos": 1,
+    "modalidad": true,
+    "restos": false,
+    "huellas": 0,
+    "calculos": 0
+   },
+   "conteos": {
+    "filas": 51,
+    "valores_invalidos": 0,
+    "citas": 25,
+    "citas_fuera": 0,
+    "numeros": 4,
+    "numeros_fuera": 0
+   }
+  },
+  {
+   "id": "cesvi-df6a4b2324",
+   "expediente_valido": true,
+   "escena_valida": true,
+   "lista_para_reconstruir": true,
+   "error": null,
+   "ms": 317,
+   "campos": {
+    "vehiculos": 2,
+    "clase": 1,
+    "masa": 0,
+    "rigidez": 0,
+    "danos": 6,
+    "medidas_c_y_l": 0,
+    "impactos": 1,
+    "modalidad": true,
+    "restos": false,
+    "huellas": 0,
+    "calculos": 0
+   },
+   "conteos": {
+    "filas": 57,
+    "valores_invalidos": 0,
+    "citas": 26,
+    "citas_fuera": 1,
+    "numeros": 5,
+    "numeros_fuera": 0
+   }
+  },
+  {
+   "id": "cesvi-c6269d800e",
+   "expediente_valido": true,
+   "escena_valida": true,
+   "lista_para_reconstruir": true,
+   "error": null,
+   "ms": 480,
+   "campos": {
+    "vehiculos": 2,
+    "clase": 0,
+    "masa": 0,
+    "rigidez": 0,
+    "danos": 4,
+    "medidas_c_y_l": 0,
+    "impactos": 1,
+    "modalidad": true,
+    "restos": false,
+    "huellas": 0,
+    "calculos": 0
+   },
+   "conteos": {
+    "filas": 38,
+    "valores_invalidos": 0,
+    "citas": 18,
+    "citas_fuera": 0,
+    "numeros": 9,
+    "numeros_fuera": 0
+   }
+  },
+  {
+   "id": "cesvi-240b770de0",
+   "expediente_valido": true,
+   "escena_valida": true,
+   "lista_para_reconstruir": true,
+   "error": null,
+   "ms": 319,
+   "campos": {
+    "vehiculos": 2,
+    "clase": 1,
+    "masa": 0,
+    "rigidez": 0,
+    "danos": 5,
+    "medidas_c_y_l": 0,
+    "impactos": 1,
+    "modalidad": true,
+    "restos": false,
+    "huellas": 0,
+    "calculos": 1
+   },
+   "conteos": {
+    "filas": 49,
+    "valores_invalidos": 0,
+    "citas": 24,
+    "citas_fuera": 0,
+    "numeros": 4,
+    "numeros_fuera": 0
+   }
+  },
+  {
+   "id": "cesvi-bb774b3897",
+   "expediente_valido": true,
+   "escena_valida": true,
+   "lista_para_reconstruir": true,
+   "error": null,
+   "ms": 13493,
+   "campos": {
+    "vehiculos": 8,
+    "clase": 1,
+    "masa": 0,
+    "rigidez": 0,
+    "danos": 5,
+    "medidas_c_y_l": 0,
+    "impactos": 2,
+    "modalidad": true,
+    "restos": false,
+    "huellas": 0,
+    "calculos": 0
+   },
+   "conteos": {
+    "filas": 50,
+    "valores_invalidos": 0,
+    "citas": 26,
+    "citas_fuera": 0,
+    "numeros": 4,
+    "numeros_fuera": 0
+   }
+  },
+  {
+   "id": "cesvi-8e3a7ac59f",
+   "expediente_valido": true,
+   "escena_valida": true,
+   "lista_para_reconstruir": true,
+   "error": null,
+   "ms": 466,
+   "campos": {
+    "vehiculos": 2,
+    "clase": 1,
+    "masa": 0,
+    "rigidez": 0,
+    "danos": 7,
+    "medidas_c_y_l": 0,
+    "impactos": 1,
+    "modalidad": true,
+    "restos": false,
+    "huellas": 0,
+    "calculos": 0
+   },
+   "conteos": {
+    "filas": 59,
+    "valores_invalidos": 0,
+    "citas": 23,
+    "citas_fuera": 0,
+    "numeros": 3,
+    "numeros_fuera": 0
+   }
+  },
+  {
+   "id": "cesvi-0221ee4ec4",
+   "expediente_valido": true,
+   "escena_valida": true,
+   "lista_para_reconstruir": true,
+   "error": null,
+   "ms": 327,
+   "campos": {
+    "vehiculos": 2,
+    "clase": 0,
+    "masa": 1,
+    "rigidez": 0,
+    "danos": 5,
+    "medidas_c_y_l": 0,
+    "impactos": 1,
+    "modalidad": true,
+    "restos": false,
+    "huellas": 0,
+    "calculos": 1
+   },
+   "conteos": {
+    "filas": 55,
+    "valores_invalidos": 0,
+    "citas": 30,
+    "citas_fuera": 0,
+    "numeros": 10,
+    "numeros_fuera": 3
+   }
+  },
+  {
+   "id": "cesvi-5dfc9ba3c0",
+   "expediente_valido": true,
+   "escena_valida": true,
+   "lista_para_reconstruir": true,
+   "error": null,
+   "ms": 546,
+   "campos": {
+    "vehiculos": 2,
+    "clase": 1,
+    "masa": 0,
+    "rigidez": 0,
+    "danos": 4,
+    "medidas_c_y_l": 0,
+    "impactos": 1,
+    "modalidad": true,
+    "restos": false,
+    "huellas": 0,
+    "calculos": 0
+   },
+   "conteos": {
+    "filas": 38,
+    "valores_invalidos": 0,
+    "citas": 20,
+    "citas_fuera": 0,
+    "numeros": 2,
+    "numeros_fuera": 0
+   }
+  },
+  {
+   "id": "cesvi-5dd2c6df58",
+   "expediente_valido": true,
+   "escena_valida": true,
+   "lista_para_reconstruir": true,
+   "error": null,
+   "ms": 326,
+   "campos": {
+    "vehiculos": 2,
+    "clase": 1,
+    "masa": 1,
+    "rigidez": 0,
+    "danos": 7,
+    "medidas_c_y_l": 0,
+    "impactos": 2,
+    "modalidad": true,
+    "restos": false,
+    "huellas": 0,
+    "calculos": 0
+   },
+   "conteos": {
+    "filas": 62,
+    "valores_invalidos": 0,
+    "citas": 28,
+    "citas_fuera": 0,
+    "numeros": 4,
+    "numeros_fuera": 0
+   }
+  },
+  {
+   "id": "cesvi-d950dda14b",
+   "expediente_valido": true,
+   "escena_valida": true,
+   "lista_para_reconstruir": true,
+   "error": null,
+   "ms": 211,
+   "campos": {
+    "vehiculos": 1,
+    "clase": 0,
+    "masa": 0,
+    "rigidez": 0,
+    "danos": 3,
+    "medidas_c_y_l": 0,
+    "impactos": 1,
+    "modalidad": true,
+    "restos": false,
+    "huellas": 0,
+    "calculos": 0
+   },
+   "conteos": {
+    "filas": 37,
+    "valores_invalidos": 0,
+    "citas": 22,
+    "citas_fuera": 0,
+    "numeros": 1,
+    "numeros_fuera": 0
+   }
+  },
+  {
+   "id": "cesvi-2276b03fc0",
+   "expediente_valido": true,
+   "escena_valida": true,
+   "lista_para_reconstruir": true,
+   "error": null,
+   "ms": 338,
+   "campos": {
+    "vehiculos": 2,
+    "clase": 0,
+    "masa": 0,
+    "rigidez": 0,
+    "danos": 5,
+    "medidas_c_y_l": 0,
+    "impactos": 1,
+    "modalidad": true,
+    "restos": false,
+    "huellas": 0,
+    "calculos": 1
+   },
+   "conteos": {
+    "filas": 54,
+    "valores_invalidos": 0,
+    "citas": 26,
+    "citas_fuera": 0,
+    "numeros": 9,
+    "numeros_fuera": 0
+   }
+  },
+  {
+   "id": "cesvi-3fa0cd2ba1",
+   "expediente_valido": true,
+   "escena_valida": true,
+   "lista_para_reconstruir": true,
+   "error": null,
+   "ms": 356,
+   "campos": {
+    "vehiculos": 2,
+    "clase": 1,
+    "masa": 0,
+    "rigidez": 0,
+    "danos": 4,
+    "medidas_c_y_l": 0,
+    "impactos": 2,
+    "modalidad": true,
+    "restos": false,
+    "huellas": 0,
+    "calculos": 0
+   },
+   "conteos": {
+    "filas": 52,
+    "valores_invalidos": 0,
+    "citas": 25,
+    "citas_fuera": 0,
+    "numeros": 3,
+    "numeros_fuera": 0
+   }
+  },
+  {
+   "id": "cesvi-f112d84f11",
+   "expediente_valido": true,
+   "escena_valida": true,
+   "lista_para_reconstruir": true,
+   "error": null,
+   "ms": 19,
+   "campos": {
+    "vehiculos": 1,
+    "clase": 0,
+    "masa": 0,
+    "rigidez": 0,
+    "danos": 2,
+    "medidas_c_y_l": 0,
+    "impactos": 0,
+    "modalidad": true,
+    "restos": false,
+    "huellas": 0,
+    "calculos": 0
+   },
+   "conteos": {
+    "filas": 17,
+    "valores_invalidos": 0,
+    "citas": 9,
+    "citas_fuera": 1,
+    "numeros": 1,
+    "numeros_fuera": 1
+   }
+  },
+  {
+   "id": "cesvi-feef78b49a",
+   "expediente_valido": true,
+   "escena_valida": true,
+   "lista_para_reconstruir": true,
+   "error": null,
+   "ms": 360,
+   "campos": {
+    "vehiculos": 2,
+    "clase": 1,
+    "masa": 0,
+    "rigidez": 0,
+    "danos": 10,
+    "medidas_c_y_l": 0,
+    "impactos": 2,
+    "modalidad": true,
+    "restos": false,
+    "huellas": 0,
+    "calculos": 0
+   },
+   "conteos": {
+    "filas": 84,
+    "valores_invalidos": 1,
+    "citas": 37,
+    "citas_fuera": 0,
+    "numeros": 12,
+    "numeros_fuera": 0
+   }
+  },
+  {
+   "id": "cesvi-16eb0fba1f",
+   "expediente_valido": true,
+   "escena_valida": true,
+   "lista_para_reconstruir": true,
+   "error": null,
+   "ms": 767,
+   "campos": {
+    "vehiculos": 3,
+    "clase": 1,
+    "masa": 0,
+    "rigidez": 0,
+    "danos": 9,
+    "medidas_c_y_l": 0,
+    "impactos": 1,
+    "modalidad": true,
+    "restos": false,
+    "huellas": 1,
+    "calculos": 1
+   },
+   "conteos": {
+    "filas": 69,
+    "valores_invalidos": 0,
+    "citas": 32,
+    "citas_fuera": 0,
+    "numeros": 14,
+    "numeros_fuera": 2
+   }
+  },
+  {
+   "id": "cesvi-d55ce7a8fe",
+   "expediente_valido": true,
+   "escena_valida": true,
+   "lista_para_reconstruir": true,
+   "error": null,
+   "ms": 20,
+   "campos": {
+    "vehiculos": 1,
+    "clase": 0,
+    "masa": 0,
+    "rigidez": 0,
+    "danos": 4,
+    "medidas_c_y_l": 0,
+    "impactos": 0,
+    "modalidad": true,
+    "restos": true,
+    "huellas": 0,
+    "calculos": 0
+   },
+   "conteos": {
+    "filas": 31,
+    "valores_invalidos": 0,
+    "citas": 14,
+    "citas_fuera": 0,
+    "numeros": 2,
+    "numeros_fuera": 0
+   }
+  },
+  {
+   "id": "cesvi-52fb9f9c5d",
+   "expediente_valido": true,
+   "escena_valida": true,
+   "lista_para_reconstruir": true,
+   "error": null,
+   "ms": 209,
+   "campos": {
+    "vehiculos": 1,
+    "clase": 0,
+    "masa": 0,
+    "rigidez": 0,
+    "danos": 6,
+    "medidas_c_y_l": 0,
+    "impactos": 1,
+    "modalidad": true,
+    "restos": false,
+    "huellas": 0,
+    "calculos": 0
+   },
+   "conteos": {
+    "filas": 44,
+    "valores_invalidos": 0,
+    "citas": 21,
+    "citas_fuera": 0,
+    "numeros": 1,
+    "numeros_fuera": 0
+   }
+  },
+  {
+   "id": "cesvi-4e9cbd1711",
+   "expediente_valido": true,
+   "escena_valida": true,
+   "lista_para_reconstruir": true,
+   "error": null,
+   "ms": 363,
+   "campos": {
+    "vehiculos": 2,
+    "clase": 0,
+    "masa": 0,
+    "rigidez": 0,
+    "danos": 7,
+    "medidas_c_y_l": 0,
+    "impactos": 1,
+    "modalidad": true,
+    "restos": false,
+    "huellas": 0,
+    "calculos": 1
+   },
+   "conteos": {
+    "filas": 62,
+    "valores_invalidos": 0,
+    "citas": 38,
+    "citas_fuera": 0,
+    "numeros": 7,
+    "numeros_fuera": 0
+   }
+  },
+  {
+   "id": "cesvi-b7ca573795",
+   "expediente_valido": true,
+   "escena_valida": true,
+   "lista_para_reconstruir": true,
+   "error": null,
+   "ms": 334,
+   "campos": {
+    "vehiculos": 2,
+    "clase": 0,
+    "masa": 1,
+    "rigidez": 0,
+    "danos": 6,
+    "medidas_c_y_l": 0,
+    "impactos": 2,
+    "modalidad": true,
+    "restos": false,
+    "huellas": 0,
+    "calculos": 1
+   },
+   "conteos": {
+    "filas": 59,
+    "valores_invalidos": 0,
+    "citas": 29,
+    "citas_fuera": 1,
+    "numeros": 14,
+    "numeros_fuera": 6
+   }
+  },
+  {
+   "id": "cesvi-7b8ab3e55e",
+   "expediente_valido": true,
+   "escena_valida": true,
+   "lista_para_reconstruir": true,
+   "error": null,
+   "ms": 418,
+   "campos": {
+    "vehiculos": 3,
+    "clase": 2,
+    "masa": 0,
+    "rigidez": 0,
+    "danos": 6,
+    "medidas_c_y_l": 0,
+    "impactos": 1,
+    "modalidad": true,
+    "restos": true,
+    "huellas": 0,
+    "calculos": 2
+   },
+   "conteos": {
+    "filas": 49,
+    "valores_invalidos": 0,
+    "citas": 25,
+    "citas_fuera": 1,
+    "numeros": 12,
+    "numeros_fuera": 0
+   }
+  },
+  {
+   "id": "cesvi-71660b61b8",
+   "expediente_valido": true,
+   "escena_valida": true,
+   "lista_para_reconstruir": true,
+   "error": null,
+   "ms": 191,
+   "campos": {
+    "vehiculos": 2,
+    "clase": 1,
+    "masa": 2,
+    "rigidez": 0,
+    "danos": 2,
+    "medidas_c_y_l": 0,
+    "impactos": 1,
+    "modalidad": true,
+    "restos": false,
+    "huellas": 0,
+    "calculos": 4
+   },
+   "conteos": {
+    "filas": 37,
+    "valores_invalidos": 0,
+    "citas": 24,
+    "citas_fuera": 0,
+    "numeros": 19,
+    "numeros_fuera": 1
+   }
+  },
+  {
+   "id": "cesvi-6c34c6ac79",
+   "expediente_valido": true,
+   "escena_valida": true,
+   "lista_para_reconstruir": true,
+   "error": null,
+   "ms": 334,
+   "campos": {
+    "vehiculos": 2,
+    "clase": 1,
+    "masa": 0,
+    "rigidez": 0,
+    "danos": 8,
+    "medidas_c_y_l": 0,
+    "impactos": 1,
+    "modalidad": true,
+    "restos": false,
+    "huellas": 0,
+    "calculos": 0
+   },
+   "conteos": {
+    "filas": 82,
+    "valores_invalidos": 0,
+    "citas": 33,
+    "citas_fuera": 0,
+    "numeros": 6,
+    "numeros_fuera": 0
+   }
+  },
+  {
+   "id": "cesvi-a8e0a03cfd",
+   "expediente_valido": true,
+   "escena_valida": true,
+   "lista_para_reconstruir": true,
+   "error": null,
+   "ms": 397,
+   "campos": {
+    "vehiculos": 2,
+    "clase": 0,
+    "masa": 0,
+    "rigidez": 0,
+    "danos": 5,
+    "medidas_c_y_l": 0,
+    "impactos": 1,
+    "modalidad": true,
+    "restos": false,
+    "huellas": 0,
+    "calculos": 0
+   },
+   "conteos": {
+    "filas": 33,
+    "valores_invalidos": 0,
+    "citas": 19,
+    "citas_fuera": 0,
+    "numeros": 1,
+    "numeros_fuera": 0
+   }
+  },
+  {
+   "id": "cesvi-e005298ffb",
+   "expediente_valido": true,
+   "escena_valida": true,
+   "lista_para_reconstruir": true,
+   "error": null,
+   "ms": 329,
+   "campos": {
+    "vehiculos": 2,
+    "clase": 0,
+    "masa": 0,
+    "rigidez": 0,
+    "danos": 5,
+    "medidas_c_y_l": 0,
+    "impactos": 1,
+    "modalidad": true,
+    "restos": false,
+    "huellas": 0,
+    "calculos": 0
+   },
+   "conteos": {
+    "filas": 48,
+    "valores_invalidos": 0,
+    "citas": 20,
+    "citas_fuera": 0,
+    "numeros": 9,
+    "numeros_fuera": 0
+   }
+  },
+  {
+   "id": "cesvi-abc31b1de8",
+   "expediente_valido": true,
+   "escena_valida": true,
+   "lista_para_reconstruir": true,
+   "error": null,
+   "ms": 351,
+   "campos": {
+    "vehiculos": 2,
+    "clase": 0,
+    "masa": 0,
+    "rigidez": 0,
+    "danos": 4,
+    "medidas_c_y_l": 0,
+    "impactos": 1,
+    "modalidad": true,
+    "restos": false,
+    "huellas": 0,
+    "calculos": 0
+   },
+   "conteos": {
+    "filas": 43,
+    "valores_invalidos": 0,
+    "citas": 22,
+    "citas_fuera": 0,
+    "numeros": 2,
+    "numeros_fuera": 0
+   }
+  },
+  {
+   "id": "cesvi-6f70c56733",
+   "expediente_valido": true,
+   "escena_valida": true,
+   "lista_para_reconstruir": true,
+   "error": null,
+   "ms": 17,
+   "campos": {
+    "vehiculos": 1,
+    "clase": 1,
+    "masa": 0,
+    "rigidez": 0,
+    "danos": 1,
+    "medidas_c_y_l": 0,
+    "impactos": 0,
+    "modalidad": true,
+    "restos": false,
+    "huellas": 0,
+    "calculos": 0
+   },
+   "conteos": {
+    "filas": 20,
+    "valores_invalidos": 0,
+    "citas": 11,
+    "citas_fuera": 0,
+    "numeros": 1,
+    "numeros_fuera": 0
+   }
+  },
+  {
+   "id": "cesvi-def04a2cc3",
+   "expediente_valido": true,
+   "escena_valida": true,
+   "lista_para_reconstruir": true,
+   "error": null,
+   "ms": 375,
+   "campos": {
+    "vehiculos": 2,
+    "clase": 0,
+    "masa": 0,
+    "rigidez": 0,
+    "danos": 5,
+    "medidas_c_y_l": 0,
+    "impactos": 1,
+    "modalidad": true,
+    "restos": false,
+    "huellas": 0,
+    "calculos": 0
+   },
+   "conteos": {
+    "filas": 49,
+    "valores_invalidos": 0,
+    "citas": 26,
+    "citas_fuera": 0,
+    "numeros": 6,
+    "numeros_fuera": 0
+   }
+  },
+  {
+   "id": "cesvi-87b14ec4ba",
+   "expediente_valido": true,
+   "escena_valida": true,
+   "lista_para_reconstruir": true,
+   "error": null,
+   "ms": 176,
+   "campos": {
+    "vehiculos": 1,
+    "clase": 0,
+    "masa": 0,
+    "rigidez": 0,
+    "danos": 6,
+    "medidas_c_y_l": 0,
+    "impactos": 1,
+    "modalidad": true,
+    "restos": false,
+    "huellas": 0,
+    "calculos": 0
+   },
+   "conteos": {
+    "filas": 48,
+    "valores_invalidos": 0,
+    "citas": 21,
+    "citas_fuera": 0,
+    "numeros": 1,
+    "numeros_fuera": 0
+   }
+  },
+  {
+   "id": "cesvi-31fcbca870",
+   "expediente_valido": true,
+   "escena_valida": true,
+   "lista_para_reconstruir": true,
+   "error": null,
+   "ms": 19,
+   "campos": {
+    "vehiculos": 1,
+    "clase": 1,
+    "masa": 1,
+    "rigidez": 0,
+    "danos": 5,
+    "medidas_c_y_l": 0,
+    "impactos": 0,
+    "modalidad": true,
+    "restos": false,
+    "huellas": 0,
+    "calculos": 2
+   },
+   "conteos": {
+    "filas": 32,
+    "valores_invalidos": 0,
+    "citas": 18,
+    "citas_fuera": 0,
+    "numeros": 6,
+    "numeros_fuera": 1
+   }
+  },
+  {
+   "id": "cesvi-48acbb46c2",
+   "expediente_valido": true,
+   "escena_valida": true,
+   "lista_para_reconstruir": true,
+   "error": null,
+   "ms": 143,
+   "campos": {
+    "vehiculos": 1,
+    "clase": 0,
+    "masa": 0,
+    "rigidez": 0,
+    "danos": 4,
+    "medidas_c_y_l": 0,
+    "impactos": 1,
+    "modalidad": true,
+    "restos": false,
+    "huellas": 0,
+    "calculos": 0
+   },
+   "conteos": {
+    "filas": 51,
+    "valores_invalidos": 0,
+    "citas": 28,
+    "citas_fuera": 0,
+    "numeros": 5,
+    "numeros_fuera": 0
+   }
+  },
+  {
+   "id": "cesvi-76cbfb506e",
+   "expediente_valido": true,
+   "escena_valida": true,
+   "lista_para_reconstruir": true,
+   "error": null,
+   "ms": 194,
+   "campos": {
+    "vehiculos": 1,
+    "clase": 1,
+    "masa": 0,
+    "rigidez": 0,
+    "danos": 8,
+    "medidas_c_y_l": 0,
+    "impactos": 1,
+    "modalidad": true,
+    "restos": false,
+    "huellas": 0,
+    "calculos": 0
+   },
+   "conteos": {
+    "filas": 60,
+    "valores_invalidos": 0,
+    "citas": 30,
+    "citas_fuera": 1,
+    "numeros": 2,
+    "numeros_fuera": 1
+   }
+  },
+  {
+   "id": "cesvi-5aa5e75aca",
+   "expediente_valido": true,
+   "escena_valida": true,
+   "lista_para_reconstruir": true,
+   "error": null,
+   "ms": 394,
+   "campos": {
+    "vehiculos": 2,
+    "clase": 0,
+    "masa": 0,
+    "rigidez": 0,
+    "danos": 7,
+    "medidas_c_y_l": 0,
+    "impactos": 3,
+    "modalidad": true,
+    "restos": false,
+    "huellas": 1,
+    "calculos": 0
+   },
+   "conteos": {
+    "filas": 62,
+    "valores_invalidos": 0,
+    "citas": 32,
+    "citas_fuera": 0,
+    "numeros": 3,
+    "numeros_fuera": 0
+   }
+  },
+  {
+   "id": "cesvi-a514a9a881",
+   "expediente_valido": true,
+   "escena_valida": true,
+   "lista_para_reconstruir": true,
+   "error": null,
+   "ms": 347,
+   "campos": {
+    "vehiculos": 2,
+    "clase": 0,
+    "masa": 0,
+    "rigidez": 0,
+    "danos": 6,
+    "medidas_c_y_l": 0,
+    "impactos": 1,
+    "modalidad": true,
+    "restos": false,
+    "huellas": 0,
+    "calculos": 0
+   },
+   "conteos": {
+    "filas": 52,
+    "valores_invalidos": 0,
+    "citas": 25,
+    "citas_fuera": 0,
+    "numeros": 3,
+    "numeros_fuera": 0
+   }
+  },
+  {
+   "id": "cesvi-257e1374a0",
+   "expediente_valido": true,
+   "escena_valida": true,
+   "lista_para_reconstruir": true,
+   "error": null,
+   "ms": 2704,
+   "campos": {
+    "vehiculos": 3,
+    "clase": 0,
+    "masa": 0,
+    "rigidez": 0,
+    "danos": 7,
+    "medidas_c_y_l": 0,
+    "impactos": 2,
+    "modalidad": true,
+    "restos": false,
+    "huellas": 0,
+    "calculos": 1
+   },
+   "conteos": {
+    "filas": 66,
+    "valores_invalidos": 0,
+    "citas": 28,
+    "citas_fuera": 0,
+    "numeros": 5,
+    "numeros_fuera": 0
+   }
+  },
+  {
+   "id": "cesvi-04c4022204",
+   "expediente_valido": true,
+   "escena_valida": true,
+   "lista_para_reconstruir": true,
+   "error": null,
+   "ms": 205,
+   "campos": {
+    "vehiculos": 1,
+    "clase": 0,
+    "masa": 0,
+    "rigidez": 0,
+    "danos": 4,
+    "medidas_c_y_l": 0,
+    "impactos": 2,
+    "modalidad": true,
+    "restos": false,
+    "huellas": 0,
+    "calculos": 0
+   },
+   "conteos": {
+    "filas": 48,
+    "valores_invalidos": 0,
+    "citas": 27,
+    "citas_fuera": 0,
+    "numeros": 3,
+    "numeros_fuera": 0
+   }
+  },
+  {
+   "id": "cesvi-ebb5c029a8",
+   "expediente_valido": true,
+   "escena_valida": true,
+   "lista_para_reconstruir": true,
+   "error": null,
+   "ms": 163,
+   "campos": {
+    "vehiculos": 1,
+    "clase": 0,
+    "masa": 0,
+    "rigidez": 0,
+    "danos": 3,
+    "medidas_c_y_l": 0,
+    "impactos": 1,
+    "modalidad": true,
+    "restos": false,
+    "huellas": 0,
+    "calculos": 0
+   },
+   "conteos": {
+    "filas": 26,
+    "valores_invalidos": 0,
+    "citas": 15,
+    "citas_fuera": 0,
+    "numeros": 1,
+    "numeros_fuera": 0
+   }
+  },
+  {
+   "id": "cesvi-549b436c96",
+   "expediente_valido": true,
+   "escena_valida": true,
+   "lista_para_reconstruir": true,
+   "error": null,
+   "ms": 18,
+   "campos": {
+    "vehiculos": 1,
+    "clase": 0,
+    "masa": 0,
+    "rigidez": 0,
+    "danos": 4,
+    "medidas_c_y_l": 0,
+    "impactos": 0,
+    "modalidad": true,
+    "restos": false,
+    "huellas": 0,
+    "calculos": 0
+   },
+   "conteos": {
+    "filas": 23,
+    "valores_invalidos": 0,
+    "citas": 16,
+    "citas_fuera": 0,
+    "numeros": 1,
+    "numeros_fuera": 0
+   }
+  },
+  {
+   "id": "cesvi-9ab47f7f37",
+   "expediente_valido": true,
+   "escena_valida": true,
+   "lista_para_reconstruir": true,
+   "error": null,
+   "ms": 5577,
+   "campos": {
+    "vehiculos": 3,
+    "clase": 2,
+    "masa": 0,
+    "rigidez": 0,
+    "danos": 8,
+    "medidas_c_y_l": 0,
+    "impactos": 5,
+    "modalidad": true,
+    "restos": false,
+    "huellas": 1,
+    "calculos": 0
+   },
+   "conteos": {
+    "filas": 86,
+    "valores_invalidos": 0,
+    "citas": 34,
+    "citas_fuera": 1,
+    "numeros": 5,
+    "numeros_fuera": 0
+   }
+  },
+  {
+   "id": "cesvi-36340d20a2",
+   "expediente_valido": true,
+   "escena_valida": true,
+   "lista_para_reconstruir": true,
+   "error": null,
+   "ms": 19,
+   "campos": {
+    "vehiculos": 1,
+    "clase": 0,
+    "masa": 0,
+    "rigidez": 0,
+    "danos": 0,
+    "medidas_c_y_l": 0,
+    "impactos": 0,
+    "modalidad": true,
+    "restos": false,
+    "huellas": 0,
+    "calculos": 1
+   },
+   "conteos": {
+    "filas": 11,
+    "valores_invalidos": 0,
+    "citas": 7,
+    "citas_fuera": 0,
+    "numeros": 1,
+    "numeros_fuera": 0
+   }
+  },
+  {
+   "id": "cesvi-a7570ee749",
+   "expediente_valido": true,
+   "escena_valida": true,
+   "lista_para_reconstruir": true,
+   "error": null,
+   "ms": 346,
+   "campos": {
+    "vehiculos": 2,
+    "clase": 1,
+    "masa": 0,
+    "rigidez": 0,
+    "danos": 3,
+    "medidas_c_y_l": 0,
+    "impactos": 1,
+    "modalidad": true,
+    "restos": false,
+    "huellas": 0,
+    "calculos": 0
+   },
+   "conteos": {
+    "filas": 44,
+    "valores_invalidos": 0,
+    "citas": 24,
+    "citas_fuera": 0,
+    "numeros": 6,
+    "numeros_fuera": 1
+   }
+  },
+  {
+   "id": "cesvi-85894938e3",
+   "expediente_valido": true,
+   "escena_valida": true,
+   "lista_para_reconstruir": true,
+   "error": null,
+   "ms": 374,
+   "campos": {
+    "vehiculos": 2,
+    "clase": 1,
+    "masa": 0,
+    "rigidez": 0,
+    "danos": 2,
+    "medidas_c_y_l": 0,
+    "impactos": 1,
+    "modalidad": true,
+    "restos": false,
+    "huellas": 0,
+    "calculos": 0
+   },
+   "conteos": {
+    "filas": 34,
+    "valores_invalidos": 0,
+    "citas": 16,
+    "citas_fuera": 0,
+    "numeros": 1,
+    "numeros_fuera": 0
+   }
+  },
+  {
+   "id": "cesvi-87cc4e2767",
+   "expediente_valido": true,
+   "escena_valida": true,
+   "lista_para_reconstruir": true,
+   "error": null,
+   "ms": 676,
+   "campos": {
+    "vehiculos": 2,
+    "clase": 2,
+    "masa": 0,
+    "rigidez": 0,
+    "danos": 3,
+    "medidas_c_y_l": 0,
+    "impactos": 1,
+    "modalidad": true,
+    "restos": false,
+    "huellas": 0,
+    "calculos": 0
+   },
+   "conteos": {
+    "filas": 47,
+    "valores_invalidos": 0,
+    "citas": 22,
+    "citas_fuera": 0,
+    "numeros": 6,
+    "numeros_fuera": 0
+   }
+  },
+  {
+   "id": "cesvi-16b9b82f10",
+   "expediente_valido": true,
+   "escena_valida": true,
+   "lista_para_reconstruir": true,
+   "error": null,
+   "ms": 352,
+   "campos": {
+    "vehiculos": 2,
+    "clase": 0,
+    "masa": 0,
+    "rigidez": 0,
+    "danos": 6,
+    "medidas_c_y_l": 0,
+    "impactos": 1,
+    "modalidad": true,
+    "restos": false,
+    "huellas": 0,
+    "calculos": 0
+   },
+   "conteos": {
+    "filas": 53,
+    "valores_invalidos": 0,
+    "citas": 26,
+    "citas_fuera": 0,
+    "numeros": 2,
+    "numeros_fuera": 0
+   }
+  },
+  {
+   "id": "cesvi-2b10fea718",
+   "expediente_valido": true,
+   "escena_valida": true,
+   "lista_para_reconstruir": true,
+   "error": null,
+   "ms": 507,
+   "campos": {
+    "vehiculos": 2,
+    "clase": 1,
+    "masa": 0,
+    "rigidez": 0,
+    "danos": 3,
+    "medidas_c_y_l": 0,
+    "impactos": 1,
+    "modalidad": true,
+    "restos": false,
+    "huellas": 0,
+    "calculos": 0
+   },
+   "conteos": {
+    "filas": 41,
+    "valores_invalidos": 0,
+    "citas": 20,
+    "citas_fuera": 0,
+    "numeros": 6,
+    "numeros_fuera": 0
+   }
+  },
+  {
+   "id": "cesvi-840953e0be",
+   "expediente_valido": true,
+   "escena_valida": true,
+   "lista_para_reconstruir": true,
+   "error": null,
+   "ms": 384,
+   "campos": {
+    "vehiculos": 2,
+    "clase": 1,
+    "masa": 0,
+    "rigidez": 0,
+    "danos": 3,
+    "medidas_c_y_l": 0,
+    "impactos": 1,
+    "modalidad": true,
+    "restos": false,
+    "huellas": 0,
+    "calculos": 0
+   },
+   "conteos": {
+    "filas": 45,
+    "valores_invalidos": 0,
+    "citas": 25,
+    "citas_fuera": 0,
+    "numeros": 6,
+    "numeros_fuera": 0
+   }
+  },
+  {
+   "id": "cesvi-c0bc4df135",
+   "expediente_valido": true,
+   "escena_valida": true,
+   "lista_para_reconstruir": true,
+   "error": null,
+   "ms": 5298,
+   "campos": {
+    "vehiculos": 3,
+    "clase": 0,
+    "masa": 0,
+    "rigidez": 0,
+    "danos": 6,
+    "medidas_c_y_l": 0,
+    "impactos": 2,
+    "modalidad": true,
+    "restos": false,
+    "huellas": 0,
+    "calculos": 0
+   },
+   "conteos": {
+    "filas": 65,
+    "valores_invalidos": 0,
+    "citas": 35,
+    "citas_fuera": 1,
+    "numeros": 11,
+    "numeros_fuera": 0
+   }
+  },
+  {
+   "id": "cesvi-b8c6174603",
+   "expediente_valido": true,
+   "escena_valida": true,
+   "lista_para_reconstruir": true,
+   "error": null,
+   "ms": 437,
+   "campos": {
+    "vehiculos": 2,
+    "clase": 1,
+    "masa": 0,
+    "rigidez": 0,
+    "danos": 8,
+    "medidas_c_y_l": 0,
+    "impactos": 1,
+    "modalidad": true,
+    "restos": false,
+    "huellas": 0,
+    "calculos": 1
+   },
+   "conteos": {
+    "filas": 60,
+    "valores_invalidos": 0,
+    "citas": 24,
+    "citas_fuera": 0,
+    "numeros": 10,
+    "numeros_fuera": 0
+   }
+  },
+  {
+   "id": "cesvi-4ee7f719b9",
+   "expediente_valido": true,
+   "escena_valida": true,
+   "lista_para_reconstruir": true,
+   "error": null,
+   "ms": 439,
+   "campos": {
+    "vehiculos": 2,
+    "clase": 1,
+    "masa": 0,
+    "rigidez": 0,
+    "danos": 8,
+    "medidas_c_y_l": 0,
+    "impactos": 2,
+    "modalidad": true,
+    "restos": false,
+    "huellas": 0,
+    "calculos": 0
+   },
+   "conteos": {
+    "filas": 65,
+    "valores_invalidos": 0,
+    "citas": 28,
+    "citas_fuera": 0,
+    "numeros": 6,
+    "numeros_fuera": 0
+   }
+  },
+  {
+   "id": "cesvi-0b1f65a976",
+   "expediente_valido": true,
+   "escena_valida": true,
+   "lista_para_reconstruir": true,
+   "error": null,
+   "ms": 12326,
+   "campos": {
+    "vehiculos": 7,
+    "clase": 2,
+    "masa": 0,
+    "rigidez": 0,
+    "danos": 8,
+    "medidas_c_y_l": 0,
+    "impactos": 3,
+    "modalidad": true,
+    "restos": false,
+    "huellas": 0,
+    "calculos": 0
+   },
+   "conteos": {
+    "filas": 77,
+    "valores_invalidos": 0,
+    "citas": 35,
+    "citas_fuera": 0,
+    "numeros": 5,
+    "numeros_fuera": 2
+   }
+  },
+  {
+   "id": "cesvi-2a83292792",
+   "expediente_valido": true,
+   "escena_valida": true,
+   "lista_para_reconstruir": true,
+   "error": null,
+   "ms": 15636,
+   "campos": {
+    "vehiculos": 6,
+    "clase": 1,
+    "masa": 0,
+    "rigidez": 0,
+    "danos": 12,
+    "medidas_c_y_l": 0,
+    "impactos": 3,
+    "modalidad": true,
+    "restos": false,
+    "huellas": 0,
+    "calculos": 0
+   },
+   "conteos": {
+    "filas": 93,
+    "valores_invalidos": 0,
+    "citas": 45,
+    "citas_fuera": 0,
+    "numeros": 4,
+    "numeros_fuera": 0
+   }
+  },
+  {
+   "id": "cesvi-5242a129c5",
+   "expediente_valido": true,
+   "escena_valida": true,
+   "lista_para_reconstruir": true,
+   "error": null,
+   "ms": 557,
+   "campos": {
+    "vehiculos": 2,
+    "clase": 2,
+    "masa": 2,
+    "rigidez": 0,
+    "danos": 7,
+    "medidas_c_y_l": 0,
+    "impactos": 1,
+    "modalidad": true,
+    "restos": false,
+    "huellas": 0,
+    "calculos": 2
+   },
+   "conteos": {
+    "filas": 54,
+    "valores_invalidos": 0,
+    "citas": 20,
+    "citas_fuera": 0,
+    "numeros": 14,
+    "numeros_fuera": 2
+   }
+  },
+  {
+   "id": "cesvi-a29030f88d",
+   "expediente_valido": true,
+   "escena_valida": true,
+   "lista_para_reconstruir": true,
+   "error": null,
+   "ms": 320,
+   "campos": {
+    "vehiculos": 2,
+    "clase": 0,
+    "masa": 0,
+    "rigidez": 0,
+    "danos": 5,
+    "medidas_c_y_l": 0,
+    "impactos": 1,
+    "modalidad": true,
+    "restos": false,
+    "huellas": 0,
+    "calculos": 1
+   },
+   "conteos": {
+    "filas": 54,
+    "valores_invalidos": 0,
+    "citas": 28,
+    "citas_fuera": 0,
+    "numeros": 5,
+    "numeros_fuera": 0
+   }
+  },
+  {
+   "id": "cesvi-6400c99448",
+   "expediente_valido": true,
+   "escena_valida": true,
+   "lista_para_reconstruir": true,
+   "error": null,
+   "ms": 322,
+   "campos": {
+    "vehiculos": 2,
+    "clase": 1,
+    "masa": 0,
+    "rigidez": 0,
+    "danos": 8,
+    "medidas_c_y_l": 0,
+    "impactos": 2,
+    "modalidad": true,
+    "restos": false,
+    "huellas": 1,
+    "calculos": 0
+   },
+   "conteos": {
+    "filas": 72,
+    "valores_invalidos": 0,
+    "citas": 35,
+    "citas_fuera": 0,
+    "numeros": 6,
+    "numeros_fuera": 1
+   }
+  },
+  {
+   "id": "cesvi-8edf93b5c6",
+   "expediente_valido": true,
+   "escena_valida": true,
+   "lista_para_reconstruir": true,
+   "error": null,
+   "ms": 176,
+   "campos": {
+    "vehiculos": 1,
+    "clase": 1,
+    "masa": 0,
+    "rigidez": 0,
+    "danos": 2,
+    "medidas_c_y_l": 0,
+    "impactos": 1,
+    "modalidad": true,
+    "restos": false,
+    "huellas": 0,
+    "calculos": 0
+   },
+   "conteos": {
+    "filas": 36,
+    "valores_invalidos": 0,
+    "citas": 18,
+    "citas_fuera": 0,
+    "numeros": 3,
+    "numeros_fuera": 0
+   }
+  },
+  {
+   "id": "cesvi-d4283db9c4",
+   "expediente_valido": true,
+   "escena_valida": true,
+   "lista_para_reconstruir": true,
+   "error": null,
+   "ms": 320,
+   "campos": {
+    "vehiculos": 2,
+    "clase": 1,
+    "masa": 0,
+    "rigidez": 0,
+    "danos": 10,
+    "medidas_c_y_l": 0,
+    "impactos": 1,
+    "modalidad": true,
+    "restos": false,
+    "huellas": 0,
+    "calculos": 1
+   },
+   "conteos": {
+    "filas": 71,
+    "valores_invalidos": 0,
+    "citas": 26,
+    "citas_fuera": 0,
+    "numeros": 3,
+    "numeros_fuera": 0
+   }
+  },
+  {
+   "id": "cesvi-af2196f0fc",
+   "expediente_valido": true,
+   "escena_valida": true,
+   "lista_para_reconstruir": true,
+   "error": null,
+   "ms": 185,
+   "campos": {
+    "vehiculos": 2,
+    "clase": 1,
+    "masa": 0,
+    "rigidez": 0,
+    "danos": 8,
+    "medidas_c_y_l": 0,
+    "impactos": 1,
+    "modalidad": true,
+    "restos": false,
+    "huellas": 1,
+    "calculos": 2
+   },
+   "conteos": {
+    "filas": 55,
+    "valores_invalidos": 0,
+    "citas": 28,
+    "citas_fuera": 0,
+    "numeros": 6,
+    "numeros_fuera": 0
+   }
+  },
+  {
+   "id": "cesvi-58c038ffdf",
+   "expediente_valido": true,
+   "escena_valida": true,
+   "lista_para_reconstruir": true,
+   "error": null,
+   "ms": 5272,
+   "campos": {
+    "vehiculos": 3,
+    "clase": 1,
+    "masa": 0,
+    "rigidez": 0,
+    "danos": 5,
+    "medidas_c_y_l": 0,
+    "impactos": 2,
+    "modalidad": true,
+    "restos": false,
+    "huellas": 0,
+    "calculos": 0
+   },
+   "conteos": {
+    "filas": 37,
+    "valores_invalidos": 0,
+    "citas": 18,
+    "citas_fuera": 0,
+    "numeros": 1,
+    "numeros_fuera": 0
+   }
+  },
+  {
+   "id": "cesvi-c4100ea323",
+   "expediente_valido": true,
+   "escena_valida": true,
+   "lista_para_reconstruir": true,
+   "error": null,
+   "ms": 334,
+   "campos": {
+    "vehiculos": 2,
+    "clase": 0,
+    "masa": 0,
+    "rigidez": 0,
+    "danos": 5,
+    "medidas_c_y_l": 0,
+    "impactos": 1,
+    "modalidad": true,
+    "restos": false,
+    "huellas": 0,
+    "calculos": 0
+   },
+   "conteos": {
+    "filas": 46,
+    "valores_invalidos": 0,
+    "citas": 25,
+    "citas_fuera": 0,
+    "numeros": 6,
+    "numeros_fuera": 0
+   }
+  },
+  {
+   "id": "cesvi-52c47a9f37",
+   "expediente_valido": true,
+   "escena_valida": true,
+   "lista_para_reconstruir": true,
+   "error": null,
+   "ms": 575,
+   "campos": {
+    "vehiculos": 2,
+    "clase": 1,
+    "masa": 0,
+    "rigidez": 0,
+    "danos": 5,
+    "medidas_c_y_l": 0,
+    "impactos": 1,
+    "modalidad": true,
+    "restos": false,
+    "huellas": 0,
+    "calculos": 1
+   },
+   "conteos": {
+    "filas": 55,
+    "valores_invalidos": 0,
+    "citas": 26,
+    "citas_fuera": 0,
+    "numeros": 5,
+    "numeros_fuera": 0
+   }
+  },
+  {
+   "id": "cesvi-b9f5a5ca1f",
+   "expediente_valido": true,
+   "escena_valida": true,
+   "lista_para_reconstruir": true,
+   "error": null,
+   "ms": 3817,
+   "campos": {
+    "vehiculos": 3,
+    "clase": 1,
+    "masa": 0,
+    "rigidez": 0,
+    "danos": 13,
+    "medidas_c_y_l": 0,
+    "impactos": 2,
+    "modalidad": true,
+    "restos": false,
+    "huellas": 0,
+    "calculos": 0
+   },
+   "conteos": {
+    "filas": 110,
+    "valores_invalidos": 0,
+    "citas": 39,
+    "citas_fuera": 0,
+    "numeros": 20,
+    "numeros_fuera": 0
+   }
+  },
+  {
+   "id": "cesvi-5cf7e956c6",
+   "expediente_valido": true,
+   "escena_valida": true,
+   "lista_para_reconstruir": true,
+   "error": null,
+   "ms": 142,
+   "campos": {
+    "vehiculos": 1,
+    "clase": 0,
+    "masa": 0,
+    "rigidez": 0,
+    "danos": 8,
+    "medidas_c_y_l": 0,
+    "impactos": 1,
+    "modalidad": true,
+    "restos": false,
+    "huellas": 0,
+    "calculos": 0
+   },
+   "conteos": {
+    "filas": 53,
+    "valores_invalidos": 0,
+    "citas": 19,
+    "citas_fuera": 0,
+    "numeros": 1,
+    "numeros_fuera": 0
+   }
+  },
+  {
+   "id": "cesvi-d0c7ed3ad8",
+   "expediente_valido": true,
+   "escena_valida": true,
+   "lista_para_reconstruir": true,
+   "error": null,
+   "ms": 324,
+   "campos": {
+    "vehiculos": 2,
+    "clase": 0,
+    "masa": 0,
+    "rigidez": 0,
+    "danos": 6,
+    "medidas_c_y_l": 0,
+    "impactos": 1,
+    "modalidad": true,
+    "restos": false,
+    "huellas": 0,
+    "calculos": 1
+   },
+   "conteos": {
+    "filas": 50,
+    "valores_invalidos": 0,
+    "citas": 19,
+    "citas_fuera": 0,
+    "numeros": 3,
+    "numeros_fuera": 0
+   }
+  },
+  {
+   "id": "cesvi-358b91874b",
+   "expediente_valido": true,
+   "escena_valida": true,
+   "lista_para_reconstruir": true,
+   "error": null,
+   "ms": 318,
+   "campos": {
+    "vehiculos": 2,
+    "clase": 0,
+    "masa": 0,
+    "rigidez": 0,
+    "danos": 2,
+    "medidas_c_y_l": 0,
+    "impactos": 1,
+    "modalidad": true,
+    "restos": false,
+    "huellas": 0,
+    "calculos": 1
+   },
+   "conteos": {
+    "filas": 33,
+    "valores_invalidos": 0,
+    "citas": 19,
+    "citas_fuera": 0,
+    "numeros": 2,
+    "numeros_fuera": 0
+   }
+  },
+  {
+   "id": "cesvi-7f1fa3c962",
+   "expediente_valido": true,
+   "escena_valida": true,
+   "lista_para_reconstruir": true,
+   "error": null,
+   "ms": 320,
+   "campos": {
+    "vehiculos": 2,
+    "clase": 0,
+    "masa": 0,
+    "rigidez": 0,
+    "danos": 4,
+    "medidas_c_y_l": 0,
+    "impactos": 1,
+    "modalidad": true,
+    "restos": false,
+    "huellas": 0,
+    "calculos": 0
+   },
+   "conteos": {
+    "filas": 55,
+    "valores_invalidos": 0,
+    "citas": 27,
+    "citas_fuera": 0,
+    "numeros": 9,
+    "numeros_fuera": 0
+   }
+  },
+  {
+   "id": "cesvi-6f007ef54a",
+   "expediente_valido": true,
+   "escena_valida": true,
+   "lista_para_reconstruir": true,
+   "error": null,
+   "ms": 145,
+   "campos": {
+    "vehiculos": 1,
+    "clase": 0,
+    "masa": 0,
+    "rigidez": 0,
+    "danos": 7,
+    "medidas_c_y_l": 0,
+    "impactos": 1,
+    "modalidad": true,
+    "restos": false,
+    "huellas": 0,
+    "calculos": 0
+   },
+   "conteos": {
+    "filas": 52,
+    "valores_invalidos": 0,
+    "citas": 23,
+    "citas_fuera": 1,
+    "numeros": 2,
+    "numeros_fuera": 0
+   }
+  },
+  {
+   "id": "cesvi-e25e2e4542",
+   "expediente_valido": true,
+   "escena_valida": true,
+   "lista_para_reconstruir": true,
+   "error": null,
+   "ms": 159,
+   "campos": {
+    "vehiculos": 1,
+    "clase": 0,
+    "masa": 0,
+    "rigidez": 0,
+    "danos": 5,
+    "medidas_c_y_l": 0,
+    "impactos": 1,
+    "modalidad": false,
+    "restos": false,
+    "huellas": 0,
+    "calculos": 0
+   },
+   "conteos": {
+    "filas": 34,
+    "valores_invalidos": 0,
+    "citas": 16,
+    "citas_fuera": 0,
+    "numeros": 1,
+    "numeros_fuera": 0
+   }
+  },
+  {
+   "id": "cesvi-a8bf6a49ac",
+   "expediente_valido": true,
+   "escena_valida": true,
+   "lista_para_reconstruir": true,
+   "error": null,
+   "ms": 327,
+   "campos": {
+    "vehiculos": 2,
+    "clase": 0,
+    "masa": 0,
+    "rigidez": 0,
+    "danos": 3,
+    "medidas_c_y_l": 0,
+    "impactos": 1,
+    "modalidad": true,
+    "restos": false,
+    "huellas": 0,
+    "calculos": 0
+   },
+   "conteos": {
+    "filas": 44,
+    "valores_invalidos": 0,
+    "citas": 24,
+    "citas_fuera": 0,
+    "numeros": 4,
+    "numeros_fuera": 0
+   }
+  },
+  {
+   "id": "cesvi-928c1a7646",
+   "expediente_valido": true,
+   "escena_valida": true,
+   "lista_para_reconstruir": true,
+   "error": null,
+   "ms": 4321,
+   "campos": {
+    "vehiculos": 3,
+    "clase": 0,
+    "masa": 0,
+    "rigidez": 0,
+    "danos": 5,
+    "medidas_c_y_l": 0,
+    "impactos": 2,
+    "modalidad": true,
+    "restos": false,
+    "huellas": 0,
+    "calculos": 1
+   },
+   "conteos": {
+    "filas": 57,
+    "valores_invalidos": 0,
+    "citas": 30,
+    "citas_fuera": 0,
+    "numeros": 11,
+    "numeros_fuera": 0
+   }
+  },
+  {
+   "id": "cesvi-4f918c2927",
+   "expediente_valido": true,
+   "escena_valida": true,
+   "lista_para_reconstruir": true,
+   "error": null,
+   "ms": 339,
+   "campos": {
+    "vehiculos": 2,
+    "clase": 0,
+    "masa": 0,
+    "rigidez": 0,
+    "danos": 5,
+    "medidas_c_y_l": 0,
+    "impactos": 1,
+    "modalidad": true,
+    "restos": false,
+    "huellas": 0,
+    "calculos": 0
+   },
+   "conteos": {
+    "filas": 51,
+    "valores_invalidos": 0,
+    "citas": 28,
+    "citas_fuera": 0,
+    "numeros": 5,
+    "numeros_fuera": 0
+   }
+  },
+  {
+   "id": "cesvi-d4772dda4f",
+   "expediente_valido": true,
+   "escena_valida": true,
+   "lista_para_reconstruir": true,
+   "error": null,
+   "ms": 836,
+   "campos": {
+    "vehiculos": 4,
+    "clase": 1,
+    "masa": 0,
+    "rigidez": 0,
+    "danos": 6,
+    "medidas_c_y_l": 0,
+    "impactos": 1,
+    "modalidad": true,
+    "restos": false,
+    "huellas": 0,
+    "calculos": 0
+   },
+   "conteos": {
+    "filas": 50,
+    "valores_invalidos": 1,
+    "citas": 26,
+    "citas_fuera": 0,
+    "numeros": 4,
+    "numeros_fuera": 0
+   }
+  },
+  {
+   "id": "cesvi-f7779cef54",
+   "expediente_valido": true,
+   "escena_valida": true,
+   "lista_para_reconstruir": true,
+   "error": null,
+   "ms": 499,
+   "campos": {
+    "vehiculos": 3,
+    "clase": 2,
+    "masa": 0,
+    "rigidez": 0,
+    "danos": 3,
+    "medidas_c_y_l": 0,
+    "impactos": 1,
+    "modalidad": true,
+    "restos": false,
+    "huellas": 0,
+    "calculos": 0
+   },
+   "conteos": {
+    "filas": 43,
+    "valores_invalidos": 0,
+    "citas": 24,
+    "citas_fuera": 1,
+    "numeros": 2,
+    "numeros_fuera": 0
+   }
+  },
+  {
+   "id": "cesvi-d646b64594",
+   "expediente_valido": true,
+   "escena_valida": true,
+   "lista_para_reconstruir": true,
+   "error": null,
+   "ms": 6159,
+   "campos": {
+    "vehiculos": 4,
+    "clase": 0,
+    "masa": 0,
+    "rigidez": 0,
+    "danos": 8,
+    "medidas_c_y_l": 0,
+    "impactos": 3,
+    "modalidad": true,
+    "restos": false,
+    "huellas": 0,
+    "calculos": 0
+   },
+   "conteos": {
+    "filas": 82,
+    "valores_invalidos": 0,
+    "citas": 42,
+    "citas_fuera": 0,
+    "numeros": 8,
+    "numeros_fuera": 0
+   }
+  },
+  {
+   "id": "cesvi-85090bf850",
+   "expediente_valido": true,
+   "escena_valida": true,
+   "lista_para_reconstruir": true,
+   "error": null,
+   "ms": 813,
+   "campos": {
+    "vehiculos": 3,
+    "clase": 2,
+    "masa": 0,
+    "rigidez": 0,
+    "danos": 3,
+    "medidas_c_y_l": 0,
+    "impactos": 2,
+    "modalidad": true,
+    "restos": true,
+    "huellas": 0,
+    "calculos": 0
+   },
+   "conteos": {
+    "filas": 35,
+    "valores_invalidos": 1,
+    "citas": 22,
+    "citas_fuera": 0,
+    "numeros": 3,
+    "numeros_fuera": 0
+   }
+  },
+  {
+   "id": "cesvi-6dbc809e80",
+   "expediente_valido": true,
+   "escena_valida": true,
+   "lista_para_reconstruir": true,
+   "error": null,
+   "ms": 490,
+   "campos": {
+    "vehiculos": 2,
+    "clase": 0,
+    "masa": 0,
+    "rigidez": 0,
+    "danos": 7,
+    "medidas_c_y_l": 0,
+    "impactos": 1,
+    "modalidad": true,
+    "restos": false,
+    "huellas": 0,
+    "calculos": 0
+   },
+   "conteos": {
+    "filas": 61,
+    "valores_invalidos": 0,
+    "citas": 22,
+    "citas_fuera": 0,
+    "numeros": 7,
+    "numeros_fuera": 0
+   }
+  },
+  {
+   "id": "cesvi-3bde7bd134",
+   "expediente_valido": true,
+   "escena_valida": true,
+   "lista_para_reconstruir": true,
+   "error": null,
+   "ms": 708,
+   "campos": {
+    "vehiculos": 2,
+    "clase": 1,
+    "masa": 0,
+    "rigidez": 0,
+    "danos": 4,
+    "medidas_c_y_l": 0,
+    "impactos": 1,
+    "modalidad": true,
+    "restos": false,
+    "huellas": 0,
+    "calculos": 0
+   },
+   "conteos": {
+    "filas": 35,
+    "valores_invalidos": 0,
+    "citas": 18,
+    "citas_fuera": 0,
+    "numeros": 2,
+    "numeros_fuera": 0
+   }
+  },
+  {
+   "id": "cesvi-97cb6986e4",
+   "expediente_valido": true,
+   "escena_valida": true,
+   "lista_para_reconstruir": true,
+   "error": null,
+   "ms": 482,
+   "campos": {
+    "vehiculos": 2,
+    "clase": 1,
+    "masa": 0,
+    "rigidez": 0,
+    "danos": 4,
+    "medidas_c_y_l": 0,
+    "impactos": 1,
+    "modalidad": true,
+    "restos": false,
+    "huellas": 0,
+    "calculos": 0
+   },
+   "conteos": {
+    "filas": 41,
+    "valores_invalidos": 0,
+    "citas": 21,
+    "citas_fuera": 0,
+    "numeros": 2,
+    "numeros_fuera": 0
+   }
+  },
+  {
+   "id": "cesvi-e9aed4ab5b",
+   "expediente_valido": true,
+   "escena_valida": true,
+   "lista_para_reconstruir": true,
+   "error": null,
+   "ms": 6585,
+   "campos": {
+    "vehiculos": 3,
+    "clase": 2,
+    "masa": 0,
+    "rigidez": 0,
+    "danos": 6,
+    "medidas_c_y_l": 0,
+    "impactos": 2,
+    "modalidad": true,
+    "restos": false,
+    "huellas": 0,
+    "calculos": 0
+   },
+   "conteos": {
+    "filas": 68,
+    "valores_invalidos": 0,
+    "citas": 38,
+    "citas_fuera": 0,
+    "numeros": 11,
+    "numeros_fuera": 0
+   }
+  },
+  {
+   "id": "cesvi-f85560ba6c",
+   "expediente_valido": true,
+   "escena_valida": true,
+   "lista_para_reconstruir": true,
+   "error": null,
+   "ms": 323,
+   "campos": {
+    "vehiculos": 2,
+    "clase": 0,
+    "masa": 0,
+    "rigidez": 0,
+    "danos": 0,
+    "medidas_c_y_l": 0,
+    "impactos": 1,
+    "modalidad": true,
+    "restos": false,
+    "huellas": 0,
+    "calculos": 0
+   },
+   "conteos": {
+    "filas": 23,
+    "valores_invalidos": 0,
+    "citas": 12,
+    "citas_fuera": 0,
+    "numeros": 2,
+    "numeros_fuera": 0
+   }
+  },
+  {
+   "id": "cesvi-7a3e5a6055",
+   "expediente_valido": true,
+   "escena_valida": true,
+   "lista_para_reconstruir": true,
+   "error": null,
+   "ms": 330,
+   "campos": {
+    "vehiculos": 2,
+    "clase": 0,
+    "masa": 0,
+    "rigidez": 0,
+    "danos": 3,
+    "medidas_c_y_l": 0,
+    "impactos": 1,
+    "modalidad": true,
+    "restos": false,
+    "huellas": 0,
+    "calculos": 1
+   },
+   "conteos": {
+    "filas": 37,
+    "valores_invalidos": 0,
+    "citas": 23,
+    "citas_fuera": 0,
+    "numeros": 5,
+    "numeros_fuera": 0
+   }
+  },
+  {
+   "id": "cesvi-736d92094b",
+   "expediente_valido": true,
+   "escena_valida": true,
+   "lista_para_reconstruir": true,
+   "error": null,
+   "ms": 4855,
+   "campos": {
+    "vehiculos": 3,
+    "clase": 0,
+    "masa": 0,
+    "rigidez": 0,
+    "danos": 4,
+    "medidas_c_y_l": 0,
+    "impactos": 2,
+    "modalidad": true,
+    "restos": false,
+    "huellas": 0,
+    "calculos": 0
+   },
+   "conteos": {
+    "filas": 47,
+    "valores_invalidos": 0,
+    "citas": 26,
+    "citas_fuera": 0,
+    "numeros": 8,
+    "numeros_fuera": 0
+   }
+  },
+  {
+   "id": "cesvi-11fb37efea",
+   "expediente_valido": true,
+   "escena_valida": true,
+   "lista_para_reconstruir": true,
+   "error": null,
+   "ms": 202,
+   "campos": {
+    "vehiculos": 2,
+    "clase": 1,
+    "masa": 0,
+    "rigidez": 0,
+    "danos": 6,
+    "medidas_c_y_l": 0,
+    "impactos": 1,
+    "modalidad": true,
+    "restos": false,
+    "huellas": 0,
+    "calculos": 0
+   },
+   "conteos": {
+    "filas": 52,
+    "valores_invalidos": 0,
+    "citas": 20,
+    "citas_fuera": 1,
+    "numeros": 3,
+    "numeros_fuera": 0
+   }
+  },
+  {
+   "id": "cesvi-7377724258",
+   "expediente_valido": true,
+   "escena_valida": true,
+   "lista_para_reconstruir": true,
+   "error": null,
+   "ms": 146,
+   "campos": {
+    "vehiculos": 1,
+    "clase": 0,
+    "masa": 0,
+    "rigidez": 0,
+    "danos": 3,
+    "medidas_c_y_l": 0,
+    "impactos": 1,
+    "modalidad": true,
+    "restos": false,
+    "huellas": 0,
+    "calculos": 1
+   },
+   "conteos": {
+    "filas": 31,
+    "valores_invalidos": 0,
+    "citas": 17,
+    "citas_fuera": 0,
+    "numeros": 3,
+    "numeros_fuera": 2
+   }
+  },
+  {
+   "id": "cesvi-89637693fe",
+   "expediente_valido": true,
+   "escena_valida": true,
+   "lista_para_reconstruir": true,
+   "error": null,
+   "ms": 317,
+   "campos": {
+    "vehiculos": 2,
+    "clase": 0,
+    "masa": 0,
+    "rigidez": 0,
+    "danos": 4,
+    "medidas_c_y_l": 0,
+    "impactos": 1,
+    "modalidad": true,
+    "restos": false,
+    "huellas": 1,
+    "calculos": 0
+   },
+   "conteos": {
+    "filas": 49,
+    "valores_invalidos": 0,
+    "citas": 26,
+    "citas_fuera": 0,
+    "numeros": 6,
+    "numeros_fuera": 0
+   }
+  },
+  {
+   "id": "cesvi-0eeebbed82",
+   "expediente_valido": true,
+   "escena_valida": true,
+   "lista_para_reconstruir": true,
+   "error": null,
+   "ms": 334,
+   "campos": {
+    "vehiculos": 2,
+    "clase": 0,
+    "masa": 0,
+    "rigidez": 0,
+    "danos": 6,
+    "medidas_c_y_l": 0,
+    "impactos": 1,
+    "modalidad": true,
+    "restos": false,
+    "huellas": 0,
+    "calculos": 1
+   },
+   "conteos": {
+    "filas": 52,
+    "valores_invalidos": 0,
+    "citas": 23,
+    "citas_fuera": 0,
+    "numeros": 5,
+    "numeros_fuera": 0
+   }
+  },
+  {
+   "id": "cesvi-cdaf2821ca",
+   "expediente_valido": true,
+   "escena_valida": true,
+   "lista_para_reconstruir": true,
+   "error": null,
+   "ms": 513,
+   "campos": {
+    "vehiculos": 3,
+    "clase": 0,
+    "masa": 0,
+    "rigidez": 0,
+    "danos": 4,
+    "medidas_c_y_l": 0,
+    "impactos": 2,
+    "modalidad": true,
+    "restos": false,
+    "huellas": 0,
+    "calculos": 0
+   },
+   "conteos": {
+    "filas": 49,
+    "valores_invalidos": 0,
+    "citas": 25,
+    "citas_fuera": 0,
+    "numeros": 2,
+    "numeros_fuera": 0
+   }
+  },
+  {
+   "id": "cesvi-466c13a262",
+   "expediente_valido": true,
+   "escena_valida": true,
+   "lista_para_reconstruir": true,
+   "error": null,
+   "ms": 316,
+   "campos": {
+    "vehiculos": 2,
+    "clase": 0,
+    "masa": 0,
+    "rigidez": 0,
+    "danos": 4,
+    "medidas_c_y_l": 0,
+    "impactos": 1,
+    "modalidad": true,
+    "restos": false,
+    "huellas": 0,
+    "calculos": 0
+   },
+   "conteos": {
+    "filas": 32,
+    "valores_invalidos": 0,
+    "citas": 25,
+    "citas_fuera": 7,
+    "numeros": 2,
+    "numeros_fuera": 0
+   }
+  },
+  {
+   "id": "cesvi-edc4d70d79",
+   "expediente_valido": true,
+   "escena_valida": true,
+   "lista_para_reconstruir": true,
+   "error": null,
+   "ms": 18,
+   "campos": {
+    "vehiculos": 1,
+    "clase": 0,
+    "masa": 0,
+    "rigidez": 0,
+    "danos": 4,
+    "medidas_c_y_l": 0,
+    "impactos": 0,
+    "modalidad": false,
+    "restos": false,
+    "huellas": 0,
+    "calculos": 1
+   },
+   "conteos": {
+    "filas": 30,
+    "valores_invalidos": 0,
+    "citas": 14,
+    "citas_fuera": 1,
+    "numeros": 1,
+    "numeros_fuera": 0
+   }
+  },
+  {
+   "id": "cesvi-78d98fd926",
+   "expediente_valido": true,
+   "escena_valida": true,
+   "lista_para_reconstruir": true,
+   "error": null,
+   "ms": 202,
+   "campos": {
+    "vehiculos": 1,
+    "clase": 0,
+    "masa": 0,
+    "rigidez": 0,
+    "danos": 3,
+    "medidas_c_y_l": 0,
+    "impactos": 1,
+    "modalidad": true,
+    "restos": false,
+    "huellas": 0,
+    "calculos": 0
+   },
+   "conteos": {
+    "filas": 28,
+    "valores_invalidos": 0,
+    "citas": 18,
+    "citas_fuera": 0,
+    "numeros": 1,
+    "numeros_fuera": 0
+   }
+  },
+  {
+   "id": "cesvi-99ae88f8e3",
+   "expediente_valido": true,
+   "escena_valida": true,
+   "lista_para_reconstruir": true,
+   "error": null,
+   "ms": 317,
+   "campos": {
+    "vehiculos": 2,
+    "clase": 2,
+    "masa": 0,
+    "rigidez": 0,
+    "danos": 4,
+    "medidas_c_y_l": 0,
+    "impactos": 1,
+    "modalidad": true,
+    "restos": false,
+    "huellas": 0,
+    "calculos": 0
+   },
+   "conteos": {
+    "filas": 55,
+    "valores_invalidos": 1,
+    "citas": 29,
+    "citas_fuera": 0,
+    "numeros": 4,
+    "numeros_fuera": 0
+   }
+  },
+  {
+   "id": "cesvi-5518ddf7bc",
+   "expediente_valido": true,
+   "escena_valida": true,
+   "lista_para_reconstruir": true,
+   "error": null,
+   "ms": 164,
+   "campos": {
+    "vehiculos": 1,
+    "clase": 0,
+    "masa": 0,
+    "rigidez": 0,
+    "danos": 5,
+    "medidas_c_y_l": 0,
+    "impactos": 1,
+    "modalidad": true,
+    "restos": false,
+    "huellas": 0,
+    "calculos": 0
+   },
+   "conteos": {
+    "filas": 34,
+    "valores_invalidos": 0,
+    "citas": 19,
+    "citas_fuera": 0,
+    "numeros": 1,
+    "numeros_fuera": 0
+   }
+  },
+  {
+   "id": "cesvi-f6bafdd302",
+   "expediente_valido": true,
+   "escena_valida": true,
+   "lista_para_reconstruir": true,
+   "error": null,
+   "ms": 395,
+   "campos": {
+    "vehiculos": 2,
+    "clase": 0,
+    "masa": 0,
+    "rigidez": 0,
+    "danos": 2,
+    "medidas_c_y_l": 0,
+    "impactos": 1,
+    "modalidad": true,
+    "restos": false,
+    "huellas": 0,
+    "calculos": 1
+   },
+   "conteos": {
+    "filas": 37,
+    "valores_invalidos": 0,
+    "citas": 22,
+    "citas_fuera": 0,
+    "numeros": 2,
+    "numeros_fuera": 0
+   }
+  },
+  {
+   "id": "cesvi-9cb20db594",
+   "expediente_valido": true,
+   "escena_valida": true,
+   "lista_para_reconstruir": true,
+   "error": null,
+   "ms": 349,
+   "campos": {
+    "vehiculos": 2,
+    "clase": 0,
+    "masa": 0,
+    "rigidez": 0,
+    "danos": 4,
+    "medidas_c_y_l": 0,
+    "impactos": 1,
+    "modalidad": true,
+    "restos": false,
+    "huellas": 0,
+    "calculos": 0
+   },
+   "conteos": {
+    "filas": 49,
+    "valores_invalidos": 0,
+    "citas": 26,
+    "citas_fuera": 0,
+    "numeros": 6,
+    "numeros_fuera": 0
+   }
+  },
+  {
+   "id": "cesvi-16853d8646",
+   "expediente_valido": true,
+   "escena_valida": true,
+   "lista_para_reconstruir": true,
+   "error": null,
+   "ms": 323,
+   "campos": {
+    "vehiculos": 2,
+    "clase": 0,
+    "masa": 0,
+    "rigidez": 0,
+    "danos": 7,
+    "medidas_c_y_l": 0,
+    "impactos": 2,
+    "modalidad": true,
+    "restos": false,
+    "huellas": 0,
+    "calculos": 0
+   },
+   "conteos": {
+    "filas": 60,
+    "valores_invalidos": 0,
+    "citas": 27,
+    "citas_fuera": 0,
+    "numeros": 5,
+    "numeros_fuera": 0
+   }
+  },
+  {
+   "id": "cesvi-853129f415",
+   "expediente_valido": true,
+   "escena_valida": true,
+   "lista_para_reconstruir": true,
+   "error": null,
+   "ms": 143,
+   "campos": {
+    "vehiculos": 1,
+    "clase": 0,
+    "masa": 0,
+    "rigidez": 0,
+    "danos": 4,
+    "medidas_c_y_l": 0,
+    "impactos": 1,
+    "modalidad": true,
+    "restos": false,
+    "huellas": 0,
+    "calculos": 0
+   },
+   "conteos": {
+    "filas": 34,
+    "valores_invalidos": 0,
+    "citas": 14,
+    "citas_fuera": 0,
+    "numeros": 1,
+    "numeros_fuera": 0
+   }
+  },
+  {
+   "id": "cesvi-3481483d69",
+   "expediente_valido": true,
+   "escena_valida": true,
+   "lista_para_reconstruir": true,
+   "error": null,
+   "ms": 333,
+   "campos": {
+    "vehiculos": 2,
+    "clase": 0,
+    "masa": 0,
+    "rigidez": 0,
+    "danos": 3,
+    "medidas_c_y_l": 0,
+    "impactos": 1,
+    "modalidad": true,
+    "restos": false,
+    "huellas": 0,
+    "calculos": 0
+   },
+   "conteos": {
+    "filas": 38,
+    "valores_invalidos": 0,
+    "citas": 18,
+    "citas_fuera": 0,
+    "numeros": 4,
+    "numeros_fuera": 0
+   }
+  },
+  {
+   "id": "cesvi-e6067d3d1b",
+   "expediente_valido": true,
+   "escena_valida": true,
+   "lista_para_reconstruir": true,
+   "error": null,
+   "ms": 394,
+   "campos": {
+    "vehiculos": 2,
+    "clase": 0,
+    "masa": 0,
+    "rigidez": 0,
+    "danos": 6,
+    "medidas_c_y_l": 0,
+    "impactos": 1,
+    "modalidad": true,
+    "restos": false,
+    "huellas": 0,
+    "calculos": 1
+   },
+   "conteos": {
+    "filas": 46,
+    "valores_invalidos": 0,
+    "citas": 26,
+    "citas_fuera": 0,
+    "numeros": 4,
+    "numeros_fuera": 0
+   }
+  },
+  {
+   "id": "cesvi-de7323cf1c",
+   "expediente_valido": true,
+   "escena_valida": true,
+   "lista_para_reconstruir": true,
+   "error": null,
+   "ms": 575,
+   "campos": {
+    "vehiculos": 2,
+    "clase": 1,
+    "masa": 0,
+    "rigidez": 0,
+    "danos": 4,
+    "medidas_c_y_l": 0,
+    "impactos": 1,
+    "modalidad": true,
+    "restos": false,
+    "huellas": 0,
+    "calculos": 0
+   },
+   "conteos": {
+    "filas": 47,
+    "valores_invalidos": 0,
+    "citas": 23,
+    "citas_fuera": 0,
+    "numeros": 5,
+    "numeros_fuera": 0
+   }
+  },
+  {
+   "id": "cesvi-16c23ff0f7",
+   "expediente_valido": true,
+   "escena_valida": true,
+   "lista_para_reconstruir": true,
+   "error": null,
+   "ms": 358,
+   "campos": {
+    "vehiculos": 2,
+    "clase": 0,
+    "masa": 0,
+    "rigidez": 0,
+    "danos": 4,
+    "medidas_c_y_l": 0,
+    "impactos": 1,
+    "modalidad": true,
+    "restos": false,
+    "huellas": 0,
+    "calculos": 0
+   },
+   "conteos": {
+    "filas": 41,
+    "valores_invalidos": 0,
+    "citas": 18,
+    "citas_fuera": 0,
+    "numeros": 2,
+    "numeros_fuera": 0
+   }
+  },
+  {
+   "id": "cesvi-e984ff56d3",
+   "expediente_valido": true,
+   "escena_valida": true,
+   "lista_para_reconstruir": true,
+   "error": null,
+   "ms": 176,
+   "campos": {
+    "vehiculos": 1,
+    "clase": 0,
+    "masa": 0,
+    "rigidez": 0,
+    "danos": 4,
+    "medidas_c_y_l": 0,
+    "impactos": 1,
+    "modalidad": true,
+    "restos": false,
+    "huellas": 0,
+    "calculos": 1
+   },
+   "conteos": {
+    "filas": 41,
+    "valores_invalidos": 0,
+    "citas": 20,
+    "citas_fuera": 0,
+    "numeros": 3,
+    "numeros_fuera": 0
+   }
+  },
+  {
+   "id": "cesvi-818c2eb6d6",
+   "expediente_valido": true,
+   "escena_valida": true,
+   "lista_para_reconstruir": true,
+   "error": null,
+   "ms": 5349,
+   "campos": {
+    "vehiculos": 3,
+    "clase": 3,
+    "masa": 0,
+    "rigidez": 0,
+    "danos": 4,
+    "medidas_c_y_l": 0,
+    "impactos": 2,
+    "modalidad": true,
+    "restos": true,
+    "huellas": 0,
+    "calculos": 0
+   },
+   "conteos": {
+    "filas": 53,
+    "valores_invalidos": 0,
+    "citas": 28,
+    "citas_fuera": 0,
+    "numeros": 4,
+    "numeros_fuera": 0
+   }
+  },
+  {
+   "id": "cesvi-30fa1926dc",
+   "expediente_valido": true,
+   "escena_valida": true,
+   "lista_para_reconstruir": true,
+   "error": null,
+   "ms": 368,
+   "campos": {
+    "vehiculos": 2,
+    "clase": 0,
+    "masa": 0,
+    "rigidez": 0,
+    "danos": 6,
+    "medidas_c_y_l": 0,
+    "impactos": 1,
+    "modalidad": true,
+    "restos": false,
+    "huellas": 0,
+    "calculos": 1
+   },
+   "conteos": {
+    "filas": 48,
+    "valores_invalidos": 0,
+    "citas": 24,
+    "citas_fuera": 0,
+    "numeros": 4,
+    "numeros_fuera": 0
+   }
+  },
+  {
+   "id": "cesvi-e53c722cc2",
+   "expediente_valido": true,
+   "escena_valida": true,
+   "lista_para_reconstruir": true,
+   "error": null,
+   "ms": 3129,
+   "campos": {
+    "vehiculos": 3,
+    "clase": 0,
+    "masa": 0,
+    "rigidez": 0,
+    "danos": 6,
+    "medidas_c_y_l": 0,
+    "impactos": 2,
+    "modalidad": true,
+    "restos": false,
+    "huellas": 2,
+    "calculos": 0
+   },
+   "conteos": {
+    "filas": 71,
+    "valores_invalidos": 0,
+    "citas": 37,
+    "citas_fuera": 0,
+    "numeros": 12,
+    "numeros_fuera": 0
+   }
+  },
+  {
+   "id": "cesvi-5db0896348",
+   "expediente_valido": true,
+   "escena_valida": true,
+   "lista_para_reconstruir": false,
+   "error": null,
+   "ms": 18,
+   "campos": {
+    "vehiculos": 0,
+    "clase": 0,
+    "masa": 0,
+    "rigidez": 0,
+    "danos": 0,
+    "medidas_c_y_l": 0,
+    "impactos": 0,
+    "modalidad": true,
+    "restos": false,
+    "huellas": 0,
+    "calculos": 0
+   },
+   "conteos": {
+    "filas": 7,
+    "valores_invalidos": 0,
+    "citas": 6,
+    "citas_fuera": 1,
+    "numeros": 0,
+    "numeros_fuera": 0
+   }
+  },
+  {
+   "id": "cesvi-c3af05ad39",
+   "expediente_valido": true,
+   "escena_valida": true,
+   "lista_para_reconstruir": true,
+   "error": null,
+   "ms": 344,
+   "campos": {
+    "vehiculos": 2,
+    "clase": 0,
+    "masa": 0,
+    "rigidez": 0,
+    "danos": 6,
+    "medidas_c_y_l": 0,
+    "impactos": 1,
+    "modalidad": true,
+    "restos": false,
+    "huellas": 0,
+    "calculos": 1
+   },
+   "conteos": {
+    "filas": 57,
+    "valores_invalidos": 0,
+    "citas": 25,
+    "citas_fuera": 0,
+    "numeros": 4,
+    "numeros_fuera": 0
+   }
+  },
+  {
+   "id": "cesvi-f290a77272",
+   "expediente_valido": true,
+   "escena_valida": true,
+   "lista_para_reconstruir": true,
+   "error": null,
+   "ms": 319,
+   "campos": {
+    "vehiculos": 2,
+    "clase": 0,
+    "masa": 0,
+    "rigidez": 0,
+    "danos": 7,
+    "medidas_c_y_l": 0,
+    "impactos": 1,
+    "modalidad": true,
+    "restos": false,
+    "huellas": 0,
+    "calculos": 0
+   },
+   "conteos": {
+    "filas": 63,
+    "valores_invalidos": 0,
+    "citas": 21,
+    "citas_fuera": 1,
+    "numeros": 9,
+    "numeros_fuera": 4
+   }
+  },
+  {
+   "id": "cesvi-65daf4b688",
+   "expediente_valido": true,
+   "escena_valida": true,
+   "lista_para_reconstruir": true,
+   "error": null,
+   "ms": 354,
+   "campos": {
+    "vehiculos": 2,
+    "clase": 0,
+    "masa": 0,
+    "rigidez": 0,
+    "danos": 6,
+    "medidas_c_y_l": 0,
+    "impactos": 1,
+    "modalidad": true,
+    "restos": false,
+    "huellas": 0,
+    "calculos": 0
+   },
+   "conteos": {
+    "filas": 47,
+    "valores_invalidos": 0,
+    "citas": 21,
+    "citas_fuera": 0,
+    "numeros": 2,
+    "numeros_fuera": 0
+   }
+  },
+  {
+   "id": "cesvi-9b2fc2ffc7",
+   "expediente_valido": true,
+   "escena_valida": true,
+   "lista_para_reconstruir": true,
+   "error": null,
+   "ms": 269,
+   "campos": {
+    "vehiculos": 2,
+    "clase": 1,
+    "masa": 0,
+    "rigidez": 0,
+    "danos": 6,
+    "medidas_c_y_l": 0,
+    "impactos": 1,
+    "modalidad": true,
+    "restos": false,
+    "huellas": 0,
+    "calculos": 0
+   },
+   "conteos": {
+    "filas": 47,
+    "valores_invalidos": 0,
+    "citas": 22,
+    "citas_fuera": 0,
+    "numeros": 3,
+    "numeros_fuera": 0
+   }
+  },
+  {
+   "id": "cesvi-ba1949532f",
+   "expediente_valido": true,
+   "escena_valida": true,
+   "lista_para_reconstruir": true,
+   "error": null,
+   "ms": 322,
+   "campos": {
+    "vehiculos": 2,
+    "clase": 0,
+    "masa": 0,
+    "rigidez": 0,
+    "danos": 5,
+    "medidas_c_y_l": 0,
+    "impactos": 1,
+    "modalidad": true,
+    "restos": false,
+    "huellas": 0,
+    "calculos": 1
+   },
+   "conteos": {
+    "filas": 48,
+    "valores_invalidos": 0,
+    "citas": 22,
+    "citas_fuera": 0,
+    "numeros": 7,
+    "numeros_fuera": 0
+   }
+  },
+  {
+   "id": "cesvi-7be5e8a261",
+   "expediente_valido": true,
+   "escena_valida": true,
+   "lista_para_reconstruir": true,
+   "error": null,
+   "ms": 341,
+   "campos": {
+    "vehiculos": 2,
+    "clase": 0,
+    "masa": 0,
+    "rigidez": 0,
+    "danos": 2,
+    "medidas_c_y_l": 0,
+    "impactos": 1,
+    "modalidad": true,
+    "restos": false,
+    "huellas": 0,
+    "calculos": 0
+   },
+   "conteos": {
+    "filas": 23,
+    "valores_invalidos": 0,
+    "citas": 14,
+    "citas_fuera": 0,
+    "numeros": 0,
+    "numeros_fuera": 0
+   }
+  },
+  {
+   "id": "cesvi-316a61cb43",
+   "expediente_valido": true,
+   "escena_valida": true,
+   "lista_para_reconstruir": true,
+   "error": null,
+   "ms": 7184,
+   "campos": {
+    "vehiculos": 4,
+    "clase": 0,
+    "masa": 0,
+    "rigidez": 0,
+    "danos": 8,
+    "medidas_c_y_l": 0,
+    "impactos": 3,
+    "modalidad": true,
+    "restos": false,
+    "huellas": 0,
+    "calculos": 0
+   },
+   "conteos": {
+    "filas": 75,
+    "valores_invalidos": 0,
+    "citas": 30,
+    "citas_fuera": 0,
+    "numeros": 8,
+    "numeros_fuera": 0
+   }
+  },
+  {
+   "id": "cesvi-f9de9836d6",
+   "expediente_valido": true,
+   "escena_valida": true,
+   "lista_para_reconstruir": true,
+   "error": null,
+   "ms": 385,
+   "campos": {
+    "vehiculos": 2,
+    "clase": 0,
+    "masa": 0,
+    "rigidez": 0,
+    "danos": 4,
+    "medidas_c_y_l": 0,
+    "impactos": 1,
+    "modalidad": true,
+    "restos": false,
+    "huellas": 0,
+    "calculos": 0
+   },
+   "conteos": {
+    "filas": 51,
+    "valores_invalidos": 0,
+    "citas": 23,
+    "citas_fuera": 0,
+    "numeros": 6,
+    "numeros_fuera": 2
+   }
+  },
+  {
+   "id": "cesvi-b1ab1b00df",
+   "expediente_valido": true,
+   "escena_valida": true,
+   "lista_para_reconstruir": true,
+   "error": null,
+   "ms": 4934,
+   "campos": {
+    "vehiculos": 3,
+    "clase": 0,
+    "masa": 0,
+    "rigidez": 0,
+    "danos": 9,
+    "medidas_c_y_l": 0,
+    "impactos": 2,
+    "modalidad": true,
+    "restos": false,
+    "huellas": 0,
+    "calculos": 0
+   },
+   "conteos": {
+    "filas": 71,
+    "valores_invalidos": 0,
+    "citas": 33,
+    "citas_fuera": 0,
+    "numeros": 8,
+    "numeros_fuera": 0
+   }
+  },
+  {
+   "id": "cesvi-5e0f7da79c",
+   "expediente_valido": true,
+   "escena_valida": true,
+   "lista_para_reconstruir": true,
+   "error": null,
+   "ms": 142,
+   "campos": {
+    "vehiculos": 1,
+    "clase": 0,
+    "masa": 0,
+    "rigidez": 0,
+    "danos": 5,
+    "medidas_c_y_l": 0,
+    "impactos": 1,
+    "modalidad": true,
+    "restos": false,
+    "huellas": 1,
+    "calculos": 0
+   },
+   "conteos": {
+    "filas": 45,
+    "valores_invalidos": 0,
+    "citas": 22,
+    "citas_fuera": 0,
+    "numeros": 2,
+    "numeros_fuera": 0
+   }
+  },
+  {
+   "id": "cesvi-4055e6fd60",
+   "expediente_valido": true,
+   "escena_valida": true,
+   "lista_para_reconstruir": true,
+   "error": null,
+   "ms": 183,
+   "campos": {
+    "vehiculos": 1,
+    "clase": 0,
+    "masa": 0,
+    "rigidez": 0,
+    "danos": 5,
+    "medidas_c_y_l": 0,
+    "impactos": 1,
+    "modalidad": true,
+    "restos": false,
+    "huellas": 1,
+    "calculos": 0
+   },
+   "conteos": {
+    "filas": 45,
+    "valores_invalidos": 0,
+    "citas": 27,
+    "citas_fuera": 0,
+    "numeros": 3,
+    "numeros_fuera": 0
+   }
+  },
+  {
+   "id": "cesvi-fa403f1905",
+   "expediente_valido": true,
+   "escena_valida": true,
+   "lista_para_reconstruir": true,
+   "error": null,
+   "ms": 312,
+   "campos": {
+    "vehiculos": 2,
+    "clase": 1,
+    "masa": 0,
+    "rigidez": 0,
+    "danos": 5,
+    "medidas_c_y_l": 0,
+    "impactos": 1,
+    "modalidad": true,
+    "restos": false,
+    "huellas": 0,
+    "calculos": 1
+   },
+   "conteos": {
+    "filas": 48,
+    "valores_invalidos": 0,
+    "citas": 23,
+    "citas_fuera": 0,
+    "numeros": 7,
+    "numeros_fuera": 0
+   }
+  },
+  {
+   "id": "cesvi-c97f0058a8",
+   "expediente_valido": true,
+   "escena_valida": true,
+   "lista_para_reconstruir": true,
+   "error": null,
+   "ms": 348,
+   "campos": {
+    "vehiculos": 2,
+    "clase": 0,
+    "masa": 0,
+    "rigidez": 0,
+    "danos": 2,
+    "medidas_c_y_l": 0,
+    "impactos": 1,
+    "modalidad": true,
+    "restos": false,
+    "huellas": 0,
+    "calculos": 0
+   },
+   "conteos": {
+    "filas": 35,
+    "valores_invalidos": 0,
+    "citas": 16,
+    "citas_fuera": 0,
+    "numeros": 2,
+    "numeros_fuera": 0
+   }
+  },
+  {
+   "id": "cesvi-9babee8d11",
+   "expediente_valido": true,
+   "escena_valida": true,
+   "lista_para_reconstruir": true,
+   "error": null,
+   "ms": 311,
+   "campos": {
+    "vehiculos": 2,
+    "clase": 2,
+    "masa": 2,
+    "rigidez": 0,
+    "danos": 3,
+    "medidas_c_y_l": 0,
+    "impactos": 1,
+    "modalidad": true,
+    "restos": false,
+    "huellas": 0,
+    "calculos": 1
+   },
+   "conteos": {
+    "filas": 45,
+    "valores_invalidos": 0,
+    "citas": 22,
+    "citas_fuera": 0,
+    "numeros": 4,
+    "numeros_fuera": 0
+   }
+  },
+  {
+   "id": "cesvi-17068f5d53",
+   "expediente_valido": true,
+   "escena_valida": true,
+   "lista_para_reconstruir": true,
+   "error": null,
+   "ms": 331,
+   "campos": {
+    "vehiculos": 2,
+    "clase": 0,
+    "masa": 0,
+    "rigidez": 0,
+    "danos": 2,
+    "medidas_c_y_l": 0,
+    "impactos": 1,
+    "modalidad": true,
+    "restos": false,
+    "huellas": 0,
+    "calculos": 0
+   },
+   "conteos": {
+    "filas": 18,
+    "valores_invalidos": 0,
+    "citas": 11,
+    "citas_fuera": 0,
+    "numeros": 0,
+    "numeros_fuera": 0
+   }
+  },
+  {
+   "id": "cesvi-d84907cf47",
+   "expediente_valido": true,
+   "escena_valida": true,
+   "lista_para_reconstruir": true,
+   "error": null,
+   "ms": 352,
+   "campos": {
+    "vehiculos": 2,
+    "clase": 0,
+    "masa": 0,
+    "rigidez": 0,
+    "danos": 6,
+    "medidas_c_y_l": 0,
+    "impactos": 2,
+    "modalidad": true,
+    "restos": false,
+    "huellas": 1,
+    "calculos": 0
+   },
+   "conteos": {
+    "filas": 57,
+    "valores_invalidos": 0,
+    "citas": 26,
+    "citas_fuera": 0,
+    "numeros": 2,
+    "numeros_fuera": 0
+   }
+  },
+  {
+   "id": "cesvi-c3a461721a",
+   "expediente_valido": true,
+   "escena_valida": true,
+   "lista_para_reconstruir": true,
+   "error": null,
+   "ms": 367,
+   "campos": {
+    "vehiculos": 2,
+    "clase": 0,
+    "masa": 0,
+    "rigidez": 0,
+    "danos": 5,
+    "medidas_c_y_l": 0,
+    "impactos": 1,
+    "modalidad": true,
+    "restos": false,
+    "huellas": 0,
+    "calculos": 0
+   },
+   "conteos": {
+    "filas": 47,
+    "valores_invalidos": 0,
+    "citas": 28,
+    "citas_fuera": 13,
+    "numeros": 2,
+    "numeros_fuera": 0
+   }
+  },
+  {
+   "id": "cesvi-4a5c51d807",
+   "expediente_valido": true,
+   "escena_valida": true,
+   "lista_para_reconstruir": true,
+   "error": null,
+   "ms": 344,
+   "campos": {
+    "vehiculos": 2,
+    "clase": 0,
+    "masa": 0,
+    "rigidez": 0,
+    "danos": 4,
+    "medidas_c_y_l": 0,
+    "impactos": 1,
+    "modalidad": true,
+    "restos": false,
+    "huellas": 0,
+    "calculos": 1
+   },
+   "conteos": {
+    "filas": 42,
+    "valores_invalidos": 0,
+    "citas": 23,
+    "citas_fuera": 3,
+    "numeros": 6,
+    "numeros_fuera": 3
+   }
+  },
+  {
+   "id": "cesvi-feb7aaa0e1",
+   "expediente_valido": true,
+   "escena_valida": true,
+   "lista_para_reconstruir": true,
+   "error": null,
+   "ms": 2617,
+   "campos": {
+    "vehiculos": 3,
+    "clase": 2,
+    "masa": 0,
+    "rigidez": 0,
+    "danos": 4,
+    "medidas_c_y_l": 0,
+    "impactos": 2,
+    "modalidad": true,
+    "restos": false,
+    "huellas": 0,
+    "calculos": 0
+   },
+   "conteos": {
+    "filas": 58,
+    "valores_invalidos": 0,
+    "citas": 29,
+    "citas_fuera": 0,
+    "numeros": 5,
+    "numeros_fuera": 0
+   }
+  },
+  {
+   "id": "cesvi-df473476cf",
+   "expediente_valido": true,
+   "escena_valida": true,
+   "lista_para_reconstruir": true,
+   "error": null,
+   "ms": 160,
+   "campos": {
+    "vehiculos": 1,
+    "clase": 1,
+    "masa": 0,
+    "rigidez": 0,
+    "danos": 7,
+    "medidas_c_y_l": 0,
+    "impactos": 1,
+    "modalidad": true,
+    "restos": false,
+    "huellas": 0,
+    "calculos": 0
+   },
+   "conteos": {
+    "filas": 50,
+    "valores_invalidos": 1,
+    "citas": 28,
+    "citas_fuera": 2,
+    "numeros": 2,
+    "numeros_fuera": 0
+   }
+  },
+  {
+   "id": "cesvi-17afa381e4",
+   "expediente_valido": true,
+   "escena_valida": true,
+   "lista_para_reconstruir": true,
+   "error": null,
+   "ms": 2727,
+   "campos": {
+    "vehiculos": 3,
+    "clase": 0,
+    "masa": 0,
+    "rigidez": 0,
+    "danos": 5,
+    "medidas_c_y_l": 0,
+    "impactos": 2,
+    "modalidad": true,
+    "restos": false,
+    "huellas": 0,
+    "calculos": 0
+   },
+   "conteos": {
+    "filas": 67,
+    "valores_invalidos": 0,
+    "citas": 29,
+    "citas_fuera": 0,
+    "numeros": 9,
+    "numeros_fuera": 0
+   }
+  },
+  {
+   "id": "cesvi-a4177250d4",
+   "expediente_valido": true,
+   "escena_valida": true,
+   "lista_para_reconstruir": true,
+   "error": null,
+   "ms": 366,
+   "campos": {
+    "vehiculos": 2,
+    "clase": 0,
+    "masa": 0,
+    "rigidez": 0,
+    "danos": 5,
+    "medidas_c_y_l": 0,
+    "impactos": 1,
+    "modalidad": true,
+    "restos": false,
+    "huellas": 0,
+    "calculos": 0
+   },
+   "conteos": {
+    "filas": 43,
+    "valores_invalidos": 0,
+    "citas": 24,
+    "citas_fuera": 0,
+    "numeros": 2,
+    "numeros_fuera": 0
+   }
+  },
+  {
+   "id": "cesvi-7fceadfdca",
+   "expediente_valido": true,
+   "escena_valida": true,
+   "lista_para_reconstruir": true,
+   "error": null,
+   "ms": 332,
+   "campos": {
+    "vehiculos": 2,
+    "clase": 0,
+    "masa": 0,
+    "rigidez": 0,
+    "danos": 2,
+    "medidas_c_y_l": 0,
+    "impactos": 1,
+    "modalidad": true,
+    "restos": false,
+    "huellas": 0,
+    "calculos": 0
+   },
+   "conteos": {
+    "filas": 30,
+    "valores_invalidos": 0,
+    "citas": 17,
+    "citas_fuera": 0,
+    "numeros": 1,
+    "numeros_fuera": 0
+   }
+  },
+  {
+   "id": "cesvi-fb43c646b6",
+   "expediente_valido": true,
+   "escena_valida": true,
+   "lista_para_reconstruir": true,
+   "error": null,
+   "ms": 355,
+   "campos": {
+    "vehiculos": 2,
+    "clase": 0,
+    "masa": 0,
+    "rigidez": 0,
+    "danos": 5,
+    "medidas_c_y_l": 0,
+    "impactos": 1,
+    "modalidad": true,
+    "restos": false,
+    "huellas": 0,
+    "calculos": 0
+   },
+   "conteos": {
+    "filas": 53,
+    "valores_invalidos": 0,
+    "citas": 25,
+    "citas_fuera": 0,
+    "numeros": 8,
+    "numeros_fuera": 0
+   }
+  },
+  {
+   "id": "cesvi-8dfd2f1c6f",
+   "expediente_valido": true,
+   "escena_valida": true,
+   "lista_para_reconstruir": true,
+   "error": null,
+   "ms": 320,
+   "campos": {
+    "vehiculos": 2,
+    "clase": 1,
+    "masa": 0,
+    "rigidez": 0,
+    "danos": 7,
+    "medidas_c_y_l": 0,
+    "impactos": 1,
+    "modalidad": true,
+    "restos": false,
+    "huellas": 0,
+    "calculos": 0
+   },
+   "conteos": {
+    "filas": 48,
+    "valores_invalidos": 0,
+    "citas": 20,
+    "citas_fuera": 0,
+    "numeros": 5,
+    "numeros_fuera": 0
+   }
+  },
+  {
+   "id": "cesvi-c6e5335493",
+   "expediente_valido": true,
+   "escena_valida": true,
+   "lista_para_reconstruir": true,
+   "error": null,
+   "ms": 7043,
+   "campos": {
+    "vehiculos": 4,
+    "clase": 0,
+    "masa": 0,
+    "rigidez": 0,
+    "danos": 9,
+    "medidas_c_y_l": 0,
+    "impactos": 3,
+    "modalidad": true,
+    "restos": false,
+    "huellas": 0,
+    "calculos": 0
+   },
+   "conteos": {
+    "filas": 77,
+    "valores_invalidos": 0,
+    "citas": 37,
+    "citas_fuera": 0,
+    "numeros": 9,
+    "numeros_fuera": 0
+   }
+  },
+  {
+   "id": "cesvi-be27388d4a",
+   "expediente_valido": true,
+   "escena_valida": true,
+   "lista_para_reconstruir": true,
+   "error": null,
+   "ms": 339,
+   "campos": {
+    "vehiculos": 2,
+    "clase": 0,
+    "masa": 0,
+    "rigidez": 0,
+    "danos": 5,
+    "medidas_c_y_l": 0,
+    "impactos": 1,
+    "modalidad": true,
+    "restos": false,
+    "huellas": 0,
+    "calculos": 1
+   },
+   "conteos": {
+    "filas": 55,
+    "valores_invalidos": 0,
+    "citas": 26,
+    "citas_fuera": 1,
+    "numeros": 4,
+    "numeros_fuera": 0
+   }
+  },
+  {
+   "id": "cesvi-94c84e00ab",
+   "expediente_valido": true,
+   "escena_valida": true,
+   "lista_para_reconstruir": true,
+   "error": null,
+   "ms": 350,
+   "campos": {
+    "vehiculos": 2,
+    "clase": 0,
+    "masa": 0,
+    "rigidez": 0,
+    "danos": 2,
+    "medidas_c_y_l": 0,
+    "impactos": 1,
+    "modalidad": true,
+    "restos": false,
+    "huellas": 0,
+    "calculos": 0
+   },
+   "conteos": {
+    "filas": 40,
+    "valores_invalidos": 0,
+    "citas": 23,
+    "citas_fuera": 0,
+    "numeros": 2,
+    "numeros_fuera": 0
+   }
+  },
+  {
+   "id": "cesvi-09828841f1",
+   "expediente_valido": true,
+   "escena_valida": true,
+   "lista_para_reconstruir": true,
+   "error": null,
+   "ms": 310,
+   "campos": {
+    "vehiculos": 2,
+    "clase": 1,
+    "masa": 0,
+    "rigidez": 0,
+    "danos": 6,
+    "medidas_c_y_l": 0,
+    "impactos": 2,
+    "modalidad": true,
+    "restos": false,
+    "huellas": 0,
+    "calculos": 0
+   },
+   "conteos": {
+    "filas": 60,
+    "valores_invalidos": 0,
+    "citas": 33,
+    "citas_fuera": 0,
+    "numeros": 4,
+    "numeros_fuera": 0
+   }
+  },
+  {
+   "id": "cesvi-14b9bd1a4e",
+   "expediente_valido": true,
+   "escena_valida": true,
+   "lista_para_reconstruir": true,
+   "error": null,
+   "ms": 155,
+   "campos": {
+    "vehiculos": 1,
+    "clase": 1,
+    "masa": 0,
+    "rigidez": 0,
+    "danos": 9,
+    "medidas_c_y_l": 0,
+    "impactos": 2,
+    "modalidad": true,
+    "restos": false,
+    "huellas": 0,
+    "calculos": 0
+   },
+   "conteos": {
+    "filas": 54,
+    "valores_invalidos": 0,
+    "citas": 23,
+    "citas_fuera": 0,
+    "numeros": 1,
+    "numeros_fuera": 0
+   }
+  },
+  {
+   "id": "cesvi-d24f648593",
+   "expediente_valido": true,
+   "escena_valida": true,
+   "lista_para_reconstruir": true,
+   "error": null,
+   "ms": 332,
+   "campos": {
+    "vehiculos": 2,
+    "clase": 1,
+    "masa": 0,
+    "rigidez": 0,
+    "danos": 1,
+    "medidas_c_y_l": 0,
+    "impactos": 1,
+    "modalidad": true,
+    "restos": false,
+    "huellas": 0,
+    "calculos": 0
+   },
+   "conteos": {
+    "filas": 22,
+    "valores_invalidos": 0,
+    "citas": 14,
+    "citas_fuera": 0,
+    "numeros": 1,
+    "numeros_fuera": 0
+   }
+  },
+  {
+   "id": "cesvi-bdf8899ada",
+   "expediente_valido": true,
+   "escena_valida": true,
+   "lista_para_reconstruir": true,
+   "error": null,
+   "ms": 426,
+   "campos": {
+    "vehiculos": 2,
+    "clase": 1,
+    "masa": 0,
+    "rigidez": 0,
+    "danos": 3,
+    "medidas_c_y_l": 0,
+    "impactos": 1,
+    "modalidad": true,
+    "restos": false,
+    "huellas": 1,
+    "calculos": 1
+   },
+   "conteos": {
+    "filas": 41,
+    "valores_invalidos": 0,
+    "citas": 23,
+    "citas_fuera": 18,
+    "numeros": 7,
+    "numeros_fuera": 5
+   }
+  },
+  {
+   "id": "cesvi-06e4ee9b97",
+   "expediente_valido": true,
+   "escena_valida": true,
+   "lista_para_reconstruir": true,
+   "error": null,
+   "ms": 324,
+   "campos": {
+    "vehiculos": 2,
+    "clase": 0,
+    "masa": 0,
+    "rigidez": 0,
+    "danos": 10,
+    "medidas_c_y_l": 0,
+    "impactos": 1,
+    "modalidad": true,
+    "restos": false,
+    "huellas": 0,
+    "calculos": 0
+   },
+   "conteos": {
+    "filas": 74,
+    "valores_invalidos": 0,
+    "citas": 28,
+    "citas_fuera": 0,
+    "numeros": 11,
+    "numeros_fuera": 0
+   }
+  },
+  {
+   "id": "cesvi-24f644a44f",
+   "expediente_valido": true,
+   "escena_valida": true,
+   "lista_para_reconstruir": true,
+   "error": null,
+   "ms": 464,
+   "campos": {
+    "vehiculos": 2,
+    "clase": 0,
+    "masa": 0,
+    "rigidez": 0,
+    "danos": 6,
+    "medidas_c_y_l": 0,
+    "impactos": 1,
+    "modalidad": true,
+    "restos": false,
+    "huellas": 0,
+    "calculos": 0
+   },
+   "conteos": {
+    "filas": 44,
+    "valores_invalidos": 0,
+    "citas": 21,
+    "citas_fuera": 0,
+    "numeros": 4,
+    "numeros_fuera": 0
+   }
+  },
+  {
+   "id": "cesvi-eb4d9c1c4e",
+   "expediente_valido": true,
+   "escena_valida": true,
+   "lista_para_reconstruir": true,
+   "error": null,
+   "ms": 400,
+   "campos": {
+    "vehiculos": 2,
+    "clase": 2,
+    "masa": 0,
+    "rigidez": 0,
+    "danos": 4,
+    "medidas_c_y_l": 0,
+    "impactos": 1,
+    "modalidad": true,
+    "restos": false,
+    "huellas": 0,
+    "calculos": 0
+   },
+   "conteos": {
+    "filas": 32,
+    "valores_invalidos": 0,
+    "citas": 29,
+    "citas_fuera": 14,
+    "numeros": 3,
+    "numeros_fuera": 0
+   }
+  },
+  {
+   "id": "cesvi-d4f9c1a411",
+   "expediente_valido": true,
+   "escena_valida": true,
+   "lista_para_reconstruir": true,
+   "error": null,
+   "ms": 278,
+   "campos": {
+    "vehiculos": 1,
+    "clase": 0,
+    "masa": 0,
+    "rigidez": 0,
+    "danos": 4,
+    "medidas_c_y_l": 0,
+    "impactos": 1,
+    "modalidad": true,
+    "restos": false,
+    "huellas": 1,
+    "calculos": 1
+   },
+   "conteos": {
+    "filas": 42,
+    "valores_invalidos": 0,
+    "citas": 25,
+    "citas_fuera": 0,
+    "numeros": 7,
+    "numeros_fuera": 3
+   }
+  },
+  {
+   "id": "cesvi-5becbd0fbb",
+   "expediente_valido": true,
+   "escena_valida": true,
+   "lista_para_reconstruir": true,
+   "error": null,
+   "ms": 2715,
+   "campos": {
+    "vehiculos": 3,
+    "clase": 2,
+    "masa": 0,
+    "rigidez": 0,
+    "danos": 5,
+    "medidas_c_y_l": 0,
+    "impactos": 2,
+    "modalidad": true,
+    "restos": false,
+    "huellas": 0,
+    "calculos": 0
+   },
+   "conteos": {
+    "filas": 59,
+    "valores_invalidos": 1,
+    "citas": 24,
+    "citas_fuera": 0,
+    "numeros": 7,
+    "numeros_fuera": 0
+   }
+  },
+  {
+   "id": "cesvi-4f39800f79",
+   "expediente_valido": true,
+   "escena_valida": true,
+   "lista_para_reconstruir": true,
+   "error": null,
+   "ms": 149,
+   "campos": {
+    "vehiculos": 1,
+    "clase": 0,
+    "masa": 0,
+    "rigidez": 0,
+    "danos": 3,
+    "medidas_c_y_l": 0,
+    "impactos": 1,
+    "modalidad": true,
+    "restos": false,
+    "huellas": 0,
+    "calculos": 1
+   },
+   "conteos": {
+    "filas": 23,
+    "valores_invalidos": 0,
+    "citas": 11,
+    "citas_fuera": 0,
+    "numeros": 3,
+    "numeros_fuera": 0
+   }
+  },
+  {
+   "id": "cesvi-6ca24dcfce",
+   "expediente_valido": true,
+   "escena_valida": true,
+   "lista_para_reconstruir": true,
+   "error": null,
+   "ms": 439,
+   "campos": {
+    "vehiculos": 2,
+    "clase": 0,
+    "masa": 0,
+    "rigidez": 0,
+    "danos": 5,
+    "medidas_c_y_l": 0,
+    "impactos": 1,
+    "modalidad": true,
+    "restos": false,
+    "huellas": 0,
+    "calculos": 0
+   },
+   "conteos": {
+    "filas": 48,
+    "valores_invalidos": 0,
+    "citas": 29,
+    "citas_fuera": 0,
+    "numeros": 4,
+    "numeros_fuera": 0
+   }
+  },
+  {
+   "id": "cesvi-47c32388f7",
+   "expediente_valido": true,
+   "escena_valida": true,
+   "lista_para_reconstruir": true,
+   "error": null,
+   "ms": 18,
+   "campos": {
+    "vehiculos": 1,
+    "clase": 0,
+    "masa": 0,
+    "rigidez": 0,
+    "danos": 0,
+    "medidas_c_y_l": 0,
+    "impactos": 0,
+    "modalidad": false,
+    "restos": false,
+    "huellas": 0,
+    "calculos": 0
+   },
+   "conteos": {
+    "filas": 8,
+    "valores_invalidos": 0,
+    "citas": 4,
+    "citas_fuera": 0,
+    "numeros": 1,
+    "numeros_fuera": 0
+   }
+  },
+  {
+   "id": "cesvi-5f9276cffe",
+   "expediente_valido": true,
+   "escena_valida": true,
+   "lista_para_reconstruir": true,
+   "error": null,
+   "ms": 227,
+   "campos": {
+    "vehiculos": 1,
+    "clase": 0,
+    "masa": 0,
+    "rigidez": 0,
+    "danos": 4,
+    "medidas_c_y_l": 0,
+    "impactos": 1,
+    "modalidad": true,
+    "restos": false,
+    "huellas": 0,
+    "calculos": 0
+   },
+   "conteos": {
+    "filas": 40,
+    "valores_invalidos": 0,
+    "citas": 24,
+    "citas_fuera": 0,
+    "numeros": 2,
+    "numeros_fuera": 0
+   }
+  },
+  {
+   "id": "cesvi-76db6d8acd",
+   "expediente_valido": true,
+   "escena_valida": true,
+   "lista_para_reconstruir": true,
+   "error": null,
+   "ms": 401,
+   "campos": {
+    "vehiculos": 2,
+    "clase": 0,
+    "masa": 0,
+    "rigidez": 0,
+    "danos": 4,
+    "medidas_c_y_l": 0,
+    "impactos": 1,
+    "modalidad": true,
+    "restos": false,
+    "huellas": 0,
+    "calculos": 0
+   },
+   "conteos": {
+    "filas": 46,
+    "valores_invalidos": 0,
+    "citas": 22,
+    "citas_fuera": 0,
+    "numeros": 3,
+    "numeros_fuera": 0
+   }
+  },
+  {
+   "id": "cesvi-8324c1892b",
+   "expediente_valido": true,
+   "escena_valida": true,
+   "lista_para_reconstruir": true,
+   "error": null,
+   "ms": 318,
+   "campos": {
+    "vehiculos": 2,
+    "clase": 2,
+    "masa": 0,
+    "rigidez": 0,
+    "danos": 9,
+    "medidas_c_y_l": 0,
+    "impactos": 2,
+    "modalidad": true,
+    "restos": false,
+    "huellas": 0,
+    "calculos": 0
+   },
+   "conteos": {
+    "filas": 78,
+    "valores_invalidos": 0,
+    "citas": 26,
+    "citas_fuera": 0,
+    "numeros": 3,
+    "numeros_fuera": 0
+   }
+  },
+  {
+   "id": "cesvi-5cb23d1cfd",
+   "expediente_valido": true,
+   "escena_valida": true,
+   "lista_para_reconstruir": true,
+   "error": null,
+   "ms": 368,
+   "campos": {
+    "vehiculos": 2,
+    "clase": 0,
+    "masa": 0,
+    "rigidez": 0,
+    "danos": 8,
+    "medidas_c_y_l": 0,
+    "impactos": 1,
+    "modalidad": true,
+    "restos": false,
+    "huellas": 0,
+    "calculos": 0
+   },
+   "conteos": {
+    "filas": 52,
+    "valores_invalidos": 0,
+    "citas": 29,
+    "citas_fuera": 0,
+    "numeros": 2,
+    "numeros_fuera": 0
+   }
+  },
+  {
+   "id": "cesvi-e8474c118b",
+   "expediente_valido": true,
+   "escena_valida": true,
+   "lista_para_reconstruir": true,
+   "error": null,
+   "ms": 349,
+   "campos": {
+    "vehiculos": 2,
+    "clase": 0,
+    "masa": 0,
+    "rigidez": 0,
+    "danos": 4,
+    "medidas_c_y_l": 0,
+    "impactos": 1,
+    "modalidad": true,
+    "restos": false,
+    "huellas": 0,
+    "calculos": 0
+   },
+   "conteos": {
+    "filas": 47,
+    "valores_invalidos": 0,
+    "citas": 21,
+    "citas_fuera": 0,
+    "numeros": 2,
+    "numeros_fuera": 0
+   }
+  },
+  {
+   "id": "cesvi-8022b514b7",
+   "expediente_valido": true,
+   "escena_valida": true,
+   "lista_para_reconstruir": true,
+   "error": null,
+   "ms": 332,
+   "campos": {
+    "vehiculos": 2,
+    "clase": 0,
+    "masa": 0,
+    "rigidez": 0,
+    "danos": 9,
+    "medidas_c_y_l": 0,
+    "impactos": 2,
+    "modalidad": true,
+    "restos": false,
+    "huellas": 1,
+    "calculos": 0
+   },
+   "conteos": {
+    "filas": 65,
+    "valores_invalidos": 0,
+    "citas": 32,
+    "citas_fuera": 0,
+    "numeros": 10,
+    "numeros_fuera": 1
+   }
+  },
+  {
+   "id": "cesvi-2251d90ba3",
+   "expediente_valido": true,
+   "escena_valida": true,
+   "lista_para_reconstruir": true,
+   "error": null,
+   "ms": 290,
+   "campos": {
+    "vehiculos": 2,
+    "clase": 2,
+    "masa": 0,
+    "rigidez": 0,
+    "danos": 9,
+    "medidas_c_y_l": 0,
+    "impactos": 1,
+    "modalidad": true,
+    "restos": false,
+    "huellas": 0,
+    "calculos": 0
+   },
+   "conteos": {
+    "filas": 67,
+    "valores_invalidos": 0,
+    "citas": 28,
+    "citas_fuera": 0,
+    "numeros": 6,
+    "numeros_fuera": 0
+   }
+  },
+  {
+   "id": "cesvi-4ef2a9d90b",
+   "expediente_valido": true,
+   "escena_valida": true,
+   "lista_para_reconstruir": true,
+   "error": null,
+   "ms": 5030,
+   "campos": {
+    "vehiculos": 3,
+    "clase": 0,
+    "masa": 0,
+    "rigidez": 0,
+    "danos": 7,
+    "medidas_c_y_l": 0,
+    "impactos": 2,
+    "modalidad": true,
+    "restos": false,
+    "huellas": 0,
+    "calculos": 0
+   },
+   "conteos": {
+    "filas": 64,
+    "valores_invalidos": 0,
+    "citas": 33,
+    "citas_fuera": 1,
+    "numeros": 3,
+    "numeros_fuera": 0
+   }
+  },
+  {
+   "id": "cesvi-7f6b73260c",
+   "expediente_valido": true,
+   "escena_valida": true,
+   "lista_para_reconstruir": true,
+   "error": null,
+   "ms": 388,
+   "campos": {
+    "vehiculos": 2,
+    "clase": 1,
+    "masa": 0,
+    "rigidez": 0,
+    "danos": 6,
+    "medidas_c_y_l": 0,
+    "impactos": 2,
+    "modalidad": true,
+    "restos": false,
+    "huellas": 0,
+    "calculos": 0
+   },
+   "conteos": {
+    "filas": 62,
+    "valores_invalidos": 0,
+    "citas": 29,
+    "citas_fuera": 0,
+    "numeros": 6,
+    "numeros_fuera": 0
+   }
+  },
+  {
+   "id": "cesvi-52e0c1deef",
+   "expediente_valido": true,
+   "escena_valida": true,
+   "lista_para_reconstruir": true,
+   "error": null,
+   "ms": 201,
+   "campos": {
+    "vehiculos": 1,
+    "clase": 1,
+    "masa": 0,
+    "rigidez": 0,
+    "danos": 6,
+    "medidas_c_y_l": 0,
+    "impactos": 1,
+    "modalidad": true,
+    "restos": true,
+    "huellas": 0,
+    "calculos": 0
+   },
+   "conteos": {
+    "filas": 49,
+    "valores_invalidos": 0,
+    "citas": 23,
+    "citas_fuera": 0,
+    "numeros": 4,
+    "numeros_fuera": 0
+   }
+  },
+  {
+   "id": "cesvi-923e562683",
+   "expediente_valido": true,
+   "escena_valida": true,
+   "lista_para_reconstruir": true,
+   "error": null,
+   "ms": 7120,
+   "campos": {
+    "vehiculos": 4,
+    "clase": 1,
+    "masa": 0,
+    "rigidez": 0,
+    "danos": 6,
+    "medidas_c_y_l": 0,
+    "impactos": 3,
+    "modalidad": true,
+    "restos": false,
+    "huellas": 0,
+    "calculos": 0
+   },
+   "conteos": {
+    "filas": 44,
+    "valores_invalidos": 0,
+    "citas": 23,
+    "citas_fuera": 0,
+    "numeros": 1,
+    "numeros_fuera": 0
+   }
+  },
+  {
+   "id": "cesvi-3fb401796c",
+   "expediente_valido": true,
+   "escena_valida": true,
+   "lista_para_reconstruir": true,
+   "error": null,
+   "ms": 6884,
+   "campos": {
+    "vehiculos": 3,
+    "clase": 1,
+    "masa": 0,
+    "rigidez": 0,
+    "danos": 5,
+    "medidas_c_y_l": 0,
+    "impactos": 2,
+    "modalidad": true,
+    "restos": false,
+    "huellas": 0,
+    "calculos": 0
+   },
+   "conteos": {
+    "filas": 50,
+    "valores_invalidos": 0,
+    "citas": 26,
+    "citas_fuera": 0,
+    "numeros": 2,
+    "numeros_fuera": 0
+   }
+  },
+  {
+   "id": "cesvi-6a3f3106f0",
+   "expediente_valido": true,
+   "escena_valida": true,
+   "lista_para_reconstruir": true,
+   "error": null,
+   "ms": 31,
+   "campos": {
+    "vehiculos": 1,
+    "clase": 0,
+    "masa": 0,
+    "rigidez": 0,
+    "danos": 4,
+    "medidas_c_y_l": 0,
+    "impactos": 0,
+    "modalidad": true,
+    "restos": false,
+    "huellas": 0,
+    "calculos": 0
+   },
+   "conteos": {
+    "filas": 12,
+    "valores_invalidos": 0,
+    "citas": 9,
+    "citas_fuera": 0,
+    "numeros": 1,
+    "numeros_fuera": 0
+   }
+  },
+  {
+   "id": "cesvi-e69d48f64f",
+   "expediente_valido": true,
+   "escena_valida": true,
+   "lista_para_reconstruir": true,
+   "error": null,
+   "ms": 226,
+   "campos": {
+    "vehiculos": 1,
+    "clase": 0,
+    "masa": 0,
+    "rigidez": 0,
+    "danos": 5,
+    "medidas_c_y_l": 0,
+    "impactos": 1,
+    "modalidad": true,
+    "restos": false,
+    "huellas": 0,
+    "calculos": 0
+   },
+   "conteos": {
+    "filas": 54,
+    "valores_invalidos": 0,
+    "citas": 21,
+    "citas_fuera": 1,
+    "numeros": 2,
+    "numeros_fuera": 0
+   }
+  },
+  {
+   "id": "cesvi-fc5f48e946",
+   "expediente_valido": true,
+   "escena_valida": true,
+   "lista_para_reconstruir": true,
+   "error": null,
+   "ms": 547,
+   "campos": {
+    "vehiculos": 2,
+    "clase": 0,
+    "masa": 0,
+    "rigidez": 0,
+    "danos": 2,
+    "medidas_c_y_l": 0,
+    "impactos": 1,
+    "modalidad": true,
+    "restos": false,
+    "huellas": 0,
+    "calculos": 0
+   },
+   "conteos": {
+    "filas": 36,
+    "valores_invalidos": 0,
+    "citas": 22,
+    "citas_fuera": 0,
+    "numeros": 5,
+    "numeros_fuera": 0
+   }
+  },
+  {
+   "id": "cesvi-b37686e37c",
+   "expediente_valido": true,
+   "escena_valida": true,
+   "lista_para_reconstruir": true,
+   "error": null,
+   "ms": 489,
+   "campos": {
+    "vehiculos": 2,
+    "clase": 1,
+    "masa": 0,
+    "rigidez": 0,
+    "danos": 6,
+    "medidas_c_y_l": 0,
+    "impactos": 1,
+    "modalidad": true,
+    "restos": false,
+    "huellas": 0,
+    "calculos": 1
+   },
+   "conteos": {
+    "filas": 60,
+    "valores_invalidos": 0,
+    "citas": 24,
+    "citas_fuera": 0,
+    "numeros": 6,
+    "numeros_fuera": 0
+   }
+  }
+ ]
+}

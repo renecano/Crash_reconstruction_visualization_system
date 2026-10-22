@@ -103,12 +103,39 @@ Reglas de trabajo: `CLAUDE.md`. Especificación: `PLAN.md`.
     - **C0:** pasa a R0. Falta lo nuevo: la descripción de los hechos sin conclusiones, con su revisión de fuga, y lo que concluyó CESVI, estructurado.
     - **C1:** es el módulo de verificación CESVI de R2, con su reproducción (E-C1) ya corrida.
     - **C2–C8:** se reacomodan en R1–R9.
-  - **Fase actual: R5** (cargar un dictamen). R4 y R6 quedaron cerradas el 2026-10-22, y R3 también; R0, R1 y R2, el 2026-10-21. C0 y C1 de la v1 quedaron cerradas el 2026-10-21. El plan de C0 fue:
+  - **Fase actual: R7** (comparación con la declaración del conductor). R4, R5 y R6 quedaron cerradas el 2026-10-22, y R3 también; R0, R1 y R2, el 2026-10-21. C0 y C1 de la v1 quedaron cerradas el 2026-10-21. El plan de C0 fue:
     - **Contrato v2:** `escena.schema.json` ampliado, con migración desde v1.3, Zod y Pydantic generados y un validador semántico (N vehículos, M impactos, versiones).
     - **Corpus estructurado** de los 671 dictámenes con Claude (salida estructurada, caché, semilla), validado contra el esquema, con partición congelada del 30 % y etiquetas de la conclusión revisadas en una muestra.
     - **Mediciones:** las proporciones del §2 en `eval/results/cesvi_corpus.json`; desde ahí se pueden citar.
     - **Costo:** antes de correr el corpus se estima y se anota aquí. Si pasa de 30 USD, se pregunta a René.
-  - **R5 en curso: cargar un dictamen** (rama `feat/r5-cargar-dictamen`). Plan:
+  - **Resumen de R5 para René** (rama `feat/r5-cargar-dictamen`, ADR 0068):
+    - **Qué quedó:** `/cesvi/importar` carga un reporte de CESVI en PDF, Markdown o texto.
+      - **El texto se saca en el navegador:** el PDF con pdf.js; el archivo no sale del equipo.
+      - **Claude lo lee dos veces:**
+        - el expediente con la cita de cada dato;
+        - la narración sin conclusiones y lo que concluyó CESVI.
+      - **Cada cita se revisa contra el texto.**
+      - **El expediente abre en «Caso nuevo»** para colocar a los vehículos y reconstruir, con la verificación CESVI y lo que concluyó CESVI al lado.
+    - **Números medidos** (E-R5, `eval/results/cesvi_r5_importar.json`, los 205 de la prueba congelada con las lecturas de C0, que son la misma importación):
+      - 204 de 205 quedan listos para reconstruir; el que falta no trae vehículos.
+      - Citas en el texto: 98.4 %; números en su cita: 94.1 %.
+      - Daños, impactos y modalidad: en más del 92 % de los reportes.
+      - Con los datos que imprimen los reportes, Croquis reproduce 18 de 23 cálculos a 0.5 % (E-C1).
+      - **Lo que falta:** las entradas de los cálculos casi nunca quedan en los campos del vehículo y del daño (1 de 3,312 daños trae C y L), así que la verificación CESVI y la inversión no las usan. Queda pendiente.
+    - **Gasto de API:** 0.1206 USD (las lecturas grabadas del reporte de ejemplo).
+    - **Cómo probarlo:**
+      1. En `/cesvi/importar`, «Usar el reporte de ejemplo» o subir un PDF.
+      2. «Leer el reporte»: aparecen el expediente, la verificación CESVI (63.90 km/h en el de ejemplo) y lo que concluyó CESVI.
+    - **Pruebas:**
+      - la importación y la lectura en el servidor (`packages/cesvi`);
+      - la unión del texto de pdf.js;
+      - la e2e `@flujo`, que sube un PDF generado en la prueba.
+    - **Qué necesito de René:** los PDF originales de algunos reportes (ya en «Bloqueado») para medir la exactitud con imágenes y fórmulas.
+    - **Siguiente:**
+      - el cambio de terminología que pidió CESVI («reporte» contra «dictamen»);
+      - la voz del video;
+      - R7.
+  - **Lo que se planeó para R5:**
     1. **`/cesvi/importar`:**
        - el perito sube un dictamen en PDF, Markdown o texto;
        - el texto del PDF se saca en el navegador con `pdfjs-dist`, que ya está en el proyecto.
@@ -664,6 +691,9 @@ Lo que se pospone por el trabajo con CESVI no se borra: queda aquí para despué
   - el debris del segundo impacto;
   - el tiempo de las escenas con muchos vehículos (hasta 34 s en E-R6);
   - en «Caso nuevo», una forma de declarar a mano los impactos cuando la narración no dice su orden.
+- **De R5** (ADR 0068, «Límites»):
+  - pasar las entradas de los cálculos de CESVI (masas, C y L, rigidez) a los campos del vehículo y del daño, para que la verificación CESVI y la inversión las usen;
+  - OCR para reportes escaneados.
 - **De E-R4** (ADR 0067, «Límites»):
   - **Modalidades:**
     - la reversa (0 de 9);

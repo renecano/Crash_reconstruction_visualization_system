@@ -20,7 +20,7 @@ import {
 import type { Map as MapaMl, Marker } from "maplibre-gl";
 // Sin la hoja de MapLibre los marcadores no quedan en su lugar (no se ven sobre el mapa).
 import "maplibre-gl/dist/maplibre-gl.css";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { type ReactNode, useEffect, useMemo, useRef, useState } from "react";
 import { downloadBytes } from "@/lib/download";
 import ejemplo from "../../../../../data/cesvi/grabaciones/escenas/cesvi-e814f085db.json";
 import { ESTILO_MAPA_CLARO, marcador } from "./mapa-comun";
@@ -232,13 +232,29 @@ function Pregunta({
   );
 }
 
-export function CasoNuevo() {
+/**
+ * Un caso que ya llega leído (R5: un dictamen importado): su escena, con qué título se muestra y lo
+ * que va al lado de la reconstrucción (lo que concluyó CESVI).
+ */
+export interface CasoInicial {
+  escena: EscenaNarrada;
+  titulo: string;
+  descripcion: ReactNode;
+  aparte?: ReactNode;
+}
+
+export function CasoNuevo({ inicial }: { inicial?: CasoInicial } = {}) {
   const [texto, setTexto] = useState("");
   const [estado, setEstado] = useState<string | null>(null);
-  const [leida, setLeida] = useState<EscenaNarrada | null>(null);
-  const [expediente, setExpediente] = useState<Expediente | null>(null);
+  const [leida, setLeida] = useState<EscenaNarrada | null>(inicial?.escena ?? null);
+  const [expediente, setExpediente] = useState<Expediente | null>(
+    inicial?.escena.expediente ?? null,
+  );
   const [noSe, setNoSe] = useState<Set<string>>(new Set());
-  const [herramienta, setHerramienta] = useState<{ vehiculo: Id; fase: Fase } | null>(null);
+  const primerVehiculo = inicial?.escena.expediente.vehiculos[0];
+  const [herramienta, setHerramienta] = useState<{ vehiculo: Id; fase: Fase } | null>(
+    primerVehiculo ? { vehiculo: primerVehiculo.id, fase: "final" } : null,
+  );
   const [rumbo, setRumbo] = useState("");
   const [moviles, setMoviles] = useState<PosicionMovil[]>([]);
   const [impactosMapa, setImpactosMapa] = useState<MarcaImpacto[]>([]);
@@ -297,47 +313,48 @@ export function CasoNuevo() {
       <div className="mx-auto flex max-w-[1200px] flex-col gap-8">
         <header className="flex flex-col gap-3">
           <p className="t-rotulo">Caso nuevo · reconstrucción de apoyo</p>
-          <h1 className="t-titulo">Narra el hecho</h1>
-          <p className="t-cuerpo max-w-[70ch] text-texto-2">
-            Escribe la narración técnica como en un dictamen: lugar, vehículos, daños, restos,
-            huellas y posiciones. Croquis la ordena en la escena y pregunta solo lo que más cambia
-            la reconstrucción. La IA no produce números: los que no están en tu texto se descartan.
-          </p>
+          <h1 className="t-titulo">{inicial?.titulo ?? "Narra el hecho"}</h1>
+          <div className="t-cuerpo max-w-[70ch] text-texto-2">
+            {inicial?.descripcion ??
+              "Escribe la narración técnica como en un dictamen: lugar, vehículos, daños, restos, huellas y posiciones. Croquis la ordena en la escena y pregunta solo lo que más cambia la reconstrucción. La IA no produce números: los que no están en tu texto se descartan."}
+          </div>
         </header>
 
-        <section className="tarjeta flex flex-col gap-3 p-6">
-          <textarea
-            className="campo min-h-48"
-            value={texto}
-            onChange={(e) => setTexto(e.target.value)}
-            aria-label="Narración técnica del perito"
-            data-testid="narracion"
-          />
-          <div className="flex flex-wrap items-center gap-3">
-            <button
-              type="button"
-              className="boton-principal"
-              onClick={() => void leer()}
-              disabled={texto.trim().length < 20}
-              data-testid="leer-narracion"
-            >
-              Leer la narración
-            </button>
-            <button
-              type="button"
-              className="boton-secundario"
-              onClick={() => setTexto(ejemplo.narracion)}
-              data-testid="ejemplo-narracion"
-            >
-              Usar una narración de ejemplo
-            </button>
-            {estado ? (
-              <span role="status" className="t-nota">
-                {estado}
-              </span>
-            ) : null}
-          </div>
-        </section>
+        {inicial ? null : (
+          <section className="tarjeta flex flex-col gap-3 p-6">
+            <textarea
+              className="campo min-h-48"
+              value={texto}
+              onChange={(e) => setTexto(e.target.value)}
+              aria-label="Narración técnica del perito"
+              data-testid="narracion"
+            />
+            <div className="flex flex-wrap items-center gap-3">
+              <button
+                type="button"
+                className="boton-principal"
+                onClick={() => void leer()}
+                disabled={texto.trim().length < 20}
+                data-testid="leer-narracion"
+              >
+                Leer la narración
+              </button>
+              <button
+                type="button"
+                className="boton-secundario"
+                onClick={() => setTexto(ejemplo.narracion)}
+                data-testid="ejemplo-narracion"
+              >
+                Usar una narración de ejemplo
+              </button>
+              {estado ? (
+                <span role="status" className="t-nota">
+                  {estado}
+                </span>
+              ) : null}
+            </div>
+          </section>
+        )}
 
         {expediente && leida ? (
           <>
@@ -498,6 +515,7 @@ export function CasoNuevo() {
               onPosiciones={setMoviles}
               onImpactos={setImpactosMapa}
             />
+            {inicial?.aparte}
           </>
         ) : null}
         <p className="t-nota text-texto-3">Reconstrucción de apoyo · el dictamen es del perito.</p>
