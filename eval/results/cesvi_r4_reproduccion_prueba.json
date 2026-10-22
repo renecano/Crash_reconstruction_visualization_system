@@ -1,0 +1,7575 @@
+{
+ "fecha": "2026-10-22T22:12:27.402Z",
+ "particion": "prueba",
+ "descripcion": "E-R4: a Croquis se le da solo la narración sin conclusiones (R0); Claude la lee a escena como en «Caso nuevo» (R1) y Croquis la compara con lo que concluyó CESVI (R0). Líneas base: la modalidad más frecuente y la velocidad promedio por deformación, de desarrollo.",
+ "version_prompt": "escena-narracion-v1",
+ "lineas_base": {
+  "modalidad": "otra",
+  "modalidad_fisica": "alcance",
+  "velocidad_kmh": 61.61687499999999
+ },
+ "leidos": 205,
+ "sin_leer": [],
+ "escenas_validas": 202,
+ "reconstruidas_en_3d": 205,
+ "ms_mediana": 359,
+ "costo_lecturas_usd": 2.6738,
+ "resumen": {
+  "dictamenes": 205,
+  "modalidad": {
+   "croquis": {
+    "k": 65,
+    "n": 190,
+    "pct": 34.2
+   },
+   "sin_inferir": 36,
+   "fisicas": {
+    "croquis": {
+     "k": 65,
+     "n": 123,
+     "pct": 52.8
+    },
+    "linea_base": {
+     "modalidad": "alcance",
+     "k": 46,
+     "n": 123,
+     "pct": 37.4
+    }
+   },
+   "linea_base": {
+    "modalidad": "otra",
+    "k": 67,
+    "n": 190,
+    "pct": 35.3
+   },
+   "por_modalidad": {
+    "alcance": {
+     "k": 34,
+     "n": 46,
+     "pct": 73.9
+    },
+    "frontal": {
+     "k": 4,
+     "n": 6,
+     "pct": 66.7
+    },
+    "lateral": {
+     "k": 17,
+     "n": 25,
+     "pct": 68
+    },
+    "objeto_fijo": {
+     "k": 6,
+     "n": 17,
+     "pct": 35.3
+    },
+    "otra": {
+     "k": 0,
+     "n": 67,
+     "pct": 0
+    },
+    "reversa": {
+     "k": 0,
+     "n": 9,
+     "pct": 0
+    },
+    "salida_de_camino": {
+     "k": 2,
+     "n": 10,
+     "pct": 20
+    },
+    "volcadura": {
+     "k": 2,
+     "n": 10,
+     "pct": 20
+    }
+   }
+  },
+  "zonas": {
+   "dictamenes_con_zonas": 152,
+   "exhaustividad": {
+    "k": 216,
+    "n": 312,
+    "pct": 69.2
+   },
+   "precision": {
+    "k": 216,
+    "n": 362,
+    "pct": 59.7
+   },
+   "tercio": {
+    "k": 11,
+    "n": 11,
+    "pct": 100
+   }
+  },
+  "secuencia": {
+   "dictamenes_con_secuencia": 135,
+   "primer_impacto": {
+    "k": 86,
+    "n": 135,
+    "pct": 63.7
+   },
+   "completa": {
+    "k": 67,
+    "n": 135,
+    "pct": 49.6
+   },
+   "mismo_numero": {
+    "k": 69,
+    "n": 135,
+    "pct": 51.1
+   }
+  },
+  "velocidades": {
+   "del_dictamen_por_deformacion": 5,
+   "croquis_calcula": 0,
+   "error_abs_mediana_kmh": null,
+   "error_pct_abs_mediana": null,
+   "dentro_de_5_pct": {
+    "k": 0,
+    "n": 0,
+    "pct": null
+   },
+   "linea_base": {
+    "velocidad_kmh": 61.62,
+    "error_abs_mediana_kmh": 11.716874999999995,
+    "error_pct_abs_mediana": 23.480711422845683
+   }
+  },
+  "posiciones_finales": {
+   "dictamenes_con_posiciones": 46,
+   "croquis_las_tiene": {
+    "k": 31,
+    "n": 58,
+    "pct": 53.4
+   }
+  }
+ },
+ "detalle": [
+  {
+   "id": "cesvi-4e4d78194f",
+   "escena_valida": true,
+   "comparacion": {
+    "modalidad": {
+     "cesvi": "objeto_fijo",
+     "croquis": "objeto_fijo",
+     "motivo": "un vehículo contra un objeto fijo",
+     "coincide": true
+    },
+    "zonas": {
+     "cesvi": 2,
+     "croquis": 1,
+     "coinciden": 1,
+     "tercios_comparables": 0,
+     "tercios_coinciden": 0
+    },
+    "secuencia": {
+     "cesvi": 2,
+     "croquis": 1,
+     "primero_coincide": true,
+     "completa_coincide": false
+    },
+    "velocidades": [],
+    "posiciones": {
+     "cesvi": 0,
+     "croquis_las_tiene": 0
+    }
+   },
+   "reconstruccion": {
+    "reconstruida": true,
+    "en_3d": true,
+    "ms": 396
+   },
+   "costo_usd": 0.0108412
+  },
+  {
+   "id": "cesvi-ec1c390b10",
+   "escena_valida": true,
+   "comparacion": {
+    "modalidad": {
+     "cesvi": "alcance",
+     "croquis": "alcance",
+     "motivo": "frente contra parte posterior",
+     "coincide": true
+    },
+    "zonas": {
+     "cesvi": 2,
+     "croquis": 2,
+     "coinciden": 2,
+     "tercios_comparables": 1,
+     "tercios_coinciden": 1
+    },
+    "secuencia": {
+     "cesvi": 1,
+     "croquis": 1,
+     "primero_coincide": true,
+     "completa_coincide": true
+    },
+    "velocidades": [],
+    "posiciones": {
+     "cesvi": 0,
+     "croquis_las_tiene": 0
+    }
+   },
+   "reconstruccion": {
+    "reconstruida": true,
+    "en_3d": true,
+    "ms": 505
+   },
+   "costo_usd": 0.0141852
+  },
+  {
+   "id": "cesvi-644837b23b",
+   "escena_valida": true,
+   "comparacion": {
+    "modalidad": {
+     "cesvi": "otra",
+     "croquis": "alcance",
+     "motivo": "los dos frentes dañados y uno también por detrás: golpe por detrás y empuje",
+     "coincide": false
+    },
+    "zonas": {
+     "cesvi": 0,
+     "croquis": 2,
+     "coinciden": 0,
+     "tercios_comparables": 0,
+     "tercios_coinciden": 0
+    },
+    "secuencia": {
+     "cesvi": 0,
+     "croquis": 1,
+     "primero_coincide": null,
+     "completa_coincide": null
+    },
+    "velocidades": [],
+    "posiciones": {
+     "cesvi": 0,
+     "croquis_las_tiene": 0
+    }
+   },
+   "reconstruccion": {
+    "reconstruida": true,
+    "en_3d": true,
+    "ms": 317
+   },
+   "costo_usd": 0.0148982
+  },
+  {
+   "id": "cesvi-581f3c5f7e",
+   "escena_valida": true,
+   "comparacion": {
+    "modalidad": {
+     "cesvi": "lateral",
+     "croquis": "lateral",
+     "motivo": "contacto en un costado",
+     "coincide": true
+    },
+    "zonas": {
+     "cesvi": 2,
+     "croquis": 2,
+     "coinciden": 2,
+     "tercios_comparables": 0,
+     "tercios_coinciden": 0
+    },
+    "secuencia": {
+     "cesvi": 0,
+     "croquis": 1,
+     "primero_coincide": null,
+     "completa_coincide": null
+    },
+    "velocidades": [],
+    "posiciones": {
+     "cesvi": 0,
+     "croquis_las_tiene": 0
+    }
+   },
+   "reconstruccion": {
+    "reconstruida": true,
+    "en_3d": true,
+    "ms": 305
+   },
+   "costo_usd": 0.0121142
+  },
+  {
+   "id": "cesvi-037dde2760",
+   "escena_valida": true,
+   "comparacion": {
+    "modalidad": {
+     "cesvi": "lateral",
+     "croquis": "lateral",
+     "motivo": "contacto en un costado",
+     "coincide": true
+    },
+    "zonas": {
+     "cesvi": 2,
+     "croquis": 2,
+     "coinciden": 2,
+     "tercios_comparables": 0,
+     "tercios_coinciden": 0
+    },
+    "secuencia": {
+     "cesvi": 0,
+     "croquis": 1,
+     "primero_coincide": null,
+     "completa_coincide": null
+    },
+    "velocidades": [],
+    "posiciones": {
+     "cesvi": 0,
+     "croquis_las_tiene": 0
+    }
+   },
+   "reconstruccion": {
+    "reconstruida": true,
+    "en_3d": true,
+    "ms": 337
+   },
+   "costo_usd": 0.0102202
+  },
+  {
+   "id": "cesvi-cf708e9fed",
+   "escena_valida": true,
+   "comparacion": {
+    "modalidad": {
+     "cesvi": "objeto_fijo",
+     "croquis": null,
+     "motivo": "un vehículo, sin objeto, vuelco ni salida descritos",
+     "coincide": false
+    },
+    "zonas": {
+     "cesvi": 1,
+     "croquis": 1,
+     "coinciden": 1,
+     "tercios_comparables": 0,
+     "tercios_coinciden": 0
+    },
+    "secuencia": {
+     "cesvi": 2,
+     "croquis": 0,
+     "primero_coincide": false,
+     "completa_coincide": false
+    },
+    "velocidades": [],
+    "posiciones": {
+     "cesvi": 0,
+     "croquis_las_tiene": 0
+    }
+   },
+   "reconstruccion": {
+    "reconstruida": true,
+    "en_3d": true,
+    "ms": 23
+   },
+   "costo_usd": 0.0149702
+  },
+  {
+   "id": "cesvi-cb04fdb41b",
+   "escena_valida": true,
+   "comparacion": {
+    "modalidad": {
+     "cesvi": "objeto_fijo",
+     "croquis": null,
+     "motivo": "un vehículo, sin objeto, vuelco ni salida descritos",
+     "coincide": false
+    },
+    "zonas": {
+     "cesvi": 2,
+     "croquis": 1,
+     "coinciden": 1,
+     "tercios_comparables": 0,
+     "tercios_coinciden": 0
+    },
+    "secuencia": {
+     "cesvi": 1,
+     "croquis": 0,
+     "primero_coincide": false,
+     "completa_coincide": false
+    },
+    "velocidades": [],
+    "posiciones": {
+     "cesvi": 0,
+     "croquis_las_tiene": 0
+    }
+   },
+   "reconstruccion": {
+    "reconstruida": true,
+    "en_3d": true,
+    "ms": 23
+   },
+   "costo_usd": 0.0131002
+  },
+  {
+   "id": "cesvi-12f0cdba9c",
+   "escena_valida": true,
+   "comparacion": {
+    "modalidad": {
+     "cesvi": "alcance",
+     "croquis": "alcance",
+     "motivo": "frente contra parte posterior",
+     "coincide": true
+    },
+    "zonas": {
+     "cesvi": 2,
+     "croquis": 2,
+     "coinciden": 2,
+     "tercios_comparables": 0,
+     "tercios_coinciden": 0
+    },
+    "secuencia": {
+     "cesvi": 1,
+     "croquis": 1,
+     "primero_coincide": true,
+     "completa_coincide": true
+    },
+    "velocidades": [],
+    "posiciones": {
+     "cesvi": 2,
+     "croquis_las_tiene": 0
+    }
+   },
+   "reconstruccion": {
+    "reconstruida": true,
+    "en_3d": true,
+    "ms": 376
+   },
+   "costo_usd": 0.0165612
+  },
+  {
+   "id": "cesvi-e9c4e081fe",
+   "escena_valida": true,
+   "comparacion": {
+    "modalidad": {
+     "cesvi": "otra",
+     "croquis": "alcance",
+     "motivo": "frente contra parte posterior",
+     "coincide": false
+    },
+    "zonas": {
+     "cesvi": 0,
+     "croquis": 2,
+     "coinciden": 0,
+     "tercios_comparables": 0,
+     "tercios_coinciden": 0
+    },
+    "secuencia": {
+     "cesvi": 0,
+     "croquis": 1,
+     "primero_coincide": null,
+     "completa_coincide": null
+    },
+    "velocidades": [],
+    "posiciones": {
+     "cesvi": 0,
+     "croquis_las_tiene": 0
+    }
+   },
+   "reconstruccion": {
+    "reconstruida": true,
+    "en_3d": true,
+    "ms": 485
+   },
+   "costo_usd": 0.0076572
+  },
+  {
+   "id": "cesvi-285a38dbd1",
+   "escena_valida": true,
+   "comparacion": {
+    "modalidad": {
+     "cesvi": null,
+     "croquis": null,
+     "motivo": "un vehículo, sin objeto, vuelco ni salida descritos",
+     "coincide": null
+    },
+    "zonas": {
+     "cesvi": 0,
+     "croquis": 1,
+     "coinciden": 0,
+     "tercios_comparables": 0,
+     "tercios_coinciden": 0
+    },
+    "secuencia": {
+     "cesvi": 0,
+     "croquis": 0,
+     "primero_coincide": null,
+     "completa_coincide": null
+    },
+    "velocidades": [],
+    "posiciones": {
+     "cesvi": 0,
+     "croquis_las_tiene": 0
+    }
+   },
+   "reconstruccion": {
+    "reconstruida": true,
+    "en_3d": true,
+    "ms": 19
+   },
+   "costo_usd": 0.0046362
+  },
+  {
+   "id": "cesvi-cd894debf8",
+   "escena_valida": true,
+   "comparacion": {
+    "modalidad": {
+     "cesvi": "otra",
+     "croquis": "lateral",
+     "motivo": "contacto en un costado",
+     "coincide": false
+    },
+    "zonas": {
+     "cesvi": 2,
+     "croquis": 2,
+     "coinciden": 2,
+     "tercios_comparables": 0,
+     "tercios_coinciden": 0
+    },
+    "secuencia": {
+     "cesvi": 2,
+     "croquis": 1,
+     "primero_coincide": true,
+     "completa_coincide": false
+    },
+    "velocidades": [],
+    "posiciones": {
+     "cesvi": 0,
+     "croquis_las_tiene": 0
+    }
+   },
+   "reconstruccion": {
+    "reconstruida": true,
+    "en_3d": true,
+    "ms": 373
+   },
+   "costo_usd": 0.0124812
+  },
+  {
+   "id": "cesvi-7968cc5df9",
+   "escena_valida": true,
+   "comparacion": {
+    "modalidad": {
+     "cesvi": "reversa",
+     "croquis": "lateral",
+     "motivo": "contacto en un costado",
+     "coincide": false
+    },
+    "zonas": {
+     "cesvi": 2,
+     "croquis": 2,
+     "coinciden": 0,
+     "tercios_comparables": 0,
+     "tercios_coinciden": 0
+    },
+    "secuencia": {
+     "cesvi": 1,
+     "croquis": 1,
+     "primero_coincide": true,
+     "completa_coincide": true
+    },
+    "velocidades": [],
+    "posiciones": {
+     "cesvi": 1,
+     "croquis_las_tiene": 1
+    }
+   },
+   "reconstruccion": {
+    "reconstruida": true,
+    "en_3d": true,
+    "ms": 362
+   },
+   "costo_usd": 0.0139182
+  },
+  {
+   "id": "cesvi-352e083b8a",
+   "escena_valida": true,
+   "comparacion": {
+    "modalidad": {
+     "cesvi": "otra",
+     "croquis": "lateral",
+     "motivo": "contacto en un costado",
+     "coincide": false
+    },
+    "zonas": {
+     "cesvi": 2,
+     "croquis": 2,
+     "coinciden": 2,
+     "tercios_comparables": 0,
+     "tercios_coinciden": 0
+    },
+    "secuencia": {
+     "cesvi": 0,
+     "croquis": 1,
+     "primero_coincide": null,
+     "completa_coincide": null
+    },
+    "velocidades": [],
+    "posiciones": {
+     "cesvi": 0,
+     "croquis_las_tiene": 0
+    }
+   },
+   "reconstruccion": {
+    "reconstruida": true,
+    "en_3d": true,
+    "ms": 339
+   },
+   "costo_usd": 0.0148722
+  },
+  {
+   "id": "cesvi-5863ef5531",
+   "escena_valida": true,
+   "comparacion": {
+    "modalidad": {
+     "cesvi": "alcance",
+     "croquis": "alcance",
+     "motivo": "frente contra parte posterior",
+     "coincide": true
+    },
+    "zonas": {
+     "cesvi": 2,
+     "croquis": 2,
+     "coinciden": 2,
+     "tercios_comparables": 0,
+     "tercios_coinciden": 0
+    },
+    "secuencia": {
+     "cesvi": 1,
+     "croquis": 1,
+     "primero_coincide": true,
+     "completa_coincide": true
+    },
+    "velocidades": [],
+    "posiciones": {
+     "cesvi": 0,
+     "croquis_las_tiene": 0
+    }
+   },
+   "reconstruccion": {
+    "reconstruida": true,
+    "en_3d": true,
+    "ms": 398
+   },
+   "costo_usd": 0.0141282
+  },
+  {
+   "id": "cesvi-f344a46f3f",
+   "escena_valida": true,
+   "comparacion": {
+    "modalidad": {
+     "cesvi": "otra",
+     "croquis": "objeto_fijo",
+     "motivo": "un vehículo contra un objeto fijo",
+     "coincide": false
+    },
+    "zonas": {
+     "cesvi": 1,
+     "croquis": 1,
+     "coinciden": 1,
+     "tercios_comparables": 0,
+     "tercios_coinciden": 0
+    },
+    "secuencia": {
+     "cesvi": 1,
+     "croquis": 1,
+     "primero_coincide": true,
+     "completa_coincide": true
+    },
+    "velocidades": [],
+    "posiciones": {
+     "cesvi": 0,
+     "croquis_las_tiene": 0
+    }
+   },
+   "reconstruccion": {
+    "reconstruida": true,
+    "en_3d": true,
+    "ms": 203
+   },
+   "costo_usd": 0.0033442
+  },
+  {
+   "id": "cesvi-aee9753bf1",
+   "escena_valida": true,
+   "comparacion": {
+    "modalidad": {
+     "cesvi": "otra",
+     "croquis": "alcance",
+     "motivo": "frente contra parte posterior",
+     "coincide": false
+    },
+    "zonas": {
+     "cesvi": 2,
+     "croquis": 2,
+     "coinciden": 2,
+     "tercios_comparables": 0,
+     "tercios_coinciden": 0
+    },
+    "secuencia": {
+     "cesvi": 1,
+     "croquis": 1,
+     "primero_coincide": true,
+     "completa_coincide": true
+    },
+    "velocidades": [],
+    "posiciones": {
+     "cesvi": 0,
+     "croquis_las_tiene": 0
+    }
+   },
+   "reconstruccion": {
+    "reconstruida": true,
+    "en_3d": true,
+    "ms": 347
+   },
+   "costo_usd": 0.0082062
+  },
+  {
+   "id": "cesvi-d8a73cd0be",
+   "escena_valida": true,
+   "comparacion": {
+    "modalidad": {
+     "cesvi": "alcance",
+     "croquis": "alcance",
+     "motivo": "frente contra parte posterior",
+     "coincide": true
+    },
+    "zonas": {
+     "cesvi": 0,
+     "croquis": 2,
+     "coinciden": 0,
+     "tercios_comparables": 0,
+     "tercios_coinciden": 0
+    },
+    "secuencia": {
+     "cesvi": 0,
+     "croquis": 1,
+     "primero_coincide": null,
+     "completa_coincide": null
+    },
+    "velocidades": [],
+    "posiciones": {
+     "cesvi": 0,
+     "croquis_las_tiene": 0
+    }
+   },
+   "reconstruccion": {
+    "reconstruida": true,
+    "en_3d": true,
+    "ms": 349
+   },
+   "costo_usd": 0.0131262
+  },
+  {
+   "id": "cesvi-c9ea862641",
+   "escena_valida": true,
+   "comparacion": {
+    "modalidad": {
+     "cesvi": "otra",
+     "croquis": "objeto_fijo",
+     "motivo": "un vehículo contra un objeto fijo",
+     "coincide": false
+    },
+    "zonas": {
+     "cesvi": 1,
+     "croquis": 1,
+     "coinciden": 1,
+     "tercios_comparables": 0,
+     "tercios_coinciden": 0
+    },
+    "secuencia": {
+     "cesvi": 1,
+     "croquis": 1,
+     "primero_coincide": true,
+     "completa_coincide": true
+    },
+    "velocidades": [],
+    "posiciones": {
+     "cesvi": 0,
+     "croquis_las_tiene": 0
+    }
+   },
+   "reconstruccion": {
+    "reconstruida": true,
+    "en_3d": true,
+    "ms": 170
+   },
+   "costo_usd": 0.0077902
+  },
+  {
+   "id": "cesvi-eed00406c6",
+   "escena_valida": true,
+   "comparacion": {
+    "modalidad": {
+     "cesvi": "objeto_fijo",
+     "croquis": "lateral",
+     "motivo": "contacto en un costado",
+     "coincide": false
+    },
+    "zonas": {
+     "cesvi": 2,
+     "croquis": 3,
+     "coinciden": 0,
+     "tercios_comparables": 0,
+     "tercios_coinciden": 0
+    },
+    "secuencia": {
+     "cesvi": 1,
+     "croquis": 0,
+     "primero_coincide": false,
+     "completa_coincide": false
+    },
+    "velocidades": [
+     {
+      "vehiculo": "V2",
+      "cesvi_kmh": 68.4,
+      "que": "velocidad de impacto por energía cinética",
+      "croquis_kmh": null,
+      "error_kmh": null,
+      "error_pct": null
+     }
+    ],
+    "posiciones": {
+     "cesvi": 1,
+     "croquis_las_tiene": 1
+    }
+   },
+   "reconstruccion": {
+    "reconstruida": true,
+    "en_3d": true,
+    "ms": 849
+   },
+   "costo_usd": 0.0140822
+  },
+  {
+   "id": "cesvi-a8b1cf4c43",
+   "escena_valida": true,
+   "comparacion": {
+    "modalidad": {
+     "cesvi": "lateral",
+     "croquis": "frontal",
+     "motivo": "frente contra frente",
+     "coincide": false
+    },
+    "zonas": {
+     "cesvi": 2,
+     "croquis": 4,
+     "coinciden": 0,
+     "tercios_comparables": 0,
+     "tercios_coinciden": 0
+    },
+    "secuencia": {
+     "cesvi": 1,
+     "croquis": 0,
+     "primero_coincide": false,
+     "completa_coincide": false
+    },
+    "velocidades": [],
+    "posiciones": {
+     "cesvi": 2,
+     "croquis_las_tiene": 1
+    }
+   },
+   "reconstruccion": {
+    "reconstruida": true,
+    "en_3d": true,
+    "ms": 757
+   },
+   "costo_usd": 0.0239482
+  },
+  {
+   "id": "cesvi-84cfa78565",
+   "escena_valida": true,
+   "comparacion": {
+    "modalidad": {
+     "cesvi": "otra",
+     "croquis": "lateral",
+     "motivo": "contacto en un costado",
+     "coincide": false
+    },
+    "zonas": {
+     "cesvi": 0,
+     "croquis": 2,
+     "coinciden": 0,
+     "tercios_comparables": 0,
+     "tercios_coinciden": 0
+    },
+    "secuencia": {
+     "cesvi": 0,
+     "croquis": 1,
+     "primero_coincide": null,
+     "completa_coincide": null
+    },
+    "velocidades": [],
+    "posiciones": {
+     "cesvi": 0,
+     "croquis_las_tiene": 0
+    }
+   },
+   "reconstruccion": {
+    "reconstruida": true,
+    "en_3d": true,
+    "ms": 318
+   },
+   "costo_usd": 0.0180662
+  },
+  {
+   "id": "cesvi-b7834ff8b0",
+   "escena_valida": true,
+   "comparacion": {
+    "modalidad": {
+     "cesvi": "otra",
+     "croquis": null,
+     "motivo": "sin las caras de contacto de los dos vehículos",
+     "coincide": false
+    },
+    "zonas": {
+     "cesvi": 2,
+     "croquis": 0,
+     "coinciden": 0,
+     "tercios_comparables": 0,
+     "tercios_coinciden": 0
+    },
+    "secuencia": {
+     "cesvi": 1,
+     "croquis": 1,
+     "primero_coincide": true,
+     "completa_coincide": true
+    },
+    "velocidades": [],
+    "posiciones": {
+     "cesvi": 1,
+     "croquis_las_tiene": 1
+    }
+   },
+   "reconstruccion": {
+    "reconstruida": true,
+    "en_3d": true,
+    "ms": 456
+   },
+   "costo_usd": 0.0072112
+  },
+  {
+   "id": "cesvi-52de2b4555",
+   "escena_valida": true,
+   "comparacion": {
+    "modalidad": {
+     "cesvi": "otra",
+     "croquis": null,
+     "motivo": "un vehículo, sin objeto, vuelco ni salida descritos",
+     "coincide": false
+    },
+    "zonas": {
+     "cesvi": 1,
+     "croquis": 1,
+     "coinciden": 0,
+     "tercios_comparables": 0,
+     "tercios_coinciden": 0
+    },
+    "secuencia": {
+     "cesvi": 1,
+     "croquis": 0,
+     "primero_coincide": false,
+     "completa_coincide": false
+    },
+    "velocidades": [],
+    "posiciones": {
+     "cesvi": 0,
+     "croquis_las_tiene": 0
+    }
+   },
+   "reconstruccion": {
+    "reconstruida": true,
+    "en_3d": true,
+    "ms": 21
+   },
+   "costo_usd": 0.0118032
+  },
+  {
+   "id": "cesvi-ce2e6cce75",
+   "escena_valida": true,
+   "comparacion": {
+    "modalidad": {
+     "cesvi": null,
+     "croquis": null,
+     "motivo": "un vehículo, sin objeto, vuelco ni salida descritos",
+     "coincide": null
+    },
+    "zonas": {
+     "cesvi": 0,
+     "croquis": 0,
+     "coinciden": 0,
+     "tercios_comparables": 0,
+     "tercios_coinciden": 0
+    },
+    "secuencia": {
+     "cesvi": 0,
+     "croquis": 0,
+     "primero_coincide": null,
+     "completa_coincide": null
+    },
+    "velocidades": [],
+    "posiciones": {
+     "cesvi": 0,
+     "croquis_las_tiene": 0
+    }
+   },
+   "reconstruccion": {
+    "reconstruida": true,
+    "en_3d": true,
+    "ms": 17
+   },
+   "costo_usd": 0.0019062
+  },
+  {
+   "id": "cesvi-639ce6d42f",
+   "escena_valida": true,
+   "comparacion": {
+    "modalidad": {
+     "cesvi": "otra",
+     "croquis": "objeto_fijo",
+     "motivo": "un vehículo contra un objeto fijo",
+     "coincide": false
+    },
+    "zonas": {
+     "cesvi": 2,
+     "croquis": 1,
+     "coinciden": 1,
+     "tercios_comparables": 0,
+     "tercios_coinciden": 0
+    },
+    "secuencia": {
+     "cesvi": 1,
+     "croquis": 1,
+     "primero_coincide": true,
+     "completa_coincide": true
+    },
+    "velocidades": [],
+    "posiciones": {
+     "cesvi": 1,
+     "croquis_las_tiene": 0
+    }
+   },
+   "reconstruccion": {
+    "reconstruida": true,
+    "en_3d": true,
+    "ms": 153
+   },
+   "costo_usd": 0.0067972
+  },
+  {
+   "id": "cesvi-059b27d89d",
+   "escena_valida": true,
+   "comparacion": {
+    "modalidad": {
+     "cesvi": "otra",
+     "croquis": "alcance",
+     "motivo": "los dos frentes dañados y uno también por detrás: golpe por detrás y empuje",
+     "coincide": false
+    },
+    "zonas": {
+     "cesvi": 0,
+     "croquis": 2,
+     "coinciden": 0,
+     "tercios_comparables": 0,
+     "tercios_coinciden": 0
+    },
+    "secuencia": {
+     "cesvi": 0,
+     "croquis": 1,
+     "primero_coincide": null,
+     "completa_coincide": null
+    },
+    "velocidades": [],
+    "posiciones": {
+     "cesvi": 1,
+     "croquis_las_tiene": 1
+    }
+   },
+   "reconstruccion": {
+    "reconstruida": true,
+    "en_3d": true,
+    "ms": 369
+   },
+   "costo_usd": 0.0167772
+  },
+  {
+   "id": "cesvi-460d7f3120",
+   "escena_valida": true,
+   "comparacion": {
+    "modalidad": {
+     "cesvi": "otra",
+     "croquis": null,
+     "motivo": "un vehículo, sin objeto, vuelco ni salida descritos",
+     "coincide": false
+    },
+    "zonas": {
+     "cesvi": 2,
+     "croquis": 1,
+     "coinciden": 1,
+     "tercios_comparables": 0,
+     "tercios_coinciden": 0
+    },
+    "secuencia": {
+     "cesvi": 1,
+     "croquis": 0,
+     "primero_coincide": false,
+     "completa_coincide": false
+    },
+    "velocidades": [],
+    "posiciones": {
+     "cesvi": 0,
+     "croquis_las_tiene": 0
+    }
+   },
+   "reconstruccion": {
+    "reconstruida": true,
+    "en_3d": true,
+    "ms": 21
+   },
+   "costo_usd": 0.0111762
+  },
+  {
+   "id": "cesvi-73ea769d2f",
+   "escena_valida": true,
+   "comparacion": {
+    "modalidad": {
+     "cesvi": "lateral",
+     "croquis": "alcance",
+     "motivo": "frente contra parte posterior",
+     "coincide": false
+    },
+    "zonas": {
+     "cesvi": 0,
+     "croquis": 2,
+     "coinciden": 0,
+     "tercios_comparables": 0,
+     "tercios_coinciden": 0
+    },
+    "secuencia": {
+     "cesvi": 0,
+     "croquis": 1,
+     "primero_coincide": null,
+     "completa_coincide": null
+    },
+    "velocidades": [],
+    "posiciones": {
+     "cesvi": 0,
+     "croquis_las_tiene": 0
+    }
+   },
+   "reconstruccion": {
+    "reconstruida": true,
+    "en_3d": true,
+    "ms": 350
+   },
+   "costo_usd": 0.0180742
+  },
+  {
+   "id": "cesvi-b641fb6657",
+   "escena_valida": true,
+   "comparacion": {
+    "modalidad": {
+     "cesvi": "otra",
+     "croquis": null,
+     "motivo": "un vehículo, sin objeto, vuelco ni salida descritos",
+     "coincide": false
+    },
+    "zonas": {
+     "cesvi": 0,
+     "croquis": 1,
+     "coinciden": 0,
+     "tercios_comparables": 0,
+     "tercios_coinciden": 0
+    },
+    "secuencia": {
+     "cesvi": 0,
+     "croquis": 0,
+     "primero_coincide": null,
+     "completa_coincide": null
+    },
+    "velocidades": [],
+    "posiciones": {
+     "cesvi": 0,
+     "croquis_las_tiene": 0
+    }
+   },
+   "reconstruccion": {
+    "reconstruida": true,
+    "en_3d": true,
+    "ms": 20
+   },
+   "costo_usd": 0.0064972
+  },
+  {
+   "id": "cesvi-9f15522337",
+   "escena_valida": true,
+   "comparacion": {
+    "modalidad": {
+     "cesvi": "otra",
+     "croquis": "lateral",
+     "motivo": "contacto en un costado",
+     "coincide": false
+    },
+    "zonas": {
+     "cesvi": 2,
+     "croquis": 2,
+     "coinciden": 2,
+     "tercios_comparables": 0,
+     "tercios_coinciden": 0
+    },
+    "secuencia": {
+     "cesvi": 1,
+     "croquis": 1,
+     "primero_coincide": true,
+     "completa_coincide": true
+    },
+    "velocidades": [],
+    "posiciones": {
+     "cesvi": 0,
+     "croquis_las_tiene": 0
+    }
+   },
+   "reconstruccion": {
+    "reconstruida": true,
+    "en_3d": true,
+    "ms": 360
+   },
+   "costo_usd": 0.0096382
+  },
+  {
+   "id": "cesvi-6256dba174",
+   "escena_valida": true,
+   "comparacion": {
+    "modalidad": {
+     "cesvi": "otra",
+     "croquis": null,
+     "motivo": "un vehículo, sin objeto, vuelco ni salida descritos",
+     "coincide": false
+    },
+    "zonas": {
+     "cesvi": 0,
+     "croquis": 1,
+     "coinciden": 0,
+     "tercios_comparables": 0,
+     "tercios_coinciden": 0
+    },
+    "secuencia": {
+     "cesvi": 0,
+     "croquis": 0,
+     "primero_coincide": null,
+     "completa_coincide": null
+    },
+    "velocidades": [],
+    "posiciones": {
+     "cesvi": 0,
+     "croquis_las_tiene": 0
+    }
+   },
+   "reconstruccion": {
+    "reconstruida": true,
+    "en_3d": true,
+    "ms": 27
+   },
+   "costo_usd": 0.0038052
+  },
+  {
+   "id": "cesvi-d2c5cede7c",
+   "escena_valida": true,
+   "comparacion": {
+    "modalidad": {
+     "cesvi": "otra",
+     "croquis": "lateral",
+     "motivo": "contacto en un costado",
+     "coincide": false
+    },
+    "zonas": {
+     "cesvi": 1,
+     "croquis": 2,
+     "coinciden": 1,
+     "tercios_comparables": 0,
+     "tercios_coinciden": 0
+    },
+    "secuencia": {
+     "cesvi": 0,
+     "croquis": 1,
+     "primero_coincide": null,
+     "completa_coincide": null
+    },
+    "velocidades": [],
+    "posiciones": {
+     "cesvi": 2,
+     "croquis_las_tiene": 2
+    }
+   },
+   "reconstruccion": {
+    "reconstruida": true,
+    "en_3d": true,
+    "ms": 309
+   },
+   "costo_usd": 0.0195692
+  },
+  {
+   "id": "cesvi-ab666b294f",
+   "escena_valida": true,
+   "comparacion": {
+    "modalidad": {
+     "cesvi": "otra",
+     "croquis": "lateral",
+     "motivo": "contacto en un costado",
+     "coincide": false
+    },
+    "zonas": {
+     "cesvi": 3,
+     "croquis": 2,
+     "coinciden": 2,
+     "tercios_comparables": 0,
+     "tercios_coinciden": 0
+    },
+    "secuencia": {
+     "cesvi": 2,
+     "croquis": 1,
+     "primero_coincide": true,
+     "completa_coincide": false
+    },
+    "velocidades": [],
+    "posiciones": {
+     "cesvi": 1,
+     "croquis_las_tiene": 0
+    }
+   },
+   "reconstruccion": {
+    "reconstruida": true,
+    "en_3d": true,
+    "ms": 320
+   },
+   "costo_usd": 0.0195602
+  },
+  {
+   "id": "cesvi-faa8a2bde0",
+   "escena_valida": true,
+   "comparacion": {
+    "modalidad": {
+     "cesvi": null,
+     "croquis": null,
+     "motivo": "un vehículo, sin objeto, vuelco ni salida descritos",
+     "coincide": null
+    },
+    "zonas": {
+     "cesvi": 0,
+     "croquis": 1,
+     "coinciden": 0,
+     "tercios_comparables": 0,
+     "tercios_coinciden": 0
+    },
+    "secuencia": {
+     "cesvi": 0,
+     "croquis": 0,
+     "primero_coincide": null,
+     "completa_coincide": null
+    },
+    "velocidades": [],
+    "posiciones": {
+     "cesvi": 0,
+     "croquis_las_tiene": 0
+    }
+   },
+   "reconstruccion": {
+    "reconstruida": true,
+    "en_3d": true,
+    "ms": 18
+   },
+   "costo_usd": 0.0071062
+  },
+  {
+   "id": "cesvi-7d5dbd5fdb",
+   "escena_valida": true,
+   "comparacion": {
+    "modalidad": {
+     "cesvi": "lateral",
+     "croquis": "lateral",
+     "motivo": "contacto en un costado",
+     "coincide": true
+    },
+    "zonas": {
+     "cesvi": 2,
+     "croquis": 2,
+     "coinciden": 2,
+     "tercios_comparables": 0,
+     "tercios_coinciden": 0
+    },
+    "secuencia": {
+     "cesvi": 0,
+     "croquis": 1,
+     "primero_coincide": null,
+     "completa_coincide": null
+    },
+    "velocidades": [],
+    "posiciones": {
+     "cesvi": 0,
+     "croquis_las_tiene": 0
+    }
+   },
+   "reconstruccion": {
+    "reconstruida": true,
+    "en_3d": true,
+    "ms": 287
+   },
+   "costo_usd": 0.0176112
+  },
+  {
+   "id": "cesvi-662e6d9423",
+   "escena_valida": true,
+   "comparacion": {
+    "modalidad": {
+     "cesvi": "lateral",
+     "croquis": "frontal",
+     "motivo": "frente contra frente",
+     "coincide": false
+    },
+    "zonas": {
+     "cesvi": 2,
+     "croquis": 2,
+     "coinciden": 2,
+     "tercios_comparables": 0,
+     "tercios_coinciden": 0
+    },
+    "secuencia": {
+     "cesvi": 1,
+     "croquis": 1,
+     "primero_coincide": true,
+     "completa_coincide": true
+    },
+    "velocidades": [],
+    "posiciones": {
+     "cesvi": 0,
+     "croquis_las_tiene": 0
+    }
+   },
+   "reconstruccion": {
+    "reconstruida": true,
+    "en_3d": true,
+    "ms": 456
+   },
+   "costo_usd": 0.0136342
+  },
+  {
+   "id": "cesvi-cade1c89cb",
+   "escena_valida": true,
+   "comparacion": {
+    "modalidad": {
+     "cesvi": "otra",
+     "croquis": null,
+     "motivo": "sin las caras de contacto de los dos vehículos",
+     "coincide": false
+    },
+    "zonas": {
+     "cesvi": 5,
+     "croquis": 3,
+     "coinciden": 2,
+     "tercios_comparables": 0,
+     "tercios_coinciden": 0
+    },
+    "secuencia": {
+     "cesvi": 3,
+     "croquis": 0,
+     "primero_coincide": false,
+     "completa_coincide": false
+    },
+    "velocidades": [],
+    "posiciones": {
+     "cesvi": 0,
+     "croquis_las_tiene": 0
+    }
+   },
+   "reconstruccion": {
+    "reconstruida": true,
+    "en_3d": true,
+    "ms": 631
+   },
+   "costo_usd": 0.0198792
+  },
+  {
+   "id": "cesvi-1bc2829bb6",
+   "escena_valida": true,
+   "comparacion": {
+    "modalidad": {
+     "cesvi": "salida_de_camino",
+     "croquis": "objeto_fijo",
+     "motivo": "un vehículo contra un objeto fijo",
+     "coincide": false
+    },
+    "zonas": {
+     "cesvi": 2,
+     "croquis": 1,
+     "coinciden": 1,
+     "tercios_comparables": 0,
+     "tercios_coinciden": 0
+    },
+    "secuencia": {
+     "cesvi": 1,
+     "croquis": 1,
+     "primero_coincide": true,
+     "completa_coincide": true
+    },
+    "velocidades": [],
+    "posiciones": {
+     "cesvi": 0,
+     "croquis_las_tiene": 0
+    }
+   },
+   "reconstruccion": {
+    "reconstruida": true,
+    "en_3d": true,
+    "ms": 159
+   },
+   "costo_usd": 0.0141022
+  },
+  {
+   "id": "cesvi-85b5b83442",
+   "escena_valida": true,
+   "comparacion": {
+    "modalidad": {
+     "cesvi": "alcance",
+     "croquis": "alcance",
+     "motivo": "frente contra parte posterior",
+     "coincide": true
+    },
+    "zonas": {
+     "cesvi": 2,
+     "croquis": 2,
+     "coinciden": 2,
+     "tercios_comparables": 0,
+     "tercios_coinciden": 0
+    },
+    "secuencia": {
+     "cesvi": 1,
+     "croquis": 1,
+     "primero_coincide": true,
+     "completa_coincide": true
+    },
+    "velocidades": [],
+    "posiciones": {
+     "cesvi": 0,
+     "croquis_las_tiene": 0
+    }
+   },
+   "reconstruccion": {
+    "reconstruida": true,
+    "en_3d": true,
+    "ms": 326
+   },
+   "costo_usd": 0.0138792
+  },
+  {
+   "id": "cesvi-9200983dab",
+   "escena_valida": true,
+   "comparacion": {
+    "modalidad": {
+     "cesvi": null,
+     "croquis": null,
+     "motivo": "un vehículo, sin objeto, vuelco ni salida descritos",
+     "coincide": null
+    },
+    "zonas": {
+     "cesvi": 0,
+     "croquis": 0,
+     "coinciden": 0,
+     "tercios_comparables": 0,
+     "tercios_coinciden": 0
+    },
+    "secuencia": {
+     "cesvi": 0,
+     "croquis": 0,
+     "primero_coincide": null,
+     "completa_coincide": null
+    },
+    "velocidades": [],
+    "posiciones": {
+     "cesvi": 0,
+     "croquis_las_tiene": 0
+    }
+   },
+   "reconstruccion": {
+    "reconstruida": true,
+    "en_3d": true,
+    "ms": 19
+   },
+   "costo_usd": 0.0020952
+  },
+  {
+   "id": "cesvi-05a7c05640",
+   "escena_valida": true,
+   "comparacion": {
+    "modalidad": {
+     "cesvi": "alcance",
+     "croquis": "alcance",
+     "motivo": "frente contra parte posterior",
+     "coincide": true
+    },
+    "zonas": {
+     "cesvi": 2,
+     "croquis": 2,
+     "coinciden": 2,
+     "tercios_comparables": 0,
+     "tercios_coinciden": 0
+    },
+    "secuencia": {
+     "cesvi": 1,
+     "croquis": 1,
+     "primero_coincide": true,
+     "completa_coincide": true
+    },
+    "velocidades": [],
+    "posiciones": {
+     "cesvi": 0,
+     "croquis_las_tiene": 0
+    }
+   },
+   "reconstruccion": {
+    "reconstruida": true,
+    "en_3d": true,
+    "ms": 328
+   },
+   "costo_usd": 0.0153172
+  },
+  {
+   "id": "cesvi-af71476614",
+   "escena_valida": true,
+   "comparacion": {
+    "modalidad": {
+     "cesvi": "otra",
+     "croquis": "lateral",
+     "motivo": "contacto en un costado",
+     "coincide": false
+    },
+    "zonas": {
+     "cesvi": 0,
+     "croquis": 2,
+     "coinciden": 0,
+     "tercios_comparables": 0,
+     "tercios_coinciden": 0
+    },
+    "secuencia": {
+     "cesvi": 0,
+     "croquis": 1,
+     "primero_coincide": null,
+     "completa_coincide": null
+    },
+    "velocidades": [],
+    "posiciones": {
+     "cesvi": 0,
+     "croquis_las_tiene": 0
+    }
+   },
+   "reconstruccion": {
+    "reconstruida": true,
+    "en_3d": true,
+    "ms": 340
+   },
+   "costo_usd": 0.0177682
+  },
+  {
+   "id": "cesvi-bf10fcba2f",
+   "escena_valida": true,
+   "comparacion": {
+    "modalidad": {
+     "cesvi": "objeto_fijo",
+     "croquis": "alcance",
+     "motivo": "frente contra parte posterior",
+     "coincide": false
+    },
+    "zonas": {
+     "cesvi": 2,
+     "croquis": 2,
+     "coinciden": 2,
+     "tercios_comparables": 0,
+     "tercios_coinciden": 0
+    },
+    "secuencia": {
+     "cesvi": 2,
+     "croquis": 1,
+     "primero_coincide": false,
+     "completa_coincide": false
+    },
+    "velocidades": [],
+    "posiciones": {
+     "cesvi": 1,
+     "croquis_las_tiene": 0
+    }
+   },
+   "reconstruccion": {
+    "reconstruida": true,
+    "en_3d": true,
+    "ms": 230
+   },
+   "costo_usd": 0.0085122
+  },
+  {
+   "id": "cesvi-147df2914c",
+   "escena_valida": true,
+   "comparacion": {
+    "modalidad": {
+     "cesvi": "alcance",
+     "croquis": "alcance",
+     "motivo": "frente contra parte posterior",
+     "coincide": true
+    },
+    "zonas": {
+     "cesvi": 2,
+     "croquis": 2,
+     "coinciden": 2,
+     "tercios_comparables": 0,
+     "tercios_coinciden": 0
+    },
+    "secuencia": {
+     "cesvi": 1,
+     "croquis": 1,
+     "primero_coincide": true,
+     "completa_coincide": true
+    },
+    "velocidades": [],
+    "posiciones": {
+     "cesvi": 1,
+     "croquis_las_tiene": 0
+    }
+   },
+   "reconstruccion": {
+    "reconstruida": true,
+    "en_3d": true,
+    "ms": 325
+   },
+   "costo_usd": 0.0119132
+  },
+  {
+   "id": "cesvi-476cf1439b",
+   "escena_valida": true,
+   "comparacion": {
+    "modalidad": {
+     "cesvi": "alcance",
+     "croquis": "objeto_fijo",
+     "motivo": "un vehículo contra un objeto fijo",
+     "coincide": false
+    },
+    "zonas": {
+     "cesvi": 1,
+     "croquis": 1,
+     "coinciden": 0,
+     "tercios_comparables": 0,
+     "tercios_coinciden": 0
+    },
+    "secuencia": {
+     "cesvi": 1,
+     "croquis": 1,
+     "primero_coincide": true,
+     "completa_coincide": true
+    },
+    "velocidades": [],
+    "posiciones": {
+     "cesvi": 1,
+     "croquis_las_tiene": 0
+    }
+   },
+   "reconstruccion": {
+    "reconstruida": true,
+    "en_3d": true,
+    "ms": 260
+   },
+   "costo_usd": 0.0150672
+  },
+  {
+   "id": "cesvi-3eab5db876",
+   "escena_valida": true,
+   "comparacion": {
+    "modalidad": {
+     "cesvi": "lateral",
+     "croquis": "lateral",
+     "motivo": "contacto en un costado",
+     "coincide": true
+    },
+    "zonas": {
+     "cesvi": 2,
+     "croquis": 2,
+     "coinciden": 1,
+     "tercios_comparables": 0,
+     "tercios_coinciden": 0
+    },
+    "secuencia": {
+     "cesvi": 3,
+     "croquis": 1,
+     "primero_coincide": true,
+     "completa_coincide": false
+    },
+    "velocidades": [],
+    "posiciones": {
+     "cesvi": 1,
+     "croquis_las_tiene": 1
+    }
+   },
+   "reconstruccion": {
+    "reconstruida": true,
+    "en_3d": true,
+    "ms": 326
+   },
+   "costo_usd": 0.0152242
+  },
+  {
+   "id": "cesvi-d4b38174d1",
+   "escena_valida": true,
+   "comparacion": {
+    "modalidad": {
+     "cesvi": "reversa",
+     "croquis": "lateral",
+     "motivo": "contacto en un costado",
+     "coincide": false
+    },
+    "zonas": {
+     "cesvi": 2,
+     "croquis": 2,
+     "coinciden": 1,
+     "tercios_comparables": 0,
+     "tercios_coinciden": 0
+    },
+    "secuencia": {
+     "cesvi": 1,
+     "croquis": 1,
+     "primero_coincide": true,
+     "completa_coincide": true
+    },
+    "velocidades": [],
+    "posiciones": {
+     "cesvi": 1,
+     "croquis_las_tiene": 0
+    }
+   },
+   "reconstruccion": {
+    "reconstruida": true,
+    "en_3d": true,
+    "ms": 326
+   },
+   "costo_usd": 0.0109602
+  },
+  {
+   "id": "cesvi-df6a4b2324",
+   "escena_valida": true,
+   "comparacion": {
+    "modalidad": {
+     "cesvi": "lateral",
+     "croquis": "lateral",
+     "motivo": "contacto en un costado",
+     "coincide": true
+    },
+    "zonas": {
+     "cesvi": 2,
+     "croquis": 2,
+     "coinciden": 2,
+     "tercios_comparables": 0,
+     "tercios_coinciden": 0
+    },
+    "secuencia": {
+     "cesvi": 1,
+     "croquis": 1,
+     "primero_coincide": true,
+     "completa_coincide": true
+    },
+    "velocidades": [],
+    "posiciones": {
+     "cesvi": 0,
+     "croquis_las_tiene": 0
+    }
+   },
+   "reconstruccion": {
+    "reconstruida": true,
+    "en_3d": true,
+    "ms": 522
+   },
+   "costo_usd": 0.0161532
+  },
+  {
+   "id": "cesvi-c6269d800e",
+   "escena_valida": true,
+   "comparacion": {
+    "modalidad": {
+     "cesvi": "alcance",
+     "croquis": "alcance",
+     "motivo": "frente contra parte posterior",
+     "coincide": true
+    },
+    "zonas": {
+     "cesvi": 0,
+     "croquis": 2,
+     "coinciden": 0,
+     "tercios_comparables": 0,
+     "tercios_coinciden": 0
+    },
+    "secuencia": {
+     "cesvi": 0,
+     "croquis": 1,
+     "primero_coincide": null,
+     "completa_coincide": null
+    },
+    "velocidades": [],
+    "posiciones": {
+     "cesvi": 0,
+     "croquis_las_tiene": 0
+    }
+   },
+   "reconstruccion": {
+    "reconstruida": true,
+    "en_3d": true,
+    "ms": 455
+   },
+   "costo_usd": 0.0125922
+  },
+  {
+   "id": "cesvi-240b770de0",
+   "escena_valida": true,
+   "comparacion": {
+    "modalidad": {
+     "cesvi": "lateral",
+     "croquis": "frontal",
+     "motivo": "frente contra frente",
+     "coincide": false
+    },
+    "zonas": {
+     "cesvi": 2,
+     "croquis": 2,
+     "coinciden": 1,
+     "tercios_comparables": 0,
+     "tercios_coinciden": 0
+    },
+    "secuencia": {
+     "cesvi": 1,
+     "croquis": 1,
+     "primero_coincide": true,
+     "completa_coincide": true
+    },
+    "velocidades": [],
+    "posiciones": {
+     "cesvi": 0,
+     "croquis_las_tiene": 0
+    }
+   },
+   "reconstruccion": {
+    "reconstruida": true,
+    "en_3d": true,
+    "ms": 370
+   },
+   "costo_usd": 0.0130902
+  },
+  {
+   "id": "cesvi-bb774b3897",
+   "escena_valida": true,
+   "comparacion": {
+    "modalidad": {
+     "cesvi": "alcance",
+     "croquis": "alcance",
+     "motivo": "frente contra parte posterior",
+     "coincide": true
+    },
+    "zonas": {
+     "cesvi": 4,
+     "croquis": 4,
+     "coinciden": 3,
+     "tercios_comparables": 0,
+     "tercios_coinciden": 0
+    },
+    "secuencia": {
+     "cesvi": 2,
+     "croquis": 0,
+     "primero_coincide": false,
+     "completa_coincide": false
+    },
+    "velocidades": [],
+    "posiciones": {
+     "cesvi": 0,
+     "croquis_las_tiene": 0
+    }
+   },
+   "reconstruccion": {
+    "reconstruida": true,
+    "en_3d": true,
+    "ms": 842
+   },
+   "costo_usd": 0.0186712
+  },
+  {
+   "id": "cesvi-8e3a7ac59f",
+   "escena_valida": true,
+   "comparacion": {
+    "modalidad": {
+     "cesvi": "alcance",
+     "croquis": "lateral",
+     "motivo": "contacto en un costado",
+     "coincide": false
+    },
+    "zonas": {
+     "cesvi": 2,
+     "croquis": 2,
+     "coinciden": 1,
+     "tercios_comparables": 0,
+     "tercios_coinciden": 0
+    },
+    "secuencia": {
+     "cesvi": 2,
+     "croquis": 1,
+     "primero_coincide": true,
+     "completa_coincide": false
+    },
+    "velocidades": [],
+    "posiciones": {
+     "cesvi": 0,
+     "croquis_las_tiene": 0
+    }
+   },
+   "reconstruccion": {
+    "reconstruida": true,
+    "en_3d": true,
+    "ms": 464
+   },
+   "costo_usd": 0.0120532
+  },
+  {
+   "id": "cesvi-0221ee4ec4",
+   "escena_valida": true,
+   "comparacion": {
+    "modalidad": {
+     "cesvi": "alcance",
+     "croquis": "alcance",
+     "motivo": "frente contra parte posterior",
+     "coincide": true
+    },
+    "zonas": {
+     "cesvi": 2,
+     "croquis": 2,
+     "coinciden": 2,
+     "tercios_comparables": 0,
+     "tercios_coinciden": 0
+    },
+    "secuencia": {
+     "cesvi": 1,
+     "croquis": 1,
+     "primero_coincide": true,
+     "completa_coincide": true
+    },
+    "velocidades": [],
+    "posiciones": {
+     "cesvi": 0,
+     "croquis_las_tiene": 0
+    }
+   },
+   "reconstruccion": {
+    "reconstruida": true,
+    "en_3d": true,
+    "ms": 372
+   },
+   "costo_usd": 0.0149102
+  },
+  {
+   "id": "cesvi-5dfc9ba3c0",
+   "escena_valida": true,
+   "comparacion": {
+    "modalidad": {
+     "cesvi": "alcance",
+     "croquis": "lateral",
+     "motivo": "contacto en un costado",
+     "coincide": false
+    },
+    "zonas": {
+     "cesvi": 0,
+     "croquis": 1,
+     "coinciden": 0,
+     "tercios_comparables": 0,
+     "tercios_coinciden": 0
+    },
+    "secuencia": {
+     "cesvi": 0,
+     "croquis": 1,
+     "primero_coincide": null,
+     "completa_coincide": null
+    },
+    "velocidades": [],
+    "posiciones": {
+     "cesvi": 0,
+     "croquis_las_tiene": 0
+    }
+   },
+   "reconstruccion": {
+    "reconstruida": true,
+    "en_3d": true,
+    "ms": 569
+   },
+   "costo_usd": 0.0106492
+  },
+  {
+   "id": "cesvi-5dd2c6df58",
+   "escena_valida": true,
+   "comparacion": {
+    "modalidad": {
+     "cesvi": "volcadura",
+     "croquis": "alcance",
+     "motivo": "un vehículo golpeado en su parte posterior",
+     "coincide": false
+    },
+    "zonas": {
+     "cesvi": 2,
+     "croquis": 1,
+     "coinciden": 0,
+     "tercios_comparables": 0,
+     "tercios_coinciden": 0
+    },
+    "secuencia": {
+     "cesvi": 1,
+     "croquis": 0,
+     "primero_coincide": false,
+     "completa_coincide": false
+    },
+    "velocidades": [],
+    "posiciones": {
+     "cesvi": 1,
+     "croquis_las_tiene": 0
+    }
+   },
+   "reconstruccion": {
+    "reconstruida": true,
+    "en_3d": true,
+    "ms": 19
+   },
+   "costo_usd": 0.0175592
+  },
+  {
+   "id": "cesvi-d950dda14b",
+   "escena_valida": true,
+   "comparacion": {
+    "modalidad": {
+     "cesvi": "objeto_fijo",
+     "croquis": "objeto_fijo",
+     "motivo": "un vehículo contra un objeto fijo",
+     "coincide": true
+    },
+    "zonas": {
+     "cesvi": 2,
+     "croquis": 1,
+     "coinciden": 2,
+     "tercios_comparables": 0,
+     "tercios_coinciden": 0
+    },
+    "secuencia": {
+     "cesvi": 1,
+     "croquis": 1,
+     "primero_coincide": true,
+     "completa_coincide": true
+    },
+    "velocidades": [],
+    "posiciones": {
+     "cesvi": 1,
+     "croquis_las_tiene": 1
+    }
+   },
+   "reconstruccion": {
+    "reconstruida": true,
+    "en_3d": true,
+    "ms": 224
+   },
+   "costo_usd": 0.0120012
+  },
+  {
+   "id": "cesvi-2276b03fc0",
+   "escena_valida": true,
+   "comparacion": {
+    "modalidad": {
+     "cesvi": "reversa",
+     "croquis": "alcance",
+     "motivo": "frente contra parte posterior",
+     "coincide": false
+    },
+    "zonas": {
+     "cesvi": 2,
+     "croquis": 2,
+     "coinciden": 2,
+     "tercios_comparables": 0,
+     "tercios_coinciden": 0
+    },
+    "secuencia": {
+     "cesvi": 1,
+     "croquis": 1,
+     "primero_coincide": true,
+     "completa_coincide": true
+    },
+    "velocidades": [],
+    "posiciones": {
+     "cesvi": 0,
+     "croquis_las_tiene": 0
+    }
+   },
+   "reconstruccion": {
+    "reconstruida": true,
+    "en_3d": true,
+    "ms": 351
+   },
+   "costo_usd": 0.0143332
+  },
+  {
+   "id": "cesvi-3fa0cd2ba1",
+   "escena_valida": true,
+   "comparacion": {
+    "modalidad": {
+     "cesvi": "objeto_fijo",
+     "croquis": "lateral",
+     "motivo": "contacto en un costado",
+     "coincide": false
+    },
+    "zonas": {
+     "cesvi": 1,
+     "croquis": 1,
+     "coinciden": 0,
+     "tercios_comparables": 0,
+     "tercios_coinciden": 0
+    },
+    "secuencia": {
+     "cesvi": 1,
+     "croquis": 1,
+     "primero_coincide": true,
+     "completa_coincide": true
+    },
+    "velocidades": [],
+    "posiciones": {
+     "cesvi": 1,
+     "croquis_las_tiene": 0
+    }
+   },
+   "reconstruccion": {
+    "reconstruida": true,
+    "en_3d": true,
+    "ms": 272
+   },
+   "costo_usd": 0.0160872
+  },
+  {
+   "id": "cesvi-f112d84f11",
+   "escena_valida": true,
+   "comparacion": {
+    "modalidad": {
+     "cesvi": "otra",
+     "croquis": null,
+     "motivo": "un vehículo, sin objeto, vuelco ni salida descritos",
+     "coincide": false
+    },
+    "zonas": {
+     "cesvi": 0,
+     "croquis": 1,
+     "coinciden": 0,
+     "tercios_comparables": 0,
+     "tercios_coinciden": 0
+    },
+    "secuencia": {
+     "cesvi": 0,
+     "croquis": 0,
+     "primero_coincide": null,
+     "completa_coincide": null
+    },
+    "velocidades": [],
+    "posiciones": {
+     "cesvi": 0,
+     "croquis_las_tiene": 0
+    }
+   },
+   "reconstruccion": {
+    "reconstruida": true,
+    "en_3d": true,
+    "ms": 28
+   },
+   "costo_usd": 0.0036502
+  },
+  {
+   "id": "cesvi-feef78b49a",
+   "escena_valida": true,
+   "comparacion": {
+    "modalidad": {
+     "cesvi": "lateral",
+     "croquis": "lateral",
+     "motivo": "contacto en un costado",
+     "coincide": true
+    },
+    "zonas": {
+     "cesvi": 3,
+     "croquis": 2,
+     "coinciden": 0,
+     "tercios_comparables": 0,
+     "tercios_coinciden": 0
+    },
+    "secuencia": {
+     "cesvi": 2,
+     "croquis": 1,
+     "primero_coincide": true,
+     "completa_coincide": false
+    },
+    "velocidades": [],
+    "posiciones": {
+     "cesvi": 0,
+     "croquis_las_tiene": 0
+    }
+   },
+   "reconstruccion": {
+    "reconstruida": true,
+    "en_3d": true,
+    "ms": 368
+   },
+   "costo_usd": 0.0182282
+  },
+  {
+   "id": "cesvi-16eb0fba1f",
+   "escena_valida": true,
+   "comparacion": {
+    "modalidad": {
+     "cesvi": "lateral",
+     "croquis": "lateral",
+     "motivo": "contacto en un costado",
+     "coincide": true
+    },
+    "zonas": {
+     "cesvi": 2,
+     "croquis": 2,
+     "coinciden": 0,
+     "tercios_comparables": 0,
+     "tercios_coinciden": 0
+    },
+    "secuencia": {
+     "cesvi": 2,
+     "croquis": 1,
+     "primero_coincide": true,
+     "completa_coincide": false
+    },
+    "velocidades": [],
+    "posiciones": {
+     "cesvi": 0,
+     "croquis_las_tiene": 0
+    }
+   },
+   "reconstruccion": {
+    "reconstruida": true,
+    "en_3d": true,
+    "ms": 238
+   },
+   "costo_usd": 0.0153212
+  },
+  {
+   "id": "cesvi-d55ce7a8fe",
+   "escena_valida": true,
+   "comparacion": {
+    "modalidad": {
+     "cesvi": "volcadura",
+     "croquis": "salida_de_camino",
+     "motivo": "un vehículo que sale del camino",
+     "coincide": false
+    },
+    "zonas": {
+     "cesvi": 0,
+     "croquis": 1,
+     "coinciden": 0,
+     "tercios_comparables": 0,
+     "tercios_coinciden": 0
+    },
+    "secuencia": {
+     "cesvi": 0,
+     "croquis": 0,
+     "primero_coincide": null,
+     "completa_coincide": null
+    },
+    "velocidades": [],
+    "posiciones": {
+     "cesvi": 0,
+     "croquis_las_tiene": 0
+    }
+   },
+   "reconstruccion": {
+    "reconstruida": true,
+    "en_3d": true,
+    "ms": 18
+   },
+   "costo_usd": 0.0135672
+  },
+  {
+   "id": "cesvi-52fb9f9c5d",
+   "escena_valida": true,
+   "comparacion": {
+    "modalidad": {
+     "cesvi": null,
+     "croquis": "volcadura",
+     "motivo": "un vehículo; la narración describe un vuelco",
+     "coincide": null
+    },
+    "zonas": {
+     "cesvi": 1,
+     "croquis": 1,
+     "coinciden": 0,
+     "tercios_comparables": 0,
+     "tercios_coinciden": 0
+    },
+    "secuencia": {
+     "cesvi": 1,
+     "croquis": 1,
+     "primero_coincide": true,
+     "completa_coincide": true
+    },
+    "velocidades": [],
+    "posiciones": {
+     "cesvi": 1,
+     "croquis_las_tiene": 1
+    }
+   },
+   "reconstruccion": {
+    "reconstruida": true,
+    "en_3d": true,
+    "ms": 154
+   },
+   "costo_usd": 0.0125482
+  },
+  {
+   "id": "cesvi-4e9cbd1711",
+   "escena_valida": true,
+   "comparacion": {
+    "modalidad": {
+     "cesvi": "otra",
+     "croquis": "lateral",
+     "motivo": "contacto en un costado",
+     "coincide": false
+    },
+    "zonas": {
+     "cesvi": 2,
+     "croquis": 2,
+     "coinciden": 2,
+     "tercios_comparables": 0,
+     "tercios_coinciden": 0
+    },
+    "secuencia": {
+     "cesvi": 1,
+     "croquis": 1,
+     "primero_coincide": true,
+     "completa_coincide": true
+    },
+    "velocidades": [],
+    "posiciones": {
+     "cesvi": 2,
+     "croquis_las_tiene": 2
+    }
+   },
+   "reconstruccion": {
+    "reconstruida": true,
+    "en_3d": true,
+    "ms": 358
+   },
+   "costo_usd": 0.0180312
+  },
+  {
+   "id": "cesvi-b7ca573795",
+   "escena_valida": true,
+   "comparacion": {
+    "modalidad": {
+     "cesvi": "otra",
+     "croquis": "lateral",
+     "motivo": "contacto en un costado",
+     "coincide": false
+    },
+    "zonas": {
+     "cesvi": 3,
+     "croquis": 2,
+     "coinciden": 2,
+     "tercios_comparables": 0,
+     "tercios_coinciden": 0
+    },
+    "secuencia": {
+     "cesvi": 2,
+     "croquis": 1,
+     "primero_coincide": true,
+     "completa_coincide": false
+    },
+    "velocidades": [
+     {
+      "vehiculo": "V2",
+      "cesvi_kmh": 40.67,
+      "que": "velocidad mínima de impacto contra la barda perimetral, por deformación",
+      "croquis_kmh": null,
+      "error_kmh": null,
+      "error_pct": null
+     }
+    ],
+    "posiciones": {
+     "cesvi": 0,
+     "croquis_las_tiene": 0
+    }
+   },
+   "reconstruccion": {
+    "reconstruida": true,
+    "en_3d": true,
+    "ms": 335
+   },
+   "costo_usd": 0.0171242
+  },
+  {
+   "id": "cesvi-7b8ab3e55e",
+   "escena_valida": true,
+   "comparacion": {
+    "modalidad": {
+     "cesvi": "alcance",
+     "croquis": "alcance",
+     "motivo": "frente contra parte posterior",
+     "coincide": true
+    },
+    "zonas": {
+     "cesvi": 2,
+     "croquis": 3,
+     "coinciden": 2,
+     "tercios_comparables": 0,
+     "tercios_coinciden": 0
+    },
+    "secuencia": {
+     "cesvi": 1,
+     "croquis": 0,
+     "primero_coincide": false,
+     "completa_coincide": false
+    },
+    "velocidades": [],
+    "posiciones": {
+     "cesvi": 2,
+     "croquis_las_tiene": 2
+    }
+   },
+   "reconstruccion": {
+    "reconstruida": true,
+    "en_3d": true,
+    "ms": 486
+   },
+   "costo_usd": 0.0196772
+  },
+  {
+   "id": "cesvi-71660b61b8",
+   "escena_valida": true,
+   "comparacion": {
+    "modalidad": {
+     "cesvi": "volcadura",
+     "croquis": "volcadura",
+     "motivo": "un vehículo; la narración describe un vuelco",
+     "coincide": true
+    },
+    "zonas": {
+     "cesvi": 0,
+     "croquis": 1,
+     "coinciden": 0,
+     "tercios_comparables": 0,
+     "tercios_coinciden": 0
+    },
+    "secuencia": {
+     "cesvi": 1,
+     "croquis": 0,
+     "primero_coincide": false,
+     "completa_coincide": false
+    },
+    "velocidades": [],
+    "posiciones": {
+     "cesvi": 1,
+     "croquis_las_tiene": 0
+    }
+   },
+   "reconstruccion": {
+    "reconstruida": true,
+    "en_3d": true,
+    "ms": 22
+   },
+   "costo_usd": 0.0073082
+  },
+  {
+   "id": "cesvi-6c34c6ac79",
+   "escena_valida": true,
+   "comparacion": {
+    "modalidad": {
+     "cesvi": "volcadura",
+     "croquis": "lateral",
+     "motivo": "contacto en un costado",
+     "coincide": false
+    },
+    "zonas": {
+     "cesvi": 2,
+     "croquis": 2,
+     "coinciden": 2,
+     "tercios_comparables": 0,
+     "tercios_coinciden": 0
+    },
+    "secuencia": {
+     "cesvi": 1,
+     "croquis": 1,
+     "primero_coincide": true,
+     "completa_coincide": true
+    },
+    "velocidades": [],
+    "posiciones": {
+     "cesvi": 2,
+     "croquis_las_tiene": 0
+    }
+   },
+   "reconstruccion": {
+    "reconstruida": true,
+    "en_3d": true,
+    "ms": 387
+   },
+   "costo_usd": 0.0210062
+  },
+  {
+   "id": "cesvi-a8e0a03cfd",
+   "escena_valida": true,
+   "comparacion": {
+    "modalidad": {
+     "cesvi": "otra",
+     "croquis": null,
+     "motivo": "un vehículo, sin objeto, vuelco ni salida descritos",
+     "coincide": false
+    },
+    "zonas": {
+     "cesvi": 2,
+     "croquis": 1,
+     "coinciden": 0,
+     "tercios_comparables": 0,
+     "tercios_coinciden": 0
+    },
+    "secuencia": {
+     "cesvi": 2,
+     "croquis": 0,
+     "primero_coincide": false,
+     "completa_coincide": false
+    },
+    "velocidades": [],
+    "posiciones": {
+     "cesvi": 1,
+     "croquis_las_tiene": 1
+    }
+   },
+   "reconstruccion": {
+    "reconstruida": true,
+    "en_3d": true,
+    "ms": 24
+   },
+   "costo_usd": 0.0140422
+  },
+  {
+   "id": "cesvi-e005298ffb",
+   "escena_valida": true,
+   "comparacion": {
+    "modalidad": {
+     "cesvi": "otra",
+     "croquis": "lateral",
+     "motivo": "contacto en un costado",
+     "coincide": false
+    },
+    "zonas": {
+     "cesvi": 2,
+     "croquis": 2,
+     "coinciden": 2,
+     "tercios_comparables": 0,
+     "tercios_coinciden": 0
+    },
+    "secuencia": {
+     "cesvi": 0,
+     "croquis": 1,
+     "primero_coincide": null,
+     "completa_coincide": null
+    },
+    "velocidades": [],
+    "posiciones": {
+     "cesvi": 0,
+     "croquis_las_tiene": 0
+    }
+   },
+   "reconstruccion": {
+    "reconstruida": true,
+    "en_3d": true,
+    "ms": 405
+   },
+   "costo_usd": 0.0136812
+  },
+  {
+   "id": "cesvi-abc31b1de8",
+   "escena_valida": true,
+   "comparacion": {
+    "modalidad": {
+     "cesvi": "alcance",
+     "croquis": "lateral",
+     "motivo": "contacto en un costado",
+     "coincide": false
+    },
+    "zonas": {
+     "cesvi": 2,
+     "croquis": 2,
+     "coinciden": 1,
+     "tercios_comparables": 0,
+     "tercios_coinciden": 0
+    },
+    "secuencia": {
+     "cesvi": 1,
+     "croquis": 1,
+     "primero_coincide": true,
+     "completa_coincide": true
+    },
+    "velocidades": [],
+    "posiciones": {
+     "cesvi": 0,
+     "croquis_las_tiene": 0
+    }
+   },
+   "reconstruccion": {
+    "reconstruida": true,
+    "en_3d": true,
+    "ms": 409
+   },
+   "costo_usd": 0.0153952
+  },
+  {
+   "id": "cesvi-6f70c56733",
+   "escena_valida": true,
+   "comparacion": {
+    "modalidad": {
+     "cesvi": "otra",
+     "croquis": null,
+     "motivo": "un vehículo, sin objeto, vuelco ni salida descritos",
+     "coincide": false
+    },
+    "zonas": {
+     "cesvi": 0,
+     "croquis": 1,
+     "coinciden": 0,
+     "tercios_comparables": 0,
+     "tercios_coinciden": 0
+    },
+    "secuencia": {
+     "cesvi": 0,
+     "croquis": 0,
+     "primero_coincide": null,
+     "completa_coincide": null
+    },
+    "velocidades": [],
+    "posiciones": {
+     "cesvi": 1,
+     "croquis_las_tiene": 1
+    }
+   },
+   "reconstruccion": {
+    "reconstruida": true,
+    "en_3d": true,
+    "ms": 18
+   },
+   "costo_usd": 0.0097402
+  },
+  {
+   "id": "cesvi-def04a2cc3",
+   "escena_valida": true,
+   "comparacion": {
+    "modalidad": {
+     "cesvi": "alcance",
+     "croquis": "alcance",
+     "motivo": "frente contra parte posterior",
+     "coincide": true
+    },
+    "zonas": {
+     "cesvi": 2,
+     "croquis": 2,
+     "coinciden": 2,
+     "tercios_comparables": 0,
+     "tercios_coinciden": 0
+    },
+    "secuencia": {
+     "cesvi": 1,
+     "croquis": 1,
+     "primero_coincide": true,
+     "completa_coincide": true
+    },
+    "velocidades": [],
+    "posiciones": {
+     "cesvi": 0,
+     "croquis_las_tiene": 0
+    }
+   },
+   "reconstruccion": {
+    "reconstruida": true,
+    "en_3d": true,
+    "ms": 375
+   },
+   "costo_usd": 0.0132652
+  },
+  {
+   "id": "cesvi-87b14ec4ba",
+   "escena_valida": true,
+   "comparacion": {
+    "modalidad": {
+     "cesvi": "salida_de_camino",
+     "croquis": "salida_de_camino",
+     "motivo": "un vehículo que sale del camino",
+     "coincide": true
+    },
+    "zonas": {
+     "cesvi": 0,
+     "croquis": 1,
+     "coinciden": 0,
+     "tercios_comparables": 0,
+     "tercios_coinciden": 0
+    },
+    "secuencia": {
+     "cesvi": 2,
+     "croquis": 0,
+     "primero_coincide": false,
+     "completa_coincide": false
+    },
+    "velocidades": [],
+    "posiciones": {
+     "cesvi": 1,
+     "croquis_las_tiene": 1
+    }
+   },
+   "reconstruccion": {
+    "reconstruida": true,
+    "en_3d": true,
+    "ms": 30
+   },
+   "costo_usd": 0.0158182
+  },
+  {
+   "id": "cesvi-31fcbca870",
+   "escena_valida": true,
+   "comparacion": {
+    "modalidad": {
+     "cesvi": "volcadura",
+     "croquis": "volcadura",
+     "motivo": "un vehículo; la narración describe un vuelco",
+     "coincide": true
+    },
+    "zonas": {
+     "cesvi": 0,
+     "croquis": 1,
+     "coinciden": 0,
+     "tercios_comparables": 0,
+     "tercios_coinciden": 0
+    },
+    "secuencia": {
+     "cesvi": 1,
+     "croquis": 0,
+     "primero_coincide": false,
+     "completa_coincide": false
+    },
+    "velocidades": [],
+    "posiciones": {
+     "cesvi": 1,
+     "croquis_las_tiene": 1
+    }
+   },
+   "reconstruccion": {
+    "reconstruida": true,
+    "en_3d": true,
+    "ms": 20
+   },
+   "costo_usd": 0.0095172
+  },
+  {
+   "id": "cesvi-48acbb46c2",
+   "escena_valida": true,
+   "comparacion": {
+    "modalidad": {
+     "cesvi": "salida_de_camino",
+     "croquis": "salida_de_camino",
+     "motivo": "un vehículo que sale del camino",
+     "coincide": true
+    },
+    "zonas": {
+     "cesvi": 2,
+     "croquis": 1,
+     "coinciden": 0,
+     "tercios_comparables": 0,
+     "tercios_coinciden": 0
+    },
+    "secuencia": {
+     "cesvi": 1,
+     "croquis": 0,
+     "primero_coincide": false,
+     "completa_coincide": false
+    },
+    "velocidades": [],
+    "posiciones": {
+     "cesvi": 0,
+     "croquis_las_tiene": 0
+    }
+   },
+   "reconstruccion": {
+    "reconstruida": true,
+    "en_3d": true,
+    "ms": 18
+   },
+   "costo_usd": 0.0110822
+  },
+  {
+   "id": "cesvi-76cbfb506e",
+   "escena_valida": true,
+   "comparacion": {
+    "modalidad": {
+     "cesvi": "objeto_fijo",
+     "croquis": null,
+     "motivo": "un vehículo, sin objeto, vuelco ni salida descritos",
+     "coincide": false
+    },
+    "zonas": {
+     "cesvi": 1,
+     "croquis": 1,
+     "coinciden": 0,
+     "tercios_comparables": 0,
+     "tercios_coinciden": 0
+    },
+    "secuencia": {
+     "cesvi": 1,
+     "croquis": 0,
+     "primero_coincide": false,
+     "completa_coincide": false
+    },
+    "velocidades": [],
+    "posiciones": {
+     "cesvi": 0,
+     "croquis_las_tiene": 0
+    }
+   },
+   "reconstruccion": {
+    "reconstruida": true,
+    "en_3d": true,
+    "ms": 20
+   },
+   "costo_usd": 0.0142292
+  },
+  {
+   "id": "cesvi-5aa5e75aca",
+   "escena_valida": true,
+   "comparacion": {
+    "modalidad": {
+     "cesvi": "alcance",
+     "croquis": "alcance",
+     "motivo": "los dos frentes dañados y uno también por detrás: golpe por detrás y empuje",
+     "coincide": true
+    },
+    "zonas": {
+     "cesvi": 5,
+     "croquis": 2,
+     "coinciden": 2,
+     "tercios_comparables": 0,
+     "tercios_coinciden": 0
+    },
+    "secuencia": {
+     "cesvi": 3,
+     "croquis": 1,
+     "primero_coincide": true,
+     "completa_coincide": false
+    },
+    "velocidades": [],
+    "posiciones": {
+     "cesvi": 1,
+     "croquis_las_tiene": 1
+    }
+   },
+   "reconstruccion": {
+    "reconstruida": true,
+    "en_3d": true,
+    "ms": 442
+   },
+   "costo_usd": 0.0162202
+  },
+  {
+   "id": "cesvi-a514a9a881",
+   "escena_valida": true,
+   "comparacion": {
+    "modalidad": {
+     "cesvi": "frontal",
+     "croquis": "lateral",
+     "motivo": "contacto en un costado",
+     "coincide": false
+    },
+    "zonas": {
+     "cesvi": 2,
+     "croquis": 2,
+     "coinciden": 1,
+     "tercios_comparables": 0,
+     "tercios_coinciden": 0
+    },
+    "secuencia": {
+     "cesvi": 1,
+     "croquis": 1,
+     "primero_coincide": true,
+     "completa_coincide": true
+    },
+    "velocidades": [],
+    "posiciones": {
+     "cesvi": 0,
+     "croquis_las_tiene": 0
+    }
+   },
+   "reconstruccion": {
+    "reconstruida": true,
+    "en_3d": true,
+    "ms": 420
+   },
+   "costo_usd": 0.0128102
+  },
+  {
+   "id": "cesvi-257e1374a0",
+   "escena_valida": true,
+   "comparacion": {
+    "modalidad": {
+     "cesvi": "alcance",
+     "croquis": "lateral",
+     "motivo": "contacto en un costado",
+     "coincide": false
+    },
+    "zonas": {
+     "cesvi": 2,
+     "croquis": 2,
+     "coinciden": 1,
+     "tercios_comparables": 0,
+     "tercios_coinciden": 0
+    },
+    "secuencia": {
+     "cesvi": 0,
+     "croquis": 1,
+     "primero_coincide": null,
+     "completa_coincide": null
+    },
+    "velocidades": [],
+    "posiciones": {
+     "cesvi": 0,
+     "croquis_las_tiene": 0
+    }
+   },
+   "reconstruccion": {
+    "reconstruida": true,
+    "en_3d": true,
+    "ms": 387
+   },
+   "costo_usd": 0.0151832
+  },
+  {
+   "id": "cesvi-04c4022204",
+   "escena_valida": true,
+   "comparacion": {
+    "modalidad": {
+     "cesvi": "objeto_fijo",
+     "croquis": null,
+     "motivo": "un vehículo, sin objeto, vuelco ni salida descritos",
+     "coincide": false
+    },
+    "zonas": {
+     "cesvi": 2,
+     "croquis": 1,
+     "coinciden": 0,
+     "tercios_comparables": 0,
+     "tercios_coinciden": 0
+    },
+    "secuencia": {
+     "cesvi": 2,
+     "croquis": 0,
+     "primero_coincide": false,
+     "completa_coincide": false
+    },
+    "velocidades": [],
+    "posiciones": {
+     "cesvi": 0,
+     "croquis_las_tiene": 0
+    }
+   },
+   "reconstruccion": {
+    "reconstruida": true,
+    "en_3d": true,
+    "ms": 18
+   },
+   "costo_usd": 0.0274582
+  },
+  {
+   "id": "cesvi-ebb5c029a8",
+   "escena_valida": true,
+   "comparacion": {
+    "modalidad": {
+     "cesvi": "objeto_fijo",
+     "croquis": "objeto_fijo",
+     "motivo": "un vehículo contra un objeto fijo",
+     "coincide": true
+    },
+    "zonas": {
+     "cesvi": 1,
+     "croquis": 1,
+     "coinciden": 1,
+     "tercios_comparables": 0,
+     "tercios_coinciden": 0
+    },
+    "secuencia": {
+     "cesvi": 1,
+     "croquis": 1,
+     "primero_coincide": true,
+     "completa_coincide": true
+    },
+    "velocidades": [],
+    "posiciones": {
+     "cesvi": 0,
+     "croquis_las_tiene": 0
+    }
+   },
+   "reconstruccion": {
+    "reconstruida": true,
+    "en_3d": true,
+    "ms": 197
+   },
+   "costo_usd": 0.0077152
+  },
+  {
+   "id": "cesvi-549b436c96",
+   "escena_valida": true,
+   "comparacion": {
+    "modalidad": {
+     "cesvi": "otra",
+     "croquis": null,
+     "motivo": "un vehículo, sin objeto, vuelco ni salida descritos",
+     "coincide": false
+    },
+    "zonas": {
+     "cesvi": 0,
+     "croquis": 1,
+     "coinciden": 0,
+     "tercios_comparables": 0,
+     "tercios_coinciden": 0
+    },
+    "secuencia": {
+     "cesvi": 0,
+     "croquis": 0,
+     "primero_coincide": null,
+     "completa_coincide": null
+    },
+    "velocidades": [],
+    "posiciones": {
+     "cesvi": 0,
+     "croquis_las_tiene": 0
+    }
+   },
+   "reconstruccion": {
+    "reconstruida": true,
+    "en_3d": true,
+    "ms": 23
+   },
+   "costo_usd": 0.0073122
+  },
+  {
+   "id": "cesvi-9ab47f7f37",
+   "escena_valida": true,
+   "comparacion": {
+    "modalidad": {
+     "cesvi": "otra",
+     "croquis": "lateral",
+     "motivo": "contacto en un costado",
+     "coincide": false
+    },
+    "zonas": {
+     "cesvi": 4,
+     "croquis": 3,
+     "coinciden": 2,
+     "tercios_comparables": 0,
+     "tercios_coinciden": 0
+    },
+    "secuencia": {
+     "cesvi": 4,
+     "croquis": 0,
+     "primero_coincide": false,
+     "completa_coincide": false
+    },
+    "velocidades": [],
+    "posiciones": {
+     "cesvi": 1,
+     "croquis_las_tiene": 0
+    }
+   },
+   "reconstruccion": {
+    "reconstruida": true,
+    "en_3d": true,
+    "ms": 826
+   },
+   "costo_usd": 0.0224842
+  },
+  {
+   "id": "cesvi-36340d20a2",
+   "escena_valida": true,
+   "comparacion": {
+    "modalidad": {
+     "cesvi": "otra",
+     "croquis": null,
+     "motivo": "un vehículo, sin objeto, vuelco ni salida descritos",
+     "coincide": false
+    },
+    "zonas": {
+     "cesvi": 0,
+     "croquis": 0,
+     "coinciden": 0,
+     "tercios_comparables": 0,
+     "tercios_coinciden": 0
+    },
+    "secuencia": {
+     "cesvi": 0,
+     "croquis": 0,
+     "primero_coincide": null,
+     "completa_coincide": null
+    },
+    "velocidades": [],
+    "posiciones": {
+     "cesvi": 1,
+     "croquis_las_tiene": 1
+    }
+   },
+   "reconstruccion": {
+    "reconstruida": true,
+    "en_3d": true,
+    "ms": 18
+   },
+   "costo_usd": 0.0042802
+  },
+  {
+   "id": "cesvi-a7570ee749",
+   "escena_valida": true,
+   "comparacion": {
+    "modalidad": {
+     "cesvi": "otra",
+     "croquis": "alcance",
+     "motivo": "frente contra parte posterior",
+     "coincide": false
+    },
+    "zonas": {
+     "cesvi": 2,
+     "croquis": 2,
+     "coinciden": 2,
+     "tercios_comparables": 2,
+     "tercios_coinciden": 2
+    },
+    "secuencia": {
+     "cesvi": 1,
+     "croquis": 1,
+     "primero_coincide": true,
+     "completa_coincide": true
+    },
+    "velocidades": [],
+    "posiciones": {
+     "cesvi": 0,
+     "croquis_las_tiene": 0
+    }
+   },
+   "reconstruccion": {
+    "reconstruida": true,
+    "en_3d": true,
+    "ms": 763
+   },
+   "costo_usd": 0.0131722
+  },
+  {
+   "id": "cesvi-85894938e3",
+   "escena_valida": true,
+   "comparacion": {
+    "modalidad": {
+     "cesvi": "otra",
+     "croquis": null,
+     "motivo": "sin las caras de contacto de los dos vehículos",
+     "coincide": false
+    },
+    "zonas": {
+     "cesvi": 2,
+     "croquis": 1,
+     "coinciden": 1,
+     "tercios_comparables": 0,
+     "tercios_coinciden": 0
+    },
+    "secuencia": {
+     "cesvi": 0,
+     "croquis": 1,
+     "primero_coincide": null,
+     "completa_coincide": null
+    },
+    "velocidades": [],
+    "posiciones": {
+     "cesvi": 0,
+     "croquis_las_tiene": 0
+    }
+   },
+   "reconstruccion": {
+    "reconstruida": true,
+    "en_3d": true,
+    "ms": 379
+   },
+   "costo_usd": 0.0075302
+  },
+  {
+   "id": "cesvi-87cc4e2767",
+   "escena_valida": true,
+   "comparacion": {
+    "modalidad": {
+     "cesvi": "otra",
+     "croquis": "lateral",
+     "motivo": "contacto en un costado",
+     "coincide": false
+    },
+    "zonas": {
+     "cesvi": 2,
+     "croquis": 2,
+     "coinciden": 2,
+     "tercios_comparables": 1,
+     "tercios_coinciden": 1
+    },
+    "secuencia": {
+     "cesvi": 1,
+     "croquis": 1,
+     "primero_coincide": true,
+     "completa_coincide": true
+    },
+    "velocidades": [],
+    "posiciones": {
+     "cesvi": 0,
+     "croquis_las_tiene": 0
+    }
+   },
+   "reconstruccion": {
+    "reconstruida": true,
+    "en_3d": true,
+    "ms": 420
+   },
+   "costo_usd": 0.0111002
+  },
+  {
+   "id": "cesvi-16b9b82f10",
+   "escena_valida": true,
+   "comparacion": {
+    "modalidad": {
+     "cesvi": "otra",
+     "croquis": "lateral",
+     "motivo": "contacto en un costado",
+     "coincide": false
+    },
+    "zonas": {
+     "cesvi": 2,
+     "croquis": 2,
+     "coinciden": 2,
+     "tercios_comparables": 0,
+     "tercios_coinciden": 0
+    },
+    "secuencia": {
+     "cesvi": 1,
+     "croquis": 1,
+     "primero_coincide": true,
+     "completa_coincide": true
+    },
+    "velocidades": [],
+    "posiciones": {
+     "cesvi": 0,
+     "croquis_las_tiene": 0
+    }
+   },
+   "reconstruccion": {
+    "reconstruida": true,
+    "en_3d": true,
+    "ms": 356
+   },
+   "costo_usd": 0.0146822
+  },
+  {
+   "id": "cesvi-2b10fea718",
+   "escena_valida": true,
+   "comparacion": {
+    "modalidad": {
+     "cesvi": "otra",
+     "croquis": "lateral",
+     "motivo": "contacto en un costado",
+     "coincide": false
+    },
+    "zonas": {
+     "cesvi": 2,
+     "croquis": 2,
+     "coinciden": 2,
+     "tercios_comparables": 1,
+     "tercios_coinciden": 1
+    },
+    "secuencia": {
+     "cesvi": 0,
+     "croquis": 1,
+     "primero_coincide": null,
+     "completa_coincide": null
+    },
+    "velocidades": [],
+    "posiciones": {
+     "cesvi": 0,
+     "croquis_las_tiene": 0
+    }
+   },
+   "reconstruccion": {
+    "reconstruida": true,
+    "en_3d": true,
+    "ms": 490
+   },
+   "costo_usd": 0.0094992
+  },
+  {
+   "id": "cesvi-840953e0be",
+   "escena_valida": true,
+   "comparacion": {
+    "modalidad": {
+     "cesvi": "alcance",
+     "croquis": "alcance",
+     "motivo": "frente contra parte posterior",
+     "coincide": true
+    },
+    "zonas": {
+     "cesvi": 2,
+     "croquis": 2,
+     "coinciden": 2,
+     "tercios_comparables": 0,
+     "tercios_coinciden": 0
+    },
+    "secuencia": {
+     "cesvi": 0,
+     "croquis": 1,
+     "primero_coincide": null,
+     "completa_coincide": null
+    },
+    "velocidades": [],
+    "posiciones": {
+     "cesvi": 0,
+     "croquis_las_tiene": 0
+    }
+   },
+   "reconstruccion": {
+    "reconstruida": true,
+    "en_3d": true,
+    "ms": 374
+   },
+   "costo_usd": 0.0133072
+  },
+  {
+   "id": "cesvi-c0bc4df135",
+   "escena_valida": true,
+   "comparacion": {
+    "modalidad": {
+     "cesvi": "alcance",
+     "croquis": "alcance",
+     "motivo": "los dos frentes dañados y uno también por detrás: golpe por detrás y empuje",
+     "coincide": true
+    },
+    "zonas": {
+     "cesvi": 4,
+     "croquis": 3,
+     "coinciden": 3,
+     "tercios_comparables": 0,
+     "tercios_coinciden": 0
+    },
+    "secuencia": {
+     "cesvi": 2,
+     "croquis": 0,
+     "primero_coincide": false,
+     "completa_coincide": false
+    },
+    "velocidades": [],
+    "posiciones": {
+     "cesvi": 0,
+     "croquis_las_tiene": 0
+    }
+   },
+   "reconstruccion": {
+    "reconstruida": true,
+    "en_3d": true,
+    "ms": 600
+   },
+   "costo_usd": 0.0151752
+  },
+  {
+   "id": "cesvi-b8c6174603",
+   "escena_valida": true,
+   "comparacion": {
+    "modalidad": {
+     "cesvi": "otra",
+     "croquis": "alcance",
+     "motivo": "frente contra parte posterior",
+     "coincide": false
+    },
+    "zonas": {
+     "cesvi": 0,
+     "croquis": 2,
+     "coinciden": 0,
+     "tercios_comparables": 0,
+     "tercios_coinciden": 0
+    },
+    "secuencia": {
+     "cesvi": 0,
+     "croquis": 1,
+     "primero_coincide": null,
+     "completa_coincide": null
+    },
+    "velocidades": [],
+    "posiciones": {
+     "cesvi": 0,
+     "croquis_las_tiene": 0
+    }
+   },
+   "reconstruccion": {
+    "reconstruida": true,
+    "en_3d": true,
+    "ms": 407
+   },
+   "costo_usd": 0.0116712
+  },
+  {
+   "id": "cesvi-4ee7f719b9",
+   "escena_valida": true,
+   "comparacion": {
+    "modalidad": {
+     "cesvi": "alcance",
+     "croquis": "lateral",
+     "motivo": "contacto en un costado",
+     "coincide": false
+    },
+    "zonas": {
+     "cesvi": 2,
+     "croquis": 2,
+     "coinciden": 1,
+     "tercios_comparables": 0,
+     "tercios_coinciden": 0
+    },
+    "secuencia": {
+     "cesvi": 2,
+     "croquis": 1,
+     "primero_coincide": true,
+     "completa_coincide": false
+    },
+    "velocidades": [],
+    "posiciones": {
+     "cesvi": 2,
+     "croquis_las_tiene": 0
+    }
+   },
+   "reconstruccion": {
+    "reconstruida": true,
+    "en_3d": true,
+    "ms": 358
+   },
+   "costo_usd": 0.0157392
+  },
+  {
+   "id": "cesvi-0b1f65a976",
+   "escena_valida": true,
+   "comparacion": {
+    "modalidad": {
+     "cesvi": "otra",
+     "croquis": "lateral",
+     "motivo": "contacto en un costado",
+     "coincide": false
+    },
+    "zonas": {
+     "cesvi": 2,
+     "croquis": 4,
+     "coinciden": 1,
+     "tercios_comparables": 0,
+     "tercios_coinciden": 0
+    },
+    "secuencia": {
+     "cesvi": 3,
+     "croquis": 0,
+     "primero_coincide": false,
+     "completa_coincide": false
+    },
+    "velocidades": [],
+    "posiciones": {
+     "cesvi": 0,
+     "croquis_las_tiene": 0
+    }
+   },
+   "reconstruccion": {
+    "reconstruida": true,
+    "en_3d": true,
+    "ms": 3404
+   },
+   "costo_usd": 0.0190432
+  },
+  {
+   "id": "cesvi-2a83292792",
+   "escena_valida": true,
+   "comparacion": {
+    "modalidad": {
+     "cesvi": "alcance",
+     "croquis": "alcance",
+     "motivo": "un vehículo golpeado en su parte posterior",
+     "coincide": true
+    },
+    "zonas": {
+     "cesvi": 5,
+     "croquis": 5,
+     "coinciden": 4,
+     "tercios_comparables": 0,
+     "tercios_coinciden": 0
+    },
+    "secuencia": {
+     "cesvi": 3,
+     "croquis": 0,
+     "primero_coincide": false,
+     "completa_coincide": false
+    },
+    "velocidades": [],
+    "posiciones": {
+     "cesvi": 0,
+     "croquis_las_tiene": 0
+    }
+   },
+   "reconstruccion": {
+    "reconstruida": true,
+    "en_3d": true,
+    "ms": 2367
+   },
+   "costo_usd": 0.0386612
+  },
+  {
+   "id": "cesvi-5242a129c5",
+   "escena_valida": true,
+   "comparacion": {
+    "modalidad": {
+     "cesvi": null,
+     "croquis": "alcance",
+     "motivo": "los dos frentes dañados y uno también por detrás: golpe por detrás y empuje",
+     "coincide": null
+    },
+    "zonas": {
+     "cesvi": 0,
+     "croquis": 2,
+     "coinciden": 0,
+     "tercios_comparables": 0,
+     "tercios_coinciden": 0
+    },
+    "secuencia": {
+     "cesvi": 0,
+     "croquis": 1,
+     "primero_coincide": null,
+     "completa_coincide": null
+    },
+    "velocidades": [],
+    "posiciones": {
+     "cesvi": 0,
+     "croquis_las_tiene": 0
+    }
+   },
+   "reconstruccion": {
+    "reconstruida": true,
+    "en_3d": true,
+    "ms": 602
+   },
+   "costo_usd": 0.0165642
+  },
+  {
+   "id": "cesvi-a29030f88d",
+   "escena_valida": true,
+   "comparacion": {
+    "modalidad": {
+     "cesvi": "otra",
+     "croquis": "lateral",
+     "motivo": "contacto en un costado",
+     "coincide": false
+    },
+    "zonas": {
+     "cesvi": 3,
+     "croquis": 2,
+     "coinciden": 2,
+     "tercios_comparables": 0,
+     "tercios_coinciden": 0
+    },
+    "secuencia": {
+     "cesvi": 1,
+     "croquis": 1,
+     "primero_coincide": true,
+     "completa_coincide": true
+    },
+    "velocidades": [],
+    "posiciones": {
+     "cesvi": 0,
+     "croquis_las_tiene": 0
+    }
+   },
+   "reconstruccion": {
+    "reconstruida": true,
+    "en_3d": true,
+    "ms": 439
+   },
+   "costo_usd": 0.0125242
+  },
+  {
+   "id": "cesvi-6400c99448",
+   "escena_valida": true,
+   "comparacion": {
+    "modalidad": {
+     "cesvi": "alcance",
+     "croquis": "alcance",
+     "motivo": "frente contra parte posterior",
+     "coincide": true
+    },
+    "zonas": {
+     "cesvi": 2,
+     "croquis": 2,
+     "coinciden": 2,
+     "tercios_comparables": 0,
+     "tercios_coinciden": 0
+    },
+    "secuencia": {
+     "cesvi": 2,
+     "croquis": 1,
+     "primero_coincide": true,
+     "completa_coincide": false
+    },
+    "velocidades": [],
+    "posiciones": {
+     "cesvi": 2,
+     "croquis_las_tiene": 2
+    }
+   },
+   "reconstruccion": {
+    "reconstruida": true,
+    "en_3d": true,
+    "ms": 374
+   },
+   "costo_usd": 0.0192742
+  },
+  {
+   "id": "cesvi-8edf93b5c6",
+   "escena_valida": true,
+   "comparacion": {
+    "modalidad": {
+     "cesvi": "otra",
+     "croquis": null,
+     "motivo": "un vehículo, sin objeto, vuelco ni salida descritos",
+     "coincide": false
+    },
+    "zonas": {
+     "cesvi": 2,
+     "croquis": 1,
+     "coinciden": 2,
+     "tercios_comparables": 0,
+     "tercios_coinciden": 0
+    },
+    "secuencia": {
+     "cesvi": 2,
+     "croquis": 0,
+     "primero_coincide": false,
+     "completa_coincide": false
+    },
+    "velocidades": [],
+    "posiciones": {
+     "cesvi": 0,
+     "croquis_las_tiene": 0
+    }
+   },
+   "reconstruccion": {
+    "reconstruida": true,
+    "en_3d": true,
+    "ms": 21
+   },
+   "costo_usd": 0.0088632
+  },
+  {
+   "id": "cesvi-d4283db9c4",
+   "escena_valida": true,
+   "comparacion": {
+    "modalidad": {
+     "cesvi": "alcance",
+     "croquis": "alcance",
+     "motivo": "frente contra parte posterior",
+     "coincide": true
+    },
+    "zonas": {
+     "cesvi": 2,
+     "croquis": 2,
+     "coinciden": 2,
+     "tercios_comparables": 0,
+     "tercios_coinciden": 0
+    },
+    "secuencia": {
+     "cesvi": 1,
+     "croquis": 1,
+     "primero_coincide": true,
+     "completa_coincide": true
+    },
+    "velocidades": [],
+    "posiciones": {
+     "cesvi": 0,
+     "croquis_las_tiene": 0
+    }
+   },
+   "reconstruccion": {
+    "reconstruida": true,
+    "en_3d": true,
+    "ms": 428
+   },
+   "costo_usd": 0.0159642
+  },
+  {
+   "id": "cesvi-af2196f0fc",
+   "escena_valida": true,
+   "comparacion": {
+    "modalidad": {
+     "cesvi": "salida_de_camino",
+     "croquis": "lateral",
+     "motivo": "contacto en un costado",
+     "coincide": false
+    },
+    "zonas": {
+     "cesvi": 1,
+     "croquis": 1,
+     "coinciden": 0,
+     "tercios_comparables": 0,
+     "tercios_coinciden": 0
+    },
+    "secuencia": {
+     "cesvi": 1,
+     "croquis": 1,
+     "primero_coincide": false,
+     "completa_coincide": false
+    },
+    "velocidades": [],
+    "posiciones": {
+     "cesvi": 1,
+     "croquis_las_tiene": 0
+    }
+   },
+   "reconstruccion": {
+    "reconstruida": true,
+    "en_3d": true,
+    "ms": 574
+   },
+   "costo_usd": 0.0107332
+  },
+  {
+   "id": "cesvi-58c038ffdf",
+   "escena_valida": true,
+   "comparacion": {
+    "modalidad": {
+     "cesvi": "alcance",
+     "croquis": null,
+     "motivo": "un vehículo, sin objeto, vuelco ni salida descritos",
+     "coincide": false
+    },
+    "zonas": {
+     "cesvi": 2,
+     "croquis": 1,
+     "coinciden": 0,
+     "tercios_comparables": 0,
+     "tercios_coinciden": 0
+    },
+    "secuencia": {
+     "cesvi": 1,
+     "croquis": 0,
+     "primero_coincide": false,
+     "completa_coincide": false
+    },
+    "velocidades": [],
+    "posiciones": {
+     "cesvi": 0,
+     "croquis_las_tiene": 0
+    }
+   },
+   "reconstruccion": {
+    "reconstruida": true,
+    "en_3d": true,
+    "ms": 23
+   },
+   "costo_usd": 0.0094012
+  },
+  {
+   "id": "cesvi-c4100ea323",
+   "escena_valida": true,
+   "comparacion": {
+    "modalidad": {
+     "cesvi": "alcance",
+     "croquis": "alcance",
+     "motivo": "frente contra parte posterior",
+     "coincide": true
+    },
+    "zonas": {
+     "cesvi": 2,
+     "croquis": 2,
+     "coinciden": 2,
+     "tercios_comparables": 0,
+     "tercios_coinciden": 0
+    },
+    "secuencia": {
+     "cesvi": 0,
+     "croquis": 1,
+     "primero_coincide": null,
+     "completa_coincide": null
+    },
+    "velocidades": [],
+    "posiciones": {
+     "cesvi": 0,
+     "croquis_las_tiene": 0
+    }
+   },
+   "reconstruccion": {
+    "reconstruida": true,
+    "en_3d": true,
+    "ms": 486
+   },
+   "costo_usd": 0.0125142
+  },
+  {
+   "id": "cesvi-52c47a9f37",
+   "escena_valida": true,
+   "comparacion": {
+    "modalidad": {
+     "cesvi": "alcance",
+     "croquis": "alcance",
+     "motivo": "frente contra parte posterior",
+     "coincide": true
+    },
+    "zonas": {
+     "cesvi": 2,
+     "croquis": 2,
+     "coinciden": 2,
+     "tercios_comparables": 0,
+     "tercios_coinciden": 0
+    },
+    "secuencia": {
+     "cesvi": 1,
+     "croquis": 1,
+     "primero_coincide": true,
+     "completa_coincide": true
+    },
+    "velocidades": [],
+    "posiciones": {
+     "cesvi": 0,
+     "croquis_las_tiene": 0
+    }
+   },
+   "reconstruccion": {
+    "reconstruida": true,
+    "en_3d": true,
+    "ms": 824
+   },
+   "costo_usd": 0.0157262
+  },
+  {
+   "id": "cesvi-b9f5a5ca1f",
+   "escena_valida": true,
+   "comparacion": {
+    "modalidad": {
+     "cesvi": "lateral",
+     "croquis": "lateral",
+     "motivo": "contacto en un costado",
+     "coincide": true
+    },
+    "zonas": {
+     "cesvi": 4,
+     "croquis": 3,
+     "coinciden": 1,
+     "tercios_comparables": 0,
+     "tercios_coinciden": 0
+    },
+    "secuencia": {
+     "cesvi": 2,
+     "croquis": 0,
+     "primero_coincide": false,
+     "completa_coincide": false
+    },
+    "velocidades": [],
+    "posiciones": {
+     "cesvi": 0,
+     "croquis_las_tiene": 0
+    }
+   },
+   "reconstruccion": {
+    "reconstruida": true,
+    "en_3d": true,
+    "ms": 654
+   },
+   "costo_usd": 0.0308252
+  },
+  {
+   "id": "cesvi-5cf7e956c6",
+   "escena_valida": true,
+   "comparacion": {
+    "modalidad": {
+     "cesvi": "otra",
+     "croquis": null,
+     "motivo": "un vehículo, sin objeto, vuelco ni salida descritos",
+     "coincide": false
+    },
+    "zonas": {
+     "cesvi": 0,
+     "croquis": 1,
+     "coinciden": 0,
+     "tercios_comparables": 0,
+     "tercios_coinciden": 0
+    },
+    "secuencia": {
+     "cesvi": 0,
+     "croquis": 0,
+     "primero_coincide": null,
+     "completa_coincide": null
+    },
+    "velocidades": [],
+    "posiciones": {
+     "cesvi": 0,
+     "croquis_las_tiene": 0
+    }
+   },
+   "reconstruccion": {
+    "reconstruida": true,
+    "en_3d": true,
+    "ms": 19
+   },
+   "costo_usd": 0.0144492
+  },
+  {
+   "id": "cesvi-d0c7ed3ad8",
+   "escena_valida": true,
+   "comparacion": {
+    "modalidad": {
+     "cesvi": null,
+     "croquis": "alcance",
+     "motivo": "los dos frentes dañados y uno también por detrás: golpe por detrás y empuje",
+     "coincide": null
+    },
+    "zonas": {
+     "cesvi": 0,
+     "croquis": 2,
+     "coinciden": 0,
+     "tercios_comparables": 0,
+     "tercios_coinciden": 0
+    },
+    "secuencia": {
+     "cesvi": 0,
+     "croquis": 1,
+     "primero_coincide": null,
+     "completa_coincide": null
+    },
+    "velocidades": [],
+    "posiciones": {
+     "cesvi": 0,
+     "croquis_las_tiene": 0
+    }
+   },
+   "reconstruccion": {
+    "reconstruida": true,
+    "en_3d": true,
+    "ms": 443
+   },
+   "costo_usd": 0.0143532
+  },
+  {
+   "id": "cesvi-358b91874b",
+   "escena_valida": true,
+   "comparacion": {
+    "modalidad": {
+     "cesvi": "otra",
+     "croquis": "salida_de_camino",
+     "motivo": "un vehículo que sale del camino",
+     "coincide": false
+    },
+    "zonas": {
+     "cesvi": 1,
+     "croquis": 1,
+     "coinciden": 1,
+     "tercios_comparables": 0,
+     "tercios_coinciden": 0
+    },
+    "secuencia": {
+     "cesvi": 1,
+     "croquis": 0,
+     "primero_coincide": false,
+     "completa_coincide": false
+    },
+    "velocidades": [],
+    "posiciones": {
+     "cesvi": 0,
+     "croquis_las_tiene": 0
+    }
+   },
+   "reconstruccion": {
+    "reconstruida": true,
+    "en_3d": true,
+    "ms": 30
+   },
+   "costo_usd": 0.0083572
+  },
+  {
+   "id": "cesvi-7f1fa3c962",
+   "escena_valida": true,
+   "comparacion": {
+    "modalidad": {
+     "cesvi": "lateral",
+     "croquis": "lateral",
+     "motivo": "contacto en un costado",
+     "coincide": true
+    },
+    "zonas": {
+     "cesvi": 2,
+     "croquis": 2,
+     "coinciden": 2,
+     "tercios_comparables": 0,
+     "tercios_coinciden": 0
+    },
+    "secuencia": {
+     "cesvi": 1,
+     "croquis": 1,
+     "primero_coincide": true,
+     "completa_coincide": true
+    },
+    "velocidades": [],
+    "posiciones": {
+     "cesvi": 0,
+     "croquis_las_tiene": 0
+    }
+   },
+   "reconstruccion": {
+    "reconstruida": true,
+    "en_3d": true,
+    "ms": 486
+   },
+   "costo_usd": 0.0149252
+  },
+  {
+   "id": "cesvi-6f007ef54a",
+   "escena_valida": true,
+   "comparacion": {
+    "modalidad": {
+     "cesvi": "salida_de_camino",
+     "croquis": "objeto_fijo",
+     "motivo": "un vehículo contra un objeto fijo",
+     "coincide": false
+    },
+    "zonas": {
+     "cesvi": 2,
+     "croquis": 1,
+     "coinciden": 0,
+     "tercios_comparables": 0,
+     "tercios_coinciden": 0
+    },
+    "secuencia": {
+     "cesvi": 0,
+     "croquis": 1,
+     "primero_coincide": null,
+     "completa_coincide": null
+    },
+    "velocidades": [],
+    "posiciones": {
+     "cesvi": 0,
+     "croquis_las_tiene": 0
+    }
+   },
+   "reconstruccion": {
+    "reconstruida": true,
+    "en_3d": true,
+    "ms": 18
+   },
+   "costo_usd": 0.0175552
+  },
+  {
+   "id": "cesvi-e25e2e4542",
+   "escena_valida": true,
+   "comparacion": {
+    "modalidad": {
+     "cesvi": null,
+     "croquis": "alcance",
+     "motivo": "un vehículo golpeado en su parte posterior",
+     "coincide": null
+    },
+    "zonas": {
+     "cesvi": 1,
+     "croquis": 1,
+     "coinciden": 0,
+     "tercios_comparables": 0,
+     "tercios_coinciden": 0
+    },
+    "secuencia": {
+     "cesvi": 0,
+     "croquis": 0,
+     "primero_coincide": null,
+     "completa_coincide": null
+    },
+    "velocidades": [],
+    "posiciones": {
+     "cesvi": 0,
+     "croquis_las_tiene": 0
+    }
+   },
+   "reconstruccion": {
+    "reconstruida": true,
+    "en_3d": true,
+    "ms": 22
+   },
+   "costo_usd": 0.0069922
+  },
+  {
+   "id": "cesvi-a8bf6a49ac",
+   "escena_valida": true,
+   "comparacion": {
+    "modalidad": {
+     "cesvi": "frontal",
+     "croquis": "lateral",
+     "motivo": "contacto en un costado",
+     "coincide": false
+    },
+    "zonas": {
+     "cesvi": 2,
+     "croquis": 2,
+     "coinciden": 1,
+     "tercios_comparables": 0,
+     "tercios_coinciden": 0
+    },
+    "secuencia": {
+     "cesvi": 1,
+     "croquis": 1,
+     "primero_coincide": true,
+     "completa_coincide": true
+    },
+    "velocidades": [],
+    "posiciones": {
+     "cesvi": 0,
+     "croquis_las_tiene": 0
+    }
+   },
+   "reconstruccion": {
+    "reconstruida": true,
+    "en_3d": true,
+    "ms": 425
+   },
+   "costo_usd": 0.0120622
+  },
+  {
+   "id": "cesvi-928c1a7646",
+   "escena_valida": true,
+   "comparacion": {
+    "modalidad": {
+     "cesvi": "otra",
+     "croquis": "lateral",
+     "motivo": "contacto en un costado",
+     "coincide": false
+    },
+    "zonas": {
+     "cesvi": 2,
+     "croquis": 3,
+     "coinciden": 2,
+     "tercios_comparables": 0,
+     "tercios_coinciden": 0
+    },
+    "secuencia": {
+     "cesvi": 1,
+     "croquis": 0,
+     "primero_coincide": false,
+     "completa_coincide": false
+    },
+    "velocidades": [],
+    "posiciones": {
+     "cesvi": 0,
+     "croquis_las_tiene": 0
+    }
+   },
+   "reconstruccion": {
+    "reconstruida": true,
+    "en_3d": true,
+    "ms": 642
+   },
+   "costo_usd": 0.0132842
+  },
+  {
+   "id": "cesvi-4f918c2927",
+   "escena_valida": true,
+   "comparacion": {
+    "modalidad": {
+     "cesvi": "otra",
+     "croquis": "lateral",
+     "motivo": "contacto en un costado",
+     "coincide": false
+    },
+    "zonas": {
+     "cesvi": 0,
+     "croquis": 2,
+     "coinciden": 0,
+     "tercios_comparables": 0,
+     "tercios_coinciden": 0
+    },
+    "secuencia": {
+     "cesvi": 0,
+     "croquis": 1,
+     "primero_coincide": null,
+     "completa_coincide": null
+    },
+    "velocidades": [],
+    "posiciones": {
+     "cesvi": 0,
+     "croquis_las_tiene": 0
+    }
+   },
+   "reconstruccion": {
+    "reconstruida": true,
+    "en_3d": true,
+    "ms": 519
+   },
+   "costo_usd": 0.0143172
+  },
+  {
+   "id": "cesvi-d4772dda4f",
+   "escena_valida": true,
+   "comparacion": {
+    "modalidad": {
+     "cesvi": "lateral",
+     "croquis": "alcance",
+     "motivo": "los dos frentes dañados y uno también por detrás: golpe por detrás y empuje",
+     "coincide": false
+    },
+    "zonas": {
+     "cesvi": 2,
+     "croquis": 2,
+     "coinciden": 1,
+     "tercios_comparables": 0,
+     "tercios_coinciden": 0
+    },
+    "secuencia": {
+     "cesvi": 1,
+     "croquis": 1,
+     "primero_coincide": true,
+     "completa_coincide": true
+    },
+    "velocidades": [],
+    "posiciones": {
+     "cesvi": 0,
+     "croquis_las_tiene": 0
+    }
+   },
+   "reconstruccion": {
+    "reconstruida": true,
+    "en_3d": true,
+    "ms": 294
+   },
+   "costo_usd": 0.0155092
+  },
+  {
+   "id": "cesvi-f7779cef54",
+   "escena_valida": true,
+   "comparacion": {
+    "modalidad": {
+     "cesvi": "otra",
+     "croquis": "lateral",
+     "motivo": "contacto en un costado",
+     "coincide": false
+    },
+    "zonas": {
+     "cesvi": 2,
+     "croquis": 2,
+     "coinciden": 2,
+     "tercios_comparables": 0,
+     "tercios_coinciden": 0
+    },
+    "secuencia": {
+     "cesvi": 1,
+     "croquis": 1,
+     "primero_coincide": true,
+     "completa_coincide": true
+    },
+    "velocidades": [],
+    "posiciones": {
+     "cesvi": 0,
+     "croquis_las_tiene": 0
+    }
+   },
+   "reconstruccion": {
+    "reconstruida": true,
+    "en_3d": true,
+    "ms": 432
+   },
+   "costo_usd": 0.0100752
+  },
+  {
+   "id": "cesvi-d646b64594",
+   "escena_valida": true,
+   "comparacion": {
+    "modalidad": {
+     "cesvi": "otra",
+     "croquis": "lateral",
+     "motivo": "contacto en un costado",
+     "coincide": false
+    },
+    "zonas": {
+     "cesvi": 0,
+     "croquis": 4,
+     "coinciden": 0,
+     "tercios_comparables": 0,
+     "tercios_coinciden": 0
+    },
+    "secuencia": {
+     "cesvi": 1,
+     "croquis": 0,
+     "primero_coincide": false,
+     "completa_coincide": false
+    },
+    "velocidades": [],
+    "posiciones": {
+     "cesvi": 0,
+     "croquis_las_tiene": 0
+    }
+   },
+   "reconstruccion": {
+    "reconstruida": true,
+    "en_3d": true,
+    "ms": 849
+   },
+   "costo_usd": 0.0209742
+  },
+  {
+   "id": "cesvi-85090bf850",
+   "escena_valida": false,
+   "comparacion": {
+    "modalidad": {
+     "cesvi": "volcadura",
+     "croquis": "lateral",
+     "motivo": "contacto en un costado",
+     "coincide": false
+    },
+    "zonas": {
+     "cesvi": 2,
+     "croquis": 2,
+     "coinciden": 1,
+     "tercios_comparables": 0,
+     "tercios_coinciden": 0
+    },
+    "secuencia": {
+     "cesvi": 2,
+     "croquis": 1,
+     "primero_coincide": false,
+     "completa_coincide": false
+    },
+    "velocidades": [],
+    "posiciones": {
+     "cesvi": 2,
+     "croquis_las_tiene": 2
+    }
+   },
+   "reconstruccion": {
+    "reconstruida": true,
+    "en_3d": true,
+    "ms": 212
+   },
+   "costo_usd": 0.0134952
+  },
+  {
+   "id": "cesvi-6dbc809e80",
+   "escena_valida": true,
+   "comparacion": {
+    "modalidad": {
+     "cesvi": null,
+     "croquis": "alcance",
+     "motivo": "frente contra parte posterior",
+     "coincide": null
+    },
+    "zonas": {
+     "cesvi": 0,
+     "croquis": 2,
+     "coinciden": 0,
+     "tercios_comparables": 0,
+     "tercios_coinciden": 0
+    },
+    "secuencia": {
+     "cesvi": 0,
+     "croquis": 1,
+     "primero_coincide": null,
+     "completa_coincide": null
+    },
+    "velocidades": [],
+    "posiciones": {
+     "cesvi": 0,
+     "croquis_las_tiene": 0
+    }
+   },
+   "reconstruccion": {
+    "reconstruida": true,
+    "en_3d": true,
+    "ms": 382
+   },
+   "costo_usd": 0.0150822
+  },
+  {
+   "id": "cesvi-3bde7bd134",
+   "escena_valida": true,
+   "comparacion": {
+    "modalidad": {
+     "cesvi": "alcance",
+     "croquis": "alcance",
+     "motivo": "frente contra parte posterior",
+     "coincide": true
+    },
+    "zonas": {
+     "cesvi": 2,
+     "croquis": 2,
+     "coinciden": 2,
+     "tercios_comparables": 0,
+     "tercios_coinciden": 0
+    },
+    "secuencia": {
+     "cesvi": 1,
+     "croquis": 1,
+     "primero_coincide": true,
+     "completa_coincide": true
+    },
+    "velocidades": [],
+    "posiciones": {
+     "cesvi": 0,
+     "croquis_las_tiene": 0
+    }
+   },
+   "reconstruccion": {
+    "reconstruida": true,
+    "en_3d": true,
+    "ms": 625
+   },
+   "costo_usd": 0.0122932
+  },
+  {
+   "id": "cesvi-97cb6986e4",
+   "escena_valida": true,
+   "comparacion": {
+    "modalidad": {
+     "cesvi": "alcance",
+     "croquis": "alcance",
+     "motivo": "frente contra parte posterior",
+     "coincide": true
+    },
+    "zonas": {
+     "cesvi": 2,
+     "croquis": 2,
+     "coinciden": 2,
+     "tercios_comparables": 0,
+     "tercios_coinciden": 0
+    },
+    "secuencia": {
+     "cesvi": 1,
+     "croquis": 1,
+     "primero_coincide": true,
+     "completa_coincide": true
+    },
+    "velocidades": [],
+    "posiciones": {
+     "cesvi": 0,
+     "croquis_las_tiene": 0
+    }
+   },
+   "reconstruccion": {
+    "reconstruida": true,
+    "en_3d": true,
+    "ms": 381
+   },
+   "costo_usd": 0.0192822
+  },
+  {
+   "id": "cesvi-e9aed4ab5b",
+   "escena_valida": true,
+   "comparacion": {
+    "modalidad": {
+     "cesvi": "otra",
+     "croquis": "lateral",
+     "motivo": "contacto en un costado",
+     "coincide": false
+    },
+    "zonas": {
+     "cesvi": 4,
+     "croquis": 3,
+     "coinciden": 3,
+     "tercios_comparables": 0,
+     "tercios_coinciden": 0
+    },
+    "secuencia": {
+     "cesvi": 2,
+     "croquis": 0,
+     "primero_coincide": false,
+     "completa_coincide": false
+    },
+    "velocidades": [],
+    "posiciones": {
+     "cesvi": 0,
+     "croquis_las_tiene": 0
+    }
+   },
+   "reconstruccion": {
+    "reconstruida": true,
+    "en_3d": true,
+    "ms": 757
+   },
+   "costo_usd": 0.0143402
+  },
+  {
+   "id": "cesvi-f85560ba6c",
+   "escena_valida": true,
+   "comparacion": {
+    "modalidad": {
+     "cesvi": "alcance",
+     "croquis": null,
+     "motivo": "sin las caras de contacto de los dos vehículos",
+     "coincide": false
+    },
+    "zonas": {
+     "cesvi": 0,
+     "croquis": 0,
+     "coinciden": 0,
+     "tercios_comparables": 0,
+     "tercios_coinciden": 0
+    },
+    "secuencia": {
+     "cesvi": 0,
+     "croquis": 1,
+     "primero_coincide": null,
+     "completa_coincide": null
+    },
+    "velocidades": [],
+    "posiciones": {
+     "cesvi": 0,
+     "croquis_las_tiene": 0
+    }
+   },
+   "reconstruccion": {
+    "reconstruida": true,
+    "en_3d": true,
+    "ms": 389
+   },
+   "costo_usd": 0.0042862
+  },
+  {
+   "id": "cesvi-7a3e5a6055",
+   "escena_valida": true,
+   "comparacion": {
+    "modalidad": {
+     "cesvi": "alcance",
+     "croquis": "alcance",
+     "motivo": "frente contra parte posterior",
+     "coincide": true
+    },
+    "zonas": {
+     "cesvi": 2,
+     "croquis": 2,
+     "coinciden": 2,
+     "tercios_comparables": 0,
+     "tercios_coinciden": 0
+    },
+    "secuencia": {
+     "cesvi": 1,
+     "croquis": 1,
+     "primero_coincide": true,
+     "completa_coincide": true
+    },
+    "velocidades": [],
+    "posiciones": {
+     "cesvi": 0,
+     "croquis_las_tiene": 0
+    }
+   },
+   "reconstruccion": {
+    "reconstruida": true,
+    "en_3d": true,
+    "ms": 435
+   },
+   "costo_usd": 0.0097942
+  },
+  {
+   "id": "cesvi-736d92094b",
+   "escena_valida": true,
+   "comparacion": {
+    "modalidad": {
+     "cesvi": "alcance",
+     "croquis": "alcance",
+     "motivo": "frente contra parte posterior",
+     "coincide": true
+    },
+    "zonas": {
+     "cesvi": 2,
+     "croquis": 3,
+     "coinciden": 2,
+     "tercios_comparables": 0,
+     "tercios_coinciden": 0
+    },
+    "secuencia": {
+     "cesvi": 2,
+     "croquis": 0,
+     "primero_coincide": false,
+     "completa_coincide": false
+    },
+    "velocidades": [],
+    "posiciones": {
+     "cesvi": 0,
+     "croquis_las_tiene": 0
+    }
+   },
+   "reconstruccion": {
+    "reconstruida": true,
+    "en_3d": true,
+    "ms": 617
+   },
+   "costo_usd": 0.0147822
+  },
+  {
+   "id": "cesvi-11fb37efea",
+   "escena_valida": true,
+   "comparacion": {
+    "modalidad": {
+     "cesvi": "objeto_fijo",
+     "croquis": "objeto_fijo",
+     "motivo": "un vehículo contra un objeto fijo",
+     "coincide": true
+    },
+    "zonas": {
+     "cesvi": 1,
+     "croquis": 1,
+     "coinciden": 1,
+     "tercios_comparables": 0,
+     "tercios_coinciden": 0
+    },
+    "secuencia": {
+     "cesvi": 0,
+     "croquis": 1,
+     "primero_coincide": null,
+     "completa_coincide": null
+    },
+    "velocidades": [],
+    "posiciones": {
+     "cesvi": 1,
+     "croquis_las_tiene": 1
+    }
+   },
+   "reconstruccion": {
+    "reconstruida": true,
+    "en_3d": true,
+    "ms": 30
+   },
+   "costo_usd": 0.0114592
+  },
+  {
+   "id": "cesvi-7377724258",
+   "escena_valida": true,
+   "comparacion": {
+    "modalidad": {
+     "cesvi": "otra",
+     "croquis": "objeto_fijo",
+     "motivo": "un vehículo contra un objeto fijo",
+     "coincide": false
+    },
+    "zonas": {
+     "cesvi": 1,
+     "croquis": 1,
+     "coinciden": 1,
+     "tercios_comparables": 0,
+     "tercios_coinciden": 0
+    },
+    "secuencia": {
+     "cesvi": 1,
+     "croquis": 1,
+     "primero_coincide": true,
+     "completa_coincide": true
+    },
+    "velocidades": [],
+    "posiciones": {
+     "cesvi": 0,
+     "croquis_las_tiene": 0
+    }
+   },
+   "reconstruccion": {
+    "reconstruida": true,
+    "en_3d": true,
+    "ms": 203
+   },
+   "costo_usd": 0.0108712
+  },
+  {
+   "id": "cesvi-89637693fe",
+   "escena_valida": true,
+   "comparacion": {
+    "modalidad": {
+     "cesvi": "frontal",
+     "croquis": "frontal",
+     "motivo": "frente contra frente",
+     "coincide": true
+    },
+    "zonas": {
+     "cesvi": 2,
+     "croquis": 2,
+     "coinciden": 2,
+     "tercios_comparables": 0,
+     "tercios_coinciden": 0
+    },
+    "secuencia": {
+     "cesvi": 1,
+     "croquis": 1,
+     "primero_coincide": true,
+     "completa_coincide": true
+    },
+    "velocidades": [],
+    "posiciones": {
+     "cesvi": 0,
+     "croquis_las_tiene": 0
+    }
+   },
+   "reconstruccion": {
+    "reconstruida": true,
+    "en_3d": true,
+    "ms": 423
+   },
+   "costo_usd": 0.0118562
+  },
+  {
+   "id": "cesvi-0eeebbed82",
+   "escena_valida": true,
+   "comparacion": {
+    "modalidad": {
+     "cesvi": null,
+     "croquis": "alcance",
+     "motivo": "frente contra parte posterior",
+     "coincide": null
+    },
+    "zonas": {
+     "cesvi": 0,
+     "croquis": 2,
+     "coinciden": 0,
+     "tercios_comparables": 0,
+     "tercios_coinciden": 0
+    },
+    "secuencia": {
+     "cesvi": 0,
+     "croquis": 1,
+     "primero_coincide": null,
+     "completa_coincide": null
+    },
+    "velocidades": [],
+    "posiciones": {
+     "cesvi": 0,
+     "croquis_las_tiene": 0
+    }
+   },
+   "reconstruccion": {
+    "reconstruida": true,
+    "en_3d": true,
+    "ms": 408
+   },
+   "costo_usd": 0.0129232
+  },
+  {
+   "id": "cesvi-cdaf2821ca",
+   "escena_valida": true,
+   "comparacion": {
+    "modalidad": {
+     "cesvi": "otra",
+     "croquis": "lateral",
+     "motivo": "contacto en un costado",
+     "coincide": false
+    },
+    "zonas": {
+     "cesvi": 0,
+     "croquis": 2,
+     "coinciden": 0,
+     "tercios_comparables": 0,
+     "tercios_coinciden": 0
+    },
+    "secuencia": {
+     "cesvi": 0,
+     "croquis": 1,
+     "primero_coincide": null,
+     "completa_coincide": null
+    },
+    "velocidades": [],
+    "posiciones": {
+     "cesvi": 0,
+     "croquis_las_tiene": 0
+    }
+   },
+   "reconstruccion": {
+    "reconstruida": true,
+    "en_3d": true,
+    "ms": 252
+   },
+   "costo_usd": 0.0140152
+  },
+  {
+   "id": "cesvi-466c13a262",
+   "escena_valida": true,
+   "comparacion": {
+    "modalidad": {
+     "cesvi": null,
+     "croquis": "frontal",
+     "motivo": "frente contra frente",
+     "coincide": null
+    },
+    "zonas": {
+     "cesvi": 0,
+     "croquis": 2,
+     "coinciden": 0,
+     "tercios_comparables": 0,
+     "tercios_coinciden": 0
+    },
+    "secuencia": {
+     "cesvi": 0,
+     "croquis": 1,
+     "primero_coincide": null,
+     "completa_coincide": null
+    },
+    "velocidades": [],
+    "posiciones": {
+     "cesvi": 0,
+     "croquis_las_tiene": 0
+    }
+   },
+   "reconstruccion": {
+    "reconstruida": true,
+    "en_3d": true,
+    "ms": 460
+   },
+   "costo_usd": 0.0119812
+  },
+  {
+   "id": "cesvi-edc4d70d79",
+   "escena_valida": true,
+   "comparacion": {
+    "modalidad": {
+     "cesvi": null,
+     "croquis": null,
+     "motivo": "un vehículo, sin objeto, vuelco ni salida descritos",
+     "coincide": null
+    },
+    "zonas": {
+     "cesvi": 0,
+     "croquis": 1,
+     "coinciden": 0,
+     "tercios_comparables": 0,
+     "tercios_coinciden": 0
+    },
+    "secuencia": {
+     "cesvi": 0,
+     "croquis": 0,
+     "primero_coincide": null,
+     "completa_coincide": null
+    },
+    "velocidades": [],
+    "posiciones": {
+     "cesvi": 0,
+     "croquis_las_tiene": 0
+    }
+   },
+   "reconstruccion": {
+    "reconstruida": true,
+    "en_3d": true,
+    "ms": 27
+   },
+   "costo_usd": 0.0150532
+  },
+  {
+   "id": "cesvi-78d98fd926",
+   "escena_valida": true,
+   "comparacion": {
+    "modalidad": {
+     "cesvi": "volcadura",
+     "croquis": "salida_de_camino",
+     "motivo": "un vehículo que sale del camino",
+     "coincide": false
+    },
+    "zonas": {
+     "cesvi": 0,
+     "croquis": 1,
+     "coinciden": 0,
+     "tercios_comparables": 0,
+     "tercios_coinciden": 0
+    },
+    "secuencia": {
+     "cesvi": 0,
+     "croquis": 0,
+     "primero_coincide": null,
+     "completa_coincide": null
+    },
+    "velocidades": [],
+    "posiciones": {
+     "cesvi": 0,
+     "croquis_las_tiene": 0
+    }
+   },
+   "reconstruccion": {
+    "reconstruida": true,
+    "en_3d": true,
+    "ms": 21
+   },
+   "costo_usd": 0.0063052
+  },
+  {
+   "id": "cesvi-99ae88f8e3",
+   "escena_valida": true,
+   "comparacion": {
+    "modalidad": {
+     "cesvi": "otra",
+     "croquis": "frontal",
+     "motivo": "frente contra frente",
+     "coincide": false
+    },
+    "zonas": {
+     "cesvi": 2,
+     "croquis": 2,
+     "coinciden": 2,
+     "tercios_comparables": 0,
+     "tercios_coinciden": 0
+    },
+    "secuencia": {
+     "cesvi": 1,
+     "croquis": 1,
+     "primero_coincide": true,
+     "completa_coincide": true
+    },
+    "velocidades": [],
+    "posiciones": {
+     "cesvi": 1,
+     "croquis_las_tiene": 0
+    }
+   },
+   "reconstruccion": {
+    "reconstruida": true,
+    "en_3d": true,
+    "ms": 435
+   },
+   "costo_usd": 0.0130352
+  },
+  {
+   "id": "cesvi-5518ddf7bc",
+   "escena_valida": true,
+   "comparacion": {
+    "modalidad": {
+     "cesvi": "objeto_fijo",
+     "croquis": null,
+     "motivo": "un vehículo, sin objeto, vuelco ni salida descritos",
+     "coincide": false
+    },
+    "zonas": {
+     "cesvi": 1,
+     "croquis": 1,
+     "coinciden": 0,
+     "tercios_comparables": 0,
+     "tercios_coinciden": 0
+    },
+    "secuencia": {
+     "cesvi": 1,
+     "croquis": 0,
+     "primero_coincide": false,
+     "completa_coincide": false
+    },
+    "velocidades": [],
+    "posiciones": {
+     "cesvi": 0,
+     "croquis_las_tiene": 0
+    }
+   },
+   "reconstruccion": {
+    "reconstruida": true,
+    "en_3d": true,
+    "ms": 31
+   },
+   "costo_usd": 0.0081402
+  },
+  {
+   "id": "cesvi-f6bafdd302",
+   "escena_valida": true,
+   "comparacion": {
+    "modalidad": {
+     "cesvi": "reversa",
+     "croquis": "alcance",
+     "motivo": "frente contra parte posterior",
+     "coincide": false
+    },
+    "zonas": {
+     "cesvi": 2,
+     "croquis": 2,
+     "coinciden": 2,
+     "tercios_comparables": 0,
+     "tercios_coinciden": 0
+    },
+    "secuencia": {
+     "cesvi": 1,
+     "croquis": 1,
+     "primero_coincide": true,
+     "completa_coincide": true
+    },
+    "velocidades": [],
+    "posiciones": {
+     "cesvi": 0,
+     "croquis_las_tiene": 0
+    }
+   },
+   "reconstruccion": {
+    "reconstruida": true,
+    "en_3d": true,
+    "ms": 473
+   },
+   "costo_usd": 0.0087502
+  },
+  {
+   "id": "cesvi-9cb20db594",
+   "escena_valida": true,
+   "comparacion": {
+    "modalidad": {
+     "cesvi": "otra",
+     "croquis": "frontal",
+     "motivo": "frente contra frente",
+     "coincide": false
+    },
+    "zonas": {
+     "cesvi": 2,
+     "croquis": 2,
+     "coinciden": 2,
+     "tercios_comparables": 0,
+     "tercios_coinciden": 0
+    },
+    "secuencia": {
+     "cesvi": 0,
+     "croquis": 1,
+     "primero_coincide": null,
+     "completa_coincide": null
+    },
+    "velocidades": [],
+    "posiciones": {
+     "cesvi": 0,
+     "croquis_las_tiene": 0
+    }
+   },
+   "reconstruccion": {
+    "reconstruida": true,
+    "en_3d": true,
+    "ms": 435
+   },
+   "costo_usd": 0.0118322
+  },
+  {
+   "id": "cesvi-16853d8646",
+   "escena_valida": false,
+   "comparacion": {
+    "modalidad": {
+     "cesvi": "alcance",
+     "croquis": "alcance",
+     "motivo": "los dos frentes dañados y uno también por detrás: golpe por detrás y empuje",
+     "coincide": true
+    },
+    "zonas": {
+     "cesvi": 3,
+     "croquis": 2,
+     "coinciden": 2,
+     "tercios_comparables": 0,
+     "tercios_coinciden": 0
+    },
+    "secuencia": {
+     "cesvi": 2,
+     "croquis": 1,
+     "primero_coincide": false,
+     "completa_coincide": false
+    },
+    "velocidades": [],
+    "posiciones": {
+     "cesvi": 2,
+     "croquis_las_tiene": 1
+    }
+   },
+   "reconstruccion": {
+    "reconstruida": true,
+    "en_3d": true,
+    "ms": 292
+   },
+   "costo_usd": 0.0166542
+  },
+  {
+   "id": "cesvi-853129f415",
+   "escena_valida": true,
+   "comparacion": {
+    "modalidad": {
+     "cesvi": "volcadura",
+     "croquis": "objeto_fijo",
+     "motivo": "un vehículo contra un objeto fijo",
+     "coincide": false
+    },
+    "zonas": {
+     "cesvi": 1,
+     "croquis": 1,
+     "coinciden": 1,
+     "tercios_comparables": 0,
+     "tercios_coinciden": 0
+    },
+    "secuencia": {
+     "cesvi": 2,
+     "croquis": 1,
+     "primero_coincide": true,
+     "completa_coincide": false
+    },
+    "velocidades": [],
+    "posiciones": {
+     "cesvi": 1,
+     "croquis_las_tiene": 0
+    }
+   },
+   "reconstruccion": {
+    "reconstruida": true,
+    "en_3d": true,
+    "ms": 208
+   },
+   "costo_usd": 0.0103782
+  },
+  {
+   "id": "cesvi-3481483d69",
+   "escena_valida": true,
+   "comparacion": {
+    "modalidad": {
+     "cesvi": "alcance",
+     "croquis": "alcance",
+     "motivo": "frente contra parte posterior",
+     "coincide": true
+    },
+    "zonas": {
+     "cesvi": 2,
+     "croquis": 2,
+     "coinciden": 2,
+     "tercios_comparables": 0,
+     "tercios_coinciden": 0
+    },
+    "secuencia": {
+     "cesvi": 1,
+     "croquis": 1,
+     "primero_coincide": true,
+     "completa_coincide": true
+    },
+    "velocidades": [],
+    "posiciones": {
+     "cesvi": 0,
+     "croquis_las_tiene": 0
+    }
+   },
+   "reconstruccion": {
+    "reconstruida": true,
+    "en_3d": true,
+    "ms": 541
+   },
+   "costo_usd": 0.0098052
+  },
+  {
+   "id": "cesvi-e6067d3d1b",
+   "escena_valida": true,
+   "comparacion": {
+    "modalidad": {
+     "cesvi": "alcance",
+     "croquis": null,
+     "motivo": "un vehículo, sin objeto, vuelco ni salida descritos",
+     "coincide": false
+    },
+    "zonas": {
+     "cesvi": 2,
+     "croquis": 1,
+     "coinciden": 1,
+     "tercios_comparables": 0,
+     "tercios_coinciden": 0
+    },
+    "secuencia": {
+     "cesvi": 0,
+     "croquis": 0,
+     "primero_coincide": null,
+     "completa_coincide": null
+    },
+    "velocidades": [
+     {
+      "vehiculo": "V1",
+      "cesvi_kmh": 49.9,
+      "que": "velocidad de impacto en la parte frontal, por energía de deformación",
+      "croquis_kmh": null,
+      "error_kmh": null,
+      "error_pct": null
+     }
+    ],
+    "posiciones": {
+     "cesvi": 0,
+     "croquis_las_tiene": 0
+    }
+   },
+   "reconstruccion": {
+    "reconstruida": true,
+    "en_3d": true,
+    "ms": 28
+   },
+   "costo_usd": 0.0119602
+  },
+  {
+   "id": "cesvi-de7323cf1c",
+   "escena_valida": true,
+   "comparacion": {
+    "modalidad": {
+     "cesvi": "alcance",
+     "croquis": "alcance",
+     "motivo": "frente contra parte posterior",
+     "coincide": true
+    },
+    "zonas": {
+     "cesvi": 2,
+     "croquis": 2,
+     "coinciden": 2,
+     "tercios_comparables": 0,
+     "tercios_coinciden": 0
+    },
+    "secuencia": {
+     "cesvi": 0,
+     "croquis": 1,
+     "primero_coincide": null,
+     "completa_coincide": null
+    },
+    "velocidades": [],
+    "posiciones": {
+     "cesvi": 0,
+     "croquis_las_tiene": 0
+    }
+   },
+   "reconstruccion": {
+    "reconstruida": true,
+    "en_3d": true,
+    "ms": 702
+   },
+   "costo_usd": 0.0106532
+  },
+  {
+   "id": "cesvi-16c23ff0f7",
+   "escena_valida": true,
+   "comparacion": {
+    "modalidad": {
+     "cesvi": "reversa",
+     "croquis": null,
+     "motivo": "caras posterior y posterior: sin regla",
+     "coincide": false
+    },
+    "zonas": {
+     "cesvi": 2,
+     "croquis": 2,
+     "coinciden": 2,
+     "tercios_comparables": 0,
+     "tercios_coinciden": 0
+    },
+    "secuencia": {
+     "cesvi": 1,
+     "croquis": 1,
+     "primero_coincide": true,
+     "completa_coincide": true
+    },
+    "velocidades": [],
+    "posiciones": {
+     "cesvi": 0,
+     "croquis_las_tiene": 0
+    }
+   },
+   "reconstruccion": {
+    "reconstruida": true,
+    "en_3d": true,
+    "ms": 432
+   },
+   "costo_usd": 0.0172532
+  },
+  {
+   "id": "cesvi-e984ff56d3",
+   "escena_valida": true,
+   "comparacion": {
+    "modalidad": {
+     "cesvi": "objeto_fijo",
+     "croquis": "objeto_fijo",
+     "motivo": "un vehículo contra un objeto fijo",
+     "coincide": true
+    },
+    "zonas": {
+     "cesvi": 1,
+     "croquis": 1,
+     "coinciden": 1,
+     "tercios_comparables": 0,
+     "tercios_coinciden": 0
+    },
+    "secuencia": {
+     "cesvi": 1,
+     "croquis": 1,
+     "primero_coincide": true,
+     "completa_coincide": true
+    },
+    "velocidades": [],
+    "posiciones": {
+     "cesvi": 0,
+     "croquis_las_tiene": 0
+    }
+   },
+   "reconstruccion": {
+    "reconstruida": true,
+    "en_3d": true,
+    "ms": 232
+   },
+   "costo_usd": 0.0105162
+  },
+  {
+   "id": "cesvi-818c2eb6d6",
+   "escena_valida": true,
+   "comparacion": {
+    "modalidad": {
+     "cesvi": "alcance",
+     "croquis": "alcance",
+     "motivo": "los dos frentes dañados y uno también por detrás: golpe por detrás y empuje",
+     "coincide": true
+    },
+    "zonas": {
+     "cesvi": 4,
+     "croquis": 3,
+     "coinciden": 3,
+     "tercios_comparables": 0,
+     "tercios_coinciden": 0
+    },
+    "secuencia": {
+     "cesvi": 2,
+     "croquis": 0,
+     "primero_coincide": false,
+     "completa_coincide": false
+    },
+    "velocidades": [],
+    "posiciones": {
+     "cesvi": 0,
+     "croquis_las_tiene": 0
+    }
+   },
+   "reconstruccion": {
+    "reconstruida": true,
+    "en_3d": true,
+    "ms": 584
+   },
+   "costo_usd": 0.0154502
+  },
+  {
+   "id": "cesvi-30fa1926dc",
+   "escena_valida": true,
+   "comparacion": {
+    "modalidad": {
+     "cesvi": "otra",
+     "croquis": "lateral",
+     "motivo": "contacto en un costado",
+     "coincide": false
+    },
+    "zonas": {
+     "cesvi": 0,
+     "croquis": 2,
+     "coinciden": 0,
+     "tercios_comparables": 0,
+     "tercios_coinciden": 0
+    },
+    "secuencia": {
+     "cesvi": 0,
+     "croquis": 1,
+     "primero_coincide": null,
+     "completa_coincide": null
+    },
+    "velocidades": [],
+    "posiciones": {
+     "cesvi": 0,
+     "croquis_las_tiene": 0
+    }
+   },
+   "reconstruccion": {
+    "reconstruida": true,
+    "en_3d": true,
+    "ms": 463
+   },
+   "costo_usd": 0.0120712
+  },
+  {
+   "id": "cesvi-e53c722cc2",
+   "escena_valida": true,
+   "comparacion": {
+    "modalidad": {
+     "cesvi": "otra",
+     "croquis": "frontal",
+     "motivo": "frente contra frente",
+     "coincide": false
+    },
+    "zonas": {
+     "cesvi": 4,
+     "croquis": 3,
+     "coinciden": 3,
+     "tercios_comparables": 0,
+     "tercios_coinciden": 0
+    },
+    "secuencia": {
+     "cesvi": 2,
+     "croquis": 0,
+     "primero_coincide": false,
+     "completa_coincide": false
+    },
+    "velocidades": [],
+    "posiciones": {
+     "cesvi": 0,
+     "croquis_las_tiene": 0
+    }
+   },
+   "reconstruccion": {
+    "reconstruida": true,
+    "en_3d": true,
+    "ms": 612
+   },
+   "costo_usd": 0.0127222
+  },
+  {
+   "id": "cesvi-5db0896348",
+   "escena_valida": true,
+   "comparacion": {
+    "modalidad": {
+     "cesvi": "salida_de_camino",
+     "croquis": null,
+     "motivo": "caras techo y lateral_derecho: sin regla",
+     "coincide": false
+    },
+    "zonas": {
+     "cesvi": 0,
+     "croquis": 2,
+     "coinciden": 0,
+     "tercios_comparables": 0,
+     "tercios_coinciden": 0
+    },
+    "secuencia": {
+     "cesvi": 2,
+     "croquis": 1,
+     "primero_coincide": false,
+     "completa_coincide": false
+    },
+    "velocidades": [
+     {
+      "vehiculo": "V1",
+      "cesvi_kmh": 122.68,
+      "que": "velocidad mínima de circulación de la configuración T3S2 al salir del camino, por energía cinética y disipada en el desplazamiento",
+      "croquis_kmh": null,
+      "error_kmh": null,
+      "error_pct": null
+     },
+     {
+      "vehiculo": "V2",
+      "cesvi_kmh": 70,
+      "que": "velocidad máxima reglamentaria supuesta para determinar la energía cinética",
+      "croquis_kmh": null,
+      "error_kmh": null,
+      "error_pct": null
+     }
+    ],
+    "posiciones": {
+     "cesvi": 2,
+     "croquis_las_tiene": 2
+    }
+   },
+   "reconstruccion": {
+    "reconstruida": true,
+    "en_3d": true,
+    "ms": 592
+   },
+   "costo_usd": 0.0113812
+  },
+  {
+   "id": "cesvi-c3af05ad39",
+   "escena_valida": true,
+   "comparacion": {
+    "modalidad": {
+     "cesvi": "lateral",
+     "croquis": "alcance",
+     "motivo": "frente contra parte posterior",
+     "coincide": false
+    },
+    "zonas": {
+     "cesvi": 2,
+     "croquis": 2,
+     "coinciden": 1,
+     "tercios_comparables": 0,
+     "tercios_coinciden": 0
+    },
+    "secuencia": {
+     "cesvi": 1,
+     "croquis": 1,
+     "primero_coincide": true,
+     "completa_coincide": true
+    },
+    "velocidades": [],
+    "posiciones": {
+     "cesvi": 0,
+     "croquis_las_tiene": 0
+    }
+   },
+   "reconstruccion": {
+    "reconstruida": true,
+    "en_3d": true,
+    "ms": 588
+   },
+   "costo_usd": 0.0217312
+  },
+  {
+   "id": "cesvi-f290a77272",
+   "escena_valida": true,
+   "comparacion": {
+    "modalidad": {
+     "cesvi": "otra",
+     "croquis": "alcance",
+     "motivo": "los dos frentes dañados y uno también por detrás: golpe por detrás y empuje",
+     "coincide": false
+    },
+    "zonas": {
+     "cesvi": 2,
+     "croquis": 2,
+     "coinciden": 1,
+     "tercios_comparables": 0,
+     "tercios_coinciden": 0
+    },
+    "secuencia": {
+     "cesvi": 1,
+     "croquis": 1,
+     "primero_coincide": true,
+     "completa_coincide": true
+    },
+    "velocidades": [],
+    "posiciones": {
+     "cesvi": 0,
+     "croquis_las_tiene": 0
+    }
+   },
+   "reconstruccion": {
+    "reconstruida": true,
+    "en_3d": true,
+    "ms": 589
+   },
+   "costo_usd": 0.0136362
+  },
+  {
+   "id": "cesvi-65daf4b688",
+   "escena_valida": true,
+   "comparacion": {
+    "modalidad": {
+     "cesvi": "lateral",
+     "croquis": "lateral",
+     "motivo": "contacto en un costado",
+     "coincide": true
+    },
+    "zonas": {
+     "cesvi": 2,
+     "croquis": 2,
+     "coinciden": 2,
+     "tercios_comparables": 0,
+     "tercios_coinciden": 0
+    },
+    "secuencia": {
+     "cesvi": 1,
+     "croquis": 1,
+     "primero_coincide": true,
+     "completa_coincide": true
+    },
+    "velocidades": [],
+    "posiciones": {
+     "cesvi": 0,
+     "croquis_las_tiene": 0
+    }
+   },
+   "reconstruccion": {
+    "reconstruida": true,
+    "en_3d": true,
+    "ms": 389
+   },
+   "costo_usd": 0.0117192
+  },
+  {
+   "id": "cesvi-9b2fc2ffc7",
+   "escena_valida": true,
+   "comparacion": {
+    "modalidad": {
+     "cesvi": "otra",
+     "croquis": "alcance",
+     "motivo": "los dos frentes dañados y uno también por detrás: golpe por detrás y empuje",
+     "coincide": false
+    },
+    "zonas": {
+     "cesvi": 1,
+     "croquis": 2,
+     "coinciden": 1,
+     "tercios_comparables": 0,
+     "tercios_coinciden": 0
+    },
+    "secuencia": {
+     "cesvi": 1,
+     "croquis": 1,
+     "primero_coincide": false,
+     "completa_coincide": false
+    },
+    "velocidades": [],
+    "posiciones": {
+     "cesvi": 0,
+     "croquis_las_tiene": 0
+    }
+   },
+   "reconstruccion": {
+    "reconstruida": true,
+    "en_3d": true,
+    "ms": 507
+   },
+   "costo_usd": 0.0138712
+  },
+  {
+   "id": "cesvi-ba1949532f",
+   "escena_valida": true,
+   "comparacion": {
+    "modalidad": {
+     "cesvi": "otra",
+     "croquis": "lateral",
+     "motivo": "contacto en un costado",
+     "coincide": false
+    },
+    "zonas": {
+     "cesvi": 0,
+     "croquis": 2,
+     "coinciden": 0,
+     "tercios_comparables": 0,
+     "tercios_coinciden": 0
+    },
+    "secuencia": {
+     "cesvi": 0,
+     "croquis": 1,
+     "primero_coincide": null,
+     "completa_coincide": null
+    },
+    "velocidades": [],
+    "posiciones": {
+     "cesvi": 0,
+     "croquis_las_tiene": 0
+    }
+   },
+   "reconstruccion": {
+    "reconstruida": true,
+    "en_3d": true,
+    "ms": 276
+   },
+   "costo_usd": 0.0118242
+  },
+  {
+   "id": "cesvi-7be5e8a261",
+   "escena_valida": true,
+   "comparacion": {
+    "modalidad": {
+     "cesvi": "lateral",
+     "croquis": "frontal",
+     "motivo": "frente contra frente",
+     "coincide": false
+    },
+    "zonas": {
+     "cesvi": 2,
+     "croquis": 2,
+     "coinciden": 2,
+     "tercios_comparables": 2,
+     "tercios_coinciden": 2
+    },
+    "secuencia": {
+     "cesvi": 1,
+     "croquis": 1,
+     "primero_coincide": true,
+     "completa_coincide": true
+    },
+    "velocidades": [],
+    "posiciones": {
+     "cesvi": 0,
+     "croquis_las_tiene": 0
+    }
+   },
+   "reconstruccion": {
+    "reconstruida": true,
+    "en_3d": true,
+    "ms": 396
+   },
+   "costo_usd": 0.0059462
+  },
+  {
+   "id": "cesvi-316a61cb43",
+   "escena_valida": true,
+   "comparacion": {
+    "modalidad": {
+     "cesvi": "lateral",
+     "croquis": "lateral",
+     "motivo": "contacto en un costado",
+     "coincide": true
+    },
+    "zonas": {
+     "cesvi": 4,
+     "croquis": 3,
+     "coinciden": 3,
+     "tercios_comparables": 0,
+     "tercios_coinciden": 0
+    },
+    "secuencia": {
+     "cesvi": 3,
+     "croquis": 0,
+     "primero_coincide": false,
+     "completa_coincide": false
+    },
+    "velocidades": [],
+    "posiciones": {
+     "cesvi": 0,
+     "croquis_las_tiene": 0
+    }
+   },
+   "reconstruccion": {
+    "reconstruida": true,
+    "en_3d": true,
+    "ms": 804
+   },
+   "costo_usd": 0.0191132
+  },
+  {
+   "id": "cesvi-f9de9836d6",
+   "escena_valida": true,
+   "comparacion": {
+    "modalidad": {
+     "cesvi": "otra",
+     "croquis": "lateral",
+     "motivo": "contacto en un costado",
+     "coincide": false
+    },
+    "zonas": {
+     "cesvi": 2,
+     "croquis": 2,
+     "coinciden": 1,
+     "tercios_comparables": 0,
+     "tercios_coinciden": 0
+    },
+    "secuencia": {
+     "cesvi": 1,
+     "croquis": 1,
+     "primero_coincide": true,
+     "completa_coincide": true
+    },
+    "velocidades": [],
+    "posiciones": {
+     "cesvi": 0,
+     "croquis_las_tiene": 0
+    }
+   },
+   "reconstruccion": {
+    "reconstruida": true,
+    "en_3d": true,
+    "ms": 347
+   },
+   "costo_usd": 0.0117582
+  },
+  {
+   "id": "cesvi-b1ab1b00df",
+   "escena_valida": true,
+   "comparacion": {
+    "modalidad": {
+     "cesvi": "otra",
+     "croquis": "alcance",
+     "motivo": "frente contra parte posterior",
+     "coincide": false
+    },
+    "zonas": {
+     "cesvi": 0,
+     "croquis": 3,
+     "coinciden": 0,
+     "tercios_comparables": 0,
+     "tercios_coinciden": 0
+    },
+    "secuencia": {
+     "cesvi": 0,
+     "croquis": 0,
+     "primero_coincide": null,
+     "completa_coincide": null
+    },
+    "velocidades": [],
+    "posiciones": {
+     "cesvi": 0,
+     "croquis_las_tiene": 0
+    }
+   },
+   "reconstruccion": {
+    "reconstruida": true,
+    "en_3d": true,
+    "ms": 531
+   },
+   "costo_usd": 0.0234502
+  },
+  {
+   "id": "cesvi-5e0f7da79c",
+   "escena_valida": true,
+   "comparacion": {
+    "modalidad": {
+     "cesvi": "salida_de_camino",
+     "croquis": "objeto_fijo",
+     "motivo": "un vehículo contra un objeto fijo",
+     "coincide": false
+    },
+    "zonas": {
+     "cesvi": 0,
+     "croquis": 1,
+     "coinciden": 0,
+     "tercios_comparables": 0,
+     "tercios_coinciden": 0
+    },
+    "secuencia": {
+     "cesvi": 2,
+     "croquis": 1,
+     "primero_coincide": true,
+     "completa_coincide": false
+    },
+    "velocidades": [],
+    "posiciones": {
+     "cesvi": 0,
+     "croquis_las_tiene": 0
+    }
+   },
+   "reconstruccion": {
+    "reconstruida": true,
+    "en_3d": true,
+    "ms": 158
+   },
+   "costo_usd": 0.0125352
+  },
+  {
+   "id": "cesvi-4055e6fd60",
+   "escena_valida": true,
+   "comparacion": {
+    "modalidad": {
+     "cesvi": "objeto_fijo",
+     "croquis": null,
+     "motivo": "un vehículo, sin objeto, vuelco ni salida descritos",
+     "coincide": false
+    },
+    "zonas": {
+     "cesvi": 1,
+     "croquis": 1,
+     "coinciden": 1,
+     "tercios_comparables": 0,
+     "tercios_coinciden": 0
+    },
+    "secuencia": {
+     "cesvi": 1,
+     "croquis": 0,
+     "primero_coincide": false,
+     "completa_coincide": false
+    },
+    "velocidades": [],
+    "posiciones": {
+     "cesvi": 1,
+     "croquis_las_tiene": 0
+    }
+   },
+   "reconstruccion": {
+    "reconstruida": true,
+    "en_3d": true,
+    "ms": 19
+   },
+   "costo_usd": 0.0102562
+  },
+  {
+   "id": "cesvi-fa403f1905",
+   "escena_valida": true,
+   "comparacion": {
+    "modalidad": {
+     "cesvi": "lateral",
+     "croquis": "lateral",
+     "motivo": "contacto en un costado",
+     "coincide": true
+    },
+    "zonas": {
+     "cesvi": 0,
+     "croquis": 1,
+     "coinciden": 0,
+     "tercios_comparables": 0,
+     "tercios_coinciden": 0
+    },
+    "secuencia": {
+     "cesvi": 0,
+     "croquis": 1,
+     "primero_coincide": null,
+     "completa_coincide": null
+    },
+    "velocidades": [],
+    "posiciones": {
+     "cesvi": 0,
+     "croquis_las_tiene": 0
+    }
+   },
+   "reconstruccion": {
+    "reconstruida": true,
+    "en_3d": true,
+    "ms": 370
+   },
+   "costo_usd": 0.0105772
+  },
+  {
+   "id": "cesvi-c97f0058a8",
+   "escena_valida": true,
+   "comparacion": {
+    "modalidad": {
+     "cesvi": "alcance",
+     "croquis": "alcance",
+     "motivo": "frente contra parte posterior",
+     "coincide": true
+    },
+    "zonas": {
+     "cesvi": 1,
+     "croquis": 2,
+     "coinciden": 1,
+     "tercios_comparables": 0,
+     "tercios_coinciden": 0
+    },
+    "secuencia": {
+     "cesvi": 1,
+     "croquis": 1,
+     "primero_coincide": true,
+     "completa_coincide": true
+    },
+    "velocidades": [],
+    "posiciones": {
+     "cesvi": 0,
+     "croquis_las_tiene": 0
+    }
+   },
+   "reconstruccion": {
+    "reconstruida": true,
+    "en_3d": true,
+    "ms": 459
+   },
+   "costo_usd": 0.0094212
+  },
+  {
+   "id": "cesvi-9babee8d11",
+   "escena_valida": true,
+   "comparacion": {
+    "modalidad": {
+     "cesvi": "frontal",
+     "croquis": "frontal",
+     "motivo": "frente contra frente",
+     "coincide": true
+    },
+    "zonas": {
+     "cesvi": 2,
+     "croquis": 2,
+     "coinciden": 2,
+     "tercios_comparables": 0,
+     "tercios_coinciden": 0
+    },
+    "secuencia": {
+     "cesvi": 2,
+     "croquis": 1,
+     "primero_coincide": true,
+     "completa_coincide": false
+    },
+    "velocidades": [],
+    "posiciones": {
+     "cesvi": 2,
+     "croquis_las_tiene": 0
+    }
+   },
+   "reconstruccion": {
+    "reconstruida": true,
+    "en_3d": true,
+    "ms": 322
+   },
+   "costo_usd": 0.0107892
+  },
+  {
+   "id": "cesvi-17068f5d53",
+   "escena_valida": true,
+   "comparacion": {
+    "modalidad": {
+     "cesvi": "alcance",
+     "croquis": "alcance",
+     "motivo": "un vehículo golpeado en su parte posterior",
+     "coincide": true
+    },
+    "zonas": {
+     "cesvi": 1,
+     "croquis": 1,
+     "coinciden": 1,
+     "tercios_comparables": 0,
+     "tercios_coinciden": 0
+    },
+    "secuencia": {
+     "cesvi": 0,
+     "croquis": 0,
+     "primero_coincide": null,
+     "completa_coincide": null
+    },
+    "velocidades": [],
+    "posiciones": {
+     "cesvi": 0,
+     "croquis_las_tiene": 0
+    }
+   },
+   "reconstruccion": {
+    "reconstruida": true,
+    "en_3d": true,
+    "ms": 19
+   },
+   "costo_usd": 0.0029562
+  },
+  {
+   "id": "cesvi-d84907cf47",
+   "escena_valida": true,
+   "comparacion": {
+    "modalidad": {
+     "cesvi": "otra",
+     "croquis": "lateral",
+     "motivo": "contacto en un costado",
+     "coincide": false
+    },
+    "zonas": {
+     "cesvi": 2,
+     "croquis": 2,
+     "coinciden": 1,
+     "tercios_comparables": 0,
+     "tercios_coinciden": 0
+    },
+    "secuencia": {
+     "cesvi": 2,
+     "croquis": 1,
+     "primero_coincide": true,
+     "completa_coincide": false
+    },
+    "velocidades": [],
+    "posiciones": {
+     "cesvi": 1,
+     "croquis_las_tiene": 1
+    }
+   },
+   "reconstruccion": {
+    "reconstruida": true,
+    "en_3d": true,
+    "ms": 359
+   },
+   "costo_usd": 0.0174192
+  },
+  {
+   "id": "cesvi-c3a461721a",
+   "escena_valida": true,
+   "comparacion": {
+    "modalidad": {
+     "cesvi": "lateral",
+     "croquis": "lateral",
+     "motivo": "contacto en un costado",
+     "coincide": true
+    },
+    "zonas": {
+     "cesvi": 0,
+     "croquis": 2,
+     "coinciden": 0,
+     "tercios_comparables": 0,
+     "tercios_coinciden": 0
+    },
+    "secuencia": {
+     "cesvi": 1,
+     "croquis": 1,
+     "primero_coincide": true,
+     "completa_coincide": true
+    },
+    "velocidades": [],
+    "posiciones": {
+     "cesvi": 0,
+     "croquis_las_tiene": 0
+    }
+   },
+   "reconstruccion": {
+    "reconstruida": true,
+    "en_3d": true,
+    "ms": 405
+   },
+   "costo_usd": 0.0119312
+  },
+  {
+   "id": "cesvi-4a5c51d807",
+   "escena_valida": true,
+   "comparacion": {
+    "modalidad": {
+     "cesvi": "alcance",
+     "croquis": "alcance",
+     "motivo": "frente contra parte posterior",
+     "coincide": true
+    },
+    "zonas": {
+     "cesvi": 2,
+     "croquis": 2,
+     "coinciden": 2,
+     "tercios_comparables": 0,
+     "tercios_coinciden": 0
+    },
+    "secuencia": {
+     "cesvi": 1,
+     "croquis": 1,
+     "primero_coincide": true,
+     "completa_coincide": true
+    },
+    "velocidades": [],
+    "posiciones": {
+     "cesvi": 0,
+     "croquis_las_tiene": 0
+    }
+   },
+   "reconstruccion": {
+    "reconstruida": true,
+    "en_3d": true,
+    "ms": 363
+   },
+   "costo_usd": 0.0122202
+  },
+  {
+   "id": "cesvi-feb7aaa0e1",
+   "escena_valida": true,
+   "comparacion": {
+    "modalidad": {
+     "cesvi": "alcance",
+     "croquis": "alcance",
+     "motivo": "frente contra parte posterior",
+     "coincide": true
+    },
+    "zonas": {
+     "cesvi": 4,
+     "croquis": 3,
+     "coinciden": 3,
+     "tercios_comparables": 0,
+     "tercios_coinciden": 0
+    },
+    "secuencia": {
+     "cesvi": 2,
+     "croquis": 0,
+     "primero_coincide": false,
+     "completa_coincide": false
+    },
+    "velocidades": [],
+    "posiciones": {
+     "cesvi": 0,
+     "croquis_las_tiene": 0
+    }
+   },
+   "reconstruccion": {
+    "reconstruida": true,
+    "en_3d": true,
+    "ms": 508
+   },
+   "costo_usd": 0.0139512
+  },
+  {
+   "id": "cesvi-df473476cf",
+   "escena_valida": true,
+   "comparacion": {
+    "modalidad": {
+     "cesvi": "objeto_fijo",
+     "croquis": "objeto_fijo",
+     "motivo": "un vehículo contra un objeto fijo",
+     "coincide": true
+    },
+    "zonas": {
+     "cesvi": 0,
+     "croquis": 1,
+     "coinciden": 0,
+     "tercios_comparables": 0,
+     "tercios_coinciden": 0
+    },
+    "secuencia": {
+     "cesvi": 0,
+     "croquis": 1,
+     "primero_coincide": null,
+     "completa_coincide": null
+    },
+    "velocidades": [],
+    "posiciones": {
+     "cesvi": 1,
+     "croquis_las_tiene": 1
+    }
+   },
+   "reconstruccion": {
+    "reconstruida": true,
+    "en_3d": true,
+    "ms": 148
+   },
+   "costo_usd": 0.0113082
+  },
+  {
+   "id": "cesvi-17afa381e4",
+   "escena_valida": true,
+   "comparacion": {
+    "modalidad": {
+     "cesvi": "lateral",
+     "croquis": "lateral",
+     "motivo": "contacto en un costado",
+     "coincide": true
+    },
+    "zonas": {
+     "cesvi": 2,
+     "croquis": 3,
+     "coinciden": 1,
+     "tercios_comparables": 0,
+     "tercios_coinciden": 0
+    },
+    "secuencia": {
+     "cesvi": 2,
+     "croquis": 0,
+     "primero_coincide": false,
+     "completa_coincide": false
+    },
+    "velocidades": [],
+    "posiciones": {
+     "cesvi": 0,
+     "croquis_las_tiene": 0
+    }
+   },
+   "reconstruccion": {
+    "reconstruida": true,
+    "en_3d": true,
+    "ms": 499
+   },
+   "costo_usd": 0.0147012
+  },
+  {
+   "id": "cesvi-a4177250d4",
+   "escena_valida": true,
+   "comparacion": {
+    "modalidad": {
+     "cesvi": "reversa",
+     "croquis": "alcance",
+     "motivo": "los dos frentes dañados y uno también por detrás: golpe por detrás y empuje",
+     "coincide": false
+    },
+    "zonas": {
+     "cesvi": 0,
+     "croquis": 2,
+     "coinciden": 0,
+     "tercios_comparables": 0,
+     "tercios_coinciden": 0
+    },
+    "secuencia": {
+     "cesvi": 0,
+     "croquis": 1,
+     "primero_coincide": null,
+     "completa_coincide": null
+    },
+    "velocidades": [],
+    "posiciones": {
+     "cesvi": 0,
+     "croquis_las_tiene": 0
+    }
+   },
+   "reconstruccion": {
+    "reconstruida": true,
+    "en_3d": true,
+    "ms": 383
+   },
+   "costo_usd": 0.0127082
+  },
+  {
+   "id": "cesvi-7fceadfdca",
+   "escena_valida": true,
+   "comparacion": {
+    "modalidad": {
+     "cesvi": "otra",
+     "croquis": null,
+     "motivo": "un vehículo, sin objeto, vuelco ni salida descritos",
+     "coincide": false
+    },
+    "zonas": {
+     "cesvi": 1,
+     "croquis": 1,
+     "coinciden": 1,
+     "tercios_comparables": 0,
+     "tercios_coinciden": 0
+    },
+    "secuencia": {
+     "cesvi": 0,
+     "croquis": 0,
+     "primero_coincide": null,
+     "completa_coincide": null
+    },
+    "velocidades": [],
+    "posiciones": {
+     "cesvi": 0,
+     "croquis_las_tiene": 0
+    }
+   },
+   "reconstruccion": {
+    "reconstruida": true,
+    "en_3d": true,
+    "ms": 18
+   },
+   "costo_usd": 0.0064212
+  },
+  {
+   "id": "cesvi-fb43c646b6",
+   "escena_valida": true,
+   "comparacion": {
+    "modalidad": {
+     "cesvi": "otra",
+     "croquis": "alcance",
+     "motivo": "frente contra parte posterior",
+     "coincide": false
+    },
+    "zonas": {
+     "cesvi": 0,
+     "croquis": 2,
+     "coinciden": 0,
+     "tercios_comparables": 0,
+     "tercios_coinciden": 0
+    },
+    "secuencia": {
+     "cesvi": 0,
+     "croquis": 1,
+     "primero_coincide": null,
+     "completa_coincide": null
+    },
+    "velocidades": [],
+    "posiciones": {
+     "cesvi": 0,
+     "croquis_las_tiene": 0
+    }
+   },
+   "reconstruccion": {
+    "reconstruida": true,
+    "en_3d": true,
+    "ms": 377
+   },
+   "costo_usd": 0.0136782
+  },
+  {
+   "id": "cesvi-8dfd2f1c6f",
+   "escena_valida": true,
+   "comparacion": {
+    "modalidad": {
+     "cesvi": "alcance",
+     "croquis": "alcance",
+     "motivo": "frente contra parte posterior",
+     "coincide": true
+    },
+    "zonas": {
+     "cesvi": 2,
+     "croquis": 2,
+     "coinciden": 2,
+     "tercios_comparables": 0,
+     "tercios_coinciden": 0
+    },
+    "secuencia": {
+     "cesvi": 1,
+     "croquis": 1,
+     "primero_coincide": true,
+     "completa_coincide": true
+    },
+    "velocidades": [],
+    "posiciones": {
+     "cesvi": 0,
+     "croquis_las_tiene": 0
+    }
+   },
+   "reconstruccion": {
+    "reconstruida": true,
+    "en_3d": true,
+    "ms": 304
+   },
+   "costo_usd": 0.0133442
+  },
+  {
+   "id": "cesvi-c6e5335493",
+   "escena_valida": true,
+   "comparacion": {
+    "modalidad": {
+     "cesvi": "otra",
+     "croquis": "alcance",
+     "motivo": "los dos frentes dañados y uno también por detrás: golpe por detrás y empuje",
+     "coincide": false
+    },
+    "zonas": {
+     "cesvi": 2,
+     "croquis": 4,
+     "coinciden": 0,
+     "tercios_comparables": 0,
+     "tercios_coinciden": 0
+    },
+    "secuencia": {
+     "cesvi": 1,
+     "croquis": 0,
+     "primero_coincide": false,
+     "completa_coincide": false
+    },
+    "velocidades": [],
+    "posiciones": {
+     "cesvi": 0,
+     "croquis_las_tiene": 0
+    }
+   },
+   "reconstruccion": {
+    "reconstruida": true,
+    "en_3d": true,
+    "ms": 757
+   },
+   "costo_usd": 0.0193292
+  },
+  {
+   "id": "cesvi-be27388d4a",
+   "escena_valida": true,
+   "comparacion": {
+    "modalidad": {
+     "cesvi": "otra",
+     "croquis": "lateral",
+     "motivo": "contacto en un costado",
+     "coincide": false
+    },
+    "zonas": {
+     "cesvi": 0,
+     "croquis": 2,
+     "coinciden": 0,
+     "tercios_comparables": 0,
+     "tercios_coinciden": 0
+    },
+    "secuencia": {
+     "cesvi": 0,
+     "croquis": 1,
+     "primero_coincide": null,
+     "completa_coincide": null
+    },
+    "velocidades": [],
+    "posiciones": {
+     "cesvi": 0,
+     "croquis_las_tiene": 0
+    }
+   },
+   "reconstruccion": {
+    "reconstruida": true,
+    "en_3d": true,
+    "ms": 389
+   },
+   "costo_usd": 0.0142772
+  },
+  {
+   "id": "cesvi-94c84e00ab",
+   "escena_valida": true,
+   "comparacion": {
+    "modalidad": {
+     "cesvi": "alcance",
+     "croquis": "reversa",
+     "motivo": "parte posterior, y la narración describe una reversa",
+     "coincide": false
+    },
+    "zonas": {
+     "cesvi": 2,
+     "croquis": 2,
+     "coinciden": 2,
+     "tercios_comparables": 2,
+     "tercios_coinciden": 2
+    },
+    "secuencia": {
+     "cesvi": 1,
+     "croquis": 1,
+     "primero_coincide": true,
+     "completa_coincide": true
+    },
+    "velocidades": [],
+    "posiciones": {
+     "cesvi": 0,
+     "croquis_las_tiene": 0
+    }
+   },
+   "reconstruccion": {
+    "reconstruida": true,
+    "en_3d": true,
+    "ms": 484
+   },
+   "costo_usd": 0.0093082
+  },
+  {
+   "id": "cesvi-09828841f1",
+   "escena_valida": true,
+   "comparacion": {
+    "modalidad": {
+     "cesvi": "frontal",
+     "croquis": "frontal",
+     "motivo": "frente contra frente",
+     "coincide": true
+    },
+    "zonas": {
+     "cesvi": 3,
+     "croquis": 2,
+     "coinciden": 2,
+     "tercios_comparables": 0,
+     "tercios_coinciden": 0
+    },
+    "secuencia": {
+     "cesvi": 2,
+     "croquis": 1,
+     "primero_coincide": false,
+     "completa_coincide": false
+    },
+    "velocidades": [],
+    "posiciones": {
+     "cesvi": 0,
+     "croquis_las_tiene": 0
+    }
+   },
+   "reconstruccion": {
+    "reconstruida": true,
+    "en_3d": true,
+    "ms": 298
+   },
+   "costo_usd": 0.0152162
+  },
+  {
+   "id": "cesvi-14b9bd1a4e",
+   "escena_valida": true,
+   "comparacion": {
+    "modalidad": {
+     "cesvi": "volcadura",
+     "croquis": null,
+     "motivo": "un vehículo, sin objeto, vuelco ni salida descritos",
+     "coincide": false
+    },
+    "zonas": {
+     "cesvi": 0,
+     "croquis": 1,
+     "coinciden": 0,
+     "tercios_comparables": 0,
+     "tercios_coinciden": 0
+    },
+    "secuencia": {
+     "cesvi": 1,
+     "croquis": 0,
+     "primero_coincide": false,
+     "completa_coincide": false
+    },
+    "velocidades": [],
+    "posiciones": {
+     "cesvi": 0,
+     "croquis_las_tiene": 0
+    }
+   },
+   "reconstruccion": {
+    "reconstruida": true,
+    "en_3d": true,
+    "ms": 19
+   },
+   "costo_usd": 0.0162872
+  },
+  {
+   "id": "cesvi-d24f648593",
+   "escena_valida": true,
+   "comparacion": {
+    "modalidad": {
+     "cesvi": "objeto_fijo",
+     "croquis": null,
+     "motivo": "un vehículo, sin objeto, vuelco ni salida descritos",
+     "coincide": false
+    },
+    "zonas": {
+     "cesvi": 1,
+     "croquis": 1,
+     "coinciden": 1,
+     "tercios_comparables": 0,
+     "tercios_coinciden": 0
+    },
+    "secuencia": {
+     "cesvi": 0,
+     "croquis": 0,
+     "primero_coincide": null,
+     "completa_coincide": null
+    },
+    "velocidades": [],
+    "posiciones": {
+     "cesvi": 0,
+     "croquis_las_tiene": 0
+    }
+   },
+   "reconstruccion": {
+    "reconstruida": true,
+    "en_3d": true,
+    "ms": 17
+   },
+   "costo_usd": 0.0079522
+  },
+  {
+   "id": "cesvi-bdf8899ada",
+   "escena_valida": false,
+   "comparacion": {
+    "modalidad": {
+     "cesvi": null,
+     "croquis": null,
+     "motivo": "sin las caras de contacto de los dos vehículos",
+     "coincide": null
+    },
+    "zonas": {
+     "cesvi": 0,
+     "croquis": 1,
+     "coinciden": 0,
+     "tercios_comparables": 0,
+     "tercios_coinciden": 0
+    },
+    "secuencia": {
+     "cesvi": 0,
+     "croquis": 1,
+     "primero_coincide": null,
+     "completa_coincide": null
+    },
+    "velocidades": [],
+    "posiciones": {
+     "cesvi": 0,
+     "croquis_las_tiene": 0
+    }
+   },
+   "reconstruccion": {
+    "reconstruida": true,
+    "en_3d": true,
+    "ms": 357
+   },
+   "costo_usd": 0.0092822
+  },
+  {
+   "id": "cesvi-06e4ee9b97",
+   "escena_valida": true,
+   "comparacion": {
+    "modalidad": {
+     "cesvi": "lateral",
+     "croquis": "lateral",
+     "motivo": "contacto en un costado",
+     "coincide": true
+    },
+    "zonas": {
+     "cesvi": 2,
+     "croquis": 2,
+     "coinciden": 1,
+     "tercios_comparables": 0,
+     "tercios_coinciden": 0
+    },
+    "secuencia": {
+     "cesvi": 1,
+     "croquis": 1,
+     "primero_coincide": true,
+     "completa_coincide": true
+    },
+    "velocidades": [],
+    "posiciones": {
+     "cesvi": 0,
+     "croquis_las_tiene": 0
+    }
+   },
+   "reconstruccion": {
+    "reconstruida": true,
+    "en_3d": true,
+    "ms": 404
+   },
+   "costo_usd": 0.0174632
+  },
+  {
+   "id": "cesvi-24f644a44f",
+   "escena_valida": true,
+   "comparacion": {
+    "modalidad": {
+     "cesvi": "lateral",
+     "croquis": "lateral",
+     "motivo": "contacto en un costado",
+     "coincide": true
+    },
+    "zonas": {
+     "cesvi": 1,
+     "croquis": 1,
+     "coinciden": 1,
+     "tercios_comparables": 0,
+     "tercios_coinciden": 0
+    },
+    "secuencia": {
+     "cesvi": 0,
+     "croquis": 1,
+     "primero_coincide": null,
+     "completa_coincide": null
+    },
+    "velocidades": [],
+    "posiciones": {
+     "cesvi": 0,
+     "croquis_las_tiene": 0
+    }
+   },
+   "reconstruccion": {
+    "reconstruida": true,
+    "en_3d": true,
+    "ms": 514
+   },
+   "costo_usd": 0.0086882
+  },
+  {
+   "id": "cesvi-eb4d9c1c4e",
+   "escena_valida": true,
+   "comparacion": {
+    "modalidad": {
+     "cesvi": null,
+     "croquis": null,
+     "motivo": "un vehículo, sin objeto, vuelco ni salida descritos",
+     "coincide": null
+    },
+    "zonas": {
+     "cesvi": 0,
+     "croquis": 1,
+     "coinciden": 0,
+     "tercios_comparables": 0,
+     "tercios_coinciden": 0
+    },
+    "secuencia": {
+     "cesvi": 0,
+     "croquis": 0,
+     "primero_coincide": null,
+     "completa_coincide": null
+    },
+    "velocidades": [],
+    "posiciones": {
+     "cesvi": 0,
+     "croquis_las_tiene": 0
+    }
+   },
+   "reconstruccion": {
+    "reconstruida": true,
+    "en_3d": true,
+    "ms": 20
+   },
+   "costo_usd": 0.0100172
+  },
+  {
+   "id": "cesvi-d4f9c1a411",
+   "escena_valida": true,
+   "comparacion": {
+    "modalidad": {
+     "cesvi": "salida_de_camino",
+     "croquis": "objeto_fijo",
+     "motivo": "un vehículo contra un objeto fijo",
+     "coincide": false
+    },
+    "zonas": {
+     "cesvi": 1,
+     "croquis": 1,
+     "coinciden": 0,
+     "tercios_comparables": 0,
+     "tercios_coinciden": 0
+    },
+    "secuencia": {
+     "cesvi": 2,
+     "croquis": 1,
+     "primero_coincide": true,
+     "completa_coincide": false
+    },
+    "velocidades": [],
+    "posiciones": {
+     "cesvi": 1,
+     "croquis_las_tiene": 0
+    }
+   },
+   "reconstruccion": {
+    "reconstruida": true,
+    "en_3d": true,
+    "ms": 157
+   },
+   "costo_usd": 0.0106072
+  },
+  {
+   "id": "cesvi-5becbd0fbb",
+   "escena_valida": true,
+   "comparacion": {
+    "modalidad": {
+     "cesvi": "alcance",
+     "croquis": null,
+     "motivo": "sin las caras de contacto de los dos vehículos",
+     "coincide": false
+    },
+    "zonas": {
+     "cesvi": 2,
+     "croquis": 2,
+     "coinciden": 2,
+     "tercios_comparables": 0,
+     "tercios_coinciden": 0
+    },
+    "secuencia": {
+     "cesvi": 1,
+     "croquis": 0,
+     "primero_coincide": false,
+     "completa_coincide": false
+    },
+    "velocidades": [],
+    "posiciones": {
+     "cesvi": 0,
+     "croquis_las_tiene": 0
+    }
+   },
+   "reconstruccion": {
+    "reconstruida": true,
+    "en_3d": true,
+    "ms": 494
+   },
+   "costo_usd": 0.0146362
+  },
+  {
+   "id": "cesvi-4f39800f79",
+   "escena_valida": true,
+   "comparacion": {
+    "modalidad": {
+     "cesvi": "reversa",
+     "croquis": null,
+     "motivo": "un vehículo, sin objeto, vuelco ni salida descritos",
+     "coincide": false
+    },
+    "zonas": {
+     "cesvi": 1,
+     "croquis": 1,
+     "coinciden": 1,
+     "tercios_comparables": 0,
+     "tercios_coinciden": 0
+    },
+    "secuencia": {
+     "cesvi": 0,
+     "croquis": 0,
+     "primero_coincide": null,
+     "completa_coincide": null
+    },
+    "velocidades": [],
+    "posiciones": {
+     "cesvi": 0,
+     "croquis_las_tiene": 0
+    }
+   },
+   "reconstruccion": {
+    "reconstruida": true,
+    "en_3d": true,
+    "ms": 18
+   },
+   "costo_usd": 0.0058942
+  },
+  {
+   "id": "cesvi-6ca24dcfce",
+   "escena_valida": true,
+   "comparacion": {
+    "modalidad": {
+     "cesvi": "alcance",
+     "croquis": "alcance",
+     "motivo": "frente contra parte posterior",
+     "coincide": true
+    },
+    "zonas": {
+     "cesvi": 2,
+     "croquis": 2,
+     "coinciden": 2,
+     "tercios_comparables": 1,
+     "tercios_coinciden": 1
+    },
+    "secuencia": {
+     "cesvi": 1,
+     "croquis": 1,
+     "primero_coincide": true,
+     "completa_coincide": true
+    },
+    "velocidades": [],
+    "posiciones": {
+     "cesvi": 0,
+     "croquis_las_tiene": 0
+    }
+   },
+   "reconstruccion": {
+    "reconstruida": true,
+    "en_3d": true,
+    "ms": 458
+   },
+   "costo_usd": 0.0117932
+  },
+  {
+   "id": "cesvi-47c32388f7",
+   "escena_valida": true,
+   "comparacion": {
+    "modalidad": {
+     "cesvi": "otra",
+     "croquis": null,
+     "motivo": "un vehículo, sin objeto, vuelco ni salida descritos",
+     "coincide": false
+    },
+    "zonas": {
+     "cesvi": 0,
+     "croquis": 0,
+     "coinciden": 0,
+     "tercios_comparables": 0,
+     "tercios_coinciden": 0
+    },
+    "secuencia": {
+     "cesvi": 0,
+     "croquis": 0,
+     "primero_coincide": null,
+     "completa_coincide": null
+    },
+    "velocidades": [],
+    "posiciones": {
+     "cesvi": 0,
+     "croquis_las_tiene": 0
+    }
+   },
+   "reconstruccion": {
+    "reconstruida": true,
+    "en_3d": true,
+    "ms": 17
+   },
+   "costo_usd": 0.0026302
+  },
+  {
+   "id": "cesvi-5f9276cffe",
+   "escena_valida": true,
+   "comparacion": {
+    "modalidad": {
+     "cesvi": "salida_de_camino",
+     "croquis": "objeto_fijo",
+     "motivo": "un vehículo contra un objeto fijo",
+     "coincide": false
+    },
+    "zonas": {
+     "cesvi": 1,
+     "croquis": 1,
+     "coinciden": 0,
+     "tercios_comparables": 0,
+     "tercios_coinciden": 0
+    },
+    "secuencia": {
+     "cesvi": 1,
+     "croquis": 1,
+     "primero_coincide": true,
+     "completa_coincide": true
+    },
+    "velocidades": [],
+    "posiciones": {
+     "cesvi": 1,
+     "croquis_las_tiene": 1
+    }
+   },
+   "reconstruccion": {
+    "reconstruida": true,
+    "en_3d": true,
+    "ms": 154
+   },
+   "costo_usd": 0.0145832
+  },
+  {
+   "id": "cesvi-76db6d8acd",
+   "escena_valida": true,
+   "comparacion": {
+    "modalidad": {
+     "cesvi": "reversa",
+     "croquis": "alcance",
+     "motivo": "frente contra parte posterior",
+     "coincide": false
+    },
+    "zonas": {
+     "cesvi": 3,
+     "croquis": 2,
+     "coinciden": 2,
+     "tercios_comparables": 0,
+     "tercios_coinciden": 0
+    },
+    "secuencia": {
+     "cesvi": 1,
+     "croquis": 1,
+     "primero_coincide": true,
+     "completa_coincide": true
+    },
+    "velocidades": [],
+    "posiciones": {
+     "cesvi": 0,
+     "croquis_las_tiene": 0
+    }
+   },
+   "reconstruccion": {
+    "reconstruida": true,
+    "en_3d": true,
+    "ms": 436
+   },
+   "costo_usd": 0.0118392
+  },
+  {
+   "id": "cesvi-8324c1892b",
+   "escena_valida": true,
+   "comparacion": {
+    "modalidad": {
+     "cesvi": "otra",
+     "croquis": "lateral",
+     "motivo": "contacto en un costado",
+     "coincide": false
+    },
+    "zonas": {
+     "cesvi": 3,
+     "croquis": 2,
+     "coinciden": 2,
+     "tercios_comparables": 0,
+     "tercios_coinciden": 0
+    },
+    "secuencia": {
+     "cesvi": 3,
+     "croquis": 1,
+     "primero_coincide": true,
+     "completa_coincide": false
+    },
+    "velocidades": [],
+    "posiciones": {
+     "cesvi": 1,
+     "croquis_las_tiene": 0
+    }
+   },
+   "reconstruccion": {
+    "reconstruida": true,
+    "en_3d": true,
+    "ms": 341
+   },
+   "costo_usd": 0.0154982
+  },
+  {
+   "id": "cesvi-5cb23d1cfd",
+   "escena_valida": true,
+   "comparacion": {
+    "modalidad": {
+     "cesvi": "lateral",
+     "croquis": "lateral",
+     "motivo": "contacto en un costado",
+     "coincide": true
+    },
+    "zonas": {
+     "cesvi": 2,
+     "croquis": 2,
+     "coinciden": 2,
+     "tercios_comparables": 0,
+     "tercios_coinciden": 0
+    },
+    "secuencia": {
+     "cesvi": 1,
+     "croquis": 1,
+     "primero_coincide": true,
+     "completa_coincide": true
+    },
+    "velocidades": [],
+    "posiciones": {
+     "cesvi": 0,
+     "croquis_las_tiene": 0
+    }
+   },
+   "reconstruccion": {
+    "reconstruida": true,
+    "en_3d": true,
+    "ms": 329
+   },
+   "costo_usd": 0.0088562
+  },
+  {
+   "id": "cesvi-e8474c118b",
+   "escena_valida": true,
+   "comparacion": {
+    "modalidad": {
+     "cesvi": "otra",
+     "croquis": "frontal",
+     "motivo": "frente contra frente",
+     "coincide": false
+    },
+    "zonas": {
+     "cesvi": 2,
+     "croquis": 2,
+     "coinciden": 2,
+     "tercios_comparables": 0,
+     "tercios_coinciden": 0
+    },
+    "secuencia": {
+     "cesvi": 2,
+     "croquis": 1,
+     "primero_coincide": true,
+     "completa_coincide": false
+    },
+    "velocidades": [],
+    "posiciones": {
+     "cesvi": 0,
+     "croquis_las_tiene": 0
+    }
+   },
+   "reconstruccion": {
+    "reconstruida": true,
+    "en_3d": true,
+    "ms": 331
+   },
+   "costo_usd": 0.0111172
+  },
+  {
+   "id": "cesvi-8022b514b7",
+   "escena_valida": true,
+   "comparacion": {
+    "modalidad": {
+     "cesvi": "alcance",
+     "croquis": "frontal",
+     "motivo": "frente contra frente",
+     "coincide": false
+    },
+    "zonas": {
+     "cesvi": 2,
+     "croquis": 2,
+     "coinciden": 1,
+     "tercios_comparables": 0,
+     "tercios_coinciden": 0
+    },
+    "secuencia": {
+     "cesvi": 2,
+     "croquis": 1,
+     "primero_coincide": true,
+     "completa_coincide": false
+    },
+    "velocidades": [],
+    "posiciones": {
+     "cesvi": 0,
+     "croquis_las_tiene": 0
+    }
+   },
+   "reconstruccion": {
+    "reconstruida": true,
+    "en_3d": true,
+    "ms": 361
+   },
+   "costo_usd": 0.0162202
+  },
+  {
+   "id": "cesvi-2251d90ba3",
+   "escena_valida": true,
+   "comparacion": {
+    "modalidad": {
+     "cesvi": "otra",
+     "croquis": "lateral",
+     "motivo": "contacto en un costado",
+     "coincide": false
+    },
+    "zonas": {
+     "cesvi": 2,
+     "croquis": 2,
+     "coinciden": 2,
+     "tercios_comparables": 0,
+     "tercios_coinciden": 0
+    },
+    "secuencia": {
+     "cesvi": 0,
+     "croquis": 1,
+     "primero_coincide": null,
+     "completa_coincide": null
+    },
+    "velocidades": [],
+    "posiciones": {
+     "cesvi": 0,
+     "croquis_las_tiene": 0
+    }
+   },
+   "reconstruccion": {
+    "reconstruida": true,
+    "en_3d": true,
+    "ms": 338
+   },
+   "costo_usd": 0.0149422
+  },
+  {
+   "id": "cesvi-4ef2a9d90b",
+   "escena_valida": true,
+   "comparacion": {
+    "modalidad": {
+     "cesvi": null,
+     "croquis": "lateral",
+     "motivo": "contacto en un costado",
+     "coincide": null
+    },
+    "zonas": {
+     "cesvi": 4,
+     "croquis": 3,
+     "coinciden": 2,
+     "tercios_comparables": 0,
+     "tercios_coinciden": 0
+    },
+    "secuencia": {
+     "cesvi": 2,
+     "croquis": 0,
+     "primero_coincide": false,
+     "completa_coincide": false
+    },
+    "velocidades": [],
+    "posiciones": {
+     "cesvi": 0,
+     "croquis_las_tiene": 0
+    }
+   },
+   "reconstruccion": {
+    "reconstruida": true,
+    "en_3d": true,
+    "ms": 790
+   },
+   "costo_usd": 0.0198582
+  },
+  {
+   "id": "cesvi-7f6b73260c",
+   "escena_valida": true,
+   "comparacion": {
+    "modalidad": {
+     "cesvi": "salida_de_camino",
+     "croquis": "lateral",
+     "motivo": "contacto en un costado",
+     "coincide": false
+    },
+    "zonas": {
+     "cesvi": 3,
+     "croquis": 2,
+     "coinciden": 1,
+     "tercios_comparables": 0,
+     "tercios_coinciden": 0
+    },
+    "secuencia": {
+     "cesvi": 3,
+     "croquis": 1,
+     "primero_coincide": false,
+     "completa_coincide": false
+    },
+    "velocidades": [],
+    "posiciones": {
+     "cesvi": 1,
+     "croquis_las_tiene": 0
+    }
+   },
+   "reconstruccion": {
+    "reconstruida": true,
+    "en_3d": true,
+    "ms": 627
+   },
+   "costo_usd": 0.0147142
+  },
+  {
+   "id": "cesvi-52e0c1deef",
+   "escena_valida": true,
+   "comparacion": {
+    "modalidad": {
+     "cesvi": "objeto_fijo",
+     "croquis": null,
+     "motivo": "un vehículo, sin objeto, vuelco ni salida descritos",
+     "coincide": false
+    },
+    "zonas": {
+     "cesvi": 1,
+     "croquis": 1,
+     "coinciden": 0,
+     "tercios_comparables": 0,
+     "tercios_coinciden": 0
+    },
+    "secuencia": {
+     "cesvi": 1,
+     "croquis": 0,
+     "primero_coincide": false,
+     "completa_coincide": false
+    },
+    "velocidades": [],
+    "posiciones": {
+     "cesvi": 0,
+     "croquis_las_tiene": 0
+    }
+   },
+   "reconstruccion": {
+    "reconstruida": true,
+    "en_3d": true,
+    "ms": 31
+   },
+   "costo_usd": 0.0158972
+  },
+  {
+   "id": "cesvi-923e562683",
+   "escena_valida": true,
+   "comparacion": {
+    "modalidad": {
+     "cesvi": "lateral",
+     "croquis": null,
+     "motivo": "un vehículo, sin objeto, vuelco ni salida descritos",
+     "coincide": false
+    },
+    "zonas": {
+     "cesvi": 1,
+     "croquis": 1,
+     "coinciden": 0,
+     "tercios_comparables": 0,
+     "tercios_coinciden": 0
+    },
+    "secuencia": {
+     "cesvi": 0,
+     "croquis": 0,
+     "primero_coincide": null,
+     "completa_coincide": null
+    },
+    "velocidades": [],
+    "posiciones": {
+     "cesvi": 0,
+     "croquis_las_tiene": 0
+    }
+   },
+   "reconstruccion": {
+    "reconstruida": true,
+    "en_3d": true,
+    "ms": 34
+   },
+   "costo_usd": 0.0108372
+  },
+  {
+   "id": "cesvi-3fb401796c",
+   "escena_valida": true,
+   "comparacion": {
+    "modalidad": {
+     "cesvi": "otra",
+     "croquis": "lateral",
+     "motivo": "contacto en un costado",
+     "coincide": false
+    },
+    "zonas": {
+     "cesvi": 2,
+     "croquis": 2,
+     "coinciden": 1,
+     "tercios_comparables": 0,
+     "tercios_coinciden": 0
+    },
+    "secuencia": {
+     "cesvi": 0,
+     "croquis": 1,
+     "primero_coincide": null,
+     "completa_coincide": null
+    },
+    "velocidades": [],
+    "posiciones": {
+     "cesvi": 0,
+     "croquis_las_tiene": 0
+    }
+   },
+   "reconstruccion": {
+    "reconstruida": true,
+    "en_3d": true,
+    "ms": 416
+   },
+   "costo_usd": 0.0130862
+  },
+  {
+   "id": "cesvi-6a3f3106f0",
+   "escena_valida": true,
+   "comparacion": {
+    "modalidad": {
+     "cesvi": "otra",
+     "croquis": null,
+     "motivo": "un vehículo, sin objeto, vuelco ni salida descritos",
+     "coincide": false
+    },
+    "zonas": {
+     "cesvi": 0,
+     "croquis": 1,
+     "coinciden": 0,
+     "tercios_comparables": 0,
+     "tercios_coinciden": 0
+    },
+    "secuencia": {
+     "cesvi": 0,
+     "croquis": 0,
+     "primero_coincide": null,
+     "completa_coincide": null
+    },
+    "velocidades": [],
+    "posiciones": {
+     "cesvi": 0,
+     "croquis_las_tiene": 0
+    }
+   },
+   "reconstruccion": {
+    "reconstruida": true,
+    "en_3d": true,
+    "ms": 18
+   },
+   "costo_usd": 0.0042482
+  },
+  {
+   "id": "cesvi-e69d48f64f",
+   "escena_valida": true,
+   "comparacion": {
+    "modalidad": {
+     "cesvi": "volcadura",
+     "croquis": null,
+     "motivo": "un vehículo, sin objeto, vuelco ni salida descritos",
+     "coincide": false
+    },
+    "zonas": {
+     "cesvi": 0,
+     "croquis": 1,
+     "coinciden": 0,
+     "tercios_comparables": 0,
+     "tercios_coinciden": 0
+    },
+    "secuencia": {
+     "cesvi": 0,
+     "croquis": 0,
+     "primero_coincide": null,
+     "completa_coincide": null
+    },
+    "velocidades": [],
+    "posiciones": {
+     "cesvi": 0,
+     "croquis_las_tiene": 0
+    }
+   },
+   "reconstruccion": {
+    "reconstruida": true,
+    "en_3d": true,
+    "ms": 17
+   },
+   "costo_usd": 0.0111472
+  },
+  {
+   "id": "cesvi-fc5f48e946",
+   "escena_valida": true,
+   "comparacion": {
+    "modalidad": {
+     "cesvi": "frontal",
+     "croquis": "frontal",
+     "motivo": "frente contra frente",
+     "coincide": true
+    },
+    "zonas": {
+     "cesvi": 2,
+     "croquis": 2,
+     "coinciden": 2,
+     "tercios_comparables": 1,
+     "tercios_coinciden": 1
+    },
+    "secuencia": {
+     "cesvi": 1,
+     "croquis": 1,
+     "primero_coincide": true,
+     "completa_coincide": true
+    },
+    "velocidades": [],
+    "posiciones": {
+     "cesvi": 0,
+     "croquis_las_tiene": 0
+    }
+   },
+   "reconstruccion": {
+    "reconstruida": true,
+    "en_3d": true,
+    "ms": 333
+   },
+   "costo_usd": 0.0084532
+  },
+  {
+   "id": "cesvi-b37686e37c",
+   "escena_valida": true,
+   "comparacion": {
+    "modalidad": {
+     "cesvi": "reversa",
+     "croquis": null,
+     "motivo": "caras posterior y lateral_izquierdo: sin regla",
+     "coincide": false
+    },
+    "zonas": {
+     "cesvi": 2,
+     "croquis": 2,
+     "coinciden": 2,
+     "tercios_comparables": 0,
+     "tercios_coinciden": 0
+    },
+    "secuencia": {
+     "cesvi": 1,
+     "croquis": 1,
+     "primero_coincide": true,
+     "completa_coincide": true
+    },
+    "velocidades": [],
+    "posiciones": {
+     "cesvi": 0,
+     "croquis_las_tiene": 0
+    }
+   },
+   "reconstruccion": {
+    "reconstruida": true,
+    "en_3d": true,
+    "ms": 346
+   },
+   "costo_usd": 0.0147882
+  }
+ ]
+}
