@@ -8,6 +8,7 @@ export * from "./reproduccion";
 export * from "./contra-dictamen";
 export * from "./escena-narracion";
 export * from "./reconstruccion";
+export * from "./verificacion";
 export * from "./segunda-opinion";
 export * from "./discrepancia";
 export * from "./geo";

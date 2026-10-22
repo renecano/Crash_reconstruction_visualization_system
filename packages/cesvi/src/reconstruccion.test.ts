@@ -5,7 +5,9 @@ import { validateEscena } from "@croquis/scene-schema";
 import { describe, expect, it } from "vitest";
 import type { Expediente, SalidaCorpus } from "./corpus";
 import { conMasa, conPosicion, escenaDeNarracion } from "./escena-narracion";
+import { mcHenry } from "./metodo";
 import { especDeExpediente, reconstruirExpediente, rumboEscena } from "./reconstruccion";
+import { verificacionCesvi } from "./verificacion";
 
 type Json = Record<string, unknown>;
 
@@ -108,5 +110,47 @@ describe("del expediente a la escena del solver (R2)", () => {
       expect(v.previa).not.toBeNull();
       expect(v.previa!.p10!).toBeLessThanOrEqual(v.previa!.p90!);
     }
+  });
+});
+
+describe("verificación CESVI al lado de la reconstrucción", () => {
+  const conMedidas = (rigidez?: Expediente["vehiculos"][number]["rigidez"]): Expediente => ({
+    ...base,
+    vehiculos: base.vehiculos.map((v) =>
+      v.id === "V1"
+        ? {
+            ...v,
+            clase: "sedan_compacto",
+            masa: { valor: 1200, unidad: "kg", fuente: "perito" },
+            ...(rigidez && { rigidez }),
+          }
+        : v,
+    ),
+    danos: base.danos!.map((d) =>
+      d.vehiculo === "V1" && d.zona.cara === "frontal"
+        ? { ...d, magnitud: { c_m: [0.3, 0.42, 0.25, 0.1], l_m: 1.2 } }
+        : d,
+    ),
+  });
+
+  it("con medidas, masa y la rigidez del perito: McHenry y EBS sustituidos, como en C1", () => {
+    const [v1] = verificacionCesvi(conMedidas({ A: 50000, B: 400000, fuente: "perito" }));
+    expect(v1!.falta).toEqual([]);
+    expect(v1!.rigidez).toMatchObject({ fuente: "perito", A: 50000, B: 400000 });
+    const e = mcHenry({ L: 1.2, A: 50000, B: 400000, C: [0.3, 0.42, 0.25, 0.1] }).energia;
+    expect(v1!.pasos[0]!.paso.calculo).toMatchObject({ energia: e });
+    expect(v1!.pasos[1]!.paso.resultado).toContain("km/h");
+    expect((v1!.pasos[1]!.paso.calculo as { ms: number }).ms).toBeCloseTo(
+      Math.sqrt((2 * e) / 1200),
+      9,
+    );
+  });
+
+  it("sin rigidez propia la toma de NHTSA E2 marcada; sin medidas dice qué falta", () => {
+    const [v1, v2] = verificacionCesvi(conMedidas());
+    expect(["nhtsa_e2", "supuesto"]).toContain(v1!.rigidez!.fuente);
+    expect(v1!.pasos).toHaveLength(2);
+    expect(v2!.pasos).toEqual([]);
+    expect(v2!.falta).toEqual(["las medidas C (2, 4 o 6) y L de la deformación", "la masa"]);
   });
 });

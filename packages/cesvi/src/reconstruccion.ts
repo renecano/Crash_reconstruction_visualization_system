@@ -203,22 +203,23 @@ export interface Reconstruccion extends EscenaSolver {
   evidencia: string[];
 }
 
-/** Corre el solver de producción (port TS) sobre la escena del expediente. */
-export function reconstruirExpediente(e: Expediente, specId?: string): Reconstruccion {
-  const base = especDeExpediente(e, specId);
-  const resultado = fullResult(base.spec) as Json & {
-    inversion: {
-      evidencia: string[];
-      parametros: {
-        parametro: string;
-        vehiculo: string;
-        identificable: boolean;
-        estimacion?: { mejor: number; p10?: number; p50?: number; p90?: number };
-      }[];
-      velocidad_impacto: { vehiculo: string; p10?: number; p50?: number; p90?: number }[];
-    };
-  };
-  const inv = resultado.inversion;
+interface Inversion {
+  evidencia: string[];
+  parametros: {
+    parametro: string;
+    vehiculo: string;
+    identificable: boolean;
+    estimacion?: { mejor: number; p10?: number; p50?: number; p90?: number };
+  }[];
+  velocidad_impacto: { vehiculo: string; p10?: number; p50?: number; p90?: number }[];
+}
+
+/**
+ * Lee el resultado completo del solver (`fullResult`, en el servidor de pruebas o en el Web Worker
+ * del navegador) en términos del expediente: velocidades por vehículo y lo que no fija la evidencia.
+ */
+export function interpretarResultado(base: EscenaSolver, resultado: Json): Reconstruccion {
+  const inv = resultado.inversion as Inversion;
   const limites = [...base.limites];
   if (!inv.evidencia.length) {
     limites.push(
@@ -235,4 +236,25 @@ export function reconstruirExpediente(e: Expediente, specId?: string): Reconstru
     };
   });
   return { ...base, limites, resultado, velocidades, evidencia: inv.evidencia };
+}
+
+/** La evidencia del solver en palabras («reposo:veh-a» → «posición final de V1»). */
+export function evidenciaEnPalabras(etiqueta: string, ids: Record<string, Id>): string {
+  const [tipo, sid] = etiqueta.split(":");
+  const v = ids[sid ?? ""] ?? sid;
+  const nombre: Record<string, string> = {
+    reposo: "posición final",
+    rumbo_final: "rumbo final",
+    marcas_frenado: "huella de frenado",
+    marcas_despues: "huella después del impacto",
+    proyeccion: "distancia de proyección",
+    dano: "deformación (C y L)",
+  };
+  return `${nombre[tipo ?? ""] ?? tipo} de ${v}`;
+}
+
+/** Corre el solver de producción (port TS) sobre la escena del expediente. */
+export function reconstruirExpediente(e: Expediente, specId?: string): Reconstruccion {
+  const base = especDeExpediente(e, specId);
+  return interpretarResultado(base, fullResult(base.spec));
 }
