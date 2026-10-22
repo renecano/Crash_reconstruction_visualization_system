@@ -146,7 +146,30 @@ Cada fase se cierra con su criterio en verde, merge y despliegue, y con su resum
   - Pide a René una revisión visual antes de cerrarlo.
 - Lo anotado en «Endurecimiento pendiente» y los cambios que pida CESVI.
 
-**Orden:** R0 → R1 → R2 → R3 → R4 → R5 → R6 → R7 → R8 → R9.
+### R10 · Calidad visual del 3D (al final, cuando todo lo demás funcione)
+- **Meta (René, 2026-10-21):** que la reconstrucción se vea como un juego actual de autos o de mundo abierto (la referencia es GTA o Forza), al menos muy por encima de lo que hay hoy.
+  - Lo realista es acercarse a ese nivel en una sola escena con buenos recursos, no igualar un juego de estudio grande.
+  - Se hace en three.js con WebGPU, no en Unity (ADR que lo registre).
+- **Qué incluye:**
+  - **Vehículos:** modelos 3D realistas por clase (sedán, hatchback, SUV, pickup, camión, moto), con licencia libre registrada en `assets/ASSETS.md` y sin logotipos ni marcas (regla 5).
+  - **Materiales físicos:** pintura metálica con capa transparente, vidrio, cromo, llantas y faros.
+  - **Luz:** de ambiente con HDRI, sombras suaves y reflejos en pantalla.
+  - **Postprocesado:** oclusión ambiental, bloom, tone mapping de cine, antialiasing temporal, profundidad de campo en las cámaras cinemáticas y desenfoque de movimiento en el impacto.
+  - **Escenario:** asfalto y marcas viales con textura, banquetas, camellones, vegetación y postes según el lugar real del mapa.
+  - **Marcas en el piso:** huellas de frenado, restos y vidrios como calcomanías y partículas.
+  - **Daño:** deformación de la carrocería en la zona y con la profundidad que dio el perito (C1–C6 cuando las hay), más vidrios rotos y piezas desprendidas, sin contenido gráfico de personas.
+  - **Cámaras cinemáticas** con trayectorias suaves para presentar.
+- **Niveles §7.8:** ultra y alta usan todo; media y baja bajan efectos sin perder función. La laptop es el piso; alta y ultra se miden en la computadora de la demo.
+- **Evaluación:** capturas de antes y después de las mismas escenas para que René las revise, y fps por nivel. Las capturas se aprueban a ojo de René; no son prueba de CI.
+- **Listo cuando:** René aprueba las capturas y se cumplen los fps de §7.8.
+
+### R11 · Video cinematográfico para demo y reporte (complemento)
+- «Exportar a Blender» desde el visor: la escena reconstruida en glTF, con animación, cámaras y materiales, más un script de Python para Blender que arma la escena y renderiza el video (Cycles o EEVEE) con la leyenda de reconstrucción de apoyo.
+- Se renderiza en la computadora de la demo, no en Vercel. El video puede adjuntarse al reporte.
+- Los recursos son los mismos de R10.
+- **Listo cuando:** un caso del corpus sale como video de calidad cinematográfica con un solo comando en la computadora de la demo, y René aprueba el resultado.
+
+**Orden:** R0 → R1 → R2 → R3 → R4 → R5 → R6 → R7 → R8 → R9 → R10 → R11.
 
 ## 6. Fuera de esta versión
 
