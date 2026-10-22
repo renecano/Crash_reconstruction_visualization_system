@@ -42,10 +42,7 @@ export async function leerEscena(narracion: string, o: OpcionesEscena): Promise<
       o.modelo,
     ),
   );
-  const l = lecturaDeMensaje<SalidaCorpus>(
-    (await stream.finalMessage()) as unknown as Parameters<typeof lecturaDeMensaje>[0],
-    false,
-  );
+  const l = lecturaDeMensaje<SalidaCorpus>(await stream.finalMessage(), false);
   await o.gasto.charge(l.costoUsd);
   return {
     salida: l.salida,
