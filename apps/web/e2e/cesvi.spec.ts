@@ -167,9 +167,17 @@ test("@flujo /cesvi: el recorrido del perito, del caso al dictamen en PDF", asyn
   await page.getByTestId("restablecer").click();
   await expect(punto).toHaveText("26.22848, -109.05424");
 
-  // 4. Las dos versiones y la zona de restos.
+  // 4. La reconstrucción de Croquis, por defecto; la declaración es una capa opcional, apagada.
   await page.getByTestId("siguiente").click();
-  await expect(page.getByTestId("version-declarada")).toHaveAttribute("aria-selected", "true");
+  await expect(frase).toContainText("Reconstrucción de Croquis");
+  await expect(page.getByTestId("version-declarada")).toHaveCount(0);
+  await expect(page.getByTestId("comparar-declaracion")).not.toBeChecked();
+  await expect(page.getByTestId("restos-mapa").locator("[data-valor]")).toHaveAttribute(
+    "data-valor",
+    "15.89",
+  );
+  await page.getByTestId("comparar-declaracion").check();
+  await page.getByTestId("version-declarada").click();
   await expect(frase).toContainText("retrocede 4 m");
   // Cada vehículo con su nombre, cada marca con lo que es, y la leyenda.
   await expect(page.getByTestId("nombre-A")).toHaveText("A · Silverado");
@@ -248,9 +256,19 @@ test("@flujo /cesvi: el recorrido del perito, del caso al dictamen en PDF", asyn
   await expect(panel.locator('[data-fila="energia"]')).toContainText("+2.39 %");
   await page.keyboard.press("Escape");
 
-  // 7. La sugerencia, validada por el perito: «Aceptar y seguir» lleva al dictamen.
+  // 7. Croquis contra el dictamen: punto por punto, con la diferencia en %; la comparación con la
+  // declaración va plegada, y su sugerencia solo aparece si el perito la pide.
   await page.getByTestId("siguiente").click();
-  await expect(page.getByTestId("sugerencia")).toContainText("no se sostiene");
+  await expect(page.getByTestId("titulo-contra")).toHaveText("Croquis contra el dictamen");
+  const contra = page.getByTestId("contra-dictamen");
+  await expect(contra.locator('[data-fila="modalidad"]')).toContainText("Coincide");
+  await expect(contra.locator('[data-fila="restos"]')).toContainText("60.27 km/h");
+  await expect(contra.locator('[data-fila="deformacion"]')).toContainText("63.15 km/h");
+  await expect(page.getByTestId("discrepancia-energia")).toContainText("2.39 %");
+  await expect(page.getByTestId("sugerencia")).toHaveCount(0);
+  await page.getByTestId("comparacion-declaracion").locator("summary").click();
+  await page.getByTestId("ver-sugerencia").click();
+  await expect(page.getByTestId("sugerencia")).toContainText("Es una sugerencia");
   await page.getByTestId("perito").fill("Perito de prueba");
   await page.getByTestId("aceptar").click();
 

@@ -10,6 +10,7 @@
 import {
   callesCerca,
   compararVersiones,
+  croquisContraDictamen,
   completitud as completitudHecho,
   eventosDeLinea,
   zonasEsperadasDeclarada,
@@ -70,7 +71,7 @@ import {
   PasoHecho,
   PasoLugar,
   PasoNumeros,
-  PasoSugerencia,
+  PasoContraDictamen,
   PasoVersiones,
   BarraEdicion,
   Leyenda,
@@ -83,6 +84,7 @@ import { ProveedorRecorrido } from "./marco";
 import {
   Herramientas,
   PanelObjeto,
+  InterruptorComparar,
   PestanasVista,
   TablaCambios,
   type Herramienta,
@@ -94,10 +96,10 @@ const PASOS = [
   "El caso",
   "El hecho",
   "El lugar",
-  "Las versiones",
+  "La reconstrucción",
   "Los daños",
   "Los números",
-  "La sugerencia",
+  "Croquis contra el dictamen",
   "El dictamen",
 ] as const;
 
@@ -106,10 +108,10 @@ const PASOS_CORTOS = [
   "Caso",
   "Hecho",
   "Lugar",
-  "Versiones",
+  "Reconstrucción",
   "Daños",
   "Números",
-  "Sugerencia",
+  "Contra dictamen",
   "Dictamen",
 ] as const;
 
@@ -124,7 +126,7 @@ const FUENTE_CALLE: Record<Calle["fuente"], string> = {
 };
 const NOMBRE_VERSION: Record<ClaveVersion, string> = {
   declarada: "versión declarada",
-  evidencia: "versión de la evidencia",
+  evidencia: "reconstrucción de Croquis",
 };
 
 /** Lo elegido en el mapa, en palabras: «B · Tacoma · posición inicial» y su versión. */
@@ -263,7 +265,10 @@ export function Recorrido({ caso, reproduccion }: { caso: CasoCesvi; reproduccio
   const histRef = useRef(hist);
   const versiones = hist.presente;
   const [reubicando, setReubicando] = useState(false);
-  const [activa, setActiva] = useState<ClaveVersion>("declarada");
+  // Lo principal es la reconstrucción de Croquis (la versión de la evidencia); la declaración
+  // del conductor es una capa opcional, apagada al inicio (plan v2, R7).
+  const [activa, setActiva] = useState<ClaveVersion>("evidencia");
+  const [comparar, setComparar] = useState(false);
   const [animacion, setAnimacion] = useState<number | null>(null);
   const [seleccion, setSeleccion] = useState<Seleccion>({
     tipo: "pose",
@@ -580,7 +585,7 @@ export function Recorrido({ caso, reproduccion }: { caso: CasoCesvi; reproduccio
       seleccion,
       onSeleccion: (sel) => {
         setSeleccion(sel);
-        setActiva(clave);
+        if (clave === "evidencia" || comparar) setActiva(clave);
       },
       onMover: (sel, p) => {
         setSeleccion(sel);
@@ -588,7 +593,7 @@ export function Recorrido({ caso, reproduccion }: { caso: CasoCesvi; reproduccio
         moverEn(clave, sel, p);
       },
     }),
-    [seleccion, moverEn],
+    [seleccion, moverEn, comparar],
   );
   const edicion: EdicionMapa | null = useMemo(() => {
     if (!versiones) return null;
@@ -635,7 +640,7 @@ export function Recorrido({ caso, reproduccion }: { caso: CasoCesvi; reproduccio
   const tema = useTema(modo);
   const [manualAbierto, setManualAbierto] = useState(false);
   const [herramienta, setHerramienta] = useState<Herramienta | null>(null);
-  const [vista, setVista] = useState<VistaTrabajo>("superponer");
+  const [vista, setVista] = useState<VistaTrabajo>("evidencia");
   const [medicion, setMedicion] = useState<LonLat[]>([]);
   const estadoIA = Object.values(estados).some((e) => e?.startsWith("Leyendo"))
     ? "entendiendo"
@@ -715,6 +720,13 @@ export function Recorrido({ caso, reproduccion }: { caso: CasoCesvi; reproduccio
       moverEn(clave, seleccion, p);
     }
   };
+  const cambiarComparar = (v: boolean) => {
+    setComparar(v);
+    if (!v) {
+      setActiva("evidencia");
+      setVista("evidencia");
+    }
+  };
   const cambiarVista = (v: VistaTrabajo) => {
     setVista(v);
     if (v === "declarada") setActiva("declarada");
@@ -773,7 +785,7 @@ export function Recorrido({ caso, reproduccion }: { caso: CasoCesvi; reproduccio
   const trazabilidad = {
     metodo: "CESVI · McHenry 4 medidas",
     huella,
-    sugerencia: validacion
+    comparacion: validacion
       ? {
           aceptada: "aceptada por el perito",
           editada: "editada por el perito",
@@ -825,6 +837,8 @@ export function Recorrido({ caso, reproduccion }: { caso: CasoCesvi; reproduccio
       criterios,
       zonas,
       sugerencia,
+      contraDictamen: contra,
+      compararDeclaracion: comparar,
       validacion,
       consideraciones: borrador.trim() ? { texto: borrador.trim(), revisadas: revisado } : null,
       incluir: opciones,
@@ -844,7 +858,7 @@ export function Recorrido({ caso, reproduccion }: { caso: CasoCesvi; reproduccio
               MEDIDAS,
               nombres,
               papel,
-              "Versión de la evidencia",
+              "Reconstrucción de Croquis",
             ),
           }
         : undefined,
@@ -921,8 +935,16 @@ export function Recorrido({ caso, reproduccion }: { caso: CasoCesvi; reproduccio
               desplazamiento: resultados?.v3?.resultado ?? null,
             },
             separacion_restos: { metros: distancia.valor, fuente: fuenteDistancia },
-            sugerencia: sugerencia.texto,
-            razones: sugerencia.razones.map((x) => x.texto),
+            comparacion_con_el_dictamen: {
+              resumen: contra.resumen,
+              puntos: contra.filas.map((f) => ({
+                punto: f.concepto,
+                cesvi: f.cesvi,
+                croquis: f.croquis,
+                diferencia_pct: f.diferenciaPct === null ? null : f.diferenciaPct.toFixed(2),
+              })),
+            },
+            indicadores_declaracion: comparar ? sugerencia.razones.map((x) => x.texto) : null,
             conclusion_validada: validacion?.conclusion ?? null,
           },
         }),
@@ -1032,7 +1054,7 @@ export function Recorrido({ caso, reproduccion }: { caso: CasoCesvi; reproduccio
       ? [{ texto: "El punto de impacto es la ubicación ilustrativa, no el lugar real.", paso: 2 }]
       : []),
     ...(!validacion
-      ? [{ texto: "La sugerencia de Croquis no está validada por el perito.", paso: 6 }]
+      ? [{ texto: "El perito no ha validado la comparación con el dictamen.", paso: 6 }]
       : []),
   ];
   const descargarWord = async () => {
@@ -1095,20 +1117,27 @@ export function Recorrido({ caso, reproduccion }: { caso: CasoCesvi; reproduccio
     );
   };
   const desplazamientoKmh = resultados?.v3?.calculo.kmh ?? null;
+  // Paso 7: lo que concluyó CESVI contra lo que obtuvo Croquis (plan v2 §1).
+  const contra = croquisContraDictamen(caso, {
+    modalidad: interpretacion.evidencia.find((d) => d.clave === "modalidad")?.valor ?? null,
+    deformacionKmh: resultados?.ebsDatos?.calculo.kmh ?? null,
+    restosKmh: desplazamientoKmh,
+    restosM: restosDeVersiones?.evidencia ?? null,
+  });
   const frase = [
-    `Siniestro ${caso.id} de ${caso.aseguradora}: alcance entre una ${caso.vehiculos.A.tipo} y una ${caso.vehiculos.B.tipo}; el conductor de A declara una reversa.`,
-    "La descripción técnica del perito arma la versión de la evidencia; la declaración, la versión declarada. Croquis pregunta lo que falta.",
+    `Siniestro ${caso.id} de ${caso.aseguradora}: alcance entre una ${caso.vehiculos.A.tipo} y una ${caso.vehiculos.B.tipo}; Croquis lo reconstruye y lo compara con lo que concluyó CESVI.`,
+    "Con la descripción técnica del perito, Croquis arma la reconstrucción y pregunta lo que falta. La declaración del conductor es opcional: sirve para comparar.",
     "Tramo Los Mochis–Navojoa de la carretera federal 15. Marca el punto de impacto: las calles salen del mapa, sin esperar.",
-    activa === "declarada"
-      ? `Versión declarada: ${nombres.A} retrocede ${reversaDibujada} m y ${nombres.B} lo impacta; sin desplazamiento después.`
+    comparar && activa === "declarada"
+      ? `Versión declarada, para comparar: ${nombres.A} retrocede ${reversaDibujada} m y ${nombres.B} lo impacta; sin desplazamiento después.`
       : interpretacion.parametros.evidencia.distanciaRestos === null
-        ? `Versión de la evidencia: ${nombres.B} alcanza a ${nombres.A}; la descripción técnica aún no da la longitud de los restos.`
-        : `Versión de la evidencia: ${nombres.B} alcanza a ${nombres.A} y lo desplaza; los restos cubren ${interpretacion.parametros.evidencia.distanciaRestos} m.`,
-    "Los daños se acentúan a un lado (izquierdo en A, derecho en B); una reversa los dejaría al centro.",
+        ? `Reconstrucción de Croquis: ${nombres.B} alcanza a ${nombres.A}; la descripción técnica aún no da la longitud de los restos.`
+        : `Reconstrucción de Croquis: ${nombres.B} alcanza a ${nombres.A} y lo desplaza; los restos cubren ${interpretacion.parametros.evidencia.distanciaRestos} m.`,
+    "Los daños se acentúan a un lado: izquierdo en A, derecho en B. Así los observó el dictamen.",
     impactoKmh !== null && desplazamientoKmh !== null
       ? `${impactoKmh.toFixed(2)} km/h por los daños y ${desplazamientoKmh.toFixed(2)} km/h por el desplazamiento: ${resultados?.comparacion?.significativa ? "difieren" : "no difieren"} de forma significativa.`
       : "Los números del dictamen, calculados con el método de CESVI.",
-    "Croquis sugiere una conclusión con tres razones; el perito acepta, edita o rechaza.",
+    "Lo que concluyó CESVI contra lo que obtuvo Croquis, punto por punto. El perito concluye.",
     "El dictamen con la estructura de CESVI: revísalo, fírmalo y descárgalo.",
   ][paso]!;
 
@@ -1190,6 +1219,11 @@ export function Recorrido({ caso, reproduccion }: { caso: CasoCesvi; reproduccio
       restosDictamen={caso.evidencia.restos.distancia_m.valor}
       superponer={superponer}
       onSuperponer={setSuperponer}
+      comparar={comparar}
+      onComparar={(v) => {
+        cambiarComparar(v);
+        animar();
+      }}
       seleccion={
         animacion === null && versiones ? describirSeleccion(seleccion, nombres, activa) : null
       }
@@ -1220,8 +1254,9 @@ export function Recorrido({ caso, reproduccion }: { caso: CasoCesvi; reproduccio
       filas={reproducir(caso).filas}
       frase={frase}
     />,
-    <PasoSugerencia
-      key="sugerencia"
+    <PasoContraDictamen
+      key="contra-dictamen"
+      contra={contra}
       cambios={comparacionVersiones}
       sugerencia={sugerencia}
       pasoDeRazon={{ velocidades: 5, desplazamiento: 3, ubicacion_danos: 4 }}
@@ -1449,7 +1484,9 @@ export function Recorrido({ caso, reproduccion }: { caso: CasoCesvi; reproduccio
               camara={camara}
               calles={calles}
               version={version}
-              superpuesta={paso === 3 && superponer && versiones ? versiones[otra] : null}
+              superpuesta={
+                paso === 3 && comparar && superponer && versiones ? versiones[otra] : null
+              }
               medidas={MEDIDAS}
               nombres={nombres}
               animacion={paso === 3 ? animacion : null}
@@ -1517,7 +1554,10 @@ export function Recorrido({ caso, reproduccion }: { caso: CasoCesvi; reproduccio
             </aside>
             <section className="flex min-h-[60vh] min-w-0 flex-col gap-3 lg:min-h-0">
               <div className="flex flex-wrap items-center justify-between gap-3">
-                <PestanasVista vista={vista} onVista={cambiarVista} />
+                <div className="flex flex-wrap items-center gap-3">
+                  {comparar ? <PestanasVista vista={vista} onVista={cambiarVista} /> : null}
+                  <InterruptorComparar comparar={comparar} onComparar={cambiarComparar} />
+                </div>
                 <p className="t-nota">
                   {herramienta === "medir"
                     ? "Toca dos puntos para medir."
@@ -1559,7 +1599,9 @@ export function Recorrido({ caso, reproduccion }: { caso: CasoCesvi; reproduccio
                       />
                       {vista === "lado" ? (
                         <span className="vidrio pointer-events-none absolute top-3 left-3 px-3 py-1 text-xs font-medium">
-                          {clave === "declarada" ? "Versión declarada" : "Versión de la evidencia"}
+                          {clave === "declarada"
+                            ? "Versión declarada"
+                            : "Reconstrucción de Croquis"}
                         </span>
                       ) : null}
                     </div>
@@ -1609,7 +1651,7 @@ export function Recorrido({ caso, reproduccion }: { caso: CasoCesvi; reproduccio
                 />
               ) : null}
               <BarraEdicion e={edicionPasos} restablecer={versiones !== null} />
-              <TablaCambios c={comparacionVersiones} />
+              {comparar ? <TablaCambios c={comparacionVersiones} /> : null}
             </aside>
           </main>
         )}
@@ -1636,9 +1678,10 @@ export function Recorrido({ caso, reproduccion }: { caso: CasoCesvi; reproduccio
             <section className="t-cuerpo flex flex-col gap-4">
               <p>
                 Croquis lee cada texto por separado: la descripción técnica del perito arma la
-                versión de la evidencia, y la declaración del conductor, la versión declarada. Cada
-                dato lleva su fuente (perito, conductor, expediente o supuesto) y la frase de donde
-                sale; si la frase no está en el texto, el dato se descarta.
+                reconstrucción de Croquis; la declaración del conductor, si se pega, arma la versión
+                declarada, que solo sirve para comparar. Cada dato lleva su fuente (perito,
+                conductor, expediente o supuesto) y la frase de donde sale; si la frase no está en
+                el texto, el dato se descarta.
               </p>
               <p>
                 La lectura usa el vocabulario de los dictámenes de CESVI: un glosario de{" "}
@@ -1790,13 +1833,15 @@ export function Recorrido({ caso, reproduccion }: { caso: CasoCesvi; reproduccio
           {paso === 6 ? (
             <section className="flex flex-col gap-3">
               <ul className="t-cuerpo flex flex-col gap-3">
-                {sugerencia.razones.map((r) => (
-                  <li key={r.clave}>
-                    {r.texto} <span className="t-nota text-texto-2">({r.evidencia})</span>
+                {contra.filas.map((f) => (
+                  <li key={f.clave}>
+                    {f.concepto}: <span className="t-nota text-texto-2">{f.fuente}.</span>
                   </li>
                 ))}
               </ul>
-              <p className="t-nota text-texto-2">{sugerencia.regla}</p>
+              <p className="t-nota text-texto-2">
+                Cada diferencia va con su valor y su porcentaje, sin ajustes. El perito concluye.
+              </p>
             </section>
           ) : null}
           {paso === 7 ? (

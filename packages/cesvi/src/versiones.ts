@@ -87,7 +87,7 @@ export function proponerVersiones(p: ParametrosVersiones): Record<ClaveVersion, 
 
   const evidencia: VersionCroquis = {
     clave: "evidencia",
-    titulo: "Versión de la evidencia",
+    titulo: "Reconstrucción de Croquis",
     descripcion:
       "Alcance de B a A: los restos se extienden desde el punto de impacto hasta la posición final de A.",
     impacto: { punto: x, fuente: "perito" },

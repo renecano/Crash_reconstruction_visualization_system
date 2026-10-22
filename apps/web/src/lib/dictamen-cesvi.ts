@@ -18,6 +18,7 @@ import {
   type PasoEnergia,
   type PasoFormula,
   type PasoVelocidad,
+  type ContraDictamen,
   type Sugerencia,
   type Validacion,
   type Zona,
@@ -50,6 +51,10 @@ export interface DatosDictamen {
   criterios: Record<"A" | "B", Record<ClaveCriterio, CriterioMarcado>>;
   zonas: Record<"A" | "B", Zona[]>;
   sugerencia: Sugerencia;
+  /** Lo que concluyó CESVI contra lo que obtuvo Croquis (paso 7). */
+  contraDictamen?: ContraDictamen;
+  /** ¿El perito encendió la comparación con la declaración del conductor? (plan v2, R7). */
+  compararDeclaracion?: boolean;
   validacion: Validacion | null;
   /** Consideraciones redactadas (borrador de Claude revisado por el perito), si las hay. */
   consideraciones: { texto: string; revisadas: boolean } | null;
@@ -61,8 +66,8 @@ export interface DatosDictamen {
   datosHecho?: { etiqueta: string; valor: string; fuente: string; version: string }[];
   /** Notas internas del perito (no van salvo que se pidan). */
   notasInternas?: string;
-  /** Método, huella de las entradas, sugerencia y validación. */
-  trazabilidad?: { metodo: string; huella: string; sugerencia: string; valido: string };
+  /** Método, huella de las entradas, estado de la comparación y validación. */
+  trazabilidad?: { metodo: string; huella: string; comparacion: string; valido: string };
 }
 
 const MARCA: Record<string, string> = {
@@ -280,8 +285,8 @@ export function dictamenContenido(d: DatosDictamen): Content[] {
     out.push({
       columns: (
         [
+          ["Reconstrucción de Croquis", cv.evidencia],
           ["Versión declarada", cv.declarada],
-          ["Versión de la evidencia", cv.evidencia],
         ] as const
       ).map(([nombre, img]) =>
         img
@@ -377,12 +382,52 @@ export function dictamenContenido(d: DatosDictamen): Content[] {
       : null,
     validado
       ? d.validacion!.conclusion
-      : `Pendiente de validación del perito. Sugerencia de Croquis: ${d.sugerencia.texto}`,
+      : "Pendiente de validación del perito: la conclusión es del perito.",
   ].filter((x): x is string => x !== null);
   out.push({ ol: conclusiones, margin: [0, 0, 0, 8] });
-  out.push(subtitulo("Razones de la sugerencia de Croquis"));
-  out.push({ ul: d.sugerencia.razones.map((r) => `${r.texto} (${r.evidencia}).`), fontSize: 9 });
-  out.push({ text: d.sugerencia.regla, fontSize: 8, color: "#444444", margin: [0, 4, 0, 8] });
+  const cd = d.contraDictamen;
+  if (cd) {
+    out.push(subtitulo("Reconstrucción de Croquis contra el dictamen original"));
+    out.push(
+      tabla(
+        ["Punto", "Concluyó CESVI", "Obtuvo Croquis", "Diferencia"],
+        cd.filas.map((f) => [
+          f.concepto,
+          f.cesvi,
+          f.croquis,
+          f.coincide === null
+            ? "—"
+            : f.diferenciaPct === null
+              ? f.coincide
+                ? "Coincide"
+                : "Difiere"
+              : `${f.diferenciaPct >= 0 ? "+" : "−"}${Math.abs(f.diferenciaPct).toFixed(2)} %`,
+        ]),
+        ["*", 95, 95, 60],
+      ),
+    );
+    if (cd.energia) {
+      out.push({
+        text: `Diferencia de energía: con los datos impresos la energía de deformación es ${cd.energia.croquis.toFixed(3)} y el dictamen imprime ${cd.energia.dictamen.toFixed(3)} (${cd.energia.diferenciaPct >= 0 ? "+" : "−"}${Math.abs(cd.energia.diferenciaPct).toFixed(2)} %). ${cd.energia.lectura}`,
+        fontSize: 8,
+        color: "#444444",
+        margin: [0, 4, 0, 8],
+      });
+    }
+  }
+  if (d.compararDeclaracion) {
+    out.push(subtitulo("Comparación con la declaración del conductor (complemento)"));
+    out.push({
+      ul: d.sugerencia.razones.map((r) => `${r.texto} (${r.evidencia}).`),
+      fontSize: 9,
+    });
+    out.push({
+      text: "Indicadores para el perito: Croquis no determina si la declaración se sostiene.",
+      fontSize: 8,
+      color: "#444444",
+      margin: [0, 4, 0, 8],
+    });
+  }
 
   out.push(titulo("Validación del perito"));
   if (d.validacion) {
@@ -391,7 +436,7 @@ export function dictamenContenido(d: DatosDictamen): Content[] {
     ];
     out.push(
       parrafo(
-        `El perito ${d.validacion.perito} ${decision} la sugerencia de Croquis el ${new Date(d.validacion.fecha).toLocaleString("es-MX", { dateStyle: "long", timeStyle: "short" })}.`,
+        `El perito ${d.validacion.perito} ${decision} la comparación de Croquis con el dictamen el ${new Date(d.validacion.fecha).toLocaleString("es-MX", { dateStyle: "long", timeStyle: "short" })}.`,
       ),
     );
   } else {
@@ -405,7 +450,7 @@ export function dictamenContenido(d: DatosDictamen): Content[] {
   if (d.trazabilidad) {
     const t = d.trazabilidad;
     out.push({
-      text: `Trazabilidad: método ${t.metodo} · huella de entradas ${t.huella} · sugerencia ${t.sugerencia} · validó ${t.valido}.`,
+      text: `Trazabilidad: método ${t.metodo} · huella de entradas ${t.huella} · comparación ${t.comparacion} · validó ${t.valido}.`,
       fontSize: 7,
       color: "#555555",
       margin: [0, 12, 0, 0],
