@@ -47,6 +47,10 @@
       "type": "array",
       "items": { "$ref": "#/$defs/EvidenciaFisica" },
       "maxItems": 64
+    },
+    "expediente": {
+      "$ref": "#/$defs/Expediente",
+      "description": "El expediente de CESVI (desde 2.0.0): opcional; una escena del relato no lo trae."
     }
   },
   "$defs": {
@@ -520,7 +524,7 @@
       "required": ["id", "version_esquema", "idioma", "semilla", "creado"],
       "properties": {
         "id": { "type": "string", "minLength": 8, "maxLength": 64, "pattern": "^[A-Za-z0-9_-]+$" },
-        "version_esquema": { "type": "string", "const": "1.3.0" },
+        "version_esquema": { "type": "string", "const": "2.0.0" },
         "idioma": { "type": "string", "enum": ["es-MX", "en"] },
         "semilla": {
           "type": "integer",
@@ -998,6 +1002,677 @@
         "descripcion": { "type": "string", "maxLength": 400 },
         "procedencia": { "$ref": "#/$defs/Procedencia" }
       }
+    },
+    "FuenteExpediente": {
+      "type": "string",
+      "description": "De dónde sale un dato del expediente de CESVI (v2): lo escribió el perito, lo dijo un conductor, viene del expediente del caso, de un dictamen importado, lo supuso el sistema o salió del mapa.",
+      "enum": ["perito", "conductor", "expediente", "dictamen_importado", "supuesto", "mapa"]
+    },
+    "IdVehiculoExpediente": {
+      "type": "string",
+      "description": "Identificador del vehículo en el expediente: A, B, C… (o V1, V2… en un dictamen importado).",
+      "pattern": "^[A-Z][A-Z0-9]{0,3}$"
+    },
+    "Cita": {
+      "type": "object",
+      "description": "La frase literal de donde sale un dato, y la página si es de un PDF.",
+      "properties": {
+        "texto": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 1200,
+          "description": "Fragmento literal."
+        },
+        "pagina": { "type": "integer", "minimum": 1, "description": "Página del PDF." }
+      },
+      "required": ["texto"],
+      "additionalProperties": false
+    },
+    "DatoExpediente": {
+      "type": "object",
+      "description": "Un dato de texto con su fuente y su cita.",
+      "properties": {
+        "valor": { "type": "string", "minLength": 1, "maxLength": 600, "description": "El dato." },
+        "fuente": { "$ref": "#/$defs/FuenteExpediente" },
+        "cita": { "$ref": "#/$defs/Cita" }
+      },
+      "required": ["valor", "fuente"],
+      "additionalProperties": false
+    },
+    "MedidaExpediente": {
+      "type": "object",
+      "description": "Un número con unidad, su fuente y su cita.",
+      "properties": {
+        "valor": { "type": "number", "description": "El número." },
+        "unidad": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 20,
+          "description": "Unidad (m, cm, km/h, m/s, kJ, kg, N/m, N/m², g…)."
+        },
+        "fuente": { "$ref": "#/$defs/FuenteExpediente" },
+        "cita": { "$ref": "#/$defs/Cita" }
+      },
+      "required": ["valor", "unidad", "fuente"],
+      "additionalProperties": false
+    },
+    "Coordenadas": {
+      "type": "object",
+      "description": "Un punto en el mapa (WGS84).",
+      "properties": {
+        "lat": { "type": "number", "description": "Latitud.", "minimum": -90, "maximum": 90 },
+        "lon": { "type": "number", "description": "Longitud.", "minimum": -180, "maximum": 180 }
+      },
+      "required": ["lat", "lon"],
+      "additionalProperties": false
+    },
+    "Modalidad": {
+      "type": "string",
+      "description": "Modalidad del hecho de tránsito según los dictámenes de CESVI.",
+      "enum": [
+        "alcance",
+        "lateral",
+        "frontal",
+        "crucero",
+        "reversa",
+        "volcadura",
+        "salida_de_camino",
+        "objeto_fijo",
+        "atropellamiento",
+        "carambola",
+        "otra"
+      ]
+    },
+    "CasoExpediente": {
+      "type": "object",
+      "description": "Los datos del caso: aseguradora, siniestro, fecha, lugar y modalidades. Sin nombres de personas.",
+      "properties": {
+        "aseguradora": { "$ref": "#/$defs/DatoExpediente" },
+        "siniestro": { "$ref": "#/$defs/DatoExpediente" },
+        "fecha_hora": { "$ref": "#/$defs/DatoExpediente" },
+        "lugar": {
+          "type": "object",
+          "description": "Dónde fue.",
+          "properties": {
+            "descripcion": { "$ref": "#/$defs/DatoExpediente" },
+            "coordenadas": { "$ref": "#/$defs/Coordenadas" },
+            "via": { "$ref": "#/$defs/DatoExpediente" },
+            "carriles": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 12,
+              "description": "Carriles por sentido."
+            },
+            "municipio": { "$ref": "#/$defs/DatoExpediente" },
+            "estado": { "$ref": "#/$defs/DatoExpediente" }
+          },
+          "required": [],
+          "additionalProperties": false
+        },
+        "modalidades": {
+          "type": "array",
+          "description": "Modalidad o modalidades del hecho.",
+          "items": { "$ref": "#/$defs/Modalidad" },
+          "maxItems": 6
+        }
+      },
+      "required": ["modalidades"],
+      "additionalProperties": false
+    },
+    "Rigidez": {
+      "type": "object",
+      "description": "Coeficientes de rigidez A (N/m) y B (N/m²) con su fuente.",
+      "properties": {
+        "A": { "type": "number", "description": "Coeficiente A (N/m).", "minimum": 0 },
+        "B": { "type": "number", "description": "Coeficiente B (N/m²).", "minimum": 0 },
+        "fuente": {
+          "type": "string",
+          "description": "Del dictamen, de una tabla de CESVI o de NHTSA E2 (marcada como tal).",
+          "enum": ["dictamen", "tabla_cesvi", "nhtsa_e2", "perito"]
+        },
+        "cita": { "$ref": "#/$defs/Cita" }
+      },
+      "required": ["A", "B", "fuente"],
+      "additionalProperties": false
+    },
+    "VehiculoExpediente": {
+      "type": "object",
+      "description": "Un vehículo del expediente. Sin placas, VIN ni nombres.",
+      "properties": {
+        "id": { "$ref": "#/$defs/IdVehiculoExpediente" },
+        "marca": { "$ref": "#/$defs/DatoExpediente" },
+        "modelo": { "$ref": "#/$defs/DatoExpediente" },
+        "anio": {
+          "type": "integer",
+          "minimum": 1900,
+          "maximum": 2100,
+          "description": "Año modelo."
+        },
+        "clase": {
+          "type": "string",
+          "description": "Clase del vehículo (las mismas del contrato: sedan_compacto, pickup…).",
+          "enum": [
+            "sedan_compacto",
+            "sedan_mediano",
+            "hatchback",
+            "suv_compacta",
+            "suv_grande",
+            "pickup",
+            "van",
+            "microbus_combi",
+            "autobus",
+            "camion_unitario",
+            "tractocamion",
+            "motocicleta",
+            "bicicleta",
+            "scooter"
+          ]
+        },
+        "masa": { "$ref": "#/$defs/MedidaExpediente" },
+        "rigidez": { "$ref": "#/$defs/Rigidez" },
+        "altura_defensa_cm": {
+          "type": "object",
+          "description": "Altura de las defensas medida (cm desde el piso).",
+          "properties": {
+            "delantera": {
+              "type": "number",
+              "description": "Delantera (cm).",
+              "minimum": 0,
+              "maximum": 300
+            },
+            "trasera": {
+              "type": "number",
+              "description": "Trasera (cm).",
+              "minimum": 0,
+              "maximum": 300
+            }
+          },
+          "required": [],
+          "additionalProperties": false
+        }
+      },
+      "required": ["id"],
+      "additionalProperties": false
+    },
+    "ZonaDiagrama": {
+      "type": "object",
+      "description": "La zona en el diagrama estándar del vehículo: cara, tercio y vértice.",
+      "properties": {
+        "cara": {
+          "type": "string",
+          "enum": [
+            "frontal",
+            "posterior",
+            "lateral_izquierdo",
+            "lateral_derecho",
+            "techo",
+            "inferior"
+          ]
+        },
+        "tercio": {
+          "type": "string",
+          "description": "En el frente y la parte posterior: izquierdo, centro, derecho. En los laterales: delantero, medio, trasero.",
+          "enum": ["izquierdo", "centro", "derecho", "delantero", "medio", "trasero"]
+        },
+        "vertice": {
+          "type": "string",
+          "enum": [
+            "delantero_izquierdo",
+            "delantero_derecho",
+            "posterior_izquierdo",
+            "posterior_derecho"
+          ]
+        }
+      },
+      "required": ["cara"],
+      "additionalProperties": false
+    },
+    "DireccionDeformacion": {
+      "type": "string",
+      "description": "Dirección de la deformación, como la escriben los dictámenes de CESVI.",
+      "enum": [
+        "de_adelante_hacia_atras",
+        "de_atras_hacia_adelante",
+        "de_izquierda_a_derecha",
+        "de_derecha_a_izquierda",
+        "de_arriba_hacia_abajo",
+        "de_abajo_hacia_arriba"
+      ]
+    },
+    "DanoExpediente": {
+      "type": "object",
+      "description": "Un daño de un vehículo: zona, altura, dirección, magnitud, intercambio de material y daño previo.",
+      "properties": {
+        "vehiculo": { "$ref": "#/$defs/IdVehiculoExpediente" },
+        "zona": { "$ref": "#/$defs/ZonaDiagrama" },
+        "altura_cm": {
+          "type": "object",
+          "description": "Altura mínima y máxima del daño desde el piso (cm).",
+          "properties": {
+            "min": {
+              "type": "number",
+              "description": "Mínima (cm).",
+              "minimum": 0,
+              "maximum": 400
+            },
+            "max": { "type": "number", "description": "Máxima (cm).", "minimum": 0, "maximum": 400 }
+          },
+          "required": [],
+          "additionalProperties": false
+        },
+        "direcciones": {
+          "type": "array",
+          "description": "Dirección o direcciones de la deformación.",
+          "items": { "$ref": "#/$defs/DireccionDeformacion" },
+          "maxItems": 4
+        },
+        "tipos": {
+          "type": "array",
+          "description": "Tipo de daño.",
+          "items": {
+            "type": "string",
+            "enum": [
+              "hundimiento",
+              "tallon",
+              "ruptura",
+              "desprendimiento",
+              "deformacion",
+              "fractura",
+              "impregnacion_pintura"
+            ]
+          },
+          "maxItems": 7
+        },
+        "magnitud": {
+          "type": "object",
+          "description": "Magnitud del daño: cualitativa y, si las hay, las medidas de profundidad C y el ancho L.",
+          "properties": {
+            "cualitativa": { "type": "string", "enum": ["leve", "moderada", "severa"] },
+            "c_m": {
+              "type": "array",
+              "description": "Medidas C1…C6 (m).",
+              "items": {
+                "type": "number",
+                "description": "Profundidad C (m).",
+                "minimum": 0,
+                "maximum": 5
+              },
+              "maxItems": 6
+            },
+            "l_m": {
+              "type": "number",
+              "description": "Ancho del daño L (m).",
+              "minimum": 0,
+              "maximum": 10
+            }
+          },
+          "required": [],
+          "additionalProperties": false
+        },
+        "intercambio_material": {
+          "type": "object",
+          "description": "Transferencia de material: color y sobre qué zona.",
+          "properties": {
+            "color": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 60,
+              "description": "Color transferido."
+            },
+            "sobre": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 200,
+              "description": "Sobre qué zona o pieza."
+            }
+          },
+          "required": [],
+          "additionalProperties": false
+        },
+        "dano_previo": {
+          "type": "boolean",
+          "description": "Daño previo u óxido sin relación con el hecho."
+        },
+        "descripcion": { "$ref": "#/$defs/DatoExpediente" },
+        "fotos": {
+          "type": "array",
+          "description": "Fotos asociadas.",
+          "items": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 300,
+            "description": "Referencia a una foto del caso."
+          },
+          "maxItems": 50
+        },
+        "fuente": { "$ref": "#/$defs/FuenteExpediente" },
+        "cita": { "$ref": "#/$defs/Cita" }
+      },
+      "required": ["vehiculo", "zona", "fuente"],
+      "additionalProperties": false
+    },
+    "ImpactoExpediente": {
+      "type": "object",
+      "description": "Un impacto, en orden: qué vehículos u objeto fijo, sus zonas de contacto, dónde y cuándo. Una carambola tiene más de uno.",
+      "properties": {
+        "orden": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 50,
+          "description": "1, 2, 3… en la secuencia."
+        },
+        "vehiculos": {
+          "type": "array",
+          "description": "Vehículos que participan.",
+          "items": { "$ref": "#/$defs/IdVehiculoExpediente" },
+          "maxItems": 6
+        },
+        "objeto_fijo": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 120,
+          "description": "Objeto fijo, si lo hay (poste, muro, árbol…)."
+        },
+        "zonas": {
+          "type": "array",
+          "description": "Zonas de contacto.",
+          "items": {
+            "type": "object",
+            "description": "Zona de contacto de un vehículo.",
+            "properties": {
+              "vehiculo": { "$ref": "#/$defs/IdVehiculoExpediente" },
+              "zona": { "$ref": "#/$defs/ZonaDiagrama" }
+            },
+            "required": ["vehiculo", "zona"],
+            "additionalProperties": false
+          },
+          "maxItems": 6
+        },
+        "punto": { "$ref": "#/$defs/Coordenadas" },
+        "fuente": { "$ref": "#/$defs/FuenteExpediente" },
+        "cita": { "$ref": "#/$defs/Cita" }
+      },
+      "required": ["orden", "fuente"],
+      "additionalProperties": false
+    },
+    "PosicionExpediente": {
+      "type": "object",
+      "description": "Posición de un vehículo en una fase de una versión.",
+      "properties": {
+        "vehiculo": { "$ref": "#/$defs/IdVehiculoExpediente" },
+        "fase": { "type": "string", "enum": ["inicial", "impacto", "final"] },
+        "punto": { "$ref": "#/$defs/Coordenadas" },
+        "rumbo": {
+          "type": "number",
+          "description": "Rumbo del frente, grados desde el norte.",
+          "minimum": 0,
+          "maximum": 360
+        },
+        "fuente": { "$ref": "#/$defs/FuenteExpediente" }
+      },
+      "required": ["vehiculo", "fase", "punto", "rumbo", "fuente"],
+      "additionalProperties": false
+    },
+    "ManiobraExpediente": {
+      "type": "object",
+      "description": "Una maniobra de un vehículo en una versión.",
+      "properties": {
+        "vehiculo": { "$ref": "#/$defs/IdVehiculoExpediente" },
+        "tipo": {
+          "type": "string",
+          "enum": [
+            "circula",
+            "se_detiene",
+            "reversa",
+            "frena",
+            "vira_izquierda",
+            "vira_derecha",
+            "cambia_carril",
+            "evasiva",
+            "otra"
+          ]
+        },
+        "metros": {
+          "type": "number",
+          "description": "Metros, si se dicen.",
+          "minimum": 0,
+          "maximum": 10000
+        },
+        "cita": { "$ref": "#/$defs/Cita" }
+      },
+      "required": ["vehiculo", "tipo"],
+      "additionalProperties": false
+    },
+    "VersionExpediente": {
+      "type": "object",
+      "description": "Una versión del hecho: la de la evidencia (la arma el perito) o la de un conductor (cita literal y maniobras).",
+      "properties": {
+        "tipo": { "type": "string", "enum": ["evidencia", "declarada"] },
+        "declarante": { "$ref": "#/$defs/IdVehiculoExpediente" },
+        "declaracion": { "$ref": "#/$defs/Cita" },
+        "maniobras": {
+          "type": "array",
+          "description": "Maniobras en orden.",
+          "items": { "$ref": "#/$defs/ManiobraExpediente" },
+          "maxItems": 20
+        },
+        "posiciones": {
+          "type": "array",
+          "description": "Posiciones por vehículo y fase.",
+          "items": { "$ref": "#/$defs/PosicionExpediente" },
+          "maxItems": 60
+        }
+      },
+      "required": ["tipo"],
+      "additionalProperties": false
+    },
+    "EvidenciasLugar": {
+      "type": "object",
+      "description": "Evidencias del lugar.",
+      "properties": {
+        "restos": {
+          "type": "object",
+          "description": "Zona de restos.",
+          "properties": {
+            "inicio": { "$ref": "#/$defs/Coordenadas" },
+            "fin": { "$ref": "#/$defs/Coordenadas" },
+            "longitud": { "$ref": "#/$defs/MedidaExpediente" },
+            "cita": { "$ref": "#/$defs/Cita" }
+          },
+          "required": [],
+          "additionalProperties": false
+        },
+        "huellas": {
+          "type": "array",
+          "description": "Huellas.",
+          "items": {
+            "type": "object",
+            "description": "Huella de frenado, derrape o arrastre.",
+            "properties": {
+              "tipo": { "type": "string", "enum": ["frenado", "derrape", "arrastre"] },
+              "vehiculo": { "$ref": "#/$defs/IdVehiculoExpediente" },
+              "longitud": { "$ref": "#/$defs/MedidaExpediente" },
+              "cita": { "$ref": "#/$defs/Cita" }
+            },
+            "required": ["tipo"],
+            "additionalProperties": false
+          },
+          "maxItems": 20
+        },
+        "objetos_fijos_danados": {
+          "type": "array",
+          "description": "Objetos fijos dañados.",
+          "items": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 200,
+            "description": "Objeto fijo dañado."
+          },
+          "maxItems": 20
+        }
+      },
+      "required": [],
+      "additionalProperties": false
+    },
+    "CalculoExpediente": {
+      "type": "object",
+      "description": "Un cálculo del dictamen o del motor: método, entradas con valor y resultado.",
+      "properties": {
+        "metodo": {
+          "type": "string",
+          "enum": [
+            "mchenry",
+            "ebs",
+            "desplazamiento",
+            "frenado_huellas",
+            "cantidad_movimiento",
+            "bolsas_aire",
+            "prueba_choque",
+            "otro"
+          ]
+        },
+        "entradas": {
+          "type": "array",
+          "description": "Entradas.",
+          "items": {
+            "type": "object",
+            "description": "Una entrada del cálculo.",
+            "properties": {
+              "nombre": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 40,
+                "description": "Símbolo o nombre (L, A, B, C1, m, D, a…)."
+              },
+              "valor": { "$ref": "#/$defs/MedidaExpediente" }
+            },
+            "required": ["nombre", "valor"],
+            "additionalProperties": false
+          },
+          "maxItems": 20
+        },
+        "resultado": { "$ref": "#/$defs/MedidaExpediente" },
+        "vehiculo": { "$ref": "#/$defs/IdVehiculoExpediente" },
+        "cita": { "$ref": "#/$defs/Cita" }
+      },
+      "required": ["metodo"],
+      "additionalProperties": false
+    },
+    "CriterioExpediente": {
+      "type": "object",
+      "description": "Un criterio de correspondencia con su estado y su evidencia.",
+      "properties": {
+        "criterio": {
+          "type": "string",
+          "enum": [
+            "altura",
+            "forma",
+            "direccion",
+            "magnitud",
+            "intercambio_material",
+            "dano_previo",
+            "lugar"
+          ]
+        },
+        "estado": { "type": "string", "enum": ["corresponde", "no_corresponde", "sin_dato"] },
+        "evidencia": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 1200,
+          "description": "Por qué."
+        },
+        "cita": { "$ref": "#/$defs/Cita" }
+      },
+      "required": ["criterio", "estado"],
+      "additionalProperties": false
+    },
+    "ResultadoExpediente": {
+      "type": "object",
+      "description": "El resultado: conclusión, sugerencia, decisión del perito, quién validó y la huella de las entradas.",
+      "properties": {
+        "conclusion": {
+          "type": "object",
+          "description": "La conclusión sobre la versión declarada.",
+          "properties": {
+            "veredicto": {
+              "type": "string",
+              "enum": ["se_sostiene", "no_se_sostiene", "parcial", "sin_juicio"]
+            },
+            "cita": { "$ref": "#/$defs/Cita" },
+            "fuente": { "$ref": "#/$defs/FuenteExpediente" }
+          },
+          "required": ["veredicto", "fuente"],
+          "additionalProperties": false
+        },
+        "sugerencia": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 2000,
+          "description": "La sugerencia de Croquis."
+        },
+        "decision": { "type": "string", "enum": ["aceptada", "editada", "rechazada"] },
+        "validado_por": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 120,
+          "description": "Quién validó (cargo o «perito»; sin nombres en el repositorio)."
+        },
+        "fecha_validacion": { "type": "string", "format": "date-time", "description": "Cuándo." },
+        "huella_entradas": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{8,64}$",
+          "description": "SHA-256 (o su prefijo) de las entradas."
+        }
+      },
+      "required": [],
+      "additionalProperties": false
+    },
+    "Expediente": {
+      "type": "object",
+      "description": "El expediente de CESVI (contrato v2, docs/cesvi/PLAN-CESVI.md §4): caso, vehículos 1..N, daños, impactos 1..M en orden, versiones, evidencias del lugar, cálculos, criterios y resultado.",
+      "properties": {
+        "caso": { "$ref": "#/$defs/CasoExpediente" },
+        "vehiculos": {
+          "type": "array",
+          "description": "Vehículos 1..N.",
+          "items": { "$ref": "#/$defs/VehiculoExpediente" },
+          "maxItems": 20
+        },
+        "danos": {
+          "type": "array",
+          "description": "Daños por vehículo.",
+          "items": { "$ref": "#/$defs/DanoExpediente" },
+          "maxItems": 200
+        },
+        "impactos": {
+          "type": "array",
+          "description": "Impactos en orden.",
+          "items": { "$ref": "#/$defs/ImpactoExpediente" },
+          "maxItems": 50
+        },
+        "versiones": {
+          "type": "array",
+          "description": "Versiones: la de la evidencia y una por declaración.",
+          "items": { "$ref": "#/$defs/VersionExpediente" },
+          "maxItems": 20
+        },
+        "evidencias": { "$ref": "#/$defs/EvidenciasLugar" },
+        "calculos": {
+          "type": "array",
+          "description": "Cálculos.",
+          "items": { "$ref": "#/$defs/CalculoExpediente" },
+          "maxItems": 60
+        },
+        "criterios": {
+          "type": "array",
+          "description": "Criterios de correspondencia.",
+          "items": { "$ref": "#/$defs/CriterioExpediente" },
+          "maxItems": 40
+        },
+        "resultado": { "$ref": "#/$defs/ResultadoExpediente" }
+      },
+      "required": ["caso", "vehiculos"],
+      "additionalProperties": false
     }
   }
 }

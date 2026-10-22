@@ -35,11 +35,45 @@ Reglas de trabajo: `CLAUDE.md`. Especificación: `PLAN.md`.
 - **Versión real para CESVI (desde 2026-10-21):** el plan es `docs/cesvi/PLAN-CESVI.md`; `docs/cesvi/PROTOTIPO.md` queda como historial.
   - **El prototipo desplegado se queda como está** para la demo con CESVI de esta semana. La versión real se trabaja en ramas y entra a `main` solo con la e2e del prototipo en verde.
   - **Orden:** C0 → C1 → C2 → C3 → C4 → C6 → C5 → C7 → C8.
-  - **Fase actual: C0** (corpus y contrato v2). Plan:
+  - **Fase actual: C1** (motor de cálculo). C0 (corpus y contrato v2) quedó cerrada el 2026-10-21; su plan fue:
     - **Contrato v2:** `escena.schema.json` ampliado, con migración desde v1.3, Zod y Pydantic generados y un validador semántico (N vehículos, M impactos, versiones).
     - **Corpus estructurado** de los 671 dictámenes con Claude (salida estructurada, caché, semilla), validado contra el esquema, con partición congelada del 30 % y etiquetas de la conclusión revisadas en una muestra.
     - **Mediciones:** las proporciones del §2 en `eval/results/cesvi_corpus.json`; desde ahí se pueden citar.
     - **Costo:** antes de correr el corpus se estima y se anota aquí. Si pasa de 30 USD, se pregunta a René.
+  - **Resumen de C0 para René** (rama `feat/c0-corpus`, ADR 0058):
+    - **Qué quedó:**
+      - **Contrato 2.0.0:** `expediente` opcional (N vehículos, M impactos, versiones, cálculos, criterios), migración identidad 1.3.0 → 2.0.0 en TS y Python, Zod y Pydantic generados y validador semántico X001–X009 con paridad. Relatos-MX conserva sus escenas congeladas en 1.3.0 y las valida migradas.
+      - **Corpus estructurado de los 671 dictámenes:** `data/cesvi/corpus/expedientes.jsonl`, con las citas redactadas, y `particion.json` (prueba congelada del 30 %).
+      - **Medición por palabras clave:** `eval/cesvi_corpus.mjs` → `eval/results/cesvi_corpus.json`. Dice si el dictamen _menciona_ el tema, no si lo analiza.
+      - **Revisión ciega** de la etiqueta de la conclusión: `eval/cesvi_concordancia.mts` → `eval/results/cesvi_concordancia.json`.
+    - **Números medidos** (`eval/results/cesvi_corpus_extraccion.json`, `cesvi_concordancia.json`):
+      - **Válidos contra el esquema y el validador:** 668 de 671. Los 3 que no:
+        - 2 dictámenes de un solo vehículo que no nombran contra qué fue el impacto (X004);
+        - 1 que escribe la altura del daño como «110 y 130 metros» (no se corrige: sería inventar).
+      - **Citas fuera del texto:** 406 de 15 800 (se descartan). **Números que no están en su cita:** 313 de 3 129 (se descartan).
+      - **Datos personales tras redactar:** 0.
+      - **Partición:** 205 de prueba y 466 de desarrollo.
+      - **Estructura** (sobre los 668 válidos):
+        - **Conclusión:** no se sostiene 332, se sostiene 157, parcial 103, sin juicio 65, sin conclusión 11.
+        - **Vehículos e impactos:** 3 o más vehículos en 104; más de un impacto en 144; con declaración, 581.
+        - **Modalidad principal:** alcance 186, lateral 126, otra 120, objeto fijo 81, volcadura 34, reversa 32, salida de camino 31, frontal 27, crucero 10, carambola 3, sin modalidad 18.
+        - **Criterios analizados:** intercambio 476, forma 396, altura 385, magnitud 291, dirección 195, daño previo 115, lugar 111.
+        - **Cálculos:** prueba de choque 18, bolsas de aire 15, desplazamiento 14, EBS 8, huellas de frenado 6, McHenry 3, cantidad de movimiento 3 y otros 114.
+      - **Concordancia de la conclusión:**
+        - **Acuerdo:** 35 de 47 (74.5 %), kappa de Cohen 0.68.
+        - **Los desacuerdos** caen en la frontera entre parcial, no se sostiene y sin juicio.
+        - **El segundo lector es Claude Code, no un perito.**
+        - **Para las fases siguientes:** la etiqueta sirve para estratificar y describir, no como verdad de referencia fina.
+      - **Costo real:** 18.47 USD; estimado previo: 18.29 USD con la API de lotes, debajo del tope de 30.
+        - **Desglose:** piloto, 0.26 USD; lote de 666, 16.45 USD; relectura de 41 inválidos con el prompt v3, 1.76 USD.
+    - **Las cifras del §2 del plan** ya se pueden citar, desde los dos resultados de arriba.
+    - **Cómo probarlo:**
+      - `pnpm --filter @croquis/cesvi test`: extractor, conversión, redacción y partición, sin la API;
+      - `pnpm --filter @croquis/scene-schema test`: contrato y validador;
+      - `pnpm --filter @croquis/cesvi corpus armar` rearma el corpus desde la caché local, sin costo; requiere `data/raw/cesvi/`.
+    - **Qué necesito de René:**
+      - **Opcional:** que un perito de CESVI etiquete la hoja ciega (47 conclusiones, `data/raw/cesvi/revision-ciega.md`, fuera de git) para medir el acuerdo con una persona.
+    - **Siguiente:** C1, el motor de cálculo. Los casos de frenado con transferencia y velocidad crítica en curva del corpus ya están ubicados.
 - **UI unificada (2026-10-21)** (rama `feat/cesvi-ui-unificada`, ADR 0057; maquetas Paso4Trabajo, Paso8 y Paso2Claro):
   - **Liga:** https://croquis-sage.vercel.app/cesvi
   - **Qué hay:**
@@ -296,7 +330,8 @@ Lo que se pospone por el trabajo con CESVI no se borra: queda aquí para despué
 | PDF originales de algunos dictámenes                                                                                                                                                                                                | Evaluar la carga de PDF con imágenes y fórmulas (C4, E-C4)                                | Pendiente; mientras, se evalúa con Markdown                                                                                                                           |
 | Tabla de coeficientes de rigidez A y B que usa CESVI                                                                                                                                                                                | C1: rigidez por vehículo (si no, NHTSA E2 marcada como tal)                               | Pendiente                                                                                                                                                             |
 | Comentarios de CESVI tras la demo                                                                                                                                                                                                   | C8                                                                                        | Pendiente                                                                                                                                                             |
-| Saldo de la API de Claude para el corpus de C0                                                                                                                                                                                      | Procesar los 671 dictámenes                                                               | Se estima el costo antes de correrlo; si pasa de 30 USD, se pregunta                                                                                                  |
+| Saldo de la API de Claude para el corpus de C0                                                                                                                                                                                      | Procesar los 671 dictámenes                                                               | Hecho el 2026-10-21: 18.47 USD reales (estimado 18.29 USD, tope 30 USD)                                                                                               |
+| Etiquetas de un perito de CESVI sobre la hoja ciega de 47 conclusiones (`data/raw/cesvi/revision-ciega.md`)                                                                                                                         | Medir el acuerdo de la etiqueta de la conclusión con una persona (hoy: con Claude Code)   | Opcional; no bloquea C1                                                                                                                                               |
 | `ANTHROPIC_API_KEY`                                                                                                                                                                                                                 | F6 (extracción con Claude) y E1. CI usa respuestas grabadas, así que no bloquea hasta F6. | Recibida 2026-10-14 (`.env.local`)                                                                                                                                    |
 | Confirmar licencia MIT del código y el nombre _Croquis_                                                                                                                                                                             | Se usan los valores por defecto de PLAN §16 (ADR 0002)                                    | Usando default                                                                                                                                                        |
 | Computadora de demo (GPU potente) para medir alta y ultra                                                                                                                                                                           | Meta de PLAN §7.8: ≥ 60 fps en alta o ultra en todas las escenas canónicas (ADR 0026)     | Pendiente; ya se puede medir sin instalar nada: abrir `/medicion` en esa computadora, descargar el JSON y correr `node eval/e6_navegador.mjs <archivo>` (ADR 0045 §7) |

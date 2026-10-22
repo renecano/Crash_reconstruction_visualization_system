@@ -12,17 +12,20 @@
   "scripts": {
     "lint": "eslint .",
     "typecheck": "tsc -p tsconfig.json",
-    "test": "vitest run"
+    "test": "vitest run",
+    "corpus": "tsx ../../data/cesvi/scripts/corpus.mts"
   },
   "devDependencies": {
     "@types/node": "catalog:",
     "eslint": "catalog:",
+    "tsx": "catalog:",
     "typescript": "catalog:",
     "vitest": "catalog:"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "catalog:",
     "@croquis/extraction": "workspace:*",
+    "@croquis/scene-schema": "workspace:*",
     "@croquis/solver-ts": "workspace:*"
   }
 }

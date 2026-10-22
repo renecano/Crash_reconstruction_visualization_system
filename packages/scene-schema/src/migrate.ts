@@ -41,6 +41,13 @@ export const MIGRATIONS: Migration[] = [
     // Un tipo nuevo en el enum: ningún documento anterior lo usa.
     aplicar: (doc) => doc,
   },
+  {
+    desde: "1.3.0",
+    hasta: "2.0.0",
+    descripcion: "expediente de CESVI opcional (contrato v2); los documentos no cambian",
+    // Una propiedad nueva opcional: ninguna escena anterior la trae (docs/cesvi/PLAN-CESVI.md §4).
+    aplicar: (doc) => doc,
+  },
 ];
 
 export interface MigrationResult {

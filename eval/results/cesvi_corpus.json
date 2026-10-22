@@ -1,0 +1,196 @@
+{
+  "fecha": "2026-10-21T18:36:17.732Z",
+  "corpus": "671 dictámenes (data/raw/cesvi/, por patrones de palabras; ver cada patrón)",
+  "dictamenes": 671,
+  "metricas": [
+    {
+      "clave": "correspondencia",
+      "descripcion": "Analiza la correspondencia de daños",
+      "patrones": [
+        "/correspondencia/"
+      ],
+      "dictamenes": 563,
+      "proporcion": 0.839
+    },
+    {
+      "clave": "direccion_del_dano",
+      "descripcion": "Describe la dirección de la deformación («de atrás hacia adelante», «dirección de izquierda a derecha»…)",
+      "patrones": [
+        "/direccion de (adelante|atras|izquierda|derecha|arriba|abajo)|de (adelante|atras) hacia (atras|adelante|delante)|de (izquierda|derecha) (a|hacia) (la )?(derecha|izquierda)/"
+      ],
+      "dictamenes": 617,
+      "proporcion": 0.9195
+    },
+    {
+      "clave": "forma_del_dano",
+      "descripcion": "Relaciona la forma con el daño o el objeto que lo causó",
+      "patrones": [
+        "/\\bforma\\b[^.]{0,60}(dano|deformacion|hundimiento|contacto|objeto|defensa)|(dano|deformacion|hundimiento)[^.]{0,60}\\bforma\\b|correspondencia de caracteristicas/"
+      ],
+      "dictamenes": 485,
+      "proporcion": 0.7228
+    },
+    {
+      "clave": "direccion_y_forma",
+      "descripcion": "Describe la dirección y relaciona la forma (las dos de arriba)",
+      "patrones": [
+        "/direccion de (adelante|atras|izquierda|derecha|arriba|abajo)|de (adelante|atras) hacia (atras|adelante|delante)|de (izquierda|derecha) (a|hacia) (la )?(derecha|izquierda)/",
+        "/\\bforma\\b[^.]{0,60}(dano|deformacion|hundimiento|contacto|objeto|defensa)|(dano|deformacion|hundimiento)[^.]{0,60}\\bforma\\b|correspondencia de caracteristicas/"
+      ],
+      "dictamenes": 467,
+      "proporcion": 0.696
+    },
+    {
+      "clave": "magnitud_del_dano",
+      "descripcion": "Relaciona la magnitud con el daño o la deformación",
+      "patrones": [
+        "/\\bmagnitud[^.]{0,80}(dano|deformacion|impacto)|(dano|deformacion|impacto)[^.]{0,80}\\bmagnitud/"
+      ],
+      "dictamenes": 385,
+      "proporcion": 0.5738
+    },
+    {
+      "clave": "altura_del_dano",
+      "descripcion": "Mide o compara la altura de los daños (respecto al piso, en cm)",
+      "patrones": [
+        "/altura[^.]{0,80}(piso|suelo|cm\\b|centimetros)|(piso|suelo|cm\\b|centimetros)[^.]{0,80}altura/"
+      ],
+      "dictamenes": 293,
+      "proporcion": 0.4367
+    },
+    {
+      "clave": "intercambio_material",
+      "descripcion": "Menciona el intercambio de material(es)",
+      "patrones": [
+        "/intercambio de material/"
+      ],
+      "dictamenes": 364,
+      "proporcion": 0.5425
+    },
+    {
+      "clave": "dano_previo_u_oxido",
+      "descripcion": "Revisa daño previo u óxido",
+      "patrones": [
+        "/dano(s)? previo|danos? anterior|\\boxid|corrosion/"
+      ],
+      "dictamenes": 132,
+      "proporcion": 0.1967
+    },
+    {
+      "clave": "bolsas_de_aire",
+      "descripcion": "Menciona bolsas de aire",
+      "patrones": [
+        "/bolsas? de aire/"
+      ],
+      "dictamenes": 181,
+      "proporcion": 0.2697
+    },
+    {
+      "clave": "fotografias",
+      "descripcion": "Usa fotografías",
+      "patrones": [
+        "/fotografi/"
+      ],
+      "dictamenes": 654,
+      "proporcion": 0.9747
+    },
+    {
+      "clave": "calculo_mchenry",
+      "descripcion": "Cálculo de energía por McHenry",
+      "patrones": [
+        "/mchenry/"
+      ],
+      "dictamenes": 1,
+      "proporcion": 0.0015
+    },
+    {
+      "clave": "calculo_ebs",
+      "descripcion": "Velocidad equivalente de barrera (EBS)",
+      "patrones": [
+        "/velocidad equivalente de barrera|\\bebs\\b/"
+      ],
+      "dictamenes": 13,
+      "proporcion": 0.0194
+    },
+    {
+      "clave": "calculo_cantidad_movimiento",
+      "descripcion": "Cantidad de movimiento",
+      "patrones": [
+        "/cantidad de movimiento|conservacion del momento/"
+      ],
+      "dictamenes": 9,
+      "proporcion": 0.0134
+    },
+    {
+      "clave": "calculo_huellas_frenado",
+      "descripcion": "Huellas de frenado",
+      "patrones": [
+        "/huellas? de frenado/"
+      ],
+      "dictamenes": 23,
+      "proporcion": 0.0343
+    },
+    {
+      "clave": "velocidad_en_kmh",
+      "descripcion": "Escribe una velocidad en km/h",
+      "patrones": [
+        "/\\d+(?:[.,]\\d+)?\\s*km\\/h/"
+      ],
+      "dictamenes": 111,
+      "proporcion": 0.1654
+    },
+    {
+      "clave": "mencion_direccion",
+      "descripcion": "Menciona la palabra «dirección» (cualquier uso)",
+      "patrones": [
+        "/\\bdireccion\\b/"
+      ],
+      "dictamenes": 633,
+      "proporcion": 0.9434
+    },
+    {
+      "clave": "mencion_forma",
+      "descripcion": "Menciona la palabra «forma» (cualquier uso)",
+      "patrones": [
+        "/\\bforma\\b/"
+      ],
+      "dictamenes": 582,
+      "proporcion": 0.8674
+    },
+    {
+      "clave": "mencion_magnitud",
+      "descripcion": "Menciona la palabra «magnitud» (cualquier uso)",
+      "patrones": [
+        "/\\bmagnitud/"
+      ],
+      "dictamenes": 437,
+      "proporcion": 0.6513
+    },
+    {
+      "clave": "mencion_altura",
+      "descripcion": "Menciona la palabra «altura» (cualquier uso, incluida «a la altura del km»)",
+      "patrones": [
+        "/\\baltura/"
+      ],
+      "dictamenes": 542,
+      "proporcion": 0.8077
+    }
+  ],
+  "vehiculos_por_encabezado": {
+    "descripcion": "Dictámenes con 3 o más parejas distintas de marca y tipo en «VEHÍCULO MARCA X, TIPO Y» (proxy de 3 o más vehículos; el corpus estructurado lo medirá con precisión)",
+    "tres_o_mas": 181,
+    "proporcion": 0.2697,
+    "sin_encabezado": 36,
+    "distribucion": {
+      "0": 36,
+      "1": 195,
+      "2": 259,
+      "3": 116,
+      "4": 42,
+      "5": 16,
+      "6": 4,
+      "7": 2,
+      "8": 1
+    }
+  }
+}

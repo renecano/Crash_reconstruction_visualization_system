@@ -380,7 +380,113 @@ def check_escena(spec: JsonObj, clases: dict[str, JsonObj] | None = None) -> lis
                 "Un impacto con objeto necesita al menos un vehículo como actor.",
             )
 
+    # --- Expediente de CESVI (contrato v2) ----------------------------------------------
+    exp = spec.get("expediente")
+    if isinstance(exp, dict):
+        problemas.extend(check_expediente(cast(JsonObj, exp)))
+
     return sorted(problemas, key=lambda p: (p.ruta, p.codigo))
+
+
+_TERCIOS_FRENTE = {"izquierdo", "centro", "derecho"}
+_TERCIOS_LADO = {"delantero", "medio", "trasero"}
+
+
+def check_expediente(exp: JsonObj) -> list[Problema]:
+    """Validación semántica del expediente de CESVI (contrato v2), igual que
+    ``src/check-expediente.ts``: X001–X009."""
+    out: list[Problema] = []
+    base = "/expediente"
+
+    def err(codigo: str, ruta: str, mensaje: str) -> None:
+        out.append(Problema(ruta=ruta, codigo=codigo, severidad="error", mensaje=mensaje))
+
+    def warn(codigo: str, ruta: str, mensaje: str) -> None:
+        out.append(Problema(ruta=ruta, codigo=codigo, severidad="advertencia", mensaje=mensaje))
+
+    ids: set[str] = set()
+    for i, v in enumerate(cast(list[JsonObj], exp.get("vehiculos", []))):
+        vid = str(v["id"])
+        if vid in ids:
+            err("X001", f"{base}/vehiculos/{i}/id", f"Vehículo repetido: {vid}.")
+        ids.add(vid)
+
+    def ref(vid: object, ruta: str) -> None:
+        if vid is not None and vid not in ids:
+            err("X002", ruta, f"El vehículo {vid} no está en el expediente.")
+
+    for i, d in enumerate(cast(list[JsonObj], exp.get("danos", []))):
+        ref(d.get("vehiculo"), f"{base}/danos/{i}/vehiculo")
+        alt = cast(JsonObj, d.get("altura_cm") or {})
+        if "min" in alt and "max" in alt and float(alt["min"]) > float(alt["max"]):
+            err(
+                "X007",
+                f"{base}/danos/{i}/altura_cm",
+                "La altura mínima del daño es mayor que la máxima.",
+            )
+        zona = cast(JsonObj, d["zona"])
+        tercio = zona.get("tercio")
+        if tercio is not None:
+            cara = zona["cara"]
+            frente = cara in ("frontal", "posterior")
+            lado = cara in ("lateral_izquierdo", "lateral_derecho")
+            if (frente and tercio not in _TERCIOS_FRENTE) or (lado and tercio not in _TERCIOS_LADO):
+                err(
+                    "X009",
+                    f"{base}/danos/{i}/zona/tercio",
+                    f"El tercio «{tercio}» no corresponde a la cara {cara}.",
+                )
+        mag = cast(JsonObj, d.get("magnitud") or {})
+        c = mag.get("c_m")
+        n_c = len(cast(list[float], c)) if isinstance(c, list) else None
+        if n_c is not None and n_c not in (2, 4, 6):
+            warn(
+                "X008",
+                f"{base}/danos/{i}/magnitud/c_m",
+                f"McHenry usa 2, 4 o 6 medidas C; hay {n_c}.",
+            )
+
+    impactos = cast(list[JsonObj], exp.get("impactos", []))
+    vistos: set[int] = set()
+    for i, im in enumerate(impactos):
+        for j, v in enumerate(cast(list[str], im.get("vehiculos", []))):
+            ref(v, f"{base}/impactos/{i}/vehiculos/{j}")
+        for j, z in enumerate(cast(list[JsonObj], im.get("zonas", []))):
+            ref(z.get("vehiculo"), f"{base}/impactos/{i}/zonas/{j}/vehiculo")
+        orden = int(im["orden"])
+        if orden in vistos or orden > len(impactos):
+            err(
+                "X003",
+                f"{base}/impactos/{i}/orden",
+                f"Orden de impacto {orden} repetido o fuera de 1..{len(impactos)}.",
+            )
+        vistos.add(orden)
+        if len(cast(list[str], im.get("vehiculos", []))) + (1 if im.get("objeto_fijo") else 0) < 2:
+            err(
+                "X004",
+                f"{base}/impactos/{i}",
+                "Un impacto necesita dos vehículos, o un vehículo y un objeto fijo.",
+            )
+
+    evidencias = 0
+    for i, v in enumerate(cast(list[JsonObj], exp.get("versiones", []))):
+        if v["tipo"] == "evidencia":
+            evidencias += 1
+            if evidencias > 1:
+                err("X005", f"{base}/versiones/{i}", "Hay más de una versión de la evidencia.")
+        if v["tipo"] == "declarada" and "declarante" not in v:
+            err("X006", f"{base}/versiones/{i}", "Una versión declarada necesita su declarante.")
+        ref(v.get("declarante"), f"{base}/versiones/{i}/declarante")
+        for j, m in enumerate(cast(list[JsonObj], v.get("maniobras", []))):
+            ref(m.get("vehiculo"), f"{base}/versiones/{i}/maniobras/{j}/vehiculo")
+        for j, p in enumerate(cast(list[JsonObj], v.get("posiciones", []))):
+            ref(p.get("vehiculo"), f"{base}/versiones/{i}/posiciones/{j}/vehiculo")
+    ev = cast(JsonObj, exp.get("evidencias") or {})
+    for j, h in enumerate(cast(list[JsonObj], ev.get("huellas", []))):
+        ref(h.get("vehiculo"), f"{base}/evidencias/huellas/{j}/vehiculo")
+    for i, c in enumerate(cast(list[JsonObj], exp.get("calculos", []))):
+        ref(c.get("vehiculo"), f"{base}/calculos/{i}/vehiculo")
+    return out
 
 
 def _tip(tipico: JsonObj | None, key: str) -> float | None:

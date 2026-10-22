@@ -34,6 +34,18 @@ export function schemaErrors(data: unknown): string[] {
   return (validate.errors ?? []).map(formatError).sort();
 }
 
+/**
+ * Errores de un expediente de CESVI suelto (`$defs/Expediente`, contrato v2) contra el JSON
+ * Schema, con rutas relativas al expediente. Lo usa el corpus de dictámenes (C0).
+ */
+export function expedienteErrors(data: unknown): string[] {
+  const validate = ajv().getSchema(`${escenaSchema.$id}#/$defs/Expediente`);
+  if (!validate) throw new Error("No se pudo compilar $defs/Expediente");
+  const ok = validate(data);
+  if (ok) return [];
+  return (validate.errors ?? []).map(formatError).sort();
+}
+
 /** Verdadero si el documento cumple el JSON Schema (Ajv). */
 export function isValidEscena(data: unknown): data is EscenaSpec {
   return schemaErrors(data).length === 0;

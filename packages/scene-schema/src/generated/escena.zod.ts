@@ -3,7 +3,60 @@
 import { z } from "zod";
 
 export const SCHEMA_ID = "https://croquis.mx/schemas/escena/1.0.0/escena.schema.json";
-export const SCHEMA_VERSION = "1.3.0" as const;
+export const SCHEMA_VERSION = "2.0.0" as const;
+
+/** La frase literal de donde sale un dato, y la página si es de un PDF. */
+export const Cita = z.strictObject({
+  texto: z.string().min(1).max(1200),
+  pagina: z.int().min(1).optional(),
+});
+export type Cita = z.infer<typeof Cita>;
+
+/** Identificador del vehículo en el expediente: A, B, C… (o V1, V2… en un dictamen importado). */
+export const IdVehiculoExpediente = z.string().regex(new RegExp("^[A-Z][A-Z0-9]{0,3}$"));
+export type IdVehiculoExpediente = z.infer<typeof IdVehiculoExpediente>;
+
+/** De dónde sale un dato del expediente de CESVI (v2): lo escribió el perito, lo dijo un conductor, viene del expediente del caso, de un dictamen importado, lo supuso el sistema o salió del mapa. */
+export const FuenteExpediente = z.enum([
+  "perito",
+  "conductor",
+  "expediente",
+  "dictamen_importado",
+  "supuesto",
+  "mapa",
+]);
+export type FuenteExpediente = z.infer<typeof FuenteExpediente>;
+
+/** Un número con unidad, su fuente y su cita. */
+export const MedidaExpediente = z.strictObject({
+  valor: z.number(),
+  unidad: z.string().min(1).max(20),
+  fuente: FuenteExpediente,
+  cita: Cita.optional(),
+});
+export type MedidaExpediente = z.infer<typeof MedidaExpediente>;
+
+/** Un cálculo del dictamen o del motor: método, entradas con valor y resultado. */
+export const CalculoExpediente = z.strictObject({
+  metodo: z.enum([
+    "mchenry",
+    "ebs",
+    "desplazamiento",
+    "frenado_huellas",
+    "cantidad_movimiento",
+    "bolsas_aire",
+    "prueba_choque",
+    "otro",
+  ]),
+  entradas: z
+    .array(z.strictObject({ nombre: z.string().min(1).max(40), valor: MedidaExpediente }))
+    .max(20)
+    .optional(),
+  resultado: MedidaExpediente.optional(),
+  vehiculo: IdVehiculoExpediente.optional(),
+  cita: Cita.optional(),
+});
+export type CalculoExpediente = z.infer<typeof CalculoExpediente>;
 
 /** Confianza en el valor, de 0 (adivinado) a 1 (seguro). */
 export const Confianza = z.number().min(0).max(1);
@@ -306,11 +359,78 @@ export const CampoVelocidad = z.strictObject({
 });
 export type CampoVelocidad = z.infer<typeof CampoVelocidad>;
 
+/** Un punto en el mapa (WGS84). */
+export const Coordenadas = z.strictObject({
+  lat: z.number().min(-90).max(90),
+  lon: z.number().min(-180).max(180),
+});
+export type Coordenadas = z.infer<typeof Coordenadas>;
+
+/** Un dato de texto con su fuente y su cita. */
+export const DatoExpediente = z.strictObject({
+  valor: z.string().min(1).max(600),
+  fuente: FuenteExpediente,
+  cita: Cita.optional(),
+});
+export type DatoExpediente = z.infer<typeof DatoExpediente>;
+
+/** Modalidad del hecho de tránsito según los dictámenes de CESVI. */
+export const Modalidad = z.enum([
+  "alcance",
+  "lateral",
+  "frontal",
+  "crucero",
+  "reversa",
+  "volcadura",
+  "salida_de_camino",
+  "objeto_fijo",
+  "atropellamiento",
+  "carambola",
+  "otra",
+]);
+export type Modalidad = z.infer<typeof Modalidad>;
+
+/** Los datos del caso: aseguradora, siniestro, fecha, lugar y modalidades. Sin nombres de personas. */
+export const CasoExpediente = z.strictObject({
+  aseguradora: DatoExpediente.optional(),
+  siniestro: DatoExpediente.optional(),
+  fecha_hora: DatoExpediente.optional(),
+  lugar: z
+    .strictObject({
+      descripcion: DatoExpediente.optional(),
+      coordenadas: Coordenadas.optional(),
+      via: DatoExpediente.optional(),
+      carriles: z.int().min(1).max(12).optional(),
+      municipio: DatoExpediente.optional(),
+      estado: DatoExpediente.optional(),
+    })
+    .optional(),
+  modalidades: z.array(Modalidad).max(6),
+});
+export type CasoExpediente = z.infer<typeof CasoExpediente>;
+
 export const Color = z.strictObject({
   nombre: CampoTexto,
   hex: z.string().regex(new RegExp("^#[0-9a-fA-F]{6}$")),
 });
 export type Color = z.infer<typeof Color>;
+
+/** Un criterio de correspondencia con su estado y su evidencia. */
+export const CriterioExpediente = z.strictObject({
+  criterio: z.enum([
+    "altura",
+    "forma",
+    "direccion",
+    "magnitud",
+    "intercambio_material",
+    "dano_previo",
+    "lugar",
+  ]),
+  estado: z.enum(["corresponde", "no_corresponde", "sin_dato"]),
+  evidencia: z.string().min(1).max(1200).optional(),
+  cita: Cita.optional(),
+});
+export type CriterioExpediente = z.infer<typeof CriterioExpediente>;
 
 /** Identificador estable dentro de la escena. */
 export const Id = z.string().regex(new RegExp("^[a-z][a-z0-9_-]{0,31}$"));
@@ -368,6 +488,80 @@ export const DanoDeclarado = z.strictObject({
   procedencia: Procedencia,
 });
 export type DanoDeclarado = z.infer<typeof DanoDeclarado>;
+
+/** Dirección de la deformación, como la escriben los dictámenes de CESVI. */
+export const DireccionDeformacion = z.enum([
+  "de_adelante_hacia_atras",
+  "de_atras_hacia_adelante",
+  "de_izquierda_a_derecha",
+  "de_derecha_a_izquierda",
+  "de_arriba_hacia_abajo",
+  "de_abajo_hacia_arriba",
+]);
+export type DireccionDeformacion = z.infer<typeof DireccionDeformacion>;
+
+/** La zona en el diagrama estándar del vehículo: cara, tercio y vértice. */
+export const ZonaDiagrama = z.strictObject({
+  cara: z.enum([
+    "frontal",
+    "posterior",
+    "lateral_izquierdo",
+    "lateral_derecho",
+    "techo",
+    "inferior",
+  ]),
+  tercio: z.enum(["izquierdo", "centro", "derecho", "delantero", "medio", "trasero"]).optional(),
+  vertice: z
+    .enum(["delantero_izquierdo", "delantero_derecho", "posterior_izquierdo", "posterior_derecho"])
+    .optional(),
+});
+export type ZonaDiagrama = z.infer<typeof ZonaDiagrama>;
+
+/** Un daño de un vehículo: zona, altura, dirección, magnitud, intercambio de material y daño previo. */
+export const DanoExpediente = z.strictObject({
+  vehiculo: IdVehiculoExpediente,
+  zona: ZonaDiagrama,
+  altura_cm: z
+    .strictObject({
+      min: z.number().min(0).max(400).optional(),
+      max: z.number().min(0).max(400).optional(),
+    })
+    .optional(),
+  direcciones: z.array(DireccionDeformacion).max(4).optional(),
+  tipos: z
+    .array(
+      z.enum([
+        "hundimiento",
+        "tallon",
+        "ruptura",
+        "desprendimiento",
+        "deformacion",
+        "fractura",
+        "impregnacion_pintura",
+      ]),
+    )
+    .max(7)
+    .optional(),
+  magnitud: z
+    .strictObject({
+      cualitativa: z.enum(["leve", "moderada", "severa"]).optional(),
+      c_m: z.array(z.number().min(0).max(5)).max(6).optional(),
+      l_m: z.number().min(0).max(10).optional(),
+    })
+    .optional(),
+  intercambio_material: z
+    .strictObject({
+      color: z.string().min(1).max(60).optional(),
+      sobre: z.string().min(1).max(200).optional(),
+    })
+    .optional(),
+  dano_previo: z.boolean().optional(),
+  descripcion: DatoExpediente.optional(),
+  fotos: z.array(z.string().min(1).max(300)).max(50).optional(),
+  fuente: FuenteExpediente,
+  cita: Cita.optional(),
+});
+export type DanoExpediente = z.infer<typeof DanoExpediente>;
 
 export const FaseSemaforo = z.strictObject({
   movimiento: z.string().max(60),
@@ -501,6 +695,160 @@ export const EvidenciaFisica = z.strictObject({
 });
 export type EvidenciaFisica = z.infer<typeof EvidenciaFisica>;
 
+/** Evidencias del lugar. */
+export const EvidenciasLugar = z.strictObject({
+  restos: z
+    .strictObject({
+      inicio: Coordenadas.optional(),
+      fin: Coordenadas.optional(),
+      longitud: MedidaExpediente.optional(),
+      cita: Cita.optional(),
+    })
+    .optional(),
+  huellas: z
+    .array(
+      z.strictObject({
+        tipo: z.enum(["frenado", "derrape", "arrastre"]),
+        vehiculo: IdVehiculoExpediente.optional(),
+        longitud: MedidaExpediente.optional(),
+        cita: Cita.optional(),
+      }),
+    )
+    .max(20)
+    .optional(),
+  objetos_fijos_danados: z.array(z.string().min(1).max(200)).max(20).optional(),
+});
+export type EvidenciasLugar = z.infer<typeof EvidenciasLugar>;
+
+/** Un impacto, en orden: qué vehículos u objeto fijo, sus zonas de contacto, dónde y cuándo. Una carambola tiene más de uno. */
+export const ImpactoExpediente = z.strictObject({
+  orden: z.int().min(1).max(50),
+  vehiculos: z.array(IdVehiculoExpediente).max(6).optional(),
+  objeto_fijo: z.string().min(1).max(120).optional(),
+  zonas: z
+    .array(z.strictObject({ vehiculo: IdVehiculoExpediente, zona: ZonaDiagrama }))
+    .max(6)
+    .optional(),
+  punto: Coordenadas.optional(),
+  fuente: FuenteExpediente,
+  cita: Cita.optional(),
+});
+export type ImpactoExpediente = z.infer<typeof ImpactoExpediente>;
+
+/** El resultado: conclusión, sugerencia, decisión del perito, quién validó y la huella de las entradas. */
+export const ResultadoExpediente = z.strictObject({
+  conclusion: z
+    .strictObject({
+      veredicto: z.enum(["se_sostiene", "no_se_sostiene", "parcial", "sin_juicio"]),
+      cita: Cita.optional(),
+      fuente: FuenteExpediente,
+    })
+    .optional(),
+  sugerencia: z.string().min(1).max(2000).optional(),
+  decision: z.enum(["aceptada", "editada", "rechazada"]).optional(),
+  validado_por: z.string().min(1).max(120).optional(),
+  fecha_validacion: z.iso.datetime({ offset: true }).optional(),
+  huella_entradas: z.string().regex(new RegExp("^[0-9a-f]{8,64}$")).optional(),
+});
+export type ResultadoExpediente = z.infer<typeof ResultadoExpediente>;
+
+/** Coeficientes de rigidez A (N/m) y B (N/m²) con su fuente. */
+export const Rigidez = z.strictObject({
+  A: z.number().min(0),
+  B: z.number().min(0),
+  fuente: z.enum(["dictamen", "tabla_cesvi", "nhtsa_e2", "perito"]),
+  cita: Cita.optional(),
+});
+export type Rigidez = z.infer<typeof Rigidez>;
+
+/** Un vehículo del expediente. Sin placas, VIN ni nombres. */
+export const VehiculoExpediente = z.strictObject({
+  id: IdVehiculoExpediente,
+  marca: DatoExpediente.optional(),
+  modelo: DatoExpediente.optional(),
+  anio: z.int().min(1900).max(2100).optional(),
+  clase: z
+    .enum([
+      "sedan_compacto",
+      "sedan_mediano",
+      "hatchback",
+      "suv_compacta",
+      "suv_grande",
+      "pickup",
+      "van",
+      "microbus_combi",
+      "autobus",
+      "camion_unitario",
+      "tractocamion",
+      "motocicleta",
+      "bicicleta",
+      "scooter",
+    ])
+    .optional(),
+  masa: MedidaExpediente.optional(),
+  rigidez: Rigidez.optional(),
+  altura_defensa_cm: z
+    .strictObject({
+      delantera: z.number().min(0).max(300).optional(),
+      trasera: z.number().min(0).max(300).optional(),
+    })
+    .optional(),
+});
+export type VehiculoExpediente = z.infer<typeof VehiculoExpediente>;
+
+/** Una maniobra de un vehículo en una versión. */
+export const ManiobraExpediente = z.strictObject({
+  vehiculo: IdVehiculoExpediente,
+  tipo: z.enum([
+    "circula",
+    "se_detiene",
+    "reversa",
+    "frena",
+    "vira_izquierda",
+    "vira_derecha",
+    "cambia_carril",
+    "evasiva",
+    "otra",
+  ]),
+  metros: z.number().min(0).max(10000).optional(),
+  cita: Cita.optional(),
+});
+export type ManiobraExpediente = z.infer<typeof ManiobraExpediente>;
+
+/** Posición de un vehículo en una fase de una versión. */
+export const PosicionExpediente = z.strictObject({
+  vehiculo: IdVehiculoExpediente,
+  fase: z.enum(["inicial", "impacto", "final"]),
+  punto: Coordenadas,
+  rumbo: z.number().min(0).max(360),
+  fuente: FuenteExpediente,
+});
+export type PosicionExpediente = z.infer<typeof PosicionExpediente>;
+
+/** Una versión del hecho: la de la evidencia (la arma el perito) o la de un conductor (cita literal y maniobras). */
+export const VersionExpediente = z.strictObject({
+  tipo: z.enum(["evidencia", "declarada"]),
+  declarante: IdVehiculoExpediente.optional(),
+  declaracion: Cita.optional(),
+  maniobras: z.array(ManiobraExpediente).max(20).optional(),
+  posiciones: z.array(PosicionExpediente).max(60).optional(),
+});
+export type VersionExpediente = z.infer<typeof VersionExpediente>;
+
+/** El expediente de CESVI (contrato v2, docs/cesvi/PLAN-CESVI.md §4): caso, vehículos 1..N, daños, impactos 1..M en orden, versiones, evidencias del lugar, cálculos, criterios y resultado. */
+export const Expediente = z.strictObject({
+  caso: CasoExpediente,
+  vehiculos: z.array(VehiculoExpediente).max(20),
+  danos: z.array(DanoExpediente).max(200).optional(),
+  impactos: z.array(ImpactoExpediente).max(50).optional(),
+  versiones: z.array(VersionExpediente).max(20).optional(),
+  evidencias: EvidenciasLugar.optional(),
+  calculos: z.array(CalculoExpediente).max(60).optional(),
+  criterios: z.array(CriterioExpediente).max(40).optional(),
+  resultado: ResultadoExpediente.optional(),
+});
+export type Expediente = z.infer<typeof Expediente>;
+
 export const Frenado = z.strictObject({
   aplico: CampoBooleano,
   distancia_antes_impacto: CampoLongitud.optional(),
@@ -570,7 +918,7 @@ export type Lugar = z.infer<typeof Lugar>;
 
 export const Meta = z.strictObject({
   id: z.string().min(8).max(64).regex(new RegExp("^[A-Za-z0-9_-]+$")),
-  version_esquema: z.literal("1.3.0"),
+  version_esquema: z.literal("2.0.0"),
   idioma: z.enum(["es-MX", "en"]),
   semilla: z.int().min(0).max(4294967295),
   creado: z.iso.datetime({ offset: true }),
@@ -650,5 +998,6 @@ export const EscenaSpecSchema = z.strictObject({
   eventos: z.array(Evento).max(32),
   danos_declarados: z.array(DanoDeclarado).max(32),
   evidencias: z.array(EvidenciaFisica).max(64),
+  expediente: Expediente.optional(),
 });
 export type EscenaSpec = z.infer<typeof EscenaSpecSchema>;

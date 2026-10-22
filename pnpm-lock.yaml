@@ -462,6 +462,9 @@ importers:
       '@croquis/extraction':
         specifier: workspace:*
         version: link:../extraction
+      '@croquis/scene-schema':
+        specifier: workspace:*
+        version: link:../scene-schema
       '@croquis/solver-ts':
         specifier: workspace:*
         version: link:../solver-ts
@@ -472,6 +475,9 @@ importers:
       eslint:
         specifier: 'catalog:'
         version: 10.12.0(jiti@2.7.0)
+      tsx:
+        specifier: 'catalog:'
+        version: 4.23.15
       typescript:
         specifier: 'catalog:'
         version: 6.0.3

@@ -57,6 +57,11 @@ def _v120_a_130(doc: JsonObj) -> JsonObj:
     return doc
 
 
+def _v130_a_200(doc: JsonObj) -> JsonObj:
+    """2.0.0 agrega ``expediente`` (el expediente de CESVI, opcional): ningún documento cambia."""
+    return doc
+
+
 MIGRATIONS: list[Migration] = [
     Migration(
         "1.0.0",
@@ -75,6 +80,12 @@ MIGRATIONS: list[Migration] = [
         "1.3.0",
         "dispositivo 'semaforo_peatonal'; los documentos no cambian",
         _v120_a_130,
+    ),
+    Migration(
+        "1.3.0",
+        "2.0.0",
+        "expediente de CESVI opcional (contrato v2); los documentos no cambian",
+        _v130_a_200,
     ),
 ]
 
