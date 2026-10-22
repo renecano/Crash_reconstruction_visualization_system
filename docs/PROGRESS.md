@@ -77,6 +77,15 @@ Reglas de trabajo: `CLAUDE.md`. Especificación: `PLAN.md`.
     - **Corpus estructurado** de los 671 dictámenes con Claude (salida estructurada, caché, semilla), validado contra el esquema, con partición congelada del 30 % y etiquetas de la conclusión revisadas en una muestra.
     - **Mediciones:** las proporciones del §2 en `eval/results/cesvi_corpus.json`; desde ahí se pueden citar.
     - **Costo:** antes de correr el corpus se estima y se anota aquí. Si pasa de 30 USD, se pregunta a René.
+  - **R1 en curso: de la narración del perito a la escena** (rama `feat/r1-escena`). Plan:
+    - **Lectura de la narración a expediente (contrato 2.0.0):** reutiliza el extractor de C0 (filas planas, citas y números revisados contra el texto) con un prompt para la narración del perito. Da N vehículos con clase y masa, M impactos con zonas de contacto, objetos fijos, maniobras, restos, huellas y la descripción de las posiciones finales.
+    - **Posiciones:** el contrato las pide con coordenadas, que pone el perito en el mapa (fuente `perito`). De la narración solo salen como descripción, para guiar dónde colocarlas; no se inventan coordenadas.
+    - **Preguntas:** solo lo que más cambia la reconstrucción (participantes y zonas de contacto de cada impacto, masas, longitud de restos y huellas, posiciones finales), con «No sé».
+    - **E-R1:** 10 narraciones de desarrollo de R0, de modalidades distintas, leídas con Claude. Las respuestas se graban para que CI no llame a la API, y se validan con el esquema y el validador semántico.
+    - **Recorrido:** el paso «El hecho» muestra la escena (N vehículos, M impactos), y el mapa coloca a cada vehículo; e2e narración → mapa → escena.
+    - **Riesgos:**
+      - el mapa del prototipo es de dos vehículos (A y B) y hay que generalizarlo sin romper el caso de AXA;
+      - en las carambolas, la asignación de zonas a impactos puede quedar ambigua, y entonces se pregunta.
   - **Resumen de R0 para René** (rama `feat/r0-narracion`, ADR 0060):
     - **Qué quedó:** por cada uno de los 671 dictámenes, en `data/cesvi/corpus/narraciones.jsonl`:
       - la narración de los hechos sin conclusiones, revisada contra fugas;
