@@ -108,6 +108,22 @@ Reglas de trabajo: `CLAUDE.md`. Especificación: `PLAN.md`.
     - **Corpus estructurado** de los 671 dictámenes con Claude (salida estructurada, caché, semilla), validado contra el esquema, con partición congelada del 30 % y etiquetas de la conclusión revisadas en una muestra.
     - **Mediciones:** las proporciones del §2 en `eval/results/cesvi_corpus.json`; desde ahí se pueden citar.
     - **Costo:** antes de correr el corpus se estima y se anota aquí. Si pasa de 30 USD, se pregunta a René.
+  - **R5 en curso: cargar un dictamen** (rama `feat/r5-cargar-dictamen`). Plan:
+    1. **`/cesvi/importar`:**
+       - el perito sube un dictamen en PDF, Markdown o texto;
+       - el texto del PDF se saca en el navegador con `pdfjs-dist`, que ya está en el proyecto.
+    2. **`POST /api/cesvi/importar`:** Claude lee el texto dos veces, en paralelo y con el tope de gasto de siempre:
+       - la lectura de C0: el expediente completo, con la cita de cada dato;
+       - la de R0: la narración sin conclusiones y lo que concluyó CESVI.
+       - **En el navegador** se revisa cada cita contra el texto (`expedienteDeSalida` y `narracionDeSalida`).
+    3. **El perito revisa y reconstruye:** el expediente importado abre en «Caso nuevo» ya leído (mapa, preguntas, reconstrucción, 3D y verificación CESVI con las medidas del dictamen). Al lado va lo que concluyó CESVI.
+    4. **E-R5,** con las lecturas de C0, que son la misma importación sobre el texto de los dictámenes:
+       - qué tanto de la prueba congelada queda listo para reconstruir;
+       - cobertura por campo;
+       - citas y números verificables;
+       - la exactitud de los campos de cálculo con la reproducción de E-C1.
+       - **La exactitud contra los PDF originales sigue bloqueada** hasta que René los consiga.
+    5. **e2e:** importar un dictamen (Markdown redactado, con lecturas grabadas) hasta reconstruirlo.
   - **Resumen de R4 para René** (rama `feat/r4-reproduccion`, ADR 0067):
     - **Qué quedó:**
       - **E-R4:** Croquis recibe solo la narración sin conclusiones de cada dictamen de la prueba congelada; la lee a escena como en «Caso nuevo», la reconstruye y se compara con lo que concluyó CESVI.
