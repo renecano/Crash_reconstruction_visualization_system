@@ -11,6 +11,7 @@
  *   pnpm --filter @croquis/cesvi corpus piloto <n>        n dictámenes con la API normal
  *   pnpm --filter @croquis/cesvi corpus lote [tope_usd]   los que faltan, con la API de lotes
  *   pnpm --filter @croquis/cesvi corpus recoger <id>      trae a la caché los resultados de un lote
+ *   pnpm --filter @croquis/cesvi corpus releer [X004,X006]  relee con el prompt vigente los inválidos por esas causas
  *   pnpm --filter @croquis/cesvi corpus armar             corpus, partición y medición (sin API)
  */
 import { existsSync, mkdirSync, readdirSync, readFileSync, writeFileSync } from "node:fs";
@@ -24,6 +25,7 @@ import {
   problemasExpediente,
   redactar,
   VERSION_PROMPT_CORPUS,
+  VERSIONES_ACEPTADAS,
   type Conteos,
   type DocumentoCrudo,
   type Expediente,
@@ -55,6 +57,8 @@ interface Cacheado {
   fecha: string;
   uso: UsoTokens;
   costo_usd: number;
+  /** Lo que costaron las lecturas anteriores del mismo dictamen (si se releyó). */
+  costos_anteriores_usd?: number[];
   salida?: SalidaCorpus;
   error?: string;
 }
@@ -78,7 +82,7 @@ const rutaCache = (id: string) => join(CACHE, `${id}.json`);
 function cacheado(id: string): Cacheado | null {
   if (!existsSync(rutaCache(id))) return null;
   const c = JSON.parse(readFileSync(rutaCache(id), "utf8")) as Cacheado;
-  return c.version_prompt === VERSION_PROMPT_CORPUS && c.salida ? c : null;
+  return VERSIONES_ACEPTADAS.includes(c.version_prompt) && c.salida ? c : null;
 }
 
 const cliente = clienteCorpus;
@@ -159,6 +163,46 @@ async function piloto(n: number) {
     }
   }
   console.log(`Piloto: ${costo.toFixed(4)} USD`);
+}
+
+/**
+ * Relee con la versión vigente del prompt (API normal) los dictámenes que no validaron por una
+ * causa que la versión vigente corrige (`motivo`: prefijo del código, p. ej. X004).
+ */
+async function releer(motivos: string[]) {
+  const r = JSON.parse(readFileSync(join(RESULTADOS, "cesvi_corpus_extraccion.json"), "utf8")) as {
+    invalidos: { id: string; motivos: string[] }[];
+  };
+  const ids = new Set(
+    r.invalidos
+      .filter((i) => i.motivos.some((m) => motivos.some((x) => m.startsWith(x))))
+      .map((i) => i.id),
+  );
+  const c = cliente();
+  let costo = 0;
+  for (const d of documentos().filter((x) => ids.has(x.id))) {
+    const previo = JSON.parse(readFileSync(rutaCache(d.id), "utf8")) as Cacheado;
+    if (previo.version_prompt === VERSION_PROMPT_CORPUS) continue;
+    try {
+      const l = await leerDictamen(d.texto, c);
+      costo += l.costoUsd;
+      escribirJson(rutaCache(d.id), {
+        id: d.id,
+        version_prompt: VERSION_PROMPT_CORPUS,
+        modelo: l.modeloRespuesta,
+        lote: false,
+        fecha: new Date().toISOString(),
+        uso: l.uso,
+        costo_usd: l.costoUsd,
+        costos_anteriores_usd: [...(previo.costos_anteriores_usd ?? []), previo.costo_usd],
+        salida: l.salida,
+      } satisfies Cacheado);
+      console.log(`${d.id}: ${l.costoUsd.toFixed(4)} USD`);
+    } catch (e) {
+      console.log(`${d.id}: ${(e as Error).message}`);
+    }
+  }
+  console.log(`Releídos ${ids.size}: ${costo.toFixed(4)} USD`);
 }
 
 async function lote(topeUsd: number) {
@@ -278,6 +322,7 @@ function armar() {
   const docs = documentos();
   const filas: {
     id: string;
+    version: string;
     expediente: Expediente;
     problemas: string[];
     conteos: Conteos;
@@ -291,10 +336,16 @@ function armar() {
       sinLeer.push(d.id);
       continue;
     }
-    costo += c.costo_usd;
+    costo += c.costo_usd + (c.costos_anteriores_usd ?? []).reduce((a, b) => a + b, 0);
     if (c.lote) costoLote += c.costo_usd;
     const { expediente, conteos } = expedienteDeSalida(c.salida!, d.texto);
-    filas.push({ id: d.id, expediente, problemas: problemasExpediente(expediente), conteos });
+    filas.push({
+      id: d.id,
+      version: c.version_prompt,
+      expediente,
+      problemas: problemasExpediente(expediente),
+      conteos,
+    });
   }
   const validos = filas.filter((f) => f.problemas.length === 0);
   const pii = filas.reduce((a, f) => a + restosDePii(f.expediente), 0);
@@ -306,7 +357,7 @@ function armar() {
       .map((f) =>
         JSON.stringify({
           id: f.id,
-          version_prompt: VERSION_PROMPT_CORPUS,
+          version_prompt: f.version,
           expediente: f.expediente,
           problemas: f.problemas,
           conteos: f.conteos,
@@ -431,10 +482,15 @@ switch (orden) {
     if (!arg) throw new Error("Falta el id del lote.");
     await recoger(arg);
     break;
+  case "releer":
+    await releer((arg ?? "X004,X006").split(","));
+    break;
   case "armar":
     armar();
     break;
   default:
-    console.error("Uso: corpus estimar | piloto <n> | lote [tope_usd] | recoger <id> | armar");
+    console.error(
+      "Uso: corpus estimar | piloto <n> | lote [tope_usd] | recoger <id> | releer [motivos] | armar",
+    );
     process.exit(1);
 }

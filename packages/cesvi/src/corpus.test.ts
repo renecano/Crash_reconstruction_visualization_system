@@ -109,6 +109,11 @@ describe("corpus de dictámenes de CESVI (C0)", () => {
     expect(numeroEscrito("")).toBeNull();
     expect(numerosEscritos("45 a 95 cm")).toEqual([45, 95]);
     expect(unidadEscrita("220.19 kJ")).toBe("kJ");
+    // Miles con espacio, como en «50 600 kgs»; dos números separados no se juntan.
+    expect(numeroEscrito("50 600 kgs")).toBe(50600);
+    expect(unidadEscrita("50 600 kgs")).toBe("kgs");
+    expect(numerosEscritos("45 95 cm")).toEqual([45, 95]);
+    expect(numerosEscritos("2015 120 km")).toEqual([2015, 120]);
     expect(numerosEnCita("una masa de 1,450 kg y 0,45 m")).toEqual(
       expect.arrayContaining([1450, 0.45, 45]),
     );
@@ -182,6 +187,20 @@ describe("corpus de dictámenes de CESVI (C0)", () => {
       "el vehículo marca Mercedes Benz, placas [PLACA]",
     );
     expect(redactar("el conductor Juan Pérez García declaró")).not.toContain("Juan");
+    // Placas con guion largo o en formatos que el módulo general no ve, y el número de serie.
+    expect(redactar("placas MAV–1144, 263-HT-8 y 974-1P6; serie 2BEK6X2B013523787")).toBe(
+      "placas [PLACA], [PLACA] y [PLACA]; serie [VIN]",
+    );
+    expect(redactar("con placas de circulación 12-34-ABC; otra 7437-MDB")).toBe(
+      "con placas de circulación [PLACA]; otra [PLACA]",
+    );
+    expect(redactar("la matrícula (123-AB), No. Siniestro N12-3456-78")).toBe(
+      "la matrícula ([PLACA]), No. Siniestro [NUMERO]",
+    );
+    // Modelos y normas que parecen placa se conservan.
+    expect(redactar("tractocamión tipo FLD-120, según la NOM-012-SCT")).toBe(
+      "tractocamión tipo FLD-120, según la NOM-012-SCT",
+    );
   });
 
   it("un impacto con un solo participante queda como problema", () => {

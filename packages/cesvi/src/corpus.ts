@@ -28,7 +28,14 @@ import {
 } from "@croquis/scene-schema";
 import { GLOSARIO, glosarioParaPrompt, ubicarCita } from "./hecho-lectura";
 
-export const VERSION_PROMPT_CORPUS = "corpus-cesvi-v2";
+export const VERSION_PROMPT_CORPUS = "corpus-cesvi-v3";
+
+/**
+ * Versiones del prompt con que se aceptan lecturas en el corpus. La v3 solo agrega cómo nombrar la
+ * contraparte de un impacto de un solo vehículo y el vehículo del declarante; con ella se releyeron
+ * los dictámenes que con la v2 no validaban por eso (ADR 0058).
+ */
+export const VERSIONES_ACEPTADAS = ["corpus-cesvi-v2", "corpus-cesvi-v3"];
 
 export type Expediente = NonNullable<EscenaSpec["expediente"]>;
 
@@ -169,8 +176,8 @@ Secciones y campos:
   - medidas: las medidas de deformación C1…C6 y el ancho L, como "C1 0.96, C2 0.86, L 1.689 m";
   - intercambio: el material transferido, su color y sobre qué zona (p. ej. "pintura blanca sobre la defensa trasera");
   - previo: «si» si el dictamen dice que el daño es previo, con óxido o sin relación con el hecho.
-- impacto (n = el orden en la secuencia: 1, 2, 3…; una carambola tiene varios; vehículo «ninguno»): participante (una fila por cada vehículo que participa, aunque el dictamen no dé sus datos: V1, V2…) y objeto_fijo (poste, muro, guarnición, registro, árbol…) si el impacto es contra un objeto. Todo impacto tiene dos participantes, o un participante y un objeto_fijo.
-- declaracion (un grupo por cada versión de un conductor que el dictamen transcribe o resume; vehículo = el del declarante): version (valor "", con la cita más representativa de esa versión, hasta 60 palabras) y maniobra (lo que el conductor dice que hizo: ${lista("maniobra")}; una fila por maniobra).
+- impacto (n = el orden en la secuencia: 1, 2, 3…; una carambola tiene varios; vehículo «ninguno»): participante (una fila por cada vehículo que participa, aunque el dictamen no dé sus datos: V1, V2…) y objeto_fijo (poste, muro, guarnición, registro, árbol…) si el impacto es contra un objeto. Todo impacto tiene dos participantes, o un participante y un objeto_fijo: si solo participa un vehículo, objeto_fijo nombra la contraparte como la describe el dictamen («superficie de rodamiento» en una volcadura, «bache», «talud», «cuerpo duro no identificado» si no la identifica).
+- declaracion (un grupo por cada versión de un conductor que el dictamen transcribe o resume; vehículo = el que conducía o en el que iba el declarante; si no lo dice, el vehículo asegurado): version (valor "", con la cita más representativa de esa versión, hasta 60 palabras) y maniobra (lo que el conductor dice que hizo: ${lista("maniobra")}; una fila por maniobra).
 - restos (n 1): longitud de la zona de restos (p. ej. "15.89 m"), si la mide.
 - huella (un grupo por huella; vehículo = el que la dejó o «ninguno»): tipo_huella (${lista("tipo_huella")}) y longitud.
 - objeto_fijo (un grupo por objeto fijo dañado): descripcion.
@@ -216,12 +223,14 @@ export function idDocumento(archivo: string): string {
 
 // --- Números escritos ---------------------------------------------------------------------------
 
-const RX_NUMERO = /-?\d{1,3}(?:,\d{3})+(?:\.\d+)?|-?\d+(?:[.,]\d+)?/g;
+/** Miles con coma o con espacio («1,450», «50 600»); si no, un número con su decimal. */
+const NUMERO = String.raw`-?\d{1,3}(?:[,\u00a0\u202f ]\d{3}(?!\d))+(?:\.\d+)?|-?\d+(?:[.,]\d+)?`;
+const RX_NUMERO = new RegExp(NUMERO, "g");
 
-/** Un número escrito: la coma con tres cifras detrás es de miles; si no, decimal. */
+/** Un número escrito: la coma o el espacio con tres cifras detrás son de miles; si no, decimal. */
 function leerNumero(x: string): number {
-  return /^-?\d{1,3}(?:,\d{3})+(?:\.\d+)?$/.test(x)
-    ? Number(x.replace(/,/g, ""))
+  return /^-?\d{1,3}(?:[,\u00a0\u202f ]\d{3})+(?:\.\d+)?$/.test(x)
+    ? Number(x.replace(/[,\u00a0\u202f ]/g, ""))
     : Number(x.replace(",", "."));
 }
 
@@ -237,7 +246,7 @@ export function numeroEscrito(t: string): number | null {
 
 /** Lo que sigue al primer número: su unidad ("220.19 kJ" → "kJ"). */
 export function unidadEscrita(t: string): string {
-  const m = /-?\d{1,3}(?:,\d{3})+(?:\.\d+)?|-?\d+(?:[.,]\d+)?/.exec(t);
+  const m = new RegExp(NUMERO).exec(t);
   if (!m) return "";
   return t
     .slice(m.index + m[0].length)
@@ -321,19 +330,58 @@ const limpio = <T extends object>(o: T): T =>
 const algo = <T extends object>(o: T): T | undefined => (Object.keys(o).length ? o : undefined);
 const noVacio = <T>(xs: T[]): T[] | undefined => (xs.length ? xs : undefined);
 /**
+ * Placas que el módulo de `@croquis/extraction` no reconoce en los dictámenes: con guion largo,
+ * partidas en dos renglones o en formatos de otros estados («MAV–1144», «263-HT-8», «974-1P6»,
+ * «12-34-ABC»). Grupos unidos por guion, de 6 a 8 caracteres en total, con letra y número.
+ */
+const RX_PLACA_DICTAMEN = /\b[A-Z0-9]{1,4}(?:\s?[-–—]\s?[A-Z0-9]{1,4}){1,2}\b/g;
+const largoDePlaca = (x: string) => {
+  const n = x.replace(/[^A-Z0-9]/g, "").length;
+  return n >= 6 && n <= 8;
+};
+/** Lo que sigue a «placas de circulación» (o «placa:», «matrícula»), si lleva un número, es la placa. */
+const RX_TRAS_PLACAS =
+  /(\b(?:placas?(?:\s+de\s+circulaci[oó]n)?|matr[ií]cula)(?:\s+n[uú]mero)?\s*[:|(]?\s*)([A-Z0-9]{1,8}(?:\s?[-–—]\s?[A-Z0-9]{1,4}){0,3})\b/gi;
+/** El número de siniestro, póliza, folio o reporte identifica el caso: se redacta. */
+const RX_TRAS_FOLIO =
+  /(\b(?:siniestro|p[oó]liza|folio|reporte)\s*(?:n[uú]m(?:ero)?\.?|no\.?)?\s*[:|]?\s*)([A-Z0-9]{1,6}(?:-?[A-Z0-9]{1,6}){1,3})\b/gi;
+/** Número de serie (VIN): 17 caracteres sin I, O ni Q, con letra y número. */
+const RX_VIN = /\b[A-HJ-NPR-Z0-9]{17}\b/g;
+const letraYNumero = (x: string) => /\d/.test(x) && /[A-Z]/.test(x);
+/** Lo que parece placa pero, por lo que va antes, es un modelo («tipo FLD-120») o una norma. */
+const modeloONorma = (antes: string) => /(?:\b(?:tipo|modelo)\s+|\bNOM-?)$/i.test(antes);
+
+/**
  * El texto sin datos personales. Un «nombre» justo después de «marca» es la marca del vehículo
- * (p. ej. «Mercedes Benz»), no una persona: se conserva.
+ * (p. ej. «Mercedes Benz»), no una persona: se conserva. Lo que parece placa después de «tipo» o
+ * «modelo» es el modelo («tipo FLD-120»), y «NOM-012» es una norma: también se conservan.
  */
 export function redactar(t: string): string {
   const r = redact(t);
   let out = "";
   let pos = 0;
   for (const sp of r.spans) {
-    const marca = sp.kind === "NOMBRE" && /\bmarca\s+$/i.test(t.slice(0, sp.start));
-    out += t.slice(pos, sp.start) + (marca ? sp.original : `[${sp.kind}]`);
+    const antes = t.slice(0, sp.start);
+    const conserva =
+      (sp.kind === "NOMBRE" && /\bmarca\s+$/i.test(antes)) ||
+      (sp.kind === "PLACA" && modeloONorma(antes));
+    out += antes.slice(pos) + (conserva ? sp.original : `[${sp.kind}]`);
     pos = sp.end;
   }
-  return out + t.slice(pos);
+  out += t.slice(pos);
+  return out
+    .replace(RX_TRAS_PLACAS, (m, antes: string, placa: string) =>
+      /\d/.test(placa) ? `${antes}[PLACA]` : m,
+    )
+    .replace(RX_TRAS_FOLIO, (m, antes: string, folio: string) =>
+      (folio.match(/\d/g) ?? []).length >= 4 ? `${antes}[NUMERO]` : m,
+    )
+    .replace(RX_PLACA_DICTAMEN, (m, i: number, s: string) =>
+      !letraYNumero(m) || !largoDePlaca(m) || m.startsWith("NOM") || modeloONorma(s.slice(0, i))
+        ? m
+        : "[PLACA]",
+    )
+    .replace(RX_VIN, (m) => (letraYNumero(m) ? "[VIN]" : m));
 }
 
 const libre = (t: string, max: number): string | undefined => {
@@ -464,13 +512,17 @@ export function expedienteDeSalida(s: SalidaCorpus, textoDictamen: string): Conv
     .filter((g) => g.vehiculo && uno(g, "cara"))
     .map((g) => {
       const t = uno(g, "altura");
-      const k = /\bcm\b|cent/i.test(t) || !/\bm\b|metro/i.test(t) ? 1 : 100;
+      const k = /(?<![a-z])mm\b|mil[ií]m/i.test(t)
+        ? 0.1
+        : /(?<![a-z])cm\b|cent/i.test(t) || !/\bm\b|metro/i.test(t)
+          ? 1
+          : 100;
       const hs = numerosEscritos(t)
         .map((x) => num(x, g))
         .filter((x): x is number => x !== undefined)
         .map((x) => redondear(x * k));
       const m = uno(g, "medidas");
-      const km = /\bmm\b/i.test(m) ? 0.001 : /\bcm\b|cent/i.test(m) ? 0.01 : 1;
+      const km = /(?<![a-z])mm\b/i.test(m) ? 0.001 : /(?<![a-z])cm\b|cent/i.test(m) ? 0.01 : 1;
       const pares = [...m.matchAll(/\b(C[1-6]|L)\s*[=:]?\s*(-?\d[\d.,]*\d|\d)/gi)].map((p) => ({
         k: p[1]!.toUpperCase(),
         v: num(leerNumero(p[2]!), g),
