@@ -22,7 +22,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { downloadBytes } from "@/lib/download";
 import ejemplo from "../../../../../data/cesvi/grabaciones/escenas/cesvi-e814f085db.json";
 import { ESTILO_MAPA_CLARO, marcador } from "./mapa-comun";
-import { ReconstruccionCaso } from "./reconstruccion-caso";
+import { ReconstruccionCaso, type PosicionMovil } from "./reconstruccion-caso";
 
 type Id = Expediente["vehiculos"][number]["id"];
 type Fase = "impacto" | "final";
@@ -51,14 +51,18 @@ function Fuente({ f }: { f?: string }) {
 /** El mapa donde el perito coloca a cada vehículo: un clic pone lo elegido en la herramienta. */
 function MapaEscena({
   posiciones,
+  moviles = [],
   onClic,
 }: {
   posiciones: { vehiculo: Id; fase: string; punto: { lat: number; lon: number } }[];
+  /** Los vehículos en el instante del 3D (el croquis sigue al reloj de la reconstrucción). */
+  moviles?: PosicionMovil[];
   onClic: (p: { lat: number; lon: number }) => void;
 }) {
   const contenedor = useRef<HTMLDivElement>(null);
   const mapa = useRef<MapaMl | null>(null);
   const marcas = useRef<Marker[]>([]);
+  const marcasMoviles = useRef<Marker[]>([]);
   const [listo, setListo] = useState(false);
   const clic = useRef(onClic);
   useEffect(() => {
@@ -107,6 +111,24 @@ function MapaEscena({
       );
     });
   }, [posiciones, listo]);
+  useEffect(() => {
+    const m = mapa.current;
+    if (!m || !listo) return;
+    void import("maplibre-gl").then(({ Marker }) => {
+      for (const x of marcasMoviles.current) x.remove();
+      marcasMoviles.current = moviles.map((p) => {
+        // MapLibre posiciona el marcador con `transform`: el rumbo va en un elemento interior.
+        const el = marcador(`${p.vehiculo} `, "punto-mapa");
+        el.dataset.movil = p.vehiculo;
+        const flecha = document.createElement("span");
+        flecha.textContent = "▲";
+        flecha.style.display = "inline-block";
+        flecha.style.transform = `rotate(${p.rumbo}deg)`;
+        el.appendChild(flecha);
+        return new Marker({ element: el }).setLngLat([p.punto.lon, p.punto.lat]).addTo(m);
+      });
+    });
+  }, [moviles, listo]);
   return (
     <div className="relative h-[420px] overflow-hidden rounded-panel border border-linea-suave">
       <div ref={contenedor} className="absolute inset-0" data-testid="mapa-escena" />
@@ -189,6 +211,7 @@ export function CasoNuevo() {
   const [noSe, setNoSe] = useState<Set<string>>(new Set());
   const [herramienta, setHerramienta] = useState<{ vehiculo: Id; fase: Fase } | null>(null);
   const [rumbo, setRumbo] = useState("");
+  const [moviles, setMoviles] = useState<PosicionMovil[]>([]);
 
   const leer = async () => {
     setEstado("Leyendo la narración…");
@@ -411,7 +434,7 @@ export function CasoNuevo() {
                     : "Toca el mapa para colocar."}
                 </p>
               </div>
-              <MapaEscena posiciones={posiciones} onClic={colocar} />
+              <MapaEscena posiciones={posiciones} moviles={moviles} onClic={colocar} />
               <p className="t-nota" data-testid="colocados">
                 {posiciones.length === 1
                   ? "1 posición colocada por el perito."
@@ -435,7 +458,7 @@ export function CasoNuevo() {
               </button>
             </section>
 
-            <ReconstruccionCaso expediente={expediente} />
+            <ReconstruccionCaso expediente={expediente} onPosiciones={setMoviles} />
           </>
         ) : null}
         <p className="t-nota text-texto-3">Reconstrucción de apoyo · el dictamen es del perito.</p>

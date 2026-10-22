@@ -9,6 +9,7 @@ import {
   especReconstruida,
   evidenciaEnPalabras,
   interpretarResultado,
+  posicionesEnTiempo,
   verificacionCesvi,
   type Expediente,
   type Reconstruccion,
@@ -24,7 +25,16 @@ import { reconstruirCompletoEnNavegador } from "@/lib/reconstruct-client";
 
 const kmh = (x?: number) => (x === undefined ? "—" : x.toFixed(1));
 
-export function ReconstruccionCaso({ expediente }: { expediente: Expediente }) {
+export type PosicionMovil = ReturnType<typeof posicionesEnTiempo>[number];
+
+export function ReconstruccionCaso({
+  expediente,
+  onPosiciones,
+}: {
+  expediente: Expediente;
+  /** Dónde están los vehículos en el instante del 3D, para dibujarlos en el mapa (vacío sin 3D). */
+  onPosiciones?: (ps: PosicionMovil[]) => void;
+}) {
   const [estado, setEstado] = useState<string | null>(null);
   const [r, setR] = useState<Reconstruccion | null>(null);
   const verificacion = verificacionCesvi(expediente);
@@ -41,6 +51,7 @@ export function ReconstruccionCaso({ expediente }: { expediente: Expediente }) {
     setEstado("Reconstruyendo con el solver…");
     setR(null);
     setVer3d(false);
+    onPosiciones?.([]);
     try {
       const base = especDeExpediente(expediente);
       const resultado = await reconstruirCompletoEnNavegador(base.spec as unknown as EscenaSpec);
@@ -133,7 +144,10 @@ export function ReconstruccionCaso({ expediente }: { expediente: Expediente }) {
             <button
               type="button"
               className="boton-secundario self-start"
-              onClick={() => setVer3d((x) => !x)}
+              onClick={() => {
+                if (ver3d) onPosiciones?.([]);
+                setVer3d((x) => !x);
+              }}
               data-testid="ver-3d"
             >
               {ver3d ? "Ocultar el 3D" : "Ver la reconstrucción en 3D"}
@@ -179,6 +193,9 @@ export function ReconstruccionCaso({ expediente }: { expediente: Expediente }) {
             spec={spec3d}
             escena="propia"
             controles={controles}
+            onTiempo={(t, res) =>
+              onPosiciones?.(posicionesEnTiempo(r!, res as unknown as Record<string, unknown>, t))
+            }
             onControl={(k, v) =>
               setControles((c) => {
                 if (k === "completa") return { ...c, completa: v !== null };

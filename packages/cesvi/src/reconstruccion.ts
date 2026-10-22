@@ -13,7 +13,7 @@
 import { buildSpec, fact, emptyFacts, type Fact } from "@croquis/extraction";
 import { fullResult } from "@croquis/solver-ts";
 import type { Expediente } from "./corpus";
-import { enMetros, type LonLat } from "./geo";
+import { avanzar, enMetros, type LonLat } from "./geo";
 
 type Json = Record<string, unknown>;
 type Id = Expediente["vehiculos"][number]["id"];
@@ -77,6 +77,8 @@ export interface EscenaSolver {
   ids: Record<string, Id>;
   /** Lo que la reconstrucción no cubre o no fija, en palabras para el perito. */
   limites: string[];
+  /** El punto de impacto en el mapa (lon, lat): el origen de la escena. null sin posiciones de impacto. */
+  origen: LonLat | null;
 }
 
 /** La escena del solver a partir del expediente (sin correr el solver). */
@@ -219,7 +221,7 @@ export function especDeExpediente(e: Expediente, specId = "caso-nuevo"): EscenaS
       procedencia: { ...DEL_PERITO },
     });
   });
-  return { spec, ids, limites };
+  return { spec, ids, limites, origen };
 }
 
 export interface VelocidadReconstruida {
@@ -317,4 +319,50 @@ export function especReconstruida(r: Reconstruccion): Json {
     };
   }
   return spec;
+}
+
+interface Trayectoria {
+  t: number[];
+  x: number[];
+  y: number[];
+  /** Radianes desde +X, antihorario. */
+  rumbo: number[];
+}
+
+/** Interpola una serie en el tiempo t (fuera del intervalo, el extremo más cercano). */
+function enT(ts: number[], xs: number[], t: number): number {
+  if (t <= ts[0]!) return xs[0]!;
+  const n = ts.length - 1;
+  if (t >= ts[n]!) return xs[n]!;
+  let k = 0;
+  while (k < n && ts[k + 1]! < t) k++;
+  const f = (t - ts[k]!) / (ts[k + 1]! - ts[k]!);
+  return xs[k]! + f * (xs[k + 1]! - xs[k]!);
+}
+
+/**
+ * Dónde está cada vehículo en el instante t de la reconstrucción, en el mapa: la trayectoria del
+ * solver (metros desde el punto de impacto) de vuelta a latitud y longitud, con el rumbo en grados
+ * desde el norte. Para sincronizar el croquis 2D con el reloj del 3D. Vacío sin punto de impacto.
+ */
+export function posicionesEnTiempo(
+  base: EscenaSolver,
+  resultado: Json,
+  t: number,
+): { vehiculo: Id; punto: { lat: number; lon: number }; rumbo: number }[] {
+  if (!base.origen) return [];
+  const origen = base.origen;
+  return ((resultado.vehiculos ?? []) as { id: string; trayectoria?: Trayectoria }[]).flatMap(
+    (v) => {
+      const tr = v.trayectoria;
+      const id = base.ids[v.id];
+      if (!tr?.t?.length || !id) return [];
+      const x = enT(tr.t, tr.x, t);
+      const y = enT(tr.t, tr.y, t);
+      const r = enT(tr.t, tr.rumbo, t);
+      const [lon, lat] = avanzar(avanzar(origen, 0, y), 90, x);
+      const rumbo = (((90 - (r * 180) / Math.PI) % 360) + 360) % 360;
+      return [{ vehiculo: id, punto: { lat, lon }, rumbo }];
+    },
+  );
 }

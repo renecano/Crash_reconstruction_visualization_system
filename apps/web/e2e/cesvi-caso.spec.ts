@@ -90,6 +90,9 @@ test("@flujo /cesvi/caso: de la narración del perito al mapa y a la escena", as
   const visor = page.getByTestId("visor-caso");
   await expect(visor).toContainText("supuesto, con su rango");
   await expect(visor.locator("canvas").first()).toBeVisible({ timeout: 60_000 });
+  // El croquis 2D sigue al reloj del 3D: los vehículos de la reconstrucción se mueven en el mapa.
+  await expect(mapa.locator('[data-movil="V1"]')).toHaveCount(1, { timeout: 30_000 });
+  await expect(mapa.locator('[data-movil="V2"]')).toHaveCount(1);
 
   // 5. La escena, descargada: contrato 2.0.0 con lo que marcó el perito.
   const descarga = page.waitForEvent("download");

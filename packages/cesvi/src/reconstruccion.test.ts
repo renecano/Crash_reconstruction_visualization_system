@@ -10,6 +10,7 @@ import {
   especDeExpediente,
   especReconstruida,
   reconstruirExpediente,
+  posicionesEnTiempo,
   rumboEscena,
   zonaHorizontal,
 } from "./reconstruccion";
@@ -35,6 +36,8 @@ const m = (norte: number, este: number) => ({
   lat: P.lat + norte / 111320,
   lon: P.lon + este / (111320 * Math.cos((P.lat * Math.PI) / 180)),
 });
+
+const base0 = (): Expediente => base;
 
 function colocado(): Expediente {
   let e = conPosicion(base, { vehiculo: "V1", fase: "impacto", punto: m(-2, 0), rumbo: 0 });
@@ -220,5 +223,35 @@ describe("la escena para el 3D", () => {
     expect(v).toMatchObject({ fuente: "supuesto", unidad: "km/h" });
     expect(v.valor).toBeCloseTo(r.velocidades[0]!.previa!.mejor, 1);
     expect((v.rango as number[])[0]).toBeLessThanOrEqual((v.rango as number[])[1]!);
+  });
+});
+
+describe("el croquis 2D sigue al reloj del 3D", () => {
+  it("la trayectoria del solver vuelve al mapa: en el impacto, cada vehículo en su posición de impacto", () => {
+    const e = colocado();
+    const base = especDeExpediente(e);
+    const resultado = {
+      vehiculos: [
+        {
+          id: "veh-a",
+          trayectoria: {
+            t: [-1, 0, 1],
+            x: [-1, -1, 4],
+            y: [-12, -1, 5],
+            rumbo: [Math.PI / 2, Math.PI / 2, Math.PI / 3],
+          },
+        },
+      ],
+    };
+    const [p0] = posicionesEnTiempo(base, resultado, 0);
+    // (−1, −1) m del origen = la posición de impacto que colocó el perito para V1 (−2 m norte, 0 este).
+    expect(p0!.vehiculo).toBe("V1");
+    expect(p0!.punto.lat).toBeCloseTo(m(-2, 0).lat, 6);
+    expect(p0!.punto.lon).toBeCloseTo(m(-2, 0).lon, 6);
+    expect(p0!.rumbo).toBeCloseTo(0, 6);
+    // A medio camino entre dos muestras interpola; al final, rumbo de 30° desde el norte.
+    const [p1] = posicionesEnTiempo(base, resultado, 1);
+    expect(p1!.rumbo).toBeCloseTo(30, 6);
+    expect(posicionesEnTiempo(especDeExpediente(base0()), resultado, 0)).toEqual([]);
   });
 });
