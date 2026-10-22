@@ -3,6 +3,7 @@ export * from "./formulas";
 export * from "./metodo";
 export * from "./calculos";
 export * from "./rigidez";
+export * from "./referencias";
 export * from "./reproduccion";
 export * from "./segunda-opinion";
 export * from "./discrepancia";
