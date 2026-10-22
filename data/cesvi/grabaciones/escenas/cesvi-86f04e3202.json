@@ -1,0 +1,338 @@
+{
+  "id": "cesvi-86f04e3202",
+  "modalidad_c0": "frontal",
+  "version_prompt": "escena-narracion-v1",
+  "modelo": "claude-sonnet-5-5",
+  "uso": {
+    "input_tokens": 1130,
+    "output_tokens": 2719,
+    "cache_creation_input_tokens": 0,
+    "cache_read_input_tokens": 3462
+  },
+  "costo_usd": 0.0301424,
+  "narracion": "El hecho se ubica en la intersección de las calles Montebello y Monte Carpatos, en el fraccionamiento Montebello, municipio de Culiacán, Sinaloa, el 17 de abril de 2012 a las 00:00 horas. La calle Montebello tiene un ancho de vía de 8.40 metros, es de concreto hidráulico, con circulación de Poniente a Oriente, sin señalamiento horizontal en los extremos y delimitada por banquetas de 2 metros de ancho. La calle Monte Carpatos tiene un ancho de vía de 8.45 metros, es de concreto hidráulico, con una inclinación de 7 grados hacia el Sur y circulación de Sur a Norte. En la esquina Sur Oriente de la calle Montebello se encuentran restos plásticos de color gris y micas transparentes; en la pared del inmueble se aprecian tallones en dirección de Poniente a Oriente a una altura de 55 centímetros, así como micas de color rojo.\n\nEl vehículo A es un [NOMBRE], tipo GLK-300, modelo 2011, color rojo, de servicio particular. En su parte frontal presenta daños tipo hundimiento, en dirección de adelante hacia atrás, localizados a una altura mínima de 60 centímetros y una máxima de 90 centímetros, que afectan el cofre, la parrilla, la fascia y las unidades de luz; en la parrilla y el cofre hay restos de pintura color gris. El lado derecho no presenta daños a simple vista. En la parte posterior presenta daños leves tipo hundimiento en dirección de izquierda a derecha, en el vértice trasero izquierdo a una altura de 60 centímetros, que afectan la fascia posterior. El lado izquierdo presenta daños leves tipo tallón en dirección de atrás hacia adelante, a una altura de 55 centímetros, sobre la superficie de las puertas. En el habitáculo las bolsas de aire están activadas y los pretensores de los cinturones se encuentran flácidos.\n\nEl vehículo B es un Audi, tipo A3, modelo 2012, color gris, de servicio particular. En su parte frontal presenta daños de grandes magnitudes tipo hundimiento, en dirección de adelante hacia atrás, que afectan la fascia, la parrilla, el refuerzo de la defensa, el cofre, el marco del radiador y las unidades de luz del lado izquierdo; en el cofre y en la fascia hay restos de pintura color rojo. A 56 centímetros se ubica la estructura del refuerzo de la defensa y a 86 centímetros el cofre. El lado derecho no presenta daños a simple vista. En la parte posterior presenta ruptura de la calavera del lado izquierdo, a una altura de 90 centímetros. El lateral izquierdo presenta hundimiento en dirección de adelante hacia atrás en la salpicadera delantera y daños tipo tallón en dirección de atrás hacia adelante, a una altura mínima de 55 centímetros y una máxima de 1 metro. En el habitáculo las bolsas de aire están activadas. En el lugar se localizó un resto plástico de color gris en la esquina Sur Poniente de la calle Montebello.",
+  "salida": {
+    "datos": [
+      {
+        "seccion": "caso",
+        "n": 1,
+        "vehiculo": "ninguno",
+        "campo": "lugar",
+        "valor": "intersección de las calles Montebello y Monte Carpatos, fraccionamiento Montebello",
+        "cita": "El hecho se ubica en la intersección de las calles Montebello y Monte Carpatos, en el fraccionamiento Montebello"
+      },
+      {
+        "seccion": "caso",
+        "n": 1,
+        "vehiculo": "ninguno",
+        "campo": "municipio",
+        "valor": "Culiacán",
+        "cita": "municipio de Culiacán, Sinaloa, el 17 de abril de 2012 a las 00:00 horas"
+      },
+      {
+        "seccion": "caso",
+        "n": 1,
+        "vehiculo": "ninguno",
+        "campo": "entidad",
+        "valor": "Sinaloa",
+        "cita": ""
+      },
+      {
+        "seccion": "caso",
+        "n": 1,
+        "vehiculo": "ninguno",
+        "campo": "fecha_hora",
+        "valor": "17 de abril de 2012 a las 00:00 horas",
+        "cita": ""
+      },
+      {
+        "seccion": "vehiculo",
+        "n": 1,
+        "vehiculo": "V1",
+        "campo": "modelo",
+        "valor": "GLK-300",
+        "cita": "tipo GLK-300, modelo 2011, color rojo, de servicio particular"
+      },
+      {
+        "seccion": "vehiculo",
+        "n": 1,
+        "vehiculo": "V1",
+        "campo": "anio",
+        "valor": "2011",
+        "cita": ""
+      },
+      {
+        "seccion": "vehiculo",
+        "n": 2,
+        "vehiculo": "V2",
+        "campo": "marca",
+        "valor": "Audi",
+        "cita": "El vehículo B es un Audi, tipo A3, modelo 2012, color gris, de servicio particular"
+      },
+      {
+        "seccion": "vehiculo",
+        "n": 2,
+        "vehiculo": "V2",
+        "campo": "modelo",
+        "valor": "A3",
+        "cita": ""
+      },
+      {
+        "seccion": "vehiculo",
+        "n": 2,
+        "vehiculo": "V2",
+        "campo": "anio",
+        "valor": "2012",
+        "cita": ""
+      },
+      {
+        "seccion": "dano",
+        "n": 1,
+        "vehiculo": "V1",
+        "campo": "cara",
+        "valor": "frontal",
+        "cita": "En su parte frontal presenta daños tipo hundimiento, en dirección de adelante hacia atrás, localizados a una altura mínima de 60 centímetros y una máxima de 90 centímetros"
+      },
+      {
+        "seccion": "dano",
+        "n": 1,
+        "vehiculo": "V1",
+        "campo": "tipo",
+        "valor": "hundimiento",
+        "cita": ""
+      },
+      {
+        "seccion": "dano",
+        "n": 1,
+        "vehiculo": "V1",
+        "campo": "direccion",
+        "valor": "de_adelante_hacia_atras",
+        "cita": ""
+      },
+      {
+        "seccion": "dano",
+        "n": 1,
+        "vehiculo": "V1",
+        "campo": "altura",
+        "valor": "60 a 90 cm",
+        "cita": ""
+      },
+      {
+        "seccion": "dano",
+        "n": 1,
+        "vehiculo": "V1",
+        "campo": "intercambio",
+        "valor": "restos de pintura color gris en la parrilla y el cofre",
+        "cita": "en la parrilla y el cofre hay restos de pintura color gris"
+      },
+      {
+        "seccion": "dano",
+        "n": 2,
+        "vehiculo": "V1",
+        "campo": "cara",
+        "valor": "posterior",
+        "cita": "En la parte posterior presenta daños leves tipo hundimiento en dirección de izquierda a derecha, en el vértice trasero izquierdo a una altura de 60 centímetros"
+      },
+      {
+        "seccion": "dano",
+        "n": 2,
+        "vehiculo": "V1",
+        "campo": "vertice",
+        "valor": "posterior_izquierdo",
+        "cita": ""
+      },
+      {
+        "seccion": "dano",
+        "n": 2,
+        "vehiculo": "V1",
+        "campo": "tipo",
+        "valor": "hundimiento",
+        "cita": ""
+      },
+      {
+        "seccion": "dano",
+        "n": 2,
+        "vehiculo": "V1",
+        "campo": "magnitud",
+        "valor": "leve",
+        "cita": ""
+      },
+      {
+        "seccion": "dano",
+        "n": 2,
+        "vehiculo": "V1",
+        "campo": "direccion",
+        "valor": "de_izquierda_a_derecha",
+        "cita": ""
+      },
+      {
+        "seccion": "dano",
+        "n": 2,
+        "vehiculo": "V1",
+        "campo": "altura",
+        "valor": "60 cm",
+        "cita": ""
+      },
+      {
+        "seccion": "dano",
+        "n": 3,
+        "vehiculo": "V1",
+        "campo": "cara",
+        "valor": "lateral_izquierdo",
+        "cita": "El lado izquierdo presenta daños leves tipo tallón en dirección de atrás hacia adelante, a una altura de 55 centímetros"
+      },
+      {
+        "seccion": "dano",
+        "n": 3,
+        "vehiculo": "V1",
+        "campo": "tipo",
+        "valor": "tallon",
+        "cita": ""
+      },
+      {
+        "seccion": "dano",
+        "n": 3,
+        "vehiculo": "V1",
+        "campo": "magnitud",
+        "valor": "leve",
+        "cita": ""
+      },
+      {
+        "seccion": "dano",
+        "n": 3,
+        "vehiculo": "V1",
+        "campo": "direccion",
+        "valor": "de_atras_hacia_adelante",
+        "cita": ""
+      },
+      {
+        "seccion": "dano",
+        "n": 3,
+        "vehiculo": "V1",
+        "campo": "altura",
+        "valor": "55 cm",
+        "cita": ""
+      },
+      {
+        "seccion": "dano",
+        "n": 4,
+        "vehiculo": "V2",
+        "campo": "cara",
+        "valor": "frontal",
+        "cita": "En su parte frontal presenta daños de grandes magnitudes tipo hundimiento, en dirección de adelante hacia atrás"
+      },
+      {
+        "seccion": "dano",
+        "n": 4,
+        "vehiculo": "V2",
+        "campo": "tipo",
+        "valor": "hundimiento",
+        "cita": ""
+      },
+      {
+        "seccion": "dano",
+        "n": 4,
+        "vehiculo": "V2",
+        "campo": "magnitud",
+        "valor": "severa",
+        "cita": ""
+      },
+      {
+        "seccion": "dano",
+        "n": 4,
+        "vehiculo": "V2",
+        "campo": "direccion",
+        "valor": "de_adelante_hacia_atras",
+        "cita": ""
+      },
+      {
+        "seccion": "dano",
+        "n": 4,
+        "vehiculo": "V2",
+        "campo": "intercambio",
+        "valor": "restos de pintura color rojo en el cofre y la fascia",
+        "cita": "en el cofre y en la fascia hay restos de pintura color rojo"
+      },
+      {
+        "seccion": "dano",
+        "n": 5,
+        "vehiculo": "V2",
+        "campo": "cara",
+        "valor": "posterior",
+        "cita": "En la parte posterior presenta ruptura de la calavera del lado izquierdo, a una altura de 90 centímetros"
+      },
+      {
+        "seccion": "dano",
+        "n": 5,
+        "vehiculo": "V2",
+        "campo": "tipo",
+        "valor": "ruptura",
+        "cita": ""
+      },
+      {
+        "seccion": "dano",
+        "n": 5,
+        "vehiculo": "V2",
+        "campo": "altura",
+        "valor": "90 cm",
+        "cita": ""
+      },
+      {
+        "seccion": "dano",
+        "n": 6,
+        "vehiculo": "V2",
+        "campo": "cara",
+        "valor": "lateral_izquierdo",
+        "cita": "El lateral izquierdo presenta hundimiento en dirección de adelante hacia atrás en la salpicadera delantera y daños tipo tallón en dirección de atrás hacia adelante, a una altura mínima de 55 centímetros y una máxima de 1 metro"
+      },
+      {
+        "seccion": "dano",
+        "n": 6,
+        "vehiculo": "V2",
+        "campo": "tipo",
+        "valor": "hundimiento",
+        "cita": ""
+      },
+      {
+        "seccion": "dano",
+        "n": 6,
+        "vehiculo": "V2",
+        "campo": "tipo",
+        "valor": "tallon",
+        "cita": ""
+      },
+      {
+        "seccion": "dano",
+        "n": 6,
+        "vehiculo": "V2",
+        "campo": "direccion",
+        "valor": "de_adelante_hacia_atras",
+        "cita": ""
+      },
+      {
+        "seccion": "dano",
+        "n": 6,
+        "vehiculo": "V2",
+        "campo": "direccion",
+        "valor": "de_atras_hacia_adelante",
+        "cita": ""
+      },
+      {
+        "seccion": "dano",
+        "n": 6,
+        "vehiculo": "V2",
+        "campo": "altura",
+        "valor": "55 cm a 1 m",
+        "cita": ""
+      },
+      {
+        "seccion": "objeto_fijo",
+        "n": 1,
+        "vehiculo": "ninguno",
+        "campo": "descripcion",
+        "valor": "pared del inmueble en la esquina Sur Oriente de la calle Montebello, con tallones en dirección de Poniente a Oriente a una altura de 55 centímetros y micas de color rojo",
+        "cita": "en la pared del inmueble se aprecian tallones en dirección de Poniente a Oriente a una altura de 55 centímetros, así como micas de color rojo"
+      }
+    ]
+  }
+}

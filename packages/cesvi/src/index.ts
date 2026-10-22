@@ -6,6 +6,7 @@ export * from "./rigidez";
 export * from "./referencias";
 export * from "./reproduccion";
 export * from "./contra-dictamen";
+export * from "./escena-narracion";
 export * from "./segunda-opinion";
 export * from "./discrepancia";
 export * from "./geo";

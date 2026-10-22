@@ -1,0 +1,130 @@
+{
+  "id": "cesvi-697d4ae885",
+  "modalidad_c0": "lateral",
+  "version_prompt": "escena-narracion-v1",
+  "modelo": "claude-sonnet-5-5",
+  "uso": {
+    "input_tokens": 472,
+    "output_tokens": 923,
+    "cache_creation_input_tokens": 0,
+    "cache_read_input_tokens": 3462
+  },
+  "costo_usd": 0.0108664,
+  "narracion": "El hecho se ubica en la colonia Morelos, Monterrey, Nuevo León, el día 05 de junio [PLACA], aproximadamente a las 16:50 hrs. El dictamen no describe la vía, los carriles, la superficie ni los señalamientos.\n\nIntervienen el vehículo A, marca GMC, tipo Yukon, modelo 2001, color rojo, de servicio particular, y el vehículo B, marca Dodge, tipo Stratus, modelo 2000, color verde, de servicio particular. El dictamen no registra la masa de ninguno de los dos.\n\nEn el vehículo A, en la parte posterior y en la defensa trasera, no se observan daños generados por el hecho bajo estudio, de acuerdo con las fotografías 1 y 2. En el vehículo B, en el lado izquierdo, en la zona posterior de la salpicadera delantera, se observa un hundimiento ocasionado por cuerpo duro, con dirección de izquierda a derecha. La salpicadera delantera izquierda no muestra indicios de corrimiento. El dictamen no consigna altura de los daños desde el piso, medidas de deformación (C1…C6 y L) ni intercambio de material.\n\nEl dictamen no reporta restos, huellas de frenado o derrape, objetos fijos dañados ni posiciones finales observadas.",
+  "salida": {
+    "datos": [
+      {
+        "seccion": "caso",
+        "n": 1,
+        "vehiculo": "ninguno",
+        "campo": "lugar",
+        "valor": "colonia Morelos",
+        "cita": "El hecho se ubica en la colonia Morelos, Monterrey, Nuevo León"
+      },
+      {
+        "seccion": "caso",
+        "n": 1,
+        "vehiculo": "ninguno",
+        "campo": "municipio",
+        "valor": "Monterrey",
+        "cita": ""
+      },
+      {
+        "seccion": "caso",
+        "n": 1,
+        "vehiculo": "ninguno",
+        "campo": "entidad",
+        "valor": "Nuevo León",
+        "cita": ""
+      },
+      {
+        "seccion": "caso",
+        "n": 1,
+        "vehiculo": "ninguno",
+        "campo": "fecha_hora",
+        "valor": "05 de junio, aproximadamente a las 16:50 hrs",
+        "cita": "el día 05 de junio [PLACA], aproximadamente a las 16:50 hrs"
+      },
+      {
+        "seccion": "vehiculo",
+        "n": 1,
+        "vehiculo": "V1",
+        "campo": "marca",
+        "valor": "GMC",
+        "cita": "vehículo A, marca GMC, tipo Yukon, modelo 2001, color rojo"
+      },
+      {
+        "seccion": "vehiculo",
+        "n": 1,
+        "vehiculo": "V1",
+        "campo": "modelo",
+        "valor": "Yukon",
+        "cita": ""
+      },
+      {
+        "seccion": "vehiculo",
+        "n": 1,
+        "vehiculo": "V1",
+        "campo": "anio",
+        "valor": "2001",
+        "cita": ""
+      },
+      {
+        "seccion": "vehiculo",
+        "n": 2,
+        "vehiculo": "V2",
+        "campo": "marca",
+        "valor": "Dodge",
+        "cita": "vehículo B, marca Dodge, tipo Stratus, modelo 2000, color verde"
+      },
+      {
+        "seccion": "vehiculo",
+        "n": 2,
+        "vehiculo": "V2",
+        "campo": "modelo",
+        "valor": "Stratus",
+        "cita": ""
+      },
+      {
+        "seccion": "vehiculo",
+        "n": 2,
+        "vehiculo": "V2",
+        "campo": "anio",
+        "valor": "2000",
+        "cita": ""
+      },
+      {
+        "seccion": "dano",
+        "n": 1,
+        "vehiculo": "V2",
+        "campo": "cara",
+        "valor": "lateral_izquierdo",
+        "cita": "En el vehículo B, en el lado izquierdo, en la zona posterior de la salpicadera delantera, se observa un hundimiento ocasionado por cuerpo duro, con dirección de izquierda a derecha"
+      },
+      {
+        "seccion": "dano",
+        "n": 1,
+        "vehiculo": "V2",
+        "campo": "tercio",
+        "valor": "delantero",
+        "cita": ""
+      },
+      {
+        "seccion": "dano",
+        "n": 1,
+        "vehiculo": "V2",
+        "campo": "tipo",
+        "valor": "hundimiento",
+        "cita": ""
+      },
+      {
+        "seccion": "dano",
+        "n": 1,
+        "vehiculo": "V2",
+        "campo": "direccion",
+        "valor": "de_izquierda_a_derecha",
+        "cita": ""
+      }
+    ]
+  }
+}

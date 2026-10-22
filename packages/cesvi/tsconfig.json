@@ -7,6 +7,7 @@
     "../../data/cesvi/scripts/corpus.mts",
     "../../data/cesvi/scripts/narracion.mts",
     "../../eval/cesvi_concordancia.mts",
-    "../../eval/cesvi_reproduccion.mts"
+    "../../eval/cesvi_reproduccion.mts",
+    "../../eval/cesvi_r1_escenas.mts"
   ]
 }

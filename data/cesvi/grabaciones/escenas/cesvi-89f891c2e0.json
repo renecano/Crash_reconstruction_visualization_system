@@ -1,0 +1,346 @@
+{
+  "id": "cesvi-89f891c2e0",
+  "modalidad_c0": "volcadura",
+  "version_prompt": "escena-narracion-v1",
+  "modelo": "claude-sonnet-5-5",
+  "uso": {
+    "input_tokens": 1076,
+    "output_tokens": 2899,
+    "cache_creation_input_tokens": 0,
+    "cache_read_input_tokens": 3462
+  },
+  "costo_usd": 0.0318344,
+  "narracion": "El hecho se ubica en el camino a Soxotla s/n, a [PLACA] de la carretera México-Tampico (carretera federal 105), en el municipio de Zacualtipán, Estado de Hidalgo, a las 13:40 horas del 10 de mayo [PLACA]. El camino es una vía sinuosa de terracería en regular estado, con doble sentido de circulación de Poniente a Oriente y viceversa, con una pendiente descendente de 5º. En sentido de Poniente a Oriente, del lado derecho se encuentra una barranca con una pendiente de 35º, delimitada por postes y alambre de púas caídos hacia la derecha; el lado izquierdo de la vía está delimitado por un talud de tierra. La distancia desde la última parte de la curva hasta el punto donde el neumático delantero derecho pierde contacto con la vía es de 10 metros.\n\nSe examina un vehículo A, marca Jeep, tipo Liberty, modelo 2002, color azul, de servicio particular. En la parte frontal el parabrisas está completamente roto, los postes y el toldo están doblados con daños tipo hundimiento de magnitud severa en dirección de arriba hacia abajo; el cofre está desprendido y fuera de su lugar, el marco del radiador presenta hundimiento en dirección de adelante hacia atrás acentuado en el lado derecho, y los faros, parrilla, defensa y fascia están desprendidos. En la parte derecha la salpicadera presenta hundimiento en dirección de derecha a izquierda con corrimiento de materiales de abajo hacia arriba; el resto del lado presenta múltiples hundimientos de derecha a izquierda de magnitud severa, con cristales rotos, puertas desprendidas, espejo lateral roto, toldo con hundimiento severo de arriba hacia abajo en toda su extensión y tallones con desprendimiento de pintura en toda la parte derecha.\n\nEn la parte posterior el toldo presenta hundimiento severo de arriba hacia abajo, el medallón trasero está roto en su totalidad, los postes traseros están doblados con tallones y desprendimiento de pintura, y la calavera posterior izquierda está rota y fuera de su lugar. En la parte izquierda el costado presenta hundimiento severo de izquierda a derecha, el cristal de la aleta está roto, ambas puertas presentan hundimiento de izquierda a derecha de magnitud severa con cristales rotos y tallones con pérdida de pintura en la totalidad de su superficie, y la salpicadera presenta corrimiento de arriba hacia abajo. El toldo está introducido al interior del habitáculo y las bolsas de aire no están activadas.\n\nLa posición final del vehículo se encuentra a 35m bajo el nivel de la vía, donde hay piezas plásticas y del habitáculo como fascia frontal, espejo lateral, molduras plásticas, guardafangos y guata de motor. En los árboles donde impacta el vehículo hay daños tipo tallón con desprendimiento de corteza y restos de cristal incrustados.",
+  "salida": {
+    "datos": [
+      {
+        "seccion": "caso",
+        "n": 1,
+        "vehiculo": "ninguno",
+        "campo": "modalidad",
+        "valor": "salida_de_camino",
+        "cita": "En los árboles donde impacta el vehículo hay daños tipo tallón con desprendimiento de corteza"
+      },
+      {
+        "seccion": "caso",
+        "n": 1,
+        "vehiculo": "ninguno",
+        "campo": "fecha_hora",
+        "valor": "13:40 horas del 10 de mayo",
+        "cita": "a las 13:40 horas del 10 de mayo"
+      },
+      {
+        "seccion": "caso",
+        "n": 1,
+        "vehiculo": "ninguno",
+        "campo": "lugar",
+        "valor": "camino a Soxotla s/n, carretera México-Tampico (carretera federal 105)",
+        "cita": "El hecho se ubica en el camino a Soxotla s/n"
+      },
+      {
+        "seccion": "caso",
+        "n": 1,
+        "vehiculo": "ninguno",
+        "campo": "municipio",
+        "valor": "Zacualtipán",
+        "cita": "en el municipio de Zacualtipán, Estado de Hidalgo"
+      },
+      {
+        "seccion": "caso",
+        "n": 1,
+        "vehiculo": "ninguno",
+        "campo": "entidad",
+        "valor": "Hidalgo",
+        "cita": ""
+      },
+      {
+        "seccion": "vehiculo",
+        "n": 1,
+        "vehiculo": "V1",
+        "campo": "marca",
+        "valor": "Jeep",
+        "cita": "marca Jeep, tipo Liberty, modelo 2002, color azul"
+      },
+      {
+        "seccion": "vehiculo",
+        "n": 1,
+        "vehiculo": "V1",
+        "campo": "modelo",
+        "valor": "Liberty",
+        "cita": ""
+      },
+      {
+        "seccion": "vehiculo",
+        "n": 1,
+        "vehiculo": "V1",
+        "campo": "anio",
+        "valor": "2002",
+        "cita": ""
+      },
+      {
+        "seccion": "dano",
+        "n": 1,
+        "vehiculo": "V1",
+        "campo": "cara",
+        "valor": "frontal",
+        "cita": "En la parte frontal el parabrisas está completamente roto, los postes y el toldo están doblados con daños tipo hundimiento de magnitud severa en dirección de arriba hacia abajo"
+      },
+      {
+        "seccion": "dano",
+        "n": 1,
+        "vehiculo": "V1",
+        "campo": "tipo",
+        "valor": "hundimiento",
+        "cita": ""
+      },
+      {
+        "seccion": "dano",
+        "n": 1,
+        "vehiculo": "V1",
+        "campo": "magnitud",
+        "valor": "severa",
+        "cita": ""
+      },
+      {
+        "seccion": "dano",
+        "n": 1,
+        "vehiculo": "V1",
+        "campo": "direccion",
+        "valor": "de_arriba_hacia_abajo",
+        "cita": ""
+      },
+      {
+        "seccion": "dano",
+        "n": 1,
+        "vehiculo": "V1",
+        "campo": "direccion",
+        "valor": "de_adelante_hacia_atras",
+        "cita": "el marco del radiador presenta hundimiento en dirección de adelante hacia atrás acentuado en el lado derecho"
+      },
+      {
+        "seccion": "dano",
+        "n": 1,
+        "vehiculo": "V1",
+        "campo": "tipo",
+        "valor": "ruptura",
+        "cita": "el parabrisas está completamente roto"
+      },
+      {
+        "seccion": "dano",
+        "n": 1,
+        "vehiculo": "V1",
+        "campo": "tipo",
+        "valor": "desprendimiento",
+        "cita": "el cofre está desprendido y fuera de su lugar"
+      },
+      {
+        "seccion": "dano",
+        "n": 2,
+        "vehiculo": "V1",
+        "campo": "cara",
+        "valor": "lateral_derecho",
+        "cita": "En la parte derecha la salpicadera presenta hundimiento en dirección de derecha a izquierda con corrimiento de materiales de abajo hacia arriba"
+      },
+      {
+        "seccion": "dano",
+        "n": 2,
+        "vehiculo": "V1",
+        "campo": "direccion",
+        "valor": "de_derecha_a_izquierda",
+        "cita": ""
+      },
+      {
+        "seccion": "dano",
+        "n": 2,
+        "vehiculo": "V1",
+        "campo": "direccion",
+        "valor": "de_arriba_hacia_abajo",
+        "cita": "toldo con hundimiento severo de arriba hacia abajo en toda su extensión"
+      },
+      {
+        "seccion": "dano",
+        "n": 2,
+        "vehiculo": "V1",
+        "campo": "tipo",
+        "valor": "hundimiento",
+        "cita": ""
+      },
+      {
+        "seccion": "dano",
+        "n": 2,
+        "vehiculo": "V1",
+        "campo": "tipo",
+        "valor": "tallon",
+        "cita": "tallones con desprendimiento de pintura en toda la parte derecha"
+      },
+      {
+        "seccion": "dano",
+        "n": 2,
+        "vehiculo": "V1",
+        "campo": "tipo",
+        "valor": "ruptura",
+        "cita": "con cristales rotos, puertas desprendidas, espejo lateral roto"
+      },
+      {
+        "seccion": "dano",
+        "n": 2,
+        "vehiculo": "V1",
+        "campo": "tipo",
+        "valor": "desprendimiento",
+        "cita": ""
+      },
+      {
+        "seccion": "dano",
+        "n": 2,
+        "vehiculo": "V1",
+        "campo": "magnitud",
+        "valor": "severa",
+        "cita": "el resto del lado presenta múltiples hundimientos de derecha a izquierda de magnitud severa"
+      },
+      {
+        "seccion": "dano",
+        "n": 3,
+        "vehiculo": "V1",
+        "campo": "cara",
+        "valor": "posterior",
+        "cita": "En la parte posterior el toldo presenta hundimiento severo de arriba hacia abajo"
+      },
+      {
+        "seccion": "dano",
+        "n": 3,
+        "vehiculo": "V1",
+        "campo": "tipo",
+        "valor": "hundimiento",
+        "cita": ""
+      },
+      {
+        "seccion": "dano",
+        "n": 3,
+        "vehiculo": "V1",
+        "campo": "magnitud",
+        "valor": "severa",
+        "cita": ""
+      },
+      {
+        "seccion": "dano",
+        "n": 3,
+        "vehiculo": "V1",
+        "campo": "direccion",
+        "valor": "de_arriba_hacia_abajo",
+        "cita": ""
+      },
+      {
+        "seccion": "dano",
+        "n": 3,
+        "vehiculo": "V1",
+        "campo": "tipo",
+        "valor": "ruptura",
+        "cita": "el medallón trasero está roto en su totalidad"
+      },
+      {
+        "seccion": "dano",
+        "n": 3,
+        "vehiculo": "V1",
+        "campo": "tipo",
+        "valor": "tallon",
+        "cita": "los postes traseros están doblados con tallones y desprendimiento de pintura"
+      },
+      {
+        "seccion": "dano",
+        "n": 4,
+        "vehiculo": "V1",
+        "campo": "cara",
+        "valor": "lateral_izquierdo",
+        "cita": "En la parte izquierda el costado presenta hundimiento severo de izquierda a derecha"
+      },
+      {
+        "seccion": "dano",
+        "n": 4,
+        "vehiculo": "V1",
+        "campo": "tipo",
+        "valor": "hundimiento",
+        "cita": ""
+      },
+      {
+        "seccion": "dano",
+        "n": 4,
+        "vehiculo": "V1",
+        "campo": "magnitud",
+        "valor": "severa",
+        "cita": ""
+      },
+      {
+        "seccion": "dano",
+        "n": 4,
+        "vehiculo": "V1",
+        "campo": "direccion",
+        "valor": "de_izquierda_a_derecha",
+        "cita": ""
+      },
+      {
+        "seccion": "dano",
+        "n": 4,
+        "vehiculo": "V1",
+        "campo": "tipo",
+        "valor": "tallon",
+        "cita": "tallones con pérdida de pintura en la totalidad de su superficie"
+      },
+      {
+        "seccion": "dano",
+        "n": 4,
+        "vehiculo": "V1",
+        "campo": "tipo",
+        "valor": "ruptura",
+        "cita": "el cristal de la aleta está roto"
+      },
+      {
+        "seccion": "impacto",
+        "n": 1,
+        "vehiculo": "ninguno",
+        "campo": "participante",
+        "valor": "V1",
+        "cita": "En los árboles donde impacta el vehículo hay daños tipo tallón con desprendimiento de corteza"
+      },
+      {
+        "seccion": "impacto",
+        "n": 1,
+        "vehiculo": "ninguno",
+        "campo": "objeto_fijo",
+        "valor": "árboles",
+        "cita": ""
+      },
+      {
+        "seccion": "objeto_fijo",
+        "n": 1,
+        "vehiculo": "ninguno",
+        "campo": "descripcion",
+        "valor": "árboles con daños tipo tallón con desprendimiento de corteza y restos de cristal incrustados",
+        "cita": "En los árboles donde impacta el vehículo hay daños tipo tallón con desprendimiento de corteza y restos de cristal incrustados"
+      },
+      {
+        "seccion": "objeto_fijo",
+        "n": 2,
+        "vehiculo": "ninguno",
+        "campo": "descripcion",
+        "valor": "postes y alambre de púas caídos hacia la derecha",
+        "cita": "delimitada por postes y alambre de púas caídos hacia la derecha"
+      },
+      {
+        "seccion": "posicion",
+        "n": 1,
+        "vehiculo": "V1",
+        "campo": "fase",
+        "valor": "final",
+        "cita": "La posición final del vehículo se encuentra a 35m bajo el nivel de la vía"
+      },
+      {
+        "seccion": "posicion",
+        "n": 1,
+        "vehiculo": "V1",
+        "campo": "descripcion",
+        "valor": "a 35m bajo el nivel de la vía, con piezas plásticas y del habitáculo como fascia frontal, espejo lateral, molduras plásticas, guardafangos y guata de motor",
+        "cita": ""
+      }
+    ]
+  }
+}

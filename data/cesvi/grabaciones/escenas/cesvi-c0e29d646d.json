@@ -1,0 +1,242 @@
+{
+  "id": "cesvi-c0e29d646d",
+  "modalidad_c0": "otra",
+  "version_prompt": "escena-narracion-v1",
+  "modelo": "claude-sonnet-5-5",
+  "uso": {
+    "input_tokens": 847,
+    "output_tokens": 1968,
+    "cache_creation_input_tokens": 3462,
+    "cache_read_input_tokens": 0
+  },
+  "costo_usd": 0.030029,
+  "narracion": "El hecho se ubica en la carretera México-Texcoco, en el kilómetro 31, a la altura de la entrada del poblado de Cuautlalpan, Estado de México, aproximadamente a las 17:00 horas. La vía tiene dos calzadas de asfalto con seis carriles de circulación, tres en sentido Norte a Sur y tres en sentido contrario, divididas por un camellón central de 7 metros de ancho total. Los carriles están delimitados por líneas discontinuas de color blanco y en el lugar hay 6 semáforos funcionando.\n\nIntervienen el vehículo A, marca Dodge, tipo caja, modelo 1969, color rojo, de carga con capacidad de 20 toneladas, y el vehículo B, marca Nissan, tipo Urvan, modelo 2008, color blanco, de servicio público de pasajeros con capacidad de 13 pasajeros.\n\nEl vehículo A presenta en la parte frontal daños leves tipo hundimiento con dirección de adelante hacia atrás, generados por contacto contra cuerpo duro, en la parte media sobre la superficie de la defensa. En el costado derecho y en el costado izquierdo no se observan daños considerables. En la parte posterior hay indicios de oxidación sobre la superficie de las tapas de la caja. En las partes bajas la flecha cardan está fuera de su posición original porque se rompió el yugo de conexión hacia el diferencial trasero, y el tubo de escape tiene un hundimiento con dirección de izquierda a derecha. El yugo se encontró dentro del vehículo B, con reparaciones por soldadura de arco eléctrico sobre un extremo y restos de concreto en un vértice. También se encontró dentro del habitáculo del vehículo B la tapa de la cruceta.\n\nEl vehículo B no presenta daños por contacto contra cuerpo duro en las partes frontal y posterior ni en el costado derecho. En el costado izquierdo hay indicios de una reparación reciente en la ventana anterior. En el habitáculo hay dos daños tipo hundimiento y rotura de material con dirección de adentro hacia afuera, generados por contacto contra cuerpo duro. El daño 1 está en la parte posterior a una altura de 1.60 metros desde el piso del vehículo. El daño 2 está sobre el costado derecho a una altura de 1.52 metros y presenta indicios de grasa de color negro.",
+  "salida": {
+    "datos": [
+      {
+        "seccion": "caso",
+        "n": 1,
+        "vehiculo": "ninguno",
+        "campo": "lugar",
+        "valor": "carretera México-Texcoco, kilómetro 31, a la altura de la entrada del poblado de Cuautlalpan",
+        "cita": "El hecho se ubica en la carretera México-Texcoco, en el kilómetro 31, a la altura de la entrada del poblado de Cuautlalpan"
+      },
+      {
+        "seccion": "caso",
+        "n": 1,
+        "vehiculo": "ninguno",
+        "campo": "entidad",
+        "valor": "Estado de México",
+        "cita": ""
+      },
+      {
+        "seccion": "caso",
+        "n": 1,
+        "vehiculo": "ninguno",
+        "campo": "fecha_hora",
+        "valor": "aproximadamente a las 17:00 horas",
+        "cita": "Estado de México, aproximadamente a las 17:00 horas"
+      },
+      {
+        "seccion": "vehiculo",
+        "n": 1,
+        "vehiculo": "V1",
+        "campo": "marca",
+        "valor": "Dodge",
+        "cita": "Intervienen el vehículo A, marca Dodge, tipo caja, modelo 1969, color rojo, de carga con capacidad de 20 toneladas"
+      },
+      {
+        "seccion": "vehiculo",
+        "n": 1,
+        "vehiculo": "V1",
+        "campo": "modelo",
+        "valor": "caja",
+        "cita": ""
+      },
+      {
+        "seccion": "vehiculo",
+        "n": 1,
+        "vehiculo": "V1",
+        "campo": "anio",
+        "valor": "1969",
+        "cita": ""
+      },
+      {
+        "seccion": "vehiculo",
+        "n": 2,
+        "vehiculo": "V2",
+        "campo": "marca",
+        "valor": "Nissan",
+        "cita": "el vehículo B, marca Nissan, tipo Urvan, modelo 2008, color blanco, de servicio público de pasajeros con capacidad de 13 pasajeros"
+      },
+      {
+        "seccion": "vehiculo",
+        "n": 2,
+        "vehiculo": "V2",
+        "campo": "modelo",
+        "valor": "Urvan",
+        "cita": ""
+      },
+      {
+        "seccion": "vehiculo",
+        "n": 2,
+        "vehiculo": "V2",
+        "campo": "anio",
+        "valor": "2008",
+        "cita": ""
+      },
+      {
+        "seccion": "vehiculo",
+        "n": 2,
+        "vehiculo": "V2",
+        "campo": "clase",
+        "valor": "van",
+        "cita": ""
+      },
+      {
+        "seccion": "dano",
+        "n": 1,
+        "vehiculo": "V1",
+        "campo": "cara",
+        "valor": "frontal",
+        "cita": "El vehículo A presenta en la parte frontal daños leves tipo hundimiento con dirección de adelante hacia atrás, generados por contacto contra cuerpo duro, en la parte media sobre la superficie de la defensa"
+      },
+      {
+        "seccion": "dano",
+        "n": 1,
+        "vehiculo": "V1",
+        "campo": "tercio",
+        "valor": "centro",
+        "cita": ""
+      },
+      {
+        "seccion": "dano",
+        "n": 1,
+        "vehiculo": "V1",
+        "campo": "tipo",
+        "valor": "hundimiento",
+        "cita": ""
+      },
+      {
+        "seccion": "dano",
+        "n": 1,
+        "vehiculo": "V1",
+        "campo": "magnitud",
+        "valor": "leve",
+        "cita": ""
+      },
+      {
+        "seccion": "dano",
+        "n": 1,
+        "vehiculo": "V1",
+        "campo": "direccion",
+        "valor": "de_adelante_hacia_atras",
+        "cita": ""
+      },
+      {
+        "seccion": "dano",
+        "n": 2,
+        "vehiculo": "V1",
+        "campo": "cara",
+        "valor": "inferior",
+        "cita": "En las partes bajas la flecha cardan está fuera de su posición original porque se rompió el yugo de conexión hacia el diferencial trasero"
+      },
+      {
+        "seccion": "dano",
+        "n": 2,
+        "vehiculo": "V1",
+        "campo": "tipo",
+        "valor": "ruptura",
+        "cita": ""
+      },
+      {
+        "seccion": "dano",
+        "n": 2,
+        "vehiculo": "V1",
+        "campo": "tipo",
+        "valor": "hundimiento",
+        "cita": "el tubo de escape tiene un hundimiento con dirección de izquierda a derecha"
+      },
+      {
+        "seccion": "dano",
+        "n": 2,
+        "vehiculo": "V1",
+        "campo": "direccion",
+        "valor": "de_izquierda_a_derecha",
+        "cita": ""
+      },
+      {
+        "seccion": "dano",
+        "n": 3,
+        "vehiculo": "V2",
+        "campo": "cara",
+        "valor": "posterior",
+        "cita": "El daño 1 está en la parte posterior a una altura de 1.60 metros desde el piso del vehículo"
+      },
+      {
+        "seccion": "dano",
+        "n": 3,
+        "vehiculo": "V2",
+        "campo": "altura",
+        "valor": "1.60 metros",
+        "cita": ""
+      },
+      {
+        "seccion": "dano",
+        "n": 3,
+        "vehiculo": "V2",
+        "campo": "tipo",
+        "valor": "hundimiento",
+        "cita": "En el habitáculo hay dos daños tipo hundimiento y rotura de material con dirección de adentro hacia afuera, generados por contacto contra cuerpo duro"
+      },
+      {
+        "seccion": "dano",
+        "n": 3,
+        "vehiculo": "V2",
+        "campo": "tipo",
+        "valor": "ruptura",
+        "cita": ""
+      },
+      {
+        "seccion": "dano",
+        "n": 4,
+        "vehiculo": "V2",
+        "campo": "cara",
+        "valor": "lateral_derecho",
+        "cita": "El daño 2 está sobre el costado derecho a una altura de 1.52 metros y presenta indicios de grasa de color negro"
+      },
+      {
+        "seccion": "dano",
+        "n": 4,
+        "vehiculo": "V2",
+        "campo": "altura",
+        "valor": "1.52 metros",
+        "cita": ""
+      },
+      {
+        "seccion": "dano",
+        "n": 4,
+        "vehiculo": "V2",
+        "campo": "tipo",
+        "valor": "hundimiento",
+        "cita": "En el habitáculo hay dos daños tipo hundimiento y rotura de material con dirección de adentro hacia afuera, generados por contacto contra cuerpo duro"
+      },
+      {
+        "seccion": "dano",
+        "n": 4,
+        "vehiculo": "V2",
+        "campo": "tipo",
+        "valor": "ruptura",
+        "cita": ""
+      },
+      {
+        "seccion": "dano",
+        "n": 4,
+        "vehiculo": "V2",
+        "campo": "intercambio",
+        "valor": "grasa de color negro",
+        "cita": "presenta indicios de grasa de color negro"
+      }
+    ]
+  }
+}

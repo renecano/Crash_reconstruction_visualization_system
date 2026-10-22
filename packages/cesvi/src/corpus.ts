@@ -78,6 +78,8 @@ export const CAMPOS_POR_SECCION = {
   restos: ["longitud"],
   huella: ["tipo_huella", "longitud"],
   objeto_fijo: ["descripcion"],
+  // Solo la lectura de la narración del perito (R1): dónde queda cada vehículo, en palabras.
+  posicion: ["fase", "descripcion"],
   calculo: ["metodo", "resultado", "entradas"],
   criterio: ["criterio", "estado"],
   conclusion: ["veredicto"],
@@ -104,6 +106,7 @@ export const VALORES: Record<string, readonly string[]> = {
   criterio: enumDe("CriterioExpediente", "criterio"),
   estado: enumDe("CriterioExpediente", "estado"),
   veredicto: VEREDICTOS,
+  fase: ["inicial", "impacto", "final"],
 };
 
 // --- Lo que devuelve el modelo ------------------------------------------------------------------
@@ -317,12 +320,22 @@ export interface Conteos {
   numeros_fuera: number;
 }
 
+/** Dónde queda un vehículo en una fase, en palabras: guía para colocarlo en el mapa (R1). */
+export interface PosicionDescrita {
+  vehiculo: (typeof IDS_VEHICULO)[number];
+  fase: "inicial" | "impacto" | "final";
+  descripcion: string;
+  cita?: { texto: string };
+}
+
 export interface Conversion {
   expediente: Expediente;
   conteos: Conteos;
+  /** Las posiciones que describe el texto; no van al contrato, que las pide con coordenadas. */
+  posiciones: PosicionDescrita[];
 }
 
-const F = "dictamen_importado" as const;
+type Fuente = "dictamen_importado" | "perito";
 const redondear = (x: number) => Math.round(x * 1e6) / 1e6;
 /** El objeto sin sus claves `undefined`. */
 const limpio = <T extends object>(o: T): T =>
@@ -390,7 +403,12 @@ const libre = (t: string, max: number): string | undefined => {
 };
 
 /** La salida del modelo como expediente, revisada contra el texto del dictamen. */
-export function expedienteDeSalida(s: SalidaCorpus, textoDictamen: string): Conversion {
+export function expedienteDeSalida(
+  s: SalidaCorpus,
+  textoDictamen: string,
+  /** De dónde salen los datos: el dictamen importado (C0) o la narración del perito (R1). */
+  F: Fuente = "dictamen_importado",
+): Conversion {
   const { grupos, invalidos } = agrupar(s.datos);
   const conteos: Conteos = {
     filas: s.datos.length,
@@ -492,7 +510,12 @@ export function expedienteDeSalida(s: SalidaCorpus, textoDictamen: string): Conv
         masa: masa && { ...masa, ...(c && { cita: c }) },
         rigidez:
           a !== undefined && b !== undefined
-            ? { A: a, B: b, fuente: "dictamen" as const, ...(c && { cita: c }) }
+            ? {
+                A: a,
+                B: b,
+                fuente: F === "perito" ? ("perito" as const) : ("dictamen" as const),
+                ...(c && { cita: c }),
+              }
             : undefined,
       }),
     );
@@ -658,7 +681,18 @@ export function expedienteDeSalida(s: SalidaCorpus, textoDictamen: string): Conv
         }
       : undefined,
   }) as Expediente;
-  return { expediente, conteos };
+  const posiciones = de("posicion")
+    .filter((g) => g.vehiculo && uno(g, "fase") && uno(g, "descripcion").trim())
+    .map((g) => {
+      const c = cita(g);
+      return {
+        vehiculo: g.vehiculo!,
+        fase: uno(g, "fase") as PosicionDescrita["fase"],
+        descripcion: libre(uno(g, "descripcion"), 300)!,
+        ...(c && { cita: c }),
+      };
+    });
+  return { expediente, conteos, posiciones };
 }
 
 /** Problemas del expediente: el JSON Schema y, si pasa, los errores semánticos. */
