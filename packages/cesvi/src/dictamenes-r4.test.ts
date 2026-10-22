@@ -62,26 +62,58 @@ describe("modalidad que infiere Croquis (R4)", () => {
     expect(modalidadInferida(conZonas, "").modalidad).toBe("lateral");
   });
 
-  it("un vehículo: objeto fijo o salida del camino según la narración", () => {
-    expect(modalidadInferida(exp({ n: 1 }), "Impactó contra un poste de concreto.").modalidad).toBe(
+  it("un vehículo: vuelco, objeto golpeado, salida del camino o golpe por detrás", () => {
+    const uno = (danos: Dano[] = []) => exp({ n: 1, danos });
+    expect(modalidadInferida(uno(), "El vehículo volcó sobre su costado.").modalidad).toBe(
+      "volcadura",
+    );
+    expect(modalidadInferida(uno(), "Impactó contra un poste de concreto.").modalidad).toBe(
       "objeto_fijo",
     );
     expect(
-      modalidadInferida(exp({ n: 1 }), "El vehículo salió del camino hacia la cuneta.").modalidad,
+      modalidadInferida(uno(), "El vehículo salió del camino hacia la cuneta.").modalidad,
     ).toBe("salida_de_camino");
-    expect(modalidadInferida(exp({ n: 1 }), "Sin más datos.").modalidad).toBeNull();
+    expect(modalidadInferida(uno([dano("V1", "posterior")]), "").modalidad).toBe("alcance");
+    expect(modalidadInferida(uno(), "Sin más datos.").modalidad).toBeNull();
+    // Un objeto que solo está en la vía (el camellón) no es un objeto golpeado.
+    expect(
+      modalidadInferida(uno(), "La avenida tiene un camellón central con postes.").modalidad,
+    ).toBeNull();
   });
 
-  it("el techo dañado o un vuelco narrado es volcadura; una reversa narrada, reversa", () => {
-    expect(modalidadInferida(exp({ n: 1, danos: [dano("V1", "techo")] }), "").modalidad).toBe(
-      "volcadura",
+  it("la dirección de la deformación decide la cara de contacto; el techo solo no es vuelco", () => {
+    // V2: daño frontal leve y uno en la parte posterior que entra de atrás hacia adelante.
+    const e = exp({
+      danos: [
+        dano("V1", "frontal", { direcciones: ["de_adelante_hacia_atras"] }),
+        dano("V2", "frontal"),
+        dano("V2", "posterior", { direcciones: ["de_atras_hacia_adelante"] }),
+        dano("V2", "techo"),
+      ],
+    });
+    expect(modalidadInferida(e, "").modalidad).toBe("alcance");
+  });
+
+  it("frente contra frente con una parte posterior dañada es un alcance con empuje", () => {
+    const e = exp({
+      danos: [dano("V1", "frontal"), dano("V2", "frontal"), dano("V2", "posterior")],
+    });
+    expect(modalidadInferida(e, "").modalidad).toBe("alcance");
+    const frontal = exp({ danos: [dano("V1", "frontal"), dano("V2", "frontal")] });
+    expect(modalidadInferida(frontal, "").modalidad).toBe("frontal");
+    // Solo se conoce la cara de uno.
+    expect(modalidadInferida(exp({ danos: [dano("V2", "posterior")] }), "").modalidad).toBe(
+      "alcance",
     );
-    expect(modalidadInferida(exp({}), "El vehículo volcó sobre su costado.").modalidad).toBe(
-      "volcadura",
+  });
+
+  it("una reversa narrada con la parte posterior en el contacto", () => {
+    const e = exp({ danos: [dano("V1", "posterior"), dano("V2", "frontal")] });
+    expect(modalidadInferida(e, "El vehículo A realizaba maniobra de reversa.").modalidad).toBe(
+      "reversa",
     );
-    expect(
-      modalidadInferida(exp({}), "El vehículo A realizaba maniobra de reversa.").modalidad,
-    ).toBe("reversa");
+    const sinPosterior = exp({ danos: [dano("V1", "frontal"), dano("V2", "lateral_derecho")] });
+    expect(modalidadInferida(sinPosterior, "Había hecho reversa antes.").modalidad).toBe("lateral");
   });
 });
 
@@ -180,7 +212,7 @@ describe("líneas base y resumen", () => {
         ],
       },
     ]);
-    expect(b).toEqual({ modalidad: "otra", velocidad_kmh: 40 });
+    expect(b).toEqual({ modalidad: "otra", modalidad_fisica: "alcance", velocidad_kmh: 40 });
   });
 
   it("el resumen pone a Croquis junto a la línea base", () => {
@@ -188,9 +220,11 @@ describe("líneas base y resumen", () => {
     const e = exp({ danos: [dano("V1", "frontal"), dano("V2", "posterior")] });
     const r = resumen([{ conclusiones: c, comparacion: comparar(c, e, [], "") }], {
       modalidad: "otra",
+      modalidad_fisica: "alcance",
       velocidad_kmh: 40,
     });
     expect(r.modalidad.croquis).toEqual({ k: 1, n: 1, pct: 100 });
     expect(r.modalidad.linea_base).toEqual({ modalidad: "otra", k: 0, n: 1, pct: 0 });
+    expect(r.modalidad.fisicas.linea_base).toEqual({ modalidad: "alcance", k: 1, n: 1, pct: 100 });
   });
 });

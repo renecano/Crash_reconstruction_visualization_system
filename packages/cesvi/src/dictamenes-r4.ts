@@ -22,7 +22,11 @@ export type Conclusiones = Narracion["conclusiones"];
 type Id = Expediente["vehiculos"][number]["id"];
 type Cara = string;
 
-const normal = (s: string) => s.toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g, "");
+const normal = (s: string) =>
+  s
+    .toLowerCase()
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "");
 
 // --- Modalidad ----------------------------------------------------------------------------------
 
@@ -31,19 +35,37 @@ const RX_VOLCADURA =
 const RX_REVERSA = /\b(revers|retroced|marcha atras|en reversa)/;
 const RX_SALIDA =
   /\b(sali[oó] del camino|salida del camino|voladero|cuneta|barranc|despen|fuera del camino|sali[oó] de la carretera|sali[oó] del arroyo)/;
-const RX_OBJETO =
-  /\b(poste|muro|arbol|barda|guarnicion|camellon|defensa metalica|banqueta|contencion|columna|pared|malla|reja|senal|semaforo|piedra|roca|talud|puente|caseta|fachada)/;
+/** El contacto con un objeto fijo dicho como tal («contra un poste», «con la barda»), no el objeto en la vía. */
+const RX_CONTRA_OBJETO =
+  /\b(contra|con) (un|una|el|la|los|las|unos|unas) (poste|muro|arbol|barda|guarnicion|defensa|contencion|columna|pared|malla|reja|senal|semaforo|piedra|roca|talud|puente|caseta|fachada|cuerpo duro)/;
 
-/** La cara principal de los daños de un vehículo (sin los previos): la que más se menciona. */
+/** La dirección de deformación que entra por cada cara: la que deja un golpe en esa cara. */
+const ENTRA: Record<string, string> = {
+  frontal: "de_adelante_hacia_atras",
+  posterior: "de_atras_hacia_adelante",
+  lateral_izquierdo: "de_izquierda_a_derecha",
+  lateral_derecho: "de_derecha_a_izquierda",
+  techo: "de_arriba_hacia_abajo",
+};
+const PESO_MAGNITUD: Record<string, number> = { leve: 0, moderada: 1, severa: 2 };
+
+/**
+ * La cara de contacto más probable de un vehículo según sus daños (sin los previos): cada daño
+ * suma 1, 2 más si su deformación entra por esa cara (la dirección de un golpe en ella) y lo que
+ * pesa su magnitud. En un empate, la primera en el orden de la narración.
+ */
 function caraPrincipal(e: Expediente, v: Id): Cara | null {
-  const cuenta = new Map<Cara, number>();
+  const puntos = new Map<Cara, number>();
   for (const d of e.danos ?? []) {
     if (d.vehiculo !== v || d.dano_previo) continue;
-    cuenta.set(d.zona.cara, (cuenta.get(d.zona.cara) ?? 0) + 1);
+    const c = d.zona.cara;
+    const entra = (d.direcciones ?? []).includes(ENTRA[c] as never) ? 2 : 0;
+    const mag = PESO_MAGNITUD[d.magnitud?.cualitativa ?? ""] ?? 0;
+    puntos.set(c, (puntos.get(c) ?? 0) + 1 + entra + mag);
   }
   let mejor: Cara | null = null;
   let n = 0;
-  for (const [c, k] of cuenta) if (k > n) [mejor, n] = [c, k];
+  for (const [c, k] of puntos) if (k > n) [mejor, n] = [c, k];
   return mejor;
 }
 
@@ -58,44 +80,69 @@ function caraEnImpacto(
 
 const lateral = (c: Cara | null) => c === "lateral_izquierdo" || c === "lateral_derecho";
 
+/** El objeto fijo del hecho: el del impacto que leyó Croquis, o el que la narración dice golpeado. */
+function objetoFijo(e: Expediente, texto: string): boolean {
+  return (e.impactos ?? []).some((i) => i.objeto_fijo) || RX_CONTRA_OBJETO.test(texto);
+}
+
 /**
  * La modalidad que infiere Croquis de la escena y de la narración, con el motivo en palabras.
- * null si no hay con qué (sin vehículos ni daños).
+ * null si no hay con qué. Nunca infiere «otra»: en los dictámenes es una clase de casos variados,
+ * no una configuración física (ADR 0067).
  */
 export function modalidadInferida(
   e: Expediente,
   narracion: string,
 ): { modalidad: string | null; motivo: string } {
   const texto = normal(narracion);
-  const techo = (e.danos ?? []).some((d) => !d.dano_previo && d.zona.cara === "techo");
-  if (RX_VOLCADURA.test(texto) || techo)
-    return {
-      modalidad: "volcadura",
-      motivo: techo ? "daño en el techo" : "la narración describe un vuelco",
-    };
-  if (RX_REVERSA.test(texto))
-    return { modalidad: "reversa", motivo: "la narración describe una reversa" };
   const vs = e.vehiculos.map((v) => v.id);
   const impactos = [...(e.impactos ?? [])].sort((a, b) => a.orden - b.orden);
   const primero = impactos[0];
   if (vs.length === 1) {
-    if (primero?.objeto_fijo || RX_OBJETO.test(texto))
+    const v = vs[0]!;
+    if (RX_VOLCADURA.test(texto))
+      return { modalidad: "volcadura", motivo: "un vehículo; la narración describe un vuelco" };
+    if (objetoFijo(e, texto))
       return { modalidad: "objeto_fijo", motivo: "un vehículo contra un objeto fijo" };
     if (RX_SALIDA.test(texto))
       return { modalidad: "salida_de_camino", motivo: "un vehículo que sale del camino" };
-    return { modalidad: null, motivo: "un vehículo, sin objeto ni salida descritos" };
+    if (caraPrincipal(e, v) === "posterior")
+      return { modalidad: "alcance", motivo: "un vehículo golpeado en su parte posterior" };
+    return { modalidad: null, motivo: "un vehículo, sin objeto, vuelco ni salida descritos" };
   }
   const par =
     primero && (primero.vehiculos ?? []).length >= 2
       ? primero.vehiculos!.slice(0, 2)
       : vs.slice(0, 2);
   const [a, b] = par.map((v) => caraEnImpacto(e, primero, v));
-  if (!a || !b)
+  if (!a || !b) {
+    // Solo se conoce la cara de uno: la parte posterior es un alcance; un costado, un lateral.
+    const una = a ?? b;
+    if (una === "posterior")
+      return { modalidad: "alcance", motivo: "un vehículo golpeado en su parte posterior" };
+    if (lateral(una ?? null)) return { modalidad: "lateral", motivo: "contacto en un costado" };
     return { modalidad: null, motivo: "sin las caras de contacto de los dos vehículos" };
+  }
+  if ((a === "posterior" || b === "posterior") && RX_REVERSA.test(texto) && a !== b)
+    return { modalidad: "reversa", motivo: "parte posterior, y la narración describe una reversa" };
   const caras = [a, b].sort().join("+");
   if (caras === "frontal+posterior")
     return { modalidad: "alcance", motivo: "frente contra parte posterior" };
-  if (caras === "frontal+frontal") return { modalidad: "frontal", motivo: "frente contra frente" };
+  if (caras === "frontal+frontal") {
+    // Frente contra frente, pero uno también trae la parte posterior dañada: el golpe entre ellos
+    // fue por detrás y su frente pegó después (lo empujaron contra otra cosa).
+    const atras = par.some((v) =>
+      (e.danos ?? []).some(
+        (d) => d.vehiculo === v && !d.dano_previo && d.zona.cara === "posterior",
+      ),
+    );
+    if (atras && !primero?.zonas?.length)
+      return {
+        modalidad: "alcance",
+        motivo: "los dos frentes dañados y uno también por detrás: golpe por detrás y empuje",
+      };
+    return { modalidad: "frontal", motivo: "frente contra frente" };
+  }
   if (
     (a === "frontal" && lateral(b)) ||
     (b === "frontal" && lateral(a)) ||
@@ -123,6 +170,31 @@ export function zonasCroquis(e: Expediente): { vehiculo: Id; cara: Cara; tercio:
     if (c) out.set(`${v.id}:${c}`, { vehiculo: v.id, cara: c, tercio: null });
   }
   return [...out.values()];
+}
+
+/**
+ * La secuencia de impactos de Croquis: la que leyó de la narración o, si no la dice, la única
+ * posible (los dos vehículos entre sí, o el vehículo contra el objeto que golpeó), marcada como
+ * inferida.
+ */
+export function secuenciaCroquis(
+  e: Expediente,
+  narracion: string,
+): { impactos: { vehiculos: Id[]; objeto_fijo: boolean }[]; inferida: boolean } {
+  const leidos = [...(e.impactos ?? [])].sort((a, b) => a.orden - b.orden);
+  if (leidos.length)
+    return {
+      impactos: leidos.map((i) => ({
+        vehiculos: i.vehiculos ?? [],
+        objeto_fijo: Boolean(i.objeto_fijo),
+      })),
+      inferida: false,
+    };
+  const vs = e.vehiculos.map((v) => v.id);
+  if (vs.length === 2) return { impactos: [{ vehiculos: vs, objeto_fijo: false }], inferida: true };
+  if (vs.length === 1 && objetoFijo(e, normal(narracion)))
+    return { impactos: [{ vehiculos: vs, objeto_fijo: true }], inferida: true };
+  return { impactos: [], inferida: false };
 }
 
 /** Las velocidades que calcula Croquis con la verificación CESVI (EBS, por deformación). */
@@ -217,10 +289,10 @@ export function comparar(
   };
 
   const sc = [...c.secuencia].sort((a, b) => a.orden - b.orden);
-  const sk = [...(e.impactos ?? [])].sort((a, b) => a.orden - b.orden);
+  const sk = secuenciaCroquis(e, narracion).impactos;
   const igual = (i: number) =>
     conjunto(sc[i]!.participantes, sc[i]!.objeto_fijo) ===
-    conjunto(sk[i]?.vehiculos ?? [], sk[i]?.objeto_fijo);
+    conjunto(sk[i]?.vehiculos ?? [], sk[i]?.objeto_fijo ? "objeto" : null);
   const secuencia: EjeSecuencia = {
     cesvi: sc.length,
     croquis: sk.length,
@@ -256,6 +328,8 @@ export function comparar(
 export interface LineasBase {
   /** La modalidad más frecuente en desarrollo. */
   modalidad: string;
+  /** La más frecuente de las modalidades físicas (sin «otra») en desarrollo. */
+  modalidad_fisica: string;
   /** La velocidad promedio de las calculadas por deformación en desarrollo (km/h). */
   velocidad_kmh: number;
 }
@@ -265,15 +339,16 @@ export function lineasBase(desarrollo: readonly Conclusiones[]): LineasBase {
   const cuenta = new Map<string, number>();
   for (const c of desarrollo)
     if (c.modalidad) cuenta.set(c.modalidad, (cuenta.get(c.modalidad) ?? 0) + 1);
-  const modalidad =
-    [...cuenta.entries()].sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0]))[0]?.[0] ?? "otra";
+  const orden = [...cuenta.entries()].sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0]));
+  const modalidad = orden[0]?.[0] ?? "otra";
+  const modalidad_fisica = orden.find(([m]) => m !== "otra")?.[0] ?? "alcance";
   const vs = desarrollo.flatMap((c) =>
     c.velocidades
       .filter((v) => v.vehiculo && RX_POR_DEFORMACION.test(normal(v.que)))
       .map((v) => v.kmh),
   );
   const velocidad_kmh = vs.length ? vs.reduce((a, x) => a + x, 0) / vs.length : 0;
-  return { modalidad, velocidad_kmh };
+  return { modalidad, modalidad_fisica, velocidad_kmh };
 }
 
 const tasa = (k: number, n: number) => ({ k, n, pct: n ? Math.round((1000 * k) / n) / 10 : null });
@@ -290,6 +365,8 @@ export function resumen(
   base: LineasBase,
 ) {
   const conModalidad = filas.filter((f) => f.conclusiones.modalidad);
+  // «Otra» es una clase de casos variados, no una configuración física: aparte, sin ella.
+  const fisicas = conModalidad.filter((f) => f.conclusiones.modalidad !== "otra");
   const z = filas.map((f) => f.comparacion.zonas);
   const s = filas.map((f) => f.comparacion.secuencia).filter((x) => x.cesvi > 0);
   const v = filas.flatMap((f) => f.comparacion.velocidades);
@@ -312,6 +389,19 @@ export function resumen(
         conModalidad.length,
       ),
       sin_inferir: conModalidad.filter((f) => f.comparacion.modalidad.croquis === null).length,
+      fisicas: {
+        croquis: tasa(
+          fisicas.filter((f) => f.comparacion.modalidad.coincide).length,
+          fisicas.length,
+        ),
+        linea_base: {
+          modalidad: base.modalidad_fisica,
+          ...tasa(
+            fisicas.filter((f) => f.conclusiones.modalidad === base.modalidad_fisica).length,
+            fisicas.length,
+          ),
+        },
+      },
       linea_base: {
         modalidad: base.modalidad,
         ...tasa(

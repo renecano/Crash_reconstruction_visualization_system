@@ -53,6 +53,8 @@ const RAIZ = resolve(dirname(fileURLToPath(import.meta.url)), "..");
 const CORPUS = join(RAIZ, "data/cesvi/corpus");
 const LECTURAS = join(RAIZ, "data/cesvi/r4/lecturas.jsonl");
 const LOTES = join(RAIZ, "data/raw/cesvi/r4");
+/** Los datos de la página «Reproducción de dictámenes» (solo los de la prueba que se reconstruyen). */
+const PAGINA = join(RAIZ, "data/cesvi/r4/pagina.json");
 const GRABACIONES_R1 = join(RAIZ, "data/cesvi/grabaciones/escenas");
 /** Tamaño de la muestra de desarrollo para ajustar las reglas. */
 const N_DESARROLLO = 80;
@@ -277,6 +279,9 @@ function medir(p: Particion) {
         comparacion,
         reconstruccion,
         costo_usd: l.costo_usd,
+        narracion: n.descripcion,
+        expediente: escena.expediente,
+        posiciones: escena.posiciones,
       };
     });
   const r = resumen(filas, base);
@@ -303,12 +308,35 @@ function medir(p: Particion) {
       : {}),
     costo_lecturas_usd: Number(filas.reduce((a, f) => a + f.costo_usd, 0).toFixed(4)),
     resumen: r,
-    detalle: filas.map(({ conclusiones: _c, ...f }) => f),
+    detalle: filas.map(
+      ({ conclusiones: _c, narracion: _n, expediente: _e, posiciones: _p, ...f }) => f,
+    ),
   };
   writeFileSync(
     join(RAIZ, `eval/results/cesvi_r4_reproduccion_${p}.json`),
     `${JSON.stringify(out, null, 1)}\n`,
   );
+  if (p === "prueba") {
+    // La página «Reproducción de dictámenes»: los casos de la prueba que Croquis reconstruye, con lo
+    // que concluyó CESVI, la escena que leyó Croquis y la comparación.
+    const pagina = {
+      fuente: "eval/cesvi_r4_reproduccion.mts medir prueba",
+      fecha: out.fecha,
+      dictamenes: filas.length,
+      resumen: r,
+      lineas_base: base,
+      casos: reconstruidas.map((f) => ({
+        id: f.id,
+        narracion: f.narracion,
+        conclusiones: f.conclusiones,
+        comparacion: f.comparacion,
+        expediente: f.expediente,
+        posiciones: f.posiciones,
+      })),
+    };
+    writeFileSync(PAGINA, `${JSON.stringify(pagina)}\n`);
+    console.log(`Página: ${pagina.casos.length} casos en ${PAGINA}`);
+  }
   console.log(JSON.stringify({ particion: p, leidos: out.leidos, resumen: r }, null, 1));
 }
 
