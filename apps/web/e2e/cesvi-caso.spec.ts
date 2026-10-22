@@ -85,6 +85,12 @@ test("@flujo /cesvi/caso: de la narración del perito al mapa y a la escena", as
   await expect(page.getByTestId("evidencia-usada")).toContainText("posición final de V1");
   await expect(page.getByTestId("verificacion-cesvi")).toContainText("Falta:");
 
+  // El 3D de la reconstrucción (R3): el visor dibuja la escena con las velocidades estimadas.
+  await page.getByTestId("ver-3d").click();
+  const visor = page.getByTestId("visor-caso");
+  await expect(visor).toContainText("supuesto, con su rango");
+  await expect(visor.locator("canvas").first()).toBeVisible({ timeout: 60_000 });
+
   // 5. La escena, descargada: contrato 2.0.0 con lo que marcó el perito.
   const descarga = page.waitForEvent("download");
   await page.getByTestId("descargar-escena").click();
