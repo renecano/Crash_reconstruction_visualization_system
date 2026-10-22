@@ -58,7 +58,7 @@ export const PREGUNTAS_PARA_CESVI: readonly { tema: string; pregunta: string }[]
   {
     tema: "Unidades de A y B",
     pregunta:
-      "El dictamen imprime A y B en N/m y la energía en Julios, pero divide entre la masa en toneladas (1.431083). Eso es consistente con A en kN/m, B en kN/m² y la energía en kJ. ¿Esas son las unidades de sus coeficientes?",
+      "El reporte imprime A y B en N/m y la energía en Julios, pero divide entre la masa en toneladas (1.431083). Eso es consistente con A en kN/m, B en kN/m² y la energía en kJ. ¿Esas son las unidades de sus coeficientes?",
   },
   {
     tema: "Fuente de A y B",
@@ -73,11 +73,11 @@ export const PREGUNTAS_PARA_CESVI: readonly { tema: string; pregunta: string }[]
   {
     tema: "Ubicación",
     pregunta:
-      "¿Tienen las coordenadas o una foto aérea del km 47+800 del tramo Los Mochis–Navojoa? El dictamen no las da, y para el croquis sobre el mapa el perito tiene que marcar el punto a mano.",
+      "¿Tienen las coordenadas o una foto aérea del km 47+800 del tramo Los Mochis–Navojoa? El reporte no las da, y para el croquis sobre el mapa el perito tiene que marcar el punto a mano.",
   },
   {
     tema: "Diferencia significativa",
     pregunta:
-      "El dictamen dice que 63.15 y 60.27 km/h no difieren de forma significativa. ¿Qué criterio usan sus peritos (porcentaje, km/h, otro)?",
+      "El reporte dice que 63.15 y 60.27 km/h no difieren de forma significativa. ¿Qué criterio usan sus peritos (porcentaje, km/h, otro)?",
   },
 ];

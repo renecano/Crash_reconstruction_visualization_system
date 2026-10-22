@@ -125,7 +125,7 @@ test("@flujo /cesvi: el recorrido del perito, del caso al dictamen en PDF", asyn
   // 3. El lugar: el perito marca el punto de impacto sobre la MEX 15. Overpass sigue retenido: las
   // calles salen del tramo precargado en menos de 1 s.
   await page.getByTestId("siguiente").click();
-  // El dictamen no da coordenadas: la ubicación ilustrativa del km 47+800 (ADR 0056).
+  // El reporte de CESVI no da coordenadas: la ubicación ilustrativa del km 47+800 (ADR 0056).
   await expect(page.getByTestId("ubicacion-ilustrativa")).toContainText("26.20915, -109.05970");
   await page.getByTestId("usar-ilustrativa").click();
   const marcado = page.getByTestId("impacto-marcado");
@@ -256,10 +256,10 @@ test("@flujo /cesvi: el recorrido del perito, del caso al dictamen en PDF", asyn
   await expect(panel.locator('[data-fila="energia"]')).toContainText("+2.39 %");
   await page.keyboard.press("Escape");
 
-  // 7. Croquis contra el dictamen: punto por punto, con la diferencia en %; la comparación con la
+  // 7. Croquis contra el reporte de CESVI: punto por punto, con la diferencia en %; la comparación con la
   // declaración va plegada, y su sugerencia solo aparece si el perito la pide.
   await page.getByTestId("siguiente").click();
-  await expect(page.getByTestId("titulo-contra")).toHaveText("Croquis contra el dictamen");
+  await expect(page.getByTestId("titulo-contra")).toHaveText("Croquis contra el reporte de CESVI");
   const contra = page.getByTestId("contra-dictamen");
   await expect(contra.locator('[data-fila="modalidad"]')).toContainText("Coincide");
   await expect(contra.locator('[data-fila="restos"]')).toContainText("60.27 km/h");

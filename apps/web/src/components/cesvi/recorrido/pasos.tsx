@@ -104,7 +104,7 @@ export function PasoCaso({
             Declaración del conductor de {nombres[caso.declaracion.conductor as Letra] ?? "A"} ·
             literal
           </span>
-          <span className="t-rotulo normal-case tracking-normal">Fuente: dictamen</span>
+          <span className="t-rotulo normal-case tracking-normal">Fuente: reporte de CESVI</span>
         </div>
         <blockquote
           className="text-[clamp(1.25rem,2.2vw,1.625rem)] leading-[1.6] tracking-[-0.01em] text-texto"
@@ -586,7 +586,7 @@ export function PasoHecho({
           )}
           {grupo("Expediente", "", i.expediente, "datos-expediente", "")}
           <p className="t-nota px-1 text-texto-3">
-            La IA solo ordena lo que dice cada texto, con el vocabulario de los dictámenes de CESVI.
+            La IA solo ordena lo que dice cada texto, con el vocabulario de los reportes de CESVI.
             Los números salen del texto o del perito; la conclusión, del cálculo y del perito.
           </p>
         </aside>
@@ -758,7 +758,7 @@ export function PasoLugar({
             {via ? <p className="t-nota">{via}</p> : null}
             {puntoIlustrativo ? (
               <p className="t-nota text-texto-3" data-testid="aviso-ilustrativa">
-                Ubicación ilustrativa: el dictamen no da coordenadas del km {kilometro}.
+                Ubicación ilustrativa: el reporte de CESVI no da coordenadas del km {kilometro}.
               </p>
             ) : null}
           </div>
@@ -815,8 +815,8 @@ export function PasoLugar({
                 {ilustrativa.lat.toFixed(5)}, {ilustrativa.lon.toFixed(5)}
               </p>
               <p className="t-nota">
-                El dictamen no da coordenadas: es un punto de la {ilustrativa.via} para mostrar el
-                recorrido. No es el lugar real.
+                El reporte de CESVI no da coordenadas: es un punto de la {ilustrativa.via} para
+                mostrar el recorrido. No es el lugar real.
               </p>
               <button
                 type="button"
@@ -940,7 +940,7 @@ export function PasoVersiones({
         </div>
       ) : null}
       <p className="t-nota -mt-2">
-        El dictamen midió <span className="cifras">{restosDictamen} m</span>.{" "}
+        El reporte de CESVI midió <span className="cifras">{restosDictamen} m</span>.{" "}
         <button
           type="button"
           className="underline underline-offset-2 hover:text-texto"
@@ -1161,7 +1161,7 @@ export function PasoDanos({
           [
             [
               "Dónde están",
-              "Según la observación del dictamen. Toca una zona para corregirla.",
+              "Según la observación del reporte de CESVI. Toca una zona para corregirla.",
               zonas,
               true,
             ],
@@ -1229,9 +1229,9 @@ function TablaReproduccion({
   onCerrar: () => void;
 }) {
   return (
-    <section aria-label="Reproducción del dictamen" className="tarjeta overflow-hidden rounded-3xl">
+    <section aria-label="Reproducción del reporte" className="tarjeta overflow-hidden rounded-3xl">
       <div className="flex items-center justify-between gap-4 border-b border-linea-suave px-6 py-4">
-        <h2 className="t-interfaz font-semibold">Reproducción del dictamen</h2>
+        <h2 className="t-interfaz font-semibold">Reproducción del reporte</h2>
         <div className="flex gap-2">
           <button type="button" className="boton-secundario boton-compacto" onClick={onFormulas}>
             Ver fórmulas
@@ -1251,7 +1251,7 @@ function TablaReproduccion({
           <thead>
             <tr className="text-left text-xs text-texto-3">
               <th className="px-6 py-3 font-medium">Valor</th>
-              <th className="px-6 py-3 text-right font-medium">Dictamen</th>
+              <th className="px-6 py-3 text-right font-medium">Reporte</th>
               <th className="px-6 py-3 text-right font-medium">Croquis</th>
               <th className="px-6 py-3 text-right font-medium">Diferencia</th>
             </tr>
@@ -1420,7 +1420,7 @@ export function PasoNumeros({
           className="boton-secundario boton-compacto self-center"
           onClick={() => setTabla(true)}
         >
-          Ver la reproducción del dictamen
+          Ver la reproducción del reporte
         </button>
       )}
       <div className="flex flex-wrap items-center justify-between gap-3">
@@ -1432,7 +1432,7 @@ export function PasoNumeros({
 }
 
 /* ------------------------------------------------------------------------------------------ */
-/* Paso 7: Croquis contra el dictamen (maqueta Paso7)                                         */
+/* Paso 7: Croquis contra el reporte de CESVI (maqueta Paso7)                                         */
 /* ------------------------------------------------------------------------------------------ */
 
 /** La primera oración de un texto (con su punto). */
@@ -1455,7 +1455,7 @@ const DECISION = { aceptada: "aceptó", editada: "editó", rechazada: "rechazó"
 export function TextoValidacion({ validacion }: { validacion: Validacion }) {
   return (
     <span role="status" data-testid="validacion">
-      {validacion.perito} {DECISION[validacion.decision]} la comparación con el dictamen el{" "}
+      {validacion.perito} {DECISION[validacion.decision]} la comparación con el reporte de CESVI el{" "}
       {new Intl.DateTimeFormat("es-MX", { dateStyle: "long" }).format(new Date(validacion.fecha))}.
     </span>
   );
@@ -1658,16 +1658,16 @@ export function PasoContraDictamen({
   return (
     <Pagina>
       <header className="flex max-w-[820px] flex-col gap-4">
-        <Rotulo extra="Reproducción del dictamen" senal />
+        <Rotulo extra="Reproducción del reporte" senal />
         <h1 className="t-lanzamiento" data-testid="titulo-contra">
-          Croquis contra el dictamen
+          Croquis contra el reporte de CESVI
         </h1>
         <div data-testid="resumen-contra">
           <Frase>{contra.resumen}</Frase>
         </div>
       </header>
       <section
-        aria-label="Croquis contra el dictamen"
+        aria-label="Croquis contra el reporte de CESVI"
         className="tarjeta overflow-hidden rounded-3xl"
         data-testid="contra-dictamen"
       >
@@ -1708,11 +1708,11 @@ export function PasoContraDictamen({
         >
           <span className="t-interfaz font-semibold">La diferencia de energía, explicada</span>
           <p className="t-cuerpo max-w-[75ch]">
-            Con los datos que imprime el dictamen (L, A, B y C1–C4), la energía de deformación es{" "}
-            <span className="cifras">{e.croquis.toFixed(3)}</span>; el dictamen imprime{" "}
+            Con los datos que imprime el reporte (L, A, B y C1–C4), la energía de deformación es{" "}
+            <span className="cifras">{e.croquis.toFixed(3)}</span>; el reporte imprime{" "}
             <span className="cifras">{e.dictamen.toFixed(3)}</span> (
             <span className="cifras">{signo(e.diferenciaPct, 2)} %</span>). Por eso la velocidad por
-            deformación de Croquis difiere de la del dictamen. {e.lectura}
+            deformación de Croquis difiere de la del reporte. {e.lectura}
           </p>
           <button
             type="button"
@@ -1865,7 +1865,7 @@ export function PasoDictamen({
     ["tablaDatos", "Tabla de datos y su fuente"],
     ["notasInternas", "Notas internas del perito"],
   ];
-  const textoTraza = `Método: ${trazabilidad.metodo}\nHuella de entradas: ${trazabilidad.huella}\nComparación con el dictamen: ${trazabilidad.comparacion}\nValidó: ${trazabilidad.valido}`;
+  const textoTraza = `Método: ${trazabilidad.metodo}\nHuella de entradas: ${trazabilidad.huella}\nComparación con el reporte de CESVI: ${trazabilidad.comparacion}\nValidó: ${trazabilidad.valido}`;
   return (
     <Pagina ancho="max-w-[1320px]">
       <div className="flex flex-wrap items-start gap-8">
@@ -1992,7 +1992,7 @@ export function PasoDictamen({
               <dd className="cifras text-right">{trazabilidad.metodo}</dd>
               <dt className="text-texto-2">Huella de entradas</dt>
               <dd className="cifras text-right">{trazabilidad.huella}</dd>
-              <dt className="text-texto-2">Comparación con el dictamen</dt>
+              <dt className="text-texto-2">Comparación con el reporte de CESVI</dt>
               <dd className="text-right">{trazabilidad.comparacion}</dd>
               <dt className="text-texto-2">Validó</dt>
               <dd className="text-right">{trazabilidad.valido}</dd>

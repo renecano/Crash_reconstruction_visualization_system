@@ -3,7 +3,7 @@ import { join } from "node:path";
 import { expect, test } from "@playwright/test";
 
 /**
- * Cargar un dictamen (R5): el PDF del caso A2010930 (redactado; se genera aquí con Chromium a partir
+ * Cargar un reporte (R5): el PDF del caso A2010930 (redactado; se genera aquí con Chromium a partir
  * del texto), su texto sacado con pdf.js en el navegador, las dos lecturas grabadas de Claude (CI no
  * llama a la API) y el expediente en «Caso nuevo», con la verificación CESVI y lo que concluyó CESVI.
  */
@@ -40,7 +40,7 @@ test("@flujo /cesvi/importar: de un reporte de CESVI en PDF al expediente, listo
     }),
   );
 
-  // El PDF del dictamen, como lo imprimiría un navegador.
+  // El PDF del reporte, como lo imprimiría un navegador.
   const imprenta = await context.newPage();
   await imprenta.setContent(
     `<pre style="white-space: pre-wrap; font: 11px sans-serif">${escapar(TEXTO)}</pre>`,
@@ -61,7 +61,7 @@ test("@flujo /cesvi/importar: de un reporte de CESVI en PDF al expediente, listo
   await page.getByTestId("leer-dictamen").click();
   await expect(page.getByTestId("resumen-importado")).toContainText("2 vehículos");
   await expect(page.getByTestId("vehiculos")).toContainText("Silverado");
-  // La verificación CESVI con las medidas del dictamen reproduce la EBS de la Tacoma (C1).
+  // La verificación CESVI con las medidas del reporte reproduce la EBS de la Tacoma (C1).
   await expect(page.getByTestId("verificacion-cesvi")).toContainText("63.90 km/h");
   // Lo que concluyó CESVI, para comparar.
   const cesvi = page.getByTestId("conclusiones-cesvi");

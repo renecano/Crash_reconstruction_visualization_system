@@ -139,7 +139,7 @@ const central = (zonas: readonly Zona[], parte: "frontal" | "posterior") =>
   zonas.includes(`${parte}_centro` as Zona);
 
 export const REGLA_SUGERENCIA =
-  "Croquis cuenta las tres razones del dictamen: si dos o más van contra la versión declarada, sugiere que no se sostiene; si dos o más van a su favor, que se sostiene; si no, que no es concluyente. Es una sugerencia: el perito decide.";
+  "Croquis cuenta las tres razones del reporte de CESVI: si dos o más van contra la versión declarada, sugiere que no se sostiene; si dos o más van a su favor, que se sostiene; si no, que no es concluyente. Es una sugerencia: el perito decide.";
 
 /** La sugerencia de Croquis sobre la versión declarada (una reversa de A), con sus razones. */
 export function sugerir(e: EntradaSugerencia): Sugerencia {

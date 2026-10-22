@@ -19,7 +19,7 @@ describe("sugerencia de Croquis", () => {
     const s = sugerir({
       comparacion: compararVelocidades(63.15, 60.27, 10),
       distanciaRestos: 15.89,
-      fuenteDistancia: "del dictamen",
+      fuenteDistancia: "del reporte de CESVI",
       zonasA,
       zonasB,
     });
@@ -47,7 +47,7 @@ describe("sugerencia de Croquis", () => {
     const s = sugerir({
       comparacion: compararVelocidades(63.15, 60.27, 4),
       distanciaRestos: 15.89,
-      fuenteDistancia: "del dictamen",
+      fuenteDistancia: "del reporte de CESVI",
       zonasA: ["posterior_centro"],
       zonasB: ["frontal_centro"],
     });
@@ -63,7 +63,7 @@ describe("sugerencia de Croquis", () => {
     const s = sugerir({
       comparacion: compararVelocidades(63.15, 60.27, 4),
       distanciaRestos: 15.89,
-      fuenteDistancia: "del dictamen",
+      fuenteDistancia: "del reporte de CESVI",
       zonasA: [],
       zonasB: ["frontal_derecha"],
     });

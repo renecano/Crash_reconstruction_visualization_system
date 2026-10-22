@@ -7,7 +7,7 @@ const c = caso("A2010930");
 const filas = reproducir(c).filas;
 const de = (clave: string) => filas.find((f) => f.clave === clave)!.croquis;
 
-describe("Croquis contra el dictamen A2010930", () => {
+describe("Croquis contra el reporte de CESVI A2010930", () => {
   const r = croquisContraDictamen(c, {
     modalidad: "Alcance",
     deformacionKmh: de("ebs_kmh_datos"),
@@ -33,7 +33,7 @@ describe("Croquis contra el dictamen A2010930", () => {
   it("explica la discrepancia de energía con lo medido y lo resume sin juzgar a nadie", () => {
     expect(r.energia!.diferenciaPct).toBeCloseTo(2.39, 2);
     expect(r.resumen).toBe(
-      "Croquis llega a lo mismo que el dictamen en la modalidad, la velocidad por restos y la dinámica del impacto. Difiere en la velocidad por deformación (+1.19 %).",
+      "Croquis llega a lo mismo que el reporte de CESVI en la modalidad, la velocidad por restos y la dinámica del impacto. Difiere en la velocidad por deformación (+1.19 %).",
     );
     expect(r.resumen).not.toMatch(/sostiene|miente|culpa|declar/i);
   });

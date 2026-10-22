@@ -60,7 +60,7 @@ export function Expediente({ caso }: { caso: CasoCesvi }) {
           {fecha(caso.fecha_hora.valor)}, {caso.fecha_hora.aproximada ? "~" : ""}
           {caso.fecha_hora.valor.slice(11)} h
         </Dato>
-        <Dato etiqueta="Dictamen emitido">
+        <Dato etiqueta="Reporte de CESVI emitido">
           {fecha(caso.fecha_dictamen.valor)}, por un {caso.autor_dictamen}
         </Dato>
         <Dato etiqueta="Aseguradora">{caso.aseguradora}</Dato>

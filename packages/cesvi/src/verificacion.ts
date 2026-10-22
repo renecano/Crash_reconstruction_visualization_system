@@ -30,7 +30,7 @@ export interface VerificacionVehiculo {
 
 /**
  * Una rigidez de dictamen con A por debajo de 1000 está en kN/m (y B en kN/m²): los coeficientes de
- * un vehículo en N/m son del orden de decenas de miles. Así la escriben los dictámenes de CESVI
+ * un vehículo en N/m son del orden de decenas de miles. Así la escriben los reportes de CESVI
  * aunque impriman «N/m» (ADR 0048): con ella la energía sale en kJ y la masa va en toneladas.
  */
 export function rigidezEnKilo(A: number): boolean {
@@ -71,7 +71,7 @@ export function verificacionCesvi(e: Expediente): VerificacionVehiculo[] {
       const kilo = rigidezEnKilo(rigidez.A);
       if (kilo) {
         notas.push(
-          `La rigidez (A = ${rigidez.A}) está en kN/m: la energía sale en kJ y la masa va en toneladas, como en los dictámenes de CESVI.`,
+          `La rigidez (A = ${rigidez.A}) está en kN/m: la energía sale en kJ y la masa va en toneladas, como en los reportes de CESVI.`,
         );
       }
       const mc = formulaMcHenry(

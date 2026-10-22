@@ -15,11 +15,11 @@
    - usa como evidencia lo que el perito dio (punto de impacto, posiciones finales, restos, huellas y daños);
    - los métodos de CESVI (McHenry, EBS, desplazamiento, huellas, cantidad de movimiento) se muestran al lado como verificación.
 4. **Croquis muestra la reconstrucción** en 3D y en el croquis 2D sobre el mapa, sincronizados en una línea de tiempo.
-5. **Sale un reporte** con la reconstrucción, los cálculos y su trazabilidad.
+5. **Sale un dictamen** con la reconstrucción, los cálculos y su trazabilidad.
 
-**El papel de los dictámenes de CESVI:** demostrarles a los peritos que un hecho que ellos ya analizaron y probaron, Croquis lo reconstruye y llega a lo mismo. Se usan para:
+**El papel de los reportes de CESVI:** demostrarles a los peritos que un hecho que ellos ya analizaron y probaron, Croquis lo reconstruye y llega a lo mismo. Se usan para:
 - evaluar a Croquis contra sus conclusiones (§5, R4);
-- la demo: el dictamen y la reconstrucción de Croquis, lado a lado.
+- la demo: el reporte de CESVI y la reconstrucción de Croquis, lado a lado.
 
 **El complemento opcional** (R7): el perito puede cargar la declaración de un conductor y ver en 3D, lado a lado o superpuesta, esa versión contra la reconstrucción, con lo que cambia entre ambas. Croquis no declara culpables ni dice quién miente. Si se muestra una sugerencia, el perito la confirma o la descarta.
 
@@ -32,14 +32,14 @@
   - medido contra registradores de choques reales (E3) y atropellos (E4).
 - **Visor 3D:** WebGPU, niveles baja / media / alta / ultra, daño y cámaras. Estaba en pausa: **se reactiva.**
 - **Extracción con Claude:** salida estructurada, fuentes por dato y preguntas de lo que falta, ya adaptada al lenguaje técnico del perito, con un glosario de 114 términos.
-- **El recorrido de `/cesvi`:** 8 pasos, modo Presentar / Trabajar, mapa con el punto editable, posiciones del perito, deshacer, temas y dictamen en PDF.
+- **El recorrido de `/cesvi`:** 8 pasos, modo Presentar / Trabajar, mapa con el punto editable, posiciones del perito, deshacer, temas y dictamen en PDF y Word.
 - **Contrato 2.0.0:** expediente, N vehículos, M impactos y versiones.
 - **C0 en curso:** el corpus estructurado de los 671 dictámenes. Se conserva tal cual y se amplía en R0.
 
 ## 3. Datos
 
 - **Licencia:** los dictámenes de CESVI son de uso libre para este proyecto (René, 2026-10-21; muchos son casos elaborados por CESVI). Se registran en `data/SOURCES.md`.
-- **Corpus estructurado (R0):** a lo que ya extrae C0 se le agrega, por dictamen:
+- **Corpus estructurado (R0):** a lo que ya extrae C0 se le agrega, por reporte:
   - **Descripción de los hechos sin conclusiones:** solo hechos, lugar, daños, evidencias y medidas, sin velocidades calculadas ni conclusiones. Es lo que se le da a Croquis como «narración del perito» en la evaluación. Debe pasar una revisión automática de fuga: no puede contener cifras de velocidad ni frases de conclusión.
   - **Lo que concluyó CESVI, para comparar:** modalidad, zonas de contacto por vehículo, secuencia de impactos, velocidades calculadas (si las hay) y posiciones finales (si se describen).
 - **Partición:** la prueba congelada (30 %) de C0 se mantiene y no se usa para ajustar nada.
@@ -48,7 +48,7 @@
 
 - La IA traduce, la física decide, el visor muestra.
 - Ningún número inventado.
-- Cada resultado lleva su rango y su fuente; toda diferencia con un dictamen se muestra con su valor y su porcentaje.
+- Cada resultado lleva su rango y su fuente; toda diferencia con un reporte de CESVI se muestra con su valor y su porcentaje.
 - Reconstrucción de apoyo: el análisis y la firma son del perito.
 
 ## 5. Fases
@@ -58,7 +58,7 @@ Cada fase se cierra con su criterio en verde, merge y despliegue, y con su resum
 ### R0 · Corpus (continúa C0)
 - Termina lo de C0: corpus validado, partición congelada, etiquetas revisadas en una muestra y mediciones en `eval/results/cesvi_corpus.json`.
 - Agrega los dos campos del §3 (descripción sin conclusiones y lo que concluyó CESVI), con la revisión de fuga.
-- **Listo cuando:** el corpus completo valida y cada dictamen de la prueba congelada tiene su descripción limpia y sus conclusiones estructuradas.
+- **Listo cuando:** el corpus completo valida y cada reporte de la prueba congelada tiene su descripción limpia y sus conclusiones estructuradas.
 
 ### R1 · De la narración del perito a la escena
 - El paso «El hecho» genera la escena completa (contrato v2), no solo datos sueltos:
@@ -75,7 +75,7 @@ Cada fase se cierra con su criterio en verde, merge y despliegue, y con su resum
 - Choques contra objeto fijo.
 - Modalidades frecuentes en el corpus: alcance, lateral, frontal, reversa, volcadura y salida del camino. Lo que el solver no cubra se declara en pantalla como límite, no se simula a medias.
 - Módulo de verificación CESVI al lado del resultado físico: McHenry de 2, 4 y 6 medidas, EBS, desplazamiento, huellas y cantidad de movimiento, con la fórmula sustituida.
-  - **Reproducción:** todo dictamen del corpus que imprime entradas y resultados se recalcula, y se reporta cuántos coinciden dentro de 0.5 %. Ningún ajuste para que cuadre.
+  - **Reproducción:** todo reporte del corpus que imprime entradas y resultados se recalcula, y se reporta cuántos coinciden dentro de 0.5 %. Ningún ajuste para que cuadre.
 - El solver Python es la referencia. Cada cambio lleva su port a TS y pruebas de paridad.
 - **Listo cuando:** las escenas de R1 se reconstruyen con resultados y rangos, y la verificación CESVI está corrida sobre el corpus.
 
@@ -91,21 +91,21 @@ Cada fase se cierra con su criterio en verde, merge y despliegue, y con su resum
 - Pruebas: la e2e del recorrido abre el 3D en Chromium. Las capturas y los fps se miden a mano antes de una demo.
 - **Listo cuando:** cualquier escena de R2 se ve en 3D y en 2D sincronizadas y sin interpenetración.
 
-### R4 · Croquis reproduce los dictámenes (evaluación y demo)
+### R4 · Croquis reproduce los reportes de CESVI (evaluación y demo)
 - **Evaluación E-R4,** sobre la prueba congelada. A Croquis se le da solo la descripción sin conclusiones y se compara con lo que concluyó CESVI:
   - modalidad;
   - zonas de contacto por vehículo;
   - secuencia de impactos;
-  - velocidades, cuando el dictamen las calcula (error absoluto y porcentaje);
+  - velocidades, cuando el reporte las calcula (error absoluto y porcentaje);
   - posiciones finales, cuando se describen.
   - **Contra líneas base simples:** la modalidad más frecuente y una velocidad fija promedio. Se publica en `eval/results/` con lo que sale bien y lo que no.
-- **Página «Reproducción de dictámenes»:** lista de casos con el dictamen y la reconstrucción de Croquis lado a lado (2D y 3D), con las diferencias en porcentaje. Para la demo: «esto lo analizaron ustedes, esto lo reconstruyó Croquis».
+- **Página «Reproducción de reportes»:** lista de casos con el reporte de CESVI y la reconstrucción de Croquis lado a lado (2D y 3D), con las diferencias en porcentaje. Para la demo: «esto lo analizaron ustedes, esto lo reconstruyó Croquis».
 - **Listo cuando:** E-R4 está corrida y publicada, y la página tiene al menos los casos de la prueba congelada que Croquis puede reconstruir.
 
-### R5 · Cargar un dictamen
+### R5 · Cargar un reporte
 - PDF, Markdown o texto. Croquis llena el expediente y la narración con la cita de cada dato, y el perito revisa y reconstruye.
 - **Evaluación E-R5:** exactitud por campo en la prueba congelada; con PDF originales cuando René los consiga.
-- **Listo cuando:** importar un dictamen del corpus lo deja listo para reconstruir.
+- **Listo cuando:** importar un reporte del corpus lo deja listo para reconstruir.
 
 ### R6 · Carambolas
 - Impactos en secuencia en el solver (Python y TS, con paridad), en el croquis (X1, X2…), en el 3D y en la línea de tiempo.
@@ -119,7 +119,7 @@ Cada fase se cierra con su criterio en verde, merge y despliegue, y con su resum
 - Reutiliza lo que ya hace el prototipo para el caso de AXA.
 - **Listo cuando:** la e2e carga una declaración y la compara en 3D.
 
-### R8 · Reporte
+### R8 · Dictamen
 - PDF y Word con:
   - la narración del perito;
   - el croquis 2D y cuadros del 3D;
@@ -127,7 +127,7 @@ Cada fase se cierra con su criterio en verde, merge y despliegue, y con su resum
   - la verificación CESVI;
   - la comparación de R7, si se usó;
   - la trazabilidad (método, huella de entradas, quién validó y cuándo).
-- Estructura de dictamen de CESVI cuando el perito lo pida.
+- La estructura de los reportes de CESVI cuando el perito lo pida.
 - **Listo cuando:** la e2e exporta el PDF y el Word de una reconstrucción.
 
 ### R9 · Diseño, endurecimiento y lo que diga CESVI
@@ -138,11 +138,11 @@ Cada fase se cierra con su criterio en verde, merge y despliegue, y con su resum
   - Pantallas que lo necesitan:
     - visor 3D en el recorrido;
     - lista de casos;
-    - importar dictamen;
-    - reproducción de dictámenes;
+    - cargar un reporte;
+    - reproducción de reportes;
     - carambolas;
     - comparación;
-    - reporte.
+    - dictamen.
   - Pide a René una revisión visual antes de cerrarlo.
 - Lo anotado en «Endurecimiento pendiente» y los cambios que pida CESVI.
 
@@ -163,15 +163,15 @@ Cada fase se cierra con su criterio en verde, merge y despliegue, y con su resum
 - **Evaluación:** capturas de antes y después de las mismas escenas para que René las revise, y fps por nivel. Las capturas se aprueban a ojo de René; no son prueba de CI.
 - **Listo cuando:** René aprueba las capturas y se cumplen los fps de §7.8.
 
-### R11 · Video cinematográfico para demo y reporte (complemento)
+### R11 · Video cinematográfico para demo y dictamen (complemento)
 - «Exportar a Blender» desde el visor: la escena reconstruida en glTF, con animación, cámaras y materiales, más un script de Python para Blender que arma la escena y renderiza el video (Cycles o EEVEE) con la leyenda de reconstrucción de apoyo.
-- Se renderiza en la computadora de la demo, no en Vercel. El video puede adjuntarse al reporte.
+- Se renderiza en la computadora de la demo, no en Vercel. El video puede adjuntarse al dictamen.
 - Los recursos son los mismos de R10.
 - **Listo cuando:** un caso del corpus sale como video de calidad cinematográfica con un solo comando en la computadora de la demo, y René aprueba el resultado.
 
 **Orden:** R0 → R1 → R2 → R3 → R6 → R4 → R5 → R7 → R8 → R9 → R10 → R11.
 
-R6 (carambolas) va después de R3 y antes de R4 (René, 2026-10-21): el corpus tiene 104 dictámenes con 3 o más vehículos y 144 con más de un impacto, y la evaluación de R4 debe cubrirlos.
+R6 (carambolas) va después de R3 y antes de R4 (René, 2026-10-21): el corpus tiene 104 reportes con 3 o más vehículos y 144 con más de un impacto, y la evaluación de R4 debe cubrirlos.
 
 ## 6. Fuera de esta versión
 
@@ -179,8 +179,8 @@ La portada y la historia de lanzamiento (siguen en pausa), cuentas de usuario y 
 
 ## 7. Bloqueado: necesita a René
 
-- PDF originales de algunos dictámenes (R5).
+- PDF originales de algunos reportes (R5).
 - Tabla de rigideces A y B de CESVI, si la tienen (R2).
-- PDF u hoja de cálculo del dictamen de AXA (diferencia de energía).
+- PDF u hoja de cálculo del reporte de AXA (diferencia de energía).
 - Computadora de demo con GPU para medir alta y ultra (R3).
 - Comentarios de CESVI tras la demo (R9).

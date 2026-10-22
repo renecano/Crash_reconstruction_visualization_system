@@ -1,5 +1,5 @@
 /**
- * «Croquis contra el dictamen» (paso 7 del recorrido, plan v2 §1): punto por punto, lo que concluyó
+ * «Croquis contra el reporte de CESVI» (paso 7 del recorrido, plan v2 §1): punto por punto, lo que concluyó
  * CESVI en el dictamen contra lo que obtuvo Croquis con la descripción técnica del perito y los datos
  * impresos. Cada diferencia numérica va con su valor y su porcentaje; nada se ajusta para que cuadre.
  * El perito concluye: esto solo lo pone a la vista.
@@ -92,7 +92,7 @@ export function croquisContraDictamen(c: CasoCesvi, d: DeCroquis): ContraDictame
       croquis: d.modalidad ?? "—",
       diferenciaPct: null,
       coincide: modalidadCoincide,
-      fuente: "Conclusión del dictamen · lectura de la descripción técnica del perito",
+      fuente: "Conclusión del reporte de CESVI · lectura de la descripción técnica del perito",
     },
     numerica(
       "deformacion",
@@ -100,7 +100,7 @@ export function croquisContraDictamen(c: CasoCesvi, d: DeCroquis): ContraDictame
       def,
       d.deformacionKmh,
       kmh,
-      "EBS del dictamen · EBS de Croquis con L, A, B y C1–C4 impresos",
+      "EBS del reporte · EBS de Croquis con L, A, B y C1–C4 impresos",
     ),
     numerica(
       "restos",
@@ -108,7 +108,7 @@ export function croquisContraDictamen(c: CasoCesvi, d: DeCroquis): ContraDictame
       des,
       d.restosKmh,
       kmh,
-      "√(2·a·g·D) del dictamen · el mismo método en Croquis",
+      "√(2·a·g·D) del reporte · el mismo método en Croquis",
     ),
     numerica(
       "dinamica",
@@ -116,7 +116,7 @@ export function croquisContraDictamen(c: CasoCesvi, d: DeCroquis): ContraDictame
       restos,
       d.restosM,
       (x) => `${x.toFixed(2)} m de restos`,
-      "Separación de los restos del dictamen · reconstrucción de Croquis en el mapa",
+      "Separación de los restos del reporte · reconstrucción de Croquis en el mapa",
     ),
   ];
   const r = DISCREPANCIA_A2010930;
@@ -138,7 +138,9 @@ export function croquisContraDictamen(c: CasoCesvi, d: DeCroquis): ContraDictame
         : `${EN_FRASE[f.clave]} (${f.diferenciaPct >= 0 ? "+" : "−"}${Math.abs(f.diferenciaPct).toFixed(2)} %)`,
     );
   const resumen = [
-    coinciden.length ? `Croquis llega a lo mismo que el dictamen en ${lista(coinciden)}.` : null,
+    coinciden.length
+      ? `Croquis llega a lo mismo que el reporte de CESVI en ${lista(coinciden)}.`
+      : null,
     difieren.length ? `Difiere en ${lista(difieren)}.` : null,
   ]
     .filter(Boolean)

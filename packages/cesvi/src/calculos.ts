@@ -1,5 +1,5 @@
 /**
- * Los demás cálculos que aparecen en los dictámenes de CESVI (docs/cesvi/PLAN-CESVI.md, C1; ADR
+ * Los demás cálculos que aparecen en los reportes de CESVI (docs/cesvi/PLAN-CESVI.md, C1; ADR
  * 0059), además de McHenry, EBS y desplazamiento (`metodo.ts`). Cada función es la fórmula de libro
  * que imprimen los dictámenes; no hay factores de ajuste. Las unidades son SI (m, kg, s, J) salvo
  * que el nombre diga otra cosa, y las velocidades salen en m/s y km/h.
@@ -232,7 +232,7 @@ export function friccionEquivalente(mu: number, sumaSenos: number, n: number): n
 }
 
 /**
- * Velocidad crítica en curva como la escriben los dictámenes de CESVI:
+ * Velocidad crítica en curva como la escriben los reportes de CESVI:
  * V = 11.27·√(R·(tan α + μ)) en km/h, que es √(g·R·(μ + e)) con g = 9.8 m/s² (11.27 = 3.6·√9.8).
  * Es la forma de peralte pequeño: omite el denominador 1 − μ·e de `velocidadCriticaCurva`.
  */

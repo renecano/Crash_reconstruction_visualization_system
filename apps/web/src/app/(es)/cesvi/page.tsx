@@ -9,8 +9,8 @@ import { Recorrido } from "@/components/cesvi/recorrido/recorrido";
 import { Reproduccion } from "@/components/cesvi/reproduccion";
 
 export const metadata: Metadata = {
-  title: `Dictamen ${CASO_INICIAL} · Croquis para CESVI`,
-  description: "Reproducción de un dictamen de CESVI México con su método y sus números.",
+  title: `Caso ${CASO_INICIAL} · Croquis para CESVI`,
+  description: "Reproducción de un reporte de CESVI México con su método y sus números.",
   robots: { index: false, follow: false },
 };
 

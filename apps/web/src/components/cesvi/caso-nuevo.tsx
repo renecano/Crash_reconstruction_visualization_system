@@ -316,7 +316,7 @@ export function CasoNuevo({ inicial }: { inicial?: CasoInicial } = {}) {
           <h1 className="t-titulo">{inicial?.titulo ?? "Narra el hecho"}</h1>
           <div className="t-cuerpo max-w-[70ch] text-texto-2">
             {inicial?.descripcion ??
-              "Escribe la narración técnica como en un dictamen: lugar, vehículos, daños, restos, huellas y posiciones. Croquis la ordena en la escena y pregunta solo lo que más cambia la reconstrucción. La IA no produce números: los que no están en tu texto se descartan."}
+              "Escribe la narración técnica como en un reporte de CESVI: lugar, vehículos, daños, restos, huellas y posiciones. Croquis la ordena en la escena y pregunta solo lo que más cambia la reconstrucción. La IA no produce números: los que no están en tu texto se descartan."}
           </div>
         </header>
 

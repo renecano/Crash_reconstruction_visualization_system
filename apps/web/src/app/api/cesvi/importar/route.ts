@@ -49,7 +49,7 @@ export async function POST(request: Request): Promise<Response> {
     return Response.json({ metodo: "claude", ...r }, { headers: { "Cache-Control": "no-store" } });
   } catch (e) {
     if (e instanceof LLMError) return sinLectura(e.message);
-    console.error("Importación del dictamen", e);
+    console.error("Importación del reporte", e);
     return sinLectura("Claude no respondió");
   }
 }
