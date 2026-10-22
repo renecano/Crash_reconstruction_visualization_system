@@ -50,6 +50,11 @@ function Fuente({ f }: { f?: string }) {
   );
 }
 
+/** El color de V1 y V2 en el mapa (los del sistema visual); los demás, el del punto genérico. */
+function claseVehiculo(id: string): string {
+  return id === "V1" ? " punto-a" : id === "V2" ? " punto-b" : "";
+}
+
 /** El mapa donde el perito coloca a cada vehículo: un clic pone lo elegido en la herramienta. */
 function MapaEscena({
   posiciones,
@@ -103,9 +108,7 @@ function MapaEscena({
       for (const x of marcas.current) x.remove();
       marcas.current = posiciones.map((p) => {
         // El número del vehículo en el punto, con su color; el impacto, con borde punteado.
-        const n = p.vehiculo.slice(1);
-        const color = n === "1" ? " punto-a" : n === "2" ? " punto-b" : "";
-        const el = marcador(n, `punto-mapa${color}`);
+        const el = marcador(p.vehiculo.slice(1), `punto-mapa${claseVehiculo(p.vehiculo)}`);
         const fase = p.fase === "final" ? "posición final" : "impacto";
         el.title = `${p.vehiculo} · ${fase}`;
         el.dataset.posicion = `${p.vehiculo}:${p.fase}`;
@@ -123,8 +126,11 @@ function MapaEscena({
       for (const x of marcasMoviles.current) x.remove();
       marcasMoviles.current = moviles.map((p) => {
         // MapLibre posiciona el marcador con `transform`: el rumbo va en un elemento interior.
-        const el = marcador(`${p.vehiculo} `, "punto-mapa");
+        // El color es el del vehículo, como en las posiciones colocadas.
+        const el = marcador("", `punto-mapa${claseVehiculo(p.vehiculo)}`);
+        el.title = `${p.vehiculo} en la reconstrucción`;
         el.dataset.movil = p.vehiculo;
+        el.style.pointerEvents = "none";
         const flecha = document.createElement("span");
         flecha.textContent = "▲";
         flecha.style.display = "inline-block";

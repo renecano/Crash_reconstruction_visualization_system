@@ -97,12 +97,41 @@ Reglas de trabajo: `CLAUDE.md`. Especificación: `PLAN.md`.
     - **C0:** pasa a R0. Falta lo nuevo: la descripción de los hechos sin conclusiones, con su revisión de fuga, y lo que concluyó CESVI, estructurado.
     - **C1:** es el módulo de verificación CESVI de R2, con su reproducción (E-C1) ya corrida.
     - **C2–C8:** se reacomodan en R1–R9.
-  - **Fase actual: R3** (3D de la reconstrucción). R0, R1 y R2 quedaron cerradas el 2026-10-21. C0 y C1 de la v1 quedaron cerradas el 2026-10-21. El plan de C0 fue:
+  - **Fase actual: R6** (carambolas, antes de R4 por orden de René). R3 quedó cerrada el 2026-10-22; R0, R1 y R2, el 2026-10-21. C0 y C1 de la v1 quedaron cerradas el 2026-10-21. El plan de C0 fue:
     - **Contrato v2:** `escena.schema.json` ampliado, con migración desde v1.3, Zod y Pydantic generados y un validador semántico (N vehículos, M impactos, versiones).
     - **Corpus estructurado** de los 671 dictámenes con Claude (salida estructurada, caché, semilla), validado contra el esquema, con partición congelada del 30 % y etiquetas de la conclusión revisadas en una muestra.
     - **Mediciones:** las proporciones del §2 en `eval/results/cesvi_corpus.json`; desde ahí se pueden citar.
     - **Costo:** antes de correr el corpus se estima y se anota aquí. Si pasa de 30 USD, se pregunta a René.
-  - **R3 en curso: 3D de la reconstrucción** (rama `feat/r3-visor-3d`). Plan:
+  - **Resumen de R3 para René** (rama `feat/r3-visor-3d`; ADR 0063, 0064 y 0065):
+    - **Qué quedó:**
+      - **El 3D en «Caso nuevo»:** después de «Reconstruir», «Ver la reconstrucción en 3D» abre el visor con la escena reconstruida. Las velocidades de la inversión van marcadas como supuesto, con su rango.
+      - **El daño, donde lo narró el perito:** el tercio de la cara pasa a la zona horizontal CDC del impacto.
+      - **El reloj del 3D mueve a los vehículos sobre el mapa 2D:** cada uno es un punto con su color y una flecha con su rumbo.
+      - **Los vehículos ya no se atraviesan después del impacto:**
+        - el solver integra juntos a los vehículos de un choque, con contacto secundario plástico (ADR 0063, resultado 1.8.0);
+        - la referencia Python usa el mismo fdlibm que el port TS (ADR 0065).
+    - **Números medidos:**
+      - **Interpenetración** (`eval/results/r3_interpenetracion.json`, 8 pares en las 11 escenas canónicas):
+        - **Antes:** 3 de 8 pares pasaban su aplastamiento, con un máximo de 1.438 m (`nocturno_lluvia`).
+        - **Ahora:** 1 de 8, la moto de `motociclista` en t = 0, con 0.083 m. Es la configuración del impacto: a los 0.04 s ya no queda exceso (ADR 0063 explica por qué).
+      - **Paridad:** los 66,733 números de los resultados canónicos son iguales en Python y TS, con las tolerancias de siempre (ADR 0065).
+      - **Velocidades de impacto y delta-v:** no cambian en ninguna escena canónica (ADR 0063).
+    - **Lo que cambió en los resultados** (ADR 0063, «Consecuencias»):
+      - en `nocturno_lluvia`, A ya no atraviesa a la combi y recorre 18.78 m en lugar de 30.11 m;
+      - en `glorieta`, B recorre 2.47 m en lugar de 2.98 m;
+      - en `lateral_interseccion`, la inversión ya no puede llegar a las posiciones finales atravesando a B. Su ajuste queda en A 81.95 km/h, con la bandera `velocidad_vs_evidencia` (la declarada es de 35 a 55 km/h).
+    - **Cómo probarlo:** en `/cesvi/caso`:
+      1. «Usar una narración de ejemplo» y «Leer la narración».
+      2. Acercar el mapa y colocar a V1 y V2 en el impacto y en su posición final.
+      3. «Reconstruir» y luego «Ver la reconstrucción en 3D». Al reproducir, los puntos del mapa siguen al 3D.
+    - **Pruebas:**
+      - unitarias del contacto secundario (Python y TS);
+      - la guardia y las tablas de bits de `dmath.py`;
+      - la paridad;
+      - la e2e de `/cesvi/caso`, que abre el 3D.
+    - **Qué necesito de René:** nada. Las capturas y los fps del 3D en «Caso nuevo» se miden a mano antes de una demo con CESVI.
+    - **Siguiente:** R6, las carambolas (N vehículos, M impactos en secuencia).
+  - **Lo que se planeó para R3:**
     1. **El 3D en «Caso nuevo»:** el visor embebible (`VisorEscena`) con la escena reconstruida, con las velocidades que estimó la inversión, marcadas como supuesto con su rango. Cámaras libre, cenital, de conductor y cinemática.
     2. **El daño en la zona que narró el perito:** el tercio de la cara pasa a la zona CDC del impacto (hoy el visor deforma por lado, con el perfil del solver).
     3. **La línea de tiempo sincronizada con el 2D:** el reloj del 3D mueve a los vehículos sobre el mapa de «Caso nuevo».
@@ -507,6 +536,11 @@ Lo que se pospone por el trabajo con CESVI no se borra: queda aquí para despué
 - **Lighthouse, axe y E-series como requisito:** `eval/f11_portada.mjs` y las demás evaluaciones siguen en el repo; se corren cuando René lo pida.
 - **En pausa:** la portada de lanzamiento y la historia (el visor 3D se reactiva con el plan v2, R3) (de F11a solo se usan tokens, marca y componentes); E6 en baja y media después de F11a; F11b (E9 con personas).
 - **«Caso nuevo» (R1 y R2):** buscar el lugar en el mapa (hoy el perito navega a mano hasta el punto), y generalizar el recorrido de ocho pasos a N vehículos para que use la misma escena.
+- **Del contacto secundario de R3** (ADR 0063, «Límites»):
+  - el impulso no acopla la guiñada y no hay fricción entre carrocerías;
+  - el contorno es rectangular, con la cara dañada hundida de forma pareja;
+  - con más evidencia, revisar el ajuste de la inversión en `lateral_interseccion` (A 81.95 km/h, con bandera);
+  - regenerar a mano E7 y E8, y los cuadros de la portada en pausa, con el resultado 1.8.0.
 - **Reversa en la reconstrucción** (encontrado al grabar el video, 2026-10-22):
   - **El caso:** en `cesvi-3a0125cb81`, A mira al norte y retrocede hacia el sur hasta pegar con B.
   - **Lo que pasa:** con esas posiciones, la inversión no identifica ninguna velocidad y deja las dos en el valor por defecto de 40 km/h. La página lo dice («la evidencia no la fija»), pero no reconstruye la maniobra.
