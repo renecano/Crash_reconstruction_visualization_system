@@ -66,3 +66,8 @@ apps/web/public/maplibre/
 eval/e5/casos.jsonl
 # Resultado por caso del desarrollo de E5 (para el ajuste; se regenera con el reproductor)
 eval/e5/resultados_desarrollo.jsonl
+
+# Video demo (demo/video): lo generado se queda fuera de git; el MP4 final pesa más de 20 MB
+demo/video/salida/
+demo/video/*.mp4
+demo/video/*.srt
