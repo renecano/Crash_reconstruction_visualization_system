@@ -22,6 +22,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { downloadBytes } from "@/lib/download";
 import ejemplo from "../../../../../data/cesvi/grabaciones/escenas/cesvi-e814f085db.json";
 import { ESTILO_MAPA_CLARO, marcador } from "./mapa-comun";
+import { ReconstruccionCaso } from "./reconstruccion-caso";
 
 type Id = Expediente["vehiculos"][number]["id"];
 type Fase = "impacto" | "final";
@@ -432,6 +433,8 @@ export function CasoNuevo() {
                 Descargar la escena (JSON)
               </button>
             </section>
+
+            <ReconstruccionCaso expediente={expediente} />
           </>
         ) : null}
         <p className="t-nota text-texto-3">Reconstrucción de apoyo · el dictamen es del perito.</p>
