@@ -18,6 +18,8 @@ import {
   type SalidaCorpus,
 } from "@croquis/cesvi";
 import type { Map as MapaMl, Marker } from "maplibre-gl";
+// Sin la hoja de MapLibre los marcadores no quedan en su lugar (no se ven sobre el mapa).
+import "maplibre-gl/dist/maplibre-gl.css";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { downloadBytes } from "@/lib/download";
 import ejemplo from "../../../../../data/cesvi/grabaciones/escenas/cesvi-e814f085db.json";
@@ -95,21 +97,24 @@ function MapaEscena({
     if (!m || !listo) return;
     void import("maplibre-gl").then(({ Marker }) => {
       for (const x of marcas.current) x.remove();
-      marcas.current = posiciones.map((p) =>
-        new Marker({
-          element: marcador(
-            `${p.vehiculo} · ${p.fase === "final" ? "final" : "impacto"}`,
-            "punto-mapa",
-          ),
-        })
-          .setLngLat([p.punto.lon, p.punto.lat])
-          .addTo(m),
-      );
+      marcas.current = posiciones.map((p) => {
+        // El número del vehículo en el punto, con su color; el impacto, con borde punteado.
+        const n = p.vehiculo.slice(1);
+        const color = n === "1" ? " punto-a" : n === "2" ? " punto-b" : "";
+        const el = marcador(n, `punto-mapa${color}`);
+        const fase = p.fase === "final" ? "posición final" : "impacto";
+        el.title = `${p.vehiculo} · ${fase}`;
+        el.dataset.posicion = `${p.vehiculo}:${p.fase}`;
+        if (p.fase !== "final") el.style.borderStyle = "dashed";
+        // No se arrastran: el clic pasa al mapa, para colocar otra posición junto a esta.
+        el.style.pointerEvents = "none";
+        return new Marker({ element: el }).setLngLat([p.punto.lon, p.punto.lat]).addTo(m);
+      });
     });
   }, [posiciones, listo]);
   return (
     <div className="relative h-[420px] overflow-hidden rounded-panel border border-linea-suave">
-      <div ref={contenedor} className="absolute inset-0" data-testid="mapa-escena" />
+      <div ref={contenedor} className="h-full w-full" data-testid="mapa-escena" />
       <p className="vidrio pointer-events-none absolute right-3 bottom-3 px-2 py-1 text-[0.6875rem] text-texto-3">
         © OpenStreetMap · OpenFreeMap · OpenMapTiles
       </p>
