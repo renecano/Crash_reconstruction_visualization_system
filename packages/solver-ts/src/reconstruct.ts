@@ -48,7 +48,14 @@ import {
   straightWalkTrack,
   throwTrack,
 } from "./person-motion";
-import { fourWheels, integrate, ROLLING_RESISTANCE } from "./postimpact";
+import {
+  fourWheels,
+  integrate,
+  integrateJoint,
+  type JointBody,
+  type PostImpactResult,
+  ROLLING_RESISTANCE,
+} from "./postimpact";
 import {
   ArcPath,
   brakingDeceleration,
@@ -79,7 +86,7 @@ import * as dmath from "./dmath";
 
 type Json = Record<string, unknown>;
 
-export const RESULT_VERSION = "1.7.0";
+export const RESULT_VERSION = "1.8.0";
 export const DT_OUT = 0.02;
 const T_PRE_MAX = 6.0;
 const T_PRE_MIN = 3.0;
@@ -905,6 +912,7 @@ export function reconstruct(
     models.map((m) => [m.id, [[0.0, 0.0, 0.0, 0.0, 0.0, 0.0], m.body.width, 0.0, "sin impacto"]]),
   );
   const throws: ThrowInfo[] = [];
+  let jointIds: string[] = []; // vehículos de un choque entre vehículos: fase posterior conjunta
   const muBody = pedestrianFriction(String((lugar.superficie as Json).valor));
   const evidencias = (spec.evidencias ?? []) as Json[];
 
@@ -980,6 +988,7 @@ export function reconstruct(
       restitution: RESTITUTION_VV,
       friction: IMPULSE_RATIO,
     });
+    jointIds = [a.id, b.id];
     postStart.set(a.id, res.aAfter);
     postStart.set(b.id, res.bAfter!);
     deltaV.set(a.id, res.deltaVA);
@@ -1195,23 +1204,50 @@ export function reconstruct(
   let tFin = dt;
   const post = new Map<string, [Trajectory, boolean, number]>();
   const muDowned = downedMotorcycleFriction(String((lugar.superficie as Json).valor));
+
+  const postBody = (m: VehicleModel): JointBody => {
+    const start = postStart.get(m.id)!;
+    const downed = DOWNED_SLIDE_CLASSES.has(m.clase);
+    // Caída, se arrastra de lado: todo el contacto desliza con el arrastre medido.
+    const wheels = fourWheels(m.wheelbase, m.track, m.cgFromFront, m.braking || downed);
+    const drag =
+      m.braking || downed
+        ? ROLLING_RESISTANCE
+        : Math.max(ROLLING_RESISTANCE, POST_IMPACT_DRAG_FRACTION * mu);
+    const muPost = downed ? (opts.downedMu ?? muDowned.nominal) : mu;
+    return {
+      body: m.body,
+      start: { ...start, t: 0.0 },
+      wheels,
+      mu: muPost,
+      rollingDrag: drag,
+      crush: Math.max(0.0, ...crush.get(m.id)![0]),
+      crushFace: str((zonas.get(m.id) ?? {}).lado, "F"),
+    };
+  };
+
+  // Los vehículos de un choque entre vehículos se mueven juntos: si después de separarse se
+  // vuelven a encajar más que su aplastamiento, el contacto secundario los detiene (ADR 0063).
+  const jointResults = integrateJoint(
+    jointIds.map((i) => postBody(byId.get(i)!)),
+    { dtOut: dt, tMax: T_POST_MAX },
+  );
+  const jointPost = new Map<string, PostImpactResult>(
+    jointIds.map((i, k) => [i, jointResults[k]!]),
+  );
   for (const m of models) {
     if (!actores.includes(m.id)) continue;
     const start = postStart.get(m.id)!;
-    if (stateSpeed(start) > 0.05 || Math.abs(start.yawRate) > 0.05) {
-      const downed = DOWNED_SLIDE_CLASSES.has(m.clase);
-      // Caída, se arrastra de lado: todo el contacto desliza con el arrastre medido.
-      const wheels = fourWheels(m.wheelbase, m.track, m.cgFromFront, m.braking || downed);
-      const drag =
-        m.braking || downed
-          ? ROLLING_RESISTANCE
-          : Math.max(ROLLING_RESISTANCE, POST_IMPACT_DRAG_FRACTION * mu);
-      const muPost = downed ? (opts.downedMu ?? muDowned.nominal) : mu;
-      const resPost = integrate(m.body, { ...start, t: 0.0 }, wheels, muPost, {
+    let resPost: PostImpactResult | undefined = jointPost.get(m.id);
+    if (resPost === undefined && (stateSpeed(start) > 0.05 || Math.abs(start.yawRate) > 0.05)) {
+      const pb = postBody(m);
+      resPost = integrate(pb.body, pb.start, pb.wheels, pb.mu, {
         dtOut: dt,
         tMax: T_POST_MAX,
-        rollingDrag: drag,
+        rollingDrag: pb.rollingDrag,
       });
+    }
+    if (resPost !== undefined) {
       post.set(m.id, [resPost.trajectory, resPost.stopped, resPost.distance]);
       if (!resPost.stopped) {
         flag(

@@ -12,6 +12,7 @@ import bisect
 import math
 from dataclasses import dataclass
 
+from croquis_solver import dmath
 from croquis_solver.models import G, State2D, Trajectory, Vec, wrap_angle
 
 
@@ -40,8 +41,8 @@ class StraightPath(Path):
 
     def pose(self, s: float) -> Pose:
         return Pose(
-            self.origin[0] + s * math.cos(self.heading),
-            self.origin[1] + s * math.sin(self.heading),
+            self.origin[0] + s * dmath.cos(self.heading),
+            self.origin[1] + s * dmath.sin(self.heading),
             self.heading,
             0.0,
         )
@@ -66,8 +67,8 @@ class ArcPath(Path):
     def center(self) -> Vec:
         sign = 1.0 if self.left else -1.0
         return (
-            self.start[0] - sign * self.radius * math.sin(self.heading),
-            self.start[1] + sign * self.radius * math.cos(self.heading),
+            self.start[0] - sign * self.radius * dmath.sin(self.heading),
+            self.start[1] + sign * self.radius * dmath.cos(self.heading),
         )
 
     def pose(self, s: float) -> Pose:
@@ -75,8 +76,8 @@ class ArcPath(Path):
         dtheta = sign * s / self.radius
         h = self.heading + dtheta
         cx, cy = self.center
-        x = cx + sign * self.radius * math.sin(h)
-        y = cy - sign * self.radius * math.cos(h)
+        x = cx + sign * self.radius * dmath.sin(h)
+        y = cy - sign * self.radius * dmath.cos(h)
         return Pose(x, y, wrap_angle(h), sign / self.radius)
 
 
@@ -92,12 +93,15 @@ class LaneChangePath(Path):
     def pose(self, s: float) -> Pose:
         s = min(max(s, 0.0), self.length)
         u = s / self.length
-        offset = 0.5 * self.lateral * (1.0 - math.cos(math.pi * u))
-        d_offset = 0.5 * self.lateral * math.pi / self.length * math.sin(math.pi * u)
-        dd_offset = 0.5 * self.lateral * (math.pi / self.length) ** 2 * math.cos(math.pi * u)
-        local_heading = math.atan(d_offset)
-        curvature = dd_offset / (1.0 + d_offset * d_offset) ** 1.5
-        c, sn = math.cos(self.heading), math.sin(self.heading)
+        offset = 0.5 * self.lateral * (1.0 - dmath.cos(math.pi * u))
+        d_offset = 0.5 * self.lateral * math.pi / self.length * dmath.sin(math.pi * u)
+        k = math.pi / self.length
+        dd_offset = 0.5 * self.lateral * (k * k) * dmath.cos(math.pi * u)
+        local_heading = dmath.atan(d_offset)
+        # q^1.5 como q·√q: `**` usa la pow de la libm (ADR 0065, como el port TS).
+        q = 1.0 + d_offset * d_offset
+        curvature = dd_offset / (q * math.sqrt(q))
+        c, sn = dmath.cos(self.heading), dmath.sin(self.heading)
         return Pose(
             self.origin[0] + s * c - offset * sn,
             self.origin[1] + s * sn + offset * c,
@@ -130,8 +134,8 @@ def braking_deceleration(
 
     Pendiente positiva = subida (frena más).
     """
-    alpha = math.atan(grade_percent / 100.0)
-    return G * (mu * abs_factor * math.cos(alpha) + math.sin(alpha))
+    alpha = dmath.atan(grade_percent / 100.0)
+    return G * (mu * abs_factor * dmath.cos(alpha) + dmath.sin(alpha))
 
 
 def skid_distance(v0: float, decel: float) -> float:
@@ -218,8 +222,8 @@ def simulate(
                 x=p.x,
                 y=p.y,
                 yaw=p.heading,
-                vx=v * math.cos(p.heading),
-                vy=v * math.sin(p.heading),
+                vx=v * dmath.cos(p.heading),
+                vy=v * dmath.sin(p.heading),
                 yaw_rate=v * p.curvature,
                 t=t,
             )
@@ -252,7 +256,7 @@ class CurvedLanePath(Path):
         d = (
             0.5
             * self.lateral
-            * (1.0 - math.cos(math.pi * min(max(u, 0.0), self.change_length) / self.change_length))
+            * (1.0 - dmath.cos(math.pi * min(max(u, 0.0), self.change_length) / self.change_length))
         )
         # A la izquierda: hacia el centro si gira antihorario, hacia afuera si gira horario.
         return self.r0 - d if self.ccw else self.r0 + d
@@ -260,7 +264,7 @@ class CurvedLanePath(Path):
     def _point(self, u: float) -> tuple[float, float]:
         phi = self.phi0 + (u / self.r0 if self.ccw else -u / self.r0)
         r = self._radius(u)
-        return (self.center[0] + r * math.cos(phi), self.center[1] + r * math.sin(phi))
+        return (self.center[0] + r * dmath.cos(phi), self.center[1] + r * dmath.sin(phi))
 
     def _table(self) -> tuple[list[float], list[float]]:
         cache: dict[str, tuple[list[float], list[float]]] = self.__dict__.setdefault("_cache", {})
@@ -271,7 +275,7 @@ class CurvedLanePath(Path):
             prev = self._point(0.0)
             for u in us[1:]:
                 p = self._point(u)
-                ss.append(ss[-1] + math.hypot(p[0] - prev[0], p[1] - prev[1]))
+                ss.append(ss[-1] + dmath.hypot(p[0] - prev[0], p[1] - prev[1]))
                 prev = p
             cache["t"] = (us, ss)
         return cache["t"]
@@ -291,12 +295,12 @@ class CurvedLanePath(Path):
         h = 1e-3
         p0 = self._point(u - h)
         p1 = self._point(u + h)
-        heading = math.atan2(p1[1] - p0[1], p1[0] - p0[0])
+        heading = dmath.atan2(p1[1] - p0[1], p1[0] - p0[0])
         q0 = self._point(u - 2 * h)
         q1 = self._point(u + 2 * h)
-        h0 = math.atan2(self._point(u)[1] - q0[1], self._point(u)[0] - q0[0])
-        h1 = math.atan2(q1[1] - self._point(u)[1], q1[0] - self._point(u)[0])
-        dist = math.hypot(q1[0] - q0[0], q1[1] - q0[1])
-        dh = math.atan2(math.sin(h1 - h0), math.cos(h1 - h0))
+        h0 = dmath.atan2(self._point(u)[1] - q0[1], self._point(u)[0] - q0[0])
+        h1 = dmath.atan2(q1[1] - self._point(u)[1], q1[0] - self._point(u)[0])
+        dist = dmath.hypot(q1[0] - q0[0], q1[1] - q0[1])
+        dh = dmath.atan2(dmath.sin(h1 - h0), dmath.cos(h1 - h0))
         x, y = self._point(u)
         return Pose(x, y, heading, dh / (dist / 2) if dist > 0 else 0.0)

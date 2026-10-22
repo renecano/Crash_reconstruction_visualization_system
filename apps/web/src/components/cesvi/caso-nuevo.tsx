@@ -24,7 +24,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { downloadBytes } from "@/lib/download";
 import ejemplo from "../../../../../data/cesvi/grabaciones/escenas/cesvi-e814f085db.json";
 import { ESTILO_MAPA_CLARO, marcador } from "./mapa-comun";
-import { ReconstruccionCaso } from "./reconstruccion-caso";
+import { ReconstruccionCaso, type PosicionMovil } from "./reconstruccion-caso";
 
 type Id = Expediente["vehiculos"][number]["id"];
 type Fase = "impacto" | "final";
@@ -50,17 +50,26 @@ function Fuente({ f }: { f?: string }) {
   );
 }
 
+/** El color de V1 y V2 en el mapa (los del sistema visual); los demás, el del punto genérico. */
+function claseVehiculo(id: string): string {
+  return id === "V1" ? " punto-a" : id === "V2" ? " punto-b" : "";
+}
+
 /** El mapa donde el perito coloca a cada vehículo: un clic pone lo elegido en la herramienta. */
 function MapaEscena({
   posiciones,
+  moviles = [],
   onClic,
 }: {
   posiciones: { vehiculo: Id; fase: string; punto: { lat: number; lon: number } }[];
+  /** Los vehículos en el instante del 3D (el croquis sigue al reloj de la reconstrucción). */
+  moviles?: PosicionMovil[];
   onClic: (p: { lat: number; lon: number }) => void;
 }) {
   const contenedor = useRef<HTMLDivElement>(null);
   const mapa = useRef<MapaMl | null>(null);
   const marcas = useRef<Marker[]>([]);
+  const marcasMoviles = useRef<Marker[]>([]);
   const [listo, setListo] = useState(false);
   const clic = useRef(onClic);
   useEffect(() => {
@@ -99,9 +108,7 @@ function MapaEscena({
       for (const x of marcas.current) x.remove();
       marcas.current = posiciones.map((p) => {
         // El número del vehículo en el punto, con su color; el impacto, con borde punteado.
-        const n = p.vehiculo.slice(1);
-        const color = n === "1" ? " punto-a" : n === "2" ? " punto-b" : "";
-        const el = marcador(n, `punto-mapa${color}`);
+        const el = marcador(p.vehiculo.slice(1), `punto-mapa${claseVehiculo(p.vehiculo)}`);
         const fase = p.fase === "final" ? "posición final" : "impacto";
         el.title = `${p.vehiculo} · ${fase}`;
         el.dataset.posicion = `${p.vehiculo}:${p.fase}`;
@@ -112,6 +119,27 @@ function MapaEscena({
       });
     });
   }, [posiciones, listo]);
+  useEffect(() => {
+    const m = mapa.current;
+    if (!m || !listo) return;
+    void import("maplibre-gl").then(({ Marker }) => {
+      for (const x of marcasMoviles.current) x.remove();
+      marcasMoviles.current = moviles.map((p) => {
+        // MapLibre posiciona el marcador con `transform`: el rumbo va en un elemento interior.
+        // El color es el del vehículo, como en las posiciones colocadas.
+        const el = marcador("", `punto-mapa${claseVehiculo(p.vehiculo)}`);
+        el.title = `${p.vehiculo} en la reconstrucción`;
+        el.dataset.movil = p.vehiculo;
+        el.style.pointerEvents = "none";
+        const flecha = document.createElement("span");
+        flecha.textContent = "▲";
+        flecha.style.display = "inline-block";
+        flecha.style.transform = `rotate(${p.rumbo}deg)`;
+        el.appendChild(flecha);
+        return new Marker({ element: el }).setLngLat([p.punto.lon, p.punto.lat]).addTo(m);
+      });
+    });
+  }, [moviles, listo]);
   return (
     <div className="relative h-[420px] overflow-hidden rounded-panel border border-linea-suave">
       <div ref={contenedor} className="h-full w-full" data-testid="mapa-escena" />
@@ -194,6 +222,7 @@ export function CasoNuevo() {
   const [noSe, setNoSe] = useState<Set<string>>(new Set());
   const [herramienta, setHerramienta] = useState<{ vehiculo: Id; fase: Fase } | null>(null);
   const [rumbo, setRumbo] = useState("");
+  const [moviles, setMoviles] = useState<PosicionMovil[]>([]);
 
   const leer = async () => {
     setEstado("Leyendo la narración…");
@@ -416,7 +445,7 @@ export function CasoNuevo() {
                     : "Toca el mapa para colocar."}
                 </p>
               </div>
-              <MapaEscena posiciones={posiciones} onClic={colocar} />
+              <MapaEscena posiciones={posiciones} moviles={moviles} onClic={colocar} />
               <p className="t-nota" data-testid="colocados">
                 {posiciones.length === 1
                   ? "1 posición colocada por el perito."
@@ -440,7 +469,7 @@ export function CasoNuevo() {
               </button>
             </section>
 
-            <ReconstruccionCaso expediente={expediente} />
+            <ReconstruccionCaso expediente={expediente} onPosiciones={setMoviles} />
           </>
         ) : null}
         <p className="t-nota text-texto-3">Reconstrucción de apoyo · el dictamen es del perito.</p>

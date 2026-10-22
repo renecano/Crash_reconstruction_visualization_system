@@ -13,7 +13,7 @@
 import { buildSpec, fact, emptyFacts, type Fact } from "@croquis/extraction";
 import { fullResult } from "@croquis/solver-ts";
 import type { Expediente } from "./corpus";
-import { enMetros, type LonLat } from "./geo";
+import { avanzar, enMetros, type LonLat } from "./geo";
 
 type Json = Record<string, unknown>;
 type Id = Expediente["vehiculos"][number]["id"];
@@ -39,6 +39,32 @@ const DEL_PERITO = { fuente: "usuario", confianza: 0.9 } as const;
 /** Sin posición inicial del perito, el vehículo empieza 12 m antes del impacto en su rumbo. */
 const ANTES_DEL_IMPACTO_M = 12;
 
+/**
+ * La zona horizontal CDC (SAE J224) de una zona del diagrama del perito: en el frente y la parte
+ * posterior, L, C o R por el tercio o el vértice; en los costados, F, P o B. null si no la dice.
+ */
+export function zonaHorizontal(z: {
+  cara: string;
+  tercio?: string;
+  vertice?: string;
+}): string | null {
+  const frenteAtras = z.cara === "frontal" || z.cara === "posterior";
+  const costado = z.cara === "lateral_izquierdo" || z.cara === "lateral_derecho";
+  if (frenteAtras) {
+    const t = { izquierdo: "L", centro: "C", derecho: "R" }[z.tercio ?? ""];
+    if (t) return t;
+    if (z.vertice?.endsWith("izquierdo")) return "L";
+    if (z.vertice?.endsWith("derecho")) return "R";
+  }
+  if (costado) {
+    const t = { delantero: "F", medio: "P", trasero: "B" }[z.tercio ?? ""];
+    if (t) return t;
+    if (z.vertice?.startsWith("delantero")) return "F";
+    if (z.vertice?.startsWith("posterior")) return "B";
+  }
+  return null;
+}
+
 /** Rumbo del contrato 2.0.0 (grados desde el norte, horario) al de la escena v1 (desde +X, antihorario). */
 export function rumboEscena(rumboNorte: number): number {
   const r = (((90 - rumboNorte) % 360) + 360) % 360;
@@ -51,6 +77,8 @@ export interface EscenaSolver {
   ids: Record<string, Id>;
   /** Lo que la reconstrucción no cubre o no fija, en palabras para el perito. */
   limites: string[];
+  /** El punto de impacto en el mapa (lon, lat): el origen de la escena. null sin posiciones de impacto. */
+  origen: LonLat | null;
 }
 
 /** La escena del solver a partir del expediente (sin correr el solver). */
@@ -154,6 +182,14 @@ export function especDeExpediente(e: Expediente, specId = "caso-nuevo"): EscenaS
   }
   const evento = spec.eventos[0]!;
   if (origen) evento.punto_impacto = { x: 0, y: 0 };
+  // La zona dentro de la cara que narró el perito (tercio o vértice) va como zona horizontal CDC:
+  // con ella el solver centra el daño ahí y el 3D lo deforma en ese lugar.
+  for (const z of (evento.zonas_impacto ?? []) as { vehiculo_id: string; cdc: Json }[]) {
+    const id = ids[z.vehiculo_id];
+    const zona = primero?.zonas?.find((x) => x.vehiculo === id)?.zona;
+    const h = zona ? zonaHorizontal(zona) : null;
+    if (h) z.cdc.zona_horizontal = h;
+  }
 
   for (const d of e.danos ?? []) {
     const lado = LADO[d.zona.cara];
@@ -185,7 +221,7 @@ export function especDeExpediente(e: Expediente, specId = "caso-nuevo"): EscenaS
       procedencia: { ...DEL_PERITO },
     });
   });
-  return { spec, ids, limites };
+  return { spec, ids, limites, origen };
 }
 
 export interface VelocidadReconstruida {
@@ -257,4 +293,76 @@ export function evidenciaEnPalabras(etiqueta: string, ids: Record<string, Id>): 
 export function reconstruirExpediente(e: Expediente, specId?: string): Reconstruccion {
   const base = especDeExpediente(e, specId);
   return interpretarResultado(base, fullResult(base.spec));
+}
+
+/**
+ * La escena del solver con las velocidades que la inversión estimó (las que reproducen la evidencia
+ * del perito), para dibujar la reconstrucción en 3D. Van con fuente «supuesto» y una nota con sus
+ * percentiles: son un cálculo de Croquis, no un dato del perito. Las que la evidencia no fija quedan
+ * como estaban.
+ */
+export function especReconstruida(r: Reconstruccion): Json {
+  const spec = structuredClone(r.spec) as Json & { vehiculos: Json[] };
+  for (const sv of spec.vehiculos) {
+    const v = r.velocidades.find((x) => x.vehiculo === r.ids[String(sv.id)]);
+    if (!v?.previa) continue;
+    const { mejor, p10, p90 } = v.previa;
+    sv.velocidad_previa = {
+      valor: Math.round(mejor * 100) / 100,
+      unidad: "km/h",
+      ...(p10 !== undefined && p90 !== undefined
+        ? { rango: [Math.round(p10 * 100) / 100, Math.round(p90 * 100) / 100] }
+        : {}),
+      fuente: "supuesto",
+      confianza: 0.7,
+      nota: "Velocidad que reproduce la evidencia del perito (inversión de Croquis, p10–p90 en el rango).",
+    };
+  }
+  return spec;
+}
+
+interface Trayectoria {
+  t: number[];
+  x: number[];
+  y: number[];
+  /** Radianes desde +X, antihorario. */
+  rumbo: number[];
+}
+
+/** Interpola una serie en el tiempo t (fuera del intervalo, el extremo más cercano). */
+function enT(ts: number[], xs: number[], t: number): number {
+  if (t <= ts[0]!) return xs[0]!;
+  const n = ts.length - 1;
+  if (t >= ts[n]!) return xs[n]!;
+  let k = 0;
+  while (k < n && ts[k + 1]! < t) k++;
+  const f = (t - ts[k]!) / (ts[k + 1]! - ts[k]!);
+  return xs[k]! + f * (xs[k + 1]! - xs[k]!);
+}
+
+/**
+ * Dónde está cada vehículo en el instante t de la reconstrucción, en el mapa: la trayectoria del
+ * solver (metros desde el punto de impacto) de vuelta a latitud y longitud, con el rumbo en grados
+ * desde el norte. Para sincronizar el croquis 2D con el reloj del 3D. Vacío sin punto de impacto.
+ */
+export function posicionesEnTiempo(
+  base: EscenaSolver,
+  resultado: Json,
+  t: number,
+): { vehiculo: Id; punto: { lat: number; lon: number }; rumbo: number }[] {
+  if (!base.origen) return [];
+  const origen = base.origen;
+  return ((resultado.vehiculos ?? []) as { id: string; trayectoria?: Trayectoria }[]).flatMap(
+    (v) => {
+      const tr = v.trayectoria;
+      const id = base.ids[v.id];
+      if (!tr?.t?.length || !id) return [];
+      const x = enT(tr.t, tr.x, t);
+      const y = enT(tr.t, tr.y, t);
+      const r = enT(tr.t, tr.rumbo, t);
+      const [lon, lat] = avanzar(avanzar(origen, 0, y), 90, x);
+      const rumbo = (((90 - (r * 180) / Math.PI) % 360) + 360) % 360;
+      return [{ vehiculo: id, punto: { lat, lon }, rumbo }];
+    },
+  );
 }

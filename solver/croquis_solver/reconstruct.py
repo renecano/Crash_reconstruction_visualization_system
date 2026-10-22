@@ -22,7 +22,7 @@ from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any
 
-from croquis_solver import fixed_object, friction, occupant, pedestrian, rollover, visibility
+from croquis_solver import dmath, fixed_object, friction, occupant, pedestrian, rollover, visibility
 from croquis_solver.contact import ContactSolution, Locus, contact_offset, resolve_contact
 from croquis_solver.crash3 import TRIANGULAR_SHAPES, Stiffness, crush_energy, profile_for_energy
 from croquis_solver.impact import ImpactResult, planar_impact
@@ -36,7 +36,14 @@ from croquis_solver.person_motion import (
     straight_walk_track,
     throw_track,
 )
-from croquis_solver.postimpact import ROLLING_RESISTANCE, WheelConfig, integrate
+from croquis_solver.postimpact import (
+    ROLLING_RESISTANCE,
+    JointBody,
+    PostImpactResult,
+    WheelConfig,
+    integrate,
+    integrate_joint,
+)
 from croquis_solver.preimpact import (
     ArcPath,
     CompositePath,
@@ -55,7 +62,7 @@ from croquis_solver.units import ms_to_kmh
 
 JsonObj = dict[str, Any]
 
-RESULT_VERSION = "1.7.0"
+RESULT_VERSION = "1.8.0"
 DT_OUT = 0.02
 T_PRE_MAX = 6.0
 T_PRE_MIN = 3.0  # contexto mínimo antes del impacto para el visor
@@ -488,12 +495,12 @@ def _barrier_normal(obj: JsonObj | None, point: Vec, axis: RoadAxis, state: Stat
     """
     if obj is not None and obj.get("rumbo_deg") is not None:
         r = math.radians(float(obj["rumbo_deg"]))
-        n: Vec = (-math.sin(r), math.cos(r))
+        n: Vec = (-dmath.sin(r), dmath.cos(r))
     elif axis.kind == "recta":
         n = (0.0, 1.0 if point[1] >= 0 else -1.0)
     else:
         dx, dy = point[0] - axis.center[0], point[1] - axis.center[1]
-        d = math.hypot(dx, dy) or 1.0
+        d = dmath.hypot(dx, dy) or 1.0
         outward = d >= axis.radius
         n = (dx / d, dy / d) if outward else (-dx / d, -dy / d)
     if n[0] * state.vx + n[1] * state.vy < 0:
@@ -509,8 +516,8 @@ def _target_path(m: VehicleModel, target: Vec, offset: Vec) -> KinPath | None:
     """
     x, y, yaw = m.pose0
     dx, dy = target[0] - x, target[1] - y
-    fwd = dx * math.cos(yaw) + dy * math.sin(yaw)
-    left = -dx * math.sin(yaw) + dy * math.cos(yaw)
+    fwd = dx * dmath.cos(yaw) + dy * dmath.sin(yaw)
+    left = -dx * dmath.sin(yaw) + dy * dmath.cos(yaw)
     lateral = left - offset[1]
     reach = fwd - offset[0]
     if reach < 15.0 or abs(lateral) < 0.3:
@@ -519,7 +526,7 @@ def _target_path(m: VehicleModel, target: Vec, offset: Vec) -> KinPath | None:
     # termina paralelo al objeto). Desplazamiento en u = 3/4 del perfil coseno: (1 − cos(3π/4))/2.
     u_hit = SEEK_CONTACT_FRACTION
     change = reach / u_hit
-    total = lateral / (0.5 * (1.0 - math.cos(math.pi * u_hit)))
+    total = lateral / (0.5 * (1.0 - dmath.cos(math.pi * u_hit)))
     return _then_straight(LaneChangePath((x, y), yaw, change, total))
 
 
@@ -542,7 +549,7 @@ def _pose_at(path: KinPath, s: float) -> tuple[float, float, float, float]:
         p = path.pose(min(s, path.length))
         return p.x, p.y, p.heading, p.curvature
     p = path.pose(0.0)
-    return p.x + s * math.cos(p.heading), p.y + s * math.sin(p.heading), p.heading, 0.0
+    return p.x + s * dmath.cos(p.heading), p.y + s * dmath.sin(p.heading), p.heading, 0.0
 
 
 def _primary_event(spec: JsonObj) -> JsonObj | None:
@@ -635,7 +642,7 @@ def _sample_path(path: KinPath, prof: SpeedProfile, t_ref: float, times: list[fl
             s = prof.v0 * tau
             v = prof.v0
         x, y, yaw, kappa = _pose_at(path, s)
-        traj.append(State2D(x, y, yaw, v * math.cos(yaw), v * math.sin(yaw), v * kappa, t))
+        traj.append(State2D(x, y, yaw, v * dmath.cos(yaw), v * dmath.sin(yaw), v * kappa, t))
     return traj
 
 
@@ -766,7 +773,7 @@ def reconstruct(
             lateral = 0.0
             if isinstance(first, LaneChangePath):
                 u = SEEK_CONTACT_FRACTION
-                lateral = first.lateral * 0.5 * (1.0 - math.cos(math.pi * u))
+                lateral = first.lateral * 0.5 * (1.0 - dmath.cos(math.pi * u))
             flag(
                 "desvio_lateral",
                 {"vehiculo": targets[0].id, "lateral_m": lateral},
@@ -855,6 +862,7 @@ def reconstruct(
         m.id: ([0.0] * 6, m.body.width, 0.0, "sin impacto") for m in models
     }
     throws: list[ThrowInfo] = []
+    joint_ids: list[str] = []  # vehículos de un choque entre vehículos: fase posterior conjunta
     mu_body = friction.pedestrian_friction(lugar["superficie"]["valor"])
 
     def declared_throw_for(pid: str) -> JsonObj | None:
@@ -903,7 +911,7 @@ def reconstruct(
                     f"entre {ms_to_kmh(rng.v_min):.0f} y {ms_to_kmh(rng.v_max):.0f} km/h; la "
                     f"velocidad reconstruida al impacto es {ms_to_kmh(v_vehicle):.0f} km/h.",
                 )
-        rest_xy = (origin[0] + d_nom * math.cos(heading), origin[1] + d_nom * math.sin(heading))
+        rest_xy = (origin[0] + d_nom * dmath.cos(heading), origin[1] + d_nom * dmath.sin(heading))
         return ThrowOutcome(
             ms_to_kmh(launch),
             d_nom,
@@ -935,6 +943,7 @@ def reconstruct(
             friction=IMPULSE_RATIO,
         )
         assert res.b_after is not None
+        joint_ids = [a.id, b.id]
         post_start[a.id] = res.a_after
         post_start[b.id] = res.b_after
         delta_v[a.id], delta_v[b.id] = res.delta_v_a, res.delta_v_b
@@ -962,7 +971,7 @@ def reconstruct(
                     "adherencia": res.sticking,
                     "friccion_contacto_usada": res.friction_used,
                     "energia_disipada_j": res.energy_loss,
-                    "velocidad_cierre_kmh": ms_to_kmh(math.hypot(sa.vx - sb.vx, sa.vy - sb.vy)),
+                    "velocidad_cierre_kmh": ms_to_kmh(dmath.hypot(sa.vx - sb.vx, sa.vy - sb.vy)),
                 },
             )
         )
@@ -971,10 +980,10 @@ def reconstruct(
             if m.clase not in TWO_WHEEL_CLASSES:
                 continue
             s_m = impact_states[m.id]
-            v_m = math.hypot(s_m.vx, s_m.vy)
+            v_m = dmath.hypot(s_m.vx, s_m.vy)
             if v_m < 0.5:
                 continue
-            heading_m = math.atan2(s_m.vy, s_m.vx)
+            heading_m = dmath.atan2(s_m.vy, s_m.vx)
             for pdoc in spec["personas"]:
                 if pdoc.get("vehiculo_id") != m.id or pdoc["rol"]["valor"] not in RIDER_ROLES:
                     continue
@@ -1053,7 +1062,7 @@ def reconstruct(
             )
             delta_v[a.id] = r.delta_v
             pdof[a.id] = 0.0
-            heading = (math.cos(sa.yaw), math.sin(sa.yaw))
+            heading = (dmath.cos(sa.yaw), dmath.sin(sa.yaw))
             sign = -1.0 if r.rigid else 1.0
             post_start[a.id] = sa.with_velocity(
                 sign * r.v_after * heading[0], sign * r.v_after * heading[1], 0.0
@@ -1084,7 +1093,7 @@ def reconstruct(
         m_ped = _num(ped_doc.get("masa"), _MASS, DEFAULT_PERSON_MASS_KG)
         launch = PEDESTRIAN_PROJECTION_FACTOR * v_imp
         h_cg = PEDESTRIAN_CG_HEIGHT_FACTOR * stature
-        heading = (math.cos(sa.yaw), math.sin(sa.yaw))
+        heading = (dmath.cos(sa.yaw), dmath.sin(sa.yaw))
         dv_a = m_ped * launch / (a.body.mass + m_ped)  # el vehículo cede momento al peatón
         delta_v[a.id] = dv_a
         pdof[a.id] = 0.0
@@ -1142,31 +1151,56 @@ def reconstruct(
     t_fin = dt
     post: dict[str, tuple[Trajectory, bool, float]] = {}
     mu_downed = friction.downed_motorcycle_friction(lugar["superficie"]["valor"])
+
+    def post_body(m: VehicleModel) -> JointBody:
+        start = post_start[m.id]
+        downed = m.clase in friction.DOWNED_SLIDE_CLASSES
+        # Caída, se arrastra de lado: todo el contacto desliza con el arrastre medido.
+        wheels = WheelConfig.four_wheels(
+            m.wheelbase, m.track, m.cg_from_front, locked=m.braking or downed
+        )
+        drag = (
+            ROLLING_RESISTANCE
+            if m.braking or downed
+            else max(ROLLING_RESISTANCE, POST_IMPACT_DRAG_FRACTION * mu)
+        )
+        mu_post = (mu_downed.nominal if downed_mu is None else downed_mu) if downed else mu
+        return JointBody(
+            m.body,
+            State2D(start.x, start.y, start.yaw, start.vx, start.vy, start.yaw_rate, 0.0),
+            wheels,
+            mu_post,
+            drag,
+            max(0.0, *crush[m.id][0]),
+            str((zonas.get(m.id) or {}).get("lado", "F")),
+        )
+
+    # Los vehículos de un choque entre vehículos se mueven juntos: si después de separarse se
+    # vuelven a encajar más que su aplastamiento, el contacto secundario los detiene (ADR 0063).
+    joint_post: dict[str, PostImpactResult] = dict(
+        zip(
+            joint_ids,
+            integrate_joint([post_body(by_id[i]) for i in joint_ids], dt_out=dt, t_max=T_POST_MAX),
+            strict=True,
+        )
+    )
     for m in models:
         if m.id not in actores:
             continue
         start = post_start[m.id]
-        if start.speed > 0.05 or abs(start.yaw_rate) > 0.05:
-            downed = m.clase in friction.DOWNED_SLIDE_CLASSES
-            # Caída, se arrastra de lado: todo el contacto desliza con el arrastre medido.
-            wheels = WheelConfig.four_wheels(
-                m.wheelbase, m.track, m.cg_from_front, locked=m.braking or downed
-            )
-            drag = (
-                ROLLING_RESISTANCE
-                if m.braking or downed
-                else max(ROLLING_RESISTANCE, POST_IMPACT_DRAG_FRACTION * mu)
-            )
-            mu_post = (mu_downed.nominal if downed_mu is None else downed_mu) if downed else mu
+        res_post: PostImpactResult | None = joint_post.get(m.id)
+        if res_post is None and (start.speed > 0.05 or abs(start.yaw_rate) > 0.05):
+            pb = post_body(m)
             res_post = integrate(
-                m.body,
-                State2D(start.x, start.y, start.yaw, start.vx, start.vy, start.yaw_rate, 0.0),
-                wheels,
-                mu_post,
+                pb.body,
+                pb.start,
+                pb.wheels,
+                pb.mu,
                 dt_out=dt,
                 t_max=T_POST_MAX,
-                rolling_drag=drag,
+                rolling_drag=pb.rolling_drag,
             )
+        if res_post is not None:
             post[m.id] = (res_post.trajectory, res_post.stopped, res_post.distance)
             if not res_post.stopped:
                 flag(
@@ -1355,7 +1389,7 @@ def reconstruct(
         sa = impact_states[a.id]
         n = _barrier_normal(obj, impact_point, axis, sa)
         v_n = sa.vx * n[0] + sa.vy * n[1]  # componente de la velocidad hacia la orilla
-        left = -math.sin(sa.yaw) * n[0] + math.cos(sa.yaw) * n[1]
+        left = -dmath.sin(sa.yaw) * n[0] + dmath.cos(sa.yaw) * n[1]
         check = rollover.trip_check(
             a.track, a.body.width, a.height, v_n, "izquierdo" if left > 0 else "derecho"
         )
@@ -1441,7 +1475,7 @@ def _occupant_doc(
             "duracion_s": _r(pulse.duration_s),
             "delta_v_kmh": _r(ms_to_kmh(pulse.delta_v)),
             "aceleracion_max_g": _r(occupant.peak_g(pulse)),
-            "direccion_deg": _r(math.degrees(math.atan2(toward[1], toward[0]))),
+            "direccion_deg": _r(math.degrees(dmath.atan2(toward[1], toward[0]))),
         },
         "variantes": [],
     }

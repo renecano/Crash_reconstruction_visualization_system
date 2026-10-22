@@ -49,6 +49,7 @@ import {
   useCallback,
   useEffect,
   useMemo,
+  useRef,
   useState,
   useSyncExternalStore,
   type ReactElement,
@@ -351,6 +352,8 @@ export interface VisorEscenaProps {
   onEscena?: (e: EscenaVisor) => void;
   hayPropia?: boolean;
   ambiente?: AmbienteVisual | null;
+  /** Avisa el tiempo del reloj y la reconstrucción dibujada (p. ej. para mover el croquis 2D). */
+  onTiempo?: (t: number, resultado: Resultado) => void;
 }
 
 export function VisorEscena({
@@ -361,6 +364,7 @@ export function VisorEscena({
   onEscena,
   hayPropia = false,
   ambiente = null,
+  onTiempo,
 }: VisorEscenaProps) {
   const t = useTextos(T);
   const { lang } = useIdioma();
@@ -440,6 +444,17 @@ export function VisorEscena({
       }),
     );
   }, [dibujo, controles.t, controles.auto, controles.bucle]);
+
+  // El reloj del 3D hacia fuera (el croquis 2D de «Caso nuevo» lo sigue).
+  const avisarTiempo = useRef(onTiempo);
+  useEffect(() => {
+    avisarTiempo.current = onTiempo;
+  }, [onTiempo]);
+  useEffect(() => {
+    if (!clock || !dibujo) return undefined;
+    avisarTiempo.current?.(clock.get().t, dibujo);
+    return clock.subscribe((st) => avisarTiempo.current?.(st.t, dibujo));
+  }, [clock, dibujo]);
 
   // Resultado del montaje de personas (ragdolls calibrados) para el panel.
   const [people, setPeople] = useState<{ escena: EscenaVisor; data: PeopleAttachment } | null>(

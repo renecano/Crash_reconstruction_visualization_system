@@ -18,6 +18,7 @@ from collections.abc import Callable, Mapping
 from dataclasses import dataclass
 from typing import Any
 
+from croquis_solver import dmath
 from croquis_solver.models import Vec, rot
 
 COARSE_SAMPLES = 800
@@ -78,7 +79,8 @@ class Locus:
 
         def d2(s: float) -> float:
             p = self.point(s)
-            return (p[0] - target[0]) ** 2 + (p[1] - target[1]) ** 2
+            dx, dy = p[0] - target[0], p[1] - target[1]
+            return dx * dx + dy * dy
 
         if hint is None:
             start, span, n = 0.0, self.s_max, COARSE_SAMPLES
@@ -134,7 +136,7 @@ def resolve_contact(loci: list[Locus], declared: Vec) -> ContactSolution:
         points = [loci[0].point(params[0]), loci[1].point(params[1])]
     cx = sum(q[0] for q in points) / len(points)
     cy = sum(q[1] for q in points) / len(points)
-    gap = max(math.hypot(q[0] - points[0][0], q[1] - points[0][1]) for q in points)
+    gap = max(dmath.hypot(q[0] - points[0][0], q[1] - points[0][1]) for q in points)
     return ContactSolution((cx, cy), tuple(params), gap)
 
 
@@ -152,7 +154,8 @@ def _refine_pair(la: Locus, lb: Locus, sa: float, sb: float) -> tuple[float, flo
 
     def cost(x: float, y: float) -> float:
         pa, pb = la.point(x), lb.point(y)
-        return (pa[0] - pb[0]) ** 2 + (pa[1] - pb[1]) ** 2
+        dx, dy = pa[0] - pb[0], pa[1] - pb[1]
+        return dx * dx + dy * dy
 
     lam = 1e-3
     current = cost(sa, sb)

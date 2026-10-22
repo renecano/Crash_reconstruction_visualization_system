@@ -6,7 +6,14 @@ import { describe, expect, it } from "vitest";
 import type { Expediente, SalidaCorpus } from "./corpus";
 import { conMasa, conPosicion, escenaDeNarracion } from "./escena-narracion";
 import { mcHenry } from "./metodo";
-import { especDeExpediente, reconstruirExpediente, rumboEscena } from "./reconstruccion";
+import {
+  especDeExpediente,
+  especReconstruida,
+  reconstruirExpediente,
+  posicionesEnTiempo,
+  rumboEscena,
+  zonaHorizontal,
+} from "./reconstruccion";
 import { verificacionCesvi } from "./verificacion";
 
 type Json = Record<string, unknown>;
@@ -30,6 +37,8 @@ const m = (norte: number, este: number) => ({
   lon: P.lon + este / (111320 * Math.cos((P.lat * Math.PI) / 180)),
 });
 
+const base0 = (): Expediente => base;
+
 function colocado(): Expediente {
   let e = conPosicion(base, { vehiculo: "V1", fase: "impacto", punto: m(-2, 0), rumbo: 0 });
   e = conPosicion(e, { vehiculo: "V2", fase: "impacto", punto: m(0, 2), rumbo: 90 });
@@ -43,6 +52,31 @@ describe("del expediente a la escena del solver (R2)", () => {
     expect(rumboEscena(90)).toBe(0);
     expect(rumboEscena(180)).toBe(-90);
     expect(rumboEscena(270)).toBe(180);
+  });
+
+  it("el tercio o el vértice que narró el perito pasa a la zona horizontal CDC del impacto", () => {
+    expect(zonaHorizontal({ cara: "frontal", tercio: "derecho" })).toBe("R");
+    expect(zonaHorizontal({ cara: "posterior", vertice: "posterior_izquierdo" })).toBe("L");
+    expect(zonaHorizontal({ cara: "lateral_derecho", tercio: "trasero" })).toBe("B");
+    expect(zonaHorizontal({ cara: "lateral_izquierdo", vertice: "delantero_izquierdo" })).toBe("F");
+    expect(zonaHorizontal({ cara: "frontal" })).toBeNull();
+    const e: Expediente = {
+      ...base,
+      impactos: base.impactos!.map((i) => ({
+        ...i,
+        zonas: [
+          { vehiculo: "V1", zona: { cara: "frontal", tercio: "izquierdo" } },
+          { vehiculo: "V2", zona: { cara: "lateral_derecho", tercio: "medio" } },
+        ],
+      })),
+    };
+    const { spec } = especDeExpediente(e);
+    expect(validateEscena(spec).ok).toBe(true);
+    const zonas = ((spec.eventos as Json[])[0]!.zonas_impacto as { cdc: Json }[]).map((z) => z.cdc);
+    expect(zonas).toEqual([
+      { lado: "F", zona_horizontal: "L" },
+      { lado: "R", zona_horizontal: "P" },
+    ]);
   });
 
   it("sin posiciones, la escena es válida y todo lo no dicho es supuesto o por omisión", () => {
@@ -177,5 +211,47 @@ describe("verificación CESVI al lado de la reconstrucción", () => {
     expect(v1!.pasos).toHaveLength(2);
     expect(v2!.pasos).toEqual([]);
     expect(v2!.falta).toEqual(["las medidas C (2, 4 o 6) y L de la deformación", "la masa"]);
+  });
+});
+
+describe("la escena para el 3D", () => {
+  it("lleva las velocidades estimadas como supuesto con su rango, y sigue siendo válida", () => {
+    const r = reconstruirExpediente(colocado());
+    const spec = especReconstruida(r) as Json & { vehiculos: Json[] };
+    expect(validateEscena(spec).ok).toBe(true);
+    const v = spec.vehiculos[0]!.velocidad_previa as Json;
+    expect(v).toMatchObject({ fuente: "supuesto", unidad: "km/h" });
+    expect(v.valor).toBeCloseTo(r.velocidades[0]!.previa!.mejor, 1);
+    expect((v.rango as number[])[0]).toBeLessThanOrEqual((v.rango as number[])[1]!);
+  });
+});
+
+describe("el croquis 2D sigue al reloj del 3D", () => {
+  it("la trayectoria del solver vuelve al mapa: en el impacto, cada vehículo en su posición de impacto", () => {
+    const e = colocado();
+    const base = especDeExpediente(e);
+    const resultado = {
+      vehiculos: [
+        {
+          id: "veh-a",
+          trayectoria: {
+            t: [-1, 0, 1],
+            x: [-1, -1, 4],
+            y: [-12, -1, 5],
+            rumbo: [Math.PI / 2, Math.PI / 2, Math.PI / 3],
+          },
+        },
+      ],
+    };
+    const [p0] = posicionesEnTiempo(base, resultado, 0);
+    // (−1, −1) m del origen = la posición de impacto que colocó el perito para V1 (−2 m norte, 0 este).
+    expect(p0!.vehiculo).toBe("V1");
+    expect(p0!.punto.lat).toBeCloseTo(m(-2, 0).lat, 6);
+    expect(p0!.punto.lon).toBeCloseTo(m(-2, 0).lon, 6);
+    expect(p0!.rumbo).toBeCloseTo(0, 6);
+    // A medio camino entre dos muestras interpola; al final, rumbo de 30° desde el norte.
+    const [p1] = posicionesEnTiempo(base, resultado, 1);
+    expect(p1!.rumbo).toBeCloseTo(30, 6);
+    expect(posicionesEnTiempo(especDeExpediente(base0()), resultado, 0)).toEqual([]);
   });
 });

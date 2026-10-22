@@ -6,26 +6,52 @@
  */
 import {
   especDeExpediente,
+  especReconstruida,
   evidenciaEnPalabras,
   interpretarResultado,
+  posicionesEnTiempo,
   verificacionCesvi,
   type Expediente,
   type Reconstruccion,
 } from "@croquis/cesvi";
 import type { EscenaSpec } from "@croquis/scene-schema";
-import { useState } from "react";
+import { useMemo, useState } from "react";
+import {
+  CONTROLES_INICIALES,
+  type ControlesVisor,
+  VisorEscena,
+} from "@/components/visor/visor-app";
 import { reconstruirCompletoEnNavegador } from "@/lib/reconstruct-client";
 
 const kmh = (x?: number) => (x === undefined ? "—" : x.toFixed(1));
 
-export function ReconstruccionCaso({ expediente }: { expediente: Expediente }) {
+export type PosicionMovil = ReturnType<typeof posicionesEnTiempo>[number];
+
+export function ReconstruccionCaso({
+  expediente,
+  onPosiciones,
+}: {
+  expediente: Expediente;
+  /** Dónde están los vehículos en el instante del 3D, para dibujarlos en el mapa (vacío sin 3D). */
+  onPosiciones?: (ps: PosicionMovil[]) => void;
+}) {
   const [estado, setEstado] = useState<string | null>(null);
   const [r, setR] = useState<Reconstruccion | null>(null);
   const verificacion = verificacionCesvi(expediente);
+  const [ver3d, setVer3d] = useState(false);
+  // Se abre con la cámara que sigue a los vehículos y reproduciendo, como el flujo guiado.
+  const [controles, setControles] = useState<ControlesVisor>({
+    ...CONTROLES_INICIALES,
+    camara: "cinematica",
+    auto: true,
+  });
+  const spec3d = useMemo(() => (r ? (especReconstruida(r) as unknown as EscenaSpec) : null), [r]);
 
   const reconstruir = async () => {
     setEstado("Reconstruyendo con el solver…");
     setR(null);
+    setVer3d(false);
+    onPosiciones?.([]);
     try {
       const base = especDeExpediente(expediente);
       const resultado = await reconstruirCompletoEnNavegador(base.spec as unknown as EscenaSpec);
@@ -115,6 +141,17 @@ export function ReconstruccionCaso({ expediente }: { expediente: Expediente }) {
                 ))}
               </ul>
             ) : null}
+            <button
+              type="button"
+              className="boton-secundario self-start"
+              onClick={() => {
+                if (ver3d) onPosiciones?.([]);
+                setVer3d((x) => !x);
+              }}
+              data-testid="ver-3d"
+            >
+              {ver3d ? "Ocultar el 3D" : "Ver la reconstrucción en 3D"}
+            </button>
           </>
         ) : null}
       </div>
@@ -145,6 +182,32 @@ export function ReconstruccionCaso({ expediente }: { expediente: Expediente }) {
           </div>
         ))}
       </div>
+      {ver3d && spec3d ? (
+        <div className="lg:col-span-2" data-testid="visor-caso">
+          <p className="t-nota mb-3">
+            Las velocidades del 3D son las que estimó Croquis para reproducir tu evidencia
+            (supuesto, con su rango); lo demás que no narraste va con valores por omisión.
+            Reconstrucción de apoyo: el dictamen es del perito.
+          </p>
+          <VisorEscena
+            spec={spec3d}
+            escena="propia"
+            controles={controles}
+            onTiempo={(t, res) =>
+              onPosiciones?.(posicionesEnTiempo(r!, res as unknown as Record<string, unknown>, t))
+            }
+            onControl={(k, v) =>
+              setControles((c) => {
+                if (k === "completa") return { ...c, completa: v !== null };
+                if (k === "camara") return { ...c, camara: v ?? "libre" };
+                if (k === "calidad")
+                  return { ...c, calidad: (v ?? "auto") as ControlesVisor["calidad"] };
+                return { ...c, renderer: (v ?? "auto") as ControlesVisor["renderer"] };
+              })
+            }
+          />
+        </div>
+      ) : null}
     </section>
   );
 }

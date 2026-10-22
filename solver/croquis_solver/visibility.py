@@ -26,6 +26,7 @@ from collections import Counter
 from dataclasses import dataclass, field
 from typing import Any
 
+from croquis_solver import dmath
 from croquis_solver.scene_objects import SceneObject, footprint_radius
 
 JsonObj = dict[str, Any]
@@ -91,7 +92,7 @@ def box_occluder(
     oid: str, cx: float, cy: float, yaw: float, lx: float, ly: float, h: float
 ) -> Occluder:
     return Occluder(
-        oid, "box", cx, cy, 0.0, h, yaw=yaw, hx=lx / 2, hy=ly / 2, reach=0.5 * math.hypot(lx, ly)
+        oid, "box", cx, cy, 0.0, h, yaw=yaw, hx=lx / 2, hy=ly / 2, reach=0.5 * dmath.hypot(lx, ly)
     )
 
 
@@ -168,7 +169,8 @@ def segment_blocked(occ: Occluder, p0: Point3, p1: Point3) -> bool:
     if seg2 > EPS:
         u = max(0.0, min(1.0, ((occ.cx - p0[0]) * dx + (occ.cy - p0[1]) * dy) / seg2))
         qx, qy = p0[0] + u * dx - occ.cx, p0[1] + u * dy - occ.cy
-        if qx * qx + qy * qy > (occ.reach + 1e-6) ** 2:
+        reach = occ.reach + 1e-6
+        if qx * qx + qy * qy > reach * reach:
             return False
     if occ.kind == "cylinder":
         iv = _segment_circle(p0, p1, occ.cx, occ.cy, occ.radius)
@@ -178,12 +180,12 @@ def segment_blocked(occ: Occluder, p0: Point3, p1: Point3) -> bool:
         fx, fy, fz = p0[0] - occ.cx, p0[1] - occ.cy, p0[2] - occ.zc
         a = ex * ex + ey * ey + ez * ez
         if a < EPS:
-            return fx * fx + fy * fy + fz * fz <= occ.radius**2
+            return fx * fx + fy * fy + fz * fz <= occ.radius * occ.radius
         u = max(0.0, min(1.0, -(fx * ex + fy * ey + fz * ez) / a))
         qx, qy, qz = fx + u * ex, fy + u * ey, fz + u * ez
-        return qx * qx + qy * qy + qz * qz <= occ.radius**2
+        return qx * qx + qy * qy + qz * qz <= occ.radius * occ.radius
     # Caja orientada: método de las placas en su marco local.
-    c, s = math.cos(occ.yaw), math.sin(occ.yaw)
+    c, s = dmath.cos(occ.yaw), dmath.sin(occ.yaw)
 
     def local(p: Point3) -> Point3:
         rx, ry = p[0] - occ.cx, p[1] - occ.cy
@@ -229,7 +231,7 @@ class Actor:
             return [(x, y, 0.5), (x, y, 0.55 * self.height), (x, y, self.height - 0.1)]
         if self.tipo == "objeto":
             return [(x, y, 0.5), (x, y, min(1.5, self.height))]
-        c, s = math.cos(yaw), math.sin(yaw)
+        c, s = dmath.cos(yaw), dmath.sin(yaw)
         pts: list[Point3] = []
         for fx, fy in ((0.5, 0.5), (0.5, -0.5), (-0.5, 0.5), (-0.5, -0.5), (0.0, 0.0)):
             lx, ly = fx * self.length * 0.95, fy * self.width * 0.95
@@ -255,7 +257,7 @@ class Observer:
     def eye(self, k: int) -> Point3:
         x, y, yaw = self.poses[k]
         ox, oy = eye_offset(self.clase, self.length, self.width)
-        c, s = math.cos(yaw), math.sin(yaw)
+        c, s = dmath.cos(yaw), dmath.sin(yaw)
         return (x + c * ox - s * oy, y + s * ox + c * oy, self.eye_height)
 
 
@@ -313,7 +315,7 @@ def analyze_pair(
         eye = obs.eye(k)
         pts = target.points(k)
         tx, ty, _ = target.poses[k]
-        dist = math.hypot(tx - eye[0], ty - eye[1])
+        dist = dmath.hypot(tx - eye[0], ty - eye[1])
         occ = [o for o in static_occ if o.id not in exclude]
         for mv in movers:
             if f"vehiculo:{mv.id}" in exclude:
@@ -327,8 +329,8 @@ def analyze_pair(
             cause = "clima"
         elif night_unlit and not (target.tipo == "vehiculo" and target.lights):
             yaw = obs.poses[k][2]
-            bearing = math.atan2(ty - eye[1], tx - eye[0])
-            off = abs(math.atan2(math.sin(bearing - yaw), math.cos(bearing - yaw)))
+            bearing = dmath.atan2(ty - eye[1], tx - eye[0])
+            off = abs(dmath.atan2(dmath.sin(bearing - yaw), dmath.cos(bearing - yaw)))
             if not obs.lights or dist > night_detection_m or off > half:
                 cause = "noche"
         seen = 0

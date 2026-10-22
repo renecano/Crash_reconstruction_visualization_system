@@ -8,9 +8,10 @@ sale de un hash FNV-1a de la semilla y el id (igual al del visor), así que es d
 
 from __future__ import annotations
 
-import math
 from dataclasses import dataclass
 from typing import Any
+
+from croquis_solver import dmath
 
 JsonObj = dict[str, Any]
 
@@ -185,4 +186,4 @@ def footprint_radius(o: SceneObject) -> float:
         return max(o.radio, o.copa_radio)
     if o.forma in ("cilindro", "senal"):
         return max(o.radio, 0.5 * o.largo)
-    return 0.5 * math.hypot(o.largo, o.ancho)
+    return 0.5 * dmath.hypot(o.largo, o.ancho)
