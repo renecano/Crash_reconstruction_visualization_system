@@ -1,0 +1,647 @@
+{
+ "fecha": "2026-10-23T15:22:21.088Z",
+ "descripcion": "E-R4 en la prueba congelada: la v1 (reglas de ADR 0067, escena-narracion-v1), la v2 (R4b, ADR 0069, escena-narracion-v2) y la v3 (R4d, ADR 0076: las mismas lecturas v2 con las modalidades flojas trabajadas), medidas una sola vez cada una, con las mismas líneas base de desarrollo.",
+ "lineas_base": {
+  "modalidad": "otra",
+  "modalidad_fisica": "alcance",
+  "velocidad_kmh": 61.61687499999999
+ },
+ "por_modalidad": {
+  "alcance": {
+   "v1": {
+    "k": 34,
+    "n": 46,
+    "pct": 73.9
+   },
+   "v2": {
+    "k": 36,
+    "n": 46,
+    "pct": 78.3
+   },
+   "v3": {
+    "k": 37,
+    "n": 46,
+    "pct": 80.4
+   }
+  },
+  "frontal": {
+   "v1": {
+    "k": 4,
+    "n": 6,
+    "pct": 66.7
+   },
+   "v2": {
+    "k": 5,
+    "n": 6,
+    "pct": 83.3
+   },
+   "v3": {
+    "k": 5,
+    "n": 6,
+    "pct": 83.3
+   }
+  },
+  "lateral": {
+   "v1": {
+    "k": 17,
+    "n": 25,
+    "pct": 68
+   },
+   "v2": {
+    "k": 16,
+    "n": 25,
+    "pct": 64
+   },
+   "v3": {
+    "k": 16,
+    "n": 25,
+    "pct": 64
+   }
+  },
+  "objeto_fijo": {
+   "v1": {
+    "k": 6,
+    "n": 17,
+    "pct": 35.3
+   },
+   "v2": {
+    "k": 9,
+    "n": 17,
+    "pct": 52.9
+   },
+   "v3": {
+    "k": 9,
+    "n": 17,
+    "pct": 52.9
+   }
+  },
+  "otra": {
+   "v1": {
+    "k": 0,
+    "n": 67,
+    "pct": 0
+   },
+   "v2": {
+    "k": 2,
+    "n": 67,
+    "pct": 3
+   },
+   "v3": {
+    "k": 6,
+    "n": 67,
+    "pct": 9
+   }
+  },
+  "reversa": {
+   "v1": {
+    "k": 0,
+    "n": 9,
+    "pct": 0
+   },
+   "v2": {
+    "k": 0,
+    "n": 9,
+    "pct": 0
+   },
+   "v3": {
+    "k": 0,
+    "n": 9,
+    "pct": 0
+   }
+  },
+  "salida_de_camino": {
+   "v1": {
+    "k": 2,
+    "n": 10,
+    "pct": 20
+   },
+   "v2": {
+    "k": 1,
+    "n": 10,
+    "pct": 10
+   },
+   "v3": {
+    "k": 1,
+    "n": 10,
+    "pct": 10
+   }
+  },
+  "volcadura": {
+   "v1": {
+    "k": 2,
+    "n": 10,
+    "pct": 20
+   },
+   "v2": {
+    "k": 6,
+    "n": 10,
+    "pct": 60
+   },
+   "v3": {
+    "k": 6,
+    "n": 10,
+    "pct": 60
+   }
+  }
+ },
+ "v1": {
+  "version_prompt": "escena-narracion-v1",
+  "leidos": 205,
+  "reconstruidas_en_3d": 205,
+  "resumen": {
+   "dictamenes": 205,
+   "modalidad": {
+    "croquis": {
+     "k": 65,
+     "n": 190,
+     "pct": 34.2
+    },
+    "sin_inferir": 36,
+    "fisicas": {
+     "croquis": {
+      "k": 65,
+      "n": 123,
+      "pct": 52.8
+     },
+     "linea_base": {
+      "modalidad": "alcance",
+      "k": 46,
+      "n": 123,
+      "pct": 37.4
+     }
+    },
+    "linea_base": {
+     "modalidad": "otra",
+     "k": 67,
+     "n": 190,
+     "pct": 35.3
+    },
+    "por_modalidad": {
+     "alcance": {
+      "k": 34,
+      "n": 46,
+      "pct": 73.9
+     },
+     "frontal": {
+      "k": 4,
+      "n": 6,
+      "pct": 66.7
+     },
+     "lateral": {
+      "k": 17,
+      "n": 25,
+      "pct": 68
+     },
+     "objeto_fijo": {
+      "k": 6,
+      "n": 17,
+      "pct": 35.3
+     },
+     "otra": {
+      "k": 0,
+      "n": 67,
+      "pct": 0
+     },
+     "reversa": {
+      "k": 0,
+      "n": 9,
+      "pct": 0
+     },
+     "salida_de_camino": {
+      "k": 2,
+      "n": 10,
+      "pct": 20
+     },
+     "volcadura": {
+      "k": 2,
+      "n": 10,
+      "pct": 20
+     }
+    }
+   },
+   "zonas": {
+    "dictamenes_con_zonas": 152,
+    "exhaustividad": {
+     "k": 216,
+     "n": 312,
+     "pct": 69.2
+    },
+    "precision": {
+     "k": 216,
+     "n": 362,
+     "pct": 59.7
+    },
+    "tercio": {
+     "k": 11,
+     "n": 11,
+     "pct": 100
+    }
+   },
+   "secuencia": {
+    "dictamenes_con_secuencia": 135,
+    "primer_impacto": {
+     "k": 86,
+     "n": 135,
+     "pct": 63.7
+    },
+    "completa": {
+     "k": 67,
+     "n": 135,
+     "pct": 49.6
+    },
+    "mismo_numero": {
+     "k": 69,
+     "n": 135,
+     "pct": 51.1
+    }
+   },
+   "velocidades": {
+    "del_dictamen_por_deformacion": 5,
+    "croquis_calcula": 0,
+    "error_abs_mediana_kmh": null,
+    "error_pct_abs_mediana": null,
+    "dentro_de_5_pct": {
+     "k": 0,
+     "n": 0,
+     "pct": null
+    },
+    "linea_base": {
+     "velocidad_kmh": 61.62,
+     "error_abs_mediana_kmh": 11.716874999999995,
+     "error_pct_abs_mediana": 23.480711422845683
+    }
+   },
+   "posiciones_finales": {
+    "dictamenes_con_posiciones": 46,
+    "croquis_las_tiene": {
+     "k": 31,
+     "n": 58,
+     "pct": 53.4
+    }
+   }
+  }
+ },
+ "v2": {
+  "version_prompt": "escena-narracion-v2",
+  "leidos": 205,
+  "reconstruidas_en_3d": 205,
+  "resumen": {
+   "dictamenes": 205,
+   "modalidad": {
+    "croquis": {
+     "k": 75,
+     "n": 190,
+     "pct": 39.5
+    },
+    "sin_inferir": 10,
+    "otra_predicha": {
+     "k": 2,
+     "n": 3,
+     "pct": 66.7
+    },
+    "fisicas": {
+     "croquis": {
+      "k": 73,
+      "n": 123,
+      "pct": 59.3
+     },
+     "linea_base": {
+      "modalidad": "alcance",
+      "k": 46,
+      "n": 123,
+      "pct": 37.4
+     }
+    },
+    "linea_base": {
+     "modalidad": "otra",
+     "k": 67,
+     "n": 190,
+     "pct": 35.3
+    },
+    "por_modalidad": {
+     "alcance": {
+      "k": 36,
+      "n": 46,
+      "pct": 78.3
+     },
+     "frontal": {
+      "k": 5,
+      "n": 6,
+      "pct": 83.3
+     },
+     "lateral": {
+      "k": 16,
+      "n": 25,
+      "pct": 64
+     },
+     "objeto_fijo": {
+      "k": 9,
+      "n": 17,
+      "pct": 52.9
+     },
+     "otra": {
+      "k": 2,
+      "n": 67,
+      "pct": 3
+     },
+     "reversa": {
+      "k": 0,
+      "n": 9,
+      "pct": 0
+     },
+     "salida_de_camino": {
+      "k": 1,
+      "n": 10,
+      "pct": 10
+     },
+     "volcadura": {
+      "k": 6,
+      "n": 10,
+      "pct": 60
+     }
+    },
+    "precision_por_modalidad": {
+     "alcance": {
+      "k": 36,
+      "n": 57,
+      "pct": 63.2
+     },
+     "frontal": {
+      "k": 5,
+      "n": 14,
+      "pct": 35.7
+     },
+     "lateral": {
+      "k": 16,
+      "n": 57,
+      "pct": 28.1
+     },
+     "objeto_fijo": {
+      "k": 9,
+      "n": 30,
+      "pct": 30
+     },
+     "otra": {
+      "k": 2,
+      "n": 3,
+      "pct": 66.7
+     },
+     "reversa": {
+      "k": 0,
+      "n": 1,
+      "pct": 0
+     },
+     "salida_de_camino": {
+      "k": 1,
+      "n": 3,
+      "pct": 33.3
+     },
+     "volcadura": {
+      "k": 6,
+      "n": 15,
+      "pct": 40
+     }
+    }
+   },
+   "zonas": {
+    "dictamenes_con_zonas": 152,
+    "exhaustividad": {
+     "k": 222,
+     "n": 312,
+     "pct": 71.2
+    },
+    "precision": {
+     "k": 222,
+     "n": 362,
+     "pct": 61.3
+    },
+    "tercio": {
+     "k": 13,
+     "n": 14,
+     "pct": 92.9
+    }
+   },
+   "secuencia": {
+    "dictamenes_con_secuencia": 135,
+    "primer_impacto": {
+     "k": 92,
+     "n": 135,
+     "pct": 68.1
+    },
+    "completa": {
+     "k": 69,
+     "n": 135,
+     "pct": 51.1
+    },
+    "mismo_numero": {
+     "k": 72,
+     "n": 135,
+     "pct": 53.3
+    }
+   },
+   "velocidades": {
+    "del_dictamen_por_deformacion": 5,
+    "croquis_calcula": 0,
+    "error_abs_mediana_kmh": null,
+    "error_pct_abs_mediana": null,
+    "dentro_de_5_pct": {
+     "k": 0,
+     "n": 0,
+     "pct": null
+    },
+    "linea_base": {
+     "velocidad_kmh": 61.62,
+     "error_abs_mediana_kmh": 11.716874999999995,
+     "error_pct_abs_mediana": 23.480711422845683
+    }
+   },
+   "posiciones_finales": {
+    "dictamenes_con_posiciones": 46,
+    "croquis_las_tiene": {
+     "k": 29,
+     "n": 58,
+     "pct": 50
+    }
+   }
+  }
+ },
+ "v3": {
+  "version_prompt": "escena-narracion-v2",
+  "leidos": 205,
+  "reconstruidas_en_3d": 205,
+  "resumen": {
+   "dictamenes": 205,
+   "modalidad": {
+    "croquis": {
+     "k": 80,
+     "n": 190,
+     "pct": 42.1
+    },
+    "sin_inferir": 10,
+    "otra_predicha": {
+     "k": 6,
+     "n": 10,
+     "pct": 60
+    },
+    "fisicas": {
+     "croquis": {
+      "k": 74,
+      "n": 123,
+      "pct": 60.2
+     },
+     "linea_base": {
+      "modalidad": "alcance",
+      "k": 46,
+      "n": 123,
+      "pct": 37.4
+     }
+    },
+    "linea_base": {
+     "modalidad": "otra",
+     "k": 67,
+     "n": 190,
+     "pct": 35.3
+    },
+    "por_modalidad": {
+     "alcance": {
+      "k": 37,
+      "n": 46,
+      "pct": 80.4
+     },
+     "frontal": {
+      "k": 5,
+      "n": 6,
+      "pct": 83.3
+     },
+     "lateral": {
+      "k": 16,
+      "n": 25,
+      "pct": 64
+     },
+     "objeto_fijo": {
+      "k": 9,
+      "n": 17,
+      "pct": 52.9
+     },
+     "otra": {
+      "k": 6,
+      "n": 67,
+      "pct": 9
+     },
+     "reversa": {
+      "k": 0,
+      "n": 9,
+      "pct": 0
+     },
+     "salida_de_camino": {
+      "k": 1,
+      "n": 10,
+      "pct": 10
+     },
+     "volcadura": {
+      "k": 6,
+      "n": 10,
+      "pct": 60
+     }
+    },
+    "precision_por_modalidad": {
+     "alcance": {
+      "k": 37,
+      "n": 58,
+      "pct": 63.8
+     },
+     "frontal": {
+      "k": 5,
+      "n": 14,
+      "pct": 35.7
+     },
+     "lateral": {
+      "k": 16,
+      "n": 57,
+      "pct": 28.1
+     },
+     "objeto_fijo": {
+      "k": 9,
+      "n": 24,
+      "pct": 37.5
+     },
+     "otra": {
+      "k": 6,
+      "n": 10,
+      "pct": 60
+     },
+     "salida_de_camino": {
+      "k": 1,
+      "n": 3,
+      "pct": 33.3
+     },
+     "volcadura": {
+      "k": 6,
+      "n": 14,
+      "pct": 42.9
+     }
+    }
+   },
+   "zonas": {
+    "dictamenes_con_zonas": 152,
+    "exhaustividad": {
+     "k": 222,
+     "n": 312,
+     "pct": 71.2
+    },
+    "precision": {
+     "k": 222,
+     "n": 362,
+     "pct": 61.3
+    },
+    "tercio": {
+     "k": 13,
+     "n": 14,
+     "pct": 92.9
+    }
+   },
+   "secuencia": {
+    "dictamenes_con_secuencia": 135,
+    "primer_impacto": {
+     "k": 92,
+     "n": 135,
+     "pct": 68.1
+    },
+    "completa": {
+     "k": 69,
+     "n": 135,
+     "pct": 51.1
+    },
+    "mismo_numero": {
+     "k": 72,
+     "n": 135,
+     "pct": 53.3
+    }
+   },
+   "velocidades": {
+    "del_dictamen_por_deformacion": 5,
+    "croquis_calcula": 0,
+    "error_abs_mediana_kmh": null,
+    "error_pct_abs_mediana": null,
+    "dentro_de_5_pct": {
+     "k": 0,
+     "n": 0,
+     "pct": null
+    },
+    "linea_base": {
+     "velocidad_kmh": 61.62,
+     "error_abs_mediana_kmh": 11.716874999999995,
+     "error_pct_abs_mediana": 23.480711422845683
+    }
+   },
+   "posiciones_finales": {
+    "dictamenes_con_posiciones": 46,
+    "croquis_las_tiene": {
+     "k": 29,
+     "n": 58,
+     "pct": 50
+    }
+   }
+  }
+ }
+}

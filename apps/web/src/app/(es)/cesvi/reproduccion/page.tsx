@@ -50,7 +50,7 @@ function Cifra({
 
 export default function ReproduccionPage() {
   const r = PAGINA.resumen;
-  const t = TITULO.v2.titulo_del_reporte;
+  const t = TITULO.v3.titulo_del_reporte;
   const base = (m: string) => MODALIDAD[m] ?? m;
   const renglones: RenglonReproduccion[] = PAGINA.casos.map((c) => {
     const m = c.comparacion.modalidad;
@@ -124,7 +124,7 @@ export default function ReproduccionPage() {
           </section>
           <p className="t-nota text-texto-3">
             {PAGINA.dictamenes} reportes de la prueba; {PAGINA.casos.length} se reconstruyen y están
-            abajo. Mediciones: <code>eval/results/cesvi_r4b_reproduccion_prueba.json</code> (
+            abajo. Mediciones: <code>eval/results/cesvi_r4d_reproduccion_prueba.json</code> (
             {PAGINA.fecha.slice(0, 10)}) y <code>eval/results/cesvi_r4c_titulo_prueba.json</code> (
             {TITULO.fecha.slice(0, 10)}).
           </p>
