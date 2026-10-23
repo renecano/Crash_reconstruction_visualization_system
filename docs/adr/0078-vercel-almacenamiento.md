@@ -39,5 +39,5 @@
 ## Pendiente
 
 - **Las compilaciones de desarrollo de MapLibre** (`maplibre-gl-dev` y `maplibre-gl-worker-dev`, 3.7 MB) se copian a los estáticos porque MapLibre arma la URL de su worker con una plantilla. Quitarlas pide parchar MapLibre.
-- **Los 75 despliegues de producción anteriores** también ocupan espacio. Una política de retención en Vercel (Settings → Deployment Retention) los borraría solos. Se deja a René porque quita la posibilidad de volver a versiones viejas.
+- **Los despliegues de producción anteriores:** René pidió borrarlos (2026-10-23). Se borraron 72 y se conservaron el actual y los 5 más recientes (ver PROGRESS).
 - **Las bibliotecas que solo usa el navegador** (pdfmake, docx, mediabunny) podrían salir de los trozos de SSR cargándolas solo en el cliente.
