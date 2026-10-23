@@ -18,6 +18,7 @@ import {
 import type { EscenaSpec } from "@croquis/scene-schema";
 import type { ViewerExportApi } from "@croquis/viewer";
 import type { Map as MapaMl } from "maplibre-gl";
+import type { ValidacionPerito } from "@/lib/caso-guardado";
 import { useMemo, useState } from "react";
 import {
   CONTROLES_INICIALES,
@@ -41,12 +42,17 @@ export function ReconstruccionCaso({
   onImpactos,
   narracion = null,
   mapa = null,
+  validacion,
+  onValidacion,
 }: {
   expediente: Expediente;
   /** La narración técnica del perito, para el dictamen (null en un reporte importado). */
   narracion?: string | null;
   /** El mapa de «Caso nuevo», para el croquis del dictamen sobre las calles (R8b). */
   mapa?: MapaMl | null;
+  /** La validación del perito del dictamen, que se guarda con el caso (ADR 0075). */
+  validacion: ValidacionPerito | null;
+  onValidacion: (v: ValidacionPerito | null) => void;
   /** Dónde están los vehículos en el instante del 3D, para dibujarlos en el mapa (vacío sin 3D). */
   onPosiciones?: (ps: PosicionMovil[]) => void;
   /** Dónde ocurrió cada impacto (X1, X2…), para marcarlo en el mapa (vacío sin reconstrucción). */
@@ -266,6 +272,8 @@ export function ReconstruccionCaso({
           declarada={comparacion}
           exportApi={ver3d ? exportApi : null}
           mapa={mapa}
+          validacion={validacion}
+          onValidacion={onValidacion}
         />
       ) : null}
     </section>

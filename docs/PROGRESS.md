@@ -146,7 +146,7 @@ Reglas de trabajo: `CLAUDE.md`. Especificación: `PLAN.md`.
     - **Lectura:**
       - **Contra lo que CESVI escribió en el título,** Croquis gana 18.6 puntos a su línea base. Contra la etiqueta de R0, 4.2.
       - **Siguen débiles:** salida del camino, «otra» y reversa.
-  - **Fase actual (2026-10-23): la prioridad alta de «Endurecimiento pendiente», después R10.** R9 quedó en `main` (#97, ADR 0073) y espera la revisión visual de René («Bloqueado»). El punto 1 (las calles del mapa en el croquis del dictamen, ADR 0074) está hecho; **siguiente paso concreto:** el punto 2, que la validación del perito se guarde con el caso. Los puntos 3 (necesita los PDF) y 4 siguen en ese orden.
+  - **Fase actual (2026-10-23): la prioridad alta de «Endurecimiento pendiente», después R10.** R9 quedó en `main` (#97, ADR 0073) y espera la revisión visual de René («Bloqueado»). Los puntos 1 (las calles del mapa en el croquis del dictamen, ADR 0074) y 2 (la validación guardada con el caso, ADR 0075) están hechos. El punto 3 espera los PDF originales («Bloqueado»); **siguiente paso concreto:** el punto 4, las modalidades flojas con desarrollo y una sola medición de la prueba.
   - **R9** (pase de diseño de lo nuevo de R0–R8, endurecimiento y lo que diga CESVI). R8 quedó lista el 2026-10-23 (rama `feat/r8-dictamen`, ADR 0072); R7 y R4b, el 2026-10-22. La voz del video quedó aprobada por René el 2026-10-23.
     - **Siguiente paso concreto:** el pase de diseño con las maquetas de `docs/cesvi/rediseno/`, el modo Presentar / Trabajar y los temas, en este orden:
       1. el visor 3D en el recorrido;
@@ -989,7 +989,7 @@ Lo que se pospone por el trabajo con CESVI no se borra: queda aquí para despué
 
 - **Prioridad alta, justo después de R9** (René, 2026-10-23), en este orden:
   1. ~~**Las calles del mapa en el croquis del dictamen.**~~ Hecho el 2026-10-23 (ADR 0074): si el perito colocó el caso en el mapa, el croquis del PDF y del Word va sobre las calles; si no, queda el dibujo a escala.
-  2. **Que la validación del perito se guarde con el caso.** Hoy vive solo en la página (ADR 0072).
+  2. ~~**Que la validación del perito se guarde con el caso.**~~ Hecho el 2026-10-23 (ADR 0075): «Guardar el caso» lleva la validación en los campos del contrato y «Abrir un caso guardado» la devuelve; si cambian las entradas, la validación ya no vale.
   3. **Velocidades en E-R4.** Cuando René consiga los PDF originales:
      - leer de las imágenes del PDF las medidas C1–C6, L y las masas;
      - volver a medir.
