@@ -53,12 +53,11 @@ import {
   type Zona,
 } from "@croquis/cesvi";
 import { useCallback, useEffect, useMemo, useRef, useState, type ReactNode } from "react";
-import { Logotipo } from "@/components/sitio/logo";
 import { downloadBytes } from "@/lib/download";
 import { COLOR_VEHICULO, nombresVehiculos } from "@/lib/vehiculos-cesvi";
 import type { DatosDictamen, IncluirDictamen } from "@/lib/dictamen-cesvi";
 import { croquisEsquema, dictamenDocx, huellaEntradas } from "@/lib/exportar-cesvi";
-import { guardarTema, useTema, type Modo } from "@/lib/preferencias-cesvi";
+import { useTema, type Modo } from "@/lib/preferencias-cesvi";
 import { Calculos, type DistanciaRestos, type ResultadosCalculo } from "../calculos";
 import { Criterios } from "../correspondencia";
 import { Expediente } from "../expediente";
@@ -79,6 +78,7 @@ import {
   type EdicionPasos,
   type Velocidad,
 } from "./pasos";
+import { BarraRecorrido } from "./barra";
 import { PanelManual } from "./manual";
 import { ProveedorRecorrido } from "./marco";
 import {
@@ -1364,120 +1364,54 @@ export function Recorrido({ caso, reproduccion }: { caso: CasoCesvi; reproduccio
         data-modo={modo}
         data-testid="recorrido"
       >
-        <header className="vidrio barra relative z-30 flex h-16 shrink-0 items-center gap-3 px-4 md:px-6">
-          <Logotipo ancho={112} variante={tema === "claro" ? "logotipo-sobre-claro" : "logotipo"} />
-          {modo === "trabajar" ? (
-            <span className="hidden text-[0.8125rem] font-medium text-texto-2 lg:inline">
-              {resumenCaso}
-            </span>
-          ) : null}
-          {modo === "presentar" ? (
-            <nav
-              aria-label="Pasos del recorrido"
-              className="flex min-w-0 flex-1 items-center justify-center-safe gap-1 overflow-x-auto"
-            >
-              {PASOS.map((nombre, i) => {
-                const actual = paso === i;
-                const hecho = i < paso;
-                return (
-                  <button
-                    key={nombre}
-                    type="button"
-                    aria-label={`Paso ${i + 1}: ${nombre}`}
-                    aria-current={actual ? "step" : undefined}
-                    onClick={() => irA(i)}
-                    className={`flex h-9 shrink-0 items-center gap-2 rounded-full text-[0.8125rem] transition-colors ${
-                      actual
-                        ? "bg-accion pr-3.5 pl-2 font-semibold text-accion-texto"
-                        : `px-2.5 font-medium hover:bg-superficie-alta ${hecho ? "text-texto-2" : "text-texto-3"}`
-                    }`}
-                    data-testid={`paso-${i + 1}`}
-                  >
-                    <span
-                      className={`grid h-5 w-5 place-items-center rounded-full text-[0.6875rem] ${
-                        actual
-                          ? "bg-fondo text-texto"
-                          : hecho
-                            ? "bg-superficie-alta text-texto-2"
-                            : "border border-linea"
-                      }`}
-                      aria-hidden="true"
-                    >
-                      {hecho ? "✓" : i + 1}
-                    </span>
-                    <span className={actual ? "" : "hidden 2xl:inline"}>{PASOS_CORTOS[i]}</span>
-                  </button>
-                );
-              })}
-            </nav>
-          ) : (
-            <span className="flex-1" />
-          )}
-          <div className="segmentado shrink-0" role="tablist" aria-label="Modo">
-            {(["presentar", "trabajar"] as const).map((m) => (
-              <button
-                key={m}
-                type="button"
-                role="tab"
-                aria-selected={modo === m}
-                className="px-4"
-                onClick={() => cambiarModo(m)}
-                data-testid={`modo-${m}`}
+        <BarraRecorrido
+          pasos={PASOS}
+          pasosCortos={PASOS_CORTOS}
+          paso={paso}
+          irA={irA}
+          modo={modo}
+          onModo={cambiarModo}
+          tema={tema}
+          resumen={resumenCaso}
+          onExportar={() => {
+            setModo("presentar");
+            irA(PASOS.length - 1);
+          }}
+          acciones={
+            <>
+              <span
+                className="hidden shrink-0 items-center gap-2 text-[0.8125rem] text-texto-2 md:flex"
+                role="status"
+                data-testid="estado-ia"
+                data-estado={estadoIA}
               >
-                {m === "presentar" ? "Presentar" : "Trabajar"}
+                <span
+                  className={`h-2 w-2 rounded-full ${estadoIA === "lista" ? "bg-[var(--ok)]" : estadoIA === "error" ? "bg-senal" : estadoIA === "entendiendo" ? "animate-pulse bg-texto-2" : "bg-texto-3"}`}
+                  aria-hidden="true"
+                />
+                {ESTADO_IA[estadoIA]}
+              </span>
+              <button
+                type="button"
+                className="boton-secundario boton-compacto h-9 min-h-9 shrink-0"
+                onClick={() => setManualAbierto(true)}
+                data-testid="llenar-a-mano"
+              >
+                Llenar a mano
               </button>
-            ))}
-          </div>
-          <span
-            className="hidden shrink-0 items-center gap-2 text-[0.8125rem] text-texto-2 md:flex"
-            role="status"
-            data-testid="estado-ia"
-            data-estado={estadoIA}
-          >
-            <span
-              className={`h-2 w-2 rounded-full ${estadoIA === "lista" ? "bg-[var(--ok)]" : estadoIA === "error" ? "bg-senal" : estadoIA === "entendiendo" ? "animate-pulse bg-texto-2" : "bg-texto-3"}`}
-              aria-hidden="true"
-            />
-            {ESTADO_IA[estadoIA]}
-          </span>
-          <button
-            type="button"
-            className="boton-secundario boton-compacto h-9 min-h-9 shrink-0"
-            onClick={() => setManualAbierto(true)}
-            data-testid="llenar-a-mano"
-          >
-            Llenar a mano
-          </button>
-          {modo === "trabajar" ? (
-            <button
-              type="button"
-              className="boton-secundario boton-compacto h-9 min-h-9 shrink-0"
-              onClick={deshacerCambio}
-              disabled={hist.pasado.length === 0}
-            >
-              ↶ Deshacer
-            </button>
-          ) : null}
-          <button
-            type="button"
-            className="boton-secundario boton-compacto grid h-9 min-h-9 w-9 shrink-0 place-items-center px-0"
-            onClick={() => guardarTema(modo, tema === "claro" ? "oscuro" : "claro")}
-            aria-label={tema === "claro" ? "Cambiar a tema oscuro" : "Cambiar a tema claro"}
-            data-testid="tema"
-          >
-            ◐
-          </button>
-          <button
-            type="button"
-            className={`${modo === "trabajar" ? "boton-principal" : "boton-secundario"} boton-compacto h-9 min-h-9 shrink-0`}
-            onClick={() => {
-              setModo("presentar");
-              irA(PASOS.length - 1);
-            }}
-          >
-            Exportar
-          </button>
-        </header>
+              {modo === "trabajar" ? (
+                <button
+                  type="button"
+                  className="boton-secundario boton-compacto h-9 min-h-9 shrink-0"
+                  onClick={deshacerCambio}
+                  disabled={hist.pasado.length === 0}
+                >
+                  ↶ Deshacer
+                </button>
+              ) : null}
+            </>
+          }
+        />
 
         {modo === "presentar" ? (
           <main
