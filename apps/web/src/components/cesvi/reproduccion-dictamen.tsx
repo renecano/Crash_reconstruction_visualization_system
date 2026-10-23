@@ -75,7 +75,7 @@ export function ReproduccionDictamen({ caso }: { caso: CasoReproduccion }) {
   const secuencia = secuenciaCroquis(e, caso.narracion);
 
   return (
-    <main className="min-h-screen bg-fondo px-4 py-10 text-texto md:px-8" data-tema="claro">
+    <main className="px-4 py-10 md:px-8">
       <div className="mx-auto flex max-w-[1200px] flex-col gap-8" data-testid="reproduccion-caso">
         <header className="flex flex-col gap-3">
           <Link href="/cesvi/reproduccion" className="t-nota underline underline-offset-2">

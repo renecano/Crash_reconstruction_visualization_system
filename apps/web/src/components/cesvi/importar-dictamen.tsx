@@ -153,7 +153,7 @@ export function ImportarDictamen() {
 
   const r = texto ? resumenTexto(texto.texto) : null;
   return (
-    <main className="min-h-screen bg-fondo px-4 py-10 text-texto md:px-8" data-tema="claro">
+    <main className="px-4 py-10 md:px-8">
       <div className="mx-auto flex max-w-[900px] flex-col gap-8" data-testid="importar-dictamen">
         <header className="flex flex-col gap-3">
           <p className="t-rotulo">Caso nuevo · cargar un reporte de CESVI</p>
@@ -165,10 +165,24 @@ export function ImportarDictamen() {
           </p>
         </header>
         <section className="tarjeta flex flex-col gap-4 p-6">
-          <label className="t-interfaz flex flex-col gap-2">
-            Archivo del reporte
+          <label
+            className="hundido flex cursor-pointer flex-col items-center gap-1 rounded-panel border border-dashed border-linea px-6 py-8 text-center hover:border-texto-3"
+            onDragOver={(e) => e.preventDefault()}
+            onDrop={(e) => {
+              e.preventDefault();
+              void elegir(e.dataTransfer.files[0]);
+            }}
+            data-testid="zona-archivo"
+          >
+            <span className="t-interfaz font-semibold">
+              {archivo ? archivo : "Elige el reporte en PDF, Markdown o texto"}
+            </span>
+            <span className="t-nota text-texto-3">
+              {archivo ? "Toca para elegir otro" : "o arrástralo aquí"}
+            </span>
             <input
               type="file"
+              className="sr-only"
               accept=".pdf,.md,.markdown,.txt,application/pdf,text/markdown,text/plain"
               onChange={(e) => void elegir(e.target.files?.[0])}
               data-testid="archivo-dictamen"
@@ -215,7 +229,7 @@ export function ImportarDictamen() {
           </div>
         </section>
         <p className="t-nota text-texto-3">
-          El archivo no se guarda. Reconstrucción de apoyo · el dictamen es del perito.
+          El archivo no se guarda: el texto se saca en tu equipo.
         </p>
       </div>
     </main>

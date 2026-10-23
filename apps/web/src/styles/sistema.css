@@ -221,6 +221,17 @@
 }
 
 @layer components {
+  /* Presentar (R9, ADR 0073): fuera del recorrido, los controles de edición se ocultan. Con
+     !important, porque las utilidades de Tailwind (flex, grid) van en una capa posterior. */
+  [data-modo="presentar"] .solo-trabajar,
+  [data-modo="trabajar"] .solo-presentar {
+    display: none !important;
+  }
+  /* Lo que en Trabajar comparte la fila con un panel de edición la ocupa entera al presentar. */
+  [data-modo="presentar"] .ancho-al-presentar {
+    grid-column: 1 / -1;
+  }
+
   /* ---------- Escala tipográfica ---------- */
 
   .t-lanzamiento,

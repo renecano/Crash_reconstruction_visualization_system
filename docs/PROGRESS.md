@@ -156,6 +156,47 @@ Reglas de trabajo: `CLAUDE.md`. Especificación: `PLAN.md`.
       6. comparación;
       7. dictamen.
          Al terminar, pedir a René la revisión visual.
+    - **Resumen de R9 para René** (ADR 0073; pendiente: su revisión visual):
+      - **Qué quedó:**
+        - **«Caso nuevo», «Cargar un reporte» y «Reproducción de reportes»** van ahora en el marco del recorrido:
+          - la barra con la marca y la navegación entre las cuatro pantallas;
+          - Presentar / Trabajar;
+          - el tema recordado por modo (claro al trabajar, oscuro al presentar);
+          - la leyenda de reconstrucción de apoyo.
+        - **«Caso nuevo» al presentar** oculta los controles de edición (preguntas, herramientas del mapa, entradas de la declaración y del dictamen). Muestra la narración como texto, los resultados, el 3D, la comparación y las descargas. El mapa sigue al tema.
+        - **«Reproducción de reportes»:**
+          - la modalidad contra el título del reporte (55.8 %) y contra la etiqueta de R0 (39.5 %), lado a lado;
+          - los otros ejes en tarjetas;
+          - la lista compacta con la columna del título, filtros por modalidad y por si coincide, de 40 en 40.
+        - **«Cargar un reporte»:** zona para elegir o arrastrar el archivo.
+        - **El recorrido de AXA:** «Ver la reconstrucción en 3D» en el paso 4 abre, a pantalla completa, la versión de la evidencia con el solver.
+      - **Pruebas:**
+        - 5 unitarias nuevas: el marco, y el caso del recorrido en 3D;
+        - las cinco e2e `@flujo` en Chromium, en verde, con el 3D del recorrido y los filtros de la reproducción.
+      - **Cómo revisarlo:** en `/cesvi/caso`, `/cesvi/importar`, `/cesvi/reproduccion` y en el paso 4 de `/cesvi`:
+        1. cambia entre Presentar y Trabajar y el tema;
+        2. en «Caso nuevo», usa la narración de ejemplo y reconstruye antes de pasar a Presentar.
+      - **Qué necesito de René:** la revisión visual. Con sus comentarios se cierra R9 y se empieza la prioridad alta de «Endurecimiento pendiente» (las calles del mapa en el croquis del dictamen).
+    - **Plan de R9** (rama `feat/r9-diseno`, ADR 0073). Las capturas del estado de partida (2026-10-23) muestran:
+      - **El recorrido de `/cesvi`** tiene el sistema (grafito, barra con la marca, Presentar / Trabajar, tema recordado).
+      - **«Caso nuevo», «Cargar un reporte» y «Reproducción de reportes»** salen en claro fijo (`data-tema="claro"`), sin barra, sin modos y sin forma de ir de una a otra.
+      - **«Reproducción de reportes»** es una tabla de 205 renglones sin jerarquía.
+      - **Pasos:**
+        1. **Marco común** (`MarcoCesvi`) para las tres pantallas nuevas:
+           - la barra del recorrido con la marca;
+           - navegación entre el recorrido, «Caso nuevo», «Cargar un reporte» y «Reproducción de reportes»;
+           - Presentar / Trabajar y el tema recordado por modo (`preferencias-cesvi`);
+           - la leyenda de reconstrucción de apoyo al pie.
+        2. **«Caso nuevo»** en los dos modos:
+           - **Trabajar** (por omisión: es la herramienta de trabajo) con todo lo que se edita.
+           - **Presentar** sin los controles de edición: la narración, lo que leyó Croquis, la reconstrucción, el 3D, la comparación y el dictamen.
+        3. **«Reproducción de reportes»** con jerarquía:
+           - la modalidad contra la etiqueta de R0 y contra el título del reporte, lado a lado (ADR 0071);
+           - filtros por modalidad y por si coincide;
+           - renglones compactos con enlace al caso.
+        4. **«Cargar un reporte»** con el selector de archivo del sistema, y el caso de «Reproducción» en el marco.
+        5. **El 3D en el recorrido de AXA:** la reconstrucción del solver con las posiciones del perito del paso 4.
+        6. **Pruebas:** las e2e de cada flujo siguen en verde. Una prueba unitaria de la navegación del marco. Capturas de antes y después para la revisión de René.
   - **Resumen de R8 para René** (ADR 0072):
     - **Qué quedó:** en «Caso nuevo», después de reconstruir, el panel «Dictamen».
       - **El perito escribe su conclusión,** valida con su nombre y descarga el PDF o el Word, con el mismo contenido.

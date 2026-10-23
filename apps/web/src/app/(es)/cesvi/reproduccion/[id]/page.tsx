@@ -2,6 +2,7 @@
  * `/cesvi/reproduccion/[id]`: un dictamen de la prueba congelada, con lo que concluyó CESVI y lo que
  * reconstruyó Croquis lado a lado, en 2D y 3D (R4, ADR 0067). Las páginas se generan al construir.
  */
+import { MarcoCesvi } from "@/components/cesvi/marco-cesvi";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { ReproduccionDictamen } from "@/components/cesvi/reproduccion-dictamen";
@@ -31,5 +32,9 @@ export default async function ReproduccionCasoPage({
   const { id } = await params;
   const caso = casoPorId(id);
   if (!caso) notFound();
-  return <ReproduccionDictamen caso={caso} />;
+  return (
+    <MarcoCesvi seccion="reproduccion" modoInicial="presentar" conModos={false}>
+      <ReproduccionDictamen caso={caso} />
+    </MarcoCesvi>
+  );
 }
