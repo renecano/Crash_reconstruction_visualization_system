@@ -14,83 +14,77 @@ Video narrado de `/cesvi`, para enseñárselo a los peritos de CESVI: el caso de
 
 El perito narra el hecho. Croquis lo reconstruye.
 
+## lista
+
+> En pantalla: la lista de casos; se abre el de AXA.
+
+En la lista de casos están el caso nuevo, la carga de un reporte, los casos guardados y los de ejemplo. Abrimos el de AXA.
+
 ## caso
 
-> En pantalla: paso 1, el caso A2010930.
+> En pantalla: paso 1, las tarjetas de los vehículos y el avance.
 
-Este es un caso real de CESVI: un alcance en la carretera federal 15, entre una Silverado y una Tacoma. Ustedes ya lo analizaron en su reporte. Vamos a ver si Croquis llega a lo mismo.
+Paso uno, el caso. Es un caso real de CESVI: un alcance en la carretera federal 15, entre una Silverado y una Tacoma. Ustedes ya lo analizaron en su reporte. Vamos a ver si Croquis llega a lo mismo.
 
-## hecho-ejemplo
+## hecho
 
-> En pantalla: paso 2, se usa la narración técnica de ejemplo y se lee.
+> En pantalla: paso 2, la narración y lo que leyó Croquis.
 
-Paso dos. El perito escribe su narración técnica, como la escribe en un reporte. Aquí usamos el ejemplo.
-
-## hecho-datos
-
-> En pantalla: los datos leídos, con la frase de donde sale cada uno.
-
-Croquis la lee con el vocabulario de los reportes de CESVI. Cada dato queda con la frase de donde sale y con su fuente. Si una frase no está en el texto, el dato se descarta.
-
-## hecho-pregunta
-
-> En pantalla: se contesta la pregunta del carril.
-
-Lo que falta para reconstruir, Croquis lo pregunta en lenguaje técnico. El perito contesta, o dice que no sabe.
+Paso dos, el hecho. Croquis leyó el reporte con el vocabulario de CESVI, y cada dato quedó con la frase de donde sale.
 
 ## lugar
 
-> En pantalla: paso 3, se usa la ubicación ilustrativa.
+> En pantalla: paso 3; se marca el punto de impacto y Croquis propone las dos poses.
 
-Paso tres, el lugar. El reporte no da coordenadas del kilómetro 47 más 800. Usamos una ubicación ilustrativa sobre la vía, y Croquis lo dice.
+Paso tres, el lugar. El reporte no da coordenadas: el mapa abre en una ubicación ilustrativa, y Croquis lo dice. El perito marca el punto de impacto, y Croquis propone dónde estaba cada vehículo por sus zonas de contacto.
 
-## lugar-mover
+## lugar-finales
 
-> En pantalla: se mueve el punto y se deshace.
+> En pantalla: dónde quedó cada vehículo, con la flecha de su frente.
 
-El perito puede mover el punto de impacto, y deshacer cualquier cambio.
+Luego marca dónde quedó cada uno, y gira la flecha hacia su frente. Mientras falte algo, el siguiente paso no se abre.
+
+## expandir
+
+> En pantalla: el mapa a pantalla completa, y se contrae.
+
+El mapa se puede expandir a pantalla completa.
 
 ## reconstruccion
 
-> En pantalla: paso 4, se reproduce la animación.
+> En pantalla: paso 4, «Reconstruir» y el 3D.
 
-Paso cuatro, la reconstrucción de Croquis. La Tacoma alcanza a la Silverado y la desplaza. Los restos cubren 15 punto 89 metros, como en su reporte.
+Paso cuatro, la reconstrucción con física, y su 3D.
 
 ## declaracion
 
-> En pantalla: se enciende y se apaga «Comparar con la declaración del conductor».
+> En pantalla: se abre la comparación con la declaración del conductor.
 
-La declaración del conductor es una capa opcional. Si el perito la enciende, la compara con la reconstrucción. Croquis no dice quién tiene razón: el perito concluye.
-
-## trabajar
-
-> En pantalla: modo Trabajar, se elige A, se mueve su posición y se ve «Qué cambia».
-
-En el modo Trabajar, el perito coloca cada vehículo con precisión, en metros desde el impacto, y ve qué cambia entre versiones.
+La declaración del conductor viene escrita, como una capa opcional para comparar. Croquis no dice quién tiene razón: el perito concluye.
 
 ## danos
 
-> En pantalla: paso 5, los daños.
+> En pantalla: paso 5, los daños y la correspondencia.
 
-Paso cinco, los daños: dónde están en cada vehículo, como los observó su reporte.
+Paso cinco, los daños, con la correspondencia del método de CESVI.
 
 ## numeros
 
-> En pantalla: paso 6, los números; se abre «Ver cálculo».
+> En pantalla: paso 6, la verificación y el método de CESVI.
 
-Paso seis, los números, con el método de CESVI. 63 punto 15 kilómetros por hora por la deformación de la Tacoma, y 60 punto 27 por el desplazamiento de la Silverado. En Ver cálculo está cada fórmula con sus valores sustituidos.
+Paso seis, los números, con el método de CESVI. Con las medidas impresas del reporte, la velocidad de impacto de la Tacoma por deformación sale en 63 punto 90 kilómetros por hora.
 
 ## contra
 
-> En pantalla: paso 7, «Croquis contra el reporte de CESVI».
+> En pantalla: paso 7, «Croquis contra el reporte de CESVI» y la tabla de reproducción.
 
-Paso siete: Croquis contra el reporte de CESVI. Croquis llega a lo mismo que ustedes en la modalidad, la velocidad por restos y la dinámica del impacto. La velocidad por deformación difiere 1 punto 19 por ciento, porque la energía calculada con los datos impresos difiere 2 punto 39 por ciento de la de su reporte. La diferencia queda a la vista, con su valor.
+Paso siete: Croquis contra el reporte de CESVI. La modalidad coincide, y cada número del reporte va junto al de Croquis: 63 punto 15 por deformación y 60 punto 27 por desplazamiento, como en su reporte. La energía calculada con los datos impresos difiere 2 punto 39 por ciento, y queda a la vista con su valor.
 
 ## dictamen
 
-> En pantalla: paso 8, vista previa y descarga del PDF.
+> En pantalla: paso 8, el dictamen.
 
-Paso ocho, el dictamen con la estructura de CESVI: vista previa y descarga en PDF, con la trazabilidad de cada dato. El perito revisa, concluye y firma.
+Paso ocho, el dictamen en PDF y Word, con la estructura de CESVI y la trazabilidad de cada dato. El perito revisa, concluye y valida.
 
 ## tema
 
@@ -102,13 +96,13 @@ Tema claro para trabajar, y oscuro para presentar.
 
 > En pantalla: «Caso nuevo»; se pega la narración de otro hecho y se lee.
 
-Croquis no es solo este caso. En Caso nuevo, el perito pega la narración técnica de otro hecho, y Croquis la ordena en la escena: vehículos, daños, y lo que falta preguntar.
+Croquis no es solo este caso. En Caso nuevo, el perito pega la narración técnica de otro hecho, y Croquis la ordena: vehículos, daños, y lo que falta preguntar.
 
 ## caso-nuevo-mapa
 
-> En pantalla: se colocan los vehículos en el mapa.
+> En pantalla: se marca el impacto y dónde quedó cada vehículo.
 
-El perito coloca a cada vehículo en el mapa, en el impacto y en su posición final.
+El perito marca el impacto y dónde quedó cada vehículo, igual que en cualquier caso.
 
 ## caso-nuevo-reconstruccion
 
