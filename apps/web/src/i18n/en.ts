@@ -13,6 +13,7 @@ export const en: Dict = {
     cerrar: "Close",
     inicio: "Croquis home",
     nav: {
+      entrar: "Enter Croquis",
       cuenta: "Tell what happened",
       ejemplo: "See an example",
       mide: "How it is measured",

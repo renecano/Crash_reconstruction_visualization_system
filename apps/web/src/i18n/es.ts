@@ -11,6 +11,7 @@ export const es = {
     cerrar: "Cerrar",
     inicio: "Inicio de Croquis",
     nav: {
+      entrar: "Entrar a Croquis",
       cuenta: "Cuenta qué pasó",
       ejemplo: "Ver un ejemplo",
       mide: "Cómo se mide",

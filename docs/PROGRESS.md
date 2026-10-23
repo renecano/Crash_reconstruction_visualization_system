@@ -160,6 +160,21 @@ Reglas de trabajo: `CLAUDE.md`. Especificación: `PLAN.md`.
       - se piden al marcar el impacto y el 3D las agrega cuando llegan (la física no las espera: la primera consulta a Overpass tardó 42.7 s en local);
       - con la atribución ODbL en la leyenda.
     - **R10, los objetos del lugar** (ADR 0081): árboles, postes y bardas de OpenStreetMap entran al 3D como objetos con fuente «mapa». En México casi no están mapeados (AXA: 0; el cruce de Toluca: 0; Reforma, CDMX: 7), así que el 3D muestra lo que hay.
+    - **La entrada de los peritos y las fuentes legibles** (René, 2026-10-23, ADR 0083):
+      - **Lo que René vio:** la portada de producción sin «Entrar a Croquis».
+      - **Lo que había en producción** (navegador nuevo, 2026-10-23, antes del arreglo): el botón blanco «Entrar a Croquis» → `/cesvi` en el centro y «Cuenta qué pasó» como secundario. La barra de navegación no lo tenía.
+      - **La causa:** el service worker servía el HTML de la portada desde su precarga. La versión nueva espera a que se cierren todas las pestañas de la anterior, así que un navegador que ya había abierto Croquis seguía viendo la portada vieja.
+      - **El arreglo:**
+        - las páginas salen de la precarga: el HTML va primero a la red (sin internet, la copia guardada);
+        - la versión nueva del service worker se activa sola y toma las pestañas abiertas (`skipWaiting`, `clientsClaim`); lo estático del despliegue anterior queda aparte para las pestañas que aún lo usan;
+        - «Entrar a Croquis» también en la barra («Enter Croquis» en inglés);
+        - las fuentes con su etiqueta legible en `/cesvi` («del reporte» en lugar de `dictamen_importado`).
+      - **Pruebas:**
+        - unitarias: toda fuente del contrato tiene etiqueta;
+        - e2e `@flujo`: de la portada a la lista de casos;
+        - en el flujo de AXA: ningún identificador de fuente en pantalla;
+        - sin red: lo visitado abre su copia.
+      - **Verificación en producción:** pendiente del despliegue (se anota aquí con lo que se vea en producción).
     - **Siguiente paso concreto:** lo grande de R10 espera a René («Bloqueado»): la fuente de los modelos de vehículos, la revisión de las capturas y la medición en la computadora de demo.
     1. **V2-1, marco:**
        - **la barra:** los nombres de los 8 pasos siempre, «← Casos», la barra de avance arriba y los pasos futuros cerrados hasta completar lo obligatorio;

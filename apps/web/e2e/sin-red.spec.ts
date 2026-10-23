@@ -102,9 +102,12 @@ test.describe("demo sin red", () => {
     await page.goto("/en/medicion");
     await expect(page.getByTestId("medicion-empezar")).toBeVisible();
 
-    // Sin red, una página sin precargar abre el inicio en su idioma.
+    // Sin red, una página ya visitada abre su copia (el HTML va primero a la red y se guarda, ADR
+    // 0083); una que no se precargó ni se visitó abre el inicio en su idioma.
     await context.setOffline(true);
     await page.goto("/e9");
+    await expect(page.getByTestId("e9-iniciar")).toBeVisible();
+    await page.goto("/medicion");
     await expect(page.locator("html")).toHaveAttribute("lang", "es-MX");
     await expect(page.getByTestId("portada")).toBeVisible();
     await page.goto("/en/e9");

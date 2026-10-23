@@ -3,7 +3,7 @@
 import { useEffect } from "react";
 
 /**
- * Registra el service worker (ADR 0030) cuando la página ya cargó y el navegador está ocioso: la
+ * Registra el service worker (ADR 0030 y 0083) cuando la página ya cargó y el navegador está ocioso: la
  * precarga de la primera visita no compite con la carga ni con el horneado del visor.
  */
 export function ServiceWorkerRegistration() {
