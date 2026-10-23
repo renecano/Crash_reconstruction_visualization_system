@@ -146,7 +146,32 @@ Reglas de trabajo: `CLAUDE.md`. Especificación: `PLAN.md`.
     - **Lectura:**
       - **Contra lo que CESVI escribió en el título,** Croquis gana 18.6 puntos a su línea base. Contra la etiqueta de R0, 4.2.
       - **Siguen débiles:** salida del camino, «otra» y reversa.
-  - **Fase actual (2026-10-23): R10, la calidad visual del 3D; primera parte hecha** (ADR 0077, rama `feat/r10-calidad-visual`):
+  - **Fase actual (2026-10-23): /cesvi V2** (pedido de René con las maquetas `docs/cesvi/rediseno/V2-*`, ADR 0080). Todo caso por igual, incluido AXA: la misma interfaz, los mismos 8 pasos y la misma barra con nombres. Va por partes, cada una con su PR (rama `feat/cesvi-v2`):
+    1. **V2-1, marco:**
+       - **la barra:** los nombres de los 8 pasos siempre, «← Casos», la barra de avance arriba y los pasos futuros cerrados hasta completar lo obligatorio;
+       - **los botones:** «Siguiente: el hecho →», desactivado y diciendo qué falta (`lib/pasos-caso.ts`, con pruebas);
+       - **el mapa:** una tarjeta lateral en los pasos que no son de mapa, más grande en el lugar y la reconstrucción, «Expandir» a pantalla completa con el panel flotante y «Contraer · Esc»;
+       - **dónde abre el mapa:** en el lugar del caso, o pide buscarlo;
+       - **los reportes de la reproducción** toman el impacto de las conclusiones de CESVI (fuente `dictamen_importado`); el paso 7 usa la comparación medida en E-R4;
+       - **la portada:** «Entrar a Croquis».
+    2. **V2-2, el paso 3:**
+       - la lista guiada (punto de impacto, dónde quedó cada vehículo, lo opcional aparte);
+       - el elemento activo con dos pasos;
+       - el rumbo con una flecha sobre el mapa (escribirlo es opcional);
+       - los modos «Colocar», «Mover mapa» y «Medir» (en «Colocar» el mapa no se arrastra; Espacio lo mueve);
+       - del punto de impacto, Croquis propone las poses de impacto con las zonas de contacto y la dirección de la calle, generalizando `proponerVersiones` a N vehículos.
+    3. **V2-3, más visual:**
+       - tarjetas con la silueta de cada vehículo vista desde arriba;
+       - el anillo de avance;
+       - «+ Agregar masa» en lugar de «falta»;
+       - el detalle técnico en «Ver detalle».
+    4. **V2-4, AXA en la misma interfaz:** su expediente (`expedienteDelRecorrido`) y lo que solo él tiene (la versión declarada, la reproducción de los cálculos del reporte, la comparación fila por fila) como paneles de sus pasos. Sale el recorrido propio; se reescribe su e2e y se regraba el video.
+    5. **e2e:**
+       - colocar en el paso 3 sin arrastrar el mapa;
+       - expandir y contraer;
+       - «Siguiente» no avanza sin lo obligatorio.
+    - **Luego, R10.**
+  - **Antes (2026-10-23): R10, la calidad visual del 3D; primera parte hecha** (ADR 0077, rama `feat/r10-calidad-visual`):
     - **Efectos en alta y ultra:** TRAA, profundidad de campo en la cámara cinemática y desenfoque de movimiento en el impacto; en ultra, además, reflejos en pantalla. Baja y media no cambian.
     - **Capturas de antes y después** en `docs/cesvi/r10/`.
     - **Resultado:** el cambio se nota poco. Lo grande de R10 (vehículos realistas, escenario, la escena nocturna) espera la fuente de los modelos («Bloqueado»).
