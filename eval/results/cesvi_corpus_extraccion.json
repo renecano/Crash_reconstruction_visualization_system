@@ -1,6 +1,6 @@
 {
-  "fecha": "2026-10-22T01:21:57.395Z",
-  "version_prompt": "corpus-cesvi-v3",
+  "fecha": "2026-10-23T02:56:21.471Z",
+  "version_prompt": "corpus-cesvi-v4",
   "modelo": "claude-sonnet-5-5",
   "dictamenes": 671,
   "leidos": 671,
@@ -29,22 +29,22 @@
     }
   ],
   "filas": {
-    "total": 31457,
-    "valores_invalidos": 44
+    "total": 31500,
+    "valores_invalidos": 53
   },
   "citas": {
-    "total": 15800,
-    "fuera_del_texto": 406,
-    "proporcion_fuera": 0.0257
+    "total": 15880,
+    "fuera_del_texto": 412,
+    "proporcion_fuera": 0.0259
   },
   "numeros": {
-    "total": 3129,
-    "fuera_de_su_cita": 313,
-    "proporcion_fuera": 0.1
+    "total": 3151,
+    "fuera_de_su_cita": 311,
+    "proporcion_fuera": 0.0987
   },
   "datos_personales_tras_redactar": 0,
-  "costo_usd": 18.4693,
-  "costo_lote_usd": 15.5892,
+  "costo_usd": 21.1373,
+  "costo_lote_usd": 14.3636,
   "particion": {
     "prueba": 205,
     "desarrollo": 466
@@ -57,49 +57,49 @@
       "frontal": 27,
       "lateral": 126,
       "objeto_fijo": 81,
-      "otra": 120,
+      "otra": 121,
       "reversa": 32,
       "salida_de_camino": 31,
-      "sin_modalidad": 18,
+      "sin_modalidad": 17,
       "volcadura": 34
     },
     "conclusion": {
-      "no_se_sostiene": 332,
+      "no_se_sostiene": 333,
       "parcial": 103,
       "se_sostiene": 157,
-      "sin_conclusion": 11,
+      "sin_conclusion": 10,
       "sin_juicio": 65
     },
     "tres_o_mas_vehiculos": {
-      "dictamenes": 104,
-      "proporcion": 0.1557
+      "dictamenes": 100,
+      "proporcion": 0.1497
     },
     "mas_de_un_impacto": {
-      "dictamenes": 144,
-      "proporcion": 0.2156
+      "dictamenes": 145,
+      "proporcion": 0.2171
     },
     "con_declaracion": {
-      "dictamenes": 581,
-      "proporcion": 0.8698
+      "dictamenes": 584,
+      "proporcion": 0.8743
     },
     "metodo_de_calculo": {
-      "bolsas_aire": 15,
-      "cantidad_movimiento": 3,
-      "desplazamiento": 14,
+      "bolsas_aire": 14,
+      "cantidad_movimiento": 2,
+      "desplazamiento": 17,
       "ebs": 8,
       "frenado_huellas": 6,
       "mchenry": 3,
-      "otro": 114,
-      "prueba_choque": 18
+      "otro": 109,
+      "prueba_choque": 16
     },
     "criterio_analizado": {
       "altura": 385,
-      "dano_previo": 115,
-      "direccion": 195,
-      "forma": 396,
-      "intercambio_material": 476,
-      "lugar": 111,
-      "magnitud": 291
+      "dano_previo": 116,
+      "direccion": 193,
+      "forma": 394,
+      "intercambio_material": 477,
+      "lugar": 110,
+      "magnitud": 290
     }
   }
 }

@@ -169,6 +169,7 @@ export const TITULO_ESCENA_EN: Record<FixtureName, string> = {
   glorieta: "Entering a roundabout without yielding",
   interseccion_toluca: "Side collision at Carranza and Juárez (Toluca, OpenStreetMap street)",
   carambola: "Chain collision on Paseo Tollocan at a red light",
+  reversa: "Backing into a stopped pickup on Hidalgo street",
 };
 
 /** Título de una escena canónica en el idioma de la página. */

@@ -205,6 +205,55 @@ async function releer(motivos: string[]) {
   console.log(`Releídos ${ids.size}: ${costo.toFixed(4)} USD`);
 }
 
+/** El reporte escribe medidas de deformación, una masa en kg o la rigidez A (R4b). */
+const RX_CON_MEDIDAS =
+  /\bC\s?1\s*[=:]?\s*\(?\s*\d[\s\S]{0,160}\bC\s?2\s*[=:]?\s*\(?\s*\d|\d[\d,. ]*\s*kg\b|\brigidez\b|\bA\s*=\s*\d/i;
+
+/**
+ * Relee con el prompt vigente (v4) los reportes cuyo texto trae medidas, masas o rigidez (R4b). El
+ * estimado es lo que costó su lectura anterior, al doble porque va sin lotes; si pasa el tope, no
+ * se envía nada.
+ */
+async function releerMedidas(topeUsd: number) {
+  const docs = documentos().filter((d) => {
+    const previo = JSON.parse(readFileSync(rutaCache(d.id), "utf8")) as Cacheado;
+    return previo.version_prompt !== VERSION_PROMPT_CORPUS && RX_CON_MEDIDAS.test(d.texto);
+  });
+  const estimado = docs.reduce((a, d) => {
+    const previo = JSON.parse(readFileSync(rutaCache(d.id), "utf8")) as Cacheado;
+    return a + previo.costo_usd * (previo.lote ? 2 : 1);
+  }, 0);
+  console.log(`${docs.length} reportes con medidas por releer: ~${estimado.toFixed(2)} USD`);
+  if (estimado > topeUsd) {
+    console.log(`Pasa el tope de ${topeUsd} USD: no se envía.`);
+    return;
+  }
+  const c = cliente();
+  let costo = 0;
+  for (const d of docs) {
+    const previo = JSON.parse(readFileSync(rutaCache(d.id), "utf8")) as Cacheado;
+    try {
+      const l = await leerDictamen(d.texto, c);
+      costo += l.costoUsd;
+      escribirJson(rutaCache(d.id), {
+        id: d.id,
+        version_prompt: VERSION_PROMPT_CORPUS,
+        modelo: l.modeloRespuesta,
+        lote: false,
+        fecha: new Date().toISOString(),
+        uso: l.uso,
+        costo_usd: l.costoUsd,
+        costos_anteriores_usd: [...(previo.costos_anteriores_usd ?? []), previo.costo_usd],
+        salida: l.salida,
+      } satisfies Cacheado);
+      console.log(`${d.id}: ${l.costoUsd.toFixed(4)} USD`);
+    } catch (e) {
+      console.log(`${d.id}: ${(e as Error).message}`);
+    }
+  }
+  console.log(`Releídos ${docs.length}: ${costo.toFixed(4)} USD`);
+}
+
 async function lote(topeUsd: number) {
   const docs = documentos().filter((d) => !cacheado(d.id));
   const tokens = JSON.parse(readFileSync(join(CACHE, "_tokens.json"), "utf8")) as {
@@ -485,12 +534,15 @@ switch (orden) {
   case "releer":
     await releer((arg ?? "X004,X006").split(","));
     break;
+  case "medidas":
+    await releerMedidas(Number(arg ?? 5));
+    break;
   case "armar":
     armar();
     break;
   default:
     console.error(
-      "Uso: corpus estimar | piloto <n> | lote [tope_usd] | recoger <id> | releer [motivos] | armar",
+      "Uso: corpus estimar | piloto <n> | lote [tope_usd] | recoger <id> | releer [motivos] | medidas [tope_usd] | armar",
     );
     process.exit(1);
 }

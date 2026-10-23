@@ -30,9 +30,17 @@ const normal = (s: string) =>
 
 // --- Modalidad ----------------------------------------------------------------------------------
 
+/** Un vuelco, con el vocabulario de las narraciones de desarrollo (R4b: «sobre su toldo», «giro»). */
 const RX_VOLCADURA =
-  /\b(volc[oó]|volcadura|volcamiento|vuelco|volteo|se volte[oó]|dio vueltas|rod[oó] sobre)/;
+  /\b(volc|vuelc|volte|dio (?:una |varias )?vueltas|giros? sobre su eje|rodo|rodando|sobre su toldo|sobre el toldo|sobre su techo|llantas hacia arriba|sobre su costado|campana)/;
+/** El techo o el toldo en la narración: con un solo vehículo, casi siempre un vuelco (R4b, desarrollo). */
+const RX_TECHO = /\b(toldo|techo)\b/;
+/** Un objeto fijo nombrado en la narración, aunque no diga que lo golpeó (último recurso, R4b). */
+const RX_OBJETO_NOMBRADO =
+  /\b(poste|muro|arbol|barda|guarnicion|barrera|contencion|columna|pared|malla|reja|piedra|roca|puente|caseta|fachada|luminaria|arbotante)/;
 const RX_REVERSA = /\b(revers|retroced|marcha atras|en reversa)/;
+/** Un incendio: con un solo vehículo, el hecho no es un choque (CESVI lo clasifica como «otra»). */
+const RX_INCENDIO = /\b(incendi|fuego|calcinad)/;
 const RX_SALIDA =
   /\b(sali[oó] del camino|salida del camino|voladero|cuneta|barranc|despen|fuera del camino|sali[oó] de la carretera|sali[oó] del arroyo)/;
 /** El contacto con un objeto fijo dicho como tal («contra un poste», «con la barda»), no el objeto en la vía. */
@@ -78,11 +86,19 @@ function caraEnImpacto(
   return imp?.zonas?.find((z) => z.vehiculo === v)?.zona.cara ?? caraPrincipal(e, v);
 }
 
+/** Si el vehículo tiene un daño (no previo) en esa cara. */
+const danadoEn = (e: Expediente, v: Id, cara: Cara) =>
+  (e.danos ?? []).some((d) => d.vehiculo === v && !d.dano_previo && d.zona.cara === cara);
+
 const lateral = (c: Cara | null) => c === "lateral_izquierdo" || c === "lateral_derecho";
 
 /** El objeto fijo del hecho: el del impacto que leyó Croquis, o el que la narración dice golpeado. */
 function objetoFijo(e: Expediente, texto: string): boolean {
-  return (e.impactos ?? []).some((i) => i.objeto_fijo) || RX_CONTRA_OBJETO.test(texto);
+  return (
+    (e.impactos ?? []).some((i) => i.objeto_fijo) ||
+    Boolean(e.evidencias?.objetos_fijos_danados?.length) ||
+    RX_CONTRA_OBJETO.test(texto)
+  );
 }
 
 /**
@@ -96,18 +112,33 @@ export function modalidadInferida(
 ): { modalidad: string | null; motivo: string } {
   const texto = normal(narracion);
   const vs = e.vehiculos.map((v) => v.id);
+  // Quién retrocedía, si la narración lo dice (R4b: la maniobra de la versión de la evidencia).
+  const enReversa = new Set(
+    (e.versiones ?? [])
+      .find((v) => v.tipo === "evidencia")
+      ?.maniobras?.filter((m) => m.tipo === "reversa")
+      .map((m) => m.vehiculo) ?? [],
+  );
   const impactos = [...(e.impactos ?? [])].sort((a, b) => a.orden - b.orden);
   const primero = impactos[0];
   if (vs.length === 1) {
     const v = vs[0]!;
+    // El orden lo fijó la muestra de desarrollo (R4b, ADR 0069): vuelco, techo, salida, objeto.
     if (RX_VOLCADURA.test(texto))
       return { modalidad: "volcadura", motivo: "un vehículo; la narración describe un vuelco" };
-    if (objetoFijo(e, texto))
-      return { modalidad: "objeto_fijo", motivo: "un vehículo contra un objeto fijo" };
+    if (RX_TECHO.test(texto) || danadoEn(e, v, "techo"))
+      return { modalidad: "volcadura", motivo: "un vehículo con el techo en la narración" };
     if (RX_SALIDA.test(texto))
       return { modalidad: "salida_de_camino", motivo: "un vehículo que sale del camino" };
+    if (objetoFijo(e, texto))
+      return { modalidad: "objeto_fijo", motivo: "un vehículo contra un objeto fijo" };
+    // «Otra» solo con evidencia de un hecho sin choque (R4b, ADR 0069), nunca por descarte.
+    if (RX_INCENDIO.test(texto))
+      return { modalidad: "otra", motivo: "un vehículo y un incendio, sin choque descrito" };
     if (caraPrincipal(e, v) === "posterior")
       return { modalidad: "alcance", motivo: "un vehículo golpeado en su parte posterior" };
+    if (RX_OBJETO_NOMBRADO.test(texto))
+      return { modalidad: "objeto_fijo", motivo: "un vehículo y un objeto fijo nombrado" };
     return { modalidad: null, motivo: "un vehículo, sin objeto, vuelco ni salida descritos" };
   }
   const par =
@@ -123,7 +154,8 @@ export function modalidadInferida(
     if (lateral(una ?? null)) return { modalidad: "lateral", motivo: "contacto en un costado" };
     return { modalidad: null, motivo: "sin las caras de contacto de los dos vehículos" };
   }
-  if ((a === "posterior" || b === "posterior") && RX_REVERSA.test(texto) && a !== b)
+  const atras = par.filter((_, i) => [a, b][i] === "posterior");
+  if (atras.length === 1 && (atras.some((v) => enReversa.has(v)) || RX_REVERSA.test(texto)))
     return { modalidad: "reversa", motivo: "parte posterior, y la narración describe una reversa" };
   const caras = [a, b].sort().join("+");
   if (caras === "frontal+posterior")
@@ -389,6 +421,13 @@ export function resumen(
         conModalidad.length,
       ),
       sin_inferir: conModalidad.filter((f) => f.comparacion.modalidad.croquis === null).length,
+      // Cada «otra» que predice Croquis cuenta: si no lo era, es un error (R4b).
+      otra_predicha: tasa(
+        conModalidad.filter(
+          (f) => f.comparacion.modalidad.croquis === "otra" && f.comparacion.modalidad.coincide,
+        ).length,
+        conModalidad.filter((f) => f.comparacion.modalidad.croquis === "otra").length,
+      ),
       fisicas: {
         croquis: tasa(
           fisicas.filter((f) => f.comparacion.modalidad.coincide).length,
@@ -411,6 +450,20 @@ export function resumen(
       },
       por_modalidad: Object.fromEntries(
         [...porModalidad.entries()].sort().map(([k, r]) => [k, tasa(r.k, r.n)]),
+      ),
+      // De lo que predice Croquis, cuánto es lo que concluyó CESVI (R4b): un último recurso que
+      // acierta poco se ve aquí, aunque suba la exhaustividad de su modalidad.
+      precision_por_modalidad: Object.fromEntries(
+        [...new Set(conModalidad.map((f) => f.comparacion.modalidad.croquis))]
+          .filter((k): k is string => k !== null)
+          .sort()
+          .map((k) => {
+            const pred = conModalidad.filter((f) => f.comparacion.modalidad.croquis === k);
+            return [
+              k,
+              tasa(pred.filter((f) => f.comparacion.modalidad.coincide).length, pred.length),
+            ];
+          }),
       ),
     },
     zonas: {

@@ -14,7 +14,7 @@
  * eventos posteriores (`segundo_impacto`); el solver los resuelve cuando el par se toca.
  */
 import { buildSpec, fact, emptyFacts, type Fact } from "@croquis/extraction";
-import { fullResult } from "@croquis/solver-ts";
+import { fullResult, reconstruct } from "@croquis/solver-ts";
 import type { Expediente } from "./corpus";
 import { avanzar, enMetros, type LonLat } from "./geo";
 
@@ -41,6 +41,13 @@ const OBJETO: [RegExp, string][] = [
 const DEL_PERITO = { fuente: "usuario", confianza: 0.9 } as const;
 /** Sin posición inicial del perito, el vehículo empieza 12 m antes del impacto en su rumbo. */
 const ANTES_DEL_IMPACTO_M = 12;
+/** La maniobra de la escena v1 para cada maniobra narrada que cambia la reconstrucción (R4b). */
+const MANIOBRA_ESCENA: Record<string, string> = {
+  reversa: "reversa",
+  se_detiene: "detenido",
+  vira_izquierda: "vuelta_izquierda",
+  vira_derecha: "vuelta_derecha",
+};
 
 /**
  * La zona horizontal CDC (SAE J224) de una zona del diagrama del perito: en el frente y la parte
@@ -97,11 +104,19 @@ export function especDeExpediente(e: Expediente, specId = "caso-nuevo"): EscenaS
   ];
   const vehiculos = orden.map((id) => e.vehiculos.find((v) => v.id === id)!);
 
-  // 1. Base válida con buildSpec.
+  // 1. Base válida con buildSpec, con la maniobra que dice la narración (R4b): quien retrocede va en
+  // reversa (avanza con la parte posterior por delante) y quien estaba detenido empieza quieto.
+  const maniobraNarrada = new Map<Id, string>();
+  for (const m of (e.versiones ?? []).find((v) => v.tipo === "evidencia")?.maniobras ?? []) {
+    const k = MANIOBRA_ESCENA[m.tipo];
+    if (k && !maniobraNarrada.has(m.vehiculo)) maniobraNarrada.set(m.vehiculo, k);
+  }
   const facts = emptyFacts();
   for (const v of vehiculos) {
     const m = new Map<string, Fact>();
     if (v.clase) m.set("clase", fact(v.clase, null, "supuesto"));
+    const man = maniobraNarrada.get(v.id);
+    if (man) m.set("maniobra", fact(man, null, "supuesto"));
     facts.vehiculos.push(m);
   }
   for (const z of primero?.zonas ?? []) {
@@ -158,6 +173,14 @@ export function especDeExpediente(e: Expediente, specId = "caso-nuevo"): EscenaS
     if (v.masa && v.masa.unidad === "kg") {
       sv.masa = { valor: v.masa.valor, unidad: "kg", ...DEL_PERITO };
     }
+    if (maniobraNarrada.has(v.id) && sv.maniobra) {
+      sv.maniobra = {
+        ...(sv.maniobra as Json),
+        fuente: "usuario",
+        confianza: 0.8,
+        nota: "Lo dice la narración del perito.",
+      };
+    }
     if (!origen) continue;
     const imp = deImpacto.find((p) => p.vehiculo === v.id);
     if (imp && enImpacto.length && !enImpacto.includes(v.id)) {
@@ -180,14 +203,23 @@ export function especDeExpediente(e: Expediente, specId = "caso-nuevo"): EscenaS
       const { x, y } = local(imp.punto);
       const r = rumboEscena(imp.rumbo);
       const rad = (r * Math.PI) / 180;
+      const man = maniobraNarrada.get(v.id);
+      // En reversa llega de frente a su rumbo (avanza hacia atrás); detenido, ya está ahí.
+      const d =
+        man === "detenido" ? 0 : man === "reversa" ? -ANTES_DEL_IMPACTO_M : ANTES_DEL_IMPACTO_M;
       sv.posicion_inicial = {
-        x: Math.round((x - ANTES_DEL_IMPACTO_M * Math.cos(rad)) * 1000) / 1000,
-        y: Math.round((y - ANTES_DEL_IMPACTO_M * Math.sin(rad)) * 1000) / 1000,
+        x: Math.round((x - d * Math.cos(rad)) * 1000) / 1000,
+        y: Math.round((y - d * Math.sin(rad)) * 1000) / 1000,
         rumbo_deg: r,
         procedencia: {
           fuente: "supuesto",
           confianza: 0.5,
-          nota: `${ANTES_DEL_IMPACTO_M} m antes de la posición de impacto que colocó el perito, en su rumbo.`,
+          nota:
+            man === "detenido"
+              ? "Detenido en la posición de impacto que colocó el perito."
+              : man === "reversa"
+                ? `${ANTES_DEL_IMPACTO_M} m delante de la posición de impacto que colocó el perito: llega en reversa.`
+                : `${ANTES_DEL_IMPACTO_M} m antes de la posición de impacto que colocó el perito, en su rumbo.`,
         },
       };
     }
@@ -275,7 +307,109 @@ export function especDeExpediente(e: Expediente, specId = "caso-nuevo"): EscenaS
       procedencia: { ...DEL_PERITO },
     });
   });
+  // Carambola sin las posiciones del perito (R4b): los vehículos que solo están en impactos
+  // posteriores se colocan donde la narración dice que pasó el golpe, no en la disposición genérica.
+  const colocados = colocarPosteriores(
+    spec,
+    new Set([...enImpacto, ...deImpacto.map((p) => p.vehiculo)].map(idEscena)),
+    maniobraNarrada.size ? new Set([...maniobraNarrada.keys()].map(idEscena)) : new Set(),
+  );
+  if (colocados.length) {
+    const nombres = colocados.map((v) => ids[v]).join(", ");
+    limites.push(
+      `${nombres}: sin sus posiciones en el mapa, Croquis ${colocados.length === 1 ? "lo coloca detenido" : "los coloca detenidos"} en la trayectoria del vehículo que los golpea, con la cara que dice la narración (supuesto): coloca a cada uno en el mapa para medirlo.`,
+    );
+  }
   return { spec, ids, limites, origen };
+}
+
+const CARA_POR_OMISION = "B";
+
+/**
+ * Coloca a los vehículos que solo aparecen en impactos posteriores (R4b, carambolas sin
+ * posiciones del perito). En el orden de los impactos, si uno de los dos ya está colocado y el
+ * otro no: con una reconstrucción rápida (sin Monte Carlo) se ve a dónde va el colocado después de
+ * su primer golpe, y el otro queda detenido a la mitad de ese recorrido, con la cara de contacto
+ * que dice la narración (o la parte posterior, si no la dice) de frente al que llega. Todo como
+ * supuesto. Devuelve los ids de escena colocados.
+ */
+function colocarPosteriores(
+  spec: Json & { vehiculos: Json[]; eventos: Json[] },
+  colocados: Set<string>,
+  conManiobraNarrada: Set<string>,
+): string[] {
+  const nuevos: string[] = [];
+  const posteriores = spec.eventos.filter((ev) => ev.tipo === "segundo_impacto");
+  for (const ev of posteriores) {
+    const [a, b] = ev.actores as string[];
+    if (!a || !b) continue;
+    const [fijo, nuevo] =
+      colocados.has(a) && !colocados.has(b)
+        ? [a, b]
+        : colocados.has(b) && !colocados.has(a)
+          ? [b, a]
+          : [null, null];
+    if (!fijo || !nuevo) continue;
+    const r = reconstruct(spec);
+    const vf = r.vehiculos.find((v) => v.id === fijo);
+    const vn = r.vehiculos.find((v) => v.id === nuevo);
+    const golpe = r.eventos
+      .filter((x) => x.tipo.startsWith("impacto_") && x.actores.includes(fijo))
+      .sort((x, y) => x.t - y.t)[0];
+    if (!vf || !vn || !golpe) continue;
+    const tr = vf.trajectory;
+    const i0 = tr.t.findIndex((t) => t >= golpe.t);
+    if (i0 < 0) continue;
+    // El recorrido real después del golpe (puede curvarse si gira): a la mitad de su longitud.
+    const tramos = [0];
+    for (let i = i0 + 1; i < tr.t.length; i++)
+      tramos.push(tramos.at(-1)! + Math.hypot(tr.x[i]! - tr.x[i - 1]!, tr.y[i]! - tr.y[i - 1]!));
+    const recorrido = tramos.at(-1)!;
+    // Si después del golpe casi no se mueve, no alcanza a nadie: se queda la disposición genérica.
+    if (recorrido < 0.5) continue;
+    const im = i0 + tramos.findIndex((s) => s >= 0.5 * recorrido);
+    const v = Math.hypot(tr.vx[im]!, tr.vy[im]!);
+    if (v < 0.05) continue;
+    // La dirección del movimiento en ese punto, y lo que sobresale el vehículo hacia ella.
+    const d: [number, number] = [tr.vx[im]! / v, tr.vy[im]! / v];
+    const rel = tr.yaw[im]! - Math.atan2(d[1], d[0]);
+    const alcance =
+      Math.abs(Math.cos(rel)) * (vf.length / 2) + Math.abs(Math.sin(rel)) * (vf.width / 2);
+    const contacto: [number, number] = [tr.x[im]! + d[0] * alcance, tr.y[im]! + d[1] * alcance];
+    const zona = (
+      ev.zonas_impacto as { vehiculo_id: string; cdc: { lado: string } }[] | undefined
+    )?.find((z) => z.vehiculo_id === nuevo);
+    const cara = zona?.cdc.lado ?? CARA_POR_OMISION;
+    // El rumbo que deja la cara de contacto mirando hacia el que llega (−d).
+    const haciaAtras = Math.atan2(-d[1], -d[0]);
+    const rumbo =
+      cara === "F"
+        ? haciaAtras
+        : cara === "B"
+          ? haciaAtras + Math.PI
+          : cara === "L"
+            ? haciaAtras - Math.PI / 2
+            : haciaAtras + Math.PI / 2;
+    const fondo = cara === "F" || cara === "B" ? vn.length / 2 : vn.width / 2;
+    const sv = spec.vehiculos.find((v) => v.id === nuevo)!;
+    const grados = ((((rumbo * 180) / Math.PI) % 360) + 360) % 360;
+    sv.posicion_inicial = {
+      x: Math.round((contacto[0] + d[0] * fondo) * 1000) / 1000,
+      y: Math.round((contacto[1] + d[1] * fondo) * 1000) / 1000,
+      rumbo_deg: Math.round(grados * 1000) / 1000,
+      procedencia: {
+        fuente: "supuesto",
+        confianza: 0.3,
+        nota: "Detenido en la trayectoria del vehículo que lo golpea, con la cara de contacto que dice la narración.",
+      },
+    };
+    sv.velocidad_previa = { valor: 0, unidad: "km/h", fuente: "supuesto", confianza: 0.3 };
+    if (!conManiobraNarrada.has(nuevo))
+      sv.maniobra = { valor: "detenido", fuente: "supuesto", confianza: 0.3 };
+    colocados.add(nuevo);
+    nuevos.push(nuevo);
+  }
+  return nuevos;
 }
 
 export interface VelocidadReconstruida {

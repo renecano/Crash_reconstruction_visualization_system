@@ -28,14 +28,17 @@ import {
 } from "@croquis/scene-schema";
 import { GLOSARIO, glosarioParaPrompt, ubicarCita } from "./hecho-lectura";
 
-export const VERSION_PROMPT_CORPUS = "corpus-cesvi-v3";
+export const VERSION_PROMPT_CORPUS = "corpus-cesvi-v4";
 
 /**
  * Versiones del prompt con que se aceptan lecturas en el corpus. La v3 solo agrega cómo nombrar la
  * contraparte de un impacto de un solo vehículo y el vehículo del declarante; con ella se releyeron
- * los dictámenes que con la v2 no validaban por eso (ADR 0058).
+ * los dictámenes que con la v2 no validaban por eso (ADR 0058). La v4 solo agrega que la masa, la
+ * rigidez y las medidas de deformación van en el vehículo y en el daño aunque el reporte las
+ * escriba en sus cálculos o en una tabla, y que de una cuenta se copia el resultado; con ella se
+ * releen los reportes que traen esas medidas (R4b, ADR 0069).
  */
-export const VERSIONES_ACEPTADAS = ["corpus-cesvi-v2", "corpus-cesvi-v3"];
+export const VERSIONES_ACEPTADAS = ["corpus-cesvi-v2", "corpus-cesvi-v3", "corpus-cesvi-v4"];
 
 export type Expediente = NonNullable<EscenaSpec["expediente"]>;
 
@@ -73,13 +76,15 @@ export const CAMPOS_POR_SECCION = {
     "intercambio",
     "previo",
   ],
-  impacto: ["participante", "objeto_fijo"],
+  impacto: ["participante", "objeto_fijo", "contacto"],
   declaracion: ["version", "maniobra"],
   restos: ["longitud"],
   huella: ["tipo_huella", "longitud"],
   objeto_fijo: ["descripcion"],
   // Solo la lectura de la narración del perito (R1): dónde queda cada vehículo, en palabras.
   posicion: ["fase", "descripcion"],
+  // Solo la lectura de la narración (R4b): lo que hacía cada vehículo antes del impacto.
+  movimiento: ["maniobra"],
   calculo: ["metodo", "resultado", "entradas"],
   criterio: ["criterio", "estado"],
   conclusion: ["veredicto"],
@@ -170,13 +175,13 @@ Vehículos: V1, V2, V3… en el orden en que el dictamen los presenta por primer
 
 Secciones y campos:
 - caso (n 1, vehículo «ninguno»): modalidad (una fila por modalidad: ${lista("modalidad")}), aseguradora, fecha_hora, lugar (la dirección como la escribe), municipio, entidad (el estado de la república).
-- vehiculo (n 1, 2…; vehículo V1, V2…): marca, modelo (lo que el dictamen llama tipo o versión, p. ej. «Matiz»), anio (el año modelo), clase (solo si es clara: ${lista("clase")}), masa (p. ej. "1,450 kg") y rigidez (p. ej. "A = 52,000 N/m, B = 345,000 N/m²"), solo si las escribe.
+- vehiculo (n 1, 2…; vehículo V1, V2…): marca, modelo (lo que el dictamen llama tipo o versión, p. ej. «Matiz»), anio (el año modelo), clase (solo si es clara: ${lista("clase")}), masa (p. ej. "1,450 kg"; también si la llama peso) y rigidez (p. ej. "A = 52,000 N/m, B = 345,000 N/m²"), solo si las escribe, aunque sea en la sección de cálculos o en una tabla.
 - dano (un grupo por cada zona dañada de cada vehículo que describe, incluidas las previas o sin relación; vehículo = el dañado):
   - cara (${lista("cara")}); tercio (izquierdo, centro o derecho en el frente y la parte posterior; delantero, medio o trasero en los laterales); vertice (${lista("vertice")});
   - altura: la altura del daño desde el piso, como "45 a 95 cm" (o un solo valor);
   - direccion: la dirección de la deformación (${lista("direccion")}; una fila por dirección);
   - tipo (${lista("tipo")}; una fila por tipo); magnitud (${lista("magnitud")}) si la califica;
-  - medidas: las medidas de deformación C1…C6 y el ancho L, como "C1 0.96, C2 0.86, L 1.689 m";
+  - medidas: las medidas de deformación C1…C6 y el ancho L con su unidad, como "C1 0.96 m, C2 0.86 m, L 1.689 m", aunque estén en la sección de cálculos o en una tabla; si el dictamen hace la cuenta («C1 = 85 – 45 = 40 cm»), copia el resultado escrito ("C1 40 cm");
   - intercambio: el material transferido, su color y sobre qué zona (p. ej. "pintura blanca sobre la defensa trasera");
   - previo: «si» si el dictamen dice que el daño es previo, con óxido o sin relación con el hecho.
 - impacto (n = el orden en la secuencia: 1, 2, 3…; una carambola tiene varios; vehículo «ninguno»): participante (una fila por cada vehículo que participa, aunque el dictamen no dé sus datos: V1, V2…) y objeto_fijo (poste, muro, guarnición, registro, árbol…) si el impacto es contra un objeto. Todo impacto tiene dos participantes, o un participante y un objeto_fijo: si solo participa un vehículo, objeto_fijo nombra la contraparte como la describe el dictamen («superficie de rodamiento» en una volcadura, «bache», «talud», «cuerpo duro no identificado» si no la identifica).
@@ -257,6 +262,48 @@ export function unidadEscrita(t: string): string {
     .trim()
     .slice(0, 20);
 }
+
+/** Escala a metros de una unidad de longitud escrita («cm» → 0.01); null si no hay unidad. */
+function escalaDe(t: string): number | null {
+  if (/(?<![a-z])mm\b|mil[ií]m/i.test(t)) return 0.001;
+  if (/(?<![a-z])cm\b|cent[ií]m/i.test(t)) return 0.01;
+  if (/(?<![a-z])m\b|metro/i.test(t)) return 1;
+  return null;
+}
+
+/**
+ * Las medidas de deformación de un texto («C1 0.96, C2 0.86, L 1.689 m»), en metros. Cada una vale
+ * el último número de su tramo: si el texto hace la cuenta («C1 = 85 – 45 = 40 cm = 0.40 m»), es el
+ * resultado escrito, no el primer término. La unidad es la que va junto a ese número o, si no
+ * tiene, la del texto. Una C sin unidad de más de 3 se lee en cm (ninguna deformación mide 3 m).
+ * Un tramo que solo trae la resta, sin resultado, no da medida: Croquis no hace cuentas.
+ */
+export function medidasDeDeformacion(
+  t: string,
+): { clave: string; valor: number; escrito: number; escala: number }[] {
+  const general = escalaDe(t);
+  const claves = [...t.matchAll(/\b(C\s?[1-6]|L)\b\s*[=:]?/gi)];
+  return claves.flatMap((c, i) => {
+    // El tramo llega hasta la siguiente medida o el siguiente separador («; », «, y una masa…»).
+    const tramo = t
+      .slice(c.index + c[0].length, claves[i + 1]?.index ?? t.length)
+      .split(/;|,\s+(?=[^\d\s])|\sy\s/)[0]!;
+    const nums = [...tramo.matchAll(RX_NUMERO)];
+    const ultimo = nums.at(-1);
+    if (!ultimo) return [];
+    const escrito = leerNumero(ultimo[0]);
+    const resta = nums.length > 1 && !/=/.test(tramo.slice(nums.at(-2)!.index, ultimo.index));
+    if (escrito < 0 || resta) return [];
+    const junto = /^\s*(mm|cm|m|metros?|cent[ií]metros?|mil[ií]metros?)\b/i.exec(
+      tramo.slice(ultimo.index + ultimo[0].length),
+    );
+    const clave = c[1]!.replace(/\s/g, "").toUpperCase();
+    let escala = (junto && escalaDe(junto[1]!)) ?? general ?? 1;
+    if (!junto && general === null && clave !== "L" && escrito > 3) escala = 0.01;
+    return [{ clave, valor: redondearM(escrito * escala), escrito, escala }];
+  });
+}
+const redondearM = (x: number) => Math.round(x * 1e6) / 1e6;
 
 /** Los números escritos en una cita, leyendo la coma como decimal y como separador de miles. */
 export function numerosEnCita(cita: string): number[] {
@@ -402,6 +449,75 @@ const libre = (t: string, max: number): string | undefined => {
   return r ? r.slice(0, max) : undefined;
 };
 
+/**
+ * La masa en kg aunque el texto escriba «Kg», «kgs», «kilogramos» o toneladas (R4b): la
+ * verificación CESVI y la escena solo la toman en kg. Otra unidad se deja como está.
+ */
+function enKg<T extends { valor: number; unidad: string }>(m: T | undefined): T | undefined {
+  if (!m) return m;
+  if (/^k(?:ilo)?g/i.test(m.unidad.trim())) return { ...m, unidad: "kg" };
+  if (/^(?:ton|t\b)/i.test(m.unidad.trim()))
+    return { ...m, valor: redondear(m.valor * 1000), unidad: "kg" };
+  return m;
+}
+
+/** Nombres de la masa en las entradas de un cálculo («m», «m2», «mB», «masa del vehículo B»…). */
+const RX_MASA = /^(?:m(?:[_ ]?[1-8ab])?|masa\b.*|peso\b.*)$/i;
+const RX_C = /^C\s?([1-6])$/i;
+
+/**
+ * Las entradas de los cálculos en los campos del vehículo y del daño (R4b), para que la
+ * verificación CESVI y la inversión las usen: C1…C6 y L en la magnitud del primer daño del vehículo
+ * (sin los previos) que no las trae; la masa y la rigidez A y B, en el vehículo. Solo llena campos
+ * vacíos: lo que el texto dice en su lugar manda. Cada valor conserva la cita del cálculo.
+ */
+export function conEntradasDeCalculo(e: Expediente): Expediente {
+  const vehiculos = e.vehiculos.map((v) => ({ ...v }));
+  const danos = (e.danos ?? []).map((d) => ({ ...d }));
+  for (const c of e.calculos ?? []) {
+    const v = vehiculos.find((x) => x.id === c.vehiculo);
+    if (!v) continue;
+    const ent = (c.entradas ?? []).map((x) => ({ ...x, nombre: x.nombre.trim() }));
+    const cita = c.cita ? { cita: c.cita } : {};
+    if (!v.masa) {
+      const m = ent.find((x) => RX_MASA.test(x.nombre) && /kg|ton|^t$/i.test(x.valor.unidad));
+      if (m) {
+        const ton = /ton|^t$/i.test(m.valor.unidad);
+        v.masa = {
+          valor: ton ? redondear(m.valor.valor * 1000) : m.valor.valor,
+          unidad: "kg",
+          fuente: m.valor.fuente,
+          ...cita,
+        };
+      }
+    }
+    const a = ent.find((x) => x.nombre === "A");
+    const b = ent.find((x) => x.nombre === "B");
+    if (!v.rigidez && a && b) {
+      v.rigidez = {
+        A: a.valor.valor,
+        B: b.valor.valor,
+        fuente: a.valor.fuente === "perito" ? "perito" : "dictamen",
+        ...cita,
+      };
+    }
+    const enMetros = (x: (typeof ent)[number], esC: boolean) => {
+      const escala = escalaDe(x.valor.unidad) ?? (esC && x.valor.valor > 3 ? 0.01 : 1);
+      return redondear(x.valor.valor * escala);
+    };
+    const cs = ent
+      .filter((x) => RX_C.test(x.nombre))
+      .sort((p, q) => Number(RX_C.exec(p.nombre)![1]) - Number(RX_C.exec(q.nombre)![1]))
+      .map((x) => enMetros(x, true));
+    const l = ent.find((x) => x.nombre.toUpperCase() === "L");
+    const d = danos.find((x) => x.vehiculo === v.id && !x.dano_previo && !x.magnitud?.c_m?.length);
+    if (cs.length >= 2 && l && d) {
+      d.magnitud = { ...d.magnitud, c_m: cs.slice(0, 6), l_m: enMetros(l, false) };
+    }
+  }
+  return { ...e, vehiculos, ...(e.danos ? { danos } : {}) };
+}
+
 /** La salida del modelo como expediente, revisada contra el texto del dictamen. */
 export function expedienteDeSalida(
   s: SalidaCorpus,
@@ -492,7 +608,7 @@ export function expedienteDeSalida(
     if (!id || ids.has(id)) continue;
     ids.add(id);
     const anio = num(numeroEscrito(uno(g, "anio")), g);
-    const masa = medida(g, "masa", "kg");
+    const masa = enKg(medida(g, "masa", "kg"));
     const rig = uno(g, "rigidez");
     const a = num(numeroEscrito(/\bA\s*[=:]?\s*([-\d.,]+)/.exec(rig)?.[1] ?? ""), g);
     const b = num(numeroEscrito(/\bB\s*[=:]?\s*([-\d.,]+)/.exec(rig)?.[1] ?? ""), g);
@@ -544,16 +660,12 @@ export function expedienteDeSalida(
         .map((x) => num(x, g))
         .filter((x): x is number => x !== undefined)
         .map((x) => redondear(x * k));
-      const m = uno(g, "medidas");
-      const km = /(?<![a-z])mm\b/i.test(m) ? 0.001 : /(?<![a-z])cm\b|cent/i.test(m) ? 0.01 : 1;
-      const pares = [...m.matchAll(/\b(C[1-6]|L)\s*[=:]?\s*(-?\d[\d.,]*\d|\d)/gi)].map((p) => ({
-        k: p[1]!.toUpperCase(),
-        v: num(leerNumero(p[2]!), g),
-      }));
-      const cs = pares
-        .filter((p) => p.k !== "L" && p.v !== undefined)
-        .map((p) => redondear(p.v! * km));
-      const l = pares.find((p) => p.k === "L")?.v;
+      // Cada medida, si su número está escrito en una cita del grupo.
+      const medidas = medidasDeDeformacion(uno(g, "medidas")).filter(
+        (x) => num(x.escrito, g) !== undefined,
+      );
+      const cs = medidas.filter((x) => x.clave !== "L").map((x) => x.valor);
+      const l = medidas.find((x) => x.clave === "L")?.valor;
       const tercio = uno(g, "tercio");
       return limpio({
         vehiculo: g.vehiculo!,
@@ -569,7 +681,7 @@ export function expedienteDeSalida(
           limpio({
             cualitativa: uno(g, "magnitud") || undefined,
             c_m: noVacio(cs.slice(0, 6)),
-            l_m: l !== undefined ? redondear(l * km) : undefined,
+            l_m: l,
           }),
         ),
         intercambio_material: (() => {
@@ -582,17 +694,39 @@ export function expedienteDeSalida(
       });
     }) as NonNullable<Expediente["danos"]>;
 
-  const impactos = de("impacto").map((g) =>
-    limpio({
+  const impactos = de("impacto").map((g) => {
+    const vehiculos = varios(g, "participante");
+    // La cara con que tocó cada participante, si el texto la dice («V1 frontal»): R4b.
+    const zonas = varios(g, "contacto").flatMap((t) => {
+      const m = /\b(V[1-8])\b\W*([a-záéíóú_ ]+)/i.exec(t);
+      const cara = m?.[2]!.trim().toLowerCase().replace(/\s+/g, "_");
+      if (!m || !cara || !VALORES.cara!.includes(cara) || !vehiculos.includes(m[1]!.toUpperCase()))
+        return [];
+      return [{ vehiculo: m[1]!.toUpperCase(), zona: { cara } }];
+    });
+    const unicas = zonas.filter((z, i) => zonas.findIndex((x) => x.vehiculo === z.vehiculo) === i);
+    return limpio({
       orden: g.n,
-      vehiculos: noVacio(varios(g, "participante")),
+      vehiculos: noVacio(vehiculos),
       objeto_fijo: libre(uno(g, "objeto_fijo"), 120),
+      zonas: noVacio(unicas),
       fuente: F,
       cita: cita(g),
-    }),
-  ) as NonNullable<Expediente["impactos"]>;
+    });
+  }) as NonNullable<Expediente["impactos"]>;
 
-  const versiones = de("declaracion").map((g) =>
+  // Lo que hacía cada vehículo antes del impacto según el texto (R4b): la versión de la evidencia.
+  const movimientos = de("movimiento")
+    .filter((g) => g.vehiculo && uno(g, "maniobra"))
+    .map((g) => {
+      const c = cita(g);
+      return { vehiculo: g.vehiculo!, tipo: uno(g, "maniobra"), ...(c && { cita: c }) };
+    });
+  const evidencia = movimientos.length
+    ? [{ tipo: "evidencia" as const, maniobras: movimientos.slice(0, 20) }]
+    : [];
+
+  const declaradas = de("declaracion").map((g) =>
     limpio({
       tipo: "declarada" as const,
       declarante: g.vehiculo ?? undefined,
@@ -606,6 +740,7 @@ export function expedienteDeSalida(
         : undefined,
     }),
   ) as NonNullable<Expediente["versiones"]>;
+  const versiones = [...evidencia, ...declaradas] as NonNullable<Expediente["versiones"]>;
 
   const restos0 = de("restos")[0];
   const huellas = de("huella")
@@ -662,25 +797,27 @@ export function expedienteDeSalida(
     ) as NonNullable<Expediente["criterios"]>;
 
   const conclusion0 = de("conclusion").find((g) => uno(g, "veredicto"));
-  const expediente = limpio({
-    caso,
-    vehiculos,
-    danos: noVacio(danos),
-    impactos: noVacio(impactos),
-    versiones: noVacio(versiones),
-    evidencias,
-    calculos: noVacio(calculos),
-    criterios: noVacio(criterios),
-    resultado: conclusion0
-      ? {
-          conclusion: limpio({
-            veredicto: uno(conclusion0, "veredicto"),
-            cita: cita(conclusion0),
-            fuente: F,
-          }),
-        }
-      : undefined,
-  }) as Expediente;
+  const expediente = conEntradasDeCalculo(
+    limpio({
+      caso,
+      vehiculos,
+      danos: noVacio(danos),
+      impactos: noVacio(impactos),
+      versiones: noVacio(versiones),
+      evidencias,
+      calculos: noVacio(calculos),
+      criterios: noVacio(criterios),
+      resultado: conclusion0
+        ? {
+            conclusion: limpio({
+              veredicto: uno(conclusion0, "veredicto"),
+              cita: cita(conclusion0),
+              fuente: F,
+            }),
+          }
+        : undefined,
+    }) as Expediente,
+  );
   const posiciones = de("posicion")
     .filter((g) => g.vehiculo && uno(g, "fase") && uno(g, "descripcion").trim())
     .map((g) => {

@@ -1,6 +1,7 @@
 import { MemoryBudgetStore } from "@croquis/extraction/server";
 import { describe, expect, it } from "vitest";
 import type { ClienteClaude } from "./consideraciones";
+import { VERSION_PROMPT_ESCENA } from "../escena-narracion";
 import { leerEscena } from "./escena";
 
 /** Un cliente falso que responde con `texto` (sin red). */
@@ -45,7 +46,7 @@ describe("lectura de la narración a escena (servidor)", () => {
       cliente,
     });
     expect(r.salida).toEqual(SALIDA);
-    expect(r.version).toBe("escena-narracion-v1");
+    expect(r.version).toBe(VERSION_PROMPT_ESCENA);
     expect(await gasto.spentToday()).toBeCloseTo(r.costoUsd, 10);
     expect(JSON.stringify(cliente.pedidos[0])).toContain("Narración del perito");
   });

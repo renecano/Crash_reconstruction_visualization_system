@@ -67,10 +67,7 @@
     },
     "friccion": {
       "valor": 0.75,
-      "rango": [
-        0.65,
-        0.85
-      ],
+      "rango": [0.65, 0.85],
       "fuente": "default",
       "confianza": 0.5,
       "nota": "Asfalto seco; rango de literatura, se referencia en docs/physics.md (F2)."
@@ -148,10 +145,7 @@
       "masa": {
         "valor": 1120,
         "unidad": "kg",
-        "rango": [
-          1050,
-          1250
-        ],
+        "rango": [1050, 1250],
         "fuente": "default",
         "confianza": 0.6
       },
@@ -194,10 +188,7 @@
       "velocidad_previa": {
         "valor": 25,
         "unidad": "km/h",
-        "rango": [
-          20,
-          30
-        ],
+        "rango": [20, 30],
         "fuente": "relato",
         "confianza": 0.6,
         "evidencia": [
@@ -237,9 +228,7 @@
           "confianza": 0.4
         }
       },
-      "ocupantes": [
-        "per-a1"
-      ]
+      "ocupantes": ["per-a1"]
     },
     {
       "id": "veh-b",
@@ -274,10 +263,7 @@
       "masa": {
         "valor": 1350,
         "unidad": "kg",
-        "rango": [
-          1200,
-          1550
-        ],
+        "rango": [1200, 1550],
         "fuente": "default",
         "confianza": 0.5
       },
@@ -359,9 +345,7 @@
           "confianza": 0.4
         }
       },
-      "ocupantes": [
-        "per-b1"
-      ]
+      "ocupantes": ["per-b1"]
     }
   ],
   "personas": [
@@ -400,20 +384,14 @@
       "estatura": {
         "valor": 1.7,
         "unidad": "m",
-        "rango": [
-          1.55,
-          1.85
-        ],
+        "rango": [1.55, 1.85],
         "fuente": "default",
         "confianza": 0.3
       },
       "masa": {
         "valor": 75,
         "unidad": "kg",
-        "rango": [
-          55,
-          95
-        ],
+        "rango": [55, 95],
         "fuente": "default",
         "confianza": 0.3
       }
@@ -451,10 +429,7 @@
       "id": "ev-impacto",
       "orden": 1,
       "tipo": "impacto_vehiculo_vehiculo",
-      "actores": [
-        "veh-a",
-        "veh-b"
-      ],
+      "actores": ["veh-a", "veh-b"],
       "t": {
         "valor": 0,
         "unidad": "s",
@@ -512,17 +487,11 @@
       "id": "ev-reposo",
       "orden": 2,
       "tipo": "reposo",
-      "actores": [
-        "veh-a",
-        "veh-b"
-      ],
+      "actores": ["veh-a", "veh-b"],
       "t": {
         "valor": 1.5,
         "unidad": "s",
-        "rango": [
-          0.8,
-          2.5
-        ],
+        "rango": [0.8, 2.5],
         "fuente": "supuesto",
         "confianza": 0.3
       },

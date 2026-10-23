@@ -14,7 +14,14 @@
  * Las lecturas (de narraciones ya redactadas) se guardan en `data/cesvi/r4/lecturas.jsonl` para
  * medir sin API; los lotes enviados, en `data/raw/cesvi/r4/` (fuera de git).
  *
- * Uso (desde packages/cesvi; con la llave en el entorno para estimar, lote y recoger):
+ * R4b (ADR 0069): la v2 lee con `escena-narracion-v2` (maniobras, caras de contacto, medidas) y
+ * guarda aparte (`data/cesvi/r4/lecturas-v2.jsonl`, `eval/results/cesvi_r4b_*.json`); los
+ * resultados de la v1 se quedan como están. En v2, desarrollo son todas las narraciones limpias de
+ * desarrollo, no solo 80. `comparar` publica la v1 y la v2 de la prueba lado a lado.
+ *
+ * Uso (desde packages/cesvi; con la llave en el entorno para estimar, piloto, lote y recoger):
+ *   pnpm exec tsx ../../eval/cesvi_r4_reproduccion.mts piloto <n>     n de desarrollo, sin lotes
+ *   pnpm exec tsx ../../eval/cesvi_r4_reproduccion.mts comparar        v1 y v2 de la prueba
  *   pnpm exec tsx ../../eval/cesvi_r4_reproduccion.mts estimar <desarrollo|prueba>
  *   pnpm exec tsx ../../eval/cesvi_r4_reproduccion.mts lote <desarrollo|prueba> <tope_usd>
  *   pnpm exec tsx ../../eval/cesvi_r4_reproduccion.mts recoger <id_lote>
@@ -42,6 +49,7 @@ import { validateEscena, validateResultado } from "../packages/scene-schema/src/
 import {
   clienteCorpus,
   costoCorpus,
+  leerConPedido,
   lecturaDeMensaje,
   MODELO_CORPUS,
   pedidoLectura,
@@ -51,13 +59,20 @@ import {
 
 const RAIZ = resolve(dirname(fileURLToPath(import.meta.url)), "..");
 const CORPUS = join(RAIZ, "data/cesvi/corpus");
-const LECTURAS = join(RAIZ, "data/cesvi/r4/lecturas.jsonl");
+const V1 = VERSION_PROMPT_ESCENA === "escena-narracion-v1";
+const LECTURAS = join(
+  RAIZ,
+  V1 ? "data/cesvi/r4/lecturas.jsonl" : "data/cesvi/r4/lecturas-v2.jsonl",
+);
+/** Prefijo de los resultados: los de la v1 se quedan; los de R4b van aparte. */
+const RESULTADO = (p: string) =>
+  join(RAIZ, `eval/results/${V1 ? "cesvi_r4_reproduccion" : "cesvi_r4b_reproduccion"}_${p}.json`);
 const LOTES = join(RAIZ, "data/raw/cesvi/r4");
 /** Los datos de la página «Reproducción de dictámenes» (solo los de la prueba que se reconstruyen). */
 const PAGINA = join(RAIZ, "data/cesvi/r4/pagina.json");
 const GRABACIONES_R1 = join(RAIZ, "data/cesvi/grabaciones/escenas");
-/** Tamaño de la muestra de desarrollo para ajustar las reglas. */
-const N_DESARROLLO = 80;
+/** Tamaño de la muestra de desarrollo para ajustar las reglas (en v2, todas las de desarrollo). */
+const N_DESARROLLO = V1 ? 80 : Number.POSITIVE_INFINITY;
 
 type Particion = "desarrollo" | "prueba";
 
@@ -110,7 +125,7 @@ export function muestra(p: Particion): Narracion[] {
   const limpias = narraciones().filter((n) => !n.fugas.length && !n.solo_conclusiones);
   if (p === "prueba") return limpias.filter((n) => prueba.has(n.id));
   return limpias
-    .filter((n) => !prueba.has(n.id) && n.conclusiones.modalidad)
+    .filter((n) => !prueba.has(n.id) && (!V1 || n.conclusiones.modalidad))
     .sort((a, b) => (sha256Hex(`r4:${a.id}`) < sha256Hex(`r4:${b.id}`) ? -1 : 1))
     .slice(0, N_DESARROLLO);
 }
@@ -312,10 +327,7 @@ function medir(p: Particion) {
       ({ conclusiones: _c, narracion: _n, expediente: _e, posiciones: _p, ...f }) => f,
     ),
   };
-  writeFileSync(
-    join(RAIZ, `eval/results/cesvi_r4_reproduccion_${p}.json`),
-    `${JSON.stringify(out, null, 1)}\n`,
-  );
+  writeFileSync(RESULTADO(p), `${JSON.stringify(out, null, 1)}\n`);
   if (p === "prueba") {
     // La página «Reproducción de dictámenes»: los casos de la prueba que Croquis reconstruye, con lo
     // que concluyó CESVI, la escena que leyó Croquis y la comparación.
@@ -340,10 +352,113 @@ function medir(p: Particion) {
   console.log(JSON.stringify({ particion: p, leidos: out.leidos, resumen: r }, null, 1));
 }
 
+/**
+ * Piloto de la v2 (R4b): n narraciones de desarrollo, sin lotes, para revisar las filas nuevas
+ * (maniobras, caras de contacto, medidas) antes de leer todo. Elige por partes iguales reversas,
+ * secuencias de más de un impacto y narraciones con medidas C. Sus lecturas cuentan para el lote.
+ */
+async function piloto(n: number) {
+  const m = lecturas();
+  const dev = muestra("desarrollo").filter((x) => !m.has(x.id));
+  const conMedidas = /\bC\s?1\s*[=:]?\s*\d/;
+  const grupos = [
+    dev.filter((x) => x.conclusiones.modalidad === "reversa"),
+    dev.filter((x) => x.conclusiones.secuencia.length >= 2),
+    dev.filter((x) => conMedidas.test(x.descripcion)),
+  ];
+  const elegidos = [...new Set(grupos.flatMap((g) => g.slice(0, Math.ceil(n / 3))))].slice(0, n);
+  const c = clienteCorpus();
+  let costo = 0;
+  for (const x of elegidos) {
+    const l = await leerConPedido<SalidaCorpus>(pedido(x), c);
+    costo += l.costoUsd;
+    m.set(x.id, {
+      id: x.id,
+      particion: "desarrollo",
+      version_prompt: VERSION_PROMPT_ESCENA,
+      modelo: l.modeloRespuesta,
+      uso: l.uso,
+      costo_usd: l.costoUsd,
+      salida: l.salida,
+    });
+    const e = escenaDeNarracion(l.salida, x.descripcion).expediente;
+    console.log(
+      x.id,
+      x.conclusiones.modalidad,
+      JSON.stringify({
+        maniobras: e.versiones
+          ?.find((v) => v.tipo === "evidencia")
+          ?.maniobras?.map((k) => `${k.vehiculo}:${k.tipo}`),
+        impactos: e.impactos?.map((i) => [
+          i.vehiculos,
+          i.zonas?.map((z) => `${z.vehiculo}:${z.zona.cara}`),
+        ]),
+        medidas: e.danos?.filter((d) => d.magnitud?.c_m).map((d) => d.magnitud),
+        masas: e.vehiculos.filter((v) => v.masa).length,
+      }),
+    );
+  }
+  guardarLecturas(m);
+  console.log(`Piloto: ${elegidos.length} lecturas, ${costo.toFixed(4)} USD`);
+}
+
+/** La v1 y la v2 de la prueba lado a lado (R4b): eval/results/cesvi_r4b_comparacion.json. */
+function compararVersiones() {
+  const leer = (f: string) =>
+    JSON.parse(readFileSync(join(RAIZ, "eval/results", f), "utf8")) as {
+      version_prompt: string;
+      leidos: number;
+      reconstruidas_en_3d?: number;
+      lineas_base: unknown;
+      resumen: ReturnType<typeof resumen>;
+    };
+  const v1 = leer("cesvi_r4_reproduccion_prueba.json");
+  const v2 = leer("cesvi_r4b_reproduccion_prueba.json");
+  const fila = (r: typeof v1) => ({
+    version_prompt: r.version_prompt,
+    leidos: r.leidos,
+    reconstruidas_en_3d: r.reconstruidas_en_3d,
+    resumen: r.resumen,
+  });
+  const modalidades = [
+    ...new Set([
+      ...Object.keys(v1.resumen.modalidad.por_modalidad),
+      ...Object.keys(v2.resumen.modalidad.por_modalidad),
+    ]),
+  ].sort();
+  const out = {
+    fecha: new Date().toISOString(),
+    descripcion:
+      "E-R4 en la prueba congelada: la v1 (reglas de ADR 0067, escena-narracion-v1) y la v2 (R4b, ADR 0069, escena-narracion-v2), medidas una sola vez cada una, con las mismas líneas base de desarrollo.",
+    lineas_base: v1.lineas_base,
+    por_modalidad: Object.fromEntries(
+      modalidades.map((k) => [
+        k,
+        {
+          v1: v1.resumen.modalidad.por_modalidad[k] ?? null,
+          v2: v2.resumen.modalidad.por_modalidad[k] ?? null,
+        },
+      ]),
+    ),
+    v1: fila(v1),
+    v2: fila(v2),
+  };
+  writeFileSync(
+    join(RAIZ, "eval/results/cesvi_r4b_comparacion.json"),
+    `${JSON.stringify(out, null, 1)}\n`,
+  );
+  console.log(JSON.stringify(out.por_modalidad, null, 1));
+}
+
 const [modo, arg, arg2] = process.argv.slice(2);
 const particion = (arg === "prueba" ? "prueba" : "desarrollo") as Particion;
 if (modo === "estimar") await estimar(particion);
+else if (modo === "piloto") await piloto(Number(arg ?? 9));
 else if (modo === "lote") await lote(particion, Number(arg2));
 else if (modo === "recoger") await recoger(arg!);
 else if (modo === "medir") medir(particion);
-else console.error("Uso: estimar | lote <particion> <tope> | recoger <lote> | medir <particion>");
+else if (modo === "comparar") compararVersiones();
+else
+  console.error(
+    "Uso: estimar | piloto <n> | lote <particion> <tope> | recoger <lote> | medir <particion> | comparar",
+  );

@@ -1,6 +1,7 @@
 import { MemoryBudgetStore } from "@croquis/extraction/server";
 import { describe, expect, it } from "vitest";
 import type { ClienteClaude } from "./consideraciones";
+import { VERSION_PROMPT_CORPUS } from "../corpus";
 import { leerDictamenImportado } from "./importar";
 
 const CORPUS = { datos: [] };
@@ -50,7 +51,7 @@ describe("importación de un dictamen (servidor)", () => {
     expect(cliente.pedidos).toHaveLength(2);
     expect(r.corpus).toEqual(CORPUS);
     expect(r.narracion).toEqual(NARRACION);
-    expect(r.versiones).toEqual({ corpus: "corpus-cesvi-v3", narracion: "narracion-cesvi-v1" });
+    expect(r.versiones).toEqual({ corpus: VERSION_PROMPT_CORPUS, narracion: "narracion-cesvi-v1" });
     expect(r.costoUsd).toBeGreaterThan(0);
     expect(await gasto.spentToday()).toBeCloseTo(r.costoUsd, 10);
   });

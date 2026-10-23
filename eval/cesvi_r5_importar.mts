@@ -15,6 +15,10 @@
  *
  * Uso (desde packages/cesvi): pnpm exec tsx ../../eval/cesvi_r5_importar.mts
  *   → eval/results/cesvi_r5_importar.json
+ *
+ * R4b (ADR 0069): con `r4b` mide el corpus rearmado (medidas al último número de su tramo, las
+ * entradas de los cálculos en sus campos, la masa en kg y la relectura v4 de los reportes con
+ * medidas) → eval/results/cesvi_r4b_importar.json. El de la v1 se queda como está.
  */
 import { readFileSync, writeFileSync } from "node:fs";
 import { dirname, join, resolve } from "node:path";
@@ -173,7 +177,12 @@ const out = {
   detalle,
 };
 writeFileSync(
-  join(RAIZ, "eval/results/cesvi_r5_importar.json"),
+  join(
+    RAIZ,
+    process.argv[2] === "r4b"
+      ? "eval/results/cesvi_r4b_importar.json"
+      : "eval/results/cesvi_r5_importar.json",
+  ),
   `${JSON.stringify(out, null, 1)}\n`,
 );
 const { detalle: _d, ...resumen } = out;

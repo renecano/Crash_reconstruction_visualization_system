@@ -75,10 +75,14 @@ describe("modalidad que infiere Croquis (R4)", () => {
     ).toBe("salida_de_camino");
     expect(modalidadInferida(uno([dano("V1", "posterior")]), "").modalidad).toBe("alcance");
     expect(modalidadInferida(uno(), "Sin más datos.").modalidad).toBeNull();
-    // Un objeto que solo está en la vía (el camellón) no es un objeto golpeado.
-    expect(
-      modalidadInferida(uno(), "La avenida tiene un camellón central con postes.").modalidad,
-    ).toBeNull();
+    // Un objeto que solo se nombra (los postes del camellón) no dice que se golpeó: en R4b es el
+    // último recurso, con su motivo, y su precisión se publica aparte (ADR 0069).
+    expect(modalidadInferida(uno(), "La avenida tiene un camellón central con postes.")).toEqual({
+      modalidad: "objeto_fijo",
+      motivo: "un vehículo y un objeto fijo nombrado",
+    });
+    // El techo en la narración de un solo vehículo apunta a un vuelco (R4b, desarrollo).
+    expect(modalidadInferida(uno(), "El toldo presenta hundimiento.").modalidad).toBe("volcadura");
   });
 
   it("la dirección de la deformación decide la cara de contacto; el techo solo no es vuelco", () => {
@@ -226,5 +230,40 @@ describe("líneas base y resumen", () => {
     expect(r.modalidad.croquis).toEqual({ k: 1, n: 1, pct: 100 });
     expect(r.modalidad.linea_base).toEqual({ modalidad: "otra", k: 0, n: 1, pct: 0 });
     expect(r.modalidad.fisicas.linea_base).toEqual({ modalidad: "alcance", k: 1, n: 1, pct: 100 });
+  });
+});
+
+describe("reglas de R4b (ADR 0069)", () => {
+  it("la reversa sale de la maniobra que narra la lectura, aunque el texto no diga «reversa»", () => {
+    const e = exp({
+      danos: [dano("V1", "posterior"), dano("V2", "frontal")],
+      versiones: [{ tipo: "evidencia", maniobras: [{ vehiculo: "V1", tipo: "reversa" }] }],
+    });
+    expect(modalidadInferida(e, "").modalidad).toBe("reversa");
+    // Sin la maniobra, la misma configuración es un alcance.
+    expect(modalidadInferida({ ...e, versiones: undefined }, "").modalidad).toBe("alcance");
+  });
+
+  it("«otra» solo con evidencia de un hecho sin choque, nunca por descarte", () => {
+    const incendio = exp({ n: 1, danos: [dano("V1", "frontal")] });
+    expect(
+      modalidadInferida(incendio, "El vehículo resultó calcinado por el incendio.").modalidad,
+    ).toBe("otra");
+    expect(
+      modalidadInferida(incendio, "El vehículo presenta daños en el frente.").modalidad,
+    ).toBeNull();
+  });
+
+  it("el resumen cuenta cada «otra» que predice Croquis, acierte o no", () => {
+    const fila = (cesvi: string, texto: string) => {
+      const e = exp({ n: 1, danos: [dano("V1", "frontal")] });
+      const c = { ...sin, modalidad: cesvi };
+      return { conclusiones: c, comparacion: comparar(c, e, [], texto) };
+    };
+    const r = resumen(
+      [fila("otra", "incendio"), fila("objeto_fijo", "incendio"), fila("otra", "sin nada")],
+      lineasBase([{ ...sin, modalidad: "otra" }]),
+    );
+    expect(r.modalidad.otra_predicha).toEqual({ k: 1, n: 2, pct: 50 });
   });
 });

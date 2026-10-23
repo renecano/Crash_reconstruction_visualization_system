@@ -103,7 +103,52 @@ Reglas de trabajo: `CLAUDE.md`. Especificación: `PLAN.md`.
     - **C0:** pasa a R0. Falta lo nuevo: la descripción de los hechos sin conclusiones, con su revisión de fuga, y lo que concluyó CESVI, estructurado.
     - **C1:** es el módulo de verificación CESVI de R2, con su reproducción (E-C1) ya corrida.
     - **C2–C8:** se reacomodan en R1–R9.
-  - **Fase actual: R7** (comparación con la declaración del conductor). R4, R5 y R6 quedaron cerradas el 2026-10-22, y R3 también; R0, R1 y R2, el 2026-10-21. C0 y C1 de la v1 quedaron cerradas el 2026-10-21. El plan de C0 fue:
+  - **Fase actual: R4b** (ronda de mejora de R4, pedida por René el 2026-10-22, antes de R7; rama `feat/r4b-mejora`). Después: la voz del video (PR #92) y R7.
+    - **Por qué:** E-R4 v1 no sostiene «Croquis llega a lo mismo que CESVI». En la prueba, la modalidad queda en 34.2 % contra 35.3 % de la línea base «siempre otra». Además:
+      - reversa: 0 de 9;
+      - objeto fijo: 35.3 %;
+      - salida del camino y volcadura: 20 %;
+      - velocidades por deformación: 0 de 5.
+    - **Reglas del juego:**
+      - Se ajusta solo con desarrollo.
+      - Las reglas se congelan en un commit antes de leer y medir la prueba, que se mide una sola vez.
+      - Se publican v1 y v2 lado a lado: los resultados de v1 se quedan como están.
+    - **Lo que ya se midió en desarrollo antes de cambiar nada** (los textos crudos y las narraciones de R0):
+      - **Medidas:** los reportes casi no las traen en el texto. De 671, 8 tienen C1 y C2 con números, 47 masas en kg y 6 la rigidez; 80 remiten a imágenes que el Markdown perdió. De 459 narraciones de desarrollo, 9 traen C1… con números. El techo de las velocidades por deformación lo pone el dato, y se va a reportar así.
+      - **«Otra» en las conclusiones de R0:** en desarrollo, 131 de 459. Muchas tienen otro título en el propio reporte («ALCANCE», «COLISIÓN PERPENDICULAR», «IMPACTO LATERAL POR MANIOBRA EN REVERSA»). Solo una parte son hechos sin choque entre vehículos: incendio, inundación, corte de circulación, bache, desprendimiento de piezas.
+      - **Reversa:** el solver gira la trayectoria 180° y el cuerpo la sigue, así que el vehículo choca con el frente. Además, `especDeExpediente` no pasa la maniobra y todo va como «recto».
+      - **Carambolas:** sin posiciones del perito, la disposición es la genérica, y 7 de 88 impactos posteriores ocurren (E-R6, sobre todo el corpus).
+    - **Plan:**
+      1. **Medidas a sus campos:**
+         - lectura de cada Ck como el último número de su tramo («C1 = 85 – 45 = 45 cm = 0.45 m» → 0.45 m);
+         - las entradas de los cálculos (C, L, masa, A y B) pasan a los campos del vehículo y del daño;
+         - prompts `escena-narracion-v2` y `corpus-cesvi-v4`, con masa y rigidez en el vehículo y las medidas en el daño;
+         - se vuelven a leer con C0 v4 solo los reportes cuyo texto trae medidas.
+      2. **Reversa:**
+         - el solver separa el sentido de marcha del rumbo del frente (Python primero, luego el port TS, con pruebas de paridad);
+         - la lectura marca la maniobra del vehículo y la escena la pasa;
+         - el que retrocede se coloca delante del punto de impacto.
+      3. **Modalidad:**
+         - reglas para objeto fijo, salida del camino, volcadura y reversa, ajustadas con todas las lecturas de desarrollo;
+         - «otra» solo con evidencia positiva de un hecho sin choque (incendio, inundación, bache…), y se publica la precisión de esas predicciones para que no regale aciertos;
+         - una auditoría (solo informativa) de la etiqueta «otra» de R0 contra el título del reporte.
+      4. **Carambolas:** colocar a los vehículos con el orden de los impactos, las caras de contacto y los detenidos que dice la narración, en lugar de la disposición genérica. E-R6 v2 se mide en desarrollo y prueba por separado, y v1 se recalcula en esa misma partición.
+      5. **Reporte:** congelar, leer la prueba con v2, medir una vez y publicar v1 y v2 por modalidad contra las líneas base (ADR 0069).
+    - **Costo estimado de API** (antes de enviar se estima con el contador de tokens y se anota el real):
+      - desarrollo con `escena-narracion-v2`: 459 narraciones a ~0.018 USD (lo que costó cada lectura de prueba en v1), ~8.2 USD;
+      - prueba: 205 narraciones, ~3.7 USD;
+      - C0 v4 de los reportes con medidas: unos 60 a ~0.028 USD, ~1.7 USD.
+      - **Total:** ~14 USD, debajo del tope de 30 USD.
+    - **Gasto real, conforme se envía:**
+      - C0 v4 (`pnpm --filter @croquis/cesvi corpus medidas 3`): 48 reportes, 2.668 USD (estimado 2.70 USD, lo que costó su lectura anterior, al doble por ir sin lotes).
+      - Piloto de `escena-narracion-v2`: 9 narraciones de desarrollo, 0.2453 USD.
+      - Desarrollo con `escena-narracion-v2`: 450 narraciones en lote (`msgbatch_01ESoqS5Fv5tmMDeY6bv3WN3`), estimado 9.02 USD; el real se anota al recogerlo.
+    - **Lo que mostró el piloto:**
+      - **Medidas:** se leen con el resultado de la cuenta (C1 0.44 m…).
+      - **Reversa:** ninguna de las 3 narraciones de reversa trae la maniobra. En desarrollo, 0 de 16 narraciones de reversa dicen que alguien retrocedía: R0 quitó la dinámica que concluye CESVI y las declaraciones, y ahí venía la reversa.
+        - La pista «estacionamiento» no sirve: aparece en 4 de 16 reversas, 1 de 112 alcances, 8 de 63 laterales y 12 de 131 «otra».
+        - **Consecuencia:** en E-R4 la reversa no se puede identificar con la entrada de la prueba. R4b arregla lo que usa el producto: si el perito narra que un vehículo retrocedía, la lectura lo marca y el solver lo reconstruye bien.
+  - **R7** (comparación con la declaración del conductor) espera a R4b. R4, R5 y R6 quedaron cerradas el 2026-10-22, y R3 también; R0, R1 y R2, el 2026-10-21. C0 y C1 de la v1 quedaron cerradas el 2026-10-21. El plan de C0 fue:
     - **Contrato v2:** `escena.schema.json` ampliado, con migración desde v1.3, Zod y Pydantic generados y un validador semántico (N vehículos, M impactos, versiones).
     - **Corpus estructurado** de los 671 dictámenes con Claude (salida estructurada, caché, semilla), validado contra el esquema, con partición congelada del 30 % y etiquetas de la conclusión revisadas en una muestra.
     - **Mediciones:** las proporciones del §2 en `eval/results/cesvi_corpus.json`; desde ahí se pueden citar.
