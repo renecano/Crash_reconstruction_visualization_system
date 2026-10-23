@@ -945,6 +945,17 @@ Reglas de trabajo: `CLAUDE.md`. Especificación: `PLAN.md`.
 
 Lo que se pospone por el trabajo con CESVI no se borra: queda aquí para después.
 
+- **Prioridad alta, justo después de R9** (René, 2026-10-23), en este orden:
+  1. **Las calles del mapa en el croquis del dictamen.** El lugar de los hechos es central para los peritos. Hoy el croquis de R8 es el dibujo a escala sin calles (ADR 0072).
+  2. **Que la validación del perito se guarde con el caso.** Hoy vive solo en la página (ADR 0072).
+  3. **Velocidades en E-R4.** Cuando René consiga los PDF originales:
+     - leer de las imágenes del PDF las medidas C1–C6, L y las masas;
+     - volver a medir.
+       Hoy las narraciones casi no traen L (ADR 0069).
+  4. **Modalidades flojas** (salida del camino, reversa y «otra»):
+     - mejorarlas con desarrollo;
+     - volver a medir la prueba una sola vez, como siempre (ADR 0069 y 0071).
+
 - **Fuera de la CI de cada PR** (ADR 0047; corre a mano con `completo.yml`, o antes de una demo con CESVI):
   - e2e completa en escritorio y celular, y las referencias visuales de `capturas-diseno` (aún sin versionar: la primera corrida completa las genera como artefacto para revisarlas y versionarlas);
   - E8 en Chromium, Firefox y WebKit;
