@@ -42,5 +42,7 @@
   - **elegir la fuente es de René** («Bloqueado»).
   - El proceso ya está pensado: escalar a las dimensiones del contrato conservando el radio de las llantas, nombrar las piezas para el daño y quitar marcas.
 - **Escenario:** banquetas, camellones, vegetación y postes del lugar real.
-- **HDRI:** Poly Haven (CC0) para el reflejo y la luz de alta y ultra.
+- **HDRI: se decide no usarlo** (2026-10-23; René puede revocarlo).
+  - **El cielo de ambiente ya es físico:** se calcula con la posición del sol para el lugar, la fecha y la hora del hecho, y se hornea como mapa de reflejos y luz.
+  - **Un HDRI es una foto con su propio sol:** los reflejos y la luz contradirían las sombras y la hora del hecho. En una reconstrucción eso pesa más que el realismo de la foto.
 - **Medición de alta y ultra:** en la computadora de demo (E6, «Bloqueado»).
