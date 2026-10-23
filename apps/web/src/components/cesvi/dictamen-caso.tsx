@@ -17,12 +17,12 @@ import {
 import type { ViewerExportApi } from "@croquis/viewer";
 import type { Map as MapaMl } from "maplibre-gl";
 import { useState } from "react";
+import { huellaDelCaso, validacionVigente, type ValidacionPerito } from "@/lib/caso-guardado";
 import { croquisDeReconstruccion } from "@/lib/croquis-caso";
 import { croquisSobreMapa } from "@/lib/croquis-mapa";
-import { useModoCesvi } from "./marco-cesvi";
-import { ESTILO_MAPA, ESTILO_MAPA_CLARO } from "./mapa-comun";
 import { dictamenCasoPdf, dictamenCasoWord, type DatosDictamenCaso } from "@/lib/dictamen-caso";
-import { huellaEntradas } from "@/lib/exportar-cesvi";
+import { ESTILO_MAPA, ESTILO_MAPA_CLARO } from "./mapa-comun";
+import { useModoCesvi } from "./marco-cesvi";
 
 function descargar(bytes: Uint8Array, nombre: string, tipo: string) {
   const url = URL.createObjectURL(new Blob([bytes as BlobPart], { type: tipo }));
@@ -60,6 +60,8 @@ export function DictamenCaso({
   declarada,
   exportApi,
   mapa = null,
+  validacion: guardada,
+  onValidacion,
 }: {
   expediente: Expediente;
   narracion: string | null;
@@ -70,11 +72,18 @@ export function DictamenCaso({
   exportApi: ViewerExportApi | null;
   /** El mapa de «Caso nuevo»: con él, el croquis va sobre las calles (R8b). */
   mapa?: MapaMl | null;
+  /** La validación del perito, que se guarda con el caso (ADR 0075). */
+  validacion: ValidacionPerito | null;
+  onValidacion: (v: ValidacionPerito | null) => void;
 }) {
   const [estructuraCesvi, setEstructuraCesvi] = useState(false);
-  const [perito, setPerito] = useState("");
-  const [conclusion, setConclusion] = useState("");
-  const [validacion, setValidacion] = useState<DatosDictamenCaso["validacion"]>(null);
+  const [perito, setPerito] = useState(guardada?.perito ?? "");
+  const [conclusion, setConclusion] = useState(guardada?.conclusion ?? "");
+  // Solo vale si es de estas mismas entradas; si el perito las cambió, el dictamen es borrador.
+  const vigente = validacionVigente(guardada, expediente, narracion);
+  const validacion: DatosDictamenCaso["validacion"] = vigente
+    ? { perito: guardada.perito, conclusion: guardada.conclusion, fecha: guardada.fecha }
+    : null;
   const [estado, setEstado] = useState<string | null>(null);
   const { tema } = useModoCesvi();
   // Qué croquis llevó el último dictamen descargado: sobre el mapa o a escala sin mapa.
@@ -115,7 +124,7 @@ export function DictamenCaso({
       estructuraCesvi,
       trazabilidad: {
         metodo: `solver de Croquis ${String(reconstruccion.resultado.version_resultado ?? "")}, lectura ${VERSION_PROMPT_ESCENA}, verificación con el método de CESVI`,
-        huella: huellaEntradas({ expediente, narracion }),
+        huella: huellaDelCaso(expediente, narracion),
       },
     };
   };
@@ -159,7 +168,7 @@ export function DictamenCaso({
           value={conclusion}
           onChange={(e) => {
             setConclusion(e.target.value);
-            setValidacion(null);
+            onValidacion(null);
           }}
           data-testid="conclusion-perito"
         />
@@ -172,7 +181,7 @@ export function DictamenCaso({
             value={perito}
             onChange={(e) => {
               setPerito(e.target.value);
-              setValidacion(null);
+              onValidacion(null);
             }}
             data-testid="nombre-perito"
           />
@@ -182,10 +191,11 @@ export function DictamenCaso({
           className="boton-secundario"
           disabled={!perito.trim() || !conclusion.trim()}
           onClick={() =>
-            setValidacion({
+            onValidacion({
               perito: perito.trim(),
               conclusion: conclusion.trim(),
               fecha: new Date().toISOString(),
+              huella: huellaDelCaso(expediente, narracion),
             })
           }
           data-testid="validar-dictamen"
@@ -196,7 +206,9 @@ export function DictamenCaso({
       <p role="status" className="t-nota" data-testid="estado-validacion">
         {validacion
           ? `Validó ${validacion.perito} el ${new Date(validacion.fecha).toLocaleString("es-MX", { dateStyle: "long", timeStyle: "short" })}.`
-          : "Sin validar: el dictamen sale como borrador."}
+          : guardada
+            ? `La validación de ${guardada.perito} era de otras entradas: cambiaron la narración o lo que marcaste. Vuelve a validar; mientras, el dictamen sale como borrador.`
+            : "Sin validar: el dictamen sale como borrador."}
       </p>
       <label className="flex items-center gap-2">
         <input

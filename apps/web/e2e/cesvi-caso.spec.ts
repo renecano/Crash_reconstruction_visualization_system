@@ -179,12 +179,16 @@ test("@flujo /cesvi/caso: de la narración del perito al mapa y a la escena", as
       .toString(),
   ).toBe("PK");
 
-  // 5. La escena, descargada: contrato 2.0.0 con lo que marcó el perito.
+  // 5. El caso guardado: contrato 2.0.0 con lo que marcó el perito y su validación (ADR 0075).
   const descarga = page.waitForEvent("download");
-  await page.getByTestId("descargar-escena").click();
+  await page.getByTestId("guardar-caso").click();
   const archivo = await descarga;
-  const d = JSON.parse(readFileSync(await archivo.path(), "utf8")) as {
+  expect(archivo.suggestedFilename()).toBe("caso-croquis.json");
+  const rutaCaso = await archivo.path();
+  const d = JSON.parse(readFileSync(rutaCaso, "utf8")) as {
+    conclusion_perito: string;
     expediente: {
+      resultado: { validado_por: string; huella_entradas: string };
       impactos: { fuente: string }[];
       versiones: {
         tipo: string;
@@ -197,6 +201,15 @@ test("@flujo /cesvi/caso: de la narración del perito al mapa y a la escena", as
   expect(posiciones).toHaveLength(4);
   expect(posiciones.every((p) => p.fuente === "perito")).toBe(true);
   expect(posiciones.find((p) => p.vehiculo === "V1" && p.fase === "final")!.rumbo).toBe(315);
+  expect(d.expediente.resultado.validado_por).toBe("Perito de prueba");
+  expect(d.conclusion_perito).toBe("Conclusión de prueba del perito.");
+
+  // Al volver a abrirlo en otra visita, regresan la narración, las posiciones y la validación.
+  await page.goto("/cesvi/caso");
+  await page.getByTestId("abrir-caso").setInputFiles(rutaCaso);
+  await expect(page.getByTestId("caso-abierto")).toContainText("Validó Perito de prueba");
+  await expect(page.getByTestId("narracion")).not.toHaveValue("");
+  await expect(page.getByTestId("colocados")).toHaveText("4 posiciones colocadas por el perito.");
   expect(errores).toEqual([]);
 });
 

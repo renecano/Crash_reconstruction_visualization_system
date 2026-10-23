@@ -21,6 +21,7 @@ import type { Map as MapaMl, Marker } from "maplibre-gl";
 // Sin la hoja de MapLibre los marcadores no quedan en su lugar (no se ven sobre el mapa).
 import "maplibre-gl/dist/maplibre-gl.css";
 import { type ReactNode, useEffect, useMemo, useRef, useState } from "react";
+import { casoParaGuardar, leerCasoGuardado, type ValidacionPerito } from "@/lib/caso-guardado";
 import { downloadBytes } from "@/lib/download";
 import ejemplo from "../../../../../data/cesvi/grabaciones/escenas/cesvi-e814f085db.json";
 import { ESTILO_MAPA, ESTILO_MAPA_CLARO, marcador } from "./mapa-comun";
@@ -278,6 +279,42 @@ export function CasoNuevo({ inicial }: { inicial?: CasoInicial } = {}) {
   const [moviles, setMoviles] = useState<PosicionMovil[]>([]);
   const [impactosMapa, setImpactosMapa] = useState<MarcaImpacto[]>([]);
   const [mapaListo, setMapaListo] = useState<MapaMl | null>(null);
+  // La validación del perito se guarda con el caso (ADR 0075).
+  const [validacion, setValidacion] = useState<ValidacionPerito | null>(null);
+  const [abierto, setAbierto] = useState<string | null>(null);
+  /** La narración del caso, la misma que lleva el dictamen y con la que se valida. */
+  const narracion = inicial ? null : texto.trim() || null;
+
+  const abrir = async (archivo: File) => {
+    let datos: unknown;
+    try {
+      datos = JSON.parse(await archivo.text());
+    } catch {
+      setAbierto("El archivo no es un caso de Croquis.");
+      return;
+    }
+    const c = leerCasoGuardado(datos);
+    if ("error" in c) {
+      setAbierto(c.error);
+      return;
+    }
+    setTexto(c.narracion ?? "");
+    setLeida(c.escena);
+    setExpediente(c.expediente);
+    setValidacion(c.validacion);
+    setNoSe(new Set());
+    const primero = c.expediente.vehiculos[0];
+    setHerramienta(primero ? { vehiculo: primero.id, fase: "final" } : null);
+    const fecha = (iso: string) =>
+      new Date(iso).toLocaleString("es-MX", { dateStyle: "long", timeStyle: "short" });
+    setAbierto(
+      `Caso guardado el ${fecha(c.guardado)}. ${
+        c.validacion
+          ? `Validó ${c.validacion.perito} el ${fecha(c.validacion.fecha)}: reconstruye para descargar el dictamen.`
+          : "Sin validar."
+      }`,
+    );
+  };
 
   const leer = async () => {
     setEstado("Leyendo la narración…");
@@ -295,6 +332,8 @@ export function CasoNuevo({ inicial }: { inicial?: CasoInicial } = {}) {
       const e = escenaDeNarracion(d.salida, texto);
       setLeida(e);
       setExpediente(e.expediente);
+      setValidacion(null);
+      setAbierto(null);
       setNoSe(new Set());
       const primero = e.expediente.vehiculos[0];
       setHerramienta(primero ? { vehiculo: primero.id, fase: "final" } : null);
@@ -368,12 +407,31 @@ export function CasoNuevo({ inicial }: { inicial?: CasoInicial } = {}) {
               >
                 Usar una narración de ejemplo
               </button>
+              <label className="boton-secundario cursor-pointer">
+                Abrir un caso guardado
+                <input
+                  type="file"
+                  accept="application/json,.json"
+                  className="sr-only"
+                  onChange={(e) => {
+                    const f = e.target.files?.[0];
+                    if (f) void abrir(f);
+                    e.target.value = "";
+                  }}
+                  data-testid="abrir-caso"
+                />
+              </label>
               {estado ? (
                 <span role="status" className="t-nota">
                   {estado}
                 </span>
               ) : null}
             </div>
+            {abierto ? (
+              <p role="status" className="t-nota" data-testid="caso-abierto">
+                {abierto}
+              </p>
+            ) : null}
           </section>
         )}
 
@@ -530,22 +588,24 @@ export function CasoNuevo({ inicial }: { inicial?: CasoInicial } = {}) {
                 onClick={() =>
                   downloadBytes(
                     new TextEncoder().encode(
-                      `${JSON.stringify({ expediente, posiciones_descritas: leida.posiciones }, null, 2)}\n`,
+                      `${JSON.stringify(casoParaGuardar({ narracion, escena: leida, expediente, validacion }), null, 2)}\n`,
                     ) as Uint8Array<ArrayBuffer>,
-                    "escena.json",
+                    "caso-croquis.json",
                     "application/json",
                   )
                 }
-                data-testid="descargar-escena"
+                data-testid="guardar-caso"
               >
-                Descargar la escena (JSON)
+                Guardar el caso
               </button>
             </section>
 
             <ReconstruccionCaso
               expediente={expediente}
-              narracion={inicial ? null : texto.trim() || null}
+              narracion={narracion}
               mapa={mapaListo}
+              validacion={validacion}
+              onValidacion={setValidacion}
               onPosiciones={setMoviles}
               onImpactos={setImpactosMapa}
             />
