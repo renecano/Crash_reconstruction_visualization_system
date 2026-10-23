@@ -167,6 +167,8 @@ test("@flujo /cesvi/caso: de la narración del perito al mapa y a la escena", as
   // El croquis a escala y los tres cuadros del 3D (el visor está abierto) van como imágenes.
   const imagenes = bytesPdf.toString("latin1").match(/\/Subtype\s*\/Image/g) ?? [];
   expect(imagenes.length).toBeGreaterThanOrEqual(4);
+  // El croquis del dictamen va sobre las calles del mapa donde el perito colocó a los vehículos.
+  await expect(dictamen).toHaveAttribute("data-croquis", "mapa");
   const word = page.waitForEvent("download");
   await dictamen.getByTestId("descargar-dictamen-word").click();
   const archivoWord = await word;
