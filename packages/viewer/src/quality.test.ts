@@ -39,4 +39,22 @@ describe("quality", () => {
       expect(p.shadowMapSize).toBeGreaterThanOrEqual(QUALITY_PROFILES.media.shadowMapSize);
     }
   });
+
+  it("los efectos de cine de R10 solo van en alta y ultra; baja y media no cambian (§7.8)", () => {
+    for (const lvl of ["baja", "media"] as const) {
+      const p = QUALITY_PROFILES[lvl];
+      expect([p.temporalAA, p.depthOfField, p.motionBlur, p.screenReflections]).toEqual([
+        false,
+        false,
+        false,
+        false,
+      ]);
+    }
+    for (const lvl of ["alta", "ultra"] as const) {
+      const p = QUALITY_PROFILES[lvl];
+      expect(p.temporalAA && p.depthOfField && p.motionBlur).toBe(true);
+    }
+    expect(QUALITY_PROFILES.alta.screenReflections).toBe(false);
+    expect(QUALITY_PROFILES.ultra.screenReflections).toBe(true);
+  });
 });

@@ -50,6 +50,13 @@ import { buildVisibilityOverlay, eyeHeightFor } from "../visibility-overlay";
 import { sunShadowFrame } from "../shadow-frame";
 import { BODY_BASE_URL, loadBodies } from "../body-assets";
 import { PostEffects } from "./PostEffects";
+import {
+  cinematicFocus,
+  firstImpactTime,
+  impactBlurWeight,
+  newFxState,
+  type FxState,
+} from "../cinematic-fx";
 import { loadEnvTextures, TEXTURE_BASE_URL, texturesWanted } from "../env-textures";
 import { attachPeople, variantsFor, type PeopleAttachment } from "../people-scene";
 import { buildGhostLayer, GHOST_COLORS } from "../ghosts";
@@ -188,8 +195,11 @@ function SceneContent({
   hipotesis,
   onExport,
   guiada,
+  fx,
 }: Omit<SceneViewerProps, "renderer" | "onRendererInfo" | "onError" | "className"> & {
   env: EnvironmentSettings;
+  /** Lo que leen los efectos de cine cada cuadro (R10): desenfoque y enfoque. */
+  fx: FxState;
 }): ReactElement {
   const profile = QUALITY_PROFILES[quality];
   const graph = useMemo(
@@ -527,6 +537,10 @@ function SceneContent({
   }, [overlay, camera, driver]);
 
   const puntoImpacto = useMemo(() => graph.root.getObjectByName("punto_impacto") ?? null, [graph]);
+  const tImpacto = useMemo(
+    () => firstImpactTime(resultado as { eventos?: { tipo: string; t?: number }[] }),
+    [resultado],
+  );
 
   useFrame((state, delta) => {
     clock.tick(Math.min(delta, 0.1), performance.now());
@@ -574,9 +588,14 @@ function SceneContent({
     else if (camera === "cenital") applyPose(persp, overheadCamera(resultado));
     else if (camera === "conductor" && driver)
       applyPose(persp, driverCamera(driver.v, t, driver.eye));
-    else if (camera === "cinematica") applyPose(persp, cinematicCamera(resultado, t));
-    else if (camera === "dano") applyPose(persp, damageCamera(resultado, t));
+    else if (camera === "cinematica") {
+      const pose = cinematicCamera(resultado, t);
+      applyPose(persp, pose);
+      fx.focus = cinematicFocus(pose);
+    } else if (camera === "dano") applyPose(persp, damageCamera(resultado, t));
     else if (camera === "persona") applyPose(persp, personCamera(resultado, t));
+    if (camera !== "cinematica") fx.focus = null;
+    fx.blur = clock.get().playing ? impactBlurWeight(t, tImpacto) : 0;
   });
 
   return (
@@ -654,6 +673,7 @@ export function SceneViewer(props: SceneViewerProps): ReactElement {
   );
   const profile = QUALITY_PROFILES[quality];
   const backendRef = useRef<RendererInfo["backend"] | undefined>(undefined);
+  const fx = useMemo(newFxState, []);
   const dpr =
     typeof window === "undefined"
       ? 1
@@ -692,9 +712,9 @@ export function SceneViewer(props: SceneViewerProps): ReactElement {
           }
         }}
       >
-        <SceneContent {...rest} quality={quality} env={env} />
+        <SceneContent {...rest} quality={quality} env={env} fx={fx} />
         {profile.ambientOcclusion || profile.bloom ? (
-          <PostEffects ambientOcclusion={profile.ambientOcclusion} withBloom={profile.bloom} />
+          <PostEffects profile={profile} fx={fx} />
         ) : null}
         <PerfProbe backend={() => backendRef.current} />
       </Canvas>

@@ -39,6 +39,15 @@ export interface QualityProfile {
   ambientOcclusion: boolean;
   /** Resplandor de luces y superficies muy brillantes (faros, lámparas, cielo). */
   bloom: boolean;
+  /**
+   * Efectos de cine de R10 (ADR 0077), solo en alta y ultra: antialiasing temporal (TRAA),
+   * profundidad de campo en la cámara cinemática y desenfoque de movimiento en el impacto.
+   */
+  temporalAA: boolean;
+  depthOfField: boolean;
+  motionBlur: boolean;
+  /** Reflejos en pantalla (SSR): el asfalto mojado y la pintura reflejan la escena. Solo ultra. */
+  screenReflections: boolean;
 }
 
 export const QUALITY_PROFILES: Record<QualityLevel, QualityProfile> = {
@@ -54,6 +63,10 @@ export const QUALITY_PROFILES: Record<QualityLevel, QualityProfile> = {
     envTextures: false,
     ambientOcclusion: false,
     bloom: false,
+    temporalAA: false,
+    depthOfField: false,
+    motionBlur: false,
+    screenReflections: false,
   },
   media: {
     level: "media",
@@ -67,6 +80,10 @@ export const QUALITY_PROFILES: Record<QualityLevel, QualityProfile> = {
     envTextures: false,
     ambientOcclusion: false,
     bloom: false,
+    temporalAA: false,
+    depthOfField: false,
+    motionBlur: false,
+    screenReflections: false,
   },
   alta: {
     level: "alta",
@@ -80,6 +97,10 @@ export const QUALITY_PROFILES: Record<QualityLevel, QualityProfile> = {
     envTextures: true,
     ambientOcclusion: true,
     bloom: true,
+    temporalAA: true,
+    depthOfField: true,
+    motionBlur: true,
+    screenReflections: false,
   },
   ultra: {
     level: "ultra",
@@ -93,6 +114,10 @@ export const QUALITY_PROFILES: Record<QualityLevel, QualityProfile> = {
     envTextures: true,
     ambientOcclusion: true,
     bloom: true,
+    temporalAA: true,
+    depthOfField: true,
+    motionBlur: true,
+    screenReflections: true,
   },
 };
 
