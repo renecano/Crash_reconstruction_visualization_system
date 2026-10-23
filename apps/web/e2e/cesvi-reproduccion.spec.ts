@@ -29,7 +29,10 @@ test("@flujo /cesvi/reproduccion: la evidencia, y cada reporte abre su caso en e
   // con lo que concluyó CESVI.
   await filas.first().getByRole("link").click();
   await expect(page.getByTestId("recorrido-caso")).toHaveAttribute("data-origen", "reporte");
-  await expect(page.getByTestId("caso-con-reporte")).toBeVisible();
+  // El paso 1 (V2): la etiqueta del reporte, sus vehículos y lo que ya está.
+  await expect(page.getByTestId("titulo-caso")).toBeVisible();
+  await expect(page.getByTestId("avance-caso")).toHaveAttribute("data-avance", "2/4");
+  await expect(page.getByTestId("caso-con-reporte")).toHaveCount(1);
   // El lugar es obligatorio (V2): lo que pide la lista guiada, antes de reconstruir.
   await irAPaso(page, 3);
   await colocarTodo(page);

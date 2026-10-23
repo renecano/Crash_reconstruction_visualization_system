@@ -38,10 +38,12 @@ import { downloadBytes } from "@/lib/download";
 import {
   CLAVES_PASOS,
   enLista,
+  faltaDelLugar,
   faltaEnPaso,
   impactosAColocar,
   pasoAbierto,
 } from "@/lib/pasos-caso";
+import { MODALIDAD } from "@/lib/nombres-cesvi";
 import { colorDeVehiculo } from "@/lib/vehiculos-cesvi";
 import { useTema, type Modo } from "@/lib/preferencias-cesvi";
 import ejemplo from "../../../../../../data/cesvi/grabaciones/escenas/cesvi-e814f085db.json";
@@ -246,6 +248,24 @@ export function RecorridoCaso({ inicial }: { inicial: CasoExpediente }) {
     }
   };
 
+  // --- El paso 1 (V2): qué es el caso y cuánto lleva --------------------------------------------
+  const etiqueta =
+    inicial.origen === "nuevo"
+      ? "Caso nuevo"
+      : inicial.origen === "guardado"
+        ? "Caso guardado"
+        : `Reporte de CESVI${reporte?.conclusiones.modalidad ? ` · ${(MODALIDAD[reporte.conclusiones.modalidad] ?? reporte.conclusiones.modalidad).toLowerCase()}` : ""}`;
+  const lugarFalta = expediente ? faltaDelLugar(expediente) : null;
+  const avance = [
+    { nombre: "Narración del hecho", listo: leida !== null },
+    { nombre: "Vehículos", listo: (expediente?.vehiculos.length ?? 0) > 0 },
+    { nombre: "Lugar en el mapa", listo: lugarFalta !== null && lugarFalta.impactos.length === 0 },
+    {
+      nombre: "Dónde quedó cada vehículo",
+      listo: lugarFalta !== null && lugarFalta.finales.length === 0,
+    },
+  ];
+
   // --- El paso del lugar (V2) ------------------------------------------------------------------
   const impactos = expediente ? impactosAColocar(expediente) : [];
   const poseDe = (v: string, fase: string) =>
@@ -315,7 +335,8 @@ export function RecorridoCaso({ inicial }: { inicial: CasoExpediente }) {
     if (activo.tipo === "impacto") {
       const r = rumboDeItem(activo) ?? 0;
       setPuntosImpacto((m) => ({ ...m, [activo.orden]: punto }));
-      if (mapa && mapa.getZoom() < 18.5) mapa.easeTo({ center: [punto.lon, punto.lat], zoom: 19 });
+      // Si el mapa está lejos (a nivel de colonia o más), se acerca al punto para ver los vehículos.
+      if (mapa && mapa.getZoom() < 17) mapa.easeTo({ center: [punto.lon, punto.lat], zoom: 19 });
       setRumbosImpacto((m) => ({ ...m, [activo.orden]: r }));
       cambiarExpediente(conImpacto(expediente, activo.orden, punto, r));
     } else {
@@ -428,9 +449,13 @@ export function RecorridoCaso({ inicial }: { inicial: CasoExpediente }) {
       return (
         <PasoCaso
           titulo={titulo}
+          etiqueta={etiqueta}
           detalle={DETALLE[inicial.origen]}
           escena={leida}
           reporte={reporte}
+          editable={modo === "trabajar"}
+          onExpediente={cambiarExpediente}
+          avance={avance}
           inicio={
             <>
               {inicio}

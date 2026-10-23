@@ -147,6 +147,7 @@ Reglas de trabajo: `CLAUDE.md`. Especificación: `PLAN.md`.
       - **Contra lo que CESVI escribió en el título,** Croquis gana 18.6 puntos a su línea base. Contra la etiqueta de R0, 4.2.
       - **Siguen débiles:** salida del camino, «otra» y reversa.
   - **Fase actual (2026-10-23): /cesvi V2** (pedido de René con las maquetas `docs/cesvi/rediseno/V2-*`, ADR 0080). Todo caso por igual, incluido AXA: la misma interfaz, los mismos 8 pasos y la misma barra con nombres. Va por partes, cada una con su PR (rama `feat/cesvi-v2`):
+    - **Hecho el 2026-10-23 (V2-1 a V2-3, ADR 0080):** el marco, el paso 3 guiado y lo visual, con las cinco e2e `@flujo` en verde. **Siguiente paso concreto:** V2-4, AXA en la misma interfaz.
     1. **V2-1, marco:**
        - **la barra:** los nombres de los 8 pasos siempre, «← Casos», la barra de avance arriba y los pasos futuros cerrados hasta completar lo obligatorio;
        - **los botones:** «Siguiente: el hecho →», desactivado y diciendo qué falta (`lib/pasos-caso.ts`, con pruebas);
@@ -1063,6 +1064,8 @@ Reglas de trabajo: `CLAUDE.md`. Especificación: `PLAN.md`.
 ### Endurecimiento pendiente
 
 Lo que se pospone por el trabajo con CESVI no se borra: queda aquí para después.
+
+- **El rediseño de la portada** (René, 2026-10-23). Por ahora solo cambió el botón principal: «Entrar a Croquis» lleva a `/cesvi` y la versión para el público queda en segundo plano (ADR 0080).
 
 - **Prioridad alta, justo después de R9** (René, 2026-10-23), en este orden:
   1. ~~**Las calles del mapa en el croquis del dictamen.**~~ Hecho el 2026-10-23 (ADR 0074): si el perito colocó el caso en el mapa, el croquis del PDF y del Word va sobre las calles; si no, queda el dibujo a escala.
