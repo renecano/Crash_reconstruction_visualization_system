@@ -79,6 +79,21 @@ describe("fecha y hora de la escena", () => {
     expect(nada.supuestos.join(" ")).toContain("18:10");
   });
 
+  it("«noche con alumbrado» ilumina igual con o sin el campo de alumbrado aparte (R10)", () => {
+    const solo = environmentFor({ iluminacion: "noche_con_alumbrado" });
+    const conCampo = environmentFor({ iluminacion: "noche_con_alumbrado", alumbrado: true });
+    expect(solo.streetLights).toBe(true);
+    expect(solo.ambientIntensity).toBe(conCampo.ambientIntensity);
+    expect(solo.ambientSkyColor).toBe(conCampo.ambientSkyColor);
+    // Sin alumbrado (o apagado) la noche queda con la luz de la luna.
+    const sin = environmentFor({ iluminacion: "noche_sin_alumbrado" });
+    expect(sin.streetLights).toBe(false);
+    expect(sin.ambientIntensity).toBeLessThan(solo.ambientIntensity);
+    expect(
+      environmentFor({ iluminacion: "noche_con_alumbrado", alumbrado: false }).streetLights,
+    ).toBe(false);
+  });
+
   it("de noche hay poca luz, alumbrado si se declara y los supuestos se reportan", () => {
     const n = environmentFor({
       fechaHora: "23:00",

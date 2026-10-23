@@ -227,22 +227,17 @@ export function environmentFor(input: EnvironmentInput): EnvironmentSettings {
   // (no para calcular nada) la luz direccional se eleva al menos 6° sobre el horizonte.
   const lit = { ...sun, elevation: Math.max(sun.elevation, MIN_LIGHT_ELEVATION_DEG) };
   const lightDirection = night ? moon : sunDirection(lit);
+  // El alumbrado declarado, o el que trae «noche con alumbrado»: el mismo para los focos y para la
+  // luz ambiental (R10: antes la ambiental solo veía el campo aparte y la noche quedaba a oscuras).
+  const alumbrado = night && (input.alumbrado ?? input.iluminacion === "noche_con_alumbrado");
   return {
     sun,
     lightDirection,
     sunIntensity: night ? 0.45 : twilight ? 2.2 : overcast ? 1.4 : 2.8,
-    ambientIntensity: night
-      ? input.alumbrado
-        ? 0.9
-        : 0.45
-      : twilight
-        ? 1.25
-        : overcast
-          ? 0.95
-          : 0.85,
+    ambientIntensity: night ? (alumbrado ? 0.9 : 0.45) : twilight ? 1.25 : overcast ? 0.95 : 0.85,
     skyColor: night ? "#18223d" : twilight ? "#cdbbb0" : overcast ? "#9aa3ad" : "#8fc1ea",
     ambientSkyColor: night
-      ? input.alumbrado
+      ? alumbrado
         ? "#c8b48c"
         : "#7184ad"
       : twilight
@@ -256,7 +251,7 @@ export function environmentFor(input: EnvironmentInput): EnvironmentSettings {
     wet: surface === "mojado" || surface === "encharcado",
     surface,
     precipitation,
-    streetLights: night && (input.alumbrado ?? input.iluminacion === "noche_con_alumbrado"),
+    streetLights: alumbrado,
     turbidity: overcast ? 10 : 2.5,
     supuestos,
   };
