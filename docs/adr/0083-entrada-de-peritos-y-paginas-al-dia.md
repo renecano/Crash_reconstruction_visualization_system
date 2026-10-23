@@ -34,5 +34,5 @@
 
 ## Consecuencias
 
-- **La transición desde el service worker anterior:** la primera recarga después del despliegue la atiende todavía el anterior, que sirve la portada precargada. Mientras tanto, la versión nueva se instala y se activa sola. La verificación en producción (en `docs/PROGRESS.md`) mide cuántas recargas hicieron falta. Desde esta versión, el HTML llega siempre de la red.
+- **La transición desde el service worker anterior:** la primera recarga después del despliegue la atiende todavía el anterior, que sirve la portada precargada. Mientras tanto, la versión nueva se instala y se activa sola. En producción hicieron falta tres recargas en 71 s (`docs/PROGRESS.md`). Desde esta versión, el HTML llega siempre de la red.
 - **Con red lenta** (más de 5 s), una página guardada abre su copia; sin copia, espera a la red.

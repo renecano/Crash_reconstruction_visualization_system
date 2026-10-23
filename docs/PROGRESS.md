@@ -174,7 +174,16 @@ Reglas de trabajo: `CLAUDE.md`. Especificación: `PLAN.md`.
         - e2e `@flujo`: de la portada a la lista de casos;
         - en el flujo de AXA: ningún identificador de fuente en pantalla;
         - sin red: lo visitado abre su copia.
-      - **Verificación en producción:** pendiente del despliegue (se anota aquí con lo que se vea en producción).
+      - **Verificación en producción** (2026-10-23, `https://croquis-sage.vercel.app`, después del despliegue de #110). Una pestaña de Chromium con perfil persistente, abierta y controlada por el service worker anterior antes del despliegue:
+        - **antes:** la barra sin «Entrar a Croquis» (el centro sí lo tenía);
+        - **el despliegue** se detectó porque `sw.js` cambió de huella (`54b4f3fd8e` → `b896735431`);
+        - **recargas 1 y 2** (a los 3 s y a los 40 s del cambio): todavía la portada anterior, servida por el service worker anterior mientras el nuevo se instalaba;
+        - **recarga 3** (a los 71 s): «Entrar a Croquis» en la barra y en el centro (→ `/cesvi`). Al hacer clic en el botón de la barra se abrió `https://croquis-sage.vercel.app/cesvi` con la lista de casos;
+        - **las cachés después:**
+          - la precarga ya no tiene páginas HTML (162 entradas, ninguna página);
+          - `croquis-paginas` tiene las 16 páginas de la demo y lo visitado;
+          - `croquis-estaticos-previos` tiene 18 trozos del despliegue anterior.
+        - **Desde esta versión,** el HTML va primero a la red: una sola recarga basta después de cada despliegue.
     - **Siguiente paso concreto:** lo grande de R10 espera a René («Bloqueado»): la fuente de los modelos de vehículos, la revisión de las capturas y la medición en la computadora de demo.
     1. **V2-1, marco:**
        - **la barra:** los nombres de los 8 pasos siempre, «← Casos», la barra de avance arriba y los pasos futuros cerrados hasta completar lo obligatorio;
