@@ -1,0 +1,101 @@
+{
+  "id": "declaracion-e2e",
+  "caso": "cesvi-e814f085db",
+  "version_prompt": "declaracion-caso-v1",
+  "modelo": "claude-sonnet-5-5",
+  "uso": {
+    "input_tokens": 177,
+    "output_tokens": 719,
+    "cache_creation_input_tokens": 2817,
+    "cache_read_input_tokens": 0
+  },
+  "costo_usd": 0.0145865,
+  "declaracion": "Yo circulaba por la Av. Reforma de sur a norte a unos 40 km/h, con el semáforo en verde, cuando el Jetta azul salió de la calle Azucena sin detenerse y me pegó con su frente en mi costado izquierdo. Mi carro quedó sobre la avenida, cerca de la banqueta del lado derecho.",
+  "declarante": "V2",
+  "vehiculos": [
+    {
+      "id": "V1",
+      "descripcion": "VW, Jetta"
+    },
+    {
+      "id": "V2",
+      "descripcion": "GM, Camaro"
+    }
+  ],
+  "salida": {
+    "datos": [
+      {
+        "seccion": "movimiento",
+        "n": 1,
+        "vehiculo": "V2",
+        "campo": "maniobra",
+        "valor": "circula",
+        "cita": "Yo circulaba por la Av. Reforma de sur a norte a unos 40 km/h"
+      },
+      {
+        "seccion": "movimiento",
+        "n": 1,
+        "vehiculo": "V2",
+        "campo": "velocidad",
+        "valor": "unos 40 km/h",
+        "cita": "Yo circulaba por la Av. Reforma de sur a norte a unos 40 km/h"
+      },
+      {
+        "seccion": "movimiento",
+        "n": 2,
+        "vehiculo": "V1",
+        "campo": "maniobra",
+        "valor": "circula",
+        "cita": "el Jetta azul salió de la calle Azucena sin detenerse"
+      },
+      {
+        "seccion": "impacto",
+        "n": 1,
+        "vehiculo": "ninguno",
+        "campo": "participante",
+        "valor": "V1",
+        "cita": "el Jetta azul salió de la calle Azucena sin detenerse y me pegó con su frente"
+      },
+      {
+        "seccion": "impacto",
+        "n": 1,
+        "vehiculo": "ninguno",
+        "campo": "participante",
+        "valor": "V2",
+        "cita": "y me pegó con su frente en mi costado izquierdo"
+      },
+      {
+        "seccion": "impacto",
+        "n": 1,
+        "vehiculo": "ninguno",
+        "campo": "contacto",
+        "valor": "V1 frontal",
+        "cita": "me pegó con su frente en mi costado izquierdo"
+      },
+      {
+        "seccion": "impacto",
+        "n": 1,
+        "vehiculo": "ninguno",
+        "campo": "contacto",
+        "valor": "V2 lateral_izquierdo",
+        "cita": "me pegó con su frente en mi costado izquierdo"
+      },
+      {
+        "seccion": "posicion",
+        "n": 1,
+        "vehiculo": "V2",
+        "campo": "fase",
+        "valor": "final",
+        "cita": "Mi carro quedó sobre la avenida, cerca de la banqueta del lado derecho."
+      },
+      {
+        "seccion": "posicion",
+        "n": 1,
+        "vehiculo": "V2",
+        "campo": "descripcion",
+        "valor": "sobre la avenida, cerca de la banqueta del lado derecho",
+        "cita": "Mi carro quedó sobre la avenida, cerca de la banqueta del lado derecho."
+      }
+    ]
+  }
+}

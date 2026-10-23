@@ -23,6 +23,8 @@ import {
   VisorEscena,
 } from "@/components/visor/visor-app";
 import { reconstruirCompletoEnNavegador } from "@/lib/reconstruct-client";
+import type { Hipotesis } from "@/components/visor/hypothesis-panel";
+import { ComparacionDeclaracion } from "./comparacion-declaracion";
 
 const kmh = (x?: number) => (x === undefined ? "—" : x.toFixed(1));
 
@@ -51,10 +53,14 @@ export function ReconstruccionCaso({
     auto: true,
   });
   const spec3d = useMemo(() => (r ? (especReconstruida(r) as unknown as EscenaSpec) : null), [r]);
+  // R7: la versión que declara un conductor, simulada, como hipótesis del 3D.
+  const [declarada, setDeclarada] = useState<Hipotesis | null>(null);
+  const externas = useMemo(() => (declarada ? [declarada] : undefined), [declarada]);
 
   const reconstruir = async () => {
     setEstado("Reconstruyendo con el solver…");
     setR(null);
+    setDeclarada(null);
     setVer3d(false);
     onPosiciones?.([]);
     onImpactos?.([]);
@@ -201,6 +207,13 @@ export function ReconstruccionCaso({
           </div>
         ))}
       </div>
+      {r ? (
+        <ComparacionDeclaracion
+          expediente={expediente}
+          reconstruccion={r}
+          onHipotesis={setDeclarada}
+        />
+      ) : null}
       {ver3d && spec3d ? (
         <div className="lg:col-span-2" data-testid="visor-caso">
           <p className="t-nota mb-3">
@@ -212,6 +225,7 @@ export function ReconstruccionCaso({
             spec={spec3d}
             escena="propia"
             controles={controles}
+            hipotesisExternas={externas}
             onTiempo={(t, res) =>
               onPosiciones?.(posicionesEnTiempo(r!, res as unknown as Record<string, unknown>, t))
             }

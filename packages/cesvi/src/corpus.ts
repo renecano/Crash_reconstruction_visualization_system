@@ -83,8 +83,9 @@ export const CAMPOS_POR_SECCION = {
   objeto_fijo: ["descripcion"],
   // Solo la lectura de la narración del perito (R1): dónde queda cada vehículo, en palabras.
   posicion: ["fase", "descripcion"],
-  // Solo la lectura de la narración (R4b): lo que hacía cada vehículo antes del impacto.
-  movimiento: ["maniobra"],
+  // Lo que hacía cada vehículo antes del impacto: la narración (R4b) y la declaración (R7, con
+  // la velocidad que declara el conductor).
+  movimiento: ["maniobra", "velocidad"],
   calculo: ["metodo", "resultado", "entradas"],
   criterio: ["criterio", "estado"],
   conclusion: ["veredicto"],

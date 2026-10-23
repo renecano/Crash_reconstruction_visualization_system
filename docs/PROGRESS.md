@@ -123,7 +123,59 @@ Reglas de trabajo: `CLAUDE.md`. Especificación: `PLAN.md`.
     - **C0:** pasa a R0. Falta lo nuevo: la descripción de los hechos sin conclusiones, con su revisión de fuga, y lo que concluyó CESVI, estructurado.
     - **C1:** es el módulo de verificación CESVI de R2, con su reproducción (E-C1) ya corrida.
     - **C2–C8:** se reacomodan en R1–R9.
-  - **Fase actual: R7** (comparación con la declaración del conductor). R4b quedó cerrada el 2026-10-22; la voz del video quedó en `main` (PR #92) y espera que René la escuche («Bloqueado»).
+  - **Fase actual: R8** (dictamen en PDF y Word de una reconstrucción). R7 quedó lista el 2026-10-22 (rama `feat/r7-declaracion`, ADR 0070); R4b, el mismo día. La voz del video está en `main` (PR #92) y espera que René la escuche («Bloqueado»).
+  - **Resumen de R7 para René** (ADR 0070):
+    - **Qué quedó:** en «Caso nuevo», después de reconstruir, el panel plegado «Comparar con la declaración del conductor · opcional».
+      - **El perito pega la declaración** y elige qué vehículo conducía el declarante.
+      - **Claude la lee** con los vehículos del caso: maniobras, velocidad declarada, caras de contacto y dónde quedó. Cada dato va con su cita revisada contra el texto.
+      - **Croquis simula esa versión** con el mismo solver: mismo lugar y punto de impacto, sin las posiciones finales del perito.
+      - **«Qué cambia entre versiones»** muestra, por vehículo:
+        - la velocidad declarada contra el rango que fija la evidencia;
+        - la posición final;
+        - la zona de contacto;
+        - la dirección de la deformación;
+        - la altura.
+      - **En el 3D** la versión declarada va como fantasma sobre la reconstrucción, o «Comparar lado a lado».
+      - **La sugerencia** sale solo si el perito la pide, y él la confirma o la descarta. Habla de compatibilidad de los daños y la evidencia con la versión, no de personas.
+    - **El caso de la e2e** (el de ejemplo, con la declaración sintética del conductor del Camaro):
+      - dice que lo golpearon en el costado **izquierdo**, y los daños de V2 están a la derecha;
+      - declara 40 km/h, y la evidencia fija de 17.9 a 24.4 km/h;
+      - Croquis muestra las tres diferencias, con su fuente.
+    - **Pruebas:**
+      - 7 unitarias de la lectura, la escena declarada, la comparación y la sugerencia;
+      - la e2e `@flujo` de «Caso nuevo» compara la declaración en 3D (fantasmas y lado a lado) y descarta la sugerencia.
+    - **Gasto de API:** 0.0146 USD (la lectura grabada de la e2e).
+    - **Cómo probarlo:** en `/cesvi/caso`:
+      1. usa la narración de ejemplo, coloca a los vehículos y reconstruye;
+      2. abre el panel y pega una declaración;
+      3. «Leer y comparar», y luego «Ver la reconstrucción en 3D».
+    - **Límites** (ADR 0070):
+      - la versión declarada conserva la geometría del impacto de la evidencia;
+      - el croquis 2D no la dibuja;
+      - una declaración por vez.
+    - **Qué necesito de René:** nada nuevo.
+  - **Plan de R7** (rama `feat/r7-declaracion`, ADR 0070):
+    1. **Lectura de la declaración** (`declaracion-caso-v1`). El perito pega la declaración y dice qué vehículo conducía el declarante. Claude la lee con las filas del corpus, con los vehículos del caso en el mensaje:
+       - la maniobra de cada vehículo;
+       - la velocidad declarada;
+       - la cara de contacto;
+       - dónde dice que quedó.
+       - Cada cita y cada número se revisan contra el texto, como en R1.
+    2. **La versión declarada** (`especDeclarada`): la escena de la reconstrucción con lo que declara el conductor (maniobras, velocidades y caras de contacto), sin las posiciones finales del perito. El solver la simula hacia adelante.
+    3. **«Qué cambia entre versiones»** (`compararDeclarada`), fila por fila, con su fuente:
+       - velocidad declarada contra la reconstruida;
+       - posición final;
+       - zona de contacto esperada contra la observada;
+       - indicadores de correspondencia de daños: dirección, zona y altura.
+    4. **Sugerencia:** solo si el perito la activa. Él la confirma o la descarta. Sin culpas y sin decir quién miente.
+    5. **«Caso nuevo»:** un panel opcional después de la reconstrucción. La versión declarada entra al visor como hipótesis: superpuesta (fantasmas) o lado a lado, con lo que ya tiene el visor (F7).
+    6. **Pruebas:**
+       - unitarias de la lectura, la escena declarada y la comparación;
+       - la e2e `@flujo` carga una declaración, con su lectura grabada, y la compara en 3D.
+    - **Costo de API:** solo la lectura grabada de la e2e (~0.03 USD).
+    - **Riesgos:**
+      - un conductor que nombra los vehículos de otra forma («la camioneta», «el taxi»): por eso la lectura recibe los vehículos del caso;
+      - una declaración sin velocidad: la versión declarada usa la de la reconstrucción y lo dice.
   - **Resumen de R4b para René** (rama `feat/r4b-mejora`, ADR 0069; reglas congeladas en `29b67ab` antes de leer la prueba, medida una sola vez):
     - **Prueba congelada, v1 contra v2** (`eval/results/cesvi_r4b_comparacion.json`; 205 narraciones, 190 con modalidad concluida):
 
@@ -855,6 +907,10 @@ Lo que se pospone por el trabajo con CESVI no se borra: queda aquí para despué
   - el debris del segundo impacto;
   - el tiempo de las escenas con muchos vehículos (hasta 34 s en E-R6);
   - en «Caso nuevo», una forma de declarar a mano los impactos cuando la narración no dice su orden.
+- **De R7** (ADR 0070, «Límites»):
+  - dibujar la versión declarada en el croquis 2D (hoy está en el 3D y en la tabla);
+  - simular una declaración que cambia el lugar o los rumbos del impacto (hoy conserva la geometría de la evidencia);
+  - varias declaraciones a la vez.
 - **De R4b** (ADR 0069, «Límites»):
   - en la prueba bajan lateral (68 % → 64 %), salida del camino (20 % → 10 %) y las posiciones finales que tiene Croquis (53.4 % → 50 %);
   - las reglas de un vehículo generalizan peor que en desarrollo (modalidad 45.5 % en desarrollo, 39.5 % en la prueba);
