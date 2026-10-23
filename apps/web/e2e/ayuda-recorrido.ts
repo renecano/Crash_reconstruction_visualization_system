@@ -27,6 +27,9 @@ export async function sinBuscarLugar(page: Page) {
 
 /** Acerca el mapa en «Mover mapa» (en «Colocar» el doble clic colocaría) y vuelve a «Colocar». */
 export async function acercar(page: Page, veces = 7) {
+  // Las calles del lugar para el 3D (R10) salen de OpenStreetMap: en CI no se consulta la red, así
+  // que se reconstruye sin ellas (lo mismo que hace la app si Overpass no responde).
+  await page.route("**/api/osm?**", (r) => r.fulfill({ json: { elements: [] } }));
   const mapa = page.getByTestId("mapa-escena");
   await expect(mapa.locator("canvas")).toBeVisible({ timeout: 20_000 });
   await sinBuscarLugar(page);
