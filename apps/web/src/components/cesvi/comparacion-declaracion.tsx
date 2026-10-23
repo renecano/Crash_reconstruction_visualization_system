@@ -21,8 +21,9 @@ import {
   type VersionDeclarada,
 } from "@croquis/cesvi";
 import type { EscenaSpec, Resultado } from "@croquis/scene-schema";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import type { Hipotesis } from "@/components/visor/hypothesis-panel";
+import type { DatosDictamenCaso } from "@/lib/dictamen-caso";
 import { reconstruirCompletoEnNavegador } from "@/lib/reconstruct-client";
 
 type Id = Expediente["vehiculos"][number]["id"];
@@ -39,11 +40,14 @@ export function ComparacionDeclaracion({
   expediente,
   reconstruccion,
   onHipotesis,
+  onComparacion,
 }: {
   expediente: Expediente;
   reconstruccion: Reconstruccion;
   /** La versión declarada ya simulada, para el 3D (null al quitarla). */
   onHipotesis: (h: Hipotesis | null) => void;
+  /** La comparación que hizo el perito, para el dictamen (R8); null si no la usó. */
+  onComparacion?: (c: DatosDictamenCaso["declarada"]) => void;
 }) {
   const ids = expediente.vehiculos.map((v) => v.id);
   const [abierta, setAbierta] = useState(false);
@@ -111,6 +115,19 @@ export function ComparacionDeclaracion({
   };
 
   const s = filas ? sugerirDeclarada(filas) : null;
+  useEffect(() => {
+    onComparacion?.(
+      version && filas
+        ? {
+            declarante: version.declarante,
+            filas,
+            sugerencia: sugerencia && s ? { texto: s.texto, decision } : null,
+          }
+        : null,
+    );
+    // `s` se deriva de `filas`.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [version, filas, sugerencia, decision, onComparacion]);
 
   return (
     <section

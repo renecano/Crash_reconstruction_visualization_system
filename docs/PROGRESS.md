@@ -146,7 +146,43 @@ Reglas de trabajo: `CLAUDE.md`. Especificación: `PLAN.md`.
     - **Lectura:**
       - **Contra lo que CESVI escribió en el título,** Croquis gana 18.6 puntos a su línea base. Contra la etiqueta de R0, 4.2.
       - **Siguen débiles:** salida del camino, «otra» y reversa.
-  - **Fase actual: R8** (dictamen en PDF y Word de una reconstrucción). R7 quedó lista el 2026-10-22 (rama `feat/r7-declaracion`, ADR 0070); R4b, el mismo día. La voz del video está en `main` (PR #92) y espera que René la escuche («Bloqueado»).
+  - **Fase actual: R9** (pase de diseño de lo nuevo de R0–R8, endurecimiento y lo que diga CESVI). R8 quedó lista el 2026-10-23 (rama `feat/r8-dictamen`, ADR 0072); R7 y R4b, el 2026-10-22. La voz del video quedó aprobada por René el 2026-10-23.
+    - **Siguiente paso concreto:** el pase de diseño con las maquetas de `docs/cesvi/rediseno/`, el modo Presentar / Trabajar y los temas, en este orden:
+      1. el visor 3D en el recorrido;
+      2. la lista de casos;
+      3. cargar un reporte;
+      4. reproducción de reportes;
+      5. carambolas;
+      6. comparación;
+      7. dictamen.
+         Al terminar, pedir a René la revisión visual.
+  - **Resumen de R8 para René** (ADR 0072):
+    - **Qué quedó:** en «Caso nuevo», después de reconstruir, el panel «Dictamen».
+      - **El perito escribe su conclusión,** valida con su nombre y descarga el PDF o el Word, con el mismo contenido.
+      - **Lo que lleva el documento:**
+        - la narración;
+        - los vehículos y los daños;
+        - las velocidades con su rango p10–p90 (y al impacto p10–p50–p90);
+        - lo que la reconstrucción no cubre;
+        - el croquis a escala, dibujado con las trayectorias del solver;
+        - tres cuadros del 3D (antes del impacto, en el impacto y en reposo) si abrió el 3D;
+        - la verificación con el método de CESVI y lo que le falta;
+        - la comparación con la declaración si la usó;
+        - la trazabilidad: método, huella de las entradas, quién validó y cuándo.
+      - **Sin validar,** sale como borrador.
+      - **Con la casilla,** en el orden de los reportes de CESVI: título con la modalidad, objetivos, fundamentos, características, observación de daños, lugar, consideraciones, conclusiones y validación.
+    - **Pruebas:**
+      - 5 unitarias del contenido;
+      - la e2e `@flujo` de «Caso nuevo» valida, pide la estructura de CESVI y descarga el PDF (con el croquis y los tres cuadros del 3D como imágenes) y el Word.
+    - **Cómo probarlo:** en `/cesvi/caso`:
+      1. reconstruye y abre el 3D;
+      2. escribe una conclusión y tu nombre, y pulsa «Validar»;
+      3. descarga el PDF o el Word.
+    - **Límites** (ADR 0072):
+      - el croquis es el dibujo a escala, sin las calles del mapa;
+      - no hay borrador de consideraciones con Claude;
+      - la validación no se guarda con el caso.
+    - **Qué necesito de René:** nada nuevo.
   - **Resumen de R7 para René** (ADR 0070):
     - **Qué quedó:** en «Caso nuevo», después de reconstruir, el panel plegado «Comparar con la declaración del conductor · opcional».
       - **El perito pega la declaración** y elige qué vehículo conducía el declarante.
@@ -930,6 +966,10 @@ Lo que se pospone por el trabajo con CESVI no se borra: queda aquí para despué
   - el debris del segundo impacto;
   - el tiempo de las escenas con muchos vehículos (hasta 34 s en E-R6);
   - en «Caso nuevo», una forma de declarar a mano los impactos cuando la narración no dice su orden.
+- **De R8** (ADR 0072, «Límites»):
+  - el croquis del dictamen con las calles del mapa de «Caso nuevo»;
+  - guardar la validación del perito con el caso;
+  - un borrador de consideraciones con Claude, como en el prototipo, si los peritos lo piden.
 - **De R7** (ADR 0070, «Límites»):
   - dibujar la versión declarada en el croquis 2D (hoy está en el 3D y en la tabla);
   - simular una declaración que cambia el lugar o los rumbos del impacto (hoy conserva la geometría de la evidencia);

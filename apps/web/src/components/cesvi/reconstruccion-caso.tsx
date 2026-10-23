@@ -16,6 +16,7 @@ import {
   type Reconstruccion,
 } from "@croquis/cesvi";
 import type { EscenaSpec } from "@croquis/scene-schema";
+import type { ViewerExportApi } from "@croquis/viewer";
 import { useMemo, useState } from "react";
 import {
   CONTROLES_INICIALES,
@@ -25,6 +26,8 @@ import {
 import { reconstruirCompletoEnNavegador } from "@/lib/reconstruct-client";
 import type { Hipotesis } from "@/components/visor/hypothesis-panel";
 import { ComparacionDeclaracion } from "./comparacion-declaracion";
+import { DictamenCaso } from "./dictamen-caso";
+import type { DatosDictamenCaso } from "@/lib/dictamen-caso";
 
 const kmh = (x?: number) => (x === undefined ? "—" : x.toFixed(1));
 
@@ -35,8 +38,11 @@ export function ReconstruccionCaso({
   expediente,
   onPosiciones,
   onImpactos,
+  narracion = null,
 }: {
   expediente: Expediente;
+  /** La narración técnica del perito, para el dictamen (null en un reporte importado). */
+  narracion?: string | null;
   /** Dónde están los vehículos en el instante del 3D, para dibujarlos en el mapa (vacío sin 3D). */
   onPosiciones?: (ps: PosicionMovil[]) => void;
   /** Dónde ocurrió cada impacto (X1, X2…), para marcarlo en el mapa (vacío sin reconstrucción). */
@@ -56,11 +62,15 @@ export function ReconstruccionCaso({
   // R7: la versión que declara un conductor, simulada, como hipótesis del 3D.
   const [declarada, setDeclarada] = useState<Hipotesis | null>(null);
   const externas = useMemo(() => (declarada ? [declarada] : undefined), [declarada]);
+  // R8: lo que lleva el dictamen de la comparación con la declaración y del visor abierto.
+  const [comparacion, setComparacion] = useState<DatosDictamenCaso["declarada"]>(null);
+  const [exportApi, setExportApi] = useState<ViewerExportApi | null>(null);
 
   const reconstruir = async () => {
     setEstado("Reconstruyendo con el solver…");
     setR(null);
     setDeclarada(null);
+    setComparacion(null);
     setVer3d(false);
     onPosiciones?.([]);
     onImpactos?.([]);
@@ -212,6 +222,7 @@ export function ReconstruccionCaso({
           expediente={expediente}
           reconstruccion={r}
           onHipotesis={setDeclarada}
+          onComparacion={setComparacion}
         />
       ) : null}
       {ver3d && spec3d ? (
@@ -226,6 +237,7 @@ export function ReconstruccionCaso({
             escena="propia"
             controles={controles}
             hipotesisExternas={externas}
+            onExportApi={setExportApi}
             onTiempo={(t, res) =>
               onPosiciones?.(posicionesEnTiempo(r!, res as unknown as Record<string, unknown>, t))
             }
@@ -240,6 +252,16 @@ export function ReconstruccionCaso({
             }
           />
         </div>
+      ) : null}
+      {r ? (
+        <DictamenCaso
+          expediente={expediente}
+          narracion={narracion}
+          reconstruccion={r}
+          verificacion={verificacion}
+          declarada={comparacion}
+          exportApi={ver3d ? exportApi : null}
+        />
       ) : null}
     </section>
   );

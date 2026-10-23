@@ -359,6 +359,8 @@ export interface VisorEscenaProps {
    * fantasmas o lado a lado, igual que las del panel, pero el panel no las quita.
    */
   hipotesisExternas?: readonly Hipotesis[];
+  /** Entrega la API de exportación del visor (R8: cuadros del 3D para el dictamen). */
+  onExportApi?: (api: ViewerExportApi | null) => void;
 }
 
 export function VisorEscena({
@@ -371,6 +373,7 @@ export function VisorEscena({
   ambiente = null,
   onTiempo,
   hipotesisExternas,
+  onExportApi,
 }: VisorEscenaProps) {
   const t = useTextos(T);
   const { lang } = useIdioma();
@@ -388,6 +391,9 @@ export function VisorEscena({
   const [error, setError] = useState<string | null>(null);
   const [info, setInfo] = useState<RendererInfo | null>(null);
   const [exportApi, setExportApi] = useState<ViewerExportApi | null>(null);
+  useEffect(() => {
+    onExportApi?.(exportApi);
+  }, [exportApi, onExportApi]);
   const legend = useMemo(() => legendFor(spec), [spec]);
   // Modo automático (ADR 0026): arranca en el nivel que sugiere la GPU y luego lo ajustan los fps
   // medidos. En el prerender no hay GPU (null) y se usa media.

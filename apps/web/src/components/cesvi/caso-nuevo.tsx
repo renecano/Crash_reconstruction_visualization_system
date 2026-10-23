@@ -512,6 +512,7 @@ export function CasoNuevo({ inicial }: { inicial?: CasoInicial } = {}) {
 
             <ReconstruccionCaso
               expediente={expediente}
+              narracion={inicial ? null : texto.trim() || null}
               onPosiciones={setMoviles}
               onImpactos={setImpactosMapa}
             />
