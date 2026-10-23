@@ -12,25 +12,20 @@ function Modo() {
 }
 
 describe("el marco de las pantallas de CESVI (R9)", () => {
-  it("lleva a las cuatro pantallas y marca la actual", () => {
+  it("lleva a los casos y a la reproducción, y marca la actual (ADR 0079)", () => {
     render(
-      <MarcoCesvi seccion="importar">
+      <MarcoCesvi seccion="reproduccion">
         <Modo />
       </MarcoCesvi>,
     );
-    expect(SECCIONES.map((s) => s.ruta)).toEqual([
-      "/cesvi",
-      "/cesvi/caso",
-      "/cesvi/importar",
-      "/cesvi/reproduccion",
-    ]);
-    expect(screen.getByTestId("seccion-importar").getAttribute("aria-current")).toBe("page");
-    expect(screen.getByTestId("seccion-caso").getAttribute("aria-current")).toBeNull();
+    expect(SECCIONES.map((s) => s.ruta)).toEqual(["/cesvi", "/cesvi/reproduccion"]);
+    expect(screen.getByTestId("seccion-reproduccion").getAttribute("aria-current")).toBe("page");
+    expect(screen.getByTestId("seccion-casos").getAttribute("aria-current")).toBeNull();
   });
 
   it("Trabajar por omisión, claro; Presentar, oscuro, y los hijos lo saben", () => {
     render(
-      <MarcoCesvi seccion="caso">
+      <MarcoCesvi seccion="casos">
         <Modo />
       </MarcoCesvi>,
     );

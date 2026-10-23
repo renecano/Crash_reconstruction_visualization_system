@@ -12,13 +12,11 @@ import { createContext, useContext, useState, type ReactNode } from "react";
 import { Logotipo } from "@/components/sitio/logo";
 import { guardarTema, useTema, type Modo, type Tema } from "@/lib/preferencias-cesvi";
 
-export type SeccionCesvi = "recorrido" | "caso" | "importar" | "reproduccion";
+export type SeccionCesvi = "casos" | "reproduccion";
 
 /** Las pantallas, en el orden de la barra. */
 export const SECCIONES: readonly { clave: SeccionCesvi; ruta: string; nombre: string }[] = [
-  { clave: "recorrido", ruta: "/cesvi", nombre: "Recorrido AXA" },
-  { clave: "caso", ruta: "/cesvi/caso", nombre: "Caso nuevo" },
-  { clave: "importar", ruta: "/cesvi/importar", nombre: "Cargar un reporte" },
+  { clave: "casos", ruta: "/cesvi", nombre: "Casos" },
   { clave: "reproduccion", ruta: "/cesvi/reproduccion", nombre: "Reproducción de reportes" },
 ];
 

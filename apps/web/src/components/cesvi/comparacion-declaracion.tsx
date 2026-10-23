@@ -131,7 +131,7 @@ export function ComparacionDeclaracion({
 
   return (
     <section
-      className="tarjeta flex flex-col gap-4 p-6 lg:col-span-2"
+      className="hundido flex flex-col gap-4 p-4"
       data-testid="comparacion-declaracion"
     >
       <button

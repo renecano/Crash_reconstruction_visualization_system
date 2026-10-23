@@ -76,16 +76,22 @@ function ConclusionesCesvi({ d }: { d: DictamenImportado }) {
   );
 }
 
-export function ImportarDictamen() {
+/**
+ * Cargar un reporte de CESVI (R5) como primer paso de un caso importado del recorrido (ADR 0079):
+ * el texto se saca en el equipo, Claude lo lee y Croquis arma el expediente con la cita de cada dato.
+ */
+export function CargaReporte({
+  onImportado,
+}: {
+  onImportado: (d: DictamenImportado, archivo: string) => void;
+}) {
   const [archivo, setArchivo] = useState<string | null>(null);
   const [texto, setTexto] = useState<TextoDictamen | null>(null);
   const [estado, setEstado] = useState<string | null>(null);
-  const [importado, setImportado] = useState<DictamenImportado | null>(null);
 
   const elegir = async (f: File | undefined) => {
     if (!f) return;
     setEstado("Sacando el texto del archivo…");
-    setImportado(null);
     try {
       const t = await textoDeArchivo(f);
       setArchivo(f.name);
@@ -119,119 +125,80 @@ export function ImportarDictamen() {
         setEstado(`No se pudo leer con Claude (${d.motivo ?? "sin respuesta"}).`);
         return;
       }
-      setImportado(importarDictamen(texto.texto, d.corpus, d.narracion, archivo ?? "reporte"));
+      const nombre = archivo ?? "reporte";
+      onImportado(importarDictamen(texto.texto, d.corpus, d.narracion, nombre), nombre);
       setEstado(null);
     } catch {
       setEstado("No se pudo leer el reporte.");
     }
   };
 
-  if (importado) {
-    const k = importado.conteos;
-    return (
-      <CasoNuevo
-        inicial={{
-          escena: importado,
-          titulo: "Reporte de CESVI importado",
-          descripcion: (
-            <p data-testid="resumen-importado">
-              {archivo}: {importado.expediente.vehiculos.length} vehículo
-              {importado.expediente.vehiculos.length === 1 ? "" : "s"},{" "}
-              {importado.expediente.danos?.length ?? 0} daños y{" "}
-              {importado.expediente.impactos?.length ?? 0} impacto
-              {(importado.expediente.impactos?.length ?? 0) === 1 ? "" : "s"}. De {k.citas} citas,{" "}
-              {k.citas_fuera} no están en el texto y sus datos se descartaron. Coloca a los
-              vehículos en el mapa y reconstruye; al final está lo que concluyó CESVI, para
-              comparar.
-            </p>
-          ),
-          aparte: <ConclusionesCesvi d={importado} />,
-        }}
-      />
-    );
-  }
-
   const r = texto ? resumenTexto(texto.texto) : null;
   return (
-    <main className="px-4 py-10 md:px-8">
-      <div className="mx-auto flex max-w-[900px] flex-col gap-8" data-testid="importar-dictamen">
-        <header className="flex flex-col gap-3">
-          <p className="t-rotulo">Caso nuevo · cargar un reporte de CESVI</p>
-          <h1 className="t-titulo">Carga un reporte de CESVI</h1>
-          <p className="t-cuerpo max-w-[70ch] text-texto-2">
-            Sube un reporte de CESVI en PDF, Markdown o texto. El texto se saca en tu equipo; Claude
-            lo lee y Croquis arma el expediente con la frase de donde sale cada dato. Lo que no está
-            en el texto se descarta. Después colocas a los vehículos y reconstruyes.
+    <section className="flex flex-col gap-4" data-testid="importar-dictamen">
+      <label
+        className="hundido flex cursor-pointer flex-col items-center gap-1 rounded-panel border border-dashed border-linea px-6 py-8 text-center hover:border-texto-3"
+        onDragOver={(e) => e.preventDefault()}
+        onDrop={(e) => {
+          e.preventDefault();
+          void elegir(e.dataTransfer.files[0]);
+        }}
+        data-testid="zona-archivo"
+      >
+        <span className="t-interfaz font-semibold">
+          {archivo ? archivo : "Elige el reporte en PDF, Markdown o texto"}
+        </span>
+        <span className="t-nota text-texto-3">
+          {archivo ? "Toca para elegir otro" : "o arrástralo aquí"}
+        </span>
+        <input
+          type="file"
+          className="sr-only"
+          accept=".pdf,.md,.markdown,.txt,application/pdf,text/markdown,text/plain"
+          onChange={(e) => void elegir(e.target.files?.[0])}
+          data-testid="archivo-dictamen"
+        />
+      </label>
+      <button
+        type="button"
+        className="boton-secundario self-start"
+        onClick={() => {
+          setArchivo(ejemplo.archivo);
+          setTexto({ texto: ejemplo.texto, paginas: null });
+          setEstado(null);
+        }}
+        data-testid="ejemplo-dictamen"
+      >
+        Usar el reporte de ejemplo (caso A2010930, redactado)
+      </button>
+      {texto && r ? (
+        <div className="hundido flex flex-col gap-2 p-4" data-testid="texto-dictamen">
+          <span className="t-nota">
+            {archivo} · {r.palabras.toLocaleString("es-MX")} palabras
+            {texto.paginas ? ` · ${texto.paginas} páginas` : ""}
+          </span>
+          <p className="t-nota line-clamp-4 whitespace-pre-line text-texto-2">
+            {texto.texto.slice(0, 600)}
           </p>
-        </header>
-        <section className="tarjeta flex flex-col gap-4 p-6">
-          <label
-            className="hundido flex cursor-pointer flex-col items-center gap-1 rounded-panel border border-dashed border-linea px-6 py-8 text-center hover:border-texto-3"
-            onDragOver={(e) => e.preventDefault()}
-            onDrop={(e) => {
-              e.preventDefault();
-              void elegir(e.dataTransfer.files[0]);
-            }}
-            data-testid="zona-archivo"
-          >
-            <span className="t-interfaz font-semibold">
-              {archivo ? archivo : "Elige el reporte en PDF, Markdown o texto"}
-            </span>
-            <span className="t-nota text-texto-3">
-              {archivo ? "Toca para elegir otro" : "o arrástralo aquí"}
-            </span>
-            <input
-              type="file"
-              className="sr-only"
-              accept=".pdf,.md,.markdown,.txt,application/pdf,text/markdown,text/plain"
-              onChange={(e) => void elegir(e.target.files?.[0])}
-              data-testid="archivo-dictamen"
-            />
-          </label>
-          <button
-            type="button"
-            className="boton-secundario self-start"
-            onClick={() => {
-              setArchivo(ejemplo.archivo);
-              setTexto({ texto: ejemplo.texto, paginas: null });
-              setEstado(null);
-            }}
-            data-testid="ejemplo-dictamen"
-          >
-            Usar el reporte de ejemplo (caso A2010930, redactado)
-          </button>
-          {texto && r ? (
-            <div className="hundido flex flex-col gap-2 p-4" data-testid="texto-dictamen">
-              <span className="t-nota">
-                {archivo} · {r.palabras.toLocaleString("es-MX")} palabras
-                {texto.paginas ? ` · ${texto.paginas} páginas` : ""}
-              </span>
-              <p className="t-nota line-clamp-4 whitespace-pre-line text-texto-2">
-                {texto.texto.slice(0, 600)}
-              </p>
-            </div>
-          ) : null}
-          <div className="flex flex-wrap items-center gap-3">
-            <button
-              type="button"
-              className="boton-principal"
-              onClick={() => void leer()}
-              disabled={!texto || texto.texto.length < 200}
-              data-testid="leer-dictamen"
-            >
-              Leer el reporte
-            </button>
-            {estado ? (
-              <span role="status" className="t-nota" data-testid="estado-importar">
-                {estado}
-              </span>
-            ) : null}
-          </div>
-        </section>
-        <p className="t-nota text-texto-3">
-          El archivo no se guarda: el texto se saca en tu equipo.
-        </p>
+        </div>
+      ) : null}
+      <div className="flex flex-wrap items-center gap-3">
+        <button
+          type="button"
+          className="boton-principal"
+          onClick={() => void leer()}
+          disabled={!texto || texto.texto.length < 200}
+          data-testid="leer-dictamen"
+        >
+          Leer el reporte
+        </button>
+        {estado ? (
+          <span role="status" className="t-nota" data-testid="estado-importar">
+            {estado}
+          </span>
+        ) : null}
       </div>
-    </main>
+      <p className="t-nota text-texto-3">El archivo no se guarda: el texto se saca en tu equipo.</p>
+    </section>
   );
 }
