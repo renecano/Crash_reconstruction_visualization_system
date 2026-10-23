@@ -4,6 +4,7 @@
  *   CROQUIS_FFMPEG_DIR  carpeta con ffmpeg y ffprobe
  *   CROQUIS_PIPER       ejecutable de Piper
  *   CROQUIS_PIPER_VOZ   modelo de voz (.onnx), es_MX-claude-high
+ *   CROQUIS_KOKORO_PYTHON  Python con kokoro-onnx y soundfile (los modelos: CROQUIS_KOKORO_MODELOS)
  */
 import { readFileSync } from "node:fs";
 import { dirname, join, resolve } from "node:path";
@@ -22,6 +23,8 @@ export const FFPROBE = join(FFMPEG_DIR, "ffprobe.exe");
 export const PIPER = process.env.CROQUIS_PIPER ?? `${HERRAMIENTAS}/piper-venv/Scripts/piper.exe`;
 export const PIPER_VOZ =
   process.env.CROQUIS_PIPER_VOZ ?? `${HERRAMIENTAS}/piper-voices/es_MX-claude-high.onnx`;
+export const KOKORO_PYTHON =
+  process.env.CROQUIS_KOKORO_PYTHON ?? `${HERRAMIENTAS}/kokoro-venv/Scripts/python.exe`;
 
 /** Los segmentos del guion: `## id` y el texto que sigue (sin las indicaciones `>`). */
 export function segmentosDelGuion() {
