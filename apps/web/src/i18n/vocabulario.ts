@@ -98,6 +98,11 @@ export const FUENTE: Vocab = {
   supuesto: { es: "supuesto", en: "assumed" },
   default: { es: "por omisión", en: "default" },
   mapa: { es: "del mapa", en: "from the map" },
+  // Las del expediente de CESVI (FuenteExpediente): nunca se muestra el identificador tal cual.
+  perito: { es: "perito", en: "investigator" },
+  conductor: { es: "conductor", en: "driver" },
+  expediente: { es: "del expediente", en: "from the case file" },
+  dictamen_importado: { es: "del reporte", en: "from the report" },
 };
 
 /** Parámetros del solver. */

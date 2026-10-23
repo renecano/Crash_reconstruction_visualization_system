@@ -1,5 +1,7 @@
 /** Ayudas de las e2e del recorrido de los casos (V2, ADR 0080). */
 import { expect, type Page } from "@playwright/test";
+import { Fuente, FuenteExpediente } from "@croquis/scene-schema";
+import { FUENTE, palabra } from "../src/i18n/vocabulario";
 
 /** Lleva el recorrido al paso n (1 a 8 del recorrido completo) con «Siguiente» y «Anterior». */
 export async function irAPaso(page: Page, n: number) {
@@ -58,4 +60,23 @@ export async function colocarTodo(page: Page) {
     await page.getByTestId("listo-elemento").click();
   }
   await expect(page.getByTestId("falta-para-seguir")).toHaveCount(0);
+}
+
+/** Los identificadores internos de fuente que no son palabras («dictamen_importado»…). */
+const IDS_FUENTE = [...Fuente.options, ...FuenteExpediente.options].filter(
+  (f) => palabra(FUENTE, f, "es") !== f,
+);
+
+/**
+ * Ninguna fuente aparece en pantalla como identificador interno (ADR 0083): cada etiqueta de fuente
+ * dice su palabra legible y ningún identificador con guion bajo llega al texto visible.
+ */
+export async function sinIdentificadoresDeFuente(page: Page) {
+  const etiquetas = page.locator("[data-fuente]");
+  for (const e of await etiquetas.all()) {
+    const f = (await e.getAttribute("data-fuente"))!;
+    await expect(e, `fuente ${f}`).toHaveText(palabra(FUENTE, f, "es"));
+  }
+  const texto = await page.locator("body").innerText();
+  for (const f of IDS_FUENTE.filter((f) => f.includes("_"))) expect(texto).not.toContain(f);
 }

@@ -1,6 +1,6 @@
 import { readFileSync } from "node:fs";
 import { expect, test } from "@playwright/test";
-import { colocarTodo, irAPaso } from "./ayuda-recorrido";
+import { colocarTodo, irAPaso, sinIdentificadoresDeFuente } from "./ayuda-recorrido";
 
 /**
  * El caso de AXA A2010930 en el mismo recorrido que cualquier caso (V2-4, ADR 0080): sus vehículos,
@@ -36,6 +36,9 @@ test("@flujo /cesvi: el caso de AXA desde la lista, del caso al dictamen en PDF"
   await expect(page.getByTestId("tarjeta-V1")).toContainText("Silverado");
   await expect(page.getByTestId("tarjeta-V2")).toContainText("Tacoma");
   await expect(page.getByTestId("tarjeta-V2")).toContainText("1,431.083 kg");
+  // La masa sale del reporte y lo dice así, no con el identificador interno de la fuente.
+  await expect(page.getByTestId("tarjeta-V2").locator("[data-fuente]")).toHaveText("del reporte");
+  await sinIdentificadoresDeFuente(page);
   await expect(page.getByTestId("avance-caso")).toHaveAttribute("data-avance", "2/4");
   // Los pasos futuros esperan: el paso 4 no se abre sin el lugar.
   await expect(page.getByTestId("paso-4")).toBeDisabled();
@@ -50,6 +53,7 @@ test("@flujo /cesvi: el caso de AXA desde la lista, del caso al dictamen en PDF"
   await expect(page.getByTestId("dialogo-buscar-lugar")).toHaveCount(0);
   await expect(page.getByTestId("siguiente")).toBeDisabled();
   await colocarTodo(page);
+  await sinIdentificadoresDeFuente(page);
 
   // 4. La reconstrucción, y la declaración del conductor ya escrita para compararla.
   await irAPaso(page, 4);

@@ -4,6 +4,7 @@
  * 0061): el mapa donde el perito coloca a cada vehículo, las preguntas de lo que más cambia la
  * reconstrucción y la fuente de cada dato.
  */
+import { FUENTE, palabra } from "@/i18n/vocabulario";
 import {
   avanzar,
   confirmarImpacto,
@@ -38,13 +39,15 @@ export const CARA: Record<string, string> = {
   inferior: "inferior",
 };
 
+/** De dónde sale un dato, con su etiqueta legible («del reporte», «perito»…), nunca el identificador. */
 export function Fuente({ f }: { f?: string }) {
   if (!f) return null;
   return (
     <span
+      data-fuente={f}
       className={`rounded-full px-2 py-0.5 text-[0.6875rem] font-medium ${f === "supuesto" ? "bg-[var(--falta-fondo)] text-senal-texto" : "bg-superficie-alta text-texto-2"}`}
     >
-      {f}
+      {palabra(FUENTE, f, "es")}
     </span>
   );
 }

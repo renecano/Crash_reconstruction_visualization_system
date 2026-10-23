@@ -61,6 +61,14 @@ export function Encabezado({ sobreEscena = false }: { sobreEscena?: boolean }) {
           <span className="sr-only">{t.sitio.nombre}</span>
         </Link>
         <nav aria-label={t.sitio.navegacion} className="hidden items-center gap-6 md:flex">
+          {/* Croquis es para los peritos de CESVI (V2): la entrada principal, en español. */}
+          <Link
+            href="/cesvi"
+            className="boton-principal boton-compacto no-underline"
+            data-testid="nav-entrar"
+          >
+            {t.sitio.nav.entrar}
+          </Link>
           {enlaces.map((e) => (
             <Link
               key={e.href}
@@ -94,6 +102,15 @@ export function Encabezado({ sobreEscena = false }: { sobreEscena?: boolean }) {
       {abierto ? (
         <nav id={menuId} aria-label={t.sitio.navegacion} className="pagina pb-6 md:hidden">
           <ul className="carril flex flex-col gap-1">
+            <li>
+              <Link
+                href="/cesvi"
+                className="t-subtitulo block py-2 no-underline"
+                data-testid="nav-entrar-menu"
+              >
+                {t.sitio.nav.entrar}
+              </Link>
+            </li>
             {enlaces.map((e) => (
               <li key={e.href}>
                 <Link href={e.href} className="t-subtitulo block py-2 no-underline">
