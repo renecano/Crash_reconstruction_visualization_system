@@ -49,9 +49,11 @@ from croquis_solver.preimpact import (
     ArcPath,
     CompositePath,
     LaneChangePath,
+    ReversePath,
     SpeedProfile,
     StraightPath,
     braking_deceleration,
+    travel_heading,
 )
 from croquis_solver.preimpact import (
     Path as KinPath,
@@ -536,7 +538,8 @@ def _path_for(m: VehicleModel, lane_width: float) -> KinPath:
     if m.maniobra == "cambio_carril_derecha":
         return _then_straight(LaneChangePath((x, y), yaw, LANE_CHANGE_LENGTH_M, -lane_width))
     if m.maniobra == "reversa":
-        return StraightPath((x, y), wrap_angle(yaw + math.pi), 500.0)
+        # Hacia atrás con el frente donde lo dejó el perito (sentido de marcha ≠ rumbo del frente).
+        return ReversePath(StraightPath((x, y), wrap_angle(yaw + math.pi), 500.0))
     return StraightPath((x, y), yaw, 500.0)
 
 
@@ -569,6 +572,11 @@ def _target_path(m: VehicleModel, target: Vec, offset: Vec) -> KinPath | None:
     ejemplo, un volantazo hacia la banqueta); el orquestador lo marca como inferido.
     """
     x, y, yaw = m.pose0
+    # En reversa el desvío se traza en el sentido de marcha, con el desfase del contacto girado.
+    reverse = m.maniobra == "reversa"
+    if reverse:
+        yaw = wrap_angle(yaw + math.pi)
+        offset = (-offset[0], -offset[1])
     dx, dy = target[0] - x, target[1] - y
     fwd = dx * dmath.cos(yaw) + dy * dmath.sin(yaw)
     left = -dx * dmath.sin(yaw) + dy * dmath.cos(yaw)
@@ -581,7 +589,8 @@ def _target_path(m: VehicleModel, target: Vec, offset: Vec) -> KinPath | None:
     u_hit = SEEK_CONTACT_FRACTION
     change = reach / u_hit
     total = lateral / (0.5 * (1.0 - dmath.cos(math.pi * u_hit)))
-    return _then_straight(LaneChangePath((x, y), yaw, change, total))
+    path = _then_straight(LaneChangePath((x, y), yaw, change, total))
+    return ReversePath(path) if reverse else path
 
 
 def _path_candidates(m: VehicleModel, lane_width: float, axis: RoadAxis) -> list[KinPath]:
@@ -603,7 +612,8 @@ def _pose_at(path: KinPath, s: float) -> tuple[float, float, float, float]:
         p = path.pose(min(s, path.length))
         return p.x, p.y, p.heading, p.curvature
     p = path.pose(0.0)
-    return p.x + s * dmath.cos(p.heading), p.y + s * dmath.sin(p.heading), p.heading, 0.0
+    h = travel_heading(path, p.heading)
+    return p.x + s * dmath.cos(h), p.y + s * dmath.sin(h), p.heading, 0.0
 
 
 def _primary_event(spec: JsonObj) -> JsonObj | None:
@@ -731,7 +741,8 @@ def _sample_path(path: KinPath, prof: SpeedProfile, t_ref: float, times: list[fl
             s = prof.v0 * tau
             v = prof.v0
         x, y, yaw, kappa = _pose_at(path, s)
-        traj.append(State2D(x, y, yaw, v * dmath.cos(yaw), v * dmath.sin(yaw), v * kappa, t))
+        h = travel_heading(path, yaw)
+        traj.append(State2D(x, y, yaw, v * dmath.cos(h), v * dmath.sin(h), v * kappa, t))
     return traj
 
 
@@ -861,8 +872,9 @@ def reconstruct(
         _, _, combo, sol = best
         for m, path in zip(targets, combo, strict=True):
             paths[m.id] = path
-        if seek is not None and combo[0] is seek and isinstance(seek, CompositePath):
-            first = seek.parts[0]
+        desvio = seek.inner if isinstance(seek, ReversePath) else seek
+        if seek is not None and combo[0] is seek and isinstance(desvio, CompositePath):
+            first = desvio.parts[0]
             lateral = 0.0
             if isinstance(first, LaneChangePath):
                 u = SEEK_CONTACT_FRACTION

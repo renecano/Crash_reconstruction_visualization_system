@@ -123,7 +123,126 @@ Reglas de trabajo: `CLAUDE.md`. Especificación: `PLAN.md`.
     - **C0:** pasa a R0. Falta lo nuevo: la descripción de los hechos sin conclusiones, con su revisión de fuga, y lo que concluyó CESVI, estructurado.
     - **C1:** es el módulo de verificación CESVI de R2, con su reproducción (E-C1) ya corrida.
     - **C2–C8:** se reacomodan en R1–R9.
-  - **Fase actual: R7** (comparación con la declaración del conductor). R4, R5 y R6 quedaron cerradas el 2026-10-22, y R3 también; R0, R1 y R2, el 2026-10-21. C0 y C1 de la v1 quedaron cerradas el 2026-10-21. El plan de C0 fue:
+  - **Fase actual: R7** (comparación con la declaración del conductor). R4b quedó cerrada el 2026-10-22; la voz del video quedó en `main` (PR #92) y espera que René la escuche («Bloqueado»).
+  - **Resumen de R4b para René** (rama `feat/r4b-mejora`, ADR 0069; reglas congeladas en `29b67ab` antes de leer la prueba, medida una sola vez):
+    - **Prueba congelada, v1 contra v2** (`eval/results/cesvi_r4b_comparacion.json`; 205 narraciones, 190 con modalidad concluida):
+
+      | Eje                                  | v1         | v2         | Línea base                 |
+      | ------------------------------------ | ---------- | ---------- | -------------------------- |
+      | Modalidad (todas)                    | 34.2 %     | 39.5 %     | 35.3 % («siempre otra»)    |
+      | Modalidades físicas (sin «otra»)     | 52.8 %     | 59.3 %     | 37.4 % («siempre alcance») |
+      | Sin inferir                          | 36         | 10         | —                          |
+      | Zonas de contacto (exhaustividad)    | 69.2 %     | 71.2 %     | —                          |
+      | Zonas de contacto (precisión)        | 59.7 %     | 61.3 %     | —                          |
+      | Primer impacto                       | 63.7 %     | 68.1 %     | —                          |
+      | Secuencia completa                   | 49.6 %     | 51.1 %     | —                          |
+      | Posiciones finales que tiene Croquis | 53.4 %     | 50.0 %     | —                          |
+      | Velocidades por deformación          | 0 de 5     | 0 de 5     | —                          |
+      | Reconstruidas y en 3D                | 205 de 205 | 205 de 205 | —                          |
+
+    - **Por modalidad en la prueba** (exhaustividad v1 → v2; entre paréntesis, de lo que predice la v2, cuánto acierta):
+      - **Volcadura:** 20 % → 60 % (40 %).
+      - **Objeto fijo:** 35.3 % → 52.9 % (30 %).
+      - **Alcance:** 73.9 % → 78.3 % (63.2 %).
+      - **Frontal:** 66.7 % → 83.3 % (35.7 %).
+      - **Lateral:** 68 % → 64 % (28.1 %).
+      - **Salida del camino:** 20 % → 10 % (33.3 %).
+      - **Reversa:** 0 → 0 de 9 (predice 1, falla).
+      - **«Otra»:** 0 % → 3 %; predice «otra» 3 veces y acierta 2.
+    - **Qué subió y qué no:**
+      - **Sube:**
+        - la modalidad física, que gana 21.9 puntos a su línea base;
+        - volcadura y objeto fijo;
+        - los casos sin inferir (de 36 a 10);
+        - un poco la secuencia y las zonas.
+      - **No sube:**
+        - la modalidad con «otra» apenas pasa la línea base (+4.2 puntos);
+        - lateral y salida del camino bajan;
+        - las posiciones finales bajan 3.4 puntos;
+        - la reversa y las velocidades se quedan en cero.
+      - **En desarrollo la v2 daba 45.5 % y 65.1 %.** En la prueba da 39.5 % y 59.3 %: las reglas de un vehículo se ajustaron con 136 casos de desarrollo y generalizan peor de lo que prometían.
+    - **Por qué no más** (medido en desarrollo y en los textos):
+      - **«Otra»:** es el 35 % de la prueba, y la etiqueta de R0 mezcla hechos sin choque con choques que el título del propio reporte nombra (auditoría, `eval/results/cesvi_r4b_auditoria_otra.json`).
+        - En la prueba, de 67 «otra», 11 son hechos sin choque, 30 llevan título de choque (18 laterales o perpendiculares, 7 alcances…) y 25 no se pueden clasificar.
+        - Croquis solo predice «otra» con evidencia de un hecho sin choque, para no regalar aciertos.
+      - **Reversa:** las narraciones de R0 no dicen que alguien retrocedía (0 de 16 en desarrollo), porque R0 quitó la dinámica y las declaraciones.
+      - **Velocidades:** las narraciones casi no traen el ancho dañado L; sin L no hay McHenry, y Croquis no lo inventa.
+    - **Carambolas** (E-R6 v2, `eval/results/cesvi_r4b_carambolas_{desarrollo,prueba}.json`):
+      - en la prueba ocurren 21 de 31 impactos posteriores (v1: 2 de 32);
+      - en desarrollo, 43 de 55 (v1: 5 de 56);
+      - las 33 escenas de la prueba son válidas y van en 3D.
+      - **Qué mide:** el impacto ocurre porque Croquis coloca al vehículo en la trayectoria del que lo golpea, como supuesto. Se mide que la secuencia narrada se reproduce, no que las posiciones sean las reales.
+    - **Medidas a sus campos:**
+      - **Corpus de C0** (671 reportes):
+        - daños con C: de 4 a 8;
+        - daños con C y L: de 1 a 2;
+        - vehículos con masa: de 31 a 42, todas en kg;
+        - rigidez: de 1 a 2.
+      - **E-R5 en la prueba** (`eval/results/cesvi_r4b_importar.json`):
+        - listos para reconstruir: 205 de 205 (v1: 204);
+        - masa: 3.4 % de los vehículos (v1: 2.4 %);
+        - C y L: 0 %.
+      - **El techo lo pone el dato:** 8 de 671 reportes traen C1 y C2 con números en su texto.
+    - **Reversa:**
+      - el solver ya avanza en reversa con el frente en su lugar (Python y TS, escena canónica `reversa`, paridad en las 13);
+      - la lectura marca la maniobra narrada y la escena la pasa.
+    - **Gasto de API de R4b:** 11.25 USD.
+      - C0 v4: 2.668 USD;
+      - piloto: 0.2453 USD;
+      - desarrollo: 5.6738 USD;
+      - prueba: 2.6626 USD.
+    - **Cómo probarlo:**
+      - `/cesvi/reproduccion` muestra la v2;
+      - en «Caso nuevo», una narración que diga «el vehículo A retrocedía» reconstruye la reversa;
+      - una carambola sin posiciones coloca al tercero y su impacto ocurre.
+    - **Qué necesito de René:** decidir si E-R4 debe medirse también contra el título del reporte, además de la etiqueta de R0. La auditoría dice que la etiqueta «otra» de R0 no es lo que CESVI escribió en 30 de 67 casos de la prueba. Cambiar la etiqueta sería cambiar la medición, así que no lo hice sin preguntar.
+  - **Lo que se hizo en R4b** (plan y bitácora):
+    - **Por qué:** E-R4 v1 no sostiene «Croquis llega a lo mismo que CESVI». En la prueba, la modalidad queda en 34.2 % contra 35.3 % de la línea base «siempre otra». Además:
+      - reversa: 0 de 9;
+      - objeto fijo: 35.3 %;
+      - salida del camino y volcadura: 20 %;
+      - velocidades por deformación: 0 de 5.
+    - **Reglas del juego:**
+      - Se ajusta solo con desarrollo.
+      - Las reglas se congelan en un commit antes de leer y medir la prueba, que se mide una sola vez.
+      - Se publican v1 y v2 lado a lado: los resultados de v1 se quedan como están.
+    - **Lo que ya se midió en desarrollo antes de cambiar nada** (los textos crudos y las narraciones de R0):
+      - **Medidas:** los reportes casi no las traen en el texto. De 671, 8 tienen C1 y C2 con números, 47 masas en kg y 6 la rigidez; 80 remiten a imágenes que el Markdown perdió. De 459 narraciones de desarrollo, 9 traen C1… con números. El techo de las velocidades por deformación lo pone el dato, y se va a reportar así.
+      - **«Otra» en las conclusiones de R0:** en desarrollo, 131 de 459. Muchas tienen otro título en el propio reporte («ALCANCE», «COLISIÓN PERPENDICULAR», «IMPACTO LATERAL POR MANIOBRA EN REVERSA»). Solo una parte son hechos sin choque entre vehículos: incendio, inundación, corte de circulación, bache, desprendimiento de piezas.
+      - **Reversa:** el solver gira la trayectoria 180° y el cuerpo la sigue, así que el vehículo choca con el frente. Además, `especDeExpediente` no pasa la maniobra y todo va como «recto».
+      - **Carambolas:** sin posiciones del perito, la disposición es la genérica, y 7 de 88 impactos posteriores ocurren (E-R6, sobre todo el corpus).
+    - **Plan:**
+      1. **Medidas a sus campos:**
+         - lectura de cada Ck como el último número de su tramo («C1 = 85 – 45 = 45 cm = 0.45 m» → 0.45 m);
+         - las entradas de los cálculos (C, L, masa, A y B) pasan a los campos del vehículo y del daño;
+         - prompts `escena-narracion-v2` y `corpus-cesvi-v4`, con masa y rigidez en el vehículo y las medidas en el daño;
+         - se vuelven a leer con C0 v4 solo los reportes cuyo texto trae medidas.
+      2. **Reversa:**
+         - el solver separa el sentido de marcha del rumbo del frente (Python primero, luego el port TS, con pruebas de paridad);
+         - la lectura marca la maniobra del vehículo y la escena la pasa;
+         - el que retrocede se coloca delante del punto de impacto.
+      3. **Modalidad:**
+         - reglas para objeto fijo, salida del camino, volcadura y reversa, ajustadas con todas las lecturas de desarrollo;
+         - «otra» solo con evidencia positiva de un hecho sin choque (incendio, inundación, bache…), y se publica la precisión de esas predicciones para que no regale aciertos;
+         - una auditoría (solo informativa) de la etiqueta «otra» de R0 contra el título del reporte.
+      4. **Carambolas:** colocar a los vehículos con el orden de los impactos, las caras de contacto y los detenidos que dice la narración, en lugar de la disposición genérica. E-R6 v2 se mide en desarrollo y prueba por separado, y v1 se recalcula en esa misma partición.
+      5. **Reporte:** congelar, leer la prueba con v2, medir una vez y publicar v1 y v2 por modalidad contra las líneas base (ADR 0069).
+    - **Costo estimado de API** (antes de enviar se estima con el contador de tokens y se anota el real):
+      - desarrollo con `escena-narracion-v2`: 459 narraciones a ~0.018 USD (lo que costó cada lectura de prueba en v1), ~8.2 USD;
+      - prueba: 205 narraciones, ~3.7 USD;
+      - C0 v4 de los reportes con medidas: unos 60 a ~0.028 USD, ~1.7 USD.
+      - **Total:** ~14 USD, debajo del tope de 30 USD.
+    - **Gasto real, conforme se envía:**
+      - C0 v4 (`pnpm --filter @croquis/cesvi corpus medidas 3`): 48 reportes, 2.668 USD (estimado 2.70 USD, lo que costó su lectura anterior, al doble por ir sin lotes).
+      - Piloto de `escena-narracion-v2`: 9 narraciones de desarrollo, 0.2453 USD.
+      - Desarrollo con `escena-narracion-v2`: 450 narraciones en lote (`msgbatch_01ESoqS5Fv5tmMDeY6bv3WN3`), 5.6738 USD (estimado 9.02 USD).
+      - Prueba con `escena-narracion-v2`: 205 narraciones en lote (`msgbatch_01GpMggjpeKgQYYjnn74iZsW`), 2.6626 USD (estimado 4.11 USD).
+    - **Lo que mostró el piloto:**
+      - **Medidas:** se leen con el resultado de la cuenta (C1 0.44 m…).
+      - **Reversa:** ninguna de las 3 narraciones de reversa trae la maniobra. En desarrollo, 0 de 16 narraciones de reversa dicen que alguien retrocedía: R0 quitó la dinámica que concluye CESVI y las declaraciones, y ahí venía la reversa.
+        - La pista «estacionamiento» no sirve: aparece en 4 de 16 reversas, 1 de 112 alcances, 8 de 63 laterales y 12 de 131 «otra».
+        - **Consecuencia:** en E-R4 la reversa no se puede identificar con la entrada de la prueba. R4b arregla lo que usa el producto: si el perito narra que un vehículo retrocedía, la lectura lo marca y el solver lo reconstruye bien.
+  - **Historial:** R4b, R4, R5 y R6 quedaron cerradas el 2026-10-22, y R3 también; R0, R1 y R2, el 2026-10-21. C0 y C1 de la v1 quedaron cerradas el 2026-10-21. El plan de C0 fue:
     - **Contrato v2:** `escena.schema.json` ampliado, con migración desde v1.3, Zod y Pydantic generados y un validador semántico (N vehículos, M impactos, versiones).
     - **Corpus estructurado** de los 671 dictámenes con Claude (salida estructurada, caché, semilla), validado contra el esquema, con partición congelada del 30 % y etiquetas de la conclusión revisadas en una muestra.
     - **Mediciones:** las proporciones del §2 en `eval/results/cesvi_corpus.json`; desde ahí se pueden citar.
@@ -736,6 +855,11 @@ Lo que se pospone por el trabajo con CESVI no se borra: queda aquí para despué
   - el debris del segundo impacto;
   - el tiempo de las escenas con muchos vehículos (hasta 34 s en E-R6);
   - en «Caso nuevo», una forma de declarar a mano los impactos cuando la narración no dice su orden.
+- **De R4b** (ADR 0069, «Límites»):
+  - en la prueba bajan lateral (68 % → 64 %), salida del camino (20 % → 10 %) y las posiciones finales que tiene Croquis (53.4 % → 50 %);
+  - las reglas de un vehículo generalizan peor que en desarrollo (modalidad 45.5 % en desarrollo, 39.5 % en la prueba);
+  - el ancho dañado L casi nunca está en las narraciones: sin él no hay velocidades por deformación;
+  - en las carambolas sin posiciones, el tercero se coloca detenido en la trayectoria del que lo golpea (supuesto); uno que venía en movimiento no se modela.
 - **De R5** (ADR 0068, «Límites»):
   - pasar las entradas de los cálculos de CESVI (masas, C y L, rigidez) a los campos del vehículo y del daño, para que la verificación CESVI y la inversión las usen;
   - OCR para reportes escaneados.
@@ -759,6 +883,7 @@ Lo que se pospone por el trabajo con CESVI no se borra: queda aquí para despué
 
 | Qué                                                                                                                                                                                                                                 | Para qué                                                                                                                                                                                                                                                                                                                                                                                                                                    | Estado                                                                                                                                                                |
 | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Decidir si E-R4 se mide también contra la modalidad del título del reporte, además de la etiqueta de R0                                                                                                                             | La auditoría (`eval/results/cesvi_r4b_auditoria_otra.json`) muestra que la etiqueta «otra» de R0 no es lo que CESVI escribió en 30 de 67 casos de la prueba; cambiarla es cambiar la medición                                                                                                                                                                                                                                               | Pendiente (2026-10-22); E-R4 sigue midiéndose con la etiqueta de R0                                                                                                   |
 | Escuchar las muestras de voz en `demo/video/salida/muestras/` (Piper, Kokoro `ef_dora`, `em_alex` y `em_santa`, el mismo fragmento) y el video regrabado con `ef_dora`                                                              | Confirmar que la voz del video suena natural (CESVI lo pidió). Si ninguna voz local suena natural: crear una cuenta gratuita de Azure, un recurso «Speech» en el plan F0 (0.5 millones de caracteres al mes con voces neuronales; el guion tiene 2,605) y poner `AZURE_SPEECH_KEY` y `AZURE_SPEECH_REGION` en `.env.local`. Después: `CROQUIS_VOZ=azure:es-MX-DaliaNeural node demo/video/voz.mjs` (o `es-MX-JorgeNeural`), grabar y montar | Pendiente (2026-10-22); mientras, el video va con Kokoro `ef_dora`                                                                                                    |
 | La maqueta actualizada de `docs/cesvi/rediseno/Paso2.html`                                                                                                                                                                          | Subirla tal como está y ajustar el paso 2 («El hecho») a ella                                                                                                                                                                                                                                                                                                                                                                               | Pendiente: la del disco es idéntica a la del repositorio (2026-10-21)                                                                                                 |
 | `CLAUDE.md` con el cambio que menciona René (apuntar al plan nuevo y el uso libre de los dictámenes)                                                                                                                                | Commit tal como esté en el disco                                                                                                                                                                                                                                                                                                                                                                                                            | El del disco es idéntico al de git (2026-10-21): no hay cambio que subir. El uso libre quedó registrado desde `PLAN-CESVI.md` §3 en `data/SOURCES.md`                 |

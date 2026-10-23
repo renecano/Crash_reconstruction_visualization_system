@@ -20,7 +20,7 @@ import {
 } from "./corpus";
 import { GLOSARIO, glosarioParaPrompt } from "./hecho-lectura";
 
-export const VERSION_PROMPT_ESCENA = "escena-narracion-v1";
+export const VERSION_PROMPT_ESCENA = "escena-narracion-v2";
 
 const lista = (campo: string) => VALORES[campo]!.join(", ");
 
@@ -39,9 +39,10 @@ Vehículos: el que la narración llama «vehículo A» es V1, el «vehículo B»
 
 Secciones y campos:
 - caso (n 1, vehículo «ninguno»): modalidad (solo si la narración la nombra: ${lista("modalidad")}), fecha_hora, lugar (la vía y el punto como los escribe), municipio, entidad.
-- vehiculo (n 1, 2…; vehículo V1, V2…): marca, modelo (el tipo o versión), anio, clase (solo si es clara: ${lista("clase")}) y masa, si las escribe.
-- dano (un grupo por cada zona dañada de cada vehículo; vehículo = el dañado): cara (${lista("cara")}); tercio (izquierdo, centro o derecho en el frente y la parte posterior; delantero, medio o trasero en los laterales); vertice (${lista("vertice")}); altura ("45 a 95 cm"); direccion (${lista("direccion")}; una fila por dirección); tipo (${lista("tipo")}; una fila por tipo); magnitud (${lista("magnitud")}); medidas ("C1 0.96, C2 0.86, L 1.689 m"); intercambio; previo («si» si la narración dice que el daño es previo o sin relación).
-- impacto (n = el orden: 1, 2…; vehículo «ninguno»): solo si la narración dice qué vehículos u objetos entraron en contacto. participante (una fila por vehículo) y objeto_fijo (la contraparte si es un objeto, la superficie o un cuerpo no identificado).
+- vehiculo (n 1, 2…; vehículo V1, V2…): marca, modelo (el tipo o versión), anio, clase (solo si es clara: ${lista("clase")}), masa (también si la llama peso: "1,450 kg") y rigidez ("A = 52,000 N/m, B = 345,000 N/m²"), si las escribe.
+- dano (un grupo por cada zona dañada de cada vehículo; vehículo = el dañado): cara (${lista("cara")}); tercio (izquierdo, centro o derecho en el frente y la parte posterior; delantero, medio o trasero en los laterales); vertice (${lista("vertice")}); altura ("45 a 95 cm"); direccion (${lista("direccion")}; una fila por dirección); tipo (${lista("tipo")}; una fila por tipo); magnitud (${lista("magnitud")}); medidas (las de deformación C1…C6 y el ancho L con su unidad: "C1 0.96 m, C2 0.86 m, L 1.689 m"; si la narración hace la cuenta, «C1 = 85 – 45 = 40 cm», copia el resultado: "C1 40 cm"); intercambio; previo («si» si la narración dice que el daño es previo o sin relación).
+- impacto (n = el orden: 1, 2…; vehículo «ninguno»): solo si la narración dice qué vehículos u objetos entraron en contacto. participante (una fila por vehículo), objeto_fijo (la contraparte si es un objeto, la superficie o un cuerpo no identificado) y contacto (una fila por vehículo cuya cara de contacto en ese impacto dice la narración: el vehículo y la cara, p. ej. "V1 frontal"; caras: ${lista("cara")}).
+- movimiento (un grupo por vehículo cuyo movimiento antes del impacto dice la narración; vehículo = ese): maniobra (${lista("maniobra")}): «reversa» si retrocedía, «se_detiene» si estaba detenido o estacionado, «circula» si avanzaba, y las demás si las dice.
 - restos (n 1): longitud de la zona de restos, si la mide.
 - huella (un grupo por huella; vehículo = el que la dejó o «ninguno»): tipo_huella (${lista("tipo_huella")}) y longitud.
 - objeto_fijo (un grupo por objeto fijo dañado): descripcion.
@@ -100,8 +101,10 @@ function conZonas(e: Expediente): { expediente: Expediente; ambiguas: [number, I
   const impactos = e.impactos ?? [];
   const ambiguas: [number, Id][] = [];
   const nuevos = impactos.map((i) => {
-    const zonas: { vehiculo: Id; zona: Zona }[] = [];
+    // Las que dice la narración (R4b) se quedan; las demás salen de los daños.
+    const zonas: { vehiculo: Id; zona: Zona }[] = [...(i.zonas ?? [])];
     for (const v of i.vehiculos ?? []) {
+      if (zonas.some((z) => z.vehiculo === v)) continue;
       const enCuantos = impactos.filter((x) => x.vehiculos?.includes(v)).length;
       const zona = zonaUnica(e, v);
       if (enCuantos === 1 && zona) zonas.push({ vehiculo: v, zona });

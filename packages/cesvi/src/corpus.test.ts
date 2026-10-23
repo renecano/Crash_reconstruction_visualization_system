@@ -1,9 +1,11 @@
 import { describe, expect, it } from "vitest";
 import {
   agrupar,
+  conEntradasDeCalculo,
   dividirLote,
   ESQUEMA_CORPUS,
   expedienteDeSalida,
+  medidasDeDeformacion,
   numeroEscrito,
   numerosEnCita,
   numerosEscritos,
@@ -11,6 +13,7 @@ import {
   problemasExpediente,
   redactar,
   unidadEscrita,
+  type Expediente,
   type FilaCorpus,
 } from "./corpus";
 
@@ -230,5 +233,116 @@ describe("corpus de dictámenes de CESVI (C0)", () => {
     expect(p).toHaveLength(12);
     expect(particionPrueba([...docs].reverse(), 7)).toEqual(p);
     expect(particionPrueba(docs, 8)).not.toEqual(p);
+  });
+});
+
+describe("medidas de deformación (R4b)", () => {
+  const m = (t: string) => medidasDeDeformacion(t).map((x) => [x.clave, x.valor]);
+
+  it("lee cada C con el último número de su tramo: el resultado de la cuenta, no la referencia", () => {
+    // Formatos de los reportes del corpus.
+    expect(m("C1 = 85 – 45 = 45 cm = 0.45 m; C2 = 87 – 45 = 42 cm = 0.42 m")).toEqual([
+      ["C1", 0.45],
+      ["C2", 0.42],
+    ]);
+    expect(m("C1 = 74 cm – 54 cm = 20 cm, C2 = 89 cm – 54 cm = 35 cm")).toEqual([
+      ["C1", 0.2],
+      ["C2", 0.35],
+    ]);
+    expect(m("C1 0.96, C2 0.86, L 1.689 m")).toEqual([
+      ["C1", 0.96],
+      ["C2", 0.86],
+      ["L", 1.689],
+    ]);
+  });
+
+  it("sin unidad, una C mayor que 3 está en cm; una resta sin resultado no da medida", () => {
+    expect(m("C1 = 47; C2 = 37")).toEqual([
+      ["C1", 0.47],
+      ["C2", 0.37],
+    ]);
+    expect(m("C1 = 85 – 45")).toEqual([]);
+  });
+
+  it("el tramo termina en el separador: lo que sigue no es medida", () => {
+    expect(m("L = 1.689 m, C1 = 0.96 m y una masa de 1431.083 kg")).toEqual([
+      ["L", 1.689],
+      ["C1", 0.96],
+    ]);
+  });
+});
+
+describe("las entradas de los cálculos pasan a sus campos (R4b)", () => {
+  const base: Expediente = {
+    caso: {},
+    vehiculos: [{ id: "V1" }, { id: "V2", masa: { valor: 1500, unidad: "kg", fuente: "perito" } }],
+    danos: [
+      { vehiculo: "V1", zona: { cara: "frontal" }, dano_previo: true, fuente: "perito" },
+      { vehiculo: "V1", zona: { cara: "frontal" }, fuente: "perito" },
+    ],
+    calculos: [
+      {
+        metodo: "mchenry",
+        vehiculo: "V1",
+        cita: { texto: "L = 1.689 m; C1 = 96 cm; C2 = 86 cm" },
+        entradas: [
+          { nombre: "L", valor: { valor: 1.689, unidad: "m", fuente: "perito" } },
+          { nombre: "C2", valor: { valor: 86, unidad: "cm", fuente: "perito" } },
+          { nombre: "C1", valor: { valor: 96, unidad: "cm", fuente: "perito" } },
+          { nombre: "m", valor: { valor: 1.431, unidad: "ton", fuente: "perito" } },
+          { nombre: "A", valor: { valor: 52, unidad: "kN/m", fuente: "perito" } },
+          { nombre: "B", valor: { valor: 345, unidad: "kN/m²", fuente: "perito" } },
+        ],
+      },
+      {
+        metodo: "ebs",
+        vehiculo: "V2",
+        entradas: [{ nombre: "m", valor: { valor: 900, unidad: "kg", fuente: "perito" } }],
+      },
+    ],
+  } as unknown as Expediente;
+
+  it("C y L van al primer daño que no es previo; la masa y la rigidez, al vehículo", () => {
+    const e = conEntradasDeCalculo(base);
+    expect(e.danos![0]!.magnitud).toBeUndefined();
+    expect(e.danos![1]!.magnitud).toEqual({ c_m: [0.96, 0.86], l_m: 1.689 });
+    const v1 = e.vehiculos[0]!;
+    expect(v1.masa).toMatchObject({ valor: 1431, unidad: "kg" });
+    expect(v1.rigidez).toMatchObject({ A: 52, B: 345, fuente: "perito" });
+  });
+
+  it("no pisa lo que el texto ya dice en su lugar", () => {
+    const e = conEntradasDeCalculo(base);
+    expect(e.vehiculos[1]!.masa!.valor).toBe(1500);
+  });
+});
+
+describe("la masa en kg (R4b)", () => {
+  it("«1,200 Kg» y «1.4 toneladas» quedan en kg para la verificación CESVI", () => {
+    const texto = "El vehículo A pesa 1,200 Kg. El vehículo B, 1.4 toneladas.";
+    const s = {
+      datos: [
+        fila({
+          seccion: "vehiculo",
+          vehiculo: "V1",
+          campo: "masa",
+          valor: "1,200 Kg",
+          cita: "El vehículo A pesa 1,200 Kg",
+        }),
+        fila({
+          seccion: "vehiculo",
+          n: 2,
+          vehiculo: "V2",
+          campo: "masa",
+          valor: "1.4 toneladas",
+          cita: "El vehículo B, 1.4 toneladas",
+        }),
+      ],
+    };
+    const e = expedienteDeSalida(s, texto, "perito").expediente;
+    expect(e.vehiculos.map((v) => v.masa && [v.masa.valor, v.masa.unidad])).toEqual([
+      [1200, "kg"],
+      [1400, "kg"],
+    ]);
   });
 });

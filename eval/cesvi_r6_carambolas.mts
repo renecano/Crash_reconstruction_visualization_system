@@ -16,12 +16,19 @@
  *   pnpm exec tsx ../../eval/cesvi_r6_carambolas.mts grabar   lee la narración de la e2e con Claude
  *        (con la llave en el entorno) → data/cesvi/grabaciones/carambola/carambola-e2e.json
  *   pnpm exec tsx ../../eval/cesvi_r6_carambolas.mts medir    → eval/results/cesvi_r6_carambolas.json
+ *
+ * R4b (ADR 0069): `medir <desarrollo|prueba>` mide una partición con la versión vigente: el
+ * expediente pasa por `escenaDeConversion` como en «Caso nuevo» (zonas de contacto de los daños) y
+ * los vehículos que solo están en impactos posteriores se colocan en la trayectoria del que los
+ * golpea → eval/results/cesvi_r4b_carambolas_<particion>.json, con la v1 de la misma partición al
+ * lado (de su detalle). La v1 se queda como está.
  */
 import { mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import { ESQUEMA_CORPUS, type Expediente, type SalidaCorpus } from "../packages/cesvi/src/corpus";
 import {
+  escenaDeConversion,
   mensajeEscena,
   SISTEMA_ESCENA,
   VERSION_PROMPT_ESCENA,
@@ -82,7 +89,16 @@ const mediana = (xs: number[]) => {
   return s.length ? s[Math.floor(s.length / 2)]! : 0;
 };
 
-function medir() {
+const SIN_CONTEOS = {
+  filas: 0,
+  valores_invalidos: 0,
+  citas: 0,
+  citas_fuera: 0,
+  numeros: 0,
+  numeros_fuera: 0,
+};
+
+function medir(particion: "desarrollo" | "prueba" | null) {
   const prueba = new Set(
     (JSON.parse(readFileSync(join(CORPUS, "particion.json"), "utf8")) as { prueba: string[] })
       .prueba,
@@ -91,8 +107,14 @@ function medir() {
     .trim()
     .split("\n")
     .map((l) => JSON.parse(l) as { id: string; expediente: Expediente })
-    .filter((r) => r.expediente.vehiculos.length >= 3);
-  const detalle = filas.map(({ id, expediente: e }) => {
+    .filter((r) => r.expediente.vehiculos.length >= 3)
+    .filter((r) => particion === null || (particion === "prueba") === prueba.has(r.id));
+  const detalle = filas.map(({ id, expediente: e0 }) => {
+    // v2: como en «Caso nuevo», con las zonas de contacto que dan los daños.
+    const e =
+      particion === null
+        ? e0
+        : escenaDeConversion({ expediente: e0, posiciones: [], conteos: SIN_CONTEOS }).expediente;
     const t0 = performance.now();
     const r = reconstruirExpediente(e, id);
     const ms = Math.round(performance.now() - t0);
@@ -145,9 +167,42 @@ function medir() {
     ms_maximo: Math.max(...detalle.map((d) => d.ms)),
     detalle,
   };
+  const v1 =
+    particion === null
+      ? null
+      : (() => {
+          const d = (
+            JSON.parse(
+              readFileSync(join(RAIZ, "eval/results/cesvi_r6_carambolas.json"), "utf8"),
+            ) as { detalle: (typeof detalle)[number][] }
+          ).detalle.filter((x) => x.particion === particion);
+          return {
+            expedientes: d.length,
+            reconstruidas: d.filter((x) => x.reconstruida).length,
+            impactos_posteriores_en_escena: d.reduce((a, x) => a + x.posteriores_en_escena, 0),
+            impactos_posteriores_ocurridos: d.reduce((a, x) => a + x.posteriores_ocurridos, 0),
+          };
+        })();
   writeFileSync(
-    join(RAIZ, "eval/results/cesvi_r6_carambolas.json"),
-    `${JSON.stringify(out, null, 1)}\n`,
+    join(
+      RAIZ,
+      particion === null
+        ? "eval/results/cesvi_r6_carambolas.json"
+        : `eval/results/cesvi_r4b_carambolas_${particion}.json`,
+    ),
+    `${JSON.stringify(
+      particion === null
+        ? out
+        : {
+            ...out,
+            descripcion:
+              "E-R6 v2 (R4b): los expedientes de C0 con 3 o más vehículos de una partición, por «escenaDeConversion» como en «Caso nuevo»; los vehículos que solo están en impactos posteriores, colocados en la trayectoria del que los golpea (supuesto). Al lado, la v1 de la misma partición.",
+            particion,
+            v1_misma_particion: v1,
+          },
+      null,
+      1,
+    )}\n`,
   );
   console.log(
     `${out.reconstruidas}/${out.expedientes} reconstruidas (${out.escenas_validas} válidas, ${out.en_3d} en 3D); impactos posteriores: ${out.impactos_posteriores_ocurridos} de ${out.impactos_posteriores_en_escena} ocurren; mediana ${out.ms_mediana} ms`,
@@ -156,5 +211,9 @@ function medir() {
 
 const modo = process.argv[2];
 if (modo === "grabar") await grabar();
-else if (modo === "medir") medir();
-else console.error("Uso: cesvi_r6_carambolas.mts grabar | medir");
+else if (modo === "medir") {
+  const p = process.argv[3];
+  // Sin partición sería la v1, que ya está medida (y su código cambió): no se reescribe.
+  if (p !== "desarrollo" && p !== "prueba") throw new Error("Uso: medir <desarrollo|prueba>");
+  medir(p);
+} else console.error("Uso: cesvi_r6_carambolas.mts grabar | medir");

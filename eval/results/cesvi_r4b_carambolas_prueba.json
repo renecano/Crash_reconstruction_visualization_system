@@ -1,0 +1,626 @@
+{
+ "fecha": "2026-10-23T03:30:14.550Z",
+ "descripcion": "E-R6 v2 (R4b): los expedientes de C0 con 3 o más vehículos de una partición, por «escenaDeConversion» como en «Caso nuevo»; los vehículos que solo están en impactos posteriores, colocados en la trayectoria del que los golpea (supuesto). Al lado, la v1 de la misma partición.",
+ "expedientes": 33,
+ "por_vehiculos": {
+  "3": 22,
+  "4": 8,
+  "6": 1,
+  "7": 1,
+  "8": 1
+ },
+ "escenas_validas": 33,
+ "reconstruidas": 33,
+ "en_3d": 33,
+ "con_impactos_posteriores": 24,
+ "impactos_posteriores_en_escena": 31,
+ "impactos_posteriores_ocurridos": 21,
+ "ms_mediana": 1589,
+ "ms_maximo": 27184,
+ "detalle": [
+  {
+   "id": "cesvi-aee9753bf1",
+   "particion": "prueba",
+   "vehiculos": 3,
+   "impactos_declarados": 1,
+   "posteriores_en_escena": 0,
+   "posteriores_ocurridos": 0,
+   "escena_valida": true,
+   "reconstruida": true,
+   "resultado_valido": true,
+   "escena_3d_valida": true,
+   "velocidades_fijadas": 0,
+   "limites": [
+    "La evidencia del perito todavía no fija ninguna velocidad: coloca las posiciones de impacto y finales, o captura las medidas C y L de la deformación."
+   ],
+   "ms": 1425
+  },
+  {
+   "id": "cesvi-eed00406c6",
+   "particion": "prueba",
+   "vehiculos": 4,
+   "impactos_declarados": 1,
+   "posteriores_en_escena": 0,
+   "posteriores_ocurridos": 0,
+   "escena_valida": true,
+   "reconstruida": true,
+   "resultado_valido": true,
+   "escena_3d_valida": true,
+   "velocidades_fijadas": 0,
+   "limites": [
+    "La evidencia del perito todavía no fija ninguna velocidad: coloca las posiciones de impacto y finales, o captura las medidas C y L de la deformación."
+   ],
+   "ms": 1893
+  },
+  {
+   "id": "cesvi-a8b1cf4c43",
+   "particion": "prueba",
+   "vehiculos": 4,
+   "impactos_declarados": 1,
+   "posteriores_en_escena": 0,
+   "posteriores_ocurridos": 0,
+   "escena_valida": true,
+   "reconstruida": true,
+   "resultado_valido": true,
+   "escena_3d_valida": true,
+   "velocidades_fijadas": 0,
+   "limites": [],
+   "ms": 1633
+  },
+  {
+   "id": "cesvi-cade1c89cb",
+   "particion": "prueba",
+   "vehiculos": 4,
+   "impactos_declarados": 3,
+   "posteriores_en_escena": 2,
+   "posteriores_ocurridos": 1,
+   "escena_valida": true,
+   "reconstruida": true,
+   "resultado_valido": true,
+   "escena_3d_valida": true,
+   "velocidades_fijadas": 0,
+   "limites": [
+    "V3, V4: sin sus posiciones en el mapa, Croquis los coloca detenidos en la trayectoria del vehículo que los golpea, con la cara que dice la narración (supuesto): coloca a cada uno en el mapa para medirlo.",
+    "La evidencia del perito todavía no fija ninguna velocidad: coloca las posiciones de impacto y finales, o captura las medidas C y L de la deformación.",
+    "El impacto 2 (V2 con V3) no ocurre en la reconstrucción: con estas posiciones, sus trayectorias no llegan a tocarse."
+   ],
+   "ms": 5718
+  },
+  {
+   "id": "cesvi-bb774b3897",
+   "particion": "prueba",
+   "vehiculos": 8,
+   "impactos_declarados": 2,
+   "posteriores_en_escena": 1,
+   "posteriores_ocurridos": 0,
+   "escena_valida": true,
+   "reconstruida": true,
+   "resultado_valido": true,
+   "escena_3d_valida": true,
+   "velocidades_fijadas": 0,
+   "limites": [
+    "La evidencia del perito todavía no fija ninguna velocidad: coloca las posiciones de impacto y finales, o captura las medidas C y L de la deformación.",
+    "El impacto 2 (V1 con V6) no ocurre en la reconstrucción: con estas posiciones, sus trayectorias no llegan a tocarse."
+   ],
+   "ms": 22070
+  },
+  {
+   "id": "cesvi-16eb0fba1f",
+   "particion": "prueba",
+   "vehiculos": 3,
+   "impactos_declarados": 1,
+   "posteriores_en_escena": 0,
+   "posteriores_ocurridos": 0,
+   "escena_valida": true,
+   "reconstruida": true,
+   "resultado_valido": true,
+   "escena_3d_valida": true,
+   "velocidades_fijadas": 0,
+   "limites": [
+    "La evidencia del perito todavía no fija ninguna velocidad: coloca las posiciones de impacto y finales, o captura las medidas C y L de la deformación."
+   ],
+   "ms": 1213
+  },
+  {
+   "id": "cesvi-7b8ab3e55e",
+   "particion": "prueba",
+   "vehiculos": 3,
+   "impactos_declarados": 1,
+   "posteriores_en_escena": 0,
+   "posteriores_ocurridos": 0,
+   "escena_valida": true,
+   "reconstruida": true,
+   "resultado_valido": true,
+   "escena_3d_valida": true,
+   "velocidades_fijadas": 0,
+   "limites": [
+    "La evidencia del perito todavía no fija ninguna velocidad: coloca las posiciones de impacto y finales, o captura las medidas C y L de la deformación."
+   ],
+   "ms": 719
+  },
+  {
+   "id": "cesvi-257e1374a0",
+   "particion": "prueba",
+   "vehiculos": 3,
+   "impactos_declarados": 2,
+   "posteriores_en_escena": 1,
+   "posteriores_ocurridos": 1,
+   "escena_valida": true,
+   "reconstruida": true,
+   "resultado_valido": true,
+   "escena_3d_valida": true,
+   "velocidades_fijadas": 0,
+   "limites": [
+    "V1: sin sus posiciones en el mapa, Croquis lo coloca detenido en la trayectoria del vehículo que los golpea, con la cara que dice la narración (supuesto): coloca a cada uno en el mapa para medirlo.",
+    "La evidencia del perito todavía no fija ninguna velocidad: coloca las posiciones de impacto y finales, o captura las medidas C y L de la deformación."
+   ],
+   "ms": 1589
+  },
+  {
+   "id": "cesvi-9ab47f7f37",
+   "particion": "prueba",
+   "vehiculos": 3,
+   "impactos_declarados": 5,
+   "posteriores_en_escena": 1,
+   "posteriores_ocurridos": 0,
+   "escena_valida": true,
+   "reconstruida": true,
+   "resultado_valido": true,
+   "escena_3d_valida": true,
+   "velocidades_fijadas": 0,
+   "limites": [
+    "El impacto 2 no es entre dos vehículos (maceta de concreto y guarnición): la reconstrucción no lo calcula.",
+    "El impacto 3 no es entre dos vehículos (muro de concreto): la reconstrucción no lo calcula.",
+    "El impacto 5 no es entre dos vehículos (barandal): la reconstrucción no lo calcula.",
+    "V3: sin sus posiciones en el mapa, Croquis lo coloca detenido en la trayectoria del vehículo que los golpea, con la cara que dice la narración (supuesto): coloca a cada uno en el mapa para medirlo.",
+    "La evidencia del perito todavía no fija ninguna velocidad: coloca las posiciones de impacto y finales, o captura las medidas C y L de la deformación.",
+    "El impacto 4 (V2 con V3) no ocurre en la reconstrucción: con estas posiciones, sus trayectorias no llegan a tocarse."
+   ],
+   "ms": 11284
+  },
+  {
+   "id": "cesvi-c0bc4df135",
+   "particion": "prueba",
+   "vehiculos": 3,
+   "impactos_declarados": 2,
+   "posteriores_en_escena": 1,
+   "posteriores_ocurridos": 1,
+   "escena_valida": true,
+   "reconstruida": true,
+   "resultado_valido": true,
+   "escena_3d_valida": true,
+   "velocidades_fijadas": 0,
+   "limites": [
+    "V3: sin sus posiciones en el mapa, Croquis lo coloca detenido en la trayectoria del vehículo que los golpea, con la cara que dice la narración (supuesto): coloca a cada uno en el mapa para medirlo.",
+    "La evidencia del perito todavía no fija ninguna velocidad: coloca las posiciones de impacto y finales, o captura las medidas C y L de la deformación."
+   ],
+   "ms": 1557
+  },
+  {
+   "id": "cesvi-0b1f65a976",
+   "particion": "prueba",
+   "vehiculos": 7,
+   "impactos_declarados": 3,
+   "posteriores_en_escena": 2,
+   "posteriores_ocurridos": 2,
+   "escena_valida": true,
+   "reconstruida": true,
+   "resultado_valido": true,
+   "escena_3d_valida": true,
+   "velocidades_fijadas": 0,
+   "limites": [
+    "V3, V5: sin sus posiciones en el mapa, Croquis los coloca detenidos en la trayectoria del vehículo que los golpea, con la cara que dice la narración (supuesto): coloca a cada uno en el mapa para medirlo.",
+    "La evidencia del perito todavía no fija ninguna velocidad: coloca las posiciones de impacto y finales, o captura las medidas C y L de la deformación."
+   ],
+   "ms": 6532
+  },
+  {
+   "id": "cesvi-2a83292792",
+   "particion": "prueba",
+   "vehiculos": 6,
+   "impactos_declarados": 3,
+   "posteriores_en_escena": 2,
+   "posteriores_ocurridos": 1,
+   "escena_valida": true,
+   "reconstruida": true,
+   "resultado_valido": true,
+   "escena_3d_valida": true,
+   "velocidades_fijadas": 0,
+   "limites": [
+    "V5: sin sus posiciones en el mapa, Croquis lo coloca detenido en la trayectoria del vehículo que los golpea, con la cara que dice la narración (supuesto): coloca a cada uno en el mapa para medirlo.",
+    "La evidencia del perito todavía no fija ninguna velocidad: coloca las posiciones de impacto y finales, o captura las medidas C y L de la deformación.",
+    "El impacto 3 (V2 con V6) no ocurre en la reconstrucción: con estas posiciones, sus trayectorias no llegan a tocarse."
+   ],
+   "ms": 27184
+  },
+  {
+   "id": "cesvi-58c038ffdf",
+   "particion": "prueba",
+   "vehiculos": 3,
+   "impactos_declarados": 2,
+   "posteriores_en_escena": 1,
+   "posteriores_ocurridos": 1,
+   "escena_valida": true,
+   "reconstruida": true,
+   "resultado_valido": true,
+   "escena_3d_valida": true,
+   "velocidades_fijadas": 0,
+   "limites": [
+    "V3: sin sus posiciones en el mapa, Croquis lo coloca detenido en la trayectoria del vehículo que los golpea, con la cara que dice la narración (supuesto): coloca a cada uno en el mapa para medirlo.",
+    "La evidencia del perito todavía no fija ninguna velocidad: coloca las posiciones de impacto y finales, o captura las medidas C y L de la deformación."
+   ],
+   "ms": 1538
+  },
+  {
+   "id": "cesvi-b9f5a5ca1f",
+   "particion": "prueba",
+   "vehiculos": 3,
+   "impactos_declarados": 2,
+   "posteriores_en_escena": 1,
+   "posteriores_ocurridos": 1,
+   "escena_valida": true,
+   "reconstruida": true,
+   "resultado_valido": true,
+   "escena_3d_valida": true,
+   "velocidades_fijadas": 0,
+   "limites": [
+    "V3: sin sus posiciones en el mapa, Croquis lo coloca detenido en la trayectoria del vehículo que los golpea, con la cara que dice la narración (supuesto): coloca a cada uno en el mapa para medirlo.",
+    "La evidencia del perito todavía no fija ninguna velocidad: coloca las posiciones de impacto y finales, o captura las medidas C y L de la deformación."
+   ],
+   "ms": 1183
+  },
+  {
+   "id": "cesvi-928c1a7646",
+   "particion": "prueba",
+   "vehiculos": 3,
+   "impactos_declarados": 2,
+   "posteriores_en_escena": 1,
+   "posteriores_ocurridos": 0,
+   "escena_valida": true,
+   "reconstruida": true,
+   "resultado_valido": true,
+   "escena_3d_valida": true,
+   "velocidades_fijadas": 0,
+   "limites": [
+    "V3: sin sus posiciones en el mapa, Croquis lo coloca detenido en la trayectoria del vehículo que los golpea, con la cara que dice la narración (supuesto): coloca a cada uno en el mapa para medirlo.",
+    "La evidencia del perito todavía no fija ninguna velocidad: coloca las posiciones de impacto y finales, o captura las medidas C y L de la deformación.",
+    "El impacto 2 (V2 con V3) no ocurre en la reconstrucción: con estas posiciones, sus trayectorias no llegan a tocarse."
+   ],
+   "ms": 12171
+  },
+  {
+   "id": "cesvi-d4772dda4f",
+   "particion": "prueba",
+   "vehiculos": 4,
+   "impactos_declarados": 1,
+   "posteriores_en_escena": 0,
+   "posteriores_ocurridos": 0,
+   "escena_valida": true,
+   "reconstruida": true,
+   "resultado_valido": true,
+   "escena_3d_valida": true,
+   "velocidades_fijadas": 0,
+   "limites": [
+    "La evidencia del perito todavía no fija ninguna velocidad: coloca las posiciones de impacto y finales, o captura las medidas C y L de la deformación."
+   ],
+   "ms": 1353
+  },
+  {
+   "id": "cesvi-f7779cef54",
+   "particion": "prueba",
+   "vehiculos": 3,
+   "impactos_declarados": 1,
+   "posteriores_en_escena": 0,
+   "posteriores_ocurridos": 0,
+   "escena_valida": true,
+   "reconstruida": true,
+   "resultado_valido": true,
+   "escena_3d_valida": true,
+   "velocidades_fijadas": 0,
+   "limites": [
+    "La evidencia del perito todavía no fija ninguna velocidad: coloca las posiciones de impacto y finales, o captura las medidas C y L de la deformación."
+   ],
+   "ms": 1100
+  },
+  {
+   "id": "cesvi-d646b64594",
+   "particion": "prueba",
+   "vehiculos": 4,
+   "impactos_declarados": 3,
+   "posteriores_en_escena": 2,
+   "posteriores_ocurridos": 0,
+   "escena_valida": true,
+   "reconstruida": true,
+   "resultado_valido": true,
+   "escena_3d_valida": true,
+   "velocidades_fijadas": 0,
+   "limites": [
+    "V3, V4: sin sus posiciones en el mapa, Croquis los coloca detenidos en la trayectoria del vehículo que los golpea, con la cara que dice la narración (supuesto): coloca a cada uno en el mapa para medirlo.",
+    "La evidencia del perito todavía no fija ninguna velocidad: coloca las posiciones de impacto y finales, o captura las medidas C y L de la deformación.",
+    "El impacto 2 (V1 con V3) no ocurre en la reconstrucción: con estas posiciones, sus trayectorias no llegan a tocarse.",
+    "El impacto 3 (V1 con V4) no ocurre en la reconstrucción: con estas posiciones, sus trayectorias no llegan a tocarse."
+   ],
+   "ms": 25289
+  },
+  {
+   "id": "cesvi-85090bf850",
+   "particion": "prueba",
+   "vehiculos": 3,
+   "impactos_declarados": 2,
+   "posteriores_en_escena": 0,
+   "posteriores_ocurridos": 0,
+   "escena_valida": true,
+   "reconstruida": true,
+   "resultado_valido": true,
+   "escena_3d_valida": true,
+   "velocidades_fijadas": 0,
+   "limites": [
+    "El impacto 2 no es entre dos vehículos (valla metálica): la reconstrucción no lo calcula.",
+    "La evidencia del perito todavía no fija ninguna velocidad: coloca las posiciones de impacto y finales, o captura las medidas C y L de la deformación."
+   ],
+   "ms": 1128
+  },
+  {
+   "id": "cesvi-e9aed4ab5b",
+   "particion": "prueba",
+   "vehiculos": 3,
+   "impactos_declarados": 2,
+   "posteriores_en_escena": 1,
+   "posteriores_ocurridos": 0,
+   "escena_valida": true,
+   "reconstruida": true,
+   "resultado_valido": true,
+   "escena_3d_valida": true,
+   "velocidades_fijadas": 0,
+   "limites": [
+    "V3: sin sus posiciones en el mapa, Croquis lo coloca detenido en la trayectoria del vehículo que los golpea, con la cara que dice la narración (supuesto): coloca a cada uno en el mapa para medirlo.",
+    "La evidencia del perito todavía no fija ninguna velocidad: coloca las posiciones de impacto y finales, o captura las medidas C y L de la deformación.",
+    "El impacto 2 (V2 con V3) no ocurre en la reconstrucción: con estas posiciones, sus trayectorias no llegan a tocarse."
+   ],
+   "ms": 2764
+  },
+  {
+   "id": "cesvi-736d92094b",
+   "particion": "prueba",
+   "vehiculos": 3,
+   "impactos_declarados": 2,
+   "posteriores_en_escena": 1,
+   "posteriores_ocurridos": 1,
+   "escena_valida": true,
+   "reconstruida": true,
+   "resultado_valido": true,
+   "escena_3d_valida": true,
+   "velocidades_fijadas": 0,
+   "limites": [
+    "V3: sin sus posiciones en el mapa, Croquis lo coloca detenido en la trayectoria del vehículo que los golpea, con la cara que dice la narración (supuesto): coloca a cada uno en el mapa para medirlo.",
+    "La evidencia del perito todavía no fija ninguna velocidad: coloca las posiciones de impacto y finales, o captura las medidas C y L de la deformación."
+   ],
+   "ms": 1522
+  },
+  {
+   "id": "cesvi-cdaf2821ca",
+   "particion": "prueba",
+   "vehiculos": 3,
+   "impactos_declarados": 2,
+   "posteriores_en_escena": 0,
+   "posteriores_ocurridos": 0,
+   "escena_valida": true,
+   "reconstruida": true,
+   "resultado_valido": true,
+   "escena_3d_valida": true,
+   "velocidades_fijadas": 0,
+   "limites": [
+    "El impacto 2 no es entre dos vehículos (poste): la reconstrucción no lo calcula.",
+    "La evidencia del perito todavía no fija ninguna velocidad: coloca las posiciones de impacto y finales, o captura las medidas C y L de la deformación."
+   ],
+   "ms": 1347
+  },
+  {
+   "id": "cesvi-818c2eb6d6",
+   "particion": "prueba",
+   "vehiculos": 3,
+   "impactos_declarados": 2,
+   "posteriores_en_escena": 1,
+   "posteriores_ocurridos": 1,
+   "escena_valida": true,
+   "reconstruida": true,
+   "resultado_valido": true,
+   "escena_3d_valida": true,
+   "velocidades_fijadas": 0,
+   "limites": [
+    "V3: sin sus posiciones en el mapa, Croquis lo coloca detenido en la trayectoria del vehículo que los golpea, con la cara que dice la narración (supuesto): coloca a cada uno en el mapa para medirlo.",
+    "La evidencia del perito todavía no fija ninguna velocidad: coloca las posiciones de impacto y finales, o captura las medidas C y L de la deformación."
+   ],
+   "ms": 1103
+  },
+  {
+   "id": "cesvi-e53c722cc2",
+   "particion": "prueba",
+   "vehiculos": 3,
+   "impactos_declarados": 2,
+   "posteriores_en_escena": 1,
+   "posteriores_ocurridos": 1,
+   "escena_valida": true,
+   "reconstruida": true,
+   "resultado_valido": true,
+   "escena_3d_valida": true,
+   "velocidades_fijadas": 0,
+   "limites": [
+    "V3: sin sus posiciones en el mapa, Croquis lo coloca detenido en la trayectoria del vehículo que los golpea, con la cara que dice la narración (supuesto): coloca a cada uno en el mapa para medirlo.",
+    "La evidencia del perito todavía no fija ninguna velocidad: coloca las posiciones de impacto y finales, o captura las medidas C y L de la deformación."
+   ],
+   "ms": 1503
+  },
+  {
+   "id": "cesvi-316a61cb43",
+   "particion": "prueba",
+   "vehiculos": 4,
+   "impactos_declarados": 3,
+   "posteriores_en_escena": 2,
+   "posteriores_ocurridos": 2,
+   "escena_valida": true,
+   "reconstruida": true,
+   "resultado_valido": true,
+   "escena_3d_valida": true,
+   "velocidades_fijadas": 0,
+   "limites": [
+    "V3, V4: sin sus posiciones en el mapa, Croquis los coloca detenidos en la trayectoria del vehículo que los golpea, con la cara que dice la narración (supuesto): coloca a cada uno en el mapa para medirlo.",
+    "La evidencia del perito todavía no fija ninguna velocidad: coloca las posiciones de impacto y finales, o captura las medidas C y L de la deformación."
+   ],
+   "ms": 2848
+  },
+  {
+   "id": "cesvi-b1ab1b00df",
+   "particion": "prueba",
+   "vehiculos": 3,
+   "impactos_declarados": 2,
+   "posteriores_en_escena": 1,
+   "posteriores_ocurridos": 1,
+   "escena_valida": true,
+   "reconstruida": true,
+   "resultado_valido": true,
+   "escena_3d_valida": true,
+   "velocidades_fijadas": 0,
+   "limites": [
+    "V3: sin sus posiciones en el mapa, Croquis lo coloca detenido en la trayectoria del vehículo que los golpea, con la cara que dice la narración (supuesto): coloca a cada uno en el mapa para medirlo.",
+    "La evidencia del perito todavía no fija ninguna velocidad: coloca las posiciones de impacto y finales, o captura las medidas C y L de la deformación."
+   ],
+   "ms": 1750
+  },
+  {
+   "id": "cesvi-feb7aaa0e1",
+   "particion": "prueba",
+   "vehiculos": 3,
+   "impactos_declarados": 2,
+   "posteriores_en_escena": 1,
+   "posteriores_ocurridos": 0,
+   "escena_valida": true,
+   "reconstruida": true,
+   "resultado_valido": true,
+   "escena_3d_valida": true,
+   "velocidades_fijadas": 0,
+   "limites": [
+    "V1: sin sus posiciones en el mapa, Croquis lo coloca detenido en la trayectoria del vehículo que los golpea, con la cara que dice la narración (supuesto): coloca a cada uno en el mapa para medirlo.",
+    "La evidencia del perito todavía no fija ninguna velocidad: coloca las posiciones de impacto y finales, o captura las medidas C y L de la deformación.",
+    "El impacto 2 (V1 con V2) no ocurre en la reconstrucción: con estas posiciones, sus trayectorias no llegan a tocarse."
+   ],
+   "ms": 3637
+  },
+  {
+   "id": "cesvi-17afa381e4",
+   "particion": "prueba",
+   "vehiculos": 3,
+   "impactos_declarados": 2,
+   "posteriores_en_escena": 1,
+   "posteriores_ocurridos": 0,
+   "escena_valida": true,
+   "reconstruida": true,
+   "resultado_valido": true,
+   "escena_3d_valida": true,
+   "velocidades_fijadas": 0,
+   "limites": [
+    "V3: sin sus posiciones en el mapa, Croquis lo coloca detenido en la trayectoria del vehículo que los golpea, con la cara que dice la narración (supuesto): coloca a cada uno en el mapa para medirlo.",
+    "La evidencia del perito todavía no fija ninguna velocidad: coloca las posiciones de impacto y finales, o captura las medidas C y L de la deformación.",
+    "El impacto 2 (V1 con V3) no ocurre en la reconstrucción: con estas posiciones, sus trayectorias no llegan a tocarse."
+   ],
+   "ms": 6723
+  },
+  {
+   "id": "cesvi-c6e5335493",
+   "particion": "prueba",
+   "vehiculos": 4,
+   "impactos_declarados": 3,
+   "posteriores_en_escena": 2,
+   "posteriores_ocurridos": 2,
+   "escena_valida": true,
+   "reconstruida": true,
+   "resultado_valido": true,
+   "escena_3d_valida": true,
+   "velocidades_fijadas": 0,
+   "limites": [
+    "V3, V4: sin sus posiciones en el mapa, Croquis los coloca detenidos en la trayectoria del vehículo que los golpea, con la cara que dice la narración (supuesto): coloca a cada uno en el mapa para medirlo.",
+    "La evidencia del perito todavía no fija ninguna velocidad: coloca las posiciones de impacto y finales, o captura las medidas C y L de la deformación."
+   ],
+   "ms": 2805
+  },
+  {
+   "id": "cesvi-5becbd0fbb",
+   "particion": "prueba",
+   "vehiculos": 3,
+   "impactos_declarados": 2,
+   "posteriores_en_escena": 1,
+   "posteriores_ocurridos": 1,
+   "escena_valida": true,
+   "reconstruida": true,
+   "resultado_valido": true,
+   "escena_3d_valida": true,
+   "velocidades_fijadas": 0,
+   "limites": [
+    "V1: sin sus posiciones en el mapa, Croquis lo coloca detenido en la trayectoria del vehículo que los golpea, con la cara que dice la narración (supuesto): coloca a cada uno en el mapa para medirlo.",
+    "La evidencia del perito todavía no fija ninguna velocidad: coloca las posiciones de impacto y finales, o captura las medidas C y L de la deformación."
+   ],
+   "ms": 1448
+  },
+  {
+   "id": "cesvi-4ef2a9d90b",
+   "particion": "prueba",
+   "vehiculos": 3,
+   "impactos_declarados": 2,
+   "posteriores_en_escena": 1,
+   "posteriores_ocurridos": 1,
+   "escena_valida": true,
+   "reconstruida": true,
+   "resultado_valido": true,
+   "escena_3d_valida": true,
+   "velocidades_fijadas": 0,
+   "limites": [
+    "V3: sin sus posiciones en el mapa, Croquis lo coloca detenido en la trayectoria del vehículo que los golpea, con la cara que dice la narración (supuesto): coloca a cada uno en el mapa para medirlo.",
+    "La evidencia del perito todavía no fija ninguna velocidad: coloca las posiciones de impacto y finales, o captura las medidas C y L de la deformación."
+   ],
+   "ms": 1518
+  },
+  {
+   "id": "cesvi-923e562683",
+   "particion": "prueba",
+   "vehiculos": 4,
+   "impactos_declarados": 3,
+   "posteriores_en_escena": 2,
+   "posteriores_ocurridos": 2,
+   "escena_valida": true,
+   "reconstruida": true,
+   "resultado_valido": true,
+   "escena_3d_valida": true,
+   "velocidades_fijadas": 0,
+   "limites": [
+    "V3, V4: sin sus posiciones en el mapa, Croquis los coloca detenidos en la trayectoria del vehículo que los golpea, con la cara que dice la narración (supuesto): coloca a cada uno en el mapa para medirlo.",
+    "La evidencia del perito todavía no fija ninguna velocidad: coloca las posiciones de impacto y finales, o captura las medidas C y L de la deformación."
+   ],
+   "ms": 2361
+  },
+  {
+   "id": "cesvi-3fb401796c",
+   "particion": "prueba",
+   "vehiculos": 3,
+   "impactos_declarados": 2,
+   "posteriores_en_escena": 1,
+   "posteriores_ocurridos": 1,
+   "escena_valida": true,
+   "reconstruida": true,
+   "resultado_valido": true,
+   "escena_3d_valida": true,
+   "velocidades_fijadas": 0,
+   "limites": [
+    "V3: sin sus posiciones en el mapa, Croquis lo coloca detenido en la trayectoria del vehículo que los golpea, con la cara que dice la narración (supuesto): coloca a cada uno en el mapa para medirlo.",
+    "La evidencia del perito todavía no fija ninguna velocidad: coloca las posiciones de impacto y finales, o captura las medidas C y L de la deformación."
+   ],
+   "ms": 1510
+  }
+ ],
+ "particion": "prueba",
+ "v1_misma_particion": {
+  "expedientes": 33,
+  "reconstruidas": 33,
+  "impactos_posteriores_en_escena": 32,
+  "impactos_posteriores_ocurridos": 2
+ }
+}

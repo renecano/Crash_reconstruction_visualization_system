@@ -1,0 +1,33 @@
+{
+ "fecha": "2026-10-23T02:52:01+00:00",
+ "descripcion": "Reportes que R0 etiquetó «otra», por la clase de la modalidad que CESVI escribió en el título del propio reporte. Informativo: E-R4 se mide con la etiqueta de R0.",
+ "desarrollo": {
+  "otra_en_r0": 131,
+  "por_titulo": {
+   "sin_clasificar": 39,
+   "lateral": 38,
+   "sin_choque": 28,
+   "alcance": 9,
+   "reversa": 7,
+   "sin_titulo": 3,
+   "frontal": 3,
+   "salida_de_camino": 2,
+   "objeto_fijo": 1,
+   "volcadura": 1
+  }
+ },
+ "prueba": {
+  "otra_en_r0": 67,
+  "por_titulo": {
+   "sin_clasificar": 25,
+   "lateral": 18,
+   "sin_choque": 11,
+   "alcance": 7,
+   "frontal": 2,
+   "reversa": 1,
+   "volcadura": 1,
+   "salida_de_camino": 1,
+   "objeto_fijo": 1
+  }
+ }
+}

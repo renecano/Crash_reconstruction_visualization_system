@@ -103,6 +103,29 @@ export class LaneChangePath implements Path {
   }
 }
 
+/**
+ * El vehículo recorre `inner` en reversa: avanza por la curva con la parte posterior por delante.
+ * El rumbo de `pose` es el del frente (el de la curva más π); el sentido de marcha es el de la curva
+ * (`travelHeading`).
+ */
+export class ReversePath implements Path {
+  constructor(readonly inner: Path) {}
+
+  get length(): number {
+    return this.inner.length;
+  }
+
+  pose(s: number): Pose {
+    const p = this.inner.pose(s);
+    return { x: p.x, y: p.y, heading: wrapAngle(p.heading + Math.PI), curvature: p.curvature };
+  }
+}
+
+/** El rumbo del movimiento a partir del rumbo del frente: el mismo, salvo en reversa. */
+export function travelHeading(path: Path, heading: number): number {
+  return path instanceof ReversePath ? wrapAngle(heading + Math.PI) : heading;
+}
+
 export class CompositePath implements Path {
   constructor(readonly parts: readonly Path[]) {}
 

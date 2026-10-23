@@ -63,8 +63,10 @@ import {
   CompositePath,
   LaneChangePath,
   type Path as KinPath,
+  ReversePath,
   SpeedProfile,
   StraightPath,
+  travelHeading,
 } from "./preimpact";
 import { degrees, pyRound, pySum, radians, str } from "./pymath";
 import { laneFollowingPath, roadAxis, type RoadAxis } from "./road";
@@ -508,7 +510,10 @@ function pathFor(m: VehicleModel, laneWidth: number): KinPath {
   if (m.maniobra === "cambio_carril_derecha") {
     return thenStraight(new LaneChangePath([x, y], yaw, LANE_CHANGE_LENGTH_M, -laneWidth));
   }
-  if (m.maniobra === "reversa") return new StraightPath([x, y], wrapAngle(yaw + Math.PI), 500.0);
+  if (m.maniobra === "reversa") {
+    // Hacia atrás con el frente donde lo dejó el perito (sentido de marcha ≠ rumbo del frente).
+    return new ReversePath(new StraightPath([x, y], wrapAngle(yaw + Math.PI), 500.0));
+  }
   return new StraightPath([x, y], yaw, 500.0);
 }
 
@@ -532,8 +537,12 @@ function barrierNormal(obj: Json | null, point: Vec, axis: RoadAxis, st: State2D
 }
 
 /** Desvío suave que lleva el punto de contacto al objetivo (cuando nada más lo alcanza). */
-function targetPath(m: VehicleModel, target: Vec, offset: Vec): CompositePath | null {
-  const [x, y, yaw] = m.pose0;
+function targetPath(m: VehicleModel, target: Vec, offset: Vec): KinPath | null {
+  const [x, y, yaw0] = m.pose0;
+  // En reversa el desvío se traza en el sentido de marcha, con el desfase del contacto girado.
+  const reverse = m.maniobra === "reversa";
+  const yaw = reverse ? wrapAngle(yaw0 + Math.PI) : yaw0;
+  if (reverse) offset = [-offset[0], -offset[1]];
   const dx = target[0] - x;
   const dy = target[1] - y;
   const fwd = dx * dmath.cos(yaw) + dy * dmath.sin(yaw);
@@ -544,7 +553,8 @@ function targetPath(m: VehicleModel, target: Vec, offset: Vec): CompositePath | 
   const uHit = SEEK_CONTACT_FRACTION;
   const change = reach / uHit;
   const total = lateral / (0.5 * (1.0 - dmath.cos(Math.PI * uHit)));
-  return thenStraight(new LaneChangePath([x, y], yaw, change, total));
+  const path = thenStraight(new LaneChangePath([x, y], yaw, change, total));
+  return reverse ? new ReversePath(path) : path;
 }
 
 /** Primero la trayectoria que sigue el carril (vía curva o glorieta), luego la literal. */
@@ -569,7 +579,8 @@ function poseAt(path: KinPath, s: number): [number, number, number, number] {
     return [p.x, p.y, p.heading, p.curvature];
   }
   const p = path.pose(0.0);
-  return [p.x + s * dmath.cos(p.heading), p.y + s * dmath.sin(p.heading), p.heading, 0.0];
+  const h = travelHeading(path, p.heading);
+  return [p.x + s * dmath.cos(h), p.y + s * dmath.sin(h), p.heading, 0.0];
 }
 
 function primaryEvent(spec: Json): Json | null {
@@ -735,12 +746,13 @@ function samplePath(
       v = prof.v0;
     }
     const [x, y, yaw, kappa] = poseAt(path, s);
+    const h = travelHeading(path, yaw);
     traj.append({
       x,
       y,
       yaw,
-      vx: v * dmath.cos(yaw),
-      vy: v * dmath.sin(yaw),
+      vx: v * dmath.cos(h),
+      vy: v * dmath.sin(h),
       yawRate: v * kappa,
       t,
     });
@@ -876,7 +888,7 @@ export function reconstruct(
     const options = targets.map((m) =>
       m.v0 > 0 ? candidates.get(m.id)! : candidates.get(m.id)!.slice(0, 1),
     );
-    let seek: CompositePath | null = null;
+    let seek: KinPath | null = null;
     if (tipoEvento !== "impacto_vehiculo_vehiculo" && targets[0]!.v0 > 0) {
       seek = targetPath(targets[0]!, decl, offsets.get(targets[0]!.id)!);
       if (seek !== null) options[0] = [...options[0]!, seek];
@@ -900,8 +912,9 @@ export function reconstruct(
     }
     const [, , combo, sol] = best!;
     targets.forEach((m, i) => paths.set(m.id, combo[i]!));
-    if (seek !== null && combo[0] === seek) {
-      const first = seek.parts[0];
+    const desvio = seek instanceof ReversePath ? seek.inner : seek;
+    if (seek !== null && combo[0] === seek && desvio instanceof CompositePath) {
+      const first = desvio.parts[0];
       let lateral = 0.0;
       if (first instanceof LaneChangePath) {
         const u = SEEK_CONTACT_FRACTION;

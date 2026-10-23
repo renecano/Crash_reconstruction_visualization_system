@@ -330,3 +330,98 @@ describe("el croquis 2D sigue al reloj del 3D", () => {
     expect(posicionesEnTiempo(especDeExpediente(base0()), resultado, 0)).toEqual([]);
   });
 });
+
+describe("R4b (ADR 0069): la maniobra narrada y la carambola sin posiciones", () => {
+  type Dano = NonNullable<Expediente["danos"]>[number];
+  const dano = (vehiculo: string, cara: string): Dano =>
+    ({ vehiculo, zona: { cara }, fuente: "perito" }) as Dano;
+
+  it("quien retrocede según la narración va en reversa y choca con su parte posterior", () => {
+    const e = {
+      caso: {},
+      vehiculos: [
+        { id: "V1", clase: "sedan_compacto" },
+        { id: "V2", clase: "pickup" },
+      ],
+      danos: [dano("V1", "posterior"), dano("V2", "frontal")],
+      impactos: [
+        {
+          orden: 1,
+          vehiculos: ["V1", "V2"],
+          zonas: [
+            { vehiculo: "V1", zona: { cara: "posterior" } },
+            { vehiculo: "V2", zona: { cara: "frontal" } },
+          ],
+          fuente: "perito",
+        },
+      ],
+      versiones: [
+        {
+          tipo: "evidencia",
+          maniobras: [
+            { vehiculo: "V1", tipo: "reversa" },
+            { vehiculo: "V2", tipo: "se_detiene" },
+          ],
+        },
+      ],
+    } as unknown as Expediente;
+    const { spec, ids } = especDeExpediente(e);
+    expect(validateEscena(spec).ok).toBe(true);
+    const idDe = (v: string) => Object.keys(ids).find((k) => ids[k] === v)!;
+    const sv = (spec.vehiculos as Json[]).find((v) => v.id === idDe("V1"))!;
+    expect(sv.maniobra).toMatchObject({ valor: "reversa", fuente: "usuario" });
+    const r = reconstruirExpediente(e, "reversa-narrada");
+    const vs = r.resultado.vehiculos as { id: string; dano: { cdc: { lado: string } | null } }[];
+    expect(vs.find((v) => v.id === idDe("V1"))!.dano.cdc?.lado).toBe("B");
+  }, 20_000);
+
+  it("sin posiciones, el tercero de un alcance en cadena queda en el camino y el segundo impacto ocurre", () => {
+    const e = {
+      caso: {},
+      vehiculos: [
+        { id: "V1", clase: "sedan_compacto" },
+        { id: "V2", clase: "sedan_compacto" },
+        { id: "V3", clase: "sedan_compacto" },
+      ],
+      danos: [
+        dano("V1", "frontal"),
+        dano("V2", "posterior"),
+        dano("V2", "frontal"),
+        dano("V3", "posterior"),
+      ],
+      impactos: [
+        {
+          orden: 1,
+          vehiculos: ["V1", "V2"],
+          zonas: [
+            { vehiculo: "V1", zona: { cara: "frontal" } },
+            { vehiculo: "V2", zona: { cara: "posterior" } },
+          ],
+          fuente: "perito",
+        },
+        {
+          orden: 2,
+          vehiculos: ["V2", "V3"],
+          zonas: [
+            { vehiculo: "V2", zona: { cara: "frontal" } },
+            { vehiculo: "V3", zona: { cara: "posterior" } },
+          ],
+          fuente: "perito",
+        },
+      ],
+      versiones: [{ tipo: "evidencia", maniobras: [{ vehiculo: "V2", tipo: "se_detiene" }] }],
+    } as unknown as Expediente;
+    const { spec, ids, limites } = especDeExpediente(e);
+    expect(validateEscena(spec).ok).toBe(true);
+    const idDe = (v: string) => Object.keys(ids).find((k) => ids[k] === v)!;
+    const v3 = (spec.vehiculos as Json[]).find((v) => v.id === idDe("V3"))!;
+    expect(v3.posicion_inicial).toMatchObject({ procedencia: { fuente: "supuesto" } });
+    expect(v3.velocidad_previa).toMatchObject({ valor: 0 });
+    expect(limites.some((l) => l.startsWith("V3: sin sus posiciones en el mapa"))).toBe(true);
+    const r = reconstruirExpediente(e, "cadena");
+    expect(r.impactos.map((i) => i.vehiculos)).toEqual([
+      ["V1", "V2"],
+      ["V2", "V3"],
+    ]);
+  }, 30_000);
+});
