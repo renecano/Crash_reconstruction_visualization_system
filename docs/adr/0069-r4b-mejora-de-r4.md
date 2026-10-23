@@ -73,7 +73,39 @@
   | Objeto fijo         | 73.8 % (precisión 37.8 %) | —                          |
 
 - **Carambolas en desarrollo:** 44 de 56 impactos posteriores ocurren, contra 5 de 56 en v1 (`eval/results/cesvi_r4b_carambolas_desarrollo.json`).
-- **Prueba congelada** (una sola vez, con las reglas congeladas): v1 y v2 lado a lado en `eval/results/cesvi_r4b_comparacion.json`.
+- **Prueba congelada** (una sola vez, con las reglas congeladas en `29b67ab`): v1 y v2 lado a lado en `eval/results/cesvi_r4b_comparacion.json`.
+
+  | Eje (205 narraciones, 190 con modalidad) | v1              | v2                        | Línea base                 |
+  | ---------------------------------------- | --------------- | ------------------------- | -------------------------- |
+  | Modalidad                                | 34.2 %          | 39.5 %                    | 35.3 % («siempre otra»)    |
+  | Modalidades físicas                      | 52.8 %          | 59.3 %                    | 37.4 % («siempre alcance») |
+  | Volcadura                                | 20 %            | 60 % (precisión 40 %)     | —                          |
+  | Objeto fijo                              | 35.3 %          | 52.9 % (precisión 30 %)   | —                          |
+  | Alcance                                  | 73.9 %          | 78.3 % (precisión 63.2 %) | —                          |
+  | Frontal                                  | 66.7 %          | 83.3 % (precisión 35.7 %) | —                          |
+  | Lateral                                  | 68 %            | 64 % (precisión 28.1 %)   | —                          |
+  | Salida del camino                        | 20 %            | 10 % (precisión 33.3 %)   | —                          |
+  | Reversa                                  | 0 de 9          | 0 de 9                    | —                          |
+  | «Otra» predicha                          | —               | 2 de 3 aciertan           | —                          |
+  | Zonas (exhaustividad / precisión)        | 69.2 % / 59.7 % | 71.2 % / 61.3 %           | —                          |
+  | Primer impacto / secuencia completa      | 63.7 % / 49.6 % | 68.1 % / 51.1 %           | —                          |
+  | Posiciones finales                       | 53.4 %          | 50.0 %                    | —                          |
+  | Velocidades por deformación              | 0 de 5          | 0 de 5                    | —                          |
+
+- **Carambolas en la prueba:** 21 de 31 impactos posteriores ocurren, contra 2 de 32 en v1. Las 33 escenas son válidas y van en 3D.
+- **E-R5 en la prueba** (`eval/results/cesvi_r4b_importar.json`):
+  - listos para reconstruir: 205 de 205 (v1: 204);
+  - masa: 3.4 % de los vehículos (v1: 2.4 %);
+  - C y L: 0 %.
+- **Lectura honesta:**
+  - la modalidad física gana con claridad a su línea base;
+  - la modalidad con «otra» apenas la pasa;
+  - las reglas de un vehículo generalizan peor que en desarrollo (45.5 % allí, 39.5 % aquí).
+- **Gasto de API:** 11.25 USD.
+  - C0 v4: 2.668 USD;
+  - piloto: 0.2453 USD;
+  - desarrollo: 5.6738 USD;
+  - prueba: 2.6626 USD.
 
 ## Límites
 

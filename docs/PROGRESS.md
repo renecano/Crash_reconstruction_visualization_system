@@ -103,7 +103,80 @@ Reglas de trabajo: `CLAUDE.md`. Especificación: `PLAN.md`.
     - **C0:** pasa a R0. Falta lo nuevo: la descripción de los hechos sin conclusiones, con su revisión de fuga, y lo que concluyó CESVI, estructurado.
     - **C1:** es el módulo de verificación CESVI de R2, con su reproducción (E-C1) ya corrida.
     - **C2–C8:** se reacomodan en R1–R9.
-  - **Fase actual: R4b** (ronda de mejora de R4, pedida por René el 2026-10-22, antes de R7; rama `feat/r4b-mejora`). Después: la voz del video (PR #92) y R7.
+  - **Fase actual: R7** (comparación con la declaración del conductor). R4b quedó cerrada el 2026-10-22; la voz del video quedó en `main` (PR #92) y espera que René la escuche («Bloqueado»).
+  - **Resumen de R4b para René** (rama `feat/r4b-mejora`, ADR 0069; reglas congeladas en `29b67ab` antes de leer la prueba, medida una sola vez):
+    - **Prueba congelada, v1 contra v2** (`eval/results/cesvi_r4b_comparacion.json`; 205 narraciones, 190 con modalidad concluida):
+
+      | Eje                                  | v1         | v2         | Línea base                 |
+      | ------------------------------------ | ---------- | ---------- | -------------------------- |
+      | Modalidad (todas)                    | 34.2 %     | 39.5 %     | 35.3 % («siempre otra»)    |
+      | Modalidades físicas (sin «otra»)     | 52.8 %     | 59.3 %     | 37.4 % («siempre alcance») |
+      | Sin inferir                          | 36         | 10         | —                          |
+      | Zonas de contacto (exhaustividad)    | 69.2 %     | 71.2 %     | —                          |
+      | Zonas de contacto (precisión)        | 59.7 %     | 61.3 %     | —                          |
+      | Primer impacto                       | 63.7 %     | 68.1 %     | —                          |
+      | Secuencia completa                   | 49.6 %     | 51.1 %     | —                          |
+      | Posiciones finales que tiene Croquis | 53.4 %     | 50.0 %     | —                          |
+      | Velocidades por deformación          | 0 de 5     | 0 de 5     | —                          |
+      | Reconstruidas y en 3D                | 205 de 205 | 205 de 205 | —                          |
+
+    - **Por modalidad en la prueba** (exhaustividad v1 → v2; entre paréntesis, de lo que predice la v2, cuánto acierta):
+      - **Volcadura:** 20 % → 60 % (40 %).
+      - **Objeto fijo:** 35.3 % → 52.9 % (30 %).
+      - **Alcance:** 73.9 % → 78.3 % (63.2 %).
+      - **Frontal:** 66.7 % → 83.3 % (35.7 %).
+      - **Lateral:** 68 % → 64 % (28.1 %).
+      - **Salida del camino:** 20 % → 10 % (33.3 %).
+      - **Reversa:** 0 → 0 de 9 (predice 1, falla).
+      - **«Otra»:** 0 % → 3 %; predice «otra» 3 veces y acierta 2.
+    - **Qué subió y qué no:**
+      - **Sube:**
+        - la modalidad física, que gana 21.9 puntos a su línea base;
+        - volcadura y objeto fijo;
+        - los casos sin inferir (de 36 a 10);
+        - un poco la secuencia y las zonas.
+      - **No sube:**
+        - la modalidad con «otra» apenas pasa la línea base (+4.2 puntos);
+        - lateral y salida del camino bajan;
+        - las posiciones finales bajan 3.4 puntos;
+        - la reversa y las velocidades se quedan en cero.
+      - **En desarrollo la v2 daba 45.5 % y 65.1 %.** En la prueba da 39.5 % y 59.3 %: las reglas de un vehículo se ajustaron con 136 casos de desarrollo y generalizan peor de lo que prometían.
+    - **Por qué no más** (medido en desarrollo y en los textos):
+      - **«Otra»:** es el 35 % de la prueba, y la etiqueta de R0 mezcla hechos sin choque con choques que el título del propio reporte nombra (auditoría, `eval/results/cesvi_r4b_auditoria_otra.json`).
+        - En la prueba, de 67 «otra», 11 son hechos sin choque, 30 llevan título de choque (18 laterales o perpendiculares, 7 alcances…) y 25 no se pueden clasificar.
+        - Croquis solo predice «otra» con evidencia de un hecho sin choque, para no regalar aciertos.
+      - **Reversa:** las narraciones de R0 no dicen que alguien retrocedía (0 de 16 en desarrollo), porque R0 quitó la dinámica y las declaraciones.
+      - **Velocidades:** las narraciones casi no traen el ancho dañado L; sin L no hay McHenry, y Croquis no lo inventa.
+    - **Carambolas** (E-R6 v2, `eval/results/cesvi_r4b_carambolas_{desarrollo,prueba}.json`):
+      - en la prueba ocurren 21 de 31 impactos posteriores (v1: 2 de 32);
+      - en desarrollo, 43 de 55 (v1: 5 de 56);
+      - las 33 escenas de la prueba son válidas y van en 3D.
+      - **Qué mide:** el impacto ocurre porque Croquis coloca al vehículo en la trayectoria del que lo golpea, como supuesto. Se mide que la secuencia narrada se reproduce, no que las posiciones sean las reales.
+    - **Medidas a sus campos:**
+      - **Corpus de C0** (671 reportes):
+        - daños con C: de 4 a 8;
+        - daños con C y L: de 1 a 2;
+        - vehículos con masa: de 31 a 42, todas en kg;
+        - rigidez: de 1 a 2.
+      - **E-R5 en la prueba** (`eval/results/cesvi_r4b_importar.json`):
+        - listos para reconstruir: 205 de 205 (v1: 204);
+        - masa: 3.4 % de los vehículos (v1: 2.4 %);
+        - C y L: 0 %.
+      - **El techo lo pone el dato:** 8 de 671 reportes traen C1 y C2 con números en su texto.
+    - **Reversa:**
+      - el solver ya avanza en reversa con el frente en su lugar (Python y TS, escena canónica `reversa`, paridad en las 13);
+      - la lectura marca la maniobra narrada y la escena la pasa.
+    - **Gasto de API de R4b:** 11.25 USD.
+      - C0 v4: 2.668 USD;
+      - piloto: 0.2453 USD;
+      - desarrollo: 5.6738 USD;
+      - prueba: 2.6626 USD.
+    - **Cómo probarlo:**
+      - `/cesvi/reproduccion` muestra la v2;
+      - en «Caso nuevo», una narración que diga «el vehículo A retrocedía» reconstruye la reversa;
+      - una carambola sin posiciones coloca al tercero y su impacto ocurre.
+    - **Qué necesito de René:** decidir si E-R4 debe medirse también contra el título del reporte, además de la etiqueta de R0. La auditoría dice que la etiqueta «otra» de R0 no es lo que CESVI escribió en 30 de 67 casos de la prueba. Cambiar la etiqueta sería cambiar la medición, así que no lo hice sin preguntar.
+  - **Lo que se hizo en R4b** (plan y bitácora):
     - **Por qué:** E-R4 v1 no sostiene «Croquis llega a lo mismo que CESVI». En la prueba, la modalidad queda en 34.2 % contra 35.3 % de la línea base «siempre otra». Además:
       - reversa: 0 de 9;
       - objeto fijo: 35.3 %;
@@ -142,13 +215,14 @@ Reglas de trabajo: `CLAUDE.md`. Especificación: `PLAN.md`.
     - **Gasto real, conforme se envía:**
       - C0 v4 (`pnpm --filter @croquis/cesvi corpus medidas 3`): 48 reportes, 2.668 USD (estimado 2.70 USD, lo que costó su lectura anterior, al doble por ir sin lotes).
       - Piloto de `escena-narracion-v2`: 9 narraciones de desarrollo, 0.2453 USD.
-      - Desarrollo con `escena-narracion-v2`: 450 narraciones en lote (`msgbatch_01ESoqS5Fv5tmMDeY6bv3WN3`), estimado 9.02 USD; el real se anota al recogerlo.
+      - Desarrollo con `escena-narracion-v2`: 450 narraciones en lote (`msgbatch_01ESoqS5Fv5tmMDeY6bv3WN3`), 5.6738 USD (estimado 9.02 USD).
+      - Prueba con `escena-narracion-v2`: 205 narraciones en lote (`msgbatch_01GpMggjpeKgQYYjnn74iZsW`), 2.6626 USD (estimado 4.11 USD).
     - **Lo que mostró el piloto:**
       - **Medidas:** se leen con el resultado de la cuenta (C1 0.44 m…).
       - **Reversa:** ninguna de las 3 narraciones de reversa trae la maniobra. En desarrollo, 0 de 16 narraciones de reversa dicen que alguien retrocedía: R0 quitó la dinámica que concluye CESVI y las declaraciones, y ahí venía la reversa.
         - La pista «estacionamiento» no sirve: aparece en 4 de 16 reversas, 1 de 112 alcances, 8 de 63 laterales y 12 de 131 «otra».
         - **Consecuencia:** en E-R4 la reversa no se puede identificar con la entrada de la prueba. R4b arregla lo que usa el producto: si el perito narra que un vehículo retrocedía, la lectura lo marca y el solver lo reconstruye bien.
-  - **R7** (comparación con la declaración del conductor) espera a R4b. R4, R5 y R6 quedaron cerradas el 2026-10-22, y R3 también; R0, R1 y R2, el 2026-10-21. C0 y C1 de la v1 quedaron cerradas el 2026-10-21. El plan de C0 fue:
+  - **Historial:** R4b, R4, R5 y R6 quedaron cerradas el 2026-10-22, y R3 también; R0, R1 y R2, el 2026-10-21. C0 y C1 de la v1 quedaron cerradas el 2026-10-21. El plan de C0 fue:
     - **Contrato v2:** `escena.schema.json` ampliado, con migración desde v1.3, Zod y Pydantic generados y un validador semántico (N vehículos, M impactos, versiones).
     - **Corpus estructurado** de los 671 dictámenes con Claude (salida estructurada, caché, semilla), validado contra el esquema, con partición congelada del 30 % y etiquetas de la conclusión revisadas en una muestra.
     - **Mediciones:** las proporciones del §2 en `eval/results/cesvi_corpus.json`; desde ahí se pueden citar.
@@ -761,6 +835,11 @@ Lo que se pospone por el trabajo con CESVI no se borra: queda aquí para despué
   - el debris del segundo impacto;
   - el tiempo de las escenas con muchos vehículos (hasta 34 s en E-R6);
   - en «Caso nuevo», una forma de declarar a mano los impactos cuando la narración no dice su orden.
+- **De R4b** (ADR 0069, «Límites»):
+  - en la prueba bajan lateral (68 % → 64 %), salida del camino (20 % → 10 %) y las posiciones finales que tiene Croquis (53.4 % → 50 %);
+  - las reglas de un vehículo generalizan peor que en desarrollo (modalidad 45.5 % en desarrollo, 39.5 % en la prueba);
+  - el ancho dañado L casi nunca está en las narraciones: sin él no hay velocidades por deformación;
+  - en las carambolas sin posiciones, el tercero se coloca detenido en la trayectoria del que lo golpea (supuesto); uno que venía en movimiento no se modela.
 - **De R5** (ADR 0068, «Límites»):
   - pasar las entradas de los cálculos de CESVI (masas, C y L, rigidez) a los campos del vehículo y del daño, para que la verificación CESVI y la inversión las usen;
   - OCR para reportes escaneados.
@@ -782,24 +861,25 @@ Lo que se pospone por el trabajo con CESVI no se borra: queda aquí para despué
 
 ### Bloqueado — necesita a René
 
-| Qué                                                                                                                                                                                                                                 | Para qué                                                                                  | Estado                                                                                                                                                                |
-| ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| La maqueta actualizada de `docs/cesvi/rediseno/Paso2.html`                                                                                                                                                                          | Subirla tal como está y ajustar el paso 2 («El hecho») a ella                             | Pendiente: la del disco es idéntica a la del repositorio (2026-10-21)                                                                                                 |
-| `CLAUDE.md` con el cambio que menciona René (apuntar al plan nuevo y el uso libre de los dictámenes)                                                                                                                                | Commit tal como esté en el disco                                                          | El del disco es idéntico al de git (2026-10-21): no hay cambio que subir. El uso libre quedó registrado desde `PLAN-CESVI.md` §3 en `data/SOURCES.md`                 |
-| PDF originales de algunos dictámenes                                                                                                                                                                                                | Evaluar la carga de PDF con imágenes y fórmulas (C4, E-C4)                                | Pendiente; mientras, se evalúa con Markdown                                                                                                                           |
-| Tabla de coeficientes de rigidez A y B que usa CESVI                                                                                                                                                                                | C1: rigidez por vehículo (si no, NHTSA E2 marcada como tal)                               | Pendiente                                                                                                                                                             |
-| Comentarios de CESVI tras la demo                                                                                                                                                                                                   | C8                                                                                        | Pendiente                                                                                                                                                             |
-| Saldo de la API de Claude para el corpus de C0                                                                                                                                                                                      | Procesar los 671 dictámenes                                                               | Hecho el 2026-10-21: 18.47 USD reales (estimado 18.29 USD, tope 30 USD)                                                                                               |
-| Etiquetas de un perito de CESVI sobre la hoja ciega de 47 conclusiones (`data/raw/cesvi/revision-ciega.md`)                                                                                                                         | Medir el acuerdo de la etiqueta de la conclusión con una persona (hoy: con Claude Code)   | Opcional; no bloquea C1                                                                                                                                               |
-| `ANTHROPIC_API_KEY`                                                                                                                                                                                                                 | F6 (extracción con Claude) y E1. CI usa respuestas grabadas, así que no bloquea hasta F6. | Recibida 2026-10-14 (`.env.local`)                                                                                                                                    |
-| Confirmar licencia MIT del código y el nombre _Croquis_                                                                                                                                                                             | Se usan los valores por defecto de PLAN §16 (ADR 0002)                                    | Usando default                                                                                                                                                        |
-| Computadora de demo (GPU potente) para medir alta y ultra                                                                                                                                                                           | Meta de PLAN §7.8: ≥ 60 fps en alta o ultra en todas las escenas canónicas (ADR 0026)     | Pendiente; ya se puede medir sin instalar nada: abrir `/medicion` en esa computadora, descargar el JSON y correr `node eval/e6_navegador.mjs <archivo>` (ADR 0045 §7) |
-| Cuenta y llave de NextGIS (opcional)                                                                                                                                                                                                | Instancia de Overpass sin pago si las públicas siguen saturadas (ADR 0040)                | Opcional; la ruta funciona con las públicas cuando responden                                                                                                          |
-| Pruebas con ≥ 5 personas reales (E9)                                                                                                                                                                                                | F11                                                                                       | Kit listo (`docs/e9/protocolo.md`, página `/e9`, `uv run croquis-eval e9`); faltan las sesiones                                                                       |
-| Prueba piloto informal con una persona (5 s en la portada)                                                                                                                                                                          | Criterio de F11a (PLAN §11.7): ¿qué entendió en 5 segundos?                               | Pendiente; no bloquea el despliegue                                                                                                                                   |
-| Laptop conectada a la corriente mientras corre Lighthouse                                                                                                                                                                           | Metas de carga de F11a (`eval/f11_portada.mjs`, ADR 0045 §5)                              | Pendiente (2026-10-20): la laptop estaba con batería                                                                                                                  |
-| E6 en baja y media después de F11a, en una ventana de PowerShell aparte: `node eval/e6_performance.mjs --scenes alcance,nocturno_lluvia,glorieta --qualities baja --out eval/results/e6_f11a_baja.json` (y lo mismo con `media`)    | Confirmar que el visor no cambió de rendimiento con el empaquetado nuevo                  | Pendiente; desde Claude Code, el sistema cortó la corrida por falta de memoria                                                                                        |
-| Confirmar que el repositorio remoto correcto es `renecano/Crash_reconstruction_visualization_system` (público, lo creó René vacío el 2026-10-10). Se eligió por nombre y fecha; se puede cambiar con `git remote set-url origin …`. | Push y CI                                                                                 | Asumido y ya en uso                                                                                                                                                   |
+| Qué                                                                                                                                                                                                                                 | Para qué                                                                                                                                                                                      | Estado                                                                                                                                                                |
+| ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Decidir si E-R4 se mide también contra la modalidad del título del reporte, además de la etiqueta de R0                                                                                                                             | La auditoría (`eval/results/cesvi_r4b_auditoria_otra.json`) muestra que la etiqueta «otra» de R0 no es lo que CESVI escribió en 30 de 67 casos de la prueba; cambiarla es cambiar la medición | Pendiente (2026-10-22); E-R4 sigue midiéndose con la etiqueta de R0                                                                                                   |
+| La maqueta actualizada de `docs/cesvi/rediseno/Paso2.html`                                                                                                                                                                          | Subirla tal como está y ajustar el paso 2 («El hecho») a ella                                                                                                                                 | Pendiente: la del disco es idéntica a la del repositorio (2026-10-21)                                                                                                 |
+| `CLAUDE.md` con el cambio que menciona René (apuntar al plan nuevo y el uso libre de los dictámenes)                                                                                                                                | Commit tal como esté en el disco                                                                                                                                                              | El del disco es idéntico al de git (2026-10-21): no hay cambio que subir. El uso libre quedó registrado desde `PLAN-CESVI.md` §3 en `data/SOURCES.md`                 |
+| PDF originales de algunos dictámenes                                                                                                                                                                                                | Evaluar la carga de PDF con imágenes y fórmulas (C4, E-C4)                                                                                                                                    | Pendiente; mientras, se evalúa con Markdown                                                                                                                           |
+| Tabla de coeficientes de rigidez A y B que usa CESVI                                                                                                                                                                                | C1: rigidez por vehículo (si no, NHTSA E2 marcada como tal)                                                                                                                                   | Pendiente                                                                                                                                                             |
+| Comentarios de CESVI tras la demo                                                                                                                                                                                                   | C8                                                                                                                                                                                            | Pendiente                                                                                                                                                             |
+| Saldo de la API de Claude para el corpus de C0                                                                                                                                                                                      | Procesar los 671 dictámenes                                                                                                                                                                   | Hecho el 2026-10-21: 18.47 USD reales (estimado 18.29 USD, tope 30 USD)                                                                                               |
+| Etiquetas de un perito de CESVI sobre la hoja ciega de 47 conclusiones (`data/raw/cesvi/revision-ciega.md`)                                                                                                                         | Medir el acuerdo de la etiqueta de la conclusión con una persona (hoy: con Claude Code)                                                                                                       | Opcional; no bloquea C1                                                                                                                                               |
+| `ANTHROPIC_API_KEY`                                                                                                                                                                                                                 | F6 (extracción con Claude) y E1. CI usa respuestas grabadas, así que no bloquea hasta F6.                                                                                                     | Recibida 2026-10-14 (`.env.local`)                                                                                                                                    |
+| Confirmar licencia MIT del código y el nombre _Croquis_                                                                                                                                                                             | Se usan los valores por defecto de PLAN §16 (ADR 0002)                                                                                                                                        | Usando default                                                                                                                                                        |
+| Computadora de demo (GPU potente) para medir alta y ultra                                                                                                                                                                           | Meta de PLAN §7.8: ≥ 60 fps en alta o ultra en todas las escenas canónicas (ADR 0026)                                                                                                         | Pendiente; ya se puede medir sin instalar nada: abrir `/medicion` en esa computadora, descargar el JSON y correr `node eval/e6_navegador.mjs <archivo>` (ADR 0045 §7) |
+| Cuenta y llave de NextGIS (opcional)                                                                                                                                                                                                | Instancia de Overpass sin pago si las públicas siguen saturadas (ADR 0040)                                                                                                                    | Opcional; la ruta funciona con las públicas cuando responden                                                                                                          |
+| Pruebas con ≥ 5 personas reales (E9)                                                                                                                                                                                                | F11                                                                                                                                                                                           | Kit listo (`docs/e9/protocolo.md`, página `/e9`, `uv run croquis-eval e9`); faltan las sesiones                                                                       |
+| Prueba piloto informal con una persona (5 s en la portada)                                                                                                                                                                          | Criterio de F11a (PLAN §11.7): ¿qué entendió en 5 segundos?                                                                                                                                   | Pendiente; no bloquea el despliegue                                                                                                                                   |
+| Laptop conectada a la corriente mientras corre Lighthouse                                                                                                                                                                           | Metas de carga de F11a (`eval/f11_portada.mjs`, ADR 0045 §5)                                                                                                                                  | Pendiente (2026-10-20): la laptop estaba con batería                                                                                                                  |
+| E6 en baja y media después de F11a, en una ventana de PowerShell aparte: `node eval/e6_performance.mjs --scenes alcance,nocturno_lluvia,glorieta --qualities baja --out eval/results/e6_f11a_baja.json` (y lo mismo con `media`)    | Confirmar que el visor no cambió de rendimiento con el empaquetado nuevo                                                                                                                      | Pendiente; desde Claude Code, el sistema cortó la corrida por falta de memoria                                                                                        |
+| Confirmar que el repositorio remoto correcto es `renecano/Crash_reconstruction_visualization_system` (público, lo creó René vacío el 2026-10-10). Se eligió por nombre y fecha; se puede cambiar con `git remote set-url origin …`. | Push y CI                                                                                                                                                                                     | Asumido y ya en uso                                                                                                                                                   |
 
 ## Entorno de desarrollo (verificado 2026-10-10)
 
