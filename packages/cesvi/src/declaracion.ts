@@ -96,9 +96,7 @@ export function versionDeclarada(
     descartados: { citas: 0, numeros: 0 },
   };
   const delCaso = (x: string | null): x is Id =>
-    x !== null &&
-    (IDS_VEHICULO as readonly string[]).includes(x) &&
-    vehiculosDelCaso.includes(x);
+    x !== null && (IDS_VEHICULO as readonly string[]).includes(x) && vehiculosDelCaso.includes(x);
   /** La primera cita del grupo que está en la declaración (redactada), o null. */
   const citaDe = (citas: string[]): string | null => {
     const encontradas = citas.filter((c) => ubicarCita(declaracion, c));
