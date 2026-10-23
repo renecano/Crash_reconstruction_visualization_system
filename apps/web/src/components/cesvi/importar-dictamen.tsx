@@ -7,6 +7,7 @@
  */
 import {
   importarDictamen,
+  type Conclusiones,
   resumenTexto,
   type DictamenImportado,
   type SalidaCorpus,
@@ -15,7 +16,6 @@ import {
 import { useState } from "react";
 import ejemplo from "../../../../../data/cesvi/grabaciones/importar/ejemplo.json";
 import { textoDeArchivo, type TextoDictamen } from "@/lib/texto-dictamen";
-import { CasoNuevo } from "./caso-nuevo";
 
 const CARA: Record<string, string> = {
   frontal: "frente",
@@ -29,10 +29,10 @@ function Cita({ texto }: { texto: string }) {
 }
 
 /** Lo que concluyó CESVI en el reporte, con la cita de cada dato, para comparar al reconstruir. */
-function ConclusionesCesvi({ d }: { d: DictamenImportado }) {
-  const c = d.narracion.conclusiones;
+/** Lo que concluyó CESVI en un reporte, con la frase de donde sale cada dato. */
+export function ConclusionesCesvi({ conclusiones: c }: { conclusiones: Conclusiones }) {
   return (
-    <section className="tarjeta flex flex-col gap-4 p-6" data-testid="conclusiones-cesvi">
+    <section className="flex flex-col gap-4" data-testid="conclusiones-cesvi">
       <h2 className="t-subtitulo">Lo que concluyó CESVI en este reporte</h2>
       <p className="t-nota text-texto-2">
         Para comparar con la reconstrucción de Croquis. Cada dato lleva la frase del reporte de

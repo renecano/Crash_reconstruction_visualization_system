@@ -78,7 +78,7 @@ import {
   type EdicionPasos,
   type Velocidad,
 } from "./pasos";
-import { BarraRecorrido } from "./barra";
+import { BarraRecorrido, PASOS, PASOS_CORTOS } from "./barra";
 import { PanelManual } from "./manual";
 import { ProveedorRecorrido } from "./marco";
 import {
@@ -92,29 +92,6 @@ import {
 } from "./trabajo";
 import { PanelDetalle } from "./piezas";
 import { Reconstruccion3dRecorrido } from "./reconstruccion-3d";
-
-const PASOS = [
-  "El caso",
-  "El hecho",
-  "El lugar",
-  "La reconstrucción",
-  "Los daños",
-  "Los números",
-  "Croquis contra el reporte de CESVI",
-  "El dictamen",
-] as const;
-
-/** Los nombres de la barra de pasos, cortos para que quepan en una fila (maquetas). */
-const PASOS_CORTOS = [
-  "Caso",
-  "Hecho",
-  "Lugar",
-  "Reconstrucción",
-  "Daños",
-  "Números",
-  "Contra el reporte",
-  "Dictamen",
-] as const;
 
 const DURACION_ANIMACION_MS = 4500;
 const MEDIDAS = { A: MEDIDAS_PICKUP, B: MEDIDAS_PICKUP };

@@ -10,6 +10,30 @@ import { Logotipo } from "@/components/sitio/logo";
 import { RUTAS } from "@/lib/casos";
 import { guardarTema, type Modo } from "@/lib/preferencias-cesvi";
 
+/** Los pasos del recorrido, los mismos para todo caso (ADR 0052 y 0079). */
+export const PASOS = [
+  "El caso",
+  "El hecho",
+  "El lugar",
+  "La reconstrucción",
+  "Los daños",
+  "Los números",
+  "Croquis contra el reporte de CESVI",
+  "El dictamen",
+] as const;
+
+/** Los nombres de la barra de pasos, cortos para que quepan en una fila (maquetas). */
+export const PASOS_CORTOS = [
+  "Caso",
+  "Hecho",
+  "Lugar",
+  "Reconstrucción",
+  "Daños",
+  "Números",
+  "Contra el reporte",
+  "Dictamen",
+] as const;
+
 export function BarraRecorrido({
   pasos,
   pasosCortos,

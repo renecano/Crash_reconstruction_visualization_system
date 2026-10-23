@@ -91,4 +91,4 @@ export const CARA: Record<string, string> = {
 };
 
 /** El nombre corto de un caso: los últimos caracteres de su id del corpus. */
-export const nombreCaso = (id: string) => `Reporte ${id.replace("cesvi-", "").slice(0, 6)}`;
+export { nombreCaso } from "./casos";

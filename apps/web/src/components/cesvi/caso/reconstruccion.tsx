@@ -118,8 +118,8 @@ export function PanelReconstruccion({
               {r.impactos.map((i) => (
                 <li key={i.numero} data-impacto={i.numero}>
                   <span className="font-medium text-texto">X{i.numero}</span> ·{" "}
-                  <span className="cifras">{i.t === 0 ? "0.00 s" : `+${i.t.toFixed(2)} s`}</span>{" "}
-                  · {i.vehiculos.join(" con ")}
+                  <span className="cifras">{i.t === 0 ? "0.00 s" : `+${i.t.toFixed(2)} s`}</span> ·{" "}
+                  {i.vehiculos.join(" con ")}
                 </li>
               ))}
             </ol>

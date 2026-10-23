@@ -7,6 +7,7 @@
  */
 import Link from "next/link";
 import { useMemo, useState } from "react";
+import { RUTAS } from "@/lib/casos";
 
 export interface RenglonReproduccion {
   id: string;
@@ -112,7 +113,7 @@ export function ListaReproduccion({
                 <td className="px-4 py-2.5">
                   <Link
                     className="font-medium whitespace-nowrap underline underline-offset-2 hover:text-texto-2"
-                    href={`/cesvi/reproduccion/${r.id}`}
+                    href={RUTAS.reporte(r.id)}
                   >
                     {r.nombre}
                   </Link>

@@ -12,7 +12,11 @@ import {
   type ReporteCesvi,
   type ValidacionPerito,
 } from "./caso-guardado";
-import { nombreCaso, type CasoReproduccion } from "./reproduccion-dictamenes";
+// Solo el tipo: los 205 casos de la reproducción no deben entrar al código del navegador.
+import type { CasoReproduccion } from "./reproduccion-dictamenes";
+
+/** El nombre corto de un reporte de la reproducción, sin datos del reporte. */
+export const nombreCaso = (id: string) => `Reporte ${id.replace("cesvi-", "").slice(0, 6)}`;
 
 export const RUTAS = {
   lista: "/cesvi",
@@ -44,6 +48,16 @@ export const casoNuevo = (): CasoExpediente => ({
   id: "nuevo",
   origen: "nuevo",
   titulo: "Caso nuevo",
+  narracion: null,
+  escena: null,
+  reporte: null,
+  validacion: null,
+});
+
+export const casoImportado = (): CasoExpediente => ({
+  id: "importado",
+  origen: "importado",
+  titulo: "Cargar un reporte de CESVI",
   narracion: null,
   escena: null,
   reporte: null,
@@ -95,8 +109,10 @@ export interface ResumenGuardado {
   conReporte: boolean;
 }
 
-const INDICE = "croquis:casos:v1";
-const clave = (id: string) => `croquis:caso:${id}`;
+export const CLAVE_INDICE = "croquis:casos:v1";
+export const claveCaso = (id: string) => `croquis:caso:${id}`;
+const INDICE = CLAVE_INDICE;
+const clave = claveCaso;
 
 function leerIndice(a: Almacen): ResumenGuardado[] {
   try {

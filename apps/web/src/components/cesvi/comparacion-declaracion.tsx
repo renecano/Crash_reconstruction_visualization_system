@@ -130,10 +130,7 @@ export function ComparacionDeclaracion({
   }, [version, filas, sugerencia, decision, onComparacion]);
 
   return (
-    <section
-      className="hundido flex flex-col gap-4 p-4"
-      data-testid="comparacion-declaracion"
-    >
+    <section className="hundido flex flex-col gap-4 p-4" data-testid="comparacion-declaracion">
       <button
         type="button"
         className="t-subtitulo self-start text-left"

@@ -1,39 +1,44 @@
 /* Generado por scripts/tokens.mjs desde assets/brand/tokens.json. No editar a mano. */
 :root {
-  --marca-grafito: #0B0C0F;
+  --marca-grafito: #0b0c0f;
   --marca-grafito-superficie: #121418;
-  --marca-grafito-elevado: #1C1F25;
-  --marca-linea-suave: #1E2127;
-  --marca-linea: #2A2E35;
-  --marca-blanco: #F2F3F5;
-  --marca-gris: #A4A9B3;
-  --marca-gris-oscuro: #7B818C;
-  --marca-senal: #FF5B2E;
-  --marca-vehiculo-a: #5AA9FF;
-  --marca-vehiculo-b: #FFC24B;
-  --marca-papel: #EFEBE1;
-  --marca-tinta: #15181B;
-  --marca-claro-fondo: #F3F4F6;
-  --marca-claro-superficie: #FFFFFF;
-  --marca-claro-elevado: #ECEEF1;
-  --marca-claro-linea-suave: #E4E7EB;
-  --marca-claro-linea: #D9DCE1;
-  --marca-claro-texto: #15181D;
-  --marca-claro-texto-2: #555B66;
+  --marca-grafito-elevado: #1c1f25;
+  --marca-linea-suave: #1e2127;
+  --marca-linea: #2a2e35;
+  --marca-blanco: #f2f3f5;
+  --marca-gris: #a4a9b3;
+  --marca-gris-oscuro: #7b818c;
+  --marca-senal: #ff5b2e;
+  --marca-vehiculo-a: #5aa9ff;
+  --marca-vehiculo-b: #ffc24b;
+  --marca-papel: #efebe1;
+  --marca-tinta: #15181b;
+  --marca-claro-fondo: #f3f4f6;
+  --marca-claro-superficie: #ffffff;
+  --marca-claro-elevado: #eceef1;
+  --marca-claro-linea-suave: #e4e7eb;
+  --marca-claro-linea: #d9dce1;
+  --marca-claro-texto: #15181d;
+  --marca-claro-texto-2: #555b66;
   --marca-claro-texto-3: #636974;
-  --marca-claro-senal: #D9431A;
-  --marca-claro-senal-texto: #B8360F;
-  --marca-claro-vehiculo-a: #2257C9;
-  --marca-claro-vehiculo-b: #A35A00;
-  --efecto-pintura-faro: linear-gradient(135deg, #FFFFFF 0%, #ECE9E1 55%, #A9ADB2 100%);
-  --efecto-metal-texto: linear-gradient(180deg, #FFFFFF 0%, #E9E6DE 55%, #9EA3A8 100%);
-  --efecto-brillo-baliza: drop-shadow(0 0 6px rgba(255,91,46,0.75));
-  --efecto-sombra-objeto: 0 6px 12px rgba(0,0,0,0.55);
-  --efecto-sombra-profunda: 0 32px 64px rgba(0,0,0,0.6), 0 2px 6px rgba(0,0,0,0.5);
-  --efecto-vidrio-oscuro-background: rgba(21,23,28,0.78);
-  --efecto-vidrio-oscuro-border: 1px solid rgba(255,255,255,0.08);
+  --marca-claro-senal: #d9431a;
+  --marca-claro-senal-texto: #b8360f;
+  --marca-claro-vehiculo-a: #2257c9;
+  --marca-claro-vehiculo-b: #a35a00;
+  --efecto-pintura-faro: linear-gradient(135deg, #ffffff 0%, #ece9e1 55%, #a9adb2 100%);
+  --efecto-metal-texto: linear-gradient(180deg, #ffffff 0%, #e9e6de 55%, #9ea3a8 100%);
+  --efecto-brillo-baliza: drop-shadow(0 0 6px rgba(255, 91, 46, 0.75));
+  --efecto-sombra-objeto: 0 6px 12px rgba(0, 0, 0, 0.55);
+  --efecto-sombra-profunda: 0 32px 64px rgba(0, 0, 0, 0.6), 0 2px 6px rgba(0, 0, 0, 0.5);
+  --efecto-vidrio-oscuro-background: rgba(21, 23, 28, 0.78);
+  --efecto-vidrio-oscuro-border: 1px solid rgba(255, 255, 255, 0.08);
   --efecto-vidrio-oscuro-backdrop-filter: blur(20px);
-  --efecto-boton-principal-background: #F2F3F5;
-  --efecto-boton-principal-color: #0B0C0F;
-  --efecto-luz-escena: radial-gradient(ellipse 70% 55% at 50% 46%, #262B30 0%, #15181B 55%, #0A0C0E 100%);
+  --efecto-boton-principal-background: #f2f3f5;
+  --efecto-boton-principal-color: #0b0c0f;
+  --efecto-luz-escena: radial-gradient(
+    ellipse 70% 55% at 50% 46%,
+    #262b30 0%,
+    #15181b 55%,
+    #0a0c0e 100%
+  );
 }

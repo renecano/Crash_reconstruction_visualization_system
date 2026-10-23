@@ -21,7 +21,10 @@ import type { MarcaImpacto, PosicionMovil } from "./reconstruccion";
 export type Id = Expediente["vehiculos"][number]["id"];
 export type Fase = "impacto" | "final";
 
-export const NOMBRE_FASE: Record<Fase, string> = { impacto: "en el impacto", final: "posición final" };
+export const NOMBRE_FASE: Record<Fase, string> = {
+  impacto: "en el impacto",
+  final: "posición final",
+};
 export const CARA: Record<string, string> = {
   frontal: "frontal",
   posterior: "posterior",
