@@ -1,0 +1,1264 @@
+{
+ "fecha": "2026-10-23T13:21:45.012Z",
+ "particion": "prueba",
+ "descripcion": "E-R4, modalidad: contra la etiqueta de R0 (como siempre) y contra la modalidad del título del reporte (regla de titulo-reporte.ts, congelada antes de mirar la prueba). Las predicciones de Croquis son las ya medidas de cada versión.",
+ "lineas_base_titulo": {
+  "modalidad": "alcance",
+  "modalidad_fisica": "alcance",
+  "velocidad_kmh": 61.61687499999999
+ },
+ "v1": {
+  "archivo": "cesvi_r4_reproduccion_prueba.json",
+  "reportes": 205,
+  "con_modalidad_en_el_titulo": 156,
+  "etiqueta_r0": {
+   "croquis": {
+    "k": 65,
+    "n": 190,
+    "pct": 34.2
+   },
+   "sin_inferir": 36,
+   "fisicas": {
+    "croquis": {
+     "k": 65,
+     "n": 123,
+     "pct": 52.8
+    },
+    "linea_base": {
+     "modalidad": "alcance",
+     "k": 46,
+     "n": 123,
+     "pct": 37.4
+    }
+   },
+   "linea_base": {
+    "modalidad": "otra",
+    "k": 67,
+    "n": 190,
+    "pct": 35.3
+   },
+   "por_modalidad": {
+    "alcance": {
+     "k": 34,
+     "n": 46,
+     "pct": 73.9
+    },
+    "frontal": {
+     "k": 4,
+     "n": 6,
+     "pct": 66.7
+    },
+    "lateral": {
+     "k": 17,
+     "n": 25,
+     "pct": 68
+    },
+    "objeto_fijo": {
+     "k": 6,
+     "n": 17,
+     "pct": 35.3
+    },
+    "otra": {
+     "k": 0,
+     "n": 67,
+     "pct": 0
+    },
+    "reversa": {
+     "k": 0,
+     "n": 9,
+     "pct": 0
+    },
+    "salida_de_camino": {
+     "k": 2,
+     "n": 10,
+     "pct": 20
+    },
+    "volcadura": {
+     "k": 2,
+     "n": 10,
+     "pct": 20
+    }
+   }
+  },
+  "titulo_del_reporte": {
+   "croquis": {
+    "k": 76,
+    "n": 156,
+    "pct": 48.7
+   },
+   "sin_inferir": 31,
+   "otra_predicha": {
+    "k": 0,
+    "n": 0,
+    "pct": null
+   },
+   "fisicas": {
+    "croquis": {
+     "k": 76,
+     "n": 138,
+     "pct": 55.1
+    },
+    "linea_base": {
+     "modalidad": "alcance",
+     "k": 58,
+     "n": 138,
+     "pct": 42
+    }
+   },
+   "linea_base": {
+    "modalidad": "alcance",
+    "k": 58,
+    "n": 156,
+    "pct": 37.2
+   },
+   "por_modalidad": {
+    "alcance": {
+     "k": 40,
+     "n": 58,
+     "pct": 69
+    },
+    "carambola": {
+     "k": 0,
+     "n": 1,
+     "pct": 0
+    },
+    "frontal": {
+     "k": 2,
+     "n": 6,
+     "pct": 33.3
+    },
+    "lateral": {
+     "k": 24,
+     "n": 35,
+     "pct": 68.6
+    },
+    "objeto_fijo": {
+     "k": 6,
+     "n": 17,
+     "pct": 35.3
+    },
+    "otra": {
+     "k": 0,
+     "n": 18,
+     "pct": 0
+    },
+    "reversa": {
+     "k": 0,
+     "n": 5,
+     "pct": 0
+    },
+    "salida_de_camino": {
+     "k": 1,
+     "n": 7,
+     "pct": 14.3
+    },
+    "volcadura": {
+     "k": 3,
+     "n": 9,
+     "pct": 33.3
+    }
+   },
+   "precision_por_modalidad": {
+    "alcance": {
+     "k": 40,
+     "n": 50,
+     "pct": 80
+    },
+    "frontal": {
+     "k": 2,
+     "n": 8,
+     "pct": 25
+    },
+    "lateral": {
+     "k": 24,
+     "n": 45,
+     "pct": 53.3
+    },
+    "objeto_fijo": {
+     "k": 6,
+     "n": 15,
+     "pct": 40
+    },
+    "reversa": {
+     "k": 0,
+     "n": 1,
+     "pct": 0
+    },
+    "salida_de_camino": {
+     "k": 1,
+     "n": 3,
+     "pct": 33.3
+    },
+    "volcadura": {
+     "k": 3,
+     "n": 3,
+     "pct": 100
+    }
+   }
+  }
+ },
+ "v2": {
+  "archivo": "cesvi_r4b_reproduccion_prueba.json",
+  "reportes": 205,
+  "con_modalidad_en_el_titulo": 156,
+  "etiqueta_r0": {
+   "croquis": {
+    "k": 75,
+    "n": 190,
+    "pct": 39.5
+   },
+   "sin_inferir": 10,
+   "otra_predicha": {
+    "k": 2,
+    "n": 3,
+    "pct": 66.7
+   },
+   "fisicas": {
+    "croquis": {
+     "k": 73,
+     "n": 123,
+     "pct": 59.3
+    },
+    "linea_base": {
+     "modalidad": "alcance",
+     "k": 46,
+     "n": 123,
+     "pct": 37.4
+    }
+   },
+   "linea_base": {
+    "modalidad": "otra",
+    "k": 67,
+    "n": 190,
+    "pct": 35.3
+   },
+   "por_modalidad": {
+    "alcance": {
+     "k": 36,
+     "n": 46,
+     "pct": 78.3
+    },
+    "frontal": {
+     "k": 5,
+     "n": 6,
+     "pct": 83.3
+    },
+    "lateral": {
+     "k": 16,
+     "n": 25,
+     "pct": 64
+    },
+    "objeto_fijo": {
+     "k": 9,
+     "n": 17,
+     "pct": 52.9
+    },
+    "otra": {
+     "k": 2,
+     "n": 67,
+     "pct": 3
+    },
+    "reversa": {
+     "k": 0,
+     "n": 9,
+     "pct": 0
+    },
+    "salida_de_camino": {
+     "k": 1,
+     "n": 10,
+     "pct": 10
+    },
+    "volcadura": {
+     "k": 6,
+     "n": 10,
+     "pct": 60
+    }
+   },
+   "precision_por_modalidad": {
+    "alcance": {
+     "k": 36,
+     "n": 57,
+     "pct": 63.2
+    },
+    "frontal": {
+     "k": 5,
+     "n": 14,
+     "pct": 35.7
+    },
+    "lateral": {
+     "k": 16,
+     "n": 57,
+     "pct": 28.1
+    },
+    "objeto_fijo": {
+     "k": 9,
+     "n": 30,
+     "pct": 30
+    },
+    "otra": {
+     "k": 2,
+     "n": 3,
+     "pct": 66.7
+    },
+    "reversa": {
+     "k": 0,
+     "n": 1,
+     "pct": 0
+    },
+    "salida_de_camino": {
+     "k": 1,
+     "n": 3,
+     "pct": 33.3
+    },
+    "volcadura": {
+     "k": 6,
+     "n": 15,
+     "pct": 40
+    }
+   }
+  },
+  "titulo_del_reporte": {
+   "croquis": {
+    "k": 87,
+    "n": 156,
+    "pct": 55.8
+   },
+   "sin_inferir": 6,
+   "otra_predicha": {
+    "k": 2,
+    "n": 3,
+    "pct": 66.7
+   },
+   "fisicas": {
+    "croquis": {
+     "k": 85,
+     "n": 138,
+     "pct": 61.6
+    },
+    "linea_base": {
+     "modalidad": "alcance",
+     "k": 58,
+     "n": 138,
+     "pct": 42
+    }
+   },
+   "linea_base": {
+    "modalidad": "alcance",
+    "k": 58,
+    "n": 156,
+    "pct": 37.2
+   },
+   "por_modalidad": {
+    "alcance": {
+     "k": 42,
+     "n": 58,
+     "pct": 72.4
+    },
+    "carambola": {
+     "k": 0,
+     "n": 1,
+     "pct": 0
+    },
+    "frontal": {
+     "k": 3,
+     "n": 6,
+     "pct": 50
+    },
+    "lateral": {
+     "k": 24,
+     "n": 35,
+     "pct": 68.6
+    },
+    "objeto_fijo": {
+     "k": 9,
+     "n": 17,
+     "pct": 52.9
+    },
+    "otra": {
+     "k": 2,
+     "n": 18,
+     "pct": 11.1
+    },
+    "reversa": {
+     "k": 0,
+     "n": 5,
+     "pct": 0
+    },
+    "salida_de_camino": {
+     "k": 1,
+     "n": 7,
+     "pct": 14.3
+    },
+    "volcadura": {
+     "k": 6,
+     "n": 9,
+     "pct": 66.7
+    }
+   },
+   "precision_por_modalidad": {
+    "alcance": {
+     "k": 42,
+     "n": 53,
+     "pct": 79.2
+    },
+    "frontal": {
+     "k": 3,
+     "n": 9,
+     "pct": 33.3
+    },
+    "lateral": {
+     "k": 24,
+     "n": 40,
+     "pct": 60
+    },
+    "objeto_fijo": {
+     "k": 9,
+     "n": 28,
+     "pct": 32.1
+    },
+    "otra": {
+     "k": 2,
+     "n": 3,
+     "pct": 66.7
+    },
+    "reversa": {
+     "k": 0,
+     "n": 1,
+     "pct": 0
+    },
+    "salida_de_camino": {
+     "k": 1,
+     "n": 3,
+     "pct": 33.3
+    },
+    "volcadura": {
+     "k": 6,
+     "n": 13,
+     "pct": 46.2
+    }
+   }
+  }
+ },
+ "frases": {
+  "cesvi-4e4d78194f": {
+   "frase": "impacto contra objeto fijo",
+   "modalidad": "objeto_fijo"
+  },
+  "cesvi-ec1c390b10": {
+   "frase": "alcance",
+   "modalidad": "alcance"
+  },
+  "cesvi-644837b23b": {
+   "frase": "impacto frontal",
+   "modalidad": "frontal"
+  },
+  "cesvi-581f3c5f7e": {
+   "frase": "colision lateral oblicua",
+   "modalidad": "lateral"
+  },
+  "cesvi-037dde2760": {
+   "frase": "colision lateral",
+   "modalidad": "lateral"
+  },
+  "cesvi-cf708e9fed": {
+   "frase": "impacto contra objeto fijo",
+   "modalidad": "objeto_fijo"
+  },
+  "cesvi-cb04fdb41b": {
+   "frase": "choque",
+   "modalidad": null
+  },
+  "cesvi-12f0cdba9c": {
+   "frase": "alcance",
+   "modalidad": "alcance"
+  },
+  "cesvi-e9c4e081fe": {
+   "frase": "colision posterior (alcance)",
+   "modalidad": "alcance"
+  },
+  "cesvi-285a38dbd1": {
+   "frase": "danos en partes bajas",
+   "modalidad": "otra"
+  },
+  "cesvi-cd894debf8": {
+   "frase": "colision oblicua media",
+   "modalidad": "lateral"
+  },
+  "cesvi-7968cc5df9": {
+   "frase": "choque",
+   "modalidad": null
+  },
+  "cesvi-352e083b8a": {
+   "frase": "embestida",
+   "modalidad": "lateral"
+  },
+  "cesvi-5863ef5531": {
+   "frase": "colision posterior (alcance)",
+   "modalidad": "alcance"
+  },
+  "cesvi-f344a46f3f": {
+   "frase": "colision en partes bajas",
+   "modalidad": "otra"
+  },
+  "cesvi-aee9753bf1": {
+   "frase": "choque por maniobra en reversa",
+   "modalidad": "reversa"
+  },
+  "cesvi-d8a73cd0be": {
+   "frase": "alcance",
+   "modalidad": "alcance"
+  },
+  "cesvi-c9ea862641": {
+   "frase": "colision posterior (alcance)",
+   "modalidad": "alcance"
+  },
+  "cesvi-eed00406c6": {
+   "frase": "choque contra cuerpo fijo",
+   "modalidad": "objeto_fijo"
+  },
+  "cesvi-a8b1cf4c43": {
+   "frase": "colision lateral (invasion de carril)",
+   "modalidad": "lateral"
+  },
+  "cesvi-84cfa78565": {
+   "frase": "colision",
+   "modalidad": null
+  },
+  "cesvi-b7834ff8b0": {
+   "frase": "impacto",
+   "modalidad": null
+  },
+  "cesvi-52de2b4555": {
+   "frase": "dano en partes bajas",
+   "modalidad": "otra"
+  },
+  "cesvi-ce2e6cce75": {
+   "frase": null,
+   "modalidad": null
+  },
+  "cesvi-639ce6d42f": {
+   "frase": "## impacto en partes bajas",
+   "modalidad": "otra"
+  },
+  "cesvi-059b27d89d": {
+   "frase": "alcance",
+   "modalidad": "alcance"
+  },
+  "cesvi-460d7f3120": {
+   "frase": "impacto contra cuerpo duro",
+   "modalidad": "objeto_fijo"
+  },
+  "cesvi-73ea769d2f": {
+   "frase": "impacto lateral",
+   "modalidad": "lateral"
+  },
+  "cesvi-b641fb6657": {
+   "frase": "colision en partes bajas",
+   "modalidad": "otra"
+  },
+  "cesvi-9f15522337": {
+   "frase": "colision",
+   "modalidad": null
+  },
+  "cesvi-6256dba174": {
+   "frase": "danos en motor",
+   "modalidad": "otra"
+  },
+  "cesvi-d2c5cede7c": {
+   "frase": "colision refleja",
+   "modalidad": null
+  },
+  "cesvi-ab666b294f": {
+   "frase": "colision",
+   "modalidad": null
+  },
+  "cesvi-faa8a2bde0": {
+   "frase": "impacto en partes bajas y activacion de bolsas de aire",
+   "modalidad": "otra"
+  },
+  "cesvi-7d5dbd5fdb": {
+   "frase": "colision lateral",
+   "modalidad": "lateral"
+  },
+  "cesvi-662e6d9423": {
+   "frase": "embestida lateral izquierda anterior",
+   "modalidad": "lateral"
+  },
+  "cesvi-cade1c89cb": {
+   "frase": "raspado",
+   "modalidad": "lateral"
+  },
+  "cesvi-1bc2829bb6": {
+   "frase": "impacto lateral",
+   "modalidad": "lateral"
+  },
+  "cesvi-85b5b83442": {
+   "frase": "alcance",
+   "modalidad": "alcance"
+  },
+  "cesvi-9200983dab": {
+   "frase": null,
+   "modalidad": null
+  },
+  "cesvi-05a7c05640": {
+   "frase": "alcance con salida de camino",
+   "modalidad": "alcance"
+  },
+  "cesvi-af71476614": {
+   "frase": "colision",
+   "modalidad": null
+  },
+  "cesvi-bf10fcba2f": {
+   "frase": "danos mecanicos e impacto",
+   "modalidad": "otra"
+  },
+  "cesvi-147df2914c": {
+   "frase": "alcance",
+   "modalidad": "alcance"
+  },
+  "cesvi-476cf1439b": {
+   "frase": "alcance",
+   "modalidad": "alcance"
+  },
+  "cesvi-3eab5db876": {
+   "frase": "impacto lateral y atropellamiento",
+   "modalidad": "lateral"
+  },
+  "cesvi-d4b38174d1": {
+   "frase": "colision lateral por maniobra en reversa",
+   "modalidad": "reversa"
+  },
+  "cesvi-df6a4b2324": {
+   "frase": "colision lateral",
+   "modalidad": "lateral"
+  },
+  "cesvi-c6269d800e": {
+   "frase": "alcance",
+   "modalidad": "alcance"
+  },
+  "cesvi-240b770de0": {
+   "frase": "colision lateral",
+   "modalidad": "lateral"
+  },
+  "cesvi-bb774b3897": {
+   "frase": "alcance multiple",
+   "modalidad": "alcance"
+  },
+  "cesvi-8e3a7ac59f": {
+   "frase": "alcance con proyeccion",
+   "modalidad": "alcance"
+  },
+  "cesvi-0221ee4ec4": {
+   "frase": "alcance",
+   "modalidad": "alcance"
+  },
+  "cesvi-5dfc9ba3c0": {
+   "frase": "alcance",
+   "modalidad": "alcance"
+  },
+  "cesvi-5dd2c6df58": {
+   "frase": "alcance",
+   "modalidad": "alcance"
+  },
+  "cesvi-d950dda14b": {
+   "frase": "impacto contra cuerpo duro",
+   "modalidad": "objeto_fijo"
+  },
+  "cesvi-2276b03fc0": {
+   "frase": "impacto",
+   "modalidad": null
+  },
+  "cesvi-3fa0cd2ba1": {
+   "frase": "colision contra objeto fijo con proyeccion",
+   "modalidad": "objeto_fijo"
+  },
+  "cesvi-f112d84f11": {
+   "frase": "danos en motor",
+   "modalidad": "otra"
+  },
+  "cesvi-feef78b49a": {
+   "frase": "impacto lateral",
+   "modalidad": "lateral"
+  },
+  "cesvi-16eb0fba1f": {
+   "frase": "impacto lateral oblicuo con volcadura",
+   "modalidad": "lateral"
+  },
+  "cesvi-d55ce7a8fe": {
+   "frase": "volcadura tipo tonel ½",
+   "modalidad": "volcadura"
+  },
+  "cesvi-52fb9f9c5d": {
+   "frase": "volcadura tipo tonel ¼ con incendio",
+   "modalidad": "volcadura"
+  },
+  "cesvi-4e9cbd1711": {
+   "frase": "embestida oblicua posterior",
+   "modalidad": "alcance"
+  },
+  "cesvi-b7ca573795": {
+   "frase": "corte",
+   "modalidad": null
+  },
+  "cesvi-7b8ab3e55e": {
+   "frase": "alcance con proyeccion",
+   "modalidad": "alcance"
+  },
+  "cesvi-71660b61b8": {
+   "frase": "volcadura tipo tonel 1/1",
+   "modalidad": "volcadura"
+  },
+  "cesvi-6c34c6ac79": {
+   "frase": "volcadura tipo tonel",
+   "modalidad": "volcadura"
+  },
+  "cesvi-a8e0a03cfd": {
+   "frase": "impacto posterior con volcadura",
+   "modalidad": "alcance"
+  },
+  "cesvi-e005298ffb": {
+   "frase": "choque",
+   "modalidad": null
+  },
+  "cesvi-abc31b1de8": {
+   "frase": "alcance",
+   "modalidad": "alcance"
+  },
+  "cesvi-6f70c56733": {
+   "frase": "incendio",
+   "modalidad": "otra"
+  },
+  "cesvi-def04a2cc3": {
+   "frase": "alcance",
+   "modalidad": "alcance"
+  },
+  "cesvi-87b14ec4ba": {
+   "frase": "salida",
+   "modalidad": null
+  },
+  "cesvi-31fcbca870": {
+   "frase": "volcadura tipo tonel 1/1",
+   "modalidad": "volcadura"
+  },
+  "cesvi-48acbb46c2": {
+   "frase": "salida del camino e impacto",
+   "modalidad": "salida_de_camino"
+  },
+  "cesvi-76cbfb506e": {
+   "frase": "choque (impacto frontal contra objeto fijo)",
+   "modalidad": "objeto_fijo"
+  },
+  "cesvi-5aa5e75aca": {
+   "frase": "alcance",
+   "modalidad": "alcance"
+  },
+  "cesvi-a514a9a881": {
+   "frase": "colision frontal angular",
+   "modalidad": "frontal"
+  },
+  "cesvi-257e1374a0": {
+   "frase": "alcance",
+   "modalidad": "alcance"
+  },
+  "cesvi-04c4022204": {
+   "frase": "colision contra objeto fijo",
+   "modalidad": "objeto_fijo"
+  },
+  "cesvi-ebb5c029a8": {
+   "frase": "choque contra objeto fijo",
+   "modalidad": "objeto_fijo"
+  },
+  "cesvi-549b436c96": {
+   "frase": "incendio",
+   "modalidad": "otra"
+  },
+  "cesvi-9ab47f7f37": {
+   "frase": "corte de circulacion y despiste",
+   "modalidad": "otra"
+  },
+  "cesvi-36340d20a2": {
+   "frase": "incendio",
+   "modalidad": "otra"
+  },
+  "cesvi-a7570ee749": {
+   "frase": "alcance",
+   "modalidad": "alcance"
+  },
+  "cesvi-85894938e3": {
+   "frase": "colision",
+   "modalidad": null
+  },
+  "cesvi-87cc4e2767": {
+   "frase": "colision perpendicular",
+   "modalidad": "lateral"
+  },
+  "cesvi-16b9b82f10": {
+   "frase": "corte de circulacion",
+   "modalidad": "otra"
+  },
+  "cesvi-2b10fea718": {
+   "frase": "colision",
+   "modalidad": null
+  },
+  "cesvi-840953e0be": {
+   "frase": "colision posterior",
+   "modalidad": "alcance"
+  },
+  "cesvi-c0bc4df135": {
+   "frase": "alcance",
+   "modalidad": "alcance"
+  },
+  "cesvi-b8c6174603": {
+   "frase": "impacto contra cuerpo fijo",
+   "modalidad": "objeto_fijo"
+  },
+  "cesvi-4ee7f719b9": {
+   "frase": "alcance con proyeccion",
+   "modalidad": "alcance"
+  },
+  "cesvi-0b1f65a976": {
+   "frase": "colision multiple",
+   "modalidad": "carambola"
+  },
+  "cesvi-2a83292792": {
+   "frase": "alcance",
+   "modalidad": "alcance"
+  },
+  "cesvi-5242a129c5": {
+   "frase": "colision frontal excentrica",
+   "modalidad": "frontal"
+  },
+  "cesvi-a29030f88d": {
+   "frase": "colision oblicua",
+   "modalidad": "lateral"
+  },
+  "cesvi-6400c99448": {
+   "frase": "alcance con proyeccion",
+   "modalidad": "alcance"
+  },
+  "cesvi-8edf93b5c6": {
+   "frase": "despiste",
+   "modalidad": "salida_de_camino"
+  },
+  "cesvi-d4283db9c4": {
+   "frase": "alcance",
+   "modalidad": "alcance"
+  },
+  "cesvi-af2196f0fc": {
+   "frase": "ruptura",
+   "modalidad": "otra"
+  },
+  "cesvi-58c038ffdf": {
+   "frase": "alcance",
+   "modalidad": "alcance"
+  },
+  "cesvi-c4100ea323": {
+   "frase": "alcance",
+   "modalidad": "alcance"
+  },
+  "cesvi-52c47a9f37": {
+   "frase": "alcance",
+   "modalidad": "alcance"
+  },
+  "cesvi-b9f5a5ca1f": {
+   "frase": "embestida",
+   "modalidad": "lateral"
+  },
+  "cesvi-5cf7e956c6": {
+   "frase": "impacto",
+   "modalidad": null
+  },
+  "cesvi-d0c7ed3ad8": {
+   "frase": "impacto<br>lateral delantero",
+   "modalidad": "lateral"
+  },
+  "cesvi-358b91874b": {
+   "frase": "impacto",
+   "modalidad": null
+  },
+  "cesvi-7f1fa3c962": {
+   "frase": "colision lateral central",
+   "modalidad": "lateral"
+  },
+  "cesvi-6f007ef54a": {
+   "frase": "despiste",
+   "modalidad": "salida_de_camino"
+  },
+  "cesvi-e25e2e4542": {
+   "frase": null,
+   "modalidad": null
+  },
+  "cesvi-a8bf6a49ac": {
+   "frase": "colision frontal oblicua",
+   "modalidad": "frontal"
+  },
+  "cesvi-928c1a7646": {
+   "frase": "colision lateral oblicua con proyeccion",
+   "modalidad": "lateral"
+  },
+  "cesvi-4f918c2927": {
+   "frase": "colision lateral oblicua",
+   "modalidad": "lateral"
+  },
+  "cesvi-d4772dda4f": {
+   "frase": "colision lateral por",
+   "modalidad": "lateral"
+  },
+  "cesvi-f7779cef54": {
+   "frase": "colision oblicua posterior en",
+   "modalidad": "alcance"
+  },
+  "cesvi-d646b64594": {
+   "frase": "choque",
+   "modalidad": null
+  },
+  "cesvi-85090bf850": {
+   "frase": "volcadura",
+   "modalidad": "volcadura"
+  },
+  "cesvi-6dbc809e80": {
+   "frase": "choque",
+   "modalidad": null
+  },
+  "cesvi-3bde7bd134": {
+   "frase": "alcance",
+   "modalidad": "alcance"
+  },
+  "cesvi-97cb6986e4": {
+   "frase": "alcance",
+   "modalidad": "alcance"
+  },
+  "cesvi-e9aed4ab5b": {
+   "frase": "raspado",
+   "modalidad": "lateral"
+  },
+  "cesvi-f85560ba6c": {
+   "frase": "colision posterior (alcance)",
+   "modalidad": "alcance"
+  },
+  "cesvi-7a3e5a6055": {
+   "frase": "colision posterior (alcance)",
+   "modalidad": "alcance"
+  },
+  "cesvi-736d92094b": {
+   "frase": "colision",
+   "modalidad": null
+  },
+  "cesvi-11fb37efea": {
+   "frase": "colision lateral contra objeto fijo",
+   "modalidad": "objeto_fijo"
+  },
+  "cesvi-7377724258": {
+   "frase": "impacto contra",
+   "modalidad": null
+  },
+  "cesvi-89637693fe": {
+   "frase": "colision",
+   "modalidad": null
+  },
+  "cesvi-0eeebbed82": {
+   "frase": "alcance",
+   "modalidad": "alcance"
+  },
+  "cesvi-cdaf2821ca": {
+   "frase": "colision lateral oblicua delantera (corte de circulacion) en el",
+   "modalidad": "otra"
+  },
+  "cesvi-466c13a262": {
+   "frase": null,
+   "modalidad": null
+  },
+  "cesvi-edc4d70d79": {
+   "frase": "comparativa de danos",
+   "modalidad": null
+  },
+  "cesvi-78d98fd926": {
+   "frase": "volcadura",
+   "modalidad": "volcadura"
+  },
+  "cesvi-99ae88f8e3": {
+   "frase": "colision",
+   "modalidad": null
+  },
+  "cesvi-5518ddf7bc": {
+   "frase": "choque contra objeto fijo",
+   "modalidad": "objeto_fijo"
+  },
+  "cesvi-f6bafdd302": {
+   "frase": "colision en",
+   "modalidad": null
+  },
+  "cesvi-9cb20db594": {
+   "frase": "embestida",
+   "modalidad": "lateral"
+  },
+  "cesvi-16853d8646": {
+   "frase": "alcance con proyeccion",
+   "modalidad": "alcance"
+  },
+  "cesvi-853129f415": {
+   "frase": "vuelco",
+   "modalidad": "volcadura"
+  },
+  "cesvi-3481483d69": {
+   "frase": "alcance",
+   "modalidad": "alcance"
+  },
+  "cesvi-e6067d3d1b": {
+   "frase": "colision posterior (alcance) con",
+   "modalidad": "alcance"
+  },
+  "cesvi-de7323cf1c": {
+   "frase": "alcance",
+   "modalidad": "alcance"
+  },
+  "cesvi-16c23ff0f7": {
+   "frase": "colision",
+   "modalidad": null
+  },
+  "cesvi-e984ff56d3": {
+   "frase": "impacto contra cuerpo duro (muro de contencion)",
+   "modalidad": "objeto_fijo"
+  },
+  "cesvi-818c2eb6d6": {
+   "frase": "alcance con proyeccion",
+   "modalidad": "alcance"
+  },
+  "cesvi-30fa1926dc": {
+   "frase": "embestida perpendicular en",
+   "modalidad": "lateral"
+  },
+  "cesvi-e53c722cc2": {
+   "frase": "colision oblicua delantera",
+   "modalidad": "lateral"
+  },
+  "cesvi-5db0896348": {
+   "frase": "salida de camino",
+   "modalidad": "salida_de_camino"
+  },
+  "cesvi-c3af05ad39": {
+   "frase": "colision lateral en reversa",
+   "modalidad": "reversa"
+  },
+  "cesvi-f290a77272": {
+   "frase": "colision",
+   "modalidad": null
+  },
+  "cesvi-65daf4b688": {
+   "frase": "colision",
+   "modalidad": null
+  },
+  "cesvi-9b2fc2ffc7": {
+   "frase": "alcance con",
+   "modalidad": "alcance"
+  },
+  "cesvi-ba1949532f": {
+   "frase": "colision",
+   "modalidad": null
+  },
+  "cesvi-7be5e8a261": {
+   "frase": null,
+   "modalidad": null
+  },
+  "cesvi-316a61cb43": {
+   "frase": "colision lateral con proyeccion",
+   "modalidad": "lateral"
+  },
+  "cesvi-f9de9836d6": {
+   "frase": "raspado negativo",
+   "modalidad": "lateral"
+  },
+  "cesvi-b1ab1b00df": {
+   "frase": "alcance con proyeccion",
+   "modalidad": "alcance"
+  },
+  "cesvi-5e0f7da79c": {
+   "frase": "despiste",
+   "modalidad": "salida_de_camino"
+  },
+  "cesvi-4055e6fd60": {
+   "frase": "impacto contra cuerpo duro",
+   "modalidad": "objeto_fijo"
+  },
+  "cesvi-fa403f1905": {
+   "frase": "colision",
+   "modalidad": null
+  },
+  "cesvi-c97f0058a8": {
+   "frase": "alcance",
+   "modalidad": "alcance"
+  },
+  "cesvi-9babee8d11": {
+   "frase": "colision",
+   "modalidad": null
+  },
+  "cesvi-17068f5d53": {
+   "frase": null,
+   "modalidad": null
+  },
+  "cesvi-d84907cf47": {
+   "frase": "embestida oblicua anterior",
+   "modalidad": "lateral"
+  },
+  "cesvi-c3a461721a": {
+   "frase": "colision",
+   "modalidad": null
+  },
+  "cesvi-4a5c51d807": {
+   "frase": "alcance",
+   "modalidad": "alcance"
+  },
+  "cesvi-feb7aaa0e1": {
+   "frase": "alcance",
+   "modalidad": "alcance"
+  },
+  "cesvi-df473476cf": {
+   "frase": "choque contra objeto fijo",
+   "modalidad": "objeto_fijo"
+  },
+  "cesvi-17afa381e4": {
+   "frase": "colision lateral con colision perpendicular trasera",
+   "modalidad": "lateral"
+  },
+  "cesvi-a4177250d4": {
+   "frase": "colision",
+   "modalidad": null
+  },
+  "cesvi-7fceadfdca": {
+   "frase": "raspado positivo",
+   "modalidad": "lateral"
+  },
+  "cesvi-fb43c646b6": {
+   "frase": "colision",
+   "modalidad": null
+  },
+  "cesvi-8dfd2f1c6f": {
+   "frase": "alcance",
+   "modalidad": "alcance"
+  },
+  "cesvi-c6e5335493": {
+   "frase": "alcance con proyeccion",
+   "modalidad": "alcance"
+  },
+  "cesvi-be27388d4a": {
+   "frase": "embestida perpendicular",
+   "modalidad": "lateral"
+  },
+  "cesvi-94c84e00ab": {
+   "frase": "alcance",
+   "modalidad": "alcance"
+  },
+  "cesvi-09828841f1": {
+   "frase": "colision frontal",
+   "modalidad": "frontal"
+  },
+  "cesvi-14b9bd1a4e": {
+   "frase": "despiste con volcadura",
+   "modalidad": "salida_de_camino"
+  },
+  "cesvi-d24f648593": {
+   "frase": "choque contra objeto fijo",
+   "modalidad": "objeto_fijo"
+  },
+  "cesvi-bdf8899ada": {
+   "frase": null,
+   "modalidad": null
+  },
+  "cesvi-06e4ee9b97": {
+   "frase": "colision lateral",
+   "modalidad": "lateral"
+  },
+  "cesvi-24f644a44f": {
+   "frase": "colision",
+   "modalidad": null
+  },
+  "cesvi-eb4d9c1c4e": {
+   "frase": null,
+   "modalidad": null
+  },
+  "cesvi-d4f9c1a411": {
+   "frase": "salida de carretera",
+   "modalidad": "salida_de_camino"
+  },
+  "cesvi-5becbd0fbb": {
+   "frase": "alcance con proyeccion",
+   "modalidad": "alcance"
+  },
+  "cesvi-4f39800f79": {
+   "frase": "maniobra en reversa",
+   "modalidad": "reversa"
+  },
+  "cesvi-6ca24dcfce": {
+   "frase": "colision posterior",
+   "modalidad": "alcance"
+  },
+  "cesvi-47c32388f7": {
+   "frase": "danos al motor",
+   "modalidad": null
+  },
+  "cesvi-5f9276cffe": {
+   "frase": "salida",
+   "modalidad": null
+  },
+  "cesvi-76db6d8acd": {
+   "frase": "colision en reversa",
+   "modalidad": "reversa"
+  },
+  "cesvi-8324c1892b": {
+   "frase": "colision y choque contra objeto fijo",
+   "modalidad": null
+  },
+  "cesvi-5cb23d1cfd": {
+   "frase": "colision lateral (corte de circulacion)",
+   "modalidad": "otra"
+  },
+  "cesvi-e8474c118b": {
+   "frase": "colision frontal angular",
+   "modalidad": "frontal"
+  },
+  "cesvi-8022b514b7": {
+   "frase": "alcance con proyeccion",
+   "modalidad": "alcance"
+  },
+  "cesvi-2251d90ba3": {
+   "frase": "embestida",
+   "modalidad": "lateral"
+  },
+  "cesvi-4ef2a9d90b": {
+   "frase": "perdida de control con colision lateral",
+   "modalidad": null
+  },
+  "cesvi-7f6b73260c": {
+   "frase": "colision posterior",
+   "modalidad": "alcance"
+  },
+  "cesvi-52e0c1deef": {
+   "frase": "impacto contra cuerpo fijo",
+   "modalidad": "objeto_fijo"
+  },
+  "cesvi-923e562683": {
+   "frase": "colision oblicua posterior",
+   "modalidad": "alcance"
+  },
+  "cesvi-3fb401796c": {
+   "frase": "colision",
+   "modalidad": null
+  },
+  "cesvi-6a3f3106f0": {
+   "frase": "incendio",
+   "modalidad": "otra"
+  },
+  "cesvi-e69d48f64f": {
+   "frase": "volcadura",
+   "modalidad": "volcadura"
+  },
+  "cesvi-fc5f48e946": {
+   "frase": "colision",
+   "modalidad": null
+  },
+  "cesvi-b37686e37c": {
+   "frase": "impacto",
+   "modalidad": null
+  }
+ }
+}
