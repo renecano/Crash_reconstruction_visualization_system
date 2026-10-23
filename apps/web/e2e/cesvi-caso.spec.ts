@@ -22,8 +22,8 @@ const DECLARACION = JSON.parse(
 ) as { declaracion: string; salida: unknown };
 
 test("@flujo /cesvi/caso: de la narración del perito al mapa y a la escena", async ({ page }) => {
-  // Reconstruye y además simula la versión declarada del conductor (R7): dos corridas del solver.
-  test.setTimeout(120_000);
+  // Reconstruye, simula la versión declarada del conductor (R7) y arma el dictamen (R8).
+  test.setTimeout(150_000);
   const errores: string[] = [];
   page.on("pageerror", (e) => errores.push(e.message));
   await page.route("https://tiles.openfreemap.org/**", (r) =>
@@ -147,6 +147,35 @@ test("@flujo /cesvi/caso: de la narración del perito al mapa y a la escena", as
   await expect(page.getByTestId("decision-sugerencia")).toHaveText(
     "El perito descartó la sugerencia.",
   );
+
+  // R8: el dictamen de la reconstrucción, validado por el perito, en PDF y en Word.
+  const dictamen = page.getByTestId("dictamen-caso");
+  await expect(page.getByTestId("estado-validacion")).toHaveText(
+    "Sin validar: el dictamen sale como borrador.",
+  );
+  await page.getByTestId("conclusion-perito").fill("Conclusión de prueba del perito.");
+  await page.getByTestId("nombre-perito").fill("Perito de prueba");
+  await page.getByTestId("validar-dictamen").click();
+  await expect(page.getByTestId("estado-validacion")).toContainText("Validó Perito de prueba");
+  await page.getByTestId("estructura-cesvi").check();
+  const pdf = page.waitForEvent("download");
+  await dictamen.getByTestId("descargar-dictamen-pdf").click();
+  const archivoPdf = await pdf;
+  expect(archivoPdf.suggestedFilename()).toBe("dictamen-reconstruccion.pdf");
+  const bytesPdf = readFileSync(await archivoPdf.path());
+  expect(bytesPdf.subarray(0, 5).toString()).toBe("%PDF-");
+  // El croquis a escala y los tres cuadros del 3D (el visor está abierto) van como imágenes.
+  const imagenes = bytesPdf.toString("latin1").match(/\/Subtype\s*\/Image/g) ?? [];
+  expect(imagenes.length).toBeGreaterThanOrEqual(4);
+  const word = page.waitForEvent("download");
+  await dictamen.getByTestId("descargar-dictamen-word").click();
+  const archivoWord = await word;
+  expect(archivoWord.suggestedFilename()).toBe("dictamen-reconstruccion.docx");
+  expect(
+    readFileSync(await archivoWord.path())
+      .subarray(0, 2)
+      .toString(),
+  ).toBe("PK");
 
   // 5. La escena, descargada: contrato 2.0.0 con lo que marcó el perito.
   const descarga = page.waitForEvent("download");

@@ -1,5 +1,5 @@
 /**
- * El dictamen de una reconstrucción de «Caso nuevo» (R8, docs/cesvi/PLAN-CESVI.md; ADR 0071), en
+ * El dictamen de una reconstrucción de «Caso nuevo» (R8, docs/cesvi/PLAN-CESVI.md; ADR 0072), en
  * PDF y en Word con el mismo contenido:
  * - la narración del perito;
  * - el croquis 2D a escala y cuadros del 3D;
@@ -92,13 +92,6 @@ export function modalidadDelDictamen(e: Expediente, narracion: string | null) {
   if (narrada) return { modalidad: narrada, inferida: false, motivo: null };
   const m = modalidadInferida(e, narracion ?? "");
   return { modalidad: m.modalidad, inferida: true, motivo: m.motivo };
-}
-
-function nombre(v: Expediente["vehiculos"][number]): string {
-  const partes = [v.marca?.valor, v.modelo?.valor, v.anio ? String(v.anio) : undefined].filter(
-    Boolean,
-  );
-  return partes.length ? `${v.id} (${partes.join(" ")})` : v.id;
 }
 
 /** Las secciones del dictamen, cada una con su título en los dos órdenes. */
