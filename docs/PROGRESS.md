@@ -155,7 +155,12 @@ Reglas de trabajo: `CLAUDE.md`. Especificación: `PLAN.md`.
       - **Guion y script nuevos:** la lista; AXA en los 8 pasos (el punto de impacto con las poses propuestas, los finales con su flecha, expandir, la reconstrucción y su 3D, la declaración, la correspondencia, los números y la reproducción del reporte con 63.15, 60.27 y 2.39 %); el caso nuevo.
       - **Comando de siempre:** voz Kokoro `ef_dora`, 18 segmentos y 136.6 s de voz.
       - **Resultado:** 3.69 min y 15.6 MB, en `demo/video/croquis-cesvi-demo.mp4` (fuera de git).
-    - **Siguiente paso concreto:** R10, el escenario del lugar real en alta y ultra (árboles, postes y bardas de OpenStreetMap como objetos del entorno con fuente «mapa»).
+    - **R10, las calles reales en el 3D de los casos** (ADR 0081, 2026-10-23):
+      - el 3D dibuja la red de OpenStreetMap alrededor del impacto, en el marco de la escena, en lugar de la recta de la plantilla;
+      - se piden al marcar el impacto y el 3D las agrega cuando llegan (la física no las espera: la primera consulta a Overpass tardó 42.7 s en local);
+      - con la atribución ODbL en la leyenda.
+    - **R10, los objetos del lugar** (ADR 0081): árboles, postes y bardas de OpenStreetMap entran al 3D como objetos con fuente «mapa». En México casi no están mapeados (AXA: 0; el cruce de Toluca: 0; Reforma, CDMX: 7), así que el 3D muestra lo que hay.
+    - **Siguiente paso concreto:** lo grande de R10 espera a René («Bloqueado»): la fuente de los modelos de vehículos, la revisión de las capturas y la medición en la computadora de demo.
     1. **V2-1, marco:**
        - **la barra:** los nombres de los 8 pasos siempre, «← Casos», la barra de avance arriba y los pasos futuros cerrados hasta completar lo obligatorio;
        - **los botones:** «Siguiente: el hecho →», desactivado y diciendo qué falta (`lib/pasos-caso.ts`, con pruebas);

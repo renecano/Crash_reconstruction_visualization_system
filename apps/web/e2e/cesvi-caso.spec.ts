@@ -281,6 +281,8 @@ const CARAMBOLA = JSON.parse(
 ) as { narracion: string; salida: unknown };
 
 test("@flujo /cesvi: una carambola, con sus impactos en orden hasta el 3D", async ({ page }) => {
+  // Acerca el mapa, coloca dos impactos y tres finales, reconstruye y abre el 3D.
+  test.setTimeout(120_000);
   const errores: string[] = [];
   page.on("pageerror", (e) => errores.push(e.message));
   await page.route("https://tiles.openfreemap.org/**", (r) =>

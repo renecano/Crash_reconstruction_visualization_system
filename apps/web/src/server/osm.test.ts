@@ -68,6 +68,10 @@ describe("calles de OSM en producción (ADR 0040)", () => {
     expect(b.instancia).toBeNull();
     expect(d.calls).toHaveLength(1);
     expect(cacheKey(19.278975, -99.6539869, 150)).toBe("croquis:osm:19.27897:-99.65399:150");
+    // Los objetos del lugar (R10) tienen su clave; la de las calles no cambia.
+    expect(cacheKey(19.278975, -99.6539869, 150, "objetos")).toBe(
+      "croquis:osm-objetos:19.27897:-99.65399:150",
+    );
   });
 
   it("si una instancia está saturada o no responde, prueba la siguiente", async () => {

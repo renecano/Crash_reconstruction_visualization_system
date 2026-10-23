@@ -26,6 +26,8 @@ import {
   type ControlesVisor,
   VisorEscena,
 } from "@/components/visor/visor-app";
+import type { OverpassResponse } from "@croquis/croquis-2d";
+import { conCallesDelMapa, conObjetosDelMapa } from "@/lib/calles-del-mapa";
 import { reconstruirCompletoEnNavegador } from "@/lib/reconstruct-client";
 
 const kmh = (x?: number) => (x === undefined ? "—" : x.toFixed(1));
@@ -234,8 +236,14 @@ export function Visor3dCaso({
   declarada,
   onExportApi,
   onPosiciones,
+  calles = null,
+  objetos = null,
 }: {
   r: Reconstruccion;
+  /** Las calles del lugar (R10): con ellas, el 3D dibuja la red real en lugar de la plantilla. */
+  calles?: OverpassResponse | null;
+  /** Los árboles, postes y bardas del lugar (R10), como objetos del entorno. */
+  objetos?: OverpassResponse | null;
   declarada: Hipotesis | null;
   onExportApi: (api: ViewerExportApi | null) => void;
   onPosiciones: (ps: PosicionMovil[]) => void;
@@ -245,7 +253,12 @@ export function Visor3dCaso({
     camara: "cinematica",
     auto: true,
   });
-  const spec3d = useMemo(() => especReconstruida(r) as unknown as EscenaSpec, [r]);
+  const spec3d = useMemo(() => {
+    let s = especReconstruida(r);
+    if (r.origen && calles) s = conCallesDelMapa(s, r.origen, calles);
+    if (r.origen && objetos) s = conObjetosDelMapa(s, r.origen, objetos);
+    return s as unknown as EscenaSpec;
+  }, [r, calles, objetos]);
   const externas = useMemo(() => (declarada ? [declarada] : undefined), [declarada]);
   return (
     <div className="flex h-full flex-col gap-2 overflow-y-auto p-3 pt-16" data-testid="visor-caso">

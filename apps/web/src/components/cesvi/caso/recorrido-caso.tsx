@@ -22,6 +22,7 @@ import {
   type Expediente,
   type SalidaCorpus,
 } from "@croquis/cesvi";
+import type { OverpassResponse } from "@croquis/croquis-2d";
 import type { ViewerExportApi } from "@croquis/viewer";
 import type { Map as MapaMl } from "maplibre-gl";
 import { useEffect, useMemo, useState } from "react";
@@ -35,6 +36,7 @@ import {
 import { guardarCaso, idNuevo, type CasoExpediente } from "@/lib/casos";
 import { avisarCambio } from "@/lib/casos-navegador";
 import type { DatosDictamenCaso } from "@/lib/dictamen-caso";
+import { callesCerca, objetosCerca } from "@/lib/calles-del-mapa";
 import { downloadBytes } from "@/lib/download";
 import {
   CLAVES_PASOS,
@@ -109,6 +111,8 @@ export function RecorridoCaso({ inicial }: { inicial: CasoExpediente }) {
   );
   const [rumbosImpacto, setRumbosImpacto] = useState<Record<number, number>>({});
   const [historial, setHistorial] = useState<Expediente[]>([]);
+  const [calles, setCalles] = useState<OverpassResponse | null>(null);
+  const [objetos, setObjetos] = useState<OverpassResponse | null>(null);
   const [medida, setMedida] = useState<number | null>(null);
   const [mapa, setMapa] = useState<MapaMl | null>(null);
   const [moviles, setMoviles] = useState<PosicionMovil[]>([]);
@@ -309,6 +313,26 @@ export function RecorridoCaso({ inicial }: { inicial: CasoExpediente }) {
       lon: ps.reduce((a, p) => a + p.punto.lon, 0) / ps.length,
     };
   };
+  // Las calles del lugar para el 3D (R10): se piden en cuanto hay punto de impacto (al marcarlo o al
+  // abrir un caso que ya lo tiene) y el 3D las agrega cuando llegan.
+  const origenCalles = puntoDe(1);
+  const claveCalles = origenCalles
+    ? `${origenCalles.lon.toFixed(3)},${origenCalles.lat.toFixed(3)}`
+    : null;
+  useEffect(() => {
+    if (!claveCalles) return;
+    const [lon, lat] = claveCalles.split(",").map(Number) as [number, number];
+    let vivo = true;
+    void callesCerca([lon, lat]).then((c) => {
+      if (vivo) setCalles(c);
+    });
+    void objetosCerca([lon, lat]).then((o) => {
+      if (vivo) setObjetos(o);
+    });
+    return () => {
+      vivo = false;
+    };
+  }, [claveCalles]);
   const rumboDeItem = (i: ItemLugar): number | null => {
     if (i.tipo === "impacto") {
       const primero = vehiculosDe(i.orden)[0];
@@ -776,6 +800,8 @@ export function RecorridoCaso({ inicial }: { inicial: CasoExpediente }) {
                 declarada={declarada}
                 onExportApi={setExportApi}
                 onPosiciones={setMoviles}
+                calles={calles}
+                objetos={objetos}
               />
             </div>
           ) : null}
