@@ -14,7 +14,7 @@ import {
 } from "@croquis/cesvi";
 import type { ReactNode } from "react";
 import type { ReporteCesvi } from "@/lib/caso-guardado";
-import { MODALIDAD } from "@/lib/reproduccion-dictamenes";
+import { MODALIDAD } from "@/lib/nombres-cesvi";
 import { CARA, Fuente, NOMBRE_FASE, Pregunta, type Fase, type Id } from "./piezas";
 import { PanelVerificacion, TablaVelocidades } from "./reconstruccion";
 import { ConclusionesCesvi } from "../importar-dictamen";
@@ -189,6 +189,7 @@ export function PasoHecho({
           </p>
         </section>
       ) : null}
+      {escena ? <ResumenEscena escena={escena} /> : null}
       {escena ? (
         <div className="solo-trabajar flex flex-col gap-3">
           <h3 className="t-interfaz font-semibold">Lo que más cambia la reconstrucción</h3>

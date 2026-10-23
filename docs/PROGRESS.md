@@ -146,7 +146,7 @@ Reglas de trabajo: `CLAUDE.md`. Especificación: `PLAN.md`.
     - **Lectura:**
       - **Contra lo que CESVI escribió en el título,** Croquis gana 18.6 puntos a su línea base. Contra la etiqueta de R0, 4.2.
       - **Siguen débiles:** salida del camino, «otra» y reversa.
-  - **Fase actual (2026-10-23): unificar /cesvi en una sola aplicación** (pedido de René, ADR 0079, rama `feat/cesvi-unificado`). Después: R10 (rama `feat/r10-calidad-visual`, con los efectos de cine a medias: `packages/viewer/src/cinematic-fx.ts`; siguen TRAA, SSR, profundidad de campo y desenfoque en `PostEffects`, ADR 0077) y regrabar el video demo con el comando de siempre.
+  - **Fase actual (2026-10-23): /cesvi unificado** (ADR 0079): la lista de casos y todo caso en el mismo recorrido; las cinco e2e `@flujo` en verde. **Siguiente paso concreto:** regrabar el video demo con `node demo/video/grabar.mjs` (el guion y el script ya van con las rutas nuevas) y después R10. Después: R10 (rama `feat/r10-calidad-visual`, con los efectos de cine a medias: `packages/viewer/src/cinematic-fx.ts`; siguen TRAA, SSR, profundidad de campo y desenfoque en `PostEffects`, ADR 0077) y regrabar el video demo con el comando de siempre.
     - **Plan de la unificación:**
       1. **`/cesvi` es la lista de casos:** «Caso nuevo», «Cargar un reporte», los casos guardados en este equipo (`localStorage`) y los de ejemplo (AXA A2010930 y los reportes de la reproducción).
       2. **Rutas nuevas:**

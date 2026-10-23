@@ -248,7 +248,7 @@ export function Visor3dCaso({
   const spec3d = useMemo(() => especReconstruida(r) as unknown as EscenaSpec, [r]);
   const externas = useMemo(() => (declarada ? [declarada] : undefined), [declarada]);
   return (
-    <div className="flex h-full flex-col gap-2 overflow-y-auto p-3" data-testid="visor-caso">
+    <div className="flex h-full flex-col gap-2 overflow-y-auto p-3 pt-16" data-testid="visor-caso">
       <p className="t-nota">
         Las velocidades del 3D son las que estimó Croquis para reproducir tu evidencia (supuesto,
         con su rango); lo demás que no narraste va con valores por omisión. Reconstrucción de apoyo:

@@ -1,6 +1,6 @@
 # Guion del video demo de Croquis para CESVI
 
-Video narrado del prototipo `/cesvi` y de «Caso nuevo» (`/cesvi/caso`), para enseñárselo a los peritos de CESVI. Lo graba `demo/video/` (ver PROGRESS).
+Video narrado de `/cesvi`, para enseñárselo a los peritos de CESVI: el caso de ejemplo de AXA y un caso nuevo, abiertos desde la lista de casos en el mismo recorrido (ADR 0079). Lo graba `demo/video/` (ver PROGRESS).
 
 - **Formato de este archivo:**
   - Cada `## id` es un segmento: el texto que sigue es la voz, y se usa tal cual en los subtítulos.
@@ -120,4 +120,4 @@ Y Croquis reconstruye con física: cada velocidad con su rango, y la evidencia d
 
 > En pantalla: la marca otra vez.
 
-Lo que sigue: el 3D de la reconstrucción, y cualquier caso, no solo este.
+Todo caso, nuevo, importado o de ejemplo, se abre en el mismo recorrido, con su reconstrucción en 3D y su dictamen.

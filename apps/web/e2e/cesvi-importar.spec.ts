@@ -1,6 +1,17 @@
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
-import { expect, test } from "@playwright/test";
+import { expect, test, type Page } from "@playwright/test";
+
+/** Lleva el recorrido al paso n (1 a 8 del recorrido completo) con «Siguiente» y «Anterior». */
+async function irAPaso(page: Page, n: number) {
+  const panel = page.getByTestId("panel-paso");
+  for (let k = 0; k < 10; k++) {
+    const actual = Number(await panel.getAttribute("data-paso"));
+    if (actual === n) return;
+    await page.getByTestId(actual < n ? "siguiente" : "anterior").click();
+  }
+  await expect(panel).toHaveAttribute("data-paso", String(n));
+}
 
 /**
  * Cargar un reporte (R5): el PDF del caso A2010930 (redactado; se genera aquí con Chromium a partir
@@ -16,7 +27,7 @@ const LECTURAS = JSON.parse(readFileSync(join(DIR, "lecturas-a2010930.json"), "u
 
 const escapar = (t: string) => t.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
 
-test("@flujo /cesvi/importar: de un reporte de CESVI en PDF al expediente, listo para reconstruir", async ({
+test("@flujo /cesvi: cargar un reporte de CESVI en PDF y abrirlo en el recorrido", async ({
   page,
   context,
 }) => {
@@ -48,7 +59,10 @@ test("@flujo /cesvi/importar: de un reporte de CESVI en PDF al expediente, listo
   const pdf = await imprenta.pdf({ format: "Letter" });
   await imprenta.close();
 
-  await page.goto("/cesvi/importar");
+  // Desde la lista de casos (ADR 0079): «Cargar un reporte» abre el recorrido en el paso 1.
+  await page.goto("/cesvi");
+  await page.getByTestId("ir-importar").click();
+  await expect(page.getByTestId("recorrido-caso")).toHaveAttribute("data-origen", "importado");
   await page.getByTestId("archivo-dictamen").setInputFiles({
     name: "dictamen-a2010930.pdf",
     mimeType: "application/pdf",
@@ -58,17 +72,23 @@ test("@flujo /cesvi/importar: de un reporte de CESVI en PDF al expediente, listo
   await expect(texto).toContainText("páginas", { timeout: 30_000 });
   await expect(texto).toContainText("DICTAMEN TÉCNICO");
 
+  // Leído el reporte, el caso sigue en el recorrido: el hecho con lo que leyó Croquis.
   await page.getByTestId("leer-dictamen").click();
-  await expect(page.getByTestId("resumen-importado")).toContainText("2 vehículos");
+  await expect(page.getByTestId("panel-paso")).toHaveAttribute("data-paso", "2");
+  await expect(page.getByTestId("escena")).toContainText("2 vehículos");
   await expect(page.getByTestId("vehiculos")).toContainText("Silverado");
-  // La verificación CESVI con las medidas del reporte reproduce la EBS de la Tacoma (C1).
-  await expect(page.getByTestId("verificacion-cesvi")).toContainText("63.90 km/h");
-  // Lo que concluyó CESVI, para comparar.
-  const cesvi = page.getByTestId("conclusiones-cesvi");
-  await expect(cesvi).toContainText("alcance");
-  await expect(page.getByTestId("velocidades-cesvi")).toContainText("63.15 km/h");
 
+  await irAPaso(page, 4);
   await page.getByTestId("reconstruir").click();
   await expect(page.getByTestId("velocidades")).toBeVisible({ timeout: 60_000 });
+  // La verificación CESVI con las medidas del reporte reproduce la EBS de la Tacoma (C1).
+  await irAPaso(page, 6);
+  await expect(page.getByTestId("verificacion-cesvi")).toContainText("63.90 km/h");
+  // Con reporte hay paso «Croquis contra el reporte de CESVI»: lo que concluyó CESVI, eje por eje.
+  await irAPaso(page, 7);
+  await expect(page.getByTestId("eje-modalidad")).toContainText("Alcance");
+  await expect(page.getByTestId("conclusiones-cesvi")).toContainText("Alcance");
+  await expect(page.getByTestId("velocidades-cesvi")).toContainText("63.15 km/h");
+  await expect(page.getByTestId("velocidades-contra")).toContainText("%");
   expect(errores).toEqual([]);
 });

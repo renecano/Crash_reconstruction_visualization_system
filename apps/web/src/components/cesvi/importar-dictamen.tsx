@@ -15,6 +15,7 @@ import {
 } from "@croquis/cesvi";
 import { useState } from "react";
 import ejemplo from "../../../../../data/cesvi/grabaciones/importar/ejemplo.json";
+import { MODALIDAD } from "@/lib/nombres-cesvi";
 import { textoDeArchivo, type TextoDictamen } from "@/lib/texto-dictamen";
 
 const CARA: Record<string, string> = {
@@ -41,7 +42,7 @@ export function ConclusionesCesvi({ conclusiones: c }: { conclusiones: Conclusio
       <div>
         <span className="t-nota">Modalidad</span>
         <p className="t-interfaz font-medium" data-testid="modalidad-cesvi">
-          {c.modalidad ?? "El reporte no la concluye."}
+          {c.modalidad ? (MODALIDAD[c.modalidad] ?? c.modalidad) : "El reporte no la concluye."}
         </p>
       </div>
       {c.zonas_contacto.length ? (
