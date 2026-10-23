@@ -261,35 +261,34 @@
         "hex": "#f2f2f2"
       },
       "masa": {
-        "valor": 1350,
+        "valor": 1890,
         "unidad": "kg",
-        "rango": [1200, 1550],
         "fuente": "default",
-        "confianza": 0.5
+        "confianza": 0.6
       },
       "largo": {
-        "valor": 4.3,
+        "valor": 5.34,
         "unidad": "m",
         "fuente": "default",
-        "confianza": 0.5
+        "confianza": 0.6
       },
       "ancho": {
-        "valor": 1.76,
+        "valor": 1.86,
         "unidad": "m",
         "fuente": "default",
-        "confianza": 0.5
+        "confianza": 0.6
       },
       "alto": {
-        "valor": 1.6,
+        "valor": 1.85,
         "unidad": "m",
         "fuente": "default",
-        "confianza": 0.5
+        "confianza": 0.6
       },
       "distancia_entre_ejes": {
-        "valor": 2.62,
+        "valor": 3.18,
         "unidad": "m",
         "fuente": "default",
-        "confianza": 0.5
+        "confianza": 0.6
       },
       "maniobra": {
         "valor": "detenido",
