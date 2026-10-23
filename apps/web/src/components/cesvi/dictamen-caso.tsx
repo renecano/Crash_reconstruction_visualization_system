@@ -7,14 +7,20 @@
  * el orden de los reportes de CESVI.
  */
 import {
+  impactosEnMapa,
+  trayectoriasEnMapa,
   VERSION_PROMPT_ESCENA,
   type Expediente,
   type Reconstruccion,
   type VerificacionVehiculo,
 } from "@croquis/cesvi";
 import type { ViewerExportApi } from "@croquis/viewer";
+import type { Map as MapaMl } from "maplibre-gl";
 import { useState } from "react";
 import { croquisDeReconstruccion } from "@/lib/croquis-caso";
+import { croquisSobreMapa } from "@/lib/croquis-mapa";
+import { useModoCesvi } from "./marco-cesvi";
+import { ESTILO_MAPA, ESTILO_MAPA_CLARO } from "./mapa-comun";
 import { dictamenCasoPdf, dictamenCasoWord, type DatosDictamenCaso } from "@/lib/dictamen-caso";
 import { huellaEntradas } from "@/lib/exportar-cesvi";
 
@@ -53,6 +59,7 @@ export function DictamenCaso({
   verificacion,
   declarada,
   exportApi,
+  mapa = null,
 }: {
   expediente: Expediente;
   narracion: string | null;
@@ -61,34 +68,64 @@ export function DictamenCaso({
   declarada: DatosDictamenCaso["declarada"];
   /** El visor 3D abierto, para los cuadros (null si el perito no lo abrió). */
   exportApi: ViewerExportApi | null;
+  /** El mapa de «Caso nuevo»: con él, el croquis va sobre las calles (R8b). */
+  mapa?: MapaMl | null;
 }) {
   const [estructuraCesvi, setEstructuraCesvi] = useState(false);
   const [perito, setPerito] = useState("");
   const [conclusion, setConclusion] = useState("");
   const [validacion, setValidacion] = useState<DatosDictamenCaso["validacion"]>(null);
   const [estado, setEstado] = useState<string | null>(null);
+  const { tema } = useModoCesvi();
+  // Qué croquis llevó el último dictamen descargado: sobre el mapa o a escala sin mapa.
+  const [croquisUsado, setCroquisUsado] = useState<"mapa" | "escala" | null>(null);
 
-  const datos = (): DatosDictamenCaso => ({
-    expediente,
-    narracion,
-    reconstruccion,
-    verificacion,
-    croquis: croquisDeReconstruccion(reconstruccion.resultado, reconstruccion.ids),
-    cuadros3d: cuadros(exportApi, reconstruccion.resultado),
-    declarada,
-    validacion,
-    estructuraCesvi,
-    trazabilidad: {
-      metodo: `solver de Croquis ${String(reconstruccion.resultado.version_resultado ?? "")}, lectura ${VERSION_PROMPT_ESCENA}, verificación con el método de CESVI`,
-      huella: huellaEntradas({ expediente, narracion }),
-    },
-  });
+  /** El croquis sobre las calles del mapa si el caso está en el mapa; si no, el dibujo a escala. */
+  const croquis = async () => {
+    const trs = trayectoriasEnMapa(reconstruccion, reconstruccion.resultado);
+    if (mapa && trs.length) {
+      const imagen = await croquisSobreMapa(
+        mapa,
+        trs,
+        impactosEnMapa(reconstruccion, reconstruccion.resultado),
+        {
+          impresion: ESTILO_MAPA_CLARO,
+          actual: tema === "claro" ? ESTILO_MAPA_CLARO : ESTILO_MAPA,
+        },
+      );
+      if (imagen) return { imagen, sobreMapa: true };
+    }
+    return {
+      imagen: croquisDeReconstruccion(reconstruccion.resultado, reconstruccion.ids),
+      sobreMapa: false,
+    };
+  };
+  const datos = async (): Promise<DatosDictamenCaso> => {
+    const c = await croquis();
+    return {
+      expediente,
+      narracion,
+      reconstruccion,
+      verificacion,
+      croquis: c.imagen,
+      croquisSobreMapa: c.sobreMapa,
+      cuadros3d: cuadros(exportApi, reconstruccion.resultado),
+      declarada,
+      validacion,
+      estructuraCesvi,
+      trazabilidad: {
+        metodo: `solver de Croquis ${String(reconstruccion.resultado.version_resultado ?? "")}, lectura ${VERSION_PROMPT_ESCENA}, verificación con el método de CESVI`,
+        huella: huellaEntradas({ expediente, narracion }),
+      },
+    };
+  };
   const nombre = (ext: string) => `dictamen-reconstruccion${validacion ? "" : "-borrador"}.${ext}`;
 
   const exportar = async (formato: "pdf" | "docx") => {
     setEstado(formato === "pdf" ? "Armando el PDF…" : "Armando el Word…");
     try {
-      const d = datos();
+      const d = await datos();
+      setCroquisUsado(d.croquisSobreMapa ? "mapa" : "escala");
       if (formato === "pdf") descargar(await dictamenCasoPdf(d), nombre("pdf"), "application/pdf");
       else
         descargar(
@@ -103,12 +140,17 @@ export function DictamenCaso({
   };
 
   return (
-    <section className="tarjeta flex flex-col gap-4 p-6 lg:col-span-2" data-testid="dictamen-caso">
+    <section
+      className="tarjeta flex flex-col gap-4 p-6 lg:col-span-2"
+      data-testid="dictamen-caso"
+      data-croquis={croquisUsado ?? undefined}
+    >
       <h2 className="t-subtitulo">Dictamen</h2>
       <p className="t-nota">
-        Lleva tu narración, el croquis a escala, cuadros del 3D si lo abriste, los resultados con
-        sus rangos, la verificación con el método de CESVI, la comparación con la declaración si la
-        usaste y la trazabilidad. La conclusión es tuya; sin validar, sale como borrador.
+        Lleva tu narración, el croquis sobre las calles del mapa (a escala si no hay mapa), cuadros
+        del 3D si lo abriste, los resultados con sus rangos, la verificación con el método de CESVI,
+        la comparación con la declaración si la usaste y la trazabilidad. La conclusión es tuya; sin
+        validar, sale como borrador.
       </p>
       <label className="solo-trabajar flex flex-col gap-1.5">
         <span className="t-nota">Conclusión del perito</span>

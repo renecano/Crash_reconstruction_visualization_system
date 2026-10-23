@@ -20,7 +20,7 @@ interface VehiculoResultado {
 }
 
 /** Colores de datos de los vehículos, en orden (los mismos tonos que el croquis del recorrido). */
-const COLORES = [
+export const COLORES = [
   "#ff5b2e",
   "#2b8cff",
   "#a05cff",

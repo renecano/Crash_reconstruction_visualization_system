@@ -16,7 +16,7 @@
 import { buildSpec, fact, emptyFacts, type Fact } from "@croquis/extraction";
 import { fullResult, reconstruct } from "@croquis/solver-ts";
 import type { Expediente } from "./corpus";
-import { avanzar, enMetros, type LonLat } from "./geo";
+import { avanzar, desdeMetros, enMetros, rectanguloVehiculo, type LonLat } from "./geo";
 
 type Json = Record<string, unknown>;
 type Id = Expediente["vehiculos"][number]["id"];
@@ -614,4 +614,49 @@ export function posicionesEnTiempo(
       return [{ vehiculo: id, punto: { lat, lon }, rumbo }];
     },
   );
+}
+
+/** La trayectoria de un vehículo de la reconstrucción en el mapa, con sus tres poses (R8b). */
+export interface TrayectoriaEnMapa {
+  vehiculo: Id;
+  /** El recorrido, en [lon, lat]. */
+  puntos: [number, number][];
+  /** El contorno del vehículo al inicio, en el primer impacto y en reposo, en [lon, lat]. */
+  contornos: [number, number][][];
+}
+
+/**
+ * Las trayectorias del solver (metros desde el primer impacto) de vuelta al mapa, para dibujar el
+ * croquis del dictamen sobre las calles. Vacío si la escena no tiene posiciones en el mapa.
+ */
+export function trayectoriasEnMapa(base: EscenaSolver, resultado: Json): TrayectoriaEnMapa[] {
+  if (!base.origen) return [];
+  const origen = base.origen;
+  const vs = (resultado.vehiculos ?? []) as {
+    id: string;
+    dimensiones?: { largo_m: number; ancho_m: number };
+    trayectoria?: Trayectoria;
+  }[];
+  return vs.flatMap((v) => {
+    const tr = v.trayectoria;
+    const id = base.ids[v.id];
+    if (!tr?.t?.length || !id) return [];
+    const lonLat = (i: number) => desdeMetros(tr.x[i]!, tr.y[i]!, origen);
+    const rumboNorte = (i: number) => (((90 - (tr.rumbo[i]! * 180) / Math.PI) % 360) + 360) % 360;
+    const i0 = Math.max(
+      0,
+      tr.t.findIndex((t) => t >= 0),
+    );
+    const largo = v.dimensiones?.largo_m ?? 4.5;
+    const ancho = v.dimensiones?.ancho_m ?? 1.8;
+    return [
+      {
+        vehiculo: id,
+        puntos: tr.t.map((_, i) => lonLat(i)),
+        contornos: [0, i0, tr.t.length - 1].map((i) =>
+          rectanguloVehiculo(lonLat(i), rumboNorte(i), largo, ancho),
+        ),
+      },
+    ];
+  });
 }

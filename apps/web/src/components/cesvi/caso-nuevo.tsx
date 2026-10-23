@@ -62,6 +62,7 @@ function MapaEscena({
   moviles = [],
   impactos = [],
   onClic,
+  onMapa,
 }: {
   posiciones: { vehiculo: Id; fase: string; punto: { lat: number; lon: number } }[];
   /** Los vehículos en el instante del 3D (el croquis sigue al reloj de la reconstrucción). */
@@ -69,6 +70,8 @@ function MapaEscena({
   /** Los impactos de la reconstrucción, en orden: X1, X2… (R6). */
   impactos?: MarcaImpacto[];
   onClic: (p: { lat: number; lon: number }) => void;
+  /** El mapa ya cargado, para el croquis del dictamen sobre las calles (R8b). */
+  onMapa?: (m: MapaMl | null) => void;
 }) {
   const contenedor = useRef<HTMLDivElement>(null);
   const mapa = useRef<MapaMl | null>(null);
@@ -80,9 +83,11 @@ function MapaEscena({
   const marcasImpacto = useRef<Marker[]>([]);
   const [listo, setListo] = useState(false);
   const clic = useRef(onClic);
+  const avisar = useRef(onMapa);
   useEffect(() => {
     clic.current = onClic;
-  }, [onClic]);
+    avisar.current = onMapa;
+  }, [onClic, onMapa]);
   useEffect(() => {
     let vivo = true;
     let instancia: MapaMl | null = null;
@@ -100,11 +105,13 @@ function MapaEscena({
       instancia.on("load", () => {
         if (!vivo) return;
         mapa.current = instancia;
+        avisar.current?.(instancia);
         setListo(true);
       });
     });
     return () => {
       vivo = false;
+      avisar.current?.(null);
       instancia?.remove();
       mapa.current = null;
     };
@@ -270,6 +277,7 @@ export function CasoNuevo({ inicial }: { inicial?: CasoInicial } = {}) {
   const [rumbo, setRumbo] = useState("");
   const [moviles, setMoviles] = useState<PosicionMovil[]>([]);
   const [impactosMapa, setImpactosMapa] = useState<MarcaImpacto[]>([]);
+  const [mapaListo, setMapaListo] = useState<MapaMl | null>(null);
 
   const leer = async () => {
     setEstado("Leyendo la narración…");
@@ -505,6 +513,7 @@ export function CasoNuevo({ inicial }: { inicial?: CasoInicial } = {}) {
                 </p>
               </div>
               <MapaEscena
+                onMapa={setMapaListo}
                 posiciones={posiciones}
                 moviles={moviles}
                 impactos={impactosMapa}
@@ -536,6 +545,7 @@ export function CasoNuevo({ inicial }: { inicial?: CasoInicial } = {}) {
             <ReconstruccionCaso
               expediente={expediente}
               narracion={inicial ? null : texto.trim() || null}
+              mapa={mapaListo}
               onPosiciones={setMoviles}
               onImpactos={setImpactosMapa}
             />

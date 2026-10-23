@@ -158,4 +158,14 @@ describe("el dictamen de una reconstrucción (R8)", () => {
     const docx = await dictamenCasoWord(datos());
     expect(String.fromCharCode(docx[0]!, docx[1]!)).toBe("PK");
   });
+
+  it("el croquis dice si va sobre las calles del mapa o a escala sin mapa (R8b)", () => {
+    const png =
+      "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==";
+    expect(texto(datos({ croquis: png, croquisSobreMapa: true }))).toContain(
+      "sobre el mapa (calles de OpenStreetMap)",
+    );
+    expect(texto(datos({ croquis: png }))).toContain("Croquis a escala de la reconstrucción");
+    expect(texto(datos())).not.toContain("Croquis a escala");
+  });
 });

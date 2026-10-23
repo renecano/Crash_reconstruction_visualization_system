@@ -35,6 +35,8 @@ export interface DatosDictamenCaso {
   verificacion: VerificacionVehiculo[];
   /** El croquis 2D a escala (PNG, data URL), si se pudo dibujar. */
   croquis: string | null;
+  /** El croquis va sobre las calles del mapa (R8b); si no, es el dibujo a escala sin mapa. */
+  croquisSobreMapa?: boolean;
   /** Cuadros del 3D (PNG, data URL), si el perito abrió el 3D. */
   cuadros3d: { etiqueta: string; imagen: string }[];
   /** La comparación con la declaración del conductor (R7), si la usó. */
@@ -142,7 +144,9 @@ function secciones(d: DatosDictamenCaso) {
       ? [
           { image: d.croquis, width: 480, margin: [0, 4, 0, 4] } as Content,
           nota(
-            "Croquis a escala de la reconstrucción: posición inicial, de impacto y final de cada vehículo.",
+            d.croquisSobreMapa
+              ? "Croquis de la reconstrucción sobre el mapa (calles de OpenStreetMap): recorrido y posición inicial, de impacto y final de cada vehículo."
+              : "Croquis a escala de la reconstrucción: posición inicial, de impacto y final de cada vehículo.",
           ),
         ]
       : []),

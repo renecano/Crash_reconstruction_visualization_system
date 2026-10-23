@@ -5,6 +5,7 @@ import { validateEscena } from "@croquis/scene-schema";
 import { describe, expect, it } from "vitest";
 import type { Expediente, SalidaCorpus } from "./corpus";
 import { conMasa, conPosicion, escenaDeNarracion } from "./escena-narracion";
+import { distanciaM } from "./geo";
 import { mcHenry } from "./metodo";
 import {
   especDeExpediente,
@@ -13,6 +14,7 @@ import {
   reconstruirExpediente,
   posicionesEnTiempo,
   rumboEscena,
+  trayectoriasEnMapa,
   zonaHorizontal,
 } from "./reconstruccion";
 import { verificacionCesvi } from "./verificacion";
@@ -423,5 +425,32 @@ describe("R4b (ADR 0069): la maniobra narrada y la carambola sin posiciones", ()
       ["V1", "V2"],
       ["V2", "V3"],
     ]);
+  }, 30_000);
+});
+
+describe("las trayectorias en el mapa, para el croquis del dictamen (R8b)", () => {
+  it("cada vehículo con su recorrido y su contorno al inicio, en el impacto y en reposo", () => {
+    const e = colocado();
+    const r = reconstruirExpediente(e, "croquis-mapa");
+    const trs = trayectoriasEnMapa(r, r.resultado);
+    expect(trs.map((t) => t.vehiculo).sort()).toEqual(["V1", "V2"]);
+    for (const t of trs) {
+      expect(t.contornos).toHaveLength(3);
+      for (const c of t.contornos) expect(c).toHaveLength(5);
+      expect(t.puntos.length).toBeGreaterThan(10);
+    }
+    // En el impacto, el centro del contorno queda a unos metros de donde el perito lo colocó.
+    const v1 = trs.find((t) => t.vehiculo === "V1")!.contornos[1]!.slice(0, 4);
+    const centro: [number, number] = [
+      v1.reduce((a, p) => a + p[0], 0) / 4,
+      v1.reduce((a, p) => a + p[1], 0) / 4,
+    ];
+    const perito = m(-2, 0);
+    expect(distanciaM(centro, [perito.lon, perito.lat])).toBeLessThan(6);
+  }, 30_000);
+
+  it("sin posiciones en el mapa no hay trayectorias que dibujar sobre él", () => {
+    const r = reconstruirExpediente(base0(), "sin-mapa");
+    expect(trayectoriasEnMapa(r, r.resultado)).toEqual([]);
   }, 30_000);
 });
