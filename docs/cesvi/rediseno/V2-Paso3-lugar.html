@@ -1,0 +1,118 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<title>v2 · Paso 3 · Colocar en el mapa</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Anybody:wdth,wght@50..150,100..900&amp;family=Geist:wght@400..700&amp;family=Geist+Mono:wght@400..600&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#0B0C0F}
+button,a,[role=tab]{cursor:pointer}
+button:hover{filter:brightness(1.08)}
+a{color:#A4A9B3}a:hover{color:#F2F3F5}
+</style>
+</helmet>
+<div style="width: 100%; min-height: 900px; background: #0B0C0F; color: #F2F3F5; font-family: Geist, system-ui, sans-serif; display: flex; flex-direction: column">
+
+<header style="height: 64px; display: flex; align-items: center; justify-content: space-between; gap: 20px; padding: 0 24px; border-bottom: 1px solid rgba(255, 255, 255, 0.06); flex-wrap: wrap">
+<div style="display: flex; align-items: center; gap: 10px">
+<svg viewBox="0 0 120 120" width="26" height="26" aria-hidden="true"><path d="M91.11 28.89 A44 44 0 1 0 91.11 91.11" fill="none" stroke="#F2F3F5" stroke-width="13" stroke-dasharray="52 25.6"></path><path d="M91 51 L109 69 M109 51 L91 69" stroke="#FF5B2E" stroke-width="7" stroke-linecap="round"></path></svg>
+<span style="font-family: Anybody, sans-serif; font-stretch: 150%; font-weight: 600; letter-spacing: 0.16em; font-size: 15px">CROQUIS</span>
+<a href="#" style="margin-left: 10px; font: 500 13px Geist, sans-serif; text-decoration: none">← Casos</a>
+</div>
+<nav aria-label="Pasos" style="display: flex; align-items: center; gap: 4px">
+<button style="height: 36px; padding: 0 10px; border: 0; border-radius: 18px; background: transparent; color: #A4A9B3; font: 500 13px Geist, sans-serif">✓ Caso</button>
+<button style="height: 36px; padding: 0 10px; border: 0; border-radius: 18px; background: transparent; color: #A4A9B3; font: 500 13px Geist, sans-serif">✓ Hecho</button>
+<button aria-current="step" style="display: flex; align-items: center; gap: 8px; height: 36px; padding: 0 14px 0 8px; border: 0; border-radius: 18px; background: #F2F3F5; color: #0B0C0F; font: 600 13px Geist, sans-serif"><span style="width: 20px; height: 20px; border-radius: 10px; background: #0B0C0F; color: #F2F3F5; font-size: 11px; display: grid; place-items: center">3</span>Lugar</button>
+<button disabled style="height: 36px; padding: 0 10px; border: 0; border-radius: 18px; background: transparent; color: #4A505A; font: 500 13px Geist, sans-serif; cursor: not-allowed">4 Reconstrucción</button>
+<button disabled style="height: 36px; padding: 0 10px; border: 0; border-radius: 18px; background: transparent; color: #4A505A; font: 500 13px Geist, sans-serif; cursor: not-allowed">5 Daños</button>
+<button disabled style="height: 36px; padding: 0 10px; border: 0; border-radius: 18px; background: transparent; color: #4A505A; font: 500 13px Geist, sans-serif; cursor: not-allowed">6 Números</button>
+<button disabled style="height: 36px; padding: 0 10px; border: 0; border-radius: 18px; background: transparent; color: #4A505A; font: 500 13px Geist, sans-serif; cursor: not-allowed">7 Reporte</button>
+<button disabled style="height: 36px; padding: 0 10px; border: 0; border-radius: 18px; background: transparent; color: #4A505A; font: 500 13px Geist, sans-serif; cursor: not-allowed">8 Dictamen</button>
+</nav>
+<div style="display: flex; gap: 10px; align-items: center">
+<div role="tablist" aria-label="Modo" style="display: flex; padding: 3px; border-radius: 12px; background: #121418; border: 1px solid #23262D"><button role="tab" aria-selected="false" style="height: 32px; padding: 0 12px; border: 0; border-radius: 9px; background: transparent; color: #A4A9B3; font: 500 13px Geist, sans-serif">Presentar</button><button role="tab" aria-selected="true" style="height: 32px; padding: 0 12px; border: 0; border-radius: 9px; background: #23262D; color: #F2F3F5; font: 600 13px Geist, sans-serif">Trabajar</button></div>
+<button aria-label="Tema" style="width: 36px; height: 36px; border-radius: 18px; border: 1px solid #2A2E35; background: transparent; color: #F2F3F5">◐</button>
+</div>
+</header>
+<div style="height: 3px; background: #15171C"><div style="width: 37.5%; height: 3px; background: #F2F3F5"></div></div>
+
+<div style="flex: 1; display: flex; flex-wrap: wrap; gap: 24px; padding: 28px; box-sizing: border-box">
+
+<main style="flex: 1 1 380px; max-width: 460px; min-width: 0; display: flex; flex-direction: column; gap: 18px">
+<div style="display: flex; flex-direction: column; gap: 8px">
+<span style="font: 500 12px Geist Mono, monospace; letter-spacing: 0.08em; color: #7B818C">PASO 3 DE 8 · EL LUGAR</span>
+<h1 style="margin: 0; font: 600 36px/1.08 Geist, sans-serif; letter-spacing: -0.025em">Marca dónde chocaron y dónde quedó cada uno</h1>
+</div>
+
+<ol style="margin: 0; padding: 0; list-style: none; display: flex; flex-direction: column; gap: 8px">
+<li style="display: flex; align-items: center; gap: 12px; padding: 12px 14px; border-radius: 14px; background: #121418; border: 1px solid #1E2127"><span style="width: 26px; height: 26px; border-radius: 13px; background: #1F9D5C; color: #0B0C0F; display: grid; place-items: center; font-size: 13px; font-weight: 700">✓</span><span style="flex: 1; font: 500 15px Geist, sans-serif">Punto de impacto</span><span style="color: #FF5B2E; font-weight: 700">✕</span><button style="height: 30px; padding: 0 10px; border-radius: 8px; border: 1px solid #2A2E35; background: transparent; color: #A4A9B3; font: 500 12px Geist, sans-serif">Mover</button></li>
+
+<li style="display: flex; flex-direction: column; gap: 14px; padding: 16px; border-radius: 16px; background: rgba(90, 169, 255, 0.08); border: 1.5px solid #5AA9FF">
+<div style="display: flex; align-items: center; gap: 12px"><span style="width: 26px; height: 26px; border-radius: 13px; background: #5AA9FF; color: #0B0C0F; display: grid; place-items: center; font-size: 13px; font-weight: 700">2</span><span style="flex: 1; font: 600 16px Geist, sans-serif">V1 · Plymouth · dónde quedó</span><span style="font: 500 11px Geist Mono, monospace; color: #5AA9FF">AHORA</span></div>
+<div style="display: flex; gap: 14px; align-items: center">
+<svg viewBox="0 0 80 80" width="72" height="72" aria-hidden="true"><circle cx="40" cy="40" r="34" fill="#0B0C0F" stroke="#2A2E35" stroke-width="2"></circle><text x="40" y="16" text-anchor="middle" fill="#7B818C" font-size="9" font-family="Geist Mono, monospace">N</text><g transform="rotate(-8 40 40)"><rect x="32" y="24" width="16" height="32" rx="5" fill="#5AA9FF"></rect><path d="M40 12 L46 22 L34 22 Z" fill="#F2F3F5"></path></g></svg>
+<div style="display: flex; flex-direction: column; gap: 6px; font: 400 14px/1.45 Geist, sans-serif; color: #C9CDD4">
+<span><b style="color: #F2F3F5">1.</b> Toca el mapa donde quedó.</span>
+<span><b style="color: #F2F3F5">2.</b> Gira la flecha hacia donde apunta el frente.</span>
+</div>
+</div>
+<label style="display: flex; align-items: center; gap: 8px; font: 400 13px Geist, sans-serif; color: #A4A9B3">o escribe el rumbo<input value="352" style="width: 56px; height: 34px; padding: 0 8px; border-radius: 8px; border: 1px solid #2A2E35; background: #0B0C0F; color: #F2F3F5; font: 500 14px Geist Mono, monospace">° (0° = norte)</label>
+</li>
+
+<li style="display: flex; align-items: center; gap: 12px; padding: 12px 14px; border-radius: 14px; border: 1.5px dashed #2A2E35"><span style="width: 26px; height: 26px; border-radius: 13px; border: 1.5px solid #FFC24B; color: #FFC24B; display: grid; place-items: center; font-size: 13px; font-weight: 600">3</span><span style="flex: 1; font: 500 15px Geist, sans-serif; color: #A4A9B3">V2 · Ford · dónde quedó</span></li>
+
+<li style="display: flex; align-items: center; gap: 12px; padding: 12px 14px; border-radius: 14px; border: 1.5px dashed #23262D"><span style="width: 26px; height: 26px; border-radius: 13px; border: 1.5px solid #3A3F47; color: #7B818C; display: grid; place-items: center; font-size: 13px">+</span><span style="flex: 1; font: 500 14px Geist, sans-serif; color: #7B818C">Posiciones iniciales, restos y huellas</span><span style="font: 500 11px Geist Mono, monospace; color: #7B818C">OPCIONAL</span></li>
+</ol>
+
+<div style="margin-top: auto; display: flex; flex-direction: column; gap: 10px">
+<div style="font: 400 13px Geist, sans-serif; color: #A4A9B3">Para seguir falta: <b style="color: #F2F3F5">V1 y V2, dónde quedaron</b>.</div>
+<div style="display: flex; justify-content: space-between; gap: 12px">
+<button style="height: 52px; padding: 0 22px; border-radius: 26px; border: 1px solid #2A2E35; background: transparent; color: #F2F3F5; font: 500 15px Geist, sans-serif">← Anterior</button>
+<button disabled style="height: 52px; padding: 0 26px; border-radius: 26px; border: 0; background: #23262D; color: #7B818C; font: 600 15px Geist, sans-serif; cursor: not-allowed">Siguiente: reconstruir →</button>
+</div>
+</div>
+</main>
+
+<section aria-label="Mapa" style="flex: 999 1 560px; min-width: 0; position: relative; min-height: 640px; border-radius: 22px; overflow: hidden; border: 1px solid #1E2127; background: #0F1114">
+<svg viewBox="0 0 880 700" preserveAspectRatio="xMidYMid slice" role="img" aria-label="Mapa en modo colocar: el impacto ya marcado y V1 por colocar" style="position: absolute; inset: 0; width: 100%; height: 100%; cursor: crosshair">
+<rect width="880" height="700" fill="#0F1114"></rect>
+<path d="M0 140 L880 110 M0 560 L880 600 M120 0 L150 700 M720 0 L700 700" stroke="#1A1D22" stroke-width="10"></path>
+<rect x="0" y="300" width="880" height="140" fill="#1C1F25"></rect>
+<line x1="0" y1="303" x2="880" y2="303" stroke="#3A3F47" stroke-width="2"></line><line x1="0" y1="437" x2="880" y2="437" stroke="#3A3F47" stroke-width="2"></line>
+<line x1="0" y1="370" x2="880" y2="370" stroke="#555B66" stroke-width="2" stroke-dasharray="22 28"></line>
+<rect x="400" y="0" width="110" height="700" fill="#1C1F25"></rect>
+<rect x="400" y="300" width="110" height="140" fill="#20242B"></rect>
+<circle cx="455" cy="395" r="30" fill="#FF5B2E" opacity="0.18"></circle>
+<path d="M444 384 L466 406 M466 384 L444 406" stroke="#FF5B2E" stroke-width="5" stroke-linecap="round"></path>
+<rect x="476" y="380" width="84" height="26" rx="13" fill="#15171C" stroke="#FF5B2E" stroke-opacity="0.6"></rect><text x="518" y="398" text-anchor="middle" fill="#F2F3F5" font-size="12" font-family="Geist, sans-serif">Impacto</text>
+<g opacity="0.85" transform="rotate(-8 640 350)"><rect x="621" y="298" width="38" height="104" rx="10" fill="#5AA9FF" stroke="#F2F3F5" stroke-width="1.5" stroke-dasharray="5 4"></rect><line x1="640" y1="298" x2="640" y2="262" stroke="#F2F3F5" stroke-width="1.5"></line><circle cx="640" cy="256" r="8" fill="#0B0C0F" stroke="#F2F3F5" stroke-width="2"></circle></g>
+<rect x="676" y="410" width="148" height="28" rx="14" fill="#5AA9FF"></rect><text x="750" y="429" text-anchor="middle" fill="#0B0C0F" font-size="12" font-weight="600" font-family="Geist, sans-serif">V1 · toca para soltar</text>
+</svg>
+
+<div role="tablist" aria-label="Herramienta del mapa" style="position: absolute; left: 16px; top: 16px; display: flex; padding: 4px; border-radius: 14px; background: rgba(21, 23, 28, 0.9); border: 1px solid rgba(255, 255, 255, 0.1)">
+<button role="tab" aria-selected="true" style="height: 38px; padding: 0 14px; border: 0; border-radius: 10px; background: #F2F3F5; color: #0B0C0F; font: 600 13px Geist, sans-serif">Colocar</button>
+<button role="tab" aria-selected="false" style="height: 38px; padding: 0 14px; border: 0; border-radius: 10px; background: transparent; color: #A4A9B3; font: 500 13px Geist, sans-serif">Mover mapa</button>
+</div>
+<div style="position: absolute; left: 16px; top: 70px; padding: 8px 12px; border-radius: 10px; background: rgba(21, 23, 28, 0.85); font: 400 12px Geist, sans-serif; color: #A4A9B3">En «Colocar» el mapa no se mueve. Mantén Espacio para moverlo.</div>
+<button style="position: absolute; right: 16px; top: 16px; height: 40px; padding: 0 14px; border-radius: 20px; border: 1px solid rgba(255, 255, 255, 0.12); background: rgba(21, 23, 28, 0.9); color: #F2F3F5; font: 500 13px Geist, sans-serif">⤢ Expandir</button>
+<div style="position: absolute; right: 16px; bottom: 16px; display: flex; flex-direction: column; gap: 6px"><button aria-label="Acercar" style="width: 40px; height: 40px; border-radius: 12px; border: 1px solid #2A2E35; background: #15171C; color: #F2F3F5">+</button><button aria-label="Alejar" style="width: 40px; height: 40px; border-radius: 12px; border: 1px solid #2A2E35; background: #15171C; color: #F2F3F5">−</button><button aria-label="Deshacer" style="width: 40px; height: 40px; border-radius: 12px; border: 1px solid #2A2E35; background: #15171C; color: #F2F3F5">↶</button></div>
+<span style="position: absolute; left: 16px; bottom: 14px; font: 400 11px Geist, sans-serif; color: #7B818C">© OpenStreetMap</span>
+</section>
+</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1440,"height":900}}'>
+class Component extends DCLogic {
+renderVals() {
+return {};
+}
+}
+</script>
+</body>
+</html>
