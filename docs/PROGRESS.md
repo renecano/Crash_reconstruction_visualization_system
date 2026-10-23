@@ -151,7 +151,8 @@ Reglas de trabajo: `CLAUDE.md`. Especificación: `PLAN.md`.
     - **Capturas de antes y después** en `docs/cesvi/r10/`.
     - **Resultado:** el cambio se nota poco. Lo grande de R10 (vehículos realistas, escenario, la escena nocturna) espera la fuente de los modelos («Bloqueado»).
     - **La noche con alumbrado** ahora ilumina igual con o sin el campo aparte. La escena `nocturno_lluvia` sigue oscura a propósito: es la visibilidad de la lluvia fuerte de noche (ADR 0077).
-    - **Siguiente paso concreto sin René:** HDRI de Poly Haven (CC0) para la luz y los reflejos de alta y ultra.
+    - **HDRI: no se usa** (ADR 0077). El cielo físico del lugar y la hora del hecho ya da la luz y los reflejos; un HDRI traería otro sol.
+    - **Siguiente paso concreto sin René:** el escenario del lugar real en alta y ultra (banquetas, camellones, vegetación y postes de OpenStreetMap), sobre el modelo de vía de F8d.
     - **/cesvi unificado** quedó en `main` (#102, ADR 0079): la lista de casos y todo caso en el mismo recorrido; las cinco e2e `@flujo` en verde.
     - **El video demo se regrabó** el 2026-10-23 con el comando de siempre (`voz.mjs`, `grabar.mjs` y `montar.mjs`, voz Kokoro `ef_dora`) y ya sigue el flujo nuevo: AXA desde la lista y el caso nuevo en el recorrido. Dura 3.47 min (19.7 MB) y está en `demo/video/croquis-cesvi-demo.mp4`, fuera de git como antes.
     - **El cierre del guion** dice ahora lo que ya hay («todo caso en el mismo recorrido…, con su 3D y su dictamen») en lugar de «lo que sigue: el 3D».
