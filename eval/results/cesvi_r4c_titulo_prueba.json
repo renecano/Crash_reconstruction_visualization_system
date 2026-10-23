@@ -1,5 +1,5 @@
 {
- "fecha": "2026-10-23T13:21:45.012Z",
+ "fecha": "2026-10-23T15:22:19.726Z",
  "particion": "prueba",
  "descripcion": "E-R4, modalidad: contra la etiqueta de R0 (como siempre) y contra la modalidad del título del reporte (regla de titulo-reporte.ts, congelada antes de mirar la prueba). Las predicciones de Croquis son las ya medidas de cada versión.",
  "lineas_base_titulo": {
@@ -435,6 +435,238 @@
      "k": 6,
      "n": 13,
      "pct": 46.2
+    }
+   }
+  }
+ },
+ "v3": {
+  "archivo": "cesvi_r4d_reproduccion_prueba.json",
+  "reportes": 205,
+  "con_modalidad_en_el_titulo": 156,
+  "etiqueta_r0": {
+   "croquis": {
+    "k": 80,
+    "n": 190,
+    "pct": 42.1
+   },
+   "sin_inferir": 10,
+   "otra_predicha": {
+    "k": 6,
+    "n": 10,
+    "pct": 60
+   },
+   "fisicas": {
+    "croquis": {
+     "k": 74,
+     "n": 123,
+     "pct": 60.2
+    },
+    "linea_base": {
+     "modalidad": "alcance",
+     "k": 46,
+     "n": 123,
+     "pct": 37.4
+    }
+   },
+   "linea_base": {
+    "modalidad": "otra",
+    "k": 67,
+    "n": 190,
+    "pct": 35.3
+   },
+   "por_modalidad": {
+    "alcance": {
+     "k": 37,
+     "n": 46,
+     "pct": 80.4
+    },
+    "frontal": {
+     "k": 5,
+     "n": 6,
+     "pct": 83.3
+    },
+    "lateral": {
+     "k": 16,
+     "n": 25,
+     "pct": 64
+    },
+    "objeto_fijo": {
+     "k": 9,
+     "n": 17,
+     "pct": 52.9
+    },
+    "otra": {
+     "k": 6,
+     "n": 67,
+     "pct": 9
+    },
+    "reversa": {
+     "k": 0,
+     "n": 9,
+     "pct": 0
+    },
+    "salida_de_camino": {
+     "k": 1,
+     "n": 10,
+     "pct": 10
+    },
+    "volcadura": {
+     "k": 6,
+     "n": 10,
+     "pct": 60
+    }
+   },
+   "precision_por_modalidad": {
+    "alcance": {
+     "k": 37,
+     "n": 58,
+     "pct": 63.8
+    },
+    "frontal": {
+     "k": 5,
+     "n": 14,
+     "pct": 35.7
+    },
+    "lateral": {
+     "k": 16,
+     "n": 57,
+     "pct": 28.1
+    },
+    "objeto_fijo": {
+     "k": 9,
+     "n": 24,
+     "pct": 37.5
+    },
+    "otra": {
+     "k": 6,
+     "n": 10,
+     "pct": 60
+    },
+    "salida_de_camino": {
+     "k": 1,
+     "n": 3,
+     "pct": 33.3
+    },
+    "volcadura": {
+     "k": 6,
+     "n": 14,
+     "pct": 42.9
+    }
+   }
+  },
+  "titulo_del_reporte": {
+   "croquis": {
+    "k": 91,
+    "n": 156,
+    "pct": 58.3
+   },
+   "sin_inferir": 6,
+   "otra_predicha": {
+    "k": 6,
+    "n": 11,
+    "pct": 54.5
+   },
+   "fisicas": {
+    "croquis": {
+     "k": 85,
+     "n": 138,
+     "pct": 61.6
+    },
+    "linea_base": {
+     "modalidad": "alcance",
+     "k": 58,
+     "n": 138,
+     "pct": 42
+    }
+   },
+   "linea_base": {
+    "modalidad": "alcance",
+    "k": 58,
+    "n": 156,
+    "pct": 37.2
+   },
+   "por_modalidad": {
+    "alcance": {
+     "k": 43,
+     "n": 58,
+     "pct": 74.1
+    },
+    "carambola": {
+     "k": 0,
+     "n": 1,
+     "pct": 0
+    },
+    "frontal": {
+     "k": 3,
+     "n": 6,
+     "pct": 50
+    },
+    "lateral": {
+     "k": 24,
+     "n": 35,
+     "pct": 68.6
+    },
+    "objeto_fijo": {
+     "k": 9,
+     "n": 17,
+     "pct": 52.9
+    },
+    "otra": {
+     "k": 6,
+     "n": 18,
+     "pct": 33.3
+    },
+    "reversa": {
+     "k": 0,
+     "n": 5,
+     "pct": 0
+    },
+    "salida_de_camino": {
+     "k": 1,
+     "n": 7,
+     "pct": 14.3
+    },
+    "volcadura": {
+     "k": 5,
+     "n": 9,
+     "pct": 55.6
+    }
+   },
+   "precision_por_modalidad": {
+    "alcance": {
+     "k": 43,
+     "n": 54,
+     "pct": 79.6
+    },
+    "frontal": {
+     "k": 3,
+     "n": 9,
+     "pct": 33.3
+    },
+    "lateral": {
+     "k": 24,
+     "n": 40,
+     "pct": 60
+    },
+    "objeto_fijo": {
+     "k": 9,
+     "n": 22,
+     "pct": 40.9
+    },
+    "otra": {
+     "k": 6,
+     "n": 11,
+     "pct": 54.5
+    },
+    "salida_de_camino": {
+     "k": 1,
+     "n": 3,
+     "pct": 33.3
+    },
+    "volcadura": {
+     "k": 5,
+     "n": 11,
+     "pct": 45.5
     }
    }
   }

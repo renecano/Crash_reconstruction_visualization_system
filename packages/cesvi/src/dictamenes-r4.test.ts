@@ -119,6 +119,39 @@ describe("modalidad que infiere Croquis (R4)", () => {
     const sinPosterior = exp({ danos: [dano("V1", "frontal"), dano("V2", "lateral_derecho")] });
     expect(modalidadInferida(sinPosterior, "Había hecho reversa antes.").modalidad).toBe("lateral");
   });
+
+  it("R4d: la pieza «de reversa» o «el reverso» no es una maniobra en reversa", () => {
+    const e = exp({ danos: [dano("V1", "posterior"), dano("V2", "frontal")] });
+    for (const t of [
+      "El sensor de reversa central no está en su posición.",
+      "La luz de reversa está rota.",
+      "Color negro en el reverso de la moldura.",
+    ])
+      expect(modalidadInferida(e, t).modalidad).toBe("alcance");
+    expect(modalidadInferida(e, "El vehículo A retrocedió hacia la calle.").modalidad).toBe(
+      "reversa",
+    );
+    expect(modalidadInferida(e, "Circulaba en reversa.").modalidad).toBe("reversa");
+  });
+
+  it("R4d: un vehículo con incendio o daño mecánico del motor es «otra»", () => {
+    const uno = (danos: Dano[] = []) => exp({ n: 1, danos });
+    // El incendio va antes que el techo dañado por el fuego.
+    expect(
+      modalidadInferida(uno([dano("V1", "techo")]), "Se observa el vehículo calcinado.").modalidad,
+    ).toBe("otra");
+    expect(modalidadInferida(uno(), "El motor presenta daños en la biela.")).toEqual({
+      modalidad: "otra",
+      motivo: "un vehículo con un daño mecánico del motor",
+    });
+    // Un vuelco descrito o un golpe contra un objeto mandan sobre la mención del motor.
+    expect(modalidadInferida(uno(), "El vehículo volcó; hay daños en el motor.").modalidad).toBe(
+      "volcadura",
+    );
+    expect(
+      modalidadInferida(uno(), "Impactó contra un poste; el motor presenta daños.").modalidad,
+    ).toBe("objeto_fijo");
+  });
 });
 
 describe("comparación con lo que concluyó CESVI", () => {

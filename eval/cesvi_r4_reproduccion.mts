@@ -21,7 +21,7 @@
  *
  * Uso (desde packages/cesvi; con la llave en el entorno para estimar, piloto, lote y recoger):
  *   pnpm exec tsx ../../eval/cesvi_r4_reproduccion.mts piloto <n>     n de desarrollo, sin lotes
- *   pnpm exec tsx ../../eval/cesvi_r4_reproduccion.mts comparar        v1 y v2 de la prueba
+ *   pnpm exec tsx ../../eval/cesvi_r4_reproduccion.mts comparar        v1, v2 y v3 de la prueba
  *   pnpm exec tsx ../../eval/cesvi_r4_reproduccion.mts estimar <desarrollo|prueba>
  *   pnpm exec tsx ../../eval/cesvi_r4_reproduccion.mts lote <desarrollo|prueba> <tope_usd>
  *   pnpm exec tsx ../../eval/cesvi_r4_reproduccion.mts recoger <id_lote>
@@ -64,9 +64,13 @@ const LECTURAS = join(
   RAIZ,
   V1 ? "data/cesvi/r4/lecturas.jsonl" : "data/cesvi/r4/lecturas-v2.jsonl",
 );
-/** Prefijo de los resultados: los de la v1 se quedan; los de R4b van aparte. */
+/**
+ * Prefijo de los resultados: cada versión de las reglas escribe los suyos y los anteriores se quedan
+ * como están (v1: `cesvi_r4_`, ADR 0067; v2: `cesvi_r4b_`, ADR 0069). Las reglas vigentes son las
+ * v3 de R4d (ADR 0076): las mismas lecturas v2, con las modalidades flojas trabajadas.
+ */
 const RESULTADO = (p: string) =>
-  join(RAIZ, `eval/results/${V1 ? "cesvi_r4_reproduccion" : "cesvi_r4b_reproduccion"}_${p}.json`);
+  join(RAIZ, `eval/results/${V1 ? "cesvi_r4_reproduccion" : "cesvi_r4d_reproduccion"}_${p}.json`);
 const LOTES = join(RAIZ, "data/raw/cesvi/r4");
 /** Los datos de la página «Reproducción de dictámenes» (solo los de la prueba que se reconstruyen). */
 const PAGINA = join(RAIZ, "data/cesvi/r4/pagina.json");
@@ -402,7 +406,11 @@ async function piloto(n: number) {
   console.log(`Piloto: ${elegidos.length} lecturas, ${costo.toFixed(4)} USD`);
 }
 
-/** La v1 y la v2 de la prueba lado a lado (R4b): eval/results/cesvi_r4b_comparacion.json. */
+/**
+ * Las versiones de la prueba lado a lado: v1 (ADR 0067), v2 (R4b, ADR 0069) y v3 (R4d, ADR 0076),
+ * cada una medida una sola vez. eval/results/cesvi_r4d_comparacion.json; la de R4b
+ * (cesvi_r4b_comparacion.json, v1 y v2) se queda como se publicó.
+ */
 function compararVersiones() {
   const leer = (f: string) =>
     JSON.parse(readFileSync(join(RAIZ, "eval/results", f), "utf8")) as {
@@ -412,39 +420,42 @@ function compararVersiones() {
       lineas_base: unknown;
       resumen: ReturnType<typeof resumen>;
     };
-  const v1 = leer("cesvi_r4_reproduccion_prueba.json");
-  const v2 = leer("cesvi_r4b_reproduccion_prueba.json");
-  const fila = (r: typeof v1) => ({
-    version_prompt: r.version_prompt,
-    leidos: r.leidos,
-    reconstruidas_en_3d: r.reconstruidas_en_3d,
-    resumen: r.resumen,
-  });
+  const versiones = {
+    v1: leer("cesvi_r4_reproduccion_prueba.json"),
+    v2: leer("cesvi_r4b_reproduccion_prueba.json"),
+    v3: leer("cesvi_r4d_reproduccion_prueba.json"),
+  };
+  const lista = Object.entries(versiones);
   const modalidades = [
-    ...new Set([
-      ...Object.keys(v1.resumen.modalidad.por_modalidad),
-      ...Object.keys(v2.resumen.modalidad.por_modalidad),
-    ]),
+    ...new Set(lista.flatMap(([, r]) => Object.keys(r.resumen.modalidad.por_modalidad))),
   ].sort();
   const out = {
     fecha: new Date().toISOString(),
     descripcion:
-      "E-R4 en la prueba congelada: la v1 (reglas de ADR 0067, escena-narracion-v1) y la v2 (R4b, ADR 0069, escena-narracion-v2), medidas una sola vez cada una, con las mismas líneas base de desarrollo.",
-    lineas_base: v1.lineas_base,
+      "E-R4 en la prueba congelada: la v1 (reglas de ADR 0067, escena-narracion-v1), la v2 (R4b, ADR 0069, escena-narracion-v2) y la v3 (R4d, ADR 0076: las mismas lecturas v2 con las modalidades flojas trabajadas), medidas una sola vez cada una, con las mismas líneas base de desarrollo.",
+    lineas_base: versiones.v1.lineas_base,
     por_modalidad: Object.fromEntries(
       modalidades.map((k) => [
         k,
+        Object.fromEntries(
+          lista.map(([v, r]) => [v, r.resumen.modalidad.por_modalidad[k] ?? null]),
+        ),
+      ]),
+    ),
+    ...Object.fromEntries(
+      lista.map(([v, r]) => [
+        v,
         {
-          v1: v1.resumen.modalidad.por_modalidad[k] ?? null,
-          v2: v2.resumen.modalidad.por_modalidad[k] ?? null,
+          version_prompt: r.version_prompt,
+          leidos: r.leidos,
+          reconstruidas_en_3d: r.reconstruidas_en_3d,
+          resumen: r.resumen,
         },
       ]),
     ),
-    v1: fila(v1),
-    v2: fila(v2),
   };
   writeFileSync(
-    join(RAIZ, "eval/results/cesvi_r4b_comparacion.json"),
+    join(RAIZ, "eval/results/cesvi_r4d_comparacion.json"),
     `${JSON.stringify(out, null, 1)}\n`,
   );
   console.log(JSON.stringify(out.por_modalidad, null, 1));
