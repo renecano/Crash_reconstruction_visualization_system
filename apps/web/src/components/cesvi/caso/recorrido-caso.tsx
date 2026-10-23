@@ -11,6 +11,7 @@
 import {
   comparar,
   conHuella,
+  criteriosVacios,
   conPosicion,
   conRestos,
   escenaDeNarracion,
@@ -47,10 +48,14 @@ import { MODALIDAD } from "@/lib/nombres-cesvi";
 import { colorDeVehiculo } from "@/lib/vehiculos-cesvi";
 import { useTema, type Modo } from "@/lib/preferencias-cesvi";
 import ejemplo from "../../../../../../data/cesvi/grabaciones/escenas/cesvi-e814f085db.json";
+import { Calculos, type DistanciaRestos } from "../calculos";
+import { Criterios } from "../correspondencia";
+import { Expediente as ExpedienteCesvi } from "../expediente";
 import { ComparacionDeclaracion } from "../comparacion-declaracion";
 import { DictamenCaso } from "../dictamen-caso";
 import { CargaReporte } from "../importar-dictamen";
 import { BarraRecorrido, PASOS, PASOS_CORTOS } from "../recorrido/barra";
+import { Reproduccion } from "../reproduccion";
 import {
   PasoCaso,
   PasoContraReporte,
@@ -76,6 +81,8 @@ const DETALLE: Record<CasoExpediente["origen"], string> = {
   reporte:
     "Un reporte de la prueba congelada de E-R4: Croquis recibió la narración sin las conclusiones. Reconstrúyelo y compáralo con lo que concluyó CESVI.",
   guardado: "Un caso que guardaste en este equipo, con lo que marcaste y tu validación.",
+  ejemplo:
+    "Un caso real de CESVI que ya analizaron en su reporte: Croquis lo reconstruye y reproduce sus números con su método.",
 };
 
 export function RecorridoCaso({ inicial }: { inicial: CasoExpediente }) {
@@ -114,6 +121,13 @@ export function RecorridoCaso({ inicial }: { inicial: CasoExpediente }) {
     inicial.origen === "guardado" ? inicial.id : null,
   );
   const [avisoGuardado, setAvisoGuardado] = useState<string | null>(null);
+  // AXA: los criterios de correspondencia de los daños que marca el perito (método de CESVI).
+  const [criterios, setCriterios] = useState({ A: criteriosVacios(), B: criteriosVacios() });
+  // AXA: la distancia de los restos del método de CESVI (la del reporte, o la que cambie el perito).
+  const [distancia, setDistancia] = useState<DistanciaRestos>({
+    valor: String(inicial.ejemplo?.calculos.desplazamiento.D_m.valor ?? ""),
+    fuente: "dictamen",
+  });
   const rec = useReconstruccion(expediente);
   // El mapa a pantalla completa (V2): se cierra con «Contraer» o con Esc.
   const [expandido, setExpandido] = useState(false);
@@ -254,7 +268,7 @@ export function RecorridoCaso({ inicial }: { inicial: CasoExpediente }) {
       ? "Caso nuevo"
       : inicial.origen === "guardado"
         ? "Caso guardado"
-        : `Reporte de CESVI${reporte?.conclusiones.modalidad ? ` · ${(MODALIDAD[reporte.conclusiones.modalidad] ?? reporte.conclusiones.modalidad).toLowerCase()}` : ""}`;
+        : `${inicial.origen === "ejemplo" ? "Caso de ejemplo" : "Reporte de CESVI"}${reporte?.conclusiones.modalidad ? ` · ${(MODALIDAD[reporte.conclusiones.modalidad] ?? reporte.conclusiones.modalidad).toLowerCase()}` : ""}`;
   const lugarFalta = expediente ? faltaDelLugar(expediente) : null;
   const avance = [
     { nombre: "Narración del hecho", listo: leida !== null },
@@ -456,6 +470,7 @@ export function RecorridoCaso({ inicial }: { inicial: CasoExpediente }) {
           editable={modo === "trabajar"}
           onExpediente={cambiarExpediente}
           avance={avance}
+          extra={inicial.ejemplo ? <ExpedienteCesvi caso={inicial.ejemplo} /> : null}
           inicio={
             <>
               {inicio}
@@ -526,16 +541,57 @@ export function RecorridoCaso({ inicial }: { inicial: CasoExpediente }) {
             <ComparacionDeclaracion
               expediente={expediente}
               reconstruccion={r}
+              textoInicial={inicial.ejemplo?.declaracion.texto}
+              declaranteInicial={
+                inicial.ejemplo
+                  ? inicial.ejemplo.declaracion.conductor === "B"
+                    ? "V2"
+                    : "V1"
+                  : undefined
+              }
               onHipotesis={setDeclarada}
               onComparacion={setComparacionDeclarada}
             />
           ) : null}
         </div>
       );
-    if (actual === 4) return <PasoDanos expediente={expediente} r={r} />;
-    if (actual === 5) return <PasoNumeros r={r} verificacion={verificacion} />;
+    if (actual === 4)
+      return (
+        <div className="flex flex-col gap-8">
+          <PasoDanos expediente={expediente} r={r} />
+          {inicial.ejemplo ? (
+            <section className="flex flex-col gap-4" data-testid="criterios-axa">
+              <h3 className="t-subtitulo">Correspondencia de los daños (método de CESVI)</h3>
+              {(["A", "B"] as const).map((l) => (
+                <Criterios
+                  key={l}
+                  letra={l}
+                  valores={criterios[l]}
+                  onCambio={(clave, v) =>
+                    setCriterios((c) => ({ ...c, [l]: { ...c[l], [clave]: v } }))
+                  }
+                />
+              ))}
+            </section>
+          ) : null}
+        </div>
+      );
+    if (actual === 5)
+      return (
+        <div className="flex flex-col gap-8">
+          <PasoNumeros r={r} verificacion={verificacion} />
+          {inicial.ejemplo ? (
+            <Calculos caso={inicial.ejemplo} distancia={distancia} onDistancia={setDistancia} />
+          ) : null}
+        </div>
+      );
     if (actual === 6 && reporte && comparacionReporte)
-      return <PasoContraReporte reporte={reporte} comparacion={comparacionReporte} />;
+      return (
+        <div className="flex flex-col gap-8">
+          <PasoContraReporte reporte={reporte} comparacion={comparacionReporte} />
+          {inicial.ejemplo ? <Reproduccion caso={inicial.ejemplo} /> : null}
+        </div>
+      );
     return (
       <div className="flex flex-col gap-5">
         <h2 className="t-subtitulo">El dictamen</h2>

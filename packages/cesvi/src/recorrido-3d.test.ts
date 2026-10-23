@@ -26,6 +26,18 @@ describe("el caso del recorrido en 3D (R9)", () => {
     expect(e.versiones![0]!.posiciones).toHaveLength(4);
   });
 
+  it("sin evidencia va sin posiciones y con el lugar ilustrativo como supuesto (V2)", () => {
+    const sin = expedienteDelRecorrido(c, null, {
+      lat: 26.2,
+      lon: -109.06,
+      descripcion: "Ubicación ilustrativa",
+    });
+    expect(problemasExpediente(sin)).toEqual([]);
+    expect(sin.versiones).toBeUndefined();
+    expect(sin.caso.lugar?.coordenadas).toEqual({ lat: 26.2, lon: -109.06 });
+    expect(sin.caso.lugar?.descripcion?.fuente).toBe("supuesto");
+  });
+
   it("el solver reconstruye el alcance: B golpea con su frente la parte posterior de A", () => {
     const r = reconstruirExpediente(e, "recorrido-a2010930");
     const vs = r.resultado.vehiculos as { id: string; dano: { cdc: { lado: string } | null } }[];
