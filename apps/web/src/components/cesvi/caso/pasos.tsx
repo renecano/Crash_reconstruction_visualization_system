@@ -5,6 +5,7 @@
  * «Caso nuevo» (N vehículos, carambolas, 3D, declaración y dictamen).
  */
 import {
+  conMasa,
   type ComparacionDictamen,
   type EscenaNarrada,
   type Expediente,
@@ -12,10 +13,11 @@ import {
   type Reconstruccion,
   type VerificacionVehiculo,
 } from "@croquis/cesvi";
-import type { ReactNode } from "react";
+import { useState, type ReactNode } from "react";
 import type { ReporteCesvi } from "@/lib/caso-guardado";
 import { MODALIDAD } from "@/lib/nombres-cesvi";
-import { CARA, Fuente, NOMBRE_FASE, Pregunta, type Fase, type Id } from "./piezas";
+import { colorDeVehiculo } from "@/lib/vehiculos-cesvi";
+import { CARA, Fuente, Pregunta } from "./piezas";
 import { PanelVerificacion, TablaVelocidades } from "./reconstruccion";
 import { ConclusionesCesvi } from "../importar-dictamen";
 
@@ -63,46 +65,268 @@ export function ResumenEscena({ escena }: { escena: EscenaNarrada }) {
           </li>
         ))}
       </ul>
-      <p className="t-nota" data-testid="validez">
-        {escena.problemas.length
-          ? `La escena tiene ${escena.problemas.length} problema${escena.problemas.length === 1 ? "" : "s"}: ${escena.problemas.join("; ")}`
-          : "La escena es válida contra el contrato."}
-      </p>
+      {/* El detalle técnico, a un clic (V2): en pantalla, solo lo que el perito usa. */}
+      <details className="t-nota" open={escena.problemas.length > 0}>
+        <summary className="cursor-pointer">Ver detalle</summary>
+        <p className="mt-2" data-testid="validez">
+          {escena.problemas.length
+            ? `La escena tiene ${escena.problemas.length} problema${escena.problemas.length === 1 ? "" : "s"}: ${escena.problemas.join("; ")}`
+            : "La escena es válida contra el contrato."}
+        </p>
+      </details>
     </div>
   );
 }
 
-/** Paso 1: el caso. Un caso nuevo o importado empieza aquí (narrar o cargar el reporte). */
+/** Cómo se dice cada clase de vehículo en pantalla. */
+const NOMBRE_CLASE: Record<string, string> = {
+  sedan_compacto: "sedán compacto",
+  sedan_mediano: "sedán",
+  hatchback: "hatchback",
+  suv_compacta: "SUV compacta",
+  suv_grande: "SUV",
+  pickup: "pickup",
+  van: "van",
+  microbus_combi: "microbús",
+  autobus: "autobús",
+  camion_unitario: "camión",
+  tractocamion: "tractocamión",
+  motocicleta: "motocicleta",
+  bicicleta: "bicicleta",
+  scooter: "scooter",
+};
+
+/** La silueta de un vehículo visto desde arriba, en su color (V2). */
+export function Silueta({ color, etiqueta }: { color: string; etiqueta: string }) {
+  return (
+    <svg viewBox="0 0 60 120" width="56" height="112" role="img" aria-label={etiqueta}>
+      <rect x="8" y="4" width="44" height="112" rx="14" fill={color} />
+      <rect x="13" y="26" width="34" height="20" rx="5" fill="#0B0C0F" opacity="0.55" />
+      <rect x="13" y="50" width="34" height="34" rx="4" fill="#0B0C0F" opacity="0.18" />
+      <rect x="13" y="88" width="34" height="14" rx="4" fill="#0B0C0F" opacity="0.45" />
+    </svg>
+  );
+}
+
+/** La tarjeta de un vehículo: su silueta, quién es y lo que falta como acción («+ Agregar masa»). */
+function TarjetaVehiculo({
+  v,
+  editable,
+  onMasa,
+}: {
+  v: Expediente["vehiculos"][number];
+  editable: boolean;
+  onMasa: (kg: number) => void;
+}) {
+  const [abierta, setAbierta] = useState(false);
+  const [kg, setKg] = useState("");
+  const color = colorDeVehiculo(v.id);
+  const nombre = [v.marca?.valor, v.modelo?.valor].filter(Boolean).join(" ") || "Sin marca";
+  const detalle = [v.anio, v.clase ? (NOMBRE_CLASE[v.clase] ?? v.clase) : null]
+    .filter(Boolean)
+    .join(" · ");
+  return (
+    <article
+      className="tarjeta flex items-center gap-4 p-5"
+      style={{
+        background: `linear-gradient(160deg, color-mix(in srgb, ${color} 10%, transparent), transparent 60%), var(--superficie)`,
+      }}
+      data-testid={`tarjeta-${v.id}`}
+    >
+      <Silueta color={color} etiqueta={`${v.id} visto desde arriba`} />
+      <div className="flex min-w-0 flex-col gap-2">
+        <span
+          className="self-start rounded-full px-2.5 text-[0.75rem] leading-6 font-semibold text-[#0B0C0F]"
+          style={{ background: color }}
+        >
+          {v.id}
+        </span>
+        <span className="t-subtitulo">{nombre}</span>
+        {detalle ? <span className="t-nota">{detalle}</span> : null}
+        {v.masa ? (
+          <span className="t-nota cifras">
+            {v.masa.valor.toLocaleString("es-MX")} {v.masa.unidad} <Fuente f={v.masa.fuente} />
+          </span>
+        ) : !editable ? null : abierta ? (
+          <form
+            className="flex items-center gap-2"
+            onSubmit={(e) => {
+              e.preventDefault();
+              const n = Number(kg.replace(",", "."));
+              if (n > 0) onMasa(n);
+            }}
+          >
+            <input
+              className="campo h-9 w-24"
+              inputMode="decimal"
+              value={kg}
+              onChange={(e) => setKg(e.target.value)}
+              aria-label={`Masa de ${v.id} en kilogramos`}
+              data-testid={`masa-${v.id}`}
+            />
+            <span className="t-nota">kg</span>
+            <button type="submit" className="boton-secundario boton-compacto">
+              Usar
+            </button>
+          </form>
+        ) : (
+          <button
+            type="button"
+            className="solo-trabajar self-start rounded-control border border-dashed border-linea px-3 py-1.5 text-[0.8125rem] font-medium"
+            onClick={() => setAbierta(true)}
+            data-testid={`agregar-masa-${v.id}`}
+          >
+            + Agregar masa
+          </button>
+        )}
+      </div>
+    </article>
+  );
+}
+
+/** El anillo de avance: lo que ya está y lo que falta (V2). */
+function AnilloAvance({ items }: { items: { nombre: string; listo: boolean }[] }) {
+  const k = items.filter((i) => i.listo).length;
+  const n = items.length;
+  const c = 2 * Math.PI * 26;
+  return (
+    <section
+      className="tarjeta flex flex-wrap items-center gap-6 p-5"
+      aria-label="Lo que ya tenemos"
+      data-testid="avance-caso"
+      data-avance={`${k}/${n}`}
+    >
+      <svg viewBox="0 0 64 64" width="64" height="64" role="img" aria-label={`${k} de ${n} listos`}>
+        <circle cx="32" cy="32" r="26" fill="none" stroke="var(--linea)" strokeWidth="7" />
+        <circle
+          cx="32"
+          cy="32"
+          r="26"
+          fill="none"
+          stroke="var(--texto)"
+          strokeWidth="7"
+          strokeLinecap="round"
+          strokeDasharray={`${(c * k) / Math.max(1, n)} ${c}`}
+          transform="rotate(-90 32 32)"
+        />
+        <text
+          x="32"
+          y="37"
+          textAnchor="middle"
+          fill="var(--texto)"
+          fontSize="15"
+          fontWeight="600"
+          fontFamily="var(--font-geist-mono), monospace"
+        >
+          {k}/{n}
+        </text>
+      </svg>
+      <ul className="grid min-w-[260px] flex-1 grid-cols-1 gap-x-5 gap-y-2.5 sm:grid-cols-2">
+        {items.map((i) => (
+          <li
+            key={i.nombre}
+            className={`t-interfaz flex items-center gap-2.5 ${i.listo ? "" : "text-texto-2"}`}
+          >
+            {i.listo ? (
+              <span className="grid h-[22px] w-[22px] place-items-center rounded-full bg-[var(--ok)] text-[0.75rem] font-bold text-[#0B0C0F]">
+                ✓
+              </span>
+            ) : (
+              <span className="h-[22px] w-[22px] rounded-full border-[1.5px] border-dashed border-linea" />
+            )}
+            {i.nombre}
+          </li>
+        ))}
+      </ul>
+    </section>
+  );
+}
+
+const NUMERO = ["Ningún", "Un", "Dos", "Tres", "Cuatro", "Cinco", "Seis"];
+/** «Dos vehículos, un choque.» */
+function enPalabras(e: Expediente): string {
+  const v = e.vehiculos.length;
+  const i = e.impactos?.length ?? 0;
+  const nv = NUMERO[v] ?? String(v);
+  const ni =
+    i === 0
+      ? "sin choque descrito"
+      : i === 1
+        ? "un choque"
+        : `${(NUMERO[i] ?? String(i)).toLowerCase()} choques`;
+  return `${nv} vehículo${v === 1 ? "" : "s"}, ${ni}.`;
+}
+
+/** Paso 1: el caso (V2). Quiénes participaron, lo que ya está y lo que falta. */
 export function PasoCaso({
   titulo,
+  etiqueta,
   detalle,
   escena,
   reporte,
   inicio,
+  editable,
+  onExpediente,
+  avance,
 }: {
   titulo: string;
+  /** Lo que es el caso, en una etiqueta («Reporte de CESVI · alcance»). */
+  etiqueta: string;
   detalle: string;
   escena: EscenaNarrada | null;
   reporte: ReporteCesvi | null;
   /** Lo que se hace antes de tener escena: narrar, abrir un archivo o cargar el reporte. */
   inicio?: ReactNode;
+  editable: boolean;
+  onExpediente: (e: Expediente) => void;
+  avance: { nombre: string; listo: boolean }[];
 }) {
+  const e = escena?.expediente;
   return (
-    <div className="flex flex-col gap-5">
-      <div className="flex flex-col gap-2">
-        <p className="t-rotulo">El caso</p>
+    <div className="flex flex-col gap-6">
+      <div className="flex flex-col gap-2.5">
+        <span className="t-nota self-start rounded-control bg-superficie-alta px-2.5 py-1">
+          {etiqueta}
+        </span>
         <h2 className="t-titulo" data-testid="titulo-caso">
           {titulo}
         </h2>
-        <p className="t-cuerpo text-texto-2">{detalle}</p>
+        <p className="t-cuerpo max-w-[640px] text-texto-2">
+          {e
+            ? `${enPalabras(e)} Revisa quiénes participaron y completa lo que falta antes de reconstruir.`
+            : detalle}
+        </p>
       </div>
       {inicio}
-      {escena ? <ResumenEscena escena={escena} /> : null}
-      {reporte ? (
-        <p className="t-nota" data-testid="caso-con-reporte">
-          Tiene el reporte de CESVI ({reporte.nombre}): el paso «Croquis contra el reporte de CESVI»
-          compara la reconstrucción con lo que concluyó.
-        </p>
+      {e ? (
+        <section aria-label="Vehículos" className="grid gap-4 sm:grid-cols-2">
+          {e.vehiculos.map((v) => (
+            <TarjetaVehiculo
+              key={v.id}
+              v={v}
+              editable={editable}
+              onMasa={(kg) => onExpediente(conMasa(e, v.id, kg))}
+            />
+          ))}
+        </section>
+      ) : null}
+      <AnilloAvance items={avance} />
+      {escena ? (
+        <details className="t-nota">
+          <summary className="cursor-pointer" data-testid="ver-detalle-caso">
+            Ver detalle
+          </summary>
+          <div className="mt-3 flex flex-col gap-2">
+            <p>{detalle}</p>
+            {reporte ? (
+              <p data-testid="caso-con-reporte">
+                Tiene el reporte de CESVI ({reporte.nombre}): el paso «Croquis contra el reporte de
+                CESVI» compara la reconstrucción con lo que concluyó.
+              </p>
+            ) : null}
+            <ResumenEscena escena={escena} />
+          </div>
+        </details>
       ) : null}
     </div>
   );
@@ -216,78 +440,233 @@ export function PasoHecho({
   );
 }
 
-/** Paso 3: el lugar. Con qué se coloca (vehículo, fase y rumbo) y lo que describe la narración. */
+/** Un elemento que se coloca en el mapa en el paso del lugar (V2). */
+export type ItemLugar =
+  { tipo: "impacto"; orden: number } | { tipo: "final" | "inicial"; vehiculo: string };
+
+export const claveItem = (i: ItemLugar) =>
+  i.tipo === "impacto" ? `impacto:${i.orden}` : `${i.tipo}:${i.vehiculo}`;
+
+/** La brújula del elemento activo: el vehículo visto desde arriba, girado a su rumbo. */
+function Brujula({ rumbo, color }: { rumbo: number; color: string }) {
+  return (
+    <svg viewBox="0 0 80 80" width="72" height="72" aria-hidden="true" className="shrink-0">
+      <circle cx="40" cy="40" r="34" fill="var(--fondo)" stroke="var(--linea)" strokeWidth="2" />
+      <text x="40" y="16" textAnchor="middle" fill="var(--texto-3)" fontSize="9">
+        N
+      </text>
+      <g transform={`rotate(${rumbo} 40 40)`}>
+        <rect x="32" y="24" width="16" height="32" rx="5" fill={color} />
+        <path d="M40 12 L46 22 L34 22 Z" fill="var(--texto)" />
+      </g>
+    </svg>
+  );
+}
+
+/**
+ * Paso 3: el lugar (V2). La lista guiada de lo que hay que colocar, con su estado; el elemento
+ * activo dice qué hacer en dos pasos; lo opcional va aparte y nunca bloquea.
+ */
 export function PasoLugar({
   expediente,
   escena,
-  herramienta,
-  onHerramienta,
-  rumbo,
+  requeridos,
+  opcionales,
+  colocado,
+  activo,
+  onActivo,
+  rumboActivo,
   onRumbo,
-  colocados,
+  onListo,
+  nombreItem,
+  colorItem,
+  medida,
+  onUsarMedida,
 }: {
   expediente: Expediente;
   escena: EscenaNarrada;
-  herramienta: { vehiculo: Id; fase: Fase } | null;
-  onHerramienta: (h: { vehiculo: Id; fase: Fase }) => void;
-  rumbo: string;
-  onRumbo: (r: string) => void;
-  colocados: number;
+  requeridos: ItemLugar[];
+  opcionales: ItemLugar[];
+  colocado: (i: ItemLugar) => boolean;
+  activo: ItemLugar | null;
+  onActivo: (i: ItemLugar) => void;
+  rumboActivo: number | null;
+  onRumbo: (r: number) => void;
+  onListo: () => void;
+  nombreItem: (i: ItemLugar) => string;
+  colorItem: (i: ItemLugar) => string;
+  /** Lo último que se midió en «Medir» (m). */
+  medida: number | null;
+  onUsarMedida: (destino: "restos" | { vehiculo: string }) => void;
 }) {
+  const [verOpcional, setVerOpcional] = useState(false);
+  const esActivo = (i: ItemLugar) => activo !== null && claveItem(activo) === claveItem(i);
+  const fila = (i: ItemLugar, n: number, opcional = false) => {
+    const hecho = colocado(i);
+    const color = colorItem(i);
+    if (esActivo(i))
+      return (
+        <li
+          key={claveItem(i)}
+          className="flex flex-col gap-3 rounded-panel border-[1.5px] p-4"
+          style={{ borderColor: color, background: `color-mix(in srgb, ${color} 8%, transparent)` }}
+          data-testid="item-activo"
+          data-item={claveItem(i)}
+        >
+          <div className="flex items-center gap-3">
+            <span
+              className="grid h-7 w-7 place-items-center rounded-full text-[0.8125rem] font-bold text-[#0B0C0F]"
+              style={{ background: color }}
+            >
+              {hecho ? "✓" : n}
+            </span>
+            <span className="t-interfaz flex-1 font-semibold">{nombreItem(i)}</span>
+            <span className="t-rotulo" style={{ color }}>
+              Ahora
+            </span>
+          </div>
+          <div className="flex items-center gap-3">
+            <Brujula rumbo={rumboActivo ?? 0} color={color} />
+            <ol className="t-cuerpo flex flex-col gap-1 text-texto-2">
+              <li>
+                <b className="text-texto">1.</b>{" "}
+                {i.tipo === "impacto"
+                  ? "Toca el mapa donde chocaron."
+                  : "Toca el mapa donde quedó."}
+              </li>
+              <li>
+                <b className="text-texto">2.</b> Gira la flecha hacia donde apunta el frente
+                {i.tipo === "impacto" ? " del primero." : "."}
+              </li>
+            </ol>
+          </div>
+          <div className="solo-trabajar flex flex-wrap items-center justify-between gap-3">
+            <label className="t-nota flex items-center gap-2">
+              o escribe el rumbo
+              <input
+                className="campo cifras h-9 w-16 px-2"
+                inputMode="decimal"
+                value={rumboActivo === null ? "" : String(Math.round(rumboActivo))}
+                disabled={!hecho}
+                onChange={(e) => {
+                  const r = Number(e.target.value.replace(",", "."));
+                  if (Number.isFinite(r)) onRumbo(r);
+                }}
+                data-testid="rumbo-activo"
+              />
+              ° (0° = norte)
+            </label>
+            {hecho ? (
+              <button
+                type="button"
+                className="boton-secundario boton-compacto"
+                onClick={onListo}
+                data-testid="listo-elemento"
+              >
+                Listo
+              </button>
+            ) : null}
+          </div>
+        </li>
+      );
+    return (
+      <li
+        key={claveItem(i)}
+        className={`flex items-center gap-3 rounded-panel px-3.5 py-3 ${hecho ? "tarjeta" : "border-[1.5px] border-dashed border-linea"}`}
+        data-testid={`elemento-${claveItem(i).replace(":", "-")}`}
+        data-colocado={hecho ? "si" : "no"}
+      >
+        <span
+          className={`grid h-7 w-7 shrink-0 place-items-center rounded-full text-[0.8125rem] font-semibold ${hecho ? "bg-[var(--ok)] text-[#0B0C0F]" : ""}`}
+          style={hecho ? undefined : { border: `1.5px solid ${color}`, color }}
+        >
+          {hecho ? "✓" : opcional ? "+" : n}
+        </span>
+        <span className={`t-interfaz flex-1 ${hecho ? "" : "text-texto-2"}`}>{nombreItem(i)}</span>
+        <button
+          type="button"
+          className="boton-secundario boton-compacto solo-trabajar"
+          onClick={() => onActivo(i)}
+          data-testid={`elegir-${claveItem(i).replace(":", "-")}`}
+        >
+          {hecho ? "Mover" : "Colocar"}
+        </button>
+      </li>
+    );
+  };
   return (
-    <div className="flex flex-col gap-4">
-      <h2 className="t-subtitulo">El lugar</h2>
-      <p className="t-nota solo-trabajar">
-        Elige el vehículo y la fase, escribe el rumbo del frente y toca el mapa para colocarlo.
+    <div className="flex flex-col gap-4" data-testid="paso-lugar">
+      <h2 className="t-titulo text-[clamp(1.75rem,2.6vw,2.25rem)]">
+        Marca dónde chocaron y dónde quedó cada uno
+      </h2>
+      <p className="t-nota solo-presentar" data-testid="lugar-al-presentar">
+        Para colocar en el mapa, cambia a «Trabajar».
       </p>
-      <div className="solo-trabajar flex flex-wrap items-end gap-3">
-        <label className="t-nota flex flex-col gap-1">
-          Vehículo y fase
-          <select
-            className="campo h-10"
-            value={herramienta ? `${herramienta.vehiculo}:${herramienta.fase}` : ""}
-            onChange={(e) => {
-              const [vehiculo, fase] = e.target.value.split(":") as [Id, Fase];
-              onHerramienta({ vehiculo, fase });
-            }}
-            data-testid="herramienta-escena"
-          >
-            {expediente.vehiculos.flatMap((v) =>
-              (["impacto", "final"] as const).map((f) => (
-                <option key={`${v.id}:${f}`} value={`${v.id}:${f}`}>
-                  {v.id} · {NOMBRE_FASE[f]}
-                </option>
-              )),
-            )}
-          </select>
-        </label>
-        <label className="t-nota flex flex-col gap-1">
-          Rumbo del frente (°)
-          <input
-            className="campo h-10 w-28"
-            inputMode="decimal"
-            value={rumbo}
-            onChange={(e) => onRumbo(e.target.value)}
-            data-testid="rumbo-escena"
-          />
-        </label>
+      <ol className="flex flex-col gap-2" data-testid="lista-colocar">
+        {requeridos.map((i, k) => fila(i, k + 1))}
+      </ol>
+      <div className="flex flex-col gap-2">
+        <button
+          type="button"
+          className="flex items-center gap-3 rounded-panel border-[1.5px] border-dashed border-linea px-3.5 py-3 text-left"
+          onClick={() => setVerOpcional((x) => !x)}
+          aria-expanded={verOpcional}
+          data-testid="ver-opcional"
+        >
+          <span className="grid h-7 w-7 place-items-center rounded-full border-[1.5px] border-linea text-texto-3">
+            +
+          </span>
+          <span className="t-interfaz flex-1 text-texto-3">
+            Posiciones iniciales, restos y huellas
+          </span>
+          <span className="t-rotulo">Opcional</span>
+        </button>
+        {verOpcional ? (
+          <>
+            <ol className="flex flex-col gap-2">{opcionales.map((i) => fila(i, 0, true))}</ol>
+            <div className="hundido flex flex-col gap-2 p-4" data-testid="medir-opcional">
+              <span className="t-nota">
+                Restos y huellas de frenado: elige «Medir» en el mapa y toca sus dos extremos.
+              </span>
+              {medida !== null ? (
+                <div className="flex flex-wrap items-center gap-2">
+                  <span className="t-interfaz cifras font-semibold">{medida.toFixed(2)} m</span>
+                  <button
+                    type="button"
+                    className="boton-secundario boton-compacto"
+                    onClick={() => onUsarMedida("restos")}
+                    data-testid="medida-restos"
+                  >
+                    Usar como restos
+                  </button>
+                  {expediente.vehiculos.map((v) => (
+                    <button
+                      key={v.id}
+                      type="button"
+                      className="boton-secundario boton-compacto"
+                      onClick={() => onUsarMedida({ vehiculo: v.id })}
+                      data-testid={`medida-huella-${v.id}`}
+                    >
+                      Huella de frenado de {v.id}
+                    </button>
+                  ))}
+                </div>
+              ) : null}
+            </div>
+          </>
+        ) : null}
       </div>
-      <p className="t-nota" data-testid="colocados">
-        {colocados === 1
-          ? "1 posición colocada por el perito."
-          : `${colocados} posiciones colocadas por el perito.`}
-      </p>
       {escena.posiciones.length ? (
-        <div className="flex flex-col gap-1">
-          <h3 className="t-interfaz font-semibold">Lo que dice la narración</h3>
-          <ul className="t-nota flex flex-col gap-1">
+        <details className="t-nota">
+          <summary className="cursor-pointer">Lo que dice la narración del lugar</summary>
+          <ul className="mt-2 flex flex-col gap-1">
             {escena.posiciones.map((p, k) => (
               <li key={k}>
                 {p.vehiculo}, {p.fase}: {p.descripcion}
               </li>
             ))}
           </ul>
-        </div>
+        </details>
       ) : null}
     </div>
   );

@@ -1,15 +1,5 @@
-import { expect, test, type Page } from "@playwright/test";
-
-/** Lleva el recorrido al paso n (1 a 8 del recorrido completo) con «Siguiente» y «Anterior». */
-async function irAPaso(page: Page, n: number) {
-  const panel = page.getByTestId("panel-paso");
-  for (let k = 0; k < 10; k++) {
-    const actual = Number(await panel.getAttribute("data-paso"));
-    if (actual === n) return;
-    await page.getByTestId(actual < n ? "siguiente" : "anterior").click();
-  }
-  await expect(panel).toHaveAttribute("data-paso", String(n));
-}
+import { expect, test } from "@playwright/test";
+import { colocarTodo, irAPaso } from "./ayuda-recorrido";
 
 /**
  * «Reproducción de dictámenes» (R4): la lista de los casos de la prueba congelada que Croquis
@@ -39,7 +29,13 @@ test("@flujo /cesvi/reproduccion: la evidencia, y cada reporte abre su caso en e
   // con lo que concluyó CESVI.
   await filas.first().getByRole("link").click();
   await expect(page.getByTestId("recorrido-caso")).toHaveAttribute("data-origen", "reporte");
-  await expect(page.getByTestId("caso-con-reporte")).toBeVisible();
+  // El paso 1 (V2): la etiqueta del reporte, sus vehículos y lo que ya está.
+  await expect(page.getByTestId("titulo-caso")).toBeVisible();
+  await expect(page.getByTestId("avance-caso")).toHaveAttribute("data-avance", "2/4");
+  await expect(page.getByTestId("caso-con-reporte")).toHaveCount(1);
+  // El lugar es obligatorio (V2): lo que pide la lista guiada, antes de reconstruir.
+  await irAPaso(page, 3);
+  await colocarTodo(page);
   await irAPaso(page, 4);
   await page.getByTestId("reconstruir").click();
   await expect(page.getByTestId("velocidades")).toBeVisible({ timeout: 60_000 });

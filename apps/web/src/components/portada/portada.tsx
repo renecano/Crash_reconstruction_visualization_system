@@ -338,9 +338,16 @@ export function Portada({ datos }: { datos: DatosPortada }) {
                 </span>
               ))}
             </p>
-            <Link href={ruta("/cuenta")} className="boton-principal" data-testid="cta-apertura">
-              {t.cuenta}
-            </Link>
+            {/* Croquis es para los peritos de CESVI: el botón principal entra a /cesvi; la versión
+                para el público queda en segundo plano (V2, René 2026-10-23). */}
+            <div className="flex flex-wrap justify-center gap-3">
+              <Link href="/cesvi" className="boton-principal" data-testid="cta-apertura">
+                {t.entrar}
+              </Link>
+              <Link href={ruta("/cuenta")} className="boton-secundario" data-testid="cta-publico">
+                {t.cuenta}
+              </Link>
+            </div>
             <p className="t-nota" aria-hidden="true">
               {t.sigue}
             </p>
@@ -634,7 +641,14 @@ export function Portada({ datos }: { datos: DatosPortada }) {
             />
             <h2 className="t-lanzamiento max-w-[20ch]">{t.cierre.titulo}</h2>
             <div className="flex flex-wrap justify-center gap-3">
-              <Link href={ruta("/cuenta")} className="boton-principal" data-testid="cta-cierre">
+              <Link href="/cesvi" className="boton-principal" data-testid="cta-cierre">
+                {t.entrar}
+              </Link>
+              <Link
+                href={ruta("/cuenta")}
+                className="boton-secundario"
+                data-testid="cta-cierre-publico"
+              >
                 {t.cuenta}
               </Link>
               <Link href={ruta("/demo")} className="boton-secundario">

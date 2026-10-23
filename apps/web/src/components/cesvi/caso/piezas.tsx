@@ -5,13 +5,17 @@
  * reconstrucción y la fuente de cada dato.
  */
 import {
+  avanzar,
   confirmarImpacto,
   conMasa,
   conRestos,
+  distanciaM,
+  rectanguloVehiculo,
+  rumboDeg,
   type Expediente,
   type PreguntaEscena,
 } from "@croquis/cesvi";
-import type { Map as MapaMl, Marker } from "maplibre-gl";
+import type { GeoJSONSource, Map as MapaMl, Marker } from "maplibre-gl";
 // Sin la hoja de MapLibre los marcadores no quedan en su lugar (no se ven sobre el mapa).
 import "maplibre-gl/dist/maplibre-gl.css";
 import { useEffect, useRef, useState } from "react";
@@ -50,7 +54,103 @@ function claseVehiculo(id: string): string {
   return id === "V1" ? " punto-a" : id === "V2" ? " punto-b" : "";
 }
 
-/** El mapa donde el perito coloca a cada vehículo: un clic pone lo elegido en la herramienta. */
+/** La herramienta del mapa en el paso del lugar (V2). */
+export type HerramientaMapa = "colocar" | "mover" | "medir";
+
+/** La huella de un vehículo colocado: su contorno visto desde arriba, en su color. */
+export interface HuellaMapa {
+  vehiculo: string;
+  fase: string;
+  punto: { lat: number; lon: number };
+  rumbo: number;
+  largo: number;
+  ancho: number;
+  color: string;
+}
+
+/** Largo de la flecha del rumbo sobre el mapa (m): se arrastra su punta para girar. */
+const FLECHA_M = 9;
+
+/** La flecha del rumbo del elemento activo. */
+export interface FlechaMapa {
+  punto: { lat: number; lon: number };
+  rumbo: number;
+  color: string;
+}
+
+/** Dibuja huellas, la línea de la flecha y la medición en la fuente GeoJSON del croquis. */
+function dibujarCroquis(
+  m: MapaMl | null,
+  hs: readonly HuellaMapa[],
+  f: FlechaMapa | null,
+  medicion: readonly [number, number][],
+): void {
+  if (!m || !m.isStyleLoaded()) return;
+  const features: GeoJSON.Feature[] = hs.map((h) => ({
+    type: "Feature",
+    properties: { color: h.color, tipo: h.fase === "final" ? "final" : "otra" },
+    geometry: {
+      type: "Polygon",
+      coordinates: [rectanguloVehiculo([h.punto.lon, h.punto.lat], h.rumbo, h.largo, h.ancho)],
+    },
+  }));
+  if (f)
+    features.push({
+      type: "Feature",
+      properties: { color: f.color, tipo: "flecha" },
+      geometry: {
+        type: "LineString",
+        coordinates: [
+          [f.punto.lon, f.punto.lat],
+          avanzar([f.punto.lon, f.punto.lat], f.rumbo, FLECHA_M),
+        ],
+      },
+    });
+  if (medicion.length)
+    features.push({
+      type: "Feature",
+      properties: { color: "#FF5B2E", tipo: "medida" },
+      geometry: { type: "LineString", coordinates: [...medicion] },
+    });
+  const fc: GeoJSON.FeatureCollection = { type: "FeatureCollection", features };
+  const src = m.getSource("croquis-dibujo") as GeoJSONSource | undefined;
+  if (src) {
+    src.setData(fc);
+    return;
+  }
+  m.addSource("croquis-dibujo", { type: "geojson", data: fc });
+  m.addLayer({
+    id: "croquis-huellas",
+    type: "fill",
+    source: "croquis-dibujo",
+    filter: ["==", ["geometry-type"], "Polygon"],
+    paint: {
+      "fill-color": ["get", "color"],
+      "fill-opacity": ["case", ["==", ["get", "tipo"], "final"], 0.75, 0.35],
+    },
+  });
+  m.addLayer({
+    id: "croquis-lineas",
+    type: "line",
+    source: "croquis-dibujo",
+    paint: {
+      "line-color": ["get", "color"],
+      "line-width": ["case", ["==", ["get", "tipo"], "flecha"], 3, 2],
+      "line-dasharray": [
+        "case",
+        ["==", ["get", "tipo"], "medida"],
+        ["literal", [2, 1]],
+        ["literal", [1, 0]],
+      ],
+    },
+  });
+}
+
+/**
+ * El mapa donde el perito coloca a cada vehículo. En «Colocar» un clic pone lo elegido y el mapa
+ * no se arrastra (Espacio sostenido lo mueve); en «Mover mapa» se arrastra; en «Medir» dos clics
+ * dan una distancia. La flecha del elemento activo se gira arrastrando su punta.
+ */
 export function MapaEscena({
   posiciones,
   moviles = [],
@@ -58,6 +158,15 @@ export function MapaEscena({
   onClic,
   onMapa,
   tema,
+  inicio = null,
+  lugarTexto = "",
+  herramienta = "mover",
+  pedirLugar = true,
+  huellas = [],
+  flecha = null,
+  onFlecha,
+  onMedida,
+  onDeshacer,
 }: {
   posiciones: { vehiculo: Id; fase: string; punto: { lat: number; lon: number } }[];
   /** Los vehículos en el instante del 3D (el croquis sigue al reloj de la reconstrucción). */
@@ -68,6 +177,22 @@ export function MapaEscena({
   /** El mapa ya cargado, para el croquis del dictamen sobre las calles (R8b). */
   onMapa?: (m: MapaMl | null) => void;
   tema: "claro" | "oscuro";
+  /** Dónde abre el mapa si aún no hay posiciones: las coordenadas del caso (V2). */
+  inicio?: { lat: number; lon: number } | null;
+  /** El lugar en palabras, para buscarlo si el caso no trae coordenadas. */
+  lugarTexto?: string;
+  herramienta?: HerramientaMapa;
+  /** Si el mapa pide buscar el lugar cuando el caso no trae coordenadas (en el paso del lugar). */
+  pedirLugar?: boolean;
+  /** Los contornos de lo colocado, en el color de cada vehículo. */
+  huellas?: HuellaMapa[];
+  /** La flecha del rumbo del elemento activo; su punta se arrastra para girarla. */
+  flecha?: FlechaMapa | null;
+  onFlecha?: (rumbo: number) => void;
+  /** Una distancia medida en «Medir» (m). */
+  onMedida?: (m: number) => void;
+  /** Deshacer lo último colocado (botón del mapa). */
+  onDeshacer?: () => void;
 }) {
   const contenedor = useRef<HTMLDivElement>(null);
   const mapa = useRef<MapaMl | null>(null);
@@ -77,12 +202,28 @@ export function MapaEscena({
   const marcasMoviles = useRef<Marker[]>([]);
   const marcasImpacto = useRef<Marker[]>([]);
   const [listo, setListo] = useState(false);
+  // Sin posiciones ni coordenadas del caso, el mapa pide buscar el lugar (V2).
+  const [buscar, setBuscar] = useState(false);
+  const arranque = useRef({ posiciones, inicio });
   const clic = useRef(onClic);
   const avisar = useRef(onMapa);
+  const giro = useRef(onFlecha);
+  const medida = useRef(onMedida);
+  const modo = useRef(herramienta);
+  const espacio = useRef(false);
+  const medicion = useRef<[number, number][]>([]);
+  // Lo último que se dibuja, para el clic de «Medir» y el cambio de estilo.
+  const datos = useRef({ huellas, flecha });
+  const punta = useRef<Marker | null>(null);
+  const [medidaM, setMedidaM] = useState<number | null>(null);
   useEffect(() => {
     clic.current = onClic;
     avisar.current = onMapa;
-  }, [onClic, onMapa]);
+    giro.current = onFlecha;
+    medida.current = onMedida;
+    modo.current = herramienta;
+    datos.current = { huellas, flecha };
+  }, [onClic, onMapa, onFlecha, onMedida, herramienta, huellas, flecha]);
   useEffect(() => {
     let vivo = true;
     let instancia: MapaMl | null = null;
@@ -96,9 +237,42 @@ export function MapaEscena({
         zoom: 11,
         attributionControl: false,
       });
-      instancia.on("click", (e) => clic.current({ lat: e.lngLat.lat, lon: e.lngLat.lng }));
+      instancia.on("click", (e) => {
+        // Con Espacio sostenido el clic solo termina de mover el mapa.
+        if (espacio.current) return;
+        if (modo.current === "colocar") clic.current({ lat: e.lngLat.lat, lon: e.lngLat.lng });
+        else if (modo.current === "medir") {
+          const ps = medicion.current.length >= 2 ? [] : medicion.current;
+          medicion.current = [...ps, [e.lngLat.lng, e.lngLat.lat]];
+          if (medicion.current.length === 2) {
+            const d = distanciaM(medicion.current[0]!, medicion.current[1]!);
+            setMedidaM(d);
+            medida.current?.(d);
+          } else setMedidaM(null);
+          dibujarCroquis(
+            mapa.current,
+            datos.current.huellas,
+            datos.current.flecha,
+            medicion.current,
+          );
+        }
+      });
       instancia.on("load", () => {
-        if (!vivo) return;
+        if (!vivo || !instancia) return;
+        // Abre en el caso: sus posiciones, o sus coordenadas; si no hay ninguna, se busca.
+        const { posiciones: ps, inicio: i0 } = arranque.current;
+        if (ps.length) {
+          const lons = ps.map((p) => p.punto.lon);
+          const lats = ps.map((p) => p.punto.lat);
+          instancia.fitBounds(
+            [
+              [Math.min(...lons), Math.min(...lats)],
+              [Math.max(...lons), Math.max(...lats)],
+            ],
+            { padding: 80, maxZoom: 19, animate: false },
+          );
+        } else if (i0) instancia.jumpTo({ center: [i0.lon, i0.lat], zoom: 17 });
+        else setBuscar(true);
         mapa.current = instancia;
         avisar.current?.(instancia);
         setListo(true);
@@ -111,6 +285,90 @@ export function MapaEscena({
       mapa.current = null;
     };
   }, []);
+  // Huellas de los vehículos, la línea de la flecha y la medición: una fuente GeoJSON que se vuelve
+  // a agregar si cambia el estilo (el tema).
+  useEffect(() => {
+    const m = mapa.current;
+    if (!m || !listo) return;
+    dibujarCroquis(mapa.current, datos.current.huellas, datos.current.flecha, medicion.current);
+    const alCambiarEstilo = () =>
+      dibujarCroquis(mapa.current, datos.current.huellas, datos.current.flecha, medicion.current);
+    m.on("style.load", alCambiarEstilo);
+    return () => {
+      m.off("style.load", alCambiarEstilo);
+    };
+  }, [listo, huellas, flecha]);
+  // La punta de la flecha: se arrastra para girar el rumbo del elemento activo.
+  useEffect(() => {
+    const m = mapa.current;
+    if (!m || !listo) return;
+    let vivo = true;
+    void import("maplibre-gl").then(({ Marker }) => {
+      if (!vivo) return;
+      punta.current?.remove();
+      punta.current = null;
+      if (!flecha) return;
+      const el = document.createElement("div");
+      el.className = "punta-flecha";
+      el.style.cssText = `width:18px;height:18px;border-radius:9px;background:#0B0C0F;border:2px solid ${flecha.color};cursor:grab`;
+      el.title = "Arrastra para girar el frente";
+      el.dataset.testid = "punta-flecha";
+      el.setAttribute("data-testid", "punta-flecha");
+      const [lon, lat] = avanzar([flecha.punto.lon, flecha.punto.lat], flecha.rumbo, FLECHA_M);
+      const mk = new Marker({ element: el, draggable: true }).setLngLat([lon, lat]).addTo(m);
+      mk.on("drag", () => {
+        const q = mk.getLngLat();
+        giro.current?.(Math.round(rumboDeg([flecha.punto.lon, flecha.punto.lat], [q.lng, q.lat])));
+      });
+      punta.current = mk;
+    });
+    return () => {
+      vivo = false;
+    };
+  }, [flecha, listo]);
+  // «Colocar»: el mapa no se arrastra; Espacio sostenido lo mueve. «Mover mapa»: se arrastra.
+  useEffect(() => {
+    const m = mapa.current;
+    if (!m || !listo) return;
+    if (herramienta === "colocar") m.dragPan.disable();
+    else m.dragPan.enable();
+    if (herramienta !== "medir") {
+      medicion.current = [];
+      dibujarCroquis(mapa.current, datos.current.huellas, datos.current.flecha, medicion.current);
+    }
+    if (herramienta !== "colocar") return;
+    const escribiendo = (t: EventTarget | null) =>
+      t instanceof HTMLElement && /^(INPUT|TEXTAREA|SELECT)$/.test(t.tagName);
+    const abajo = (e: KeyboardEvent) => {
+      if (e.code !== "Space" || escribiendo(e.target) || espacio.current) return;
+      e.preventDefault();
+      espacio.current = true;
+      m.dragPan.enable();
+      m.getCanvas().style.cursor = "grab";
+    };
+    const arriba = (e: KeyboardEvent) => {
+      if (e.code !== "Space") return;
+      espacio.current = false;
+      m.dragPan.disable();
+      m.getCanvas().style.cursor = "crosshair";
+    };
+    m.getCanvas().style.cursor = "crosshair";
+    window.addEventListener("keydown", abajo);
+    window.addEventListener("keyup", arriba);
+    return () => {
+      window.removeEventListener("keydown", abajo);
+      window.removeEventListener("keyup", arriba);
+      m.getCanvas().style.cursor = "";
+    };
+  }, [herramienta, listo]);
+  // La tarjeta del mapa cambia de tamaño entre pasos y al expandirla: el mapa se ajusta.
+  useEffect(() => {
+    const el = contenedor.current;
+    if (!el || !listo) return;
+    const ro = new ResizeObserver(() => mapa.current?.resize());
+    ro.observe(el);
+    return () => ro.disconnect();
+  }, [listo]);
   // El mapa sigue al tema del marco (R9), como el del recorrido.
   useEffect(() => {
     if (listo && estilo !== estiloInicial.current) {
@@ -173,10 +431,156 @@ export function MapaEscena({
   }, [impactos, listo]);
   return (
     <div className="relative h-full min-h-[320px] overflow-hidden">
-      <div ref={contenedor} className="h-full w-full" data-testid="mapa-escena" />
+      <div
+        ref={contenedor}
+        className="h-full w-full"
+        data-testid="mapa-escena"
+        data-herramienta={herramienta}
+      />
+      {herramienta === "medir" && medidaM !== null ? (
+        <p
+          className="vidrio absolute top-16 left-1/2 -translate-x-1/2 rounded-full px-4 py-1.5 text-[0.8125rem] font-semibold"
+          data-testid="medida-mapa"
+        >
+          <span className="cifras">{medidaM.toFixed(2)} m</span>
+        </p>
+      ) : null}
+      {listo && onDeshacer ? (
+        <div className="absolute right-3 bottom-12 z-10 flex flex-col gap-1.5">
+          <button
+            type="button"
+            aria-label="Acercar"
+            className="vidrio grid h-10 w-10 place-items-center rounded-control"
+            onClick={() => mapa.current?.zoomIn()}
+          >
+            +
+          </button>
+          <button
+            type="button"
+            aria-label="Alejar"
+            className="vidrio grid h-10 w-10 place-items-center rounded-control"
+            onClick={() => mapa.current?.zoomOut()}
+          >
+            −
+          </button>
+          <button
+            type="button"
+            aria-label="Deshacer"
+            className="vidrio grid h-10 w-10 place-items-center rounded-control"
+            onClick={onDeshacer}
+            data-testid="deshacer-mapa"
+          >
+            ↶
+          </button>
+        </div>
+      ) : null}
+      {buscar && pedirLugar ? (
+        <BuscarLugar
+          inicial={lugarTexto}
+          onLugar={(p) => {
+            mapa.current?.jumpTo({ center: [p.lon, p.lat], zoom: 17 });
+            setBuscar(false);
+          }}
+          onCerrar={() => setBuscar(false)}
+        />
+      ) : listo ? (
+        <button
+          type="button"
+          className="vidrio absolute bottom-3 left-3 rounded-full px-3 py-1.5 text-[0.75rem] font-medium"
+          onClick={() => setBuscar(true)}
+          data-testid="buscar-lugar"
+        >
+          Buscar el lugar
+        </button>
+      ) : null}
       <p className="vidrio pointer-events-none absolute right-3 bottom-3 px-2 py-1 text-[0.6875rem] text-texto-3">
         © OpenStreetMap · OpenFreeMap · OpenMapTiles
       </p>
+    </div>
+  );
+}
+
+/**
+ * Buscar el lugar del hecho en OpenStreetMap (Nominatim, en México y en español). Se busca solo al
+ * pedirlo, sin teclear en vivo, como pide la política de uso de Nominatim.
+ */
+function BuscarLugar({
+  inicial,
+  onLugar,
+  onCerrar,
+}: {
+  inicial: string;
+  onLugar: (p: { lat: number; lon: number }) => void;
+  onCerrar: () => void;
+}) {
+  const [q, setQ] = useState(inicial);
+  const [estado, setEstado] = useState<string | null>(null);
+  const [resultados, setResultados] = useState<{ nombre: string; lat: number; lon: number }[]>([]);
+  const buscarYa = async () => {
+    if (!q.trim()) return;
+    setEstado("Buscando…");
+    try {
+      const url = `https://nominatim.openstreetmap.org/search?format=jsonv2&limit=5&countrycodes=mx&accept-language=es&q=${encodeURIComponent(q.trim())}`;
+      const r = (await (await fetch(url)).json()) as {
+        display_name: string;
+        lat: string;
+        lon: string;
+      }[];
+      setResultados(
+        r.map((x) => ({ nombre: x.display_name, lat: Number(x.lat), lon: Number(x.lon) })),
+      );
+      setEstado(r.length ? null : "No se encontró. Prueba con la calle y el municipio.");
+    } catch {
+      setEstado("No se pudo buscar. Mueve el mapa a mano hasta el lugar.");
+    }
+  };
+  return (
+    <div
+      className="vidrio absolute top-1/2 left-1/2 flex w-[min(420px,90%)] -translate-x-1/2 -translate-y-1/2 flex-col gap-3 rounded-panel p-5"
+      role="dialog"
+      aria-label="Buscar el lugar del hecho"
+      data-testid="dialogo-buscar-lugar"
+    >
+      <span className="t-interfaz font-semibold">¿Dónde fue el hecho?</span>
+      <span className="t-nota">El caso no trae coordenadas: busca la calle y el municipio.</span>
+      <form
+        className="flex gap-2"
+        onSubmit={(e) => {
+          e.preventDefault();
+          void buscarYa();
+        }}
+      >
+        <input
+          className="campo h-10 flex-1"
+          value={q}
+          onChange={(e) => setQ(e.target.value)}
+          aria-label="Lugar del hecho"
+          data-testid="texto-buscar-lugar"
+        />
+        <button type="submit" className="boton-principal boton-compacto">
+          Buscar
+        </button>
+      </form>
+      {estado ? <span className="t-nota">{estado}</span> : null}
+      {resultados.length ? (
+        <ul className="flex max-h-48 flex-col gap-1 overflow-y-auto">
+          {resultados.map((r) => (
+            <li key={`${r.lat},${r.lon}`}>
+              <button
+                type="button"
+                className="t-nota w-full rounded-control px-2 py-1.5 text-left hover:bg-superficie-alta"
+                onClick={() => onLugar(r)}
+              >
+                {r.nombre}
+              </button>
+            </li>
+          ))}
+        </ul>
+      ) : null}
+      <button type="button" className="t-nota self-end underline" onClick={onCerrar}>
+        Lo busco moviendo el mapa
+      </button>
+      <span className="t-nota text-texto-3">Búsqueda: Nominatim · © OpenStreetMap</span>
     </div>
   );
 }

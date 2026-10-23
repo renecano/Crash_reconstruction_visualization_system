@@ -10,8 +10,12 @@
  */
 import {
   comparar,
+  conHuella,
   conPosicion,
+  conRestos,
   escenaDeNarracion,
+  medidasDe,
+  posesDeImpacto,
   verificacionCesvi,
   type EscenaNarrada,
   type Expediente,
@@ -19,7 +23,7 @@ import {
 } from "@croquis/cesvi";
 import type { ViewerExportApi } from "@croquis/viewer";
 import type { Map as MapaMl } from "maplibre-gl";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import type { Hipotesis } from "@/components/visor/hypothesis-panel";
 import {
   casoParaGuardar,
@@ -31,14 +35,32 @@ import { guardarCaso, idNuevo, type CasoExpediente } from "@/lib/casos";
 import { avisarCambio } from "@/lib/casos-navegador";
 import type { DatosDictamenCaso } from "@/lib/dictamen-caso";
 import { downloadBytes } from "@/lib/download";
+import {
+  CLAVES_PASOS,
+  enLista,
+  faltaDelLugar,
+  faltaEnPaso,
+  impactosAColocar,
+  pasoAbierto,
+} from "@/lib/pasos-caso";
+import { MODALIDAD } from "@/lib/nombres-cesvi";
+import { colorDeVehiculo } from "@/lib/vehiculos-cesvi";
 import { useTema, type Modo } from "@/lib/preferencias-cesvi";
 import ejemplo from "../../../../../../data/cesvi/grabaciones/escenas/cesvi-e814f085db.json";
 import { ComparacionDeclaracion } from "../comparacion-declaracion";
 import { DictamenCaso } from "../dictamen-caso";
 import { CargaReporte } from "../importar-dictamen";
 import { BarraRecorrido, PASOS, PASOS_CORTOS } from "../recorrido/barra";
-import { PasoCaso, PasoContraReporte, PasoDanos, PasoHecho, PasoLugar, PasoNumeros } from "./pasos";
-import { MapaEscena, type Fase, type Id } from "./piezas";
+import {
+  PasoCaso,
+  PasoContraReporte,
+  PasoDanos,
+  PasoHecho,
+  PasoLugar,
+  PasoNumeros,
+  type ItemLugar,
+} from "./pasos";
+import { MapaEscena, type HerramientaMapa, type HuellaMapa } from "./piezas";
 import {
   PanelReconstruccion,
   useReconstruccion,
@@ -71,12 +93,16 @@ export function RecorridoCaso({ inicial }: { inicial: CasoExpediente }) {
   const [validacion, setValidacion] = useState<ValidacionPerito | null>(inicial.validacion);
   const [estado, setEstado] = useState<string | null>(null);
   const [noSe, setNoSe] = useState<Set<string>>(new Set());
-  const [herramienta, setHerramienta] = useState<{ vehiculo: Id; fase: Fase } | null>(
-    inicial.escena?.expediente.vehiculos[0]
-      ? { vehiculo: inicial.escena.expediente.vehiculos[0].id, fase: "final" }
-      : null,
+  // El paso del lugar (V2): la herramienta del mapa, el elemento elegido de la lista guiada, el
+  // punto y el rumbo de cada impacto (para su flecha), lo que se deshace y lo último medido.
+  const [herramientaMapa, setHerramientaMapa] = useState<HerramientaMapa>("colocar");
+  const [elegido, setElegido] = useState<ItemLugar | null>(null);
+  const [puntosImpacto, setPuntosImpacto] = useState<Record<number, { lat: number; lon: number }>>(
+    {},
   );
-  const [rumbo, setRumbo] = useState("");
+  const [rumbosImpacto, setRumbosImpacto] = useState<Record<number, number>>({});
+  const [historial, setHistorial] = useState<Expediente[]>([]);
+  const [medida, setMedida] = useState<number | null>(null);
   const [mapa, setMapa] = useState<MapaMl | null>(null);
   const [moviles, setMoviles] = useState<PosicionMovil[]>([]);
   const [vista, setVista] = useState<"mapa" | "3d">("mapa");
@@ -89,6 +115,16 @@ export function RecorridoCaso({ inicial }: { inicial: CasoExpediente }) {
   );
   const [avisoGuardado, setAvisoGuardado] = useState<string | null>(null);
   const rec = useReconstruccion(expediente);
+  // El mapa a pantalla completa (V2): se cierra con «Contraer» o con Esc.
+  const [expandido, setExpandido] = useState(false);
+  useEffect(() => {
+    if (!expandido) return;
+    const tecla = (e: KeyboardEvent) => {
+      if (e.key === "Escape") setExpandido(false);
+    };
+    window.addEventListener("keydown", tecla);
+    return () => window.removeEventListener("keydown", tecla);
+  }, [expandido]);
   const r = rec.r;
 
   // Un caso con reporte se lee del reporte: su narración no se edita ni va al dictamen.
@@ -106,12 +142,14 @@ export function RecorridoCaso({ inicial }: { inicial: CasoExpediente }) {
     () => (expediente ? verificacionCesvi(expediente) : []),
     [expediente],
   );
+  // La reproducción trae la comparación medida en E-R4; un reporte importado se compara aquí.
   const comparacionReporte = useMemo(
     () =>
-      reporte && expediente && leida
+      inicial.comparacion ??
+      (reporte && expediente && leida
         ? comparar(reporte.conclusiones, expediente, leida.posiciones, texto)
-        : null,
-    [reporte, expediente, leida, texto],
+        : null),
+    [inicial.comparacion, reporte, expediente, leida, texto],
   );
   const preguntas = (leida?.preguntas ?? []).filter((p) => {
     if (noSe.has(p.clave) || !expediente) return false;
@@ -134,8 +172,10 @@ export function RecorridoCaso({ inicial }: { inicial: CasoExpediente }) {
     setExpediente(e.expediente);
     setNoSe(new Set());
     setValidacion(null);
-    const primero = e.expediente.vehiculos[0];
-    setHerramienta(primero ? { vehiculo: primero.id, fase: "final" } : null);
+    setElegido(null);
+    setPuntosImpacto({});
+    setRumbosImpacto({});
+    setHistorial([]);
   };
 
   const leer = async () => {
@@ -208,13 +248,159 @@ export function RecorridoCaso({ inicial }: { inicial: CasoExpediente }) {
     }
   };
 
+  // --- El paso 1 (V2): qué es el caso y cuánto lleva --------------------------------------------
+  const etiqueta =
+    inicial.origen === "nuevo"
+      ? "Caso nuevo"
+      : inicial.origen === "guardado"
+        ? "Caso guardado"
+        : `Reporte de CESVI${reporte?.conclusiones.modalidad ? ` · ${(MODALIDAD[reporte.conclusiones.modalidad] ?? reporte.conclusiones.modalidad).toLowerCase()}` : ""}`;
+  const lugarFalta = expediente ? faltaDelLugar(expediente) : null;
+  const avance = [
+    { nombre: "Narración del hecho", listo: leida !== null },
+    { nombre: "Vehículos", listo: (expediente?.vehiculos.length ?? 0) > 0 },
+    { nombre: "Lugar en el mapa", listo: lugarFalta !== null && lugarFalta.impactos.length === 0 },
+    {
+      nombre: "Dónde quedó cada vehículo",
+      listo: lugarFalta !== null && lugarFalta.finales.length === 0,
+    },
+  ];
+
+  // --- El paso del lugar (V2) ------------------------------------------------------------------
+  const impactos = expediente ? impactosAColocar(expediente) : [];
+  const poseDe = (v: string, fase: string) =>
+    posiciones.find((p) => p.vehiculo === v && p.fase === fase);
+  const requeridos: ItemLugar[] = expediente
+    ? [
+        ...impactos.map((i): ItemLugar => ({ tipo: "impacto", orden: i.orden })),
+        ...expediente.vehiculos.map((v): ItemLugar => ({ tipo: "final", vehiculo: v.id })),
+      ]
+    : [];
+  const opcionales: ItemLugar[] = expediente
+    ? expediente.vehiculos.map((v): ItemLugar => ({ tipo: "inicial", vehiculo: v.id }))
+    : [];
+  const vehiculosDe = (orden: number) => impactos.find((x) => x.orden === orden)?.vehiculos ?? [];
+  const colocado = (i: ItemLugar) =>
+    i.tipo === "impacto"
+      ? vehiculosDe(i.orden).every((v) => poseDe(v, "impacto"))
+      : Boolean(poseDe(i.vehiculo, i.tipo));
+  const activo: ItemLugar | null = elegido ?? requeridos.find((i) => !colocado(i)) ?? null;
+  /** El punto de un impacto: el que marcó el perito, o el centro de sus poses (caso reabierto). */
+  const puntoDe = (orden: number) => {
+    if (puntosImpacto[orden]) return puntosImpacto[orden];
+    const ps = vehiculosDe(orden).flatMap((v) => poseDe(v, "impacto") ?? []);
+    if (!ps.length) return null;
+    return {
+      lat: ps.reduce((a, p) => a + p.punto.lat, 0) / ps.length,
+      lon: ps.reduce((a, p) => a + p.punto.lon, 0) / ps.length,
+    };
+  };
+  const rumboDeItem = (i: ItemLugar): number | null => {
+    if (i.tipo === "impacto") {
+      const primero = vehiculosDe(i.orden)[0];
+      return (
+        rumbosImpacto[i.orden] ?? (primero ? (poseDe(primero, "impacto")?.rumbo ?? null) : null)
+      );
+    }
+    return poseDe(i.vehiculo, i.tipo)?.rumbo ?? null;
+  };
+  const nombreItem = (i: ItemLugar) => {
+    if (i.tipo === "impacto")
+      return impactos.length > 1 ? `Punto del impacto ${i.orden}` : "Punto de impacto";
+    const v = expediente?.vehiculos.find((x) => x.id === i.vehiculo);
+    const marca = v?.marca?.valor ? ` · ${v.marca.valor}` : "";
+    return `${i.vehiculo}${marca} · ${i.tipo === "final" ? "dónde quedó" : "dónde venía"}`;
+  };
+  const colorItem = (i: ItemLugar) =>
+    i.tipo === "impacto" ? "#FF5B2E" : colorDeVehiculo(i.vehiculo);
+  /** Las poses de un impacto desde su punto; en una carambola, solo las de quien entra en él. */
+  const conImpacto = (
+    e: Expediente,
+    orden: number,
+    punto: { lat: number; lon: number },
+    rumbo: number,
+  ): Expediente => {
+    const antes = new Set(impactos.filter((x) => x.orden < orden).flatMap((x) => x.vehiculos));
+    let r = e;
+    for (const p of posesDeImpacto(e, punto, rumbo, orden)) {
+      if (antes.has(p.vehiculo)) continue;
+      r = conPosicion(r, { vehiculo: p.vehiculo, fase: "impacto", punto: p.punto, rumbo: p.rumbo });
+    }
+    return r;
+  };
   const colocar = (punto: { lat: number; lon: number }) => {
     // Se coloca en el paso del lugar y al trabajar; al presentar el mapa solo se mira.
-    if (modo !== "trabajar" || actual !== 2) return;
-    if (!expediente || !herramienta || rumbo.trim() === "") return;
-    const rumboNum = Number(rumbo.replace(",", "."));
-    if (!Number.isFinite(rumboNum)) return;
-    cambiarExpediente(conPosicion(expediente, { ...herramienta, punto, rumbo: rumboNum }));
+    if (modo !== "trabajar" || actual !== 2 || !expediente || !activo) return;
+    setHistorial((h) => [...h, expediente]);
+    if (activo.tipo === "impacto") {
+      const r = rumboDeItem(activo) ?? 0;
+      setPuntosImpacto((m) => ({ ...m, [activo.orden]: punto }));
+      // Si el mapa está lejos (a nivel de colonia o más), se acerca al punto para ver los vehículos.
+      if (mapa && mapa.getZoom() < 17) mapa.easeTo({ center: [punto.lon, punto.lat], zoom: 19 });
+      setRumbosImpacto((m) => ({ ...m, [activo.orden]: r }));
+      cambiarExpediente(conImpacto(expediente, activo.orden, punto, r));
+    } else {
+      const r = rumboDeItem(activo) ?? poseDe(activo.vehiculo, "impacto")?.rumbo ?? 0;
+      cambiarExpediente(
+        conPosicion(expediente, { vehiculo: activo.vehiculo, fase: activo.tipo, punto, rumbo: r }),
+      );
+    }
+    // Se queda activo para girar su flecha; «Listo» pasa al siguiente.
+    setElegido(activo);
+  };
+  const girar = (rumbo: number) => {
+    if (!expediente || !activo) return;
+    if (activo.tipo === "impacto") {
+      const p = puntoDe(activo.orden);
+      if (!p) return;
+      setRumbosImpacto((m) => ({ ...m, [activo.orden]: rumbo }));
+      cambiarExpediente(conImpacto(expediente, activo.orden, p, rumbo));
+    } else {
+      const pose = poseDe(activo.vehiculo, activo.tipo);
+      if (!pose) return;
+      cambiarExpediente(
+        conPosicion(expediente, {
+          vehiculo: activo.vehiculo,
+          fase: activo.tipo,
+          punto: pose.punto,
+          rumbo,
+        }),
+      );
+    }
+  };
+  const flecha =
+    actual === 2 && modo === "trabajar" && activo && colocado(activo)
+      ? (() => {
+          const punto =
+            activo.tipo === "impacto"
+              ? puntoDe(activo.orden)
+              : (poseDe(activo.vehiculo, activo.tipo)?.punto ?? null);
+          return punto
+            ? { punto, rumbo: rumboDeItem(activo) ?? 0, color: colorItem(activo) }
+            : null;
+        })()
+      : null;
+  const huellas: HuellaMapa[] = expediente
+    ? posiciones.flatMap((p) => {
+        const v = expediente.vehiculos.find((x) => x.id === p.vehiculo);
+        if (!v) return [];
+        return [
+          {
+            vehiculo: p.vehiculo,
+            fase: p.fase,
+            punto: p.punto,
+            rumbo: p.rumbo,
+            ...medidasDe(v),
+            color: colorDeVehiculo(p.vehiculo),
+          },
+        ];
+      })
+    : [];
+  const deshacer = () => {
+    const previo = historial[historial.length - 1];
+    if (!previo) return;
+    setHistorial((h) => h.slice(0, -1));
+    cambiarExpediente(previo);
   };
 
   const inicio =
@@ -263,9 +449,13 @@ export function RecorridoCaso({ inicial }: { inicial: CasoExpediente }) {
       return (
         <PasoCaso
           titulo={titulo}
+          etiqueta={etiqueta}
           detalle={DETALLE[inicial.origen]}
           escena={leida}
           reporte={reporte}
+          editable={modo === "trabajar"}
+          onExpediente={cambiarExpediente}
+          avance={avance}
           inicio={
             <>
               {inicio}
@@ -299,11 +489,26 @@ export function RecorridoCaso({ inicial }: { inicial: CasoExpediente }) {
         <PasoLugar
           expediente={expediente}
           escena={leida}
-          herramienta={herramienta}
-          onHerramienta={setHerramienta}
-          rumbo={rumbo}
-          onRumbo={setRumbo}
-          colocados={posiciones.length}
+          requeridos={requeridos}
+          opcionales={opcionales}
+          colocado={colocado}
+          activo={activo}
+          onActivo={setElegido}
+          rumboActivo={activo ? rumboDeItem(activo) : null}
+          onRumbo={girar}
+          onListo={() => setElegido(null)}
+          nombreItem={nombreItem}
+          colorItem={colorItem}
+          medida={medida}
+          onUsarMedida={(destino) => {
+            if (medida === null) return;
+            setHistorial((h) => [...h, expediente]);
+            cambiarExpediente(
+              destino === "restos"
+                ? conRestos(expediente, Number(medida.toFixed(2)))
+                : conHuella(expediente, destino.vehiculo, Number(medida.toFixed(2))),
+            );
+          }}
         />
       );
     if (actual === 3)
@@ -391,6 +596,25 @@ export function RecorridoCaso({ inicial }: { inicial: CasoExpediente }) {
   })();
 
   const verMapa = vista === "mapa" || !r;
+  // Lo obligatorio de cada paso (V2): «Siguiente» dice qué falta y los pasos futuros esperan.
+  const claves = pasos.map((n) => CLAVES_PASOS[PASOS.indexOf(n)]!);
+  const estadoPasos = {
+    esperaReporte: inicial.origen === "importado" && !leida,
+    expediente,
+    reconstruido: r !== null && !rec.vieja,
+  };
+  const falta = faltaEnPaso(claves[paso]!, estadoPasos);
+  const abierto = (i: number) => pasoAbierto(claves, i, estadoPasos);
+  const siguienteNombre = pasos[paso + 1];
+  // El mapa es el contenido en el lugar y la reconstrucción; en los demás pasos, una tarjeta.
+  const grande = actual === 2 || actual === 3;
+  const lugar = expediente?.caso.lugar;
+  const lugarTexto = [lugar?.descripcion?.valor, lugar?.municipio?.valor, lugar?.estado?.valor]
+    .filter(Boolean)
+    .join(", ");
+  const textoSiguiente = siguienteNombre
+    ? `Siguiente: ${siguienteNombre.charAt(0).toLowerCase()}${siguienteNombre.slice(1)} →`
+    : "";
   return (
     <div
       className="fixed inset-0 flex flex-col bg-fondo text-texto"
@@ -403,49 +627,71 @@ export function RecorridoCaso({ inicial }: { inicial: CasoExpediente }) {
         pasos={pasos}
         pasosCortos={cortos}
         paso={paso}
-        irA={irA}
+        irA={(i) => {
+          if (i <= paso || abierto(i)) irA(i);
+        }}
+        abierto={abierto}
         modo={modo}
         onModo={setModo}
         tema={tema}
         resumen={titulo}
         onExportar={() => {
+          if (!abierto(pasos.length - 1)) return;
           setModo("presentar");
           irA(pasos.length - 1);
         }}
       />
-      <div className="grid min-h-0 flex-1 grid-rows-[auto_minmax(50vh,1fr)] overflow-y-auto lg:grid-cols-[minmax(380px,460px)_1fr] lg:grid-rows-1 lg:overflow-hidden">
-        <aside
-          className="flex min-h-0 flex-col gap-5 border-linea-suave p-5 lg:overflow-y-auto lg:border-r"
+      <div className="flex min-h-0 flex-1 flex-col gap-6 overflow-y-auto p-4 md:p-7 lg:flex-row lg:overflow-hidden">
+        <main
+          className={`flex min-h-0 min-w-0 flex-col gap-5 lg:overflow-y-auto ${grande ? "lg:w-[440px] lg:shrink-0" : "lg:flex-1"}`}
           aria-label={pasos[paso]}
           data-testid="panel-paso"
           data-paso={actual + 1}
         >
           <p className="t-rotulo">
-            Paso {paso + 1} de {pasos.length}
+            Paso {paso + 1} de {pasos.length} · {pasos[paso]}
           </p>
           {cuerpo}
-          <nav className="mt-auto flex justify-between gap-2 pt-4" aria-label="Pasos">
-            <button
-              type="button"
-              className="boton-secundario"
-              onClick={() => irA(paso - 1)}
-              disabled={paso === 0}
-              data-testid="anterior"
-            >
-              Anterior
-            </button>
-            <button
-              type="button"
-              className="boton-principal"
-              onClick={() => irA(paso + 1)}
-              disabled={paso === pasos.length - 1}
-              data-testid="siguiente"
-            >
-              Siguiente
-            </button>
-          </nav>
-        </aside>
-        <section className="relative min-h-[50vh]" aria-label="Escenario" data-testid="escenario">
+          <div className="mt-auto flex flex-col gap-2 pt-4">
+            {falta.length ? (
+              <p className="t-nota" role="status" data-testid="falta-para-seguir">
+                Para seguir falta: <b className="text-texto">{enLista(falta)}</b>.
+              </p>
+            ) : null}
+            <div className="flex justify-between gap-3">
+              <button
+                type="button"
+                className="boton-secundario"
+                onClick={() => irA(paso - 1)}
+                disabled={paso === 0}
+                data-testid="anterior"
+              >
+                ← Anterior
+              </button>
+              {siguienteNombre ? (
+                <button
+                  type="button"
+                  className="boton-principal"
+                  onClick={() => irA(paso + 1)}
+                  disabled={falta.length > 0}
+                  data-testid="siguiente"
+                >
+                  {textoSiguiente}
+                </button>
+              ) : null}
+            </div>
+          </div>
+        </main>
+        <section
+          className={
+            expandido
+              ? "fixed inset-0 z-40 bg-fondo"
+              : `relative min-h-[50vh] overflow-hidden rounded-panel border border-linea-suave ${grande ? "lg:flex-1" : "lg:h-[460px] lg:w-[420px] lg:shrink-0 lg:self-start"}`
+          }
+          aria-label="Mapa"
+          data-testid="escenario"
+          data-expandido={expandido ? "si" : "no"}
+        >
           <div className={`absolute inset-0 ${verMapa ? "" : "invisible"}`}>
             <MapaEscena
               tema={tema}
@@ -454,6 +700,15 @@ export function RecorridoCaso({ inicial }: { inicial: CasoExpediente }) {
               moviles={moviles}
               impactos={rec.impactos}
               onClic={colocar}
+              inicio={lugar?.coordenadas ?? null}
+              lugarTexto={lugarTexto}
+              herramienta={actual === 2 && modo === "trabajar" ? herramientaMapa : "mover"}
+              pedirLugar={actual === 2 || expandido}
+              huellas={huellas}
+              flecha={flecha}
+              onFlecha={girar}
+              onMedida={setMedida}
+              onDeshacer={actual === 2 && modo === "trabajar" ? deshacer : undefined}
             />
           </div>
           {r ? (
@@ -468,33 +723,122 @@ export function RecorridoCaso({ inicial }: { inicial: CasoExpediente }) {
               />
             </div>
           ) : null}
-          {r ? (
-            <div
-              className="segmentado absolute top-3 left-3 z-10"
-              role="tablist"
-              aria-label="Vista"
-            >
-              {(["mapa", "3d"] as const).map((v) => (
-                <button
-                  key={v}
-                  type="button"
-                  role="tab"
-                  aria-selected={vista === v}
-                  className="px-3"
-                  onClick={() => {
-                    if (v === "mapa") setMoviles([]);
-                    setVista(v);
-                  }}
-                  data-testid={`vista-${v}`}
-                >
-                  {v === "mapa" ? "Mapa" : "3D"}
-                </button>
-              ))}
+          {!posiciones.length && !grande && !expandido ? (
+            <div className="vidrio pointer-events-none absolute top-1/2 left-1/2 flex -translate-x-1/2 -translate-y-1/2 flex-col items-center gap-1 rounded-panel px-5 py-4 text-center">
+              <span className="t-interfaz font-semibold">El lugar aún no está marcado</span>
+              <span className="t-nota">Lo marcas en el paso 3.</span>
             </div>
           ) : null}
-          <p className="vidrio pointer-events-none absolute bottom-3 left-3 z-10 px-2 py-1 text-[0.6875rem] text-texto-2">
-            Reconstrucción de apoyo · el dictamen es del perito.
-          </p>
+          {actual === 2 && modo === "trabajar" && verMapa ? (
+            <div
+              className={`absolute z-10 flex flex-col gap-2 ${expandido ? "top-5 left-1/2 -translate-x-1/2 items-center" : "top-3 left-3 items-start"}`}
+            >
+              <div className="segmentado" role="tablist" aria-label="Herramienta del mapa">
+                {(
+                  [
+                    ["colocar", "Colocar"],
+                    ["mover", "Mover mapa"],
+                    ["medir", "Medir"],
+                  ] as const
+                ).map(([h, nombre]) => (
+                  <button
+                    key={h}
+                    type="button"
+                    role="tab"
+                    aria-selected={herramientaMapa === h}
+                    className="px-3"
+                    onClick={() => setHerramientaMapa(h)}
+                    data-testid={`herramienta-${h}`}
+                  >
+                    {nombre}
+                  </button>
+                ))}
+              </div>
+              {herramientaMapa === "colocar" ? (
+                <p className="vidrio t-nota rounded-control px-3 py-1.5">
+                  En «Colocar» el mapa no se mueve. Mantén Espacio para moverlo.
+                </p>
+              ) : herramientaMapa === "medir" ? (
+                <p className="vidrio t-nota rounded-control px-3 py-1.5">
+                  Toca los dos extremos de lo que mides.
+                </p>
+              ) : null}
+            </div>
+          ) : null}
+          <div className="absolute top-3 right-3 z-10 flex gap-2">
+            {r ? (
+              <div className="segmentado" role="tablist" aria-label="Vista">
+                {(["mapa", "3d"] as const).map((v) => (
+                  <button
+                    key={v}
+                    type="button"
+                    role="tab"
+                    aria-selected={vista === v}
+                    className="px-3"
+                    onClick={() => {
+                      if (v === "mapa") setMoviles([]);
+                      setVista(v);
+                    }}
+                    data-testid={`vista-${v}`}
+                  >
+                    {v === "mapa" ? "Mapa" : "3D"}
+                  </button>
+                ))}
+              </div>
+            ) : null}
+            <button
+              type="button"
+              className="vidrio rounded-full px-4 py-2 text-[0.8125rem] font-medium"
+              onClick={() => setExpandido(!expandido)}
+              data-testid={expandido ? "contraer-mapa" : "expandir-mapa"}
+            >
+              {expandido ? "⤡ Contraer · Esc" : "⤢ Expandir"}
+            </button>
+          </div>
+          {expandido ? (
+            <>
+              <aside
+                className="vidrio absolute top-5 left-5 z-10 flex w-[300px] flex-col gap-2 rounded-panel p-4"
+                aria-label="Lo que falta"
+                data-testid="panel-expandido"
+              >
+                <span className="t-rotulo">
+                  Paso {paso + 1} · {pasos[paso]}
+                </span>
+                <span className="t-nota">
+                  {falta.length ? (
+                    <>
+                      Falta: <b className="text-texto">{enLista(falta)}</b>
+                    </>
+                  ) : (
+                    "Listo: puedes seguir."
+                  )}
+                </span>
+              </aside>
+              {siguienteNombre ? (
+                <div className="vidrio absolute bottom-6 left-1/2 z-10 flex -translate-x-1/2 items-center gap-4 rounded-full py-2 pr-2 pl-5">
+                  <span className="t-nota">
+                    {falta.length ? `Falta: ${enLista(falta)}` : "Todo listo en este paso."}
+                  </span>
+                  <button
+                    type="button"
+                    className="boton-principal boton-compacto"
+                    disabled={falta.length > 0}
+                    onClick={() => {
+                      setExpandido(false);
+                      irA(paso + 1);
+                    }}
+                  >
+                    {textoSiguiente}
+                  </button>
+                </div>
+              ) : null}
+            </>
+          ) : (
+            <p className="vidrio pointer-events-none absolute right-3 bottom-3 z-10 px-2 py-1 text-[0.6875rem] text-texto-2">
+              Reconstrucción de apoyo · el dictamen es del perito.
+            </p>
+          )}
         </section>
       </div>
     </div>

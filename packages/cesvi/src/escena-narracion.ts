@@ -284,6 +284,27 @@ export function conRestos(e: Expediente, m: number): Expediente {
   };
 }
 
+/**
+ * Una huella de frenado que mide el perito en el mapa (V2): reemplaza la de ese vehículo si ya la
+ * había medido él; las del reporte se quedan.
+ */
+export function conHuella(e: Expediente, vehiculo: Id, m: number): Expediente {
+  const ev = e.evidencias ?? {};
+  const otras = (ev.huellas ?? []).filter(
+    (h) => !(h.vehiculo === vehiculo && h.tipo === "frenado" && h.longitud?.fuente === "perito"),
+  );
+  return {
+    ...e,
+    evidencias: {
+      ...ev,
+      huellas: [
+        ...otras,
+        { tipo: "frenado", vehiculo, longitud: { valor: m, unidad: "m", fuente: "perito" } },
+      ],
+    },
+  };
+}
+
 /** El perito confirma un impacto que Croquis supuso: deja de ser supuesto. */
 export function confirmarImpacto(e: Expediente, orden: number): Expediente {
   return {

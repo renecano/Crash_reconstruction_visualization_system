@@ -1,0 +1,69 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<title>v2 · Paso 3 · Mapa expandido</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400..700&amp;family=Geist+Mono:wght@400..600&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#0B0C0F}
+button,a,[role=tab]{cursor:pointer}
+button:hover{filter:brightness(1.08)}
+</style>
+</helmet>
+<div style="position: relative; width: 100%; height: 900px; overflow: hidden; background: #0F1114; color: #F2F3F5; font-family: Geist, system-ui, sans-serif">
+<svg viewBox="0 0 1440 900" preserveAspectRatio="xMidYMid slice" role="img" aria-label="Mapa a pantalla completa con el impacto y los dos vehículos colocados" style="position: absolute; inset: 0; width: 100%; height: 100%; cursor: crosshair">
+<rect width="1440" height="900" fill="#0F1114"></rect>
+<path d="M0 160 L1440 120 M0 740 L1440 780 M200 0 L240 900 M1220 0 L1190 900" stroke="#1A1D22" stroke-width="12"></path>
+<rect x="0" y="380" width="1440" height="170" fill="#1C1F25"></rect>
+<line x1="0" y1="383" x2="1440" y2="383" stroke="#3A3F47" stroke-width="2"></line><line x1="0" y1="547" x2="1440" y2="547" stroke="#3A3F47" stroke-width="2"></line>
+<line x1="0" y1="465" x2="1440" y2="465" stroke="#555B66" stroke-width="2" stroke-dasharray="26 32"></line>
+<rect x="650" y="0" width="140" height="900" fill="#1C1F25"></rect>
+<rect x="650" y="380" width="140" height="170" fill="#20242B"></rect>
+<circle cx="720" cy="490" r="36" fill="#FF5B2E" opacity="0.18"></circle>
+<path d="M707 477 L733 503 M733 477 L707 503" stroke="#FF5B2E" stroke-width="6" stroke-linecap="round"></path>
+<g transform="rotate(-8 980 440)"><rect x="958" y="378" width="44" height="122" rx="12" fill="#5AA9FF"></rect><rect x="964" y="400" width="32" height="18" rx="4" fill="#0B0C0F" opacity="0.55"></rect></g>
+<rect x="1020" y="420" width="130" height="30" rx="15" fill="#5AA9FF"></rect><text x="1085" y="440" text-anchor="middle" fill="#0B0C0F" font-size="13" font-weight="600" font-family="Geist, sans-serif">V1 · donde quedó</text>
+<g opacity="0.85" transform="rotate(12 760 640)"><rect x="738" y="578" width="44" height="122" rx="12" fill="#FFC24B" stroke="#F2F3F5" stroke-width="1.5" stroke-dasharray="5 4"></rect><line x1="760" y1="578" x2="760" y2="540" stroke="#F2F3F5" stroke-width="1.5"></line><circle cx="760" cy="533" r="9" fill="#0B0C0F" stroke="#F2F3F5" stroke-width="2"></circle></g>
+<rect x="800" y="660" width="170" height="30" rx="15" fill="#FFC24B"></rect><text x="885" y="680" text-anchor="middle" fill="#0B0C0F" font-size="13" font-weight="600" font-family="Geist, sans-serif">V2 · gira y toca para soltar</text>
+</svg>
+
+<aside aria-label="Qué colocar" style="position: absolute; left: 20px; top: 20px; width: 300px; box-sizing: border-box; padding: 16px; border-radius: 18px; background: rgba(21, 23, 28, 0.9); backdrop-filter: blur(18px); border: 1px solid rgba(255, 255, 255, 0.08); display: flex; flex-direction: column; gap: 10px">
+<span style="font: 500 11px Geist Mono, monospace; letter-spacing: 0.08em; color: #7B818C">PASO 3 · EL LUGAR</span>
+<div style="display: flex; align-items: center; gap: 10px; font: 500 14px Geist, sans-serif"><span style="width: 22px; height: 22px; border-radius: 11px; background: #1F9D5C; color: #0B0C0F; display: grid; place-items: center; font-size: 12px; font-weight: 700">✓</span>Punto de impacto</div>
+<div style="display: flex; align-items: center; gap: 10px; font: 500 14px Geist, sans-serif"><span style="width: 22px; height: 22px; border-radius: 11px; background: #1F9D5C; color: #0B0C0F; display: grid; place-items: center; font-size: 12px; font-weight: 700">✓</span>V1 · dónde quedó</div>
+<div style="display: flex; align-items: center; gap: 10px; padding: 8px 10px; margin: 0 -10px; border-radius: 10px; background: rgba(255, 194, 75, 0.10); font: 600 14px Geist, sans-serif"><span style="width: 22px; height: 22px; border-radius: 11px; background: #FFC24B; color: #0B0C0F; display: grid; place-items: center; font-size: 12px; font-weight: 700">3</span>V2 · dónde quedó</div>
+<div style="display: flex; align-items: center; gap: 10px; font: 500 13px Geist, sans-serif; color: #7B818C"><span style="width: 22px; height: 22px; border-radius: 11px; border: 1.5px dashed #3A3F47; box-sizing: border-box"></span>Opcional: iniciales, restos, huellas</div>
+</aside>
+
+<div role="tablist" aria-label="Herramienta del mapa" style="position: absolute; left: 50%; top: 20px; transform: translateX(-50%); display: flex; padding: 4px; border-radius: 14px; background: rgba(21, 23, 28, 0.9); border: 1px solid rgba(255, 255, 255, 0.1)">
+<button role="tab" aria-selected="true" style="height: 40px; padding: 0 16px; border: 0; border-radius: 10px; background: #F2F3F5; color: #0B0C0F; font: 600 14px Geist, sans-serif">Colocar</button>
+<button role="tab" aria-selected="false" style="height: 40px; padding: 0 16px; border: 0; border-radius: 10px; background: transparent; color: #A4A9B3; font: 500 14px Geist, sans-serif">Mover mapa</button>
+<button role="tab" aria-selected="false" style="height: 40px; padding: 0 16px; border: 0; border-radius: 10px; background: transparent; color: #A4A9B3; font: 500 14px Geist, sans-serif">Medir</button>
+</div>
+
+<button style="position: absolute; right: 20px; top: 20px; height: 42px; padding: 0 16px; border-radius: 21px; border: 1px solid rgba(255, 255, 255, 0.12); background: rgba(21, 23, 28, 0.9); color: #F2F3F5; font: 500 14px Geist, sans-serif">⤡ Contraer · Esc</button>
+
+<div style="position: absolute; right: 20px; bottom: 96px; display: flex; flex-direction: column; gap: 6px"><button aria-label="Acercar" style="width: 42px; height: 42px; border-radius: 12px; border: 1px solid #2A2E35; background: #15171C; color: #F2F3F5">+</button><button aria-label="Alejar" style="width: 42px; height: 42px; border-radius: 12px; border: 1px solid #2A2E35; background: #15171C; color: #F2F3F5">−</button><button aria-label="Deshacer" style="width: 42px; height: 42px; border-radius: 12px; border: 1px solid #2A2E35; background: #15171C; color: #F2F3F5">↶</button></div>
+
+<div style="position: absolute; left: 50%; bottom: 24px; transform: translateX(-50%); display: flex; align-items: center; gap: 16px; padding: 10px 10px 10px 20px; border-radius: 30px; background: rgba(21, 23, 28, 0.92); border: 1px solid rgba(255, 255, 255, 0.08)">
+<span style="font: 400 14px Geist, sans-serif; color: #A4A9B3">Falta: <b style="color: #F2F3F5">V2, dónde quedó</b></span>
+<button disabled style="height: 44px; padding: 0 22px; border-radius: 22px; border: 0; background: #23262D; color: #7B818C; font: 600 14px Geist, sans-serif; cursor: not-allowed">Siguiente: reconstruir →</button>
+</div>
+<span style="position: absolute; left: 20px; bottom: 20px; font: 400 11px Geist, sans-serif; color: #7B818C">© OpenStreetMap</span>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1440,"height":900}}'>
+class Component extends DCLogic {
+renderVals() {
+return {};
+}
+}
+</script>
+</body>
+</html>

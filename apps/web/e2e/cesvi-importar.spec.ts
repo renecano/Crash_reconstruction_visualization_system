@@ -1,17 +1,7 @@
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
-import { expect, test, type Page } from "@playwright/test";
-
-/** Lleva el recorrido al paso n (1 a 8 del recorrido completo) con «Siguiente» y «Anterior». */
-async function irAPaso(page: Page, n: number) {
-  const panel = page.getByTestId("panel-paso");
-  for (let k = 0; k < 10; k++) {
-    const actual = Number(await panel.getAttribute("data-paso"));
-    if (actual === n) return;
-    await page.getByTestId(actual < n ? "siguiente" : "anterior").click();
-  }
-  await expect(panel).toHaveAttribute("data-paso", String(n));
-}
+import { expect, test } from "@playwright/test";
+import { colocarTodo, irAPaso } from "./ayuda-recorrido";
 
 /**
  * Cargar un reporte (R5): el PDF del caso A2010930 (redactado; se genera aquí con Chromium a partir
@@ -78,6 +68,9 @@ test("@flujo /cesvi: cargar un reporte de CESVI en PDF y abrirlo en el recorrido
   await expect(page.getByTestId("escena")).toContainText("2 vehículos");
   await expect(page.getByTestId("vehiculos")).toContainText("Silverado");
 
+  // El lugar es obligatorio (V2): lo que pide la lista guiada, antes de reconstruir.
+  await irAPaso(page, 3);
+  await colocarTodo(page);
   await irAPaso(page, 4);
   await page.getByTestId("reconstruir").click();
   await expect(page.getByTestId("velocidades")).toBeVisible({ timeout: 60_000 });

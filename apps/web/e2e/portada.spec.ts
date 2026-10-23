@@ -120,11 +120,14 @@ test.describe("portada", () => {
     await expect(comparador.getByRole("img", { name: "Foto de la prueba real" })).toBeVisible();
   });
 
-  test("el cierre lleva al flujo guiado", async ({ page }) => {
+  test("el cierre entra a Croquis para CESVI; el flujo para el público queda al lado", async ({
+    page,
+  }) => {
     await page.goto("/");
     await irA(page, CAPITULOS.length - 1);
+    await expect(page.getByTestId("cta-cierre-publico")).toHaveAttribute("href", "/cuenta");
     await page.getByTestId("cta-cierre").click();
-    await expect(page).toHaveURL(/\/cuenta$/);
+    await expect(page).toHaveURL(/\/cesvi$/);
   });
 
   test("con teclado, enfocar un enlace de un capítulo lleva el scroll a ese capítulo", async ({
@@ -143,7 +146,8 @@ test.describe("portada", () => {
     await expect(page.locator('section[data-capitulo="apertura"] p.t-lanzamiento')).toHaveText(
       "Tell what happened. Watch it happen.",
     );
-    await expect(page.getByTestId("cta-apertura")).toHaveAttribute("href", "/en/cuenta");
+    await expect(page.getByTestId("cta-apertura")).toHaveAttribute("href", "/cesvi");
+    await expect(page.getByTestId("cta-publico")).toHaveAttribute("href", "/en/cuenta");
     await expect(page.getByRole("note").first()).toContainText("not a forensic report");
     // El relato de ejemplo se queda en su español original, marcado como tal.
     await expect(page.getByTestId("relato-en-vivo")).toHaveAttribute("lang", "es-MX");
