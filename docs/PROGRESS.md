@@ -983,6 +983,21 @@ Reglas de trabajo: `CLAUDE.md`. Especificación: `PLAN.md`.
 - **E1 del prompt v2 en el primer test, hecho** (PR #14). Sonnet 0.875 → 0.919 y Haiku 0.852 → 0.896. Además, E1 ahora compara cada contrafactual con la repetición del mismo relato (McNemar por tipo): ningún tipo difiere del ruido, y las reglas cambian con el modelo del vehículo en 6 de 52 pares (ADR 0012 §10).
 - **F8** cerrada el 2026-10-17 (PR #20 a #24). **F0** cerrado el 2026-10-10 (PR #1), **F1** el 2026-10-10 (PR #3), **F2** el 2026-10-13 (PR #4), **F3** el 2026-10-13 (PR #5), **F4** el 2026-10-13 (PR #6), **F5** el 2026-10-13 (PR #7), **F6** el 2026-10-14 (PR #8), **F7** el 2026-10-14 (PR #9; pendientes registrados); migración a Vercel el 2026-10-14 (PR #10); test CISS y prompt v2 el 2026-10-14 (PR #11).
 
+### Almacenamiento de Vercel (2026-10-23, ADR 0078)
+
+- **Antes:** 7.9 de 10 GB de Deployment Storage y 269 despliegues (193 vistas previas y 76 de producción).
+- **Solo despliegan `main` y una rama `preview`** (`apps/web/vercel.json`); las ramas de trabajo ya no crean vistas previas.
+- **Borradas 190 vistas previas viejas.** Se conservaron la producción actual y las 3 más recientes; quedan 79 despliegues y producción responde 200.
+- **Medición de un despliegue**, antes y después de `outputFileTracingExcludes`:
+  - funciones (suma por función): 141.5 → 140.6 MB;
+  - archivos únicos: 23.7 → 23.5 MB;
+  - estáticos: 21.2 MB de `.next/static` y 7.6 MB de `public/`.
+    Los datos crudos ya no entraban; la exclusión evita que entren.
+- **Pendiente:**
+  - las compilaciones de desarrollo de MapLibre (3.7 MB);
+  - la política de retención para los 75 despliegues de producción viejos (decisión de René);
+  - sacar pdfmake, docx y mediabunny de los trozos de SSR.
+
 ### Endurecimiento pendiente
 
 Lo que se pospone por el trabajo con CESVI no se borra: queda aquí para después.
