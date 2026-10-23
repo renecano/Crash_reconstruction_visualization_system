@@ -23,3 +23,5 @@ export * from "./historial";
 export * from "./ejemplo";
 export * from "./tramo";
 export * from "./comparacion-versiones";
+export * from "./declaracion";
+export * from "./comparacion-declarada";

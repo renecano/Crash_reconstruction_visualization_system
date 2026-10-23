@@ -354,6 +354,11 @@ export interface VisorEscenaProps {
   ambiente?: AmbienteVisual | null;
   /** Avisa el tiempo del reloj y la reconstrucción dibujada (p. ej. para mover el croquis 2D). */
   onTiempo?: (t: number, resultado: Resultado) => void;
+  /**
+   * Hipótesis que llegan de fuera (R7: la versión que declara un conductor): se dibujan como
+   * fantasmas o lado a lado, igual que las del panel, pero el panel no las quita.
+   */
+  hipotesisExternas?: readonly Hipotesis[];
 }
 
 export function VisorEscena({
@@ -365,6 +370,7 @@ export function VisorEscena({
   hayPropia = false,
   ambiente = null,
   onTiempo,
+  hipotesisExternas,
 }: VisorEscenaProps) {
   const t = useTextos(T);
   const { lang } = useIdioma();
@@ -430,7 +436,11 @@ export function VisorEscena({
   const calculando = vigente !== null && !vigente.completo;
   // Hipótesis alternativa de la escena actual (se descarta al cambiar de escena).
   const [hyp, setHyp] = useState<{ escena: EscenaVisor; lista: Hipotesis[] } | null>(null);
-  const hipotesis = useMemo(() => (hyp?.escena === escena ? hyp.lista : []), [hyp, escena]);
+  const propias = useMemo(() => (hyp?.escena === escena ? hyp.lista : []), [hyp, escena]);
+  const hipotesis = useMemo(
+    () => [...(hipotesisExternas ?? []), ...propias],
+    [hipotesisExternas, propias],
+  );
   const ghostResults = useMemo(() => hipotesis.map((h) => h.resultado), [hipotesis]);
   const [dividida, setDividida] = useState(false);
   const comparar = dividida && hipotesis.length > 0;
@@ -720,7 +730,7 @@ export function VisorEscena({
         <HypothesisPanel
           spec={spec}
           resultado={r}
-          hipotesis={hipotesis}
+          hipotesis={propias}
           onChange={(lista) => setHyp({ escena, lista })}
         />
       ) : null}

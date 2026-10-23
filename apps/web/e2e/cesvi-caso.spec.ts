@@ -13,7 +13,17 @@ const GRABACION = JSON.parse(
   ),
 ) as { salida: unknown };
 
+/** La lectura grabada de la declaración del conductor de V2 en ese mismo caso (R7, ADR 0070). */
+const DECLARACION = JSON.parse(
+  readFileSync(
+    join(__dirname, "../../../data/cesvi/grabaciones/declaracion/declaracion-e2e.json"),
+    "utf8",
+  ),
+) as { declaracion: string; salida: unknown };
+
 test("@flujo /cesvi/caso: de la narración del perito al mapa y a la escena", async ({ page }) => {
+  // Reconstruye y además simula la versión declarada del conductor (R7): dos corridas del solver.
+  test.setTimeout(120_000);
   const errores: string[] = [];
   page.on("pageerror", (e) => errores.push(e.message));
   await page.route("https://tiles.openfreemap.org/**", (r) =>
@@ -30,6 +40,12 @@ test("@flujo /cesvi/caso: de la narración del perito al mapa y a la escena", as
     r.fulfill({
       contentType: "application/json",
       body: JSON.stringify({ metodo: "claude", salida: GRABACION.salida }),
+    }),
+  );
+  await page.route("**/api/cesvi/declaracion", (r) =>
+    r.fulfill({
+      contentType: "application/json",
+      body: JSON.stringify({ metodo: "claude", salida: DECLARACION.salida }),
     }),
   );
   await page.goto("/cesvi/caso");
@@ -98,6 +114,39 @@ test("@flujo /cesvi/caso: de la narración del perito al mapa y a la escena", as
   // El croquis 2D sigue al reloj del 3D: los vehículos de la reconstrucción se mueven en el mapa.
   await expect(mapa.locator('[data-movil="V1"]')).toHaveCount(1, { timeout: 30_000 });
   await expect(mapa.locator('[data-movil="V2"]')).toHaveCount(1);
+
+  // R7: la declaración del conductor de V2, leída y simulada, contra la reconstrucción y en el 3D.
+  await page.getByTestId("abrir-declaracion").click();
+  await page.getByTestId("texto-declaracion").fill(DECLARACION.declaracion);
+  await page.getByTestId("declarante").selectOption("V2");
+  await page.getByTestId("leer-declaracion").click();
+  await expect(page.getByTestId("lo-que-declara")).toContainText("40 km/h");
+  const queCambia = page.getByTestId("que-cambia");
+  await expect(queCambia).toBeVisible({ timeout: 60_000 });
+  await expect(queCambia.locator('[data-fila="velocidad-V2"]')).toContainText("40 km/h");
+  await expect(queCambia.locator('[data-fila="posicion_final-V2"]')).toContainText(
+    "m de la reconstruida",
+  );
+  // En el 3D, la versión declarada va como fantasmas sobre la reconstrucción, o lado a lado.
+  await expect
+    .poll(
+      () => page.evaluate(() => (window as { __croquisGhosts?: number }).__croquisGhosts ?? 0),
+      {
+        timeout: 30_000,
+      },
+    )
+    .toBeGreaterThan(0);
+  await page.getByTestId("comparar-lado-a-lado").click();
+  await expect(page.getByTestId("visor-hipotesis")).toContainText("versión declarada (V2)");
+  await page.getByTestId("comparar-lado-a-lado").click();
+  // La sugerencia sale solo si el perito la pide, y él la confirma o la descarta.
+  await expect(page.getByTestId("sugerencia-declarada")).toHaveCount(0);
+  await page.getByTestId("pedir-sugerencia").check();
+  await expect(page.getByTestId("sugerencia-declarada")).toContainText("versión declarada");
+  await page.getByRole("button", { name: "Descartar" }).click();
+  await expect(page.getByTestId("decision-sugerencia")).toHaveText(
+    "El perito descartó la sugerencia.",
+  );
 
   // 5. La escena, descargada: contrato 2.0.0 con lo que marcó el perito.
   const descarga = page.waitForEvent("download");
