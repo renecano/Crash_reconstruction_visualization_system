@@ -10,7 +10,7 @@
  * Solo servidor. La conversión a `lugar.red_vial` la hace el navegador (`applyMap`), para que el
  * resultado sea idéntico al de las escenas canónicas.
  */
-import { overpassQuery, type OverpassResponse } from "@croquis/croquis-2d";
+import { overpassQuery, overpassQueryObjetos, type OverpassResponse } from "@croquis/croquis-2d";
 import {
   MemoryRateLimiter,
   type RateLimiter,
@@ -54,6 +54,8 @@ export const OsmIn = z.object({
   lat: z.coerce.number().min(-90).max(90),
   lon: z.coerce.number().min(-180).max(180),
   radio: z.coerce.number().int().min(50).max(300).default(150),
+  /** Qué se consulta: las calles (por omisión) o los objetos del lugar para el 3D (R10). */
+  que: z.enum(["calles", "objetos"]).default("calles"),
 });
 
 export interface OsmCache {
@@ -101,9 +103,18 @@ export function defaultOsmDeps(env: NodeJS.ProcessEnv = process.env): OsmDeps {
   };
 }
 
-/** Clave de caché: el punto redondeado a ~1 m (5 decimales) y el radio. */
-export function cacheKey(lat: number, lon: number, radio: number): string {
-  return `croquis:osm:${lat.toFixed(5)}:${lon.toFixed(5)}:${radio}`;
+/**
+ * Clave de caché: el punto redondeado a ~1 m (5 decimales) y el radio. La de las calles no cambia
+ * (sirve lo ya guardado); los objetos del lugar llevan la suya.
+ */
+export function cacheKey(
+  lat: number,
+  lon: number,
+  radio: number,
+  que: "calles" | "objetos" = "calles",
+): string {
+  const base = que === "objetos" ? "croquis:osm-objetos" : "croquis:osm";
+  return `${base}:${lat.toFixed(5)}:${lon.toFixed(5)}:${radio}`;
 }
 
 export class OsmError extends Error {
@@ -128,19 +139,21 @@ export interface OsmOut {
  * Un error de la consulta (4xx) no se reintenta.
  */
 export async function callesCerca(
-  input: z.infer<typeof OsmIn>,
+  input: Omit<z.infer<typeof OsmIn>, "que"> & { que?: "calles" | "objetos" },
   clientKey: string,
   deps: OsmDeps,
 ): Promise<OsmOut> {
   const lat = Number(input.lat.toFixed(5));
   const lon = Number(input.lon.toFixed(5));
-  const key = cacheKey(lat, lon, input.radio);
+  const que = input.que ?? "calles";
+  const key = cacheKey(lat, lon, input.radio, que);
   const cached = await deps.cache.get(key);
   if (cached) return { respuesta: cached, cache: "hit", instancia: null };
   if (!(await deps.limiter.allow(clientKey))) {
     throw new OsmError(429, "Demasiadas consultas al mapa en una hora. Intenta más tarde.");
   }
-  const body = new URLSearchParams({ data: overpassQuery(lat, lon, input.radio) });
+  const consulta = que === "objetos" ? overpassQueryObjetos : overpassQuery;
+  const body = new URLSearchParams({ data: consulta(lat, lon, input.radio) });
   const now = deps.now ?? Date.now;
   const deadline = now() + BUDGET_S * 1000;
   rounds: for (let round = 0; round < ROUNDS; round++) {

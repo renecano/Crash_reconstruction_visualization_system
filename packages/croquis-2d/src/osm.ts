@@ -36,6 +36,8 @@ export interface OsmNode {
   id: number;
   lat: number;
   lon: number;
+  /** Las etiquetas del nodo (árboles, postes); las calles no las usan. */
+  tags?: Record<string, string>;
 }
 export interface OsmWay {
   type: "way";
@@ -402,4 +404,94 @@ export function applyMap(
   };
   lugar.red_vial = red;
   return { spec: out, nodo, vias: red.vias.length };
+}
+
+// --- Objetos del lugar (R10, ADR 0081) ------------------------------------------------------------
+
+/**
+ * Consulta de los objetos del lugar que el 3D dibuja: árboles, postes de alumbrado y de luz, y
+ * bardas y muros. Va aparte de la de calles (`overpassQuery`), que comparten los extractos
+ * versionados.
+ */
+export function overpassQueryObjetos(lat: number, lon: number, radioM: number): string {
+  const a = `around:${radioM},${lat},${lon}`;
+  return (
+    `[out:json][timeout:25];(` +
+    `node(${a})["natural"="tree"];` +
+    `node(${a})["highway"="street_lamp"];` +
+    `node(${a})["power"~"^(pole|tower)$"];` +
+    `way(${a})["barrier"~"^(wall|fence|retaining_wall)$"];` +
+    `);out body;>;out skel qt;`
+  );
+}
+
+/** Un objeto del entorno salido del mapa, en metros del marco de la escena (sin girar). */
+export interface ObjetoDelMapa {
+  id: string;
+  tipo: "arbol" | "poste" | "barda" | "muro";
+  posicion: Point;
+  rumbo_deg?: number;
+  largo_m?: number;
+  material?: "vegetal" | "metal" | "concreto" | "mamposteria";
+  nota: string;
+}
+
+/**
+ * Los objetos de la respuesta alrededor de un origen, del más cercano al más lejano, hasta `max`.
+ * Una barda o un muro van por tramos (cada tramo entre dos nodos), con su largo y su rumbo.
+ */
+export function objetosDelMapa(
+  resp: OverpassResponse,
+  o: { lat: number; lon: number; radioM: number; max: number },
+): ObjetoDelMapa[] {
+  // `parts` solo deja las calles: las bardas y los muros se toman de la respuesta.
+  const { nodes } = parts(resp);
+  const ways = resp.elements.filter((e): e is OsmWay => e.type === "way");
+  const out: ObjetoDelMapa[] = [];
+  for (const n of nodes.values()) {
+    const t = n.tags ?? {};
+    const tipo =
+      t.natural === "tree"
+        ? "arbol"
+        : t.highway === "street_lamp" || t.power === "pole" || t.power === "tower"
+          ? "poste"
+          : null;
+    if (!tipo) continue;
+    const p = enu(n.lat, n.lon, o.lat, o.lon);
+    out.push({
+      id: `osm-${n.id}`,
+      tipo,
+      posicion: p,
+      ...(tipo === "arbol" ? { material: "vegetal" as const } : {}),
+      nota: `OpenStreetMap, nodo ${n.id} (${tipo === "arbol" ? "natural=tree" : (t.highway ?? `power=${t.power}`)}).`,
+    });
+  }
+  for (const w of ways) {
+    const b = w.tags?.barrier;
+    if (!b || !/^(wall|fence|retaining_wall)$/.test(b)) continue;
+    const pts = w.nodes
+      .map((id) => nodes.get(id))
+      .filter((n): n is OsmNode => n !== undefined)
+      .map((n) => enu(n.lat, n.lon, o.lat, o.lon));
+    for (let k = 0; k + 1 < pts.length; k++) {
+      const a = pts[k]!;
+      const c = pts[k + 1]!;
+      const largo = Math.hypot(c.x - a.x, c.y - a.y);
+      if (largo < 0.5) continue;
+      out.push({
+        id: `osm-${w.id}-${k}`,
+        tipo: b === "fence" ? "barda" : "muro",
+        posicion: { x: (a.x + c.x) / 2, y: (a.y + c.y) / 2 },
+        // Rumbo desde el norte (grados), como el de los vehículos.
+        rumbo_deg: Number(((Math.atan2(c.x - a.x, c.y - a.y) * 180) / Math.PI).toFixed(1)),
+        largo_m: Number(largo.toFixed(2)),
+        ...(b === "fence" ? {} : { material: "mamposteria" as const }),
+        nota: `OpenStreetMap, vía ${w.id}, tramo ${k + 1} (barrier=${b}).`,
+      });
+    }
+  }
+  return out
+    .filter((x) => Math.hypot(x.posicion.x, x.posicion.y) <= o.radioM)
+    .sort((x, y) => Math.hypot(x.posicion.x, x.posicion.y) - Math.hypot(y.posicion.x, y.posicion.y))
+    .slice(0, o.max);
 }

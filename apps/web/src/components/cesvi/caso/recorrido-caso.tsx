@@ -36,7 +36,7 @@ import {
 import { guardarCaso, idNuevo, type CasoExpediente } from "@/lib/casos";
 import { avisarCambio } from "@/lib/casos-navegador";
 import type { DatosDictamenCaso } from "@/lib/dictamen-caso";
-import { callesCerca } from "@/lib/calles-del-mapa";
+import { callesCerca, objetosCerca } from "@/lib/calles-del-mapa";
 import { downloadBytes } from "@/lib/download";
 import {
   CLAVES_PASOS,
@@ -112,6 +112,7 @@ export function RecorridoCaso({ inicial }: { inicial: CasoExpediente }) {
   const [rumbosImpacto, setRumbosImpacto] = useState<Record<number, number>>({});
   const [historial, setHistorial] = useState<Expediente[]>([]);
   const [calles, setCalles] = useState<OverpassResponse | null>(null);
+  const [objetos, setObjetos] = useState<OverpassResponse | null>(null);
   const [medida, setMedida] = useState<number | null>(null);
   const [mapa, setMapa] = useState<MapaMl | null>(null);
   const [moviles, setMoviles] = useState<PosicionMovil[]>([]);
@@ -324,6 +325,9 @@ export function RecorridoCaso({ inicial }: { inicial: CasoExpediente }) {
     let vivo = true;
     void callesCerca([lon, lat]).then((c) => {
       if (vivo) setCalles(c);
+    });
+    void objetosCerca([lon, lat]).then((o) => {
+      if (vivo) setObjetos(o);
     });
     return () => {
       vivo = false;
@@ -797,6 +801,7 @@ export function RecorridoCaso({ inicial }: { inicial: CasoExpediente }) {
                 onExportApi={setExportApi}
                 onPosiciones={setMoviles}
                 calles={calles}
+                objetos={objetos}
               />
             </div>
           ) : null}

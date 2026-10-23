@@ -6,7 +6,7 @@
  * esperarlas y se agregan al 3D cuando llegan (la primera consulta de un lugar a Overpass puede
  * tardar más de 40 s; después queda en caché).
  */
-import { redVialFrom, type OverpassResponse } from "@croquis/croquis-2d";
+import { objetosDelMapa, redVialFrom, type OverpassResponse } from "@croquis/croquis-2d";
 
 /** Radio de la consulta de calles alrededor del impacto (m). */
 export const RADIO_CALLES_M = 150;
@@ -55,7 +55,7 @@ export function callesCerca(origen: readonly [number, number]): Promise<Overpass
   const clave = `${origen[0].toFixed(3)},${origen[1].toFixed(3)}`;
   let p = pedidas.get(clave);
   if (!p) {
-    p = callesDelMapa(origen).then((r) => {
+    p = consultarMapa(origen, "calles").then((r) => {
       if (!r) pedidas.delete(clave);
       return r;
     });
@@ -64,16 +64,17 @@ export function callesCerca(origen: readonly [number, number]): Promise<Overpass
   return p;
 }
 
-/** Las calles de OpenStreetMap alrededor del impacto (`/api/osm`), o null si no llegan a tiempo. */
-export async function callesDelMapa(
+/** Lo de OpenStreetMap alrededor del impacto (`/api/osm`), o null si no llega a tiempo. */
+async function consultarMapa(
   origen: readonly [number, number],
+  que: "calles" | "objetos",
 ): Promise<OverpassResponse | null> {
   const ac = new AbortController();
   const t = setTimeout(() => ac.abort(), ESPERA_CALLES_MS);
   try {
     const [lon, lat] = origen;
     const r = await fetch(
-      `/api/osm?lat=${lat.toFixed(5)}&lon=${lon.toFixed(5)}&radio=${RADIO_CALLES_M}`,
+      `/api/osm?lat=${lat.toFixed(5)}&lon=${lon.toFixed(5)}&radio=${RADIO_CALLES_M}&que=${que}`,
       { signal: ac.signal },
     );
     if (!r.ok) return null;
@@ -83,4 +84,56 @@ export async function callesDelMapa(
   } finally {
     clearTimeout(t);
   }
+}
+
+// --- Los objetos del lugar (R10, ADR 0081) --------------------------------------------------------
+
+/** El contrato admite 64 objetos del entorno: los del mapa llenan lo que dejan los de la escena. */
+const MAX_OBJETOS = 64;
+
+/** La escena con los árboles, postes y bardas del mapa (fuente «mapa»), después de los suyos. */
+export function conObjetosDelMapa(
+  spec: Json,
+  origen: readonly [number, number],
+  resp: OverpassResponse,
+  radioM = RADIO_CALLES_M,
+): Json {
+  const entorno = (spec.entorno ?? {}) as Json;
+  const propios = (entorno.objetos ?? []) as Json[];
+  const max = MAX_OBJETOS - propios.length;
+  if (max <= 0) return spec;
+  const [lon, lat] = origen;
+  const os = objetosDelMapa(resp, { lat, lon, radioM, max });
+  if (!os.length) return spec;
+  const out = structuredClone(spec);
+  (out.entorno as Json).objetos = [
+    ...propios,
+    ...os.map((o) => ({
+      id: o.id,
+      tipo: o.tipo,
+      posicion: { x: Number(o.posicion.x.toFixed(2)), y: Number(o.posicion.y.toFixed(2)) },
+      ...(o.rumbo_deg !== undefined ? { rumbo_deg: o.rumbo_deg } : {}),
+      ...(o.largo_m !== undefined
+        ? { largo: { valor: o.largo_m, unidad: "m", fuente: "mapa", confianza: 0.9 } }
+        : {}),
+      ...(o.material ? { material: o.material } : {}),
+      procedencia: { fuente: "mapa", confianza: 0.9, nota: o.nota },
+    })),
+  ];
+  return out;
+}
+
+const pedidosObjetos = new Map<string, Promise<OverpassResponse | null>>();
+/** Los objetos del lugar (`/api/osm?que=objetos`), una consulta por lugar como las calles. */
+export function objetosCerca(origen: readonly [number, number]): Promise<OverpassResponse | null> {
+  const clave = `${origen[0].toFixed(3)},${origen[1].toFixed(3)}`;
+  let p = pedidosObjetos.get(clave);
+  if (!p) {
+    p = consultarMapa(origen, "objetos").then((r) => {
+      if (!r) pedidosObjetos.delete(clave);
+      return r;
+    });
+    pedidosObjetos.set(clave, p);
+  }
+  return p;
 }

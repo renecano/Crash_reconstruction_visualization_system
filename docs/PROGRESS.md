@@ -159,7 +159,8 @@ Reglas de trabajo: `CLAUDE.md`. Especificación: `PLAN.md`.
       - el 3D dibuja la red de OpenStreetMap alrededor del impacto, en el marco de la escena, en lugar de la recta de la plantilla;
       - se piden al marcar el impacto y el 3D las agrega cuando llegan (la física no las espera: la primera consulta a Overpass tardó 42.7 s en local);
       - con la atribución ODbL en la leyenda.
-    - **Siguiente paso concreto:** R10, los objetos del lugar (árboles, postes y bardas de OpenStreetMap con fuente «mapa»). Lo grande de R10 sigue esperando la fuente de los modelos de vehículos («Bloqueado»).
+    - **R10, los objetos del lugar** (ADR 0081): árboles, postes y bardas de OpenStreetMap entran al 3D como objetos con fuente «mapa». En México casi no están mapeados (AXA: 0; el cruce de Toluca: 0; Reforma, CDMX: 7), así que el 3D muestra lo que hay.
+    - **Siguiente paso concreto:** lo grande de R10 espera a René («Bloqueado»): la fuente de los modelos de vehículos, la revisión de las capturas y la medición en la computadora de demo.
     1. **V2-1, marco:**
        - **la barra:** los nombres de los 8 pasos siempre, «← Casos», la barra de avance arriba y los pasos futuros cerrados hasta completar lo obligatorio;
        - **los botones:** «Siguiente: el hecho →», desactivado y diciendo qué falta (`lib/pasos-caso.ts`, con pruebas);

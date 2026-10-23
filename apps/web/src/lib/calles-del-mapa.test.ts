@@ -10,7 +10,7 @@ import {
 import type { OverpassResponse } from "@croquis/croquis-2d";
 import { validateEscena } from "@croquis/scene-schema";
 import { describe, expect, it } from "vitest";
-import { conCallesDelMapa } from "./calles-del-mapa";
+import { conCallesDelMapa, conObjetosDelMapa } from "./calles-del-mapa";
 
 const aqui = dirname(fileURLToPath(import.meta.url));
 const grabada = JSON.parse(
@@ -64,5 +64,25 @@ describe("las calles del mapa en el 3D de un caso (R10)", () => {
 
   it("sin calles cerca, la escena queda igual", () => {
     expect(conCallesDelMapa(base.spec, base.origen!, { elements: [] })).toBe(base.spec);
+  });
+
+  it("los árboles y postes del lugar entran como objetos del entorno con fuente «mapa» (R10)", () => {
+    const objetos: OverpassResponse = {
+      elements: [
+        { type: "node", id: 21, ...m(8, 6), tags: { natural: "tree" } },
+        { type: "node", id: 22, ...m(-5, 7), tags: { highway: "street_lamp" } },
+      ],
+    } as OverpassResponse;
+    const spec = conObjetosDelMapa(base.spec, base.origen!, objetos);
+    expect(validateEscena(spec).ok).toBe(true);
+    const os = (
+      spec.entorno as { objetos: { id: string; tipo: string; procedencia: { fuente: string } }[] }
+    ).objetos;
+    expect(
+      os.filter((o) => o.id.startsWith("osm-")).map((o) => [o.tipo, o.procedencia.fuente]),
+    ).toEqual([
+      ["poste", "mapa"],
+      ["arbol", "mapa"],
+    ]);
   });
 });

@@ -1,4 +1,4 @@
-# ADR 0081 — R10: las calles reales del lugar en el 3D de los casos
+# ADR 0081 — R10: el lugar real en el 3D de los casos (calles y objetos)
 
 - **Estado:** aceptado (2026-10-23).
 - **Contexto:** R10 pide un escenario «según el lugar real del mapa».
@@ -19,7 +19,11 @@
    - **El solver no las usa para la física** (solo en sus revisiones de consistencia). Se reconstruye sin esperarlas y el 3D las agrega cuando llegan (`Visor3dCaso`).
    - **Si no llegan,** el 3D queda con la plantilla, como antes.
 3. **La atribución de OpenStreetMap (ODbL)** aparece en la leyenda del 3D cuando la escena trae las calles.
-4. **CI no consulta la red:** las e2e responden `/api/osm` con una respuesta vacía.
+4. **Los objetos del lugar:**
+   - **La consulta:** `/api/osm?que=objetos` (`overpassQueryObjetos`) trae árboles (`natural=tree`), postes de alumbrado y de luz (`highway=street_lamp`, `power=pole|tower`), y bardas y muros (`barrier=wall|fence|retaining_wall`). Va aparte de la de calles, que comparten los extractos versionados, y tiene su propia clave de caché; la de calles no cambia.
+   - **En el 3D** entran como objetos del entorno con fuente «mapa» y la nota de su nodo o vía (`objetosDelMapa`, `conObjetosDelMapa`). Van del más cercano al impacto al más lejano, hasta llenar los 64 que admite el contrato después de los de la escena. Las bardas y los muros van por tramos, con su largo y su rumbo.
+   - **Se piden y llegan** como las calles.
+5. **CI no consulta la red:** las e2e responden `/api/osm` con una respuesta vacía.
 
 ## Evidencia
 
@@ -27,9 +31,19 @@
   - un cruce norte–oriente queda en el marco de la escena sin girar;
   - la escena con las calles cumple el contrato (`validateEscena`);
   - sin calles cerca, la escena queda igual.
+- **Pruebas de los objetos:**
+  - la conversión (orden, radio, máximo, tramos de muro con su largo y su rumbo);
+  - la consulta;
+  - la escena con objetos cumple el contrato;
+  - la clave de caché de cada consulta.
+- **Cobertura medida con Overpass real (2026-10-23):**
+  - AXA (carretera rural): 0 objetos;
+  - el cruce de Toluca de F8d: 0;
+  - Paseo de la Reforma, CDMX: 2 árboles, 4 muros y 1 barda.
+  - En México, OpenStreetMap casi no tiene árboles ni postes mapeados: el 3D muestra lo que hay y no inventa.
 - **Captura de AXA con Overpass real:** se ven los dos cuerpos de la carretera Los Mochis–Cd. Obregón (cuota), con los vehículos sobre el suyo y la atribución en la leyenda.
 
 ## Límites
 
 - **Las revisiones de consistencia del solver** (un vehículo fuera de la vía) no ven las calles, porque llegan después de reconstruir.
-- **Solo hay calles:** árboles, postes y bardas de OpenStreetMap como objetos del entorno quedan pendientes.
+- **Lo que no está en OpenStreetMap no aparece.** Dibujar árboles o postes «típicos» sería inventar el lugar.
