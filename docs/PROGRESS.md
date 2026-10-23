@@ -146,7 +146,34 @@ Reglas de trabajo: `CLAUDE.md`. Especificación: `PLAN.md`.
     - **Lectura:**
       - **Contra lo que CESVI escribió en el título,** Croquis gana 18.6 puntos a su línea base. Contra la etiqueta de R0, 4.2.
       - **Siguen débiles:** salida del camino, «otra» y reversa.
-  - **Fase actual (2026-10-23): la prioridad alta de «Endurecimiento pendiente», después R10.** R9 quedó en `main` (#97, ADR 0073) y espera la revisión visual de René («Bloqueado»). Los puntos 1 (las calles del mapa en el croquis del dictamen, ADR 0074), 2 (la validación guardada con el caso, ADR 0075) y 4 (las modalidades flojas, R4d, ADR 0076) están hechos. El punto 3 espera los PDF originales («Bloqueado»). **Siguiente paso concreto:** R10, la calidad visual del 3D.
+  - **Fase actual (2026-10-23): unificar /cesvi en una sola aplicación** (pedido de René, ADR 0079, rama `feat/cesvi-unificado`). Después: R10 (rama `feat/r10-calidad-visual`, con los efectos de cine a medias: `packages/viewer/src/cinematic-fx.ts`; siguen TRAA, SSR, profundidad de campo y desenfoque en `PostEffects`, ADR 0077) y regrabar el video demo con el comando de siempre.
+    - **Plan de la unificación:**
+      1. **`/cesvi` es la lista de casos:** «Caso nuevo», «Cargar un reporte», los casos guardados en este equipo (`localStorage`) y los de ejemplo (AXA A2010930 y los reportes de la reproducción).
+      2. **Rutas nuevas:**
+         - `/cesvi/casos/a2010930` (AXA);
+         - `/cesvi/casos/nuevo`;
+         - `/cesvi/casos/importar`;
+         - `/cesvi/casos/reporte/[id]`;
+         - `/cesvi/casos/guardado/[id]`.
+           Las viejas (`/cesvi/caso`, `/cesvi/importar`, `/cesvi/reproduccion/[id]`) redirigen en `next.config.ts`.
+      3. **La misma barra del recorrido** (pasos, Presentar / Trabajar, tema) en un componente compartido, para AXA y para los casos de expediente.
+      4. **Los casos de expediente usan los 8 pasos del recorrido:**
+         1. el caso (o la carga del reporte);
+         2. el hecho (narración y preguntas);
+         3. el lugar (mapa, colocar);
+         4. la reconstrucción (solver, 3D, carambolas, declaración);
+         5. los daños;
+         6. los números (verificación CESVI y velocidades);
+         7. contra el reporte de CESVI (solo si hay reporte: `comparar()` de E-R4);
+         8. el dictamen y guardar el caso.
+            El mapa se queda montado todo el recorrido; los cuadros del 3D se capturan una vez para el dictamen.
+      5. **AXA** conserva todo lo que muestra hoy en sus 8 pasos.
+      6. **«Reproducción de reportes»** se queda como página de evidencia; cada reporte abre su caso.
+      7. **e2e:**
+         - AXA desde la lista;
+         - caso nuevo hasta el dictamen;
+         - importar un reporte y abrirlo en el recorrido.
+  - **Antes (2026-10-23): la prioridad alta de «Endurecimiento pendiente», después R10.** R9 quedó en `main` (#97, ADR 0073) y espera la revisión visual de René («Bloqueado»). Los puntos 1 (las calles del mapa en el croquis del dictamen, ADR 0074), 2 (la validación guardada con el caso, ADR 0075) y 4 (las modalidades flojas, R4d, ADR 0076) están hechos. El punto 3 espera los PDF originales («Bloqueado»). **Siguiente paso concreto:** R10, la calidad visual del 3D.
   - **R9** (pase de diseño de lo nuevo de R0–R8, endurecimiento y lo que diga CESVI). R8 quedó lista el 2026-10-23 (rama `feat/r8-dictamen`, ADR 0072); R7 y R4b, el 2026-10-22. La voz del video quedó aprobada por René el 2026-10-23.
     - **Siguiente paso concreto:** el pase de diseño con las maquetas de `docs/cesvi/rediseno/`, el modo Presentar / Trabajar y los temas, en este orden:
       1. el visor 3D en el recorrido;
