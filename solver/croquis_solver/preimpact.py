@@ -111,6 +111,28 @@ class LaneChangePath(Path):
 
 
 @dataclass(frozen=True)
+class ReversePath(Path):
+    """El vehículo recorre `inner` en reversa: avanza por la curva con la parte posterior por
+    delante. El rumbo de `pose` es el del frente (el de la curva más π); el sentido de marcha es el
+    de la curva (`travel_heading`)."""
+
+    inner: Path
+
+    @property
+    def length(self) -> float:  # type: ignore[override]
+        return self.inner.length
+
+    def pose(self, s: float) -> Pose:
+        p = self.inner.pose(s)
+        return Pose(p.x, p.y, wrap_angle(p.heading + math.pi), p.curvature)
+
+
+def travel_heading(path: Path, heading: float) -> float:
+    """El rumbo del movimiento a partir del rumbo del frente: el mismo, salvo en reversa."""
+    return wrap_angle(heading + math.pi) if isinstance(path, ReversePath) else heading
+
+
+@dataclass(frozen=True)
 class CompositePath(Path):
     parts: tuple[Path, ...]
 
