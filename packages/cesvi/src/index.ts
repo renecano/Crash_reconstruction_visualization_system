@@ -25,3 +25,4 @@ export * from "./tramo";
 export * from "./comparacion-versiones";
 export * from "./declaracion";
 export * from "./comparacion-declarada";
+export * from "./titulo-reporte";
