@@ -169,7 +169,49 @@ Cada fase se cierra con su criterio en verde, merge y despliegue, y con su resum
 - Los recursos son los mismos de R10.
 - **Listo cuando:** un caso del corpus sale como video de calidad cinematográfica con un solo comando en la computadora de la demo, y René aprueba el resultado.
 
-**Orden:** R0 → R1 → R2 → R3 → R6 → R4 → R5 → R7 → R8 → R9 → R10 → R11.
+### R12 · Arquitectura multiagente (después de R11; no se empieza todavía)
+
+René la pidió el 2026-10-23. El porqué y cómo se mantiene reproducible están en el ADR 0084. Mientras tanto, lo que se construya no debe estorbarla: módulos con entradas y salidas explícitas, sin estado global, y todo lo aleatorio con semilla.
+
+#### R12a · Los conductores como agentes (simulación basada en agentes)
+
+- **Antes del impacto, cada conductor:**
+  - percibe la visibilidad, la luz, el clima y los otros vehículos;
+  - decide frenar, volantear o seguir, con su tiempo de reacción;
+  - actúa sobre su vehículo.
+- **En las carambolas,** cada conductor reacciona a los demás.
+- **El perito prueba hipótesis:** «¿y si V2 frenaba 0.5 s antes?».
+- **Dónde va:** en el solver Python de referencia y en su port TS, con pruebas de paridad. El comportamiento de cada conductor es determinista o lleva semilla explícita: el mismo caso da el mismo resultado.
+- **Contrato:** lo que hace falta (tiempo de reacción, la decisión y su instante) se agrega a `escena.schema.json`, con fuente y rango como cualquier dato. Zod y Pydantic se regeneran.
+- **Listo cuando:**
+  - un caso del corpus se reconstruye con los conductores como agentes y da lo mismo en Python y en TS;
+  - una hipótesis del perito cambia el resultado como dice la física;
+  - una carambola muestra la reacción en cadena.
+
+#### R12b · Agentes especialistas con pizarra (blackboard)
+
+- **La pizarra es el expediente.** Los módulos de hoy pasan a ser agentes que actúan cuando aparece en la pizarra algo que les toca:
+  - **Lector IA:** la narración a `EscenaSpec` (`packages/cesvi/src/server/escena.ts` y `hecho.ts`);
+  - **Verificador de citas:** que cada dato leído tenga su cita en la narración;
+  - **Validador:** `validateEscena` y `checkExpediente`;
+  - **Físico:** el solver;
+  - **Verificador CESVI:** el método de CESVI (`verificacion.ts` y `calculos.ts`);
+  - **Comparador:** la declaración del conductor y los reportes (`comparacion-declarada.ts` y `reproduccion.ts`);
+  - **Preguntador:** lo que falta y se le pregunta al perito;
+  - **Redactor:** el dictamen (`apps/web/src/lib/dictamen-caso.ts`).
+- **Coordinación real,** no una cadena fija:
+  - el Verificador rechaza un dato y pide releer;
+  - cuando la física no cuadra, el Físico pide evidencia al Preguntador.
+- **El coordinador:**
+  - decide quién actúa, con un orden determinista;
+  - lleva la bitácora de mensajes, visible en la trazabilidad del dictamen.
+- **La IA sigue sin producir números físicos finales:** el Lector y el Preguntador traducen, el Físico calcula.
+- **Listo cuando:**
+  - el corpus de R4 da los mismos números que antes de R12b (o mejores, medidos en `eval/`);
+  - la bitácora de un caso sale en su dictamen;
+  - el mismo caso con las mismas respuestas grabadas da la misma bitácora.
+
+**Orden:** R0 → R1 → R2 → R3 → R6 → R4 → R5 → R7 → R8 → R9 → R10 → R11 → R12 (R12a, luego R12b).
 
 R6 (carambolas) va después de R3 y antes de R4 (René, 2026-10-21): el corpus tiene 104 reportes con 3 o más vehículos y 144 con más de un impacto, y la evaluación de R4 debe cubrirlos.
 
