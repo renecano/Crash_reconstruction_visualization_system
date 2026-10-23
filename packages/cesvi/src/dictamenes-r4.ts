@@ -12,7 +12,8 @@
  * - Posiciones finales: si Croquis tiene la posición final de cada vehículo que describe CESVI.
  *
  * Las reglas se ajustaron con la muestra de desarrollo y se congelaron antes de medir la prueba
- * (ADR 0067).
+ * (ADR 0067; v2 en R4b, ADR 0069; v3 en R4d, ADR 0076: incendio y daño del motor como «otra», y la
+ * reversa como maniobra, no como pieza).
  */
 import type { Expediente, PosicionDescrita } from "./corpus";
 import type { Narracion } from "./narracion";
@@ -38,7 +39,18 @@ const RX_TECHO = /\b(toldo|techo)\b/;
 /** Un objeto fijo nombrado en la narración, aunque no diga que lo golpeó (último recurso, R4b). */
 const RX_OBJETO_NOMBRADO =
   /\b(poste|muro|arbol|barda|guarnicion|barrera|contencion|columna|pared|malla|reja|piedra|roca|puente|caseta|fachada|luminaria|arbotante)/;
-const RX_REVERSA = /\b(revers|retroced|marcha atras|en reversa)/;
+/**
+ * Una maniobra en reversa. R4d (desarrollo): no la pieza («sensor de reversa», «luz de reversa») ni
+ * «el reverso» de una pieza, que dispararon falsos casos de reversa.
+ */
+const RX_REVERSA =
+  /\b(?<!(?:sensor|sensores|luz|luces|camara|alarma|foco|focos|faro|faros|calavera|lampara) de )(reversa(?:ba|ndo)?|marcha atras|retroced\w*)\b/;
+/**
+ * Un daño mecánico del motor (R4d, desarrollo): biela, pistón, lubricación, calentamiento o agua
+ * succionada. Con un solo vehículo, CESVI lo titula «daños en motor» (otra), no un choque.
+ */
+const RX_MOTOR =
+  /\b(danos? (en el|al|del) motor|motor (presenta|con|sufrio)|biela|ciguenal|piston|lubricacion|sobrecalentamiento|calentamiento|succion de agua|hidrobloqueo|desvielad|monoblock)/;
 /** Un incendio: con un solo vehículo, el hecho no es un choque (CESVI lo clasifica como «otra»). */
 const RX_INCENDIO = /\b(incendi|fuego|calcinad)/;
 const RX_SALIDA =
@@ -124,6 +136,10 @@ export function modalidadInferida(
   if (vs.length === 1) {
     const v = vs[0]!;
     // El orden lo fijó la muestra de desarrollo (R4b, ADR 0069): vuelco, techo, salida, objeto.
+    // R4d (ADR 0076): un incendio va antes que todo; CESVI lo titula «incendio» aunque el fuego
+    // deje el techo dañado.
+    if (RX_INCENDIO.test(texto))
+      return { modalidad: "otra", motivo: "un vehículo y un incendio, sin choque descrito" };
     if (RX_VOLCADURA.test(texto))
       return { modalidad: "volcadura", motivo: "un vehículo; la narración describe un vuelco" };
     if (RX_TECHO.test(texto) || danadoEn(e, v, "techo"))
@@ -133,8 +149,8 @@ export function modalidadInferida(
     if (objetoFijo(e, texto))
       return { modalidad: "objeto_fijo", motivo: "un vehículo contra un objeto fijo" };
     // «Otra» solo con evidencia de un hecho sin choque (R4b, ADR 0069), nunca por descarte.
-    if (RX_INCENDIO.test(texto))
-      return { modalidad: "otra", motivo: "un vehículo y un incendio, sin choque descrito" };
+    if (RX_MOTOR.test(texto))
+      return { modalidad: "otra", motivo: "un vehículo con un daño mecánico del motor" };
     if (caraPrincipal(e, v) === "posterior")
       return { modalidad: "alcance", motivo: "un vehículo golpeado en su parte posterior" };
     if (RX_OBJETO_NOMBRADO.test(texto))
