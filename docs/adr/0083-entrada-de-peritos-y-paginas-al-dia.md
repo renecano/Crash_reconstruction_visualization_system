@@ -11,13 +11,16 @@
 1. **«Entrar a Croquis» también en la barra de navegación**, como botón principal y antes de los demás enlaces (`nav-entrar`), en español y en inglés («Enter Croquis»). En la portada ya era el botón principal del centro y «Cuenta qué pasó», el secundario.
 2. **El HTML de las páginas va primero a la red** (`src/sw.ts`):
    - las páginas salen de la precarga, que sirve primero desde la caché;
-   - las navegaciones usan `NetworkFirst` sobre la caché `croquis-paginas`, con 5 s de espera;
+   - las navegaciones usan `NetworkFirst` sobre la caché `croquis-paginas`, con 5 s de espera; la copia guardada solo se usa sin internet o con la red muy lenta;
    - el CSS, el JavaScript, las fuentes y los modelos siguen precargados y con su revisión.
-3. **La demo sigue abriendo sin red:**
+3. **Una versión nueva se activa sola** (`skipWaiting` y `clientsClaim`, pedido de René): toma las pestañas abiertas sin esperar a que se cierren.
+   - **El riesgo** que había hecho esperar a la versión nueva (ADR 0030): una pestaña abierta con la versión anterior pide un trozo de JavaScript que la activación ya borró de la precarga y que el despliegue nuevo ya no sirve.
+   - **Cómo se cubre:** al instalarse, el service worker copia lo estático de la versión anterior que no está en la suya (`/_next/static/`) a `croquis-estaticos-previos`. Lo que la precarga nueva no tiene se busca ahí antes de ir a la red. Cada instalación reemplaza esa copia, así que solo se guarda un despliegue anterior.
+4. **La demo sigue abriendo sin red:**
    - las páginas de la demo se guardan en `croquis-paginas` al instalar el service worker;
    - una página visitada con red se guarda al visitarla y abre sin red;
    - una que no se guardó abre el inicio en su idioma.
-4. **Las fuentes se dicen con su etiqueta legible:**
+5. **Las fuentes se dicen con su etiqueta legible:**
    - el distintivo `Fuente` de `/cesvi` usa el vocabulario compartido (`FUENTE` en `i18n/vocabulario.ts`, el mismo que usa el visor);
    - se agregaron las fuentes del expediente: «perito», «conductor», «del expediente», «del reporte» (`dictamen_importado`).
 
@@ -31,5 +34,5 @@
 
 ## Consecuencias
 
-- **Una vez:** quien tenga el service worker anterior ve la portada vieja hasta cerrar todas las pestañas de Croquis y volver a abrirla (recargar no basta: la versión nueva espera a que se cierren). Desde entonces, el HTML llega siempre de la red.
+- **La transición desde el service worker anterior:** la primera recarga después del despliegue la atiende todavía el anterior, que sirve la portada precargada. Mientras tanto, la versión nueva se instala y se activa sola. La verificación en producción (en `docs/PROGRESS.md`) mide cuántas recargas hicieron falta. Desde esta versión, el HTML llega siempre de la red.
 - **Con red lenta** (más de 5 s), una página guardada abre su copia; sin copia, espera a la red.

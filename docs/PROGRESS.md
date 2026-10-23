@@ -165,7 +165,8 @@ Reglas de trabajo: `CLAUDE.md`. Especificación: `PLAN.md`.
       - **Lo que había en producción** (navegador nuevo, 2026-10-23, antes del arreglo): el botón blanco «Entrar a Croquis» → `/cesvi` en el centro y «Cuenta qué pasó» como secundario. La barra de navegación no lo tenía.
       - **La causa:** el service worker servía el HTML de la portada desde su precarga. La versión nueva espera a que se cierren todas las pestañas de la anterior, así que un navegador que ya había abierto Croquis seguía viendo la portada vieja.
       - **El arreglo:**
-        - el HTML de las páginas va primero a la red (sin red, la copia guardada);
+        - las páginas salen de la precarga: el HTML va primero a la red (sin internet, la copia guardada);
+        - la versión nueva del service worker se activa sola y toma las pestañas abiertas (`skipWaiting`, `clientsClaim`); lo estático del despliegue anterior queda aparte para las pestañas que aún lo usan;
         - «Entrar a Croquis» también en la barra («Enter Croquis» en inglés);
         - las fuentes con su etiqueta legible en `/cesvi` («del reporte» en lugar de `dictamen_importado`).
       - **Pruebas:**
@@ -173,6 +174,7 @@ Reglas de trabajo: `CLAUDE.md`. Especificación: `PLAN.md`.
         - e2e `@flujo`: de la portada a la lista de casos;
         - en el flujo de AXA: ningún identificador de fuente en pantalla;
         - sin red: lo visitado abre su copia.
+      - **Verificación en producción:** pendiente del despliegue (se anota aquí con lo que se vea en producción).
     - **Siguiente paso concreto:** lo grande de R10 espera a René («Bloqueado»): la fuente de los modelos de vehículos, la revisión de las capturas y la medición en la computadora de demo.
     1. **V2-1, marco:**
        - **la barra:** los nombres de los 8 pasos siempre, «← Casos», la barra de avance arriba y los pasos futuros cerrados hasta completar lo obligatorio;

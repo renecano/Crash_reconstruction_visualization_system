@@ -7,10 +7,14 @@
  * sirve desde la caché y se renueva con cada despliegue (cada entrada lleva su revisión). La
  * extracción del relato con Claude (`/api/*`) no pasa por aquí: necesita red y la interfaz lo dice.
  *
- * El HTML de las páginas va primero a la red (ADR 0083): antes se servía desde la caché y quien ya
- * había abierto Croquis seguía viendo la versión anterior después de un despliegue (la nueva espera
- * a que se cierren las pestañas de la vieja). Las páginas de la demo se guardan al instalar, para
- * abrirlas sin red; sin red, una página que no se guardó abre el inicio en su idioma.
+ * Las páginas siempre al día (ADR 0083):
+ * - **El HTML no se precarga:** va primero a la red y la copia guardada solo se usa sin internet.
+ *   Antes, la portada salía de la precarga y un navegador que ya había abierto Croquis seguía
+ *   viendo la versión anterior después de un despliegue.
+ * - **Una versión nueva se activa sola** y toma las pestañas abiertas, sin esperar a que se cierren.
+ *   Una pestaña de la versión anterior puede pedir después un trozo que ya no está en la precarga
+ *   nueva ni en el despliegue nuevo: por eso los archivos estáticos del despliegue anterior se
+ *   guardan aparte (`croquis-estaticos-previos`) hasta el siguiente.
  */
 import { NetworkFirst, type PrecacheEntry, Serwist, type SerwistGlobalConfig } from "serwist";
 
@@ -22,8 +26,10 @@ declare global {
 
 declare const self: ServiceWorkerGlobalScope;
 
-/** La caché del HTML de las páginas (aparte de la precarga, que sirve primero desde la caché). */
+/** La copia del HTML de las páginas, para abrirlas sin internet. */
 const PAGINAS = "croquis-paginas";
+/** Los archivos estáticos del despliegue anterior, para las pestañas que aún lo usan. */
+const PREVIOS = "croquis-estaticos-previos";
 /** Lo que se espera a la red antes de abrir la copia guardada de una página (s). */
 const ESPERA_RED_S = 5;
 
@@ -32,6 +38,9 @@ const urlDe = (e: PrecacheEntry | string) => (typeof e === "string" ? e : e.url)
 const esPagina = (e: PrecacheEntry | string) => !/\.[a-z0-9]+$/i.test(urlDe(e).split("?")[0]!);
 const manifiesto = self.__SW_MANIFEST ?? [];
 const paginas = manifiesto.filter(esPagina);
+const esEstatico = (url: URL) => url.pathname.startsWith("/_next/static/");
+/** Las rutas de esta versión, para no guardar dos veces lo que ya está en su precarga. */
+const actuales = new Set(manifiesto.map((e) => new URL(urlDe(e), self.location.origin).pathname));
 
 const redPrimero = new NetworkFirst({
   cacheName: PAGINAS,
@@ -57,26 +66,48 @@ const serwist = new Serwist({
         }
       },
     },
+    {
+      // Lo estático que no está en la precarga de esta versión: el del despliegue anterior, si lo
+      // hay; si no, la red.
+      matcher: ({ url }) => url.origin === self.location.origin && esEstatico(url),
+      handler: async ({ request }) =>
+        (await (await caches.open(PREVIOS)).match(request, { ignoreSearch: true })) ??
+        fetch(request),
+    },
   ],
-  // Una versión nueva espera a que se cierren las pestañas de la anterior: así una página abierta no
-  // pide trozos que la limpieza de la caché ya borró. La primera instalación toma la página actual.
-  skipWaiting: false,
+  skipWaiting: true,
   clientsClaim: true,
 });
 
-// Las páginas de la demo se guardan al instalar, con la versión de este despliegue, para abrirlas
-// sin red. Si una falla, la instalación sigue: esa página se guarda al visitarla.
 self.addEventListener("install", (event) => {
   event.waitUntil(
-    caches.open(PAGINAS).then((c) =>
-      Promise.allSettled(
-        paginas.map(async (e) => {
-          const url = urlDe(e);
-          const r = await fetch(url, { cache: "no-store" });
-          if (r.ok) await c.put(url, r);
-        }),
+    Promise.all([
+      // Las páginas de la demo se guardan con la versión de este despliegue, para abrirlas sin
+      // red. Si una falla, la instalación sigue: esa página se guarda al visitarla.
+      caches.open(PAGINAS).then((c) =>
+        Promise.allSettled(
+          paginas.map(async (e) => {
+            const url = urlDe(e);
+            const r = await fetch(url, { cache: "no-store" });
+            if (r.ok) await c.put(url, r);
+          }),
+        ),
       ),
-    ),
+      // Lo estático de la versión anterior pasa aparte antes de que la activación lo limpie de la
+      // precarga; lo del despliegue de antes de ese se descarta.
+      (async () => {
+        const precarga = await caches.open(serwist.precacheStrategy.cacheName);
+        await caches.delete(PREVIOS);
+        const previos = await caches.open(PREVIOS);
+        for (const req of await precarga.keys()) {
+          const url = new URL(req.url);
+          if (!esEstatico(url) || actuales.has(url.pathname)) continue;
+          const r = await precarga.match(req);
+          url.search = "";
+          if (r) await previos.put(url.href, r);
+        }
+      })(),
+    ]),
   );
 });
 
