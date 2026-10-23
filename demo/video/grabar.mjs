@@ -146,12 +146,6 @@ async function clic(loc, { solo = false } = {}) {
   if (!solo) await pagina.mouse.click(x, y);
 }
 const senalar = (loc) => clic(loc, { solo: true });
-/** Deja «Comparar con la declaración» como se pide, con un clic visible si hay que cambiarlo. */
-async function comparar(v) {
-  const c = pagina.getByTestId("comparar-declaracion");
-  if ((await c.isChecked()) !== v) await clic(c);
-  if ((await c.isChecked()) !== v) await c.setChecked(v);
-}
 
 /**
  * Un segmento del guion: muestra su subtítulo, hace sus acciones mientras suena su voz y espera la
@@ -184,116 +178,116 @@ await espera(4.4);
 await segmento("intro");
 await espera(10.5 - (Date.now() - t0) / 1000);
 
-// --- 2. El recorrido de /cesvi -------------------------------------------------------------------
-// Todo caso se abre desde la lista de /cesvi en el mismo recorrido (ADR 0079).
+// --- 2. La lista y el caso de AXA, en el recorrido común (V2, ADR 0080) --------------------------
 await pagina.goto(`${BASE}/cesvi`);
-await pagina.getByTestId("ir-axa").click();
-await pagina.getByTestId("frase").waitFor();
-await espera(0.8);
+await pagina.getByTestId("lista-casos").waitFor();
+await espera(0.6);
 const sig = () => clic(pagina.getByTestId("siguiente"));
+/** Acerca el mapa en «Mover mapa» (en «Colocar» el doble clic colocaría) y vuelve a «Colocar». */
+async function acercar(veces) {
+  const mapa = pagina.getByTestId("mapa-escena");
+  await mapa.locator("canvas").waitFor();
+  await clic(pagina.getByTestId("herramienta-mover"));
+  const b = await mapa.boundingBox();
+  for (let k = 0; k < veces; k++) {
+    await pagina.mouse.dblclick(b.x + b.width / 2, b.y + b.height / 2);
+    await pagina.waitForTimeout(450);
+  }
+  await clic(pagina.getByTestId("herramienta-colocar"));
+}
+/** Toca el mapa (desde el centro, en pixeles) y escribe el rumbo del elemento activo. */
+async function tocar(dx, dy, rumbo) {
+  const b = await pagina.getByTestId("mapa-escena").boundingBox();
+  const x = b.x + b.width / 2 + dx;
+  const y = b.y + b.height / 2 + dy;
+  await pagina.mouse.move(x, y, { steps: 18 });
+  await pagina.mouse.click(x, y);
+  await espera(0.4);
+  if (rumbo !== null) await pagina.getByTestId("rumbo-activo").fill(rumbo);
+  await espera(0.4);
+  await clic(pagina.getByTestId("listo-elemento"));
+}
 
+await segmento("lista", async () => {
+  await senalar(pagina.getByTestId("ir-caso-nuevo"));
+  await espera(0.8);
+  await senalar(pagina.getByTestId("ir-importar"));
+  await espera(0.8);
+  await clic(pagina.getByTestId("ir-axa"));
+  await pagina.getByTestId("recorrido-caso").waitFor();
+});
 await segmento("caso", async () => {
-  await senalar(pagina.getByTestId("caso-A"));
-  await espera(1.5);
-  await senalar(pagina.getByTestId("caso-B"));
+  await senalar(pagina.getByTestId("tarjeta-V1"));
+  await espera(1.2);
+  await senalar(pagina.getByTestId("tarjeta-V2"));
+  await espera(1.2);
+  await senalar(pagina.getByTestId("avance-caso"));
 });
-await segmento("hecho-ejemplo", async () => {
-  await pagina.keyboard.press("ArrowRight");
-  await pagina.getByTestId("paso-2").waitFor();
+await segmento("hecho", async () => {
+  await sig();
   await espera(1);
-  await clic(pagina.getByTestId("ejemplo-descripcion"));
-  await espera(1.2);
-  await clic(pagina.getByTestId("leer-descripcion"));
-  await pagina.getByTestId("frase-vertice_a").waitFor();
-});
-await segmento("hecho-datos", async () => {
-  await senalar(pagina.getByTestId("datos-evidencia"));
+  await senalar(pagina.getByTestId("narracion-texto"));
   await espera(1.5);
-  await senalar(pagina.getByTestId("texto-descripcion").locator('mark[data-dato="vertice_a"]'));
-});
-await segmento("hecho-pregunta", async () => {
-  await clic(pagina.getByTestId("pregunta-carril_a").getByRole("button", { name: "Derecho" }));
-  await espera(1.2);
-  await clic(pagina.getByTestId("respuesta-reversa"));
-  await pagina.getByTestId("respuesta-reversa").pressSequentially("4", { delay: 80 });
-  await pagina.getByTestId("completitud").filter({ hasText: "9/9" }).waitFor();
+  await senalar(pagina.getByTestId("vehiculos"));
 });
 await segmento("lugar", async () => {
   await sig();
-  await pagina.getByTestId("ubicacion-ilustrativa").waitFor();
   await espera(1.2);
-  await clic(pagina.getByTestId("usar-ilustrativa"));
+  await acercar(2);
+  // El punto de impacto, con el frente de la Tacoma hacia el norte (la vía va de sur a norte).
+  await tocar(0, 0, "0");
 });
-await segmento("lugar-mover", async () => {
-  await clic(pagina.getByTestId("cambiar-ubicacion"));
-  await pagina.getByTestId("coordenadas-nuevas").fill("26.22848, -109.05424");
-  await clic(pagina.getByRole("button", { name: "Mover el punto" }));
-  await espera(1.2);
-  await clic(pagina.getByTestId("deshacer"));
-  const listo = pagina.getByRole("button", { name: "Listo" });
-  if (await listo.isVisible()) await clic(listo);
+await segmento("lugar-finales", async () => {
+  await tocar(18, -70, "350");
+  await tocar(-6, -30, "5");
+  await senalar(pagina.getByTestId("siguiente"));
+});
+await segmento("expandir", async () => {
+  await clic(pagina.getByTestId("expandir-mapa"));
+  await espera(2);
+  await pagina.keyboard.press("Escape");
 });
 await segmento("reconstruccion", async () => {
   await sig();
-  await espera(1);
-  await clic(pagina.getByTestId("reproducir"));
+  await clic(pagina.getByTestId("reconstruir"));
+  await pagina.getByTestId("velocidades").waitFor({ timeout: 60_000 });
+  await clic(pagina.getByTestId("ver-3d"));
+  await pagina.getByTestId("visor-caso").locator("canvas").first().waitFor({ timeout: 60_000 });
 });
 await segmento("declaracion", async () => {
-  await comparar(true);
+  await clic(pagina.getByTestId("abrir-declaracion"));
   await espera(1.2);
-  await clic(pagina.getByTestId("version-declarada"));
-  await espera(3);
-  await clic(pagina.getByTestId("version-evidencia"));
-  await espera(1);
-  await comparar(false);
-});
-await segmento("trabajar", async () => {
-  await clic(pagina.getByTestId("modo-trabajar"));
-  await espera(1);
-  await comparar(true);
-  await clic(pagina.getByTestId("herramienta-A"));
-  const y = pagina.getByTestId("objeto-y");
-  await clic(y);
-  const actual = Number((await y.inputValue()).replace(",", "."));
-  await y.fill((actual + 2).toFixed(2));
-  await y.press("Enter");
-  await espera(1);
-  await senalar(pagina.getByTestId("que-cambia"));
-  await espera(2.5);
-  await clic(pagina.getByTestId("modo-presentar"));
+  await senalar(pagina.getByTestId("texto-declaracion"));
 });
 await segmento("danos", async () => {
   await sig();
+  await espera(1);
+  await senalar(pagina.getByTestId("criterios-axa"));
 });
 await segmento("numeros", async () => {
   await sig();
-  await espera(5);
-  await clic(pagina.getByTestId("ver-detalle"));
-  await espera(7);
-  await pagina.keyboard.press("Escape");
+  await espera(1);
+  await senalar(pagina.getByTestId("verificacion-cesvi"));
 });
 await segmento("contra", async () => {
   await sig();
-  await espera(1.5);
-  for (const f of ["modalidad", "deformacion", "restos", "dinamica"]) {
-    await senalar(pagina.getByTestId("contra-dictamen").locator(`[data-fila="${f}"]`));
-    await espera(1.6);
+  await espera(1);
+  await senalar(pagina.getByTestId("eje-modalidad"));
+  await espera(1.2);
+  const tabla = pagina.getByTestId("reproduccion");
+  for (const f of ["ebs_kmh_reporte", "v3_kmh", "energia"]) {
+    await senalar(tabla.locator(`[data-fila="${f}"]`));
+    await espera(1);
   }
-  await senalar(pagina.getByTestId("discrepancia-energia"));
 });
 await segmento("dictamen", async () => {
-  await clic(pagina.getByTestId("perito"));
-  await pagina.getByTestId("perito").pressSequentially("Perito de CESVI", { delay: 60 });
-  await clic(pagina.getByTestId("aceptar"));
-  await pagina.getByTestId("vista-previa").waitFor({ timeout: 30_000 });
-  await espera(1.5);
-  const descarga = pagina.waitForEvent("download");
-  await clic(pagina.getByTestId("descargar-pdf"));
-  await descarga;
+  await sig();
+  await espera(1);
+  await senalar(pagina.getByTestId("dictamen-caso"));
 });
 await segmento("tema", async () => {
   await clic(pagina.getByTestId("tema"));
-  await espera(1.2);
+  await espera(1.4);
   await clic(pagina.getByTestId("tema"));
 });
 
@@ -314,33 +308,15 @@ await segmento("caso-nuevo", async () => {
 });
 await segmento("caso-nuevo-mapa", async () => {
   await clic(pagina.getByTestId("siguiente"));
-  const mapa = pagina.getByTestId("mapa-escena");
-  await mapa.locator("canvas").waitFor();
-  const b = await mapa.boundingBox();
-  // De zoom 11 a 19 (unos 0.14 m por pixel): las posiciones quedan a metros y no se enciman.
-  await pagina.mouse.move(b.x + b.width / 2, b.y + b.height / 2, { steps: 20 });
-  for (let k = 0; k < 8; k++) {
-    await pagina.mouse.dblclick(b.x + b.width / 2, b.y + b.height / 2);
-    await pagina.waitForTimeout(450);
-  }
-  const colocar = async (herramienta, rumbo, dx, dy) => {
-    await pagina.getByTestId("herramienta-escena").selectOption(herramienta);
-    await pagina.getByTestId("rumbo-escena").fill(rumbo);
-    // La caja se vuelve a medir: al colocar, las preguntas de arriba se van y el mapa sube.
-    const c = await mapa.boundingBox();
-    const x = c.x + c.width / 2 + dx;
-    const y = c.y + c.height / 2 + dy;
-    await pagina.mouse.move(x, y, { steps: 18 });
-    await pagina.mouse.click(x, y);
-  };
+  const dialogo = pagina.getByTestId("dialogo-buscar-lugar");
+  await dialogo.waitFor({ timeout: 20_000 });
+  await clic(dialogo.getByRole("button", { name: /moviendo el mapa/ }));
+  await acercar(8);
   // La narración: el frente de A (por Azucena, hacia el noroeste) pega en el costado trasero
-  // derecho de B (por Reforma, hacia el norte). A unos 0.14 m por pixel: B sale unos 12 m al
-  // noroeste girando y A avanza unos 3.5 m.
-  await colocar("V2:impacto", "0", 0, 0);
-  await colocar("V1:impacto", "315", 18, 22);
-  await colocar("V2:final", "320", -36, -78);
-  await colocar("V1:final", "300", -18, -18);
-  await pagina.getByTestId("colocados").filter({ hasText: "4 posiciones" }).waitFor();
+  // derecho de B (por Reforma, hacia el norte); B sale al noroeste girando y A avanza poco.
+  await tocar(0, 0, "315");
+  await tocar(-36, -78, "320");
+  await tocar(-18, -18, "300");
 });
 await segmento("caso-nuevo-reconstruccion", async () => {
   await clic(pagina.getByTestId("siguiente"));
