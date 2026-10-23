@@ -1,0 +1,75 @@
+{
+ "fecha": "2026-10-22T23:52:38+00:00",
+ "descripcion": "Voces locales para el video demo: mismo fragmento del guion con Piper (tres corridas) y Kokoro-82M (es-419). WER de Whisper small en español (menor es mejor; mide inteligibilidad, no naturalidad) y fonemas de Kokoro con espeak «es» contra «es-419».",
+ "texto": "Este es un caso real de CESVI: un alcance en la carretera federal quince, entre una Silverado y una Tacoma. Ustedes ya lo analizaron en su reporte. Vamos a ver si Croquis llega a lo mismo. Paso dos. El perito escribe su narración técnica, como la escribe en un reporte, y Croquis la lee con el vocabulario de los reportes de CESVI.",
+ "caracteres_del_guion": 2605,
+ "palabras": 62,
+ "asr": "faster-whisper 1.2.1, modelo small, int8, CPU, beam 5, temperatura 0",
+ "acento_kokoro_fonemas": {
+  "es": "la βˌeloθiðˈad ðe impˈakto ˈes ðe kˈinθe kilˈometɾos.",
+  "es-419": "la βˌelosiðˈad ðe impˈakto ˈes ðe kˈinse kilˈometɾos."
+ },
+ "kokoro_ef_dora_igual_en_dos_sintesis": true,
+ "muestras": [
+  {
+   "voz": "piper/es_MX-claude-high",
+   "corrida": 1,
+   "wav": "demo/video/salida/muestras/piper-es_MX-claude-high-1.wav",
+   "sintesis_s": 5.06,
+   "duracion_s": 22.4,
+   "muestreo_hz": 22050,
+   "transcripcion": "Este es un caso real de Cesvi, un alcance, en la carretera federal 15, entre una Silverado y una Tacoma. Ustedes ya lo analizaron en su reporte, vamos a ver si Croquis llega a lo mismo. Paso 2. El perito escribe su narración técnica, como la escribe, en un reporte, y Croquis la lee con el vocabulario de los reportes de Cesvi.",
+   "wer_pct": 3.2
+  },
+  {
+   "voz": "piper/es_MX-claude-high",
+   "corrida": 2,
+   "wav": "demo/video/salida/muestras/piper-es_MX-claude-high-2.wav",
+   "sintesis_s": 5.31,
+   "duracion_s": 22.45,
+   "muestreo_hz": 22050,
+   "transcripcion": "Este es un caso real de Cesvi, un alcance, en la carretera Federal 15, entre una Silverado y una Tacoma. Ustedes ya lo analizaron en su reporte. Vamos a ver si Croquis yera a lo mismo. Paso 2. El perito escribe su narración técnica, como la escribe, en un reporte, y Croquis la lee con el vocabulario de los reportes de Cesvi.",
+   "wer_pct": 4.8
+  },
+  {
+   "voz": "piper/es_MX-claude-high",
+   "corrida": 3,
+   "wav": "demo/video/salida/muestras/piper-es_MX-claude-high-3.wav",
+   "sintesis_s": 4.66,
+   "duracion_s": 22.37,
+   "muestreo_hz": 22050,
+   "transcripcion": "Este es un caso real de Cesvi, un alcance, en la carretera Federal 15, entre una Silverado y una Tacoma. Ustedes ya lo analizaron en su reporte. Vamos a ver si Croquis llega a lo mismo. Paso 2. Que el perito escribe su narración tequica, como la escribe en un reporte y Croquis la lee con el vocabulario de los deportes de Cesvi.",
+   "wer_pct": 8.1
+  },
+  {
+   "voz": "kokoro/ef_dora (es-419)",
+   "corrida": 1,
+   "wav": "demo/video/salida/muestras/kokoro-ef_dora-es419.wav",
+   "sintesis_s": 11.89,
+   "duracion_s": 18.54,
+   "muestreo_hz": 24000,
+   "transcripcion": "Este es un caso real de Cesvi, un alcance en la carretera federal 15 entre una Silverado y una Tacoma. Ustedes ya lo analizaron en su reporte. Vamos a ver si Croquis llega a lo mismo. Paso 2. El perito escribe su narración técnica, como la escribe en un reporte, y Croquis la lee con el vocabulario de los reportes de Cesvi.",
+   "wer_pct": 3.2
+  },
+  {
+   "voz": "kokoro/em_alex (es-419)",
+   "corrida": 1,
+   "wav": "demo/video/salida/muestras/kokoro-em_alex-es419.wav",
+   "sintesis_s": 18.83,
+   "duracion_s": 18.62,
+   "muestreo_hz": 24000,
+   "transcripcion": "Este es un caso real de Cesbí, un alcance en la carretera federal 15 entre un asilverado y una Tacoma. Ustedes ya lo analizaron en su reporte. Vamos a ver si Croquis llega a lo mismo. Paso 2. El perito escribe su narración técnica, como la escribe en un reporte y Croquis la lee con el vocabulario de los reportes de Cesbí.",
+   "wer_pct": 9.7
+  },
+  {
+   "voz": "kokoro/em_santa (es-419)",
+   "corrida": 1,
+   "wav": "demo/video/salida/muestras/kokoro-em_santa-es419.wav",
+   "sintesis_s": 15.93,
+   "duracion_s": 18.56,
+   "muestreo_hz": 24000,
+   "transcripcion": "Este es un caso real de Sesby, un alcance en la carretera federal 15 entre un asilverado y una Tacoma. Ustedes ya lo analizaron en su reporte. Vamos a ver si Croquis llega a lo mismo. Paso 2. El perito escribe su narración técnica, como la escribe en un reporte, y Croquis la lee con el vocabulario de los reportes de Sesby.",
+   "wer_pct": 9.7
+  }
+ ]
+}
