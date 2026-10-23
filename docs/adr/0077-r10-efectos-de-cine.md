@@ -29,6 +29,11 @@
   - el cambio se nota poco: bordes más limpios, el fondo y la lluvia suavizados por la profundidad de campo, y el piso mojado con algo de reflejo en ultra;
   - la distancia con la meta (un juego de autos actual) no está en el postprocesado: está en los vehículos (procedurales, de pocas caras), el escenario y la escena nocturna, que casi no se ve.
 
+## La escena nocturna
+
+- **Corrección:** «noche con alumbrado» sin el campo `alumbrado` aparte encendía los focos, pero dejaba la luz ambiental de una noche sin alumbrado (0.45, azulada). Ahora los dos salen del mismo dato, con su prueba.
+- **No se aclara la escena a la fuerza:** en `nocturno_lluvia` la oscuridad viene de la niebla de la lluvia fuerte sobre el cielo de noche. Es la visibilidad que representa la escena, y la visibilidad nocturna es una función que no se pierde. Aclararla daría una impresión falsa de lo que se veía.
+
 ## Pendiente (lo grande de R10)
 
 - **Vehículos realistas por clase:**
@@ -36,6 +41,6 @@
   - los realistas con licencia libre están en Sketchfab (CC-BY, piden cuenta) o son de pago;
   - **elegir la fuente es de René** («Bloqueado»).
   - El proceso ya está pensado: escalar a las dimensiones del contrato conservando el radio de las llantas, nombrar las piezas para el daño y quitar marcas.
-- **Escenario y escena nocturna:** banquetas, camellones, vegetación y postes del lugar real; más luz de faros y alumbrado para que la noche se vea.
+- **Escenario:** banquetas, camellones, vegetación y postes del lugar real.
 - **HDRI:** Poly Haven (CC0) para el reflejo y la luz de alta y ultra.
 - **Medición de alta y ultra:** en la computadora de demo (E6, «Bloqueado»).
