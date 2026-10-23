@@ -22,7 +22,6 @@ import { croquisDeReconstruccion } from "@/lib/croquis-caso";
 import { croquisSobreMapa } from "@/lib/croquis-mapa";
 import { dictamenCasoPdf, dictamenCasoWord, type DatosDictamenCaso } from "@/lib/dictamen-caso";
 import { ESTILO_MAPA, ESTILO_MAPA_CLARO } from "./mapa-comun";
-import { useModoCesvi } from "./marco-cesvi";
 
 function descargar(bytes: Uint8Array, nombre: string, tipo: string) {
   const url = URL.createObjectURL(new Blob([bytes as BlobPart], { type: tipo }));
@@ -62,6 +61,7 @@ export function DictamenCaso({
   mapa = null,
   validacion: guardada,
   onValidacion,
+  tema,
 }: {
   expediente: Expediente;
   narracion: string | null;
@@ -75,6 +75,8 @@ export function DictamenCaso({
   /** La validación del perito, que se guarda con el caso (ADR 0075). */
   validacion: ValidacionPerito | null;
   onValidacion: (v: ValidacionPerito | null) => void;
+  /** El tema del mapa del perito: el croquis se toma con el estilo claro y se regresa a este. */
+  tema: "claro" | "oscuro";
 }) {
   const [estructuraCesvi, setEstructuraCesvi] = useState(false);
   const [perito, setPerito] = useState(guardada?.perito ?? "");
@@ -85,7 +87,6 @@ export function DictamenCaso({
     ? { perito: guardada.perito, conclusion: guardada.conclusion, fecha: guardada.fecha }
     : null;
   const [estado, setEstado] = useState<string | null>(null);
-  const { tema } = useModoCesvi();
   // Qué croquis llevó el último dictamen descargado: sobre el mapa o a escala sin mapa.
   const [croquisUsado, setCroquisUsado] = useState<"mapa" | "escala" | null>(null);
 
@@ -150,7 +151,7 @@ export function DictamenCaso({
 
   return (
     <section
-      className="tarjeta flex flex-col gap-4 p-6 lg:col-span-2"
+      className="flex flex-col gap-4"
       data-testid="dictamen-caso"
       data-croquis={croquisUsado ?? undefined}
     >

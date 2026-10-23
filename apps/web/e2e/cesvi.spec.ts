@@ -73,12 +73,17 @@ async function sinRedExterna(page: Page) {
 }
 
 // El recorrido del perito (docs/cesvi/PROTOTIPO.md): los ocho pasos, de la declaración al dictamen.
-test("@flujo /cesvi: el recorrido del perito, del caso al dictamen en PDF", async ({ page }) => {
+test("@flujo /cesvi: el caso de AXA desde la lista, del caso al dictamen en PDF", async ({
+  page,
+}) => {
   test.setTimeout(90_000);
   const errores: string[] = [];
   page.on("pageerror", (e) => errores.push(e.message));
   const { soltarOverpass } = await sinRedExterna(page);
+  // El caso de AXA es un caso de ejemplo de la lista (ADR 0079).
   await page.goto("/cesvi");
+  await page.getByTestId("ir-axa").click();
+  await expect(page).toHaveURL(/\/cesvi\/casos\/a2010930$/);
   const frase = page.getByTestId("frase");
 
   // 1. El caso.

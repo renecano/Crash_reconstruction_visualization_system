@@ -185,7 +185,9 @@ await segmento("intro");
 await espera(10.5 - (Date.now() - t0) / 1000);
 
 // --- 2. El recorrido de /cesvi -------------------------------------------------------------------
+// Todo caso se abre desde la lista de /cesvi en el mismo recorrido (ADR 0079).
 await pagina.goto(`${BASE}/cesvi`);
+await pagina.getByTestId("ir-axa").click();
 await pagina.getByTestId("frase").waitFor();
 await espera(0.8);
 const sig = () => clic(pagina.getByTestId("siguiente"));
@@ -296,7 +298,10 @@ await segmento("tema", async () => {
 });
 
 // --- 3. Caso nuevo -------------------------------------------------------------------------------
-await pagina.goto(`${BASE}/cesvi/caso`);
+await pagina.goto(`${BASE}/cesvi`);
+await pagina.getByTestId("ir-caso-nuevo").click();
+await pagina.getByTestId("recorrido-caso").waitFor();
+await pagina.getByTestId("siguiente").click();
 await pagina.getByTestId("narracion").waitFor();
 await segmento("caso-nuevo", async () => {
   await clic(pagina.getByTestId("narracion"));
@@ -308,8 +313,8 @@ await segmento("caso-nuevo", async () => {
   await senalar(pagina.getByTestId("vehiculos"));
 });
 await segmento("caso-nuevo-mapa", async () => {
+  await clic(pagina.getByTestId("siguiente"));
   const mapa = pagina.getByTestId("mapa-escena");
-  await mapa.scrollIntoViewIfNeeded();
   await mapa.locator("canvas").waitFor();
   const b = await mapa.boundingBox();
   // De zoom 11 a 19 (unos 0.14 m por pixel): las posiciones quedan a metros y no se enciman.
@@ -336,26 +341,28 @@ await segmento("caso-nuevo-mapa", async () => {
   await colocar("V2:final", "320", -36, -78);
   await colocar("V1:final", "300", -18, -18);
   await pagina.getByTestId("colocados").filter({ hasText: "4 posiciones" }).waitFor();
-  if (RAPIDO) {
-    // En el ensayo se guarda la escena colocada, para revisar la reconstrucción fuera de la página.
-    const d = pagina.waitForEvent("download");
-    await pagina.getByTestId("descargar-escena").click();
-    await (await d).saveAs(join(SALIDA, "escena-ensayo.json"));
-  }
 });
 await segmento("caso-nuevo-reconstruccion", async () => {
+  await clic(pagina.getByTestId("siguiente"));
   await clic(pagina.getByTestId("reconstruir"));
   await pagina.getByTestId("velocidades").waitFor({ timeout: 60_000 });
   await senalar(pagina.getByTestId("velocidades"));
   await espera(1.5);
   await senalar(pagina.getByTestId("evidencia-usada"));
 });
+if (RAPIDO) {
+  // En el ensayo se guarda el caso colocado, para revisar la reconstrucción fuera de la página.
+  for (let k = 0; k < 3; k++) await pagina.getByTestId("siguiente").click();
+  const d = pagina.waitForEvent("download");
+  await pagina.getByTestId("guardar-caso").click();
+  await (await d).saveAs(join(SALIDA, "escena-ensayo.json"));
+}
 
 // --- 4. Cierre -----------------------------------------------------------------------------------
 await pagina.setContent(
   htmlMarca(
     "cierre",
-    "Lo que sigue: <span>el 3D de la reconstrucción y cualquier caso, no solo este.</span>",
+    "Todo caso en el mismo recorrido: <span>nuevo, importado o de ejemplo, con su 3D y su dictamen.</span>",
   ),
 );
 await espera(0.8);

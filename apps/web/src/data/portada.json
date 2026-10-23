@@ -103,9 +103,7 @@
             "x": -6.5,
             "y": -8
           },
-          "aplica_a": [
-            "veh-a"
-          ],
+          "aplica_a": ["veh-a"],
           "fases": [
             {
               "movimiento": "veh-a",
@@ -132,9 +130,7 @@
             "y": 8
           },
           "orientacion_deg": 90,
-          "aplica_a": [
-            "veh-b"
-          ],
+          "aplica_a": ["veh-b"],
           "fases": [
             {
               "movimiento": "veh-b",
@@ -700,10 +696,7 @@
         "velocidad_previa": {
           "valor": 35,
           "unidad": "km/h",
-          "rango": [
-            25,
-            45
-          ],
+          "rango": [25, 45],
           "fuente": "relato",
           "confianza": 0.7,
           "evidencia": [
@@ -752,9 +745,7 @@
             ]
           }
         },
-        "ocupantes": [
-          "per-a1"
-        ]
+        "ocupantes": ["per-a1"]
       },
       {
         "id": "veh-b",
@@ -813,10 +804,7 @@
         "velocidad_previa": {
           "valor": 40,
           "unidad": "km/h",
-          "rango": [
-            25,
-            60
-          ],
+          "rango": [25, 60],
           "fuente": "supuesto",
           "confianza": 0.3,
           "nota": "La narradora no estima la velocidad del taxi; es la primera pregunta por sensibilidad."
@@ -847,9 +835,7 @@
             ]
           }
         },
-        "ocupantes": [
-          "per-b1"
-        ]
+        "ocupantes": ["per-b1"]
       }
     ],
     "personas": [
@@ -912,10 +898,7 @@
           "fuente": "default",
           "confianza": 1
         },
-        "actores": [
-          "veh-a",
-          "veh-b"
-        ],
+        "actores": ["veh-a", "veh-b"],
         "zonas_impacto": [
           {
             "vehiculo_id": "veh-a",
@@ -967,10 +950,7 @@
         "id": "ev-reposo",
         "orden": 1,
         "tipo": "reposo",
-        "actores": [
-          "veh-a",
-          "veh-b"
-        ],
+        "actores": ["veh-a", "veh-b"],
         "procedencia": {
           "fuente": "relato",
           "confianza": 0.7,
@@ -1017,11 +997,7 @@
       "texto": "¿Viste si el auto (B) frenó antes del golpe?",
       "motivo": "sensibilidad",
       "campo": "vehiculos.1.frenado.aplico",
-      "opciones": [
-        "sí",
-        "no",
-        "no sé"
-      ],
+      "opciones": ["sí", "no", "no sé"],
       "reduccion": 0.322
     },
     {
@@ -1036,11 +1012,7 @@
       "texto": "¿Alcanzaste a frenar antes del golpe?",
       "motivo": "sensibilidad",
       "campo": "vehiculos.0.frenado.aplico",
-      "opciones": [
-        "sí",
-        "no",
-        "no sé"
-      ],
+      "opciones": ["sí", "no", "no sé"],
       "reduccion": 0.295
     }
   ]

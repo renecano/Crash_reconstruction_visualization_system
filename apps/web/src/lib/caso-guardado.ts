@@ -7,7 +7,12 @@
  * expediente. La huella es la de las entradas sin el resultado: si el perito cambia la narración o
  * el expediente después de validar, la validación ya no vale y el dictamen vuelve a ser borrador.
  */
-import { problemasExpediente, type EscenaNarrada, type Expediente } from "@croquis/cesvi";
+import {
+  problemasExpediente,
+  type Conclusiones,
+  type EscenaNarrada,
+  type Expediente,
+} from "@croquis/cesvi";
 import { huellaEntradas } from "./exportar-cesvi";
 
 export const FORMATO_CASO = "croquis-caso";
@@ -22,6 +27,15 @@ export interface ValidacionPerito {
   huella: string;
 }
 
+/**
+ * El reporte de CESVI de un caso importado o de la reproducción (ADR 0079): lo que concluyó, para
+ * el paso «Croquis contra el reporte de CESVI».
+ */
+export interface ReporteCesvi {
+  nombre: string;
+  conclusiones: Conclusiones;
+}
+
 export interface CasoGuardado {
   formato: typeof FORMATO_CASO;
   version: typeof VERSION_CASO;
@@ -31,9 +45,14 @@ export interface CasoGuardado {
   escena: Omit<EscenaNarrada, "expediente">;
   expediente: Expediente;
   conclusion_perito: string | null;
+  /** Opcionales (ADR 0079): el nombre del caso y el reporte de CESVI, si lo tiene. */
+  titulo?: string;
+  reporte_cesvi?: ReporteCesvi | null;
 }
 
 export interface CasoAbierto {
+  titulo: string | null;
+  reporte: ReporteCesvi | null;
   narracion: string | null;
   /** Cuándo se guardó (ISO 8601). */
   guardado: string;
@@ -68,6 +87,8 @@ export function casoParaGuardar(c: {
   escena: EscenaNarrada;
   expediente: Expediente;
   validacion: ValidacionPerito | null;
+  titulo?: string;
+  reporte?: ReporteCesvi | null;
   ahora?: Date;
 }): CasoGuardado {
   const { posiciones, conteos, problemas, preguntas } = c.escena;
@@ -91,6 +112,8 @@ export function casoParaGuardar(c: {
         }
       : base,
     conclusion_perito: v?.conclusion ?? null,
+    ...(c.titulo ? { titulo: c.titulo } : {}),
+    ...(c.reporte ? { reporte_cesvi: c.reporte } : {}),
   };
 }
 
@@ -117,6 +140,8 @@ export function leerCasoGuardado(datos: unknown): CasoAbierto | { error: string 
         }
       : null;
   return {
+    titulo: typeof c.titulo === "string" ? c.titulo : null,
+    reporte: c.reporte_cesvi ?? null,
     narracion: c.narracion,
     guardado: String(c.guardado ?? ""),
     escena: { ...c.escena, expediente },

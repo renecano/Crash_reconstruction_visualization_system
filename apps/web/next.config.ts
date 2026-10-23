@@ -30,6 +30,18 @@ const nextConfig: NextConfig = {
       "../../**/*.test.*",
     ],
   },
+  // /cesvi como una sola aplicación (ADR 0079): las rutas viejas llevan a su caso en el recorrido.
+  async redirects() {
+    return [
+      { source: "/cesvi/caso", destination: "/cesvi/casos/nuevo", permanent: false },
+      { source: "/cesvi/importar", destination: "/cesvi/casos/importar", permanent: false },
+      {
+        source: "/cesvi/reproduccion/:id",
+        destination: "/cesvi/casos/reporte/:id",
+        permanent: false,
+      },
+    ];
+  },
   experimental: {
     // El CSS (unos 8 KB comprimidos) va dentro del HTML: el primer pintado no espera otra ida y
     // vuelta de red (PLAN §11.6, LCP en celular con 4G; ADR 0045).
