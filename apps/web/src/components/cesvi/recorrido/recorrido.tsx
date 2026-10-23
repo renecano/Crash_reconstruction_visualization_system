@@ -91,6 +91,7 @@ import {
   type VistaTrabajo,
 } from "./trabajo";
 import { PanelDetalle } from "./piezas";
+import { Reconstruccion3dRecorrido } from "./reconstruccion-3d";
 
 const PASOS = [
   "El caso",
@@ -560,6 +561,8 @@ export function Recorrido({ caso, reproduccion }: { caso: CasoCesvi; reproduccio
     if (reproduciendo) animar(tRef.current);
   };
   const [superponer, setSuperponer] = useState(true);
+  // R9: la reconstrucción del solver en 3D, a pantalla completa, desde el paso 4.
+  const [ver3d, setVer3d] = useState(false);
   const version = versiones?.[activa] ?? null;
   const restosM = version ? distanciaM(version.restos.inicio, version.restos.fin) : null;
 
@@ -1235,6 +1238,7 @@ export function Recorrido({ caso, reproduccion }: { caso: CasoCesvi; reproduccio
         irA(5);
       }}
       edicion={edicionPasos}
+      onVer3d={versiones ? () => setVer3d(true) : undefined}
     />,
     <PasoDanos
       key="danos"
@@ -1895,6 +1899,15 @@ export function Recorrido({ caso, reproduccion }: { caso: CasoCesvi; reproduccio
             </section>
           ) : null}
         </PanelDetalle>
+        {ver3d && versiones ? (
+          <Reconstruccion3dRecorrido
+            caso={caso}
+            evidencia={versiones.evidencia}
+            nombres={nombres}
+            tema={tema}
+            onCerrar={() => setVer3d(false)}
+          />
+        ) : null}
       </div>
     </ProveedorRecorrido>
   );

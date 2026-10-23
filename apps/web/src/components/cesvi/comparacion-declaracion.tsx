@@ -150,7 +150,7 @@ export function ComparacionDeclaracion({
             muestra al lado de la reconstrucción. Es lo que dice el conductor, no evidencia; Croquis
             no dice quién tiene razón.
           </p>
-          <label className="flex flex-col gap-1.5">
+          <label className="solo-trabajar flex flex-col gap-1.5">
             <span className="t-nota">Declaración</span>
             <textarea
               className="campo min-h-[120px]"
@@ -159,7 +159,7 @@ export function ComparacionDeclaracion({
               data-testid="texto-declaracion"
             />
           </label>
-          <label className="flex flex-wrap items-center gap-2">
+          <label className="solo-trabajar flex flex-wrap items-center gap-2">
             <span className="t-nota">El declarante conducía</span>
             <select
               className="campo"
@@ -176,7 +176,7 @@ export function ComparacionDeclaracion({
           </label>
           <button
             type="button"
-            className="boton-principal self-start"
+            className="boton-principal solo-trabajar self-start"
             disabled={texto.trim().length < 20}
             onClick={() => void comparar()}
             data-testid="leer-declaracion"

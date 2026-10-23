@@ -110,7 +110,7 @@ export function DictamenCaso({
         sus rangos, la verificación con el método de CESVI, la comparación con la declaración si la
         usaste y la trazabilidad. La conclusión es tuya; sin validar, sale como borrador.
       </p>
-      <label className="flex flex-col gap-1.5">
+      <label className="solo-trabajar flex flex-col gap-1.5">
         <span className="t-nota">Conclusión del perito</span>
         <textarea
           className="campo min-h-[96px]"
@@ -122,7 +122,7 @@ export function DictamenCaso({
           data-testid="conclusion-perito"
         />
       </label>
-      <div className="flex flex-wrap items-end gap-3">
+      <div className="solo-trabajar flex flex-wrap items-end gap-3">
         <label className="flex flex-col gap-1.5">
           <span className="t-nota">Nombre del perito</span>
           <input

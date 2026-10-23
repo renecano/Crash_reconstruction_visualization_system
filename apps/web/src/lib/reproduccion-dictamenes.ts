@@ -12,6 +12,7 @@ import type {
   PosicionDescrita,
   resumen,
 } from "@croquis/cesvi";
+import titulo from "../../../../eval/results/cesvi_r4c_titulo_prueba.json";
 import pagina from "../../../../data/cesvi/r4/pagina.json";
 
 export interface CasoReproduccion {
@@ -33,6 +34,32 @@ export interface PaginaReproduccion {
 }
 
 export const PAGINA = pagina as unknown as PaginaReproduccion;
+
+/** Una tasa medida: k de n, y el porcentaje (null sin casos). */
+export interface Tasa {
+  k: number;
+  n: number;
+  pct: number | null;
+}
+
+/**
+ * La segunda medición de la modalidad (ADR 0071): contra la modalidad del título de cada reporte,
+ * con la regla congelada antes de mirar la prueba. `eval/cesvi_r4c_titulo.mts medir prueba`.
+ */
+export interface MedicionTitulo {
+  fecha: string;
+  v2: {
+    con_modalidad_en_el_titulo: number;
+    reportes: number;
+    titulo_del_reporte: {
+      croquis: Tasa;
+      linea_base: Tasa & { modalidad: string };
+      fisicas: { croquis: Tasa; linea_base: Tasa & { modalidad: string } };
+    };
+  };
+  frases: Record<string, { frase: string | null; modalidad: string | null }>;
+}
+export const TITULO = titulo as unknown as MedicionTitulo;
 
 export function casoPorId(id: string): CasoReproduccion | undefined {
   return PAGINA.casos.find((c) => c.id === id);

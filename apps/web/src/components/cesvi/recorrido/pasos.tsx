@@ -874,8 +874,11 @@ export function PasoVersiones({
   edicion,
   comparar,
   onComparar,
+  onVer3d,
 }: {
   edicion: EdicionPasos;
+  /** Abre la reconstrucción del solver en 3D (R9); sin versiones aún, no hay botón. */
+  onVer3d?: () => void;
   /** ¿Se compara con la declaración del conductor? Apagado, solo se ve la reconstrucción. */
   comparar: boolean;
   onComparar: (v: boolean) => void;
@@ -963,6 +966,16 @@ export function PasoVersiones({
           </span>
           <span className="t-nota">{seleccion.detalle}</span>
         </div>
+      ) : null}
+      {onVer3d ? (
+        <button
+          type="button"
+          className="boton-principal self-start"
+          onClick={onVer3d}
+          data-testid="ver-3d-recorrido"
+        >
+          Ver la reconstrucción en 3D
+        </button>
       ) : null}
       <BarraEdicion e={edicion} restablecer />
       <InterruptorComparar comparar={comparar} onComparar={onComparar} />

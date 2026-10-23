@@ -14,6 +14,15 @@ test("@flujo /cesvi/reproduccion: un reporte de CESVI y la reconstrucción de Cr
   const filas = page.getByTestId("casos-r4").locator("[data-caso]");
   await expect(filas.first()).toBeVisible();
   expect(await filas.count()).toBeGreaterThan(10);
+  // La modalidad contra las dos referencias (ADR 0071) y el filtro de la lista (R9).
+  await expect(page.getByTestId("modalidad-titulo")).toContainText("Contra el título del reporte");
+  await expect(page.getByTestId("modalidad-r0")).toContainText("etiqueta de las conclusiones");
+  await expect(page.getByTestId("seccion-reproduccion")).toHaveAttribute("aria-current", "page");
+  const total = (await page.getByTestId("cuantos-casos").textContent())!;
+  await page.getByTestId("filtro-coincide").selectOption("no_coincide");
+  await expect(page.getByTestId("cuantos-casos")).not.toHaveText(total);
+  await page.getByTestId("filtro-coincide").selectOption("");
+  await expect(page.getByTestId("cuantos-casos")).toHaveText(total);
 
   // El primer caso: los dos lados y la reconstrucción en 2D y 3D.
   await filas.first().getByRole("link").click();

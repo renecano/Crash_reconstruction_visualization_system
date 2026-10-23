@@ -203,6 +203,15 @@ test("@flujo /cesvi: el recorrido del perito, del caso al dictamen en PDF", asyn
     "data-valor",
     "15.89",
   );
+  // R9: la versión de la evidencia con el solver, en 3D a pantalla completa.
+  await page.getByTestId("ver-3d-recorrido").click();
+  const vista3d = page.getByTestId("recorrido-3d");
+  await expect(vista3d.getByTestId("velocidades-3d")).toContainText("A · Silverado", {
+    timeout: 60_000,
+  });
+  await expect(vista3d.locator("canvas").first()).toBeVisible({ timeout: 60_000 });
+  await page.getByTestId("cerrar-3d").click();
+  await expect(vista3d).toHaveCount(0);
 
   // Modo Trabajar (ADR 0057): los mismos datos, con herramientas, el objeto elegido, la línea de
   // tiempo con velocidades y qué cambia entre versiones; tema claro por defecto al trabajar.

@@ -23,7 +23,8 @@ import "maplibre-gl/dist/maplibre-gl.css";
 import { type ReactNode, useEffect, useMemo, useRef, useState } from "react";
 import { downloadBytes } from "@/lib/download";
 import ejemplo from "../../../../../data/cesvi/grabaciones/escenas/cesvi-e814f085db.json";
-import { ESTILO_MAPA_CLARO, marcador } from "./mapa-comun";
+import { ESTILO_MAPA, ESTILO_MAPA_CLARO, marcador } from "./mapa-comun";
+import { useModoCesvi } from "./marco-cesvi";
 import { type MarcaImpacto, ReconstruccionCaso, type PosicionMovil } from "./reconstruccion-caso";
 
 type Id = Expediente["vehiculos"][number]["id"];
@@ -71,6 +72,9 @@ function MapaEscena({
 }) {
   const contenedor = useRef<HTMLDivElement>(null);
   const mapa = useRef<MapaMl | null>(null);
+  const { tema } = useModoCesvi();
+  const estilo = tema === "claro" ? ESTILO_MAPA_CLARO : ESTILO_MAPA;
+  const estiloInicial = useRef(estilo);
   const marcas = useRef<Marker[]>([]);
   const marcasMoviles = useRef<Marker[]>([]);
   const marcasImpacto = useRef<Marker[]>([]);
@@ -87,7 +91,7 @@ function MapaEscena({
       setWorkerUrl(`/maplibre/worker-${getVersion()}.mjs`);
       instancia = new Map({
         container: contenedor.current,
-        style: ESTILO_MAPA_CLARO,
+        style: estiloInicial.current,
         center: [-99.13, 19.43],
         zoom: 11,
         attributionControl: false,
@@ -105,6 +109,13 @@ function MapaEscena({
       mapa.current = null;
     };
   }, []);
+  // El mapa sigue al tema del marco (R9), como el del recorrido.
+  useEffect(() => {
+    if (listo && estilo !== estiloInicial.current) {
+      mapa.current?.setStyle(estilo);
+      estiloInicial.current = estilo;
+    }
+  }, [estilo, listo]);
   useEffect(() => {
     const m = mapa.current;
     if (!m || !listo) return;
@@ -244,6 +255,7 @@ export interface CasoInicial {
 }
 
 export function CasoNuevo({ inicial }: { inicial?: CasoInicial } = {}) {
+  const { modo } = useModoCesvi();
   const [texto, setTexto] = useState("");
   const [estado, setEstado] = useState<string | null>(null);
   const [leida, setLeida] = useState<EscenaNarrada | null>(inicial?.escena ?? null);
@@ -300,28 +312,29 @@ export function CasoNuevo({ inicial }: { inicial?: CasoInicial } = {}) {
   });
   const rumboNum = Number(rumbo.replace(",", "."));
   const colocar = (punto: { lat: number; lon: number }) => {
+    // En Presentar el mapa solo se mira.
+    if (modo === "presentar") return;
     if (!expediente || !herramienta || rumbo.trim() === "" || !Number.isFinite(rumboNum)) return;
     setExpediente(conPosicion(expediente, { ...herramienta, punto, rumbo: rumboNum }));
   };
 
   return (
-    <main
-      className="min-h-screen bg-fondo px-4 py-10 text-texto md:px-8"
-      data-tema="claro"
-      data-testid="caso-nuevo"
-    >
+    <main className="px-4 py-10 md:px-8" data-testid="caso-nuevo">
       <div className="mx-auto flex max-w-[1200px] flex-col gap-8">
         <header className="flex flex-col gap-3">
           <p className="t-rotulo">Caso nuevo · reconstrucción de apoyo</p>
-          <h1 className="t-titulo">{inicial?.titulo ?? "Narra el hecho"}</h1>
-          <div className="t-cuerpo max-w-[70ch] text-texto-2">
+          <h1 className="t-titulo">
+            {inicial?.titulo ??
+              (modo === "presentar" ? "El hecho, reconstruido" : "Narra el hecho")}
+          </h1>
+          <div className={`t-cuerpo max-w-[70ch] text-texto-2${inicial ? "" : " solo-trabajar"}`}>
             {inicial?.descripcion ??
               "Escribe la narración técnica como en un reporte de CESVI: lugar, vehículos, daños, restos, huellas y posiciones. Croquis la ordena en la escena y pregunta solo lo que más cambia la reconstrucción. La IA no produce números: los que no están en tu texto se descartan."}
           </div>
         </header>
 
         {inicial ? null : (
-          <section className="tarjeta flex flex-col gap-3 p-6">
+          <section className="tarjeta solo-trabajar flex flex-col gap-3 p-6">
             <textarea
               className="campo min-h-48"
               value={texto}
@@ -358,8 +371,14 @@ export function CasoNuevo({ inicial }: { inicial?: CasoInicial } = {}) {
 
         {expediente && leida ? (
           <>
+            {!inicial && texto.trim() ? (
+              <section className="tarjeta solo-presentar flex flex-col gap-2 p-6">
+                <h2 className="t-subtitulo">Narración del perito</h2>
+                <p className="t-cuerpo whitespace-pre-line text-texto-2">{texto}</p>
+              </section>
+            ) : null}
             <section className="grid gap-6 lg:grid-cols-2" data-testid="escena">
-              <div className="tarjeta flex flex-col gap-4 p-6">
+              <div className="tarjeta ancho-al-presentar flex flex-col gap-4 p-6">
                 <h2 className="t-subtitulo">
                   {expediente.vehiculos.length} vehículo
                   {expediente.vehiculos.length === 1 ? "" : "s"} ·{" "}
@@ -420,7 +439,7 @@ export function CasoNuevo({ inicial }: { inicial?: CasoInicial } = {}) {
                     : "La escena es válida contra el contrato."}
                 </p>
               </div>
-              <div className="tarjeta flex flex-col gap-4 p-6">
+              <div className="tarjeta solo-trabajar flex flex-col gap-4 p-6">
                 <h2 className="t-subtitulo">Lo que más cambia la reconstrucción</h2>
                 {preguntas.length ? (
                   <ol className="flex flex-col gap-3">
@@ -444,8 +463,12 @@ export function CasoNuevo({ inicial }: { inicial?: CasoInicial } = {}) {
 
             <section className="tarjeta flex flex-col gap-4 p-6">
               <div className="flex flex-wrap items-end gap-4">
-                <h2 className="t-subtitulo">Coloca a cada vehículo en el mapa</h2>
-                <label className="t-nota flex flex-col gap-1">
+                <h2 className="t-subtitulo">
+                  {modo === "presentar"
+                    ? "El croquis en el mapa"
+                    : "Coloca a cada vehículo en el mapa"}
+                </h2>
+                <label className="t-nota solo-trabajar flex flex-col gap-1">
                   Vehículo y fase
                   <select
                     className="campo h-10"
@@ -465,7 +488,7 @@ export function CasoNuevo({ inicial }: { inicial?: CasoInicial } = {}) {
                     )}
                   </select>
                 </label>
-                <label className="t-nota flex flex-col gap-1">
+                <label className="t-nota solo-trabajar flex flex-col gap-1">
                   Rumbo del frente (°)
                   <input
                     className="campo h-10 w-28"
@@ -475,7 +498,7 @@ export function CasoNuevo({ inicial }: { inicial?: CasoInicial } = {}) {
                     data-testid="rumbo-escena"
                   />
                 </label>
-                <p className="t-nota">
+                <p className="t-nota solo-trabajar">
                   {rumbo.trim() === ""
                     ? "Escribe el rumbo y toca el mapa."
                     : "Toca el mapa para colocar."}
@@ -494,7 +517,7 @@ export function CasoNuevo({ inicial }: { inicial?: CasoInicial } = {}) {
               </p>
               <button
                 type="button"
-                className="boton-secundario self-start"
+                className="boton-secundario solo-trabajar self-start"
                 onClick={() =>
                   downloadBytes(
                     new TextEncoder().encode(
@@ -519,7 +542,6 @@ export function CasoNuevo({ inicial }: { inicial?: CasoInicial } = {}) {
             {inicial?.aparte}
           </>
         ) : null}
-        <p className="t-nota text-texto-3">Reconstrucción de apoyo · el dictamen es del perito.</p>
       </div>
     </main>
   );

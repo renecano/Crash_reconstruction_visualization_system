@@ -4,6 +4,7 @@
  */
 import type { Metadata } from "next";
 import { CasoNuevo } from "@/components/cesvi/caso-nuevo";
+import { MarcoCesvi } from "@/components/cesvi/marco-cesvi";
 
 export const metadata: Metadata = {
   title: "Caso nuevo · Croquis para CESVI",
@@ -12,5 +13,9 @@ export const metadata: Metadata = {
 };
 
 export default function CasoNuevoPage() {
-  return <CasoNuevo />;
+  return (
+    <MarcoCesvi seccion="caso">
+      <CasoNuevo />
+    </MarcoCesvi>
+  );
 }

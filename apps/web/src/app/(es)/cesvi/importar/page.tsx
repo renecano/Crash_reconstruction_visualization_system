@@ -4,6 +4,7 @@
  */
 import type { Metadata } from "next";
 import { ImportarDictamen } from "@/components/cesvi/importar-dictamen";
+import { MarcoCesvi } from "@/components/cesvi/marco-cesvi";
 
 export const metadata: Metadata = {
   title: "Cargar un reporte · Croquis para CESVI",
@@ -13,5 +14,9 @@ export const metadata: Metadata = {
 };
 
 export default function ImportarPage() {
-  return <ImportarDictamen />;
+  return (
+    <MarcoCesvi seccion="importar">
+      <ImportarDictamen />
+    </MarcoCesvi>
+  );
 }
