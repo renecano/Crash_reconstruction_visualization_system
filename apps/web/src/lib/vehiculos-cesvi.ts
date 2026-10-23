@@ -21,3 +21,9 @@ export const nombresVehiculos = (caso: CasoCesvi): Record<Letra, string> => ({
   A: nombreVehiculo(caso, "A"),
   B: nombreVehiculo(caso, "B"),
 });
+
+/** Los colores de los vehículos de un caso de expediente (V2): V1 azul, V2 ámbar, como las maquetas. */
+const COLORES_ID = ["#5AA9FF", "#FFC24B", "#A07CFF", "#3CC98B", "#FF7A9C", "#8FA3B8"];
+export const colorDeVehiculo = (id: string): string =>
+  COLORES_ID[(Number(id.replace(/\D/g, "")) - 1 + COLORES_ID.length) % COLORES_ID.length] ??
+  COLORES_ID[0]!;

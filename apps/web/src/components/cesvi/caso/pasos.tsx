@@ -12,10 +12,10 @@ import {
   type Reconstruccion,
   type VerificacionVehiculo,
 } from "@croquis/cesvi";
-import type { ReactNode } from "react";
+import { useState, type ReactNode } from "react";
 import type { ReporteCesvi } from "@/lib/caso-guardado";
 import { MODALIDAD } from "@/lib/nombres-cesvi";
-import { CARA, Fuente, NOMBRE_FASE, Pregunta, type Fase, type Id } from "./piezas";
+import { CARA, Fuente, Pregunta } from "./piezas";
 import { PanelVerificacion, TablaVelocidades } from "./reconstruccion";
 import { ConclusionesCesvi } from "../importar-dictamen";
 
@@ -216,78 +216,233 @@ export function PasoHecho({
   );
 }
 
-/** Paso 3: el lugar. Con qué se coloca (vehículo, fase y rumbo) y lo que describe la narración. */
+/** Un elemento que se coloca en el mapa en el paso del lugar (V2). */
+export type ItemLugar =
+  { tipo: "impacto"; orden: number } | { tipo: "final" | "inicial"; vehiculo: string };
+
+export const claveItem = (i: ItemLugar) =>
+  i.tipo === "impacto" ? `impacto:${i.orden}` : `${i.tipo}:${i.vehiculo}`;
+
+/** La brújula del elemento activo: el vehículo visto desde arriba, girado a su rumbo. */
+function Brujula({ rumbo, color }: { rumbo: number; color: string }) {
+  return (
+    <svg viewBox="0 0 80 80" width="72" height="72" aria-hidden="true" className="shrink-0">
+      <circle cx="40" cy="40" r="34" fill="var(--fondo)" stroke="var(--linea)" strokeWidth="2" />
+      <text x="40" y="16" textAnchor="middle" fill="var(--texto-3)" fontSize="9">
+        N
+      </text>
+      <g transform={`rotate(${rumbo} 40 40)`}>
+        <rect x="32" y="24" width="16" height="32" rx="5" fill={color} />
+        <path d="M40 12 L46 22 L34 22 Z" fill="var(--texto)" />
+      </g>
+    </svg>
+  );
+}
+
+/**
+ * Paso 3: el lugar (V2). La lista guiada de lo que hay que colocar, con su estado; el elemento
+ * activo dice qué hacer en dos pasos; lo opcional va aparte y nunca bloquea.
+ */
 export function PasoLugar({
   expediente,
   escena,
-  herramienta,
-  onHerramienta,
-  rumbo,
+  requeridos,
+  opcionales,
+  colocado,
+  activo,
+  onActivo,
+  rumboActivo,
   onRumbo,
-  colocados,
+  onListo,
+  nombreItem,
+  colorItem,
+  medida,
+  onUsarMedida,
 }: {
   expediente: Expediente;
   escena: EscenaNarrada;
-  herramienta: { vehiculo: Id; fase: Fase } | null;
-  onHerramienta: (h: { vehiculo: Id; fase: Fase }) => void;
-  rumbo: string;
-  onRumbo: (r: string) => void;
-  colocados: number;
+  requeridos: ItemLugar[];
+  opcionales: ItemLugar[];
+  colocado: (i: ItemLugar) => boolean;
+  activo: ItemLugar | null;
+  onActivo: (i: ItemLugar) => void;
+  rumboActivo: number | null;
+  onRumbo: (r: number) => void;
+  onListo: () => void;
+  nombreItem: (i: ItemLugar) => string;
+  colorItem: (i: ItemLugar) => string;
+  /** Lo último que se midió en «Medir» (m). */
+  medida: number | null;
+  onUsarMedida: (destino: "restos" | { vehiculo: string }) => void;
 }) {
+  const [verOpcional, setVerOpcional] = useState(false);
+  const esActivo = (i: ItemLugar) => activo !== null && claveItem(activo) === claveItem(i);
+  const fila = (i: ItemLugar, n: number, opcional = false) => {
+    const hecho = colocado(i);
+    const color = colorItem(i);
+    if (esActivo(i))
+      return (
+        <li
+          key={claveItem(i)}
+          className="flex flex-col gap-3 rounded-panel border-[1.5px] p-4"
+          style={{ borderColor: color, background: `color-mix(in srgb, ${color} 8%, transparent)` }}
+          data-testid="item-activo"
+          data-item={claveItem(i)}
+        >
+          <div className="flex items-center gap-3">
+            <span
+              className="grid h-7 w-7 place-items-center rounded-full text-[0.8125rem] font-bold text-[#0B0C0F]"
+              style={{ background: color }}
+            >
+              {hecho ? "✓" : n}
+            </span>
+            <span className="t-interfaz flex-1 font-semibold">{nombreItem(i)}</span>
+            <span className="t-rotulo" style={{ color }}>
+              Ahora
+            </span>
+          </div>
+          <div className="flex items-center gap-3">
+            <Brujula rumbo={rumboActivo ?? 0} color={color} />
+            <ol className="t-cuerpo flex flex-col gap-1 text-texto-2">
+              <li>
+                <b className="text-texto">1.</b>{" "}
+                {i.tipo === "impacto"
+                  ? "Toca el mapa donde chocaron."
+                  : "Toca el mapa donde quedó."}
+              </li>
+              <li>
+                <b className="text-texto">2.</b> Gira la flecha hacia donde apunta el frente
+                {i.tipo === "impacto" ? " del primero." : "."}
+              </li>
+            </ol>
+          </div>
+          <div className="solo-trabajar flex flex-wrap items-center justify-between gap-3">
+            <label className="t-nota flex items-center gap-2">
+              o escribe el rumbo
+              <input
+                className="campo cifras h-9 w-16 px-2"
+                inputMode="decimal"
+                value={rumboActivo === null ? "" : String(Math.round(rumboActivo))}
+                disabled={!hecho}
+                onChange={(e) => {
+                  const r = Number(e.target.value.replace(",", "."));
+                  if (Number.isFinite(r)) onRumbo(r);
+                }}
+                data-testid="rumbo-activo"
+              />
+              ° (0° = norte)
+            </label>
+            {hecho ? (
+              <button
+                type="button"
+                className="boton-secundario boton-compacto"
+                onClick={onListo}
+                data-testid="listo-elemento"
+              >
+                Listo
+              </button>
+            ) : null}
+          </div>
+        </li>
+      );
+    return (
+      <li
+        key={claveItem(i)}
+        className={`flex items-center gap-3 rounded-panel px-3.5 py-3 ${hecho ? "tarjeta" : "border-[1.5px] border-dashed border-linea"}`}
+        data-testid={`elemento-${claveItem(i).replace(":", "-")}`}
+        data-colocado={hecho ? "si" : "no"}
+      >
+        <span
+          className={`grid h-7 w-7 shrink-0 place-items-center rounded-full text-[0.8125rem] font-semibold ${hecho ? "bg-[var(--ok)] text-[#0B0C0F]" : ""}`}
+          style={hecho ? undefined : { border: `1.5px solid ${color}`, color }}
+        >
+          {hecho ? "✓" : opcional ? "+" : n}
+        </span>
+        <span className={`t-interfaz flex-1 ${hecho ? "" : "text-texto-2"}`}>{nombreItem(i)}</span>
+        <button
+          type="button"
+          className="boton-secundario boton-compacto solo-trabajar"
+          onClick={() => onActivo(i)}
+          data-testid={`elegir-${claveItem(i).replace(":", "-")}`}
+        >
+          {hecho ? "Mover" : "Colocar"}
+        </button>
+      </li>
+    );
+  };
   return (
-    <div className="flex flex-col gap-4">
-      <h2 className="t-subtitulo">El lugar</h2>
-      <p className="t-nota solo-trabajar">
-        Elige el vehículo y la fase, escribe el rumbo del frente y toca el mapa para colocarlo.
+    <div className="flex flex-col gap-4" data-testid="paso-lugar">
+      <h2 className="t-titulo text-[clamp(1.75rem,2.6vw,2.25rem)]">
+        Marca dónde chocaron y dónde quedó cada uno
+      </h2>
+      <p className="t-nota solo-presentar" data-testid="lugar-al-presentar">
+        Para colocar en el mapa, cambia a «Trabajar».
       </p>
-      <div className="solo-trabajar flex flex-wrap items-end gap-3">
-        <label className="t-nota flex flex-col gap-1">
-          Vehículo y fase
-          <select
-            className="campo h-10"
-            value={herramienta ? `${herramienta.vehiculo}:${herramienta.fase}` : ""}
-            onChange={(e) => {
-              const [vehiculo, fase] = e.target.value.split(":") as [Id, Fase];
-              onHerramienta({ vehiculo, fase });
-            }}
-            data-testid="herramienta-escena"
-          >
-            {expediente.vehiculos.flatMap((v) =>
-              (["impacto", "final"] as const).map((f) => (
-                <option key={`${v.id}:${f}`} value={`${v.id}:${f}`}>
-                  {v.id} · {NOMBRE_FASE[f]}
-                </option>
-              )),
-            )}
-          </select>
-        </label>
-        <label className="t-nota flex flex-col gap-1">
-          Rumbo del frente (°)
-          <input
-            className="campo h-10 w-28"
-            inputMode="decimal"
-            value={rumbo}
-            onChange={(e) => onRumbo(e.target.value)}
-            data-testid="rumbo-escena"
-          />
-        </label>
+      <ol className="flex flex-col gap-2" data-testid="lista-colocar">
+        {requeridos.map((i, k) => fila(i, k + 1))}
+      </ol>
+      <div className="flex flex-col gap-2">
+        <button
+          type="button"
+          className="flex items-center gap-3 rounded-panel border-[1.5px] border-dashed border-linea px-3.5 py-3 text-left"
+          onClick={() => setVerOpcional((x) => !x)}
+          aria-expanded={verOpcional}
+          data-testid="ver-opcional"
+        >
+          <span className="grid h-7 w-7 place-items-center rounded-full border-[1.5px] border-linea text-texto-3">
+            +
+          </span>
+          <span className="t-interfaz flex-1 text-texto-3">
+            Posiciones iniciales, restos y huellas
+          </span>
+          <span className="t-rotulo">Opcional</span>
+        </button>
+        {verOpcional ? (
+          <>
+            <ol className="flex flex-col gap-2">{opcionales.map((i) => fila(i, 0, true))}</ol>
+            <div className="hundido flex flex-col gap-2 p-4" data-testid="medir-opcional">
+              <span className="t-nota">
+                Restos y huellas de frenado: elige «Medir» en el mapa y toca sus dos extremos.
+              </span>
+              {medida !== null ? (
+                <div className="flex flex-wrap items-center gap-2">
+                  <span className="t-interfaz cifras font-semibold">{medida.toFixed(2)} m</span>
+                  <button
+                    type="button"
+                    className="boton-secundario boton-compacto"
+                    onClick={() => onUsarMedida("restos")}
+                    data-testid="medida-restos"
+                  >
+                    Usar como restos
+                  </button>
+                  {expediente.vehiculos.map((v) => (
+                    <button
+                      key={v.id}
+                      type="button"
+                      className="boton-secundario boton-compacto"
+                      onClick={() => onUsarMedida({ vehiculo: v.id })}
+                      data-testid={`medida-huella-${v.id}`}
+                    >
+                      Huella de frenado de {v.id}
+                    </button>
+                  ))}
+                </div>
+              ) : null}
+            </div>
+          </>
+        ) : null}
       </div>
-      <p className="t-nota" data-testid="colocados">
-        {colocados === 1
-          ? "1 posición colocada por el perito."
-          : `${colocados} posiciones colocadas por el perito.`}
-      </p>
       {escena.posiciones.length ? (
-        <div className="flex flex-col gap-1">
-          <h3 className="t-interfaz font-semibold">Lo que dice la narración</h3>
-          <ul className="t-nota flex flex-col gap-1">
+        <details className="t-nota">
+          <summary className="cursor-pointer">Lo que dice la narración del lugar</summary>
+          <ul className="mt-2 flex flex-col gap-1">
             {escena.posiciones.map((p, k) => (
               <li key={k}>
                 {p.vehiculo}, {p.fase}: {p.descripcion}
               </li>
             ))}
           </ul>
-        </div>
+        </details>
       ) : null}
     </div>
   );

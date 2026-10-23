@@ -41,12 +41,32 @@ describe("los casos de /cesvi como una sola aplicación (ADR 0079)", () => {
     expect(RUTAS.reporte("cesvi-abc")).toBe("/cesvi/casos/reporte/cesvi-abc");
   });
 
-  it("un reporte de la reproducción abre con su escena y lo que concluyó CESVI", () => {
+  it("un reporte de la reproducción abre con su escena, lo que concluyó CESVI y la comparación medida", () => {
     const c = casoDeReporte(PAGINA.casos[0]!);
     expect(c.origen).toBe("reporte");
-    expect(c.escena!.expediente).toBe(PAGINA.casos[0]!.expediente);
     expect(c.reporte!.conclusiones).toBe(PAGINA.casos[0]!.conclusiones);
-    expect(c.escena!.problemas).toEqual(problemasExpediente(PAGINA.casos[0]!.expediente));
+    expect(c.comparacion).toBe(PAGINA.casos[0]!.comparacion);
+    expect(c.escena!.problemas).toEqual([]);
+  });
+
+  it("los reportes sin impacto en la narración lo toman de las zonas que concluyó CESVI (V2)", () => {
+    const sin = PAGINA.casos.filter((c) => !(c.expediente.impactos ?? []).length);
+    // Con dos vehículos en las zonas de CESVI que también están en la lectura de Croquis.
+    const dos = sin.filter((c) => {
+      const ids = new Set(c.expediente.vehiculos.map((v) => v.id as string));
+      return (
+        new Set(c.conclusiones.zonas_contacto.map((z) => z.vehiculo).filter((v) => ids.has(v)))
+          .size >= 2
+      );
+    });
+    expect(dos.length).toBeGreaterThan(50);
+    for (const r of dos) {
+      const e = casoDeReporte(r).escena!.expediente;
+      expect(e.impactos?.[0]?.fuente).toBe("dictamen_importado");
+      expect(problemasExpediente(e)).toEqual([]);
+    }
+    // El expediente de la evaluación no cambia: la comparación sigue siendo la medida.
+    expect(dos[0]!.expediente.impactos ?? []).toEqual([]);
   });
 
   it("guarda en este equipo, lista del más reciente, abre con su validación y su reporte, y borra", () => {
