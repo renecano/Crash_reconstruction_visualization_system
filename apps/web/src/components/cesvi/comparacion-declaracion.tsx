@@ -41,8 +41,13 @@ export function ComparacionDeclaracion({
   reconstruccion,
   onHipotesis,
   onComparacion,
+  textoInicial = "",
+  declaranteInicial,
 }: {
   expediente: Expediente;
+  /** La declaración que trae el caso (AXA), ya escrita; el perito la lee o la cambia. */
+  textoInicial?: string;
+  declaranteInicial?: Id;
   reconstruccion: Reconstruccion;
   /** La versión declarada ya simulada, para el 3D (null al quitarla). */
   onHipotesis: (h: Hipotesis | null) => void;
@@ -51,8 +56,8 @@ export function ComparacionDeclaracion({
 }) {
   const ids = expediente.vehiculos.map((v) => v.id);
   const [abierta, setAbierta] = useState(false);
-  const [texto, setTexto] = useState("");
-  const [declarante, setDeclarante] = useState<Id>(ids[0]!);
+  const [texto, setTexto] = useState(textoInicial);
+  const [declarante, setDeclarante] = useState<Id>(declaranteInicial ?? ids[0]!);
   const [estado, setEstado] = useState<string | null>(null);
   const [version, setVersion] = useState<VersionDeclarada | null>(null);
   const [filas, setFilas] = useState<FilaDeclarada[] | null>(null);

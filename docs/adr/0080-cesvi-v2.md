@@ -1,6 +1,6 @@
 # ADR 0080 — /cesvi V2: un solo recorrido guiado, con validación por paso y colocar sin arrastrar
 
-- **Estado:** aceptado (2026-10-23). AXA entra a esta misma interfaz en V2-4 (siguiente PR).
+- **Estado:** aceptado (2026-10-23), con V2-4: AXA ya está en esta misma interfaz.
 - **Contexto:** René (2026-10-23) dejó las maquetas `docs/cesvi/rediseno/V2-Paso1-caso`, `V2-Paso3-lugar` y `V2-Paso3-mapa-expandido`. Pidió aplicarlas a todos los casos por igual, incluido AXA:
   1. el mapa como tarjeta, más grande en el lugar y expandible;
   2. la colocación guiada del paso 3;
@@ -51,6 +51,29 @@
    - **El paso 7** usa la comparación medida en E-R4 (la de la lectura de Croquis sin conclusiones), no una recalculada con ese impacto.
 7. **La portada:** el botón principal es «Entrar a Croquis» (`/cesvi`); «Cuenta qué pasó», la versión para el público, queda en segundo plano. El rediseño de la portada queda pendiente.
 
+## V2-4: AXA en la misma interfaz
+
+- **AXA es un caso de expediente más** (`lib/caso-axa.ts`, origen `ejemplo`), en el mismo recorrido, la misma barra y los mismos 8 pasos:
+  - **la escena:** el expediente que se lee del reporte redactado (la lectura grabada de la e2e de «Cargar un reporte»): vehículos, daños, masas y las medidas C y L, cada dato con su cita. La verificación reproduce el método de CESVI (EBS de la Tacoma: 63.90 km/h con las medidas del reporte).
+  - **sin posiciones:** el perito las coloca en el paso 3. El mapa abre en la ubicación ilustrativa (ADR 0056), como supuesto.
+  - **la narración:** la del ejemplo del hecho.
+  - **lo que concluyó CESVI:** de la misma lectura, con su cita.
+- **Lo que solo AXA tiene va como paneles de sus pasos:**
+  - los datos del expediente, en «Ver detalle» del paso 1;
+  - los criterios de correspondencia de los daños, en el paso 5;
+  - el método de CESVI con sus números (`Calculos`), en el paso 6;
+  - la reproducción del reporte, cada número con el de Croquis, su diferencia y su porcentaje (`Reproduccion`), en el paso 7.
+- **La declaración del conductor:** el paso 4 la trae ya escrita en la comparación de R7.
+- **Sale el recorrido propio de AXA** (`components/cesvi/recorrido/`, salvo la barra):
+  - la versión declarada animada en el mapa;
+  - «Llenar a mano»;
+  - el dictamen con vista previa.
+  - **Sus equivalentes en el recorrido común:**
+    - la declaración simulada y su fantasma en 3D (R7);
+    - la narración y la carga del reporte;
+    - el dictamen en PDF y Word con la estructura de CESVI (R8).
+  - Si René quiere alguna de esas piezas de vuelta, se agrega como panel del paso que corresponda.
+
 ## Pruebas
 
 - **Unitarias:**
@@ -66,10 +89,9 @@
     - expandir y contraer con Esc.
   - **La carambola:** dos puntos de impacto y tres finales.
   - **El importado y la reproducción:** colocan lo que pide la lista antes de reconstruir.
-  - **AXA** pasa sin cambios.
+  - **AXA** desde la lista: tarjetas y avance; paso 4 cerrado sin el lugar; colocar; reconstruir con la declaración ya escrita; criterios; verificación 63.90 km/h; contra el reporte con 63.15, 60.27 y 2.39 %; el dictamen en PDF.
 
 ## Límites
 
-- **AXA sigue con su propio recorrido** hasta V2-4.
 - **Las huellas de frenado medidas** guardan solo la longitud; el contrato no tiene su posición.
 - **La búsqueda del lugar** depende de Nominatim, un servicio externo. Si falla, se mueve el mapa a mano.

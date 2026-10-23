@@ -147,7 +147,11 @@ Reglas de trabajo: `CLAUDE.md`. Especificación: `PLAN.md`.
       - **Contra lo que CESVI escribió en el título,** Croquis gana 18.6 puntos a su línea base. Contra la etiqueta de R0, 4.2.
       - **Siguen débiles:** salida del camino, «otra» y reversa.
   - **Fase actual (2026-10-23): /cesvi V2** (pedido de René con las maquetas `docs/cesvi/rediseno/V2-*`, ADR 0080). Todo caso por igual, incluido AXA: la misma interfaz, los mismos 8 pasos y la misma barra con nombres. Va por partes, cada una con su PR (rama `feat/cesvi-v2`):
-    - **Hecho el 2026-10-23 (V2-1 a V2-3, ADR 0080):** el marco, el paso 3 guiado y lo visual, con las cinco e2e `@flujo` en verde. **Siguiente paso concreto:** V2-4, AXA en la misma interfaz.
+    - **Hecho el 2026-10-23 (V2-1 a V2-4, ADR 0080):**
+      - el marco, el paso 3 guiado y lo visual (#106);
+      - AXA en la misma interfaz, con sus paneles propios;
+      - las cinco e2e `@flujo` en verde.
+    - **Siguiente paso concreto:** regrabar el video demo para la interfaz V2 (el guion y `demo/video/grabar.mjs` aún siguen el recorrido viejo de AXA) y luego R10.
     1. **V2-1, marco:**
        - **la barra:** los nombres de los 8 pasos siempre, «← Casos», la barra de avance arriba y los pasos futuros cerrados hasta completar lo obligatorio;
        - **los botones:** «Siguiente: el hecho →», desactivado y diciendo qué falta (`lib/pasos-caso.ts`, con pruebas);

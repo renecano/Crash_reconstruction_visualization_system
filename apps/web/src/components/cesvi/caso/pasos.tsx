@@ -268,6 +268,7 @@ export function PasoCaso({
   editable,
   onExpediente,
   avance,
+  extra,
 }: {
   titulo: string;
   /** Lo que es el caso, en una etiqueta («Reporte de CESVI · alcance»). */
@@ -280,6 +281,8 @@ export function PasoCaso({
   editable: boolean;
   onExpediente: (e: Expediente) => void;
   avance: { nombre: string; listo: boolean }[];
+  /** Lo que solo trae un caso (AXA: los datos de su expediente), en «Ver detalle». */
+  extra?: ReactNode;
 }) {
   const e = escena?.expediente;
   return (
@@ -325,6 +328,7 @@ export function PasoCaso({
               </p>
             ) : null}
             <ResumenEscena escena={escena} />
+            {extra}
           </div>
         </details>
       ) : null}

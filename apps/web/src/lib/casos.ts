@@ -11,6 +11,7 @@ import {
   type ComparacionDictamen,
   type Conclusiones,
   type EscenaNarrada,
+  type CasoCesvi,
   type Expediente,
 } from "@croquis/cesvi";
 import {
@@ -35,7 +36,7 @@ export const RUTAS = {
   reproduccion: "/cesvi/reproduccion",
 } as const;
 
-export type OrigenCaso = "nuevo" | "importado" | "reporte" | "guardado";
+export type OrigenCaso = "nuevo" | "importado" | "reporte" | "guardado" | "ejemplo";
 
 /** Un caso de expediente abierto en el recorrido: nuevo, importado, de la reproducción o guardado. */
 export interface CasoExpediente {
@@ -54,6 +55,11 @@ export interface CasoExpediente {
    * conclusiones, no una recalculada con el impacto que se tomó del reporte.
    */
   comparacion?: ComparacionDictamen;
+  /**
+   * El caso de AXA (V2-4, ADR 0080): con él, el recorrido muestra además lo que solo él tiene, la
+   * reproducción del reporte con su método y sus números.
+   */
+  ejemplo?: CasoCesvi;
 }
 
 export const casoNuevo = (): CasoExpediente => ({

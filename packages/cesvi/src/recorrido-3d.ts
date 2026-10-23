@@ -13,12 +13,21 @@ import type { VersionCroquis } from "./versiones";
 
 const ID = { A: "V1", B: "V2" } as const;
 
-export function expedienteDelRecorrido(caso: CasoCesvi, evidencia: VersionCroquis): Expediente {
+/**
+ * Sin `evidencia`, el expediente va sin posiciones: el perito las coloca en el paso del lugar (V2,
+ * ADR 0080). Con `lugar`, el mapa abre ahí; la ubicación de AXA es ilustrativa (ADR 0056), así que
+ * va como supuesto y lo dice.
+ */
+export function expedienteDelRecorrido(
+  caso: CasoCesvi,
+  evidencia: VersionCroquis | null,
+  lugar?: { lat: number; lon: number; descripcion: string } | null,
+): Expediente {
   const v = (l: "A" | "B") => caso.vehiculos[l];
   const masaB = v("B").masa_kg;
-  const posiciones = (["A", "B"] as const).flatMap((l) =>
+  const posiciones = (evidencia ? (["A", "B"] as const) : []).flatMap((l) =>
     (["impacto", "final"] as const).map((fase) => {
-      const p = evidencia.vehiculos[l][fase];
+      const p = evidencia!.vehiculos[l][fase];
       return {
         vehiculo: ID[l],
         fase,
@@ -29,7 +38,17 @@ export function expedienteDelRecorrido(caso: CasoCesvi, evidencia: VersionCroqui
     }),
   );
   return {
-    caso: { modalidades: [caso.modalidad_dictaminada] },
+    caso: {
+      modalidades: [caso.modalidad_dictaminada],
+      ...(lugar
+        ? {
+            lugar: {
+              coordenadas: { lat: lugar.lat, lon: lugar.lon },
+              descripcion: { valor: lugar.descripcion, fuente: "supuesto" },
+            },
+          }
+        : {}),
+    },
     vehiculos: [
       {
         id: "V1",
@@ -72,7 +91,7 @@ export function expedienteDelRecorrido(caso: CasoCesvi, evidencia: VersionCroqui
         fuente: "perito",
       },
     ],
-    versiones: [{ tipo: "evidencia", posiciones }],
+    ...(posiciones.length ? { versiones: [{ tipo: "evidencia", posiciones }] } : {}),
     evidencias: {
       restos: {
         longitud: {
