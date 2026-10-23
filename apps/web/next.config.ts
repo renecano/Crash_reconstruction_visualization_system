@@ -13,6 +13,23 @@ const nextConfig: NextConfig = {
     "@croquis/croquis-2d",
     "@croquis/extraction",
   ],
+  // Lo que no se sirve no entra a las funciones de Vercel (ADR 0078): datos crudos y del corpus,
+  // evaluaciones, grabaciones, fixtures, el video de la demo y el solver de referencia. Lo que la
+  // app usa de ahí se importa y queda dentro del código compilado, no como archivo.
+  outputFileTracingExcludes: {
+    "/**": [
+      "../../data/**",
+      "../../eval/**",
+      "../../demo/**",
+      "../../docs/**",
+      "../../solver/**",
+      "../../extraction/**",
+      "../../packages/*/fixtures/**",
+      "../../packages/*/grabaciones/**",
+      "../../packages/scene-schema/fixtures/**",
+      "../../**/*.test.*",
+    ],
+  },
   experimental: {
     // El CSS (unos 8 KB comprimidos) va dentro del HTML: el primer pintado no espera otra ida y
     // vuelta de red (PLAN §11.6, LCP en celular con 4G; ADR 0045).
