@@ -7,6 +7,7 @@ Video narrado de `/cesvi`, para enseñárselo a los peritos de CESVI: el caso de
   - Las líneas que empiezan con `>` son indicaciones de pantalla y no se leen.
 - **Cifras:** solo las que muestra el sistema. Van escritas como se dicen («63 punto 15»), para que la voz las lea bien.
 - **Nada juzga al conductor:** el perito concluye.
+- **Sin el 3D** (René, 2026-10-23): todavía no se le enseña a CESVI. La grabación no abre ninguna vista 3D; la reconstrucción se ve en el mapa con su animación, y una sola frase dice que el 3D está en desarrollo. `revisar.mjs` lo comprueba.
 
 ## intro
 
@@ -52,9 +53,9 @@ El mapa se puede expandir a pantalla completa.
 
 ## reconstruccion
 
-> En pantalla: paso 4, «Reconstruir» y el 3D.
+> En pantalla: paso 4, «Reconstruir» y la animación en el mapa.
 
-Paso cuatro, la reconstrucción con física, y su 3D.
+Paso cuatro, la reconstrucción con física. En el mapa, cada vehículo se mueve como lo calcula Croquis, del impacto hasta donde quedó.
 
 ## declaracion
 
@@ -110,8 +111,14 @@ El perito marca el impacto y dónde quedó cada vehículo, igual que en cualquie
 
 Y Croquis reconstruye con física: cada velocidad con su rango, y la evidencia del perito que la fija. Sin evidencia, no inventa nada.
 
+## en-desarrollo
+
+> En pantalla: la reconstrucción del caso nuevo en el mapa.
+
+La reconstrucción en 3D está en desarrollo.
+
 ## cierre
 
 > En pantalla: la marca otra vez.
 
-Todo caso, nuevo, importado o de ejemplo, se abre en el mismo recorrido, con su reconstrucción en 3D y su dictamen.
+Todo caso, nuevo, importado o de ejemplo, se abre en el mismo recorrido, con su reconstrucción y su dictamen.

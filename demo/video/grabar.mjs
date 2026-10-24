@@ -5,7 +5,8 @@
  * Una sola página graba todo: la entrada de la marca, el recorrido de ocho pasos, «Caso nuevo» y el
  * cierre. Cada segmento hace sus acciones mientras suena su voz, espera la duración medida de la voz
  * (salida/voz.json) más una pausa de lectura y anota cuándo empezó (salida/linea-de-tiempo.json),
- * para que el montaje ponga cada voz en su lugar. El cursor y la barra de subtítulos se inyectan
+ * para que el montaje ponga cada voz en su lugar. Guarda también el texto visible de cada segmento
+ * (salida/textos.json) para la revisión. El cursor y la barra de subtítulos se inyectan
  * solo durante la grabación.
  *
  * Las lecturas de Claude son las grabadas (las mismas de las pruebas): el video no gasta API y sale
@@ -135,6 +136,10 @@ async function subtitulo(texto) {
 
 /** Lleva el cursor al elemento (despacio, para que se vea) y hace clic. */
 async function clic(loc, { solo = false } = {}) {
+  if (!solo && enCurso) {
+    const id = await loc.getAttribute("data-testid", { timeout: 2000 }).catch(() => null);
+    vistas.get(enCurso).acciones.push(id ?? (await loc.textContent()).trim());
+  }
   await loc.scrollIntoViewIfNeeded();
   const b = await loc.boundingBox();
   if (!b) throw new Error("Elemento sin caja");
@@ -147,6 +152,27 @@ async function clic(loc, { solo = false } = {}) {
 }
 const senalar = (loc) => clic(loc, { solo: true });
 
+/** El texto visible de cada segmento, para revisar el video (`revisar.mjs`). */
+const textos = new Map();
+/** Por segmento: los clics (su `data-testid`) y si la vista 3D estaba a la vista (`revisar.mjs`). */
+const vistas = new Map();
+let enCurso = null;
+async function anotarTexto(id) {
+  const t = await pagina.evaluate(() => document.body.innerText);
+  textos.set(id, [...(textos.get(id) ?? []), t]);
+  const v3d = await pagina.evaluate(() => {
+    const tab = document.querySelector('[data-testid="vista-3d"]');
+    const visores = document.querySelectorAll(
+      '[data-testid="visor-caso"], [data-testid="visor-3d"]',
+    );
+    return (
+      tab?.getAttribute("aria-selected") === "true" ||
+      [...visores].some((v) => v.checkVisibility({ visibilityProperty: true }))
+    );
+  });
+  vistas.get(id).vista3d.push(v3d);
+}
+
 /**
  * Un segmento del guion: muestra su subtítulo, hace sus acciones mientras suena su voz y espera la
  * duración de la voz más la pausa de lectura.
@@ -156,9 +182,12 @@ async function segmento(id, acciones = async () => {}) {
   if (!v) throw new Error(`Sin voz para «${id}»`);
   const inicio = Date.now();
   linea.push({ id, inicio_s: (inicio - t0) / 1000, duracion_s: v.duracion_s, texto: v.texto });
+  enCurso = id;
+  vistas.set(id, { acciones: [], vista3d: [] });
   await subtitulo(v.texto);
   try {
     await acciones();
+    await anotarTexto(id);
   } catch (e) {
     // Lo que había en pantalla cuando falló, para corregir el guion de acciones.
     await pagina.screenshot({ path: join(SALIDA, `fallo-${id}.png`) });
@@ -166,7 +195,9 @@ async function segmento(id, acciones = async () => {}) {
   }
   const transcurrido = (Date.now() - inicio) / 1000;
   await espera(v.duracion_s + PAUSA - transcurrido);
+  await anotarTexto(id);
   await subtitulo(null);
+  enCurso = null;
   console.log(`${id}: ${((Date.now() - inicio) / 1000).toFixed(1)} s`);
 }
 
@@ -251,8 +282,9 @@ await segmento("reconstruccion", async () => {
   await sig();
   await clic(pagina.getByTestId("reconstruir"));
   await pagina.getByTestId("velocidades").waitFor({ timeout: 60_000 });
-  await clic(pagina.getByTestId("ver-3d"));
-  await pagina.getByTestId("visor-caso").locator("canvas").first().waitFor({ timeout: 60_000 });
+  // Sin el 3D (René, 2026-10-23): la reconstrucción se ve en el mapa, con su animación.
+  await espera(0.8);
+  await senalar(pagina.getByTestId("escenario"));
 });
 await segmento("declaracion", async () => {
   await clic(pagina.getByTestId("abrir-declaracion"));
@@ -326,6 +358,9 @@ await segmento("caso-nuevo-reconstruccion", async () => {
   await espera(1.5);
   await senalar(pagina.getByTestId("evidencia-usada"));
 });
+await segmento("en-desarrollo", async () => {
+  await senalar(pagina.getByTestId("escenario"));
+});
 if (RAPIDO) {
   // En el ensayo se guarda el caso colocado, para revisar la reconstrucción fuera de la página.
   for (let k = 0; k < 3; k++) await pagina.getByTestId("siguiente").click();
@@ -338,7 +373,7 @@ if (RAPIDO) {
 await pagina.setContent(
   htmlMarca(
     "cierre",
-    "Todo caso en el mismo recorrido: <span>nuevo, importado o de ejemplo, con su 3D y su dictamen.</span>",
+    "Todo caso en el mismo recorrido: <span>nuevo, importado o de ejemplo, con su reconstrucción y su dictamen.</span>",
   ),
 );
 await espera(0.8);
@@ -353,5 +388,15 @@ renameSync(ruta, join(SALIDA, "recorrido.webm"));
 writeFileSync(
   join(SALIDA, "linea-de-tiempo.json"),
   `${JSON.stringify({ duracion_s: total, segmentos: linea }, null, 2)}\n`,
+);
+writeFileSync(
+  join(SALIDA, "vistas.json"),
+  `${JSON.stringify(Object.fromEntries(vistas), null, 2)}
+`,
+);
+writeFileSync(
+  join(SALIDA, "textos.json"),
+  `${JSON.stringify(Object.fromEntries(textos), null, 2)}
+`,
 );
 console.log(`Grabado: ${total.toFixed(1)} s → ${join(SALIDA, "recorrido.webm")}`);

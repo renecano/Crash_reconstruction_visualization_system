@@ -7,6 +7,9 @@
  *    del segmento) y la voz:
  *    - ningún identificador interno: las fuentes del contrato que no son palabras
  *      (`dictamen_importado`…) ni nada con forma de identificador (`palabra_con_guion_bajo`);
+ *    - ninguna vista 3D (René, 2026-10-23): ningún segmento hace clic en «Ver la reconstrucción en
+ *      3D» ni en la pestaña «3D», y el 3D no está a la vista al anotar el segmento
+ *      (salida/vistas.json, lo que anotó `grabar.mjs`);
  *    - «dictamen» solo para lo que produce Croquis: se marca cuando va junto a CESVI, AXA o un reporte
  *      («dictamen de CESVI», «el dictamen del reporte»…), y se listan todas las apariciones con su
  *      contexto.
@@ -22,6 +25,9 @@ import { FFMPEG, FFPROBE, RAIZ, SALIDA, VIDEO_FINAL } from "./comun.mjs";
 
 const linea = JSON.parse(readFileSync(join(SALIDA, "linea-de-tiempo.json"), "utf8"));
 const textos = JSON.parse(readFileSync(join(SALIDA, "textos.json"), "utf8"));
+const vistas = JSON.parse(readFileSync(join(SALIDA, "vistas.json"), "utf8"));
+/** Lo que abre el 3D: el botón del paso 4 y la pestaña del escenario. */
+const ABRE_3D = new Set(["ver-3d", "vista-3d", "Ver la reconstrucción en 3D", "3D"]);
 const esquema = JSON.parse(
   readFileSync(join(RAIZ, "packages/scene-schema/escena.schema.json"), "utf8"),
 );
@@ -91,6 +97,11 @@ const ajeno = new RegExp(
 const hallazgos = [];
 const dictamen = [];
 for (const s of linea.segmentos) {
+  const v = vistas[s.id] ?? { acciones: [], vista3d: [] };
+  for (const a of v.acciones.filter((x) => ABRE_3D.has(x)))
+    hallazgos.push({ segmento: s.id, donde: "acción", tipo: "abre la vista 3D", texto: a });
+  if (v.vista3d.some(Boolean))
+    hallazgos.push({ segmento: s.id, donde: "pantalla", tipo: "vista 3D a la vista", texto: "3D" });
   const pantalla = (textos[s.id] ?? []).join("\n");
   for (const [donde, texto] of [
     ["pantalla", pantalla],
@@ -120,4 +131,6 @@ console.log(`Cuadros: ${linea.segmentos.length * 3} en ${dir}`);
 console.log(`«dictamen»: ${unicos.length} apariciones distintas (revision.json)`);
 for (const h of hallazgos) console.log(`✗ ${h.segmento} (${h.donde}) ${h.tipo}: ${h.texto}`);
 if (hallazgos.length) process.exit(1);
-console.log("Sin identificadores internos ni «dictamen» fuera de lo que produce Croquis.");
+console.log(
+  "Sin vista 3D, sin identificadores internos ni «dictamen» fuera de lo que produce Croquis.",
+);
