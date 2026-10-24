@@ -145,7 +145,12 @@ export const LEGACY_GRAVEL_LOOK: SurfaceLook = {
 export function asphaltMaterial(surface: SurfaceState, legacyGravel = false): AsphaltMaterial {
   const look =
     legacyGravel && surface === "grava_suelta" ? LEGACY_GRAVEL_LOOK : SURFACE_LOOK[surface];
-  const m = new MeshStandardNodeMaterial({ roughness: look.roughness, metalness: 0 });
+  // `color` es el color plano que lleva la exportación glTF (R11); el dibujo usa colorNode.
+  const m = new MeshStandardNodeMaterial({
+    color: look.color,
+    roughness: look.roughness,
+    metalness: 0,
+  });
   // Manchas (charcos, aceite, lodo, grava) sobre la base: liso o con textura.
   const p = look.patch;
   const k = p

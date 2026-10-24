@@ -122,7 +122,8 @@ export function bodyMaterial(p: BodyPalette): MeshStandardNodeMaterial {
     const c = new Color(hex);
     return uniform(vec3(c.r, c.g, c.b));
   };
-  const m = new MeshStandardNodeMaterial();
+  // `color`: la camisa, el color plano que lleva la exportación glTF (R11); el dibujo usa colorNode.
+  const m = new MeshStandardNodeMaterial({ color: p.camisa });
   m.colorNode = col(p.piel)
     .mul(w(0))
     .add(col(p.camisa).mul(w(1)))

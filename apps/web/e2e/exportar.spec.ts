@@ -63,7 +63,9 @@ test.describe("exportar desde el visor", () => {
     await expect(page.getByTestId("export-estado")).toContainText("Listo");
   });
 
-  test("escena glTF: .glb con leyenda, vehículos y animación", async ({ page }) => {
+  test("Exportar a Blender: .glb con leyenda, vehículos, animación, cámaras y ambiente", async ({
+    page,
+  }) => {
     await page.goto("/visor?escena=volcadura&t=0&calidad=baja&renderer=webgl");
     await waitReady(page);
     const [download] = await Promise.all([
@@ -77,14 +79,25 @@ test.describe("exportar desde el visor", () => {
     const jsonLen = glb.readUInt32LE(12);
     const json = JSON.parse(glb.subarray(20, 20 + jsonLen).toString("utf8")) as {
       asset: { copyright?: string };
-      nodes: { name?: string }[];
+      nodes: { name?: string; camera?: number }[];
       animations?: { channels: unknown[] }[];
-      scenes: { extras?: { leyenda?: string[] } }[];
+      cameras?: unknown[];
+      scenes: {
+        extras?: { leyenda?: string[]; camara_principal?: string; ambiente?: { sol?: unknown } };
+      }[];
     };
     expect(json.asset.copyright).toContain(LEGEND);
     expect(json.scenes[0]!.extras!.leyenda).toContain(LEGEND);
     expect(json.nodes.some((n) => n.name?.startsWith("vehiculo_"))).toBe(true);
     expect(json.animations?.[0]?.channels.length ?? 0).toBeGreaterThan(0);
+    // «Exportar a Blender» (R11): las cámaras del visor y el ambiente para el video.
+    expect(json.cameras?.length ?? 0).toBeGreaterThan(2);
+    expect(json.scenes[0]!.extras!.camara_principal).toBe("Cinematográfica");
+    expect(json.scenes[0]!.extras!.ambiente?.sol).toBeDefined();
+    await expect(page.getByTestId("export-glb")).toHaveText("Exportar a Blender");
+    const script = await page.request.get("/blender/croquis_render.py");
+    expect(script.ok()).toBe(true);
+    expect(await script.text()).toContain("def armar(");
   });
 
   test("informe PDF: secciones, rangos, la marca al pie de cada página y en los metadatos", async ({

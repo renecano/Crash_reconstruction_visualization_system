@@ -184,7 +184,8 @@ function sceneMaterials(opts: SceneGraphOptions, asphalt: AsphaltMaterial) {
 /** Llanta y rin con un solo material: el atributo `_parte` elige entre ambos (ver `wheelMesh`). */
 function wheelMaterial(): MeshStandardNodeMaterial {
   const k = attribute("_parte", "float");
-  const m = new MeshStandardNodeMaterial();
+  // `color`: la llanta, el color plano que lleva la exportación glTF (R11); el dibujo usa colorNode.
+  const m = new MeshStandardNodeMaterial({ color: "#141414" });
   m.colorNode = mix(color("#141414"), color("#b9bcc0"), k);
   m.roughnessNode = mix(float(0.95), float(0.3), k);
   m.metalnessNode = mix(float(0), float(0.8), k);

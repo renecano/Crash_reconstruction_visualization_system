@@ -73,3 +73,5 @@ demo/video/*.mp4
 demo/video/*.srt
 # Worker de pdf.js copiado de node_modules en cada build (scripts/pdfjs-worker.mjs)
 apps/web/public/pdfjs/
+# El script de Blender (R11) se copia de tools/blender/ en cada build.
+apps/web/public/blender/

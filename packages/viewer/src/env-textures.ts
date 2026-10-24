@@ -165,7 +165,8 @@ export function texturedPlanarMaterial(
   t: EnvTexture,
   opts: { color: string; roughness: number; variation?: boolean },
 ): MeshStandardNodeMaterial {
-  const m = new MeshStandardNodeMaterial({ metalness: 0 });
+  // `color` es el color plano que lleva la exportación glTF (R11); el dibujo usa colorNode.
+  const m = new MeshStandardNodeMaterial({ metalness: 0, color: opts.color });
   const base = normalizedColor(t, opts.color);
   m.colorNode = opts.variation
     ? base.mul(

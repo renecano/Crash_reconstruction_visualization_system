@@ -47,7 +47,13 @@ const T = textos(
     tamanoCuadro: "Tamaño del cuadro",
     delVisor: "La del visor",
     png: "Cuadro PNG del instante actual",
-    glb: "Escena glTF con animación",
+    glb: "Exportar a Blender",
+    script: "Script de Blender",
+    detalle: "Ver detalle",
+    blender: (archivo: string) =>
+      `La escena (${archivo}) va en glTF con la animación de la reconstrucción, las cámaras del visor, los materiales y la luz del lugar y la hora. Con Blender 5.2 o posterior, en la carpeta de los dos archivos:`,
+    blenderFin:
+      "hace el video con la cámara cinematográfica y la leyenda de reconstrucción de apoyo en cada cuadro. Las opciones (otra cámara, Cycles, resolución, un tramo) están al principio del script.",
     informe: "Informe PDF",
     esperaResultado: "Espera el resultado completo",
     video: "Video",
@@ -74,7 +80,13 @@ const T = textos(
     tamanoCuadro: "Frame size",
     delVisor: "Same as the viewer",
     png: "PNG frame of the current instant",
-    glb: "glTF scene with animation",
+    glb: "Export to Blender",
+    script: "Blender script",
+    detalle: "Details",
+    blender: (archivo: string) =>
+      `The scene (${archivo}) is glTF with the reconstruction's animation, the viewer's cameras, the materials and the light of the place and time. With Blender 5.2 or later, in the folder with both files:`,
+    blenderFin:
+      "renders the video with the cinematic camera and the support-reconstruction notice on every frame. The options (another camera, Cycles, resolution, a time span) are at the top of the script.",
     informe: "PDF report",
     esperaResultado: "Wait for the full result",
     video: "Video",
@@ -254,6 +266,14 @@ export function ExportPanel({ api, clock, legend: legendEs, nombre, informe }: E
         >
           {t.glb}
         </button>
+        <a
+          href="/blender/croquis_render.py"
+          download
+          className="t-nota"
+          data-testid="export-script-blender"
+        >
+          {t.script}
+        </a>
         {informe ? (
           <button
             type="button"
@@ -267,6 +287,17 @@ export function ExportPanel({ api, clock, legend: legendEs, nombre, informe }: E
           </button>
         ) : null}
       </div>
+      {/* El video de cine se hace en Blender con la escena y el script (R11, ADR 0085). */}
+      <details className="t-nota" data-testid="export-blender-detalle">
+        <summary>{t.detalle}</summary>
+        <p className="mt-1">
+          {t.blender(`croquis-${base}.glb`)}{" "}
+          <code className="cifras">
+            blender -b --factory-startup -P croquis_render.py -- croquis-{base}.glb
+          </code>{" "}
+          {t.blenderFin}
+        </p>
+      </details>
       <div className="flex flex-wrap items-end gap-3 border-t border-linea pt-4">
         <label className="flex flex-col gap-1">
           <span className="t-nota">{t.video}</span>

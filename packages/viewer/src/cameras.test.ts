@@ -4,6 +4,7 @@ import {
   actionBounds,
   cinematicCamera,
   damageCamera,
+  exportCameras,
   mostDamaged,
   driverCamera,
   freeCameraStart,
@@ -75,5 +76,24 @@ describe("cámaras", () => {
     const rel = Math.atan2(dy, dx) - p.yaw;
     expect(Math.abs(Math.atan2(Math.sin(rel), Math.cos(rel)))).toBeCloseTo((60 * Math.PI) / 180, 6);
     expect(Math.hypot(dx, dy)).toBeLessThan(15);
+  });
+
+  it("R11: las cámaras que se exportan son las del visor, con la cinematográfica primero", async () => {
+    const r = await loadResultado("peaton_cruce");
+    const cams = exportCameras(r, () => 1.3);
+    expect(cams[0]!.clave).toBe("cinematica");
+    expect(cams.map((c) => c.clave)).toEqual([
+      "cinematica",
+      "cenital",
+      "dano",
+      ...r.vehiculos.map((v) => `conductor_${v.id}`),
+      "persona",
+    ]);
+    const t = (r.t_inicio + r.t_fin) / 2;
+    expect(cams[0]!.pose(t)).toEqual(cinematicCamera(r, t));
+    const v = r.vehiculos[0]!;
+    expect(cams.find((c) => c.clave === `conductor_${v.id}`)!.pose(t)).toEqual(
+      driverCamera(v, t, 1.3),
+    );
   });
 });
