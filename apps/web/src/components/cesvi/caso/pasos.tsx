@@ -538,12 +538,12 @@ export function PasoLugar({
               <li>
                 <b className="text-texto">1.</b>{" "}
                 {i.tipo === "impacto"
-                  ? "Toca el mapa donde chocaron."
-                  : "Toca el mapa donde quedó."}
+                  ? "Arrastra X1 de la bandeja (o toca el mapa) donde chocaron."
+                  : "Arrastra su chip de la bandeja (o toca el mapa) donde quedó."}
               </li>
               <li>
-                <b className="text-texto">2.</b> Gira la flecha hacia donde apunta el frente
-                {i.tipo === "impacto" ? " del primero." : "."}
+                <b className="text-texto">2.</b> Gira con el anillo hacia donde apunta el frente
+                {i.tipo === "impacto" ? " del primero" : ""} (Q y E: 5°).
               </li>
             </ol>
           </div>
@@ -563,6 +563,27 @@ export function PasoLugar({
               />
               ° (0° = norte)
             </label>
+            {hecho ? (
+              <div className="flex flex-wrap gap-1.5">
+                {(
+                  [
+                    ["−15°", -15, "girar-menos"],
+                    ["+15°", 15, "girar-mas"],
+                    ["Voltear 180°", 180, "voltear"],
+                  ] as const
+                ).map(([texto, d, id]) => (
+                  <button
+                    key={id}
+                    type="button"
+                    className="boton-secundario boton-compacto"
+                    onClick={() => onRumbo(((((rumboActivo ?? 0) + d) % 360) + 360) % 360)}
+                    data-testid={id}
+                  >
+                    {texto}
+                  </button>
+                ))}
+              </div>
+            ) : null}
             {hecho ? (
               <button
                 type="button"

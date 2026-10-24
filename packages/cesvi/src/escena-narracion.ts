@@ -345,7 +345,14 @@ type Fase = "inicial" | "impacto" | "final";
  */
 export function conPosicion(
   e: Expediente,
-  p: { vehiculo: Id; fase: Fase; punto: { lat: number; lon: number }; rumbo: number },
+  p: {
+    vehiculo: Id;
+    fase: Fase;
+    punto: { lat: number; lon: number };
+    rumbo: number;
+    /** «supuesto»: una pose que propone Croquis y el perito todavía no acepta (se ve como fantasma). */
+    fuente?: "perito" | "supuesto";
+  },
 ): Expediente {
   const versiones = [...(e.versiones ?? [])];
   let i = versiones.findIndex((v) => v.tipo === "evidencia");
@@ -359,7 +366,7 @@ export function conPosicion(
     ...v,
     posiciones: [
       ...(v.posiciones ?? []).filter((x) => !(x.vehiculo === p.vehiculo && x.fase === p.fase)),
-      { vehiculo: p.vehiculo, fase: p.fase, punto: p.punto, rumbo, fuente: "perito" },
+      { vehiculo: p.vehiculo, fase: p.fase, punto: p.punto, rumbo, fuente: p.fuente ?? "perito" },
     ],
   };
   return { ...e, versiones };
