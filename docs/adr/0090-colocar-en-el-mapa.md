@@ -31,7 +31,7 @@
 - **`eval/giro-mapa.mjs` → `eval/results/giro_mapa.json`:** en la laptop de René (Chrome con su Intel UHD, 1440×800 a escala 1.5), contra producción, mientras se gira el anillo con el mouse:
   - la página dibuja 59.9 cuadros por segundo (el tope de la pantalla, contra una meta de ≥ 30);
   - cada actualización del anillo cuesta 0.281 ms.
-  - Con el servidor local, antes de desplegar, había dado 59.3 y 0.318.
+  - Con el servidor local, antes de desplegar, había dado 59.3 y 0.318 (`eval/results/giro_mapa.json` en el commit `087e300`).
 - **Pruebas:**
   - la lógica: el rumbo del cursor con imán y Shift, los metros por pixel y la calle más cercana;
   - la e2e del caso nuevo: arrastra V2 de la bandeja al mapa (con la distancia en vivo), lo gira con el anillo a 90° y acepta el fantasma de V1;
