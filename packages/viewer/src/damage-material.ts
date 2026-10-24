@@ -72,6 +72,8 @@ export function damagedPaintMaterial(baseHex: string, otherHex?: string): Damage
   const streaks = smoothstep(-0.1, 0.45, n);
   const painted = otherHex ? mix(base, color(otherHex), clamp(transfer.mul(streaks), 0, 1)) : base;
   const m = new MeshPhysicalNodeMaterial();
+  // El color plano: no cambia el dibujo (manda colorNode); es lo que lleva la exportación glTF (R11).
+  m.color.set(baseHex);
   m.colorNode = mix(painted, color("#8f9296"), clamp(scratches.mul(0.8), 0, 1));
   m.roughnessNode = mix(float(0.38), float(0.85), clamp(dano.mul(1.3).add(scratches), 0, 1));
   m.metalnessNode = mix(float(0.35), float(0.75), clamp(scratches, 0, 1));
@@ -120,7 +122,7 @@ export function crackedGlassMaterial(
     .sub(smoothstep(0, 0.03, r))
     .mul(crack);
   const mask = clamp(max(radial, ring.mul(0.7)).mul(inside).add(core), 0, 1);
-  const m = new MeshPhysicalNodeMaterial({ transparent: true });
+  const m = new MeshPhysicalNodeMaterial({ transparent: true, color: "#1c2730", opacity: 0.78 });
   m.colorNode = mix(color("#1c2730"), color("#e9eef2"), mask.mul(0.85));
   m.opacityNode = mix(float(0.78), float(0.96), mask);
   m.roughnessNode = mix(float(0.06), float(0.5), mask);
@@ -130,7 +132,7 @@ export function crackedGlassMaterial(
 
 /** Faro roto: sin luz y opaco (las piezas de vidrio salen como restos). */
 export function brokenLightMaterial(): MeshStandardNodeMaterial {
-  const m = new MeshStandardNodeMaterial();
+  const m = new MeshStandardNodeMaterial({ color: "#2b2d30" });
   m.colorNode = color("#2b2d30");
   m.roughnessNode = float(0.9);
   return m;

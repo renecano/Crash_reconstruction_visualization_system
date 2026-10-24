@@ -33,6 +33,7 @@ import {
   damageCamera,
   personCamera,
   driverCamera,
+  exportCameras,
   freeCameraStart,
   overheadCamera,
   type CameraMode,
@@ -361,12 +362,25 @@ function SceneContent({
         }
       },
       // GLTFExporter y SkeletonUtils se cargan solo al exportar (no pesan en la carga del visor).
-      exportGlb: async (legend) =>
-        (await import("../export/gltf")).exportSceneGlb(graph, { resultado, legend }),
+      exportGlb: async (legend) => {
+        const { exportSceneGlb, ambienteDe } = await import("../export/gltf");
+        // Las cámaras del visor y su ambiente, para el video cinematográfico en Blender (R11).
+        return exportSceneGlb(graph, {
+          resultado,
+          legend,
+          cameras: exportCameras(resultado, (v) =>
+            driverEye(
+              resultado,
+              resultado.vehiculos.find((x) => x.id === v.id)!,
+            ),
+          ),
+          ambiente: ambienteDe(env),
+        });
+      },
     };
     onExport(api);
     return () => onExport(null);
-  }, [onExport, resultado, clock, cam, gl, advance, size, graph]);
+  }, [onExport, resultado, clock, cam, gl, advance, size, graph, env]);
 
   // Cielo, niebla y luces.
   const lights = useMemo(() => {
@@ -455,16 +469,7 @@ function SceneContent({
   const driver = useMemo(() => {
     const v = resultado.vehiculos.find((x) => x.id === driverVehicleId) ?? resultado.vehiculos[0];
     if (!v) return undefined;
-    // Altura del ojo del análisis de visibilidad del solver; sin él, asiento + 0.62 m.
-    const eye =
-      eyeHeightFor(resultado, v.id) ??
-      seatHeight(v.clase, {
-        length: v.dimensiones.largo_m,
-        width: v.dimensiones.ancho_m,
-        height: v.dimensiones.alto_m,
-        wheelbase: v.dimensiones.distancia_entre_ejes_m,
-      }) + 0.62;
-    return { v, eye };
+    return { v, eye: driverEye(resultado, v) };
   }, [resultado, driverVehicleId]);
 
   // El croquis pintado sobre el asfalto (solo en la escena guiada de la portada).
@@ -604,6 +609,19 @@ function SceneContent({
       <primitive object={lights} />
       {precipitation ? <primitive object={precipitation.object} /> : null}
     </>
+  );
+}
+
+/** Altura del ojo del análisis de visibilidad del solver; sin él, asiento + 0.62 m. */
+function driverEye(resultado: Resultado, v: Resultado["vehiculos"][number]): number {
+  return (
+    eyeHeightFor(resultado, v.id) ??
+    seatHeight(v.clase, {
+      length: v.dimensiones.largo_m,
+      width: v.dimensiones.ancho_m,
+      height: v.dimensiones.alto_m,
+      wheelbase: v.dimensiones.distancia_entre_ejes_m,
+    }) + 0.62
   );
 }
 

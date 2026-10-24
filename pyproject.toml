@@ -38,7 +38,7 @@ dev = [
 ]
 
 [tool.pytest.ini_options]
-testpaths = ["packages/scene-schema/python/tests", "solver/tests", "extraction/tests", "data/tests", "eval/tests", "assets/pipeline/tests"]
+testpaths = ["packages/scene-schema/python/tests", "solver/tests", "extraction/tests", "data/tests", "eval/tests", "assets/pipeline/tests", "tools/blender/tests"]
 addopts = "-q --strict-markers --strict-config --import-mode=importlib"
 xfail_strict = true
 filterwarnings = ["error"]
@@ -57,6 +57,8 @@ ignore = ["RUF001", "RUF002", "RUF003"]
 "**/tests/**" = ["ARG", "PT011"]
 "**/scripts/**" = ["T20"]
 "**/__main__.py" = ["T20"]
+# Los scripts de Blender (R11) informan en la consola de Blender.
+"tools/blender/*.py" = ["T20"]
 # Scripts que se corren a mano e informan su avance.
 "eval/voz_video.py" = ["T20"]
 "demo/video/*.py" = ["T20"]

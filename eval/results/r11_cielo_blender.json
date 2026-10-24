@@ -1,0 +1,31 @@
+{
+  "blender": "5.2.3 LTS",
+  "elevacion_pedida_deg": 40,
+  "medidas": [
+    {
+      "sun_rotation_deg": 0,
+      "sol_columna": 180,
+      "sol_fila": 130,
+      "azimut_medido_deg": 0,
+      "elevacion_medida_deg": 40,
+      "referencia_este_columna": 268
+    },
+    {
+      "sun_rotation_deg": 90,
+      "sol_columna": 269,
+      "sol_fila": 128,
+      "azimut_medido_deg": 89,
+      "elevacion_medida_deg": 38,
+      "referencia_este_columna": 268
+    },
+    {
+      "sun_rotation_deg": -90,
+      "sol_columna": 89,
+      "sol_fila": 129,
+      "azimut_medido_deg": 269,
+      "elevacion_medida_deg": 39,
+      "referencia_este_columna": 268
+    }
+  ],
+  "conclusion": "sun_rotation se mide desde el norte hacia el este, como el azimut del visor"
+}

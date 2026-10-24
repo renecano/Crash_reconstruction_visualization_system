@@ -1,0 +1,82 @@
+{
+  "fecha": "2026-10-24T03:01:49.563Z",
+  "equipo_despierto_durante_la_medicion": true,
+  "blender": "Blender 5.2.3 LTS (hash e13b728c6880 built 2026-10-22 01:37:16)",
+  "escena": {
+    "archivo": "axa-escena.glb",
+    "sha256": "c6603fd48942048324b01601790080ba96beb11e3415ba4bc20a3e5a63d14138",
+    "bytes": 5471772
+  },
+  "ram_total_gb": 7.83,
+  "limite_blender_fraccion_ram": 0.7,
+  "renders": [
+    {
+      "id": "eevee_480p_2s",
+      "argumentos": [
+        "--motor",
+        "eevee",
+        "--resolucion",
+        "480x270",
+        "--muestras",
+        "16",
+        "--desde",
+        "-0.5",
+        "--hasta",
+        "1.5"
+      ],
+      "segundos_de_render": 227.4,
+      "video": {
+        "codec": "h264",
+        "ancho": 480,
+        "alto": 270,
+        "cuadros": 61,
+        "fps": "30/1",
+        "duracion_s": 2.033,
+        "bytes": 112814
+      },
+      "memoria": {
+        "blender_pico_mb": 1414,
+        "blender_pico_fraccion_ram": 0.176,
+        "blender_pico_informado_mb": null,
+        "maquina_antes_fraccion": 0.697,
+        "maquina_pico_fraccion": 0.969,
+        "muestras": 511
+      },
+      "cumple_limite_blender": true
+    },
+    {
+      "id": "cycles_320p_10cuadros",
+      "argumentos": [
+        "--motor",
+        "cycles",
+        "--resolucion",
+        "320x180",
+        "--muestras",
+        "8",
+        "--desde",
+        "0",
+        "--hasta",
+        "0.3"
+      ],
+      "segundos_de_render": 39.8,
+      "video": {
+        "codec": "h264",
+        "ancho": 320,
+        "alto": 180,
+        "cuadros": 10,
+        "fps": "30/1",
+        "duracion_s": 0.333,
+        "bytes": 15313
+      },
+      "memoria": {
+        "blender_pico_mb": 755,
+        "blender_pico_fraccion_ram": 0.094,
+        "blender_pico_informado_mb": null,
+        "maquina_antes_fraccion": 0.673,
+        "maquina_pico_fraccion": 0.769,
+        "muestras": 83
+      },
+      "cumple_limite_blender": true
+    }
+  ]
+}

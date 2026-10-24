@@ -232,3 +232,40 @@ export function personCamera(scene: CameraScene, t: number, fov = 40): CameraPos
     up: UP_Y,
   };
 }
+
+/** Una cámara del visor para exportar a glTF (R11): su clave, su nombre y su pose en cada instante. */
+export interface ExportCamera {
+  clave: CameraMode | `conductor_${string}`;
+  nombre: string;
+  pose: (t: number) => CameraPose;
+}
+
+/**
+ * Las cámaras del visor que viajan en la escena glTF, con las mismas poses que en pantalla: la
+ * cinematográfica primero (la del video), luego la cenital, la del daño, la de cada conductor y,
+ * si hay personas, la que las sigue.
+ */
+export function exportCameras(
+  scene: CameraScene,
+  eyeHeight: (v: CameraVehicle) => number,
+): ExportCamera[] {
+  const out: ExportCamera[] = [
+    { clave: "cinematica", nombre: "Cinematográfica", pose: (t) => cinematicCamera(scene, t) },
+    { clave: "cenital", nombre: "Cenital", pose: () => overheadCamera(scene) },
+  ];
+  if (scene.vehiculos.length > 0) {
+    out.push({ clave: "dano", nombre: "Daño", pose: (t) => damageCamera(scene, t) });
+  }
+  for (const v of scene.vehiculos) {
+    const eye = eyeHeight(v);
+    out.push({
+      clave: `conductor_${v.id}`,
+      nombre: `Conductor ${v.id}`,
+      pose: (t) => driverCamera(v, t, eye),
+    });
+  }
+  if ((scene.personas ?? []).some((p) => p.trayectoria.t.length > 0)) {
+    out.push({ clave: "persona", nombre: "Persona", pose: (t) => personCamera(scene, t) });
+  }
+  return out;
+}
