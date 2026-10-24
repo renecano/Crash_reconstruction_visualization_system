@@ -110,10 +110,15 @@ describe("de la narración del perito a la escena (R1)", () => {
       },
     ]);
     expect(e.preguntas[0]!.clave).toBe("impacto-propuesto");
-    // Lo demás que falta, en orden: masas y la posición final de A (la de B sí está).
+    // Lo demás que falta, en orden: la clase y la masa de cada uno (un dato por pregunta) y la
+    // posición final de A (la de B sí está). «impactos» (cuáles chocaron) solo queda pendiente si el
+    // perito dice que el supuesto no es correcto.
     expect(e.preguntas.map((p) => p.clave)).toEqual([
       "impacto-propuesto",
+      "impactos",
+      "clase-V1",
       "masa-V1",
+      "clase-V2",
       "masa-V2",
       "final-V1",
     ]);

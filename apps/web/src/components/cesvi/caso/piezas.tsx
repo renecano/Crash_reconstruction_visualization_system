@@ -8,8 +8,14 @@ import { FUENTE, palabra } from "@/i18n/vocabulario";
 import {
   avanzar,
   confirmarImpacto,
+  conClase,
   conMasa,
+  conMasaTipica,
+  conPrimerImpacto,
   conRestos,
+  conZonaImpacto,
+  masaTipica,
+  sinImpactoSupuesto,
   distanciaM,
   rectanguloVehiculo,
   rumboDeg,
@@ -593,51 +599,119 @@ export function Pregunta({
   expediente,
   onCambio,
   onNoSe,
+  onIrAlMapa,
 }: {
   p: PreguntaEscena;
   expediente: Expediente;
   onCambio: (e: Expediente) => void;
   onNoSe: () => void;
+  /** Para «¿Dónde quedó…?»: lleva al paso del lugar con ese vehículo listo para colocarlo. */
+  onIrAlMapa?: (vehiculo: string) => void;
 }) {
   const [valor, setValor] = useState("");
   const numero = Number(valor.replace(",", "."));
+  const c = p.control;
   const aplicar = () => {
     if (!(numero > 0)) return;
     if (p.clave.startsWith("masa-") && p.vehiculo)
       onCambio(conMasa(expediente, p.vehiculo, numero));
     if (p.clave === "restos") onCambio(conRestos(expediente, numero));
   };
-  const numerica = p.clave.startsWith("masa-") || p.clave === "restos";
+  const elegir = (v: string) => {
+    if (p.clave === "impactos") onCambio(conPrimerImpacto(expediente, v));
+    else if (p.clave.startsWith("zona-") && p.vehiculo && p.impacto)
+      onCambio(conZonaImpacto(expediente, p.impacto, p.vehiculo, v));
+    else if (p.clave.startsWith("clase-") && p.vehiculo)
+      // «Otro» no cambia la clase: la pregunta se da por contestada y la masa se pide sin típica.
+      if (v === "otro") onNoSe();
+      else onCambio(conClase(expediente, p.vehiculo, v));
+  };
+  // La masa típica se calcula con la clase de ahora (el perito pudo contestarla después de leer).
+  const tipico =
+    p.clave.startsWith("masa-") && p.vehiculo
+      ? masaTipica(expediente.vehiculos.find((v) => v.id === p.vehiculo)?.clase)
+      : c.tipo === "numero"
+        ? (c.tipico ?? null)
+        : null;
   return (
     <li className="hundido flex flex-col gap-2 p-4" data-testid={`pregunta-${p.clave}`}>
       <p className="t-interfaz font-medium">{p.texto}</p>
       <p className="t-nota">{p.porQue}</p>
       <div className="flex flex-wrap items-center gap-2">
-        {p.clave === "impacto-propuesto" && p.impacto ? (
-          <button
-            type="button"
-            className="boton-principal boton-compacto"
-            onClick={() => onCambio(confirmarImpacto(expediente, p.impacto!))}
-            data-testid="confirmar-impacto"
-          >
-            Sí, confirmar
-          </button>
+        {c.tipo === "sino" && p.impacto ? (
+          <>
+            <button
+              type="button"
+              className="boton-principal boton-compacto"
+              onClick={() => onCambio(confirmarImpacto(expediente, p.impacto!))}
+              data-testid="confirmar-impacto"
+            >
+              Sí, confirmar
+            </button>
+            <button
+              type="button"
+              className="boton-secundario boton-compacto"
+              onClick={() => onCambio(sinImpactoSupuesto(expediente))}
+              data-testid="rechazar-impacto"
+            >
+              No, fue otro
+            </button>
+          </>
         ) : null}
-        {numerica ? (
+        {c.tipo === "opciones" ? (
+          <div className="flex flex-wrap gap-2" role="group" aria-label={p.texto}>
+            {c.opciones.map((o) => (
+              <button
+                key={o.valor}
+                type="button"
+                className="boton-secundario boton-compacto"
+                onClick={() => elegir(o.valor)}
+                data-testid={`opcion-${p.clave}-${o.valor.replace(/[|:]/g, "-")}`}
+              >
+                {o.etiqueta}
+              </button>
+            ))}
+          </div>
+        ) : null}
+        {c.tipo === "numero" ? (
           <>
             <input
               className="campo h-10 w-32"
               inputMode="decimal"
               value={valor}
               onChange={(e) => setValor(e.target.value)}
-              aria-label={p.clave === "restos" ? "Longitud en metros" : "Masa en kilogramos"}
+              aria-label={c.unidad === "m" ? "Longitud en metros" : "Masa en kilogramos"}
               data-testid={`valor-${p.clave}`}
             />
-            <span className="t-nota">{p.clave === "restos" ? "m" : "kg"}</span>
+            <span className="t-nota">{c.unidad}</span>
             <button type="button" className="boton-secundario boton-compacto" onClick={aplicar}>
               Usar
             </button>
+            {tipico && p.vehiculo ? (
+              <button
+                type="button"
+                className="boton-secundario boton-compacto"
+                title={`Supuesto: ${tipico.fuente}`}
+                onClick={() => {
+                  const e = conMasaTipica(expediente, p.vehiculo!);
+                  if (e) onCambio(e);
+                }}
+                data-testid={`usar-tipico-${p.clave}`}
+              >
+                Usar valor típico ({Math.round(tipico.valor).toLocaleString("es-MX")} kg)
+              </button>
+            ) : null}
           </>
+        ) : null}
+        {c.tipo === "mapa" && p.vehiculo && onIrAlMapa ? (
+          <button
+            type="button"
+            className="boton-secundario boton-compacto"
+            onClick={() => onIrAlMapa(p.vehiculo!)}
+            data-testid={`colocar-${p.clave}`}
+          >
+            Colocarlo en el mapa
+          </button>
         ) : null}
         <button
           type="button"
@@ -648,6 +722,9 @@ export function Pregunta({
           No sé
         </button>
       </div>
+      {tipico ? (
+        <p className="t-nota text-texto-3">El valor típico es un supuesto: {tipico.fuente}.</p>
+      ) : null}
     </li>
   );
 }

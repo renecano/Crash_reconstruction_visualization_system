@@ -8,6 +8,7 @@
  * es el perito. Las posiciones no van al contrato, que las pide con coordenadas: las coloca el
  * perito en el mapa, y la descripción le dice dónde.
  */
+import MASAS_TIPICAS from "./data/masas-tipicas.json";
 import {
   expedienteDeSalida,
   problemasExpediente,
@@ -58,13 +59,74 @@ export function mensajeEscena(narracion: string): string {
 type Id = Expediente["vehiculos"][number]["id"];
 type Zona = NonNullable<Expediente["danos"]>[number]["zona"];
 
+/**
+ * Cómo se contesta una pregunta (comentario de René, 2026-10-24): cada una pide un solo dato y trae su
+ * control; «No sé» va siempre aparte, como opción secundaria.
+ */
+export type ControlPregunta =
+  | { tipo: "sino" }
+  | { tipo: "opciones"; opciones: { valor: string; etiqueta: string }[] }
+  | {
+      tipo: "numero";
+      unidad: "kg" | "m";
+      /** El valor típico de su clase, con su fuente; al usarlo queda como supuesto. */
+      tipico?: { valor: number; fuente: string };
+    }
+  /** Se contesta colocándolo en el mapa (paso del lugar). */
+  | { tipo: "mapa" };
+
 export interface PreguntaEscena {
   clave: string;
   texto: string;
   /** Por qué importa para reconstruir. */
   porQue: string;
+  control: ControlPregunta;
   vehiculo?: Id;
   impacto?: number;
+}
+
+/** Las clases que se ofrecen al preguntar el tipo de vehículo, con la del contrato que usa cada una. */
+export const CLASES_PREGUNTA: { valor: string; etiqueta: string }[] = [
+  { valor: "sedan_compacto", etiqueta: "Sedán" },
+  { valor: "hatchback", etiqueta: "Hatchback" },
+  { valor: "suv_compacta", etiqueta: "SUV" },
+  { valor: "pickup", etiqueta: "Pickup" },
+  { valor: "camion_unitario", etiqueta: "Camión" },
+  { valor: "motocicleta", etiqueta: "Moto" },
+  { valor: "otro", etiqueta: "Otro" },
+];
+
+/** Los objetos fijos que se ofrecen cuando hay un solo vehículo (el texto va al impacto). */
+export const OBJETOS_PREGUNTA: { valor: string; etiqueta: string }[] = [
+  { valor: "poste", etiqueta: "Un poste" },
+  { valor: "arbol", etiqueta: "Un árbol" },
+  { valor: "muro", etiqueta: "Un muro o una barda" },
+  { valor: "otro", etiqueta: "Otro objeto fijo" },
+];
+const OBJETO_TEXTO: Record<string, string> = {
+  poste: "poste",
+  arbol: "árbol",
+  muro: "muro",
+  otro: "objeto fijo",
+};
+
+/** Las caras de un vehículo que se ofrecen al preguntar la zona de contacto. */
+export const CARAS_PREGUNTA: { valor: string; etiqueta: string }[] = [
+  { valor: "frontal", etiqueta: "Frente" },
+  { valor: "posterior", etiqueta: "Parte trasera" },
+  { valor: "lateral_izquierdo", etiqueta: "Costado izquierdo" },
+  { valor: "lateral_derecho", etiqueta: "Costado derecho" },
+];
+
+/**
+ * La masa típica de una clase, con su fuente (`data/masas-tipicas.json`, generado de E2 y de las
+ * fichas de fabricante por `data/cesvi/scripts/masas-tipicas.mjs`), o null si no hay dato.
+ */
+export function masaTipica(clase: string | undefined): { valor: number; fuente: string } | null {
+  const m = clase
+    ? (MASAS_TIPICAS.masas as Record<string, { kg: number; fuente: string }>)[clase]
+    : undefined;
+  return m ? { valor: m.kg, fuente: m.fuente } : null;
 }
 
 export interface EscenaNarrada {
@@ -165,7 +227,6 @@ export function escenaDeConversion(c: Conversion): EscenaNarrada {
   const propuesto = leido.expediente.impactos?.length ? null : impactoPropuesto(leido.expediente);
   const expediente = propuesto ? { ...leido.expediente, impactos: [propuesto] } : leido.expediente;
   const { ambiguas } = leido;
-  const impactos = expediente.impactos ?? [];
   if (propuesto) {
     const partes = propuesto.zonas!.map((z) => `${z.vehiculo} en su ${enPalabras(z.zona)}`);
     preguntas.push({
@@ -173,32 +234,72 @@ export function escenaDeConversion(c: Conversion): EscenaNarrada {
       texto: `La narración no dice qué entró en contacto. Por los daños, Croquis supone un impacto entre ${partes.join(" y ")}${propuesto.objeto_fijo ? ` contra ${propuesto.objeto_fijo}` : ""}. ¿Es correcto?`,
       porQue:
         "Sin los impactos no hay reconstrucción; este es un supuesto hasta que el perito lo confirme.",
+      control: { tipo: "sino" },
       impacto: 1,
     });
-  } else if (!impactos.length) {
-    preguntas.push({
-      clave: "impactos",
-      texto: "¿Qué vehículos u objetos entraron en contacto, y en qué orden?",
-      porQue: "Sin los impactos no hay reconstrucción.",
-    });
   }
+  // Si no hay impactos (o el perito dice que el supuesto no es correcto): cuáles chocaron primero;
+  // con un solo vehículo, contra qué.
+  const ids = expediente.vehiculos.map((v) => v.id);
+  const pares = ids.flatMap((a, i) => ids.slice(i + 1).map((b) => [a, b] as const));
+  preguntas.push(
+    ids.length === 1
+      ? {
+          clave: "impactos",
+          texto: `¿Contra qué chocó ${ids[0]}?`,
+          porQue: "Sin los impactos no hay reconstrucción.",
+          control: {
+            tipo: "opciones",
+            opciones: OBJETOS_PREGUNTA.map((o) => ({
+              valor: `${ids[0]}|objeto:${o.valor}`,
+              etiqueta: o.etiqueta,
+            })),
+          },
+        }
+      : {
+          clave: "impactos",
+          texto: "¿Qué vehículos chocaron primero?",
+          porQue: "Sin los impactos no hay reconstrucción.",
+          control: {
+            tipo: "opciones",
+            opciones: [
+              ...pares.map(([a, b]) => ({ valor: `${a}|${b}`, etiqueta: `${a} y ${b}` })),
+              ...ids.map((v) => ({
+                valor: `${v}|objeto:otro`,
+                etiqueta: `${v} contra un objeto fijo`,
+              })),
+            ],
+          },
+        },
+  );
   for (const [orden, v] of ambiguas) {
     preguntas.push({
       clave: `zona-${orden}-${v}`,
       texto: `¿Con qué zona entró en contacto ${v} en el impacto ${orden}?`,
       porQue: "La zona de contacto fija la dirección de la fuerza en el impacto.",
+      control: { tipo: "opciones", opciones: CARAS_PREGUNTA },
       vehiculo: v,
       impacto: orden,
     });
   }
   for (const v of expediente.vehiculos) {
+    // Un solo dato por pregunta: primero la clase (si falta) y luego la masa, aparte.
+    if (!v.clase) {
+      preguntas.push({
+        clave: `clase-${v.id}`,
+        texto: `¿Qué tipo de vehículo es ${v.id}?`,
+        porQue: "La clase da sus medidas y su masa típica, y la rigidez de su carrocería.",
+        control: { tipo: "opciones", opciones: CLASES_PREGUNTA },
+        vehiculo: v.id,
+      });
+    }
     if (!v.masa) {
+      const tipico = masaTipica(v.clase);
       preguntas.push({
         clave: `masa-${v.id}`,
-        texto: v.clase
-          ? `¿Cuál es la masa de ${v.id}? Si no se sabe, se usa la típica de su clase, marcada como supuesto.`
-          : `¿Qué clase de vehículo es ${v.id} y cuál es su masa?`,
+        texto: `¿Cuál es la masa de ${v.id}?`,
         porQue: "La masa reparte la cantidad de movimiento y cambia las velocidades.",
+        control: { tipo: "numero", unidad: "kg", ...(tipico ? { tipico } : {}) },
         vehiculo: v.id,
       });
     }
@@ -208,6 +309,7 @@ export function escenaDeConversion(c: Conversion): EscenaNarrada {
       clave: "restos",
       texto: "¿Qué longitud tiene la zona de restos?",
       porQue: "Los restos fijan el desplazamiento después del impacto.",
+      control: { tipo: "numero", unidad: "m" },
     });
   }
   for (const v of expediente.vehiculos) {
@@ -216,6 +318,7 @@ export function escenaDeConversion(c: Conversion): EscenaNarrada {
         clave: `final-${v.id}`,
         texto: `¿Dónde quedó ${v.id} al final?`,
         porQue: "La posición final es evidencia para la inversión de velocidades.",
+        control: { tipo: "mapa" },
         vehiculo: v.id,
       });
     }
@@ -306,6 +409,99 @@ export function conHuella(e: Expediente, vehiculo: Id, m: number): Expediente {
 }
 
 /** El perito confirma un impacto que Croquis supuso: deja de ser supuesto. */
+/**
+ * Si una pregunta sigue pendiente con lo que ya tiene el expediente: las contestadas se ocultan. La
+ * masa típica cuenta como contestada (queda como supuesto) y la masa se vuelve a preguntar si se
+ * elige otra clase.
+ */
+export function preguntaPendiente(
+  p: PreguntaEscena,
+  e: Expediente,
+  finales: readonly { vehiculo: Id }[],
+): boolean {
+  const vehiculo = e.vehiculos.find((v) => v.id === p.vehiculo);
+  if (p.clave === "impacto-propuesto")
+    return e.impactos?.some((i) => i.fuente === "supuesto") ?? false;
+  if (p.clave === "impactos") return !e.impactos?.length;
+  if (p.clave.startsWith("zona-"))
+    return !e.impactos
+      ?.find((i) => i.orden === p.impacto)
+      ?.zonas?.some((z) => z.vehiculo === p.vehiculo);
+  if (p.clave.startsWith("clase-")) return !vehiculo?.clase;
+  if (p.clave.startsWith("masa-")) return !vehiculo?.masa;
+  if (p.clave === "restos") return !e.evidencias?.restos?.longitud;
+  if (p.clave.startsWith("final-")) return !finales.some((x) => x.vehiculo === p.vehiculo);
+  return true;
+}
+
+/** La clase que contesta el perito (`otro` no cambia la clase: se pregunta la masa sin típica). */
+export function conClase(e: Expediente, vehiculo: Id, clase: string): Expediente {
+  if (clase === "otro") return e;
+  return {
+    ...e,
+    vehiculos: e.vehiculos.map((v) =>
+      v.id === vehiculo ? { ...v, clase: clase as NonNullable<typeof v.clase> } : v,
+    ),
+  };
+}
+
+/** La masa típica de su clase, marcada como supuesto (null si su clase no tiene dato). */
+export function conMasaTipica(e: Expediente, vehiculo: Id): Expediente | null {
+  const t = masaTipica(e.vehiculos.find((v) => v.id === vehiculo)?.clase);
+  if (!t) return null;
+  return {
+    ...e,
+    vehiculos: e.vehiculos.map((v) =>
+      v.id === vehiculo ? { ...v, masa: { valor: t.valor, unidad: "kg", fuente: "supuesto" } } : v,
+    ),
+  };
+}
+
+/** La zona de contacto de un vehículo en un impacto, la cara que elige el perito. */
+export function conZonaImpacto(
+  e: Expediente,
+  orden: number,
+  vehiculo: Id,
+  cara: string,
+): Expediente {
+  return {
+    ...e,
+    impactos: e.impactos?.map((i) =>
+      i.orden === orden
+        ? {
+            ...i,
+            zonas: [
+              ...(i.zonas ?? []).filter((z) => z.vehiculo !== vehiculo),
+              { vehiculo, zona: { cara: cara as Zona["cara"] } },
+            ],
+          }
+        : i,
+    ),
+  };
+}
+
+/**
+ * El primer impacto que contesta el perito: dos vehículos (`A|B`) o uno contra un objeto fijo
+ * (`A|objeto:poste`).
+ */
+export function conPrimerImpacto(e: Expediente, valor: string): Expediente {
+  const [a, b] = valor.split("|") as [Id, string];
+  const impacto = b.startsWith("objeto:")
+    ? {
+        orden: 1,
+        vehiculos: [a],
+        objeto_fijo: OBJETO_TEXTO[b.slice(7)] ?? "objeto fijo",
+        fuente: "perito" as const,
+      }
+    : { orden: 1, vehiculos: [a, b], fuente: "perito" as const };
+  return { ...e, impactos: [impacto] };
+}
+
+/** «No es correcto» al impacto que supuso Croquis: se quita y se pregunta cuáles chocaron. */
+export function sinImpactoSupuesto(e: Expediente): Expediente {
+  return { ...e, impactos: (e.impactos ?? []).filter((i) => i.fuente !== "supuesto") };
+}
+
 export function confirmarImpacto(e: Expediente, orden: number): Expediente {
   return {
     ...e,
