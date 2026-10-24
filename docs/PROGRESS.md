@@ -356,7 +356,21 @@ Reglas de trabajo: `CLAUDE.md`. Especificación: `PLAN.md`.
          - **Guía animada** de 3 pasos la primera vez, con «No volver a mostrar».
          - **Medición** (`eval/giro-mapa.mjs` → `eval/results/giro_mapa.json`): en la laptop de René, 59.3 cuadros por segundo mientras se gira (meta ≥ 30) y 0.318 ms por actualización del anillo.
          - **La e2e del caso nuevo** arrastra V2 de la bandeja, lo gira con el anillo a 90° y acepta el fantasma de V1, todo con el mouse.
-      4. **Punto 4, la portada nueva:** pendiente.
+      4. **Punto 4, la portada nueva:** hecho (rama `feat/portada-cesvi`).
+         - **`/` y `/en`** siguen `docs/cesvi/rediseno/Portada.html` en su orden y con sus textos: el encabezado («Reconstruye el hecho. Defiende el dictamen.»), «El problema», «La prueba» con la tabla de AXA y las cifras, «Cómo funciona», «Nada se inventa / Siempre da lo mismo / La firma es tuya», las preguntas de peritos y el cierre.
+         - **Tipografía y colores:** los del sistema de diseño (las fichas de marca son los colores de la maqueta). Las fuentes Anybody y Geist de la maqueta no se usan, por la regla de no copiar tipografías.
+         - **Las cifras** se calculan al compilar (`apps/web/src/lib/portada-cesvi.ts`, con prueba contra cada fuente):
+           - 671 de `eval/results/cesvi_corpus_extraccion.json`;
+           - 205 de `data/cesvi/r4/pagina.json`;
+           - 58.3 % y 37.2 % de `eval/results/cesvi_r4c_titulo_prueba.json` (v3);
+           - 60.27, 63.15, 63.90 y +1.19 % del caso de AXA (`reproducir`);
+           - la modalidad, de `modalidadInferida`.
+         - **La animación del encabezado** es la reconstrucción de AXA en 2D, calculada con el solver de producción al compilar: las trayectorias se dibujan y los vehículos se encuentran en la X naranja. Con «reducir movimiento», queda quieta.
+         - **Aparece suave al bajar,** pero se ve completa sin JavaScript (solo se esconde lo que está debajo de la pantalla al cargar).
+         - **«Entrar a Croquis»** en la barra, el encabezado y el cierre.
+         - **La portada de antes** pasa a `/publico` y `/en/publico`, con liga en el pie.
+         - **Un cambio a la maqueta:** su ejemplo «ΔV de V2 15 km/h · 13–20» de «Firma el dictamen» no tiene fuente en el caso. En su lugar va la velocidad por restos de AXA, que sí la tiene.
+         - **e2e** (`home.spec.ts`, la de flujo): las cifras contra sus archivos, la tabla y la escena; «Entrar a Croquis» desde la barra, el encabezado y el cierre lleva a `/cesvi`, también en inglés; el pie lleva a `/publico`. Las e2e de la portada de antes ahora abren `/publico`.
     - **R12a (conductores como agentes) en pausa:**
       - lo hecho está en la rama `feat/r12a-agentes`: el contrato 2.1.0, el módulo de agentes en Python y las escenas de hipótesis;
       - faltan las pruebas, el port TS y la paridad;

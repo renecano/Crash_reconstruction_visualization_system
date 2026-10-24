@@ -21,11 +21,11 @@ test("el encabezado enlaza a la historia y al recorrido técnico", async ({ page
   const abrirMenu = async () => {
     if (isMobile) await nav.getByRole("button", { name: "Menú" }).click();
   };
-  await page.goto("/");
+  await page.goto("/publico");
   await abrirMenu();
   await nav.getByRole("link", { name: "Por qué existe", exact: true }).click();
   await expect(page).toHaveURL(/\/historia$/);
-  await page.goto("/");
+  await page.goto("/publico");
   await abrirMenu();
   await nav.getByRole("link", { name: "Cómo se mide", exact: true }).click();
   await expect(page).toHaveURL(/\/recorrido$/);
@@ -113,6 +113,7 @@ test("demo «Tú eres…»: elige un relato, contesta una ronda y lo ve en 3D si
 /** Ninguna página se desplaza de lado: todo cabe a lo ancho, también en el celular. */
 for (const ruta of [
   "/",
+  "/publico",
   "/cuenta",
   "/demo",
   "/croquis",

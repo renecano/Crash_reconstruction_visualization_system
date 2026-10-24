@@ -56,7 +56,7 @@ test.describe("portada", () => {
     isMobile,
   }) => {
     const errs = errores(page);
-    await page.goto("/");
+    await page.goto("/publico");
     await expect(page.locator("html")).toHaveAttribute("lang", "es-MX");
     await expect(page.getByTestId("cuadro-portada")).toBeVisible();
     await esperarEscena(page);
@@ -79,7 +79,7 @@ test.describe("portada", () => {
     page,
   }) => {
     const errs = errores(page);
-    await page.goto("/");
+    await page.goto("/publico");
     await esperarEscena(page);
     const i = CAPITULOS.findIndex(([c]) => c === "i");
     await irA(page, i, 0.3);
@@ -100,7 +100,7 @@ test.describe("portada", () => {
   test("Las pruebas: las cifras salen de eval/results y el comparador se maneja con teclado", async ({
     page,
   }) => {
-    await page.goto("/");
+    await page.goto("/publico");
     const p = CAPITULOS.findIndex(([c]) => c === "pruebas");
     await irA(page, p);
     const cotas = page.getByTestId("cota");
@@ -123,7 +123,7 @@ test.describe("portada", () => {
   test("el cierre entra a Croquis para CESVI; el flujo para el público queda al lado", async ({
     page,
   }) => {
-    await page.goto("/");
+    await page.goto("/publico");
     await irA(page, CAPITULOS.length - 1);
     await expect(page.getByTestId("cta-cierre-publico")).toHaveAttribute("href", "/cuenta");
     await page.getByTestId("cta-cierre").click();
@@ -133,7 +133,7 @@ test.describe("portada", () => {
   test("con teclado, enfocar un enlace de un capítulo lleva el scroll a ese capítulo", async ({
     page,
   }) => {
-    await page.goto("/");
+    await page.goto("/publico");
     await page.getByRole("link", { name: "Abrir esta escena en el visor" }).focus();
     await expect(page.getByTestId("portada")).toHaveAttribute("data-capitulo", "s");
     await expect.poll(() => opacidad(page, "s"), { timeout: 10_000 }).toBeGreaterThan(0.95);
@@ -162,7 +162,7 @@ test.describe("portada con movimiento reducido", () => {
     page,
   }) => {
     const errs = errores(page);
-    await page.goto("/");
+    await page.goto("/publico");
     const cuadro = page.getByTestId("cuadro-portada");
     await expect(cuadro).toBeVisible();
     await expect(cuadro).toHaveAttribute("src", "/portada/apertura-ancho.jpg");

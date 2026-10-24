@@ -7,7 +7,7 @@ test("flujo guiado: redacta en el navegador, pregunta, acomoda el croquis y lleg
   test.setTimeout(180_000);
   const enviados = await simularApi(page);
 
-  await page.goto("/");
+  await page.goto("/publico");
   await page.getByTestId("cta-publico").click();
   await expect(page).toHaveURL(/\/cuenta$/);
   await expect(page.getByRole("heading", { level: 1 })).toHaveText("Cuenta qué pasó");
