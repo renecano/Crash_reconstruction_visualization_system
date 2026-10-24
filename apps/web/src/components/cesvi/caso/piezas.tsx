@@ -25,8 +25,9 @@ import {
 import type { GeoJSONSource, Map as MapaMl, Marker } from "maplibre-gl";
 // Sin la hoja de MapLibre los marcadores no quedan en su lugar (no se ven sobre el mapa).
 import "maplibre-gl/dist/maplibre-gl.css";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, type ComponentProps } from "react";
 import { ESTILO_MAPA, ESTILO_MAPA_CLARO, marcador } from "../mapa-comun";
+import { ColocarMapa } from "./colocar-mapa";
 import type { MarcaImpacto, PosicionMovil } from "./reconstruccion";
 
 export type Id = Expediente["vehiculos"][number]["id"];
@@ -176,6 +177,7 @@ export function MapaEscena({
   onFlecha,
   onMedida,
   onDeshacer,
+  colocacion = null,
 }: {
   posiciones: { vehiculo: Id; fase: string; punto: { lat: number; lon: number } }[];
   /** Los vehículos en el instante del 3D (el croquis sigue al reloj de la reconstrucción). */
@@ -202,6 +204,8 @@ export function MapaEscena({
   onMedida?: (m: number) => void;
   /** Deshacer lo último colocado (botón del mapa). */
   onDeshacer?: () => void;
+  /** Colocar en el mapa (punto 3 de René): bandeja, anillo de giro y fantasmas sobre el mapa. */
+  colocacion?: Omit<ComponentProps<typeof ColocarMapa>, "mapa"> | null;
 }) {
   const contenedor = useRef<HTMLDivElement>(null);
   const mapa = useRef<MapaMl | null>(null);
@@ -211,6 +215,9 @@ export function MapaEscena({
   const marcasMoviles = useRef<Marker[]>([]);
   const marcasImpacto = useRef<Marker[]>([]);
   const [listo, setListo] = useState(false);
+  // La instancia del mapa también en el estado, para lo que se dibuja encima (no se lee un ref al
+  // dibujar).
+  const [instancia, setInstancia] = useState<MapaMl | null>(null);
   // Sin posiciones ni coordenadas del caso, el mapa pide buscar el lugar (V2).
   const [buscar, setBuscar] = useState(false);
   const arranque = useRef({ posiciones, inicio });
@@ -284,6 +291,7 @@ export function MapaEscena({
         else setBuscar(true);
         mapa.current = instancia;
         avisar.current?.(instancia);
+        setInstancia(instancia);
         setListo(true);
       });
     });
@@ -446,6 +454,7 @@ export function MapaEscena({
         data-testid="mapa-escena"
         data-herramienta={herramienta}
       />
+      {listo && instancia && colocacion ? <ColocarMapa mapa={instancia} {...colocacion} /> : null}
       {herramienta === "medir" && medidaM !== null ? (
         <p
           className="vidrio absolute top-16 left-1/2 -translate-x-1/2 rounded-full px-4 py-1.5 text-[0.8125rem] font-semibold"

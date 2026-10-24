@@ -8,6 +8,7 @@
  * Lo que marca el perito lleva fuente «perito»; lo que supone Croquis, «supuesto», hasta que el
  * perito lo confirma. La validación del dictamen se guarda con el caso (ADR 0075).
  */
+import { GuiaColocar } from "./colocar-mapa";
 import { LEGEND_TEXT_CESVI } from "@croquis/scene-schema";
 import {
   comparar,
@@ -68,6 +69,7 @@ import {
   PasoHecho,
   PasoLugar,
   PasoNumeros,
+  claveItem,
   type ItemLugar,
 } from "./pasos";
 import { MapaEscena, type HerramientaMapa, type HuellaMapa } from "./piezas";
@@ -365,29 +367,44 @@ export function RecorridoCaso({ inicial }: { inicial: CasoExpediente }) {
     let r = e;
     for (const p of posesDeImpacto(e, punto, rumbo, orden)) {
       if (antes.has(p.vehiculo)) continue;
-      r = conPosicion(r, { vehiculo: p.vehiculo, fase: "impacto", punto: p.punto, rumbo: p.rumbo });
+      // Lo que propone Croquis: un fantasma hasta que el perito lo acepta o lo mueve.
+      r = conPosicion(r, {
+        vehiculo: p.vehiculo,
+        fase: "impacto",
+        punto: p.punto,
+        rumbo: p.rumbo,
+        fuente: "supuesto",
+      });
     }
     return r;
   };
-  const colocar = (punto: { lat: number; lon: number }) => {
+  /** Coloca algo de la lista: con un clic en el mapa (rumbo actual) o soltándolo de la bandeja. */
+  const colocarItem = (
+    item: ItemLugar,
+    punto: { lat: number; lon: number },
+    rumbo: number | null,
+  ) => {
     // Se coloca en el paso del lugar y al trabajar; al presentar el mapa solo se mira.
-    if (modo !== "trabajar" || actual !== 2 || !expediente || !activo) return;
+    if (modo !== "trabajar" || actual !== 2 || !expediente) return;
     setHistorial((h) => [...h, expediente]);
-    if (activo.tipo === "impacto") {
-      const r = rumboDeItem(activo) ?? 0;
-      setPuntosImpacto((m) => ({ ...m, [activo.orden]: punto }));
+    if (item.tipo === "impacto") {
+      const r = rumbo ?? rumboDeItem(item) ?? 0;
+      setPuntosImpacto((m) => ({ ...m, [item.orden]: punto }));
       // Si el mapa está lejos (a nivel de colonia o más), se acerca al punto para ver los vehículos.
       if (mapa && mapa.getZoom() < 17) mapa.easeTo({ center: [punto.lon, punto.lat], zoom: 19 });
-      setRumbosImpacto((m) => ({ ...m, [activo.orden]: r }));
-      cambiarExpediente(conImpacto(expediente, activo.orden, punto, r));
+      setRumbosImpacto((m) => ({ ...m, [item.orden]: r }));
+      cambiarExpediente(conImpacto(expediente, item.orden, punto, r));
     } else {
-      const r = rumboDeItem(activo) ?? poseDe(activo.vehiculo, "impacto")?.rumbo ?? 0;
+      const r = rumbo ?? rumboDeItem(item) ?? poseDe(item.vehiculo, "impacto")?.rumbo ?? 0;
       cambiarExpediente(
-        conPosicion(expediente, { vehiculo: activo.vehiculo, fase: activo.tipo, punto, rumbo: r }),
+        conPosicion(expediente, { vehiculo: item.vehiculo, fase: item.tipo, punto, rumbo: r }),
       );
     }
-    // Se queda activo para girar su flecha; «Listo» pasa al siguiente.
-    setElegido(activo);
+    // Se queda activo para girarlo; «Listo» pasa al siguiente.
+    setElegido(item);
+  };
+  const colocar = (punto: { lat: number; lon: number }) => {
+    if (activo) colocarItem(activo, punto, null);
   };
   const girar = (rumbo: number) => {
     if (!expediente || !activo) return;
@@ -437,6 +454,90 @@ export function RecorridoCaso({ inicial }: { inicial: CasoExpediente }) {
         ];
       })
     : [];
+  // Colocar en el mapa (punto 3 de René): la bandeja con lo que falta, el anillo del elegido y los
+  // fantasmas de lo que propone Croquis (las poses de impacto que el perito no ha aceptado).
+  const itemDeClave = (clave: string): ItemLugar | null => {
+    const [tipo, resto] = clave.split(":") as [string, string];
+    if (tipo === "impacto") return { tipo: "impacto", orden: Number(resto) };
+    if (tipo === "final" || tipo === "inicial") return { tipo, vehiculo: resto };
+    return null;
+  };
+  const medidasDeVehiculo = (id: string | undefined) => {
+    const v = expediente?.vehiculos.find((x) => x.id === id);
+    return v ? medidasDe(v) : { largo: 4.5, ancho: 1.8 };
+  };
+  const colocacion =
+    actual === 2 && modo === "trabajar" && expediente
+      ? {
+          bandeja: requeridos
+            .filter((i) => !colocado(i))
+            .map((i) => ({
+              clave: claveItem(i),
+              etiqueta: i.tipo === "impacto" ? `X${i.orden}` : i.vehiculo,
+              ...medidasDeVehiculo(i.tipo === "impacto" ? vehiculosDe(i.orden)[0] : i.vehiculo),
+              color: colorItem(i),
+            })),
+          seleccion:
+            activo && colocado(activo)
+              ? (() => {
+                  const vehiculo =
+                    activo.tipo === "impacto"
+                      ? (vehiculosDe(activo.orden)[0] ?? "V1")
+                      : activo.vehiculo;
+                  const punto =
+                    activo.tipo === "impacto"
+                      ? puntoDe(activo.orden)
+                      : (poseDe(activo.vehiculo, activo.tipo)?.punto ?? null);
+                  return punto
+                    ? {
+                        clave: claveItem(activo),
+                        vehiculo,
+                        punto,
+                        rumbo: rumboDeItem(activo) ?? 0,
+                        ...medidasDeVehiculo(vehiculo),
+                        color: colorItem(activo),
+                      }
+                    : null;
+                })()
+              : null,
+          fantasmas: posiciones
+            .filter((p) => p.fase === "impacto" && p.fuente === "supuesto")
+            .map((p) => ({
+              clave: `fantasma:${p.vehiculo}`,
+              vehiculo: p.vehiculo,
+              punto: p.punto,
+              rumbo: p.rumbo,
+              ...medidasDeVehiculo(p.vehiculo),
+              color: colorDeVehiculo(p.vehiculo),
+            })),
+          impacto: puntoDe(1),
+          rumboPreferido: (clave: string) => {
+            const i = itemDeClave(clave);
+            return i && i.tipo !== "impacto"
+              ? (poseDe(i.vehiculo, "impacto")?.rumbo ?? null)
+              : null;
+          },
+          onSoltar: (clave: string, punto: { lat: number; lon: number }, rumbo: number) => {
+            const i = itemDeClave(clave);
+            if (i) colocarItem(i, punto, rumbo);
+          },
+          onGirar: girar,
+          onAceptar: (vehiculo: string) => {
+            const p = poseDe(vehiculo, "impacto");
+            if (!p) return;
+            setHistorial((h) => [...h, expediente]);
+            cambiarExpediente(
+              conPosicion(expediente, {
+                vehiculo,
+                fase: "impacto",
+                punto: p.punto,
+                rumbo: p.rumbo,
+                fuente: "perito",
+              }),
+            );
+          },
+        }
+      : null;
   const deshacer = () => {
     const previo = historial[historial.length - 1];
     if (!previo) return;
@@ -743,6 +844,7 @@ export function RecorridoCaso({ inicial }: { inicial: CasoExpediente }) {
           <p className="t-rotulo">
             Paso {paso + 1} de {pasos.length} · {pasos[paso]}
           </p>
+          {actual === 2 && modo === "trabajar" ? <GuiaColocar /> : null}
           {cuerpo}
           <div className="mt-auto flex flex-col gap-2 pt-4">
             {(actual === 2 || actual === 3) && modo === "trabajar"
@@ -830,7 +932,8 @@ export function RecorridoCaso({ inicial }: { inicial: CasoExpediente }) {
               herramienta={actual === 2 && modo === "trabajar" ? herramientaMapa : "mover"}
               pedirLugar={actual === 2 || expandido}
               huellas={huellas}
-              flecha={flecha}
+              flecha={colocacion ? null : flecha}
+              colocacion={colocacion}
               onFlecha={girar}
               onMedida={setMedida}
               onDeshacer={actual === 2 && modo === "trabajar" ? deshacer : undefined}

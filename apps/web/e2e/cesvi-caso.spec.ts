@@ -102,6 +102,12 @@ test("@flujo /cesvi: un caso nuevo desde la lista, de la narración al dictamen"
   await mapa.click({ position: { x: 300, y: 205 } });
   await expect(mapa.locator('[data-posicion="V1:impacto"]')).toHaveCount(1);
   await expect(mapa.locator('[data-posicion="V2:impacto"]')).toHaveCount(1);
+  // Lo que propone Croquis se ve como fantasma, con «Aceptar» por vehículo.
+  await expect(page.getByTestId("fantasma-V1")).toHaveCount(1);
+  await expect(page.getByTestId("fantasma-V2")).toHaveCount(1);
+  await page.getByTestId("aceptar-V1").click();
+  await expect(page.getByTestId("fantasma-V1")).toHaveCount(0);
+  await expect(page.getByTestId("fantasma-V2")).toHaveCount(1);
   await page.getByTestId("listo-elemento").click();
 
   // En «Colocar» el mapa no se arrastra: lo colocado se queda donde estaba en la pantalla.
@@ -127,7 +133,28 @@ test("@flujo /cesvi: un caso nuevo desde la lista, de la narración al dictamen"
   await expect(page.getByTestId("falta-para-seguir")).toHaveText(
     "Para seguir falta: V2, dónde quedó.",
   );
-  await colocar("V2", "80", 345, 185);
+  // V2, con el mouse (punto 3 de René): se arrastra su chip de la bandeja al mapa, que dice en vivo a
+  // cuánto queda del impacto, y se gira con el anillo (el asa hacia el este da 90°, con imán).
+  await expect(page.getByTestId("item-activo")).toHaveAttribute("data-item", "final:V2");
+  const chip = (await page.getByTestId("chip-final:V2").boundingBox())!;
+  await page.mouse.move(chip.x + chip.width / 2, chip.y + chip.height / 2);
+  await page.mouse.down();
+  await page.mouse.move(caja.x + 345, caja.y + 185, { steps: 12 });
+  await expect(page.getByTestId("distancia-arrastre")).toContainText("m del impacto");
+  await page.mouse.up();
+  await expect(mapa.locator('[data-posicion="V2:final"]')).toHaveCount(1);
+  const anillo = (await page.getByTestId("anillo-giro").locator("svg").boundingBox())!;
+  const cx = anillo.x + anillo.width / 2;
+  const cy = anillo.y + anillo.height / 2;
+  const radio = anillo.width / 2 - 12;
+  await page.mouse.move(cx, cy - radio);
+  await page.mouse.down();
+  await page.mouse.move(cx + radio * 0.7, cy - radio * 0.7, { steps: 6 });
+  await page.mouse.move(cx + radio, cy, { steps: 6 });
+  await page.mouse.up();
+  await expect(page.getByTestId("rumbo-activo")).toHaveValue("90");
+  await expect(page.getByTestId("rotulo-giro")).toContainText("90°");
+  await page.getByTestId("listo-elemento").click();
   await expect(mapa.locator("[data-posicion]")).toHaveCount(4);
   await expect(page.getByTestId("falta-para-seguir")).toHaveCount(0);
   await expect(siguiente).toBeEnabled();
@@ -253,8 +280,16 @@ test("@flujo /cesvi: un caso nuevo desde la lista, de la narración al dictamen"
   expect(d.expediente.impactos[0]!.fuente).toBe("perito");
   const posiciones = d.expediente.versiones[0]!.posiciones;
   expect(posiciones).toHaveLength(4);
-  expect(posiciones.every((p) => p.fuente === "perito")).toBe(true);
+  // Lo que colocó o aceptó el perito es suyo; la pose de impacto de V2 que propuso Croquis y nadie
+  // aceptó sigue como supuesto (punto 3 de René).
+  const fuenteDe = (v: string, fase: string) =>
+    posiciones.find((p) => p.vehiculo === v && p.fase === fase)!.fuente;
+  expect(fuenteDe("V1", "impacto")).toBe("perito");
+  expect(fuenteDe("V2", "impacto")).toBe("supuesto");
+  expect(fuenteDe("V1", "final")).toBe("perito");
+  expect(fuenteDe("V2", "final")).toBe("perito");
   expect(posiciones.find((p) => p.vehiculo === "V1" && p.fase === "final")!.rumbo).toBe(315);
+  expect(posiciones.find((p) => p.vehiculo === "V2" && p.fase === "final")!.rumbo).toBe(90);
   expect(d.expediente.resultado.validado_por).toBe("Perito de prueba");
   expect(d.conclusion_perito).toBe("Conclusión de prueba del perito.");
 

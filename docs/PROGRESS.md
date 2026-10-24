@@ -349,7 +349,13 @@ Reglas de trabajo: `CLAUDE.md`. Especificación: `PLAN.md`.
            - la masa típica coincide con E2;
            - cada respuesta deja de estar pendiente;
            - la e2e del caso nuevo contesta el tipo de vehículo y ve el valor típico.
-      3. **Punto 3, colocar en el mapa:** pendiente.
+      3. **Punto 3, colocar en el mapa:** hecho (ADR 0090, rama `feat/colocar-mapa`).
+         - **Bandeja** con X1, V1, V2…: se arrastran al mapa, dicen en vivo a cuánto quedan del impacto y, al soltarlos, se alinean con la calle más cercana. «Voltear 180°» los da vuelta.
+         - **Anillo de giro:** atan2 absoluto 1:1, imán de 15° (Shift libre), Q/E ±5°, botones ±15° y 180°, con captura del puntero y `requestAnimationFrame`. El expediente cambia solo al soltar.
+         - **Fantasmas:** las poses que propone Croquis quedan como supuesto, punteadas, con «Aceptar» por vehículo.
+         - **Guía animada** de 3 pasos la primera vez, con «No volver a mostrar».
+         - **Medición** (`eval/giro-mapa.mjs` → `eval/results/giro_mapa.json`): en la laptop de René, 59.3 cuadros por segundo mientras se gira (meta ≥ 30) y 0.318 ms por actualización del anillo.
+         - **La e2e del caso nuevo** arrastra V2 de la bandeja, lo gira con el anillo a 90° y acepta el fantasma de V1, todo con el mouse.
       4. **Punto 4, la portada nueva:** pendiente.
     - **R12a (conductores como agentes) en pausa:**
       - lo hecho está en la rama `feat/r12a-agentes`: el contrato 2.1.0, el módulo de agentes en Python y las escenas de hipótesis;

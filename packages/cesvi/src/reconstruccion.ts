@@ -160,11 +160,15 @@ export function especDeExpediente(e: Expediente, specId = "caso-nuevo"): EscenaS
   spec.vehiculos.forEach((sv, k) => (ids[String(sv.id)] = orden[k]!));
   const idEscena = (v: Id) => String(spec.vehiculos[orden.indexOf(v)]?.id);
 
-  // 2. La evidencia del perito.
+  // 2. La evidencia del perito. Las poses de impacto que propone Croquis desde el punto que marcó el
+  // perito (fantasmas sin aceptar) también cuentan: solo fijan el origen y el arranque, que en la
+  // escena ya van como supuesto.
   const posiciones =
     (e.versiones ?? [])
       .find((v) => v.tipo === "evidencia")
-      ?.posiciones?.filter((p) => p.fuente === "perito") ?? [];
+      ?.posiciones?.filter(
+        (p) => p.fuente === "perito" || (p.fase === "impacto" && p.fuente === "supuesto"),
+      ) ?? [];
   const deImpacto = posiciones.filter((p) => p.fase === "impacto");
   // El origen es el primer impacto: el promedio de las posiciones de impacto de sus vehículos (o
   // de todas, si el perito no colocó a ninguno de ellos).

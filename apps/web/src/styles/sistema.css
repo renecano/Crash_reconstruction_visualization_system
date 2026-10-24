@@ -759,3 +759,73 @@
     --color-frase: var(--texto-2);
   }
 }
+
+/* Guía de colocar en el mapa (punto 3 de René): el gesto de cada paso, en bucle. */
+.guia-escena {
+  position: relative;
+  height: 72px;
+  border-radius: var(--radio-control);
+  background: var(--superficie-alta);
+  overflow: hidden;
+}
+.guia-figura {
+  position: absolute;
+  top: 26px;
+  left: 20px;
+  width: 14px;
+  height: 26px;
+  border-radius: 3px;
+  background: var(--accion);
+}
+.guia-arrastre {
+  animation: guia-arrastre 2.4s ease-in-out infinite;
+}
+.guia-giro {
+  left: calc(50% - 7px);
+  top: 23px;
+  animation: guia-giro 2.4s ease-in-out infinite;
+}
+.guia-fantasma {
+  left: calc(50% - 7px);
+  top: 23px;
+  background: transparent;
+  border: 2px dashed var(--accion);
+  animation: guia-fantasma 2.4s ease-in-out infinite;
+}
+@keyframes guia-arrastre {
+  0%,
+  15% {
+    transform: translate(0, 18px) scale(0.8);
+  }
+  70%,
+  100% {
+    transform: translate(170px, -6px) scale(1);
+  }
+}
+@keyframes guia-giro {
+  0%,
+  10% {
+    transform: rotate(0deg);
+  }
+  60%,
+  100% {
+    transform: rotate(90deg);
+  }
+}
+@keyframes guia-fantasma {
+  0%,
+  45% {
+    background: transparent;
+  }
+  60%,
+  100% {
+    background: var(--accion);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .guia-arrastre,
+  .guia-giro,
+  .guia-fantasma {
+    animation: none;
+  }
+}
