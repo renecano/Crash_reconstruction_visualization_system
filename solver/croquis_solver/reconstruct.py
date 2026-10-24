@@ -269,6 +269,30 @@ def _r(x: float, nd: int = 6) -> float:
 
 
 @dataclass
+class PlanPrevio:
+    """La fase previa de un vehículo tal como la armó la reconstrucción, para los agentes (R12a).
+
+    El perfil arranca (τ = 0) en `t_ref`; antes, el vehículo va a v0 constante.
+    """
+
+    id: str
+    clase: str
+    path: KinPath
+    profile: SpeedProfile
+    t_ref: float
+    decel: float  # m/s², frenado a fondo con la fricción, el ABS y la pendiente de la escena
+    length: float
+    width: float
+    height: float
+    mu: float
+    lane_width: float
+
+
+def _no_plans() -> dict[str, PlanPrevio]:
+    return {}
+
+
+@dataclass
 class Reconstruction:
     escena_id: str
     semilla: int
@@ -284,6 +308,8 @@ class Reconstruction:
     objetos: list[SceneObject] = field(default_factory=_no_objects)
     visibilidad: list[JsonObj] = field(default_factory=_no_docs)
     avisos: list[Aviso] = field(default_factory=_no_avisos)
+    # La fase previa de cada vehículo (no va al resultado): la usan los agentes de R12a.
+    previa: dict[str, PlanPrevio] = field(default_factory=_no_plans)
 
     def to_dict(self) -> JsonObj:
         """Documento según `resultado.schema.json` (sin nulos: lo ausente se omite)."""
@@ -948,15 +974,27 @@ def reconstruct(
     }
     pre: dict[str, Trajectory] = {}
     impact_states: dict[str, State2D] = {}
+    previa: dict[str, PlanPrevio] = {}
     for m in models:
-        if m.id in s_contact and m.v0 > 0:
-            # Llega a su punto de contacto exactamente en t = 0.
-            traj = _sample_path(paths[m.id], profiles[m.id], -t_to_impact[m.id], pre_times)
-        else:
-            # Detenido, o no participa: sale de su pose inicial al empezar la escena.
-            traj = _sample_path(paths[m.id], profiles[m.id], -t_pre, pre_times)
+        # Llega a su punto de contacto exactamente en t = 0; si está detenido o no participa,
+        # sale de su pose inicial al empezar la escena.
+        t_ref = -t_to_impact[m.id] if m.id in s_contact and m.v0 > 0 else -t_pre
+        traj = _sample_path(paths[m.id], profiles[m.id], t_ref, pre_times)
         pre[m.id] = traj
         impact_states[m.id] = traj.last()
+        previa[m.id] = PlanPrevio(
+            m.id,
+            m.clase,
+            paths[m.id],
+            profiles[m.id],
+            t_ref,
+            braking_deceleration(mu, abs_factor=abs_factor if m.abs_ else 1.0, grade_percent=grade),
+            m.body.length,
+            m.body.width,
+            m.height,
+            mu,
+            lane_width,
+        )
 
     # ---- impacto principal ---------------------------------------------------------------
     eventos_out: list[EventOutcome] = []
@@ -1660,6 +1698,7 @@ def reconstruct(
         avisos=avisos,
         objetos=objetos_out,
         visibilidad=visibilidad_out,
+        previa=previa,
     )
 
 

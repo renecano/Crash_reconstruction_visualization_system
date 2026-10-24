@@ -14,7 +14,14 @@ import math
 from pathlib import Path
 from typing import Any
 
-from croquis_scene_schema import RESULTS_DIR, list_fixtures, load_fixture, result_errors
+from croquis_scene_schema import (
+    FIXTURES_DIR,
+    RESULTS_DIR,
+    list_fixtures,
+    load_fixture,
+    result_errors,
+)
+from croquis_solver.agents import simulate_drivers
 from croquis_solver.consistency import check_consistency
 from croquis_solver.inversion import invert
 from croquis_solver.montecarlo import monte_carlo
@@ -32,13 +39,48 @@ FIT_REL_TOL = 0.0
 FIT_ABS_TOL = 0.011
 
 
-def render(name: str) -> str:
-    spec = load_fixture(name)
-    doc = reconstruct(spec).to_dict()
+# Escenas de hipótesis de los conductores como agentes (R12a, ADR 0088): una escena canónica con
+# `conductor` en algún vehículo. Su resultado guarda solo el bloque `agentes` (lo demás ya lo
+# cubren las canónicas).
+AGENTS_DIR = FIXTURES_DIR / "agentes"
+AGENT_RESULTS_DIR = AGENTS_DIR / "resultados"
+
+
+def full_result(spec: dict[str, Any]) -> dict[str, Any]:
+    """El resultado completo: reconstrucción, Monte Carlo, inversión, consistencia y agentes."""
+    rec = reconstruct(spec)
+    doc = rec.to_dict()
     doc["incertidumbre"] = monte_carlo(spec).to_dict()
     inv = invert(spec)
     doc["inversion"] = inv.to_dict()
     doc["consistencia"] = [f.to_dict() for f in check_consistency(spec, inversion=inv)]
+    agentes = simulate_drivers(spec, rec)
+    if agentes is not None:
+        doc["agentes"] = agentes.to_dict()
+    return doc
+
+
+def agent_fixtures() -> list[str]:
+    return sorted(p.stem for p in AGENTS_DIR.glob("*.json"))
+
+
+def load_agent_fixture(name: str) -> dict[str, Any]:
+    data: dict[str, Any] = json.loads((AGENTS_DIR / f"{name}.json").read_text(encoding="utf-8"))
+    return data
+
+
+def render_agents(name: str) -> str:
+    spec = load_agent_fixture(name)
+    agentes = simulate_drivers(spec, reconstruct(spec))
+    if agentes is None:
+        msg = f"La escena de hipótesis {name} no trae conductores"
+        raise ValueError(msg)
+    return json.dumps(agentes.to_dict(), ensure_ascii=False, separators=(",", ":")) + "\n"
+
+
+def render(name: str) -> str:
+    spec = load_fixture(name)
+    doc = full_result(spec)
     errors = result_errors(doc)
     if errors:
         msg = f"El resultado de {name} no cumple resultado.schema.json:\n" + "\n".join(errors[:10])
@@ -82,6 +124,11 @@ def write_all(results_dir: Path = RESULTS_DIR) -> list[Path]:
         path = results_dir / f"{name}.json"
         path.write_text(render(name), encoding="utf-8", newline="\n")
         written.append(path)
+    AGENT_RESULTS_DIR.mkdir(parents=True, exist_ok=True)
+    for name in agent_fixtures():
+        path = AGENT_RESULTS_DIR / f"{name}.json"
+        path.write_text(render_agents(name), encoding="utf-8", newline="\n")
+        written.append(path)
     return written
 
 
@@ -97,4 +144,13 @@ def check_all(results_dir: Path = RESULTS_DIR) -> dict[str, list[str]]:
         diff = differences(expected, json.loads(render(name)))
         if diff:
             bad[name] = diff
+    for name in agent_fixtures():
+        path = AGENT_RESULTS_DIR / f"{name}.json"
+        if not path.exists():
+            bad[f"agentes/{name}"] = ["falta el archivo"]
+            continue
+        expected = json.loads(path.read_text(encoding="utf-8"))
+        diff = differences(expected, json.loads(render_agents(name)))
+        if diff:
+            bad[f"agentes/{name}"] = diff
     return bad
