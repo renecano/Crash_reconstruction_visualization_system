@@ -11,7 +11,7 @@ Al terminar, sube los resultados a GitHub para que René los vea.
 
 - **Lo que necesita la computadora:** Git, con acceso al repositorio de Croquis, y Google Chrome. Si falta alguno, el programa lo dice.
 - **Conéctala a la corriente y a internet.** La primera vez descarga Blender (unos 400 MB) de su sitio oficial.
-- **Calcula unas 2 o 3 horas** y no uses la computadora mientras corre: la medición necesita el equipo libre.
+- **Puede tardar varias horas.** No uses la computadora mientras corre: la medición necesita el equipo libre.
 
 ## Pasos
 

@@ -33,7 +33,7 @@
    4. **La medición E6 en Chrome:**
       - abre `/medicion?auto=1` de producción en un perfil propio de Chrome, que no toca el del usuario, y guarda las descargas en la carpeta de trabajo;
       - va a pantalla completa y sin el límite de cuadros (`--disable-gpu-vsync --disable-frame-rate-limit`), como E6;
-      - el modo automático de `/medicion` empieza solo y descarga el JSON al terminar; el script espera el archivo hasta 150 minutos y luego cierra Chrome.
+      - el modo automático de `/medicion` empieza solo y descarga el JSON al terminar; el script espera el archivo hasta 150 minutos y luego cierra Chrome. La medición de E6 son 132 mediciones (11 escenas, alta y ultra, WebGPU y WebGL, 3 repeticiones) de unos 20 s, 44 minutos; con hasta dos reintentos por tirones, cabe en 132 minutos.
    5. **Los datos de la máquina** (`maquina.json`):
       - CPU, núcleos e hilos, RAM, tarjetas de video y sus controladores;
       - las versiones de Windows, Chrome, Git y Blender;
@@ -71,6 +71,20 @@
   - en una carretera recta, OSM pone los vértices a cientos de metros, así que MEX 15D se quedaba fuera y el 3D dibujaba la vía genérica;
   - ahora la calle que cruza el círculo sin dos vértices dentro entra recortada en el borde. Las que ya entraban no cambian.
   - La escena canónica de Toluca gana un tramo de la calle Benito Juárez que cruza el área.
+
+- **Descompresión de Blender:**
+  - `Expand-Archive` de PowerShell 5.1 es lento y pide mucha memoria con un zip de 406 MB;
+  - en la prueba en la laptop, Claude Code detuvo la corrida por falta de memoria a la mitad de la descompresión;
+  - ahora se usa `tar.exe`, que trae Windows 10 y 11 y descomprime mientras lee, en una carpeta aparte que se renombra al final, para que una descompresión interrumpida no pase por completa en la siguiente corrida.
+
+## Prueba en la laptop (2026-10-24)
+
+- **Hasta dónde llegó:** con `-Prueba`, `-Url http://localhost:3000` y la carpeta en D:, revisó Git y Chrome y descargó Blender de blender.org (406 MB). El SHA-256 coincidió con el publicado.
+- **Dónde se detuvo:** en la descompresión, por falta de memoria (8 GB, con el servidor de Next.js corriendo).
+- **Queda por correr:** la prueba completa con la descompresión nueva, cuando René la pida. El zip verificado se quedó en la carpeta de la prueba para no descargarlo otra vez.
+- **Ya se probó aparte:**
+  - el render de las dos escenas con `croquis_render.py` en EEVEE, a 960×540;
+  - las escenas exportadas en alta.
 
 ## Límites
 

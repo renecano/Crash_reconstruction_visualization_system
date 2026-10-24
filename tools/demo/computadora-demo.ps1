@@ -160,7 +160,16 @@ Paso "Blender $BlenderVersion (portátil, de blender.org)" {
     throw "El SHA-256 de la descarga no coincide con el publicado por blender.org; se borró y no se usa."
   }
   Escribir "   SHA-256 verificado. Descomprimiendo…"
-  Expand-Archive -Path $zip -DestinationPath (Join-Path $Carpeta "blender") -Force
+  # tar.exe (de Windows 10 y 11) descomprime mientras lee; Expand-Archive de PowerShell 5.1 es lento
+  # y pide mucha memoria con 400 MB. Se descomprime aparte y se renombra al final, para que una
+  # descompresión interrumpida no pase por completa en la siguiente corrida.
+  $final = Join-Path $Carpeta "blender"
+  $temporal = Join-Path $Carpeta "blender-descomprimiendo"
+  if (Test-Path $temporal) { Remove-Item -Recurse -Force $temporal }
+  if (Test-Path $final) { Remove-Item -Recurse -Force $final }
+  New-Item -ItemType Directory -Force -Path $temporal | Out-Null
+  if ((Nativo "tar.exe" @("-xf", $zip, "-C", $temporal)) -ne 0) { throw "No se pudo descomprimir Blender." }
+  Rename-Item -Path $temporal -NewName "blender"
   Remove-Item -Force $zip
   if (-not (Test-Path $BlenderExe)) { throw "No quedó blender.exe donde se esperaba." }
   "Blender listo en $Carpeta."
