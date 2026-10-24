@@ -15,6 +15,7 @@ import {
   type EscenaSpec,
   type FixtureName,
   legendFor,
+  LEGEND_TEXT_CESVI,
   type Resultado,
 } from "@croquis/scene-schema";
 import {
@@ -292,6 +293,9 @@ export function VisorApp() {
   const router = useRouter();
   const params = useMemo(() => parseControles(new URLSearchParams(sp.toString())), [sp]);
   const ambiente = useMemo(() => parseAmbiente(new URLSearchParams(sp.toString())), [sp]);
+  // `leyenda=cesvi`: un caso de CESVI abierto en el visor (p. ej. la escena de AXA del video de la
+  // computadora de la demo) lleva la leyenda de CESVI en pantalla y en lo que se exporta.
+  const leyendaTexto = sp.get("leyenda") === "cesvi" ? LEGEND_TEXT_CESVI : undefined;
   const hidratado = useSyncExternalStore(noopSubscribe, hydratedSnapshot, serverSnapshot);
   const propia = useSyncExternalStore(noopSubscribe, leerEscenaPropia, nullSnapshot);
   const spec = useMemo(
@@ -338,6 +342,7 @@ export function VisorApp() {
       }
       onEscena={(e) => setParam("escena", e)}
       ambiente={ambiente}
+      leyendaTexto={leyendaTexto}
     />
   );
 }
@@ -361,6 +366,8 @@ export interface VisorEscenaProps {
   hipotesisExternas?: readonly Hipotesis[];
   /** Entrega la API de exportación del visor (R8: cuadros del 3D para el dictamen). */
   onExportApi?: (api: ViewerExportApi | null) => void;
+  /** Otro texto de leyenda, en pantalla y en lo que se exporta (en /cesvi, el de CESVI). */
+  leyendaTexto?: string;
 }
 
 export function VisorEscena({
@@ -374,6 +381,7 @@ export function VisorEscena({
   onTiempo,
   hipotesisExternas,
   onExportApi,
+  leyendaTexto,
 }: VisorEscenaProps) {
   const t = useTextos(T);
   const { lang } = useIdioma();
@@ -394,7 +402,10 @@ export function VisorEscena({
   useEffect(() => {
     onExportApi?.(exportApi);
   }, [exportApi, onExportApi]);
-  const legend = useMemo(() => legendFor(spec), [spec]);
+  const legend = useMemo(
+    () => ({ ...legendFor(spec), ...(leyendaTexto ? { texto: leyendaTexto } : {}) }),
+    [spec, leyendaTexto],
+  );
   // Modo automático (ADR 0026): arranca en el nivel que sugiere la GPU y luego lo ajustan los fps
   // medidos. En el prerender no hay GPU (null) y se usa media.
   const gpu = useSyncExternalStore(noopSubscribe, gpuTierSnapshot, nullSnapshot);
@@ -579,6 +590,7 @@ export function VisorEscena({
         tone="clara"
         atribucion={spec.lugar.red_vial?.atribucion}
         modelos={exportApi?.vehicleCredits}
+        texto={leyendaTexto}
       />
     </div>
   );

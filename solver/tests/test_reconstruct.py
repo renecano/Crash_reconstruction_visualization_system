@@ -210,9 +210,12 @@ def test_la_moto_caida_se_desliza_con_el_arrastre_medido() -> None:
     }
     assert d["alto"] < moto.distance_post_m < d["bajo"]
     assert alto.parametros["friccion_moto_caida"]["valor"] == 0.56
-    # El auto no cambia: el arrastre de la moto caída solo aplica a motos y scooters.
+    # El auto casi no cambia: el arrastre de la moto caída solo aplica a motos y scooters. Lo único
+    # que los une es la separación de sus contornos en los 0.04 s después del impacto (ADR 0089),
+    # que reparte el encaje según cómo se mueve cada uno: menos de un milímetro.
     auto = next(v for v in nominal.vehiculos if v.clase != "motocicleta")
-    assert next(v for v in alto.vehiculos if v.id == auto.id).rest_pose == auto.rest_pose
+    otro = next(v for v in alto.vehiculos if v.id == auto.id).rest_pose
+    assert all(abs(p - q) < 1e-3 for p, q in zip(otro, auto.rest_pose, strict=True))
 
 
 def test_sin_moto_no_hay_arrastre_de_moto_caida() -> None:

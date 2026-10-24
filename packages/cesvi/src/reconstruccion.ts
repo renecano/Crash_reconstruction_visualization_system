@@ -103,6 +103,24 @@ export function especDeExpediente(e: Expediente, specId = "caso-nuevo"): EscenaS
     ...e.vehiculos.map((v) => v.id).filter((v) => !enImpacto.includes(v)),
   ];
   const vehiculos = orden.map((id) => e.vehiculos.find((v) => v.id === id)!);
+  // Las zonas del primer impacto. Si el reporte no las da (la lectura de AXA, por ejemplo), se
+  // toman del primer daño de cada vehículo: sin zonas, el solver supone el centro del frente de
+  // los dos y en un alcance los pone uno encima del otro (comentario de René, 2026-10-24).
+  const zonasDadas = primero?.zonas ?? [];
+  const zonasPrimero = [
+    ...zonasDadas,
+    ...enImpacto.slice(0, 2).flatMap((v) => {
+      if (zonasDadas.some((z) => z.vehiculo === v)) return [];
+      // Solo la cara: el daño dice dónde se deformó, no en qué punto de la cara fue el contacto.
+      const dano = (e.danos ?? []).find((d) => d.vehiculo === v);
+      return dano ? [{ vehiculo: v, zona: { cara: dano.zona.cara } }] : [];
+    }),
+  ];
+  const deDanos = zonasPrimero.filter((z) => !zonasDadas.includes(z)).map((z) => z.vehiculo);
+  if (deDanos.length)
+    limites.push(
+      `El reporte no da las zonas del impacto de ${deDanos.join(" y ")}: se toma la cara de su primer daño.`,
+    );
 
   // 1. Base válida con buildSpec, con la maniobra que dice la narración (R4b): quien retrocede va en
   // reversa (avanza con la parte posterior por delante) y quien estaba detenido empieza quieto.
@@ -119,7 +137,7 @@ export function especDeExpediente(e: Expediente, specId = "caso-nuevo"): EscenaS
     if (man) m.set("maniobra", fact(man, null, "supuesto"));
     facts.vehiculos.push(m);
   }
-  for (const z of primero?.zonas ?? []) {
+  for (const z of zonasPrimero) {
     const k = orden.indexOf(z.vehiculo);
     const lado = LADO[z.zona.cara];
     if (k >= 0 && lado && ["F", "B", "L", "R"].includes(lado))
@@ -237,7 +255,7 @@ export function especDeExpediente(e: Expediente, specId = "caso-nuevo"): EscenaS
   // con ella el solver centra el daño ahí y el 3D lo deforma en ese lugar.
   for (const z of (evento.zonas_impacto ?? []) as { vehiculo_id: string; cdc: Json }[]) {
     const id = ids[z.vehiculo_id];
-    const zona = primero?.zonas?.find((x) => x.vehiculo === id)?.zona;
+    const zona = zonasPrimero.find((x) => x.vehiculo === id)?.zona;
     const h = zona ? zonaHorizontal(zona) : null;
     if (h) z.cdc.zona_horizontal = h;
   }

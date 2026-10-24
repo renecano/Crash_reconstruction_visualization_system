@@ -316,7 +316,34 @@ Reglas de trabajo: `CLAUDE.md`. Especificación: `PLAN.md`.
         - con `-Prueba` en producción y límite de RAM de 85 % (la laptop ya estaba en 70 %), los 7 pasos salieron bien en 1 min 35 s, con RAM máxima de 78 %;
         - la primera corrida destapó dos fallas, ya arregladas: el script no volvía a la rama de antes y subía videos a medias. También mostró que EEVEE y la medición en alta no caben en 85 %; por eso `-Prueba` usa Cycles en CPU y la medición en baja;
         - la e2e de `/medicion?auto=1` pasó contra producción.
-    - **Siguiente paso concreto:** cuando aparezca en GitHub la rama `resultados/computadora-demo-<fecha>`, integrar los videos de R11 y E6 en alta y ultra («Bloqueado»). Mientras tanto, R12a (ADR 0084): los conductores como agentes en el solver Python y el port TS, con paridad y semilla.
+    - **Comentarios de René (2026-10-24), en su orden:**
+      1. **Punto 1, los vehículos encimados en el 3D de AXA:** hecho (ADR 0089, rama `fix/contornos-reposo`).
+         - **Medición** (`uv run croquis-eval contornos`), desde 0.04 s después de cada impacto hasta el reposo:
+           - **antes** (`eval/results/contornos_antes.json`): AXA se traslapaba 1.82 m; con la caja sin deformar, cinco escenas canónicas, con `nocturno_lluvia` en 0.26 m también en el reposo;
+           - **después** (`eval/results/contornos.json`): ningún traslape (lo que queda es redondeo, ~10⁻¹⁵ m).
+         - **Causas y arreglos:**
+           - **AXA no traía zonas del impacto:** el solver ponía los dos frentes, y por eso los dos centros, en el mismo punto. Ahora `especDeExpediente` toma la cara del primer daño de cada vehículo y lo dice en los límites.
+           - **El contacto secundario** deshacía el encaje del impacto a 1 m/s, con la caja deformada. Ahora usa la caja sin deformar, que contiene lo que dibuja el 3D, y lo deshace en 0.04 s, en Python y en el port TS, con paridad.
+           - **Posiciones finales encimadas del perito:** aviso en los pasos 3 y 4 con «Separarlos», que propone moverlos lo mínimo, más 10 cm.
+         - **En la misma pantalla:**
+           - **la leyenda** del 3D en `/cesvi` es la de CESVI («Reconstrucción de apoyo · el dictamen es del perito»), en pantalla y en lo que exporta el visor; `/visor?…&leyenda=cesvi` la usa para la escena de AXA del video;
+           - **el texto de arriba** ya no queda debajo de la caja del paso en la vista expandida, y el rótulo de CESVI ya no tapa los controles del 3D;
+           - **la calidad en la laptop de René** (Chrome, Intel UHD, 1440×800 a 1.5×): la automática va entre media y alta y nunca baja a baja, así que siempre hay modelos (en media, los ligeros de R10). Lo que se veía como cajas: al cambiar de nivel, la escena volvía a los paramétricos mientras llegaba la otra versión. Ahora se queda con los modelos que ya tiene.
+         - **Las escenas del botón** (`demo/escenas-r11/*.glb`) se volvieron a exportar con `tools/demo/exportar-escenas.mjs`. **AXA:**
+           - B queda en reposo detrás de A, como supone el método de los restos de CESVI;
+           - la reconstrucción da V2 a 41.01 km/h y V1 a 39.95 km/h, y el dictamen da 63.15 km/h (ver «Endurecimiento pendiente»);
+           - la comparación del paso 7 (el método de CESVI) no cambia.
+      2. **Punto 2, las preguntas del hecho:** sigue.
+      3. **Punto 3, colocar en el mapa:** pendiente.
+      4. **Punto 4, la portada nueva:** pendiente.
+    - **R12a (conductores como agentes) en pausa:**
+      - lo hecho está en la rama `feat/r12a-agentes`: el contrato 2.1.0, el módulo de agentes en Python y las escenas de hipótesis;
+      - faltan las pruebas, el port TS y la paridad;
+      - se retoma después de los comentarios de René.
+    - **Siguiente paso concreto:**
+      - los puntos 2 a 4 de René, en ese orden, y verificar cada uno en producción;
+      - luego, R12a;
+      - cuando aparezca la rama `resultados/computadora-demo-<fecha>`, integrar los videos de R11 y E6 en alta y ultra («Bloqueado»).
     1. **V2-1, marco:**
        - **la barra:** los nombres de los 8 pasos siempre, «← Casos», la barra de avance arriba y los pasos futuros cerrados hasta completar lo obligatorio;
        - **los botones:** «Siguiente: el hecho →», desactivado y diciendo qué falta (`lib/pasos-caso.ts`, con pruebas);
@@ -1313,6 +1340,10 @@ Lo que se pospone por el trabajo con CESVI no se borra: queda aquí para despué
   - **Lo que pasa:** con esas posiciones, la inversión no identifica ninguna velocidad y deja las dos en el valor por defecto de 40 km/h. La página lo dice («la evidencia no la fija»), pero no reconstruye la maniobra.
   - **Lo que falta:** el contrato y el solver necesitan el sentido de marcha separado del rumbo del frente. Va con R4 o R6, junto con las otras modalidades del corpus.
 - **Del prototipo de CESVI:** el mapa con mosaicos propios (privacidad completa), la importación automática de cualquier dictamen, interpenetración, impactos múltiples y generalidad del método; autenticación con cuentas para cuando los peritos usen sus propios casos (hoy el acceso es con usuario y clave, ADR 0049).
+
+- **AXA en el solver** (2026-10-24, ADR 0089):
+  - con las zonas correctas, la reconstrucción no reproduce las velocidades de CESVI: V2 a 41.01 km/h contra 63.15 km/h por deformación;
+  - falta ver si la inversión usa las medidas C y L de V2, y cómo encajan con las posiciones (con o sin la posición final de B).
 
 ### Bloqueado — necesita a René
 

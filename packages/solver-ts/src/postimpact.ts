@@ -31,11 +31,12 @@ export const V_REF_LATERAL = 0.3;
 export const STOP_SPEED = 0.05;
 export const STOP_YAW_RATE = 0.05;
 /**
- * m/s: a qué ritmo se deshace el encaje con que arrancan dos contornos en el instante del impacto
- * (2 mm por paso, 2 cm por cuadro de 0.02 s): lo bastante lento para no verse como un salto y
- * mucho más rápido que lo que dura la fase posterior (ADR 0063).
+ * s: en cuánto se deshace el encaje con que arrancan dos contornos en el instante del impacto. Desde
+ * ahí ningún contorno traslapa a otro (comentario de René, 2026-10-24; ADR 0089): se deshace parejo
+ * en dos cuadros de 0.02 s, que se ven como el rebote del choque. Antes (ADR 0063) se deshacía a
+ * 1 m/s y un encaje grande tardaba segundos.
  */
-export const DEPENETRATION_SPEED = 1.0;
+export const SEPARATION_S = 0.04;
 /**
  * m: la normal de un contacto secundario se mantiene mientras dure el contacto y solo cambia a otro
  * eje si ese separa con al menos esto menos. Sin ella, dos ejes casi empatados se turnan de un paso
@@ -379,12 +380,9 @@ export class JointState {
     const inertia = spec.body.inertia;
     const ke0 = 0.5 * m * (u * u + v * v) + 0.5 * inertia * r * r;
     const active = dmath.hypot(st.vx, st.vy) > STOP_SPEED || Math.abs(st.yawRate) > STOP_YAW_RATE;
-    const ext = deformedExtents(
-      spec.body.length,
-      spec.body.width,
-      spec.crush ?? 0.0,
-      spec.crushFace ?? "F",
-    );
+    // El contorno del contacto es la caja sin deformar: el 3D dibuja el daño hacia adentro de ella,
+    // así que si las cajas no se traslapan, nada de lo que se ve se traslapa (ADR 0089).
+    const ext = deformedExtents(spec.body.length, spec.body.width, 0.0, spec.crushFace ?? "F");
     const j = new JointState(
       spec,
       ext,
@@ -665,11 +663,13 @@ export function integrateJointImpacts(
       axes.push(null);
     }
   }
+  // Cuánto baja el encaje permitido de cada par en cada paso: el del impacto en SEPARATION_S.
+  const nSep = Math.max(1, pyRound(SEPARATION_S / dt));
+  const rates = allowances.map((w) => w / nSep);
   const happened: JointImpact[] = [];
   const stepsPerOut = Math.max(1, pyRound(dtOut / dt));
   let step = 0;
   let t = t0;
-  const relax = DEPENETRATION_SPEED * dt;
   while (t < t0 + tMax - 1e-12 && (joints.some((j) => j.active) || allowances.some((w) => w > 0))) {
     for (const j of joints) {
       if (!j.active) continue;
@@ -699,12 +699,15 @@ export function integrateJointImpacts(
             const ax = argmin(ov);
             axes[k] = ax;
             allowances[k] = Math.max(allowances[k]!, ov[ax]![0]);
+            rates[k] = allowances[k]! / nSep;
           }
         }
       }
+      // Primero baja lo permitido y luego se resuelve: a los SEPARATION_S ya no queda encaje.
+      allowances[k] = Math.max(0.0, allowances[k]! - rates[k]!);
       const [left, axis] = resolveSecondaryContact(a, b, allowances[k]!, axes[k] ?? null);
       axes[k] = axis;
-      allowances[k] = Math.max(0.0, Math.min(allowances[k]!, left) - relax);
+      allowances[k] = Math.min(allowances[k]!, left);
     }
     const onGrid = step % stepsPerOut === 0;
     for (const j of joints) {

@@ -8,6 +8,7 @@
  * Lo que marca el perito lleva fuente «perito»; lo que supone Croquis, «supuesto», hasta que el
  * perito lo confirma. La validación del dictamen se guarda con el caso (ADR 0075).
  */
+import { LEGEND_TEXT_CESVI } from "@croquis/scene-schema";
 import {
   comparar,
   conHuella,
@@ -17,6 +18,7 @@ import {
   escenaDeNarracion,
   medidasDe,
   posesDeImpacto,
+  posicionesEncimadas,
   verificacionCesvi,
   type EscenaNarrada,
   type Expediente,
@@ -684,6 +686,11 @@ export function RecorridoCaso({ inicial }: { inicial: CasoExpediente }) {
     reconstruido: r !== null && !rec.vieja,
   };
   const falta = faltaEnPaso(claves[paso]!, estadoPasos);
+  // Posiciones finales encimadas: se avisan con la propuesta para separarlas (comentario de René).
+  const encimadas = useMemo(
+    () => (expediente ? posicionesEncimadas(expediente) : []),
+    [expediente],
+  );
   const abierto = (i: number) => pasoAbierto(claves, i, estadoPasos);
   const siguienteNombre = pasos[paso + 1];
   // El mapa es el contenido en el lugar y la reconstrucción; en los demás pasos, una tarjeta.
@@ -733,6 +740,39 @@ export function RecorridoCaso({ inicial }: { inicial: CasoExpediente }) {
           </p>
           {cuerpo}
           <div className="mt-auto flex flex-col gap-2 pt-4">
+            {(actual === 2 || actual === 3) && modo === "trabajar"
+              ? encimadas.map((enc) => (
+                  <div
+                    key={enc.vehiculos.join("-")}
+                    role="status"
+                    className="flex flex-wrap items-center gap-3 border-l-2 border-senal pl-3"
+                    data-testid="aviso-encimadas"
+                  >
+                    <p className="t-nota">
+                      <b className="text-texto">
+                        {enc.vehiculos[0]} y {enc.vehiculos[1]} quedaron encimados
+                      </b>{" "}
+                      en su posición final ({enc.traslape_m.toFixed(2)} m). Dos vehículos en reposo
+                      no ocupan el mismo lugar.
+                    </p>
+                    <button
+                      type="button"
+                      className="boton-secundario"
+                      data-testid="separar-encimadas"
+                      onClick={() => {
+                        if (!expediente) return;
+                        setHistorial((h) => [...h, expediente]);
+                        let r = expediente;
+                        for (const pose of enc.propuesta)
+                          r = conPosicion(r, { ...pose, fase: "final" });
+                        cambiarExpediente(r);
+                      }}
+                    >
+                      Separarlos
+                    </button>
+                  </div>
+                ))
+              : null}
             {falta.length ? (
               <p className="t-nota" role="status" data-testid="falta-para-seguir">
                 Para seguir falta: <b className="text-texto">{enLista(falta)}</b>.
@@ -802,6 +842,7 @@ export function RecorridoCaso({ inicial }: { inicial: CasoExpediente }) {
                 onPosiciones={setMoviles}
                 calles={calles}
                 objetos={objetos}
+                expandido={expandido}
               />
             </div>
           ) : null}
@@ -916,11 +957,12 @@ export function RecorridoCaso({ inicial }: { inicial: CasoExpediente }) {
                 </div>
               ) : null}
             </>
-          ) : (
+          ) : verMapa ? (
+            // En el 3D la leyenda de CESVI va en la banda del visor (y no tapa sus controles).
             <p className="vidrio pointer-events-none absolute right-3 bottom-3 z-10 px-2 py-1 text-[0.6875rem] text-texto-2">
-              Reconstrucción de apoyo · el dictamen es del perito.
+              {LEGEND_TEXT_CESVI}
             </p>
-          )}
+          ) : null}
         </section>
       </div>
     </div>

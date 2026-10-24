@@ -28,3 +28,4 @@ export * from "./comparacion-declarada";
 export * from "./titulo-reporte";
 export * from "./recorrido-3d";
 export * from "./poses-impacto";
+export * from "./encimadas";

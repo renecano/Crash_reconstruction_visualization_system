@@ -36,10 +36,11 @@ STOP_YAW_RATE = 0.05
 # eje si ese separa con al menos esto menos. Sin ella, dos ejes casi empatados se turnan de un paso
 # a otro por el redondeo y el empujón cambia de dirección (ADR 0063).
 AXIS_HYSTERESIS = 0.05
-# m/s: a qué ritmo se deshace el encaje con que arrancan dos contornos en el instante del impacto
-# (2 mm por paso, 2 cm por cuadro de 0.02 s): lo bastante lento para no verse como un salto y
-# mucho más rápido que lo que dura la fase posterior (ADR 0063).
-DEPENETRATION_SPEED = 1.0
+# s: en cuánto se deshace el encaje con que arrancan dos contornos en el instante del impacto.
+# Desde ahí ningún contorno traslapa a otro (comentario de René, 2026-10-24; ADR 0089): se
+# deshace parejo en dos cuadros de 0.02 s, que se ven como el rebote del choque. Antes (ADR 0063)
+# se deshacía a 1 m/s y un encaje grande tardaba segundos.
+SEPARATION_S = 0.04
 
 
 @dataclass(frozen=True)
@@ -344,7 +345,9 @@ class JointState:
         m, inertia = spec.body.mass, spec.body.inertia
         ke0 = 0.5 * m * (u * u + v * v) + 0.5 * inertia * r * r
         active = st.speed > STOP_SPEED or abs(st.yaw_rate) > STOP_YAW_RATE
-        ext = deformed_extents(spec.body.length, spec.body.width, spec.crush, spec.crush_face)
+        # El contorno del contacto es la caja sin deformar: el 3D dibuja el daño hacia adentro de
+        # ella, así que si las cajas no se traslapan, nada de lo que se ve se traslapa (ADR 0089).
+        ext = deformed_extents(spec.body.length, spec.body.width, 0.0, spec.crush_face)
         j = cls(spec, ext, st.x, st.y, st.yaw, c, s, u, v, r, st.vx, st.vy, active, ke0)
         j.drag = spec.rolling_drag
         if not active:
@@ -601,11 +604,13 @@ def integrate_joint_impacts(
             pairs.append((a, b))
             allowances.append(box_penetration(_corners_of(a), _corners_of(b))[0])
             axes.append(None)
+    # Cuánto baja el encaje permitido de cada par en cada paso: el del impacto en SEPARATION_S.
+    n_sep = max(1, round(SEPARATION_S / dt))
+    rates = [w / n_sep for w in allowances]
     happened: list[JointImpact] = []
     steps_per_out = max(1, round(dt_out / dt))
     step = 0
     t = t0
-    relax = DEPENETRATION_SPEED * dt
     while t < t0 + t_max - 1e-12 and (
         any(j.active for j in joints) or any(w > 0 for w in allowances)
     ):
@@ -635,8 +640,11 @@ def integrate_joint_impacts(
                         ax = _argmin(ov)
                         axes[k] = ax
                         allowances[k] = max(allowances[k], ov[ax][0])
+                        rates[k] = allowances[k] / n_sep
+            # Primero baja lo permitido y luego se resuelve: a los SEPARATION_S ya no queda encaje.
+            allowances[k] = max(0.0, allowances[k] - rates[k])
             left, axes[k] = resolve_secondary_contact(a, b, allowances[k], axes[k])
-            allowances[k] = max(0.0, min(allowances[k], left) - relax)
+            allowances[k] = min(allowances[k], left)
         on_grid = step % steps_per_out == 0
         for j in joints:
             if j.active:
