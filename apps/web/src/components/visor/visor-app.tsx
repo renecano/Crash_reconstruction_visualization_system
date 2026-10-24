@@ -578,6 +578,7 @@ export function VisorEscena({
         inputHash={spec.meta.hash_relato}
         tone="clara"
         atribucion={spec.lugar.red_vial?.atribucion}
+        modelos={exportApi?.vehicleCredits}
       />
     </div>
   );

@@ -256,7 +256,37 @@ Reglas de trabajo: `CLAUDE.md`. Especificación: `PLAN.md`.
       | Moto      | **Red motorcycle** (elegido)                                                  | Chenzoss                   | CC-BY    | 38,645                                       | Moto de trabajo de 125 cc, la más común en México. Muchas marcas la hacen con el mismo diseño, así que no es un modelo reconocible. Si trae texto en las calcomanías del tanque, se quita en Blender. |
       | Moto      | Enduro bike (alternativa)                                                     | Zaborchik                  | CC-BY    | 42,681                                       | Moto de campo genérica.                                                                                                                                                                               |
       | Moto      | Las demás (descartadas)                                                       | varios                     | —        | —                                            | Conceptos, ciencia ficción, caricatura, decorados de carreras o copias de Honda, Ducati, Vespa, JAWA o Moto Guzzi.                                                                                    |
-      - **Siguiente:** descargar los seis elegidos y revisar en Blender que no traigan logotipos, emblemas ni placas con texto (se quitan y se anotan). Luego optimizarlos para la web y registrarlos en `assets/ASSETS.md`.
+      - **La moto cambió al revisarla:** «Red motorcycle» trae una sola malla con la iluminación horneada en un atlas, el emblema azul en el tanque y los colores de un modelo real. Se usó la alternativa, «Enduro bike» (Zaborchik, CC-BY 4.0), sin texturas ni emblemas. El original descartado quedó en `data/raw/sketchfab/descartados/`.
+
+    - **R10, vehículos realistas de Sketchfab: hecho** (2026-10-24, ADR 0086, rama `feat/r10-modelos`):
+      - **El pipeline:** `uv run croquis-assets vehicles download|build|check`.
+        - Verifica la licencia de cada modelo en el API antes de descargarlo y fija su SHA-256 en `assets/pipeline/sketchfab.lock.json`.
+        - Lo prepara en Blender 5.2.3: quita placas y emblemas y deja la estructura del visor.
+        - Hace tres versiones con gltf-transform: alta y ultra (KTX2 de 1024 y Draco), ligera para media (KTX2 de 512) y para Blender (WebP).
+      - **Limpieza (regla 5):** de cada modelo de Daniel Zhabotinsky se quitaron 3 o 4 objetos: las placas (una decía «KCS 2207 Michigan») y los emblemas (en el camión, «KOROMO», «LCT» y una calcomanía). La lista va en `vehiculos.json`. Las vistas de frente y de atrás de los modelos procesados se revisaron a ojo: sin texto ni emblemas.
+      - **Tamaños** (completa / ligera / Blender):
+        - sedán: 1.62 / 0.55 / 1.29 MB;
+        - hatchback: 1.64 / 0.56 / 1.32 MB;
+        - SUV: 1.63 / 0.54 / 1.30 MB;
+        - pickup: 1.92 / 0.66 / 1.42 MB;
+        - camión: 1.66 / 0.55 / 1.31 MB;
+        - moto: 0.22 / 0.21 / 0.22 MB.
+      - **En el visor:**
+        - **Qué versión baja:** la completa en alta y ultra, la ligera en media; en baja, el paramétrico, sin descargar nada.
+        - **Pintura y materiales:** la pintura toma el color del caso; vidrios, llantas, rines, plásticos e interior conservan los del modelo; los faros encienden de noche.
+        - **Daño:** el de la zona narrada se hornea sobre la carrocería subdividida a 10 cm; el parabrisas se agrieta y los restos y las defensas se desprenden igual que en el paramétrico.
+        - **Clases sin modelo:** van, combi, autobús, tractocamión, bicicleta y scooter siguen paramétricas.
+      - **Atribución CC-BY:** en la leyenda del 3D, en el dictamen cuando lleva cuadros del 3D y en la leyenda de cada cuadro del video de R11.
+      - **R11:** el script de Blender cambia los materiales de los modelos por los de la versión WebP, que toma del repositorio o del sitio.
+      - **Capturas de antes y después** para René en `docs/cesvi/r10/vehiculos-*.jpg`:
+        - el antes es producción y el después, esta rama;
+        - escenas `alcance`, `lateral_interseccion`, `motociclista` y `nocturno_lluvia`, en alta y ultra, con la cámara cinematográfica y la del daño;
+        - `vehiculos-comparacion-*.jpg` pone las dos una sobre otra.
+        - **Lectura:** con la cámara del daño se ve el cambio (de cajas a autos con carrocería, rines, espejos y faros, con su deformación). Con la cinematográfica, a la distancia de la toma, se nota poco.
+      - **Carga en Chromium sin tarjeta de video** (e2e `vehiculos-modelos.spec.ts`, no bloquea): 4 s en media y unos 30 s en alta, porque alta dibuja cada cuadro por software. En la computadora de la demo se mide en E6.
+      - **Instalado** (registrado también en ADR 0086):
+        - KTX-Software 4.4.2 en `D:\dev-cache\tools\ktx` (instalador oficial, SHA-256 verificado, sin elevar permisos; no cambió el PATH; dejó su desinstalador en la cuenta del usuario);
+        - `@gltf-transform/cli`, `core`, `functions` y `extensions` 4.5.1 como dependencias de desarrollo.
 
     - **El video demo ya se le entregó a CESVI** (René, 2026-10-24): no se regraba ni se toca salvo que René lo pida.
     - **Siguiente paso concreto:** R11 espera a René: el render final en calidad completa en la computadora de la demo y su aprobación («Bloqueado»). R10 sigue bloqueado hasta la cuenta de Sketchfab. R12 va después de R11.
@@ -1174,6 +1204,12 @@ Reglas de trabajo: `CLAUDE.md`. Especificación: `PLAN.md`.
   - sacar pdfmake, docx y mediabunny de los trozos de SSR.
 
 ### Endurecimiento pendiente
+
+- **Vehículos de Sketchfab (R10, ADR 0086):**
+  - **Ruedas y solver:** las ruedas quedan donde el modelo tiene sus arcos, no en el paso entre ejes del caso; si son muy distintos, no coinciden con el solver (la física no cambia).
+  - **Moto:** es de campo; falta una de trabajo de 125 cc con licencia libre, piezas separadas y sin marca.
+  - **Pintura:** usa el color del caso, no la textura de pintura del modelo.
+- **Avisos de three.js «Vertex attribute "uv" not found»** en media y alta: 8 por escena. Ya salían en producción antes de R10: son las texturas del entorno sobre geometría sin coordenadas de textura. No cambian lo que se ve.
 
 - **El prompt de lectura del corpus** (`packages/cesvi/src/corpus.ts`, `SISTEMA_CORPUS`) llama «dictamen» a los reportes de CESVI.
   - **Por qué no se cambió:** no se ve en pantalla, y cambiarlo invalida las respuestas grabadas de R0 y R4.

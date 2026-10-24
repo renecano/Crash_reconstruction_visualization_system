@@ -16,6 +16,9 @@ const eslintConfig = defineConfig([
     "public/workers/**",
     "public/maplibre/**",
     "public/pdfjs/**",
+    // Decodificadores de three (Draco y Basis) y el script de Blender, copiados en cada build (R10, R11).
+    "public/decodificadores/**",
+    "public/blender/**",
   ]),
 ]);
 

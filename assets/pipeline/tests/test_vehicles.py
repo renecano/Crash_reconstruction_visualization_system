@@ -69,3 +69,40 @@ def test_el_manifiesto_trae_licencia_ruedas_y_limpieza() -> None:
             assert r["centro"][2] == pytest.approx(r["radio"], abs=0.01)
         assert c["papeles"].get("pintura", 0) >= 1
         assert 1.5 < c["largo_m"] < 8
+
+
+def _glb_json(nombre: str) -> dict[str, Any]:
+    datos = (vehicles.OUT_DIR / nombre).read_bytes()
+    largo = int.from_bytes(datos[12:16], "little")
+    return json.loads(datos[20 : 20 + largo])
+
+
+@pytest.mark.parametrize("clase", ["sedan", "hatchback", "suv", "pickup", "camion", "moto"])
+def test_cada_version_trae_lo_que_espera_el_visor(clase: str) -> None:
+    m = json.loads(vehicles.MANIFIESTO.read_text(encoding="utf-8"))["clases"][clase]
+    for variante, a in m["archivos"].items():
+        g = _glb_json(a["archivo"])
+        requeridas = set(g.get("extensionsRequired", []))
+        assert "KHR_draco_mesh_compression" in requeridas
+        # La moto no trae texturas; los autos, en KTX2 (en WebP la versión para Blender).
+        if variante == "blender":
+            assert "KHR_texture_basisu" not in requeridas
+            if clase != "moto":
+                assert "EXT_texture_webp" in set(g.get("extensionsUsed", []))
+        elif clase != "moto":
+            assert "KHR_texture_basisu" in requeridas
+        nodos: list[dict[str, Any]] = g["nodes"]
+
+        def extras(n: dict[str, Any]) -> dict[str, Any]:
+            return n.get("extras") or {}
+
+        nombres = {n.get("name", "") for n in nodos}
+        # Sin placas ni emblemas (regla 5).
+        assert not any("Numberplate" in n or "Badges" in n or "NP_" in n for n in nombres)
+        papeles = {extras(n).get("role") for n in nodos}
+        assert {"pintura", "rueda"} <= papeles
+        ruedas = [n for n in nodos if n.get("name", "").startswith("wheel_") and "mesh" not in n]
+        assert all(extras(n).get("radius", 0) > 0 for n in ruedas)
+        assert len(ruedas) == (2 if clase == "moto" else 4)
+        if clase != "moto":
+            assert {"windshield", "headlight_l", "headlight_r"} <= nombres

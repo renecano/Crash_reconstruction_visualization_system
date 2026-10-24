@@ -170,3 +170,69 @@ def test_las_superficies_del_piso() -> None:
     assert not cr.es_superficie_del_piso(0.0, 1.6)  # un vehículo
     assert not cr.es_superficie_del_piso(0.0, 0.15)  # una banqueta: tiene altura
     assert not cr.es_superficie_del_piso(3.0, 3.01)  # algo plano pero en alto
+
+
+def test_de_donde_salen_los_modelos(tmp_path: Path) -> None:
+    script = tmp_path / "tools" / "blender" / "croquis_render.py"
+    script.parent.mkdir(parents=True)
+    script.write_text("", encoding="utf-8")
+    # Fuera del repositorio: el sitio de Croquis.
+    assert cr.origen_de_modelos(None, script, {}) == cr.MODELOS_PRODUCCION
+    # Dentro del repositorio (la computadora de la demo): la carpeta versionada.
+    repo = tmp_path / "apps" / "web" / "public" / "modelos" / "vehiculos"
+    repo.mkdir(parents=True)
+    assert cr.origen_de_modelos(None, script, {}) == str(repo)
+    # La variable de entorno y la opción mandan sobre lo demás.
+    assert cr.origen_de_modelos(None, script, {"CROQUIS_MODELOS": "D:/m"}) == "D:/m"
+    assert cr.origen_de_modelos("E:/x", script, {"CROQUIS_MODELOS": "D:/m"}) == "E:/x"
+
+
+def test_las_clases_con_modelo_y_sus_archivos() -> None:
+    gltf = {
+        "materials": [
+            {"name": "pintura"},
+            {
+                "name": "UCB_BOTTOM",
+                "extras": {"material_modelo": {"clase": "sedan", "material": "UCB_BOTTOM"}},
+            },
+            {"name": "Tire", "extras": {"material_modelo": {"clase": "moto", "material": "Tire"}}},
+            {
+                "name": "Tire.001",
+                "extras": {"material_modelo": {"clase": "sedan", "material": "Tire"}},
+            },
+        ]
+    }
+    assert cr.clases_con_modelo(gltf) == ["moto", "sedan"]
+    assert cr.clases_con_modelo({"materials": [{"name": "x"}]}) == []
+    assert cr.ruta_del_modelo("https://a.b/modelos/vehiculos/", "suv") == (
+        "https://a.b/modelos/vehiculos/suv-blender.glb"
+    )
+    assert cr.ruta_del_modelo("D:/repo/modelos", "suv") == str(
+        Path("D:/repo/modelos/suv-blender.glb")
+    )
+    assert cr.sin_sufijo("UCB_BOTTOM.001") == "UCB_BOTTOM"
+    assert cr.sin_sufijo("Kiri10_bodymat") == "Kiri10_bodymat"
+
+
+def test_la_leyenda_lleva_la_atribucion_de_los_modelos() -> None:
+    gltf = {
+        "scenes": [
+            {
+                "extras": {
+                    "leyenda": ["Reconstrucción ilustrativa."],
+                    "creditos_modelos": [
+                        {
+                            "modelo": "Kiri '10",
+                            "autor": "Daniel Zhabotinsky",
+                            "licencia": "CC-BY 4.0",
+                        },
+                        {"modelo": "Enduro bike", "autor": "Zaborchik", "licencia": "CC-BY 4.0"},
+                    ],
+                }
+            }
+        ]
+    }
+    assert cr.texto_leyenda(gltf) == (
+        "Reconstrucción ilustrativa. · Vehículos 3D: «Kiri '10» de Daniel Zhabotinsky "
+        "(CC-BY 4.0); «Enduro bike» de Zaborchik (CC-BY 4.0)"
+    )

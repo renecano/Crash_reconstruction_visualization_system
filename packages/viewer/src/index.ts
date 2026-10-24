@@ -60,6 +60,13 @@ export { computeGroundMarks, puddleRadius, visibleCount, type GroundMarks } from
 export { bakeDebris, debrisPoseAt, mulberry32, type DebrisBake, type DebrisSpec } from "./debris";
 export { attachDebris, planDebris, type DebrisAttachment, type DebrisPlan } from "./debris-scene";
 export * from "./body-assets";
+export {
+  creditLine,
+  MODEL_FOR_CLASS,
+  modelVariantFor,
+  type ModelClass,
+  type VehicleCredit,
+} from "./vehicle-models";
 export * from "./person-pose";
 export * from "./person-ragdoll";
 export * from "./people-scene";

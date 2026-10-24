@@ -84,6 +84,14 @@ import {
   wheelNames,
   type PartRole,
 } from "./vehicle-geometry";
+import {
+  buildModelVehicle,
+  creditsOf,
+  MODEL_FOR_CLASS,
+  type ModelClass,
+  type VehicleCredit,
+  type VehicleModelTemplate,
+} from "./vehicle-models";
 
 export interface SceneGraphOptions {
   quality: QualityProfile;
@@ -91,6 +99,8 @@ export interface SceneGraphOptions {
   diag?: { gravaPrevia?: boolean; osmSoloCalzada?: boolean };
   env: Pick<EnvironmentSettings, "night" | "wet" | "groundColor" | "streetLights"> &
     Partial<Pick<EnvironmentSettings, "lightDirection" | "surface">>;
+  /** Los modelos de Sketchfab por clase (R10, ADR 0086); sin ellos, los vehículos paramétricos. */
+  vehicleModels?: ReadonlyMap<ModelClass, VehicleModelTemplate>;
 }
 
 export interface VehicleNode {
@@ -131,6 +141,8 @@ export interface SceneGraph {
   readonly wantedTextures: readonly EnvTextureName[];
   /** Texturas PBR del entorno (F8e): asfalto, concreto de banquetas y camellón, y pasto. */
   applyTextures(t: EnvTextures): void;
+  /** La atribución de los modelos de Sketchfab que usa la escena (R10, CC-BY). */
+  readonly vehicleCredits: readonly VehicleCredit[];
   dispose(): void;
   stats: { meshes: number; triangles: number };
 }
@@ -762,6 +774,7 @@ export function buildSceneGraph(
   const glyphs = new Map(sceneLayout(spec).vehicles.map((v) => [v.id, v]));
   const specVehicles = new Map(spec.vehiculos.map((v) => [v.id, v]));
   const vehicles: VehicleNode[] = [];
+  const usedTemplates: VehicleModelTemplate[] = [];
   for (const v of resultado.vehiculos) {
     const sv = specVehicles.get(v.id);
     const dims = {
@@ -771,7 +784,12 @@ export function buildSceneGraph(
       wheelbase: v.dimensiones.distancia_entre_ejes_m,
       frontOverhang: sv?.voladizo_delantero ? longitudM(sv.voladizo_delantero) : undefined,
     };
-    const group = buildVehicle(v.clase, dims);
+    const modelo = MODEL_FOR_CLASS[v.clase];
+    const template = modelo ? opts.vehicleModels?.get(modelo) : undefined;
+    const group = template
+      ? buildModelVehicle(template, v.clase, dims)
+      : buildVehicle(v.clase, dims);
+    if (template) usedTemplates.push(template);
     group.name = `vehiculo_${v.id}`;
     group.userData.id = v.id;
     const vm = vehicleMaterials(
@@ -780,10 +798,20 @@ export function buildSceneGraph(
     );
     disposables.push(...Object.values(vm));
     group.traverse((m) => {
-      if (m instanceof Mesh) {
-        m.material = vm[m.userData.role as PartRole] ?? vm.plastico;
-        m.castShadow = opts.quality.shadows && castsShadow(m);
+      if (!(m instanceof Mesh)) return;
+      const role = m.userData.role as PartRole;
+      if (!m.userData.modelo || role === "pintura") {
+        m.material = vm[role] ?? vm.plastico;
+      } else if (role === "faro" || role === "calavera") {
+        // El modelo conserva sus faros; de noche encienden como los del paramétrico.
+        const own = (m.material as MeshStandardMaterial).clone();
+        const lit = vm[role] as MeshStandardMaterial;
+        own.emissive.copy(lit.emissive);
+        own.emissiveIntensity = lit.emissiveIntensity;
+        m.material = own;
+        disposables.push(own);
       }
+      m.castShadow = opts.quality.shadows && castsShadow(m);
     });
     const rig = buildDamageRig(group, v, dims, glyphs.get(v.id)?.colorHex ?? "#9aa0a6", {
       spec,
@@ -1014,6 +1042,7 @@ export function buildSceneGraph(
     vehicles,
     persons,
     update,
+    vehicleCredits: creditsOf(usedTemplates),
     addUpdater(fn: (t: number) => void, o?: { after?: boolean }) {
       (o?.after ? postUpdaters : extraUpdaters).push(fn);
       update(lastT);

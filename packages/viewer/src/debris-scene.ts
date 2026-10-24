@@ -36,6 +36,7 @@ import type { SceneGraph } from "./scene-graph";
 import type { CarLayout } from "./vehicle-geometry";
 import { dmath } from "@croquis/solver-ts";
 import { applyAxisAngle, quatFromAxisAngle } from "./dthree";
+import { meshSize } from "./vehicle-models";
 
 /** Defensas: se desprenden con este aplastamiento máximo (m, ilustrativo). */
 export const BUMPER_DETACH_M = 0.2;
@@ -85,12 +86,12 @@ export function planDebris(spec: EscenaSpec, resultado: Resultado, graph: SceneG
     const detach = (name: string): void => {
       const m = node.group.getObjectByName(name);
       if (!(m instanceof Mesh)) return;
-      const g = m.geometry as BoxGeometry;
-      const prm = g.parameters;
+      // La caja de la pieza (paramétrica o de un modelo de Sketchfab, R10).
+      const size = meshSize(m as Mesh);
       const world = toWorld(m.position);
       bodies.push({
         kind: "pieza",
-        half: [prm.width / 2, prm.height / 2, prm.depth / 2],
+        half: [size.x / 2, size.y / 2, size.z / 2],
         position: world,
         quaternion: quatFromAxisAngle(Y, p.yaw),
         linvel: velAt(world)
