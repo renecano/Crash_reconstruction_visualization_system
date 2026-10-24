@@ -829,3 +829,98 @@
     animation: none;
   }
 }
+
+/* Portada de CESVI (punto 4 de René, docs/cesvi/rediseno/Portada.html): la reconstrucción de AXA se
+   dibuja y los vehículos chocan en la X naranja; los bloques aparecen al bajar. */
+.pc-trazo {
+  stroke-dasharray: 700;
+  animation: pc-trazo 2.4s cubic-bezier(0.2, 0.7, 0.2, 1) both;
+}
+.pc-llega {
+  animation: pc-aparece 0.5s ease-out 1.9s both;
+}
+.pc-despues {
+  opacity: 0.8;
+  animation: pc-aparece 0.8s ease-out 2.6s both;
+}
+.pc-golpe {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: pc-golpe 2.6s ease-out both;
+}
+.pc-onda {
+  animation: pc-onda 2.6s ease-out both;
+}
+.pc-tarjeta {
+  animation: pc-aparece 0.6s ease-out 2.8s both;
+}
+@keyframes pc-trazo {
+  from {
+    stroke-dashoffset: 700;
+  }
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+@keyframes pc-golpe {
+  0%,
+  40% {
+    opacity: 0;
+    transform: scale(0.4);
+  }
+  55% {
+    opacity: 1;
+    transform: scale(1.25);
+  }
+  70%,
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+@keyframes pc-onda {
+  0%,
+  45% {
+    opacity: 0;
+    r: 10;
+  }
+  60% {
+    opacity: 0.5;
+  }
+  100% {
+    opacity: 0;
+    r: 140;
+  }
+}
+@keyframes pc-aparece {
+  from {
+    opacity: 0;
+  }
+}
+/* Visible por omisión (sin JavaScript se ve todo); el script esconde solo lo que está debajo de la
+   pantalla y lo muestra al llegar. */
+.pc-aparecer {
+  transition:
+    opacity 0.7s ease-out,
+    transform 0.7s cubic-bezier(0.2, 0.7, 0.2, 1);
+}
+.pc-aparecer.pc-espera {
+  opacity: 0;
+  transform: translateY(18px);
+}
+@media (prefers-reduced-motion: reduce) {
+  .pc-trazo,
+  .pc-llega,
+  .pc-despues,
+  .pc-golpe,
+  .pc-onda,
+  .pc-tarjeta {
+    animation: none;
+  }
+  .pc-aparecer,
+  .pc-aparecer.pc-espera {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+}

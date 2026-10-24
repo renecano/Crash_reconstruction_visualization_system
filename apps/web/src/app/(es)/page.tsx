@@ -1,8 +1,8 @@
 import { metadatos } from "@/components/sitio/documento";
-import InicioPagina from "@/paginas/inicio";
+import PortadaCesviPagina from "@/paginas/portada-cesvi";
 
 export const metadata = metadatos("es", "inicio", "/");
 
 export default function Page() {
-  return <InicioPagina lang="es" />;
+  return <PortadaCesviPagina lang="es" />;
 }

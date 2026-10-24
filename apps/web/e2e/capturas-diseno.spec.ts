@@ -42,7 +42,7 @@ async function copiaCompleta(page: Page, c: string) {
 }
 
 test("portada: cada capítulo", async ({ page }) => {
-  await page.goto("/");
+  await page.goto("/publico");
   await page.waitForFunction(() => window.__croquisReady === true, null, { timeout: 180_000 });
   for (const [i, c] of CAPITULOS.entries()) {
     await page.evaluate((p) => window.scrollTo(0, p * window.innerHeight * 1.5), i + 0.5);
@@ -61,7 +61,7 @@ test("portada: cada capítulo", async ({ page }) => {
 test("portada con movimiento reducido: apertura", async ({ browser }) => {
   const ctx = await browser.newContext({ reducedMotion: "reduce" });
   const page = await ctx.newPage();
-  await page.goto("/");
+  await page.goto("/publico");
   await page.waitForLoadState("networkidle");
   await expect(page).toHaveScreenshot("portada-reducido-apertura.png", COMPARAR);
   await ctx.close();

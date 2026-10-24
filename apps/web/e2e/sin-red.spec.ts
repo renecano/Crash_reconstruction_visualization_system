@@ -30,7 +30,7 @@ test.describe("demo sin red", () => {
   }) => {
     const errors: string[] = [];
     page.on("pageerror", (e) => errors.push(e.message));
-    await page.goto("/");
+    await page.goto("/publico");
     // El registro espera a que la página cargue y el navegador esté ocioso; `ready` llega cuando el
     // service worker está activo, y solo se activa después de precargar todo.
     const scope = await page.evaluate(async () => (await navigator.serviceWorker.ready).scope);
@@ -39,7 +39,7 @@ test.describe("demo sin red", () => {
     await context.setOffline(true);
     const failed = watchFailures(page);
 
-    await page.goto("/");
+    await page.goto("/publico");
     await expect(page.locator("body")).toContainText("Croquis");
 
     // Visor: resultados canónicos, Rapier (restos y ragdoll), cuerpos de MakeHuman y texturas.

@@ -19,6 +19,7 @@ async function sinProblemasSerios(page: Page, donde: string) {
 
 const PAGINAS = [
   "/",
+  "/publico",
   "/en",
   "/cuenta",
   "/en/cuenta",
@@ -54,7 +55,7 @@ test.describe("accesibilidad", () => {
   });
 
   test("axe: la portada a la mitad de cada capítulo", async ({ page }) => {
-    await page.goto("/");
+    await page.goto("/publico");
     for (let i = 0; i < 12; i++) {
       await page.evaluate((p) => window.scrollTo(0, p * window.innerHeight * 1.5), i + 0.5);
       await page.waitForTimeout(1500);
