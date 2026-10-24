@@ -48,6 +48,14 @@ export const MIGRATIONS: Migration[] = [
     // Una propiedad nueva opcional: ninguna escena anterior la trae (docs/cesvi/PLAN-CESVI.md §4).
     aplicar: (doc) => doc,
   },
+  {
+    desde: "2.0.0",
+    hasta: "2.1.0",
+    descripcion:
+      "vehiculos[].conductor opcional (R12a, conductores como agentes); los documentos no cambian",
+    // Un campo nuevo opcional: ninguna escena anterior lo trae.
+    aplicar: (doc) => doc,
+  },
 ];
 
 export interface MigrationResult {

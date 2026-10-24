@@ -3,7 +3,7 @@
 import { z } from "zod";
 
 export const SCHEMA_ID = "https://croquis.mx/schemas/escena/1.0.0/escena.schema.json";
-export const SCHEMA_VERSION = "2.0.0" as const;
+export const SCHEMA_VERSION = "2.1.0" as const;
 
 /** La frase literal de donde sale un dato, y la página si es de un PDF. */
 export const Cita = z.strictObject({
@@ -172,6 +172,15 @@ export const CampoClima = z.strictObject({
   nota: z.string().max(300).optional(),
 });
 export type CampoClima = z.infer<typeof CampoClima>;
+
+export const CampoDecision = z.strictObject({
+  valor: z.enum(["frenar", "volantear_izquierda", "volantear_derecha", "seguir"]),
+  fuente: Fuente,
+  confianza: Confianza,
+  evidencia: ListaEvidencia.optional(),
+  nota: z.string().max(300).optional(),
+});
+export type CampoDecision = z.infer<typeof CampoDecision>;
 
 export const CampoEntero = z.strictObject({
   valor: z.int(),
@@ -414,6 +423,14 @@ export const Color = z.strictObject({
   hex: z.string().regex(new RegExp("^#[0-9a-fA-F]{6}$")),
 });
 export type Color = z.infer<typeof Color>;
+
+/** El conductor como agente (R12a, ADR 0088): su tiempo de reacción y, si el perito prueba una hipótesis, qué decide y cuándo. Con este campo el solver simula a los conductores. */
+export const Conductor = z.strictObject({
+  tiempo_reaccion: CampoTiempo.optional(),
+  decision: CampoDecision.optional(),
+  instante_decision: CampoTiempo.optional(),
+});
+export type Conductor = z.infer<typeof Conductor>;
 
 /** Un criterio de correspondencia con su estado y su evidencia. */
 export const CriterioExpediente = z.strictObject({
@@ -918,7 +935,7 @@ export type Lugar = z.infer<typeof Lugar>;
 
 export const Meta = z.strictObject({
   id: z.string().min(8).max(64).regex(new RegExp("^[A-Za-z0-9_-]+$")),
-  version_esquema: z.literal("2.0.0"),
+  version_esquema: z.literal("2.1.0"),
   idioma: z.enum(["es-MX", "en"]),
   semilla: z.int().min(0).max(4294967295),
   creado: z.iso.datetime({ offset: true }),
@@ -985,6 +1002,7 @@ export const Vehiculo = z.strictObject({
   posicion_inicial: Pose2D,
   posicion_final: Pose2D.optional(),
   ocupantes: z.array(Id).max(60).optional(),
+  conductor: Conductor.optional(),
 });
 export type Vehiculo = z.infer<typeof Vehiculo>;
 

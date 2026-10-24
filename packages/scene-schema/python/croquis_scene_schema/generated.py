@@ -581,7 +581,7 @@ class Meta(BaseModel):
         extra="forbid",
     )
     id: Annotated[str, Field(max_length=64, min_length=8, pattern="^[A-Za-z0-9_-]+$")]
-    version_esquema: Literal["2.0.0"]
+    version_esquema: Literal["2.1.0"]
     idioma: Literal["es-MX", "en"]
     semilla: Annotated[int, Field(ge=0, le=4294967295)]
     """
@@ -747,44 +747,21 @@ class Frenado(BaseModel):
     bloqueo_llantas: CampoBooleano | None = None
 
 
-class Vehiculo(BaseModel):
+class CampoDecision(BaseModel):
     model_config = ConfigDict(
         extra="forbid",
     )
-    id: Annotated[str, Field(pattern="^[a-z][a-z0-9_-]{0,31}$")]
+    valor: Literal["frenar", "volantear_izquierda", "volantear_derecha", "seguir"]
+    fuente: Literal["relato", "usuario", "supuesto", "default", "mapa"]
     """
-    Identificador estable dentro de la escena.
+    De dónde salió el dato: del relato (con evidencia textual), lo escribió o corrigió la persona, lo supuso el sistema, es el valor por defecto de la clase, o salió del mapa de OpenStreetMap en `ubicacion_real` (desde 1.2.0).
     """
-    rol: Annotated[str, Field(pattern="^[A-H]$")]
+    confianza: Annotated[float, Field(ge=0.0, le=1.0)]
     """
-    Letra con la que se nombra en el croquis (A, B, C…).
+    Confianza en el valor, de 0 (adivinado) a 1 (seguro).
     """
-    clase: CampoClaseVehiculo
-    marca: CampoTexto | None = None
-    modelo: CampoTexto | None = None
-    anio: CampoEntero | None = None
-    color: Color
-    estado_pintura: CampoEstadoPintura | None = None
-    masa: CampoMasa | None = None
-    largo: CampoLongitud | None = None
-    ancho: CampoLongitud | None = None
-    alto: CampoLongitud | None = None
-    distancia_entre_ejes: CampoLongitud | None = None
-    voladizo_delantero: CampoLongitud | None = None
-    voladizo_trasero: CampoLongitud | None = None
-    maniobra: CampoManiobra
-    velocidad_previa: CampoVelocidad
-    frenado: Frenado | None = None
-    aceleracion: CampoAceleracion | None = None
-    luces_encendidas: CampoBooleano | None = None
-    direccionales: Literal["ninguna", "izquierda", "derecha", "intermitentes"] | None = None
-    carril: CampoEntero | None = None
-    posicion_inicial: Pose2D
-    posicion_final: Pose2D | None = None
-    ocupantes: Annotated[list[Id] | None, Field(max_length=60)] = None
-    """
-    Ids de personas a bordo.
-    """
+    evidencia: Annotated[list[EvidenciaTexto] | None, Field(max_length=8)] = None
+    nota: Annotated[str | None, Field(max_length=300)] = None
 
 
 class Persona(BaseModel):
@@ -1732,6 +1709,22 @@ class Lugar(BaseModel):
     red_vial: RedVial | None = None
 
 
+class Conductor(BaseModel):
+    """
+    El conductor como agente (R12a, ADR 0088): su tiempo de reacción y, si el perito prueba una hipótesis, qué decide y cuándo. Con este campo el solver simula a los conductores.
+    """
+
+    model_config = ConfigDict(
+        extra="forbid",
+    )
+    tiempo_reaccion: CampoTiempo | None = None
+    decision: CampoDecision | None = None
+    instante_decision: CampoTiempo | None = None
+    """
+    Respecto del impacto reconstruido (t = 0): negativo es antes.
+    """
+
+
 class Evento(BaseModel):
     model_config = ConfigDict(
         extra="forbid",
@@ -1763,6 +1756,47 @@ class Evento(BaseModel):
     punto_impacto: Punto2D | None = None
     descripcion: Annotated[str | None, Field(max_length=400)] = None
     procedencia: Procedencia
+
+
+class Vehiculo(BaseModel):
+    model_config = ConfigDict(
+        extra="forbid",
+    )
+    id: Annotated[str, Field(pattern="^[a-z][a-z0-9_-]{0,31}$")]
+    """
+    Identificador estable dentro de la escena.
+    """
+    rol: Annotated[str, Field(pattern="^[A-H]$")]
+    """
+    Letra con la que se nombra en el croquis (A, B, C…).
+    """
+    clase: CampoClaseVehiculo
+    marca: CampoTexto | None = None
+    modelo: CampoTexto | None = None
+    anio: CampoEntero | None = None
+    color: Color
+    estado_pintura: CampoEstadoPintura | None = None
+    masa: CampoMasa | None = None
+    largo: CampoLongitud | None = None
+    ancho: CampoLongitud | None = None
+    alto: CampoLongitud | None = None
+    distancia_entre_ejes: CampoLongitud | None = None
+    voladizo_delantero: CampoLongitud | None = None
+    voladizo_trasero: CampoLongitud | None = None
+    maniobra: CampoManiobra
+    velocidad_previa: CampoVelocidad
+    frenado: Frenado | None = None
+    aceleracion: CampoAceleracion | None = None
+    luces_encendidas: CampoBooleano | None = None
+    direccionales: Literal["ninguna", "izquierda", "derecha", "intermitentes"] | None = None
+    carril: CampoEntero | None = None
+    posicion_inicial: Pose2D
+    posicion_final: Pose2D | None = None
+    ocupantes: Annotated[list[Id] | None, Field(max_length=60)] = None
+    """
+    Ids de personas a bordo.
+    """
+    conductor: Conductor | None = None
 
 
 class EscenaSpec(BaseModel):

@@ -162,7 +162,7 @@ def build_spec(
     titulo: str | None = None,
     origen: str = "escrito",
     sintetico: bool = True,
-    version_esquema: str = "2.0.0",
+    version_esquema: str = "2.1.0",
 ) -> JsonObj:
     sc = facts.escalares
     seed = int(hashlib.sha256(spec_id.encode()).hexdigest()[:8], 16) % 1_000_000

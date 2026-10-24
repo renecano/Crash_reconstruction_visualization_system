@@ -61,6 +61,7 @@ def test_encadena_migraciones_y_el_resultado_valida() -> None:
         "1.1.0→1.2.0",
         "1.2.0→1.3.0",
         "1.3.0→2.0.0",
+        "2.0.0→2.1.0",
     ]
     assert schema_errors(r.doc) == []
     assert r.doc["meta"]["version_esquema"] == SCHEMA_VERSION
@@ -88,7 +89,13 @@ def test_una_escena_1_0_0_migra_sin_cambios_a_la_vigente() -> None:
     for e in viejo.get("evidencias", []):
         e.pop("fase", None)
     r = migrate_escena(viejo)
-    assert r.aplicadas == ["1.0.0→1.1.0", "1.1.0→1.2.0", "1.2.0→1.3.0", "1.3.0→2.0.0"]
+    assert r.aplicadas == [
+        "1.0.0→1.1.0",
+        "1.1.0→1.2.0",
+        "1.2.0→1.3.0",
+        "1.3.0→2.0.0",
+        "2.0.0→2.1.0",
+    ]
     assert schema_errors(r.doc) == []
     assert r.doc["meta"] == actual["meta"]
 
