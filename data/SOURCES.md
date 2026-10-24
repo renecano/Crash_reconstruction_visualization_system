@@ -49,6 +49,13 @@ Cada dato externo que usa Croquis se registra aquí (CLAUDE.md, regla 4). Format
 
 `solver/croquis_solver/data/friction.json`: rangos de fricción llanta–pavimento y cuerpo–pavimento, factor ABS y tiempo de percepción-reacción con fuente por valor (Fricke 2010 vía secundarias, Mumford 1997, Searle 1983/1993, Olson y Sivak 1986, Green 2000) y el arrastre de una motocicleta caída (Peck, Focha y Gloekler 2014, ifz Forschungsheft 16; ADR 0017). Lo que no tiene fuente accesible está marcado `supuesto`.
 
+`packages/cesvi/src/data/masas-tipicas.json`: la masa típica por clase que ofrece «Usar valor típico» en las preguntas del hecho (comentario de René, 2026-10-24). Sale de dos fuentes ya registradas:
+
+- las clases que mide E2, con la masa media de prueba de NHTSA y el número de pruebas (`eval/results/e2_barrier.json`);
+- la moto, que NHTSA no prueba contra barrera, con la típica de las fichas de fabricante (`packages/scene-schema/vehicle_classes.json`).
+
+Se genera con `node data/cesvi/scripts/masas-tipicas.mjs` (`--check` comprueba que esté al día), y una prueba de `packages/cesvi` la compara con E2. Al usarla, la masa queda como supuesto.
+
 ## Notas sobre ATUS
 
 - **Qué cuenta ATUS:** hechos de tránsito en zonas urbanas y suburbanas (vías no federales) captados de autoridades municipales. No incluye carreteras federales ni percances no reportados.

@@ -71,10 +71,19 @@ test("@flujo /cesvi: un caso nuevo desde la lista, de la narración al dictamen"
   await page.getByTestId("confirmar-impacto").click();
   await expect(page.getByTestId("impactos")).not.toContainText("supuesto");
   await expect(page.getByTestId("impactos")).toContainText("perito");
+  // Una pregunta = un dato, con su control además de «No sé»: primero el tipo de vehículo (opciones)
+  // y luego la masa, que ya ofrece el valor típico de su clase (E2).
+  await expect(page.getByTestId("usar-tipico-masa-V1")).toHaveCount(0);
+  await page.getByTestId("opcion-clase-V1-sedan_compacto").click();
+  await expect(page.getByTestId("pregunta-clase-V1")).toHaveCount(0);
+  await expect(page.getByTestId("usar-tipico-masa-V1")).toBeVisible();
   await page.getByTestId("no-se-masa-V1").click();
   await expect(page.getByTestId("pregunta-masa-V1")).toHaveCount(0);
   await page.getByTestId("valor-masa-V2").fill("1450");
-  await page.getByTestId("pregunta-masa-V2").getByRole("button", { name: "Usar" }).click();
+  await page
+    .getByTestId("pregunta-masa-V2")
+    .getByRole("button", { name: "Usar", exact: true })
+    .click();
   await expect(page.getByTestId("vehiculos")).toContainText("1450 kg");
 
   await irAPaso(page, 3);

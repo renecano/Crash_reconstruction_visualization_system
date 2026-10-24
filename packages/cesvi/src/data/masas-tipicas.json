@@ -1,0 +1,41 @@
+{
+  "_generado_por": "node data/cesvi/scripts/masas-tipicas.mjs",
+  "masas": {
+    "camion_unitario": {
+      "kg": 2425,
+      "fuente": "masa media de 5 pruebas de NHTSA contra barrera (E2, eval/results/e2_barrier.json)"
+    },
+    "hatchback": {
+      "kg": 1590.9,
+      "fuente": "masa media de 93 pruebas de NHTSA contra barrera (E2, eval/results/e2_barrier.json)"
+    },
+    "pickup": {
+      "kg": 2476.9,
+      "fuente": "masa media de 158 pruebas de NHTSA contra barrera (E2, eval/results/e2_barrier.json)"
+    },
+    "sedan_compacto": {
+      "kg": 1415.9,
+      "fuente": "masa media de 155 pruebas de NHTSA contra barrera (E2, eval/results/e2_barrier.json)"
+    },
+    "sedan_mediano": {
+      "kg": 1769.5,
+      "fuente": "masa media de 386 pruebas de NHTSA contra barrera (E2, eval/results/e2_barrier.json)"
+    },
+    "suv_compacta": {
+      "kg": 1920.4,
+      "fuente": "masa media de 248 pruebas de NHTSA contra barrera (E2, eval/results/e2_barrier.json)"
+    },
+    "suv_grande": {
+      "kg": 2385.1,
+      "fuente": "masa media de 201 pruebas de NHTSA contra barrera (E2, eval/results/e2_barrier.json)"
+    },
+    "van": {
+      "kg": 2142.7,
+      "fuente": "masa media de 70 pruebas de NHTSA contra barrera (E2, eval/results/e2_barrier.json)"
+    },
+    "motocicleta": {
+      "kg": 130,
+      "fuente": "típica de 5 fichas de fabricante (Honda GL150 Cargo 2026, Honda XR150L 2026, Italika FT150 2025, Italika DM150 2026, Italika 250Z 2026; data/SOURCES.md)"
+    }
+  }
+}

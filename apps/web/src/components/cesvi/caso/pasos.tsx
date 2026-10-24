@@ -348,6 +348,7 @@ export function PasoHecho({
   preguntas,
   onExpediente,
   onNoSe,
+  onIrAlMapa,
 }: {
   narracion: string;
   /** Un reporte importado o de la reproducción ya viene leído: su texto no se edita. */
@@ -360,6 +361,7 @@ export function PasoHecho({
   preguntas: PreguntaEscena[];
   onExpediente: (e: Expediente) => void;
   onNoSe: (clave: string) => void;
+  onIrAlMapa?: (vehiculo: string) => void;
 }) {
   return (
     <div className="flex flex-col gap-5">
@@ -430,6 +432,7 @@ export function PasoHecho({
                   expediente={escena.expediente}
                   onCambio={onExpediente}
                   onNoSe={() => onNoSe(p.clave)}
+                  onIrAlMapa={onIrAlMapa}
                 />
               ))}
             </ol>

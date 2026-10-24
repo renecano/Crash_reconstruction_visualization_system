@@ -19,6 +19,7 @@ import {
   medidasDe,
   posesDeImpacto,
   posicionesEncimadas,
+  preguntaPendiente,
   verificacionCesvi,
   type EscenaNarrada,
   type Expediente,
@@ -171,17 +172,17 @@ export function RecorridoCaso({ inicial }: { inicial: CasoExpediente }) {
         : null),
     [inicial.comparacion, reporte, expediente, leida, texto],
   );
-  const preguntas = (leida?.preguntas ?? []).filter((p) => {
-    if (noSe.has(p.clave) || !expediente) return false;
-    if (p.clave === "impacto-propuesto")
-      return expediente.impactos?.some((i) => i.fuente === "supuesto");
-    if (p.clave.startsWith("masa-"))
-      return !expediente.vehiculos.find((v) => v.id === p.vehiculo)?.masa;
-    if (p.clave === "restos") return !expediente.evidencias?.restos?.longitud;
-    if (p.clave.startsWith("final-"))
-      return !posiciones.some((x) => x.vehiculo === p.vehiculo && x.fase === "final");
-    return true;
-  });
+  // Las que siguen pendientes con lo que ya tiene el expediente (y las que no dijo «No sé»).
+  const preguntas = (leida?.preguntas ?? []).filter(
+    (p) =>
+      !noSe.has(p.clave) &&
+      expediente !== null &&
+      preguntaPendiente(
+        p,
+        expediente,
+        posiciones.filter((x) => x.fase === "final"),
+      ),
+  );
 
   const cambiarExpediente = (e: Expediente) => {
     setExpediente(e);
@@ -522,6 +523,10 @@ export function RecorridoCaso({ inicial }: { inicial: CasoExpediente }) {
           preguntas={preguntas}
           onExpediente={cambiarExpediente}
           onNoSe={(c) => setNoSe((s) => new Set([...s, c]))}
+          onIrAlMapa={(vehiculo) => {
+            setElegido({ tipo: "final", vehiculo });
+            irA(2);
+          }}
         />
       );
     if (!expediente || !leida) return sinEscena;

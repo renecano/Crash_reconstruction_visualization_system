@@ -333,7 +333,22 @@ Reglas de trabajo: `CLAUDE.md`. Especificación: `PLAN.md`.
            - B queda en reposo detrás de A, como supone el método de los restos de CESVI;
            - la reconstrucción da V2 a 41.01 km/h y V1 a 39.95 km/h, y el dictamen da 63.15 km/h (ver «Endurecimiento pendiente»);
            - la comparación del paso 7 (el método de CESVI) no cambia.
-      2. **Punto 2, las preguntas del hecho:** sigue.
+      2. **Punto 2, las preguntas del hecho:** hecho (rama `feat/preguntas-hecho`).
+         - **Una pregunta = un dato:**
+           - «tipo de vehículo y masa» pasa a dos preguntas: el tipo (Sedán, Hatchback, SUV, Pickup, Camión, Moto, Otro) y la masa;
+           - «qué vehículos y en qué orden» pasa a «¿Qué vehículos chocaron primero?» (con un solo vehículo, «¿Contra qué chocó?», con el tipo de objeto).
+         - **Cada pregunta trae su control:**
+           - opciones para la zona de contacto, el tipo de vehículo y los vehículos del impacto;
+           - número con su unidad para la masa (kg) y los restos (m);
+           - sí o no para el impacto que supone Croquis («No, fue otro» lo quita y pregunta cuáles chocaron);
+           - «Colocarlo en el mapa» para la posición final;
+           - «No sé» va siempre aparte.
+         - **«Usar valor típico»** en la masa usa la de su clase, con fuente: la masa media de prueba de NHTSA de E2 (8 clases, con el número de pruebas) y, para la moto, las fichas de fabricante (`packages/cesvi/src/data/masas-tipicas.json`, `data/SOURCES.md`). Queda como supuesto.
+         - **Pruebas:**
+           - toda pregunta de las 10 lecturas grabadas, y de un expediente al que le falta todo, tiene un control además de «No sé» y pide un solo dato (95 pruebas);
+           - la masa típica coincide con E2;
+           - cada respuesta deja de estar pendiente;
+           - la e2e del caso nuevo contesta el tipo de vehículo y ve el valor típico.
       3. **Punto 3, colocar en el mapa:** pendiente.
       4. **Punto 4, la portada nueva:** pendiente.
     - **R12a (conductores como agentes) en pausa:**
