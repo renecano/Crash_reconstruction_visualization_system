@@ -9,7 +9,7 @@
 import type { EscenaSpec, Resultado } from "@croquis/scene-schema";
 import { longitudM } from "@croquis/scene-schema";
 import { Canvas, useFrame, useThree } from "@react-three/fiber";
-import { useEffect, useMemo, useRef, type ReactElement } from "react";
+import { useEffect, useMemo, useRef, useState, type ReactElement } from "react";
 import {
   Color,
   CubeCamera,
@@ -66,6 +66,13 @@ import { buildSceneGraph, mesh2DToGeometry } from "../scene-graph";
 import type { ViewerExportApi } from "../export/capture";
 import { seek } from "../timeline";
 import { seatHeight } from "../vehicle-geometry";
+import {
+  loadVehicleModels,
+  modelClassesFor,
+  modelVariantFor,
+  type ModelClass,
+  type VehicleModelTemplate,
+} from "../vehicle-models";
 
 export type RendererPreference = "auto" | "webgpu" | "webgl";
 
@@ -151,6 +158,8 @@ declare global {
     __croquisPeopleReady?: boolean;
     /** Texturas del entorno aplicadas (o descartadas por calidad o por error). */
     __croquisTexturesReady?: boolean;
+    /** Los vehículos de Sketchfab ya están en la escena, o no se piden en esta calidad (R10). */
+    __croquisVehicleModelsReady?: boolean;
     __croquisPeople?: PeopleAttachment;
     /**
      * Interruptores de diagnóstico para las evaluaciones (`eval/`); la página nunca los pone.
@@ -203,20 +212,59 @@ function SceneContent({
   fx: FxState;
 }): ReactElement {
   const profile = QUALITY_PROFILES[quality];
+  // Vehículos de Sketchfab (R10, ADR 0086): la escena se arma de inmediato con los paramétricos y se
+  // vuelve a armar con los modelos cuando llegan (versión completa en alta y ultra, ligera en media).
+  const renderer = useThree((s) => s.gl);
+  const variant = modelVariantFor(quality);
+  const modelKey = useMemo(
+    () => `${variant}|${modelClassesFor(resultado.vehiculos.map((v) => v.clase)).join(",")}`,
+    [variant, resultado],
+  );
+  const [loaded, setLoaded] = useState<{
+    key: string;
+    models: ReadonlyMap<ModelClass, VehicleModelTemplate>;
+  } | null>(null);
+  useEffect(() => {
+    const [v, list] = modelKey.split("|") as [string, string];
+    const clases = list ? (list.split(",") as ModelClass[]) : [];
+    if (v === "null" || clases.length === 0) {
+      window.__croquisVehicleModelsReady = true;
+      return undefined;
+    }
+    let alive = true;
+    window.__croquisVehicleModelsReady = false;
+    loadVehicleModels(clases, v as "alta" | "ligero", renderer)
+      .then((models) => {
+        if (alive) setLoaded({ key: modelKey, models });
+      })
+      .catch((err: unknown) => {
+        // Sin modelos (p. ej. sin red) quedan los vehículos paramétricos.
+        console.error("No se pudieron cargar los vehículos", err);
+        if (alive) window.__croquisVehicleModelsReady = true;
+      });
+    return () => {
+      alive = false;
+    };
+  }, [modelKey, renderer]);
+  const vehicleModels = loaded?.key === modelKey ? loaded.models : undefined;
   const graph = useMemo(
     () =>
       buildSceneGraph(spec, resultado, {
         quality: profile,
         env,
+        vehicleModels,
         diag: {
           gravaPrevia: typeof window !== "undefined" && window.__croquisDiag?.gravaPrevia === true,
           osmSoloCalzada:
             typeof window !== "undefined" && window.__croquisDiag?.osmSoloCalzada === true,
         },
       }),
-    [spec, resultado, profile, env],
+    [spec, resultado, profile, env, vehicleModels],
   );
   useEffect(() => () => graph.dispose(), [graph]);
+  useEffect(() => {
+    if (vehicleModels) window.__croquisVehicleModelsReady = true;
+  }, [vehicleModels]);
   // Hipótesis: fantasmas translúcidos con el mismo reloj que la escena.
   const ghosts = useMemo(
     () =>
@@ -327,6 +375,7 @@ function SceneContent({
     const api: ViewerExportApi = {
       tStart: resultado.t_inicio,
       tEnd: resultado.t_fin,
+      vehicleCredits: graph.vehicleCredits,
       async captureSequence(times, { width, height }, onFrame, signal) {
         const before = clock.get();
         const restore = resizeTo(width, height);
@@ -368,6 +417,7 @@ function SceneContent({
         return exportSceneGlb(graph, {
           resultado,
           legend,
+          vehicleCredits: graph.vehicleCredits,
           cameras: exportCameras(resultado, (v) =>
             driverEye(
               resultado,

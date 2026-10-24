@@ -120,6 +120,7 @@ export function DictamenCaso({
       croquis: c.imagen,
       croquisSobreMapa: c.sobreMapa,
       cuadros3d: cuadros(exportApi, reconstruccion.resultado),
+      modelos3d: exportApi ? [...exportApi.vehicleCredits] : [],
       declarada,
       validacion,
       estructuraCesvi,

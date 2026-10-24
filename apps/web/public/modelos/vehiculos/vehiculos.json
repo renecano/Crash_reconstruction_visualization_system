@@ -1,0 +1,464 @@
+{
+  "_generado_por": "uv run croquis-assets vehicles build",
+  "marco": "x al frente, y arriba, z a la derecha (−z izquierda); origen en el centro de la planta, sobre el piso",
+  "clases": {
+    "sedan": {
+      "modelo": {
+        "nombre": "Kiri '10",
+        "autor": "Daniel Zhabotinsky",
+        "usuario": "DanielZhabotinsky",
+        "licencia": "CC-BY 4.0",
+        "url": "https://sketchfab.com/3d-models/7fd6e15785fa4aa9bfd6e31eb7c97ba6"
+      },
+      "archivos": {
+        "alta": {
+          "archivo": "sedan.glb",
+          "sha256": "64942189b1b138917fc0bb8e01f60ad9c08bfe409c049233cfcad860d93eabcd",
+          "bytes": 1622472
+        },
+        "ligero": {
+          "archivo": "sedan-ligero.glb",
+          "sha256": "b44cb9253505f01a2ed9e7adedb3269fea6ddd7aaeb4d371dd52000f19b1c7fa",
+          "bytes": 547508
+        },
+        "blender": {
+          "archivo": "sedan-blender.glb",
+          "sha256": "416f2e1fc7a96d89b280b1238fb61553644b81f685278eb97c290c6ad468984c",
+          "bytes": 1294320
+        }
+      },
+      "largo_m": 4.3506,
+      "ancho_m": 1.707,
+      "alto_m": 1.4799,
+      "caras": 12796,
+      "ruedas": [
+        {
+          "nombre": "wheel_fl",
+          "centro": [
+            1.417,
+            0.6992,
+            0.2977
+          ],
+          "radio": 0.2977
+        },
+        {
+          "nombre": "wheel_fr",
+          "centro": [
+            1.417,
+            -0.6988,
+            0.2977
+          ],
+          "radio": 0.2977
+        },
+        {
+          "nombre": "wheel_rl",
+          "centro": [
+            -1.2806,
+            0.6992,
+            0.2977
+          ],
+          "radio": 0.2977
+        },
+        {
+          "nombre": "wheel_rr",
+          "centro": [
+            -1.2806,
+            -0.6988,
+            0.2977
+          ],
+          "radio": 0.2977
+        }
+      ],
+      "papeles": {
+        "pintura": 5,
+        "plastico": 9,
+        "vidrio": 7,
+        "calavera": 1,
+        "faro": 2
+      },
+      "quitados": [
+        "Kiri10_Body_Badges_Carbadges_misc_U_0",
+        "Kiri10_Numberplate_Front_Numberplates_Misk_U_0",
+        "Kiri10_Numberplate_Rear_Numberplates_Misk_U_0",
+        "Kiri10_Trunkdoor_Badges_Carbadges_misc_U_0"
+      ]
+    },
+    "hatchback": {
+      "modelo": {
+        "nombre": "Sigil '07",
+        "autor": "Daniel Zhabotinsky",
+        "usuario": "DanielZhabotinsky",
+        "licencia": "CC-BY 4.0",
+        "url": "https://sketchfab.com/3d-models/22abe5284d4c4b55920b8462eb24a8c1"
+      },
+      "archivos": {
+        "alta": {
+          "archivo": "hatchback.glb",
+          "sha256": "fc671cb2aed9a247612640170cc4150df4603ee241e9529ff85912a8ea2bd5f1",
+          "bytes": 1644272
+        },
+        "ligero": {
+          "archivo": "hatchback-ligero.glb",
+          "sha256": "b96c2eec4c6f9702c6da5538cd25826babea4a9cdbf2ac761770073829bc93f5",
+          "bytes": 563888
+        },
+        "blender": {
+          "archivo": "hatchback-blender.glb",
+          "sha256": "5591966c3e37d5a90193c35aefbbfd02bdaa9bb075ffa7e2cd8631fb97da10f3",
+          "bytes": 1316124
+        }
+      },
+      "largo_m": 4.3256,
+      "ancho_m": 1.784,
+      "alto_m": 1.3799,
+      "caras": 16755,
+      "ruedas": [
+        {
+          "nombre": "wheel_fl",
+          "centro": [
+            1.3136,
+            0.7448,
+            0.3217
+          ],
+          "radio": 0.3217
+        },
+        {
+          "nombre": "wheel_fr",
+          "centro": [
+            1.3136,
+            -0.7471,
+            0.3217
+          ],
+          "radio": 0.3217
+        },
+        {
+          "nombre": "wheel_rl",
+          "centro": [
+            -1.2448,
+            0.7448,
+            0.3217
+          ],
+          "radio": 0.3217
+        },
+        {
+          "nombre": "wheel_rr",
+          "centro": [
+            -1.2448,
+            -0.7471,
+            0.3217
+          ],
+          "radio": 0.3217
+        }
+      ],
+      "papeles": {
+        "plastico": 12,
+        "pintura": 4,
+        "vidrio": 7,
+        "calavera": 1,
+        "faro": 2
+      },
+      "quitados": [
+        "Sigil08_Body_Badges_Carbadges_misc_U_0",
+        "Sigil08_NP_Front_Numberplates_Misk_U_0",
+        "Sigil08_NP_Rear_Numberplates_Misk_U_0"
+      ]
+    },
+    "suv": {
+      "modelo": {
+        "nombre": "Urban '10",
+        "autor": "Daniel Zhabotinsky",
+        "usuario": "DanielZhabotinsky",
+        "licencia": "CC-BY 4.0",
+        "url": "https://sketchfab.com/3d-models/2866efdfa943484391ef8313768e074d"
+      },
+      "archivos": {
+        "alta": {
+          "archivo": "suv.glb",
+          "sha256": "b7dd7bd835f1d8f8654c0d90e3cc9686a391c2e0a3fc820afc5d8dae4dc92406",
+          "bytes": 1625560
+        },
+        "ligero": {
+          "archivo": "suv-ligero.glb",
+          "sha256": "303f12886c3d23db6d3dc383e68dacb2a71d232e81be645d1a89fe484d2cca49",
+          "bytes": 541520
+        },
+        "blender": {
+          "archivo": "suv-blender.glb",
+          "sha256": "4a9650fbc73836daed998ddf7164bd28d4ef468356993384cbf40069a1e7ee83",
+          "bytes": 1297408
+        }
+      },
+      "largo_m": 4.29,
+      "ancho_m": 1.8827,
+      "alto_m": 1.5202,
+      "caras": 16305,
+      "ruedas": [
+        {
+          "nombre": "wheel_fl",
+          "centro": [
+            1.3614,
+            0.7179,
+            0.3265
+          ],
+          "radio": 0.3265
+        },
+        {
+          "nombre": "wheel_fr",
+          "centro": [
+            1.3614,
+            -0.7182,
+            0.3265
+          ],
+          "radio": 0.3265
+        },
+        {
+          "nombre": "wheel_rl",
+          "centro": [
+            -1.3129,
+            0.7179,
+            0.3265
+          ],
+          "radio": 0.3265
+        },
+        {
+          "nombre": "wheel_rr",
+          "centro": [
+            -1.3129,
+            -0.7182,
+            0.3265
+          ],
+          "radio": 0.3265
+        }
+      ],
+      "papeles": {
+        "vidrio": 7,
+        "pintura": 3,
+        "plastico": 8,
+        "calavera": 1,
+        "faro": 2
+      },
+      "quitados": [
+        "Urban10_Body_Badges_Carbadges_misc_U_0",
+        "Urban10_Numberplate_Front_Numberplates_Misk_U_0",
+        "Urban10_Numberplate_Rear_Numberplates_Misk_U_0"
+      ]
+    },
+    "pickup": {
+      "modelo": {
+        "nombre": "Lightbody '90 MD Pickup",
+        "autor": "Daniel Zhabotinsky",
+        "usuario": "DanielZhabotinsky",
+        "licencia": "CC-BY 4.0",
+        "url": "https://sketchfab.com/3d-models/3b3ac59245c44872b06ad85673be9643"
+      },
+      "archivos": {
+        "alta": {
+          "archivo": "pickup.glb",
+          "sha256": "2f74cc6f393530139c1334b69762521508a691a38dc240200aeb6de7d0cb8cca",
+          "bytes": 1920568
+        },
+        "ligero": {
+          "archivo": "pickup-ligero.glb",
+          "sha256": "a9b37d9a21b0354e4e7209d360e78ebc2e858c810a0049e5bfe557bc3e656011",
+          "bytes": 658436
+        },
+        "blender": {
+          "archivo": "pickup-blender.glb",
+          "sha256": "cb280a5ff26aefa799d0f5c454af95c74badf9becfe34f9c6d3992f829760c1e",
+          "bytes": 1418172
+        }
+      },
+      "largo_m": 5.3579,
+      "ancho_m": 2.0021,
+      "alto_m": 1.6571,
+      "caras": 26912,
+      "ruedas": [
+        {
+          "nombre": "wheel_fl",
+          "centro": [
+            1.7923,
+            0.7943,
+            0.3563
+          ],
+          "radio": 0.3563
+        },
+        {
+          "nombre": "wheel_fr",
+          "centro": [
+            1.7923,
+            -0.7928,
+            0.3563
+          ],
+          "radio": 0.3563
+        },
+        {
+          "nombre": "wheel_rl",
+          "centro": [
+            -1.3691,
+            0.7737,
+            0.3563
+          ],
+          "radio": 0.3563
+        },
+        {
+          "nombre": "wheel_rr",
+          "centro": [
+            -1.3691,
+            -0.7725,
+            0.3563
+          ],
+          "radio": 0.3563
+        }
+      ],
+      "papeles": {
+        "pintura": 4,
+        "plastico": 10,
+        "vidrio": 6,
+        "calavera": 1,
+        "faro": 2
+      },
+      "quitados": [
+        "UTLTRUCK90_Badges_Body_Carbadges_misc_U_0",
+        "UTLTRUCK90_Truck_Numberplate_Front_Numberplates_Misk_U_0",
+        "UTLTRUCK90_Truck_Numberplate_rear_Numberplates_Misk_U_0"
+      ]
+    },
+    "camion": {
+      "modelo": {
+        "nombre": "LCT 3000 '07",
+        "autor": "Daniel Zhabotinsky",
+        "usuario": "DanielZhabotinsky",
+        "licencia": "CC-BY 4.0",
+        "url": "https://sketchfab.com/3d-models/3be03b6a43aa41898c9ca806b8787052"
+      },
+      "archivos": {
+        "alta": {
+          "archivo": "camion.glb",
+          "sha256": "075ed5b9a73d7d3a5cea4856469f9f5751a80d76f43ce0332beee1958937f70a",
+          "bytes": 1664596
+        },
+        "ligero": {
+          "archivo": "camion-ligero.glb",
+          "sha256": "40999a40c1d68671799d1c1af2d6b5abbe7ad14de842f4910ba104e8fe97da11",
+          "bytes": 549064
+        },
+        "blender": {
+          "archivo": "camion-blender.glb",
+          "sha256": "47498cebf9a3af81ad14173eeaf682070f9e4bb929d1228d71b272d21d3339e1",
+          "bytes": 1305324
+        }
+      },
+      "largo_m": 5.8575,
+      "ancho_m": 2.4331,
+      "alto_m": 2.8381,
+      "caras": 15658,
+      "ruedas": [
+        {
+          "nombre": "wheel_fl",
+          "centro": [
+            1.8725,
+            0.899,
+            0.3563
+          ],
+          "radio": 0.3563
+        },
+        {
+          "nombre": "wheel_fr",
+          "centro": [
+            1.8725,
+            -0.9098,
+            0.3563
+          ],
+          "radio": 0.3563
+        },
+        {
+          "nombre": "wheel_rl",
+          "centro": [
+            -1.4723,
+            0.876,
+            0.3563
+          ],
+          "radio": 0.3563
+        },
+        {
+          "nombre": "wheel_rr",
+          "centro": [
+            -1.4723,
+            -0.8864,
+            0.3563
+          ],
+          "radio": 0.3563
+        }
+      ],
+      "papeles": {
+        "plastico": 11,
+        "vidrio": 5,
+        "pintura": 3,
+        "calavera": 1,
+        "faro": 2
+      },
+      "quitados": [
+        "LCT300007_Body_Badges_Carbadges_misc_U_0",
+        "LCT300007_Numberplate_front_Numberplates_Misk_U_0",
+        "LCT300007_Numberplate_rear_Numberplates_Misk_U_0"
+      ]
+    },
+    "moto": {
+      "modelo": {
+        "nombre": "Enduro bike",
+        "autor": "Zaborchik",
+        "usuario": "Zaborchik",
+        "licencia": "CC-BY 4.0",
+        "url": "https://sketchfab.com/3d-models/5bb654aed341477b8878f1e2ffd6fcd2"
+      },
+      "archivos": {
+        "alta": {
+          "archivo": "moto.glb",
+          "sha256": "fa302312344a5c527383df957a654db22cc431570fc5f4f3a101a5bedfe315e2",
+          "bytes": 221792
+        },
+        "ligero": {
+          "archivo": "moto-ligero.glb",
+          "sha256": "570011b7a4299f1f5ec801a0c53c585620641dc1d79a9cdcd62de41f14c44497",
+          "bytes": 209856
+        },
+        "blender": {
+          "archivo": "moto-blender.glb",
+          "sha256": "fa302312344a5c527383df957a654db22cc431570fc5f4f3a101a5bedfe315e2",
+          "bytes": 221792
+        }
+      },
+      "largo_m": 2.15,
+      "ancho_m": 1.1009,
+      "alto_m": 1.2664,
+      "caras": 42681,
+      "ruedas": [
+        {
+          "nombre": "wheel_f",
+          "centro": [
+            0.7266,
+            0.0478,
+            0.3004
+          ],
+          "radio": 0.3004,
+          "piezas": 10
+        },
+        {
+          "nombre": "wheel_r",
+          "centro": [
+            -0.7266,
+            0.0478,
+            0.3004
+          ],
+          "radio": 0.3004,
+          "piezas": 12
+        }
+      ],
+      "papeles": {
+        "plastico": 44,
+        "pintura": 1
+      },
+      "quitados": []
+    }
+  }
+}

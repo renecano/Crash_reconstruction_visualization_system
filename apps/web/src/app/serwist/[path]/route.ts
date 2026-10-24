@@ -31,6 +31,14 @@ export const { dynamic, dynamicParams, revalidate, generateStaticParams, GET } =
       ".next/static/**/*.{js,css,woff2,ico,png,svg,webp,json}",
       "public/**/*.{glb,json,webp,png,jpg,svg,ico,js,woff2,webmanifest}",
     ],
+    // Los vehículos de Sketchfab (R10, ~18 MB en tres versiones), sus decodificadores y el script
+    // de Blender se piden solo cuando hacen falta: sin red, el visor usa los paramétricos.
+    globIgnores: [
+      "**/node_modules/**/*",
+      "public/modelos/vehiculos/**",
+      "public/decodificadores/**",
+      "public/blender/**",
+    ],
     // Rapier trae su WASM dentro de un trozo de JavaScript de más de 4 MB; el límite por omisión
     // (2 MiB) lo dejaría fuera y el horneado no funcionaría sin red.
     maximumFileSizeToCacheInBytes: 8 * 1024 * 1024,

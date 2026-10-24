@@ -18,6 +18,7 @@
 import { legendLines, legendString, type LegendInfo, type Resultado } from "@croquis/scene-schema";
 import {
   AnimationClip,
+  CompressedTexture,
   Color,
   Group,
   Matrix4,
@@ -34,12 +35,14 @@ import {
   Quaternion,
   QuaternionKeyframeTrack,
   Scene,
+  type Texture,
   Vector3,
   VectorKeyframeTrack,
 } from "three";
 import { GLTFExporter } from "three/addons/exporters/GLTFExporter.js";
 import { clone as cloneSkinned } from "three/addons/utils/SkeletonUtils.js";
 import type { CameraPose, ExportCamera } from "../cameras";
+import type { VehicleCredit } from "../vehicle-models";
 import type { EnvironmentSettings } from "../environment";
 import type { SceneGraph } from "../scene-graph";
 
@@ -52,6 +55,8 @@ export interface GltfExportOptions {
   cameras?: readonly ExportCamera[];
   /** El ambiente del visor (R11), para armar el cielo y la luz fuera del navegador. */
   ambiente?: GltfAmbiente;
+  /** La atribución de los vehículos de Sketchfab (R10, CC-BY), para la leyenda del video. */
+  vehicleCredits?: readonly VehicleCredit[];
 }
 
 /**
@@ -319,6 +324,36 @@ export function expandInstances(
   return { group, tracks, materials: [...byColor.values()] };
 }
 
+/** Los mapas de un material que pueden traer texturas KTX2 (vehículos de Sketchfab, R10). */
+const TEXTURE_SLOTS = [
+  "map",
+  "normalMap",
+  "roughnessMap",
+  "metalnessMap",
+  "aoMap",
+  "emissiveMap",
+  "alphaMap",
+  "specularIntensityMap",
+  "specularColorMap",
+  "clearcoatMap",
+  "clearcoatRoughnessMap",
+] as const;
+
+/**
+ * Un material de un vehículo de Sketchfab (R10) sin sus texturas KTX2: `GLTFExporter` no las
+ * puede leer sin el renderizador, y el video de Blender (R11) usa las mismas en WebP
+ * (`<clase>-blender.glb`). En sus extras queda de qué modelo y qué material sale.
+ */
+export function withoutCompressedTextures(m: Material, clase: string): Material {
+  const src = m as Material & Partial<Record<(typeof TEXTURE_SLOTS)[number], Texture | null>>;
+  const compressed = (t: Texture | null | undefined) => t instanceof CompressedTexture;
+  if (!TEXTURE_SLOTS.some((k) => compressed(src[k]))) return m;
+  const c = m.clone() as typeof src;
+  for (const k of TEXTURE_SLOTS) if (compressed(c[k])) c[k] = null;
+  c.userData = { ...c.userData, material_modelo: { clase, material: m.name } };
+  return c;
+}
+
 /** Material clásico equivalente a uno de nodos (lo que exporta `GLTFExporter`). */
 export function classicMaterial(m: Material): Material {
   const node = m as Material & {
@@ -408,6 +443,21 @@ export async function exportSceneGlb(
     mesh.material = Array.isArray(mesh.material)
       ? mesh.material.map(convert)
       : convert(mesh.material);
+    // Las piezas de un vehículo de Sketchfab: sin KTX2 y con la referencia a su material (R11).
+    let clase: unknown;
+    for (let p: Object3D | null = mesh; p && clase === undefined; p = p.parent) {
+      if (typeof p.userData.modelo === "string") clase = p.userData.modelo;
+    }
+    if (typeof clase === "string") {
+      const strip = (m: Material) => {
+        const c = withoutCompressedTextures(m, clase);
+        if (c !== m) averaged.push(c);
+        return c;
+      };
+      mesh.material = Array.isArray(mesh.material)
+        ? mesh.material.map(strip)
+        : strip(mesh.material);
+    }
   });
 
   const rel = new Float32Array(times.map((t) => t - t_inicio));
@@ -443,6 +493,7 @@ export async function exportSceneGlb(
         }
       : {}),
     ...(opts.ambiente ? { ambiente: opts.ambiente } : {}),
+    ...(opts.vehicleCredits?.length ? { creditos_modelos: [...opts.vehicleCredits] } : {}),
     marco: "Y arriba; el solver usa X al este y Y al norte (glTF: x = este, z = −norte).",
   };
   scene.add(copy, ...cams);

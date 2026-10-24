@@ -30,6 +30,7 @@ import {
 } from "./damage";
 import { crackedGlassMaterial, damagedPaintMaterial } from "./damage-material";
 import { profileFor, type CarLayout, type VehicleDimensions } from "./vehicle-geometry";
+import { meshSize, tessellateForDamage, windshieldUv } from "./vehicle-models";
 
 type VehicleResult = Resultado["vehiculos"][number];
 type EventResult = Resultado["eventos"][number];
@@ -148,6 +149,8 @@ export function buildDamageRig(
   const wheelBase = new Map<Group, { pos: Vector3; rotY: number }>();
   const wheelShifts: { w: WheelDamage; t: number }[] = [];
 
+  // Los modelos de Sketchfab (R10) tienen paneles grandes: se subdividen antes de deformarlos.
+  if (group.userData.modelo && timed.length > 0) tessellateForDamage(group);
   timed.forEach(({ input: inp, t }, i) => {
     const d = applyVehicleDamage(group, v.clase, dims, inp, i > 0);
     damage ??= d;
@@ -195,9 +198,11 @@ export function buildDamageRig(
     );
   const frontalCrush = input?.lado === "F" ? Math.max(...input.perfil) : 0;
   if (windshield instanceof Mesh && (headOnGlass || frontalCrush >= WINDSHIELD_CRACK_M)) {
-    const geo = windshield.geometry as BoxGeometry;
-    const params = geo.parameters;
-    const aspect = params.depth / Math.max(0.01, params.height);
+    // Ancho entre alto de la cara grande del parabrisas (caja o modelo de Sketchfab).
+    const glassMesh = windshield as Mesh;
+    const size = meshSize(glassMesh);
+    const aspect = size.z / Math.max(0.01, size.y);
+    if (glassMesh.userData.modelo) windshieldUv(glassMesh.geometry);
     const glass = crackedGlassMaterial(
       headOnGlass ? [0.5, 0.35] : [0.5, 0.12],
       aspect,

@@ -5,6 +5,8 @@
  * La semilla y el hash de entradas se agregan cuando existen.
  */
 import { LEGEND_TEXT } from "@croquis/scene-schema";
+// Solo el tipo: la leyenda va en muchas páginas y no debe traer el visor (three.js) consigo.
+import type { VehicleCredit } from "@croquis/viewer";
 import { textos } from "@/i18n";
 import { useIdioma, useTextos } from "@/i18n/cliente";
 
@@ -16,11 +18,15 @@ const T = textos(
     etiqueta: "Leyenda de reconstrucción ilustrativa",
     semilla: "semilla",
     osm: "Contiene información de OpenStreetMap, disponible en openstreetmap.org bajo la Open Database License (ODbL).",
+    modelos: "Vehículos 3D:",
+    de: "de",
   },
   {
     etiqueta: "Illustrative reconstruction notice",
     semilla: "seed",
     osm: "Contains information from OpenStreetMap, available at openstreetmap.org under the Open Database License (ODbL).",
+    modelos: "3D vehicles:",
+    de: "by",
   },
 );
 
@@ -34,9 +40,11 @@ export interface LegendProps {
   tone?: "normal" | "clara";
   /** Atribución de los datos del mapa (ODbL, ADR 0023) cuando la escena trae `red_vial`. */
   atribucion?: string;
+  /** Atribución de los vehículos de Sketchfab que se ven (R10, CC-BY; ADR 0086). */
+  modelos?: readonly VehicleCredit[];
 }
 
-export function Legend({ seed, inputHash, tone = "normal", atribucion }: LegendProps) {
+export function Legend({ seed, inputHash, tone = "normal", atribucion, modelos }: LegendProps) {
   const { lang } = useIdioma();
   const t = useTextos(T);
   const texto = lang === "es" ? LEGEND_TEXT : LEYENDA_EN;
@@ -62,6 +70,12 @@ export function Legend({ seed, inputHash, tone = "normal", atribucion }: LegendP
       {attr ? (
         <span className="block" data-testid="atribucion-mapa">
           {attr}
+        </span>
+      ) : null}
+      {modelos?.length ? (
+        <span className="block" data-testid="atribucion-modelos">
+          {t.modelos}{" "}
+          {modelos.map((c) => `«${c.modelo}» ${t.de} ${c.autor} (${c.licencia})`).join("; ")}
         </span>
       ) : null}
     </p>

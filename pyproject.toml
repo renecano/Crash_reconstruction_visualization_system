@@ -59,6 +59,7 @@ ignore = ["RUF001", "RUF002", "RUF003"]
 "**/__main__.py" = ["T20"]
 # Los scripts de Blender (R11) informan en la consola de Blender.
 "tools/blender/*.py" = ["T20"]
+"assets/pipeline/blender/*.py" = ["T20"]
 # Scripts que se corren a mano e informan su avance.
 "eval/voz_video.py" = ["T20"]
 "demo/video/*.py" = ["T20"]
@@ -79,7 +80,8 @@ pythonVersion = "3.14"
 typeCheckingMode = "strict"
 include = ["packages/scene-schema/python", "solver", "extraction", "data", "eval", "assets/pipeline"]
 # eval/voz_video.py corre con Kokoro y Whisper, instalados fuera del proyecto (docs/PROGRESS.md).
-exclude = ["**/node_modules", "**/__pycache__", "**/.venv", "data/raw", "data/processed", "eval/results", "eval/voz_video.py"]
+# assets/pipeline/blender corre dentro de Blender (bpy no trae tipos), como tools/blender.
+exclude = ["**/node_modules", "**/__pycache__", "**/.venv", "data/raw", "data/processed", "eval/results", "eval/voz_video.py", "assets/pipeline/blender"]
 venvPath = "."
 venv = ".venv"
 reportMissingModuleSource = "warning"

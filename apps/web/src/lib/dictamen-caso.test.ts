@@ -118,6 +118,27 @@ describe("el dictamen de una reconstrucción (R8)", () => {
     ]);
   });
 
+  it("con cuadros del 3D, la atribución CC-BY de los vehículos de Sketchfab (R10)", () => {
+    const t = texto(
+      datos({
+        cuadros3d: [{ etiqueta: "Instante del impacto", imagen: "data:image/png;base64,AAAA" }],
+        modelos3d: [
+          {
+            modelo: "Kiri '10",
+            autor: "Daniel Zhabotinsky",
+            licencia: "CC-BY 4.0",
+            url: "https://sketchfab.com/3d-models/7fd6e15785fa4aa9bfd6e31eb7c97ba6",
+          },
+        ],
+      }),
+    );
+    expect(t).toContain(
+      "Vehículos 3D: «Kiri '10» de Daniel Zhabotinsky (CC-BY 4.0, https://sketchfab.com/",
+    );
+    // Sin cuadros del 3D, no hay atribución que dar.
+    expect(texto(datos())).not.toContain("Vehículos 3D");
+  });
+
   it("validado: la conclusión y el nombre del perito, sin borrador", () => {
     const t = texto(
       datos({

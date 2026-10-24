@@ -75,3 +75,5 @@ demo/video/*.srt
 apps/web/public/pdfjs/
 # El script de Blender (R11) se copia de tools/blender/ en cada build.
 apps/web/public/blender/
+# Decodificadores de three.js (Draco y Basis, R10): se copian de node_modules en cada build.
+apps/web/public/decodificadores/

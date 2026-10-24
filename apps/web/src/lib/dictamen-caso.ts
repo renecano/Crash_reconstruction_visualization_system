@@ -39,6 +39,8 @@ export interface DatosDictamenCaso {
   croquisSobreMapa?: boolean;
   /** Cuadros del 3D (PNG, data URL), si el perito abrió el 3D. */
   cuadros3d: { etiqueta: string; imagen: string }[];
+  /** La atribución de los vehículos de Sketchfab que se ven en esos cuadros (R10, CC-BY). */
+  modelos3d?: { modelo: string; autor: string; licencia: string; url: string }[];
   /** La comparación con la declaración del conductor (R7), si la usó. */
   declarada: {
     declarante: Id;
@@ -185,6 +187,13 @@ function secciones(d: DatosDictamenCaso) {
             { image: c.imagen, width: 420, margin: [0, 2, 0, 2] },
             nota(c.etiqueta),
           ]),
+          ...(d.modelos3d?.length
+            ? [
+                nota(
+                  `Vehículos 3D: ${d.modelos3d.map((m) => `«${m.modelo}» de ${m.autor} (${m.licencia}, ${m.url})`).join("; ")}.`,
+                ),
+              ]
+            : []),
         ]
       : []),
   ];

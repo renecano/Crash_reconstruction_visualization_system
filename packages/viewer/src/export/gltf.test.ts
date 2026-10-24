@@ -6,6 +6,8 @@ import { fileURLToPath } from "node:url";
 import { LEGEND_TEXT, legendFor, loadFixture, loadResultado } from "@croquis/scene-schema";
 import {
   AnimationMixer,
+  CompressedTexture,
+  Texture,
   type Mesh,
   MeshStandardMaterial,
   type PerspectiveCamera,
@@ -23,7 +25,13 @@ import { attachRollovers } from "../rollover-scene";
 import { cinematicCamera, exportCameras } from "../cameras";
 import { environmentFor } from "../environment";
 import { buildSceneGraph } from "../scene-graph";
-import { ambienteDe, classicMaterial, exportSceneGlb, sampleTimes } from "./gltf";
+import {
+  ambienteDe,
+  classicMaterial,
+  exportSceneGlb,
+  sampleTimes,
+  withoutCompressedTextures,
+} from "./gltf";
 
 const opts = {
   quality: QUALITY_PROFILES.media,
@@ -87,6 +95,21 @@ describe("exportación glTF", () => {
   it("muestrea de t0 a t1 a los fps pedidos e incluye el final", () => {
     expect(sampleTimes(-1, 1, 2)).toEqual([-1, -0.5, 0, 0.5, 1]);
     expect(sampleTimes(0, 1.05, 10).at(-1)).toBeCloseTo(1.05);
+  });
+
+  it("R11: un material de un vehículo de Sketchfab sale sin KTX2 y dice de qué modelo es", () => {
+    const m = new MeshStandardMaterial({ name: "UCB_BOTTOM_LT" });
+    m.map = new CompressedTexture([], 4, 4);
+    m.roughnessMap = new CompressedTexture([], 4, 4);
+    const c = withoutCompressedTextures(m, "sedan") as MeshStandardMaterial;
+    expect(c).not.toBe(m);
+    expect(c.map).toBeNull();
+    expect(c.roughnessMap).toBeNull();
+    expect(c.userData.material_modelo).toEqual({ clase: "sedan", material: "UCB_BOTTOM_LT" });
+    // El original no cambia (lo sigue usando el visor) y sin KTX2 no hay copia.
+    expect(m.map).toBeInstanceOf(CompressedTexture);
+    const plano = new MeshStandardMaterial({ map: new Texture() });
+    expect(withoutCompressedTextures(plano, "sedan")).toBe(plano);
   });
 
   it("los materiales de nodos pasan a sus equivalentes clásicos", () => {

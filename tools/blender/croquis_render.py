@@ -22,6 +22,8 @@ Opciones:
     --cuadros              PNG cuadro por cuadro en vez de MP4
     --blend RUTA           guarda la escena armada para abrirla y ajustarla en Blender
     --solo-armar           arma (y guarda con --blend) sin renderizar
+    --modelos RUTA|URL     los vehículos de Sketchfab con sus texturas (R10): por omisión, los del
+                           repositorio si el script está ahí, o los del sitio de Croquis
 
 La parte que no usa Blender (leer el `.glb`, las opciones, el tramo, el sol) son funciones puras con
 pruebas en `tools/blender/tests`; `bpy` solo se importa dentro de Blender.
@@ -32,8 +34,13 @@ from __future__ import annotations
 import argparse
 import json
 import math
+import os
+import re
 import struct
 import sys
+import tempfile
+import urllib.request
+from collections.abc import Mapping
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
@@ -44,6 +51,7 @@ MUESTRAS = {"eevee": 64, "cycles": 128}
 # Sin niebla visible por debajo de esta densidad (la del visor con cielo despejado es 0.0015).
 NIEBLA_MINIMA = 0.004
 LEYENDA_POR_OMISION = "Reconstrucción ilustrativa de apoyo: el dictamen es del perito."
+MODELOS_PRODUCCION = "https://croquis-sage.vercel.app/modelos/vehiculos/"
 
 
 @dataclass(frozen=True)
@@ -61,6 +69,7 @@ class Opciones:
     cuadros: bool
     blend: Path | None
     solo_armar: bool
+    modelos: str | None = None
 
 
 def leer_opciones(argv: list[str]) -> Opciones:
@@ -80,6 +89,7 @@ def leer_opciones(argv: list[str]) -> Opciones:
     p.add_argument("--cuadros", action="store_true")
     p.add_argument("--blend", type=Path)
     p.add_argument("--solo-armar", action="store_true")
+    p.add_argument("--modelos")
     a = p.parse_args(argv)
     try:
         ancho, alto = (int(x) for x in a.resolucion.lower().split("x"))
@@ -104,6 +114,7 @@ def leer_opciones(argv: list[str]) -> Opciones:
         cuadros=a.cuadros,
         blend=a.blend,
         solo_armar=a.solo_armar,
+        modelos=a.modelos,
     )
 
 
@@ -126,11 +137,26 @@ def extras_de(gltf: dict[str, Any]) -> dict[str, Any]:
 
 
 def texto_leyenda(gltf: dict[str, Any]) -> str:
-    """La leyenda de reconstrucción de apoyo, en una línea, para cada cuadro del video."""
-    lineas = extras_de(gltf).get("leyenda")
+    """La leyenda de reconstrucción de apoyo, en una línea, para cada cuadro del video.
+
+    Con vehículos de Sketchfab (R10) lleva su atribución (CC-BY pide nombrar al autor y la
+    licencia donde se ve el modelo).
+    """
+    extras = extras_de(gltf)
+    lineas = extras.get("leyenda")
     if isinstance(lineas, list) and lineas:
-        return " · ".join(str(x) for x in lineas)
-    return str(gltf.get("asset", {}).get("copyright") or LEYENDA_POR_OMISION)
+        texto = " · ".join(str(x) for x in lineas)
+    else:
+        texto = str(gltf.get("asset", {}).get("copyright") or LEYENDA_POR_OMISION)
+    creditos = extras.get("creditos_modelos")
+    if isinstance(creditos, list) and creditos:
+        modelos = "; ".join(
+            f"«{c.get('modelo')}» de {c.get('autor')} ({c.get('licencia')})"
+            for c in creditos
+            if isinstance(c, dict)
+        )
+        texto += f" · Vehículos 3D: {modelos}"
+    return texto
 
 
 def camara_elegida(gltf: dict[str, Any], pedida: str | None) -> str:
@@ -197,6 +223,47 @@ def sigma_niebla(densidad_visor: float) -> float:
     return math.sqrt(math.log(20)) * densidad_visor
 
 
+def origen_de_modelos(opcion: str | None, script: Path, entorno: Mapping[str, str]) -> str:
+    """De dónde salen los vehículos de Sketchfab con sus texturas (``<clase>-blender.glb``).
+
+    La opción, luego ``CROQUIS_MODELOS``, luego la carpeta del repositorio si el script está en
+    él (la computadora de la demo) y, al final, el sitio de Croquis.
+    """
+    if opcion:
+        return opcion
+    if entorno.get("CROQUIS_MODELOS"):
+        return entorno["CROQUIS_MODELOS"]
+    partes = script.resolve().parents
+    if len(partes) > 2:
+        repo = partes[2] / "apps" / "web" / "public" / "modelos" / "vehiculos"
+        if repo.is_dir():
+            return str(repo)
+    return MODELOS_PRODUCCION
+
+
+def clases_con_modelo(gltf: dict[str, Any]) -> list[str]:
+    """Las clases de vehículo de Sketchfab cuyos materiales vienen sin texturas (R10)."""
+    clases = set()
+    for m in gltf.get("materials", []):
+        ref = (m.get("extras") or {}).get("material_modelo")
+        if isinstance(ref, dict) and ref.get("clase"):
+            clases.add(str(ref["clase"]))
+    return sorted(clases)
+
+
+def ruta_del_modelo(origen: str, clase: str) -> str:
+    """El archivo del modelo de una clase, en una carpeta o en una URL."""
+    nombre = f"{clase}-blender.glb"
+    if origen.startswith(("http://", "https://")):
+        return origen.rstrip("/") + "/" + nombre
+    return str(Path(origen) / nombre)
+
+
+def sin_sufijo(nombre: str) -> str:
+    """El nombre de un material sin el sufijo que pone Blender a los repetidos (``.001``)."""
+    return re.sub(r"\.\d{3}$", "", nombre)
+
+
 def es_superficie_del_piso(z_min: float, z_max: float) -> bool:
     """Si una malla es una superficie del piso: plana (menos de 5 cm de alto) y a ras del suelo.
 
@@ -248,6 +315,7 @@ def armar(o: Opciones, gltf: dict[str, Any]) -> tuple[int, int]:  # pragma: no c
     escena.frame_start, escena.frame_end = a, b
 
     piso(escena)
+    materiales_de_modelos(escena, o, gltf)
     ambiente = extras.get("ambiente")
     cielo_y_luz(escena, ambiente if isinstance(ambiente, dict) else None)
     motor(escena, o)
@@ -256,6 +324,41 @@ def armar(o: Opciones, gltf: dict[str, Any]) -> tuple[int, int]:  # pragma: no c
     if o.blend:
         bpy.ops.wm.save_as_mainfile(filepath=str(o.blend.resolve()))
     return a, b
+
+
+def materiales_de_modelos(
+    escena: Any, o: Opciones, gltf: dict[str, Any]
+) -> list[str]:  # pragma: no cover
+    """Los materiales de los vehículos de Sketchfab con sus texturas (WebP), por su nombre."""
+    import bpy
+
+    clases = clases_con_modelo(gltf)
+    if not clases:
+        return []
+    origen = origen_de_modelos(o.modelos, Path(__file__), os.environ)
+    hechas = []
+    for clase in clases:
+        ruta = ruta_del_modelo(origen, clase)
+        if ruta.startswith(("http://", "https://")):
+            with urllib.request.urlopen(ruta, timeout=120) as r:
+                datos = r.read()
+            local = Path(tempfile.gettempdir()) / f"croquis-{clase}-blender.glb"
+            local.write_bytes(datos)
+            ruta = str(local)
+        antes_m = set(bpy.data.materials)
+        antes_o = set(bpy.data.objects)
+        bpy.ops.import_scene.gltf(filepath=ruta, import_webp_texture=True)
+        nuevos = {sin_sufijo(m.name): m for m in bpy.data.materials if m not in antes_m}
+        for ob in [ob for ob in bpy.data.objects if ob not in antes_o]:
+            bpy.data.objects.remove(ob, do_unlink=True)
+        for ob in escena.objects:
+            for slot in getattr(ob, "material_slots", []):
+                ref = slot.material.get("material_modelo") if slot.material else None
+                if ref and ref.get("clase") == clase and ref.get("material") in nuevos:
+                    slot.material = nuevos[ref["material"]]
+        hechas.append(clase)
+    print(f"Vehículos con sus texturas: {', '.join(hechas)} ({origen}).")
+    return hechas
 
 
 def piso(escena: Any) -> None:  # pragma: no cover - en Blender

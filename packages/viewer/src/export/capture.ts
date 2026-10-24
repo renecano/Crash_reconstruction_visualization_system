@@ -3,6 +3,7 @@
  * que convierten un cuadro en un PNG con la marca de reconstrucción ilustrativa (PLAN §10).
  */
 import { legendLines, legendString, type LegendInfo } from "@croquis/scene-schema";
+import type { VehicleCredit } from "../vehicle-models";
 import { drawLegendBand } from "./legend-band";
 import { addPngText } from "./png";
 
@@ -32,6 +33,8 @@ export interface ViewerExportApi {
   ): Promise<void>;
   /** Escena glTF (`.glb`) con su animación y la leyenda. */
   exportGlb(legend: LegendInfo): Promise<ArrayBuffer>;
+  /** La atribución de los vehículos de Sketchfab que se ven (R10, CC-BY): vacía si no hay. */
+  readonly vehicleCredits: readonly VehicleCredit[];
   /** Intervalo de la reconstrucción y paso del solver (para video y cuadros). */
   readonly tStart: number;
   readonly tEnd: number;
