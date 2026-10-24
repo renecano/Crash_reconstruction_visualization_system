@@ -1,0 +1,299 @@
+{
+  "name": "contornos_antes",
+  "generated_at": "2026-10-24T21:43:22+00:00",
+  "git_commit": "ca1eead",
+  "seed": null,
+  "descripcion": "Distancia mínima entre contornos de cada par de vehículos desde 0.04 s después del impacto hasta el reposo (negativa = traslape). Antes del ADR 0089: medido con el código de main en el commit de git_commit (el contacto secundario de ADR 0063 y AXA sin zonas de impacto).",
+  "t_desde_s": 0.04,
+  "escenas_con_traslape": {
+    "caja": [
+      "axa",
+      "frontal_curva",
+      "glorieta",
+      "lateral_interseccion",
+      "motociclista",
+      "nocturno_lluvia"
+    ],
+    "deformado": [
+      "axa",
+      "nocturno_lluvia"
+    ]
+  },
+  "escenas": {
+    "alcance": {
+      "t_reposo_s": 5.06,
+      "pares": [
+        {
+          "vehiculos": [
+            "veh-a",
+            "veh-b"
+          ],
+          "caja": {
+            "distancia_minima_m": 0.0118,
+            "en_t_s": 0.04,
+            "en_reposo_m": 6.0089
+          },
+          "deformado": {
+            "distancia_minima_m": 0.245,
+            "en_t_s": 0.04,
+            "en_reposo_m": 6.2361
+          }
+        }
+      ]
+    },
+    "carambola": {
+      "t_reposo_s": 3.8,
+      "pares": [
+        {
+          "vehiculos": [
+            "veh-a",
+            "veh-b"
+          ],
+          "caja": {
+            "distancia_minima_m": 0.0118,
+            "en_t_s": 0.04,
+            "en_reposo_m": 1.3468
+          },
+          "deformado": {
+            "distancia_minima_m": 0.245,
+            "en_t_s": 0.04,
+            "en_reposo_m": 1.5785
+          }
+        },
+        {
+          "vehiculos": [
+            "veh-a",
+            "veh-c"
+          ],
+          "caja": {
+            "distancia_minima_m": 4.5983,
+            "en_t_s": 0.42,
+            "en_reposo_m": 5.7324
+          },
+          "deformado": {
+            "distancia_minima_m": 4.7861,
+            "en_t_s": 0.42,
+            "en_reposo_m": 5.9162
+          }
+        },
+        {
+          "vehiculos": [
+            "veh-b",
+            "veh-c"
+          ],
+          "caja": {
+            "distancia_minima_m": -0.0,
+            "en_t_s": 0.8,
+            "en_reposo_m": 0.0445
+          },
+          "deformado": {
+            "distancia_minima_m": -0.0,
+            "en_t_s": 0.8,
+            "en_reposo_m": 0.0445
+          }
+        }
+      ]
+    },
+    "frontal_curva": {
+      "t_reposo_s": 2.38,
+      "pares": [
+        {
+          "vehiculos": [
+            "veh-a",
+            "veh-b"
+          ],
+          "caja": {
+            "distancia_minima_m": -0.0334,
+            "en_t_s": 0.04,
+            "en_reposo_m": 0.2287
+          },
+          "deformado": {
+            "distancia_minima_m": 1.1789,
+            "en_t_s": 0.04,
+            "en_reposo_m": 1.4116
+          }
+        }
+      ]
+    },
+    "glorieta": {
+      "t_reposo_s": 4.52,
+      "pares": [
+        {
+          "vehiculos": [
+            "veh-a",
+            "veh-b"
+          ],
+          "caja": {
+            "distancia_minima_m": -0.0954,
+            "en_t_s": 0.16,
+            "en_reposo_m": 4.0044
+          },
+          "deformado": {
+            "distancia_minima_m": 0.0004,
+            "en_t_s": 0.16,
+            "en_reposo_m": 4.0047
+          }
+        }
+      ]
+    },
+    "interseccion_toluca": {
+      "t_reposo_s": 4.14,
+      "pares": [
+        {
+          "vehiculos": [
+            "veh-a",
+            "veh-b"
+          ],
+          "caja": {
+            "distancia_minima_m": 0.0039,
+            "en_t_s": 0.04,
+            "en_reposo_m": 1.0591
+          },
+          "deformado": {
+            "distancia_minima_m": 0.2395,
+            "en_t_s": 0.04,
+            "en_reposo_m": 1.2787
+          }
+        }
+      ]
+    },
+    "lateral_interseccion": {
+      "t_reposo_s": 5.2,
+      "pares": [
+        {
+          "vehiculos": [
+            "veh-a",
+            "veh-b"
+          ],
+          "caja": {
+            "distancia_minima_m": -0.0397,
+            "en_t_s": 0.06,
+            "en_reposo_m": 6.5905
+          },
+          "deformado": {
+            "distancia_minima_m": 0.1817,
+            "en_t_s": 0.06,
+            "en_reposo_m": 6.7308
+          }
+        }
+      ]
+    },
+    "motociclista": {
+      "t_reposo_s": 4.14,
+      "pares": [
+        {
+          "vehiculos": [
+            "veh-a",
+            "veh-b"
+          ],
+          "caja": {
+            "distancia_minima_m": -0.0882,
+            "en_t_s": 0.04,
+            "en_reposo_m": 0.8553
+          },
+          "deformado": {
+            "distancia_minima_m": 0.0208,
+            "en_t_s": 0.04,
+            "en_reposo_m": 0.9521
+          }
+        }
+      ]
+    },
+    "nocturno_lluvia": {
+      "t_reposo_s": 5.66,
+      "pares": [
+        {
+          "vehiculos": [
+            "veh-a",
+            "veh-b"
+          ],
+          "caja": {
+            "distancia_minima_m": -0.2595,
+            "en_t_s": 0.04,
+            "en_reposo_m": -0.2561
+          },
+          "deformado": {
+            "distancia_minima_m": -0.1733,
+            "en_t_s": 0.04,
+            "en_reposo_m": 0.0
+          }
+        }
+      ]
+    },
+    "objeto_fijo_arbol": {
+      "t_reposo_s": 2.2,
+      "pares": []
+    },
+    "peaton_cruce": {
+      "t_reposo_s": 3.14,
+      "pares": []
+    },
+    "poste": {
+      "t_reposo_s": 2.14,
+      "pares": []
+    },
+    "reversa": {
+      "t_reposo_s": 3.1,
+      "pares": [
+        {
+          "vehiculos": [
+            "veh-a",
+            "veh-b"
+          ],
+          "caja": {
+            "distancia_minima_m": 0.0278,
+            "en_t_s": 0.04,
+            "en_reposo_m": 0.6724
+          },
+          "deformado": {
+            "distancia_minima_m": 0.0837,
+            "en_t_s": 0.04,
+            "en_reposo_m": 0.7283
+          }
+        }
+      ]
+    },
+    "volcadura": {
+      "t_reposo_s": 8.54,
+      "pares": [
+        {
+          "vehiculos": [
+            "veh-a",
+            "veh-b"
+          ],
+          "caja": {
+            "distancia_minima_m": 6.2283,
+            "en_t_s": 0.04,
+            "en_reposo_m": 155.7419
+          },
+          "deformado": {
+            "distancia_minima_m": 6.2283,
+            "en_t_s": 0.04,
+            "en_reposo_m": 155.7419
+          }
+        }
+      ]
+    },
+    "axa": {
+      "t_reposo_s": 6.56,
+      "pares": [
+        {
+          "vehiculos": [
+            "veh-a",
+            "veh-b"
+          ],
+          "caja": {
+            "distancia_minima_m": -1.8214,
+            "en_t_s": 0.04,
+            "en_reposo_m": 0.1912
+          },
+          "deformado": {
+            "distancia_minima_m": -1.8214,
+            "en_t_s": 0.04,
+            "en_reposo_m": 0.2908
+          }
+        }
+      ]
+    }
+  }
+}

@@ -7,6 +7,7 @@
  * Trabajar muestra todo lo que se edita; Presentar oculta lo que lleva `solo-trabajar` (los
  * controles de edición) y deja la narración y los resultados, para enseñarlos.
  */
+import { LEGEND_TEXT_CESVI } from "@croquis/scene-schema";
 import Link from "next/link";
 import { createContext, useContext, useState, type ReactNode } from "react";
 import { Logotipo } from "@/components/sitio/logo";
@@ -106,9 +107,7 @@ export function MarcoCesvi({
         </header>
         {children}
         <footer className="t-nota px-4 pb-6 text-texto-3 md:px-8">
-          <div className="mx-auto max-w-[1200px]">
-            Reconstrucción de apoyo · el dictamen es del perito.
-          </div>
+          <div className="mx-auto max-w-[1200px]">{LEGEND_TEXT_CESVI}</div>
         </footer>
       </div>
     </ModoContexto.Provider>

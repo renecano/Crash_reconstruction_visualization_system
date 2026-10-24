@@ -3,7 +3,10 @@
 from __future__ import annotations
 
 import itertools
+import json
 import math
+from pathlib import Path
+from typing import Any
 
 import pytest
 
@@ -11,7 +14,7 @@ from croquis_scene_schema import list_fixtures, load_fixture
 from croquis_solver.models import Body2D, State2D
 from croquis_solver.postimpact import (
     AXIS_HYSTERESIS,
-    DEPENETRATION_SPEED,
+    SEPARATION_S,
     JointBody,
     JointState,
     WheelConfig,
@@ -198,18 +201,20 @@ def test_empuja_al_que_esta_detenido_sin_atravesarlo() -> None:
     assert ra.distance < 10.0**2 / (2 * 0.05 * 9.80665)
 
 
-def test_el_encaje_inicial_se_deshace_sin_salto() -> None:
-    # Dos cuerpos detenidos que arrancan encajados 0.2 m se separan a DEPENETRATION_SPEED.
+def test_el_encaje_inicial_se_deshace_en_separation_s() -> None:
+    # Dos cuerpos detenidos que arrancan encajados 0.2 m se separan parejo en SEPARATION_S (dos
+    # cuadros de 0.02 s, 0.1 m por cuadro entre los dos) y desde ahí sus cajas solo se tocan.
     a_spec = JointBody(CAR, State2D(x=0.0), LOCKED, 0.7)
     b_spec = JointBody(CAR, State2D(x=4.3), LOCKED, 0.7)
     ra, rb = integrate_joint([a_spec, b_spec])
-    gap = [rb.trajectory.x[-1] - ra.trajectory.x[-1]]
-    assert math.isclose(gap[0], 4.5, abs_tol=1e-9)
-    step = DEPENETRATION_SPEED * 0.02 + 1e-9
-    xs_a, xs_b = ra.trajectory.x, rb.trajectory.x
-    assert all(abs(q - p) <= step for p, q in itertools.pairwise(xs_a))
-    assert all(abs(q - p) <= step for p, q in itertools.pairwise(xs_b))
-    assert math.isclose(ra.duration, 0.2, abs_tol=0.03)
+    ta = ra.trajectory
+    gaps = [rb.trajectory.x[k] - ta.x[k] for k in range(len(ta))]
+    assert math.isclose(gaps[-1], 4.5, abs_tol=1e-9)
+    per_frame = 0.2 * 0.02 / SEPARATION_S + 1e-9
+    assert all(q - p <= per_frame for p, q in itertools.pairwise(gaps))
+    k = next(i for i, t in enumerate(ta.t) if t >= SEPARATION_S - 1e-9)
+    assert all(g >= 4.5 - 1e-9 for g in gaps[k:])
+    assert ra.duration <= SEPARATION_S + 0.02
 
 
 VV = [
@@ -217,6 +222,14 @@ VV = [
     for n in list_fixtures()
     if any(e.get("tipo") == "impacto_vehiculo_vehiculo" for e in load_fixture(n)["eventos"])
 ]
+AXA = Path(__file__).resolve().parents[2] / "demo" / "escenas-r11" / "axa.json"
+
+
+def _escena(name: str) -> dict[str, Any]:
+    if name == "axa":
+        data: dict[str, Any] = json.loads(AXA.read_text(encoding="utf-8"))
+        return data
+    return load_fixture(name)
 
 
 def _excess(a: VehicleOutcome, b: VehicleOutcome, k: int) -> float:
@@ -228,21 +241,44 @@ def _excess(a: VehicleOutcome, b: VehicleOutcome, k: int) -> float:
     return depth - max(0.0, *a.crush_profile_m) - max(0.0, *b.crush_profile_m)
 
 
-@pytest.mark.parametrize("name", VV)
-def test_despues_del_impacto_ningun_par_se_atraviesa(name: str) -> None:
-    """Después de t = 0 ningún par pasa 1 cm de su aplastamiento; si el impacto ya pasaba (la
-    moto, ver la prueba siguiente), ese exceso solo baja, al menos a DEPENETRATION_SPEED."""
-    r = reconstruct(load_fixture(name))
+def _depth(a: VehicleOutcome, b: VehicleOutcome, ka: int, kb: int) -> float:
+    ta, tb = a.trajectory, b.trajectory
+    ea = deformed_extents(a.length, a.width, 0.0, "F")
+    eb = deformed_extents(b.length, b.width, 0.0, "F")
+    depth, _ = box_penetration(
+        box_corners(ta.x[ka], ta.y[ka], ta.yaw[ka], ea),
+        box_corners(tb.x[kb], tb.y[kb], tb.yaw[kb], eb),
+    )
+    return depth
+
+
+@pytest.mark.parametrize("name", [*VV, "axa"])
+def test_desde_separation_s_ningun_contorno_traslapa(name: str) -> None:
+    """Comentario de René (2026-10-24, ADR 0089): ningún contorno de vehículo (su caja sin
+    deformar, que contiene lo que dibuja el 3D) traslapa a otro desde SEPARATION_S después de cada
+    impacto entre los dos, ni en la animación ni en el reposo."""
+    r = reconstruct(_escena(name))
     vs = r.vehiculos
     for i, a in enumerate(vs):
         for b in vs[i + 1 :]:
-            n = min(len(a.trajectory), len(b.trajectory))
-            k0 = a.trajectory.t.index(0.0)
-            at_impact = _excess(a, b, k0)
-            for k in range(k0 + 1, n):
-                t = a.trajectory.t[k]
-                bound = max(0.01, at_impact - DEPENETRATION_SPEED * t)
-                assert _excess(a, b, k) <= bound, (name, a.id, b.id, t, _excess(a, b, k))
+            impactos = [0.0] + [
+                e.t
+                for e in r.eventos
+                if e.tipo == "impacto_vehiculo_vehiculo" and {a.id, b.id} <= set(e.actores)
+            ]
+            ta, tb = a.trajectory, b.trajectory
+            index_b = {round(t, 6): k for k, t in enumerate(tb.t)}
+            for ka, t in enumerate(ta.t):
+                if t < SEPARATION_S - 1e-9 or any(
+                    lo <= t < lo + SEPARATION_S - 1e-9 for lo in impactos
+                ):
+                    continue
+                kb = index_b.get(round(t, 6), len(tb) - 1 if t > tb.t[-1] else None)
+                if kb is None:
+                    continue
+                assert _depth(a, b, ka, kb) <= 1e-9, (name, a.id, b.id, t, _depth(a, b, ka, kb))
+            # En reposo (la última pose de cada uno), tampoco.
+            assert _depth(a, b, len(ta) - 1, len(tb) - 1) <= 1e-9, (name, a.id, b.id, "reposo")
 
 
 def test_en_el_impacto_solo_la_moto_pasa_de_su_aplastamiento() -> None:

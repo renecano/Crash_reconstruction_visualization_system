@@ -8,6 +8,9 @@ import type { EscenaSpec } from "./generated/escena.zod";
 export const LEGEND_TEXT =
   "Reconstrucción ilustrativa generada a partir de un relato. No es un peritaje.";
 
+/** La de /cesvi: ahí la reconstrucción apoya al perito, que es quien firma el dictamen. */
+export const LEGEND_TEXT_CESVI = "Reconstrucción de apoyo · el dictamen es del perito.";
+
 export interface LegendInfo {
   texto: string;
   semilla: string;

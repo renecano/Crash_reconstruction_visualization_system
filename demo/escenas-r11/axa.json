@@ -130,11 +130,11 @@
         "confianza": 0.3
       },
       "velocidad_previa": {
-        "valor": 63.89,
+        "valor": 41.01,
         "unidad": "km/h",
         "rango": [
-          63.89,
-          73.49
+          38.11,
+          42.25
         ],
         "fuente": "supuesto",
         "confianza": 0.7,
@@ -157,8 +157,8 @@
         "confianza": 0.9
       },
       "posicion_final": {
-        "x": -0.659,
-        "y": -2.587,
+        "x": 3.262,
+        "y": 12.811,
         "rumbo_deg": 75.71537756298898,
         "procedencia": {
           "fuente": "usuario",
@@ -188,11 +188,11 @@
         "confianza": 0.3
       },
       "velocidad_previa": {
-        "valor": 17.65,
+        "valor": 39.95,
         "unidad": "km/h",
         "rango": [
-          14.76,
-          17.83
+          35.36,
+          41.92
         ],
         "fuente": "supuesto",
         "confianza": 0.7,
@@ -233,6 +233,20 @@
         "fuente": "default",
         "confianza": 0.3
       },
+      "zonas_impacto": [
+        {
+          "vehiculo_id": "veh-a",
+          "cdc": {
+            "lado": "F"
+          }
+        },
+        {
+          "vehiculo_id": "veh-b",
+          "cdc": {
+            "lado": "B"
+          }
+        }
+      ],
       "punto_impacto": {
         "x": 0,
         "y": 0

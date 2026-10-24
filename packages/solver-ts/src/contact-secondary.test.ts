@@ -2,14 +2,17 @@
  * Integración conjunta y contacto secundario después del impacto (ADR 0063); espejo de
  * `solver/tests/test_contact_secondary.py`.
  */
-import { FIXTURE_NAMES, loadFixture } from "@croquis/scene-schema";
+import { readFileSync } from "node:fs";
+import { dirname, resolve } from "node:path";
+import { fileURLToPath } from "node:url";
+import { FIXTURE_NAMES, loadFixture, type FixtureName } from "@croquis/scene-schema";
 import { describe, expect, it } from "vitest";
 import { Body2D, state, type State2D } from "./models";
 import {
   boxCorners,
   boxPenetration,
   AXIS_HYSTERESIS,
-  DEPENETRATION_SPEED,
+  SEPARATION_S,
   deformedExtents,
   fourWheels,
   integrate,
@@ -188,18 +191,18 @@ describe("integración conjunta", () => {
     });
   });
 
-  it("el encaje inicial se deshace sin salto", () => {
+  it("el encaje inicial se deshace en SEPARATION_S", () => {
+    // Encajados 0.2 m: se separan parejo en dos cuadros de 0.02 s y desde ahí solo se tocan.
     const [ra, rb] = integrateJoint([body(CAR, state()), body(CAR, state({ x: 4.3 }))]);
-    const xa = ra!.trajectory.x;
-    const xb = rb!.trajectory.x;
-    expect(xb[xb.length - 1]! - xa[xa.length - 1]!).toBeCloseTo(4.5, 9);
-    const step = DEPENETRATION_SPEED * 0.02 + 1e-9;
-    for (const xs of [xa, xb]) {
-      for (let i = 1; i < xs.length; i++)
-        expect(Math.abs(xs[i]! - xs[i - 1]!)).toBeLessThanOrEqual(step);
-    }
-    expect(ra!.duration).toBeGreaterThan(0.17);
-    expect(ra!.duration).toBeLessThan(0.23);
+    const ta = ra!.trajectory;
+    const gaps = ta.x.map((x, k) => rb!.trajectory.x[k]! - x);
+    expect(gaps[gaps.length - 1]!).toBeCloseTo(4.5, 9);
+    const perFrame = (0.2 * 0.02) / SEPARATION_S + 1e-9;
+    for (let i = 1; i < gaps.length; i++)
+      expect(gaps[i]! - gaps[i - 1]!).toBeLessThanOrEqual(perFrame);
+    const k = ta.t.findIndex((t) => t >= SEPARATION_S - 1e-9);
+    for (const g of gaps.slice(k)) expect(g).toBeGreaterThanOrEqual(4.5 - 1e-9);
+    expect(ra!.duration).toBeLessThanOrEqual(SEPARATION_S + 0.02);
   });
 });
 
@@ -219,23 +222,61 @@ function excess(a: VehicleOutcome, b: VehicleOutcome, k: number): number {
   return depth - Math.max(0.0, ...a.crushProfileM) - Math.max(0.0, ...b.crushProfileM);
 }
 
+function depth(a: VehicleOutcome, b: VehicleOutcome, ka: number, kb: number): number {
+  const ta = a.trajectory;
+  const tb = b.trajectory;
+  return boxPenetration(
+    boxCorners(ta.x[ka]!, ta.y[ka]!, ta.yaw[ka]!, deformedExtents(a.length, a.width, 0.0, "F")),
+    boxCorners(tb.x[kb]!, tb.y[kb]!, tb.yaw[kb]!, deformedExtents(b.length, b.width, 0.0, "F")),
+  )[0];
+}
+
+const AXA = JSON.parse(
+  readFileSync(
+    resolve(dirname(fileURLToPath(import.meta.url)), "../../../demo/escenas-r11/axa.json"),
+    "utf8",
+  ),
+) as Record<string, unknown>;
+const escena = (name: FixtureName | "axa") =>
+  name === "axa" ? structuredClone(AXA) : loadFixture(name);
+
 describe("escenas canónicas: los vehículos no se atraviesan", () => {
-  it.each(VV.map((n) => [n]))(
-    "%s: después del impacto ningún par pasa 1 cm de su aplastamiento",
+  // Comentario de René (2026-10-24, ADR 0089): ningún contorno (la caja sin deformar, que contiene
+  // lo que dibuja el 3D) traslapa a otro desde SEPARATION_S después de cada impacto entre los dos.
+  it.each([...VV, "axa" as const].map((n) => [n]))(
+    "%s: desde SEPARATION_S ningún contorno traslapa a otro, ni en el reposo",
     (name) => {
-      const r = reconstruct(loadFixture(name));
+      const r = reconstruct(escena(name));
       const vs = r.vehiculos;
       for (let i = 0; i < vs.length; i++) {
         for (let j = i + 1; j < vs.length; j++) {
           const a = vs[i]!;
           const b = vs[j]!;
-          const n = Math.min(a.trajectory.length, b.trajectory.length);
-          const k0 = a.trajectory.t.indexOf(0.0);
-          const atImpact = excess(a, b, k0);
-          for (let k = k0 + 1; k < n; k++) {
-            const bound = Math.max(0.01, atImpact - DEPENETRATION_SPEED * a.trajectory.t[k]!);
-            expect(excess(a, b, k), `${name} t=${a.trajectory.t[k]}`).toBeLessThanOrEqual(bound);
-          }
+          const impactos = [
+            0,
+            ...r.eventos
+              .filter(
+                (e) =>
+                  e.tipo === "impacto_vehiculo_vehiculo" &&
+                  e.actores.includes(a.id) &&
+                  e.actores.includes(b.id),
+              )
+              .map((e) => e.t),
+          ];
+          const ta = a.trajectory;
+          const tb = b.trajectory;
+          const indexB = new Map(tb.t.map((t, k) => [Math.round(t * 1e6), k]));
+          ta.t.forEach((t, ka) => {
+            if (t < SEPARATION_S - 1e-9) return;
+            if (impactos.some((lo) => lo <= t && t < lo + SEPARATION_S - 1e-9)) return;
+            const kb =
+              indexB.get(Math.round(t * 1e6)) ?? (t > tb.t[tb.length - 1]! ? tb.length - 1 : null);
+            if (kb === null) return;
+            expect(depth(a, b, ka, kb), `${name} ${a.id}-${b.id} t=${t}`).toBeLessThanOrEqual(1e-9);
+          });
+          expect(depth(a, b, ta.length - 1, tb.length - 1), `${name} reposo`).toBeLessThanOrEqual(
+            1e-9,
+          );
         }
       }
     },

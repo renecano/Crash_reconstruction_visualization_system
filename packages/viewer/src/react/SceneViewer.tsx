@@ -246,7 +246,11 @@ function SceneContent({
       alive = false;
     };
   }, [modelKey, renderer]);
-  const vehicleModels = loaded?.key === modelKey ? loaded.models : undefined;
+  // Al cambiar entre la versión completa y la ligera (el modo automático sube y baja de calidad según
+  // los fps), se quedan los modelos que ya están hasta que llegan los nuevos: volver a los
+  // paramétricos mientras tanto se veía como autos que se vuelven cajas. En baja, paramétricos.
+  const vehicleModels =
+    loaded?.key === modelKey ? loaded.models : variant !== null ? loaded?.models : undefined;
   const graph = useMemo(
     () =>
       buildSceneGraph(spec, resultado, {

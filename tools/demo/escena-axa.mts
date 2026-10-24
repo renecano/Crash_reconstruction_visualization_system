@@ -4,8 +4,9 @@
  * - **El expediente** es el del caso de ejemplo de /cesvi (`apps/web/src/lib/caso-axa.ts`): la
  *   lectura grabada del reporte, con las masas y las medidas C y L de la deformación.
  * - **Las posiciones** son las de la reconstrucción de Croquis (`proponerVersiones`, versión de la
- *   evidencia): A queda a 15.89 m del impacto, donde terminan los restos según el dictamen, y B en el
- *   impacto, en el sentido de la vía. Es lo que coloca el perito en el paso del lugar.
+ *   evidencia): A queda a 15.89 m del impacto, donde terminan los restos según el dictamen, en el
+ *   sentido de la vía. La de B no la da el dictamen: se usa el supuesto de su método de los restos
+ *   (los dos avanzan juntos hasta el final de los restos), así que B queda justo detrás de A.
  * - **La vía** es el tramo de MEX 15D precargado del caso (`A2010930-tramo.json`, de OpenStreetMap):
  *   su rumbo en el punto ilustrativo orienta las posiciones, y sus calles van al 3D como las que el
  *   caso trae de Overpass (`conCallesDelMapa`).
@@ -21,6 +22,7 @@ import { join } from "node:path";
 import type { OverpassResponse } from "../../packages/croquis-2d/src/osm.ts";
 import { conCallesDelMapa, RADIO_CALLES_M } from "../../apps/web/src/lib/calles-del-mapa.ts";
 import {
+  avanzar,
   callesCerca,
   caso,
   especReconstruida,
@@ -66,9 +68,16 @@ const evidencia = proponerVersiones({
 const leido = importarDictamen(ejemplo.texto, lecturas.corpus, lecturas.narracion, ejemplo.archivo);
 // A es V1 y B es V2, como en el recorrido (`recorrido-3d.ts`).
 const ID = { A: "V1", B: "V2" } as const;
+// La posición final de B no la da el dictamen. Se usa el supuesto de su método de los restos (la
+// velocidad de 60.27 km/h): después del impacto los dos avanzan juntos hasta el final de los
+// restos, así que B queda justo detrás de A, tocándolo.
+const finalB = {
+  punto: avanzar(evidencia.vehiculos.A.final.punto, via.rumbo, -5.34),
+  rumbo: evidencia.vehiculos.A.final.rumbo,
+};
 const posiciones = (["A", "B"] as const).flatMap((l) =>
   (["impacto", "final"] as const).map((fase) => {
-    const p = evidencia.vehiculos[l][fase];
+    const p = l === "B" && fase === "final" ? finalB : evidencia.vehiculos[l][fase];
     return {
       vehiculo: ID[l],
       fase,

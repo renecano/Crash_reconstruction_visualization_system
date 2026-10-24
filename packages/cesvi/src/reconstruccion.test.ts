@@ -82,6 +82,32 @@ describe("del expediente a la escena del solver (R2)", () => {
     ]);
   });
 
+  it("sin zonas del impacto, toma la cara del primer daño de cada vehículo y lo dice", () => {
+    // La lectura de AXA trae los daños pero no las zonas del impacto: sin ellas el solver suponía el
+    // frente de los dos y en un alcance los ponía uno encima del otro (comentario de René).
+    const e: Expediente = {
+      ...base,
+      impactos: base.impactos!.map((i) => ({ ...i, zonas: undefined })),
+      danos: [
+        { vehiculo: "V1", zona: { cara: "frontal", tercio: "izquierdo" }, fuente: "perito" },
+        {
+          vehiculo: "V2",
+          zona: { cara: "posterior", vertice: "posterior_derecho" },
+          fuente: "perito",
+        },
+        { vehiculo: "V2", zona: { cara: "lateral_derecho" }, fuente: "perito" },
+      ],
+    };
+    const { spec, limites } = especDeExpediente(e);
+    expect(validateEscena(spec).ok).toBe(true);
+    const zonas = ((spec.eventos as Json[])[0]!.zonas_impacto as { cdc: Json }[]).map((z) => z.cdc);
+    // Solo la cara: el daño dice dónde se deformó, no en qué punto de la cara fue el contacto.
+    expect(zonas).toEqual([{ lado: "F" }, { lado: "B" }]);
+    expect(limites.join(" ")).toMatch(/no da las zonas del impacto de V1 y V2: se toma la cara/);
+    // Con las zonas del reporte, no se tocan ni se dice nada.
+    expect(especDeExpediente(base).limites.join(" ")).not.toMatch(/no da las zonas/);
+  });
+
   it("sin posiciones, la escena es válida y todo lo no dicho es supuesto o por omisión", () => {
     const { spec, ids, limites } = especDeExpediente(base);
     expect(validateEscena(spec).ok).toBe(true);

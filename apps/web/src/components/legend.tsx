@@ -42,12 +42,21 @@ export interface LegendProps {
   atribucion?: string;
   /** Atribución de los vehículos de Sketchfab que se ven (R10, CC-BY; ADR 0086). */
   modelos?: readonly VehicleCredit[];
+  /** Otro texto en lugar del de la reconstrucción ilustrativa (en /cesvi, el de CESVI). */
+  texto?: string;
 }
 
-export function Legend({ seed, inputHash, tone = "normal", atribucion, modelos }: LegendProps) {
+export function Legend({
+  seed,
+  inputHash,
+  tone = "normal",
+  atribucion,
+  modelos,
+  texto: otro,
+}: LegendProps) {
   const { lang } = useIdioma();
   const t = useTextos(T);
-  const texto = lang === "es" ? LEGEND_TEXT : LEYENDA_EN;
+  const texto = otro ?? (lang === "es" ? LEGEND_TEXT : LEYENDA_EN);
   // La atribución de OSM se traduce si es la estándar; cualquier otra se muestra tal cual.
   const attr = atribucion
     ? atribucion.startsWith("Contiene información de OpenStreetMap")

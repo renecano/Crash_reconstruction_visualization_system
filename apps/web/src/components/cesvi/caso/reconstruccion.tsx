@@ -17,7 +17,7 @@ import {
   type Reconstruccion,
   type VerificacionVehiculo,
 } from "@croquis/cesvi";
-import type { EscenaSpec } from "@croquis/scene-schema";
+import { LEGEND_TEXT_CESVI, type EscenaSpec } from "@croquis/scene-schema";
 import type { ViewerExportApi } from "@croquis/viewer";
 import { useCallback, useMemo, useState } from "react";
 import type { Hipotesis } from "@/components/visor/hypothesis-panel";
@@ -238,8 +238,11 @@ export function Visor3dCaso({
   onPosiciones,
   calles = null,
   objetos = null,
+  expandido = false,
 }: {
   r: Reconstruccion;
+  /** A pantalla completa: arriba flota la caja del paso y abajo «Siguiente»; el 3D les deja lugar. */
+  expandido?: boolean;
   /** Las calles del lugar (R10): con ellas, el 3D dibuja la red real en lugar de la plantilla. */
   calles?: OverpassResponse | null;
   /** Los árboles, postes y bardas del lugar (R10), como objetos del entorno. */
@@ -261,7 +264,10 @@ export function Visor3dCaso({
   }, [r, calles, objetos]);
   const externas = useMemo(() => (declarada ? [declarada] : undefined), [declarada]);
   return (
-    <div className="flex h-full flex-col gap-2 overflow-y-auto p-3 pt-16" data-testid="visor-caso">
+    <div
+      className={`flex h-full flex-col gap-2 overflow-y-auto p-3 ${expandido ? "pt-40 pb-28" : "pt-16"}`}
+      data-testid="visor-caso"
+    >
       <p className="t-nota">
         Las velocidades del 3D son las que estimó Croquis para reproducir tu evidencia (supuesto,
         con su rango); lo demás que no narraste va con valores por omisión. Reconstrucción de apoyo:
@@ -270,6 +276,7 @@ export function Visor3dCaso({
       <VisorEscena
         spec={spec3d}
         escena="propia"
+        leyendaTexto={LEGEND_TEXT_CESVI}
         controles={controles}
         hipotesisExternas={externas}
         onExportApi={onExportApi}

@@ -23,6 +23,7 @@ def main(argv: list[str] | None = None) -> int:
         help="E2 lateral y trasera: rigidez desde pruebas de barrera móvil de NHTSA",
     )
     sub.add_parser("e4-pedestrian", help="E4: proyección de peatones contra casos publicados")
+    sub.add_parser("contornos", help="Traslape de contornos de vehículos después del impacto")
     sub.add_parser(
         "inercia-guinada",
         help="Inercia de guiñada por grupo de carrocería desde la base de NHTSA (VRTC)",
@@ -146,6 +147,11 @@ def main(argv: list[str] | None = None) -> int:
         from croquis_eval.f7_inversion import main as run_f7
 
         print(run_f7())
+        return 0
+    if args.command == "contornos":
+        from croquis_eval.contornos import run as run_contornos
+
+        print(run_contornos())
         return 0
     if args.command == "e4-pedestrian":
         from croquis_eval.e4_pedestrian import main as run_e4
