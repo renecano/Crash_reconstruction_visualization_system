@@ -58,7 +58,7 @@
    - render corto en EEVEE a 480×270;
    - una medición de 2 s en alta;
    - la rama `resultados/prueba-<fecha>`.
-   - `-SinSubir` no hace commit ni push; `-Url` mide en otro sitio, por ejemplo el servidor local antes de desplegar.
+   - `-SinSubir` no hace commit ni push; `-Url` mide en otro sitio, por ejemplo el servidor local antes de desplegar; `-LimiteRam` fija el tope de memoria.
 
 ## Arreglos que salieron al probarlo
 
@@ -79,12 +79,30 @@
 
 ## Prueba en la laptop (2026-10-24)
 
-- **Hasta dónde llegó:** con `-Prueba`, `-Url http://localhost:3000` y la carpeta en D:, revisó Git y Chrome y descargó Blender de blender.org (406 MB). El SHA-256 coincidió con el publicado.
-- **Dónde se detuvo:** en la descompresión, por falta de memoria (8 GB, con el servidor de Next.js corriendo).
-- **Queda por correr:** la prueba completa con la descompresión nueva, cuando René la pida. El zip verificado se quedó en la carpeta de la prueba para no descargarlo otra vez.
-- **Ya se probó aparte:**
-  - el render de las dos escenas con `croquis_render.py` en EEVEE, a 960×540;
-  - las escenas exportadas en alta.
+René pidió correrla completa con `-Prueba` antes de que el colaborador use el botón, sin pasar del 70 % de la RAM. La laptop ya estaba en 70 % antes de empezar (Claude Code, servicios del sistema, Defender y Edge), así que René fijó el límite en 85 %.
+
+1. **Primera corrida** (`-Prueba`, en producción, `-LimiteRam 85`):
+   - **Bien:**
+     - Git y Chrome;
+     - el SHA-256 del zip;
+     - la descompresión con `tar.exe` (8 s);
+     - los datos de la máquina;
+     - el push.
+   - **Detenidos por el vigilante de RAM:**
+     - los dos renders, en 86 y 87 % (EEVEE en la tarjeta integrada toma su memoria de la RAM);
+     - la medición en alta, en 96 %.
+   - **Dos fallas del script, que se arreglaron:**
+     - **No volvía a la rama de antes:** la bitácora se seguía escribiendo después del commit y Git no podía cambiar de rama con ese archivo modificado; el repositorio se quedaba en `resultados/prueba-…`. Ahora el commit se arma con un índice temporal (`GIT_INDEX_FILE`) y se sube directo a `refs/heads/<rama>`: la copia de trabajo y la rama del repositorio no cambian nunca.
+     - **Subía videos a medias** (48 bytes) cuando el render se detenía. Ahora un render que falla borra su video.
+   - **El vigilante de RAM** es nuevo:
+     - cada paso anota su RAM máxima;
+     - si un proceso pasa de `-LimiteRam` (95 % por omisión), se detiene y el paso falla con la causa, sin congelar el equipo;
+     - `maquina.json` guarda la RAM al empezar y la máxima.
+2. **Segunda corrida,** con `-Prueba` en lo más liviano (Cycles en CPU a 320×180 y 4 muestras, 0.5 s de cada escena, y medición de 2 s en baja): **los 7 pasos bien, en 1 min 35 s, con RAM entre 65 % y 78 %.**
+   - **Los videos:** 16 cuadros cada uno, con las texturas de los modelos de R10 (22 KB y 18 KB).
+   - **La medición:** en la tarjeta real de la laptop (Intel UHD, `ANGLE … D3D11`), 235 fps en baja. Llegó al tercer intento por tirones del equipo ocupado, como pide el criterio de E6.
+   - **El commit de la rama** tiene como padre el commit actual, y el repositorio se quedó en su rama. La rama de prueba se borró después.
+3. **La e2e de `/medicion?auto=1`** (`medicion-auto.spec.ts`), contra producción con una configuración temporal sin servidor local: pasó en 14 s.
 
 ## Límites
 

@@ -17,16 +17,19 @@
   %LOCALAPPDATA%\CroquisDemo). No pide contraseñas: el push usa las credenciales que Git ya tenga.
 
   Opciones (para probarlo; el colaborador no necesita ninguna):
-    -Prueba       render corto y de baja resolución, medición corta y rama resultados/prueba-<fecha>
+    -Prueba       lo más liviano (render corto a 320×180 en CPU, medición de 2 s en baja) y rama
+                  resultados/prueba-<fecha>: prueba el mecanismo, no la calidad
     -SinSubir     no hace commit ni push
     -Carpeta RUTA la carpeta de trabajo fuera del repositorio
     -Url URL      el sitio donde medir (por omisión, producción)
+    -LimiteRam N  detiene el paso en curso si la RAM usada pasa de N % (por omisión, 95)
 #>
 param(
   [switch]$Prueba,
   [switch]$SinSubir,
   [string]$Carpeta = (Join-Path $env:LOCALAPPDATA "CroquisDemo"),
-  [string]$Url = "https://croquis-sage.vercel.app"
+  [string]$Url = "https://croquis-sage.vercel.app",
+  [int]$LimiteRam = 95
 )
 
 $ErrorActionPreference = "Stop"
@@ -59,9 +62,45 @@ function Escribir([string]$texto, [string]$color = "Gray") {
   Add-Content -Path $Bitacora -Value $texto -Encoding UTF8
 }
 
+# RAM usada del equipo (%), y la máxima de cada paso y de toda la corrida.
+function RamUsada {
+  $os = Get-CimInstance Win32_OperatingSystem
+  return [int][math]::Round(100 * (1 - $os.FreePhysicalMemory / $os.TotalVisibleMemorySize))
+}
+$script:RamPaso = 0
+$script:RamMax = RamUsada
+$RamInicial = $script:RamMax
+
+function AnotarRam {
+  $r = RamUsada
+  if ($r -gt $script:RamPaso) { $script:RamPaso = $r }
+  if ($r -gt $script:RamMax) { $script:RamMax = $r }
+  return $r
+}
+
+# Espera a que termine un proceso midiendo la RAM cada 2 s. Si pasa del límite, lo detiene (con
+# sus procesos hijos) y el paso falla con la causa; los demás pasos siguen.
+function Vigilar([System.Diagnostics.Process]$proceso, [int]$limiteSegundos = 0) {
+  $t0 = Get-Date
+  while (-not $proceso.HasExited) {
+    Start-Sleep -Seconds 2
+    $r = AnotarRam
+    if ($r -gt $LimiteRam) {
+      Nativo "taskkill.exe" @("/PID", "$($proceso.Id)", "/T", "/F") | Out-Null
+      throw "Se detuvo: la RAM llegó a $r % (límite $LimiteRam %)."
+    }
+    if ($limiteSegundos -gt 0 -and ((Get-Date) - $t0).TotalSeconds -gt $limiteSegundos) {
+      Nativo "taskkill.exe" @("/PID", "$($proceso.Id)", "/T", "/F") | Out-Null
+      throw "Se detuvo: pasaron más de $limiteSegundos s."
+    }
+  }
+}
+
 function Paso([string]$nombre, [scriptblock]$accion) {
   Escribir ""
   Escribir "== $nombre" "Cyan"
+  $script:RamPaso = 0
+  [void](AnotarRam)
   $t0 = Get-Date
   $bien = $true
   $nota = ""
@@ -73,9 +112,12 @@ function Paso([string]$nombre, [scriptblock]$accion) {
     $nota = $_.Exception.Message
     Escribir "   No se pudo: $nota" "Red"
   }
+  [void](AnotarRam)
   $seg = [int]((Get-Date) - $t0).TotalSeconds
-  $Pasos.Add([pscustomobject]@{ Paso = $nombre; Bien = $bien; Segundos = $seg; Nota = $nota })
-  if ($bien) { Escribir "   Listo ($seg s). $nota" "Green" }
+  $Pasos.Add([pscustomobject]@{
+      Paso = $nombre; Bien = $bien; Segundos = $seg; RamMaxima = $script:RamPaso; Nota = $nota
+    })
+  if ($bien) { Escribir "   Listo ($seg s, RAM máxima $($script:RamPaso) %). $nota" "Green" }
 }
 
 # Un programa externo (Blender, Git): su salida va a la bitácora o a un archivo y se decide por su
@@ -185,7 +227,8 @@ foreach ($escena in @("axa", "carambola")) {
     if (-not (Test-Path $glb)) { throw "No está la escena $glb (¿se hizo git pull?)." }
     $video = Join-Path $Salida "video-$escena.mp4"
     if ($Prueba) {
-      $opciones = @("--motor", "eevee", "--resolucion", "480x270", "--muestras", "16", "--desde", "0", "--hasta", "1")
+      # Cycles en CPU pide menos memoria que EEVEE en una tarjeta integrada (que la toma de la RAM).
+      $opciones = @("--motor", "cycles", "--resolucion", "320x180", "--muestras", "4", "--desde", "0", "--hasta", "0.5")
     } elseif ($ConGpu) {
       $opciones = @("--motor", "cycles", "--gpu", "--resolucion", "1920x1080", "--muestras", "128")
     } else {
@@ -193,8 +236,19 @@ foreach ($escena in @("axa", "carambola")) {
     }
     $log = Join-Path $Salida "blender-$escena.log"
     $argumentos = @("-b", "--factory-startup", "-P", $ScriptBlender, "--", $glb, "--salida", $video) + $opciones
-    $codigo = Nativo $BlenderExe $argumentos $log
-    if ($codigo -ne 0 -or -not (Test-Path $video)) { throw "Blender terminó con error (ver $log)." }
+    # Cada argumento entre comillas: Start-Process los une con espacios y una ruta puede tenerlos.
+    $citados = $argumentos | ForEach-Object { '"' + $_ + '"' }
+    $p = Start-Process -FilePath $BlenderExe -ArgumentList $citados -NoNewWindow -PassThru `
+      -RedirectStandardOutput $log -RedirectStandardError "$log.err"
+    $null = $p.Handle  # sin esto, PowerShell 5.1 pierde el código de salida
+    try {
+      Vigilar $p
+      $p.WaitForExit()
+      if ($p.ExitCode -ne 0 -or -not (Test-Path $video)) { throw "Blender terminó con error (ver $log)." }
+    } catch {
+      Remove-Item -Force $video -ErrorAction SilentlyContinue  # un video a medias no se sube
+      throw
+    }
     "$([math]::Round((Get-Item $video).Length / 1MB, 1)) MB, $($opciones -join ' ')"
   }
 }
@@ -211,7 +265,7 @@ Paso "Medición del visor en Chrome (E6: alta y ultra)" {
     profile = @{ default_content_setting_values = @{ automatic_downloads = 1 } }
   }
   $url = $UrlMedicion
-  if ($Prueba) { $url += "&escenas=alcance&calidades=alta&renderers=webgl&repeticiones=1&calentamiento=0&segundos=2&pausa=0" }
+  if ($Prueba) { $url += "&escenas=alcance&calidades=baja&renderers=webgl&repeticiones=1&calentamiento=0&segundos=2&pausa=0" }
   $argsChrome = @(
     "--user-data-dir=$perfil", "--no-first-run", "--no-default-browser-check",
     "--start-fullscreen", "--disable-gpu-vsync", "--disable-frame-rate-limit", $url
@@ -221,7 +275,12 @@ Paso "Medición del visor en Chrome (E6: alta y ultra)" {
   $limite = (Get-Date).AddMinutes(150)
   $archivo = $null
   while ((Get-Date) -lt $limite -and -not $archivo) {
-    Start-Sleep -Seconds 10
+    Start-Sleep -Seconds 5
+    $r = AnotarRam
+    if ($r -gt $LimiteRam) {
+      Nativo "taskkill.exe" @("/PID", "$($p.Id)", "/T", "/F") | Out-Null
+      throw "Se detuvo: la RAM llegó a $r % (límite $LimiteRam %)."
+    }
     $archivo = Get-ChildItem -Path $descargas -Filter "e6-navegador-*.json" -ErrorAction SilentlyContinue | Select-Object -First 1
   }
   Start-Sleep -Seconds 3
@@ -255,13 +314,15 @@ Paso "Datos de la máquina" {
 
 $Total = [int]((Get-Date) - $Inicio).TotalSeconds
 $Datos.duracion_total_s = $Total
+$Datos.ram_usada_al_empezar_pct = $RamInicial
+$Datos.ram_usada_maxima_pct = $script:RamMax
+$Datos.limite_ram_pct = $LimiteRam
 $Datos.pasos = $Pasos
 EscribirJson (Join-Path $Salida "maquina.json") $Datos
 
 if (-not $SinSubir) {
   Paso "Subir los resultados a la rama $Rama" {
     if (-not $Git) { throw "No hay Git." }
-    $actual = (& git -C $Repo rev-parse --abbrev-ref HEAD).Trim()
     if ($Rama -eq "main") { throw "La rama no puede ser main." }
     # Los videos de más de 95 MB no caben en GitHub: se quedan en la carpeta y se anota.
     $grandes = Get-ChildItem $Salida -Filter *.mp4 | Where-Object { $_.Length -gt 95MB }
@@ -271,19 +332,30 @@ if (-not $SinSubir) {
     $quien = @()
     if (-not $nombre) { $quien += @("-c", "user.name=Computadora de la demo") }
     if (-not $correo) { $quien += @("-c", "user.email=computadora-demo@croquis.invalid") }
-    if ((Nativo "git" @("-C", $Repo, "switch", "-c", $Rama)) -ne 0) { throw "No se pudo crear la rama $Rama." }
+    # El commit se arma con un índice temporal, a partir del commit actual más los resultados, y
+    # se sube directo a la rama nueva: la copia de trabajo y la rama en la que está el repositorio
+    # no cambian, pase lo que pase.
+    $indice = Join-Path $Carpeta "indice-$Fecha"
+    $env:GIT_INDEX_FILE = $indice
     try {
+      if ((Nativo "git" @("-C", $Repo, "read-tree", "HEAD")) -ne 0) { throw "No se pudo leer el commit actual." }
       $relativa = "resultados/$Tipo/$Fecha"
-      Nativo "git" @("-C", $Repo, "add", "--", $relativa) | Out-Null
-      foreach ($g in $grandes) { Nativo "git" @("-C", $Repo, "reset", "-q", "--", "$relativa/$($g.Name)") | Out-Null }
-      if ((Nativo "git" (@("-C", $Repo) + $quien + @("commit", "-q", "-m", "results: demo computer $Fecha"))) -ne 0) {
-        throw "No se pudo hacer el commit."
+      foreach ($f in Get-ChildItem $Salida -File) {
+        if ($grandes.Name -contains $f.Name) { continue }
+        if ((Nativo "git" @("-C", $Repo, "add", "-f", "--", "$relativa/$($f.Name)")) -ne 0) {
+          throw "No se pudo agregar $($f.Name)."
+        }
       }
-      if ((Nativo "git" @("-C", $Repo, "push", "-u", "origin", $Rama)) -ne 0) {
+      $arbol = (& git -C $Repo write-tree).Trim()
+      $padre = (& git -C $Repo rev-parse HEAD).Trim()
+      $commit = (& git -C $Repo @quien commit-tree $arbol -p $padre -m "results: demo computer $Fecha").Trim()
+      if (-not $commit) { throw "No se pudo hacer el commit." }
+      if ((Nativo "git" @("-C", $Repo, "push", "origin", "$($commit):refs/heads/$Rama")) -ne 0) {
         throw "No se pudo hacer push (¿hay acceso al repositorio?)."
       }
     } finally {
-      Nativo "git" @("-C", $Repo, "switch", $actual) | Out-Null
+      Remove-Item Env:\GIT_INDEX_FILE -ErrorAction SilentlyContinue
+      Remove-Item -Force $indice -ErrorAction SilentlyContinue
     }
     "Rama $Rama en GitHub."
   }
@@ -296,10 +368,10 @@ Escribir "================ Resumen ================" "White"
 foreach ($p in $Pasos) {
   $marca = if ($p.Bien) { "[ok]  " } else { "[FALLÓ]" }
   $color = if ($p.Bien) { "Green" } else { "Red" }
-  Escribir ("{0} {1} — {2} s {3}" -f $marca, $p.Paso, $p.Segundos, $p.Nota) $color
+  Escribir ("{0} {1} — {2} s, RAM máxima {3} % {4}" -f $marca, $p.Paso, $p.Segundos, $p.RamMaxima, $p.Nota) $color
 }
 $fallos = @($Pasos | Where-Object { -not $_.Bien }).Count
-Escribir ("Tiempo total: {0} min {1} s." -f [int][math]::Floor($Total / 60), ($Total % 60)) "White"
+Escribir ("Tiempo total: {0} min {1} s. RAM usada: {2} % al empezar, {3} % como máximo." -f [int][math]::Floor($Total / 60), ($Total % 60), $RamInicial, $script:RamMax) "White"
 if ($fallos -eq 0) {
   Escribir "Todo salió bien. Los resultados están en $Salida y en la rama $Rama de GitHub." "Green"
 } else {

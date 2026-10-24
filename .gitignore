@@ -77,3 +77,6 @@ apps/web/public/pdfjs/
 apps/web/public/blender/
 # Decodificadores de three.js (Draco y Basis, R10): se copian de node_modules en cada build.
 apps/web/public/decodificadores/
+
+# Resultados del botón de la computadora de la demo: el script los sube a su propia rama
+resultados/
