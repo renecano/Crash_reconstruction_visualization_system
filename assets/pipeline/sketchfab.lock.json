@@ -1,0 +1,62 @@
+{
+  "sedan": {
+    "uid": "7fd6e15785fa4aa9bfd6e31eb7c97ba6",
+    "nombre": "Kiri '10",
+    "autor": "Daniel Zhabotinsky",
+    "licencia": "CC-BY 4.0",
+    "url": "https://sketchfab.com/3d-models/7fd6e15785fa4aa9bfd6e31eb7c97ba6",
+    "sha256": "1cde66fff03a2716ffa3492d162e4405ca595b0a0f39681b254bad6f2f493d32",
+    "bytes": 7099356,
+    "caras": 13035
+  },
+  "hatchback": {
+    "uid": "22abe5284d4c4b55920b8462eb24a8c1",
+    "nombre": "Sigil '07",
+    "autor": "Daniel Zhabotinsky",
+    "licencia": "CC-BY 4.0",
+    "url": "https://sketchfab.com/3d-models/22abe5284d4c4b55920b8462eb24a8c1",
+    "sha256": "685d79941d2419b6578f68c65c5bc3c74d7655d64b483c6df73d9d53a5490117",
+    "bytes": 7279948,
+    "caras": 16963
+  },
+  "suv": {
+    "uid": "2866efdfa943484391ef8313768e074d",
+    "nombre": "Urban '10",
+    "autor": "Daniel Zhabotinsky",
+    "licencia": "CC-BY 4.0",
+    "url": "https://sketchfab.com/3d-models/2866efdfa943484391ef8313768e074d",
+    "sha256": "1948a0b6d499ecc51e2a8eb6e833fdca5001e6b2e10144e27e101a8b9845e1d0",
+    "bytes": 7223564,
+    "caras": 16577
+  },
+  "pickup": {
+    "uid": "3b3ac59245c44872b06ad85673be9643",
+    "nombre": "Lightbody '90 MD Pickup",
+    "autor": "Daniel Zhabotinsky",
+    "licencia": "CC-BY 4.0",
+    "url": "https://sketchfab.com/3d-models/3b3ac59245c44872b06ad85673be9643",
+    "sha256": "b0b1e00d9dcd2503eae5be59c2b3b5aab545da325c0d73fe3f28ea97bde7b3c3",
+    "bytes": 8529880,
+    "caras": 27092
+  },
+  "camion": {
+    "uid": "3be03b6a43aa41898c9ca806b8787052",
+    "nombre": "LCT 3000 '07",
+    "autor": "Daniel Zhabotinsky",
+    "licencia": "CC-BY 4.0",
+    "url": "https://sketchfab.com/3d-models/3be03b6a43aa41898c9ca806b8787052",
+    "sha256": "076fb6e9f444f7afa429238ff9227f21adae4799dee62e02bdf1227a847e8ae1",
+    "bytes": 7436200,
+    "caras": 15846
+  },
+  "moto": {
+    "uid": "5bb654aed341477b8878f1e2ffd6fcd2",
+    "nombre": "Enduro bike",
+    "autor": "Zaborchik",
+    "licencia": "CC-BY 4.0",
+    "url": "https://sketchfab.com/3d-models/5bb654aed341477b8878f1e2ffd6fcd2",
+    "sha256": "2bd1f34292bb900160f10d457bfc9b3d9f2c14cdf97f1a1109a75737dfa7109f",
+    "bytes": 2343844,
+    "caras": 42681
+  }
+}

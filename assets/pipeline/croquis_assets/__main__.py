@@ -87,9 +87,13 @@ def main(argv: list[str] | None = None) -> int:
     h.add_argument("action", choices=["download", "build", "check"])
     tx = sub.add_parser("textures", help="Texturas PBR de Poly Haven (CC0) para el entorno")
     tx.add_argument("action", choices=["download", "build", "check"])
+    vh = sub.add_parser("vehicles", help="Vehículos de Sketchfab (CC-BY o CC0) para R10")
+    vh.add_argument("action", choices=["download", "build", "check"])
     args = parser.parse_args(argv)
     if args.group == "textures":
         return _textures(args.action)
+    if args.group == "vehicles":
+        return _vehicles(args.action)
     return {"download": download, "build": build, "check": check}[args.action]()
 
 
@@ -107,6 +111,27 @@ def _textures(action: str) -> int:
         print("Desactualizados: " + ", ".join(bad), file=sys.stderr)
         return 1
     print("Texturas al día.")
+    return 0
+
+
+def _vehicles(action: str) -> int:
+    from croquis_assets import vehicles
+
+    if action == "download":
+        rutas = vehicles.download()
+        print(f"{len(rutas)} modelos descargados y verificados (licencia y SHA-256 del lock)")
+        return 0
+    if action == "build":
+        m = vehicles.build()
+        for clase, c in m["clases"].items():
+            tam = ", ".join(f"{v} {a['bytes'] / 1e6:.2f} MB" for v, a in c["archivos"].items())
+            print(f"{clase}: {c['caras']} caras; {tam}; quitados: {len(c['quitados'])}")
+        return 0
+    errores = vehicles.check()
+    if errores:
+        print("\n".join(errores), file=sys.stderr)
+        return 1
+    print("Vehículos al día.")
     return 0
 
 
