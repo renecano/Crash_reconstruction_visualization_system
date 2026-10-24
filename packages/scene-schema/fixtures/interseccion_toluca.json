@@ -257,6 +257,23 @@
           "un_sentido": true
         },
         {
+          "id_osm": 1363663230,
+          "tipo": "secondary",
+          "puntos": [
+            {
+              "x": 137.344,
+              "y": -3.858
+            },
+            {
+              "x": 224.876,
+              "y": -7.465
+            }
+          ],
+          "nombre": "Calle Benito Juárez Garcia",
+          "carriles": 4,
+          "un_sentido": true
+        },
+        {
           "id_osm": 1363846372,
           "tipo": "secondary",
           "puntos": [

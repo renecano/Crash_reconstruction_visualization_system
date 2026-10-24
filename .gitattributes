@@ -12,3 +12,6 @@
 data/osm/*.overpass.json -text
 # Partición congelada de E5: verificada por SHA-256 (ADR 0032); git no debe tocar los bytes.
 eval/e5/*.json -text
+# Windows los lee con CRLF (cmd y PowerShell 5.1: el botón de la computadora de la demo)
+*.bat text eol=crlf
+*.ps1 text eol=crlf

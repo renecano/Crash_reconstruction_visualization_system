@@ -213,14 +213,14 @@ def hacia_el_sol(ambiente: dict[str, Any]) -> tuple[float, float, float]:
     return (x / n, y / n, z / n)
 
 
-def sigma_niebla(densidad_visor: float) -> float:
-    """Coeficiente de extinción (1/m) con la misma visibilidad que la niebla del visor.
+def factor_niebla(densidad_visor: float, distancia: float) -> float:
+    """Cuánto de la niebla del visor hay a una profundidad: `FogExp2` de three.js, 1 − exp(−(ρz)²).
 
-    El visor usa niebla exponencial cuadrática (`FogExp2`): a la distancia de visibilidad V deja
-    pasar 1/20 de la luz con densidad √(ln 20)/V. Un volumen de Blender atenúa con exp(-σd); para
-    dejar pasar lo mismo a V, σ = ln 20 / V = √(ln 20) · densidad.
+    three la aplica por píxel con la profundidad de la vista y mezcla hacia el color del cielo; el
+    compositor hace lo mismo con la pasada de profundidad (`niebla`). Un volumen homogéneo no puede
+    reproducirla: atenúa como exp(−σz), no con el cuadrado de la distancia.
     """
-    return math.sqrt(math.log(20)) * densidad_visor
+    return 1.0 - math.exp(-((densidad_visor * distancia) ** 2))
 
 
 def origen_de_modelos(opcion: str | None, script: Path, entorno: Mapping[str, str]) -> str:
@@ -318,6 +318,7 @@ def armar(o: Opciones, gltf: dict[str, Any]) -> tuple[int, int]:  # pragma: no c
     materiales_de_modelos(escena, o, gltf)
     ambiente = extras.get("ambiente")
     cielo_y_luz(escena, ambiente if isinstance(ambiente, dict) else None)
+    niebla(escena, ambiente if isinstance(ambiente, dict) else None)
     motor(escena, o)
     leyenda(escena, texto_leyenda(gltf), o.alto)
     salida(escena, o)
@@ -405,12 +406,6 @@ def cielo_y_luz(escena: Any, ambiente: dict[str, Any] | None) -> None:  # pragma
         cielo.sun_rotation = az
         mundo.node_tree.links.new(cielo.outputs["Color"], fondo.inputs["Color"])
         fondo.inputs["Strength"].default_value = 0.25
-    densidad = float(ambiente.get("densidad_niebla", 0.0))
-    if densidad > NIEBLA_MINIMA:
-        vol = nodos.new("ShaderNodeVolumePrincipal")
-        vol.inputs["Density"].default_value = sigma_niebla(densidad)
-        mundo.node_tree.links.new(vol.outputs["Volume"], nodos["World Output"].inputs["Volume"])
-
     luz = bpy.data.lights.new("Sol" if not noche else "Luna", type="SUN")
     luz.energy = 1.6 * float(ambiente["intensidad_luz"])
     luz.angle = math.radians(0.53)
@@ -420,6 +415,53 @@ def cielo_y_luz(escena: Any, ambiente: dict[str, Any] | None) -> None:  # pragma
     escena.collection.objects.link(obj)
     # La lámpara alumbra hacia su −Z: su +Z apunta al sol.
     obj.rotation_euler = Vector(hacia_el_sol(ambiente)).to_track_quat("Z", "Y").to_euler()
+
+
+def niebla(escena: Any, ambiente: dict[str, Any] | None) -> None:  # pragma: no cover
+    """La niebla del visor en el compositor: con la profundidad de cada píxel, mezcla hacia el color
+    del cielo con `factor_niebla`. Como en el visor, el cielo (el fondo) no lleva niebla."""
+    import bpy
+
+    densidad = float((ambiente or {}).get("densidad_niebla", 0.0))
+    if densidad <= NIEBLA_MINIMA:
+        return
+    escena.view_layers[0].use_pass_z = True
+    arbol = bpy.data.node_groups.new("Niebla", "CompositorNodeTree")
+    arbol.interface.new_socket("Image", in_out="OUTPUT", socket_type="NodeSocketColor")
+    escena.compositing_node_group = arbol
+    n, enlaces = arbol.nodes, arbol.links
+    capas = n.new("CompositorNodeRLayers")
+    salida_grupo = n.new("NodeGroupOutput")
+
+    def operacion(tipo: str, a: Any, b: float | None = None) -> Any:
+        m = n.new("ShaderNodeMath")
+        m.operation = tipo
+        enlaces.new(a, m.inputs[0])
+        if b is not None:
+            m.inputs[1].default_value = b
+        return m.outputs[0]
+
+    profundidad = capas.outputs["Depth"]
+    rz = operacion("MULTIPLY", profundidad, densidad)
+    cuadrado = operacion("POWER", rz, 2.0)
+    transmision = operacion("EXPONENT", operacion("MULTIPLY", cuadrado, -1.0))
+    factor = operacion("SUBTRACT", transmision)
+    factor.node.inputs[0].default_value = 1.0
+    enlaces.new(transmision, factor.node.inputs[1])
+    # El cielo no tiene profundidad finita: ahí el factor es 0, como el fondo del visor.
+    geometria = operacion("LESS_THAN", profundidad, 1e6)
+    final = n.new("ShaderNodeMath")
+    final.operation = "MULTIPLY"
+    enlaces.new(factor, final.inputs[0])
+    enlaces.new(geometria, final.inputs[1])
+    mezcla = n.new("ShaderNodeMix")
+    mezcla.data_type = "RGBA"
+    enlaces.new(final.outputs[0], mezcla.inputs["Factor"])
+    enlaces.new(capas.outputs["Image"], mezcla.inputs["A"])
+    noche = bool((ambiente or {}).get("noche"))
+    r, g, b = color_hex(str((ambiente or {}).get("color_cielo", "#18223d" if noche else "#9aa3ad")))
+    mezcla.inputs["B"].default_value = (r, g, b, 1)
+    enlaces.new(mezcla.outputs["Result"], salida_grupo.inputs[0])
 
 
 def motor(escena: Any, o: Opciones) -> None:  # pragma: no cover - en Blender

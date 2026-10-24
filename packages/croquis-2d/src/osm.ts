@@ -197,6 +197,38 @@ export interface RedVialOptions {
   nodoCruce?: number;
 }
 
+/**
+ * La parte de una polilínea dentro del círculo de radio r alrededor del origen, en un solo tramo:
+ * los puntos donde entra y sale y los vértices de en medio. Para las calles que cruzan el círculo
+ * sin tener dos vértices dentro (una carretera recta, con vértices a cientos de metros).
+ */
+export function recorteEnCirculo(pts: readonly Point[], r: number): Point[] {
+  const out: Point[] = [];
+  const push = (p: Point) => {
+    const u = out[out.length - 1];
+    if (!u || Math.hypot(u.x - p.x, u.y - p.y) > 1e-6) out.push(p);
+  };
+  for (let i = 0; i + 1 < pts.length; i++) {
+    const a = pts[i]!;
+    const b = pts[i + 1]!;
+    const dx = b.x - a.x;
+    const dy = b.y - a.y;
+    // |a + t·(b − a)| = r: t² (d·d) + 2t (a·d) + a·a − r² = 0.
+    const qa = dx * dx + dy * dy;
+    const qb = 2 * (a.x * dx + a.y * dy);
+    const qc = a.x * a.x + a.y * a.y - r * r;
+    const disc = qb * qb - 4 * qa * qc;
+    if (qa === 0 || disc < 0) continue;
+    const raiz = Math.sqrt(disc);
+    const t0 = Math.max(0, (-qb - raiz) / (2 * qa));
+    const t1 = Math.min(1, (-qb + raiz) / (2 * qa));
+    if (t0 > t1) continue;
+    push({ x: a.x + t0 * dx, y: a.y + t0 * dy });
+    push({ x: a.x + t1 * dx, y: a.y + t1 * dy });
+  }
+  return out;
+}
+
 /** Calles de la respuesta, en metros locales, recortadas a 1.5 radios del origen. */
 export function redVialFrom(resp: OverpassResponse, o: RedVialOptions): RedVial {
   const { nodes, ways } = parts(resp);
@@ -212,8 +244,10 @@ export function redVialFrom(resp: OverpassResponse, o: RedVialOptions): RedVial 
     const inside = pts.map((p) => Math.hypot(p.x, p.y) <= maxR);
     const first = inside.indexOf(true);
     const last = inside.lastIndexOf(true);
-    if (first < 0 || last - first < 1) continue;
-    const kept = pts.slice(first, last + 1).map((p) => ({
+    // Sin dos vértices dentro, la calle puede cruzar el círculo de todos modos: se recorta.
+    const tramo = last - first >= 1 ? pts.slice(first, last + 1) : recorteEnCirculo(pts, maxR);
+    if (tramo.length < 2) continue;
+    const kept = tramo.map((p) => ({
       x: Math.round(p.x * 1000) / 1000,
       y: Math.round(p.y * 1000) / 1000,
     }));
