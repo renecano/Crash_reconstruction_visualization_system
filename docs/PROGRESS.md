@@ -354,7 +354,7 @@ Reglas de trabajo: `CLAUDE.md`. Especificación: `PLAN.md`.
          - **Anillo de giro:** atan2 absoluto 1:1, imán de 15° (Shift libre), Q/E ±5°, botones ±15° y 180°, con captura del puntero y `requestAnimationFrame`. El expediente cambia solo al soltar.
          - **Fantasmas:** las poses que propone Croquis quedan como supuesto, punteadas, con «Aceptar» por vehículo.
          - **Guía animada** de 3 pasos la primera vez, con «No volver a mostrar».
-         - **Medición** (`eval/giro-mapa.mjs` → `eval/results/giro_mapa.json`): en la laptop de René, 59.3 cuadros por segundo mientras se gira (meta ≥ 30) y 0.318 ms por actualización del anillo.
+         - **Medición** (`eval/giro-mapa.mjs` → `eval/results/giro_mapa.json`): en la laptop de René, contra producción, 59.9 cuadros por segundo mientras se gira (meta ≥ 30) y 0.281 ms por actualización del anillo.
          - **La e2e del caso nuevo** arrastra V2 de la bandeja, lo gira con el anillo a 90° y acepta el fantasma de V1, todo con el mouse.
       4. **Punto 4, la portada nueva:** hecho (rama `feat/portada-cesvi`).
          - **`/` y `/en`** siguen `docs/cesvi/rediseno/Portada.html` en su orden y con sus textos: el encabezado («Reconstruye el hecho. Defiende el dictamen.»), «El problema», «La prueba» con la tabla de AXA y las cifras, «Cómo funciona», «Nada se inventa / Siempre da lo mismo / La firma es tuya», las preguntas de peritos y el cierre.
@@ -371,6 +371,25 @@ Reglas de trabajo: `CLAUDE.md`. Especificación: `PLAN.md`.
          - **La portada de antes** pasa a `/publico` y `/en/publico`, con liga en el pie.
          - **Un cambio a la maqueta:** su ejemplo «ΔV de V2 15 km/h · 13–20» de «Firma el dictamen» no tiene fuente en el caso. En su lugar va la velocidad por restos de AXA, que sí la tiene.
          - **e2e** (`home.spec.ts`, la de flujo): las cifras contra sus archivos, la tabla y la escena; «Entrar a Croquis» desde la barra, el encabezado y el cierre lleva a `/cesvi`, también en inglés; el pie lleva a `/publico`. Las e2e de la portada de antes ahora abren `/publico`.
+    - **Verificado en producción** (2026-10-24, https://croquis-sage.vercel.app, con Chrome en la laptop de René a 1440×800 y escala 1.5):
+      - **Portada (punto 4):**
+        - el encabezado dice «Reconstruye el hecho. Defiende el dictamen.»;
+        - las cifras son 671, 205 y 58.3 %;
+        - la tabla de AXA da Alcance contra Alcance (coincide), 60.27 contra 60.27 (0.00 %) y 63.15 contra 63.90 (+1.19 %);
+        - el cierre lleva a `/cesvi`;
+        - `/en` está en inglés;
+        - el pie lleva a `/publico`, la portada de antes.
+      - **Preguntas (punto 2),** con la narración de ejemplo (la lectura grabada en lugar del API): 8 preguntas, cada una con su control además de «No sé». El impacto supuesto con sí o no; el tipo de V1 y de V2 con sus siete opciones; la masa y los restos con número; las posiciones finales con «Colocarlo en el mapa».
+      - **Colocar (punto 3):**
+        - la guía sale la primera vez;
+        - X1 arrastrado de la bandeja deja dos fantasmas, y «Aceptar V1» acepta el suyo;
+        - la distancia en vivo dice «a 48.3 m del impacto»;
+        - el anillo deja a V2 en 90°;
+        - giro a 59.9 cuadros por segundo.
+      - **AXA en `/cesvi` (punto 1):**
+        - al soltar V1 y V2 encimados sale «V1 y V2 quedaron encimados en su posición final (3.75 m)», y «Separarlos» lo quita;
+        - el 3D lleva la leyenda de CESVI, las calles de OpenStreetMap y los modelos (Lightbody), en calidad automática media;
+        - en la vista expandida, la caja del paso ya no tapa el texto.
     - **R12a (conductores como agentes) en pausa:**
       - lo hecho está en la rama `feat/r12a-agentes`: el contrato 2.1.0, el módulo de agentes en Python y las escenas de hipótesis;
       - faltan las pruebas, el port TS y la paridad;

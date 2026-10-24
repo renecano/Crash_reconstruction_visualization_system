@@ -1,19 +1,20 @@
 {
   "name": "giro_mapa",
-  "generated_at": "2026-10-24T22:45:16Z",
-  "git_commit": "1a5d539",
+  "generated_at": "2026-10-24T23:18:26Z",
+  "git_commit": "6c94e82",
   "descripcion": "Giro con el anillo en el paso del lugar de /cesvi (caso de AXA): cuadros por segundo de la página mientras se gira con el mouse y trabajo de cada actualización del anillo.",
   "metodo": "Chrome 155.0.8059.85 con ventana visible, 1440×800 a escala 1.5 (la laptop de René), 3 vueltas del mouse alrededor del anillo en 480 movimientos.",
+  "sitio": "https://croquis-sage.vercel.app",
   "equipo": {
     "gpu": "ANGLE (Intel, Intel(R) UHD Graphics (0x00009B41) Direct3D11 vs_5_0 ps_5_0, D3D11)"
   },
   "meta_fps": 30,
   "resultado": {
-    "duracion_giro_s": 8.356,
-    "cuadros_pagina": 504,
-    "fps_pagina": 59.3,
-    "actualizaciones_anillo": 481,
-    "ms_por_actualizacion": 0.318,
+    "duracion_giro_s": 8.054,
+    "cuadros_pagina": 483,
+    "fps_pagina": 59.9,
+    "actualizaciones_anillo": 480,
+    "ms_por_actualizacion": 0.281,
     "cumple": true
   }
 }
