@@ -99,6 +99,7 @@ const doc = {
   descripcion:
     "Giro con el anillo en el paso del lugar de /cesvi (caso de AXA): cuadros por segundo de la página mientras se gira con el mouse y trabajo de cada actualización del anillo.",
   metodo: `Chrome ${chrome} con ventana visible, 1440×800 a escala 1.5 (la laptop de René), ${VUELTAS} vueltas del mouse alrededor del anillo en ${pasos} movimientos.`,
+  sitio: base,
   equipo: { gpu },
   meta_fps: META_FPS,
   resultado: {
