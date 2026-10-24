@@ -74,3 +74,5 @@ solver/tests/data/dmath_ts.json
 
 # Datos generados de la página «Reproducción de dictámenes» (eval/cesvi_r4_reproduccion.mts medir prueba, ADR 0067)
 data/cesvi/r4/pagina.json
+# Escenas de la computadora de la demo, generadas por tools/demo/escena-axa.mts
+demo/escenas-r11/*.json

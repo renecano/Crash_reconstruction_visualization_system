@@ -154,10 +154,13 @@ def test_el_tramo_de_cuadros_sale_de_los_segundos_de_la_reconstruccion() -> None
 
 def test_el_sol_y_la_niebla() -> None:
     assert cr.hacia_el_sol(GLTF["scenes"][0]["extras"]["ambiente"]) == pytest.approx((0, 0.6, 0.8))
-    # Con la niebla del visor para una visibilidad V, el volumen deja pasar 1/20 de la luz a V.
+    # La niebla del visor (FogExp2) para una visibilidad V: a V deja pasar 1/20 de la luz.
     v = 120.0
     densidad = math.sqrt(math.log(20)) / v
-    assert math.exp(-cr.sigma_niebla(densidad) * v) == pytest.approx(1 / 20)
+    assert cr.factor_niebla(densidad, v) == pytest.approx(1 - 1 / 20)
+    assert cr.factor_niebla(densidad, 0.0) == 0.0
+    # Crece con el cuadrado de la distancia: a V/2 hay mucho menos que con una atenuación lineal.
+    assert cr.factor_niebla(densidad, v / 2) == pytest.approx(1 - 20**-0.25)
     assert cr.color_hex("#ffffff") == pytest.approx((1, 1, 1))
     assert cr.color_hex("#000000") == (0, 0, 0)
     assert cr.color_hex("#808080")[0] == pytest.approx(0.2158605, rel=1e-6)

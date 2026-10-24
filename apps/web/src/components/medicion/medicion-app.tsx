@@ -187,9 +187,13 @@ export function MedicionApp() {
   // se lee al montar: con useSearchParams la página entera se dibujaría solo en el navegador y el
   // pie saltaría al aparecer (CLS, PLAN §11.6).
   const [config, setConfig] = useState<ConfigMedicion>(CONFIG_DEMO);
+  // `?auto=1`: empieza sola y descarga el JSON al terminar (el botón de la computadora de la demo).
+  const [auto, setAuto] = useState(false);
   useEffect(() => {
+    const q = new URLSearchParams(window.location.search);
     // eslint-disable-next-line react-hooks/set-state-in-effect -- sincroniza con la URL al montar
-    setConfig(configDesdeUrl(new URLSearchParams(window.location.search)));
+    setConfig(configDesdeUrl(q));
+    setAuto(q.get("auto") === "1");
   }, []);
   const [corriendo, setCorriendo] = useState(false);
   const [estado, setEstado] = useState<{
@@ -315,7 +319,7 @@ export function MedicionApp() {
     };
   }
 
-  async function empezar() {
+  async function empezar(): Promise<Medicion[]> {
     senal.current = { cancelada: false };
     setCancelada(false);
     setMediciones([]);
@@ -349,16 +353,26 @@ export function MedicionApp() {
     setCancelada(senal.current.cancelada);
     setCorriendo(false);
     setEstado(null);
+    return hechas;
   }
 
   const resumen = resumenPorConfig(mediciones);
+  // En modo automático: en cuanto se conoce el equipo, mide y descarga sin que nadie toque nada.
+  const autoIniciada = useRef(false);
+  useEffect(() => {
+    if (!auto || !equipo || autoIniciada.current) return;
+    autoIniciada.current = true;
+    void empezar().then((hechas) => {
+      if (!senal.current.cancelada) descargar(hechas);
+    });
+  });
   const minutos = Math.ceil(
     (planMedicion(config).length *
       (config.calentamiento_s + config.segundos + config.pausa_s + 4)) /
       60,
   );
 
-  function descargar() {
+  function descargar(ms: Medicion[] = mediciones) {
     const doc = {
       version: 1,
       generado_por: "/medicion (apps/web/src/components/medicion/medicion-app.tsx)",
@@ -368,8 +382,8 @@ export function MedicionApp() {
       equipo,
       config,
       meta_fps: META_DEMO_FPS,
-      mediciones,
-      resumen,
+      mediciones: ms,
+      resumen: resumenPorConfig(ms),
     };
     const blob = new Blob([`${JSON.stringify(doc, null, 2)}\n`], { type: "application/json" });
     const url = URL.createObjectURL(blob);
@@ -597,7 +611,7 @@ export function MedicionApp() {
           <button
             type="button"
             className="boton-principal self-start"
-            onClick={descargar}
+            onClick={() => descargar()}
             disabled={corriendo}
             data-testid="medicion-descargar"
           >

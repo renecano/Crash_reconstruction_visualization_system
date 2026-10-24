@@ -10,6 +10,7 @@ import {
   nearestCrossing,
   OSM_ATTRIBUTION,
   overpassQuery,
+  recorteEnCirculo,
   redVialFrom,
   rotateDeg,
   templateFromCrossing,
@@ -84,6 +85,55 @@ describe("OpenStreetMap a red vial (ADR 0023)", () => {
       ...red,
       nodo_cruce: undefined,
     });
+  });
+
+  it("una carretera recta que cruza el círculo sin vértices dentro entra recortada", () => {
+    // Dos vértices a ~2.2 km del origen, uno al sur y otro al norte (sin ninguno en 225 m).
+    const resp: OverpassResponse = {
+      elements: [
+        { type: "node", id: 1, lat: -0.02, lon: 0.0001 },
+        { type: "node", id: 2, lat: 0.02, lon: 0.0001 },
+        { type: "node", id: 3, lat: 0.03, lon: 0.0001 },
+        { type: "way", id: 10, nodes: [1, 2, 3], tags: { highway: "motorway", oneway: "yes" } },
+        // Una que no llega al círculo sigue fuera.
+        { type: "node", id: 4, lat: -0.02, lon: 0.01 },
+        { type: "node", id: 5, lat: 0.02, lon: 0.01 },
+        { type: "way", id: 11, nodes: [4, 5], tags: { highway: "primary" } },
+      ],
+    };
+    const red = redVialFrom(resp, { lat: 0, lon: 0, radioM: 150, rotacionDeg: 0 });
+    expect(red.vias.map((v) => v.id_osm)).toEqual([10]);
+    const [a, b] = red.vias[0]!.puntos;
+    expect(red.vias[0]!.puntos).toHaveLength(2);
+    // Entra y sale por el borde (1.5 radios), de sur a norte, a ~11 m al este del origen.
+    expect(Math.hypot(a!.x, a!.y)).toBeCloseTo(225, 2);
+    expect(Math.hypot(b!.x, b!.y)).toBeCloseTo(225, 2);
+    expect(a!.y).toBeLessThan(0);
+    expect(b!.y).toBeGreaterThan(0);
+    expect(a!.x).toBeCloseTo(11.1, 0);
+    expect(red.vias[0]!.un_sentido).toBe(true);
+  });
+
+  it("el recorte en el círculo junta entrada, vértices de en medio y salida", () => {
+    const pts = [
+      { x: -300, y: 0 },
+      { x: 0, y: 10 },
+      { x: 300, y: 0 },
+    ];
+    const r = recorteEnCirculo(pts, 100);
+    expect(r).toHaveLength(3);
+    expect(Math.hypot(r[0]!.x, r[0]!.y)).toBeCloseTo(100, 6);
+    expect(r[1]).toEqual({ x: 0, y: 10 });
+    expect(Math.hypot(r[2]!.x, r[2]!.y)).toBeCloseTo(100, 6);
+    expect(
+      recorteEnCirculo(
+        [
+          { x: 200, y: 200 },
+          { x: 300, y: 200 },
+        ],
+        100,
+      ),
+    ).toEqual([]);
   });
 
   it("andadores y ciclovías no entran; un nodo ajeno es error", () => {
