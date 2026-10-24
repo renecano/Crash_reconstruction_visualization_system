@@ -53,7 +53,7 @@ export const PREGUNTAS_PARA_CESVI: readonly { tema: string; pregunta: string }[]
   {
     tema: "Energía de deformación",
     pregunta:
-      "Con la fórmula de 4 medidas y los datos impresos (L, A, B, C1–C4) la energía es 225.454 y no 220.1900228. ¿Nos pueden compartir el PDF original o la hoja de cálculo del dictamen, para ver con qué medidas se calculó?",
+      "Con la fórmula de 4 medidas y los datos impresos (L, A, B, C1–C4) la energía es 225.454 y no 220.1900228. ¿Nos pueden compartir el PDF original o la hoja de cálculo del reporte, para ver con qué medidas se calculó?",
   },
   {
     tema: "Unidades de A y B",

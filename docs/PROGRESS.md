@@ -83,6 +83,7 @@ Reglas de trabajo: `CLAUDE.md`. Especificación: `PLAN.md`.
     2. `node demo/video/voz.mjs`: un WAV por segmento y su duración medida (`demo/video/salida/voz.json`). Solo hace falta si cambia el guion.
     3. `node demo/video/grabar.mjs`, con `PLAYWRIGHT_BROWSERS_PATH=D:\dev-cache\ms-playwright`: Chromium completo en headless nuevo, a 1920×1080. Cada segmento espera su voz más 1.3 s de lectura. Escribe `salida/recorrido.webm` y `salida/linea-de-tiempo.json`. Con `CROQUIS_VIDEO_RAPIDO=1` hace un ensayo rápido de las acciones, sin esperas; ese ensayo no sirve para el video.
     4. `node demo/video/montar.mjs`: pone cada voz donde empezó su segmento y escribe el MP4 y el `.srt`.
+    5. `node demo/video/revisar.mjs` (desde el 2026-10-23): tres cuadros por segmento y un mosaico en `salida/revision/`. Revisa el texto en pantalla de cada segmento (`salida/textos.json`, lo anota `grabar.mjs`) y la voz: ningún identificador interno, y «dictamen» solo para lo que produce Croquis. Si encuentra algo, termina con error.
   - **Herramientas instaladas fuera del repositorio** (en D:, porque C: está casi lleno; las rutas se pueden cambiar con variables de entorno, ver `demo/video/comun.mjs`):
     - ffmpeg 9.0.2 essentials en `D:\dev-cache\tools\ffmpeg\` (`CROQUIS_FFMPEG_DIR`);
     - Piper 1.8.0 (piper-tts, en un venv de Python 3.12) en `D:\dev-cache\tools\piper-venv\` (`CROQUIS_PIPER`);
@@ -184,7 +185,28 @@ Reglas de trabajo: `CLAUDE.md`. Especificación: `PLAN.md`.
           - `croquis-paginas` tiene las 16 páginas de la demo y lo visitado;
           - `croquis-estaticos-previos` tiene 18 trozos del despliegue anterior.
         - **Desde esta versión,** el HTML va primero a la red: una sola recarga basta después de cada despliegue.
-    - **Siguiente paso concreto:** lo grande de R10 espera a René («Bloqueado»): la fuente de los modelos de vehículos, la revisión de las capturas y la medición en la computadora de demo.
+    - **El video demo se regrabó el 2026-10-23 sin el 3D** (René: todavía no se le enseña a CESVI), con las fuentes legibles y «Entrar a Croquis», con el comando de siempre (voz Kokoro `ef_dora`).
+      - **Resultado:** 3.96 min y 14.3 MB, en `demo/video/croquis-cesvi-demo.mp4` (fuera de git). Voz: 143.1 s en 19 segmentos; grabación: 240.3 s.
+      - **El guion** (`docs/cesvi/video/guion.md`):
+        - **El paso 4** ya no dice «y su 3D»: la reconstrucción se ve en el mapa, con cada vehículo moviéndose como lo calcula Croquis.
+        - **Una sola frase** cerca del cierre, en su propio segmento (`en-desarrollo`): «La reconstrucción en 3D está en desarrollo».
+        - **El cierre** (voz y pantalla) dice «con su reconstrucción y su dictamen», sin «en 3D». La entrada («El perito narra el hecho. Croquis lo reconstruye.») se queda: la reconstrucción se ve en el mapa.
+      - **La grabación** no abre «Ver la reconstrucción en 3D» ni la pestaña «3D», ni en AXA ni en el caso nuevo.
+      - **Revisión automática** (`revisar.mjs`), de los 19 segmentos, en pantalla y en la voz:
+        - **Vista 3D:** ningún segmento la abre. `grabar.mjs` anota cada clic por segmento y si el 3D estaba a la vista o su pestaña seleccionada (`salida/vistas.json`).
+          - Ningún clic abrió el 3D, y en ningún segmento estuvo a la vista.
+          - Para comprobar que la regla funciona, se le agregó a una copia del registro un clic en `ver-3d` y el 3D a la vista: falla con las dos.
+        - **Identificadores internos:** ninguno, ni las fuentes del contrato con guion bajo ni nada con forma de identificador.
+        - **«dictamen»:** 45 apariciones distintas, todas el dictamen de Croquis: el paso 8, la barra, «Siguiente: el dictamen», la voz del paso 8 y del cierre, y la leyenda «el dictamen es del perito».
+      - **Lo que encontró la grabación anterior:** en el paso 7, la pregunta a CESVI sobre la energía decía «la hoja de cálculo del dictamen», cuando se refiere al reporte de CESVI.
+        - **Arreglo:** ahora dice «del reporte» (`packages/cesvi/src/discrepancia.ts`), y la regla de `revisar.mjs` atrapa ese caso.
+        - **El prompt de lectura del corpus** (`corpus.ts`) sigue diciendo «dictamen» para los reportes. No se ve en pantalla, y cambiarlo invalidaría las respuestas grabadas. Queda en «Endurecimiento pendiente».
+      - **Revisión a ojo:** 57 cuadros (tres por segmento), en tres hojas, más seis cuadros seguidos del tema.
+        - **En los pasos 4 a 8,** la tarjeta del escenario muestra el mapa, y los vehículos se mueven entre cuadros.
+        - **En AXA,** la Tacoma dice «1,431.083 kg · del reporte».
+        - **El tema oscuro** se ve entero hacia los 3.6 s de su segmento.
+        - **En el paso 4 se ven, sin abrirse,** el botón «Ver la reconstrucción en 3D» y la pestaña «3D» del escenario: son parte de la interfaz.
+    - **Siguiente paso concreto:** R11, el video cinematográfico: «Exportar a Blender» y el script de Blender (René, 2026-10-23). R10 sigue bloqueado hasta la cuenta de Sketchfab; R12 va después de R11.
     1. **V2-1, marco:**
        - **la barra:** los nombres de los 8 pasos siempre, «← Casos», la barra de avance arriba y los pasos futuros cerrados hasta completar lo obligatorio;
        - **los botones:** «Siguiente: el hecho →», desactivado y diciendo qué falta (`lib/pasos-caso.ts`, con pruebas);
@@ -1099,6 +1121,10 @@ Reglas de trabajo: `CLAUDE.md`. Especificación: `PLAN.md`.
   - sacar pdfmake, docx y mediabunny de los trozos de SSR.
 
 ### Endurecimiento pendiente
+
+- **El prompt de lectura del corpus** (`packages/cesvi/src/corpus.ts`, `SISTEMA_CORPUS`) llama «dictamen» a los reportes de CESVI.
+  - **Por qué no se cambió:** no se ve en pantalla, y cambiarlo invalida las respuestas grabadas de R0 y R4.
+  - **Cuándo:** con la siguiente regrabación del corpus, que gasta API y hay que pedirla.
 
 Lo que se pospone por el trabajo con CESVI no se borra: queda aquí para después.
 
