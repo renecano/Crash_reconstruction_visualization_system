@@ -390,6 +390,18 @@ Reglas de trabajo: `CLAUDE.md`. Especificación: `PLAN.md`.
         - al soltar V1 y V2 encimados sale «V1 y V2 quedaron encimados en su posición final (3.75 m)», y «Separarlos» lo quita;
         - el 3D lleva la leyenda de CESVI, las calles de OpenStreetMap y los modelos (Lightbody), en calidad automática media;
         - en la vista expandida, la caja del paso ya no tapa el texto.
+    - **Resumen para René (portada v3, 2026-10-25): ya está en la URL principal** (#133, https://croquis-sage.vercel.app).
+      - **Verificado en producción el 2026-10-25:**
+        - `/` y `/en` cargan sin errores de consola;
+        - el video corre: `toma-1.mp4` en escritorio y `toma-1-movil.mp4` en celular;
+        - los tres «Entrar a Croquis» de cada idioma llevan a `/cesvi`;
+        - el pie lleva a `/publico` (`/en/publico` en inglés), que responde.
+      - **Capturas en `docs/cesvi/portada-v3/`:** la portada, «La prueba» y «Cómo funciona», en escritorio (1440 × 900) y en celular (Pixel 7).
+      - **Qué revisar tú:**
+        - las cuatro tomas de fondo: nocturno_lluvia, la carambola, poste y AXA, de noche y con la cámara del daño;
+        - los tres textos ajustados («Lo ubicas en el lugar real», la narración de AXA tal cual, «entra como supuesto y queda marcado»);
+        - los huevos de pascua: escribe «croquis», o da triple clic al logo, o doble clic en 60.27.
+      - **Cuando lleguen los renders de Blender** de la computadora de la demo, sustituyen a estas tomas («Endurecimiento pendiente»).
     - **Portada v3 (2026-10-25, rama `feat/portada-v3`, ADR 0092):** la referencia es `docs/cesvi/rediseno/Portada-v3.html`, copia de la que dejó René en `docs/cesvi/entrante/`.
       - **Qué es:**
         - `components/portada-v3/`, con la estructura, los textos, las tipografías, los colores, las animaciones y los huevos de pascua de la referencia;
@@ -464,8 +476,7 @@ Reglas de trabajo: `CLAUDE.md`. Especificación: `PLAN.md`.
       - faltan las pruebas, el port TS y la paridad;
       - al retomarlo, su contrato sube a 2.2.0, porque el 2.1.0 ya es el del perfil de aplastamiento.
     - **Siguiente paso concreto:**
-      - fusionar la portada v3, verificarla en producción (capturas de escritorio y celular en `docs/cesvi/`) y dejarla en «Resumen para René»;
-      - luego, R12a;
+      - R12a (rama `feat/r12a-agentes`; su contrato sube a 2.2.0);
       - cuando aparezca la rama `resultados/computadora-demo-<fecha>`, integrar los videos de R11 y E6 en alta y ultra («Bloqueado»).
     1. **V2-1, marco:**
        - **la barra:** los nombres de los 8 pasos siempre, «← Casos», la barra de avance arriba y los pasos futuros cerrados hasta completar lo obligatorio;
