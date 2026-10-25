@@ -524,7 +524,7 @@
       "required": ["id", "version_esquema", "idioma", "semilla", "creado"],
       "properties": {
         "id": { "type": "string", "minLength": 8, "maxLength": 64, "pattern": "^[A-Za-z0-9_-]+$" },
-        "version_esquema": { "type": "string", "const": "2.0.0" },
+        "version_esquema": { "type": "string", "const": "2.1.0" },
         "idioma": { "type": "string", "enum": ["es-MX", "en"] },
         "semilla": {
           "type": "integer",
@@ -815,6 +815,10 @@
         "carril": { "$ref": "#/$defs/CampoEntero" },
         "posicion_inicial": { "$ref": "#/$defs/Pose2D" },
         "posicion_final": { "$ref": "#/$defs/Pose2D" },
+        "posicion_final_supuesta": {
+          "type": "boolean",
+          "description": "La posición final es un supuesto a propósito (el reporte no la da; la supone el perito o un método, p. ej. el de los restos): con procedencia «supuesto», entra a la inversión como evidencia blanda, por debajo de lo medido (ADR 0091). Las posiciones que pone la escena por omisión no la llevan."
+        },
         "ocupantes": {
           "type": "array",
           "items": { "$ref": "#/$defs/Id" },
@@ -921,6 +925,38 @@
         "pdof_horas": { "$ref": "#/$defs/CampoAdimensional" }
       }
     },
+    "CampoPerfilAplastamiento": {
+      "type": "object",
+      "description": "Perfil de aplastamiento C1–Cn medido a lo ancho del daño (CRASH3 / McHenry: 2, 4 o 6 medidas, de un extremo al otro). Con él, la energía sale del perfil y no de una profundidad pareja.",
+      "additionalProperties": false,
+      "required": ["valor", "unidad", "fuente", "confianza"],
+      "properties": {
+        "valor": {
+          "type": "array",
+          "items": { "type": "number", "minimum": 0 },
+          "minItems": 2,
+          "maxItems": 6
+        },
+        "unidad": { "type": "string", "enum": ["m", "cm", "mm"] },
+        "fuente": { "$ref": "#/$defs/Fuente" },
+        "confianza": { "$ref": "#/$defs/Confianza" },
+        "evidencia": { "$ref": "#/$defs/ListaEvidencia" },
+        "nota": { "type": "string", "maxLength": 300 }
+      }
+    },
+    "CampoRigidez": {
+      "type": "object",
+      "description": "Coeficientes de rigidez CRASH3 de la cara dañada: A en N/m y B en N/m² (los del reporte del perito, si los da). Sin ellos, el solver usa los de la clase.",
+      "additionalProperties": false,
+      "required": ["a", "b", "fuente", "confianza"],
+      "properties": {
+        "a": { "type": "number", "exclusiveMinimum": 0 },
+        "b": { "type": "number", "exclusiveMinimum": 0 },
+        "fuente": { "$ref": "#/$defs/Fuente" },
+        "confianza": { "$ref": "#/$defs/Confianza" },
+        "nota": { "type": "string", "maxLength": 300 }
+      }
+    },
     "DanoDeclarado": {
       "type": "object",
       "additionalProperties": false,
@@ -934,6 +970,8 @@
         },
         "profundidad_aplastamiento": { "$ref": "#/$defs/CampoLongitud" },
         "ancho_danado": { "$ref": "#/$defs/CampoLongitud" },
+        "perfil_aplastamiento": { "$ref": "#/$defs/CampoPerfilAplastamiento" },
+        "rigidez": { "$ref": "#/$defs/CampoRigidez" },
         "vidrios": { "type": "string", "enum": ["intactos", "estrellados", "rotos"] },
         "bolsas_aire": { "$ref": "#/$defs/CampoBooleano" },
         "piezas_desprendidas": {

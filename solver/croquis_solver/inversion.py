@@ -8,7 +8,10 @@ Dos piezas:
    (bootstrap: A y B salen de la misma pendiente y van juntos). Entre dos vehículos el ΔV sale de la
    energía total y la conservación de momento (velocidad común, como CRASH3); contra un objeto
    rígido, de la velocidad equivalente de barrera con restitución en [0, 0.2]. E3 lo valida contra
-   el EDR de casos reales de CISS.
+   el EDR de casos reales de CISS. Si el daño trae su rigidez A y B (la que escribe el reporte),
+   se usa esa y no la de la clase. Si solo uno de los dos vehículos tiene la deformación medida (un
+   reporte que mide la del que golpea), su energía es una cota inferior de la del choque: el ΔV que
+   implica sola entra como un mínimo, sin inventar la energía del otro (ADR 0091).
 2. **Velocidades y ángulos desde la evidencia.** Las velocidades previas de los vehículos en
    movimiento (y su rumbo inicial cuando nadie lo declaró y hay posiciones finales) se ajustan con
    mínimos cuadrados robustos (SciPy `least_squares`, pérdida `soft_l1`) para que el solver
@@ -19,6 +22,16 @@ Dos piezas:
    límites de búsqueda. El ajuste se repite con entradas perturbadas con semilla (fricción, masas
    y la propia evidencia dentro de su incertidumbre) y devuelve percentiles. Si ni el mejor ajuste
    reproduce algo declarado, eso queda como inconsistencia (ver `consistency`).
+3. **Lo medido pesa más que lo supuesto (ADR 0091).** Tres niveles, con un solo factor global
+   (`PRIORIDAD`), nunca por caso:
+   - la deformación medida es una restricción: su ΔV no cuesta nada dentro de su banda p10–p90
+     (en un mínimo, desde p10) y fuera de ella pesa `PRIORIDAD` veces su σ;
+   - lo declarado (relato o persona usuaria) es dato, con su σ;
+   - un reposo supuesto a propósito (`posicion_final_supuesta`: el perito o el método lo suponen,
+     el reporte no lo da) es evidencia blanda, con `PRIORIDAD` veces la σ de uno declarado. Los
+     reposos que pone la escena por omisión no entran.
+   Si con la deformación el reposo supuesto queda lejos, la hipótesis contraria («cuadra con el
+   reposo supuesto», `assumed_as_data`) se calcula aparte y el perito elige.
 """
 
 from __future__ import annotations
@@ -29,13 +42,19 @@ import math
 import random
 import statistics
 from collections.abc import Sequence
-from dataclasses import dataclass, field
+from dataclasses import dataclass, field, replace
 from functools import cache
 from pathlib import Path
 from typing import Any
 
 from croquis_solver import dmath, friction, linalg
-from croquis_solver.crash3 import crush_energy, delta_v_barrier, delta_v_pair, uniform_crush_energy
+from croquis_solver.crash3 import (
+    Stiffness,
+    crush_energy,
+    delta_v_barrier,
+    delta_v_pair,
+    uniform_crush_energy,
+)
 from croquis_solver.lsq import least_squares_soft_l1
 from croquis_solver.stiffness import sample_stiffness, stiffness_for, zona_from_cdc_side
 
@@ -44,6 +63,13 @@ KMH = 3.6
 MASS_SPREAD = 0.05  # ±5 % de masa (ocupantes y carga no medidos; supuesto)
 RESTITUTION_RIGID = (0.0, 0.2)  # barrera rígida: rango de la literatura usado en E2
 SIGMA_POSITION_M = 1.0  # incertidumbre de una posición final declarada (supuesto)
+# Factor entre niveles de evidencia (ADR 0091): la deformación medida, restricción, pesa PRIORIDAD
+# veces su σ fuera de su banda; un reposo supuesto tiene PRIORIDAD veces la σ de uno declarado
+# (±10 m en lugar de ±1 m). Global, no por caso.
+PRIORIDAD = 10.0
+# Un reposo supuesto a más de esto del de la reconstrucción con la deformación (el mismo umbral de
+# `reposo_inalcanzable`, 3 σ de una posición declarada) no cabe con ella: hay dos hipótesis.
+ASSUMED_REST_MISS_M = 3.0 * SIGMA_POSITION_M
 SIGMA_THROW_M = 1.5  # incertidumbre de una distancia de proyección declarada (supuesto)
 # Incertidumbre del largo de unas marcas de después del impacto (supuesto, como la proyección: un
 # largo que da el relato, no una medición con cinta).
@@ -78,6 +104,8 @@ class Damage:
     pdof_deg: float
     perfil_m: tuple[float, ...]  # perfil C1–Cn (n ≥ 2) o una sola profundidad uniforme
     ancho_m: float
+    # Rigidez A (N/m) y B (N/m²) declarada (la del reporte); None: la de la clase, muestreada.
+    rigidez: tuple[float, float] | None = None
 
 
 def pdof_offset(plano: str, pdof_deg: float) -> float:
@@ -88,8 +116,6 @@ def pdof_offset(plano: str, pdof_deg: float) -> float:
 
 
 def _energy(d: Damage, a: float, b: float) -> float:
-    from croquis_solver.crash3 import Stiffness
-
     k = Stiffness(a, b)
     off = pdof_offset(d.plano, d.pdof_deg)
     profile = list(d.perfil_m)
@@ -131,31 +157,42 @@ def distribution(values: Sequence[float]) -> Distribution:
     return Distribution(q[0], statistics.median(vals), q[-1], len(vals))
 
 
+def _stiffness_samples(d: Damage, rng: dmath.Random, n: int) -> list[Stiffness]:
+    """La rigidez declarada (la del reporte) en cada muestra, o la de la clase muestreada."""
+    if d.rigidez is not None:
+        return [Stiffness(d.rigidez[0], d.rigidez[1])] * n
+    return sample_stiffness(stiffness_for(d.clase, zona_from_cdc_side(d.plano)), rng, n)
+
+
+def damage_sigma(dist: Distribution) -> float:
+    """σ (km/h) del residuo de un ΔV por daño: p10–p90 de una normal ≈ 2.563 σ, al menos 1."""
+    return max((dist.p90 - dist.p10) / 2.563, 1.0)
+
+
 def delta_v_from_damage(
     own: Damage,
     other: Damage | None = None,
     *,
     rigid: bool = False,
+    other_mass_kg: float | None = None,
     seed: int = 0,
     n: int = 200,
     sigma: float | None = None,
 ) -> Distribution:
     """ΔV (km/h) del vehículo `own` a partir del daño medido, con su distribución.
 
-    `other` es el daño del otro vehículo (impacto entre dos); `rigid=True`, objeto rígido.
-    `sigma` es el error del modelo en log ΔV (por omisión, el calibrado con CISS dev).
+    `other` es el daño del otro vehículo (impacto entre dos); `rigid=True`, objeto rígido. Con
+    `other_mass_kg` y sin `other`, el otro no tiene la deformación medida: el ΔV sale solo de la
+    energía de `own`, así que es un mínimo (la del otro solo lo subiría). `sigma` es el error del
+    modelo en log ΔV (por omisión, el calibrado con CISS dev).
     """
     s_model = model_sigma() if sigma is None else sigma
-    if other is None and not rigid:
-        msg = "Entre dos vehículos hace falta el daño del otro (o usa rigid=True)"
+    if other is None and not rigid and other_mass_kg is None:
+        msg = "Entre dos vehículos hace falta el daño o la masa del otro (o usa rigid=True)"
         raise ValueError(msg)
     rng = dmath.Random(seed)
-    own_k = sample_stiffness(stiffness_for(own.clase, zona_from_cdc_side(own.plano)), rng, n)
-    oth_k = (
-        sample_stiffness(stiffness_for(other.clase, zona_from_cdc_side(other.plano)), rng, n)
-        if other is not None
-        else []
-    )
+    own_k = _stiffness_samples(own, rng, n)
+    oth_k = _stiffness_samples(other, rng, n) if other is not None else []
     out: list[float] = []
     for i in range(n):
         m1 = own.masa_kg * rng.uniform(1 - MASS_SPREAD, 1 + MASS_SPREAD)
@@ -164,6 +201,9 @@ def delta_v_from_damage(
             m2 = other.masa_kg * rng.uniform(1 - MASS_SPREAD, 1 + MASS_SPREAD)
             e2 = _energy(other, oth_k[i].a, oth_k[i].b)
             dv = delta_v_pair(e1 + e2, m1, m2)[0]
+        elif other_mass_kg is not None:
+            m2 = other_mass_kg * rng.uniform(1 - MASS_SPREAD, 1 + MASS_SPREAD)
+            dv = delta_v_pair(e1, m1, m2)[0]
         else:
             dv = delta_v_barrier(e1, m1, rng.uniform(*RESTITUTION_RIGID))
         if s_model > 0:
@@ -217,9 +257,32 @@ class Evidence:
     skid: dict[str, float] = field(default_factory=_no_floats)  # vehículo → marcas de frenado (m)
     # vehículo → largo de las marcas de después del impacto (m): lo que se desliza hasta el reposo.
     slide: dict[str, float] = field(default_factory=_no_floats)
+    # vehículo → ΔV mínimo que implica su daño cuando el otro vehículo no tiene el suyo medido.
+    damage_min: dict[str, Distribution] = field(default_factory=lambda: dict[str, Distribution]())
+    # vehículo → posición y rumbo finales supuestos a propósito (evidencia blanda, ADR 0091).
+    rest_assumed: dict[str, tuple[float, float]] = field(
+        default_factory=lambda: dict[str, tuple[float, float]]()
+    )
+    heading_assumed: dict[str, float] = field(default_factory=_no_floats)
+    # La hipótesis «cuadra con el reposo supuesto»: el supuesto pesa como dato y el daño, sin
+    # prioridad.
+    assumed_as_data: bool = False
 
     def empty(self) -> bool:
-        return not (self.rest or self.throw or self.damage_dv or self.rest_heading or self.slide)
+        return not (
+            self.rest
+            or self.throw
+            or self.damage_dv
+            or self.damage_min
+            or self.rest_heading
+            or self.slide
+            or self.rest_assumed
+        )
+
+    def weight(self) -> float:
+        """Cuánto más incierto es un reposo supuesto que uno declarado (y cuánto pesa la
+        restricción del daño): `PRIORIDAD`, o 1 en la hipótesis del reposo supuesto."""
+        return 1.0 if self.assumed_as_data else PRIORIDAD
 
     def labels(self) -> list[str]:
         """Evidencia usada, en orden fijo (para el resultado y el visor)."""
@@ -230,6 +293,9 @@ class Evidence:
             + [f"marcas_despues:{k}" for k in sorted(self.slide)]
             + [f"proyeccion:{k}" for k in sorted(self.throw)]
             + [f"dano:{k}" for k in sorted(self.damage_dv)]
+            + [f"dano_minimo:{k}" for k in sorted(self.damage_min)]
+            + [f"reposo_supuesto:{k}" for k in sorted(self.rest_assumed)]
+            + [f"rumbo_final_supuesto:{k}" for k in sorted(self.heading_assumed)]
         )
 
 
@@ -244,12 +310,18 @@ def evidence_from_spec(spec: JsonObj, seed: int = 0, n_damage: int = 200) -> Evi
     """Evidencia declarada de la escena (solo lo que dice el relato o la persona usuaria)."""
     rest: dict[str, tuple[float, float]] = {}
     rest_heading: dict[str, float] = {}
+    rest_assumed: dict[str, tuple[float, float]] = {}
+    heading_assumed: dict[str, float] = {}
     for v in spec["vehiculos"]:
         pf: JsonObj | None = v.get("posicion_final")
         if _stated_pose(pf) and pf is not None:
             rest[v["id"]] = (float(pf["x"]), float(pf["y"]))
             if pf.get("rumbo_deg") is not None:
                 rest_heading[v["id"]] = float(pf["rumbo_deg"])
+        elif pf is not None and v.get("posicion_final_supuesta") is True:
+            rest_assumed[v["id"]] = (float(pf["x"]), float(pf["y"]))
+            if pf.get("rumbo_deg") is not None:
+                heading_assumed[v["id"]] = float(pf["rumbo_deg"])
     throw: dict[str, float] = {}
     skid: dict[str, float] = {}
     slide: dict[str, float] = {}
@@ -288,6 +360,14 @@ def evidence_from_spec(spec: JsonObj, seed: int = 0, n_damage: int = 200) -> Evi
         for d in spec.get("danos_declarados", [])
         if _stated(d.get("profundidad_aplastamiento")) and _stated(d.get("ancho_danado"))
     ]
+    eventos: list[JsonObj] = spec.get("eventos", [])
+    event: JsonObj | None = next((e for e in eventos if str(e["tipo"]).startswith("impacto")), None)
+    # La cara con que tocó cada vehículo en el primer impacto (su CDC), si se dice.
+    zonas: list[JsonObj] = event.get("zonas_impacto", []) if event is not None else []
+    contacto: dict[str, str] = {}
+    for z in zonas:
+        cdc: JsonObj = z.get("cdc") or {}
+        contacto[str(z["vehiculo_id"])] = str(cdc.get("lado", ""))
     dmg: dict[str, Damage] = {}
     for d in declared:
         v = by_id.get(d["vehiculo_id"])
@@ -296,16 +376,29 @@ def evidence_from_spec(spec: JsonObj, seed: int = 0, n_damage: int = 200) -> Evi
         lado = str(d["zona"].get("lado", "F"))
         if lado not in ("F", "B", "L", "R"):
             continue
+        # Con varios daños medidos, el de la cara del contacto; si no se sabe, el primero.
+        previo = dmg.get(v["id"])
+        if previo is not None and (
+            previo.plano == contacto.get(v["id"]) or lado != contacto.get(v["id"])
+        ):
+            continue
         masa = float(v["masa"]["valor"]) if v.get("masa") else _class_mass(str(v["clase"]["valor"]))
+        perfil = d.get("perfil_aplastamiento")
+        rig = d.get("rigidez")
         dmg[v["id"]] = Damage(
             clase=str(v["clase"]["valor"]),
             masa_kg=masa,
             plano=lado,
             pdof_deg={"F": 0.0, "R": 90.0, "B": 180.0, "L": 270.0}[lado],
-            perfil_m=(_len_m(d["profundidad_aplastamiento"]),),
+            perfil_m=(
+                tuple(_len_m({"valor": c, "unidad": perfil["unidad"]}) for c in perfil["valor"])
+                if _stated(perfil)
+                else (_len_m(d["profundidad_aplastamiento"]),)
+            ),
             ancho_m=_len_m(d["ancho_danado"]),
+            rigidez=(float(rig["a"]), float(rig["b"])) if _stated(rig) else None,
         )
-    event = next((e for e in spec.get("eventos", []) if str(e["tipo"]).startswith("impacto")), None)
+    damage_min: dict[str, Distribution] = {}
     if event is not None:
         actors = [a for a in event.get("actores", []) if a in by_id]
         rigid = event["tipo"] == "impacto_vehiculo_objeto"
@@ -317,10 +410,27 @@ def evidence_from_spec(spec: JsonObj, seed: int = 0, n_damage: int = 200) -> Evi
                     dmg[vid], rigid=True, seed=seed + k, n=n_damage
                 )
             else:
-                other = next((dmg[o] for o in actors if o != vid and o in dmg), None)
-                if other is not None:
-                    damage_dv[vid] = delta_v_from_damage(dmg[vid], other, seed=seed + k, n=n_damage)
-    return Evidence(rest, throw, damage_dv, rest_heading, skid, slide)
+                otro_id = next((o for o in actors if o != vid), None)
+                if otro_id is None:
+                    continue
+                if otro_id in dmg:
+                    damage_dv[vid] = delta_v_from_damage(
+                        dmg[vid], dmg[otro_id], seed=seed + k, n=n_damage
+                    )
+                else:
+                    # El otro sin su deformación medida: la energía de este es una cota inferior.
+                    o = by_id[otro_id]
+                    masa_o = (
+                        float(o["masa"]["valor"])
+                        if o.get("masa")
+                        else _class_mass(str(o["clase"]["valor"]))
+                    )
+                    damage_min[vid] = delta_v_from_damage(
+                        dmg[vid], other_mass_kg=masa_o, seed=seed + k, n=n_damage
+                    )
+    return Evidence(
+        rest, throw, damage_dv, rest_heading, skid, slide, damage_min, rest_assumed, heading_assumed
+    )
 
 
 def _class_mass(clase: str) -> float:
@@ -446,7 +556,11 @@ class Fit:
 
 
 def _residuals(
-    spec: JsonObj, ev: Evidence, dt: float, downed_mu: float | None = None
+    spec: JsonObj,
+    ev: Evidence,
+    dt: float,
+    downed_mu: float | None = None,
+    active: dict[str, float] | None = None,
 ) -> dict[str, float] | None:
     from croquis_solver.reconstruct import reconstruct
 
@@ -478,13 +592,63 @@ def _residuals(
         if v is None:
             continue
         out[f"marcas_despues:{vid}"] = (v.distance_post_m - d) / SIGMA_SLIDE_M
+    w = ev.weight()
     for vid, dist in sorted(ev.damage_dv.items()):
         v = by_v.get(vid)
         if v is None:
             continue
-        sigma = max((dist.p90 - dist.p10) / 2.563, 1.0)  # p10–p90 de una normal ≈ 2.563 σ
-        out[f"dano:{vid}"] = (v.delta_v_kmh - dist.p50) / sigma
+        name = f"dano:{vid}"
+        out[name] = damage_band(v.delta_v_kmh, dist, w, edge=(active or {}).get(name))
+    for vid, dist in sorted(ev.damage_min.items()):
+        v = by_v.get(vid)
+        if v is None:
+            continue
+        # Un mínimo: solo cuenta si la reconstrucción queda por debajo de su p10.
+        name = f"dano_minimo:{vid}"
+        out[name] = damage_band(v.delta_v_kmh, dist, w, minimum=True, edge=(active or {}).get(name))
+    for vid, (x, y) in sorted(ev.rest_assumed.items()):
+        v = by_v.get(vid)
+        if v is None:
+            continue
+        out[f"reposo_supuesto:{vid}:x"] = (v.rest_pose[0] - x) / (SIGMA_POSITION_M * w)
+        out[f"reposo_supuesto:{vid}:y"] = (v.rest_pose[1] - y) / (SIGMA_POSITION_M * w)
+    for vid, h in sorted(ev.heading_assumed.items()):
+        v = by_v.get(vid)
+        if v is None:
+            continue
+        out[f"rumbo_final_supuesto:{vid}"] = _wrap_deg(v.rest_pose[2] - h) / (SIGMA_HEADING_DEG * w)
     return out
+
+
+def damage_band(
+    dv: float, dist: Distribution, w: float, *, minimum: bool = False, edge: float | None = None
+) -> float:
+    """Residuo del ΔV de la reconstrucción contra el que implica la deformación medida: cero dentro
+    de la banda p10–p90 (en un mínimo, desde p10); fuera, la distancia al borde en σ por `w`.
+
+    Con `edge` (el signo del lado que el mejor ajuste viola), la restricción está activa y es
+    localmente una igualdad: la distancia a ese borde, sin el recorte de la banda (para el
+    jacobiano, que si no se sale de la banda con el paso y la ve plana)."""
+    if edge is not None:
+        return (dv - (dist.p10 if edge < 0 else dist.p90)) / damage_sigma(dist) * w
+    if dv < dist.p10:
+        return (dv - dist.p10) / damage_sigma(dist) * w
+    if not minimum and dv > dist.p90:
+        return (dv - dist.p90) / damage_sigma(dist) * w
+    return 0.0
+
+
+def assumed_rest_miss(ev: Evidence, fit: Fit) -> dict[str, float]:
+    """Vehículo → a cuántos metros de su reposo supuesto lo deja el ajuste."""
+    s = SIGMA_POSITION_M * ev.weight()
+    return {
+        vid: dmath.hypot(
+            fit.residuals.get(f"reposo_supuesto:{vid}:x", 0.0),
+            fit.residuals.get(f"reposo_supuesto:{vid}:y", 0.0),
+        )
+        * s
+        for vid in sorted(ev.rest_assumed)
+    }
 
 
 class _Problem:
@@ -504,6 +668,7 @@ class _Problem:
         self.downed_mu = downed_mu
         self.names: list[str] = []
         self._cache: dict[tuple[float, ...], list[float]] = {}
+        self.active: dict[str, float] = {}
 
     def values(self, x: Sequence[float]) -> dict[str, float]:
         out = dict(self.fixed)
@@ -511,7 +676,18 @@ class _Problem:
         return out
 
     def raw(self, x: Sequence[float]) -> dict[str, float] | None:
-        return _residuals(apply_values(self.spec, self.values(x)), self.ev, self.dt, self.downed_mu)
+        return _residuals(
+            apply_values(self.spec, self.values(x)), self.ev, self.dt, self.downed_mu, self.active
+        )
+
+    def activate(self, x: Sequence[float]) -> None:
+        """Las restricciones del daño que el ajuste en `x` viola quedan activas (igualdades) para
+        el jacobiano en ese punto."""
+        res = self.raw(x) or {}
+        self.active = {
+            k: r for k, r in res.items() if k.startswith(("dano:", "dano_minimo:")) and r != 0.0
+        }
+        self._cache.clear()
 
     def __call__(self, x: Sequence[float]) -> list[float]:
         key = tuple(round(float(v), 9) for v in x)
@@ -607,6 +783,7 @@ def local_sigma(spec: JsonObj, ev: Evidence, fit: Fit, *, dt: float = 0.1) -> di
         return {}
     prob = _Problem(base, ev, params, {}, dt)
     x = [min(max(fit.values.get(p.name, p.start), p.lo), p.hi) for p in params]
+    prob.activate(x)
     j = prob.jac(x)
     if not j or not prob.names:
         return {p.name: math.inf for p in params}
@@ -712,10 +889,33 @@ def perturbed(spec: JsonObj, ev: Evidence, rng: random.Random) -> Perturbed:
     for k, d in ev.damage_dv.items():
         shift = rng.gauss(0, (d.p90 - d.p10) / 2.563)
         damage[k] = Distribution(d.p10 + shift, d.p50 + shift, d.p90 + shift, d.muestras)
+    damage_min: dict[str, Distribution] = {}
+    for k, d in ev.damage_min.items():
+        shift = rng.gauss(0, (d.p90 - d.p10) / 2.563)
+        damage_min[k] = Distribution(d.p10 + shift, d.p50 + shift, d.p90 + shift, d.muestras)
     slide = {k: max(0.5, d + rng.gauss(0, SIGMA_SLIDE_M)) for k, d in ev.slide.items()}
+    s_pos = SIGMA_POSITION_M * ev.weight()
+    rest_assumed = {
+        k: (x + rng.gauss(0, s_pos), y + rng.gauss(0, s_pos))
+        for k, (x, y) in ev.rest_assumed.items()
+    }
+    heading_assumed = {
+        k: h + rng.gauss(0, SIGMA_HEADING_DEG * ev.weight()) for k, h in ev.heading_assumed.items()
+    }
     # Las marcas de frenado se miden con cinta: se toman tal cual (su incertidumbre entra por la
     # fricción).
-    e = Evidence(rest, throw, damage, heading, dict(ev.skid), slide)
+    e = Evidence(
+        rest,
+        throw,
+        damage,
+        heading,
+        dict(ev.skid),
+        slide,
+        damage_min,
+        rest_assumed,
+        heading_assumed,
+        ev.assumed_as_data,
+    )
     downed_mu: float | None = None
     if any(str(v["clase"]["valor"]) in friction.DOWNED_SLIDE_CLASSES for v in s["vehiculos"]):
         md = friction.downed_motorcycle_friction(lugar["superficie"]["valor"])
@@ -768,6 +968,8 @@ class Inversion:
     impact_speeds: dict[str, Distribution]
     fits: list[Fit] = field(default_factory=_no_fits)
     seed: int = 0
+    assumed_as_data: bool = False  # la hipótesis «cuadra con el reposo supuesto» (ADR 0091)
+    full: Fit | None = None  # el ajuste conjunto con todo libre, si algo no quedó fijado
 
     @property
     def speeds(self) -> dict[str, Distribution]:
@@ -791,21 +993,83 @@ class Inversion:
                 {"nombre": k, "sigma": round(v, 3)} for k, v in sorted(self.best.residuals.items())
             ],
             "convergio": self.best.success,
+            **(
+                {
+                    "ajuste_completo": {
+                        "valores": [
+                            {"nombre": k, "valor": round(v, 2)}
+                            for k, v in sorted(self.full.values.items())
+                        ],
+                        "residuos": [
+                            {"nombre": k, "sigma": round(v, 3)}
+                            for k, v in sorted(self.full.residuals.items())
+                        ],
+                    }
+                }
+                if self.full is not None
+                else {}
+            ),
         }
 
 
+def damage_starts(spec: JsonObj, ev: Evidence, params: list[Param]) -> list[dict[str, float]]:
+    """Arranques compatibles con la deformación medida (ADR 0091).
+
+    Lejos de ella, el ΔV de la reconstrucción casi no cambia con las velocidades y el ajuste se
+    queda donde arranca. Por cada daño medido entre dos vehículos se arranca con la velocidad de
+    cierre que implica la mediana de su ΔV (momento: ΔV₁ = cierre·m₂/(m₁ + m₂)), con cada uno de
+    los dos como el que alcanza; el ajuste se queda con el arranque de menor costo.
+    """
+    starts: list[dict[str, float]] = []
+    eventos: list[JsonObj] = spec.get("eventos", [])
+    event = next((e for e in eventos if str(e["tipo"]) == "impacto_vehiculo_vehiculo"), None)
+    if event is None:
+        return starts
+    by_id = {v["id"]: v for v in spec["vehiculos"]}
+    first = {p.name: p.start for p in params}
+
+    def mass(vid: str) -> float:
+        v = by_id[vid]
+        return float(v["masa"]["valor"]) if v.get("masa") else _class_mass(str(v["clase"]["valor"]))
+
+    actors = [a for a in event.get("actores", []) if a in by_id]
+    for vid, dist in sorted((ev.damage_dv | ev.damage_min).items()):
+        other = next((o for o in actors if o != vid), None)
+        if other is None or vid not in actors:
+            continue
+        closing = dist.p50 * (mass(vid) + mass(other)) / mass(other)
+        for a, b in ((vid, other), (other, vid)):
+            ka, kb = f"velocidad:{a}", f"velocidad:{b}"
+            if ka not in first:
+                continue
+            speed = first.get(kb, 0.0) + closing
+            starts.append({ka: min(speed, SPEED_BOUNDS_KMH[1] - 1)})
+    return starts
+
+
 def invert(
-    spec: JsonObj, *, seed: int | None = None, samples: int = 12, dt: float = 0.1
+    spec: JsonObj,
+    *,
+    seed: int | None = None,
+    samples: int = 12,
+    dt: float = 0.1,
+    assumed_as_data: bool = False,
 ) -> Inversion:
     """Velocidades (y rumbos no declarados) que reproducen la evidencia, con percentiles sobre
     `samples` ajustes con entradas perturbadas. Lo que la evidencia no fija se informa así y queda
-    en su valor inicial."""
+    en su valor inicial. Con `assumed_as_data`, la hipótesis «cuadra con el reposo supuesto»."""
     from croquis_solver.reconstruct import reconstruct
 
     seed = int(spec["meta"]["semilla"]) if seed is None else seed
     ev = evidence_from_spec(spec, seed=seed)
+    if assumed_as_data:
+        ev = replace(ev, assumed_as_data=True)
     params = parameters(with_marks(spec, ev), ev)
     best = fit_evidence(spec, ev, dt=dt)
+    for start in damage_starts(spec, ev, params):
+        f = fit_evidence(spec, ev, dt=dt, start=start)
+        if f.cost < best.cost:
+            best = f
     sigma = (
         local_sigma(spec, ev, best, dt=dt)
         if not ev.empty()
@@ -813,6 +1077,9 @@ def invert(
     )
     ident = {p.name: sigma.get(p.name, math.inf) <= IDENT_MAX[p.kind] for p in params}
     free = {n for n, ok in ident.items() if ok}
+    # El ajuste conjunto, con todo libre: si algo no queda fijado, se guarda (es la reconstrucción
+    # que mejor cumple la evidencia, aunque no la fije; ADR 0091).
+    full = best if not ev.empty() and len(free) < len(params) else None
     if free and len(free) < len(params):
         # Lo que la evidencia no fija vuelve a su valor inicial y se reajusta lo demás.
         start = {p.name: (best.values[p.name] if p.name in free else p.start) for p in params}
@@ -823,11 +1090,11 @@ def invert(
     free_params = [p for p in params if p.name in free]
     x_best = [best.values[p.name] for p in free_params]
     fixed = {n: v for n, v in best.values.items() if n not in free}
-    j_best = (
-        _Problem(with_marks(spec, ev), ev, free_params, fixed, dt).jac(x_best)
-        if free_params
-        else []
-    )
+    j_best: list[list[float]] = []
+    if free_params:
+        prob_best = _Problem(with_marks(spec, ev), ev, free_params, fixed, dt)
+        prob_best.activate(x_best)
+        j_best = prob_best.jac(x_best)
     for _ in range(samples if free_params else 0):
         pert = perturbed(spec, ev, rng)
         s, e, dmu = pert.spec, pert.evidence, pert.downed_mu
@@ -860,6 +1127,8 @@ def invert(
         impact_speeds={k: distribution(v) for k, v in impacts.items() if v},
         fits=fits,
         seed=seed,
+        assumed_as_data=assumed_as_data,
+        full=full,
     )
 
 

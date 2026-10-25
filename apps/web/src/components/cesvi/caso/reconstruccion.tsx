@@ -13,6 +13,7 @@ import {
   impactosEnMapa,
   interpretarResultado,
   posicionesEnTiempo,
+  type ContraMetodosCesvi,
   type Expediente,
   type Reconstruccion,
   type VerificacionVehiculo,
@@ -194,6 +195,138 @@ export function TablaVelocidades({ r }: { r: Reconstruccion }) {
   );
 }
 
+const conSigno = (x: number, d: number) => `${x >= 0 ? "+" : "−"}${Math.abs(x).toFixed(d)}`;
+
+/** Una diferencia de velocidad con su valor y su porcentaje («−19.76 km/h (−31.29 %)»). */
+export function diferenciaEnTexto(f: ContraMetodosCesvi["filas"][number]): string {
+  return f.diferenciaKmh === null || f.diferenciaPct === null
+    ? "—"
+    : `${conSigno(f.diferenciaKmh, 2)} km/h (${conSigno(f.diferenciaPct, 2)} %)`;
+}
+
+/**
+ * La reconstrucción contra cada método del reporte de CESVI (ADR 0091): las dos velocidades, la
+ * diferencia con su valor y su porcentaje, y por qué los métodos no miden lo mismo.
+ */
+export function TablaContraCesvi({ contra }: { contra: ContraMetodosCesvi }) {
+  return (
+    <div className="flex flex-col gap-3" data-testid="contra-metodos-cesvi">
+      <h3 className="t-interfaz font-semibold">La reconstrucción contra el reporte de CESVI</h3>
+      <table className="w-full border-collapse text-sm">
+        <thead>
+          <tr className="text-left text-xs text-texto-3">
+            <th className="py-2 font-medium">Método del reporte</th>
+            <th className="py-2 text-right font-medium">CESVI (km/h)</th>
+            <th className="py-2 text-right font-medium">Croquis (km/h)</th>
+            <th className="py-2 text-right font-medium">Diferencia</th>
+          </tr>
+        </thead>
+        <tbody className="cifras">
+          {contra.filas.map((f) => (
+            <tr key={f.metodo} className="border-t border-linea-suave">
+              <td className="py-2 font-sans">
+                {f.metodo} <span className="t-nota">{f.cesviQue}</span>
+              </td>
+              <td className="py-2 text-right">{f.cesviKmh.toFixed(2)}</td>
+              <td className="py-2 text-right">
+                {f.croquisKmh === null ? (
+                  <span className="font-sans text-texto-3">la evidencia no la fija</span>
+                ) : (
+                  f.croquisKmh.toFixed(2)
+                )}
+              </td>
+              <td className="py-2 text-right">{diferenciaEnTexto(f)}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+      {contra.filas.map((f) => (
+        <p key={f.metodo} className="t-nota">
+          <span className="font-semibold">{f.metodo}:</span> {f.porQue}
+        </p>
+      ))}
+      {contra.avisos.map((a) => (
+        <p key={a} className="t-nota text-senal-texto" data-testid="aviso-dano-no-alcanzado">
+          {a}
+        </p>
+      ))}
+    </div>
+  );
+}
+
+/**
+ * Las dos hipótesis cuando un reposo supuesto no cabe con la deformación medida (ADR 0091): cada
+ * una con sus números. El perito elige; Croquis no elige por él.
+ */
+export function ElegirHipotesis({
+  r,
+  elegida,
+  onElegir,
+}: {
+  r: Reconstruccion;
+  elegida: "dano" | "reposo" | null;
+  onElegir: (h: "dano" | "reposo") => void;
+}) {
+  if (!r.hipotesis) return null;
+  const hs = [r.hipotesis.dano, r.hipotesis.reposo];
+  return (
+    <div className="flex flex-col gap-3" data-testid="hipotesis">
+      <h3 className="t-interfaz font-semibold">
+        Dos hipótesis: el reposo supuesto y el daño medido no caben juntos
+      </h3>
+      <p className="t-nota">
+        {elegida
+          ? `Elegiste «${r.hipotesis[elegida].titulo}»: los números, el 3D y el dictamen la siguen.`
+          : "Elige una. Mientras no elijas, se ve «Cuadra con el daño medido» (lo medido pesa más que lo supuesto), y el dictamen dice que falta tu elección."}
+      </p>
+      <div className="grid gap-3 sm:grid-cols-2">
+        {hs.map((h) => (
+          <div
+            key={h.clave}
+            className="hundido flex flex-col gap-2 p-4"
+            style={elegida === h.clave ? { outline: "2px solid var(--acento)" } : undefined}
+            data-testid={`hipotesis-${h.clave}`}
+          >
+            <span className="t-interfaz font-semibold">{h.titulo}</span>
+            <ul className="cifras t-cuerpo flex flex-col gap-1">
+              {h.velocidades.map((v) => (
+                <li key={v.vehiculo}>
+                  {v.vehiculo}:{" "}
+                  {v.kmh === null
+                    ? "sin velocidad"
+                    : `${v.kmh.toFixed(2)} km/h${v.fijada ? "" : ` (mejor ajuste; la evidencia medida no la fija${v.sigmaKmh !== null ? `, ±${v.sigmaKmh.toFixed(0)} km/h` : ""})`}`}
+                </li>
+              ))}
+              {h.reposos.map((x) => (
+                <li key={x.vehiculo}>
+                  {x.vehiculo} termina a {x.m.toFixed(1)} m de su reposo supuesto
+                </li>
+              ))}
+              <li>
+                {h.alcanzaDano
+                  ? "Alcanza la deformación medida"
+                  : "No alcanza la deformación medida"}
+              </li>
+            </ul>
+            <button
+              type="button"
+              className={
+                elegida === h.clave
+                  ? "boton-primario boton-compacto"
+                  : "boton-secundario boton-compacto"
+              }
+              onClick={() => onElegir(h.clave)}
+              data-testid={`elegir-${h.clave}`}
+            >
+              {elegida === h.clave ? "Elegida" : "Elegir esta"}
+            </button>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
 /** La verificación con los métodos de CESVI, paso por paso (fórmula, sustitución, resultado). */
 export function PanelVerificacion({ verificacion }: { verificacion: VerificacionVehiculo[] }) {
   return (
@@ -233,6 +366,7 @@ export function PanelVerificacion({ verificacion }: { verificacion: Verificacion
  */
 export function Visor3dCaso({
   r,
+  contraCesvi = null,
   declarada,
   onExportApi,
   onPosiciones,
@@ -241,6 +375,8 @@ export function Visor3dCaso({
   expandido = false,
 }: {
   r: Reconstruccion;
+  /** La velocidad de la reconstrucción contra el reporte de CESVI, para decirla sobre el 3D. */
+  contraCesvi?: ContraMetodosCesvi | null;
   /** A pantalla completa: arriba flota la caja del paso y abajo «Siguiente»; el 3D les deja lugar. */
   expandido?: boolean;
   /** Las calles del lugar (R10): con ellas, el 3D dibuja la red real en lugar de la plantilla. */
@@ -273,6 +409,22 @@ export function Visor3dCaso({
         con su rango); lo demás que no narraste va con valores por omisión. Reconstrucción de apoyo:
         el dictamen es del perito.
       </p>
+      {contraCesvi?.filas
+        .filter((f) => f.croquisKmh !== null)
+        .map((f) => (
+          <p key={f.metodo} className="t-nota" data-testid="contra-cesvi-3d">
+            <span className="cifras">
+              {f.vehiculo}: Croquis {f.croquisKmh!.toFixed(2)} km/h · CESVI ({f.metodo}){" "}
+              {f.cesviKmh.toFixed(2)} km/h · {diferenciaEnTexto(f)}.
+            </span>{" "}
+            {f.porQue}
+          </p>
+        ))}
+      {contraCesvi?.avisos.map((a) => (
+        <p key={a} className="t-nota text-senal-texto">
+          {a}
+        </p>
+      ))}
       <VisorEscena
         spec={spec3d}
         escena="propia"

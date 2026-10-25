@@ -11,7 +11,17 @@ import { G } from "./models";
 import { vehicleSpeedRangeFromThrow } from "./pedestrian";
 import { pyFixed } from "./reconstruct";
 import { pyRound, str } from "./pymath";
-import { Evidence, evidenceFromSpec, fitEvidence, invert, type Inversion } from "./inversion";
+import {
+  ASSUMED_REST_MISS_M,
+  PRIORIDAD,
+  Evidence,
+  assumedRestMiss,
+  damageSigma,
+  evidenceFromSpec,
+  fitEvidence,
+  invert,
+  type Inversion,
+} from "./inversion";
 import { monteCarlo } from "./montecarlo";
 import * as dmath from "./dmath";
 
@@ -271,6 +281,7 @@ const EVIDENCE_WORDS: Readonly<Record<string, string>> = {
   marcas_frenado: "las marcas de frenado",
   proyeccion: "la distancia a la que quedó la persona",
   dano: "el daño descrito",
+  dano_minimo: "el daño medido",
 };
 
 /** Velocidad declarada fuera del intervalo que fija la evidencia física (inversión). */
@@ -318,6 +329,63 @@ export function checkSpeedEvidence(spec: Json, inv: Inversion): Inconsistency[] 
   return out;
 }
 
+/** El daño medido pide más cambio de velocidad del que da la reconstrucción (ADR 0091). */
+export function checkDamageReach(spec: Json, inv: Inversion, seed: number): Inconsistency[] {
+  const out: Inconsistency[] = [];
+  const ev = evidenceFromSpec(spec, seed);
+  if (ev.damageMin.size === 0) return out;
+  const fixed = new Set(
+    inv.estimates
+      .filter(
+        (e) => e.param.kind === "velocidad" && e.dist !== null && e.identifiable && !e.atBound,
+      )
+      .map((e) => e.param.vehicle),
+  );
+  const byId = new Map((spec.vehiculos as Json[]).map((v) => [str(v.id), v]));
+  for (const vid of [...ev.damageMin.keys()].sort()) {
+    const dmg = ev.damageMin.get(vid)!;
+    const r = inv.best.residuals.get(`dano_minimo:${vid}`);
+    // El residuo es (ΔV − p10)/σ·w por debajo de la banda: más de una unidad (σ/w) no es la holgura
+    // del ajuste, es que no alcanza.
+    if (r === undefined || !fixed.has(vid) || r >= -1.0) continue;
+    const w = inv.assumedAsData ? 1.0 : PRIORIDAD;
+    const dv = dmg.p10 + (r * damageSigma(dmg)) / w;
+    out.push({
+      codigo: "dano_no_alcanzado",
+      mensaje:
+        `Solo con su deformación, el daño medido en ${name(byId.get(vid)!)} pide un cambio ` +
+        `de velocidad mínimo de ${pyFixed(dmg.p10, 0)} a ${pyFixed(dmg.p90, 0)} km/h; en la reconstrucción ` +
+        `que reproduce dónde quedaron los vehículos es de ${pyFixed(dv, 0)} km/h. ¿Son correctas ` +
+        "las posiciones finales? Si alguna es un supuesto, con ella la reconstrucción no " +
+        "alcanza ese daño.",
+      datos: { vehiculo: vid, dano_minimo_kmh: [dmg.p10, dmg.p90], reconstruccion_kmh: dv },
+    });
+  }
+  return out;
+}
+
+/** Un reposo supuesto que no cabe con la deformación medida: dos hipótesis (ADR 0091). */
+export function checkAssumedRest(spec: Json, inv: Inversion, seed: number): Inconsistency[] {
+  const ev = evidenceFromSpec(spec, seed);
+  if (!ev.restAssumed.size || !(ev.damageDv.size || ev.damageMin.size) || inv.assumedAsData)
+    return [];
+  const byId = new Map((spec.vehiculos as Json[]).map((v) => [str(v.id), v]));
+  const out: Inconsistency[] = [];
+  for (const [vid, miss] of assumedRestMiss(ev, inv.full ?? inv.best)) {
+    if (miss <= ASSUMED_REST_MISS_M) continue;
+    out.push({
+      codigo: "reposo_supuesto_vs_dano",
+      mensaje:
+        `Con la deformación medida, ${name(byId.get(vid)!)} termina a unos ${pyFixed(miss, 0)} m de ` +
+        "su posición final supuesta: el daño y ese reposo no caben juntos. Hay dos " +
+        "hipótesis, «cuadra con el daño medido» y «cuadra con el reposo supuesto»; el " +
+        "perito elige.",
+      datos: { vehiculo: vid, distancia_m: miss },
+    });
+  }
+  return out;
+}
+
 /**
  * Todas las banderas de consistencia de la escena, en orden fijo (port de `check_consistency`).
  * `inversion` evita repetir la inversión si ya se calculó con la misma semilla.
@@ -338,5 +406,7 @@ export function checkConsistency(
     ...checkDamage(spec, seed, samples),
     ...checkRest(spec, seed),
     ...(inversion !== null ? checkSpeedEvidence(spec, inversion) : []),
+    ...(inversion !== null ? checkDamageReach(spec, inversion, seed) : []),
+    ...(inversion !== null ? checkAssumedRest(spec, inversion, seed) : []),
   ];
 }

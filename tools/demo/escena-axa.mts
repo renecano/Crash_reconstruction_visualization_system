@@ -13,7 +13,7 @@
  * - **El solver** de producción (port TS) reconstruye la escena, y `especReconstruida` le pone las
  *   velocidades estimadas, como el 3D del caso.
  *
- *   pnpm --filter @croquis/cesvi exec tsx ../../tools/demo/escena-axa.mts
+ *   pnpm --filter @croquis/cesvi exec tsx ../../tools/demo/escena-axa.mts [dano|reposo]
  *
  * Escribe `demo/escenas-r11/axa.json` (EscenaSpec) e imprime la vía y las velocidades.
  */
@@ -26,8 +26,10 @@ import {
   callesCerca,
   caso,
   especReconstruida,
+  conMasasDeFicha,
   importarDictamen,
   proponerVersiones,
+  conHipotesis,
   reconstruirExpediente,
   tramoDelCaso,
   ubicacionIlustrativa,
@@ -66,6 +68,8 @@ const evidencia = proponerVersiones({
   reversaM: 3,
 }).evidencia;
 const leido = importarDictamen(ejemplo.texto, lecturas.corpus, lecturas.narracion, ejemplo.archivo);
+// El reporte no da la masa de V1: la de la ficha técnica de su modelo y año (data/SOURCES.md).
+const conFicha = conMasasDeFicha(leido.expediente);
 // A es V1 y B es V2, como en el recorrido (`recorrido-3d.ts`).
 const ID = { A: "V1", B: "V2" } as const;
 // La posición final de B no la da el dictamen. Se usa el supuesto de su método de los restos (la
@@ -83,16 +87,17 @@ const posiciones = (["A", "B"] as const).flatMap((l) =>
       fase,
       punto: { lon: p.punto[0], lat: p.punto[1] },
       rumbo: ((p.rumbo % 360) + 360) % 360,
-      fuente: "perito" as const,
+      // El reposo de B no lo da el reporte: es el supuesto del método de los restos (ADR 0091).
+      fuente: l === "B" && fase === "final" ? ("supuesto" as const) : ("perito" as const),
     };
   }),
 );
 const e: Expediente = {
-  ...leido.expediente,
+  ...conFicha,
   caso: {
-    ...leido.expediente.caso,
+    ...conFicha.caso,
     lugar: {
-      ...leido.expediente.caso.lugar,
+      ...conFicha.caso.lugar,
       coordenadas: { lat: u.lat, lon: u.lon },
       descripcion: {
         valor: `Ubicación ilustrativa sobre ${u.via.ref}: el reporte no da coordenadas.`,
@@ -102,7 +107,17 @@ const e: Expediente = {
   },
   versiones: [{ tipo: "evidencia", posiciones }],
 };
-const r = reconstruirExpediente(e, "demo-axa");
+// Ese reposo supuesto y la deformación medida no caben juntos: hay dos hipótesis y la del video la
+// elige René (`dano` por omisión: «cuadra con el daño medido»; `reposo`: «cuadra con el reposo
+// supuesto»).
+const clave = process.argv[2] === "reposo" ? "reposo" : "dano";
+const r0 = reconstruirExpediente(e, "demo-axa");
+const r = r0.hipotesis ? conHipotesis(r0, clave) : r0;
+console.log(
+  r0.hipotesis
+    ? `hipótesis: «${r0.hipotesis[clave].titulo}» (${JSON.stringify(r0.hipotesis[clave].velocidades)})`
+    : "sin hipótesis: el reposo supuesto cabe con la deformación",
+);
 
 // El tramo como respuesta de Overpass, con las vías y etiquetas de OSM tal como se descargaron.
 const crudo = leer("data/cesvi/casos/A2010930-tramo.json") as {

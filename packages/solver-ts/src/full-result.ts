@@ -15,6 +15,11 @@ export function fullResult(spec: Json): Json {
   doc.incertidumbre = monteCarlo(spec).toDict();
   const inv = invert(spec);
   doc.inversion = inv.toDict();
-  doc.consistencia = checkConsistency(spec, { inversion: inv }).map(inconsistencyToDict);
+  const flags = checkConsistency(spec, { inversion: inv });
+  doc.consistencia = flags.map(inconsistencyToDict);
+  // Un reposo supuesto que no cabe con el daño medido: la otra hipótesis, para que el perito elija
+  // (ADR 0091).
+  if (flags.some((f) => f.codigo === "reposo_supuesto_vs_dano"))
+    doc.inversion_reposo_supuesto = invert(spec, { assumedAsData: true }).toDict();
   return doc;
 }

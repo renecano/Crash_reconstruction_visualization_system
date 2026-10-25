@@ -7,6 +7,7 @@
 import {
   conMasa,
   type ComparacionDictamen,
+  type ContraMetodosCesvi,
   type EscenaNarrada,
   type Expediente,
   type PreguntaEscena,
@@ -18,7 +19,7 @@ import type { ReporteCesvi } from "@/lib/caso-guardado";
 import { MODALIDAD } from "@/lib/nombres-cesvi";
 import { colorDeVehiculo } from "@/lib/vehiculos-cesvi";
 import { CARA, Fuente, Pregunta } from "./piezas";
-import { PanelVerificacion, TablaVelocidades } from "./reconstruccion";
+import { PanelVerificacion, TablaContraCesvi, TablaVelocidades } from "./reconstruccion";
 import { ConclusionesCesvi } from "../importar-dictamen";
 
 const nombreModalidad = (m: string | null) => (m ? (MODALIDAD[m] ?? m.replaceAll("_", " ")) : "—");
@@ -489,6 +490,8 @@ export function PasoLugar({
   colorItem,
   medida,
   onUsarMedida,
+  reposoSupuesto,
+  onReposoSupuesto,
 }: {
   expediente: Expediente;
   escena: EscenaNarrada;
@@ -505,6 +508,9 @@ export function PasoLugar({
   /** Lo último que se midió en «Medir» (m). */
   medida: number | null;
   onUsarMedida: (destino: "restos" | { vehiculo: string }) => void;
+  /** ¿Este reposo lo supone el perito (el reporte no lo da)? ADR 0091. */
+  reposoSupuesto?: (i: ItemLugar) => boolean;
+  onReposoSupuesto?: (i: ItemLugar, supuesto: boolean) => void;
 }) {
   const [verOpcional, setVerOpcional] = useState(false);
   const esActivo = (i: ItemLugar) => activo !== null && claveItem(activo) === claveItem(i);
@@ -595,6 +601,20 @@ export function PasoLugar({
               </button>
             ) : null}
           </div>
+          {hecho && i.tipo === "final" && onReposoSupuesto ? (
+            <label className="t-nota flex items-start gap-2">
+              <input
+                type="checkbox"
+                checked={reposoSupuesto?.(i) ?? false}
+                onChange={(e) => onReposoSupuesto(i, e.target.checked)}
+                data-testid="reposo-supuesto"
+              />
+              <span>
+                Es un supuesto: el reporte no da dónde quedó. En la reconstrucción pesa menos que lo
+                medido (la deformación, las posiciones que sí da el reporte).
+              </span>
+            </label>
+          ) : null}
         </li>
       );
     return (
@@ -766,9 +786,11 @@ export function PasoDanos({ expediente, r }: { expediente: Expediente; r: Recons
 export function PasoNumeros({
   r,
   verificacion,
+  contraCesvi = null,
 }: {
   r: Reconstruccion | null;
   verificacion: VerificacionVehiculo[];
+  contraCesvi?: ContraMetodosCesvi | null;
 }) {
   return (
     <div className="flex flex-col gap-5">
@@ -778,6 +800,7 @@ export function PasoNumeros({
       ) : (
         <p className="t-nota">Reconstruye para ver las velocidades con su rango.</p>
       )}
+      {contraCesvi?.filas.length ? <TablaContraCesvi contra={contraCesvi} /> : null}
       <PanelVerificacion verificacion={verificacion} />
     </div>
   );

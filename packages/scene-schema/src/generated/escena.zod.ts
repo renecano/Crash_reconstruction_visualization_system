@@ -3,7 +3,7 @@
 import { z } from "zod";
 
 export const SCHEMA_ID = "https://croquis.mx/schemas/escena/1.0.0/escena.schema.json";
-export const SCHEMA_VERSION = "2.0.0" as const;
+export const SCHEMA_VERSION = "2.1.0" as const;
 
 /** La frase literal de donde sale un dato, y la página si es de un PDF. */
 export const Cita = z.strictObject({
@@ -252,6 +252,17 @@ export const CampoMasa = z.strictObject({
 });
 export type CampoMasa = z.infer<typeof CampoMasa>;
 
+/** Perfil de aplastamiento C1–Cn medido a lo ancho del daño (CRASH3 / McHenry: 2, 4 o 6 medidas, de un extremo al otro). Con él, la energía sale del perfil y no de una profundidad pareja. */
+export const CampoPerfilAplastamiento = z.strictObject({
+  valor: z.array(z.number().min(0)).min(2).max(6),
+  unidad: z.enum(["m", "cm", "mm"]),
+  fuente: Fuente,
+  confianza: Confianza,
+  evidencia: ListaEvidencia.optional(),
+  nota: z.string().max(300).optional(),
+});
+export type CampoPerfilAplastamiento = z.infer<typeof CampoPerfilAplastamiento>;
+
 export const CampoPorcentaje = z.strictObject({
   valor: z.number().min(-100).max(100),
   unidad: z.enum(["%"]),
@@ -280,6 +291,16 @@ export const CampoPostura = z.strictObject({
   nota: z.string().max(300).optional(),
 });
 export type CampoPostura = z.infer<typeof CampoPostura>;
+
+/** Coeficientes de rigidez CRASH3 de la cara dañada: A en N/m y B en N/m² (los del reporte del perito, si los da). Sin ellos, el solver usa los de la clase. */
+export const CampoRigidez = z.strictObject({
+  a: z.number().gt(0),
+  b: z.number().gt(0),
+  fuente: Fuente,
+  confianza: Confianza,
+  nota: z.string().max(300).optional(),
+});
+export type CampoRigidez = z.infer<typeof CampoRigidez>;
 
 export const CampoRolPersona = z.strictObject({
   valor: z.enum(["conductor", "pasajero", "peaton", "ciclista", "motociclista"]),
@@ -460,6 +481,8 @@ export const DanoDeclarado = z.strictObject({
   severidad: z.enum(["ninguno", "leve", "moderado", "severo", "perdida_total"]),
   profundidad_aplastamiento: CampoLongitud.optional(),
   ancho_danado: CampoLongitud.optional(),
+  perfil_aplastamiento: CampoPerfilAplastamiento.optional(),
+  rigidez: CampoRigidez.optional(),
   vidrios: z.enum(["intactos", "estrellados", "rotos"]).optional(),
   bolsas_aire: CampoBooleano.optional(),
   piezas_desprendidas: z
@@ -918,7 +941,7 @@ export type Lugar = z.infer<typeof Lugar>;
 
 export const Meta = z.strictObject({
   id: z.string().min(8).max(64).regex(new RegExp("^[A-Za-z0-9_-]+$")),
-  version_esquema: z.literal("2.0.0"),
+  version_esquema: z.literal("2.1.0"),
   idioma: z.enum(["es-MX", "en"]),
   semilla: z.int().min(0).max(4294967295),
   creado: z.iso.datetime({ offset: true }),
@@ -984,6 +1007,7 @@ export const Vehiculo = z.strictObject({
   carril: CampoEntero.optional(),
   posicion_inicial: Pose2D,
   posicion_final: Pose2D.optional(),
+  posicion_final_supuesta: z.boolean().optional(),
   ocupantes: z.array(Id).max(60).optional(),
 });
 export type Vehiculo = z.infer<typeof Vehiculo>;

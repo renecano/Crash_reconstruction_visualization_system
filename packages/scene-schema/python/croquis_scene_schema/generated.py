@@ -581,7 +581,7 @@ class Meta(BaseModel):
         extra="forbid",
     )
     id: Annotated[str, Field(max_length=64, min_length=8, pattern="^[A-Za-z0-9_-]+$")]
-    version_esquema: Literal["2.0.0"]
+    version_esquema: Literal["2.1.0"]
     idioma: Literal["es-MX", "en"]
     semilla: Annotated[int, Field(ge=0, le=4294967295)]
     """
@@ -781,6 +781,10 @@ class Vehiculo(BaseModel):
     carril: CampoEntero | None = None
     posicion_inicial: Pose2D
     posicion_final: Pose2D | None = None
+    posicion_final_supuesta: bool | None = None
+    """
+    La posición final es un supuesto a propósito (el reporte no la da; la supone el perito o un método, p. ej. el de los restos): con procedencia «supuesto», entra a la inversión como evidencia blanda, por debajo de lo medido (ADR 0091). Las posiciones que pone la escena por omisión no la llevan.
+    """
     ocupantes: Annotated[list[Id] | None, Field(max_length=60)] = None
     """
     Ids de personas a bordo.
@@ -853,6 +857,53 @@ class ZonaImpacto(BaseModel):
     pdof_horas: CampoAdimensional | None = None
 
 
+class ValorItem(RootModel[float]):
+    root: Annotated[float, Field(ge=0.0)]
+
+
+class CampoPerfilAplastamiento(BaseModel):
+    """
+    Perfil de aplastamiento C1–Cn medido a lo ancho del daño (CRASH3 / McHenry: 2, 4 o 6 medidas, de un extremo al otro). Con él, la energía sale del perfil y no de una profundidad pareja.
+    """
+
+    model_config = ConfigDict(
+        extra="forbid",
+    )
+    valor: Annotated[list[ValorItem], Field(max_length=6, min_length=2)]
+    unidad: Literal["m", "cm", "mm"]
+    fuente: Literal["relato", "usuario", "supuesto", "default", "mapa"]
+    """
+    De dónde salió el dato: del relato (con evidencia textual), lo escribió o corrigió la persona, lo supuso el sistema, es el valor por defecto de la clase, o salió del mapa de OpenStreetMap en `ubicacion_real` (desde 1.2.0).
+    """
+    confianza: Annotated[float, Field(ge=0.0, le=1.0)]
+    """
+    Confianza en el valor, de 0 (adivinado) a 1 (seguro).
+    """
+    evidencia: Annotated[list[EvidenciaTexto] | None, Field(max_length=8)] = None
+    nota: Annotated[str | None, Field(max_length=300)] = None
+
+
+class CampoRigidez(BaseModel):
+    """
+    Coeficientes de rigidez CRASH3 de la cara dañada: A en N/m y B en N/m² (los del reporte del perito, si los da). Sin ellos, el solver usa los de la clase.
+    """
+
+    model_config = ConfigDict(
+        extra="forbid",
+    )
+    a: Annotated[float, Field(gt=0.0)]
+    b: Annotated[float, Field(gt=0.0)]
+    fuente: Literal["relato", "usuario", "supuesto", "default", "mapa"]
+    """
+    De dónde salió el dato: del relato (con evidencia textual), lo escribió o corrigió la persona, lo supuso el sistema, es el valor por defecto de la clase, o salió del mapa de OpenStreetMap en `ubicacion_real` (desde 1.2.0).
+    """
+    confianza: Annotated[float, Field(ge=0.0, le=1.0)]
+    """
+    Confianza en el valor, de 0 (adivinado) a 1 (seguro).
+    """
+    nota: Annotated[str | None, Field(max_length=300)] = None
+
+
 class DanoDeclarado(BaseModel):
     model_config = ConfigDict(
         extra="forbid",
@@ -865,6 +916,8 @@ class DanoDeclarado(BaseModel):
     severidad: Literal["ninguno", "leve", "moderado", "severo", "perdida_total"]
     profundidad_aplastamiento: CampoLongitud | None = None
     ancho_danado: CampoLongitud | None = None
+    perfil_aplastamiento: CampoPerfilAplastamiento | None = None
+    rigidez: CampoRigidez | None = None
     vidrios: Literal["intactos", "estrellados", "rotos"] | None = None
     bolsas_aire: CampoBooleano | None = None
     piezas_desprendidas: Annotated[

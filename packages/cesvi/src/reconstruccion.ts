@@ -14,8 +14,9 @@
  * eventos posteriores (`segundo_impacto`); el solver los resuelve cuando el par se toca.
  */
 import { buildSpec, fact, emptyFacts, type Fact } from "@croquis/extraction";
-import { fullResult, reconstruct } from "@croquis/solver-ts";
+import { fullResult, PRIORIDAD, reconstruct } from "@croquis/solver-ts";
 import type { Expediente } from "./corpus";
+import { rigidezEnKilo } from "./verificacion";
 import { avanzar, desdeMetros, enMetros, rectanguloVehiculo, type LonLat } from "./geo";
 
 type Json = Record<string, unknown>;
@@ -166,9 +167,7 @@ export function especDeExpediente(e: Expediente, specId = "caso-nuevo"): EscenaS
   const posiciones =
     (e.versiones ?? [])
       .find((v) => v.tipo === "evidencia")
-      ?.posiciones?.filter(
-        (p) => p.fuente === "perito" || (p.fase === "impacto" && p.fuente === "supuesto"),
-      ) ?? [];
+      ?.posiciones?.filter((p) => p.fuente === "perito" || p.fuente === "supuesto") ?? [];
   const deImpacto = posiciones.filter((p) => p.fase === "impacto");
   // El origen es el primer impacto: el promedio de las posiciones de impacto de sus vehículos (o
   // de todas, si el perito no colocó a ninguno de ellos).
@@ -193,7 +192,11 @@ export function especDeExpediente(e: Expediente, specId = "caso-nuevo"): EscenaS
   for (const v of vehiculos) {
     const sv = spec.vehiculos[orden.indexOf(v.id)]!;
     if (v.masa && v.masa.unidad === "kg") {
-      sv.masa = { valor: v.masa.valor, unidad: "kg", ...DEL_PERITO };
+      sv.masa = {
+        valor: v.masa.valor,
+        unidad: "kg",
+        ...(v.masa.fuente === "supuesto" ? { fuente: "supuesto", confianza: 0.5 } : DEL_PERITO),
+      };
     }
     if (maniobraNarrada.has(v.id) && sv.maniobra) {
       sv.maniobra = {
@@ -246,7 +249,19 @@ export function especDeExpediente(e: Expediente, specId = "caso-nuevo"): EscenaS
       };
     }
     const fin = posiciones.find((p) => p.vehiculo === v.id && p.fase === "final");
-    if (fin)
+    if (fin?.fuente === "supuesto") {
+      // Un reposo que el reporte no da y el perito supone: evidencia blanda (ADR 0091).
+      sv.posicion_final = {
+        ...local(fin.punto),
+        rumbo_deg: rumboEscena(fin.rumbo),
+        procedencia: {
+          fuente: "supuesto",
+          confianza: 0.5,
+          nota: "Reposo supuesto por el perito: el reporte no lo da.",
+        },
+      };
+      sv.posicion_final_supuesta = true;
+    } else if (fin)
       sv.posicion_final = {
         ...local(fin.punto),
         rumbo_deg: rumboEscena(fin.rumbo),
@@ -299,18 +314,54 @@ export function especDeExpediente(e: Expediente, specId = "caso-nuevo"): EscenaS
     });
   }
 
-  for (const d of e.danos ?? []) {
+  // La deformación medida (C y L) de cada vehículo: la de la cara del primer impacto o, si el
+  // reporte no la dice, la primera. Un reporte mide una sola deformación por vehículo (la del
+  // McHenry); si la lectura la repite en otro daño, esa copia no se usa (diagnóstico de AXA, ADR
+  // 0091). El perfil C1–Cn completo y la rigidez A y B del reporte van con ella.
+  const medidos = (e.danos ?? []).filter((d) => {
     const lado = LADO[d.zona.cara];
-    const c = d.magnitud?.c_m;
-    const l = d.magnitud?.l_m;
-    if (!lado || !["F", "B", "L", "R"].includes(lado) || !c?.length || l === undefined) continue;
-    if (!orden.includes(d.vehiculo)) continue;
+    return (
+      !d.dano_previo &&
+      !!lado &&
+      ["F", "B", "L", "R"].includes(lado) &&
+      !!d.magnitud?.c_m?.length &&
+      d.magnitud.l_m !== undefined &&
+      orden.includes(d.vehiculo)
+    );
+  });
+  for (const id of orden) {
+    const suyos = medidos.filter((d) => d.vehiculo === id);
+    if (!suyos.length) continue;
+    const cara = zonasPrimero.find((z) => z.vehiculo === id)?.zona.cara;
+    const d = suyos.find((x) => x.zona.cara === cara) ?? suyos[0]!;
+    if (suyos.length > 1)
+      limites.push(
+        `${id}: el reporte trae medidas de deformación en ${suyos.length} daños; se usa la de ${d.zona.cara === cara ? "la cara del impacto" : "la primera"} (${d.zona.cara}).`,
+      );
+    const c = d.magnitud!.c_m!;
+    const v = e.vehiculos.find((x) => x.id === id);
+    const rig = v?.rigidez && v.rigidez.fuente !== "nhtsa_e2" ? v.rigidez : undefined;
+    // El reporte escribe A y B en kN/m y kN/m² aunque imprima «N/m» (ADR 0048).
+    const kilo = rig && rigidezEnKilo(rig.A) ? 1000 : 1;
     spec.danos_declarados.push({
-      vehiculo_id: idEscena(d.vehiculo),
-      zona: { lado },
+      vehiculo_id: idEscena(id),
+      zona: { lado: LADO[d.zona.cara]! },
       severidad: SEVERIDAD[d.magnitud?.cualitativa ?? ""] ?? "moderado",
       profundidad_aplastamiento: { valor: Math.max(...c), unidad: "m", ...DEL_PERITO },
-      ancho_danado: { valor: l, unidad: "m", ...DEL_PERITO },
+      ancho_danado: { valor: d.magnitud!.l_m!, unidad: "m", ...DEL_PERITO },
+      ...(c.length >= 2 && c.length <= 6
+        ? { perfil_aplastamiento: { valor: [...c], unidad: "m", ...DEL_PERITO } }
+        : {}),
+      ...(rig
+        ? {
+            rigidez: {
+              a: rig.A * kilo,
+              b: rig.B * kilo,
+              ...DEL_PERITO,
+              nota: `Del reporte: A = ${rig.A}, B = ${rig.B}${kilo === 1000 ? " (en kN/m y kN/m²)" : ""}.`,
+            },
+          }
+        : {}),
       procedencia: { ...DEL_PERITO },
     });
   }
@@ -448,6 +499,25 @@ export interface ImpactoReconstruido {
   vehiculos: Id[];
 }
 
+/**
+ * Una hipótesis de la reconstrucción cuando un reposo supuesto no cabe con la deformación medida
+ * (ADR 0091): «cuadra con el daño medido» (la deformación como restricción, el reposo supuesto
+ * blando) o «cuadra con el reposo supuesto» (el supuesto pesa como dato). El perito elige.
+ */
+export interface HipotesisReconstruccion {
+  clave: "dano" | "reposo";
+  titulo: string;
+  /**
+   * Velocidad previa de cada vehículo: la que fija la evidencia o, si no la fija, la del ajuste
+   * conjunto (`fijada: false`, con su desviación local).
+   */
+  velocidades: { vehiculo: Id; kmh: number | null; fijada: boolean; sigmaKmh: number | null }[];
+  /** A cuántos metros de su reposo supuesto termina cada vehículo con este ajuste. */
+  reposos: { vehiculo: Id; m: number }[];
+  /** ¿El ajuste alcanza la deformación medida (dentro de su banda)? */
+  alcanzaDano: boolean;
+}
+
 export interface Reconstruccion extends EscenaSolver {
   /** El resultado completo del solver (trayectorias, incertidumbre, inversión, consistencia). */
   resultado: Json;
@@ -456,6 +526,10 @@ export interface Reconstruccion extends EscenaSolver {
   impactos: ImpactoReconstruido[];
   /** La evidencia que usó la inversión, con sus nombres del solver. */
   evidencia: string[];
+  /** Las dos hipótesis, si un reposo supuesto no cabe con la deformación medida (ADR 0091). */
+  hipotesis: { dano: HipotesisReconstruccion; reposo: HipotesisReconstruccion } | null;
+  /** La que eligió el perito; null mientras no elija (se muestra la del daño medido). */
+  elegida: "dano" | "reposo" | null;
 }
 
 interface Inversion {
@@ -464,9 +538,68 @@ interface Inversion {
     parametro: string;
     vehiculo: string;
     identificable: boolean;
+    sigma_local?: number;
     estimacion?: { mejor: number; p10?: number; p50?: number; p90?: number };
   }[];
   velocidad_impacto: { vehiculo: string; p10?: number; p50?: number; p90?: number }[];
+  residuos: { nombre: string; sigma: number }[];
+  ajuste_completo?: {
+    valores: { nombre: string; valor: number }[];
+    residuos: { nombre: string; sigma: number }[];
+  };
+}
+
+/** Una hipótesis leída de su inversión (ADR 0091). */
+function leerHipotesis(
+  base: EscenaSolver,
+  inv: Inversion,
+  clave: "dano" | "reposo",
+): HipotesisReconstruccion {
+  const ajuste = inv.ajuste_completo;
+  const residuos = new Map((ajuste?.residuos ?? inv.residuos).map((r) => [r.nombre, r.sigma]));
+  const valor = (nombre: string) => ajuste?.valores.find((v) => v.nombre === nombre)?.valor;
+  // Un reposo supuesto tiene PRIORIDAD veces la σ (1 m) de uno declarado, salvo en su hipótesis.
+  const sigmaReposo = clave === "dano" ? PRIORIDAD : 1;
+  return {
+    clave,
+    titulo: clave === "dano" ? "Cuadra con el daño medido" : "Cuadra con el reposo supuesto",
+    velocidades: Object.entries(base.ids).map(([sid, id]) => {
+      const p = inv.parametros.find(
+        (x) => x.vehiculo === sid && x.parametro === "velocidad_previa",
+      );
+      const fijada = Boolean(p?.identificable && p.estimacion);
+      return {
+        vehiculo: id,
+        kmh: fijada ? p!.estimacion!.mejor : (valor(`velocidad:${sid}`) ?? null),
+        fijada,
+        sigmaKmh: p?.sigma_local ?? null,
+      };
+    }),
+    reposos: Object.entries(base.ids).flatMap(([sid, id]) => {
+      const x = residuos.get(`reposo_supuesto:${sid}:x`);
+      const y = residuos.get(`reposo_supuesto:${sid}:y`);
+      return x === undefined || y === undefined
+        ? []
+        : [{ vehiculo: id, m: Math.round(Math.hypot(x, y) * sigmaReposo * 10) / 10 }];
+    }),
+    alcanzaDano: [...residuos].every(
+      ([k, r]) => !(k.startsWith("dano:") || k.startsWith("dano_minimo:")) || Math.abs(r) <= 1,
+    ),
+  };
+}
+
+/**
+ * La reconstrucción con la hipótesis que eligió el perito (ADR 0091): sus velocidades y su
+ * evidencia pasan al paso 6, al 3D y al dictamen.
+ */
+export function conHipotesis(r: Reconstruccion, clave: "dano" | "reposo"): Reconstruccion {
+  if (!r.hipotesis) return r;
+  const inv =
+    clave === "reposo"
+      ? (r.resultado.inversion_reposo_supuesto as Json)
+      : (r.resultado.inversion as Json);
+  const otra = interpretarResultado(r, { ...r.resultado, inversion: inv });
+  return { ...otra, limites: r.limites, hipotesis: r.hipotesis, elegida: clave };
 }
 
 /**
@@ -514,7 +647,20 @@ export function interpretarResultado(base: EscenaSolver, resultado: Json): Recon
       impacto: inv.evidencia.length && i ? { p10: i.p10, p50: i.p50, p90: i.p90 } : null,
     };
   });
-  return { ...base, limites, resultado, velocidades, impactos, evidencia: inv.evidencia };
+  const alterna = resultado.inversion_reposo_supuesto as Inversion | undefined;
+  const hipotesis = alterna
+    ? { dano: leerHipotesis(base, inv, "dano"), reposo: leerHipotesis(base, alterna, "reposo") }
+    : null;
+  return {
+    ...base,
+    limites,
+    resultado,
+    velocidades,
+    impactos,
+    evidencia: inv.evidencia,
+    hipotesis,
+    elegida: null,
+  };
 }
 
 /** La evidencia del solver en palabras («reposo:veh-a» → «posición final de V1»). */
@@ -546,8 +692,21 @@ export function reconstruirExpediente(e: Expediente, specId?: string): Reconstru
  */
 export function especReconstruida(r: Reconstruccion): Json {
   const spec = structuredClone(r.spec) as Json & { vehiculos: Json[] };
+  const hip = r.hipotesis ? r.hipotesis[r.elegida ?? "dano"] : null;
   for (const sv of spec.vehiculos) {
     const v = r.velocidades.find((x) => x.vehiculo === r.ids[String(sv.id)]);
+    // En una hipótesis que la evidencia medida no fija, el 3D muestra su ajuste conjunto, dicho así.
+    const sinFijar = hip?.velocidades.find((x) => x.vehiculo === r.ids[String(sv.id)]);
+    if (!v?.previa && sinFijar && !sinFijar.fijada && sinFijar.kmh !== null) {
+      sv.velocidad_previa = {
+        valor: Math.round(sinFijar.kmh * 100) / 100,
+        unidad: "km/h",
+        fuente: "supuesto",
+        confianza: 0.3,
+        nota: `Mejor ajuste de la hipótesis «${hip!.titulo}»: la evidencia medida no la fija.`,
+      };
+      continue;
+    }
     if (!v?.previa) continue;
     const { mejor, p10, p90 } = v.previa;
     sv.velocidad_previa = {

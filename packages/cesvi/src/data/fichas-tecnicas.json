@@ -1,0 +1,21 @@
+{
+  "_descripcion": "Masas de ficha técnica de vehículos concretos de los casos (marca, modelo y año del reporte), para cuando el reporte no da la masa. Fuentes y cálculo en data/SOURCES.md («Fichas técnicas de vehículos de los casos»).",
+  "fichas": [
+    {
+      "marca": "chevrolet",
+      "modelo": "silverado 2500",
+      "anio": 2007,
+      "configuracion": "cabina de cuatro puertas (extendida o doble): el reporte describe la «puerta delantera» y la «ventanilla posterior izquierda del habitáculo»; no da caja ni tracción",
+      "peso_vacio_lb": [5398, 5899],
+      "peso_vacio_kg": [2448.5, 2675.7],
+      "masa_kg": 2562.1,
+      "regla": "punto medio del rango de las configuraciones de cuatro puertas; la perturbación de ±5 % de la inversión cubre el rango",
+      "fuentes": [
+        "https://www.kbb.com/chevrolet/silverado-classic-2500/2007/specs",
+        "https://www.kbb.com/chevrolet/silverado-2500-hd-extended-cab/2007/specs",
+        "https://www.kbb.com/chevrolet/silverado-2500-hd-crew-cab/2007/specs/"
+      ],
+      "consultado": "2026-10-24"
+    }
+  ]
+}

@@ -5,6 +5,7 @@
  * - el croquis 2D a escala y cuadros del 3D;
  * - los resultados con sus rangos;
  * - la verificación con el método de CESVI;
+ * - la reconstrucción contra cada método del reporte de CESVI, con su diferencia (ADR 0091);
  * - la comparación con la declaración del conductor (R7), si el perito la usó;
  * - la trazabilidad (método, huella de las entradas, quién validó y cuándo).
  *
@@ -15,6 +16,7 @@
  */
 import {
   modalidadInferida,
+  reconstruccionContraCesvi,
   type Expediente,
   type FilaDeclarada,
   type Reconstruccion,
@@ -84,6 +86,61 @@ function tabla(encabezados: string[], filas: TableCell[][]): Content {
 
 const enPalabras = (s: string) => s.replaceAll("_", " ");
 const kmh = (x?: number) => (x === undefined ? "—" : x.toFixed(1));
+const conSigno = (x: number) => `${x >= 0 ? "+" : "−"}${Math.abs(x).toFixed(2)}`;
+
+/**
+ * La velocidad de la reconstrucción contra la de cada método del reporte (ADR 0091), con su
+ * diferencia en km/h y en %, por qué los métodos no miden lo mismo y, si la reconstrucción no
+ * alcanza la deformación medida, el aviso con sus números.
+ */
+function hipotesis(d: DatosDictamenCaso): Content[] {
+  const r = d.reconstruccion;
+  if (!r.hipotesis) return [];
+  const hs = [r.hipotesis.dano, r.hipotesis.reposo];
+  return [
+    subtitulo("Dos hipótesis: el reposo supuesto y el daño medido no caben juntos"),
+    parrafo(
+      r.elegida
+        ? `El perito eligió «${r.hipotesis[r.elegida].titulo}»; los números de este dictamen son los de esa hipótesis.`
+        : "El perito no eligió hipótesis: los números son los de «Cuadra con el daño medido» (lo medido pesa más que lo supuesto). Falta su elección.",
+    ),
+    tabla(
+      ["Hipótesis", "Velocidades previas", "Reposo supuesto", "Deformación medida"],
+      hs.map((h) => [
+        h.titulo,
+        h.velocidades
+          .map(
+            (v) =>
+              `${v.vehiculo}: ${v.kmh === null ? "—" : `${v.kmh.toFixed(2)} km/h`}${v.fijada || v.kmh === null ? "" : " (mejor ajuste; la evidencia medida no la fija)"}`,
+          )
+          .join("; "),
+        h.reposos.map((x) => `${x.vehiculo} a ${x.m.toFixed(1)} m`).join("; ") || "—",
+        h.alcanzaDano ? "La alcanza" : "No la alcanza",
+      ]),
+    ),
+  ];
+}
+
+function contraReporte(d: DatosDictamenCaso): Content[] {
+  const k = reconstruccionContraCesvi(d.expediente, d.reconstruccion);
+  if (!k.filas.length) return [];
+  return [
+    subtitulo("La reconstrucción contra el reporte de CESVI"),
+    tabla(
+      ["Método del reporte", "CESVI (km/h)", "Croquis (km/h)", "Diferencia"],
+      k.filas.map((f) => [
+        `${f.metodo}: ${f.cesviQue}`,
+        f.cesviKmh.toFixed(2),
+        f.croquisKmh === null ? "la evidencia no la fija" : f.croquisKmh.toFixed(2),
+        f.diferenciaKmh === null || f.diferenciaPct === null
+          ? "—"
+          : `${conSigno(f.diferenciaKmh)} km/h (${conSigno(f.diferenciaPct)} %)`,
+      ]),
+    ),
+    ...k.filas.map((f) => nota(`${f.metodo}: ${f.porQue}`)),
+    ...k.avisos.map((a) => parrafo(a)),
+  ];
+}
 const ESTADO: Record<FilaDeclarada["estado"], string> = {
   coincide: "Coincide",
   no_coincide: "No coincide",
@@ -167,6 +224,8 @@ function secciones(d: DatosDictamenCaso) {
         v.impacto ? `${kmh(v.impacto.p10)}–${kmh(v.impacto.p50)}–${kmh(v.impacto.p90)}` : "—",
       ]),
     ),
+    ...hipotesis(d),
+    ...contraReporte(d),
     ...(r.impactos.length > 1
       ? [
           parrafo(
