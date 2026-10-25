@@ -62,6 +62,7 @@ def test_encadena_migraciones_y_el_resultado_valida() -> None:
         "1.2.0→1.3.0",
         "1.3.0→2.0.0",
         "2.0.0→2.1.0",
+        "2.1.0→2.2.0",
     ]
     assert schema_errors(r.doc) == []
     assert r.doc["meta"]["version_esquema"] == SCHEMA_VERSION
@@ -95,6 +96,7 @@ def test_una_escena_1_0_0_migra_sin_cambios_a_la_vigente() -> None:
         "1.2.0→1.3.0",
         "1.3.0→2.0.0",
         "2.0.0→2.1.0",
+        "2.1.0→2.2.0",
     ]
     assert schema_errors(r.doc) == []
     assert r.doc["meta"] == actual["meta"]

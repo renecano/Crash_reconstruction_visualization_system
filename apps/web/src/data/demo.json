@@ -15,7 +15,7 @@
       "spec": {
         "meta": {
           "id": "demo-rmx-d001",
-          "version_esquema": "2.1.0",
+          "version_esquema": "2.2.0",
           "idioma": "es-MX",
           "semilla": 507663,
           "creado": "2026-10-13T00:00:00-06:00",
@@ -336,7 +336,7 @@
       "spec": {
         "meta": {
           "id": "demo-rmx-d003",
-          "version_esquema": "2.1.0",
+          "version_esquema": "2.2.0",
           "idioma": "es-MX",
           "semilla": 146821,
           "creado": "2026-10-13T00:00:00-06:00",
@@ -610,7 +610,7 @@
       "spec": {
         "meta": {
           "id": "demo-rmx-d004",
-          "version_esquema": "2.1.0",
+          "version_esquema": "2.2.0",
           "idioma": "es-MX",
           "semilla": 629750,
           "creado": "2026-10-13T00:00:00-06:00",
@@ -861,7 +861,7 @@
       "spec": {
         "meta": {
           "id": "demo-rmx-d005",
-          "version_esquema": "2.1.0",
+          "version_esquema": "2.2.0",
           "idioma": "es-MX",
           "semilla": 753954,
           "creado": "2026-10-13T00:00:00-06:00",
@@ -1136,7 +1136,7 @@
       "spec": {
         "meta": {
           "id": "demo-rmx-d007",
-          "version_esquema": "2.1.0",
+          "version_esquema": "2.2.0",
           "idioma": "es-MX",
           "semilla": 178795,
           "creado": "2026-10-13T00:00:00-06:00",
@@ -1459,7 +1459,7 @@
       "spec": {
         "meta": {
           "id": "demo-rmx-d012",
-          "version_esquema": "2.1.0",
+          "version_esquema": "2.2.0",
           "idioma": "es-MX",
           "semilla": 32312,
           "creado": "2026-10-13T00:00:00-06:00",

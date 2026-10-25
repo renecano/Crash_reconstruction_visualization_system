@@ -1,0 +1,763 @@
+{
+  "meta": {
+    "id": "fx-carambola-tollocan-cadena",
+    "version_esquema": "2.2.0",
+    "idioma": "es-MX",
+    "semilla": 107,
+    "creado": "2026-10-10T18:00:00-06:00",
+    "titulo": "Hipótesis: C frena y B y A reaccionan en cadena (carambola)",
+    "origen_relato": "precargado",
+    "sintetico": true,
+    "relato": "Iba por Paseo Tollocan en mi Versa gris, como a 50, y adelante una camioneta blanca se detuvo en el semáforo que se puso en rojo. Frené pero el piso estaba mojado y le pegué por atrás, de frente con mi lado del copiloto. Se le hundió la cajuela y a mí se me dobló el cofre y se rompió el faro derecho. Dejé como ocho metros de marca de frenado. Los dos traíamos cinturón y nadie salió lastimado. Con el golpe, la camioneta se fue hacia adelante y le pegó a un Aveo rojo que estaba parado delante de ella en el semáforo."
+  },
+  "lugar": {
+    "nombre_via": {
+      "valor": "Paseo Tollocan",
+      "fuente": "relato",
+      "confianza": 0.95,
+      "evidencia": [
+        {
+          "inicio": 8,
+          "fin": 22,
+          "texto": "Paseo Tollocan"
+        }
+      ]
+    },
+    "tipo_via": {
+      "valor": "recta",
+      "fuente": "supuesto",
+      "confianza": 0.6,
+      "nota": "Tramo recto de avenida principal frente a semáforo."
+    },
+    "carriles_por_sentido": {
+      "valor": 3,
+      "fuente": "default",
+      "confianza": 0.5
+    },
+    "ancho_carril": {
+      "valor": 3.5,
+      "unidad": "m",
+      "fuente": "default",
+      "confianza": 0.5
+    },
+    "sentidos": {
+      "valor": "doble_sentido",
+      "fuente": "default",
+      "confianza": 0.6
+    },
+    "camellon": {
+      "valor": true,
+      "fuente": "default",
+      "confianza": 0.6
+    },
+    "banquetas": {
+      "valor": true,
+      "fuente": "default",
+      "confianza": 0.6
+    },
+    "superficie": {
+      "valor": "asfalto",
+      "fuente": "default",
+      "confianza": 0.7
+    },
+    "estado_superficie": {
+      "valor": "mojado",
+      "fuente": "relato",
+      "confianza": 0.9,
+      "evidencia": [
+        {
+          "inicio": 141,
+          "fin": 162,
+          "texto": "el piso estaba mojado"
+        }
+      ]
+    },
+    "friccion": {
+      "valor": 0.5,
+      "rango": [
+        0.4,
+        0.6
+      ],
+      "fuente": "default",
+      "confianza": 0.5,
+      "nota": "Asfalto mojado; rango de literatura, se referencia en docs/physics.md (F2)."
+    },
+    "dispositivos": [
+      {
+        "id": "semaforo-1",
+        "tipo": "semaforo",
+        "posicion": {
+          "x": 12,
+          "y": -12.5
+        },
+        "aplica_a": [
+          "veh-a",
+          "veh-b"
+        ],
+        "fases": [
+          {
+            "movimiento": "veh-b",
+            "color": "rojo"
+          }
+        ],
+        "procedencia": {
+          "fuente": "relato",
+          "confianza": 0.9,
+          "evidencia": [
+            {
+              "inicio": 97,
+              "fin": 128,
+              "texto": "el semáforo que se puso en rojo"
+            }
+          ]
+        }
+      }
+    ]
+  },
+  "entorno": {
+    "clima": {
+      "valor": "lluvia_ligera",
+      "fuente": "supuesto",
+      "confianza": 0.5,
+      "nota": "Se infiere del piso mojado; no se menciona lluvia activa."
+    },
+    "iluminacion": {
+      "valor": "dia",
+      "fuente": "default",
+      "confianza": 0.5
+    },
+    "objetos": []
+  },
+  "vehiculos": [
+    {
+      "id": "veh-a",
+      "rol": "A",
+      "clase": {
+        "valor": "sedan_compacto",
+        "fuente": "relato",
+        "confianza": 0.9,
+        "evidencia": [
+          {
+            "inicio": 26,
+            "fin": 39,
+            "texto": "mi Versa gris"
+          }
+        ]
+      },
+      "marca": {
+        "valor": "Nissan",
+        "fuente": "relato",
+        "confianza": 0.9,
+        "evidencia": [
+          {
+            "inicio": 29,
+            "fin": 34,
+            "texto": "Versa"
+          }
+        ]
+      },
+      "modelo": {
+        "valor": "Versa",
+        "fuente": "relato",
+        "confianza": 0.9,
+        "evidencia": [
+          {
+            "inicio": 29,
+            "fin": 34,
+            "texto": "Versa"
+          }
+        ]
+      },
+      "color": {
+        "nombre": {
+          "valor": "gris",
+          "fuente": "relato",
+          "confianza": 0.9,
+          "evidencia": [
+            {
+              "inicio": 35,
+              "fin": 39,
+              "texto": "gris"
+            }
+          ]
+        },
+        "hex": "#8a8d91"
+      },
+      "masa": {
+        "valor": 1120,
+        "unidad": "kg",
+        "rango": [
+          1050,
+          1250
+        ],
+        "fuente": "default",
+        "confianza": 0.6
+      },
+      "largo": {
+        "valor": 4.5,
+        "unidad": "m",
+        "fuente": "default",
+        "confianza": 0.6
+      },
+      "ancho": {
+        "valor": 1.7,
+        "unidad": "m",
+        "fuente": "default",
+        "confianza": 0.6
+      },
+      "alto": {
+        "valor": 1.5,
+        "unidad": "m",
+        "fuente": "default",
+        "confianza": 0.6
+      },
+      "distancia_entre_ejes": {
+        "valor": 2.6,
+        "unidad": "m",
+        "fuente": "default",
+        "confianza": 0.6
+      },
+      "maniobra": {
+        "valor": "recto",
+        "fuente": "relato",
+        "confianza": 0.85,
+        "evidencia": [
+          {
+            "inicio": 0,
+            "fin": 22,
+            "texto": "Iba por Paseo Tollocan"
+          }
+        ]
+      },
+      "velocidad_previa": {
+        "valor": 50,
+        "unidad": "km/h",
+        "rango": [
+          40,
+          60
+        ],
+        "fuente": "relato",
+        "confianza": 0.7,
+        "evidencia": [
+          {
+            "inicio": 41,
+            "fin": 50,
+            "texto": "como a 50"
+          }
+        ]
+      },
+      "luces_encendidas": {
+        "valor": false,
+        "fuente": "default",
+        "confianza": 0.4
+      },
+      "carril": {
+        "valor": 2,
+        "fuente": "default",
+        "confianza": 0.4
+      },
+      "posicion_inicial": {
+        "x": -30,
+        "y": -6.0,
+        "rumbo_deg": 0,
+        "procedencia": {
+          "fuente": "supuesto",
+          "confianza": 0.5,
+          "nota": "30 m detrás del punto de impacto, mismo carril que B."
+        }
+      },
+      "posicion_final": {
+        "x": -4.6,
+        "y": -6.0,
+        "rumbo_deg": 0,
+        "procedencia": {
+          "fuente": "supuesto",
+          "confianza": 0.4
+        }
+      },
+      "ocupantes": [
+        "per-a1"
+      ],
+      "conductor": {}
+    },
+    {
+      "id": "veh-b",
+      "rol": "B",
+      "clase": {
+        "valor": "suv_compacta",
+        "fuente": "relato",
+        "confianza": 0.7,
+        "evidencia": [
+          {
+            "inicio": 63,
+            "fin": 83,
+            "texto": "una camioneta blanca"
+          }
+        ],
+        "nota": "“Camioneta” en México suele ser SUV o pickup; se asume SUV compacta."
+      },
+      "color": {
+        "nombre": {
+          "valor": "blanco",
+          "fuente": "relato",
+          "confianza": 0.9,
+          "evidencia": [
+            {
+              "inicio": 77,
+              "fin": 83,
+              "texto": "blanca"
+            }
+          ]
+        },
+        "hex": "#f2f2f2"
+      },
+      "masa": {
+        "valor": 1350,
+        "unidad": "kg",
+        "rango": [
+          1200,
+          1550
+        ],
+        "fuente": "default",
+        "confianza": 0.5
+      },
+      "largo": {
+        "valor": 4.3,
+        "unidad": "m",
+        "fuente": "default",
+        "confianza": 0.5
+      },
+      "ancho": {
+        "valor": 1.76,
+        "unidad": "m",
+        "fuente": "default",
+        "confianza": 0.5
+      },
+      "alto": {
+        "valor": 1.6,
+        "unidad": "m",
+        "fuente": "default",
+        "confianza": 0.5
+      },
+      "distancia_entre_ejes": {
+        "valor": 2.62,
+        "unidad": "m",
+        "fuente": "default",
+        "confianza": 0.5
+      },
+      "maniobra": {
+        "valor": "recto",
+        "fuente": "usuario",
+        "confianza": 0.9
+      },
+      "velocidad_previa": {
+        "valor": 40,
+        "unidad": "km/h",
+        "fuente": "usuario",
+        "confianza": 0.9
+      },
+      "luces_encendidas": {
+        "valor": false,
+        "fuente": "default",
+        "confianza": 0.4
+      },
+      "carril": {
+        "valor": 2,
+        "fuente": "default",
+        "confianza": 0.4
+      },
+      "posicion_inicial": {
+        "x": 0,
+        "y": -6.0,
+        "rumbo_deg": 0,
+        "procedencia": {
+          "fuente": "supuesto",
+          "confianza": 0.6,
+          "nota": "Detenida en la línea de alto; su defensa trasera define el origen."
+        }
+      },
+      "ocupantes": [
+        "per-b1"
+      ],
+      "conductor": {}
+    },
+    {
+      "id": "veh-c",
+      "rol": "C",
+      "clase": {
+        "valor": "sedan_compacto",
+        "fuente": "relato",
+        "confianza": 0.8,
+        "evidencia": [
+          {
+            "inicio": 457,
+            "fin": 469,
+            "texto": "un Aveo rojo"
+          }
+        ]
+      },
+      "color": {
+        "nombre": {
+          "valor": "rojo",
+          "fuente": "relato",
+          "confianza": 0.9,
+          "evidencia": [
+            {
+              "inicio": 124,
+              "fin": 128,
+              "texto": "rojo"
+            }
+          ]
+        },
+        "hex": "#a3262a"
+      },
+      "masa": {
+        "valor": 1100,
+        "unidad": "kg",
+        "rango": [
+          1020,
+          1200
+        ],
+        "fuente": "default",
+        "confianza": 0.6
+      },
+      "largo": {
+        "valor": 4.31,
+        "unidad": "m",
+        "fuente": "default",
+        "confianza": 0.5
+      },
+      "ancho": {
+        "valor": 1.71,
+        "unidad": "m",
+        "fuente": "default",
+        "confianza": 0.5
+      },
+      "alto": {
+        "valor": 1.5,
+        "unidad": "m",
+        "fuente": "default",
+        "confianza": 0.5
+      },
+      "distancia_entre_ejes": {
+        "valor": 2.48,
+        "unidad": "m",
+        "fuente": "default",
+        "confianza": 0.5
+      },
+      "maniobra": {
+        "valor": "recto",
+        "fuente": "usuario",
+        "confianza": 0.9
+      },
+      "velocidad_previa": {
+        "valor": 40,
+        "unidad": "km/h",
+        "fuente": "usuario",
+        "confianza": 0.9
+      },
+      "luces_encendidas": {
+        "valor": false,
+        "fuente": "default",
+        "confianza": 0.4
+      },
+      "carril": {
+        "valor": 2,
+        "fuente": "default",
+        "confianza": 0.4
+      },
+      "posicion_inicial": {
+        "x": -14.0,
+        "y": -6.0,
+        "rumbo_deg": 0,
+        "procedencia": {
+          "fuente": "usuario",
+          "confianza": 0.9,
+          "nota": "Delante de B en el mismo carril, con unos 15 m de separación."
+        }
+      },
+      "ocupantes": [],
+      "marca": {
+        "valor": "Chevrolet",
+        "fuente": "supuesto",
+        "confianza": 0.6,
+        "nota": "El Aveo es de Chevrolet."
+      },
+      "modelo": {
+        "valor": "Aveo",
+        "fuente": "relato",
+        "confianza": 0.9,
+        "evidencia": [
+          {
+            "inicio": 460,
+            "fin": 464,
+            "texto": "Aveo"
+          }
+        ]
+      },
+      "conductor": {
+        "decision": {
+          "valor": "frenar",
+          "fuente": "usuario",
+          "confianza": 0.9
+        },
+        "instante_decision": {
+          "valor": -2.5,
+          "unidad": "s",
+          "fuente": "usuario",
+          "confianza": 0.9,
+          "nota": "C frena de golpe"
+        }
+      }
+    }
+  ],
+  "personas": [
+    {
+      "id": "per-a1",
+      "rol": {
+        "valor": "conductor",
+        "fuente": "relato",
+        "confianza": 1,
+        "evidencia": [
+          {
+            "inicio": 26,
+            "fin": 34,
+            "texto": "mi Versa"
+          }
+        ]
+      },
+      "vehiculo_id": "veh-a",
+      "asiento": {
+        "valor": "conductor",
+        "fuente": "supuesto",
+        "confianza": 1
+      },
+      "cinturon": {
+        "valor": true,
+        "fuente": "relato",
+        "confianza": 0.9,
+        "evidencia": [
+          {
+            "inicio": 345,
+            "fin": 370,
+            "texto": "Los dos traíamos cinturón"
+          }
+        ]
+      },
+      "estatura": {
+        "valor": 1.7,
+        "unidad": "m",
+        "rango": [
+          1.55,
+          1.85
+        ],
+        "fuente": "default",
+        "confianza": 0.3
+      },
+      "masa": {
+        "valor": 75,
+        "unidad": "kg",
+        "rango": [
+          55,
+          95
+        ],
+        "fuente": "default",
+        "confianza": 0.3
+      }
+    },
+    {
+      "id": "per-b1",
+      "rol": {
+        "valor": "conductor",
+        "fuente": "supuesto",
+        "confianza": 0.8,
+        "nota": "Toda camioneta detenida lleva al menos un conductor."
+      },
+      "vehiculo_id": "veh-b",
+      "asiento": {
+        "valor": "conductor",
+        "fuente": "supuesto",
+        "confianza": 0.8
+      },
+      "cinturon": {
+        "valor": true,
+        "fuente": "relato",
+        "confianza": 0.8,
+        "evidencia": [
+          {
+            "inicio": 345,
+            "fin": 370,
+            "texto": "Los dos traíamos cinturón"
+          }
+        ]
+      }
+    }
+  ],
+  "eventos": [
+    {
+      "id": "ev-impacto",
+      "orden": 1,
+      "tipo": "impacto_vehiculo_vehiculo",
+      "actores": [
+        "veh-a",
+        "veh-b"
+      ],
+      "t": {
+        "valor": 0,
+        "unidad": "s",
+        "fuente": "default",
+        "confianza": 1
+      },
+      "zonas_impacto": [
+        {
+          "vehiculo_id": "veh-a",
+          "cdc": {
+            "lado": "F",
+            "zona_horizontal": "Z",
+            "zona_vertical": "E",
+            "extension": 3
+          },
+          "pdof_horas": {
+            "valor": 12,
+            "fuente": "supuesto",
+            "confianza": 0.6
+          }
+        },
+        {
+          "vehiculo_id": "veh-b",
+          "cdc": {
+            "lado": "B",
+            "zona_horizontal": "D",
+            "zona_vertical": "E",
+            "extension": 2
+          },
+          "pdof_horas": {
+            "valor": 6,
+            "fuente": "supuesto",
+            "confianza": 0.6
+          }
+        }
+      ],
+      "punto_impacto": {
+        "x": 0,
+        "y": -6.0
+      },
+      "descripcion": "A alcanza a B detenida; contacto frontal derecho de A contra la parte trasera de B.",
+      "procedencia": {
+        "fuente": "relato",
+        "confianza": 0.9,
+        "evidencia": [
+          {
+            "inicio": 165,
+            "fin": 219,
+            "texto": "le pegué por atrás, de frente con mi lado del copiloto"
+          }
+        ]
+      }
+    },
+    {
+      "id": "ev-reposo",
+      "orden": 3,
+      "tipo": "reposo",
+      "actores": [
+        "veh-a",
+        "veh-b",
+        "veh-c"
+      ],
+      "t": {
+        "valor": 1.5,
+        "unidad": "s",
+        "rango": [
+          0.8,
+          2.5
+        ],
+        "fuente": "supuesto",
+        "confianza": 0.3
+      },
+      "procedencia": {
+        "fuente": "supuesto",
+        "confianza": 0.3
+      }
+    }
+  ],
+  "danos_declarados": [
+    {
+      "vehiculo_id": "veh-a",
+      "zona": {
+        "lado": "F",
+        "zona_horizontal": "Z",
+        "zona_vertical": "E",
+        "extension": 3
+      },
+      "severidad": "moderado",
+      "vidrios": "intactos",
+      "bolsas_aire": {
+        "valor": false,
+        "fuente": "supuesto",
+        "confianza": 0.6
+      },
+      "piezas_desprendidas": [
+        "faro"
+      ],
+      "descripcion": "Cofre doblado y faro derecho roto.",
+      "procedencia": {
+        "fuente": "relato",
+        "confianza": 0.9,
+        "evidencia": [
+          {
+            "inicio": 252,
+            "fin": 300,
+            "texto": "se me dobló el cofre y se rompió el faro derecho"
+          }
+        ]
+      }
+    },
+    {
+      "vehiculo_id": "veh-b",
+      "zona": {
+        "lado": "B",
+        "zona_horizontal": "D",
+        "zona_vertical": "E",
+        "extension": 2
+      },
+      "severidad": "moderado",
+      "vidrios": "intactos",
+      "descripcion": "Cajuela hundida.",
+      "procedencia": {
+        "fuente": "relato",
+        "confianza": 0.9,
+        "evidencia": [
+          {
+            "inicio": 221,
+            "fin": 244,
+            "texto": "Se le hundió la cajuela"
+          }
+        ]
+      }
+    },
+    {
+      "vehiculo_id": "veh-c",
+      "zona": {
+        "lado": "B",
+        "zona_horizontal": "D",
+        "zona_vertical": "E",
+        "extension": 1
+      },
+      "severidad": "leve",
+      "vidrios": "intactos",
+      "descripcion": "Golpe en la parte trasera.",
+      "procedencia": {
+        "fuente": "relato",
+        "confianza": 0.7,
+        "evidencia": [
+          {
+            "inicio": 447,
+            "fin": 469,
+            "texto": "le pegó a un Aveo rojo"
+          }
+        ]
+      }
+    }
+  ],
+  "evidencias": []
+}

@@ -22,7 +22,15 @@ def main(argv: list[str] | None = None) -> int:
     rec.add_argument("--json", type=Path, help="EscenaSpec en un archivo JSON")
     num = sub.add_parser("numerics", help="Vectores de referencia de linalg y lsq para el port TS")
     num.add_argument("--check", action="store_true", help="Falla si el archivo no está al día")
+    sub.add_parser("agent-fixtures", help="Escenas de hipótesis de los conductores (R12a)")
     args = parser.parse_args(argv)
+
+    if args.command == "agent-fixtures":
+        from croquis_solver import agent_fixtures
+
+        for path in agent_fixtures.write_all():
+            print(path)
+        return 0
 
     if args.command == "numerics":
         from croquis_solver import numerics_fixture

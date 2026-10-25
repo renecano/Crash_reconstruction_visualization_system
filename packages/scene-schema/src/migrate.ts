@@ -56,6 +56,13 @@ export const MIGRATIONS: Migration[] = [
     // Un campo nuevo opcional: ninguna escena anterior lo trae.
     aplicar: (doc) => doc,
   },
+  {
+    desde: "2.1.0",
+    hasta: "2.2.0",
+    descripcion: "vehiculos[].conductor opcional (R12a); los documentos no cambian",
+    // Un bloque nuevo opcional: ninguna escena anterior lo trae.
+    aplicar: (doc) => doc,
+  },
 ];
 
 export interface MigrationResult {

@@ -68,6 +68,11 @@ def _v200_a_210(doc: JsonObj) -> JsonObj:
     return doc
 
 
+def _v210_a_220(doc: JsonObj) -> JsonObj:
+    """2.2.0 agrega ``vehiculos[].conductor`` (R12a, opcional): ningún documento cambia."""
+    return doc
+
+
 MIGRATIONS: list[Migration] = [
     Migration(
         "1.0.0",
@@ -100,6 +105,12 @@ MIGRATIONS: list[Migration] = [
         "vehiculos[].posicion_final_supuesta, opcionales; "
         "los documentos no cambian",
         _v200_a_210,
+    ),
+    Migration(
+        "2.1.0",
+        "2.2.0",
+        "vehiculos[].conductor opcional (R12a); los documentos no cambian",
+        _v210_a_220,
     ),
 ]
 

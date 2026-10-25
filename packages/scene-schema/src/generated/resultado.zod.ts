@@ -5,6 +5,67 @@ import { z } from "zod";
 export const RESULTADO_SCHEMA_ID = "https://croquis.local/schema/resultado/1.9.0";
 export const RESULT_VERSION = "1.10.0" as const;
 
+export const Id = z.string().regex(new RegExp("^[a-z0-9][a-z0-9_-]{0,63}$"));
+export type Id = z.infer<typeof Id>;
+
+export const ConductorAgente = z.strictObject({
+  vehiculo: Id,
+  tiempo_reaccion_s: z.strictObject({
+    valor: z.number(),
+    rango: z.tuple([z.number(), z.number()]),
+    fuente: z.string().max(300),
+  }),
+  decision: z
+    .strictObject({
+      tipo: z.enum(["frenar", "volantear_izquierda", "volantear_derecha", "seguir"]),
+      t: z.number(),
+      origen: z.enum(["perito", "reconstruccion", "reaccion"]),
+      ante: Id.optional(),
+      percibio_t: z.number().optional(),
+    })
+    .optional(),
+});
+export type ConductorAgente = z.infer<typeof ConductorAgente>;
+
+/** Percentiles 10, 50 y 90 de las muestras. */
+export const Percentiles = z.strictObject({ p10: z.number(), p50: z.number(), p90: z.number() });
+export type Percentiles = z.infer<typeof Percentiles>;
+
+/** Lo que pasa con esas decisiones: el primer contacto entre vehículos o, si no hay, la distancia mínima a la que quedaron. */
+export const SimulacionAgentes = z.strictObject({
+  contacto: z.boolean(),
+  t: z.number().optional(),
+  vehiculos: z.tuple([Id, Id]).optional(),
+  velocidades_kmh: z
+    .array(z.strictObject({ vehiculo: Id, valor: z.number() }))
+    .max(2)
+    .optional(),
+  velocidad_relativa_kmh: z.number().optional(),
+  distancia_minima_m: z.number().optional(),
+});
+export type SimulacionAgentes = z.infer<typeof SimulacionAgentes>;
+
+/** Los conductores como agentes (R12a, ADR 0088): solo cuando algún vehículo trae conductor. `resultado` es con las decisiones del perito; `linea_base`, con las de la reconstrucción. */
+export const Agentes = z.strictObject({
+  dt: z.number(),
+  t_inicio: z.number(),
+  t_fin: z.number(),
+  conductores: z.array(ConductorAgente).max(32),
+  resultado: SimulacionAgentes,
+  linea_base: SimulacionAgentes,
+  sensibilidad: z
+    .strictObject({
+      muestras: z.int(),
+      semilla: z.int(),
+      vehiculos: z.array(Id),
+      sin_contacto: z.int(),
+      velocidad_relativa_kmh: Percentiles.optional(),
+    })
+    .optional(),
+  supuestos: z.array(z.string().max(300)).max(16).optional(),
+});
+export type Agentes = z.infer<typeof Agentes>;
+
 export const CampoMuestreado = z.strictObject({
   ruta: z.string().min(1).max(120),
   distribucion: z.enum(["uniforme"]),
@@ -47,9 +108,6 @@ export const Dano = z.strictObject({
   cdc: ZonaCDC.optional(),
 });
 export type Dano = z.infer<typeof Dano>;
-
-export const Id = z.string().regex(new RegExp("^[a-z0-9][a-z0-9_-]{0,63}$"));
-export type Id = z.infer<typeof Id>;
 
 /** El daño de un impacto posterior (carambola) en un vehículo que ya tenía daño de un impacto anterior: el mismo perfil que `Dano`, con el evento, el instante, el delta-v y la PDOF de ese impacto (desde 1.9.0, ADR 0066). */
 export const DanoPosterior = z.strictObject({
@@ -151,10 +209,6 @@ export const Fase = z.strictObject({
   t_fin: z.number(),
 });
 export type Fase = z.infer<typeof Fase>;
-
-/** Percentiles 10, 50 y 90 de las muestras. */
-export const Percentiles = z.strictObject({ p10: z.number(), p50: z.number(), p90: z.number() });
-export type Percentiles = z.infer<typeof Percentiles>;
 
 export const IncertidumbrePersona = z.strictObject({ id: Id, distancia_proyeccion_m: Percentiles });
 export type IncertidumbrePersona = z.infer<typeof IncertidumbrePersona>;
@@ -488,5 +542,6 @@ export const ResultadoSchema = z.strictObject({
   inversion: Inversion.optional(),
   inversion_reposo_supuesto: Inversion.optional(),
   consistencia: z.array(Inconsistencia).max(32).optional(),
+  agentes: Agentes.optional(),
 });
 export type Resultado = z.infer<typeof ResultadoSchema>;
