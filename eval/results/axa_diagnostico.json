@@ -1,0 +1,350 @@
+{
+  "name": "axa_diagnostico",
+  "generated_at": "2026-10-25T00:56:57Z",
+  "git_commit": "8ab9271",
+  "descripcion": "AXA A2010930: por qué la reconstrucción del solver da una velocidad de V2 distinta del 63.15 km/h del reporte de CESVI. Entradas, sensibilidad de V2 y métodos.",
+  "escena": "El caso de ejemplo de /cesvi (lectura grabada del reporte) con la versión de la evidencia sobre MEX 15D y V2 en reposo detrás de V1; inversión del port TS (4 muestras).",
+  "entradas": [
+    {
+      "entrada": "Masa de V2 (Tacoma)",
+      "cesvi": "1431.083 kg («m = 1431.083 kg»)",
+      "solver": "1431.083 kg",
+      "difiere": false,
+      "origen": "La lectura del reporte."
+    },
+    {
+      "entrada": "Masa de V1 (Silverado)",
+      "cesvi": "El reporte no la da.",
+      "solver": "1890 kg, la típica de su clase (pickup), supuesto",
+      "difiere": true,
+      "origen": "Dato que falta en el reporte; el solver usa la típica de la clase."
+    },
+    {
+      "entrada": "Daños de V2 con medidas",
+      "cesvi": "Una deformación medida: el frente (la del McHenry)",
+      "solver": "1 (F)",
+      "difiere": false,
+      "origen": "Se usa solo la de la cara del impacto (arreglado, ADR 0091)."
+    },
+    {
+      "entrada": "Perfil de deformación de V2",
+      "cesvi": "C1–C4 = 0.96, 0.86, 0.52, 0.2 m, L = 1.689 m (frontal)",
+      "solver": "F: profundidad 0.96 m, ancho 1.689 m, perfil [0.96,0.86,0.52,0.2]",
+      "difiere": false,
+      "origen": "El perfil C1–C4 del reporte (arreglado: antes llegaba solo la profundidad máxima, pareja en todo el ancho)."
+    },
+    {
+      "entrada": "Rigidez A y B de V2",
+      "cesvi": "A = 55.405, B = 385.336 (impresas como N/m; son kN/m y kN/m², ADR 0048)",
+      "solver": "A = 55405 N/m, B = 385336 N/m² (la del reporte)",
+      "difiere": false,
+      "origen": "La del reporte (arreglado: antes, la de la clase de NHTSA, que con el mismo perfil da 2.6 veces la energía)."
+    },
+    {
+      "entrada": "Energía de deformación de V2",
+      "cesvi": "220.1900228 (kJ; impresa como «Julios»)",
+      "solver": "0.18 kJ en la reconstrucción con las velocidades que ajusta la inversión",
+      "difiere": true,
+      "origen": "Sale de la reconstrucción, no se mide: depende de las velocidades que ajusta la inversión."
+    },
+    {
+      "entrada": "Fricción después del impacto",
+      "cesvi": "a = 0.9 («a = 0.9»)",
+      "solver": "llanta 0.7 (fricke; toolbox); arrastre después del impacto 0.35 (supuesto)",
+      "difiere": true,
+      "origen": "De método: CESVI supone deslizamiento con 0.9; el solver, llantas que ruedan con arrastre."
+    },
+    {
+      "entrada": "Distancia después del impacto",
+      "cesvi": "D = 15.89 m, la separación de los restos, como recorrido de V1",
+      "solver": "reposo de V1 a 15.89 m del impacto en la vía (posición de la versión de la evidencia)",
+      "difiere": false,
+      "origen": "La misma medida del reporte."
+    },
+    {
+      "entrada": "Reposo de V2",
+      "cesvi": "El reporte no lo da.",
+      "solver": "Detrás de V1, tocándolo (el supuesto del método de los restos: avanzan juntos)",
+      "difiere": true,
+      "origen": "Dato que falta en el reporte; supuesto."
+    },
+    {
+      "entrada": "Posiciones y ángulo de impacto",
+      "cesvi": "Alcance colineal (el reporte no da posiciones)",
+      "solver": "Colineal sobre MEX 15D, rumbo 14.28° (versión de la evidencia)",
+      "difiere": false,
+      "origen": "Supuesto de la versión de la evidencia, igual al del reporte."
+    }
+  ],
+  "errores": [],
+  "sensibilidad": {
+    "v2_base_kmh": 43.39,
+    "filas": [
+      {
+        "entrada": "Fricción de la llanta",
+        "valor": "0.55",
+        "v2_kmh": 41.32,
+        "v1_kmh": 39.23
+      },
+      {
+        "entrada": "Fricción de la llanta",
+        "valor": "0.7",
+        "v2_kmh": 43.39,
+        "v1_kmh": 38.69
+      },
+      {
+        "entrada": "Fricción de la llanta",
+        "valor": "0.8",
+        "v2_kmh": 41.62,
+        "v1_kmh": 39.97
+      },
+      {
+        "entrada": "Fricción de la llanta",
+        "valor": "0.9",
+        "v2_kmh": null,
+        "v1_kmh": 40
+      },
+      {
+        "entrada": "Reposo de V1 desde el impacto (m)",
+        "valor": "12.89",
+        "v2_kmh": 40.95,
+        "v1_kmh": 39.69
+      },
+      {
+        "entrada": "Reposo de V1 desde el impacto (m)",
+        "valor": "15.89",
+        "v2_kmh": 43.39,
+        "v1_kmh": 38.69
+      },
+      {
+        "entrada": "Reposo de V1 desde el impacto (m)",
+        "valor": "18.89",
+        "v2_kmh": 41.71,
+        "v1_kmh": 40.02
+      },
+      {
+        "entrada": "Reposo de V2",
+        "valor": "detras",
+        "v2_kmh": 43.39,
+        "v1_kmh": 38.69
+      },
+      {
+        "entrada": "Reposo de V2",
+        "valor": "impacto",
+        "v2_kmh": 27.32,
+        "v1_kmh": 41.66
+      },
+      {
+        "entrada": "Reposo de V2",
+        "valor": "ninguno",
+        "v2_kmh": null,
+        "v1_kmh": null
+      },
+      {
+        "entrada": "Ángulo de V2 en el impacto (°)",
+        "valor": "-10",
+        "v2_kmh": 37.29,
+        "v1_kmh": null
+      },
+      {
+        "entrada": "Ángulo de V2 en el impacto (°)",
+        "valor": "0",
+        "v2_kmh": 43.39,
+        "v1_kmh": 38.69
+      },
+      {
+        "entrada": "Ángulo de V2 en el impacto (°)",
+        "valor": "10",
+        "v2_kmh": 37.45,
+        "v1_kmh": null
+      },
+      {
+        "entrada": "PDOF de V2 (horas)",
+        "valor": "11",
+        "v2_kmh": 43.39,
+        "v1_kmh": 38.69
+      },
+      {
+        "entrada": "PDOF de V2 (horas)",
+        "valor": "12",
+        "v2_kmh": 43.39,
+        "v1_kmh": 38.69
+      },
+      {
+        "entrada": "PDOF de V2 (horas)",
+        "valor": "1",
+        "v2_kmh": 43.39,
+        "v1_kmh": 38.69
+      },
+      {
+        "entrada": "Ruedas después del impacto",
+        "valor": "bloqueadas en los dos (deslizan, como supone CESVI)",
+        "v2_kmh": 40,
+        "v1_kmh": 40
+      },
+      {
+        "entrada": "Masa de V1 (kg)",
+        "valor": "2000",
+        "v2_kmh": 43.35,
+        "v1_kmh": 38.75
+      },
+      {
+        "entrada": "Masa de V1 (kg)",
+        "valor": "2600",
+        "v2_kmh": 42.63,
+        "v1_kmh": 38.37
+      },
+      {
+        "entrada": "Masa de V1 (kg)",
+        "valor": "3200",
+        "v2_kmh": 43.4,
+        "v1_kmh": 38.97
+      },
+      {
+        "entrada": "Masa de V2 (kg)",
+        "valor": "1287.97",
+        "v2_kmh": 43.35,
+        "v1_kmh": 38.81
+      },
+      {
+        "entrada": "Masa de V2 (kg)",
+        "valor": "1431.08",
+        "v2_kmh": 43.39,
+        "v1_kmh": 38.69
+      },
+      {
+        "entrada": "Masa de V2 (kg)",
+        "valor": "1574.19",
+        "v2_kmh": 43.42,
+        "v1_kmh": 38.59
+      }
+    ]
+  },
+  "metodos": {
+    "cesvi_deformacion": {
+      "valor_kmh": 63.15,
+      "metodo": "Velocidad equivalente de barrera (EBS) de V2: la velocidad a la que toda la energía de su deformación (McHenry con C1–C4, L, A y B) se absorbería contra una barrera rígida, v = √(2E/m), con la masa de V2. Es una equivalencia de energía, no la velocidad a la que circulaba.",
+      "croquis_con_los_mismos_datos_kmh": 63.9,
+      "croquis_recalculado_kmh": 63.9
+    },
+    "cesvi_restos": {
+      "valor_kmh": 60.27,
+      "metodo": "Velocidad de V1 al salir del impacto, para recorrer la separación de los restos (15.89 m) deslizando con a = 0.9: v = √(2·a·g·D). Es de V1 después del impacto, no de V2 antes.",
+      "croquis_recalculado_kmh": 60.27
+    },
+    "solver": {
+      "valor_kmh": 43.39,
+      "metodo": "Velocidad de V2 justo antes del impacto que hace que la simulación (impulso con conservación de momento y la trayectoria después del impacto con las llantas del solver) termine donde quedaron los vehículos. Es la velocidad a la que circulaba.",
+      "evidencia_que_usa": [
+        "reposo:veh-a",
+        "reposo:veh-b",
+        "rumbo_final:veh-a",
+        "rumbo_final:veh-b",
+        "dano_minimo:veh-a"
+      ]
+    },
+    "comprobacion_fisica": {
+      "masa_v1_supuesta_kg": 1890,
+      "energia_v2_kj": 225.45,
+      "velocidad_cierre_minima_kmh": 84.71,
+      "energia_v2_rigidez_clase_kj": 586.97,
+      "razon_clase_contra_reporte": 2.6,
+      "solver_v1_kmh": 38.69,
+      "solver_cierre_kmh": 4.7,
+      "residuo_dano_minimo_sigma": -2.382,
+      "lectura": "En un alcance entre dos vehículos, la energía de deformación sale de la velocidad de cierre con la masa reducida (½·μ·v²), no con la masa de V2 sola: con la deformación de V2 la velocidad de cierre es al menos este valor (más si V1 también se deformó). Un cierre cercano a cero no es compatible con 0.96 m de deformación."
+    }
+  },
+  "arranques": [
+    {
+      "arranque": "por omisión (40 km/h los dos)",
+      "v2_kmh": 43.39,
+      "v1_kmh": 38.69,
+      "costo": 2.82,
+      "residuos_sigma": {
+        "dano_minimo:veh-a": -2.38,
+        "reposo:veh-a:x": 0.22,
+        "reposo:veh-a:y": 0.9,
+        "reposo:veh-b:x": 0.07,
+        "reposo:veh-b:y": 1.57,
+        "rumbo_final:veh-a": 0,
+        "rumbo_final:veh-b": 0.03
+      }
+    },
+    {
+      "arranque": "compatible con la deformación (V2 a 84.71 km/h, V1 detenido)",
+      "v2_kmh": 84.14,
+      "v1_kmh": 0.66,
+      "costo": 9.86,
+      "residuos_sigma": {
+        "dano_minimo:veh-a": 0,
+        "reposo:veh-a:x": -2.25,
+        "reposo:veh-a:y": -9.19,
+        "reposo:veh-b:x": -0.47,
+        "reposo:veh-b:y": 0.29,
+        "rumbo_final:veh-a": -0.01,
+        "rumbo_final:veh-b": 0.06
+      }
+    }
+  ],
+  "paso6": {
+    "filas": [
+      {
+        "vehiculo": "V2",
+        "metodo": "Deformación (EBS)",
+        "cesviQue": "velocidad equivalente de barrera de V2",
+        "cesviKmh": 63.15,
+        "croquisQue": "velocidad de V2 antes del impacto",
+        "croquisKmh": 43.34,
+        "diferenciaKmh": -19.81,
+        "diferenciaPct": -31.37,
+        "porQue": "CESVI convierte la energía de la deformación de V2 en la velocidad de un choque contra un muro fijo, √(2E/m), con la masa de V2 sola; Croquis calcula a qué velocidad circulaba, con el momento de los dos vehículos y lo que recorrieron después del impacto."
+      },
+      {
+        "vehiculo": "V1",
+        "metodo": "Restos (desplazamiento)",
+        "cesviQue": "velocidad de V1 al salir del impacto",
+        "cesviKmh": 60.27,
+        "croquisQue": "velocidad de V1 al salir del impacto",
+        "croquisKmh": 39.83,
+        "diferenciaKmh": -20.44,
+        "diferenciaPct": -33.91,
+        "porQue": "CESVI hace que los vehículos se deslicen juntos 15.89 m con a = 0.9 (llantas que no ruedan); en Croquis, después del golpe las llantas ruedan con un arrastre de 0.35 de la fricción y cada vehículo sigue su propia trayectoria, así que la misma distancia pide otra velocidad."
+      }
+    ],
+    "avisos": [
+      "La reconstrucción no alcanza la deformación medida de V2: solo con ella, su cambio de velocidad sería de al menos 26–83 km/h, y en la reconstrucción que reproduce las posiciones finales es de 3 km/h. Revisa las posiciones finales que sean supuestos: con ellas, la velocidad de V2 sale baja para ese daño."
+    ]
+  },
+  "conclusion": {
+    "antes": {
+      "git_commit": "8ab9271",
+      "v2_kmh": 41.01,
+      "errores": [
+        "Medidas de deformación duplicadas",
+        "Perfil de deformación incompleto",
+        "La deformación no entra a la inversión"
+      ]
+    },
+    "despues": {
+      "v2_kmh": 43.39,
+      "errores_pendientes": []
+    },
+    "diferencia_con_deformacion": {
+      "kmh": -19.76,
+      "pct": -31.29
+    },
+    "diferencia_con_restos": {
+      "kmh": -16.88,
+      "pct": -28.01
+    },
+    "error": [],
+    "metodo": "El 63.15 de CESVI es una equivalencia de energía de V2 contra una barrera; el 60.27 es V1 después del impacto con deslizamiento a 0.9; el del solver es la velocidad previa de V2 por momento y trayectorias. Son tres magnitudes distintas: aun sin errores, no tienen por qué coincidir.",
+    "datos": "Faltan en el reporte la masa de V1 y el reposo de V2 (supuesto: detrás de V1, tocándolo); la fricción después del impacto se supone distinta (CESVI: deslizan juntos con a = 0.9; el solver: llantas que ruedan con arrastre de 0.35·μ).",
+    "consistencia": "Con la deformación del reporte, la velocidad de cierre debe ser al menos la de «comprobacion_fisica». Si la reconstrucción queda por debajo (residuo negativo de «dano_minimo»), la deformación y las posiciones finales supuestas no son compatibles con el modelo del solver: es un conflicto de datos y supuestos que el perito debe ver, no un número que se ajuste.",
+    "arranques": "Si el ajuste desde el arranque compatible con la deformación tiene más costo que el de por omisión, el resultado no es un mínimo local: con el modelo del solver (restitución y llantas que ruedan después del impacto), una velocidad de cierre que alcanza la deformación separa a los vehículos y deja a V2 lejos del reposo supuesto (tocando a V1). El supuesto que pesa es ese reposo, que el reporte no da.",
+    "bandera_dano_no_alcanzado": [
+      "Solo con su deformación, el daño medido en el vehículo A pide un cambio de velocidad mínimo de 30 a 82 km/h; en la reconstrucción que reproduce dónde quedaron los vehículos es de 3 km/h. ¿Son correctas las posiciones finales? Si alguna es un supuesto, con ella la reconstrucción no alcanza ese daño."
+    ]
+  }
+}

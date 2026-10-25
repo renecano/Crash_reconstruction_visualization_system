@@ -390,12 +390,38 @@ Reglas de trabajo: `CLAUDE.md`. Especificación: `PLAN.md`.
         - al soltar V1 y V2 encimados sale «V1 y V2 quedaron encimados en su posición final (3.75 m)», y «Separarlos» lo quita;
         - el 3D lleva la leyenda de CESVI, las calles de OpenStreetMap y los modelos (Lightbody), en calidad automática media;
         - en la vista expandida, la caja del paso ya no tapa el texto.
+    - **La diferencia de AXA (2026-10-24, rama `fix/axa-diagnostico`, ADR 0091):** René pidió resolverla antes de R12a. La reconstrucción daba V2 a 41.01 km/h contra 63.15 km/h del reporte (−35.1 %).
+      - **Diagnóstico:**
+        - el script es `eval/cesvi_axa_diagnostico.mts`, con el resultado en `eval/results/axa_diagnostico.json`;
+        - el del código anterior está en `axa_diagnostico_antes.json`;
+        - incluye la tabla de entradas (CESVI contra el solver), la sensibilidad de V2, los métodos, la comprobación física, dos arranques del ajuste y lo que ve el perito en el paso 6.
+      - **Tres errores, corregidos:**
+        1. las C y L del frente de la Tacoma iban duplicadas en su costado;
+        2. llegaba solo la profundidad máxima, pareja, y no el perfil C1–C4 ni la rigidez del reporte;
+        3. la deformación no entraba a la inversión, porque solo se usaba si los dos vehículos la tenían medida.
+      - **Arreglo:**
+        - contrato 2.1.0 con `perfil_aplastamiento` y `rigidez` en el daño declarado;
+        - la inversión usa la deformación de un solo vehículo como mínimo (`dano_minimo`);
+        - bandera nueva `dano_no_alcanzado` (resultado 1.10.0);
+        - Python y TS con paridad, sobre dos escenas nuevas en `fixtures/inversion/`.
+      - **Lo que queda es de método y de datos, y se muestra con su valor y su porcentaje** en el paso 6, sobre el 3D y en el dictamen (`reconstruccionContraCesvi`). En la reconstrucción de la app:
+        - deformación (EBS): 63.15 contra 43.34 km/h, −19.81 km/h (−31.37 %);
+        - restos (V1 al salir del impacto): 60.27 contra 39.83 km/h, −20.44 km/h (−33.91 %).
+      - **Por qué los métodos difieren:**
+        - El 63.15 es la equivalencia de barrera de la energía de V2 con su masa sola, no la velocidad a la que circulaba.
+        - El 60.27 hace deslizar a los dos juntos con a = 0.9; el solver, con llantas que ruedan después del impacto.
+        - Faltan en el reporte la masa de V1 y el reposo de V2: se usa el supuesto de los restos, V2 detrás de V1, tocándolo.
+      - **Aviso:**
+        - con ese supuesto, la reconstrucción no alcanza la deformación medida: con 225.45 kJ, el cierre debe ser al menos de 84.71 km/h, y en el ajuste es de 4.7 km/h;
+        - no es un mínimo local: el costo es 2.82 desde el arranque por omisión, contra 9.86 desde uno compatible con la deformación;
+        - Croquis lo dice al perito con sus números, sin ajustar pesos para que cuadre.
     - **R12a (conductores como agentes) en pausa:**
-      - lo hecho está en la rama `feat/r12a-agentes`: el contrato 2.1.0, el módulo de agentes en Python y las escenas de hipótesis;
+      - lo hecho está en la rama `feat/r12a-agentes`: el contrato, el módulo de agentes en Python y las escenas de hipótesis;
       - faltan las pruebas, el port TS y la paridad;
-      - se retoma después de los comentarios de René.
+      - al retomarlo, su contrato sube a 2.2.0, porque el 2.1.0 ya es el del perfil de aplastamiento.
     - **Siguiente paso concreto:**
-      - los puntos 2 a 4 de René, en ese orden, y verificar cada uno en producción;
+      - fusionar `fix/axa-diagnostico`;
+      - volver a exportar `demo/escenas-r11` (`axa.json` con `tools/demo/escena-axa.mts` y los GLB con `tools/demo/exportar-escenas.mjs`);
       - luego, R12a;
       - cuando aparezca la rama `resultados/computadora-demo-<fecha>`, integrar los videos de R11 y E6 en alta y ultra («Bloqueado»).
     1. **V2-1, marco:**
@@ -1395,9 +1421,9 @@ Lo que se pospone por el trabajo con CESVI no se borra: queda aquí para despué
   - **Lo que falta:** el contrato y el solver necesitan el sentido de marcha separado del rumbo del frente. Va con R4 o R6, junto con las otras modalidades del corpus.
 - **Del prototipo de CESVI:** el mapa con mosaicos propios (privacidad completa), la importación automática de cualquier dictamen, interpenetración, impactos múltiples y generalidad del método; autenticación con cuentas para cuando los peritos usen sus propios casos (hoy el acceso es con usuario y clave, ADR 0049).
 
-- **AXA en el solver** (2026-10-24, ADR 0089):
-  - con las zonas correctas, la reconstrucción no reproduce las velocidades de CESVI: V2 a 41.01 km/h contra 63.15 km/h por deformación;
-  - falta ver si la inversión usa las medidas C y L de V2, y cómo encajan con las posiciones (con o sin la posición final de B).
+- **Alcance sin el orden de velocidades en la inversión** (2026-10-24, ADR 0091):
+  - en la variante del diagnóstico de AXA con V2 en reposo en el punto de impacto (no es la de la demo), el ajuste de menor costo deja a V2, que va detrás, más lento que V1: 27.32 contra 41.66 km/h;
+  - en un alcance, el que golpea tiene que ir más rápido; falta esa restricción en la inversión.
 
 ### Bloqueado — necesita a René
 
