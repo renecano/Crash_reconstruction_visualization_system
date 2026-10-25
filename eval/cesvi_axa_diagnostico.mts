@@ -41,8 +41,10 @@ import {
   callesCerca,
   caso,
   especDeExpediente,
+  conMasasDeFicha,
   importarDictamen,
   mcHenry,
+  conHipotesis,
   proponerVersiones,
   reconstruccionContraCesvi,
   reconstruirExpediente,
@@ -73,6 +75,8 @@ const ejemplo = leer("data/cesvi/grabaciones/importar/ejemplo.json") as {
   archivo: string;
 };
 const leido = importarDictamen(ejemplo.texto, lecturas.corpus, lecturas.narracion, ejemplo.archivo);
+// El reporte no da la masa de V1: la de la ficha técnica de su modelo y año (data/SOURCES.md).
+const conFicha = conMasasDeFicha(leido.expediente);
 const u = ubicacionIlustrativa(c.id)!;
 const via = callesCerca(tramoDelCaso(c.id), [u.lon, u.lat], 150).cercana!;
 
@@ -83,6 +87,8 @@ interface Variante {
   reposoB?: "detras" | "impacto" | "ninguno";
   /** Giro del rumbo de B en el impacto respecto de la vía (grados). */
   anguloB?: number;
+  /** El reposo de B marcado como supuesto por el perito (el reporte no lo da; ADR 0091). */
+  reposoBSupuesto?: boolean;
 }
 
 function expediente(v: Variante = {}): Expediente {
@@ -111,12 +117,15 @@ function expediente(v: Variante = {}): Expediente {
           fase,
           punto: { lon: p.punto[0], lat: p.punto[1] },
           rumbo: ((rumbo % 360) + 360) % 360,
-          fuente: "perito" as const,
+          fuente:
+            l === "B" && fase === "final" && v.reposoBSupuesto
+              ? ("supuesto" as const)
+              : ("perito" as const),
         },
       ];
     }),
   );
-  const e = leido.expediente;
+  const e = conFicha;
   return {
     ...e,
     caso: {
@@ -208,9 +217,10 @@ const entradas = [
   {
     entrada: "Masa de V1 (Silverado)",
     cesvi: "El reporte no la da.",
-    solver: `${r2(recV1.mass)} kg, la típica de su clase (pickup), supuesto`,
+    solver: `${r2(recV1.mass)} kg, de la ficha técnica de la Silverado 2500 HD 2007 de cuatro puertas (punto medio de su rango; data/SOURCES.md), supuesto`,
     difiere: true,
-    origen: "Dato que falta en el reporte; el solver usa la típica de la clase.",
+    origen:
+      "Dato que falta en el reporte; se toma de la ficha técnica de su modelo y año (cabina de cuatro puertas: el reporte describe la «puerta delantera» y la «ventanilla posterior izquierda del habitáculo»).",
   },
   {
     entrada: "Daños de V2 con medidas",
@@ -478,6 +488,38 @@ for (const a of arranques) console.log("arranque", a.arranque, "→", a.v2_kmh, 
 
 // --- 5. Lo que ve el perito en el paso 6, el 3D y el dictamen (la reconstrucción completa de la app).
 const paso6 = reconstruccionContraCesvi(expediente(), reconstruirExpediente(expediente(), "axa"));
+
+// --- 6. Las dos hipótesis (ADR 0091): el reposo de V2 marcado como supuesto, como en el paso 3 ----
+const eSup = expediente({ reposoBSupuesto: true });
+const rSup = reconstruirExpediente(eSup, "axa");
+const hipotesis = rSup.hipotesis
+  ? (["dano", "reposo"] as const).map((k) => {
+      const h = rSup.hipotesis![k];
+      const v2 = h.velocidades.find((v) => v.vehiculo === "V2")!;
+      return {
+        ...h,
+        // La velocidad de V2 de la hipótesis (fijada o su mejor ajuste) contra el EBS del reporte.
+        v2_contra_ebs:
+          v2.kmh === null
+            ? null
+            : {
+                kmh: r2(v2.kmh - dB.reporte.ebs_kmh.valor),
+                pct: r2(((v2.kmh - dB.reporte.ebs_kmh.valor) / dB.reporte.ebs_kmh.valor) * 100),
+                fijada: v2.fijada,
+              },
+        paso6: reconstruccionContraCesvi(eSup, conHipotesis(rSup, k)),
+      };
+    })
+  : null;
+const banderasSup = (
+  (rSup.resultado.consistencia ?? []) as { codigo: string; mensaje: string }[]
+).map((b) => ({ codigo: b.codigo, mensaje: b.mensaje }));
+console.log(
+  "hipotesis",
+  JSON.stringify(
+    hipotesis?.map((h) => [h.clave, h.velocidades, h.reposos, h.alcanzaDano, h.v2_contra_ebs]),
+  ),
+);
 for (const f of paso6.filas)
   console.log("paso 6", f.metodo, f.cesviKmh, f.croquisKmh, f.diferenciaKmh, f.diferenciaPct);
 
@@ -511,11 +553,13 @@ const conclusion = {
   metodo:
     "El 63.15 de CESVI es una equivalencia de energía de V2 contra una barrera; el 60.27 es V1 después del impacto con deslizamiento a 0.9; el del solver es la velocidad previa de V2 por momento y trayectorias. Son tres magnitudes distintas: aun sin errores, no tienen por qué coincidir.",
   datos:
-    "Faltan en el reporte la masa de V1 y el reposo de V2 (supuesto: detrás de V1, tocándolo); la fricción después del impacto se supone distinta (CESVI: deslizan juntos con a = 0.9; el solver: llantas que ruedan con arrastre de 0.35·μ).",
+    "Faltan en el reporte la masa de V1 (se toma de su ficha técnica, data/SOURCES.md) y el reposo de V2 (supuesto: detrás de V1, tocándolo); la fricción después del impacto se supone distinta (CESVI: deslizan juntos con a = 0.9; el solver: llantas que ruedan con arrastre de 0.35·μ).",
   consistencia:
-    "Con la deformación del reporte, la velocidad de cierre debe ser al menos la de «comprobacion_fisica». Si la reconstrucción queda por debajo (residuo negativo de «dano_minimo»), la deformación y las posiciones finales supuestas no son compatibles con el modelo del solver: es un conflicto de datos y supuestos que el perito debe ver, no un número que se ajuste.",
+    "Con la deformación del reporte, la velocidad de cierre debe ser al menos la de «comprobacion_fisica». Con la regla de ADR 0091 la deformación medida es una restricción: la reconstrucción se acerca a ella todo lo que le dejan las posiciones que pesan como dato; lo que le falte se dice con «dano_no_alcanzado» y sus números.",
   arranques:
-    "Si el ajuste desde el arranque compatible con la deformación tiene más costo que el de por omisión, el resultado no es un mínimo local: con el modelo del solver (restitución y llantas que ruedan después del impacto), una velocidad de cierre que alcanza la deformación separa a los vehículos y deja a V2 lejos del reposo supuesto (tocando a V1). El supuesto que pesa es ese reposo, que el reporte no da.",
+    "Desde el arranque por omisión el ajuste ya llega a un cierre compatible con la deformación, y desde el cierre mínimo queda con más costo («arranques»): no es un mínimo local.",
+  hipotesis:
+    "Con el reposo de V2 marcado como supuesto (paso 3), ese reposo y la deformación no caben juntos: «cuadra con el daño medido» deja a V2 a unos metros de su reposo supuesto y «cuadra con el reposo supuesto» no alcanza la deformación. Croquis muestra las dos con sus números y el perito elige («hipotesis»).",
   bandera_dano_no_alcanzado: bandera.map((b) => b.mensaje),
 };
 
@@ -533,6 +577,7 @@ const doc = {
   metodos,
   arranques,
   paso6,
+  hipotesis: { banderas: banderasSup, hipotesis },
   conclusion,
 };
 writeFileSync(SALIDA, `${JSON.stringify(doc, null, 2)}\n`);
