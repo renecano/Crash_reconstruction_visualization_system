@@ -429,21 +429,22 @@ Reglas de trabajo: `CLAUDE.md`. Especificación: `PLAN.md`.
       - **Pruebas:**
         - `components/portada-v3/textos.test.ts`: las cifras, la ilustración, la narración y las tomas;
         - la e2e `@flujo` de `e2e/home.spec.ts`: carga sin errores de consola, los tres botones a /cesvi, inglés, `/publico` y el póster con movimiento reducido.
-    - **Resumen para René (AXA, 2026-10-25): el colaborador ya puede correr el botón.**
-      - **Fusionado:**
-        - #130: la regla «lo medido pesa más que lo supuesto», las dos hipótesis en el paso 4 y la masa de V1 de su ficha técnica;
-        - #131: la completitud de los 671 reportes.
-      - **Escenas de R11 vueltas a exportar** con el código nuevo (`demo/escenas-r11`, rama `chore/r11-escenas-axa`):
-        - AXA va con «Cuadra con el daño medido», como pediste;
-        - V2 a 71.96 km/h y V1 a 25.07 km/h (lo que imprime `tools/demo/escena-axa.mts dano`);
-        - `axa.glb` pesa 16.7 MB, antes 3.5 MB: ahora se ve la deformación de V2, que con el cierre de antes casi no existía;
-        - `carambola.glb` no cambió.
+    - **Resumen para René (AXA, 2026-10-25, la semilla): el colaborador ya puede correr el botón.**
+      - **El video muestra lo mismo que el paso 6.** La escena de AXA se arma una sola vez, como en la app, con su semilla (`apps/web/src/lib/axa-reconstruccion.ts`), y la usan:
+        - el video de R11 (`tools/demo/escena-axa.mts`);
+        - el diagnóstico;
+        - la medición con semillas.
+      - **«Cuadra con el daño medido»,** con la semilla de la app y en el video: V2 a 63.17 km/h (p10–p90 60.77–113.09) y V1 a 23.35 km/h. Lo vuelve a imprimir `tools/demo/escena-axa.mts dano`.
+      - **Vuelto a exportar** (rama `fix/axa-semilla`):
+        - `demo/escenas-r11/axa.json` y `axa.glb` (16.7 MB);
+        - la toma de AXA de la portada (`apps/web/public/portada/toma-4*`), que sale de esa escena.
+      - **Con 20 semillas** (`eval/results/axa_semillas.json`):
+        - 15 dan dos hipótesis y 5, una;
+        - V2 en «cuadra con el daño medido» va de 63.15 a 91.64 km/h (p10–p90 entre semillas), con extremos de 62.03 y 151.84. El ajuste es multimodal: cerca de 63, de 75–77 o, en dos semillas, de 150 con V1 detenido;
+        - «cuadra con el reposo supuesto» casi no cambia (41.61 a 41.92 km/h).
+      - **El rango va con el número** en el paso 6, sobre el 3D, en las tarjetas de las hipótesis y en el dictamen: el p10–p90 de la reconstrucción. En la semilla de la app cubre 17 de las 19 semillas en V2.
       - **Cómo lo corre el colaborador:** `git pull` y doble clic en `EJECUTAR-EN-COMPUTADORA-DEMO.bat`; la guía es `LEEME-COMPUTADORA-DEMO.md`.
-      - **Qué revisar tú:**
-        - en `/cesvi`, AXA, paso 3: coloca el reposo de V2 y márcalo «Es un supuesto»;
-        - en el paso 4 salen las dos hipótesis con sus números; al elegir una, cambian el paso 6, el 3D y el dictamen.
-      - **Qué necesito de ti:** pedirle a CESVI dónde quedó V2 y si había huellas de frenado o arrastre («Bloqueado»).
-      - **Ojo:** la escena del video usa otra semilla que la de la app. Con ella, el reposo supuesto de V2 cabe con la deformación (una sola hipótesis) y V2 sale a 71.96 km/h, contra 62.77 en la app. Lo anoto en «Endurecimiento pendiente» para medirlo con varias semillas.
+      - **Qué necesito de ti:** pedirle a CESVI dónde quedó V2 y si había huellas de frenado o arrastre («Bloqueado»). Con ese dato, AXA deja de tener dos hipótesis y el ajuste deja de saltar entre soluciones.
     - **La diferencia de AXA (2026-10-24, rama `fix/axa-diagnostico`, PR #130, ADR 0091):** René pidió resolverla antes de R12a. La reconstrucción daba V2 a 41.01 km/h contra 63.15 km/h del reporte (−35.1 %).
       - **Diagnóstico:**
         - `eval/cesvi_axa_diagnostico.mts`, con el resultado en `eval/results/axa_diagnostico.json`; el del código anterior está en `axa_diagnostico_antes.json`;
@@ -457,11 +458,11 @@ Reglas de trabajo: `CLAUDE.md`. Especificación: `PLAN.md`.
         - Un reposo que el perito marca como supuesto en el paso 3 es evidencia blanda, con ±10 m.
         - Un solo factor global (`PRIORIDAD`), nunca por caso.
         - Si el daño y el reposo supuesto no caben juntos, el paso 4 muestra «Cuadra con el daño medido» y «Cuadra con el reposo supuesto» con sus números, y el perito elige. Lo elegido pasa al paso 6, al 3D y al dictamen.
-      - **AXA ahora,** con la masa de V1 de la ficha técnica de la Silverado 2500 HD 2007 de cuatro puertas (2,562.1 kg, data/SOURCES.md):
-        - **Con el reposo de V2 como dato,** el paso 6 da 65.94 km/h contra 63.15 (+2.79 km/h, +4.42 %). Los restos de V1 al salir del impacto dan 42.77 contra 60.27 (−17.5 km/h, −29.04 %).
+      - **AXA ahora,** como la reconstruye la app y con su semilla, con la masa de V1 de la ficha técnica de la Silverado 2500 HD 2007 de cuatro puertas (2,562.1 kg, data/SOURCES.md):
+        - **Con el reposo de V2 como dato,** el paso 6 da 58.15 km/h (56.48–60.17) contra 63.15 (−5.00 km/h, −7.92 %). Los restos de V1 al salir del impacto dan 41.76 contra 60.27 (−18.51 km/h, −30.71 %).
         - **Con el reposo de V2 marcado como supuesto,** hay dos hipótesis:
-          - «Cuadra con el daño medido»: V2 a 62.77 km/h (−0.38 km/h, −0.60 %). Termina a 5 m de su reposo supuesto. No se ajustó nada a 63.15.
-          - «Cuadra con el reposo supuesto»: V2 a 41.9 km/h (−21.25 km/h, −33.65 %), casi a la misma velocidad que V1, sin alcanzar la deformación.
+          - «Cuadra con el daño medido»: V2 a 63.17 km/h (60.77–113.09; +0.02 km/h, +0.03 %). Termina a 5.2 m de su reposo supuesto. No se ajustó nada a 63.15, y con otras semillas da otra velocidad (resumen de arriba).
+          - «Cuadra con el reposo supuesto»: V2 a 41.73 km/h (40.86–54.06; −21.42 km/h, −33.92 %), casi a la misma velocidad que V1, sin alcanzar la deformación.
       - **Por qué los métodos difieren aun sin errores:** el 63.15 es la equivalencia de barrera de la energía de V2 con su masa sola, y el 60.27 hace deslizar a los dos juntos con a = 0.9; el solver calcula la velocidad a la que circulaba, por momento y trayectorias, con llantas que ruedan después del impacto. Faltan en el reporte el reposo de V2 («Bloqueado») y la masa de V1 (se toma de su ficha técnica).
       - **Antes y después de la regla:**
         - 13 de 13 escenas canónicas dan lo mismo, y la paridad Python/TS sigue en verde (`eval/results/inversion_prioridad.json`);
@@ -1480,10 +1481,10 @@ Lo que se pospone por el trabajo con CESVI no se borra: queda aquí para despué
   - en un alcance, el que golpea tiene que ir más rápido; falta esa restricción en la inversión.
 - **La elección de hipótesis** (ADR 0091) no se guarda con el caso: se pierde al recargar la página.
 - **Las tomas de la portada v3** (ADR 0092) se sustituyen por los renders de Blender cuando llegue la rama `resultados/computadora-demo-<fecha>`.
-- **La hipótesis «cuadra con el daño medido» depende de la semilla** (ADR 0091):
-  - la escena del video de AXA (semilla de `demo-axa`) da V2 a 71.96 km/h y su reposo supuesto cabe con la deformación;
-  - la de la app da 62.77 km/h y dos hipótesis;
-  - esa diferencia es mayor que la σ local (2.48 km/h). Medir la velocidad con varias semillas y, si se confirma, informar el rango entre semillas en lugar de la σ local.
+- **El ajuste de «cuadra con el daño medido» es multimodal** (ADR 0091, `eval/results/axa_semillas.json`):
+  - según la semilla, AXA cae cerca de 63, de 75–77 o, en dos semillas de 20, de 150 km/h con V1 detenido;
+  - hoy se informa el p10–p90 de la reconstrucción con el número;
+  - falta que el ajuste no dependa del modo en que cae (arrancar desde varios puntos o reportar los modos).
 
 ### Bloqueado — necesita a René
 

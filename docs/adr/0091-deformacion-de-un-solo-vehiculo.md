@@ -61,25 +61,29 @@ Tres errores, con el código de 8ab9271:
 
 **Antes de todo** (`eval/results/axa_diagnostico_antes.json`, 8ab9271): V2 a 41.01 km/h, con los tres errores.
 
-**Ahora** (`eval/results/axa_diagnostico.json`), con la masa de V1 de su ficha técnica (2,562.1 kg, punto medio de la Silverado 2500 HD 2007 de cuatro puertas; data/SOURCES.md):
+**Ahora** (`eval/results/axa_diagnostico.json`):
+
+- **La reconstrucción es la de la app:** la escena se arma igual que en el paso 6 (`apps/web/src/lib/axa-reconstruccion.ts`) y con su semilla, la de `especDeExpediente` con su identificador por omisión. La usan también el video de R11 y la medición con semillas.
+- **La masa de V1** es la de su ficha técnica: 2,562.1 kg, el punto medio de la Silverado 2500 HD 2007 de cuatro puertas (data/SOURCES.md).
+- **Entre paréntesis va el p10–p90** de las reestimaciones con entradas perturbadas.
 
 1. **Con el reposo de V2 como dato** (sin la marca), la deformación ya pesa como restricción. El paso 6:
 
-   | Método del reporte               | CESVI      | Croquis    | Diferencia            |
-   | -------------------------------- | ---------- | ---------- | --------------------- |
-   | Deformación (EBS)                | 63.15 km/h | 65.94 km/h | +2.79 km/h (+4.42 %)  |
-   | Restos (V1 al salir del impacto) | 60.27 km/h | 42.77 km/h | −17.5 km/h (−29.04 %) |
+   | Método del reporte               | CESVI      | Croquis                  | Diferencia             |
+   | -------------------------------- | ---------- | ------------------------ | ---------------------- |
+   | Deformación (EBS)                | 63.15 km/h | 58.15 (56.48–60.17) km/h | −5.00 km/h (−7.92 %)   |
+   | Restos (V1 al salir del impacto) | 60.27 km/h | 41.76 km/h               | −18.51 km/h (−30.71 %) |
 
 2. **Con el reposo de V2 marcado como supuesto** (lo que es: el reporte no lo da), no caben juntos y hay dos hipótesis:
 
-   | Hipótesis                     | V2                                | V1 al salir del impacto       | V2 y su reposo supuesto | Deformación   |
-   | ----------------------------- | --------------------------------- | ----------------------------- | ----------------------- | ------------- |
-   | Cuadra con el daño medido     | 62.77 km/h (−0.38 km/h, −0.60 %)  | 38.96 km/h (−21.31, −35.36 %) | a 5 m                   | la alcanza    |
-   | Cuadra con el reposo supuesto | 41.9 km/h (−21.25 km/h, −33.65 %) | 41.68 km/h (−18.59, −30.84 %) | a 0.2 m                 | no la alcanza |
-
-   Los porcentajes de V2 son contra el EBS de 63.15 y los de V1 contra los 60.27 de los restos. En «cuadra con el daño medido», V2 queda fijada (σ local de 2.48 km/h) y V1 va a 23.75 km/h antes del impacto. En «cuadra con el reposo supuesto», V2 y V1 van casi a la misma velocidad antes del impacto (41.9 y 41.82 km/h): sin cierre no hay deformación.
-
-   El −0.60 % de «cuadra con el daño medido» no se buscó: sale de la regla, la ficha de V1 y los datos del reporte, sin ajustar nada a 63.15.
+   | Hipótesis                     | V2                                               | V1 al salir del impacto       | V2 y su reposo supuesto | Deformación   |
+   | ----------------------------- | ------------------------------------------------ | ----------------------------- | ----------------------- | ------------- |
+   | Cuadra con el daño medido     | 63.17 (60.77–113.09) km/h (+0.02 km/h, +0.03 %)  | 38.87 km/h (−21.40, −35.51 %) | a 5.2 m                 | la alcanza    |
+   | Cuadra con el reposo supuesto | 41.73 (40.86–54.06) km/h (−21.42 km/h, −33.92 %) | 41.54 km/h (−18.73, −31.08 %) | en él                   | no la alcanza |
+   - Los porcentajes de V2 son contra el EBS de 63.15, y los de V1 contra los 60.27 de los restos.
+   - En «cuadra con el daño medido», V1 va a 23.35 km/h antes del impacto.
+   - En «cuadra con el reposo supuesto», V2 y V1 van casi a la misma velocidad antes del impacto (41.73 y 41.71 km/h): sin cierre no hay deformación.
+   - El +0.03 % no se buscó, y no hay que leerlo como precisión: con otras semillas, la misma hipótesis da otra velocidad (siguiente sección).
 
 **Lo que queda es de método y de datos, no de error:**
 
@@ -87,7 +91,29 @@ Tres errores, con el código de 8ab9271:
 - **Faltan datos en el reporte:**
   - el reposo de V2, que se le pide a CESVI junto con las huellas de frenado o arrastre (PROGRESS, «Bloqueado»);
   - la masa de V1, que se toma de su ficha técnica.
-- **Con la deformación del reporte** (225.45 kJ) y esa masa, la velocidad de cierre debe ser al menos 79.78 km/h. El ajuste del reposo como dato no es un mínimo local: costo 9.29 desde el arranque por omisión, contra 25.2 desde el cierre mínimo.
+- **Con la deformación del reporte** (225.45 kJ) y esa masa, la velocidad de cierre debe ser al menos 79.78 km/h. El ajuste del reposo como dato no es un mínimo local: costo 8.18 desde el arranque por omisión, contra 25.2 desde el cierre mínimo.
+
+## La semilla (René, 2026-10-25; `eval/results/axa_semillas.json`)
+
+La escena del video daba V2 a 71.96 km/h y la app a 62.77, porque cada una tenía otra semilla. La portada promete «Siempre da lo mismo». La medición reconstruye AXA como la app (resultado completo de producción) con la semilla de la app y con otras 19:
+
+- **Hipótesis:** 15 de 20 semillas dan dos hipótesis y 5, una sola.
+- **«Cuadra con el daño medido» (V2), en las 19 semillas en que la evidencia lo fija:**
+  - el p10–p90 entre semillas es de 63.15 a 91.64 km/h (28.49 km/h), con extremos de 62.03 a 151.84;
+  - el ajuste es multimodal: con unas semillas queda cerca de 63 km/h (la de la app, la 4 y la 10), con la mayoría cerca de 75–77, y con dos (la 9 y la 11) en otra solución, con V1 detenido y V2 a unos 150 km/h.
+- **V1:** de 18.76 a 24.47 km/h (p10–p90 entre semillas).
+- **El p10–p90 de la semilla de la app** (60.77–113.09 para V2; 0–25.65 para V1) cubre 17 de 19 semillas en V2 y 19 de 20 en V1. Las dos que quedan fuera son las de unos 150 km/h.
+- **«Cuadra con el reposo supuesto»** casi no cambia: V2 entre 41.61 y 41.92 km/h.
+
+**Decisión:**
+
+- **Mismo caso, mismo resultado.** El video de R11, el diagnóstico y la app usan la misma construcción y la misma semilla. La promesa se cumple: con la misma semilla, el mismo resultado.
+- **Rango donde va el número:** como la dispersión pasa de un par de km/h, cada velocidad de la reconstrucción va con su p10–p90:
+  - en el paso 6, en la comparación con el reporte;
+  - sobre el 3D;
+  - en las tarjetas de las hipótesis, en lugar de la σ local, que con 2.9 km/h subestimaba la dispersión;
+  - en el dictamen.
+- **Pendiente** («Endurecimiento pendiente»): que el ajuste no dependa del modo en que cae, por ejemplo arrancando desde varios puntos o reportando los modos.
 
 **Antes y después de la regla, fuera de AXA:**
 
