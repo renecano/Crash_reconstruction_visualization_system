@@ -11,7 +11,14 @@ import { G } from "./models";
 import { vehicleSpeedRangeFromThrow } from "./pedestrian";
 import { pyFixed } from "./reconstruct";
 import { pyRound, str } from "./pymath";
-import { Evidence, evidenceFromSpec, fitEvidence, invert, type Inversion } from "./inversion";
+import {
+  Evidence,
+  damageSigma,
+  evidenceFromSpec,
+  fitEvidence,
+  invert,
+  type Inversion,
+} from "./inversion";
 import { monteCarlo } from "./montecarlo";
 import * as dmath from "./dmath";
 
@@ -271,6 +278,7 @@ const EVIDENCE_WORDS: Readonly<Record<string, string>> = {
   marcas_frenado: "las marcas de frenado",
   proyeccion: "la distancia a la que quedó la persona",
   dano: "el daño descrito",
+  dano_minimo: "el daño medido",
 };
 
 /** Velocidad declarada fuera del intervalo que fija la evidencia física (inversión). */
@@ -318,6 +326,40 @@ export function checkSpeedEvidence(spec: Json, inv: Inversion): Inconsistency[] 
   return out;
 }
 
+/** El daño medido pide más cambio de velocidad del que da la reconstrucción (ADR 0091). */
+export function checkDamageReach(spec: Json, inv: Inversion, seed: number): Inconsistency[] {
+  const out: Inconsistency[] = [];
+  const ev = evidenceFromSpec(spec, seed);
+  if (ev.damageMin.size === 0) return out;
+  const fixed = new Set(
+    inv.estimates
+      .filter(
+        (e) => e.param.kind === "velocidad" && e.dist !== null && e.identifiable && !e.atBound,
+      )
+      .map((e) => e.param.vehicle),
+  );
+  const byId = new Map((spec.vehiculos as Json[]).map((v) => [str(v.id), v]));
+  for (const vid of [...ev.damageMin.keys()].sort()) {
+    const dmg = ev.damageMin.get(vid)!;
+    const r = inv.best.residuals.get(`dano_minimo:${vid}`);
+    if (r === undefined || !fixed.has(vid)) continue;
+    // El residuo es (ΔV − p50)/σ cuando queda por debajo: de él sale el ΔV de la reconstrucción.
+    const dv = dmg.p50 + r * damageSigma(dmg);
+    if (dv >= dmg.p10) continue;
+    out.push({
+      codigo: "dano_no_alcanzado",
+      mensaje:
+        `Solo con su deformación, el daño medido en ${name(byId.get(vid)!)} pide un cambio ` +
+        `de velocidad mínimo de ${pyFixed(dmg.p10, 0)} a ${pyFixed(dmg.p90, 0)} km/h; en la reconstrucción ` +
+        `que reproduce dónde quedaron los vehículos es de ${pyFixed(dv, 0)} km/h. ¿Son correctas ` +
+        "las posiciones finales? Si alguna es un supuesto, con ella la reconstrucción no " +
+        "alcanza ese daño.",
+      datos: { vehiculo: vid, dano_minimo_kmh: [dmg.p10, dmg.p90], reconstruccion_kmh: dv },
+    });
+  }
+  return out;
+}
+
 /**
  * Todas las banderas de consistencia de la escena, en orden fijo (port de `check_consistency`).
  * `inversion` evita repetir la inversión si ya se calculó con la misma semilla.
@@ -338,5 +380,6 @@ export function checkConsistency(
     ...checkDamage(spec, seed, samples),
     ...checkRest(spec, seed),
     ...(inversion !== null ? checkSpeedEvidence(spec, inversion) : []),
+    ...(inversion !== null ? checkDamageReach(spec, inversion, seed) : []),
   ];
 }

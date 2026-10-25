@@ -53,8 +53,57 @@ def test_determinista_por_semilla_y_error_de_modelo_ensancha() -> None:
 
 
 def test_sin_otro_vehiculo_ni_objeto_es_error() -> None:
-    with pytest.raises(ValueError, match="daño del otro"):
+    with pytest.raises(ValueError, match="daño o la masa del otro"):
         inv.delta_v_from_damage(_dmg(10))
+
+
+def test_la_rigidez_del_reporte_reemplaza_a_la_de_la_clase() -> None:
+    # AXA (dictamen CESVI): Tacoma, perfil C1–C4 = 0.96, 0.86, 0.52, 0.20 m, L = 1.689 m, A = 55.405
+    # y B = 385.336 en kN/m y kN/m² (ADR 0048). Sin dispersión, la energía es la de McHenry.
+    from croquis_solver.crash3 import Stiffness, crush_energy, delta_v_pair
+
+    k = (55405.0, 385336.0)
+    own = inv.Damage("pickup", 1431.083, "F", 0.0, (0.96, 0.86, 0.52, 0.20), 1.689, rigidez=k)
+    e = crush_energy(own.perfil_m, own.ancho_m, Stiffness(*k))
+    assert e / 1000 == pytest.approx(225.45, abs=0.01)
+    d = inv.delta_v_from_damage(own, other_mass_kg=1890.0, seed=1, n=50, sigma=0.0)
+    # Solo la masa varía (±5 %): la mediana es el ΔV de esa energía con las masas nominales.
+    assert d.p50 == pytest.approx(delta_v_pair(e, 1431.083, 1890.0)[0] * inv.KMH, rel=0.05)
+
+
+def test_la_deformacion_de_un_solo_vehiculo_entra_como_minimo() -> None:
+    spec = load_fixture("alcance")
+    spec["danos_declarados"][0].update(
+        profundidad_aplastamiento={
+            "valor": 0.3,
+            "unidad": "m",
+            "fuente": "usuario",
+            "confianza": 0.9,
+        },
+        ancho_danado={"valor": 1.5, "unidad": "m", "fuente": "usuario", "confianza": 0.9},
+    )
+    costado = {
+        "vehiculo_id": "veh-a",
+        "zona": {"lado": "R"},
+        "severidad": "leve",
+        "profundidad_aplastamiento": {
+            "valor": 0.9,
+            "unidad": "m",
+            "fuente": "usuario",
+            "confianza": 0.9,
+        },
+        "ancho_danado": {"valor": 0.8, "unidad": "m", "fuente": "usuario", "confianza": 0.9},
+        "procedencia": {"fuente": "usuario", "confianza": 0.9},
+    }
+    spec["danos_declarados"].insert(0, costado)
+    ev = inv.evidence_from_spec(spec, 1)
+    # veh-b no tiene su deformación medida: el daño de veh-a no se compara como ΔV exacto.
+    assert ev.damage_dv == {}
+    assert "dano_minimo:veh-a" in ev.labels()
+    # Entre el costado (primero) y el frente, cuenta el de la cara del contacto (el frente, 0.3 m).
+    solo_frente = copy.deepcopy(spec)
+    solo_frente["danos_declarados"].pop(0)
+    assert inv.evidence_from_spec(solo_frente, 1).damage_min == ev.damage_min
 
 
 @settings(max_examples=25, deadline=None)

@@ -1,0 +1,229 @@
+{
+  "meta": {
+    "id": "axa-alcance",
+    "version_esquema": "2.1.0",
+    "idioma": "es-MX",
+    "semilla": 135589,
+    "creado": "2026-10-13T00:00:00-06:00",
+    "relato": "",
+    "origen_relato": "escrito",
+    "sintetico": false
+  },
+  "lugar": {
+    "tipo_via": {
+      "valor": "recta",
+      "fuente": "default",
+      "confianza": 0.3
+    },
+    "carriles_por_sentido": {
+      "valor": 2,
+      "fuente": "default",
+      "confianza": 0.3
+    },
+    "ancho_carril": {
+      "valor": 3.5,
+      "unidad": "m",
+      "fuente": "default",
+      "confianza": 0.3
+    },
+    "sentidos": {
+      "valor": "doble_sentido",
+      "fuente": "default",
+      "confianza": 0.3
+    },
+    "superficie": {
+      "valor": "asfalto",
+      "fuente": "default",
+      "confianza": 0.3
+    },
+    "estado_superficie": {
+      "valor": "seco",
+      "fuente": "default",
+      "confianza": 0.3
+    }
+  },
+  "entorno": {
+    "clima": {
+      "valor": "despejado",
+      "fuente": "default",
+      "confianza": 0.3
+    },
+    "iluminacion": {
+      "valor": "dia",
+      "fuente": "default",
+      "confianza": 0.3
+    }
+  },
+  "vehiculos": [
+    {
+      "id": "veh-a",
+      "rol": "A",
+      "clase": {
+        "valor": "pickup",
+        "fuente": "supuesto",
+        "confianza": 0.4
+      },
+      "color": {
+        "nombre": {
+          "valor": "gris",
+          "fuente": "default",
+          "confianza": 0.3
+        },
+        "hex": "#8a8d91"
+      },
+      "maniobra": {
+        "valor": "recto",
+        "fuente": "default",
+        "confianza": 0.3
+      },
+      "velocidad_previa": {
+        "valor": 40,
+        "unidad": "km/h",
+        "fuente": "supuesto",
+        "confianza": 0.3
+      },
+      "posicion_inicial": {
+        "x": -3.62,
+        "y": -14.216,
+        "rumbo_deg": 75.71537756298898,
+        "procedencia": {
+          "fuente": "supuesto",
+          "confianza": 0.5,
+          "nota": "12 m antes de la posición de impacto que colocó el perito, en su rumbo."
+        }
+      },
+      "masa": {
+        "valor": 1431.083,
+        "unidad": "kg",
+        "fuente": "usuario",
+        "confianza": 0.9
+      },
+      "posicion_final": {
+        "x": 3.262,
+        "y": 12.811,
+        "rumbo_deg": 75.71537756298898,
+        "procedencia": {
+          "fuente": "usuario",
+          "confianza": 0.9
+        }
+      }
+    },
+    {
+      "id": "veh-b",
+      "rol": "B",
+      "clase": {
+        "valor": "pickup",
+        "fuente": "supuesto",
+        "confianza": 0.4
+      },
+      "color": {
+        "nombre": {
+          "valor": "gris",
+          "fuente": "default",
+          "confianza": 0.3
+        },
+        "hex": "#8a8d91"
+      },
+      "maniobra": {
+        "valor": "recto",
+        "fuente": "default",
+        "confianza": 0.3
+      },
+      "velocidad_previa": {
+        "valor": 40,
+        "unidad": "km/h",
+        "fuente": "supuesto",
+        "confianza": 0.3
+      },
+      "posicion_inicial": {
+        "x": -2.302,
+        "y": -9.042,
+        "rumbo_deg": 75.71537756298898,
+        "procedencia": {
+          "fuente": "supuesto",
+          "confianza": 0.5,
+          "nota": "12 m antes de la posición de impacto que colocó el perito, en su rumbo."
+        }
+      },
+      "posicion_final": {
+        "x": 4.579,
+        "y": 17.986,
+        "rumbo_deg": 75.71537756298898,
+        "procedencia": {
+          "fuente": "usuario",
+          "confianza": 0.9
+        }
+      }
+    }
+  ],
+  "personas": [],
+  "eventos": [
+    {
+      "id": "ev-1",
+      "orden": 0,
+      "tipo": "impacto_vehiculo_vehiculo",
+      "actores": ["veh-a", "veh-b"],
+      "procedencia": {
+        "fuente": "default",
+        "confianza": 0.3
+      },
+      "zonas_impacto": [
+        {
+          "vehiculo_id": "veh-a",
+          "cdc": {
+            "lado": "F"
+          }
+        },
+        {
+          "vehiculo_id": "veh-b",
+          "cdc": {
+            "lado": "B"
+          }
+        }
+      ],
+      "punto_impacto": {
+        "x": 0,
+        "y": 0
+      }
+    }
+  ],
+  "danos_declarados": [
+    {
+      "vehiculo_id": "veh-a",
+      "zona": {
+        "lado": "F"
+      },
+      "severidad": "moderado",
+      "profundidad_aplastamiento": {
+        "valor": 0.96,
+        "unidad": "m",
+        "fuente": "usuario",
+        "confianza": 0.9
+      },
+      "ancho_danado": {
+        "valor": 1.689,
+        "unidad": "m",
+        "fuente": "usuario",
+        "confianza": 0.9
+      },
+      "perfil_aplastamiento": {
+        "valor": [0.96, 0.86, 0.52, 0.2],
+        "unidad": "m",
+        "fuente": "usuario",
+        "confianza": 0.9
+      },
+      "rigidez": {
+        "a": 55405,
+        "b": 385336,
+        "fuente": "usuario",
+        "confianza": 0.9,
+        "nota": "Del reporte: A = 55.405, B = 385.336 (en kN/m y kN/m²)."
+      },
+      "procedencia": {
+        "fuente": "usuario",
+        "confianza": 0.9
+      }
+    }
+  ],
+  "evidencias": []
+}

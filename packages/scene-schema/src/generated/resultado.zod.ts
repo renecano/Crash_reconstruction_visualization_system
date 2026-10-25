@@ -3,7 +3,7 @@
 import { z } from "zod";
 
 export const RESULTADO_SCHEMA_ID = "https://croquis.local/schema/resultado/1.9.0";
-export const RESULT_VERSION = "1.9.0" as const;
+export const RESULT_VERSION = "1.10.0" as const;
 
 export const CampoMuestreado = z.strictObject({
   ruta: z.string().min(1).max(120),
@@ -82,6 +82,8 @@ export const DatosInconsistencia = z.strictObject({
   declarada_max_kmh: z.number().optional(),
   distancia_m: z.number().optional(),
   rango_kmh: z.tuple([z.number(), z.number()]).optional(),
+  dano_minimo_kmh: z.tuple([z.number(), z.number()]).optional(),
+  reconstruccion_kmh: z.number().optional(),
   dano_kmh: z.tuple([z.number(), z.number()]).optional(),
   velocidades_kmh: z.tuple([z.number(), z.number()]).optional(),
   distancia_minima_m: z.number().optional(),
@@ -187,6 +189,7 @@ export const Inconsistencia = z.strictObject({
     "reposo_inalcanzable",
     "velocidad_vs_evidencia",
     "fuera_de_la_via_del_mapa",
+    "dano_no_alcanzado",
   ]),
   mensaje: z.string().min(1).max(600),
   datos: DatosInconsistencia,
@@ -458,7 +461,7 @@ export type Visibilidad = z.infer<typeof Visibilidad>;
 
 /** Reconstrucción producida por el solver a partir de una EscenaSpec: trayectorias, impulsos, daños, personas (proyección y ocupantes), visibilidad, objetos del entorno, eventos, banderas, parámetros con su fuente incertidumbre por Monte Carlo (percentiles con semilla), inversión desde la evidencia y banderas de consistencia. Unidades SI; tiempo con t = 0 en el impacto principal; rumbos en radianes antihorario desde +X (salvo los campos que terminan en _deg). */
 export const ResultadoSchema = z.strictObject({
-  version_resultado: z.literal("1.9.0"),
+  version_resultado: z.literal("1.10.0"),
   escena_id: Id,
   semilla: z.int().min(0),
   dt: z.number().max(1).gt(0),

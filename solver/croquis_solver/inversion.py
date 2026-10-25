@@ -8,7 +8,10 @@ Dos piezas:
    (bootstrap: A y B salen de la misma pendiente y van juntos). Entre dos vehículos el ΔV sale de la
    energía total y la conservación de momento (velocidad común, como CRASH3); contra un objeto
    rígido, de la velocidad equivalente de barrera con restitución en [0, 0.2]. E3 lo valida contra
-   el EDR de casos reales de CISS.
+   el EDR de casos reales de CISS. Si el daño trae su rigidez A y B (la que escribe el reporte),
+   se usa esa y no la de la clase. Si solo uno de los dos vehículos tiene la deformación medida (un
+   reporte que mide la del que golpea), su energía es una cota inferior de la del choque: el ΔV que
+   implica sola entra como un mínimo, sin inventar la energía del otro (ADR 0091).
 2. **Velocidades y ángulos desde la evidencia.** Las velocidades previas de los vehículos en
    movimiento (y su rumbo inicial cuando nadie lo declaró y hay posiciones finales) se ajustan con
    mínimos cuadrados robustos (SciPy `least_squares`, pérdida `soft_l1`) para que el solver
@@ -35,7 +38,13 @@ from pathlib import Path
 from typing import Any
 
 from croquis_solver import dmath, friction, linalg
-from croquis_solver.crash3 import crush_energy, delta_v_barrier, delta_v_pair, uniform_crush_energy
+from croquis_solver.crash3 import (
+    Stiffness,
+    crush_energy,
+    delta_v_barrier,
+    delta_v_pair,
+    uniform_crush_energy,
+)
 from croquis_solver.lsq import least_squares_soft_l1
 from croquis_solver.stiffness import sample_stiffness, stiffness_for, zona_from_cdc_side
 
@@ -78,6 +87,8 @@ class Damage:
     pdof_deg: float
     perfil_m: tuple[float, ...]  # perfil C1–Cn (n ≥ 2) o una sola profundidad uniforme
     ancho_m: float
+    # Rigidez A (N/m) y B (N/m²) declarada (la del reporte); None: la de la clase, muestreada.
+    rigidez: tuple[float, float] | None = None
 
 
 def pdof_offset(plano: str, pdof_deg: float) -> float:
@@ -88,8 +99,6 @@ def pdof_offset(plano: str, pdof_deg: float) -> float:
 
 
 def _energy(d: Damage, a: float, b: float) -> float:
-    from croquis_solver.crash3 import Stiffness
-
     k = Stiffness(a, b)
     off = pdof_offset(d.plano, d.pdof_deg)
     profile = list(d.perfil_m)
@@ -131,31 +140,42 @@ def distribution(values: Sequence[float]) -> Distribution:
     return Distribution(q[0], statistics.median(vals), q[-1], len(vals))
 
 
+def _stiffness_samples(d: Damage, rng: dmath.Random, n: int) -> list[Stiffness]:
+    """La rigidez declarada (la del reporte) en cada muestra, o la de la clase muestreada."""
+    if d.rigidez is not None:
+        return [Stiffness(d.rigidez[0], d.rigidez[1])] * n
+    return sample_stiffness(stiffness_for(d.clase, zona_from_cdc_side(d.plano)), rng, n)
+
+
+def damage_sigma(dist: Distribution) -> float:
+    """σ (km/h) del residuo de un ΔV por daño: p10–p90 de una normal ≈ 2.563 σ, al menos 1."""
+    return max((dist.p90 - dist.p10) / 2.563, 1.0)
+
+
 def delta_v_from_damage(
     own: Damage,
     other: Damage | None = None,
     *,
     rigid: bool = False,
+    other_mass_kg: float | None = None,
     seed: int = 0,
     n: int = 200,
     sigma: float | None = None,
 ) -> Distribution:
     """ΔV (km/h) del vehículo `own` a partir del daño medido, con su distribución.
 
-    `other` es el daño del otro vehículo (impacto entre dos); `rigid=True`, objeto rígido.
-    `sigma` es el error del modelo en log ΔV (por omisión, el calibrado con CISS dev).
+    `other` es el daño del otro vehículo (impacto entre dos); `rigid=True`, objeto rígido. Con
+    `other_mass_kg` y sin `other`, el otro no tiene la deformación medida: el ΔV sale solo de la
+    energía de `own`, así que es un mínimo (la del otro solo lo subiría). `sigma` es el error del
+    modelo en log ΔV (por omisión, el calibrado con CISS dev).
     """
     s_model = model_sigma() if sigma is None else sigma
-    if other is None and not rigid:
-        msg = "Entre dos vehículos hace falta el daño del otro (o usa rigid=True)"
+    if other is None and not rigid and other_mass_kg is None:
+        msg = "Entre dos vehículos hace falta el daño o la masa del otro (o usa rigid=True)"
         raise ValueError(msg)
     rng = dmath.Random(seed)
-    own_k = sample_stiffness(stiffness_for(own.clase, zona_from_cdc_side(own.plano)), rng, n)
-    oth_k = (
-        sample_stiffness(stiffness_for(other.clase, zona_from_cdc_side(other.plano)), rng, n)
-        if other is not None
-        else []
-    )
+    own_k = _stiffness_samples(own, rng, n)
+    oth_k = _stiffness_samples(other, rng, n) if other is not None else []
     out: list[float] = []
     for i in range(n):
         m1 = own.masa_kg * rng.uniform(1 - MASS_SPREAD, 1 + MASS_SPREAD)
@@ -164,6 +184,9 @@ def delta_v_from_damage(
             m2 = other.masa_kg * rng.uniform(1 - MASS_SPREAD, 1 + MASS_SPREAD)
             e2 = _energy(other, oth_k[i].a, oth_k[i].b)
             dv = delta_v_pair(e1 + e2, m1, m2)[0]
+        elif other_mass_kg is not None:
+            m2 = other_mass_kg * rng.uniform(1 - MASS_SPREAD, 1 + MASS_SPREAD)
+            dv = delta_v_pair(e1, m1, m2)[0]
         else:
             dv = delta_v_barrier(e1, m1, rng.uniform(*RESTITUTION_RIGID))
         if s_model > 0:
@@ -217,9 +240,18 @@ class Evidence:
     skid: dict[str, float] = field(default_factory=_no_floats)  # vehículo → marcas de frenado (m)
     # vehículo → largo de las marcas de después del impacto (m): lo que se desliza hasta el reposo.
     slide: dict[str, float] = field(default_factory=_no_floats)
+    # vehículo → ΔV mínimo que implica su daño cuando el otro vehículo no tiene el suyo medido.
+    damage_min: dict[str, Distribution] = field(default_factory=lambda: dict[str, Distribution]())
 
     def empty(self) -> bool:
-        return not (self.rest or self.throw or self.damage_dv or self.rest_heading or self.slide)
+        return not (
+            self.rest
+            or self.throw
+            or self.damage_dv
+            or self.damage_min
+            or self.rest_heading
+            or self.slide
+        )
 
     def labels(self) -> list[str]:
         """Evidencia usada, en orden fijo (para el resultado y el visor)."""
@@ -230,6 +262,7 @@ class Evidence:
             + [f"marcas_despues:{k}" for k in sorted(self.slide)]
             + [f"proyeccion:{k}" for k in sorted(self.throw)]
             + [f"dano:{k}" for k in sorted(self.damage_dv)]
+            + [f"dano_minimo:{k}" for k in sorted(self.damage_min)]
         )
 
 
@@ -288,6 +321,14 @@ def evidence_from_spec(spec: JsonObj, seed: int = 0, n_damage: int = 200) -> Evi
         for d in spec.get("danos_declarados", [])
         if _stated(d.get("profundidad_aplastamiento")) and _stated(d.get("ancho_danado"))
     ]
+    eventos: list[JsonObj] = spec.get("eventos", [])
+    event: JsonObj | None = next((e for e in eventos if str(e["tipo"]).startswith("impacto")), None)
+    # La cara con que tocó cada vehículo en el primer impacto (su CDC), si se dice.
+    zonas: list[JsonObj] = event.get("zonas_impacto", []) if event is not None else []
+    contacto: dict[str, str] = {}
+    for z in zonas:
+        cdc: JsonObj = z.get("cdc") or {}
+        contacto[str(z["vehiculo_id"])] = str(cdc.get("lado", ""))
     dmg: dict[str, Damage] = {}
     for d in declared:
         v = by_id.get(d["vehiculo_id"])
@@ -296,16 +337,29 @@ def evidence_from_spec(spec: JsonObj, seed: int = 0, n_damage: int = 200) -> Evi
         lado = str(d["zona"].get("lado", "F"))
         if lado not in ("F", "B", "L", "R"):
             continue
+        # Con varios daños medidos, el de la cara del contacto; si no se sabe, el primero.
+        previo = dmg.get(v["id"])
+        if previo is not None and (
+            previo.plano == contacto.get(v["id"]) or lado != contacto.get(v["id"])
+        ):
+            continue
         masa = float(v["masa"]["valor"]) if v.get("masa") else _class_mass(str(v["clase"]["valor"]))
+        perfil = d.get("perfil_aplastamiento")
+        rig = d.get("rigidez")
         dmg[v["id"]] = Damage(
             clase=str(v["clase"]["valor"]),
             masa_kg=masa,
             plano=lado,
             pdof_deg={"F": 0.0, "R": 90.0, "B": 180.0, "L": 270.0}[lado],
-            perfil_m=(_len_m(d["profundidad_aplastamiento"]),),
+            perfil_m=(
+                tuple(_len_m({"valor": c, "unidad": perfil["unidad"]}) for c in perfil["valor"])
+                if _stated(perfil)
+                else (_len_m(d["profundidad_aplastamiento"]),)
+            ),
             ancho_m=_len_m(d["ancho_danado"]),
+            rigidez=(float(rig["a"]), float(rig["b"])) if _stated(rig) else None,
         )
-    event = next((e for e in spec.get("eventos", []) if str(e["tipo"]).startswith("impacto")), None)
+    damage_min: dict[str, Distribution] = {}
     if event is not None:
         actors = [a for a in event.get("actores", []) if a in by_id]
         rigid = event["tipo"] == "impacto_vehiculo_objeto"
@@ -317,10 +371,25 @@ def evidence_from_spec(spec: JsonObj, seed: int = 0, n_damage: int = 200) -> Evi
                     dmg[vid], rigid=True, seed=seed + k, n=n_damage
                 )
             else:
-                other = next((dmg[o] for o in actors if o != vid and o in dmg), None)
-                if other is not None:
-                    damage_dv[vid] = delta_v_from_damage(dmg[vid], other, seed=seed + k, n=n_damage)
-    return Evidence(rest, throw, damage_dv, rest_heading, skid, slide)
+                otro_id = next((o for o in actors if o != vid), None)
+                if otro_id is None:
+                    continue
+                if otro_id in dmg:
+                    damage_dv[vid] = delta_v_from_damage(
+                        dmg[vid], dmg[otro_id], seed=seed + k, n=n_damage
+                    )
+                else:
+                    # El otro sin su deformación medida: la energía de este es una cota inferior.
+                    o = by_id[otro_id]
+                    masa_o = (
+                        float(o["masa"]["valor"])
+                        if o.get("masa")
+                        else _class_mass(str(o["clase"]["valor"]))
+                    )
+                    damage_min[vid] = delta_v_from_damage(
+                        dmg[vid], other_mass_kg=masa_o, seed=seed + k, n=n_damage
+                    )
+    return Evidence(rest, throw, damage_dv, rest_heading, skid, slide, damage_min)
 
 
 def _class_mass(clase: str) -> float:
@@ -482,8 +551,13 @@ def _residuals(
         v = by_v.get(vid)
         if v is None:
             continue
-        sigma = max((dist.p90 - dist.p10) / 2.563, 1.0)  # p10–p90 de una normal ≈ 2.563 σ
-        out[f"dano:{vid}"] = (v.delta_v_kmh - dist.p50) / sigma
+        out[f"dano:{vid}"] = (v.delta_v_kmh - dist.p50) / damage_sigma(dist)
+    for vid, dist in sorted(ev.damage_min.items()):
+        v = by_v.get(vid)
+        if v is None:
+            continue
+        # Un mínimo: cuenta solo si la reconstrucción queda por debajo.
+        out[f"dano_minimo:{vid}"] = min(0.0, v.delta_v_kmh - dist.p50) / damage_sigma(dist)
     return out
 
 
@@ -712,10 +786,14 @@ def perturbed(spec: JsonObj, ev: Evidence, rng: random.Random) -> Perturbed:
     for k, d in ev.damage_dv.items():
         shift = rng.gauss(0, (d.p90 - d.p10) / 2.563)
         damage[k] = Distribution(d.p10 + shift, d.p50 + shift, d.p90 + shift, d.muestras)
+    damage_min: dict[str, Distribution] = {}
+    for k, d in ev.damage_min.items():
+        shift = rng.gauss(0, (d.p90 - d.p10) / 2.563)
+        damage_min[k] = Distribution(d.p10 + shift, d.p50 + shift, d.p90 + shift, d.muestras)
     slide = {k: max(0.5, d + rng.gauss(0, SIGMA_SLIDE_M)) for k, d in ev.slide.items()}
     # Las marcas de frenado se miden con cinta: se toman tal cual (su incertidumbre entra por la
     # fricción).
-    e = Evidence(rest, throw, damage, heading, dict(ev.skid), slide)
+    e = Evidence(rest, throw, damage, heading, dict(ev.skid), slide, damage_min)
     downed_mu: float | None = None
     if any(str(v["clase"]["valor"]) in friction.DOWNED_SLIDE_CLASSES for v in s["vehiculos"]):
         md = friction.downed_motorcycle_friction(lugar["superficie"]["valor"])

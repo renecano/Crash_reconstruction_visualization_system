@@ -18,6 +18,10 @@ Banderas:
 * `velocidad_vs_evidencia`: la velocidad declarada no se cruza con el intervalo p10–p90 que fija la
   evidencia física en la inversión (solo parámetros que la evidencia identifica y que no quedan en
   el límite de búsqueda).
+* `dano_no_alcanzado`: el ΔV que reconstruye la inversión queda por debajo del p10 del mínimo que
+  implica el daño medido de un vehículo cuando el otro no tiene el suyo (ADR 0091): la velocidad
+  que reproduce las demás evidencias no alcanza para ese daño. Solo si la evidencia fija la
+  velocidad de ese vehículo.
 * `reposo_inalcanzable`: ninguna velocidad entre 0 y 200 km/h (ni un rumbo inicial no declarado
   dentro de ±20°) lleva el vehículo a la posición final declarada (ajuste de la inversión con
   residuo mayor a 3 σ).
@@ -36,6 +40,7 @@ from croquis_solver.inversion import (
     SIGMA_POSITION_M,
     Evidence,
     Inversion,
+    damage_sigma,
     evidence_from_spec,
     fit_evidence,
     invert,
@@ -291,6 +296,7 @@ _EVIDENCE_WORDS = {
     "marcas_frenado": "las marcas de frenado",
     "proyeccion": "la distancia a la que quedó la persona",
     "dano": "el daño descrito",
+    "dano_minimo": "el daño medido",
 }
 
 
@@ -338,6 +344,44 @@ def check_speed_evidence(spec: JsonObj, inv: Inversion) -> list[Inconsistency]:
     return out
 
 
+def check_damage_reach(spec: JsonObj, inv: Inversion, seed: int) -> list[Inconsistency]:
+    """El daño medido pide más cambio de velocidad del que da la reconstrucción (ADR 0091)."""
+    out: list[Inconsistency] = []
+    ev = evidence_from_spec(spec, seed=seed)
+    if not ev.damage_min:
+        return out
+    fixed = {
+        e.param.vehicle
+        for e in inv.estimates
+        if e.param.kind == "velocidad" and e.dist is not None and e.identifiable and not e.at_bound
+    }
+    by_id = {v["id"]: v for v in spec["vehiculos"]}
+    for vid, dmg in sorted(ev.damage_min.items()):
+        r = inv.best.residuals.get(f"dano_minimo:{vid}")
+        if r is None or vid not in fixed:
+            continue
+        # El residuo es (ΔV − p50)/σ cuando queda por debajo: de él sale el ΔV de la reconstrucción.
+        dv = dmg.p50 + r * damage_sigma(dmg)
+        if dv >= dmg.p10:
+            continue
+        out.append(
+            Inconsistency(
+                "dano_no_alcanzado",
+                f"Solo con su deformación, el daño medido en {_name(by_id[vid])} pide un cambio "
+                f"de velocidad mínimo de {dmg.p10:.0f} a {dmg.p90:.0f} km/h; en la reconstrucción "
+                f"que reproduce dónde quedaron los vehículos es de {dv:.0f} km/h. ¿Son correctas "
+                "las posiciones finales? Si alguna es un supuesto, con ella la reconstrucción no "
+                "alcanza ese daño.",
+                {
+                    "vehiculo": vid,
+                    "dano_minimo_kmh": [dmg.p10, dmg.p90],
+                    "reconstruccion_kmh": dv,
+                },
+            )
+        )
+    return out
+
+
 def check_consistency(
     spec: JsonObj,
     *,
@@ -365,6 +409,7 @@ def check_consistency(
         + check_damage(spec, seed, samples)
         + check_rest(spec, seed)
         + (check_speed_evidence(spec, inversion) if inversion is not None else [])
+        + (check_damage_reach(spec, inversion, seed) if inversion is not None else [])
     )
 
 

@@ -48,6 +48,15 @@ export interface Damage {
   pdofDeg: number;
   perfilM: readonly number[];
   anchoM: number;
+  /** Rigidez A (N/m) y B (N/m²) declarada (la del reporte); sin ella, la de la clase, muestreada. */
+  rigidez?: readonly [number, number] | null;
+}
+
+/** La rigidez declarada (la del reporte) en cada muestra, o la de la clase muestreada. */
+function stiffnessSamples(d: Damage, rng: PyRandom, n: number): Stiffness[] {
+  if (d.rigidez)
+    return Array.from({ length: n }, () => new Stiffness(d.rigidez![0], d.rigidez![1]));
+  return sampleStiffness(stiffnessFor(d.clase, zonaFromCdcSide(d.plano)), rng, n);
 }
 
 export function pdofOffset(plano: string, pdofDeg: number): number {
@@ -95,24 +104,30 @@ export function distribution(values: readonly number[]): Distribution {
   return new Distribution(q[0]!, median(vals), q[q.length - 1]!, vals.length);
 }
 
-/** ΔV (km/h) del vehículo `own` a partir del daño medido, con su distribución. */
+/** σ (km/h) del residuo de un ΔV por daño: p10–p90 de una normal ≈ 2.563 σ, al menos 1. */
+export function damageSigma(dist: Distribution): number {
+  return Math.max((dist.p90 - dist.p10) / 2.563, 1.0);
+}
+
+/**
+ * ΔV (km/h) del vehículo `own` a partir del daño medido, con su distribución. Con `otherMassKg` y
+ * sin `other`, el otro no tiene la deformación medida: el ΔV sale solo de la energía de `own`, así
+ * que es un mínimo (la del otro solo lo subiría; ADR 0091).
+ */
 export function deltaVFromDamage(
   own: Damage,
   other: Damage | null = null,
-  opts: { rigid?: boolean; seed?: number; n?: number; sigma?: number } = {},
+  opts: { rigid?: boolean; otherMassKg?: number; seed?: number; n?: number; sigma?: number } = {},
 ): Distribution {
   const rigid = opts.rigid ?? false;
   const n = opts.n ?? 200;
   const sModel = opts.sigma ?? modelSigma();
-  if (other === null && !rigid) {
-    throw new Error("Entre dos vehículos hace falta el daño del otro (o usa rigid=True)");
+  if (other === null && !rigid && opts.otherMassKg === undefined) {
+    throw new Error("Entre dos vehículos hace falta el daño o la masa del otro (o usa rigid=True)");
   }
   const rng = new PyRandom(opts.seed ?? 0);
-  const ownK = sampleStiffness(stiffnessFor(own.clase, zonaFromCdcSide(own.plano)), rng, n);
-  const othK =
-    other !== null
-      ? sampleStiffness(stiffnessFor(other.clase, zonaFromCdcSide(other.plano)), rng, n)
-      : [];
+  const ownK = stiffnessSamples(own, rng, n);
+  const othK = other !== null ? stiffnessSamples(other, rng, n) : [];
   const out: number[] = [];
   for (let i = 0; i < n; i++) {
     const m1 = own.masaKg * rng.uniform(1 - MASS_SPREAD, 1 + MASS_SPREAD);
@@ -122,6 +137,9 @@ export function deltaVFromDamage(
       const m2 = other.masaKg * rng.uniform(1 - MASS_SPREAD, 1 + MASS_SPREAD);
       const e2 = energy(other, othK[i]!.a, othK[i]!.b);
       dv = deltaVPair(e1 + e2, m1, m2)[0];
+    } else if (opts.otherMassKg !== undefined) {
+      const m2 = opts.otherMassKg * rng.uniform(1 - MASS_SPREAD, 1 + MASS_SPREAD);
+      dv = deltaVPair(e1, m1, m2)[0];
     } else {
       dv = deltaVBarrier(e1, m1, rng.uniform(RESTITUTION_RIGID[0], RESTITUTION_RIGID[1]));
     }
@@ -161,6 +179,8 @@ export class Evidence {
     readonly restHeading: Map<string, number> = new Map(),
     readonly skid: Map<string, number> = new Map(),
     readonly slide: Map<string, number> = new Map(),
+    /** Vehículo → ΔV mínimo que implica su daño cuando el otro no tiene el suyo medido. */
+    readonly damageMin: Map<string, Distribution> = new Map(),
   ) {}
 
   empty(): boolean {
@@ -168,6 +188,7 @@ export class Evidence {
       this.rest.size ||
       this.throwM.size ||
       this.damageDv.size ||
+      this.damageMin.size ||
       this.restHeading.size ||
       this.slide.size
     );
@@ -182,6 +203,7 @@ export class Evidence {
       ...sorted(this.slide).map((k) => `marcas_despues:${k}`),
       ...sorted(this.throwM).map((k) => `proyeccion:${k}`),
       ...sorted(this.damageDv).map((k) => `dano:${k}`),
+      ...sorted(this.damageMin).map((k) => `dano_minimo:${k}`),
     ];
   }
 }
@@ -246,25 +268,42 @@ export function evidenceFromSpec(spec: Json, seed = 0, nDamage = 200): Evidence 
   const declared = ((spec.danos_declarados ?? []) as Json[]).filter(
     (d) => stated(d.profundidad_aplastamiento) && stated(d.ancho_danado),
   );
+  const event = ((spec.eventos ?? []) as Json[]).find((e) => String(e.tipo).startsWith("impacto"));
+  // La cara con que tocó cada vehículo en el primer impacto (su CDC), si se dice.
+  const contacto = new Map<string, string>();
+  for (const z of (event?.zonas_impacto ?? []) as Json[])
+    contacto.set(String(z.vehiculo_id), str(((z.cdc ?? {}) as Json).lado, ""));
   const dmg = new Map<string, Damage>();
   for (const d of declared) {
     const v = byId.get(String(d.vehiculo_id));
     if (!v) continue;
     const lado = str(((d.zona ?? {}) as Json).lado, "F");
     if (!["F", "B", "L", "R"].includes(lado)) continue;
+    // Con varios daños medidos, el de la cara del contacto; si no se sabe, el primero.
+    const previo = dmg.get(String(v.id));
+    if (
+      previo !== undefined &&
+      (previo.plano === contacto.get(String(v.id)) || lado !== contacto.get(String(v.id)))
+    )
+      continue;
     const masa = v.masa
       ? Number((v.masa as Json).valor)
       : classMass(String((v.clase as Json).valor));
+    const perfil = d.perfil_aplastamiento as Json | undefined;
+    const rig = d.rigidez as Json | undefined;
     dmg.set(String(v.id), {
       clase: String((v.clase as Json).valor),
       masaKg: masa,
       plano: lado,
       pdofDeg: ({ F: 0.0, R: 90.0, B: 180.0, L: 270.0 } as Record<string, number>)[lado]!,
-      perfilM: [lenM(d.profundidad_aplastamiento as Json)],
+      perfilM: stated(perfil)
+        ? (perfil!.valor as number[]).map((c) => lenM({ valor: c, unidad: perfil!.unidad }))
+        : [lenM(d.profundidad_aplastamiento as Json)],
       anchoM: lenM(d.ancho_danado as Json),
+      rigidez: stated(rig) ? [Number(rig!.a), Number(rig!.b)] : null,
     });
   }
-  const event = ((spec.eventos ?? []) as Json[]).find((e) => String(e.tipo).startsWith("impacto"));
+  const damageMin = new Map<string, Distribution>();
   if (event) {
     const actors = ((event.actores ?? []) as string[]).filter((a) => byId.has(a));
     const rigid = event.tipo === "impacto_vehiculo_objeto";
@@ -274,17 +313,26 @@ export function evidenceFromSpec(spec: Json, seed = 0, nDamage = 200): Evidence 
       if (rigid) {
         damageDv.set(vid, deltaVFromDamage(own, null, { rigid: true, seed: seed + k, n: nDamage }));
       } else {
-        const otherId = actors.find((o) => o !== vid && dmg.has(o));
-        if (otherId !== undefined) {
-          damageDv.set(
+        const otherId = actors.find((o) => o !== vid);
+        if (otherId === undefined) return;
+        const other = dmg.get(otherId);
+        if (other !== undefined) {
+          damageDv.set(vid, deltaVFromDamage(own, other, { seed: seed + k, n: nDamage }));
+        } else {
+          // El otro sin su deformación medida: la energía de este es una cota inferior.
+          const o = byId.get(otherId)!;
+          const masaO = o.masa
+            ? Number((o.masa as Json).valor)
+            : classMass(String((o.clase as Json).valor));
+          damageMin.set(
             vid,
-            deltaVFromDamage(own, dmg.get(otherId), { seed: seed + k, n: nDamage }),
+            deltaVFromDamage(own, null, { otherMassKg: masaO, seed: seed + k, n: nDamage }),
           );
         }
       }
     });
   }
-  return new Evidence(rest, throwM, damageDv, restHeading, skid, slide);
+  return new Evidence(rest, throwM, damageDv, restHeading, skid, slide, damageMin);
 }
 
 export function movingVehicles(spec: Json): string[] {
@@ -430,8 +478,13 @@ function residuals(
   for (const [vid, dist] of sortedEntries(ev.damageDv)) {
     const v = byV.get(vid);
     if (!v) continue;
-    const sigma = Math.max((dist.p90 - dist.p10) / 2.563, 1.0);
-    out.set(`dano:${vid}`, (v.deltaVKmh - dist.p50) / sigma);
+    out.set(`dano:${vid}`, (v.deltaVKmh - dist.p50) / damageSigma(dist));
+  }
+  for (const [vid, dist] of sortedEntries(ev.damageMin)) {
+    const v = byV.get(vid);
+    if (!v) continue;
+    // Un mínimo: cuenta solo si la reconstrucción queda por debajo.
+    out.set(`dano_minimo:${vid}`, Math.min(0.0, v.deltaVKmh - dist.p50) / damageSigma(dist));
   }
   return out;
 }
@@ -655,9 +708,14 @@ export function perturbed(spec: Json, ev: Evidence, rng: PyRandom): Perturbed {
     const shift = rng.gauss(0, (d.p90 - d.p10) / 2.563);
     damage.set(k, new Distribution(d.p10 + shift, d.p50 + shift, d.p90 + shift, d.muestras));
   }
+  const damageMin = new Map<string, Distribution>();
+  for (const [k, d] of ev.damageMin) {
+    const shift = rng.gauss(0, (d.p90 - d.p10) / 2.563);
+    damageMin.set(k, new Distribution(d.p10 + shift, d.p50 + shift, d.p90 + shift, d.muestras));
+  }
   const slide = new Map<string, number>();
   for (const [k, d] of ev.slide) slide.set(k, Math.max(0.5, d + rng.gauss(0, SIGMA_SLIDE_M)));
-  const e = new Evidence(rest, throwM, damage, heading, new Map(ev.skid), slide);
+  const e = new Evidence(rest, throwM, damage, heading, new Map(ev.skid), slide, damageMin);
   let downedMu: number | null = null;
   if (
     (s.vehiculos as Json[]).some((v) => DOWNED_SLIDE_CLASSES.has(String((v.clase as Json).valor)))

@@ -14,9 +14,15 @@ import math
 from pathlib import Path
 from typing import Any
 
-from croquis_scene_schema import RESULTS_DIR, list_fixtures, load_fixture, result_errors
-from croquis_solver.consistency import check_consistency
-from croquis_solver.inversion import invert
+from croquis_scene_schema import (
+    FIXTURES_DIR,
+    RESULTS_DIR,
+    list_fixtures,
+    load_fixture,
+    result_errors,
+)
+from croquis_solver.consistency import check_consistency, check_damage_reach
+from croquis_solver.inversion import evidence_from_spec, invert
 from croquis_solver.montecarlo import monte_carlo
 from croquis_solver.reconstruct import reconstruct
 
@@ -30,6 +36,31 @@ ABS_TOL = 1e-5
 FIT_PREFIXES = ("/inversion", "/consistencia")
 FIT_REL_TOL = 0.0
 FIT_ABS_TOL = 0.011
+
+
+# Escenas de la inversión que no son canónicas (ADR 0091): la deformación medida de un solo
+# vehículo, con su perfil y su rigidez (AXA A2010930, del reporte de CESVI). Su resultado guarda la
+# evidencia, la inversión y la bandera de daño no alcanzado.
+INVERSION_DIR = FIXTURES_DIR / "inversion"
+INVERSION_RESULTS_DIR = INVERSION_DIR / "resultados"
+
+
+def inversion_fixtures() -> list[str]:
+    return sorted(p.stem for p in INVERSION_DIR.glob("*.json"))
+
+
+def render_inversion(name: str) -> str:
+    spec: dict[str, Any] = json.loads((INVERSION_DIR / f"{name}.json").read_text(encoding="utf-8"))
+    seed = int(spec["meta"]["semilla"])
+    ev = evidence_from_spec(spec, seed)
+    inv = invert(spec)
+    doc = {
+        "evidencia": ev.labels(),
+        "dano_minimo": {k: d.to_dict() for k, d in sorted(ev.damage_min.items())},
+        "inversion": inv.to_dict(),
+        "consistencia": [i.to_dict() for i in check_damage_reach(spec, inv, seed)],
+    }
+    return json.dumps(doc, ensure_ascii=False, separators=(",", ":")) + "\n"
 
 
 def render(name: str) -> str:
@@ -82,6 +113,11 @@ def write_all(results_dir: Path = RESULTS_DIR) -> list[Path]:
         path = results_dir / f"{name}.json"
         path.write_text(render(name), encoding="utf-8", newline="\n")
         written.append(path)
+    INVERSION_RESULTS_DIR.mkdir(parents=True, exist_ok=True)
+    for name in inversion_fixtures():
+        path = INVERSION_RESULTS_DIR / f"{name}.json"
+        path.write_text(render_inversion(name), encoding="utf-8", newline="\n")
+        written.append(path)
     return written
 
 
@@ -97,4 +133,13 @@ def check_all(results_dir: Path = RESULTS_DIR) -> dict[str, list[str]]:
         diff = differences(expected, json.loads(render(name)))
         if diff:
             bad[name] = diff
+    for name in inversion_fixtures():
+        path = INVERSION_RESULTS_DIR / f"{name}.json"
+        if not path.exists():
+            bad[f"inversion/{name}"] = ["falta el archivo"]
+            continue
+        expected = json.loads(path.read_text(encoding="utf-8"))
+        diff = differences(expected, json.loads(render_inversion(name)))
+        if diff:
+            bad[f"inversion/{name}"] = diff
     return bad
