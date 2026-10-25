@@ -1,0 +1,272 @@
+{
+ "name": "inversion_prioridad",
+ "generated_at": "2026-10-25T04:18:06Z",
+ "git_commit": "f3bb366",
+ "antes": "8ab9271",
+ "descripcion": "La regla «lo medido pesa más que lo supuesto» (ADR 0091): la inversión de las 13 escenas canónicas antes y después, y la paridad Python/TS.",
+ "escenas": [
+  {
+   "escena": "alcance",
+   "evidencia": [
+    "marcas_frenado:veh-a"
+   ],
+   "estimaciones_antes": {
+    "velocidad_previa:veh-a": "no la fija"
+   },
+   "estimaciones_despues": {
+    "velocidad_previa:veh-a": "no la fija"
+   },
+   "resultado_igual_salvo_claves_nuevas": true,
+   "claves_nuevas_en_la_inversion": [],
+   "claves_nuevas_en_el_resultado": []
+  },
+  {
+   "escena": "carambola",
+   "evidencia": [
+    "marcas_frenado:veh-a"
+   ],
+   "estimaciones_antes": {
+    "velocidad_previa:veh-a": "no la fija"
+   },
+   "estimaciones_despues": {
+    "velocidad_previa:veh-a": "no la fija"
+   },
+   "resultado_igual_salvo_claves_nuevas": true,
+   "claves_nuevas_en_la_inversion": [],
+   "claves_nuevas_en_el_resultado": []
+  },
+  {
+   "escena": "frontal_curva",
+   "evidencia": [
+    "marcas_frenado:veh-b"
+   ],
+   "estimaciones_antes": {
+    "velocidad_previa:veh-a": "no la fija",
+    "velocidad_previa:veh-b": "no la fija"
+   },
+   "estimaciones_despues": {
+    "velocidad_previa:veh-a": "no la fija",
+    "velocidad_previa:veh-b": "no la fija"
+   },
+   "resultado_igual_salvo_claves_nuevas": true,
+   "claves_nuevas_en_la_inversion": [],
+   "claves_nuevas_en_el_resultado": []
+  },
+  {
+   "escena": "glorieta",
+   "evidencia": [
+    "reposo:veh-a",
+    "rumbo_final:veh-a"
+   ],
+   "estimaciones_antes": {
+    "velocidad_previa:veh-a": "no la fija",
+    "velocidad_previa:veh-b": "no la fija",
+    "rumbo_inicial:veh-a": "no la fija",
+    "rumbo_inicial:veh-b": "no la fija"
+   },
+   "estimaciones_despues": {
+    "velocidad_previa:veh-a": "no la fija",
+    "velocidad_previa:veh-b": "no la fija",
+    "rumbo_inicial:veh-a": "no la fija",
+    "rumbo_inicial:veh-b": "no la fija"
+   },
+   "resultado_igual_salvo_claves_nuevas": true,
+   "claves_nuevas_en_la_inversion": [
+    "ajuste_completo"
+   ],
+   "claves_nuevas_en_el_resultado": []
+  },
+  {
+   "escena": "interseccion_toluca",
+   "evidencia": [
+    "reposo:veh-a",
+    "reposo:veh-b",
+    "rumbo_final:veh-a",
+    "rumbo_final:veh-b"
+   ],
+   "estimaciones_antes": {
+    "velocidad_previa:veh-a": 15.55,
+    "velocidad_previa:veh-b": "no la fija",
+    "rumbo_inicial:veh-a": -2.35,
+    "rumbo_inicial:veh-b": -82.73
+   },
+   "estimaciones_despues": {
+    "velocidad_previa:veh-a": 15.55,
+    "velocidad_previa:veh-b": "no la fija",
+    "rumbo_inicial:veh-a": -2.35,
+    "rumbo_inicial:veh-b": -82.73
+   },
+   "resultado_igual_salvo_claves_nuevas": true,
+   "claves_nuevas_en_la_inversion": [
+    "ajuste_completo"
+   ],
+   "claves_nuevas_en_el_resultado": []
+  },
+  {
+   "escena": "lateral_interseccion",
+   "evidencia": [
+    "reposo:veh-a",
+    "reposo:veh-b",
+    "rumbo_final:veh-a",
+    "rumbo_final:veh-b"
+   ],
+   "estimaciones_antes": {
+    "velocidad_previa:veh-a": 77.05,
+    "velocidad_previa:veh-b": 27.93,
+    "rumbo_inicial:veh-a": -2.55,
+    "rumbo_inicial:veh-b": 87.92
+   },
+   "estimaciones_despues": {
+    "velocidad_previa:veh-a": 77.05,
+    "velocidad_previa:veh-b": 27.93,
+    "rumbo_inicial:veh-a": -2.55,
+    "rumbo_inicial:veh-b": 87.92
+   },
+   "resultado_igual_salvo_claves_nuevas": true,
+   "claves_nuevas_en_la_inversion": [],
+   "claves_nuevas_en_el_resultado": []
+  },
+  {
+   "escena": "motociclista",
+   "evidencia": [
+    "reposo:veh-b",
+    "rumbo_final:veh-b",
+    "marcas_despues:veh-b",
+    "proyeccion:per-b1"
+   ],
+   "estimaciones_antes": {
+    "velocidad_previa:veh-a": 0.0,
+    "velocidad_previa:veh-b": 35.42,
+    "rumbo_inicial:veh-a": 183.16,
+    "rumbo_inicial:veh-b": -1.89
+   },
+   "estimaciones_despues": {
+    "velocidad_previa:veh-a": 0.0,
+    "velocidad_previa:veh-b": 35.42,
+    "rumbo_inicial:veh-a": 183.16,
+    "rumbo_inicial:veh-b": -1.89
+   },
+   "resultado_igual_salvo_claves_nuevas": true,
+   "claves_nuevas_en_la_inversion": [],
+   "claves_nuevas_en_el_resultado": []
+  },
+  {
+   "escena": "nocturno_lluvia",
+   "evidencia": [],
+   "estimaciones_antes": {
+    "velocidad_previa:veh-a": "no la fija",
+    "velocidad_previa:veh-b": "no la fija"
+   },
+   "estimaciones_despues": {
+    "velocidad_previa:veh-a": "no la fija",
+    "velocidad_previa:veh-b": "no la fija"
+   },
+   "resultado_igual_salvo_claves_nuevas": true,
+   "claves_nuevas_en_la_inversion": [],
+   "claves_nuevas_en_el_resultado": []
+  },
+  {
+   "escena": "objeto_fijo_arbol",
+   "evidencia": [
+    "reposo:veh-a",
+    "rumbo_final:veh-a"
+   ],
+   "estimaciones_antes": {
+    "velocidad_previa:veh-a": "no la fija",
+    "rumbo_inicial:veh-a": "no la fija"
+   },
+   "estimaciones_despues": {
+    "velocidad_previa:veh-a": "no la fija",
+    "rumbo_inicial:veh-a": "no la fija"
+   },
+   "resultado_igual_salvo_claves_nuevas": true,
+   "claves_nuevas_en_la_inversion": [
+    "ajuste_completo"
+   ],
+   "claves_nuevas_en_el_resultado": []
+  },
+  {
+   "escena": "peaton_cruce",
+   "evidencia": [
+    "marcas_frenado:veh-a",
+    "proyeccion:per-peaton"
+   ],
+   "estimaciones_antes": {
+    "velocidad_previa:veh-a": 53.27
+   },
+   "estimaciones_despues": {
+    "velocidad_previa:veh-a": 53.27
+   },
+   "resultado_igual_salvo_claves_nuevas": true,
+   "claves_nuevas_en_la_inversion": [],
+   "claves_nuevas_en_el_resultado": []
+  },
+  {
+   "escena": "poste",
+   "evidencia": [
+    "reposo:veh-a",
+    "rumbo_final:veh-a"
+   ],
+   "estimaciones_antes": {
+    "velocidad_previa:veh-a": "no la fija",
+    "rumbo_inicial:veh-a": "no la fija"
+   },
+   "estimaciones_despues": {
+    "velocidad_previa:veh-a": "no la fija",
+    "rumbo_inicial:veh-a": "no la fija"
+   },
+   "resultado_igual_salvo_claves_nuevas": true,
+   "claves_nuevas_en_la_inversion": [
+    "ajuste_completo"
+   ],
+   "claves_nuevas_en_el_resultado": []
+  },
+  {
+   "escena": "reversa",
+   "evidencia": [],
+   "estimaciones_antes": {
+    "velocidad_previa:veh-a": "no la fija"
+   },
+   "estimaciones_despues": {
+    "velocidad_previa:veh-a": "no la fija"
+   },
+   "resultado_igual_salvo_claves_nuevas": true,
+   "claves_nuevas_en_la_inversion": [],
+   "claves_nuevas_en_el_resultado": []
+  },
+  {
+   "escena": "volcadura",
+   "evidencia": [
+    "reposo:veh-a",
+    "rumbo_final:veh-a"
+   ],
+   "estimaciones_antes": {
+    "velocidad_previa:veh-a": 80.3,
+    "velocidad_previa:veh-b": "no la fija",
+    "rumbo_inicial:veh-a": -20.0,
+    "rumbo_inicial:veh-b": "no la fija"
+   },
+   "estimaciones_despues": {
+    "velocidad_previa:veh-a": 80.3,
+    "velocidad_previa:veh-b": "no la fija",
+    "rumbo_inicial:veh-a": -20.0,
+    "rumbo_inicial:veh-b": "no la fija"
+   },
+   "resultado_igual_salvo_claves_nuevas": true,
+   "claves_nuevas_en_la_inversion": [
+    "ajuste_completo"
+   ],
+   "claves_nuevas_en_el_resultado": []
+  }
+ ],
+ "escenas_con_estimaciones_iguales": 13,
+ "escenas_con_resultado_igual_salvo_claves_nuevas": 13,
+ "paridad": {
+  "python_reconstruct_check_ok": true,
+  "ts_pruebas_de_paridad": {
+   "pasaron": 19,
+   "fallaron": 0,
+   "ok": true
+  }
+ }
+}
