@@ -16,6 +16,7 @@
 import {
   caso as casoCesvi,
   CASO_INICIAL,
+  conMasasDeFicha,
   ejemploHecho,
   importarDictamen,
   problemasExpediente,
@@ -37,13 +38,15 @@ export function casoAxa(): CasoExpediente {
     lecturas.narracion as unknown as SalidaNarracion,
     ejemplo.archivo,
   );
+  // El reporte no da la masa de V1: la de la ficha técnica de su modelo y año (data/SOURCES.md).
+  const conFicha = conMasasDeFicha(leido.expediente);
   const expediente: Expediente = u
     ? {
-        ...leido.expediente,
+        ...conFicha,
         caso: {
-          ...leido.expediente.caso,
+          ...conFicha.caso,
           lugar: {
-            ...leido.expediente.caso.lugar,
+            ...conFicha.caso.lugar,
             coordenadas: { lat: u.lat, lon: u.lon },
             descripcion: {
               valor: `Ubicación ilustrativa sobre ${u.via.ref}: el reporte no da coordenadas.`,
@@ -52,7 +55,7 @@ export function casoAxa(): CasoExpediente {
           },
         },
       }
-    : leido.expediente;
+    : conFicha;
   return {
     id: c.id.toLowerCase(),
     origen: "ejemplo",
