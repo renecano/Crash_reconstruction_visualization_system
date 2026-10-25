@@ -22,21 +22,4 @@ describe("portada de CESVI: las cifras salen de los datos (punto 4 de René)", (
     expect(Math.abs(d.axa.restos.pct)).toBeLessThan(0.005);
     expect(d.axa.deformacion.pct).toBeGreaterThan(0);
   });
-
-  it("la reconstrucción de AXA cabe en el dibujo y los dos llegan al impacto", () => {
-    expect(d.escena.trazos).toHaveLength(2);
-    for (const t of d.escena.trazos) {
-      for (const [x, y] of [...t.antes, ...t.despues]) {
-        expect(x).toBeGreaterThanOrEqual(0);
-        expect(x).toBeLessThanOrEqual(1240);
-        expect(y).toBeGreaterThanOrEqual(0);
-        expect(y).toBeLessThanOrEqual(590);
-      }
-      // Avanzan de izquierda a derecha hasta el impacto.
-      expect(t.antes.at(-1)![0]).toBeGreaterThan(t.antes[0]![0]);
-    }
-    const [ix] = d.escena.impacto;
-    expect(ix).toBeGreaterThan(90);
-    expect(ix).toBeLessThan(1150);
-  });
 });

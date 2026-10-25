@@ -1,0 +1,62 @@
+[
+  {
+    "toma": 1,
+    "escena": "nocturno_lluvia",
+    "iluminacion": "la de la escena",
+    "duracion_s": 7.2,
+    "escritorio": {
+      "bytes": 429958,
+      "crf": 26
+    },
+    "movil": {
+      "bytes": 164458,
+      "crf": 26
+    },
+    "poster_bytes": 29632
+  },
+  {
+    "toma": 2,
+    "escena": "carambola",
+    "iluminacion": "noche_con_alumbrado (cambiada para la toma)",
+    "duracion_s": 7.2,
+    "escritorio": {
+      "bytes": 198100,
+      "crf": 26
+    },
+    "movil": {
+      "bytes": 76941,
+      "crf": 26
+    },
+    "poster_bytes": 24666
+  },
+  {
+    "toma": 3,
+    "escena": "poste",
+    "iluminacion": "la de la escena",
+    "duracion_s": 7.2,
+    "escritorio": {
+      "bytes": 234994,
+      "crf": 26
+    },
+    "movil": {
+      "bytes": 85771,
+      "crf": 26
+    },
+    "poster_bytes": 24148
+  },
+  {
+    "toma": 4,
+    "escena": "axa",
+    "iluminacion": "noche_con_alumbrado (cambiada para la toma)",
+    "duracion_s": 7.2,
+    "escritorio": {
+      "bytes": 353778,
+      "crf": 26
+    },
+    "movil": {
+      "bytes": 110536,
+      "crf": 26
+    },
+    "poster_bytes": 44167
+  }
+]

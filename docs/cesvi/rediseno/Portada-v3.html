@@ -1,0 +1,936 @@
+<!doctype html><!-- Referencia de diseño de la portada v3 (René, 2026-10-24). Los videos noche-*.mp4 son de stock y NO se usan: ver el prompt. --><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>Croquis para CESVI</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Anybody:wdth,wght@50..150,100..900&family=Martian+Mono:wdth,wght@75..112.5,300..600&family=Schibsted+Grotesk:wght@400..700&display=swap">
+<style>
+/* Layout: un expediente pericial filmado. Un solo plano de video real corre detrás de toda la página;
+   cada hoja del expediente tiene su toma. Texto a la izquierda, filetes y datos en monoespaciada. */
+:root{
+  --asphalt:#0c0d0e;      /* suelo */
+  --line:#2a2d31;         /* filetes */
+  --chalk:#ece8df;        /* texto principal */
+  --soft:#cfcac0;         /* texto de lectura */
+  --dust:#9b978e;         /* secundario */
+  --marker:#f2c230;       /* amarillo de testigo pericial */
+  --impact:#ff5a1f;       /* punto de impacto */
+  --f-display:"Anybody", "Arial Narrow", "Helvetica Neue", Arial, sans-serif;
+  --f-body:"Schibsted Grotesk", "Helvetica Neue", Arial, sans-serif;
+  --f-mono:"Martian Mono", ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace;
+  --gutter:max(20px, env(safe-area-inset-left, 0px));
+  --gutter-r:max(20px, env(safe-area-inset-right, 0px));
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+html{background:var(--asphalt)}
+body{background:var(--asphalt);color:var(--chalk);font:400 16px/1.55 var(--f-body);-webkit-font-smoothing:antialiased;overflow-x:hidden}
+::selection{background:var(--marker);color:var(--asphalt)}
+a{color:inherit}
+:focus-visible{outline:2px solid var(--marker);outline-offset:3px;border-radius:2px}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:60;background:var(--asphalt)}
+h1,h2,h3{margin:0;font-weight:inherit;text-wrap:balance}
+p{margin:0}
+
+/* ---------- película de fondo ---------- */
+#film{position:fixed;inset:0;z-index:0;background:#050607;overflow:hidden;pointer-events:none}
+#film video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:0;transition:opacity 1.2s ease,filter 1.2s ease,transform 8s linear;filter:contrast(1.06) saturate(.85) brightness(.9);transform:scale(1.04)}
+#film video.on{opacity:1;transform:scale(1)}
+body:not([data-sheet="hecho"]) #film video{filter:contrast(1.04) saturate(.65) brightness(.68) blur(2px)}
+#film::after{content:"";position:absolute;inset:0;background:radial-gradient(120% 90% at 50% 45%,rgba(0,0,0,0) 40%,rgba(0,0,0,.6) 100%),linear-gradient(90deg,rgba(8,9,10,.75) 0%,rgba(8,9,10,.3) 45%,rgba(8,9,10,0) 70%)}
+#grain{position:fixed;inset:-50%;z-index:1;pointer-events:none;opacity:.07;background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/></filter><rect width='160' height='160' filter='url(%23n)'/></svg>");animation:grain 1s steps(6) infinite}
+@keyframes grain{0%{transform:translate(0,0)}20%{transform:translate(-3%,2%)}40%{transform:translate(2%,-3%)}60%{transform:translate(-2%,-1%)}80%{transform:translate(3%,3%)}100%{transform:translate(0,0)}}
+#veil{position:fixed;inset:0;z-index:1;pointer-events:none;background:linear-gradient(90deg,rgba(10,11,12,.9) 0%,rgba(10,11,12,.66) 50%,rgba(10,11,12,.32) 100%);opacity:0;transition:opacity 1.1s ease}
+body:not([data-sheet="hecho"]) #veil{opacity:1}
+#heroShade{position:fixed;inset:auto 0 0 0;height:60vh;z-index:1;pointer-events:none;background:linear-gradient(0deg,rgba(10,11,12,.92),rgba(10,11,12,0));transition:opacity 1s}
+body:not([data-sheet="hecho"]) #heroShade{opacity:0}
+
+/* ---------- cabecera ---------- */
+header{position:fixed;top:env(safe-area-inset-top,0px);left:0;right:0;z-index:40;padding-left:var(--gutter);padding-right:var(--gutter-r);padding-block:14px;display:flex;align-items:center;gap:24px;transition:background .4s,border-color .4s;border-bottom:1px solid transparent}
+header.solid{background:rgba(12,13,14,.82);backdrop-filter:blur(12px);border-bottom-color:var(--line)}
+.brand{display:flex;align-items:center;gap:12px;text-decoration:none;flex:none}
+.brand svg{width:40px;height:40px;flex:none}
+.wordmark{font:650 17px/1 var(--f-display);font-variation-settings:"wdth" 132;letter-spacing:.2em;text-transform:uppercase;padding-top:1px}
+.brand small{display:block;font:500 8.5px/1 var(--f-mono);letter-spacing:.22em;color:var(--dust);margin-top:5px;text-transform:uppercase}
+nav{margin-left:auto;display:flex;gap:2px}
+nav a{display:flex;gap:7px;text-decoration:none;padding:10px 12px;min-height:44px;align-items:center;font:500 13.5px/1 var(--f-body);color:var(--dust);position:relative;transition:color .2s}
+nav a i{font:500 9.5px/1 var(--f-mono);font-style:normal;color:#6c6962;letter-spacing:.06em}
+nav a:hover,nav a[aria-current="true"]{color:var(--chalk)}
+nav a[aria-current="true"] i{color:var(--marker)}
+nav a::after{content:"";position:absolute;left:12px;right:12px;bottom:6px;height:1px;background:var(--marker);transform:scaleX(0);transform-origin:left;transition:transform .35s ease}
+nav a[aria-current="true"]::after{transform:scaleX(1)}
+.cta{display:inline-flex;align-items:center;gap:10px;min-height:44px;padding:0 18px;text-decoration:none;font:600 14px/1 var(--f-body);color:var(--asphalt);background:var(--chalk);border-radius:2px;transition:background .2s;flex:none;white-space:nowrap}
+.cta svg{width:14px;height:14px;transition:transform .25s}
+.cta:hover{background:var(--marker)}
+.cta:hover svg{transform:translateX(3px)}
+.cta.ghost{background:transparent;color:var(--chalk);box-shadow:inset 0 0 0 1px rgba(236,232,223,.35)}
+.cta.ghost:hover{box-shadow:inset 0 0 0 1px var(--marker);color:var(--marker)}
+
+/* ---------- hojas ---------- */
+main{position:relative;z-index:5}
+.sheet{position:relative;padding-left:var(--gutter);padding-right:var(--gutter-r)}
+.wrap{max-width:1360px;margin:0 auto}
+.h2{font-family:var(--f-display);font-weight:820;font-variation-settings:"wdth" 78;text-transform:uppercase;font-size:clamp(38px,5.4vw,84px);line-height:.92;letter-spacing:-.005em;max-width:14em}
+.h2 .lt{font-weight:250;font-variation-settings:"wdth" 122;color:var(--soft)}
+.lede{max-width:36em;font-size:clamp(16px,1.3vw,19px);color:var(--soft)}
+
+/* hoja 01 · el hecho */
+#hecho{min-height:100svh;display:grid;grid-template-rows:minmax(0,1fr) auto;gap:40px;padding-block:112px 26px}
+.hero{width:100%;align-self:center;display:flex;flex-direction:column;gap:30px;padding-top:3vh;min-width:0}
+.h-row{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:28px 48px}
+.h-row .lede{flex:1 1 420px}
+.h-foot{width:100%;display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:16px 32px;border-top:1px solid rgba(236,232,223,.16);padding-top:18px}
+.eyebrow{align-self:flex-start;display:inline-flex;align-items:center;gap:10px;font:500 11px/1 var(--f-mono);letter-spacing:.16em;text-transform:uppercase;color:var(--chalk)}
+.eyebrow .dot{width:7px;height:7px;border-radius:50%;background:var(--impact);box-shadow:0 0 0 4px rgba(255,90,31,.18)}
+.h1{font-family:var(--f-display);text-transform:uppercase;line-height:.86;letter-spacing:-.005em;font-size:clamp(46px,7.4vw,134px)}
+.h1 .l1{display:block;font-weight:860;font-variation-settings:"wdth" 70;white-space:nowrap}
+body.ready .h1 .l1{animation:squeeze 1.25s .25s cubic-bezier(.2,.9,.25,1) both}
+@keyframes squeeze{0%{font-variation-settings:"wdth" 118;letter-spacing:.02em}55%{font-variation-settings:"wdth" 62}100%{font-variation-settings:"wdth" 70}}
+.h1 .l2{display:block;font-weight:240;font-variation-settings:"wdth" 132;font-size:.74em;letter-spacing:.01em;margin-top:.12em}
+.h1 .l2 em{font-style:normal;color:var(--impact);font-weight:520}
+.actions{display:flex;flex-wrap:wrap;gap:12px}
+.proof{display:flex;flex-wrap:wrap;gap:8px 26px;font:500 11px/1.4 var(--f-mono);letter-spacing:.04em;color:var(--dust)}
+.proof span{display:inline-flex;gap:8px;align-items:center}
+.proof span::before{content:"";width:9px;height:9px;border:1px solid var(--marker);transform:rotate(45deg) scale(.8)}
+.scroll{display:inline-flex;align-items:center;gap:14px;min-height:44px;font:500 10px/1 var(--f-mono);letter-spacing:.2em;text-transform:uppercase;color:var(--dust);text-decoration:none;transition:color .2s}
+.scroll:hover{color:var(--chalk)}
+.scroll i{display:block;width:56px;height:1px;background:linear-gradient(90deg,var(--marker),transparent);animation:drop 2.4s ease-in-out infinite;transform-origin:left}
+@keyframes drop{0%{transform:scaleX(0)}50%{transform:scaleX(1)}100%{transform:scaleX(1);opacity:0}}
+
+/* hoja 02 · el problema: tres piezas desalineadas que se alinean en un solo flujo */
+#problema{padding-block:22vh 18vh}
+#problema .wrap{display:grid;gap:60px}
+.frags{position:relative;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));column-gap:44px;max-width:1240px;padding-top:2px}
+.frags::after{content:"";position:absolute;left:0;right:0;top:0;height:1px;background:var(--marker);transform:scaleX(0);transform-origin:left;transition:transform 1.3s .45s cubic-bezier(.6,0,.2,1)}
+.frags.united::after{transform:scaleX(1)}
+.frag{position:relative;padding-top:30px;border-top:1px solid rgba(236,232,223,.24);display:flex;flex-direction:column;gap:14px;transition:transform 1.1s cubic-bezier(.2,.8,.2,1);min-width:0}
+.frag:nth-child(1){transform:translate(-10px,34px)}
+.frag:nth-child(2){transform:translate(12px,-22px)}
+.frag:nth-child(3){transform:translate(-6px,52px)}
+.frags.united .frag{transform:none}
+.frag::before{content:"";position:absolute;left:0;top:-5px;width:9px;height:9px;border-radius:50%;border:1px solid var(--chalk);background:var(--asphalt);transition:background .5s .9s,border-color .5s .9s}
+.frags.united .frag::before{background:var(--marker);border-color:var(--marker)}
+.frag .tool{display:flex;justify-content:space-between;gap:12px;font:500 10px/1 var(--f-mono);letter-spacing:.16em;text-transform:uppercase;color:var(--dust)}
+.frag .tool b{font-weight:600;color:var(--chalk)}
+.frag h3{font:800 clamp(24px,2.3vw,32px)/1 var(--f-display);font-variation-settings:"wdth" 84;text-transform:uppercase}
+.frag p{font-size:16px;color:var(--soft);max-width:26em}
+.frag .fault{margin-top:6px;align-self:flex-start;display:inline-flex;align-items:center;gap:10px;font:500 11.5px/1 var(--f-mono);color:var(--impact);padding:9px 0 0;border-top:1px dashed rgba(255,90,31,.45)}
+.frag .fault s{color:var(--dust);text-decoration-color:var(--impact)}
+.joint{font-size:clamp(20px,2.1vw,28px);color:var(--soft);max-width:30em}
+.joint strong{color:var(--marker);font-weight:600}
+
+/* hoja 03 · la prueba */
+#prueba{padding-block:16vh 14vh}
+#prueba .wrap{display:grid;grid-template-columns:minmax(0,7fr) minmax(0,5fr);gap:64px;align-items:end}
+.col{display:flex;flex-direction:column;gap:28px;min-width:0}
+.case{font:500 12px/1.6 var(--f-mono);color:var(--dust);letter-spacing:.02em}
+.case b{color:var(--chalk);font-weight:500}
+.tablebox{overflow-x:auto;border-top:1px solid rgba(236,232,223,.3);border-bottom:1px solid rgba(236,232,223,.3)}
+table{width:100%;border-collapse:collapse;min-width:520px;font-variant-numeric:tabular-nums}
+th,td{padding:16px 14px;text-align:right;border-top:1px solid var(--line);white-space:nowrap}
+th:first-child,td:first-child{padding-left:0;text-align:left}
+th:last-child,td:last-child{padding-right:0}
+thead th{border-top:0;font:500 9.5px/1 var(--f-mono);letter-spacing:.16em;text-transform:uppercase;color:var(--dust)}
+tbody th{font:600 15px/1.2 var(--f-body);color:var(--chalk)}
+td{font:500 15px/1 var(--f-mono);color:var(--soft)}
+td.c{color:var(--chalk);font-weight:600}
+td.d{color:var(--marker)}
+td.d.ok{color:var(--chalk)}
+td .chip{display:inline-block;font:600 9.5px/1 var(--f-mono);letter-spacing:.14em;text-transform:uppercase;padding:5px 7px;border:1px solid currentColor}
+.foot{font-size:13.5px;color:var(--dust);max-width:46em}
+.figs{display:grid;gap:30px}
+.fig{display:grid;grid-template-columns:auto minmax(0,1fr);gap:20px;align-items:baseline;border-top:1px solid var(--line);padding-top:18px}
+.fig .n{font:300 clamp(48px,5vw,76px)/.9 var(--f-mono);font-variation-settings:"wdth" 75;letter-spacing:-.04em;color:var(--chalk);font-variant-numeric:tabular-nums}
+.fig p{font-size:14.5px;color:var(--dust);max-width:20em}
+.versus{border-top:1px solid var(--line);padding-top:20px;display:grid;gap:12px}
+.versus .row{display:grid;grid-template-columns:110px minmax(0,1fr) 64px;align-items:center;gap:14px;font:500 12px/1 var(--f-mono)}
+.versus .row span{color:var(--dust)}
+.versus .track{height:12px;background:repeating-linear-gradient(90deg,#2a2d31 0 1px,transparent 1px 10%);border-bottom:1px solid var(--line)}
+.versus .fill{height:100%;background:var(--marker);width:calc(var(--v) * 1%)}
+.versus .row.base .fill{background:#6b6860}
+.versus b{font-weight:600;text-align:right;color:var(--chalk)}
+.textlink{display:inline-flex;gap:10px;align-items:center;font:600 15px/1.2 var(--f-body);text-decoration:none;color:var(--marker);align-self:flex-start}
+.textlink svg{transition:transform .3s}
+.textlink:hover{color:var(--chalk)}
+.textlink:hover svg{transform:translateX(4px)}
+
+/* hoja 04 · método */
+#metodo{padding-block:16vh 14vh}
+#metodo .wrap{display:grid;gap:64px}
+.steps{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));border-top:1px solid rgba(236,232,223,.3)}
+.step{padding:28px 28px 8px 0;display:flex;flex-direction:column;gap:14px;min-width:0}
+.step + .step{padding-left:28px;border-left:1px solid var(--line)}
+.step .k{display:flex;align-items:center;gap:12px;font:500 10px/1 var(--f-mono);letter-spacing:.18em;text-transform:uppercase;color:var(--dust)}
+.step .k b{display:grid;place-items:center;width:28px;height:28px;border:1px solid var(--marker);color:var(--marker);font-weight:600;letter-spacing:0;font-size:11px}
+.step h3{font:800 30px/1 var(--f-display);font-variation-settings:"wdth" 86;text-transform:uppercase}
+.step > p{color:var(--soft);font-size:15.5px}
+.specimen{position:relative;margin-top:8px;padding:4px 0 4px 18px}
+.specimen::before{content:"";position:absolute;left:0;top:0;bottom:0;width:2px;background:var(--marker);transform-origin:top}
+.narr{font:400 15.5px/1.85 var(--f-body);color:var(--chalk)}
+.narr mark{background:none;color:var(--chalk);transition:color .5s ease,text-shadow .5s ease}
+.narr mark.lit{color:var(--marker);text-shadow:0 0 18px rgba(242,194,48,.35)}
+.found{margin-top:12px;display:flex;flex-wrap:wrap;gap:6px 16px;font:500 9.5px/1 var(--f-mono);letter-spacing:.14em;text-transform:uppercase;color:#5d5b56}
+.found span{transition:color .4s ease}
+.found span.lit{color:var(--marker)}
+.found::before{content:"Detectado";color:var(--dust)}
+.coord{display:grid;grid-template-columns:auto 1fr;gap:8px 16px;margin:0;font:500 12px/1.4 var(--f-mono)}
+.coord dt{color:var(--dust)}
+.coord dd{margin:0;color:var(--chalk)}
+.coord dd.hl{color:var(--impact)}
+.dict{display:grid;gap:10px}
+.dict .lab{font:500 9.5px/1 var(--f-mono);letter-spacing:.16em;text-transform:uppercase;color:var(--dust)}
+.dict .v{font:500 34px/1 var(--f-mono);letter-spacing:-.03em;font-variant-numeric:tabular-nums}
+.dict .v small{font-size:13px;margin-left:6px;color:var(--soft)}
+.dict .src{display:flex;flex-wrap:wrap;gap:6px 14px;font:500 10.5px/1.4 var(--f-mono);color:var(--soft)}
+.dict .src span::before{content:"— ";color:var(--marker)}
+.dict .sign{margin-top:8px;display:flex;align-items:flex-end;gap:12px;font:500 10px/1.3 var(--f-mono);color:var(--dust)}
+.dict .sign i{flex:1;height:1px;background:rgba(236,232,223,.4)}
+.tenets{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:44px}
+.tenet{display:flex;flex-direction:column;gap:12px;min-width:0}
+.tenet h3{font:800 clamp(26px,2.6vw,38px)/.95 var(--f-display);font-variation-settings:"wdth" 80;text-transform:uppercase}
+.tenet p{color:var(--soft);font-size:15.5px;max-width:28em}
+.tenet .tags{font:500 10px/1.5 var(--f-mono);letter-spacing:.12em;text-transform:uppercase;color:var(--marker)}
+
+/* hoja 05 · preguntas */
+#preguntas{padding-block:16vh 10vh}
+#preguntas .wrap{display:grid;grid-template-columns:minmax(0,5fr) minmax(0,7fr);gap:56px}
+.faq{border-top:1px solid rgba(236,232,223,.3)}
+details{border-bottom:1px solid var(--line)}
+summary{list-style:none;cursor:pointer;display:grid;grid-template-columns:minmax(0,1fr) 24px;gap:12px;align-items:baseline;padding:22px 0;font:600 clamp(17px,1.5vw,21px)/1.3 var(--f-body)}
+summary::-webkit-details-marker{display:none}
+summary i{font:500 10px/1 var(--f-mono);font-style:normal;color:var(--dust);letter-spacing:.08em}
+summary::after{content:"+";font:300 22px/1 var(--f-mono);color:var(--marker);transition:transform .3s;justify-self:end}
+details[open] summary::after{transform:rotate(45deg)}
+details p{padding:0 36px 24px 0;color:var(--soft);max-width:44em}
+summary:hover{color:var(--marker)}
+
+/* cierre */
+#cierre{padding-block:12vh 40px}
+.close{display:grid;gap:40px;border-top:1px solid var(--line);padding-top:56px}
+.close .h2{max-width:none}
+.close-row{display:flex;flex-wrap:wrap;gap:28px;align-items:flex-end;justify-content:space-between}
+.credits{font:500 10px/1.6 var(--f-mono);color:#77746d;letter-spacing:.03em;max-width:64em}
+
+/* ---------- transición entre hojas ---------- */
+#wipe{position:fixed;inset:0;z-index:80;pointer-events:none;display:grid}
+#wipe .bars{position:absolute;inset:0;display:grid;grid-template-rows:repeat(7,1fr)}
+#wipe .bars i{display:block;background:var(--asphalt);transform:scaleX(0);transform-origin:left;border-bottom:1px solid #17191b}
+#wipe .mid{position:relative;place-self:center;display:flex;flex-direction:column;align-items:center;gap:22px;opacity:0}
+#wipe .mid svg{width:92px;height:92px}
+#wipe .mid p{font:800 clamp(28px,4vw,52px)/1 var(--f-display);font-variation-settings:"wdth" 80;letter-spacing:.01em;text-transform:uppercase;color:var(--chalk)}
+#wipe .mid p b{color:var(--marker);font-weight:600}
+#wipe.in .bars i{transform:scaleX(1);transition:transform .42s cubic-bezier(.7,0,.2,1)}
+#wipe.in .mid{opacity:1;transition:opacity .2s .3s}
+#wipe.out .bars i{transform:scaleX(0);transform-origin:right;transition:transform .5s cubic-bezier(.7,0,.2,1)}
+#wipe.out .mid{opacity:0;transition:opacity .15s}
+#wipe.in{pointer-events:auto}
+
+/* intro */
+#intro{position:fixed;inset:0;z-index:90;display:grid;place-items:center;background:var(--asphalt);transition:clip-path 1s cubic-bezier(.8,0,.2,1)}
+#intro.gone{clip-path:inset(0 0 100% 0);pointer-events:none}
+.intro-in{display:flex;flex-direction:column;align-items:center;gap:30px}
+.intro-in svg{width:min(200px,42vw);height:auto}
+.intro-word{font:650 clamp(22px,3.2vw,34px)/1 var(--f-display);font-variation-settings:"wdth" 140;letter-spacing:.32em;text-transform:uppercase;padding-left:.32em;clip-path:inset(0 100% 0 0);animation:reveal .9s 1.35s cubic-bezier(.7,0,.2,1) forwards}
+.intro-meta{font:500 10px/1 var(--f-mono);letter-spacing:.2em;text-transform:uppercase;color:var(--dust);opacity:0;animation:fade .6s 1.9s forwards}
+@keyframes reveal{to{clip-path:inset(0 0 0 0)}}
+@keyframes fade{to{opacity:1}}
+
+/* trazo del logo animado */
+.mk .ticks line{stroke-dasharray:3;stroke-dashoffset:3}
+.mk.draw .ticks line{animation:dash .25s forwards}
+.mk .arc{stroke-dasharray:110;stroke-dashoffset:110}
+.mk.draw .arc{animation:dash .95s .25s cubic-bezier(.65,0,.25,1) forwards}
+.mk .tgt{transform-origin:52px 32px;transform:scale(0);opacity:0}
+.mk.draw .tgt{animation:pop .5s 1.15s cubic-bezier(.3,1.6,.5,1) forwards}
+.mk .ring{transform-origin:52px 32px;opacity:0}
+.mk.draw .ring{animation:ring .9s 1.2s ease-out forwards}
+@keyframes dash{to{stroke-dashoffset:0}}
+@keyframes pop{to{transform:scale(1);opacity:1}}
+@keyframes ring{0%{opacity:.9;transform:scale(.6)}100%{opacity:0;transform:scale(3.2)}}
+
+
+/* ---------- movimiento ---------- */
+#progress{position:absolute;left:0;right:0;bottom:-1px;height:1px;background:var(--marker);transform-origin:left;transform:scaleX(var(--p,0));opacity:.9}
+#scan{position:absolute;top:0;bottom:0;left:0;width:1px;background:var(--marker);box-shadow:0 0 18px 2px rgba(242,194,48,.55);opacity:0}
+#scan.go{animation:sweep 1.3s cubic-bezier(.6,0,.3,1)}
+@keyframes sweep{0%{transform:translateX(-2vw);opacity:0}12%{opacity:.9}88%{opacity:.9}100%{transform:translateX(102vw);opacity:0}}
+#cursor{position:fixed;left:0;top:0;z-index:95;pointer-events:none;width:0;height:0;opacity:0;transition:opacity .3s}
+#cursor.on{opacity:1}
+#cursor .ring{position:absolute;left:-16px;top:-16px;width:32px;height:32px;border:1px solid rgba(236,232,223,.55);border-radius:50%;transition:transform .35s cubic-bezier(.3,1.4,.5,1),border-color .25s,background .25s}
+#cursor .ring::before,#cursor .ring::after{content:"";position:absolute;background:var(--impact);opacity:0;transition:opacity .25s}
+#cursor .ring::before{left:50%;top:-6px;bottom:-6px;width:1px;transform:translateX(-50%);-webkit-mask:linear-gradient(#000 0 5px,transparent 5px calc(100% - 5px),#000 calc(100% - 5px));mask:linear-gradient(#000 0 5px,transparent 5px calc(100% - 5px),#000 calc(100% - 5px))}
+#cursor .ring::after{top:50%;left:-6px;right:-6px;height:1px;transform:translateY(-50%);-webkit-mask:linear-gradient(90deg,#000 0 5px,transparent 5px calc(100% - 5px),#000 calc(100% - 5px));mask:linear-gradient(90deg,#000 0 5px,transparent 5px calc(100% - 5px),#000 calc(100% - 5px))}
+#cursor .dot{position:absolute;left:-2px;top:-2px;width:4px;height:4px;border-radius:50%;background:var(--impact)}
+#cursor.hot .ring{transform:scale(1.6);border-color:var(--impact);background:rgba(255,90,31,.06)}
+#cursor.hot .ring::before,#cursor.hot .ring::after{opacity:1}
+.cta{will-change:transform}
+
+.js-anim .split .w{display:inline-block;overflow:hidden;vertical-align:top;padding:.08em .04em .14em;margin:-.08em -.04em -.14em}
+.js-anim .split .wi{display:inline-block;transform:translateY(112%) scaleX(1.32);transform-origin:0 100%;transition:transform 1.1s cubic-bezier(.16,.9,.2,1);transition-delay:calc(var(--i,0) * 55ms + var(--d,0s))}
+.js-anim .split.in .wi{transform:none}
+.js-anim [data-r]{opacity:0;transition:opacity 1s ease,filter 1.1s ease,transform 1.1s cubic-bezier(.16,.9,.2,1);transition-delay:var(--d,0s)}
+.js-anim [data-r="focus"]{filter:blur(12px);transform:translateY(16px)}
+.js-anim [data-r="up"]{transform:translateY(36px)}
+.js-anim [data-r="left"]{transform:translateX(-28px)}
+.js-anim [data-r].in{opacity:1;filter:none;transform:none}
+.js-anim .versus .fill{transform:scaleX(0);transform-origin:left;transition:transform 1.5s cubic-bezier(.16,.9,.2,1) .35s}
+.js-anim .versus .row.base .fill{transition-delay:.6s}
+.js-anim .versus.in .fill{transform:none}
+.js-anim .tablebox tbody tr{opacity:0;transform:translateX(-16px);transition:opacity .7s ease,transform .8s cubic-bezier(.16,.9,.2,1);transition-delay:calc(var(--i,0) * 130ms + .25s)}
+.js-anim .tablebox.in tbody tr{opacity:1;transform:none}
+.js-anim .chip{opacity:0;transform:scale(1.9) rotate(-9deg);transition:opacity .2s ease 1.05s,transform .5s cubic-bezier(.3,1.6,.45,1) 1s}
+.js-anim .tablebox.in .chip{opacity:1;transform:rotate(-2deg)}
+.js-anim .specimen::before{transform:scaleY(0);transition:transform 1s cubic-bezier(.6,0,.2,1) .2s}
+.js-anim .specimen.in::before{transform:none}
+.js-anim .dict .sign i{transform:scaleX(0);transform-origin:left;transition:transform 1.2s cubic-bezier(.6,0,.2,1) 1s}
+.js-anim .dict.in .sign i{transform:none}
+.js-anim .frags::after{transition-delay:1s}
+.dict .sign .ok{color:var(--marker);opacity:0;transition:opacity .4s 2.1s}
+.dict.in .sign .ok{opacity:1}
+details .ans{overflow:hidden}
+
+
+/* ---------- huevo de pascua: modo croquis a mano ---------- */
+html.sketch{--asphalt:#0e2a52;--line:rgba(214,230,255,.26);--chalk:#eef4ff;--soft:#c9d9f2;--dust:#9cb3d6;--marker:#ffffff;--impact:#ffd45c}
+html.sketch #film{background:#0e2a52}
+html.sketch #film video,html.sketch body:not([data-sheet="hecho"]) #film video{filter:grayscale(1) invert(1) contrast(1.7) brightness(1.08)!important;mix-blend-mode:multiply}
+html.sketch #film::after{background:linear-gradient(rgba(255,255,255,.07) 1px,transparent 1px) 0 0/24px 24px,linear-gradient(90deg,rgba(255,255,255,.07) 1px,transparent 1px) 0 0/24px 24px,linear-gradient(rgba(255,255,255,.12) 1px,transparent 1px) 0 0/120px 120px,linear-gradient(90deg,rgba(255,255,255,.12) 1px,transparent 1px) 0 0/120px 120px}
+html.sketch #veil{background:linear-gradient(90deg,rgba(14,42,82,.88),rgba(14,42,82,.5))}
+html.sketch #heroShade{background:linear-gradient(0deg,rgba(14,42,82,.9),rgba(14,42,82,0))}
+html.sketch header.solid{background:rgba(14,42,82,.85)}
+html.sketch .h1,html.sketch .h2,html.sketch h3{font-family:"Caveat","Segoe Print","Bradley Hand",cursive!important;text-transform:none;font-variation-settings:normal!important;letter-spacing:0!important;font-weight:700!important}
+html.sketch .h1{font-size:clamp(56px,9vw,160px);line-height:.95}
+html.sketch .h1 .l1{animation:none}
+html.sketch .h2 .lt,html.sketch .h1 .l2{font-weight:500!important}
+html.sketch .cta{border-radius:255px 15px 225px 15px/15px 225px 15px 255px}
+html.sketch #grain{opacity:.12;mix-blend-mode:screen}
+#toast{position:fixed;left:50%;bottom:calc(24px + env(safe-area-inset-bottom,0px));z-index:96;transform:translate(-50%,20px);opacity:0;pointer-events:none;display:flex;align-items:center;gap:12px;padding:12px 16px;max-width:calc(100% - 32px);background:rgba(12,13,14,.92);border:1px solid rgba(236,232,223,.25);font:500 11px/1.45 var(--f-mono);letter-spacing:.04em;color:var(--chalk);transition:opacity .35s,transform .45s cubic-bezier(.3,1.4,.5,1)}
+#toast.on{opacity:1;transform:translate(-50%,0)}
+#toast b{color:var(--marker);font-weight:600}
+html.sketch #toast{background:rgba(14,42,82,.95)}
+
+
+/* botón principal: un rayo recorre el borde; al pasar, la franja amarilla barre y la mira gira */
+@property --a{syntax:'<angle>';inherits:false;initial-value:0deg}
+.cta.epic{position:relative;isolation:isolate;min-height:62px;padding:0 9px 0 24px;gap:26px;background:var(--chalk);color:var(--asphalt);border-radius:3px;box-shadow:0 22px 50px -18px rgba(255,90,31,.55)}
+.cta.epic:hover{background:var(--chalk)}
+.cta.epic::before{content:"";position:absolute;inset:-3px;border-radius:5px;padding:2px;background:conic-gradient(from var(--a),transparent 0 62%,rgba(242,194,48,.0) 66%,var(--marker) 80%,var(--impact) 88%,transparent 93%);-webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);-webkit-mask-composite:xor;mask-composite:exclude;animation:orbit 3.4s linear infinite;z-index:-1;pointer-events:none}
+.cta.epic::after{content:"";position:absolute;inset:-18px -24px;z-index:-2;background:radial-gradient(55% 70% at 50% 60%,rgba(255,90,31,.32),transparent 72%);filter:blur(12px);opacity:.55;animation:breathe 3.4s ease-in-out infinite;pointer-events:none;transition:opacity .4s}
+.cta.epic:hover::after{opacity:1}
+@keyframes orbit{to{--a:360deg}}
+@keyframes breathe{50%{opacity:.95}}
+.cta.epic .fill{position:absolute;inset:0;border-radius:3px;background:var(--marker);clip-path:polygon(0 0,0 0,-14% 100%,0 100%);transition:clip-path .55s cubic-bezier(.7,0,.2,1);z-index:0}
+.cta.epic:hover .fill,.cta.epic:focus-visible .fill{clip-path:polygon(0 0,114% 0,100% 100%,0 100%)}
+.cta.epic .t,.cta.epic .ic{position:relative;z-index:1}
+.cta.epic .t{display:flex;flex-direction:column;gap:6px;text-align:left}
+.cta.epic .t small{font:600 8.5px/1 var(--f-mono);letter-spacing:.22em;text-transform:uppercase;opacity:.6}
+.cta.epic .t b{font:800 19px/1 var(--f-display);font-variation-settings:"wdth" 92;text-transform:uppercase;letter-spacing:.02em}
+.cta.epic .ic{display:grid;place-items:center;width:46px;height:46px;border-radius:2px;background:var(--asphalt);color:var(--chalk);transition:background .35s}
+.cta.epic .ic svg{width:24px;height:24px;transition:transform .7s cubic-bezier(.3,1.5,.45,1)}
+.cta.epic:hover .ic{background:#16171a}
+.cta.epic:hover .ic svg{transform:rotate(90deg) scale(1.08)}
+.cta.epic.hit{animation:hit .42s cubic-bezier(.3,1.6,.5,1)}
+@keyframes hit{20%{transform:translate(-3px,1px) scale(.97)}45%{transform:translate(3px,-1px)}70%{transform:translate(-1px,0)}}
+.boom{position:fixed;z-index:97;pointer-events:none;width:14px;height:14px;margin:-7px 0 0 -7px;border-radius:50%;border:2px solid var(--impact);animation:boom .7s cubic-bezier(.1,.8,.2,1) forwards}
+.boom.b2{border-color:var(--marker);animation-delay:.08s;opacity:0}
+@keyframes boom{0%{transform:scale(.4);opacity:1}100%{transform:scale(9);opacity:0}}
+
+
+/* botón de cabecera: misma familia, en chico */
+.cta.epic.sm{min-height:46px;padding:0 5px 0 16px;gap:14px;box-shadow:0 12px 30px -14px rgba(255,90,31,.6)}
+.cta.epic.sm::after{inset:-10px -14px;opacity:.35}
+.cta.epic.sm .t b{font-size:13.5px;font-variation-settings:"wdth" 96}
+.cta.epic.sm .ic{width:36px;height:36px}
+.cta.epic.sm .ic svg{width:18px;height:18px}
+
+/* enlace al significado */
+.foot-links{display:flex;flex-wrap:wrap;align-items:center;gap:8px 34px}
+.means{display:inline-flex;align-items:center;gap:12px;min-height:44px;font:500 10px/1 var(--f-mono);letter-spacing:.2em;text-transform:uppercase;color:var(--chalk);text-decoration:none;transition:color .2s}
+.means .glyph{display:grid;place-items:center;width:28px;height:28px;border:1px solid var(--marker);color:var(--marker);font:800 14px/1 var(--f-display);letter-spacing:0;transition:background .3s,color .3s,transform .5s cubic-bezier(.3,1.5,.45,1)}
+.means:hover{color:var(--marker)}
+.means:hover .glyph{background:var(--marker);color:var(--asphalt);transform:rotate(-8deg) scale(1.08)}
+
+/* qué significa: siete letras que se abren */
+#significado{padding-block:14vh 6vh}
+.acro-wrap{display:grid;gap:52px}
+.acro-head{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:24px 48px}
+.acro-side{display:flex;flex-direction:column;align-items:flex-start;gap:18px;max-width:30em}
+.acro-side p{color:var(--soft);font-size:15.5px}
+.acro-all{appearance:none;cursor:pointer;display:inline-flex;align-items:center;gap:12px;min-height:44px;padding:0 18px;background:transparent;color:var(--marker);border:1px solid var(--marker);border-radius:2px;font:600 10.5px/1 var(--f-mono);letter-spacing:.18em;text-transform:uppercase;transition:background .25s,color .25s}
+.acro-all::before{content:"";width:7px;height:7px;background:currentColor;transform:rotate(45deg);transition:transform .4s}
+.acro-all:hover{background:var(--marker);color:var(--asphalt)}
+.acro-all[aria-pressed="true"]::before{transform:rotate(225deg)}
+.acro-all .off-t,.acro-all[aria-pressed="true"] .on-t{display:none}
+.acro-all[aria-pressed="true"] .off-t{display:inline}
+.acro{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(7,minmax(0,1fr));border-top:1px solid rgba(236,232,223,.3)}
+.acro li{position:relative;min-width:0;border-left:1px solid var(--line);padding:0 0 0 clamp(10px,1.2vw,18px)}
+.acro li:first-child{border-left:0;padding-left:0}
+.acro li::before{content:"";position:absolute;left:-1px;top:-1px;height:2px;right:0;background:var(--marker);transform:scaleX(0);transform-origin:left;transition:transform .7s cubic-bezier(.6,0,.2,1)}
+.acro li.open::before{transform:scaleX(1)}
+.acro .L{appearance:none;display:block;width:100%;background:none;border:0;padding:16px 0 6px;cursor:pointer;text-align:left;color:var(--chalk);font:880 clamp(64px,11.5vw,186px)/.82 var(--f-display);font-variation-settings:"wdth" 62;transition:color .35s,font-variation-settings .6s cubic-bezier(.2,.9,.25,1),text-shadow .35s}
+.acro .L:hover{color:var(--marker);font-variation-settings:"wdth" 74}
+.acro li.open .L{color:var(--marker);text-shadow:0 0 40px rgba(242,194,48,.28);font-variation-settings:"wdth" 54}
+.acro .L:focus-visible{outline-offset:-2px}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+.acro .m{display:grid;grid-template-rows:0fr;transition:grid-template-rows .6s cubic-bezier(.16,.9,.2,1)}
+.acro .m > div{overflow:hidden;min-height:0}
+.acro li.open .m{grid-template-rows:1fr}
+.acro .m b{display:block;padding-top:14px;font:800 clamp(16px,1.65vw,25px)/1 var(--f-display);font-variation-settings:"wdth" 82;text-transform:uppercase;color:var(--chalk);white-space:nowrap}
+.acro .m p{margin-top:10px;padding-bottom:22px;font-size:13.5px;line-height:1.5;color:var(--soft);opacity:0;transform:translateY(8px);transition:opacity .5s .2s,transform .6s .2s cubic-bezier(.16,.9,.2,1)}
+.acro li.open .m p{opacity:1;transform:none}
+.acro-en{display:flex;flex-wrap:wrap;gap:6px 16px;font:500 11px/1.5 var(--f-mono);letter-spacing:.06em;color:var(--dust)}
+.acro-en span{color:#6c6962;text-transform:uppercase;letter-spacing:.18em;font-size:9.5px;padding-top:2px}
+.js-anim .acro .L .ch{display:inline-block;transform:translateY(105%);opacity:0;transition:transform 1s cubic-bezier(.16,.9,.2,1),opacity .6s;transition-delay:calc(var(--i,0) * 80ms)}
+.js-anim .acro.in .L .ch{transform:none;opacity:1}
+.acro.hint li:not(.open) .L{animation:nudge 2.6s ease-in-out infinite;animation-delay:calc(var(--i,0) * 120ms)}
+@keyframes nudge{0%,70%,100%{color:var(--chalk)}80%{color:var(--marker)}}
+@media (max-width:760px){
+  .acro{grid-template-columns:minmax(0,1fr)}
+  .acro li,.acro li:first-child{display:grid;grid-template-columns:76px minmax(0,1fr);align-items:center;column-gap:16px;border-left:0;padding:10px 0 14px;border-bottom:1px solid var(--line)}
+  .acro li::before{left:0;top:auto;bottom:-1px}
+  .acro .L{font-size:70px;padding:8px 0 6px;grid-row:1}
+  .acro .m{grid-template-rows:1fr}
+  .acro .m b{padding-top:0;font-size:20px}
+  .acro .m p{margin-top:6px;padding-bottom:0;opacity:1;transform:none;display:none}
+  .acro li.open .m p{display:block}
+  .acro .m b{color:var(--dust)}
+  .acro li.open .m b{color:var(--chalk)}
+}
+
+/* ---------- responsivo ---------- */
+@media (max-width:1100px){
+  nav a i{display:none}
+  #prueba .wrap{grid-template-columns:minmax(0,1fr);gap:48px}
+  .tenets{grid-template-columns:minmax(0,1fr);gap:28px}
+  #preguntas .wrap{grid-template-columns:minmax(0,1fr);gap:28px}
+}
+@media (max-width:900px){
+  nav{display:none}
+  header{gap:12px}
+  header .cta.epic.sm{margin-left:auto;padding:0 4px 0 12px;gap:10px}
+  .cta.epic.sm .t b{font-size:12px}
+  .cta.epic.sm .ic{width:34px;height:34px}
+  .brand small{display:none}
+  .h1 .l1{white-space:normal}
+  .scroll{display:none}
+  .frags{grid-template-columns:minmax(0,1fr);row-gap:44px}
+  .frag:nth-child(n){transform:translateX(14px)}
+  .frag:nth-child(2){transform:translateX(-10px)}
+  .frags.united .frag{transform:none}
+  .steps{grid-template-columns:minmax(0,1fr)}
+  .step,.step + .step{padding:28px 0 28px;border-left:0}
+  .step + .step{border-top:1px solid var(--line)}
+  #veil{background:rgba(10,11,12,.78)}
+}
+@media (max-width:520px){
+  .eyebrow{font-size:10px;letter-spacing:.12em}
+  .wordmark{font-size:14px;letter-spacing:.14em}
+  .brand svg{width:32px;height:32px}
+  .h1{font-size:clamp(40px,13.2vw,64px)}
+  .versus .row{grid-template-columns:84px minmax(0,1fr) 52px}
+}
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation-duration:.01ms!important;animation-delay:0s!important;transition-duration:.01ms!important}
+}
+</style>
+
+<!-- símbolo: C de trayectoria + escala de transportador + punto de impacto -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <symbol id="mark" viewBox="0 0 64 64">
+      <g class="ticks" stroke="currentColor" stroke-width="1.1" stroke-linecap="butt" opacity=".55"></g>
+      <path class="arc" d="M 46.86 45.38 A 20 20 0 1 1 46.86 18.62" fill="none" stroke="currentColor" stroke-width="6.4"/>
+      <path d="M 43.14 41.94 A 15 15 0 1 1 43.14 22.06" fill="none" stroke="currentColor" stroke-width=".9" opacity=".45" stroke-dasharray="2.2 2.2"/>
+      <g class="tgt" stroke="#ff5a1f" fill="none">
+        <circle cx="52" cy="32" r="4.3" stroke-width="1.7"/>
+        <line x1="52" y1="23.6" x2="52" y2="26.4" stroke-width="1.3"/>
+        <line x1="52" y1="37.6" x2="52" y2="40.4" stroke-width="1.3"/>
+        <line x1="57.6" y1="32" x2="60.4" y2="32" stroke-width="1.3"/>
+        <circle cx="52" cy="32" r="1.2" fill="#ff5a1f" stroke="none"/>
+      </g>
+      <circle class="ring" cx="52" cy="32" r="4.3" fill="none" stroke="#ff5a1f" stroke-width=".8"/>
+    </symbol>
+    <symbol id="mark-sm" viewBox="0 0 64 64">
+      <path d="M 46.86 45.38 A 20 20 0 1 1 46.86 18.62" fill="none" stroke="currentColor" stroke-width="7"/>
+      <path d="M 44 42 A 14.5 14.5 0 1 1 44 22" fill="none" stroke="currentColor" stroke-width="1.4" opacity=".45" stroke-dasharray="2.6 2.6"/>
+      <g stroke="#ff5a1f" fill="none">
+        <circle cx="52" cy="32" r="4.6" stroke-width="2.2"/>
+        <line x1="52" y1="22.5" x2="52" y2="25.8" stroke-width="2"/>
+        <line x1="52" y1="38.2" x2="52" y2="41.5" stroke-width="2"/>
+        <line x1="58.2" y1="32" x2="61.5" y2="32" stroke-width="2"/>
+        <circle cx="52" cy="32" r="1.5" fill="#ff5a1f" stroke="none"/>
+      </g>
+    </symbol>
+  </defs>
+</svg>
+
+<div id="intro" role="status" aria-live="polite">
+  <div class="intro-in">
+    <svg class="mk" viewBox="0 0 64 64" aria-hidden="true" style="color:var(--chalk)"><use href="#mark"/></svg>
+    <div class="intro-word" aria-label="Croquis">Croquis</div>
+    <div class="intro-meta">Reconstrucción pericial</div>
+  </div>
+</div>
+
+<div id="wipe" aria-hidden="true">
+  <div class="bars"><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+  <div class="mid">
+    <svg class="mk" viewBox="0 0 64 64" style="color:var(--chalk)"><use href="#mark"/></svg>
+    <p id="wipeLabel">El hecho</p>
+  </div>
+</div>
+
+<div id="film" aria-hidden="true">
+  <div id="scan"></div>
+  <video id="vA" muted playsinline loop preload="auto" poster="./poster.jpg"></video>
+  <video id="vB" muted playsinline loop preload="auto"></video>
+</div>
+<div id="grain" aria-hidden="true"></div>
+<div id="veil" aria-hidden="true"></div>
+<div id="heroShade" aria-hidden="true"></div>
+
+<div id="toast" role="status" aria-live="polite"></div>
+<div id="cursor" aria-hidden="true"><div class="ring"></div><div class="dot"></div></div>
+<header id="top">
+  <div id="progress"></div>
+  <a class="brand" href="#hecho" data-go="hecho" aria-label="Croquis, inicio">
+    <svg viewBox="0 0 64 64" aria-hidden="true" style="color:var(--chalk)"><use href="#mark-sm"/></svg>
+    <span><span class="wordmark">Croquis</span><small>Reconstrucción pericial</small></span>
+  </a>
+  <nav aria-label="Hojas del expediente">
+    <a href="#hecho" data-go="hecho">El hecho</a>
+    <a href="#problema" data-go="problema">El problema</a>
+    <a href="#prueba" data-go="prueba">La prueba</a>
+    <a href="#metodo" data-go="metodo">Cómo funciona</a>
+    <a href="#preguntas" data-go="preguntas">Preguntas</a>
+  </nav>
+  <a class="cta epic sm" href="#cierre" data-go="cierre"><span class="fill"></span><span class="t"><b>Entrar a Croquis</b></span><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true"><circle cx="12" cy="12" r="6.2" stroke-width="1.8"/><path d="M12 1.5v4M12 18.5v4M1.5 12h4M18.5 12h4" stroke-width="1.8"/><circle cx="12" cy="12" r="1.9" fill="#ff5a1f" stroke="none"/></svg></span></a>
+</header>
+
+<main>
+  <section class="sheet" id="hecho" data-sheet="hecho" data-label="El hecho" data-n="01">
+    <div class="wrap hero">
+      <span class="eyebrow" data-r="up"><span class="dot"></span><span data-decode>Reconstrucción de hechos de tránsito</span></span>
+      <h1 class="h1"><span class="l1">Reconstruye el hecho.</span><span class="l2 split"><em>Defiende</em> el dictamen.</span></h1>
+      <div class="h-row">
+        <p class="lede" data-r="focus" style="--d:.35s">Narra el choque con tu lenguaje técnico. Croquis lo ubica en el lugar real, lo reconstruye con física verificable y arma tu dictamen, con la fuente de cada número.</p>
+        <div class="actions" data-r="up" style="--d:.55s">
+          <a class="cta epic" href="#cierre" data-go="cierre"><span class="fill"></span><span class="t"><small>Acceso para peritos</small><b>Entrar a Croquis</b></span><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true"><circle cx="12" cy="12" r="6.2" stroke-width="1.6"/><path d="M12 1.5v4M12 18.5v4M1.5 12h4M18.5 12h4" stroke-width="1.6"/><circle cx="12" cy="12" r="1.8" fill="#ff5a1f" stroke="none"/></svg></span></a>
+          <a class="cta ghost" href="#metodo" data-go="metodo">Cómo funciona</a>
+        </div>
+      </div>
+    </div>
+    <div class="wrap h-foot" data-r="focus" style="--d:.8s">
+      <div class="proof"><span>Del relato a la firma</span><span>Cada número con su fuente</span><span>El dictamen siempre es del perito</span></div>
+      <div class="foot-links"><a class="means" href="#significado" data-go="significado"><span class="glyph" aria-hidden="true">C</span>¿Qué significa Croquis?</a><a class="scroll" href="#problema" data-go="problema">Abrir el expediente<i></i></a></div>
+    </div>
+  </section>
+
+  <section class="sheet" id="problema" data-sheet="problema" data-label="El problema" data-n="02">
+    <div class="wrap">
+      <h2 class="h2 split">Hoy un dictamen se arma con <span class="lt">piezas sueltas.</span></h2>
+      <div class="frags" id="frags">
+        <article class="frag">
+          <div class="tool"><b data-decode>A mano</b><span>Croquis</span></div>
+          <h3>El croquis, a mano</h3>
+          <p>Posiciones, distancias y trayectorias dibujadas aparte, sin el lugar real debajo.</p>
+          <span class="fault">¿Escala? ¿Orientación?</span>
+        </article>
+        <article class="frag">
+          <div class="tool"><b data-decode>Hoja de cálculo</b><span>Velocidades</span></div>
+          <h3>Los cálculos, en otra hoja</h3>
+          <p>McHenry, desplazamiento y frenado se capturan a mano; un dígito mal copiado cambia la conclusión.</p>
+          <span class="fault"><s>63.15</s> → 63.51</span>
+        </article>
+        <article class="frag">
+          <div class="tool"><b data-decode>Procesador de texto</b><span>Dictamen</span></div>
+          <h3>El dictamen, desde cero</h3>
+          <p>Se redacta copiando de todo lo anterior, sin una traza de dónde salió cada número.</p>
+          <span class="fault">Fuente: sin registro</span>
+        </article>
+      </div>
+      <p class="joint" data-r="focus">Croquis lo une en <strong>un solo flujo</strong>, del relato a la firma.</p>
+    </div>
+  </section>
+
+  <section class="sheet" id="prueba" data-sheet="prueba" data-label="La prueba" data-n="03">
+    <div class="wrap">
+      <div class="col">
+        <h2 class="h2 split">Tomamos uno de sus reportes. <span class="lt">Croquis llegó a lo mismo.</span></h2>
+        <p class="case" data-r="focus"><b data-decode>AXA A2010930</b> · un alcance en Ahome, Sinaloa · mismos datos, mismo método.</p>
+        <div class="tablebox" data-watch>
+          <table>
+            <thead><tr><th scope="col">Concepto</th><th scope="col">Reporte de CESVI</th><th scope="col">Croquis</th><th scope="col">Diferencia</th></tr></thead>
+            <tbody>
+              <tr><th scope="row">Modalidad</th><td>Alcance</td><td class="c">Alcance</td><td class="d ok"><span class="chip">Coincide</span></td></tr>
+              <tr><th scope="row">Velocidad por restos</th><td>60.27</td><td class="c">60.27</td><td class="d ok">0.00 %</td></tr>
+              <tr><th scope="row">Velocidad por deformación</th><td>63.15</td><td class="c">63.90</td><td class="d">+1.19 %</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <p class="foot" data-r="focus" style="--d:.6s">Velocidades en km/h. La diferencia de 1.19 % viene de los datos impresos en el reporte; Croquis la muestra en lugar de esconderla.</p>
+      </div>
+      <div class="figs">
+        <div class="fig" data-r="up"><div class="n" data-count="671">671</div><p>reportes de CESVI estudiados para construirlo</p></div>
+        <div class="fig" data-r="up" style="--d:.15s"><div class="n" data-count="205">205</div><p>reconstruidos a ciegas, sin ver sus conclusiones</p></div>
+        <div class="versus" data-watch role="img" aria-label="Modalidad correcta en 205 reportes: Croquis 58.3 por ciento, regla simple 37.2 por ciento">
+          <div class="row"><span>Croquis</span><div class="track"><div class="fill" style="--v:58.3"></div></div><b><span data-count="58.3" data-dec="1">58.3</span> %</b></div>
+          <div class="row base"><span>Regla simple</span><div class="track"><div class="fill" style="--v:37.2"></div></div><b><span data-count="37.2" data-dec="1">37.2</span> %</b></div>
+          <p class="foot">Modalidades correctas sobre los 205 reportes reconstruidos a ciegas.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="sheet" id="metodo" data-sheet="metodo" data-label="Cómo funciona" data-n="04">
+    <div class="wrap">
+      <div style="display:grid;gap:26px">
+        <h2 class="h2 split">Narra. Ubica. <span class="lt">Reconstruye.</span></h2>
+      </div>
+      <div class="steps">
+        <div class="step" data-r="up">
+          <div class="k"><b>1</b>Relato</div>
+          <h3>Narra como siempre</h3>
+          <p>Croquis entiende modalidad, zonas de contacto y restos, y solo pregunta lo que falta.</p>
+          <div data-watch class="specimen" data-scan><p class="narr">Hecho de tránsito en la modalidad de <mark>alcance</mark> en el arroyo que corre <mark>de sur a norte</mark> de la <mark>carretera federal</mark>, a la altura del <mark>km 47+800</mark>.</p><p class="found"><span>Modalidad</span><span>Sentido</span><span>Vía</span><span>Ubicación</span></p></div>
+        </div>
+        <div class="step" data-r="up">
+          <div class="k"><b>2</b>Lugar</div>
+          <h3>Marca el impacto</h3>
+          <p>Sobre el mapa real. Croquis propone dónde iba cada vehículo; tú solo ajustas.</p>
+          <div data-watch class="specimen"><dl class="coord"><dt>Punto</dt><dd class="hl">Impacto</dd><dt>Sentido</dt><dd>Sur → norte</dd><dt>V1</dt><dd>Propuesto · ajustable</dd><dt>V2</dt><dd>Propuesto · ajustable</dd></dl></div>
+        </div>
+        <div class="step" data-r="up">
+          <div class="k"><b>3</b>Firma</div>
+          <h3>Firma el dictamen</h3>
+          <p>Velocidades con su rango, verificación con el método de CESVI y el documento en PDF o Word.</p>
+          <div data-watch class="specimen dict" aria-label="Ejemplo de un renglón del dictamen">
+            <span class="lab" data-decode>Velocidad por restos</span>
+            <span class="v"><span data-count="60.27" data-dec="2">60.27</span><small>km/h</small></span>
+            <div class="src"><span>Fuente: reporte</span><span>Método: CESVI</span></div>
+            <div class="sign"><span>Validó</span><i></i><span class="ok">Perito</span></div>
+          </div>
+        </div>
+      </div>
+      <div class="tenets">
+        <div class="tenet" data-r="up"><h3 class="split">Nada se inventa.</h3><p>Cada dato dice si viene del perito, del reporte o de un supuesto. Lo que falta, se pregunta.</p><span class="tags">Perito · Reporte · Supuesto</span></div>
+        <div class="tenet" data-r="up"><h3 class="split">Siempre da lo mismo.</h3><p>El mismo caso produce el mismo resultado, con su huella de entradas para repetirlo.</p><span class="tags">Huella de entradas</span></div>
+        <div class="tenet" data-r="up"><h3 class="split">La firma es tuya.</h3><p>Croquis reconstruye y sugiere. El perito revisa, decide y valida el dictamen.</p><span class="tags">Revisa · Decide · Valida</span></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="sheet" id="preguntas" data-sheet="preguntas" data-label="Preguntas" data-n="05">
+    <div class="wrap">
+      <div style="display:grid;gap:26px;align-content:start">
+        <h2 class="h2 split">Preguntas de <span class="lt">peritos.</span></h2>
+      </div>
+      <div class="faq">
+        <details data-r="up" open><summary>¿Croquis firma el dictamen?</summary><p>No. Croquis reconstruye y sugiere; el perito revisa, decide y valida. La firma siempre es del perito.</p></details>
+        <details data-r="up"><summary>¿De dónde sale cada número?</summary><p>Cada dato indica si viene del perito, del reporte o de un supuesto, y el dictamen conserva esa fuente junto al valor.</p></details>
+        <details data-r="up"><summary>¿Qué pasa si al relato le falta un dato?</summary><p>Croquis no lo rellena por su cuenta: te pregunta lo que falta antes de reconstruir.</p></details>
+        <details data-r="up"><summary>¿Si reconstruyo el mismo caso dos veces, cambia el resultado?</summary><p>No. El mismo caso produce el mismo resultado y guarda su huella de entradas para que cualquiera lo repita.</p></details>
+        <details data-r="up"><summary>¿Qué tan seguido acierta la modalidad?</summary><p>En 205 reportes reconstruidos a ciegas acertó 58.3 % de las modalidades, contra 37.2 % de una regla simple.</p></details>
+        <details data-r="up"><summary>¿En qué formato sale el dictamen?</summary><p>En PDF o Word, con las velocidades y su rango y la verificación con el método de CESVI.</p></details>
+      </div>
+    </div>
+  </section>
+
+  <section class="sheet" id="significado" data-sheet="preguntas" data-label="Qué significa" data-n="06">
+    <div class="wrap acro-wrap">
+      <div class="acro-head">
+        <h2 class="h2 split">Siete letras. <span class="lt">Un método.</span></h2>
+        <div class="acro-side" data-r="focus">
+          <p>Croquis no es solo el dibujo del perito. Cada letra es un paso de la reconstrucción. Toca una letra para leerla.</p>
+          <button class="acro-all" id="acroAll" type="button" aria-pressed="false"><span class="on-t">Descifrar Croquis</span><span class="off-t">Volver a cerrar</span></button>
+        </div>
+      </div>
+      <ol class="acro" id="acro" data-watch>
+          <li><button class="L" type="button" aria-expanded="false" aria-controls="m0"><span class="ch">C</span><span class="sr">: ver significado</span></button><div class="m" id="m0"><div><b>Cuenta</b><p>Narra el hecho con tu lenguaje técnico, como siempre.</p></div></div></li>
+          <li><button class="L" type="button" aria-expanded="false" aria-controls="m1"><span class="ch">R</span><span class="sr">: ver significado</span></button><div class="m" id="m1"><div><b>Reconoce</b><p>Identifica modalidad, zonas de contacto y restos.</p></div></div></li>
+          <li><button class="L" type="button" aria-expanded="false" aria-controls="m2"><span class="ch">O</span><span class="sr">: ver significado</span></button><div class="m" id="m2"><div><b>Ordena</b><p>Acomoda cada dato con su fuente: perito, reporte o supuesto.</p></div></div></li>
+          <li><button class="L" type="button" aria-expanded="false" aria-controls="m3"><span class="ch">Q</span><span class="sr">: ver significado</span></button><div class="m" id="m3"><div><b>¿Qué falta?</b><p>Pregunta solo lo que el relato no dice.</p></div></div></li>
+          <li><button class="L" type="button" aria-expanded="false" aria-controls="m4"><span class="ch">U</span><span class="sr">: ver significado</span></button><div class="m" id="m4"><div><b>Ubica</b><p>Sitúa el hecho sobre el lugar real.</p></div></div></li>
+          <li><button class="L" type="button" aria-expanded="false" aria-controls="m5"><span class="ch">I</span><span class="sr">: ver significado</span></button><div class="m" id="m5"><div><b>Impacta</b><p>Calcula el impacto con física verificable.</p></div></div></li>
+          <li><button class="L" type="button" aria-expanded="false" aria-controls="m6"><span class="ch">S</span><span class="sr">: ver significado</span></button><div class="m" id="m6"><div><b>Simula</b><p>Reconstruye el hecho y arma el dictamen para tu firma.</p></div></div></li>
+      </ol>
+      <p class="acro-en" data-r="focus"><span>En inglés</span>Crash Reconstruction from Oral Queries Using Impact Simulation</p>
+    </div>
+  </section>
+
+  <section class="sheet" id="cierre" data-sheet="preguntas" data-label="Entrar" data-n="06">
+    <div class="wrap close">
+      <h2 class="h2 split">Del relato <span class="lt">a la firma.</span></h2>
+      <div class="close-row" data-r="up" style="--d:.3s">
+        <div class="actions">
+          <a class="cta epic" href="#cierre"><span class="fill"></span><span class="t"><small>Acceso para peritos</small><b>Entrar a Croquis</b></span><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true"><circle cx="12" cy="12" r="6.2" stroke-width="1.6"/><path d="M12 1.5v4M12 18.5v4M1.5 12h4M18.5 12h4" stroke-width="1.6"/><circle cx="12" cy="12" r="1.8" fill="#ff5a1f" stroke="none"/></svg></span></a>
+          <a class="cta ghost" href="#metodo" data-go="metodo">Cómo funciona</a>
+        </div>
+      </div>
+      <p class="credits">Video de fondo: clips de Pexels, bajo la licencia de Pexels.</p>
+    </div>
+  </section>
+</main>
+
+<script>
+(function(){
+  // escala de transportador del símbolo grande
+  const g=document.querySelector('#mark .ticks');
+  for(let a=60;a<=300;a+=15){const r=a*Math.PI/180,c=Math.cos(r),s=Math.sin(r);const l=document.createElementNS('http://www.w3.org/2000/svg','line');
+    const r1=(a%45===0)?26.2:27.3;l.setAttribute('x1',(32+r1*c).toFixed(2));l.setAttribute('y1',(32+r1*s).toFixed(2));l.setAttribute('x2',(32+29.6*c).toFixed(2));l.setAttribute('y2',(32+29.6*s).toFixed(2));g.appendChild(l);}
+  const reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
+  document.querySelector('#intro .mk').classList.add('draw');
+
+  /* ---- hojas: la activa es la que cruza el 45 % de la ventana ---- */
+  const sheets=[...document.querySelectorAll('main .sheet')];
+  const links=[...document.querySelectorAll('nav a')];
+  function setSheet(id){
+    const key=document.getElementById(id).dataset.sheet;
+    if(document.body.dataset.sheet!==key){document.body.dataset.sheet=key;window.dispatchEvent(new CustomEvent('sheet',{detail:key}));}
+    links.forEach(a=>a.setAttribute('aria-current',a.dataset.go===key?'true':'false'));
+  }
+  document.body.dataset.sheet='hecho'; links[0].setAttribute('aria-current','true');
+  function pick(){const y=innerHeight*.45;let cur=sheets[0];for(const s of sheets){if(s.getBoundingClientRect().top<=y)cur=s;}setSheet(cur.id);
+    document.getElementById('top').classList.toggle('solid',scrollY>40);}
+  addEventListener('scroll',pick,{passive:true});addEventListener('resize',pick);
+
+  /* ---- piezas sueltas que se alinean ---- */
+  const frags=document.getElementById('frags');
+  new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting&&e.intersectionRatio>.5)frags.classList.add('united');else if(!e.isIntersecting)frags.classList.remove('united');}),{threshold:[0,.5,1]}).observe(frags);
+
+  /* ---- transición entre hojas con el símbolo ---- */
+  const wipe=document.getElementById('wipe'),wl=document.getElementById('wipeLabel'),wmk=wipe.querySelector('.mk');
+  let busy=false;
+  function go(id){
+    const s=document.getElementById(id); if(!s) return;
+    if(reduce||busy){s.scrollIntoView();pick();return;}
+    busy=true;
+    wl.textContent=s.dataset.label;
+    wipe.querySelectorAll('.bars i').forEach((b,i)=>b.style.transitionDelay=(i*0.045)+'s');
+    wipe.classList.remove('out');wmk.classList.remove('draw');void wipe.offsetWidth;wipe.classList.add('in');
+    setTimeout(()=>wmk.classList.add('draw'),120);
+    setTimeout(()=>{window.scrollTo({top:s.getBoundingClientRect().top+scrollY-(id==='hecho'?0:10),behavior:'instant'});pick();},560);
+    setTimeout(()=>{wipe.querySelectorAll('.bars i').forEach((b,i)=>b.style.transitionDelay=(i*0.04)+'s');wipe.classList.remove('in');wipe.classList.add('out');},1550);
+    setTimeout(()=>{busy=false;},2150);
+  }
+  document.querySelectorAll('[data-go]').forEach(a=>a.addEventListener('click',e=>{e.preventDefault();if(e.detail)a.blur();go(a.dataset.go);}));
+  const h=(location.hash||'').slice(1);
+  if(h&&document.getElementById(h))setTimeout(()=>{document.getElementById(h).scrollIntoView();pick();},50);
+
+  /* ---- intro: se retira cuando el primer cuadro del video está listo (o a los 6 s) ---- */
+  let introDone=false;
+  function done(){if(introDone)return;introDone=true;const el=document.getElementById('intro');
+    setTimeout(()=>{el.classList.add('gone');document.body.classList.add('ready');dispatchEvent(new Event('croquis:ready'));setTimeout(()=>el.remove(),1100);},reduce?0:900);}
+  setTimeout(done,reduce?200:6000);
+
+  /* ---- película: la portada recorre las cuatro tomas; cada hoja tiene la suya ---- */
+  const CLIPS=['./noche-1.mp4','./noche-2.mp4','./noche-3.mp4','./noche-4.mp4'];
+  const SHEET_CLIP={problema:1,prueba:2,metodo:0,preguntas:3};
+  const HOLD=7.2;                               // segundos por toma en la portada
+  const vids=[document.getElementById('vA'),document.getElementById('vB')];
+  let front=0, cur=-1, heroTimer=null, pending=null;
+  function src(v,k){ if(v.dataset.k!==String(k)){ v.dataset.k=k; v.src=CLIPS[k]; v.load(); } }
+  function whenReady(v,fn){ if(v.readyState>=3) fn(); else v.addEventListener('canplay',fn,{once:true}); }
+  function show(k){
+    if(k===cur&&pending===null) return;
+    pending=k;
+    const a=vids[front], b=vids[1-front];
+    if(cur===-1){ src(a,k); whenReady(a,()=>{ cur=k; pending=null; a.classList.add('on'); if(!reduce) a.play().catch(()=>{}); done(); preload(); }); return; }
+    src(b,k); try{ b.currentTime=0; }catch(e){}
+    whenReady(b,()=>{
+      if(pending!==k) return;
+      if(!reduce) b.play().catch(()=>{});
+      b.classList.add('on'); a.classList.remove('on');
+      const sc=document.getElementById('scan'); if(sc&&document.body.dataset.sheet==='hecho'&&!reduce){ sc.classList.remove('go'); void sc.offsetWidth; sc.classList.add('go'); }
+      front=1-front; cur=k; pending=null;
+      setTimeout(()=>{ if(!a.classList.contains('on')) a.pause(); preload(); },1300);
+    });
+  }
+  // deja la siguiente toma cargando en el video de atrás
+  function preload(){ if(document.body.dataset.sheet==='hecho') src(vids[1-front],(cur+1)%CLIPS.length); }
+  function heroLoop(){ clearInterval(heroTimer); if(reduce) return; heroTimer=setInterval(()=>{ if(document.body.dataset.sheet==='hecho'&&!document.hidden) show((cur+1)%CLIPS.length); },HOLD*1000); }
+  addEventListener('sheet',e=>{
+    const k=e.detail==='hecho'?Math.max(cur,0):SHEET_CLIP[e.detail];
+    if(k!==undefined) show(k);
+    if(e.detail==='hecho') heroLoop(); else clearInterval(heroTimer);
+  });
+  vids[0].addEventListener('error',()=>done(),{once:true});
+  show(0); heroLoop();
+})();
+</script>
+
+<script>
+/* ---- movimiento: entradas al hacer scroll, lecturas que se "decodifican", cifras que cuentan ---- */
+(function(){
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if (reduce || !('IntersectionObserver' in window)) return;
+  document.documentElement.classList.add('js-anim');
+
+  // titulares: cada palabra entra desde abajo y se comprime
+  document.querySelectorAll('.split').forEach(el => {
+    let i = 0;
+    const walk = node => {
+      [...node.childNodes].forEach(n => {
+        if (n.nodeType === 3) {
+          const parts = n.textContent.split(/(\s+)/), frag = document.createDocumentFragment();
+          parts.forEach(t => {
+            if (!t) return;
+            if (/^\s+$/.test(t)) { frag.appendChild(document.createTextNode(t)); return; }
+            const w = document.createElement('span'); w.className = 'w';
+            const wi = document.createElement('span'); wi.className = 'wi'; wi.style.setProperty('--i', i++); wi.textContent = t;
+            w.appendChild(wi); frag.appendChild(w);
+          });
+          n.replaceWith(frag);
+        } else if (n.nodeType === 1) walk(n);
+      });
+    };
+    walk(el);
+  });
+
+  // escalonar hermanos sin retraso propio
+  const groups = new Map();
+  document.querySelectorAll('[data-r]').forEach(el => { if (el.style.getPropertyValue('--d')) return; const p = el.parentElement; const k = groups.get(p) || 0; el.style.setProperty('--d', (k * 0.12) + 's'); groups.set(p, k + 1); });
+  document.querySelectorAll('.tablebox tbody tr').forEach((tr, i) => tr.style.setProperty('--i', i));
+
+  // lectura que se decodifica, como un instrumento
+  const GLYPHS = '0123456789ABCDEFGHJKLMNPRSTUVXYZ/·+';
+  function decode(el) {
+    if (el.dataset.done) return; el.dataset.done = 1;
+    const final = el.dataset.final || (el.dataset.final = el.textContent);
+    const t0 = performance.now(), dur = 650 + final.length * 18;
+    (function step(now) {
+      const k = Math.min(1, (now - t0) / dur); const n = Math.floor(final.length * k);
+      let out = final.slice(0, n);
+      for (let j = n; j < final.length; j++) out += final[j] === ' ' ? ' ' : GLYPHS[(Math.random() * GLYPHS.length) | 0];
+      el.textContent = out;
+      if (k < 1) requestAnimationFrame(step); else el.textContent = final;
+    })(t0);
+  }
+  // cifras que cuentan
+  function count(el) {
+    const to = parseFloat(el.dataset.count), dec = +(el.dataset.dec || 0), t0 = performance.now(), dur = 1500;
+    (function step(now) { const k = Math.min(1, (now - t0) / dur), e = 1 - Math.pow(1 - k, 4);
+      el.textContent = (to * e).toFixed(dec); if (k < 1) requestAnimationFrame(step); })(t0);
+  }
+  // la narración: Croquis "lee" y marca cada dato
+  function scan(el) {
+    const marks = el.querySelectorAll('mark'), found = el.querySelectorAll('.found span');
+    marks.forEach((m, i) => setTimeout(() => { m.classList.add('lit'); found[i] && found[i].classList.add('lit'); }, 700 + i * 420));
+  }
+  function fire(el) {
+    if (el.classList.contains('in')) return;
+    el.classList.add('in');
+    el.querySelectorAll('[data-decode]').forEach(decode);
+    if (el.matches('[data-decode]')) decode(el);
+    el.querySelectorAll('[data-count]').forEach(count);
+    if (el.matches('[data-scan]')) scan(el);
+  }
+  const io = new IntersectionObserver(es => es.forEach(e => { if (e.isIntersecting) { fire(e.target); io.unobserve(e.target); } }), { threshold: 0.18, rootMargin: '0px 0px -6% 0px' });
+  const targets = document.querySelectorAll('.split, [data-r], [data-watch], [data-decode]');
+  let started = false;
+  function start() { if (started) return; started = true; targets.forEach(t => io.observe(t)); }
+  if (document.body.classList.contains('ready')) start(); else addEventListener('croquis:ready', start, { once: true });
+  setTimeout(start, 7000);
+
+  // barra de avance del expediente
+  const prog = document.getElementById('progress');
+  const onScroll = () => { const h = document.documentElement.scrollHeight - innerHeight; prog.style.setProperty('--p', h > 0 ? (scrollY / h).toFixed(4) : 0); };
+  addEventListener('scroll', onScroll, { passive: true }); onScroll();
+
+  // preguntas: abren y cierran con movimiento
+  document.querySelectorAll('details').forEach(d => {
+    const p = d.querySelector('p'); const box = document.createElement('div'); box.className = 'ans'; p.replaceWith(box); box.appendChild(p);
+    d.querySelector('summary').addEventListener('click', e => {
+      e.preventDefault();
+      if (d.open) { const h = box.offsetHeight; box.animate([{ height: h + 'px', opacity: 1 }, { height: '0px', opacity: 0 }], { duration: 380, easing: 'cubic-bezier(.6,0,.2,1)' }).onfinish = () => { d.open = false; }; }
+      else { d.open = true; const h = box.offsetHeight; box.animate([{ height: '0px', opacity: 0 }, { height: h + 'px', opacity: 1 }], { duration: 480, easing: 'cubic-bezier(.16,.9,.2,1)' }); }
+    });
+  });
+
+  if (!matchMedia('(pointer: fine)').matches) return;
+  // mira que sigue al cursor y se vuelve punto de impacto sobre lo que se puede tocar
+  const cur = document.getElementById('cursor'); let x = -100, y = -100, cx = -100, cy = -100;
+  addEventListener('pointermove', e => { x = e.clientX; y = e.clientY; cur.classList.add('on'); cur.classList.toggle('hot', !!e.target.closest('a, button, summary')); }, { passive: true });
+  document.addEventListener('pointerleave', () => cur.classList.remove('on'));
+  (function loop() { cx += (x - cx) * 0.22; cy += (y - cy) * 0.22; cur.style.transform = `translate(${cx.toFixed(1)}px, ${cy.toFixed(1)}px)`; requestAnimationFrame(loop); })();
+  // botones magnéticos
+  document.querySelectorAll('.cta').forEach(b => {
+    b.addEventListener('pointermove', e => { const r = b.getBoundingClientRect(); const dx = (e.clientX - r.left - r.width / 2) / r.width, dy = (e.clientY - r.top - r.height / 2) / r.height; b.style.transform = `translate(${(dx * 10).toFixed(1)}px, ${(dy * 8).toFixed(1)}px)`; });
+    b.addEventListener('pointerleave', () => { b.style.transition = 'transform .5s cubic-bezier(.3,1.5,.5,1), background .2s'; b.style.transform = ''; setTimeout(() => b.style.transition = '', 500); });
+  });
+})();
+</script>
+
+<script>
+/* ---- huevos de pascua ---- */
+(function(){
+  // 1 · para quien abre la consola
+  try { console.log('%c ◖ CROQUIS %c reconstrucción pericial ', 'background:#ece8df;color:#0c0d0e;font:800 13px monospace;padding:4px 6px', 'background:#ff5a1f;color:#0c0d0e;font:600 12px monospace;padding:4px 6px');
+        console.log('%c¿Eres perito y además programas? Escribe "croquis" en cualquier parte de la página.', 'color:#f2c230;font:12px monospace'); } catch (e) {}
+
+  // 2 · modo croquis a mano: escribir "croquis" o dar triple clic al logo
+  const toast = document.getElementById('toast'); let tt;
+  function say(html) { toast.innerHTML = html; toast.classList.add('on'); clearTimeout(tt); tt = setTimeout(() => toast.classList.remove('on'), 5200); }
+  let fontLoaded = false;
+  function sketch() {
+    if (!fontLoaded) { fontLoaded = true; const l = document.createElement('link'); l.rel = 'stylesheet'; l.href = 'https://fonts.googleapis.com/css2?family=Caveat:wght@500;700&display=swap'; document.head.appendChild(l); }
+    const on = document.documentElement.classList.toggle('sketch');
+    say(on ? '<b>Modo croquis a mano.</b> Así se dibujaba antes. Escribe “croquis” otra vez para volver.' : '<b>De vuelta al expediente.</b> Croquis lo hace por ti.');
+  }
+  let buf = '';
+  addEventListener('keydown', e => { if (e.target.closest && e.target.closest('input,textarea')) return; if (e.key.length !== 1) return;
+    buf = (buf + e.key.toLowerCase()).slice(-7); if (buf === 'croquis') { buf = ''; sketch(); } });
+  let clicks = 0, ct; document.querySelector('.brand').addEventListener('click', () => { clicks++; clearTimeout(ct); ct = setTimeout(() => clicks = 0, 900); if (clicks === 3) { clicks = 0; sketch(); } });
+
+
+  // 4 · el botón principal "choca" al darle clic
+  document.querySelectorAll('.cta.epic').forEach(b => b.addEventListener('click', e => {
+    if (matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    b.classList.remove('hit'); void b.offsetWidth; b.classList.add('hit');
+    const x = e.clientX || (b.getBoundingClientRect().left + b.offsetWidth / 2), y = e.clientY || (b.getBoundingClientRect().top + b.offsetHeight / 2);
+    ['', ' b2'].forEach(c => { const r = document.createElement('span'); r.className = 'boom' + c; r.style.left = x + 'px'; r.style.top = y + 'px'; document.body.appendChild(r); setTimeout(() => r.remove(), 900); });
+    if (navigator.vibrate) try { navigator.vibrate(18); } catch (_) {}
+  }));
+
+  // 3 · el número del caso: doble clic en 60.27 muestra de dónde sale
+  document.querySelectorAll('.dict .v').forEach(v => v.addEventListener('dblclick', () => say('<b>60.27 km/h</b> · velocidad por restos · fuente: reporte · método: CESVI. Así de trazable es cada número.')));
+})();
+</script>
+
+<script>
+/* ---- qué significa Croquis ---- */
+(function(){
+  const list = document.getElementById('acro'), all = document.getElementById('acroAll');
+  const lis = [...list.children];
+  lis.forEach((li, i) => li.querySelector('.ch').style.setProperty('--i', i));
+  lis.forEach((li, i) => li.querySelector('.L').style.setProperty('--i', i));
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const G = 'ABCDEFGHIJKLMNÑOPQRSTUVWXYZ';
+  function decode(el) {
+    if (reduce) return; const final = el.dataset.f || (el.dataset.f = el.textContent); const t0 = performance.now(), dur = 520;
+    (function step(now) { const k = Math.min(1, (now - t0) / dur), n = Math.floor(final.length * k); let o = final.slice(0, n);
+      for (let j = n; j < final.length; j++) o += /[\s¿?]/.test(final[j]) ? final[j] : G[(Math.random() * G.length) | 0];
+      el.textContent = o; if (k < 1) requestAnimationFrame(step); else el.textContent = final; })(t0);
+  }
+  function set(li, open) {
+    if (li.classList.contains('open') === open) return;
+    li.classList.toggle('open', open); li.querySelector('.L').setAttribute('aria-expanded', open);
+    if (open) decode(li.querySelector('.m b'));
+    list.classList.remove('hint');
+    const n = lis.filter(l => l.classList.contains('open')).length;
+    all.setAttribute('aria-pressed', n === lis.length ? 'true' : 'false');
+  }
+  lis.forEach(li => li.querySelector('.L').addEventListener('click', () => set(li, !li.classList.contains('open'))));
+  all.addEventListener('click', () => {
+    const openAll = all.getAttribute('aria-pressed') !== 'true';
+    lis.forEach((li, i) => setTimeout(() => set(li, openAll), reduce ? 0 : i * (openAll ? 140 : 60)));
+  });
+  // al llegar a la sección las letras caen y luego parpadean en secuencia para invitar a tocarlas
+  if ('IntersectionObserver' in window) {
+    const io = new IntersectionObserver(es => es.forEach(e => { if (e.isIntersecting) { setTimeout(() => { if (!lis.some(l => l.classList.contains('open'))) list.classList.add('hint'); }, 1400); io.disconnect(); } }), { threshold: .35 });
+    io.observe(list);
+  }
+})();
+</script>
+
+</body></html>
