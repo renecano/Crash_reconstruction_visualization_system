@@ -472,12 +472,19 @@ Reglas de trabajo: `CLAUDE.md`. Especificación: `PLAN.md`.
         - el más completo es cesvi-31bfdf3ac3, al que le faltan el punto de impacto y la fricción;
         - AXA queda segundo, y le falta justo la masa de V1 y el reposo de V2;
         - se sigue con AXA y sus dos hipótesis.
-    - **R12a (conductores como agentes) en pausa:**
-      - lo hecho está en la rama `feat/r12a-agentes`: el contrato, el módulo de agentes en Python y las escenas de hipótesis;
-      - faltan las pruebas, el port TS y la paridad;
-      - al retomarlo, su contrato sube a 2.2.0, porque el 2.1.0 ya es el del perfil de aplastamiento.
+    - **R12a, los conductores como agentes (2026-10-25, rama `feat/r12a-conductores`, ADR 0088):**
+      - **Qué hace:** antes del impacto, cada conductor percibe (al de adelante, si lo ve con la luz y el clima de la escena), decide (lo que diga el perito, lo que reconstruyó la evidencia o reaccionar a las luces de freno) y actúa (frenar, volantear un carril o seguir).
+      - **Contrato 2.2.0:** `vehiculos[].conductor` (tiempo de reacción, decisión e instante, con fuente y rango). Sin `conductor`, nada cambia: las 13 escenas canónicas dan el mismo resultado que antes, salvo la versión del resultado (1.11.0, por el bloque `agentes`).
+      - **Dónde:** `solver/croquis_solver/agents.py` (referencia) y `packages/solver-ts/src/agents.ts` (port), con el bloque `agentes` en el resultado completo de los dos.
+      - **Listo cuando, medido** (`eval/results/r12a_agentes.json`):
+        - **un caso del corpus:** AXA con los conductores como agentes y sin hipótesis da el mismo contacto que la reconstrucción (t = 0, 39.82 km/h relativa), igual en Python y en TS;
+        - **una hipótesis que cambia el resultado como dice la física:** si A frena 0.5 s antes, el alcance pasa de 38.51 a 24.51 km/h relativa (−14.00 km/h, −36.36 %) y ocurre 0.29 s después; si volantea en vez de frenar, toca a 50.99 km/h (+12.48 km/h, +32.40 %);
+        - **una carambola con la reacción en cadena:** C frena en −2.5 s, B lo ve y frena en −1.4 s, A ve a B y frenaría en −0.3 s, pero alcanza a B antes, a 24.38 km/h relativa contra 10.00 sin la hipótesis (p10–p90 de 21.81 a 25.78 con el tiempo de reacción en su rango).
+      - **Pruebas:** `solver/tests/test_agents.py` (los tres criterios, que sin `conductor` no hay agentes y que el mismo caso da lo mismo) y `packages/solver-ts/src/agents.test.ts` (paridad en las cuatro escenas de `fixtures/agentes`).
+      - **Cómo probarlo:** `uv run python eval/r12a_agentes.py` y `pnpm --filter @croquis/solver-ts exec vitest run src/agents.test.ts`.
     - **Siguiente paso concreto:**
-      - R12a (rama `feat/r12a-agentes`; su contrato sube a 2.2.0);
+      - que el perito pruebe una hipótesis desde el paso 6 («¿y si V2 frenaba 0.5 s antes?»): elegir conductor, decisión e instante y ver el contacto con su número contra la reconstrucción;
+      - después, R12b (agentes especialistas con pizarra);
       - cuando aparezca la rama `resultados/computadora-demo-<fecha>`, integrar los videos de R11 y E6 en alta y ultra («Bloqueado»).
     1. **V2-1, marco:**
        - **la barra:** los nombres de los 8 pasos siempre, «← Casos», la barra de avance arriba y los pasos futuros cerrados hasta completar lo obligatorio;

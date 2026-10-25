@@ -57,6 +57,20 @@
 - **Semilla:** el único azar es la sensibilidad al tiempo de reacción; se muestrea en su rango con la semilla de la escena (`meta.semilla`) y el generador que ya replica el port TS (`pyrandom`).
 - **Python es la referencia y el port TS lo sigue,** con pruebas de paridad sobre escenas de hipótesis versionadas en `packages/scene-schema/fixtures/agentes/`.
 
+## Resultados (`eval/r12a_agentes.py` → `eval/results/r12a_agentes.json`)
+
+Cada escena de hipótesis contra la reconstrucción sin hipótesis (la línea base). Python y TS dan el mismo bloque `agentes` en las cuatro (`packages/solver-ts/src/agents.test.ts`).
+
+| Escena                                         | Hipótesis                                                         | Línea base             | Qué muestra                                                                                         |
+| ---------------------------------------------- | ----------------------------------------------------------------- | ---------------------- | --------------------------------------------------------------------------------------------------- |
+| `axa_agentes` (AXA A2010930, reporte de CESVI) | contacto en t = 0.00 s, 39.82 km/h relativa                       | igual                  | sin hipótesis, los agentes reproducen la reconstrucción                                             |
+| `alcance_frena_antes`                          | contacto en t = +0.29 s, 24.51 km/h relativa                      | t = 0.00 s, 38.51 km/h | frenar 0.5 s antes llega más tarde y 14.00 km/h más lento (−36.36 %)                                |
+| `alcance_volantea`                             | contacto en t = −0.08 s, 50.99 km/h relativa                      | t = 0.00 s, 38.51 km/h | volantear sin frenar no pierde velocidad: el contacto es 12.48 km/h más rápido (+32.40 %)           |
+| `carambola_cadena`                             | A contra B en t = −0.59 s, 24.38 km/h relativa (A 50.00, B 25.62) | t = 0.00 s, 10.00 km/h | C frena en −2.5 s; B lo ve y frena en −1.4 s; A ve a B y frenaría en −0.3 s, pero alcanza a B antes |
+
+- **En la carambola, la reacción en cadena empeora el choque de atrás:** B frena con fuerza y A todavía no reacciona. Con el tiempo de reacción de A y B muestreado en su rango (64 muestras, semilla de la escena), la velocidad relativa va de 21.81 a 25.78 km/h (p10–p90), y en todas las muestras hay contacto.
+- **El tiempo de reacción** de B y A es el supuesto típico (1.1 s, de 0.7 a 1.5 s), porque la escena no lo trae.
+
 ## Consecuencias
 
 - **El perito** puede probar una hipótesis cambiando un dato de un conductor, y ver el resultado con su número: el contacto y sus velocidades, o que no hubo contacto.
