@@ -103,6 +103,34 @@ describe("el dictamen de una reconstrucción (R8)", () => {
     expect(t).toContain("[el perito debe concluir]");
   }, 60_000);
 
+  it("con un cálculo del reporte, la reconstrucción contra él con su diferencia y su porcentaje (ADR 0091)", () => {
+    expect(texto(datos())).not.toContain("La reconstrucción contra el reporte de CESVI");
+    // Entrada de prueba: un EBS del reporte para V1 (no es un dato de este caso).
+    const conCalculo: Expediente = {
+      ...e,
+      calculos: [
+        {
+          metodo: "ebs",
+          vehiculo: "V1",
+          resultado: { valor: 50, unidad: "km/h", fuente: "dictamen_importado" },
+        },
+      ],
+    };
+    const t = texto(datos({ expediente: conCalculo }));
+    const v1 =
+      Math.round(r.velocidades.find((x) => x.vehiculo === "V1")!.previa!.mejor * 100) / 100;
+    const dif = Math.round((v1 - 50) * 100) / 100;
+    const pct = Math.round(((v1 - 50) / 50) * 10000) / 100;
+    const signo = (x: number) => `${x >= 0 ? "+" : "−"}${Math.abs(x).toFixed(2)}`;
+    enOrden(t, [
+      "Reconstrucción física",
+      "La reconstrucción contra el reporte de CESVI",
+      `${signo(dif)} km/h (${signo(pct)} %)`,
+      "CESVI convierte la energía de la deformación de V1",
+      "Verificación con el método de CESVI",
+    ]);
+  }, 60_000);
+
   it("con la estructura de los reportes de CESVI, cuando el perito la pide", () => {
     const t = texto(datos({ estructuraCesvi: true }));
     enOrden(t, [

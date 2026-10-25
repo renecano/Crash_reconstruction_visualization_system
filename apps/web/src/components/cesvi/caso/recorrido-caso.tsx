@@ -21,6 +21,7 @@ import {
   posesDeImpacto,
   posicionesEncimadas,
   preguntaPendiente,
+  reconstruccionContraCesvi,
   verificacionCesvi,
   type EscenaNarrada,
   type Expediente,
@@ -164,6 +165,11 @@ export function RecorridoCaso({ inicial }: { inicial: CasoExpediente }) {
   const verificacion = useMemo(
     () => (expediente ? verificacionCesvi(expediente) : []),
     [expediente],
+  );
+  // La velocidad de la reconstrucción contra la de cada método del reporte (ADR 0091).
+  const contraCesvi = useMemo(
+    () => (expediente && r ? reconstruccionContraCesvi(expediente, r) : null),
+    [expediente, r],
   );
   // La reproducción trae la comparación medida en E-R4; un reporte importado se compara aquí.
   const comparacionReporte = useMemo(
@@ -711,7 +717,7 @@ export function RecorridoCaso({ inicial }: { inicial: CasoExpediente }) {
     if (actual === 5)
       return (
         <div className="flex flex-col gap-8">
-          <PasoNumeros r={r} verificacion={verificacion} />
+          <PasoNumeros r={r} verificacion={verificacion} contraCesvi={contraCesvi} />
           {inicial.ejemplo ? (
             <Calculos caso={inicial.ejemplo} distancia={distancia} onDistancia={setDistancia} />
           ) : null}
@@ -945,6 +951,7 @@ export function RecorridoCaso({ inicial }: { inicial: CasoExpediente }) {
             >
               <Visor3dCaso
                 r={r}
+                contraCesvi={contraCesvi}
                 declarada={declarada}
                 onExportApi={setExportApi}
                 onPosiciones={setMoviles}

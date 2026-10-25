@@ -16,6 +16,7 @@
 import { buildSpec, fact, emptyFacts, type Fact } from "@croquis/extraction";
 import { fullResult, reconstruct } from "@croquis/solver-ts";
 import type { Expediente } from "./corpus";
+import { rigidezEnKilo } from "./verificacion";
 import { avanzar, desdeMetros, enMetros, rectanguloVehiculo, type LonLat } from "./geo";
 
 type Json = Record<string, unknown>;
@@ -299,18 +300,54 @@ export function especDeExpediente(e: Expediente, specId = "caso-nuevo"): EscenaS
     });
   }
 
-  for (const d of e.danos ?? []) {
+  // La deformación medida (C y L) de cada vehículo: la de la cara del primer impacto o, si el
+  // reporte no la dice, la primera. Un reporte mide una sola deformación por vehículo (la del
+  // McHenry); si la lectura la repite en otro daño, esa copia no se usa (diagnóstico de AXA, ADR
+  // 0091). El perfil C1–Cn completo y la rigidez A y B del reporte van con ella.
+  const medidos = (e.danos ?? []).filter((d) => {
     const lado = LADO[d.zona.cara];
-    const c = d.magnitud?.c_m;
-    const l = d.magnitud?.l_m;
-    if (!lado || !["F", "B", "L", "R"].includes(lado) || !c?.length || l === undefined) continue;
-    if (!orden.includes(d.vehiculo)) continue;
+    return (
+      !d.dano_previo &&
+      !!lado &&
+      ["F", "B", "L", "R"].includes(lado) &&
+      !!d.magnitud?.c_m?.length &&
+      d.magnitud.l_m !== undefined &&
+      orden.includes(d.vehiculo)
+    );
+  });
+  for (const id of orden) {
+    const suyos = medidos.filter((d) => d.vehiculo === id);
+    if (!suyos.length) continue;
+    const cara = zonasPrimero.find((z) => z.vehiculo === id)?.zona.cara;
+    const d = suyos.find((x) => x.zona.cara === cara) ?? suyos[0]!;
+    if (suyos.length > 1)
+      limites.push(
+        `${id}: el reporte trae medidas de deformación en ${suyos.length} daños; se usa la de ${d.zona.cara === cara ? "la cara del impacto" : "la primera"} (${d.zona.cara}).`,
+      );
+    const c = d.magnitud!.c_m!;
+    const v = e.vehiculos.find((x) => x.id === id);
+    const rig = v?.rigidez && v.rigidez.fuente !== "nhtsa_e2" ? v.rigidez : undefined;
+    // El reporte escribe A y B en kN/m y kN/m² aunque imprima «N/m» (ADR 0048).
+    const kilo = rig && rigidezEnKilo(rig.A) ? 1000 : 1;
     spec.danos_declarados.push({
-      vehiculo_id: idEscena(d.vehiculo),
-      zona: { lado },
+      vehiculo_id: idEscena(id),
+      zona: { lado: LADO[d.zona.cara]! },
       severidad: SEVERIDAD[d.magnitud?.cualitativa ?? ""] ?? "moderado",
       profundidad_aplastamiento: { valor: Math.max(...c), unidad: "m", ...DEL_PERITO },
-      ancho_danado: { valor: l, unidad: "m", ...DEL_PERITO },
+      ancho_danado: { valor: d.magnitud!.l_m!, unidad: "m", ...DEL_PERITO },
+      ...(c.length >= 2 && c.length <= 6
+        ? { perfil_aplastamiento: { valor: [...c], unidad: "m", ...DEL_PERITO } }
+        : {}),
+      ...(rig
+        ? {
+            rigidez: {
+              a: rig.A * kilo,
+              b: rig.B * kilo,
+              ...DEL_PERITO,
+              nota: `Del reporte: A = ${rig.A}, B = ${rig.B}${kilo === 1000 ? " (en kN/m y kN/m²)" : ""}.`,
+            },
+          }
+        : {}),
       procedencia: { ...DEL_PERITO },
     });
   }

@@ -7,6 +7,7 @@
 import {
   conMasa,
   type ComparacionDictamen,
+  type ContraMetodosCesvi,
   type EscenaNarrada,
   type Expediente,
   type PreguntaEscena,
@@ -18,7 +19,7 @@ import type { ReporteCesvi } from "@/lib/caso-guardado";
 import { MODALIDAD } from "@/lib/nombres-cesvi";
 import { colorDeVehiculo } from "@/lib/vehiculos-cesvi";
 import { CARA, Fuente, Pregunta } from "./piezas";
-import { PanelVerificacion, TablaVelocidades } from "./reconstruccion";
+import { PanelVerificacion, TablaContraCesvi, TablaVelocidades } from "./reconstruccion";
 import { ConclusionesCesvi } from "../importar-dictamen";
 
 const nombreModalidad = (m: string | null) => (m ? (MODALIDAD[m] ?? m.replaceAll("_", " ")) : "—");
@@ -766,9 +767,11 @@ export function PasoDanos({ expediente, r }: { expediente: Expediente; r: Recons
 export function PasoNumeros({
   r,
   verificacion,
+  contraCesvi = null,
 }: {
   r: Reconstruccion | null;
   verificacion: VerificacionVehiculo[];
+  contraCesvi?: ContraMetodosCesvi | null;
 }) {
   return (
     <div className="flex flex-col gap-5">
@@ -778,6 +781,7 @@ export function PasoNumeros({
       ) : (
         <p className="t-nota">Reconstruye para ver las velocidades con su rango.</p>
       )}
+      {contraCesvi?.filas.length ? <TablaContraCesvi contra={contraCesvi} /> : null}
       <PanelVerificacion verificacion={verificacion} />
     </div>
   );

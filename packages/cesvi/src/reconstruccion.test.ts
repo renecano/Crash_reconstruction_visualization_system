@@ -158,6 +158,49 @@ describe("del expediente a la escena del solver (R2)", () => {
     );
   });
 
+  it("AXA: la deformación medida va una vez, la de la cara del impacto, con su perfil y la rigidez del reporte (ADR 0091)", () => {
+    // La lectura grabada de AXA repite las C y L del frente de la Tacoma en su costado derecho; el
+    // reporte las mide solo en el frente (McHenry de cuatro medidas) y escribe A y B en kN/m.
+    const medida = { c_m: [0.96, 0.86, 0.52, 0.2], l_m: 1.689 };
+    const e: Expediente = {
+      ...base,
+      vehiculos: base.vehiculos.map((v) =>
+        v.id === "V1" ? { ...v, rigidez: { A: 55.405, B: 385.336, fuente: "dictamen" } } : v,
+      ),
+      impactos: [
+        {
+          orden: 1,
+          vehiculos: ["V1", "V2"],
+          zonas: [
+            { vehiculo: "V1", zona: { cara: "frontal" } },
+            { vehiculo: "V2", zona: { cara: "lateral_izquierdo" } },
+          ],
+          fuente: "perito",
+        },
+      ],
+      danos: [
+        { vehiculo: "V1", zona: { cara: "lateral_derecho" }, magnitud: medida, fuente: "perito" },
+        { vehiculo: "V1", zona: { cara: "frontal" }, magnitud: medida, fuente: "perito" },
+        { vehiculo: "V2", zona: { cara: "lateral_izquierdo" }, fuente: "perito" },
+      ],
+    };
+    const { spec, limites } = especDeExpediente(e);
+    expect(validateEscena(spec).ok).toBe(true);
+    const declarados = spec.danos_declarados as Json[];
+    expect(declarados).toHaveLength(1);
+    expect(declarados[0]).toMatchObject({
+      vehiculo_id: "veh-a",
+      zona: { lado: "F" },
+      profundidad_aplastamiento: { valor: 0.96, unidad: "m" },
+      ancho_danado: { valor: 1.689, unidad: "m" },
+      perfil_aplastamiento: { valor: [0.96, 0.86, 0.52, 0.2], unidad: "m", fuente: "usuario" },
+      rigidez: { a: 55405, b: 385336, fuente: "usuario" },
+    });
+    expect(limites).toContain(
+      "V1: el reporte trae medidas de deformación en 2 daños; se usa la de la cara del impacto (frontal).",
+    );
+  });
+
   it("carambola (R6): el impacto posterior entre vehículos pasa a la escena y el tercero espera detenido", () => {
     // El crucero con el perito y un tercero (V3) al que V2 pega con su frente después.
     let e = colocado();

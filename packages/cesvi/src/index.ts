@@ -6,6 +6,7 @@ export * from "./rigidez";
 export * from "./referencias";
 export * from "./reproduccion";
 export * from "./contra-dictamen";
+export * from "./contra-metodos";
 export * from "./dictamenes-r4";
 export * from "./importar";
 export * from "./escena-narracion";
