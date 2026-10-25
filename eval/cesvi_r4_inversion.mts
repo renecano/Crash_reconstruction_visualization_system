@@ -56,8 +56,7 @@ const mediana = (xs: number[]) => {
 };
 
 const prueba = new Set(
-  (JSON.parse(readFileSync(join(CORPUS, "particion.json"), "utf8")) as { prueba: string[] })
-    .prueba,
+  (JSON.parse(readFileSync(join(CORPUS, "particion.json"), "utf8")) as { prueba: string[] }).prueba,
 );
 const lecturas = new Map(
   jsonl<{ id: string; salida: SalidaCorpus }>(LECTURAS).map((l) => [l.id, l]),
@@ -135,7 +134,10 @@ const doc = {
     mediana_error_abs_pct: mediana(comparables.map((v) => Math.abs(v.error_pct!))),
   },
   impactos: {
-    mismo_numero: pct(conImpactos.filter((f) => f.impactos.mismo_numero).length, conImpactos.length),
+    mismo_numero: pct(
+      conImpactos.filter((f) => f.impactos.mismo_numero).length,
+      conImpactos.length,
+    ),
     primero_coincide: pct(
       conPrimero.filter((f) => f.impactos.primero_coincide).length,
       conPrimero.length,
