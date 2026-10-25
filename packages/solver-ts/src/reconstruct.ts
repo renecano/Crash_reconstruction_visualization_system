@@ -89,7 +89,7 @@ import * as dmath from "./dmath";
 
 type Json = Record<string, unknown>;
 
-export const RESULT_VERSION = "1.10.0";
+export const RESULT_VERSION = "1.11.0";
 export const DT_OUT = 0.02;
 const T_PRE_MAX = 6.0;
 const T_PRE_MIN = 3.0;
@@ -252,6 +252,25 @@ export interface EventOutcome {
   detalle: Record<string, unknown>;
 }
 
+/**
+ * La fase previa de un vehículo tal como la armó la reconstrucción, para los agentes (R12a). El
+ * perfil arranca (τ = 0) en `tRef`; antes, el vehículo va a v0 constante.
+ */
+export interface PlanPrevio {
+  id: string;
+  clase: string;
+  path: KinPath;
+  profile: SpeedProfile;
+  tRef: number;
+  /** m/s², frenado a fondo con la fricción, el ABS y la pendiente de la escena. */
+  decel: number;
+  length: number;
+  width: number;
+  height: number;
+  mu: number;
+  laneWidth: number;
+}
+
 export interface Reconstruction {
   escenaId: string;
   semilla: number;
@@ -267,6 +286,8 @@ export interface Reconstruction {
   objetos: SceneObject[];
   visibilidad: Json[];
   avisos: Aviso[];
+  /** La fase previa de cada vehículo (no va al resultado): la usan los agentes de R12a. */
+  previa: Map<string, PlanPrevio>;
 }
 
 // ----------------------------------------------------------------------------------------------
@@ -573,7 +594,7 @@ function pathCandidates(m: VehicleModel, laneWidth: number, axis: RoadAxis): Kin
 }
 
 /** (x, y, rumbo, curvatura) para cualquier s; antes de s = 0 se extrapola en línea recta. */
-function poseAt(path: KinPath, s: number): [number, number, number, number] {
+export function poseAt(path: KinPath, s: number): [number, number, number, number] {
   if (s >= 0) {
     const p = path.pose(Math.min(s, path.length));
     return [p.x, p.y, p.heading, p.curvature];
@@ -999,13 +1020,27 @@ export function reconstruct(
   };
   const pre = new Map<string, Trajectory>();
   const impactStates = new Map<string, State2D>();
+  const previa = new Map<string, PlanPrevio>();
   for (const m of models) {
-    const traj =
-      sContact.has(m.id) && m.v0 > 0
-        ? samplePath(paths.get(m.id)!, profiles.get(m.id)!, -tToImpact.get(m.id)!, preTimes)
-        : samplePath(paths.get(m.id)!, profiles.get(m.id)!, -tPre, preTimes);
+    // Llega a su punto de contacto exactamente en t = 0; si está detenido o no participa, sale de
+    // su pose inicial al empezar la escena.
+    const tRef = sContact.has(m.id) && m.v0 > 0 ? -tToImpact.get(m.id)! : -tPre;
+    const traj = samplePath(paths.get(m.id)!, profiles.get(m.id)!, tRef, preTimes);
     pre.set(m.id, traj);
     impactStates.set(m.id, traj.last());
+    previa.set(m.id, {
+      id: m.id,
+      clase: m.clase,
+      path: paths.get(m.id)!,
+      profile: profiles.get(m.id)!,
+      tRef,
+      decel: brakingDeceleration(mu, m.abs ? absFactor : 1.0, grade),
+      length: m.body.length,
+      width: m.body.width,
+      height: m.height,
+      mu,
+      laneWidth,
+    });
   }
 
   // ---- impacto principal ---------------------------------------------------------------
@@ -1772,6 +1807,7 @@ export function reconstruct(
     objetos: objetosOut,
     visibilidad: visibilidadOut,
     avisos,
+    previa,
   };
 }
 
