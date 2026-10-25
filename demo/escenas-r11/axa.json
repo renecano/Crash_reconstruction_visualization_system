@@ -1,7 +1,7 @@
 {
   "meta": {
     "id": "demo-axa",
-    "version_esquema": "2.0.0",
+    "version_esquema": "2.1.0",
     "idioma": "es-MX",
     "semilla": 950655,
     "creado": "2026-10-13T00:00:00-06:00",
@@ -130,11 +130,11 @@
         "confianza": 0.3
       },
       "velocidad_previa": {
-        "valor": 41.01,
+        "valor": 71.96,
         "unidad": "km/h",
         "rango": [
-          38.11,
-          42.25
+          66.78,
+          87.2
         ],
         "fuente": "supuesto",
         "confianza": 0.7,
@@ -161,10 +161,12 @@
         "y": 12.811,
         "rumbo_deg": 75.71537756298898,
         "procedencia": {
-          "fuente": "usuario",
-          "confianza": 0.9
+          "fuente": "supuesto",
+          "confianza": 0.5,
+          "nota": "Reposo supuesto por el perito: el reporte no lo da."
         }
-      }
+      },
+      "posicion_final_supuesta": true
     },
     {
       "id": "veh-b",
@@ -188,11 +190,11 @@
         "confianza": 0.3
       },
       "velocidad_previa": {
-        "valor": 39.95,
+        "valor": 25.07,
         "unidad": "km/h",
         "rango": [
-          35.36,
-          41.92
+          14.38,
+          24.83
         ],
         "fuente": "supuesto",
         "confianza": 0.7,
@@ -207,6 +209,12 @@
           "confianza": 0.5,
           "nota": "12 m antes de la posición de impacto que colocó el perito, en su rumbo."
         }
+      },
+      "masa": {
+        "valor": 2562.1,
+        "unidad": "kg",
+        "fuente": "supuesto",
+        "confianza": 0.5
       },
       "posicion_final": {
         "x": 4.579,
@@ -272,28 +280,23 @@
         "fuente": "usuario",
         "confianza": 0.9
       },
-      "procedencia": {
-        "fuente": "usuario",
-        "confianza": 0.9
-      }
-    },
-    {
-      "vehiculo_id": "veh-a",
-      "zona": {
-        "lado": "R"
-      },
-      "severidad": "moderado",
-      "profundidad_aplastamiento": {
-        "valor": 0.96,
+      "perfil_aplastamiento": {
+        "valor": [
+          0.96,
+          0.86,
+          0.52,
+          0.2
+        ],
         "unidad": "m",
         "fuente": "usuario",
         "confianza": 0.9
       },
-      "ancho_danado": {
-        "valor": 1.689,
-        "unidad": "m",
+      "rigidez": {
+        "a": 55405,
+        "b": 385336,
         "fuente": "usuario",
-        "confianza": 0.9
+        "confianza": 0.9,
+        "nota": "Del reporte: A = 55.405, B = 385.336 (en kN/m y kN/m²)."
       },
       "procedencia": {
         "fuente": "usuario",

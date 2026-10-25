@@ -390,6 +390,21 @@ Reglas de trabajo: `CLAUDE.md`. Especificación: `PLAN.md`.
         - al soltar V1 y V2 encimados sale «V1 y V2 quedaron encimados en su posición final (3.75 m)», y «Separarlos» lo quita;
         - el 3D lleva la leyenda de CESVI, las calles de OpenStreetMap y los modelos (Lightbody), en calidad automática media;
         - en la vista expandida, la caja del paso ya no tapa el texto.
+    - **Resumen para René (AXA, 2026-10-25): el colaborador ya puede correr el botón.**
+      - **Fusionado:**
+        - #130: la regla «lo medido pesa más que lo supuesto», las dos hipótesis en el paso 4 y la masa de V1 de su ficha técnica;
+        - #131: la completitud de los 671 reportes.
+      - **Escenas de R11 vueltas a exportar** con el código nuevo (`demo/escenas-r11`, rama `chore/r11-escenas-axa`):
+        - AXA va con «Cuadra con el daño medido», como pediste;
+        - V2 a 71.96 km/h y V1 a 25.07 km/h (lo que imprime `tools/demo/escena-axa.mts dano`);
+        - `axa.glb` pesa 16.7 MB, antes 3.5 MB: ahora se ve la deformación de V2, que con el cierre de antes casi no existía;
+        - `carambola.glb` no cambió.
+      - **Cómo lo corre el colaborador:** `git pull` y doble clic en `EJECUTAR-EN-COMPUTADORA-DEMO.bat`; la guía es `LEEME-COMPUTADORA-DEMO.md`.
+      - **Qué revisar tú:**
+        - en `/cesvi`, AXA, paso 3: coloca el reposo de V2 y márcalo «Es un supuesto»;
+        - en el paso 4 salen las dos hipótesis con sus números; al elegir una, cambian el paso 6, el 3D y el dictamen.
+      - **Qué necesito de ti:** pedirle a CESVI dónde quedó V2 y si había huellas de frenado o arrastre («Bloqueado»).
+      - **Ojo:** la escena del video usa otra semilla que la de la app. Con ella, el reposo supuesto de V2 cabe con la deformación (una sola hipótesis) y V2 sale a 71.96 km/h, contra 62.77 en la app. Lo anoto en «Endurecimiento pendiente» para medirlo con varias semillas.
     - **La diferencia de AXA (2026-10-24, rama `fix/axa-diagnostico`, PR #130, ADR 0091):** René pidió resolverla antes de R12a. La reconstrucción daba V2 a 41.01 km/h contra 63.15 km/h del reporte (−35.1 %).
       - **Diagnóstico:**
         - `eval/cesvi_axa_diagnostico.mts`, con el resultado en `eval/results/axa_diagnostico.json`; el del código anterior está en `axa_diagnostico_antes.json`;
@@ -422,11 +437,7 @@ Reglas de trabajo: `CLAUDE.md`. Especificación: `PLAN.md`.
       - faltan las pruebas, el port TS y la paridad;
       - al retomarlo, su contrato sube a 2.2.0, porque el 2.1.0 ya es el del perfil de aplastamiento.
     - **Siguiente paso concreto:**
-      - fusionar `fix/axa-diagnostico` (#130) y la completitud (`feat/cesvi-completitud`);
-      - volver a exportar `demo/escenas-r11`:
-        - `axa.json` con `tools/demo/escena-axa.mts [dano|reposo]`; por omisión es «cuadra con el daño medido» y René elige;
-        - los GLB con `tools/demo/exportar-escenas.mjs`;
-      - la portada v3 (pedida por René el 2026-10-24, después de AXA y antes de R12a);
+      - la portada v3 (pedida por René el 2026-10-24, después de AXA y antes de R12a): `docs/cesvi/entrante/portada-v3-referencia.html`;
       - luego, R12a;
       - cuando aparezca la rama `resultados/computadora-demo-<fecha>`, integrar los videos de R11 y E6 en alta y ultra («Bloqueado»).
     1. **V2-1, marco:**
@@ -1430,6 +1441,10 @@ Lo que se pospone por el trabajo con CESVI no se borra: queda aquí para despué
   - en AXA, «cuadra con el reposo supuesto» deja a V2, que va detrás, casi a la misma velocidad que V1 (41.9 y 41.82 km/h);
   - en un alcance, el que golpea tiene que ir más rápido; falta esa restricción en la inversión.
 - **La elección de hipótesis** (ADR 0091) no se guarda con el caso: se pierde al recargar la página.
+- **La hipótesis «cuadra con el daño medido» depende de la semilla** (ADR 0091):
+  - la escena del video de AXA (semilla de `demo-axa`) da V2 a 71.96 km/h y su reposo supuesto cabe con la deformación;
+  - la de la app da 62.77 km/h y dos hipótesis;
+  - esa diferencia es mayor que la σ local (2.48 km/h). Medir la velocidad con varias semillas y, si se confirma, informar el rango entre semillas en lugar de la σ local.
 
 ### Bloqueado — necesita a René
 
