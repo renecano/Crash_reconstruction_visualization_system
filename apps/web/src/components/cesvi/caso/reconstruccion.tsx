@@ -195,6 +195,13 @@ export function TablaVelocidades({ r }: { r: Reconstruccion }) {
   );
 }
 
+/** «63.17 (60.77–113.09)»: el valor con su p10–p90, si lo hay. */
+export function conRango(kmh: number, rango: [number, number] | null): string {
+  return rango
+    ? `${kmh.toFixed(2)} (${rango[0].toFixed(2)}–${rango[1].toFixed(2)})`
+    : kmh.toFixed(2);
+}
+
 const conSigno = (x: number, d: number) => `${x >= 0 ? "+" : "−"}${Math.abs(x).toFixed(d)}`;
 
 /** Una diferencia de velocidad con su valor y su porcentaje («−19.76 km/h (−31.29 %)»). */
@@ -232,7 +239,7 @@ export function TablaContraCesvi({ contra }: { contra: ContraMetodosCesvi }) {
                 {f.croquisKmh === null ? (
                   <span className="font-sans text-texto-3">la evidencia no la fija</span>
                 ) : (
-                  f.croquisKmh.toFixed(2)
+                  conRango(f.croquisKmh, f.croquisRango)
                 )}
               </td>
               <td className="py-2 text-right">{diferenciaEnTexto(f)}</td>
@@ -240,6 +247,12 @@ export function TablaContraCesvi({ contra }: { contra: ContraMetodosCesvi }) {
           ))}
         </tbody>
       </table>
+      {contra.filas.some((f) => f.croquisRango) ? (
+        <p className="t-nota">
+          Entre paréntesis, el p10–p90 de la reconstrucción: la velocidad que reproduce la evidencia
+          con sus entradas perturbadas.
+        </p>
+      ) : null}
       {contra.filas.map((f) => (
         <p key={f.metodo} className="t-nota">
           <span className="font-semibold">{f.metodo}:</span> {f.porQue}
@@ -294,7 +307,9 @@ export function ElegirHipotesis({
                   {v.vehiculo}:{" "}
                   {v.kmh === null
                     ? "sin velocidad"
-                    : `${v.kmh.toFixed(2)} km/h${v.fijada ? "" : ` (mejor ajuste; la evidencia medida no la fija${v.sigmaKmh !== null ? `, ±${v.sigmaKmh.toFixed(0)} km/h` : ""})`}`}
+                    : v.fijada
+                      ? `${conRango(v.kmh, v.rango)} km/h`
+                      : `${v.kmh.toFixed(2)} km/h (mejor ajuste; la evidencia medida no la fija)`}
                 </li>
               ))}
               {h.reposos.map((x) => (
@@ -414,8 +429,8 @@ export function Visor3dCaso({
         .map((f) => (
           <p key={f.metodo} className="t-nota" data-testid="contra-cesvi-3d">
             <span className="cifras">
-              {f.vehiculo}: Croquis {f.croquisKmh!.toFixed(2)} km/h · CESVI ({f.metodo}){" "}
-              {f.cesviKmh.toFixed(2)} km/h · {diferenciaEnTexto(f)}.
+              {f.vehiculo}: Croquis {conRango(f.croquisKmh!, f.croquisRango)} km/h · CESVI (
+              {f.metodo}) {f.cesviKmh.toFixed(2)} km/h · {diferenciaEnTexto(f)}.
             </span>{" "}
             {f.porQue}
           </p>

@@ -50,13 +50,13 @@
     "iluminacion": "noche_con_alumbrado (cambiada para la toma)",
     "duracion_s": 7.2,
     "escritorio": {
-      "bytes": 353778,
+      "bytes": 361405,
       "crf": 26
     },
     "movil": {
-      "bytes": 110536,
+      "bytes": 114637,
       "crf": 26
     },
-    "poster_bytes": 44167
+    "poster_bytes": 45477
   }
 ]

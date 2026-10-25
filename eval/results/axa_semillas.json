@@ -1,0 +1,732 @@
+{
+ "name": "axa_semillas",
+ "generated_at": "2026-10-25T20:08:30Z",
+ "git_commit": "6a0786c",
+ "descripcion": "AXA A2010930 como la reconstruye la app (reposo de V2 marcado como supuesto), con la semilla de la app y 19 más: hipótesis por semilla y dispersión de la velocidad previa de V2 y V1 en la reconstrucción que se ve sin elegir («cuadra con el daño medido»).",
+ "spec_id_app": "caso-nuevo",
+ "semilla_app": 719300,
+ "semillas": [
+  719300,
+  1,
+  2,
+  3,
+  4,
+  5,
+  6,
+  7,
+  8,
+  9,
+  10,
+  11,
+  12,
+  13,
+  14,
+  15,
+  16,
+  17,
+  18,
+  19
+ ],
+ "con_dos_hipotesis": 15,
+ "con_una_hipotesis": 5,
+ "V2": {
+  "semillas_con_valor": 19,
+  "min": 62.03,
+  "max": 151.84,
+  "p10": 63.15,
+  "p50": 75.48,
+  "p90": 91.64,
+  "rango_kmh": 89.81,
+  "p10_p90_kmh": 28.49,
+  "app": 63.17,
+  "app_p10_p90": [
+   60.77,
+   113.09
+  ],
+  "semillas_dentro_del_p10_p90_de_la_app": 17
+ },
+ "V1": {
+  "semillas_con_valor": 20,
+  "min": 0,
+  "max": 37.69,
+  "p10": 18.76,
+  "p50": 22.42,
+  "p90": 24.47,
+  "rango_kmh": 37.69,
+  "p10_p90_kmh": 5.71,
+  "app": 23.35,
+  "app_p10_p90": [
+   0,
+   25.65
+  ],
+  "semillas_dentro_del_p10_p90_de_la_app": 19
+ },
+ "filas": [
+  {
+   "semilla": 719300,
+   "es_la_de_la_app": true,
+   "hipotesis": 2,
+   "principal": {
+    "V2": {
+     "mejor": 63.17,
+     "p10": 60.77,
+     "p90": 113.09
+    },
+    "V1": {
+     "mejor": 23.35,
+     "p10": 0,
+     "p90": 25.65
+    }
+   },
+   "dano": {
+    "V2": {
+     "kmh": 63.17,
+     "fijada": true
+    },
+    "V1": {
+     "kmh": 23.35,
+     "fijada": true
+    }
+   },
+   "reposo": {
+    "V2": {
+     "kmh": 41.73,
+     "fijada": true
+    },
+    "V1": {
+     "kmh": 41.71,
+     "fijada": true
+    }
+   },
+   "ms": 23281
+  },
+  {
+   "semilla": 1,
+   "es_la_de_la_app": false,
+   "hipotesis": 2,
+   "principal": {
+    "V2": {
+     "mejor": 75.48,
+     "p10": 66.72,
+     "p90": 88.35
+    },
+    "V1": {
+     "mejor": 22.32,
+     "p10": 10.2,
+     "p90": 27.44
+    }
+   },
+   "dano": {
+    "V2": {
+     "kmh": 75.48,
+     "fijada": true
+    },
+    "V1": {
+     "kmh": 22.32,
+     "fijada": true
+    }
+   },
+   "reposo": {
+    "V2": {
+     "kmh": 41.87,
+     "fijada": true
+    },
+    "V1": {
+     "kmh": 41.81,
+     "fijada": true
+    }
+   },
+   "ms": 24833
+  },
+  {
+   "semilla": 2,
+   "es_la_de_la_app": false,
+   "hipotesis": 2,
+   "principal": {
+    "V2": {
+     "mejor": 77.16,
+     "p10": 65.05,
+     "p90": 113.6
+    },
+    "V1": {
+     "mejor": 21.02,
+     "p10": 0.26,
+     "p90": 22.9
+    }
+   },
+   "dano": {
+    "V2": {
+     "kmh": 77.16,
+     "fijada": true
+    },
+    "V1": {
+     "kmh": 21.02,
+     "fijada": true
+    }
+   },
+   "reposo": {
+    "V2": {
+     "kmh": 41.69,
+     "fijada": true
+    },
+    "V1": {
+     "kmh": 41.72,
+     "fijada": true
+    }
+   },
+   "ms": 20359
+  },
+  {
+   "semilla": 3,
+   "es_la_de_la_app": false,
+   "hipotesis": 2,
+   "principal": {
+    "V2": {
+     "mejor": 77.36,
+     "p10": 70.15,
+     "p90": 101.85
+    },
+    "V1": {
+     "mejor": 20.88,
+     "p10": 6.88,
+     "p90": 22.4
+    }
+   },
+   "dano": {
+    "V2": {
+     "kmh": 77.36,
+     "fijada": true
+    },
+    "V1": {
+     "kmh": 20.88,
+     "fijada": true
+    }
+   },
+   "reposo": {
+    "V2": {
+     "kmh": 41.81,
+     "fijada": true
+    },
+    "V1": {
+     "kmh": 41.76,
+     "fijada": true
+    }
+   },
+   "ms": 24801
+  },
+  {
+   "semilla": 4,
+   "es_la_de_la_app": false,
+   "hipotesis": 2,
+   "principal": {
+    "V2": {
+     "mejor": 63.07,
+     "p10": 63.66,
+     "p90": 104.96
+    },
+    "V1": {
+     "mejor": 23.39,
+     "p10": 0.2,
+     "p90": 22.04
+    }
+   },
+   "dano": {
+    "V2": {
+     "kmh": 63.07,
+     "fijada": true
+    },
+    "V1": {
+     "kmh": 23.39,
+     "fijada": true
+    }
+   },
+   "reposo": {
+    "V2": {
+     "kmh": 41.76,
+     "fijada": true
+    },
+    "V1": {
+     "kmh": 41.65,
+     "fijada": true
+    }
+   },
+   "ms": 17211
+  },
+  {
+   "semilla": 5,
+   "es_la_de_la_app": false,
+   "hipotesis": 2,
+   "principal": {
+    "V2": {
+     "mejor": 77.38,
+     "p10": 63.93,
+     "p90": 87.41
+    },
+    "V1": {
+     "mejor": 20.85,
+     "p10": 19.48,
+     "p90": 27.72
+    }
+   },
+   "dano": {
+    "V2": {
+     "kmh": 77.38,
+     "fijada": true
+    },
+    "V1": {
+     "kmh": 20.85,
+     "fijada": true
+    }
+   },
+   "reposo": {
+    "V2": {
+     "kmh": 41.82,
+     "fijada": true
+    },
+    "V1": {
+     "kmh": 41.76,
+     "fijada": true
+    }
+   },
+   "ms": 23300
+  },
+  {
+   "semilla": 6,
+   "es_la_de_la_app": false,
+   "hipotesis": 2,
+   "principal": {
+    "V2": {
+     "mejor": 75.19,
+     "p10": 67.88,
+     "p90": 87.01
+    },
+    "V1": {
+     "mejor": 22.54,
+     "p10": 18.6,
+     "p90": 29.56
+    }
+   },
+   "dano": {
+    "V2": {
+     "kmh": 75.19,
+     "fijada": true
+    },
+    "V1": {
+     "kmh": 22.54,
+     "fijada": true
+    }
+   },
+   "reposo": {
+    "V2": {
+     "kmh": 41.91,
+     "fijada": true
+    },
+    "V1": {
+     "kmh": 41.82,
+     "fijada": true
+    }
+   },
+   "ms": 24290
+  },
+  {
+   "semilla": 7,
+   "es_la_de_la_app": false,
+   "hipotesis": 1,
+   "principal": {
+    "V2": null,
+    "V1": {
+     "mejor": 37.69,
+     "p10": 32.63,
+     "p90": 38
+    }
+   },
+   "dano": null,
+   "reposo": null,
+   "ms": 10227
+  },
+  {
+   "semilla": 8,
+   "es_la_de_la_app": false,
+   "hipotesis": 2,
+   "principal": {
+    "V2": {
+     "mejor": 76.9,
+     "p10": 67.77,
+     "p90": 95.89
+    },
+    "V1": {
+     "mejor": 21.22,
+     "p10": 0,
+     "p90": 24.64
+    }
+   },
+   "dano": {
+    "V2": {
+     "kmh": 76.9,
+     "fijada": true
+    },
+    "V1": {
+     "kmh": 21.22,
+     "fijada": true
+    }
+   },
+   "reposo": {
+    "V2": {
+     "kmh": 41.61,
+     "fijada": true
+    },
+    "V1": {
+     "kmh": 41.62,
+     "fijada": true
+    }
+   },
+   "ms": 24450
+  },
+  {
+   "semilla": 9,
+   "es_la_de_la_app": false,
+   "hipotesis": 1,
+   "principal": {
+    "V2": {
+     "mejor": 151.84,
+     "p10": 151.82,
+     "p90": 164.51
+    },
+    "V1": {
+     "mejor": 0,
+     "p10": 0,
+     "p90": 0
+    }
+   },
+   "dano": null,
+   "reposo": null,
+   "ms": 10208
+  },
+  {
+   "semilla": 10,
+   "es_la_de_la_app": false,
+   "hipotesis": 2,
+   "principal": {
+    "V2": {
+     "mejor": 62.03,
+     "p10": 60.5,
+     "p90": 76.24
+    },
+    "V1": {
+     "mejor": 24.1,
+     "p10": 13.12,
+     "p90": 25.58
+    }
+   },
+   "dano": {
+    "V2": {
+     "kmh": 62.03,
+     "fijada": true
+    },
+    "V1": {
+     "kmh": 24.1,
+     "fijada": true
+    }
+   },
+   "reposo": {
+    "V2": {
+     "kmh": 41.76,
+     "fijada": true
+    },
+    "V1": {
+     "kmh": 41.69,
+     "fijada": true
+    }
+   },
+   "ms": 18399
+  },
+  {
+   "semilla": 11,
+   "es_la_de_la_app": false,
+   "hipotesis": 1,
+   "principal": {
+    "V2": {
+     "mejor": 148.64,
+     "p10": 149.35,
+     "p90": 165.67
+    },
+    "V1": {
+     "mejor": 0,
+     "p10": 0,
+     "p90": 0
+    }
+   },
+   "dano": null,
+   "reposo": null,
+   "ms": 9596
+  },
+  {
+   "semilla": 12,
+   "es_la_de_la_app": false,
+   "hipotesis": 2,
+   "principal": {
+    "V2": {
+     "mejor": 77.25,
+     "p10": 63.54,
+     "p90": 92.47
+    },
+    "V1": {
+     "mejor": 20.96,
+     "p10": 5.85,
+     "p90": 25.64
+    }
+   },
+   "dano": {
+    "V2": {
+     "kmh": 77.25,
+     "fijada": true
+    },
+    "V1": {
+     "kmh": 20.96,
+     "fijada": true
+    }
+   },
+   "reposo": {
+    "V2": {
+     "kmh": 41.84,
+     "fijada": true
+    },
+    "V1": {
+     "kmh": 41.8,
+     "fijada": true
+    }
+   },
+   "ms": 24452
+  },
+  {
+   "semilla": 13,
+   "es_la_de_la_app": false,
+   "hipotesis": 1,
+   "principal": {
+    "V2": {
+     "mejor": 71.95,
+     "p10": 72.1,
+     "p90": 80.28
+    },
+    "V1": {
+     "mejor": 25.08,
+     "p10": 13.61,
+     "p90": 26.44
+    }
+   },
+   "dano": null,
+   "reposo": null,
+   "ms": 9820
+  },
+  {
+   "semilla": 14,
+   "es_la_de_la_app": false,
+   "hipotesis": 2,
+   "principal": {
+    "V2": {
+     "mejor": 75.23,
+     "p10": 70.47,
+     "p90": 95.08
+    },
+    "V1": {
+     "mejor": 22.51,
+     "p10": 1.24,
+     "p90": 27.21
+    }
+   },
+   "dano": {
+    "V2": {
+     "kmh": 75.23,
+     "fijada": true
+    },
+    "V1": {
+     "kmh": 22.51,
+     "fijada": true
+    }
+   },
+   "reposo": {
+    "V2": {
+     "kmh": 41.92,
+     "fijada": true
+    },
+    "V1": {
+     "kmh": 41.83,
+     "fijada": true
+    }
+   },
+   "ms": 26403
+  },
+  {
+   "semilla": 15,
+   "es_la_de_la_app": false,
+   "hipotesis": 2,
+   "principal": {
+    "V2": {
+     "mejor": 74.58,
+     "p10": 70.28,
+     "p90": 111.93
+    },
+    "V1": {
+     "mejor": 23.03,
+     "p10": 0.51,
+     "p90": 29.86
+    }
+   },
+   "dano": {
+    "V2": {
+     "kmh": 74.58,
+     "fijada": true
+    },
+    "V1": {
+     "kmh": 23.03,
+     "fijada": true
+    }
+   },
+   "reposo": {
+    "V2": {
+     "kmh": 41.79,
+     "fijada": true
+    },
+    "V1": {
+     "kmh": 41.75,
+     "fijada": true
+    }
+   },
+   "ms": 20213
+  },
+  {
+   "semilla": 16,
+   "es_la_de_la_app": false,
+   "hipotesis": 1,
+   "principal": {
+    "V2": {
+     "mejor": 72.81,
+     "p10": 67.53,
+     "p90": 78.38
+    },
+    "V1": {
+     "mejor": 24.4,
+     "p10": 17.91,
+     "p90": 24.73
+    }
+   },
+   "dano": null,
+   "reposo": null,
+   "ms": 8464
+  },
+  {
+   "semilla": 17,
+   "es_la_de_la_app": false,
+   "hipotesis": 2,
+   "principal": {
+    "V2": {
+     "mejor": 75.07,
+     "p10": 66.46,
+     "p90": 91.84
+    },
+    "V1": {
+     "mejor": 22.64,
+     "p10": 14.83,
+     "p90": 27.66
+    }
+   },
+   "dano": {
+    "V2": {
+     "kmh": 75.07,
+     "fijada": true
+    },
+    "V1": {
+     "kmh": 22.64,
+     "fijada": true
+    }
+   },
+   "reposo": {
+    "V2": {
+     "kmh": 41.83,
+     "fijada": true
+    },
+    "V1": {
+     "kmh": 41.78,
+     "fijada": true
+    }
+   },
+   "ms": 24199
+  },
+  {
+   "semilla": 18,
+   "es_la_de_la_app": false,
+   "hipotesis": 2,
+   "principal": {
+    "V2": {
+     "mejor": 77.39,
+     "p10": 71.07,
+     "p90": 80.88
+    },
+    "V1": {
+     "mejor": 20.84,
+     "p10": 18.84,
+     "p90": 24.89
+    }
+   },
+   "dano": {
+    "V2": {
+     "kmh": 77.39,
+     "fijada": true
+    },
+    "V1": {
+     "kmh": 20.84,
+     "fijada": true
+    }
+   },
+   "reposo": {
+    "V2": {
+     "kmh": 41.77,
+     "fijada": true
+    },
+    "V1": {
+     "kmh": 41.74,
+     "fijada": true
+    }
+   },
+   "ms": 28312
+  },
+  {
+   "semilla": 19,
+   "es_la_de_la_app": false,
+   "hipotesis": 2,
+   "principal": {
+    "V2": {
+     "mejor": 75.64,
+     "p10": 66.35,
+     "p90": 78.67
+    },
+    "V1": {
+     "mejor": 22.2,
+     "p10": 18.65,
+     "p90": 28.88
+    }
+   },
+   "dano": {
+    "V2": {
+     "kmh": 75.64,
+     "fijada": true
+    },
+    "V1": {
+     "kmh": 22.2,
+     "fijada": true
+    }
+   },
+   "reposo": {
+    "V2": {
+     "kmh": 41.86,
+     "fijada": true
+    },
+    "V1": {
+     "kmh": 41.81,
+     "fijada": true
+    }
+   },
+   "ms": 22837
+  }
+ ]
+}

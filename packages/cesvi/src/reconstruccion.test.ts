@@ -604,6 +604,11 @@ describe("lo medido pesa más que lo supuesto: el reposo supuesto y las dos hip�
     expect(r.hipotesis!.dano.reposos).toEqual([{ vehiculo: id, m: 6.2 }]);
     expect(r.hipotesis!.dano.alcanzaDano).toBe(true);
     expect(r.hipotesis!.reposo.reposos).toEqual([{ vehiculo: id, m: 0.3 }]);
+    // La velocidad que la evidencia fija lleva su p10–p90; la del ajuste conjunto, no.
+    expect(r.hipotesis!.reposo.velocidades.find((v) => v.vehiculo === id)!.rango).toEqual([
+      39.47, 43.47,
+    ]);
+    expect(r.hipotesis!.dano.velocidades.find((v) => v.vehiculo === id)!.rango).toBeNull();
     expect(r.hipotesis!.reposo.alcanzaDano).toBe(false);
     // Sin elegir, el 3D lleva el ajuste conjunto de la del daño, dicho así.
     const sin = (especReconstruida(r).vehiculos as Json[]).find((v) => v.id === "veh-a")!;

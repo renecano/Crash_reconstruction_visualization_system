@@ -86,6 +86,9 @@ function tabla(encabezados: string[], filas: TableCell[][]): Content {
 
 const enPalabras = (s: string) => s.replaceAll("_", " ");
 const kmh = (x?: number) => (x === undefined ? "—" : x.toFixed(1));
+/** «63.17 (60.77–113.09)»: el valor con el p10–p90 de la reconstrucción, si lo hay. */
+const rangoTexto = (kmh: number, rango: [number, number] | null) =>
+  rango ? `${kmh.toFixed(2)} (${rango[0].toFixed(2)}–${rango[1].toFixed(2)})` : kmh.toFixed(2);
 const conSigno = (x: number) => `${x >= 0 ? "+" : "−"}${Math.abs(x).toFixed(2)}`;
 
 /**
@@ -111,7 +114,7 @@ function hipotesis(d: DatosDictamenCaso): Content[] {
         h.velocidades
           .map(
             (v) =>
-              `${v.vehiculo}: ${v.kmh === null ? "—" : `${v.kmh.toFixed(2)} km/h`}${v.fijada || v.kmh === null ? "" : " (mejor ajuste; la evidencia medida no la fija)"}`,
+              `${v.vehiculo}: ${v.kmh === null ? "—" : `${v.fijada ? rangoTexto(v.kmh, v.rango) : v.kmh.toFixed(2)} km/h`}${v.fijada || v.kmh === null ? "" : " (mejor ajuste; la evidencia medida no la fija)"}`,
           )
           .join("; "),
         h.reposos.map((x) => `${x.vehiculo} a ${x.m.toFixed(1)} m`).join("; ") || "—",
@@ -131,12 +134,21 @@ function contraReporte(d: DatosDictamenCaso): Content[] {
       k.filas.map((f) => [
         `${f.metodo}: ${f.cesviQue}`,
         f.cesviKmh.toFixed(2),
-        f.croquisKmh === null ? "la evidencia no la fija" : f.croquisKmh.toFixed(2),
+        f.croquisKmh === null
+          ? "la evidencia no la fija"
+          : rangoTexto(f.croquisKmh, f.croquisRango),
         f.diferenciaKmh === null || f.diferenciaPct === null
           ? "—"
           : `${conSigno(f.diferenciaKmh)} km/h (${conSigno(f.diferenciaPct)} %)`,
       ]),
     ),
+    ...(k.filas.some((f) => f.croquisRango)
+      ? [
+          nota(
+            "Entre paréntesis, el p10–p90 de la reconstrucción: la velocidad que reproduce la evidencia con sus entradas perturbadas.",
+          ),
+        ]
+      : []),
     ...k.filas.map((f) => nota(`${f.metodo}: ${f.porQue}`)),
     ...k.avisos.map((a) => parrafo(a)),
   ];

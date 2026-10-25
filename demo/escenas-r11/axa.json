@@ -1,9 +1,9 @@
 {
   "meta": {
-    "id": "demo-axa",
+    "id": "caso-nuevo",
     "version_esquema": "2.1.0",
     "idioma": "es-MX",
-    "semilla": 950655,
+    "semilla": 719300,
     "creado": "2026-10-13T00:00:00-06:00",
     "relato": "",
     "origen_relato": "escrito",
@@ -130,11 +130,11 @@
         "confianza": 0.3
       },
       "velocidad_previa": {
-        "valor": 71.96,
+        "valor": 63.17,
         "unidad": "km/h",
         "rango": [
-          66.78,
-          87.2
+          60.77,
+          113.09
         ],
         "fuente": "supuesto",
         "confianza": 0.7,
@@ -190,11 +190,11 @@
         "confianza": 0.3
       },
       "velocidad_previa": {
-        "valor": 25.07,
+        "valor": 23.35,
         "unidad": "km/h",
         "rango": [
-          14.38,
-          24.83
+          0,
+          25.65
         ],
         "fuente": "supuesto",
         "confianza": 0.7,
