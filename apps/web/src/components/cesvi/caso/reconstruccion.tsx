@@ -254,6 +254,79 @@ export function TablaContraCesvi({ contra }: { contra: ContraMetodosCesvi }) {
   );
 }
 
+/**
+ * Las dos hipótesis cuando un reposo supuesto no cabe con la deformación medida (ADR 0091): cada
+ * una con sus números. El perito elige; Croquis no elige por él.
+ */
+export function ElegirHipotesis({
+  r,
+  elegida,
+  onElegir,
+}: {
+  r: Reconstruccion;
+  elegida: "dano" | "reposo" | null;
+  onElegir: (h: "dano" | "reposo") => void;
+}) {
+  if (!r.hipotesis) return null;
+  const hs = [r.hipotesis.dano, r.hipotesis.reposo];
+  return (
+    <div className="flex flex-col gap-3" data-testid="hipotesis">
+      <h3 className="t-interfaz font-semibold">
+        Dos hipótesis: el reposo supuesto y el daño medido no caben juntos
+      </h3>
+      <p className="t-nota">
+        {elegida
+          ? `Elegiste «${r.hipotesis[elegida].titulo}»: los números, el 3D y el dictamen la siguen.`
+          : "Elige una. Mientras no elijas, se ve «Cuadra con el daño medido» (lo medido pesa más que lo supuesto), y el dictamen dice que falta tu elección."}
+      </p>
+      <div className="grid gap-3 sm:grid-cols-2">
+        {hs.map((h) => (
+          <div
+            key={h.clave}
+            className="hundido flex flex-col gap-2 p-4"
+            style={elegida === h.clave ? { outline: "2px solid var(--acento)" } : undefined}
+            data-testid={`hipotesis-${h.clave}`}
+          >
+            <span className="t-interfaz font-semibold">{h.titulo}</span>
+            <ul className="cifras t-cuerpo flex flex-col gap-1">
+              {h.velocidades.map((v) => (
+                <li key={v.vehiculo}>
+                  {v.vehiculo}:{" "}
+                  {v.kmh === null
+                    ? "sin velocidad"
+                    : `${v.kmh.toFixed(2)} km/h${v.fijada ? "" : ` (mejor ajuste; la evidencia medida no la fija${v.sigmaKmh !== null ? `, ±${v.sigmaKmh.toFixed(0)} km/h` : ""})`}`}
+                </li>
+              ))}
+              {h.reposos.map((x) => (
+                <li key={x.vehiculo}>
+                  {x.vehiculo} termina a {x.m.toFixed(1)} m de su reposo supuesto
+                </li>
+              ))}
+              <li>
+                {h.alcanzaDano
+                  ? "Alcanza la deformación medida"
+                  : "No alcanza la deformación medida"}
+              </li>
+            </ul>
+            <button
+              type="button"
+              className={
+                elegida === h.clave
+                  ? "boton-primario boton-compacto"
+                  : "boton-secundario boton-compacto"
+              }
+              onClick={() => onElegir(h.clave)}
+              data-testid={`elegir-${h.clave}`}
+            >
+              {elegida === h.clave ? "Elegida" : "Elegir esta"}
+            </button>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
 /** La verificación con los métodos de CESVI, paso por paso (fórmula, sustitución, resultado). */
 export function PanelVerificacion({ verificacion }: { verificacion: VerificacionVehiculo[] }) {
   return (

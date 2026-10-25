@@ -93,6 +93,34 @@ const conSigno = (x: number) => `${x >= 0 ? "+" : "−"}${Math.abs(x).toFixed(2)
  * diferencia en km/h y en %, por qué los métodos no miden lo mismo y, si la reconstrucción no
  * alcanza la deformación medida, el aviso con sus números.
  */
+function hipotesis(d: DatosDictamenCaso): Content[] {
+  const r = d.reconstruccion;
+  if (!r.hipotesis) return [];
+  const hs = [r.hipotesis.dano, r.hipotesis.reposo];
+  return [
+    subtitulo("Dos hipótesis: el reposo supuesto y el daño medido no caben juntos"),
+    parrafo(
+      r.elegida
+        ? `El perito eligió «${r.hipotesis[r.elegida].titulo}»; los números de este dictamen son los de esa hipótesis.`
+        : "El perito no eligió hipótesis: los números son los de «Cuadra con el daño medido» (lo medido pesa más que lo supuesto). Falta su elección.",
+    ),
+    tabla(
+      ["Hipótesis", "Velocidades previas", "Reposo supuesto", "Deformación medida"],
+      hs.map((h) => [
+        h.titulo,
+        h.velocidades
+          .map(
+            (v) =>
+              `${v.vehiculo}: ${v.kmh === null ? "—" : `${v.kmh.toFixed(2)} km/h`}${v.fijada || v.kmh === null ? "" : " (mejor ajuste; la evidencia medida no la fija)"}`,
+          )
+          .join("; "),
+        h.reposos.map((x) => `${x.vehiculo} a ${x.m.toFixed(1)} m`).join("; ") || "—",
+        h.alcanzaDano ? "La alcanza" : "No la alcanza",
+      ]),
+    ),
+  ];
+}
+
 function contraReporte(d: DatosDictamenCaso): Content[] {
   const k = reconstruccionContraCesvi(d.expediente, d.reconstruccion);
   if (!k.filas.length) return [];
@@ -196,6 +224,7 @@ function secciones(d: DatosDictamenCaso) {
         v.impacto ? `${kmh(v.impacto.p10)}–${kmh(v.impacto.p50)}–${kmh(v.impacto.p90)}` : "—",
       ]),
     ),
+    ...hipotesis(d),
     ...contraReporte(d),
     ...(r.impactos.length > 1
       ? [

@@ -4,13 +4,21 @@ import { fileURLToPath } from "node:url";
 import { validateEscena } from "@croquis/scene-schema";
 import { describe, expect, it } from "vitest";
 import type { Expediente, SalidaCorpus } from "./corpus";
-import { conMasa, conPosicion, escenaDeNarracion } from "./escena-narracion";
+import {
+  conMasa,
+  conPosicion,
+  conReposoSupuesto,
+  escenaDeNarracion,
+  reposoSupuesto,
+} from "./escena-narracion";
 import { distanciaM } from "./geo";
 import { mcHenry } from "./metodo";
 import {
+  conHipotesis,
   especDeExpediente,
   especReconstruida,
   impactosEnMapa,
+  interpretarResultado,
   reconstruirExpediente,
   posicionesEnTiempo,
   rumboEscena,
@@ -522,4 +530,88 @@ describe("las trayectorias en el mapa, para el croquis del dictamen (R8b)", () =
     const r = reconstruirExpediente(base0(), "sin-mapa");
     expect(trayectoriasEnMapa(r, r.resultado)).toEqual([]);
   }, 30_000);
+});
+
+describe("lo medido pesa más que lo supuesto: el reposo supuesto y las dos hipótesis (ADR 0091)", () => {
+  it("un reposo que el perito marca como supuesto llega a la escena como evidencia blanda, y moverlo no lo vuelve dato", () => {
+    let e = conReposoSupuesto(colocado(), "V2", true);
+    expect(reposoSupuesto(e, "V2")).toBe(true);
+    e = conPosicion(e, { vehiculo: "V2", fase: "final", punto: m(3, 8), rumbo: 80 });
+    expect(reposoSupuesto(e, "V2")).toBe(true);
+    const { spec } = especDeExpediente(e);
+    expect(validateEscena(spec).ok).toBe(true);
+    const v2 = (spec.vehiculos as Json[]).find((v) => v.id === "veh-b")!;
+    expect(v2.posicion_final_supuesta).toBe(true);
+    expect((v2.posicion_final as Json).procedencia).toMatchObject({ fuente: "supuesto" });
+    const v1 = (spec.vehiculos as Json[]).find((v) => v.id === "veh-a")!;
+    expect(v1.posicion_final_supuesta).toBeUndefined();
+    expect(reposoSupuesto(conReposoSupuesto(e, "V2", false), "V2")).toBe(false);
+  });
+
+  it("con las dos inversiones, cada hipótesis con sus números; elegir una cambia velocidades y 3D", () => {
+    const base = especDeExpediente(colocado());
+    // Resultado de prueba: la del daño no fija veh-a (ajuste conjunto 66.25) y deja su reposo
+    // supuesto a 0.62 σ×10 m; la del reposo supuesto fija 41.47 y no alcanza la deformación.
+    const param = (vehiculo: string, mejor: number | null, sigma: number) => ({
+      parametro: "velocidad_previa",
+      vehiculo,
+      identificable: mejor !== null,
+      sigma_local: sigma,
+      ...(mejor !== null
+        ? { estimacion: { mejor, p10: mejor - 2, p50: mejor, p90: mejor + 2 } }
+        : {}),
+    });
+    const dano = {
+      evidencia: ["dano_minimo:veh-a", "reposo_supuesto:veh-a"],
+      parametros: [param("veh-a", null, 32.93), param("veh-b", null, 33.83)],
+      velocidad_impacto: [],
+      residuos: [],
+      ajuste_completo: {
+        valores: [
+          { nombre: "velocidad:veh-a", valor: 66.25 },
+          { nombre: "velocidad:veh-b", valor: 19.14 },
+        ],
+        residuos: [
+          { nombre: "dano_minimo:veh-a", sigma: -0.11 },
+          { nombre: "reposo_supuesto:veh-a:x", sigma: -0.187 },
+          { nombre: "reposo_supuesto:veh-a:y", sigma: -0.592 },
+        ],
+      },
+    };
+    const reposo = {
+      evidencia: dano.evidencia,
+      parametros: [param("veh-a", 41.47, 3), param("veh-b", 41.99, 3)],
+      velocidad_impacto: [],
+      residuos: [
+        { nombre: "dano_minimo:veh-a", sigma: -1.47 },
+        { nombre: "reposo_supuesto:veh-a:x", sigma: 0.02 },
+        { nombre: "reposo_supuesto:veh-a:y", sigma: -0.3 },
+      ],
+    };
+    const r = interpretarResultado(base, {
+      vehiculos: [],
+      eventos: [],
+      inversion: dano,
+      inversion_reposo_supuesto: reposo,
+    });
+    const id = base.ids["veh-a"]!;
+    expect(r.elegida).toBeNull();
+    expect(r.hipotesis!.dano.velocidades.find((v) => v.vehiculo === id)).toMatchObject({
+      kmh: 66.25,
+      fijada: false,
+      sigmaKmh: 32.93,
+    });
+    expect(r.hipotesis!.dano.reposos).toEqual([{ vehiculo: id, m: 6.2 }]);
+    expect(r.hipotesis!.dano.alcanzaDano).toBe(true);
+    expect(r.hipotesis!.reposo.reposos).toEqual([{ vehiculo: id, m: 0.3 }]);
+    expect(r.hipotesis!.reposo.alcanzaDano).toBe(false);
+    // Sin elegir, el 3D lleva el ajuste conjunto de la del daño, dicho así.
+    const sin = (especReconstruida(r).vehiculos as Json[]).find((v) => v.id === "veh-a")!;
+    expect(sin.velocidad_previa).toMatchObject({ valor: 66.25, fuente: "supuesto" });
+    const elegida = conHipotesis(r, "reposo");
+    expect(elegida.elegida).toBe("reposo");
+    expect(elegida.velocidades.find((v) => v.vehiculo === id)!.previa!.mejor).toBe(41.47);
+    const con = (especReconstruida(elegida).vehiculos as Json[]).find((v) => v.id === "veh-a")!;
+    expect(con.velocidad_previa).toMatchObject({ valor: 41.47 });
+  });
 });

@@ -57,7 +57,9 @@ function reconstruccion(conBandera: boolean): Reconstruccion {
 
 describe("la reconstrucción contra los métodos del reporte de CESVI (ADR 0091)", () => {
   it("cada velocidad del reporte con la de la reconstrucción, su diferencia y su porcentaje", () => {
-    const { filas } = reconstruccionContraCesvi(expediente, reconstruccion(false));
+    const r = reconstruccion(false);
+    // Las trayectorias con las velocidades ajustadas, como las del 3D (aquí, las de prueba).
+    const { filas } = reconstruccionContraCesvi(expediente, r, r.resultado);
     expect(filas).toHaveLength(2);
     expect(filas[0]).toMatchObject({
       vehiculo: "V2",
@@ -82,13 +84,13 @@ describe("la reconstrucción contra los métodos del reporte de CESVI (ADR 0091)
   it("sin la velocidad en la reconstrucción no hay diferencia que mostrar", () => {
     const r = reconstruccion(false);
     r.velocidades[0]!.previa = null;
-    const [def] = reconstruccionContraCesvi(expediente, r).filas;
+    const [def] = reconstruccionContraCesvi(expediente, r, r.resultado).filas;
     expect(def).toMatchObject({ croquisKmh: null, diferenciaKmh: null, diferenciaPct: null });
   });
 
   it("si el solver no alcanza la deformación medida, lo avisa con sus números y el vehículo del perito", () => {
-    expect(reconstruccionContraCesvi(expediente, reconstruccion(false)).avisos).toEqual([]);
-    const [aviso] = reconstruccionContraCesvi(expediente, reconstruccion(true)).avisos;
+    expect(reconstruccionContraCesvi(expediente, reconstruccion(false), {}).avisos).toEqual([]);
+    const [aviso] = reconstruccionContraCesvi(expediente, reconstruccion(true), {}).avisos;
     expect(aviso).toContain("deformación medida de V2");
     expect(aviso).toContain("30–82 km/h");
     expect(aviso).toContain("es de 3 km/h");

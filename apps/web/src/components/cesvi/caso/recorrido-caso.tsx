@@ -20,8 +20,11 @@ import {
   medidasDe,
   posesDeImpacto,
   posicionesEncimadas,
+  conHipotesis,
+  conReposoSupuesto,
   preguntaPendiente,
   reconstruccionContraCesvi,
+  reposoSupuesto,
   verificacionCesvi,
   type EscenaNarrada,
   type Expediente,
@@ -75,6 +78,7 @@ import {
 } from "./pasos";
 import { MapaEscena, type HerramientaMapa, type HuellaMapa } from "./piezas";
 import {
+  ElegirHipotesis,
   PanelReconstruccion,
   useReconstruccion,
   Visor3dCaso,
@@ -149,7 +153,13 @@ export function RecorridoCaso({ inicial }: { inicial: CasoExpediente }) {
     window.addEventListener("keydown", tecla);
     return () => window.removeEventListener("keydown", tecla);
   }, [expandido]);
-  const r = rec.r;
+  // Si un reposo supuesto no cabe con la deformación medida hay dos hipótesis; el perito elige
+  // (ADR 0091). Mientras no elija se ve la del daño medido, y se dice.
+  const [hipotesis, setHipotesis] = useState<"dano" | "reposo" | null>(null);
+  const r = useMemo(
+    () => (rec.r?.hipotesis && hipotesis ? conHipotesis(rec.r, hipotesis) : rec.r),
+    [rec.r, hipotesis],
+  );
 
   // Un caso con reporte se lee del reporte: su narración no se edita ni va al dictamen.
   const editable = reporte === null;
@@ -650,6 +660,12 @@ export function RecorridoCaso({ inicial }: { inicial: CasoExpediente }) {
           rumboActivo={activo ? rumboDeItem(activo) : null}
           onRumbo={girar}
           onListo={() => setElegido(null)}
+          reposoSupuesto={(i) => i.tipo === "final" && reposoSupuesto(expediente, i.vehiculo)}
+          onReposoSupuesto={(i, v) => {
+            if (i.tipo !== "final") return;
+            setHistorial((h) => [...h, expediente]);
+            cambiarExpediente(conReposoSupuesto(expediente, i.vehiculo, v));
+          }}
           nombreItem={nombreItem}
           colorItem={colorItem}
           medida={medida}
@@ -667,6 +683,9 @@ export function RecorridoCaso({ inicial }: { inicial: CasoExpediente }) {
     if (actual === 3)
       return (
         <div className="flex flex-col gap-5">
+          {r?.hipotesis ? (
+            <ElegirHipotesis r={r} elegida={hipotesis} onElegir={setHipotesis} />
+          ) : null}
           <PanelReconstruccion
             rec={rec}
             ver3d={vista === "3d"}

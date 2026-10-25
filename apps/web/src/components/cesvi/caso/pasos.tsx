@@ -490,6 +490,8 @@ export function PasoLugar({
   colorItem,
   medida,
   onUsarMedida,
+  reposoSupuesto,
+  onReposoSupuesto,
 }: {
   expediente: Expediente;
   escena: EscenaNarrada;
@@ -506,6 +508,9 @@ export function PasoLugar({
   /** Lo último que se midió en «Medir» (m). */
   medida: number | null;
   onUsarMedida: (destino: "restos" | { vehiculo: string }) => void;
+  /** ¿Este reposo lo supone el perito (el reporte no lo da)? ADR 0091. */
+  reposoSupuesto?: (i: ItemLugar) => boolean;
+  onReposoSupuesto?: (i: ItemLugar, supuesto: boolean) => void;
 }) {
   const [verOpcional, setVerOpcional] = useState(false);
   const esActivo = (i: ItemLugar) => activo !== null && claveItem(activo) === claveItem(i);
@@ -596,6 +601,20 @@ export function PasoLugar({
               </button>
             ) : null}
           </div>
+          {hecho && i.tipo === "final" && onReposoSupuesto ? (
+            <label className="t-nota flex items-start gap-2">
+              <input
+                type="checkbox"
+                checked={reposoSupuesto?.(i) ?? false}
+                onChange={(e) => onReposoSupuesto(i, e.target.checked)}
+                data-testid="reposo-supuesto"
+              />
+              <span>
+                Es un supuesto: el reporte no da dónde quedó. En la reconstrucción pesa menos que lo
+                medido (la deformación, las posiciones que sí da el reporte).
+              </span>
+            </label>
+          ) : null}
         </li>
       );
     return (

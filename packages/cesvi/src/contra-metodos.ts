@@ -5,8 +5,9 @@
  * los métodos no tienen que coincidir. Nada se ajusta para que cuadre: si el solver además no
  * alcanza la deformación medida (`dano_no_alcanzado`), se avisa con sus números.
  */
+import { reconstruct, reconstructionToDict } from "@croquis/solver-ts";
 import type { Expediente } from "./corpus";
-import type { Reconstruccion } from "./reconstruccion";
+import { especReconstruida, type Reconstruccion } from "./reconstruccion";
 
 type Id = Expediente["vehiculos"][number]["id"];
 type Json = Record<string, unknown>;
@@ -49,7 +50,18 @@ function alSalirDelImpacto(resultado: Json, sid: string): number | null {
   return i < 0 ? null : Math.hypot(tr.vx[i]!, tr.vy[i]!) * KMH;
 }
 
-export function reconstruccionContraCesvi(e: Expediente, r: Reconstruccion): ContraMetodosCesvi {
+/**
+ * `ajustada` es la reconstrucción con las velocidades que ajustó la inversión (la del 3D); sin ella,
+ * se calcula. Las trayectorias de `r.resultado` van con las velocidades de partida de la escena.
+ */
+export function reconstruccionContraCesvi(
+  e: Expediente,
+  r: Reconstruccion,
+  ajustada?: Json,
+): ContraMetodosCesvi {
+  let conAjuste = ajustada;
+  const trayectorias = () =>
+    (conAjuste ??= reconstructionToDict(reconstruct(especReconstruida(r))));
   const sid = (id: Id) => Object.entries(r.ids).find(([, x]) => x === id)?.[0];
   const previa = (id: Id) => r.velocidades.find((v) => v.vehiculo === id)?.previa?.mejor ?? null;
   const parametros = (r.resultado.parametros ?? {}) as Record<string, { valor?: number }>;
@@ -81,7 +93,7 @@ export function reconstruccionContraCesvi(e: Expediente, r: Reconstruccion): Con
         cesviQue: `velocidad de ${v} al salir del impacto`,
         cesviKmh: res.valor,
         croquisQue: `velocidad de ${v} al salir del impacto`,
-        croquisKmh: s ? alSalirDelImpacto(r.resultado, s) : null,
+        croquisKmh: s ? alSalirDelImpacto(trayectorias(), s) : null,
         diferenciaKmh: null,
         diferenciaPct: null,
         porQue: `CESVI hace que los vehículos se deslicen juntos${D !== undefined ? ` ${D} m` : ""}${a !== undefined ? ` con a = ${a}` : ""} (llantas que no ruedan); en Croquis, después del golpe las llantas ruedan${arrastre !== undefined ? ` con un arrastre de ${arrastre} de la fricción` : ""} y cada vehículo sigue su propia trayectoria, así que la misma distancia pide otra velocidad.`,

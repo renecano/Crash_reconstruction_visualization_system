@@ -350,7 +350,10 @@ export function conPosicion(
     fase: Fase;
     punto: { lat: number; lon: number };
     rumbo: number;
-    /** «supuesto»: una pose que propone Croquis y el perito todavía no acepta (se ve como fantasma). */
+    /**
+     * «supuesto»: en una pose de impacto, la que propone Croquis y el perito todavía no acepta (se
+     * ve como fantasma); en una final, un reposo que el reporte no da y el perito supone (ADR 0091).
+     */
     fuente?: "perito" | "supuesto";
   },
 ): Expediente {
@@ -362,14 +365,51 @@ export function conPosicion(
   }
   const v = versiones[i]!;
   const rumbo = ((p.rumbo % 360) + 360) % 360;
+  const previa = (v.posiciones ?? []).find((x) => x.vehiculo === p.vehiculo && x.fase === p.fase);
+  // Mover un reposo supuesto no lo vuelve dato: sigue siendo supuesto hasta que el perito lo diga.
+  const fuente =
+    p.fuente ?? (p.fase === "final" && previa?.fuente === "supuesto" ? "supuesto" : "perito");
   versiones[i] = {
     ...v,
     posiciones: [
       ...(v.posiciones ?? []).filter((x) => !(x.vehiculo === p.vehiculo && x.fase === p.fase)),
-      { vehiculo: p.vehiculo, fase: p.fase, punto: p.punto, rumbo, fuente: p.fuente ?? "perito" },
+      { vehiculo: p.vehiculo, fase: p.fase, punto: p.punto, rumbo, fuente },
     ],
   };
   return { ...e, versiones };
+}
+
+/**
+ * Marca (o desmarca) el reposo de un vehículo como supuesto: el reporte no lo da y el perito lo
+ * supone. En la inversión pesa menos que lo medido (ADR 0091).
+ */
+export function conReposoSupuesto(e: Expediente, vehiculo: Id, supuesto: boolean): Expediente {
+  return {
+    ...e,
+    versiones: (e.versiones ?? []).map((v) =>
+      v.tipo !== "evidencia"
+        ? v
+        : {
+            ...v,
+            posiciones: (v.posiciones ?? []).map((p) =>
+              p.vehiculo === vehiculo && p.fase === "final"
+                ? { ...p, fuente: supuesto ? "supuesto" : "perito" }
+                : p,
+            ),
+          },
+    ),
+  };
+}
+
+/** ¿El reposo de este vehículo está marcado como supuesto? */
+export function reposoSupuesto(e: Expediente, vehiculo: Id): boolean {
+  return (e.versiones ?? []).some(
+    (v) =>
+      v.tipo === "evidencia" &&
+      (v.posiciones ?? []).some(
+        (p) => p.vehiculo === vehiculo && p.fase === "final" && p.fuente === "supuesto",
+      ),
+  );
 }
 
 /** La masa que da el perito (kg). */
