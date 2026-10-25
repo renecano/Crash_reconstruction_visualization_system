@@ -1,0 +1,226 @@
+{
+  "name": "cesvi_completitud",
+  "generated_at": "2026-10-25T01:33:30Z",
+  "git_commit": "8ab9271",
+  "descripcion": "Qué tan completos vienen los 671 reportes de C0 para una reconstrucción física, con la extracción que ya existe (sin API). Criterios y puntaje en el encabezado de eval/cesvi_completitud.mts.",
+  "fuentes": {
+    "expedientes_c0": 671,
+    "lecturas_r4_v2": 664,
+    "reportes_con_fichas_de_calculo": 39,
+    "textos_crudos": 671
+  },
+  "definicion_completo": "Masa y reposo medido de todos los vehículos, punto de impacto, ángulo o PDOF con su valor, perfil C1–Cn con L de al menos un vehículo y fricción con su valor.",
+  "reportes": 671,
+  "completos": 0,
+  "por_criterio": {
+    "masa_de_todos": 19,
+    "reposo_de_todos": 20,
+    "punto_impacto": 159,
+    "angulo": 47,
+    "perfil": 5,
+    "rigidez": 10,
+    "friccion": 25,
+    "velocidades": 63
+  },
+  "distribucion_puntaje": {
+    "0": 430,
+    "1": 184,
+    "2": 25,
+    "3": 16,
+    "4": 12,
+    "5": 2,
+    "6": 2
+  },
+  "top10": [
+    {
+      "id": "cesvi-31bfdf3ac3",
+      "vehiculos": 1,
+      "puntaje": 6,
+      "completo": false,
+      "tiene": [
+        "masa de 1 de 1 vehículos",
+        "reposo medido de 1 de 1 vehículos",
+        "ángulo de impacto o PDOF",
+        "perfil de deformación C1–Cn con L",
+        "rigidez A y B",
+        "velocidades calculadas por CESVI"
+      ],
+      "falta": [
+        "punto de impacto",
+        "fricción con su valor"
+      ]
+    },
+    {
+      "id": "cesvi-4dcc3ceaf6",
+      "vehiculos": 2,
+      "puntaje": 6,
+      "completo": false,
+      "tiene": [
+        "masa de 1 de 2 vehículos",
+        "reposo medido de 1 de 2 vehículos",
+        "punto de impacto",
+        "perfil de deformación C1–Cn con L",
+        "rigidez A y B",
+        "fricción con su valor",
+        "velocidades calculadas por CESVI"
+      ],
+      "falta": [
+        "masa de 1 de 2 vehículos (incompleto)",
+        "reposo medido de 1 de 2 vehículos (incompleto)",
+        "ángulo de impacto o PDOF"
+      ]
+    },
+    {
+      "id": "cesvi-abd8e947a8",
+      "vehiculos": 2,
+      "puntaje": 5.5,
+      "completo": false,
+      "tiene": [
+        "masa de 2 de 2 vehículos",
+        "reposo medido de 1 de 2 vehículos",
+        "punto de impacto",
+        "rigidez A y B",
+        "fricción con su valor",
+        "velocidades calculadas por CESVI"
+      ],
+      "falta": [
+        "reposo medido de 1 de 2 vehículos (incompleto)",
+        "ángulo de impacto o PDOF",
+        "perfil de deformación C1–Cn con L"
+      ]
+    },
+    {
+      "id": "cesvi-1bc2829bb6",
+      "vehiculos": 1,
+      "puntaje": 5,
+      "completo": false,
+      "tiene": [
+        "reposo medido de 1 de 1 vehículos",
+        "punto de impacto",
+        "ángulo de impacto o PDOF",
+        "fricción con su valor",
+        "velocidades calculadas por CESVI"
+      ],
+      "falta": [
+        "masa de 0 de 1 vehículos",
+        "perfil de deformación C1–Cn con L",
+        "rigidez A y B"
+      ]
+    },
+    {
+      "id": "cesvi-1133bc17f5",
+      "vehiculos": 2,
+      "puntaje": 4.5,
+      "completo": false,
+      "tiene": [
+        "masa de 1 de 2 vehículos",
+        "ángulo de impacto o PDOF",
+        "perfil de deformación C1–Cn con L",
+        "rigidez A y B",
+        "velocidades calculadas por CESVI"
+      ],
+      "falta": [
+        "masa de 1 de 2 vehículos (incompleto)",
+        "reposo medido de 0 de 2 vehículos",
+        "punto de impacto",
+        "fricción con su valor"
+      ]
+    },
+    {
+      "id": "cesvi-7214733ff2",
+      "vehiculos": 2,
+      "puntaje": 4.5,
+      "completo": false,
+      "tiene": [
+        "masa de 1 de 2 vehículos",
+        "ángulo de impacto o PDOF",
+        "rigidez A y B",
+        "fricción con su valor",
+        "velocidades calculadas por CESVI"
+      ],
+      "falta": [
+        "masa de 1 de 2 vehículos (incompleto)",
+        "reposo medido de 0 de 2 vehículos",
+        "punto de impacto",
+        "perfil de deformación C1–Cn con L"
+      ]
+    },
+    {
+      "id": "cesvi-a8b1cf4c43",
+      "vehiculos": 4,
+      "puntaje": 4.5,
+      "completo": false,
+      "tiene": [
+        "masa de 3 de 4 vehículos",
+        "reposo medido de 3 de 4 vehículos",
+        "punto de impacto",
+        "fricción con su valor",
+        "velocidades calculadas por CESVI"
+      ],
+      "falta": [
+        "masa de 3 de 4 vehículos (incompleto)",
+        "reposo medido de 3 de 4 vehículos (incompleto)",
+        "ángulo de impacto o PDOF",
+        "perfil de deformación C1–Cn con L",
+        "rigidez A y B"
+      ]
+    },
+    {
+      "id": "cesvi-380a1f4ce4",
+      "vehiculos": 3,
+      "puntaje": 4.33,
+      "completo": false,
+      "tiene": [
+        "masa de 3 de 3 vehículos",
+        "reposo medido de 1 de 3 vehículos",
+        "ángulo de impacto o PDOF",
+        "fricción con su valor",
+        "velocidades calculadas por CESVI"
+      ],
+      "falta": [
+        "reposo medido de 1 de 3 vehículos (incompleto)",
+        "punto de impacto",
+        "perfil de deformación C1–Cn con L",
+        "rigidez A y B"
+      ]
+    },
+    {
+      "id": "cesvi-3a460e69de",
+      "vehiculos": 3,
+      "puntaje": 4.33,
+      "completo": false,
+      "tiene": [
+        "masa de 3 de 3 vehículos",
+        "reposo medido de 1 de 3 vehículos",
+        "ángulo de impacto o PDOF",
+        "fricción con su valor",
+        "velocidades calculadas por CESVI"
+      ],
+      "falta": [
+        "reposo medido de 1 de 3 vehículos (incompleto)",
+        "punto de impacto",
+        "perfil de deformación C1–Cn con L",
+        "rigidez A y B"
+      ]
+    },
+    {
+      "id": "cesvi-7968a2fe85",
+      "vehiculos": 3,
+      "puntaje": 4.33,
+      "completo": false,
+      "tiene": [
+        "masa de 3 de 3 vehículos",
+        "reposo medido de 1 de 3 vehículos",
+        "ángulo de impacto o PDOF",
+        "fricción con su valor",
+        "velocidades calculadas por CESVI"
+      ],
+      "falta": [
+        "reposo medido de 1 de 3 vehículos (incompleto)",
+        "punto de impacto",
+        "perfil de deformación C1–Cn con L",
+        "rigidez A y B"
+      ]
+    }
+  ]
+}
