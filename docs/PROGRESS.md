@@ -390,6 +390,33 @@ Reglas de trabajo: `CLAUDE.md`. Especificación: `PLAN.md`.
         - al soltar V1 y V2 encimados sale «V1 y V2 quedaron encimados en su posición final (3.75 m)», y «Separarlos» lo quita;
         - el 3D lleva la leyenda de CESVI, las calles de OpenStreetMap y los modelos (Lightbody), en calidad automática media;
         - en la vista expandida, la caja del paso ya no tapa el texto.
+    - **Portada v3 (2026-10-25, rama `feat/portada-v3`, ADR 0092):** la referencia es `docs/cesvi/rediseno/Portada-v3.html`, copia de la que dejó René en `docs/cesvi/entrante/`.
+      - **Qué es:**
+        - `components/portada-v3/`, con la estructura, los textos, las tipografías, los colores, las animaciones y los huevos de pascua de la referencia;
+        - reemplaza a la portada de CESVI en `/` y en `/en`;
+        - `/publico` sigue con la portada de antes, enlazada desde el pie.
+      - **Fondo:** la propia reconstrucción de Croquis, de noche, en calidad alta, con los vehículos de R10 y la cámara del daño (`demo/portada/grabar-tomas.mjs`):
+        - cuatro tomas de 7.2 s: nocturno_lluvia, la carambola, poste y AXA con «cuadra con el daño medido»;
+        - en MP4 H.264, de escritorio y de celular, más un póster por toma (`apps/web/public/portada/tomas.json`);
+        - pesos: escritorio 430, 198, 235 y 354 KB; celular 164, 77, 86 y 111 KB;
+        - la carambola y AXA son de día en sus escenas: para la toma solo cambia la iluminación;
+        - se grabaron una a una, con el exportador de video del visor y ffmpeg;
+        - el pie dice «Todo lo que ves es una reconstrucción calculada por Croquis».
+      - **Botones:** los tres «Entrar a Croquis» llevan a /cesvi y «Cómo funciona» baja a su sección. No hay enlace a los 205 reportes.
+      - **Cifras:**
+        - salen al compilar de `eval/results` y de AXA; si falta una, el build falla;
+        - el «63.15 → 63.51» es una ilustración de un dígito transpuesto, marcada en el código (`capturaMalCopiada`).
+      - **Textos ajustados al mínimo** para que sean ciertos hoy:
+        - «Croquis lo ubica en el lugar real» pasa a «Lo ubicas en el lugar real»;
+        - la narración de ejemplo es la de AXA tal cual, y se marcan modalidad, vía y ubicación: la lectura no extrae el sentido de circulación;
+        - «no lo rellena por su cuenta» pasa a «lo que decidas no dar entra como supuesto y queda marcado así».
+      - **Tipografías:**
+        - Anybody, Schibsted Grotesk, Martian Mono y Caveat, todas OFL, con `next/font`;
+        - `CLAUDE.md` se actualizó con tu aclaración, y las fuentes están registradas en `assets/ASSETS.md`.
+      - **Movimiento reducido:** sin video, solo el póster. **En celular:** el video de 640 y la primera toma antes que las demás.
+      - **Pruebas:**
+        - `components/portada-v3/textos.test.ts`: las cifras, la ilustración, la narración y las tomas;
+        - la e2e `@flujo` de `e2e/home.spec.ts`: carga sin errores de consola, los tres botones a /cesvi, inglés, `/publico` y el póster con movimiento reducido.
     - **Resumen para René (AXA, 2026-10-25): el colaborador ya puede correr el botón.**
       - **Fusionado:**
         - #130: la regla «lo medido pesa más que lo supuesto», las dos hipótesis en el paso 4 y la masa de V1 de su ficha técnica;
@@ -437,7 +464,7 @@ Reglas de trabajo: `CLAUDE.md`. Especificación: `PLAN.md`.
       - faltan las pruebas, el port TS y la paridad;
       - al retomarlo, su contrato sube a 2.2.0, porque el 2.1.0 ya es el del perfil de aplastamiento.
     - **Siguiente paso concreto:**
-      - la portada v3 (pedida por René el 2026-10-24, después de AXA y antes de R12a): `docs/cesvi/entrante/portada-v3-referencia.html`;
+      - fusionar la portada v3, verificarla en producción (capturas de escritorio y celular en `docs/cesvi/`) y dejarla en «Resumen para René»;
       - luego, R12a;
       - cuando aparezca la rama `resultados/computadora-demo-<fecha>`, integrar los videos de R11 y E6 en alta y ultra («Bloqueado»).
     1. **V2-1, marco:**
@@ -1441,6 +1468,7 @@ Lo que se pospone por el trabajo con CESVI no se borra: queda aquí para despué
   - en AXA, «cuadra con el reposo supuesto» deja a V2, que va detrás, casi a la misma velocidad que V1 (41.9 y 41.82 km/h);
   - en un alcance, el que golpea tiene que ir más rápido; falta esa restricción en la inversión.
 - **La elección de hipótesis** (ADR 0091) no se guarda con el caso: se pierde al recargar la página.
+- **Las tomas de la portada v3** (ADR 0092) se sustituyen por los renders de Blender cuando llegue la rama `resultados/computadora-demo-<fecha>`.
 - **La hipótesis «cuadra con el daño medido» depende de la semilla** (ADR 0091):
   - la escena del video de AXA (semilla de `demo-axa`) da V2 a 71.96 km/h y su reposo supuesto cabe con la deformación;
   - la de la app da 62.77 km/h y dos hipótesis;

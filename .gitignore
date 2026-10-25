@@ -69,6 +69,7 @@ eval/e5/resultados_desarrollo.jsonl
 
 # Video demo (demo/video): lo generado se queda fuera de git; el MP4 final pesa más de 20 MB
 demo/video/salida/
+demo/portada/salida/
 demo/video/*.mp4
 demo/video/*.srt
 # Worker de pdf.js copiado de node_modules en cada build (scripts/pdfjs-worker.mjs)

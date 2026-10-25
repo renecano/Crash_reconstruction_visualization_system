@@ -1,0 +1,2100 @@
+/*
+ * La portada v3 (docs/cesvi/rediseno/Portada-v3.html), con alcance `.pv3`: la misma hoja de la
+ * referencia, con el cuerpo y la raíz llevados a `.pv3` (generada por un script de una sola vez
+ * desde la referencia; los cambios se hacen aquí).
+ */
+html:has(.pv3) {
+  background: #0c0d0e;
+}
+.pv3 {
+  min-height: 100vh;
+  position: relative;
+}
+.pv3 {
+  --asphalt: #0c0d0e; /* suelo */
+  --line: #2a2d31; /* filetes */
+  --chalk: #ece8df; /* texto principal */
+  --soft: #cfcac0; /* texto de lectura */
+  --dust: #9b978e; /* secundario */
+  --marker: #f2c230; /* amarillo de testigo pericial */
+  --impact: #ff5a1f; /* punto de impacto */
+  --f-display: var(--pv3-anybody), "Arial Narrow", "Helvetica Neue", Arial, sans-serif;
+  --f-body: var(--pv3-schibsted), "Helvetica Neue", Arial, sans-serif;
+  --f-mono: var(--pv3-martian), ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace;
+  --gutter: max(20px, env(safe-area-inset-left, 0px));
+  --gutter-r: max(20px, env(safe-area-inset-right, 0px));
+  color-scheme: dark;
+}
+.pv3 * {
+  box-sizing: border-box;
+}
+.pv3 {
+  background: var(--asphalt);
+  color: var(--chalk);
+  font: 400 16px/1.55 var(--f-body);
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+}
+.pv3 ::selection {
+  background: var(--marker);
+  color: var(--asphalt);
+}
+.pv3 a {
+  color: inherit;
+}
+.pv3 :focus-visible {
+  outline: 2px solid var(--marker);
+  outline-offset: 3px;
+  border-radius: 2px;
+}
+.pv3::before {
+  content: "";
+  position: fixed;
+  inset: 0 0 auto;
+  height: env(safe-area-inset-top, 0px);
+  z-index: 60;
+  background: var(--asphalt);
+}
+.pv3 h1,
+.pv3 h2,
+.pv3 h3 {
+  margin: 0;
+  font-weight: inherit;
+  text-wrap: balance;
+}
+.pv3 p {
+  margin: 0;
+}
+.pv3 #film {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  background: #050607;
+  overflow: hidden;
+  pointer-events: none;
+}
+.pv3 #film video {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  opacity: 0;
+  transition:
+    opacity 1.2s ease,
+    filter 1.2s ease,
+    transform 8s linear;
+  filter: contrast(1.06) saturate(0.85) brightness(0.9);
+  transform: scale(1.04);
+}
+.pv3 #film video.on {
+  opacity: 1;
+  transform: scale(1);
+}
+.pv3:not([data-sheet="hecho"]) #film video {
+  filter: contrast(1.04) saturate(0.65) brightness(0.68) blur(2px);
+}
+.pv3 #film::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(120% 90% at 50% 45%, rgba(0, 0, 0, 0) 40%, rgba(0, 0, 0, 0.6) 100%),
+    linear-gradient(90deg, rgba(8, 9, 10, 0.75) 0%, rgba(8, 9, 10, 0.3) 45%, rgba(8, 9, 10, 0) 70%);
+}
+.pv3 #grain {
+  position: fixed;
+  inset: -50%;
+  z-index: 1;
+  pointer-events: none;
+  opacity: 0.07;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/></filter><rect width='160' height='160' filter='url(%23n)'/></svg>");
+  animation: pv3-grain 1s steps(6) infinite;
+}
+@keyframes pv3-grain {
+  0% {
+    transform: translate(0, 0);
+  }
+  20% {
+    transform: translate(-3%, 2%);
+  }
+  40% {
+    transform: translate(2%, -3%);
+  }
+  60% {
+    transform: translate(-2%, -1%);
+  }
+  80% {
+    transform: translate(3%, 3%);
+  }
+  100% {
+    transform: translate(0, 0);
+  }
+}
+.pv3 #veil {
+  position: fixed;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  background: linear-gradient(
+    90deg,
+    rgba(10, 11, 12, 0.9) 0%,
+    rgba(10, 11, 12, 0.66) 50%,
+    rgba(10, 11, 12, 0.32) 100%
+  );
+  opacity: 0;
+  transition: opacity 1.1s ease;
+}
+.pv3:not([data-sheet="hecho"]) #veil {
+  opacity: 1;
+}
+.pv3 #heroShade {
+  position: fixed;
+  inset: auto 0 0 0;
+  height: 60vh;
+  z-index: 1;
+  pointer-events: none;
+  background: linear-gradient(0deg, rgba(10, 11, 12, 0.92), rgba(10, 11, 12, 0));
+  transition: opacity 1s;
+}
+.pv3:not([data-sheet="hecho"]) #heroShade {
+  opacity: 0;
+}
+.pv3 header {
+  position: fixed;
+  top: env(safe-area-inset-top, 0px);
+  left: 0;
+  right: 0;
+  z-index: 40;
+  padding-left: var(--gutter);
+  padding-right: var(--gutter-r);
+  padding-block: 14px;
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  transition:
+    background 0.4s,
+    border-color 0.4s;
+  border-bottom: 1px solid transparent;
+}
+.pv3 header.solid {
+  background: rgba(12, 13, 14, 0.82);
+  backdrop-filter: blur(12px);
+  border-bottom-color: var(--line);
+}
+.pv3 .brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  text-decoration: none;
+  flex: none;
+}
+.pv3 .brand svg {
+  width: 40px;
+  height: 40px;
+  flex: none;
+}
+.pv3 .wordmark {
+  font: 650 17px/1 var(--f-display);
+  font-variation-settings: "wdth" 132;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  padding-top: 1px;
+}
+.pv3 .brand small {
+  display: block;
+  font: 500 8.5px/1 var(--f-mono);
+  letter-spacing: 0.22em;
+  color: var(--dust);
+  margin-top: 5px;
+  text-transform: uppercase;
+}
+.pv3 nav {
+  margin-left: auto;
+  display: flex;
+  gap: 2px;
+}
+.pv3 nav a {
+  display: flex;
+  gap: 7px;
+  text-decoration: none;
+  padding: 10px 12px;
+  min-height: 44px;
+  align-items: center;
+  font: 500 13.5px/1 var(--f-body);
+  color: var(--dust);
+  position: relative;
+  transition: color 0.2s;
+}
+.pv3 nav a i {
+  font: 500 9.5px/1 var(--f-mono);
+  font-style: normal;
+  color: #6c6962;
+  letter-spacing: 0.06em;
+}
+.pv3 nav a:hover,
+.pv3 nav a[aria-current="true"] {
+  color: var(--chalk);
+}
+.pv3 nav a[aria-current="true"] i {
+  color: var(--marker);
+}
+.pv3 nav a::after {
+  content: "";
+  position: absolute;
+  left: 12px;
+  right: 12px;
+  bottom: 6px;
+  height: 1px;
+  background: var(--marker);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.35s ease;
+}
+.pv3 nav a[aria-current="true"]::after {
+  transform: scaleX(1);
+}
+.pv3 .cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 44px;
+  padding: 0 18px;
+  text-decoration: none;
+  font: 600 14px/1 var(--f-body);
+  color: var(--asphalt);
+  background: var(--chalk);
+  border-radius: 2px;
+  transition: background 0.2s;
+  flex: none;
+  white-space: nowrap;
+}
+.pv3 .cta svg {
+  width: 14px;
+  height: 14px;
+  transition: transform 0.25s;
+}
+.pv3 .cta:hover {
+  background: var(--marker);
+}
+.pv3 .cta:hover svg {
+  transform: translateX(3px);
+}
+.pv3 .cta.ghost {
+  background: transparent;
+  color: var(--chalk);
+  box-shadow: inset 0 0 0 1px rgba(236, 232, 223, 0.35);
+}
+.pv3 .cta.ghost:hover {
+  box-shadow: inset 0 0 0 1px var(--marker);
+  color: var(--marker);
+}
+.pv3 main {
+  position: relative;
+  z-index: 5;
+}
+.pv3 .sheet {
+  position: relative;
+  padding-left: var(--gutter);
+  padding-right: var(--gutter-r);
+}
+.pv3 .wrap {
+  max-width: 1360px;
+  margin: 0 auto;
+}
+.pv3 .h2 {
+  font-family: var(--f-display);
+  font-weight: 820;
+  font-variation-settings: "wdth" 78;
+  text-transform: uppercase;
+  font-size: clamp(38px, 5.4vw, 84px);
+  line-height: 0.92;
+  letter-spacing: -0.005em;
+  max-width: 14em;
+}
+.pv3 .h2 .lt {
+  font-weight: 250;
+  font-variation-settings: "wdth" 122;
+  color: var(--soft);
+}
+.pv3 .lede {
+  max-width: 36em;
+  font-size: clamp(16px, 1.3vw, 19px);
+  color: var(--soft);
+}
+.pv3 #hecho {
+  min-height: 100svh;
+  display: grid;
+  grid-template-rows: minmax(0, 1fr) auto;
+  gap: 40px;
+  padding-block: 112px 26px;
+}
+.pv3 .hero {
+  width: 100%;
+  align-self: center;
+  display: flex;
+  flex-direction: column;
+  gap: 30px;
+  padding-top: 3vh;
+  min-width: 0;
+}
+.pv3 .h-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 28px 48px;
+}
+.pv3 .h-row .lede {
+  flex: 1 1 420px;
+}
+.pv3 .h-foot {
+  width: 100%;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px 32px;
+  border-top: 1px solid rgba(236, 232, 223, 0.16);
+  padding-top: 18px;
+}
+.pv3 .eyebrow {
+  align-self: flex-start;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  font: 500 11px/1 var(--f-mono);
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--chalk);
+}
+.pv3 .eyebrow .dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--impact);
+  box-shadow: 0 0 0 4px rgba(255, 90, 31, 0.18);
+}
+.pv3 .h1 {
+  font-family: var(--f-display);
+  text-transform: uppercase;
+  line-height: 0.86;
+  letter-spacing: -0.005em;
+  font-size: clamp(46px, 7.4vw, 134px);
+}
+.pv3 .h1 .l1 {
+  display: block;
+  font-weight: 860;
+  font-variation-settings: "wdth" 70;
+  white-space: nowrap;
+}
+.pv3.ready .h1 .l1 {
+  animation: pv3-squeeze 1.25s 0.25s cubic-bezier(0.2, 0.9, 0.25, 1) both;
+}
+@keyframes pv3-squeeze {
+  0% {
+    font-variation-settings: "wdth" 118;
+    letter-spacing: 0.02em;
+  }
+  55% {
+    font-variation-settings: "wdth" 62;
+  }
+  100% {
+    font-variation-settings: "wdth" 70;
+  }
+}
+.pv3 .h1 .l2 {
+  display: block;
+  font-weight: 240;
+  font-variation-settings: "wdth" 132;
+  font-size: 0.74em;
+  letter-spacing: 0.01em;
+  margin-top: 0.12em;
+}
+.pv3 .h1 .l2 em {
+  font-style: normal;
+  color: var(--impact);
+  font-weight: 520;
+}
+.pv3 .actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+.pv3 .proof {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 26px;
+  font: 500 11px/1.4 var(--f-mono);
+  letter-spacing: 0.04em;
+  color: var(--dust);
+}
+.pv3 .proof span {
+  display: inline-flex;
+  gap: 8px;
+  align-items: center;
+}
+.pv3 .proof span::before {
+  content: "";
+  width: 9px;
+  height: 9px;
+  border: 1px solid var(--marker);
+  transform: rotate(45deg) scale(0.8);
+}
+.pv3 .scroll {
+  display: inline-flex;
+  align-items: center;
+  gap: 14px;
+  min-height: 44px;
+  font: 500 10px/1 var(--f-mono);
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--dust);
+  text-decoration: none;
+  transition: color 0.2s;
+}
+.pv3 .scroll:hover {
+  color: var(--chalk);
+}
+.pv3 .scroll i {
+  display: block;
+  width: 56px;
+  height: 1px;
+  background: linear-gradient(90deg, var(--marker), transparent);
+  animation: pv3-drop 2.4s ease-in-out infinite;
+  transform-origin: left;
+}
+@keyframes pv3-drop {
+  0% {
+    transform: scaleX(0);
+  }
+  50% {
+    transform: scaleX(1);
+  }
+  100% {
+    transform: scaleX(1);
+    opacity: 0;
+  }
+}
+.pv3 #problema {
+  padding-block: 22vh 18vh;
+}
+.pv3 #problema .wrap {
+  display: grid;
+  gap: 60px;
+}
+.pv3 .frags {
+  position: relative;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  column-gap: 44px;
+  max-width: 1240px;
+  padding-top: 2px;
+}
+.pv3 .frags::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  height: 1px;
+  background: var(--marker);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 1.3s 0.45s cubic-bezier(0.6, 0, 0.2, 1);
+}
+.pv3 .frags.united::after {
+  transform: scaleX(1);
+}
+.pv3 .frag {
+  position: relative;
+  padding-top: 30px;
+  border-top: 1px solid rgba(236, 232, 223, 0.24);
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  transition: transform 1.1s cubic-bezier(0.2, 0.8, 0.2, 1);
+  min-width: 0;
+}
+.pv3 .frag:nth-child(1) {
+  transform: translate(-10px, 34px);
+}
+.pv3 .frag:nth-child(2) {
+  transform: translate(12px, -22px);
+}
+.pv3 .frag:nth-child(3) {
+  transform: translate(-6px, 52px);
+}
+.pv3 .frags.united .frag {
+  transform: none;
+}
+.pv3 .frag::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: -5px;
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  border: 1px solid var(--chalk);
+  background: var(--asphalt);
+  transition:
+    background 0.5s 0.9s,
+    border-color 0.5s 0.9s;
+}
+.pv3 .frags.united .frag::before {
+  background: var(--marker);
+  border-color: var(--marker);
+}
+.pv3 .frag .tool {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  font: 500 10px/1 var(--f-mono);
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--dust);
+}
+.pv3 .frag .tool b {
+  font-weight: 600;
+  color: var(--chalk);
+}
+.pv3 .frag h3 {
+  font: 800 clamp(24px, 2.3vw, 32px)/1 var(--f-display);
+  font-variation-settings: "wdth" 84;
+  text-transform: uppercase;
+}
+.pv3 .frag p {
+  font-size: 16px;
+  color: var(--soft);
+  max-width: 26em;
+}
+.pv3 .frag .fault {
+  margin-top: 6px;
+  align-self: flex-start;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  font: 500 11.5px/1 var(--f-mono);
+  color: var(--impact);
+  padding: 9px 0 0;
+  border-top: 1px dashed rgba(255, 90, 31, 0.45);
+}
+.pv3 .frag .fault s {
+  color: var(--dust);
+  text-decoration-color: var(--impact);
+}
+.pv3 .joint {
+  font-size: clamp(20px, 2.1vw, 28px);
+  color: var(--soft);
+  max-width: 30em;
+}
+.pv3 .joint strong {
+  color: var(--marker);
+  font-weight: 600;
+}
+.pv3 #prueba {
+  padding-block: 16vh 14vh;
+}
+.pv3 #prueba .wrap {
+  display: grid;
+  grid-template-columns: minmax(0, 7fr) minmax(0, 5fr);
+  gap: 64px;
+  align-items: end;
+}
+.pv3 .col {
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+  min-width: 0;
+}
+.pv3 .case {
+  font: 500 12px/1.6 var(--f-mono);
+  color: var(--dust);
+  letter-spacing: 0.02em;
+}
+.pv3 .case b {
+  color: var(--chalk);
+  font-weight: 500;
+}
+.pv3 .tablebox {
+  overflow-x: auto;
+  border-top: 1px solid rgba(236, 232, 223, 0.3);
+  border-bottom: 1px solid rgba(236, 232, 223, 0.3);
+}
+.pv3 table {
+  width: 100%;
+  border-collapse: collapse;
+  min-width: 520px;
+  font-variant-numeric: tabular-nums;
+}
+.pv3 th,
+.pv3 td {
+  padding: 16px 14px;
+  text-align: right;
+  border-top: 1px solid var(--line);
+  white-space: nowrap;
+}
+.pv3 th:first-child,
+.pv3 td:first-child {
+  padding-left: 0;
+  text-align: left;
+}
+.pv3 th:last-child,
+.pv3 td:last-child {
+  padding-right: 0;
+}
+.pv3 thead th {
+  border-top: 0;
+  font: 500 9.5px/1 var(--f-mono);
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--dust);
+}
+.pv3 tbody th {
+  font: 600 15px/1.2 var(--f-body);
+  color: var(--chalk);
+}
+.pv3 td {
+  font: 500 15px/1 var(--f-mono);
+  color: var(--soft);
+}
+.pv3 td.c {
+  color: var(--chalk);
+  font-weight: 600;
+}
+.pv3 td.d {
+  color: var(--marker);
+}
+.pv3 td.d.ok {
+  color: var(--chalk);
+}
+.pv3 td .chip {
+  display: inline-block;
+  font: 600 9.5px/1 var(--f-mono);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  padding: 5px 7px;
+  border: 1px solid currentColor;
+}
+.pv3 .foot {
+  font-size: 13.5px;
+  color: var(--dust);
+  max-width: 46em;
+}
+.pv3 .figs {
+  display: grid;
+  gap: 30px;
+}
+.pv3 .fig {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: 20px;
+  align-items: baseline;
+  border-top: 1px solid var(--line);
+  padding-top: 18px;
+}
+.pv3 .fig .n {
+  font: 300 clamp(48px, 5vw, 76px)/0.9 var(--f-mono);
+  font-variation-settings: "wdth" 75;
+  letter-spacing: -0.04em;
+  color: var(--chalk);
+  font-variant-numeric: tabular-nums;
+}
+.pv3 .fig p {
+  font-size: 14.5px;
+  color: var(--dust);
+  max-width: 20em;
+}
+.pv3 .versus {
+  border-top: 1px solid var(--line);
+  padding-top: 20px;
+  display: grid;
+  gap: 12px;
+}
+.pv3 .versus .row {
+  display: grid;
+  grid-template-columns: 110px minmax(0, 1fr) 64px;
+  align-items: center;
+  gap: 14px;
+  font: 500 12px/1 var(--f-mono);
+}
+.pv3 .versus .row span {
+  color: var(--dust);
+}
+.pv3 .versus .track {
+  height: 12px;
+  background: repeating-linear-gradient(90deg, #2a2d31 0 1px, transparent 1px 10%);
+  border-bottom: 1px solid var(--line);
+}
+.pv3 .versus .fill {
+  height: 100%;
+  background: var(--marker);
+  width: calc(var(--v) * 1%);
+}
+.pv3 .versus .row.base .fill {
+  background: #6b6860;
+}
+.pv3 .versus b {
+  font-weight: 600;
+  text-align: right;
+  color: var(--chalk);
+}
+.pv3 .textlink {
+  display: inline-flex;
+  gap: 10px;
+  align-items: center;
+  font: 600 15px/1.2 var(--f-body);
+  text-decoration: none;
+  color: var(--marker);
+  align-self: flex-start;
+}
+.pv3 .textlink svg {
+  transition: transform 0.3s;
+}
+.pv3 .textlink:hover {
+  color: var(--chalk);
+}
+.pv3 .textlink:hover svg {
+  transform: translateX(4px);
+}
+.pv3 #metodo {
+  padding-block: 16vh 14vh;
+}
+.pv3 #metodo .wrap {
+  display: grid;
+  gap: 64px;
+}
+.pv3 .steps {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  border-top: 1px solid rgba(236, 232, 223, 0.3);
+}
+.pv3 .step {
+  padding: 28px 28px 8px 0;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  min-width: 0;
+}
+.pv3 .step + .step {
+  padding-left: 28px;
+  border-left: 1px solid var(--line);
+}
+.pv3 .step .k {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font: 500 10px/1 var(--f-mono);
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--dust);
+}
+.pv3 .step .k b {
+  display: grid;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  border: 1px solid var(--marker);
+  color: var(--marker);
+  font-weight: 600;
+  letter-spacing: 0;
+  font-size: 11px;
+}
+.pv3 .step h3 {
+  font: 800 30px/1 var(--f-display);
+  font-variation-settings: "wdth" 86;
+  text-transform: uppercase;
+}
+.pv3 .step > p {
+  color: var(--soft);
+  font-size: 15.5px;
+}
+.pv3 .specimen {
+  position: relative;
+  margin-top: 8px;
+  padding: 4px 0 4px 18px;
+}
+.pv3 .specimen::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 2px;
+  background: var(--marker);
+  transform-origin: top;
+}
+.pv3 .narr {
+  font: 400 15.5px/1.85 var(--f-body);
+  color: var(--chalk);
+}
+.pv3 .narr mark {
+  background: none;
+  color: var(--chalk);
+  transition:
+    color 0.5s ease,
+    text-shadow 0.5s ease;
+}
+.pv3 .narr mark.lit {
+  color: var(--marker);
+  text-shadow: 0 0 18px rgba(242, 194, 48, 0.35);
+}
+.pv3 .found {
+  margin-top: 12px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px 16px;
+  font: 500 9.5px/1 var(--f-mono);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: #5d5b56;
+}
+.pv3 .found span {
+  transition: color 0.4s ease;
+}
+.pv3 .found span.lit {
+  color: var(--marker);
+}
+.pv3 .found::before {
+  content: attr(data-detectado);
+  color: var(--dust);
+}
+.pv3 .coord {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 8px 16px;
+  margin: 0;
+  font: 500 12px/1.4 var(--f-mono);
+}
+.pv3 .coord dt {
+  color: var(--dust);
+}
+.pv3 .coord dd {
+  margin: 0;
+  color: var(--chalk);
+}
+.pv3 .coord dd.hl {
+  color: var(--impact);
+}
+.pv3 .dict {
+  display: grid;
+  gap: 10px;
+}
+.pv3 .dict .lab {
+  font: 500 9.5px/1 var(--f-mono);
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--dust);
+}
+.pv3 .dict .v {
+  font: 500 34px/1 var(--f-mono);
+  letter-spacing: -0.03em;
+  font-variant-numeric: tabular-nums;
+}
+.pv3 .dict .v small {
+  font-size: 13px;
+  margin-left: 6px;
+  color: var(--soft);
+}
+.pv3 .dict .src {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px 14px;
+  font: 500 10.5px/1.4 var(--f-mono);
+  color: var(--soft);
+}
+.pv3 .dict .src span::before {
+  content: "— ";
+  color: var(--marker);
+}
+.pv3 .dict .sign {
+  margin-top: 8px;
+  display: flex;
+  align-items: flex-end;
+  gap: 12px;
+  font: 500 10px/1.3 var(--f-mono);
+  color: var(--dust);
+}
+.pv3 .dict .sign i {
+  flex: 1;
+  height: 1px;
+  background: rgba(236, 232, 223, 0.4);
+}
+.pv3 .tenets {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 44px;
+}
+.pv3 .tenet {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  min-width: 0;
+}
+.pv3 .tenet h3 {
+  font: 800 clamp(26px, 2.6vw, 38px)/0.95 var(--f-display);
+  font-variation-settings: "wdth" 80;
+  text-transform: uppercase;
+}
+.pv3 .tenet p {
+  color: var(--soft);
+  font-size: 15.5px;
+  max-width: 28em;
+}
+.pv3 .tenet .tags {
+  font: 500 10px/1.5 var(--f-mono);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--marker);
+}
+.pv3 #preguntas {
+  padding-block: 16vh 10vh;
+}
+.pv3 #preguntas .wrap {
+  display: grid;
+  grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
+  gap: 56px;
+}
+.pv3 .faq {
+  border-top: 1px solid rgba(236, 232, 223, 0.3);
+}
+.pv3 details {
+  border-bottom: 1px solid var(--line);
+}
+.pv3 summary {
+  list-style: none;
+  cursor: pointer;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 24px;
+  gap: 12px;
+  align-items: baseline;
+  padding: 22px 0;
+  font: 600 clamp(17px, 1.5vw, 21px)/1.3 var(--f-body);
+}
+.pv3 summary::-webkit-details-marker {
+  display: none;
+}
+.pv3 summary i {
+  font: 500 10px/1 var(--f-mono);
+  font-style: normal;
+  color: var(--dust);
+  letter-spacing: 0.08em;
+}
+.pv3 summary::after {
+  content: "+";
+  font: 300 22px/1 var(--f-mono);
+  color: var(--marker);
+  transition: transform 0.3s;
+  justify-self: end;
+}
+.pv3 details[open] summary::after {
+  transform: rotate(45deg);
+}
+.pv3 details p {
+  padding: 0 36px 24px 0;
+  color: var(--soft);
+  max-width: 44em;
+}
+.pv3 summary:hover {
+  color: var(--marker);
+}
+.pv3 #cierre {
+  padding-block: 12vh 40px;
+}
+.pv3 .close {
+  display: grid;
+  gap: 40px;
+  border-top: 1px solid var(--line);
+  padding-top: 56px;
+}
+.pv3 .close .h2 {
+  max-width: none;
+}
+.pv3 .close-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 28px;
+  align-items: flex-end;
+  justify-content: space-between;
+}
+.pv3 .credits {
+  font: 500 10px/1.6 var(--f-mono);
+  color: #77746d;
+  letter-spacing: 0.03em;
+  max-width: 64em;
+}
+.pv3 #wipe {
+  position: fixed;
+  inset: 0;
+  z-index: 80;
+  pointer-events: none;
+  display: grid;
+}
+.pv3 #wipe .bars {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  grid-template-rows: repeat(7, 1fr);
+}
+.pv3 #wipe .bars i {
+  display: block;
+  background: var(--asphalt);
+  transform: scaleX(0);
+  transform-origin: left;
+  border-bottom: 1px solid #17191b;
+}
+.pv3 #wipe .mid {
+  position: relative;
+  place-self: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 22px;
+  opacity: 0;
+}
+.pv3 #wipe .mid svg {
+  width: 92px;
+  height: 92px;
+}
+.pv3 #wipe .mid p {
+  font: 800 clamp(28px, 4vw, 52px)/1 var(--f-display);
+  font-variation-settings: "wdth" 80;
+  letter-spacing: 0.01em;
+  text-transform: uppercase;
+  color: var(--chalk);
+}
+.pv3 #wipe .mid p b {
+  color: var(--marker);
+  font-weight: 600;
+}
+.pv3 #wipe.in .bars i {
+  transform: scaleX(1);
+  transition: transform 0.42s cubic-bezier(0.7, 0, 0.2, 1);
+}
+.pv3 #wipe.in .mid {
+  opacity: 1;
+  transition: opacity 0.2s 0.3s;
+}
+.pv3 #wipe.out .bars i {
+  transform: scaleX(0);
+  transform-origin: right;
+  transition: transform 0.5s cubic-bezier(0.7, 0, 0.2, 1);
+}
+.pv3 #wipe.out .mid {
+  opacity: 0;
+  transition: opacity 0.15s;
+}
+.pv3 #wipe.in {
+  pointer-events: auto;
+}
+.pv3 #intro {
+  position: fixed;
+  inset: 0;
+  z-index: 90;
+  display: grid;
+  place-items: center;
+  background: var(--asphalt);
+  transition: clip-path 1s cubic-bezier(0.8, 0, 0.2, 1);
+}
+.pv3 #intro.gone {
+  clip-path: inset(0 0 100% 0);
+  pointer-events: none;
+}
+.pv3 .intro-in {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 30px;
+}
+.pv3 .intro-in svg {
+  width: min(200px, 42vw);
+  height: auto;
+}
+.pv3 .intro-word {
+  font: 650 clamp(22px, 3.2vw, 34px)/1 var(--f-display);
+  font-variation-settings: "wdth" 140;
+  letter-spacing: 0.32em;
+  text-transform: uppercase;
+  padding-left: 0.32em;
+  clip-path: inset(0 100% 0 0);
+  animation: pv3-reveal 0.9s 1.35s cubic-bezier(0.7, 0, 0.2, 1) forwards;
+}
+.pv3 .intro-meta {
+  font: 500 10px/1 var(--f-mono);
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--dust);
+  opacity: 0;
+  animation: pv3-fade 0.6s 1.9s forwards;
+}
+@keyframes pv3-reveal {
+  to {
+    clip-path: inset(0 0 0 0);
+  }
+}
+@keyframes pv3-fade {
+  to {
+    opacity: 1;
+  }
+}
+.pv3 .mk .ticks line {
+  stroke-dasharray: 3;
+  stroke-dashoffset: 3;
+}
+.pv3 .mk.draw .ticks line {
+  animation: pv3-dash 0.25s forwards;
+}
+.pv3 .mk .arc {
+  stroke-dasharray: 110;
+  stroke-dashoffset: 110;
+}
+.pv3 .mk.draw .arc {
+  animation: pv3-dash 0.95s 0.25s cubic-bezier(0.65, 0, 0.25, 1) forwards;
+}
+.pv3 .mk .tgt {
+  transform-origin: 52px 32px;
+  transform: scale(0);
+  opacity: 0;
+}
+.pv3 .mk.draw .tgt {
+  animation: pv3-pop 0.5s 1.15s cubic-bezier(0.3, 1.6, 0.5, 1) forwards;
+}
+.pv3 .mk .ring {
+  transform-origin: 52px 32px;
+  opacity: 0;
+}
+.pv3 .mk.draw .ring {
+  animation: pv3-ring 0.9s 1.2s ease-out forwards;
+}
+@keyframes pv3-dash {
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+@keyframes pv3-pop {
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+@keyframes pv3-ring {
+  0% {
+    opacity: 0.9;
+    transform: scale(0.6);
+  }
+  100% {
+    opacity: 0;
+    transform: scale(3.2);
+  }
+}
+.pv3 #progress {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -1px;
+  height: 1px;
+  background: var(--marker);
+  transform-origin: left;
+  transform: scaleX(var(--p, 0));
+  opacity: 0.9;
+}
+.pv3 #scan {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  width: 1px;
+  background: var(--marker);
+  box-shadow: 0 0 18px 2px rgba(242, 194, 48, 0.55);
+  opacity: 0;
+}
+.pv3 #scan.go {
+  animation: pv3-sweep 1.3s cubic-bezier(0.6, 0, 0.3, 1);
+}
+@keyframes pv3-sweep {
+  0% {
+    transform: translateX(-2vw);
+    opacity: 0;
+  }
+  12% {
+    opacity: 0.9;
+  }
+  88% {
+    opacity: 0.9;
+  }
+  100% {
+    transform: translateX(102vw);
+    opacity: 0;
+  }
+}
+.pv3 #cursor {
+  position: fixed;
+  left: 0;
+  top: 0;
+  z-index: 95;
+  pointer-events: none;
+  width: 0;
+  height: 0;
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+.pv3 #cursor.on {
+  opacity: 1;
+}
+.pv3 #cursor .ring {
+  position: absolute;
+  left: -16px;
+  top: -16px;
+  width: 32px;
+  height: 32px;
+  border: 1px solid rgba(236, 232, 223, 0.55);
+  border-radius: 50%;
+  transition:
+    transform 0.35s cubic-bezier(0.3, 1.4, 0.5, 1),
+    border-color 0.25s,
+    background 0.25s;
+}
+.pv3 #cursor .ring::before,
+.pv3 #cursor .ring::after {
+  content: "";
+  position: absolute;
+  background: var(--impact);
+  opacity: 0;
+  transition: opacity 0.25s;
+}
+.pv3 #cursor .ring::before {
+  left: 50%;
+  top: -6px;
+  bottom: -6px;
+  width: 1px;
+  transform: translateX(-50%);
+  -webkit-mask: linear-gradient(
+    #000 0 5px,
+    transparent 5px calc(100% - 5px),
+    #000 calc(100% - 5px)
+  );
+  mask: linear-gradient(#000 0 5px, transparent 5px calc(100% - 5px), #000 calc(100% - 5px));
+}
+.pv3 #cursor .ring::after {
+  top: 50%;
+  left: -6px;
+  right: -6px;
+  height: 1px;
+  transform: translateY(-50%);
+  -webkit-mask: linear-gradient(
+    90deg,
+    #000 0 5px,
+    transparent 5px calc(100% - 5px),
+    #000 calc(100% - 5px)
+  );
+  mask: linear-gradient(90deg, #000 0 5px, transparent 5px calc(100% - 5px), #000 calc(100% - 5px));
+}
+.pv3 #cursor .dot {
+  position: absolute;
+  left: -2px;
+  top: -2px;
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: var(--impact);
+}
+.pv3 #cursor.hot .ring {
+  transform: scale(1.6);
+  border-color: var(--impact);
+  background: rgba(255, 90, 31, 0.06);
+}
+.pv3 #cursor.hot .ring::before,
+.pv3 #cursor.hot .ring::after {
+  opacity: 1;
+}
+.pv3 .cta {
+  will-change: transform;
+}
+.pv3.js-anim .split .w {
+  display: inline-block;
+  overflow: hidden;
+  vertical-align: top;
+  padding: 0.08em 0.04em 0.14em;
+  margin: -0.08em -0.04em -0.14em;
+}
+.pv3.js-anim .split .wi {
+  display: inline-block;
+  transform: translateY(112%) scaleX(1.32);
+  transform-origin: 0 100%;
+  transition: transform 1.1s cubic-bezier(0.16, 0.9, 0.2, 1);
+  transition-delay: calc(var(--i, 0) * 55ms + var(--d, 0s));
+}
+.pv3.js-anim .split.in .wi {
+  transform: none;
+}
+.pv3.js-anim [data-r] {
+  opacity: 0;
+  transition:
+    opacity 1s ease,
+    filter 1.1s ease,
+    transform 1.1s cubic-bezier(0.16, 0.9, 0.2, 1);
+  transition-delay: var(--d, 0s);
+}
+.pv3.js-anim [data-r="focus"] {
+  filter: blur(12px);
+  transform: translateY(16px);
+}
+.pv3.js-anim [data-r="up"] {
+  transform: translateY(36px);
+}
+.pv3.js-anim [data-r="left"] {
+  transform: translateX(-28px);
+}
+.pv3.js-anim [data-r].in {
+  opacity: 1;
+  filter: none;
+  transform: none;
+}
+.pv3.js-anim .versus .fill {
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 1.5s cubic-bezier(0.16, 0.9, 0.2, 1) 0.35s;
+}
+.pv3.js-anim .versus .row.base .fill {
+  transition-delay: 0.6s;
+}
+.pv3.js-anim .versus.in .fill {
+  transform: none;
+}
+.pv3.js-anim .tablebox tbody tr {
+  opacity: 0;
+  transform: translateX(-16px);
+  transition:
+    opacity 0.7s ease,
+    transform 0.8s cubic-bezier(0.16, 0.9, 0.2, 1);
+  transition-delay: calc(var(--i, 0) * 130ms + 0.25s);
+}
+.pv3.js-anim .tablebox.in tbody tr {
+  opacity: 1;
+  transform: none;
+}
+.pv3.js-anim .chip {
+  opacity: 0;
+  transform: scale(1.9) rotate(-9deg);
+  transition:
+    opacity 0.2s ease 1.05s,
+    transform 0.5s cubic-bezier(0.3, 1.6, 0.45, 1) 1s;
+}
+.pv3.js-anim .tablebox.in .chip {
+  opacity: 1;
+  transform: rotate(-2deg);
+}
+.pv3.js-anim .specimen::before {
+  transform: scaleY(0);
+  transition: transform 1s cubic-bezier(0.6, 0, 0.2, 1) 0.2s;
+}
+.pv3.js-anim .specimen.in::before {
+  transform: none;
+}
+.pv3.js-anim .dict .sign i {
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 1.2s cubic-bezier(0.6, 0, 0.2, 1) 1s;
+}
+.pv3.js-anim .dict.in .sign i {
+  transform: none;
+}
+.pv3.js-anim .frags::after {
+  transition-delay: 1s;
+}
+.pv3 .dict .sign .ok {
+  color: var(--marker);
+  opacity: 0;
+  transition: opacity 0.4s 2.1s;
+}
+.pv3 .dict.in .sign .ok {
+  opacity: 1;
+}
+.pv3 details .ans {
+  overflow: hidden;
+}
+.pv3.sketch {
+  --asphalt: #0e2a52;
+  --line: rgba(214, 230, 255, 0.26);
+  --chalk: #eef4ff;
+  --soft: #c9d9f2;
+  --dust: #9cb3d6;
+  --marker: #ffffff;
+  --impact: #ffd45c;
+}
+.pv3.sketch #film {
+  background: #0e2a52;
+}
+.pv3.sketch #film video,
+.pv3.sketch body:not([data-sheet="hecho"]) #film video {
+  filter: grayscale(1) invert(1) contrast(1.7) brightness(1.08) !important;
+  mix-blend-mode: multiply;
+}
+.pv3.sketch #film::after {
+  background:
+    linear-gradient(rgba(255, 255, 255, 0.07) 1px, transparent 1px) 0 0/24px 24px,
+    linear-gradient(90deg, rgba(255, 255, 255, 0.07) 1px, transparent 1px) 0 0/24px 24px,
+    linear-gradient(rgba(255, 255, 255, 0.12) 1px, transparent 1px) 0 0/120px 120px,
+    linear-gradient(90deg, rgba(255, 255, 255, 0.12) 1px, transparent 1px) 0 0/120px 120px;
+}
+.pv3.sketch #veil {
+  background: linear-gradient(90deg, rgba(14, 42, 82, 0.88), rgba(14, 42, 82, 0.5));
+}
+.pv3.sketch #heroShade {
+  background: linear-gradient(0deg, rgba(14, 42, 82, 0.9), rgba(14, 42, 82, 0));
+}
+.pv3.sketch header.solid {
+  background: rgba(14, 42, 82, 0.85);
+}
+.pv3.sketch .h1,
+.pv3.sketch .h2,
+.pv3.sketch h3 {
+  font-family: var(--pv3-caveat), "Segoe Print", "Bradley Hand", cursive !important;
+  text-transform: none;
+  font-variation-settings: normal !important;
+  letter-spacing: 0 !important;
+  font-weight: 700 !important;
+}
+.pv3.sketch .h1 {
+  font-size: clamp(56px, 9vw, 160px);
+  line-height: 0.95;
+}
+.pv3.sketch .h1 .l1 {
+  animation: none;
+}
+.pv3.sketch .h2 .lt,
+.pv3.sketch .h1 .l2 {
+  font-weight: 500 !important;
+}
+.pv3.sketch .cta {
+  border-radius: 255px 15px 225px 15px/15px 225px 15px 255px;
+}
+.pv3.sketch #grain {
+  opacity: 0.12;
+  mix-blend-mode: screen;
+}
+.pv3 #toast {
+  position: fixed;
+  left: 50%;
+  bottom: calc(24px + env(safe-area-inset-bottom, 0px));
+  z-index: 96;
+  transform: translate(-50%, 20px);
+  opacity: 0;
+  pointer-events: none;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 16px;
+  max-width: calc(100% - 32px);
+  background: rgba(12, 13, 14, 0.92);
+  border: 1px solid rgba(236, 232, 223, 0.25);
+  font: 500 11px/1.45 var(--f-mono);
+  letter-spacing: 0.04em;
+  color: var(--chalk);
+  transition:
+    opacity 0.35s,
+    transform 0.45s cubic-bezier(0.3, 1.4, 0.5, 1);
+}
+.pv3 #toast.on {
+  opacity: 1;
+  transform: translate(-50%, 0);
+}
+.pv3 #toast b {
+  color: var(--marker);
+  font-weight: 600;
+}
+.pv3.sketch #toast {
+  background: rgba(14, 42, 82, 0.95);
+}
+@property --a {
+  syntax: "<angle>";
+  inherits: false;
+  initial-value: 0deg;
+}
+.pv3 .cta.epic {
+  position: relative;
+  isolation: isolate;
+  min-height: 62px;
+  padding: 0 9px 0 24px;
+  gap: 26px;
+  background: var(--chalk);
+  color: var(--asphalt);
+  border-radius: 3px;
+  box-shadow: 0 22px 50px -18px rgba(255, 90, 31, 0.55);
+}
+.pv3 .cta.epic:hover {
+  background: var(--chalk);
+}
+.pv3 .cta.epic::before {
+  content: "";
+  position: absolute;
+  inset: -3px;
+  border-radius: 5px;
+  padding: 2px;
+  background: conic-gradient(
+    from var(--a),
+    transparent 0 62%,
+    rgba(242, 194, 48, 0) 66%,
+    var(--marker) 80%,
+    var(--impact) 88%,
+    transparent 93%
+  );
+  -webkit-mask:
+    linear-gradient(#000 0 0) content-box,
+    linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  animation: pv3-orbit 3.4s linear infinite;
+  z-index: -1;
+  pointer-events: none;
+}
+.pv3 .cta.epic::after {
+  content: "";
+  position: absolute;
+  inset: -18px -24px;
+  z-index: -2;
+  background: radial-gradient(55% 70% at 50% 60%, rgba(255, 90, 31, 0.32), transparent 72%);
+  filter: blur(12px);
+  opacity: 0.55;
+  animation: pv3-breathe 3.4s ease-in-out infinite;
+  pointer-events: none;
+  transition: opacity 0.4s;
+}
+.pv3 .cta.epic:hover::after {
+  opacity: 1;
+}
+@keyframes pv3-orbit {
+  to {
+    --a: 360deg;
+  }
+}
+@keyframes pv3-breathe {
+  50% {
+    opacity: 0.95;
+  }
+}
+.pv3 .cta.epic .fill {
+  position: absolute;
+  inset: 0;
+  border-radius: 3px;
+  background: var(--marker);
+  clip-path: polygon(0 0, 0 0, -14% 100%, 0 100%);
+  transition: clip-path 0.55s cubic-bezier(0.7, 0, 0.2, 1);
+  z-index: 0;
+}
+.pv3 .cta.epic:hover .fill,
+.pv3 .cta.epic:focus-visible .fill {
+  clip-path: polygon(0 0, 114% 0, 100% 100%, 0 100%);
+}
+.pv3 .cta.epic .t,
+.pv3 .cta.epic .ic {
+  position: relative;
+  z-index: 1;
+}
+.pv3 .cta.epic .t {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  text-align: left;
+}
+.pv3 .cta.epic .t small {
+  font: 600 8.5px/1 var(--f-mono);
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  opacity: 0.6;
+}
+.pv3 .cta.epic .t b {
+  font: 800 19px/1 var(--f-display);
+  font-variation-settings: "wdth" 92;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+}
+.pv3 .cta.epic .ic {
+  display: grid;
+  place-items: center;
+  width: 46px;
+  height: 46px;
+  border-radius: 2px;
+  background: var(--asphalt);
+  color: var(--chalk);
+  transition: background 0.35s;
+}
+.pv3 .cta.epic .ic svg {
+  width: 24px;
+  height: 24px;
+  transition: transform 0.7s cubic-bezier(0.3, 1.5, 0.45, 1);
+}
+.pv3 .cta.epic:hover .ic {
+  background: #16171a;
+}
+.pv3 .cta.epic:hover .ic svg {
+  transform: rotate(90deg) scale(1.08);
+}
+.pv3 .cta.epic.hit {
+  animation: pv3-hit 0.42s cubic-bezier(0.3, 1.6, 0.5, 1);
+}
+@keyframes pv3-hit {
+  20% {
+    transform: translate(-3px, 1px) scale(0.97);
+  }
+  45% {
+    transform: translate(3px, -1px);
+  }
+  70% {
+    transform: translate(-1px, 0);
+  }
+}
+.pv3 .boom {
+  position: fixed;
+  z-index: 97;
+  pointer-events: none;
+  width: 14px;
+  height: 14px;
+  margin: -7px 0 0 -7px;
+  border-radius: 50%;
+  border: 2px solid var(--impact);
+  animation: pv3-boom 0.7s cubic-bezier(0.1, 0.8, 0.2, 1) forwards;
+}
+.pv3 .boom.b2 {
+  border-color: var(--marker);
+  animation-delay: 0.08s;
+  opacity: 0;
+}
+@keyframes pv3-boom {
+  0% {
+    transform: scale(0.4);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(9);
+    opacity: 0;
+  }
+}
+.pv3 .cta.epic.sm {
+  min-height: 46px;
+  padding: 0 5px 0 16px;
+  gap: 14px;
+  box-shadow: 0 12px 30px -14px rgba(255, 90, 31, 0.6);
+}
+.pv3 .cta.epic.sm::after {
+  inset: -10px -14px;
+  opacity: 0.35;
+}
+.pv3 .cta.epic.sm .t b {
+  font-size: 13.5px;
+  font-variation-settings: "wdth" 96;
+}
+.pv3 .cta.epic.sm .ic {
+  width: 36px;
+  height: 36px;
+}
+.pv3 .cta.epic.sm .ic svg {
+  width: 18px;
+  height: 18px;
+}
+.pv3 .foot-links {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 34px;
+}
+.pv3 .means {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  min-height: 44px;
+  font: 500 10px/1 var(--f-mono);
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--chalk);
+  text-decoration: none;
+  transition: color 0.2s;
+}
+.pv3 .means .glyph {
+  display: grid;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  border: 1px solid var(--marker);
+  color: var(--marker);
+  font: 800 14px/1 var(--f-display);
+  letter-spacing: 0;
+  transition:
+    background 0.3s,
+    color 0.3s,
+    transform 0.5s cubic-bezier(0.3, 1.5, 0.45, 1);
+}
+.pv3 .means:hover {
+  color: var(--marker);
+}
+.pv3 .means:hover .glyph {
+  background: var(--marker);
+  color: var(--asphalt);
+  transform: rotate(-8deg) scale(1.08);
+}
+.pv3 #significado {
+  padding-block: 14vh 6vh;
+}
+.pv3 .acro-wrap {
+  display: grid;
+  gap: 52px;
+}
+.pv3 .acro-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 24px 48px;
+}
+.pv3 .acro-side {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 18px;
+  max-width: 30em;
+}
+.pv3 .acro-side p {
+  color: var(--soft);
+  font-size: 15.5px;
+}
+.pv3 .acro-all {
+  appearance: none;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  min-height: 44px;
+  padding: 0 18px;
+  background: transparent;
+  color: var(--marker);
+  border: 1px solid var(--marker);
+  border-radius: 2px;
+  font: 600 10.5px/1 var(--f-mono);
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  transition:
+    background 0.25s,
+    color 0.25s;
+}
+.pv3 .acro-all::before {
+  content: "";
+  width: 7px;
+  height: 7px;
+  background: currentColor;
+  transform: rotate(45deg);
+  transition: transform 0.4s;
+}
+.pv3 .acro-all:hover {
+  background: var(--marker);
+  color: var(--asphalt);
+}
+.pv3 .acro-all[aria-pressed="true"]::before {
+  transform: rotate(225deg);
+}
+.pv3 .acro-all .off-t,
+.pv3 .acro-all[aria-pressed="true"] .on-t {
+  display: none;
+}
+.pv3 .acro-all[aria-pressed="true"] .off-t {
+  display: inline;
+}
+.pv3 .acro {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+  border-top: 1px solid rgba(236, 232, 223, 0.3);
+}
+.pv3 .acro li {
+  position: relative;
+  min-width: 0;
+  border-left: 1px solid var(--line);
+  padding: 0 0 0 clamp(10px, 1.2vw, 18px);
+}
+.pv3 .acro li:first-child {
+  border-left: 0;
+  padding-left: 0;
+}
+.pv3 .acro li::before {
+  content: "";
+  position: absolute;
+  left: -1px;
+  top: -1px;
+  height: 2px;
+  right: 0;
+  background: var(--marker);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.7s cubic-bezier(0.6, 0, 0.2, 1);
+}
+.pv3 .acro li.open::before {
+  transform: scaleX(1);
+}
+.pv3 .acro .L {
+  appearance: none;
+  display: block;
+  width: 100%;
+  background: none;
+  border: 0;
+  padding: 16px 0 6px;
+  cursor: pointer;
+  text-align: left;
+  color: var(--chalk);
+  font: 880 clamp(64px, 11.5vw, 186px)/0.82 var(--f-display);
+  font-variation-settings: "wdth" 62;
+  transition:
+    color 0.35s,
+    font-variation-settings 0.6s cubic-bezier(0.2, 0.9, 0.25, 1),
+    text-shadow 0.35s;
+}
+.pv3 .acro .L:hover {
+  color: var(--marker);
+  font-variation-settings: "wdth" 74;
+}
+.pv3 .acro li.open .L {
+  color: var(--marker);
+  text-shadow: 0 0 40px rgba(242, 194, 48, 0.28);
+  font-variation-settings: "wdth" 54;
+}
+.pv3 .acro .L:focus-visible {
+  outline-offset: -2px;
+}
+.pv3 .sr {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
+.pv3 .acro .m {
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows 0.6s cubic-bezier(0.16, 0.9, 0.2, 1);
+}
+.pv3 .acro .m > div {
+  overflow: hidden;
+  min-height: 0;
+}
+.pv3 .acro li.open .m {
+  grid-template-rows: 1fr;
+}
+.pv3 .acro .m b {
+  display: block;
+  padding-top: 14px;
+  font: 800 clamp(16px, 1.65vw, 25px)/1 var(--f-display);
+  font-variation-settings: "wdth" 82;
+  text-transform: uppercase;
+  color: var(--chalk);
+  white-space: nowrap;
+}
+.pv3 .acro .m p {
+  margin-top: 10px;
+  padding-bottom: 22px;
+  font-size: 13.5px;
+  line-height: 1.5;
+  color: var(--soft);
+  opacity: 0;
+  transform: translateY(8px);
+  transition:
+    opacity 0.5s 0.2s,
+    transform 0.6s 0.2s cubic-bezier(0.16, 0.9, 0.2, 1);
+}
+.pv3 .acro li.open .m p {
+  opacity: 1;
+  transform: none;
+}
+.pv3 .acro-en {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px 16px;
+  font: 500 11px/1.5 var(--f-mono);
+  letter-spacing: 0.06em;
+  color: var(--dust);
+}
+.pv3 .acro-en span {
+  color: #6c6962;
+  text-transform: uppercase;
+  letter-spacing: 0.18em;
+  font-size: 9.5px;
+  padding-top: 2px;
+}
+.pv3.js-anim .acro .L .ch {
+  display: inline-block;
+  transform: translateY(105%);
+  opacity: 0;
+  transition:
+    transform 1s cubic-bezier(0.16, 0.9, 0.2, 1),
+    opacity 0.6s;
+  transition-delay: calc(var(--i, 0) * 80ms);
+}
+.pv3.js-anim .acro.in .L .ch {
+  transform: none;
+  opacity: 1;
+}
+.pv3 .acro.hint li:not(.open) .L {
+  animation: pv3-nudge 2.6s ease-in-out infinite;
+  animation-delay: calc(var(--i, 0) * 120ms);
+}
+@keyframes pv3-nudge {
+  0%,
+  70%,
+  100% {
+    color: var(--chalk);
+  }
+  80% {
+    color: var(--marker);
+  }
+}
+@media (max-width: 760px) {
+  .pv3 .acro {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .pv3 .acro li,
+  .pv3 .acro li:first-child {
+    display: grid;
+    grid-template-columns: 76px minmax(0, 1fr);
+    align-items: center;
+    column-gap: 16px;
+    border-left: 0;
+    padding: 10px 0 14px;
+    border-bottom: 1px solid var(--line);
+  }
+  .pv3 .acro li::before {
+    left: 0;
+    top: auto;
+    bottom: -1px;
+  }
+  .pv3 .acro .L {
+    font-size: 70px;
+    padding: 8px 0 6px;
+    grid-row: 1;
+  }
+  .pv3 .acro .m {
+    grid-template-rows: 1fr;
+  }
+  .pv3 .acro .m b {
+    padding-top: 0;
+    font-size: 20px;
+  }
+  .pv3 .acro .m p {
+    margin-top: 6px;
+    padding-bottom: 0;
+    opacity: 1;
+    transform: none;
+    display: none;
+  }
+  .pv3 .acro li.open .m p {
+    display: block;
+  }
+  .pv3 .acro .m b {
+    color: var(--dust);
+  }
+  .pv3 .acro li.open .m b {
+    color: var(--chalk);
+  }
+}
+@media (max-width: 1100px) {
+  .pv3 nav a i {
+    display: none;
+  }
+  .pv3 #prueba .wrap {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 48px;
+  }
+  .pv3 .tenets {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 28px;
+  }
+  .pv3 #preguntas .wrap {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 28px;
+  }
+}
+@media (max-width: 900px) {
+  .pv3 nav {
+    display: none;
+  }
+  .pv3 header {
+    gap: 12px;
+  }
+  .pv3 header .cta.epic.sm {
+    margin-left: auto;
+    padding: 0 4px 0 12px;
+    gap: 10px;
+  }
+  .pv3 .cta.epic.sm .t b {
+    font-size: 12px;
+  }
+  .pv3 .cta.epic.sm .ic {
+    width: 34px;
+    height: 34px;
+  }
+  .pv3 .brand small {
+    display: none;
+  }
+  .pv3 .h1 .l1 {
+    white-space: normal;
+  }
+  .pv3 .scroll {
+    display: none;
+  }
+  .pv3 .frags {
+    grid-template-columns: minmax(0, 1fr);
+    row-gap: 44px;
+  }
+  .pv3 .frag:nth-child(n) {
+    transform: translateX(14px);
+  }
+  .pv3 .frag:nth-child(2) {
+    transform: translateX(-10px);
+  }
+  .pv3 .frags.united .frag {
+    transform: none;
+  }
+  .pv3 .steps {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .pv3 .step,
+  .pv3 .step + .step {
+    padding: 28px 0 28px;
+    border-left: 0;
+  }
+  .pv3 .step + .step {
+    border-top: 1px solid var(--line);
+  }
+  .pv3 #veil {
+    background: rgba(10, 11, 12, 0.78);
+  }
+}
+@media (max-width: 520px) {
+  .pv3 .eyebrow {
+    font-size: 10px;
+    letter-spacing: 0.12em;
+  }
+  .pv3 .wordmark {
+    font-size: 14px;
+    letter-spacing: 0.14em;
+  }
+  .pv3 .brand svg {
+    width: 32px;
+    height: 32px;
+  }
+  .pv3 .h1 {
+    font-size: clamp(40px, 13.2vw, 64px);
+  }
+  .pv3 .versus .row {
+    grid-template-columns: 84px minmax(0, 1fr) 52px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .pv3 *,
+  .pv3 *::before,
+  .pv3 *::after {
+    animation-duration: 0.01ms !important;
+    animation-delay: 0s !important;
+    transition-duration: 0.01ms !important;
+  }
+}
