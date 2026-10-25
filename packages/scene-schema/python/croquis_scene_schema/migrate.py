@@ -62,6 +62,12 @@ def _v130_a_200(doc: JsonObj) -> JsonObj:
     return doc
 
 
+def _v200_a_210(doc: JsonObj) -> JsonObj:
+    """2.1.0 agrega ``danos_declarados[].perfil_aplastamiento`` y ``.rigidez`` (opcionales): ningún
+    documento cambia."""
+    return doc
+
+
 MIGRATIONS: list[Migration] = [
     Migration(
         "1.0.0",
@@ -86,6 +92,13 @@ MIGRATIONS: list[Migration] = [
         "2.0.0",
         "expediente de CESVI opcional (contrato v2); los documentos no cambian",
         _v130_a_200,
+    ),
+    Migration(
+        "2.0.0",
+        "2.1.0",
+        "danos_declarados[].perfil_aplastamiento y .rigidez opcionales (perfil C1–Cn y A, B); "
+        "los documentos no cambian",
+        _v200_a_210,
     ),
 ]
 
