@@ -511,7 +511,14 @@ export interface HipotesisReconstruccion {
    * Velocidad previa de cada vehículo: la que fija la evidencia o, si no la fija, la del ajuste
    * conjunto (`fijada: false`, con su desviación local).
    */
-  velocidades: { vehiculo: Id; kmh: number | null; fijada: boolean; sigmaKmh: number | null }[];
+  velocidades: {
+    vehiculo: Id;
+    kmh: number | null;
+    fijada: boolean;
+    sigmaKmh: number | null;
+    /** p10–p90 de las reestimaciones con entradas perturbadas, si la evidencia la fija. */
+    rango: [number, number] | null;
+  }[];
   /** A cuántos metros de su reposo supuesto termina cada vehículo con este ajuste. */
   reposos: { vehiculo: Id; m: number }[];
   /** ¿El ajuste alcanza la deformación medida (dentro de su banda)? */
@@ -568,11 +575,16 @@ function leerHipotesis(
         (x) => x.vehiculo === sid && x.parametro === "velocidad_previa",
       );
       const fijada = Boolean(p?.identificable && p.estimacion);
+      const e = p?.estimacion;
       return {
         vehiculo: id,
-        kmh: fijada ? p!.estimacion!.mejor : (valor(`velocidad:${sid}`) ?? null),
+        kmh: fijada ? e!.mejor : (valor(`velocidad:${sid}`) ?? null),
         fijada,
         sigmaKmh: p?.sigma_local ?? null,
+        rango:
+          fijada && e!.p10 !== undefined && e!.p90 !== undefined
+            ? ([e!.p10, e!.p90] as [number, number])
+            : null,
       };
     }),
     reposos: Object.entries(base.ids).flatMap(([sid, id]) => {

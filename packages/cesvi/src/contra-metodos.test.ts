@@ -30,7 +30,7 @@ function reconstruccion(conBandera: boolean): Reconstruccion {
   return {
     ids: { "veh-a": "V2", "veh-b": "V1" },
     velocidades: [
-      { vehiculo: "V2", previa: { mejor: 43.39 }, impacto: null },
+      { vehiculo: "V2", previa: { mejor: 43.39, p10: 40.12, p90: 51.3 }, impacto: null },
       { vehiculo: "V1", previa: { mejor: 38.69 }, impacto: null },
     ],
     resultado: {
@@ -68,6 +68,8 @@ describe("la reconstrucción contra los métodos del reporte de CESVI (ADR 0091)
       croquisKmh: 43.39,
       diferenciaKmh: -19.76,
       diferenciaPct: -31.29,
+      // El p10–p90 de la reconstrucción va con su valor (AXA cambia con la semilla, ADR 0091).
+      croquisRango: [40.12, 51.3],
     });
     // Los restos dan la velocidad de V1 al salir del impacto: se compara con esa, no con la previa.
     expect(filas[1]).toMatchObject({
@@ -85,7 +87,12 @@ describe("la reconstrucción contra los métodos del reporte de CESVI (ADR 0091)
     const r = reconstruccion(false);
     r.velocidades[0]!.previa = null;
     const [def] = reconstruccionContraCesvi(expediente, r, r.resultado).filas;
-    expect(def).toMatchObject({ croquisKmh: null, diferenciaKmh: null, diferenciaPct: null });
+    expect(def).toMatchObject({
+      croquisKmh: null,
+      croquisRango: null,
+      diferenciaKmh: null,
+      diferenciaPct: null,
+    });
   });
 
   it("si el solver no alcanza la deformación medida, lo avisa con sus números y el vehículo del perito", () => {

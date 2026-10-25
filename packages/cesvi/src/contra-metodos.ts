@@ -22,6 +22,11 @@ export interface FilaMetodoCesvi {
   /** La velocidad de la reconstrucción con la que se compara, y cuál es. */
   croquisQue: string;
   croquisKmh: number | null;
+  /**
+   * p10–p90 de la velocidad de la reconstrucción (las reestimaciones con entradas perturbadas), si
+   * la evidencia la fija: con AXA el ajuste cambia con la semilla (`eval/results/axa_semillas.json`).
+   */
+  croquisRango: [number, number] | null;
   /** Croquis − CESVI (km/h) y su porcentaje sobre CESVI; null si la reconstrucción no la fija. */
   diferenciaKmh: number | null;
   diferenciaPct: number | null;
@@ -64,6 +69,10 @@ export function reconstruccionContraCesvi(
     (conAjuste ??= reconstructionToDict(reconstruct(especReconstruida(r))));
   const sid = (id: Id) => Object.entries(r.ids).find(([, x]) => x === id)?.[0];
   const previa = (id: Id) => r.velocidades.find((v) => v.vehiculo === id)?.previa?.mejor ?? null;
+  const rango = (id: Id): [number, number] | null => {
+    const p = r.velocidades.find((v) => v.vehiculo === id)?.previa;
+    return p?.p10 !== undefined && p.p90 !== undefined ? [r2(p.p10), r2(p.p90)] : null;
+  };
   const parametros = (r.resultado.parametros ?? {}) as Record<string, { valor?: number }>;
   const arrastre = parametros.arrastre_post_impacto?.valor;
   const filas: FilaMetodoCesvi[] = [];
@@ -79,6 +88,7 @@ export function reconstruccionContraCesvi(
         cesviKmh: res.valor,
         croquisQue: `velocidad de ${v} antes del impacto`,
         croquisKmh: previa(v),
+        croquisRango: rango(v),
         diferenciaKmh: null,
         diferenciaPct: null,
         porQue: `CESVI convierte la energía de la deformación de ${v} en la velocidad de un choque contra un muro fijo, √(2E/m), con la masa de ${v} sola; Croquis calcula a qué velocidad circulaba, con el momento de los dos vehículos y lo que recorrieron después del impacto.`,
@@ -94,6 +104,7 @@ export function reconstruccionContraCesvi(
         cesviKmh: res.valor,
         croquisQue: `velocidad de ${v} al salir del impacto`,
         croquisKmh: s ? alSalirDelImpacto(trayectorias(), s) : null,
+        croquisRango: null,
         diferenciaKmh: null,
         diferenciaPct: null,
         porQue: `CESVI hace que los vehículos se deslicen juntos${D !== undefined ? ` ${D} m` : ""}${a !== undefined ? ` con a = ${a}` : ""} (llantas que no ruedan); en Croquis, después del golpe las llantas ruedan${arrastre !== undefined ? ` con un arrastre de ${arrastre} de la fricción` : ""} y cada vehículo sigue su propia trayectoria, así que la misma distancia pide otra velocidad.`,

@@ -15,7 +15,7 @@
  * «antes» es el resultado con el código anterior al arreglo (`eval/results/axa_diagnostico_antes.json`,
  * corrido en 8ab9271); el resto, con el código actual (ADR 0091).
  *
- * La escena es la del caso de ejemplo de /cesvi (la lectura grabada del reporte) con las posiciones
+ * La escena es la de la app (`apps/web/src/lib/axa-reconstruccion.ts`), con su semilla: la del caso de ejemplo de /cesvi (la lectura grabada del reporte) con las posiciones
  * de la versión de la evidencia sobre MEX 15D, como `tools/demo/escena-axa.mts`, armada aquí sin
  * tocar `demo/escenas-r11`.
  *
@@ -33,27 +33,19 @@ import {
   invert,
 } from "../packages/solver-ts/src/inversion.ts";
 import { checkDamageReach } from "../packages/solver-ts/src/consistency.ts";
+import { expedienteAxaReconstruccion, viaAxa } from "../apps/web/src/lib/axa-reconstruccion.ts";
 import { crushEnergy } from "../packages/solver-ts/src/crash3.ts";
 import { stiffnessFor } from "../packages/solver-ts/src/stiffness.ts";
 import { reconstruct } from "../packages/solver-ts/src/reconstruct.ts";
 import {
-  avanzar,
-  callesCerca,
   caso,
   especDeExpediente,
-  conMasasDeFicha,
-  importarDictamen,
   mcHenry,
   conHipotesis,
-  proponerVersiones,
   reconstruccionContraCesvi,
   reconstruirExpediente,
   reproducir,
-  tramoDelCaso,
-  ubicacionIlustrativa,
   type Expediente,
-  type SalidaCorpus,
-  type SalidaNarracion,
 } from "../packages/cesvi/src/index.ts";
 
 type Json = Record<string, unknown>;
@@ -66,19 +58,7 @@ const r2 = (x: number) => Math.round(x * 100) / 100;
 
 // --- La escena de AXA, como la arma la app -------------------------------------------------------
 const c = caso("A2010930");
-const lecturas = leer("data/cesvi/grabaciones/importar/lecturas-a2010930.json") as {
-  corpus: SalidaCorpus;
-  narracion: SalidaNarracion;
-};
-const ejemplo = leer("data/cesvi/grabaciones/importar/ejemplo.json") as {
-  texto: string;
-  archivo: string;
-};
-const leido = importarDictamen(ejemplo.texto, lecturas.corpus, lecturas.narracion, ejemplo.archivo);
-// El reporte no da la masa de V1: la de la ficha técnica de su modelo y año (data/SOURCES.md).
-const conFicha = conMasasDeFicha(leido.expediente);
-const u = ubicacionIlustrativa(c.id)!;
-const via = callesCerca(tramoDelCaso(c.id), [u.lon, u.lat], 150).cercana!;
+const { via } = viaAxa();
 
 interface Variante {
   /** Distancia del reposo de A (V1) al impacto, en la vía (m). */
@@ -91,54 +71,17 @@ interface Variante {
   reposoBSupuesto?: boolean;
 }
 
+/**
+ * El expediente de AXA colocado como lo reconstruye la app (`axa-reconstruccion.ts`). Aquí, por
+ * omisión, el reposo de V2 va como dato (las secciones 1 a 5); la sección 6 lo marca como supuesto.
+ */
 function expediente(v: Variante = {}): Expediente {
-  const ev = proponerVersiones({
-    impacto: [u.lon, u.lat],
-    rumboVia: via.rumbo,
-    medidas: { A: { largo: 5.34, ancho: 1.86 }, B: { largo: 5.34, ancho: 1.86 } },
-    distanciaRestos: v.reposoA ?? c.evidencia.restos.distancia_m.valor,
-    reversaM: 3,
-  }).evidencia;
-  const ID = { A: "V1", B: "V2" } as const;
-  const finalB =
-    (v.reposoB ?? "detras") === "detras"
-      ? { punto: avanzar(ev.vehiculos.A.final.punto, via.rumbo, -5.34), rumbo: via.rumbo }
-      : v.reposoB === "impacto"
-        ? ev.vehiculos.B.final
-        : null;
-  const posiciones = (["A", "B"] as const).flatMap((l) =>
-    (["impacto", "final"] as const).flatMap((fase) => {
-      const p = l === "B" && fase === "final" ? finalB : ev.vehiculos[l][fase];
-      if (!p) return [];
-      const rumbo = l === "B" && fase === "impacto" ? p.rumbo + (v.anguloB ?? 0) : p.rumbo;
-      return [
-        {
-          vehiculo: ID[l],
-          fase,
-          punto: { lon: p.punto[0], lat: p.punto[1] },
-          rumbo: ((rumbo % 360) + 360) % 360,
-          fuente:
-            l === "B" && fase === "final" && v.reposoBSupuesto
-              ? ("supuesto" as const)
-              : ("perito" as const),
-        },
-      ];
-    }),
-  );
-  const e = conFicha;
-  return {
-    ...e,
-    caso: {
-      ...e.caso,
-      lugar: { ...e.caso.lugar, coordenadas: { lat: u.lat, lon: u.lon } },
-    },
-    versiones: [{ tipo: "evidencia", posiciones }],
-  };
+  return expedienteAxaReconstruccion({ ...v, reposoBSupuesto: v.reposoBSupuesto ?? false });
 }
 
 /** La escena del solver y el id de V2 en ella. */
 function escena(v: Variante = {}): { spec: Json; v2: string; v1: string } {
-  const base = especDeExpediente(expediente(v), "axa-diagnostico");
+  const base = especDeExpediente(expediente(v));
   const id = (x: string) => Object.entries(base.ids).find(([, e]) => e === x)![0];
   return { spec: base.spec as Json, v2: id("V2"), v1: id("V1") };
 }
@@ -487,11 +430,11 @@ const bandera = checkDamageReach(sb, inversionBase, semilla);
 for (const a of arranques) console.log("arranque", a.arranque, "→", a.v2_kmh, a.v1_kmh, a.costo);
 
 // --- 5. Lo que ve el perito en el paso 6, el 3D y el dictamen (la reconstrucción completa de la app).
-const paso6 = reconstruccionContraCesvi(expediente(), reconstruirExpediente(expediente(), "axa"));
+const paso6 = reconstruccionContraCesvi(expediente(), reconstruirExpediente(expediente()));
 
 // --- 6. Las dos hipótesis (ADR 0091): el reposo de V2 marcado como supuesto, como en el paso 3 ----
 const eSup = expediente({ reposoBSupuesto: true });
-const rSup = reconstruirExpediente(eSup, "axa");
+const rSup = reconstruirExpediente(eSup);
 const hipotesis = rSup.hipotesis
   ? (["dano", "reposo"] as const).map((k) => {
       const h = rSup.hipotesis![k];

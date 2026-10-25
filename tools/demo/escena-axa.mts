@@ -1,17 +1,12 @@
 /**
  * La escena de AXA (A2010930) que renderiza el botón de la computadora de la demo (R11).
  *
- * - **El expediente** es el del caso de ejemplo de /cesvi (`apps/web/src/lib/caso-axa.ts`): la
- *   lectura grabada del reporte, con las masas y las medidas C y L de la deformación.
- * - **Las posiciones** son las de la reconstrucción de Croquis (`proponerVersiones`, versión de la
- *   evidencia): A queda a 15.89 m del impacto, donde terminan los restos según el dictamen, en el
- *   sentido de la vía. La de B no la da el dictamen: se usa el supuesto de su método de los restos
- *   (los dos avanzan juntos hasta el final de los restos), así que B queda justo detrás de A.
- * - **La vía** es el tramo de MEX 15D precargado del caso (`A2010930-tramo.json`, de OpenStreetMap):
- *   su rumbo en el punto ilustrativo orienta las posiciones, y sus calles van al 3D como las que el
- *   caso trae de Overpass (`conCallesDelMapa`).
- * - **El solver** de producción (port TS) reconstruye la escena, y `especReconstruida` le pone las
- *   velocidades estimadas, como el 3D del caso.
+ * Es la misma reconstrucción que el paso 6 de la app: el caso de ejemplo de /cesvi colocado en el
+ * mapa con la versión de la evidencia (`apps/web/src/lib/axa-reconstruccion.ts`), reconstruido con
+ * el solver de producción (port TS) y la semilla de la app (`especDeExpediente` con su
+ * identificador por omisión). `especReconstruida` le pone las velocidades de la hipótesis elegida,
+ * como el 3D del caso, y la vía es el tramo de MEX 15D del caso (`A2010930-tramo.json`, de
+ * OpenStreetMap), con sus calles en el 3D como las que el caso trae de Overpass (`conCallesDelMapa`).
  *
  *   pnpm --filter @croquis/cesvi exec tsx ../../tools/demo/escena-axa.mts [dano|reposo]
  *
@@ -20,98 +15,27 @@
 import { readFileSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import type { OverpassResponse } from "../../packages/croquis-2d/src/osm.ts";
-import { conCallesDelMapa, RADIO_CALLES_M } from "../../apps/web/src/lib/calles-del-mapa.ts";
+import { expedienteAxaReconstruccion, viaAxa } from "../../apps/web/src/lib/axa-reconstruccion.ts";
+import { conCallesDelMapa } from "../../apps/web/src/lib/calles-del-mapa.ts";
 import {
-  avanzar,
-  callesCerca,
-  caso,
-  especReconstruida,
-  conMasasDeFicha,
-  importarDictamen,
-  proponerVersiones,
   conHipotesis,
+  especReconstruida,
   reconstruirExpediente,
-  tramoDelCaso,
-  ubicacionIlustrativa,
-  type Expediente,
-  type SalidaCorpus,
-  type SalidaNarracion,
 } from "../../packages/cesvi/src/index.ts";
 
 const RAIZ = join(import.meta.dirname, "../..");
 const leer = (ruta: string) => JSON.parse(readFileSync(join(RAIZ, ruta), "utf8")) as unknown;
-const lecturas = leer("data/cesvi/grabaciones/importar/lecturas-a2010930.json") as {
-  corpus: SalidaCorpus;
-  narracion: SalidaNarracion;
-};
-const ejemplo = leer("data/cesvi/grabaciones/importar/ejemplo.json") as {
-  texto: string;
-  archivo: string;
-};
 
-const c = caso("A2010930");
-const u = ubicacionIlustrativa(c.id)!;
-const tramo = tramoDelCaso(c.id);
-const via = callesCerca(tramo, [u.lon, u.lat], RADIO_CALLES_M).cercana;
-if (!via) throw new Error("El punto ilustrativo no está cerca del tramo del caso.");
+const { via } = viaAxa();
 console.log(
   `vía: ${via.calle.nombre}, a ${via.distanciaM.toFixed(1)} m, rumbo ${via.rumbo.toFixed(1)}°`,
 );
-const evidencia = proponerVersiones({
-  impacto: [u.lon, u.lat],
-  rumboVia: via.rumbo,
-  medidas: {
-    A: { largo: 5.34, ancho: 1.86 },
-    B: { largo: 5.34, ancho: 1.86 },
-  },
-  distanciaRestos: c.evidencia.restos.distancia_m.valor,
-  reversaM: 3,
-}).evidencia;
-const leido = importarDictamen(ejemplo.texto, lecturas.corpus, lecturas.narracion, ejemplo.archivo);
-// El reporte no da la masa de V1: la de la ficha técnica de su modelo y año (data/SOURCES.md).
-const conFicha = conMasasDeFicha(leido.expediente);
-// A es V1 y B es V2, como en el recorrido (`recorrido-3d.ts`).
-const ID = { A: "V1", B: "V2" } as const;
-// La posición final de B no la da el dictamen. Se usa el supuesto de su método de los restos (la
-// velocidad de 60.27 km/h): después del impacto los dos avanzan juntos hasta el final de los
-// restos, así que B queda justo detrás de A, tocándolo.
-const finalB = {
-  punto: avanzar(evidencia.vehiculos.A.final.punto, via.rumbo, -5.34),
-  rumbo: evidencia.vehiculos.A.final.rumbo,
-};
-const posiciones = (["A", "B"] as const).flatMap((l) =>
-  (["impacto", "final"] as const).map((fase) => {
-    const p = l === "B" && fase === "final" ? finalB : evidencia.vehiculos[l][fase];
-    return {
-      vehiculo: ID[l],
-      fase,
-      punto: { lon: p.punto[0], lat: p.punto[1] },
-      rumbo: ((p.rumbo % 360) + 360) % 360,
-      // El reposo de B no lo da el reporte: es el supuesto del método de los restos (ADR 0091).
-      fuente: l === "B" && fase === "final" ? ("supuesto" as const) : ("perito" as const),
-    };
-  }),
-);
-const e: Expediente = {
-  ...conFicha,
-  caso: {
-    ...conFicha.caso,
-    lugar: {
-      ...conFicha.caso.lugar,
-      coordenadas: { lat: u.lat, lon: u.lon },
-      descripcion: {
-        valor: `Ubicación ilustrativa sobre ${u.via.ref}: el reporte no da coordenadas.`,
-        fuente: "supuesto",
-      },
-    },
-  },
-  versiones: [{ tipo: "evidencia", posiciones }],
-};
-// Ese reposo supuesto y la deformación medida no caben juntos: hay dos hipótesis y la del video la
-// elige René (`dano` por omisión: «cuadra con el daño medido»; `reposo`: «cuadra con el reposo
-// supuesto»).
+// El reposo de V2 es el supuesto del método de los restos: con la deformación medida puede haber
+// dos hipótesis, y la del video la elige René (`dano` por omisión: «cuadra con el daño medido»;
+// `reposo`: «cuadra con el reposo supuesto»).
 const clave = process.argv[2] === "reposo" ? "reposo" : "dano";
-const r0 = reconstruirExpediente(e, "demo-axa");
+// La semilla de la app: el identificador por omisión de `especDeExpediente`.
+const r0 = reconstruirExpediente(expedienteAxaReconstruccion());
 const r = r0.hipotesis ? conHipotesis(r0, clave) : r0;
 console.log(
   r0.hipotesis
