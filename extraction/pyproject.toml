@@ -6,7 +6,7 @@ requires-python = ">=3.14"
 dependencies = [
   "croquis-scene-schema",
   "croquis-solver",
-  "anthropic>=1.13,<2",
+  "anthropic>=2.1.0,<3",
   "pydantic>=2.14,<3",
   "jsonschema>=4.26,<5",
 ]
