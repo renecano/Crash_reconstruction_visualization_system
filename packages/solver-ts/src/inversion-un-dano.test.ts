@@ -9,7 +9,7 @@ import { readFileSync } from "node:fs";
 import { dirname, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import { describe, expect, it } from "vitest";
-import { checkDamageReach } from "./consistency";
+import { checkAssumedRest, checkDamageReach } from "./consistency";
 import { evidenceFromSpec, invert } from "./inversion";
 import { differences } from "./parity-diff";
 
@@ -32,15 +32,17 @@ describe.each(["alcance_un_dano", "axa_alcance"])("inversión con un solo daño 
     expect(differences(golden.dano_minimo, mio)).toEqual([]);
   });
 
-  it("la inversión y la bandera coinciden con la referencia Python", () => {
+  it("la inversión, las banderas y la otra hipótesis coinciden con la referencia Python", () => {
     const inv = invert(spec);
-    const mio = {
-      inversion: inv.toDict(),
-      consistencia: checkDamageReach(spec, inv, seed),
-    };
-    const ref = { inversion: golden.inversion, consistencia: golden.consistencia };
+    const banderas = [...checkDamageReach(spec, inv, seed), ...checkAssumedRest(spec, inv, seed)];
+    const mio: Record<string, unknown> = { inversion: inv.toDict(), consistencia: banderas };
+    if (banderas.some((b) => b.codigo === "reposo_supuesto_vs_dano"))
+      mio.inversion_reposo_supuesto = invert(spec, { assumedAsData: true }).toDict();
+    const ref = Object.fromEntries(
+      Object.entries(golden).filter(([k]) => k !== "evidencia" && k !== "dano_minimo"),
+    );
     expect(differences(ref, JSON.parse(JSON.stringify(mio)))).toEqual([]);
-  }, 300_000);
+  }, 600_000);
 });
 
 describe("qué daño cuenta (ADR 0091)", () => {
@@ -51,10 +53,11 @@ describe("qué daño cuenta (ADR 0091)", () => {
     expect(evidenceFromSpec(solo, 1).damageMin).toEqual(evidenceFromSpec(spec, 1).damageMin);
   });
 
-  it("en AXA la reconstrucción no alcanza la deformación del reporte y lo dice", () => {
+  it("en AXA el reposo supuesto de V2 no cabe con la deformación: dos hipótesis (ADR 0091)", () => {
     const golden = leer("resultados/axa_alcance.json");
     expect((golden.consistencia as { codigo: string }[]).map((c) => c.codigo)).toEqual([
-      "dano_no_alcanzado",
+      "reposo_supuesto_vs_dano",
     ]);
+    expect(golden.inversion_reposo_supuesto).toBeDefined();
   });
 });

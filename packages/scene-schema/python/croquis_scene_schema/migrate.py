@@ -96,7 +96,8 @@ MIGRATIONS: list[Migration] = [
     Migration(
         "2.0.0",
         "2.1.0",
-        "danos_declarados[].perfil_aplastamiento y .rigidez opcionales (perfil C1–Cn y A, B); "
+        "danos_declarados[].perfil_aplastamiento y .rigidez y "
+        "vehiculos[].posicion_final_supuesta, opcionales; "
         "los documentos no cambian",
         _v200_a_210,
     ),

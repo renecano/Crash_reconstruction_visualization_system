@@ -28,6 +28,14 @@ const KMH = 3.6;
 const MASS_SPREAD = 0.05;
 const RESTITUTION_RIGID: readonly [number, number] = [0.0, 0.2];
 const SIGMA_POSITION_M = 1.0;
+/**
+ * Factor entre niveles de evidencia (ADR 0091): la deformación medida, restricción, pesa PRIORIDAD
+ * veces su σ fuera de su banda; un reposo supuesto tiene PRIORIDAD veces la σ de uno declarado.
+ * Global, no por caso.
+ */
+export const PRIORIDAD = 10.0;
+/** Un reposo supuesto a más de esto del de la reconstrucción con la deformación no cabe con ella. */
+export const ASSUMED_REST_MISS_M = 3.0 * SIGMA_POSITION_M;
 const SIGMA_THROW_M = 1.5;
 const SIGMA_SLIDE_M = 1.5;
 const SPEED_BOUNDS_KMH: readonly [number, number] = [0.0, 200.0];
@@ -181,6 +189,11 @@ export class Evidence {
     readonly slide: Map<string, number> = new Map(),
     /** Vehículo → ΔV mínimo que implica su daño cuando el otro no tiene el suyo medido. */
     readonly damageMin: Map<string, Distribution> = new Map(),
+    /** Vehículo → posición y rumbo finales supuestos a propósito (evidencia blanda, ADR 0091). */
+    readonly restAssumed: Map<string, [number, number]> = new Map(),
+    readonly headingAssumed: Map<string, number> = new Map(),
+    /** La hipótesis «cuadra con el reposo supuesto»: el supuesto pesa como dato. */
+    readonly assumedAsData = false,
   ) {}
 
   empty(): boolean {
@@ -190,7 +203,29 @@ export class Evidence {
       this.damageDv.size ||
       this.damageMin.size ||
       this.restHeading.size ||
-      this.slide.size
+      this.slide.size ||
+      this.restAssumed.size
+    );
+  }
+
+  /** Cuánto más incierto es un reposo supuesto (y cuánto pesa la restricción del daño). */
+  weight(): number {
+    return this.assumedAsData ? 1.0 : PRIORIDAD;
+  }
+
+  /** La misma evidencia en la hipótesis «cuadra con el reposo supuesto». */
+  asAssumedData(): Evidence {
+    return new Evidence(
+      this.rest,
+      this.throwM,
+      this.damageDv,
+      this.restHeading,
+      this.skid,
+      this.slide,
+      this.damageMin,
+      this.restAssumed,
+      this.headingAssumed,
+      true,
     );
   }
 
@@ -204,6 +239,8 @@ export class Evidence {
       ...sorted(this.throwM).map((k) => `proyeccion:${k}`),
       ...sorted(this.damageDv).map((k) => `dano:${k}`),
       ...sorted(this.damageMin).map((k) => `dano_minimo:${k}`),
+      ...sorted(this.restAssumed).map((k) => `reposo_supuesto:${k}`),
+      ...sorted(this.headingAssumed).map((k) => `rumbo_final_supuesto:${k}`),
     ];
   }
 }
@@ -227,12 +264,19 @@ export function evidenceFromSpec(spec: Json, seed = 0, nDamage = 200): Evidence 
   const personas = spec.personas as Json[];
   const rest = new Map<string, [number, number]>();
   const restHeading = new Map<string, number>();
+  const restAssumed = new Map<string, [number, number]>();
+  const headingAssumed = new Map<string, number>();
   for (const v of vehiculos) {
     const pf = v.posicion_final as Json | undefined;
     if (statedPose(pf) && pf) {
       rest.set(String(v.id), [Number(pf.x), Number(pf.y)]);
       if (pf.rumbo_deg !== undefined && pf.rumbo_deg !== null) {
         restHeading.set(String(v.id), Number(pf.rumbo_deg));
+      }
+    } else if (pf && v.posicion_final_supuesta === true) {
+      restAssumed.set(String(v.id), [Number(pf.x), Number(pf.y)]);
+      if (pf.rumbo_deg !== undefined && pf.rumbo_deg !== null) {
+        headingAssumed.set(String(v.id), Number(pf.rumbo_deg));
       }
     }
   }
@@ -332,7 +376,17 @@ export function evidenceFromSpec(spec: Json, seed = 0, nDamage = 200): Evidence 
       }
     });
   }
-  return new Evidence(rest, throwM, damageDv, restHeading, skid, slide, damageMin);
+  return new Evidence(
+    rest,
+    throwM,
+    damageDv,
+    restHeading,
+    skid,
+    slide,
+    damageMin,
+    restAssumed,
+    headingAssumed,
+  );
 }
 
 export function movingVehicles(spec: Json): string[] {
@@ -446,6 +500,7 @@ function residuals(
   ev: Evidence,
   dt: number,
   downedMu: number | null = null,
+  active: Map<string, number> | null = null,
 ): Map<string, number> | null {
   const r = tryReconstruct(spec, dt, downedMu);
   if (r === null) return null;
@@ -475,24 +530,73 @@ function residuals(
     if (!v) continue;
     out.set(`marcas_despues:${vid}`, (v.distancePostM - d) / SIGMA_SLIDE_M);
   }
+  const w = ev.weight();
   for (const [vid, dist] of sortedEntries(ev.damageDv)) {
     const v = byV.get(vid);
     if (!v) continue;
-    out.set(`dano:${vid}`, (v.deltaVKmh - dist.p50) / damageSigma(dist));
+    const name = `dano:${vid}`;
+    out.set(name, damageBand(v.deltaVKmh, dist, w, false, active?.get(name) ?? null));
   }
   for (const [vid, dist] of sortedEntries(ev.damageMin)) {
     const v = byV.get(vid);
     if (!v) continue;
-    // Un mínimo: cuenta solo si la reconstrucción queda por debajo.
-    out.set(`dano_minimo:${vid}`, Math.min(0.0, v.deltaVKmh - dist.p50) / damageSigma(dist));
+    // Un mínimo: solo cuenta si la reconstrucción queda por debajo de su p10.
+    const name = `dano_minimo:${vid}`;
+    out.set(name, damageBand(v.deltaVKmh, dist, w, true, active?.get(name) ?? null));
+  }
+  for (const [vid, [x, y]] of sortedEntries(ev.restAssumed)) {
+    const v = byV.get(vid);
+    if (!v) continue;
+    out.set(`reposo_supuesto:${vid}:x`, (v.restPose[0] - x) / (SIGMA_POSITION_M * w));
+    out.set(`reposo_supuesto:${vid}:y`, (v.restPose[1] - y) / (SIGMA_POSITION_M * w));
+  }
+  for (const [vid, h] of sortedEntries(ev.headingAssumed)) {
+    const v = byV.get(vid);
+    if (!v) continue;
+    out.set(`rumbo_final_supuesto:${vid}`, wrapDeg(v.restPose[2] - h) / (SIGMA_HEADING_DEG * w));
   }
   return out;
+}
+
+/**
+ * Residuo del ΔV de la reconstrucción contra el de la deformación medida: cero dentro de la banda
+ * p10–p90 (en un mínimo, desde p10); fuera, la distancia al borde en σ por `w`. Con `edge` (el signo
+ * del lado que viola el mejor ajuste), la restricción activa es una igualdad local (ADR 0091).
+ */
+export function damageBand(
+  dv: number,
+  dist: Distribution,
+  w: number,
+  minimum = false,
+  edge: number | null = null,
+): number {
+  if (edge !== null) return ((dv - (edge < 0 ? dist.p10 : dist.p90)) / damageSigma(dist)) * w;
+  if (dv < dist.p10) return ((dv - dist.p10) / damageSigma(dist)) * w;
+  if (!minimum && dv > dist.p90) return ((dv - dist.p90) / damageSigma(dist)) * w;
+  return 0.0;
+}
+
+/** Vehículo → a cuántos metros de su reposo supuesto lo deja el ajuste. */
+export function assumedRestMiss(ev: Evidence, fit: Fit): Map<string, number> {
+  const s = SIGMA_POSITION_M * ev.weight();
+  return new Map(
+    [...ev.restAssumed.keys()]
+      .sort()
+      .map((vid) => [
+        vid,
+        dmath.hypot(
+          fit.residuals.get(`reposo_supuesto:${vid}:x`) ?? 0,
+          fit.residuals.get(`reposo_supuesto:${vid}:y`) ?? 0,
+        ) * s,
+      ]),
+  );
 }
 
 /** Residuos en función de los parámetros libres, con caché por punto. */
 class Problem {
   readonly names: string[] = [];
   private readonly cache = new Map<string, number[]>();
+  active: Map<string, number> = new Map();
 
   constructor(
     readonly spec: Json,
@@ -510,7 +614,24 @@ class Problem {
   }
 
   raw(x: readonly number[]): Map<string, number> | null {
-    return residuals(applyValues(this.spec, this.values(x)), this.ev, this.dt, this.downedMu);
+    return residuals(
+      applyValues(this.spec, this.values(x)),
+      this.ev,
+      this.dt,
+      this.downedMu,
+      this.active,
+    );
+  }
+
+  /** Las restricciones del daño que el ajuste en `x` viola quedan activas para el jacobiano. */
+  activate(x: readonly number[]): void {
+    const res = this.raw(x) ?? new Map<string, number>();
+    this.active = new Map(
+      [...res].filter(
+        ([k, r]) => (k.startsWith("dano:") || k.startsWith("dano_minimo:")) && r !== 0.0,
+      ),
+    );
+    this.cache.clear();
   }
 
   call(x: readonly number[]): number[] {
@@ -601,6 +722,7 @@ export function localSigma(spec: Json, ev: Evidence, fit: Fit, dt = 0.1): Map<st
   if (params.length === 0) return new Map();
   const prob = new Problem(base, ev, params, new Map(), dt);
   const x = params.map((p) => Math.min(Math.max(fit.values.get(p.name) ?? p.start, p.lo), p.hi));
+  prob.activate(x);
   const j = prob.jac(x);
   if (j.length === 0 || prob.names.length === 0) {
     return new Map(params.map((p) => [p.name, Infinity]));
@@ -715,7 +837,28 @@ export function perturbed(spec: Json, ev: Evidence, rng: PyRandom): Perturbed {
   }
   const slide = new Map<string, number>();
   for (const [k, d] of ev.slide) slide.set(k, Math.max(0.5, d + rng.gauss(0, SIGMA_SLIDE_M)));
-  const e = new Evidence(rest, throwM, damage, heading, new Map(ev.skid), slide, damageMin);
+  const sPos = SIGMA_POSITION_M * ev.weight();
+  const restAssumed = new Map<string, [number, number]>();
+  for (const [k, [x, y]] of ev.restAssumed) {
+    const nx = x + rng.gauss(0, sPos);
+    const ny = y + rng.gauss(0, sPos);
+    restAssumed.set(k, [nx, ny]);
+  }
+  const headingAssumed = new Map<string, number>();
+  for (const [k, h] of ev.headingAssumed)
+    headingAssumed.set(k, h + rng.gauss(0, SIGMA_HEADING_DEG * ev.weight()));
+  const e = new Evidence(
+    rest,
+    throwM,
+    damage,
+    heading,
+    new Map(ev.skid),
+    slide,
+    damageMin,
+    restAssumed,
+    headingAssumed,
+    ev.assumedAsData,
+  );
   let downedMu: number | null = null;
   if (
     (s.vehiculos as Json[]).some((v) => DOWNED_SLIDE_CLASSES.has(String((v.clase as Json).valor)))
@@ -767,6 +910,10 @@ export class Inversion {
     readonly impactSpeeds: Map<string, Distribution>,
     readonly fits: Fit[] = [],
     readonly seed = 0,
+    /** La hipótesis «cuadra con el reposo supuesto» (ADR 0091). */
+    readonly assumedAsData = false,
+    /** El ajuste conjunto con todo libre, si algo no quedó fijado. */
+    readonly full: Fit | null = null,
   ) {}
 
   /** Velocidad previa estimada de cada vehículo que la evidencia fija. */
@@ -792,6 +939,20 @@ export class Inversion {
       })),
       residuos: byKey(this.best.residuals).map(([k, v]) => ({ nombre: k, sigma: pyRound(v, 3) })),
       convergio: this.best.success,
+      ...(this.full !== null
+        ? {
+            ajuste_completo: {
+              valores: byKey(this.full.values).map(([k, v]) => ({
+                nombre: k,
+                valor: pyRound(v, 2),
+              })),
+              residuos: byKey(this.full.residuals).map(([k, v]) => ({
+                nombre: k,
+                sigma: pyRound(v, 3),
+              })),
+            },
+          }
+        : {}),
     };
   }
 }
@@ -800,16 +961,59 @@ export class Inversion {
  * Velocidades (y rumbos no declarados) que reproducen la evidencia, con percentiles sobre `samples`
  * ajustes con entradas perturbadas. Lo que la evidencia no fija se informa así.
  */
+/**
+ * Arranques compatibles con la deformación medida (ADR 0091): lejos de ella el ΔV casi no cambia
+ * con las velocidades y el ajuste se queda donde arranca. Por cada daño medido entre dos vehículos,
+ * la velocidad de cierre que implica la mediana de su ΔV, con cada uno como el que alcanza.
+ */
+export function damageStarts(spec: Json, ev: Evidence, params: Param[]): Map<string, number>[] {
+  const starts: Map<string, number>[] = [];
+  const event = ((spec.eventos ?? []) as Json[]).find(
+    (e) => String(e.tipo) === "impacto_vehiculo_vehiculo",
+  );
+  if (!event) return starts;
+  const byId = new Map((spec.vehiculos as Json[]).map((v) => [String(v.id), v]));
+  const first = new Map(params.map((p) => [p.name, p.start]));
+  const mass = (vid: string) => {
+    const v = byId.get(vid)!;
+    return v.masa ? Number((v.masa as Json).valor) : classMass(String((v.clase as Json).valor));
+  };
+  const actors = ((event.actores ?? []) as string[]).filter((a) => byId.has(a));
+  const damages = new Map([...ev.damageDv, ...ev.damageMin]);
+  for (const vid of [...damages.keys()].sort()) {
+    const dist = damages.get(vid)!;
+    const other = actors.find((o) => o !== vid);
+    if (other === undefined || !actors.includes(vid)) continue;
+    const closing = (dist.p50 * (mass(vid) + mass(other))) / mass(other);
+    for (const [a, b] of [
+      [vid, other],
+      [other, vid],
+    ] as const) {
+      const ka = `velocidad:${a}`;
+      if (!first.has(ka)) continue;
+      const speed = (first.get(`velocidad:${b}`) ?? 0.0) + closing;
+      starts.push(new Map([[ka, Math.min(speed, SPEED_BOUNDS_KMH[1] - 1)]]));
+    }
+  }
+  return starts;
+}
+
 export function invert(
   spec: Json,
-  opts: { seed?: number | null; samples?: number; dt?: number } = {},
+  opts: { seed?: number | null; samples?: number; dt?: number; assumedAsData?: boolean } = {},
 ): Inversion {
   const dt = opts.dt ?? 0.1;
   const samples = opts.samples ?? 12;
   const seed = opts.seed ?? Number((spec.meta as Json).semilla);
-  const ev = evidenceFromSpec(spec, seed);
+  const assumedAsData = opts.assumedAsData ?? false;
+  let ev = evidenceFromSpec(spec, seed);
+  if (assumedAsData) ev = ev.asAssumedData();
   const params = parameters(withMarks(spec, ev), ev);
   let best = fitEvidence(spec, ev, { dt });
+  for (const start of damageStarts(spec, ev, params)) {
+    const f = fitEvidence(spec, ev, { dt, start });
+    if (f.cost < best.cost) best = f;
+  }
   const sigma = !ev.empty()
     ? localSigma(spec, ev, best, dt)
     : new Map(params.map((p) => [p.name, Infinity]));
@@ -817,6 +1021,8 @@ export function invert(
     params.map((p) => [p.name, (sigma.get(p.name) ?? Infinity) <= IDENT_MAX[p.kind]!]),
   );
   const free = new Set([...ident].filter(([, ok]) => ok).map(([n]) => n));
+  // El ajuste conjunto, con todo libre: si algo no queda fijado, se guarda (ADR 0091).
+  const full = !ev.empty() && free.size < params.length ? best : null;
   if (free.size && free.size < params.length) {
     const start = new Map(
       params.map((p) => [p.name, free.has(p.name) ? best.values.get(p.name)! : p.start]),
@@ -829,9 +1035,12 @@ export function invert(
   const freeParams = params.filter((p) => free.has(p.name));
   const xBest = freeParams.map((p) => best.values.get(p.name)!);
   const fixed = new Map([...best.values].filter(([n]) => !free.has(n)));
-  const jBest = freeParams.length
-    ? new Problem(withMarks(spec, ev), ev, freeParams, fixed, dt).jac(xBest)
-    : [];
+  let jBest: number[][] = [];
+  if (freeParams.length) {
+    const probBest = new Problem(withMarks(spec, ev), ev, freeParams, fixed, dt);
+    probBest.activate(xBest);
+    jBest = probBest.jac(xBest);
+  }
   for (let i = 0; i < (freeParams.length ? samples : 0); i++) {
     const pert = perturbed(spec, ev, rng);
     const { spec: s, evidence: e, downedMu } = pert;
@@ -862,5 +1071,5 @@ export function invert(
   );
   const impactSpeeds = new Map<string, Distribution>();
   for (const [k, v] of impacts) if (v.length) impactSpeeds.set(k, distribution(v));
-  return new Inversion(ev.labels(), estimates, best, impactSpeeds, fits, seed);
+  return new Inversion(ev.labels(), estimates, best, impactSpeeds, fits, seed, assumedAsData, full);
 }

@@ -101,6 +101,10 @@
     "inversion": {
       "$ref": "#/$defs/Inversion"
     },
+    "inversion_reposo_supuesto": {
+      "$ref": "#/$defs/Inversion",
+      "description": "La hipótesis «cuadra con el reposo supuesto» (ADR 0091): solo si un reposo supuesto no cabe con la deformación medida (bandera reposo_supuesto_vs_dano). La inversión principal es «cuadra con el daño medido»; el perito elige."
+    },
     "consistencia": {
       "type": "array",
       "items": {
@@ -1334,6 +1338,33 @@
         },
         "convergio": {
           "type": "boolean"
+        },
+        "ajuste_completo": {
+          "type": "object",
+          "additionalProperties": false,
+          "description": "El ajuste conjunto con todos los parámetros libres, cuando la evidencia no fija alguno (ADR 0091): la reconstrucción que mejor la cumple, aunque no la fije. Sus valores no son estimaciones.",
+          "required": ["valores", "residuos"],
+          "properties": {
+            "valores": {
+              "type": "array",
+              "description": "Cada parámetro («velocidad:<id>» en km/h, «rumbo:<id>» en grados) con su valor.",
+              "items": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": ["nombre", "valor"],
+                "properties": {
+                  "nombre": { "type": "string", "minLength": 1, "maxLength": 80 },
+                  "valor": { "type": "number" }
+                }
+              },
+              "maxItems": 64
+            },
+            "residuos": {
+              "type": "array",
+              "items": { "$ref": "#/$defs/Residuo" },
+              "maxItems": 128
+            }
+          }
         }
       }
     },
@@ -1352,7 +1383,8 @@
             "reposo_inalcanzable",
             "velocidad_vs_evidencia",
             "fuera_de_la_via_del_mapa",
-            "dano_no_alcanzado"
+            "dano_no_alcanzado",
+            "reposo_supuesto_vs_dano"
           ]
         },
         "mensaje": {

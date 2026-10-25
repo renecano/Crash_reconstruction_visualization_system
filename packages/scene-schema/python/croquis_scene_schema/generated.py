@@ -781,6 +781,10 @@ class Vehiculo(BaseModel):
     carril: CampoEntero | None = None
     posicion_inicial: Pose2D
     posicion_final: Pose2D | None = None
+    posicion_final_supuesta: bool | None = None
+    """
+    La posición final es un supuesto a propósito (el reporte no la da; la supone el perito o un método, p. ej. el de los restos): con procedencia «supuesto», entra a la inversión como evidencia blanda, por debajo de lo medido (ADR 0091). Las posiciones que pone la escena por omisión no la llevan.
+    """
     ocupantes: Annotated[list[Id] | None, Field(max_length=60)] = None
     """
     Ids de personas a bordo.

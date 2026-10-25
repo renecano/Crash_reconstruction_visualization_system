@@ -1,6 +1,7 @@
 """Inversión: ΔV desde el daño (CRASH3 con rigidez muestreada) y velocidades desde la evidencia."""
 
 import copy
+import dataclasses
 from typing import Any
 
 import pytest
@@ -257,3 +258,29 @@ def test_estimacion_en_el_limite_se_marca() -> None:
     assert inv.Estimate(p, 5.0, True, p.lo + 0.004, d).at_bound
     assert inv.Estimate(p, 5.0, True, p.lo + 0.09, d).at_bound
     assert not inv.Estimate(p, 5.0, True, p.lo + 0.2, d).at_bound
+
+
+def test_la_deformacion_medida_es_una_banda_que_pesa_como_restriccion() -> None:
+    # ADR 0091: dentro de p10–p90 no cuesta; fuera, la distancia al borde en σ por PRIORIDAD.
+    d = inv.Distribution(30.0, 50.0, 80.0, 200)
+    s = inv.damage_sigma(d)
+    assert inv.damage_band(55.0, d, inv.PRIORIDAD) == 0.0
+    assert inv.damage_band(20.0, d, inv.PRIORIDAD) == pytest.approx(-10.0 / s * inv.PRIORIDAD)
+    assert inv.damage_band(90.0, d, 1.0) == pytest.approx(10.0 / s)
+    # Un mínimo no tiene techo; activa, es la distancia al borde aunque esté dentro de la banda.
+    assert inv.damage_band(90.0, d, 1.0, minimum=True) == 0.0
+    assert inv.damage_band(31.0, d, 1.0, minimum=True, edge=-1.0) == pytest.approx(1.0 / s)
+
+
+def test_solo_el_reposo_supuesto_a_proposito_entra_como_evidencia_blanda() -> None:
+    spec = load_fixture("alcance")
+    # Los reposos que pone la escena por omisión (fuente «supuesto») no entran.
+    assert inv.evidence_from_spec(spec, 1).rest_assumed == {}
+    spec["vehiculos"][0]["posicion_final_supuesta"] = True
+    ev = inv.evidence_from_spec(spec, 1)
+    assert set(ev.rest_assumed) == {"veh-a"}
+    assert "reposo_supuesto:veh-a" in ev.labels()
+    assert "reposo:veh-a" not in ev.labels()
+    # Un reposo supuesto tiene PRIORIDAD veces la σ de uno declarado; en su hipótesis, la misma.
+    assert ev.weight() == inv.PRIORIDAD
+    assert dataclasses.replace(ev, assumed_as_data=True).weight() == 1.0

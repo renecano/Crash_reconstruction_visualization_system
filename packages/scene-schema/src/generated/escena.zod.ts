@@ -1007,6 +1007,7 @@ export const Vehiculo = z.strictObject({
   carril: CampoEntero.optional(),
   posicion_inicial: Pose2D,
   posicion_final: Pose2D.optional(),
+  posicion_final_supuesta: z.boolean().optional(),
   ocupantes: z.array(Id).max(60).optional(),
 });
 export type Vehiculo = z.infer<typeof Vehiculo>;

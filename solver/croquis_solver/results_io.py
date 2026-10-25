@@ -21,7 +21,12 @@ from croquis_scene_schema import (
     load_fixture,
     result_errors,
 )
-from croquis_solver.consistency import check_consistency, check_damage_reach
+from croquis_solver.consistency import (
+    Inconsistency,
+    check_assumed_rest,
+    check_consistency,
+    check_damage_reach,
+)
 from croquis_solver.inversion import evidence_from_spec, invert
 from croquis_solver.montecarlo import monte_carlo
 from croquis_solver.reconstruct import reconstruct
@@ -49,16 +54,27 @@ def inversion_fixtures() -> list[str]:
     return sorted(p.stem for p in INVERSION_DIR.glob("*.json"))
 
 
+def with_assumed_rest_hypothesis(
+    spec: dict[str, Any], flags: list[Inconsistency]
+) -> dict[str, Any]:
+    """La hipótesis «cuadra con el reposo supuesto», si el reposo supuesto no cabe con el daño."""
+    if not any(f.codigo == "reposo_supuesto_vs_dano" for f in flags):
+        return {}
+    return {"inversion_reposo_supuesto": invert(spec, assumed_as_data=True).to_dict()}
+
+
 def render_inversion(name: str) -> str:
     spec: dict[str, Any] = json.loads((INVERSION_DIR / f"{name}.json").read_text(encoding="utf-8"))
     seed = int(spec["meta"]["semilla"])
     ev = evidence_from_spec(spec, seed)
     inv = invert(spec)
+    flags = check_damage_reach(spec, inv, seed) + check_assumed_rest(spec, inv, seed)
     doc = {
         "evidencia": ev.labels(),
         "dano_minimo": {k: d.to_dict() for k, d in sorted(ev.damage_min.items())},
         "inversion": inv.to_dict(),
-        "consistencia": [i.to_dict() for i in check_damage_reach(spec, inv, seed)],
+        "consistencia": [i.to_dict() for i in flags],
+        **with_assumed_rest_hypothesis(spec, flags),
     }
     return json.dumps(doc, ensure_ascii=False, separators=(",", ":")) + "\n"
 
@@ -69,7 +85,9 @@ def render(name: str) -> str:
     doc["incertidumbre"] = monte_carlo(spec).to_dict()
     inv = invert(spec)
     doc["inversion"] = inv.to_dict()
-    doc["consistencia"] = [f.to_dict() for f in check_consistency(spec, inversion=inv)]
+    flags = check_consistency(spec, inversion=inv)
+    doc["consistencia"] = [f.to_dict() for f in flags]
+    doc.update(with_assumed_rest_hypothesis(spec, flags))
     errors = result_errors(doc)
     if errors:
         msg = f"El resultado de {name} no cumple resultado.schema.json:\n" + "\n".join(errors[:10])

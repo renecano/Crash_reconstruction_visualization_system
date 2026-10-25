@@ -103,10 +103,12 @@
         "y": 12.811,
         "rumbo_deg": 75.71537756298898,
         "procedencia": {
-          "fuente": "usuario",
-          "confianza": 0.9
+          "fuente": "supuesto",
+          "confianza": 0.5,
+          "nota": "El reporte no da el reposo de V2: supuesto del método de los restos, detrás de V1, tocándolo."
         }
-      }
+      },
+      "posicion_final_supuesta": true
     },
     {
       "id": "veh-b",
@@ -153,6 +155,12 @@
           "fuente": "usuario",
           "confianza": 0.9
         }
+      },
+      "masa": {
+        "valor": 2562.1,
+        "unidad": "kg",
+        "fuente": "supuesto",
+        "confianza": 0.5
       }
     }
   ],

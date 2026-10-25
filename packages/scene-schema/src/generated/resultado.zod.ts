@@ -190,6 +190,7 @@ export const Inconsistencia = z.strictObject({
     "velocidad_vs_evidencia",
     "fuera_de_la_via_del_mapa",
     "dano_no_alcanzado",
+    "reposo_supuesto_vs_dano",
   ]),
   mensaje: z.string().min(1).max(600),
   datos: DatosInconsistencia,
@@ -241,6 +242,14 @@ export const Inversion = z.strictObject({
   velocidad_impacto: z.array(VelocidadImpactoInvertida).max(16),
   residuos: z.array(Residuo).max(128),
   convergio: z.boolean(),
+  ajuste_completo: z
+    .strictObject({
+      valores: z
+        .array(z.strictObject({ nombre: z.string().min(1).max(80), valor: z.number() }))
+        .max(64),
+      residuos: z.array(Residuo).max(128),
+    })
+    .optional(),
 });
 export type Inversion = z.infer<typeof Inversion>;
 
@@ -477,6 +486,7 @@ export const ResultadoSchema = z.strictObject({
   parametros: Parametros,
   incertidumbre: Incertidumbre.optional(),
   inversion: Inversion.optional(),
+  inversion_reposo_supuesto: Inversion.optional(),
   consistencia: z.array(Inconsistencia).max(32).optional(),
 });
 export type Resultado = z.infer<typeof ResultadoSchema>;

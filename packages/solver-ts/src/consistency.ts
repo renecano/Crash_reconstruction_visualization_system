@@ -12,7 +12,10 @@ import { vehicleSpeedRangeFromThrow } from "./pedestrian";
 import { pyFixed } from "./reconstruct";
 import { pyRound, str } from "./pymath";
 import {
+  ASSUMED_REST_MISS_M,
+  PRIORIDAD,
   Evidence,
+  assumedRestMiss,
   damageSigma,
   evidenceFromSpec,
   fitEvidence,
@@ -342,10 +345,11 @@ export function checkDamageReach(spec: Json, inv: Inversion, seed: number): Inco
   for (const vid of [...ev.damageMin.keys()].sort()) {
     const dmg = ev.damageMin.get(vid)!;
     const r = inv.best.residuals.get(`dano_minimo:${vid}`);
-    if (r === undefined || !fixed.has(vid)) continue;
-    // El residuo es (ΔV − p50)/σ cuando queda por debajo: de él sale el ΔV de la reconstrucción.
-    const dv = dmg.p50 + r * damageSigma(dmg);
-    if (dv >= dmg.p10) continue;
+    // El residuo es (ΔV − p10)/σ·w por debajo de la banda: más de una unidad (σ/w) no es la holgura
+    // del ajuste, es que no alcanza.
+    if (r === undefined || !fixed.has(vid) || r >= -1.0) continue;
+    const w = inv.assumedAsData ? 1.0 : PRIORIDAD;
+    const dv = dmg.p10 + (r * damageSigma(dmg)) / w;
     out.push({
       codigo: "dano_no_alcanzado",
       mensaje:
@@ -355,6 +359,28 @@ export function checkDamageReach(spec: Json, inv: Inversion, seed: number): Inco
         "las posiciones finales? Si alguna es un supuesto, con ella la reconstrucción no " +
         "alcanza ese daño.",
       datos: { vehiculo: vid, dano_minimo_kmh: [dmg.p10, dmg.p90], reconstruccion_kmh: dv },
+    });
+  }
+  return out;
+}
+
+/** Un reposo supuesto que no cabe con la deformación medida: dos hipótesis (ADR 0091). */
+export function checkAssumedRest(spec: Json, inv: Inversion, seed: number): Inconsistency[] {
+  const ev = evidenceFromSpec(spec, seed);
+  if (!ev.restAssumed.size || !(ev.damageDv.size || ev.damageMin.size) || inv.assumedAsData)
+    return [];
+  const byId = new Map((spec.vehiculos as Json[]).map((v) => [str(v.id), v]));
+  const out: Inconsistency[] = [];
+  for (const [vid, miss] of assumedRestMiss(ev, inv.full ?? inv.best)) {
+    if (miss <= ASSUMED_REST_MISS_M) continue;
+    out.push({
+      codigo: "reposo_supuesto_vs_dano",
+      mensaje:
+        `Con la deformación medida, ${name(byId.get(vid)!)} termina a unos ${pyFixed(miss, 0)} m de ` +
+        "su posición final supuesta: el daño y ese reposo no caben juntos. Hay dos " +
+        "hipótesis, «cuadra con el daño medido» y «cuadra con el reposo supuesto»; el " +
+        "perito elige.",
+      datos: { vehiculo: vid, distancia_m: miss },
     });
   }
   return out;
@@ -381,5 +407,6 @@ export function checkConsistency(
     ...checkRest(spec, seed),
     ...(inversion !== null ? checkSpeedEvidence(spec, inversion) : []),
     ...(inversion !== null ? checkDamageReach(spec, inversion, seed) : []),
+    ...(inversion !== null ? checkAssumedRest(spec, inversion, seed) : []),
   ];
 }

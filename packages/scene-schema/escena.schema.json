@@ -815,6 +815,10 @@
         "carril": { "$ref": "#/$defs/CampoEntero" },
         "posicion_inicial": { "$ref": "#/$defs/Pose2D" },
         "posicion_final": { "$ref": "#/$defs/Pose2D" },
+        "posicion_final_supuesta": {
+          "type": "boolean",
+          "description": "La posición final es un supuesto a propósito (el reporte no la da; la supone el perito o un método, p. ej. el de los restos): con procedencia «supuesto», entra a la inversión como evidencia blanda, por debajo de lo medido (ADR 0091). Las posiciones que pone la escena por omisión no la llevan."
+        },
         "ocupantes": {
           "type": "array",
           "items": { "$ref": "#/$defs/Id" },
