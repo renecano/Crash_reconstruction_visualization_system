@@ -24,6 +24,7 @@ export * from "./linalg";
 export * from "./lsq";
 export * from "./inversion";
 export * from "./montecarlo";
+export * from "./agents";
 export * from "./full-result";
 /** Funciones trascendentes deterministas (E8, ADR 0029); también las usa el horneado del visor. */
 export * as dmath from "./dmath";

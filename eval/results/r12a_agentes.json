@@ -1,0 +1,114 @@
+{
+ "name": "r12a_agentes",
+ "generated_at": "2026-10-25T21:50:47Z",
+ "git_commit": "1b4674c",
+ "descripcion": "Los conductores como agentes (R12a) en las escenas de hipótesis: la hipótesis contra la reconstrucción sin ella, con la decisión de cada conductor.",
+ "escenas": {
+  "alcance_frena_antes": {
+   "titulo": "Hipótesis: A frena 0.5 s antes (alcance)",
+   "hipotesis": {
+    "contacto": true,
+    "t_s": 0.293385,
+    "velocidad_relativa_kmh": 24.508133
+   },
+   "linea_base": {
+    "contacto": true,
+    "t_s": 0.0,
+    "velocidad_relativa_kmh": 38.51294
+   },
+   "igual_a_la_linea_base": false,
+   "decisiones": {
+    "veh-a": {
+     "tipo": "frenar",
+     "t": -1.150752,
+     "origen": "perito"
+    }
+   }
+  },
+  "alcance_volantea": {
+   "titulo": "Hipótesis: A volantea a la izquierda en vez de frenar (alcance)",
+   "hipotesis": {
+    "contacto": true,
+    "t_s": -0.083615,
+    "velocidad_relativa_kmh": 50.992372
+   },
+   "linea_base": {
+    "contacto": true,
+    "t_s": 0.0,
+    "velocidad_relativa_kmh": 38.51294
+   },
+   "igual_a_la_linea_base": false,
+   "decisiones": {
+    "veh-a": {
+     "tipo": "volantear_izquierda",
+     "t": -0.650752,
+     "origen": "perito"
+    }
+   }
+  },
+  "axa_agentes": {
+   "titulo": "AXA A2010930 con los conductores como agentes, sin hipótesis",
+   "hipotesis": {
+    "contacto": true,
+    "t_s": 0.0,
+    "velocidad_relativa_kmh": 39.82
+   },
+   "linea_base": {
+    "contacto": true,
+    "t_s": 0.0,
+    "velocidad_relativa_kmh": 39.82
+   },
+   "igual_a_la_linea_base": true,
+   "decisiones": {}
+  },
+  "carambola_cadena": {
+   "titulo": "Hipótesis: C frena y B y A reaccionan en cadena (carambola)",
+   "hipotesis": {
+    "contacto": true,
+    "t_s": -0.58551,
+    "velocidad_relativa_kmh": 24.377349
+   },
+   "linea_base": {
+    "contacto": true,
+    "t_s": 0.0,
+    "velocidad_relativa_kmh": 10.0
+   },
+   "igual_a_la_linea_base": false,
+   "decisiones": {
+    "veh-a": {
+     "tipo": "frenar",
+     "t": -0.3,
+     "origen": "reaccion",
+     "ante": "veh-b",
+     "percibio_t": -1.4
+    },
+    "veh-b": {
+     "tipo": "frenar",
+     "t": -1.4,
+     "origen": "reaccion",
+     "ante": "veh-c",
+     "percibio_t": -2.5
+    },
+    "veh-c": {
+     "tipo": "frenar",
+     "t": -2.5,
+     "origen": "perito"
+    }
+   },
+   "sensibilidad": {
+    "muestras": 64,
+    "semilla": 107,
+    "vehiculos": [
+     "veh-a",
+     "veh-b"
+    ],
+    "sin_contacto": 0,
+    "velocidad_relativa_kmh": {
+     "p10": 21.813615,
+     "p50": 23.944769,
+     "p90": 25.777437
+    }
+   }
+  }
+ }
+}

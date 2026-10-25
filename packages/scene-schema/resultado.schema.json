@@ -22,7 +22,7 @@
   ],
   "properties": {
     "version_resultado": {
-      "const": "1.10.0"
+      "const": "1.11.0"
     },
     "escena_id": {
       "$ref": "#/$defs/Id"
@@ -112,6 +112,9 @@
       },
       "maxItems": 32,
       "description": "Lo declarado que no cabe en ninguna solución física (PLAN §6.1.12), en lenguaje llano y sin culpa."
+    },
+    "agentes": {
+      "$ref": "#/$defs/Agentes"
     }
   },
   "$defs": {
@@ -1543,6 +1546,170 @@
         },
         "cdc": {
           "$ref": "#/$defs/ZonaCDC"
+        }
+      }
+    },
+    "SimulacionAgentes": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["contacto"],
+      "description": "Lo que pasa con esas decisiones: el primer contacto entre vehículos o, si no hay, la distancia mínima a la que quedaron.",
+      "properties": {
+        "contacto": {
+          "type": "boolean"
+        },
+        "t": {
+          "type": "number"
+        },
+        "vehiculos": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/Id"
+          },
+          "minItems": 2,
+          "maxItems": 2
+        },
+        "velocidades_kmh": {
+          "type": "array",
+          "maxItems": 2,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["vehiculo", "valor"],
+            "properties": {
+              "vehiculo": {
+                "$ref": "#/$defs/Id"
+              },
+              "valor": {
+                "type": "number"
+              }
+            }
+          }
+        },
+        "velocidad_relativa_kmh": {
+          "type": "number"
+        },
+        "distancia_minima_m": {
+          "type": "number"
+        }
+      }
+    },
+    "ConductorAgente": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["vehiculo", "tiempo_reaccion_s"],
+      "properties": {
+        "vehiculo": {
+          "$ref": "#/$defs/Id"
+        },
+        "tiempo_reaccion_s": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["valor", "rango", "fuente"],
+          "properties": {
+            "valor": {
+              "type": "number"
+            },
+            "rango": {
+              "type": "array",
+              "items": {
+                "type": "number"
+              },
+              "minItems": 2,
+              "maxItems": 2
+            },
+            "fuente": {
+              "type": "string",
+              "maxLength": 300
+            }
+          }
+        },
+        "decision": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["tipo", "t", "origen"],
+          "properties": {
+            "tipo": {
+              "type": "string",
+              "enum": ["frenar", "volantear_izquierda", "volantear_derecha", "seguir"]
+            },
+            "t": {
+              "type": "number"
+            },
+            "origen": {
+              "type": "string",
+              "enum": ["perito", "reconstruccion", "reaccion"]
+            },
+            "ante": {
+              "$ref": "#/$defs/Id"
+            },
+            "percibio_t": {
+              "type": "number"
+            }
+          }
+        }
+      }
+    },
+    "Agentes": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["dt", "t_inicio", "t_fin", "conductores", "resultado", "linea_base"],
+      "description": "Los conductores como agentes (R12a, ADR 0088): solo cuando algún vehículo trae conductor. `resultado` es con las decisiones del perito; `linea_base`, con las de la reconstrucción.",
+      "properties": {
+        "dt": {
+          "type": "number"
+        },
+        "t_inicio": {
+          "type": "number"
+        },
+        "t_fin": {
+          "type": "number"
+        },
+        "conductores": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/ConductorAgente"
+          },
+          "maxItems": 32
+        },
+        "resultado": {
+          "$ref": "#/$defs/SimulacionAgentes"
+        },
+        "linea_base": {
+          "$ref": "#/$defs/SimulacionAgentes"
+        },
+        "sensibilidad": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["muestras", "semilla", "vehiculos", "sin_contacto"],
+          "properties": {
+            "muestras": {
+              "type": "integer"
+            },
+            "semilla": {
+              "type": "integer"
+            },
+            "vehiculos": {
+              "type": "array",
+              "items": {
+                "$ref": "#/$defs/Id"
+              }
+            },
+            "sin_contacto": {
+              "type": "integer"
+            },
+            "velocidad_relativa_kmh": {
+              "$ref": "#/$defs/Percentiles"
+            }
+          }
+        },
+        "supuestos": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "maxLength": 300
+          },
+          "maxItems": 16
         }
       }
     }

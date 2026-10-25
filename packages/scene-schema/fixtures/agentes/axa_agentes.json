@@ -1,0 +1,311 @@
+{
+  "meta": {
+    "id": "caso-nuevo-agentes",
+    "version_esquema": "2.2.0",
+    "idioma": "es-MX",
+    "semilla": 719300,
+    "creado": "2026-10-13T00:00:00-06:00",
+    "relato": "",
+    "origen_relato": "escrito",
+    "sintetico": false,
+    "titulo": "AXA A2010930 con los conductores como agentes, sin hipótesis"
+  },
+  "lugar": {
+    "tipo_via": {
+      "valor": "recta",
+      "fuente": "default",
+      "confianza": 0.3
+    },
+    "carriles_por_sentido": {
+      "valor": 2,
+      "fuente": "default",
+      "confianza": 0.3
+    },
+    "ancho_carril": {
+      "valor": 3.5,
+      "unidad": "m",
+      "fuente": "default",
+      "confianza": 0.3
+    },
+    "sentidos": {
+      "valor": "doble_sentido",
+      "fuente": "default",
+      "confianza": 0.3
+    },
+    "superficie": {
+      "valor": "asfalto",
+      "fuente": "default",
+      "confianza": 0.3
+    },
+    "estado_superficie": {
+      "valor": "seco",
+      "fuente": "default",
+      "confianza": 0.3
+    },
+    "ubicacion_real": {
+      "lat": 26.20915,
+      "lon": -109.0597,
+      "radio_m": 150,
+      "rotacion_deg": 0,
+      "procedencia": {
+        "fuente": "usuario",
+        "confianza": 1,
+        "nota": "El punto de impacto que marcó el perito; las calles alrededor salen de OpenStreetMap."
+      }
+    },
+    "red_vial": {
+      "fuente_datos": "OpenStreetMap",
+      "licencia": "ODbL-1.0",
+      "atribucion": "Contiene información de OpenStreetMap, disponible en openstreetmap.org bajo la Open Database License (ODbL)",
+      "consultado": "",
+      "vias": [
+        {
+          "id_osm": 601958374,
+          "tipo": "motorway",
+          "puntos": [
+            {
+              "x": 36.304,
+              "y": 222.052
+            },
+            {
+              "x": -73.669,
+              "y": -212.598
+            }
+          ],
+          "nombre": "Carretera Los Mochis - Cd. Obregón (Cuota)",
+          "carriles": 2,
+          "un_sentido": true
+        },
+        {
+          "id_osm": 626882568,
+          "tipo": "motorway",
+          "puntos": [
+            {
+              "x": -55.476,
+              "y": -218.054
+            },
+            {
+              "x": 55.557,
+              "y": 218.033
+            }
+          ],
+          "nombre": "Carretera Los Mochis - Cd. Obregón (Cuota)",
+          "carriles": 2,
+          "un_sentido": true
+        }
+      ]
+    }
+  },
+  "entorno": {
+    "clima": {
+      "valor": "despejado",
+      "fuente": "default",
+      "confianza": 0.3
+    },
+    "iluminacion": {
+      "valor": "dia",
+      "fuente": "default",
+      "confianza": 0.3
+    }
+  },
+  "vehiculos": [
+    {
+      "id": "veh-a",
+      "rol": "A",
+      "clase": {
+        "valor": "pickup",
+        "fuente": "supuesto",
+        "confianza": 0.4
+      },
+      "color": {
+        "nombre": {
+          "valor": "gris",
+          "fuente": "default",
+          "confianza": 0.3
+        },
+        "hex": "#8a8d91"
+      },
+      "maniobra": {
+        "valor": "recto",
+        "fuente": "default",
+        "confianza": 0.3
+      },
+      "velocidad_previa": {
+        "valor": 63.17,
+        "unidad": "km/h",
+        "rango": [
+          60.77,
+          113.09
+        ],
+        "fuente": "supuesto",
+        "confianza": 0.7,
+        "nota": "Velocidad que reproduce la evidencia del perito (inversión de Croquis, p10–p90 en el rango)."
+      },
+      "posicion_inicial": {
+        "x": -3.62,
+        "y": -14.216,
+        "rumbo_deg": 75.71537756298898,
+        "procedencia": {
+          "fuente": "supuesto",
+          "confianza": 0.5,
+          "nota": "12 m antes de la posición de impacto que colocó el perito, en su rumbo."
+        }
+      },
+      "masa": {
+        "valor": 1431.083,
+        "unidad": "kg",
+        "fuente": "usuario",
+        "confianza": 0.9
+      },
+      "posicion_final": {
+        "x": 3.262,
+        "y": 12.811,
+        "rumbo_deg": 75.71537756298898,
+        "procedencia": {
+          "fuente": "supuesto",
+          "confianza": 0.5,
+          "nota": "Reposo supuesto por el perito: el reporte no lo da."
+        }
+      },
+      "posicion_final_supuesta": true,
+      "conductor": {}
+    },
+    {
+      "id": "veh-b",
+      "rol": "B",
+      "clase": {
+        "valor": "pickup",
+        "fuente": "supuesto",
+        "confianza": 0.4
+      },
+      "color": {
+        "nombre": {
+          "valor": "gris",
+          "fuente": "default",
+          "confianza": 0.3
+        },
+        "hex": "#8a8d91"
+      },
+      "maniobra": {
+        "valor": "recto",
+        "fuente": "default",
+        "confianza": 0.3
+      },
+      "velocidad_previa": {
+        "valor": 23.35,
+        "unidad": "km/h",
+        "rango": [
+          0,
+          25.65
+        ],
+        "fuente": "supuesto",
+        "confianza": 0.7,
+        "nota": "Velocidad que reproduce la evidencia del perito (inversión de Croquis, p10–p90 en el rango)."
+      },
+      "posicion_inicial": {
+        "x": -2.302,
+        "y": -9.042,
+        "rumbo_deg": 75.71537756298898,
+        "procedencia": {
+          "fuente": "supuesto",
+          "confianza": 0.5,
+          "nota": "12 m antes de la posición de impacto que colocó el perito, en su rumbo."
+        }
+      },
+      "masa": {
+        "valor": 2562.1,
+        "unidad": "kg",
+        "fuente": "supuesto",
+        "confianza": 0.5
+      },
+      "posicion_final": {
+        "x": 4.579,
+        "y": 17.986,
+        "rumbo_deg": 75.71537756298898,
+        "procedencia": {
+          "fuente": "usuario",
+          "confianza": 0.9
+        }
+      },
+      "conductor": {}
+    }
+  ],
+  "personas": [],
+  "eventos": [
+    {
+      "id": "ev-1",
+      "orden": 0,
+      "tipo": "impacto_vehiculo_vehiculo",
+      "actores": [
+        "veh-a",
+        "veh-b"
+      ],
+      "procedencia": {
+        "fuente": "default",
+        "confianza": 0.3
+      },
+      "zonas_impacto": [
+        {
+          "vehiculo_id": "veh-a",
+          "cdc": {
+            "lado": "F"
+          }
+        },
+        {
+          "vehiculo_id": "veh-b",
+          "cdc": {
+            "lado": "B"
+          }
+        }
+      ],
+      "punto_impacto": {
+        "x": 0,
+        "y": 0
+      }
+    }
+  ],
+  "danos_declarados": [
+    {
+      "vehiculo_id": "veh-a",
+      "zona": {
+        "lado": "F"
+      },
+      "severidad": "moderado",
+      "profundidad_aplastamiento": {
+        "valor": 0.96,
+        "unidad": "m",
+        "fuente": "usuario",
+        "confianza": 0.9
+      },
+      "ancho_danado": {
+        "valor": 1.689,
+        "unidad": "m",
+        "fuente": "usuario",
+        "confianza": 0.9
+      },
+      "perfil_aplastamiento": {
+        "valor": [
+          0.96,
+          0.86,
+          0.52,
+          0.2
+        ],
+        "unidad": "m",
+        "fuente": "usuario",
+        "confianza": 0.9
+      },
+      "rigidez": {
+        "a": 55405,
+        "b": 385336,
+        "fuente": "usuario",
+        "confianza": 0.9,
+        "nota": "Del reporte: A = 55.405, B = 385.336 (en kN/m y kN/m²)."
+      },
+      "procedencia": {
+        "fuente": "usuario",
+        "confianza": 0.9
+      }
+    }
+  ],
+  "evidencias": []
+}

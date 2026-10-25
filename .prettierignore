@@ -23,6 +23,7 @@ solver/croquis_solver/data/inversion_calibration.json
 data/vehicles/
 packages/scene-schema/fixtures/resultados/
 packages/scene-schema/fixtures/inversion/resultados/
+packages/scene-schema/fixtures/agentes/
 
 # Salida del pipeline de assets (se verifica byte a byte con croquis-assets humans check)
 apps/web/public/modelos/

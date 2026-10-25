@@ -524,7 +524,7 @@
       "required": ["id", "version_esquema", "idioma", "semilla", "creado"],
       "properties": {
         "id": { "type": "string", "minLength": 8, "maxLength": 64, "pattern": "^[A-Za-z0-9_-]+$" },
-        "version_esquema": { "type": "string", "const": "2.1.0" },
+        "version_esquema": { "type": "string", "const": "2.2.0" },
         "idioma": { "type": "string", "enum": ["es-MX", "en"] },
         "semilla": {
           "type": "integer",
@@ -824,7 +824,36 @@
           "items": { "$ref": "#/$defs/Id" },
           "maxItems": 60,
           "description": "Ids de personas a bordo."
+        },
+        "conductor": { "$ref": "#/$defs/Conductor" }
+      }
+    },
+    "Conductor": {
+      "type": "object",
+      "description": "El conductor como agente (R12a, ADR 0088): su tiempo de reacción y, si el perito prueba una hipótesis, qué decide y cuándo. Con este campo el solver simula a los conductores.",
+      "additionalProperties": false,
+      "properties": {
+        "tiempo_reaccion": { "$ref": "#/$defs/CampoTiempo" },
+        "decision": { "$ref": "#/$defs/CampoDecision" },
+        "instante_decision": {
+          "$ref": "#/$defs/CampoTiempo",
+          "description": "Respecto del impacto reconstruido (t = 0): negativo es antes."
         }
+      }
+    },
+    "CampoDecision": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["valor", "fuente", "confianza"],
+      "properties": {
+        "valor": {
+          "type": "string",
+          "enum": ["frenar", "volantear_izquierda", "volantear_derecha", "seguir"]
+        },
+        "fuente": { "$ref": "#/$defs/Fuente" },
+        "confianza": { "$ref": "#/$defs/Confianza" },
+        "evidencia": { "$ref": "#/$defs/ListaEvidencia" },
+        "nota": { "type": "string", "maxLength": 300 }
       }
     },
     "Persona": {
