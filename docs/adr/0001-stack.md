@@ -51,6 +51,7 @@
 | httpx                            | ≥ 0.28                    | Descargas                                                                                                 |
 | pypdf                            | ≥ 6.20                    | Lectura de la tabla de inercias de NHTSA (PDF oficial, F7)                                                |
 | pytest / pytest-cov / hypothesis | ≥ 9.1 / ≥ 7.1 / ≥ 6.168   | `filterwarnings = error`, `xfail_strict`                                                                  |
+| pytest-xdist                     | ≥ 3.8 (3.8.0, MIT)        | `pytest -n auto` en CI: reparte los resultados versionados entre procesos (2026-10-25, ADR 0091)          |
 | ruff                             | ≥ 0.17                    | lint + format; `target-version = py314`                                                                   |
 | pyright                          | ≥ 1.1.414                 | modo `strict` (elegido sobre mypy por velocidad y soporte de Pydantic v2)                                 |
 | datamodel-code-generator         | ≥ 0.83                    | F1: `--input-file-type jsonschema --output-model-type pydantic_v2.BaseModel`                              |

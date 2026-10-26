@@ -493,6 +493,7 @@ Reglas de trabajo: `CLAUDE.md`. Especificación: `PLAN.md`.
         - cambian banderas en 4: `lateral_interseccion` y `axa_alcance` pierden una; `motociclista` y `volcadura` ganan `velocidad_vs_evidencia`;
         - ninguna trae alternativas dentro del margen.
       - **E-R4 con la inversión:** idéntico en las 205 narraciones.
+      - **CI:** en Python, el multiarranque hace más lenta la referencia, y regenerar los resultados versionados en una sola prueba pasó de los 10 min de CI. Ahora es una prueba por resultado, y CI corre `pytest -n auto` con `pytest-xdist` 3.8.0 (MIT, instalado con `uv add --group dev`; ADR 0001).
       - **Escena de prueba nueva:** `fixtures/inversion/axa_reposo_lejano`, para que la paridad siga cubriendo las dos hipótesis.
       - **Pruebas:**
         - `solver/tests/test_inversion.py`: arranques fijos, agrupar por modo, el margen y que la solución no dependa de la semilla;

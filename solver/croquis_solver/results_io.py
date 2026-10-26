@@ -180,34 +180,34 @@ def write_all(results_dir: Path = RESULTS_DIR) -> list[Path]:
     return written
 
 
+def result_targets() -> list[str]:
+    """Todos los resultados versionados: «<escena>», «inversion/<escena>» y «agentes/<escena>»."""
+    return (
+        list_fixtures()
+        + [f"inversion/{n}" for n in inversion_fixtures()]
+        + [f"agentes/{n}" for n in agent_fixtures()]
+    )
+
+
+def check_one(target: str, results_dir: Path = RESULTS_DIR) -> list[str]:
+    """Diferencias entre un resultado versionado (`result_targets`) y el que da el solver hoy."""
+    kind, _, name = target.rpartition("/")
+    path, render_fn = {
+        "": (results_dir / f"{name}.json", render),
+        "inversion": (INVERSION_RESULTS_DIR / f"{name}.json", render_inversion),
+        "agentes": (AGENT_RESULTS_DIR / f"{name}.json", render_agents),
+    }[kind]
+    if not path.exists():
+        return ["falta el archivo"]
+    expected = json.loads(path.read_text(encoding="utf-8"))
+    return differences(expected, json.loads(render_fn(name)))
+
+
 def check_all(results_dir: Path = RESULTS_DIR) -> dict[str, list[str]]:
-    """Escena → diferencias (solo las que no coinciden)."""
+    """Resultado → diferencias (solo los que no coinciden)."""
     bad: dict[str, list[str]] = {}
-    for name in list_fixtures():
-        path = results_dir / f"{name}.json"
-        if not path.exists():
-            bad[name] = ["falta el archivo"]
-            continue
-        expected = json.loads(path.read_text(encoding="utf-8"))
-        diff = differences(expected, json.loads(render(name)))
+    for target in result_targets():
+        diff = check_one(target, results_dir)
         if diff:
-            bad[name] = diff
-    for name in inversion_fixtures():
-        path = INVERSION_RESULTS_DIR / f"{name}.json"
-        if not path.exists():
-            bad[f"inversion/{name}"] = ["falta el archivo"]
-            continue
-        expected = json.loads(path.read_text(encoding="utf-8"))
-        diff = differences(expected, json.loads(render_inversion(name)))
-        if diff:
-            bad[f"inversion/{name}"] = diff
-    for name in agent_fixtures():
-        path = AGENT_RESULTS_DIR / f"{name}.json"
-        if not path.exists():
-            bad[f"agentes/{name}"] = ["falta el archivo"]
-            continue
-        expected = json.loads(path.read_text(encoding="utf-8"))
-        diff = differences(expected, json.loads(render_agents(name)))
-        if diff:
-            bad[f"agentes/{name}"] = diff
+            bad[target] = diff
     return bad
