@@ -5,7 +5,9 @@ Compara cada resultado de `packages/scene-schema/fixtures/resultados/` (las esce
 
 - por escena, las estimaciones de la inversión (mejor, p10 y p90 de cada parámetro identificable),
   los modos que encontró el multiarranque y si hay alternativas dentro del margen;
-- qué otras partes del resultado cambian (fuera de la inversión y de `version_resultado`).
+- qué otras partes del resultado cambian (fuera de la inversión y de `version_resultado`);
+- E-R4 con la inversión: `cesvi_r4_inversion_despues.json` (main) contra
+  `cesvi_r4_inversion_multiarranque.json` (`cesvi_r4_inversion.mts` con este código), si existe.
 
     uv run python eval/inversion_multiarranque.py  → eval/results/inversion_multiarranque.json
 """
@@ -51,6 +53,30 @@ def estimaciones(inv: dict[str, Any] | None) -> dict[str, Any]:
 def otras_partes(a: dict[str, Any], b: dict[str, Any]) -> list[str]:
     fuera = {"version_resultado", "inversion", "inversion_reposo_supuesto"}
     return sorted(k for k in set(a) | set(b) if k not in fuera and a.get(k) != b.get(k))
+
+
+def comparar_er4() -> dict[str, Any] | None:
+    """E-R4 con la inversión, antes (main) y con el multiarranque: resúmenes y detalle."""
+    antes_p = RAIZ / "eval/results/cesvi_r4_inversion_despues.json"
+    despues_p = RAIZ / "eval/results/cesvi_r4_inversion_multiarranque.json"
+    if not despues_p.exists():
+        return None
+    a = json.loads(antes_p.read_text(encoding="utf-8"))
+    b = json.loads(despues_p.read_text(encoding="utf-8"))
+    claves = ("reconstruidas", "con_evidencia", "con_alguna_velocidad_fijada", "velocidades")
+    da: list[Any] = a["detalle"]
+    db: list[Any] = b["detalle"]
+    return {
+        "antes": {"archivo": antes_p.name, "git_commit": a["git_commit"]},
+        "despues": {"archivo": despues_p.name, "git_commit": b["git_commit"]},
+        "resumen_igual": all(a[k] == b[k] for k in claves),
+        "impactos_antes": a["impactos"],
+        "impactos_despues": b["impactos"],
+        "banderas_antes": a["banderas"],
+        "banderas_despues": b["banderas"],
+        "detalle_igual": sum(x == y for x, y in zip(da, db, strict=True)),
+        "narraciones": len(db),
+    }
 
 
 def main() -> int:
@@ -105,6 +131,7 @@ def main() -> int:
         "con_estimaciones_iguales": sum(e["estimaciones_iguales"] for e in escenas.values()),
         "total": len(escenas),
         "con_alternativas": sorted(k for k, e in escenas.items() if e["alternativas"]),
+        "e_r4": comparar_er4(),
     }
     SALIDA.write_text(json.dumps(doc, ensure_ascii=False, indent=1) + "\n", encoding="utf-8")
     for k, e in escenas.items():
