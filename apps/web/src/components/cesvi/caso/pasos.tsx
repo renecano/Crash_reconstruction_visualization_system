@@ -19,6 +19,7 @@ import type { ReporteCesvi } from "@/lib/caso-guardado";
 import { MODALIDAD } from "@/lib/nombres-cesvi";
 import { colorDeVehiculo } from "@/lib/vehiculos-cesvi";
 import { CARA, Fuente, Pregunta } from "./piezas";
+import { ProbarConductores } from "./conductores";
 import { PanelVerificacion, TablaContraCesvi, TablaVelocidades } from "./reconstruccion";
 import { ConclusionesCesvi } from "../importar-dictamen";
 
@@ -801,6 +802,7 @@ export function PasoNumeros({
         <p className="t-nota">Reconstruye para ver las velocidades con su rango.</p>
       )}
       {contraCesvi?.filas.length ? <TablaContraCesvi contra={contraCesvi} /> : null}
+      {r ? <ProbarConductores r={r} /> : null}
       <PanelVerificacion verificacion={verificacion} />
     </div>
   );

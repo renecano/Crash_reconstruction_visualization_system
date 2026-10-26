@@ -499,9 +499,19 @@ Reglas de trabajo: `CLAUDE.md`. Especificación: `PLAN.md`.
         - `solver/tests/test_inversion.py`: arranques fijos, agrupar por modo, el margen y que la solución no dependa de la semilla;
         - `packages/cesvi/src/reconstruccion.test.ts`: un modo dentro del margen va como hipótesis con su costo y sus números;
         - la paridad TS/Python de todos los resultados versionados.
+    - **R12a en el paso 6 (2026-10-25, rama `feat/r12a-interfaz`, ADR 0088):**
+      - **Qué hace:** en «Los números», «Probar una hipótesis sobre un conductor».
+        - El perito elige el conductor, qué hace (frenar, volantear o seguir), cuántos segundos antes del impacto y, si lo sabe, su tiempo de reacción.
+        - Croquis simula a todos los conductores en un Web Worker propio y muestra el contacto con la hipótesis y sin ella, con sus números, la diferencia en km/h y en % (solo si el contacto es entre los mismos vehículos), la reacción en cadena y el p10–p90 por el tiempo de reacción.
+      - **Cómo probarlo:**
+        - en `/cesvi`, un caso reconstruido, paso 6;
+        - por ejemplo, la carambola de la e2e: «V3 frena 2.5 s antes» da V2 reaccionando en −1.40 s y V1 en −0.30 s.
+      - **Pruebas:**
+        - `packages/cesvi/src/conductores.test.ts` (5);
+        - `apps/web/src/components/cesvi/caso/conductores.test.tsx` (2);
+        - la e2e `@flujo` de la carambola, que ahora termina en el paso 6.
     - **Siguiente paso concreto:**
-      - que el perito pruebe una hipótesis desde el paso 6 («¿y si V2 frenaba 0.5 s antes?»): elegir conductor, decisión e instante y ver el contacto con su número contra la reconstrucción;
-      - después, R12b (agentes especialistas con pizarra);
+      - R12b (agentes especialistas con pizarra);
       - cuando aparezca la rama `resultados/computadora-demo-<fecha>`, integrar los videos de R11 y E6 en alta y ultra («Bloqueado»).
     1. **V2-1, marco:**
        - **la barra:** los nombres de los 8 pasos siempre, «← Casos», la barra de avance arriba y los pasos futuros cerrados hasta completar lo obligatorio;
@@ -1513,6 +1523,8 @@ Lo que se pospone por el trabajo con CESVI no se borra: queda aquí para despué
   - en `interseccion_toluca`, el p10–p90 de B (2.15–22.15) queda por debajo de su mejor valor (24.41).
 - **El rumbo inicial de V2 en AXA** queda en el límite de búsqueda (+20° sobre el que colocó el perito). Revisar si ese límite es el correcto o si la posición inicial supuesta de V2 está mal orientada.
 - **Las hipótesis por modo** (otro mínimo dentro del margen de costo) solo las ejercita la prueba unitaria: ninguna escena versionada ni AXA tiene hoy un segundo modo dentro del margen.
+- **Python en CI tarda 8 min** con el multiarranque y `pytest -n auto` (el límite es 10). Si crece, hay que acelerar la referencia Python o repartir más los resultados versionados.
+- **La línea base de los conductores no siempre es la reconstrucción** (ADR 0088): en una carambola colocada a mano, los agentes sin hipótesis encontraron a V2 con V3 en −0.40 s, antes del primer impacto reconstruido (V1 con V2 en 0 s). Falta que los agentes respeten el orden de impactos de la reconstrucción, o que avisen cuando no coincide.
 
 ### Bloqueado — necesita a René
 

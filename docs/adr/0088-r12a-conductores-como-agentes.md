@@ -71,6 +71,28 @@ Cada escena de hipótesis contra la reconstrucción sin hipótesis (la línea ba
 - **En la carambola, la reacción en cadena empeora el choque de atrás:** B frena con fuerza y A todavía no reacciona. Con el tiempo de reacción de A y B muestreado en su rango (64 muestras, semilla de la escena), la velocidad relativa va de 21.81 a 25.78 km/h (p10–p90), y en todas las muestras hay contacto.
 - **El tiempo de reacción** de B y A es el supuesto típico (1.1 s, de 0.7 a 1.5 s), porque la escena no lo trae.
 
+## La interfaz: el paso 6 (2026-10-25)
+
+- **Dónde:** en «Los números» (paso 6), debajo de la comparación con CESVI: «Probar una hipótesis sobre un conductor».
+- **Qué elige el perito:**
+  - el conductor (V1, V2…);
+  - qué hace: frenar, volantear a la izquierda o a la derecha, o seguir sin frenar;
+  - cuántos segundos antes del impacto decide (0 a 10 s);
+  - su tiempo de reacción, si lo sabe (0.3 a 3 s). Si no, va el típico con su rango.
+- **La escena** es la del 3D (`especReconstruida`, con las velocidades que fija la evidencia) con el `conductor` del perito, con fuente «usuario» (`packages/cesvi/src/conductores.ts`).
+- **El cálculo** lo hace un Web Worker propio (`probarConductoresEnNavegador`). Solo reconstruye y simula a los conductores, sin Monte Carlo ni inversión, y no espera detrás del resultado completo del visor.
+- **Lo que ve el perito:**
+  - el contacto con la hipótesis y el de los mismos conductores sin ella: entre quiénes, cuándo, la velocidad relativa y la de cada uno, o la distancia mínima si no se tocan;
+  - la diferencia en km/h y en %, solo si el primer contacto es entre los mismos vehículos; si cambia de par, se dice así y no se comparan;
+  - las decisiones en el orden en que ocurren, con la reacción en cadena («V2 frena en −1.40 s, 1.10 s después de ver frenar a V3»);
+  - el p10–p90 con el tiempo de reacción sorteado en su rango;
+  - la leyenda de que es una prueba ilustrativa de la física, no un juicio sobre ningún conductor.
+- **Pruebas:**
+  - `packages/cesvi/src/conductores.test.ts`: la escena, los límites y la lectura de los resultados de la referencia Python;
+  - `apps/web/src/components/cesvi/caso/conductores.test.tsx`: el formulario con el AXA de la app;
+  - la e2e `@flujo` de la carambola, que prueba «V3 frena 2.5 s antes» con el worker real.
+- **Límite:** «sin la hipótesis» es la simulación de los agentes, no la reconstrucción. En AXA dan el mismo impacto. En la carambola que coloca la e2e a mano, los agentes encuentran a V2 con V3 en −0.40 s, antes del primer impacto de la reconstrucción (V1 con V2 en 0 s). Por eso la fila dice «Sin la hipótesis» y no «La reconstrucción» (pendiente en PROGRESS).
+
 ## Consecuencias
 
 - **El perito** puede probar una hipótesis cambiando un dato de un conductor, y ver el resultado con su número: el contacto y sus velocidades, o que no hubo contacto.
