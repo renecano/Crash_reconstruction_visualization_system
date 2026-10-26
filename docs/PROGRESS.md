@@ -521,6 +521,13 @@ Reglas de trabajo: `CLAUDE.md`. Especificación: `PLAN.md`.
         - **E-R4:** 205 de 205 narraciones con los mismos números, antes y después (`eval/results/r12b_r4_igual.json`). El Verificador pidió releer en 2; sin relectura grabada se siguió con lo verificado.
         - **La bitácora sale en el dictamen,** en la trazabilidad, y en el paso 4.
         - **Mismo caso, misma bitácora:** lo prueba `pizarra.test.ts`.
+      - **Verificado en producción (2026-10-26):** AXA colocado como en la app (`tools/demo/verificar-r12a.mjs`), sin errores en la página. Captura en `docs/cesvi/r12b/paso4-bitacora.png`.
+        - La bitácora del paso 4: el perito abre el caso y pide reconstruir; el Físico escribe V2 a 71.56 km/h (63.19–95.96) y V1 a 25.32; el Verificador CESVI, la EBS de V2 a 63.90 km/h; el Comparador, que la modalidad coincide con la de CESVI.
+        - **Corregido al verificar** (#141): en un caso que abre con su escena ya leída, el Lector intentaba leer y dejaba un falso «No se pudo leer la narración».
+      - **Resumen para René (R12, 2026-10-26): PLAN-CESVI queda completo.**
+        - **R12a:** en el paso 6, «Probar una hipótesis sobre un conductor». En AXA, «V2 frena 1.5 s antes» da sin contacto (a 7.25 m como mínimo), contra el alcance a 46.24 km/h relativa sin la hipótesis.
+        - **R12b:** los módulos del caso son agentes sobre una pizarra, con su bitácora en el paso 4 y en el dictamen. E-R4 da los mismos números en las 205 narraciones.
+        - **Qué necesito de ti:** lo de siempre en «Bloqueado». Lo más útil es dónde quedó V2 en AXA y si había huellas, y la rama `resultados/computadora-demo-<fecha>` para integrar los videos de R11 y E6.
       - **Cómo probarlo:**
         - en `/cesvi`, un caso nuevo: «Leer la narración», reconstruir y abrir «Bitácora de los agentes» en el paso 4;
         - el dictamen la lleva al final, en la trazabilidad.
