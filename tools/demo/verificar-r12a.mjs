@@ -1,5 +1,6 @@
 // Verifica en el sitio (producción por omisión) la prueba de una hipótesis sobre un conductor en el
-// paso 6 de AXA (R12a, ADR 0088) y deja las capturas en `docs/cesvi/r12a/`.
+// paso 6 de AXA (R12a, ADR 0088) y la bitácora de la pizarra en el paso 4 (R12b, ADR 0093), y deja
+// las capturas en `docs/cesvi/r12a/` y `docs/cesvi/r12b/`.
 //
 // El caso se abre ya colocado como en la app (`caso-axa-colocado.mts`): se guarda en el navegador
 // de la prueba antes de cargar la página, como si el perito lo hubiera guardado. Luego reconstruye
@@ -62,6 +63,13 @@ await irAPaso(4);
 await pagina.getByTestId("reconstruir").click();
 await pagina.getByTestId("velocidades").waitFor({ timeout: 180_000 });
 log("velocidades", (await pagina.getByTestId("velocidades").textContent()).replace(/\s+/g, " "));
+// R12b: la bitácora de los agentes, abierta, con la reconstrucción del Físico.
+const bitacora = pagina.getByTestId("bitacora-agentes");
+await bitacora.locator('[data-de="fisico"]').first().waitFor({ state: "attached" });
+for (const li of await bitacora.locator("li").all()) log("bitácora", await li.textContent());
+await bitacora.locator("summary").click();
+mkdirSync(join(raiz, "docs/cesvi/r12b"), { recursive: true });
+await bitacora.screenshot({ path: join(raiz, "docs/cesvi/r12b/paso4-bitacora.png") });
 
 await irAPaso(6);
 const seccion = pagina.getByTestId("probar-conductores");

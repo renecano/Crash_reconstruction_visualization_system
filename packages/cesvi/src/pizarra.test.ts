@@ -14,6 +14,7 @@ import {
   coordinar,
   delPerito,
   mensajeEnPalabras,
+  pizarraDeEscena,
   pizarraNueva,
   type ContextoPizarra,
 } from "./pizarra";
@@ -177,6 +178,36 @@ describe("la pizarra y el coordinador (R12b)", () => {
     const relectura = mensajeEscena("Texto.", ["una cita"]);
     expect(relectura.startsWith("Narración del perito:\n\nTexto.\n\n")).toBe(true);
     expect(relectura).toContain("- «una cita»");
+  });
+
+  it("un caso que abre con su escena ya leída no vuelve a leer: el Físico actúa directo", async () => {
+    const escena = escenaDeNarracion(grabacion.salida, grabacion.narracion);
+    const leer = grabado(grabacion.salida);
+    const reconstruccion = {
+      ids: { "veh-a": "V1" },
+      velocidades: [],
+      resultado: { consistencia: [] },
+    } as unknown as Reconstruccion;
+    const p = await coordinar(
+      delPerito(
+        pizarraDeEscena(grabacion.narracion, escena, { origen: "caso de ejemplo" }),
+        "Pide reconstruir.",
+        {
+          pideReconstruir: true,
+        },
+      ),
+      { leer, reconstruir: () => Promise.resolve(reconstruccion) },
+    );
+    expect(leer).not.toHaveBeenCalled();
+    // Sin velocidades fijadas, el Físico pide las posiciones finales; el Preguntador ya las tenía.
+    expect(p.bitacora.map((m) => [m.de, m.tipo])).toEqual([
+      ["perito", "escribe"],
+      ["perito", "escribe"],
+      ["fisico", "escribe"],
+      ["fisico", "pide"],
+      ["preguntador", "escribe"],
+      ["verificador_cesvi", "escribe"],
+    ]);
   });
 
   it("el Redactor escribe cuando el perito pide el dictamen", async () => {

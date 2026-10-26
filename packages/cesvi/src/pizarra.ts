@@ -173,7 +173,9 @@ const lector: Agente = {
   nombre: "lector",
   quiere: (p) =>
     Boolean(p.narracion) &&
-    ((p.lecturas.length === 0 && !p.lecturaFallida) || pendienteRelectura(p)),
+    // La primera lectura, solo si la escena no viene ya leída (un caso de ejemplo, guardado o
+    // importado); una relectura, si el Verificador la pidió.
+    ((p.lecturas.length === 0 && !p.lecturaFallida && !p.escena) || pendienteRelectura(p)),
   async actua(p, ctx, decir) {
     const relee = pendienteRelectura(p);
     const s = await ctx.leer(p.narracion!, relee ? p.pedidoRelectura!.rechazadas : undefined);
