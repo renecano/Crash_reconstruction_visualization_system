@@ -32,6 +32,14 @@ Dos piezas:
      reposos que pone la escena por omisión no entran.
    Si con la deformación el reposo supuesto queda lejos, la hipótesis contraria («cuadra con el
    reposo supuesto», `assumed_as_data`) se calcula aparte y el perito elige.
+4. **Multiarranque determinista (ADR 0091).** El costo puede tener varios mínimos y un solo
+   arranque se queda en el más cercano. El ajuste arranca desde puntos fijos (el inicial, los
+   compatibles con la deformación y una sucesión de Halton sobre las velocidades), con pocas
+   iteraciones cada uno; agrupa los ajustes por modo, afina el mejor de cada modo y se queda con el
+   de menor costo. Un modo dentro de `MODE_MARGIN` del mejor se informa como alternativa, con sus
+   propios números. Nada depende de la semilla de la escena salvo el muestreo del rango: la
+   distribución del ΔV por daño es una propiedad de la evidencia y se estima con `N_DAMAGE`
+   muestras y semilla fija (`EVIDENCE_SEED`).
 """
 
 from __future__ import annotations
@@ -55,7 +63,7 @@ from croquis_solver.crash3 import (
     delta_v_pair,
     uniform_crush_energy,
 )
-from croquis_solver.lsq import least_squares_soft_l1
+from croquis_solver.lsq import least_squares_soft_l1, soft_l1_cost
 from croquis_solver.stiffness import sample_stiffness, stiffness_for, zona_from_cdc_side
 
 JsonObj = dict[str, Any]
@@ -228,7 +236,24 @@ SCALE = {"velocidad": 10.0, "rumbo": 10.0}
 # saldría de los límites de búsqueda y no de la evidencia, así que no se reporta.
 IDENT_MAX = {"velocidad": 30.0, "rumbo": 15.0}
 CHORD_ITER = 4  # iteraciones de cada reajuste perturbado (cuerda con el jacobiano del mejor)
-FALLBACK_NFEV = 20  # ajuste completo de una muestra si la cuerda no mejora
+CHORD_TRUST = 1.0  # paso máximo de la cuerda, en escalas (10 km/h, 10°; ADR 0091)
+# Multiarranque (ADR 0091): arranques fijos, pocas iteraciones en cada uno y se afinan los mejores.
+EVIDENCE_SEED = 0  # la evidencia no depende de la semilla de la escena
+N_DAMAGE = 2000  # muestras del ΔV por daño (con 200, su p10 se movía ~5 km/h con la semilla)
+SCATTER_STARTS = 8  # arranques de la sucesión de Halton, además del inicial y los del daño
+SCATTER_SPEED_KMH = (5.0, 150.0)
+SCREEN_NFEV = 6  # evaluaciones de cada arranque antes de agrupar
+REFINE_MODES = 3  # modos que se afinan con el ajuste completo
+MODE_TOL_KMH = 5.0  # dos ajustes son el mismo modo si ninguna velocidad difiere más
+# ... o si no hay una loma entre ellos: el costo en estos puntos de la recta que los une no pasa del
+# mayor de los dos más HILL_TOL (una dirección que la evidencia no fija es un valle plano, no dos
+# modos).
+HILL_POINTS = (0.25, 0.5, 0.75)
+HILL_TOL = 0.05
+# Margen de costo para presentar otro modo como hipótesis: con residuos chicos el costo soft_l1 es
+# ½ χ², así que 0.5 es un Δχ² de 1 (el otro modo explica la evidencia casi igual de bien).
+MODE_MARGIN = 0.5
+_PRIMES = (2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37, 41, 43, 47, 53, 59, 61, 67, 71)
 
 
 def _stated(campo: JsonObj | None) -> bool:
@@ -306,8 +331,13 @@ def _len_m(campo: JsonObj) -> float:
     )
 
 
-def evidence_from_spec(spec: JsonObj, seed: int = 0, n_damage: int = 200) -> Evidence:
-    """Evidencia declarada de la escena (solo lo que dice el relato o la persona usuaria)."""
+def evidence_from_spec(
+    spec: JsonObj, seed: int = EVIDENCE_SEED, n_damage: int = N_DAMAGE
+) -> Evidence:
+    """Evidencia declarada de la escena (solo lo que dice el relato o la persona usuaria).
+
+    El ΔV por daño se estima con `n_damage` muestras y la semilla `seed`, fija por omisión: es una
+    propiedad de la evidencia, no de la escena (ADR 0091)."""
     rest: dict[str, tuple[float, float]] = {}
     rest_heading: dict[str, float] = {}
     rest_assumed: dict[str, tuple[float, float]] = {}
@@ -807,9 +837,10 @@ def _laplace(j: list[list[float]], params: list[Param]) -> dict[str, float]:
 def _chord_refit(prob: _Problem, x_best: list[float], j: list[list[float]]) -> Fit | None:
     """Reajuste barato de una muestra perturbada: Gauss-Newton con el jacobiano del mejor ajuste
     (método de la cuerda), pesos de la pérdida `soft_l1` (ρ'(z) = 1/√(1+z)), pasos recortados a la
-    mitad si no mejoran y dentro de los límites. Cerca del mejor ajuste converge como el ajuste
-    completo con unas cuantas reconstrucciones en vez de decenas. Devuelve `None` si ningún paso
-    mejora (la muestra se reajusta completa)."""
+    mitad si no mejoran, de a lo más `CHORD_TRUST` escalas y dentro de los límites. Cerca del
+    mejor ajuste converge como el ajuste completo con unas cuantas reconstrucciones en vez de
+    decenas, y no salta a otro modo. Devuelve `None` si ningún paso mejora (el modo ya es el
+    óptimo local de la muestra)."""
     lo = [p.lo for p in prob.params]
     hi = [p.hi for p in prob.params]
     x = [float(v) for v in x_best]
@@ -827,7 +858,28 @@ def _chord_refit(prob: _Problem, x_best: list[float], j: list[list[float]]) -> F
     for _ in range(CHORD_ITER):
         w = [1.0 / math.sqrt(math.sqrt(1.0 + e * e)) for e in r]  # raíz del peso IRLS de soft_l1
         a = [[w[i] * v for v in j[i]] for i in range(len(r))]
-        step = linalg.lstsq(a, [-(r[i] * w[i]) for i in range(len(r))])
+        rhs = [-(r[i] * w[i]) for i in range(len(r))]
+        step = linalg.lstsq(a, rhs)
+        # Conjunto activo: un parámetro en su límite cuyo paso apunta hacia afuera se queda fijo y
+        # el paso se recalcula con los demás (si no, el recorte lo anula y la muestra no se mueve).
+        keep = [
+            k
+            for k in range(len(x))
+            if not ((x[k] <= lo[k] and step[k] < 0) or (x[k] >= hi[k] and step[k] > 0))
+        ]
+        if len(keep) < len(x):
+            step = [0.0] * len(x)
+            if keep:
+                sub = linalg.lstsq([[row[k] for k in keep] for row in a], rhs)
+                for i, k in enumerate(keep):
+                    step[k] = sub[i]
+        # Región de confianza: a lo más `CHORD_TRUST` escalas por paso, para que la muestra baje
+        # desde el modo elegido y no salte a otro en una dirección que la evidencia no fija.
+        big_scaled = 0.0
+        for k, p in enumerate(prob.params):
+            big_scaled = max(big_scaled, abs(step[k]) / SCALE[p.kind])
+        if big_scaled > CHORD_TRUST:
+            step = [v * CHORD_TRUST / big_scaled for v in step]
         moved = False
         for frac in (1.0, 0.5, 0.25):
             x_new = [min(max(x[k] + frac * step[k], lo[k]), hi[k]) for k in range(len(x))]
@@ -970,6 +1022,9 @@ class Inversion:
     seed: int = 0
     assumed_as_data: bool = False  # la hipótesis «cuadra con el reposo supuesto» (ADR 0091)
     full: Fit | None = None  # el ajuste conjunto con todo libre, si algo no quedó fijado
+    modes: list[Mode] = field(default_factory=lambda: list[Mode]())  # del multiarranque
+    # Los otros modos dentro de MODE_MARGIN del mejor, cada uno con su estimación (ADR 0091).
+    alternatives: list[Inversion] = field(default_factory=lambda: list[Inversion]())
 
     @property
     def speeds(self) -> dict[str, Distribution]:
@@ -1007,6 +1062,28 @@ class Inversion:
                     }
                 }
                 if self.full is not None
+                else {}
+            ),
+            **(
+                {
+                    "multiarranque": {
+                        "margen_costo": MODE_MARGIN,
+                        "modos": [
+                            m.to_dict(
+                                chosen=k == 0,
+                                in_margin=k > 0
+                                and m.fit.cost <= self.modes[0].fit.cost + MODE_MARGIN,
+                            )
+                            for k, m in enumerate(self.modes)
+                        ],
+                    }
+                }
+                if len(self.modes) > 0
+                else {}
+            ),
+            **(
+                {"alternativas": [a.to_dict() for a in self.alternatives]}
+                if self.alternatives
                 else {}
             ),
         }
@@ -1047,6 +1124,102 @@ def damage_starts(spec: JsonObj, ev: Evidence, params: list[Param]) -> list[dict
     return starts
 
 
+def _radical_inverse(k: int, base: int) -> float:
+    """k-ésimo punto de van der Corput en `base` (una coordenada de la sucesión de Halton)."""
+    out, f = 0.0, 1.0
+    while k > 0:
+        f /= base
+        out += f * (k % base)
+        k //= base
+    return out
+
+
+def multistart_starts(spec: JsonObj, ev: Evidence, params: list[Param]) -> list[dict[str, float]]:
+    """Arranques fijos (ADR 0091): el inicial, los compatibles con la deformación y
+    `SCATTER_STARTS` puntos de Halton sobre las velocidades (los rumbos arrancan en su valor
+    inicial). Los mismos para todos los casos y en cada corrida."""
+    starts: list[dict[str, float]] = [{}, *damage_starts(spec, ev, params)]
+    speeds = [p for p in params if p.kind == "velocidad"]
+    lo, hi = SCATTER_SPEED_KMH
+    for k in range(1, SCATTER_STARTS + 1):
+        starts.append(
+            {
+                p.name: lo + (hi - lo) * _radical_inverse(k, _PRIMES[d % len(_PRIMES)])
+                for d, p in enumerate(speeds)
+            }
+        )
+    return starts
+
+
+@dataclass(frozen=True)
+class Mode:
+    """Un mínimo del costo: su ajuste y cuántos arranques llegaron a él."""
+
+    fit: Fit
+    starts: int
+
+    def to_dict(self, *, chosen: bool, in_margin: bool) -> JsonObj:
+        return {
+            "valores": [
+                {"nombre": k, "valor": round(v, 2)} for k, v in sorted(self.fit.values.items())
+            ],
+            "costo": round(self.fit.cost, 4),
+            "arranques": self.starts,
+            "elegido": chosen,
+            "en_margen": in_margin,
+        }
+
+
+def _same_mode(a: Fit, b: Fit) -> bool:
+    sa, sb = a.speeds_kmh, b.speeds_kmh
+    return all(abs(v - sb.get(k, math.inf)) <= MODE_TOL_KMH for k, v in sa.items())
+
+
+def _barrier(prob: _Problem, a: Fit, b: Fit) -> bool:
+    """¿Hay una loma entre los dos ajustes? Si no, son el mismo valle."""
+    xa = [a.values[p.name] for p in prob.params]
+    xb = [b.values[p.name] for p in prob.params]
+    top = max(a.cost, b.cost) + HILL_TOL
+    for t in HILL_POINTS:
+        x = [u + t * (v - u) for u, v in zip(xa, xb, strict=True)]
+        if soft_l1_cost(prob(x)) > top:
+            return True
+    return False
+
+
+def _group(fits: list[tuple[Fit, int]], prob: _Problem | None = None) -> list[Mode]:
+    """Agrupa por modo, del menor costo al mayor: cada modo lo representa su ajuste de menor
+    costo y cuenta los arranques que llegaron a él. Con `prob`, dos ajustes lejanos sin una loma
+    entre ellos también son el mismo modo."""
+    modes: list[Mode] = []
+    for f, n in sorted(fits, key=lambda fn: fn[0].cost):
+        for i, m in enumerate(modes):
+            if _same_mode(m.fit, f) or (prob is not None and not _barrier(prob, m.fit, f)):
+                modes[i] = Mode(m.fit, m.starts + n)
+                break
+        else:
+            modes.append(Mode(f, n))
+    return modes
+
+
+def find_modes(spec: JsonObj, ev: Evidence, params: list[Param], *, dt: float = 0.1) -> list[Mode]:
+    """Multiarranque determinista (ADR 0091): cada arranque con `SCREEN_NFEV` evaluaciones, se
+    agrupan por modo y los `REFINE_MODES` mejores se afinan con el ajuste completo. Devuelve los
+    modos afinados, del menor costo al mayor; dos afinados son modos distintos solo si hay una loma
+    entre ellos."""
+    if not params or ev.empty():
+        return [Mode(fit_evidence(spec, ev, dt=dt), 1)]
+    screened = [
+        (fit_evidence(spec, ev, dt=dt, start=s, max_nfev=SCREEN_NFEV), 1)
+        for s in multistart_starts(spec, ev, params)
+    ]
+    modes = _group(screened)
+    refined = [
+        (fit_evidence(spec, ev, dt=dt, start=m.fit.values), m.starts) for m in modes[:REFINE_MODES]
+    ]
+    return _group(refined, _Problem(with_marks(spec, ev), ev, params, {}, dt))
+
+
 def invert(
     spec: JsonObj,
     *,
@@ -1054,22 +1227,50 @@ def invert(
     samples: int = 12,
     dt: float = 0.1,
     assumed_as_data: bool = False,
+    evidence_seed: int = EVIDENCE_SEED,
 ) -> Inversion:
     """Velocidades (y rumbos no declarados) que reproducen la evidencia, con percentiles sobre
     `samples` ajustes con entradas perturbadas. Lo que la evidencia no fija se informa así y queda
-    en su valor inicial. Con `assumed_as_data`, la hipótesis «cuadra con el reposo supuesto»."""
-    from croquis_solver.reconstruct import reconstruct
+    en su valor inicial. Con `assumed_as_data`, la hipótesis «cuadra con el reposo supuesto».
 
+    El mejor ajuste sale del multiarranque y no depende de la semilla; la semilla (la de la escena
+    por omisión) solo sortea las entradas perturbadas del rango. Los otros modos dentro de
+    `MODE_MARGIN` del mejor van como alternativas, cada uno con su propia estimación."""
     seed = int(spec["meta"]["semilla"]) if seed is None else seed
-    ev = evidence_from_spec(spec, seed=seed)
+    # `evidence_seed` solo cambia para medir la sensibilidad a la semilla de la evidencia.
+    ev = evidence_from_spec(spec, seed=evidence_seed)
     if assumed_as_data:
         ev = replace(ev, assumed_as_data=True)
     params = parameters(with_marks(spec, ev), ev)
-    best = fit_evidence(spec, ev, dt=dt)
-    for start in damage_starts(spec, ev, params):
-        f = fit_evidence(spec, ev, dt=dt, start=start)
-        if f.cost < best.cost:
-            best = f
+    modes = find_modes(spec, ev, params, dt=dt)
+    best_cost = modes[0].fit.cost
+    out = _estimate(spec, ev, params, modes[0].fit, seed=seed, samples=samples, dt=dt)
+    out.assumed_as_data = assumed_as_data
+    out.modes = modes
+    out.alternatives = [
+        _estimate(spec, ev, params, m.fit, seed=seed, samples=samples, dt=dt)
+        for m in modes[1:]
+        if m.fit.cost <= best_cost + MODE_MARGIN
+    ]
+    for alt in out.alternatives:
+        alt.assumed_as_data = assumed_as_data
+    return out
+
+
+def _estimate(
+    spec: JsonObj,
+    ev: Evidence,
+    params: list[Param],
+    best: Fit,
+    *,
+    seed: int,
+    samples: int,
+    dt: float,
+) -> Inversion:
+    """Estimación alrededor de un modo: qué fija la evidencia (Laplace), el reajuste de lo que no
+    fija y el rango con entradas perturbadas, cada muestra reajustada desde ese modo."""
+    from croquis_solver.reconstruct import reconstruct
+
     sigma = (
         local_sigma(spec, ev, best, dt=dt)
         if not ev.empty()
@@ -1100,8 +1301,13 @@ def invert(
         s, e, dmu = pert.spec, pert.evidence, pert.downed_mu
         prob = _Problem(with_marks(s, e), e, free_params, fixed, dt, dmu)
         prob.names.extend(sorted(best.residuals))
-        f = _chord_refit(prob, x_best, j_best) or fit_evidence(
-            s, e, dt=dt, start=best.values, free=free, max_nfev=FALLBACK_NFEV, downed_mu=dmu
+        # El rango sale de las entradas alrededor del modo elegido, sin saltar a otro: la cuerda con
+        # el jacobiano del modo; si no mejora, con el de la muestra; si tampoco, el modo ya es el
+        # óptimo local de la muestra.
+        f = (
+            _chord_refit(prob, x_best, j_best)
+            or _chord_refit(prob, x_best, _sample_jac(prob, x_best))
+            or _at(prob, x_best)
         )
         fits.append(f)
         try:
@@ -1127,8 +1333,26 @@ def invert(
         impact_speeds={k: distribution(v) for k, v in impacts.items() if v},
         fits=fits,
         seed=seed,
-        assumed_as_data=assumed_as_data,
         full=full,
+    )
+
+
+def _sample_jac(prob: _Problem, x: list[float]) -> list[list[float]]:
+    """El jacobiano de la muestra en `x`, con sus restricciones activas, sin tocar `prob`."""
+    p = _Problem(prob.spec, prob.ev, prob.params, prob.fixed, prob.dt, prob.downed_mu)
+    p.names.extend(prob.names)
+    p.activate(x)
+    return p.jac(x)
+
+
+def _at(prob: _Problem, x: list[float]) -> Fit:
+    """El ajuste en `x` tal cual, con los residuos del problema."""
+    r = prob(x)
+    return Fit(
+        prob.values(list(x)),
+        {k: float(v) for k, v in zip(prob.names, r, strict=True)},
+        soft_l1_cost(r),
+        True,
     )
 
 
@@ -1139,11 +1363,13 @@ __all__ = [
     "Evidence",
     "Fit",
     "Inversion",
+    "Mode",
     "Param",
     "apply_values",
     "delta_v_from_damage",
     "distribution",
     "evidence_from_spec",
+    "find_modes",
     "fit_evidence",
     "invert",
     "local_sigma",

@@ -5,16 +5,18 @@ import copy
 import pytest
 
 from croquis_scene_schema import list_fixtures, list_results, load_result, result_errors
-from croquis_solver.results_io import check_all, differences
+from croquis_solver.results_io import check_one, differences, result_targets
 
 
 def test_hay_un_resultado_versionado_por_escena() -> None:
     assert list_results() == list_fixtures()
 
 
-def test_resultados_versionados_coinciden_con_el_solver() -> None:
-    """Equivale a `croquis-solver reconstruct --check` (lo corre CI en Ubuntu y Windows)."""
-    assert check_all() == {}
+@pytest.mark.parametrize("target", result_targets())
+def test_resultados_versionados_coinciden_con_el_solver(target: str) -> None:
+    """Equivale a `croquis-solver reconstruct --check`, un resultado por prueba para que CI los
+    reparta entre procesos (`pytest -n auto`): con el multiarranque, juntos pasaban de 10 min."""
+    assert check_one(target) == []
 
 
 @pytest.mark.parametrize("name", list_fixtures())

@@ -3,7 +3,7 @@
 import { z } from "zod";
 
 export const RESULTADO_SCHEMA_ID = "https://croquis.local/schema/resultado/1.9.0";
-export const RESULT_VERSION = "1.11.0" as const;
+export const RESULT_VERSION = "1.12.0" as const;
 
 export const Id = z.string().regex(new RegExp("^[a-z0-9][a-z0-9_-]{0,63}$"));
 export type Id = z.infer<typeof Id>;
@@ -277,6 +277,48 @@ export const VelocidadImpactoInvertida = z.strictObject({
 });
 export type VelocidadImpactoInvertida = z.infer<typeof VelocidadImpactoInvertida>;
 
+/** Otro modo del multiarranque dentro del margen de costo del mejor (ADR 0091), con su propia estimación: la misma forma que la inversión, sin sus modos ni alternativas. */
+export const InversionAlternativa = z.strictObject({
+  semilla: z.int().min(0),
+  muestras: z.int().min(0).max(1000),
+  evidencia: z
+    .array(
+      z
+        .string()
+        .regex(
+          new RegExp(
+            "^(reposo|rumbo_final|marcas_frenado|marcas_despues|proyeccion|dano):[A-Za-z0-9_-]+$",
+          ),
+        ),
+    )
+    .max(64),
+  parametros: z.array(ParametroInvertido).max(32),
+  velocidad_impacto: z.array(VelocidadImpactoInvertida).max(16),
+  residuos: z.array(Residuo).max(128),
+  convergio: z.boolean(),
+  ajuste_completo: z
+    .strictObject({
+      valores: z
+        .array(z.strictObject({ nombre: z.string().min(1).max(80), valor: z.number() }))
+        .max(64),
+      residuos: z.array(Residuo).max(128),
+    })
+    .optional(),
+});
+export type InversionAlternativa = z.infer<typeof InversionAlternativa>;
+
+/** Un mínimo del costo del multiarranque (ADR 0091): su ajuste completo, su costo y cuántos arranques llegaron a él. */
+export const ModoInversion = z.strictObject({
+  valores: z
+    .array(z.strictObject({ nombre: z.string().min(1).max(80), valor: z.number() }))
+    .max(64),
+  costo: z.number().min(0),
+  arranques: z.int().min(1),
+  elegido: z.boolean(),
+  en_margen: z.boolean(),
+});
+export type ModoInversion = z.infer<typeof ModoInversion>;
+
 /** Inversión (PLAN §6.1.10): velocidades y rumbos que reproducen la evidencia declarada, con mínimos cuadrados robustos y reestimaciones con semilla. */
 export const Inversion = z.strictObject({
   semilla: z.int().min(0),
@@ -304,6 +346,10 @@ export const Inversion = z.strictObject({
       residuos: z.array(Residuo).max(128),
     })
     .optional(),
+  multiarranque: z
+    .strictObject({ margen_costo: z.number().min(0), modos: z.array(ModoInversion).min(1).max(16) })
+    .optional(),
+  alternativas: z.array(InversionAlternativa).max(8).optional(),
 });
 export type Inversion = z.infer<typeof Inversion>;
 
@@ -524,7 +570,7 @@ export type Visibilidad = z.infer<typeof Visibilidad>;
 
 /** Reconstrucción producida por el solver a partir de una EscenaSpec: trayectorias, impulsos, daños, personas (proyección y ocupantes), visibilidad, objetos del entorno, eventos, banderas, parámetros con su fuente incertidumbre por Monte Carlo (percentiles con semilla), inversión desde la evidencia y banderas de consistencia. Unidades SI; tiempo con t = 0 en el impacto principal; rumbos en radianes antihorario desde +X (salvo los campos que terminan en _deg). */
 export const ResultadoSchema = z.strictObject({
-  version_resultado: z.literal("1.11.0"),
+  version_resultado: z.literal("1.12.0"),
   escena_id: Id,
   semilla: z.int().min(0),
   dt: z.number().max(1).gt(0),

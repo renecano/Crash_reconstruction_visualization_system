@@ -22,7 +22,7 @@
   ],
   "properties": {
     "version_resultado": {
-      "const": "1.11.0"
+      "const": "1.12.0"
     },
     "escena_id": {
       "$ref": "#/$defs/Id"
@@ -1356,15 +1356,188 @@
                 "additionalProperties": false,
                 "required": ["nombre", "valor"],
                 "properties": {
-                  "nombre": { "type": "string", "minLength": 1, "maxLength": 80 },
-                  "valor": { "type": "number" }
+                  "nombre": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 80
+                  },
+                  "valor": {
+                    "type": "number"
+                  }
                 }
               },
               "maxItems": 64
             },
             "residuos": {
               "type": "array",
-              "items": { "$ref": "#/$defs/Residuo" },
+              "items": {
+                "$ref": "#/$defs/Residuo"
+              },
+              "maxItems": 128
+            }
+          }
+        },
+        "multiarranque": {
+          "type": "object",
+          "additionalProperties": false,
+          "description": "Multiarranque determinista (ADR 0091): los modos que encontró, del menor costo al mayor, y el margen para presentar otro como hipótesis.",
+          "required": ["margen_costo", "modos"],
+          "properties": {
+            "margen_costo": {
+              "type": "number",
+              "minimum": 0
+            },
+            "modos": {
+              "type": "array",
+              "items": {
+                "$ref": "#/$defs/ModoInversion"
+              },
+              "minItems": 1,
+              "maxItems": 16
+            }
+          }
+        },
+        "alternativas": {
+          "type": "array",
+          "description": "Los otros modos dentro del margen, en orden de costo, cada uno con su estimación (ADR 0091).",
+          "items": {
+            "$ref": "#/$defs/InversionAlternativa"
+          },
+          "maxItems": 8
+        }
+      }
+    },
+    "ModoInversion": {
+      "type": "object",
+      "additionalProperties": false,
+      "description": "Un mínimo del costo del multiarranque (ADR 0091): su ajuste completo, su costo y cuántos arranques llegaron a él.",
+      "required": ["valores", "costo", "arranques", "elegido", "en_margen"],
+      "properties": {
+        "valores": {
+          "type": "array",
+          "description": "Cada parámetro («velocidad:<id>» en km/h, «rumbo:<id>» en grados) con su valor.",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["nombre", "valor"],
+            "properties": {
+              "nombre": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 80
+              },
+              "valor": {
+                "type": "number"
+              }
+            }
+          },
+          "maxItems": 64
+        },
+        "costo": {
+          "type": "number",
+          "minimum": 0,
+          "description": "Costo soft_l1 del ajuste (con residuos chicos, ½ χ²)."
+        },
+        "arranques": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "elegido": {
+          "type": "boolean",
+          "description": "El de menor costo: el que se muestra."
+        },
+        "en_margen": {
+          "type": "boolean",
+          "description": "Otro modo dentro del margen de costo del elegido: se presenta como hipótesis."
+        }
+      }
+    },
+    "InversionAlternativa": {
+      "type": "object",
+      "additionalProperties": false,
+      "description": "Otro modo del multiarranque dentro del margen de costo del mejor (ADR 0091), con su propia estimación: la misma forma que la inversión, sin sus modos ni alternativas.",
+      "required": [
+        "semilla",
+        "muestras",
+        "evidencia",
+        "parametros",
+        "velocidad_impacto",
+        "residuos",
+        "convergio"
+      ],
+      "properties": {
+        "semilla": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "muestras": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 1000
+        },
+        "evidencia": {
+          "type": "array",
+          "maxItems": 64,
+          "items": {
+            "type": "string",
+            "pattern": "^(reposo|rumbo_final|marcas_frenado|marcas_despues|proyeccion|dano):[A-Za-z0-9_-]+$"
+          }
+        },
+        "parametros": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/ParametroInvertido"
+          },
+          "maxItems": 32
+        },
+        "velocidad_impacto": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/VelocidadImpactoInvertida"
+          },
+          "maxItems": 16
+        },
+        "residuos": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/Residuo"
+          },
+          "maxItems": 128
+        },
+        "convergio": {
+          "type": "boolean"
+        },
+        "ajuste_completo": {
+          "type": "object",
+          "additionalProperties": false,
+          "description": "El ajuste conjunto con todos los parámetros libres, cuando la evidencia no fija alguno (ADR 0091): la reconstrucción que mejor la cumple, aunque no la fije. Sus valores no son estimaciones.",
+          "required": ["valores", "residuos"],
+          "properties": {
+            "valores": {
+              "type": "array",
+              "description": "Cada parámetro («velocidad:<id>» en km/h, «rumbo:<id>» en grados) con su valor.",
+              "items": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": ["nombre", "valor"],
+                "properties": {
+                  "nombre": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 80
+                  },
+                  "valor": {
+                    "type": "number"
+                  }
+                }
+              },
+              "maxItems": 64
+            },
+            "residuos": {
+              "type": "array",
+              "items": {
+                "$ref": "#/$defs/Residuo"
+              },
               "maxItems": 128
             }
           }

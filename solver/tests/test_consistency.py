@@ -153,11 +153,11 @@ def test_velocidad_fuera_de_lo_que_fija_la_evidencia() -> None:
 
 def test_escenas_canonicas_sin_banderas() -> None:
     # La glorieta también queda limpia, pero su inversión tarda; la cubre la prueba de resultados.
-    # El cruce lateral ya no: sin atravesarse después del impacto (ADR 0063), sus posiciones
-    # finales piden más velocidad para A que la declarada (su resultado canónico lo registra).
-    for name in ("alcance", "nocturno_lluvia", "poste"):
+    # El cruce lateral también: con el multiarranque (ADR 0091) su mejor ajuste deja a B casi
+    # detenido y la evidencia ya no fija la velocidad de A, así que no hay con qué contrastar la
+    # declarada (antes, otro mínimo con más costo pedía más velocidad para A).
+    for name in ("alcance", "nocturno_lluvia", "poste", "lateral_interseccion"):
         assert _codes(load_fixture(name)) == [], name
-    assert _codes(load_fixture("lateral_interseccion")) == ["velocidad_vs_evidencia"]
 
 
 def test_vehiculo_fuera_de_las_calles_del_mapa() -> None:

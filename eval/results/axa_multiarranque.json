@@ -1,0 +1,573 @@
+{
+ "name": "axa_multiarranque",
+ "generated_at": "2026-10-26T00:19:58Z",
+ "git_commit": "9c9a82c",
+ "descripcion": "AXA A2010930 como la reconstruye la app (reposo de V2 supuesto), antes y después del multiarranque determinista de la inversión: modos con su costo, la solución elegida y su p10–p90, las hipótesis del paso 4, la comparación con CESVI y el tiempo.",
+ "semilla_app": 719300,
+ "antes": {
+  "fuente": "eval/results/axa_semillas.json",
+  "git_commit": "6a0786c",
+  "con_la_semilla_de_la_app": {
+   "mejor": 63.17,
+   "p10": 60.77,
+   "p90": 113.09
+  },
+  "V2_entre_20_semillas": {
+   "semillas_con_valor": 19,
+   "min": 62.03,
+   "max": 151.84,
+   "p10": 63.15,
+   "p50": 75.48,
+   "p90": 91.64,
+   "rango_kmh": 89.81,
+   "p10_p90_kmh": 28.49,
+   "app": 63.17,
+   "app_p10_p90": [
+    60.77,
+    113.09
+   ],
+   "semillas_dentro_del_p10_p90_de_la_app": 17
+  },
+  "V1_entre_20_semillas": {
+   "semillas_con_valor": 20,
+   "min": 0,
+   "max": 37.69,
+   "p10": 18.76,
+   "p50": 22.42,
+   "p90": 24.47,
+   "rango_kmh": 37.69,
+   "p10_p90_kmh": 5.71,
+   "app": 23.35,
+   "app_p10_p90": [
+    0,
+    25.65
+   ],
+   "semillas_dentro_del_p10_p90_de_la_app": 19
+  },
+  "con_dos_hipotesis": 15,
+  "con_una_hipotesis": 5,
+  "resultado_completo_ms_mediana": 23059
+ },
+ "despues": {
+  "modos": {
+   "dano": [
+    {
+     "valores": {
+      "rumbo:V2": 95.72,
+      "rumbo:V1": 87.16,
+      "velocidad:V2": 71.56,
+      "velocidad:V1": 25.32
+     },
+     "costo": 0.0293,
+     "arranques": 5,
+     "elegido": true,
+     "en_margen": false
+    }
+   ],
+   "reposo": null
+  },
+  "elegida": {
+   "velocidades": {
+    "V2": {
+     "kmh": 71.56,
+     "p10": 63.19,
+     "p90": 95.96
+    },
+    "V1": {
+     "kmh": 25.32,
+     "p10": 3.73,
+     "p90": 27.03
+    }
+   },
+   "contra_cesvi": [
+    {
+     "metodo": "Deformación (EBS)",
+     "cesvi_kmh": 63.15,
+     "croquis_kmh": 71.56,
+     "croquis_p10_p90": [
+      63.19,
+      95.96
+     ],
+     "diferencia_kmh": 8.41,
+     "diferencia_pct": 13.32
+    },
+    {
+     "metodo": "Restos (desplazamiento)",
+     "cesvi_kmh": 60.27,
+     "croquis_kmh": 43.38,
+     "croquis_p10_p90": null,
+     "diferencia_kmh": -16.89,
+     "diferencia_pct": -28.02
+    }
+   ]
+  },
+  "hipotesis": [],
+  "tiempos_ms_node": {
+   "reconstruccion": 46,
+   "monte_carlo": 841,
+   "inversion_dano": 4605,
+   "consistencia": 837,
+   "inversion_reposo": 0,
+   "resultado_completo": 5859
+  }
+ },
+ "semillas_de_la_escena": {
+  "semillas": [
+   719300,
+   1,
+   2,
+   3,
+   4,
+   5,
+   6,
+   7,
+   8,
+   9,
+   10,
+   11,
+   12,
+   13,
+   14,
+   15,
+   16,
+   17,
+   18,
+   19
+  ],
+  "V2": {
+   "mejor_distintos": [
+    71.56
+   ],
+   "p10_min": 59.35,
+   "p10_max": 72.56,
+   "p90_min": 79.81,
+   "p90_max": 98.51
+  },
+  "V1": {
+   "mejor_distintos": [
+    25.32
+   ],
+   "p10_min": 1.9,
+   "p10_max": 17.73,
+   "p90_min": 21.01,
+   "p90_max": 29.61
+  },
+  "hipotesis_distintas": [
+   ""
+  ],
+  "resultado_completo_ms_mediana": 5885,
+  "filas": [
+   {
+    "semilla": 719300,
+    "hipotesis": [],
+    "V2": {
+     "mejor": 71.56,
+     "p10": 63.19,
+     "p50": 80.03,
+     "p90": 95.96,
+     "muestras": 12
+    },
+    "V1": {
+     "mejor": 25.32,
+     "p10": 3.73,
+     "p50": 19.47,
+     "p90": 27.03,
+     "muestras": 12
+    },
+    "ms": 6109
+   },
+   {
+    "semilla": 1,
+    "hipotesis": [],
+    "V2": {
+     "mejor": 71.56,
+     "p10": 71.34,
+     "p50": 77.93,
+     "p90": 82.18,
+     "muestras": 12
+    },
+    "V1": {
+     "mejor": 25.32,
+     "p10": 10.33,
+     "p50": 15.61,
+     "p90": 25.28,
+     "muestras": 12
+    },
+    "ms": 7760
+   },
+   {
+    "semilla": 2,
+    "hipotesis": [],
+    "V2": {
+     "mejor": 71.56,
+     "p10": 69.21,
+     "p50": 90.13,
+     "p90": 95.43,
+     "muestras": 12
+    },
+    "V1": {
+     "mejor": 25.32,
+     "p10": 2.39,
+     "p50": 13.15,
+     "p90": 21.4,
+     "muestras": 12
+    },
+    "ms": 6493
+   },
+   {
+    "semilla": 3,
+    "hipotesis": [],
+    "V2": {
+     "mejor": 71.56,
+     "p10": 72.16,
+     "p50": 81.24,
+     "p90": 90.36,
+     "muestras": 12
+    },
+    "V1": {
+     "mejor": 25.32,
+     "p10": 6.84,
+     "p50": 18.68,
+     "p90": 21.01,
+     "muestras": 12
+    },
+    "ms": 5904
+   },
+   {
+    "semilla": 4,
+    "hipotesis": [],
+    "V2": {
+     "mejor": 71.56,
+     "p10": 70.13,
+     "p50": 81.7,
+     "p90": 94.59,
+     "muestras": 12
+    },
+    "V1": {
+     "mejor": 25.32,
+     "p10": 2.9,
+     "p50": 13.78,
+     "p90": 21.31,
+     "muestras": 12
+    },
+    "ms": 5944
+   },
+   {
+    "semilla": 5,
+    "hipotesis": [],
+    "V2": {
+     "mejor": 71.56,
+     "p10": 63.67,
+     "p50": 75.64,
+     "p90": 86.73,
+     "muestras": 12
+    },
+    "V1": {
+     "mejor": 25.32,
+     "p10": 12.79,
+     "p50": 22.84,
+     "p90": 26.91,
+     "muestras": 12
+    },
+    "ms": 5887
+   },
+   {
+    "semilla": 6,
+    "hipotesis": [],
+    "V2": {
+     "mejor": 71.56,
+     "p10": 66.46,
+     "p50": 78.87,
+     "p90": 86.92,
+     "muestras": 12
+    },
+    "V1": {
+     "mejor": 25.32,
+     "p10": 9.03,
+     "p50": 20.63,
+     "p90": 28.1,
+     "muestras": 12
+    },
+    "ms": 5932
+   },
+   {
+    "semilla": 7,
+    "hipotesis": [],
+    "V2": {
+     "mejor": 71.56,
+     "p10": 70.35,
+     "p50": 77.11,
+     "p90": 91.73,
+     "muestras": 12
+    },
+    "V1": {
+     "mejor": 25.32,
+     "p10": 7.48,
+     "p50": 20.64,
+     "p90": 24.59,
+     "muestras": 12
+    },
+    "ms": 6141
+   },
+   {
+    "semilla": 8,
+    "hipotesis": [],
+    "V2": {
+     "mejor": 71.56,
+     "p10": 69.87,
+     "p50": 80.2,
+     "p90": 94.45,
+     "muestras": 12
+    },
+    "V1": {
+     "mejor": 25.32,
+     "p10": 3.1,
+     "p50": 13.38,
+     "p90": 26.48,
+     "muestras": 12
+    },
+    "ms": 5875
+   },
+   {
+    "semilla": 9,
+    "hipotesis": [],
+    "V2": {
+     "mejor": 71.56,
+     "p10": 72.56,
+     "p50": 82.35,
+     "p90": 91.68,
+     "muestras": 12
+    },
+    "V1": {
+     "mejor": 25.32,
+     "p10": 3.72,
+     "p50": 12.68,
+     "p90": 22.73,
+     "muestras": 12
+    },
+    "ms": 6167
+   },
+   {
+    "semilla": 10,
+    "hipotesis": [],
+    "V2": {
+     "mejor": 71.56,
+     "p10": 67.5,
+     "p50": 73.1,
+     "p90": 85.9,
+     "muestras": 12
+    },
+    "V1": {
+     "mejor": 25.32,
+     "p10": 13.11,
+     "p50": 19.81,
+     "p90": 27.69,
+     "muestras": 12
+    },
+    "ms": 5813
+   },
+   {
+    "semilla": 11,
+    "hipotesis": [],
+    "V2": {
+     "mejor": 71.56,
+     "p10": 68.56,
+     "p50": 85.79,
+     "p90": 96.18,
+     "muestras": 12
+    },
+    "V1": {
+     "mejor": 25.32,
+     "p10": 5.72,
+     "p50": 11.59,
+     "p90": 23.19,
+     "muestras": 12
+    },
+    "ms": 5856
+   },
+   {
+    "semilla": 12,
+    "hipotesis": [],
+    "V2": {
+     "mejor": 71.56,
+     "p10": 67.27,
+     "p50": 78.92,
+     "p90": 88.89,
+     "muestras": 12
+    },
+    "V1": {
+     "mejor": 25.32,
+     "p10": 7.59,
+     "p50": 19.75,
+     "p90": 25.54,
+     "muestras": 12
+    },
+    "ms": 5883
+   },
+   {
+    "semilla": 13,
+    "hipotesis": [],
+    "V2": {
+     "mejor": 71.56,
+     "p10": 71.59,
+     "p50": 78.59,
+     "p90": 86.02,
+     "muestras": 12
+    },
+    "V1": {
+     "mejor": 25.32,
+     "p10": 9.97,
+     "p50": 15.66,
+     "p90": 26.78,
+     "muestras": 12
+    },
+    "ms": 5946
+   },
+   {
+    "semilla": 14,
+    "hipotesis": [],
+    "V2": {
+     "mejor": 71.56,
+     "p10": 70.94,
+     "p50": 76.81,
+     "p90": 98.51,
+     "muestras": 12
+    },
+    "V1": {
+     "mejor": 25.32,
+     "p10": 1.9,
+     "p50": 21.47,
+     "p90": 26.1,
+     "muestras": 12
+    },
+    "ms": 5632
+   },
+   {
+    "semilla": 15,
+    "hipotesis": [],
+    "V2": {
+     "mejor": 71.56,
+     "p10": 71.11,
+     "p50": 78.66,
+     "p90": 97.69,
+     "muestras": 12
+    },
+    "V1": {
+     "mejor": 25.32,
+     "p10": 12.06,
+     "p50": 17.91,
+     "p90": 25.91,
+     "muestras": 12
+    },
+    "ms": 5478
+   },
+   {
+    "semilla": 16,
+    "hipotesis": [],
+    "V2": {
+     "mejor": 71.56,
+     "p10": 68.04,
+     "p50": 74.33,
+     "p90": 84.46,
+     "muestras": 12
+    },
+    "V1": {
+     "mejor": 25.32,
+     "p10": 15.42,
+     "p50": 20.95,
+     "p90": 24.02,
+     "muestras": 12
+    },
+    "ms": 5354
+   },
+   {
+    "semilla": 17,
+    "hipotesis": [],
+    "V2": {
+     "mejor": 71.56,
+     "p10": 59.35,
+     "p50": 80.46,
+     "p90": 87.71,
+     "muestras": 12
+    },
+    "V1": {
+     "mejor": 25.32,
+     "p10": 11.86,
+     "p50": 19.55,
+     "p90": 29.61,
+     "muestras": 12
+    },
+    "ms": 5353
+   },
+   {
+    "semilla": 18,
+    "hipotesis": [],
+    "V2": {
+     "mejor": 71.56,
+     "p10": 69.83,
+     "p50": 73.47,
+     "p90": 79.81,
+     "muestras": 12
+    },
+    "V1": {
+     "mejor": 25.32,
+     "p10": 17.73,
+     "p50": 22.04,
+     "p90": 24.91,
+     "muestras": 12
+    },
+    "ms": 5407
+   },
+   {
+    "semilla": 19,
+    "hipotesis": [],
+    "V2": {
+     "mejor": 71.56,
+     "p10": 63.4,
+     "p50": 72.69,
+     "p90": 81,
+     "muestras": 12
+    },
+    "V1": {
+     "mejor": 25.32,
+     "p10": 16.69,
+     "p50": 22.85,
+     "p90": 26.61,
+     "muestras": 12
+    },
+    "ms": 5384
+   }
+  ]
+ },
+ "semillas_de_la_evidencia": {
+  "filas": [
+   {
+    "semilla_evidencia": 0,
+    "V2": 71.56,
+    "V1": 25.32
+   },
+   {
+    "semilla_evidencia": 1,
+    "V2": 71.95,
+    "V1": 25.07
+   },
+   {
+    "semilla_evidencia": 2,
+    "V2": 71.62,
+    "V1": 25.28
+   },
+   {
+    "semilla_evidencia": 3,
+    "V2": 71.18,
+    "V1": 25.55
+   },
+   {
+    "semilla_evidencia": 4,
+    "V2": 71.56,
+    "V1": 25.32
+   }
+  ],
+  "V2_min": 71.18,
+  "V2_max": 71.95
+ }
+}

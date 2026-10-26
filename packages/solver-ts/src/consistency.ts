@@ -223,7 +223,7 @@ const SIGMA_POSITION_M = 1.0;
 
 export function checkDamage(spec: Json, seed: number, samples: number): Inconsistency[] {
   const out: Inconsistency[] = [];
-  const ev = evidenceFromSpec(spec, seed);
+  const ev = evidenceFromSpec(spec);
   if (ev.damageDv.size === 0) return out;
   if (!(spec.vehiculos as Json[]).every((v) => stated(v.velocidad_previa))) return out;
   const mc = monteCarlo(spec, { samples, seed });
@@ -250,9 +250,9 @@ export function checkDamage(spec: Json, seed: number, samples: number): Inconsis
   return out;
 }
 
-export function checkRest(spec: Json, seed: number): Inconsistency[] {
+export function checkRest(spec: Json): Inconsistency[] {
   const out: Inconsistency[] = [];
-  const ev = evidenceFromSpec(spec, seed);
+  const ev = evidenceFromSpec(spec);
   if (ev.rest.size === 0) return out;
   const fit = fitEvidence(spec, new Evidence(ev.rest, new Map(), new Map()));
   const byId = new Map((spec.vehiculos as Json[]).map((v) => [str(v.id), v]));
@@ -330,9 +330,9 @@ export function checkSpeedEvidence(spec: Json, inv: Inversion): Inconsistency[] 
 }
 
 /** El daño medido pide más cambio de velocidad del que da la reconstrucción (ADR 0091). */
-export function checkDamageReach(spec: Json, inv: Inversion, seed: number): Inconsistency[] {
+export function checkDamageReach(spec: Json, inv: Inversion): Inconsistency[] {
   const out: Inconsistency[] = [];
-  const ev = evidenceFromSpec(spec, seed);
+  const ev = evidenceFromSpec(spec);
   if (ev.damageMin.size === 0) return out;
   const fixed = new Set(
     inv.estimates
@@ -365,8 +365,8 @@ export function checkDamageReach(spec: Json, inv: Inversion, seed: number): Inco
 }
 
 /** Un reposo supuesto que no cabe con la deformación medida: dos hipótesis (ADR 0091). */
-export function checkAssumedRest(spec: Json, inv: Inversion, seed: number): Inconsistency[] {
-  const ev = evidenceFromSpec(spec, seed);
+export function checkAssumedRest(spec: Json, inv: Inversion): Inconsistency[] {
+  const ev = evidenceFromSpec(spec);
   if (!ev.restAssumed.size || !(ev.damageDv.size || ev.damageMin.size) || inv.assumedAsData)
     return [];
   const byId = new Map((spec.vehiculos as Json[]).map((v) => [str(v.id), v]));
@@ -398,15 +398,15 @@ export function checkConsistency(
   const samples = opts.samples ?? 32;
   const basic = checkConsistencyBasic(spec);
   let inversion = opts.inversion ?? null;
-  if (inversion === null && !evidenceFromSpec(spec, seed).empty()) {
+  if (inversion === null && !evidenceFromSpec(spec).empty()) {
     inversion = invert(spec, { seed });
   }
   return [
     ...basic,
     ...checkDamage(spec, seed, samples),
-    ...checkRest(spec, seed),
+    ...checkRest(spec),
     ...(inversion !== null ? checkSpeedEvidence(spec, inversion) : []),
-    ...(inversion !== null ? checkDamageReach(spec, inversion, seed) : []),
-    ...(inversion !== null ? checkAssumedRest(spec, inversion, seed) : []),
+    ...(inversion !== null ? checkDamageReach(spec, inversion) : []),
+    ...(inversion !== null ? checkAssumedRest(spec, inversion) : []),
   ];
 }

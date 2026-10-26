@@ -21,6 +21,7 @@ import {
   type FilaDeclarada,
   type Reconstruccion,
   type VerificacionVehiculo,
+  encabezadoHipotesis,
 } from "@croquis/cesvi";
 import type { Content, TableCell, TDocumentDefinitions } from "pdfmake/interfaces";
 import { LEYENDA_DICTAMEN } from "./dictamen-cesvi";
@@ -86,7 +87,7 @@ function tabla(encabezados: string[], filas: TableCell[][]): Content {
 
 const enPalabras = (s: string) => s.replaceAll("_", " ");
 const kmh = (x?: number) => (x === undefined ? "—" : x.toFixed(1));
-/** «63.17 (60.77–113.09)»: el valor con el p10–p90 de la reconstrucción, si lo hay. */
+/** «71.56 (62.40–90.00)»: el valor con su p10–p90 alrededor de la solución elegida, si lo hay. */
 const rangoTexto = (kmh: number, rango: [number, number] | null) =>
   rango ? `${kmh.toFixed(2)} (${rango[0].toFixed(2)}–${rango[1].toFixed(2)})` : kmh.toFixed(2);
 const conSigno = (x: number) => `${x >= 0 ? "+" : "−"}${Math.abs(x).toFixed(2)}`;
@@ -99,18 +100,26 @@ const conSigno = (x: number) => `${x >= 0 ? "+" : "−"}${Math.abs(x).toFixed(2)
 function hipotesis(d: DatosDictamenCaso): Content[] {
   const r = d.reconstruccion;
   if (!r.hipotesis) return [];
-  const hs = [r.hipotesis.dano, r.hipotesis.reposo];
+  const hs = r.hipotesis;
+  const vista = hs.find((h) => h.clave === r.elegida);
   return [
-    subtitulo("Dos hipótesis: el reposo supuesto y el daño medido no caben juntos"),
+    subtitulo(encabezadoHipotesis(hs)),
     parrafo(
-      r.elegida
-        ? `El perito eligió «${r.hipotesis[r.elegida].titulo}»; los números de este dictamen son los de esa hipótesis.`
-        : "El perito no eligió hipótesis: los números son los de «Cuadra con el daño medido» (lo medido pesa más que lo supuesto). Falta su elección.",
+      vista
+        ? `El perito eligió «${vista.titulo}»; los números de este dictamen son los de esa hipótesis.`
+        : `El perito no eligió hipótesis: los números son los de «${hs[0]!.titulo}» (${hs[0]!.familia === "dano" ? "lo medido pesa más que lo supuesto y es la de menor costo" : "la de menor costo"}). Falta su elección.`,
     ),
     tabla(
-      ["Hipótesis", "Velocidades previas", "Reposo supuesto", "Deformación medida"],
+      [
+        "Hipótesis",
+        "Costo del ajuste",
+        "Velocidades previas (p10–p90)",
+        "Reposo supuesto",
+        "Deformación medida",
+      ],
       hs.map((h) => [
         h.titulo,
+        h.costo === null ? "—" : h.costo.toFixed(3),
         h.velocidades
           .map(
             (v) =>
@@ -120,6 +129,9 @@ function hipotesis(d: DatosDictamenCaso): Content[] {
         h.reposos.map((x) => `${x.vehiculo} a ${x.m.toFixed(1)} m`).join("; ") || "—",
         h.alcanzaDano ? "La alcanza" : "No la alcanza",
       ]),
+    ),
+    nota(
+      "El costo mide qué tan bien reproduce cada solución la evidencia (menor es mejor); solo se comparan los de la misma hipótesis. El p10–p90 sale de las entradas perturbadas (medidas, fricción, masas y reposo supuesto) alrededor de cada solución.",
     ),
   ];
 }
@@ -145,7 +157,7 @@ function contraReporte(d: DatosDictamenCaso): Content[] {
     ...(k.filas.some((f) => f.croquisRango)
       ? [
           nota(
-            "Entre paréntesis, el p10–p90 de la reconstrucción: la velocidad que reproduce la evidencia con sus entradas perturbadas.",
+            "Entre paréntesis, el p10–p90: la velocidad que reproduce la evidencia cuando sus entradas (medidas, fricción, masas y reposo supuesto) varían dentro de su incertidumbre, alrededor de la solución elegida.",
           ),
         ]
       : []),

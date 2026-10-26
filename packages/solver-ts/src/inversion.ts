@@ -6,6 +6,9 @@
  * 2. Velocidades y rumbos no declarados ajustados con mínimos cuadrados robustos (`lsq.ts`) para
  *    que el solver reproduzca la evidencia declarada; Laplace para ver qué fija la evidencia;
  *    reestimaciones con entradas perturbadas con semilla para los percentiles.
+ * 3. Multiarranque determinista (ADR 0091): arranques fijos con pocas iteraciones, agrupados por
+ *    modo; se afinan los mejores y se queda el de menor costo. Los modos dentro de `MODE_MARGIN`
+ *    van como alternativas. La evidencia usa semilla fija (`EVIDENCE_SEED`).
  *
  * Traducción función por función de la referencia: mismos nombres, mismo orden de sorteos
  * (`Map` conserva el orden de inserción como los dict de Python), `round` y `%` de CPython
@@ -14,7 +17,7 @@
 import { deltaVBarrier, deltaVPair, crushEnergy, uniformCrushEnergy, Stiffness } from "./crash3";
 import { DOWNED_SLIDE_CLASSES, downedMotorcycleFriction, tireFriction } from "./friction";
 import { lstsq, matmul, pinv, transpose } from "./linalg";
-import { leastSquaresSoftL1 } from "./lsq";
+import { leastSquaresSoftL1, softL1Cost } from "./lsq";
 import { median, pyMod, pyRound, quantilesInclusive, str } from "./pymath";
 import { PyRandom } from "./pyrandom";
 import { reconstruct, vehicleClasses, type Reconstruction } from "./reconstruct";
@@ -166,7 +169,21 @@ const BOUND_TOL: Record<string, number> = { velocidad: 0.1, rumbo: 0.1 };
 export const SCALE: Record<string, number> = { velocidad: 10.0, rumbo: 10.0 };
 const IDENT_MAX: Record<string, number> = { velocidad: 30.0, rumbo: 15.0 };
 const CHORD_ITER = 4;
-const FALLBACK_NFEV = 20;
+const CHORD_TRUST = 1.0;
+// Multiarranque (ADR 0091): arranques fijos, pocas iteraciones en cada uno y se afinan los mejores.
+export const EVIDENCE_SEED = 0;
+export const N_DAMAGE = 2000;
+const SCATTER_STARTS = 8;
+const SCATTER_SPEED_KMH = [5.0, 150.0] as const;
+const SCREEN_NFEV = 6;
+const REFINE_MODES = 3;
+const MODE_TOL_KMH = 5.0;
+/** Puntos de la recta entre dos ajustes donde se busca una loma, y su tolerancia de costo. */
+const HILL_POINTS = [0.25, 0.5, 0.75];
+const HILL_TOL = 0.05;
+/** Margen de costo (½ Δχ²) para presentar otro modo como hipótesis. */
+export const MODE_MARGIN = 0.5;
+const PRIMES = [2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37, 41, 43, 47, 53, 59, 61, 67, 71];
 
 function stated(campo: unknown): boolean {
   return campo !== null && campo !== undefined && STATED.includes(String((campo as Json).fuente));
@@ -259,7 +276,8 @@ function classMass(clase: string): number {
 }
 
 /** Evidencia declarada de la escena (solo lo que dice el relato o la persona usuaria). */
-export function evidenceFromSpec(spec: Json, seed = 0, nDamage = 200): Evidence {
+/** La evidencia de la escena; el ΔV por daño, con semilla fija por omisión (ADR 0091). */
+export function evidenceFromSpec(spec: Json, seed = EVIDENCE_SEED, nDamage = N_DAMAGE): Evidence {
   const vehiculos = spec.vehiculos as Json[];
   const personas = spec.personas as Json[];
   const rest = new Map<string, [number, number]>();
@@ -761,10 +779,31 @@ function chordRefit(prob: Problem, xBest: readonly number[], j: number[][]): Fit
   for (let it = 0; it < CHORD_ITER; it++) {
     const w = r.map((e) => 1.0 / Math.sqrt(Math.sqrt(1.0 + e * e)));
     const a = r.map((_, i) => j[i]!.map((v) => w[i]! * v));
-    const step = lstsq(
-      a,
-      r.map((ri, i) => -(ri * w[i]!)),
-    );
+    const rhs = r.map((ri, i) => -(ri * w[i]!));
+    let step = lstsq(a, rhs);
+    // Conjunto activo: un parámetro en su límite cuyo paso apunta hacia afuera se queda fijo y el
+    // paso se recalcula con los demás.
+    const keep = x
+      .map((_, k) => k)
+      .filter((k) => !((x[k]! <= lo[k]! && step[k]! < 0) || (x[k]! >= hi[k]! && step[k]! > 0)));
+    if (keep.length < x.length) {
+      const sub = keep.length
+        ? lstsq(
+            a.map((row) => keep.map((k) => row[k]!)),
+            rhs,
+          )
+        : [];
+      step = x.map(() => 0.0);
+      keep.forEach((k, i) => {
+        step[k] = sub[i]!;
+      });
+    }
+    // Región de confianza: a lo más `CHORD_TRUST` escalas por paso (ADR 0091).
+    let bigScaled = 0.0;
+    prob.params.forEach((p, k) => {
+      bigScaled = Math.max(bigScaled, Math.abs(step[k]!) / SCALE[p.kind]!);
+    });
+    if (bigScaled > CHORD_TRUST) step = step.map((v) => (v * CHORD_TRUST) / bigScaled);
     let moved = false;
     for (const frac of [1.0, 0.5, 0.25]) {
       const xNew = x.map((xk, k) => Math.min(Math.max(xk + frac * step[k]!, lo[k]!), hi[k]!));
@@ -916,6 +955,11 @@ export class Inversion {
     readonly full: Fit | null = null,
   ) {}
 
+  /** Los modos del multiarranque, del menor costo al mayor (ADR 0091). */
+  modes: Mode[] = [];
+  /** Los otros modos dentro de `MODE_MARGIN` del mejor, cada uno con su estimación. */
+  alternatives: Inversion[] = [];
+
   /** Velocidad previa estimada de cada vehículo que la evidencia fija. */
   get speeds(): Map<string, Distribution> {
     const out = new Map<string, Distribution>();
@@ -953,8 +997,129 @@ export class Inversion {
             },
           }
         : {}),
+      ...(this.modes.length > 0
+        ? {
+            multiarranque: {
+              margen_costo: MODE_MARGIN,
+              modos: this.modes.map((m, k) =>
+                m.toDict(k === 0, k > 0 && m.fit.cost <= this.modes[0]!.fit.cost + MODE_MARGIN),
+              ),
+            },
+          }
+        : {}),
+      ...(this.alternatives.length
+        ? { alternativas: this.alternatives.map((a) => a.toDict()) }
+        : {}),
     };
   }
+}
+
+/** Un mínimo del costo: su ajuste y cuántos arranques llegaron a él. */
+export class Mode {
+  constructor(
+    readonly fit: Fit,
+    readonly starts: number,
+  ) {}
+
+  toDict(chosen: boolean, inMargin: boolean): Json {
+    return {
+      valores: [...this.fit.values.entries()]
+        .sort(([a], [b]) => (a < b ? -1 : a > b ? 1 : 0))
+        .map(([k, v]) => ({ nombre: k, valor: pyRound(v, 2) })),
+      costo: pyRound(this.fit.cost, 4),
+      arranques: this.starts,
+      elegido: chosen,
+      en_margen: inMargin,
+    };
+  }
+}
+
+/** k-ésimo punto de van der Corput en `base` (una coordenada de la sucesión de Halton). */
+function radicalInverse(k: number, base: number): number {
+  let out = 0.0;
+  let f = 1.0;
+  while (k > 0) {
+    f /= base;
+    out += f * (k % base);
+    k = Math.floor(k / base);
+  }
+  return out;
+}
+
+/**
+ * Arranques fijos (ADR 0091): el inicial, los compatibles con la deformación y `SCATTER_STARTS`
+ * puntos de Halton sobre las velocidades (los rumbos arrancan en su valor inicial).
+ */
+export function multistartStarts(spec: Json, ev: Evidence, params: Param[]): Map<string, number>[] {
+  const starts: Map<string, number>[] = [
+    new Map<string, number>(),
+    ...damageStarts(spec, ev, params),
+  ];
+  const speeds = params.filter((p) => p.kind === "velocidad");
+  const [lo, hi] = SCATTER_SPEED_KMH;
+  for (let k = 1; k <= SCATTER_STARTS; k++) {
+    starts.push(
+      new Map(
+        speeds.map((p, d) => [
+          p.name,
+          lo + (hi - lo) * radicalInverse(k, PRIMES[d % PRIMES.length]!),
+        ]),
+      ),
+    );
+  }
+  return starts;
+}
+
+function speedsOf(f: Fit): Map<string, number> {
+  return new Map(
+    [...f.values].filter(([k]) => k.startsWith("velocidad:")).map(([k, v]) => [k.slice(10), v]),
+  );
+}
+
+function sameMode(a: Fit, b: Fit): boolean {
+  const sb = speedsOf(b);
+  return [...speedsOf(a)].every(([k, v]) => Math.abs(v - (sb.get(k) ?? Infinity)) <= MODE_TOL_KMH);
+}
+
+/** ¿Hay una loma entre los dos ajustes? Si no, son el mismo valle. */
+function barrier(prob: Problem, a: Fit, b: Fit): boolean {
+  const xa = prob.params.map((p) => a.values.get(p.name)!);
+  const xb = prob.params.map((p) => b.values.get(p.name)!);
+  const top = Math.max(a.cost, b.cost) + HILL_TOL;
+  return HILL_POINTS.some(
+    (s) => softL1Cost(prob.call(xa.map((u, k) => u + s * (xb[k]! - u)))) > top,
+  );
+}
+
+/**
+ * Agrupa por modo, del menor costo al mayor (cada modo, su ajuste de menor costo). Con `prob`, dos
+ * ajustes lejanos sin una loma entre ellos también son el mismo modo.
+ */
+function group(fits: [Fit, number][], prob: Problem | null = null): Mode[] {
+  const modes: Mode[] = [];
+  for (const [f, n] of [...fits].sort((a, b) => a[0].cost - b[0].cost)) {
+    const i = modes.findIndex(
+      (m) => sameMode(m.fit, f) || (prob !== null && !barrier(prob, m.fit, f)),
+    );
+    if (i >= 0) modes[i] = new Mode(modes[i]!.fit, modes[i]!.starts + n);
+    else modes.push(new Mode(f, n));
+  }
+  return modes;
+}
+
+/**
+ * Multiarranque determinista (ADR 0091): cada arranque con `SCREEN_NFEV` evaluaciones, agrupados
+ * por modo; los `REFINE_MODES` mejores se afinan con el ajuste completo.
+ */
+export function findModes(spec: Json, ev: Evidence, params: Param[], dt = 0.1): Mode[] {
+  if (!params.length || ev.empty()) return [new Mode(fitEvidence(spec, ev, { dt }), 1)];
+  const screened = multistartStarts(spec, ev, params).map(
+    (start) => [fitEvidence(spec, ev, { dt, start, maxNfev: SCREEN_NFEV }), 1] as [Fit, number],
+  );
+  const refined = group(screened)
+    .slice(0, REFINE_MODES)
+    .map((m) => [fitEvidence(spec, ev, { dt, start: m.fit.values }), m.starts] as [Fit, number]);
+  return group(refined, new Problem(withMarks(spec, ev), ev, params, new Map(), dt));
 }
 
 /**
@@ -1000,20 +1165,47 @@ export function damageStarts(spec: Json, ev: Evidence, params: Param[]): Map<str
 
 export function invert(
   spec: Json,
-  opts: { seed?: number | null; samples?: number; dt?: number; assumedAsData?: boolean } = {},
+  opts: {
+    seed?: number | null;
+    samples?: number;
+    dt?: number;
+    assumedAsData?: boolean;
+    /** Solo para medir la sensibilidad a la semilla de la evidencia (ADR 0091). */
+    evidenceSeed?: number;
+  } = {},
 ): Inversion {
   const dt = opts.dt ?? 0.1;
   const samples = opts.samples ?? 12;
   const seed = opts.seed ?? Number((spec.meta as Json).semilla);
   const assumedAsData = opts.assumedAsData ?? false;
-  let ev = evidenceFromSpec(spec, seed);
+  let ev = evidenceFromSpec(spec, opts.evidenceSeed ?? EVIDENCE_SEED);
   if (assumedAsData) ev = ev.asAssumedData();
   const params = parameters(withMarks(spec, ev), ev);
-  let best = fitEvidence(spec, ev, { dt });
-  for (const start of damageStarts(spec, ev, params)) {
-    const f = fitEvidence(spec, ev, { dt, start });
-    if (f.cost < best.cost) best = f;
-  }
+  const modes = findModes(spec, ev, params, dt);
+  const bestCost = modes[0]!.fit.cost;
+  const est = (m: Mode) => estimate(spec, ev, params, m.fit, { seed, samples, dt, assumedAsData });
+  const out = est(modes[0]!);
+  out.modes = modes;
+  out.alternatives = modes
+    .slice(1)
+    .filter((m) => m.fit.cost <= bestCost + MODE_MARGIN)
+    .map(est);
+  return out;
+}
+
+/**
+ * Estimación alrededor de un modo: qué fija la evidencia (Laplace), el reajuste de lo que no fija y
+ * el rango con entradas perturbadas, cada muestra reajustada desde ese modo.
+ */
+function estimate(
+  spec: Json,
+  ev: Evidence,
+  params: Param[],
+  bestFull: Fit,
+  opts: { seed: number; samples: number; dt: number; assumedAsData: boolean },
+): Inversion {
+  const { seed, samples, dt, assumedAsData } = opts;
+  let best = bestFull;
   const sigma = !ev.empty()
     ? localSigma(spec, ev, best, dt)
     : new Map(params.map((p) => [p.name, Infinity]));
@@ -1046,9 +1238,13 @@ export function invert(
     const { spec: s, evidence: e, downedMu } = pert;
     const prob = new Problem(withMarks(s, e), e, freeParams, fixed, dt, downedMu);
     prob.names.push(...[...best.residuals.keys()].sort());
+    // El rango sale de las entradas alrededor del modo elegido, sin saltar a otro: la cuerda con el
+    // jacobiano del modo; si no mejora, con el de la muestra; si tampoco, el modo ya es el óptimo
+    // local de la muestra.
     const f =
       chordRefit(prob, xBest, jBest) ??
-      fitEvidence(s, e, { dt, start: best.values, free, maxNfev: FALLBACK_NFEV, downedMu });
+      chordRefit(prob, xBest, sampleJac(prob, xBest)) ??
+      at(prob, xBest);
     fits.push(f);
     const r = tryReconstruct(applyValues(withMarks(s, e), f.values), dt, downedMu);
     if (r === null) continue;
@@ -1072,4 +1268,23 @@ export function invert(
   const impactSpeeds = new Map<string, Distribution>();
   for (const [k, v] of impacts) if (v.length) impactSpeeds.set(k, distribution(v));
   return new Inversion(ev.labels(), estimates, best, impactSpeeds, fits, seed, assumedAsData, full);
+}
+
+/** El jacobiano de la muestra en `x`, con sus restricciones activas, sin tocar `prob`. */
+function sampleJac(prob: Problem, x: number[]): number[][] {
+  const p = new Problem(prob.spec, prob.ev, prob.params, prob.fixed, prob.dt, prob.downedMu);
+  p.names.push(...prob.names);
+  p.activate(x);
+  return p.jac(x);
+}
+
+/** El ajuste en `x` tal cual, con los residuos del problema. */
+function at(prob: Problem, x: number[]): Fit {
+  const r = prob.call(x);
+  return {
+    values: prob.values(x),
+    residuals: new Map(prob.names.map((k, i) => [k, r[i]!])),
+    cost: softL1Cost(r),
+    success: true,
+  };
 }

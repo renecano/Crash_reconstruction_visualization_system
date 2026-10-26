@@ -1,0 +1,60 @@
+{
+ "name": "axa_ruido_dano",
+ "generated_at": "2026-10-26T00:48:33Z",
+ "git_commit": "24d2bba",
+ "descripcion": "ΔV mínimo de V2 por su deformación medida (AXA A2010930, escena de la app), con 200 y con 2000 muestras, en 20 semillas: el menor y el mayor de su p10, p50 y p90 (km/h).",
+ "semillas": [
+  0,
+  1,
+  2,
+  3,
+  4,
+  5,
+  6,
+  7,
+  8,
+  9,
+  10,
+  11,
+  12,
+  13,
+  14,
+  15,
+  16,
+  17,
+  18,
+  19
+ ],
+ "por_muestras": [
+  {
+   "muestras": 200,
+   "p10": [
+    27.25,
+    32.08
+   ],
+   "p50": [
+    47.02,
+    54.57
+   ],
+   "p90": [
+    80.92,
+    100.24
+   ]
+  },
+  {
+   "muestras": 2000,
+   "p10": [
+    28.87,
+    30.34
+   ],
+   "p50": [
+    49.74,
+    51.94
+   ],
+   "p90": [
+    87,
+    92.13
+   ]
+  }
+ ]
+}

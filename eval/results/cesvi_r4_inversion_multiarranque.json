@@ -1,0 +1,3070 @@
+{
+ "name": "cesvi_r4_inversion",
+ "generated_at": "2026-10-26T00:22:13Z",
+ "git_commit": "9c9a82c",
+ "descripcion": "E-R4 (prueba congelada, lecturas v2 grabadas) con lo que reconstruye el solver: velocidad previa de la inversión contra las velocidades del dictamen, impactos contra la secuencia de CESVI y banderas de consistencia.",
+ "narraciones": 205,
+ "reconstruidas": 205,
+ "con_evidencia": 1,
+ "con_alguna_velocidad_fijada": 0,
+ "velocidades": {
+  "del_dictamen_con_vehiculo": 19,
+  "comparables": 0,
+  "mediana_error_abs_kmh": null,
+  "mediana_error_abs_pct": null
+ },
+ "impactos": {
+  "mismo_numero": {
+   "k": 71,
+   "n": 135,
+   "pct": 52.59
+  },
+  "primero_coincide": {
+   "k": 96,
+   "n": 110,
+   "pct": 87.27
+  }
+ },
+ "banderas": {},
+ "detalle": [
+  {
+   "id": "cesvi-4e4d78194f",
+   "reconstruida": true,
+   "evidencia": [],
+   "velocidades_fijadas": 0,
+   "velocidades": [],
+   "impactos": {
+    "cesvi": 2,
+    "solver": 1,
+    "mismo_numero": false,
+    "primero_coincide": true
+   },
+   "consistencia": []
+  },
+  {
+   "id": "cesvi-ec1c390b10",
+   "reconstruida": true,
+   "evidencia": [],
+   "velocidades_fijadas": 0,
+   "velocidades": [],
+   "impactos": {
+    "cesvi": 1,
+    "solver": 1,
+    "mismo_numero": true,
+    "primero_coincide": true
+   },
+   "consistencia": []
+  },
+  {
+   "id": "cesvi-644837b23b",
+   "reconstruida": true,
+   "evidencia": [],
+   "velocidades_fijadas": 0,
+   "velocidades": [],
+   "impactos": {
+    "cesvi": 0,
+    "solver": 1,
+    "mismo_numero": null,
+    "primero_coincide": null
+   },
+   "consistencia": []
+  },
+  {
+   "id": "cesvi-581f3c5f7e",
+   "reconstruida": true,
+   "evidencia": [],
+   "velocidades_fijadas": 0,
+   "velocidades": [],
+   "impactos": {
+    "cesvi": 0,
+    "solver": 1,
+    "mismo_numero": null,
+    "primero_coincide": null
+   },
+   "consistencia": []
+  },
+  {
+   "id": "cesvi-037dde2760",
+   "reconstruida": true,
+   "evidencia": [],
+   "velocidades_fijadas": 0,
+   "velocidades": [],
+   "impactos": {
+    "cesvi": 0,
+    "solver": 1,
+    "mismo_numero": null,
+    "primero_coincide": null
+   },
+   "consistencia": []
+  },
+  {
+   "id": "cesvi-cf708e9fed",
+   "reconstruida": true,
+   "evidencia": [],
+   "velocidades_fijadas": 0,
+   "velocidades": [],
+   "impactos": {
+    "cesvi": 2,
+    "solver": 0,
+    "mismo_numero": false,
+    "primero_coincide": null
+   },
+   "consistencia": []
+  },
+  {
+   "id": "cesvi-cb04fdb41b",
+   "reconstruida": true,
+   "evidencia": [],
+   "velocidades_fijadas": 0,
+   "velocidades": [],
+   "impactos": {
+    "cesvi": 1,
+    "solver": 0,
+    "mismo_numero": false,
+    "primero_coincide": null
+   },
+   "consistencia": []
+  },
+  {
+   "id": "cesvi-12f0cdba9c",
+   "reconstruida": true,
+   "evidencia": [],
+   "velocidades_fijadas": 0,
+   "velocidades": [],
+   "impactos": {
+    "cesvi": 1,
+    "solver": 1,
+    "mismo_numero": true,
+    "primero_coincide": true
+   },
+   "consistencia": []
+  },
+  {
+   "id": "cesvi-e9c4e081fe",
+   "reconstruida": true,
+   "evidencia": [],
+   "velocidades_fijadas": 0,
+   "velocidades": [],
+   "impactos": {
+    "cesvi": 0,
+    "solver": 1,
+    "mismo_numero": null,
+    "primero_coincide": null
+   },
+   "consistencia": []
+  },
+  {
+   "id": "cesvi-285a38dbd1",
+   "reconstruida": true,
+   "evidencia": [],
+   "velocidades_fijadas": 0,
+   "velocidades": [],
+   "impactos": {
+    "cesvi": 0,
+    "solver": 0,
+    "mismo_numero": null,
+    "primero_coincide": null
+   },
+   "consistencia": []
+  },
+  {
+   "id": "cesvi-cd894debf8",
+   "reconstruida": true,
+   "evidencia": [],
+   "velocidades_fijadas": 0,
+   "velocidades": [],
+   "impactos": {
+    "cesvi": 2,
+    "solver": 1,
+    "mismo_numero": false,
+    "primero_coincide": true
+   },
+   "consistencia": []
+  },
+  {
+   "id": "cesvi-7968cc5df9",
+   "reconstruida": true,
+   "evidencia": [],
+   "velocidades_fijadas": 0,
+   "velocidades": [
+    {
+     "vehiculo": "V1",
+     "que": "velocidad baja supuesta de circulación en estacionamiento al momento del impacto",
+     "cesvi_kmh": 10,
+     "solver_kmh": null,
+     "error_kmh": null,
+     "error_pct": null
+    }
+   ],
+   "impactos": {
+    "cesvi": 1,
+    "solver": 1,
+    "mismo_numero": true,
+    "primero_coincide": true
+   },
+   "consistencia": []
+  },
+  {
+   "id": "cesvi-352e083b8a",
+   "reconstruida": true,
+   "evidencia": [],
+   "velocidades_fijadas": 0,
+   "velocidades": [],
+   "impactos": {
+    "cesvi": 0,
+    "solver": 1,
+    "mismo_numero": null,
+    "primero_coincide": null
+   },
+   "consistencia": []
+  },
+  {
+   "id": "cesvi-5863ef5531",
+   "reconstruida": true,
+   "evidencia": [],
+   "velocidades_fijadas": 0,
+   "velocidades": [],
+   "impactos": {
+    "cesvi": 1,
+    "solver": 1,
+    "mismo_numero": true,
+    "primero_coincide": true
+   },
+   "consistencia": []
+  },
+  {
+   "id": "cesvi-f344a46f3f",
+   "reconstruida": true,
+   "evidencia": [],
+   "velocidades_fijadas": 0,
+   "velocidades": [],
+   "impactos": {
+    "cesvi": 1,
+    "solver": 1,
+    "mismo_numero": true,
+    "primero_coincide": true
+   },
+   "consistencia": []
+  },
+  {
+   "id": "cesvi-aee9753bf1",
+   "reconstruida": true,
+   "evidencia": [],
+   "velocidades_fijadas": 0,
+   "velocidades": [],
+   "impactos": {
+    "cesvi": 1,
+    "solver": 1,
+    "mismo_numero": true,
+    "primero_coincide": true
+   },
+   "consistencia": []
+  },
+  {
+   "id": "cesvi-d8a73cd0be",
+   "reconstruida": true,
+   "evidencia": [],
+   "velocidades_fijadas": 0,
+   "velocidades": [],
+   "impactos": {
+    "cesvi": 0,
+    "solver": 1,
+    "mismo_numero": null,
+    "primero_coincide": null
+   },
+   "consistencia": []
+  },
+  {
+   "id": "cesvi-c9ea862641",
+   "reconstruida": true,
+   "evidencia": [],
+   "velocidades_fijadas": 0,
+   "velocidades": [],
+   "impactos": {
+    "cesvi": 1,
+    "solver": 0,
+    "mismo_numero": false,
+    "primero_coincide": null
+   },
+   "consistencia": []
+  },
+  {
+   "id": "cesvi-eed00406c6",
+   "reconstruida": true,
+   "evidencia": [],
+   "velocidades_fijadas": 0,
+   "velocidades": [
+    {
+     "vehiculo": "V2",
+     "que": "velocidad de impacto por energía cinética",
+     "cesvi_kmh": 68.4,
+     "solver_kmh": null,
+     "error_kmh": null,
+     "error_pct": null
+    },
+    {
+     "vehiculo": "V2",
+     "que": "velocidad de circulación",
+     "cesvi_kmh": 68.62,
+     "solver_kmh": null,
+     "error_kmh": null,
+     "error_pct": null
+    }
+   ],
+   "impactos": {
+    "cesvi": 1,
+    "solver": 1,
+    "mismo_numero": true,
+    "primero_coincide": true
+   },
+   "consistencia": []
+  },
+  {
+   "id": "cesvi-a8b1cf4c43",
+   "reconstruida": true,
+   "evidencia": [],
+   "velocidades_fijadas": 0,
+   "velocidades": [
+    {
+     "vehiculo": "V2",
+     "que": "velocidad de impacto del vehículo White con el semirremolque",
+     "cesvi_kmh": 58.28,
+     "solver_kmh": null,
+     "error_kmh": null,
+     "error_pct": null
+    },
+    {
+     "vehiculo": "V2",
+     "que": "velocidad de circulación del vehículo White (al menos)",
+     "cesvi_kmh": 62.92,
+     "solver_kmh": null,
+     "error_kmh": null,
+     "error_pct": null
+    }
+   ],
+   "impactos": {
+    "cesvi": 1,
+    "solver": 1,
+    "mismo_numero": true,
+    "primero_coincide": true
+   },
+   "consistencia": []
+  },
+  {
+   "id": "cesvi-84cfa78565",
+   "reconstruida": true,
+   "evidencia": [],
+   "velocidades_fijadas": 0,
+   "velocidades": [],
+   "impactos": {
+    "cesvi": 0,
+    "solver": 1,
+    "mismo_numero": null,
+    "primero_coincide": null
+   },
+   "consistencia": []
+  },
+  {
+   "id": "cesvi-b7834ff8b0",
+   "reconstruida": true,
+   "evidencia": [],
+   "velocidades_fijadas": 0,
+   "velocidades": [],
+   "impactos": {
+    "cesvi": 1,
+    "solver": 1,
+    "mismo_numero": true,
+    "primero_coincide": true
+   },
+   "consistencia": []
+  },
+  {
+   "id": "cesvi-52de2b4555",
+   "reconstruida": true,
+   "evidencia": [],
+   "velocidades_fijadas": 0,
+   "velocidades": [],
+   "impactos": {
+    "cesvi": 1,
+    "solver": 0,
+    "mismo_numero": false,
+    "primero_coincide": null
+   },
+   "consistencia": []
+  },
+  {
+   "id": "cesvi-ce2e6cce75",
+   "reconstruida": true,
+   "evidencia": [],
+   "velocidades_fijadas": 0,
+   "velocidades": [],
+   "impactos": {
+    "cesvi": 0,
+    "solver": 0,
+    "mismo_numero": null,
+    "primero_coincide": null
+   },
+   "consistencia": []
+  },
+  {
+   "id": "cesvi-639ce6d42f",
+   "reconstruida": true,
+   "evidencia": [],
+   "velocidades_fijadas": 0,
+   "velocidades": [],
+   "impactos": {
+    "cesvi": 1,
+    "solver": 1,
+    "mismo_numero": true,
+    "primero_coincide": true
+   },
+   "consistencia": []
+  },
+  {
+   "id": "cesvi-059b27d89d",
+   "reconstruida": true,
+   "evidencia": [],
+   "velocidades_fijadas": 0,
+   "velocidades": [],
+   "impactos": {
+    "cesvi": 0,
+    "solver": 1,
+    "mismo_numero": null,
+    "primero_coincide": null
+   },
+   "consistencia": []
+  },
+  {
+   "id": "cesvi-460d7f3120",
+   "reconstruida": true,
+   "evidencia": [],
+   "velocidades_fijadas": 0,
+   "velocidades": [],
+   "impactos": {
+    "cesvi": 1,
+    "solver": 0,
+    "mismo_numero": false,
+    "primero_coincide": null
+   },
+   "consistencia": []
+  },
+  {
+   "id": "cesvi-73ea769d2f",
+   "reconstruida": true,
+   "evidencia": [],
+   "velocidades_fijadas": 0,
+   "velocidades": [],
+   "impactos": {
+    "cesvi": 0,
+    "solver": 1,
+    "mismo_numero": null,
+    "primero_coincide": null
+   },
+   "consistencia": []
+  },
+  {
+   "id": "cesvi-b641fb6657",
+   "reconstruida": true,
+   "evidencia": [],
+   "velocidades_fijadas": 0,
+   "velocidades": [],
+   "impactos": {
+    "cesvi": 0,
+    "solver": 0,
+    "mismo_numero": null,
+    "primero_coincide": null
+   },
+   "consistencia": []
+  },
+  {
+   "id": "cesvi-9f15522337",
+   "reconstruida": true,
+   "evidencia": [],
+   "velocidades_fijadas": 0,
+   "velocidades": [],
+   "impactos": {
+    "cesvi": 1,
+    "solver": 1,
+    "mismo_numero": true,
+    "primero_coincide": true
+   },
+   "consistencia": []
+  },
+  {
+   "id": "cesvi-6256dba174",
+   "reconstruida": true,
+   "evidencia": [],
+   "velocidades_fijadas": 0,
+   "velocidades": [],
+   "impactos": {
+    "cesvi": 0,
+    "solver": 0,
+    "mismo_numero": null,
+    "primero_coincide": null
+   },
+   "consistencia": []
+  },
+  {
+   "id": "cesvi-d2c5cede7c",
+   "reconstruida": true,
+   "evidencia": [],
+   "velocidades_fijadas": 0,
+   "velocidades": [],
+   "impactos": {
+    "cesvi": 0,
+    "solver": 1,
+    "mismo_numero": null,
+    "primero_coincide": null
+   },
+   "consistencia": []
+  },
+  {
+   "id": "cesvi-ab666b294f",
+   "reconstruida": true,
+   "evidencia": [],
+   "velocidades_fijadas": 0,
+   "velocidades": [],
+   "impactos": {
+    "cesvi": 2,
+    "solver": 1,
+    "mismo_numero": false,
+    "primero_coincide": true
+   },
+   "consistencia": []
+  },
+  {
+   "id": "cesvi-faa8a2bde0",
+   "reconstruida": true,
+   "evidencia": [],
+   "velocidades_fijadas": 0,
+   "velocidades": [],
+   "impactos": {
+    "cesvi": 0,
+    "solver": 0,
+    "mismo_numero": null,
+    "primero_coincide": null
+   },
+   "consistencia": []
+  },
+  {
+   "id": "cesvi-7d5dbd5fdb",
+   "reconstruida": true,
+   "evidencia": [],
+   "velocidades_fijadas": 0,
+   "velocidades": [],
+   "impactos": {
+    "cesvi": 0,
+    "solver": 1,
+    "mismo_numero": null,
+    "primero_coincide": null
+   },
+   "consistencia": []
+  },
+  {
+   "id": "cesvi-662e6d9423",
+   "reconstruida": true,
+   "evidencia": [],
+   "velocidades_fijadas": 0,
+   "velocidades": [],
+   "impactos": {
+    "cesvi": 1,
+    "solver": 1,
+    "mismo_numero": true,
+    "primero_coincide": true
+   },
+   "consistencia": []
+  },
+  {
+   "id": "cesvi-cade1c89cb",
+   "reconstruida": true,
+   "evidencia": [],
+   "velocidades_fijadas": 0,
+   "velocidades": [],
+   "impactos": {
+    "cesvi": 3,
+    "solver": 1,
+    "mismo_numero": false,
+    "primero_coincide": true
+   },
+   "consistencia": []
+  },
+  {
+   "id": "cesvi-1bc2829bb6",
+   "reconstruida": true,
+   "evidencia": [],
+   "velocidades_fijadas": 0,
+   "velocidades": [
+    {
+     "vehiculo": "V1",
+     "que": "velocidad al perder el control del vehículo en la curva (mínima)",
+     "cesvi_kmh": 121.64,
+     "solver_kmh": null,
+     "error_kmh": null,
+     "error_pct": null
+    }
+   ],
+   "impactos": {
+    "cesvi": 1,
+    "solver": 1,
+    "mismo_numero": true,
+    "primero_coincide": true
+   },
+   "consistencia": []
+  },
+  {
+   "id": "cesvi-85b5b83442",
+   "reconstruida": true,
+   "evidencia": [],
+   "velocidades_fijadas": 0,
+   "velocidades": [],
+   "impactos": {
+    "cesvi": 1,
+    "solver": 1,
+    "mismo_numero": true,
+    "primero_coincide": true
+   },
+   "consistencia": []
+  },
+  {
+   "id": "cesvi-9200983dab",
+   "reconstruida": true,
+   "evidencia": [],
+   "velocidades_fijadas": 0,
+   "velocidades": [],
+   "impactos": {
+    "cesvi": 0,
+    "solver": 0,
+    "mismo_numero": null,
+    "primero_coincide": null
+   },
+   "consistencia": []
+  },
+  {
+   "id": "cesvi-05a7c05640",
+   "reconstruida": true,
+   "evidencia": [],
+   "velocidades_fijadas": 0,
+   "velocidades": [],
+   "impactos": {
+    "cesvi": 1,
+    "solver": 1,
+    "mismo_numero": true,
+    "primero_coincide": true
+   },
+   "consistencia": []
+  },
+  {
+   "id": "cesvi-af71476614",
+   "reconstruida": true,
+   "evidencia": [],
+   "velocidades_fijadas": 0,
+   "velocidades": [],
+   "impactos": {
+    "cesvi": 0,
+    "solver": 1,
+    "mismo_numero": null,
+    "primero_coincide": null
+   },
+   "consistencia": []
+  },
+  {
+   "id": "cesvi-bf10fcba2f",
+   "reconstruida": true,
+   "evidencia": [],
+   "velocidades_fijadas": 0,
+   "velocidades": [],
+   "impactos": {
+    "cesvi": 2,
+    "solver": 1,
+    "mismo_numero": false,
+    "primero_coincide": false
+   },
+   "consistencia": []
+  },
+  {
+   "id": "cesvi-147df2914c",
+   "reconstruida": true,
+   "evidencia": [],
+   "velocidades_fijadas": 0,
+   "velocidades": [],
+   "impactos": {
+    "cesvi": 1,
+    "solver": 1,
+    "mismo_numero": true,
+    "primero_coincide": true
+   },
+   "consistencia": []
+  },
+  {
+   "id": "cesvi-476cf1439b",
+   "reconstruida": true,
+   "evidencia": [],
+   "velocidades_fijadas": 0,
+   "velocidades": [],
+   "impactos": {
+    "cesvi": 1,
+    "solver": 0,
+    "mismo_numero": false,
+    "primero_coincide": null
+   },
+   "consistencia": []
+  },
+  {
+   "id": "cesvi-3eab5db876",
+   "reconstruida": true,
+   "evidencia": [],
+   "velocidades_fijadas": 0,
+   "velocidades": [],
+   "impactos": {
+    "cesvi": 3,
+    "solver": 1,
+    "mismo_numero": false,
+    "primero_coincide": true
+   },
+   "consistencia": []
+  },
+  {
+   "id": "cesvi-d4b38174d1",
+   "reconstruida": true,
+   "evidencia": [],
+   "velocidades_fijadas": 0,
+   "velocidades": [],
+   "impactos": {
+    "cesvi": 1,
+    "solver": 1,
+    "mismo_numero": true,
+    "primero_coincide": true
+   },
+   "consistencia": []
+  },
+  {
+   "id": "cesvi-df6a4b2324",
+   "reconstruida": true,
+   "evidencia": [],
+   "velocidades_fijadas": 0,
+   "velocidades": [],
+   "impactos": {
+    "cesvi": 1,
+    "solver": 1,
+    "mismo_numero": true,
+    "primero_coincide": true
+   },
+   "consistencia": []
+  },
+  {
+   "id": "cesvi-c6269d800e",
+   "reconstruida": true,
+   "evidencia": [],
+   "velocidades_fijadas": 0,
+   "velocidades": [],
+   "impactos": {
+    "cesvi": 0,
+    "solver": 1,
+    "mismo_numero": null,
+    "primero_coincide": null
+   },
+   "consistencia": []
+  },
+  {
+   "id": "cesvi-240b770de0",
+   "reconstruida": true,
+   "evidencia": [],
+   "velocidades_fijadas": 0,
+   "velocidades": [],
+   "impactos": {
+    "cesvi": 1,
+    "solver": 1,
+    "mismo_numero": true,
+    "primero_coincide": true
+   },
+   "consistencia": []
+  },
+  {
+   "id": "cesvi-bb774b3897",
+   "reconstruida": true,
+   "evidencia": [],
+   "velocidades_fijadas": 0,
+   "velocidades": [],
+   "impactos": {
+    "cesvi": 2,
+    "solver": 1,
+    "mismo_numero": false,
+    "primero_coincide": false
+   },
+   "consistencia": []
+  },
+  {
+   "id": "cesvi-8e3a7ac59f",
+   "reconstruida": true,
+   "evidencia": [],
+   "velocidades_fijadas": 0,
+   "velocidades": [],
+   "impactos": {
+    "cesvi": 2,
+    "solver": 1,
+    "mismo_numero": false,
+    "primero_coincide": true
+   },
+   "consistencia": []
+  },
+  {
+   "id": "cesvi-0221ee4ec4",
+   "reconstruida": true,
+   "evidencia": [],
+   "velocidades_fijadas": 0,
+   "velocidades": [],
+   "impactos": {
+    "cesvi": 1,
+    "solver": 1,
+    "mismo_numero": true,
+    "primero_coincide": true
+   },
+   "consistencia": []
+  },
+  {
+   "id": "cesvi-5dfc9ba3c0",
+   "reconstruida": true,
+   "evidencia": [],
+   "velocidades_fijadas": 0,
+   "velocidades": [],
+   "impactos": {
+    "cesvi": 0,
+    "solver": 1,
+    "mismo_numero": null,
+    "primero_coincide": null
+   },
+   "consistencia": []
+  },
+  {
+   "id": "cesvi-5dd2c6df58",
+   "reconstruida": true,
+   "evidencia": [],
+   "velocidades_fijadas": 0,
+   "velocidades": [],
+   "impactos": {
+    "cesvi": 1,
+    "solver": 0,
+    "mismo_numero": false,
+    "primero_coincide": null
+   },
+   "consistencia": []
+  },
+  {
+   "id": "cesvi-d950dda14b",
+   "reconstruida": true,
+   "evidencia": [],
+   "velocidades_fijadas": 0,
+   "velocidades": [],
+   "impactos": {
+    "cesvi": 1,
+    "solver": 1,
+    "mismo_numero": true,
+    "primero_coincide": true
+   },
+   "consistencia": []
+  },
+  {
+   "id": "cesvi-2276b03fc0",
+   "reconstruida": true,
+   "evidencia": [],
+   "velocidades_fijadas": 0,
+   "velocidades": [],
+   "impactos": {
+    "cesvi": 1,
+    "solver": 1,
+    "mismo_numero": true,
+    "primero_coincide": true
+   },
+   "consistencia": []
+  },
+  {
+   "id": "cesvi-3fa0cd2ba1",
+   "reconstruida": true,
+   "evidencia": [],
+   "velocidades_fijadas": 0,
+   "velocidades": [],
+   "impactos": {
+    "cesvi": 1,
+    "solver": 1,
+    "mismo_numero": true,
+    "primero_coincide": false
+   },
+   "consistencia": []
+  },
+  {
+   "id": "cesvi-f112d84f11",
+   "reconstruida": true,
+   "evidencia": [],
+   "velocidades_fijadas": 0,
+   "velocidades": [],
+   "impactos": {
+    "cesvi": 0,
+    "solver": 0,
+    "mismo_numero": null,
+    "primero_coincide": null
+   },
+   "consistencia": []
+  },
+  {
+   "id": "cesvi-feef78b49a",
+   "reconstruida": true,
+   "evidencia": [],
+   "velocidades_fijadas": 0,
+   "velocidades": [],
+   "impactos": {
+    "cesvi": 2,
+    "solver": 1,
+    "mismo_numero": false,
+    "primero_coincide": true
+   },
+   "consistencia": []
+  },
+  {
+   "id": "cesvi-16eb0fba1f",
+   "reconstruida": true,
+   "evidencia": [],
+   "velocidades_fijadas": 0,
+   "velocidades": [],
+   "impactos": {
+    "cesvi": 2,
+    "solver": 1,
+    "mismo_numero": false,
+    "primero_coincide": true
+   },
+   "consistencia": []
+  },
+  {
+   "id": "cesvi-d55ce7a8fe",
+   "reconstruida": true,
+   "evidencia": [],
+   "velocidades_fijadas": 0,
+   "velocidades": [],
+   "impactos": {
+    "cesvi": 0,
+    "solver": 0,
+    "mismo_numero": null,
+    "primero_coincide": null
+   },
+   "consistencia": []
+  },
+  {
+   "id": "cesvi-52fb9f9c5d",
+   "reconstruida": true,
+   "evidencia": [],
+   "velocidades_fijadas": 0,
+   "velocidades": [],
+   "impactos": {
+    "cesvi": 1,
+    "solver": 0,
+    "mismo_numero": false,
+    "primero_coincide": null
+   },
+   "consistencia": []
+  },
+  {
+   "id": "cesvi-4e9cbd1711",
+   "reconstruida": true,
+   "evidencia": [],
+   "velocidades_fijadas": 0,
+   "velocidades": [
+    {
+     "vehiculo": "V1",
+     "que": "velocidad baja estimada del vehículo A190 al momento del hecho",
+     "cesvi_kmh": 0,
+     "solver_kmh": null,
+     "error_kmh": null,
+     "error_pct": null
+    }
+   ],
+   "impactos": {
+    "cesvi": 1,
+    "solver": 1,
+    "mismo_numero": true,
+    "primero_coincide": true
+   },
+   "consistencia": []
+  },
+  {
+   "id": "cesvi-b7ca573795",
+   "reconstruida": true,
+   "evidencia": [],
+   "velocidades_fijadas": 0,
+   "velocidades": [
+    {
+     "vehiculo": "V2",
+     "que": "velocidad mínima de impacto contra la barda perimetral, por deformación",
+     "cesvi_kmh": 40.67,
+     "solver_kmh": null,
+     "error_kmh": null,
+     "error_pct": null
+    }
+   ],
+   "impactos": {
+    "cesvi": 2,
+    "solver": 1,
+    "mismo_numero": false,
+    "primero_coincide": true
+   },
+   "consistencia": []
+  },
+  {
+   "id": "cesvi-7b8ab3e55e",
+   "reconstruida": true,
+   "evidencia": [],
+   "velocidades_fijadas": 0,
+   "velocidades": [
+    {
+     "vehiculo": "V2",
+     "que": "velocidad del tracto momentos antes de la colisión",
+     "cesvi_kmh": 80.73,
+     "solver_kmh": null,
+     "error_kmh": null,
+     "error_pct": null
+    }
+   ],
+   "impactos": {
+    "cesvi": 1,
+    "solver": 1,
+    "mismo_numero": true,
+    "primero_coincide": true
+   },
+   "consistencia": []
+  },
+  {
+   "id": "cesvi-71660b61b8",
+   "reconstruida": true,
+   "evidencia": [],
+   "velocidades_fijadas": 0,
+   "velocidades": [
+    {
+     "vehiculo": "V1",
+     "que": "velocidad necesaria para que vuelque el semirremolque tipo Volteo sin carga",
+     "cesvi_kmh": 47.17,
+     "solver_kmh": null,
+     "error_kmh": null,
+     "error_pct": null
+    }
+   ],
+   "impactos": {
+    "cesvi": 1,
+    "solver": 0,
+    "mismo_numero": false,
+    "primero_coincide": null
+   },
+   "consistencia": []
+  },
+  {
+   "id": "cesvi-6c34c6ac79",
+   "reconstruida": true,
+   "evidencia": [],
+   "velocidades_fijadas": 0,
+   "velocidades": [],
+   "impactos": {
+    "cesvi": 1,
+    "solver": 1,
+    "mismo_numero": true,
+    "primero_coincide": true
+   },
+   "consistencia": []
+  },
+  {
+   "id": "cesvi-a8e0a03cfd",
+   "reconstruida": true,
+   "evidencia": [],
+   "velocidades_fijadas": 0,
+   "velocidades": [],
+   "impactos": {
+    "cesvi": 2,
+    "solver": 0,
+    "mismo_numero": false,
+    "primero_coincide": null
+   },
+   "consistencia": []
+  },
+  {
+   "id": "cesvi-e005298ffb",
+   "reconstruida": true,
+   "evidencia": [],
+   "velocidades_fijadas": 0,
+   "velocidades": [],
+   "impactos": {
+    "cesvi": 0,
+    "solver": 1,
+    "mismo_numero": null,
+    "primero_coincide": null
+   },
+   "consistencia": []
+  },
+  {
+   "id": "cesvi-abc31b1de8",
+   "reconstruida": true,
+   "evidencia": [],
+   "velocidades_fijadas": 0,
+   "velocidades": [],
+   "impactos": {
+    "cesvi": 1,
+    "solver": 1,
+    "mismo_numero": true,
+    "primero_coincide": true
+   },
+   "consistencia": []
+  },
+  {
+   "id": "cesvi-6f70c56733",
+   "reconstruida": true,
+   "evidencia": [],
+   "velocidades_fijadas": 0,
+   "velocidades": [],
+   "impactos": {
+    "cesvi": 0,
+    "solver": 0,
+    "mismo_numero": null,
+    "primero_coincide": null
+   },
+   "consistencia": []
+  },
+  {
+   "id": "cesvi-def04a2cc3",
+   "reconstruida": true,
+   "evidencia": [],
+   "velocidades_fijadas": 0,
+   "velocidades": [],
+   "impactos": {
+    "cesvi": 1,
+    "solver": 1,
+    "mismo_numero": true,
+    "primero_coincide": true
+   },
+   "consistencia": []
+  },
+  {
+   "id": "cesvi-87b14ec4ba",
+   "reconstruida": true,
+   "evidencia": [],
+   "velocidades_fijadas": 0,
+   "velocidades": [],
+   "impactos": {
+    "cesvi": 2,
+    "solver": 0,
+    "mismo_numero": false,
+    "primero_coincide": null
+   },
+   "consistencia": []
+  },
+  {
+   "id": "cesvi-31fcbca870",
+   "reconstruida": true,
+   "evidencia": [],
+   "velocidades_fijadas": 0,
+   "velocidades": [],
+   "impactos": {
+    "cesvi": 1,
+    "solver": 0,
+    "mismo_numero": false,
+    "primero_coincide": null
+   },
+   "consistencia": []
+  },
+  {
+   "id": "cesvi-48acbb46c2",
+   "reconstruida": true,
+   "evidencia": [],
+   "velocidades_fijadas": 0,
+   "velocidades": [],
+   "impactos": {
+    "cesvi": 1,
+    "solver": 0,
+    "mismo_numero": false,
+    "primero_coincide": null
+   },
+   "consistencia": []
+  },
+  {
+   "id": "cesvi-76cbfb506e",
+   "reconstruida": true,
+   "evidencia": [],
+   "velocidades_fijadas": 0,
+   "velocidades": [],
+   "impactos": {
+    "cesvi": 1,
+    "solver": 0,
+    "mismo_numero": false,
+    "primero_coincide": null
+   },
+   "consistencia": []
+  },
+  {
+   "id": "cesvi-5aa5e75aca",
+   "reconstruida": true,
+   "evidencia": [],
+   "velocidades_fijadas": 0,
+   "velocidades": [],
+   "impactos": {
+    "cesvi": 3,
+    "solver": 1,
+    "mismo_numero": false,
+    "primero_coincide": true
+   },
+   "consistencia": []
+  },
+  {
+   "id": "cesvi-a514a9a881",
+   "reconstruida": true,
+   "evidencia": [],
+   "velocidades_fijadas": 0,
+   "velocidades": [],
+   "impactos": {
+    "cesvi": 1,
+    "solver": 1,
+    "mismo_numero": true,
+    "primero_coincide": true
+   },
+   "consistencia": []
+  },
+  {
+   "id": "cesvi-257e1374a0",
+   "reconstruida": true,
+   "evidencia": [],
+   "velocidades_fijadas": 0,
+   "velocidades": [],
+   "impactos": {
+    "cesvi": 0,
+    "solver": 1,
+    "mismo_numero": null,
+    "primero_coincide": null
+   },
+   "consistencia": []
+  },
+  {
+   "id": "cesvi-04c4022204",
+   "reconstruida": true,
+   "evidencia": [],
+   "velocidades_fijadas": 0,
+   "velocidades": [],
+   "impactos": {
+    "cesvi": 2,
+    "solver": 0,
+    "mismo_numero": false,
+    "primero_coincide": null
+   },
+   "consistencia": []
+  },
+  {
+   "id": "cesvi-ebb5c029a8",
+   "reconstruida": true,
+   "evidencia": [],
+   "velocidades_fijadas": 0,
+   "velocidades": [],
+   "impactos": {
+    "cesvi": 1,
+    "solver": 1,
+    "mismo_numero": true,
+    "primero_coincide": true
+   },
+   "consistencia": []
+  },
+  {
+   "id": "cesvi-549b436c96",
+   "reconstruida": true,
+   "evidencia": [],
+   "velocidades_fijadas": 0,
+   "velocidades": [],
+   "impactos": {
+    "cesvi": 0,
+    "solver": 0,
+    "mismo_numero": null,
+    "primero_coincide": null
+   },
+   "consistencia": []
+  },
+  {
+   "id": "cesvi-9ab47f7f37",
+   "reconstruida": true,
+   "evidencia": [],
+   "velocidades_fijadas": 0,
+   "velocidades": [],
+   "impactos": {
+    "cesvi": 4,
+    "solver": 1,
+    "mismo_numero": false,
+    "primero_coincide": true
+   },
+   "consistencia": []
+  },
+  {
+   "id": "cesvi-36340d20a2",
+   "reconstruida": true,
+   "evidencia": [],
+   "velocidades_fijadas": 0,
+   "velocidades": [],
+   "impactos": {
+    "cesvi": 0,
+    "solver": 0,
+    "mismo_numero": null,
+    "primero_coincide": null
+   },
+   "consistencia": []
+  },
+  {
+   "id": "cesvi-a7570ee749",
+   "reconstruida": true,
+   "evidencia": [],
+   "velocidades_fijadas": 0,
+   "velocidades": [],
+   "impactos": {
+    "cesvi": 1,
+    "solver": 1,
+    "mismo_numero": true,
+    "primero_coincide": true
+   },
+   "consistencia": []
+  },
+  {
+   "id": "cesvi-85894938e3",
+   "reconstruida": true,
+   "evidencia": [],
+   "velocidades_fijadas": 0,
+   "velocidades": [],
+   "impactos": {
+    "cesvi": 0,
+    "solver": 1,
+    "mismo_numero": null,
+    "primero_coincide": null
+   },
+   "consistencia": []
+  },
+  {
+   "id": "cesvi-87cc4e2767",
+   "reconstruida": true,
+   "evidencia": [],
+   "velocidades_fijadas": 0,
+   "velocidades": [],
+   "impactos": {
+    "cesvi": 1,
+    "solver": 1,
+    "mismo_numero": true,
+    "primero_coincide": true
+   },
+   "consistencia": []
+  },
+  {
+   "id": "cesvi-16b9b82f10",
+   "reconstruida": true,
+   "evidencia": [],
+   "velocidades_fijadas": 0,
+   "velocidades": [],
+   "impactos": {
+    "cesvi": 1,
+    "solver": 1,
+    "mismo_numero": true,
+    "primero_coincide": true
+   },
+   "consistencia": []
+  },
+  {
+   "id": "cesvi-2b10fea718",
+   "reconstruida": true,
+   "evidencia": [],
+   "velocidades_fijadas": 0,
+   "velocidades": [],
+   "impactos": {
+    "cesvi": 0,
+    "solver": 1,
+    "mismo_numero": null,
+    "primero_coincide": null
+   },
+   "consistencia": []
+  },
+  {
+   "id": "cesvi-840953e0be",
+   "reconstruida": true,
+   "evidencia": [],
+   "velocidades_fijadas": 0,
+   "velocidades": [],
+   "impactos": {
+    "cesvi": 0,
+    "solver": 1,
+    "mismo_numero": null,
+    "primero_coincide": null
+   },
+   "consistencia": []
+  },
+  {
+   "id": "cesvi-c0bc4df135",
+   "reconstruida": true,
+   "evidencia": [],
+   "velocidades_fijadas": 0,
+   "velocidades": [],
+   "impactos": {
+    "cesvi": 2,
+    "solver": 1,
+    "mismo_numero": false,
+    "primero_coincide": true
+   },
+   "consistencia": []
+  },
+  {
+   "id": "cesvi-b8c6174603",
+   "reconstruida": true,
+   "evidencia": [],
+   "velocidades_fijadas": 0,
+   "velocidades": [],
+   "impactos": {
+    "cesvi": 0,
+    "solver": 1,
+    "mismo_numero": null,
+    "primero_coincide": null
+   },
+   "consistencia": []
+  },
+  {
+   "id": "cesvi-4ee7f719b9",
+   "reconstruida": true,
+   "evidencia": [],
+   "velocidades_fijadas": 0,
+   "velocidades": [],
+   "impactos": {
+    "cesvi": 2,
+    "solver": 1,
+    "mismo_numero": false,
+    "primero_coincide": true
+   },
+   "consistencia": []
+  },
+  {
+   "id": "cesvi-0b1f65a976",
+   "reconstruida": true,
+   "evidencia": [],
+   "velocidades_fijadas": 0,
+   "velocidades": [],
+   "impactos": {
+    "cesvi": 3,
+    "solver": 1,
+    "mismo_numero": false,
+    "primero_coincide": false
+   },
+   "consistencia": []
+  },
+  {
+   "id": "cesvi-2a83292792",
+   "reconstruida": true,
+   "evidencia": [],
+   "velocidades_fijadas": 0,
+   "velocidades": [],
+   "impactos": {
+    "cesvi": 3,
+    "solver": 1,
+    "mismo_numero": false,
+    "primero_coincide": false
+   },
+   "consistencia": []
+  },
+  {
+   "id": "cesvi-5242a129c5",
+   "reconstruida": true,
+   "evidencia": [],
+   "velocidades_fijadas": 0,
+   "velocidades": [],
+   "impactos": {
+    "cesvi": 0,
+    "solver": 1,
+    "mismo_numero": null,
+    "primero_coincide": null
+   },
+   "consistencia": []
+  },
+  {
+   "id": "cesvi-a29030f88d",
+   "reconstruida": true,
+   "evidencia": [],
+   "velocidades_fijadas": 0,
+   "velocidades": [],
+   "impactos": {
+    "cesvi": 1,
+    "solver": 1,
+    "mismo_numero": true,
+    "primero_coincide": true
+   },
+   "consistencia": []
+  },
+  {
+   "id": "cesvi-6400c99448",
+   "reconstruida": true,
+   "evidencia": [],
+   "velocidades_fijadas": 0,
+   "velocidades": [],
+   "impactos": {
+    "cesvi": 2,
+    "solver": 1,
+    "mismo_numero": false,
+    "primero_coincide": true
+   },
+   "consistencia": []
+  },
+  {
+   "id": "cesvi-8edf93b5c6",
+   "reconstruida": true,
+   "evidencia": [],
+   "velocidades_fijadas": 0,
+   "velocidades": [],
+   "impactos": {
+    "cesvi": 2,
+    "solver": 1,
+    "mismo_numero": false,
+    "primero_coincide": true
+   },
+   "consistencia": []
+  },
+  {
+   "id": "cesvi-d4283db9c4",
+   "reconstruida": true,
+   "evidencia": [],
+   "velocidades_fijadas": 0,
+   "velocidades": [],
+   "impactos": {
+    "cesvi": 1,
+    "solver": 1,
+    "mismo_numero": true,
+    "primero_coincide": true
+   },
+   "consistencia": []
+  },
+  {
+   "id": "cesvi-af2196f0fc",
+   "reconstruida": true,
+   "evidencia": [],
+   "velocidades_fijadas": 0,
+   "velocidades": [],
+   "impactos": {
+    "cesvi": 1,
+    "solver": 1,
+    "mismo_numero": true,
+    "primero_coincide": false
+   },
+   "consistencia": []
+  },
+  {
+   "id": "cesvi-58c038ffdf",
+   "reconstruida": true,
+   "evidencia": [],
+   "velocidades_fijadas": 0,
+   "velocidades": [],
+   "impactos": {
+    "cesvi": 1,
+    "solver": 0,
+    "mismo_numero": false,
+    "primero_coincide": null
+   },
+   "consistencia": []
+  },
+  {
+   "id": "cesvi-c4100ea323",
+   "reconstruida": true,
+   "evidencia": [],
+   "velocidades_fijadas": 0,
+   "velocidades": [],
+   "impactos": {
+    "cesvi": 0,
+    "solver": 1,
+    "mismo_numero": null,
+    "primero_coincide": null
+   },
+   "consistencia": []
+  },
+  {
+   "id": "cesvi-52c47a9f37",
+   "reconstruida": true,
+   "evidencia": [],
+   "velocidades_fijadas": 0,
+   "velocidades": [],
+   "impactos": {
+    "cesvi": 1,
+    "solver": 1,
+    "mismo_numero": true,
+    "primero_coincide": true
+   },
+   "consistencia": []
+  },
+  {
+   "id": "cesvi-b9f5a5ca1f",
+   "reconstruida": true,
+   "evidencia": [],
+   "velocidades_fijadas": 0,
+   "velocidades": [],
+   "impactos": {
+    "cesvi": 2,
+    "solver": 1,
+    "mismo_numero": false,
+    "primero_coincide": true
+   },
+   "consistencia": []
+  },
+  {
+   "id": "cesvi-5cf7e956c6",
+   "reconstruida": true,
+   "evidencia": [],
+   "velocidades_fijadas": 0,
+   "velocidades": [],
+   "impactos": {
+    "cesvi": 0,
+    "solver": 0,
+    "mismo_numero": null,
+    "primero_coincide": null
+   },
+   "consistencia": []
+  },
+  {
+   "id": "cesvi-d0c7ed3ad8",
+   "reconstruida": true,
+   "evidencia": [],
+   "velocidades_fijadas": 0,
+   "velocidades": [],
+   "impactos": {
+    "cesvi": 0,
+    "solver": 1,
+    "mismo_numero": null,
+    "primero_coincide": null
+   },
+   "consistencia": []
+  },
+  {
+   "id": "cesvi-358b91874b",
+   "reconstruida": true,
+   "evidencia": [],
+   "velocidades_fijadas": 0,
+   "velocidades": [],
+   "impactos": {
+    "cesvi": 1,
+    "solver": 0,
+    "mismo_numero": false,
+    "primero_coincide": null
+   },
+   "consistencia": []
+  },
+  {
+   "id": "cesvi-7f1fa3c962",
+   "reconstruida": true,
+   "evidencia": [],
+   "velocidades_fijadas": 0,
+   "velocidades": [],
+   "impactos": {
+    "cesvi": 1,
+    "solver": 1,
+    "mismo_numero": true,
+    "primero_coincide": true
+   },
+   "consistencia": []
+  },
+  {
+   "id": "cesvi-6f007ef54a",
+   "reconstruida": true,
+   "evidencia": [],
+   "velocidades_fijadas": 0,
+   "velocidades": [],
+   "impactos": {
+    "cesvi": 0,
+    "solver": 0,
+    "mismo_numero": null,
+    "primero_coincide": null
+   },
+   "consistencia": []
+  },
+  {
+   "id": "cesvi-e25e2e4542",
+   "reconstruida": true,
+   "evidencia": [],
+   "velocidades_fijadas": 0,
+   "velocidades": [],
+   "impactos": {
+    "cesvi": 0,
+    "solver": 0,
+    "mismo_numero": null,
+    "primero_coincide": null
+   },
+   "consistencia": []
+  },
+  {
+   "id": "cesvi-a8bf6a49ac",
+   "reconstruida": true,
+   "evidencia": [],
+   "velocidades_fijadas": 0,
+   "velocidades": [],
+   "impactos": {
+    "cesvi": 1,
+    "solver": 1,
+    "mismo_numero": true,
+    "primero_coincide": true
+   },
+   "consistencia": []
+  },
+  {
+   "id": "cesvi-928c1a7646",
+   "reconstruida": true,
+   "evidencia": [],
+   "velocidades_fijadas": 0,
+   "velocidades": [],
+   "impactos": {
+    "cesvi": 1,
+    "solver": 1,
+    "mismo_numero": true,
+    "primero_coincide": false
+   },
+   "consistencia": []
+  },
+  {
+   "id": "cesvi-4f918c2927",
+   "reconstruida": true,
+   "evidencia": [],
+   "velocidades_fijadas": 0,
+   "velocidades": [],
+   "impactos": {
+    "cesvi": 0,
+    "solver": 1,
+    "mismo_numero": null,
+    "primero_coincide": null
+   },
+   "consistencia": []
+  },
+  {
+   "id": "cesvi-d4772dda4f",
+   "reconstruida": true,
+   "evidencia": [],
+   "velocidades_fijadas": 0,
+   "velocidades": [],
+   "impactos": {
+    "cesvi": 1,
+    "solver": 1,
+    "mismo_numero": true,
+    "primero_coincide": true
+   },
+   "consistencia": []
+  },
+  {
+   "id": "cesvi-f7779cef54",
+   "reconstruida": true,
+   "evidencia": [],
+   "velocidades_fijadas": 0,
+   "velocidades": [],
+   "impactos": {
+    "cesvi": 1,
+    "solver": 1,
+    "mismo_numero": true,
+    "primero_coincide": true
+   },
+   "consistencia": []
+  },
+  {
+   "id": "cesvi-d646b64594",
+   "reconstruida": true,
+   "evidencia": [],
+   "velocidades_fijadas": 0,
+   "velocidades": [],
+   "impactos": {
+    "cesvi": 1,
+    "solver": 1,
+    "mismo_numero": true,
+    "primero_coincide": true
+   },
+   "consistencia": []
+  },
+  {
+   "id": "cesvi-85090bf850",
+   "reconstruida": true,
+   "evidencia": [],
+   "velocidades_fijadas": 0,
+   "velocidades": [
+    {
+     "vehiculo": "V1",
+     "que": "velocidad al entrar a la curva según GPS",
+     "cesvi_kmh": 46.2,
+     "solver_kmh": null,
+     "error_kmh": null,
+     "error_pct": null
+    }
+   ],
+   "impactos": {
+    "cesvi": 2,
+    "solver": 1,
+    "mismo_numero": false,
+    "primero_coincide": true
+   },
+   "consistencia": []
+  },
+  {
+   "id": "cesvi-6dbc809e80",
+   "reconstruida": true,
+   "evidencia": [],
+   "velocidades_fijadas": 0,
+   "velocidades": [],
+   "impactos": {
+    "cesvi": 0,
+    "solver": 1,
+    "mismo_numero": null,
+    "primero_coincide": null
+   },
+   "consistencia": []
+  },
+  {
+   "id": "cesvi-3bde7bd134",
+   "reconstruida": true,
+   "evidencia": [],
+   "velocidades_fijadas": 0,
+   "velocidades": [],
+   "impactos": {
+    "cesvi": 1,
+    "solver": 1,
+    "mismo_numero": true,
+    "primero_coincide": true
+   },
+   "consistencia": []
+  },
+  {
+   "id": "cesvi-97cb6986e4",
+   "reconstruida": true,
+   "evidencia": [],
+   "velocidades_fijadas": 0,
+   "velocidades": [],
+   "impactos": {
+    "cesvi": 1,
+    "solver": 1,
+    "mismo_numero": true,
+    "primero_coincide": true
+   },
+   "consistencia": []
+  },
+  {
+   "id": "cesvi-e9aed4ab5b",
+   "reconstruida": true,
+   "evidencia": [],
+   "velocidades_fijadas": 0,
+   "velocidades": [],
+   "impactos": {
+    "cesvi": 2,
+    "solver": 1,
+    "mismo_numero": false,
+    "primero_coincide": true
+   },
+   "consistencia": []
+  },
+  {
+   "id": "cesvi-f85560ba6c",
+   "reconstruida": true,
+   "evidencia": [],
+   "velocidades_fijadas": 0,
+   "velocidades": [],
+   "impactos": {
+    "cesvi": 0,
+    "solver": 1,
+    "mismo_numero": null,
+    "primero_coincide": null
+   },
+   "consistencia": []
+  },
+  {
+   "id": "cesvi-7a3e5a6055",
+   "reconstruida": true,
+   "evidencia": [],
+   "velocidades_fijadas": 0,
+   "velocidades": [
+    {
+     "vehiculo": "V1",
+     "que": "velocidad de impacto entre ambos vehículos",
+     "cesvi_kmh": 25,
+     "solver_kmh": null,
+     "error_kmh": null,
+     "error_pct": null
+    }
+   ],
+   "impactos": {
+    "cesvi": 1,
+    "solver": 1,
+    "mismo_numero": true,
+    "primero_coincide": true
+   },
+   "consistencia": []
+  },
+  {
+   "id": "cesvi-736d92094b",
+   "reconstruida": true,
+   "evidencia": [],
+   "velocidades_fijadas": 0,
+   "velocidades": [],
+   "impactos": {
+    "cesvi": 2,
+    "solver": 1,
+    "mismo_numero": false,
+    "primero_coincide": true
+   },
+   "consistencia": []
+  },
+  {
+   "id": "cesvi-11fb37efea",
+   "reconstruida": true,
+   "evidencia": [],
+   "velocidades_fijadas": 0,
+   "velocidades": [],
+   "impactos": {
+    "cesvi": 0,
+    "solver": 0,
+    "mismo_numero": null,
+    "primero_coincide": null
+   },
+   "consistencia": []
+  },
+  {
+   "id": "cesvi-7377724258",
+   "reconstruida": true,
+   "evidencia": [],
+   "velocidades_fijadas": 0,
+   "velocidades": [],
+   "impactos": {
+    "cesvi": 1,
+    "solver": 0,
+    "mismo_numero": false,
+    "primero_coincide": null
+   },
+   "consistencia": []
+  },
+  {
+   "id": "cesvi-89637693fe",
+   "reconstruida": true,
+   "evidencia": [],
+   "velocidades_fijadas": 0,
+   "velocidades": [],
+   "impactos": {
+    "cesvi": 1,
+    "solver": 1,
+    "mismo_numero": true,
+    "primero_coincide": true
+   },
+   "consistencia": []
+  },
+  {
+   "id": "cesvi-0eeebbed82",
+   "reconstruida": true,
+   "evidencia": [],
+   "velocidades_fijadas": 0,
+   "velocidades": [],
+   "impactos": {
+    "cesvi": 0,
+    "solver": 1,
+    "mismo_numero": null,
+    "primero_coincide": null
+   },
+   "consistencia": []
+  },
+  {
+   "id": "cesvi-cdaf2821ca",
+   "reconstruida": true,
+   "evidencia": [],
+   "velocidades_fijadas": 0,
+   "velocidades": [],
+   "impactos": {
+    "cesvi": 0,
+    "solver": 1,
+    "mismo_numero": null,
+    "primero_coincide": null
+   },
+   "consistencia": []
+  },
+  {
+   "id": "cesvi-466c13a262",
+   "reconstruida": true,
+   "evidencia": [],
+   "velocidades_fijadas": 0,
+   "velocidades": [],
+   "impactos": {
+    "cesvi": 0,
+    "solver": 1,
+    "mismo_numero": null,
+    "primero_coincide": null
+   },
+   "consistencia": []
+  },
+  {
+   "id": "cesvi-edc4d70d79",
+   "reconstruida": true,
+   "evidencia": [],
+   "velocidades_fijadas": 0,
+   "velocidades": [],
+   "impactos": {
+    "cesvi": 0,
+    "solver": 0,
+    "mismo_numero": null,
+    "primero_coincide": null
+   },
+   "consistencia": []
+  },
+  {
+   "id": "cesvi-78d98fd926",
+   "reconstruida": true,
+   "evidencia": [],
+   "velocidades_fijadas": 0,
+   "velocidades": [],
+   "impactos": {
+    "cesvi": 0,
+    "solver": 0,
+    "mismo_numero": null,
+    "primero_coincide": null
+   },
+   "consistencia": []
+  },
+  {
+   "id": "cesvi-99ae88f8e3",
+   "reconstruida": true,
+   "evidencia": [],
+   "velocidades_fijadas": 0,
+   "velocidades": [],
+   "impactos": {
+    "cesvi": 1,
+    "solver": 1,
+    "mismo_numero": true,
+    "primero_coincide": true
+   },
+   "consistencia": []
+  },
+  {
+   "id": "cesvi-5518ddf7bc",
+   "reconstruida": true,
+   "evidencia": [],
+   "velocidades_fijadas": 0,
+   "velocidades": [],
+   "impactos": {
+    "cesvi": 1,
+    "solver": 1,
+    "mismo_numero": true,
+    "primero_coincide": true
+   },
+   "consistencia": []
+  },
+  {
+   "id": "cesvi-f6bafdd302",
+   "reconstruida": true,
+   "evidencia": [],
+   "velocidades_fijadas": 0,
+   "velocidades": [],
+   "impactos": {
+    "cesvi": 1,
+    "solver": 1,
+    "mismo_numero": true,
+    "primero_coincide": true
+   },
+   "consistencia": []
+  },
+  {
+   "id": "cesvi-9cb20db594",
+   "reconstruida": true,
+   "evidencia": [],
+   "velocidades_fijadas": 0,
+   "velocidades": [],
+   "impactos": {
+    "cesvi": 0,
+    "solver": 1,
+    "mismo_numero": null,
+    "primero_coincide": null
+   },
+   "consistencia": []
+  },
+  {
+   "id": "cesvi-16853d8646",
+   "reconstruida": true,
+   "evidencia": [],
+   "velocidades_fijadas": 0,
+   "velocidades": [],
+   "impactos": {
+    "cesvi": 2,
+    "solver": 1,
+    "mismo_numero": false,
+    "primero_coincide": true
+   },
+   "consistencia": []
+  },
+  {
+   "id": "cesvi-853129f415",
+   "reconstruida": true,
+   "evidencia": [],
+   "velocidades_fijadas": 0,
+   "velocidades": [],
+   "impactos": {
+    "cesvi": 2,
+    "solver": 1,
+    "mismo_numero": false,
+    "primero_coincide": true
+   },
+   "consistencia": []
+  },
+  {
+   "id": "cesvi-3481483d69",
+   "reconstruida": true,
+   "evidencia": [],
+   "velocidades_fijadas": 0,
+   "velocidades": [],
+   "impactos": {
+    "cesvi": 1,
+    "solver": 1,
+    "mismo_numero": true,
+    "primero_coincide": true
+   },
+   "consistencia": []
+  },
+  {
+   "id": "cesvi-e6067d3d1b",
+   "reconstruida": true,
+   "evidencia": [],
+   "velocidades_fijadas": 0,
+   "velocidades": [
+    {
+     "vehiculo": "V1",
+     "que": "velocidad de impacto en la parte frontal, por energía de deformación",
+     "cesvi_kmh": 49.9,
+     "solver_kmh": null,
+     "error_kmh": null,
+     "error_pct": null
+    },
+    {
+     "vehiculo": "V1",
+     "que": "velocidad de impacto en la parte posterior, por comparación con pruebas de CESVI MÉXICO",
+     "cesvi_kmh": 15.34,
+     "solver_kmh": null,
+     "error_kmh": null,
+     "error_pct": null
+    }
+   ],
+   "impactos": {
+    "cesvi": 0,
+    "solver": 0,
+    "mismo_numero": null,
+    "primero_coincide": null
+   },
+   "consistencia": []
+  },
+  {
+   "id": "cesvi-de7323cf1c",
+   "reconstruida": true,
+   "evidencia": [],
+   "velocidades_fijadas": 0,
+   "velocidades": [],
+   "impactos": {
+    "cesvi": 0,
+    "solver": 1,
+    "mismo_numero": null,
+    "primero_coincide": null
+   },
+   "consistencia": []
+  },
+  {
+   "id": "cesvi-16c23ff0f7",
+   "reconstruida": true,
+   "evidencia": [],
+   "velocidades_fijadas": 0,
+   "velocidades": [],
+   "impactos": {
+    "cesvi": 1,
+    "solver": 1,
+    "mismo_numero": true,
+    "primero_coincide": true
+   },
+   "consistencia": []
+  },
+  {
+   "id": "cesvi-e984ff56d3",
+   "reconstruida": true,
+   "evidencia": [],
+   "velocidades_fijadas": 0,
+   "velocidades": [
+    {
+     "vehiculo": "V1",
+     "que": "velocidad aproximada al momento del impacto, por los daños",
+     "cesvi_kmh": 65,
+     "solver_kmh": null,
+     "error_kmh": null,
+     "error_pct": null
+    }
+   ],
+   "impactos": {
+    "cesvi": 1,
+    "solver": 0,
+    "mismo_numero": false,
+    "primero_coincide": null
+   },
+   "consistencia": []
+  },
+  {
+   "id": "cesvi-818c2eb6d6",
+   "reconstruida": true,
+   "evidencia": [],
+   "velocidades_fijadas": 0,
+   "velocidades": [],
+   "impactos": {
+    "cesvi": 2,
+    "solver": 1,
+    "mismo_numero": false,
+    "primero_coincide": true
+   },
+   "consistencia": []
+  },
+  {
+   "id": "cesvi-30fa1926dc",
+   "reconstruida": true,
+   "evidencia": [],
+   "velocidades_fijadas": 0,
+   "velocidades": [],
+   "impactos": {
+    "cesvi": 0,
+    "solver": 1,
+    "mismo_numero": null,
+    "primero_coincide": null
+   },
+   "consistencia": []
+  },
+  {
+   "id": "cesvi-e53c722cc2",
+   "reconstruida": true,
+   "evidencia": [],
+   "velocidades_fijadas": 0,
+   "velocidades": [],
+   "impactos": {
+    "cesvi": 2,
+    "solver": 1,
+    "mismo_numero": false,
+    "primero_coincide": true
+   },
+   "consistencia": []
+  },
+  {
+   "id": "cesvi-5db0896348",
+   "reconstruida": true,
+   "evidencia": [
+    "marcas_frenado:veh-a"
+   ],
+   "velocidades_fijadas": 0,
+   "velocidades": [
+    {
+     "vehiculo": "V1",
+     "que": "velocidad mínima de circulación de la configuración T3S2 al salir del camino, por energía cinética y disipada en el desplazamiento",
+     "cesvi_kmh": 122.68,
+     "solver_kmh": null,
+     "error_kmh": null,
+     "error_pct": null
+    },
+    {
+     "vehiculo": "V2",
+     "que": "velocidad máxima reglamentaria supuesta para determinar la energía cinética",
+     "cesvi_kmh": 70,
+     "solver_kmh": null,
+     "error_kmh": null,
+     "error_pct": null
+    }
+   ],
+   "impactos": {
+    "cesvi": 2,
+    "solver": 1,
+    "mismo_numero": false,
+    "primero_coincide": false
+   },
+   "consistencia": []
+  },
+  {
+   "id": "cesvi-c3af05ad39",
+   "reconstruida": true,
+   "evidencia": [],
+   "velocidades_fijadas": 0,
+   "velocidades": [],
+   "impactos": {
+    "cesvi": 1,
+    "solver": 1,
+    "mismo_numero": true,
+    "primero_coincide": true
+   },
+   "consistencia": []
+  },
+  {
+   "id": "cesvi-f290a77272",
+   "reconstruida": true,
+   "evidencia": [],
+   "velocidades_fijadas": 0,
+   "velocidades": [],
+   "impactos": {
+    "cesvi": 1,
+    "solver": 1,
+    "mismo_numero": true,
+    "primero_coincide": true
+   },
+   "consistencia": []
+  },
+  {
+   "id": "cesvi-65daf4b688",
+   "reconstruida": true,
+   "evidencia": [],
+   "velocidades_fijadas": 0,
+   "velocidades": [],
+   "impactos": {
+    "cesvi": 1,
+    "solver": 1,
+    "mismo_numero": true,
+    "primero_coincide": true
+   },
+   "consistencia": []
+  },
+  {
+   "id": "cesvi-9b2fc2ffc7",
+   "reconstruida": true,
+   "evidencia": [],
+   "velocidades_fijadas": 0,
+   "velocidades": [],
+   "impactos": {
+    "cesvi": 1,
+    "solver": 1,
+    "mismo_numero": true,
+    "primero_coincide": false
+   },
+   "consistencia": []
+  },
+  {
+   "id": "cesvi-ba1949532f",
+   "reconstruida": true,
+   "evidencia": [],
+   "velocidades_fijadas": 0,
+   "velocidades": [],
+   "impactos": {
+    "cesvi": 0,
+    "solver": 1,
+    "mismo_numero": null,
+    "primero_coincide": null
+   },
+   "consistencia": []
+  },
+  {
+   "id": "cesvi-7be5e8a261",
+   "reconstruida": true,
+   "evidencia": [],
+   "velocidades_fijadas": 0,
+   "velocidades": [],
+   "impactos": {
+    "cesvi": 1,
+    "solver": 1,
+    "mismo_numero": true,
+    "primero_coincide": true
+   },
+   "consistencia": []
+  },
+  {
+   "id": "cesvi-316a61cb43",
+   "reconstruida": true,
+   "evidencia": [],
+   "velocidades_fijadas": 0,
+   "velocidades": [],
+   "impactos": {
+    "cesvi": 3,
+    "solver": 1,
+    "mismo_numero": false,
+    "primero_coincide": true
+   },
+   "consistencia": []
+  },
+  {
+   "id": "cesvi-f9de9836d6",
+   "reconstruida": true,
+   "evidencia": [],
+   "velocidades_fijadas": 0,
+   "velocidades": [],
+   "impactos": {
+    "cesvi": 1,
+    "solver": 1,
+    "mismo_numero": true,
+    "primero_coincide": true
+   },
+   "consistencia": []
+  },
+  {
+   "id": "cesvi-b1ab1b00df",
+   "reconstruida": true,
+   "evidencia": [],
+   "velocidades_fijadas": 0,
+   "velocidades": [],
+   "impactos": {
+    "cesvi": 0,
+    "solver": 1,
+    "mismo_numero": null,
+    "primero_coincide": null
+   },
+   "consistencia": []
+  },
+  {
+   "id": "cesvi-5e0f7da79c",
+   "reconstruida": true,
+   "evidencia": [],
+   "velocidades_fijadas": 0,
+   "velocidades": [],
+   "impactos": {
+    "cesvi": 2,
+    "solver": 0,
+    "mismo_numero": false,
+    "primero_coincide": null
+   },
+   "consistencia": []
+  },
+  {
+   "id": "cesvi-4055e6fd60",
+   "reconstruida": true,
+   "evidencia": [],
+   "velocidades_fijadas": 0,
+   "velocidades": [],
+   "impactos": {
+    "cesvi": 1,
+    "solver": 0,
+    "mismo_numero": false,
+    "primero_coincide": null
+   },
+   "consistencia": []
+  },
+  {
+   "id": "cesvi-fa403f1905",
+   "reconstruida": true,
+   "evidencia": [],
+   "velocidades_fijadas": 0,
+   "velocidades": [],
+   "impactos": {
+    "cesvi": 0,
+    "solver": 1,
+    "mismo_numero": null,
+    "primero_coincide": null
+   },
+   "consistencia": []
+  },
+  {
+   "id": "cesvi-c97f0058a8",
+   "reconstruida": true,
+   "evidencia": [],
+   "velocidades_fijadas": 0,
+   "velocidades": [],
+   "impactos": {
+    "cesvi": 1,
+    "solver": 1,
+    "mismo_numero": true,
+    "primero_coincide": true
+   },
+   "consistencia": []
+  },
+  {
+   "id": "cesvi-9babee8d11",
+   "reconstruida": true,
+   "evidencia": [],
+   "velocidades_fijadas": 0,
+   "velocidades": [],
+   "impactos": {
+    "cesvi": 2,
+    "solver": 1,
+    "mismo_numero": false,
+    "primero_coincide": true
+   },
+   "consistencia": []
+  },
+  {
+   "id": "cesvi-17068f5d53",
+   "reconstruida": true,
+   "evidencia": [],
+   "velocidades_fijadas": 0,
+   "velocidades": [],
+   "impactos": {
+    "cesvi": 0,
+    "solver": 1,
+    "mismo_numero": null,
+    "primero_coincide": null
+   },
+   "consistencia": []
+  },
+  {
+   "id": "cesvi-d84907cf47",
+   "reconstruida": true,
+   "evidencia": [],
+   "velocidades_fijadas": 0,
+   "velocidades": [],
+   "impactos": {
+    "cesvi": 2,
+    "solver": 1,
+    "mismo_numero": false,
+    "primero_coincide": true
+   },
+   "consistencia": []
+  },
+  {
+   "id": "cesvi-c3a461721a",
+   "reconstruida": true,
+   "evidencia": [],
+   "velocidades_fijadas": 0,
+   "velocidades": [],
+   "impactos": {
+    "cesvi": 1,
+    "solver": 1,
+    "mismo_numero": true,
+    "primero_coincide": true
+   },
+   "consistencia": []
+  },
+  {
+   "id": "cesvi-4a5c51d807",
+   "reconstruida": true,
+   "evidencia": [],
+   "velocidades_fijadas": 0,
+   "velocidades": [],
+   "impactos": {
+    "cesvi": 1,
+    "solver": 1,
+    "mismo_numero": true,
+    "primero_coincide": true
+   },
+   "consistencia": []
+  },
+  {
+   "id": "cesvi-feb7aaa0e1",
+   "reconstruida": true,
+   "evidencia": [],
+   "velocidades_fijadas": 0,
+   "velocidades": [],
+   "impactos": {
+    "cesvi": 2,
+    "solver": 1,
+    "mismo_numero": false,
+    "primero_coincide": false
+   },
+   "consistencia": []
+  },
+  {
+   "id": "cesvi-df473476cf",
+   "reconstruida": true,
+   "evidencia": [],
+   "velocidades_fijadas": 0,
+   "velocidades": [],
+   "impactos": {
+    "cesvi": 0,
+    "solver": 0,
+    "mismo_numero": null,
+    "primero_coincide": null
+   },
+   "consistencia": []
+  },
+  {
+   "id": "cesvi-17afa381e4",
+   "reconstruida": true,
+   "evidencia": [],
+   "velocidades_fijadas": 0,
+   "velocidades": [],
+   "impactos": {
+    "cesvi": 2,
+    "solver": 1,
+    "mismo_numero": false,
+    "primero_coincide": true
+   },
+   "consistencia": []
+  },
+  {
+   "id": "cesvi-a4177250d4",
+   "reconstruida": true,
+   "evidencia": [],
+   "velocidades_fijadas": 0,
+   "velocidades": [],
+   "impactos": {
+    "cesvi": 0,
+    "solver": 1,
+    "mismo_numero": null,
+    "primero_coincide": null
+   },
+   "consistencia": []
+  },
+  {
+   "id": "cesvi-7fceadfdca",
+   "reconstruida": true,
+   "evidencia": [],
+   "velocidades_fijadas": 0,
+   "velocidades": [],
+   "impactos": {
+    "cesvi": 0,
+    "solver": 0,
+    "mismo_numero": null,
+    "primero_coincide": null
+   },
+   "consistencia": []
+  },
+  {
+   "id": "cesvi-fb43c646b6",
+   "reconstruida": true,
+   "evidencia": [],
+   "velocidades_fijadas": 0,
+   "velocidades": [],
+   "impactos": {
+    "cesvi": 0,
+    "solver": 1,
+    "mismo_numero": null,
+    "primero_coincide": null
+   },
+   "consistencia": []
+  },
+  {
+   "id": "cesvi-8dfd2f1c6f",
+   "reconstruida": true,
+   "evidencia": [],
+   "velocidades_fijadas": 0,
+   "velocidades": [],
+   "impactos": {
+    "cesvi": 1,
+    "solver": 1,
+    "mismo_numero": true,
+    "primero_coincide": true
+   },
+   "consistencia": []
+  },
+  {
+   "id": "cesvi-c6e5335493",
+   "reconstruida": true,
+   "evidencia": [],
+   "velocidades_fijadas": 0,
+   "velocidades": [],
+   "impactos": {
+    "cesvi": 1,
+    "solver": 1,
+    "mismo_numero": true,
+    "primero_coincide": false
+   },
+   "consistencia": []
+  },
+  {
+   "id": "cesvi-be27388d4a",
+   "reconstruida": true,
+   "evidencia": [],
+   "velocidades_fijadas": 0,
+   "velocidades": [],
+   "impactos": {
+    "cesvi": 0,
+    "solver": 1,
+    "mismo_numero": null,
+    "primero_coincide": null
+   },
+   "consistencia": []
+  },
+  {
+   "id": "cesvi-94c84e00ab",
+   "reconstruida": true,
+   "evidencia": [],
+   "velocidades_fijadas": 0,
+   "velocidades": [],
+   "impactos": {
+    "cesvi": 1,
+    "solver": 1,
+    "mismo_numero": true,
+    "primero_coincide": true
+   },
+   "consistencia": []
+  },
+  {
+   "id": "cesvi-09828841f1",
+   "reconstruida": true,
+   "evidencia": [],
+   "velocidades_fijadas": 0,
+   "velocidades": [],
+   "impactos": {
+    "cesvi": 2,
+    "solver": 1,
+    "mismo_numero": false,
+    "primero_coincide": false
+   },
+   "consistencia": []
+  },
+  {
+   "id": "cesvi-14b9bd1a4e",
+   "reconstruida": true,
+   "evidencia": [],
+   "velocidades_fijadas": 0,
+   "velocidades": [],
+   "impactos": {
+    "cesvi": 1,
+    "solver": 0,
+    "mismo_numero": false,
+    "primero_coincide": null
+   },
+   "consistencia": []
+  },
+  {
+   "id": "cesvi-d24f648593",
+   "reconstruida": true,
+   "evidencia": [],
+   "velocidades_fijadas": 0,
+   "velocidades": [
+    {
+     "vehiculo": "V1",
+     "que": "magnitud de los daños frontales con características de haberse generado a más de esa velocidad (umbral de activación de bolsas de aire)",
+     "cesvi_kmh": 25,
+     "solver_kmh": null,
+     "error_kmh": null,
+     "error_pct": null
+    }
+   ],
+   "impactos": {
+    "cesvi": 0,
+    "solver": 0,
+    "mismo_numero": null,
+    "primero_coincide": null
+   },
+   "consistencia": []
+  },
+  {
+   "id": "cesvi-bdf8899ada",
+   "reconstruida": true,
+   "evidencia": [],
+   "velocidades_fijadas": 0,
+   "velocidades": [],
+   "impactos": {
+    "cesvi": 0,
+    "solver": 1,
+    "mismo_numero": null,
+    "primero_coincide": null
+   },
+   "consistencia": []
+  },
+  {
+   "id": "cesvi-06e4ee9b97",
+   "reconstruida": true,
+   "evidencia": [],
+   "velocidades_fijadas": 0,
+   "velocidades": [],
+   "impactos": {
+    "cesvi": 1,
+    "solver": 1,
+    "mismo_numero": true,
+    "primero_coincide": true
+   },
+   "consistencia": []
+  },
+  {
+   "id": "cesvi-24f644a44f",
+   "reconstruida": true,
+   "evidencia": [],
+   "velocidades_fijadas": 0,
+   "velocidades": [],
+   "impactos": {
+    "cesvi": 0,
+    "solver": 1,
+    "mismo_numero": null,
+    "primero_coincide": null
+   },
+   "consistencia": []
+  },
+  {
+   "id": "cesvi-eb4d9c1c4e",
+   "reconstruida": true,
+   "evidencia": [],
+   "velocidades_fijadas": 0,
+   "velocidades": [],
+   "impactos": {
+    "cesvi": 0,
+    "solver": 0,
+    "mismo_numero": null,
+    "primero_coincide": null
+   },
+   "consistencia": []
+  },
+  {
+   "id": "cesvi-d4f9c1a411",
+   "reconstruida": true,
+   "evidencia": [],
+   "velocidades_fijadas": 0,
+   "velocidades": [
+    {
+     "vehiculo": "V1",
+     "que": "velocidad inicial por tiro parabólico, hipotética de haber caído al sembradío (no ocurrió)",
+     "cesvi_kmh": 79.2,
+     "solver_kmh": null,
+     "error_kmh": null,
+     "error_pct": null
+    }
+   ],
+   "impactos": {
+    "cesvi": 2,
+    "solver": 0,
+    "mismo_numero": false,
+    "primero_coincide": null
+   },
+   "consistencia": []
+  },
+  {
+   "id": "cesvi-5becbd0fbb",
+   "reconstruida": true,
+   "evidencia": [],
+   "velocidades_fijadas": 0,
+   "velocidades": [],
+   "impactos": {
+    "cesvi": 1,
+    "solver": 1,
+    "mismo_numero": true,
+    "primero_coincide": false
+   },
+   "consistencia": []
+  },
+  {
+   "id": "cesvi-4f39800f79",
+   "reconstruida": true,
+   "evidencia": [],
+   "velocidades_fijadas": 0,
+   "velocidades": [],
+   "impactos": {
+    "cesvi": 0,
+    "solver": 0,
+    "mismo_numero": null,
+    "primero_coincide": null
+   },
+   "consistencia": []
+  },
+  {
+   "id": "cesvi-6ca24dcfce",
+   "reconstruida": true,
+   "evidencia": [],
+   "velocidades_fijadas": 0,
+   "velocidades": [],
+   "impactos": {
+    "cesvi": 1,
+    "solver": 1,
+    "mismo_numero": true,
+    "primero_coincide": true
+   },
+   "consistencia": []
+  },
+  {
+   "id": "cesvi-47c32388f7",
+   "reconstruida": true,
+   "evidencia": [],
+   "velocidades_fijadas": 0,
+   "velocidades": [],
+   "impactos": {
+    "cesvi": 0,
+    "solver": 0,
+    "mismo_numero": null,
+    "primero_coincide": null
+   },
+   "consistencia": []
+  },
+  {
+   "id": "cesvi-5f9276cffe",
+   "reconstruida": true,
+   "evidencia": [],
+   "velocidades_fijadas": 0,
+   "velocidades": [],
+   "impactos": {
+    "cesvi": 1,
+    "solver": 0,
+    "mismo_numero": false,
+    "primero_coincide": null
+   },
+   "consistencia": []
+  },
+  {
+   "id": "cesvi-76db6d8acd",
+   "reconstruida": true,
+   "evidencia": [],
+   "velocidades_fijadas": 0,
+   "velocidades": [],
+   "impactos": {
+    "cesvi": 1,
+    "solver": 1,
+    "mismo_numero": true,
+    "primero_coincide": true
+   },
+   "consistencia": []
+  },
+  {
+   "id": "cesvi-8324c1892b",
+   "reconstruida": true,
+   "evidencia": [],
+   "velocidades_fijadas": 0,
+   "velocidades": [],
+   "impactos": {
+    "cesvi": 3,
+    "solver": 1,
+    "mismo_numero": false,
+    "primero_coincide": true
+   },
+   "consistencia": []
+  },
+  {
+   "id": "cesvi-5cb23d1cfd",
+   "reconstruida": true,
+   "evidencia": [],
+   "velocidades_fijadas": 0,
+   "velocidades": [],
+   "impactos": {
+    "cesvi": 1,
+    "solver": 1,
+    "mismo_numero": true,
+    "primero_coincide": true
+   },
+   "consistencia": []
+  },
+  {
+   "id": "cesvi-e8474c118b",
+   "reconstruida": true,
+   "evidencia": [],
+   "velocidades_fijadas": 0,
+   "velocidades": [],
+   "impactos": {
+    "cesvi": 2,
+    "solver": 1,
+    "mismo_numero": false,
+    "primero_coincide": true
+   },
+   "consistencia": []
+  },
+  {
+   "id": "cesvi-8022b514b7",
+   "reconstruida": true,
+   "evidencia": [],
+   "velocidades_fijadas": 0,
+   "velocidades": [],
+   "impactos": {
+    "cesvi": 2,
+    "solver": 1,
+    "mismo_numero": false,
+    "primero_coincide": true
+   },
+   "consistencia": []
+  },
+  {
+   "id": "cesvi-2251d90ba3",
+   "reconstruida": true,
+   "evidencia": [],
+   "velocidades_fijadas": 0,
+   "velocidades": [],
+   "impactos": {
+    "cesvi": 0,
+    "solver": 1,
+    "mismo_numero": null,
+    "primero_coincide": null
+   },
+   "consistencia": []
+  },
+  {
+   "id": "cesvi-4ef2a9d90b",
+   "reconstruida": true,
+   "evidencia": [],
+   "velocidades_fijadas": 0,
+   "velocidades": [],
+   "impactos": {
+    "cesvi": 2,
+    "solver": 1,
+    "mismo_numero": false,
+    "primero_coincide": true
+   },
+   "consistencia": []
+  },
+  {
+   "id": "cesvi-7f6b73260c",
+   "reconstruida": true,
+   "evidencia": [],
+   "velocidades_fijadas": 0,
+   "velocidades": [],
+   "impactos": {
+    "cesvi": 3,
+    "solver": 1,
+    "mismo_numero": false,
+    "primero_coincide": false
+   },
+   "consistencia": []
+  },
+  {
+   "id": "cesvi-52e0c1deef",
+   "reconstruida": true,
+   "evidencia": [],
+   "velocidades_fijadas": 0,
+   "velocidades": [],
+   "impactos": {
+    "cesvi": 1,
+    "solver": 0,
+    "mismo_numero": false,
+    "primero_coincide": null
+   },
+   "consistencia": []
+  },
+  {
+   "id": "cesvi-923e562683",
+   "reconstruida": true,
+   "evidencia": [],
+   "velocidades_fijadas": 0,
+   "velocidades": [],
+   "impactos": {
+    "cesvi": 0,
+    "solver": 0,
+    "mismo_numero": null,
+    "primero_coincide": null
+   },
+   "consistencia": []
+  },
+  {
+   "id": "cesvi-3fb401796c",
+   "reconstruida": true,
+   "evidencia": [],
+   "velocidades_fijadas": 0,
+   "velocidades": [],
+   "impactos": {
+    "cesvi": 0,
+    "solver": 1,
+    "mismo_numero": null,
+    "primero_coincide": null
+   },
+   "consistencia": []
+  },
+  {
+   "id": "cesvi-6a3f3106f0",
+   "reconstruida": true,
+   "evidencia": [],
+   "velocidades_fijadas": 0,
+   "velocidades": [],
+   "impactos": {
+    "cesvi": 0,
+    "solver": 0,
+    "mismo_numero": null,
+    "primero_coincide": null
+   },
+   "consistencia": []
+  },
+  {
+   "id": "cesvi-e69d48f64f",
+   "reconstruida": true,
+   "evidencia": [],
+   "velocidades_fijadas": 0,
+   "velocidades": [],
+   "impactos": {
+    "cesvi": 0,
+    "solver": 0,
+    "mismo_numero": null,
+    "primero_coincide": null
+   },
+   "consistencia": []
+  },
+  {
+   "id": "cesvi-fc5f48e946",
+   "reconstruida": true,
+   "evidencia": [],
+   "velocidades_fijadas": 0,
+   "velocidades": [],
+   "impactos": {
+    "cesvi": 1,
+    "solver": 1,
+    "mismo_numero": true,
+    "primero_coincide": true
+   },
+   "consistencia": []
+  },
+  {
+   "id": "cesvi-b37686e37c",
+   "reconstruida": true,
+   "evidencia": [],
+   "velocidades_fijadas": 0,
+   "velocidades": [],
+   "impactos": {
+    "cesvi": 1,
+    "solver": 1,
+    "mismo_numero": true,
+    "primero_coincide": true
+   },
+   "consistencia": []
+  }
+ ]
+}
