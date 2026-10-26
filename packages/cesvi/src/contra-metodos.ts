@@ -7,7 +7,7 @@
  */
 import { reconstruct, reconstructionToDict } from "@croquis/solver-ts";
 import type { Expediente } from "./corpus";
-import { especReconstruida, type Reconstruccion } from "./reconstruccion";
+import { especReconstruida, rangoInformativo, type Reconstruccion } from "./reconstruccion";
 
 type Id = Expediente["vehiculos"][number]["id"];
 type Json = Record<string, unknown>;
@@ -71,7 +71,8 @@ export function reconstruccionContraCesvi(
   const previa = (id: Id) => r.velocidades.find((v) => v.vehiculo === id)?.previa?.mejor ?? null;
   const rango = (id: Id): [number, number] | null => {
     const p = r.velocidades.find((v) => v.vehiculo === id)?.previa;
-    return p?.p10 !== undefined && p.p90 !== undefined ? [r2(p.p10), r2(p.p90)] : null;
+    const x = p ? rangoInformativo(p) : null;
+    return x ? [r2(x[0]), r2(x[1])] : null;
   };
   const parametros = (r.resultado.parametros ?? {}) as Record<string, { valor?: number }>;
   const arrastre = parametros.arrastre_post_impacto?.valor;

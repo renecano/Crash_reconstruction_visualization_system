@@ -66,10 +66,9 @@ def with_assumed_rest_hypothesis(
 
 def render_inversion(name: str) -> str:
     spec: dict[str, Any] = json.loads((INVERSION_DIR / f"{name}.json").read_text(encoding="utf-8"))
-    seed = int(spec["meta"]["semilla"])
-    ev = evidence_from_spec(spec, seed)
+    ev = evidence_from_spec(spec)
     inv = invert(spec)
-    flags = check_damage_reach(spec, inv, seed) + check_assumed_rest(spec, inv, seed)
+    flags = check_damage_reach(spec, inv) + check_assumed_rest(spec, inv)
     doc = {
         "evidencia": ev.labels(),
         "dano_minimo": {k: d.to_dict() for k, d in sorted(ev.damage_min.items())},

@@ -17,6 +17,7 @@ import {
   type Expediente,
   type Reconstruccion,
   type VerificacionVehiculo,
+  encabezadoHipotesis,
 } from "@croquis/cesvi";
 import { LEGEND_TEXT_CESVI, type EscenaSpec } from "@croquis/scene-schema";
 import type { ViewerExportApi } from "@croquis/viewer";
@@ -195,7 +196,7 @@ export function TablaVelocidades({ r }: { r: Reconstruccion }) {
   );
 }
 
-/** «63.17 (60.77–113.09)»: el valor con su p10–p90, si lo hay. */
+/** «71.56 (62.40–90.00)»: el valor con su p10–p90, si lo hay. */
 export function conRango(kmh: number, rango: [number, number] | null): string {
   return rango
     ? `${kmh.toFixed(2)} (${rango[0].toFixed(2)}–${rango[1].toFixed(2)})`
@@ -249,8 +250,9 @@ export function TablaContraCesvi({ contra }: { contra: ContraMetodosCesvi }) {
       </table>
       {contra.filas.some((f) => f.croquisRango) ? (
         <p className="t-nota">
-          Entre paréntesis, el p10–p90 de la reconstrucción: la velocidad que reproduce la evidencia
-          con sus entradas perturbadas.
+          Entre paréntesis, el p10–p90: la velocidad que reproduce la evidencia cuando sus entradas
+          (medidas, fricción, masas y reposo supuesto) varían dentro de su incertidumbre, alrededor
+          de la solución elegida.
         </p>
       ) : null}
       {contra.filas.map((f) => (
@@ -268,8 +270,9 @@ export function TablaContraCesvi({ contra }: { contra: ContraMetodosCesvi }) {
 }
 
 /**
- * Las dos hipótesis cuando un reposo supuesto no cabe con la deformación medida (ADR 0091): cada
- * una con sus números. El perito elige; Croquis no elige por él.
+ * Las hipótesis (ADR 0091): un reposo supuesto que no cabe con la deformación medida, u otro
+ * mínimo del multiarranque con un costo parecido al del mejor. Cada una con sus números y su
+ * costo. El perito elige; Croquis no elige por él.
  */
 export function ElegirHipotesis({
   r,
@@ -277,20 +280,19 @@ export function ElegirHipotesis({
   onElegir,
 }: {
   r: Reconstruccion;
-  elegida: "dano" | "reposo" | null;
-  onElegir: (h: "dano" | "reposo") => void;
+  elegida: string | null;
+  onElegir: (clave: string) => void;
 }) {
   if (!r.hipotesis) return null;
-  const hs = [r.hipotesis.dano, r.hipotesis.reposo];
+  const hs = r.hipotesis;
+  const vista = hs.find((h) => h.clave === elegida);
   return (
     <div className="flex flex-col gap-3" data-testid="hipotesis">
-      <h3 className="t-interfaz font-semibold">
-        Dos hipótesis: el reposo supuesto y el daño medido no caben juntos
-      </h3>
+      <h3 className="t-interfaz font-semibold">{encabezadoHipotesis(hs)}</h3>
       <p className="t-nota">
-        {elegida
-          ? `Elegiste «${r.hipotesis[elegida].titulo}»: los números, el 3D y el dictamen la siguen.`
-          : "Elige una. Mientras no elijas, se ve «Cuadra con el daño medido» (lo medido pesa más que lo supuesto), y el dictamen dice que falta tu elección."}
+        {vista
+          ? `Elegiste «${vista.titulo}»: los números, el 3D y el dictamen la siguen.`
+          : `Elige una. Mientras no elijas, se ve «${hs[0]!.titulo}» (${hs[0]!.familia === "dano" ? "lo medido pesa más que lo supuesto y es la de menor costo" : "la de menor costo"}), y el dictamen dice que falta tu elección.`}
       </p>
       <div className="grid gap-3 sm:grid-cols-2">
         {hs.map((h) => (
@@ -302,6 +304,9 @@ export function ElegirHipotesis({
           >
             <span className="t-interfaz font-semibold">{h.titulo}</span>
             <ul className="cifras t-cuerpo flex flex-col gap-1">
+              {h.costo !== null ? (
+                <li data-testid={`costo-${h.clave}`}>Costo del ajuste: {h.costo.toFixed(3)}</li>
+              ) : null}
               {h.velocidades.map((v) => (
                 <li key={v.vehiculo}>
                   {v.vehiculo}:{" "}
@@ -338,6 +343,12 @@ export function ElegirHipotesis({
           </div>
         ))}
       </div>
+      <p className="t-nota">
+        El costo mide qué tan bien reproduce cada solución la evidencia: menor es mejor. Solo se
+        comparan los de la misma hipótesis, porque cada una pesa distinto el reposo supuesto. Entre
+        paréntesis, el p10–p90 de cada velocidad con las entradas perturbadas (medidas, fricción,
+        masas y reposo supuesto) alrededor de esa solución.
+      </p>
     </div>
   );
 }

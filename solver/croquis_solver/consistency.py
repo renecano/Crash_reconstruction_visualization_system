@@ -241,7 +241,7 @@ def check_throw(spec: JsonObj) -> list[Inconsistency]:
 
 def check_damage(spec: JsonObj, seed: int, samples: int) -> list[Inconsistency]:
     out: list[Inconsistency] = []
-    ev = evidence_from_spec(spec, seed=seed)
+    ev = evidence_from_spec(spec)
     if not ev.damage_dv:
         return out
     if not all(_stated(v.get("velocidad_previa")) for v in spec["vehiculos"]):
@@ -270,9 +270,9 @@ def check_damage(spec: JsonObj, seed: int, samples: int) -> list[Inconsistency]:
     return out
 
 
-def check_rest(spec: JsonObj, seed: int) -> list[Inconsistency]:
+def check_rest(spec: JsonObj) -> list[Inconsistency]:
     out: list[Inconsistency] = []
-    ev = evidence_from_spec(spec, seed=seed)
+    ev = evidence_from_spec(spec)
     if not ev.rest:
         return out
     fit = fit_evidence(spec, Evidence(ev.rest, {}, {}))
@@ -350,10 +350,10 @@ def check_speed_evidence(spec: JsonObj, inv: Inversion) -> list[Inconsistency]:
     return out
 
 
-def check_damage_reach(spec: JsonObj, inv: Inversion, seed: int) -> list[Inconsistency]:
+def check_damage_reach(spec: JsonObj, inv: Inversion) -> list[Inconsistency]:
     """El daño medido pide más cambio de velocidad del que da la reconstrucción (ADR 0091)."""
     out: list[Inconsistency] = []
-    ev = evidence_from_spec(spec, seed=seed)
+    ev = evidence_from_spec(spec)
     if not ev.damage_min:
         return out
     fixed = {
@@ -388,9 +388,9 @@ def check_damage_reach(spec: JsonObj, inv: Inversion, seed: int) -> list[Inconsi
     return out
 
 
-def check_assumed_rest(spec: JsonObj, inv: Inversion, seed: int) -> list[Inconsistency]:
+def check_assumed_rest(spec: JsonObj, inv: Inversion) -> list[Inconsistency]:
     """Un reposo supuesto que no cabe con la deformación medida: dos hipótesis (ADR 0091)."""
-    ev = evidence_from_spec(spec, seed=seed)
+    ev = evidence_from_spec(spec)
     if not ev.rest_assumed or not (ev.damage_dv or ev.damage_min) or inv.assumed_as_data:
         return []
     by_id = {v["id"]: v for v in spec["vehiculos"]}
@@ -431,15 +431,15 @@ def check_consistency(
     basic = check_stopped(spec) + check_marks(spec) + check_throw(spec) + check_map(spec)
     if not sampled:
         return basic
-    if inversion is None and not evidence_from_spec(spec, seed=seed).empty():
+    if inversion is None and not evidence_from_spec(spec).empty():
         inversion = invert(spec, seed=seed)
     return (
         basic
         + check_damage(spec, seed, samples)
-        + check_rest(spec, seed)
+        + check_rest(spec)
         + (check_speed_evidence(spec, inversion) if inversion is not None else [])
-        + (check_damage_reach(spec, inversion, seed) if inversion is not None else [])
-        + (check_assumed_rest(spec, inversion, seed) if inversion is not None else [])
+        + (check_damage_reach(spec, inversion) if inversion is not None else [])
+        + (check_assumed_rest(spec, inversion) if inversion is not None else [])
     )
 
 

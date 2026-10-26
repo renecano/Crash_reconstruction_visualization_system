@@ -404,7 +404,7 @@ const metodos = {
 };
 // --- 4. Arranques ---------------------------------------------------------------------------------
 const semilla = Number((sb.meta as Json).semilla);
-const evBase = evidenceFromSpec(sb, semilla);
+const evBase = evidenceFromSpec(sb);
 const ajuste = (nombre: string, start: Map<string, number> | null) => {
   const f = fitEvidence(sb, evBase, { start });
   return {
@@ -426,18 +426,17 @@ const arranques = [
   ),
 ];
 const inversionBase = invert(sb);
-const bandera = checkDamageReach(sb, inversionBase, semilla);
+const bandera = checkDamageReach(sb, inversionBase);
 for (const a of arranques) console.log("arranque", a.arranque, "→", a.v2_kmh, a.v1_kmh, a.costo);
 
 // --- 5. Lo que ve el perito en el paso 6, el 3D y el dictamen (la reconstrucción completa de la app).
 const paso6 = reconstruccionContraCesvi(expediente(), reconstruirExpediente(expediente()));
 
-// --- 6. Las dos hipótesis (ADR 0091): el reposo de V2 marcado como supuesto, como en el paso 3 ----
+// --- 6. Las hipótesis (ADR 0091): el reposo de V2 marcado como supuesto, como en el paso 3 --------
 const eSup = expediente({ reposoBSupuesto: true });
 const rSup = reconstruirExpediente(eSup);
 const hipotesis = rSup.hipotesis
-  ? (["dano", "reposo"] as const).map((k) => {
-      const h = rSup.hipotesis![k];
+  ? rSup.hipotesis.map((h) => {
       const v2 = h.velocidades.find((v) => v.vehiculo === "V2")!;
       return {
         ...h,
@@ -450,7 +449,7 @@ const hipotesis = rSup.hipotesis
                 pct: r2(((v2.kmh - dB.reporte.ebs_kmh.valor) / dB.reporte.ebs_kmh.valor) * 100),
                 fijada: v2.fijada,
               },
-        paso6: reconstruccionContraCesvi(eSup, conHipotesis(rSup, k)),
+        paso6: reconstruccionContraCesvi(eSup, conHipotesis(rSup, h.clave)),
       };
     })
   : null;

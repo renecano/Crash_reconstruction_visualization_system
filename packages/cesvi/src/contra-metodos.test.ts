@@ -68,7 +68,7 @@ describe("la reconstrucción contra los métodos del reporte de CESVI (ADR 0091)
       croquisKmh: 43.39,
       diferenciaKmh: -19.76,
       diferenciaPct: -31.29,
-      // El p10–p90 de la reconstrucción va con su valor (AXA cambia con la semilla, ADR 0091).
+      // El p10–p90 de la reconstrucción va con su valor (la incertidumbre de las entradas, ADR 0091).
       croquisRango: [40.12, 51.3],
     });
     // Los restos dan la velocidad de V1 al salir del impacto: se compara con esa, no con la previa.

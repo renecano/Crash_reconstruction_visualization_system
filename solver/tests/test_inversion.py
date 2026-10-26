@@ -284,3 +284,67 @@ def test_solo_el_reposo_supuesto_a_proposito_entra_como_evidencia_blanda() -> No
     # Un reposo supuesto tiene PRIORIDAD veces la σ de uno declarado; en su hipótesis, la misma.
     assert ev.weight() == inv.PRIORIDAD
     assert dataclasses.replace(ev, assumed_as_data=True).weight() == 1.0
+
+
+# --- Multiarranque determinista (ADR 0091) --------------------------------------------------------
+
+
+def _fit(cost: float, **speeds: float) -> inv.Fit:
+    return inv.Fit({f"velocidad:{k}": v for k, v in speeds.items()}, {}, cost, True)
+
+
+def test_los_arranques_son_fijos_y_dentro_de_los_limites() -> None:
+    spec = load_fixture("lateral_interseccion")
+    moving = inv.moving_vehicles(spec)
+    declared = _declare_rest(spec, dict.fromkeys(moving, 45.0))
+    ev = inv.evidence_from_spec(declared)
+    params = inv.parameters(inv.with_marks(declared, ev), ev)
+    starts = inv.multistart_starts(declared, ev, params)
+    assert starts == inv.multistart_starts(declared, ev, params)
+    assert starts[0] == {}
+    scatter = starts[-inv.SCATTER_STARTS :]
+    lo, hi = inv.SCATTER_SPEED_KMH
+    # El primer punto de Halton es la mitad del intervalo en base 2 y un tercio en base 3.
+    first = [scatter[0][f"velocidad:{v}"] for v in moving]
+    assert first[0] == pytest.approx(lo + (hi - lo) / 2)
+    assert first[1] == pytest.approx(lo + (hi - lo) / 3)
+    assert all(lo <= x <= hi for s in scatter for x in s.values())
+
+
+def test_agrupa_los_ajustes_por_modo_del_menor_costo_al_mayor() -> None:
+    fits = [
+        (_fit(0.3, a=70.0, b=20.0), 1),
+        (_fit(0.1, a=72.0, b=21.0), 1),  # el mismo modo que el primero, más barato
+        (_fit(2.0, a=150.0, b=0.0), 1),
+        (_fit(0.2, a=79.0, b=19.0), 2),  # a más de MODE_TOL_KMH del primero: otro modo
+    ]
+    modes = inv._group(fits)  # pyright: ignore[reportPrivateUsage]
+    assert [(m.fit.speeds_kmh["a"], m.starts) for m in modes] == [(72.0, 2), (79.0, 2), (150.0, 1)]
+
+
+def test_el_modo_en_margen_se_marca_y_los_demas_no() -> None:
+    modes = [
+        inv.Mode(_fit(0.03, a=71.6), 4),
+        inv.Mode(_fit(0.03 + inv.MODE_MARGIN, a=79.0), 1),
+        inv.Mode(_fit(0.03 + inv.MODE_MARGIN + 0.01, a=150.0), 1),
+    ]
+    best = modes[0].fit
+    d = inv.Inversion([], [], best, {}, modes=modes).to_dict()["multiarranque"]
+    assert d["margen_costo"] == inv.MODE_MARGIN
+    assert [(m["elegido"], m["en_margen"]) for m in d["modos"]] == [
+        (True, False),
+        (False, True),
+        (False, False),
+    ]
+
+
+def test_la_solucion_elegida_no_depende_de_la_semilla() -> None:
+    spec = load_fixture("lateral_interseccion")
+    moving = inv.moving_vehicles(spec)
+    declared = _declare_rest(spec, {moving[0]: 55.0, moving[1]: 35.0})
+    a = inv.invert(declared, seed=11, samples=2)
+    b = inv.invert(declared, seed=12, samples=2)
+    assert a.best.values == b.best.values
+    assert [m.to_dict(chosen=False, in_margin=False) for m in a.modes] == [
+        m.to_dict(chosen=False, in_margin=False) for m in b.modes
+    ]

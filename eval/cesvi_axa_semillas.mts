@@ -50,18 +50,16 @@ const filas = SEMILLAS.map((semilla) => {
     const p = previa(id);
     return p ? { mejor: r2(p.mejor), p10: p.p10 ?? null, p90: p.p90 ?? null } : null;
   };
+  const dano = r.hipotesis?.find((h) => h.clave === "dano");
+  const reposo = r.hipotesis?.find((h) => h.clave === "reposo");
   const fila = {
     semilla,
     es_la_de_la_app: semilla === semillaApp,
-    hipotesis: r.hipotesis ? 2 : 1,
+    hipotesis: r.hipotesis?.length ?? 1,
     // La reconstrucción que se ve sin elegir: «cuadra con el daño medido» (o la única).
     principal: { V2: conRango("V2"), V1: conRango("V1") },
-    dano: r.hipotesis
-      ? { V2: velocidad(r.hipotesis.dano, "V2"), V1: velocidad(r.hipotesis.dano, "V1") }
-      : null,
-    reposo: r.hipotesis
-      ? { V2: velocidad(r.hipotesis.reposo, "V2"), V1: velocidad(r.hipotesis.reposo, "V1") }
-      : null,
+    dano: dano ? { V2: velocidad(dano, "V2"), V1: velocidad(dano, "V1") } : null,
+    reposo: reposo ? { V2: velocidad(reposo, "V2"), V1: velocidad(reposo, "V1") } : null,
     ms: Math.round(performance.now() - t0),
   };
   console.log(
@@ -110,7 +108,7 @@ const doc = {
   spec_id_app: SPEC_ID_APP,
   semilla_app: semillaApp,
   semillas: SEMILLAS,
-  con_dos_hipotesis: filas.filter((f) => f.hipotesis === 2).length,
+  con_dos_hipotesis: filas.filter((f) => f.hipotesis >= 2).length,
   con_una_hipotesis: filas.filter((f) => f.hipotesis === 1).length,
   V2: resumen("V2"),
   V1: resumen("V1"),

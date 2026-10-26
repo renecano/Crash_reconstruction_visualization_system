@@ -500,13 +500,29 @@ export interface ImpactoReconstruido {
 }
 
 /**
- * Una hipótesis de la reconstrucción cuando un reposo supuesto no cabe con la deformación medida
- * (ADR 0091): «cuadra con el daño medido» (la deformación como restricción, el reposo supuesto
- * blando) o «cuadra con el reposo supuesto» (el supuesto pesa como dato). El perito elige.
+ * De qué inversión sale una hipótesis (ADR 0091): si un reposo supuesto no cabe con la deformación
+ * medida, «cuadra con el daño medido» (la deformación como restricción, el reposo supuesto blando)
+ * o «cuadra con el reposo supuesto» (el supuesto pesa como dato); si no, la única inversión
+ * («evidencia»).
+ */
+export type FamiliaHipotesis = "dano" | "reposo" | "evidencia";
+
+/**
+ * Una hipótesis de la reconstrucción (ADR 0091): una de las dos familias de arriba o, dentro de
+ * una familia, otro mínimo del multiarranque con un costo parecido al del mejor. El perito elige.
  */
 export interface HipotesisReconstruccion {
-  clave: "dano" | "reposo";
+  /** «dano», «reposo» o «evidencia» para el mejor modo; «dano-2», «reposo-2»… para los otros. */
+  clave: string;
+  familia: FamiliaHipotesis;
+  /** 1, el mejor modo de su familia; 2, 3…, otro modo dentro del margen de costo. */
+  modo: number;
   titulo: string;
+  /**
+   * Costo del ajuste (soft_l1: con residuos chicos, ½ χ²); menor es mejor. Solo se comparan los de
+   * la misma familia: cada una pesa distinto el reposo supuesto.
+   */
+  costo: number | null;
   /**
    * Velocidad previa de cada vehículo: la que fija la evidencia o, si no la fija, la del ajuste
    * conjunto (`fijada: false`, con su desviación local).
@@ -516,7 +532,10 @@ export interface HipotesisReconstruccion {
     kmh: number | null;
     fijada: boolean;
     sigmaKmh: number | null;
-    /** p10–p90 de las reestimaciones con entradas perturbadas, si la evidencia la fija. */
+    /**
+     * p10–p90 de las reestimaciones con entradas perturbadas alrededor de esta solución (ADR 0091),
+     * si la evidencia la fija.
+     */
     rango: [number, number] | null;
   }[];
   /** A cuántos metros de su reposo supuesto termina cada vehículo con este ajuste. */
@@ -533,10 +552,13 @@ export interface Reconstruccion extends EscenaSolver {
   impactos: ImpactoReconstruido[];
   /** La evidencia que usó la inversión, con sus nombres del solver. */
   evidencia: string[];
-  /** Las dos hipótesis, si un reposo supuesto no cabe con la deformación medida (ADR 0091). */
-  hipotesis: { dano: HipotesisReconstruccion; reposo: HipotesisReconstruccion } | null;
-  /** La que eligió el perito; null mientras no elija (se muestra la del daño medido). */
-  elegida: "dano" | "reposo" | null;
+  /**
+   * Las hipótesis, si hay más de una (ADR 0091): un reposo supuesto que no cabe con la deformación
+   * medida, u otro modo con un costo parecido al del mejor. En orden: por familia y por costo.
+   */
+  hipotesis: HipotesisReconstruccion[] | null;
+  /** La clave que eligió el perito; null mientras no elija (se muestra la primera). */
+  elegida: string | null;
 }
 
 interface Inversion {
@@ -554,22 +576,53 @@ interface Inversion {
     valores: { nombre: string; valor: number }[];
     residuos: { nombre: string; sigma: number }[];
   };
+  /** Los modos del multiarranque (ADR 0091). */
+  multiarranque?: { margen_costo: number; modos: { costo: number; en_margen: boolean }[] };
+  /** Los otros modos dentro del margen, cada uno con su estimación. */
+  alternativas?: Inversion[];
+}
+
+const TITULOS: Record<FamiliaHipotesis, string> = {
+  dano: "Cuadra con el daño medido",
+  reposo: "Cuadra con el reposo supuesto",
+  evidencia: "La que mejor cuadra con la evidencia",
+};
+
+/** Las hipótesis de una inversión: su mejor modo y los otros dentro del margen (ADR 0091). */
+function hipotesisDe(
+  base: EscenaSolver,
+  inv: Inversion,
+  familia: FamiliaHipotesis,
+): HipotesisReconstruccion[] {
+  const modos = inv.multiarranque?.modos ?? [];
+  const enMargen = modos.filter((m) => m.en_margen);
+  return [
+    leerHipotesis(base, inv, familia, 1, modos[0]?.costo ?? null),
+    ...(inv.alternativas ?? []).map((a, i) =>
+      leerHipotesis(base, a, familia, i + 2, enMargen[i]?.costo ?? null),
+    ),
+  ];
 }
 
 /** Una hipótesis leída de su inversión (ADR 0091). */
 function leerHipotesis(
   base: EscenaSolver,
   inv: Inversion,
-  clave: "dano" | "reposo",
+  familia: FamiliaHipotesis,
+  modo: number,
+  costo: number | null,
 ): HipotesisReconstruccion {
   const ajuste = inv.ajuste_completo;
   const residuos = new Map((ajuste?.residuos ?? inv.residuos).map((r) => [r.nombre, r.sigma]));
   const valor = (nombre: string) => ajuste?.valores.find((v) => v.nombre === nombre)?.valor;
   // Un reposo supuesto tiene PRIORIDAD veces la σ (1 m) de uno declarado, salvo en su hipótesis.
-  const sigmaReposo = clave === "dano" ? PRIORIDAD : 1;
+  const sigmaReposo = familia === "reposo" ? 1 : PRIORIDAD;
   return {
-    clave,
-    titulo: clave === "dano" ? "Cuadra con el daño medido" : "Cuadra con el reposo supuesto",
+    clave: modo === 1 ? familia : `${familia}-${modo}`,
+    familia,
+    modo,
+    titulo: modo === 1 ? TITULOS[familia] : `${TITULOS[familia]} · otra solución`,
+    costo,
     velocidades: Object.entries(base.ids).map(([sid, id]) => {
       const p = inv.parametros.find(
         (x) => x.vehiculo === sid && x.parametro === "velocidad_previa",
@@ -581,10 +634,7 @@ function leerHipotesis(
         kmh: fijada ? e!.mejor : (valor(`velocidad:${sid}`) ?? null),
         fijada,
         sigmaKmh: p?.sigma_local ?? null,
-        rango:
-          fijada && e!.p10 !== undefined && e!.p90 !== undefined
-            ? ([e!.p10, e!.p90] as [number, number])
-            : null,
+        rango: fijada ? rangoInformativo(e!) : null,
       };
     }),
     reposos: Object.entries(base.ids).flatMap(([sid, id]) => {
@@ -604,14 +654,40 @@ function leerHipotesis(
  * La reconstrucción con la hipótesis que eligió el perito (ADR 0091): sus velocidades y su
  * evidencia pasan al paso 6, al 3D y al dictamen.
  */
-export function conHipotesis(r: Reconstruccion, clave: "dano" | "reposo"): Reconstruccion {
-  if (!r.hipotesis) return r;
-  const inv =
-    clave === "reposo"
-      ? (r.resultado.inversion_reposo_supuesto as Json)
-      : (r.resultado.inversion as Json);
+export function conHipotesis(r: Reconstruccion, clave: string): Reconstruccion {
+  const h = r.hipotesis?.find((x) => x.clave === clave);
+  if (!h) return r;
+  const familia = (
+    h.familia === "reposo" ? r.resultado.inversion_reposo_supuesto : r.resultado.inversion
+  ) as Inversion;
+  const inv = h.modo === 1 ? familia : familia.alternativas![h.modo - 2]!;
   const otra = interpretarResultado(r, { ...r.resultado, inversion: inv });
   return { ...otra, limites: r.limites, hipotesis: r.hipotesis, elegida: clave };
+}
+
+/** El encabezado de las hipótesis: por qué hay más de una (ADR 0091). */
+export function encabezadoHipotesis(hs: readonly HipotesisReconstruccion[]): string {
+  const choque = hs.some((h) => h.familia === "reposo");
+  const modos = hs.some((h) => h.modo > 1);
+  if (choque && modos)
+    return "Hipótesis: el reposo supuesto y el daño medido no caben juntos, y hay más de una solución con costo parecido";
+  if (choque) return "Dos hipótesis: el reposo supuesto y el daño medido no caben juntos";
+  return "Más de una solución reproduce la evidencia con un costo parecido";
+}
+
+/**
+ * El p10–p90 de una estimación, o null si no dice nada: sin percentiles, o con p10 = p90 porque
+ * ninguna muestra con las entradas perturbadas se aparta de la solución (ADR 0091). Un rango de
+ * ancho cero se leería como «sin incertidumbre», y no es eso.
+ */
+export function rangoInformativo(e: { p10?: number; p90?: number }): [number, number] | null {
+  return e.p10 !== undefined && e.p90 !== undefined && e.p10 !== e.p90 ? [e.p10, e.p90] : null;
+}
+
+/** La hipótesis que se ve: la que eligió el perito o, si no eligió, la primera. */
+export function hipotesisVisible(r: Reconstruccion): HipotesisReconstruccion | null {
+  if (!r.hipotesis) return null;
+  return r.hipotesis.find((h) => h.clave === r.elegida) ?? r.hipotesis[0]!;
 }
 
 /**
@@ -660,9 +736,10 @@ export function interpretarResultado(base: EscenaSolver, resultado: Json): Recon
     };
   });
   const alterna = resultado.inversion_reposo_supuesto as Inversion | undefined;
-  const hipotesis = alterna
-    ? { dano: leerHipotesis(base, inv, "dano"), reposo: leerHipotesis(base, alterna, "reposo") }
-    : null;
+  const todas = alterna
+    ? [...hipotesisDe(base, inv, "dano"), ...hipotesisDe(base, alterna, "reposo")]
+    : hipotesisDe(base, inv, "evidencia");
+  const hipotesis = todas.length > 1 ? todas : null;
   return {
     ...base,
     limites,
@@ -704,7 +781,7 @@ export function reconstruirExpediente(e: Expediente, specId?: string): Reconstru
  */
 export function especReconstruida(r: Reconstruccion): Json {
   const spec = structuredClone(r.spec) as Json & { vehiculos: Json[] };
-  const hip = r.hipotesis ? r.hipotesis[r.elegida ?? "dano"] : null;
+  const hip = hipotesisVisible(r);
   for (const sv of spec.vehiculos) {
     const v = r.velocidades.find((x) => x.vehiculo === r.ids[String(sv.id)]);
     // En una hipótesis que la evidencia medida no fija, el 3D muestra su ajuste conjunto, dicho así.

@@ -15,6 +15,8 @@ import { distanciaM } from "./geo";
 import { mcHenry } from "./metodo";
 import {
   conHipotesis,
+  encabezadoHipotesis,
+  hipotesisVisible,
   especDeExpediente,
   especReconstruida,
   impactosEnMapa,
@@ -595,21 +597,24 @@ describe("lo medido pesa más que lo supuesto: el reposo supuesto y las dos hip�
       inversion_reposo_supuesto: reposo,
     });
     const id = base.ids["veh-a"]!;
+    const hip = (clave: string) => r.hipotesis!.find((h) => h.clave === clave)!;
+    expect(r.hipotesis!.map((h) => h.clave)).toEqual(["dano", "reposo"]);
+    expect(encabezadoHipotesis(r.hipotesis!)).toBe(
+      "Dos hipótesis: el reposo supuesto y el daño medido no caben juntos",
+    );
     expect(r.elegida).toBeNull();
-    expect(r.hipotesis!.dano.velocidades.find((v) => v.vehiculo === id)).toMatchObject({
+    expect(hip("dano").velocidades.find((v) => v.vehiculo === id)).toMatchObject({
       kmh: 66.25,
       fijada: false,
       sigmaKmh: 32.93,
     });
-    expect(r.hipotesis!.dano.reposos).toEqual([{ vehiculo: id, m: 6.2 }]);
-    expect(r.hipotesis!.dano.alcanzaDano).toBe(true);
-    expect(r.hipotesis!.reposo.reposos).toEqual([{ vehiculo: id, m: 0.3 }]);
+    expect(hip("dano").reposos).toEqual([{ vehiculo: id, m: 6.2 }]);
+    expect(hip("dano").alcanzaDano).toBe(true);
+    expect(hip("reposo").reposos).toEqual([{ vehiculo: id, m: 0.3 }]);
     // La velocidad que la evidencia fija lleva su p10–p90; la del ajuste conjunto, no.
-    expect(r.hipotesis!.reposo.velocidades.find((v) => v.vehiculo === id)!.rango).toEqual([
-      39.47, 43.47,
-    ]);
-    expect(r.hipotesis!.dano.velocidades.find((v) => v.vehiculo === id)!.rango).toBeNull();
-    expect(r.hipotesis!.reposo.alcanzaDano).toBe(false);
+    expect(hip("reposo").velocidades.find((v) => v.vehiculo === id)!.rango).toEqual([39.47, 43.47]);
+    expect(hip("dano").velocidades.find((v) => v.vehiculo === id)!.rango).toBeNull();
+    expect(hip("reposo").alcanzaDano).toBe(false);
     // Sin elegir, el 3D lleva el ajuste conjunto de la del daño, dicho así.
     const sin = (especReconstruida(r).vehiculos as Json[]).find((v) => v.id === "veh-a")!;
     expect(sin.velocidad_previa).toMatchObject({ valor: 66.25, fuente: "supuesto" });
@@ -618,5 +623,65 @@ describe("lo medido pesa más que lo supuesto: el reposo supuesto y las dos hip�
     expect(elegida.velocidades.find((v) => v.vehiculo === id)!.previa!.mejor).toBe(41.47);
     const con = (especReconstruida(elegida).vehiculos as Json[]).find((v) => v.id === "veh-a")!;
     expect(con.velocidad_previa).toMatchObject({ valor: 41.47 });
+  });
+
+  it("otro modo del multiarranque dentro del margen va como hipótesis, con su costo y sus números", () => {
+    const base = especDeExpediente(colocado());
+    const param = (vid: string, mejor: number) => ({
+      parametro: "velocidad_previa",
+      vehiculo: vid,
+      identificable: true,
+      sigma_local: 2,
+      estimacion: { mejor, p10: mejor - 3, p50: mejor, p90: mejor + 5 },
+    });
+    const inversion = (a: number, b: number) => ({
+      evidencia: ["reposo:veh-b", "dano_minimo:veh-a"],
+      parametros: [param("veh-a", a), param("veh-b", b)],
+      velocidad_impacto: [],
+      residuos: [{ nombre: "dano_minimo:veh-a", sigma: 0 }],
+    });
+    const modos = [
+      { costo: 0.0293, en_margen: false },
+      { costo: 0.109, en_margen: true },
+      { costo: 2.5, en_margen: false },
+    ];
+    const r = interpretarResultado(base, {
+      vehiculos: [],
+      eventos: [],
+      inversion: {
+        ...inversion(71.56, 25.32),
+        multiarranque: { margen_costo: 0.5, modos },
+        alternativas: [inversion(78.98, 19.63)],
+      },
+    });
+    const id = base.ids["veh-a"]!;
+    expect(r.hipotesis!.map((h) => [h.clave, h.familia, h.modo, h.costo])).toEqual([
+      ["evidencia", "evidencia", 1, 0.0293],
+      ["evidencia-2", "evidencia", 2, 0.109],
+    ]);
+    expect(r.hipotesis![1]!.titulo).toBe("La que mejor cuadra con la evidencia · otra solución");
+    expect(encabezadoHipotesis(r.hipotesis!)).toBe(
+      "Más de una solución reproduce la evidencia con un costo parecido",
+    );
+    // Sin elegir se ve la de menor costo; al elegir la otra, sus números y su rango.
+    expect(r.velocidades.find((v) => v.vehiculo === id)!.previa!.mejor).toBe(71.56);
+    const otra = conHipotesis(r, "evidencia-2");
+    expect(otra.elegida).toBe("evidencia-2");
+    expect(otra.velocidades.find((v) => v.vehiculo === id)!.previa).toMatchObject({
+      mejor: 78.98,
+      p10: 75.98,
+      p90: 83.98,
+    });
+    expect(hipotesisVisible(otra)!.clave).toBe("evidencia-2");
+    // Un solo modo: no hay hipótesis que elegir.
+    const uno = interpretarResultado(base, {
+      vehiculos: [],
+      eventos: [],
+      inversion: {
+        ...inversion(71.56, 25.32),
+        multiarranque: { margen_costo: 0.5, modos: [modos[0]] },
+      },
+    });
+    expect(uno.hipotesis).toBeNull();
   });
 });

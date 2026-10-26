@@ -155,7 +155,7 @@ export function RecorridoCaso({ inicial }: { inicial: CasoExpediente }) {
   }, [expandido]);
   // Si un reposo supuesto no cabe con la deformación medida hay dos hipótesis; el perito elige
   // (ADR 0091). Mientras no elija se ve la del daño medido, y se dice.
-  const [hipotesis, setHipotesis] = useState<"dano" | "reposo" | null>(null);
+  const [hipotesis, setHipotesis] = useState<string | null>(null);
   const r = useMemo(
     () => (rec.r?.hipotesis && hipotesis ? conHipotesis(rec.r, hipotesis) : rec.r),
     [rec.r, hipotesis],
