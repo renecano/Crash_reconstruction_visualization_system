@@ -506,6 +506,9 @@ Reglas de trabajo: `CLAUDE.md`. Especificación: `PLAN.md`.
       - **Cómo probarlo:**
         - en `/cesvi`, un caso reconstruido, paso 6;
         - por ejemplo, la carambola de la e2e: «V3 frena 2.5 s antes» da V2 reaccionando en −1.40 s y V1 en −0.30 s.
+      - **Verificado en producción (2026-10-26):** AXA colocado como en la app (`tools/demo/caso-axa-colocado.mts` y `tools/demo/verificar-r12a.mjs`), sin errores en la página. Capturas en `docs/cesvi/r12a/`.
+        - El paso 4 reconstruye V2 a 71.6 km/h (63.2–96.0) y V1 a 25.3 (3.7–27.0).
+        - En el paso 6, «V2 frena 1.5 s antes del impacto» da sin contacto, a 7.25 m como mínimo. Sin la hipótesis, V2 alcanza a V1 en 0.00 s a 46.24 km/h relativa, el impacto de la reconstrucción.
       - **Pruebas:**
         - `packages/cesvi/src/conductores.test.ts` (5);
         - `apps/web/src/components/cesvi/caso/conductores.test.tsx` (2);
