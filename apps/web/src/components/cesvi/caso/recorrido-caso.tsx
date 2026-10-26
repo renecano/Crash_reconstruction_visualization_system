@@ -13,11 +13,14 @@ import { LEGEND_TEXT_CESVI } from "@croquis/scene-schema";
 import {
   comparar,
   conHuella,
+  coordinar,
   criteriosVacios,
   conPosicion,
   conRestos,
-  escenaDeNarracion,
+  delPerito,
   medidasDe,
+  pizarraDeEscena,
+  pizarraNueva,
   posesDeImpacto,
   posicionesEncimadas,
   conHipotesis,
@@ -26,14 +29,16 @@ import {
   reconstruccionContraCesvi,
   reposoSupuesto,
   verificacionCesvi,
+  type ContextoPizarra,
   type EscenaNarrada,
   type Expediente,
+  type Pizarra,
   type SalidaCorpus,
 } from "@croquis/cesvi";
 import type { OverpassResponse } from "@croquis/croquis-2d";
 import type { ViewerExportApi } from "@croquis/viewer";
 import type { Map as MapaMl } from "maplibre-gl";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import type { Hipotesis } from "@/components/visor/hypothesis-panel";
 import {
   casoParaGuardar,
@@ -76,6 +81,7 @@ import {
   claveItem,
   type ItemLugar,
 } from "./pasos";
+import { BitacoraAgentes } from "./bitacora";
 import { MapaEscena, type HerramientaMapa, type HuellaMapa } from "./piezas";
 import {
   ElegirHipotesis,
@@ -84,6 +90,18 @@ import {
   Visor3dCaso,
   type PosicionMovil,
 } from "./reconstruccion";
+
+/** De dónde viene la escena de un caso, para la bitácora de la pizarra (R12b). */
+const ORIGEN_ESCENA: Record<CasoExpediente["origen"], string> = {
+  nuevo: "caso nuevo",
+  importado: "reporte importado",
+  reporte: "reporte de la reproducción",
+  guardado: "guardado en este equipo",
+  ejemplo: "caso de ejemplo",
+};
+
+/** El Lector y el Físico de la app no tienen otra lectura ni otro solver que los del recorrido. */
+const SIN_LECTOR: ContextoPizarra["leer"] = () => Promise.resolve(null);
 
 const DETALLE: Record<CasoExpediente["origen"], string> = {
   nuevo:
@@ -143,6 +161,20 @@ export function RecorridoCaso({ inicial }: { inicial: CasoExpediente }) {
     fuente: "dictamen",
   });
   const rec = useReconstruccion(expediente);
+  // La pizarra de R12b (ADR 0093): lo que escriben los agentes y su bitácora.
+  const [pizarra, setPizarra] = useState<Pizarra>(() =>
+    inicial.escena
+      ? pizarraDeEscena(inicial.narracion, inicial.escena, {
+          conclusiones: inicial.reporte?.conclusiones ?? null,
+          origen: ORIGEN_ESCENA[inicial.origen],
+        })
+      : pizarraNueva(inicial.narracion, { conclusiones: inicial.reporte?.conclusiones ?? null }),
+  );
+  // La última pizarra, para los efectos que coordinan sin volver a correr con cada mensaje.
+  const pizarraRef = useRef(pizarra);
+  useEffect(() => {
+    pizarraRef.current = pizarra;
+  }, [pizarra]);
   // El mapa a pantalla completa (V2): se cierra con «Contraer» o con Esc.
   const [expandido, setExpandido] = useState(false);
   useEffect(() => {
@@ -169,6 +201,15 @@ export function RecorridoCaso({ inicial }: { inicial: CasoExpediente }) {
   const clave = (i: number) => PASOS.indexOf(pasos[i]!);
   const actual = clave(paso);
   const irA = (i: number) => setPaso(Math.max(0, Math.min(pasos.length - 1, i)));
+  // El Redactor escribe cuando el perito abre el dictamen con una reconstrucción (R12b).
+  const enDictamen = actual === PASOS.length - 1;
+  useEffect(() => {
+    const p = pizarraRef.current;
+    if (!enDictamen || !rec.r || p.dictamen || !p.escena) return;
+    void coordinar(delPerito(p, "Abre el dictamen.", { pideDictamen: true }), {
+      leer: SIN_LECTOR,
+    }).then(setPizarra);
+  }, [enDictamen, rec.r]);
 
   const evidencia = expediente?.versiones?.find((v) => v.tipo === "evidencia");
   const posiciones = useMemo(() => evidencia?.posiciones ?? [], [evidencia]);
@@ -217,25 +258,65 @@ export function RecorridoCaso({ inicial }: { inicial: CasoExpediente }) {
     setHistorial([]);
   };
 
+  // La lectura pasa por la pizarra (R12b): el Lector (Claude), el Verificador de citas (que puede
+  // pedir una relectura), el Validador y el Preguntador.
   const leer = async () => {
     setEstado("Leyendo la narración…");
-    try {
+    let motivo: string | null = null;
+    const leerConClaude: ContextoPizarra["leer"] = async (t, rechazadas) => {
       const res = await fetch("/api/cesvi/escena", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ texto }),
+        body: JSON.stringify({ texto: t, ...(rechazadas?.length ? { rechazadas } : {}) }),
       });
       const d = (await res.json()) as { metodo?: string; motivo?: string; salida?: SalidaCorpus };
       if (d.metodo !== "claude" || !d.salida) {
-        setEstado(`No se pudo leer con Claude (${d.motivo ?? "sin respuesta"}).`);
+        motivo = d.motivo ?? "sin respuesta";
+        return null;
+      }
+      return d.salida;
+    };
+    try {
+      const p = await coordinar(
+        pizarraNueva(texto, { conclusiones: reporte?.conclusiones ?? null }),
+        { leer: leerConClaude },
+      );
+      setPizarra(p);
+      if (!p.escena) {
+        setEstado(`No se pudo leer con Claude (${motivo ?? "sin respuesta"}).`);
         return;
       }
-      abrirEscena(escenaDeNarracion(d.salida, texto));
+      abrirEscena({ ...p.escena, preguntas: p.preguntas });
       setEstado(null);
     } catch {
       setEstado("No se pudo leer la narración.");
     }
   };
+
+  // El Físico escribe la reconstrucción en la pizarra; si la física no cuadra, le pide evidencia al
+  // Preguntador, y sus preguntas se suman a las del hecho.
+  useEffect(() => {
+    const hecha = rec.r;
+    if (!hecha || !expediente) return;
+    const actual = pizarraRef.current;
+    const base =
+      actual.escena || !leida
+        ? actual
+        : pizarraDeEscena(narracion, leida, {
+            conclusiones: reporte?.conclusiones ?? null,
+            origen: ORIGEN_ESCENA[inicial.origen],
+          });
+    if (!base.escena) return;
+    void coordinar(delPerito(base, "Pide reconstruir.", { pideReconstruir: true, expediente }), {
+      leer: SIN_LECTOR,
+      reconstruir: () => Promise.resolve(hecha),
+    }).then((p) => {
+      setPizarra(p);
+      setLeida((l) => (l ? { ...l, preguntas: p.preguntas } : l));
+    });
+    // Solo cuando llega una reconstrucción nueva.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [rec.r]);
 
   const abrirArchivo = async (f: File) => {
     let datos: unknown;
@@ -694,6 +775,7 @@ export function RecorridoCaso({ inicial }: { inicial: CasoExpediente }) {
               setVista(v ? "3d" : "mapa");
             }}
           />
+          <BitacoraAgentes bitacora={pizarra.bitacora} />
           {r ? (
             <ComparacionDeclaracion
               expediente={expediente}
@@ -764,6 +846,7 @@ export function RecorridoCaso({ inicial }: { inicial: CasoExpediente }) {
             validacion={validacion}
             onValidacion={setValidacion}
             tema={tema}
+            bitacora={pizarra.bitacora}
           />
         ) : (
           <p className="t-nota">Reconstruye en «La reconstrucción» para armar el dictamen.</p>

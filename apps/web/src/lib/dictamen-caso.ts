@@ -20,8 +20,10 @@ import {
   type Expediente,
   type FilaDeclarada,
   type Reconstruccion,
+  type MensajeBitacora,
   type VerificacionVehiculo,
   encabezadoHipotesis,
+  mensajeEnPalabras,
 } from "@croquis/cesvi";
 import type { Content, TableCell, TDocumentDefinitions } from "pdfmake/interfaces";
 import { LEYENDA_DICTAMEN } from "./dictamen-cesvi";
@@ -55,6 +57,8 @@ export interface DatosDictamenCaso {
   /** Con la estructura de los reportes de CESVI (si el perito la pide). */
   estructuraCesvi: boolean;
   trazabilidad: { metodo: string; huella: string };
+  /** La bitácora de los agentes de la pizarra (R12b, ADR 0093), en orden. */
+  bitacora?: readonly MensajeBitacora[];
 }
 
 const titulo = (t: string): Content => ({
@@ -343,6 +347,15 @@ function secciones(d: DatosDictamenCaso) {
     nota(
       `Método: ${d.trazabilidad.metodo} · huella de las entradas ${d.trazabilidad.huella} · validó ${d.validacion ? `${d.validacion.perito}, ${d.validacion.fecha}` : "pendiente"}.`,
     ),
+    ...(d.bitacora?.length
+      ? [
+          subtitulo("Bitácora de los agentes"),
+          nota(
+            "Quién escribió qué en la pizarra del caso y qué se pidieron los agentes, en orden. La IA solo lee la narración; los números los calculan el solver y el método de CESVI.",
+          ),
+          ...d.bitacora.map((m) => nota(mensajeEnPalabras(m))),
+        ]
+      : []),
   ];
   return {
     caracteristicas,

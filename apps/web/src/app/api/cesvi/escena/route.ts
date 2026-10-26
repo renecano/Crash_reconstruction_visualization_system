@@ -12,7 +12,11 @@ import { clientKeyFrom, defaultDeps, llmUnavailable } from "@/server/relato";
 export const runtime = "nodejs";
 export const maxDuration = 120;
 
-const PedidoIn = z.object({ texto: z.string().trim().min(20).max(12000) });
+const PedidoIn = z.object({
+  texto: z.string().trim().min(20).max(12000),
+  /** Relectura (R12b, ADR 0093): las citas que el Verificador de citas no encontró. */
+  rechazadas: z.array(z.string().max(600)).max(40).optional(),
+});
 
 const sinLectura = (motivo: string) =>
   Response.json({ metodo: "no_disponible", motivo }, { headers: { "Cache-Control": "no-store" } });
@@ -43,6 +47,7 @@ export async function POST(request: Request): Promise<Response> {
       presupuestoUsd: deps.settings.budgetUsd,
       gasto: deps.budgetStore,
       cliente: deps.client,
+      rechazadas: parsed.data.rechazadas,
     });
     return Response.json({ metodo: "claude", ...r }, { headers: { "Cache-Control": "no-store" } });
   } catch (e) {

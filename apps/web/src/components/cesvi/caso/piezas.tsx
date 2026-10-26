@@ -12,6 +12,7 @@ import {
   conMasa,
   conMasaTipica,
   conPrimerImpacto,
+  conHuella,
   conRestos,
   conZonaImpacto,
   masaTipica,
@@ -625,6 +626,8 @@ export function Pregunta({
     if (p.clave.startsWith("masa-") && p.vehiculo)
       onCambio(conMasa(expediente, p.vehiculo, numero));
     if (p.clave === "restos") onCambio(conRestos(expediente, numero));
+    if (p.clave.startsWith("huella-") && p.vehiculo)
+      onCambio(conHuella(expediente, p.vehiculo, numero));
   };
   const elegir = (v: string) => {
     if (p.clave === "impactos") onCambio(conPrimerImpacto(expediente, v));
