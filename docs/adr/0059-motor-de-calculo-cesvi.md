@@ -97,4 +97,4 @@ Entran los que usan los dictámenes, no una lista de libro. Se ubicaron leyendo 
   cd packages/cesvi && pnpm exec tsx ../../eval/cesvi_reproduccion.mts
   ```
 
-- **Pendiente:** la tabla de rigideces de CESVI (en «Bloqueado» de PROGRESS). Mientras no llegue, la rigidez sale del dictamen o de E2, marcada.
+- **La rigidez** sale del dictamen o, si no la da, de E2 (la de su clase), como supuesto declarado con su fuente. No se pide la tabla de CESVI: lo que el reporte no trae no existe (René, 2026-10-26; ADR 0091).

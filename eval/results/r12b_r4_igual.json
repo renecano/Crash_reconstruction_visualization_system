@@ -1,7 +1,7 @@
 {
  "name": "r12b_r4_igual",
- "generated_at": "2026-10-26T22:18:38Z",
- "git_commit": "6645293",
+ "generated_at": "2026-10-26T23:39:25Z",
+ "git_commit": "dd2c8d2",
  "descripcion": "E-R4 (prueba congelada, lecturas grabadas) sin y con la pizarra de R12b: resumen, escenas, reconstrucciones y comparación por narración.",
  "antes": {
   "archivo": "cesvi_r12b_r4_antes.json",
@@ -9,7 +9,7 @@
  },
  "despues": {
   "archivo": "cesvi_r12b_r4_despues.json",
-  "fecha": "2026-10-26T22:18:38.124Z"
+  "fecha": "2026-10-26T23:39:24.103Z"
  },
  "narraciones": 205,
  "resumen_igual": true,
@@ -25,7 +25,7 @@
  "narraciones_distintas": [],
  "bitacora": {
   "relectura_pedida": 2,
-  "mensajes_mediana": 9,
-  "mensajes_max": 11
+  "mensajes_mediana": 10,
+  "mensajes_max": 12
  }
 }

@@ -74,7 +74,7 @@
   - el mismo resumen;
   - 205 escenas válidas y 205 reconstruidas en 3D, antes y después.
 - **El Verificador de citas pidió releer en 2 narraciones.** Sin relectura grabada, se siguió con lo verificado; por eso no cambia nada.
-- **La bitácora** tiene una mediana de 9 mensajes por narración y un máximo de 11.
+- **La bitácora** tiene una mediana de 10 mensajes por narración y un máximo de 12, con el mensaje de los supuestos declarados que escribe el Físico (2026-10-26; antes, 9 y 11).
 
 ## Consecuencias
 

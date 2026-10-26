@@ -89,7 +89,7 @@ Tres errores, con el código de 8ab9271:
 
 - **El 63.15 no es la velocidad a la que circulaba V2.** Es la equivalencia de barrera de su energía de deformación, √(2E/m), con la masa de V2 sola. El 60.27 es la velocidad de V1 al salir del impacto, deslizando juntos con a = 0.9. El solver calcula la velocidad a la que circulaba V2, por momento y trayectorias, con llantas que ruedan después del impacto (arrastre de 0.35 de la fricción).
 - **Faltan datos en el reporte:**
-  - el reposo de V2, que se le pide a CESVI junto con las huellas de frenado o arrastre (PROGRESS, «Bloqueado»);
+  - el reposo de V2: el reporte no lo da, así que entra como supuesto declarado del método de restos (±10 m; sección «Los supuestos declarados»);
   - la masa de V1, que se toma de su ficha técnica.
 - **Con la deformación del reporte** (225.45 kJ) y esa masa, la velocidad de cierre debe ser al menos 79.78 km/h. El ajuste del reposo como dato no es un mínimo local: costo 8.18 desde el arranque por omisión, contra 25.2 desde el cierre mínimo.
 
@@ -199,6 +199,32 @@ René: el resultado de AXA no puede depender de la semilla. Mostrar 63.17 km/h p
 - **E-R4 con la inversión** (`cesvi_r4_inversion_multiarranque.json` contra `cesvi_r4_inversion_despues.json`):
   - idéntico en las 205 narraciones;
   - los mismos impactos: el mismo número en 71 de 135 (52.59 %) y el primero en 96 de 110 (87.27 %).
+
+## Los supuestos declarados (René, 2026-10-26)
+
+- **La regla, para todos los casos de ejemplo:** los reportes de CESVI son casos de ejemplo (muchos elaborados por CESVI). Lo que no traen no existe y no se le pide a CESVI.
+- **Entra como supuesto declarado,** con su justificación y su incertidumbre en el rango:
+  - supuesto del método de CESVI;
+  - ficha técnica, en `data/SOURCES.md`;
+  - valor típico de su clase, con su fuente;
+  - supuesto del solver.
+- **Una sola lista,** `supuestosDeclarados` (`packages/cesvi/src/supuestos.ts`), deducida del expediente y de la reconstrucción. Las incertidumbres salen de las constantes del solver (`MASS_SPREAD`, `PRIORIDAD`·`SIGMA_POSITION_M`, `ANGLE_BOUND_DEG`, el rango de μ), no se escriben a mano.
+- **Va al paso 6, al 3D, a la bitácora y al dictamen.** Nunca como «dato pendiente» ni «falta pedir».
+
+| Supuesto                     | Justificación                                                                                                              | Incertidumbre                                             |
+| ---------------------------- | -------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------- |
+| Masa sin dato                | ficha técnica del modelo y año; si no hay, el valor típico de su clase con su fuente                                       | el rango de la ficha; ±5 % en el rango de las velocidades |
+| Reposo marcado como supuesto | el método de restos de CESVI, si el reporte calcula con él (los vehículos se desplazan juntos); si no, lo supone el perito | ±10 m: 10 veces la σ de uno medido                        |
+| Posición inicial             | el reporte no la da: es el punto de partida                                                                                | la inversión ajusta la velocidad y el rumbo (±20°)        |
+| Fricción llanta–pavimento    | la tabla de la literatura para la superficie                                                                               | el rango de μ                                             |
+| Después del impacto          | las llantas ruedan con un arrastre de 0.35 de la fricción (sin huellas de arrastre en el reporte)                          | la fracción es fija; varía con μ (pendiente muestrearla)  |
+
+- **En AXA:**
+  - la masa de V1, por la ficha de la Silverado 2500 2007;
+  - el reposo de V2, por el método de restos;
+  - las posiciones iniciales, la fricción y las llantas que ruedan.
+- **Cuando el Físico pide evidencia** (R12b) y el perito contesta «No sé», la bitácora dice qué supuesto queda, con su nombre. Para el reposo, el de la tabla; para las huellas de frenado, el frenado que narra el hecho, sin una distancia medida.
+- **Se quitaron de «Bloqueado»** el reposo de V2 y las huellas de AXA, la tabla de rigideces de CESVI y los PDF originales: la rigidez que el reporte no da es la de su clase (E2), como supuesto con su fuente.
 
 ## Consecuencias
 
