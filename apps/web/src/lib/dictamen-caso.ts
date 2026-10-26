@@ -21,6 +21,7 @@ import {
   type FilaDeclarada,
   type Reconstruccion,
   type MensajeBitacora,
+  type SupuestoDeclarado,
   type VerificacionVehiculo,
   encabezadoHipotesis,
   mensajeEnPalabras,
@@ -59,6 +60,8 @@ export interface DatosDictamenCaso {
   trazabilidad: { metodo: string; huella: string };
   /** La bitácora de los agentes de la pizarra (R12b, ADR 0093), en orden. */
   bitacora?: readonly MensajeBitacora[];
+  /** Lo que el caso no trae, como supuesto declarado con su justificación (ADR 0091). */
+  supuestos?: readonly SupuestoDeclarado[];
 }
 
 const titulo = (t: string): Content => ({
@@ -252,6 +255,18 @@ function secciones(d: DatosDictamenCaso) {
         v.impacto ? `${kmh(v.impacto.p10)}–${kmh(v.impacto.p50)}–${kmh(v.impacto.p90)}` : "—",
       ]),
     ),
+    ...(d.supuestos?.length
+      ? [
+          subtitulo("Supuestos declarados"),
+          nota(
+            "Lo que el caso no trae entra como supuesto, con su justificación y su incertidumbre, que ya está en el rango de las velocidades.",
+          ),
+          tabla(
+            ["Supuesto", "Justificación", "Incertidumbre"],
+            d.supuestos.map((x) => [`${x.que}: ${x.valor}`, x.justificacion, x.incertidumbre]),
+          ),
+        ]
+      : []),
     ...hipotesis(d),
     ...contraReporte(d),
     ...(r.impactos.length > 1

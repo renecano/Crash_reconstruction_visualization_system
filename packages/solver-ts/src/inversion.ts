@@ -28,9 +28,9 @@ import * as dmath from "./dmath";
 type Json = Record<string, unknown>;
 
 const KMH = 3.6;
-const MASS_SPREAD = 0.05;
+export const MASS_SPREAD = 0.05;
 const RESTITUTION_RIGID: readonly [number, number] = [0.0, 0.2];
-const SIGMA_POSITION_M = 1.0;
+export const SIGMA_POSITION_M = 1.0;
 /**
  * Factor entre niveles de evidencia (ADR 0091): la deformación medida, restricción, pesa PRIORIDAD
  * veces su σ fuera de su banda; un reposo supuesto tiene PRIORIDAD veces la σ de uno declarado.
@@ -163,7 +163,7 @@ export function deltaVFromDamage(
 // --- 2. Velocidades y ángulos desde la evidencia ----------------------------------------------
 
 const SIGMA_HEADING_DEG = 20.0;
-const ANGLE_BOUND_DEG = 20.0;
+export const ANGLE_BOUND_DEG = 20.0;
 const JAC_STEP: Record<string, number> = { velocidad: 1.0, rumbo: 1.0 };
 const BOUND_TOL: Record<string, number> = { velocidad: 0.1, rumbo: 0.1 };
 export const SCALE: Record<string, number> = { velocidad: 10.0, rumbo: 10.0 };

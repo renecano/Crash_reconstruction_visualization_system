@@ -13,6 +13,7 @@ import {
   type Expediente,
   type MensajeBitacora,
   type Reconstruccion,
+  type SupuestoDeclarado,
   type VerificacionVehiculo,
 } from "@croquis/cesvi";
 import type { ViewerExportApi } from "@croquis/viewer";
@@ -64,6 +65,7 @@ export function DictamenCaso({
   onValidacion,
   tema,
   bitacora,
+  supuestos,
 }: {
   expediente: Expediente;
   narracion: string | null;
@@ -81,6 +83,8 @@ export function DictamenCaso({
   tema: "claro" | "oscuro";
   /** La bitácora de los agentes de la pizarra (R12b): va en la trazabilidad. */
   bitacora?: readonly MensajeBitacora[];
+  /** Lo que el caso no trae, como supuesto declarado (ADR 0091). */
+  supuestos?: readonly SupuestoDeclarado[];
 }) {
   const [estructuraCesvi, setEstructuraCesvi] = useState(false);
   const [perito, setPerito] = useState(guardada?.perito ?? "");
@@ -133,6 +137,7 @@ export function DictamenCaso({
         huella: huellaDelCaso(expediente, narracion),
       },
       bitacora: bitacora ?? [],
+      supuestos: supuestos ?? [],
     };
   };
   const nombre = (ext: string) => `dictamen-reconstruccion${validacion ? "" : "-borrador"}.${ext}`;
