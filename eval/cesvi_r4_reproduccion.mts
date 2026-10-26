@@ -25,7 +25,10 @@
  *   pnpm exec tsx ../../eval/cesvi_r4_reproduccion.mts estimar <desarrollo|prueba>
  *   pnpm exec tsx ../../eval/cesvi_r4_reproduccion.mts lote <desarrollo|prueba> <tope_usd>
  *   pnpm exec tsx ../../eval/cesvi_r4_reproduccion.mts recoger <id_lote>
- *   pnpm exec tsx ../../eval/cesvi_r4_reproduccion.mts medir <desarrollo|prueba>
+ *   pnpm exec tsx ../../eval/cesvi_r4_reproduccion.mts medir <desarrollo|prueba> [salida.json]
+ *
+ * Con `salida`, el resultado va a ese archivo y no se toca la página de la reproducción: sirve
+ * para medir antes y después de un cambio sin reemplazar lo publicado (R12b).
  */
 import { existsSync, mkdirSync, readdirSync, readFileSync, writeFileSync } from "node:fs";
 import { dirname, join, resolve } from "node:path";
@@ -44,7 +47,12 @@ import {
   SISTEMA_ESCENA,
   VERSION_PROMPT_ESCENA,
 } from "../packages/cesvi/src/escena-narracion";
-import { especReconstruida, reconstruirExpediente } from "../packages/cesvi/src/reconstruccion";
+import { coordinar, pizarraNueva } from "../packages/cesvi/src/pizarra";
+import {
+  especReconstruida,
+  reconstruirExpediente,
+  type Reconstruccion,
+} from "../packages/cesvi/src/reconstruccion";
 import { validateEscena, validateResultado } from "../packages/scene-schema/src/index";
 import {
   clienteCorpus,
@@ -250,8 +258,12 @@ async function recoger(idLote: string) {
  * Mide una partición con las lecturas guardadas (sin API). En la prueba también reconstruye cada
  * escena con el solver de producción: los casos que se reconstruyen son los de la página
  * «Reproducción de dictámenes».
+ *
+ * Desde R12b (ADR 0093) cada caso pasa por la pizarra: el Lector da la lectura grabada (una
+ * relectura no tiene respuesta grabada y se sigue con lo verificado), el Verificador de citas, el
+ * Validador, el Preguntador, el Físico (solo en la prueba), el Verificador CESVI y el Comparador.
  */
-function medir(p: Particion) {
+async function medir(p: Particion, salida?: string) {
   const hechas = lecturas();
   const prueba = idsPrueba();
   const base = lineasBase(
@@ -261,48 +273,61 @@ function medir(p: Particion) {
   );
   const casos = muestra(p);
   const sinLeer = casos.filter((n) => !hechas.has(n.id)).map((n) => n.id);
-  const filas = casos
-    .filter((n) => hechas.has(n.id))
-    .map((n) => {
-      const l = hechas.get(n.id)!;
-      const escena = escenaDeNarracion(l.salida, n.descripcion);
-      const comparacion = comparar(
-        n.conclusiones,
-        escena.expediente,
-        escena.posiciones,
-        n.descripcion,
-      );
-      let reconstruccion: { reconstruida: boolean; en_3d: boolean; ms: number } | null = null;
-      if (p === "prueba") {
-        const t0 = performance.now();
-        try {
-          const r = reconstruirExpediente(escena.expediente, n.id);
-          const vs = (r.resultado.vehiculos ?? []) as { trayectoria?: { t?: unknown[] } }[];
-          reconstruccion = {
+  const filas = [];
+  for (const n of casos.filter((x) => hechas.has(x.id))) {
+    const l = hechas.get(n.id)!;
+    let ms = 0;
+    let fallo = false;
+    const pizarra = await coordinar(pizarraNueva(n.descripcion, { conclusiones: n.conclusiones }), {
+      leer: (_texto, rechazadas) => Promise.resolve(rechazadas ? null : l.salida),
+      ...(p === "prueba"
+        ? {
+            fisicoAutomatico: true,
+            reconstruir: (e: Parameters<typeof reconstruirExpediente>[0]) => {
+              const t0 = performance.now();
+              try {
+                return Promise.resolve(reconstruirExpediente(e, n.id));
+              } catch (err) {
+                fallo = true;
+                return Promise.reject(err as Error);
+              } finally {
+                ms = Math.round(performance.now() - t0);
+              }
+            },
+          }
+        : {}),
+    });
+    const escena = pizarra.escena!;
+    const comparacion = pizarra.comparacion!;
+    let reconstruccion: { reconstruida: boolean; en_3d: boolean; ms: number } | null = null;
+    if (p === "prueba") {
+      const r: Reconstruccion | null = fallo ? null : pizarra.reconstruccion;
+      const vs = (r?.resultado.vehiculos ?? []) as { trayectoria?: { t?: unknown[] } }[];
+      reconstruccion = r
+        ? {
             reconstruida: vs.length > 0 && vs.every((v) => (v.trayectoria?.t ?? []).length > 1),
             en_3d: validateResultado(r.resultado).ok && validateEscena(especReconstruida(r)).ok,
-            ms: Math.round(performance.now() - t0),
-          };
-        } catch {
-          reconstruccion = {
-            reconstruida: false,
-            en_3d: false,
-            ms: Math.round(performance.now() - t0),
-          };
-        }
-      }
-      return {
-        id: n.id,
-        escena_valida: escena.problemas.length === 0,
-        conclusiones: n.conclusiones,
-        comparacion,
-        reconstruccion,
-        costo_usd: l.costo_usd,
-        narracion: n.descripcion,
-        expediente: escena.expediente,
-        posiciones: escena.posiciones,
-      };
+            ms,
+          }
+        : { reconstruida: false, en_3d: false, ms };
+    }
+    filas.push({
+      id: n.id,
+      escena_valida: escena.problemas.length === 0,
+      conclusiones: n.conclusiones,
+      comparacion,
+      reconstruccion,
+      costo_usd: l.costo_usd,
+      narracion: n.descripcion,
+      expediente: escena.expediente,
+      posiciones: escena.posiciones,
+      // La bitácora de la pizarra: cuántos mensajes y si el Verificador de citas pidió releer.
+      bitacora: {
+        mensajes: pizarra.bitacora.length,
+        relectura_pedida: pizarra.relecturas > 0,
+      },
     });
+  }
   const r = resumen(filas, base);
   const reconstruidas = filas.filter(
     (f) => f.reconstruccion?.reconstruida && f.reconstruccion.en_3d,
@@ -331,8 +356,8 @@ function medir(p: Particion) {
       ({ conclusiones: _c, narracion: _n, expediente: _e, posiciones: _p, ...f }) => f,
     ),
   };
-  writeFileSync(RESULTADO(p), `${JSON.stringify(out, null, 1)}\n`);
-  if (p === "prueba") {
+  writeFileSync(salida ?? RESULTADO(p), `${JSON.stringify(out, null, 1)}\n`);
+  if (p === "prueba" && !salida) {
     // La página «Reproducción de dictámenes»: los casos de la prueba que Croquis reconstruye, con lo
     // que concluyó CESVI, la escena que leyó Croquis y la comparación.
     const pagina = {
@@ -467,7 +492,7 @@ if (modo === "estimar") await estimar(particion);
 else if (modo === "piloto") await piloto(Number(arg ?? 9));
 else if (modo === "lote") await lote(particion, Number(arg2));
 else if (modo === "recoger") await recoger(arg!);
-else if (modo === "medir") medir(particion);
+else if (modo === "medir") await medir(particion, arg2);
 else if (modo === "comparar") compararVersiones();
 else
   console.error(

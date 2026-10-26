@@ -177,6 +177,10 @@ test("@flujo /cesvi: un caso nuevo desde la lista, de la narración al dictamen"
   await expect(page.getByTestId("velocidades")).toBeVisible({ timeout: 60_000 });
   await expect(page.getByTestId("velocidad-V1")).toContainText(/\d+\.\d \(/);
   await expect(page.getByTestId("evidencia-usada")).toContainText("posición final de V1");
+  // La bitácora de la pizarra (R12b): el Lector leyó la narración y el Físico reconstruyó.
+  const bitacora = page.getByTestId("bitacora-agentes");
+  await expect(bitacora.locator('[data-de="lector"]').first()).toContainText("Lectura:");
+  await expect(bitacora.locator('[data-de="fisico"]').first()).toContainText("Reconstrucción");
 
   // El 3D de la reconstrucción (R3): el visor dibuja la escena con las velocidades estimadas.
   await page.getByTestId("ver-3d").click();

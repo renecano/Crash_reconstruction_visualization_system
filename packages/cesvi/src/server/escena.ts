@@ -17,6 +17,8 @@ export interface OpcionesEscena {
   presupuestoUsd: number;
   gasto: BudgetStore;
   cliente?: ClienteClaude;
+  /** Relectura (R12b): las citas que el Verificador de citas no encontró en la narración. */
+  rechazadas?: readonly string[];
 }
 
 export interface LecturaEscena {
@@ -37,7 +39,7 @@ export async function leerEscena(narracion: string, o: OpcionesEscena): Promise<
   const stream = cliente.messages.stream(
     pedidoLectura(
       SISTEMA_ESCENA,
-      mensajeEscena(narracion),
+      mensajeEscena(narracion, o.rechazadas),
       ESQUEMA_CORPUS as unknown as Record<string, unknown>,
       o.modelo,
     ),

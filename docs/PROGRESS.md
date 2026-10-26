@@ -513,8 +513,23 @@ Reglas de trabajo: `CLAUDE.md`. Especificación: `PLAN.md`.
         - `packages/cesvi/src/conductores.test.ts` (5);
         - `apps/web/src/components/cesvi/caso/conductores.test.tsx` (2);
         - la e2e `@flujo` de la carambola, que ahora termina en el paso 6.
+    - **R12b, agentes especialistas con pizarra (2026-10-26, rama `feat/r12b-pizarra`, ADR 0093):**
+      - **Qué hace:** el caso tiene una pizarra (`packages/cesvi/src/pizarra.ts`) con ocho agentes y un coordinador que, en cada paso, le da el turno al primero que tiene algo que hacer. Los agentes son el Lector IA, el Verificador de citas, el Validador, el Preguntador, el Físico, el Verificador CESVI, el Comparador y el Redactor.
+        - **Coordinación real:** el Verificador de citas rechaza los datos que no están en la narración y le pide al Lector releer, con esas citas. Cuando la física no cuadra, el Físico le pide evidencia al Preguntador: la posición final o las huellas de frenado.
+        - **La IA solo lee:** los números los calculan el solver y el método de CESVI.
+      - **Listo cuando, medido:**
+        - **E-R4:** 205 de 205 narraciones con los mismos números, antes y después (`eval/results/r12b_r4_igual.json`). El Verificador pidió releer en 2; sin relectura grabada se siguió con lo verificado.
+        - **La bitácora sale en el dictamen,** en la trazabilidad, y en el paso 4.
+        - **Mismo caso, misma bitácora:** lo prueba `pizarra.test.ts`.
+      - **Cómo probarlo:**
+        - en `/cesvi`, un caso nuevo: «Leer la narración», reconstruir y abrir «Bitácora de los agentes» en el paso 4;
+        - el dictamen la lleva al final, en la trazabilidad.
+      - **Pruebas:**
+        - `packages/cesvi/src/pizarra.test.ts` (7);
+        - `apps/web/src/lib/dictamen-caso.test.ts` (la bitácora en el dictamen);
+        - la e2e `@flujo` del caso nuevo, que ahora revisa la bitácora en el paso 4.
     - **Siguiente paso concreto:**
-      - R12b (agentes especialistas con pizarra);
+      - PLAN-CESVI queda completo (R0 a R12b); sigue la prioridad alta de «Endurecimiento pendiente»;
       - cuando aparezca la rama `resultados/computadora-demo-<fecha>`, integrar los videos de R11 y E6 en alta y ultra («Bloqueado»).
     1. **V2-1, marco:**
        - **la barra:** los nombres de los 8 pasos siempre, «← Casos», la barra de avance arriba y los pasos futuros cerrados hasta completar lo obligatorio;
@@ -1527,6 +1542,8 @@ Lo que se pospone por el trabajo con CESVI no se borra: queda aquí para despué
 - **El rumbo inicial de V2 en AXA** queda en el límite de búsqueda (+20° sobre el que colocó el perito). Revisar si ese límite es el correcto o si la posición inicial supuesta de V2 está mal orientada.
 - **Las hipótesis por modo** (otro mínimo dentro del margen de costo) solo las ejercita la prueba unitaria: ninguna escena versionada ni AXA tiene hoy un segundo modo dentro del margen.
 - **Python en CI tarda 8 min** con el multiarranque y `pytest -n auto` (el límite es 10). Si crece, hay que acelerar la referencia Python o repartir más los resultados versionados.
+- **Las relecturas de R12b no están grabadas** (ADR 0093): en E-R4 el Verificador de citas pidió releer en 2 narraciones, pero sin respuesta grabada no se puede medir si la relectura mejora algo. Grabarlas (con la API) y medir.
+- **La bitácora de la pizarra no se guarda con el caso** (ADR 0093): al reabrirlo empieza de nuevo.
 - **La línea base de los conductores no siempre es la reconstrucción** (ADR 0088): en una carambola colocada a mano, los agentes sin hipótesis encontraron a V2 con V3 en −0.40 s, antes del primer impacto reconstruido (V1 con V2 en 0 s). Falta que los agentes respeten el orden de impactos de la reconstrucción, o que avisen cuando no coincide.
 
 ### Bloqueado — necesita a René

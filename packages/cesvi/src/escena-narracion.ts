@@ -52,8 +52,15 @@ Secciones y campos:
 Vocabulario de los dictámenes de CESVI, con en cuántos de los ${GLOSARIO.dictamenes} dictámenes aparece cada término:
 ${glosarioParaPrompt()}`;
 
-export function mensajeEscena(narracion: string): string {
-  return `Narración del perito:\n\n${narracion}`;
+/**
+ * El mensaje de la lectura. Con `rechazadas` es una relectura (R12b, ADR 0093): el Verificador de
+ * citas no encontró esas citas en la narración, y se le dice al modelo para que copie literal. La
+ * primera lectura no cambia (las grabadas siguen valiendo).
+ */
+export function mensajeEscena(narracion: string, rechazadas: readonly string[] = []): string {
+  const base = `Narración del perito:\n\n${narracion}`;
+  if (!rechazadas.length) return base;
+  return `${base}\n\nEn una lectura anterior, estas citas no estaban en la narración y sus datos se descartaron. Vuelve a leer y copia cada cita literal del texto:\n${rechazadas.map((c) => `- «${c}»`).join("\n")}`;
 }
 
 type Id = Expediente["vehiculos"][number]["id"];
@@ -478,6 +485,9 @@ export function preguntaPendiente(
   if (p.clave.startsWith("masa-")) return !vehiculo?.masa;
   if (p.clave === "restos") return !e.evidencias?.restos?.longitud;
   if (p.clave.startsWith("final-")) return !finales.some((x) => x.vehiculo === p.vehiculo);
+  // La que agrega el Preguntador cuando la física no cuadra (R12b): hasta que haya huellas de frenado.
+  if (p.clave.startsWith("huella-"))
+    return !e.evidencias?.huellas?.some((h) => h.vehiculo === p.vehiculo && h.tipo === "frenado");
   return true;
 }
 
