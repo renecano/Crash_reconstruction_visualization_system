@@ -17,6 +17,7 @@ import { comparar, type ComparacionDictamen, type Conclusiones } from "./dictame
 import { escenaDeConversion, type EscenaNarrada, type PreguntaEscena } from "./escena-narracion";
 import { ubicarCita } from "./hecho-lectura";
 import type { Reconstruccion } from "./reconstruccion";
+import { supuestosDeclarados, supuestosEnUnaLinea } from "./supuestos";
 import type { PasoVelocidad } from "./formulas";
 import { verificacionCesvi, type VerificacionVehiculo } from "./verificacion";
 
@@ -278,7 +279,8 @@ function preguntaPorBandera(codigo: string, v: Id | null): PreguntaEscena | null
     return {
       clave: `final-${v}`,
       texto: `¿Dónde quedó ${v} al final? Una posición medida en el lugar fija mejor su velocidad.`,
-      porQue: "La física no cuadra con la posición final que hay: hace falta la medida.",
+      porQue:
+        "Con la posición final que hay, la física no cuadra. Si se midió en el lugar, colócala; si no, queda el supuesto.",
       control: { tipo: "mapa" },
       vehiculo: v,
     };
@@ -286,7 +288,8 @@ function preguntaPorBandera(codigo: string, v: Id | null): PreguntaEscena | null
     return {
       clave: `huella-${v}`,
       texto: `¿Qué longitud tienen las huellas de frenado de ${v}?`,
-      porQue: "La velocidad que da la evidencia no cuadra con la declarada; las huellas la fijan.",
+      porQue:
+        "La velocidad que da la evidencia no cuadra con la declarada; unas huellas medidas la fijan. Si no las hay, queda el supuesto.",
       control: { tipo: "numero", unidad: "m" },
       vehiculo: v,
     };
@@ -360,6 +363,14 @@ const fisico: Agente = {
         ? `Reconstrucción: ${fijadas.map((v) => `${v.vehiculo} a ${kmh(v.previa!.mejor)}${v.previa!.p10 !== undefined && v.previa!.p90 !== undefined ? ` (${v.previa!.p10.toFixed(2)}–${v.previa!.p90.toFixed(2)})` : ""}`).join(", ")}.`
         : "Reconstrucción hecha; la evidencia todavía no fija ninguna velocidad.",
     );
+    // Lo que el reporte no trae entra como supuesto declarado, con su justificación (ADR 0091).
+    const supuestos = supuestosDeclarados(e, r);
+    if (supuestos.length)
+      decir(
+        "pizarra",
+        "escribe",
+        `Con los supuestos declarados: ${supuestosEnUnaLinea(supuestos)}.`,
+      );
     const consistencia = (r.resultado.consistencia ?? []) as {
       codigo: string;
       datos?: { vehiculo?: string };

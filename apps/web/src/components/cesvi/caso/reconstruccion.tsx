@@ -18,6 +18,8 @@ import {
   type Reconstruccion,
   type VerificacionVehiculo,
   encabezadoHipotesis,
+  supuestosEnUnaLinea,
+  type SupuestoDeclarado,
 } from "@croquis/cesvi";
 import { LEGEND_TEXT_CESVI, type EscenaSpec } from "@croquis/scene-schema";
 import type { ViewerExportApi } from "@croquis/viewer";
@@ -353,6 +355,43 @@ export function ElegirHipotesis({
   );
 }
 
+/**
+ * Los supuestos declarados (ADR 0091): lo que el caso no trae entra como supuesto, con su
+ * justificación y su incertidumbre en el rango. No es un dato pendiente: no se pide a nadie.
+ */
+export function TablaSupuestos({ supuestos }: { supuestos: readonly SupuestoDeclarado[] }) {
+  if (!supuestos.length) return null;
+  return (
+    <div className="flex flex-col gap-2" data-testid="supuestos">
+      <h3 className="t-interfaz font-semibold">Supuestos declarados</h3>
+      <p className="t-nota">
+        Lo que el caso no trae entra como supuesto, con su justificación y su incertidumbre, que ya
+        está en el rango de las velocidades.
+      </p>
+      <table className="w-full border-collapse text-sm">
+        <thead>
+          <tr className="text-left text-texto-3">
+            <th className="py-2 font-medium">Supuesto</th>
+            <th className="py-2 font-medium">Justificación</th>
+            <th className="py-2 font-medium">Incertidumbre</th>
+          </tr>
+        </thead>
+        <tbody>
+          {supuestos.map((s) => (
+            <tr key={s.clave} className="border-t border-linea-suave" data-clave={s.clave}>
+              <td className="py-2 pr-3">
+                <span className="font-medium">{s.que}:</span> {s.valor}
+              </td>
+              <td className="py-2 pr-3">{s.justificacion}</td>
+              <td className="py-2">{s.incertidumbre}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  );
+}
+
 /** La verificación con los métodos de CESVI, paso por paso (fórmula, sustitución, resultado). */
 export function PanelVerificacion({ verificacion }: { verificacion: VerificacionVehiculo[] }) {
   return (
@@ -399,8 +438,11 @@ export function Visor3dCaso({
   calles = null,
   objetos = null,
   expandido = false,
+  supuestos = [],
 }: {
   r: Reconstruccion;
+  /** Lo que el caso no trae, como supuesto declarado (ADR 0091). */
+  supuestos?: readonly SupuestoDeclarado[];
   /** La velocidad de la reconstrucción contra el reporte de CESVI, para decirla sobre el 3D. */
   contraCesvi?: ContraMetodosCesvi | null;
   /** A pantalla completa: arriba flota la caja del paso y abajo «Siguiente»; el 3D les deja lugar. */
@@ -432,9 +474,14 @@ export function Visor3dCaso({
     >
       <p className="t-nota">
         Las velocidades del 3D son las que estimó Croquis para reproducir tu evidencia (supuesto,
-        con su rango); lo demás que no narraste va con valores por omisión. Reconstrucción de apoyo:
+        con su rango); lo que el caso no trae va como supuesto declarado. Reconstrucción de apoyo:
         el dictamen es del perito.
       </p>
+      {supuestos.length ? (
+        <p className="t-nota" data-testid="supuestos-3d">
+          Supuestos declarados: {supuestosEnUnaLinea(supuestos)}.
+        </p>
+      ) : null}
       {contraCesvi?.filas
         .filter((f) => f.croquisKmh !== null)
         .map((f) => (

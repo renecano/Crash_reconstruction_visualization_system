@@ -69,6 +69,10 @@ test("@flujo /cesvi: el caso de AXA desde la lista, del caso al dictamen en PDF"
   // 6. Los números: la verificación con las medidas del reporte reproduce la EBS de la Tacoma.
   await irAPaso(page, 6);
   await expect(page.getByTestId("verificacion-cesvi")).toContainText("63.90 km/h");
+  // Lo que el reporte no trae va como supuesto declarado, con su justificación (ADR 0091).
+  await expect(page.getByTestId("supuestos")).toContainText(
+    "Ficha técnica de Chevrolet Silverado 2500 2007",
+  );
 
   // 7. Contra el reporte de CESVI: la misma modalidad y cada número del reporte con el de Croquis,
   // su diferencia y su porcentaje.

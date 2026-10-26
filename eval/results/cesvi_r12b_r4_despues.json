@@ -1,5 +1,5 @@
 {
- "fecha": "2026-10-26T22:18:38.124Z",
+ "fecha": "2026-10-26T23:39:24.103Z",
  "particion": "prueba",
  "descripcion": "E-R4: a Croquis se le da solo la narración sin conclusiones (R0); Claude la lee a escena como en «Caso nuevo» (R1) y Croquis la compara con lo que concluyó CESVI (R0). Líneas base: la modalidad más frecuente y la velocidad promedio por deformación, de desarrollo.",
  "version_prompt": "escena-narracion-v2",
@@ -12,7 +12,7 @@
  "sin_leer": [],
  "escenas_validas": 205,
  "reconstruidas_en_3d": 205,
- "ms_mediana": 295,
+ "ms_mediana": 323,
  "costo_lecturas_usd": 2.6626,
  "resumen": {
   "dictamenes": 205,
@@ -221,11 +221,11 @@
    "reconstruccion": {
     "reconstruida": true,
     "en_3d": true,
-    "ms": 231
+    "ms": 221
    },
    "costo_usd": 0.0108288,
    "bitacora": {
-    "mensajes": 9,
+    "mensajes": 10,
     "relectura_pedida": false
    }
   },
@@ -261,11 +261,11 @@
    "reconstruccion": {
     "reconstruida": true,
     "en_3d": true,
-    "ms": 438
+    "ms": 431
    },
    "costo_usd": 0.0115228,
    "bitacora": {
-    "mensajes": 9,
+    "mensajes": 10,
     "relectura_pedida": false
    }
   },
@@ -301,11 +301,11 @@
    "reconstruccion": {
     "reconstruida": true,
     "en_3d": true,
-    "ms": 344
+    "ms": 337
    },
    "costo_usd": 0.0157608,
    "bitacora": {
-    "mensajes": 9,
+    "mensajes": 10,
     "relectura_pedida": false
    }
   },
@@ -341,11 +341,11 @@
    "reconstruccion": {
     "reconstruida": true,
     "en_3d": true,
-    "ms": 309
+    "ms": 301
    },
    "costo_usd": 0.0120968,
    "bitacora": {
-    "mensajes": 9,
+    "mensajes": 10,
     "relectura_pedida": false
    }
   },
@@ -385,7 +385,7 @@
    },
    "costo_usd": 0.0113178,
    "bitacora": {
-    "mensajes": 9,
+    "mensajes": 10,
     "relectura_pedida": false
    }
   },
@@ -421,11 +421,11 @@
    "reconstruccion": {
     "reconstruida": true,
     "en_3d": true,
-    "ms": 15
+    "ms": 17
    },
    "costo_usd": 0.0207828,
    "bitacora": {
-    "mensajes": 9,
+    "mensajes": 10,
     "relectura_pedida": false
    }
   },
@@ -465,7 +465,7 @@
    },
    "costo_usd": 0.0137028,
    "bitacora": {
-    "mensajes": 9,
+    "mensajes": 10,
     "relectura_pedida": false
    }
   },
@@ -501,11 +501,11 @@
    "reconstruccion": {
     "reconstruida": true,
     "en_3d": true,
-    "ms": 322
+    "ms": 323
    },
    "costo_usd": 0.0145388,
    "bitacora": {
-    "mensajes": 9,
+    "mensajes": 10,
     "relectura_pedida": false
    }
   },
@@ -541,11 +541,11 @@
    "reconstruccion": {
     "reconstruida": true,
     "en_3d": true,
-    "ms": 363
+    "ms": 342
    },
    "costo_usd": 0.0078198,
    "bitacora": {
-    "mensajes": 9,
+    "mensajes": 10,
     "relectura_pedida": false
    }
   },
@@ -581,11 +581,11 @@
    "reconstruccion": {
     "reconstruida": true,
     "en_3d": true,
-    "ms": 17
+    "ms": 15
    },
    "costo_usd": 0.0049538,
    "bitacora": {
-    "mensajes": 9,
+    "mensajes": 10,
     "relectura_pedida": false
    }
   },
@@ -621,11 +621,11 @@
    "reconstruccion": {
     "reconstruida": true,
     "en_3d": true,
-    "ms": 258
+    "ms": 276
    },
    "costo_usd": 0.0129038,
    "bitacora": {
-    "mensajes": 9,
+    "mensajes": 10,
     "relectura_pedida": false
    }
   },
@@ -661,11 +661,11 @@
    "reconstruccion": {
     "reconstruida": true,
     "en_3d": true,
-    "ms": 303
+    "ms": 292
    },
    "costo_usd": 0.0152158,
    "bitacora": {
-    "mensajes": 9,
+    "mensajes": 10,
     "relectura_pedida": false
    }
   },
@@ -701,11 +701,11 @@
    "reconstruccion": {
     "reconstruida": true,
     "en_3d": true,
-    "ms": 295
+    "ms": 285
    },
    "costo_usd": 0.0154398,
    "bitacora": {
-    "mensajes": 9,
+    "mensajes": 10,
     "relectura_pedida": false
    }
   },
@@ -741,11 +741,11 @@
    "reconstruccion": {
     "reconstruida": true,
     "en_3d": true,
-    "ms": 288
+    "ms": 302
    },
    "costo_usd": 0.0168908,
    "bitacora": {
-    "mensajes": 9,
+    "mensajes": 10,
     "relectura_pedida": false
    }
   },
@@ -781,11 +781,11 @@
    "reconstruccion": {
     "reconstruida": true,
     "en_3d": true,
-    "ms": 140
+    "ms": 134
    },
    "costo_usd": 0.0036518,
    "bitacora": {
-    "mensajes": 9,
+    "mensajes": 10,
     "relectura_pedida": false
    }
   },
@@ -821,11 +821,11 @@
    "reconstruccion": {
     "reconstruida": true,
     "en_3d": true,
-    "ms": 296
+    "ms": 291
    },
    "costo_usd": 0.0095488,
    "bitacora": {
-    "mensajes": 9,
+    "mensajes": 10,
     "relectura_pedida": false
    }
   },
@@ -861,11 +861,11 @@
    "reconstruccion": {
     "reconstruida": true,
     "en_3d": true,
-    "ms": 291
+    "ms": 284
    },
    "costo_usd": 0.0146388,
    "bitacora": {
-    "mensajes": 9,
+    "mensajes": 10,
     "relectura_pedida": false
    }
   },
@@ -905,7 +905,7 @@
    },
    "costo_usd": 0.0072478,
    "bitacora": {
-    "mensajes": 9,
+    "mensajes": 10,
     "relectura_pedida": false
    }
   },
@@ -950,11 +950,11 @@
    "reconstruccion": {
     "reconstruida": true,
     "en_3d": true,
-    "ms": 647
+    "ms": 618
    },
    "costo_usd": 0.0122298,
    "bitacora": {
-    "mensajes": 9,
+    "mensajes": 10,
     "relectura_pedida": false
    }
   },
@@ -990,11 +990,11 @@
    "reconstruccion": {
     "reconstruida": true,
     "en_3d": true,
-    "ms": 621
+    "ms": 594
    },
    "costo_usd": 0.0176408,
    "bitacora": {
-    "mensajes": 9,
+    "mensajes": 10,
     "relectura_pedida": false
    }
   },
@@ -1030,11 +1030,11 @@
    "reconstruccion": {
     "reconstruida": true,
     "en_3d": true,
-    "ms": 289
+    "ms": 318
    },
    "costo_usd": 0.0190888,
    "bitacora": {
-    "mensajes": 9,
+    "mensajes": 10,
     "relectura_pedida": false
    }
   },
@@ -1070,11 +1070,11 @@
    "reconstruccion": {
     "reconstruida": true,
     "en_3d": true,
-    "ms": 363
+    "ms": 367
    },
    "costo_usd": 0.0070488,
    "bitacora": {
-    "mensajes": 9,
+    "mensajes": 10,
     "relectura_pedida": false
    }
   },
@@ -1110,11 +1110,11 @@
    "reconstruccion": {
     "reconstruida": true,
     "en_3d": true,
-    "ms": 14
+    "ms": 16
    },
    "costo_usd": 0.0128708,
    "bitacora": {
-    "mensajes": 9,
+    "mensajes": 10,
     "relectura_pedida": false
    }
   },
@@ -1150,11 +1150,11 @@
    "reconstruccion": {
     "reconstruida": true,
     "en_3d": true,
-    "ms": 14
+    "ms": 16
    },
    "costo_usd": 0.0019438,
    "bitacora": {
-    "mensajes": 9,
+    "mensajes": 10,
     "relectura_pedida": false
    }
   },
@@ -1190,11 +1190,11 @@
    "reconstruccion": {
     "reconstruida": true,
     "en_3d": true,
-    "ms": 119
+    "ms": 143
    },
    "costo_usd": 0.0077748,
    "bitacora": {
-    "mensajes": 9,
+    "mensajes": 10,
     "relectura_pedida": false
    }
   },
@@ -1230,11 +1230,11 @@
    "reconstruccion": {
     "reconstruida": true,
     "en_3d": true,
-    "ms": 310
+    "ms": 344
    },
    "costo_usd": 0.0139698,
    "bitacora": {
-    "mensajes": 9,
+    "mensajes": 10,
     "relectura_pedida": false
    }
   },
@@ -1270,11 +1270,11 @@
    "reconstruccion": {
     "reconstruida": true,
     "en_3d": true,
-    "ms": 14
+    "ms": 18
    },
    "costo_usd": 0.0105238,
    "bitacora": {
-    "mensajes": 9,
+    "mensajes": 10,
     "relectura_pedida": false
    }
   },
@@ -1310,11 +1310,11 @@
    "reconstruccion": {
     "reconstruida": true,
     "en_3d": true,
-    "ms": 293
+    "ms": 406
    },
    "costo_usd": 0.0174368,
    "bitacora": {
-    "mensajes": 9,
+    "mensajes": 10,
     "relectura_pedida": false
    }
   },
@@ -1350,11 +1350,11 @@
    "reconstruccion": {
     "reconstruida": true,
     "en_3d": true,
-    "ms": 14
+    "ms": 20
    },
    "costo_usd": 0.0059298,
    "bitacora": {
-    "mensajes": 9,
+    "mensajes": 10,
     "relectura_pedida": false
    }
   },
@@ -1390,11 +1390,11 @@
    "reconstruccion": {
     "reconstruida": true,
     "en_3d": true,
-    "ms": 302
+    "ms": 406
    },
    "costo_usd": 0.0096808,
    "bitacora": {
-    "mensajes": 9,
+    "mensajes": 10,
     "relectura_pedida": false
    }
   },
@@ -1430,11 +1430,11 @@
    "reconstruccion": {
     "reconstruida": true,
     "en_3d": true,
-    "ms": 15
+    "ms": 19
    },
    "costo_usd": 0.0036578,
    "bitacora": {
-    "mensajes": 9,
+    "mensajes": 10,
     "relectura_pedida": false
    }
   },
@@ -1470,11 +1470,11 @@
    "reconstruccion": {
     "reconstruida": true,
     "en_3d": true,
-    "ms": 316
+    "ms": 366
    },
    "costo_usd": 0.0177768,
    "bitacora": {
-    "mensajes": 9,
+    "mensajes": 10,
     "relectura_pedida": false
    }
   },
@@ -1510,11 +1510,11 @@
    "reconstruccion": {
     "reconstruida": true,
     "en_3d": true,
-    "ms": 328
+    "ms": 349
    },
    "costo_usd": 0.0192478,
    "bitacora": {
-    "mensajes": 9,
+    "mensajes": 10,
     "relectura_pedida": false
    }
   },
@@ -1550,11 +1550,11 @@
    "reconstruccion": {
     "reconstruida": true,
     "en_3d": true,
-    "ms": 15
+    "ms": 16
    },
    "costo_usd": 0.0079488,
    "bitacora": {
-    "mensajes": 9,
+    "mensajes": 10,
     "relectura_pedida": false
    }
   },
@@ -1590,11 +1590,11 @@
    "reconstruccion": {
     "reconstruida": true,
     "en_3d": true,
-    "ms": 335
+    "ms": 328
    },
    "costo_usd": 0.0146988,
    "bitacora": {
-    "mensajes": 9,
+    "mensajes": 10,
     "relectura_pedida": false
    }
   },
@@ -1630,11 +1630,11 @@
    "reconstruccion": {
     "reconstruida": true,
     "en_3d": true,
-    "ms": 426
+    "ms": 425
    },
    "costo_usd": 0.0099018,
    "bitacora": {
-    "mensajes": 9,
+    "mensajes": 10,
     "relectura_pedida": false
    }
   },
@@ -1670,11 +1670,11 @@
    "reconstruccion": {
     "reconstruida": true,
     "en_3d": true,
-    "ms": 638
+    "ms": 623
    },
    "costo_usd": 0.0206668,
    "bitacora": {
-    "mensajes": 9,
+    "mensajes": 10,
     "relectura_pedida": false
    }
   },
@@ -1710,11 +1710,11 @@
    "reconstruccion": {
     "reconstruida": true,
     "en_3d": true,
-    "ms": 151
+    "ms": 149
    },
    "costo_usd": 0.0126798,
    "bitacora": {
-    "mensajes": 9,
+    "mensajes": 10,
     "relectura_pedida": false
    }
   },
@@ -1750,11 +1750,11 @@
    "reconstruccion": {
     "reconstruida": true,
     "en_3d": true,
-    "ms": 340
+    "ms": 330
    },
    "costo_usd": 0.0103518,
    "bitacora": {
-    "mensajes": 9,
+    "mensajes": 10,
     "relectura_pedida": false
    }
   },
@@ -1790,11 +1790,11 @@
    "reconstruccion": {
     "reconstruida": true,
     "en_3d": true,
-    "ms": 16
+    "ms": 17
    },
    "costo_usd": 0.0021228,
    "bitacora": {
-    "mensajes": 9,
+    "mensajes": 10,
     "relectura_pedida": false
    }
   },
@@ -1830,11 +1830,11 @@
    "reconstruccion": {
     "reconstruida": true,
     "en_3d": true,
-    "ms": 343
+    "ms": 327
    },
    "costo_usd": 0.0153248,
    "bitacora": {
-    "mensajes": 9,
+    "mensajes": 10,
     "relectura_pedida": false
    }
   },
@@ -1870,11 +1870,11 @@
    "reconstruccion": {
     "reconstruida": true,
     "en_3d": true,
-    "ms": 332
+    "ms": 318
    },
    "costo_usd": 0.0170958,
    "bitacora": {
-    "mensajes": 9,
+    "mensajes": 10,
     "relectura_pedida": false
    }
   },
@@ -1910,11 +1910,11 @@
    "reconstruccion": {
     "reconstruida": true,
     "en_3d": true,
-    "ms": 207
+    "ms": 204
    },
    "costo_usd": 0.0085598,
    "bitacora": {
-    "mensajes": 9,
+    "mensajes": 10,
     "relectura_pedida": false
    }
   },
@@ -1950,11 +1950,11 @@
    "reconstruccion": {
     "reconstruida": true,
     "en_3d": true,
-    "ms": 333
+    "ms": 328
    },
    "costo_usd": 0.0123158,
    "bitacora": {
-    "mensajes": 9,
+    "mensajes": 10,
     "relectura_pedida": false
    }
   },
@@ -1990,11 +1990,11 @@
    "reconstruccion": {
     "reconstruida": true,
     "en_3d": true,
-    "ms": 15
+    "ms": 16
    },
    "costo_usd": 0.0134898,
    "bitacora": {
-    "mensajes": 9,
+    "mensajes": 10,
     "relectura_pedida": false
    }
   },
@@ -2030,11 +2030,11 @@
    "reconstruccion": {
     "reconstruida": true,
     "en_3d": true,
-    "ms": 339
+    "ms": 332
    },
    "costo_usd": 0.0123618,
    "bitacora": {
-    "mensajes": 9,
+    "mensajes": 10,
     "relectura_pedida": false
    }
   },
@@ -2070,11 +2070,11 @@
    "reconstruccion": {
     "reconstruida": true,
     "en_3d": true,
-    "ms": 342
+    "ms": 332
    },
    "costo_usd": 0.0107178,
    "bitacora": {
-    "mensajes": 9,
+    "mensajes": 10,
     "relectura_pedida": false
    }
   },
@@ -2110,11 +2110,11 @@
    "reconstruccion": {
     "reconstruida": true,
     "en_3d": true,
-    "ms": 425
+    "ms": 414
    },
    "costo_usd": 0.0173858,
    "bitacora": {
-    "mensajes": 9,
+    "mensajes": 10,
     "relectura_pedida": false
    }
   },
@@ -2150,11 +2150,11 @@
    "reconstruccion": {
     "reconstruida": true,
     "en_3d": true,
-    "ms": 332
+    "ms": 324
    },
    "costo_usd": 0.0143798,
    "bitacora": {
-    "mensajes": 9,
+    "mensajes": 10,
     "relectura_pedida": false
    }
   },
@@ -2190,11 +2190,11 @@
    "reconstruccion": {
     "reconstruida": true,
     "en_3d": true,
-    "ms": 346
+    "ms": 329
    },
    "costo_usd": 0.0132428,
    "bitacora": {
-    "mensajes": 9,
+    "mensajes": 10,
     "relectura_pedida": false
    }
   },
@@ -2230,11 +2230,11 @@
    "reconstruccion": {
     "reconstruida": true,
     "en_3d": true,
-    "ms": 576
+    "ms": 562
    },
    "costo_usd": 0.0180388,
    "bitacora": {
-    "mensajes": 9,
+    "mensajes": 10,
     "relectura_pedida": false
    }
   },
@@ -2270,11 +2270,11 @@
    "reconstruccion": {
     "reconstruida": true,
     "en_3d": true,
-    "ms": 414
+    "ms": 417
    },
    "costo_usd": 0.0175708,
    "bitacora": {
-    "mensajes": 9,
+    "mensajes": 10,
     "relectura_pedida": false
    }
   },
@@ -2310,11 +2310,11 @@
    "reconstruccion": {
     "reconstruida": true,
     "en_3d": true,
-    "ms": 402
+    "ms": 377
    },
    "costo_usd": 0.0111228,
    "bitacora": {
-    "mensajes": 9,
+    "mensajes": 10,
     "relectura_pedida": false
    }
   },
@@ -2350,11 +2350,11 @@
    "reconstruccion": {
     "reconstruida": true,
     "en_3d": true,
-    "ms": 455
+    "ms": 458
    },
    "costo_usd": 0.0100318,
    "bitacora": {
-    "mensajes": 9,
+    "mensajes": 10,
     "relectura_pedida": false
    }
   },
@@ -2390,11 +2390,11 @@
    "reconstruccion": {
     "reconstruida": true,
     "en_3d": true,
-    "ms": 17
+    "ms": 20
    },
    "costo_usd": 0.0177068,
    "bitacora": {
-    "mensajes": 9,
+    "mensajes": 10,
     "relectura_pedida": false
    }
   },
@@ -2430,11 +2430,11 @@
    "reconstruccion": {
     "reconstruida": true,
     "en_3d": true,
-    "ms": 186
+    "ms": 195
    },
    "costo_usd": 0.0116238,
    "bitacora": {
-    "mensajes": 9,
+    "mensajes": 10,
     "relectura_pedida": false
    }
   },
@@ -2470,11 +2470,11 @@
    "reconstruccion": {
     "reconstruida": true,
     "en_3d": true,
-    "ms": 347
+    "ms": 341
    },
    "costo_usd": 0.0137808,
    "bitacora": {
-    "mensajes": 11,
+    "mensajes": 12,
     "relectura_pedida": true
    }
   },
@@ -2510,11 +2510,11 @@
    "reconstruccion": {
     "reconstruida": true,
     "en_3d": true,
-    "ms": 338
+    "ms": 328
    },
    "costo_usd": 0.0155248,
    "bitacora": {
-    "mensajes": 9,
+    "mensajes": 10,
     "relectura_pedida": false
    }
   },
@@ -2550,11 +2550,11 @@
    "reconstruccion": {
     "reconstruida": true,
     "en_3d": true,
-    "ms": 20
+    "ms": 17
    },
    "costo_usd": 0.0036878,
    "bitacora": {
-    "mensajes": 9,
+    "mensajes": 10,
     "relectura_pedida": false
    }
   },
@@ -2590,11 +2590,11 @@
    "reconstruccion": {
     "reconstruida": true,
     "en_3d": true,
-    "ms": 338
+    "ms": 335
    },
    "costo_usd": 0.0174708,
    "bitacora": {
-    "mensajes": 9,
+    "mensajes": 10,
     "relectura_pedida": false
    }
   },
@@ -2630,11 +2630,11 @@
    "reconstruccion": {
     "reconstruida": true,
     "en_3d": true,
-    "ms": 205
+    "ms": 196
    },
    "costo_usd": 0.0160688,
    "bitacora": {
-    "mensajes": 9,
+    "mensajes": 10,
     "relectura_pedida": false
    }
   },
@@ -2670,11 +2670,11 @@
    "reconstruccion": {
     "reconstruida": true,
     "en_3d": true,
-    "ms": 15
+    "ms": 16
    },
    "costo_usd": 0.0156948,
    "bitacora": {
-    "mensajes": 9,
+    "mensajes": 10,
     "relectura_pedida": false
    }
   },
@@ -2710,11 +2710,11 @@
    "reconstruccion": {
     "reconstruida": true,
     "en_3d": true,
-    "ms": 15
+    "ms": 16
    },
    "costo_usd": 0.0126458,
    "bitacora": {
-    "mensajes": 9,
+    "mensajes": 10,
     "relectura_pedida": false
    }
   },
@@ -2750,11 +2750,11 @@
    "reconstruccion": {
     "reconstruida": true,
     "en_3d": true,
-    "ms": 329
+    "ms": 333
    },
    "costo_usd": 0.0181438,
    "bitacora": {
-    "mensajes": 9,
+    "mensajes": 10,
     "relectura_pedida": false
    }
   },
@@ -2799,11 +2799,11 @@
    "reconstruccion": {
     "reconstruida": true,
     "en_3d": true,
-    "ms": 338
+    "ms": 330
    },
    "costo_usd": 0.0164568,
    "bitacora": {
-    "mensajes": 9,
+    "mensajes": 10,
     "relectura_pedida": false
    }
   },
@@ -2839,11 +2839,11 @@
    "reconstruccion": {
     "reconstruida": true,
     "en_3d": true,
-    "ms": 312
+    "ms": 353
    },
    "costo_usd": 0.0204498,
    "bitacora": {
-    "mensajes": 9,
+    "mensajes": 10,
     "relectura_pedida": false
    }
   },
@@ -2879,11 +2879,11 @@
    "reconstruccion": {
     "reconstruida": true,
     "en_3d": true,
-    "ms": 13
+    "ms": 16
    },
    "costo_usd": 0.0077508,
    "bitacora": {
-    "mensajes": 9,
+    "mensajes": 10,
     "relectura_pedida": false
    }
   },
@@ -2919,11 +2919,11 @@
    "reconstruccion": {
     "reconstruida": true,
     "en_3d": true,
-    "ms": 291
+    "ms": 328
    },
    "costo_usd": 0.0211088,
    "bitacora": {
-    "mensajes": 9,
+    "mensajes": 10,
     "relectura_pedida": false
    }
   },
@@ -2959,11 +2959,11 @@
    "reconstruccion": {
     "reconstruida": true,
     "en_3d": true,
-    "ms": 14
+    "ms": 16
    },
    "costo_usd": 0.0137098,
    "bitacora": {
-    "mensajes": 9,
+    "mensajes": 10,
     "relectura_pedida": false
    }
   },
@@ -2999,11 +2999,11 @@
    "reconstruccion": {
     "reconstruida": true,
     "en_3d": true,
-    "ms": 299
+    "ms": 328
    },
    "costo_usd": 0.0151038,
    "bitacora": {
-    "mensajes": 9,
+    "mensajes": 10,
     "relectura_pedida": false
    }
   },
@@ -3039,11 +3039,11 @@
    "reconstruccion": {
     "reconstruida": true,
     "en_3d": true,
-    "ms": 300
+    "ms": 336
    },
    "costo_usd": 0.0161378,
    "bitacora": {
-    "mensajes": 9,
+    "mensajes": 10,
     "relectura_pedida": false
    }
   },
@@ -3079,11 +3079,11 @@
    "reconstruccion": {
     "reconstruida": true,
     "en_3d": true,
-    "ms": 13
+    "ms": 16
    },
    "costo_usd": 0.0087328,
    "bitacora": {
-    "mensajes": 9,
+    "mensajes": 10,
     "relectura_pedida": false
    }
   },
@@ -3119,11 +3119,11 @@
    "reconstruccion": {
     "reconstruida": true,
     "en_3d": true,
-    "ms": 293
+    "ms": 322
    },
    "costo_usd": 0.0145928,
    "bitacora": {
-    "mensajes": 9,
+    "mensajes": 10,
     "relectura_pedida": false
    }
   },
@@ -3159,11 +3159,11 @@
    "reconstruccion": {
     "reconstruida": true,
     "en_3d": true,
-    "ms": 14
+    "ms": 15
    },
    "costo_usd": 0.0151608,
    "bitacora": {
-    "mensajes": 9,
+    "mensajes": 10,
     "relectura_pedida": false
    }
   },
@@ -3199,11 +3199,11 @@
    "reconstruccion": {
     "reconstruida": true,
     "en_3d": true,
-    "ms": 14
+    "ms": 15
    },
    "costo_usd": 0.0077098,
    "bitacora": {
-    "mensajes": 9,
+    "mensajes": 10,
     "relectura_pedida": false
    }
   },
@@ -3239,11 +3239,11 @@
    "reconstruccion": {
     "reconstruida": true,
     "en_3d": true,
-    "ms": 14
+    "ms": 15
    },
    "costo_usd": 0.0114298,
    "bitacora": {
-    "mensajes": 9,
+    "mensajes": 10,
     "relectura_pedida": false
    }
   },
@@ -3279,11 +3279,11 @@
    "reconstruccion": {
     "reconstruida": true,
     "en_3d": true,
-    "ms": 14
+    "ms": 15
    },
    "costo_usd": 0.0121118,
    "bitacora": {
-    "mensajes": 9,
+    "mensajes": 10,
     "relectura_pedida": false
    }
   },
@@ -3319,11 +3319,11 @@
    "reconstruccion": {
     "reconstruida": true,
     "en_3d": true,
-    "ms": 296
+    "ms": 336
    },
    "costo_usd": 0.0144378,
    "bitacora": {
-    "mensajes": 9,
+    "mensajes": 10,
     "relectura_pedida": false
    }
   },
@@ -3359,11 +3359,11 @@
    "reconstruccion": {
     "reconstruida": true,
     "en_3d": true,
-    "ms": 288
+    "ms": 331
    },
    "costo_usd": 0.0127628,
    "bitacora": {
-    "mensajes": 9,
+    "mensajes": 10,
     "relectura_pedida": false
    }
   },
@@ -3399,11 +3399,11 @@
    "reconstruccion": {
     "reconstruida": true,
     "en_3d": true,
-    "ms": 286
+    "ms": 322
    },
    "costo_usd": 0.0147058,
    "bitacora": {
-    "mensajes": 9,
+    "mensajes": 10,
     "relectura_pedida": false
    }
   },
@@ -3439,11 +3439,11 @@
    "reconstruccion": {
     "reconstruida": true,
     "en_3d": true,
-    "ms": 13
+    "ms": 17
    },
    "costo_usd": 0.0174008,
    "bitacora": {
-    "mensajes": 9,
+    "mensajes": 10,
     "relectura_pedida": false
    }
   },
@@ -3479,11 +3479,11 @@
    "reconstruccion": {
     "reconstruida": true,
     "en_3d": true,
-    "ms": 121
+    "ms": 146
    },
    "costo_usd": 0.0085478,
    "bitacora": {
-    "mensajes": 9,
+    "mensajes": 10,
     "relectura_pedida": false
    }
   },
@@ -3519,11 +3519,11 @@
    "reconstruccion": {
     "reconstruida": true,
     "en_3d": true,
-    "ms": 13
+    "ms": 16
    },
    "costo_usd": 0.0075398,
    "bitacora": {
-    "mensajes": 9,
+    "mensajes": 10,
     "relectura_pedida": false
    }
   },
@@ -3559,11 +3559,11 @@
    "reconstruccion": {
     "reconstruida": true,
     "en_3d": true,
-    "ms": 478
+    "ms": 542
    },
    "costo_usd": 0.0174168,
    "bitacora": {
-    "mensajes": 9,
+    "mensajes": 10,
     "relectura_pedida": false
    }
   },
@@ -3599,11 +3599,11 @@
    "reconstruccion": {
     "reconstruida": true,
     "en_3d": true,
-    "ms": 13
+    "ms": 15
    },
    "costo_usd": 0.0043178,
    "bitacora": {
-    "mensajes": 9,
+    "mensajes": 10,
     "relectura_pedida": false
    }
   },
@@ -3639,11 +3639,11 @@
    "reconstruccion": {
     "reconstruida": true,
     "en_3d": true,
-    "ms": 469
+    "ms": 530
    },
    "costo_usd": 0.0128148,
    "bitacora": {
-    "mensajes": 9,
+    "mensajes": 10,
     "relectura_pedida": false
    }
   },
@@ -3679,11 +3679,11 @@
    "reconstruccion": {
     "reconstruida": true,
     "en_3d": true,
-    "ms": 296
+    "ms": 314
    },
    "costo_usd": 0.0081078,
    "bitacora": {
-    "mensajes": 9,
+    "mensajes": 10,
     "relectura_pedida": false
    }
   },
@@ -3719,11 +3719,11 @@
    "reconstruccion": {
     "reconstruida": true,
     "en_3d": true,
-    "ms": 282
+    "ms": 313
    },
    "costo_usd": 0.0109578,
    "bitacora": {
-    "mensajes": 9,
+    "mensajes": 10,
     "relectura_pedida": false
    }
   },
@@ -3759,11 +3759,11 @@
    "reconstruccion": {
     "reconstruida": true,
     "en_3d": true,
-    "ms": 267
+    "ms": 310
    },
    "costo_usd": 0.0147298,
    "bitacora": {
-    "mensajes": 9,
+    "mensajes": 10,
     "relectura_pedida": false
    }
   },
@@ -3799,11 +3799,11 @@
    "reconstruccion": {
     "reconstruida": true,
     "en_3d": true,
-    "ms": 341
+    "ms": 379
    },
    "costo_usd": 0.0111068,
    "bitacora": {
-    "mensajes": 9,
+    "mensajes": 10,
     "relectura_pedida": false
    }
   },
@@ -3839,11 +3839,11 @@
    "reconstruccion": {
     "reconstruida": true,
     "en_3d": true,
-    "ms": 348
+    "ms": 403
    },
    "costo_usd": 0.0117898,
    "bitacora": {
-    "mensajes": 9,
+    "mensajes": 10,
     "relectura_pedida": false
    }
   },
@@ -3879,11 +3879,11 @@
    "reconstruccion": {
     "reconstruida": true,
     "en_3d": true,
-    "ms": 409
+    "ms": 470
    },
    "costo_usd": 0.0193328,
    "bitacora": {
-    "mensajes": 9,
+    "mensajes": 10,
     "relectura_pedida": false
    }
   },
@@ -3919,11 +3919,11 @@
    "reconstruccion": {
     "reconstruida": true,
     "en_3d": true,
-    "ms": 287
+    "ms": 338
    },
    "costo_usd": 0.0153488,
    "bitacora": {
-    "mensajes": 9,
+    "mensajes": 10,
     "relectura_pedida": false
    }
   },
@@ -3959,11 +3959,11 @@
    "reconstruccion": {
     "reconstruida": true,
     "en_3d": true,
-    "ms": 279
+    "ms": 325
    },
    "costo_usd": 0.0309168,
    "bitacora": {
-    "mensajes": 9,
+    "mensajes": 10,
     "relectura_pedida": false
    }
   },
@@ -3999,11 +3999,11 @@
    "reconstruccion": {
     "reconstruida": true,
     "en_3d": true,
-    "ms": 2203
+    "ms": 2530
    },
    "costo_usd": 0.0262208,
    "bitacora": {
-    "mensajes": 9,
+    "mensajes": 10,
     "relectura_pedida": false
    }
   },
@@ -4039,11 +4039,11 @@
    "reconstruccion": {
     "reconstruida": true,
     "en_3d": true,
-    "ms": 1568
+    "ms": 1713
    },
    "costo_usd": 0.0231638,
    "bitacora": {
-    "mensajes": 9,
+    "mensajes": 10,
     "relectura_pedida": false
    }
   },
@@ -4079,11 +4079,11 @@
    "reconstruccion": {
     "reconstruida": true,
     "en_3d": true,
-    "ms": 379
+    "ms": 428
    },
    "costo_usd": 0.0165418,
    "bitacora": {
-    "mensajes": 9,
+    "mensajes": 10,
     "relectura_pedida": false
    }
   },
@@ -4119,11 +4119,11 @@
    "reconstruccion": {
     "reconstruida": true,
     "en_3d": true,
-    "ms": 286
+    "ms": 320
    },
    "costo_usd": 0.0131018,
    "bitacora": {
-    "mensajes": 9,
+    "mensajes": 10,
     "relectura_pedida": false
    }
   },
@@ -4159,11 +4159,11 @@
    "reconstruccion": {
     "reconstruida": true,
     "en_3d": true,
-    "ms": 279
+    "ms": 309
    },
    "costo_usd": 0.0210368,
    "bitacora": {
-    "mensajes": 9,
+    "mensajes": 10,
     "relectura_pedida": false
    }
   },
@@ -4199,11 +4199,11 @@
    "reconstruccion": {
     "reconstruida": true,
     "en_3d": true,
-    "ms": 172
+    "ms": 181
    },
    "costo_usd": 0.0081808,
    "bitacora": {
-    "mensajes": 9,
+    "mensajes": 10,
     "relectura_pedida": false
    }
   },
@@ -4239,11 +4239,11 @@
    "reconstruccion": {
     "reconstruida": true,
     "en_3d": true,
-    "ms": 361
+    "ms": 388
    },
    "costo_usd": 0.0184568,
    "bitacora": {
-    "mensajes": 9,
+    "mensajes": 10,
     "relectura_pedida": false
    }
   },
@@ -4279,11 +4279,11 @@
    "reconstruccion": {
     "reconstruida": true,
     "en_3d": true,
-    "ms": 378
+    "ms": 400
    },
    "costo_usd": 0.0134258,
    "bitacora": {
-    "mensajes": 9,
+    "mensajes": 10,
     "relectura_pedida": false
    }
   },
@@ -4319,11 +4319,11 @@
    "reconstruccion": {
     "reconstruida": true,
     "en_3d": true,
-    "ms": 15
+    "ms": 16
    },
    "costo_usd": 0.0098488,
    "bitacora": {
-    "mensajes": 9,
+    "mensajes": 10,
     "relectura_pedida": false
    }
   },
@@ -4359,11 +4359,11 @@
    "reconstruccion": {
     "reconstruida": true,
     "en_3d": true,
-    "ms": 287
+    "ms": 327
    },
    "costo_usd": 0.0119968,
    "bitacora": {
-    "mensajes": 9,
+    "mensajes": 10,
     "relectura_pedida": false
    }
   },
@@ -4399,11 +4399,11 @@
    "reconstruccion": {
     "reconstruida": true,
     "en_3d": true,
-    "ms": 399
+    "ms": 425
    },
    "costo_usd": 0.0134238,
    "bitacora": {
-    "mensajes": 9,
+    "mensajes": 10,
     "relectura_pedida": false
    }
   },
@@ -4439,11 +4439,11 @@
    "reconstruccion": {
     "reconstruida": true,
     "en_3d": true,
-    "ms": 426
+    "ms": 454
    },
    "costo_usd": 0.0313678,
    "bitacora": {
-    "mensajes": 9,
+    "mensajes": 10,
     "relectura_pedida": false
    }
   },
@@ -4479,11 +4479,11 @@
    "reconstruccion": {
     "reconstruida": true,
     "en_3d": true,
-    "ms": 14
+    "ms": 16
    },
    "costo_usd": 0.0110568,
    "bitacora": {
-    "mensajes": 9,
+    "mensajes": 10,
     "relectura_pedida": false
    }
   },
@@ -4519,11 +4519,11 @@
    "reconstruccion": {
     "reconstruida": true,
     "en_3d": true,
-    "ms": 301
+    "ms": 329
    },
    "costo_usd": 0.0125058,
    "bitacora": {
-    "mensajes": 9,
+    "mensajes": 10,
     "relectura_pedida": false
    }
   },
@@ -4559,11 +4559,11 @@
    "reconstruccion": {
     "reconstruida": true,
     "en_3d": true,
-    "ms": 13
+    "ms": 15
    },
    "costo_usd": 0.0104098,
    "bitacora": {
-    "mensajes": 9,
+    "mensajes": 10,
     "relectura_pedida": false
    }
   },
@@ -4599,11 +4599,11 @@
    "reconstruccion": {
     "reconstruida": true,
     "en_3d": true,
-    "ms": 293
+    "ms": 329
    },
    "costo_usd": 0.0145028,
    "bitacora": {
-    "mensajes": 9,
+    "mensajes": 10,
     "relectura_pedida": false
    }
   },
@@ -4639,11 +4639,11 @@
    "reconstruccion": {
     "reconstruida": true,
     "en_3d": true,
-    "ms": 14
+    "ms": 17
    },
    "costo_usd": 0.0166578,
    "bitacora": {
-    "mensajes": 9,
+    "mensajes": 10,
     "relectura_pedida": false
    }
   },
@@ -4679,11 +4679,11 @@
    "reconstruccion": {
     "reconstruida": true,
     "en_3d": true,
-    "ms": 14
+    "ms": 19
    },
    "costo_usd": 0.0087248,
    "bitacora": {
-    "mensajes": 9,
+    "mensajes": 10,
     "relectura_pedida": false
    }
   },
@@ -4719,11 +4719,11 @@
    "reconstruccion": {
     "reconstruida": true,
     "en_3d": true,
-    "ms": 289
+    "ms": 372
    },
    "costo_usd": 0.0113148,
    "bitacora": {
-    "mensajes": 9,
+    "mensajes": 10,
     "relectura_pedida": false
    }
   },
@@ -4759,11 +4759,11 @@
    "reconstruccion": {
     "reconstruida": true,
     "en_3d": true,
-    "ms": 401
+    "ms": 549
    },
    "costo_usd": 0.0133168,
    "bitacora": {
-    "mensajes": 9,
+    "mensajes": 10,
     "relectura_pedida": false
    }
   },
@@ -4799,11 +4799,11 @@
    "reconstruccion": {
     "reconstruida": true,
     "en_3d": true,
-    "ms": 295
+    "ms": 407
    },
    "costo_usd": 0.0125498,
    "bitacora": {
-    "mensajes": 9,
+    "mensajes": 10,
     "relectura_pedida": false
    }
   },
@@ -4839,11 +4839,11 @@
    "reconstruccion": {
     "reconstruida": true,
     "en_3d": true,
-    "ms": 360
+    "ms": 494
    },
    "costo_usd": 0.0170068,
    "bitacora": {
-    "mensajes": 9,
+    "mensajes": 10,
     "relectura_pedida": false
    }
   },
@@ -4879,11 +4879,11 @@
    "reconstruccion": {
     "reconstruida": true,
     "en_3d": true,
-    "ms": 288
+    "ms": 391
    },
    "costo_usd": 0.0099878,
    "bitacora": {
-    "mensajes": 9,
+    "mensajes": 10,
     "relectura_pedida": false
    }
   },
@@ -4919,11 +4919,11 @@
    "reconstruccion": {
     "reconstruida": true,
     "en_3d": true,
-    "ms": 611
+    "ms": 859
    },
    "costo_usd": 0.0204118,
    "bitacora": {
-    "mensajes": 9,
+    "mensajes": 10,
     "relectura_pedida": false
    }
   },
@@ -4959,11 +4959,11 @@
    "reconstruccion": {
     "reconstruida": true,
     "en_3d": true,
-    "ms": 352
+    "ms": 491
    },
    "costo_usd": 0.0148128,
    "bitacora": {
-    "mensajes": 9,
+    "mensajes": 10,
     "relectura_pedida": false
    }
   },
@@ -4999,11 +4999,11 @@
    "reconstruccion": {
     "reconstruida": true,
     "en_3d": true,
-    "ms": 298
+    "ms": 439
    },
    "costo_usd": 0.0139948,
    "bitacora": {
-    "mensajes": 9,
+    "mensajes": 10,
     "relectura_pedida": false
    }
   },
@@ -5039,11 +5039,11 @@
    "reconstruccion": {
     "reconstruida": true,
     "en_3d": true,
-    "ms": 384
+    "ms": 534
    },
    "costo_usd": 0.0110308,
    "bitacora": {
-    "mensajes": 9,
+    "mensajes": 10,
     "relectura_pedida": false
    }
   },
@@ -5079,11 +5079,11 @@
    "reconstruccion": {
     "reconstruida": true,
     "en_3d": true,
-    "ms": 289
+    "ms": 410
    },
    "costo_usd": 0.0169098,
    "bitacora": {
-    "mensajes": 9,
+    "mensajes": 10,
     "relectura_pedida": false
    }
   },
@@ -5119,11 +5119,11 @@
    "reconstruccion": {
     "reconstruida": true,
     "en_3d": true,
-    "ms": 480
+    "ms": 661
    },
    "costo_usd": 0.0148378,
    "bitacora": {
-    "mensajes": 9,
+    "mensajes": 10,
     "relectura_pedida": false
    }
   },
@@ -5159,11 +5159,11 @@
    "reconstruccion": {
     "reconstruida": true,
     "en_3d": true,
-    "ms": 303
+    "ms": 407
    },
    "costo_usd": 0.0047138,
    "bitacora": {
-    "mensajes": 9,
+    "mensajes": 10,
     "relectura_pedida": false
    }
   },
@@ -5199,11 +5199,11 @@
    "reconstruccion": {
     "reconstruida": true,
     "en_3d": true,
-    "ms": 298
+    "ms": 411
    },
    "costo_usd": 0.0098518,
    "bitacora": {
-    "mensajes": 9,
+    "mensajes": 10,
     "relectura_pedida": false
    }
   },
@@ -5239,11 +5239,11 @@
    "reconstruccion": {
     "reconstruida": true,
     "en_3d": true,
-    "ms": 400
+    "ms": 591
    },
    "costo_usd": 0.0136698,
    "bitacora": {
-    "mensajes": 9,
+    "mensajes": 10,
     "relectura_pedida": false
    }
   },
@@ -5279,11 +5279,11 @@
    "reconstruccion": {
     "reconstruida": true,
     "en_3d": true,
-    "ms": 13
+    "ms": 21
    },
    "costo_usd": 0.0110268,
    "bitacora": {
-    "mensajes": 9,
+    "mensajes": 10,
     "relectura_pedida": false
    }
   },
@@ -5319,11 +5319,11 @@
    "reconstruccion": {
     "reconstruida": true,
     "en_3d": true,
-    "ms": 13
+    "ms": 21
    },
    "costo_usd": 0.0097538,
    "bitacora": {
-    "mensajes": 9,
+    "mensajes": 10,
     "relectura_pedida": false
    }
   },
@@ -5359,11 +5359,11 @@
    "reconstruccion": {
     "reconstruida": true,
     "en_3d": true,
-    "ms": 303
+    "ms": 418
    },
    "costo_usd": 0.0112938,
    "bitacora": {
-    "mensajes": 9,
+    "mensajes": 10,
     "relectura_pedida": false
    }
   },
@@ -5399,11 +5399,11 @@
    "reconstruccion": {
     "reconstruida": true,
     "en_3d": true,
-    "ms": 289
+    "ms": 406
    },
    "costo_usd": 0.0141908,
    "bitacora": {
-    "mensajes": 9,
+    "mensajes": 10,
     "relectura_pedida": false
    }
   },
@@ -5439,11 +5439,11 @@
    "reconstruccion": {
     "reconstruida": true,
     "en_3d": true,
-    "ms": 150
+    "ms": 214
    },
    "costo_usd": 0.0144878,
    "bitacora": {
-    "mensajes": 9,
+    "mensajes": 10,
     "relectura_pedida": false
    }
   },
@@ -5479,11 +5479,11 @@
    "reconstruccion": {
     "reconstruida": true,
     "en_3d": true,
-    "ms": 292
+    "ms": 436
    },
    "costo_usd": 0.0134988,
    "bitacora": {
-    "mensajes": 9,
+    "mensajes": 10,
     "relectura_pedida": false
    }
   },
@@ -5519,11 +5519,11 @@
    "reconstruccion": {
     "reconstruida": true,
     "en_3d": true,
-    "ms": 13
+    "ms": 19
    },
    "costo_usd": 0.0100358,
    "bitacora": {
-    "mensajes": 9,
+    "mensajes": 10,
     "relectura_pedida": false
    }
   },
@@ -5559,11 +5559,11 @@
    "reconstruccion": {
     "reconstruida": true,
     "en_3d": true,
-    "ms": 13
+    "ms": 19
    },
    "costo_usd": 0.0061978,
    "bitacora": {
-    "mensajes": 9,
+    "mensajes": 10,
     "relectura_pedida": false
    }
   },
@@ -5599,11 +5599,11 @@
    "reconstruccion": {
     "reconstruida": true,
     "en_3d": true,
-    "ms": 294
+    "ms": 401
    },
    "costo_usd": 0.0134278,
    "bitacora": {
-    "mensajes": 9,
+    "mensajes": 10,
     "relectura_pedida": false
    }
   },
@@ -5639,11 +5639,11 @@
    "reconstruccion": {
     "reconstruida": true,
     "en_3d": true,
-    "ms": 118
+    "ms": 156
    },
    "costo_usd": 0.0085828,
    "bitacora": {
-    "mensajes": 9,
+    "mensajes": 10,
     "relectura_pedida": false
    }
   },
@@ -5679,11 +5679,11 @@
    "reconstruccion": {
     "reconstruida": true,
     "en_3d": true,
-    "ms": 286
+    "ms": 389
    },
    "costo_usd": 0.0088228,
    "bitacora": {
-    "mensajes": 9,
+    "mensajes": 10,
     "relectura_pedida": false
    }
   },
@@ -5719,11 +5719,11 @@
    "reconstruccion": {
     "reconstruida": true,
     "en_3d": true,
-    "ms": 298
+    "ms": 341
    },
    "costo_usd": 0.0136048,
    "bitacora": {
-    "mensajes": 9,
+    "mensajes": 10,
     "relectura_pedida": false
    }
   },
@@ -5759,11 +5759,11 @@
    "reconstruccion": {
     "reconstruida": true,
     "en_3d": true,
-    "ms": 303
+    "ms": 331
    },
    "costo_usd": 0.0164068,
    "bitacora": {
-    "mensajes": 9,
+    "mensajes": 10,
     "relectura_pedida": false
    }
   },
@@ -5799,11 +5799,11 @@
    "reconstruccion": {
     "reconstruida": true,
     "en_3d": true,
-    "ms": 121
+    "ms": 130
    },
    "costo_usd": 0.0109458,
    "bitacora": {
-    "mensajes": 9,
+    "mensajes": 10,
     "relectura_pedida": false
    }
   },
@@ -5839,11 +5839,11 @@
    "reconstruccion": {
     "reconstruida": true,
     "en_3d": true,
-    "ms": 290
+    "ms": 327
    },
    "costo_usd": 0.0100078,
    "bitacora": {
-    "mensajes": 9,
+    "mensajes": 10,
     "relectura_pedida": false
    }
   },
@@ -5888,11 +5888,11 @@
    "reconstruccion": {
     "reconstruida": true,
     "en_3d": true,
-    "ms": 13
+    "ms": 16
    },
    "costo_usd": 0.0111378,
    "bitacora": {
-    "mensajes": 9,
+    "mensajes": 10,
     "relectura_pedida": false
    }
   },
@@ -5928,11 +5928,11 @@
    "reconstruccion": {
     "reconstruida": true,
     "en_3d": true,
-    "ms": 357
+    "ms": 386
    },
    "costo_usd": 0.0106758,
    "bitacora": {
-    "mensajes": 9,
+    "mensajes": 10,
     "relectura_pedida": false
    }
   },
@@ -5968,11 +5968,11 @@
    "reconstruccion": {
     "reconstruida": true,
     "en_3d": true,
-    "ms": 303
+    "ms": 323
    },
    "costo_usd": 0.0155658,
    "bitacora": {
-    "mensajes": 9,
+    "mensajes": 10,
     "relectura_pedida": false
    }
   },
@@ -6008,11 +6008,11 @@
    "reconstruccion": {
     "reconstruida": true,
     "en_3d": true,
-    "ms": 13
+    "ms": 15
    },
    "costo_usd": 0.0101688,
    "bitacora": {
-    "mensajes": 9,
+    "mensajes": 10,
     "relectura_pedida": false
    }
   },
@@ -6048,11 +6048,11 @@
    "reconstruccion": {
     "reconstruida": true,
     "en_3d": true,
-    "ms": 402
+    "ms": 437
    },
    "costo_usd": 0.0177578,
    "bitacora": {
-    "mensajes": 9,
+    "mensajes": 10,
     "relectura_pedida": false
    }
   },
@@ -6088,11 +6088,11 @@
    "reconstruccion": {
     "reconstruida": true,
     "en_3d": true,
-    "ms": 306
+    "ms": 323
    },
    "costo_usd": 0.0144188,
    "bitacora": {
-    "mensajes": 9,
+    "mensajes": 10,
     "relectura_pedida": false
    }
   },
@@ -6128,11 +6128,11 @@
    "reconstruccion": {
     "reconstruida": true,
     "en_3d": true,
-    "ms": 402
+    "ms": 440
    },
    "costo_usd": 0.0178948,
    "bitacora": {
-    "mensajes": 9,
+    "mensajes": 10,
     "relectura_pedida": false
    }
   },
@@ -6185,11 +6185,11 @@
    "reconstruccion": {
     "reconstruida": true,
     "en_3d": true,
-    "ms": 362
+    "ms": 379
    },
    "costo_usd": 0.0121888,
    "bitacora": {
-    "mensajes": 9,
+    "mensajes": 10,
     "relectura_pedida": false
    }
   },
@@ -6225,11 +6225,11 @@
    "reconstruccion": {
     "reconstruida": true,
     "en_3d": true,
-    "ms": 302
+    "ms": 323
    },
    "costo_usd": 0.0141238,
    "bitacora": {
-    "mensajes": 9,
+    "mensajes": 10,
     "relectura_pedida": false
    }
   },
@@ -6265,11 +6265,11 @@
    "reconstruccion": {
     "reconstruida": true,
     "en_3d": true,
-    "ms": 299
+    "ms": 321
    },
    "costo_usd": 0.0150788,
    "bitacora": {
-    "mensajes": 9,
+    "mensajes": 10,
     "relectura_pedida": false
    }
   },
@@ -6305,11 +6305,11 @@
    "reconstruccion": {
     "reconstruida": true,
     "en_3d": true,
-    "ms": 299
+    "ms": 327
    },
    "costo_usd": 0.0132118,
    "bitacora": {
-    "mensajes": 9,
+    "mensajes": 10,
     "relectura_pedida": false
    }
   },
@@ -6345,11 +6345,11 @@
    "reconstruccion": {
     "reconstruida": true,
     "en_3d": true,
-    "ms": 289
+    "ms": 330
    },
    "costo_usd": 0.0139588,
    "bitacora": {
-    "mensajes": 9,
+    "mensajes": 10,
     "relectura_pedida": false
    }
   },
@@ -6385,11 +6385,11 @@
    "reconstruccion": {
     "reconstruida": true,
     "en_3d": true,
-    "ms": 293
+    "ms": 323
    },
    "costo_usd": 0.0102668,
    "bitacora": {
-    "mensajes": 9,
+    "mensajes": 10,
     "relectura_pedida": false
    }
   },
@@ -6425,11 +6425,11 @@
    "reconstruccion": {
     "reconstruida": true,
     "en_3d": true,
-    "ms": 292
+    "ms": 327
    },
    "costo_usd": 0.0052288,
    "bitacora": {
-    "mensajes": 9,
+    "mensajes": 10,
     "relectura_pedida": false
    }
   },
@@ -6465,11 +6465,11 @@
    "reconstruccion": {
     "reconstruida": true,
     "en_3d": true,
-    "ms": 625
+    "ms": 690
    },
    "costo_usd": 0.0202608,
    "bitacora": {
-    "mensajes": 9,
+    "mensajes": 10,
     "relectura_pedida": false
    }
   },
@@ -6505,11 +6505,11 @@
    "reconstruccion": {
     "reconstruida": true,
     "en_3d": true,
-    "ms": 317
+    "ms": 331
    },
    "costo_usd": 0.0114008,
    "bitacora": {
-    "mensajes": 9,
+    "mensajes": 10,
     "relectura_pedida": false
    }
   },
@@ -6545,11 +6545,11 @@
    "reconstruccion": {
     "reconstruida": true,
     "en_3d": true,
-    "ms": 338
+    "ms": 363
    },
    "costo_usd": 0.0231728,
    "bitacora": {
-    "mensajes": 9,
+    "mensajes": 10,
     "relectura_pedida": false
    }
   },
@@ -6585,11 +6585,11 @@
    "reconstruccion": {
     "reconstruida": true,
     "en_3d": true,
-    "ms": 13
+    "ms": 15
    },
    "costo_usd": 0.0161728,
    "bitacora": {
-    "mensajes": 9,
+    "mensajes": 10,
     "relectura_pedida": false
    }
   },
@@ -6625,11 +6625,11 @@
    "reconstruccion": {
     "reconstruida": true,
     "en_3d": true,
-    "ms": 13
+    "ms": 15
    },
    "costo_usd": 0.0096588,
    "bitacora": {
-    "mensajes": 9,
+    "mensajes": 10,
     "relectura_pedida": false
    }
   },
@@ -6665,11 +6665,11 @@
    "reconstruccion": {
     "reconstruida": true,
     "en_3d": true,
-    "ms": 294
+    "ms": 323
    },
    "costo_usd": 0.0098398,
    "bitacora": {
-    "mensajes": 9,
+    "mensajes": 10,
     "relectura_pedida": false
    }
   },
@@ -6705,11 +6705,11 @@
    "reconstruccion": {
     "reconstruida": true,
     "en_3d": true,
-    "ms": 365
+    "ms": 380
    },
    "costo_usd": 0.0078588,
    "bitacora": {
-    "mensajes": 9,
+    "mensajes": 10,
     "relectura_pedida": false
    }
   },
@@ -6745,11 +6745,11 @@
    "reconstruccion": {
     "reconstruida": true,
     "en_3d": true,
-    "ms": 300
+    "ms": 320
    },
    "costo_usd": 0.0101518,
    "bitacora": {
-    "mensajes": 9,
+    "mensajes": 10,
     "relectura_pedida": false
    }
   },
@@ -6785,11 +6785,11 @@
    "reconstruccion": {
     "reconstruida": true,
     "en_3d": true,
-    "ms": 307
+    "ms": 319
    },
    "costo_usd": 0.0040538,
    "bitacora": {
-    "mensajes": 9,
+    "mensajes": 10,
     "relectura_pedida": false
    }
   },
@@ -6825,11 +6825,11 @@
    "reconstruccion": {
     "reconstruida": true,
     "en_3d": true,
-    "ms": 304
+    "ms": 321
    },
    "costo_usd": 0.0137868,
    "bitacora": {
-    "mensajes": 9,
+    "mensajes": 10,
     "relectura_pedida": false
    }
   },
@@ -6865,11 +6865,11 @@
    "reconstruccion": {
     "reconstruida": true,
     "en_3d": true,
-    "ms": 300
+    "ms": 324
    },
    "costo_usd": 0.0122538,
    "bitacora": {
-    "mensajes": 9,
+    "mensajes": 10,
     "relectura_pedida": false
    }
   },
@@ -6905,11 +6905,11 @@
    "reconstruccion": {
     "reconstruida": true,
     "en_3d": true,
-    "ms": 292
+    "ms": 323
    },
    "costo_usd": 0.0122228,
    "bitacora": {
-    "mensajes": 9,
+    "mensajes": 10,
     "relectura_pedida": false
    }
   },
@@ -6945,11 +6945,11 @@
    "reconstruccion": {
     "reconstruida": true,
     "en_3d": true,
-    "ms": 412
+    "ms": 443
    },
    "costo_usd": 0.0153288,
    "bitacora": {
-    "mensajes": 11,
+    "mensajes": 12,
     "relectura_pedida": true
    }
   },
@@ -6985,11 +6985,11 @@
    "reconstruccion": {
     "reconstruida": true,
     "en_3d": true,
-    "ms": 13
+    "ms": 15
    },
    "costo_usd": 0.0100308,
    "bitacora": {
-    "mensajes": 9,
+    "mensajes": 10,
     "relectura_pedida": false
    }
   },
@@ -7025,11 +7025,11 @@
    "reconstruccion": {
     "reconstruida": true,
     "en_3d": true,
-    "ms": 425
+    "ms": 445
    },
    "costo_usd": 0.0161088,
    "bitacora": {
-    "mensajes": 9,
+    "mensajes": 10,
     "relectura_pedida": false
    }
   },
@@ -7065,11 +7065,11 @@
    "reconstruccion": {
     "reconstruida": true,
     "en_3d": true,
-    "ms": 282
+    "ms": 313
    },
    "costo_usd": 0.0127758,
    "bitacora": {
-    "mensajes": 9,
+    "mensajes": 10,
     "relectura_pedida": false
    }
   },
@@ -7105,11 +7105,11 @@
    "reconstruccion": {
     "reconstruida": true,
     "en_3d": true,
-    "ms": 13
+    "ms": 15
    },
    "costo_usd": 0.0072438,
    "bitacora": {
-    "mensajes": 9,
+    "mensajes": 10,
     "relectura_pedida": false
    }
   },
@@ -7145,11 +7145,11 @@
    "reconstruccion": {
     "reconstruida": true,
     "en_3d": true,
-    "ms": 286
+    "ms": 316
    },
    "costo_usd": 0.0136658,
    "bitacora": {
-    "mensajes": 9,
+    "mensajes": 10,
     "relectura_pedida": false
    }
   },
@@ -7185,11 +7185,11 @@
    "reconstruccion": {
     "reconstruida": true,
     "en_3d": true,
-    "ms": 281
+    "ms": 313
    },
    "costo_usd": 0.0135068,
    "bitacora": {
-    "mensajes": 9,
+    "mensajes": 10,
     "relectura_pedida": false
    }
   },
@@ -7225,11 +7225,11 @@
    "reconstruccion": {
     "reconstruida": true,
     "en_3d": true,
-    "ms": 608
+    "ms": 694
    },
    "costo_usd": 0.0201168,
    "bitacora": {
-    "mensajes": 9,
+    "mensajes": 10,
     "relectura_pedida": false
    }
   },
@@ -7265,11 +7265,11 @@
    "reconstruccion": {
     "reconstruida": true,
     "en_3d": true,
-    "ms": 275
+    "ms": 297
    },
    "costo_usd": 0.0134898,
    "bitacora": {
-    "mensajes": 9,
+    "mensajes": 10,
     "relectura_pedida": false
    }
   },
@@ -7305,11 +7305,11 @@
    "reconstruccion": {
     "reconstruida": true,
     "en_3d": true,
-    "ms": 355
+    "ms": 383
    },
    "costo_usd": 0.0094008,
    "bitacora": {
-    "mensajes": 9,
+    "mensajes": 10,
     "relectura_pedida": false
    }
   },
@@ -7345,11 +7345,11 @@
    "reconstruccion": {
     "reconstruida": true,
     "en_3d": true,
-    "ms": 299
+    "ms": 308
    },
    "costo_usd": 0.0163688,
    "bitacora": {
-    "mensajes": 9,
+    "mensajes": 10,
     "relectura_pedida": false
    }
   },
@@ -7385,11 +7385,11 @@
    "reconstruccion": {
     "reconstruida": true,
     "en_3d": true,
-    "ms": 16
+    "ms": 17
    },
    "costo_usd": 0.0153998,
    "bitacora": {
-    "mensajes": 9,
+    "mensajes": 10,
     "relectura_pedida": false
    }
   },
@@ -7429,7 +7429,7 @@
    },
    "costo_usd": 0.0091498,
    "bitacora": {
-    "mensajes": 9,
+    "mensajes": 10,
     "relectura_pedida": false
    }
   },
@@ -7465,11 +7465,11 @@
    "reconstruccion": {
     "reconstruida": true,
     "en_3d": true,
-    "ms": 321
+    "ms": 317
    },
    "costo_usd": 0.0089148,
    "bitacora": {
-    "mensajes": 9,
+    "mensajes": 10,
     "relectura_pedida": false
    }
   },
@@ -7505,11 +7505,11 @@
    "reconstruccion": {
     "reconstruida": true,
     "en_3d": true,
-    "ms": 309
+    "ms": 318
    },
    "costo_usd": 0.0128458,
    "bitacora": {
-    "mensajes": 9,
+    "mensajes": 10,
     "relectura_pedida": false
    }
   },
@@ -7545,11 +7545,11 @@
    "reconstruccion": {
     "reconstruida": true,
     "en_3d": true,
-    "ms": 289
+    "ms": 318
    },
    "costo_usd": 0.0109108,
    "bitacora": {
-    "mensajes": 9,
+    "mensajes": 10,
     "relectura_pedida": false
    }
   },
@@ -7585,11 +7585,11 @@
    "reconstruccion": {
     "reconstruida": true,
     "en_3d": true,
-    "ms": 14
+    "ms": 16
    },
    "costo_usd": 0.0128998,
    "bitacora": {
-    "mensajes": 9,
+    "mensajes": 10,
     "relectura_pedida": false
    }
   },
@@ -7625,11 +7625,11 @@
    "reconstruccion": {
     "reconstruida": true,
     "en_3d": true,
-    "ms": 13
+    "ms": 15
    },
    "costo_usd": 0.0093298,
    "bitacora": {
-    "mensajes": 9,
+    "mensajes": 10,
     "relectura_pedida": false
    }
   },
@@ -7665,11 +7665,11 @@
    "reconstruccion": {
     "reconstruida": true,
     "en_3d": true,
-    "ms": 394
+    "ms": 441
    },
    "costo_usd": 0.0149288,
    "bitacora": {
-    "mensajes": 9,
+    "mensajes": 10,
     "relectura_pedida": false
    }
   },
@@ -7705,11 +7705,11 @@
    "reconstruccion": {
     "reconstruida": true,
     "en_3d": true,
-    "ms": 13
+    "ms": 15
    },
    "costo_usd": 0.0064368,
    "bitacora": {
-    "mensajes": 9,
+    "mensajes": 10,
     "relectura_pedida": false
    }
   },
@@ -7745,11 +7745,11 @@
    "reconstruccion": {
     "reconstruida": true,
     "en_3d": true,
-    "ms": 452
+    "ms": 489
    },
    "costo_usd": 0.0116958,
    "bitacora": {
-    "mensajes": 9,
+    "mensajes": 10,
     "relectura_pedida": false
    }
   },
@@ -7785,11 +7785,11 @@
    "reconstruccion": {
     "reconstruida": true,
     "en_3d": true,
-    "ms": 13
+    "ms": 15
    },
    "costo_usd": 0.0026678,
    "bitacora": {
-    "mensajes": 9,
+    "mensajes": 10,
     "relectura_pedida": false
    }
   },
@@ -7825,11 +7825,11 @@
    "reconstruccion": {
     "reconstruida": true,
     "en_3d": true,
-    "ms": 13
+    "ms": 15
    },
    "costo_usd": 0.0109708,
    "bitacora": {
-    "mensajes": 9,
+    "mensajes": 10,
     "relectura_pedida": false
    }
   },
@@ -7865,11 +7865,11 @@
    "reconstruccion": {
     "reconstruida": true,
     "en_3d": true,
-    "ms": 354
+    "ms": 372
    },
    "costo_usd": 0.0116118,
    "bitacora": {
-    "mensajes": 9,
+    "mensajes": 10,
     "relectura_pedida": false
    }
   },
@@ -7905,11 +7905,11 @@
    "reconstruccion": {
     "reconstruida": true,
     "en_3d": true,
-    "ms": 285
+    "ms": 320
    },
    "costo_usd": 0.0157058,
    "bitacora": {
-    "mensajes": 9,
+    "mensajes": 10,
     "relectura_pedida": false
    }
   },
@@ -7945,11 +7945,11 @@
    "reconstruccion": {
     "reconstruida": true,
     "en_3d": true,
-    "ms": 281
+    "ms": 315
    },
    "costo_usd": 0.0102588,
    "bitacora": {
-    "mensajes": 9,
+    "mensajes": 10,
     "relectura_pedida": false
    }
   },
@@ -7985,11 +7985,11 @@
    "reconstruccion": {
     "reconstruida": true,
     "en_3d": true,
-    "ms": 298
+    "ms": 321
    },
    "costo_usd": 0.0126198,
    "bitacora": {
-    "mensajes": 9,
+    "mensajes": 10,
     "relectura_pedida": false
    }
   },
@@ -8025,11 +8025,11 @@
    "reconstruccion": {
     "reconstruida": true,
     "en_3d": true,
-    "ms": 299
+    "ms": 324
    },
    "costo_usd": 0.0152778,
    "bitacora": {
-    "mensajes": 9,
+    "mensajes": 10,
     "relectura_pedida": false
    }
   },
@@ -8065,11 +8065,11 @@
    "reconstruccion": {
     "reconstruida": true,
     "en_3d": true,
-    "ms": 301
+    "ms": 326
    },
    "costo_usd": 0.0149898,
    "bitacora": {
-    "mensajes": 9,
+    "mensajes": 10,
     "relectura_pedida": false
    }
   },
@@ -8105,11 +8105,11 @@
    "reconstruccion": {
     "reconstruida": true,
     "en_3d": true,
-    "ms": 415
+    "ms": 450
    },
    "costo_usd": 0.0190808,
    "bitacora": {
-    "mensajes": 9,
+    "mensajes": 10,
     "relectura_pedida": false
    }
   },
@@ -8145,11 +8145,11 @@
    "reconstruccion": {
     "reconstruida": true,
     "en_3d": true,
-    "ms": 314
+    "ms": 320
    },
    "costo_usd": 0.0131968,
    "bitacora": {
-    "mensajes": 9,
+    "mensajes": 10,
     "relectura_pedida": false
    }
   },
@@ -8189,7 +8189,7 @@
    },
    "costo_usd": 0.0166548,
    "bitacora": {
-    "mensajes": 9,
+    "mensajes": 10,
     "relectura_pedida": false
    }
   },
@@ -8225,11 +8225,11 @@
    "reconstruccion": {
     "reconstruida": true,
     "en_3d": true,
-    "ms": 14
+    "ms": 16
    },
    "costo_usd": 0.0121798,
    "bitacora": {
-    "mensajes": 9,
+    "mensajes": 10,
     "relectura_pedida": false
    }
   },
@@ -8265,11 +8265,11 @@
    "reconstruccion": {
     "reconstruida": true,
     "en_3d": true,
-    "ms": 299
+    "ms": 321
    },
    "costo_usd": 0.0173475,
    "bitacora": {
-    "mensajes": 9,
+    "mensajes": 10,
     "relectura_pedida": false
    }
   },
@@ -8305,11 +8305,11 @@
    "reconstruccion": {
     "reconstruida": true,
     "en_3d": true,
-    "ms": 14
+    "ms": 16
    },
    "costo_usd": 0.0042858,
    "bitacora": {
-    "mensajes": 9,
+    "mensajes": 10,
     "relectura_pedida": false
    }
   },
@@ -8345,11 +8345,11 @@
    "reconstruccion": {
     "reconstruida": true,
     "en_3d": true,
-    "ms": 14
+    "ms": 17
    },
    "costo_usd": 0.0115148,
    "bitacora": {
-    "mensajes": 9,
+    "mensajes": 10,
     "relectura_pedida": false
    }
   },
@@ -8385,11 +8385,11 @@
    "reconstruccion": {
     "reconstruida": true,
     "en_3d": true,
-    "ms": 297
+    "ms": 312
    },
    "costo_usd": 0.0085958,
    "bitacora": {
-    "mensajes": 9,
+    "mensajes": 10,
     "relectura_pedida": false
    }
   },
@@ -8425,11 +8425,11 @@
    "reconstruccion": {
     "reconstruida": true,
     "en_3d": true,
-    "ms": 306
+    "ms": 323
    },
    "costo_usd": 0.0145408,
    "bitacora": {
-    "mensajes": 9,
+    "mensajes": 10,
     "relectura_pedida": false
    }
   }

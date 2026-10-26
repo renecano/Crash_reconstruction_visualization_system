@@ -218,6 +218,28 @@ describe("el dictamen de una reconstrucción (R8)", () => {
     expect(texto(datos())).not.toContain("Croquis a escala");
   });
 
+  it("lleva los supuestos declarados con su justificación y su incertidumbre (ADR 0091)", () => {
+    const supuestos = [
+      {
+        clave: "reposo-V2",
+        que: "Posición final de V2",
+        valor: "la que se colocó en el mapa",
+        justificacion: "Supuesto del método de restos de CESVI.",
+        incertidumbre: "±10 m: 10 veces la de una posición medida.",
+      },
+    ];
+    const t = texto(datos({ supuestos }));
+    enOrden(t, [
+      "Reconstrucción física",
+      "Supuestos declarados",
+      "Posición final de V2: la que se colocó en el mapa",
+      "Supuesto del método de restos de CESVI.",
+      "±10 m",
+    ]);
+    expect(t).not.toMatch(/falta pedir|dato pendiente/i);
+    expect(texto(datos())).not.toContain("Supuestos declarados");
+  });
+
   it("lleva la bitácora de los agentes en la trazabilidad (R12b), en orden", () => {
     const bitacora = [
       {

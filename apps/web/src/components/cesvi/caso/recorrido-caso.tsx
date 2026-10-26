@@ -28,6 +28,8 @@ import {
   preguntaPendiente,
   reconstruccionContraCesvi,
   reposoSupuesto,
+  supuestoAlNoSaber,
+  supuestosDeclarados,
   verificacionCesvi,
   type ContextoPizarra,
   type EscenaNarrada,
@@ -216,6 +218,11 @@ export function RecorridoCaso({ inicial }: { inicial: CasoExpediente }) {
   const verificacion = useMemo(
     () => (expediente ? verificacionCesvi(expediente) : []),
     [expediente],
+  );
+  // Lo que el caso no trae, como supuesto declarado con su justificación (ADR 0091).
+  const supuestos = useMemo(
+    () => (expediente ? supuestosDeclarados(expediente, r) : []),
+    [expediente, r],
   );
   // La velocidad de la reconstrucción contra la de cada método del reporte (ADR 0091).
   const contraCesvi = useMemo(
@@ -720,7 +727,12 @@ export function RecorridoCaso({ inicial }: { inicial: CasoExpediente }) {
           escena={leida}
           preguntas={preguntas}
           onExpediente={cambiarExpediente}
-          onNoSe={(c) => setNoSe((s) => new Set([...s, c]))}
+          onNoSe={(c) => {
+            setNoSe((s) => new Set([...s, c]));
+            // A una pregunta del Físico (R12b), «No sé» deja el supuesto con su nombre en la bitácora.
+            const queda = pizarra.pedidoEvidencia ? supuestoAlNoSaber(c, supuestos) : null;
+            if (queda) setPizarra((p) => delPerito(p, `No sé (${c}). ${queda}`));
+          }}
           onIrAlMapa={(vehiculo) => {
             setElegido({ tipo: "final", vehiculo });
             irA(2);
@@ -818,7 +830,12 @@ export function RecorridoCaso({ inicial }: { inicial: CasoExpediente }) {
     if (actual === 5)
       return (
         <div className="flex flex-col gap-8">
-          <PasoNumeros r={r} verificacion={verificacion} contraCesvi={contraCesvi} />
+          <PasoNumeros
+            r={r}
+            verificacion={verificacion}
+            contraCesvi={contraCesvi}
+            supuestos={supuestos}
+          />
           {inicial.ejemplo ? (
             <Calculos caso={inicial.ejemplo} distancia={distancia} onDistancia={setDistancia} />
           ) : null}
@@ -847,6 +864,7 @@ export function RecorridoCaso({ inicial }: { inicial: CasoExpediente }) {
             onValidacion={setValidacion}
             tema={tema}
             bitacora={pizarra.bitacora}
+            supuestos={supuestos}
           />
         ) : (
           <p className="t-nota">Reconstruye en «La reconstrucción» para armar el dictamen.</p>
@@ -1060,6 +1078,7 @@ export function RecorridoCaso({ inicial }: { inicial: CasoExpediente }) {
                 calles={calles}
                 objetos={objetos}
                 expandido={expandido}
+                supuestos={supuestos}
               />
             </div>
           ) : null}

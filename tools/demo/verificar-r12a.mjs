@@ -72,6 +72,12 @@ mkdirSync(join(raiz, "docs/cesvi/r12b"), { recursive: true });
 await bitacora.screenshot({ path: join(raiz, "docs/cesvi/r12b/paso4-bitacora.png") });
 
 await irAPaso(6);
+// Los supuestos declarados del paso 6 (ADR 0091): lo que el reporte no trae, con su justificación.
+const supuestos = pagina.getByTestId("supuestos");
+for (const tr of await supuestos.locator("tbody tr").all())
+  log("supuesto", (await tr.textContent()).replace(/\s+/g, " "));
+mkdirSync(join(raiz, "docs/cesvi/supuestos"), { recursive: true });
+await supuestos.screenshot({ path: join(raiz, "docs/cesvi/supuestos/paso6-supuestos.png") });
 const seccion = pagina.getByTestId("probar-conductores");
 await seccion.scrollIntoViewIfNeeded();
 await pagina.getByTestId("conductor-vehiculo").selectOption("V2");

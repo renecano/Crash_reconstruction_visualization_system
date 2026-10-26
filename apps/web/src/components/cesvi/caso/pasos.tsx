@@ -12,6 +12,7 @@ import {
   type Expediente,
   type PreguntaEscena,
   type Reconstruccion,
+  type SupuestoDeclarado,
   type VerificacionVehiculo,
 } from "@croquis/cesvi";
 import { useState, type ReactNode } from "react";
@@ -20,7 +21,12 @@ import { MODALIDAD } from "@/lib/nombres-cesvi";
 import { colorDeVehiculo } from "@/lib/vehiculos-cesvi";
 import { CARA, Fuente, Pregunta } from "./piezas";
 import { ProbarConductores } from "./conductores";
-import { PanelVerificacion, TablaContraCesvi, TablaVelocidades } from "./reconstruccion";
+import {
+  PanelVerificacion,
+  TablaContraCesvi,
+  TablaSupuestos,
+  TablaVelocidades,
+} from "./reconstruccion";
 import { ConclusionesCesvi } from "../importar-dictamen";
 
 const nombreModalidad = (m: string | null) => (m ? (MODALIDAD[m] ?? m.replaceAll("_", " ")) : "—");
@@ -788,10 +794,13 @@ export function PasoNumeros({
   r,
   verificacion,
   contraCesvi = null,
+  supuestos = [],
 }: {
   r: Reconstruccion | null;
   verificacion: VerificacionVehiculo[];
   contraCesvi?: ContraMetodosCesvi | null;
+  /** Lo que el caso no trae, como supuesto declarado (ADR 0091). */
+  supuestos?: readonly SupuestoDeclarado[];
 }) {
   return (
     <div className="flex flex-col gap-5">
@@ -801,6 +810,7 @@ export function PasoNumeros({
       ) : (
         <p className="t-nota">Reconstruye para ver las velocidades con su rango.</p>
       )}
+      {r ? <TablaSupuestos supuestos={supuestos} /> : null}
       {contraCesvi?.filas.length ? <TablaContraCesvi contra={contraCesvi} /> : null}
       {r ? <ProbarConductores r={r} /> : null}
       <PanelVerificacion verificacion={verificacion} />
