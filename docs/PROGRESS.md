@@ -532,6 +532,7 @@ Reglas de trabajo: `CLAUDE.md`. Especificación: `PLAN.md`.
         - la fricción (μ 0.55–0.8);
         - las llantas que ruedan después del impacto, con un arrastre de 0.35 de la fricción (fijo; varía con μ).
       - **«No sé» a una pregunta del Físico** deja en la bitácora el supuesto que queda, con su nombre.
+      - **Verificado en producción (2026-10-26, #143):** AXA en el paso 6 muestra la tabla con la masa de V1 por ficha técnica, el reposo de V2 por el método de restos (±10 m), las posiciones iniciales, la fricción y las llantas que ruedan; la bitácora del Físico nombra los supuestos. Captura en `docs/cesvi/supuestos/paso6-supuestos.png`; las de R12a y R12b se volvieron a tomar.
       - **Las preguntas del Físico** ya no dicen «hace falta la medida»: si no la hay, queda el supuesto.
       - **Pruebas:**
         - `packages/cesvi/src/supuestos.test.ts` (4; ninguna frase dice «pendiente» ni «falta pedir»);
@@ -555,6 +556,11 @@ Reglas de trabajo: `CLAUDE.md`. Especificación: `PLAN.md`.
       - **Cómo probarlo:**
         - en `/cesvi`, un caso nuevo: «Leer la narración», reconstruir y abrir «Bitácora de los agentes» en el paso 4;
         - el dictamen la lleva al final, en la trazabilidad.
+      - **La bitácora se guarda con el caso** (2026-10-26, rama `feat/bitacora-con-el-caso`; «Endurecimiento pendiente»):
+        - «Guardar en este equipo» y el archivo descargado la llevan en el campo opcional `bitacora` (los archivos de antes abren igual, con la bitácora vacía);
+        - al reabrir, la pizarra sigue después de lo guardado, con la numeración que sigue;
+        - de un archivo editado a mano se quedan solo los mensajes con forma de mensaje.
+        - Pruebas: `caso-guardado.test.ts` (2) y `pizarra.test.ts`; revisado en local abriendo un caso guardado con bitácora.
       - **Pruebas:**
         - `packages/cesvi/src/pizarra.test.ts` (7);
         - `apps/web/src/lib/dictamen-caso.test.ts` (la bitácora en el dictamen);
@@ -1574,7 +1580,6 @@ Lo que se pospone por el trabajo con CESVI no se borra: queda aquí para despué
 - **Las hipótesis por modo** (otro mínimo dentro del margen de costo) solo las ejercita la prueba unitaria: ninguna escena versionada ni AXA tiene hoy un segundo modo dentro del margen.
 - **Python en CI tarda 8 min** con el multiarranque y `pytest -n auto` (el límite es 10). Si crece, hay que acelerar la referencia Python o repartir más los resultados versionados.
 - **Las relecturas de R12b no están grabadas** (ADR 0093): en E-R4 el Verificador de citas pidió releer en 2 narraciones, pero sin respuesta grabada no se puede medir si la relectura mejora algo. Grabarlas (con la API) y medir.
-- **La bitácora de la pizarra no se guarda con el caso** (ADR 0093): al reabrirlo empieza de nuevo.
 - **El arrastre después del impacto es una fracción fija** (0.35 de la fricción): su incertidumbre solo entra por μ. Muestrearla en su rango cuando haya una fuente para él (ADR 0091).
 - **La línea base de los conductores no siempre es la reconstrucción** (ADR 0088): en una carambola colocada a mano, los agentes sin hipótesis encontraron a V2 con V3 en −0.40 s, antes del primer impacto reconstruido (V1 con V2 en 0 s). Falta que los agentes respeten el orden de impactos de la reconstrucción, o que avisen cuando no coincide.
 

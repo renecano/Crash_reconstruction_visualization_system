@@ -13,6 +13,7 @@ import {
   type EscenaNarrada,
   type CasoCesvi,
   type Expediente,
+  type MensajeBitacora,
 } from "@croquis/cesvi";
 import {
   leerCasoGuardado,
@@ -60,6 +61,8 @@ export interface CasoExpediente {
    * reproducción del reporte con su método y sus números.
    */
   ejemplo?: CasoCesvi;
+  /** La bitácora de los agentes de un caso guardado (R12b, ADR 0093). */
+  bitacora?: MensajeBitacora[];
 }
 
 export const casoNuevo = (): CasoExpediente => ({
@@ -241,6 +244,7 @@ export function abrirGuardado(a: Almacen, id: string): CasoExpediente | null {
     escena: c.escena,
     reporte: c.reporte,
     validacion: c.validacion,
+    bitacora: c.bitacora,
   };
 }
 

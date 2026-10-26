@@ -84,4 +84,49 @@ describe("el caso guardado con la validación del perito (ADR 0075)", () => {
     const roto = { ...g, expediente: { ...g.expediente, vehiculos: "V1" } };
     expect((leerCasoGuardado(roto) as { error: string }).error).toMatch(/no es válido/);
   });
+
+  it("guarda la bitácora de los agentes y la devuelve al abrir; sin ella, vacía (R12b)", () => {
+    const bitacora = [
+      {
+        n: 1,
+        de: "lector" as const,
+        para: "pizarra" as const,
+        tipo: "escribe" as const,
+        texto: "Lectura: 30 filas con su cita.",
+      },
+      {
+        n: 2,
+        de: "fisico" as const,
+        para: "preguntador" as const,
+        tipo: "pide" as const,
+        texto: "Pide evidencia al perito.",
+      },
+    ];
+    const g = casoParaGuardar({ narracion, escena, expediente, validacion: null, bitacora });
+    const abierto = leerCasoGuardado(JSON.parse(JSON.stringify(g))) as CasoAbierto;
+    expect(abierto.bitacora).toEqual(bitacora);
+    // Un archivo de antes no trae bitácora: abre igual, con la bitácora vacía.
+    expect(idaYVuelta(null).bitacora).toEqual([]);
+    expect(casoParaGuardar({ narracion, escena, expediente, validacion: null })).not.toHaveProperty(
+      "bitacora",
+    );
+  });
+
+  it("de una bitácora editada a mano se quedan solo los mensajes con forma de mensaje", () => {
+    const g = casoParaGuardar({ narracion, escena, expediente, validacion: null });
+    const editado = {
+      ...g,
+      bitacora: [
+        { n: 7, de: "fisico", para: "pizarra", tipo: "escribe", texto: "Reconstrucción hecha." },
+        { n: 8, de: "alguien", para: "pizarra", tipo: "escribe", texto: "No es un agente." },
+        { n: 9, de: "perito", para: "pizarra", tipo: "grita", texto: "Tipo que no existe." },
+        "no es un mensaje",
+      ],
+    };
+    const abierto = leerCasoGuardado(editado) as CasoAbierto;
+    expect(abierto.bitacora).toEqual([
+      { n: 1, de: "fisico", para: "pizarra", tipo: "escribe", texto: "Reconstrucción hecha." },
+    ]);
+    expect(leerCasoGuardado({ ...g, bitacora: "no es lista" })).toMatchObject({ bitacora: [] });
+  });
 });
