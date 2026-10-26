@@ -113,7 +113,7 @@ La escena del video daba V2 a 71.96 km/h y la app a 62.77, porque cada una tení
   - sobre el 3D;
   - en las tarjetas de las hipótesis, en lugar de la σ local, que con 2.9 km/h subestimaba la dispersión;
   - en el dictamen.
-- **Pendiente** («Endurecimiento pendiente»): que el ajuste no dependa del modo en que cae, por ejemplo arrancando desde varios puntos o reportando los modos.
+- **Pendiente** («Endurecimiento pendiente»): que el ajuste no dependa del modo en que cae, por ejemplo arrancando desde varios puntos o reportando los modos. Lo resuelve el multiarranque (sección siguiente).
 
 **Antes y después de la regla, fuera de AXA:**
 
@@ -125,11 +125,87 @@ La escena del video daba V2 a 71.96 km/h y la app a 62.77, porque cada una tení
   - los impactos coinciden igual que antes: mismo número en 71 de 135 (52.59 %) y primer impacto en 96 de 110 (87.27 %).
   - Nada empeora; tampoco mejora, porque sin posiciones la regla no tiene sobre qué actuar.
 
+## Multiarranque determinista (René, 2026-10-25; `eval/results/axa_multiarranque.json`)
+
+René: el resultado de AXA no puede depender de la semilla. Mostrar 63.17 km/h porque coincide con CESVI sería escoger semilla, cuando la mediana de 20 semillas era 75.48 y había soluciones en 150.
+
+**Por qué cambiaba con la semilla.** Dos causas, medidas:
+
+- **El ajuste se quedaba donde arrancaba.** Desde distintos arranques, la misma evidencia caía en mínimos distintos.
+- **La evidencia se movía.** El ΔV del daño (la cota inferior de V2) salía de 200 muestras con la semilla de la escena. Su p10 iba de 27.25 a 32.08 km/h según la semilla; con 2000 muestras, de 28.87 a 30.34 (`eval/results/axa_ruido_dano.json`).
+
+**Decisión (para todos los casos, Python y TS con paridad):**
+
+- **Arranques fijos, los mismos siempre:**
+  - el inicial;
+  - los compatibles con la deformación;
+  - 8 puntos de Halton sobre las velocidades, de 5 a 150 km/h.
+- **Cada arranque, con pocas iteraciones** (6 evaluaciones). Se agrupan por modo, se afinan los 3 mejores con el ajuste completo y se queda el de menor costo.
+- **Cuándo son modos distintos:** solo si hay una loma entre ellos, es decir, si el costo sube en algún punto de la recta que los une. Sin esto, una velocidad que la evidencia no fija (un valle plano) aparecía como varios «modos» con el mismo costo.
+- **Hipótesis por modo:** un modo dentro de 0.5 de costo del mejor se presenta como hipótesis en el paso 4, con su costo y sus números. Con residuos chicos, el costo soft_l1 es ½ χ², así que 0.5 es un Δχ² de 1. Va en `inversion.multiarranque` y `inversion.alternativas` (resultado 1.12.0).
+- **La evidencia ya no usa la semilla de la escena:** el ΔV por daño se estima con 2000 muestras y semilla fija (0). Es una propiedad de la evidencia, no de la escena.
+- **El rango sale de las entradas alrededor de la solución elegida.** Cada muestra perturba las medidas, la fricción, las masas y el reposo supuesto, y se reajusta desde la solución elegida:
+  - con una región de confianza de una escala por paso (10 km/h, 10°), para no saltar a otro modo. Antes, un paso sin límite llevaba algunas muestras de AXA al otro modo, con V1 detenido;
+  - con conjunto activo: un parámetro en su límite que empuja hacia afuera se queda fijo y el paso se recalcula con los demás.
+  - Si ninguna muestra se aparta de la solución (p10 = p90), la velocidad va sin paréntesis: un rango de ancho cero se leería como «sin incertidumbre».
+- **La semilla de la escena** solo sortea esas muestras.
+
+**AXA antes y después** (escena de la app, reposo de V2 supuesto):
+
+|                             | Antes (`axa_semillas.json`, 6a0786c) | Después (9c9a82c)                                  |
+| --------------------------- | ------------------------------------ | -------------------------------------------------- |
+| V2 con la semilla de la app | 63.17 km/h (60.77–113.09)            | 71.56 km/h (63.19–95.96)                           |
+| V1 con la semilla de la app | 23.35 km/h (0–25.65)                 | 25.32 km/h (3.73–27.03)                            |
+| V2 en 20 semillas           | de 62.03 a 151.84 (mediana 75.48)    | 71.56 en las 20                                    |
+| Hipótesis                   | dos en 15 semillas, una en 5         | una sola en las 20                                 |
+| Modos de «daño medido»      | —                                    | uno, costo 0.0293, al que llegan 5 de 11 arranques |
+
+- **Contra CESVI:** la solución elegida no es la de ~63.
+  - Por deformación (EBS), V2 da 71.56 km/h contra 63.15 del reporte: **+8.41 km/h (+13.32 %)**.
+  - Por restos, V1 al salir del impacto da 43.38 km/h contra 60.27: **−16.89 km/h (−28.02 %)**.
+  - No se ajustó nada para coincidir.
+- **Ya no hay dos hipótesis.** Con el mínimo global, V2 alcanza la deformación medida y termina a menos de 3 m de su reposo supuesto, así que la bandera `reposo_supuesto_vs_dano` ya no sale. Las dos hipótesis de antes venían de un ajuste atascado en un mínimo local.
+- **El rumbo inicial de V2** queda en el límite de búsqueda (+20° sobre el que colocó el perito; `en_limite` en el resultado). La evidencia lo empuja hacia un ángulo de llegada más abierto que el de la vía.
+- **Sensibilidad a la semilla de la evidencia:** con otras 4 semillas (2000 muestras), V2 va de 71.18 a 71.95 km/h.
+- **El rango y el muestreo:** con 12 muestras, el p10–p90 de V2 cambia con la semilla de la escena. El p10 va de 59.35 a 72.56 km/h y el p90, de 79.81 a 98.51. Es ruido del muestreo de una distribución ancha (el reposo supuesto tiene σ de 10 m). Se queda en 12 muestras: duplicarlas alarga cada estimación sin estrechar mucho ese ruido.
+- **Tiempo:**
+  - **En el navegador** (`eval/results/axa_tiempo_navegador.json`: Chromium en esta laptop, Windows con 8 GB, el Web Worker de producción, mediana de 3 corridas):
+    - la reconstrucción que dibuja el visor llega en 54 ms antes y después;
+    - el resultado completo, de 7.13 s antes (el worker de producción) a 4.83 s después.
+    - El multiarranque cuesta menos que las dos inversiones que reemplaza.
+  - **En Node,** el resultado completo tarda 5.86 s. La mediana de 23.06 s que trae `axa_semillas.json` se midió en otra sesión, con otros procesos, y no es comparable.
+
+**Fuera de AXA** (`eval/results/inversion_multiarranque.json`, contra `main` fe89b08):
+
+- **Escenas canónicas y de inversión:** 9 de 15 dan las mismas estimaciones. Ninguna trae alternativas dentro del margen.
+- **Las 6 que cambian** encuentran un mínimo de menor costo que el de antes:
+  - **`glorieta`:** antes no fijaba ninguna velocidad. Ahora, A a 0 km/h (en el límite) y B a 27.98, las dos sin rango: ninguna muestra se aparta de la solución, porque el costo tiene un quiebre ahí (contacto o no).
+  - **`interseccion_toluca`:**
+    - A pasa de 15.55 a 19.48 km/h, y B, que antes no se fijaba, da 24.41;
+    - hay dos modos (costo 3.09 y 5.59);
+    - el p10–p90 de B (2.15–22.15) queda por debajo de su mejor valor: con las entradas perturbadas, B baja.
+  - **`lateral_interseccion`:**
+    - el mejor ajuste (costo 3.49 contra 4.22 del otro modo) deja a B a 3.51 km/h, y la evidencia ya no fija a A (antes, 77.05);
+    - pierde la bandera `velocidad_vs_evidencia`, porque ya no hay velocidad de A que contrastar con la declarada.
+  - **`motociclista`:**
+    - A pasa de 0 a 36.79 km/h; B sigue en 35.41;
+    - el modo de antes (A detenido) tiene costo 3.55 contra 1.84;
+    - gana una bandera `velocidad_vs_evidencia`.
+  - **`volcadura`:** A pasa de 80.30 a 51.03 km/h y gana la bandera `velocidad_vs_evidencia`.
+  - **`axa_alcance`:** V2 pasa de 65.67 a 71.56 km/h y pierde la bandera de las dos hipótesis, como la escena de la app.
+- **Escena de prueba nueva, `fixtures/inversion/axa_reposo_lejano`:**
+  - es AXA con el reposo supuesto de V2 30 m adelante, más allá del reposo medido de V1, cosa que la deformación no permite;
+  - cubre en la paridad el camino de las dos hipótesis, que en AXA ya no sale.
+- **E-R4 con la inversión** (`cesvi_r4_inversion_multiarranque.json` contra `cesvi_r4_inversion_despues.json`):
+  - idéntico en las 205 narraciones;
+  - los mismos impactos: el mismo número en 71 de 135 (52.59 %) y el primero en 96 de 110 (87.27 %).
+
 ## Consecuencias
 
 - Las escenas nuevas de la inversión llevan su resultado de Python como referencia de la paridad TS:
   - `fixtures/inversion/alcance_un_dano`, con un costado y un frente medidos, perfil y rigidez;
-  - `fixtures/inversion/axa_alcance`, con el reposo de V2 marcado como supuesto, la bandera de las dos hipótesis y la otra hipótesis.
+  - `fixtures/inversion/axa_alcance`, con el reposo de V2 marcado como supuesto. Con el multiarranque, ese reposo cabe con la deformación y hay una sola hipótesis;
+  - `fixtures/inversion/axa_reposo_lejano`, con un reposo supuesto que la deformación no permite, la bandera de las dos hipótesis y la otra hipótesis.
 - **Pendiente** (en PROGRESS, «Endurecimiento pendiente»):
   - en un alcance, el que golpea tiene que ir más rápido: falta esa restricción en la inversión. «Cuadra con el reposo supuesto» deja a V2 y V1 casi a la misma velocidad;
   - la elección de hipótesis no se guarda con el caso: se pierde al recargar la página.

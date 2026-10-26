@@ -130,11 +130,11 @@
         "confianza": 0.3
       },
       "velocidad_previa": {
-        "valor": 63.17,
+        "valor": 71.56,
         "unidad": "km/h",
         "rango": [
-          60.77,
-          113.09
+          63.19,
+          95.96
         ],
         "fuente": "supuesto",
         "confianza": 0.7,
@@ -190,11 +190,11 @@
         "confianza": 0.3
       },
       "velocidad_previa": {
-        "valor": 23.35,
+        "valor": 25.32,
         "unidad": "km/h",
         "rango": [
-          0,
-          25.65
+          3.73,
+          27.03
         ],
         "fuente": "supuesto",
         "confianza": 0.7,
