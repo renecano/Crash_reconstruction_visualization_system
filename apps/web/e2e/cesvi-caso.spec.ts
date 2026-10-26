@@ -326,7 +326,7 @@ const CARAMBOLA = JSON.parse(
 
 test("@flujo /cesvi: una carambola, con sus impactos en orden hasta el 3D", async ({ page }) => {
   // Acerca el mapa, coloca dos impactos y tres finales, reconstruye y abre el 3D.
-  test.setTimeout(120_000);
+  test.setTimeout(180_000);
   const errores: string[] = [];
   page.on("pageerror", (e) => errores.push(e.message));
   await page.route("https://tiles.openfreemap.org/**", (r) =>
@@ -390,5 +390,17 @@ test("@flujo /cesvi: una carambola, con sus impactos en orden hasta el 3D", asyn
   const visor = page.getByTestId("visor-caso");
   await expect(visor.locator("canvas").first()).toBeVisible({ timeout: 60_000 });
   await expect(mapa.locator('[data-movil="V3"]')).toHaveCount(1, { timeout: 30_000 });
+
+  // 5. Paso 6 (R12a): una hipótesis sobre un conductor. V3 frena 2.5 s antes del impacto; el Web
+  // Worker simula a los tres conductores y el resultado se compara con la reconstrucción.
+  await irAPaso(page, 6);
+  await page.getByTestId("conductor-vehiculo").selectOption("V3");
+  await page.getByTestId("conductor-instante").fill("2.5");
+  await page.getByTestId("conductor-probar").click();
+  await expect(page.getByTestId("resultado-conductores")).toBeVisible({ timeout: 60_000 });
+  await expect(page.getByTestId("decisiones")).toContainText(
+    "V3 frena en −2.50 s (la hipótesis del perito)",
+  );
+  await expect(page.getByTestId("contacto-sin")).not.toBeEmpty();
   expect(errores).toEqual([]);
 });

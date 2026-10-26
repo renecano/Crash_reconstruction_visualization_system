@@ -6,8 +6,9 @@ import type { EscenaSpec, Resultado } from "@croquis/scene-schema";
 
 interface Reply {
   id: number;
-  fase?: "reconstruccion" | "completo";
+  fase?: "reconstruccion" | "completo" | "agentes";
   resultado?: Resultado;
+  agentes?: Record<string, unknown> | null;
   error?: string;
 }
 
@@ -16,21 +17,36 @@ interface Pending {
   onParcial?: (r: Resultado) => void;
   resolve: (r: Resultado) => void;
   reject: (e: Error) => void;
+  /** Para `probarConductoresEnNavegador`: recibe el bloque `agentes` (o null). */
+  onAgentes?: (a: Record<string, unknown> | null) => void;
+  /** Si va al worker de los conductores. */
+  agentes?: boolean;
 }
 
-let worker: Worker | null = null;
+/**
+ * Dos workers del mismo archivo: el de las reconstrucciones y el de las pruebas de los conductores
+ * (R12a), que tardan menos de un segundo y no deben esperar detrás de un resultado completo.
+ */
+const workers: Partial<Record<"general" | "conductores", Worker>> = {};
 let nextId = 1;
 const pending = new Map<number, Pending>();
 
-function getWorker(): Worker {
-  if (worker) return worker;
+function getWorker(cual: "general" | "conductores" = "general"): Worker {
+  const existente = workers[cual];
+  if (existente) return existente;
   // Archivo propio en `public/` (lo empaqueta `scripts/build-worker.mjs`): el service worker lo
   // precarga y sin red arranca igual (ADR 0030).
-  worker = new Worker("/workers/reconstruct.js");
+  const worker = new Worker("/workers/reconstruct.js");
+  workers[cual] = worker;
   worker.onmessage = (ev: MessageEvent<Reply>) => {
     const p = pending.get(ev.data.id);
     if (!p) return;
     const { fase, resultado, error } = ev.data;
+    if (fase === "agentes" && p.onAgentes) {
+      pending.delete(ev.data.id);
+      p.onAgentes(ev.data.agentes ?? null);
+      return;
+    }
     if (!resultado) {
       pending.delete(ev.data.id);
       p.reject(new Error(error ?? "El solver no devolvió resultado."));
@@ -44,8 +60,11 @@ function getWorker(): Worker {
     p.resolve(resultado);
   };
   worker.onerror = (ev) => {
-    for (const p of pending.values()) p.reject(new Error(ev.message || "El solver falló."));
-    pending.clear();
+    for (const [id, p] of pending) {
+      if ((p.agentes ?? false) !== (cual === "conductores")) continue;
+      p.reject(new Error(ev.message || "El solver falló."));
+      pending.delete(id);
+    }
   };
   return worker;
 }
@@ -71,6 +90,26 @@ export function reconstruirCompletoEnNavegador(
     const id = nextId++;
     pending.set(id, { completo: true, onParcial, resolve, reject });
     getWorker().postMessage({ id, spec, completo: true });
+  });
+}
+
+/**
+ * Los conductores como agentes (R12a): el bloque `agentes` del solver para una escena con algún
+ * `conductor`, o null si ninguno lo trae.
+ */
+export function probarConductoresEnNavegador(
+  spec: Record<string, unknown>,
+): Promise<Record<string, unknown> | null> {
+  return new Promise((resolve, reject) => {
+    const id = nextId++;
+    pending.set(id, {
+      completo: false,
+      resolve: () => resolve(null),
+      reject,
+      onAgentes: resolve,
+      agentes: true,
+    });
+    getWorker("conductores").postMessage({ id, spec, agentes: true });
   });
 }
 
