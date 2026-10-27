@@ -1,0 +1,743 @@
+{
+ "name": "rangos_inversion",
+ "generated_at": "2026-10-27T01:50:23Z",
+ "git_commit": "ca8c939",
+ "base": "5899573",
+ "descripcion": "Resultados versionados (escenas canónicas y de inversión) contra la base de la rama: estimaciones, rangos de ancho cero, mejores fuera de su p10–p90 y banderas.",
+ "totales": {
+  "antes": {
+   "ancho_cero": 5,
+   "fuera": 3
+  },
+  "despues": {
+   "ancho_cero": 0,
+   "fuera": 2
+  }
+ },
+ "e_r4": {
+  "antes": {
+   "archivo": "cesvi_r4_inversion_multiarranque.json",
+   "git_commit": "9c9a82c"
+  },
+  "despues": {
+   "archivo": "cesvi_r4_inversion_rangos_inversion.json",
+   "git_commit": "ca8c939"
+  },
+  "impactos_antes": {
+   "mismo_numero": {
+    "k": 71,
+    "n": 135,
+    "pct": 52.59
+   },
+   "primero_coincide": {
+    "k": 96,
+    "n": 110,
+    "pct": 87.27
+   }
+  },
+  "impactos_despues": {
+   "mismo_numero": {
+    "k": 71,
+    "n": 135,
+    "pct": 52.59
+   },
+   "primero_coincide": {
+    "k": 96,
+    "n": 110,
+    "pct": 87.27
+   }
+  },
+  "con_alguna_velocidad_fijada": [
+   0,
+   0
+  ],
+  "detalle_igual": 205,
+  "narraciones": 205
+ },
+ "con_estimaciones_iguales": 12,
+ "total": 16,
+ "escenas": {
+  "packages/scene-schema/fixtures/resultados/alcance.json": {
+   "nueva": false,
+   "estimaciones_iguales": true,
+   "antes": {
+    "velocidad_previa:veh-a": "no identificable"
+   },
+   "despues": {
+    "velocidad_previa:veh-a": "no identificable"
+   },
+   "raros_antes": {
+    "ancho_cero": [],
+    "mejor_fuera_del_rango": []
+   },
+   "raros_despues": {
+    "ancho_cero": [],
+    "mejor_fuera_del_rango": []
+   },
+   "banderas": {
+    "antes": [],
+    "despues": []
+   }
+  },
+  "packages/scene-schema/fixtures/resultados/carambola.json": {
+   "nueva": false,
+   "estimaciones_iguales": true,
+   "antes": {
+    "velocidad_previa:veh-a": "no identificable"
+   },
+   "despues": {
+    "velocidad_previa:veh-a": "no identificable"
+   },
+   "raros_antes": {
+    "ancho_cero": [],
+    "mejor_fuera_del_rango": []
+   },
+   "raros_despues": {
+    "ancho_cero": [],
+    "mejor_fuera_del_rango": []
+   },
+   "banderas": {
+    "antes": [],
+    "despues": []
+   }
+  },
+  "packages/scene-schema/fixtures/resultados/frontal_curva.json": {
+   "nueva": false,
+   "estimaciones_iguales": true,
+   "antes": {
+    "velocidad_previa:veh-a": "no identificable",
+    "velocidad_previa:veh-b": "no identificable"
+   },
+   "despues": {
+    "velocidad_previa:veh-a": "no identificable",
+    "velocidad_previa:veh-b": "no identificable"
+   },
+   "raros_antes": {
+    "ancho_cero": [],
+    "mejor_fuera_del_rango": []
+   },
+   "raros_despues": {
+    "ancho_cero": [],
+    "mejor_fuera_del_rango": []
+   },
+   "banderas": {
+    "antes": [],
+    "despues": []
+   }
+  },
+  "packages/scene-schema/fixtures/resultados/glorieta.json": {
+   "nueva": false,
+   "estimaciones_iguales": false,
+   "antes": {
+    "velocidad_previa:veh-a": {
+     "mejor": 0.0,
+     "p10": 0.0,
+     "p90": 0.0,
+     "rango_por": "muestras"
+    },
+    "velocidad_previa:veh-b": {
+     "mejor": 27.98,
+     "p10": 27.98,
+     "p90": 27.98,
+     "rango_por": "muestras"
+    },
+    "rumbo_inicial:veh-a": "no identificable",
+    "rumbo_inicial:veh-b": {
+     "mejor": 80.38,
+     "p10": 80.38,
+     "p90": 80.38,
+     "rango_por": "muestras"
+    }
+   },
+   "despues": {
+    "velocidad_previa:veh-a": {
+     "mejor": 0.0,
+     "p10": 0.0,
+     "p90": 12.07,
+     "rango_por": "laplace"
+    },
+    "velocidad_previa:veh-b": {
+     "mejor": 27.98,
+     "p10": 20.08,
+     "p90": 35.89,
+     "rango_por": "laplace"
+    },
+    "rumbo_inicial:veh-a": "no identificable",
+    "rumbo_inicial:veh-b": {
+     "mejor": 80.38,
+     "p10": 73.79,
+     "p90": 86.96,
+     "rango_por": "laplace"
+    }
+   },
+   "raros_antes": {
+    "ancho_cero": [
+     "velocidad_previa:veh-a",
+     "velocidad_previa:veh-b",
+     "rumbo_inicial:veh-b"
+    ],
+    "mejor_fuera_del_rango": []
+   },
+   "raros_despues": {
+    "ancho_cero": [],
+    "mejor_fuera_del_rango": []
+   },
+   "banderas": {
+    "antes": [],
+    "despues": []
+   }
+  },
+  "packages/scene-schema/fixtures/resultados/interseccion_toluca.json": {
+   "nueva": false,
+   "estimaciones_iguales": false,
+   "antes": {
+    "velocidad_previa:veh-a": {
+     "mejor": 19.48,
+     "p10": 16.55,
+     "p90": 22.73,
+     "rango_por": "muestras"
+    },
+    "velocidad_previa:veh-b": {
+     "mejor": 24.41,
+     "p10": 2.15,
+     "p90": 22.15,
+     "rango_por": "muestras"
+    },
+    "rumbo_inicial:veh-a": {
+     "mejor": -6.09,
+     "p10": -10.02,
+     "p90": -4.98,
+     "rango_por": "muestras"
+    },
+    "rumbo_inicial:veh-b": {
+     "mejor": -84.11,
+     "p10": -86.35,
+     "p90": -83.03,
+     "rango_por": "muestras"
+    }
+   },
+   "despues": {
+    "velocidad_previa:veh-a": {
+     "mejor": 19.0,
+     "p10": 13.54,
+     "p90": 24.47,
+     "rango_por": "laplace"
+    },
+    "velocidad_previa:veh-b": {
+     "mejor": 1.91,
+     "p10": 0.0,
+     "p90": 17.65,
+     "rango_por": "laplace"
+    },
+    "rumbo_inicial:veh-a": {
+     "mejor": -8.4,
+     "p10": -12.58,
+     "p90": -4.22,
+     "rango_por": "laplace"
+    },
+    "rumbo_inicial:veh-b": {
+     "mejor": -84.43,
+     "p10": -84.52,
+     "p90": -84.43,
+     "rango_por": "muestras"
+    }
+   },
+   "raros_antes": {
+    "ancho_cero": [],
+    "mejor_fuera_del_rango": [
+     "velocidad_previa:veh-b"
+    ]
+   },
+   "raros_despues": {
+    "ancho_cero": [],
+    "mejor_fuera_del_rango": []
+   },
+   "banderas": {
+    "antes": [
+     "velocidad_vs_evidencia"
+    ],
+    "despues": [
+     "velocidad_vs_evidencia"
+    ]
+   }
+  },
+  "packages/scene-schema/fixtures/resultados/lateral_interseccion.json": {
+   "nueva": false,
+   "estimaciones_iguales": true,
+   "antes": {
+    "velocidad_previa:veh-a": "no identificable",
+    "velocidad_previa:veh-b": {
+     "mejor": 3.51,
+     "p10": 0.26,
+     "p90": 10.31,
+     "rango_por": "muestras"
+    },
+    "rumbo_inicial:veh-a": {
+     "mejor": 5.76,
+     "p10": 3.2,
+     "p90": 7.04,
+     "rango_por": "muestras"
+    },
+    "rumbo_inicial:veh-b": {
+     "mejor": 78.94,
+     "p10": 78.72,
+     "p90": 80.98,
+     "rango_por": "muestras"
+    }
+   },
+   "despues": {
+    "velocidad_previa:veh-a": "no identificable",
+    "velocidad_previa:veh-b": {
+     "mejor": 3.51,
+     "p10": 0.26,
+     "p90": 10.31,
+     "rango_por": "muestras"
+    },
+    "rumbo_inicial:veh-a": {
+     "mejor": 5.76,
+     "p10": 3.2,
+     "p90": 7.04,
+     "rango_por": "muestras"
+    },
+    "rumbo_inicial:veh-b": {
+     "mejor": 78.94,
+     "p10": 78.72,
+     "p90": 80.98,
+     "rango_por": "muestras"
+    }
+   },
+   "raros_antes": {
+    "ancho_cero": [],
+    "mejor_fuera_del_rango": []
+   },
+   "raros_despues": {
+    "ancho_cero": [],
+    "mejor_fuera_del_rango": []
+   },
+   "banderas": {
+    "antes": [],
+    "despues": []
+   }
+  },
+  "packages/scene-schema/fixtures/resultados/motociclista.json": {
+   "nueva": false,
+   "estimaciones_iguales": false,
+   "antes": {
+    "velocidad_previa:veh-a": {
+     "mejor": 36.79,
+     "p10": 33.71,
+     "p90": 41.71,
+     "rango_por": "muestras"
+    },
+    "velocidad_previa:veh-b": {
+     "mejor": 35.41,
+     "p10": 31.36,
+     "p90": 39.59,
+     "rango_por": "muestras"
+    },
+    "rumbo_inicial:veh-a": {
+     "mejor": 200.0,
+     "p10": 200.0,
+     "p90": 200.0,
+     "rango_por": "muestras"
+    },
+    "rumbo_inicial:veh-b": {
+     "mejor": 1.32,
+     "p10": 0.17,
+     "p90": 2.58,
+     "rango_por": "muestras"
+    }
+   },
+   "despues": {
+    "velocidad_previa:veh-a": {
+     "mejor": 36.79,
+     "p10": 33.71,
+     "p90": 41.71,
+     "rango_por": "muestras"
+    },
+    "velocidad_previa:veh-b": {
+     "mejor": 35.41,
+     "p10": 31.36,
+     "p90": 39.59,
+     "rango_por": "muestras"
+    },
+    "rumbo_inicial:veh-a": {
+     "mejor": 200.0,
+     "p10": 188.49,
+     "p90": 200.0,
+     "rango_por": "laplace"
+    },
+    "rumbo_inicial:veh-b": {
+     "mejor": 1.32,
+     "p10": 0.17,
+     "p90": 2.58,
+     "rango_por": "muestras"
+    }
+   },
+   "raros_antes": {
+    "ancho_cero": [
+     "rumbo_inicial:veh-a"
+    ],
+    "mejor_fuera_del_rango": []
+   },
+   "raros_despues": {
+    "ancho_cero": [],
+    "mejor_fuera_del_rango": []
+   },
+   "banderas": {
+    "antes": [
+     "velocidad_vs_evidencia",
+     "velocidad_vs_evidencia"
+    ],
+    "despues": [
+     "velocidad_vs_evidencia",
+     "velocidad_vs_evidencia"
+    ]
+   }
+  },
+  "packages/scene-schema/fixtures/resultados/nocturno_lluvia.json": {
+   "nueva": false,
+   "estimaciones_iguales": true,
+   "antes": {
+    "velocidad_previa:veh-a": "no identificable",
+    "velocidad_previa:veh-b": "no identificable"
+   },
+   "despues": {
+    "velocidad_previa:veh-a": "no identificable",
+    "velocidad_previa:veh-b": "no identificable"
+   },
+   "raros_antes": {
+    "ancho_cero": [],
+    "mejor_fuera_del_rango": []
+   },
+   "raros_despues": {
+    "ancho_cero": [],
+    "mejor_fuera_del_rango": []
+   },
+   "banderas": {
+    "antes": [],
+    "despues": []
+   }
+  },
+  "packages/scene-schema/fixtures/resultados/objeto_fijo_arbol.json": {
+   "nueva": false,
+   "estimaciones_iguales": true,
+   "antes": {
+    "velocidad_previa:veh-a": "no identificable",
+    "rumbo_inicial:veh-a": "no identificable"
+   },
+   "despues": {
+    "velocidad_previa:veh-a": "no identificable",
+    "rumbo_inicial:veh-a": "no identificable"
+   },
+   "raros_antes": {
+    "ancho_cero": [],
+    "mejor_fuera_del_rango": []
+   },
+   "raros_despues": {
+    "ancho_cero": [],
+    "mejor_fuera_del_rango": []
+   },
+   "banderas": {
+    "antes": [],
+    "despues": []
+   }
+  },
+  "packages/scene-schema/fixtures/resultados/peaton_cruce.json": {
+   "nueva": false,
+   "estimaciones_iguales": true,
+   "antes": {
+    "velocidad_previa:veh-a": {
+     "mejor": 53.27,
+     "p10": 50.71,
+     "p90": 56.15,
+     "rango_por": "muestras"
+    }
+   },
+   "despues": {
+    "velocidad_previa:veh-a": {
+     "mejor": 53.27,
+     "p10": 50.71,
+     "p90": 56.15,
+     "rango_por": "muestras"
+    }
+   },
+   "raros_antes": {
+    "ancho_cero": [],
+    "mejor_fuera_del_rango": []
+   },
+   "raros_despues": {
+    "ancho_cero": [],
+    "mejor_fuera_del_rango": []
+   },
+   "banderas": {
+    "antes": [
+     "velocidad_vs_evidencia"
+    ],
+    "despues": [
+     "velocidad_vs_evidencia"
+    ]
+   }
+  },
+  "packages/scene-schema/fixtures/resultados/poste.json": {
+   "nueva": false,
+   "estimaciones_iguales": true,
+   "antes": {
+    "velocidad_previa:veh-a": "no identificable",
+    "rumbo_inicial:veh-a": "no identificable"
+   },
+   "despues": {
+    "velocidad_previa:veh-a": "no identificable",
+    "rumbo_inicial:veh-a": "no identificable"
+   },
+   "raros_antes": {
+    "ancho_cero": [],
+    "mejor_fuera_del_rango": []
+   },
+   "raros_despues": {
+    "ancho_cero": [],
+    "mejor_fuera_del_rango": []
+   },
+   "banderas": {
+    "antes": [],
+    "despues": []
+   }
+  },
+  "packages/scene-schema/fixtures/resultados/reversa.json": {
+   "nueva": false,
+   "estimaciones_iguales": true,
+   "antes": {
+    "velocidad_previa:veh-a": "no identificable"
+   },
+   "despues": {
+    "velocidad_previa:veh-a": "no identificable"
+   },
+   "raros_antes": {
+    "ancho_cero": [],
+    "mejor_fuera_del_rango": []
+   },
+   "raros_despues": {
+    "ancho_cero": [],
+    "mejor_fuera_del_rango": []
+   },
+   "banderas": {
+    "antes": [],
+    "despues": []
+   }
+  },
+  "packages/scene-schema/fixtures/resultados/volcadura.json": {
+   "nueva": false,
+   "estimaciones_iguales": false,
+   "antes": {
+    "velocidad_previa:veh-a": {
+     "mejor": 51.03,
+     "p10": 44.63,
+     "p90": 51.13,
+     "rango_por": "muestras"
+    },
+    "velocidad_previa:veh-b": "no identificable",
+    "rumbo_inicial:veh-a": {
+     "mejor": 20.0,
+     "p10": 20.0,
+     "p90": 20.0,
+     "rango_por": "muestras"
+    },
+    "rumbo_inicial:veh-b": "no identificable"
+   },
+   "despues": {
+    "velocidad_previa:veh-a": {
+     "mejor": 51.03,
+     "p10": 44.63,
+     "p90": 51.13,
+     "rango_por": "muestras"
+    },
+    "velocidad_previa:veh-b": "no identificable",
+    "rumbo_inicial:veh-a": {
+     "mejor": 20.0,
+     "p10": 4.67,
+     "p90": 20.0,
+     "rango_por": "laplace"
+    },
+    "rumbo_inicial:veh-b": "no identificable"
+   },
+   "raros_antes": {
+    "ancho_cero": [
+     "rumbo_inicial:veh-a"
+    ],
+    "mejor_fuera_del_rango": []
+   },
+   "raros_despues": {
+    "ancho_cero": [],
+    "mejor_fuera_del_rango": []
+   },
+   "banderas": {
+    "antes": [
+     "reposo_inalcanzable",
+     "velocidad_vs_evidencia"
+    ],
+    "despues": [
+     "reposo_inalcanzable",
+     "velocidad_vs_evidencia"
+    ]
+   }
+  },
+  "packages/scene-schema/fixtures/inversion/resultados/alcance_un_dano.json": {
+   "nueva": false,
+   "estimaciones_iguales": true,
+   "antes": {
+    "velocidad_previa:veh-a": "no identificable"
+   },
+   "despues": {
+    "velocidad_previa:veh-a": "no identificable"
+   },
+   "raros_antes": {
+    "ancho_cero": [],
+    "mejor_fuera_del_rango": []
+   },
+   "raros_despues": {
+    "ancho_cero": [],
+    "mejor_fuera_del_rango": []
+   },
+   "banderas": {
+    "antes": [],
+    "despues": []
+   }
+  },
+  "packages/scene-schema/fixtures/inversion/resultados/axa_alcance.json": {
+   "nueva": false,
+   "estimaciones_iguales": true,
+   "antes": {
+    "velocidad_previa:veh-a": {
+     "mejor": 71.56,
+     "p10": 70.31,
+     "p90": 91.52,
+     "rango_por": "muestras"
+    },
+    "velocidad_previa:veh-b": {
+     "mejor": 25.32,
+     "p10": 7.71,
+     "p90": 25.23,
+     "rango_por": "muestras"
+    },
+    "rumbo_inicial:veh-a": {
+     "mejor": 95.72,
+     "p10": 72.07,
+     "p90": 95.71,
+     "rango_por": "muestras"
+    },
+    "rumbo_inicial:veh-b": {
+     "mejor": 87.16,
+     "p10": 75.25,
+     "p90": 87.24,
+     "rango_por": "muestras"
+    }
+   },
+   "despues": {
+    "velocidad_previa:veh-a": {
+     "mejor": 71.56,
+     "p10": 70.31,
+     "p90": 91.52,
+     "rango_por": "muestras"
+    },
+    "velocidad_previa:veh-b": {
+     "mejor": 25.32,
+     "p10": 7.71,
+     "p90": 25.23,
+     "rango_por": "muestras"
+    },
+    "rumbo_inicial:veh-a": {
+     "mejor": 95.72,
+     "p10": 72.07,
+     "p90": 95.71,
+     "rango_por": "muestras"
+    },
+    "rumbo_inicial:veh-b": {
+     "mejor": 87.16,
+     "p10": 75.25,
+     "p90": 87.24,
+     "rango_por": "muestras"
+    }
+   },
+   "raros_antes": {
+    "ancho_cero": [],
+    "mejor_fuera_del_rango": [
+     "velocidad_previa:veh-b",
+     "rumbo_inicial:veh-a"
+    ]
+   },
+   "raros_despues": {
+    "ancho_cero": [],
+    "mejor_fuera_del_rango": [
+     "velocidad_previa:veh-b",
+     "rumbo_inicial:veh-a"
+    ]
+   },
+   "banderas": {
+    "antes": [],
+    "despues": []
+   }
+  },
+  "packages/scene-schema/fixtures/inversion/resultados/axa_reposo_lejano.json": {
+   "nueva": false,
+   "estimaciones_iguales": true,
+   "antes": {
+    "velocidad_previa:veh-a": {
+     "mejor": 64.28,
+     "p10": 63.22,
+     "p90": 95.4,
+     "rango_por": "muestras"
+    },
+    "velocidad_previa:veh-b": {
+     "mejor": 22.75,
+     "p10": 6.24,
+     "p90": 25.74,
+     "rango_por": "muestras"
+    },
+    "rumbo_inicial:veh-a": "no identificable",
+    "rumbo_inicial:veh-b": {
+     "mejor": 75.76,
+     "p10": 74.31,
+     "p90": 77.66,
+     "rango_por": "muestras"
+    }
+   },
+   "despues": {
+    "velocidad_previa:veh-a": {
+     "mejor": 64.28,
+     "p10": 63.22,
+     "p90": 95.4,
+     "rango_por": "muestras"
+    },
+    "velocidad_previa:veh-b": {
+     "mejor": 22.75,
+     "p10": 6.24,
+     "p90": 25.74,
+     "rango_por": "muestras"
+    },
+    "rumbo_inicial:veh-a": "no identificable",
+    "rumbo_inicial:veh-b": {
+     "mejor": 75.76,
+     "p10": 74.31,
+     "p90": 77.66,
+     "rango_por": "muestras"
+    }
+   },
+   "raros_antes": {
+    "ancho_cero": [],
+    "mejor_fuera_del_rango": []
+   },
+   "raros_despues": {
+    "ancho_cero": [],
+    "mejor_fuera_del_rango": []
+   },
+   "banderas": {
+    "antes": [
+     "reposo_supuesto_vs_dano"
+    ],
+    "despues": [
+     "reposo_supuesto_vs_dano"
+    ]
+   }
+  }
+ }
+}

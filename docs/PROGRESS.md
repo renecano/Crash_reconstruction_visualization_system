@@ -1573,9 +1573,11 @@ Lo que se pospone por el trabajo con CESVI no se borra: queda aquí para despué
 - **El rango de la inversión con 12 muestras** (ADR 0091, `eval/results/axa_multiarranque.json`):
   - la solución elegida ya no depende de la semilla, pero su p10–p90 sí, por el muestreo: en AXA, el p10 de V2 va de 59.35 a 72.56 km/h y el p90, de 79.81 a 98.51;
   - estrecharlo pide muchas más muestras o un muestreo estratificado.
-- **Rangos raros de la inversión** (ADR 0091):
-  - en `glorieta`, ninguna muestra se aparta de la solución (el costo tiene un quiebre), así que la velocidad va sin rango;
-  - en `interseccion_toluca`, el p10–p90 de B (2.15–22.15) queda por debajo de su mejor valor (24.41).
+- ~~**Rangos raros de la inversión**~~ Hecho el 2026-10-26 (ADR 0091, `eval/results/rangos_inversion.json`):
+  - el mejor ajuste se pule con la cuerda: Levenberg-Marquardt se detenía antes del mínimo y las muestras se corrían solas;
+  - si ninguna muestra se aparta de la solución, el rango es el lineal (`rango_por: "laplace"`);
+  - rangos de ancho cero: de 5 a 0. Mejor fuera de su rango: de 3 a 2, los dos pegados al borde en `axa_alcance` (rango de un solo lado);
+  - E-R4 idéntico; AXA sin cambios.
 - **El rumbo inicial de V2 en AXA** queda en el límite de búsqueda (+20° sobre el que colocó el perito). Revisar si ese límite es el correcto o si la posición inicial supuesta de V2 está mal orientada.
 - **Las hipótesis por modo** (otro mínimo dentro del margen de costo) solo las ejercita la prueba unitaria: ninguna escena versionada ni AXA tiene hoy un segundo modo dentro del margen.
 - **Python en CI tarda 8 min** con el multiarranque y `pytest -n auto` (el límite es 10). Si crece, hay que acelerar la referencia Python o repartir más los resultados versionados.
