@@ -257,6 +257,9 @@ MODE_MARGIN = 0.5
 # el costo deja de bajar. LM se detiene por su tope o su tolerancia antes del mínimo, y las muestras
 # del rango, que se reajustan con la cuerda, se corrían solas desde ahí.
 POLISH_ROUNDS = 3
+# En un alcance, el que golpea no puede ir más lento que el golpeado al impactar (física, no
+# evidencia): fuera de eso pesa `PRIORIDAD` veces 1 km/h, como la deformación medida (ADR 0091).
+SIGMA_ORDEN_KMH = 1.0
 # p10–p90 de una normal: con muestras que no se apartan de la solución, el rango es el lineal.
 Z_P90 = 1.2815515655446004
 _PRIMES = (2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37, 41, 43, 47, 53, 59, 61, 67, 71)
@@ -298,6 +301,8 @@ class Evidence:
     # La hipótesis «cuadra con el reposo supuesto»: el supuesto pesa como dato y el daño, sin
     # prioridad.
     assumed_as_data: bool = False
+    # (el que golpea, el golpeado) si el primer impacto entre vehículos es un alcance.
+    rear_end: tuple[tuple[str, str], ...] = ()
 
     def empty(self) -> bool:
         return not (
@@ -465,8 +470,40 @@ def evidence_from_spec(
                         dmg[vid], other_mass_kg=masa_o, seed=seed + k, n=n_damage
                     )
     return Evidence(
-        rest, throw, damage_dv, rest_heading, skid, slide, damage_min, rest_assumed, heading_assumed
+        rest,
+        throw,
+        damage_dv,
+        rest_heading,
+        skid,
+        slide,
+        damage_min,
+        rest_assumed,
+        heading_assumed,
+        rear_end=rear_end_pairs(spec),
     )
+
+
+def rear_end_pairs(spec: JsonObj) -> tuple[tuple[str, str], ...]:
+    """(el que golpea, el golpeado) del primer impacto entre vehículos, si es un alcance: el frente
+    (F) de uno contra la parte trasera (B) del otro. Si alguno va en reversa no es un alcance: el
+    que retrocede golpea con su parte trasera."""
+    eventos: list[JsonObj] = spec.get("eventos", [])
+    event = next((e for e in eventos if str(e["tipo"]) == "impacto_vehiculo_vehiculo"), None)
+    if event is None:
+        return ()
+    zonas: list[JsonObj] = event.get("zonas_impacto", [])
+    lado = {str(z["vehiculo_id"]): str(z["cdc"]["lado"]) for z in zonas if z.get("cdc")}
+    golpea = [v for v, x in lado.items() if x == "F"]
+    golpeado = [v for v, x in lado.items() if x == "B"]
+    maniobra: dict[str, str] = {}
+    for v in spec["vehiculos"]:
+        m: JsonObj = v.get("maniobra") or {}
+        maniobra[str(v["id"])] = str(m.get("valor", ""))
+    if len(golpea) == 1 and len(golpeado) == 1 and golpea[0] != golpeado[0]:
+        if "reversa" in (maniobra.get(golpea[0]), maniobra.get(golpeado[0])):
+            return ()
+        return ((golpea[0], golpeado[0]),)
+    return ()
 
 
 def _class_mass(clase: str) -> float:
@@ -642,6 +679,15 @@ def _residuals(
         # Un mínimo: solo cuenta si la reconstrucción queda por debajo de su p10.
         name = f"dano_minimo:{vid}"
         out[name] = damage_band(v.delta_v_kmh, dist, w, minimum=True, edge=(active or {}).get(name))
+    for a, b in ev.rear_end:
+        va, vb = by_v.get(a), by_v.get(b)
+        if va is None or vb is None:
+            continue
+        # Cuánto más lento que el golpeado llega el que golpea: cero si llega más rápido.
+        name = f"orden_alcance:{a}"
+        gap = vb.v_impact_kmh - va.v_impact_kmh
+        lineal = name in (active or {})
+        out[name] = (gap if lineal else max(0.0, gap)) * PRIORIDAD / SIGMA_ORDEN_KMH
     for vid, (x, y) in sorted(ev.rest_assumed.items()):
         v = by_v.get(vid)
         if v is None:
@@ -721,7 +767,9 @@ class _Problem:
         el jacobiano en ese punto."""
         res = self.raw(x) or {}
         self.active = {
-            k: r for k, r in res.items() if k.startswith(("dano:", "dano_minimo:")) and r != 0.0
+            k: r
+            for k, r in res.items()
+            if k.startswith(("dano:", "dano_minimo:", "orden_alcance:")) and r != 0.0
         }
         self._cache.clear()
 
@@ -973,6 +1021,7 @@ def perturbed(spec: JsonObj, ev: Evidence, rng: random.Random) -> Perturbed:
         rest_assumed,
         heading_assumed,
         ev.assumed_as_data,
+        ev.rear_end,
     )
     downed_mu: float | None = None
     if any(str(v["clase"]["valor"]) in friction.DOWNED_SLIDE_CLASSES for v in s["vehiculos"]):

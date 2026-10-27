@@ -1566,9 +1566,10 @@ Lo que se pospone por el trabajo con CESVI no se borra: queda aquí para despué
   - **Lo que falta:** el contrato y el solver necesitan el sentido de marcha separado del rumbo del frente. Va con R4 o R6, junto con las otras modalidades del corpus.
 - **Del prototipo de CESVI:** el mapa con mosaicos propios (privacidad completa), la importación automática de cualquier dictamen, interpenetración, impactos múltiples y generalidad del método; autenticación con cuentas para cuando los peritos usen sus propios casos (hoy el acceso es con usuario y clave, ADR 0049).
 
-- **Alcance sin el orden de velocidades en la inversión** (2026-10-24, ADR 0091):
-  - en AXA, «cuadra con el reposo supuesto» deja a V2, que va detrás, casi a la misma velocidad que V1 (41.9 y 41.82 km/h);
-  - en un alcance, el que golpea tiene que ir más rápido; falta esa restricción en la inversión.
+- ~~**Alcance sin el orden de velocidades en la inversión**~~ Hecho el 2026-10-26 (ADR 0091, `eval/results/alcance_orden.json`):
+  - en un alcance (frente contra trasera, sin reversa), el que golpea no puede ir más lento que el golpeado al impactar; es una restricción física, no evidencia;
+  - no cambia ninguna de las 16 escenas versionadas (ya se cumplía), ni E-R4, ni AXA;
+  - en la hipótesis del reposo de `axa_reposo_lejano` las dos velocidades quedan casi iguales (47.27 y 47.26) por diseño de esa hipótesis.
 - **Las tomas de la portada v3** (ADR 0092) se sustituyen por los renders de Blender cuando llegue la rama `resultados/computadora-demo-<fecha>`.
 - **El rango de la inversión con 12 muestras** (ADR 0091, `eval/results/axa_multiarranque.json`):
   - la solución elegida ya no depende de la semilla, pero su p10–p90 sí, por el muestreo: en AXA, el p10 de V2 va de 59.35 a 72.56 km/h y el p90, de 79.81 a 98.51;

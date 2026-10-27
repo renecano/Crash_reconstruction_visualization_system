@@ -375,3 +375,44 @@ def test_el_pulido_solo_baja_el_costo() -> None:
     corto = inv.fit_evidence(declared, ev, max_nfev=2)
     pulido = inv._polish(declared, ev, corto, params, 0.1)  # pyright: ignore[reportPrivateUsage]
     assert pulido.cost <= corto.cost
+
+
+# --- En un alcance, el que golpea va más rápido (ADR 0091) ------------------------------------
+
+
+def _fixture_inversion(name: str) -> dict[str, Any]:
+    from pathlib import Path
+
+    ruta = (
+        Path(__file__).resolve().parents[2]
+        / "packages/scene-schema/fixtures/inversion"
+        / f"{name}.json"
+    )
+    import json
+
+    return json.loads(ruta.read_text(encoding="utf-8"))
+
+
+def test_un_alcance_es_frente_contra_trasera_y_la_reversa_no() -> None:
+    assert inv.rear_end_pairs(load_fixture("alcance")) == (("veh-a", "veh-b"),)
+    assert inv.rear_end_pairs(load_fixture("reversa")) == ()
+    assert inv.rear_end_pairs(load_fixture("lateral_interseccion")) == ()
+
+
+def test_el_que_golpea_mas_lento_cuesta_y_mas_rapido_no() -> None:
+    spec = _fixture_inversion("axa_alcance")
+    ev = inv.evidence_from_spec(spec)
+    assert ev.rear_end == (("veh-a", "veh-b"),)
+    base = inv.with_marks(spec, ev)
+    lento = inv._residuals(  # pyright: ignore[reportPrivateUsage]
+        inv.apply_values(base, {"velocidad:veh-a": 20.0, "velocidad:veh-b": 40.0}), ev, 0.1
+    )
+    rapido = inv._residuals(  # pyright: ignore[reportPrivateUsage]
+        inv.apply_values(base, {"velocidad:veh-a": 60.0, "velocidad:veh-b": 25.0}), ev, 0.1
+    )
+    assert lento is not None
+    assert rapido is not None
+    assert lento["orden_alcance:veh-a"] > 0
+    assert rapido["orden_alcance:veh-a"] == 0
+    # No es evidencia: no aparece entre las etiquetas.
+    assert not any(e.startswith("orden") for e in ev.labels())
