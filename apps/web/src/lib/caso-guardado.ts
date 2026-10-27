@@ -52,6 +52,8 @@ export interface CasoGuardado {
   reporte_cesvi?: ReporteCesvi | null;
   /** La bitácora de los agentes de la pizarra (R12b, ADR 0093), opcional: los archivos de antes no la traen. */
   bitacora?: MensajeBitacora[];
+  /** La hipótesis que eligió el perito (ADR 0091), opcional: los archivos de antes no la traen. */
+  hipotesis_elegida?: string;
 }
 
 export interface CasoAbierto {
@@ -65,6 +67,8 @@ export interface CasoAbierto {
   validacion: ValidacionPerito | null;
   /** La bitácora guardada (vacía si el archivo no la trae). */
   bitacora: MensajeBitacora[];
+  /** La clave de la hipótesis que eligió el perito, o null. */
+  hipotesisElegida: string | null;
 }
 
 /** El expediente sin su resultado: lo que el perito valida. */
@@ -97,6 +101,7 @@ export function casoParaGuardar(c: {
   reporte?: ReporteCesvi | null;
   ahora?: Date;
   bitacora?: readonly MensajeBitacora[];
+  hipotesisElegida?: string | null;
 }): CasoGuardado {
   const { posiciones, conteos, problemas, preguntas } = c.escena;
   const base = sinResultado(c.expediente);
@@ -122,6 +127,7 @@ export function casoParaGuardar(c: {
     ...(c.titulo ? { titulo: c.titulo } : {}),
     ...(c.reporte ? { reporte_cesvi: c.reporte } : {}),
     ...(c.bitacora?.length ? { bitacora: [...c.bitacora] } : {}),
+    ...(c.hipotesisElegida ? { hipotesis_elegida: c.hipotesisElegida } : {}),
   };
 }
 
@@ -156,5 +162,11 @@ export function leerCasoGuardado(datos: unknown): CasoAbierto | { error: string 
     expediente,
     validacion,
     bitacora: bitacoraDeArchivo(c.bitacora),
+    // Una clave como las de `hipotesisDe` («dano», «reposo-2»…); cualquier otra cosa se ignora.
+    hipotesisElegida:
+      typeof c.hipotesis_elegida === "string" &&
+      /^(dano|reposo|evidencia)(-\d+)?$/.test(c.hipotesis_elegida)
+        ? c.hipotesis_elegida
+        : null,
   };
 }

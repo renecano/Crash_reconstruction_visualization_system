@@ -190,7 +190,8 @@ export function RecorridoCaso({ inicial }: { inicial: CasoExpediente }) {
   }, [expandido]);
   // Si un reposo supuesto no cabe con la deformación medida hay dos hipótesis; el perito elige
   // (ADR 0091). Mientras no elija se ve la del daño medido, y se dice.
-  const [hipotesis, setHipotesis] = useState<string | null>(null);
+  // La elección se guarda con el caso; al reconstruir se aplica si esa hipótesis sigue existiendo.
+  const [hipotesis, setHipotesis] = useState<string | null>(inicial.hipotesisElegida ?? null);
   const r = useMemo(
     () => (rec.r?.hipotesis && hipotesis ? conHipotesis(rec.r, hipotesis) : rec.r),
     [rec.r, hipotesis],
@@ -343,6 +344,7 @@ export function RecorridoCaso({ inicial }: { inicial: CasoExpediente }) {
     setTexto(c.narracion ?? "");
     setReporte(c.reporte);
     setValidacion(c.validacion);
+    setHipotesis(c.hipotesisElegida);
     // La bitácora del archivo sigue en la pizarra (R12b): se escribe después de ella.
     setPizarra(
       pizarraDeEscena(c.narracion, c.escena, {
@@ -369,6 +371,7 @@ export function RecorridoCaso({ inicial }: { inicial: CasoExpediente }) {
           titulo,
           reporte,
           bitacora: pizarra.bitacora,
+          hipotesisElegida: hipotesis,
         })
       : null;
   const guardarEnEquipo = () => {
@@ -787,7 +790,15 @@ export function RecorridoCaso({ inicial }: { inicial: CasoExpediente }) {
       return (
         <div className="flex flex-col gap-5">
           {r?.hipotesis ? (
-            <ElegirHipotesis r={r} elegida={hipotesis} onElegir={setHipotesis} />
+            <ElegirHipotesis
+              r={r}
+              elegida={hipotesis}
+              onElegir={(clave) => {
+                setHipotesis(clave);
+                const h = r.hipotesis?.find((x) => x.clave === clave);
+                if (h) setPizarra((p) => delPerito(p, `Elige la hipótesis «${h.titulo}».`));
+              }}
+            />
           ) : null}
           <PanelReconstruccion
             rec={rec}

@@ -112,6 +112,23 @@ describe("el caso guardado con la validación del perito (ADR 0075)", () => {
     );
   });
 
+  it("guarda la hipótesis que eligió el perito; una clave que no es de hipótesis se ignora", () => {
+    const g = casoParaGuardar({
+      narracion,
+      escena,
+      expediente,
+      validacion: null,
+      hipotesisElegida: "reposo-2",
+    });
+    expect(g.hipotesis_elegida).toBe("reposo-2");
+    expect((leerCasoGuardado(JSON.parse(JSON.stringify(g))) as CasoAbierto).hipotesisElegida).toBe(
+      "reposo-2",
+    );
+    expect(idaYVuelta(null).hipotesisElegida).toBeNull();
+    const raro = { ...g, hipotesis_elegida: "<script>" };
+    expect((leerCasoGuardado(raro) as CasoAbierto).hipotesisElegida).toBeNull();
+  });
+
   it("de una bitácora editada a mano se quedan solo los mensajes con forma de mensaje", () => {
     const g = casoParaGuardar({ narracion, escena, expediente, validacion: null });
     const editado = {
