@@ -132,9 +132,38 @@ export interface PruebaConductores {
   cambiaElPar: boolean;
   /** Con el tiempo de reacción de los que reaccionan sorteado en su rango. */
   sensibilidad: { muestras: number; sinContacto: number; p10: number; p90: number } | null;
+  /**
+   * Sin la hipótesis, el primer contacto de los conductores no es el primer impacto de la
+   * reconstrucción (otro par, u otro instante): se dice, con los dos (ADR 0088).
+   */
+  lineaBaseDistinta: { sinHipotesis: string; reconstruccion: string } | null;
 }
 
 const r2 = (x: number) => Math.round(x * 100) / 100;
+/** Diferencia de instante con la que el primer contacto ya no es el impacto reconstruido (s). */
+const TOLERANCIA_CONTACTO_S = 0.1;
+const enSegundos = (t: number) => `${t < 0 ? "−" : "+"}${Math.abs(t).toFixed(2)} s`;
+const par = (vs: readonly string[]) => [...vs].sort().join("|");
+
+/** El primer contacto sin la hipótesis contra el primer impacto de la reconstrucción. */
+function contraLaReconstruccion(
+  r: Reconstruccion,
+  sin: ContactoConductores,
+): PruebaConductores["lineaBaseDistinta"] {
+  const primero = r.impactos?.[0];
+  if (!primero) return null;
+  const igual =
+    sin.contacto &&
+    par(sin.vehiculos) === par(primero.vehiculos) &&
+    Math.abs(sin.t! - primero.t) <= TOLERANCIA_CONTACTO_S;
+  if (igual) return null;
+  return {
+    sinHipotesis: sin.contacto
+      ? `${sin.vehiculos.join(" con ")} en ${enSegundos(sin.t!)}`
+      : `ningún contacto (quedan a ${(sin.distanciaMinimaM ?? 0).toFixed(2)} m)`,
+    reconstruccion: `${primero.vehiculos.join(" con ")} en ${enSegundos(primero.t)}`,
+  };
+}
 
 /** Lee el bloque `agentes` del resultado en términos del expediente. */
 export function leerPruebaConductores(r: Reconstruccion, agentes: Json): PruebaConductores {
@@ -162,8 +191,7 @@ export function leerPruebaConductores(r: Reconstruccion, agentes: Json): PruebaC
         };
   const con = contacto(agentes.resultado as Json);
   const sin = contacto(agentes.linea_base as Json);
-  const par = (c: ContactoConductores) => [...c.vehiculos].sort().join("|");
-  const cambiaElPar = con.contacto && sin.contacto && par(con) !== par(sin);
+  const cambiaElPar = con.contacto && sin.contacto && par(con.vehiculos) !== par(sin.vehiculos);
   const conductores = agentes.conductores as {
     vehiculo: string;
     tiempo_reaccion_s: { valor: number; rango: [number, number]; fuente: string };
@@ -213,6 +241,7 @@ export function leerPruebaConductores(r: Reconstruccion, agentes: Json): PruebaC
           }
         : null,
     cambiaElPar,
+    lineaBaseDistinta: contraLaReconstruccion(r, sin),
     sensibilidad:
       sens?.velocidad_relativa_kmh !== undefined
         ? {

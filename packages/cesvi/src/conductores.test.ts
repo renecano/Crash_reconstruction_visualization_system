@@ -123,6 +123,21 @@ describe("la hipótesis del perito sobre un conductor (R12a)", () => {
     expect(p.cambiaElPar).toBe(false);
   });
 
+  it("avisa si, sin la hipótesis, el primer contacto no es el primer impacto de la reconstrucción", () => {
+    const agentes = leer("../../scene-schema/fixtures/agentes/resultados/carambola_cadena.json");
+    const ids = { "veh-a": "V1", "veh-b": "V2", "veh-c": "V3" };
+    const conImpacto = (vehiculos: string[]) =>
+      ({ ids, impactos: [{ numero: 1, t: 0, vehiculos }] }) as unknown as Reconstruccion;
+    // La línea base de la carambola es A con B en 0 s: la misma que el primer impacto.
+    expect(leerPruebaConductores(conImpacto(["V2", "V1"]), agentes).lineaBaseDistinta).toBeNull();
+    expect(leerPruebaConductores(conImpacto(["V2", "V3"]), agentes).lineaBaseDistinta).toEqual({
+      sinHipotesis: "V1 con V2 en +0.00 s",
+      reconstruccion: "V2 con V3 en +0.00 s",
+    });
+    // Sin impactos reconstruidos no hay con qué comparar.
+    expect(leerPruebaConductores(conNombres(ids), agentes).lineaBaseDistinta).toBeNull();
+  });
+
   it("si el primer contacto cambia de vehículos, no se comparan sus velocidades", () => {
     const r = conNombres({ "veh-a": "V1", "veh-b": "V2", "veh-c": "V3" });
     const agentes = leer("../../scene-schema/fixtures/agentes/resultados/carambola_cadena.json");

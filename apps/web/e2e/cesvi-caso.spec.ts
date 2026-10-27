@@ -406,5 +406,9 @@ test("@flujo /cesvi: una carambola, con sus impactos en orden hasta el 3D", asyn
     "V3 frena en −2.50 s (la hipótesis del perito)",
   );
   await expect(page.getByTestId("contacto-sin")).not.toBeEmpty();
+  // Si sin la hipótesis el primer contacto no es el primer impacto reconstruido, se avisa (ADR 0088).
+  await expect(page.getByTestId("linea-base-distinta")).toContainText(
+    "la reconstrucción tiene primero V1 con V2",
+  );
   expect(errores).toEqual([]);
 });

@@ -1581,7 +1581,9 @@ Lo que se pospone por el trabajo con CESVI no se borra: queda aquí para despué
 - **Python en CI tarda 8 min** con el multiarranque y `pytest -n auto` (el límite es 10). Si crece, hay que acelerar la referencia Python o repartir más los resultados versionados.
 - **Las relecturas de R12b no están grabadas** (ADR 0093): en E-R4 el Verificador de citas pidió releer en 2 narraciones, pero sin respuesta grabada no se puede medir si la relectura mejora algo. Grabarlas (con la API) y medir.
 - **El arrastre después del impacto es una fracción fija** (0.35 de la fricción): su incertidumbre solo entra por μ. Muestrearla en su rango cuando haya una fuente para él (ADR 0091).
-- **La línea base de los conductores no siempre es la reconstrucción** (ADR 0088): en una carambola colocada a mano, los agentes sin hipótesis encontraron a V2 con V3 en −0.40 s, antes del primer impacto reconstruido (V1 con V2 en 0 s). Falta que los agentes respeten el orden de impactos de la reconstrucción, o que avisen cuando no coincide.
+- **La línea base de los conductores no siempre es la reconstrucción** (ADR 0088): en una carambola colocada a mano, los agentes sin hipótesis encontraron a V2 con V3 en −0.40 s, antes del primer impacto reconstruido (V1 con V2 en 0 s).
+  - **Hecho (2026-10-26):** el paso 6 lo avisa con los dos contactos y dice que la hipótesis se compara con «Sin la hipótesis», no con el paso 4 (`lineaBaseDistinta`; prueba en `conductores.test.ts` y en la e2e de la carambola).
+  - **Falta:** que los agentes respeten el orden de impactos de la reconstrucción (cambio del solver, con paridad).
 
 ### Bloqueado — necesita a René
 
