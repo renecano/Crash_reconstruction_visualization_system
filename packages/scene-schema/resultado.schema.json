@@ -22,7 +22,7 @@
   ],
   "properties": {
     "version_resultado": {
-      "const": "1.12.0"
+      "const": "1.13.0"
     },
     "escena_id": {
       "$ref": "#/$defs/Id"
@@ -1197,6 +1197,11 @@
           "type": "integer",
           "minimum": 1,
           "maximum": 1000
+        },
+        "rango_por": {
+          "type": "string",
+          "enum": ["laplace"],
+          "description": "Si las muestras no se apartaron de la solución (el costo tiene un quiebre ahí), el p10–p90 es el lineal: mejor ± 1.2816·σ local, dentro de los límites (ADR 0091). Sin este campo, el p10–p90 es el de las muestras."
         }
       }
     },

@@ -253,6 +253,12 @@ HILL_TOL = 0.05
 # Margen de costo para presentar otro modo como hipótesis: con residuos chicos el costo soft_l1 es
 # ½ χ², así que 0.5 es un Δχ² de 1 (el otro modo explica la evidencia casi igual de bien).
 MODE_MARGIN = 0.5
+# Pulido del mejor ajuste (ADR 0091): rondas de la cuerda con el jacobiano en cada punto, hasta que
+# el costo deja de bajar. LM se detiene por su tope o su tolerancia antes del mínimo, y las muestras
+# del rango, que se reajustan con la cuerda, se corrían solas desde ahí.
+POLISH_ROUNDS = 3
+# p10–p90 de una normal: con muestras que no se apartan de la solución, el rango es el lineal.
+Z_P90 = 1.2815515655446004
 _PRIMES = (2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37, 41, 43, 47, 53, 59, 61, 67, 71)
 
 
@@ -986,6 +992,8 @@ class Estimate:
     identifiable: bool
     best: float | None
     dist: Distribution | None
+    # «laplace» si las muestras no se apartaron de la solución y el rango es el lineal (ADR 0091).
+    range_by: str = "muestras"
 
     @property
     def at_bound(self) -> bool:
@@ -1008,6 +1016,8 @@ class Estimate:
             out["sigma_local"] = round(self.sigma_local, 2)
         if self.identifiable and self.best is not None and self.dist is not None:
             out["estimacion"] = {"mejor": round(self.best, 2), **self.dist.to_dict(2)}
+            if self.range_by != "muestras":
+                out["estimacion"]["rango_por"] = self.range_by
             out["en_limite"] = self.at_bound
         return out
 
@@ -1285,6 +1295,7 @@ def _estimate(
         # Lo que la evidencia no fija vuelve a su valor inicial y se reajusta lo demás.
         start = {p.name: (best.values[p.name] if p.name in free else p.start) for p in params}
         best = fit_evidence(spec, ev, dt=dt, start=start, free=free)
+    best = _polish(spec, ev, best, [p for p in params if p.name in free], dt)
     rng = dmath.Random(seed)
     fits: list[Fit] = []
     impacts: dict[str, list[float]] = {}
@@ -1317,12 +1328,12 @@ def _estimate(
         for v in r.vehiculos:
             impacts.setdefault(v.id, []).append(v.v_impact_kmh)
     estimates = [
-        Estimate(
+        _estimate_of(
             p,
             sigma.get(p.name, math.inf),
             ident[p.name],
             best.values.get(p.name) if ident[p.name] else None,
-            distribution([f.values[p.name] for f in fits]) if ident[p.name] and fits else None,
+            [f.values[p.name] for f in fits] if ident[p.name] else [],
         )
         for p in params
     ]
@@ -1334,6 +1345,43 @@ def _estimate(
         fits=fits,
         seed=seed,
         full=full,
+    )
+
+
+def _polish(spec: JsonObj, ev: Evidence, best: Fit, free_params: list[Param], dt: float) -> Fit:
+    """Termina de bajar el costo desde el mejor ajuste con la cuerda y el jacobiano en cada punto
+    (hasta `POLISH_ROUNDS` rondas). Se queda con el pulido solo si cuesta menos."""
+    if not free_params or not best.residuals:
+        return best
+    fixed = {n: v for n, v in best.values.items() if all(p.name != n for p in free_params)}
+    prob = _Problem(with_marks(spec, ev), ev, free_params, fixed, dt)
+    prob.names.extend(sorted(best.residuals))
+    x = [best.values[p.name] for p in free_params]
+    f = _at(prob, x)
+    for _ in range(POLISH_ROUNDS):
+        g = _chord_refit(prob, x, _sample_jac(prob, x))
+        if g is None or g.cost >= f.cost:
+            break
+        f = g
+        x = [g.values[p.name] for p in free_params]
+    return f if f.cost < best.cost else best
+
+
+def _estimate_of(
+    p: Param, sigma: float, identifiable: bool, best: float | None, samples: list[float]
+) -> Estimate:
+    """La estimación de un parámetro: el p10–p90 de las muestras o, si ninguna se apartó de la
+    solución (el costo tiene un quiebre ahí), el lineal: mejor ± `Z_P90`·σ local, dentro de los
+    límites (ADR 0091)."""
+    if not identifiable or best is None or not samples:
+        return Estimate(p, sigma, identifiable, best, None)
+    dist = distribution(samples)
+    if dist.p90 - dist.p10 > 1e-9 or not math.isfinite(sigma) or sigma <= 0:
+        return Estimate(p, sigma, identifiable, best, dist)
+    lo = max(p.lo, best - Z_P90 * sigma)
+    hi = min(p.hi, best + Z_P90 * sigma)
+    return Estimate(
+        p, sigma, identifiable, best, Distribution(lo, best, hi, dist.muestras), "laplace"
     )
 
 

@@ -3,7 +3,7 @@
 import { z } from "zod";
 
 export const RESULTADO_SCHEMA_ID = "https://croquis.local/schema/resultado/1.9.0";
-export const RESULT_VERSION = "1.12.0" as const;
+export const RESULT_VERSION = "1.13.0" as const;
 
 export const Id = z.string().regex(new RegExp("^[a-z0-9][a-z0-9_-]{0,63}$"));
 export type Id = z.infer<typeof Id>;
@@ -183,6 +183,7 @@ export const EstimacionParametro = z.strictObject({
   p50: z.number(),
   p90: z.number(),
   muestras: z.int().min(1).max(1000),
+  rango_por: z.enum(["laplace"]).optional(),
 });
 export type EstimacionParametro = z.infer<typeof EstimacionParametro>;
 
@@ -570,7 +571,7 @@ export type Visibilidad = z.infer<typeof Visibilidad>;
 
 /** Reconstrucción producida por el solver a partir de una EscenaSpec: trayectorias, impulsos, daños, personas (proyección y ocupantes), visibilidad, objetos del entorno, eventos, banderas, parámetros con su fuente incertidumbre por Monte Carlo (percentiles con semilla), inversión desde la evidencia y banderas de consistencia. Unidades SI; tiempo con t = 0 en el impacto principal; rumbos en radianes antihorario desde +X (salvo los campos que terminan en _deg). */
 export const ResultadoSchema = z.strictObject({
-  version_resultado: z.literal("1.12.0"),
+  version_resultado: z.literal("1.13.0"),
   escena_id: Id,
   semilla: z.int().min(0),
   dt: z.number().max(1).gt(0),

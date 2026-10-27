@@ -200,6 +200,40 @@ René: el resultado de AXA no puede depender de la semilla. Mostrar 63.17 km/h p
   - idéntico en las 205 narraciones;
   - los mismos impactos: el mismo número en 71 de 135 (52.59 %) y el primero en 96 de 110 (87.27 %).
 
+## Rangos sin rarezas (2026-10-26; `eval/results/rangos_inversion.json`)
+
+**Lo que pasaba en los resultados versionados:**
+
+- 5 parámetros con rango de ancho cero (p10 = p90);
+- 3 con el mejor valor fuera de su p10–p90.
+
+**Por qué:**
+
+- **El mejor fuera del rango.** Levenberg-Marquardt se detenía antes del mínimo, por su tope de evaluaciones o su tolerancia. En `interseccion_toluca`, la cuerda sin perturbar nada movía V_B de 24.41 a 19.41 km/h y bajaba el costo. Las muestras, que se reajustan con esa cuerda, se corrían solas hacia un lado.
+- **El ancho cero.** El costo tiene un quiebre en la solución (contacto o no, un parámetro en su límite) y ninguna muestra se aparta.
+
+**Decisión (Python y TS con paridad):**
+
+- **Pulido:** el mejor ajuste se termina de bajar con la cuerda y el jacobiano en cada punto (hasta 3 rondas), y se queda solo si cuesta menos.
+- **Rango lineal:** si las muestras no se apartan de la solución, el p10–p90 es el lineal, mejor ± 1.2816·σ local dentro de los límites, marcado `rango_por: "laplace"` (resultado 1.13.0). La nota del paso 6, las tarjetas y el dictamen lo dicen.
+
+**Antes y después:**
+
+|                           | Antes | Después |
+| ------------------------- | ----- | ------- |
+| Rangos de ancho cero      | 5     | 0       |
+| Mejor fuera de su p10–p90 | 3     | 2       |
+
+- **Los 2 que quedan** son de `axa_alcance` y van pegados al borde: V1 25.32 contra un p90 de 25.23, y el rumbo de V2 95.72 en su límite de búsqueda. Con las entradas perturbadas los óptimos solo se mueven hacia un lado: es un rango de un solo lado, no un artefacto, porque el pulido no los mueve.
+- **`glorieta`:** V_B 27.98 (20.08–35.89), V_A 0 (0–12.07) y el rumbo de V_B 80.38 (73.79–86.96), todos lineales.
+- **`interseccion_toluca`:**
+  - el pulido lleva V_B de 24.41 a 1.91 km/h (0–17.65), el mínimo del mismo valle, y V_A de 19.48 a 19.00 (13.54–24.47);
+  - la bandera `velocidad_vs_evidencia` sigue.
+- **`motociclista` y `volcadura`:** el rumbo en su límite pasa de ancho cero a 188.49–200 y 4.67–20.
+- **Las demás estimaciones no cambian.**
+- **E-R4 con la inversión:** idéntico en las 205 narraciones (`cesvi_r4_inversion_rangos_inversion.json`).
+- **AXA en la app no cambia** (`eval/results/axa_endurecimiento.json`, «rangos»): V2 a 71.56 km/h (63.19–95.96), +8.41 km/h (+13.32 %) contra la EBS de CESVI.
+
 ## Los supuestos declarados (René, 2026-10-26)
 
 - **La regla, para todos los casos de ejemplo:** los reportes de CESVI son casos de ejemplo (muchos elaborados por CESVI). Lo que no traen no existe y no se le pide a CESVI.

@@ -348,3 +348,30 @@ def test_la_solucion_elegida_no_depende_de_la_semilla() -> None:
     assert [m.to_dict(chosen=False, in_margin=False) for m in a.modes] == [
         m.to_dict(chosen=False, in_margin=False) for m in b.modes
     ]
+
+
+# --- Rangos sin rarezas (ADR 0091) ------------------------------------------------------------
+
+
+def test_sin_muestras_que_se_aparten_el_rango_es_el_lineal_dentro_de_los_limites() -> None:
+    p = inv.Param("velocidad", "veh-a", 40.0, 0.0, 200.0, False)
+    e = inv._estimate_of(p, 4.0, True, 2.0, [2.0, 2.0, 2.0])  # pyright: ignore[reportPrivateUsage]
+    assert e.range_by == "laplace"
+    assert e.dist is not None
+    assert e.dist.p10 == 0.0  # recortado al límite
+    assert e.dist.p90 == pytest.approx(2.0 + inv.Z_P90 * 4.0)
+    assert e.to_dict()["estimacion"]["rango_por"] == "laplace"
+    normal = inv._estimate_of(p, 4.0, True, 2.0, [1.0, 2.0, 3.0])  # pyright: ignore[reportPrivateUsage]
+    assert normal.range_by == "muestras"
+    assert "rango_por" not in normal.to_dict()["estimacion"]
+
+
+def test_el_pulido_solo_baja_el_costo() -> None:
+    spec = load_fixture("lateral_interseccion")
+    moving = inv.moving_vehicles(spec)
+    declared = _declare_rest(spec, {moving[0]: 55.0, moving[1]: 35.0})
+    ev = inv.evidence_from_spec(declared)
+    params = inv.parameters(inv.with_marks(declared, ev), ev)
+    corto = inv.fit_evidence(declared, ev, max_nfev=2)
+    pulido = inv._polish(declared, ev, corto, params, 0.1)  # pyright: ignore[reportPrivateUsage]
+    assert pulido.cost <= corto.cost
