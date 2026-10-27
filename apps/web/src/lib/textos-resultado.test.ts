@@ -92,6 +92,11 @@ describe("datos inciertos en palabras", () => {
     expect(c("parametros.friccion_moto_caida", 0.3, 0.6, "arrastre de la moto caída (peck)")).toBe(
       "Parameter: downed motorcycle drag, between 0.30 and 0.60 (downed motorcycle drag (peck))",
     );
+    expect(
+      c("parametros.arrastre_post_impacto", 0, 1, "arrastre después del impacto (supuesto)"),
+    ).toBe(
+      "Parameter: post-impact drag (fraction of μ), between 0.00 and 1.00 (post-impact drag (assumption))",
+    );
   });
 
   it("en inglés, ningún dato incierto de las escenas canónicas queda en español", async () => {

@@ -15,7 +15,12 @@
  * (`pymath`). La paridad se mide en E7.
  */
 import { deltaVBarrier, deltaVPair, crushEnergy, uniformCrushEnergy, Stiffness } from "./crash3";
-import { DOWNED_SLIDE_CLASSES, downedMotorcycleFriction, tireFriction } from "./friction";
+import {
+  DOWNED_SLIDE_CLASSES,
+  DRAG_FRACTION_RANGE,
+  downedMotorcycleFriction,
+  tireFriction,
+} from "./friction";
 import { lstsq, matmul, pinv, transpose } from "./linalg";
 import { leastSquaresSoftL1, softL1Cost } from "./lsq";
 import { median, pyMod, pyRound, quantilesInclusive, str } from "./pymath";
@@ -541,9 +546,18 @@ export interface Fit {
   success: boolean;
 }
 
-function tryReconstruct(spec: Json, dt: number, downedMu: number | null): Reconstruction | null {
+function tryReconstruct(
+  spec: Json,
+  dt: number,
+  downedMu: number | null,
+  dragFraction: number | null = null,
+): Reconstruction | null {
   try {
-    return reconstruct(spec, { dt, ...(downedMu === null ? {} : { downedMu }) });
+    return reconstruct(spec, {
+      dt,
+      ...(downedMu === null ? {} : { downedMu }),
+      ...(dragFraction === null ? {} : { dragFraction }),
+    });
   } catch {
     return null;
   }
@@ -555,8 +569,9 @@ function residuals(
   dt: number,
   downedMu: number | null = null,
   active: Map<string, number> | null = null,
+  dragFraction: number | null = null,
 ): Map<string, number> | null {
-  const r = tryReconstruct(spec, dt, downedMu);
+  const r = tryReconstruct(spec, dt, downedMu, dragFraction);
   if (r === null) return null;
   const out = new Map<string, number>();
   const byV = new Map(r.vehiculos.map((v) => [v.id, v]));
@@ -669,6 +684,7 @@ class Problem {
     readonly fixed: Map<string, number>,
     readonly dt: number,
     readonly downedMu: number | null = null,
+    readonly dragFraction: number | null = null,
   ) {}
 
   values(x: readonly number[]): Map<string, number> {
@@ -684,6 +700,7 @@ class Problem {
       this.dt,
       this.downedMu,
       this.active,
+      this.dragFraction,
     );
   }
 
@@ -885,6 +902,8 @@ export interface Perturbed {
   spec: Json;
   evidence: Evidence;
   downedMu: number | null;
+  /** La fracción de arrastre después del impacto de esta muestra (ADR 0091). */
+  dragFraction: number | null;
 }
 
 export function perturbed(spec: Json, ev: Evidence, rng: PyRandom): Perturbed {
@@ -956,7 +975,9 @@ export function perturbed(spec: Json, ev: Evidence, rng: PyRandom): Perturbed {
     const md = downedMotorcycleFriction(sup);
     downedMu = rng.uniform(md.low, md.high);
   }
-  return { spec: s, evidence: e, downedMu };
+  // Después de todo lo demás (ADR 0091).
+  const dragFraction = rng.uniform(DRAG_FRACTION_RANGE[0], DRAG_FRACTION_RANGE[1]);
+  return { spec: s, evidence: e, downedMu, dragFraction };
 }
 
 export class Estimate {
@@ -1299,8 +1320,8 @@ function estimate(
   }
   for (let i = 0; i < (freeParams.length ? samples : 0); i++) {
     const pert = perturbed(spec, ev, rng);
-    const { spec: s, evidence: e, downedMu } = pert;
-    const prob = new Problem(withMarks(s, e), e, freeParams, fixed, dt, downedMu);
+    const { spec: s, evidence: e, downedMu, dragFraction } = pert;
+    const prob = new Problem(withMarks(s, e), e, freeParams, fixed, dt, downedMu, dragFraction);
     prob.names.push(...[...best.residuals.keys()].sort());
     // El rango sale de las entradas alrededor del modo elegido, sin saltar a otro: la cuerda con el
     // jacobiano del modo; si no mejora, con el de la muestra; si tampoco, el modo ya es el óptimo
@@ -1310,7 +1331,7 @@ function estimate(
       chordRefit(prob, xBest, sampleJac(prob, xBest)) ??
       at(prob, xBest);
     fits.push(f);
-    const r = tryReconstruct(applyValues(withMarks(s, e), f.values), dt, downedMu);
+    const r = tryReconstruct(applyValues(withMarks(s, e), f.values), dt, downedMu, dragFraction);
     if (r === null) continue;
     for (const v of r.vehiculos) {
       if (!impacts.has(v.id)) impacts.set(v.id, []);
@@ -1375,7 +1396,15 @@ function estimateOf(
 
 /** El jacobiano de la muestra en `x`, con sus restricciones activas, sin tocar `prob`. */
 function sampleJac(prob: Problem, x: number[]): number[][] {
-  const p = new Problem(prob.spec, prob.ev, prob.params, prob.fixed, prob.dt, prob.downedMu);
+  const p = new Problem(
+    prob.spec,
+    prob.ev,
+    prob.params,
+    prob.fixed,
+    prob.dt,
+    prob.downedMu,
+    prob.dragFraction,
+  );
   p.names.push(...prob.names);
   p.activate(x);
   return p.jac(x);

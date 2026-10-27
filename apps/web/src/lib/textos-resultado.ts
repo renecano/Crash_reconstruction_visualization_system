@@ -179,6 +179,7 @@ function notaIncierta(nota: string, lang: Lang): string {
   if (tabla) return `friction table (${tabla[1]!.replace("según edad", "by age")})`;
   const moto = /^arrastre de la moto caída \((.+)\)$/.exec(nota);
   if (moto) return `downed motorcycle drag (${moto[1]})`;
+  if (nota === "arrastre después del impacto (supuesto)") return "post-impact drag (assumption)";
   return nota;
 }
 

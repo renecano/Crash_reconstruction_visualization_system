@@ -416,3 +416,22 @@ def test_el_que_golpea_mas_lento_cuesta_y_mas_rapido_no() -> None:
     assert rapido["orden_alcance:veh-a"] == 0
     # No es evidencia: no aparece entre las etiquetas.
     assert not any(e.startswith("orden") for e in ev.labels())
+
+
+# --- El arrastre después del impacto, muestreado (ADR 0091) -----------------------------------
+
+
+def test_el_arrastre_cambia_lo_que_desliza_y_se_publica_con_su_rango() -> None:
+    from croquis_solver import friction
+    from croquis_solver.montecarlo import DRAG_RUTA, ranges
+
+    spec = load_fixture("alcance")
+    rueda = reconstruct(spec, drag_fraction=0.0)
+    desliza = reconstruct(spec, drag_fraction=1.0)
+    golpeado = {v.id: v for v in rueda.vehiculos}["veh-b"].distance_post_m
+    assert {v.id: v for v in desliza.vehiculos}["veh-b"].distance_post_m < golpeado
+    arrastre = reconstruct(spec).parametros["arrastre_post_impacto"]
+    assert arrastre["valor"] == 0.35
+    assert arrastre["rango"] == list(friction.DRAG_FRACTION_RANGE)
+    # Monte Carlo lo sortea al final: los demás sorteos no se mueven.
+    assert ranges(spec)[-1].ruta == DRAG_RUTA

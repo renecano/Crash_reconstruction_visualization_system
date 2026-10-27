@@ -70,3 +70,14 @@ export function perceptionReactionTime(): RangedValue {
 export function sources(): Record<string, string> {
   return T.fuentes;
 }
+
+/**
+ * El rango de la fracción de μ con que frena un vehículo que rueda después del impacto (ADR 0091):
+ * no hay una fuente medida para un vehículo dañado, así que va de rodar libre (0: solo la
+ * resistencia a la rodadura) a deslizar (1: toda la fricción). Monte Carlo y las muestras de la
+ * inversión lo sortean uniforme.
+ */
+export const DRAG_FRACTION_RANGE = [0.0, 1.0] as const;
+export const DRAG_FUENTE =
+  "sin fuente medida: de rodar libre (solo la resistencia a la rodadura) a deslizar " +
+  "(toda la fricción), uniforme; el nominal es un supuesto";

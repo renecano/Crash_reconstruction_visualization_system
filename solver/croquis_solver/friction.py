@@ -83,3 +83,13 @@ def perception_reaction_time() -> RangedValue:
 def sources() -> dict[str, str]:
     s: dict[str, str] = _table()["fuentes"]
     return s
+
+
+# Su rango (ADR 0091): no hay una fuente medida para un vehículo dañado que rueda, así que va de
+# rodar libre (0: solo la resistencia a la rodadura) a deslizar (1: toda la fricción). Monte Carlo y
+# las muestras de la inversión lo sortean uniforme.
+DRAG_FRACTION_RANGE = (0.0, 1.0)
+DRAG_FUENTE = (
+    "sin fuente medida: de rodar libre (solo la resistencia a la rodadura) a deslizar "
+    "(toda la fricción), uniforme; el nominal es un supuesto"
+)

@@ -4,7 +4,12 @@
  * percentiles p10–p50–p90 de las salidas principales y la lista de campos muestreados con su rango.
  * Mismo orden de sorteos que la referencia.
  */
-import { DOWNED_SLIDE_CLASSES, downedMotorcycleFriction, tireFriction } from "./friction";
+import {
+  DOWNED_SLIDE_CLASSES,
+  DRAG_FRACTION_RANGE,
+  downedMotorcycleFriction,
+  tireFriction,
+} from "./friction";
 import { distribution, type Distribution } from "./inversion";
 import { pyRound, str } from "./pymath";
 import { PyRandom } from "./pyrandom";
@@ -20,6 +25,7 @@ const MASS_USER_SPREAD = 0.03;
 const BRAKE_SPREAD: Record<string, number> = { usuario: 0.1, relato: 0.2 };
 const BRAKE_SPREAD_DEFAULT = 0.4;
 const DOWNED_RUTA = "parametros.friccion_moto_caida";
+const DRAG_RUTA = "parametros.arrastre_post_impacto";
 
 export interface Sampled {
   ruta: string;
@@ -187,6 +193,13 @@ export function ranges(spec: Json): Sampled[] {
       nota: `arrastre de la moto caída (${md.fuente})`,
     });
   }
+  // Al final: no mueve los sorteos de lo demás (ADR 0091).
+  out.push({
+    ruta: DRAG_RUTA,
+    minimo: DRAG_FRACTION_RANGE[0],
+    maximo: DRAG_FRACTION_RANGE[1],
+    nota: "arrastre después del impacto (supuesto)",
+  });
   return out;
 }
 
@@ -236,14 +249,20 @@ export function monteCarlo(
   for (let i = 0; i < samples; i++) {
     const s = structuredClone(spec);
     let downed: number | null = null;
+    let drag: number | null = null;
     for (const c of campos) {
       const value = rng.uniform(c.minimo, c.maximo);
       if (c.ruta === DOWNED_RUTA) downed = value;
+      else if (c.ruta === DRAG_RUTA) drag = value;
       else setPath(s, c.ruta, value);
     }
     let r: Reconstruction;
     try {
-      r = reconstruct(s, { dt, ...(downed === null ? {} : { downedMu: downed }) });
+      r = reconstruct(s, {
+        dt,
+        ...(downed === null ? {} : { downedMu: downed }),
+        ...(drag === null ? {} : { dragFraction: drag }),
+      });
     } catch {
       continue;
     }
