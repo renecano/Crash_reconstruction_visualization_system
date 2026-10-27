@@ -169,6 +169,7 @@ export function RecorridoCaso({ inicial }: { inicial: CasoExpediente }) {
       ? pizarraDeEscena(inicial.narracion, inicial.escena, {
           conclusiones: inicial.reporte?.conclusiones ?? null,
           origen: ORIGEN_ESCENA[inicial.origen],
+          bitacora: inicial.bitacora,
         })
       : pizarraNueva(inicial.narracion, { conclusiones: inicial.reporte?.conclusiones ?? null }),
   );
@@ -342,6 +343,14 @@ export function RecorridoCaso({ inicial }: { inicial: CasoExpediente }) {
     setTexto(c.narracion ?? "");
     setReporte(c.reporte);
     setValidacion(c.validacion);
+    // La bitácora del archivo sigue en la pizarra (R12b): se escribe después de ella.
+    setPizarra(
+      pizarraDeEscena(c.narracion, c.escena, {
+        conclusiones: c.reporte?.conclusiones ?? null,
+        origen: "archivo del caso",
+        bitacora: c.bitacora,
+      }),
+    );
     if (c.titulo) setTitulo(c.titulo);
     setAvisoGuardado(
       c.validacion
@@ -359,6 +368,7 @@ export function RecorridoCaso({ inicial }: { inicial: CasoExpediente }) {
           validacion,
           titulo,
           reporte,
+          bitacora: pizarra.bitacora,
         })
       : null;
   const guardarEnEquipo = () => {

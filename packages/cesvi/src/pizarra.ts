@@ -487,14 +487,22 @@ export async function coordinar(p0: Pizarra, ctx: ContextoPizarra): Promise<Piza
 /**
  * La pizarra de un caso que abre con su escena ya leída (el ejemplo de AXA, un caso guardado o un
  * dictamen importado): el Lector, el Verificador de citas y el Validador ya no tienen nada que hacer.
+ * Un caso guardado trae su bitácora: se sigue escribiendo después de ella.
  */
 export function pizarraDeEscena(
   narracion: string | null,
   escena: EscenaNarrada,
-  o: { conclusiones?: Conclusiones | null; origen: string },
+  o: {
+    conclusiones?: Conclusiones | null;
+    origen: string;
+    bitacora?: readonly MensajeBitacora[];
+  },
 ): Pizarra {
   return delPerito(
-    pizarraNueva(narracion, { conclusiones: o.conclusiones ?? null }),
+    {
+      ...pizarraNueva(narracion, { conclusiones: o.conclusiones ?? null }),
+      bitacora: (o.bitacora ?? []).map((m, i) => ({ ...m, n: i + 1 })),
+    },
     `Abre el caso (${o.origen}) con su escena ya leída.`,
     {
       escena,
@@ -518,6 +526,30 @@ export function delPerito(p: Pizarra, texto: string, cambios: Partial<Pizarra> =
     },
   ];
   return { ...p, ...cambios, bitacora };
+}
+
+const TIPOS: readonly MensajeBitacora["tipo"][] = ["escribe", "pide", "rechaza", "avisa"];
+const QUIENES = new Set<string>(Object.keys(NOMBRE_AGENTE));
+
+/**
+ * La bitácora de un archivo de caso, solo con los mensajes que tienen forma de mensaje (los demás se
+ * descartan: un archivo editado a mano no rompe el caso). Vacía si no es una lista.
+ */
+export function bitacoraDeArchivo(datos: unknown): MensajeBitacora[] {
+  if (!Array.isArray(datos)) return [];
+  return datos
+    .filter(
+      (m): m is MensajeBitacora =>
+        typeof m === "object" &&
+        m !== null &&
+        QUIENES.has(String((m as MensajeBitacora).de)) &&
+        (QUIENES.has(String((m as MensajeBitacora).para)) ||
+          (m as MensajeBitacora).para === "pizarra") &&
+        TIPOS.includes((m as MensajeBitacora).tipo) &&
+        typeof (m as MensajeBitacora).texto === "string" &&
+        (m as MensajeBitacora).texto.length <= 4000,
+    )
+    .map((m, i) => ({ n: i + 1, de: m.de, para: m.para, tipo: m.tipo, texto: m.texto }));
 }
 
 /** Un mensaje en palabras: «3 · Verificador de citas → Lector IA (rechaza): …». */

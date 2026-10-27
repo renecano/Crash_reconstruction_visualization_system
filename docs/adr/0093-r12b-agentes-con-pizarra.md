@@ -91,4 +91,4 @@
 - **Límites:**
   - en la app, una relectura le cuesta otra lectura a la API (la cuida el mismo tope de gasto diario);
   - con lecturas grabadas no hay relecturas que medir: falta grabarlas para saber si la relectura mejora E-R4 (en «Endurecimiento pendiente»);
-  - la bitácora no se guarda con el caso: al reabrirlo, empieza con «Abre el caso…».
+  - la bitácora se guarda con el caso (2026-10-26): va en el campo opcional `bitacora` del archivo y de «Guardar en este equipo»; al reabrir, la pizarra sigue después de ella.

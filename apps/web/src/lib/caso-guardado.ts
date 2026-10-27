@@ -8,10 +8,12 @@
  * el expediente después de validar, la validación ya no vale y el dictamen vuelve a ser borrador.
  */
 import {
+  bitacoraDeArchivo,
   problemasExpediente,
   type Conclusiones,
   type EscenaNarrada,
   type Expediente,
+  type MensajeBitacora,
 } from "@croquis/cesvi";
 import { huellaEntradas } from "./exportar-cesvi";
 
@@ -48,6 +50,8 @@ export interface CasoGuardado {
   /** Opcionales (ADR 0079): el nombre del caso y el reporte de CESVI, si lo tiene. */
   titulo?: string;
   reporte_cesvi?: ReporteCesvi | null;
+  /** La bitácora de los agentes de la pizarra (R12b, ADR 0093), opcional: los archivos de antes no la traen. */
+  bitacora?: MensajeBitacora[];
 }
 
 export interface CasoAbierto {
@@ -59,6 +63,8 @@ export interface CasoAbierto {
   escena: EscenaNarrada;
   expediente: Expediente;
   validacion: ValidacionPerito | null;
+  /** La bitácora guardada (vacía si el archivo no la trae). */
+  bitacora: MensajeBitacora[];
 }
 
 /** El expediente sin su resultado: lo que el perito valida. */
@@ -90,6 +96,7 @@ export function casoParaGuardar(c: {
   titulo?: string;
   reporte?: ReporteCesvi | null;
   ahora?: Date;
+  bitacora?: readonly MensajeBitacora[];
 }): CasoGuardado {
   const { posiciones, conteos, problemas, preguntas } = c.escena;
   const base = sinResultado(c.expediente);
@@ -114,6 +121,7 @@ export function casoParaGuardar(c: {
     conclusion_perito: v?.conclusion ?? null,
     ...(c.titulo ? { titulo: c.titulo } : {}),
     ...(c.reporte ? { reporte_cesvi: c.reporte } : {}),
+    ...(c.bitacora?.length ? { bitacora: [...c.bitacora] } : {}),
   };
 }
 
@@ -147,5 +155,6 @@ export function leerCasoGuardado(datos: unknown): CasoAbierto | { error: string 
     escena: { ...c.escena, expediente },
     expediente,
     validacion,
+    bitacora: bitacoraDeArchivo(c.bitacora),
   };
 }

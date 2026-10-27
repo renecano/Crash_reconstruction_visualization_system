@@ -210,6 +210,35 @@ describe("la pizarra y el coordinador (R12b)", () => {
     ]);
   });
 
+  it("un caso guardado sigue su bitácora: se escribe después de ella, con la numeración que sigue", () => {
+    const escena = escenaDeNarracion(grabacion.salida, grabacion.narracion);
+    const guardada = [
+      {
+        n: 4,
+        de: "lector" as const,
+        para: "pizarra" as const,
+        tipo: "escribe" as const,
+        texto: "Lectura.",
+      },
+      {
+        n: 9,
+        de: "fisico" as const,
+        para: "pizarra" as const,
+        tipo: "escribe" as const,
+        texto: "Reconstrucción.",
+      },
+    ];
+    const p = pizarraDeEscena(grabacion.narracion, escena, {
+      origen: "guardado",
+      bitacora: guardada,
+    });
+    expect(p.bitacora.map((m) => [m.n, m.de, m.texto])).toEqual([
+      [1, "lector", "Lectura."],
+      [2, "fisico", "Reconstrucción."],
+      [3, "perito", "Abre el caso (guardado) con su escena ya leída."],
+    ]);
+  });
+
   it("el Redactor escribe cuando el perito pide el dictamen", async () => {
     const leida = await coordinar(pizarraNueva(grabacion.narracion), {
       leer: grabado(grabacion.salida),
