@@ -91,7 +91,7 @@ Cada escena de hipótesis contra la reconstrucción sin hipótesis (la línea ba
   - `packages/cesvi/src/conductores.test.ts`: la escena, los límites y la lectura de los resultados de la referencia Python;
   - `apps/web/src/components/cesvi/caso/conductores.test.tsx`: el formulario con el AXA de la app;
   - la e2e `@flujo` de la carambola, que prueba «V3 frena 2.5 s antes» con el worker real.
-- **Límite:** «sin la hipótesis» es la simulación de los agentes, no la reconstrucción. En AXA dan el mismo impacto. En la carambola que coloca la e2e a mano, los agentes encuentran a V2 con V3 en −0.40 s, antes del primer impacto de la reconstrucción (V1 con V2 en 0 s). Por eso la fila dice «Sin la hipótesis» y no «La reconstrucción» (pendiente en PROGRESS).
+- **Límite:** «sin la hipótesis» es la simulación de los agentes, no la reconstrucción. En AXA dan el mismo impacto. En la carambola que coloca la e2e a mano, los agentes encuentran a V2 con V3 en −0.40 s, antes del primer impacto de la reconstrucción (V1 con V2 en 0 s). Por eso la fila dice «Sin la hipótesis» y no «La reconstrucción», y desde el 2026-10-26 el paso 6 avisa con los dos contactos cuando no coinciden (más de 0.1 s u otro par). Que los agentes respeten el orden de la reconstrucción sigue pendiente en PROGRESS.
 
 ## Consecuencias
 

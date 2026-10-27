@@ -91,6 +91,14 @@ export function ResultadoConductores({ p }: { p: PruebaConductores }) {
           ) : null}
         </tbody>
       </table>
+      {p.lineaBaseDistinta ? (
+        <p className="t-nota text-senal-texto" data-testid="linea-base-distinta">
+          Sin la hipótesis, los conductores dan primero {p.lineaBaseDistinta.sinHipotesis}; la
+          reconstrucción tiene primero {p.lineaBaseDistinta.reconstruccion}. La simulación de los
+          conductores no impone el orden de impactos de la reconstrucción: compara la hipótesis con
+          la fila «Sin la hipótesis», no con el paso 4.
+        </p>
+      ) : null}
       {p.decisiones.length ? (
         <ol className="t-nota flex list-decimal flex-col gap-1 pl-5" data-testid="decisiones">
           {p.decisiones.map((x) => (
