@@ -183,6 +183,10 @@ const HILL_POINTS = [0.25, 0.5, 0.75];
 const HILL_TOL = 0.05;
 /** Margen de costo (½ Δχ²) para presentar otro modo como hipótesis. */
 export const MODE_MARGIN = 0.5;
+/** Pulido del mejor ajuste (ADR 0091): rondas de la cuerda hasta que el costo deja de bajar. */
+const POLISH_ROUNDS = 3;
+/** p10–p90 de una normal: el rango lineal cuando las muestras no se apartan de la solución. */
+const Z_P90 = 1.2815515655446004;
 const PRIMES = [2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37, 41, 43, 47, 53, 59, 61, 67, 71];
 
 function stated(campo: unknown): boolean {
@@ -915,6 +919,8 @@ export class Estimate {
     readonly identifiable: boolean,
     readonly best: number | null,
     readonly dist: Distribution | null,
+    /** «laplace» si las muestras no se apartaron de la solución y el rango es el lineal. */
+    readonly rangeBy: string = "muestras",
   ) {}
 
   get atBound(): boolean {
@@ -934,7 +940,11 @@ export class Estimate {
     };
     if (Number.isFinite(this.sigmaLocal)) out.sigma_local = pyRound(this.sigmaLocal, 2);
     if (this.identifiable && this.best !== null && this.dist !== null) {
-      out.estimacion = { mejor: pyRound(this.best, 2), ...this.dist.toDict(2) };
+      out.estimacion = {
+        mejor: pyRound(this.best, 2),
+        ...this.dist.toDict(2),
+        ...(this.rangeBy !== "muestras" ? { rango_por: this.rangeBy } : {}),
+      };
       out.en_limite = this.atBound;
     }
     return out;
@@ -1221,6 +1231,13 @@ function estimate(
     );
     best = fitEvidence(spec, ev, { dt, start, free });
   }
+  best = polish(
+    spec,
+    ev,
+    best,
+    params.filter((p) => free.has(p.name)),
+    dt,
+  );
   const rng = new PyRandom(seed);
   const fits: Fit[] = [];
   const impacts = new Map<string, number[]>();
@@ -1253,21 +1270,60 @@ function estimate(
       impacts.get(v.id)!.push(v.vImpactKmh);
     }
   }
-  const estimates = params.map(
-    (p) =>
-      new Estimate(
-        p,
-        sigma.get(p.name) ?? Infinity,
-        ident.get(p.name)!,
-        ident.get(p.name) ? (best.values.get(p.name) ?? null) : null,
-        ident.get(p.name) && fits.length
-          ? distribution(fits.map((f) => f.values.get(p.name)!))
-          : null,
-      ),
+  const estimates = params.map((p) =>
+    estimateOf(
+      p,
+      sigma.get(p.name) ?? Infinity,
+      ident.get(p.name)!,
+      ident.get(p.name) ? (best.values.get(p.name) ?? null) : null,
+      ident.get(p.name) ? fits.map((f) => f.values.get(p.name)!) : [],
+    ),
   );
   const impactSpeeds = new Map<string, Distribution>();
   for (const [k, v] of impacts) if (v.length) impactSpeeds.set(k, distribution(v));
   return new Inversion(ev.labels(), estimates, best, impactSpeeds, fits, seed, assumedAsData, full);
+}
+
+/** Termina de bajar el costo desde el mejor ajuste con la cuerda (hasta `POLISH_ROUNDS`). */
+function polish(spec: Json, ev: Evidence, best: Fit, freeParams: Param[], dt: number): Fit {
+  if (!freeParams.length || !best.residuals.size) return best;
+  const fixed = new Map([...best.values].filter(([n]) => freeParams.every((p) => p.name !== n)));
+  const prob = new Problem(withMarks(spec, ev), ev, freeParams, fixed, dt);
+  prob.names.push(...[...best.residuals.keys()].sort());
+  let x = freeParams.map((p) => best.values.get(p.name)!);
+  let f = at(prob, x);
+  for (let k = 0; k < POLISH_ROUNDS; k++) {
+    const g = chordRefit(prob, x, sampleJac(prob, x));
+    if (g === null || g.cost >= f.cost) break;
+    f = g;
+    x = freeParams.map((p) => g.values.get(p.name)!);
+  }
+  return f.cost < best.cost ? f : best;
+}
+
+/** La estimación de un parámetro: el p10–p90 de las muestras o, con ancho cero, el lineal. */
+function estimateOf(
+  p: Param,
+  sigma: number,
+  identifiable: boolean,
+  best: number | null,
+  samples: number[],
+): Estimate {
+  if (!identifiable || best === null || !samples.length)
+    return new Estimate(p, sigma, identifiable, best, null);
+  const dist = distribution(samples);
+  if (dist.p90 - dist.p10 > 1e-9 || !Number.isFinite(sigma) || sigma <= 0)
+    return new Estimate(p, sigma, identifiable, best, dist);
+  const lo = Math.max(p.lo, best - Z_P90 * sigma);
+  const hi = Math.min(p.hi, best + Z_P90 * sigma);
+  return new Estimate(
+    p,
+    sigma,
+    identifiable,
+    best,
+    new Distribution(lo, best, hi, dist.muestras),
+    "laplace",
+  );
 }
 
 /** El jacobiano de la muestra en `x`, con sus restricciones activas, sin tocar `prob`. */

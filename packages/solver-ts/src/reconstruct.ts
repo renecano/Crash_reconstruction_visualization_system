@@ -89,7 +89,7 @@ import * as dmath from "./dmath";
 
 type Json = Record<string, unknown>;
 
-export const RESULT_VERSION = "1.12.0";
+export const RESULT_VERSION = "1.13.0";
 export const DT_OUT = 0.02;
 const T_PRE_MAX = 6.0;
 const T_PRE_MIN = 3.0;
