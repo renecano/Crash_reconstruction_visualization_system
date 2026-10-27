@@ -63,6 +63,8 @@ export interface CasoExpediente {
   ejemplo?: CasoCesvi;
   /** La bitácora de los agentes de un caso guardado (R12b, ADR 0093). */
   bitacora?: MensajeBitacora[];
+  /** La hipótesis que eligió el perito en un caso guardado (ADR 0091). */
+  hipotesisElegida?: string | null;
 }
 
 export const casoNuevo = (): CasoExpediente => ({
@@ -245,6 +247,7 @@ export function abrirGuardado(a: Almacen, id: string): CasoExpediente | null {
     reporte: c.reporte,
     validacion: c.validacion,
     bitacora: c.bitacora,
+    hipotesisElegida: c.hipotesisElegida,
   };
 }
 
