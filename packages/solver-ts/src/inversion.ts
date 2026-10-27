@@ -185,6 +185,8 @@ const HILL_TOL = 0.05;
 export const MODE_MARGIN = 0.5;
 /** Pulido del mejor ajuste (ADR 0091): rondas de la cuerda hasta que el costo deja de bajar. */
 const POLISH_ROUNDS = 3;
+/** En un alcance, el que golpea no puede ir más lento que el golpeado al impactar (ADR 0091). */
+const SIGMA_ORDEN_KMH = 1.0;
 /** p10–p90 de una normal: el rango lineal cuando las muestras no se apartan de la solución. */
 const Z_P90 = 1.2815515655446004;
 const PRIMES = [2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37, 41, 43, 47, 53, 59, 61, 67, 71];
@@ -215,6 +217,8 @@ export class Evidence {
     readonly headingAssumed: Map<string, number> = new Map(),
     /** La hipótesis «cuadra con el reposo supuesto»: el supuesto pesa como dato. */
     readonly assumedAsData = false,
+    /** (el que golpea, el golpeado) si el primer impacto entre vehículos es un alcance. */
+    readonly rearEnd: [string, string][] = [],
   ) {}
 
   empty(): boolean {
@@ -247,6 +251,7 @@ export class Evidence {
       this.restAssumed,
       this.headingAssumed,
       true,
+      this.rearEnd,
     );
   }
 
@@ -408,7 +413,34 @@ export function evidenceFromSpec(spec: Json, seed = EVIDENCE_SEED, nDamage = N_D
     damageMin,
     restAssumed,
     headingAssumed,
+    false,
+    rearEndPairs(spec),
   );
+}
+
+/**
+ * (el que golpea, el golpeado) del primer impacto entre vehículos, si es un alcance: el frente (F)
+ * de uno contra la parte trasera (B) del otro. Si alguno va en reversa no es un alcance.
+ */
+export function rearEndPairs(spec: Json): [string, string][] {
+  const event = ((spec.eventos ?? []) as Json[]).find(
+    (e) => String(e.tipo) === "impacto_vehiculo_vehiculo",
+  );
+  if (!event) return [];
+  const lado = new Map<string, string>();
+  for (const z of (event.zonas_impacto ?? []) as Json[])
+    if (z.cdc) lado.set(String(z.vehiculo_id), String((z.cdc as Json).lado));
+  const golpea = [...lado].filter(([, x]) => x === "F").map(([v]) => v);
+  const golpeado = [...lado].filter(([, x]) => x === "B").map(([v]) => v);
+  const maniobra = new Map(
+    (spec.vehiculos as Json[]).map((v) => [
+      String(v.id),
+      str((v.maniobra as Json | undefined)?.valor, ""),
+    ]),
+  );
+  if (golpea.length !== 1 || golpeado.length !== 1 || golpea[0] === golpeado[0]) return [];
+  if (maniobra.get(golpea[0]!) === "reversa" || maniobra.get(golpeado[0]!) === "reversa") return [];
+  return [[golpea[0]!, golpeado[0]!]];
 }
 
 export function movingVehicles(spec: Json): string[] {
@@ -566,6 +598,16 @@ function residuals(
     const name = `dano_minimo:${vid}`;
     out.set(name, damageBand(v.deltaVKmh, dist, w, true, active?.get(name) ?? null));
   }
+  for (const [a, b] of ev.rearEnd) {
+    const va = byV.get(a);
+    const vb = byV.get(b);
+    if (!va || !vb) continue;
+    // Cuánto más lento que el golpeado llega el que golpea: cero si llega más rápido.
+    const name = `orden_alcance:${a}`;
+    const gap = vb.vImpactKmh - va.vImpactKmh;
+    const lineal = active?.has(name) ?? false;
+    out.set(name, ((lineal ? gap : Math.max(0.0, gap)) * PRIORIDAD) / SIGMA_ORDEN_KMH);
+  }
   for (const [vid, [x, y]] of sortedEntries(ev.restAssumed)) {
     const v = byV.get(vid);
     if (!v) continue;
@@ -650,7 +692,11 @@ class Problem {
     const res = this.raw(x) ?? new Map<string, number>();
     this.active = new Map(
       [...res].filter(
-        ([k, r]) => (k.startsWith("dano:") || k.startsWith("dano_minimo:")) && r !== 0.0,
+        ([k, r]) =>
+          (k.startsWith("dano:") ||
+            k.startsWith("dano_minimo:") ||
+            k.startsWith("orden_alcance:")) &&
+          r !== 0.0,
       ),
     );
     this.cache.clear();
@@ -901,6 +947,7 @@ export function perturbed(spec: Json, ev: Evidence, rng: PyRandom): Perturbed {
     restAssumed,
     headingAssumed,
     ev.assumedAsData,
+    ev.rearEnd,
   );
   let downedMu: number | null = null;
   if (
