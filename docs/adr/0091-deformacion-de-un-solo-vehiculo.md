@@ -234,6 +234,24 @@ René: el resultado de AXA no puede depender de la semilla. Mostrar 63.17 km/h p
 - **E-R4 con la inversión:** idéntico en las 205 narraciones (`cesvi_r4_inversion_rangos_inversion.json`).
 - **AXA en la app no cambia** (`eval/results/axa_endurecimiento.json`, «rangos»): V2 a 71.56 km/h (63.19–95.96), +8.41 km/h (+13.32 %) contra la EBS de CESVI.
 
+## En un alcance, el que golpea va más rápido (2026-10-26; `eval/results/alcance_orden.json`)
+
+**Decisión (Python y TS con paridad):**
+
+- **Qué es un alcance:** el primer impacto entre vehículos es del frente (F) de uno contra la parte trasera (B) del otro.
+- **La restricción:** al impactar, el que golpea no puede ir más lento que el golpeado. Es física, no evidencia:
+  - no cuesta nada si se cumple;
+  - si no, pesa `PRIORIDAD` veces 1 km/h, como la deformación medida, y se linealiza igual al violarse;
+  - no entra en la lista de evidencia ni hace que una escena sin evidencia se ajuste.
+- **La reversa no es un alcance:** si alguno va en reversa, golpea con su parte trasera. En `reversa`, sin esta excepción, la restricción castigaba con 250σ un orden que no aplica.
+
+**Antes y después:**
+
+- Las 16 escenas versionadas dan las mismas estimaciones: la restricción ya se cumplía en todas.
+- E-R4 es idéntico en las 205 narraciones.
+- AXA no cambia.
+- **Lo que no arregla:** en la hipótesis «cuadra con el reposo supuesto» de `axa_reposo_lejano`, V2 queda a 47.27 km/h y V1 a 47.26. Cumple la restricción, pero casi iguales, porque esa hipótesis pesa el reposo supuesto por encima del daño medido. Es lo que dice la hipótesis, no un error del orden.
+
 ## Los supuestos declarados (René, 2026-10-26)
 
 - **La regla, para todos los casos de ejemplo:** los reportes de CESVI son casos de ejemplo (muchos elaborados por CESVI). Lo que no traen no existe y no se le pide a CESVI.
