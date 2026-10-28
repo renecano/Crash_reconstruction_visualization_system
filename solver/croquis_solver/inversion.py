@@ -634,11 +634,12 @@ def _residuals(
     dt: float,
     downed_mu: float | None = None,
     active: dict[str, float] | None = None,
+    drag_fraction: float | None = None,
 ) -> dict[str, float] | None:
     from croquis_solver.reconstruct import reconstruct
 
     try:
-        r = reconstruct(spec, dt=dt, downed_mu=downed_mu)
+        r = reconstruct(spec, dt=dt, downed_mu=downed_mu, drag_fraction=drag_fraction)
     except ValueError, KeyError, ArithmeticError:
         return None
     out: dict[str, float] = {}
@@ -745,9 +746,11 @@ class _Problem:
         fixed: dict[str, float],
         dt: float,
         downed_mu: float | None = None,
+        drag_fraction: float | None = None,
     ) -> None:
         self.spec, self.ev, self.params, self.fixed, self.dt = spec, ev, params, fixed, dt
         self.downed_mu = downed_mu
+        self.drag_fraction = drag_fraction
         self.names: list[str] = []
         self._cache: dict[tuple[float, ...], list[float]] = {}
         self.active: dict[str, float] = {}
@@ -759,7 +762,12 @@ class _Problem:
 
     def raw(self, x: Sequence[float]) -> dict[str, float] | None:
         return _residuals(
-            apply_values(self.spec, self.values(x)), self.ev, self.dt, self.downed_mu, self.active
+            apply_values(self.spec, self.values(x)),
+            self.ev,
+            self.dt,
+            self.downed_mu,
+            self.active,
+            self.drag_fraction,
         )
 
     def activate(self, x: Sequence[float]) -> None:
@@ -961,11 +969,13 @@ def _chord_refit(prob: _Problem, x_best: list[float], j: list[list[float]]) -> F
 
 @dataclass(frozen=True)
 class Perturbed:
-    """Una reestimación: la escena y la evidencia sorteadas, y el arrastre de la moto caída."""
+    """Una reestimación: la escena y la evidencia sorteadas, el arrastre de la moto caída y la
+    fracción de arrastre después del impacto."""
 
     spec: JsonObj
     evidence: Evidence
     downed_mu: float | None
+    drag_fraction: float | None = None
 
 
 def perturbed(spec: JsonObj, ev: Evidence, rng: random.Random) -> Perturbed:
@@ -1027,7 +1037,8 @@ def perturbed(spec: JsonObj, ev: Evidence, rng: random.Random) -> Perturbed:
     if any(str(v["clase"]["valor"]) in friction.DOWNED_SLIDE_CLASSES for v in s["vehiculos"]):
         md = friction.downed_motorcycle_friction(lugar["superficie"]["valor"])
         downed_mu = rng.uniform(md.low, md.high)  # al final: no mueve los sorteos de lo demás
-    return Perturbed(s, e, downed_mu)
+    drag = rng.uniform(*friction.DRAG_FRACTION_RANGE)  # después de todo lo demás (ADR 0091)
+    return Perturbed(s, e, downed_mu, drag)
 
 
 def _no_fits() -> list[Fit]:
@@ -1358,8 +1369,8 @@ def _estimate(
         j_best = prob_best.jac(x_best)
     for _ in range(samples if free_params else 0):
         pert = perturbed(spec, ev, rng)
-        s, e, dmu = pert.spec, pert.evidence, pert.downed_mu
-        prob = _Problem(with_marks(s, e), e, free_params, fixed, dt, dmu)
+        s, e, dmu, drag = pert.spec, pert.evidence, pert.downed_mu, pert.drag_fraction
+        prob = _Problem(with_marks(s, e), e, free_params, fixed, dt, dmu, drag)
         prob.names.extend(sorted(best.residuals))
         # El rango sale de las entradas alrededor del modo elegido, sin saltar a otro: la cuerda con
         # el jacobiano del modo; si no mejora, con el de la muestra; si tampoco, el modo ya es el
@@ -1371,7 +1382,12 @@ def _estimate(
         )
         fits.append(f)
         try:
-            r = reconstruct(apply_values(with_marks(s, e), f.values), dt=dt, downed_mu=dmu)
+            r = reconstruct(
+                apply_values(with_marks(s, e), f.values),
+                dt=dt,
+                downed_mu=dmu,
+                drag_fraction=drag,
+            )
         except ValueError, KeyError, ArithmeticError:
             continue
         for v in r.vehiculos:
@@ -1419,24 +1435,30 @@ def _polish(spec: JsonObj, ev: Evidence, best: Fit, free_params: list[Param], dt
 def _estimate_of(
     p: Param, sigma: float, identifiable: bool, best: float | None, samples: list[float]
 ) -> Estimate:
-    """La estimación de un parámetro: el p10–p90 de las muestras o, si ninguna se apartó de la
-    solución (el costo tiene un quiebre ahí), el lineal: mejor ± `Z_P90`·σ local, dentro de los
-    límites (ADR 0091)."""
+    """La estimación de un parámetro: el p10–p90 de las muestras, nunca más angosto que el lineal
+    (mejor ± `Z_P90`·σ local, dentro de los límites; ADR 0091). Si las muestras se apartan de la
+    solución menos que eso (el costo tiene un quiebre ahí, o sus ajustes no se mueven), el rango
+    se amplía hasta el lineal: así, sumar incertidumbre a las entradas no angosta el rango."""
     if not identifiable or best is None or not samples:
         return Estimate(p, sigma, identifiable, best, None)
     dist = distribution(samples)
-    if dist.p90 - dist.p10 > 1e-9 or not math.isfinite(sigma) or sigma <= 0:
+    if not math.isfinite(sigma) or sigma <= 0:
         return Estimate(p, sigma, identifiable, best, dist)
-    lo = max(p.lo, best - Z_P90 * sigma)
-    hi = min(p.hi, best + Z_P90 * sigma)
+    lo = min(dist.p10, max(p.lo, best - Z_P90 * sigma))
+    hi = max(dist.p90, min(p.hi, best + Z_P90 * sigma))
+    if lo >= dist.p10 and hi <= dist.p90:
+        return Estimate(p, sigma, identifiable, best, dist)
+    mid = best if dist.p90 - dist.p10 <= 1e-9 else dist.p50
     return Estimate(
-        p, sigma, identifiable, best, Distribution(lo, best, hi, dist.muestras), "laplace"
+        p, sigma, identifiable, best, Distribution(lo, mid, hi, dist.muestras), "laplace"
     )
 
 
 def _sample_jac(prob: _Problem, x: list[float]) -> list[list[float]]:
     """El jacobiano de la muestra en `x`, con sus restricciones activas, sin tocar `prob`."""
-    p = _Problem(prob.spec, prob.ev, prob.params, prob.fixed, prob.dt, prob.downed_mu)
+    p = _Problem(
+        prob.spec, prob.ev, prob.params, prob.fixed, prob.dt, prob.downed_mu, prob.drag_fraction
+    )
     p.names.extend(prob.names)
     p.activate(x)
     return p.jac(x)

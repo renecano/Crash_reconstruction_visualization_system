@@ -120,10 +120,12 @@ export function supuestosDeclarados(
       que: "Después del impacto",
       valor: `las llantas ruedan, con un arrastre de ${arrastre.valor} de la fricción`,
       justificacion:
-        "Supuesto del solver: el reporte no trae huellas de arrastre que digan que las llantas deslizaron.",
-      incertidumbre: mu?.rango
-        ? `La fracción es fija; varía con la fricción (de ${(arrastre.valor * mu.rango[0]).toFixed(2)} a ${(arrastre.valor * mu.rango[1]).toFixed(2)}).`
-        : "La fracción es fija.",
+        "Supuesto del solver: el reporte no trae huellas de arrastre que digan que las llantas deslizaron, y no hay una fuente medida para un vehículo dañado que rueda.",
+      incertidumbre: arrastre.rango
+        ? `En el rango de las velocidades, la fracción va de ${arrastre.rango[0]} (rodar libre) a ${arrastre.rango[1]} (deslizar con toda la fricción).`
+        : mu?.rango
+          ? `La fracción es fija; varía con la fricción (de ${(arrastre.valor * mu.rango[0]).toFixed(2)} a ${(arrastre.valor * mu.rango[1]).toFixed(2)}).`
+          : "La fracción es fija.",
     });
   return out;
 }

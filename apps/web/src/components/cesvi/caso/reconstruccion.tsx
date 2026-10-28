@@ -253,9 +253,10 @@ export function TablaContraCesvi({ contra }: { contra: ContraMetodosCesvi }) {
       {contra.filas.some((f) => f.croquisRango) ? (
         <p className="t-nota">
           Entre paréntesis, el p10–p90: la velocidad que reproduce la evidencia cuando sus entradas
-          (medidas, fricción, masas y reposo supuesto) varían dentro de su incertidumbre, alrededor
-          de la solución elegida. Si con eso la solución no se mueve (el costo tiene un quiebre
-          ahí), es su aproximación lineal.
+          (medidas, fricción, masas, reposo supuesto y arrastre después del impacto) varían dentro
+          de su incertidumbre, alrededor de la solución elegida. Nunca es más angosto que su
+          aproximación lineal: si con eso la solución casi no se mueve (el costo tiene un quiebre
+          ahí), se amplía hasta ella.
         </p>
       ) : null}
       {contra.filas.map((f) => (
@@ -350,8 +351,8 @@ export function ElegirHipotesis({
         El costo mide qué tan bien reproduce cada solución la evidencia: menor es mejor. Solo se
         comparan los de la misma hipótesis, porque cada una pesa distinto el reposo supuesto. Entre
         paréntesis, el p10–p90 de cada velocidad con las entradas perturbadas (medidas, fricción,
-        masas y reposo supuesto) alrededor de esa solución. Si con eso la solución no se mueve (el
-        costo tiene un quiebre ahí), es su aproximación lineal.
+        masas, reposo supuesto y arrastre después del impacto) alrededor de esa solución, nunca más
+        angosto que su aproximación lineal.
       </p>
     </div>
   );

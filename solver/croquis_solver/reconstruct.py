@@ -74,6 +74,8 @@ T_POST_MAX = 30.0
 RESTITUTION_VV = 0.1  # vehículo–vehículo (Brach: 0.05–0.3 a velocidades urbanas)
 IMPULSE_RATIO = 0.4  # fricción de contacto (impulso tangencial / normal)
 POST_IMPACT_DRAG_FRACTION = 0.35  # fracción de μ como arrastre si las ruedas no van bloqueadas
+DRAG_FRACTION_RANGE = friction.DRAG_FRACTION_RANGE
+DRAG_FUENTE = friction.DRAG_FUENTE
 TURN_RADIUS_M = 8.0  # radio típico de vuelta en intersección urbana
 LANE_CHANGE_LENGTH_M = 40.0
 LANE_WIDTH_DEFAULT = 3.5
@@ -778,13 +780,19 @@ def _sample_path(path: KinPath, prof: SpeedProfile, t_ref: float, times: list[fl
 
 
 def reconstruct(
-    spec: JsonObj, *, dt: float = DT_OUT, downed_mu: float | None = None
+    spec: JsonObj,
+    *,
+    dt: float = DT_OUT,
+    downed_mu: float | None = None,
+    drag_fraction: float | None = None,
 ) -> Reconstruction:
     """Reconstruye la escena. `spec` debe haber pasado la validación del contrato.
 
-    `downed_mu` fija el arrastre de una motocicleta caída (Monte Carlo e inversión lo muestrean);
-    sin él se usa el nominal de la tabla.
+    `downed_mu` fija el arrastre de una motocicleta caída y `drag_fraction` la fracción de μ con que
+    frena un vehículo que rueda después del impacto (Monte Carlo e inversión los muestrean); sin
+    ellos se usan los nominales.
     """
+    drag_frac = POST_IMPACT_DRAG_FRACTION if drag_fraction is None else drag_fraction
     banderas: list[str] = []
     avisos: list[Aviso] = []
 
@@ -811,7 +819,12 @@ def reconstruct(
         },
         "restitucion_vehiculo_vehiculo": {"valor": RESTITUTION_VV, "tipo": "supuesto"},
         "relacion_impulso_tangencial": {"valor": IMPULSE_RATIO, "tipo": "supuesto"},
-        "arrastre_post_impacto": {"valor": POST_IMPACT_DRAG_FRACTION, "tipo": "supuesto"},
+        "arrastre_post_impacto": {
+            "valor": drag_frac,
+            "rango": list(DRAG_FRACTION_RANGE),
+            "fuente": DRAG_FUENTE,
+            "tipo": "supuesto",
+        },
         "factor_abs": {"valor": abs_factor, "tipo": friction.abs_peak_factor().tipo},
     }
 
@@ -1303,9 +1316,7 @@ def reconstruct(
             m.wheelbase, m.track, m.cg_from_front, locked=m.braking or downed
         )
         drag = (
-            ROLLING_RESISTANCE
-            if m.braking or downed
-            else max(ROLLING_RESISTANCE, POST_IMPACT_DRAG_FRACTION * mu)
+            ROLLING_RESISTANCE if m.braking or downed else max(ROLLING_RESISTANCE, drag_frac * mu)
         )
         mu_post = (mu_downed.nominal if downed_mu is None else downed_mu) if downed else mu
         # Un vehículo que todavía no choca (solo está en un impacto posterior) rueda libre hasta

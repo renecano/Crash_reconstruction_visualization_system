@@ -37,6 +37,7 @@ BRAKE_SPREAD = {"usuario": 0.10, "relato": 0.20}
 BRAKE_SPREAD_DEFAULT = 0.40
 # Parámetro del solver, no de la escena: el arrastre de una motocicleta caída (ADR 0017).
 DOWNED_RUTA = "parametros.friccion_moto_caida"
+DRAG_RUTA = "parametros.arrastre_post_impacto"
 
 
 @dataclass(frozen=True)
@@ -160,6 +161,10 @@ def ranges(spec: JsonObj) -> list[Sampled]:
         out.append(
             Sampled(DOWNED_RUTA, md.low, md.high, f"arrastre de la moto caída ({md.fuente})")
         )
+    # Al final: no mueve los sorteos de lo demás (ADR 0091).
+    out.append(
+        Sampled(DRAG_RUTA, *friction.DRAG_FRACTION_RANGE, "arrastre después del impacto (supuesto)")
+    )
     return out
 
 
@@ -193,14 +198,17 @@ def monte_carlo(
     for _ in range(samples):
         s = copy.deepcopy(spec)
         downed: float | None = None
+        drag: float | None = None
         for c in campos:
             value = rng.uniform(c.minimo, c.maximo)
             if c.ruta == DOWNED_RUTA:
                 downed = value
+            elif c.ruta == DRAG_RUTA:
+                drag = value
             else:
                 _set(s, c.ruta, value)
         try:
-            r = reconstruct(s, dt=dt, downed_mu=downed)
+            r = reconstruct(s, dt=dt, downed_mu=downed, drag_fraction=drag)
         except ValueError, KeyError, ArithmeticError:
             continue
         valid += 1

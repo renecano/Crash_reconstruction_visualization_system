@@ -1201,7 +1201,7 @@
         "rango_por": {
           "type": "string",
           "enum": ["laplace"],
-          "description": "Si las muestras no se apartaron de la solución (el costo tiene un quiebre ahí), el p10–p90 es el lineal: mejor ± 1.2816·σ local, dentro de los límites (ADR 0091). Sin este campo, el p10–p90 es el de las muestras."
+          "description": "El p10–p90 nunca es más angosto que el lineal (mejor ± 1.2816·σ local, dentro de los límites; ADR 0091): si las muestras se apartan de la solución menos que eso (el costo tiene un quiebre ahí, o sus ajustes no se mueven), el rango se amplía hasta el lineal y lleva este campo. Sin él, el p10–p90 es el de las muestras."
         }
       }
     },

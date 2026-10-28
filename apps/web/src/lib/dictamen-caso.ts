@@ -138,7 +138,7 @@ function hipotesis(d: DatosDictamenCaso): Content[] {
       ]),
     ),
     nota(
-      "El costo mide qué tan bien reproduce cada solución la evidencia (menor es mejor); solo se comparan los de la misma hipótesis. El p10–p90 sale de las entradas perturbadas (medidas, fricción, masas y reposo supuesto) alrededor de cada solución. Si con eso la solución no se mueve (el costo tiene un quiebre ahí), es su aproximación lineal.",
+      "El costo mide qué tan bien reproduce cada solución la evidencia (menor es mejor); solo se comparan los de la misma hipótesis. El p10–p90 sale de las entradas perturbadas (medidas, fricción, masas, reposo supuesto y arrastre después del impacto) alrededor de cada solución, nunca más angosto que su aproximación lineal: si con eso la solución casi no se mueve (el costo tiene un quiebre ahí), se amplía hasta ella.",
     ),
   ];
 }
@@ -164,7 +164,7 @@ function contraReporte(d: DatosDictamenCaso): Content[] {
     ...(k.filas.some((f) => f.croquisRango)
       ? [
           nota(
-            "Entre paréntesis, el p10–p90: la velocidad que reproduce la evidencia cuando sus entradas (medidas, fricción, masas y reposo supuesto) varían dentro de su incertidumbre, alrededor de la solución elegida. Si con eso la solución no se mueve (el costo tiene un quiebre ahí), es su aproximación lineal.",
+            "Entre paréntesis, el p10–p90: la velocidad que reproduce la evidencia cuando sus entradas (medidas, fricción, masas, reposo supuesto y arrastre después del impacto) varían dentro de su incertidumbre, alrededor de la solución elegida. Nunca es más angosto que su aproximación lineal: si con eso la solución casi no se mueve (el costo tiene un quiebre ahí), se amplía hasta ella.",
           ),
         ]
       : []),

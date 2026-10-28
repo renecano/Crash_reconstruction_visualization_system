@@ -16,6 +16,8 @@ import { narrowObject } from "./fixed-object";
 import {
   absPeakFactor,
   DOWNED_SLIDE_CLASSES,
+  DRAG_FRACTION_RANGE,
+  DRAG_FUENTE,
   downedMotorcycleFriction,
   pedestrianFriction,
   tireFriction,
@@ -797,13 +799,15 @@ function* product<T>(options: readonly (readonly T[])[]): Generator<T[]> {
 
 /** Reconstruye la escena. `spec` debe haber pasado la validación del contrato. */
 /**
- * `downedMu` fija el arrastre de una motocicleta caída (Monte Carlo e inversión lo muestrean);
- * sin él se usa el nominal de la tabla.
+ * `downedMu` fija el arrastre de una motocicleta caída y `dragFraction` la fracción de μ con que
+ * frena un vehículo que rueda después del impacto (Monte Carlo e inversión los muestrean); sin
+ * ellos se usan los nominales.
  */
 export function reconstruct(
   spec: Json,
-  opts: { dt?: number; downedMu?: number } = {},
+  opts: { dt?: number; downedMu?: number; dragFraction?: number } = {},
 ): Reconstruction {
+  const dragFrac = opts.dragFraction ?? POST_IMPACT_DRAG_FRACTION;
   const dt = opts.dt ?? DT_OUT;
   const banderas: string[] = [];
   const avisos: Aviso[] = [];
@@ -832,7 +836,12 @@ export function reconstruct(
     },
     restitucion_vehiculo_vehiculo: { valor: RESTITUTION_VV, tipo: "supuesto" },
     relacion_impulso_tangencial: { valor: IMPULSE_RATIO, tipo: "supuesto" },
-    arrastre_post_impacto: { valor: POST_IMPACT_DRAG_FRACTION, tipo: "supuesto" },
+    arrastre_post_impacto: {
+      valor: dragFrac,
+      rango: [...DRAG_FRACTION_RANGE],
+      fuente: DRAG_FUENTE,
+      tipo: "supuesto",
+    },
     factor_abs: { valor: absFactor, tipo: absPeakFactor().tipo },
   };
 
@@ -1351,9 +1360,7 @@ export function reconstruct(
     // Caída, se arrastra de lado: todo el contacto desliza con el arrastre medido.
     const wheels = fourWheels(m.wheelbase, m.track, m.cgFromFront, m.braking || downed);
     const drag =
-      m.braking || downed
-        ? ROLLING_RESISTANCE
-        : Math.max(ROLLING_RESISTANCE, POST_IMPACT_DRAG_FRACTION * mu);
+      m.braking || downed ? ROLLING_RESISTANCE : Math.max(ROLLING_RESISTANCE, dragFrac * mu);
     const muPost = downed ? (opts.downedMu ?? muDowned.nominal) : mu;
     // Un vehículo que todavía no choca (solo está en un impacto posterior) rueda libre hasta su
     // primer impacto (ADR 0066).
