@@ -1435,18 +1435,22 @@ def _polish(spec: JsonObj, ev: Evidence, best: Fit, free_params: list[Param], dt
 def _estimate_of(
     p: Param, sigma: float, identifiable: bool, best: float | None, samples: list[float]
 ) -> Estimate:
-    """La estimación de un parámetro: el p10–p90 de las muestras o, si ninguna se apartó de la
-    solución (el costo tiene un quiebre ahí), el lineal: mejor ± `Z_P90`·σ local, dentro de los
-    límites (ADR 0091)."""
+    """La estimación de un parámetro: el p10–p90 de las muestras, nunca más angosto que el lineal
+    (mejor ± `Z_P90`·σ local, dentro de los límites; ADR 0091). Si las muestras se apartan de la
+    solución menos que eso (el costo tiene un quiebre ahí, o sus ajustes no se mueven), el rango
+    se amplía hasta el lineal: así, sumar incertidumbre a las entradas no angosta el rango."""
     if not identifiable or best is None or not samples:
         return Estimate(p, sigma, identifiable, best, None)
     dist = distribution(samples)
-    if dist.p90 - dist.p10 > 1e-9 or not math.isfinite(sigma) or sigma <= 0:
+    if not math.isfinite(sigma) or sigma <= 0:
         return Estimate(p, sigma, identifiable, best, dist)
-    lo = max(p.lo, best - Z_P90 * sigma)
-    hi = min(p.hi, best + Z_P90 * sigma)
+    lo = min(dist.p10, max(p.lo, best - Z_P90 * sigma))
+    hi = max(dist.p90, min(p.hi, best + Z_P90 * sigma))
+    if lo >= dist.p10 and hi <= dist.p90:
+        return Estimate(p, sigma, identifiable, best, dist)
+    mid = best if dist.p90 - dist.p10 <= 1e-9 else dist.p50
     return Estimate(
-        p, sigma, identifiable, best, Distribution(lo, best, hi, dist.muestras), "laplace"
+        p, sigma, identifiable, best, Distribution(lo, mid, hi, dist.muestras), "laplace"
     )
 
 

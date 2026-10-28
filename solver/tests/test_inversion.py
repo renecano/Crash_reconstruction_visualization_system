@@ -361,9 +361,24 @@ def test_sin_muestras_que_se_aparten_el_rango_es_el_lineal_dentro_de_los_limites
     assert e.dist.p10 == 0.0  # recortado al límite
     assert e.dist.p90 == pytest.approx(2.0 + inv.Z_P90 * 4.0)
     assert e.to_dict()["estimacion"]["rango_por"] == "laplace"
-    normal = inv._estimate_of(p, 4.0, True, 2.0, [1.0, 2.0, 3.0])  # pyright: ignore[reportPrivateUsage]
+    normal = inv._estimate_of(p, 0.1, True, 2.0, [1.0, 2.0, 3.0])  # pyright: ignore[reportPrivateUsage]
     assert normal.range_by == "muestras"
     assert "rango_por" not in normal.to_dict()["estimacion"]
+
+
+def test_el_rango_nunca_es_mas_angosto_que_el_lineal() -> None:
+    p = inv.Param("velocidad", "veh-a", 40.0, 0.0, 200.0, False)
+    angosto = inv._estimate_of(p, 4.0, True, 20.0, [19.5, 20.0, 20.5, 21.0])  # pyright: ignore[reportPrivateUsage]
+    assert angosto.range_by == "laplace"
+    assert angosto.dist is not None
+    assert angosto.dist.p10 == pytest.approx(20.0 - inv.Z_P90 * 4.0)
+    assert angosto.dist.p90 == pytest.approx(20.0 + inv.Z_P90 * 4.0)
+    assert angosto.dist.p50 == pytest.approx(20.25)  # la mediana de las muestras
+    # Si las muestras van más allá del lineal de un lado, ese lado es el de las muestras.
+    ancho = inv._estimate_of(p, 4.0, True, 20.0, [19.5, 20.0, 40.0, 60.0])  # pyright: ignore[reportPrivateUsage]
+    assert ancho.dist is not None
+    assert ancho.dist.p10 == pytest.approx(20.0 - inv.Z_P90 * 4.0)
+    assert ancho.dist.p90 > 20.0 + inv.Z_P90 * 4.0
 
 
 def test_el_pulido_solo_baja_el_costo() -> None:

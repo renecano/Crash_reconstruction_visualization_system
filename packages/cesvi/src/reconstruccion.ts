@@ -677,8 +677,8 @@ export function encabezadoHipotesis(hs: readonly HipotesisReconstruccion[]): str
 
 /**
  * El p10–p90 de una estimación, o null si no dice nada: sin percentiles, o con p10 = p90. Desde el
- * 2026-10-26 el solver ya no da rangos de ancho cero (cuando las muestras no se apartan de la
- * solución, da el lineal, `rango_por: "laplace"`); queda por si una σ local es cero (ADR 0091).
+ * 2026-10-26 el solver ya no da rangos de ancho cero (el rango nunca es más angosto que el lineal,
+ * `rango_por: "laplace"`); queda por si una σ local es cero (ADR 0091).
  */
 export function rangoInformativo(e: { p10?: number; p90?: number }): [number, number] | null {
   return e.p10 !== undefined && e.p90 !== undefined && e.p10 !== e.p90 ? [e.p10, e.p90] : null;

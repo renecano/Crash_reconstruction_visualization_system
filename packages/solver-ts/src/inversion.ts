@@ -1369,7 +1369,10 @@ function polish(spec: Json, ev: Evidence, best: Fit, freeParams: Param[], dt: nu
   return f.cost < best.cost ? f : best;
 }
 
-/** La estimación de un parámetro: el p10–p90 de las muestras o, con ancho cero, el lineal. */
+/**
+ * La estimación de un parámetro: el p10–p90 de las muestras, nunca más angosto que el lineal
+ * (mejor ± `Z_P90`·σ local, dentro de los límites; ADR 0091).
+ */
 function estimateOf(
   p: Param,
   sigma: number,
@@ -1380,16 +1383,18 @@ function estimateOf(
   if (!identifiable || best === null || !samples.length)
     return new Estimate(p, sigma, identifiable, best, null);
   const dist = distribution(samples);
-  if (dist.p90 - dist.p10 > 1e-9 || !Number.isFinite(sigma) || sigma <= 0)
+  if (!Number.isFinite(sigma) || sigma <= 0)
     return new Estimate(p, sigma, identifiable, best, dist);
-  const lo = Math.max(p.lo, best - Z_P90 * sigma);
-  const hi = Math.min(p.hi, best + Z_P90 * sigma);
+  const lo = Math.min(dist.p10, Math.max(p.lo, best - Z_P90 * sigma));
+  const hi = Math.max(dist.p90, Math.min(p.hi, best + Z_P90 * sigma));
+  if (lo >= dist.p10 && hi <= dist.p90) return new Estimate(p, sigma, identifiable, best, dist);
+  const mid = dist.p90 - dist.p10 <= 1e-9 ? best : dist.p50;
   return new Estimate(
     p,
     sigma,
     identifiable,
     best,
-    new Distribution(lo, best, hi, dist.muestras),
+    new Distribution(lo, mid, hi, dist.muestras),
     "laplace",
   );
 }
