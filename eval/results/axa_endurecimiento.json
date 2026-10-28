@@ -98,5 +98,54 @@
    "Después del impacto: las llantas ruedan, con un arrastre de 0.35 de la fricción"
   ],
   "resultado_completo_ms_node": 9042
+ },
+ "arrastre": {
+  "generated_at": "2026-10-28T17:48:12Z",
+  "git_commit": "5133a8d",
+  "velocidades": {
+   "V2": {
+    "kmh": 71.56,
+    "p10": 56.19,
+    "p90": 100.49,
+    "rango_por": "laplace"
+   },
+   "V1": {
+    "kmh": 25.32,
+    "p10": 2.1,
+    "p90": 36.88,
+    "rango_por": "laplace"
+   }
+  },
+  "hipotesis": [],
+  "contra_cesvi": [
+   {
+    "metodo": "Deformación (EBS)",
+    "cesvi_kmh": 63.15,
+    "croquis_kmh": 71.56,
+    "croquis_p10_p90": [
+     56.19,
+     100.49
+    ],
+    "diferencia_kmh": 8.41,
+    "diferencia_pct": 13.32
+   },
+   {
+    "metodo": "Restos (desplazamiento)",
+    "cesvi_kmh": 60.27,
+    "croquis_kmh": 43.38,
+    "croquis_p10_p90": null,
+    "diferencia_kmh": -16.89,
+    "diferencia_pct": -28.02
+   }
+  ],
+  "supuestos": [
+   "Masa de V1: 2,562.1 kg",
+   "Posición final de V2: la que se colocó en el mapa",
+   "Posición inicial de V2: 12 m antes de la posición de impacto que colocó el perito, en su rumbo",
+   "Posición inicial de V1: 12 m antes de la posición de impacto que colocó el perito, en su rumbo",
+   "Fricción llanta–pavimento: μ = 0.7",
+   "Después del impacto: las llantas ruedan, con un arrastre de 0.35 de la fricción"
+  ],
+  "resultado_completo_ms_node": 14034
  }
 }

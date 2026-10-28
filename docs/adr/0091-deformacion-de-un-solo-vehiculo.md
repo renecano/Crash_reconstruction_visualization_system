@@ -252,6 +252,25 @@ René: el resultado de AXA no puede depender de la semilla. Mostrar 63.17 km/h p
 - AXA no cambia.
 - **Lo que no arregla:** en la hipótesis «cuadra con el reposo supuesto» de `axa_reposo_lejano`, V2 queda a 47.27 km/h y V1 a 47.26. Cumple la restricción, pero casi iguales, porque esa hipótesis pesa el reposo supuesto por encima del daño medido. Es lo que dice la hipótesis, no un error del orden.
 
+## El arrastre después del impacto se muestrea (2026-10-28; `eval/results/arrastre_muestreado.json`)
+
+**Decisión (Python y TS con paridad):**
+
+- **El rango:** la fracción de μ con que frena un vehículo que rueda después del impacto se muestrea uniforme de 0 (rodar libre, solo la resistencia a la rodadura) a 1 (deslizar con toda la fricción, como en el método de restos de CESVI). El nominal sigue en 0.35.
+- **Por qué esos límites:** no hay una fuente consultable para un vehículo dañado que rueda. La cita a Fricke 2010 (0.3–0.5) de `docs/physics.md` no se pudo verificar, así que se usan los límites físicos.
+- **Dónde entra:** en Monte Carlo (`parametros.arrastre_post_impacto`) y en cada reestimación de la inversión. Se sortea al final, para no mover los demás sorteos. El parámetro publica su rango y su fuente.
+- **El rango nunca es más angosto que el lineal:** al muestrear el arrastre, las muestras de `interseccion_toluca` se movían un poco y su rango pasaba del lineal al de las muestras, más angosto, aunque se agregó incertidumbre. Ahora el p10–p90 es la unión del de las muestras con mejor ± `Z_P90`·σ local (dentro de los límites), con `rango_por: "laplace"` cuando el lineal lo amplía. El mejor queda siempre dentro de su rango.
+
+**Antes y después** (contra `alcance_orden`):
+
+- **Rangos raros:** ninguno de ancho cero (antes 0); mejor fuera de su rango, de 2 a 0.
+- **Escenas versionadas:** 9 de 16 dan las mismas estimaciones. Las otras 7 cambian solo el rango: el mejor no se mueve en ninguna. `volcadura` pasa de 44.63–51.13 a 31.57–77.39 km/h; `motociclista` pierde una de sus dos banderas `velocidad_vs_evidencia`.
+- **E-R4:** idéntico en las 205 narraciones.
+- **AXA como la app** (`eval/results/axa_endurecimiento.json`, «arrastre»):
+  - V2: 71.56 km/h, p10–p90 de 63.19–95.96 a 56.19–100.49. Contra EBS (63.15): +8.41 km/h (+13.32 %), y el 63.15 ya cae dentro del rango;
+  - V1: 25.32 km/h, de 3.73–27.03 a 2.10–36.88;
+  - restos: 43.38 contra 60.27, −16.89 km/h (−28.02 %), sin cambio.
+
 ## Los supuestos declarados (René, 2026-10-26)
 
 - **La regla, para todos los casos de ejemplo:** los reportes de CESVI son casos de ejemplo (muchos elaborados por CESVI). Lo que no traen no existe y no se le pide a CESVI.
@@ -269,7 +288,7 @@ René: el resultado de AXA no puede depender de la semilla. Mostrar 63.17 km/h p
 | Reposo marcado como supuesto | el método de restos de CESVI, si el reporte calcula con él (los vehículos se desplazan juntos); si no, lo supone el perito | ±10 m: 10 veces la σ de uno medido                        |
 | Posición inicial             | el reporte no la da: es el punto de partida                                                                                | la inversión ajusta la velocidad y el rumbo (±20°)        |
 | Fricción llanta–pavimento    | la tabla de la literatura para la superficie                                                                               | el rango de μ                                             |
-| Después del impacto          | las llantas ruedan con un arrastre de 0.35 de la fricción (sin huellas de arrastre en el reporte)                          | la fracción es fija; varía con μ (pendiente muestrearla)  |
+| Después del impacto          | las llantas ruedan con un arrastre nominal de 0.35 de la fricción (sin huellas de arrastre en el reporte)                  | la fracción, de 0 (rodar libre) a 1 (deslizar)            |
 
 - **En AXA:**
   - la masa de V1, por la ficha de la Silverado 2500 2007;

@@ -530,7 +530,7 @@ Reglas de trabajo: `CLAUDE.md`. Especificación: `PLAN.md`.
         - el reposo de V2 por el método de restos de CESVI (±10 m);
         - las posiciones iniciales (rumbo ±20°);
         - la fricción (μ 0.55–0.8);
-        - las llantas que ruedan después del impacto, con un arrastre de 0.35 de la fricción (fijo; varía con μ).
+        - las llantas que ruedan después del impacto, con un arrastre nominal de 0.35 de la fricción (desde el 2026-10-28 se muestrea de 0 a 1).
       - **«No sé» a una pregunta del Físico** deja en la bitácora el supuesto que queda, con su nombre.
       - **Verificado en producción (2026-10-26, #143):** AXA en el paso 6 muestra la tabla con la masa de V1 por ficha técnica, el reposo de V2 por el método de restos (±10 m), las posiciones iniciales, la fricción y las llantas que ruedan; la bitácora del Físico nombra los supuestos. Captura en `docs/cesvi/supuestos/paso6-supuestos.png`; las de R12a y R12b se volvieron a tomar.
       - **Las preguntas del Físico** ya no dicen «hace falta la medida»: si no la hay, queda el supuesto.
@@ -1583,7 +1583,10 @@ Lo que se pospone por el trabajo con CESVI no se borra: queda aquí para despué
 - **Las hipótesis por modo** (otro mínimo dentro del margen de costo) solo las ejercita la prueba unitaria: ninguna escena versionada ni AXA tiene hoy un segundo modo dentro del margen.
 - **Python en CI tarda 8 min** con el multiarranque y `pytest -n auto` (el límite es 10). Si crece, hay que acelerar la referencia Python o repartir más los resultados versionados.
 - **Las relecturas de R12b no están grabadas** (ADR 0093): en E-R4 el Verificador de citas pidió releer en 2 narraciones, pero sin respuesta grabada no se puede medir si la relectura mejora algo. Grabarlas (con la API) y medir.
-- **El arrastre después del impacto es una fracción fija** (0.35 de la fricción): su incertidumbre solo entra por μ. Muestrearla en su rango cuando haya una fuente para él (ADR 0091).
+- ~~**El arrastre después del impacto es una fracción fija**~~ Hecho el 2026-10-28 (ADR 0091, `eval/results/arrastre_muestreado.json`):
+  - se muestrea de 0 (rodar libre) a 1 (deslizar), sin fuente medida; el nominal sigue en 0.35;
+  - el rango de la inversión nunca es más angosto que el lineal: mejor fuera de su rango, de 2 a 0;
+  - E-R4 idéntico; AXA V2 71.56 (56.19–100.49), el 63.15 de EBS ya cae dentro.
 - **La línea base de los conductores no siempre es la reconstrucción** (ADR 0088): en una carambola colocada a mano, los agentes sin hipótesis encontraron a V2 con V3 en −0.40 s, antes del primer impacto reconstruido (V1 con V2 en 0 s).
   - **Hecho (2026-10-26):** el paso 6 lo avisa con los dos contactos y dice que la hipótesis se compara con «Sin la hipótesis», no con el paso 4 (`lineaBaseDistinta`; prueba en `conductores.test.ts` y en la e2e de la carambola).
   - **Falta:** que los agentes respeten el orden de impactos de la reconstrucción (cambio del solver, con paridad).
