@@ -19,6 +19,10 @@ La posición de cada agente es cerrada por tramos (crucero, frenado, volantazo),
 fórmulas que `SpeedProfile`: con las decisiones de la reconstrucción, los agentes reproducen su
 cinemática. El contacto se busca en cada paso entre los rectángulos de los vehículos y se afina
 por bisección.
+
+* **El orden de impactos:** los pares cuyo impacto narra el hecho después del primero (carambola)
+  no se buscan: la simulación termina en el primer contacto, y ese par no puede tocarse antes que
+  el primero. Un par que el hecho no narra sí se busca: una hipótesis puede crear un contacto nuevo.
 """
 
 from __future__ import annotations
@@ -35,7 +39,10 @@ from croquis_solver.preimpact import travel_heading
 from croquis_solver.reconstruct import (
     PlanPrevio,
     Reconstruction,
+    _later_impacts,  # pyright: ignore[reportPrivateUsage]
+    _pair,  # pyright: ignore[reportPrivateUsage]
     _pose_at,  # pyright: ignore[reportPrivateUsage]
+    _primary_event,  # pyright: ignore[reportPrivateUsage]
     _r,  # pyright: ignore[reportPrivateUsage]
 )
 
@@ -298,12 +305,26 @@ def _leader(me: Agent, states: dict[str, Estado], by_id: dict[str, Agent]) -> st
 Ve = Callable[[Agent, Agent, float, dict[str, Estado]], bool]
 
 
+def _later_pairs(spec: JsonObj, vehicle_ids: set[str]) -> frozenset[tuple[str, str]]:
+    """Los pares (ordenados) cuyo impacto narra el hecho después del primero, sin el del primero."""
+    primary = _primary_event(spec)
+    first = tuple(sorted(_pair(primary, vehicle_ids))) if primary is not None else ()
+    out: set[tuple[str, str]] = set()
+    for e in _later_impacts(spec, primary, vehicle_ids):
+        a, b = sorted(_pair(e, vehicle_ids))
+        if (a, b) != first:
+            out.add((a, b))
+    return frozenset(out)
+
+
 def _simulate(
     agents: list[Agent],
     t_end: float,
     sees: Ve,
     reaction: dict[str, float],
+    later: frozenset[tuple[str, str]] = frozenset(),
 ) -> Simulacion:
+    """Simula hasta el primer contacto. Los pares de `later` no se buscan (el orden de impactos)."""
     by_id = {a.id: a for a in agents}
     t0 = agents[0].t0
     n = math.ceil((t_end - t0) / DT - 1e-9)
@@ -321,7 +342,7 @@ def _simulate(
         ids = sorted(rs)
         for i, a in enumerate(ids):
             for b in ids[i + 1 :]:
-                if _overlap(rs[a], rs[b]):
+                if (a, b) not in later and _overlap(rs[a], rs[b]):
                     return a, b
         return None
 
@@ -367,7 +388,7 @@ def _simulate(
         ids = sorted(rs)
         for i, a in enumerate(ids):
             for b in ids[i + 1 :]:
-                if by_id[a].v0 > 0 or by_id[b].v0 > 0:
+                if (a, b) not in later and (by_id[a].v0 > 0 or by_id[b].v0 > 0):
                     min_gap = min(min_gap, _distance(rs[a], rs[b]))
         prev_t = t
     return Simulacion({a.id: a.decision for a in agents}, None, min_gap)
@@ -472,9 +493,10 @@ def simulate_drivers(spec: JsonObj, rec: Reconstruction) -> AgentsResult | None:
 
     t_end = HORIZON_AFTER_S
     nominal_rt = {k: v[0] for k, v in reaction.items()}
+    later = _later_pairs(spec, set(rec.previa))
     agents = _make_agents(spec, rec, with_drivers=True)
-    sim = _simulate(agents, t_end, sees, nominal_rt)
-    base = _simulate(_make_agents(spec, rec, with_drivers=False), t_end, sees, nominal_rt)
+    sim = _simulate(agents, t_end, sees, nominal_rt, later)
+    base = _simulate(_make_agents(spec, rec, with_drivers=False), t_end, sees, nominal_rt, later)
 
     # Sensibilidad al tiempo de reacción de los que reaccionan (con la semilla de la escena).
     reactive = sorted(
@@ -490,7 +512,7 @@ def simulate_drivers(spec: JsonObj, rec: Reconstruction) -> AgentsResult | None:
             for vid in reactive:
                 lo, hi = reaction[vid][1]
                 rt[vid] = rng.uniform(lo, hi)
-            s = _simulate(_make_agents(spec, rec, with_drivers=True), t_end, sees, rt)
+            s = _simulate(_make_agents(spec, rec, with_drivers=True), t_end, sees, rt, later)
             if s.contacto is None:
                 sin_contacto += 1
             else:
@@ -513,6 +535,12 @@ def simulate_drivers(spec: JsonObj, rec: Reconstruction) -> AgentsResult | None:
         "Los conductores ven el estado del inicio de cada paso y actúan a la vez.",
         "Frenar usa la desaceleración de la reconstrucción; volantear desplaza un carril con μ·g.",
     ]
+    if later:
+        supuestos.append(
+            "Se respeta el orden de impactos del hecho: no se busca contacto entre "
+            + ", ".join(f"{a} y {b}" for a, b in sorted(later))
+            + " antes del primer impacto."
+        )
     return AgentsResult(
         simulacion=sim,
         linea_base=base,

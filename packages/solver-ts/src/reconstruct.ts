@@ -606,7 +606,7 @@ export function poseAt(path: KinPath, s: number): [number, number, number, numbe
   return [p.x + s * dmath.cos(h), p.y + s * dmath.sin(h), p.heading, 0.0];
 }
 
-function primaryEvent(spec: Json): Json | null {
+export function primaryEvent(spec: Json): Json | null {
   const eventos = [...(spec.eventos as Json[])].sort(
     (a, b) => Math.trunc(Number(a.orden)) - Math.trunc(Number(b.orden)),
   );
@@ -614,7 +614,7 @@ function primaryEvent(spec: Json): Json | null {
 }
 
 /** Los dos primeros vehículos entre los actores de un evento. */
-function pairOf(event: Json, vehicleIds: ReadonlyMap<string, unknown>): string[] {
+export function pairOf(event: Json, vehicleIds: ReadonlyMap<string, unknown>): string[] {
   return (event.actores as unknown[])
     .map(String)
     .filter((a) => vehicleIds.has(a))
@@ -626,7 +626,7 @@ function pairOf(event: Json, vehicleIds: ReadonlyMap<string, unknown>): string[]
  * los eventos `impacto_vehiculo_vehiculo` o `segundo_impacto` con al menos dos vehículos entre sus
  * actores y un orden posterior al del primer impacto.
  */
-function laterImpacts(
+export function laterImpacts(
   spec: Json,
   primary: Json | null,
   vehicleIds: ReadonlyMap<string, unknown>,
