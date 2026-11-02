@@ -26,7 +26,7 @@ import {
 } from "three";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
 import { SkyMesh } from "three/examples/jsm/objects/SkyMesh.js";
-import { CubeRenderTarget } from "three/webgpu";
+import { CubeRenderTarget, type WebGPURenderer } from "three/webgpu";
 import {
   actionBounds,
   cinematicCamera,
@@ -41,6 +41,15 @@ import {
 } from "../cameras";
 import type { ViewerClock } from "../clock";
 import { environmentFor, type EnvironmentSettings } from "../environment";
+import {
+  environmentIntensityFor,
+  exposureFor,
+  fogColorFor,
+  hdriFor,
+  hdriRotationY,
+  HEMISPHERE_WITH_HDRI,
+} from "../sky";
+import { buildNightSkyMesh, buildSkyEnvironment, type SkyEnvironment } from "../sky-scene";
 import { PRECIPITATION_HEIGHT, precipitationParams } from "../precipitation";
 import { buildPrecipitation } from "../precipitation-scene";
 import { toThree } from "../coords";
@@ -62,7 +71,7 @@ import { loadEnvTextures, TEXTURE_BASE_URL, texturesWanted } from "../env-textur
 import { attachPeople, variantsFor, type PeopleAttachment } from "../people-scene";
 import { buildGhostLayer, GHOST_COLORS } from "../ghosts";
 import { buildCroquisPaint } from "../croquis-paint";
-import { buildSceneGraph, mesh2DToGeometry } from "../scene-graph";
+import { buildSceneGraph, mesh2DToGeometry, type SceneGraph } from "../scene-graph";
 import type { ViewerExportApi } from "../export/capture";
 import { seek } from "../timeline";
 import { seatHeight } from "../vehicle-geometry";
@@ -167,9 +176,28 @@ declare global {
      * `gravaPrevia`: las manchas de grava de antes de ADR 0036, para medir el costo del cambio.
      * `osmSoloCalzada`: la red del mapa sin rayas, banquetas ni guarniciones (antes de ADR 0039).
      */
-    __croquisDiag?: { sombraLuna?: boolean; gravaPrevia?: boolean; osmSoloCalzada?: boolean };
+    __croquisDiag?: {
+      sombraLuna?: boolean;
+      gravaPrevia?: boolean;
+      osmSoloCalzada?: boolean;
+      /** T1.1: sin HDRI como luz de ambiente (queda el hemisferio), para medir su costo. */
+      sinHdri?: boolean;
+      /** T1.1: el HDRI sin aplicarlo a los reflejos del piso. */
+      sinReflejosPiso?: boolean;
+      /** T1.1: sin luminarias procedurales (ni sus focos), para medir su costo de noche. */
+      sinLuminarias?: boolean;
+    };
     /** `performance.now()` del primer cuadro listo (E6: tiempo hasta interactivo). */
     __croquisReadyAt?: number;
+    /** El HDRI de la luz de ambiente ya está aplicado (o no se pide en esta calidad, T1.1). */
+    __croquisSkyReady?: boolean;
+    /** El instante de la línea de tiempo que dibujó el último cuadro (s). */
+    __croquisT?: number;
+    /**
+     * El grafo vigente ya está precompilado y en pantalla (T1.1). No entra en `__croquisReady`
+     * (el primer cuadro listo es el paramétrico); las capturas y E6 lo esperan aparte.
+     */
+    __croquisGraphReady?: boolean;
   }
 }
 
@@ -261,14 +289,18 @@ function SceneContent({
           gravaPrevia: typeof window !== "undefined" && window.__croquisDiag?.gravaPrevia === true,
           osmSoloCalzada:
             typeof window !== "undefined" && window.__croquisDiag?.osmSoloCalzada === true,
+          sinLuminarias:
+            typeof window !== "undefined" && window.__croquisDiag?.sinLuminarias === true,
         },
       }),
     [spec, resultado, profile, env, vehicleModels],
   );
-  useEffect(() => () => graph.dispose(), [graph]);
   useEffect(() => {
     if (vehicleModels) window.__croquisVehicleModelsReady = true;
   }, [vehicleModels]);
+  // Cuántas cosas se agregaron al grafo después de armarlo (restos, personas): cada una pide
+  // precompilar de nuevo (ver abajo).
+  const [attachments, setAttachments] = useState(0);
   // Hipótesis: fantasmas translúcidos con el mismo reloj que la escena.
   const ghosts = useMemo(
     () =>
@@ -292,7 +324,9 @@ function SceneContent({
     window.__croquisDebrisReady = false;
     Promise.all([attachDebris(spec, resultado, graph), attachRollovers(resultado, graph)])
       .then(() => {
-        if (alive) window.__croquisDebrisReady = true;
+        if (!alive) return;
+        window.__croquisDebrisReady = true;
+        setAttachments((n) => n + 1);
       })
       .catch((err: unknown) => {
         console.error("No se pudieron simular los restos", err);
@@ -338,6 +372,7 @@ function SceneContent({
         window.__croquisPeople = people;
         onPeople?.(people);
         window.__croquisPeopleReady = true;
+        setAttachments((n) => n + 1);
       })
       .catch((err: unknown) => {
         // Sin cuerpos (p. ej. sin red) quedan los maniquíes del grafo de escena.
@@ -351,6 +386,8 @@ function SceneContent({
 
   const { scene, camera: cam, gl } = useThree();
   const advance = useThree((s) => s.advance);
+  const setFrameloop = useThree((s) => s.setFrameloop);
+  const invalidate = useThree((s) => s.invalidate);
   const size = useThree((s) => s.size);
 
   // Exportación (F9): dibuja un instante a demanda y copia el cuadro en la misma tarea, antes de
@@ -437,9 +474,21 @@ function SceneContent({
   }, [onExport, resultado, clock, cam, gl, advance, size, graph, env]);
 
   // Cielo, niebla y luces.
+  // La luz de ambiente sale del HDRI (T1.1, ADR 0094) salvo en baja, que sigue con el hemisferio.
+  const ibl =
+    profile.level !== "baja" &&
+    !(typeof window !== "undefined" && window.__croquisDiag?.sinHdri === true);
+  // En media el HDRI solo ilumina a los vehículos (pintura, vidrio, cromo): sobre toda la escena
+  // (el pasto y la calzada llenan la pantalla) costaba 7 ms por cuadro en la GPU integrada y la
+  // mediana caía de 82 a 51 fps (ADR 0094 §7). Alta y ultra lo aplican a toda la escena.
+  const iblScene = ibl && profile.level !== "media";
   const lights = useMemo(() => {
     const group = new Object3D();
-    const hemi = new HemisphereLight(env.ambientSkyColor, env.groundColor, env.ambientIntensity);
+    const hemi = new HemisphereLight(
+      env.ambientSkyColor,
+      env.groundColor,
+      env.ambientIntensity * (ibl && iblScene ? HEMISPHERE_WITH_HDRI : 1),
+    );
     const sun = new DirectionalLight(env.night ? "#b8c6ff" : "#fff4e0", env.sunIntensity);
     // Mismo marco que usa el grafo de escena para saber qué parte de la vía recibe sombra.
     const frame = sunShadowFrame(resultado, env.lightDirection);
@@ -460,10 +509,11 @@ function SceneContent({
     sun.shadow.bias = -0.0004;
     group.add(hemi, sun, sun.target);
     return group;
-  }, [env, resultado, profile]);
+  }, [env, resultado, profile, ibl, iblScene]);
 
+  // El cielo visible es procedural: Preetham de día; de noche, el domo con estrellas (T1.1).
   const sky = useMemo(() => {
-    if (env.night) return null;
+    if (env.night) return buildNightSkyMesh(env.streetLights);
     const s = new SkyMesh();
     s.scale.setScalar(4000);
     s.turbidity.value = env.turbidity;
@@ -479,7 +529,8 @@ function SceneContent({
   // cuesta un cálculo por píxel que en GPU integrada no cabe en el presupuesto de E6.
   useEffect(() => {
     const cielo = guiada?.cielo ?? env.skyColor;
-    scene.fog = new FogExp2(cielo, env.fogDensity);
+    // La niebla toma el color del horizonte (perspectiva aérea), no el del cenit.
+    scene.fog = new FogExp2(guiada?.cielo ?? fogColorFor(env), env.fogDensity);
     scene.background = new Color(cielo);
     let target: CubeRenderTarget | null = null;
     if (sky) {
@@ -489,15 +540,146 @@ function SceneContent({
       skyScene.add(sky);
       cubeCamera.update(gl, skyScene);
       scene.background = target.texture;
-      graph.setReflections(target.texture);
+      // Sin HDRI (baja), el cielo horneado da los reflejos del piso mojado.
+      if (!ibl) graph.setReflections(target.texture);
     }
     return () => {
-      graph.setReflections(null);
+      if (!ibl) graph.setReflections(null);
       scene.fog = null;
       scene.background = null;
       target?.dispose();
     };
-  }, [scene, env, sky, gl, graph, guiada?.cielo]);
+  }, [scene, env, sky, gl, graph, guiada?.cielo, ibl]);
+
+  // Luz de ambiente y reflejos del HDRI prefiltrado, girado hacia el sol calculado (T1.1). Se
+  // prefiltra una vez por cielo (el nombre, no el objeto `env`: un efecto que dependiera de `env` y
+  // cambiara estado volvía a prefiltrar en cada render y el visor se iba a 12 fps); aplicarlo al
+  // grafo va aparte, porque el grafo se rearma cuando llegan los modelos de los vehículos.
+  const hdri = hdriFor(env);
+  const [skyEnv, setSkyEnv] = useState<SkyEnvironment | null>(null);
+  useEffect(() => {
+    if (!ibl) {
+      window.__croquisSkyReady = true;
+      return undefined;
+    }
+    window.__croquisSkyReady = false;
+    let alive = true;
+    let current: SkyEnvironment | null = null;
+    buildSkyEnvironment(gl as unknown as WebGPURenderer, hdri)
+      .then((e) => {
+        if (!alive) {
+          e.dispose();
+          return;
+        }
+        current = e;
+        setSkyEnv(e);
+        window.__croquisSkyReady = true;
+      })
+      .catch((err: unknown) => {
+        // Sin HDRI (p. ej. sin red) queda la luz de hemisferio.
+        console.error("No se pudo cargar el HDRI del cielo", err);
+        if (alive) window.__croquisSkyReady = true;
+      });
+    return () => {
+      alive = false;
+      setSkyEnv(null);
+      current?.dispose();
+    };
+  }, [gl, hdri, ibl]);
+  const envIntensity = skyEnv ? environmentIntensityFor(env, skyEnv.meanLuminance) : 1;
+  const envRotationY = skyEnv ? hdriRotationY(env.sun.azimuth, skyEnv.sunAzimuthDeg) : 0;
+  useEffect(() => {
+    if (!skyEnv) return undefined;
+    if (iblScene) {
+      scene.environment = skyEnv.texture;
+      scene.environmentIntensity = envIntensity;
+      scene.environmentRotation.set(0, envRotationY, 0);
+    } else {
+      graph.setVehicleEnvironment(skyEnv.texture, envIntensity, envRotationY);
+    }
+    if (window.__croquisDiag?.sinReflejosPiso !== true) graph.setReflections(skyEnv.texture);
+    return () => {
+      scene.environment = null;
+      scene.environmentIntensity = 1;
+      scene.environmentRotation.set(0, 0, 0);
+      graph.setVehicleEnvironment(null, 1, 0);
+      graph.setReflections(null);
+    };
+  }, [scene, graph, skyEnv, envIntensity, envRotationY, iblScene]);
+
+  // Los sombreadores de un grafo nuevo (p. ej. al llegar los modelos de los vehículos, con decenas
+  // de materiales) se compilan antes de mostrarlo. Dibujarlos sin compilar los compila en el
+  // momento, en el hilo principal: con la luz de ambiente del HDRI eran hasta 15 s de tirones en la
+  // GPU integrada (`eval/t1_tirones.mjs`). `compileAsync` los compila en segundo plano.
+  // Mientras compila, sigue en pantalla el grafo anterior (p. ej. los paramétricos hasta que
+  // llegan los modelos); el anterior se desecha cuando el nuevo lo reemplaza, no antes.
+  const [compiled, setCompiled] = useState<SceneGraph | null>(null);
+  const shown = useRef<SceneGraph | null>(null);
+  useEffect(() => {
+    let alive = true;
+    window.__croquisGraphReady = compiled === graph;
+    // Mientras compila, el bucle de dibujo baja a unos 10 cuadros por segundo: a cuadro libre (sin
+    // vsync, como mide E6) el dibujo acaparaba la GPU y el precompilado tardaba minutos.
+    setFrameloop("demand");
+    const pulso = window.setInterval(() => invalidate(), 100);
+    const liberar = () => {
+      window.clearInterval(pulso);
+      setFrameloop("always");
+    };
+    // `compileAsync` recoge los objetos de forma síncrona (solo los visibles y dentro del
+    // encuadre) y compila después: se fuerzan todos visibles y sin recorte por encuadre solo
+    // durante esa recogida, para que lo que aparece más tarde (restos, personas, marcas) o fuera
+    // de la cámara ya esté compilado y no se compile en el hilo principal al primer dibujo.
+    const forzados: { o: Object3D; visible: boolean; culled: boolean }[] = [];
+    graph.root.traverse((o) => {
+      forzados.push({ o, visible: o.visible, culled: o.frustumCulled });
+      o.visible = true;
+      o.frustumCulled = false;
+    });
+    const compilando = (gl as unknown as WebGPURenderer).compileAsync(graph.root, cam, scene);
+    for (const f of forzados) {
+      f.o.visible = f.visible;
+      f.o.frustumCulled = f.culled;
+    }
+    void compilando
+      .catch((err: unknown) => {
+        console.warn("No se pudieron precompilar los sombreadores", err);
+      })
+      .then(() => {
+        if (!alive) return;
+        liberar();
+        setCompiled(graph);
+      });
+    return () => {
+      alive = false;
+      liberar();
+    };
+    // `compiled` solo marca la bandera: no hace falta recompilar cuando cambia. `attachments`
+    // cuenta lo agregado al grafo después (restos, personas): sí recompila.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [graph, gl, cam, scene, skyEnv, attachments, setFrameloop, invalidate]);
+  useEffect(() => {
+    const prev = shown.current;
+    shown.current = compiled;
+    if (prev && prev !== compiled) prev.dispose();
+    window.__croquisGraphReady = compiled === graph;
+  }, [compiled, graph]);
+  // Al desmontar se desecha lo que quedó en pantalla (y el grafo nuevo, si era otro).
+  useEffect(
+    () => () => {
+      shown.current?.dispose();
+      shown.current = null;
+    },
+    [],
+  );
+
+  // Exposición por escena (T1.1): el tone mapping es el mismo; de noche la cámara abre.
+  useEffect(() => {
+    gl.toneMappingExposure = exposureFor(env);
+    return () => {
+      gl.toneMappingExposure = 1;
+    };
+  }, [gl, env]);
 
   // Cámaras.
   const controls = useRef<OrbitControls | null>(null);
@@ -604,7 +786,10 @@ function SceneContent({
   useFrame((state, delta) => {
     clock.tick(Math.min(delta, 0.1), performance.now());
     const t = clock.get().t;
+    // El instante que se dibuja, para las evaluaciones (`eval/t1_tirones.mjs`: qué cuadro tarda).
+    window.__croquisT = t;
     graph.update(t);
+    if (shown.current && shown.current !== graph) shown.current.update(t);
     precipitation?.setTime(t);
     for (const g of ghosts) g.update(t);
     const persp = cam as PerspectiveCamera;
@@ -659,7 +844,7 @@ function SceneContent({
 
   return (
     <>
-      <primitive object={graph.root} />
+      {compiled ? <primitive object={compiled.root} /> : null}
       <primitive object={lights} />
       {precipitation ? <primitive object={precipitation.object} /> : null}
     </>
@@ -728,7 +913,8 @@ function PerfProbe({ backend }: { backend: () => RendererInfo["backend"] | undef
     if (
       !window.__croquisDebrisReady ||
       !window.__croquisPeopleReady ||
-      !window.__croquisTexturesReady
+      !window.__croquisTexturesReady ||
+      window.__croquisSkyReady === false
     )
       return;
     if (!window.__croquisReady) window.__croquisReadyAt = performance.now();

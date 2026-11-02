@@ -69,6 +69,7 @@ import {
   HEADLIGHT_INTENSITY,
   HEADLIGHT_RANGE_M,
   headlightsOn,
+  proceduralPoles,
   planNightLights,
   STREETLIGHT_HALF_ANGLE_DEG,
   STREETLIGHT_INTENSITY,
@@ -96,7 +97,7 @@ import {
 export interface SceneGraphOptions {
   quality: QualityProfile;
   /** Interruptores de diagnóstico de E6 (`window.__croquisDiag`); la página nunca los pone. */
-  diag?: { gravaPrevia?: boolean; osmSoloCalzada?: boolean };
+  diag?: { gravaPrevia?: boolean; osmSoloCalzada?: boolean; sinLuminarias?: boolean };
   env: Pick<EnvironmentSettings, "night" | "wet" | "groundColor" | "streetLights"> &
     Partial<Pick<EnvironmentSettings, "lightDirection" | "surface">>;
   /** Los modelos de Sketchfab por clase (R10, ADR 0086); sin ellos, los vehículos paramétricos. */
@@ -137,6 +138,11 @@ export interface SceneGraph {
   readonly time: number;
   /** Mapa de entorno (cielo horneado) para que el piso mojado lo refleje; null lo quita. */
   setReflections(env: Texture | null): void;
+  /**
+   * Luz de ambiente y reflejos del HDRI solo en los vehículos (media, T1.1): `envMap` en sus
+   * materiales, con intensidad y giro; null lo quita. En alta y ultra va en `scene.environment`.
+   */
+  setVehicleEnvironment(env: Texture | null, intensity: number, rotationY: number): void;
   /** Texturas que pide esta escena: las de siempre y, con `grava_suelta`, la grava. */
   readonly wantedTextures: readonly EnvTextureName[];
   /** Texturas PBR del entorno (F8e): asfalto, concreto de banquetas y camellón, y pasto. */
@@ -145,6 +151,8 @@ export interface SceneGraph {
   readonly vehicleCredits: readonly VehicleCredit[];
   dispose(): void;
   stats: { meshes: number; triangles: number };
+  /** Luminarias procedurales dibujadas (T1.1): entorno que no es del lugar real. */
+  readonly luminariasProcedurales: number;
 }
 
 // ---------------------------------------------------------------------------------------------
@@ -419,6 +427,12 @@ export function buildSceneGraph(
   const dobleSentido = lugar.sentidos.valor === "doble_sentido";
   // Con calles del mapa (ADR 0023) se dibuja la red de OSM; la plantilla queda para la física.
   const mapa = sceneLayout(spec).mapa;
+  // Luminarias procedurales (T1.1, ADR 0094): con alumbrado declarado y sin postes en la escena,
+  // cada tramo según la clase de vía. Son entorno procedural, no del lugar real.
+  const luminarias =
+    opts.env.streetLights && opts.diag?.sinLuminarias !== true
+      ? proceduralPoles(spec, resultado, layout, mapa?.vias)
+      : [];
   const dash = dashPatternFor(lugar.tipo_via.valor, limite ? velocidadKmh(limite) : undefined);
   // `osmSoloCalzada` (diagnóstico de E6): la red del mapa como antes de ADR 0039, solo calzada.
   const soloCalzada = opts.diag?.osmSoloCalzada === true;
@@ -532,7 +546,7 @@ export function buildSceneGraph(
   root.add(evGroup);
 
   // Luces reales de noche (F8b): qué vehículos y postes llevan foco, según el nivel de calidad.
-  const nightPlan = planNightLights(spec, resultado, opts.env, opts.quality.level);
+  const nightPlan = planNightLights(spec, resultado, opts.env, opts.quality.level, luminarias);
   // Sombras de los focos (alta y ultra, ADR 0026): el plano cercano deja fuera la carrocería del
   // propio vehículo y el lejano es el alcance del foco.
   const withSpotShadow = (spot: SpotLight, rangeM: number, nearM: number): void => {
@@ -543,6 +557,41 @@ export function buildSceneGraph(
     spot.shadow.bias = -0.0005;
     spot.shadow.camera.near = nearM;
     spot.shadow.camera.far = rangeM;
+  };
+  /** Poste con brazo y luminaria; con `lit`, además el foco hacia abajo (ver `planNightLights`). */
+  const buildPole = (g: Group, h: number, d: number, metal: boolean, lit: boolean): void => {
+    const pole = new Mesh(
+      new CylinderGeometry((d / 2) * 0.8, d / 2, h, 12),
+      metal ? mats.metal : mats.concrete,
+    );
+    pole.name = "poste";
+    pole.position.y = h / 2;
+    pole.userData.radius = d / 2;
+    const arm = new Mesh(new BoxGeometry(1.6, 0.1, 0.1), mats.metal);
+    arm.position.set(0.8, h - 0.3, 0);
+    const lamp = new Mesh(new BoxGeometry(0.5, 0.12, 0.25), mats.lamp);
+    lamp.name = "luminaria";
+    lamp.position.set(1.5, h - 0.4, 0);
+    for (const m of [pole, arm]) m.castShadow = true;
+    g.add(pole, arm, lamp);
+    if (lit) {
+      const spot = new SpotLight(
+        "#ffe7c2",
+        STREETLIGHT_INTENSITY,
+        STREETLIGHT_RANGE_M,
+        (STREETLIGHT_HALF_ANGLE_DEG * Math.PI) / 180,
+        0.6,
+        2,
+      );
+      spot.name = "luz_poste";
+      spot.position.copy(lamp.position);
+      withSpotShadow(spot, STREETLIGHT_RANGE_M, 0.3);
+      const target = new Object3D();
+      target.position.set(lamp.position.x, 0, 0);
+      spot.target = target;
+      g.add(spot, target);
+      disposables.push(spot);
+    }
   };
   const headlightSpots: { vehicleId: string; spot: SpotLight }[] = [];
 
@@ -597,40 +646,7 @@ export function buildSceneGraph(
       g.add(trunk, crown);
     } else if (o.tipo === "poste") {
       const d = o.diametro_tronco ? longitudM(o.diametro_tronco) : 0.3;
-      const h = alto ?? 8;
-      const metal = o.material === "metal";
-      const pole = new Mesh(
-        new CylinderGeometry((d / 2) * 0.8, d / 2, h, 12),
-        metal ? mats.metal : mats.concrete,
-      );
-      pole.name = "poste";
-      pole.position.y = h / 2;
-      pole.userData.radius = d / 2;
-      const arm = new Mesh(new BoxGeometry(1.6, 0.1, 0.1), mats.metal);
-      arm.position.set(0.8, h - 0.3, 0);
-      const lamp = new Mesh(new BoxGeometry(0.5, 0.12, 0.25), mats.lamp);
-      lamp.name = "luminaria";
-      lamp.position.set(1.5, h - 0.4, 0);
-      for (const m of [pole, arm]) m.castShadow = true;
-      g.add(pole, arm, lamp);
-      if (nightPlan.poles.includes(o.id)) {
-        const spot = new SpotLight(
-          "#ffe7c2",
-          STREETLIGHT_INTENSITY,
-          STREETLIGHT_RANGE_M,
-          (STREETLIGHT_HALF_ANGLE_DEG * Math.PI) / 180,
-          0.6,
-          2,
-        );
-        spot.name = "luz_poste";
-        spot.position.copy(lamp.position);
-        withSpotShadow(spot, STREETLIGHT_RANGE_M, 0.3);
-        const target = new Object3D();
-        target.position.set(lamp.position.x, 0, 0);
-        spot.target = target;
-        g.add(spot, target);
-        disposables.push(spot);
-      }
+      buildPole(g, alto ?? 8, d, o.material === "metal", nightPlan.poles.includes(o.id));
     } else if (o.tipo === "vehiculo_estacionado") {
       const clase = o.clase_vehiculo?.valor ?? "sedan_compacto";
       const t = profileFor(clase);
@@ -669,6 +685,14 @@ export function buildSceneGraph(
       g.add(b);
     }
     place(g, o.posicion.x, o.posicion.y, o.rumbo_deg ?? 0);
+    objGroup.add(g);
+  }
+  for (const l of luminarias) {
+    const g = new Group();
+    g.name = `luminaria_${l.id}`;
+    g.userData.procedural = true;
+    buildPole(g, l.altura_m, 0.25, true, nightPlan.poles.includes(l.id));
+    place(g, l.x, l.y, l.rumbo_deg);
     objGroup.add(g);
   }
   if (decorTrees.length > 0) {
@@ -1050,6 +1074,19 @@ export function buildSceneGraph(
     get time() {
       return lastT;
     },
+    setVehicleEnvironment(env: Texture | null, intensity: number, rotationY: number) {
+      for (const v of vehicles) {
+        v.group.traverse((o) => {
+          if (!(o instanceof Mesh)) return;
+          const m = o.material as MeshStandardMaterial;
+          if (!("envMap" in m)) return;
+          m.envMap = env;
+          m.envMapIntensity = env ? intensity : 1;
+          m.envMapRotation.set(0, env ? rotationY : 0, 0);
+          m.needsUpdate = true;
+        });
+      }
+    },
     setReflections(env: Texture | null) {
       asphalt.setReflections(env);
     },
@@ -1090,5 +1127,6 @@ export function buildSceneGraph(
       for (const d of disposables) d.dispose();
     },
     stats: { meshes, triangles: Math.round(triangles) },
+    luminariasProcedurales: luminarias.length,
   };
 }
