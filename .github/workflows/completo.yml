@@ -137,4 +137,8 @@ jobs:
         run: |
           uv run croquis-assets textures download
           uv run croquis-assets textures check
+      - name: HDRI de Poly Haven reproducibles (descarga fijada por MD5 y copia byte a byte)
+        run: |
+          uv run croquis-assets hdri download
+          uv run croquis-assets hdri check
       - run: uv run pytest

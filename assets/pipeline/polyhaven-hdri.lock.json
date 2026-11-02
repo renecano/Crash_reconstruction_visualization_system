@@ -1,0 +1,22 @@
+{
+  "kloofendal_48d_partly_cloudy_puresky": {
+    "url": "https://dl.polyhaven.org/file/ph-assets/HDRIs/hdr/1k/kloofendal_48d_partly_cloudy_puresky_1k.hdr",
+    "md5": "c69498687e876bf68d2a8b8a62234eb9",
+    "bytes": 1435119
+  },
+  "kloofendal_overcast_puresky": {
+    "url": "https://dl.polyhaven.org/file/ph-assets/HDRIs/hdr/1k/kloofendal_overcast_puresky_1k.hdr",
+    "md5": "d5c53f6432193893e7dc17eb65e67409",
+    "bytes": 1174053
+  },
+  "belfast_sunset_puresky": {
+    "url": "https://dl.polyhaven.org/file/ph-assets/HDRIs/hdr/1k/belfast_sunset_puresky_1k.hdr",
+    "md5": "38890f597727936a44d17a97f7f73354",
+    "bytes": 1190247
+  },
+  "dikhololo_night": {
+    "url": "https://dl.polyhaven.org/file/ph-assets/HDRIs/hdr/1k/dikhololo_night_1k.hdr",
+    "md5": "4a760813214ec4d97da8e1739bb616a5",
+    "bytes": 1745132
+  }
+}

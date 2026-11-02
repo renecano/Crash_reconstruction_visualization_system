@@ -1,4 +1,4 @@
-"""CLI: `uv run croquis-assets humans download|build|check`."""
+"""CLI: `uv run croquis-assets humans|textures|vehicles|hdri download|build|check`."""
 
 from __future__ import annotations
 
@@ -89,9 +89,15 @@ def main(argv: list[str] | None = None) -> int:
     tx.add_argument("action", choices=["download", "build", "check"])
     vh = sub.add_parser("vehicles", help="Vehículos de Sketchfab (CC-BY o CC0) para R10")
     vh.add_argument("action", choices=["download", "build", "check"])
+    hd = sub.add_parser(
+        "hdri", help="HDRI del cielo de Poly Haven (CC0): luz de ambiente y reflejos"
+    )
+    hd.add_argument("action", choices=["download", "build", "check"])
     args = parser.parse_args(argv)
     if args.group == "textures":
         return _textures(args.action)
+    if args.group == "hdri":
+        return _hdri(args.action)
     if args.group == "vehicles":
         return _vehicles(args.action)
     return {"download": download, "build": build, "check": check}[args.action]()
@@ -111,6 +117,23 @@ def _textures(action: str) -> int:
         print("Desactualizados: " + ", ".join(bad), file=sys.stderr)
         return 1
     print("Texturas al día.")
+    return 0
+
+
+def _hdri(action: str) -> int:
+    from croquis_assets import hdri
+
+    if action == "download":
+        print(f"{len(hdri.download())} HDRI descargados y verificados (MD5 del lock)")
+        return 0
+    if action == "build":
+        print(f"{len(hdri.build())} archivos escritos en {hdri.OUT_DIR}")
+        return 0
+    bad = hdri.check()
+    if bad:
+        print("Desactualizados: " + ", ".join(bad), file=sys.stderr)
+        return 1
+    print("HDRI al día.")
     return 0
 
 
