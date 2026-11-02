@@ -1,0 +1,38 @@
+{
+  "_nota": "Una hoja de registro de la prueba con personas (docs/cesvi/prueba-personas.md). Copiar a data/prueba-personas/P01-A.json y llenar. Sin nombres ni datos personales. Los tiempos van en segundos desde que empezó el caso; `null` si no llegó a ese paso.",
+  "persona": "P01",
+  "caso": "A",
+  "orden": 1,
+  "fecha": "2026-11-03",
+  "perito": false,
+  "computadora": "laptop",
+  "navegador": "Chrome",
+  "entrada_a_paso_s": {
+    "caso": 0,
+    "hecho": 40,
+    "lugar": 420,
+    "reconstruccion": 780,
+    "danos": 900,
+    "numeros": 960,
+    "dictamen": 1020
+  },
+  "pdf_descargado_s": 1140,
+  "llego_al_pdf": true,
+  "encontro_el_lugar": false,
+  "problemas": [
+    {
+      "paso": "lugar",
+      "tipo": "pregunta",
+      "clave": "lugar-no-encontrado",
+      "dijo": "¿Cómo busco la carretera?"
+    },
+    { "paso": "hecho", "tipo": "error", "clave": "uso-narracion-de-ejemplo", "dijo": "" },
+    { "paso": "lugar", "tipo": "pista", "clave": "no-se-como-colocar", "dijo": "" }
+  ],
+  "al_final": {
+    "mas_dificil": "",
+    "no_entendio": "",
+    "cambiaria_primero": "",
+    "seguridad_1_a_5": 4
+  }
+}

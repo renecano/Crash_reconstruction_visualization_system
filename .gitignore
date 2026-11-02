@@ -81,3 +81,6 @@ apps/web/public/decodificadores/
 
 # Resultados del botón de la computadora de la demo: el script los sube a su propia rama
 /resultados/
+
+# Sesiones de agentes (worktrees temporales)
+.claude/
