@@ -1,0 +1,220 @@
+{
+  "etiquetas": {
+    "antes/media": {
+      "etiqueta": "antes",
+      "calidad": "media",
+      "fecha": "2026-11-01T16:17:19.172Z",
+      "commit": "28406b1",
+      "navegador": "156.0.8078.4",
+      "capturas": [
+        {
+          "escena": "axa",
+          "camara": "cinematica",
+          "archivo": "docs/cesvi/t1/antes/axa-media-cinematica.jpg",
+          "backend": "WebGPU",
+          "errores": []
+        },
+        {
+          "escena": "axa",
+          "camara": "dano",
+          "archivo": "docs/cesvi/t1/antes/axa-media-dano.jpg",
+          "backend": "WebGPU",
+          "errores": []
+        },
+        {
+          "escena": "carambola",
+          "camara": "cinematica",
+          "archivo": "docs/cesvi/t1/antes/carambola-media-cinematica.jpg",
+          "backend": "WebGPU",
+          "errores": []
+        },
+        {
+          "escena": "carambola",
+          "camara": "dano",
+          "archivo": "docs/cesvi/t1/antes/carambola-media-dano.jpg",
+          "backend": "WebGPU",
+          "errores": []
+        },
+        {
+          "escena": "lateral_interseccion",
+          "camara": "cinematica",
+          "archivo": "docs/cesvi/t1/antes/lateral_interseccion-media-cinematica.jpg",
+          "backend": "WebGPU",
+          "errores": []
+        },
+        {
+          "escena": "lateral_interseccion",
+          "camara": "dano",
+          "archivo": "docs/cesvi/t1/antes/lateral_interseccion-media-dano.jpg",
+          "backend": "WebGPU",
+          "errores": []
+        },
+        {
+          "escena": "nocturno_lluvia",
+          "camara": "cinematica",
+          "archivo": "docs/cesvi/t1/antes/nocturno_lluvia-media-cinematica.jpg",
+          "backend": "WebGPU",
+          "errores": []
+        },
+        {
+          "escena": "nocturno_lluvia",
+          "camara": "dano",
+          "archivo": "docs/cesvi/t1/antes/nocturno_lluvia-media-dano.jpg",
+          "backend": "WebGPU",
+          "errores": []
+        }
+      ],
+      "fps": {
+        "axa": {
+          "backend": "webgpu",
+          "fps_promedio": 59.1,
+          "fps_mediana": 82,
+          "fps_p1_bajo": 36.9,
+          "llamadas_dibujo": 97,
+          "triangulos": 165120,
+          "tiempo_hasta_listo_ms": 5791
+        },
+        "lateral_interseccion": {
+          "backend": "webgpu",
+          "fps_promedio": 58.6,
+          "fps_mediana": 93.5,
+          "fps_p1_bajo": 18.7,
+          "llamadas_dibujo": 147,
+          "triangulos": 230371,
+          "tiempo_hasta_listo_ms": 4728
+        },
+        "nocturno_lluvia": {
+          "backend": "webgpu",
+          "fps_promedio": 22.7,
+          "fps_mediana": 357.1,
+          "fps_p1_bajo": 1.6,
+          "llamadas_dibujo": 81,
+          "triangulos": 244717,
+          "tiempo_hasta_listo_ms": 4582
+        },
+        "carambola": {
+          "backend": "webgpu",
+          "fps_promedio": 37.6,
+          "fps_mediana": 98,
+          "fps_p1_bajo": 1.5,
+          "llamadas_dibujo": 187,
+          "triangulos": 190300,
+          "tiempo_hasta_listo_ms": 4702
+        }
+      },
+      "cumple_media": true
+    },
+    "t1.1/media": {
+      "etiqueta": "t1.1",
+      "calidad": "media",
+      "fecha": "2026-11-02T04:08:47.762Z",
+      "commit": "28406b1",
+      "navegador": "156.0.8078.4",
+      "capturas": [
+        {
+          "escena": "axa",
+          "camara": "cinematica",
+          "archivo": "docs/cesvi/t1/t1.1/axa-media-cinematica.jpg",
+          "backend": "WebGPU",
+          "errores": []
+        },
+        {
+          "escena": "axa",
+          "camara": "dano",
+          "archivo": "docs/cesvi/t1/t1.1/axa-media-dano.jpg",
+          "backend": "WebGPU",
+          "errores": []
+        },
+        {
+          "escena": "carambola",
+          "camara": "cinematica",
+          "archivo": "docs/cesvi/t1/t1.1/carambola-media-cinematica.jpg",
+          "backend": "WebGPU",
+          "errores": []
+        },
+        {
+          "escena": "carambola",
+          "camara": "dano",
+          "archivo": "docs/cesvi/t1/t1.1/carambola-media-dano.jpg",
+          "backend": "WebGPU",
+          "errores": []
+        },
+        {
+          "escena": "lateral_interseccion",
+          "camara": "cinematica",
+          "archivo": "docs/cesvi/t1/t1.1/lateral_interseccion-media-cinematica.jpg",
+          "backend": "WebGPU",
+          "errores": []
+        },
+        {
+          "escena": "lateral_interseccion",
+          "camara": "dano",
+          "archivo": "docs/cesvi/t1/t1.1/lateral_interseccion-media-dano.jpg",
+          "backend": "WebGPU",
+          "errores": []
+        },
+        {
+          "escena": "nocturno_lluvia",
+          "camara": "cinematica",
+          "archivo": "docs/cesvi/t1/t1.1/nocturno_lluvia-media-cinematica.jpg",
+          "backend": "WebGPU",
+          "errores": []
+        },
+        {
+          "escena": "nocturno_lluvia",
+          "camara": "dano",
+          "archivo": "docs/cesvi/t1/t1.1/nocturno_lluvia-media-dano.jpg",
+          "backend": "WebGPU",
+          "errores": []
+        }
+      ],
+      "fps": {
+        "axa": {
+          "backend": "webgpu",
+          "fps_promedio": 64.6,
+          "fps_mediana": 66.2,
+          "fps_p1_bajo": 41.3,
+          "llamadas_dibujo": 117,
+          "triangulos": 194077,
+          "tiempo_hasta_listo_ms": 4414
+        },
+        "lateral_interseccion": {
+          "backend": "webgpu",
+          "fps_promedio": 63.5,
+          "fps_mediana": 65.8,
+          "fps_p1_bajo": 36.2,
+          "llamadas_dibujo": 147,
+          "triangulos": 230371,
+          "tiempo_hasta_listo_ms": 3614
+        },
+        "nocturno_lluvia": {
+          "backend": "webgpu",
+          "fps_promedio": 20.8,
+          "fps_mediana": 38.9,
+          "fps_p1_bajo": 23.1,
+          "llamadas_dibujo": 88,
+          "triangulos": 246253,
+          "tiempo_hasta_listo_ms": 4056
+        },
+        "carambola": {
+          "backend": "webgpu",
+          "fps_promedio": 59.9,
+          "fps_mediana": 64.9,
+          "fps_p1_bajo": 28.2,
+          "llamadas_dibujo": 134,
+          "triangulos": 143958,
+          "tiempo_hasta_listo_ms": 3860
+        }
+      },
+      "cumple_media": false
+    }
+  },
+  "descripcion": "T1 (PLAN-CESVI v3): capturas de las 4 escenas de referencia con la cámara cinematográfica y la del daño, antes y después de cada subtramo, y sus fps (protocolo de E6). René las aprueba a ojo; los fps son de CI manual.",
+  "escenas": {
+    "axa": "AXA, autopista federal de día",
+    "lateral_interseccion": "Cruce urbano (Toluca centro)",
+    "nocturno_lluvia": "Noche con lluvia (Tollocan)",
+    "carambola": "Carambola de R11 (Tollocan, semáforo)"
+  },
+  "t_captura_s": 0.2
+}

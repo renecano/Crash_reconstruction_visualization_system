@@ -1,0 +1,18 @@
+{
+  "escena": "axa",
+  "calidad": "media",
+  "diag": {},
+  "segundos": 24,
+  "cuadros": 1703,
+  "fps_promedio": 71,
+  "fps_mediana": 74.1,
+  "ms_en_cuadros_lentos": 0,
+  "cuadros_lentos": [],
+  "tareas_largas": [],
+  "precompilado_ms": 4226,
+  "pipelines_asincronos": 91,
+  "pipelines_asincronos_ms_max": 3729,
+  "pipelines": 64,
+  "pipelines_ms": 2,
+  "pipelines_lentos": []
+}
