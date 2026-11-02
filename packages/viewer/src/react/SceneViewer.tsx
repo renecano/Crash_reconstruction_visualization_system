@@ -656,7 +656,6 @@ function SceneContent({
     };
     // `compiled` solo marca la bandera: no hace falta recompilar cuando cambia. `attachments`
     // cuenta lo agregado al grafo después (restos, personas): sí recompila.
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [graph, gl, cam, scene, skyEnv, attachments, setFrameloop, invalidate]);
   useEffect(() => {
     const prev = shown.current;
