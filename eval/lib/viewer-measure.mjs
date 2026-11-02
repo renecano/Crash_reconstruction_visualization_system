@@ -22,7 +22,7 @@ export const round = (v, d = 2) => (Number.isFinite(v) ? Math.round(v * 10 ** d)
 export async function measureViewer(
   browser,
   base,
-  { scene, quality, renderer, diag = {}, warmupS = 2, seconds = 6 },
+  { scene, quality, renderer, diag = {}, warmupS = 2, seconds = 6, propia = undefined },
 ) {
   // `_serviceWorkers` va al contexto del navegador ("allow" o "block", ADR 0030); lo demás son
   // interruptores de diagnóstico del visor (`window.__croquisDiag`).
@@ -37,6 +37,13 @@ export async function measureViewer(
     await page.addInitScript((d) => {
       window.__croquisDiag = d;
     }, pageDiag);
+  }
+  // Una escena propia (T1: AXA no es una escena canónica) se guarda en la pestaña antes de abrir.
+  if (propia !== undefined) {
+    await page.addInitScript(
+      (s) => sessionStorage.setItem("croquis:escena-propia", s),
+      JSON.stringify(propia),
+    );
   }
   const cdp = await context.newCDPSession(page);
   await cdp.send("Network.enable");
@@ -58,6 +65,17 @@ export async function measureViewer(
   params.set("renderer", renderer);
   await page.goto(`${base}/visor?${params.toString()}`);
   await page.waitForFunction(() => window.__croquisReady === true, null, { timeout: 120_000 });
+  // Los vehículos de Sketchfab (R10) llegan después del primer cuadro y rearman la escena: se
+  // mide la escena completa, no el cambio de modelos (antes de R10 la bandera no existe).
+  await page.waitForFunction(
+    () => window.__croquisVehicleModelsReady === undefined || window.__croquisVehicleModelsReady,
+    null,
+    { timeout: 600_000 },
+  );
+  // Y a que ese grafo esté precompilado y en pantalla (T1.1): mientras, se ve el paramétrico.
+  await page.waitForFunction(() => window.__croquisGraphReady !== false, null, {
+    timeout: 600_000,
+  });
   ready = true;
   const readyAt = await page.evaluate(() => window.__croquisReadyAt ?? null);
   await page.waitForTimeout(warmupS * 1000);
