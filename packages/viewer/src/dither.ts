@@ -15,7 +15,12 @@ export const DITHER_AMPLITUDE = 1 / 180;
 /** Ruido por pixel en [−0.5, 0.5] × amplitud, como vec3 para `emissiveNode`. */
 export function ditherNode(amplitude = DITHER_AMPLITUDE): Node<"vec3"> {
   // Interruptor de diagnóstico (`eval/t1_tirones.mjs --diag '{"sinTramado":true}'`).
-  if (typeof window !== "undefined" && window.__croquisDiag?.sinTramado === true) {
+  // (Sin el tipo global de `SceneViewer.tsx`: este módulo también lo compila `eval/js`.)
+  const diag =
+    typeof window !== "undefined"
+      ? (window as { __croquisDiag?: { sinTramado?: boolean } }).__croquisDiag
+      : undefined;
+  if (diag?.sinTramado === true) {
     return vec3(0, 0, 0);
   }
   // Ruido de gradiente entrelazado (Jimenez 2014): sin seno, dos multiplicaciones por pixel.
