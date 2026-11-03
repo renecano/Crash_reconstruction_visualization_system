@@ -17,6 +17,7 @@ import {
   BufferAttribute,
   type BufferGeometry,
   Group,
+  type Material,
   Matrix4,
   Mesh,
   type Object3D,
@@ -28,17 +29,28 @@ import { DRACOLoader } from "three/addons/loaders/DRACOLoader.js";
 import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
 import { KTX2Loader } from "three/addons/loaders/KTX2Loader.js";
 import { TessellateModifier } from "three/addons/modifiers/TessellateModifier.js";
+import { mergeGeometries } from "three/examples/jsm/utils/BufferGeometryUtils.js";
 import type { QualityLevel } from "./quality";
-import { buildVehicle, type VehicleDimensions } from "./vehicle-geometry";
+import { axlePositionsFor, buildVehicle, type VehicleDimensions } from "./vehicle-geometry";
 
 export const VEHICLE_MODEL_BASE_URL = "/modelos/vehiculos/";
 /** Draco y Basis, copiados de three en cada build (`apps/web/scripts/decodificadores.mjs`). */
 export const DECODERS_BASE_URL = `/decodificadores/r${REVISION}/`;
 
-export type ModelClass = "sedan" | "hatchback" | "suv" | "pickup" | "camion" | "moto";
+export type ModelClass =
+  | "sedan"
+  | "hatchback"
+  | "suv"
+  | "pickup"
+  | "camion"
+  | "moto"
+  | "van"
+  | "combi"
+  | "autobus"
+  | "tracto";
 export type ModelVariant = "alta" | "ligero";
 
-/** La clase del visor que dibuja cada modelo; las demás (van, autobús…) siguen paramétricas. */
+/** La clase del visor que dibuja cada modelo; bicicleta y scooter siguen paramétricas. */
 export const MODEL_FOR_CLASS: Readonly<Record<string, ModelClass>> = {
   sedan_compacto: "sedan",
   sedan_mediano: "sedan",
@@ -48,6 +60,11 @@ export const MODEL_FOR_CLASS: Readonly<Record<string, ModelClass>> = {
   pickup: "pickup",
   camion_unitario: "camion",
   motocicleta: "moto",
+  // T1.4 (ADR 0097).
+  van: "van",
+  microbus_combi: "combi",
+  autobus: "autobus",
+  tractocamion: "tracto",
 };
 
 /** La versión del modelo para cada calidad (§7.8): completa en alta y ultra, ligera en media. */
@@ -153,10 +170,110 @@ export async function loadVehicleModels(
 const tmpBox = new Box3();
 const tmpCenter = new Vector3();
 
+/** Papeles cuyas piezas fijas se fusionan por material: no se deforman, no se rompen ni giran. */
+const MERGEABLE_ROLES: ReadonlySet<string> = new Set(["plastico", "vidrio", "cromo"]);
+/** Piezas que siguen aparte: el parabrisas se agrieta; el interior y el volante brillan de noche. */
+const KEEP_SEPARATE = /windshield|interior|steering/i;
+
+/**
+ * Fusiona las piezas fijas de un modelo que comparten material (bajos, molduras, vidrios laterales,
+ * interior de carga…) en una malla por material (T1.4): un modelo de Sketchfab trae 20–30 piezas y
+ * cada una es una llamada de dibujo y, de noche, otra pasada por cada foco. Devuelve cuántas piezas
+ * desaparecieron.
+ */
+export function mergeStaticModelParts(g: Group): number {
+  const groups = new Map<string, Mesh[]>();
+  for (const c of g.children) {
+    if (!(c instanceof Mesh)) continue;
+    const mesh = c as Mesh;
+    const role = mesh.userData.role as string;
+    if (!MERGEABLE_ROLES.has(role) || KEEP_SEPARATE.test(mesh.name)) continue;
+    const geo = mesh.geometry;
+    const attrs = Object.keys(geo.attributes).sort().join(",");
+    const sig = `${role}|${(mesh.material as Material).uuid}|${attrs}|${geo.index ? "i" : "n"}`;
+    const list = groups.get(sig);
+    if (list) list.push(mesh);
+    else groups.set(sig, [mesh]);
+  }
+  let merged = 0;
+  for (const parts of groups.values()) {
+    if (parts.length < 2) continue;
+    const geos = parts.map((p) => {
+      const geo = p.geometry.clone();
+      geo.translate(p.position.x, p.position.y, p.position.z);
+      return geo;
+    });
+    const all = mergeGeometries(geos, false);
+    for (const geo of geos) geo.dispose();
+    if (!all) continue;
+    all.computeBoundingBox();
+    const center = new Vector3();
+    all.boundingBox!.getCenter(center);
+    all.translate(-center.x, -center.y, -center.z);
+    const first = parts[0]!;
+    const m = new Mesh(all, first.material);
+    m.name = `${first.name}_fusion`;
+    m.userData = { ...first.userData, fusionadas: parts.map((p) => p.name) };
+    m.position.copy(center);
+    m.castShadow = first.castShadow;
+    m.receiveShadow = first.receiveShadow;
+    for (const p of parts) {
+      g.remove(p);
+      p.geometry.dispose();
+    }
+    g.add(m);
+    merged += parts.length - 1;
+  }
+  return merged;
+}
+
+/** Si los ejes del modelo y los del caso difieren menos que esto (m), no se reparte nada. */
+export const AXLE_TOLERANCE_M = 0.02;
+
+/**
+ * Reparte el largo del modelo en tres tramos (voladizo delantero, paso entre ejes y voladizo
+ * trasero) y estira cada uno por separado para que los arcos de las ruedas caigan en los ejes del
+ * caso (T1.4; cierra el límite de ADR 0086). Devuelve null si ya coinciden. Las x son del vehículo
+ * ya escalado al largo del caso: los extremos no se mueven.
+ */
+export function axleRemap(
+  model: { front: number; rear: number },
+  target: { front: number; rear: number },
+  length: number,
+): ((x: number) => number) | null {
+  const half = length / 2;
+  // Los ejes del caso, dentro del largo con margen para el voladizo.
+  const margin = Math.min(0.25, length * 0.08);
+  const tf = Math.min(target.front, half - margin);
+  const tr = Math.max(target.rear, -half + margin);
+  if (!(model.rear < model.front) || !(tr < tf)) return null;
+  if (Math.abs(tf - model.front) < AXLE_TOLERANCE_M && Math.abs(tr - model.rear) < AXLE_TOLERANCE_M)
+    return null;
+  const knotsIn = [-half, model.rear, model.front, half];
+  const knotsOut = [-half, tr, tf, half];
+  return (x: number) => {
+    if (x <= knotsIn[0]!) return x;
+    for (let k = 0; k < 3; k++) {
+      const a = knotsIn[k]!;
+      const b = knotsIn[k + 1]!;
+      if (x <= b) {
+        const f = b > a ? (x - a) / (b - a) : 0;
+        return knotsOut[k]! + f * (knotsOut[k + 1]! - knotsOut[k]!);
+      }
+    }
+    return x;
+  };
+}
+
 /** Una pieza como hija directa del vehículo, escalada y con su pivote en el centro de su caja. */
-function placePart(source: Mesh, toVehicle: Matrix4): Mesh {
+function placePart(source: Mesh, toVehicle: Matrix4, remapX: ((x: number) => number) | null): Mesh {
   const geo = source.geometry.clone();
   geo.applyMatrix4(toVehicle);
+  if (remapX) {
+    const pos = geo.getAttribute("position");
+    for (let i = 0; i < pos.count; i++) pos.setX(i, remapX(pos.getX(i)));
+    pos.needsUpdate = true;
+  }
   geo.computeBoundingBox();
   geo.boundingBox!.getCenter(tmpCenter);
   geo.translate(-tmpCenter.x, -tmpCenter.y, -tmpCenter.z);
@@ -198,10 +315,24 @@ export function buildModelVehicle(
     for (let p: Object3D | null = o; p; p = p.parent) if (wheels.has(p)) return true;
     return false;
   };
+  // Ejes del modelo (ya escalado al largo del caso) contra los del caso: los arcos van a los ejes.
+  const wheelX = [...wheels].map((w) => new Vector3().setFromMatrixPosition(w.matrixWorld).x * sx);
+  const front = wheelX.filter((x) => x > 0);
+  const rear = wheelX.filter((x) => x <= 0);
+  const mean = (xs: number[]) => xs.reduce((a, b) => a + b, 0) / xs.length;
+  const remapX =
+    front.length > 0 && rear.length > 0
+      ? axleRemap(
+          { front: mean(front), rear: mean(rear) },
+          axlePositionsFor(clase, dims),
+          dims.length,
+        )
+      : null;
+  g.userData.axlesRemapped = remapX !== null;
   scene.traverse((o) => {
     if (!(o as Mesh).isMesh || inWheel(o)) return;
     const m = o as Mesh;
-    g.add(placePart(m, body.clone().multiply(m.matrixWorld)));
+    g.add(placePart(m, body.clone().multiply(m.matrixWorld), remapX));
   });
   // Las ruedas no se deforman: escala igual en los tres ejes para que sigan redondas.
   for (const w of wheels) {
@@ -210,7 +341,7 @@ export function buildModelVehicle(
     wheel.name = w.name;
     wheel.userData.radius = r;
     const c = new Vector3().setFromMatrixPosition(w.matrixWorld);
-    wheel.position.set(c.x * sx, r, c.z * sz);
+    wheel.position.set(remapX ? remapX(c.x * sx) : c.x * sx, r, c.z * sz);
     const toWheel = new Matrix4().makeScale(sy, sy, sy).multiply(w.matrixWorld.clone().invert());
     w.traverse((o) => {
       if (!(o as Mesh).isMesh) return;
@@ -225,6 +356,7 @@ export function buildModelVehicle(
     });
     g.add(wheel);
   }
+  g.userData.fusionadas = mergeStaticModelParts(g);
   // Las cotas del habitáculo (bolsas de aire, vidrios laterales) son las del paramétrico.
   const parametric = buildVehicle(clase, dims, { fuse: false });
   g.userData.layout = parametric.userData.layout as unknown;

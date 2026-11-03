@@ -29,6 +29,7 @@ import {
   type WheelDamage,
 } from "./damage";
 import { crackedGlassMaterial, damagedPaintMaterial } from "./damage-material";
+import type { PaintState } from "./paint-material";
 import { profileFor, type CarLayout, type VehicleDimensions } from "./vehicle-geometry";
 import { meshSize, tessellateForDamage, windshieldUv } from "./vehicle-models";
 
@@ -62,6 +63,8 @@ export interface DamageRigContext {
   resultado: Resultado;
   colorOf: (vehicleId: string) => string | undefined;
   seed: number;
+  /** Estado de la pintura del contrato (T1.4): la pintura dañada conserva el mismo acabado. */
+  estadoPintura?: PaintState;
 }
 
 /** Un daño y el instante de su impacto (s). */
@@ -71,7 +74,7 @@ export interface TimedDamage {
 }
 
 /** El primer impacto en el que participa el vehículo (en una carambola, puede no ser el de t = 0). */
-function firstImpact(id: string, r: Resultado): EventResult | undefined {
+export function firstImpact(id: string, r: Resultado): EventResult | undefined {
   return r.eventos
     .filter((e) => e.tipo.startsWith("impacto_") && e.actores.includes(id))
     .reduce<EventResult | undefined>(
@@ -178,7 +181,7 @@ export function buildDamageRig(
   const paintOther = timed.find((x) => x.input.otherColor)?.input.otherColor;
   for (const mesh of morphMeshes) {
     if (mesh.userData.role !== "pintura") continue;
-    const paint = damagedPaintMaterial(paintHex, paintOther);
+    const paint = damagedPaintMaterial(paintHex, paintOther, ctx.estadoPintura);
     mesh.material = paint.material;
     materials.push(paint.material);
     influences.push(paint.influence);

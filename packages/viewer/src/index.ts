@@ -101,3 +101,5 @@ export * from "./export/capture";
 export { addPngText, crc32, pngSize, readPngText } from "./export/png";
 export { drawLegendBand, legendFontPx, wrapLine } from "./export/legend-band";
 export * from "./export/video";
+export * from "./brake-lights";
+export * from "./paint-material";
