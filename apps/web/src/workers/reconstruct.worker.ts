@@ -9,7 +9,13 @@
  * Con `agentes`, solo los conductores como agentes (R12a, ADR 0088): la reconstrucción y la
  * simulación de los conductores, sin Monte Carlo ni inversión (la escena ya trae sus velocidades).
  */
-import { fullResult, reconstruct, reconstructionToDict, simulateDrivers } from "@croquis/solver-ts";
+import {
+  fullResult,
+  PRODUCTION_SAMPLES,
+  reconstruct,
+  reconstructionToDict,
+  simulateDrivers,
+} from "@croquis/solver-ts";
 
 interface Request {
   id: number;
@@ -29,7 +35,8 @@ self.onmessage = (ev: MessageEvent<Request>) => {
     const resultado = reconstructionToDict(reconstruct(spec));
     self.postMessage({ id, fase: "reconstruccion", resultado });
     if (completo) {
-      self.postMessage({ id, fase: "completo", resultado: fullResult(spec) });
+      // Más muestras que la referencia (T3.1, ADR 0100).
+      self.postMessage({ id, fase: "completo", resultado: fullResult(spec, PRODUCTION_SAMPLES) });
     }
   } catch (e) {
     self.postMessage({ id, error: e instanceof Error ? e.message : String(e) });

@@ -47,7 +47,6 @@ from __future__ import annotations
 import copy
 import json
 import math
-import random
 import statistics
 from collections.abc import Sequence
 from dataclasses import dataclass, field, replace
@@ -65,6 +64,7 @@ from croquis_solver.crash3 import (
 )
 from croquis_solver.lsq import least_squares_soft_l1, soft_l1_cost
 from croquis_solver.stiffness import sample_stiffness, stiffness_for, zona_from_cdc_side
+from croquis_solver.stratified import Draws, LatinHypercube, count_draws
 
 JsonObj = dict[str, Any]
 KMH = 3.6
@@ -968,7 +968,7 @@ class Perturbed:
     downed_mu: float | None
 
 
-def perturbed(spec: JsonObj, ev: Evidence, rng: random.Random) -> Perturbed:
+def perturbed(spec: JsonObj, ev: Evidence, rng: Draws) -> Perturbed:
     s = copy.deepcopy(spec)
     lugar = s["lugar"]
     mu = friction.tire_friction(lugar["superficie"]["valor"], lugar["estado_superficie"]["valor"])
@@ -1345,10 +1345,14 @@ def _estimate(
         start = {p.name: (best.values[p.name] if p.name in free else p.start) for p in params}
         best = fit_evidence(spec, ev, dt=dt, start=start, free=free)
     best = _polish(spec, ev, best, [p for p in params if p.name in free], dt)
-    rng = dmath.Random(seed)
     fits: list[Fit] = []
     impacts: dict[str, list[float]] = {}
     free_params = [p for p in params if p.name in free]
+    # Hipercubo latino con semilla de diseño fija (T3.1, ADR 0100): los sorteos de cada muestra
+    # (una pasada seca los cuenta) se reparten en `samples` estratos por dimensión; el rango no
+    # depende de la semilla de la escena.
+    n_samples = samples if free_params else 0
+    lhs = LatinHypercube(n_samples, count_draws(lambda d: perturbed(spec, ev, d)))
     x_best = [best.values[p.name] for p in free_params]
     fixed = {n: v for n, v in best.values.items() if n not in free}
     j_best: list[list[float]] = []
@@ -1356,8 +1360,8 @@ def _estimate(
         prob_best = _Problem(with_marks(spec, ev), ev, free_params, fixed, dt)
         prob_best.activate(x_best)
         j_best = prob_best.jac(x_best)
-    for _ in range(samples if free_params else 0):
-        pert = perturbed(spec, ev, rng)
+    for i in range(n_samples):
+        pert = perturbed(spec, ev, lhs.sample(i))
         s, e, dmu = pert.spec, pert.evidence, pert.downed_mu
         prob = _Problem(with_marks(s, e), e, free_params, fixed, dt, dmu)
         prob.names.extend(sorted(best.residuals))

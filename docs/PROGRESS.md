@@ -1691,7 +1691,18 @@ Reglas de trabajo: `CLAUDE.md`. Especificación: `PLAN.md`.
   3. **Reversa.** El solver ya avanza en reversa con el frente en su lugar (R4b), pero el contrato sigue sin separar el sentido de marcha del rumbo del frente y `cesvi-3a0125cb81` no reconstruye al que retrocede (E-R4: 0 de 9). Contrato (versión menor): `sentido_marcha` por vehículo; solver Python y TS con paridad; la lectura lo marca; E-R4 mide la reversa.
   4. **AXA con sus dos lecturas.** Paso 7, 3D y dictamen con dos bloques con nombre: «Reproducción del método de CESVI con los datos del reporte» (60.27 = 60.27; 63.90 contra 63.15) y «Reconstrucción física de Croquis» (V2 con su rango contra 63.15, valor y porcentaje), y una línea de perito sobre por qué difieren. Nada se ajusta para coincidir.
   5. **E-R4 v4** completa con todo lo anterior, publicada junto a v1–v3; portada y README toman v4 al compilar.
-- **Siguiente paso concreto:** T3.1 en Python (`solver/croquis_solver/inversion.py` y `montecarlo.py`), regenerar `packages/scene-schema/fixtures/resultados` con la referencia, portar a TS y pasar la paridad; después la medición con 20 semillas.
+- **T3.1 hecho (2026-11-03, ADR 0100):** hipercubo latino en el Monte Carlo y en los reajustes de la inversión, en Python (`stratified.py`) y en el port TS (`stratified.ts`, `PyRandom.shuffle` igual a CPython), referencias regeneradas (`reconstruct --all`) y paridad E7 en verde; el worker pide 32 reajustes y 128 muestras (`PRODUCTION_SAMPLES`) y la referencia conserva 12 y 64.
+  - **Medido** (`eval/axa_rango_estable.mts`, 20 semillas, V2 en AXA como la arma la app):
+
+    |                                        | p10 de V2: mín–máx (movimiento) | p90 de V2: mín–máx (movimiento) |
+    | -------------------------------------- | ------------------------------- | ------------------------------- |
+    | Antes (`axa_rango_estable_antes.json`) | 59.35–72.56 (13.21)             | 79.81–98.51 (18.70)             |
+    | Después (`axa_rango_estable.json`)     | 68.02–68.02 (0.00)              | 92.81–92.81 (0.00)              |
+
+    **Cumple la meta (≤ 1 km/h):** con el diseño fijo el rango de V2 en AXA es el mismo con cualquier semilla (68.0–92.8 km/h con 32 reajustes). Un paso intermedio, con el hipercubo sorteado por la semilla de la escena, dejó el movimiento en 6.0 y 6.8 km/h: los reajustes no lineales conservan ruido de muestreo en los percentiles de salida (ADR 0100 §1).
+
+  - **Tiempo en el navegador** (`axa_tiempo_navegador.json`, worker de producción en Chromium, mediana de 3): reconstrucción 74 ms y resultado completo 7 539 ms con 32 reajustes y 128 muestras (antes, con 12 y 64: 54 ms y 7 126 ms). Sigue por debajo de los 10 s.
+- **Siguiente paso concreto:** T3.2 (el rumbo inicial de V2 en el límite de +20°): diagnosticar en AXA con `cesvi_axa_diagnostico.mts` y la inversión (`atBound`), corregir con fuente y medir AXA y las escenas de inversión.
 
 ### Endurecimiento pendiente
 

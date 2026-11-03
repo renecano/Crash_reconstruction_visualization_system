@@ -127,6 +127,19 @@ export class PyRandom {
     return r;
   }
 
+  /**
+   * `shuffle(x)` de CPython: de atrás hacia adelante, cada elemento se cambia con uno al azar de
+   * los que quedan (`_randbelow(i + 1)`).
+   */
+  shuffle<T>(x: T[]): void {
+    for (let i = x.length - 1; i >= 1; i--) {
+      const j = this.randrange(i + 1);
+      const tmp = x[i]!;
+      x[i] = x[j]!;
+      x[j] = tmp;
+    }
+  }
+
   /** `gauss(mu, sigma)` de CPython: Box–Muller con el segundo valor guardado para la siguiente. */
   gauss(mu = 0, sigma = 1): number {
     let z = this.gaussNext;

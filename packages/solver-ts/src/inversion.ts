@@ -20,6 +20,7 @@ import { lstsq, matmul, pinv, transpose } from "./linalg";
 import { leastSquaresSoftL1, softL1Cost } from "./lsq";
 import { median, pyMod, pyRound, quantilesInclusive, str } from "./pymath";
 import { PyRandom } from "./pyrandom";
+import { countDraws, type Draws, LatinHypercube } from "./stratified";
 import { reconstruct, vehicleClasses, type Reconstruction } from "./reconstruct";
 import { sampleStiffness, stiffnessFor, zonaFromCdcSide } from "./stiffness";
 import calibration from "./data/inversion_calibration.json";
@@ -887,7 +888,7 @@ export interface Perturbed {
   downedMu: number | null;
 }
 
-export function perturbed(spec: Json, ev: Evidence, rng: PyRandom): Perturbed {
+export function perturbed(spec: Json, ev: Evidence, rng: Draws): Perturbed {
   const s = structuredClone(spec);
   const lugar = s.lugar as Json;
   const sup = String((lugar.superficie as Json).valor);
@@ -1285,10 +1286,17 @@ function estimate(
     params.filter((p) => free.has(p.name)),
     dt,
   );
-  const rng = new PyRandom(seed);
   const fits: Fit[] = [];
   const impacts = new Map<string, number[]>();
   const freeParams = params.filter((p) => free.has(p.name));
+  // Hipercubo latino con semilla de diseño fija (T3.1, ADR 0100): los sorteos de cada muestra
+  // (una pasada seca los cuenta) se reparten en `samples` estratos por dimensión; el rango no
+  // depende de la semilla de la escena.
+  const nSamples = freeParams.length ? samples : 0;
+  const lhs = new LatinHypercube(
+    nSamples,
+    countDraws((d) => perturbed(spec, ev, d)),
+  );
   const xBest = freeParams.map((p) => best.values.get(p.name)!);
   const fixed = new Map([...best.values].filter(([n]) => !free.has(n)));
   let jBest: number[][] = [];
@@ -1297,8 +1305,8 @@ function estimate(
     probBest.activate(xBest);
     jBest = probBest.jac(xBest);
   }
-  for (let i = 0; i < (freeParams.length ? samples : 0); i++) {
-    const pert = perturbed(spec, ev, rng);
+  for (let i = 0; i < nSamples; i++) {
+    const pert = perturbed(spec, ev, lhs.sample(i));
     const { spec: s, evidence: e, downedMu } = pert;
     const prob = new Problem(withMarks(s, e), e, freeParams, fixed, dt, downedMu);
     prob.names.push(...[...best.residuals.keys()].sort());

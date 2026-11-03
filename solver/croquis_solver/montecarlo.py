@@ -24,8 +24,9 @@ import copy
 from dataclasses import dataclass, field
 from typing import Any
 
-from croquis_solver import dmath, friction
+from croquis_solver import friction
 from croquis_solver.inversion import Distribution, distribution
+from croquis_solver.stratified import LatinHypercube
 
 JsonObj = dict[str, Any]
 DEFAULT_SAMPLES = 64
@@ -185,16 +186,19 @@ def monte_carlo(
     from croquis_solver.reconstruct import reconstruct
 
     seed = int(spec["meta"]["semilla"]) if seed is None else seed
-    rng = dmath.Random(seed)
     campos = ranges(spec)
+    # Hipercubo latino con semilla de diseño fija (T3.1, ADR 0100): cada campo se reparte en
+    # `samples` estratos y el rango no depende de la semilla de la escena.
+    lhs = LatinHypercube(samples, len(campos))
     acc_v: dict[str, dict[str, list[float]]] = {}
     acc_p: dict[str, dict[str, list[float]]] = {}
     valid = 0
-    for _ in range(samples):
+    for i in range(samples):
         s = copy.deepcopy(spec)
         downed: float | None = None
+        draws = lhs.sample(i)
         for c in campos:
-            value = rng.uniform(c.minimo, c.maximo)
+            value = draws.uniform(c.minimo, c.maximo)
             if c.ruta == DOWNED_RUTA:
                 downed = value
             else:
