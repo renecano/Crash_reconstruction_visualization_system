@@ -56,6 +56,11 @@ export interface LegendProps {
   texto?: string;
   /** Lo procedural del entorno 3D (T1.3): cuántos edificios, árboles y luminarias, y cerros. */
   procedural?: { edificios: number; arboles: number; luminarias: number; cerros: boolean };
+  /**
+   * Leyenda limpia para presentar (T1.5): el texto, la atribución CC-BY y nada más (sin semilla,
+   * hash ni conteo de lo procedural). Las exportaciones conservan la semilla.
+   */
+  limpia?: boolean;
 }
 
 export function Legend({
@@ -66,6 +71,7 @@ export function Legend({
   modelos,
   texto: otro,
   procedural,
+  limpia = false,
 }: LegendProps) {
   const { lang } = useIdioma();
   const t = useTextos(T);
@@ -83,12 +89,14 @@ export function Legend({
       className={`t-nota ${tone === "clara" ? "text-texto" : "text-texto-2"}`}
     >
       {texto}
-      {seed !== undefined ? (
+      {seed !== undefined && !limpia ? (
         <span className="cifras ml-2">
           {t.semilla} {String(seed)}
         </span>
       ) : null}
-      {inputHash ? <span className="cifras ml-2">hash {inputHash.slice(0, 12)}</span> : null}
+      {inputHash && !limpia ? (
+        <span className="cifras ml-2">hash {inputHash.slice(0, 12)}</span>
+      ) : null}
       {attr ? (
         <span className="block" data-testid="atribucion-mapa">
           {attr}
@@ -100,7 +108,7 @@ export function Legend({
           {modelos.map((c) => `«${c.modelo}» ${t.de} ${c.autor} (${c.licencia})`).join("; ")}
         </span>
       ) : null}
-      {procedural ? (
+      {procedural && !limpia ? (
         <span className="block" data-testid="entorno-procedural">
           {t.procedural}{" "}
           {[

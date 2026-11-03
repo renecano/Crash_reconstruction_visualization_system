@@ -124,8 +124,31 @@ export function driverCamera(v: CameraVehicle, t: number, eyeHeight: number, fov
   };
 }
 
-/** Órbita lenta alrededor del impacto que sigue al centro de los vehículos involucrados. */
-export function cinematicCamera(scene: CameraScene, t: number, fov = 38): CameraPose {
+/** Campo de visión vertical (grados) de una lente de `mm` sobre un sensor de 24 mm de alto. */
+export function fovFromFocalMm(mm: number): number {
+  return (2 * Math.atan(12 / mm) * 180) / Math.PI;
+}
+
+/** La cinematográfica (T1.5): altura de la cámara (m), lente (mm) y giro de la órbita (rad/s). */
+export const CINEMATIC = {
+  heightMin: 3,
+  heightMax: 6,
+  focalMin: 35,
+  focalMax: 50,
+  orbitRadS: 0.06,
+  /** Altura del punto que mira (m): a media altura de los vehículos. */
+  targetHeight: 1.0,
+  /** Hasta dónde se aleja para encuadrar la acción (m). */
+  distMax: 34,
+} as const;
+
+/**
+ * Cámara cinematográfica a nivel de calle (T1.5, PLAN-CESVI): entre 3 y 6 m de altura, lente de 35 a
+ * 50 mm, mirando a media altura de los vehículos con el horizonte en el tercio superior (ve el
+ * cielo y los cerros), en una órbita lenta alrededor del impacto que sigue al centro de los
+ * vehículos involucrados. Cuanto más grande es la acción, más lejos, más alto y más angular.
+ */
+export function cinematicCamera(scene: CameraScene, t: number, fov?: number): CameraPose {
   const b = actionBounds(scene);
   const involved = scene.vehiculos.filter((v) => v.involucrado);
   const vs = involved.length > 0 ? involved : scene.vehiculos;
@@ -141,18 +164,50 @@ export function cinematicCamera(scene: CameraScene, t: number, fov = 38): Camera
   // Objetivo a medio camino entre el impacto y el centro de los vehículos: suaviza el encuadre.
   const gx = (tx + b.cx) / 2;
   const gy = (ty + b.cy) / 2;
-  const dist = Math.max(14, (b.size * 0.5) / Math.tan((fov * Math.PI) / 360));
-  const az = (-120 * Math.PI) / 180 + 0.12 * (t - scene.t_inicio);
-  const el = (24 * Math.PI) / 180;
-  const x = gx + dist * Math.cos(el) * Math.cos(az);
-  const y = gy + dist * Math.cos(el) * Math.sin(az);
+  // Acción pequeña (un alcance): 50 mm; grande (una carambola o un cruce ancho): 35 mm.
+  const k = Math.min(1, Math.max(0, (b.size - 12) / 30));
+  const focal = CINEMATIC.focalMax - k * (CINEMATIC.focalMax - CINEMATIC.focalMin);
+  const vfov = fov ?? fovFromFocalMm(focal);
+  // Distancia que encuadra la acción a lo ancho de una pantalla 16:9, con margen.
+  const hfov = 2 * Math.atan(Math.tan((vfov * Math.PI) / 360) * (16 / 9));
+  // Más cerca que el encuadre completo: la acción llena el cuadro y lo lejano se recorta.
+  const dist = Math.min(CINEMATIC.distMax, Math.max(12, (b.size * 0.5) / Math.tan(hfov / 2)));
+  const height = CINEMATIC.heightMin + k * (CINEMATIC.heightMax - CINEMATIC.heightMin);
+  const az = (-120 * Math.PI) / 180 + CINEMATIC.orbitRadS * (t - scene.t_inicio);
+  const x = gx + dist * Math.cos(az);
+  const y = gy + dist * Math.sin(az);
   return {
-    position: toThree(x, y, dist * Math.sin(el)),
-    target: toThree(gx, gy, 0.5),
-    fov,
+    position: toThree(x, y, height),
+    target: toThree(gx, gy, CINEMATIC.targetHeight),
+    fov: vfov,
     up: UP_Y,
   };
 }
+
+/** Suavizado de entrada y salida (0–1 → 0–1). */
+export function easeInOut(k: number): number {
+  const x = Math.min(1, Math.max(0, k));
+  return x * x * (3 - 2 * x);
+}
+
+/** Mezcla dos poses (posición, objetivo y campo de visión) con el peso `k` suavizado. */
+export function blendPose(a: CameraPose, b: CameraPose, k: number): CameraPose {
+  const w = easeInOut(k);
+  const mix = (p: Vec3, q: Vec3): Vec3 => [
+    p[0] + (q[0] - p[0]) * w,
+    p[1] + (q[1] - p[1]) * w,
+    p[2] + (q[2] - p[2]) * w,
+  ];
+  return {
+    position: mix(a.position, b.position),
+    target: mix(a.target, b.target),
+    fov: a.fov + (b.fov - a.fov) * w,
+    up: b.up,
+  };
+}
+
+/** Duración de la transición entre cámaras (ms). */
+export const CAMERA_TRANSITION_MS = 1200;
 
 /** Vehículo con más aplastamiento (para la cámara de acercamiento al daño). */
 export function mostDamaged(scene: CameraScene): CameraVehicle | undefined {

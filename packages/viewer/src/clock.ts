@@ -14,11 +14,17 @@ export interface ViewerClock {
   /** Avanza con el tiempo real transcurrido (lo llama el lazo de render). */
   tick(wallSeconds: number, nowMs: number): void;
   subscribe(fn: (s: TimelineState) => void): () => void;
+  /**
+   * Factor de velocidad por instante (T1.5, cámara lenta en el impacto): multiplica el tiempo real
+   * antes de avanzar; null lo quita. No cambia `speed`, la velocidad que eligió la persona.
+   */
+  setWarp(fn: ((t: number) => number) | null): void;
 }
 
 export function createClock(initial: TimelineState, uiHz = 15): ViewerClock {
   let state = initial;
   let lastNotify = -Infinity;
+  let warp: ((t: number) => number) | null = null;
   const subs = new Set<(s: TimelineState) => void>();
   const notify = (): void => {
     for (const fn of subs) fn(state);
@@ -32,7 +38,7 @@ export function createClock(initial: TimelineState, uiHz = 15): ViewerClock {
     tick(wallSeconds, nowMs) {
       if (!state.playing) return;
       const prevPlaying = state.playing;
-      state = advance(state, wallSeconds);
+      state = advance(state, warp ? wallSeconds * warp(state.t) : wallSeconds);
       const stopped = prevPlaying && !state.playing;
       if (stopped || nowMs - lastNotify >= 1000 / uiHz) {
         lastNotify = nowMs;
@@ -44,6 +50,9 @@ export function createClock(initial: TimelineState, uiHz = 15): ViewerClock {
       return () => {
         subs.delete(fn);
       };
+    },
+    setWarp(fn) {
+      warp = fn;
     },
   };
 }

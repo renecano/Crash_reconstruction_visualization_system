@@ -57,6 +57,12 @@ export interface GltfExportOptions {
   ambiente?: GltfAmbiente;
   /** La atribución de los vehículos de Sketchfab (R10, CC-BY), para la leyenda del video. */
   vehicleCredits?: readonly VehicleCredit[];
+  /**
+   * Cámara lenta del visor (T1.5): factor de velocidad por instante de la escena. El video avanza
+   * a `fps` constantes y la escena, al factor; así el clip de R11 frena en el contacto igual que
+   * la pantalla.
+   */
+  timeWarp?: (t: number) => number;
 }
 
 /**
@@ -175,6 +181,34 @@ export function sampleTimes(t0: number, t1: number, fps: number): number[] {
   const times = Array.from({ length: n + 1 }, (_, i) => t0 + i / fps);
   if (t1 - times[times.length - 1]! > 1e-9) times.push(t1);
   return times;
+}
+
+/**
+ * Instantes de la escena y del video con la cámara lenta horneada (T1.5): el video avanza a `fps`
+ * constantes; en cada cuadro la escena avanza `warp(t) / fps`. Sin `warp`, los dos coinciden.
+ */
+export function warpedTimes(
+  t0: number,
+  t1: number,
+  fps: number,
+  warp?: (t: number) => number,
+): { scene: number[]; video: number[] } {
+  if (!warp) {
+    const scene = sampleTimes(t0, t1, fps);
+    return { scene, video: scene.map((t) => t - t0) };
+  }
+  const scene = [t0];
+  const video = [0];
+  let t = t0;
+  let k = 0;
+  while (t < t1 - 1e-9) {
+    const f = Math.max(1e-3, warp(t));
+    t = Math.min(t1, t + f / fps);
+    k++;
+    scene.push(t);
+    video.push(k / fps);
+  }
+  return { scene, video };
 }
 
 /** Recorre la escena en `graph.update(t)` para cada instante y guarda lo que cambia. */
@@ -402,7 +436,7 @@ export async function exportSceneGlb(
 ): Promise<ArrayBuffer> {
   const fps = opts.fps ?? 30;
   const { t_inicio, t_fin } = opts.resultado;
-  const times = sampleTimes(t_inicio, t_fin, fps);
+  const { scene: times, video } = warpedTimes(t_inicio, t_fin, fps, opts.timeWarp);
   const sampled = sample(graph, times);
 
   // Copia en el instante actual: los objetos se emparejan por orden de recorrido.
@@ -460,7 +494,8 @@ export async function exportSceneGlb(
     }
   });
 
-  const rel = new Float32Array(times.map((t) => t - t_inicio));
+  // Los cuadros clave van en el tiempo del video (con la cámara lenta horneada, T1.5).
+  const rel = new Float32Array(video);
   const tracks = sampled.flatMap((s, i) => tracksFor(s, copies[i]!, rel));
   // Las instancias que se mueven (los restos) pasan a mallas animadas, una por instancia.
   sampled.forEach((s, i) => {
@@ -474,7 +509,7 @@ export async function exportSceneGlb(
   });
   const { cams, tracks: camTracks } = cameraTracks(opts.cameras ?? [], times, rel);
   tracks.push(...camTracks);
-  const clip = new AnimationClip("reconstruccion", t_fin - t_inicio, tracks);
+  const clip = new AnimationClip("reconstruccion", video[video.length - 1] ?? 0, tracks);
 
   const scene = new Scene();
   scene.name = "Croquis — reconstrucción ilustrativa";

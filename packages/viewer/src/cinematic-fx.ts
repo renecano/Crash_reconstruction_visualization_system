@@ -21,6 +21,25 @@ export function impactBlurWeight(t: number, tImpact: number | undefined): number
   return 1 - (d - BLUR_FULL_S) / (BLUR_END_S - BLUR_FULL_S);
 }
 
+/** Cámara lenta en el contacto (T1.5): factor mínimo y ventanas (s) de la rampa. */
+export const SLOW_FACTOR = 0.25;
+export const SLOW_FULL_S = 0.25;
+export const SLOW_RAMP_S = 0.6;
+
+/**
+ * Factor de velocidad de reproducción en `t` con la cámara cinematográfica (T1.5): 1 lejos del
+ * impacto, baja en rampa hasta `SLOW_FACTOR` a menos de `SLOW_FULL_S` del primer impacto y vuelve
+ * a 1 a `SLOW_FULL_S + SLOW_RAMP_S`. Sin impacto, 1.
+ */
+export function impactTimeWarp(t: number, tImpact: number | undefined): number {
+  if (tImpact === undefined || !Number.isFinite(t)) return 1;
+  const d = Math.abs(t - tImpact);
+  if (d <= SLOW_FULL_S) return SLOW_FACTOR;
+  if (d >= SLOW_FULL_S + SLOW_RAMP_S) return 1;
+  const k = (d - SLOW_FULL_S) / SLOW_RAMP_S;
+  return SLOW_FACTOR + (1 - SLOW_FACTOR) * k;
+}
+
 /** El instante del primer impacto del resultado (s), si lo hay. */
 export function firstImpactTime(resultado: {
   eventos?: readonly { tipo: string; t?: number }[];
