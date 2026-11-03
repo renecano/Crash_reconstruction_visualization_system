@@ -94,11 +94,17 @@ def main(argv: list[str] | None = None) -> int:
         "hdri", help="HDRI del cielo de Poly Haven (CC0): luz de ambiente y reflejos"
     )
     hd.add_argument("action", choices=["download", "build", "check"])
+    tr = sub.add_parser(
+        "trees", help="Árboles CC0 de Poly Haven horneados a tarjetas en Blender (T1.3b)"
+    )
+    tr.add_argument("action", choices=["lock", "download", "build", "check"])
     args = parser.parse_args(argv)
     if args.group == "textures":
         return _textures(args.action)
     if args.group == "hdri":
         return _hdri(args.action)
+    if args.group == "trees":
+        return _trees(args.action)
     if args.group == "vehicles":
         return _vehicles(args.action)
     return {"download": download, "build": build, "check": check}[args.action]()
@@ -118,6 +124,38 @@ def _textures(action: str) -> int:
         print("Desactualizados: " + ", ".join(bad), file=sys.stderr)
         return 1
     print("Texturas al día.")
+    return 0
+
+
+def _trees(action: str) -> int:
+    import json
+
+    from croquis_assets import trees
+
+    if action == "lock":
+        trees.LOCK.write_text(
+            json.dumps(trees.lock_from_api(), ensure_ascii=False, indent=2) + "\n",
+            encoding="utf-8",
+            newline="\n",
+        )
+        print(f"Lock escrito en {trees.LOCK}")
+        return 0
+    if action == "download":
+        rutas = trees.download()
+        print(f"{len(rutas)} archivos descargados y verificados (MD5 del lock)")
+        return 0
+    if action == "build":
+        solo = os.environ.get("CROQUIS_ARBOLES_SOLO", "")
+        m = trees.build({c for c in solo.split(",") if c} or None)
+        for especie, e in m["especies"].items():
+            kb = sum(a["bytes"] for a in e["archivos"].values()) / 1e3
+            print(f"{especie}: {kb:.0f} KB en {len(e['archivos'])} archivos; {e['medidas']}")
+        return 0
+    errores = trees.check()
+    if errores:
+        print("\n".join(errores), file=sys.stderr)
+        return 1
+    print("Árboles al día.")
     return 0
 
 

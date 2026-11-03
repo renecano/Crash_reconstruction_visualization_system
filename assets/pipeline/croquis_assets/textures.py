@@ -62,6 +62,17 @@ TEXTURAS = [
     Textura("pasto", "leafy_grass", "Charlotte Baglioni", 8.0, "Suelo fuera de la vía"),
     # Solo se carga en escenas con `grava_suelta`, dentro de las manchas de grava (ADR 0036).
     Textura("grava", "gravel_stones", "Amal Kumar", 2.0, "Grava suelta sobre la calzada"),
+    # T1.3b (ADR 0099): fachadas, cortinas metálicas y tierra del entorno procedural.
+    Textura("yeso", "clay_plaster", "Amal Kumar", 2.0, "Fachadas de concreto aplanado (se tiñe)"),
+    Textura("tabique", "brick_wall_02", "Dimitrios Savva", 2.0, "Fachadas de tabique"),
+    Textura(
+        "lamina",
+        "corrugated_iron_02",
+        "Jenelle van Heerden, Sergej Majboroda",
+        2.7,
+        "Cortinas metálicas y techos de lámina",
+    ),
+    Textura("tierra", "dirt_floor", "eye-candy.xyz", 2.0, "Tierra y orillas secas del suelo"),
 ]
 
 

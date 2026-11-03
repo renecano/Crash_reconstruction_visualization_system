@@ -14,11 +14,15 @@ import {
 } from "three";
 import { mergeGeometries } from "three/examples/jsm/utils/BufferGeometryUtils.js";
 import {
+  cameraPosition,
   color,
   float,
   fract,
   instancedBufferAttribute,
+  length,
+  mix,
   positionLocal,
+  smoothstep,
   uniform,
   vec3,
 } from "three/tsl";
@@ -71,7 +75,10 @@ export function buildPrecipitation(
   });
   material.colorNode = color(tint);
   material.opacityNode = float(params.opacity);
-  material.positionNode = positionLocal.add(offset);
+  // Las gotas a menos de 10 m de la cámara se encogen (hasta un quinto a 1.5 m): de cerca una
+  // estela de 10 cm y 1 cm de ancho se veía como un trazo gordo (T1.3b).
+  const near = smoothstep(float(1.5), float(10), length(offset.sub(cameraPosition)));
+  material.positionNode = positionLocal.mul(mix(float(0.2), float(1), near)).add(offset);
   const mesh = new InstancedMesh(geometry, material, params.count);
   mesh.name = `precipitacion-${params.kind}`;
   // La caja de la malla no incluye el desplazamiento del sombreador: sin recorte por cámara.

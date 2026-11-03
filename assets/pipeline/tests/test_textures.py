@@ -54,8 +54,9 @@ def test_las_texturas_versionadas_son_webp_de_512_y_coinciden_con_el_manifiesto(
                 assert all(0 < c < 1 for c in info["media"])
             else:
                 assert "media" not in info
-    # Presupuesto de carga de E6 (≤ 8 MB al primer cuadro): las texturas son una fracción.
-    assert total < 1_000_000
+    # Presupuesto de carga de E6 (≤ 8 MB al primer cuadro): las texturas son una fracción. Las de
+    # T1.3b (fachadas, lámina, tierra) se piden aparte, solo donde la escena las usa (ADR 0099).
+    assert total < 1_600_000
 
 
 def test_promedios_en_rgb_lineal_y_rugosidad() -> None:

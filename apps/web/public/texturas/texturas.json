@@ -113,6 +113,118 @@
           "media": 0.7809
         }
       }
+    },
+    "yeso": {
+      "polyhaven": "clay_plaster",
+      "autor": "Amal Kumar",
+      "licencia": "CC0 1.0",
+      "url": "https://polyhaven.com/a/clay_plaster",
+      "mosaico_m": 2.0,
+      "uso": "Fachadas de concreto aplanado (se tiñe)",
+      "archivos": {
+        "diff": {
+          "archivo": "yeso_diff.webp",
+          "sha256": "095135a2429a13a19bf05ca2dfbe9f5dde916ff28e5c8679586320f2016832d9",
+          "media": [
+            0.1691,
+            0.1028,
+            0.0449
+          ]
+        },
+        "nor_gl": {
+          "archivo": "yeso_nor_gl.webp",
+          "sha256": "5f3c8c6650a8da8ee790d0af2e574d22ae41aea233b86db090aafa8d82a408f6"
+        },
+        "rough": {
+          "archivo": "yeso_rough.webp",
+          "sha256": "06194404fee96358403a92f95ea75b6f66da223a610a990bcecdaa2cb79d7e0c",
+          "media": 0.9238
+        }
+      }
+    },
+    "tabique": {
+      "polyhaven": "brick_wall_02",
+      "autor": "Dimitrios Savva",
+      "licencia": "CC0 1.0",
+      "url": "https://polyhaven.com/a/brick_wall_02",
+      "mosaico_m": 2.0,
+      "uso": "Fachadas de tabique",
+      "archivos": {
+        "diff": {
+          "archivo": "tabique_diff.webp",
+          "sha256": "9190146f69a89f97b0c0184c9fc185e1d8b64b051ea63af2ce9d63f2378ff6d3",
+          "media": [
+            0.3884,
+            0.3043,
+            0.2072
+          ]
+        },
+        "nor_gl": {
+          "archivo": "tabique_nor_gl.webp",
+          "sha256": "9c4dafef846f047eb75113f089e6d83d3f0a4faed452cb3b03ba8a884d6797d7"
+        },
+        "rough": {
+          "archivo": "tabique_rough.webp",
+          "sha256": "f2a7b81d02d5561f4bb413859c8f53e4ec6e1c8f13b1b0c92347dfd13ebaf638",
+          "media": 0.7892
+        }
+      }
+    },
+    "lamina": {
+      "polyhaven": "corrugated_iron_02",
+      "autor": "Jenelle van Heerden, Sergej Majboroda",
+      "licencia": "CC0 1.0",
+      "url": "https://polyhaven.com/a/corrugated_iron_02",
+      "mosaico_m": 2.7,
+      "uso": "Cortinas metálicas y techos de lámina",
+      "archivos": {
+        "diff": {
+          "archivo": "lamina_diff.webp",
+          "sha256": "7e179c97b27880688549c9963773ee814ccba240e46efdd85aa670925141026b",
+          "media": [
+            0.099,
+            0.0983,
+            0.0826
+          ]
+        },
+        "nor_gl": {
+          "archivo": "lamina_nor_gl.webp",
+          "sha256": "dc1f54e0dd8de02dd78ccda5c1fc8f675e72e62a490f449e317ee0464975507a"
+        },
+        "rough": {
+          "archivo": "lamina_rough.webp",
+          "sha256": "5217b26acbd38027fe55b0dae3f20bceea3ad3c0a759633253af7295d2daf198",
+          "media": 0.5217
+        }
+      }
+    },
+    "tierra": {
+      "polyhaven": "dirt_floor",
+      "autor": "eye-candy.xyz",
+      "licencia": "CC0 1.0",
+      "url": "https://polyhaven.com/a/dirt_floor",
+      "mosaico_m": 2.0,
+      "uso": "Tierra y orillas secas del suelo",
+      "archivos": {
+        "diff": {
+          "archivo": "tierra_diff.webp",
+          "sha256": "5c410cbc5bbb6a54a373a2ab56f7f92a4a4b4a0f8a68fe571affd528a6525795",
+          "media": [
+            0.471,
+            0.2638,
+            0.1277
+          ]
+        },
+        "nor_gl": {
+          "archivo": "tierra_nor_gl.webp",
+          "sha256": "423d0467feb4b4e5ca78ebe60c9b764162a67d3f7725db1d4d22b6454e9ebc0c"
+        },
+        "rough": {
+          "archivo": "tierra_rough.webp",
+          "sha256": "0b8088b4a7c30fa26ad397bee8efa0b82d7c5b1b3b5968592692e5b7a89402c8",
+          "media": 0.921
+        }
+      }
     }
   }
 }

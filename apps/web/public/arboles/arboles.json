@@ -1,0 +1,132 @@
+{
+  "_generado_por": "uv run croquis-assets trees build",
+  "_nota": "Árboles CC0 de Poly Haven horneados a tarjetas (ADR 0099); ver assets/ASSETS.md.",
+  "especies": {
+    "jacaranda": {
+      "modelo": {
+        "polyhaven": "jacaranda_tree",
+        "autores": "Rob Tuytel, Rico Cilliers",
+        "licencia": "CC0 1.0",
+        "url": "https://polyhaven.com/a/jacaranda_tree"
+      },
+      "nombre_comun": "jacaranda",
+      "alto_m": 11.0,
+      "medidas": {
+        "ancho_m": 24.417,
+        "alto_m": 19.469,
+        "profundidad_m": 19.155,
+        "copa_desde_m": 1.947
+      },
+      "archivos": {
+        "frente_diff": {
+          "archivo": "jacaranda_frente_diff.webp",
+          "sha256": "4d3d4ce74e0f202d7d8d7dab5ef34764d9e028a413094ab2482c9f67f42d3b7a",
+          "bytes": 319128,
+          "px": 1024
+        },
+        "frente_nor": {
+          "archivo": "jacaranda_frente_nor.webp",
+          "sha256": "7bd2b0a00e5e59e2333696e5204f0f9d29ddb6e6276d86403c7f872ab46ce139",
+          "bytes": 412140,
+          "px": 1024
+        },
+        "planta_diff": {
+          "archivo": "jacaranda_planta_diff.webp",
+          "sha256": "e4e40c0a1783d3af80bfb7e6b49cad545ede0b7a3274aed9af5d0c4b92f845dd",
+          "bytes": 85072,
+          "px": 512
+        },
+        "planta_nor": {
+          "archivo": "jacaranda_planta_nor.webp",
+          "sha256": "f4933fb09a836f4c0d64603396f7c8d3f221f688ab7519bf8e47577aa213c76a",
+          "bytes": 108016,
+          "px": 512
+        }
+      }
+    },
+    "fresno": {
+      "modelo": {
+        "polyhaven": "tree_small_02",
+        "autores": "Rico Cilliers",
+        "licencia": "CC0 1.0",
+        "url": "https://polyhaven.com/a/tree_small_02"
+      },
+      "nombre_comun": "fresno",
+      "alto_m": 12.0,
+      "medidas": {
+        "ancho_m": 4.292,
+        "alto_m": 4.557,
+        "profundidad_m": 2.917,
+        "copa_desde_m": 1.481
+      },
+      "archivos": {
+        "frente_diff": {
+          "archivo": "fresno_frente_diff.webp",
+          "sha256": "fb353b7c7477e2a69035c5f63581b9aaa6edec8a3c7f7358a377e84b281c6750",
+          "bytes": 175268,
+          "px": 1024
+        },
+        "frente_nor": {
+          "archivo": "fresno_frente_nor.webp",
+          "sha256": "7339702acb59f3be0c54b36dc452b070ddc42ae39668868ca1592c52cd59da13",
+          "bytes": 250092,
+          "px": 1024
+        },
+        "planta_diff": {
+          "archivo": "fresno_planta_diff.webp",
+          "sha256": "ecaac5d59986eeb254c57537be484b787ac7c847109275a3d9233a9138c57697",
+          "bytes": 89428,
+          "px": 512
+        },
+        "planta_nor": {
+          "archivo": "fresno_planta_nor.webp",
+          "sha256": "576f239795f5dfc505071713e95348b303ea72f873596032f69e8c72d59ab003",
+          "bytes": 112324,
+          "px": 512
+        }
+      }
+    },
+    "pirul": {
+      "modelo": {
+        "polyhaven": "island_tree_01",
+        "autores": "Rob Tuytel, Rico Cilliers",
+        "licencia": "CC0 1.0",
+        "url": "https://polyhaven.com/a/island_tree_01"
+      },
+      "nombre_comun": "pirul",
+      "alto_m": 8.0,
+      "medidas": {
+        "ancho_m": 4.818,
+        "alto_m": 5.027,
+        "profundidad_m": 4.755,
+        "copa_desde_m": 0.628
+      },
+      "archivos": {
+        "frente_diff": {
+          "archivo": "pirul_frente_diff.webp",
+          "sha256": "27d255850fbae4a2a4918a83169b73a97ddf282eff63faac800925029be04061",
+          "bytes": 326110,
+          "px": 1024
+        },
+        "frente_nor": {
+          "archivo": "pirul_frente_nor.webp",
+          "sha256": "fa3eef65e8045640e63f15663a81bcf69c21c2077e0c2df6e83adbae8773835d",
+          "bytes": 411908,
+          "px": 1024
+        },
+        "planta_diff": {
+          "archivo": "pirul_planta_diff.webp",
+          "sha256": "8269733ba2984416cac5346f52b30ea007fdc30d347d8d665a6c4aefca689cd8",
+          "bytes": 134658,
+          "px": 512
+        },
+        "planta_nor": {
+          "archivo": "pirul_planta_nor.webp",
+          "sha256": "09deb10ec205167117cd302e35dccd04081f95b72c1405d00c117ca57d5c5624",
+          "bytes": 165998,
+          "px": 512
+        }
+      }
+    }
+  }
+}

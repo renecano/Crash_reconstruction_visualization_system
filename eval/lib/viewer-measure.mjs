@@ -72,6 +72,12 @@ export async function measureViewer(
     null,
     { timeout: 600_000 },
   );
+  // Y los árboles impostores (T1.3b; antes la bandera no existe).
+  await page.waitForFunction(
+    () => window.__croquisTreesReady === undefined || window.__croquisTreesReady,
+    null,
+    { timeout: 600_000 },
+  );
   // Y a que ese grafo esté precompilado y en pantalla (T1.1): mientras, se ve el paramétrico.
   await page.waitForFunction(() => window.__croquisGraphReady !== false, null, {
     timeout: 600_000,

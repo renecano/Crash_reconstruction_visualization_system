@@ -25,6 +25,8 @@ export interface QualityProfile {
   spotShadowMapSize: number;
   /** Número máximo de instancias de árboles. */
   maxTrees: number;
+  /** Matas de pasto instanciadas cerca de la acción (T1.3b): solo alta y ultra. */
+  grassTufts: number;
   /**
    * Muestras de MSAA (0: sin antialiasing). Media usa 2: en la laptop de referencia 4 muestras
    * costaban ~5 ms por cuadro (ADR 0026, decisión 7).
@@ -59,6 +61,7 @@ export const QUALITY_PROFILES: Record<QualityLevel, QualityProfile> = {
     moonShadow: false,
     spotShadowMapSize: 0,
     maxTrees: 60,
+    grassTufts: 0,
     msaaSamples: 0,
     envTextures: false,
     ambientOcclusion: false,
@@ -76,6 +79,7 @@ export const QUALITY_PROFILES: Record<QualityLevel, QualityProfile> = {
     moonShadow: false,
     spotShadowMapSize: 0,
     maxTrees: 200,
+    grassTufts: 0,
     msaaSamples: 2,
     envTextures: true,
     ambientOcclusion: false,
@@ -93,6 +97,7 @@ export const QUALITY_PROFILES: Record<QualityLevel, QualityProfile> = {
     moonShadow: true,
     spotShadowMapSize: 1024,
     maxTrees: 600,
+    grassTufts: 6000,
     msaaSamples: 4,
     envTextures: true,
     ambientOcclusion: true,
@@ -110,6 +115,7 @@ export const QUALITY_PROFILES: Record<QualityLevel, QualityProfile> = {
     moonShadow: true,
     spotShadowMapSize: 2048,
     maxTrees: 1500,
+    grassTufts: 12000,
     msaaSamples: 4,
     envTextures: true,
     ambientOcclusion: true,

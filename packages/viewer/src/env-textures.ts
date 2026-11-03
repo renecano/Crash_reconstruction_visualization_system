@@ -20,7 +20,17 @@ import {
   TextureLoader,
   type Texture,
 } from "three";
-import { float, mix, normalMap, positionWorld, smoothstep, texture, vec2, vec3 } from "three/tsl";
+import {
+  attribute,
+  float,
+  mix,
+  normalMap,
+  positionWorld,
+  smoothstep,
+  texture,
+  vec2,
+  vec3,
+} from "three/tsl";
 import { MeshStandardNodeMaterial, type Node } from "three/webgpu";
 import { ditherNode } from "./dither";
 import { QUALITY_PROFILES, type QualityLevel } from "./quality";
@@ -28,7 +38,7 @@ import { QUALITY_PROFILES, type QualityLevel } from "./quality";
 export const TEXTURE_BASE_URL = "/texturas/";
 export const ENV_TEXTURE_NAMES = ["asfalto", "concreto", "pasto"] as const;
 /** Texturas que solo se cargan si la escena las usa (la grava, con `grava_suelta`; ADR 0036). */
-export const OPTIONAL_TEXTURE_NAMES = ["grava"] as const;
+export const OPTIONAL_TEXTURE_NAMES = ["grava", "tierra", "yeso", "tabique", "lamina"] as const;
 export type EnvTextureName =
   (typeof ENV_TEXTURE_NAMES)[number] | (typeof OPTIONAL_TEXTURE_NAMES)[number];
 
@@ -164,6 +174,11 @@ export function texturedPlanarMaterial(
     dither?: boolean;
     /** Multiplica por el color de vértice (las parcelas del suelo, T1.3). */
     vertexColors?: boolean;
+    /**
+     * Manchas de tierra (T1.3b): la textura de tierra entra donde una lectura a 41 m de la misma
+     * textura base es clara, y en las orillas secas junto a la vía (atributo `_dry` del suelo).
+     */
+    patches?: { dirt: EnvTexture };
   },
 ): MeshStandardNodeMaterial {
   // `color` es el color plano que lleva la exportación glTF (R11); el dibujo usa colorNode.
@@ -172,9 +187,18 @@ export function texturedPlanarMaterial(
   // La variación de brillo a 23 m sale de la misma textura muestreada a esa escala (una lectura
   // más), no de ruido de gradiente por pixel: el pasto llena la pantalla y en la GPU integrada
   // el ruido costaba más que la textura (T1.2).
-  m.colorNode = opts.variation
+  let colorNode = opts.variation
     ? base.mul(mix(float(0.85), float(1.15), smoothstep(0.3, 0.7, texture(t.map, planarUv(23)).g)))
     : base;
+  if (opts.patches) {
+    const dirt = texture(opts.patches.dirt.map, planarUv(opts.patches.dirt.tileM)).rgb.mul(0.95);
+    const mask = smoothstep(0.55, 0.72, texture(t.map, planarUv(41)).r);
+    const dry = attribute("_dry", "float");
+    // Pasto reseco y amarillento junto a la vía, y tierra donde la mancha o la orilla lo piden.
+    const seco = mix(colorNode, colorNode.mul(vec3(1.18, 1.06, 0.8)), dry.mul(0.7));
+    colorNode = mix(seco, dirt, mask.mul(0.6).max(dry.mul(0.35)));
+  }
+  m.colorNode = colorNode;
   if (opts.lite) {
     m.roughness = opts.roughness;
   } else {

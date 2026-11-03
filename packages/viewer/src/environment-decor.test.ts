@@ -68,6 +68,12 @@ describe("entorno procedural (T1.3)", () => {
       expect(Math.hypot(t.x - center.x, t.y - center.y)).toBeGreaterThanOrEqual(TREE_CLEAR_M);
     }
     expect(plan.skyline.length).toBeGreaterThan(20);
+    // Fachadas y señales (T1.3b): cada lote dice a dónde mira y qué lleva; hay señales genéricas.
+    expect(plan.signs.length).toBeGreaterThan(2);
+    for (const s of plan.signs)
+      expect(["alto", "ceda", "velocidad", "informativa"]).toContain(s.kind);
+    expect(plan.buildings.some((b) => b.shutter)).toBe(true);
+    expect(plan.buildings.some((b) => b.material === "tabique")).toBe(true);
     expect(plan.parcels).toEqual([]);
     // Otra semilla, otro entorno.
     const otra = planEnvironment(spec.lugar, layout, undefined, {
@@ -91,14 +97,23 @@ describe("entorno procedural (T1.3)", () => {
     expect(plan.buildings).toEqual([]);
     expect(plan.parcels.length).toBeGreaterThan(1);
     expect(plan.fences.length).toBeGreaterThan(2);
-    expect(plan.poles.length).toBeGreaterThan(1);
+    // Con el claro de 26 m de la órbita de la cámara (T1.3b) quedan menos postes en la ventana.
+    expect(plan.poles.length).toBeGreaterThanOrEqual(1);
     expect(plan.trees.length).toBeGreaterThan(5);
     for (const t of plan.trees) expect(distanceToRoad(t, corridors)).toBeGreaterThanOrEqual(8);
     expect(plan.skyline).toEqual([]);
-    expect(plan.hills).toHaveLength(HILLS_SEGMENTS);
-    for (const h of plan.hills) {
-      expect(h).toBeGreaterThan(45);
-      expect(h).toBeLessThan(165);
+    expect(plan.signs).toEqual([]);
+    // Cerros en capas (T1.3b): el anillo del fondo completo y, delante, arcos a otros radios.
+    expect(plan.hills.length).toBeGreaterThanOrEqual(2);
+    const fondo = plan.hills[0]!;
+    expect(fondo.heights).toHaveLength(HILLS_SEGMENTS);
+    expect(fondo.to - fondo.from).toBeCloseTo(Math.PI * 2, 9);
+    expect(new Set(plan.hills.map((h) => h.radius)).size).toBeGreaterThanOrEqual(2);
+    for (const capa of plan.hills) {
+      for (const h of capa.heights) {
+        expect(h).toBeGreaterThanOrEqual(0);
+        expect(h).toBeLessThan(250);
+      }
     }
   });
 

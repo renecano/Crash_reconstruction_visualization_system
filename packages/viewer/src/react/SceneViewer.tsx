@@ -71,6 +71,7 @@ import {
   type FxState,
 } from "../cinematic-fx";
 import { loadEnvTextures, TEXTURE_BASE_URL, texturesWanted } from "../env-textures";
+import { loadTreeImpostors, TREE_BASE_URL } from "../tree-impostors";
 import { attachPeople, variantsFor, type PeopleAttachment } from "../people-scene";
 import { buildGhostLayer, GHOST_COLORS } from "../ghosts";
 import { buildCroquisPaint } from "../croquis-paint";
@@ -177,6 +178,8 @@ declare global {
     __croquisPeopleReady?: boolean;
     /** Texturas del entorno aplicadas (o descartadas por calidad o por error). */
     __croquisTexturesReady?: boolean;
+    /** Árboles impostores cargados y puestos (T1.3b), o descartados. */
+    __croquisTreesReady?: boolean;
     /** Los vehículos de Sketchfab ya están en la escena, o no se piden en esta calidad (R10). */
     __croquisVehicleModelsReady?: boolean;
     __croquisPeople?: PeopleAttachment;
@@ -203,6 +206,8 @@ declare global {
       /** T1.3: sin el entorno procedural, o solo sin el relieve, para medir su costo. */
       sinEntorno?: boolean;
       sinRelieve?: boolean;
+      /** T1.3b: sin árboles impostores (quedan las copas de pocas caras). */
+      sinArboles?: boolean;
     };
     /** `performance.now()` del primer cuadro listo (E6: tiempo hasta interactivo). */
     __croquisReadyAt?: number;
@@ -327,6 +332,8 @@ function SceneContent({
   // El grafo al que ya se le aplicaron las texturas: el precompilado lo espera, porque cambiar
   // los materiales después obligaba a compilar de nuevo en el hilo principal (T1.2).
   const [texturedGraph, setTexturedGraph] = useState<SceneGraph | null>(null);
+  /** El grafo al que ya se le pusieron (o descartaron) los árboles impostores (T1.3b). */
+  const [treedGraph, setTreedGraph] = useState<SceneGraph | null>(null);
   // Hipótesis: fantasmas translúcidos con el mismo reloj que la escena.
   const ghosts = useMemo(
     () =>
@@ -362,6 +369,34 @@ function SceneContent({
       alive = false;
     };
   }, [spec, resultado, graph]);
+
+  // Árboles impostores (T1.3b): en media, alta y ultra (baja conserva las copas de pocas caras).
+  useEffect(() => {
+    let alive = true;
+    window.__croquisTreesReady = false;
+    if (quality === "baja" || window.__croquisDiag?.sinArboles === true) {
+      window.__croquisTreesReady = true;
+      setTreedGraph(graph);
+      return undefined;
+    }
+    loadTreeImpostors(TREE_BASE_URL, fetch)
+      .then((set) => {
+        if (!alive) return;
+        graph.applyTreeImpostors(set);
+        setTreedGraph(graph);
+        window.__croquisTreesReady = true;
+      })
+      .catch((err: unknown) => {
+        console.error("No se pudieron cargar los árboles", err);
+        if (alive) {
+          setTreedGraph(graph);
+          window.__croquisTreesReady = true;
+        }
+      });
+    return () => {
+      alive = false;
+    };
+  }, [graph, quality]);
 
   // Texturas PBR del entorno (F8e): solo en calidad media y alta.
   useEffect(() => {
@@ -548,7 +583,8 @@ function SceneContent({
     s.turbidity.value = env.turbidity;
     s.rayleigh.value = env.turbidity > 5 ? 0.6 : 1.4;
     s.cloudSpeed.value = 0; // sin animación: capturas deterministas
-    s.cloudCoverage.value = env.turbidity > 5 ? 0.8 : 0.25;
+    // Nubes con huecos y gradiente también en lo nublado (T1.3b): 0.8 daba un cielo blanco plano.
+    s.cloudCoverage.value = env.turbidity > 5 ? 0.58 : 0.34;
     const [dx, dy, dz] = env.lightDirection;
     s.sunPosition.value.set(dx, dz, -dy);
     return s;
@@ -563,7 +599,9 @@ function SceneContent({
     scene.background = new Color(cielo);
     let target: CubeRenderTarget | null = null;
     if (sky) {
-      target = new CubeRenderTarget(256);
+      // 512 por cara (T1.3b): a 256 las estrellas y los bordes de las nubes salían como manchas
+      // desde la cámara a nivel de calle.
+      target = new CubeRenderTarget(512);
       const cubeCamera = new CubeCamera(1, 10_000, target);
       const skyScene = new Scene();
       skyScene.add(sky);
@@ -651,8 +689,10 @@ function SceneContent({
     texturesWanted(quality) &&
     !(typeof window !== "undefined" && window.__croquisDiag?.sinTexturas === true) &&
     texturedGraph !== graph;
+  // Los árboles impostores también se esperan: así el precompilado los incluye (T1.3b).
+  const treesPending = treedGraph !== graph;
   useEffect(() => {
-    if (texturesPending) return undefined;
+    if (texturesPending || treesPending) return undefined;
     let alive = true;
     window.__croquisGraphReady = compiled === graph;
     // Mientras compila, el bucle de dibujo baja a unos 10 cuadros por segundo: a cuadro libre (sin
@@ -704,7 +744,18 @@ function SceneContent({
     };
     // `compiled` solo marca la bandera: no hace falta recompilar cuando cambia. `attachments`
     // cuenta lo agregado al grafo después (restos, personas): sí recompila.
-  }, [graph, gl, cam, scene, skyEnv, attachments, texturesPending, setFrameloop, invalidate]);
+  }, [
+    graph,
+    gl,
+    cam,
+    scene,
+    skyEnv,
+    attachments,
+    texturesPending,
+    treesPending,
+    setFrameloop,
+    invalidate,
+  ]);
   useEffect(() => {
     const prev = shown.current;
     shown.current = compiled;

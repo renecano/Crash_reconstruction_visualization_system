@@ -40,12 +40,28 @@ export const RELIEF_FLAT_M = 18;
 export const RELIEF_RAMP_M = 40;
 /** Lado de la ventana del mundo donde se coloca el entorno (m), centrada en la acción. */
 export const DECOR_WINDOW_M = 360;
-/** Radio del anillo de cerros y de la silueta urbana (m). */
-export const HILLS_RADIUS_M = 520;
-export const HILLS_SEGMENTS = 96;
+/** Capas de cerros (T1.3b): radio (m) y segmentos de un anillo completo. El de 520 m era un tazón. */
+export const HILL_LAYERS: readonly { radius: number; segments: number }[] = [
+  { radius: 1100, segments: 128 },
+  { radius: 720, segments: 96 },
+  { radius: 430, segments: 72 },
+];
+export const HILLS_SEGMENTS = HILL_LAYERS[0]!.segments;
 export const SKYLINE_RADIUS_M = 420;
+
+/** Un tramo de cerros: anillo (o arco) a un radio, con la altura de cada segmento. */
+export interface HillLayer {
+  radius: number;
+  /** Ángulo inicial y final del arco (rad); el anillo completo va de 0 a 2π. */
+  from: number;
+  to: number;
+  heights: number[];
+}
 /** Sin árboles a menos de esta distancia de la acción: no tapan el impacto a las cámaras. */
 export const TREE_CLEAR_M = 22;
+
+/** Especies comunes en México (T1.3b): tres horneadas de Poly Haven y la palmera procedural. */
+export type TreeSpecies = "jacaranda" | "fresno" | "pirul" | "palmera";
 
 export interface Tree {
   x: number;
@@ -56,8 +72,51 @@ export interface Tree {
   yaw: number;
   /** 0: árbol redondo; 1: alargado (ciprés o eucalipto); 2: arbusto. */
   kind: 0 | 1 | 2;
+  /** Especie del impostor (T1.3b) y altura total (m); los arbustos no la llevan. */
+  species?: TreeSpecies;
+  height?: number;
 }
+
+/** Reparto de especies por zona (fracciones acumuladas). */
+export function speciesFor(zone: Zone, u: number): TreeSpecies {
+  if (zone === "urbana") return u < 0.5 ? "fresno" : u < 0.85 ? "jacaranda" : "palmera";
+  return u < 0.5 ? "pirul" : u < 0.9 ? "fresno" : "jacaranda";
+}
+
+/** Altura total típica de cada especie (m) con una variación `u` en [0, 1). */
+const TREE_HEIGHTS: Record<TreeSpecies, readonly [number, number]> = {
+  jacaranda: [8, 12],
+  fresno: [8, 14],
+  pirul: [6, 9],
+  palmera: [7, 12],
+};
+
+export function treeHeightFor(species: TreeSpecies, u: number): number {
+  const [lo, hi] = TREE_HEIGHTS[species];
+  return lo + (hi - lo) * u;
+}
+/** Señal de tránsito genérica (T1.3b): sin texto ni número real. */
+export interface Sign {
+  x: number;
+  y: number;
+  /** Hacia dónde mira la placa (rad). */
+  yaw: number;
+  kind: "alto" | "ceda" | "velocidad" | "informativa";
+}
+
 export interface Building {
+  /** Hacia dónde da la fachada principal (rad), la que mira a la calle. */
+  front: number;
+  /** Aplanado pintado o tabique visible. */
+  material: "yeso" | "tabique";
+  /** Planta baja: cortina metálica, toldo y letrero (sin texto). */
+  shutter: boolean;
+  awning: boolean;
+  sign: boolean;
+  /** Azotea: tinacos, antena y varillas. */
+  tinacos: number;
+  antenna: boolean;
+  rebar: boolean;
   x: number;
   y: number;
   /** Largo (a lo largo de la calle), fondo y alto (m), rumbo (rad, convención matemática). */
@@ -92,7 +151,8 @@ export interface EnvironmentPlan {
   fences: Fence[];
   parcels: Parcel[];
   /** Altura de los cerros por segmento del anillo (m). */
-  hills: number[];
+  hills: HillLayer[];
+  signs: Sign[];
   /** Silueta urbana lejana: bloques (ángulo rad, ancho angular rad, alto m); vacío en rural. */
   skyline: { angle: number; span: number; height: number }[];
 }
@@ -100,6 +160,22 @@ export interface EnvironmentPlan {
 const FAST_HIGHWAYS = /^(motorway|trunk)(_link)?$/;
 const RURAL_TEMPLATES = new Set(["carretera_dos_carriles", "autopista"]);
 /** Colores de fachada (hex): blancos, ocres, grises y un rosa mexicano apagado. */
+/** Concreto pintado a la mexicana (T1.3b): rosa, ocre, azul, lima, terracota, blanco, lila… */
+export const FACADE_PALETTE_MX = [
+  "#e8d7b5",
+  "#d9a066",
+  "#c1532f",
+  "#e7a5b8",
+  "#6fa8c9",
+  "#a9c47a",
+  "#f1efe9",
+  "#c8b7d8",
+  "#8a5a44",
+  "#f0c75e",
+  "#d94f70",
+  "#2f6f8f",
+] as const;
+
 export const FACADE_PALETTE = [
   "#d9d4c7",
   "#c9b99a",
@@ -265,6 +341,7 @@ export function planEnvironment(
   const poles: Pole[] = [];
   const fences: Fence[] = [];
   const parcels: Parcel[] = [];
+  const signs: Sign[] = [];
   const occupied: { x: number; y: number; r: number }[] = [];
   const free = (p: Vec2, r: number) =>
     occupied.every((o) => Math.hypot(o.x - p.x, o.y - p.y) > o.r + r);
@@ -290,7 +367,9 @@ export function planEnvironment(
       if (!free(c, Math.max(w, d) / 2 + 1.5)) return;
       // Cerca de la acción, bajos (1–2 niveles): lo alto va al fondo.
       const near = Math.hypot(cx - opts.center.x, cy - opts.center.y) < 70;
-      const floors = 1 + Math.floor(rng() * (near ? 2 : 3));
+      // Variedad de alturas (T1.3b): hasta cuatro niveles lejos de la acción, casi siempre uno o dos.
+      const floors = near ? 1 + Math.floor(rng() * 2) : 1 + Math.floor(rng() * rng() * 4);
+      const comercio = rng() < 0.45;
       buildings.push({
         x: cx,
         y: cy,
@@ -298,10 +377,33 @@ export function planEnvironment(
         d,
         h: floors * 3.2 + rng() * 0.6,
         yaw: Math.atan2(dir.y, dir.x),
-        color: Math.floor(rng() * FACADE_PALETTE.length),
+        color: Math.floor(rng() * FACADE_PALETTE_MX.length),
         floors,
+        // La fachada mira a la calle: en contra de la normal con la que se corrió el lote.
+        front: Math.atan2(-dir.x * side, dir.y * side),
+        material: rng() < 0.22 ? "tabique" : "yeso",
+        shutter: comercio,
+        awning: comercio && rng() < 0.6,
+        sign: comercio && rng() < 0.8,
+        tinacos: rng() < 0.75 ? 1 + Math.floor(rng() * 2) : 0,
+        antenna: rng() < 0.5,
+        rebar: rng() < 0.55,
       });
       occupied.push({ x: cx, y: cy, r: Math.max(w, d) / 2 + 1.5 });
+    });
+    // Señales de tránsito genéricas en la banqueta, cada 70 m; ninguna a menos de 12 m del impacto.
+    const kinds: Sign["kind"][] = ["alto", "velocidad", "ceda", "informativa"];
+    let k = 0;
+    alongCorridors(corridors, 0.9, 70, 25, (p, dir) => {
+      if (!inWindow(p) || Math.hypot(p.x - opts.center.x, p.y - opts.center.y) < 12) return;
+      if (!free(p, 0.8)) return;
+      signs.push({
+        x: p.x,
+        y: p.y,
+        yaw: Math.atan2(dir.y, dir.x),
+        kind: kinds[k++ % kinds.length]!,
+      });
+      occupied.push({ x: p.x, y: p.y, r: 0.8 });
     });
     // Árboles de banqueta cada 15 m, a 1.5 m del borde de la calzada.
     alongCorridors(corridors, 1.5, 15, 7, (p) => {
@@ -309,6 +411,7 @@ export function planEnvironment(
       if (distanceToRoad(p, corridors) < 1 || !free(p, 2)) return;
       // Claro alrededor de la acción: un árbol de banqueta tapaba el impacto en la cinematográfica.
       if (Math.hypot(p.x - opts.center.x, p.y - opts.center.y) < TREE_CLEAR_M) return;
+      const species = speciesFor(zone, rng());
       trees.push({
         x: p.x,
         y: p.y,
@@ -316,6 +419,8 @@ export function planEnvironment(
         crown: 1.3 + rng() * 0.8,
         yaw: rng() * Math.PI * 2,
         kind: 0,
+        species,
+        height: treeHeightFor(species, rng()) * 0.8,
       });
       occupied.push({ x: p.x, y: p.y, r: 2 });
     });
@@ -354,6 +459,8 @@ export function planEnvironment(
     // Postes de luz eléctrica cada 45 m, de un lado.
     alongCorridors(corridors, 5, 45, 20, (p, dir, side) => {
       if (side !== 1 || !inWindow(p)) return;
+      // Claro de la órbita de la cámara (T1.5): un poste en primer plano tapaba la escena.
+      if (Math.hypot(p.x - opts.center.x, p.y - opts.center.y) < 26) return;
       poles.push({ x: p.x, y: p.y, yaw: Math.atan2(dir.y, dir.x) });
       occupied.push({ x: p.x, y: p.y, r: 1.5 });
     });
@@ -370,6 +477,7 @@ export function planEnvironment(
         if (!inWindow(p) || distanceToRoad(p, corridors) < 8 || !free(p, 2.5)) continue;
         if (Math.hypot(p.x - opts.center.x, p.y - opts.center.y) < TREE_CLEAR_M) continue;
         const bush = rng() < 0.35;
+        const species = bush ? undefined : speciesFor(zone, rng());
         trees.push({
           x: p.x,
           y: p.y,
@@ -377,19 +485,50 @@ export function planEnvironment(
           crown: bush ? 0.9 + rng() * 0.6 : 1.8 + rng() * 1.6,
           yaw: rng() * Math.PI * 2,
           kind: bush ? 2 : rng() < 0.3 ? 1 : 0,
+          species,
+          height: species ? treeHeightFor(species, rng()) : undefined,
         });
         occupied.push({ x: p.x, y: p.y, r: 2.5 });
       }
     }
   }
-  // Cerros a lo lejos: alturas suaves por segmento; en ciudad más bajos y con silueta de edificios.
-  const hillNoise = valueNoise2D(Math.trunc(opts.seed) * 31 + 11, 1);
-  const hills: number[] = [];
-  for (let i = 0; i < HILLS_SEGMENTS; i++) {
-    const u = (i / HILLS_SEGMENTS) * 8;
-    const n = 0.6 * hillNoise(u, 0.5) + 0.4 * hillNoise(u * 3, 7.5);
-    hills.push((zone === "rural" ? 50 : 25) + n * (zone === "rural" ? 110 : 55));
-  }
+  // Cerros a lo lejos en tres capas (T1.3b): el anillo del fondo completo y alto; delante, arcos
+  // sueltos más bajos a distinta distancia, con las puntas en rampa. En ciudad, la mitad de alto.
+  const hills: HillLayer[] = [];
+  const escala = zone === "rural" ? 1 : 0.5;
+  HILL_LAYERS.forEach((layer, li) => {
+    const noise = valueNoise2D(Math.trunc(opts.seed) * 31 + 11 + li * 97, 1);
+    const rangos: readonly (readonly [number, number])[] = [
+      [90, 240],
+      [45, 150],
+      [18, 70],
+    ];
+    const [hMin, hMax] = rangos[li] ?? [18, 70];
+    const arcs: [number, number][] =
+      li === 0
+        ? [[0, Math.PI * 2]]
+        : Array.from(
+            { length: li === 1 ? 1 + Math.floor(rng() * 2) : Math.floor(rng() * 3) },
+            () => {
+              const start = rng() * Math.PI * 2;
+              const span = (li === 1 ? 1.2 : 0.6) + rng() * (li === 1 ? 1.6 : 0.9);
+              return [start, start + span] as [number, number];
+            },
+          );
+    for (const [from, to] of arcs) {
+      const n = Math.max(8, Math.round((layer.segments * (to - from)) / (Math.PI * 2)));
+      const heights: number[] = [];
+      for (let i = 0; i < n; i++) {
+        const f = i / (n - 1);
+        const u = (from + (to - from) * f) * (1.3 + li * 0.7);
+        const v = 0.55 * noise(u, 0.5 + li) + 0.45 * noise(u * 2.7, 7.5 + li);
+        // Las puntas de un arco bajan a cero; el anillo completo no tiene puntas.
+        const taper = li === 0 ? 1 : Math.sin(Math.PI * f);
+        heights.push(escala * (hMin + v * (hMax - hMin)) * taper);
+      }
+      hills.push({ radius: layer.radius, from, to, heights });
+    }
+  });
   const skyline: EnvironmentPlan["skyline"] = [];
   if (zone === "urbana") {
     const blocks = 28 + Math.floor(rng() * 12);
@@ -410,6 +549,7 @@ export function planEnvironment(
     parcels,
     hills,
     skyline,
+    signs,
   };
 }
 
