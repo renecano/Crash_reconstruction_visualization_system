@@ -104,11 +104,11 @@ describe("vehículos de Sketchfab (R10)", () => {
     expect(modelVariantFor("media")).toBe("ligero");
     expect(modelVariantFor("baja")).toBeNull();
     expect(MODEL_FOR_CLASS.sedan_mediano).toBe("sedan");
-    expect(MODEL_FOR_CLASS.van).toBeUndefined();
-    expect(modelClassesFor(["sedan_compacto", "sedan_mediano", "van", "motocicleta"])).toEqual([
-      "sedan",
-      "moto",
-    ]);
+    expect(MODEL_FOR_CLASS.van).toBe("van");
+    expect(MODEL_FOR_CLASS.bicicleta).toBeUndefined();
+    expect(
+      modelClassesFor(["sedan_compacto", "sedan_mediano", "bicicleta", "motocicleta"]),
+    ).toEqual(["sedan", "moto"]);
   });
 
   it("se ajusta a las dimensiones del caso, con las ruedas redondas sobre el piso", () => {

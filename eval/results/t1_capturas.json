@@ -415,6 +415,45 @@
         }
       },
       "cumple_media": true
+    },
+    "t1.4-flota/media": {
+      "etiqueta": "t1.4-flota",
+      "calidad": "media",
+      "fecha": "2026-11-03T15:38:03.319Z",
+      "commit": "d39f577",
+      "navegador": "156.0.8078.4",
+      "capturas": [
+        {
+          "escena": "flota_a",
+          "camara": "cinematica",
+          "archivo": "docs/cesvi/t1/t1.4-flota/flota_a-media-cinematica.jpg",
+          "backend": "WebGPU",
+          "errores": []
+        },
+        {
+          "escena": "flota_a",
+          "camara": "dano",
+          "archivo": "docs/cesvi/t1/t1.4-flota/flota_a-media-dano.jpg",
+          "backend": "WebGPU",
+          "errores": []
+        },
+        {
+          "escena": "flota_b",
+          "camara": "cinematica",
+          "archivo": "docs/cesvi/t1/t1.4-flota/flota_b-media-cinematica.jpg",
+          "backend": "WebGPU",
+          "errores": []
+        },
+        {
+          "escena": "flota_b",
+          "camara": "dano",
+          "archivo": "docs/cesvi/t1/t1.4-flota/flota_b-media-dano.jpg",
+          "backend": "WebGPU",
+          "errores": []
+        }
+      ],
+      "fps": null,
+      "cumple_media": null
     }
   },
   "descripcion": "T1 (PLAN-CESVI v3): capturas de las 4 escenas de referencia con la cámara cinematográfica y la del daño, antes y después de cada subtramo, y sus fps (protocolo de E6). René las aprueba a ojo; los fps son de CI manual.",
@@ -422,7 +461,9 @@
     "axa": "AXA, autopista federal de día",
     "lateral_interseccion": "Cruce urbano (Toluca centro)",
     "nocturno_lluvia": "Noche con lluvia (Tollocan)",
-    "carambola": "Carambola de R11 (Tollocan, semáforo)"
+    "carambola": "Carambola de R11 (Tollocan, semáforo)",
+    "flota_a": "Flota T1.4: van y autobús",
+    "flota_b": "Flota T1.4: combi y tractocamión"
   },
   "t_captura_s": 0.2
 }

@@ -62,8 +62,20 @@ export const ESCENAS_T1 = {
   lateral_interseccion: { nombre: "Cruce urbano (Toluca centro)" },
   nocturno_lluvia: { nombre: "Noche con lluvia (Tollocan)" },
   carambola: { nombre: "Carambola de R11 (Tollocan, semáforo)" },
+  // Escenas extra (no entran por defecto): las clases con modelo nuevo de T1.4.
+  flota_a: {
+    propia: "eval/escenas/flota-a.json",
+    nombre: "Flota T1.4: van y autobús",
+    extra: true,
+  },
+  flota_b: {
+    propia: "eval/escenas/flota-b.json",
+    nombre: "Flota T1.4: combi y tractocamión",
+    extra: true,
+  },
 };
-const ESCENAS = arg("escenas", Object.keys(ESCENAS_T1).join(",")).split(",");
+const POR_DEFECTO = Object.keys(ESCENAS_T1).filter((e) => !ESCENAS_T1[e].extra);
+const ESCENAS = arg("escenas", POR_DEFECTO.join(",")).split(",");
 for (const e of ESCENAS) {
   if (!ESCENAS_T1[e]) {
     console.error(`Escena desconocida: ${e}. Son: ${Object.keys(ESCENAS_T1).join(", ")}.`);

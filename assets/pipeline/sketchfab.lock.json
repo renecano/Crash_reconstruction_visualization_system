@@ -58,5 +58,45 @@
     "sha256": "2bd1f34292bb900160f10d457bfc9b3d9f2c14cdf97f1a1109a75737dfa7109f",
     "bytes": 2343844,
     "caras": 42681
+  },
+  "van": {
+    "uid": "09d718c9cf72401b8534d265a06a803f",
+    "nombre": "Shvan '92",
+    "autor": "Daniel Zhabotinsky",
+    "licencia": "CC-BY 4.0",
+    "url": "https://sketchfab.com/3d-models/09d718c9cf72401b8534d265a06a803f",
+    "sha256": "c02f916d5e1575427b6592dbf15e1082689a88fe09b787938b8e67a77ebdabfd",
+    "bytes": 8026472,
+    "caras": 23045
+  },
+  "combi": {
+    "uid": "c5134fcf8d2944b4b8800ec46fa02e17",
+    "nombre": "Shvan 92 Traveller",
+    "autor": "Daniel Zhabotinsky",
+    "licencia": "CC-BY 4.0",
+    "url": "https://sketchfab.com/3d-models/c5134fcf8d2944b4b8800ec46fa02e17",
+    "sha256": "f4d052e42901290438b0b2b3b1e12dc9eb63a22e1053e8cbf0e0f6ff9da21f35",
+    "bytes": 8490484,
+    "caras": 27503
+  },
+  "autobus": {
+    "uid": "14fe03d792914d51b6c6250b393c44fd",
+    "nombre": "Generic Town Bus",
+    "autor": "own.guest",
+    "licencia": "CC-BY 4.0",
+    "url": "https://sketchfab.com/3d-models/14fe03d792914d51b6c6250b393c44fd",
+    "sha256": "a8750122cb211145706490e8fbd26ce821d6e8a4074f943974997b2331a02ab9",
+    "bytes": 3982360,
+    "caras": 55542
+  },
+  "tracto": {
+    "uid": "15a06d5b503c44209aab85d579f422d0",
+    "nombre": "Low Poly Red Semi Truck",
+    "autor": "JuraPicksHisNose",
+    "licencia": "CC-BY 4.0",
+    "url": "https://sketchfab.com/3d-models/15a06d5b503c44209aab85d579f422d0",
+    "sha256": "664225ad617f0acbf3ad50a462f0b16f1cde780d2b234a96ae3d3586a7f30992",
+    "bytes": 660436,
+    "caras": 9232
   }
 }

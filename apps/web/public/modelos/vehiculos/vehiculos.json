@@ -459,6 +459,387 @@
         "pintura": 1
       },
       "quitados": []
+    },
+    "van": {
+      "modelo": {
+        "nombre": "Shvan '92",
+        "autor": "Daniel Zhabotinsky",
+        "usuario": "DanielZhabotinsky",
+        "licencia": "CC-BY 4.0",
+        "url": "https://sketchfab.com/3d-models/09d718c9cf72401b8534d265a06a803f"
+      },
+      "archivos": {
+        "alta": {
+          "archivo": "van.glb",
+          "sha256": "c2056b3b892710fc1278f428e874f875004f3cd522b47fb7c5ffcdb4895b9754",
+          "bytes": 1769608
+        },
+        "ligero": {
+          "archivo": "van-ligero.glb",
+          "sha256": "ee7b456b90a17e281db6e35d01843e94914a63707424a370823e3b447f0becc8",
+          "bytes": 579124
+        },
+        "blender": {
+          "archivo": "van-blender.glb",
+          "sha256": "d5eb119d765581ce261fd929690b6ad52bf8a3c2caa620fbd0512d33f407f0d2",
+          "bytes": 1361792
+        }
+      },
+      "largo_m": 4.8976,
+      "ancho_m": 2.3487,
+      "alto_m": 1.9289,
+      "caras": 22841,
+      "ruedas": [
+        {
+          "nombre": "wheel_fl",
+          "centro": [
+            1.775,
+            0.836,
+            0.3627
+          ],
+          "radio": 0.3507
+        },
+        {
+          "nombre": "wheel_fr",
+          "centro": [
+            1.775,
+            -0.8221,
+            0.3507
+          ],
+          "radio": 0.3507
+        },
+        {
+          "nombre": "wheel_rl",
+          "centro": [
+            -1.3603,
+            0.836,
+            0.3627
+          ],
+          "radio": 0.3507
+        },
+        {
+          "nombre": "wheel_rr",
+          "centro": [
+            -1.3603,
+            -0.8221,
+            0.3507
+          ],
+          "radio": 0.3507
+        }
+      ],
+      "papeles": {
+        "plastico": 8,
+        "vidrio": 5,
+        "pintura": 2,
+        "calavera": 1,
+        "faro": 2
+      },
+      "quitados": [
+        "Shvan92_Body_Badges_Carbadges_misc_U_0",
+        "Shvan92_Numberplate_front_Numberplates_Misk_U_0",
+        "Shvan92_Numberplate_rear_Numberplates_Misk_U_0"
+      ]
+    },
+    "combi": {
+      "modelo": {
+        "nombre": "Shvan 92 Traveller",
+        "autor": "Daniel Zhabotinsky",
+        "usuario": "DanielZhabotinsky",
+        "licencia": "CC-BY 4.0",
+        "url": "https://sketchfab.com/3d-models/c5134fcf8d2944b4b8800ec46fa02e17"
+      },
+      "archivos": {
+        "alta": {
+          "archivo": "combi.glb",
+          "sha256": "707fb4a2bef5dcb7dc09f27d5aae566b30cab874f84628a265410866bddca2d0",
+          "bytes": 1906564
+        },
+        "ligero": {
+          "archivo": "combi-ligero.glb",
+          "sha256": "54a9d5e16f3111fe9de6d00e9c89ac18e457ca29af28426e4af609f1ceadb38a",
+          "bytes": 635316
+        },
+        "blender": {
+          "archivo": "combi-blender.glb",
+          "sha256": "226bf388a28f72086bde14f46ff441a3519260838cf7a65dde6eba0537a85698",
+          "bytes": 1404168
+        }
+      },
+      "largo_m": 5.1839,
+      "ancho_m": 2.3487,
+      "alto_m": 2.1069,
+      "caras": 27299,
+      "ruedas": [
+        {
+          "nombre": "wheel_fl",
+          "centro": [
+            1.804,
+            0.8516,
+            0.35
+          ],
+          "radio": 0.35
+        },
+        {
+          "nombre": "wheel_fr",
+          "centro": [
+            1.804,
+            -0.854,
+            0.35
+          ],
+          "radio": 0.35
+        },
+        {
+          "nombre": "wheel_rl",
+          "centro": [
+            -1.3312,
+            0.8516,
+            0.35
+          ],
+          "radio": 0.35
+        },
+        {
+          "nombre": "wheel_rr",
+          "centro": [
+            -1.3312,
+            -0.854,
+            0.35
+          ],
+          "radio": 0.35
+        }
+      ],
+      "papeles": {
+        "plastico": 10,
+        "vidrio": 5,
+        "pintura": 3,
+        "calavera": 1,
+        "faro": 2
+      },
+      "quitados": [
+        "Shvan92TRVL_Numberplate_front_Numberplates_Misk_U_0",
+        "Shvan92TRVL_Numberplate_rear_Numberplates_Misk_U_0",
+        "Shvan92_Body_Badges_Carbadges_misc_U_0"
+      ]
+    },
+    "autobus": {
+      "modelo": {
+        "nombre": "Generic Town Bus",
+        "autor": "own.guest",
+        "usuario": "own.guest",
+        "licencia": "CC-BY 4.0",
+        "url": "https://sketchfab.com/3d-models/14fe03d792914d51b6c6250b393c44fd"
+      },
+      "archivos": {
+        "alta": {
+          "archivo": "autobus.glb",
+          "sha256": "e440c72de6d9342f69e9f1ff7b089d3e05b5418954aefd76f7adc16d3c58ee59",
+          "bytes": 485012
+        },
+        "ligero": {
+          "archivo": "autobus-ligero.glb",
+          "sha256": "721dd804fbd3ffc52e083cf08ec8ad8d0d6c58d8fe879014b5ed5b50a2a40de5",
+          "bytes": 340312
+        },
+        "blender": {
+          "archivo": "autobus-blender.glb",
+          "sha256": "190ec0fd59a9371c2672f1a2a592344b521a304d1c0eba23c101552068da11f2",
+          "bytes": 410068
+        }
+      },
+      "largo_m": 11.5,
+      "ancho_m": 2.8021,
+      "alto_m": 2.8456,
+      "caras": 54416,
+      "ruedas": [
+        {
+          "nombre": "wheel_fl",
+          "centro": [
+            4.43,
+            1.15,
+            0.52
+          ],
+          "radio": 0.52,
+          "piezas": 3
+        },
+        {
+          "nombre": "wheel_fr",
+          "centro": [
+            4.43,
+            -1.15,
+            0.52
+          ],
+          "radio": 0.52,
+          "piezas": 4
+        },
+        {
+          "nombre": "wheel_rl",
+          "centro": [
+            -3.73,
+            1.15,
+            0.52
+          ],
+          "radio": 0.52,
+          "piezas": 2
+        },
+        {
+          "nombre": "wheel_rr",
+          "centro": [
+            -3.73,
+            -1.15,
+            0.52
+          ],
+          "radio": 0.52,
+          "piezas": 5
+        }
+      ],
+      "papeles": {
+        "calavera": 4,
+        "plastico": 35,
+        "faro": 2,
+        "pintura": 6,
+        "vidrio": 2,
+        "cromo": 2
+      },
+      "quitados": []
+    },
+    "tracto": {
+      "modelo": {
+        "nombre": "Low Poly Red Semi Truck",
+        "autor": "JuraPicksHisNose",
+        "usuario": "JuraPicksHisNose",
+        "licencia": "CC-BY 4.0",
+        "url": "https://sketchfab.com/3d-models/15a06d5b503c44209aab85d579f422d0"
+      },
+      "archivos": {
+        "alta": {
+          "archivo": "tracto.glb",
+          "sha256": "c8844c98f13c61046fe7fc9f378ab1bfe5a6251dc7892726f4e0e0323475bc2f",
+          "bytes": 58420
+        },
+        "ligero": {
+          "archivo": "tracto-ligero.glb",
+          "sha256": "87916b0a5ab14a0acf20e158c32783cccbaf5d3cbc9e7be4897838eb92adc576",
+          "bytes": 57068
+        },
+        "blender": {
+          "archivo": "tracto-blender.glb",
+          "sha256": "c8844c98f13c61046fe7fc9f378ab1bfe5a6251dc7892726f4e0e0323475bc2f",
+          "bytes": 58420
+        }
+      },
+      "largo_m": 7.3,
+      "ancho_m": 2.1609,
+      "alto_m": 3.2097,
+      "caras": 9148,
+      "ruedas": [
+        {
+          "nombre": "wheel_fl",
+          "centro": [
+            2.9484,
+            0.5098,
+            0.5135
+          ],
+          "radio": 0.5135,
+          "piezas": 1
+        },
+        {
+          "nombre": "wheel_fr",
+          "centro": [
+            2.9484,
+            -0.5098,
+            0.5135
+          ],
+          "radio": 0.5135,
+          "piezas": 1
+        },
+        {
+          "nombre": "wheel_rl",
+          "centro": [
+            -1.7376,
+            0.8248,
+            0.5135
+          ],
+          "radio": 0.5135,
+          "piezas": 2
+        },
+        {
+          "nombre": "wheel_rl2",
+          "centro": [
+            -1.7376,
+            0.3433,
+            0.5135
+          ],
+          "radio": 0.5135,
+          "piezas": 1
+        },
+        {
+          "nombre": "wheel_rl22",
+          "centro": [
+            -2.8209,
+            0.8248,
+            0.5135
+          ],
+          "radio": 0.5135,
+          "piezas": 2
+        },
+        {
+          "nombre": "wheel_rl222",
+          "centro": [
+            -2.8209,
+            0.3433,
+            0.5135
+          ],
+          "radio": 0.5135,
+          "piezas": 1
+        },
+        {
+          "nombre": "wheel_rr",
+          "centro": [
+            -1.7376,
+            -0.3433,
+            0.5135
+          ],
+          "radio": 0.5135,
+          "piezas": 1
+        },
+        {
+          "nombre": "wheel_rr2",
+          "centro": [
+            -1.7376,
+            -0.8248,
+            0.5135
+          ],
+          "radio": 0.5135,
+          "piezas": 2
+        },
+        {
+          "nombre": "wheel_rr22",
+          "centro": [
+            -2.8209,
+            -0.3433,
+            0.5135
+          ],
+          "radio": 0.5135,
+          "piezas": 1
+        },
+        {
+          "nombre": "wheel_rr222",
+          "centro": [
+            -2.8209,
+            -0.8248,
+            0.5135
+          ],
+          "radio": 0.5135,
+          "piezas": 1
+        }
+      ],
+      "papeles": {
+        "calavera": 1,
+        "plastico": 21,
+        "pintura": 2,
+        "cromo": 3,
+        "vidrio": 1
+      },
+      "quitados": []
     }
   }
 }

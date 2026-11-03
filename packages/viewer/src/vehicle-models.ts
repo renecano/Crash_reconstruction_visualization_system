@@ -35,10 +35,20 @@ export const VEHICLE_MODEL_BASE_URL = "/modelos/vehiculos/";
 /** Draco y Basis, copiados de three en cada build (`apps/web/scripts/decodificadores.mjs`). */
 export const DECODERS_BASE_URL = `/decodificadores/r${REVISION}/`;
 
-export type ModelClass = "sedan" | "hatchback" | "suv" | "pickup" | "camion" | "moto";
+export type ModelClass =
+  | "sedan"
+  | "hatchback"
+  | "suv"
+  | "pickup"
+  | "camion"
+  | "moto"
+  | "van"
+  | "combi"
+  | "autobus"
+  | "tracto";
 export type ModelVariant = "alta" | "ligero";
 
-/** La clase del visor que dibuja cada modelo; las demás (van, autobús…) siguen paramétricas. */
+/** La clase del visor que dibuja cada modelo; bicicleta y scooter siguen paramétricas. */
 export const MODEL_FOR_CLASS: Readonly<Record<string, ModelClass>> = {
   sedan_compacto: "sedan",
   sedan_mediano: "sedan",
@@ -48,6 +58,11 @@ export const MODEL_FOR_CLASS: Readonly<Record<string, ModelClass>> = {
   pickup: "pickup",
   camion_unitario: "camion",
   motocicleta: "moto",
+  // T1.4 (ADR 0097).
+  van: "van",
+  microbus_combi: "combi",
+  autobus: "autobus",
+  tractocamion: "tracto",
 };
 
 /** La versión del modelo para cada calidad (§7.8): completa en alta y ultra, ligera en media. */

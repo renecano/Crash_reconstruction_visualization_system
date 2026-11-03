@@ -5,6 +5,7 @@ from __future__ import annotations
 import argparse
 import hashlib
 import json
+import os
 import sys
 import tempfile
 from pathlib import Path
@@ -145,7 +146,8 @@ def _vehicles(action: str) -> int:
         print(f"{len(rutas)} modelos descargados y verificados (licencia y SHA-256 del lock)")
         return 0
     if action == "build":
-        m = vehicles.build()
+        solo = os.environ.get("CROQUIS_VEHICULOS_SOLO", "")
+        m = vehicles.build({c for c in solo.split(",") if c} or None)
         for clase, c in m["clases"].items():
             tam = ", ".join(f"{v} {a['bytes'] / 1e6:.2f} MB" for v, a in c["archivos"].items())
             print(f"{clase}: {c['caras']} caras; {tam}; quitados: {len(c['quitados'])}")

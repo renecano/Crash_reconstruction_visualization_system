@@ -116,7 +116,7 @@ def papel_de_auto(nombre: str, material: str) -> tuple[str, str | None]:
         return "faro", "headlights"
     if "brakelight" in n or "taillight" in n:
         return "calavera", None
-    if "wheelstock" in n:
+    if "wheelstock" in n or "wheelcustom" in n:
         return "rueda", "rueda"
     return "plastico", None
 
@@ -301,15 +301,286 @@ def preparar_moto() -> dict:
     return {"papeles": papeles, "ruedas": datos}
 
 
+# --- Modelos genéricos (T1.4, ADR 0097) ---------------------------------------------------------
+# Para modelos de otros autores, sin los nombres de pieza de Daniel Zhabotinsky: la configuración
+# (en ``vehicles.py``) da el largo real, el giro al frente +X y el papel de cada material. Las
+# llantas y las luces se reconocen por geometría: los componentes redondos de los materiales de
+# llanta son ruedas; los componentes de los materiales de luces, al frente y abajo son faros y
+# atrás, calaveras.
+
+
+def _material(o) -> str:
+    return next((m.name for m in o.data.materials if m), "")
+
+
+def fusionar_vertices(o, dist: float = 1e-4) -> None:
+    """Une los vértices repetidos: muchos modelos llegan como caras sueltas y los componentes
+    (ruedas, luces) solo se reconocen por conectividad."""
+    bm = bmesh.new()
+    bm.from_mesh(o.data)
+    bmesh.ops.remove_doubles(bm, verts=bm.verts, dist=dist)
+    bm.to_mesh(o.data)
+    bm.free()
+
+
+def _es_disco(a: Vector, b: Vector, radio_min: float, ancho_max: float = 0.7) -> bool:
+    """Redondo en XZ, delgado en Y y con el centro a la altura de su radio (toca el piso)."""
+    d = b - a
+    r = max(d.x, d.z) / 2
+    cz = (a.z + b.z) / 2
+    return (
+        r >= radio_min
+        and abs(d.x - d.z) < 0.2 * max(d.x, d.z)
+        and d.y < ancho_max * d.x
+        and abs(cz - r) < 0.3 * r
+    )
+
+
+def _caras_en_cilindro(o, c: Vector, r: float, ancho: float) -> set[int]:
+    """Caras cuyo centro cae dentro del cilindro de la rueda (eje Y) centrado en c."""
+    out: set[int] = set()
+    for f in o.data.polygons:
+        p = f.center
+        if (p.x - c.x) ** 2 + (p.z - c.z) ** 2 <= r * r and abs(p.y - c.y) <= ancho / 2:
+            out.add(f.index)
+    return out
+
+
+def _caras_por_lado(o, caras: list[int]) -> tuple[list[int], list[int]]:
+    """Las caras de un componente a cada lado del plano Y = centro (llantas unidas por su eje)."""
+    bm = bmesh.new()
+    bm.from_mesh(o.data)
+    bm.faces.ensure_lookup_table()
+    ys = [bm.faces[i].calc_center_median().y for i in caras]
+    ym = (min(ys) + max(ys)) / 2
+    izq = [i for i, y in zip(caras, ys, strict=True) if y >= ym]
+    der = [i for i, y in zip(caras, ys, strict=True) if y < ym]
+    bm.free()
+    return izq, der
+
+
+def _caja_caras(o, caras: list[int]) -> tuple[Vector, Vector]:
+    pts = [o.data.vertices[v].co for i in caras for v in o.data.polygons[i].vertices]
+    lo = Vector((min(p.x for p in pts), min(p.y for p in pts), min(p.z for p in pts)))
+    hi = Vector((max(p.x for p in pts), max(p.y for p in pts), max(p.z for p in pts)))
+    return lo, hi
+
+
+def _empaquetar_ruedas(ruedas_c: list, piezas: dict[int, list]) -> list[dict]:
+    """Un vacío por rueda con sus piezas (llanta y rin) adentro; nombres como en los autos."""
+    datos: list[dict] = []
+    for k, (c, r) in enumerate(ruedas_c):
+        frente = "f" if c.x > 0 else "r"
+        nombre = f"wheel_{frente}{'l' if c.y > 0 else 'r'}"
+        while any(d["nombre"] == nombre for d in datos):
+            nombre += "2"
+        vacio = bpy.data.objects.new(nombre, None)
+        bpy.context.scene.collection.objects.link(vacio)
+        vacio.location = c
+        vacio["radius"] = round(r, 4)
+        for j, o in enumerate(piezas.get(k, [])):
+            o.data.transform(Matrix.Translation(-c))
+            o.parent = vacio
+            o.location = (0, 0, 0)
+            o.name = f"{nombre}_rueda_{j}"
+            o["role"] = "rueda"
+        datos.append(
+            {
+                "nombre": nombre,
+                "centro": [round(v, 4) for v in c],
+                "radio": round(r, 4),
+                "piezas": len(piezas.get(k, [])),
+            }
+        )
+    return sorted(datos, key=lambda d: d["nombre"])
+
+
+def preparar_generico(cfg: dict) -> dict:
+    roles: dict[str, str] = cfg.get("roles", {})
+    # 1. Frente hacia +X y largo real.
+    giro = float(cfg.get("giro_z_deg", 0))
+    if giro:
+        m_giro = Matrix.Rotation(math.radians(giro), 4, "Z")
+        for o in mallas():
+            o.data.transform(m_giro)
+    lo, hi = caja(mallas())
+    s = float(cfg["largo_m"]) / (hi.x - lo.x)
+    for o in mallas():
+        o.data.transform(Matrix.Scale(s, 4))
+    lo, hi = caja(mallas())
+    mover(Vector((-(lo.x + hi.x) / 2, -(lo.y + hi.y) / 2, -lo.z)))
+    for o in mallas():
+        fusionar_vertices(o)
+    # 2. Ruedas: componentes redondos (plano XZ, delgados en Y) de los materiales de llanta,
+    #    agrupados por centro (llanta y rin de la misma rueda).
+    radio_min = float(cfg.get("radio_min_m", 0.25))
+    ruedas_c: list[tuple[Vector, float]] = []
+    asignacion: list[tuple[int, object, list[int]]] = []
+    # 2a. Ruedas por cilindro (modelos con las llantas fundidas en la carrocería, como el
+    #     autobús): la configuración da los centros y el radio; se recortan las caras de los
+    #     materiales indicados que caen dentro de cada cilindro.
+    cil = cfg.get("ruedas_cilindro")
+    if cil:
+        r_cil = float(cil["radio_m"])
+        for cx, cy, cz in cil["centros"]:
+            c = Vector((cx, cy, cz))
+            k = len(ruedas_c)
+            ruedas_c.append((c, r_cil))
+            for o in list(mallas()):
+                if _material(o) not in cil["materiales"]:
+                    continue
+                caras = _caras_en_cilindro(o, c, r_cil * 1.05, float(cil["ancho_m"]))
+                if caras:
+                    asignacion.append((k, o, sorted(caras)))
+    # 2b. Ruedas por conectividad: componentes redondos de los materiales de llanta.
+    discos: list[tuple[Vector, float, object, list[int]]] = []
+    otros: list[tuple[Vector, object, list[int]]] = []
+    for o in list(mallas()):
+        if roles.get(_material(o)) != "rueda":
+            continue
+        for caras, a, b in componentes(o):
+            d = b - a
+            redondo = abs(d.x - d.z) < 0.2 * max(d.x, d.z)
+            # Dos llantas unidas por su eje: un componente ancho en Y; se parte por la mitad y
+            # cada mitad (llanta más medio eje) cuenta como disco aunque sea ancha.
+            if redondo and d.y > 0.7 * d.x and max(d.x, d.z) / 2 >= radio_min:
+                for lado in _caras_por_lado(o, caras):
+                    if not lado:
+                        continue
+                    aa, bb = _caja_caras(o, lado)
+                    if _es_disco(aa, bb, radio_min, ancho_max=1.2):
+                        discos.append(((aa + bb) / 2, max(bb.x - aa.x, bb.z - aa.z) / 2, o, lado))
+                    else:
+                        otros.append(((aa + bb) / 2, o, lado))
+            elif _es_disco(a, b, radio_min):
+                discos.append(((a + b) / 2, max(b.x - a.x, b.z - a.z) / 2, o, caras))
+            else:
+                otros.append(((a + b) / 2, o, caras))
+
+    def rueda_de(c: Vector) -> int | None:
+        for k, (cw, rw_) in enumerate(ruedas_c):
+            cerca = abs(c.x - cw.x) < 0.35 * rw_ and abs(c.z - cw.z) < 0.35 * rw_
+            if cerca and abs(c.y - cw.y) < 0.45:
+                return k
+        return None
+
+    for c, r, o, caras in sorted(discos, key=lambda d: -d[1]):
+        k = rueda_de(c)
+        if k is None:
+            ruedas_c.append((c, r))
+            k = len(ruedas_c) - 1
+        asignacion.append((k, o, caras))
+    # Rines, tapones y tuercas: lo demás de los materiales de llanta que cae en una rueda.
+    for c, o, caras in otros:
+        k = rueda_de(c)
+        if k is not None:
+            asignacion.append((k, o, caras))
+    if not ruedas_c:
+        msg = "No se encontraron ruedas: revisa los materiales de llanta de la configuración"
+        raise ValueError(msg)
+    # El piso lo ponen las ruedas: la más baja toca z = 0.
+    dz = min(c.z - r for c, r in ruedas_c)
+    mover(Vector((0, 0, -dz)))
+    ruedas_c = [(c - Vector((0, 0, dz)), r) for c, r in ruedas_c]
+    piezas: dict[int, list] = {}
+    por_objeto: dict[str, dict[int, set[int]]] = {}
+    for k, o, caras in asignacion:
+        por_objeto.setdefault(o.name, {}).setdefault(k, set()).update(caras)
+    for nombre, por_rueda in por_objeto.items():
+        o = bpy.data.objects[nombre]
+        # Al separar un conjunto de caras los índices del resto cambian: se recorre de mayor a
+        # menor índice y se traducen los conjuntos que quedan.
+        pendientes = {k: set(caras) for k, caras in por_rueda.items()}
+        for k in list(pendientes):
+            caras = pendientes.pop(k)
+            if not caras:
+                continue
+            piezas.setdefault(k, []).append(separar_caras(o, caras, f"rueda_{k}_{nombre}"))
+            quitadas = sorted(caras)
+            for k2, resto in pendientes.items():
+                nuevo: set[int] = set()
+                for i in resto:
+                    if i in caras:
+                        continue
+                    # Cuántas caras quitadas había antes de i.
+                    desplaza = sum(1 for q in quitadas if q < i)
+                    nuevo.add(i - desplaza)
+                pendientes[k2] = nuevo
+        if not o.data.polygons:
+            bpy.data.objects.remove(o, do_unlink=True)
+    # 3. Luces por geometría: al frente y abajo, faros (izquierdo y derecho); atrás, calaveras.
+    lo, hi = caja(mallas())
+    faros: list = []
+    papeles: dict[str, int] = {}
+    for o in list(mallas()):
+        papel = roles.get(_material(o))
+        # Los faros también pueden venir en el material del vidrio (micas): al frente y abajo.
+        if papel not in ("luces", "vidrio"):
+            continue
+        frente_caras: set[int] = set()
+        atras_caras: set[int] = set()
+        for caras, a, b in componentes(o):
+            c = (a + b) / 2
+            if c.x > 0.8 * hi.x and c.z < 0.4 * hi.z and (b - a).x < 0.6:
+                frente_caras.update(caras)
+            elif papel == "luces" and c.x < 0.8 * lo.x and c.z < 0.6 * hi.z:
+                atras_caras.update(caras)
+        if frente_caras:
+            faros.append(separar_caras(o, frente_caras, f"faros_{o.name}"))
+        if atras_caras:
+            cal = separar_caras(o, atras_caras, f"calaveras_{o.name}")
+            cal["role"] = "calavera"
+            papeles["calavera"] = papeles.get("calavera", 0) + 1
+        if not o.data.polygons:
+            bpy.data.objects.remove(o, do_unlink=True)
+            continue
+        if papel == "luces":
+            o["role"] = "plastico"
+            papeles["plastico"] = papeles.get("plastico", 0) + 1
+    for k, f in enumerate(faros):
+        for parte in separar_por_lado(
+            f,
+            "headlight_l" if k == 0 else f"faro_l_{k}",
+            "headlight_r" if k == 0 else f"faro_r_{k}",
+        ):
+            if parte.data.polygons:
+                parte["role"] = "faro"
+                papeles["faro"] = papeles.get("faro", 0) + 1
+            else:
+                bpy.data.objects.remove(parte, do_unlink=True)
+    # 4. Los demás papeles, por material; el parabrisas es el vidrio más al frente.
+    vidrios: list = []
+    for o in mallas():
+        if "role" in o or o.parent is not None:
+            continue
+        papel = roles.get(_material(o), "plastico")
+        if papel in ("rueda", "luces"):
+            papel = "plastico"
+        o["role"] = papel
+        papeles[papel] = papeles.get(papel, 0) + 1
+        if papel == "vidrio":
+            vidrios.append(o)
+    if vidrios:
+        parabrisas = max(vidrios, key=lambda o: caja([o])[1].x)
+        parabrisas.name = "windshield"
+    datos = _empaquetar_ruedas(ruedas_c, piezas)
+    return {"papeles": papeles, "ruedas": datos}
+
+
 def main() -> None:
-    clase, entrada, salida, manifiesto = sys.argv[sys.argv.index("--") + 1 :][:4]
+    args = sys.argv[sys.argv.index("--") + 1 :]
+    clase, entrada, salida, manifiesto = args[:4]
+    cfg = json.loads(args[4]) if len(args) > 4 and args[4] else {}
     bpy.ops.wm.read_factory_settings(use_empty=True)
     bpy.ops.import_scene.gltf(filepath=entrada)
     aplanar()
     quitados = quitar_marcas()
     lo, hi = caja(mallas())
     mover(Vector((-(lo.x + hi.x) / 2, -(lo.y + hi.y) / 2, -lo.z)))
-    info = preparar_moto() if clase == "moto" else preparar_auto()
+    if cfg:
+        info = preparar_generico(cfg)
+    else:
+        info = preparar_moto() if clase == "moto" else preparar_auto()
     # Las ruedas cambiaron de padre: sin actualizar, su ``matrix_world`` sigue siendo la anterior.
     bpy.context.view_layer.update()
     lo, hi = caja(mallas())
@@ -344,4 +615,5 @@ def main() -> None:
     print("PREPARADO", clase, caras, "caras")
 
 
-main()
+if __name__ == "__main__":
+    main()

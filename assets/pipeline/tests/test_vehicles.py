@@ -39,7 +39,18 @@ def test_rechaza_si_ya_no_se_puede_descargar_o_es_otro_modelo() -> None:
 
 def test_un_modelo_por_clase() -> None:
     clases = [m.clase for m in vehicles.MODELOS]
-    assert sorted(clases) == ["camion", "hatchback", "moto", "pickup", "sedan", "suv"]
+    assert sorted(clases) == [
+        "autobus",
+        "camion",
+        "combi",
+        "hatchback",
+        "moto",
+        "pickup",
+        "sedan",
+        "suv",
+        "tracto",
+        "van",
+    ]
     assert len({m.uid for m in vehicles.MODELOS}) == len(clases)
 
 
@@ -57,18 +68,23 @@ def test_el_manifiesto_trae_licencia_ruedas_y_limpieza() -> None:
         # La versión ligera (calidad media) pesa menos que la de alta.
         assert c["archivos"]["ligero"]["bytes"] <= c["archivos"]["alta"]["bytes"]
         nombres = [r["nombre"] for r in c["ruedas"]]
+        modelo = next(m for m in vehicles.MODELOS if m.clase == clase)
         if clase == "moto":
             assert nombres == ["wheel_f", "wheel_r"]
+        elif modelo.generico:
+            # Genéricos (T1.4): al menos un eje delantero y uno trasero, de los dos lados.
+            assert {"wheel_fl", "wheel_fr", "wheel_rl", "wheel_rr"} <= set(nombres), clase
         else:
             assert nombres == ["wheel_fl", "wheel_fr", "wheel_rl", "wheel_rr"]
             # Los modelos de Daniel Zhabotinsky traen placas y emblemas: se quitan (regla 5).
             assert c["quitados"], clase
             assert all("Numberplate" in q or "NP_" in q or "Badges" in q for q in c["quitados"])
         for r in c["ruedas"]:
-            # Cada rueda toca el piso: su centro está a la altura de su radio.
-            assert r["centro"][2] == pytest.approx(r["radio"], abs=0.01)
+            # Cada rueda toca el piso: su centro está a la altura de su radio (la Shvan '92 trae
+            # las ruedas izquierdas 1.2 cm más altas que las derechas: es del modelo).
+            assert r["centro"][2] == pytest.approx(r["radio"], abs=0.015)
         assert c["papeles"].get("pintura", 0) >= 1
-        assert 1.5 < c["largo_m"] < 8
+        assert 1.5 < c["largo_m"] < 13
 
 
 def _glb_json(nombre: str) -> dict[str, Any]:
@@ -77,19 +93,21 @@ def _glb_json(nombre: str) -> dict[str, Any]:
     return json.loads(datos[20 : 20 + largo])
 
 
-@pytest.mark.parametrize("clase", ["sedan", "hatchback", "suv", "pickup", "camion", "moto"])
+@pytest.mark.parametrize("clase", [m.clase for m in vehicles.MODELOS])
 def test_cada_version_trae_lo_que_espera_el_visor(clase: str) -> None:
     m = json.loads(vehicles.MANIFIESTO.read_text(encoding="utf-8"))["clases"][clase]
     for variante, a in m["archivos"].items():
         g = _glb_json(a["archivo"])
         requeridas = set(g.get("extensionsRequired", []))
         assert "KHR_draco_mesh_compression" in requeridas
-        # La moto no trae texturas; los autos, en KTX2 (en WebP la versión para Blender).
+        # La moto y el tractocamión no traen texturas; los demás, en KTX2 (en WebP la versión
+        # para Blender).
+        con_texturas = bool(g.get("images"))
         if variante == "blender":
             assert "KHR_texture_basisu" not in requeridas
-            if clase != "moto":
+            if con_texturas:
                 assert "EXT_texture_webp" in set(g.get("extensionsUsed", []))
-        elif clase != "moto":
+        elif con_texturas:
             assert "KHR_texture_basisu" in requeridas
         nodos: list[dict[str, Any]] = g["nodes"]
 
@@ -103,6 +121,16 @@ def test_cada_version_trae_lo_que_espera_el_visor(clase: str) -> None:
         assert {"pintura", "rueda"} <= papeles
         ruedas = [n for n in nodos if n.get("name", "").startswith("wheel_") and "mesh" not in n]
         assert all(extras(n).get("radius", 0) > 0 for n in ruedas)
-        assert len(ruedas) == (2 if clase == "moto" else 4)
-        if clase != "moto":
+        modelo = next(mm for mm in vehicles.MODELOS if mm.clase == clase)
+        if clase == "moto":
+            assert len(ruedas) == 2
+        elif modelo.generico:
+            # Genéricos (T1.4): ejes dobles con más de cuatro ruedas (el tractocamión).
+            assert len(ruedas) >= 4
+        else:
+            assert len(ruedas) == 4
+        if clase != "moto" and modelo.generico and not m["papeles"].get("faro"):
+            # Genéricos sin faros separables (ADR 0097, límites): solo el parabrisas.
+            assert "windshield" in nombres
+        elif clase != "moto":
             assert {"windshield", "headlight_l", "headlight_r"} <= nombres

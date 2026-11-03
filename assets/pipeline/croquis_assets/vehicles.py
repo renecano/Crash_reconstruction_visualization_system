@@ -41,6 +41,10 @@ class Modelo:
     nombre: str
     autor: str
     usuario: str
+    # Modelos que no son de Daniel Zhabotinsky (T1.4): el script de Blender no conoce sus nombres
+    # de pieza, así que reciben su configuración: largo real, giro al frente +X, papel por material
+    # y qué materiales son llantas o luces (ver ``preparar_generico`` en ``preparar_vehiculo.py``).
+    generico: dict[str, Any] | None = None
 
     @property
     def url(self) -> str:
@@ -91,6 +95,90 @@ MODELOS: tuple[Modelo, ...] = (
     # «Red motorcycle» (Chenzoss) se descartó al revisarlo: una sola malla con iluminación horneada,
     # el emblema azul y los colores de un modelo real (ver docs/PROGRESS.md, R10).
     Modelo("moto", "5bb654aed341477b8878f1e2ffd6fcd2", "Enduro bike", "Zaborchik", "Zaborchik"),
+    # T1.4 (ADR 0097): las clases que seguían paramétricas.
+    Modelo(
+        "van",
+        "09d718c9cf72401b8534d265a06a803f",
+        "Shvan '92",
+        "Daniel Zhabotinsky",
+        "DanielZhabotinsky",
+    ),
+    Modelo(
+        "combi",
+        "c5134fcf8d2944b4b8800ec46fa02e17",
+        "Shvan 92 Traveller",
+        "Daniel Zhabotinsky",
+        "DanielZhabotinsky",
+    ),
+    Modelo(
+        "autobus",
+        "14fe03d792914d51b6c6250b393c44fd",
+        "Generic Town Bus",
+        "own.guest",
+        "own.guest",
+        generico={
+            # Viene con el frente hacia +X y sin escala (130 unidades de largo).
+            "largo_m": 11.5,
+            "giro_z_deg": 0,
+            "roles": {
+                "glass": "vidrio",
+                "standard": "pintura",
+                "standard2": "pintura",
+                "standard21": "pintura",
+                "standard111": "pintura",
+                "1616862037160": "pintura",
+                "standard11111": "luces",
+                "standard1111": "luces",
+                "standard11": "luces",
+                "chrome": "cromo",
+                "metall": "plastico",
+                "rezina": "plastico",
+                "seat": "plastico",
+                "wood": "plastico",
+                "light": "plastico",
+            },
+            # Las llantas vienen fundidas con el chasis: se recortan por cilindro en los pasos de
+            # rueda (centros medidos en el modelo escalado a 11.5 m; ver ADR 0097).
+            "ruedas_cilindro": {
+                "materiales": ["black", "standard1", "rezina", "material_7", "chrome"],
+                "radio_m": 0.52,
+                "ancho_m": 0.6,
+                "centros": [
+                    [4.43, 1.15, 0.5],
+                    [4.43, -1.15, 0.5],
+                    [-3.73, 1.15, 0.5],
+                    [-3.73, -1.15, 0.5],
+                ],
+            },
+        },
+    ),
+    Modelo(
+        "tracto",
+        "15a06d5b503c44209aab85d579f422d0",
+        "Low Poly Red Semi Truck",
+        "JuraPicksHisNose",
+        "JuraPicksHisNose",
+        generico={
+            # Viene con el frente hacia +Z (−Y en Blender) y a media escala.
+            "largo_m": 7.3,
+            "giro_z_deg": 90,
+            "roles": {
+                "Material.018": "pintura",
+                "Material": "pintura",
+                "Material.004": "vidrio",
+                "Material.002": "cromo",
+                "Material.019": "cromo",
+                "Material.006": "cromo",
+                "Material.017": "luces",
+                "Material.007": "rueda",
+                "Material.008": "rueda",
+                "Material.011": "rueda",
+                "Material.012": "rueda",
+                "Material.009": "rueda",
+                "Material.010": "rueda",
+            },
+        },
+    ),
 )
 
 
@@ -232,8 +320,11 @@ def preparar(m: Modelo) -> dict[str, Any]:
     glb = PREPARADOS / f"{m.clase}.glb"
     info = PREPARADOS / f"{m.clase}.json"
     cmd = [BLENDER, "-b", "--factory-startup", "-P", str(SCRIPT_BLENDER), "--"]
+    config = json.dumps(m.generico or {}, ensure_ascii=False)
     subprocess.run(
-        [*cmd, m.clase, str(m.raw), str(glb), str(info)], check=True, capture_output=True
+        [*cmd, m.clase, str(m.raw), str(glb), str(info), config],
+        check=True,
+        capture_output=True,
     )
     return json.loads(info.read_text(encoding="utf-8"))
 
@@ -261,11 +352,24 @@ def optimizar(m: Modelo) -> dict[str, dict[str, Any]]:
     return archivos
 
 
-def build() -> dict[str, Any]:
-    """Prepara y optimiza los seis modelos y escribe ``vehiculos.json``."""
+def build(solo: set[str] | None = None) -> dict[str, Any]:
+    """Prepara y optimiza los modelos (todos, o ``solo`` esas clases) y escribe ``vehiculos.json``.
+
+    Con ``solo``, las demás clases conservan su entrada del manifiesto actual: así un modelo nuevo
+    no vuelve a pasar por Blender a los que ya están versionados.
+    """
     lock = _lock()
+    previo: dict[str, Any] = (
+        json.loads(MANIFIESTO.read_text(encoding="utf-8")).get("clases", {})
+        if MANIFIESTO.exists()
+        else {}
+    )
     clases: dict[str, Any] = {}
     for m in MODELOS:
+        if solo is not None and m.clase not in solo:
+            if m.clase in previo:
+                clases[m.clase] = previo[m.clase]
+            continue
         fijado = lock.get(m.clase)
         if not fijado or hashlib.sha256(m.raw.read_bytes()).hexdigest() != fijado["sha256"]:
             msg = f"{m.nombre}: falta el original o no coincide con el lock; corre `download`."
