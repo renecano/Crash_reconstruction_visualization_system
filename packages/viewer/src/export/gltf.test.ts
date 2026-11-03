@@ -31,6 +31,7 @@ import {
   exportSceneGlb,
   sampleTimes,
   withoutCompressedTextures,
+  warpedTimes,
 } from "./gltf";
 
 const opts = {
@@ -234,7 +235,10 @@ describe("exportación glTF", () => {
     expect(nombres).toEqual(cameras.map((c) => c.nombre));
     expect(nombres[0]).toBe("Cinematográfica");
     expect(nombres).toContain(`Conductor ${r.vehiculos[0]!.id}`);
-    expect(json.cameras![0]!.perspective!.yfov).toBeCloseTo((38 * Math.PI) / 180, 5);
+    expect(json.cameras![0]!.perspective!.yfov).toBeCloseTo(
+      (cinematicCamera(r, r.t_inicio).fov * Math.PI) / 180,
+      5,
+    );
     const extras = json.scenes[0]!.extras!;
     expect(extras.camara_principal).toBe("Cinematográfica");
     expect(extras.fps).toBe(10);
@@ -262,5 +266,24 @@ describe("exportación glTF", () => {
       [cenital.name, cenital.uuid].includes(t.name.split(".")[0]!),
     );
     expect(pistas).toHaveLength(0);
+  });
+});
+
+describe("cámara lenta horneada en el video (T1.5)", () => {
+  it("el video avanza a fps constantes y la escena frena donde el factor es menor", () => {
+    const warp = (t: number) => (Math.abs(t) < 0.5 ? 0.25 : 1);
+    const { scene, video } = warpedTimes(-2, 2, 10, warp);
+    expect(video[0]).toBe(0);
+    for (let k = 1; k < video.length; k++) expect(video[k]! - video[k - 1]!).toBeCloseTo(0.1, 9);
+    expect(scene[0]).toBe(-2);
+    expect(scene[scene.length - 1]).toBeCloseTo(2, 9);
+    // Fuera del impacto la escena avanza 0.1 s por cuadro; dentro, 0.025 s.
+    expect(scene[1]! - scene[0]!).toBeCloseTo(0.1, 9);
+    const inside = scene.findIndex((t) => t > -0.5 + 0.01);
+    expect(scene[inside + 1]! - scene[inside]!).toBeCloseTo(0.025, 9);
+    // Más cuadros que sin cámara lenta: el clip dura más que la escena.
+    expect(video[video.length - 1]!).toBeGreaterThan(4);
+    const plain = warpedTimes(-2, 2, 10);
+    expect(plain.video[plain.video.length - 1]).toBeCloseTo(4, 9);
   });
 });

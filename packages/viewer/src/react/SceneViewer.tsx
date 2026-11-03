@@ -29,6 +29,8 @@ import { SkyMesh } from "three/examples/jsm/objects/SkyMesh.js";
 import { CubeRenderTarget, type WebGPURenderer } from "three/webgpu";
 import {
   actionBounds,
+  blendPose,
+  CAMERA_TRANSITION_MS,
   cinematicCamera,
   damageCamera,
   personCamera,
@@ -62,6 +64,7 @@ import { BODY_BASE_URL, loadBodies } from "../body-assets";
 import { PostEffects } from "./PostEffects";
 import {
   cinematicFocus,
+  impactTimeWarp,
   firstImpactTime,
   impactBlurWeight,
   newFxState,
@@ -490,6 +493,8 @@ function SceneContent({
             ),
           ),
           ambiente: ambienteDe(env),
+          // La cámara lenta del visor viaja al video (T1.5).
+          timeWarp: (t) => impactTimeWarp(t, firstImpactTime(resultado)),
         });
       },
     };
@@ -820,10 +825,41 @@ function SceneContent({
   }, [overlay, camera, driver]);
 
   const puntoImpacto = useMemo(() => graph.root.getObjectByName("punto_impacto") ?? null, [graph]);
-  const tImpacto = useMemo(
-    () => firstImpactTime(resultado as { eventos?: { tipo: string; t?: number }[] }),
-    [resultado],
-  );
+  const tImpacto = useMemo(() => firstImpactTime(resultado), [resultado]);
+  // Cámara lenta en el contacto, solo con la cinematográfica (T1.5).
+  useEffect(() => {
+    clock.setWarp(camera === "cinematica" ? (t) => impactTimeWarp(t, tImpacto) : null);
+    return () => clock.setWarp(null);
+  }, [clock, camera, tImpacto]);
+  // Transición suave entre cámaras (T1.5): la pose de donde venimos y cuándo empezó el cambio.
+  const lastPose = useRef<CameraPose | null>(null);
+  const transition = useRef<{ from: CameraPose; start: number } | null>(null);
+  const lastMode = useRef<CameraMode>(camera);
+  useEffect(() => {
+    if (lastMode.current !== camera) {
+      lastMode.current = camera;
+      transition.current =
+        lastPose.current && camera !== "libre"
+          ? { from: lastPose.current, start: performance.now() }
+          : null;
+    }
+  }, [camera]);
+  const settle = (pose: CameraPose): CameraPose => {
+    const tr = transition.current;
+    if (!tr) {
+      lastPose.current = pose;
+      return pose;
+    }
+    const k = (performance.now() - tr.start) / CAMERA_TRANSITION_MS;
+    if (k >= 1) {
+      transition.current = null;
+      lastPose.current = pose;
+      return pose;
+    }
+    const mixed = blendPose(tr.from, pose, k);
+    lastPose.current = mixed;
+    return mixed;
+  };
 
   useFrame((state, delta) => {
     clock.tick(Math.min(delta, 0.1), performance.now());
@@ -870,16 +906,25 @@ function SceneContent({
         return;
       }
     }
-    if (camera === "libre") controls.current?.update();
-    else if (camera === "cenital") applyPose(persp, overheadCamera(resultado));
+    if (camera === "libre") {
+      controls.current?.update();
+      lastPose.current = {
+        position: [persp.position.x, persp.position.y, persp.position.z],
+        target: controls.current
+          ? [controls.current.target.x, controls.current.target.y, controls.current.target.z]
+          : [0, 0, 0],
+        fov: persp.fov,
+        up: [persp.up.x, persp.up.y, persp.up.z],
+      };
+    } else if (camera === "cenital") applyPose(persp, settle(overheadCamera(resultado)));
     else if (camera === "conductor" && driver)
-      applyPose(persp, driverCamera(driver.v, t, driver.eye));
+      applyPose(persp, settle(driverCamera(driver.v, t, driver.eye)));
     else if (camera === "cinematica") {
-      const pose = cinematicCamera(resultado, t);
+      const pose = settle(cinematicCamera(resultado, t));
       applyPose(persp, pose);
       fx.focus = cinematicFocus(pose);
-    } else if (camera === "dano") applyPose(persp, damageCamera(resultado, t));
-    else if (camera === "persona") applyPose(persp, personCamera(resultado, t));
+    } else if (camera === "dano") applyPose(persp, settle(damageCamera(resultado, t)));
+    else if (camera === "persona") applyPose(persp, settle(personCamera(resultado, t)));
     if (camera !== "cinematica") fx.focus = null;
     fx.blur = clock.get().playing ? impactBlurWeight(t, tImpacto) : 0;
   });

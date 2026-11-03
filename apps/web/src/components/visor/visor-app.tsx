@@ -59,6 +59,7 @@ import { textos } from "@/i18n";
 import { useIdioma, useTextos } from "@/i18n/cliente";
 import { leerE9, registrarE9 } from "@/lib/e9";
 import { leerEscenaPropia } from "@/lib/escena-propia";
+import { useModoCesvi } from "@/components/cesvi/marco-cesvi";
 import { reconstruirCompletoEnNavegador } from "@/lib/reconstruct-client";
 import type { PeopleAttachment, ProceduralSummary } from "@croquis/viewer";
 import { Legend } from "../legend";
@@ -584,6 +585,7 @@ export function VisorEscena({
     })),
   ];
 
+  const { modo } = useModoCesvi();
   const leyenda = (
     <div className="pointer-events-none absolute inset-x-0 bottom-0 bg-[color-mix(in_srgb,var(--fondo)_72%,transparent)] px-4 py-2">
       <Legend
@@ -594,6 +596,7 @@ export function VisorEscena({
         modelos={exportApi?.vehicleCredits}
         texto={leyendaTexto}
         procedural={procedural ?? undefined}
+        limpia={modo === "presentar"}
       />
     </div>
   );

@@ -6,10 +6,10 @@ Reglas de trabajo: `CLAUDE.md`. Especificación: `PLAN.md`.
 ## Estado actual
 
 - **Ahora: plan de cierre v3** (René, 2026-10-30; `docs/cesvi/PLAN-CESVI.md`). Ya no se agregan fases: siete tramos cerrados (T1–T7), cada uno contra su «listo cuando». Orden de Claude Code: **T2a → T1 → T3 → T6 → T5 → T2b → T7**; T4 (prueba con personas) lo corre René en paralelo con `docs/cesvi/prueba-personas.md`. La v2 del plan y `PROTOTIPO.md` están en `docs/historial/`.
-  - **Tramo en curso: T1 (escenario 3D).** T1.1 (PR #151, ADR 0094) y T1.2 (PR #152, ADR 0095) están en `main`; T1.3 (PR #153, ADR 0096) también; T1.4 (vehículos, segunda pasada, ADR 0097) está hecho en la rama `feat/t1-4-vehiculos`. **Orden que fijó René el 2026-11-03** (T1.2 y T1.3 aprobados como avance, pero el escenario aún no se ve como un juego actual; la meta es GTA o Forza): terminar T1.4, luego T1.5 y luego T1.3b (segunda pasada del entorno), con media ≥ 60 fps en las 4 escenas, todo programado primero y capturas, fps y Playwright al final de cada subtramo, «Resumen para René» al cerrar T1.5 y T1.3b. Ver «T1 — Escenario 3D» más abajo: capturas de antes y después en `docs/cesvi/t1/`, fps en `eval/results/e6_t1_*.json`.
+  - **Tramo en curso: T1 (escenario 3D).** T1.1 (PR #151, ADR 0094) y T1.2 (PR #152, ADR 0095) están en `main`; T1.3 (PR #153, ADR 0096) también; T1.4 (PR #154, ADR 0097) también; T1.5 (cámara y presentación, ADR 0098) está hecho en la rama `feat/t1-5-camara`. **Orden que fijó René el 2026-11-03** (T1.2 y T1.3 aprobados como avance, pero el escenario aún no se ve como un juego actual; la meta es GTA o Forza): terminar T1.4, luego T1.5 y luego T1.3b (segunda pasada del entorno), con media ≥ 60 fps en las 4 escenas, todo programado primero y capturas, fps y Playwright al final de cada subtramo, «Resumen para René» al cerrar T1.5 y T1.3b. Ver «T1 — Escenario 3D» más abajo: capturas de antes y después en `docs/cesvi/t1/`, fps en `eval/results/e6_t1_*.json`.
   - **T2a (el `-Prueba` del colaborador):** pedido a René el 2026-10-30; el resultado llega en una rama `resultados/prueba-<fecha>`. Si falla, se arregla antes de seguir con T1 (fila en «Bloqueado»).
   - **T6.4 (los agentes respetan el orden de impactos)** quedó a medias en la rama `fix/agentes-orden-impactos` (commit `c8c8a08`, Python y TS cambiados, sin pruebas ni evaluación): se retoma en T6.
-  - **Siguiente paso concreto:** T1.5 (cámara y presentación) en la rama `feat/t1-5-camara`: cámara a nivel de calle (3–6 m, 35–50 mm) que vea el cielo y el horizonte, órbita lenta al impacto, cámara lenta en el contacto, transiciones suaves y leyenda limpia (sin «semilla»). Después T1.3b (segunda pasada del entorno, juzgada desde esa cámara: árboles impostores horneados de modelos CC0, fachadas PBR a la mexicana, pasto y suelo con variación, cercas y postes con grosor real, señales genéricas, noche con más contraste), según el mensaje de René del 2026-11-03. T1.2 y T1.3 están aprobados como avance; T1.4 está en PR (capturas en `docs/cesvi/t1/t1.4/`).
+  - **Siguiente paso concreto:** T1.3b (segunda pasada del entorno, juzgada desde la cámara nueva de T1.5) en la rama `feat/t1-3b-entorno`, según el mensaje de René del 2026-11-03: árboles impostores (octaedros o tarjetas cruzadas) horneados en Blender de modelos CC0 (Poly Haven o ambientCG), 3–4 especies mexicanas (fresno, jacaranda, pirul, palmera), fuera las esferas sobre palitos; fachadas con textura PBR CC0 y colores de concreto pintado típicos de México, variedad de alturas y anchos, azoteas con tinacos, antenas y varillas, herrería, toldos, cortinas metálicas, letreros sin marca ni texto real; pasto y suelo con manchas, tierra y orillas secas (pasto instanciado cerca de la cámara en alta y ultra); cercas y postes con grosor real; señales de tránsito genéricas en ciudad; noche con más contraste, edificios sólidos y ventanas encendidas que se lean de lejos. Todo con licencia en `assets/ASSETS.md`; media ≥ 60 fps en las 4 escenas; capturas «t1.3b», fps y Playwright al final; «Resumen para René» al cerrar. T1.4 está en `main`; T1.5 en PR (capturas en `docs/cesvi/t1/t1.5/`).
 - **Antes (2026-10-20 al 2026-10-29): prototipo y plan v2 para CESVI.** Lo que sigue en esta sección es la bitácora de ese periodo; sigue valiendo como historia de lo construido.
 - **Prototipo para CESVI** (desde el 2026-10-20). Croquis es para los peritos de CESVI México; el alcance lo pone CESVI (`CLAUDE.md`). La especificación es `docs/cesvi/PROTOTIPO.md`, que manda sobre `PLAN.md` en lo que se contradigan.
   - **Orden:** Hito 1 (el caso A2010930 y sus cálculos en `/cesvi`), Hito 2 (el lugar y el croquis sobre el mapa) y Hito 3 (correspondencia, sugerencia y dictamen en PDF). Cada uno se despliega al terminar.
@@ -1628,8 +1628,35 @@ Reglas de trabajo: `CLAUDE.md`. Especificación: `PLAN.md`.
   - **Lo que no entra:** la moto de trabajo de 125 cc (no hay una limpia con licencia libre: la única fiel copia una YBR 125); ver «Endurecimiento pendiente».
   - **Qué necesito de René:** aprobar o comentar las capturas de daño de las 4 escenas (el «listo cuando» de T1.4). Sigo con T1.5 sin esperar, y después T1.3b, en el orden de tu mensaje del 2026-11-03.
 
+- **T1.4 fusionado** en `main` el 2026-11-03 (PR #154, `5531b5c`).
+
+**T1.5 — Cámara y presentación (2026-11-03, rama `feat/t1-5-camara`, ADR 0098):**
+
+- **Hecho:** cámara cinematográfica a nivel de calle (3–6 m de altura y lente de 50 a 35 mm según el tamaño de la acción; mira a 1 m de altura con el horizonte en el tercio superior: por primera vez se ven el cielo, los cerros y el perfil urbano de T1.1–T1.3), órbita lenta (0.06 rad/s) alrededor del impacto; cámara lenta en el contacto (el reloj baja a un cuarto a menos de 0.25 s del primer impacto, con rampas de 0.6 s; no toca la velocidad que elige la persona); transiciones suaves de 1.2 s entre cámaras (también desde la libre); leyenda limpia en «Presentar» (texto de CESVI y atribuciones; fuera «semilla», hash y conteo procedural; las exportaciones conservan la semilla); el exportador a Blender hornea la misma cámara lenta en los instantes de muestreo y exporta la cámara nueva.
+- **Pruebas:** `cameras.test.ts` (altura, lente, horizonte en pantalla y órbita en alcance, carambola y lateral; mezcla de poses), `cinematic-fx.test.ts` (rampa), `clock.test.ts` (factor sin tocar `speed`), `export/gltf.test.ts` (instantes horneados; la cámara exportada lleva el campo de visión nuevo), `legend.test.tsx` (limpia); visor 340, web en verde; lint y tipos en verde.
+- **fps en media, laptop** (`eval/results/e6_t1_t1.5_media.json`, mediana de 3 navegadores nuevos):
+
+  | Escena               | T1.4: promedio / mediana / p1 | T1.5: promedio / mediana / p1 |
+  | -------------------- | ----------------------------- | ----------------------------- |
+  | AXA                  | 52.5 / 63.7 / 27.9            | 59.0 / 70.9 / 35.1            |
+  | lateral_interseccion | 69.1 / 70.9 / 36.4            | 73.0 / 74.6 / 38.3            |
+  | nocturno_lluvia      | 36.9 / 61.7 / 27.2            | 39.2 / 70.4 / 34.4            |
+  | carambola            | 64.6 / 68.0 / 21.0            | 72.4 / 73.5 / 41.7            |
+  - **Las 4 cumplen con margen (≥ 70 de mediana):** desde la calle la cámara ve menos asfalto y pasto de cerca (lo que más pixeles llenaba desde arriba) y más cielo, que es barato.
+
+- **Lo que la cámara nueva deja ver (entrada de T1.3b):** el cielo de día es plano y gris en AXA y la carambola (el HDRI nublado bajo la niebla), los cerros son siluetas lisas, los árboles son esferas sobre palitos, los edificios cajas con ventanas, las cercas rayas; de noche, los puntos del domo (estrellas) se ven como discos grandes desde este ángulo y el perfil urbano son cajas negras. Es exactamente la lista de René para T1.3b.
+
+- **Resumen para René (T1.5, 2026-11-03):**
+  - **Qué ver:** `docs/cesvi/t1/t1.4/` contra `docs/cesvi/t1/t1.5/` (cinematográfica y daño, media, laptop): la cinematográfica ahora va a nivel de calle y ve cielo, horizonte y cerros; en el visor, al reproducir con ella, la acción frena a un cuarto en el contacto y las cámaras cambian con una transición de 1.2 s; en las pantallas de CESVI en «Presentar», la leyenda queda limpia.
+  - **Lo que decidí sin preguntar:** la lente va de 50 mm (acciones chicas, como el alcance) a 35 mm (cruces anchos y carambolas) y la altura de 3 a 6 m; la distancia encuadra la acción a lo ancho con margen, entre 12 y 34 m; la cámara lenta solo con la cinematográfica, y viaja al video de R11 horneada en los instantes.
+  - **Lo que no entra:** profundidad de campo y desenfoque de movimiento en media (siguen siendo de alta y ultra, R10 §7.8).
+  - **Qué necesito de René:** un recorrido de 20 s de AXA en modo Presentar con la cinematográfica es el «listo cuando» de T1.5: aprobarlo o comentarlo. Sigo con T1.3b sin esperar.
+
 ### Endurecimiento pendiente
 
+- **Cámara y presentación (T1.5, ADR 0098):**
+  - **Postes y árboles frente a la cámara:** desde la calle, un poste de luz eléctrica o un árbol puede quedar en primer plano (AXA, lado izquierdo); T1.3b debe respetar un claro alrededor de la órbita de la cámara, no solo de la acción.
+  - **La transición corre con el reloj de pared:** en pausa termina igual; podría ir con el tiempo de la escena.
 - **Vehículos, segunda pasada (T1.4, ADR 0097):**
   - **Moto de trabajo de 125 cc:** sigue la enduro. Buscar fuera de Sketchfab (p. ej. un modelo propio en Blender sin marca) o esperar una CC0/CC-BY limpia.
   - **Faros del tractocamión:** el modelo no separa los faros; de noche no lleva foco. Pintarlos en Blender como piezas aparte en el pipeline.

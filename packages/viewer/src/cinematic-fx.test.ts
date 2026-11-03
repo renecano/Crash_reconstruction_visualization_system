@@ -1,6 +1,14 @@
 import { describe, expect, it } from "vitest";
 import { cinematicCamera } from "./cameras";
-import { cinematicFocus, firstImpactTime, impactBlurWeight } from "./cinematic-fx";
+import {
+  cinematicFocus,
+  firstImpactTime,
+  impactBlurWeight,
+  impactTimeWarp,
+  SLOW_FACTOR,
+  SLOW_FULL_S,
+  SLOW_RAMP_S,
+} from "./cinematic-fx";
 
 describe("efectos de cine de alta y ultra (R10)", () => {
   it("el desenfoque de movimiento solo va alrededor del impacto", () => {
@@ -43,5 +51,16 @@ describe("efectos de cine de alta y ultra (R10)", () => {
     const f = cinematicFocus(pose);
     expect(f.distance).toBeGreaterThanOrEqual(14);
     expect(f.focalLength).toBeCloseTo(f.distance * 0.6, 10);
+  });
+});
+
+describe("cámara lenta en el contacto (T1.5)", () => {
+  it("frena a un cuarto alrededor del impacto y vuelve a 1 en rampa; sin impacto no frena", () => {
+    expect(impactTimeWarp(0, 0)).toBe(SLOW_FACTOR);
+    expect(impactTimeWarp(SLOW_FULL_S, 0)).toBe(SLOW_FACTOR);
+    expect(impactTimeWarp(SLOW_FULL_S + SLOW_RAMP_S / 2, 0)).toBeCloseTo((1 + SLOW_FACTOR) / 2, 9);
+    expect(impactTimeWarp(-(SLOW_FULL_S + SLOW_RAMP_S), 0)).toBe(1);
+    expect(impactTimeWarp(5, 0)).toBe(1);
+    expect(impactTimeWarp(0, undefined)).toBe(1);
   });
 });

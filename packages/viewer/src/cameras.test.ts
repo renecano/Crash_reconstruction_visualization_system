@@ -2,7 +2,12 @@ import { FIXTURE_NAMES, loadResultado } from "@croquis/scene-schema";
 import { describe, expect, it } from "vitest";
 import {
   actionBounds,
+  blendPose,
+  CINEMATIC,
   cinematicCamera,
+  easeInOut,
+  fovFromFocalMm,
+  type CameraPose,
   damageCamera,
   exportCameras,
   mostDamaged,
@@ -59,7 +64,48 @@ describe("cámaras", () => {
     expect(b.position).not.toEqual(a.position);
     const pa = fromThree(a.position);
     const ta = fromThree(a.target);
-    expect(Math.hypot(pa.x - ta.x, pa.y - ta.y, pa.height - ta.height)).toBeGreaterThan(13);
+    expect(Math.hypot(pa.x - ta.x, pa.y - ta.y, pa.height - ta.height)).toBeGreaterThan(11);
+  });
+
+  for (const name of ["alcance", "carambola", "lateral_interseccion"] as const) {
+    it(`${name}: la cinematográfica va a nivel de calle (3–6 m, 35–50 mm) y ve el horizonte`, async () => {
+      const r = await loadResultado(name);
+      const a = cinematicCamera(r, 0);
+      const p = fromThree(a.position);
+      const tg = fromThree(a.target);
+      expect(p.height).toBeGreaterThanOrEqual(CINEMATIC.heightMin);
+      expect(p.height).toBeLessThanOrEqual(CINEMATIC.heightMax);
+      expect(a.fov).toBeGreaterThanOrEqual(fovFromFocalMm(CINEMATIC.focalMax) - 1e-9);
+      expect(a.fov).toBeLessThanOrEqual(fovFromFocalMm(CINEMATIC.focalMin) + 1e-9);
+      // Inclinación hacia abajo menor que la mitad del campo de visión: el horizonte queda en
+      // pantalla (y el cielo encima).
+      const d = Math.hypot(p.x - tg.x, p.y - tg.y);
+      const pitch = (Math.atan2(p.height - tg.height, d) * 180) / Math.PI;
+      expect(pitch).toBeGreaterThan(0);
+      expect(pitch).toBeLessThan(a.fov / 2);
+      // Órbita lenta alrededor de su objetivo: en 2 s gira menos de 8° (0.06 rad/s).
+      const b = cinematicCamera(r, 2);
+      const pb = fromThree(b.position);
+      const tb = fromThree(b.target);
+      const ang = (q: { x: number; y: number }, c: { x: number; y: number }) =>
+        Math.atan2(q.y - c.y, q.x - c.x);
+      const giro = Math.abs(ang(pb, tb) - ang(p, tg));
+      expect(Math.min(giro, 2 * Math.PI - giro)).toBeLessThan((8 * Math.PI) / 180);
+      expect(Math.min(giro, 2 * Math.PI - giro)).toBeGreaterThan((5 * Math.PI) / 180);
+    });
+  }
+
+  it("una lente de 35 mm abre más que una de 50 mm y la mezcla de poses va de una a otra", () => {
+    expect(fovFromFocalMm(35)).toBeCloseTo(37.85, 1);
+    expect(fovFromFocalMm(50)).toBeCloseTo(26.99, 1);
+    const a: CameraPose = { position: [0, 0, 0], target: [1, 0, 0], fov: 30, up: [0, 1, 0] };
+    const b: CameraPose = { position: [10, 2, 0], target: [1, 4, 0], fov: 40, up: [0, 1, 0] };
+    expect(blendPose(a, b, 0)).toEqual({ ...a, up: b.up });
+    expect(blendPose(a, b, 1)).toEqual(b);
+    const m = blendPose(a, b, 0.5);
+    expect(m.position[0]).toBeCloseTo(5, 9);
+    expect(m.fov).toBeCloseTo(35, 9);
+    expect(easeInOut(0.25)).toBeLessThan(0.25);
   });
 
   it("el acercamiento al daño mira la cara golpeada del vehículo más deformado", async () => {

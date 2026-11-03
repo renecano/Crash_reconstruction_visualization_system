@@ -558,6 +558,110 @@
         }
       },
       "cumple_media": true
+    },
+    "t1.5/media": {
+      "etiqueta": "t1.5",
+      "calidad": "media",
+      "fecha": "2026-11-03T19:40:18.301Z",
+      "commit": "5531b5c",
+      "navegador": "156.0.8078.4",
+      "capturas": [
+        {
+          "escena": "axa",
+          "camara": "cinematica",
+          "archivo": "docs/cesvi/t1/t1.5/axa-media-cinematica.jpg",
+          "backend": "WebGPU",
+          "errores": []
+        },
+        {
+          "escena": "axa",
+          "camara": "dano",
+          "archivo": "docs/cesvi/t1/t1.5/axa-media-dano.jpg",
+          "backend": "WebGPU",
+          "errores": []
+        },
+        {
+          "escena": "carambola",
+          "camara": "cinematica",
+          "archivo": "docs/cesvi/t1/t1.5/carambola-media-cinematica.jpg",
+          "backend": "WebGPU",
+          "errores": []
+        },
+        {
+          "escena": "carambola",
+          "camara": "dano",
+          "archivo": "docs/cesvi/t1/t1.5/carambola-media-dano.jpg",
+          "backend": "WebGPU",
+          "errores": []
+        },
+        {
+          "escena": "lateral_interseccion",
+          "camara": "cinematica",
+          "archivo": "docs/cesvi/t1/t1.5/lateral_interseccion-media-cinematica.jpg",
+          "backend": "WebGPU",
+          "errores": []
+        },
+        {
+          "escena": "lateral_interseccion",
+          "camara": "dano",
+          "archivo": "docs/cesvi/t1/t1.5/lateral_interseccion-media-dano.jpg",
+          "backend": "WebGPU",
+          "errores": []
+        },
+        {
+          "escena": "nocturno_lluvia",
+          "camara": "cinematica",
+          "archivo": "docs/cesvi/t1/t1.5/nocturno_lluvia-media-cinematica.jpg",
+          "backend": "WebGPU",
+          "errores": []
+        },
+        {
+          "escena": "nocturno_lluvia",
+          "camara": "dano",
+          "archivo": "docs/cesvi/t1/t1.5/nocturno_lluvia-media-dano.jpg",
+          "backend": "WebGPU",
+          "errores": []
+        }
+      ],
+      "fps": {
+        "axa": {
+          "backend": "webgpu",
+          "fps_promedio": 59,
+          "fps_mediana": 70.9,
+          "fps_p1_bajo": 35.1,
+          "llamadas_dibujo": 115,
+          "triangulos": 264011,
+          "tiempo_hasta_listo_ms": 4711
+        },
+        "lateral_interseccion": {
+          "backend": "webgpu",
+          "fps_promedio": 73,
+          "fps_mediana": 74.6,
+          "fps_p1_bajo": 38.3,
+          "llamadas_dibujo": 111,
+          "triangulos": 243521,
+          "tiempo_hasta_listo_ms": 3275
+        },
+        "nocturno_lluvia": {
+          "backend": "webgpu",
+          "fps_promedio": 39.2,
+          "fps_mediana": 70.4,
+          "fps_p1_bajo": 34.4,
+          "llamadas_dibujo": 82,
+          "triangulos": 241614,
+          "tiempo_hasta_listo_ms": 3761
+        },
+        "carambola": {
+          "backend": "webgpu",
+          "fps_promedio": 72.4,
+          "fps_mediana": 73.5,
+          "fps_p1_bajo": 41.7,
+          "llamadas_dibujo": 137,
+          "triangulos": 201518,
+          "tiempo_hasta_listo_ms": 3528
+        }
+      },
+      "cumple_media": true
     }
   },
   "descripcion": "T1 (PLAN-CESVI v3): capturas de las 4 escenas de referencia con la cámara cinematográfica y la del daño, antes y después de cada subtramo, y sus fps (protocolo de E6). René las aprueba a ojo; los fps son de CI manual.",

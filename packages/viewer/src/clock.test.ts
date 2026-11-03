@@ -31,3 +31,16 @@ describe("reloj del visor", () => {
     expect(fn).toHaveBeenCalledTimes(2);
   });
 });
+
+describe("factor de velocidad por instante (T1.5)", () => {
+  it("multiplica el tiempo real sin tocar la velocidad elegida, y null lo quita", () => {
+    const clock = createClock(createTimeline(0, 10, 0.01, { playing: true, speed: 1 }));
+    clock.setWarp(() => 0.25);
+    clock.tick(1, 0);
+    expect(clock.get().t).toBeCloseTo(0.25, 9);
+    expect(clock.get().speed).toBe(1);
+    clock.setWarp(null);
+    clock.tick(1, 1000);
+    expect(clock.get().t).toBeCloseTo(1.25, 9);
+  });
+});

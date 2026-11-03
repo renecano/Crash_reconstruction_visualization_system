@@ -31,3 +31,22 @@ describe("Legend", () => {
     expect(LEGEND_TEXT.toLowerCase()).not.toMatch(/culpa|responsable/);
   });
 });
+
+describe("leyenda limpia al presentar (T1.5)", () => {
+  it("sin semilla, hash ni conteo procedural; el texto y las atribuciones se quedan", () => {
+    render(
+      <Legend
+        seed={42}
+        inputHash="abcdef0123456789"
+        limpia
+        procedural={{ edificios: 3, arboles: 4, luminarias: 0, cerros: true }}
+        modelos={[{ modelo: "Kiri '10", autor: "D. Z.", licencia: "CC-BY 4.0", url: "" }]}
+      />,
+    );
+    const note = screen.getByRole("note");
+    expect(note.textContent).not.toContain("semilla");
+    expect(note.textContent).not.toContain("hash");
+    expect(screen.queryByTestId("entorno-procedural")).toBeNull();
+    expect(note.textContent).toContain("Kiri '10");
+  });
+});
