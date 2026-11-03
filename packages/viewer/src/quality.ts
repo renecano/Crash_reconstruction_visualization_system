@@ -77,7 +77,7 @@ export const QUALITY_PROFILES: Record<QualityLevel, QualityProfile> = {
     spotShadowMapSize: 0,
     maxTrees: 200,
     msaaSamples: 2,
-    envTextures: false,
+    envTextures: true,
     ambientOcclusion: false,
     bloom: false,
     temporalAA: false,
@@ -122,6 +122,13 @@ export const QUALITY_PROFILES: Record<QualityLevel, QualityProfile> = {
 };
 
 export const QUALITY_LEVELS: readonly QualityLevel[] = ["baja", "media", "alta", "ultra"];
+
+/**
+ * De noche, media dibuja a esta fracción de la resolución (T1.2, ADR 0095): con cuatro conos de luz
+ * reales (faros y luminarias), lluvia y piso mojado, la GPU integrada daba 39 fps de mediana a
+ * resolución completa; es un recorte de densidad de media, no de función (PLAN §7.8).
+ */
+export const NIGHT_PIXEL_RATIO_MEDIA = 0.8;
 
 export function isQualityLevel(v: unknown): v is QualityLevel {
   return typeof v === "string" && (QUALITY_LEVELS as readonly string[]).includes(v);

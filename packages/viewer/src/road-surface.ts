@@ -16,9 +16,11 @@ import {
   normalView,
   positionWorld,
   smoothstep,
+  texture,
   vec2,
   vec3,
 } from "three/tsl";
+import { ditherNode } from "./dither";
 import { MeshStandardNodeMaterial, type Node } from "three/webgpu";
 import type { SurfaceState } from "./environment";
 import { normalizedColor, normalizedRough, texturedNormal, type EnvTexture } from "./env-textures";
@@ -127,7 +129,13 @@ export interface AsphaltMaterial {
    * Aplica la textura de asfalto (F8e) o vuelve al color liso con null. `patchTexture` (la grava)
    * llena las manchas con su color y su relieve.
    */
-  applyTexture(t: EnvTexture | null, patchTexture?: EnvTexture | null): void;
+  applyTexture(t: EnvTexture | null, patchTexture?: EnvTexture | null, lite?: boolean): void;
+  /**
+   * Mapa de desgaste, parches y bajos de la escena (T1.2, `road-wear.ts`), en planta sobre una
+   * ventana del mundo: oscurece y pule las rodadas, pinta los parches y, en `encharcado`, pone los
+   * charcos en los bajos en lugar del ruido por pixel.
+   */
+  applyWear(map: Texture, window: { cx: number; cy: number; windowM: number }): void;
 }
 
 /**
@@ -142,7 +150,11 @@ export const LEGACY_GRAVEL_LOOK: SurfaceLook = {
   normalScale: 1,
 };
 
-export function asphaltMaterial(surface: SurfaceState, legacyGravel = false): AsphaltMaterial {
+export function asphaltMaterial(
+  surface: SurfaceState,
+  legacyGravel = false,
+  dither = false,
+): AsphaltMaterial {
   const look =
     legacyGravel && surface === "grava_suelta" ? LEGACY_GRAVEL_LOOK : SURFACE_LOOK[surface];
   // `color` es el color plano que lleva la exportación glTF (R11); el dibujo usa colorNode.
@@ -171,21 +183,49 @@ export function asphaltMaterial(surface: SurfaceState, legacyGravel = false): As
     );
     return rgb(p.color).mul(mix(float(0.7), float(1.3), g));
   };
+  // Tramado contra las bandas del lienzo de 8 bits (T1.2, ADR 0095), solo de noche.
+  if (dither) m.emissiveNode = ditherNode();
+  let wear: { map: Texture; cx: number; cy: number; windowM: number } | null = null;
+  let last: {
+    base: Node<"vec3">;
+    rough: Node<"float">;
+    patch: { color: Node<"vec3">; rough: Node<"float"> } | null;
+  } | null = null;
   const paint = (
     base: Node<"vec3">,
     rough: Node<"float">,
     patch: { color: Node<"vec3">; rough: Node<"float"> } | null = null,
   ): void => {
+    last = { base, rough, patch };
     const pc = patch?.color ?? (p ? patchColor() : null);
     const pr = patch?.rough ?? (p ? float(p.roughness) : null);
-    m.colorNode = k && pc ? mix(base, pc, k) : base;
-    m.roughnessNode = k && pr ? mix(rough, pr, k) : rough;
+    let mask = k;
+    let w: Node<"vec4"> | null = null;
+    if (wear) {
+      const uv = vec2(positionWorld.x.sub(wear.cx), positionWorld.z.add(wear.cy))
+        .div(wear.windowM)
+        .add(0.5);
+      w = texture(wear.map, uv);
+      // Los charcos van en los bajos del mapa, no en ruido por pixel (más barato y fijo).
+      if (surface === "encharcado" && p) {
+        mask = smoothstep(float(0.35), float(0.65), w.b).mul(float(p.opacity ?? 1));
+      }
+    }
+    let col: Node<"vec3"> = mask && pc ? mix(base, pc, mask) : base;
+    let rgh: Node<"float"> = mask && pr ? mix(rough, pr, mask) : rough;
+    if (w) {
+      // Rodadas más oscuras y pulidas; parches de bacheo un poco más oscuros y lisos.
+      col = mix(col.mul(float(1).sub(w.r.mul(0.3))), rgb("#2b2e32"), w.g.mul(0.55));
+      rgh = mix(rgh.mul(float(1).sub(w.r.mul(0.2))), float(0.75), w.g.mul(0.5));
+    }
+    m.colorNode = col;
+    m.roughnessNode = rgh;
   };
   paint(rgb(look.color), float(look.roughness));
   return {
     material: m,
     look,
-    applyTexture(t: EnvTexture | null, patchTexture: EnvTexture | null = null) {
+    applyTexture(t: EnvTexture | null, patchTexture: EnvTexture | null = null, lite = false) {
       const g = p && k && patchTexture ? patchTexture : null;
       const patch = g
         ? { color: normalizedColor(g, p!.color), rough: normalizedRough(g, p!.roughness) }
@@ -194,7 +234,12 @@ export function asphaltMaterial(surface: SurfaceState, legacyGravel = false): As
         paint(rgb(look.color), float(look.roughness), patch);
         m.normalNode = g && k ? mix(normalView, asVec3(texturedNormal(g)), k).normalize() : null;
       } else {
-        paint(normalizedColor(t, look.color), normalizedRough(t, look.roughness), patch);
+        // En media (`lite`) la rugosidad es la calibrada, sin leer su mapa.
+        paint(
+          normalizedColor(t, look.color),
+          lite ? float(look.roughness) : normalizedRough(t, look.roughness),
+          patch,
+        );
         const base = texturedNormal(t, look.normalScale);
         m.normalNode = g && k ? mix(asVec3(base), asVec3(texturedNormal(g)), k).normalize() : base;
       }
@@ -204,6 +249,11 @@ export function asphaltMaterial(surface: SurfaceState, legacyGravel = false): As
       const on = env !== null && look.reflect > 0;
       m.envMap = on ? env : null;
       m.envMapIntensity = on ? look.reflect : 1;
+      m.needsUpdate = true;
+    },
+    applyWear(map: Texture, window: { cx: number; cy: number; windowM: number }) {
+      wear = { map, ...window };
+      if (last) paint(last.base, last.rough, last.patch);
       m.needsUpdate = true;
     },
   };

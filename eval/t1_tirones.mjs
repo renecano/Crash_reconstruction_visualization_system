@@ -35,6 +35,8 @@ const OUT = resolve(ROOT, arg("out", `eval/results/t1_tirones_${ESCENA}_${CALIDA
 const PROPIA = { axa: "demo/escenas-r11/axa.json" }[ESCENA];
 /** Interruptores de diagnóstico del visor (`window.__croquisDiag`), JSON; p. ej. '{"sinHdri":true}'. */
 const DIAG = JSON.parse(arg("diag", "{}"));
+/** Parámetros extra de la URL del visor (p. ej. `estado=seco&clima=despejado`, el ambiente forzado). */
+const EXTRA = arg("extra", "");
 
 async function waitForServer(url, ms) {
   const t0 = Date.now();
@@ -111,7 +113,7 @@ try {
     bucle: "1",
     renderer: "webgpu",
   });
-  await page.goto(`${base}/visor?${params}`);
+  await page.goto(`${base}/visor?${params}${EXTRA ? `&${EXTRA}` : ""}`);
   const espera = { timeout: 600_000 };
   await page.waitForFunction(() => window.__croquisReady === true, null, espera);
   await page.waitForFunction(() => window.__croquisVehicleModelsReady !== false, null, espera);
@@ -155,6 +157,7 @@ try {
     escena: ESCENA,
     calidad: CALIDAD,
     diag: DIAG,
+    extra: EXTRA,
     segundos: SECONDS,
     cuadros: ms.length,
     fps_promedio: Math.round(((1000 * ms.length) / total) * 10) / 10,

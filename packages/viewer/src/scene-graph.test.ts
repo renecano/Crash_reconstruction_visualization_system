@@ -4,7 +4,7 @@ import { describe, expect, it } from "vitest";
 import { fromThree } from "./coords";
 import { QUALITY_PROFILES } from "./quality";
 import { samplePerson, sampleVehicle } from "./sample";
-import { buildSceneGraph, hash01 } from "./scene-graph";
+import { buildSceneGraph, hash01, quadsToGeometry } from "./scene-graph";
 
 const opts = {
   quality: QUALITY_PROFILES.media,
@@ -173,5 +173,13 @@ describe("árboles instanciados (F8c)", () => {
     expect(sg.stats.triangles - base.stats.triangles).toBeGreaterThan(n * 100);
     sg.dispose();
     base.dispose();
+  });
+});
+
+describe("huellas como calcomanías (T1.2)", () => {
+  it("quadsToGeometry pone u de 0 a 1 a lo ancho de la marca (esquinas [a+n, b+n, b−n, a−n])", () => {
+    // Un tramo de 0.1 m de largo (más corto que el ancho de 0.2 m): u sigue siendo a lo ancho.
+    const g = quadsToGeometry([{ corners: [0, 0.1, 0.1, 0.1, 0.1, -0.1, 0, -0.1], t: 0 }], 0.01);
+    expect(Array.from(g.getAttribute("uv").array)).toEqual([0, 0, 0, 0, 1, 0, 1, 0]);
   });
 });

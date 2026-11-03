@@ -7,7 +7,14 @@
  * el solver entregó. Al no depender del renderer se prueba en Node (posiciones, giros, fases) y
  * funciona igual con WebGPU o con el respaldo WebGL 2.
  */
-import { roadLayout, sceneCrosswalks, sceneLayout, stopLines } from "@croquis/croquis-2d";
+import {
+  mapViaLineOffsets,
+  roadLayout,
+  sceneCrosswalks,
+  sceneLayout,
+  stopLines,
+  stripLineOffsets,
+} from "@croquis/croquis-2d";
 import type { EscenaSpec, Resultado } from "@croquis/scene-schema";
 import { longitudM, velocidadKmh } from "@croquis/scene-schema";
 import {
@@ -17,10 +24,12 @@ import {
   CircleGeometry,
   Color,
   CylinderGeometry,
+  DataTexture,
   DoubleSide,
   Group,
   IcosahedronGeometry,
   InstancedMesh,
+  LinearFilter,
   type Material,
   Matrix4,
   Mesh,
@@ -28,14 +37,17 @@ import {
   MeshStandardMaterial,
   PlaneGeometry,
   Quaternion,
+  RGBAFormat,
   Object3D,
   RingGeometry,
   SpotLight,
+  UnsignedByteType,
   type Texture,
   Vector3,
 } from "three";
-import { attribute, color, float, mix } from "three/tsl";
+import { attribute, color, float, mix, positionWorld, texture, vec2 } from "three/tsl";
 import { MeshStandardNodeMaterial } from "three/webgpu";
+import { actionBounds } from "./cameras";
 import { toThree } from "./coords";
 import type { EnvironmentSettings } from "./environment";
 import { applyPosture, buildMannequin, CG_HEIGHT_FACTOR } from "./person-geometry";
@@ -57,6 +69,16 @@ import {
   type Mesh2D,
 } from "./road-geometry";
 import { asphaltMaterial, type AsphaltMaterial } from "./road-surface";
+import { ditherNode } from "./dither";
+import {
+  BARRIER_POST_HEIGHT_M,
+  BARRIER_RAIL_HEIGHT_M,
+  BARRIER_RAIL_THICKNESS_M,
+  postsAlong,
+  roadDecorFor,
+} from "./road-decor";
+import { buildWearMap, type LaneAxis } from "./road-wear";
+import { markMaterial } from "./ground-marks-material";
 import {
   ENV_TEXTURE_NAMES,
   texturedPlanarMaterial,
@@ -170,16 +192,29 @@ function std(
   return m;
 }
 
+/**
+ * Material liso con tramado (T1.2, ADR 0095) para las superficies grandes: de noche, los conos de
+ * las luminarias sobre el pasto y la calzada mostraban bandas en el lienzo de 8 bits de media.
+ */
+function stdDither(color: string, roughness: number, on: boolean): MeshStandardNodeMaterial {
+  const m = new MeshStandardNodeMaterial({ color, roughness, metalness: 0 });
+  if (on) m.emissiveNode = ditherNode();
+  return m;
+}
+
 function sceneMaterials(opts: SceneGraphOptions, asphalt: AsphaltMaterial) {
   const wet = opts.env.wet;
   return {
     asphalt: asphalt.material,
     // La banqueta mojada se oscurece un poco y pierde rugosidad, sin llegar a reflejar.
-    sidewalk: std(wet ? "#85837d" : "#a19f99", wet ? 0.6 : 0.95),
-    white: std("#ecebe4", 0.6),
-    yellow: std("#e3b21c", 0.6),
+    sidewalk: stdDither(wet ? "#85837d" : "#a19f99", wet ? 0.6 : 0.95, opts.env.night),
+    // Acotamiento de grava (T1.2); en alta y ultra toma la textura de grava.
+    shoulder: stdDither(wet ? "#5a5750" : "#6f6c66", 1, opts.env.night),
+    // Rayas como calcomanías: el desgaste del mapa (T1.2) las borra parcialmente (`applyWear`).
+    white: new MeshStandardNodeMaterial({ color: "#ecebe4", roughness: 0.6, metalness: 0 }),
+    yellow: new MeshStandardNodeMaterial({ color: "#e3b21c", roughness: 0.6, metalness: 0 }),
     crosswalk: std("#f2f2ee", 0.6),
-    ground: std(opts.env.groundColor, 1),
+    ground: stdDither(opts.env.groundColor, 1, opts.env.night),
     evidence: std("#151515", 1, 0, { transparent: true, opacity: 0.55 }),
     trunk: std("#5b4636", 0.95),
     crown: std("#3e6b35", 0.9),
@@ -254,6 +289,7 @@ export function vehicleMaterials(color: string, night: boolean): Record<PartRole
 export function quadsToGeometry(quads: readonly TimedQuad[], height: number): BufferGeometry {
   const pos = new Float32Array(quads.length * 12);
   const nor = new Float32Array(quads.length * 12);
+  const uv = new Float32Array(quads.length * 8);
   const idx: number[] = [];
   quads.forEach((q, k) => {
     for (let c = 0; c < 4; c++) {
@@ -261,6 +297,10 @@ export function quadsToGeometry(quads: readonly TimedQuad[], height: number): Bu
       pos.set([x, y, z], 12 * k + 3 * c);
       nor.set([0, 1, 0], 12 * k + 3 * c);
     }
+    // u va a lo ancho de la marca, de 0 a 1: las esquinas de `ground-marks.ts` son [a+n, b+n, b−n,
+    // a−n], así que 0 y 1 están de un lado y 2 y 3 del otro. El material suaviza los bordes con u.
+    const u = [0, 0, 1, 1];
+    for (let c = 0; c < 4; c++) uv.set([u[c]!, 0], 8 * k + 2 * c);
     const b = 4 * k;
     // Esquinas en orden antihorario visto desde arriba en el mundo (ver mesh2DToGeometry).
     idx.push(b, b + 2, b + 1, b, b + 3, b + 2);
@@ -268,6 +308,7 @@ export function quadsToGeometry(quads: readonly TimedQuad[], height: number): Bu
   const g = new BufferGeometry();
   g.setAttribute("position", new BufferAttribute(pos, 3));
   g.setAttribute("normal", new BufferAttribute(nor, 3));
+  g.setAttribute("uv", new BufferAttribute(uv, 2));
   g.setIndex(idx);
   return g;
 }
@@ -400,6 +441,7 @@ export function buildSceneGraph(
   const asphalt = asphaltMaterial(
     opts.env.surface ?? (opts.env.wet ? "mojado" : "seco"),
     opts.diag?.gravaPrevia === true,
+    opts.env.night,
   );
   const mats = sceneMaterials(opts, asphalt);
   const root = new Group();
@@ -433,6 +475,80 @@ export function buildSceneGraph(
     opts.env.streetLights && opts.diag?.sinLuminarias !== true
       ? proceduralPoles(spec, resultado, layout, mapa?.vias)
       : [];
+  // Ejes de los carriles (entre rayas consecutivas) para las rodadas del desgaste (T1.2).
+  const lanes: LaneAxis[] = [];
+  const laneCenters = (o: { edges: number[]; center: number[]; dashed: number[] }) => {
+    const all = [...o.edges, ...o.center, ...o.dashed].sort((a, b) => a - b);
+    const out: number[] = [];
+    for (let i = 1; i < all.length; i++) {
+      const w = all[i]! - all[i - 1]!;
+      if (w > 1.5) out.push((all[i]! + all[i - 1]!) / 2);
+    }
+    return out;
+  };
+  if (mapa) {
+    for (const v of mapa.vias) {
+      const o = mapViaLineOffsets(v);
+      const centers = o ? laneCenters(o) : [0];
+      for (let i = 1; i < v.puntos.length; i++) {
+        const a = v.puntos[i - 1]!;
+        const b = v.puntos[i]!;
+        const len = Math.hypot(b.x - a.x, b.y - a.y) || 1;
+        const nx = -(b.y - a.y) / len;
+        const ny = (b.x - a.x) / len;
+        for (const c of centers) {
+          lanes.push({
+            a: { x: a.x + nx * c, y: a.y + ny * c },
+            b: { x: b.x + nx * c, y: b.y + ny * c },
+          });
+        }
+      }
+    }
+  } else {
+    for (const s of layout.strips) {
+      const r = (s.heading * Math.PI) / 180;
+      const dx = Math.cos(r);
+      const dy = Math.sin(r);
+      for (const c of laneCenters(stripLineOffsets(s, dobleSentido))) {
+        const ox = -dy * c;
+        const oy = dx * c;
+        lanes.push({
+          a: { x: s.center.x - (dx * s.length) / 2 + ox, y: s.center.y - (dy * s.length) / 2 + oy },
+          b: { x: s.center.x + (dx * s.length) / 2 + ox, y: s.center.y + (dy * s.length) / 2 + oy },
+        });
+      }
+    }
+  }
+  const action = actionBounds(resultado);
+  const wear = buildWearMap(spec.meta.semilla, lanes, { x: action.cx, y: action.cy });
+  const wearTexture = new DataTexture(
+    wear.data,
+    wear.size,
+    wear.size,
+    RGBAFormat,
+    UnsignedByteType,
+  );
+  // Filtrado lineal: con el vecino más cercano los charcos y parches salían en cuadros.
+  wearTexture.magFilter = LinearFilter;
+  wearTexture.minFilter = LinearFilter;
+  wearTexture.generateMipmaps = false;
+  wearTexture.needsUpdate = true;
+  asphalt.applyWear(wearTexture, { cx: wear.cx, cy: wear.cy, windowM: wear.windowM });
+  // Las rayas se desgastan donde ruedan las llantas: la opacidad baja hasta la mitad con el
+  // canal rojo del mapa, y el tramado evita bandas en el borde.
+  {
+    const uvWear = vec2(positionWorld.x.sub(wear.cx), positionWorld.z.add(wear.cy))
+      .div(wear.windowM)
+      .add(0.5);
+    const w = texture(wearTexture, uvWear);
+    for (const m of [mats.white, mats.yellow]) {
+      m.transparent = true;
+      m.opacityNode = float(1).sub(w.r.mul(0.5));
+      if (opts.env.night) m.emissiveNode = ditherNode();
+    }
+  }
+  // Acotamientos y barreras por clase de vía (T1.2).
+  const decor = roadDecorFor(lugar, layout, mapa?.vias);
   const dash = dashPatternFor(lugar.tipo_via.valor, limite ? velocidadKmh(limite) : undefined);
   // `osmSoloCalzada` (diagnóstico de E6): la red del mapa como antes de ADR 0039, solo calzada.
   const soloCalzada = opts.diag?.osmSoloCalzada === true;
@@ -514,6 +630,48 @@ export function buildSceneGraph(
     curbs.name = "guarniciones";
     curbs.receiveShadow = true;
     roadGroup.add(curbs);
+  }
+  if (decor.shoulders.indices.length > 0) {
+    const mesh = new Mesh(mesh2DToGeometry(decor.shoulders, 0.006), mats.shoulder);
+    mesh.name = "acotamiento";
+    mesh.receiveShadow = true;
+    roadGroup.add(mesh);
+  }
+  if (decor.barriers.length > 0) {
+    // Barrera metálica: riel por tramo y postes instanciados cada 4 m.
+    const posts = decor.barriers.flatMap((b) => postsAlong(b));
+    const postGeo = new BoxGeometry(0.1, BARRIER_POST_HEIGHT_M, 0.08);
+    postGeo.translate(0, BARRIER_POST_HEIGHT_M / 2, 0);
+    const postMesh = new InstancedMesh(postGeo, mats.metal, posts.length);
+    postMesh.name = "barrera_postes";
+    const m4 = new Matrix4();
+    posts.forEach((p, i) => {
+      const [x, y, z] = toThree(p.x, p.y, 0);
+      m4.makeTranslation(x, y, z);
+      postMesh.setMatrixAt(i, m4);
+    });
+    postMesh.instanceMatrix.needsUpdate = true;
+    postMesh.castShadow = true;
+    roadGroup.add(postMesh);
+    for (const b of decor.barriers) {
+      for (let i = 1; i < b.length; i++) {
+        const a = b[i - 1]!;
+        const c = b[i]!;
+        const len = Math.hypot(c.x - a.x, c.y - a.y);
+        if (len < 0.05) continue;
+        const rail = new Mesh(new BoxGeometry(len, BARRIER_RAIL_THICKNESS_M, 0.06), mats.metal);
+        rail.name = "barrera";
+        place(
+          rail,
+          (a.x + c.x) / 2,
+          (a.y + c.y) / 2,
+          (Math.atan2(c.y - a.y, c.x - a.x) * 180) / Math.PI,
+          BARRIER_RAIL_HEIGHT_M,
+        );
+        rail.castShadow = true;
+        roadGroup.add(rail);
+      }
+    }
   }
   root.add(roadGroup);
 
@@ -924,7 +1082,7 @@ export function buildSceneGraph(
     ["marcas_derrape", marks.derrape, 0.6],
   ] as const) {
     if (quads.length === 0) continue;
-    const mat = std("#121212", 0.95, 0, { transparent: true, opacity, depthWrite: false });
+    const mat = markMaterial(opacity);
     disposables.push(mat);
     const mesh = new Mesh(quadsToGeometry(quads, 0.018), mat);
     mesh.name = name;
@@ -1092,25 +1250,45 @@ export function buildSceneGraph(
     },
     wantedTextures: [
       ...ENV_TEXTURE_NAMES,
-      ...(asphalt.look.patch?.grainM ? (["grava"] as const) : []),
+      ...(asphalt.look.patch?.grainM || decor.shoulders.indices.length > 0
+        ? (["grava"] as const)
+        : []),
     ],
     applyTextures(t: EnvTextures) {
-      asphalt.applyTexture(t.asfalto ?? null, t.grava ?? null);
+      // En media, solo el mapa de color de cada textura: las lecturas de normal y rugosidad sobre
+      // el pasto y la calzada, que llenan la pantalla, costaban más de lo que se ve (T1.2).
+      const lite = opts.quality.level === "media";
+      const night = opts.env.night;
+      asphalt.applyTexture(t.asfalto ?? null, t.grava ?? null, lite);
       // Banqueta y camellón de concreto; suelo de pasto. Cada textura toma el color y la rugosidad
       // del material liso que reemplaza (seco o mojado, día o noche). La guarnición conserva su
       // material liso: en sus caras verticales la proyección en planta se vería rayada.
-      const calibrated = (m: MeshStandardMaterial) => ({
+      const calibrated = (m: { color: Color; roughness: number }) => ({
         color: `#${m.color.getHexString()}`,
         roughness: m.roughness,
       });
       const swaps = new Map<Material, Material>();
       if (t.concreto) {
-        swaps.set(mats.sidewalk, texturedPlanarMaterial(t.concreto, calibrated(mats.sidewalk)));
+        swaps.set(
+          mats.sidewalk,
+          texturedPlanarMaterial(t.concreto, { ...calibrated(mats.sidewalk), lite, dither: night }),
+        );
       }
       if (t.pasto) {
         swaps.set(
           mats.ground,
-          texturedPlanarMaterial(t.pasto, { ...calibrated(mats.ground), variation: true }),
+          texturedPlanarMaterial(t.pasto, {
+            ...calibrated(mats.ground),
+            variation: true,
+            lite,
+            dither: night,
+          }),
+        );
+      }
+      if (t.grava && decor.shoulders.indices.length > 0) {
+        swaps.set(
+          mats.shoulder,
+          texturedPlanarMaterial(t.grava, { ...calibrated(mats.shoulder), lite, dither: night }),
         );
       }
       root.traverse((o) => {
@@ -1121,6 +1299,7 @@ export function buildSceneGraph(
       disposables.push(...swaps.values());
     },
     dispose() {
+      wearTexture.dispose();
       root.traverse((o) => {
         if (o instanceof Mesh) (o.geometry as BufferGeometry).dispose();
       });

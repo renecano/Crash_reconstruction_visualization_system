@@ -6,10 +6,10 @@ Reglas de trabajo: `CLAUDE.md`. Especificación: `PLAN.md`.
 ## Estado actual
 
 - **Ahora: plan de cierre v3** (René, 2026-10-30; `docs/cesvi/PLAN-CESVI.md`). Ya no se agregan fases: siete tramos cerrados (T1–T7), cada uno contra su «listo cuando». Orden de Claude Code: **T2a → T1 → T3 → T6 → T5 → T2b → T7**; T4 (prueba con personas) lo corre René en paralelo con `docs/cesvi/prueba-personas.md`. La v2 del plan y `PROTOTIPO.md` están en `docs/historial/`.
-  - **Tramo en curso: T1 (escenario 3D), subtramo T1.1 (cielo, luz y aire).** Rama `feat/t1-1-cielo-luz-aire`, ADR 0094. Ver «T1 — Escenario 3D» más abajo: capturas de antes y después en `docs/cesvi/t1/`, fps en `eval/results/e6_t1_*.json`.
+  - **Tramo en curso: T1 (escenario 3D).** T1.1 (cielo, luz y aire) está en `main` (PR #151, ADR 0094), aprobado por René el 2026-11-02 con dos cambios que entraron en T1.2; T1.2 (vía y suelo, ADR 0095) está hecho en la rama `feat/t1-2-via-y-suelo`; sigue T1.3. Ver «T1 — Escenario 3D» más abajo: capturas de antes y después en `docs/cesvi/t1/`, fps en `eval/results/e6_t1_*.json`.
   - **T2a (el `-Prueba` del colaborador):** pedido a René el 2026-10-30; el resultado llega en una rama `resultados/prueba-<fecha>`. Si falla, se arregla antes de seguir con T1 (fila en «Bloqueado»).
   - **T6.4 (los agentes respetan el orden de impactos)** quedó a medias en la rama `fix/agentes-orden-impactos` (commit `c8c8a08`, Python y TS cambiados, sin pruebas ni evaluación): se retoma en T6.
-  - **Siguiente paso concreto:** cerrar T1.1 con las capturas «t1.1» y los fps en media; pedir la aprobación de René en «Resumen para René» y seguir con T1.2 (vía y suelo) sin esperar.
+  - **Siguiente paso concreto:** T1.3 (entorno más allá de la vía) según el plan al final de «T1 — Escenario 3D»; T1.2 está en PR y espera la aprobación de René (sus capturas en `docs/cesvi/t1/t1.2/`).
 - **Antes (2026-10-20 al 2026-10-29): prototipo y plan v2 para CESVI.** Lo que sigue en esta sección es la bitácora de ese periodo; sigue valiendo como historia de lo construido.
 - **Prototipo para CESVI** (desde el 2026-10-20). Croquis es para los peritos de CESVI México; el alcance lo pone CESVI (`CLAUDE.md`). La especificación es `docs/cesvi/PROTOTIPO.md`, que manda sobre `PLAN.md` en lo que se contradigan.
   - **Orden:** Hito 1 (el caso A2010930 y sus cálculos en `/cesvi`), Hito 2 (el lugar y el croquis sobre el mapa) y Hito 3 (correspondencia, sugerencia y dictamen en PDF). Cada uno se despliega al terminar.
@@ -1531,7 +1531,48 @@ Reglas de trabajo: `CLAUDE.md`. Especificación: `PLAN.md`.
   - **Lo que todavía no se ve y por qué:** la cámara cinematográfica mira 5° bajo el horizonte, así que de día no ve el cielo (lo arregla T1.5); el piso sigue liso y verde (T1.2) y no hay horizonte con cerros ni edificios (T1.3); los faros saturan de cerca (T1.4). En media el HDRI solo ilumina a los vehículos (en alta y ultra, toda la escena).
   - **Lo que no cumple:** la noche con lluvia en media va a 38.9 fps de mediana (meta 60); el 80 % del costo ya estaba antes de T1.1. Se ataca en T1.2.
   - **Qué necesito de René:** aprobar o comentar estas capturas (en el siguiente prompt o en «Bloqueado»). No espero: sigo con T1.2 (vía y suelo).
-- **Siguiente paso concreto:** T1.2, vía y suelo (asfalto PBR con desgaste, marcas como calcomanías, guarniciones con altura, acotamiento y barrera en la autopista de AXA, mojado con charcos, huellas y restos a escala). Mismas 4 escenas, capturas «t1.2» con `node eval/t1_capturas.mjs --etiqueta t1.2 --calidad media`.
+- **T1.1 fusionado** en `main` el 2026-11-01 (PR #151, `9022fb6`); Vercel lo despliega solo.
+
+**T1.2 — Vía y suelo (plan, 2026-11-01, rama `feat/t1-2-via-y-suelo`):**
+
+- **Listo cuando** (plan v3): en la cámara del daño el piso y la vía se ven como fotografía de un juego actual en las 4 escenas; y los fps de media siguen ≥ 60 (la noche con lluvia tiene que subir de 38.9).
+- **Orden de trabajo:**
+  1. **Medir qué cuesta la noche** con `t1_tirones.mjs` y los interruptores (`sinLuminarias`, uno nuevo `sinLluvia`, y el estado del piso): hipótesis, el material del asfalto encharcado (ruido 3D por pixel para los charcos, con reflejos) sobre toda la pantalla. Si es eso, los charcos pasan a una máscara precalculada (textura de 256 px con la semilla de la escena) en vez de ruido por pixel.
+  2. **Asfalto:** textura PBR también en media (512 px, WebP; medir: ADR 0026 la dejó fuera por 3–4 ms, hoy con KTX2 o 512 hay que volver a medir), desgaste por carril (bandas más oscuras donde ruedan las llantas, con la geometría de los carriles) y parches por semilla; juntas transversales cada 4–6 m en concreto.
+  3. **Marcas viales** como calcomanías con desgaste (alfa por ruido fijo), no franjas a 1.2 cm sobre el piso; alcantarillas en calles urbanas.
+  4. **Acotamiento y barreras:** acotamiento de grava en `carretera_dos_carriles` y `autopista` (y vías `motorway`/`trunk` del mapa, como AXA) con la textura de grava que ya existe; barrera metálica (perfil de doble onda extruido, postes instanciados cada 4 m) en autopista; guarniciones con su altura real ya existen (0.15 m), banqueta con textura de concreto en media.
+  5. **Mojado:** charcos en los bajos (la máscara del punto 1), reflejos del HDRI en el asfalto mojado (ya), gotas sobre el piso con la lluvia (anillos suaves instanciados, pocos).
+  6. **Huellas, arrastre y restos** como calcomanías con bordes suaves y gradiente (hoy son cuadriláteros planos) y partículas de vidrio y plástico con sombra (ya `castShadow`); a escala de lo que dio el perito (no cambia la física).
+  7. **Capturas «t1.2» y fps** de las 4 escenas; «Resumen para René».
+- **Riesgos:** la laptop (texturas en media y más luces de noche); se mide en cada paso y se recorta densidad en media, nunca función.
+
+**T1.2 — hecho (2026-11-02, ADR 0095), a falta de capturas y fps al final del subtramo:**
+
+- **Comentarios de René sobre T1.1** (aprobado con dos cambios, que entran aquí): el pasto de noche con anillos y bandas de color alrededor de cada luminaria y tono oliva → tramado por pixel (`dither.ts`) en pasto, banqueta, acotamiento, asfalto y rayas, y pasto nocturno neutro `#1c1d1b`; la noche con lluvia debe llegar a 60 fps de mediana en media → charcos por mapa en vez de ruido por pixel, lluvia de 4000 estelas en media (se mide al final).
+- **Mapa de desgaste** por escena (`road-wear.ts`): rodadas por carril (de las rayas de la plantilla o del mapa), pulido, parches y bajos; el asfalto lo muestrea (`applyWear`) y las rayas se borran hasta la mitad en las rodadas.
+- **Texturas en media** (asfalto, concreto, pasto, grava a 512 px): se mide al final; si media no llega a 60, se recorta aquí primero.
+- **Acotamientos y barreras** (`road-decor.ts`): grava en carretera y autopista (y `motorway`/`trunk` del mapa, como AXA); barrera metálica con postes cada 4 m en autopista y vías rápidas.
+- **Huellas como calcomanías** (`ground-marks-material.ts`): bordes suaves a lo ancho.
+- **Pruebas nuevas:** `road-decor.test.ts` (5), `road-wear.test.ts` (4), la `u` de las marcas en `scene-graph.test.ts`; `env-textures.test.ts` actualizada (media carga texturas).
+- **No entra (Endurecimiento pendiente):** juntas de concreto y alcantarillas, gotas sobre el piso mojado, acotamiento y barrera en las curvas de la plantilla.
+- **T2a:** al 2026-11-02 no hay rama `resultados/prueba-<fecha>` del colaborador; sigue en «Bloqueado».
+- **Lo que costó llegar a 60 fps en media** (`t1_tirones.mjs` con `sinTexturas`, `sinTramado`, `sinHdri`, `sinLuminarias`, mediana en AXA): las texturas con normal y rugosidad en el pasto y la calzada, 22 %; el tramado con `sin` por pixel, 12 %; el HDRI de los vehículos, 3 %. Por eso en media las texturas llevan solo el mapa de color (`lite`), el tramado es el ruido de gradiente entrelazado (dos multiplicaciones) y solo de noche, y de noche media dibuja a 0.8 de la resolución (`NIGHT_PIXEL_RATIO_MEDIA`): con cuatro conos de luz, lluvia y piso mojado daba 39 fps a resolución completa y 62.5 a 0.8. El precompilado espera ahora a las texturas (cambiar los materiales después obligaba a compilar en el hilo principal).
+- **fps en media, laptop** (`eval/results/e6_t1_t1.2_media.json`, protocolo de E6, mediana de 3):
+
+  | Escena               | T1.1: promedio / mediana / p1 | T1.2: promedio / mediana / p1 |
+  | -------------------- | ----------------------------- | ----------------------------- |
+  | AXA                  | 64.6 / 66.2 / 41.3            | 52.1 / 62.9 / 25.1            |
+  | lateral_interseccion | 63.5 / 65.8 / 36.2            | 74.8 / 76.9 / 41.7            |
+  | nocturno_lluvia      | 20.8 / 38.9 / 23.1            | 38.4 / 68.5 / 35.7            |
+  | carambola            | 59.9 / 64.9 / 28.2            | 68.0 / 70.4 / 35.3            |
+  - **Las 4 escenas cumplen la meta de media (≥ 60 fps de mediana)**, con texturas en pasto, calzada, banqueta y acotamiento, y la noche con lluvia pasa de 38.9 a 68.5 (a 0.8 de resolución). Los promedios de AXA y de la noche siguen por debajo de la mediana por cuadros sueltos de 40–100 ms (p1), que son el recolector de basura y lo que aún se compila al aparecer; se vigilan en T1.3.
+
+- **Resumen para René (T1.2, 2026-11-03):**
+  - **Qué ver:** `docs/cesvi/t1/t1.1/` contra `docs/cesvi/t1/t1.2/` (las mismas 8 capturas, media, laptop). Lo que cambia: pasto, calzada, banqueta y acotamiento con textura; rodadas más oscuras y rayas desgastadas donde ruedan las llantas; parches; en AXA, acotamiento de grava y barrera metálica con postes; en la carambola (lluvia ligera) los bajos con agua; las huellas con bordes suaves; de noche, el pasto oscuro y neutro, sin bandas alrededor de las luminarias.
+  - **Tus dos pedidos de T1.1:** las bandas y el tono oliva, corregidos (tramado por pixel de noche y pasto `#1c1d1b`); la noche con lluvia, 68.5 fps de mediana en media (meta 60), con el recorte de resolución a 0.8 solo de noche y solo en media (alta y ultra no cambian).
+  - **Lo que no entra aquí:** juntas de concreto y alcantarillas, gotas sobre el piso mojado, acotamiento y barrera en curvas de plantilla («Endurecimiento pendiente»). La cámara cinematográfica sigue sin ver el cielo (T1.5); el horizonte sigue vacío (T1.3).
+  - **Qué necesito de René:** aprobar o comentar estas capturas. Sigo con T1.3 (entorno más allá de la vía) sin esperar.
+- **Siguiente paso concreto:** T1.3, entorno más allá de la vía: donde OSM trae edificios, extruidos con fachadas procedurales; donde no (AXA, Toluca), entorno procedural por tipo de vía y uso de suelo con semilla fija (parcelas, cercas, vegetación y postes en carretera; lotes con edificios sencillos, árboles de banqueta y señales en ciudad), vegetación y postes instanciados (modelos CC0), relieve leve, siluetas de cerros o perfil urbano a lo lejos, y «procedural» en la leyenda. Capturas «t1.3» y fps al final.
 
 ### Endurecimiento pendiente
 

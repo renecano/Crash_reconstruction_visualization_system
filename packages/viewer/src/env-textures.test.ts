@@ -39,9 +39,9 @@ const fetchOf = (manifest: unknown) =>
 const fakeFetch = fetchOf(MANIFEST);
 
 describe("texturas del entorno (F8e)", () => {
-  it("solo alta y ultra las cargan (ADR 0026, decisión 7)", () => {
+  it("media, alta y ultra las cargan; baja no (ADR 0026, decisión 7; media desde T1.2, ADR 0095)", () => {
     expect(texturesWanted("baja")).toBe(false);
-    expect(texturesWanted("media")).toBe(false);
+    expect(texturesWanted("media")).toBe(true);
     expect(texturesWanted("alta")).toBe(true);
     expect(texturesWanted("ultra")).toBe(true);
   });
@@ -106,9 +106,30 @@ describe("texturas del entorno (F8e)", () => {
     expect(calzada.normalNode).toBeTruthy();
     const banqueta = mat("banqueta") ?? mat("banqueta_sin_sombra");
     expect(banqueta).toBeInstanceOf(MeshStandardNodeMaterial);
-    expect(banqueta.normalNode).toBeTruthy();
+    // En media (T1.2, ADR 0095) la banqueta y el pasto llevan solo el mapa de color.
+    expect(banqueta.normalNode).toBeNull();
+    expect(banqueta.colorNode).toBeTruthy();
     expect(mat("suelo")).toBeInstanceOf(MeshStandardNodeMaterial);
+    expect(mat("suelo").normalNode).toBeNull();
     sg.dispose();
+    // En alta, con normal y rugosidad.
+    const alta = buildSceneGraph(spec, r, {
+      quality: QUALITY_PROFILES.alta,
+      env: {
+        night: false,
+        wet: true,
+        groundColor: "#5d6b4a",
+        streetLights: false,
+        surface: "mojado",
+      },
+    });
+    alta.applyTextures(t);
+    const banquetaAlta = (
+      (alta.root.getObjectByName("banqueta") ??
+        alta.root.getObjectByName("banqueta_sin_sombra")) as Mesh
+    ).material as MeshStandardNodeMaterial;
+    expect(banquetaAlta.normalNode).toBeTruthy();
+    alta.dispose();
   });
 
   it("la grava solo se carga si se pide (ADR 0036)", async () => {

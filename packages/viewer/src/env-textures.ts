@@ -20,18 +20,9 @@ import {
   TextureLoader,
   type Texture,
 } from "three";
-import {
-  float,
-  mix,
-  mx_noise_float,
-  normalMap,
-  positionWorld,
-  smoothstep,
-  texture,
-  vec2,
-  vec3,
-} from "three/tsl";
+import { float, mix, normalMap, positionWorld, smoothstep, texture, vec2, vec3 } from "three/tsl";
 import { MeshStandardNodeMaterial, type Node } from "three/webgpu";
+import { ditherNode } from "./dither";
 import { QUALITY_PROFILES, type QualityLevel } from "./quality";
 
 export const TEXTURE_BASE_URL = "/texturas/";
@@ -163,21 +154,32 @@ export function texturedNormal(t: EnvTexture, scale = 1) {
  */
 export function texturedPlanarMaterial(
   t: EnvTexture,
-  opts: { color: string; roughness: number; variation?: boolean },
+  opts: {
+    color: string;
+    roughness: number;
+    variation?: boolean;
+    /** Solo el mapa de color (sin normal ni rugosidad): media, donde cada lectura cuesta. */
+    lite?: boolean;
+    /** Tramado por pixel (de noche, contra las bandas de los conos de luz). */
+    dither?: boolean;
+  },
 ): MeshStandardNodeMaterial {
   // `color` es el color plano que lleva la exportación glTF (R11); el dibujo usa colorNode.
   const m = new MeshStandardNodeMaterial({ metalness: 0, color: opts.color });
   const base = normalizedColor(t, opts.color);
+  // La variación de brillo a 23 m sale de la misma textura muestreada a esa escala (una lectura
+  // más), no de ruido de gradiente por pixel: el pasto llena la pantalla y en la GPU integrada
+  // el ruido costaba más que la textura (T1.2).
   m.colorNode = opts.variation
-    ? base.mul(
-        mix(
-          float(0.85),
-          float(1.15),
-          smoothstep(-0.3, 0.3, mx_noise_float(vec2(positionWorld.x, positionWorld.z).div(23))),
-        ),
-      )
+    ? base.mul(mix(float(0.85), float(1.15), smoothstep(0.3, 0.7, texture(t.map, planarUv(23)).g)))
     : base;
-  m.roughnessNode = normalizedRough(t, opts.roughness);
-  m.normalNode = texturedNormal(t);
+  if (opts.lite) {
+    m.roughness = opts.roughness;
+  } else {
+    m.roughnessNode = normalizedRough(t, opts.roughness);
+    m.normalNode = texturedNormal(t);
+  }
+  // Tramado contra las bandas de los conos de luz de noche (T1.2, ADR 0095).
+  if (opts.dither) m.emissiveNode = ditherNode();
   return m;
 }
