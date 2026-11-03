@@ -71,7 +71,12 @@ import { loadEnvTextures, TEXTURE_BASE_URL, texturesWanted } from "../env-textur
 import { attachPeople, variantsFor, type PeopleAttachment } from "../people-scene";
 import { buildGhostLayer, GHOST_COLORS } from "../ghosts";
 import { buildCroquisPaint } from "../croquis-paint";
-import { buildSceneGraph, mesh2DToGeometry, type SceneGraph } from "../scene-graph";
+import {
+  buildSceneGraph,
+  mesh2DToGeometry,
+  type ProceduralSummary,
+  type SceneGraph,
+} from "../scene-graph";
 import type { ViewerExportApi } from "../export/capture";
 import { seek } from "../timeline";
 import { seatHeight } from "../vehicle-geometry";
@@ -115,6 +120,8 @@ export interface SceneViewerProps {
   ambiente?: AmbienteVisual;
   /** Recibe la API de exportación (cuadros y glTF) cuando el visor está montado; null al salir. */
   onExport?: (api: ViewerExportApi | null) => void;
+  /** Lo procedural del entorno de la escena (T1.3), para la leyenda. */
+  onProcedural?: (p: ProceduralSummary) => void;
   /**
    * Escena guiada desde afuera (portada, PLAN §11.3). Con ella, la cámara sigue `pose` en cada
    * cuadro (en vez del modo de `camera`), el croquis se pinta sobre el asfalto y `revelado`
@@ -190,6 +197,9 @@ declare global {
       sinTexturas?: boolean;
       /** T1.2: sin el tramado por pixel, para medir su costo. */
       sinTramado?: boolean;
+      /** T1.3: sin el entorno procedural, o solo sin el relieve, para medir su costo. */
+      sinEntorno?: boolean;
+      sinRelieve?: boolean;
     };
     /** `performance.now()` del primer cuadro listo (E6: tiempo hasta interactivo). */
     __croquisReadyAt?: number;
@@ -236,6 +246,7 @@ function SceneContent({
   onPeople,
   hipotesis,
   onExport,
+  onProcedural,
   guiada,
   fx,
 }: Omit<SceneViewerProps, "renderer" | "onRendererInfo" | "onError" | "className"> & {
@@ -295,6 +306,8 @@ function SceneContent({
             typeof window !== "undefined" && window.__croquisDiag?.osmSoloCalzada === true,
           sinLuminarias:
             typeof window !== "undefined" && window.__croquisDiag?.sinLuminarias === true,
+          sinEntorno: typeof window !== "undefined" && window.__croquisDiag?.sinEntorno === true,
+          sinRelieve: typeof window !== "undefined" && window.__croquisDiag?.sinRelieve === true,
         },
       }),
     [spec, resultado, profile, env, vehicleModels],
@@ -302,6 +315,9 @@ function SceneContent({
   useEffect(() => {
     if (vehicleModels) window.__croquisVehicleModelsReady = true;
   }, [vehicleModels]);
+  useEffect(() => {
+    onProcedural?.(graph.procedural);
+  }, [graph, onProcedural]);
   // Cuántas cosas se agregaron al grafo después de armarlo (restos, personas): cada una pide
   // precompilar de nuevo (ver abajo).
   const [attachments, setAttachments] = useState(0);

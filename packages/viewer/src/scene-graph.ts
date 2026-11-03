@@ -33,6 +33,7 @@ import {
   type Material,
   Matrix4,
   Mesh,
+  MeshBasicMaterial,
   MeshPhysicalMaterial,
   MeshStandardMaterial,
   PlaneGeometry,
@@ -78,6 +79,14 @@ import {
   roadDecorFor,
 } from "./road-decor";
 import { buildWearMap, type LaneAxis } from "./road-wear";
+import { planEnvironment, corridorsOf, terrainHeightAt } from "./environment-decor";
+import {
+  buildBuildings,
+  buildFences,
+  buildHorizon,
+  buildPowerPoles,
+  buildTerrain,
+} from "./environment-scene";
 import { markMaterial } from "./ground-marks-material";
 import {
   ENV_TEXTURE_NAMES,
@@ -119,7 +128,15 @@ import {
 export interface SceneGraphOptions {
   quality: QualityProfile;
   /** Interruptores de diagnóstico de E6 (`window.__croquisDiag`); la página nunca los pone. */
-  diag?: { gravaPrevia?: boolean; osmSoloCalzada?: boolean; sinLuminarias?: boolean };
+  diag?: {
+    gravaPrevia?: boolean;
+    osmSoloCalzada?: boolean;
+    sinLuminarias?: boolean;
+    /** T1.3: sin el entorno procedural (edificios, árboles, cercas, cerros, relieve). */
+    sinEntorno?: boolean;
+    /** T1.3: solo sin el relieve del suelo (plano, como antes). */
+    sinRelieve?: boolean;
+  };
   env: Pick<EnvironmentSettings, "night" | "wet" | "groundColor" | "streetLights"> &
     Partial<Pick<EnvironmentSettings, "lightDirection" | "surface">>;
   /** Los modelos de Sketchfab por clase (R10, ADR 0086); sin ellos, los vehículos paramétricos. */
@@ -143,6 +160,14 @@ export interface PersonNode {
   mode: "trayectoria" | "a_bordo_visible" | "a_bordo_oculto" | "sin_datos";
   vehicleId?: string;
   seat?: number;
+}
+
+export interface ProceduralSummary {
+  zona: "rural" | "urbana";
+  arboles: number;
+  edificios: number;
+  luminarias: number;
+  cerros: boolean;
 }
 
 export interface SceneGraph {
@@ -175,6 +200,8 @@ export interface SceneGraph {
   stats: { meshes: number; triangles: number };
   /** Luminarias procedurales dibujadas (T1.1): entorno que no es del lugar real. */
   readonly luminariasProcedurales: number;
+  /** Lo procedural del entorno (T1.3), para que la leyenda diga que no es el lugar real. */
+  readonly procedural: ProceduralSummary;
 }
 
 // ---------------------------------------------------------------------------------------------
@@ -231,6 +258,11 @@ function sceneMaterials(opts: SceneGraphOptions, asphalt: AsphaltMaterial) {
       emissiveIntensity: opts.env.streetLights ? 2 : 0,
     }),
     impact: std("#f0b429", 0.5, 0, { transparent: true, opacity: 0.9, side: DoubleSide }),
+    // Horizonte procedural (T1.3): cerros y perfil urbano lejanos, siluetas sin iluminación (de
+    // noche, con cuatro focos, iluminarlos costaba un cuarto de los fps de media) que la niebla
+    // funde con el cielo.
+    hills: new MeshBasicMaterial({ color: opts.env.night ? "#0e1116" : "#6b7a6e" }),
+    skyline: new MeshBasicMaterial({ color: opts.env.night ? "#121419" : "#80858b" }),
     person: std("#b7bcc6", 0.8),
     personHead: std("#cfd3da", 0.8),
   };
@@ -448,17 +480,7 @@ export function buildSceneGraph(
   root.name = "escena";
   const disposables: { dispose(): void }[] = Object.values(mats);
 
-  // Suelo y vía.
-  const ground = new Mesh(new PlaneGeometry(800, 800), mats.ground);
-  ground.name = "suelo";
-  ground.rotation.x = -Math.PI / 2;
-  ground.position.y = -0.03;
-  // El pasto no recibe sombras: cubre casi toda la pantalla y las sombras importan en la calzada (E6).
-  ground.receiveShadow = false;
-  // Se dibuja después de la vía, los vehículos y los objetos: la prueba de profundidad descarta
-  // los pixeles de pasto que quedan tapados y no se sombrean dos veces (E6, limitado por relleno).
-  ground.renderOrder = 2;
-  root.add(ground);
+  // Suelo: con relieve leve y parcelas, más abajo, cuando ya se conoce la vía (T1.3).
 
   const lugar = spec.lugar;
   const layout = roadLayout(lugar);
@@ -549,6 +571,41 @@ export function buildSceneGraph(
   }
   // Acotamientos y barreras por clase de vía (T1.2).
   const decor = roadDecorFor(lugar, layout, mapa?.vias);
+  // Entorno más allá de la vía (T1.3, ADR 0096): plan procedural con la semilla, relieve leve,
+  // suelo con parcelas; los árboles declarados cuentan dentro del tope del nivel.
+  const declaredTrees = (spec.entorno.objetos ?? []).filter((o) => o.tipo === "arbol").length;
+  const envPlanCompleto = planEnvironment(lugar, layout, mapa?.vias, {
+    seed: spec.meta.semilla,
+    center: { x: action.cx, y: action.cy },
+    maxTrees: Math.max(0, opts.quality.maxTrees - declaredTrees),
+  });
+  const envPlan =
+    opts.diag?.sinEntorno === true
+      ? {
+          ...envPlanCompleto,
+          trees: [],
+          buildings: [],
+          poles: [],
+          fences: [],
+          parcels: [],
+          hills: [],
+          skyline: [],
+        }
+      : envPlanCompleto;
+  const heightAt =
+    opts.diag?.sinEntorno === true || opts.diag?.sinRelieve === true
+      ? () => 0
+      : terrainHeightAt(spec.meta.semilla, corridorsOf(layout, mapa?.vias), envPlan.zone);
+  // El suelo: 96 × 96 cuadros de 800 m, relieve fuera del corredor de la vía y color por parcela.
+  mats.ground.vertexColors = true;
+  const ground = buildTerrain(heightAt, envPlan.parcels, mats.ground);
+  ground.position.y = -0.03;
+  // El pasto no recibe sombras: cubre casi toda la pantalla y las sombras importan en la calzada (E6).
+  ground.receiveShadow = false;
+  // Se dibuja después de la vía, los vehículos y los objetos: la prueba de profundidad descarta
+  // los pixeles de pasto que quedan tapados y no se sombrean dos veces (E6, limitado por relleno).
+  ground.renderOrder = 2;
+  root.add(ground);
   const dash = dashPatternFor(lugar.tipo_via.valor, limite ? velocidadKmh(limite) : undefined);
   // `osmSoloCalzada` (diagnóstico de E6): la red del mapa como antes de ADR 0039, solo calzada.
   const soloCalzada = opts.diag?.osmSoloCalzada === true;
@@ -853,6 +910,28 @@ export function buildSceneGraph(
     place(g, l.x, l.y, l.rumbo_deg);
     objGroup.add(g);
   }
+  for (const t of envPlan.trees) {
+    const crownY = t.kind === 2 ? t.crown * 0.7 : t.trunk + t.crown * 0.7;
+    decorTrees.push({
+      x: toThree(t.x, t.y, 0)[0],
+      z: toThree(t.x, t.y, 0)[2],
+      d: t.kind === 2 ? 0.08 : 0.22 + t.crown * 0.06,
+      h: t.kind === 1 ? t.trunk + 1.5 : t.trunk,
+      crownR: t.crown,
+      crownY: t.kind === 1 ? crownY + 1.5 : crownY,
+      yaw: t.yaw,
+    });
+  }
+  const envGroup = new Group();
+  envGroup.name = "entorno_procedural";
+  const buildings = buildBuildings(envPlan.buildings, heightAt, opts.env.night);
+  if (buildings) envGroup.add(buildings);
+  const powerPoles = buildPowerPoles(envPlan.poles, heightAt, mats.concrete);
+  if (powerPoles) envGroup.add(powerPoles);
+  const fences = buildFences(envPlan.fences, heightAt, mats.dark);
+  if (fences) envGroup.add(fences);
+  envGroup.add(buildHorizon(envPlan, { x: action.cx, y: action.cy }, mats.hills, mats.skyline));
+  root.add(envGroup);
   if (decorTrees.length > 0) {
     // Geometrías unitarias escaladas por instancia: tronco de radio 0.5 y alto 1, copa de radio 1.
     const trunkGeo = new CylinderGeometry(0.5, 0.575, 1, 12);
@@ -867,9 +946,14 @@ export function buildSceneGraph(
     const up = new Vector3(0, 1, 0);
     decorTrees.forEach((t, i) => {
       q.setFromAxisAngle(up, t.yaw);
-      m.compose(new Vector3(t.x, 0, t.z), q, new Vector3(t.d, t.h, t.d));
+      const base = heightAt(t.x, -t.z);
+      m.compose(new Vector3(t.x, base, t.z), q, new Vector3(t.d, t.h, t.d));
       trunks.setMatrixAt(i, m);
-      m.compose(new Vector3(t.x, t.crownY, t.z), q, new Vector3(t.crownR, t.crownR, t.crownR));
+      m.compose(
+        new Vector3(t.x, base + t.crownY, t.z),
+        q,
+        new Vector3(t.crownR, t.crownR, t.crownR),
+      );
       crowns.setMatrixAt(i, m);
     });
     for (const im of [trunks, crowns]) {
@@ -1282,6 +1366,7 @@ export function buildSceneGraph(
             variation: true,
             lite,
             dither: night,
+            vertexColors: true,
           }),
         );
       }
@@ -1307,5 +1392,12 @@ export function buildSceneGraph(
     },
     stats: { meshes, triangles: Math.round(triangles) },
     luminariasProcedurales: luminarias.length,
+    procedural: {
+      zona: envPlan.zone,
+      arboles: envPlan.trees.length,
+      edificios: envPlan.buildings.length,
+      luminarias: luminarias.length,
+      cerros: envPlan.hills.length > 0,
+    },
   };
 }

@@ -60,7 +60,7 @@ import { useIdioma, useTextos } from "@/i18n/cliente";
 import { leerE9, registrarE9 } from "@/lib/e9";
 import { leerEscenaPropia } from "@/lib/escena-propia";
 import { reconstruirCompletoEnNavegador } from "@/lib/reconstruct-client";
-import type { PeopleAttachment } from "@croquis/viewer";
+import type { PeopleAttachment, ProceduralSummary } from "@croquis/viewer";
 import { Legend } from "../legend";
 import { describeAmbiente, parseAmbiente } from "./ambiente";
 import { EvidencePanel } from "./evidence-panel";
@@ -484,6 +484,8 @@ export function VisorEscena({
   }, [clock, dibujo]);
 
   // Resultado del montaje de personas (ragdolls calibrados) para el panel.
+  // Lo procedural del entorno 3D (T1.3), para la leyenda.
+  const [procedural, setProcedural] = useState<ProceduralSummary | null>(null);
   const [people, setPeople] = useState<{ escena: EscenaVisor; data: PeopleAttachment } | null>(
     null,
   );
@@ -591,6 +593,7 @@ export function VisorEscena({
         atribucion={spec.lugar.red_vial?.atribucion}
         modelos={exportApi?.vehicleCredits}
         texto={leyendaTexto}
+        procedural={procedural ?? undefined}
       />
     </div>
   );
@@ -608,6 +611,7 @@ export function VisorEscena({
         renderer={effectiveRenderer}
         onRendererInfo={principal ? setInfo : undefined}
         onPeople={principal ? onPeople : undefined}
+        onProcedural={principal ? setProcedural : undefined}
         hipotesis={principal && !comparar ? ghostResults : undefined}
         onExport={principal ? setExportApi : undefined}
         ambiente={ambiente ?? undefined}
