@@ -150,11 +150,6 @@ def encode(png: bytes, mapa: str, size: int) -> bytes:
     return buf.getvalue()
 
 
-def _medidas(a: Arbol) -> dict[str, Any]:
-    p = RAW_DIR / "horneados" / a.especie / "medidas.json"
-    return json.loads(p.read_text(encoding="utf-8"))
-
-
 def build(solo: set[str] | None = None) -> dict[str, Any]:
     """Hornea (todas las especies, o ``solo`` esas) y escribe los WebP y ``arboles.json``."""
     OUT_DIR.mkdir(parents=True, exist_ok=True)
