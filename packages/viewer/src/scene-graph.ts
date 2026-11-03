@@ -81,15 +81,30 @@ import {
   roadDecorFor,
 } from "./road-decor";
 import { buildWearMap, type LaneAxis } from "./road-wear";
-import { planEnvironment, corridorsOf, terrainHeightAt } from "./environment-decor";
 import {
-  buildBuildings,
+  planEnvironment,
+  corridorsOf,
+  distanceToRoad,
+  speciesFor,
+  terrainHeightAt,
+  type TreeSpecies,
+} from "./environment-decor";
+import {
+  buildPalms,
+  buildTreeImpostors,
+  type TreeImpostors,
+  type TreeInstance,
+} from "./tree-impostors";
+import {
   buildFences,
   buildHorizon,
   buildPowerPoles,
+  buildSigns,
   buildTerrain,
 } from "./environment-scene";
 import { markMaterial } from "./ground-marks-material";
+import { buildBuildings as buildBuildingsMx, type BuildingsBuild } from "./facades";
+import { buildGrassTufts } from "./grass-tufts";
 import {
   ENV_TEXTURE_NAMES,
   texturedPlanarMaterial,
@@ -203,6 +218,11 @@ export interface SceneGraph {
   readonly wantedTextures: readonly EnvTextureName[];
   /** Texturas PBR del entorno (F8e): asfalto, concreto de banquetas y camellón, y pasto. */
   applyTextures(t: EnvTextures): void;
+  /**
+   * Árboles impostores (T1.3b): las tarjetas horneadas sustituyen a las copas de pocas caras de
+   * los árboles (no a los arbustos ni al árbol que participa en un evento).
+   */
+  applyTreeImpostors(set: TreeImpostors): void;
   /** La atribución de los modelos de Sketchfab que usa la escena (R10, CC-BY). */
   readonly vehicleCredits: readonly VehicleCredit[];
   dispose(): void;
@@ -260,6 +280,11 @@ function sceneMaterials(opts: SceneGraphOptions, asphalt: AsphaltMaterial) {
     metal: std("#8d9196", 0.45, 0.6),
     wall: std("#b7a68e", 0.95),
     signPlate: std("#e6e6e6", 0.5),
+    // Señales genéricas (T1.3b).
+    signWhite: std("#f2f2f2", 0.45),
+    signBlue: std("#1f4e9c", 0.45),
+    cable: std("#1b1b1b", 0.6),
+    rebar: std("#6a4a30", 0.85),
     signRed: std("#b3261e", 0.5),
     dark: std("#2a2c2e", 0.6),
     lamp: std("#fff3cf", 0.4, 0, {
@@ -270,7 +295,10 @@ function sceneMaterials(opts: SceneGraphOptions, asphalt: AsphaltMaterial) {
     // Horizonte procedural (T1.3): cerros y perfil urbano lejanos, siluetas sin iluminación (de
     // noche, con cuatro focos, iluminarlos costaba un cuarto de los fps de media) que la niebla
     // funde con el cielo.
-    hills: new MeshBasicMaterial({ color: opts.env.night ? "#0e1116" : "#6b7a6e" }),
+    hills: new MeshBasicMaterial({
+      color: opts.env.night ? "#0e1116" : "#5f6e62",
+      vertexColors: true,
+    }),
     skyline: new MeshBasicMaterial({ color: opts.env.night ? "#121419" : "#80858b" }),
     person: std("#b7bcc6", 0.8),
     personHead: std("#cfd3da", 0.8),
@@ -597,6 +625,7 @@ export function buildSceneGraph(
           fences: [],
           parcels: [],
           hills: [],
+          signs: [],
           skyline: [],
         }
       : envPlanCompleto;
@@ -606,14 +635,43 @@ export function buildSceneGraph(
       : terrainHeightAt(spec.meta.semilla, corridorsOf(layout, mapa?.vias), envPlan.zone);
   // El suelo: 96 × 96 cuadros de 800 m, relieve fuera del corredor de la vía y color por parcela.
   mats.ground.vertexColors = true;
-  const ground = buildTerrain(heightAt, envPlan.parcels, mats.ground);
-  ground.position.y = -0.03;
-  // El pasto no recibe sombras: cubre casi toda la pantalla y las sombras importan en la calzada (E6).
-  ground.receiveShadow = false;
-  // Se dibuja después de la vía, los vehículos y los objetos: la prueba de profundidad descarta
-  // los pixeles de pasto que quedan tapados y no se sombrean dos veces (E6, limitado por relleno).
-  ground.renderOrder = 2;
-  root.add(ground);
+  // Suelo en dos piezas (T1.3b): un parche fino de 320 m alrededor de la acción (celdas de 3.3 m,
+  // con el relieve, las parcelas y la orilla seca junto a la vía) y, debajo, el terreno grueso que
+  // llega hasta los cerros del fondo, con un hueco bajo el parche.
+  const corridorsForDry = corridorsOf(layout, mapa?.vias);
+  const dryAt = (x: number, y: number) =>
+    1 - Math.min(1, Math.max(0, (distanceToRoad({ x, y }, corridorsForDry) - 1.2) / 4));
+  const groundNear = buildTerrain(heightAt, envPlan.parcels, mats.ground, 320, 96, {
+    center: { x: action.cx, y: action.cy },
+    dryAt,
+  });
+  groundNear.name = "suelo";
+  groundNear.position.y = -0.03;
+  const groundFar = buildTerrain(heightAt, envPlan.parcels, mats.ground, 2400, 80, {
+    center: { x: action.cx, y: action.cy },
+    hole: 300,
+  });
+  groundFar.name = "suelo_lejano";
+  groundFar.position.y = -0.05;
+  // Matas de pasto cerca de la acción (solo alta y ultra, T1.3b).
+  const tufts = buildGrassTufts({
+    seed: spec.meta.semilla,
+    center: { x: action.cx, y: action.cy },
+    count: opts.quality.grassTufts,
+    allowed: (x, y) => distanceToRoad({ x, y }, corridorsForDry) > 2.5,
+    heightAt,
+    night: opts.env.night,
+    groundColor: opts.env.groundColor,
+  });
+  if (tufts) root.add(tufts);
+  for (const ground of [groundNear, groundFar]) {
+    // El pasto no recibe sombras: cubre casi toda la pantalla y las sombras importan en la calzada.
+    ground.receiveShadow = false;
+    // Se dibuja después de la vía, los vehículos y los objetos: la prueba de profundidad descarta
+    // los pixeles de pasto que quedan tapados y no se sombrean dos veces (E6, limitado por relleno).
+    ground.renderOrder = 2;
+    root.add(ground);
+  }
   const dash = dashPatternFor(lugar.tipo_via.valor, limite ? velocidadKmh(limite) : undefined);
   // `osmSoloCalzada` (diagnóstico de E6): la red del mapa como antes de ADR 0039, solo calzada.
   const soloCalzada = opts.diag?.osmSoloCalzada === true;
@@ -834,7 +892,16 @@ export function buildSceneGraph(
     crownR: number;
     crownY: number;
     yaw: number;
+    /** Arbusto: nunca lo sustituye un impostor. */
+    bush?: boolean;
   }[] = [];
+  /** Árboles que los impostores sustituyen (T1.3b), por especie. */
+  const impostorTrees: Record<TreeSpecies, TreeInstance[]> = {
+    jacaranda: [],
+    fresno: [],
+    pirul: [],
+    palmera: [],
+  };
   for (const o of spec.entorno.objetos ?? []) {
     const g = new Group();
     g.name = `objeto_${o.id}`;
@@ -859,6 +926,13 @@ export function buildSceneGraph(
         // dibujo para todos los troncos y otra para todas las copas).
         const [px, , pz] = toThree(o.posicion.x, o.posicion.y, 0);
         decorTrees.push({ x: px, z: pz, d, h, crownR, crownY, yaw: 2 * Math.PI * u });
+        impostorTrees[speciesFor(envPlan.zone, u)].push({
+          x: px,
+          y: heightAt(o.posicion.x, o.posicion.y),
+          z: pz,
+          height: crownY + crownR,
+          yaw: 2 * Math.PI * u,
+        });
         continue;
       }
       const crown = new Mesh(new IcosahedronGeometry(crownR, 1), mats.crown);
@@ -920,7 +994,18 @@ export function buildSceneGraph(
   }
   for (const t of envPlan.trees) {
     const crownY = t.kind === 2 ? t.crown * 0.7 : t.trunk + t.crown * 0.7;
+    if (t.species && t.height) {
+      const [ix, , iz] = toThree(t.x, t.y, 0);
+      impostorTrees[t.species].push({
+        x: ix,
+        y: heightAt(t.x, t.y),
+        z: iz,
+        height: t.height,
+        yaw: t.yaw,
+      });
+    }
     decorTrees.push({
+      bush: t.kind === 2,
       x: toThree(t.x, t.y, 0)[0],
       z: toThree(t.x, t.y, 0)[2],
       d: t.kind === 2 ? 0.08 : 0.22 + t.crown * 0.06,
@@ -932,10 +1017,27 @@ export function buildSceneGraph(
   }
   const envGroup = new Group();
   envGroup.name = "entorno_procedural";
-  const buildings = buildBuildings(envPlan.buildings, heightAt, opts.env.night);
-  if (buildings) envGroup.add(buildings);
-  const powerPoles = buildPowerPoles(envPlan.poles, heightAt, mats.concrete);
+  // Fachadas a la mexicana (T1.3b): las texturas llegan con `applyTextures`.
+  const edificios: BuildingsBuild | null = buildBuildingsMx(
+    envPlan.buildings,
+    heightAt,
+    opts.env.night,
+    {
+      tinaco: mats.dark,
+      metal: mats.metal,
+      rebar: mats.rebar,
+    },
+  );
+  if (edificios) envGroup.add(edificios.group);
+  const powerPoles = buildPowerPoles(envPlan.poles, heightAt, mats.concrete, mats.cable);
   if (powerPoles) envGroup.add(powerPoles);
+  const signs = buildSigns(envPlan.signs, heightAt, {
+    post: mats.metal,
+    red: mats.signRed,
+    white: mats.signWhite,
+    blue: mats.signBlue,
+  });
+  if (signs) envGroup.add(signs);
   const fences = buildFences(envPlan.fences, heightAt, mats.dark);
   if (fences) envGroup.add(fences);
   envGroup.add(buildHorizon(envPlan, { x: action.cx, y: action.cy }, mats.hills, mats.skyline));
@@ -971,6 +1073,8 @@ export function buildSceneGraph(
       objGroup.add(im);
     }
   }
+  // Las copas de pocas caras que un impostor puede sustituir (todas menos los arbustos).
+  const sphereTrees = objGroup.children.filter((c) => c.name === "troncos" || c.name === "copas");
   root.add(objGroup);
 
   // Dispositivos de tránsito (F8c): semáforos con su fase en el tiempo y una placa por señal.
@@ -1393,7 +1497,54 @@ export function buildSceneGraph(
       ...(asphalt.look.patch?.grainM || decor.shoulders.indices.length > 0
         ? (["grava"] as const)
         : []),
+      // T1.3b: tierra para las manchas del suelo; fachadas solo donde hay edificios.
+      "tierra" as const,
+      ...(envPlan.buildings.length > 0 ? (["yeso", "tabique", "lamina"] as const) : []),
     ],
+    applyTreeImpostors(set: TreeImpostors) {
+      const g = new Group();
+      g.name = "arboles_impostores";
+      const night = opts.env.night;
+      for (const especie of ["jacaranda", "fresno", "pirul"] as const) {
+        const tree = set[especie];
+        const list = impostorTrees[especie];
+        if (!tree || list.length === 0) continue;
+        const built = buildTreeImpostors(tree, list, { night });
+        if (built) g.add(built);
+      }
+      const palms = buildPalms(impostorTrees.palmera, { night });
+      if (palms) g.add(palms);
+      if (g.children.length === 0) return;
+      // Las esferas solo quedan para los arbustos: se reconstruyen las mallas instanciadas con ellos.
+      const bushes = decorTrees.filter((t) => t.bush);
+      for (const m of sphereTrees) {
+        m.visible = false;
+      }
+      if (bushes.length > 0) {
+        const trunkGeo = new CylinderGeometry(0.5, 0.575, 1, 12);
+        trunkGeo.translate(0, 0.5, 0);
+        const crowns = new InstancedMesh(new IcosahedronGeometry(1, 1), mats.crown, bushes.length);
+        crowns.name = "arbustos";
+        const m4 = new Matrix4();
+        const q = new Quaternion();
+        const up = new Vector3(0, 1, 0);
+        bushes.forEach((t, i) => {
+          q.setFromAxisAngle(up, t.yaw);
+          const base = heightAt(t.x, -t.z);
+          m4.compose(
+            new Vector3(t.x, base + t.crownY, t.z),
+            q,
+            new Vector3(t.crownR, t.crownR, t.crownR),
+          );
+          crowns.setMatrixAt(i, m4);
+        });
+        crowns.instanceMatrix.needsUpdate = true;
+        crowns.castShadow = true;
+        crowns.computeBoundingSphere();
+        g.add(crowns);
+      }
+      objGroup.add(g);
+    },
     applyTextures(t: EnvTextures) {
       // En media, solo el mapa de color de cada textura: las lecturas de normal y rugosidad sobre
       // el pasto y la calzada, que llenan la pantalla, costaban más de lo que se ve (T1.2).
@@ -1414,6 +1565,13 @@ export function buildSceneGraph(
           texturedPlanarMaterial(t.concreto, { ...calibrated(mats.sidewalk), lite, dither: night }),
         );
       }
+      if (t.yeso && t.tabique && t.lamina) {
+        edificios?.setFacadeTextures({
+          yeso: t.yeso.map,
+          tabique: t.tabique.map,
+          lamina: t.lamina.map,
+        });
+      }
       if (t.pasto) {
         swaps.set(
           mats.ground,
@@ -1423,6 +1581,8 @@ export function buildSceneGraph(
             lite,
             dither: night,
             vertexColors: true,
+            // Manchas de tierra y orillas secas (T1.3b).
+            patches: t.tierra ? { dirt: t.tierra } : undefined,
           }),
         );
       }

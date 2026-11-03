@@ -52,11 +52,12 @@ export function buildNightSkyMesh(streetLights: boolean): Mesh {
   const base = mix(color(c.horizon), color(c.zenith), smoothstep(float(-0.02), float(0.5), elev));
   // Estrellas: una por celda de la dirección, con brillo por hash; se apagan junto al horizonte
   // (el aire) y con el alumbrado (el cielo urbano casi no las deja ver).
-  const cell = floor(dir.mul(260));
+  // Celdas finas (T1.3b): a 260 por unidad y mapa de 256 las estrellas eran discos.
+  const cell = floor(dir.mul(700));
   const h = fract(sin(dot(cell, vec3(12.9898, 78.233, 37.719))).mul(43758.5453));
-  const stars = smoothstep(float(0.993), float(0.999), h)
+  const stars = smoothstep(float(0.9955), float(0.9995), h)
     .mul(smoothstep(float(0.03), float(0.2), elev))
-    .mul(streetLights ? 0.45 : 0.9);
+    .mul(streetLights ? 0.35 : 0.7);
   const moon = pow(max(dot(dir, vec3(...MOON_THREE)), float(0)), float(64)).mul(
     streetLights ? 0.18 : 0.3,
   );

@@ -589,8 +589,8 @@ export function VisorEscena({
   const leyenda = (
     <div className="pointer-events-none absolute inset-x-0 bottom-0 bg-[color-mix(in_srgb,var(--fondo)_72%,transparent)] px-4 py-2">
       <Legend
-        seed={spec.meta.semilla}
-        inputHash={spec.meta.hash_relato}
+        // Sin semilla ni hash en la vista (René, 2026-11-03): quedan en el dictamen y las
+        // exportaciones, que son la trazabilidad.
         tone="clara"
         atribucion={spec.lugar.red_vial?.atribucion}
         modelos={exportApi?.vehicleCredits}

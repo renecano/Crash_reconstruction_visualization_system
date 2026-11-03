@@ -234,7 +234,8 @@ export function environmentFor(input: EnvironmentInput): EnvironmentSettings {
     sun,
     lightDirection,
     sunIntensity: night ? 0.45 : twilight ? 2.2 : overcast ? 1.4 : 2.8,
-    ambientIntensity: night ? (alumbrado ? 0.9 : 0.45) : twilight ? 1.25 : overcast ? 0.95 : 0.85,
+    // De noche algo más de ambiente (T1.3b): el piso cercano a la cámara era un hueco negro.
+    ambientIntensity: night ? (alumbrado ? 1.05 : 0.6) : twilight ? 1.25 : overcast ? 0.95 : 0.85,
     skyColor: night ? "#18223d" : twilight ? "#cdbbb0" : overcast ? "#9aa3ad" : "#8fc1ea",
     ambientSkyColor: night
       ? alumbrado
@@ -247,7 +248,7 @@ export function environmentFor(input: EnvironmentInput): EnvironmentSettings {
           : "#8fc1ea",
     // De noche el pasto es oscuro y neutro: con el ambiente cálido del alumbrado, el verde
     // de antes salía oliva (comentario de René sobre T1.1).
-    groundColor: night ? "#1c1d1b" : "#5d6b4a",
+    groundColor: night ? "#242521" : "#5d6b4a",
     fogDensity,
     night,
     wet: surface === "mojado" || surface === "encharcado",
