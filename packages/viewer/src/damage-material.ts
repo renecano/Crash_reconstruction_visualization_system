@@ -36,6 +36,7 @@ import {
   fract,
 } from "three/tsl";
 import { MeshPhysicalNodeMaterial, MeshStandardNodeMaterial } from "three/webgpu";
+import { flakeMetalness, flakeNormal, paintLookFor, type PaintState } from "./paint-material";
 
 type FloatNode = ReturnType<typeof mx_noise_float>;
 
@@ -60,7 +61,12 @@ export interface DamagedPaint {
 }
 
 /** Pintura con transferencia, rayones y abolladuras ligadas a los atributos de daño. */
-export function damagedPaintMaterial(baseHex: string, otherHex?: string): DamagedPaint {
+export function damagedPaintMaterial(
+  baseHex: string,
+  otherHex?: string,
+  estado?: PaintState,
+): DamagedPaint {
+  const look = paintLookFor(estado);
   const influence = uniform(0);
   const dano = attribute("dano", "float").mul(influence);
   const transfer = attribute("transferencia", "float").mul(influence);
@@ -75,11 +81,20 @@ export function damagedPaintMaterial(baseHex: string, otherHex?: string): Damage
   // El color plano: no cambia el dibujo (manda colorNode); es lo que lleva la exportación glTF (R11).
   m.color.set(baseHex);
   m.colorNode = mix(painted, color("#8f9296"), clamp(scratches.mul(0.8), 0, 1));
-  m.roughnessNode = mix(float(0.38), float(0.85), clamp(dano.mul(1.3).add(scratches), 0, 1));
-  m.metalnessNode = mix(float(0.35), float(0.75), clamp(scratches, 0, 1));
-  m.clearcoatNode = mix(float(1), float(0.05), clamp(dano.mul(2.5), 0, 1));
-  m.clearcoatRoughnessNode = float(0.12);
-  m.normalNode = perturbNormal(n.mul(0.012).mul(dano));
+  m.roughnessNode = mix(
+    float(look.roughness),
+    float(0.85),
+    clamp(dano.mul(1.3).add(scratches), 0, 1),
+  );
+  m.metalnessNode = mix(
+    flakeMetalness(look.metalness, look.flake),
+    float(0.75),
+    clamp(scratches, 0, 1),
+  );
+  m.clearcoatNode = mix(float(look.clearcoat), float(0.05), clamp(dano.mul(2.5), 0, 1));
+  m.clearcoatRoughnessNode = float(look.clearcoatRoughness);
+  // Las hojuelas de la pintura intacta (T1.4) más las abolladuras finas del daño.
+  m.normalNode = flakeNormal(look.flake, perturbNormal(n.mul(0.012).mul(dano)));
   return { material: m, influence };
 }
 

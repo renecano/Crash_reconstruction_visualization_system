@@ -39,6 +39,25 @@ describe("grafo de escena", () => {
     });
   }
 
+  it("las luces de freno encienden cuando el solver frena al vehículo (T1.4)", async () => {
+    const r = await loadResultado("alcance");
+    const sg = buildSceneGraph(loadFixture("alcance"), r, opts);
+    const ev = r.eventos.find((e) => e.tipo === "inicio_frenado");
+    expect(ev).toBeDefined();
+    if (!ev) return;
+    const n = sg.vehicles.find((v) => v.id === ev.actores[0]);
+    expect(n?.brake).toBeTruthy();
+    if (!n?.brake) return;
+    const mat = n.brake.mats[0];
+    expect(mat).toBeDefined();
+    if (!mat) return;
+    sg.update(ev.t - 0.5);
+    expect(mat.emissiveIntensity).toBe(0);
+    sg.update(ev.t + 0.3);
+    expect(mat.emissiveIntensity).toBeGreaterThan(0);
+    sg.dispose();
+  });
+
   it("las llantas giran según la distancia recorrida", async () => {
     const r = await loadResultado("alcance");
     const sg = buildSceneGraph(loadFixture("alcance"), r, opts);

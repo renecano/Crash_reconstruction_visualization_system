@@ -11,7 +11,9 @@ import {
 import { describe, expect, it } from "vitest";
 import { QUALITY_PROFILES } from "./quality";
 import { buildSceneGraph } from "./scene-graph";
+import { axlePositionsFor } from "./vehicle-geometry";
 import {
+  axleRemap,
   buildModelVehicle,
   MODEL_FOR_CLASS,
   modelClassesFor,
@@ -110,7 +112,8 @@ describe("vehículos de Sketchfab (R10)", () => {
   });
 
   it("se ajusta a las dimensiones del caso, con las ruedas redondas sobre el piso", () => {
-    const dims = { length: 4.4, width: 1.7, height: 1.45, wheelbase: 2.6 };
+    // El paso entre ejes del caso es el del modelo escalado (2.6 × 4.4 / 4): no se reparte nada.
+    const dims = { length: 4.4, width: 1.7, height: 1.45, wheelbase: 2.86, frontOverhang: 0.77 };
     const g = buildModelVehicle(plantilla("sedan"), "sedan_compacto", dims);
     g.updateMatrixWorld(true);
     const caja = {
@@ -146,6 +149,35 @@ describe("vehículos de Sketchfab (R10)", () => {
     // Las cotas del habitáculo del paramétrico, para las bolsas de aire.
     expect(g.userData.layout).toBeDefined();
     expect(g.userData.modelo).toBe("sedan");
+    expect(g.userData.axlesRemapped).toBe(false);
+  });
+
+  it("las ruedas caen en los ejes del caso y la carrocería se reparte sin cambiar de largo", () => {
+    const dims = { length: 4.4, width: 1.7, height: 1.45, wheelbase: 2.3 };
+    const g = buildModelVehicle(plantilla("sedan"), "sedan_compacto", dims);
+    expect(g.userData.axlesRemapped).toBe(true);
+    const { front, rear } = axlePositionsFor("sedan_compacto", dims);
+    expect(front - rear).toBeCloseTo(2.3, 6);
+    expect((g.getObjectByName("wheel_fl") as Group).position.x).toBeCloseTo(front, 6);
+    expect((g.getObjectByName("wheel_rr") as Group).position.x).toBeCloseTo(rear, 6);
+    g.updateMatrixWorld(true);
+    let minX = Infinity;
+    let maxX = -Infinity;
+    for (const c of g.children) {
+      if (!(c instanceof Mesh)) continue;
+      const geo = (c as Mesh).geometry;
+      geo.computeBoundingBox();
+      const b = geo.boundingBox!.clone().applyMatrix4(c.matrixWorld);
+      minX = Math.min(minX, b.min.x);
+      maxX = Math.max(maxX, b.max.x);
+    }
+    expect(maxX - minX).toBeCloseTo(4.4, 5);
+    // El reparto es monótono y deja los extremos donde estaban.
+    const remap = axleRemap({ front: 1.43, rear: -1.43 }, { front, rear }, 4.4)!;
+    expect(remap(-2.2)).toBeCloseTo(-2.2, 9);
+    expect(remap(2.2)).toBeCloseTo(2.2, 9);
+    expect(remap(1.43)).toBeCloseTo(front, 9);
+    expect(axleRemap({ front: 1.43, rear: -1.43 }, { front: 1.43, rear: -1.43 }, 4.4)).toBeNull();
   });
 
   it("en la escena: la pintura toma el color del caso y lo demás conserva el material del modelo", async () => {

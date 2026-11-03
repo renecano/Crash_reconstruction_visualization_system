@@ -294,6 +294,17 @@ export function axlePositions(
   return { front, rear: front - wb };
 }
 
+/** Ejes del caso para cualquier clase: autos por `axlePositions`; dos ruedas, simétricos. */
+export function axlePositionsFor(
+  clase: string,
+  d: VehicleDimensions,
+): { front: number; rear: number } {
+  const p = profileFor(clase);
+  if (p.kind === "car") return axlePositions(d, p.frontShare);
+  const wb = Math.min(d.wheelbase, d.length - 2 * p.wheelRadius + 0.1);
+  return { front: wb / 2, rear: -wb / 2 };
+}
+
 function buildCar(p: CarProfile, d: VehicleDimensions): Group {
   const g = new Group();
   const { length: L, width: W, height: H } = d;

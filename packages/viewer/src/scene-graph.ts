@@ -53,7 +53,9 @@ import { toThree } from "./coords";
 import type { EnvironmentSettings } from "./environment";
 import { applyPosture, buildMannequin, CG_HEIGHT_FACTOR } from "./person-geometry";
 import type { QualityProfile } from "./quality";
-import { buildDamageRig, type DamageRig } from "./damage-rig";
+import { buildDamageRig, firstImpact, type DamageRig } from "./damage-rig";
+import { brakingAt, type BrakeInput } from "./brake-lights";
+import { paintMaterial, type PaintState } from "./paint-material";
 import {
   computeGroundMarks,
   puddleRadius,
@@ -152,7 +154,14 @@ export interface VehicleNode {
   track: Resultado["vehiculos"][number]["trayectoria"];
   /** Daño animado (deformación, materiales, faros, parabrisas, llantas, bolsas de aire). */
   rig: DamageRig;
+  /** Luces de freno (T1.4): sus calaveras y la señal que las enciende. */
+  brake: { input: BrakeInput; mats: MeshStandardMaterial[]; night: boolean } | null;
 }
+
+/** Intensidad emisiva de las calaveras: apagadas, de posición (noche) y de freno. */
+export const TAIL_LIGHT = { off: 0, night: 1.5, brakeDay: 3, brakeNight: 6 } as const;
+/** Interior tenue de noche (tablero) en los modelos (T1.4, ilustrativo). */
+export const INTERIOR_GLOW = { color: "#ffb070", intensity: 0.15 } as const;
 
 export interface PersonNode {
   id: string;
@@ -280,15 +289,14 @@ function wheelMaterial(): MeshStandardNodeMaterial {
 }
 
 /** Materiales de la carrocería por papel de cada pieza (también los usa la galería de E5). */
-export function vehicleMaterials(color: string, night: boolean): Record<PartRole, Material> {
+export function vehicleMaterials(
+  color: string,
+  night: boolean,
+  estado?: PaintState,
+): Record<PartRole, Material> {
   return {
-    pintura: new MeshPhysicalMaterial({
-      color,
-      roughness: 0.38,
-      metalness: 0.35,
-      clearcoat: 1,
-      clearcoatRoughness: 0.12,
-    }),
+    // Base metálica con hojuelas bajo barniz (T1.4, ADR 0097); el estado de pintura del contrato.
+    pintura: paintMaterial(color, estado),
     vidrio: new MeshPhysicalMaterial({
       color: "#1c2730",
       roughness: 0.06,
@@ -1058,22 +1066,32 @@ export function buildSceneGraph(
     if (template) usedTemplates.push(template);
     group.name = `vehiculo_${v.id}`;
     group.userData.id = v.id;
-    const vm = vehicleMaterials(
-      glyphs.get(v.id)?.colorHex ?? "#9aa0a6",
-      opts.env.night && headlightsOn(spec, v.id),
-    );
+    const lit = opts.env.night && headlightsOn(spec, v.id);
+    const estadoPintura = sv?.estado_pintura?.valor;
+    const vm = vehicleMaterials(glyphs.get(v.id)?.colorHex ?? "#9aa0a6", lit, estadoPintura);
     disposables.push(...Object.values(vm));
+    const brakeMats: MeshStandardMaterial[] = [];
     group.traverse((m) => {
       if (!(m instanceof Mesh)) return;
       const role = m.userData.role as PartRole;
       if (!m.userData.modelo || role === "pintura") {
         m.material = vm[role] ?? vm.plastico;
+        if (role === "calavera") brakeMats.push(m.material as MeshStandardMaterial);
       } else if (role === "faro" || role === "calavera") {
-        // El modelo conserva sus faros; de noche encienden como los del paramétrico.
+        // El modelo conserva sus faros y calaveras, con material propio por vehículo: de noche
+        // encienden como los del paramétrico y las calaveras marcan el frenado (T1.4).
         const own = (m.material as MeshStandardMaterial).clone();
-        const lit = vm[role] as MeshStandardMaterial;
-        own.emissive.copy(lit.emissive);
-        own.emissiveIntensity = lit.emissiveIntensity;
+        const ref = vm[role] as MeshStandardMaterial;
+        own.emissive.copy(ref.emissive);
+        own.emissiveIntensity = ref.emissiveIntensity;
+        m.material = own;
+        disposables.push(own);
+        if (role === "calavera") brakeMats.push(own);
+      } else if (lit && /interior|steering/i.test(m.name)) {
+        // Tablero tenue de noche (ilustrativo).
+        const own = (m.material as MeshStandardMaterial).clone();
+        own.emissive = new Color(INTERIOR_GLOW.color);
+        own.emissiveIntensity = INTERIOR_GLOW.intensity;
         m.material = own;
         disposables.push(own);
       }
@@ -1084,7 +1102,20 @@ export function buildSceneGraph(
       resultado,
       colorOf: (id) => glyphs.get(id)?.colorHex,
       seed: Math.trunc(spec.meta.semilla) * 31 + resultado.vehiculos.indexOf(v),
+      estadoPintura,
     });
+    const brake =
+      brakeMats.length > 0
+        ? {
+            input: {
+              track: v.trayectoria,
+              tFirstImpact: firstImpact(v.id, resultado)?.t ?? null,
+              bloqueadas: sv?.frenado?.aplico?.valor ?? false,
+            },
+            mats: brakeMats,
+            night: lit,
+          }
+        : null;
     disposables.push(...rig.materials);
     group.traverse((m) => {
       if (m instanceof Mesh) m.castShadow = opts.quality.shadows && castsShadow(m);
@@ -1128,6 +1159,7 @@ export function buildSceneGraph(
       distance: cumulativeDistance(v.trayectoria),
       track: v.trayectoria,
       rig,
+      brake,
     });
   }
 
@@ -1249,6 +1281,21 @@ export function buildSceneGraph(
         ((n.distance[i + 1] ?? n.distance[i] ?? 0) - (n.distance[i] ?? 0)) * f;
       for (const w of n.wheels) w.obj.rotation.z = -s / w.radius;
       n.rig.update(t);
+      if (n.brake) {
+        const on = brakingAt(n.brake.input, t);
+        const k = on
+          ? n.brake.night
+            ? TAIL_LIGHT.brakeNight
+            : TAIL_LIGHT.brakeDay
+          : n.brake.night
+            ? TAIL_LIGHT.night
+            : TAIL_LIGHT.off;
+        for (const m of n.brake.mats) {
+          if (k > 0 && m.emissive.r === 0 && m.emissive.g === 0 && m.emissive.b === 0)
+            m.emissive.set("#ff2a2a");
+          m.emissiveIntensity = k;
+        }
+      }
       for (const h of headlightSpots) {
         if (h.vehicleId === n.id)
           h.spot.intensity = HEADLIGHT_INTENSITY * n.rig.workingHeadlights(t);

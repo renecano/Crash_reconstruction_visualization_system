@@ -6,10 +6,10 @@ Reglas de trabajo: `CLAUDE.md`. Especificación: `PLAN.md`.
 ## Estado actual
 
 - **Ahora: plan de cierre v3** (René, 2026-10-30; `docs/cesvi/PLAN-CESVI.md`). Ya no se agregan fases: siete tramos cerrados (T1–T7), cada uno contra su «listo cuando». Orden de Claude Code: **T2a → T1 → T3 → T6 → T5 → T2b → T7**; T4 (prueba con personas) lo corre René en paralelo con `docs/cesvi/prueba-personas.md`. La v2 del plan y `PROTOTIPO.md` están en `docs/historial/`.
-  - **Tramo en curso: T1 (escenario 3D).** T1.1 (PR #151, ADR 0094) y T1.2 (PR #152, ADR 0095) están en `main`; T1.3 (entorno más allá de la vía, ADR 0096) está hecho en la rama `feat/t1-3-entorno`; sigue T1.4. Ver «T1 — Escenario 3D» más abajo: capturas de antes y después en `docs/cesvi/t1/`, fps en `eval/results/e6_t1_*.json`.
+  - **Tramo en curso: T1 (escenario 3D).** T1.1 (PR #151, ADR 0094) y T1.2 (PR #152, ADR 0095) están en `main`; T1.3 (PR #153, ADR 0096) también; T1.4 (vehículos, segunda pasada) va en la rama `feat/t1-4-vehiculos`. Ver «T1 — Escenario 3D» más abajo: capturas de antes y después en `docs/cesvi/t1/`, fps en `eval/results/e6_t1_*.json`.
   - **T2a (el `-Prueba` del colaborador):** pedido a René el 2026-10-30; el resultado llega en una rama `resultados/prueba-<fecha>`. Si falla, se arregla antes de seguir con T1 (fila en «Bloqueado»).
   - **T6.4 (los agentes respetan el orden de impactos)** quedó a medias en la rama `fix/agentes-orden-impactos` (commit `c8c8a08`, Python y TS cambiados, sin pruebas ni evaluación): se retoma en T6.
-  - **Siguiente paso concreto:** T1.4 (vehículos, segunda pasada: pintura con capa transparente y hojuelas, luces de freno y faros de noche, ruedas en los ejes del caso, moto de trabajo, clases sin modelo); T1.2 está en `main` y T1.3 en PR, los dos esperan la aprobación de René (capturas en `docs/cesvi/t1/t1.2/` y `t1.3/`).
+  - **Siguiente paso concreto:** T1.4 (vehículos, segunda pasada) en la rama `feat/t1-4-vehiculos`, con el plan al final de «T1.3» en «Plan v3 — tramos de cierre»; T1.2 y T1.3 están en `main` y esperan la aprobación de René (capturas en `docs/cesvi/t1/t1.2/` y `t1.3/`).
 - **Antes (2026-10-20 al 2026-10-29): prototipo y plan v2 para CESVI.** Lo que sigue en esta sección es la bitácora de ese periodo; sigue valiendo como historia de lo construido.
 - **Prototipo para CESVI** (desde el 2026-10-20). Croquis es para los peritos de CESVI México; el alcance lo pone CESVI (`CLAUDE.md`). La especificación es `docs/cesvi/PROTOTIPO.md`, que manda sobre `PLAN.md` en lo que se contradigan.
   - **Orden:** Hito 1 (el caso A2010930 y sus cálculos en `/cesvi`), Hito 2 (el lugar y el croquis sobre el mapa) y Hito 3 (correspondencia, sugerencia y dictamen en PDF). Cada uno se despliega al terminar.
@@ -1595,6 +1595,19 @@ Reglas de trabajo: `CLAUDE.md`. Especificación: `PLAN.md`.
   - **Lo que decidí sin preguntar:** árboles procedurales de pocas caras en vez de modelos CC0 (los de Poly Haven pesan 46–215 MB por árbol); los edificios de OpenStreetMap no entran todavía (ningún caso de CESVI los trae); un claro de 28 m sin fachadas y de 22 m sin árboles alrededor de la acción, para que ninguna cámara quede tapada.
   - **Lo que no entra aquí:** señales de tránsito en ciudad, variedad de fachadas (todo es un bloque con ventanas), vegetación con modelos y edificios de OSM («Endurecimiento pendiente»). La cámara cinematográfica sigue sin ver el cielo ni los cerros de frente (T1.5).
   - **Qué necesito de René:** aprobar o comentar estas capturas. Sigo con T1.4 (vehículos, segunda pasada) sin esperar.
+
+- **T1.3 fusionado** en `main` el 2026-11-03 (PR #153, `ba392ad`).
+
+**T1.4 — Vehículos, segunda pasada (2026-11-03, rama `feat/t1-4-vehiculos`, ADR 0097):**
+
+- **Plan (se programa todo primero; capturas «t1.4» y fps al final):**
+  1. **Pintura** (`paint-material.ts`): base metálica con hojuelas por celda (hashes, sin texturas) bajo barniz liso; `estado_pintura` del contrato cambia rugosidad, barniz y hojuelas; la pintura dañada usa las mismas hojuelas. Vidrio y cromo con reflejos del HDRI (ya en media por `setVehicleEnvironment`).
+  2. **Luces de freno** (`brake-lights.ts`): encienden cuando la trayectoria del solver desacelera ≥ 1 m/s² antes del impacto (coincide con `inicio_frenado`) y, después, solo si el relato dice que aplicó el freno y el vehículo se mueve. Calaveras con material propio por vehículo, de día y de noche.
+  3. **Noche:** faros y calaveras encendidos (ya), más el interior tenue de los modelos (tablero).
+  4. **Ruedas en los ejes del caso** (`vehicle-models.ts`): la carrocería del modelo se reparte en tres tramos (voladizo delantero, paso entre ejes, voladizo trasero) que se estiran por separado para que los arcos caigan en los ejes del caso; las ruedas se colocan ahí. Cierra el límite de ADR 0086.
+  5. **Clases sin modelo:** van → «Shvan '92», microbús/combi → «Shvan 92 Traveller» (los dos de Daniel Zhabotinsky, mismo pipeline), autobús → «Generic Town Bus» (own.guest), tractocamión → «Low Poly Red Semi Truck» (JuraPicksHisNose); los dos últimos con un paso genérico del script de Blender (papeles por material, ruedas por geometría, escala al largo real). Todos CC-BY 4.0, verificados en el API. Baja sigue paramétrica.
+  6. **Moto de trabajo de 125 cc:** búsqueda en Sketchfab (2026-11-03) sin un modelo limpio: «125cc Naked Motorcycle» copia una YBR 125 (regla 5), las Super Cub traen marca, el resto son scooters de caricatura. Sigue la enduro; queda en «Endurecimiento pendiente».
+  7. Pruebas unitarias de cada módulo; build; capturas «t1.4» (cinematográfica y daño) y fps de las 4 escenas; ADR 0097; «Resumen para René».
 
 ### Endurecimiento pendiente
 
