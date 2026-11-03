@@ -162,6 +162,8 @@ export function texturedPlanarMaterial(
     lite?: boolean;
     /** Tramado por pixel (de noche, contra las bandas de los conos de luz). */
     dither?: boolean;
+    /** Multiplica por el color de vértice (las parcelas del suelo, T1.3). */
+    vertexColors?: boolean;
   },
 ): MeshStandardNodeMaterial {
   // `color` es el color plano que lleva la exportación glTF (R11); el dibujo usa colorNode.
@@ -181,5 +183,6 @@ export function texturedPlanarMaterial(
   }
   // Tramado contra las bandas de los conos de luz de noche (T1.2, ADR 0095).
   if (opts.dither) m.emissiveNode = ditherNode();
+  if (opts.vertexColors) m.vertexColors = true;
   return m;
 }

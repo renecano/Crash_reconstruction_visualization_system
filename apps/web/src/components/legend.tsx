@@ -20,6 +20,11 @@ const T = textos(
     osm: "Contiene información de OpenStreetMap, disponible en openstreetmap.org bajo la Open Database License (ODbL).",
     modelos: "Vehículos 3D:",
     de: "de",
+    procedural: "Entorno procedural (no es el lugar real):",
+    edificios: "edificios",
+    arboles: "árboles",
+    luminarias: "luminarias",
+    cerros: "cerros al fondo",
   },
   {
     etiqueta: "Illustrative reconstruction notice",
@@ -27,6 +32,11 @@ const T = textos(
     osm: "Contains information from OpenStreetMap, available at openstreetmap.org under the Open Database License (ODbL).",
     modelos: "3D vehicles:",
     de: "by",
+    procedural: "Procedural surroundings (not the real place):",
+    edificios: "buildings",
+    arboles: "trees",
+    luminarias: "street lights",
+    cerros: "distant hills",
   },
 );
 
@@ -44,6 +54,8 @@ export interface LegendProps {
   modelos?: readonly VehicleCredit[];
   /** Otro texto en lugar del de la reconstrucción ilustrativa (en /cesvi, el de CESVI). */
   texto?: string;
+  /** Lo procedural del entorno 3D (T1.3): cuántos edificios, árboles y luminarias, y cerros. */
+  procedural?: { edificios: number; arboles: number; luminarias: number; cerros: boolean };
 }
 
 export function Legend({
@@ -53,6 +65,7 @@ export function Legend({
   atribucion,
   modelos,
   texto: otro,
+  procedural,
 }: LegendProps) {
   const { lang } = useIdioma();
   const t = useTextos(T);
@@ -85,6 +98,20 @@ export function Legend({
         <span className="block" data-testid="atribucion-modelos">
           {t.modelos}{" "}
           {modelos.map((c) => `«${c.modelo}» ${t.de} ${c.autor} (${c.licencia})`).join("; ")}
+        </span>
+      ) : null}
+      {procedural ? (
+        <span className="block" data-testid="entorno-procedural">
+          {t.procedural}{" "}
+          {[
+            procedural.edificios ? `${procedural.edificios} ${t.edificios}` : null,
+            procedural.arboles ? `${procedural.arboles} ${t.arboles}` : null,
+            procedural.luminarias ? `${procedural.luminarias} ${t.luminarias}` : null,
+            procedural.cerros ? t.cerros : null,
+          ]
+            .filter(Boolean)
+            .join(", ")}
+          .
         </span>
       ) : null}
     </p>

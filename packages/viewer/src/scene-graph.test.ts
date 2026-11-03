@@ -160,8 +160,10 @@ describe("árboles instanciados (F8c)", () => {
     const sg = buildSceneGraph(spec, r, opts);
     const trunks = sg.root.getObjectByName("troncos") as InstancedMesh;
     const crowns = sg.root.getObjectByName("copas") as InstancedMesh;
-    expect(trunks.count).toBe(n);
-    expect(crowns.count).toBe(n);
+    // Los declarados van primero; después, los del entorno procedural (T1.3).
+    expect(trunks.count).toBe(n + sg.procedural.arboles);
+    expect(crowns.count).toBe(trunks.count);
+    expect(sg.procedural.arboles).toBeGreaterThan(0);
     // Cada instancia en su lugar y con el alto determinista de su hash.
     const m = new Matrix4();
     trunks.getMatrixAt(5, m);

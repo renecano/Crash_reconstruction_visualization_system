@@ -34,6 +34,7 @@ export {
   hash01,
   mesh2DToGeometry,
   type PersonNode,
+  type ProceduralSummary,
   type SceneGraph,
   type SceneGraphOptions,
   type VehicleNode,

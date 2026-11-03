@@ -6,10 +6,10 @@ Reglas de trabajo: `CLAUDE.md`. Especificación: `PLAN.md`.
 ## Estado actual
 
 - **Ahora: plan de cierre v3** (René, 2026-10-30; `docs/cesvi/PLAN-CESVI.md`). Ya no se agregan fases: siete tramos cerrados (T1–T7), cada uno contra su «listo cuando». Orden de Claude Code: **T2a → T1 → T3 → T6 → T5 → T2b → T7**; T4 (prueba con personas) lo corre René en paralelo con `docs/cesvi/prueba-personas.md`. La v2 del plan y `PROTOTIPO.md` están en `docs/historial/`.
-  - **Tramo en curso: T1 (escenario 3D).** T1.1 (cielo, luz y aire) está en `main` (PR #151, ADR 0094), aprobado por René el 2026-11-02 con dos cambios que entraron en T1.2; T1.2 (vía y suelo, ADR 0095) está hecho en la rama `feat/t1-2-via-y-suelo`; sigue T1.3. Ver «T1 — Escenario 3D» más abajo: capturas de antes y después en `docs/cesvi/t1/`, fps en `eval/results/e6_t1_*.json`.
+  - **Tramo en curso: T1 (escenario 3D).** T1.1 (PR #151, ADR 0094) y T1.2 (PR #152, ADR 0095) están en `main`; T1.3 (entorno más allá de la vía, ADR 0096) está hecho en la rama `feat/t1-3-entorno`; sigue T1.4. Ver «T1 — Escenario 3D» más abajo: capturas de antes y después en `docs/cesvi/t1/`, fps en `eval/results/e6_t1_*.json`.
   - **T2a (el `-Prueba` del colaborador):** pedido a René el 2026-10-30; el resultado llega en una rama `resultados/prueba-<fecha>`. Si falla, se arregla antes de seguir con T1 (fila en «Bloqueado»).
   - **T6.4 (los agentes respetan el orden de impactos)** quedó a medias en la rama `fix/agentes-orden-impactos` (commit `c8c8a08`, Python y TS cambiados, sin pruebas ni evaluación): se retoma en T6.
-  - **Siguiente paso concreto:** T1.3 (entorno más allá de la vía) según el plan al final de «T1 — Escenario 3D»; T1.2 está en PR y espera la aprobación de René (sus capturas en `docs/cesvi/t1/t1.2/`).
+  - **Siguiente paso concreto:** T1.4 (vehículos, segunda pasada: pintura con capa transparente y hojuelas, luces de freno y faros de noche, ruedas en los ejes del caso, moto de trabajo, clases sin modelo); T1.2 está en `main` y T1.3 en PR, los dos esperan la aprobación de René (capturas en `docs/cesvi/t1/t1.2/` y `t1.3/`).
 - **Antes (2026-10-20 al 2026-10-29): prototipo y plan v2 para CESVI.** Lo que sigue en esta sección es la bitácora de ese periodo; sigue valiendo como historia de lo construido.
 - **Prototipo para CESVI** (desde el 2026-10-20). Croquis es para los peritos de CESVI México; el alcance lo pone CESVI (`CLAUDE.md`). La especificación es `docs/cesvi/PROTOTIPO.md`, que manda sobre `PLAN.md` en lo que se contradigan.
   - **Orden:** Hito 1 (el caso A2010930 y sus cálculos en `/cesvi`), Hito 2 (el lugar y el croquis sobre el mapa) y Hito 3 (correspondencia, sugerencia y dictamen en PDF). Cada uno se despliega al terminar.
@@ -1572,10 +1572,37 @@ Reglas de trabajo: `CLAUDE.md`. Especificación: `PLAN.md`.
   - **Tus dos pedidos de T1.1:** las bandas y el tono oliva, corregidos (tramado por pixel de noche y pasto `#1c1d1b`); la noche con lluvia, 68.5 fps de mediana en media (meta 60), con el recorte de resolución a 0.8 solo de noche y solo en media (alta y ultra no cambian).
   - **Lo que no entra aquí:** juntas de concreto y alcantarillas, gotas sobre el piso mojado, acotamiento y barrera en curvas de plantilla («Endurecimiento pendiente»). La cámara cinematográfica sigue sin ver el cielo (T1.5); el horizonte sigue vacío (T1.3).
   - **Qué necesito de René:** aprobar o comentar estas capturas. Sigo con T1.3 (entorno más allá de la vía) sin esperar.
-- **Siguiente paso concreto:** T1.3, entorno más allá de la vía: donde OSM trae edificios, extruidos con fachadas procedurales; donde no (AXA, Toluca), entorno procedural por tipo de vía y uso de suelo con semilla fija (parcelas, cercas, vegetación y postes en carretera; lotes con edificios sencillos, árboles de banqueta y señales en ciudad), vegetación y postes instanciados (modelos CC0), relieve leve, siluetas de cerros o perfil urbano a lo lejos, y «procedural» en la leyenda. Capturas «t1.3» y fps al final.
+- **T1.2 fusionado** en `main` el 2026-11-03 (PR #152, `7f588b6`).
+
+**T1.3 — Entorno más allá de la vía (2026-11-03, rama `feat/t1-3-entorno`, ADR 0096):**
+
+- **Hecho:** entorno procedural por zona con la semilla de la escena (`environment-decor.ts`, puro, con pruebas; `environment-scene.ts`, mallas instanciadas): en ciudad, lotes con edificios de 1–3 niveles y fachadas procedurales (ventanas por nivel, zócalo, de noche un tercio con luz) con retiro de 7 m y un claro de 28 m alrededor de la acción, y árboles de banqueta cada 15 m; en carretera, parcelas con su tono en el suelo, cercas con postes, postes de luz eléctrica cada 45 m y grupos de árboles y arbustos a más de 8 m de la vía; relieve leve (hasta 3 m, plano en el corredor de la vía: la física no cambia); un anillo de cerros a 520 m y, en ciudad, bloques lejanos. La leyenda lo dice: «Entorno procedural (no es el lugar real): N edificios, M árboles, K luminarias, cerros al fondo».
+- **Lo que no entra (ADR 0096 §4 y §5):** vegetación con modelos CC0 (los de Poly Haven pesan 46–215 MB por árbol; los paquetes de pocas caras no tienen descarga fija) y los edificios de OpenStreetMap (piden ampliar la consulta, el contrato y el paso del lugar; en México casi no hay). Los dos quedan en «Endurecimiento pendiente».
+- **Pruebas:** `environment-decor.test.ts` (4), `scene-graph.test.ts` actualizada; visor 325 en verde; lint, tipos (visor, web y eval/js) en verde.
+- **fps en media, laptop** (`eval/results/e6_t1_t1.3_media.json`):
+
+  | Escena               | T1.2: promedio / mediana / p1 | T1.3: promedio / mediana / p1 |
+  | -------------------- | ----------------------------- | ----------------------------- |
+  | AXA                  | 52.1 / 62.9 / 25.1            | 53.0 / 67.6 / 33.3            |
+  | lateral_interseccion | 74.8 / 76.9 / 41.7            | 67.5 / 70.9 / 36.6            |
+  | nocturno_lluvia      | 38.4 / 68.5 / 35.7            | 30.0 / 63.3 / 25.3            |
+  | carambola            | 68.0 / 70.4 / 35.3            | 61.7 / 64.5 / 30.2            |
+  - **Las 4 escenas cumplen la meta de media (≥ 60 fps de mediana)** con el entorno puesto. La primera corrida formal había dado 49.8 de mediana en la noche con lluvia: el anillo de cerros y el perfil urbano se iluminaban con los cuatro focos de la noche y costaban un cuarto de los fps; ahora son siluetas sin iluminación (`MeshBasicMaterial`, ADR 0096 §6) y la noche volvió a 63.3. El promedio de la noche (30) sigue lejos de la mediana por cuadros sueltos de 40–100 ms (recolector de basura y compilación al aparecer), igual que en T1.2; se vigila en T1.4.
+  - **Interruptores de diagnóstico nuevos:** `sinEntorno` y `sinRelieve` en `eval/t1_tirones.mjs --diag`, para medir el costo del entorno y del relieve por separado.
+
+- **Resumen para René (T1.3, 2026-11-03):**
+  - **Qué ver:** `docs/cesvi/t1/t1.2/` contra `docs/cesvi/t1/t1.3/` (las mismas 8 capturas, media, laptop). Lo que cambia: en Toluca (lateral) y en la carambola, lotes con edificios de 1–3 niveles con ventanas, árboles de banqueta y bloques lejanos; en AXA (carretera), parcelas con su tono, cercas, postes de luz eléctrica y grupos de árboles; cerros al fondo que la niebla funde; relieve leve lejos de la vía; de noche, un tercio de las ventanas encendidas. La leyenda dice «Entorno procedural (no es el lugar real): N edificios, M árboles, …».
+  - **Lo que decidí sin preguntar:** árboles procedurales de pocas caras en vez de modelos CC0 (los de Poly Haven pesan 46–215 MB por árbol); los edificios de OpenStreetMap no entran todavía (ningún caso de CESVI los trae); un claro de 28 m sin fachadas y de 22 m sin árboles alrededor de la acción, para que ninguna cámara quede tapada.
+  - **Lo que no entra aquí:** señales de tránsito en ciudad, variedad de fachadas (todo es un bloque con ventanas), vegetación con modelos y edificios de OSM («Endurecimiento pendiente»). La cámara cinematográfica sigue sin ver el cielo ni los cerros de frente (T1.5).
+  - **Qué necesito de René:** aprobar o comentar estas capturas. Sigo con T1.4 (vehículos, segunda pasada) sin esperar.
 
 ### Endurecimiento pendiente
 
+- **Entorno procedural (T1.3, ADR 0096):**
+  - **Vegetación con modelos:** traer un paquete CC0 de árboles de pocas caras con descarga fijada por SHA-256 en `assets/pipeline` y registrarlo en `assets/ASSETS.md`; hoy los árboles son tronco y copa procedurales.
+  - **Edificios de OpenStreetMap:** ampliar la consulta de Overpass con `building`, el contrato (`red_vial` o un campo nuevo, versión menor) y el paso del lugar, y extruirlos con las fachadas procedurales cuando un caso los traiga.
+  - **Señales de tránsito y mobiliario en ciudad** (alto, límite de velocidad, paradas): no entran hasta que un caso de CESVI las necesite.
+  - **Variedad de fachadas:** un solo tipo de bloque con ventanas; faltan cornisas, cocheras y locales en planta baja.
 - **Vehículos de Sketchfab (R10, ADR 0086):**
   - **Ruedas y solver:** las ruedas quedan donde el modelo tiene sus arcos, no en el paso entre ejes del caso; si son muy distintos, no coinciden con el solver (la física no cambia).
   - **Moto:** es de campo; falta una de trabajo de 125 cc con licencia libre, piezas separadas y sin marca.
