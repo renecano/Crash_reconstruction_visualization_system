@@ -17,6 +17,7 @@ import {
   BufferAttribute,
   type BufferGeometry,
   Group,
+  type Material,
   Matrix4,
   Mesh,
   type Object3D,
@@ -28,6 +29,7 @@ import { DRACOLoader } from "three/addons/loaders/DRACOLoader.js";
 import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
 import { KTX2Loader } from "three/addons/loaders/KTX2Loader.js";
 import { TessellateModifier } from "three/addons/modifiers/TessellateModifier.js";
+import { mergeGeometries } from "three/examples/jsm/utils/BufferGeometryUtils.js";
 import type { QualityLevel } from "./quality";
 import { axlePositionsFor, buildVehicle, type VehicleDimensions } from "./vehicle-geometry";
 
@@ -168,6 +170,63 @@ export async function loadVehicleModels(
 const tmpBox = new Box3();
 const tmpCenter = new Vector3();
 
+/** Papeles cuyas piezas fijas se fusionan por material: no se deforman, no se rompen ni giran. */
+const MERGEABLE_ROLES: ReadonlySet<string> = new Set(["plastico", "vidrio", "cromo"]);
+/** Piezas que siguen aparte: el parabrisas se agrieta; el interior y el volante brillan de noche. */
+const KEEP_SEPARATE = /windshield|interior|steering/i;
+
+/**
+ * Fusiona las piezas fijas de un modelo que comparten material (bajos, molduras, vidrios laterales,
+ * interior de carga…) en una malla por material (T1.4): un modelo de Sketchfab trae 20–30 piezas y
+ * cada una es una llamada de dibujo y, de noche, otra pasada por cada foco. Devuelve cuántas piezas
+ * desaparecieron.
+ */
+export function mergeStaticModelParts(g: Group): number {
+  const groups = new Map<string, Mesh[]>();
+  for (const c of g.children) {
+    if (!(c instanceof Mesh)) continue;
+    const mesh = c as Mesh;
+    const role = mesh.userData.role as string;
+    if (!MERGEABLE_ROLES.has(role) || KEEP_SEPARATE.test(mesh.name)) continue;
+    const geo = mesh.geometry;
+    const attrs = Object.keys(geo.attributes).sort().join(",");
+    const sig = `${role}|${(mesh.material as Material).uuid}|${attrs}|${geo.index ? "i" : "n"}`;
+    const list = groups.get(sig);
+    if (list) list.push(mesh);
+    else groups.set(sig, [mesh]);
+  }
+  let merged = 0;
+  for (const parts of groups.values()) {
+    if (parts.length < 2) continue;
+    const geos = parts.map((p) => {
+      const geo = p.geometry.clone();
+      geo.translate(p.position.x, p.position.y, p.position.z);
+      return geo;
+    });
+    const all = mergeGeometries(geos, false);
+    for (const geo of geos) geo.dispose();
+    if (!all) continue;
+    all.computeBoundingBox();
+    const center = new Vector3();
+    all.boundingBox!.getCenter(center);
+    all.translate(-center.x, -center.y, -center.z);
+    const first = parts[0]!;
+    const m = new Mesh(all, first.material);
+    m.name = `${first.name}_fusion`;
+    m.userData = { ...first.userData, fusionadas: parts.map((p) => p.name) };
+    m.position.copy(center);
+    m.castShadow = first.castShadow;
+    m.receiveShadow = first.receiveShadow;
+    for (const p of parts) {
+      g.remove(p);
+      p.geometry.dispose();
+    }
+    g.add(m);
+    merged += parts.length - 1;
+  }
+  return merged;
+}
+
 /** Si los ejes del modelo y los del caso difieren menos que esto (m), no se reparte nada. */
 export const AXLE_TOLERANCE_M = 0.02;
 
@@ -297,6 +356,7 @@ export function buildModelVehicle(
     });
     g.add(wheel);
   }
+  g.userData.fusionadas = mergeStaticModelParts(g);
   // Las cotas del habitáculo (bolsas de aire, vidrios laterales) son las del paramétrico.
   const parametric = buildVehicle(clase, dims, { fuse: false });
   g.userData.layout = parametric.userData.layout as unknown;

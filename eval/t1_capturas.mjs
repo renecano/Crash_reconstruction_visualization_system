@@ -160,8 +160,13 @@ async function capturar(browser, base, escena, camara, destino) {
   return { backend: backend?.trim() ?? null, errores };
 }
 
+/**
+ * La repetición representativa: la de mediana de fps mediana (la métrica de §7.8). Antes se
+ * elegía por el promedio, que un solo cuadro de varios segundos (recolector de basura o una
+ * compilación tardía) hunde sin que cambie lo que se ve (T1.4).
+ */
 function medianRun(list) {
-  const sorted = [...list].sort((a, b) => (a.fps_promedio ?? 0) - (b.fps_promedio ?? 0));
+  const sorted = [...list].sort((a, b) => (a.fps_mediana ?? 0) - (b.fps_mediana ?? 0));
   return sorted[Math.floor((sorted.length - 1) / 2)];
 }
 
@@ -229,6 +234,7 @@ async function main() {
         const r = medianRun(reps);
         r.escena = escena;
         r.repeticiones_fps = reps.map((x) => x.fps_promedio);
+        r.repeticiones_mediana = reps.map((x) => x.fps_mediana);
         runs.push(r);
         log(
           `fps ${escena}: ${r.backend} ${r.fps_promedio} promedio, ${r.fps_mediana} mediana, p1 ${r.fps_p1_bajo}; ${r.llamadas_dibujo} llamadas, ${r.triangulos} triángulos`,

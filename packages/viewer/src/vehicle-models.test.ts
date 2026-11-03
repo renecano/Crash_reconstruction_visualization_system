@@ -56,6 +56,18 @@ function plantilla(
   pieza("headlight_l", "faro", new BoxGeometry(0.05, 0.12, 0.3), largo / 2 - 0.025, 0.7, -0.6);
   pieza("headlight_r", "faro", new BoxGeometry(0.05, 0.12, 0.3), largo / 2 - 0.025, 0.7, 0.6);
   pieza("interior", "plastico", new BoxGeometry(2, 0.6, 1.5), 0, 0.9);
+  // Dos bajos con el mismo material: se fusionan en una malla (T1.4).
+  const bajos = new MeshStandardMaterial({ name: "bajos_mat", color: "#202020" });
+  for (const [nombre, x] of [
+    ["bottom_front", 1],
+    ["bottom_rear", -1],
+  ] as const) {
+    const m = new Mesh(new BoxGeometry(1, 0.1, ancho * 0.9), bajos);
+    m.name = nombre;
+    m.userData.role = "plastico";
+    m.position.set(x, 0.35, 0);
+    scene.add(m);
+  }
   for (const [nombre, x, z] of [
     ["wheel_fl", 1.3, -0.75],
     ["wheel_fr", 1.3, 0.75],
@@ -150,6 +162,13 @@ describe("vehículos de Sketchfab (R10)", () => {
     expect(g.userData.layout).toBeDefined();
     expect(g.userData.modelo).toBe("sedan");
     expect(g.userData.axlesRemapped).toBe(false);
+    // Los dos bajos quedaron en una malla; el interior (brilla de noche) sigue aparte.
+    expect(g.userData.fusionadas).toBe(1);
+    const fusion = g.children.find((c) => c.name === "bottom_front_fusion");
+    expect(fusion).toBeInstanceOf(Mesh);
+    expect(fusion?.userData.fusionadas).toEqual(["bottom_front", "bottom_rear"]);
+    expect(g.getObjectByName("bottom_rear")).toBeUndefined();
+    expect(g.getObjectByName("interior")).toBeInstanceOf(Mesh);
   });
 
   it("las ruedas caen en los ejes del caso y la carrocería se reparte sin cambiar de largo", () => {

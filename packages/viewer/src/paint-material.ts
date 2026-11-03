@@ -14,6 +14,7 @@ import {
   color,
   float,
   floor,
+  fract,
   hash,
   mix,
   normalize,
@@ -54,14 +55,26 @@ export function paintLookFor(estado: PaintState | undefined): PaintLook {
   return PAINT_LOOK[estado ?? "normal"];
 }
 
+/** Interruptor de diagnóstico (`?diag` del visor): pintura sin hojuelas, para medir su costo. */
+export function flakesDisabled(): boolean {
+  if (typeof window === "undefined") return false;
+  const diag = (window as { __croquisDiag?: { sinHojuelas?: boolean } }).__croquisDiag;
+  return diag?.sinHojuelas === true;
+}
+
 type FloatNode = Node<"float">;
 type Vec3Node = Node<"vec3">;
 
-/** Tres números pseudoaleatorios por celda de hojuela, en [0, 1). */
+/**
+ * Tres números pseudoaleatorios por celda de hojuela, en [0, 1), de un solo hash por pixel (los
+ * otros dos salen de sus decimales a distinta escala: un hash PCG por canal costaba más de lo
+ * que se ve en media).
+ */
 export function flakeHashes(): { a: FloatNode; b: FloatNode; c: FloatNode } {
   const cell = floor(positionLocal.mul(FLAKE_CELLS_PER_M));
   const seed = cell.x.mul(7919).add(cell.y.mul(104729)).add(cell.z.mul(13));
-  return { a: hash(seed), b: hash(seed.add(17)), c: hash(seed.add(29)) };
+  const h = hash(seed);
+  return { a: h, b: fract(h.mul(61.7)), c: fract(h.mul(233.3)) };
 }
 
 /**
@@ -69,6 +82,7 @@ export function flakeHashes(): { a: FloatNode; b: FloatNode; c: FloatNode } {
  * perturbación en el mismo espacio (las abolladuras de la pintura dañada).
  */
 export function flakeNormal(flake: number, extra?: Vec3Node): Vec3Node {
+  if (flakesDisabled()) return extra ?? normalView;
   const h = flakeHashes();
   const tilt = vec3(h.a.sub(0.5), h.b.sub(0.5), 0).mul(flake * 2);
   const base = extra ?? normalView;
@@ -77,6 +91,7 @@ export function flakeNormal(flake: number, extra?: Vec3Node): Vec3Node {
 
 /** Brillo de la hojuela: ±jitter alrededor del metalness base, por celda. */
 export function flakeMetalness(base: number, jitter: number): FloatNode {
+  if (flakesDisabled()) return float(base);
   const h = flakeHashes();
   return float(base).add(h.c.sub(0.5).mul(jitter * 2));
 }
@@ -92,6 +107,7 @@ export function paintMaterial(hex: string, estado?: PaintState): MeshPhysicalNod
   m.clearcoat = look.clearcoat;
   m.clearcoatRoughness = look.clearcoatRoughness;
   // Hojuelas: la normal de la base gira por celda y el brillo varía un poco; el barniz queda liso.
+  if (flakesDisabled()) return m;
   m.colorNode = mix(color(hex), color(hex).mul(1.12), flakeHashes().c.mul(look.flake * 4));
   m.metalnessNode = flakeMetalness(look.metalness, look.flake);
   m.normalNode = flakeNormal(look.flake);

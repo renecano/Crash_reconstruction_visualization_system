@@ -161,7 +161,7 @@ export interface VehicleNode {
 /** Intensidad emisiva de las calaveras: apagadas, de posición (noche) y de freno. */
 export const TAIL_LIGHT = { off: 0, night: 1.5, brakeDay: 3, brakeNight: 6 } as const;
 /** Interior tenue de noche (tablero) en los modelos (T1.4, ilustrativo). */
-export const INTERIOR_GLOW = { color: "#ffb070", intensity: 0.15 } as const;
+export const INTERIOR_GLOW = { color: "#ffb070", intensity: 0.05 } as const;
 
 export interface PersonNode {
   id: string;
@@ -1364,9 +1364,14 @@ export function buildSceneGraph(
       return lastT;
     },
     setVehicleEnvironment(env: Texture | null, intensity: number, rotationY: number) {
+      // De noche en media, el HDRI solo va en la pintura: muestrearlo en cada pixel de
+      // plásticos, vidrios e interior de los modelos costaba 18 fps y el cielo nocturno apenas
+      // se refleja ahí (T1.4, ADR 0097).
+      const onlyPaint = opts.quality.level === "media" && opts.env.night;
       for (const v of vehicles) {
         v.group.traverse((o) => {
           if (!(o instanceof Mesh)) return;
+          if (onlyPaint && o.userData.role !== "pintura") return;
           const m = o.material as MeshStandardMaterial;
           if (!("envMap" in m)) return;
           m.envMap = env;
@@ -1377,7 +1382,11 @@ export function buildSceneGraph(
       }
     },
     setReflections(env: Texture | null) {
-      asphalt.setReflections(env);
+      // De noche en media, el asfalto mojado no muestrea el cielo horneado: es casi negro y
+      // costaba 12 fps de mediana (`sinReflejosPiso`); los brillos de faros y luminarias siguen
+      // saliendo de las luces (T1.4, ADR 0097).
+      const skip = opts.quality.level === "media" && opts.env.night;
+      asphalt.setReflections(skip ? null : env);
     },
     wantedTextures: [
       ...ENV_TEXTURE_NAMES,
