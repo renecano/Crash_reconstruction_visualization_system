@@ -53,7 +53,7 @@ import { buildNightSkyMesh, buildSkyEnvironment, type SkyEnvironment } from "../
 import { PRECIPITATION_HEIGHT, precipitationParams } from "../precipitation";
 import { buildPrecipitation } from "../precipitation-scene";
 import { toThree } from "../coords";
-import { QUALITY_PROFILES, type QualityLevel } from "../quality";
+import { NIGHT_PIXEL_RATIO_MEDIA, QUALITY_PROFILES, type QualityLevel } from "../quality";
 import { attachDebris } from "../debris-scene";
 import { attachRollovers } from "../rollover-scene";
 import { buildVisibilityOverlay, eyeHeightFor } from "../visibility-overlay";
@@ -186,6 +186,10 @@ declare global {
       sinReflejosPiso?: boolean;
       /** T1.1: sin luminarias procedurales (ni sus focos), para medir su costo de noche. */
       sinLuminarias?: boolean;
+      /** T1.2: sin texturas del entorno (colores lisos), para medir su costo en media. */
+      sinTexturas?: boolean;
+      /** T1.2: sin el tramado por pixel, para medir su costo. */
+      sinTramado?: boolean;
     };
     /** `performance.now()` del primer cuadro listo (E6: tiempo hasta interactivo). */
     __croquisReadyAt?: number;
@@ -301,6 +305,9 @@ function SceneContent({
   // Cuántas cosas se agregaron al grafo después de armarlo (restos, personas): cada una pide
   // precompilar de nuevo (ver abajo).
   const [attachments, setAttachments] = useState(0);
+  // El grafo al que ya se le aplicaron las texturas: el precompilado lo espera, porque cambiar
+  // los materiales después obligaba a compilar de nuevo en el hilo principal (T1.2).
+  const [texturedGraph, setTexturedGraph] = useState<SceneGraph | null>(null);
   // Hipótesis: fantasmas translúcidos con el mismo reloj que la escena.
   const ghosts = useMemo(
     () =>
@@ -341,7 +348,7 @@ function SceneContent({
   useEffect(() => {
     let alive = true;
     window.__croquisTexturesReady = false;
-    if (!texturesWanted(quality)) {
+    if (!texturesWanted(quality) || window.__croquisDiag?.sinTexturas === true) {
       window.__croquisTexturesReady = true;
       return undefined;
     }
@@ -349,6 +356,7 @@ function SceneContent({
       .then((t) => {
         if (!alive) return;
         graph.applyTextures(t);
+        setTexturedGraph(graph);
         window.__croquisTexturesReady = true;
       })
       .catch((err: unknown) => {
@@ -615,7 +623,15 @@ function SceneContent({
   // llegan los modelos); el anterior se desecha cuando el nuevo lo reemplaza, no antes.
   const [compiled, setCompiled] = useState<SceneGraph | null>(null);
   const shown = useRef<SceneGraph | null>(null);
+  /** Ramas del grafo (hijos de `root`) cuyos sombreadores ya se generaron, y con qué HDRI. */
+  const compiledChildren = useRef(new WeakSet<Object3D>());
+  const compiledFor = useRef<SkyEnvironment | null>(null);
+  const texturesPending =
+    texturesWanted(quality) &&
+    !(typeof window !== "undefined" && window.__croquisDiag?.sinTexturas === true) &&
+    texturedGraph !== graph;
   useEffect(() => {
+    if (texturesPending) return undefined;
     let alive = true;
     window.__croquisGraphReady = compiled === graph;
     // Mientras compila, el bucle de dibujo baja a unos 10 cuadros por segundo: a cuadro libre (sin
@@ -627,20 +643,31 @@ function SceneContent({
       setFrameloop("always");
     };
     // `compileAsync` recoge los objetos de forma síncrona (solo los visibles y dentro del
-    // encuadre) y compila después: se fuerzan todos visibles y sin recorte por encuadre solo
-    // durante esa recogida, para que lo que aparece más tarde (restos, personas, marcas) o fuera
-    // de la cámara ya esté compilado y no se compile en el hilo principal al primer dibujo.
+    // encuadre) y genera sus sombreadores ahí mismo (eso sí bloquea); compila después. Durante la
+    // recogida se fuerzan visibles y sin recorte por encuadre las ramas nuevas del grafo (lo que
+    // aparece más tarde, como restos y personas, o queda fuera de la cámara) y se esconden las que
+    // ya se compilaron: volver a generar todo el grafo al llegar las personas costaba 9 s.
+    // Con otro HDRI (o al llegar), los materiales de los vehículos cambian de variante: se
+    // vuelve a generar todo.
+    if (compiledFor.current !== skyEnv) {
+      compiledFor.current = skyEnv;
+      compiledChildren.current = new WeakSet<Object3D>();
+    }
     const forzados: { o: Object3D; visible: boolean; culled: boolean }[] = [];
-    graph.root.traverse((o) => {
-      forzados.push({ o, visible: o.visible, culled: o.frustumCulled });
-      o.visible = true;
-      o.frustumCulled = false;
-    });
+    for (const child of graph.root.children) {
+      const nuevo = !compiledChildren.current.has(child);
+      child.traverse((o) => {
+        forzados.push({ o, visible: o.visible, culled: o.frustumCulled });
+        o.visible = nuevo;
+        o.frustumCulled = false;
+      });
+    }
     const compilando = (gl as unknown as WebGPURenderer).compileAsync(graph.root, cam, scene);
     for (const f of forzados) {
       f.o.visible = f.visible;
       f.o.frustumCulled = f.culled;
     }
+    for (const child of graph.root.children) compiledChildren.current.add(child);
     void compilando
       .catch((err: unknown) => {
         console.warn("No se pudieron precompilar los sombreadores", err);
@@ -656,7 +683,7 @@ function SceneContent({
     };
     // `compiled` solo marca la bandera: no hace falta recompilar cuando cambia. `attachments`
     // cuenta lo agregado al grafo después (restos, personas): sí recompila.
-  }, [graph, gl, cam, scene, skyEnv, attachments, setFrameloop, invalidate]);
+  }, [graph, gl, cam, scene, skyEnv, attachments, texturesPending, setFrameloop, invalidate]);
   useEffect(() => {
     const prev = shown.current;
     shown.current = compiled;
@@ -934,7 +961,9 @@ export function SceneViewer(props: SceneViewerProps): ReactElement {
   const dpr =
     typeof window === "undefined"
       ? 1
-      : Math.min(2, window.devicePixelRatio || 1) * profile.pixelRatio;
+      : Math.min(2, window.devicePixelRatio || 1) *
+        profile.pixelRatio *
+        (env.night && profile.level === "media" ? NIGHT_PIXEL_RATIO_MEDIA : 1);
   return (
     <div className={className} data-testid="visor-3d">
       <Canvas

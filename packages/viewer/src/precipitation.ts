@@ -31,7 +31,7 @@ export interface PrecipitationParams {
 /** Partículas de lluvia fuerte por nivel de calidad; la ligera y el granizo usan una fracción. */
 export const RAIN_COUNT: Record<QualityLevel, number> = {
   baja: 1500,
-  media: 6000,
+  media: 4000,
   alta: 15000,
   ultra: 30000,
 };

@@ -245,7 +245,9 @@ export function environmentFor(input: EnvironmentInput): EnvironmentSettings {
         : overcast
           ? "#9aa3ad"
           : "#8fc1ea",
-    groundColor: night ? "#2a3326" : "#5d6b4a",
+    // De noche el pasto es oscuro y neutro: con el ambiente cálido del alumbrado, el verde
+    // de antes salía oliva (comentario de René sobre T1.1).
+    groundColor: night ? "#1c1d1b" : "#5d6b4a",
     fogDensity,
     night,
     wet: surface === "mojado" || surface === "encharcado",
