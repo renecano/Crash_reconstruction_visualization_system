@@ -26,7 +26,10 @@ const arg = (name, fallback) => {
   return i >= 0 && process.argv[i + 1] ? process.argv[i + 1] : fallback;
 };
 const ETIQUETA = arg("etiqueta", "conductor");
-const ESCENAS = arg("escenas", "alcance,lateral_interseccion,interseccion_toluca,motociclista").split(",");
+const ESCENAS = arg(
+  "escenas",
+  "alcance,lateral_interseccion,interseccion_toluca,motociclista",
+).split(",");
 const T = arg("t", "-1");
 const PORT = Number(arg("port", "3201"));
 const BASE = arg("base", null);
