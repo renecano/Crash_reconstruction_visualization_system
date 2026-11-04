@@ -36,7 +36,19 @@ import {
 } from "three";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
 import { SkyMesh } from "three/examples/jsm/objects/SkyMesh.js";
-import { CubeRenderTarget, type WebGPURenderer } from "three/webgpu";
+import {
+  dot,
+  float,
+  max,
+  min,
+  mix,
+  normalize,
+  positionWorld,
+  smoothstep,
+  vec3,
+  vec4,
+} from "three/tsl";
+import { CubeRenderTarget, type Node, type WebGPURenderer } from "three/webgpu";
 import {
   actionBounds,
   blendPose,
@@ -617,12 +629,41 @@ function SceneContent({
     const s = new SkyMesh();
     s.scale.setScalar(4000);
     s.turbidity.value = env.turbidity;
-    s.rayleigh.value = env.turbidity > 5 ? 0.6 : 1.4;
+    // Más Rayleigh y menos Mie (T1.3c): el cielo bajo, que es lo que ve la cámara a nivel de calle,
+    // salía casi blanco; así conserva el azul y el gradiente hasta cerca del horizonte.
+    s.rayleigh.value = env.turbidity > 5 ? 0.6 : 3.0;
+    s.mieCoefficient.value = env.turbidity > 5 ? 0.005 : 0.0015;
     s.cloudSpeed.value = 0; // sin animación: capturas deterministas
     // Nubes con huecos y gradiente también en lo nublado (T1.3b): 0.8 daba un cielo blanco plano.
-    s.cloudCoverage.value = env.turbidity > 5 ? 0.58 : 0.34;
+    s.cloudCoverage.value = env.turbidity > 5 ? 0.58 : 0.44;
+    // Nubes más bajas (T1.3c): desde la calle se ve el cielo cerca del horizonte, donde con la
+    // elevación por omisión (0.5) no había ninguna.
+    s.cloudElevation.value = env.turbidity > 5 ? 0.4 : 0.22;
     const [dx, dy, dz] = env.lightDirection;
     s.sunPosition.value.set(dx, dz, -dy);
+    // La franja baja del cielo (lo que ve la cámara a nivel de calle) se oscurece hasta
+    // `SKY_HORIZON_DIM` en el horizonte (T1.3c): el modelo de Preetham la da casi blanca y se
+    // perdían el gradiente y las nubes; la niebla toma un color acorde (`fogColorFor`).
+    const mat = s.material as unknown as { colorNode: Node<"vec4"> | null };
+    if (mat.colorNode) {
+      const elev = normalize(positionWorld).y;
+      const dim = mix(
+        float(SKY_HORIZON_DIM),
+        float(SKY_ZENITH_DIM),
+        smoothstep(float(-0.02), float(0.45), elev),
+      );
+      // Y un tope de luminancia que conserva el tono: cerca del horizonte el modelo da más de
+      // diez veces el blanco del mapeo tonal y cualquier factor seguía recortándose a blanco.
+      const rgb = mat.colorNode.rgb.mul(dim);
+      const lum = dot(rgb, vec3(0.2126, 0.7152, 0.0722));
+      const cap = mix(
+        float(SKY_LUM_CAP_HORIZON),
+        float(SKY_LUM_CAP),
+        smoothstep(float(-0.02), float(0.4), elev),
+      );
+      const k = min(float(1), cap.div(max(lum, float(1e-4))));
+      mat.colorNode = vec4(rgb.mul(k), mat.colorNode.a);
+    }
     return s;
   }, [env]);
 
@@ -1155,6 +1196,19 @@ function PerfProbe({ backend }: { backend: () => RendererInfo["backend"] | undef
 const FRAME_ERRORS_BEFORE_LOSS = 30;
 /** Alcance del foco de relleno de la cabina (m): la cabina y nada más. */
 const CABIN_LIGHT_RANGE_M = 2.6;
+/**
+ * Factor del cielo de día en el horizonte y de 20° de elevación hacia arriba (ver el horneado del
+ * cielo): el cielo de Preetham sale más brillante que el blanco del mapeo tonal y se recortaba a
+ * blanco; así conserva el azul, el gradiente y las nubes.
+ */
+const SKY_HORIZON_DIM = 0.5;
+const SKY_ZENITH_DIM = 0.85;
+/**
+ * Luminancia máxima del cielo horneado (lineal, antes de la exposición) en el horizonte y de 24°
+ * hacia arriba, ver `SKY_HORIZON_DIM`: así el cielo bajo queda azul claro y sube hacia el cenit.
+ */
+const SKY_LUM_CAP_HORIZON = 0.4;
+const SKY_LUM_CAP = 0.8;
 
 /**
  * Límite de error del visor: lo que lance React al montar o actualizar la escena no deja la

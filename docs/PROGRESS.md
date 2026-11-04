@@ -9,7 +9,7 @@ Reglas de trabajo: `CLAUDE.md`. Especificación: `PLAN.md`.
   - **Tramo en curso: T1 (escenario 3D).** T1.1 (PR #151, ADR 0094) y T1.2 (PR #152, ADR 0095) están en `main`; T1.3 (PR #153, ADR 0096) también; T1.4 (PR #154, ADR 0097) también; T1.5 (PR #155, ADR 0098) también, aprobado por René; T1.3b (entorno, segunda pasada, ADR 0099) está hecho en la rama `feat/t1-3b-entorno`. **Orden que fijó René el 2026-11-03** (T1.2 y T1.3 aprobados como avance, pero el escenario aún no se ve como un juego actual; la meta es GTA o Forza): terminar T1.4, luego T1.5 y luego T1.3b (segunda pasada del entorno), con media ≥ 60 fps en las 4 escenas, todo programado primero y capturas, fps y Playwright al final de cada subtramo, «Resumen para René» al cerrar T1.5 y T1.3b. Ver «T1 — Escenario 3D» más abajo: capturas de antes y después en `docs/cesvi/t1/`, fps en `eval/results/e6_t1_*.json`.
   - **T2a (el `-Prueba` del colaborador):** pedido a René el 2026-10-30; el resultado llega en una rama `resultados/prueba-<fecha>`. Si falla, se arregla antes de seguir con T1 (fila en «Bloqueado»).
   - **T6.4 (los agentes respetan el orden de impactos)** quedó a medias en la rama `fix/agentes-orden-impactos` (commit `c8c8a08`, Python y TS cambiados, sin pruebas ni evaluación): se retoma en T6.
-  - **Urgente (René, 2026-11-04):** el 3D en blanco en computadoras potentes y la cámara del conductor, antes de T1.3c y T3.2 (rama `fix/visor-3d-diag`, ADR 0102; ver «Urgente» más abajo). T3.2 quedó a medias en `feat/t3-2-arrastre` (commit wip: referencias 1–9 regeneradas; faltan 10–13, inversión y agentes). Después: T1.3c (defectos de T1.3b) y luego T3.2.
+  - **Urgente (René, 2026-11-04), hecho y en producción:** el 3D en blanco en computadoras potentes (PR #158, ADR 0102) y la cámara del conductor en dos pasadas (PR #158 y #159). T1.3c (defectos de T1.3b, ADR 0103) está en la rama `feat/t1-3c`. T3.2 quedó a medias en `feat/t3-2-arrastre` (commit wip: referencias 1–9 regeneradas; faltan 10–13, inversión y agentes); se retoma después de T1.3c, con la nota para el resumen de T3: el rango nuevo de V2 en AXA (68.02–92.81) deja fuera el 63.15 de CESVI y el cálculo pasó de 4.8 s a 11 s (reajustes en paralelo en el worker si se puede sin perder estabilidad).
   - **Siguiente paso concreto (antes del pedido urgente):** T3.1 (muestreo estratificado; ver el plan de T3 en «Plan v3 — tramos de cierre») en la rama `feat/t3-numeros`; T1.3b está en `main` y espera la aprobación de René (capturas en `docs/cesvi/t1/t1.3b/`). Lo que pidió René para T1.3b el 2026-11-03 quedó así: árboles impostores (octaedros o tarjetas cruzadas) horneados en Blender de modelos CC0 (Poly Haven o ambientCG), 3–4 especies mexicanas (fresno, jacaranda, pirul, palmera), fuera las esferas sobre palitos; fachadas con textura PBR CC0 y colores de concreto pintado típicos de México, variedad de alturas y anchos, azoteas con tinacos, antenas y varillas, herrería, toldos, cortinas metálicas, letreros sin marca ni texto real; pasto y suelo con manchas, tierra y orillas secas (pasto instanciado cerca de la cámara en alta y ultra); cercas y postes con grosor real; señales de tránsito genéricas en ciudad; noche con más contraste, edificios sólidos y ventanas encendidas que se lean de lejos. Todo con licencia en `assets/ASSETS.md`; media ≥ 60 fps en las 4 escenas; capturas «t1.3b», fps y Playwright al final; «Resumen para René» al cerrar. T1.4 está en `main`; T1.5 en PR (capturas en `docs/cesvi/t1/t1.5/`).
 - **Antes (2026-10-20 al 2026-10-29): prototipo y plan v2 para CESVI.** Lo que sigue en esta sección es la bitácora de ese periodo; sigue valiendo como historia de lo construido.
 - **Prototipo para CESVI** (desde el 2026-10-20). Croquis es para los peritos de CESVI México; el alcance lo pone CESVI (`CLAUDE.md`). La especificación es `docs/cesvi/PROTOTIPO.md`, que manda sobre `PLAN.md` en lo que se contradigan.
@@ -1766,8 +1766,37 @@ Rama `fix/visor-3d-diag`, ADR 0102. René probó la app en producción en comput
 - **Cómo probarlo:** en producción abre el visor con `?diag=1` (p. ej. `/visor?escena=lateral_interseccion&calidad=auto&diag=1`) en las computadoras potentes y mándame la captura del panel de abajo a la izquierda (backend, GPU, calidad, memoria, fps, pérdida, último error). Prueba también `calidad=ultra` y la cámara «Conductor A/B».
 - **Qué necesito de ti:** esa captura; aquí no puedo correr alta ni ultra a velocidad real.
 
+### T1.3c — Defectos de la segunda pasada del entorno (René, 2026-11-04; ADR 0103)
+
+Rama `feat/t1-3c`. Lo que René vio en las capturas de T1.3b y cómo quedó:
+
+- **Costura vertical en los impostores:** la tarjeta vista de canto se desvanece con el ángulo entre su normal y la vista; ya no hay línea.
+- **Palmera pixeleada:** fronda como textura con mipmaps (silueta en el alfa, foliolos por tono, sin huecos), 12 frondas de 6 segmentos.
+- **Cielo de día casi blanco:** era el recorte a blanco del mapeo tonal en los 9° de cielo que ve la cámara a nivel de calle (franja medida en (227, 227, 227)). El cielo horneado se atenúa hacia el horizonte y lleva un tope de luminancia que conserva el tono: ahora azul claro con gradiente ((183, 206, 213) arriba, (164, 178, 179) junto a los cerros); turbidez 1.6, nubes más bajas, niebla de día azulada.
+- **Noche verde olivo:** domo y niebla azul oscuro neutro a casi negro (`#1b2030` → `#04060b` con alumbrado).
+- **Fachadas:** paleta clara y poco saturada (claridad sRGB > 0.6, saturación HSV < 0.45), marcos claros, cornisa con sombra, zócalo, y relieve real: cornisa saliente y una losa de balcón por edificio (70 % de los de dos niveles o más).
+- **fps en media** (`eval/results/e6_t1_t1.3c_media.json`, protocolo E6 de T1: Chromium nuevo, mediana de las repeticiones):
+
+  | Escena               | fps mediana |
+  | -------------------- | ----------- |
+  | lateral_interseccion | 62.1        |
+  | nocturno_lluvia      | 65.8        |
+  | axa                  | 80.6        |
+  | carambola            | 68          |
+
+  Las cuatro ≥ 60 fps. Capturas en `docs/cesvi/t1/t1.3c/` (cinematográfica y daño, media).
+
+- **Pruebas:** `t13c.test.ts` (noche, niebla, paleta, fronda) más las del entorno; lint, tipos y unitarias del visor en verde.
+
+#### Resumen para René (T1.3c)
+
+- **Qué quedó:** sin costura en los impostores, palmera sólida sin rayas, cielo de día azul claro con gradiente (y nubes donde la cámara mira más arriba), noche azul oscuro neutro, fachadas claras y poco saturadas con marcos, cornisas, zócalo y salientes. Media sigue ≥ 60 fps en las 4 escenas.
+- **Cómo verlo:** capturas en `docs/cesvi/t1/t1.3c/` (compara con `t1.3b/`); en producción, `/visor?escena=lateral_interseccion&camara=cinematica` y `escena=nocturno_lluvia`.
+- **Qué necesito de ti:** tu ojo sobre esas capturas; si el cielo bajo te sigue pareciendo pálido, el tope de luminancia del horizonte (`SKY_LUM_CAP_HORIZON`, 0.4) se baja.
+
 ### Endurecimiento pendiente
 
+- **Entorno (T1.3c, ADR 0103):** la cámara cinematográfica ve ≈ 9° de cielo (las nubes casi no entran en cuadro); elevar un poco la mirada o la cámara es decisión de René. Salientes de fachada sin barandal ni moldura.
 - **3D (ADR 0102):** el ojo del análisis de visibilidad del solver (`eyeOffset`, 0.05·largo detrás del centro de masa) y el de la cámara (`driverEyeOffset`, en el asiento) no coinciden; alinearlos cambia las fixtures de visibilidad. El interior de los modelos se ve oscuro desde el asiento (recibe poca luz): un relleno de luz en la cámara del conductor. Mientras se precompila un grafo nuevo solo se ve el cielo: mostrar el grafo sin precompilar cuando no hay otro en pantalla (jank contra vacío).
 
 - **Entorno, segunda pasada (T1.3b, ADR 0099):**

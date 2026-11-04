@@ -161,19 +161,20 @@ const FAST_HIGHWAYS = /^(motorway|trunk)(_link)?$/;
 const RURAL_TEMPLATES = new Set(["carretera_dos_carriles", "autopista"]);
 /** Colores de fachada (hex): blancos, ocres, grises y un rosa mexicano apagado. */
 /** Concreto pintado a la mexicana (T1.3b): rosa, ocre, azul, lima, terracota, blanco, lila… */
+/** Concreto pintado a la mexicana, claro y poco saturado (T1.3c: antes oscuro y saturado). */
 export const FACADE_PALETTE_MX = [
-  "#e8d7b5",
-  "#d9a066",
-  "#c1532f",
-  "#e7a5b8",
-  "#6fa8c9",
-  "#a9c47a",
-  "#f1efe9",
-  "#c8b7d8",
-  "#8a5a44",
-  "#f0c75e",
-  "#d94f70",
-  "#2f6f8f",
+  "#ecdfc4",
+  "#dfbb93",
+  "#cf8f72",
+  "#e9bfc9",
+  "#a7c3d6",
+  "#bfcf9c",
+  "#f2f0ea",
+  "#d3c8e0",
+  "#c0988a",
+  "#ecd79a",
+  "#dc9fab",
+  "#8fb0c4",
 ] as const;
 
 export const FACADE_PALETTE = [

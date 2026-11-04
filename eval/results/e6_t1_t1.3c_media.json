@@ -1,0 +1,145 @@
+{
+  "etiqueta": "t1.3c",
+  "calidad": "media",
+  "commit": "75da0cf",
+  "fecha": "2026-11-04T17:41:55.258Z",
+  "protocolo": "E6: 1920×1080 a pantalla completa, cámara cinematográfica en movimiento, escena en bucle, GPU real, sin vsync; navegador nuevo por medición; se reporta la repetición mediana por fps promedio.",
+  "equipo": {
+    "plataforma": "win32 10.0.26200",
+    "cpu": "Intel(R) Core(TM) i5-10210U CPU @ 1.60GHz",
+    "memoria_total_mb": 8020,
+    "energia": {
+      "cambiado": true,
+      "antes": {
+        "guid": "ded574b5-45a0-4f42-8737-46345c09c238",
+        "nombre": "mejor_rendimiento"
+      },
+      "durante": {
+        "guid": "ded574b5-45a0-4f42-8737-46345c09c238",
+        "nombre": "mejor_rendimiento"
+      }
+    }
+  },
+  "navegador": "156.0.8078.4",
+  "repeticiones": 3,
+  "meta_media_fps": 60,
+  "escenas": [
+    {
+      "escena": "axa",
+      "calidad": "media",
+      "renderer_pedido": "webgpu",
+      "backend": "webgpu",
+      "cuadros": 480,
+      "fps_promedio": 67.7,
+      "fps_mediana": 80.6,
+      "fps_p1_bajo": 37.9,
+      "cuadro_p95_ms": 17.8,
+      "tareas_largas": 0,
+      "tareas_largas_ms": 0,
+      "llamadas_dibujo": 146,
+      "triangulos": 251633,
+      "memoria_js_mb": 119.6,
+      "carga_inicial_mb": 3.75,
+      "tiempo_hasta_listo_ms": 3976,
+      "errores": [],
+      "repeticiones_fps": [
+        67.7,
+        64.8,
+        59.9
+      ],
+      "repeticiones_mediana": [
+        80.6,
+        80.6,
+        74.1
+      ]
+    },
+    {
+      "escena": "lateral_interseccion",
+      "calidad": "media",
+      "renderer_pedido": "webgpu",
+      "backend": "webgpu",
+      "cuadros": 353,
+      "fps_promedio": 56.2,
+      "fps_mediana": 62.1,
+      "fps_p1_bajo": 24.9,
+      "cuadro_p95_ms": 24.5,
+      "tareas_largas": 0,
+      "tareas_largas_ms": 0,
+      "llamadas_dibujo": 154,
+      "triangulos": 258399,
+      "memoria_js_mb": 151.1,
+      "carga_inicial_mb": 4.27,
+      "tiempo_hasta_listo_ms": 3328,
+      "errores": [],
+      "repeticiones_fps": [
+        56.2,
+        56.6,
+        58.8
+      ],
+      "repeticiones_mediana": [
+        62.1,
+        60.2,
+        62.9
+      ]
+    },
+    {
+      "escena": "nocturno_lluvia",
+      "calidad": "media",
+      "renderer_pedido": "webgpu",
+      "backend": "webgpu",
+      "cuadros": 329,
+      "fps_promedio": 29,
+      "fps_mediana": 65.8,
+      "fps_p1_bajo": 24.6,
+      "cuadro_p95_ms": 21.4,
+      "tareas_largas": 1,
+      "tareas_largas_ms": 609,
+      "llamadas_dibujo": 89,
+      "triangulos": 254464,
+      "memoria_js_mb": 111.2,
+      "carga_inicial_mb": 4.53,
+      "tiempo_hasta_listo_ms": 4062,
+      "errores": [],
+      "repeticiones_fps": [
+        28.2,
+        29,
+        33.8
+      ],
+      "repeticiones_mediana": [
+        68.5,
+        65.8,
+        64.5
+      ]
+    },
+    {
+      "escena": "carambola",
+      "calidad": "media",
+      "renderer_pedido": "webgpu",
+      "backend": "webgpu",
+      "cuadros": 397,
+      "fps_promedio": 66,
+      "fps_mediana": 68,
+      "fps_p1_bajo": 31,
+      "cuadro_p95_ms": 24.3,
+      "tareas_largas": 1,
+      "tareas_largas_ms": 87,
+      "llamadas_dibujo": 155,
+      "triangulos": 215278,
+      "memoria_js_mb": 105.9,
+      "carga_inicial_mb": 3.81,
+      "tiempo_hasta_listo_ms": 3207,
+      "errores": [],
+      "repeticiones_fps": [
+        66.6,
+        66,
+        68.7
+      ],
+      "repeticiones_mediana": [
+        66.2,
+        68,
+        73
+      ]
+    }
+  ],
+  "cumple_media": true
+}
