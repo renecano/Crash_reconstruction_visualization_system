@@ -7,8 +7,8 @@
 import { DOWNED_SLIDE_CLASSES, downedMotorcycleFriction, tireFriction } from "./friction";
 import { distribution, type Distribution } from "./inversion";
 import { pyRound, str } from "./pymath";
-import { PyRandom } from "./pyrandom";
 import { reconstruct, vehicleClasses, type Reconstruction } from "./reconstruct";
+import { LatinHypercube } from "./stratified";
 
 type Json = Record<string, unknown>;
 
@@ -222,8 +222,10 @@ export function monteCarlo(
   const samples = opts.samples ?? DEFAULT_SAMPLES;
   const dt = opts.dt ?? SAMPLE_DT;
   const seed = opts.seed ?? Number((spec.meta as Json).semilla);
-  const rng = new PyRandom(seed);
   const campos = ranges(spec);
+  // Hipercubo latino con semilla de diseño fija (T3.1, ADR 0100): cada campo se reparte en
+  // `samples` estratos y el rango no depende de la semilla de la escena.
+  const lhs = new LatinHypercube(samples, campos.length);
   const accV = new Map<string, Map<string, number[]>>();
   const accP = new Map<string, Map<string, number[]>>();
   const push = (m: Map<string, Map<string, number[]>>, id: string, key: string, x: number) => {
@@ -236,8 +238,9 @@ export function monteCarlo(
   for (let i = 0; i < samples; i++) {
     const s = structuredClone(spec);
     let downed: number | null = null;
+    const draws = lhs.sample(i);
     for (const c of campos) {
-      const value = rng.uniform(c.minimo, c.maximo);
+      const value = draws.uniform(c.minimo, c.maximo);
       if (c.ruta === DOWNED_RUTA) downed = value;
       else setPath(s, c.ruta, value);
     }

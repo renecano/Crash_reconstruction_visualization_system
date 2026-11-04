@@ -1,0 +1,396 @@
+{
+ "name": "axa_rango_estable",
+ "etiqueta": "antes",
+ "generated_at": "2026-11-03T21:35:38Z",
+ "git_commit": "38a0354",
+ "descripcion": "AXA A2010930 como la reconstruye la app, con la semilla de la app y 19 más: cuánto se mueven el p10 y el p90 de la velocidad previa de V2 entre semillas (meta de T3.1: ≤ 1 km/h).",
+ "spec_id_app": "caso-nuevo",
+ "semilla_app": 719300,
+ "semillas": [
+  719300,
+  1,
+  2,
+  3,
+  4,
+  5,
+  6,
+  7,
+  8,
+  9,
+  10,
+  11,
+  12,
+  13,
+  14,
+  15,
+  16,
+  17,
+  18,
+  19
+ ],
+ "meta_kmh": 1,
+ "cumple": false,
+ "V2": {
+  "mejor": {
+   "semillas": 20,
+   "min": 71.56,
+   "max": 71.56,
+   "movimiento_kmh": 0
+  },
+  "p10": {
+   "semillas": 20,
+   "min": 59.35,
+   "max": 72.56,
+   "movimiento_kmh": 13.21
+  },
+  "p90": {
+   "semillas": 20,
+   "min": 79.81,
+   "max": 98.51,
+   "movimiento_kmh": 18.7
+  }
+ },
+ "V1": {
+  "mejor": {
+   "semillas": 20,
+   "min": 25.32,
+   "max": 25.32,
+   "movimiento_kmh": 0
+  },
+  "p10": {
+   "semillas": 20,
+   "min": 1.9,
+   "max": 17.73,
+   "movimiento_kmh": 15.83
+  },
+  "p90": {
+   "semillas": 20,
+   "min": 21.01,
+   "max": 29.61,
+   "movimiento_kmh": 8.6
+  }
+ },
+ "mediana_ms": 5231,
+ "filas": [
+  {
+   "semilla": 719300,
+   "es_la_de_la_app": true,
+   "hipotesis": 1,
+   "V2": {
+    "mejor": 71.56,
+    "p10": 63.19,
+    "p90": 95.96
+   },
+   "V1": {
+    "mejor": 25.32,
+    "p10": 3.73,
+    "p90": 27.03
+   },
+   "ms": 5686
+  },
+  {
+   "semilla": 1,
+   "es_la_de_la_app": false,
+   "hipotesis": 1,
+   "V2": {
+    "mejor": 71.56,
+    "p10": 71.34,
+    "p90": 82.18
+   },
+   "V1": {
+    "mejor": 25.32,
+    "p10": 10.33,
+    "p90": 25.28
+   },
+   "ms": 5310
+  },
+  {
+   "semilla": 2,
+   "es_la_de_la_app": false,
+   "hipotesis": 1,
+   "V2": {
+    "mejor": 71.56,
+    "p10": 69.21,
+    "p90": 95.43
+   },
+   "V1": {
+    "mejor": 25.32,
+    "p10": 2.39,
+    "p90": 21.4
+   },
+   "ms": 5126
+  },
+  {
+   "semilla": 3,
+   "es_la_de_la_app": false,
+   "hipotesis": 1,
+   "V2": {
+    "mejor": 71.56,
+    "p10": 72.16,
+    "p90": 90.36
+   },
+   "V1": {
+    "mejor": 25.32,
+    "p10": 6.84,
+    "p90": 21.01
+   },
+   "ms": 5080
+  },
+  {
+   "semilla": 4,
+   "es_la_de_la_app": false,
+   "hipotesis": 1,
+   "V2": {
+    "mejor": 71.56,
+    "p10": 70.13,
+    "p90": 94.59
+   },
+   "V1": {
+    "mejor": 25.32,
+    "p10": 2.9,
+    "p90": 21.31
+   },
+   "ms": 5223
+  },
+  {
+   "semilla": 5,
+   "es_la_de_la_app": false,
+   "hipotesis": 1,
+   "V2": {
+    "mejor": 71.56,
+    "p10": 63.67,
+    "p90": 86.73
+   },
+   "V1": {
+    "mejor": 25.32,
+    "p10": 12.79,
+    "p90": 26.91
+   },
+   "ms": 5158
+  },
+  {
+   "semilla": 6,
+   "es_la_de_la_app": false,
+   "hipotesis": 1,
+   "V2": {
+    "mejor": 71.56,
+    "p10": 66.46,
+    "p90": 86.92
+   },
+   "V1": {
+    "mejor": 25.32,
+    "p10": 9.03,
+    "p90": 28.1
+   },
+   "ms": 5172
+  },
+  {
+   "semilla": 7,
+   "es_la_de_la_app": false,
+   "hipotesis": 1,
+   "V2": {
+    "mejor": 71.56,
+    "p10": 70.35,
+    "p90": 91.73
+   },
+   "V1": {
+    "mejor": 25.32,
+    "p10": 7.48,
+    "p90": 24.59
+   },
+   "ms": 5161
+  },
+  {
+   "semilla": 8,
+   "es_la_de_la_app": false,
+   "hipotesis": 1,
+   "V2": {
+    "mejor": 71.56,
+    "p10": 69.87,
+    "p90": 94.45
+   },
+   "V1": {
+    "mejor": 25.32,
+    "p10": 3.1,
+    "p90": 26.48
+   },
+   "ms": 5222
+  },
+  {
+   "semilla": 9,
+   "es_la_de_la_app": false,
+   "hipotesis": 1,
+   "V2": {
+    "mejor": 71.56,
+    "p10": 72.56,
+    "p90": 91.68
+   },
+   "V1": {
+    "mejor": 25.32,
+    "p10": 3.72,
+    "p90": 22.73
+   },
+   "ms": 5273
+  },
+  {
+   "semilla": 10,
+   "es_la_de_la_app": false,
+   "hipotesis": 1,
+   "V2": {
+    "mejor": 71.56,
+    "p10": 67.51,
+    "p90": 85.9
+   },
+   "V1": {
+    "mejor": 25.32,
+    "p10": 13.11,
+    "p90": 27.69
+   },
+   "ms": 5249
+  },
+  {
+   "semilla": 11,
+   "es_la_de_la_app": false,
+   "hipotesis": 1,
+   "V2": {
+    "mejor": 71.56,
+    "p10": 68.56,
+    "p90": 96.18
+   },
+   "V1": {
+    "mejor": 25.32,
+    "p10": 5.72,
+    "p90": 23.19
+   },
+   "ms": 5255
+  },
+  {
+   "semilla": 12,
+   "es_la_de_la_app": false,
+   "hipotesis": 1,
+   "V2": {
+    "mejor": 71.56,
+    "p10": 67.27,
+    "p90": 88.89
+   },
+   "V1": {
+    "mejor": 25.32,
+    "p10": 7.59,
+    "p90": 25.54
+   },
+   "ms": 5221
+  },
+  {
+   "semilla": 13,
+   "es_la_de_la_app": false,
+   "hipotesis": 1,
+   "V2": {
+    "mejor": 71.56,
+    "p10": 71.59,
+    "p90": 86.02
+   },
+   "V1": {
+    "mejor": 25.32,
+    "p10": 9.97,
+    "p90": 26.78
+   },
+   "ms": 5355
+  },
+  {
+   "semilla": 14,
+   "es_la_de_la_app": false,
+   "hipotesis": 1,
+   "V2": {
+    "mejor": 71.56,
+    "p10": 70.94,
+    "p90": 98.51
+   },
+   "V1": {
+    "mejor": 25.32,
+    "p10": 1.9,
+    "p90": 26.1
+   },
+   "ms": 5208
+  },
+  {
+   "semilla": 15,
+   "es_la_de_la_app": false,
+   "hipotesis": 1,
+   "V2": {
+    "mejor": 71.56,
+    "p10": 71.11,
+    "p90": 97.69
+   },
+   "V1": {
+    "mejor": 25.32,
+    "p10": 12.06,
+    "p90": 25.91
+   },
+   "ms": 5244
+  },
+  {
+   "semilla": 16,
+   "es_la_de_la_app": false,
+   "hipotesis": 1,
+   "V2": {
+    "mejor": 71.56,
+    "p10": 68.04,
+    "p90": 84.46
+   },
+   "V1": {
+    "mejor": 25.32,
+    "p10": 15.42,
+    "p90": 24.02
+   },
+   "ms": 5223
+  },
+  {
+   "semilla": 17,
+   "es_la_de_la_app": false,
+   "hipotesis": 1,
+   "V2": {
+    "mejor": 71.56,
+    "p10": 59.35,
+    "p90": 87.71
+   },
+   "V1": {
+    "mejor": 25.32,
+    "p10": 11.86,
+    "p90": 29.61
+   },
+   "ms": 5231
+  },
+  {
+   "semilla": 18,
+   "es_la_de_la_app": false,
+   "hipotesis": 1,
+   "V2": {
+    "mejor": 71.56,
+    "p10": 69.83,
+    "p90": 79.81
+   },
+   "V1": {
+    "mejor": 25.32,
+    "p10": 17.73,
+    "p90": 24.91
+   },
+   "ms": 5237
+  },
+  {
+   "semilla": 19,
+   "es_la_de_la_app": false,
+   "hipotesis": 1,
+   "V2": {
+    "mejor": 71.56,
+    "p10": 63.4,
+    "p90": 81
+   },
+   "V1": {
+    "mejor": 25.32,
+    "p10": 16.69,
+    "p90": 26.61
+   },
+   "ms": 5437
+  }
+ ]
+}

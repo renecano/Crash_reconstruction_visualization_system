@@ -327,7 +327,11 @@ def check_speed_evidence(spec: JsonObj, inv: Inversion) -> list[Inconsistency]:
             continue
         idx, v = hit
         rng = _speed_range(spec, idx)
-        if rng is None or not (rng[1] < e.dist.p10 or rng[0] > e.dist.p90):
+        # El valor indicado (no su rango entero) fuera del intervalo del 80 % que fija la evidencia
+        # (T3.1, ADR 0100): con el rango entero, un traslape de décimas de km/h apagaba la pregunta.
+        vp: JsonObj = v["velocidad_previa"]
+        said_kmh = float(vp["valor"]) * (3.6 if vp.get("unidad") == "m/s" else 1.0)
+        if rng is None or not (said_kmh < e.dist.p10 or said_kmh > e.dist.p90):
             continue
         frenado: JsonObj = v.get("frenado") or {}
         aplico: JsonObj = frenado.get("aplico") or {}
