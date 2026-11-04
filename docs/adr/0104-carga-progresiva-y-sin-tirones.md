@@ -70,9 +70,10 @@ ANGLE/D3D11) se encontraron estas causas, todas en el hilo principal:
 7. **dpr por nivel y memoria de pantalla** (`packages/viewer/src/dpr.ts`): nunca más de
    `min(devicePixelRatio, 2)`; baja 1, media 1.5, alta y ultra 2; y en todos los niveles se baja de
    0.25 en 0.25 (hasta 1) hasta que la memoria de pantalla estimada cabe en 150 MB.
-8. **El caso**: el mapa se desmonta mientras el 3D está a la vista (nunca dos contextos dibujando
-   a la vez; el 3D inactivo bajo el mapa no dibuja ni corre el reloj), el reloj avisa a lo más 4
-   veces por segundo y no mueve el mapa cuando está desmontado, el paso «Los daños» reutiliza el
+8. **El caso**: mientras el 3D está a la vista el mapa queda montado pero quieto (no recibe
+   posiciones ni se vuelve a dibujar; el dictamen toma de su lienzo la imagen del croquis), y el 3D
+   inactivo bajo el mapa no dibuja ni corre el reloj: nunca dos contextos dibujando a la vez. El
+   reloj avisa a lo más 4 veces por segundo, el paso «Los daños» reutiliza el
    mismo visor, el trozo de `three/webgpu` y los modelos de los vehículos se bajan al entrar al
    caso, y `?diag=1` muestra las últimas tareas largas con su causa (la última marca:
    `marcar()` deja también una marca de usuario visible en la pestaña Performance).

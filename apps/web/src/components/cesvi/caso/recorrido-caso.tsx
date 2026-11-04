@@ -1073,29 +1073,27 @@ export function RecorridoCaso({ inicial }: { inicial: CasoExpediente }) {
           data-testid="escenario"
           data-expandido={expandido ? "si" : "no"}
         >
-          {/* El mapa solo mientras se ve: con el 3D a la vista se desmonta (nunca dos contextos
-              dibujando a la vez; René, 2026-11-04) y vuelve al regresar al mapa. */}
+          {/* Bajo el 3D el mapa queda montado pero quieto: no recibe posiciones ni se vuelve a
+              dibujar (ADR 0104); el dictamen toma de aquí la imagen del croquis. */}
           <div className={`absolute inset-0 ${verMapa ? "" : "invisible"}`}>
-            {verMapa ? (
-              <MapaEscena
-                tema={tema}
-                onMapa={setMapa}
-                posiciones={posiciones}
-                moviles={moviles}
-                impactos={rec.impactos}
-                onClic={colocar}
-                inicio={lugar?.coordenadas ?? null}
-                lugarTexto={lugarTexto}
-                herramienta={actual === 2 && modo === "trabajar" ? herramientaMapa : "mover"}
-                pedirLugar={actual === 2 || expandido}
-                huellas={huellas}
-                flecha={colocacion ? null : flecha}
-                colocacion={colocacion}
-                onFlecha={girar}
-                onMedida={setMedida}
-                onDeshacer={actual === 2 && modo === "trabajar" ? deshacer : undefined}
-              />
-            ) : null}
+            <MapaEscena
+              tema={tema}
+              onMapa={setMapa}
+              posiciones={posiciones}
+              moviles={moviles}
+              impactos={rec.impactos}
+              onClic={colocar}
+              inicio={lugar?.coordenadas ?? null}
+              lugarTexto={lugarTexto}
+              herramienta={actual === 2 && modo === "trabajar" ? herramientaMapa : "mover"}
+              pedirLugar={actual === 2 || expandido}
+              huellas={huellas}
+              flecha={colocacion ? null : flecha}
+              colocacion={colocacion}
+              onFlecha={girar}
+              onMedida={setMedida}
+              onDeshacer={actual === 2 && modo === "trabajar" ? deshacer : undefined}
+            />
           </div>
           {r ? (
             <div
