@@ -716,6 +716,57 @@ async function medir(page: Page, cpu: number) {
   };
 }
 
+/**
+ * Deja el archivo de resultados con las cifras y listas recortadas (las trazas enteras y la lista
+ * completa de programas quedan en `apps/web/test-results/`): el archivo pasaba de 3 MB.
+ */
+function compactar(salida: Record<string, unknown>): Record<string, unknown> {
+  const pipe = (p: Record<string, unknown>) => ({
+    t: p.t,
+    material: p.material,
+    objeto: p.objeto,
+    ms: p.ms,
+    sombra: p.sombra,
+    precompilado: p.precompilado,
+  });
+  const tarea = (l: Larga) => ({
+    en_ms: l.en_ms,
+    duracion_ms: l.duracion_ms,
+    fase: l.fase ?? null,
+    t_escena: l.t_escena ?? null,
+    funciones: (l.funciones ?? []).slice(0, 3).map((f) => ({ funcion: f.funcion, ms: f.ms })),
+    eventos: (l.eventos ?? []).slice(0, 3),
+  });
+  for (const bloque of Object.values(salida)) {
+    if (!bloque || typeof bloque !== "object" || !("corridas" in bloque)) continue;
+    for (const c of (bloque as { corridas: Record<string, unknown>[] }).corridas) {
+      const rep = c.reproduccion as Record<string, unknown> | undefined;
+      if (rep) {
+        const pcs = (rep.pipelines_creados as Record<string, unknown>[] | undefined) ?? [];
+        rep.pipelines_creados_total = pcs.length;
+        rep.pipelines_creados = pcs.slice(0, 8).map(pipe);
+        rep.tareas_largas = ((rep.tareas_largas as unknown[]) ?? []).slice(0, 24);
+      }
+      for (const cam of (c.camaras as Record<string, unknown>[] | undefined) ?? []) {
+        const pcs = (cam.pipelines_creados as Record<string, unknown>[] | undefined) ?? [];
+        cam.pipelines_creados_total = pcs.length;
+        cam.pipelines_creados = pcs.slice(0, 5).map(pipe);
+        delete cam.funciones;
+        delete cam.eventos;
+      }
+      const tt = (c.tareas_largas_traza as Larga[] | undefined) ?? [];
+      c.tareas_largas_traza_total = tt.length;
+      c.tareas_largas_traza = tt
+        .filter((l) => l.duracion_ms >= 300)
+        .slice(0, 40)
+        .map(tarea);
+      const pc = c.pipelines_en_carga as { mas_lentos?: Record<string, unknown>[] } | undefined;
+      if (pc?.mas_lentos) pc.mas_lentos = pc.mas_lentos.slice(0, 12).map(pipe);
+    }
+  }
+  return salida;
+}
+
 test("medición: tirones del recorrido de AXA con la CPU normal y limitada", async ({ browser }) => {
   const corridas: Awaited<ReturnType<typeof medir>>[] = [];
   for (const cpu of CPUS) {
@@ -778,6 +829,6 @@ test("medición: tirones del recorrido de AXA con la CPU normal y limitada", asy
       cumple: corridas.every((c) => c.cumple),
     },
   };
-  writeFileSync(SALIDA, JSON.stringify(salida, null, 1) + "\n");
+  writeFileSync(SALIDA, JSON.stringify(compactar(salida), null, 1) + "\n");
   console.log(SALIDA);
 });
