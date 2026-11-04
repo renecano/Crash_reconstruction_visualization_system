@@ -1701,6 +1701,7 @@ Reglas de trabajo: `CLAUDE.md`. Especificación: `PLAN.md`.
 
     **Cumple la meta (≤ 1 km/h):** con el diseño fijo el rango de V2 en AXA es el mismo con cualquier semilla (68.0–92.8 km/h con 32 reajustes). Un paso intermedio, con el hipercubo sorteado por la semilla de la escena, dejó el movimiento en 6.0 y 6.8 km/h: los reajustes no lineales conservan ruido de muestreo en los percentiles de salida (ADR 0100 §1).
 
+  - **Regla de la pregunta «velocidad contra evidencia»:** ahora compara el valor indicado con el intervalo del 80 %, no el rango entero del relato (ADR 0100 §5): con el hipercubo, en `peaton_cruce` el rango «como a 40» (30–50) se traslapaba medio km/h con la evidencia (49.5–55.6) y la pregunta se apagaba. Solo esa escena cambia de banderas.
   - **Tiempo en el navegador** (`axa_tiempo_navegador.json`, worker de producción en Chromium, mediana de 3): reconstrucción 74 ms y resultado completo 7 539 ms con 32 reajustes y 128 muestras (antes, con 12 y 64: 54 ms y 7 126 ms). Sigue por debajo de los 10 s.
 - **Siguiente paso concreto:** T3.2 (el rumbo inicial de V2 en el límite de +20°): diagnosticar en AXA con `cesvi_axa_diagnostico.mts` y la inversión (`atBound`), corregir con fuente y medir AXA y las escenas de inversión.
 

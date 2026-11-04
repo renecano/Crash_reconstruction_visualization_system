@@ -307,7 +307,11 @@ export function checkSpeedEvidence(spec: Json, inv: Inversion): Inconsistency[] 
     if (hit === undefined || !stated(hit[1].velocidad_previa)) continue;
     const [idx, v] = hit;
     const rng = speedRange(spec, idx);
-    if (rng === null || !(rng[1] < e.dist.p10 || rng[0] > e.dist.p90)) continue;
+    // El valor indicado (no su rango entero) fuera del intervalo del 80 % que fija la evidencia
+    // (T3.1, ADR 0100): con el rango entero, un traslape de décimas de km/h apagaba la pregunta.
+    const vp = v.velocidad_previa as Json;
+    const saidKmh = Number(vp.valor) * (vp.unidad === "m/s" ? 3.6 : 1.0);
+    if (rng === null || !(saidKmh < e.dist.p10 || saidKmh > e.dist.p90)) continue;
     const frenado = (v.frenado ?? {}) as Json;
     const aplico = (frenado.aplico ?? {}) as Json;
     const braked = Boolean(aplico.valor) || inv.evidence.includes(`marcas_frenado:${str(v.id)}`);

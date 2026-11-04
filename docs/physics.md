@@ -183,14 +183,14 @@ El resultado (`incertidumbre`, esquema 1.3.0 en adelante) lleva p10–p50–p90 
 
 Banderas cuando lo declarado no cabe en ninguna solución física. Cada una compara contra el **rango** físico posible (fricción, rigidez y masas en sus extremos), no contra un valor nominal: solo se marca lo que no cabe ni en el extremo favorable. Los mensajes son en lenguaje llano, terminan en una pregunta y nunca atribuyen culpa ni intención (PLAN §10). La página del relato las convierte en las primeras preguntas de cada ronda y el visor las muestra en "Datos que no cuadran".
 
-| Código                    | Cuándo                                                                                                                                   |
-| ------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------- |
-| `detenido_con_velocidad`  | Un vehículo "detenido" o "estacionado" con velocidad declarada mayor a 5 km/h.                                                           |
-| `marcas_vs_velocidad`     | Las marcas de frenado de antes del impacto exigen $v \ge \sqrt{2\mu_{min} g d}$ y la velocidad declarada (con su rango) no llega.        |
-| `proyeccion_vs_velocidad` | La banda de Searle para la distancia declarada (con el rango de fricción cuerpo–suelo) no se cruza con el rango de velocidad declarado.  |
-| `dano_vs_velocidad`       | El ΔV del daño declarado (§10) no se cruza con el ΔV de Monte Carlo con las velocidades declaradas.                                      |
-| `velocidad_vs_evidencia`  | La velocidad declarada no se cruza con el intervalo que fija la inversión (solo parámetros identificables y que no quedan en el límite). |
-| `reposo_inalcanzable`     | Ni la mejor combinación de velocidad (0–200 km/h) y rumbo no declarado (±20°) deja el vehículo a menos de 3 σ de la posición declarada.  |
+| Código                    | Cuándo                                                                                                                                                                                  |
+| ------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `detenido_con_velocidad`  | Un vehículo "detenido" o "estacionado" con velocidad declarada mayor a 5 km/h.                                                                                                          |
+| `marcas_vs_velocidad`     | Las marcas de frenado de antes del impacto exigen $v \ge \sqrt{2\mu_{min} g d}$ y la velocidad declarada (con su rango) no llega.                                                       |
+| `proyeccion_vs_velocidad` | La banda de Searle para la distancia declarada (con el rango de fricción cuerpo–suelo) no se cruza con el rango de velocidad declarado.                                                 |
+| `dano_vs_velocidad`       | El ΔV del daño declarado (§10) no se cruza con el ΔV de Monte Carlo con las velocidades declaradas.                                                                                     |
+| `velocidad_vs_evidencia`  | La velocidad declarada (su valor, no su rango entero) queda fuera del intervalo del 80 % que fija la inversión (solo parámetros identificables y que no quedan en el límite; ADR 0100). |
+| `reposo_inalcanzable`     | Ni la mejor combinación de velocidad (0–200 km/h) y rumbo no declarado (±20°) deja el vehículo a menos de 3 σ de la posición declarada.                                                 |
 
 En las escenas canónicas aparecen tres banderas:
 
