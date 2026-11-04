@@ -9,6 +9,8 @@ export * from "./timeline";
 export * from "./clock";
 export * from "./backend-choice";
 export * from "./cameras";
+export * from "./diagnostics";
+export * from "./recovery";
 export * from "./environment";
 export {
   buildRoadGeometry,

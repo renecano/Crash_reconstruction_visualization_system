@@ -1,0 +1,699 @@
+{
+ "name": "t1_memoria_gpu",
+ "descripcion": "Memoria de video estimada por el visor (texturas de la escena, búferes de pantalla y sombras), fps, pérdidas del dispositivo y lienzo en blanco por nivel de calidad, en Chromium con GPU real, cámara cinematográfica en bucle.",
+ "antes": {
+  "generated_at": "2026-11-04T14:45:28.627Z",
+  "git_commit": "aca04bf",
+  "segundos": 50,
+  "maquina": "intel · gen-9",
+  "corridas": [
+   {
+    "escena": "lateral_interseccion",
+    "calidad": "auto",
+    "listo": true,
+    "listo_ms": 10381,
+    "crash": false,
+    "backend": "webgpu",
+    "adaptador": "intel · gen-9",
+    "lienzo": [
+     1905,
+     1080
+    ],
+    "fps_mediana": 15,
+    "memoria_total_max_mb": 597,
+    "memoria_texturas_max_mb": 49.3,
+    "memoria_ultima": {
+     "texturasMB": 0,
+     "texturas": 0,
+     "texturasRenderer": 13,
+     "geometriasRenderer": 6,
+     "pantallaMB": 62.8,
+     "sombrasMB": 4,
+     "totalMB": 66.8
+    },
+    "blanco_max": 0,
+    "perdidas": 0,
+    "recuperaciones": 0,
+    "perdida": null,
+    "generacion": 0,
+    "fallo_en_pantalla": false,
+    "ultimo_error": {
+     "origen": "gpu",
+     "mensaje": "WebGPU GPUValidationError: [Invalid CommandBuffer from CommandEncoder \"copyTextureToTexture_198_231\"] is invalid due to a previous error.\n - While calling [Queue].Submit([[Invalid CommandBuffer from CommandEncoder \"copyTextureToTexture_198_231\"]])\n"
+    },
+    "errores_pagina": [],
+    "consola": [
+     "warning: THREE.Clock: This module has been deprecated. Please use THREE.Timer instead.",
+     "warning: THREE.AttributeNode: Vertex attribute \"uv\" not found on geometry.",
+     "warning: THREE.AttributeNode: Vertex attribute \"uv\" not found on geometry.",
+     "warning: THREE.AttributeNode: Vertex attribute \"uv\" not found on geometry.",
+     "warning: THREE.AttributeNode: Vertex attribute \"uv\" not found on geometry.",
+     "warning: THREE.Clock: This module has been deprecated. Please use THREE.Timer instead.",
+     "error: THREE.WebGPURenderer: Render pipeline creation failed (renderPipeline_GTAO_588): [Invalid ShaderModule \"fragment_GTAO\"] is invalid due to a previous error.\n - While validating fragment stage ([Invalid ShaderModule \"fragment_GTAO\"], entryPoint: \"main\").\n - While validating fragment state.\n - W",
+     "warning: Error while parsing WGSL: :109:25 error: no matching call to 'textureGather(texture_depth_multisampled_2d, sampler, vec2<f32>)'\n\n12 candidate functions:\n • 'textureGather(texture: texture_depth_2d  ✗ , sampler: sampler  ✓ , coords: vec2<f32>  ✓ ) -> vec4<f32>'\n • 'textureGather(texture: tex",
+     "warning: [Invalid RenderPipeline \"renderPipeline_GTAO_588\"] is invalid due to a previous error.\n - While encoding [RenderPassEncoder (unlabeled)].SetPipeline([Invalid RenderPipeline \"renderPipeline_GTAO_588\"]).\n - While finishing [CommandEncoder \"renderContext_13\"].\n",
+     "warning: [Invalid CommandBuffer from CommandEncoder \"renderContext_13\"] is invalid due to a previous error.\n - While calling [Queue].Submit([[Invalid CommandBuffer from CommandEncoder \"renderContext_13\"]])\n",
+     "error: THREE.WebGPURenderer: Render pipeline creation failed (renderPipeline_GTAO_588): [Invalid ShaderModule \"fragment_GTAO\"] is invalid due to a previous error.\n - While validating fragment stage ([Invalid ShaderModule \"fragment_GTAO\"], entryPoint: \"main\").\n - While validating fragment state.\n - W",
+     "warning: Error while parsing WGSL: :109:25 error: no matching call to 'textureGather(texture_depth_multisampled_2d, sampler, vec2<f32>)'\n\n12 candidate functions:\n • 'textureGather(texture: texture_depth_2d  ✗ , sampler: sampler  ✓ , coords: vec2<f32>  ✓ ) -> vec4<f32>'\n • 'textureGather(texture: tex",
+     "warning: [Invalid RenderPipeline \"renderPipeline_GTAO_588\"] is invalid due to a previous error.\n - While encoding [RenderPassEncoder (unlabeled)].SetPipeline([Invalid RenderPipeline \"renderPipeline_GTAO_588\"]).\n - While finishing [CommandEncoder \"renderContext_13\"].\n",
+     "warning: [Invalid CommandBuffer from CommandEncoder \"renderContext_13\"] is invalid due to a previous error.\n - While calling [Queue].Submit([[Invalid CommandBuffer from CommandEncoder \"renderContext_13\"]])\n",
+     "error: THREE.WebGPURenderer: Render pipeline creation failed (renderPipeline_GTAO_588): [Invalid ShaderModule \"fragment_GTAO\"] is invalid due to a previous error.\n - While validating fragment stage ([Invalid ShaderModule \"fragment_GTAO\"], entryPoint: \"main\").\n - While validating fragment state.\n - W",
+     "warning: Source [Texture \"depth\"] sample count (4) and destination [Texture (unlabeled 2857x1620 px, TextureFormat::Depth24Plus)] sample count (1) does not match.\n - While [Failed to format error message: \"encoding %s.CopyTextureToTexture(%s, %s, %s).\"].\n - While finishing [CommandEncoder \"copyTextu",
+     "warning: [Invalid CommandBuffer from CommandEncoder \"copyTextureToTexture_198_231\"] is invalid due to a previous error.\n - While calling [Queue].Submit([[Invalid CommandBuffer from CommandEncoder \"copyTextureToTexture_198_231\"]])\n",
+     "warning: Error while parsing WGSL: :109:25 error: no matching call to 'textureGather(texture_depth_multisampled_2d, sampler, vec2<f32>)'\n\n12 candidate functions:\n • 'textureGather(texture: texture_depth_2d  ✗ , sampler: sampler  ✓ , coords: vec2<f32>  ✓ ) -> vec4<f32>'\n • 'textureGather(texture: tex",
+     "warning: [Invalid RenderPipeline \"renderPipeline_GTAO_588\"] is invalid due to a previous error.\n - While encoding [RenderPassEncoder (unlabeled)].SetPipeline([Invalid RenderPipeline \"renderPipeline_GTAO_588\"]).\n - While finishing [CommandEncoder \"renderContext_13\"].\n",
+     "warning: [Invalid CommandBuffer from CommandEncoder \"renderContext_13\"] is invalid due to a previous error.\n - While calling [Queue].Submit([[Invalid CommandBuffer from CommandEncoder \"renderContext_13\"]])\n"
+    ],
+    "muestras": [
+     {
+      "s": 5,
+      "blanco": 0,
+      "backend": "webgpu",
+      "adaptador": "intel · gen-9",
+      "calidad": "alta",
+      "dpr": 1.5000000447034836,
+      "lienzo": [
+       1905,
+       1080
+      ],
+      "fps": 71,
+      "memoria": {
+       "texturasMB": 49.3,
+       "texturas": 38,
+       "texturasRenderer": 112,
+       "geometriasRenderer": 233,
+       "pantallaMB": 62.8,
+       "sombrasMB": 4,
+       "totalMB": 116.1
+      },
+      "perdida": null,
+      "perdidas": 0,
+      "recuperaciones": 0,
+      "generacion": 0,
+      "ultimoError": null,
+      "fallo": false
+     },
+     {
+      "s": 10,
+      "blanco": 0,
+      "backend": "webgpu",
+      "adaptador": "intel · gen-9",
+      "calidad": "alta",
+      "dpr": 1.5000000447034836,
+      "lienzo": [
+       2857,
+       1620
+      ],
+      "fps": null,
+      "memoria": {
+       "texturasMB": 0,
+       "texturas": 0,
+       "texturasRenderer": 44,
+       "geometriasRenderer": 3,
+       "pantallaMB": 565,
+       "sombrasMB": 32,
+       "totalMB": 597
+      },
+      "perdida": null,
+      "perdidas": 0,
+      "recuperaciones": 0,
+      "generacion": 0,
+      "ultimoError": {
+       "origen": "gpu",
+       "mensaje": "WebGPU GPUValidationError: [Invalid CommandBuffer from CommandEncoder \"renderContext_13\"] is invalid due to a previous error.\n - While calling [Queue].Submit([[Invalid CommandBuffer from CommandEncoder \"renderContext_13\"]])\n"
+      },
+      "fallo": false
+     },
+     {
+      "s": 15,
+      "blanco": 0,
+      "backend": "webgpu",
+      "adaptador": "intel · gen-9",
+      "calidad": "media",
+      "dpr": 1.0000000298023224,
+      "lienzo": [
+       1905,
+       1080
+      ],
+      "fps": null,
+      "memoria": {
+       "texturasMB": 0,
+       "texturas": 0,
+       "texturasRenderer": 13,
+       "geometriasRenderer": 7,
+       "pantallaMB": 62.8,
+       "sombrasMB": 4,
+       "totalMB": 66.8
+      },
+      "perdida": null,
+      "perdidas": 0,
+      "recuperaciones": 0,
+      "generacion": 0,
+      "ultimoError": {
+       "origen": "gpu",
+       "mensaje": "WebGPU GPUValidationError: [Invalid CommandBuffer from CommandEncoder \"copyTextureToTexture_198_231\"] is invalid due to a previous error.\n - While calling [Queue].Submit([[Invalid CommandBuffer from CommandEncoder \"copyTextureToTexture_198_231\"]])\n"
+      },
+      "fallo": false
+     },
+     {
+      "s": 20,
+      "blanco": 0,
+      "backend": "webgpu",
+      "adaptador": "intel · gen-9",
+      "calidad": "media",
+      "dpr": 1.0000000298023224,
+      "lienzo": [
+       1905,
+       1080
+      ],
+      "fps": 12,
+      "memoria": {
+       "texturasMB": 0,
+       "texturas": 0,
+       "texturasRenderer": 51,
+       "geometriasRenderer": 98,
+       "pantallaMB": 62.8,
+       "sombrasMB": 4,
+       "totalMB": 66.8
+      },
+      "perdida": null,
+      "perdidas": 0,
+      "recuperaciones": 0,
+      "generacion": 0,
+      "ultimoError": {
+       "origen": "gpu",
+       "mensaje": "WebGPU GPUValidationError: [Invalid CommandBuffer from CommandEncoder \"copyTextureToTexture_198_231\"] is invalid due to a previous error.\n - While calling [Queue].Submit([[Invalid CommandBuffer from CommandEncoder \"copyTextureToTexture_198_231\"]])\n"
+      },
+      "fallo": false
+     },
+     {
+      "s": 25,
+      "blanco": 0,
+      "backend": "webgpu",
+      "adaptador": "intel · gen-9",
+      "calidad": "media",
+      "dpr": 1.0000000298023224,
+      "lienzo": [
+       1429,
+       810
+      ],
+      "fps": 81,
+      "memoria": {
+       "texturasMB": 1,
+       "texturas": 4,
+       "texturasRenderer": 30,
+       "geometriasRenderer": 74,
+       "pantallaMB": 22.1,
+       "sombrasMB": 0,
+       "totalMB": 23.1
+      },
+      "perdida": null,
+      "perdidas": 0,
+      "recuperaciones": 0,
+      "generacion": 0,
+      "ultimoError": {
+       "origen": "gpu",
+       "mensaje": "WebGPU GPUValidationError: [Invalid CommandBuffer from CommandEncoder \"copyTextureToTexture_198_231\"] is invalid due to a previous error.\n - While calling [Queue].Submit([[Invalid CommandBuffer from CommandEncoder \"copyTextureToTexture_198_231\"]])\n"
+      },
+      "fallo": false
+     },
+     {
+      "s": 30,
+      "blanco": 0,
+      "backend": "webgpu",
+      "adaptador": "intel · gen-9",
+      "calidad": "media",
+      "dpr": 1.0000000298023224,
+      "lienzo": [
+       1905,
+       1080
+      ],
+      "fps": 15,
+      "memoria": {
+       "texturasMB": 0,
+       "texturas": 0,
+       "texturasRenderer": 17,
+       "geometriasRenderer": 11,
+       "pantallaMB": 62.8,
+       "sombrasMB": 4,
+       "totalMB": 66.8
+      },
+      "perdida": null,
+      "perdidas": 0,
+      "recuperaciones": 0,
+      "generacion": 0,
+      "ultimoError": {
+       "origen": "gpu",
+       "mensaje": "WebGPU GPUValidationError: [Invalid CommandBuffer from CommandEncoder \"copyTextureToTexture_198_231\"] is invalid due to a previous error.\n - While calling [Queue].Submit([[Invalid CommandBuffer from CommandEncoder \"copyTextureToTexture_198_231\"]])\n"
+      },
+      "fallo": false
+     },
+     {
+      "s": 35,
+      "blanco": 0,
+      "backend": "webgpu",
+      "adaptador": "intel · gen-9",
+      "calidad": "media",
+      "dpr": 1.0000000298023224,
+      "lienzo": [
+       1905,
+       1080
+      ],
+      "fps": 13,
+      "memoria": {
+       "texturasMB": 0,
+       "texturas": 0,
+       "texturasRenderer": 107,
+       "geometriasRenderer": 225,
+       "pantallaMB": 62.8,
+       "sombrasMB": 4,
+       "totalMB": 66.8
+      },
+      "perdida": null,
+      "perdidas": 0,
+      "recuperaciones": 0,
+      "generacion": 0,
+      "ultimoError": {
+       "origen": "gpu",
+       "mensaje": "WebGPU GPUValidationError: [Invalid CommandBuffer from CommandEncoder \"copyTextureToTexture_198_231\"] is invalid due to a previous error.\n - While calling [Queue].Submit([[Invalid CommandBuffer from CommandEncoder \"copyTextureToTexture_198_231\"]])\n"
+      },
+      "fallo": false
+     },
+     {
+      "s": 40,
+      "blanco": 0,
+      "backend": "webgpu",
+      "adaptador": "intel · gen-9",
+      "calidad": "media",
+      "dpr": 1.0000000298023224,
+      "lienzo": [
+       1905,
+       1080
+      ],
+      "fps": null,
+      "memoria": {
+       "texturasMB": 0,
+       "texturas": 0,
+       "texturasRenderer": 13,
+       "geometriasRenderer": 6,
+       "pantallaMB": 62.8,
+       "sombrasMB": 4,
+       "totalMB": 66.8
+      },
+      "perdida": null,
+      "perdidas": 0,
+      "recuperaciones": 0,
+      "generacion": 0,
+      "ultimoError": {
+       "origen": "gpu",
+       "mensaje": "WebGPU GPUValidationError: [Invalid CommandBuffer from CommandEncoder \"copyTextureToTexture_198_231\"] is invalid due to a previous error.\n - While calling [Queue].Submit([[Invalid CommandBuffer from CommandEncoder \"copyTextureToTexture_198_231\"]])\n"
+      },
+      "fallo": false
+     }
+    ]
+   }
+  ]
+ },
+ "despues": {
+  "generated_at": "2026-11-04T15:22:42.604Z",
+  "renderer": "webgpu",
+  "git_commit": "aca04bf",
+  "segundos": 10,
+  "maquina": "intel · gen-9",
+  "corridas": [
+   {
+    "escena": "lateral_interseccion",
+    "calidad": "alta",
+    "listo": false,
+    "listo_ms": 425391,
+    "crash": false,
+    "backend": "webgpu",
+    "adaptador": "intel · gen-9",
+    "lienzo": [
+     2857,
+     1620
+    ],
+    "fps_mediana": 9,
+    "memoria_total_max_mb": 438.1,
+    "memoria_texturas_max_mb": 0,
+    "memoria_ultima": {
+     "texturasMB": 0,
+     "texturas": 0,
+     "texturasRenderer": 90,
+     "geometriasRenderer": 65,
+     "pantallaMB": 406.1,
+     "sombrasMB": 32,
+     "totalMB": 438.1
+    },
+    "blanco_max": 0,
+    "perdidas": 0,
+    "recuperaciones": 0,
+    "perdida": null,
+    "generacion": 0,
+    "fallo_en_pantalla": false,
+    "ultimo_error": null,
+    "errores_pagina": [
+     "no llegó a listo: page.waitForFunction: Timeout 420000ms exceeded."
+    ],
+    "consola": [
+     "warning: THREE.Clock: This module has been deprecated. Please use THREE.Timer instead.",
+     "warning: THREE.AttributeNode: Vertex attribute \"uv\" not found on geometry.",
+     "warning: THREE.AttributeNode: Vertex attribute \"uv\" not found on geometry.",
+     "warning: THREE.AttributeNode: Vertex attribute \"uv\" not found on geometry.",
+     "warning: THREE.AttributeNode: Vertex attribute \"uv\" not found on geometry.",
+     "warning: THREE.AttributeNode: Vertex attribute \"uv\" not found on geometry.",
+     "warning: THREE.AttributeNode: Vertex attribute \"uv\" not found on geometry.",
+     "warning: THREE.AttributeNode: Vertex attribute \"uv\" not found on geometry.",
+     "warning: THREE.AttributeNode: Vertex attribute \"uv\" not found on geometry.",
+     "warning: THREE.AttributeNode: Vertex attribute \"uv\" not found on geometry.",
+     "warning: THREE.AttributeNode: Vertex attribute \"uv\" not found on geometry."
+    ],
+    "muestras": [
+     {
+      "s": 5,
+      "blanco": 0,
+      "backend": "webgpu",
+      "adaptador": "intel · gen-9",
+      "calidad": "alta",
+      "dpr": 1.5000000447034836,
+      "lienzo": [
+       2857,
+       1620
+      ],
+      "fps": 9,
+      "memoria": {
+       "texturasMB": 0,
+       "texturas": 0,
+       "texturasRenderer": 90,
+       "geometriasRenderer": 65,
+       "pantallaMB": 406.1,
+       "sombrasMB": 32,
+       "totalMB": 438.1
+      },
+      "perdida": null,
+      "perdidas": 0,
+      "recuperaciones": 0,
+      "generacion": 0,
+      "ultimoError": null,
+      "fallo": false
+     }
+    ]
+   }
+  ]
+ },
+ "sonda": {
+  "generated_at": "2026-11-04T15:26:47.220Z",
+  "renderer": "webgl",
+  "git_commit": "aca04bf",
+  "segundos": 60,
+  "maquina": "ANGLE (Intel, Intel(R) UHD Graphics (0x00009B41) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+  "corridas": [
+   {
+    "escena": "lateral_interseccion",
+    "calidad": "alta",
+    "listo": false,
+    "listo_ms": 25956,
+    "crash": false,
+    "backend": "webgl2",
+    "adaptador": "ANGLE (Intel, Intel(R) UHD Graphics (0x00009B41) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+    "lienzo": [
+     2857,
+     1620
+    ],
+    "fps_mediana": 9,
+    "memoria_total_max_mb": 438.1,
+    "memoria_texturas_max_mb": 0,
+    "memoria_ultima": {
+     "texturasMB": 0,
+     "texturas": 0,
+     "texturasRenderer": 159,
+     "geometriasRenderer": 234,
+     "pantallaMB": 406.1,
+     "sombrasMB": 32,
+     "totalMB": 438.1
+    },
+    "blanco_max": 0,
+    "perdidas": 0,
+    "recuperaciones": 0,
+    "perdida": null,
+    "generacion": 0,
+    "fallo_en_pantalla": false,
+    "ultimo_error": null,
+    "errores_pagina": [
+     "no llegó a listo: page.waitForFunction: Timeout 20000ms exceeded."
+    ],
+    "consola": [
+     "warning: THREE.Clock: This module has been deprecated. Please use THREE.Timer instead.",
+     "warning: THREE.AttributeNode: Vertex attribute \"uv\" not found on geometry.",
+     "warning: THREE.AttributeNode: Vertex attribute \"uv\" not found on geometry.",
+     "warning: THREE.AttributeNode: Vertex attribute \"uv\" not found on geometry.",
+     "warning: THREE.AttributeNode: Vertex attribute \"uv\" not found on geometry.",
+     "warning: THREE.AttributeNode: Vertex attribute \"uv\" not found on geometry.",
+     "warning: THREE.AttributeNode: Vertex attribute \"uv\" not found on geometry.",
+     "warning: THREE.AttributeNode: Vertex attribute \"uv\" not found on geometry.",
+     "warning: THREE.AttributeNode: Vertex attribute \"uv\" not found on geometry.",
+     "warning: THREE.AttributeNode: Vertex attribute \"uv\" not found on geometry.",
+     "warning: THREE.AttributeNode: Vertex attribute \"uv\" not found on geometry.",
+     "warning: THREE.AttributeNode: Vertex attribute \"uv\" not found on geometry.",
+     "warning: THREE.AttributeNode: Vertex attribute \"uv\" not found on geometry.",
+     "warning: THREE.AttributeNode: Vertex attribute \"uv\" not found on geometry.",
+     "warning: THREE.AttributeNode: Vertex attribute \"uv\" not found on geometry.",
+     "warning: THREE.AttributeNode: Vertex attribute \"uv\" not found on geometry.",
+     "warning: THREE.AttributeNode: Vertex attribute \"uv\" not found on geometry.",
+     "warning: THREE.AttributeNode: Vertex attribute \"uv\" not found on geometry.",
+     "warning: THREE.AttributeNode: Vertex attribute \"uv\" not found on geometry."
+    ],
+    "muestras": [
+     {
+      "s": 5,
+      "blanco": 0,
+      "backend": "webgl2",
+      "adaptador": "ANGLE (Intel, Intel(R) UHD Graphics (0x00009B41) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+      "calidad": "alta",
+      "dpr": 1.5000000447034836,
+      "lienzo": [
+       2857,
+       1620
+      ],
+      "fps": 9,
+      "memoria": {
+       "texturasMB": 0,
+       "texturas": 0,
+       "texturasRenderer": 88,
+       "geometriasRenderer": 62,
+       "pantallaMB": 406.1,
+       "sombrasMB": 32,
+       "totalMB": 438.1
+      },
+      "perdida": null,
+      "perdidas": 0,
+      "recuperaciones": 0,
+      "generacion": 0,
+      "ultimoError": null,
+      "fallo": false,
+      "banderas": {
+       "listo": true,
+       "restos": true,
+       "personas": true,
+       "texturas": true,
+       "cielo": true,
+       "grafo": false,
+       "arboles": true,
+       "modelos": true
+      }
+     },
+     {
+      "s": 10,
+      "blanco": 0,
+      "backend": "webgl2",
+      "adaptador": "ANGLE (Intel, Intel(R) UHD Graphics (0x00009B41) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+      "calidad": "alta",
+      "dpr": 1.5000000447034836,
+      "lienzo": [
+       2857,
+       1620
+      ],
+      "fps": 9,
+      "memoria": {
+       "texturasMB": 0,
+       "texturas": 0,
+       "texturasRenderer": 103,
+       "geometriasRenderer": 103,
+       "pantallaMB": 406.1,
+       "sombrasMB": 32,
+       "totalMB": 438.1
+      },
+      "perdida": null,
+      "perdidas": 0,
+      "recuperaciones": 0,
+      "generacion": 0,
+      "ultimoError": null,
+      "fallo": false,
+      "banderas": {
+       "listo": true,
+       "restos": true,
+       "personas": true,
+       "texturas": true,
+       "cielo": true,
+       "grafo": false,
+       "arboles": true,
+       "modelos": true
+      }
+     },
+     {
+      "s": 15,
+      "blanco": 0,
+      "backend": "webgl2",
+      "adaptador": "ANGLE (Intel, Intel(R) UHD Graphics (0x00009B41) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+      "calidad": "alta",
+      "dpr": 1.5000000447034836,
+      "lienzo": [
+       2857,
+       1620
+      ],
+      "fps": 9,
+      "memoria": {
+       "texturasMB": 0,
+       "texturas": 0,
+       "texturasRenderer": 111,
+       "geometriasRenderer": 117,
+       "pantallaMB": 406.1,
+       "sombrasMB": 32,
+       "totalMB": 438.1
+      },
+      "perdida": null,
+      "perdidas": 0,
+      "recuperaciones": 0,
+      "generacion": 0,
+      "ultimoError": null,
+      "fallo": false,
+      "banderas": {
+       "listo": true,
+       "restos": true,
+       "personas": true,
+       "texturas": true,
+       "cielo": true,
+       "grafo": false,
+       "arboles": true,
+       "modelos": true
+      }
+     },
+     {
+      "s": 20,
+      "blanco": 0,
+      "backend": "webgl2",
+      "adaptador": "ANGLE (Intel, Intel(R) UHD Graphics (0x00009B41) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+      "calidad": "alta",
+      "dpr": 1.5000000447034836,
+      "lienzo": [
+       2857,
+       1620
+      ],
+      "fps": 9,
+      "memoria": {
+       "texturasMB": 0,
+       "texturas": 0,
+       "texturasRenderer": 134,
+       "geometriasRenderer": 152,
+       "pantallaMB": 406.1,
+       "sombrasMB": 32,
+       "totalMB": 438.1
+      },
+      "perdida": null,
+      "perdidas": 0,
+      "recuperaciones": 0,
+      "generacion": 0,
+      "ultimoError": null,
+      "fallo": false,
+      "banderas": {
+       "listo": true,
+       "restos": true,
+       "personas": true,
+       "texturas": true,
+       "cielo": true,
+       "grafo": false,
+       "arboles": true,
+       "modelos": true
+      }
+     },
+     {
+      "s": 25,
+      "blanco": 0,
+      "backend": "webgl2",
+      "adaptador": "ANGLE (Intel, Intel(R) UHD Graphics (0x00009B41) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+      "calidad": "alta",
+      "dpr": 1.5000000447034836,
+      "lienzo": [
+       2857,
+       1620
+      ],
+      "fps": 10,
+      "memoria": {
+       "texturasMB": 0,
+       "texturas": 0,
+       "texturasRenderer": 143,
+       "geometriasRenderer": 185,
+       "pantallaMB": 406.1,
+       "sombrasMB": 32,
+       "totalMB": 438.1
+      },
+      "perdida": null,
+      "perdidas": 0,
+      "recuperaciones": 0,
+      "generacion": 0,
+      "ultimoError": null,
+      "fallo": false,
+      "banderas": {
+       "listo": true,
+       "restos": true,
+       "personas": true,
+       "texturas": true,
+       "cielo": true,
+       "grafo": false,
+       "arboles": true,
+       "modelos": true
+      }
+     },
+     {
+      "s": 30,
+      "blanco": 0,
+      "backend": "webgl2",
+      "adaptador": "ANGLE (Intel, Intel(R) UHD Graphics (0x00009B41) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+      "calidad": "alta",
+      "dpr": 1.5000000447034836,
+      "lienzo": [
+       2857,
+       1620
+      ],
+      "fps": 10,
+      "memoria": {
+       "texturasMB": 0,
+       "texturas": 0,
+       "texturasRenderer": 159,
+       "geometriasRenderer": 234,
+       "pantallaMB": 406.1,
+       "sombrasMB": 32,
+       "totalMB": 438.1
+      },
+      "perdida": null,
+      "perdidas": 0,
+      "recuperaciones": 0,
+      "generacion": 0,
+      "ultimoError": null,
+      "fallo": false,
+      "banderas": {
+       "listo": true,
+       "restos": true,
+       "personas": true,
+       "texturas": true,
+       "cielo": true,
+       "grafo": false,
+       "arboles": true,
+       "modelos": true
+      }
+     }
+    ]
+   }
+  ]
+ }
+}

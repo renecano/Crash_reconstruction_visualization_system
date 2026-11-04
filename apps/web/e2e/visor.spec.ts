@@ -22,6 +22,32 @@ test.describe("visor 3D", () => {
   // Antes de estar listo el visor carga los cuerpos y hornea restos y ragdolls (F5); con render
   // por software o pruebas en paralelo eso supera el límite de 30 s por omisión.
   test.describe.configure({ timeout: 120_000 });
+
+  test("?diag=1 muestra el diagnóstico y una pérdida simulada recrea el visor sin pantalla blanca", async ({
+    page,
+  }) => {
+    await page.goto("/visor?escena=alcance&t=0&diag=1");
+    await waitReady(page);
+    const diag = page.getByTestId("visor-diag");
+    await expect(diag).toContainText(/webgpu|webgl2/);
+    await expect(diag).toContainText(/calidad/);
+    await expect(diag).toContainText(/fps/);
+    // Una pérdida del dispositivo simulada: el visor se recrea (otra generación) y sigue dibujando.
+    const antes = await page.evaluate(() => window.__croquisDiagnostico?.generacion ?? 0);
+    await page.evaluate(() => {
+      window.__croquisReady = false;
+      const gl = (window as unknown as { __croquisGl?: { onDeviceLost(i: unknown): void } })
+        .__croquisGl;
+      gl?.onDeviceLost({ api: "prueba", message: "pérdida simulada", reason: "e2e" });
+    });
+    await expect(page.getByTestId("visor-recuperando")).toBeVisible();
+    await waitReady(page);
+    await expect(page.getByTestId("visor-3d").locator("canvas")).toBeVisible();
+    const despues = await page.evaluate(() => window.__croquisDiagnostico?.generacion ?? 0);
+    expect(despues).toBe(antes + 1);
+    await expect(diag).toContainText(/pérdida simulada/);
+    await expect(page.getByTestId("visor-fallo")).toHaveCount(0);
+  });
   for (const escena of ESCENAS) {
     test(`${escena}: carga, renderiza y muestra la leyenda`, async ({ page }) => {
       const errors: string[] = [];

@@ -5,7 +5,6 @@
  */
 import { toThree, type Vec3 } from "./coords";
 import { samplePerson, sampleVehicle, type PersonTrackData, type VehicleTrack } from "./sample";
-import { eyeOffset } from "./visibility-overlay";
 
 export type CameraMode = "libre" | "cenital" | "conductor" | "cinematica" | "dano" | "persona";
 
@@ -23,7 +22,12 @@ export interface CameraVehicle {
   clase?: string;
   rol: string;
   involucrado: boolean;
-  dimensiones: { largo_m: number; ancho_m: number; alto_m: number };
+  dimensiones: {
+    largo_m: number;
+    ancho_m: number;
+    alto_m: number;
+    distancia_entre_ejes_m?: number;
+  };
   trayectoria: VehicleTrack;
   dano?: { perfil_m: readonly number[]; cdc?: { lado: string } };
 }
@@ -104,15 +108,50 @@ export function freeCameraStart(scene: CameraScene, fov = 45): CameraPose {
   };
 }
 
-/** Ojos del conductor (posición y altura del análisis de visibilidad), mirando 25 m al frente. */
-export function driverCamera(v: CameraVehicle, t: number, eyeHeight: number, fov = 70): CameraPose {
+/** Campo de visión y plano cercano de la cámara del conductor (René, 2026-11-04). */
+export const DRIVER_FOV = 70;
+export const DRIVER_NEAR_M = 0.05;
+/** Cuánto sube la cámara sobre el ojo del análisis de visibilidad (ver `driverEye`). */
+export const DRIVER_EYE_LIFT_M = 0.1;
+
+const FRONT_CAB = new Set(["autobus", "camion_unitario", "tractocamion", "microbus_combi", "van"]);
+const TWO_WHEEL = new Set(["motocicleta", "scooter", "bicicleta"]);
+
+/**
+ * Ojos del conductor en el marco del vehículo (x adelante desde el centro de masa, y a la
+ * izquierda), para la cámara: en el asiento del conductor, delante del respaldo. El centro de masa
+ * está a 0.45 del eje delantero (`cgFromFront`), así que el centro entre ejes queda 0.05·wb atrás
+ * de él; el ojo va 0.2 m delante de ese centro (la cabeza queda junto al pilar B) y 0.37 m a la
+ * izquierda del eje del vehículo. Con cabina adelantada (van, autobús, tracto), 1.0 m detrás del
+ * frente; en dos ruedas, sobre el asiento. El análisis de visibilidad del solver conserva su
+ * propio ojo (`eyeOffset`).
+ */
+export function driverEyeOffset(
+  clase: string,
+  length: number,
+  width: number,
+  wheelbase: number,
+): [number, number] {
+  if (TWO_WHEEL.has(clase)) return [-0.1, 0];
+  if (FRONT_CAB.has(clase)) return [0.5 * length - 1.0, Math.min(0.5 * width - 0.45, 0.45)];
+  return [-0.05 * wheelbase + 0.2, Math.min(0.37, Math.max(0, 0.5 * width - 0.5))];
+}
+
+/** Ojos del conductor (en su asiento, a la altura del análisis de visibilidad), mirando 25 m al frente. */
+export function driverCamera(
+  v: CameraVehicle,
+  t: number,
+  eyeHeight: number,
+  fov = DRIVER_FOV,
+): CameraPose {
   const p = sampleVehicle(v.trayectoria, t);
   const c = Math.cos(p.yaw);
   const s = Math.sin(p.yaw);
-  const [fwd, left] = eyeOffset(
+  const [fwd, left] = driverEyeOffset(
     v.clase ?? "sedan_compacto",
     v.dimensiones.largo_m,
     v.dimensiones.ancho_m,
+    v.dimensiones.distancia_entre_ejes_m ?? 0.58 * v.dimensiones.largo_m,
   );
   const ex = p.x + c * fwd - s * left;
   const ey = p.y + s * fwd + c * left;

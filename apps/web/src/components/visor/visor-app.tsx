@@ -26,6 +26,16 @@ import {
   isQualityLevel,
   nextQualityLevel,
   qualityForGpu,
+  clampToCeiling,
+  onLoss,
+  RECOVERY_INICIAL,
+  retry,
+  getDiagnostico,
+  subscribeDiagnostico,
+  updateDiagnostico,
+  type DiagPerdida,
+  type Diagnostico,
+  type RecoveryState,
   readGpuRenderer,
   type GpuTier,
   recentFps,
@@ -98,6 +108,13 @@ const T = textos(
       conductor: (rol: string) => `Conductor ${rol}`,
     },
     ajustes: "Ajustes de dibujo",
+    recuperando: (n: number) => `El dibujo 3D se perdió (${n}); se vuelve a crear…`,
+    bajando: (q: string) => `El dibujo 3D se perdió otra vez; se baja la calidad a ${q}.`,
+    fallo3d: "El dibujo 3D no se pudo recuperar en esta computadora.",
+    reintentar: "Reintentar",
+    usarMedia: "Usar calidad media",
+    preparando: "Preparando el dibujo 3D…",
+    diagnostico: "Diagnóstico del visor",
     calidad: "Calidad",
     automatica: "Automática",
     niveles: { baja: "Baja", media: "Media", alta: "Alta", ultra: "Ultra" },
@@ -138,6 +155,13 @@ const T = textos(
       conductor: (rol: string) => `Driver ${rol}`,
     },
     ajustes: "Rendering settings",
+    recuperando: (n: number) => `The 3D view was lost (${n}); recreating it…`,
+    bajando: (q: string) => `The 3D view was lost again; quality lowered to ${q}.`,
+    fallo3d: "The 3D view could not be recovered on this computer.",
+    reintentar: "Retry",
+    usarMedia: "Use medium quality",
+    preparando: "Preparing the 3D view…",
+    diagnostico: "Viewer diagnostics",
     calidad: "Quality",
     automatica: "Automatic",
     niveles: { baja: "Low", media: "Medium", alta: "High", ultra: "Ultra" },
@@ -180,6 +204,8 @@ export interface ControlesVisor {
   /** Visor a pantalla completa (demos y medición de E6 a 1080p). */
   completa: boolean;
   bucle: boolean;
+  /** Diagnóstico en pantalla (`?diag=1`): backend, GPU, calidad, memoria, fps y errores. */
+  diag: boolean;
 }
 
 export const CONTROLES_INICIALES: ControlesVisor = {
@@ -190,6 +216,7 @@ export const CONTROLES_INICIALES: ControlesVisor = {
   auto: false,
   completa: false,
   bucle: false,
+  diag: false,
 };
 
 function parseControles(sp: URLSearchParams): ControlesVisor & { escena: EscenaVisor } {
@@ -211,6 +238,7 @@ function parseControles(sp: URLSearchParams): ControlesVisor & { escena: EscenaV
     auto: sp.get("auto") === "1",
     completa: sp.get("pantalla") === "completa",
     bucle: sp.get("bucle") === "1",
+    diag: sp.get("diag") === "1",
   };
 }
 
@@ -282,6 +310,58 @@ function TrazaConReloj({
 
 const hydratedSnapshot = () => true;
 const serverSnapshot = () => false;
+
+const diagInicial: Diagnostico | null = null;
+const diagServidor = () => diagInicial;
+
+/**
+ * Diagnóstico en pantalla (`?diag=1`; René, 2026-11-04): backend y GPU, calidad, memoria
+ * estimada, fps y el último error o pérdida, para probar en otras computadoras y mandar la captura.
+ */
+function DiagnosticoPanel({ titulo }: { titulo: string }): ReactElement {
+  const d = useSyncExternalStore(subscribeDiagnostico, getDiagnostico, diagServidor);
+  if (!d) return <></>;
+  const mb = d.memoria;
+  const fila = (k: string, v: string | number | null | undefined) => (
+    <div key={k} className="flex gap-2">
+      <span className="opacity-70">{k}</span>
+      <span className="break-all">{v === null || v === undefined ? "—" : String(v)}</span>
+    </div>
+  );
+  return (
+    <section
+      aria-label={titulo}
+      data-testid="visor-diag"
+      className="vidrio absolute bottom-3 left-3 max-w-[min(92vw,520px)] px-3 py-2 font-mono text-[11px] leading-snug text-texto"
+    >
+      <div className="mb-1 font-semibold">{titulo}</div>
+      {fila("backend", d.backend ? `${d.backend} (pref. ${d.preferencia})` : null)}
+      {fila("gpu", d.adaptador)}
+      {fila(
+        "calidad",
+        d.calidad ? `${d.calidad} · dpr ${d.dpr.toFixed(2)} · gen ${d.generacion}` : null,
+      )}
+      {fila("lienzo", d.lienzo ? `${d.lienzo[0]}×${d.lienzo[1]}` : null)}
+      {fila("fps", d.fps)}
+      {fila(
+        "memoria",
+        mb
+          ? `texturas ${mb.texturasMB} MB (${mb.texturas}; renderer ${mb.texturasRenderer ?? "—"}) · pantalla ${mb.pantallaMB} MB · sombras ${mb.sombrasMB} MB · total ~${mb.totalMB} MB · geometrías ${mb.geometriasRenderer ?? "—"}`
+          : null,
+      )}
+      {fila(
+        "pérdida",
+        d.perdida
+          ? `${d.perdida.api}: ${d.perdida.mensaje}${d.perdida.motivo ? ` (${d.perdida.motivo})` : ""} · ${d.perdidas} pérdida(s), ${d.recuperaciones} recuperación(es)`
+          : `ninguna (${d.recuperaciones} recuperación(es))`,
+      )}
+      {fila(
+        "último error",
+        d.ultimoError ? `[${d.ultimoError.origen}] ${d.ultimoError.mensaje}` : null,
+      )}
+    </section>
+  );
+}
 
 /**
  * `/visor`: elige la escena (una canónica o la propia, guardada en esta pestaña desde el flujo o
@@ -411,8 +491,60 @@ export function VisorEscena({
   // medidos. En el prerender no hay GPU (null) y se usa media.
   const gpu = useSyncExternalStore(noopSubscribe, gpuTierSnapshot, nullSnapshot);
   const [autoAjustada, setAutoAjustada] = useState<QualityLevel | null>(null);
-  const autoCalidad: QualityLevel = autoAjustada ?? gpu?.level ?? "media";
+  // Recuperación del 3D (René, 2026-11-04): al perder el dispositivo se recrea el visor
+  // (`generacion`); si se repite, se baja un nivel y ese nivel queda de techo para el modo
+  // automático; si no se recupera, se pide a la persona qué hacer (`recovery.ts`).
+  const [recovery, setRecovery] = useState<RecoveryState>(RECOVERY_INICIAL);
+  const [generacion, setGeneracion] = useState(0);
+  const [rendido, setRendido] = useState(false);
+  const [avisoRecuperacion, setAvisoRecuperacion] = useState<string | null>(null);
+  // Mientras el grafo nuevo se precompila (al cargar y en cada cambio de calidad o backend) se ve
+  // solo el cielo: se dice en pantalla, y el modo automático no juzga fps de una escena vacía
+  // (dibujaba a 400 fps y subía de media a ultra en 6 s; ADR 0102).
+  const [grafoListo, setGrafoListo] = useState(false);
+  const autoCalidad: QualityLevel = clampToCeiling(
+    autoAjustada ?? gpu?.level ?? "media",
+    recovery.techo,
+  );
   const calidad: QualityLevel = controles.calidad === "auto" ? autoCalidad : controles.calidad;
+  const onDeviceLost = useCallback(
+    (info: DiagPerdida) => {
+      const { state, action } = onLoss(recovery, performance.now(), calidad);
+      setRecovery(state);
+      if (action.tipo === "rendirse") {
+        setRendido(true);
+        setAvisoRecuperacion(null);
+        return;
+      }
+      if (action.tipo === "bajar") {
+        if (controles.calidad === "auto") setAutoAjustada(action.calidad);
+        else onControl("calidad", action.calidad);
+        setAvisoRecuperacion(t.bajando(action.calidad));
+      } else setAvisoRecuperacion(t.recuperando(state.perdidas.length));
+      updateDiagnostico({ recuperaciones: getDiagnostico().recuperaciones + 1 });
+      setGeneracion((g) => g + 1);
+      window.setTimeout(() => setAvisoRecuperacion(null), 6000);
+      void info;
+    },
+    [recovery, calidad, controles.calidad, onControl, t],
+  );
+  const reintentar = useCallback(() => {
+    setRecovery((r) => retry(r));
+    setRendido(false);
+    setError(null);
+    updateDiagnostico({ recuperaciones: getDiagnostico().recuperaciones + 1 });
+    setGeneracion((g) => g + 1);
+  }, []);
+  const usarMedia = useCallback(() => {
+    setRecovery((r) => ({ ...retry(r), techo: "media" }));
+    setAutoAjustada("media");
+    if (controles.calidad !== "auto" && controles.calidad !== "media")
+      onControl("calidad", "media");
+    setRendido(false);
+    setError(null);
+    updateDiagnostico({ recuperaciones: getDiagnostico().recuperaciones + 1 });
+    setGeneracion((g) => g + 1);
+  }, [controles.calidad, onControl]);
 
   useEffect(() => {
     let alive = true;
@@ -526,7 +658,7 @@ export function VisorEscena({
     if (controles.renderer !== "auto" || trial.decided || !info) return undefined;
     const id = window.setInterval(() => {
       const perf = window.__croquisPerf;
-      if (!perf || perf.frameMs.length < 240) return;
+      if (!perf || perf.frameMs.length < 240 || window.__croquisGraphReady === false) return;
       const fps = recentFps(perf.frameMs, 120);
       if (!Number.isFinite(fps)) return;
       setTrial((tr) => {
@@ -543,13 +675,16 @@ export function VisorEscena({
     if (controles.calidad !== "auto" || (controles.renderer === "auto" && !trial.decided))
       return undefined;
     const id = window.setInterval(() => {
+      if (window.__croquisGraphReady === false || !window.__croquisReady) return;
       const fps = recentFps(window.__croquisPerf?.frameMs ?? [], 90);
       if (Number.isFinite(fps)) {
-        setAutoAjustada((q) => nextQualityLevel(q ?? gpu?.level ?? "media", fps));
+        setAutoAjustada((q) =>
+          clampToCeiling(nextQualityLevel(q ?? gpu?.level ?? "media", fps), recovery.techo),
+        );
       }
     }, 3000);
     return () => window.clearInterval(id);
-  }, [controles.calidad, controles.renderer, trial.decided, gpu]);
+  }, [controles.calidad, controles.renderer, trial.decided, gpu, recovery.techo]);
 
   const env = useMemo(
     () =>
@@ -618,7 +753,10 @@ export function VisorEscena({
         hipotesis={principal && !comparar ? ghostResults : undefined}
         onExport={principal ? setExportApi : undefined}
         ambiente={ambiente ?? undefined}
-        onError={() => setError(t.sinGpu)}
+        onError={(e) => setError(`${t.sinGpu} ${e.message}`)}
+        onDeviceLost={principal ? onDeviceLost : undefined}
+        onGraphReady={principal ? setGrafoListo : undefined}
+        generation={generacion}
         className="h-full w-full"
       />
     ) : null;
@@ -669,15 +807,48 @@ export function VisorEscena({
           }
           data-testid="marco-visor"
         >
-          {error ? (
-            <p role="alert" className="t-interfaz grid h-full place-items-center p-6 text-center">
-              {error}
-            </p>
+          {error || rendido ? (
+            <div
+              role="alert"
+              className="t-interfaz grid h-full place-items-center p-6 text-center"
+              data-testid="visor-fallo"
+            >
+              <div className="flex flex-col items-center gap-4">
+                <p>{rendido ? t.fallo3d : error}</p>
+                <div className="flex flex-wrap justify-center gap-3">
+                  <button type="button" className="boton" onClick={reintentar}>
+                    {t.reintentar}
+                  </button>
+                  <button type="button" className="boton" onClick={usarMedia}>
+                    {t.usarMedia}
+                  </button>
+                </div>
+              </div>
+            </div>
           ) : dibujo && clock ? (
             visor(dibujo, true)
           ) : (
             <div className="t-nota grid h-full place-items-center">{t.cargando}</div>
           )}
+          {dibujo && clock && !error && !rendido && !grafoListo ? (
+            <p
+              role="status"
+              className="t-nota vidrio absolute top-3 left-3 px-3 py-1 text-texto"
+              data-testid="visor-preparando"
+            >
+              {t.preparando}
+            </p>
+          ) : null}
+          {avisoRecuperacion ? (
+            <p
+              role="status"
+              className="t-nota vidrio absolute top-3 left-3 px-3 py-1 text-texto"
+              data-testid="visor-recuperando"
+            >
+              {avisoRecuperacion}
+            </p>
+          ) : null}
+          {controles.diag ? <DiagnosticoPanel titulo={t.diagnostico} /> : null}
           {/* Las lecturas toman el resultado completo cuando llega: ΔV con su intervalo. */}
           {dibujo && clock && !error ? <Lecturas clock={clock} resultado={r ?? dibujo} /> : null}
           {comparar ? (
