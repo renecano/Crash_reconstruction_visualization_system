@@ -153,11 +153,18 @@ def test_velocidad_fuera_de_lo_que_fija_la_evidencia() -> None:
 
 def test_escenas_canonicas_sin_banderas() -> None:
     # La glorieta también queda limpia, pero su inversión tarda; la cubre la prueba de resultados.
-    # El cruce lateral también: con el multiarranque (ADR 0091) su mejor ajuste deja a B casi
-    # detenido y la evidencia ya no fija la velocidad de A, así que no hay con qué contrastar la
-    # declarada (antes, otro mínimo con más costo pedía más velocidad para A).
-    for name in ("alcance", "nocturno_lluvia", "poste", "lateral_interseccion"):
+    for name in ("alcance", "nocturno_lluvia", "poste"):
         assert _codes(load_fixture(name)) == [], name
+
+
+def test_cruce_lateral_pregunta_la_velocidad_de_a() -> None:
+    # Con el multiarranque (ADR 0091) el mejor ajuste deja a B casi detenido; con el residuo previo
+    # del rumbo (ADR 0101, T3.2) la evidencia sí fija la velocidad de A (σ local 22 km/h), lejos
+    # del «como a 45» del relato, así que se pregunta. Antes, el rumbo libre ±20° la dejaba sin
+    # fijar.
+    flags = cons.check_consistency(load_fixture("lateral_interseccion"), samples=12)
+    assert [f.codigo for f in flags] == ["velocidad_vs_evidencia"]
+    assert flags[0].datos["vehiculo"] == "veh-a"
 
 
 def test_vehiculo_fuera_de_las_calles_del_mapa() -> None:

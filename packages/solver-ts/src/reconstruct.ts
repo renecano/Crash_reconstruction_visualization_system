@@ -89,7 +89,7 @@ import * as dmath from "./dmath";
 
 type Json = Record<string, unknown>;
 
-export const RESULT_VERSION = "1.13.0";
+export const RESULT_VERSION = "1.14.0";
 export const DT_OUT = 0.02;
 const T_PRE_MAX = 6.0;
 const T_PRE_MIN = 3.0;
@@ -160,6 +160,8 @@ interface VehicleModel {
   braking: boolean;
   brakeDistance: number | null;
   abs: boolean;
+  /** Arrastre tras el impacto como fracción de μ (`arrastre_post_impacto`); null: el supuesto. */
+  postDrag: number | null;
 }
 
 export interface VehicleOutcome {
@@ -479,6 +481,7 @@ function vehicleModel(v: Json, clases: Record<string, Json>, flag: Flag): Vehicl
   const braking = Boolean(aplico.valor ?? false);
   const dist = frenado.distancia_antes_impacto as Json | undefined;
   const maniobra = String((v.maniobra as Json).valor);
+  const arrastre = v.arrastre_post_impacto as Json | undefined;
   let v0 = num(v.velocidad_previa, SPEED, 0.0);
   if (maniobra === "detenido" || maniobra === "estacionado") v0 = 0.0;
   if (!clases[clase] && (v.masa === undefined || v.masa === null)) {
@@ -503,6 +506,7 @@ function vehicleModel(v: Json, clases: Record<string, Json>, flag: Flag): Vehicl
     braking,
     brakeDistance: dist ? num(dist, LEN, 0.0) : null,
     abs: Boolean(absCampo.valor ?? false),
+    postDrag: arrastre ? Number(arrastre.valor) : null,
   };
 }
 
@@ -839,6 +843,11 @@ export function reconstruct(
   const specVehicles = spec.vehiculos as Json[];
   const specPersons = spec.personas as Json[];
   const models = specVehicles.map((v) => vehicleModel(v, clases, flag));
+  // El arrastre que trae la escena (lo ajustó la inversión o lo dio el perito), por vehículo.
+  const porVehiculo: Json = {};
+  for (const m of models) if (m.postDrag !== null) porVehiculo[m.id] = m.postDrag;
+  if (Object.keys(porVehiculo).length)
+    (params.arrastre_post_impacto as Json).por_vehiculo = porVehiculo;
   const byId = new Map(models.map((m) => [m.id, m]));
   const personasSpec = new Map(specPersons.map((p) => [String(p.id), p]));
   const entorno = spec.entorno as Json;
@@ -1353,7 +1362,7 @@ export function reconstruct(
     const drag =
       m.braking || downed
         ? ROLLING_RESISTANCE
-        : Math.max(ROLLING_RESISTANCE, POST_IMPACT_DRAG_FRACTION * mu);
+        : Math.max(ROLLING_RESISTANCE, (m.postDrag ?? POST_IMPACT_DRAG_FRACTION) * mu);
     const muPost = downed ? (opts.downedMu ?? muDowned.nominal) : mu;
     // Un vehículo que todavía no choca (solo está en un impacto posterior) rueda libre hasta su
     // primer impacto (ADR 0066).

@@ -581,7 +581,7 @@ class Meta(BaseModel):
         extra="forbid",
     )
     id: Annotated[str, Field(max_length=64, min_length=8, pattern="^[A-Za-z0-9_-]+$")]
-    version_esquema: Literal["2.2.0"]
+    version_esquema: Literal["2.3.0"]
     idioma: Literal["es-MX", "en"]
     semilla: Annotated[int, Field(ge=0, le=4294967295)]
     """
@@ -1835,6 +1835,10 @@ class Vehiculo(BaseModel):
     maniobra: CampoManiobra
     velocidad_previa: CampoVelocidad
     frenado: Frenado | None = None
+    arrastre_post_impacto: CampoAdimensional | None = None
+    """
+    Con qué fracción de la fricción pierde velocidad el vehículo después del impacto cuando sus llantas no van bloqueadas: 0.015 rueda libre, 0.3–0.5 llantas rodando con daño o frenado parcial (Fricke 2010), 1.0 llantas bloqueadas. Sin él, el solver usa 0.35 (supuesto). Si hay posición final del vehículo y no frenaba, la inversión lo ajusta entre 0.3 y 1.0 (T3.2, ADR 0101).
+    """
     aceleracion: CampoAceleracion | None = None
     luces_encendidas: CampoBooleano | None = None
     direccionales: Literal["ninguna", "izquierda", "derecha", "intermitentes"] | None = None

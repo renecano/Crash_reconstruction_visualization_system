@@ -63,6 +63,13 @@ export const MIGRATIONS: Migration[] = [
     // Un bloque nuevo opcional: ninguna escena anterior lo trae.
     aplicar: (doc) => doc,
   },
+  {
+    desde: "2.2.0",
+    hasta: "2.3.0",
+    descripcion: "vehiculos[].arrastre_post_impacto opcional (T3.2); los documentos no cambian",
+    // Un campo nuevo opcional: sin él, el solver usa el supuesto de siempre (0.35).
+    aplicar: (doc) => doc,
+  },
 ];
 
 export interface MigrationResult {

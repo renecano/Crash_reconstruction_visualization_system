@@ -524,7 +524,7 @@
       "required": ["id", "version_esquema", "idioma", "semilla", "creado"],
       "properties": {
         "id": { "type": "string", "minLength": 8, "maxLength": 64, "pattern": "^[A-Za-z0-9_-]+$" },
-        "version_esquema": { "type": "string", "const": "2.2.0" },
+        "version_esquema": { "type": "string", "const": "2.3.0" },
         "idioma": { "type": "string", "enum": ["es-MX", "en"] },
         "semilla": {
           "type": "integer",
@@ -806,6 +806,14 @@
         "maniobra": { "$ref": "#/$defs/CampoManiobra" },
         "velocidad_previa": { "$ref": "#/$defs/CampoVelocidad" },
         "frenado": { "$ref": "#/$defs/Frenado" },
+        "arrastre_post_impacto": {
+          "$ref": "#/$defs/CampoAdimensional",
+          "description": "Con qué fracción de la fricción pierde velocidad el vehículo después del impacto cuando sus llantas no van bloqueadas: 0.015 rueda libre, 0.3–0.5 llantas rodando con daño o frenado parcial (Fricke 2010), 1.0 llantas bloqueadas. Sin él, el solver usa 0.35 (supuesto). Si hay posición final del vehículo y no frenaba, la inversión lo ajusta entre 0.3 y 1.0 (T3.2, ADR 0101)."
+        },
+        "arrastre_post_impacto": {
+          "$ref": "#/$defs/CampoAdimensional",
+          "description": "Con qué fracción de la fricción pierde velocidad el vehículo después del impacto cuando sus llantas no van bloqueadas: 0.015 rueda libre, 0.3–0.5 llantas rodando con daño o frenado parcial (Fricke 2010), 1.0 llantas bloqueadas. Sin él, el solver usa 0.35 (supuesto). Si hay posición final del vehículo y no frenaba, la inversión lo ajusta entre 0.3 y 1.0 (T3.2, ADR 0101)."
+        },
         "aceleracion": { "$ref": "#/$defs/CampoAceleracion" },
         "luces_encendidas": { "$ref": "#/$defs/CampoBooleano" },
         "direccionales": {

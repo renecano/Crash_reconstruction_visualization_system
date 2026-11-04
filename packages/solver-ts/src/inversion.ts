@@ -18,7 +18,7 @@ import { deltaVBarrier, deltaVPair, crushEnergy, uniformCrushEnergy, Stiffness }
 import { DOWNED_SLIDE_CLASSES, downedMotorcycleFriction, tireFriction } from "./friction";
 import { lstsq, matmul, pinv, transpose } from "./linalg";
 import { leastSquaresSoftL1, softL1Cost } from "./lsq";
-import { median, pyMod, pyRound, quantilesInclusive, str } from "./pymath";
+import { median, pyMod, pyRound, quantilesInclusive, radians, str } from "./pymath";
 import { PyRandom } from "./pyrandom";
 import { countDraws, type Draws, LatinHypercube } from "./stratified";
 import { reconstruct, vehicleClasses, type Reconstruction } from "./reconstruct";
@@ -165,10 +165,32 @@ export function deltaVFromDamage(
 
 const SIGMA_HEADING_DEG = 20.0;
 export const ANGLE_BOUND_DEG = 20.0;
-const JAC_STEP: Record<string, number> = { velocidad: 1.0, rumbo: 1.0 };
-const BOUND_TOL: Record<string, number> = { velocidad: 0.1, rumbo: 0.1 };
-export const SCALE: Record<string, number> = { velocidad: 10.0, rumbo: 10.0 };
-const IDENT_MAX: Record<string, number> = { velocidad: 30.0, rumbo: 15.0 };
+const JAC_STEP: Record<string, number> = { velocidad: 1.0, rumbo: 1.0, arrastre: 0.02 };
+const BOUND_TOL: Record<string, number> = { velocidad: 0.1, rumbo: 0.1, arrastre: 0.005 };
+export const SCALE: Record<string, number> = { velocidad: 10.0, rumbo: 10.0, arrastre: 0.1 };
+const IDENT_MAX: Record<string, number> = { velocidad: 30.0, rumbo: 15.0, arrastre: 0.3 };
+// Arrastre tras el impacto (T3.2, ADR 0101): fracción de μ con que pierden velocidad las llantas
+// que no van bloqueadas. Se ajusta entre lo que mide Fricke 2010 para llantas rodando con daño o
+// frenado parcial (0.3) y las llantas bloqueadas (1.0), con preferencia por el supuesto de siempre
+// (`POST_IMPACT_DRAG_FRACTION`, 0.35) como residuo previo de σ 0.1 (el ancho del rango de Fricke).
+export const DRAG_BOUNDS = [0.3, 1.0] as const;
+export const DRAG_PRIOR = 0.35;
+export const SIGMA_DRAG = 0.1;
+// El rumbo con que el perito colocó el vehículo es información: apartarse de él cuesta (σ 10°),
+// no solo tiene un límite (`ANGLE_BOUND_DEG`). Sin este residuo, la inversión torcía un alcance
+// colineal 20° para que los vehículos giraran y pararan antes (AXA, T3.2).
+export const SIGMA_HEADING_PRIOR_DEG = 10.0;
+export type ParamKind = "velocidad" | "rumbo" | "arrastre";
+const PARAM_NAME: Record<ParamKind, string> = {
+  velocidad: "velocidad_previa",
+  rumbo: "rumbo_inicial",
+  arrastre: "arrastre_post_impacto",
+};
+const PARAM_UNIT: Record<ParamKind, string> = {
+  velocidad: "km/h",
+  rumbo: "deg",
+  arrastre: "fraccion",
+};
 const CHORD_ITER = 4;
 const CHORD_TRUST = 1.0;
 // Multiarranque (ADR 0091): arranques fijos, pocas iteraciones en cada uno y se afinan los mejores.
@@ -470,7 +492,7 @@ export function withMarks(spec: Json, ev: Evidence): Json {
 /** Incógnita del ajuste: velocidad previa (km/h) o rumbo inicial (°) de un vehículo. */
 export class Param {
   constructor(
-    readonly kind: "velocidad" | "rumbo",
+    readonly kind: ParamKind,
     readonly vehicle: string,
     readonly start: number,
     readonly lo: number,
@@ -504,13 +526,70 @@ export function parameters(spec: Json, ev: Evidence): Param[] {
       out.push(new Param("rumbo", vid, h, h - ANGLE_BOUND_DEG, h + ANGLE_BOUND_DEG, false));
     }
   }
+  for (const vid of dragVehicles(spec, ev)) {
+    const campo = byId.get(vid)!.arrastre_post_impacto as Json | undefined;
+    let start = campo ? Number(campo.valor) : DRAG_PRIOR;
+    start = Math.min(Math.max(start, DRAG_BOUNDS[0]), DRAG_BOUNDS[1]);
+    out.push(new Param("arrastre", vid, start, DRAG_BOUNDS[0], DRAG_BOUNDS[1], stated(campo)));
+  }
+  return out;
+}
+
+/**
+ * Vehículos cuyo arrastre tras el impacto se ajusta (T3.2, ADR 0101): en movimiento, en algún
+ * impacto, sin frenado declarado (las llantas bloqueadas ya deslizan con μ), no son una motocicleta
+ * caída, con posición final (declarada o supuesta) o marcas posteriores que lo fijen, y sin un
+ * arrastre dicho por el perito o la persona usuaria.
+ */
+export function dragVehicles(spec: Json, ev: Evidence): string[] {
+  const byId = new Map((spec.vehiculos as Json[]).map((v) => [String(v.id), v]));
+  const actors = new Set<string>();
+  for (const e of (spec.eventos ?? []) as Json[]) {
+    if (typeof e.tipo === "string" && e.tipo.startsWith("impacto"))
+      for (const a of (e.actores ?? []) as unknown[]) actors.add(String(a));
+  }
+  const out: string[] = [];
+  for (const vid of movingVehicles(spec)) {
+    const v = byId.get(vid)!;
+    if (!actors.has(vid)) continue;
+    const frenado = (v.frenado ?? {}) as Json;
+    const aplico = (frenado.aplico ?? {}) as Json;
+    if (aplico.valor) continue;
+    if (DOWNED_SLIDE_CLASSES.has(String((v.clase as Json).valor))) continue;
+    if (!(ev.rest.has(vid) || ev.restAssumed.has(vid) || ev.slide.has(vid))) continue;
+    if (stated(v.arrastre_post_impacto)) continue;
+    out.push(vid);
+  }
   return out;
 }
 
 /** Escena con las velocidades y rumbos de `values` ("velocidad:veh-a" → km/h, etc.). */
+/**
+ * El punto de impacto declarado del primer impacto: alrededor de él gira el rumbo de llegada (ADR
+ * 0101). null si la escena no lo declara.
+ */
+export function impactPivot(spec: Json): [number, number] | null {
+  for (const e of (spec.eventos ?? []) as Json[]) {
+    const p = e.punto_impacto as Json | undefined;
+    if (typeof e.tipo === "string" && e.tipo.startsWith("impacto") && p)
+      return [Number(p.x), Number(p.y)];
+  }
+  return null;
+}
+
+/**
+ * Escena con las velocidades, rumbos y arrastres de `values` ("velocidad:veh-a" → km/h, etc.).
+ *
+ * El rumbo de llegada gira la posición inicial alrededor del punto de impacto declarado (T3.2, ADR
+ * 0101): cambia por dónde llega el vehículo, no dónde choca. Girarlo sobre la posición inicial
+ * (12 m antes del impacto en AXA) corría el choque hasta 4 m de lado con 20°, y en un alcance
+ * colineal cualquier décima de grado cruzaba las trayectorias en la posición inicial y adelantaba
+ * el choque 12 m.
+ */
 export function applyValues(spec: Json, values: Map<string, number>): Json {
   const s = structuredClone(spec);
   const byId = new Map((s.vehiculos as Json[]).map((v) => [String(v.id), v]));
+  const pivot = impactPivot(s);
   for (const [name, x] of values) {
     const i = name.indexOf(":");
     const kind = name.slice(0, i);
@@ -523,10 +602,45 @@ export function applyValues(spec: Json, values: Map<string, number>): Json {
         confianza: 0.5,
       };
     } else if (kind === "rumbo") {
-      (byId.get(vid)!.posicion_inicial as Json).rumbo_deg = Math.max(-360.0, Math.min(360.0, x));
+      const pose = byId.get(vid)!.posicion_inicial as Json;
+      const h = Math.max(-360.0, Math.min(360.0, x));
+      if (pivot !== null) {
+        const d = radians(h - Number(pose.rumbo_deg));
+        const c = dmath.cos(d);
+        const sn = dmath.sin(d);
+        const rx = Number(pose.x) - pivot[0];
+        const ry = Number(pose.y) - pivot[1];
+        pose.x = pivot[0] + c * rx - sn * ry;
+        pose.y = pivot[1] + sn * rx + c * ry;
+      }
+      pose.rumbo_deg = h;
+    } else if (kind === "arrastre") {
+      byId.get(vid)!.arrastre_post_impacto = {
+        valor: x,
+        fuente: "supuesto",
+        confianza: 0.5,
+        nota: "Lo ajustó la inversión (ADR 0101).",
+      };
     }
   }
   return s;
+}
+
+/**
+ * Residuos previos de los parámetros libres (ADR 0101): el rumbo contra el que colocó el perito
+ * (σ `SIGMA_HEADING_PRIOR_DEG`) y el arrastre contra el supuesto (σ `SIGMA_DRAG`). No son
+ * evidencia: dicen cuánto cuesta apartarse de lo que se sabía antes de ajustar.
+ */
+export function priors(params: readonly Param[], x: readonly number[]): Map<string, number> {
+  const out = new Map<string, number>();
+  params.forEach((p, k) => {
+    const v = x[k]!;
+    if (p.kind === "rumbo")
+      out.set(`rumbo_previo:${p.vehicle}`, wrapDeg(v - p.start) / SIGMA_HEADING_PRIOR_DEG);
+    else if (p.kind === "arrastre")
+      out.set(`arrastre_previo:${p.vehicle}`, (v - DRAG_PRIOR) / SIGMA_DRAG);
+  });
+  return out;
 }
 
 function wrapDeg(a: number): number {
@@ -679,17 +793,25 @@ class Problem {
   }
 
   raw(x: readonly number[]): Map<string, number> | null {
-    return residuals(
+    const res = residuals(
       applyValues(this.spec, this.values(x)),
       this.ev,
       this.dt,
       this.downedMu,
       this.active,
     );
+    return res === null ? null : new Map([...res, ...priors(this.params, x)]);
   }
 
-  /** Las restricciones del daño que el ajuste en `x` viola quedan activas para el jacobiano. */
+  /**
+   * Las restricciones del daño que el ajuste en `x` viola quedan activas (igualdades) para el
+   * jacobiano. También las que están justo en su borde (residuo 0 que deja de serlo al mover una
+   * velocidad un paso): una desigualdad que ata en el óptimo es localmente una igualdad; si no, la
+   * aproximación de Laplace ve plana esa dirección y da por no identificable una velocidad que el
+   * daño sí fija (AXA, ADR 0101).
+   */
   activate(x: readonly number[]): void {
+    this.active = new Map();
     const res = this.raw(x) ?? new Map<string, number>();
     this.active = new Map(
       [...res].filter(
@@ -700,6 +822,26 @@ class Problem {
           r !== 0.0,
       ),
     );
+    const zeros = [...res]
+      .filter(([k, r]) => (k.startsWith("dano:") || k.startsWith("dano_minimo:")) && r === 0.0)
+      .map(([k]) => k);
+    for (let j = 0; j < this.params.length && zeros.length; j++) {
+      const p = this.params[j]!;
+      if (p.kind !== "velocidad") continue;
+      for (const sign of [-1.0, 1.0]) {
+        const xk = [...x];
+        xk[j] = Math.min(Math.max(xk[j]! + sign * JAC_STEP[p.kind]!, p.lo), p.hi);
+        const probe = this.raw(xk) ?? new Map<string, number>();
+        for (const k of [...zeros]) {
+          const r = probe.get(k) ?? 0.0;
+          if (r !== 0.0) {
+            this.active.set(k, r);
+            zeros.splice(zeros.indexOf(k), 1);
+          }
+        }
+        if (!zeros.length) break;
+      }
+    }
     this.cache.clear();
   }
 
@@ -979,9 +1121,9 @@ export class Estimate {
   toDict(): Json {
     const p = this.param;
     const out: Json = {
-      parametro: p.kind === "velocidad" ? "velocidad_previa" : "rumbo_inicial",
+      parametro: PARAM_NAME[p.kind],
       vehiculo: p.vehicle,
-      unidad: p.kind === "velocidad" ? "km/h" : "deg",
+      unidad: PARAM_UNIT[p.kind],
       inicial: pyRound(p.start, 2),
       inicial_declarado: p.declared,
       identificable: this.identifiable,
@@ -1273,12 +1415,9 @@ function estimate(
   const free = new Set([...ident].filter(([, ok]) => ok).map(([n]) => n));
   // El ajuste conjunto, con todo libre: si algo no queda fijado, se guarda (ADR 0091).
   const full = !ev.empty() && free.size < params.length ? best : null;
-  if (free.size && free.size < params.length) {
-    const start = new Map(
-      params.map((p) => [p.name, free.has(p.name) ? best.values.get(p.name)! : p.start]),
-    );
-    best = fitEvidence(spec, ev, { dt, start, free });
-  }
+  // Lo que la evidencia no fija se informa sin estimación; lo demás se estima en el mejor ajuste
+  // conjunto, no en un reajuste con aquello en su valor inicial (que en AXA dejaba el daño a −12 σ
+  // y rumbos y arrastres ajustados a una velocidad inventada; ADR 0101).
   best = polish(
     spec,
     ev,

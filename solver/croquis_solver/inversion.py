@@ -225,16 +225,33 @@ def delta_v_from_damage(
 SIGMA_HEADING_DEG = 20.0  # incertidumbre de un rumbo final declarado (supuesto)
 ANGLE_BOUND_DEG = 20.0  # desvío máximo que se ajusta al rumbo inicial no declarado (supuesto)
 # Pasos de diferencias finitas y escalas de cada tipo de parámetro (km/h y grados).
-JAC_STEP = {"velocidad": 1.0, "rumbo": 1.0}
+JAC_STEP = {"velocidad": 1.0, "rumbo": 1.0, "arrastre": 0.02}
 # Distancia al límite de búsqueda por debajo de la cual el mejor ajuste "quedó en el límite", en las
 # unidades del parámetro (km/h y grados). Con 1e-3, un ajuste que se pega al límite caía de un lado
 # o del otro según el orden de las sumas del álgebra lineal en cada máquina; los resultados se
 # reportan al centésimo, así que una décima es estar en el límite.
-BOUND_TOL = {"velocidad": 0.1, "rumbo": 0.1}
-SCALE = {"velocidad": 10.0, "rumbo": 10.0}
+BOUND_TOL = {"velocidad": 0.1, "rumbo": 0.1, "arrastre": 0.005}
+SCALE = {"velocidad": 10.0, "rumbo": 10.0, "arrastre": 0.1}
 # Desviación local (Laplace) por encima de la cual la evidencia no fija el parámetro: el intervalo
 # saldría de los límites de búsqueda y no de la evidencia, así que no se reporta.
-IDENT_MAX = {"velocidad": 30.0, "rumbo": 15.0}
+IDENT_MAX = {"velocidad": 30.0, "rumbo": 15.0, "arrastre": 0.3}
+# Arrastre tras el impacto (T3.2, ADR 0101): fracción de μ con que pierden velocidad las llantas
+# que no van bloqueadas. Se ajusta entre lo que mide Fricke 2010 para llantas rodando con daño o
+# frenado parcial (0.3) y las llantas bloqueadas (1.0), con preferencia por el supuesto de siempre
+# (`POST_IMPACT_DRAG_FRACTION`, 0.35) como residuo previo de σ 0.1 (el ancho del rango de Fricke).
+DRAG_BOUNDS = (0.3, 1.0)
+DRAG_PRIOR = 0.35
+SIGMA_DRAG = 0.1
+# El rumbo con que el perito colocó el vehículo es información: apartarse de él cuesta (σ 10°),
+# no solo tiene un límite (`ANGLE_BOUND_DEG`). Sin este residuo, la inversión torcía un alcance
+# colineal 20° para que los vehículos giraran y pararan antes (AXA, T3.2).
+SIGMA_HEADING_PRIOR_DEG = 10.0
+PARAM_NAME = {
+    "velocidad": "velocidad_previa",
+    "rumbo": "rumbo_inicial",
+    "arrastre": "arrastre_post_impacto",
+}
+PARAM_UNIT = {"velocidad": "km/h", "rumbo": "deg", "arrastre": "fraccion"}
 CHORD_ITER = 4  # iteraciones de cada reajuste perturbado (cuerda con el jacobiano del mejor)
 CHORD_TRUST = 1.0  # paso máximo de la cuerda, en escalas (10 km/h, 10°; ADR 0091)
 # Multiarranque (ADR 0091): arranques fijos, pocas iteraciones en cada uno y se afinan los mejores.
@@ -553,7 +570,7 @@ def with_marks(spec: JsonObj, ev: Evidence) -> JsonObj:
 class Param:
     """Incógnita del ajuste: velocidad previa (km/h) o rumbo inicial (°) de un vehículo."""
 
-    kind: str  # "velocidad" | "rumbo"
+    kind: str  # "velocidad" | "rumbo" | "arrastre"
     vehicle: str
     start: float
     lo: float
@@ -583,13 +600,68 @@ def parameters(spec: JsonObj, ev: Evidence) -> list[Param]:
                 continue
             h = float(pose["rumbo_deg"])
             out.append(Param("rumbo", vid, h, h - ANGLE_BOUND_DEG, h + ANGLE_BOUND_DEG, False))
+    for vid in drag_vehicles(spec, ev):
+        campo: JsonObj | None = by_id[vid].get("arrastre_post_impacto")
+        start = float(campo["valor"]) if campo else DRAG_PRIOR
+        start = min(max(start, DRAG_BOUNDS[0]), DRAG_BOUNDS[1])
+        out.append(Param("arrastre", vid, start, *DRAG_BOUNDS, _stated(campo)))
     return out
 
 
+def drag_vehicles(spec: JsonObj, ev: Evidence) -> list[str]:
+    """Vehículos cuyo arrastre tras el impacto se ajusta (T3.2, ADR 0101): en movimiento, en
+    algún impacto, sin frenado declarado (las llantas bloqueadas ya deslizan con μ), no son una
+    motocicleta caída, con posición final (declarada o supuesta) o marcas posteriores que lo
+    fijen, y sin un arrastre dicho por el perito o la persona usuaria."""
+    by_id = {v["id"]: v for v in spec["vehiculos"]}
+    actors: set[str] = set()
+    eventos: list[JsonObj] = spec.get("eventos") or []
+    for e in eventos:
+        if str(e.get("tipo", "")).startswith("impacto"):
+            actores: list[Any] = e.get("actores", [])
+            actors.update(str(a) for a in actores)
+    out: list[str] = []
+    for vid in moving_vehicles(spec):
+        v = by_id[vid]
+        if vid not in actors:
+            continue
+        frenado: JsonObj = v.get("frenado") or {}
+        aplico: JsonObj = frenado.get("aplico") or {}
+        if bool(aplico.get("valor", False)):
+            continue
+        if str(v["clase"]["valor"]) in friction.DOWNED_SLIDE_CLASSES:
+            continue
+        if not (vid in ev.rest or vid in ev.rest_assumed or vid in ev.slide):
+            continue
+        if _stated(v.get("arrastre_post_impacto")):
+            continue
+        out.append(vid)
+    return out
+
+
+def impact_pivot(spec: JsonObj) -> tuple[float, float] | None:
+    """El punto de impacto declarado del primer impacto: alrededor de él gira el rumbo de llegada
+    (ADR 0101). None si la escena no lo declara."""
+    eventos: list[JsonObj] = spec.get("eventos") or []
+    for e in eventos:
+        p: JsonObj | None = e.get("punto_impacto")
+        if str(e.get("tipo", "")).startswith("impacto") and p:
+            return (float(p["x"]), float(p["y"]))
+    return None
+
+
 def apply_values(spec: JsonObj, values: dict[str, float]) -> JsonObj:
-    """Escena con las velocidades y rumbos de `values` ("velocidad:veh-a" → km/h, etc.)."""
+    """Escena con las velocidades, rumbos y arrastres de `values` ("velocidad:veh-a" → km/h, etc.).
+
+    El rumbo de llegada gira la posición inicial alrededor del punto de impacto declarado (T3.2,
+    ADR 0101): cambia por dónde llega el vehículo, no dónde choca. Girarlo sobre la posición
+    inicial (12 m antes del impacto en AXA) corría el choque hasta 4 m de lado con 20°, y en un
+    alcance colineal cualquier décima de grado cruzaba las trayectorias en la posición inicial y
+    adelantaba el choque 12 m.
+    """
     s = copy.deepcopy(spec)
     by_id = {v["id"]: v for v in s["vehiculos"]}
+    pivot = impact_pivot(s)
     for name, x in values.items():
         kind, vid = name.split(":", 1)
         if kind == "velocidad":
@@ -600,7 +672,22 @@ def apply_values(spec: JsonObj, values: dict[str, float]) -> JsonObj:
                 "confianza": 0.5,
             }
         elif kind == "rumbo":
-            by_id[vid]["posicion_inicial"]["rumbo_deg"] = max(-360.0, min(360.0, float(x)))
+            pose: JsonObj = by_id[vid]["posicion_inicial"]
+            h = max(-360.0, min(360.0, float(x)))
+            if pivot is not None:
+                d = math.radians(h - float(pose["rumbo_deg"]))
+                c, sn = dmath.cos(d), dmath.sin(d)
+                rx, ry = float(pose["x"]) - pivot[0], float(pose["y"]) - pivot[1]
+                pose["x"] = pivot[0] + c * rx - sn * ry
+                pose["y"] = pivot[1] + sn * rx + c * ry
+            pose["rumbo_deg"] = h
+        elif kind == "arrastre":
+            by_id[vid]["arrastre_post_impacto"] = {
+                "valor": float(x),
+                "fuente": "supuesto",
+                "confianza": 0.5,
+                "nota": "Lo ajustó la inversión (ADR 0101).",
+            }
     return s
 
 
@@ -610,6 +697,21 @@ def with_speeds(spec: JsonObj, ids: list[str], speeds_kmh: Sequence[float]) -> J
 
 def _wrap_deg(a: float) -> float:
     return (a + 180.0) % 360.0 - 180.0
+
+
+def priors(params: Sequence[Param], x: Sequence[float]) -> dict[str, float]:
+    """Residuos previos de los parámetros libres (ADR 0101): el rumbo contra el que colocó el
+    perito (σ `SIGMA_HEADING_PRIOR_DEG`) y el arrastre contra el supuesto (σ `SIGMA_DRAG`). No son
+    evidencia: dicen cuánto cuesta apartarse de lo que se sabía antes de ajustar."""
+    out: dict[str, float] = {}
+    for p, v in zip(params, x, strict=True):
+        if p.kind == "rumbo":
+            out[f"rumbo_previo:{p.vehicle}"] = (
+                _wrap_deg(float(v) - p.start) / SIGMA_HEADING_PRIOR_DEG
+            )
+        elif p.kind == "arrastre":
+            out[f"arrastre_previo:{p.vehicle}"] = (float(v) - DRAG_PRIOR) / SIGMA_DRAG
+    return out
 
 
 @dataclass
@@ -758,19 +860,41 @@ class _Problem:
         return out
 
     def raw(self, x: Sequence[float]) -> dict[str, float] | None:
-        return _residuals(
+        res = _residuals(
             apply_values(self.spec, self.values(x)), self.ev, self.dt, self.downed_mu, self.active
         )
+        return None if res is None else res | priors(self.params, x)
 
     def activate(self, x: Sequence[float]) -> None:
         """Las restricciones del daño que el ajuste en `x` viola quedan activas (igualdades) para
-        el jacobiano en ese punto."""
+        el jacobiano en ese punto. También las que están justo en su borde (residuo 0 que deja de
+        serlo al mover una velocidad un paso): una desigualdad que ata en el óptimo es localmente
+        una igualdad; si no, la aproximación de Laplace ve plana esa dirección y da por no
+        identificable una velocidad que el daño sí fija (AXA, ADR 0101)."""
+        self.active = {}
         res = self.raw(x) or {}
         self.active = {
             k: r
             for k, r in res.items()
             if k.startswith(("dano:", "dano_minimo:", "orden_alcance:")) and r != 0.0
         }
+        zeros = [k for k, r in res.items() if k.startswith(("dano:", "dano_minimo:")) and r == 0.0]
+        for j, p in enumerate(self.params):
+            if not zeros:
+                break
+            if p.kind != "velocidad":
+                continue
+            for sign in (-1.0, 1.0):
+                xk = [float(v) for v in x]
+                xk[j] = min(max(xk[j] + sign * JAC_STEP[p.kind], p.lo), p.hi)
+                probe = self.raw(xk) or {}
+                for k in list(zeros):
+                    r = probe.get(k, 0.0)
+                    if r != 0.0:
+                        self.active[k] = r
+                        zeros.remove(k)
+                if not zeros:
+                    break
         self._cache.clear()
 
     def __call__(self, x: Sequence[float]) -> list[float]:
@@ -1054,9 +1178,9 @@ class Estimate:
     def to_dict(self) -> JsonObj:
         p = self.param
         out: JsonObj = {
-            "parametro": "velocidad_previa" if p.kind == "velocidad" else "rumbo_inicial",
+            "parametro": PARAM_NAME[p.kind],
             "vehiculo": p.vehicle,
-            "unidad": "km/h" if p.kind == "velocidad" else "deg",
+            "unidad": PARAM_UNIT[p.kind],
             "inicial": round(p.start, 2),
             "inicial_declarado": p.declared,
             "identificable": self.identifiable,
@@ -1340,10 +1464,9 @@ def _estimate(
     # El ajuste conjunto, con todo libre: si algo no queda fijado, se guarda (es la reconstrucción
     # que mejor cumple la evidencia, aunque no la fije; ADR 0091).
     full = best if not ev.empty() and len(free) < len(params) else None
-    if free and len(free) < len(params):
-        # Lo que la evidencia no fija vuelve a su valor inicial y se reajusta lo demás.
-        start = {p.name: (best.values[p.name] if p.name in free else p.start) for p in params}
-        best = fit_evidence(spec, ev, dt=dt, start=start, free=free)
+    # Lo que la evidencia no fija se informa sin estimación; lo demás se estima en el mejor ajuste
+    # conjunto, no en un reajuste con aquello en su valor inicial (que en AXA dejaba el daño a
+    # −12 σ y rumbos y arrastres ajustados a una velocidad inventada; ADR 0101).
     best = _polish(spec, ev, best, [p for p in params if p.name in free], dt)
     fits: list[Fit] = []
     impacts: dict[str, list[float]] = {}

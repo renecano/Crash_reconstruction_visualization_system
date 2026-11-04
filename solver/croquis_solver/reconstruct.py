@@ -65,7 +65,7 @@ from croquis_solver.units import ms_to_kmh
 
 JsonObj = dict[str, Any]
 
-RESULT_VERSION = "1.13.0"
+RESULT_VERSION = "1.14.0"
 DT_OUT = 0.02
 T_PRE_MAX = 6.0
 T_PRE_MIN = 3.0  # contexto mínimo antes del impacto para el visor
@@ -126,6 +126,8 @@ class VehicleModel:
     braking: bool
     brake_distance: float | None
     abs_: bool
+    # Arrastre tras el impacto como fracción de μ (`arrastre_post_impacto`); None: el supuesto.
+    post_drag: float | None = None
 
 
 @dataclass
@@ -516,6 +518,7 @@ def _vehicle_model(v: JsonObj, clases: dict[str, Any], flag: _Flag) -> VehicleMo
     braking = bool(aplico.get("valor", False))
     dist: JsonObj | None = frenado.get("distancia_antes_impacto")
     maniobra = v["maniobra"]["valor"]
+    arrastre: JsonObj | None = v.get("arrastre_post_impacto")
     v0 = _num(v.get("velocidad_previa"), _SPEED, 0.0)
     if maniobra in {"detenido", "estacionado"}:
         v0 = 0.0
@@ -540,6 +543,7 @@ def _vehicle_model(v: JsonObj, clases: dict[str, Any], flag: _Flag) -> VehicleMo
         braking=braking,
         brake_distance=_num(dist, _LEN, 0.0) if dist else None,
         abs_=bool(abs_campo.get("valor", False)),
+        post_drag=float(arrastre["valor"]) if arrastre else None,
     )
 
 
@@ -817,6 +821,10 @@ def reconstruct(
 
     models = [_vehicle_model(v, clases, flag) for v in spec["vehiculos"]]
     by_id = {m.id: m for m in models}
+    # El arrastre que trae la escena (lo ajustó la inversión o lo dio el perito), por vehículo.
+    por_vehiculo = {m.id: m.post_drag for m in models if m.post_drag is not None}
+    if por_vehiculo:
+        params["arrastre_post_impacto"]["por_vehiculo"] = por_vehiculo
     personas_spec: dict[str, JsonObj] = {p["id"]: p for p in spec["personas"]}
     objetos: dict[str, JsonObj] = {o["id"]: o for o in spec["entorno"].get("objetos", [])}
     event = _primary_event(spec)
@@ -1305,7 +1313,10 @@ def reconstruct(
         drag = (
             ROLLING_RESISTANCE
             if m.braking or downed
-            else max(ROLLING_RESISTANCE, POST_IMPACT_DRAG_FRACTION * mu)
+            else max(
+                ROLLING_RESISTANCE,
+                (POST_IMPACT_DRAG_FRACTION if m.post_drag is None else m.post_drag) * mu,
+            )
         )
         mu_post = (mu_downed.nominal if downed_mu is None else downed_mu) if downed else mu
         # Un vehículo que todavía no choca (solo está en un impacto posterior) rueda libre hasta

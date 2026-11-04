@@ -22,7 +22,7 @@
   ],
   "properties": {
     "version_resultado": {
-      "const": "1.13.0"
+      "const": "1.14.0"
     },
     "escena_id": {
       "$ref": "#/$defs/Id"
@@ -1208,7 +1208,7 @@
     "ParametroInvertido": {
       "type": "object",
       "additionalProperties": false,
-      "description": "Incógnita de la inversión. Sin `estimacion` cuando la evidencia no la fija (identificable = false): queda en su valor inicial.",
+      "description": "Incógnita de la inversión. Sin `estimacion` cuando la evidencia no la fija (identificable = false); las demás se estiman en el mejor ajuste conjunto (`ajuste_completo` trae todos los valores, ADR 0101).",
       "required": [
         "parametro",
         "vehiculo",
@@ -1220,14 +1220,14 @@
       "properties": {
         "parametro": {
           "type": "string",
-          "enum": ["velocidad_previa", "rumbo_inicial"]
+          "enum": ["velocidad_previa", "rumbo_inicial", "arrastre_post_impacto"]
         },
         "vehiculo": {
           "$ref": "#/$defs/Id"
         },
         "unidad": {
           "type": "string",
-          "enum": ["km/h", "deg"]
+          "enum": ["km/h", "deg", "fraccion"]
         },
         "inicial": {
           "type": "number"

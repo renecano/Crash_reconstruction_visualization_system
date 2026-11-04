@@ -73,6 +73,12 @@ def _v210_a_220(doc: JsonObj) -> JsonObj:
     return doc
 
 
+def _v220_a_230(doc: JsonObj) -> JsonObj:
+    """2.3.0 agrega ``vehiculos[].arrastre_post_impacto`` (T3.2, opcional): ningún documento
+    cambia; sin el campo, el solver usa el supuesto de siempre (0.35)."""
+    return doc
+
+
 MIGRATIONS: list[Migration] = [
     Migration(
         "1.0.0",
@@ -111,6 +117,12 @@ MIGRATIONS: list[Migration] = [
         "2.2.0",
         "vehiculos[].conductor opcional (R12a); los documentos no cambian",
         _v210_a_220,
+    ),
+    Migration(
+        "2.2.0",
+        "2.3.0",
+        "vehiculos[].arrastre_post_impacto opcional (T3.2); los documentos no cambian",
+        _v220_a_230,
     ),
 ]
 

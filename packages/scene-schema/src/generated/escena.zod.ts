@@ -3,7 +3,7 @@
 import { z } from "zod";
 
 export const SCHEMA_ID = "https://croquis.mx/schemas/escena/1.0.0/escena.schema.json";
-export const SCHEMA_VERSION = "2.2.0" as const;
+export const SCHEMA_VERSION = "2.3.0" as const;
 
 /** La frase literal de donde sale un dato, y la página si es de un PDF. */
 export const Cita = z.strictObject({
@@ -958,7 +958,7 @@ export type Lugar = z.infer<typeof Lugar>;
 
 export const Meta = z.strictObject({
   id: z.string().min(8).max(64).regex(new RegExp("^[A-Za-z0-9_-]+$")),
-  version_esquema: z.literal("2.2.0"),
+  version_esquema: z.literal("2.3.0"),
   idioma: z.enum(["es-MX", "en"]),
   semilla: z.int().min(0).max(4294967295),
   creado: z.iso.datetime({ offset: true }),
@@ -1018,6 +1018,7 @@ export const Vehiculo = z.strictObject({
   maniobra: CampoManiobra,
   velocidad_previa: CampoVelocidad,
   frenado: Frenado.optional(),
+  arrastre_post_impacto: CampoAdimensional.optional(),
   aceleracion: CampoAceleracion.optional(),
   luces_encendidas: CampoBooleano.optional(),
   direccionales: z.enum(["ninguna", "izquierda", "derecha", "intermitentes"]).optional(),

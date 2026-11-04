@@ -61,7 +61,7 @@ const T = textos(
 
 function Estimate({ p }: { p: Parametro }) {
   const t = useTextos(T);
-  const unit = p.unidad === "deg" ? "°" : " km/h";
+  const unit = unidadInversion(p);
   if (!p.identificable || !p.estimacion) {
     return <span>{t.noBasta}</span>;
   }

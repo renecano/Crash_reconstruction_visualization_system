@@ -114,7 +114,39 @@ export function supuestosDeclarados(
         ? `En el rango de las velocidades, μ de ${mu.rango[0]} a ${mu.rango[1]}.`
         : "Sin rango.",
     });
-  if (arrastre?.valor !== undefined)
+  // El arrastre que ajustó la inversión por vehículo (T3.2, ADR 0101), si lo fijó la evidencia.
+  const inversion = (r.resultado?.inversion ?? {}) as {
+    parametros?: {
+      parametro: string;
+      vehiculo: string;
+      identificable: boolean;
+      estimacion?: { mejor: number; p10?: number; p90?: number };
+    }[];
+  };
+  const ajustados = (inversion.parametros ?? []).filter(
+    (p) => p.parametro === "arrastre_post_impacto" && p.identificable && p.estimacion,
+  );
+  if (ajustados.length)
+    out.push({
+      clave: "arrastre",
+      que: "Después del impacto",
+      valor: ajustados
+        .map((p) => {
+          const e = p.estimacion!;
+          const id = r.ids[p.vehiculo] ?? p.vehiculo;
+          const rango =
+            e.p10 !== undefined && e.p90 !== undefined
+              ? ` (${e.p10.toFixed(2)}–${e.p90.toFixed(2)})`
+              : "";
+          return `${id}: las llantas ruedan con un arrastre de ${e.mejor.toFixed(2)}${rango} de la fricción`;
+        })
+        .join("; "),
+      justificacion:
+        "Lo ajustó la inversión con la posición final: entre 0.3 (llantas rodando con daño, Fricke 2010) y 1.0 (bloqueadas), con preferencia por 0.35.",
+      incertidumbre:
+        "El rango es el del 80 % con la evidencia perturbada; el reporte no trae huellas de arrastre que lo midan.",
+    });
+  else if (arrastre?.valor !== undefined)
     out.push({
       clave: "arrastre",
       que: "Después del impacto",

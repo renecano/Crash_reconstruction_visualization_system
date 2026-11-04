@@ -93,19 +93,24 @@ export function evidenceLabel(
 
 type Parametro = NonNullable<Resultado["inversion"]>["parametros"][number];
 
+const PARAMETRO_INVERSION: Record<Parametro["parametro"], { es: string; en: string }> = {
+  velocidad_previa: {
+    es: "Velocidad previa (antes de frenar, si frenó)",
+    en: "Initial speed (before braking, if it braked)",
+  },
+  rumbo_inicial: { es: "Dirección de llegada", en: "Direction of approach" },
+  arrastre_post_impacto: {
+    es: "Arrastre después del impacto (fracción de μ)",
+    en: "Post-impact drag (fraction of μ)",
+  },
+};
+
 export function parametroInversion(p: Parametro, lang: Lang = "es"): string {
-  if (lang === "en") {
-    return p.parametro === "velocidad_previa"
-      ? "Initial speed (before braking, if it braked)"
-      : "Direction of approach";
-  }
-  return p.parametro === "velocidad_previa"
-    ? "Velocidad previa (antes de frenar, si frenó)"
-    : "Dirección de llegada";
+  return PARAMETRO_INVERSION[p.parametro][lang === "en" ? "en" : "es"];
 }
 
 export function unidadInversion(p: Parametro): string {
-  return p.unidad === "deg" ? "°" : " km/h";
+  return p.unidad === "deg" ? "°" : p.unidad === "fraccion" ? " μ" : " km/h";
 }
 
 /** Si el valor de partida se dijo o se supuso. */
