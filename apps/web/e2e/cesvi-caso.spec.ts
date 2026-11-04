@@ -187,9 +187,13 @@ test("@flujo /cesvi: un caso nuevo desde la lista, de la narración al dictamen"
   const visor = page.getByTestId("visor-caso");
   await expect(visor).toContainText("supuesto, con su rango");
   await expect(visor.locator("canvas").first()).toBeVisible({ timeout: 60_000 });
-  // El croquis 2D sigue al reloj del 3D: los vehículos de la reconstrucción se mueven en el mapa.
+  // El croquis 2D sigue al reloj del 3D: al volver al mapa (el mapa se desmonta mientras el 3D
+  // está a la vista, ADR 0104), los vehículos de la reconstrucción están donde quedó el reloj.
+  await page.getByTestId("vista-mapa").click();
   await expect(mapa.locator('[data-movil="V1"]')).toHaveCount(1, { timeout: 30_000 });
   await expect(mapa.locator('[data-movil="V2"]')).toHaveCount(1);
+  await page.getByTestId("vista-3d").click();
+  await expect(visor.locator("canvas").first()).toBeVisible({ timeout: 60_000 });
 
   // R7: la declaración del conductor de V2, leída y simulada, contra la reconstrucción y en el 3D.
   await page.getByTestId("abrir-declaracion").click();
@@ -393,6 +397,7 @@ test("@flujo /cesvi: una carambola, con sus impactos en orden hasta el 3D", asyn
   await page.getByTestId("ver-3d").click();
   const visor = page.getByTestId("visor-caso");
   await expect(visor.locator("canvas").first()).toBeVisible({ timeout: 60_000 });
+  await page.getByTestId("vista-mapa").click();
   await expect(mapa.locator('[data-movil="V3"]')).toHaveCount(1, { timeout: 30_000 });
 
   // 5. Paso 6 (R12a): una hipótesis sobre un conductor. V3 frena 2.5 s antes del impacto; el Web
