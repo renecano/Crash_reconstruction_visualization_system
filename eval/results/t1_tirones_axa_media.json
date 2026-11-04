@@ -2,17 +2,115 @@
   "escena": "axa",
   "calidad": "media",
   "diag": {},
-  "segundos": 24,
-  "cuadros": 1703,
-  "fps_promedio": 71,
-  "fps_mediana": 74.1,
-  "ms_en_cuadros_lentos": 0,
-  "cuadros_lentos": [],
-  "tareas_largas": [],
-  "precompilado_ms": 4226,
-  "pipelines_asincronos": 91,
-  "pipelines_asincronos_ms_max": 3729,
-  "pipelines": 64,
+  "extra": "",
+  "segundos": 16,
+  "cuadros": 596,
+  "fps_promedio": 37.3,
+  "fps_mediana": 38.6,
+  "ms_en_cuadros_lentos": 82,
+  "cuadros_lentos": [
+    {
+      "en_ms": 3217,
+      "cuadro_ms": 82,
+      "t_escena_s": 1.7927277867188165
+    }
+  ],
+  "tareas_largas": [
+    {
+      "inicio_ms": 3136,
+      "duracion_ms": 87
+    },
+    {
+      "inicio_ms": 10127,
+      "duracion_ms": 57
+    },
+    {
+      "inicio_ms": 10818,
+      "duracion_ms": 52
+    }
+  ],
+  "banderas": [],
+  "funciones_mas_pesadas": [
+    {
+      "funcion": "(program)",
+      "archivo": "",
+      "ms": 3798
+    },
+    {
+      "funcion": "getMaterialCacheKey",
+      "archivo": "32fk2kjs4-m60.js:7",
+      "ms": 1238
+    },
+    {
+      "funcion": "_getNodeChildren",
+      "archivo": "32fk2kjs4-m60.js:7",
+      "ms": 1021
+    },
+    {
+      "funcion": "_renderObjectDirect",
+      "archivo": "32fk2kjs4-m60.js:13",
+      "ms": 465
+    },
+    {
+      "funcion": "updateForRender",
+      "archivo": "32fk2kjs4-m60.js:10",
+      "ms": 372
+    },
+    {
+      "funcion": "_renderObjectDirect",
+      "archivo": "32fk2kjs4-m60.js:13",
+      "ms": 356
+    },
+    {
+      "funcion": "get",
+      "archivo": "32fk2kjs4-m60.js:7",
+      "ms": 340
+    },
+    {
+      "funcion": "_update",
+      "archivo": "32fk2kjs4-m60.js:7",
+      "ms": 330
+    },
+    {
+      "funcion": "writeBuffer",
+      "archivo": "",
+      "ms": 314
+    },
+    {
+      "funcion": "writeBuffer",
+      "archivo": "",
+      "ms": 273
+    },
+    {
+      "funcion": "getRenderCacheKey",
+      "archivo": "32fk2kjs4-m60.js:485",
+      "ms": 273
+    },
+    {
+      "funcion": "equals",
+      "archivo": "32fk2kjs4-m60.js:1",
+      "ms": 268
+    },
+    {
+      "funcion": "updateByType",
+      "archivo": "32fk2kjs4-m60.js:13",
+      "ms": 262
+    },
+    {
+      "funcion": "update",
+      "archivo": "32fk2kjs4-m60.js:7",
+      "ms": 223
+    },
+    {
+      "funcion": "_update",
+      "archivo": "32fk2kjs4-m60.js:7",
+      "ms": 217
+    }
+  ],
+  "precompilado_ms": 11812,
+  "pipelines_asincronos": 98,
+  "pipelines_asincronos_ms_max": 1637,
+  "pipelines": 48,
   "pipelines_ms": 2,
   "pipelines_lentos": []
 }

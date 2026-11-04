@@ -20,8 +20,9 @@ interface Rule {
 const RULES: readonly Rule[] = [
   { re: /swiftshader|llvmpipe|softpipe|basic render/i, level: "baja", kind: "render por software" },
   { re: /mali|adreno|powervr|apple gpu|videocore/i, level: "baja", kind: "GPU móvil" },
-  { re: /apple m\d+ (pro|max|ultra)/i, level: "ultra", kind: "Apple Silicon de gama alta" },
-  { re: /apple m\d+/i, level: "alta", kind: "Apple Silicon" },
+  // Apple Silicon arranca en media (René, 2026-11-04): en una MacBook Pro con Chrome, alta se
+  // congelaba en el recorrido; el modo automático ya no sube de nivel en la sesión.
+  { re: /apple (m\d+|gpu)/i, level: "media", kind: "Apple Silicon" },
   {
     re: /rtx\s*(20[6-9]0|[3-5]0[6-9]0)|rtx\s*a\d{4}|rx\s*(6[7-9]|7[7-9]|9[0-9])\d0/i,
     level: "ultra",

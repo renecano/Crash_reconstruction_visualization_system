@@ -39,3 +39,28 @@ describe("elección automática del backend", () => {
     expect(recentFps([100, 20, 20, 20], 3)).toBeCloseTo(50, 9);
   });
 });
+
+describe("fps en ventana de tiempo", () => {
+  it("promedia solo los cuadros de la ventana y es NaN si no la cubren", async () => {
+    const { fpsEnVentana } = await import("./backend-choice");
+    expect(fpsEnVentana([16, 16, 16], 3000)).toBeNaN();
+    const lentos = Array.from({ length: 100 }, () => 50); // 20 fps, 5 s
+    expect(fpsEnVentana(lentos, 3000)).toBeCloseTo(20, 5);
+    const mezcla = [
+      ...Array.from({ length: 200 }, () => 100),
+      ...Array.from({ length: 200 }, () => 16),
+    ];
+    expect(fpsEnVentana(mezcla, 3000)).toBeCloseTo(62.5, 5); // 3.2 s de cuadros rápidos al final
+  });
+});
+
+describe("backend inicial sin prueba en vivo (2026-11-04)", () => {
+  it("lo recordado manda; si no, WebGL 2 en GPU integrada y WebGPU en las demás", async () => {
+    const { defaultBackendFor } = await import("./backend-choice");
+    expect(defaultBackendFor("GPU integrada", null)).toBe("webgl");
+    expect(defaultBackendFor("GPU dedicada", null)).toBe("webgpu");
+    expect(defaultBackendFor("Apple Silicon", undefined)).toBe("webgpu");
+    expect(defaultBackendFor("GPU integrada", "webgpu")).toBe("webgpu");
+    expect(defaultBackendFor(null, "webgl")).toBe("webgl");
+  });
+});

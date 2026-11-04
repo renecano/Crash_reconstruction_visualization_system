@@ -21,7 +21,7 @@
  * este componente toma el dibujo del cuadro en lugar de R3F.
  */
 import { useFrame, useThree } from "@react-three/fiber";
-import { useEffect, useMemo } from "react";
+import { useEffect, useMemo, type MutableRefObject } from "react";
 import { bloom } from "three/addons/tsl/display/BloomNode.js";
 import { dof } from "three/addons/tsl/display/DepthOfFieldNode.js";
 import { ao } from "three/addons/tsl/display/GTAONode.js";
@@ -51,6 +51,7 @@ import {
 } from "three/tsl";
 import { RenderPipeline, type Node, type WebGPURenderer } from "three/webgpu";
 import type { FxState } from "../cinematic-fx";
+import type { ContextoRender } from "../precompile";
 import type { QualityProfile } from "../quality";
 
 /** Resplandor: intensidad, radio (0-1) y umbral de luminancia. */
@@ -62,7 +63,16 @@ export const BOKEH_SCALE = 2;
 /** Cuánto se estira el desenfoque de movimiento a peso 1 (múltiplo de la velocidad del cuadro). */
 export const MOTION_BLUR_AMOUNT = 1;
 
-export function PostEffects({ profile, fx }: { profile: QualityProfile; fx: FxState }): null {
+export function PostEffects({
+  profile,
+  fx,
+  pasos,
+}: {
+  profile: QualityProfile;
+  fx: FxState;
+  /** Se publican aquí los contextos de los pases de escena, para precompilar en ellos. */
+  pasos?: MutableRefObject<ContextoRender[]>;
+}): null {
   const { gl, scene, camera } = useThree();
   const {
     ambientOcclusion,
@@ -93,13 +103,14 @@ export function PostEffects({ profile, fx }: { profile: QualityProfile; fx: FxSt
           : {}),
       }),
     );
+    let prePass: ReturnType<typeof pass> | null = null;
     if (ambientOcclusion) {
       // Sin MSAA: el pase hereda las muestras del renderer (4 en alta y ultra) y la GTAO hace
       // `textureGather` sobre la profundidad, que WGSL no admite en una textura multimuestra. El
       // módulo de sombreado quedaba inválido y, con él, todos los búferes de comandos siguientes:
       // el visor dejaba de dibujar (pantalla blanca en las computadoras que eligen alta o ultra
       // con WebGPU; René, 2026-11-04). La oclusión no necesita antialiasing.
-      const prePass = pass(scene, camera, { samples: 0 });
+      prePass = pass(scene, camera, { samples: 0 });
       prePass.setMRT(mrt({ output: normalView }));
       const aoPass = ao(prePass.getTextureNode("depth"), prePass.getTextureNode(), camera);
       scenePass.contextNode = builtinAOContext(aoPass.getTextureNode().sample(screenUV).r);
@@ -140,9 +151,24 @@ export function PostEffects({ profile, fx }: { profile: QualityProfile; fx: FxSt
     const blurAmount = uniform(0);
     if (blur && vel) color = motionBlur(convertToTexture(color), vel.mul(blurAmount));
     p.outputNode = color;
+    // Los pases que dibujan la escena, con su destino y su MRT: el precompilado compila en estos
+    // contextos y el cuadro real reutiliza lo compilado (antes compilaba para el contexto directo
+    // y en alta y ultra el primer cuadro real volvía a generar todo).
+    const contexto = (q: ReturnType<typeof pass>): ContextoRender => ({
+      renderTarget: q.renderTarget,
+      mrt: (q as unknown as { _mrt?: unknown })._mrt ?? null,
+      pase: q,
+    });
+    if (pasos) pasos.current = [contexto(scenePass), ...(prePass ? [contexto(prePass)] : [])];
     return { pipeline: p, focus, focal, bokeh, blurAmount };
   }, [gl, scene, camera, ambientOcclusion, withBloom, temporalAA, depthOfField, blur, reflections]);
-  useEffect(() => () => built.pipeline.dispose(), [built]);
+  useEffect(
+    () => () => {
+      built.pipeline.dispose();
+      if (pasos) pasos.current = [];
+    },
+    [built, pasos],
+  );
   useFrame(() => {
     built.focus.value = fx.focus?.distance ?? 10;
     built.focal.value = fx.focus?.focalLength ?? 6;

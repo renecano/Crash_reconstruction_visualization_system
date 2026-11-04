@@ -140,6 +140,20 @@ export function isQualityLevel(v: unknown): v is QualityLevel {
   return typeof v === "string" && (QUALITY_LEVELS as readonly string[]).includes(v);
 }
 
+/** fps sostenidos por debajo de los cuales el modo automático baja un nivel. */
+export const LOWER_BELOW_FPS = 28;
+
+/**
+ * Modo automático conservador (René, 2026-11-04): el nivel inicial lo da la GPU y en la sesión
+ * solo baja (nunca sube), un nivel a la vez, y nunca durante la reproducción. Devuelve el nivel
+ * de abajo si los fps sostenidos no llegan a `LOWER_BELOW_FPS`; si no, el mismo.
+ */
+export function lowerQualityIfSlow(current: QualityLevel, measuredFps: number): QualityLevel {
+  const i = QUALITY_LEVELS.indexOf(current);
+  if (measuredFps < LOWER_BELOW_FPS && i > 0) return QUALITY_LEVELS[i - 1] ?? current;
+  return current;
+}
+
 /**
  * Elige el nivel según fps medidos con histéresis: baja si < 28 fps sostenidos,
  * sube si > 58 fps sostenidos. Nunca salta dos niveles de golpe.

@@ -11,11 +11,13 @@ import { longitudM } from "@croquis/scene-schema";
 import { Canvas, useFrame, useThree } from "@react-three/fiber";
 import {
   Component,
+  useCallback,
   useEffect,
   useMemo,
   useRef,
   useState,
   type ErrorInfo,
+  type MutableRefObject,
   type ReactElement,
   type ReactNode,
 } from "react";
@@ -27,9 +29,15 @@ import {
   Group,
   Mesh,
   MeshBasicMaterial,
+  MeshStandardMaterial,
   HemisphereLight,
   Object3D,
   PointLight,
+  RenderTarget,
+  SphereGeometry,
+  type Camera,
+  type Light,
+  type Texture,
   PerspectiveCamera,
   Scene,
   Vector3,
@@ -79,11 +87,25 @@ import { buildNightSkyMesh, buildSkyEnvironment, type SkyEnvironment } from "../
 import { PRECIPITATION_HEIGHT, precipitationParams } from "../precipitation";
 import { buildPrecipitation } from "../precipitation-scene";
 import { toThree } from "../coords";
-import { NIGHT_PIXEL_RATIO_MEDIA, QUALITY_PROFILES, type QualityLevel } from "../quality";
+import { QUALITY_PROFILES, type QualityLevel } from "../quality";
+import { dprPara, pantallaDe } from "../dpr";
+import {
+  CAPA_OCULTA,
+  Precompilador,
+  dibujables,
+  esconder,
+  mostrar,
+  ordenDeRevelado,
+  type ContextoRender,
+  type ProgresoPrecompilado,
+  type RendererCompilable,
+} from "../precompile";
 import {
   estimarMemoria,
+  marcar,
   registrarError,
   registrarPerdida,
+  registrarTareaLarga,
   updateDiagnostico,
   type DiagPerdida,
 } from "../diagnostics";
@@ -135,6 +157,12 @@ export interface SceneViewerProps {
   resultado: Resultado;
   clock: ViewerClock;
   camera: CameraMode;
+  /**
+   * Cámara «viva»: la escribe el botón en el mismo clic y el siguiente cuadro ya la usa, sin
+   * esperar a que `camera` llegue por React (3–5 cuadros por el reconciliador de R3F; René,
+   * 2026-11-04: ≤ 100 ms del clic a la respuesta). Vuelve a null cuando `camera` la alcanza.
+   */
+  cameraLive?: { current: CameraMode | null };
   /** Vehículo para la cámara del conductor. */
   driverVehicleId?: string;
   quality: QualityLevel;
@@ -152,6 +180,13 @@ export interface SceneViewerProps {
   generation?: number;
   /** El grafo vigente ya está precompilado y en pantalla (false mientras se prepara). */
   onGraphReady?: (ready: boolean) => void;
+  /** La escena ya se ve (sus objetos van apareciendo); el resto se precompila en segundo plano. */
+  onShown?: () => void;
+  /**
+   * Visor activo (por omisión). Inactivo (p. ej. tapado por el mapa del caso): no dibuja cuadros
+   * ni corre el reloj, pero conserva el renderer y el grafo precompilado para volver al instante.
+   */
+  activo?: boolean;
   className?: string;
   /** Carpeta de los cuerpos de MakeHuman (`personas.json` y los .glb). */
   bodiesBaseUrl?: string;
@@ -261,6 +296,16 @@ declare global {
     __croquisSkyReady?: boolean;
     /** El instante de la línea de tiempo que dibujó el último cuadro (s). */
     __croquisT?: number;
+    /** `performance.now()` del primer cuadro con algo de la escena a la vista (medición de carga). */
+    __croquisPrimerCuadro?: number;
+    /** `performance.now()` en que todos los objetos de los vehículos quedaron revelados. */
+    __croquisVehiculosEnPantalla?: number;
+    /** `performance.now()` en que el renderer quedó creado e inicializado. */
+    __croquisRendererListo?: number;
+    /** El orden en que se revelan los objetos (medición de carga). */
+    __croquisOrdenRevelado?: string[];
+    /** La cámara con la que se dibujó el último cuadro (respuesta a los botones de cámara). */
+    __croquisCamaraDibujada?: string;
     /**
      * El grafo vigente ya está precompilado y en pantalla (T1.1). No entra en `__croquisReady`
      * (el primer cuadro listo es el paramétrico); las capturas y E6 lo esperan aparte.
@@ -293,6 +338,7 @@ function SceneContent({
   resultado,
   clock,
   camera,
+  cameraLive,
   driverVehicleId,
   quality,
   env,
@@ -304,8 +350,13 @@ function SceneContent({
   guiada,
   onDeviceLost,
   onGraphReady,
+  onShown,
+  activo = true,
   fx,
+  pasos,
 }: Omit<SceneViewerProps, "renderer" | "onRendererInfo" | "onError" | "className"> & {
+  /** Contextos de dibujo de la posproducción (alta y ultra), para precompilar en ellos. */
+  pasos: MutableRefObject<ContextoRender[]>;
   env: EnvironmentSettings;
   /** Lo que leen los efectos de cine cada cuadro (R10): desenfoque y enfoque. */
   fx: FxState;
@@ -332,9 +383,13 @@ function SceneContent({
     }
     let alive = true;
     window.__croquisVehicleModelsReady = false;
+    marcar("cargando los modelos de los vehículos");
     loadVehicleModels(clases, v as "alta" | "ligero", renderer)
       .then((models) => {
-        if (alive) setLoaded({ key: modelKey, models });
+        if (alive) {
+          marcar("llegaron los modelos de los vehículos");
+          setLoaded({ key: modelKey, models });
+        }
       })
       .catch((err: unknown) => {
         // Sin modelos (p. ej. sin red) quedan los vehículos paramétricos.
@@ -350,24 +405,36 @@ function SceneContent({
   // paramétricos mientras tanto se veía como autos que se vuelven cajas. En baja, paramétricos.
   const vehicleModels =
     loaded?.key === modelKey ? loaded.models : variant !== null ? loaded?.models : undefined;
-  const graph = useMemo(
-    () =>
-      buildSceneGraph(spec, resultado, {
-        quality: profile,
-        env,
-        vehicleModels,
-        diag: {
-          gravaPrevia: typeof window !== "undefined" && window.__croquisDiag?.gravaPrevia === true,
-          osmSoloCalzada:
-            typeof window !== "undefined" && window.__croquisDiag?.osmSoloCalzada === true,
-          sinLuminarias:
-            typeof window !== "undefined" && window.__croquisDiag?.sinLuminarias === true,
-          sinEntorno: typeof window !== "undefined" && window.__croquisDiag?.sinEntorno === true,
-          sinRelieve: typeof window !== "undefined" && window.__croquisDiag?.sinRelieve === true,
-        },
-      }),
-    [spec, resultado, profile, env, vehicleModels],
-  );
+  // Mientras se esperan los modelos de los vehículos, el grafo paramétrico va sin entorno
+  // (fachadas, árboles, mobiliario): se arma en una fracción del tiempo y se desecha al llegar
+  // los modelos; armarlo completo (≈1 s de hilo principal) solo retrasaba la llegada de los
+  // modelos (René, 2026-11-04: ver algo en ≤ 5 s).
+  const esperandoModelos = variant !== null && !vehicleModels;
+  const graph = useMemo(() => {
+    marcar(
+      vehicleModels
+        ? "armando el grafo (con modelos)"
+        : esperandoModelos
+          ? "armando el grafo provisional (sin entorno)"
+          : "armando el grafo",
+    );
+    return buildSceneGraph(spec, resultado, {
+      quality: profile,
+      env,
+      vehicleModels,
+      diag: {
+        gravaPrevia: typeof window !== "undefined" && window.__croquisDiag?.gravaPrevia === true,
+        osmSoloCalzada:
+          typeof window !== "undefined" && window.__croquisDiag?.osmSoloCalzada === true,
+        sinLuminarias:
+          typeof window !== "undefined" && window.__croquisDiag?.sinLuminarias === true,
+        sinEntorno:
+          esperandoModelos ||
+          (typeof window !== "undefined" && window.__croquisDiag?.sinEntorno === true),
+        sinRelieve: typeof window !== "undefined" && window.__croquisDiag?.sinRelieve === true,
+      },
+    });
+  }, [spec, resultado, profile, env, vehicleModels, esperandoModelos]);
   useEffect(() => {
     if (vehicleModels) window.__croquisVehicleModelsReady = true;
   }, [vehicleModels]);
@@ -375,8 +442,14 @@ function SceneContent({
     onProcedural?.(graph.procedural);
   }, [graph, onProcedural]);
   // Cuántas cosas se agregaron al grafo después de armarlo (restos, personas): cada una pide
-  // precompilar de nuevo (ver abajo).
+  // precompilar de nuevo (ver abajo). Lo nuevo se esconde en el acto: entre llegar y el efecto
+  // que lo precompila cabía un cuadro real, que compilaba sus programas en el hilo principal
+  // (los restos: 400 ms).
   const [attachments, setAttachments] = useState(0);
+  const esconderLoNuevo = (g: SceneGraph): void => {
+    if (visibleRef.current !== g) return;
+    for (const c of g.root.children) if (!compiledChildren.current.has(c)) esconder(c);
+  };
   // El grafo al que ya se le aplicaron las texturas: el precompilado lo espera, porque cambiar
   // los materiales después obligaba a compilar de nuevo en el hilo principal (T1.2).
   const [texturedGraph, setTexturedGraph] = useState<SceneGraph | null>(null);
@@ -399,14 +472,22 @@ function SceneContent({
       window.__croquisGhosts = 0;
     };
   }, [graph, ghosts]);
-  // Restos (piezas, vidrios, plásticos): se hornean con Rapier al cargar la escena.
+  // Restos (piezas, vidrios, plásticos): se hornean con Rapier al cargar la escena. Llegan a una
+  // rama escondida y se compilan en segundo plano (René, 2026-11-04). Solo sobre el grafo con los
+  // modelos ya puestos: hornearlos sobre el paramétrico (1–2 s de hilo principal) era trabajo
+  // tirado que además retrasaba la llegada de los modelos.
+  const modelsPending = variant !== null && loaded?.key !== modelKey;
   useEffect(() => {
+    if (modelsPending) return undefined;
     let alive = true;
     window.__croquisDebrisReady = false;
+    marcar("horneando los restos");
     Promise.all([attachDebris(spec, resultado, graph), attachRollovers(resultado, graph)])
       .then(() => {
         if (!alive) return;
         window.__croquisDebrisReady = true;
+        marcar("llegaron los restos");
+        esconderLoNuevo(graph);
         setAttachments((n) => n + 1);
       })
       .catch((err: unknown) => {
@@ -416,7 +497,7 @@ function SceneContent({
     return () => {
       alive = false;
     };
-  }, [spec, resultado, graph]);
+  }, [spec, resultado, graph, modelsPending]);
 
   // Árboles impostores (T1.3b): en media, alta y ultra (baja conserva las copas de pocas caras).
   useEffect(() => {
@@ -430,6 +511,7 @@ function SceneContent({
     loadTreeImpostors(TREE_BASE_URL, fetch)
       .then((set) => {
         if (!alive) return;
+        marcar("poniendo los árboles impostores");
         graph.applyTreeImpostors(set);
         setTreedGraph(graph);
         window.__croquisTreesReady = true;
@@ -457,6 +539,7 @@ function SceneContent({
     loadEnvTextures(TEXTURE_BASE_URL, fetch, undefined, graph.wantedTextures)
       .then((t) => {
         if (!alive) return;
+        marcar("aplicando las texturas del entorno");
         graph.applyTextures(t);
         setTexturedGraph(graph);
         window.__croquisTexturesReady = true;
@@ -471,17 +554,24 @@ function SceneContent({
     };
   }, [graph, quality]);
 
-  // Personas: cuerpos de MakeHuman, ocupantes y ragdolls calibrados (se hornean al cargar).
+  // Personas: cuerpos de MakeHuman, ocupantes y ragdolls calibrados (se hornean al cargar), solo
+  // sobre el grafo con los modelos (ver los restos).
   useEffect(() => {
+    if (modelsPending) return undefined;
     let alive = true;
     window.__croquisPeopleReady = false;
     loadBodies(variantsFor(spec), bodiesBaseUrl ?? BODY_BASE_URL)
-      .then((templates) => attachPeople(spec, resultado, graph, templates))
+      .then((templates) => {
+        marcar("horneando las personas");
+        return attachPeople(spec, resultado, graph, templates);
+      })
       .then((people) => {
         if (!alive) return;
         window.__croquisPeople = people;
         onPeople?.(people);
         window.__croquisPeopleReady = true;
+        marcar("llegaron las personas");
+        esconderLoNuevo(graph);
         setAttachments((n) => n + 1);
       })
       .catch((err: unknown) => {
@@ -492,12 +582,11 @@ function SceneContent({
     return () => {
       alive = false;
     };
-  }, [spec, resultado, graph, bodiesBaseUrl, onPeople]);
+  }, [spec, resultado, graph, bodiesBaseUrl, onPeople, modelsPending]);
 
   const { scene, camera: cam, gl } = useThree();
   const advance = useThree((s) => s.advance);
   const setFrameloop = useThree((s) => s.setFrameloop);
-  const invalidate = useThree((s) => s.invalidate);
   const size = useThree((s) => s.size);
 
   // Exportación (F9): dibuja un instante a demanda y copia el cuadro en la misma tarea, antes de
@@ -682,6 +771,7 @@ function SceneContent({
       const cubeCamera = new CubeCamera(1, 10_000, target);
       const skyScene = new Scene();
       skyScene.add(sky);
+      marcar("horneando el cielo");
       cubeCamera.update(gl, skyScene);
       scene.background = target.texture;
       // Sin HDRI (baja), el cielo horneado da los reflejos del piso mojado.
@@ -716,6 +806,7 @@ function SceneContent({
           return;
         }
         current = e;
+        marcar("llegó el HDRI del cielo");
         setSkyEnv(e);
         window.__croquisSkyReady = true;
       })
@@ -742,6 +833,10 @@ function SceneContent({
       graph.setVehicleEnvironment(skyEnv.texture, envIntensity, envRotationY);
     }
     if (window.__croquisDiag?.sinReflejosPiso !== true) graph.setReflections(skyEnv.texture);
+    // El prefiltrado del HDRI (PMREM) lo hace three al compilar el primer material que lo usa:
+    // ~1.4 s de hilo principal en la laptop de referencia, que caían en el primer cuadro. Se
+    // provoca aquí, mientras todavía se esperan los modelos (René, 2026-11-04).
+    calentarHdri(gl as unknown as WebGPURenderer, cam, skyEnv.texture);
     return () => {
       scene.environment = null;
       scene.environmentIntensity = 1;
@@ -758,6 +853,8 @@ function SceneContent({
   // Mientras compila, sigue en pantalla el grafo anterior (p. ej. los paramétricos hasta que
   // llegan los modelos); el anterior se desecha cuando el nuevo lo reemplaza, no antes.
   const [compiled, setCompiled] = useState<SceneGraph | null>(null);
+  /** El grafo en pantalla: desde que lo visible está compilado, antes de que todo esté listo. */
+  const [visibleGraph, setVisibleGraph] = useState<SceneGraph | null>(null);
   const shown = useRef<SceneGraph | null>(null);
   /** Ramas del grafo (hijos de `root`) cuyos sombreadores ya se generaron, y con qué HDRI. */
   const compiledChildren = useRef(new WeakSet<Object3D>());
@@ -768,75 +865,178 @@ function SceneContent({
     texturedGraph !== graph;
   // Los árboles impostores también se esperan: así el precompilado los incluye (T1.3b).
   const treesPending = treedGraph !== graph;
+  // Y los modelos de los vehículos y el HDRI (René, 2026-11-04): con cada llegada se regeneraban
+  // todos los sombreadores en el hilo principal (hasta 2 s de congelamiento durante la
+  // reproducción). Los restos y las personas no se esperan: llegan a una rama escondida y se
+  // compilan en segundo plano (abajo).
+  const skyPending = ibl && skyEnv === null;
+  const todoPendiente = texturesPending || treesPending || modelsPending || skyPending;
+  const activoRef = useRef(activo);
+  activoRef.current = activo;
+  /** El grafo que está en pantalla (se monta escondido y se revela objeto por objeto). */
+  const visibleRef = useRef<SceneGraph | null>(null);
+  /** Cuántos objetos del grafo ya se revelaron (el primer cuadro «con algo» se mide con esto). */
+  const revelados = useRef(0);
+  /** Trabajo de precompilado en serie: nunca dos `compileAsync` a la vez sobre el renderer. */
+  const cola = useRef<Promise<void>>(Promise.resolve());
+  const contextos = useCallback(
+    (): readonly ContextoRender[] => (pasos.current.length ? pasos.current : [SIN_POSPROCESO]),
+    [pasos],
+  );
+  // Las luces que proyectan sombra viven en `lights` (el foco de la cabina no proyecta).
+  const lucesDeEscena = useCallback((): Light[] => {
+    const out: Light[] = [];
+    lights.traverse((o) => {
+      if ((o as Light).isLight) out.push(o as Light);
+    });
+    return out;
+  }, [lights]);
+  const progreso = (p: ProgresoPrecompilado): void => {
+    updateDiagnostico({ precompilado: `${p.etapa} ${p.hechos}/${p.total}` });
+  };
   useEffect(() => {
-    if (texturesPending || treesPending) return undefined;
+    window.__croquisGraphReady = false;
+  }, []);
+  // Precompilado progresivo (René, 2026-11-04; `../precompile`): en cuanto están la base del
+  // grafo, los modelos, las texturas, los árboles y el HDRI, el grafo se monta con todos sus
+  // objetos escondidos (`CAPA_OCULTA`) y se compilan uno por uno, cediendo el hilo, en orden de
+  // revelado (lo grande que ve la cámara, los vehículos, el resto): cada objeto aparece en cuanto
+  // sus programas (incluido el de sombras) están listos. Al terminar, el grafo queda «listo» y
+  // arranca la reproducción automática. Si cambia el HDRI (cambia la variante de todos los
+  // materiales), se esconde todo y se vuelve a compilar y revelar.
+  useEffect(() => {
+    if (todoPendiente) return undefined;
+    const enPantalla = visibleRef.current === graph;
+    if (enPantalla && compiledFor.current === skyEnv) return undefined;
     let alive = true;
-    window.__croquisGraphReady = compiled === graph;
-    // Mientras compila, el bucle de dibujo baja a unos 10 cuadros por segundo: a cuadro libre (sin
-    // vsync, como mide E6) el dibujo acaparaba la GPU y el precompilado tardaba minutos.
-    setFrameloop("demand");
-    const pulso = window.setInterval(() => invalidate(), 100);
-    const liberar = () => {
-      window.clearInterval(pulso);
-      setFrameloop("always");
-    };
-    // `compileAsync` recoge los objetos de forma síncrona (solo los visibles y dentro del
-    // encuadre) y genera sus sombreadores ahí mismo (eso sí bloquea); compila después. Durante la
-    // recogida se fuerzan visibles y sin recorte por encuadre las ramas nuevas del grafo (lo que
-    // aparece más tarde, como restos y personas, o queda fuera de la cámara) y se esconden las que
-    // ya se compilaron: volver a generar todo el grafo al llegar las personas costaba 9 s.
-    // Con otro HDRI (o al llegar), los materiales de los vehículos cambian de variante: se
-    // vuelve a generar todo.
-    if (compiledFor.current !== skyEnv) {
-      compiledFor.current = skyEnv;
-      compiledChildren.current = new WeakSet<Object3D>();
+    const pre = new Precompilador(
+      gl as unknown as RendererCompilable,
+      scene,
+      cam,
+      contextos,
+      progreso,
+    );
+    setCompiled(null);
+    window.__croquisGraphReady = false;
+    const base = [...graph.root.children];
+    const luces = lucesDeEscena();
+    const deVehiculo = new Set<Object3D>();
+    for (const v of graph.vehicles) v.group.traverse((o) => deVehiculo.add(o));
+    const todos = base.flatMap((c) => dibujables(c));
+    for (const o of todos) o.layers.set(CAPA_OCULTA);
+    compiledFor.current = skyEnv;
+    compiledChildren.current = new WeakSet<Object3D>(base);
+    if (!enPantalla) {
+      visibleRef.current = graph;
+      revelados.current = 0;
+      setVisibleGraph(graph);
     }
-    const forzados: { o: Object3D; visible: boolean; culled: boolean }[] = [];
-    for (const child of graph.root.children) {
-      const nuevo = !compiledChildren.current.has(child);
-      child.traverse((o) => {
-        forzados.push({ o, visible: o.visible, culled: o.frustumCulled });
-        o.visible = nuevo;
-        o.frustumCulled = false;
-      });
-    }
-    const compilando = (gl as unknown as WebGPURenderer).compileAsync(graph.root, cam, scene);
-    for (const f of forzados) {
-      f.o.visible = f.visible;
-      f.o.frustumCulled = f.culled;
-    }
-    for (const child of graph.root.children) compiledChildren.current.add(child);
-    void compilando
-      .catch((err: unknown) => {
-        console.warn("No se pudieron precompilar los sombreadores", err);
-      })
-      .then(() => {
+    setFrameloop(activoRef.current ? "always" : "never");
+    cola.current = cola.current.then(async () => {
+      if (!alive) return;
+      try {
+        marcar(enPantalla ? "nuevo HDRI: precompilando de nuevo" : "precompilando y revelando");
+        // Matrices al día antes de decidir qué cae en el encuadre: el grafo aún no está en la
+        // escena (React lo monta después del efecto) y sin esto todo quedaba «fuera».
+        graph.root.updateMatrixWorld(true);
+        (cam as PerspectiveCamera).updateProjectionMatrix();
+        poseCamara(clock.get().t);
+        const orden = ordenDeRevelado(todos, cam, (o) => deVehiculo.has(o));
+        window.__croquisOrdenRevelado = orden.map((o) => o.name || o.type);
+        let faltanVehiculos = orden.filter((o) => deVehiculo.has(o)).length;
+        await pre.todo(orden, {
+          etapa: "revelado",
+          sombras: !enPantalla,
+          sombrasDespues: true,
+          luces,
+          revelar: (o) => {
+            o.layers.set(0);
+            revelados.current++;
+            if (
+              deVehiculo.has(o) &&
+              --faltanVehiculos === 0 &&
+              !window.__croquisVehiculosEnPantalla
+            )
+              window.__croquisVehiculosEnPantalla = performance.now();
+          },
+        });
         if (!alive) return;
-        liberar();
+        updateDiagnostico({ precompilado: "listo" });
         setCompiled(graph);
-      });
+      } catch (err) {
+        registrarError("renderer", err);
+        if (!alive) return;
+        // Sin precompilado (p. ej. API no disponible): se muestra todo y compila al dibujar.
+        for (const o of todos) o.layers.set(0);
+        setCompiled(graph);
+      }
+    });
     return () => {
       alive = false;
-      liberar();
+      pre.cancelar();
     };
-    // `compiled` solo marca la bandera: no hace falta recompilar cuando cambia. `attachments`
-    // cuenta lo agregado al grafo después (restos, personas): sí recompila.
-  }, [
-    graph,
-    gl,
-    cam,
-    scene,
-    skyEnv,
-    attachments,
-    texturesPending,
-    treesPending,
-    setFrameloop,
-    invalidate,
-  ]);
+    // `visibleGraph` y `attachments` no van aquí: lo que llega después lo compila el efecto de
+    // abajo sin volver a empezar.
+  }, [graph, gl, cam, scene, skyEnv, todoPendiente, contextos, lucesDeEscena, setFrameloop]);
+  // Lo que se agrega al grafo cuando ya está en pantalla (restos, personas, fantasmas): se esconde
+  // en `CAPA_OCULTA`, se compila en segundo plano (programas y sombras) y se revela al terminar.
+  useEffect(() => {
+    if (visibleGraph !== graph) return undefined;
+    const nuevas = graph.root.children.filter((c) => !compiledChildren.current.has(c));
+    if (nuevas.length === 0) return undefined;
+    let alive = true;
+    const pre = new Precompilador(
+      gl as unknown as RendererCompilable,
+      scene,
+      cam,
+      contextos,
+      progreso,
+    );
+    setCompiled(null);
+    window.__croquisGraphReady = false;
+    for (const c of nuevas) esconder(c);
+    const luces = lucesDeEscena();
+    cola.current = cola.current.then(async () => {
+      if (!alive) return;
+      try {
+        marcar(`precompilando lo que llegó (${nuevas.map((c) => c.name || "rama").join(", ")})`);
+        const objs = nuevas.flatMap((c) => dibujables(c));
+        await pre.todo(objs, { etapa: "llegado", sombras: true, luces });
+        if (!alive) return;
+      } catch (err) {
+        registrarError("renderer", err);
+        if (!alive) return;
+      }
+      for (const c of nuevas) {
+        mostrar(c);
+        compiledChildren.current.add(c);
+      }
+      updateDiagnostico({ precompilado: "listo" });
+      setCompiled(graph);
+    });
+    return () => {
+      alive = false;
+      pre.cancelar();
+      for (const c of nuevas) mostrar(c);
+    };
+  }, [graph, visibleGraph, attachments, gl, cam, scene, contextos, lucesDeEscena]);
+  // Inactivo: ni cuadros ni reloj (el mapa del caso lo tapa); activo: vuelve a dibujar.
+  useEffect(() => {
+    if (activo) {
+      setFrameloop("always");
+      return undefined;
+    }
+    setFrameloop("never");
+    clock.set((s) => (s.playing ? { ...s, playing: false } : s));
+    return undefined;
+  }, [activo, setFrameloop, clock]);
   useEffect(() => {
     const prev = shown.current;
-    shown.current = compiled;
-    if (prev && prev !== compiled) prev.dispose();
+    shown.current = visibleGraph;
+    if (prev && prev !== visibleGraph) prev.dispose();
+    if (visibleGraph) onShown?.();
+  }, [visibleGraph, onShown]);
+  useEffect(() => {
     window.__croquisGraphReady = compiled === graph;
     onGraphReady?.(compiled === graph);
   }, [compiled, graph, onGraphReady]);
@@ -895,19 +1095,33 @@ function SceneContent({
     return l;
   }, [env.night]);
   useEffect(() => {
+    // Siempre visible: quitar o poner una luz cambia el número de luces y regenera todos los
+    // sombreadores (un tirón de cientos de ms al cambiar de cámara); con intensidad 0 no pesa.
     cabinLight.intensity = camera === "conductor" ? (env.night ? 2.4 : 6.0) : 0;
-    cabinLight.visible = camera === "conductor";
   }, [cabinLight, camera, env.night]);
   // Desde los ojos del conductor no se dibuja su propia cabeza ni la de quien va a bordo de su
   // vehículo (quedarían pegadas a la cámara); se restauran al cambiar de cámara.
   useEffect(() => {
+    marcar(`cambio de cámara → ${camera}`);
+    // La cámara viva ya no hace falta: la propiedad la alcanzó.
+    if (cameraLive && cameraLive.current === camera) cameraLive.current = null;
     if (camera !== "conductor" || !driver) return undefined;
     const ocultos = graph.persons.filter(
       (p) => p.vehicleId === driver.v.id && p.mode === "a_bordo_visible",
     );
     for (const p of ocultos) p.group.visible = false;
+    // Ni la bolsa de aire del propio vehículo (René, 2026-11-04: tapaba medio tablero tras el
+    // impacto); las de los demás vehículos y las demás cámaras la siguen viendo.
+    const bolsas: Object3D[] = [];
+    graph.vehicles
+      .find((v) => v.id === driver.v.id)
+      ?.group.traverse((o) => {
+        if (o.name.startsWith("bolsa_")) bolsas.push(o);
+      });
+    for (const b of bolsas) b.visible = false;
     return () => {
       for (const p of ocultos) p.group.visible = true;
+      for (const b of bolsas) b.visible = true;
     };
   }, [camera, driver, graph]);
 
@@ -1043,12 +1257,60 @@ function SceneContent({
       }
     }
   });
+  /** Coloca la cámara del modo vigente en el instante `t` (también antes del primer cuadro). */
+  const camaraViva = (): CameraMode => cameraLive?.current ?? camera;
+  function poseCamara(t: number): void {
+    const camera = camaraViva();
+    const persp = cam as PerspectiveCamera;
+    if (camera === "libre") {
+      controls.current?.update();
+      lastPose.current = {
+        position: [persp.position.x, persp.position.y, persp.position.z],
+        target: controls.current
+          ? [controls.current.target.x, controls.current.target.y, controls.current.target.z]
+          : [0, 0, 0],
+        fov: persp.fov,
+        up: [persp.up.x, persp.up.y, persp.up.z],
+      };
+    } else if (camera === "cenital") applyPose(persp, settle(overheadCamera(resultado)));
+    else if (camera === "conductor" && driver) {
+      const pose = settle(driverCamera(driver.v, t, driver.eye));
+      applyPose(persp, pose);
+      // El foco va con los ojos, un poco más arriba y atrás (ilumina tablero y postes de frente).
+      cabinLight.position.set(pose.position[0], pose.position[1] + 0.15, pose.position[2]);
+    } else if (camera === "cinematica") {
+      const pose = settle(cinematicCamera(resultado, t));
+      applyPose(persp, pose);
+      fx.focus = cinematicFocus(pose);
+    } else if (camera === "dano") applyPose(persp, settle(damageCamera(resultado, t)));
+    else if (camera === "persona") applyPose(persp, settle(personCamera(resultado, t)));
+    if (camera !== "cinematica") fx.focus = null;
+  }
+  const tPrevio = useRef<number | null>(null);
   function drawFrame(size: { width: number; height: number }, delta: number): void {
     clock.tick(Math.min(delta, 0.1), performance.now());
     const t = clock.get().t;
+    const prev = tPrevio.current;
+    tPrevio.current = t;
+    if (prev !== null) {
+      const ti = tImpacto ?? 0;
+      if (prev < ti && t >= ti) marcar("impacto (t = 0)");
+      else if (t < prev - 1) marcar("reinicio del bucle");
+    }
     // El instante que se dibuja, para las evaluaciones (`eval/t1_tirones.mjs`: qué cuadro tarda).
     window.__croquisT = t;
+    window.__croquisCamaraDibujada = camaraViva();
+    const primero = prev === null;
+    if (primero) marcar("primer cuadro: update del grafo");
+    if (
+      window.__croquisPrimerCuadro === undefined &&
+      shown.current === graph &&
+      revelados.current > 0 &&
+      activoRef.current
+    )
+      window.__croquisPrimerCuadro = performance.now();
     graph.update(t);
+    if (primero) marcar("primer cuadro: lo demás");
     if (shown.current && shown.current !== graph) shown.current.update(t);
     precipitation?.setTime(t);
     for (const g of ghosts) g.update(t);
@@ -1088,35 +1350,13 @@ function SceneContent({
         return;
       }
     }
-    if (camera === "libre") {
-      controls.current?.update();
-      lastPose.current = {
-        position: [persp.position.x, persp.position.y, persp.position.z],
-        target: controls.current
-          ? [controls.current.target.x, controls.current.target.y, controls.current.target.z]
-          : [0, 0, 0],
-        fov: persp.fov,
-        up: [persp.up.x, persp.up.y, persp.up.z],
-      };
-    } else if (camera === "cenital") applyPose(persp, settle(overheadCamera(resultado)));
-    else if (camera === "conductor" && driver) {
-      const pose = settle(driverCamera(driver.v, t, driver.eye));
-      applyPose(persp, pose);
-      // El foco va con los ojos, un poco más arriba y atrás (ilumina tablero y postes de frente).
-      cabinLight.position.set(pose.position[0], pose.position[1] + 0.15, pose.position[2]);
-    } else if (camera === "cinematica") {
-      const pose = settle(cinematicCamera(resultado, t));
-      applyPose(persp, pose);
-      fx.focus = cinematicFocus(pose);
-    } else if (camera === "dano") applyPose(persp, settle(damageCamera(resultado, t)));
-    else if (camera === "persona") applyPose(persp, settle(personCamera(resultado, t)));
-    if (camera !== "cinematica") fx.focus = null;
+    poseCamara(t);
     fx.blur = clock.get().playing ? impactBlurWeight(t, tImpacto) : 0;
   }
 
   return (
     <>
-      {compiled ? <primitive object={compiled.root} /> : null}
+      {visibleGraph ? <primitive object={visibleGraph.root} /> : null}
       <primitive object={lights} />
       {precipitation ? <primitive object={precipitation.object} /> : null}
       <primitive object={cabinLight} />
@@ -1271,6 +1511,53 @@ function adapterName(r: WebGPURenderer): string | null {
  * Lleva el diagnóstico (`?diag=1`): fps cada segundo, memoria estimada cada 4 s, y desecha el
  * renderer al desmontar (R3F no lo hace; con cada cambio de calidad se creaba otro).
  */
+/** Contexto de dibujo directo (sin posproducción): el renderer elige su destino. */
+const SIN_POSPROCESO: ContextoRender = { renderTarget: null, mrt: null };
+
+/**
+ * Un cuadro a 8 × 8 con una esfera metálica que refleja el HDRI: three genera el PMREM del cielo
+ * ahora (síncrono) y lo reutiliza para todos los materiales que lo usen después.
+ */
+function calentarHdri(r: WebGPURenderer, camera: Camera, texture: Texture): void {
+  const s = new Scene();
+  const m = new Mesh(
+    new SphereGeometry(0.1, 8, 6),
+    new MeshStandardMaterial({ envMap: texture, metalness: 1, roughness: 0.3 }),
+  );
+  m.frustumCulled = false;
+  s.add(m);
+  const rt = new RenderTarget(8, 8);
+  marcar("prefiltrando el HDRI (PMREM)");
+  try {
+    r.setRenderTarget(rt);
+    r.render(s, camera);
+  } catch (err) {
+    registrarError("renderer", err);
+  } finally {
+    r.setRenderTarget(null);
+    rt.dispose();
+    m.geometry.dispose();
+    m.material.dispose();
+  }
+}
+
+function LongTaskProbe(): null {
+  useEffect(() => {
+    if (typeof PerformanceObserver === "undefined") return undefined;
+    let po: PerformanceObserver | null = null;
+    try {
+      po = new PerformanceObserver((list) => {
+        for (const e of list.getEntries()) registrarTareaLarga(e.duration, e.startTime);
+      });
+      po.observe({ type: "longtask" });
+    } catch {
+      po = null;
+    }
+    return () => po?.disconnect();
+  }, []);
+  return null;
+}
+
 function DiagProbe({
   profile,
   dpr,
@@ -1293,19 +1580,7 @@ function DiagProbe({
           cambio.memoria = estimarMemoria(
             scene,
             {
-              ancho: size.width,
-              alto: size.height,
-              dpr,
-              // Con postproceso los pases van sin MSAA (ADR 0102); sin él, el lienzo lleva las
-              // muestras del perfil.
-              msaaSamples: profile.ambientOcclusion || profile.bloom ? 0 : profile.msaaSamples,
-              pasosPost:
-                (profile.bloom ? 2 : 0) +
-                (profile.ambientOcclusion ? 2 : 0) +
-                (profile.temporalAA ? 2 : 0) +
-                (profile.depthOfField ? 2 : 0) +
-                (profile.motionBlur ? 1 : 0) +
-                (profile.screenReflections ? 2 : 0),
+              ...pantallaDe(profile.level, size.width, size.height, dpr),
               shadowMapSize: profile.shadowMapSize,
               spotShadowMapSize: profile.spotShadowMapSize,
               spotShadows: profile.spotShadowMapSize > 0 ? 4 : 0,
@@ -1351,13 +1626,16 @@ export function SceneViewer(props: SceneViewerProps): ReactElement {
   const profile = QUALITY_PROFILES[quality];
   const backendRef = useRef<RendererInfo["backend"] | undefined>(undefined);
   const fx = useMemo(newFxState, []);
+  const pasos = useRef<ContextoRender[]>([]);
+  // dpr por nivel y memoria de pantalla (`../dpr`; René, 2026-11-04: en la M1 salía dpr 3).
   const dpr =
     typeof window === "undefined"
       ? 1
-      : Math.min(2, window.devicePixelRatio || 1) *
-        profile.pixelRatio *
-        (env.night && profile.level === "media" ? NIGHT_PIXEL_RATIO_MEDIA : 1);
+      : dprPara(quality, window.devicePixelRatio || 1, window.innerWidth, window.innerHeight, {
+          noche: env.night,
+        });
   useEffect(() => {
+    marcar(`montaje del visor (${quality}, ${renderer})`);
     updateDiagnostico({ calidad: quality, preferencia: renderer, dpr, generacion: generation });
   }, [quality, renderer, dpr, generation]);
   return (
@@ -1383,6 +1661,7 @@ export function SceneViewer(props: SceneViewerProps): ReactElement {
                   : {}),
               });
               await r.init();
+              window.__croquisRendererListo = performance.now();
               const backend = (r.backend as { isWebGPUBackend?: boolean }).isWebGPUBackend
                 ? "webgpu"
                 : "webgl2";
@@ -1418,12 +1697,20 @@ export function SceneViewer(props: SceneViewerProps): ReactElement {
             }
           }}
         >
-          <SceneContent {...rest} quality={quality} env={env} fx={fx} onDeviceLost={onDeviceLost} />
+          <SceneContent
+            {...rest}
+            quality={quality}
+            env={env}
+            fx={fx}
+            pasos={pasos}
+            onDeviceLost={onDeviceLost}
+          />
           {profile.ambientOcclusion || profile.bloom ? (
-            <PostEffects profile={profile} fx={fx} />
+            <PostEffects profile={profile} fx={fx} pasos={pasos} />
           ) : null}
           <PerfProbe backend={() => backendRef.current} />
           <DiagProbe profile={profile} dpr={dpr} />
+          <LongTaskProbe />
         </Canvas>
       </VisorErrorBoundary>
     </div>

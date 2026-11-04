@@ -24,6 +24,15 @@ export interface DiagPerdida {
   cuando: number;
 }
 
+/** Una tarea larga del hilo principal (> 50 ms) y a qué se atribuye. */
+export interface DiagTareaLarga {
+  /** Duración (ms) y `performance.now()` de su inicio. */
+  duracion: number;
+  cuando: number;
+  /** La última marca del visor antes de la tarea (hasta `CAUSA_VENTANA_MS` antes), o «sin marca». */
+  causa: string;
+}
+
 export interface Diagnostico {
   backend: "webgpu" | "webgl2" | null;
   preferencia: string;
@@ -46,6 +55,14 @@ export interface Diagnostico {
   recuperaciones: number;
   /** Generación del renderer en pantalla (sube con cada recuperación). */
   generacion: number;
+  /** Cómo se eligió la calidad: nivel inicial por GPU y su motivo, y el techo de la sesión. */
+  calidadMotivo: string | null;
+  /** Últimas tareas largas del hilo principal, la más reciente al final (hasta `MAX_TAREAS`). */
+  tareasLargas: DiagTareaLarga[];
+  /** Última marca de actividad del visor (qué está haciendo), para atribuir las tareas largas. */
+  marca: { texto: string; cuando: number } | null;
+  /** Avance del precompilado progresivo («visible 12/40», «sombras 3/20», «listo»). */
+  precompilado: string | null;
 }
 
 export interface MemoriaEstimada {
@@ -63,6 +80,9 @@ export interface MemoriaEstimada {
 }
 
 const MAX_ERRORES = 8;
+const MAX_TAREAS = 12;
+/** Una marca explica las tareas largas que empiezan hasta este tiempo después de ella. */
+export const CAUSA_VENTANA_MS = 4000;
 
 const inicial = (): Diagnostico => ({
   backend: null,
@@ -79,6 +99,10 @@ const inicial = (): Diagnostico => ({
   perdidas: 0,
   recuperaciones: 0,
   generacion: 0,
+  calidadMotivo: null,
+  tareasLargas: [],
+  marca: null,
+  precompilado: null,
 });
 
 let estado: Diagnostico = inicial();
@@ -136,6 +160,35 @@ export function registrarPerdida(info: {
   };
   updateDiagnostico({ perdida: p, perdidas: estado.perdidas + 1 });
   return p;
+}
+
+/**
+ * Anota qué está haciendo el visor (cambio de cámara, precompilado, llegada de modelos, impacto…):
+ * la siguiente tarea larga se atribuye a la marca más reciente dentro de `CAUSA_VENTANA_MS`.
+ */
+export function marcar(texto: string): void {
+  // También como marca de usuario: se ve en la pestaña Performance de Chrome y en las trazas de
+  // `apps/web/e2e/tirones-recorrido.spec.ts` (a cada tarea larga se le atribuye la última marca).
+  try {
+    performance.mark(`croquis: ${texto}`);
+  } catch {
+    /* sin User Timing */
+  }
+  updateDiagnostico({
+    marca: { texto, cuando: typeof performance !== "undefined" ? performance.now() : 0 },
+  });
+}
+
+/** Registra una tarea larga del hilo principal (de `PerformanceObserver`, tipo `longtask`). */
+export function registrarTareaLarga(duracion: number, inicio: number): DiagTareaLarga {
+  const m = estado.marca;
+  const causa =
+    m && inicio - m.cuando >= -50 && inicio - m.cuando <= CAUSA_VENTANA_MS
+      ? m.texto
+      : "sin marca (¿carga, recolección de basura, otra pestaña?)";
+  const t: DiagTareaLarga = { duracion, cuando: inicio, causa };
+  updateDiagnostico({ tareasLargas: [...estado.tareasLargas, t].slice(-MAX_TAREAS) });
+  return t;
 }
 
 /** Para las pruebas y al cambiar de escena: vuelve al estado inicial (conserva las pérdidas). */

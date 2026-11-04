@@ -4,9 +4,11 @@ import {
   bytesDeTextura,
   estimarMemoria,
   getDiagnostico,
+  marcar,
   memoriaPantallaMB,
   registrarError,
   registrarPerdida,
+  registrarTareaLarga,
   reiniciarDiagnostico,
   subscribeDiagnostico,
   texturasDe,
@@ -98,5 +100,28 @@ describe("diagnóstico del visor (René, 2026-11-04)", () => {
     reiniciarDiagnostico({ perdidas: d.perdidas });
     expect(getDiagnostico().perdidas).toBe(1);
     expect(getDiagnostico().ultimoError).toBeNull();
+  });
+});
+
+describe("tareas largas y marcas (René, 2026-11-04)", () => {
+  it("atribuye una tarea larga a la última marca reciente, y sin marca lo dice", () => {
+    reiniciarDiagnostico();
+    const t0 = performance.now();
+    marcar("cambio de cámara → conductor");
+    const conMarca = registrarTareaLarga(180, t0 + 100);
+    expect(conMarca.causa).toBe("cambio de cámara → conductor");
+    const tarde = registrarTareaLarga(120, t0 + 60_000);
+    expect(tarde.causa).toMatch(/sin marca/);
+    const antes = registrarTareaLarga(120, t0 - 500);
+    expect(antes.causa).toMatch(/sin marca/);
+    expect(getDiagnostico().tareasLargas.map((x) => x.duracion)).toEqual([180, 120, 120]);
+  });
+
+  it("conserva solo las últimas doce tareas largas", () => {
+    reiniciarDiagnostico();
+    for (let i = 0; i < 20; i++) registrarTareaLarga(100 + i, i);
+    const d = getDiagnostico();
+    expect(d.tareasLargas).toHaveLength(12);
+    expect(d.tareasLargas[0]?.duracion).toBe(108);
   });
 });

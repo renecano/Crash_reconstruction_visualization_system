@@ -1,4 +1,11 @@
 "use client";
+import { useSearchParams } from "next/navigation";
+import {
+  modelVariantFor,
+  prefetchVehicleModels,
+  qualityForGpu,
+  readGpuRenderer,
+} from "@croquis/viewer";
 /**
  * La reconstrucción física de un caso de expediente (R2, ADR 0062; repartida en los pasos del
  * recorrido, ADR 0079): el solver TS corre en el Web Worker del visor sobre la escena del
@@ -23,7 +30,7 @@ import {
 } from "@croquis/cesvi";
 import { LEGEND_TEXT_CESVI, type EscenaSpec } from "@croquis/scene-schema";
 import type { ViewerExportApi } from "@croquis/viewer";
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import type { Hipotesis } from "@/components/visor/hypothesis-panel";
 import {
   CONTROLES_INICIALES,
@@ -441,8 +448,11 @@ export function Visor3dCaso({
   objetos = null,
   expandido = false,
   supuestos = [],
+  activo = true,
 }: {
   r: Reconstruccion;
+  /** El 3D está a la vista (false: lo tapa el mapa; no dibuja ni corre el reloj). */
+  activo?: boolean;
   /** Lo que el caso no trae, como supuesto declarado (ADR 0091). */
   supuestos?: readonly SupuestoDeclarado[];
   /** La velocidad de la reconstrucción contra el reporte de CESVI, para decirla sobre el 3D. */
@@ -457,10 +467,26 @@ export function Visor3dCaso({
   onExportApi: (api: ViewerExportApi | null) => void;
   onPosiciones: (ps: PosicionMovil[]) => void;
 }) {
+  // Los archivos de los modelos de los vehículos se bajan en cuanto hay reconstrucción (antes de
+  // abrir el 3D): el visor los encuentra en la caché (René, 2026-11-04: ver algo en ≤ 5 s).
+  // `?diag=1` también aquí (René, 2026-11-04): el panel de diagnóstico del visor en el caso.
+  const sp = useSearchParams();
+  const diag = sp.get("diag") === "1";
+  // Y `?calidad=` y `?renderer=`/`?backend=`, para diagnosticar en el caso como en `/visor`.
+  const calidadUrl = sp.get("calidad");
+  const rendererUrl = sp.get("renderer") ?? sp.get("backend");
   const [controles, setControles] = useState<ControlesVisor>({
     ...CONTROLES_INICIALES,
     camara: "cinematica",
     auto: true,
+    diag,
+    ...(calidadUrl === "baja" ||
+    calidadUrl === "media" ||
+    calidadUrl === "alta" ||
+    calidadUrl === "ultra"
+      ? { calidad: calidadUrl }
+      : {}),
+    ...(rendererUrl === "webgl" || rendererUrl === "webgpu" ? { renderer: rendererUrl } : {}),
   });
   const spec3d = useMemo(() => {
     let s = especReconstruida(r);
@@ -468,6 +494,16 @@ export function Visor3dCaso({
     if (r.origen && objetos) s = conObjetosDelMapa(s, r.origen, objetos);
     return s as unknown as EscenaSpec;
   }, [r, calles, objetos]);
+  // Los archivos de los modelos de los vehículos se bajan en cuanto hay reconstrucción (antes de
+  // abrir el 3D): el visor los encuentra en la caché (René, 2026-11-04: ver algo en ≤ 5 s).
+  useEffect(() => {
+    const variante = modelVariantFor(qualityForGpu(readGpuRenderer()).level);
+    if (!variante) return;
+    void prefetchVehicleModels(
+      spec3d.vehiculos.map((v) => v.clase.valor),
+      variante,
+    ).catch(() => undefined);
+  }, [spec3d]);
   const externas = useMemo(() => (declarada ? [declarada] : undefined), [declarada]);
   return (
     <div
@@ -505,6 +541,7 @@ export function Visor3dCaso({
         escena="propia"
         leyendaTexto={LEGEND_TEXT_CESVI}
         controles={controles}
+        activo={activo}
         hipotesisExternas={externas}
         onExportApi={onExportApi}
         onTiempo={(t, res) =>

@@ -51,6 +51,35 @@ export function recordTrial(
   return { current: best, measured, decided: true };
 }
 
+/**
+ * Backend inicial sin prueba en vivo (René, 2026-11-04): la prueba por medición volvía a crear el
+ * renderer a media reproducción (y recompilaba todo). Lo recordado manda; si no, WebGL 2 en GPU
+ * integrada (en la laptop de referencia dio más fps, E6) y WebGPU en las demás.
+ */
+export function defaultBackendFor(
+  kind: string | null | undefined,
+  remembered?: Backend | null,
+): Backend {
+  if (remembered === "webgl" || remembered === "webgpu") return remembered;
+  return /integrada/i.test(kind ?? "") ? "webgl" : "webgpu";
+}
+
+/**
+ * fps promedio de los últimos `ventanaMs` ms de cuadros (`frameMs`: duraciones en ms); NaN si
+ * las muestras no cubren la ventana. A diferencia de `recentFps`, no mezcla épocas distintas
+ * cuando los cuadros son lentos.
+ */
+export function fpsEnVentana(frameMs: readonly number[], ventanaMs = 3000): number {
+  let suma = 0;
+  let n = 0;
+  for (let i = frameMs.length - 1; i >= 0 && suma < ventanaMs; i--) {
+    suma += frameMs[i] ?? 0;
+    n++;
+  }
+  if (suma < ventanaMs || n === 0) return Number.NaN;
+  return (1000 * n) / suma;
+}
+
 /** fps promedio de los últimos `n` tiempos de cuadro (ms); NaN si no hay suficientes. */
 export function recentFps(frameMs: readonly number[], n = 90): number {
   if (frameMs.length < n) return Number.NaN;

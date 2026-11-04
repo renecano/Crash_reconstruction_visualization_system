@@ -24,7 +24,6 @@ import {
   environmentFor,
   eventMarkers,
   isQualityLevel,
-  nextQualityLevel,
   qualityForGpu,
   clampToCeiling,
   onLoss,
@@ -38,11 +37,11 @@ import {
   type RecoveryState,
   readGpuRenderer,
   type GpuTier,
-  recentFps,
-  recordTrial,
-  startTrial,
+  fpsEnVentana,
+  defaultBackendFor,
+  lowerQualityIfSlow,
+  marcar,
   type Backend,
-  type BackendTrial,
   seek,
   setSpeed,
   step,
@@ -114,6 +113,7 @@ const T = textos(
     reintentar: "Reintentar",
     usarMedia: "Usar calidad media",
     preparando: "Preparando el dibujo 3D…",
+    preparandoResto: "Preparando la reproducción",
     diagnostico: "Diagnóstico del visor",
     calidad: "Calidad",
     automatica: "Automática",
@@ -122,7 +122,7 @@ const T = textos(
     renderAuto: "Automático (elige el más rápido)",
     forzarWebgpu: "Forzar WebGPU",
     forzarWebgl: "Forzar WebGL 2",
-    elegido: (lista: string) => `elegido por medición (${lista})`,
+    elegido: (motivo: string) => `elegido por la GPU (${motivo})`,
     sinGpu: "Este navegador no pudo iniciar WebGPU ni WebGL 2; el visor 3D no está disponible.",
     calculando:
       "Calculando la incertidumbre (Monte Carlo), la inversión desde la evidencia y la consistencia en este navegador…",
@@ -161,6 +161,7 @@ const T = textos(
     reintentar: "Retry",
     usarMedia: "Use medium quality",
     preparando: "Preparing the 3D view…",
+    preparandoResto: "Preparing playback",
     diagnostico: "Viewer diagnostics",
     calidad: "Quality",
     automatica: "Automatic",
@@ -169,7 +170,7 @@ const T = textos(
     renderAuto: "Automatic (picks the fastest)",
     forzarWebgpu: "Force WebGPU",
     forzarWebgl: "Force WebGL 2",
-    elegido: (lista: string) => `chosen by measurement (${lista})`,
+    elegido: (motivo: string) => `chosen by the GPU (${motivo})`,
     sinGpu: "This browser could not start WebGPU or WebGL 2; the 3D viewer is not available.",
     calculando:
       "Computing the uncertainty (Monte Carlo), the inversion from the evidence and the consistency in this browser…",
@@ -222,7 +223,8 @@ export const CONTROLES_INICIALES: ControlesVisor = {
 function parseControles(sp: URLSearchParams): ControlesVisor & { escena: EscenaVisor } {
   const escena = sp.get("escena");
   const calidad = sp.get("calidad");
-  const renderer = sp.get("renderer");
+  // `?backend=webgl` es un alias de `?renderer=webgl` (así lo pidió René para la M1).
+  const renderer = sp.get("renderer") ?? sp.get("backend");
   const t = sp.get("t");
   return {
     escena:
@@ -242,9 +244,12 @@ function parseControles(sp: URLSearchParams): ControlesVisor & { escena: EscenaV
   };
 }
 
-const BACKEND_KEY = "croquis.backend";
+// Clave nueva (René, 2026-11-04): la prueba automática vieja guardaba su decisión en
+// «croquis.backend» y dejaba a la M1 en WebGL para siempre; aquí solo se guarda lo que la persona
+// elige a mano, y lo viejo se ignora.
+const BACKEND_KEY = "croquis.backend.manual";
 
-/** Preferencia de backend recordada en este navegador (puede no existir o no estar disponible). */
+/** Preferencia de backend elegida a mano en este navegador (puede no existir o no estar disponible). */
 function readBackend(): Backend | null {
   try {
     const v = window.localStorage.getItem(BACKEND_KEY);
@@ -318,6 +323,21 @@ const diagServidor = () => diagInicial;
  * Diagnóstico en pantalla (`?diag=1`; René, 2026-11-04): backend y GPU, calidad, memoria
  * estimada, fps y el último error o pérdida, para probar en otras computadoras y mandar la captura.
  */
+/** Nota pequeña con el avance del precompilado en segundo plano («revelado 12/80»). */
+function AvancePrecompilado({ texto }: { texto: string }) {
+  const d = useSyncExternalStore(subscribeDiagnostico, getDiagnostico, diagServidor);
+  return (
+    <p
+      role="status"
+      className="t-nota vidrio absolute top-3 left-3 px-3 py-1 text-texto"
+      data-testid="visor-preparando-fondo"
+    >
+      {texto}
+      {d?.precompilado ? ` · ${d.precompilado}` : "…"}
+    </p>
+  );
+}
+
 function DiagnosticoPanel({ titulo }: { titulo: string }): ReactElement {
   const d = useSyncExternalStore(subscribeDiagnostico, getDiagnostico, diagServidor);
   if (!d) return <></>;
@@ -343,6 +363,17 @@ function DiagnosticoPanel({ titulo }: { titulo: string }): ReactElement {
       )}
       {fila("lienzo", d.lienzo ? `${d.lienzo[0]}×${d.lienzo[1]}` : null)}
       {fila("fps", d.fps)}
+      {fila("calidad auto", d.calidadMotivo)}
+      {fila("precompilado", d.precompilado)}
+      {fila(
+        "tareas largas",
+        d.tareasLargas.length
+          ? d.tareasLargas
+              .slice(-5)
+              .map((x) => `${Math.round(x.duracion)} ms: ${x.causa}`)
+              .join(" · ")
+          : "ninguna",
+      )}
       {fila(
         "memoria",
         mb
@@ -449,6 +480,40 @@ export interface VisorEscenaProps {
   onExportApi?: (api: ViewerExportApi | null) => void;
   /** Otro texto de leyenda, en pantalla y en lo que se exporta (en /cesvi, el de CESVI). */
   leyendaTexto?: string;
+  /**
+   * Visor activo (por omisión). Inactivo (el mapa del caso lo tapa): el 3D no dibuja ni corre el
+   * reloj, pero conserva el renderer y el grafo precompilado; nunca hay dos contextos dibujando.
+   */
+  activo?: boolean;
+}
+
+/** La calidad automática no baja hasta que el grafo lleva este tiempo precompilado. */
+const CALIDAD_ASENTADA_MS = 8000;
+/** ...ni hasta que el reloj lleva este tiempo pausado (nunca a media reproducción). */
+const CALIDAD_PAUSA_MS = 4000;
+/** Techo de calidad automática de la sesión (una vez bajada, no sube hasta cerrar la pestaña). */
+const TECHO_SESION = "croquis.calidad.techo";
+function leerTechoSesion(): QualityLevel | null {
+  try {
+    const v = window.sessionStorage.getItem(TECHO_SESION);
+    return v === "baja" || v === "media" || v === "alta" ? v : null;
+  } catch {
+    return null;
+  }
+}
+// El techo se lee una vez por montaje del visor (no en cada render): bajarlo mientras el 3D está
+// abierto no vuelve a crear el renderer; se aplica al volver a abrir el 3D.
+let techoLeido: QualityLevel | null | undefined;
+function techoSesionSnapshot(): QualityLevel | null {
+  if (techoLeido === undefined) techoLeido = leerTechoSesion();
+  return techoLeido;
+}
+function guardarTechoSesion(q: QualityLevel): void {
+  try {
+    window.sessionStorage.setItem(TECHO_SESION, q);
+  } catch {
+    /* sin almacenamiento: la sesión no recuerda el techo */
+  }
 }
 
 export function VisorEscena({
@@ -463,6 +528,7 @@ export function VisorEscena({
   hipotesisExternas,
   onExportApi,
   leyendaTexto,
+  activo = true,
 }: VisorEscenaProps) {
   const t = useTextos(T);
   const { lang } = useIdioma();
@@ -490,6 +556,9 @@ export function VisorEscena({
   // Modo automático (ADR 0026): arranca en el nivel que sugiere la GPU y luego lo ajustan los fps
   // medidos. En el prerender no hay GPU (null) y se usa media.
   const gpu = useSyncExternalStore(noopSubscribe, gpuTierSnapshot, nullSnapshot);
+  // Modo automático conservador (René, 2026-11-04): el nivel inicial lo da la GPU (Mac e
+  // integradas, media); en la sesión solo baja, y solo con el reloj parado (cada cambio vuelve a
+  // crear el renderer: nunca a media reproducción). Lo bajado queda de techo.
   const [autoAjustada, setAutoAjustada] = useState<QualityLevel | null>(null);
   // Recuperación del 3D (René, 2026-11-04): al perder el dispositivo se recrea el visor
   // (`generacion`); si se repite, se baja un nivel y ese nivel queda de techo para el modo
@@ -502,11 +571,43 @@ export function VisorEscena({
   // solo el cielo: se dice en pantalla, y el modo automático no juzga fps de una escena vacía
   // (dibujaba a 400 fps y subía de media a ultra en 6 s; ADR 0102).
   const [grafoListo, setGrafoListo] = useState(false);
-  const autoCalidad: QualityLevel = clampToCeiling(
-    autoAjustada ?? gpu?.level ?? "media",
+  // La escena ya se ve (va apareciendo objeto por objeto); el resto se precompila en segundo plano.
+  // Se guarda con qué visor (calidad, backend, generación) se vio: al recrearlo vuelve el aviso.
+  const [vistoEn, setVistoEn] = useState<string | null>(null);
+  // La cámara «viva» (ver `SceneViewerProps.cameraLive`): el botón la escribe en el mismo clic.
+  const camaraViva = useRef<CameraMode | null>(null);
+  // Backend sin prueba en vivo (René, 2026-11-04): la prueba por medición (ADR 0006) volvía a
+  // crear el renderer a media reproducción. Manda lo recordado en este navegador (lo que la
+  // persona eligió a mano); si no, WebGL 2 en GPU integrada y WebGPU en las demás.
+  const recordado = useSyncExternalStore(noopSubscribe, readBackend, nullSnapshot);
+  const backendPrevisto: Backend =
+    controles.renderer === "auto" ? defaultBackendFor(gpu?.kind, recordado) : controles.renderer;
+  const techoSesion = useSyncExternalStore(noopSubscribe, techoSesionSnapshot, nullSnapshot);
+  useEffect(
+    () => () => {
+      techoLeido = undefined;
+    },
+    [],
+  );
+  // En WebGL (ANGLE sobre Metal o D3D) la compilación bloquea el hilo y alta no cabe sin
+  // precompilarla en segundo plano (pendiente): el automático se queda en media (René, 2026-11-04).
+  const topeBackend: QualityLevel | null = backendPrevisto === "webgl" ? "media" : null;
+  const autoCalidad = clampToCeiling(
+    clampToCeiling(clampToCeiling(autoAjustada ?? gpu?.level ?? "media", techoSesion), topeBackend),
     recovery.techo,
   );
   const calidad: QualityLevel = controles.calidad === "auto" ? autoCalidad : controles.calidad;
+  useEffect(() => {
+    updateDiagnostico({
+      calidadMotivo:
+        controles.calidad === "auto"
+          ? `automática: inicial ${gpu?.level ?? "media"} (${gpu?.kind ?? "sin GPU"})${topeBackend ? `, tope ${topeBackend} en WebGL` : ""}${techoSesion ? `, techo de la sesión ${techoSesion}` : ""}${recovery.techo ? `, techo por recuperación ${recovery.techo}` : ""}`
+          : `fija por la persona usuaria: ${controles.calidad}`,
+    });
+  }, [controles.calidad, gpu, recovery.techo, techoSesion, topeBackend]);
+  const claveVisor = `${calidad}|${backendPrevisto}|${generacion}`;
+  const marcarEnPantalla = useCallback(() => setVistoEn(claveVisor), [claveVisor]);
+  const enPantalla = vistoEn === claveVisor;
   const onDeviceLost = useCallback(
     (info: DiagPerdida) => {
       const { state, action } = onLoss(recovery, performance.now(), calidad);
@@ -599,11 +700,20 @@ export function VisorEscena({
     return createClock(
       createTimeline(dibujo.t_inicio, dibujo.t_fin, dibujo.dt, {
         t: controles.t ?? dibujo.t_inicio,
-        playing: controles.auto,
+        // La reproducción automática arranca cuando el grafo está precompilado (abajo), no antes:
+        // reproducir mientras llegan modelos, árboles o el HDRI era regenerar sombreadores a
+        // media animación (René, 2026-11-04).
+        playing: false,
         loop: controles.bucle,
       }),
     );
-  }, [dibujo, controles.t, controles.auto, controles.bucle]);
+  }, [dibujo, controles.t, controles.bucle]);
+  const arrancado = useRef<ViewerClock | null>(null);
+  useEffect(() => {
+    if (!clock || !controles.auto || !grafoListo || !activo || arrancado.current === clock) return;
+    arrancado.current = clock;
+    clock.set((s) => ({ ...s, playing: true }));
+  }, [clock, controles.auto, grafoListo, activo]);
 
   // El reloj del 3D hacia fuera (el croquis 2D de «Caso nuevo» lo sigue).
   const avisarTiempo = useRef(onTiempo);
@@ -613,7 +723,15 @@ export function VisorEscena({
   useEffect(() => {
     if (!clock || !dibujo) return undefined;
     avisarTiempo.current?.(clock.get().t, dibujo);
-    return clock.subscribe((st) => avisarTiempo.current?.(st.t, dibujo));
+    // A lo más 4 avisos por segundo mientras reproduce (y siempre al pausar o buscar): cada
+    // aviso vuelve a dibujar la página del caso (15 por segundo la dejaban a 10 fps).
+    let ultimo = -Infinity;
+    return clock.subscribe((st) => {
+      const ahora = performance.now();
+      if (st.playing && ahora - ultimo < 250) return;
+      ultimo = ahora;
+      avisarTiempo.current?.(st.t, dibujo);
+    });
   }, [clock, dibujo]);
 
   // Resultado del montaje de personas (ragdolls calibrados) para el panel.
@@ -623,16 +741,6 @@ export function VisorEscena({
     null,
   );
   const onPeople = useCallback((data: PeopleAttachment) => setPeople({ escena, data }), [escena]);
-  // Backend automático por medición (ADR 0006): WebGPU primero; si no llega a 60 fps se prueba
-  // WebGL 2 y se queda el más rápido. La decisión se recuerda en este navegador. Una prueba por
-  // escena: lo que rinde en una escena puede no rendir en otra.
-  const [trialState, setTrialState] = useState<{ escena: EscenaVisor; trial: BackendTrial }>(
-    () => ({
-      escena,
-      trial: startTrial(readBackend()),
-    }),
-  );
-  const trial = trialState.escena === escena ? trialState.trial : startTrial(readBackend());
   // E9: la primera vez que la escena propia queda lista en 3D (solo con una sesión activa).
   useEffect(() => {
     if (escena !== "propia" || !leerE9()) return undefined;
@@ -644,47 +752,47 @@ export function VisorEscena({
     }, 250);
     return () => window.clearInterval(id);
   }, [escena]);
-  const setTrial = useCallback(
-    (update: (t: BackendTrial) => BackendTrial): void =>
-      setTrialState((s) => ({
-        escena,
-        trial: update(s.escena === escena ? s.trial : startTrial(readBackend())),
-      })),
-    [escena],
-  );
-  const effectiveRenderer: RendererPreference =
-    controles.renderer === "auto" ? trial.current : controles.renderer;
+  const effectiveRenderer: RendererPreference = backendPrevisto;
   useEffect(() => {
-    if (controles.renderer !== "auto" || trial.decided || !info) return undefined;
+    if (controles.renderer !== "auto") saveBackend(controles.renderer);
+  }, [controles.renderer]);
+
+  // Calidad automática conservadora (René, 2026-11-04): el nivel inicial lo da la GPU (Mac e
+  // integradas, media) acotado por el techo de la sesión; en la sesión solo baja, un nivel, y
+  // nunca mientras el visor está abierto: cambiar la calidad vuelve a crear el renderer y
+  // recompilar todo (1 s en la laptop de referencia, 5 s con la CPU limitada ×4), un congelamiento
+  // tan malo como el que se quiere evitar. Con el grafo precompilado desde hace
+  // `CALIDAD_ASENTADA_MS`, el reloj pausado desde hace `CALIDAD_PAUSA_MS` y los fps de los últimos
+  // 3 s por debajo de `LOWER_BELOW_FPS`, el nivel de abajo queda como techo de la sesión
+  // (`sessionStorage`) y se aplica la próxima vez que se abre el 3D. La pérdida del dispositivo
+  // sí baja al instante (`recovery`).
+  useEffect(() => {
+    if (controles.calidad !== "auto" || !clock || !grafoListo) return undefined;
+    const listoEn = performance.now();
+    let pausadoDesde: number | null = null;
     const id = window.setInterval(() => {
-      const perf = window.__croquisPerf;
-      if (!perf || perf.frameMs.length < 240 || window.__croquisGraphReady === false) return;
-      const fps = recentFps(perf.frameMs, 120);
+      if (window.__croquisGraphReady === false || !window.__croquisReady || clock.get().playing) {
+        pausadoDesde = null;
+        return;
+      }
+      const ahora = performance.now();
+      pausadoDesde ??= ahora;
+      if (ahora - listoEn < CALIDAD_ASENTADA_MS || ahora - pausadoDesde < CALIDAD_PAUSA_MS) return;
+      const fps = fpsEnVentana(window.__croquisPerf?.frameMs ?? [], 3000);
       if (!Number.isFinite(fps)) return;
-      setTrial((tr) => {
-        const next = recordTrial(tr, fps, info.backend);
-        if (next.decided) saveBackend(next.current);
-        return next;
-      });
+      const abajo = lowerQualityIfSlow(calidad, fps);
+      if (abajo !== calidad && leerTechoSesion() !== abajo) {
+        marcar(
+          `calidad automática: ${abajo} al volver a abrir el 3D (${Math.round(fps)} fps en pausa)`,
+        );
+        guardarTechoSesion(abajo);
+        updateDiagnostico({
+          calidadMotivo: `automática: ${calidad} ahora; ${abajo} al volver a abrir el 3D (${Math.round(fps)} fps en pausa)`,
+        });
+      }
     }, 1000);
     return () => window.clearInterval(id);
-  }, [controles.renderer, trial.decided, info, setTrial]);
-
-  // Calidad automática con histéresis según los fps medidos (PLAN §7.8), una vez elegido el backend.
-  useEffect(() => {
-    if (controles.calidad !== "auto" || (controles.renderer === "auto" && !trial.decided))
-      return undefined;
-    const id = window.setInterval(() => {
-      if (window.__croquisGraphReady === false || !window.__croquisReady) return;
-      const fps = recentFps(window.__croquisPerf?.frameMs ?? [], 90);
-      if (Number.isFinite(fps)) {
-        setAutoAjustada((q) =>
-          clampToCeiling(nextQualityLevel(q ?? gpu?.level ?? "media", fps), recovery.techo),
-        );
-      }
-    }, 3000);
-    return () => window.clearInterval(id);
-  }, [controles.calidad, controles.renderer, trial.decided, gpu, recovery.techo]);
+  }, [controles.calidad, clock, grafoListo, calidad]);
 
   const env = useMemo(
     () =>
@@ -742,6 +850,7 @@ export function VisorEscena({
         resultado={res}
         clock={clock}
         camera={cameraMode}
+        cameraLive={camaraViva}
         driverVehicleId={driverId}
         quality={
           principal ? calidad : calidad === "ultra" || calidad === "alta" ? "media" : calidad
@@ -756,6 +865,8 @@ export function VisorEscena({
         onError={(e) => setError(`${t.sinGpu} ${e.message}`)}
         onDeviceLost={principal ? onDeviceLost : undefined}
         onGraphReady={principal ? setGrafoListo : undefined}
+        onShown={principal ? marcarEnPantalla : undefined}
+        activo={activo}
         generation={generacion}
         className="h-full w-full"
       />
@@ -830,7 +941,7 @@ export function VisorEscena({
           ) : (
             <div className="t-nota grid h-full place-items-center">{t.cargando}</div>
           )}
-          {dibujo && clock && !error && !rendido && !grafoListo ? (
+          {dibujo && clock && !error && !rendido && !enPantalla ? (
             <p
               role="status"
               className="t-nota vidrio absolute top-3 left-3 px-3 py-1 text-texto"
@@ -838,6 +949,9 @@ export function VisorEscena({
             >
               {t.preparando}
             </p>
+          ) : null}
+          {dibujo && clock && !error && !rendido && enPantalla && !grafoListo ? (
+            <AvancePrecompilado texto={t.preparandoResto} />
           ) : null}
           {avisoRecuperacion ? (
             <p
@@ -891,7 +1005,10 @@ export function VisorEscena({
                   role="radio"
                   aria-checked={sel}
                   title={o.valor === "libre" ? t.camaras.libreAyuda : undefined}
-                  onClick={() => onControl("camara", o.valor)}
+                  onClick={() => {
+                    camaraViva.current = o.valor as CameraMode;
+                    onControl("camara", o.valor);
+                  }}
                   className={`boton-secundario min-h-11 px-4 ${sel ? "border-texto bg-superficie-alta" : ""}`}
                 >
                   {o.texto}
@@ -985,17 +1102,7 @@ export function VisorEscena({
           {info ? (
             <span className="t-nota cifras pb-3" data-testid="backend">
               {info.backend === "webgpu" ? "WebGPU" : "WebGL 2"}
-              {controles.renderer === "auto" &&
-              trial.decided &&
-              Object.keys(trial.measured).length > 0
-                ? ` · ${t.elegido(
-                    Object.entries(trial.measured)
-                      .map(
-                        ([k, v]) => `${k === "webgpu" ? "WebGPU" : "WebGL 2"} ${Math.round(v)} fps`,
-                      )
-                      .join(", "),
-                  )}`
-                : ""}
+              {controles.renderer === "auto" ? ` · ${t.elegido(gpu?.kind ?? "")}` : ""}
             </span>
           ) : null}
         </div>
