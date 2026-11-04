@@ -29,6 +29,7 @@ import {
   MeshBasicMaterial,
   HemisphereLight,
   Object3D,
+  PointLight,
   PerspectiveCamera,
   Scene,
   Vector3,
@@ -44,7 +45,7 @@ import {
   damageCamera,
   personCamera,
   driverCamera,
-  DRIVER_EYE_LIFT_M,
+  driverEyeHeight,
   DRIVER_NEAR_M,
   exportCameras,
   freeCameraStart,
@@ -77,7 +78,7 @@ import {
 import { recentFps } from "../backend-choice";
 import { attachDebris } from "../debris-scene";
 import { attachRollovers } from "../rollover-scene";
-import { buildVisibilityOverlay, eyeHeightFor } from "../visibility-overlay";
+import { buildVisibilityOverlay } from "../visibility-overlay";
 import { sunShadowFrame } from "../shadow-frame";
 import { BODY_BASE_URL, loadBodies } from "../body-assets";
 import { PostEffects } from "./PostEffects";
@@ -102,7 +103,6 @@ import {
 } from "../scene-graph";
 import type { ViewerExportApi } from "../export/capture";
 import { seek } from "../timeline";
-import { seatHeight } from "../vehicle-geometry";
 import {
   loadVehicleModels,
   modelClassesFor,
@@ -845,6 +845,18 @@ function SceneContent({
     if (!v) return undefined;
     return { v, eye: driverEye(resultado, v) };
   }, [resultado, driverVehicleId]);
+  // Luz de relleno en la cabina (René, 2026-11-04): desde el asiento, tablero, volante y postes
+  // salían negros (dentro del vehículo no llega el sol ni el cielo). Un foco puntual de corto
+  // alcance en los ojos del conductor, solo con su cámara, los deja en gris oscuro.
+  const cabinLight = useMemo(() => {
+    const l = new PointLight(env.night ? "#ffe6c0" : "#ffffff", 0, CABIN_LIGHT_RANGE_M, 2);
+    l.name = "luz_cabina";
+    return l;
+  }, [env.night]);
+  useEffect(() => {
+    cabinLight.intensity = camera === "conductor" ? (env.night ? 2.4 : 6.0) : 0;
+    cabinLight.visible = camera === "conductor";
+  }, [cabinLight, camera, env.night]);
   // Desde los ojos del conductor no se dibuja su propia cabeza ni la de quien va a bordo de su
   // vehículo (quedarían pegadas a la cámara); se restauran al cambiar de cámara.
   useEffect(() => {
@@ -1046,9 +1058,12 @@ function SceneContent({
         up: [persp.up.x, persp.up.y, persp.up.z],
       };
     } else if (camera === "cenital") applyPose(persp, settle(overheadCamera(resultado)));
-    else if (camera === "conductor" && driver)
-      applyPose(persp, settle(driverCamera(driver.v, t, driver.eye)));
-    else if (camera === "cinematica") {
+    else if (camera === "conductor" && driver) {
+      const pose = settle(driverCamera(driver.v, t, driver.eye));
+      applyPose(persp, pose);
+      // El foco va con los ojos, un poco más arriba y atrás (ilumina tablero y postes de frente).
+      cabinLight.position.set(pose.position[0], pose.position[1] + 0.15, pose.position[2]);
+    } else if (camera === "cinematica") {
       const pose = settle(cinematicCamera(resultado, t));
       applyPose(persp, pose);
       fx.focus = cinematicFocus(pose);
@@ -1063,25 +1078,18 @@ function SceneContent({
       {compiled ? <primitive object={compiled.root} /> : null}
       <primitive object={lights} />
       {precipitation ? <primitive object={precipitation.object} /> : null}
+      <primitive object={cabinLight} />
     </>
   );
 }
 
 /**
- * Altura del ojo del análisis de visibilidad del solver (sin él, asiento + 0.62 m), más
- * `DRIVER_EYE_LIFT_M` para la cámara: a la altura del análisis (1.08 m, AASHTO) el tablero de los
- * modelos ocupaba media pantalla (capturas `docs/cesvi/t1/conductor/`, ADR 0102).
+ * Altura del ojo de la cámara del conductor: por clase (`driverEyeHeight`, ADR 0102). A la altura
+ * del análisis de visibilidad (1.08 m, AASHTO) el tablero de los modelos ocupaba media pantalla y
+ * en una pickup el ojo quedaba bajo el cofre (capturas `docs/cesvi/t1/conductor/`).
  */
-function driverEye(resultado: Resultado, v: Resultado["vehiculos"][number]): number {
-  return (
-    (eyeHeightFor(resultado, v.id) ??
-      seatHeight(v.clase, {
-        length: v.dimensiones.largo_m,
-        width: v.dimensiones.ancho_m,
-        height: v.dimensiones.alto_m,
-        wheelbase: v.dimensiones.distancia_entre_ejes_m,
-      }) + 0.62) + DRIVER_EYE_LIFT_M
-  );
+function driverEye(_resultado: Resultado, v: Resultado["vehiculos"][number]): number {
+  return driverEyeHeight(v.clase, v.dimensiones.alto_m);
 }
 
 function applyPose(cam: PerspectiveCamera, pose: CameraPose): void {
@@ -1145,6 +1153,8 @@ function PerfProbe({ backend }: { backend: () => RendererInfo["backend"] | undef
 
 /** Errores seguidos del ciclo de dibujo que cuentan como pérdida del visor. */
 const FRAME_ERRORS_BEFORE_LOSS = 30;
+/** Alcance del foco de relleno de la cabina (m): la cabina y nada más. */
+const CABIN_LIGHT_RANGE_M = 2.6;
 
 /**
  * Límite de error del visor: lo que lance React al montar o actualizar la escena no deja la

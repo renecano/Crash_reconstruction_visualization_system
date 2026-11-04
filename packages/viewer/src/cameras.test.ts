@@ -12,6 +12,10 @@ import {
   exportCameras,
   mostDamaged,
   driverCamera,
+  driverEyeHeight,
+  driverEyeOffset,
+  DRIVER_LOOK_M,
+  DRIVER_PITCH_DEG,
   freeCameraStart,
   overheadCamera,
 } from "./cameras";
@@ -54,6 +58,44 @@ describe("cámaras", () => {
     const tgt = fromThree(cam.target);
     const ang = Math.atan2(tgt.y - pos.y, tgt.x - pos.x);
     expect(Math.abs(Math.atan2(Math.sin(ang - p.yaw), Math.cos(ang - p.yaw)))).toBeLessThan(1e-9);
+  });
+
+  it("el ojo del conductor por clase sube del sedán a la van y nunca pasa del techo", () => {
+    const sedan = driverEyeHeight("sedan_compacto", 1.49);
+    const suv = driverEyeHeight("suv_compacta", 1.64);
+    const pickup = driverEyeHeight("pickup", 1.85);
+    const van = driverEyeHeight("van", 2.28);
+    const bus = driverEyeHeight("autobus", 3.15);
+    expect(sedan).toBeLessThan(suv);
+    expect(suv).toBeLessThan(pickup);
+    expect(pickup).toBeLessThan(van);
+    expect(van).toBeLessThan(bus);
+    // Un vehículo bajito: el ojo queda 0.22 m bajo el techo, no en el valor de la clase.
+    expect(driverEyeHeight("sedan_compacto", 1.2)).toBeCloseTo(0.98, 9);
+    expect(driverEyeHeight(undefined, 1.5)).toBe(driverEyeHeight("sedan_compacto", 1.5));
+  });
+
+  it("la mirada baja DRIVER_PITCH_DEG y el ojo queda dentro del vehículo, a la izquierda", async () => {
+    const r = await loadResultado("lateral_interseccion");
+    for (const v of r.vehiculos) {
+      const cam = driverCamera(v, -1, 1.3);
+      const pos = fromThree(cam.position);
+      const tgt = fromThree(cam.target);
+      const drop = pos.height - tgt.height;
+      expect(drop).toBeCloseTo(DRIVER_LOOK_M * Math.tan((DRIVER_PITCH_DEG * Math.PI) / 180), 9);
+      const [fwd, left] = driverEyeOffset(
+        v.clase,
+        v.dimensiones.largo_m,
+        v.dimensiones.ancho_m,
+        v.dimensiones.distancia_entre_ejes_m,
+      );
+      expect(Math.abs(fwd)).toBeLessThan(v.dimensiones.largo_m / 2);
+      expect(left).toBeGreaterThanOrEqual(0);
+      expect(left).toBeLessThan(v.dimensiones.ancho_m / 2);
+    }
+    // La pickup lleva el ojo adelante del centro de masa (la cabina va adelante de la caja).
+    expect(driverEyeOffset("pickup", 5.26, 1.85, 3.15)[0]).toBeGreaterThan(0.3);
+    expect(driverEyeOffset("sedan_compacto", 4.4, 1.7, 2.5)[0]).toBeGreaterThan(0);
   });
 
   it("la cinematográfica es determinista y gira con el tiempo", async () => {
