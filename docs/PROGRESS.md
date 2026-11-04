@@ -1727,11 +1727,42 @@ Rama `fix/visor-3d-diag`, ADR 0102. René probó la app en producción en comput
   En la laptop alta y ultra no terminan de precompilar en 7 min (9 y 4 fps mientras compilan, en los dos backends): es lentitud de la GPU integrada, no un error; con el aviso en pantalla y sin errores de GPU, en las computadoras potentes deben llegar en segundos. **Pendiente de confirmar por René con `?diag=1`** en esas computadoras (captura del panel).
 
 - **Pruebas:** `recovery.test.ts`, `diagnostics.test.ts`, `cameras.test.ts`; e2e `visor.spec.ts` (`?diag=1` y una pérdida simulada con `window.__croquisGl.onDeviceLost` que recrea el visor sin pantalla en blanco).
+- **Fusionado y desplegado:** PR #158 en `main` (`df1c280`); Vercel lo publicó en producción el 2026-11-04 (deployment del commit, `success`).
+- **Cámara del conductor, segunda pasada (comentarios de René sobre las capturas; rama `fix/camara-conductor`):** luz de relleno en la cabina solo con esa cámara; altura del ojo por clase y mirada 7° abajo (horizonte en el tercio superior, techo apenas visible); la pickup con el ojo 0.6 m adelante del centro de masa (la cabina va adelante de la caja: con el ojo en el centro la cámara quedaba detrás del respaldo). Medido con `eval/t1_conductor.mjs` (`eval/results/t1_conductor.json`): fracción de pantalla en negro por vista, meta ≤ 35 %; las capturas de referencia pintan el backend fijo (`renderer=webgl`), porque con «auto» la prueba de backend recreaba el lienzo justo al capturar.
+
+  | Escena               | Conductor | Negro  |
+  | -------------------- | --------- | ------ |
+  | alcance              | A         | 0.8 %  |
+  | alcance              | B         | 7.6 %  |
+  | carambola            | A         | 0.8 %  |
+  | carambola            | B         | 7.6 %  |
+  | carambola            | C         | 0.9 %  |
+  | frontal_curva        | A         | 1.0 %  |
+  | frontal_curva        | B         | 3.1 %  |
+  | glorieta             | A         | 0.7 %  |
+  | glorieta             | B         | 1.2 %  |
+  | interseccion_toluca  | A         | 0.8 %  |
+  | interseccion_toluca  | B         | 0.7 %  |
+  | lateral_interseccion | A         | 0.3 %  |
+  | lateral_interseccion | B         | 5.9 %  |
+  | motociclista         | A         | 0.8 %  |
+  | motociclista         | B         | 1.1 %  |
+  | nocturno_lluvia      | A         | 13.4 % |
+  | nocturno_lluvia      | B         | 11.5 % |
+  | objeto_fijo_arbol    | A         | 7.4 %  |
+  | peaton_cruce         | A         | 7.9 %  |
+  | poste                | A         | 21.5 % |
+  | reversa              | A         | 0.7 %  |
+  | reversa              | B         | 8.0 %  |
+  | volcadura            | A         | 32.7 % |
+  | volcadura            | B         | 0.8 %  |
+
+  Cumple: sí (peor volcadura A, 32.7 %). Capturas en `docs/cesvi/t1/conductor/`.
 
 #### Resumen para René (3D en blanco y cámara del conductor)
 
 - **Qué era:** en alta y ultra con WebGPU (las computadoras con tarjeta de video), el pase de oclusión ambiental no compilaba y el visor dejaba de dibujar: quedaba el cielo, casi blanco. En ultra fallaba también el pipeline de reflejos. En la laptop (WebGL 2) no pasaba.
-- **Qué hay ahora:** los pases de postproceso sin MSAA y los reflejos en un destino; diagnóstico con `?diag=1`; si el dispositivo se pierde, el visor se recrea solo, baja de calidad si se repite y, si no puede, te ofrece «Reintentar» o «Usar calidad media»; nunca pantalla blanca. La cámara del conductor va en los ojos del conductor (70°, plano cercano 5 cm).
+- **Qué hay ahora:** los pases de postproceso sin MSAA y los reflejos en un destino; diagnóstico con `?diag=1`; si el dispositivo se pierde, el visor se recrea solo, baja de calidad si se repite y, si no puede, te ofrece «Reintentar» o «Usar calidad media»; nunca pantalla blanca. **Ya está en producción** (PR #158). La cámara del conductor va en los ojos del conductor (70°, plano cercano 5 cm) y, con tus comentarios, en una segunda pasada: luz de relleno en la cabina, ojo por clase, mirada 7° abajo, pickup corregida; ninguna vista de conductor pasa del 35 % de negro (peor: volcadura A, 32.7 %).
 - **Cómo probarlo:** en producción abre el visor con `?diag=1` (p. ej. `/visor?escena=lateral_interseccion&calidad=auto&diag=1`) en las computadoras potentes y mándame la captura del panel de abajo a la izquierda (backend, GPU, calidad, memoria, fps, pérdida, último error). Prueba también `calidad=ultra` y la cámara «Conductor A/B».
 - **Qué necesito de ti:** esa captura; aquí no puedo correr alta ni ultra a velocidad real.
 
