@@ -122,15 +122,18 @@ export function hdriRotationY(sceneSunAzimuthDeg: number, hdriSunAzimuthDeg: num
 
 /** Color de la niebla: el del horizonte (perspectiva aérea), no el del cenit. */
 export function fogColorFor(env: Env): string {
-  if (env.night) return env.streetLights ? "#26251f" : "#0f1322";
-  if (overcast(env)) return "#aeb5bb";
+  // De noche, azul oscuro neutro a casi negro (T1.3c; antes el alumbrado la teñía de oliva); de
+  // día, un horizonte azulado y no casi blanco (T1.3c: con #cfdbe6 el cielo bajo se veía blanco).
+  if (env.night) return env.streetLights ? "#12161f" : "#0b0e18";
+  if (overcast(env)) return "#a8b1ba";
   if (twilight(env)) return "#d9bba7";
-  return "#cfdbe6";
+  return "#9fb3c6";
 }
 
 /** Colores del domo de noche (`sky-scene.ts`): horizonte y cenit, con o sin alumbrado. */
 export function nightSkyColors(streetLights: boolean): { horizon: string; zenith: string } {
+  // Azul oscuro neutro a casi negro (T1.3c, René): el horizonte con alumbrado ya no es pardo.
   return streetLights
-    ? { horizon: "#2a2823", zenith: "#06080f" }
-    : { horizon: "#141a2e", zenith: "#04060d" };
+    ? { horizon: "#1b2030", zenith: "#04060b" }
+    : { horizon: "#10162a", zenith: "#030509" };
 }

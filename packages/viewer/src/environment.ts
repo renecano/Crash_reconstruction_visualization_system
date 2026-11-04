@@ -255,7 +255,9 @@ export function environmentFor(input: EnvironmentInput): EnvironmentSettings {
     surface,
     precipitation,
     streetLights: alumbrado,
-    turbidity: overcast ? 10 : 2.5,
+    // Despejado más limpio (T1.3c): con 2.5 el cielo bajo, que es lo que ve la cámara a nivel
+    // de calle, salía casi blanco.
+    turbidity: overcast ? 10 : 1.6,
     supuestos,
   };
 }

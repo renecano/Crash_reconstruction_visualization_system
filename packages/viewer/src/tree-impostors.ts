@@ -12,9 +12,12 @@ import {
   BufferAttribute,
   BufferGeometry,
   CylinderGeometry,
+  DataTexture,
   DoubleSide,
   Group,
   InstancedMesh,
+  LinearFilter,
+  LinearMipmapLinearFilter,
   Matrix4,
   Quaternion,
   SRGBColorSpace,
@@ -24,8 +27,10 @@ import {
 } from "three";
 import { mergeGeometries } from "three/examples/jsm/utils/BufferGeometryUtils.js";
 import {
+  abs,
   cameraPosition,
   color,
+  dot,
   float,
   fract,
   hash,
@@ -33,6 +38,8 @@ import {
   length,
   mix,
   normalMap,
+  normalize,
+  normalWorld,
   positionLocal,
   positionWorld,
   sin,
@@ -191,7 +198,11 @@ function cardMaterial(
   // De lejos los mipmaps promedian el alfa y el recorte a 0.5 deshacía el árbol: el alfa sube
   // con la distancia para que la silueta se mantenga.
   const far = smoothstep(float(40), float(260), length(positionWorld.sub(cameraPosition)));
-  m.colorNode = vec4(rgb, diff.a.mul(mix(float(1), float(2.6), far)));
+  // Una tarjeta vista de canto es una línea vertical (la «costura» de las tarjetas cruzadas,
+  // T1.3c): su alfa se desvanece con el ángulo entre la normal y la vista.
+  const view = normalize(cameraPosition.sub(positionWorld));
+  const canto = smoothstep(float(0.08), float(0.38), abs(dot(normalize(normalWorld), view)));
+  m.colorNode = vec4(rgb, diff.a.mul(mix(float(1), float(2.6), far)).mul(canto));
   m.normalNode = normalMap(texture(maps.nor, uv()), vec2(1, 1));
   if (opts.sway) {
     // Vaivén leve de las puntas (crece con la altura): cada árbol con su fase.
@@ -249,11 +260,53 @@ export function buildTreeImpostors(
 }
 
 /** Frondas por palmera y largo de cada una como fracción de la altura. */
-export const PALM_FRONDS = 9;
+export const PALM_FRONDS = 12;
+
+let frondTex: Texture | null = null;
+
+/**
+ * Textura de una fronda (T1.3c): foliolos con bordes suaves, vena central y punta que se
+ * estrecha, en un mapa con mipmaps. Antes el patrón se calculaba por pixel con `step` y el
+ * recorte alfa lo volvía escalera de lejos (la palmera pixeleada).
+ */
+export function frondTexture(): Texture {
+  if (frondTex) return frondTex;
+  const W = 128;
+  const H = 512;
+  const data = new Uint8Array(W * H * 4);
+  for (let y = 0; y < H; y++) {
+    const v = (y + 0.5) / H; // a lo largo de la fronda (0 pie, 1 punta)
+    for (let x = 0; x < W; x++) {
+      const u = (x + 0.5) / W - 0.5; // ancho, −0.5…0.5
+      const half = 0.5 * (1 - 0.65 * v); // la fronda se estrecha hacia la punta
+      const leaf = 0.5 + 0.5 * Math.sin(v * 30 * Math.PI * 2);
+      const leaflet = Math.min(1, Math.max(0, (leaf - 0.25) / 0.2));
+      const edge = Math.min(1, Math.max(0, (half - Math.abs(u)) / 0.04));
+      // La fronda es sólida (el alfa solo recorta la silueta): los foliolos se sugieren con el
+      // tono, no con huecos, que de lejos se veían como rayas (T1.3c).
+      const a = edge;
+      const sombra = 0.72 + 0.28 * leaflet;
+      const g = (0.42 + 0.22 * v) * sombra;
+      const i = 4 * (y * W + x);
+      data[i] = Math.round(255 * (0.25 + 0.15 * v) * sombra);
+      data[i + 1] = Math.round(255 * g);
+      data[i + 2] = Math.round(255 * 0.17 * sombra);
+      data[i + 3] = Math.round(255 * Math.min(1, a));
+    }
+  }
+  const t = new DataTexture(data, W, H);
+  t.colorSpace = SRGBColorSpace;
+  t.generateMipmaps = true;
+  t.minFilter = LinearMipmapLinearFilter;
+  t.magFilter = LinearFilter;
+  t.needsUpdate = true;
+  frondTex = t;
+  return t;
+}
 
 /** Una fronda: plano estrecho de 4 segmentos que se curva hacia abajo, con el pie en el origen. */
 function frond(): BufferGeometry {
-  const seg = 4;
+  const seg = 6;
   const pos: number[] = [];
   const nor: number[] = [];
   const uvs: number[] = [];
@@ -262,7 +315,7 @@ function frond(): BufferGeometry {
     const s = i / seg;
     // Se arquea: sube un poco y cae hacia la punta.
     const y = 0.12 * Math.sin(s * Math.PI) - 0.35 * s * s;
-    const w = 0.11 * (1 - 0.7 * s);
+    const w = 0.14 * (1 - 0.55 * s);
     pos.push(-w, y, s, w, y, s);
     nor.push(0, 1, 0, 0, 1, 0);
     uvs.push(0, s, 1, s);
@@ -317,14 +370,11 @@ export function buildPalms(
     roughness: 0.85,
     metalness: 0,
   });
-  // Foliolos: franjas a lo largo de la fronda con una vena central; se estrechan hacia la punta.
-  const u = uv();
-  const leaflet = step(float(0.35), fract(u.y.mul(30)));
-  const vena = smoothstep(float(0.08), float(0.0), u.x.sub(0.5).abs());
-  const borde = smoothstep(float(1.0), float(0.6), u.x.sub(0.5).abs().mul(2).add(u.y.mul(0.5)));
-  const alpha = leaflet.max(vena).mul(borde);
-  const verde = mix(color("#3f6b2a"), color("#6d9a3a"), u.y);
-  frondMat.colorNode = vec4(opts.night ? verde.mul(0.75) : verde, alpha);
+  // Foliolos desde la textura con mipmaps (T1.3c); el alfa sube de lejos como en los impostores.
+  const fr = texture(frondTexture(), uv());
+  const farP = smoothstep(float(30), float(200), length(positionWorld.sub(cameraPosition)));
+  const verde = opts.night ? fr.rgb.mul(0.75) : fr.rgb;
+  frondMat.colorNode = vec4(verde, fr.a.mul(mix(float(1), float(2.2), farP)));
   const crowns = new InstancedMesh(palmCrown(), frondMat, instances.length);
   crowns.name = "frondas";
   const m4 = new Matrix4();

@@ -162,11 +162,24 @@ export function buildBuildings(
     .sample(vec2(along.div(FACADE_TILE_M.lamina), up.div(FACADE_TILE_M.lamina)))
     .rgb.mul(0.8);
   const win = inWin.mul(float(1).sub(slot));
-  // Zócalo más oscuro en el primer metro y pretil más claro en el último medio metro.
+  // Relieve pintado (T1.3c): zócalo más oscuro en el primer metro, cornisa clara en los últimos
+  // 25 cm con su sombra debajo, y marcos claros de 12 cm alrededor de las ventanas.
   const zocalo = smoothstep(float(1.2), float(0.8), up).mul(wallK);
-  const pretil = smoothstep(d.y.sub(0.6), d.y.sub(0.3), up).mul(wallK);
-  let facade = mix(pared, pared.mul(0.72), zocalo);
-  facade = mix(facade, facade.mul(1.08).add(0.04), pretil);
+  const cornisa = smoothstep(d.y.sub(0.3), d.y.sub(0.2), up).mul(wallK);
+  const sombraCornisa = smoothstep(d.y.sub(0.3), d.y.sub(0.45), up)
+    .mul(smoothstep(d.y.sub(0.7), d.y.sub(0.5), up))
+    .mul(wallK);
+  const inFrame = step(0.29, wx)
+    .mul(step(wx, 0.71))
+    .mul(step(0.32, wy))
+    .mul(step(wy, 0.74))
+    .mul(step(up, d.y.sub(0.6)))
+    .mul(wallK);
+  const frame = inFrame.mul(float(1).sub(inWin)).mul(float(1).sub(slot));
+  let facade = mix(pared, pared.mul(0.74), zocalo);
+  facade = mix(facade, facade.mul(0.82), sombraCornisa);
+  facade = mix(facade, facade.mul(0.35).add(0.6), cornisa);
+  facade = mix(facade, facade.mul(0.3).add(0.62), frame);
   facade = mix(facade, lamina, slot);
   m.colorNode = mix(facade, glass, win);
   m.roughnessNode = mix(float(0.92), float(0.35), win);
@@ -216,6 +229,10 @@ function props(
   const tinacos: Matrix4[] = [];
   const antenas: Matrix4[] = [];
   const varillas: Matrix4[] = [];
+  // Relieve real (T1.3c): una cornisa que sobresale a lo largo del frente y, en los edificios de
+  // dos niveles o más, un saliente (losa de balcón) en el primer nivel.
+  const cornisas: Matrix4[] = [];
+  const salientes: Matrix4[] = [];
   const toldos: { m: Matrix4; c: Color }[] = [];
   const letreros: { m: Matrix4; c: Color }[] = [];
   const q = new Quaternion();
@@ -241,6 +258,18 @@ function props(
     if (b.antenna)
       antenas.push(at((u01(i, 31) - 0.5) * (b.w - 1.5), (u01(i, 32) - 0.5) * (b.d - 1.5), top));
     if (b.rebar) varillas.push(at(0, 0, top, b.w - 0.3, 1, b.d - 0.3));
+    cornisas.push(at(0, b.d / 2 + 0.09, top - 0.1, b.w + 0.24, 0.18, 0.22));
+    if (b.floors >= 2 && u01(i, 41) < 0.7)
+      salientes.push(
+        at(
+          (u01(i, 42) - 0.5) * b.w * 0.4,
+          b.d / 2 + 0.18,
+          base + FLOOR_M + 0.02,
+          b.w * 0.42,
+          0.14,
+          0.4,
+        ),
+      );
     const c = new Color(FACADE_PALETTE_MX[(b.color + 5) % FACADE_PALETTE_MX.length]);
     if (b.awning) {
       const tilt = new Quaternion().setFromAxisAngle(new Vector3(1, 0, 0), 0.35);
@@ -294,6 +323,10 @@ function props(
     false,
   );
   make("varillas", varillaGeo, mats.rebar, varillas);
+  const concreto = new MeshStandardNodeMaterial({ color: "#d8d1c2", roughness: 0.9, metalness: 0 });
+  const losa = new BoxGeometry(1, 1, 1);
+  make("cornisas", losa, concreto, cornisas);
+  make("salientes", losa, concreto, salientes);
   // Toldos y letreros con color por instancia.
   const colored = (
     name: string,
