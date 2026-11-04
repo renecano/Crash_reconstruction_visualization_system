@@ -111,8 +111,42 @@ export function freeCameraStart(scene: CameraScene, fov = 45): CameraPose {
 /** Campo de visión y plano cercano de la cámara del conductor (René, 2026-11-04). */
 export const DRIVER_FOV = 70;
 export const DRIVER_NEAR_M = 0.05;
-/** Cuánto sube la cámara sobre el ojo del análisis de visibilidad (ver `driverEye`). */
-export const DRIVER_EYE_LIFT_M = 0.1;
+/**
+ * Inclinación hacia abajo de la mirada (grados): con 70° de campo vertical, 7° dejan el
+ * horizonte cerca del tercio superior de la pantalla, el techo apenas asoma y el tablero no ocupa
+ * media pantalla (René, 2026-11-04; con 10° el tablero y el volante llenaban el 50 %).
+ */
+export const DRIVER_PITCH_DEG = 7;
+/** A qué distancia se fija la mirada (m). */
+export const DRIVER_LOOK_M = 25;
+
+/**
+ * Altura del ojo del conductor sobre el piso por clase (m): asiento real de cada tipo (sedán
+ * 1.15, SUV 1.3–1.45, pickup 1.45, van 1.65, camión y autobús 2.1–2.4, dos ruedas 1.25–1.45),
+ * y nunca más arriba que el techo menos 0.22 m. Es la cámara; el análisis de visibilidad del
+ * solver conserva su propio ojo (AASHTO).
+ */
+const DRIVER_EYE_M: Record<string, number> = {
+  sedan_compacto: 1.2,
+  sedan_mediano: 1.2,
+  hatchback: 1.22,
+  suv_compacta: 1.36,
+  suv_grande: 1.62,
+  pickup: 1.5,
+  van: 1.65,
+  microbus_combi: 1.65,
+  camion_unitario: 2.1,
+  autobus: 2.3,
+  tractocamion: 2.4,
+  motocicleta: 1.35,
+  bicicleta: 1.45,
+  scooter: 1.25,
+};
+
+export function driverEyeHeight(clase: string | undefined, altoM: number): number {
+  const eye = DRIVER_EYE_M[clase ?? "sedan_compacto"] ?? 1.15;
+  return Math.min(eye, Math.max(0.9, altoM - 0.22));
+}
 
 const FRONT_CAB = new Set(["autobus", "camion_unitario", "tractocamion", "microbus_combi", "van"]);
 const TWO_WHEEL = new Set(["motocicleta", "scooter", "bicicleta"]);
@@ -134,7 +168,13 @@ export function driverEyeOffset(
 ): [number, number] {
   if (TWO_WHEEL.has(clase)) return [-0.1, 0];
   if (FRONT_CAB.has(clase)) return [0.5 * length - 1.0, Math.min(0.5 * width - 0.45, 0.45)];
-  return [-0.05 * wheelbase + 0.2, Math.min(0.37, Math.max(0, 0.5 * width - 0.5))];
+  const left = Math.min(0.37, Math.max(0, 0.5 * width - 0.5));
+  // En la pickup la cabina queda bien adelante del centro entre ejes (la caja ocupa la mitad
+  // trasera): con el ojo cerca del centro la cámara quedaba detrás del respaldo (capturas,
+  // 2026-11-04).
+  if (clase === "pickup") return [-0.05 * wheelbase + 0.6, left];
+  if (clase === "suv_grande") return [-0.05 * wheelbase - 0.1, left];
+  return [-0.05 * wheelbase + 0.2, left];
 }
 
 /** Ojos del conductor (en su asiento, a la altura del análisis de visibilidad), mirando 25 m al frente. */
@@ -155,9 +195,10 @@ export function driverCamera(
   );
   const ex = p.x + c * fwd - s * left;
   const ey = p.y + s * fwd + c * left;
+  const drop = DRIVER_LOOK_M * Math.tan((DRIVER_PITCH_DEG * Math.PI) / 180);
   return {
     position: toThree(ex, ey, eyeHeight),
-    target: toThree(ex + 25 * c, ey + 25 * s, eyeHeight - 0.4),
+    target: toThree(ex + DRIVER_LOOK_M * c, ey + DRIVER_LOOK_M * s, eyeHeight - drop),
     fov,
     up: UP_Y,
   };

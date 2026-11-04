@@ -1,0 +1,188 @@
+{
+ "name": "t1_conductor",
+ "descripcion": "Cámara del conductor en las escenas canónicas (t = −1 s, media, 1080p): fracción de la pantalla en negro (canales < 28, sin el panel de lecturas ni la leyenda); meta ≤ 35 % (René, 2026-11-04).",
+ "conductor": {
+  "generated_at": "2026-11-04T16:53:05.212Z",
+  "git_commit": "4080954",
+  "t": -1,
+  "negro_max": 0.35,
+  "cumple": true,
+  "peor": {
+   "escena": "volcadura",
+   "vehiculo": "A",
+   "archivo": "docs/cesvi/t1/conductor/volcadura-A.jpg",
+   "negro": 0.327,
+   "cumple": true
+  },
+  "capturas": [
+   {
+    "escena": "lateral_interseccion",
+    "vehiculo": "A",
+    "archivo": "docs/cesvi/t1/conductor/lateral_interseccion-A.jpg",
+    "negro": 0.003,
+    "cumple": true
+   },
+   {
+    "escena": "lateral_interseccion",
+    "vehiculo": "B",
+    "archivo": "docs/cesvi/t1/conductor/lateral_interseccion-B.jpg",
+    "negro": 0.059,
+    "cumple": true
+   },
+   {
+    "escena": "alcance",
+    "vehiculo": "A",
+    "archivo": "docs/cesvi/t1/conductor/alcance-A.jpg",
+    "negro": 0.008,
+    "cumple": true
+   },
+   {
+    "escena": "alcance",
+    "vehiculo": "B",
+    "archivo": "docs/cesvi/t1/conductor/alcance-B.jpg",
+    "negro": 0.076,
+    "cumple": true
+   },
+   {
+    "escena": "motociclista",
+    "vehiculo": "A",
+    "archivo": "docs/cesvi/t1/conductor/motociclista-A.jpg",
+    "negro": 0.008,
+    "cumple": true
+   },
+   {
+    "escena": "motociclista",
+    "vehiculo": "B",
+    "archivo": "docs/cesvi/t1/conductor/motociclista-B.jpg",
+    "negro": 0.011,
+    "cumple": true
+   },
+   {
+    "escena": "frontal_curva",
+    "vehiculo": "A",
+    "archivo": "docs/cesvi/t1/conductor/frontal_curva-A.jpg",
+    "negro": 0.01,
+    "cumple": true
+   },
+   {
+    "escena": "frontal_curva",
+    "vehiculo": "B",
+    "archivo": "docs/cesvi/t1/conductor/frontal_curva-B.jpg",
+    "negro": 0.031,
+    "cumple": true
+   },
+   {
+    "escena": "peaton_cruce",
+    "vehiculo": "A",
+    "archivo": "docs/cesvi/t1/conductor/peaton_cruce-A.jpg",
+    "negro": 0.079,
+    "cumple": true
+   },
+   {
+    "escena": "objeto_fijo_arbol",
+    "vehiculo": "A",
+    "archivo": "docs/cesvi/t1/conductor/objeto_fijo_arbol-A.jpg",
+    "negro": 0.074,
+    "cumple": true
+   },
+   {
+    "escena": "poste",
+    "vehiculo": "A",
+    "archivo": "docs/cesvi/t1/conductor/poste-A.jpg",
+    "negro": 0.215,
+    "cumple": true
+   },
+   {
+    "escena": "volcadura",
+    "vehiculo": "A",
+    "archivo": "docs/cesvi/t1/conductor/volcadura-A.jpg",
+    "negro": 0.327,
+    "cumple": true
+   },
+   {
+    "escena": "volcadura",
+    "vehiculo": "B",
+    "archivo": "docs/cesvi/t1/conductor/volcadura-B.jpg",
+    "negro": 0.008,
+    "cumple": true
+   },
+   {
+    "escena": "nocturno_lluvia",
+    "vehiculo": "A",
+    "archivo": "docs/cesvi/t1/conductor/nocturno_lluvia-A.jpg",
+    "negro": 0.134,
+    "cumple": true
+   },
+   {
+    "escena": "nocturno_lluvia",
+    "vehiculo": "B",
+    "archivo": "docs/cesvi/t1/conductor/nocturno_lluvia-B.jpg",
+    "negro": 0.115,
+    "cumple": true
+   },
+   {
+    "escena": "glorieta",
+    "vehiculo": "A",
+    "archivo": "docs/cesvi/t1/conductor/glorieta-A.jpg",
+    "negro": 0.007,
+    "cumple": true
+   },
+   {
+    "escena": "glorieta",
+    "vehiculo": "B",
+    "archivo": "docs/cesvi/t1/conductor/glorieta-B.jpg",
+    "negro": 0.012,
+    "cumple": true
+   },
+   {
+    "escena": "interseccion_toluca",
+    "vehiculo": "A",
+    "archivo": "docs/cesvi/t1/conductor/interseccion_toluca-A.jpg",
+    "negro": 0.008,
+    "cumple": true
+   },
+   {
+    "escena": "interseccion_toluca",
+    "vehiculo": "B",
+    "archivo": "docs/cesvi/t1/conductor/interseccion_toluca-B.jpg",
+    "negro": 0.007,
+    "cumple": true
+   },
+   {
+    "escena": "carambola",
+    "vehiculo": "A",
+    "archivo": "docs/cesvi/t1/conductor/carambola-A.jpg",
+    "negro": 0.008,
+    "cumple": true
+   },
+   {
+    "escena": "carambola",
+    "vehiculo": "B",
+    "archivo": "docs/cesvi/t1/conductor/carambola-B.jpg",
+    "negro": 0.076,
+    "cumple": true
+   },
+   {
+    "escena": "carambola",
+    "vehiculo": "C",
+    "archivo": "docs/cesvi/t1/conductor/carambola-C.jpg",
+    "negro": 0.009,
+    "cumple": true
+   },
+   {
+    "escena": "reversa",
+    "vehiculo": "A",
+    "archivo": "docs/cesvi/t1/conductor/reversa-A.jpg",
+    "negro": 0.007,
+    "cumple": true
+   },
+   {
+    "escena": "reversa",
+    "vehiculo": "B",
+    "archivo": "docs/cesvi/t1/conductor/reversa-B.jpg",
+    "negro": 0.08,
+    "cumple": true
+   }
+  ]
+ }
+}
