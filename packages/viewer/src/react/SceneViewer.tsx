@@ -9,7 +9,16 @@
 import type { EscenaSpec, Resultado } from "@croquis/scene-schema";
 import { longitudM } from "@croquis/scene-schema";
 import { Canvas, useFrame, useThree } from "@react-three/fiber";
-import { useEffect, useMemo, useRef, useState, type ReactElement } from "react";
+import {
+  Component,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+  type ErrorInfo,
+  type ReactElement,
+  type ReactNode,
+} from "react";
 import {
   Color,
   CubeCamera,
@@ -35,6 +44,8 @@ import {
   damageCamera,
   personCamera,
   driverCamera,
+  DRIVER_EYE_LIFT_M,
+  DRIVER_NEAR_M,
   exportCameras,
   freeCameraStart,
   overheadCamera,
@@ -56,6 +67,14 @@ import { PRECIPITATION_HEIGHT, precipitationParams } from "../precipitation";
 import { buildPrecipitation } from "../precipitation-scene";
 import { toThree } from "../coords";
 import { NIGHT_PIXEL_RATIO_MEDIA, QUALITY_PROFILES, type QualityLevel } from "../quality";
+import {
+  estimarMemoria,
+  registrarError,
+  registrarPerdida,
+  updateDiagnostico,
+  type DiagPerdida,
+} from "../diagnostics";
+import { recentFps } from "../backend-choice";
 import { attachDebris } from "../debris-scene";
 import { attachRollovers } from "../rollover-scene";
 import { buildVisibilityOverlay, eyeHeightFor } from "../visibility-overlay";
@@ -109,7 +128,18 @@ export interface SceneViewerProps {
   quality: QualityLevel;
   renderer?: RendererPreference;
   onRendererInfo?: (info: RendererInfo) => void;
+  /** No se pudo crear el renderer, o el visor lanzó al dibujar (límite de error de React). */
   onError?: (error: Error) => void;
+  /**
+   * Se perdió el dispositivo gráfico (WebGPU `device.lost`, WebGL `webglcontextlost`) o el ciclo
+   * de dibujo falla sin parar: quien monta el visor decide recrearlo (`generation`) y con qué
+   * calidad (`recovery.ts`).
+   */
+  onDeviceLost?: (info: DiagPerdida) => void;
+  /** Sube para volver a crear el renderer y la escena (recuperación). */
+  generation?: number;
+  /** El grafo vigente ya está precompilado y en pantalla (false mientras se prepara). */
+  onGraphReady?: (ready: boolean) => void;
   className?: string;
   /** Carpeta de los cuerpos de MakeHuman (`personas.json` y los .glb). */
   bodiesBaseUrl?: string;
@@ -189,6 +219,10 @@ declare global {
      * `gravaPrevia`: las manchas de grava de antes de ADR 0036, para medir el costo del cambio.
      * `osmSoloCalzada`: la red del mapa sin rayas, banquetas ni guarniciones (antes de ADR 0039).
      */
+    /** El renderer en pantalla (e2e: `__croquisGl.onDeviceLost(...)` simula una pérdida). */
+    __croquisGl?: {
+      onDeviceLost(info: { api: string; message?: string; reason?: string | null }): void;
+    };
     __croquisDiag?: {
       sombraLuna?: boolean;
       gravaPrevia?: boolean;
@@ -256,6 +290,8 @@ function SceneContent({
   onExport,
   onProcedural,
   guiada,
+  onDeviceLost,
+  onGraphReady,
   fx,
 }: Omit<SceneViewerProps, "renderer" | "onRendererInfo" | "onError" | "className"> & {
   env: EnvironmentSettings;
@@ -761,7 +797,8 @@ function SceneContent({
     shown.current = compiled;
     if (prev && prev !== compiled) prev.dispose();
     window.__croquisGraphReady = compiled === graph;
-  }, [compiled, graph]);
+    onGraphReady?.(compiled === graph);
+  }, [compiled, graph, onGraphReady]);
   // Al desmontar se desecha lo que quedó en pantalla (y el grafo nuevo, si era otro).
   useEffect(
     () => () => {
@@ -784,7 +821,10 @@ function SceneContent({
   useEffect(() => {
     const persp = cam as PerspectiveCamera;
     persp.far = 5000;
-    persp.near = 0.1;
+    // En los ojos del conductor el plano cercano es corto: el tablero y el parabrisas están a
+    // menos de 1 m (René, 2026-11-04).
+    persp.near = camera === "conductor" ? DRIVER_NEAR_M : 0.1;
+    persp.updateProjectionMatrix();
     if (camera !== "libre" || guiada) return undefined;
     const start = freeCameraStart(resultado);
     applyPose(persp, start);
@@ -805,6 +845,18 @@ function SceneContent({
     if (!v) return undefined;
     return { v, eye: driverEye(resultado, v) };
   }, [resultado, driverVehicleId]);
+  // Desde los ojos del conductor no se dibuja su propia cabeza ni la de quien va a bordo de su
+  // vehículo (quedarían pegadas a la cámara); se restauran al cambiar de cámara.
+  useEffect(() => {
+    if (camera !== "conductor" || !driver) return undefined;
+    const ocultos = graph.persons.filter(
+      (p) => p.vehicleId === driver.v.id && p.mode === "a_bordo_visible",
+    );
+    for (const p of ocultos) p.group.visible = false;
+    return () => {
+      for (const p of ocultos) p.group.visible = true;
+    };
+  }, [camera, driver, graph]);
 
   // El croquis pintado sobre el asfalto (solo en la escena guiada de la portada).
   const pintura = useMemo(() => {
@@ -912,7 +964,33 @@ function SceneContent({
     return mixed;
   };
 
+  const frameErrors = useRef({ seguidos: 0, ultimoAviso: 0 });
   useFrame((state, delta) => {
+    try {
+      drawFrame(state.size, delta);
+      frameErrors.current.seguidos = 0;
+    } catch (err) {
+      // Se registra en el diagnóstico (a lo más uno por segundo) y, si no para, se trata como
+      // una pérdida del visor para que quien lo monta lo recree (René, 2026-11-04).
+      const fe = frameErrors.current;
+      fe.seguidos += 1;
+      const now = performance.now();
+      if (now - fe.ultimoAviso > 1000) {
+        fe.ultimoAviso = now;
+        registrarError("dibujo", err);
+      }
+      if (fe.seguidos === FRAME_ERRORS_BEFORE_LOSS) {
+        onDeviceLost?.(
+          registrarPerdida({
+            api: "dibujo",
+            message: err instanceof Error ? err.message : String(err),
+            reason: "excepcion_en_el_ciclo_de_dibujo",
+          }),
+        );
+      }
+    }
+  });
+  function drawFrame(size: { width: number; height: number }, delta: number): void {
     clock.tick(Math.min(delta, 0.1), performance.now());
     const t = clock.get().t;
     // El instante que se dibuja, para las evaluaciones (`eval/t1_tirones.mjs`: qué cuadro tarda).
@@ -944,7 +1022,7 @@ function SceneContent({
       if (pose) {
         applyPose(persp, pose);
         const [cx, cy] = guiada.centro?.() ?? [0.5, 0.5];
-        const { width: w, height: h } = state.size;
+        const { width: w, height: h } = size;
         if (Math.abs(cx - 0.5) < 1e-3 && Math.abs(cy - 0.5) < 1e-3) {
           if (persp.view?.enabled) persp.clearViewOffset();
         } else {
@@ -978,7 +1056,7 @@ function SceneContent({
     else if (camera === "persona") applyPose(persp, settle(personCamera(resultado, t)));
     if (camera !== "cinematica") fx.focus = null;
     fx.blur = clock.get().playing ? impactBlurWeight(t, tImpacto) : 0;
-  });
+  }
 
   return (
     <>
@@ -989,16 +1067,20 @@ function SceneContent({
   );
 }
 
-/** Altura del ojo del análisis de visibilidad del solver; sin él, asiento + 0.62 m. */
+/**
+ * Altura del ojo del análisis de visibilidad del solver (sin él, asiento + 0.62 m), más
+ * `DRIVER_EYE_LIFT_M` para la cámara: a la altura del análisis (1.08 m, AASHTO) el tablero de los
+ * modelos ocupaba media pantalla (capturas `docs/cesvi/t1/conductor/`, ADR 0102).
+ */
 function driverEye(resultado: Resultado, v: Resultado["vehiculos"][number]): number {
   return (
-    eyeHeightFor(resultado, v.id) ??
-    seatHeight(v.clase, {
-      length: v.dimensiones.largo_m,
-      width: v.dimensiones.ancho_m,
-      height: v.dimensiones.alto_m,
-      wheelbase: v.dimensiones.distancia_entre_ejes_m,
-    }) + 0.62
+    (eyeHeightFor(resultado, v.id) ??
+      seatHeight(v.clase, {
+        length: v.dimensiones.largo_m,
+        width: v.dimensiones.ancho_m,
+        height: v.dimensiones.alto_m,
+        wheelbase: v.dimensiones.distancia_entre_ejes_m,
+      }) + 0.62) + DRIVER_EYE_LIFT_M
   );
 }
 
@@ -1061,8 +1143,143 @@ function PerfProbe({ backend }: { backend: () => RendererInfo["backend"] | undef
   return null;
 }
 
+/** Errores seguidos del ciclo de dibujo que cuentan como pérdida del visor. */
+const FRAME_ERRORS_BEFORE_LOSS = 30;
+
+/**
+ * Límite de error del visor: lo que lance React al montar o actualizar la escena no deja la
+ * página en blanco; se registra en el diagnóstico y se avisa a quien monta el visor.
+ */
+class VisorErrorBoundary extends Component<
+  { onError?: (error: Error) => void; children: ReactNode },
+  { fallo: boolean }
+> {
+  override state = { fallo: false };
+  static getDerivedStateFromError(): { fallo: boolean } {
+    return { fallo: true };
+  }
+  override componentDidCatch(error: Error, info: ErrorInfo): void {
+    registrarError("react", error);
+    if (info.componentStack) registrarError("react", new Error(info.componentStack.trim()));
+    this.props.onError?.(error);
+  }
+  override render(): ReactNode {
+    return this.state.fallo ? null : this.props.children;
+  }
+}
+
+/** Qué GPU hay detrás del renderer: `adapterInfo` de WebGPU o la cadena de WebGL 2. */
+function adapterName(r: WebGPURenderer): string | null {
+  const backend = r.backend as {
+    device?: {
+      adapterInfo?: {
+        vendor?: string;
+        architecture?: string;
+        device?: string;
+        description?: string;
+      };
+    };
+    gl?: WebGL2RenderingContext;
+  };
+  const info = backend.device?.adapterInfo;
+  if (info) {
+    const partes = [info.vendor, info.architecture, info.device, info.description].filter(
+      (x): x is string => typeof x === "string" && x.length > 0,
+    );
+    if (partes.length) return partes.join(" · ");
+  }
+  const gl = backend.gl;
+  if (gl) {
+    try {
+      const ext = gl.getExtension("WEBGL_debug_renderer_info");
+      const name: unknown = ext
+        ? gl.getParameter(ext.UNMASKED_RENDERER_WEBGL)
+        : gl.getParameter(gl.RENDERER);
+      if (typeof name === "string") return name;
+    } catch {
+      return null;
+    }
+  }
+  return null;
+}
+
+/**
+ * Lleva el diagnóstico (`?diag=1`): fps cada segundo, memoria estimada cada 4 s, y desecha el
+ * renderer al desmontar (R3F no lo hace; con cada cambio de calidad se creaba otro).
+ */
+function DiagProbe({
+  profile,
+  dpr,
+}: {
+  profile: (typeof QUALITY_PROFILES)[QualityLevel];
+  dpr: number;
+}): null {
+  const { gl, scene, size } = useThree();
+  useEffect(() => {
+    let tick = 0;
+    const id = window.setInterval(() => {
+      tick += 1;
+      const fps = recentFps(window.__croquisPerf?.frameMs ?? [], 60);
+      const cambio: Parameters<typeof updateDiagnostico>[0] = {
+        fps: Number.isFinite(fps) ? Math.round(fps) : null,
+        lienzo: [Math.round(size.width * dpr), Math.round(size.height * dpr)],
+      };
+      if (tick % 4 === 1) {
+        try {
+          cambio.memoria = estimarMemoria(
+            scene,
+            {
+              ancho: size.width,
+              alto: size.height,
+              dpr,
+              // Con postproceso los pases van sin MSAA (ADR 0102); sin él, el lienzo lleva las
+              // muestras del perfil.
+              msaaSamples: profile.ambientOcclusion || profile.bloom ? 0 : profile.msaaSamples,
+              pasosPost:
+                (profile.bloom ? 2 : 0) +
+                (profile.ambientOcclusion ? 2 : 0) +
+                (profile.temporalAA ? 2 : 0) +
+                (profile.depthOfField ? 2 : 0) +
+                (profile.motionBlur ? 1 : 0) +
+                (profile.screenReflections ? 2 : 0),
+              shadowMapSize: profile.shadowMapSize,
+              spotShadowMapSize: profile.spotShadowMapSize,
+              spotShadows: profile.spotShadowMapSize > 0 ? 4 : 0,
+            },
+            gl,
+          );
+        } catch (err) {
+          registrarError("ventana", err);
+        }
+      }
+      updateDiagnostico(cambio);
+    }, 1000);
+    return () => window.clearInterval(id);
+  }, [gl, scene, size, dpr, profile]);
+  useEffect(
+    () => () => {
+      try {
+        (gl as unknown as { dispose?: () => void }).dispose?.();
+      } catch (err) {
+        registrarError("renderer", err);
+      }
+    },
+    [gl],
+  );
+  return null;
+}
+
 export function SceneViewer(props: SceneViewerProps): ReactElement {
-  const { renderer = "auto", onRendererInfo, onError, quality, className, ...rest } = props;
+  const {
+    renderer = "auto",
+    onRendererInfo,
+    onError,
+    onDeviceLost,
+    generation = 0,
+    quality,
+    className,
+    ...rest
+  } = props;
   const env = useMemo(
     () => environmentOf(props.spec, props.ambiente),
     [props.spec, props.ambiente],
@@ -1076,46 +1293,75 @@ export function SceneViewer(props: SceneViewerProps): ReactElement {
       : Math.min(2, window.devicePixelRatio || 1) *
         profile.pixelRatio *
         (env.night && profile.level === "media" ? NIGHT_PIXEL_RATIO_MEDIA : 1);
+  useEffect(() => {
+    updateDiagnostico({ calidad: quality, preferencia: renderer, dpr, generacion: generation });
+  }, [quality, renderer, dpr, generation]);
   return (
     <div className={className} data-testid="visor-3d">
-      <Canvas
-        key={`${renderer}-${quality}`}
-        dpr={dpr}
-        shadows={profile.shadows ? "percentage" : false}
-        camera={{ fov: 45, near: 0.1, far: 5000, position: [30, 30, 30] }}
-        gl={async (defaults) => {
-          try {
-            const { WebGPURenderer: Renderer, UnsignedByteType } = await import("three/webgpu");
-            const r = new Renderer({
-              canvas: defaults.canvas as HTMLCanvasElement,
-              antialias: profile.msaaSamples > 0,
-              ...(profile.msaaSamples > 0 ? { samples: profile.msaaSamples } : {}),
-              alpha: false,
-              forceWebGL: renderer === "webgl",
-              // Búfer de 8 bits en baja y media: menos ancho de banda en GPU integrada (E6).
-              ...(profile.level === "baja" || profile.level === "media"
-                ? { outputBufferType: UnsignedByteType }
-                : {}),
-            });
-            await r.init();
-            const backend = (r.backend as { isWebGPUBackend?: boolean }).isWebGPUBackend
-              ? "webgpu"
-              : "webgl2";
-            backendRef.current = backend;
-            onRendererInfo?.({ backend, preference: renderer });
-            return r;
-          } catch (err) {
-            onError?.(err instanceof Error ? err : new Error(String(err)));
-            throw err;
-          }
-        }}
-      >
-        <SceneContent {...rest} quality={quality} env={env} fx={fx} />
-        {profile.ambientOcclusion || profile.bloom ? (
-          <PostEffects profile={profile} fx={fx} />
-        ) : null}
-        <PerfProbe backend={() => backendRef.current} />
-      </Canvas>
+      <VisorErrorBoundary onError={onError}>
+        <Canvas
+          key={`${renderer}-${quality}-${generation}`}
+          dpr={dpr}
+          shadows={profile.shadows ? "percentage" : false}
+          camera={{ fov: 45, near: 0.1, far: 5000, position: [30, 30, 30] }}
+          gl={async (defaults) => {
+            try {
+              const { WebGPURenderer: Renderer, UnsignedByteType } = await import("three/webgpu");
+              const r = new Renderer({
+                canvas: defaults.canvas as HTMLCanvasElement,
+                antialias: profile.msaaSamples > 0,
+                ...(profile.msaaSamples > 0 ? { samples: profile.msaaSamples } : {}),
+                alpha: false,
+                forceWebGL: renderer === "webgl",
+                // Búfer de 8 bits en baja y media: menos ancho de banda en GPU integrada (E6).
+                ...(profile.level === "baja" || profile.level === "media"
+                  ? { outputBufferType: UnsignedByteType }
+                  : {}),
+              });
+              await r.init();
+              const backend = (r.backend as { isWebGPUBackend?: boolean }).isWebGPUBackend
+                ? "webgpu"
+                : "webgl2";
+              backendRef.current = backend;
+              // Pérdida del dispositivo (WebGPU `device.lost`, WebGL `webglcontextlost`): three deja
+              // de dibujar; aquí se registra y se avisa para recrear el visor (René, 2026-11-04).
+              const rr = r as unknown as {
+                onDeviceLost: (info: {
+                  api: string;
+                  message?: string;
+                  reason?: string | null;
+                }) => void;
+                onError?: (info: { api: string; type?: string; message?: string }) => void;
+              };
+              rr.onDeviceLost = (info) => {
+                onDeviceLost?.(registrarPerdida(info));
+              };
+              rr.onError = (info) => {
+                registrarError(
+                  "gpu",
+                  new Error(`${info.api} ${info.type ?? ""}: ${info.message ?? ""}`),
+                );
+              };
+              updateDiagnostico({ backend, preferencia: renderer, adaptador: adapterName(r) });
+              // Para las pruebas (simular una pérdida) y el diagnóstico desde la consola.
+              window.__croquisGl = rr;
+              onRendererInfo?.({ backend, preference: renderer });
+              return r;
+            } catch (err) {
+              registrarError("renderer", err);
+              onError?.(err instanceof Error ? err : new Error(String(err)));
+              throw err;
+            }
+          }}
+        >
+          <SceneContent {...rest} quality={quality} env={env} fx={fx} onDeviceLost={onDeviceLost} />
+          {profile.ambientOcclusion || profile.bloom ? (
+            <PostEffects profile={profile} fx={fx} />
+          ) : null}
+          <PerfProbe backend={() => backendRef.current} />
+          <DiagProbe profile={profile} dpr={dpr} />
+        </Canvas>
+      </VisorErrorBoundary>
     </div>
   );
 }

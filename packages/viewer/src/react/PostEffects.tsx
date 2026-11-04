@@ -31,19 +31,22 @@ import { traa } from "three/addons/tsl/display/TRAANode.js";
 import {
   builtinAOContext,
   convertToTexture,
+  dot,
   emissive,
+  float,
   metalness,
   mrt,
   normalView,
   output,
-  packNormalToRGB,
   pass,
   roughness,
   sample,
+  saturate,
   screenUV,
+  sqrt,
   uniform,
-  unpackRGBToNormal,
-  vec2,
+  vec3,
+  vec4,
   velocity,
 } from "three/tsl";
 import { RenderPipeline, type Node, type WebGPURenderer } from "three/webgpu";
@@ -71,20 +74,32 @@ export function PostEffects({ profile, fx }: { profile: QualityProfile; fx: FxSt
   const reflections = profile.screenReflections;
   const built = useMemo(() => {
     const p = new RenderPipeline(gl as unknown as WebGPURenderer);
-    const scenePass = pass(scene, camera);
+    // Sin MSAA en los pases (ADR 0102): heredan las muestras del renderer (4 en alta y ultra) y
+    // WebGPU no puede ni muestrear ni copiar una profundidad multimuestra a una textura sencilla
+    // («sample count (4) and destination sample count (1) does not match» en cada cuadro: el visor
+    // dejaba de dibujar). El antialiasing de alta y ultra es el temporal (TRAA).
+    const scenePass = pass(scene, camera, { samples: 0 });
     const needVelocity = temporalAA || blur;
     scenePass.setMRT(
       mrt({
         output,
         ...(withBloom ? { emissive } : {}),
         ...(needVelocity ? { velocity } : {}),
+        // Normal (xy en vista, z se reconstruye) y metal/rugosidad en un solo destino: WebGPU
+        // admite 32 bytes por muestra entre todos los destinos (cuatro RGBA16F); con normal y
+        // metal/rugosidad aparte eran 40 y el pipeline de ultra no se creaba (ADR 0102).
         ...(reflections
-          ? { normal: packNormalToRGB(normalView), metalrough: vec2(metalness, roughness) }
+          ? { nmr: vec4(normalView.xy.mul(0.5).add(0.5), metalness, roughness) }
           : {}),
       }),
     );
     if (ambientOcclusion) {
-      const prePass = pass(scene, camera);
+      // Sin MSAA: el pase hereda las muestras del renderer (4 en alta y ultra) y la GTAO hace
+      // `textureGather` sobre la profundidad, que WGSL no admite en una textura multimuestra. El
+      // módulo de sombreado quedaba inválido y, con él, todos los búferes de comandos siguientes:
+      // el visor dejaba de dibujar (pantalla blanca en las computadoras que eligen alta o ultra
+      // con WebGPU; René, 2026-11-04). La oclusión no necesita antialiasing.
+      const prePass = pass(scene, camera, { samples: 0 });
       prePass.setMRT(mrt({ output: normalView }));
       const aoPass = ao(prePass.getTextureNode("depth"), prePass.getTextureNode(), camera);
       scenePass.contextNode = builtinAOContext(aoPass.getTextureNode().sample(screenUV).r);
@@ -92,15 +107,17 @@ export function PostEffects({ profile, fx }: { profile: QualityProfile; fx: FxSt
     const depth = scenePass.getTextureNode("depth");
     let color: Node<"vec4"> = scenePass.getTextureNode("output");
     if (reflections) {
-      const normalTex = scenePass.getTextureNode("normal");
-      const metalRough = scenePass.getTextureNode("metalrough");
+      const nmr = scenePass.getTextureNode("nmr");
       const reflejos = ssr(
         color,
         depth,
-        sample((uv) => unpackRGBToNormal(normalTex.sample(uv))),
+        sample((uv) => {
+          const xy = nmr.sample(uv).xy.mul(2).sub(1);
+          return vec3(xy, sqrt(saturate(float(1).sub(dot(xy, xy)))));
+        }),
         {
-          metalnessNode: metalRough.r,
-          roughnessNode: metalRough.g,
+          metalnessNode: nmr.b,
+          roughnessNode: nmr.a,
           reflectNonMetals: true,
           camera,
         },
