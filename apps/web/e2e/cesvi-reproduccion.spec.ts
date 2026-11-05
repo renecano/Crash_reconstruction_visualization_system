@@ -49,8 +49,8 @@ test("@flujo /cesvi/reproduccion: la evidencia, y cada reporte abre su caso en e
 
   // Las rutas viejas llevan a las nuevas.
   await page.goto("/cesvi/caso");
-  await expect(page).toHaveURL(/\/cesvi\/casos\/nuevo$/);
+  await expect(page).toHaveURL(/\/cesvi\/casos\/nuevo(\/hecho)?$/);
   await page.goto("/cesvi/importar");
-  await expect(page).toHaveURL(/\/cesvi\/casos\/importar$/);
+  await expect(page).toHaveURL(/\/cesvi\/casos\/importar(\/hecho)?$/);
   expect(errores).toEqual([]);
 });

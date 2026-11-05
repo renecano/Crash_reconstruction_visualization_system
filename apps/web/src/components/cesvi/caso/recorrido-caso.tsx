@@ -75,7 +75,7 @@ import { DictamenCaso } from "../dictamen-caso";
 import { CargaReporte } from "../importar-dictamen";
 import { subpasoLugar } from "@/lib/colocar";
 import { leerReporte } from "@/lib/lectura-reporte";
-import { actoDePaso, actosDelCaso, continuarA } from "@/lib/actos";
+import { actoDePaso, actosDelCaso, continuarA, rutaDeActo, type ClaveActo } from "@/lib/actos";
 import { BarraRecorrido, PASOS } from "../recorrido/barra";
 import { TransicionActo } from "../recorrido/transicion-acto";
 import { Reproduccion } from "../reproduccion";
@@ -126,7 +126,14 @@ const DETALLE: Record<CasoExpediente["origen"], string> = {
 /** Con el 3D a la vista, los avisos del reloj no mueven el mapa (está desmontado). */
 const IGNORAR_POSICIONES = (): undefined => undefined;
 
-export function RecorridoCaso({ inicial }: { inicial: CasoExpediente }) {
+export function RecorridoCaso({
+  inicial,
+  actoInicial = null,
+}: {
+  inicial: CasoExpediente;
+  /** El acto de la ruta (`/<caso>/<acto>`, prompt §4): se abre ahí si ya se puede. */
+  actoInicial?: ClaveActo | null;
+}) {
   // El trozo del renderer 3D se baja al entrar al caso, no al abrir el 3D (René, 2026-11-04).
   useEffect(() => {
     void preloadRenderer().catch(() => undefined);
@@ -1142,6 +1149,25 @@ export function RecorridoCaso({ inicial }: { inicial: CasoExpediente }) {
     .filter(Boolean)
     .join(", ");
   const textoSiguiente = siguienteNombre ? continuarA(siguienteNombre) : "";
+  // Rutas por acto (prompt §4): se abre en el acto de la ruta si ya se puede, y la ruta sigue al acto
+  // sin recargar (el estado del recorrido vive aquí).
+  const actoDeRutaVisto = useRef(false);
+  useEffect(() => {
+    if (actoDeRutaVisto.current) return;
+    actoDeRutaVisto.current = true;
+    if (!actoInicial) return;
+    const destino = actos.find((a) => a.clave === actoInicial)?.pasos[0];
+    if (destino === undefined || destino === paso || !abierto(destino)) return;
+    const r = requestAnimationFrame(() => irA(destino));
+    return () => cancelAnimationFrame(r);
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- solo al abrir el caso
+  }, []);
+  useEffect(() => {
+    if (!claveActo) return;
+    const ruta = rutaDeActo(window.location.pathname, claveActo);
+    if (ruta !== window.location.pathname)
+      window.history.replaceState(window.history.state, "", ruta + window.location.search);
+  }, [claveActo]);
   return (
     <div
       className="fixed inset-0 flex flex-col bg-fondo text-texto"

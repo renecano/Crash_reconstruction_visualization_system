@@ -31,7 +31,7 @@ test("@flujo /cesvi: el caso de AXA desde la lista, del caso al dictamen en PDF"
   // El caso de AXA es un caso de ejemplo de la lista (ADR 0079).
   await page.goto("/cesvi");
   await page.getByTestId("ir-axa").click();
-  await expect(page).toHaveURL(/\/cesvi\/casos\/a2010930$/);
+  await expect(page).toHaveURL(/\/cesvi\/casos\/a2010930(\/hecho)?$/);
   const recorrido = page.getByTestId("recorrido-caso");
   await expect(recorrido).toHaveAttribute("data-origen", "ejemplo");
 
