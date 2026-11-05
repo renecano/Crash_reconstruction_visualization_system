@@ -1,0 +1,14 @@
+Traceback (most recent call last):
+  File "D:\Documentos\proyectos\croquis\tools\blender\croquis_render.py", line 871, in <module>
+    main(sys.argv)
+    ~~~~^^^^^^^^^^
+  File "D:\Documentos\proyectos\croquis\tools\blender\croquis_render.py", line 844, in main
+    unir_cuadros(a.unir, a.salida, int(fps))
+    ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Documentos\proyectos\croquis\tools\blender\croquis_render.py", line 802, in unir_cuadros
+    tira_col = getattr(ed, "strips", None) or ed.sequences
+                                              ^^^^^^^^^^^^
+AttributeError: 'SequenceEditor' object has no attribute 'sequences'
+Blender 5.2.3 LTS (hash e13b728c6880 built 2026-10-22 01:37:16)
+
+Blender quit

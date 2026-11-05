@@ -20,3 +20,72 @@ Solo los videos (-SoloRender).
 
 == Datos de la máquina
    Listo (2 s, RAM máxima 70 %). CPU Intel(R) Core(TM) i5-10210U CPU @ 1.60GHz, 7.8 GB de RAM.
+   warning: in the working copy of 'resultados/prueba/2026-11-05/bitacora.txt', CRLF will be replaced by LF the next time Git touches it
+   warning: in the working copy of 'resultados/prueba/2026-11-05/maquina.json', CRLF will be replaced by LF the next time Git touches it
+   remote: 
+   remote: Create a pull request for 'resultados/prueba-2026-11-05' on GitHub by visiting:        
+   remote:      https://github.com/renecano/Crash_reconstruction_visualization_system/pull/new/resultados/prueba-2026-11-05        
+   remote: 
+   To https://github.com/renecano/Crash_reconstruction_visualization_system.git
+    * [new branch]      c44916778dfe1cc5e7e0f5a75071e9368ceb43c0 -> resultados/prueba-2026-11-05
+   Subido a la rama resultados/prueba-2026-11-05 (datos de la máquina).
+
+================ Resumen ================
+[ok]   Revisar Git y Chrome — 0 s, RAM máxima 67 % Git y Chrome encontrados.
+[FALLÓ] Blender 5.2.3 (portátil, de blender.org) — 37 s, RAM máxima 70 % No se pudo descomprimir Blender.
+[FALLÓ] Video de la escena «axa» — 0 s, RAM máxima 70 % No hay Blender (falló el paso anterior).
+[FALLÓ] Video de la escena «carambola» — 0 s, RAM máxima 70 % No hay Blender (falló el paso anterior).
+[ok]   Datos de la máquina — 2 s, RAM máxima 70 % CPU Intel(R) Core(TM) i5-10210U CPU @ 1.60GHz, 7.8 GB de RAM.
+Tiempo de esta corrida: 45 s. RAM usada: 67 % al empezar, 70 % como máximo.
+Fallaron 3 paso(s). Lo que sí se hizo está en D:\Documentos\proyectos\croquis\resultados\prueba\2026-11-05 (y lo que se pudo, ya subido). Si fue un corte, vuelve a abrir el botón hoy: sigue donde se quedó. Si no, avísale a René con una foto de esta ventana.
+
+Croquis en la computadora de la demo — 2026-11-05 (16:19)
+Resultados en: D:\Documentos\proyectos\croquis\resultados\prueba\2026-11-05
+Solo los videos (-SoloRender).
+
+== Revisar Git y Chrome
+   Listo (0 s, RAM máxima 71 %). Git y Chrome encontrados.
+
+== Blender 5.2.3 (portátil, de blender.org)
+   SHA-256 verificado. Descomprimiendo…
+   Listo (11 s, RAM máxima 73 %). Blender listo en D:\CroquisDemo.
+
+== Video de la escena «axa»
+   ┌──────────────────────────────────────────────────────────────────────┐
+   │  No cierres esta ventana. El render tarda varias horas; en cuanto    │
+   │  terminen los primeros cuadros se calcula cuánto. Si se cierra,      │
+   │  vuelve a abrir el botón hoy mismo: sigue desde donde se quedó.      │
+   └──────────────────────────────────────────────────────────────────────┘
+   >> No cierres esta ventana; tarda unas 12 min en total (11.6 s por cuadro).
+
+Croquis en la computadora de la demo — 2026-11-05 (16:21)
+Resultados en: D:\Documentos\proyectos\croquis\resultados\prueba\2026-11-05
+Solo los videos (-SoloRender).
+
+== Revisar Git y Chrome
+   Listo (0 s, RAM máxima 69 %). Git y Chrome encontrados.
+
+== Blender 5.2.3 (portátil, de blender.org)
+   Listo (0 s, RAM máxima 69 %). Ya estaba en D:\CroquisDemo; se reutiliza.
+
+== Video de la escena «axa»
+   Se retoma: ya hay 22 cuadros de una corrida anterior de hoy.
+   ┌──────────────────────────────────────────────────────────────────────┐
+   │  No cierres esta ventana. El render tarda varias horas; en cuanto    │
+   │  terminen los primeros cuadros se calcula cuánto. Si se cierra,      │
+   │  vuelve a abrir el botón hoy mismo: sigue desde donde se quedó.      │
+   └──────────────────────────────────────────────────────────────────────┘
+   >> No cierres esta ventana; tarda unos 7 min en total (6.5 s por cuadro; faltan unos 4 min).
+   Armando el video con los 61 cuadros…
+   No se pudo: No se pudo armar el video (ver blender-axa-unir.log).
+
+== Video de la escena «carambola»
+   ┌──────────────────────────────────────────────────────────────────────┐
+   │  No cierres esta ventana. El render tarda varias horas; en cuanto    │
+   │  terminen los primeros cuadros se calcula cuánto. Si se cierra,      │
+   │  vuelve a abrir el botón hoy mismo: sigue desde donde se quedó.      │
+   └──────────────────────────────────────────────────────────────────────┘
+   No se pudo: No se encuentra la ruta de acceso 'D:\CroquisDemo\render-prueba-2026-11-05\carambola\plan.json' porque no existe.
+
+== Datos de la máquina
+   Listo (1 s, RAM máxima 67 %). CPU Intel(R) Core(TM) i5-10210U CPU @ 1.60GHz, 7.8 GB de RAM.

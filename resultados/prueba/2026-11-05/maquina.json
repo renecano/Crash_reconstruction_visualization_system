@@ -26,44 +26,44 @@
     "prueba":  true,
     "solo_render":  true,
     "solo_medicion":  false,
-    "duracion_de_esta_corrida_s":  40,
-    "ram_usada_al_empezar_pct":  67,
-    "ram_usada_maxima_pct":  70,
+    "duracion_de_esta_corrida_s":  145,
+    "ram_usada_al_empezar_pct":  69,
+    "ram_usada_maxima_pct":  88,
     "limite_ram_pct":  95,
     "pasos":  [
                   {
                       "Paso":  "Revisar Git y Chrome",
                       "Bien":  true,
                       "Segundos":  0,
-                      "RamMaxima":  67,
+                      "RamMaxima":  69,
                       "Nota":  "Git y Chrome encontrados."
                   },
                   {
                       "Paso":  "Blender 5.2.3 (portátil, de blender.org)",
-                      "Bien":  false,
-                      "Segundos":  37,
-                      "RamMaxima":  70,
-                      "Nota":  "No se pudo descomprimir Blender."
+                      "Bien":  true,
+                      "Segundos":  0,
+                      "RamMaxima":  69,
+                      "Nota":  "Ya estaba en D:\\CroquisDemo; se reutiliza."
                   },
                   {
                       "Paso":  "Video de la escena «axa»",
                       "Bien":  false,
-                      "Segundos":  0,
-                      "RamMaxima":  70,
-                      "Nota":  "No hay Blender (falló el paso anterior)."
+                      "Segundos":  138,
+                      "RamMaxima":  88,
+                      "Nota":  "No se pudo armar el video (ver blender-axa-unir.log)."
                   },
                   {
                       "Paso":  "Video de la escena «carambola»",
                       "Bien":  false,
-                      "Segundos":  0,
+                      "Segundos":  4,
                       "RamMaxima":  70,
-                      "Nota":  "No hay Blender (falló el paso anterior)."
+                      "Nota":  "No se encuentra la ruta de acceso \u0027D:\\CroquisDemo\\render-prueba-2026-11-05\\carambola\\plan.json\u0027 porque no existe."
                   },
                   {
                       "Paso":  "Datos de la máquina",
                       "Bien":  true,
-                      "Segundos":  2,
-                      "RamMaxima":  70,
+                      "Segundos":  1,
+                      "RamMaxima":  67,
                       "Nota":  "CPU Intel(R) Core(TM) i5-10210U CPU @ 1.60GHz, 7.8 GB de RAM."
                   }
               ]

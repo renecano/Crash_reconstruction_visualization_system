@@ -1,0 +1,230 @@
+16:21:50 | INFO: Data are loaded, start creating Blender stuff
+16:21:50 | INFO: Blender create Mesh node 0
+16:21:51 | INFO: Blender create Mesh node 1
+16:21:51 | INFO: Blender create Mesh node 2
+16:21:51 | INFO: Blender create Mesh node 3
+16:21:51 | INFO: Blender create Mesh node 4
+16:21:51 | INFO: Blender create Mesh node 5
+16:21:51 | INFO: Blender create Mesh node 6
+16:21:51 | INFO: Blender create Mesh node 7
+16:21:51 | INFO: Blender create Mesh node 8
+16:21:51 | INFO: Blender create Mesh node 9
+16:21:51 | INFO: Blender create Mesh node 10
+16:21:51 | INFO: Blender create Mesh node 11
+16:21:51 | INFO: Blender create Mesh node 12
+16:21:51 | INFO: Blender create Mesh node 13
+16:21:51 | INFO: Blender create Mesh node 14
+16:21:51 | INFO: Blender create Mesh node 15
+16:21:51 | INFO: Blender create Mesh node 16
+16:21:51 | INFO: Blender create Mesh node 17
+16:21:51 | INFO: Blender create Mesh node 18
+16:21:51 | INFO: Blender create Mesh node 19
+16:21:51 | INFO: Blender create Mesh node 20
+16:21:51 | INFO: Blender create Mesh node 21
+16:21:51 | INFO: Blender create Mesh node 22
+16:21:51 | INFO: Blender create Mesh node 23
+16:21:51 | INFO: Blender create Mesh node 24
+16:21:51 | INFO: Blender create Mesh node 25
+16:21:51 | INFO: Blender create Mesh node 26
+16:21:51 | INFO: Blender create Mesh node 27
+16:21:51 | INFO: Blender create Mesh node 28
+16:21:51 | INFO: Blender create Mesh node 29
+16:21:51 | INFO: Blender create Mesh node 30
+16:21:51 | INFO: Blender create Mesh node 31
+16:21:51 | INFO: Blender create Mesh node 32
+16:21:51 | INFO: Blender create Mesh node 33
+16:21:51 | INFO: Blender create Mesh node 34
+16:21:51 | INFO: Blender create Mesh node 35
+16:21:51 | INFO: Blender create Mesh node 36
+16:21:51 | INFO: Blender create Mesh node 37
+16:21:51 | INFO: Blender create Mesh node 38
+16:21:51 | INFO: Blender create Mesh node 39
+16:21:51 | INFO: Blender create Mesh node 40
+16:21:51 | INFO: Blender create Mesh node 41
+16:21:51 | INFO: Blender create Mesh node 42
+16:21:51 | INFO: Blender create Mesh node 43
+16:21:51 | INFO: Blender create Mesh node 44
+16:21:51 | INFO: Blender create Mesh node 45
+16:21:51 | INFO: Blender create Mesh node 46
+16:21:51 | INFO: Blender create Mesh node 47
+16:21:51 | INFO: Blender create Mesh node 48
+16:21:51 | INFO: Blender create Mesh node 49
+16:21:51 | INFO: Blender create Mesh node 50
+16:21:51 | INFO: Blender create Mesh node 51
+16:21:51 | INFO: Blender create Mesh node 52
+16:21:51 | INFO: Blender create Mesh node 53
+16:21:51 | INFO: Blender create Mesh node 54
+16:21:51 | INFO: Blender create Mesh node 55
+16:21:51 | INFO: Blender create Mesh node 56
+16:21:51 | INFO: Blender create Mesh node 57
+16:21:51 | INFO: Blender create Mesh node 58
+16:21:51 | INFO: Blender create Mesh node 59
+16:21:51 | INFO: Blender create Mesh node 60
+16:21:51 | INFO: Blender create Mesh node 61
+16:21:51 | INFO: Blender create Mesh node 62
+16:21:52 | INFO: Blender create Mesh node 63
+16:21:52 | INFO: Blender create Mesh node 64
+16:21:52 | INFO: Blender create Mesh node 65
+16:21:52 | INFO: Blender create Mesh node 66
+16:21:52 | INFO: Blender create Mesh node 67
+16:21:52 | INFO: Blender create Mesh node 68
+16:21:52 | INFO: Blender create Mesh node 69
+16:21:52 | INFO: Blender create Mesh node 70
+16:21:52 | INFO: Blender create Mesh node 71
+16:21:52 | INFO: Blender create Mesh node 72
+16:21:52 | INFO: Blender create Mesh node 73
+16:21:52 | INFO: Blender create Mesh node 74
+16:21:52 | INFO: Blender create Mesh node 75
+16:21:52 | INFO: Blender create Mesh node 76
+16:21:52 | INFO: Blender create Mesh node 77
+16:21:52 | INFO: Blender create Mesh node 78
+16:21:52 | INFO: Blender create Mesh node 79
+16:21:52 | INFO: Blender create Mesh node 80
+16:21:52 | INFO: Blender create Mesh node 81
+16:21:52 | INFO: Blender create Mesh node 82
+16:21:52 | INFO: Blender create Mesh node 83
+16:21:52 | INFO: Blender create Mesh node 84
+16:21:52 | INFO: Blender create Mesh node 85
+16:21:52 | INFO: Blender create Mesh node 86
+16:21:52 | INFO: Blender create Mesh node 87
+16:21:52 | INFO: Blender create Mesh node 88
+16:21:52 | INFO: Blender create Mesh node 89
+16:21:52 | INFO: Blender create Mesh node 90
+16:21:52 | INFO: Blender create Mesh node 91
+16:21:52 | INFO: Blender create Mesh node 92
+16:21:52 | INFO: Blender create Mesh node 93
+16:21:52 | INFO: Blender create Mesh node 94
+16:21:52 | INFO: Blender create Mesh node 95
+16:21:52 | INFO: Blender create Mesh node 96
+16:21:53 | INFO: glTF import finished in 3.40s
+16:21:54 | INFO: Data are loaded, start creating Blender stuff
+16:21:54 | INFO: Blender create Mesh node UTLTRUCK90_Bumper_Front_UTLTRUCK90_Bodymat_0
+16:21:54 | INFO: Draco Decoder: Decode primitive UTLTRUCK90_Bumper_Front_UTLTRUCK90_Bodymat_0
+16:21:54 | INFO: Blender create Mesh node UTLTRUCK90_Headlights_UCB_Lights_and_Glass_0
+16:21:54 | INFO: Draco Decoder: Decode primitive UTLTRUCK90_Headlights_UCB_Lights_and_Glass_0
+16:21:54 | INFO: Blender create Mesh node UTLTRUCK90_Headlights_UCB_Lights_and_Glass_0.001
+16:21:54 | INFO: Draco Decoder: Decode primitive UTLTRUCK90_Headlights_UCB_Lights_and_Glass_0.001
+16:21:54 | INFO: Blender create Mesh node UTLTRUCK90_Blinkers_UCB_Lights_and_Glass_0
+16:21:54 | INFO: Draco Decoder: Decode primitive UTLTRUCK90_Blinkers_UCB_Lights_and_Glass_0
+16:21:54 | INFO: Blender create Mesh node UTLTRUCK90_Body_UTLTRUCK90_Bodymat_0
+16:21:54 | INFO: Draco Decoder: Decode primitive UTLTRUCK90_Body_UTLTRUCK90_Bodymat_0
+16:21:54 | INFO: Blender create Mesh node UTLTRUCK90_bottom_UCB_BOTTOM_0
+16:21:54 | INFO: Draco Decoder: Decode primitive UTLTRUCK90_bottom_UCB_BOTTOM_0
+16:21:54 | INFO: Blender create Mesh node UTLTRUCK90_Brakelights_UCB_Lights_and_Glass_0
+16:21:54 | INFO: Draco Decoder: Decode primitive UTLTRUCK90_Brakelights_UCB_Lights_and_Glass_0
+16:21:54 | INFO: Blender create Mesh node UTLTRUCK90_Bullbar_B_UCB_BOTTOM_0
+16:21:54 | INFO: Draco Decoder: Decode primitive UTLTRUCK90_Bullbar_B_UCB_BOTTOM_0
+16:21:54 | INFO: Blender create Mesh node UTLTRUCK90_Bumper_front_inner_UCB_BOTTOM_0
+16:21:54 | INFO: Draco Decoder: Decode primitive UTLTRUCK90_Bumper_front_inner_UCB_BOTTOM_0
+16:21:54 | INFO: Blender create Mesh node UTLTRUCK90_Bumper_rear_UCB_BOTTOM_0
+16:21:54 | INFO: Draco Decoder: Decode primitive UTLTRUCK90_Bumper_rear_UCB_BOTTOM_0
+16:21:54 | INFO: Blender create Mesh node UTLTRUCK90_Glass_Driver_UCB_Lights_and_Glass_Transperent_0
+16:21:54 | INFO: Draco Decoder: Decode primitive UTLTRUCK90_Glass_Driver_UCB_Lights_and_Glass_Transperent_0
+16:21:55 | INFO: Blender create Mesh node UTLTRUCK90_Glass_Passenger_UCB_Lights_and_Glass_Transperent_0
+16:21:55 | INFO: Draco Decoder: Decode primitive UTLTRUCK90_Glass_Passenger_UCB_Lights_and_Glass_Transperent_0
+16:21:55 | INFO: Blender create Mesh node UTLTRUCK90_Glass_Rear_UCB_Lights_and_Glass_Transperent_0
+16:21:55 | INFO: Draco Decoder: Decode primitive UTLTRUCK90_Glass_Rear_UCB_Lights_and_Glass_Transperent_0
+16:21:55 | INFO: Blender create Mesh node UTLTRUCK90_Headlights_Glass_UCB_Lights_and_Glass_Transperent_0
+16:21:55 | INFO: Draco Decoder: Decode primitive UTLTRUCK90_Headlights_Glass_UCB_Lights_and_Glass_Transperent_0
+16:21:55 | INFO: Blender create Mesh node UTLTRUCK90_Hood_UTLTRUCK90_Bodymat_0
+16:21:55 | INFO: Draco Decoder: Decode primitive UTLTRUCK90_Hood_UTLTRUCK90_Bodymat_0
+16:21:55 | INFO: Blender create Mesh node UTLTRUCK90_Interior_UCB_Interiors_1_0
+16:21:55 | INFO: Draco Decoder: Decode primitive UTLTRUCK90_Interior_UCB_Interiors_1_0
+16:21:55 | INFO: Blender create Mesh node UTLTRUCK90_Reverse_UCB_Lights_and_Glass_0
+16:21:55 | INFO: Draco Decoder: Decode primitive UTLTRUCK90_Reverse_UCB_Lights_and_Glass_0
+16:21:55 | INFO: Blender create Mesh node UTLTRUCK90_Steering_Wheel_UCB_Interiors_1_0
+16:21:55 | INFO: Draco Decoder: Decode primitive UTLTRUCK90_Steering_Wheel_UCB_Interiors_1_0
+16:21:55 | INFO: Blender create Mesh node UTLTRUCK90_suspension_UCB_BOTTOM_0
+16:21:55 | INFO: Draco Decoder: Decode primitive UTLTRUCK90_suspension_UCB_BOTTOM_0
+16:21:55 | INFO: Blender create Mesh node UTLTRUCK90_Taillights_Glass_UCB_Lights_and_Glass_Transperent_0
+16:21:55 | INFO: Draco Decoder: Decode primitive UTLTRUCK90_Taillights_Glass_UCB_Lights_and_Glass_Transperent_0
+16:21:55 | INFO: Blender create Mesh node UTLTRUCK90_Truckbed_Trim_UCB_BOTTOM_0
+16:21:55 | INFO: Draco Decoder: Decode primitive UTLTRUCK90_Truckbed_Trim_UCB_BOTTOM_0
+16:21:55 | INFO: Blender create Mesh node UTLTRUCK90_Truckbed_UTLTRUCK90_Bodymat_0
+16:21:55 | INFO: Draco Decoder: Decode primitive UTLTRUCK90_Truckbed_UTLTRUCK90_Bodymat_0
+16:21:55 | INFO: Blender create Mesh node UTLTRUCK90_WheelStock_FL_RB1c_Tire_1k_0
+16:21:55 | INFO: Draco Decoder: Decode primitive UTLTRUCK90_WheelStock_FL_RB1c_Tire_1k_0
+16:21:55 | INFO: Blender create Mesh node UTLTRUCK90_WheelStock_FR_RB1c_Tire_1k_0
+16:21:55 | INFO: Draco Decoder: Decode primitive UTLTRUCK90_WheelStock_FR_RB1c_Tire_1k_0
+16:21:55 | INFO: Blender create Mesh node UTLTRUCK90_WheelStock_RL_RB1c_Tire_1k_0
+16:21:55 | INFO: Draco Decoder: Decode primitive UTLTRUCK90_WheelStock_RL_RB1c_Tire_1k_0
+16:21:55 | INFO: Blender create Mesh node UTLTRUCK90_WheelStock_RR_RB1c_Tire_1k_0
+16:21:55 | INFO: Draco Decoder: Decode primitive UTLTRUCK90_WheelStock_RR_RB1c_Tire_1k_0
+16:21:55 | INFO: Blender create Mesh node UTLTRUCK90_Windshield_UCB_Lights_and_Glass_Transperent_0
+16:21:55 | INFO: Draco Decoder: Decode primitive UTLTRUCK90_Windshield_UCB_Lights_and_Glass_Transperent_0
+16:21:55 | INFO: glTF import finished in 0.89s
+00:11.172  render           | Saved: 'D:\CroquisDemo\render-prueba-2026-11-05\axa\cuadro_0112.png'
+00:14.516  render           | Saved: 'D:\CroquisDemo\render-prueba-2026-11-05\axa\cuadro_0113.png'
+00:17.813  render           | Saved: 'D:\CroquisDemo\render-prueba-2026-11-05\axa\cuadro_0114.png'
+00:21.110  render           | Saved: 'D:\CroquisDemo\render-prueba-2026-11-05\axa\cuadro_0115.png'
+00:24.391  render           | Saved: 'D:\CroquisDemo\render-prueba-2026-11-05\axa\cuadro_0116.png'
+00:27.516  render           | Saved: 'D:\CroquisDemo\render-prueba-2026-11-05\axa\cuadro_0117.png'
+00:30.672  render           | Saved: 'D:\CroquisDemo\render-prueba-2026-11-05\axa\cuadro_0118.png'
+00:33.844  render           | Saved: 'D:\CroquisDemo\render-prueba-2026-11-05\axa\cuadro_0119.png'
+00:37.063  render           | Saved: 'D:\CroquisDemo\render-prueba-2026-11-05\axa\cuadro_0120.png'
+00:40.297  render           | Saved: 'D:\CroquisDemo\render-prueba-2026-11-05\axa\cuadro_0121.png'
+00:43.594  render           | Saved: 'D:\CroquisDemo\render-prueba-2026-11-05\axa\cuadro_0122.png'
+00:46.828  render           | Saved: 'D:\CroquisDemo\render-prueba-2026-11-05\axa\cuadro_0123.png'
+00:50.328  render           | Saved: 'D:\CroquisDemo\render-prueba-2026-11-05\axa\cuadro_0124.png'
+00:53.516  render           | Saved: 'D:\CroquisDemo\render-prueba-2026-11-05\axa\cuadro_0125.png'
+00:56.860  render           | Saved: 'D:\CroquisDemo\render-prueba-2026-11-05\axa\cuadro_0126.png'
+01:00.110  render           | Saved: 'D:\CroquisDemo\render-prueba-2026-11-05\axa\cuadro_0127.png'
+01:03.453  render           | Saved: 'D:\CroquisDemo\render-prueba-2026-11-05\axa\cuadro_0128.png'
+01:06.657  render           | Saved: 'D:\CroquisDemo\render-prueba-2026-11-05\axa\cuadro_0129.png'
+01:10.032  render           | Saved: 'D:\CroquisDemo\render-prueba-2026-11-05\axa\cuadro_0130.png'
+01:13.500  render           | Saved: 'D:\CroquisDemo\render-prueba-2026-11-05\axa\cuadro_0131.png'
+01:16.828  render           | Saved: 'D:\CroquisDemo\render-prueba-2026-11-05\axa\cuadro_0132.png'
+01:20.110  render           | Saved: 'D:\CroquisDemo\render-prueba-2026-11-05\axa\cuadro_0133.png'
+01:23.266  render           | Saved: 'D:\CroquisDemo\render-prueba-2026-11-05\axa\cuadro_0134.png'
+01:26.485  render           | Saved: 'D:\CroquisDemo\render-prueba-2026-11-05\axa\cuadro_0135.png'
+01:29.625  render           | Saved: 'D:\CroquisDemo\render-prueba-2026-11-05\axa\cuadro_0136.png'
+01:32.875  render           | Saved: 'D:\CroquisDemo\render-prueba-2026-11-05\axa\cuadro_0137.png'
+01:36.094  render           | Saved: 'D:\CroquisDemo\render-prueba-2026-11-05\axa\cuadro_0138.png'
+01:39.360  render           | Saved: 'D:\CroquisDemo\render-prueba-2026-11-05\axa\cuadro_0139.png'
+01:42.672  render           | Saved: 'D:\CroquisDemo\render-prueba-2026-11-05\axa\cuadro_0140.png'
+01:45.922  render           | Saved: 'D:\CroquisDemo\render-prueba-2026-11-05\axa\cuadro_0141.png'
+01:49.141  render           | Saved: 'D:\CroquisDemo\render-prueba-2026-11-05\axa\cuadro_0142.png'
+01:52.469  render           | Saved: 'D:\CroquisDemo\render-prueba-2026-11-05\axa\cuadro_0143.png'
+01:55.625  render           | Saved: 'D:\CroquisDemo\render-prueba-2026-11-05\axa\cuadro_0144.png'
+01:58.875  render           | Saved: 'D:\CroquisDemo\render-prueba-2026-11-05\axa\cuadro_0145.png'
+02:02.032  render           | Saved: 'D:\CroquisDemo\render-prueba-2026-11-05\axa\cuadro_0146.png'
+02:05.235  render           | Saved: 'D:\CroquisDemo\render-prueba-2026-11-05\axa\cuadro_0147.png'
+02:08.516  render           | Saved: 'D:\CroquisDemo\render-prueba-2026-11-05\axa\cuadro_0148.png'
+02:11.703  render           | Saved: 'D:\CroquisDemo\render-prueba-2026-11-05\axa\cuadro_0149.png'
+02:14.953  render           | Saved: 'D:\CroquisDemo\render-prueba-2026-11-05\axa\cuadro_0150.png'
+Vehículos con sus texturas: pickup (D:\Documentos\proyectos\croquis\apps\web\public\modelos\vehiculos).
+Entorno de T1 rearmado: 9 materiales (D:\Documentos\proyectos\croquis\apps\web\public).
+Luz de ambiente con el HDRI «dia».
+Se retoma: ya están 22 de 61 cuadros.
+Renderizando 61 cuadros (cycles, 320x180, 4 muestras)…
+Listo: D:\CroquisDemo\render-prueba-2026-11-05\axa
+Blender 5.2.3 LTS (hash e13b728c6880 built 2026-10-22 01:37:16)
+DracoDecoder | Decoded 157 vertices, 696 indices
+DracoDecoder | Decoded 15 vertices, 48 indices
+DracoDecoder | Decoded 15 vertices, 48 indices
+DracoDecoder | Decoded 60 vertices, 168 indices
+DracoDecoder | Decoded 1759 vertices, 6954 indices
+DracoDecoder | Decoded 8159 vertices, 23898 indices
+DracoDecoder | Decoded 18 vertices, 48 indices
+DracoDecoder | Decoded 933 vertices, 4104 indices
+DracoDecoder | Decoded 823 vertices, 3018 indices
+DracoDecoder | Decoded 575 vertices, 1650 indices
+DracoDecoder | Decoded 20 vertices, 66 indices
+DracoDecoder | Decoded 20 vertices, 66 indices
+DracoDecoder | Decoded 28 vertices, 108 indices
+DracoDecoder | Decoded 330 vertices, 1230 indices
+DracoDecoder | Decoded 267 vertices, 1230 indices
+DracoDecoder | Decoded 3963 vertices, 13470 indices
+DracoDecoder | Decoded 10 vertices, 24 indices
+DracoDecoder | Decoded 315 vertices, 1128 indices
+DracoDecoder | Decoded 1447 vertices, 2940 indices
+DracoDecoder | Decoded 154 vertices, 324 indices
+DracoDecoder | Decoded 1040 vertices, 2508 indices
+DracoDecoder | Decoded 1757 vertices, 5538 indices
+DracoDecoder | Decoded 729 vertices, 2478 indices
+DracoDecoder | Decoded 729 vertices, 2478 indices
+DracoDecoder | Decoded 864 vertices, 3090 indices
+DracoDecoder | Decoded 864 vertices, 3090 indices
+DracoDecoder | Decoded 75 vertices, 336 indices
+
+Blender quit
