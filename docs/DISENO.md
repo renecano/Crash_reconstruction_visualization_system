@@ -31,10 +31,13 @@ Dentro de un acto con dos partes, el rótulo dice cuál («Acto 1 de 6 · El hec
   - Completa, de unos 1.4 s, al entrar al caso y al presentar; corta, de menos de 500 ms, entre actos al trabajar.
   - Se apaga con `prefers-reduced-motion` o con «Transiciones».
 - **Colocación rehecha (B):** ver `docs/PROGRESS.md`.
+- **Rutas por acto** (prompt §4): `/cesvi/casos/<caso>/<acto>`, con `[[...acto]]` en cada página de caso (AXA, nuevo, importar, reporte y guardado).
+  - Una ruta con acto abre ahí si ya se puede; si no, en el acto donde va el caso.
+  - Al cambiar de acto, la ruta cambia con `history.replaceState`, sin recargar: el estado del recorrido vive en la página.
+  - Las rutas sin acto siguen abriendo, en El hecho.
 
 ## Lo que sigue
 
-1. Rutas por acto (`/cesvi/casos/[id]/{hecho,escena,…}`) y redirección de las viejas.
-2. La escena generada del caso (prompt §7), compartida por Escena, Reconstrucción y Presentar.
-3. Las pantallas en orden (prompt §8), luego el movimiento (§6) y los tooltips (§9).
-4. Pruebas pesadas al final: axe, Lighthouse y Playwright del caso AXA de día y de noche, con capturas de cada acto.
+1. La escena generada del caso (prompt §7), compartida por Escena, Reconstrucción y Presentar.
+2. Las pantallas en orden (prompt §8), luego el movimiento (§6) y los tooltips (§9).
+3. Pruebas pesadas al final: axe, Lighthouse y Playwright del caso AXA de día y de noche, con capturas de cada acto.

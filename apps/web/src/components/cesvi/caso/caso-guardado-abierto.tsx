@@ -3,9 +3,16 @@
 import Link from "next/link";
 import { RUTAS } from "@/lib/casos";
 import { useCasoGuardado } from "@/lib/casos-navegador";
+import type { ClaveActo } from "@/lib/actos";
 import { RecorridoCaso } from "./recorrido-caso";
 
-export function CasoGuardadoAbierto({ id }: { id: string }) {
+export function CasoGuardadoAbierto({
+  id,
+  actoInicial = null,
+}: {
+  id: string;
+  actoInicial?: ClaveActo | null;
+}) {
   const caso = useCasoGuardado(id);
   if (caso === undefined) return null;
   if (caso === null)
@@ -21,5 +28,5 @@ export function CasoGuardadoAbierto({ id }: { id: string }) {
         </Link>
       </main>
     );
-  return <RecorridoCaso inicial={caso} />;
+  return <RecorridoCaso inicial={caso} actoInicial={actoInicial} />;
 }

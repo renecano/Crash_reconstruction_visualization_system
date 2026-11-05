@@ -49,3 +49,22 @@ export function continuarA(nombre: string): string {
   const art = m[1]!.toLowerCase();
   return art === "el" ? `Continuar al ${m[2]}` : `Continuar a ${art} ${m[2]}`;
 }
+
+// --- Rutas por acto (prompt §4): /cesvi/casos/<caso>/<acto> ---------------------------------------
+
+const CLAVES = new Set<string>(ACTOS.map((a) => a.clave));
+
+export const esClaveActo = (x: unknown): x is ClaveActo => typeof x === "string" && CLAVES.has(x);
+
+/** El acto de los segmentos opcionales de la ruta (`[[...acto]]`); null si no hay o no es uno. */
+export function actoDeSegmentos(segmentos: readonly string[] | undefined): ClaveActo | null {
+  if (!segmentos || segmentos.length !== 1) return null;
+  return esClaveActo(segmentos[0]) ? segmentos[0] : null;
+}
+
+/** La ruta del caso con su acto: quita el acto que ya tenga al final y pone el nuevo. */
+export function rutaDeActo(ruta: string, clave: ClaveActo): string {
+  const partes = ruta.replace(/\/+$/, "").split("/");
+  if (esClaveActo(partes.at(-1))) partes.pop();
+  return `${partes.join("/")}/${clave}`;
+}

@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { actoDePaso, actosDelCaso, continuarA } from "./actos";
+import { actoDePaso, actoDeSegmentos, actosDelCaso, continuarA, rutaDeActo } from "./actos";
 import { CLAVES_PASOS } from "./pasos-caso";
 
 describe("los seis actos del Laboratorio (prompt §4)", () => {
@@ -31,6 +31,25 @@ describe("los seis actos del Laboratorio (prompt §4)", () => {
     expect(continuarA("Los daños")).toBe("Continuar a los daños");
     expect(continuarA("Croquis contra el reporte de CESVI")).toBe(
       "Continuar a Croquis contra el reporte de CESVI",
+    );
+  });
+});
+
+describe("las rutas por acto (prompt §4)", () => {
+  it("lee el acto de la ruta y descarta lo que no es un acto", () => {
+    expect(actoDeSegmentos(["escena"])).toBe("escena");
+    expect(actoDeSegmentos(undefined)).toBeNull();
+    expect(actoDeSegmentos(["otra"])).toBeNull();
+    expect(actoDeSegmentos(["escena", "x"])).toBeNull();
+  });
+
+  it("pone el acto al final de la ruta del caso, sin duplicarlo", () => {
+    expect(rutaDeActo("/cesvi/casos/a2010930", "hecho")).toBe("/cesvi/casos/a2010930/hecho");
+    expect(rutaDeActo("/cesvi/casos/a2010930/hecho", "escena")).toBe(
+      "/cesvi/casos/a2010930/escena",
+    );
+    expect(rutaDeActo("/cesvi/casos/reporte/r-12/", "dictamen")).toBe(
+      "/cesvi/casos/reporte/r-12/dictamen",
     );
   });
 });

@@ -11,7 +11,7 @@ Reglas de trabajo: `CLAUDE.md`. Especificación: `PLAN.md`.
   - **T6.4 (los agentes respetan el orden de impactos)** quedó a medias en la rama `fix/agentes-orden-impactos` (commit `c8c8a08`, Python y TS cambiados, sin pruebas ni evaluación): se retoma en T6.
   - **Urgente (René, 2026-11-04, tarde): congelamientos del 3D en la MacBook M1**: hecho y en producción (PR #161, ADR 0104; René confirmó en la M1: WebGPU, media, dpr 1.5, 60 fps, precompilado listo). **Luego, cámaras tras el #161** (rama `fix/camaras-vivas`, ADR 0105): Conductor A/B en los ojos del conductor otra vez, la vista siempre cambia con el botón, la cinematográfica esquiva el poste, la línea de visión solo en cenital y libre, y las tareas largas de la carga con nombre y partidas. Pendientes en la sección «Cámaras tras el #161» más abajo.
   - **Después (René, 2026-11-04, tarde; orden fijado por él):** el rediseño «Laboratorio» de /cesvi (`docs/cesvi/entrante/laboratorio/`, a copiar a `docs/cesvi/rediseno/laboratorio/`) con los arreglos de uso A1–A5 (buscar el lugar con coordenadas y links y ruta `/api/lugar`, contador de la narración, reporte pegado → cargar como reporte, botones de inicio y archivo `.croquis`, sin mapa en el paso del hecho) y la colocación de vehículos rehecha (B); se despliega por partes: A1–A4 y B, luego tokens y layout, luego los actos. Antes de eso, T3.2 sigue a medias.
-  - **Laboratorio (René, 2026-11-04):** §0, A1–A5 y B en producción (PR #166); tokens, tipografía, barra de actos y transición en `feat/laboratorio-tokens` (ADR 0108). **Siguiente:** rutas por acto y la escena generada (prompt §7), luego las pantallas en orden.
+  - **Laboratorio (René, 2026-11-04):** §0, A1–A5 y B en producción (PR #166); tokens, tipografía, barra de actos y transición en `feat/laboratorio-tokens` (ADR 0108). **Siguiente:** la escena generada (prompt §7), luego las pantallas en orden. Rutas por acto en `feat/laboratorio-rutas`.
   - **Vercel (René, 2026-11-05), antes de A1** (rama `fix/vercel-produccion`, ADR 0107): verificación de que producción sirve el commit de main, modelos y HDRI en Vercel Blob (35 % menos por despliegue) y 29 despliegues viejos borrados. Deploy Hook guardado por René; el merge del #164 se publicó solo. **Luego:** las llantas del caso de ejemplo del Jetta y el Camaro, y después A1.
   - **Fotos del dictamen (C1–C3) y calidad automática que baja (D)** (rama `fix/fotos-dictamen`, ADR 0106): las fotos esperan al visor, usan la cinematográfica y van sin marcadores de interfaz; los vehículos se apoyan en banquetas y relieve; si los fps quedan < 24 durante 5 s, la calidad baja un nivel y no vuelve a subir. **Siguiente:** A1–A5 y B, luego el rediseño «Laboratorio».
   - **Urgente (René, 2026-11-04), hecho y en producción:** el 3D en blanco en computadoras potentes (PR #158, ADR 0102) y la cámara del conductor en dos pasadas (PR #158 y #159). T1.3c (defectos de T1.3b, ADR 0103) está en la rama `feat/t1-3c`. T3.2 quedó a medias en `feat/t3-2-arrastre` (commit wip: referencias 1–9 regeneradas; faltan 10–13, inversión y agentes); se retoma después de T1.3c, con la nota para el resumen de T3: el rango nuevo de V2 en AXA (68.02–92.81) deja fuera el 63.15 de CESVI y el cálculo pasó de 4.8 s a 11 s (reajustes en paralelo en el worker si se puede sin perder estabilidad).
@@ -1882,6 +1882,22 @@ Rama `fix/fotos-dictamen`. René mandó la captura del dictamen de un caso nuevo
 - **Qué era:** las fotos usaban la cámara que tuviera el visor (con la del conductor, impacto y reposo salían iguales) y llevaban los aros de visión y el anillo del impacto; y un vehículo sobre la banqueta quedaba hundido 15 cm. Las ruedas sí estaban en sus huecos en las ocho clases que medí.
 - **Qué hay ahora:** fotos con la cinematográfica, del instante pedido, sin marcadores; vehículos apoyados en banquetas y relieve; y si el 3D se queda abajo de 24 fps durante 5 s, baja un nivel y lo dice `?diag=1`.
 - **Cómo probarlo:** genera el dictamen de un caso nuevo y compara las tres fotos; y en `docs/cesvi/t1/ruedas/` están las capturas de cerca de cada clase. Si en tu caso las llantas siguen fuera de su hueco, dime la clase del vehículo (o manda el `.json` del caso): en las ocho clases que medí quedan bien.
+
+### Laboratorio: rutas por acto (René, 2026-11-04; prompt §4)
+
+Rama `feat/laboratorio-rutas`.
+
+- **Las rutas:** cada página de caso (AXA, nuevo, importar, reporte y guardado) pasó a `[[...acto]]`, y `/cesvi/casos/<caso>/<acto>` abre en ese acto si ya se puede.
+  - AXA, nuevo e importar generan al construir la ruta de cada acto. Los reportes, la base.
+- **La ruta sigue al acto** con `history.replaceState`, sin recargar el recorrido. Las rutas sin acto siguen abriendo, en El hecho.
+- **Probado a mano:**
+  - `/a2010930/escena` abre en La escena.
+  - La base pasa a `/hecho` y, con dos «Continuar», a `/escena`.
+  - `/nuevo/dictamen`, que aún no se puede, queda en `/hecho`.
+- **Pruebas:**
+  - Unitarias de `actoDeSegmentos` y `rutaDeActo`.
+  - Las tres comprobaciones de URL de los e2e aceptan el `/hecho` final.
+  - Los e2e de `/cesvi` pasan en local.
 
 ### Laboratorio: tokens, tipografía, barra de actos y transición (René, 2026-11-04; ADR 0108)
 
