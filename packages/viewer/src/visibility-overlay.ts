@@ -73,6 +73,8 @@ export function buildVisibilityOverlay(resultado: Resultado, graph: SceneGraph):
   const group = new Group();
   group.name = "visibilidad";
   group.visible = false;
+  // Marcador de interfaz: fuera de las fotos del dictamen (`sinInterfaz`).
+  group.userData.interfaz = true;
   const mats: Material[] = [];
   const geos: BufferGeometry[] = [];
   const visibleMat = new LineBasicMaterial({

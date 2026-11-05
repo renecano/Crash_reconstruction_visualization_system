@@ -256,6 +256,39 @@ test("@flujo /cesvi: un caso nuevo desde la lista, de la narración al dictamen"
   // El croquis a escala y los tres cuadros del 3D (el visor está abierto) van como imágenes.
   const imagenes = bytesPdf.toString("latin1").match(/\/Subtype\s*\/Image/g) ?? [];
   expect(imagenes.length).toBeGreaterThanOrEqual(4);
+  // «En el impacto» y «en reposo» no son la misma foto (René, 2026-11-04: salían idénticas).
+  const diferencia = await page.evaluate(async () => {
+    const cs =
+      (window as unknown as { __croquisCuadrosDictamen?: { etiqueta: string; imagen: string }[] })
+        .__croquisCuadrosDictamen ?? [];
+    const impacto = cs.find((c) => c.etiqueta.startsWith("En el impacto"));
+    const reposo = cs.find((c) => c.etiqueta.startsWith("En reposo"));
+    if (!impacto || !reposo) return -1;
+    const pixeles = async (src: string) => {
+      const img = new Image();
+      img.src = src;
+      await img.decode();
+      const c = document.createElement("canvas");
+      c.width = img.width;
+      c.height = img.height;
+      const ctx = c.getContext("2d")!;
+      ctx.drawImage(img, 0, 0);
+      return ctx.getImageData(0, 0, c.width, c.height).data;
+    };
+    const a = await pixeles(impacto.imagen);
+    const b = await pixeles(reposo.imagen);
+    let distintos = 0;
+    for (let i = 0; i < a.length; i += 4) {
+      const d =
+        Math.abs(a[i]! - b[i]!) + Math.abs(a[i + 1]! - b[i + 1]!) + Math.abs(a[i + 2]! - b[i + 2]!);
+      if (d > 48) distintos++;
+    }
+    return distintos / (a.length / 4);
+  });
+  expect(
+    diferencia,
+    "fracción de píxeles distintos entre «en el impacto» y «en reposo»",
+  ).toBeGreaterThan(0.02);
   // El croquis del dictamen va sobre las calles del mapa donde el perito colocó a los vehículos.
   await expect(dictamen).toHaveAttribute("data-croquis", "mapa");
   const word = page.waitForEvent("download");

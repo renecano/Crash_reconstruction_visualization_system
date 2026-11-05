@@ -34,23 +34,38 @@ function descargar(bytes: Uint8Array, nombre: string, tipo: string) {
   setTimeout(() => URL.revokeObjectURL(url), 1000);
 }
 
-/** Tres cuadros del 3D: antes del impacto, en el impacto y al final. */
-function cuadros(api: ViewerExportApi | null, resultado: Record<string, unknown>) {
+/**
+ * Tres cuadros del 3D: antes del impacto, en el impacto y al final. Cada foto espera a que el visor
+ * esté listo y dibuje su instante, con la cámara cinematográfica (con la del conductor y los
+ * vehículos detenidos, «en el impacto» y «en reposo» salían iguales) y sin marcadores de interfaz
+ * (René, 2026-11-04).
+ */
+async function cuadros(api: ViewerExportApi | null, resultado: Record<string, unknown>) {
   if (!api) return [];
   const t0 = Number(resultado.t_inicio ?? -1);
   const t1 = Number(resultado.t_fin ?? 1);
-  return [
+  const out: { etiqueta: string; imagen: string }[] = [];
+  for (const { t, etiqueta } of [
     { t: Math.max(t0, -1), etiqueta: "Antes del impacto (−1 s)" },
     { t: 0, etiqueta: "En el impacto (0 s)" },
     { t: t1, etiqueta: `En reposo (+${t1.toFixed(1)} s)` },
-  ].flatMap(({ t, etiqueta }) => {
+  ]) {
     try {
-      const c = api.captureFrame({ t, width: 960, height: 540 });
-      return [{ etiqueta, imagen: c.toDataURL("image/png") }];
+      const c = await api.captureFrameReady({
+        t,
+        width: 960,
+        height: 540,
+        camara: "cinematica",
+        sinInterfaz: true,
+      });
+      out.push({ etiqueta, imagen: c.toDataURL("image/png") });
     } catch {
-      return [];
+      /* sin ese cuadro */
     }
-  });
+  }
+  // Para las pruebas: los cuadros del último dictamen (que impacto y reposo no salgan iguales).
+  (window as unknown as { __croquisCuadrosDictamen?: typeof out }).__croquisCuadrosDictamen = out;
+  return out;
 }
 
 export function DictamenCaso({
@@ -127,7 +142,7 @@ export function DictamenCaso({
       verificacion,
       croquis: c.imagen,
       croquisSobreMapa: c.sobreMapa,
-      cuadros3d: cuadros(exportApi, reconstruccion.resultado),
+      cuadros3d: await cuadros(exportApi, reconstruccion.resultado),
       modelos3d: exportApi ? [...exportApi.vehicleCredits] : [],
       declarada,
       validacion,

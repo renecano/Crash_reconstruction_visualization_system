@@ -127,12 +127,14 @@ import { rollsOver } from "./rollover-scene";
 import { sunShadowFrame, triangleInShadow, type SunShadowFrame } from "./shadow-frame";
 import { phaseAt, samplePerson, sampleVehicle, bracket } from "./sample";
 import {
+  axlePositionsFor,
   buildVehicle,
   profileFor,
   seatHeight,
   wheelNames,
   type PartRole,
 } from "./vehicle-geometry";
+import { alturaDelPiso } from "./ground-height";
 import {
   buildModelVehicle,
   creditsOf,
@@ -178,6 +180,11 @@ export interface VehicleNode {
   wheels: { obj: Group; radius: number }[];
   /** Distancia acumulada recorrida (m) en cada muestra de la trayectoria. */
   distance: number[];
+  /**
+   * Altura del piso bajo el vehículo en cada muestra de su trayectoria (m): banqueta, camellón o
+   * relieve (René, 2026-11-04, C2: sobre la banqueta se veía hundido).
+   */
+  piso: number[];
   track: Resultado["vehiculos"][number]["trayectoria"];
   /** Daño animado (deformación, materiales, faros, parabrisas, llantas, bolsas de aire). */
   rig: DamageRig;
@@ -770,6 +777,15 @@ export function buildSceneGraph(
         markings: markingsFor(dobleSentido, devTipos),
         guarniciones: lugar.guarniciones?.valor ?? false,
       });
+  // El piso bajo los vehículos: banquetas y camellones a la altura de la guarnición, y el relieve
+  // del terreno (que en la vía es 0; el parche de suelo va 3 cm abajo).
+  const pisoEn = alturaDelPiso(
+    [
+      { mesh: road.sidewalk, altura: CURB_HEIGHT },
+      { mesh: road.medians, altura: CURB_HEIGHT },
+    ],
+    (x, y) => heightAt(x, y) - 0.03,
+  );
   const roadGroup = new Group();
   roadGroup.name = "via";
   const layers: [string, Mesh2D, Material, number][] = [
@@ -1216,10 +1232,14 @@ export function buildSceneGraph(
   if (resultado.punto_impacto) {
     const ring = new Mesh(new RingGeometry(0.45, 0.6, 32), mats.impact);
     ring.name = "punto_impacto";
+    // Marcador de interfaz: fuera de las fotos del dictamen (`sinInterfaz`).
+    ring.userData.interfaz = true;
     ring.rotation.x = -Math.PI / 2;
     const [x, y, z] = toThree(resultado.punto_impacto.x, resultado.punto_impacto.y, 0.02);
     ring.position.set(x, y, z);
     const dot = new Mesh(new CircleGeometry(0.12, 16), mats.impact);
+    dot.name = "punto_impacto_centro";
+    dot.userData.interfaz = true;
     dot.rotation.x = -Math.PI / 2;
     dot.position.set(x, y, z);
     root.add(ring, dot);
@@ -1347,10 +1367,35 @@ export function buildSceneGraph(
       headlightSpots.push({ vehicleId: v.id, spot });
     }
     root.add(group);
+    // Altura del piso en cada muestra: el promedio bajo las cuatro llantas (dos en una moto), sin
+    // inclinar la carrocería.
+    const ejes = axlePositionsFor(v.clase, dims);
+    const dosRuedas = profileFor(v.clase).kind === "two_wheel";
+    const medioAncho = dosRuedas ? 0 : 0.42 * dims.width;
+    const apoyos: [number, number][] = dosRuedas
+      ? [
+          [ejes.front, 0],
+          [ejes.rear, 0],
+        ]
+      : [
+          [ejes.front, medioAncho],
+          [ejes.front, -medioAncho],
+          [ejes.rear, medioAncho],
+          [ejes.rear, -medioAncho],
+        ];
+    const piso = v.trayectoria.t.map((tt) => {
+      const p = sampleVehicle(v.trayectoria, tt);
+      const c = Math.cos(p.yaw);
+      const s = Math.sin(p.yaw);
+      let suma = 0;
+      for (const [ax, ay] of apoyos) suma += pisoEn(p.x + c * ax - s * ay, p.y + s * ax + c * ay);
+      return suma / apoyos.length;
+    });
     const node: VehicleNode = {
       id: v.id,
       group,
       wheels,
+      piso,
       distance: cumulativeDistance(v.trayectoria),
       track: v.trayectoria,
       rig,
@@ -1483,11 +1528,12 @@ export function buildSceneGraph(
     }
     for (const n of vehicles) {
       const pose = sampleVehicle(n.track, t);
-      const [x, y, z] = toThree(pose.x, pose.y, 0);
+      const { i, f } = bracket(n.track.t, t);
+      const piso = (n.piso[i] ?? 0) + ((n.piso[i + 1] ?? n.piso[i] ?? 0) - (n.piso[i] ?? 0)) * f;
+      const [x, y, z] = toThree(pose.x, pose.y, piso);
       n.group.position.set(x, y, z);
       // Rotación completa: la volcadura (actualización posterior) puede dejar alabeo y cabeceo.
       n.group.rotation.set(0, pose.yaw, 0);
-      const { i, f } = bracket(n.track.t, t);
       const s =
         (n.distance[i] ?? 0) +
         ((n.distance[i + 1] ?? n.distance[i] ?? 0) - (n.distance[i] ?? 0)) * f;

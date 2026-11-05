@@ -69,3 +69,19 @@ describe("modo automático conservador (2026-11-04)", () => {
     expect(lowerQualityIfSlow("alta", LOWER_BELOW_FPS)).toBe("alta");
   });
 });
+
+describe("bajar un nivel con menos de 24 fps durante 5 s (René, 2026-11-04)", () => {
+  it("5 s a 20 fps bajan un nivel; a 30 fps no; 3 s lentos tras 5 s fluidos tampoco", async () => {
+    const { lowerQualityIfSlow, LOWER_BELOW_FPS } = await import("./quality");
+    const { fpsEnVentana } = await import("./backend-choice");
+    expect(LOWER_BELOW_FPS).toBe(24);
+    const cuadros = (fps: number, s: number) =>
+      Array.from({ length: Math.round(fps * s) }, () => 1000 / fps);
+    expect(lowerQualityIfSlow("media", fpsEnVentana(cuadros(20, 6), 5000))).toBe("baja");
+    expect(lowerQualityIfSlow("alta", fpsEnVentana(cuadros(20, 6), 5000))).toBe("media");
+    expect(lowerQualityIfSlow("media", fpsEnVentana(cuadros(30, 6), 5000))).toBe("media");
+    const mezcla = [...cuadros(60, 5), ...cuadros(18, 3)];
+    expect(lowerQualityIfSlow("media", fpsEnVentana(mezcla, 5000))).toBe("media");
+    expect(lowerQualityIfSlow("baja", fpsEnVentana(cuadros(5, 6), 5000))).toBe("baja");
+  });
+});

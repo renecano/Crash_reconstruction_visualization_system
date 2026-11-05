@@ -3,6 +3,7 @@
  * que convierten un cuadro en un PNG con la marca de reconstrucción ilustrativa (PLAN §10).
  */
 import { legendLines, legendString, type LegendInfo } from "@croquis/scene-schema";
+import type { CameraMode } from "../cameras";
 import type { VehicleCredit } from "../vehicle-models";
 import { drawLegendBand } from "./legend-band";
 import { addPngText } from "./png";
@@ -13,12 +14,29 @@ export interface CaptureOptions {
   /** Tamaño del cuadro en píxeles; por omisión, el del lienzo. */
   width?: number;
   height?: number;
+  /**
+   * Cámara de la foto; por omisión, la que tenga el visor. El dictamen usa la cinematográfica:
+   * con la del conductor y los vehículos ya detenidos, «en el impacto» y «en reposo» salían iguales
+   * (René, 2026-11-04).
+   */
+  camara?: CameraMode;
+  /**
+   * Sin marcadores de interfaz (anillo del impacto, líneas y aros de visión, indicadores de
+   * contacto): en las fotos del dictamen no van (René, 2026-11-04).
+   */
+  sinInterfaz?: boolean;
 }
 
 /** Lo que el visor permite exportar (`SceneViewer` lo entrega con `onExport`). */
 export interface ViewerExportApi {
   /** Dibuja el instante pedido y devuelve una copia del cuadro (sin la marca). */
   captureFrame(opts?: CaptureOptions): HTMLCanvasElement;
+  /**
+   * Como `captureFrame`, pero primero espera a que el visor esté listo (modelos, texturas, daño y
+   * programas precompilados; a lo más `esperaMs`, 60 s por omisión) y dibuja el instante dos veces
+   * antes de copiar (las sombras y las texturas quedan al día). Para el dictamen.
+   */
+  captureFrameReady(opts?: CaptureOptions & { esperaMs?: number }): Promise<HTMLCanvasElement>;
   /**
    * Dibuja una secuencia de instantes a un tamaño fijo (video). Cambia el tamaño del lienzo una sola
    * vez y lo restaura al final, igual que el reloj. `onFrame` recibe el lienzo recién dibujado: debe
