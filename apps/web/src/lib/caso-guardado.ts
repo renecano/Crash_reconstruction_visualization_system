@@ -75,6 +75,8 @@ export interface CasoGuardado {
   bitacora?: MensajeBitacora[];
   /** La hipótesis que eligió el perito (ADR 0091), opcional: los archivos de antes no la traen. */
   hipotesis_elegida?: string;
+  /** Los vehículos de los que el perito no sabe dónde quedaron (B), opcional. */
+  finales_desconocidos?: string[];
 }
 
 export interface CasoAbierto {
@@ -90,6 +92,8 @@ export interface CasoAbierto {
   bitacora: MensajeBitacora[];
   /** La clave de la hipótesis que eligió el perito, o null. */
   hipotesisElegida: string | null;
+  /** Los vehículos sin posición final porque el perito no sabe dónde quedaron. */
+  finalesDesconocidos: string[];
 }
 
 /** El expediente sin su resultado: lo que el perito valida. */
@@ -123,6 +127,7 @@ export function casoParaGuardar(c: {
   ahora?: Date;
   bitacora?: readonly MensajeBitacora[];
   hipotesisElegida?: string | null;
+  finalesDesconocidos?: readonly string[];
 }): CasoGuardado {
   const { posiciones, conteos, problemas, preguntas } = c.escena;
   const base = sinResultado(c.expediente);
@@ -149,6 +154,7 @@ export function casoParaGuardar(c: {
     ...(c.reporte ? { reporte_cesvi: c.reporte } : {}),
     ...(c.bitacora?.length ? { bitacora: [...c.bitacora] } : {}),
     ...(c.hipotesisElegida ? { hipotesis_elegida: c.hipotesisElegida } : {}),
+    ...(c.finalesDesconocidos?.length ? { finales_desconocidos: [...c.finalesDesconocidos] } : {}),
   };
 }
 
@@ -189,5 +195,11 @@ export function leerCasoGuardado(datos: unknown): CasoAbierto | { error: string 
       /^(dano|reposo|evidencia)(-\d+)?$/.test(c.hipotesis_elegida)
         ? c.hipotesis_elegida
         : null,
+    // Solo ids de vehículos del expediente.
+    finalesDesconocidos: Array.isArray(c.finales_desconocidos)
+      ? c.finales_desconocidos.filter(
+          (x): x is string => typeof x === "string" && expediente.vehiculos.some((v) => v.id === x),
+        )
+      : [],
   };
 }

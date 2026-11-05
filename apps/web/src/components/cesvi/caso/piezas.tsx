@@ -27,6 +27,7 @@ import type { GeoJSONSource, Map as MapaMl, Marker } from "maplibre-gl";
 // Sin la hoja de MapLibre los marcadores no quedan en su lugar (no se ven sobre el mapa).
 import "maplibre-gl/dist/maplibre-gl.css";
 import { useEffect, useRef, useState, type ComponentProps } from "react";
+import { contornoVehiculo } from "@/lib/colocar";
 import { interpretarLugar } from "@/lib/lugar-texto";
 import { ESTILO_MAPA, ESTILO_MAPA_CLARO, marcador } from "../mapa-comun";
 import { ColocarMapa } from "./colocar-mapa";
@@ -78,6 +79,8 @@ export interface HuellaMapa {
   largo: number;
   ancho: number;
   color: string;
+  /** La clase, para dibujar su silueta (B); sin ella, un rectángulo. */
+  clase?: string;
 }
 
 /** Largo de la flecha del rumbo sobre el mapa (m): se arrastra su punta para girar. */
@@ -103,7 +106,11 @@ function dibujarCroquis(
     properties: { color: h.color, tipo: h.fase === "final" ? "final" : "otra" },
     geometry: {
       type: "Polygon",
-      coordinates: [rectanguloVehiculo([h.punto.lon, h.punto.lat], h.rumbo, h.largo, h.ancho)],
+      coordinates: [
+        h.clase
+          ? contornoVehiculo([h.punto.lon, h.punto.lat], h.rumbo, h.largo, h.ancho, h.clase)
+          : rectanguloVehiculo([h.punto.lon, h.punto.lat], h.rumbo, h.largo, h.ancho),
+      ],
     },
   }));
   if (f)

@@ -1,5 +1,14 @@
 import { describe, expect, it } from "vitest";
-import { metrosPorPixel, rumboDeCalle, rumboDesdePuntero } from "./colocar";
+import {
+  contornoClase,
+  contornoVehiculo,
+  direccionesCandidatas,
+  metrosPorPixel,
+  rumboDeCalle,
+  rumboDesdePuntero,
+  siluetaClase,
+  subpasoLugar,
+} from "./colocar";
 
 describe("colocar en el mapa (comentario de René, punto 3)", () => {
   it("el anillo da el rumbo absoluto del cursor, 1:1, con imán de 15°", () => {
@@ -44,5 +53,71 @@ describe("colocar en el mapa (comentario de René, punto 3)", () => {
     ];
     expect(rumboDeCalle([calle, esteOeste], p, null)).toBe(0);
     expect(rumboDeCalle([esteOeste], p, 100)).toBe(90);
+  });
+});
+
+describe("colocación rehecha (René, B)", () => {
+  // Una calle norte–sur y otra este–oeste que se cruzan en el punto.
+  const p: [number, number] = [-99.65, 19.28];
+  const ns: [number, number][] = [
+    [-99.65, 19.279],
+    [-99.65, 19.281],
+  ];
+  const eo: [number, number][] = [
+    [-99.651, 19.28],
+    [-99.649, 19.28],
+  ];
+
+  it("las flechas son los dos sentidos de cada calle cercana, con la propuesta marcada", () => {
+    const d = direccionesCandidatas([ns, eo], p, 95);
+    expect(d.map((x) => x.rumbo)).toEqual([0, 90, 180, 270]);
+    expect(d.filter((x) => x.propuesta).map((x) => x.rumbo)).toEqual([90]);
+  });
+
+  it("sin calles cerca, solo la propuesta de Croquis", () => {
+    expect(direccionesCandidatas([], p, 37)).toEqual([{ rumbo: 37, propuesta: true }]);
+    expect(direccionesCandidatas([], p, null)).toEqual([]);
+  });
+
+  it("Paso 1 de 3: el impacto; 2: por dónde venía cada uno; 3: dónde quedó", () => {
+    expect(subpasoLugar({ impactoColocado: false, sinConfirmar: [], sinFinal: ["V1"] })?.n).toBe(1);
+    expect(
+      subpasoLugar({ impactoColocado: true, sinConfirmar: ["V2"], sinFinal: ["V1", "V2"] }),
+    ).toEqual({ n: 2, titulo: "¿Por dónde venía V2?", vehiculo: "V2" });
+    expect(
+      subpasoLugar({ impactoColocado: true, sinConfirmar: [], sinFinal: ["V1"] })?.titulo,
+    ).toBe("¿Dónde quedó V1?");
+    expect(subpasoLugar({ impactoColocado: true, sinConfirmar: [], sinFinal: [] })).toBeNull();
+  });
+
+  it("cada clase tiene su silueta dentro de la caja de 1 × 1", () => {
+    for (const c of ["sedan_compacto", "pickup", "autobus", "motocicleta"]) {
+      const nums = siluetaClase(c)
+        .match(/-?\d+(\.\d+)?/g)!
+        .map(Number);
+      expect(nums.every((n) => Math.abs(n) <= 0.55)).toBe(true);
+    }
+    expect(siluetaClase("pickup")).not.toBe(siluetaClase("sedan_compacto"));
+  });
+});
+
+describe("las huellas con la silueta de su clase (B)", () => {
+  it("el contorno es cerrado y cabe en la caja", () => {
+    for (const c of ["sedan_compacto", "pickup", "autobus", "motocicleta"]) {
+      const k = contornoClase(c);
+      expect(k[0]).toEqual(k[k.length - 1]);
+      expect(k.every(([x, y]) => Math.abs(x) <= 0.55 && Math.abs(y) <= 0.55)).toBe(true);
+    }
+  });
+
+  it("con rumbo 0 el frente queda al norte y el ancho de este a oeste", () => {
+    const k = contornoVehiculo([-99.65, 19.28], 0, 4.5, 1.8, "sedan_compacto");
+    const lats = k.map((p) => p[1]);
+    const lons = k.map((p) => p[0]);
+    // ~4.5 m de norte a sur y ~1.8 m de este a oeste (1° de latitud ≈ 111 km).
+    expect((Math.max(...lats) - Math.min(...lats)) * 111_000).toBeGreaterThan(4.4);
+    expect((Math.max(...lats) - Math.min(...lats)) * 111_000).toBeLessThan(4.9);
+    const mPorGradoLon = 111_000 * Math.cos((19.28 * Math.PI) / 180);
+    expect((Math.max(...lons) - Math.min(...lons)) * mPorGradoLon).toBeCloseTo(1.8, 1);
   });
 });

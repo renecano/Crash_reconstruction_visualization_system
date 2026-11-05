@@ -131,6 +131,25 @@ describe("el caso guardado con la validación del perito (ADR 0075)", () => {
     expect((leerCasoGuardado(raro) as CasoAbierto).hipotesisElegida).toBeNull();
   });
 
+  it("guarda «No sé dónde quedó» (B); solo ids de vehículos del expediente", () => {
+    const id = expediente.vehiculos[0]!.id;
+    const g = casoParaGuardar({
+      narracion,
+      escena,
+      expediente,
+      validacion: null,
+      finalesDesconocidos: [id],
+    });
+    expect(g.finales_desconocidos).toEqual([id]);
+    const abierto = leerCasoGuardado(JSON.parse(JSON.stringify(g))) as CasoAbierto;
+    expect(abierto.finalesDesconocidos).toEqual([id]);
+    const raro = { ...g, finales_desconocidos: [id, "V99", 3] };
+    expect((leerCasoGuardado(raro) as CasoAbierto).finalesDesconocidos).toEqual([id]);
+    expect(casoParaGuardar({ narracion, escena, expediente, validacion: null })).not.toHaveProperty(
+      "finales_desconocidos",
+    );
+  });
+
   it("de una bitácora editada a mano se quedan solo los mensajes con forma de mensaje", () => {
     const g = casoParaGuardar({ narracion, escena, expediente, validacion: null });
     const editado = {

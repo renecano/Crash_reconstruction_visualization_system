@@ -73,6 +73,7 @@ import { Expediente as ExpedienteCesvi } from "../expediente";
 import { ComparacionDeclaracion } from "../comparacion-declaracion";
 import { DictamenCaso } from "../dictamen-caso";
 import { CargaReporte } from "../importar-dictamen";
+import { subpasoLugar } from "@/lib/colocar";
 import { leerReporte } from "@/lib/lectura-reporte";
 import { BarraRecorrido, PASOS, PASOS_CORTOS } from "../recorrido/barra";
 import { Reproduccion } from "../reproduccion";
@@ -146,6 +147,10 @@ export function RecorridoCaso({ inicial }: { inicial: CasoExpediente }) {
   // punto y el rumbo de cada impacto (para su flecha), lo que se deshace y lo último medido.
   const [herramientaMapa, setHerramientaMapa] = useState<HerramientaMapa>("colocar");
   const [elegido, setElegido] = useState<ItemLugar | null>(null);
+  /** «No sé dónde quedó» (B): esos vehículos van sin posición final; la reconstrucción no la inventa. */
+  const [desconocidos, setDesconocidos] = useState<readonly string[]>(
+    inicial.finalesDesconocidos ?? [],
+  );
   const [puntosImpacto, setPuntosImpacto] = useState<Record<number, { lat: number; lon: number }>>(
     {},
   );
@@ -355,6 +360,7 @@ export function RecorridoCaso({ inicial }: { inicial: CasoExpediente }) {
     setReporte(c.reporte);
     setValidacion(c.validacion);
     setHipotesis(c.hipotesisElegida);
+    setDesconocidos(c.finalesDesconocidos);
     // La bitácora del archivo sigue en la pizarra (R12b): se escribe después de ella.
     setPizarra(
       pizarraDeEscena(c.narracion, c.escena, {
@@ -382,6 +388,7 @@ export function RecorridoCaso({ inicial }: { inicial: CasoExpediente }) {
           reporte,
           bitacora: pizarra.bitacora,
           hipotesisElegida: hipotesis,
+          finalesDesconocidos: desconocidos,
         })
       : null;
   const guardarEnEquipo = () => {
@@ -423,7 +430,9 @@ export function RecorridoCaso({ inicial }: { inicial: CasoExpediente }) {
   const requeridos: ItemLugar[] = expediente
     ? [
         ...impactos.map((i): ItemLugar => ({ tipo: "impacto", orden: i.orden })),
-        ...expediente.vehiculos.map((v): ItemLugar => ({ tipo: "final", vehiculo: v.id })),
+        ...expediente.vehiculos
+          .filter((v) => !desconocidos.includes(v.id))
+          .map((v): ItemLugar => ({ tipo: "final", vehiculo: v.id })),
       ]
     : [];
   const opcionales: ItemLugar[] = expediente
@@ -576,6 +585,7 @@ export function RecorridoCaso({ inicial }: { inicial: CasoExpediente }) {
             punto: p.punto,
             rumbo: p.rumbo,
             ...medidasDe(v),
+            clase: v.clase ?? "sedan_mediano",
             color: colorDeVehiculo(p.vehiculo),
           },
         ];
@@ -591,7 +601,52 @@ export function RecorridoCaso({ inicial }: { inicial: CasoExpediente }) {
   };
   const medidasDeVehiculo = (id: string | undefined) => {
     const v = expediente?.vehiculos.find((x) => x.id === id);
-    return v ? medidasDe(v) : { largo: 4.5, ancho: 1.8 };
+    return v
+      ? { ...medidasDe(v), clase: v.clase ?? "sedan_mediano" }
+      : { largo: 4.5, ancho: 1.8, clase: "sedan_mediano" };
+  };
+  // La colocación en tres pasos (B): impacto, por dónde venía cada uno y dónde quedó.
+  const ordenVehiculos = impactos.flatMap((i) => i.vehiculos);
+  const subpaso =
+    actual === 2 && expediente
+      ? subpasoLugar({
+          impactoColocado: requeridos.some((i) => i.tipo === "impacto" && colocado(i)),
+          sinConfirmar: [...new Set(ordenVehiculos)].filter(
+            (v) => poseDe(v, "impacto")?.fuente === "supuesto",
+          ),
+          sinFinal: expediente.vehiculos
+            .map((v) => v.id)
+            .filter((v) => !desconocidos.includes(v) && !poseDe(v, "final")),
+        })
+      : null;
+  /** Paso 2: el perito elige por dónde venía un vehículo (una flecha sobre un carril). */
+  const elegirDireccion = (vehiculo: string, rumbo: number) => {
+    if (!expediente) return;
+    const imp = impactos.find((i) => i.vehiculos.includes(vehiculo));
+    const pose = poseDe(vehiculo, "impacto");
+    if (!imp || !pose) return;
+    setHistorial((h) => [...h, expediente]);
+    let e = expediente;
+    if (imp.vehiculos[0] === vehiculo) {
+      // El primero gira todo el impacto: los demás se recolocan por sus zonas de contacto.
+      const p = puntoDe(imp.orden);
+      if (p) {
+        setRumbosImpacto((m) => ({ ...m, [imp.orden]: rumbo }));
+        e = conImpacto(e, imp.orden, p, rumbo);
+      }
+    }
+    const nueva = e.versiones
+      ?.find((v) => v.tipo === "evidencia")
+      ?.posiciones?.find((x) => x.vehiculo === vehiculo && x.fase === "impacto");
+    cambiarExpediente(
+      conPosicion(e, {
+        vehiculo,
+        fase: "impacto",
+        punto: nueva?.punto ?? pose.punto,
+        rumbo: imp.vehiculos[0] === vehiculo ? (nueva?.rumbo ?? rumbo) : rumbo,
+        fuente: "perito",
+      }),
+    );
   };
   const colocacion =
     actual === 2 && modo === "trabajar" && expediente
@@ -638,6 +693,54 @@ export function RecorridoCaso({ inicial }: { inicial: CasoExpediente }) {
               color: colorDeVehiculo(p.vehiculo),
             })),
           impacto: puntoDe(1),
+          direcciones:
+            subpaso?.n === 2 && subpaso.vehiculo
+              ? (() => {
+                  const pose = poseDe(subpaso.vehiculo, "impacto");
+                  return pose
+                    ? {
+                        vehiculo: subpaso.vehiculo,
+                        punto: pose.punto,
+                        propuesta: pose.rumbo,
+                        color: colorDeVehiculo(subpaso.vehiculo),
+                      }
+                    : null;
+                })()
+              : null,
+          onDireccion: elegirDireccion,
+          // Paso 3: la pieza fantasma sale delante de su pose de impacto, en su rumbo, para
+          // arrastrarla; no es una posición hasta que el perito la suelta.
+          piezaFinal:
+            subpaso?.n === 3 && subpaso.vehiculo
+              ? (() => {
+                  const v = subpaso.vehiculo;
+                  const pose = poseDe(v, "impacto");
+                  if (!pose) return null;
+                  const m = medidasDeVehiculo(v);
+                  const d = m.largo * 1.6;
+                  const a = (pose.rumbo * Math.PI) / 180;
+                  const lat = pose.punto.lat + (d * Math.cos(a)) / 111_320;
+                  const lon =
+                    pose.punto.lon +
+                    (d * Math.sin(a)) / (111_320 * Math.cos((pose.punto.lat * Math.PI) / 180));
+                  return {
+                    clave: `final:${v}`,
+                    etiqueta: v,
+                    ...m,
+                    color: colorDeVehiculo(v),
+                    punto: { lat, lon },
+                    rumbo: pose.rumbo,
+                  };
+                })()
+              : null,
+          trayectorias: (expediente.vehiculos ?? []).flatMap((v) => {
+            const puntos = (["inicial", "impacto", "final"] as const).flatMap(
+              (f) => poseDe(v.id, f)?.punto ?? [],
+            );
+            return puntos.length >= 2
+              ? [{ vehiculo: v.id, color: colorDeVehiculo(v.id), puntos }]
+              : [];
+          }),
           rumboPreferido: (clave: string) => {
             const i = itemDeClave(clave);
             return i && i.tipo !== "impacto"
@@ -807,6 +910,22 @@ export function RecorridoCaso({ inicial }: { inicial: CasoExpediente }) {
           rumboActivo={activo ? rumboDeItem(activo) : null}
           onRumbo={girar}
           onListo={() => setElegido(null)}
+          subpaso={subpaso}
+          desconocidos={desconocidos}
+          onNoSeFinal={(v) => {
+            setDesconocidos((d) => (d.includes(v) ? d : [...d, v]));
+            setElegido(null);
+            setPizarra((p) =>
+              delPerito(
+                p,
+                `No sé dónde quedó ${v}: la reconstrucción va sin su posición final (no se supone ninguna).`,
+              ),
+            );
+          }}
+          onColocarDesconocido={(v) => {
+            setDesconocidos((d) => d.filter((x) => x !== v));
+            setElegido({ tipo: "final", vehiculo: v });
+          }}
           reposoSupuesto={(i) => i.tipo === "final" && reposoSupuesto(expediente, i.vehiculo)}
           onReposoSupuesto={(i, v) => {
             if (i.tipo !== "final") return;
@@ -1162,9 +1281,14 @@ export function RecorridoCaso({ inicial }: { inicial: CasoExpediente }) {
           ) : null}
           {actual === 2 && modo === "trabajar" && verMapa ? (
             <div
-              className={`absolute z-10 flex flex-col gap-2 ${expandido ? "top-5 left-1/2 -translate-x-1/2 items-center" : "top-3 left-3 items-start"}`}
+              className={`pointer-events-none absolute z-10 flex flex-col gap-2 ${expandido ? "top-5 left-1/2 -translate-x-1/2 items-center" : "top-3 left-3 items-start"}`}
             >
-              <div className="segmentado" role="tablist" aria-label="Herramienta del mapa">
+              {/* El contenedor deja pasar el puntero (no tapa lo que se arrastra en el mapa); los botones no. */}
+              <div
+                className="segmentado pointer-events-auto"
+                role="tablist"
+                aria-label="Herramienta del mapa"
+              >
                 {(
                   [
                     ["colocar", "Colocar"],
@@ -1186,11 +1310,11 @@ export function RecorridoCaso({ inicial }: { inicial: CasoExpediente }) {
                 ))}
               </div>
               {herramientaMapa === "colocar" ? (
-                <p className="vidrio t-nota rounded-control px-3 py-1.5">
+                <p className="vidrio t-nota pointer-events-none rounded-control px-3 py-1.5">
                   En «Colocar» el mapa no se mueve. Mantén Espacio para moverlo.
                 </p>
               ) : herramientaMapa === "medir" ? (
-                <p className="vidrio t-nota rounded-control px-3 py-1.5">
+                <p className="vidrio t-nota pointer-events-none rounded-control px-3 py-1.5">
                   Toca los dos extremos de lo que mides.
                 </p>
               ) : null}

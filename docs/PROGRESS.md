@@ -11,6 +11,7 @@ Reglas de trabajo: `CLAUDE.md`. Especificación: `PLAN.md`.
   - **T6.4 (los agentes respetan el orden de impactos)** quedó a medias en la rama `fix/agentes-orden-impactos` (commit `c8c8a08`, Python y TS cambiados, sin pruebas ni evaluación): se retoma en T6.
   - **Urgente (René, 2026-11-04, tarde): congelamientos del 3D en la MacBook M1**: hecho y en producción (PR #161, ADR 0104; René confirmó en la M1: WebGPU, media, dpr 1.5, 60 fps, precompilado listo). **Luego, cámaras tras el #161** (rama `fix/camaras-vivas`, ADR 0105): Conductor A/B en los ojos del conductor otra vez, la vista siempre cambia con el botón, la cinematográfica esquiva el poste, la línea de visión solo en cenital y libre, y las tareas largas de la carga con nombre y partidas. Pendientes en la sección «Cámaras tras el #161» más abajo.
   - **Después (René, 2026-11-04, tarde; orden fijado por él):** el rediseño «Laboratorio» de /cesvi (`docs/cesvi/entrante/laboratorio/`, a copiar a `docs/cesvi/rediseno/laboratorio/`) con los arreglos de uso A1–A5 (buscar el lugar con coordenadas y links y ruta `/api/lugar`, contador de la narración, reporte pegado → cargar como reporte, botones de inicio y archivo `.croquis`, sin mapa en el paso del hecho) y la colocación de vehículos rehecha (B); se despliega por partes: A1–A4 y B, luego tokens y layout, luego los actos. Antes de eso, T3.2 sigue a medias.
+  - **§0, A1–A5 y B (Laboratorio, René, 2026-11-04)** en la rama `feat/laboratorio-0-a`, listos para desplegar juntos; después, el rediseño: tokens y layout, luego los actos.
   - **Vercel (René, 2026-11-05), antes de A1** (rama `fix/vercel-produccion`, ADR 0107): verificación de que producción sirve el commit de main, modelos y HDRI en Vercel Blob (35 % menos por despliegue) y 29 despliegues viejos borrados. Deploy Hook guardado por René; el merge del #164 se publicó solo. **Luego:** las llantas del caso de ejemplo del Jetta y el Camaro, y después A1.
   - **Fotos del dictamen (C1–C3) y calidad automática que baja (D)** (rama `fix/fotos-dictamen`, ADR 0106): las fotos esperan al visor, usan la cinematográfica y van sin marcadores de interfaz; los vehículos se apoyan en banquetas y relieve; si los fps quedan < 24 durante 5 s, la calidad baja un nivel y no vuelve a subir. **Siguiente:** A1–A5 y B, luego el rediseño «Laboratorio».
   - **Urgente (René, 2026-11-04), hecho y en producción:** el 3D en blanco en computadoras potentes (PR #158, ADR 0102) y la cámara del conductor en dos pasadas (PR #158 y #159). T1.3c (defectos de T1.3b, ADR 0103) está en la rama `feat/t1-3c`. T3.2 quedó a medias en `feat/t3-2-arrastre` (commit wip: referencias 1–9 regeneradas; faltan 10–13, inversión y agentes); se retoma después de T1.3c, con la nota para el resumen de T3: el rango nuevo de V2 en AXA (68.02–92.81) deja fuera el 63.15 de CESVI y el cálculo pasó de 4.8 s a 11 s (reajustes en paralelo en el worker si se puede sin perder estabilidad).
@@ -1908,6 +1909,55 @@ Rama `feat/laboratorio-0-a`. El prompt y las ocho pantallas quedaron copiados en
 - **Pruebas:** unitarias de `lugar-texto`, `lugar` (servidor, con fetch falso), `narracion-local`, `lectura-reporte`, `caso-guardado`, `danos-caso` y `textos-caso`.
   - El e2e del caso nuevo ahora pide energía, Δv y perfil sin ceros en Daños (antes buscaba «C1–C6»).
   - Los e2e de `/cesvi` pasan en local con Chromium visible. El de la carambola falló una vez con poca memoria y pasó solo al repetirlo.
+
+### Colocación rehecha (B; René, 2026-11-04)
+
+Misma rama que §0 y A1–A5 (`feat/laboratorio-0-a`). Se despliegan juntos, como pidió René.
+
+- **Tres pasos con «Paso N de 3»** (`subpasoLugar` en `lib/colocar.ts`). El título del panel dice qué toca:
+  1. «Toca dónde chocaron».
+  2. «¿Por dónde venía V1?», uno a la vez.
+  3. «¿Dónde quedó V1?».
+- **Paso 2, flechas grandes por carril:**
+  - Alrededor de la pose de impacto salen los dos sentidos de cada calle dibujada a menos de 25 m (`direccionesCandidatas`). La que propone Croquis por las zonas de contacto va llena.
+  - Tocar una la elige. Con el primer vehículo del impacto se gira todo el impacto y los demás se recolocan por sus zonas de contacto.
+  - «Aceptar» abajo del mapa la deja igual.
+  - Sin calles cerca, solo sale la flecha de la propuesta.
+- **Paso 3, pieza fantasma:**
+  - La silueta punteada del vehículo sale delante de su pose de impacto y se arrastra a donde quedó. Un toque al mapa también lo coloca.
+  - El área para tomarla es más grande que la pieza: de lejos un auto mide pocos pixeles.
+  - ⟲ y ⟳ giran 15°.
+  - **«No sé dónde quedó»** deja al vehículo sin posición final. La reconstrucción no inventa una y la bitácora lo dice. Se guarda en el archivo `.croquis` (`finales_desconocidos`).
+- **Siluetas por clase** en el mapa, en el anillo y en los fantasmas (`siluetaClase`, `contornoClase`): auto con el frente redondeado, pickup, autobús o camión, y moto.
+- **Trayectoria punteada** de cada vehículo: inicio, si lo hay, impacto y reposo.
+- **Leyenda fija** abajo a la izquierda.
+- **«Ajuste fino» plegado:** rumbo escrito, voltear 180° y Q y E. Deshacer sigue en el mapa.
+- **Arreglo de paso:** la barra de herramientas del mapa («Colocar · Mover mapa · Medir» y su aviso) tapaba la pieza cuando quedaba debajo. Ahora deja pasar el puntero y solo sus botones lo toman.
+- **Meta:** dos vehículos en menos de 1 minuto sin ayuda. Se medirá con personas: fila «Colocar» en `docs/cesvi/prueba-personas.md`, y `colocar_s` y `colocar_sin_ayuda` en `eval/prueba_personas.mjs`.
+- **GIF:** `docs/cesvi/rediseno/laboratorio/colocacion.gif`, generado por `apps/web/e2e/colocacion-gif.spec.ts`, a mano.
+  - Es el caso de ejemplo con los mosaicos reales.
+  - El punto del impacto es un toque a pixeles fijos y no siempre cae sobre la calle: el GIF ilustra el flujo, no el lugar.
+- **Pruebas:**
+  - Unitarias de `direccionesCandidatas`, `subpasoLugar`, `siluetaClase`, `contornoClase`, `contornoVehiculo` y del `.croquis` con `finales_desconocidos`.
+  - El e2e del caso nuevo recorre los tres pasos: «Paso 2 de 3», la flecha de V2, «Paso 3 de 3» y la pieza de V1. El rumbo escrito pasa por «Ajuste fino» (`escribirRumbo`).
+  - Los tres e2e de `/cesvi` pasan en local.
+- **Lo que no se hizo:** subir el zoom a 19 al marcar el impacto, para ver más grandes los vehículos. Cambiaba la geometría de los e2e, que colocan por pixeles, y las reconstrucciones de prueba.
+
+#### Resumen para René (§0, A1–A5 y B)
+
+- **Qué quedó:**
+  - Daños de AXA con medidas reales y método en cada velocidad.
+  - Buscar el lugar con coordenadas, links y carretera con kilómetro.
+  - Contador y «Croquis ve sin IA» en la narración.
+  - «Cargarlo como reporte» y fallas con su motivo.
+  - Archivo `.croquis` y botones de inicio claros.
+  - Sin mapa en el hecho.
+  - Colocación en tres pasos: flechas por carril, pieza fantasma, «No sé dónde quedó», siluetas, trayectoria y leyenda.
+- **Cómo probarlo:**
+  - En un caso nuevo, «Usar una narración de ejemplo», «Leer», y en el lugar pega un link de Google Maps.
+  - Luego toca el impacto, elige las flechas y arrastra las piezas.
+  - El GIF muestra el recorrido.
+- **Qué necesito de ti:** medir con personas los dos vehículos en menos de 1 minuto, en la prueba de T4.
 
 ### Vercel: producción y almacenamiento (René, 2026-11-05; ADR 0107)
 

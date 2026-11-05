@@ -40,6 +40,7 @@ import {
   piezasDetectadas,
   textoConteo,
 } from "@/lib/narracion-local";
+import { type Subpaso } from "@/lib/colocar";
 import { pareceReporteCompleto } from "@/lib/lectura-reporte";
 
 const nombreModalidad = (m: string | null) => (m ? (MODALIDAD[m] ?? m.replaceAll("_", " ")) : "—");
@@ -566,6 +567,10 @@ export function PasoLugar({
   onUsarMedida,
   reposoSupuesto,
   onReposoSupuesto,
+  subpaso = null,
+  desconocidos = [],
+  onNoSeFinal,
+  onColocarDesconocido,
 }: {
   expediente: Expediente;
   escena: EscenaNarrada;
@@ -585,8 +590,15 @@ export function PasoLugar({
   /** ¿Este reposo lo supone el perito (el reporte no lo da)? ADR 0091. */
   reposoSupuesto?: (i: ItemLugar) => boolean;
   onReposoSupuesto?: (i: ItemLugar, supuesto: boolean) => void;
+  /** En qué parte de la colocación va el perito (B): «Paso N de 3». */
+  subpaso?: Subpaso | null;
+  /** Los vehículos de los que el perito no sabe dónde quedaron. */
+  desconocidos?: readonly string[];
+  onNoSeFinal?: (vehiculo: string) => void;
+  onColocarDesconocido?: (vehiculo: string) => void;
 }) {
   const [verOpcional, setVerOpcional] = useState(false);
+  const [ajusteAbierto, setAjusteAbierto] = useState(false);
   const esActivo = (i: ItemLugar) => activo !== null && claveItem(activo) === claveItem(i);
   const fila = (i: ItemLugar, n: number, opcional = false) => {
     const hecho = colocado(i);
@@ -616,40 +628,20 @@ export function PasoLugar({
             <Brujula rumbo={rumboActivo ?? 0} color={color} />
             <ol className="t-cuerpo flex flex-col gap-1 text-texto-2">
               <li>
-                <b className="text-texto">1.</b>{" "}
                 {i.tipo === "impacto"
-                  ? "Arrastra X1 de la bandeja (o toca el mapa) donde chocaron."
-                  : "Arrastra su chip de la bandeja (o toca el mapa) donde quedó."}
+                  ? "Toca el mapa donde chocaron (o arrastra X1 de la bandeja)."
+                  : "Arrastra su pieza punteada (o toca el mapa) donde quedó."}
               </li>
-              <li>
-                <b className="text-texto">2.</b> Gira con el anillo hacia donde apunta el frente
-                {i.tipo === "impacto" ? " del primero" : ""} (Q y E: 5°).
-              </li>
+              <li>Si no apunta hacia donde mira su frente, gíralo con ⟲ y ⟳ o con el anillo.</li>
             </ol>
           </div>
           <div className="solo-trabajar flex flex-wrap items-center justify-between gap-3">
-            <label className="t-nota flex items-center gap-2">
-              o escribe el rumbo
-              <input
-                className="campo cifras h-9 w-16 px-2"
-                inputMode="decimal"
-                value={rumboActivo === null ? "" : String(Math.round(rumboActivo))}
-                disabled={!hecho}
-                onChange={(e) => {
-                  const r = Number(e.target.value.replace(",", "."));
-                  if (Number.isFinite(r)) onRumbo(r);
-                }}
-                data-testid="rumbo-activo"
-              />
-              ° (0° = norte)
-            </label>
             {hecho ? (
               <div className="flex flex-wrap gap-1.5">
                 {(
                   [
-                    ["−15°", -15, "girar-menos"],
-                    ["+15°", 15, "girar-mas"],
-                    ["Voltear 180°", 180, "voltear"],
+                    ["⟲ 15°", -15, "girar-menos"],
+                    ["⟳ 15°", 15, "girar-mas"],
                   ] as const
                 ).map(([texto, d, id]) => (
                   <button
@@ -674,7 +666,56 @@ export function PasoLugar({
                 Listo
               </button>
             ) : null}
+            {!hecho && i.tipo === "final" && onNoSeFinal ? (
+              <button
+                type="button"
+                className="boton-secundario boton-compacto"
+                onClick={() => onNoSeFinal(i.vehiculo)}
+                data-testid="no-se-final"
+              >
+                No sé dónde quedó
+              </button>
+            ) : null}
           </div>
+          {/* Ajuste fino (B): el rumbo escrito y voltear, plegados. */}
+          <details
+            className="solo-trabajar t-nota"
+            data-testid="ajuste-fino"
+            open={ajusteAbierto}
+            onToggle={(e) => setAjusteAbierto((e.currentTarget as HTMLDetailsElement).open)}
+          >
+            <summary className="cursor-pointer" data-testid="abrir-ajuste-fino">
+              Ajuste fino
+            </summary>
+            <div className="mt-2 flex flex-wrap items-center gap-3">
+              <label className="flex items-center gap-2">
+                Rumbo
+                <input
+                  className="campo cifras h-9 w-16 px-2"
+                  inputMode="decimal"
+                  value={rumboActivo === null ? "" : String(Math.round(rumboActivo))}
+                  disabled={!hecho}
+                  onChange={(e) => {
+                    const r = Number(e.target.value.replace(",", "."));
+                    if (Number.isFinite(r)) onRumbo(r);
+                  }}
+                  data-testid="rumbo-activo"
+                />
+                ° (0° = norte)
+              </label>
+              {hecho ? (
+                <button
+                  type="button"
+                  className="boton-secundario boton-compacto"
+                  onClick={() => onRumbo(((((rumboActivo ?? 0) + 180) % 360) + 360) % 360)}
+                  data-testid="voltear"
+                >
+                  Voltear 180°
+                </button>
+              ) : null}
+              <span className="text-texto-3">Q y E giran 5°.</span>
+            </div>
+          </details>
           {hecho && i.tipo === "final" && onReposoSupuesto ? (
             <label className="t-nota flex items-start gap-2">
               <input
@@ -718,14 +759,48 @@ export function PasoLugar({
   };
   return (
     <div className="flex flex-col gap-4" data-testid="paso-lugar">
+      {subpaso ? (
+        <span className="t-rotulo" data-testid="subpaso-lugar" data-n={subpaso.n}>
+          Paso {subpaso.n} de 3
+        </span>
+      ) : null}
       <h2 className="t-titulo text-[clamp(1.75rem,2.6vw,2.25rem)]">
-        Marca dónde chocaron y dónde quedó cada uno
+        {subpaso ? subpaso.titulo : "Marca dónde chocaron y dónde quedó cada uno"}
       </h2>
+      {subpaso?.n === 2 ? (
+        <p className="t-nota" data-testid="ayuda-direcciones">
+          Toca la flecha del carril por el que venía. La llena es la que propone Croquis por las
+          zonas de contacto; «Aceptar» abajo del mapa la deja igual.
+        </p>
+      ) : null}
       <p className="t-nota solo-presentar" data-testid="lugar-al-presentar">
         Para colocar en el mapa, cambia a «Trabajar».
       </p>
       <ol className="flex flex-col gap-2" data-testid="lista-colocar">
         {requeridos.map((i, k) => fila(i, k + 1))}
+        {desconocidos.map((v) => (
+          <li
+            key={`desconocido-${v}`}
+            className="tarjeta flex items-center gap-3 rounded-panel px-3.5 py-3"
+            data-testid={`desconocido-${v}`}
+          >
+            <span className="grid h-7 w-7 shrink-0 place-items-center rounded-full border-[1.5px] border-linea text-texto-3">
+              ?
+            </span>
+            <span className="t-interfaz flex-1 text-texto-2">
+              {v} · no se sabe dónde quedó (sin posición final)
+            </span>
+            {onColocarDesconocido ? (
+              <button
+                type="button"
+                className="boton-secundario boton-compacto solo-trabajar"
+                onClick={() => onColocarDesconocido(v)}
+              >
+                Colocarlo
+              </button>
+            ) : null}
+          </li>
+        ))}
       </ol>
       <div className="flex flex-col gap-2">
         <button

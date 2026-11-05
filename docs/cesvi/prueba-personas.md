@@ -96,6 +96,7 @@ Paso              Hora de entrada   Preguntas (qué dijo)             Errores   
 1 Caso            __:__
 2 Hecho           __:__
 3 Lugar           __:__                                                ¿encontró el lugar? sí / no
+  Colocar         del toque del impacto __:__:__ a «Siguiente» __:__:__  ¿sin ayuda? sí / no
 4 Reconstrucción  __:__
 5 Daños           __:__
 6 Números         __:__
@@ -108,6 +109,10 @@ Al final (preguntar y anotar textual):
 3. ¿Qué cambiarías primero?
 Del 1 al 5, ¿qué tan seguro estás de que el dictamen dice lo que la narración decía? __
 ```
+
+## Meta de la colocación (René, 2026-11-04, B)
+
+**Colocar a los dos vehículos en menos de 1 minuto, sin ayuda.** Se cronometra desde que la persona toca el mapa para marcar el impacto hasta que «Siguiente» queda habilitado (los tres pasos: impacto, por dónde venía cada uno y dónde quedó). Cuenta como ayuda cualquier pista de la lista de arriba. En la hoja va en la fila «Colocar»; en el JSON, `colocar_s` (segundos) y `colocar_sin_ayuda`. `eval/prueba_personas.mjs` da la mediana y cuántos lo hicieron en menos de 60 s sin ayuda.
 
 ## Qué sale y cómo se agrega
 

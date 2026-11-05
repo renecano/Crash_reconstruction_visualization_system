@@ -12,16 +12,28 @@
  * - **en vivo,** la distancia al punto de impacto.
  *
  * Q y E giran ±5° y los botones del panel, ±15° y 180°.
+ *
+ * Colocación rehecha (René, 2026-11-04, B), en tres pasos:
+ * 1. el toque del impacto;
+ * 2. por dónde venía cada vehículo, uno a la vez: flechas grandes sobre los carriles junto a su pose
+ *    de impacto, con la de Croquis marcada;
+ * 3. dónde quedó: una pieza fantasma con su silueta que se arrastra al lugar (o un toque al mapa).
+ *
+ * Las siluetas son por clase, la trayectoria de cada uno va punteada (inicio → impacto → reposo) y la
+ * leyenda se queda fija en una esquina.
  */
 import { distanciaM } from "@croquis/cesvi";
 import type { Map as MapaMl } from "maplibre-gl";
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import {
+  type Direccion,
+  direccionesCandidatas,
   metrosPorPixel,
   normalizar,
   PASO_TECLA_GRADOS,
   rumboDeCalle,
   rumboDesdePuntero,
+  siluetaClase,
 } from "@/lib/colocar";
 
 type Punto = { lat: number; lon: number };
@@ -33,6 +45,8 @@ export interface Colocable {
   largo: number;
   ancho: number;
   color: string;
+  /** La clase del vehículo, para su silueta. */
+  clase?: string;
 }
 
 /** Una pose en el mapa: la elegida (con su anillo) o un fantasma de Croquis. */
@@ -44,6 +58,47 @@ export interface PoseMapa {
   largo: number;
   ancho: number;
   color: string;
+  clase?: string;
+}
+
+/** Las flechas de dirección del paso 2, alrededor de la pose de impacto de un vehículo. */
+export interface DireccionesMapa {
+  vehiculo: string;
+  punto: Punto;
+  /** El rumbo que propone Croquis (el de su pose de impacto). */
+  propuesta: number;
+  color: string;
+}
+
+/** La trayectoria punteada de un vehículo: inicio (si lo hay), impacto y reposo. */
+export interface TrayectoriaMapa {
+  vehiculo: string;
+  color: string;
+  puntos: Punto[];
+}
+
+/** Distancia (px) del centro a la que van las flechas del paso 2. */
+const RADIO_FLECHAS_PX = 78;
+
+/** La silueta de una clase en la caja de 1 × 1 (frente arriba), punteada o llena. */
+function Silueta({ clase, color, llena }: { clase?: string; color: string; llena: boolean }) {
+  return (
+    <svg
+      viewBox="-0.55 -0.55 1.1 1.1"
+      preserveAspectRatio="none"
+      className="absolute inset-0 h-full w-full overflow-visible"
+    >
+      <path
+        d={siluetaClase(clase ?? "")}
+        fill={color}
+        fillOpacity={llena ? 0.85 : 0.14}
+        stroke={llena ? "var(--fondo)" : color}
+        strokeWidth={llena ? 1 : 2}
+        strokeDasharray={llena ? undefined : "4 3"}
+        vectorEffect="non-scaling-stroke"
+      />
+    </svg>
+  );
 }
 
 declare global {
@@ -84,6 +139,10 @@ export function ColocarMapa({
   onSoltar,
   onGirar,
   onAceptar,
+  direcciones = null,
+  onDireccion,
+  piezaFinal = null,
+  trayectorias = [],
 }: {
   mapa: MapaMl;
   bandeja: Colocable[];
@@ -95,10 +154,20 @@ export function ColocarMapa({
   onSoltar: (clave: string, punto: Punto, rumbo: number) => void;
   onGirar: (rumbo: number) => void;
   onAceptar: (vehiculo: string) => void;
+  /** Paso 2: las flechas por las que pudo llegar el vehículo de este momento. */
+  direcciones?: DireccionesMapa | null;
+  onDireccion?: (vehiculo: string, rumbo: number) => void;
+  /** Paso 3: la pieza fantasma del vehículo que falta, para arrastrarla a donde quedó. */
+  piezaFinal?: (Colocable & { punto: Punto; rumbo: number }) | null;
+  trayectorias?: TrayectoriaMapa[];
 }) {
   const capa = useRef<HTMLDivElement>(null);
   const anillo = useRef<HTMLDivElement>(null);
-  const silueta = useRef<SVGRectElement>(null);
+  const silueta = useRef<SVGPathElement>(null);
+  const flechas = useRef<HTMLDivElement>(null);
+  const flechasRef = useRef<(HTMLButtonElement | null)[]>([]);
+  const pieza = useRef<HTMLDivElement>(null);
+  const trazos = useRef<(SVGPolylineElement | null)[]>([]);
   const circulo = useRef<SVGCircleElement>(null);
   const asa = useRef<SVGCircleElement>(null);
   const banda = useRef<SVGCircleElement>(null);
@@ -111,11 +180,50 @@ export function ColocarMapa({
   const vivo = useRef({ rumbo: seleccion?.rumbo ?? 0, girando: false, cuadro: 0 });
   const puntero = useRef({ x: 0, y: 0, libre: false });
   const [arrastrando, setArrastrando] = useState<Colocable | null>(null);
-  const datos = useRef({ seleccion, fantasmas, impacto });
+  // Las flechas salen de las calles dibujadas cerca del punto: se recalculan cuando el mapa termina
+  // de cargar sus mosaicos.
+  const [opciones, setOpciones] = useState<Direccion[]>([]);
+  const dVehiculo = direcciones?.vehiculo ?? null;
+  const dLat = direcciones?.punto.lat ?? 0;
+  const dLon = direcciones?.punto.lon ?? 0;
+  const dPropuesta = direcciones?.propuesta ?? 0;
+  useEffect(() => {
+    if (dVehiculo === null) {
+      const r = requestAnimationFrame(() => setOpciones([]));
+      return () => cancelAnimationFrame(r);
+    }
+    const calcular = () => {
+      const p = mapa.project([dLon, dLat]);
+      setOpciones(direccionesCandidatas(callesCerca(mapa, p.x, p.y), [dLon, dLat], dPropuesta));
+    };
+    const r = requestAnimationFrame(calcular);
+    mapa.on("idle", calcular);
+    return () => {
+      cancelAnimationFrame(r);
+      mapa.off("idle", calcular);
+    };
+  }, [mapa, dVehiculo, dLat, dLon, dPropuesta]);
+  const datos = useRef({
+    seleccion,
+    fantasmas,
+    impacto,
+    direcciones,
+    opciones,
+    piezaFinal,
+    trayectorias,
+  });
   const dibujar = useRef(() => {});
   // Las props de ahora y la función que dibuja: se actualizan después de cada render.
   useLayoutEffect(() => {
-    datos.current = { seleccion, fantasmas, impacto };
+    datos.current = {
+      seleccion,
+      fantasmas,
+      impacto,
+      direcciones,
+      opciones,
+      piezaFinal,
+      trayectorias,
+    };
     /** Coloca el anillo, la silueta y los fantasmas sobre el mapa (un cuadro). */
     dibujar.current = () => {
       const bearing = mapa.getBearing();
@@ -143,11 +251,10 @@ export function ColocarMapa({
           banda.current?.setAttribute(k, String(v));
         const r = vivo.current.girando ? vivo.current.rumbo : s.rumbo;
         const giro = r - bearing;
-        silueta.current.setAttribute("x", String(c - ancho / 2));
-        silueta.current.setAttribute("y", String(c - largo / 2));
-        silueta.current.setAttribute("width", String(ancho));
-        silueta.current.setAttribute("height", String(largo));
-        silueta.current.setAttribute("transform", `rotate(${giro} ${c} ${c})`);
+        silueta.current.setAttribute(
+          "transform",
+          `translate(${c} ${c}) rotate(${giro}) scale(${ancho} ${largo})`,
+        );
         const a = (giro * Math.PI) / 180;
         asa.current.setAttribute("cx", String(c + radio * Math.sin(a)));
         asa.current.setAttribute("cy", String(c - radio * Math.cos(a)));
@@ -170,6 +277,47 @@ export function ColocarMapa({
           caja.style.height = `${f.largo / mpp}px`;
           caja.style.transform = `translate(-50%, -50%) rotate(${f.rumbo - bearing}deg)`;
         }
+      });
+      // Paso 2: las flechas alrededor de la pose de impacto, cada una del lado de donde viene el
+      // vehículo y apuntando hacia donde va.
+      const d = datos.current.direcciones;
+      if (d && flechas.current) {
+        const p = mapa.project([d.punto.lon, d.punto.lat]);
+        flechas.current.style.transform = `translate(${p.x}px, ${p.y}px)`;
+        datos.current.opciones.forEach((o, i) => {
+          const el = flechasRef.current[i];
+          if (!el) return;
+          const a = ((o.rumbo + 180 - bearing) * Math.PI) / 180;
+          const x = RADIO_FLECHAS_PX * Math.sin(a);
+          const y = -RADIO_FLECHAS_PX * Math.cos(a);
+          el.style.transform = `translate(${x}px, ${y}px) translate(-50%, -50%) rotate(${o.rumbo - bearing}deg)`;
+        });
+      }
+      // Paso 3: la pieza fantasma que se arrastra.
+      const pf = datos.current.piezaFinal;
+      if (pf && pieza.current) {
+        const p = mapa.project([pf.punto.lon, pf.punto.lat]);
+        const mpp = metrosPorPixel(pf.punto.lat, zoom);
+        pieza.current.style.transform = `translate(${p.x}px, ${p.y}px)`;
+        const caja = pieza.current.firstElementChild as HTMLElement | null;
+        if (caja) {
+          caja.style.width = `${Math.max(14, pf.ancho / mpp)}px`;
+          caja.style.height = `${Math.max(28, pf.largo / mpp)}px`;
+          caja.style.transform = `translate(-50%, -50%) rotate(${pf.rumbo - bearing}deg)`;
+        }
+      }
+      datos.current.trayectorias.forEach((t, i) => {
+        const el = trazos.current[i];
+        if (!el) return;
+        el.setAttribute(
+          "points",
+          t.puntos
+            .map((q) => {
+              const xy = mapa.project([q.lon, q.lat]);
+              return `${xy.x},${xy.y}`;
+            })
+            .join(" "),
+        );
       });
     };
   });
@@ -196,7 +344,7 @@ export function ColocarMapa({
   useEffect(() => {
     vivo.current.rumbo = seleccion?.rumbo ?? 0;
     dibujar.current();
-  }, [seleccion, fantasmas, impacto]);
+  }, [seleccion, fantasmas, impacto, direcciones, opciones, piezaFinal, trayectorias]);
 
   // Q y E: ±5° al elegido (si no se está escribiendo).
   useEffect(() => {
@@ -253,22 +401,66 @@ export function ColocarMapa({
     }
   };
 
+  /** Empieza a arrastrar algo (un chip de la bandeja o la pieza fantasma del paso 3). */
+  const empezarArrastre = (b: Colocable, e: React.PointerEvent) => {
+    e.preventDefault();
+    (e.currentTarget as Element).setPointerCapture(e.pointerId);
+    setArrastrando(b);
+    requestAnimationFrame(() => moverArrastre(e.clientX, e.clientY));
+  };
+  /** Lo suelta: si cae en el mapa (y no sobre su propio origen), lo coloca alineado a la calle. */
+  const soltarArrastre = (b: Colocable, e: React.PointerEvent, origen: Element | null) => {
+    (e.currentTarget as Element).releasePointerCapture(e.pointerId);
+    setArrastrando(null);
+    const caja = capa.current?.getBoundingClientRect();
+    if (!caja) return;
+    const x = e.clientX - caja.left;
+    const y = e.clientY - caja.top;
+    if (x < 0 || y < 0 || x > caja.width || y > caja.height) return;
+    if (origen?.contains(document.elementFromPoint(e.clientX, e.clientY))) return;
+    const q = mapa.unproject([x, y]);
+    const punto = { lat: q.lat, lon: q.lng };
+    const pref = rumboPreferido(b.clave);
+    const rumbo = rumboDeCalle(callesCerca(mapa, x, y), [punto.lon, punto.lat], pref) ?? pref ?? 0;
+    onSoltar(b.clave, punto, rumbo);
+  };
+
   return (
     <div
       ref={capa}
       className="pointer-events-none absolute inset-0 z-10"
       data-testid="colocar-mapa"
     >
+      {/* La trayectoria de cada vehículo, punteada: inicio (si lo hay) → impacto → reposo. */}
+      {trayectorias.length ? (
+        <svg className="absolute inset-0 h-full w-full overflow-visible" aria-hidden="true">
+          {trayectorias.map((t, i) => (
+            <polyline
+              key={t.vehiculo}
+              ref={(el) => {
+                trazos.current[i] = el;
+              }}
+              fill="none"
+              stroke={t.color}
+              strokeWidth={2.5}
+              strokeDasharray="2 6"
+              strokeLinecap="round"
+              data-testid={`trayectoria-${t.vehiculo}`}
+            />
+          ))}
+        </svg>
+      ) : null}
       {seleccion ? (
         <div ref={anillo} className="absolute top-0 left-0" data-testid="anillo-giro">
           <svg ref={svg} className="overflow-visible">
-            <rect
+            <path
               ref={silueta}
-              rx={3}
+              d={siluetaClase(seleccion.clase ?? "")}
               fill={seleccion.color}
               fillOpacity={0.85}
               stroke="var(--fondo)"
               strokeWidth={1}
+              vectorEffect="non-scaling-stroke"
               pointerEvents="none"
             />
             <circle
@@ -352,12 +544,92 @@ export function ColocarMapa({
           className="absolute top-0 left-0"
           data-testid={`fantasma-${f.vehiculo}`}
         >
-          <div
-            className="absolute rounded-[3px] border-2 border-dashed"
-            style={{ borderColor: f.color, background: `${f.color}22` }}
-          />
+          <div className="absolute">
+            <Silueta clase={f.clase} color={f.color} llena={false} />
+          </div>
         </div>
       ))}
+
+      {/* Paso 2: por dónde venía. La flecha de Croquis va llena; tocar una la elige. */}
+      {direcciones && opciones.length ? (
+        <div
+          ref={flechas}
+          className="absolute top-0 left-0"
+          data-testid={`direcciones-${direcciones.vehiculo}`}
+        >
+          {opciones.map((o, i) => (
+            <button
+              key={o.rumbo}
+              ref={(el) => {
+                flechasRef.current[i] = el;
+              }}
+              type="button"
+              className="pointer-events-auto absolute top-0 left-0 grid h-11 w-11 place-items-center rounded-full"
+              style={{
+                background: o.propuesta ? direcciones.color : "var(--superficie)",
+                border: `2px solid ${direcciones.color}`,
+                color: o.propuesta ? "#fff" : direcciones.color,
+              }}
+              aria-label={`${direcciones.vehiculo} venía hacia ${o.rumbo}°${o.propuesta ? " (propuesta de Croquis)" : ""}`}
+              onClick={() => onDireccion?.(direcciones.vehiculo, o.rumbo)}
+              data-testid={`direccion-${o.rumbo}`}
+              data-propuesta={o.propuesta ? "si" : "no"}
+            >
+              <svg viewBox="-12 -12 24 24" className="h-6 w-6" aria-hidden="true">
+                <path d="M 0 -9 L 8 3 L 3 3 L 3 9 L -3 9 L -3 3 L -8 3 Z" fill="currentColor" />
+              </svg>
+            </button>
+          ))}
+        </div>
+      ) : null}
+
+      {/* Paso 3: la pieza fantasma; se arrastra a donde quedó el vehículo. */}
+      {piezaFinal ? (
+        <div
+          ref={pieza}
+          className="absolute top-0 left-0"
+          data-testid={`pieza-${piezaFinal.clave}`}
+        >
+          <div
+            className="pointer-events-auto absolute cursor-grab touch-none"
+            onPointerDown={(e) => empezarArrastre(piezaFinal, e)}
+            onPointerMove={(e) => {
+              if (arrastrando?.clave === piezaFinal.clave) moverArrastre(e.clientX, e.clientY);
+            }}
+            onPointerUp={(e) => soltarArrastre(piezaFinal, e, null)}
+          >
+            {/* El área para tomarla es más grande que la pieza: de lejos un auto mide pocos px. */}
+            <span className="absolute -inset-5 rounded-full" aria-hidden="true" />
+            <Silueta clase={piezaFinal.clase} color={piezaFinal.color} llena={false} />
+          </div>
+          <span
+            className="vidrio absolute top-7 left-1/2 -translate-x-1/2 rounded-full px-2 py-0.5 text-[0.75rem] whitespace-nowrap"
+            data-testid="pieza-ayuda"
+          >
+            Arrástrala a donde quedó {piezaFinal.etiqueta}
+          </span>
+        </div>
+      ) : null}
+
+      {/* La leyenda, fija. */}
+      <div
+        className="vidrio pointer-events-none absolute bottom-14 left-3 flex flex-col gap-1 rounded-panel px-3 py-2 text-[0.6875rem]"
+        data-testid="leyenda-colocar"
+      >
+        <span className="flex items-center gap-2">
+          <span className="h-2.5 w-2.5 rounded-full bg-[#FF5B2E]" /> Impacto
+        </span>
+        <span className="flex items-center gap-2">
+          <span className="h-3 w-2 rounded-[2px] bg-texto-2" /> Colocado por el perito
+        </span>
+        <span className="flex items-center gap-2">
+          <span className="h-3 w-2 rounded-[2px] border border-dashed border-texto-2" /> Propuesta
+          de Croquis
+        </span>
+        <span className="flex items-center gap-2">
+          <span className="w-4 border-t-2 border-dotted border-texto-2" /> Trayectoria
+        </span>
+      </div>
 
       {bandeja.length ? (
         <div
@@ -372,37 +644,14 @@ export function ColocarMapa({
               className="cursor-grab touch-none rounded-full px-3 py-1.5 text-[0.8125rem] font-semibold text-white"
               style={{ background: b.color }}
               data-testid={`chip-${b.clave}`}
-              onPointerDown={(e) => {
-                e.preventDefault();
-                (e.currentTarget as Element).setPointerCapture(e.pointerId);
-                setArrastrando(b);
-                requestAnimationFrame(() => moverArrastre(e.clientX, e.clientY));
-              }}
+              onPointerDown={(e) => empezarArrastre(b, e)}
               onPointerMove={(e) => {
                 if (arrastrando?.clave === b.clave) moverArrastre(e.clientX, e.clientY);
               }}
-              onPointerUp={(e) => {
-                (e.currentTarget as Element).releasePointerCapture(e.pointerId);
-                setArrastrando(null);
-                const caja = capa.current?.getBoundingClientRect();
-                if (!caja) return;
-                const x = e.clientX - caja.left;
-                const y = e.clientY - caja.top;
-                if (x < 0 || y < 0 || x > caja.width || y > caja.height) return;
-                // Soltado sobre la bandeja misma: no se coloca.
-                if (
-                  (e.currentTarget as HTMLElement).parentElement?.contains(
-                    document.elementFromPoint(e.clientX, e.clientY),
-                  )
-                )
-                  return;
-                const q = mapa.unproject([x, y]);
-                const punto = { lat: q.lat, lon: q.lng };
-                const pref = rumboPreferido(b.clave);
-                const rumbo =
-                  rumboDeCalle(callesCerca(mapa, x, y), [punto.lon, punto.lat], pref) ?? pref ?? 0;
-                onSoltar(b.clave, punto, rumbo);
-              }}
+              // Soltado sobre la bandeja misma: no se coloca.
+              onPointerUp={(e) =>
+                soltarArrastre(b, e, (e.currentTarget as HTMLElement).parentElement)
+              }
             >
               {b.etiqueta}
             </button>

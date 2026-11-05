@@ -19,6 +19,8 @@
   "pdf_descargado_s": 1140,
   "llego_al_pdf": true,
   "encontro_el_lugar": false,
+  "colocar_s": 48,
+  "colocar_sin_ayuda": true,
   "problemas": [
     {
       "paso": "lugar",
@@ -26,8 +28,18 @@
       "clave": "lugar-no-encontrado",
       "dijo": "¿Cómo busco la carretera?"
     },
-    { "paso": "hecho", "tipo": "error", "clave": "uso-narracion-de-ejemplo", "dijo": "" },
-    { "paso": "lugar", "tipo": "pista", "clave": "no-se-como-colocar", "dijo": "" }
+    {
+      "paso": "hecho",
+      "tipo": "error",
+      "clave": "uso-narracion-de-ejemplo",
+      "dijo": ""
+    },
+    {
+      "paso": "lugar",
+      "tipo": "pista",
+      "clave": "no-se-como-colocar",
+      "dijo": ""
+    }
   ],
   "al_final": {
     "mas_dificil": "",

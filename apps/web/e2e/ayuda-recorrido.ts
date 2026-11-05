@@ -80,3 +80,11 @@ export async function sinIdentificadoresDeFuente(page: Page) {
   const texto = await page.locator("body").innerText();
   for (const f of IDS_FUENTE.filter((f) => f.includes("_"))) expect(texto).not.toContain(f);
 }
+
+/** Escribe el rumbo del elemento activo: el campo vive en «Ajuste fino», plegado (B). */
+export async function escribirRumbo(page: Page, rumbo: string) {
+  const ajuste = page.getByTestId("ajuste-fino");
+  if ((await ajuste.getAttribute("open")) === null)
+    await page.getByTestId("abrir-ajuste-fino").click();
+  await page.getByTestId("rumbo-activo").fill(rumbo);
+}
