@@ -19,7 +19,16 @@
  *
  * Marco: x adelante, y arriba, z = −izquierda.
  */
-import { BufferAttribute, type BufferGeometry, type Group, Mesh, Vector3 } from "three";
+import {
+  Box3,
+  BufferAttribute,
+  type BufferGeometry,
+  type Group,
+  Matrix4,
+  Mesh,
+  type Object3D,
+  Vector3,
+} from "three";
 import { profileFor, type VehicleDimensions } from "./vehicle-geometry";
 import { dmath } from "@croquis/solver-ts";
 
@@ -469,7 +478,13 @@ export function applyVehicleDamage(
     const center = wheel.position.clone();
     const u = center.dot(field.frame.along);
     const c = crushAt(input, u);
-    const reach = field.frame.face - center.dot(field.frame.outward) - r;
+    // Lo que la llanta sobresale hacia la cara golpeada: su radio de frente o de atrás, y medio
+    // ancho de la llanta de costado. Con el radio en un costado, la llanta se hundía ~14 cm más que
+    // la lámina y quedaba fuera de su arco (caso de ejemplo Jetta–Camaro, René, 2026-11-05).
+    const reach =
+      field.frame.face -
+      center.dot(field.frame.outward) -
+      wheelExtent(wheel, field.frame.outward, r);
     const excess = Math.min(0.5, Math.max(0, c - reach));
     if (excess > 0) {
       wheels.push({
@@ -483,6 +498,32 @@ export function applyVehicleDamage(
     }
   });
   return { meshes, wheels, maxCrush: Math.max(...input.perfil), field };
+}
+
+/**
+ * Cuánto se extiende una llanta desde su centro en la dirección `dir` (marco del vehículo): la caja
+ * de sus mallas en el marco de la llanta, con su escala. Sin mallas, el radio.
+ */
+export function wheelExtent(wheel: Group, dir: Vector3, radius: number): number {
+  const box = new Box3();
+  const tmp = new Box3();
+  wheel.updateMatrix();
+  wheel.traverse((m) => {
+    if (!(m instanceof Mesh) || m === (wheel as unknown)) return;
+    const geo = m.geometry as BufferGeometry;
+    geo.computeBoundingBox();
+    // Matriz de la malla relativa a la llanta (sin la posición de la llanta en el vehículo).
+    const rel = new Matrix4();
+    for (let p: Object3D | null = m; p && p !== wheel; p = p.parent) {
+      p.updateMatrix();
+      rel.premultiply(p.matrix);
+    }
+    tmp.copy(geo.boundingBox ?? new Box3()).applyMatrix4(rel);
+    box.union(tmp);
+  });
+  if (box.isEmpty()) return radius;
+  const half = box.getSize(new Vector3()).multiply(wheel.scale).multiplyScalar(0.5);
+  return Math.abs(dir.x) * half.x + Math.abs(dir.y) * half.y + Math.abs(dir.z) * half.z;
 }
 
 /** Influencia de la deformación en el instante t (0 antes del impacto, 1 al terminar el contacto). */

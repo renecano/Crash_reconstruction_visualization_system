@@ -4,6 +4,7 @@ import { Mesh, Vector3 } from "three";
 import { describe, expect, it } from "vitest";
 import {
   applyVehicleDamage,
+  wheelExtent,
   crushAt,
   damageInfluence,
   displacementField,
@@ -211,5 +212,49 @@ describe("medición sobre la malla en estaciones arbitrarias (E5)", () => {
       perfil: [0, 0, 0, 0, 0, 0],
     });
     expect(measureDamagedWidth(intact, none.field, 0.02)).toBe(0);
+  });
+});
+
+describe("las llantas con el daño de costado (caso Jetta–Camaro, René, 2026-11-05)", () => {
+  const d = { length: 4.5, width: 1.74, height: 1.49, wheelbase: 2.62 };
+  const lateral = (c: number) => ({
+    lado: "R" as const,
+    perfil: [c, c, c, c, c, c],
+    ancho: 4.2,
+    centro: 0,
+    seed: 1,
+  });
+
+  it("de costado la llanta sobresale medio ancho, no su radio; de frente, su radio", () => {
+    const g = buildVehicle("sedan_compacto", d);
+    const rueda = g.getObjectByName("wheel_fr") as unknown as Parameters<typeof wheelExtent>[0];
+    const r = rueda.userData.radius as number;
+    expect(wheelExtent(rueda, new Vector3(0, 0, 1), r)).toBeLessThan(r * 0.6);
+    expect(wheelExtent(rueda, new Vector3(1, 0, 0), r)).toBeCloseTo(r, 1);
+  });
+
+  it("un hundimiento que no llega a la llanta no la mueve; uno grande la hunde lo que pasa de su cara", () => {
+    // La llanta del paramétrico queda a ~2 cm del costado: 1 cm no la alcanza.
+    const poco = applyVehicleDamage(
+      buildVehicle("sedan_compacto", d),
+      "sedan_compacto",
+      d,
+      lateral(0.01),
+    );
+    expect(poco.wheels).toHaveLength(0);
+    const mucho = applyVehicleDamage(
+      buildVehicle("sedan_compacto", d),
+      "sedan_compacto",
+      d,
+      lateral(0.3),
+    );
+    expect(mucho.wheels.length).toBe(2);
+    for (const w of mucho.wheels) {
+      const r = w.obj.userData.radius as number;
+      const cara = Math.abs(w.obj.position.z) + wheelExtent(w.obj, new Vector3(0, 0, 1), r);
+      // Lo que la lámina pasa de la cara de la llanta; antes sumaba radio − medio ancho (~14 cm).
+      expect(w.shift.length()).toBeCloseTo(0.3 - (d.width / 2 - cara), 6);
+      expect(w.shift.length()).toBeLessThan(0.3);
+    }
   });
 });

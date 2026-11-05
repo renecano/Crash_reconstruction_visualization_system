@@ -1944,7 +1944,36 @@ Rama `fix/vercel-produccion`. René mandó la captura del panel: «No Production
   - Crear el Deploy Hook de main y guardarlo como secreto en GitHub, para que el flujo republique solo (fila en «Bloqueado»).
   - Mirar en el panel cuánto marca ahora el almacenamiento.
 
+### Llantas del caso de ejemplo Jetta–Camaro (René, 2026-11-05)
+
+Rama `fix/ruedas-dano-costado`. René vio las llantas fuera de su hueco en un caso nuevo con la narración de ejemplo (VW Jetta 2002 contra GM Camaro 1995).
+
+- **Reproducción:** `apps/web/e2e/ruedas-ejemplo.spec.ts` sigue el mismo recorrido del caso nuevo hasta el 3D. Mide cada rueda en el inicio, el impacto y el reposo, con el daño de ese instante y de los dos costados. Corre a mano, sin `@flujo`.
+  - Resultados: `eval/results/t1_ruedas_ejemplo_antes.json` y `t1_ruedas_ejemplo.json`.
+  - Capturas: `docs/cesvi/t1/ruedas-ejemplo/` (antes en `antes/`).
+- **Lo encontrado:**
+  - En el inicio y en el impacto las ocho llantas están en su lugar.
+  - En el reposo, las dos llantas derechas de B, el costado golpeado, quedaban 20 y 22 cm adentro de la salpicadera ya deformada.
+  - Causa: el daño medía cuánto alcanza el hundimiento a la llanta con su radio (30 cm) también en los costados, donde la llanta solo sobresale medio ancho (unos 10 cm). La llanta se hundía unos 14 cm más que la lámina.
+- **Arreglo** (`wheelExtent` en `packages/viewer/src/damage.ts`):
+  - La llanta sobresale su radio hacia el frente o atrás y medio ancho hacia un costado, medido en sus mallas.
+  - Ahora se hunde solo lo que la lámina pasa de su cara.
+  - Con el arreglo, la cara de esas dos llantas queda a +0.1 cm y −2.4 cm de la salpicadera.
+
+  | Llanta de B en el reposo | Antes (m) | Después (m) |
+  | ------------------------ | --------- | ----------- |
+  | delantera derecha        | −0.200    | +0.001      |
+  | trasera derecha          | −0.223    | −0.024      |
+
+- **Suspensión:** el visor no simula suspensión. Las llantas van a la altura de su radio en todo el recorrido y la carrocería solo se inclina en una volcadura. Las medidas lo confirman: el centro de cada llanta queda a 0.30 m en los tres instantes.
+- **Pruebas:** dos unitarias en `damage.test.ts`.
+  - De costado la llanta sobresale menos de 0.6 de su radio; de frente, su radio.
+  - Un hundimiento de 1 cm no la mueve, y uno de 30 cm la hunde exactamente lo que pasa de su cara.
+- **Visto y no arreglado aquí** (en «Endurecimiento pendiente»): un rectángulo gris sobre las ventanas del costado golpeado en el reposo, probablemente el vidrio lateral roto con las cotas del paramétrico.
+
 ### Endurecimiento pendiente
+
+- **Vidrio lateral roto en los modelos (visto el 2026-11-05, caso Jetta–Camaro):** en el reposo aparece un rectángulo gris sobre las ventanas del costado golpeado de B (`docs/cesvi/t1/ruedas-ejemplo/veh-b-reposo-derecho.webp`); probablemente el vidrio agrietado se coloca con las cotas del habitáculo del paramétrico y no con las ventanas del modelo.
 
 - **Transferencia de Vercel Blob (ADR 0107):** el plan Hobby incluye 10 GB al mes; si se acaba, el visor cae a los vehículos paramétricos y a la luz de hemisferio. Antes de una demo grande, revisar el uso en el panel (Storage → croquis-recursos).
 
