@@ -1,7 +1,21 @@
+import { existsSync, readFileSync } from "node:fs";
 import { withSerwist } from "@serwist/turbopack";
 import type { NextConfig } from "next";
 
+/**
+ * De dónde salen los modelos de vehículos y los HDRI (ADR 0107): `scripts/recursos.mjs preparar`
+ * deja aquí las URL de Vercel Blob cuando quitó esas carpetas del despliegue. Sin el archivo (local,
+ * CI), se sirven de `public/` como siempre.
+ */
+const remotos: Record<string, string> = existsSync(".recursos-remotos.json")
+  ? (JSON.parse(readFileSync(".recursos-remotos.json", "utf-8")) as Record<string, string>)
+  : {};
+
 const nextConfig: NextConfig = {
+  env: {
+    CROQUIS_RECURSOS_VEHICULOS: remotos["modelos/vehiculos"] ?? "",
+    CROQUIS_RECURSOS_HDRI: remotos.hdri ?? "",
+  },
   // Las reglas para agentes viven en CLAUDE.md; no generar AGENTS.md.
   agentRules: false,
   // Los paquetes del monorepo se consumen como fuente TypeScript (sin paso de build).

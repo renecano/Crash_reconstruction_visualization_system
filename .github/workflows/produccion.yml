@@ -1,0 +1,56 @@
+# Producción = main (René, 2026-11-05): después de cada merge, croquis-sage.vercel.app debe servir
+# ese commit. El 2026-11-05 el merge del #163 no llegó a Vercel (ni despliegue ni aviso) y
+# producción se quedó en el commit anterior sin que nadie lo notara.
+#
+# Espera hasta 25 min a que /api/version diga el commit de main (o uno posterior). Si a los 6 min
+# Vercel no lo ha publicado y el repositorio tiene el secreto VERCEL_DEPLOY_HOOK_MAIN (un Deploy
+# Hook de main, creado en el panel de Vercel), lo dispara una vez. Si al final no coincide, falla:
+# la marca roja queda en el commit de main y GitHub le avisa a René por correo.
+name: Producción = main
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+concurrency:
+  group: produccion
+  # Un merge más nuevo reemplaza la espera del anterior: lo que importa es el último.
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  verificar:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 100
+      - name: Esperar a que producción sirva este commit
+        env:
+          SHA: ${{ github.sha }}
+          HOOK: ${{ secrets.VERCEL_DEPLOY_HOOK_MAIN }}
+          URL: https://croquis-sage.vercel.app/api/version
+        run: |
+          disparado=no
+          for i in $(seq 1 50); do
+            sirve=$(curl -fsS -H "Cache-Control: no-cache" "$URL?t=$(date +%s)" | jq -r '.commit // empty' || true)
+            if [ "$sirve" = "$SHA" ]; then
+              echo "Producción sirve $SHA."; exit 0
+            fi
+            if [ -n "$sirve" ] && git cat-file -e "$sirve^{commit}" 2>/dev/null \
+              && git merge-base --is-ancestor "$SHA" "$sirve"; then
+              echo "Producción sirve $sirve, posterior a $SHA."; exit 0
+            fi
+            echo "Intento $i: producción sirve '${sirve:-sin dato}', se espera $SHA."
+            if [ "$i" -eq 12 ] && [ -n "$HOOK" ] && [ "$disparado" = no ]; then
+              echo "Vercel no lo ha publicado en 6 min: se dispara el Deploy Hook de main."
+              curl -fsS -X POST "$HOOK" > /dev/null && disparado=si
+            fi
+            sleep 30
+          done
+          echo "::error::croquis-sage.vercel.app no sirve $SHA después de 25 min. Revisa el panel de Vercel (Deployments) y docs/PROGRESS.md, «Vercel: producción y almacenamiento»."
+          exit 1

@@ -84,3 +84,6 @@ apps/web/public/decodificadores/
 
 # Sesiones de agentes (worktrees temporales)
 .claude/
+
+# Lo que `scripts/recursos.mjs preparar` deja para el build (ADR 0107).
+apps/web/.recursos-remotos.json

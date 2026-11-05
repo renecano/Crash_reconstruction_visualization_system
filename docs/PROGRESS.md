@@ -11,6 +11,7 @@ Reglas de trabajo: `CLAUDE.md`. Especificación: `PLAN.md`.
   - **T6.4 (los agentes respetan el orden de impactos)** quedó a medias en la rama `fix/agentes-orden-impactos` (commit `c8c8a08`, Python y TS cambiados, sin pruebas ni evaluación): se retoma en T6.
   - **Urgente (René, 2026-11-04, tarde): congelamientos del 3D en la MacBook M1**: hecho y en producción (PR #161, ADR 0104; René confirmó en la M1: WebGPU, media, dpr 1.5, 60 fps, precompilado listo). **Luego, cámaras tras el #161** (rama `fix/camaras-vivas`, ADR 0105): Conductor A/B en los ojos del conductor otra vez, la vista siempre cambia con el botón, la cinematográfica esquiva el poste, la línea de visión solo en cenital y libre, y las tareas largas de la carga con nombre y partidas. Pendientes en la sección «Cámaras tras el #161» más abajo.
   - **Después (René, 2026-11-04, tarde; orden fijado por él):** el rediseño «Laboratorio» de /cesvi (`docs/cesvi/entrante/laboratorio/`, a copiar a `docs/cesvi/rediseno/laboratorio/`) con los arreglos de uso A1–A5 (buscar el lugar con coordenadas y links y ruta `/api/lugar`, contador de la narración, reporte pegado → cargar como reporte, botones de inicio y archivo `.croquis`, sin mapa en el paso del hecho) y la colocación de vehículos rehecha (B); se despliega por partes: A1–A4 y B, luego tokens y layout, luego los actos. Antes de eso, T3.2 sigue a medias.
+  - **Vercel (René, 2026-11-05), antes de A1** (rama `fix/vercel-produccion`, ADR 0107): verificación de que producción sirve el commit de main, modelos y HDRI en Vercel Blob (35 % menos por despliegue) y 29 despliegues viejos borrados. Falta el Deploy Hook (fila en «Bloqueado»). **Luego:** las llantas del caso de ejemplo del Jetta y el Camaro, y después A1.
   - **Fotos del dictamen (C1–C3) y calidad automática que baja (D)** (rama `fix/fotos-dictamen`, ADR 0106): las fotos esperan al visor, usan la cinematográfica y van sin marcadores de interfaz; los vehículos se apoyan en banquetas y relieve; si los fps quedan < 24 durante 5 s, la calidad baja un nivel y no vuelve a subir. **Siguiente:** A1–A5 y B, luego el rediseño «Laboratorio».
   - **Urgente (René, 2026-11-04), hecho y en producción:** el 3D en blanco en computadoras potentes (PR #158, ADR 0102) y la cámara del conductor en dos pasadas (PR #158 y #159). T1.3c (defectos de T1.3b, ADR 0103) está en la rama `feat/t1-3c`. T3.2 quedó a medias en `feat/t3-2-arrastre` (commit wip: referencias 1–9 regeneradas; faltan 10–13, inversión y agentes); se retoma después de T1.3c, con la nota para el resumen de T3: el rango nuevo de V2 en AXA (68.02–92.81) deja fuera el 63.15 de CESVI y el cálculo pasó de 4.8 s a 11 s (reajustes en paralelo en el worker si se puede sin perder estabilidad).
   - **Siguiente paso concreto (antes del pedido urgente):** T3.1 (muestreo estratificado; ver el plan de T3 en «Plan v3 — tramos de cierre») en la rama `feat/t3-numeros`; T1.3b está en `main` y espera la aprobación de René (capturas en `docs/cesvi/t1/t1.3b/`). Lo que pidió René para T1.3b el 2026-11-03 quedó así: árboles impostores (octaedros o tarjetas cruzadas) horneados en Blender de modelos CC0 (Poly Haven o ambientCG), 3–4 especies mexicanas (fresno, jacaranda, pirul, palmera), fuera las esferas sobre palitos; fachadas con textura PBR CC0 y colores de concreto pintado típicos de México, variedad de alturas y anchos, azoteas con tinacos, antenas y varillas, herrería, toldos, cortinas metálicas, letreros sin marca ni texto real; pasto y suelo con manchas, tierra y orillas secas (pasto instanciado cerca de la cámara en alta y ultra); cercas y postes con grosor real; señales de tránsito genéricas en ciudad; noche con más contraste, edificios sólidos y ventanas encendidas que se lean de lejos. Todo con licencia en `assets/ASSETS.md`; media ≥ 60 fps en las 4 escenas; capturas «t1.3b», fps y Playwright al final; «Resumen para René» al cerrar. T1.4 está en `main`; T1.5 en PR (capturas en `docs/cesvi/t1/t1.5/`).
@@ -1881,7 +1882,73 @@ Rama `fix/fotos-dictamen`. René mandó la captura del dictamen de un caso nuevo
 - **Qué hay ahora:** fotos con la cinematográfica, del instante pedido, sin marcadores; vehículos apoyados en banquetas y relieve; y si el 3D se queda abajo de 24 fps durante 5 s, baja un nivel y lo dice `?diag=1`.
 - **Cómo probarlo:** genera el dictamen de un caso nuevo y compara las tres fotos; y en `docs/cesvi/t1/ruedas/` están las capturas de cerca de cada clase. Si en tu caso las llantas siguen fuera de su hueco, dime la clase del vehículo (o manda el `.json` del caso): en las ocho clases que medí quedan bien.
 
+### Vercel: producción y almacenamiento (René, 2026-11-05; ADR 0107)
+
+Rama `fix/vercel-produccion`. René mandó la captura del panel: «No Production Deployment», el merge del #163 sin construir y 7.4 de 10 GB de almacenamiento.
+
+- **Producción:**
+  - Según el API, el despliegue de producción del proyecto es el de 59f6405 (`dpl_3CrrQWBvR31ka2swvVe17k5BAYSF`), con los alias croquis-sage, el del proyecto y el de main.
+  - Se hizo con el API (`gitSource`) porque el merge no se construyó; el panel no lo cuenta como el de la rama.
+  - El merge de esta rama lo reemplaza por uno construido por la integración de Git.
+- **Por qué no se construyó el #163:** el aviso de GitHub no llegó a Vercel.
+  - No hay despliegue, ni comentario del bot, ni estado de Vercel antes del despliegue a mano.
+  - No aplica ninguna causa conocida: el autor es el dueño, no hay paso de build ignorado, `vercel.json` publica main, no hay límite diario y no hubo incidentes.
+  - El detalle está en el ADR 0107.
+- **Verificación:**
+  - `/api/version` dice el commit desplegado.
+  - El flujo «Producción = main» (`.github/workflows/produccion.yml`) espera hasta 25 min a que croquis-sage.vercel.app sirva el commit de main y, si no, falla en ese commit.
+  - Si existe el secreto `VERCEL_DEPLOY_HOOK_MAIN`, a los 6 min dispara el Deploy Hook. Crearlo lo bloqueó el modo automático: queda en «Bloqueado — necesita a René».
+- **Peso de un despliegue** (`node eval/despliegue_peso.mjs`, `eval/results/despliegue_peso.json`, sobre el build local):
+
+  | Parte                        | MB   |
+  | ---------------------------- | ---- |
+  | `public/`                    | 47.1 |
+  | de eso, modelos de vehículos | 27.7 |
+  | de eso, HDRI                 | 5.5  |
+  | estáticos de Next            | 22.5 |
+  | funciones                    | 24.3 |
+  | despliegue, antes            | 93.9 |
+  | despliegue, después          | 60.6 |
+
+- **Recursos fuera del despliegue:**
+  - Los modelos de vehículos y los HDRI se sirven desde Vercel Blob (almacén público `croquis-recursos`, `store_Fmb6Kf9HHOC8c9mK`).
+  - Cada carpeta va en una ruta con su huella, con caché de un año y CORS abierto.
+  - El paso `preparar` del build las quita del despliegue solo si la huella coincide y el almacén responde; en local y en CI salen de `public/`.
+  - Probado con el build local en modo remoto: el visor pidió `vehiculos.json`, dos modelos, `hdri.json` y `dia.hdr` al almacén, todos con 200, y armó la escena con los modelos.
+  - El modo sin red no cambia: esas carpetas ya estaban fuera de la precarga y tienen respaldo.
+  - Si cambias un modelo o un HDRI: `node apps/web/scripts/recursos.mjs subir`. Pide `RECURSOS_READ_WRITE_TOKEN`, la variable de desarrollo del proyecto en Vercel. Una prueba unitaria falla si se olvida.
+- **Limpieza:** se borraron 29 despliegues del proyecto, incluidas las previews de `feat/r10-calidad-visual` y `feat/r4d-modalidades`.
+  - Se conservan producción (59f6405) y los dos anteriores (2e8cdc8 y c6f05ad).
+  - croquis-sage siguió respondiendo 200.
+  - No se tocaron los otros cinco proyectos de la cuenta.
+  - `vercel.json` ya solo publicaba `main` y `preview`.
+- **Uso:**
+
+  | Momento                   | Despliegues de croquis | Almacenamiento                                                       |
+  | ------------------------- | ---------------------- | -------------------------------------------------------------------- |
+  | antes (panel, René)       | 32                     | 7.4 de 10 GB en toda la cuenta                                       |
+  | después (API, 2026-11-05) | 3                      | unos 0.3 GB estimados de croquis; Blob, 36 archivos, 33.3 MB de 1 GB |
+
+  El plan Hobby no expone el uso por API: el número nuevo del panel lo tiene que leer René. Vercel lo cuenta en una ventana de 30 días, así que puede tardar en bajar.
+
+- **Instalado:** `@vercel/blob` 2.8.2 (dependencia de desarrollo de `apps/web`, para subir los recursos).
+
+#### Resumen para René (Vercel)
+
+- **Qué era:** el merge del #163 nunca llegó a Vercel. Lo publiqué con el API y por eso el panel no lo reconocía como el de main. Además, cada despliegue copiaba 33 MB de modelos y HDRI, y había 32 guardados.
+- **Qué hay ahora:**
+  - Un flujo que falla en el commit de main si producción no lo sirve en 25 min.
+  - Los modelos y los HDRI en Vercel Blob: cada despliegue pesa 35 % menos.
+  - Solo quedan los 3 despliegues que pediste conservar.
+- **Qué necesito de ti:**
+  - Crear el Deploy Hook de main y guardarlo como secreto en GitHub, para que el flujo republique solo (fila en «Bloqueado»).
+  - Mirar en el panel cuánto marca ahora el almacenamiento.
+
 ### Endurecimiento pendiente
+
+- **Transferencia de Vercel Blob (ADR 0107):** el plan Hobby incluye 10 GB al mes; si se acaba, el visor cae a los vehículos paramétricos y a la luz de hemisferio. Antes de una demo grande, revisar el uso en el panel (Storage → croquis-recursos).
+
+- **Funciones de Vercel (ADR 0107):** 18 MB de trozos del servidor (`.next/server/chunks`) van en cada despliegue; falta ver qué datos se empaquetan ahí y si alguno sobra.
 
 - **Visto en las capturas de C2 (ADR 0106), sin arreglar:** el autobús de Sketchfab trae las llantas pegadas a la carrocería (sus nodos `wheel_*` son tapones): no giran ni se desplazan con el daño; la pintura transferida cubre todo el costado del vehículo golpeado, no solo la zona del contacto; en lateral_interseccion un ocupante de la pickup asoma por la puerta en reposo.
 
@@ -2015,6 +2082,7 @@ Ordenado por impacto (lo que cierra una fase de PLAN-CESVI primero). Lo resuelto
 
 | Qué                                                                                                                                                                                                                              | Para qué                                                                                                                                                                 | Estado                                                                                                                                                                                                                                                     |
 | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Deploy Hook de main:** en Vercel, Settings → Git → Deploy Hooks, crear uno de la rama `main`; luego guardar su URL en GitHub como secreto `VERCEL_DEPLOY_HOOK_MAIN` (Settings → Secrets and variables → Actions)               | Que el flujo «Producción = main» republique solo si Vercel vuelve a perder un merge (ADR 0107)                                                                           | El modo automático no dejó crearlo por el API (cambio de cuenta); sin él, el flujo solo avisa con la marca roja                                                                                                                                            |
 | **T2a:** el colaborador corre `EJECUTAR-EN-COMPUTADORA-DEMO.bat -Prueba` desde una terminal en la carpeta del repo (2 min)                                                                                                       | Destapar hoy cualquier falla del script en otra máquina (Git, Chrome, permisos, descarga de Blender) antes del botón completo                                            | Pedido a René el 2026-10-30 (plan v3 §3). El resultado llega en la rama `resultados/prueba-<fecha>`; si falla, Claude Code lo arregla antes de seguir con T1                                                                                               |
 | Correr `EJECUTAR-EN-COMPUTADORA-DEMO.bat` en la computadora de la demo (un colaborador con Git y Chrome)                                                                                                                         | Cierra R11 (el video en calidad completa) y la meta de PLAN §7.8 (≥ 60 fps en alta o ultra, E6). Los resultados llegan en una rama `resultados/computadora-demo-<fecha>` | Listo para correr (2026-10-24, ADR 0087): `git pull` y doble clic; la guía es `LEEME-COMPUTADORA-DEMO.md`. La medición dura unos 44 minutos (132 mediciones de unos 20 s, la cuenta de la página); lo que tarden los videos se mide en esa primera corrida |
 | Aprobar el video de R11 de esa computadora                                                                                                                                                                                       | R11 se cierra con la aprobación de René (PLAN-CESVI R11)                                                                                                                 | Pendiente: depende de la fila anterior                                                                                                                                                                                                                     |

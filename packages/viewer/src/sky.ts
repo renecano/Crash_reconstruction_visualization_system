@@ -16,7 +16,8 @@
 import type { EnvironmentSettings } from "./environment";
 
 export type SkyHdri = "dia" | "nublado" | "crepusculo" | "noche";
-export const HDRI_BASE_URL = "/hdri/";
+/** Como los modelos (ADR 0107): en producción, de Vercel Blob; en local y en CI, de `public/`. */
+export const HDRI_BASE_URL = process.env.CROQUIS_RECURSOS_HDRI || "/hdri/";
 
 export interface HdriManifest {
   resolucion: string;
