@@ -1,0 +1,192 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<title>Croquis · El dictamen</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Anybody:wdth,wght@50..150,100..900&amp;family=Geist+Mono:wght@400..600&amp;family=Instrument+Sans:wdth,wght@75..100,400..700&amp;family=Instrument+Serif:ital@0;1&amp;family=Manrope:wght@200..800&amp;family=Sora:wght@100..800&amp;display=swap">
+<style>
+body{margin:0}
+a{color:inherit;text-decoration:none}a:hover{color:inherit}
+@keyframes lxRise{from{opacity:0;transform:translateY(18px);filter:blur(8px)}to{opacity:1;transform:none;filter:blur(0)}}
+@keyframes lxLine{from{transform:translateY(105%)}to{transform:none}}
+@keyframes lxGrow{from{transform:scaleX(0)}to{transform:scaleX(1)}}
+@keyframes lxPaper{from{opacity:0;transform:translateY(36px) rotate(-1.5deg)}to{opacity:1;transform:rotate(-0.6deg)}}
+@keyframes lxStamp{0%{opacity:0;transform:scale(1.8) rotate(-14deg)}60%{opacity:1;transform:scale(0.94) rotate(-8deg)}100%{opacity:1;transform:scale(1) rotate(-8deg)}}
+@keyframes lxDraw{from{stroke-dashoffset:1}to{stroke-dashoffset:0}}
+.cx-go svg{transition:transform 300ms cubic-bezier(.2,.8,.2,1)}
+.cx-go:hover svg{transform:translateX(6px)}
+.cx-go{transition:transform 200ms ease}
+.cx-go:hover{transform:translateY(-1px)}
+.cx-lift{transition:transform 220ms cubic-bezier(.2,.8,.2,1), box-shadow 220ms ease}
+.cx-lift:hover{transform:translateY(-3px)}
+@keyframes cxTip{from{opacity:0;transform:translate(-50%, calc(-100% - 4px))}to{opacity:1;transform:translate(-50%, calc(-100% - 12px))}}
+@keyframes cxDraw{from{stroke-dashoffset:1}to{stroke-dashoffset:0}}
+@keyframes cxFade{from{opacity:0}to{opacity:1}}
+@keyframes cxPop{0%{transform:scale(0);opacity:0}65%{transform:scale(1.25);opacity:1}100%{transform:scale(1);opacity:1}}
+@keyframes cxLine{from{transform:translateY(110%)}to{transform:none}}
+@keyframes cxRing{0%{transform:scale(0.6);opacity:0.9}100%{transform:scale(3.4);opacity:0}}
+@keyframes cxOut{from{clip-path:inset(0 0 0 0)}to{clip-path:inset(0 0 100% 0)}}
+@keyframes cxBurst{0%{transform:scale(0.5);opacity:0.8}100%{transform:scale(2.6);opacity:0}}
+@media (prefers-reduced-motion: reduce){*{animation:none!important;transition:none!important}}
+</style>
+</helmet>
+<div style="width: 1440px; height: 900px; box-sizing: border-box; background: {{t.bg}}; color: {{t.tx}}; font-family: {{s.ui}}; display: flex; flex-direction: column; overflow: hidden; position: relative">
+
+  <header style="height: 72px; flex: none; display: flex; align-items: center; justify-content: space-between; padding: 0 32px; background: {{t.head}}; border-bottom: 1px solid {{t.line}}">
+    <a href="Lab-Casos.dc.html" aria-label="Volver a casos" style="display: flex; align-items: center; gap: 12px; width: 280px">
+      <svg width="32" height="32" viewBox="0 0 64 64" aria-hidden="true" style="color: {{t.tx}}"><path d="M 46.86 45.38 A 20 20 0 1 1 46.86 18.62" fill="none" stroke="currentColor" stroke-width="7"></path><path d="M 44 42 A 14.5 14.5 0 1 1 44 22" fill="none" stroke="currentColor" stroke-width="1.4" opacity="0.45" stroke-dasharray="2.6 2.6"></path><g stroke="#FF5A1F" fill="none"><circle cx="52" cy="32" r="4.6" stroke-width="2.2"></circle><line x1="52" y1="22.5" x2="52" y2="25.8" stroke-width="2"></line><line x1="52" y1="38.2" x2="52" y2="41.5" stroke-width="2"></line><line x1="58.2" y1="32" x2="61.5" y2="32" stroke-width="2"></line><circle cx="52" cy="32" r="1.5" fill="#FF5A1F" stroke="none"></circle></g></svg>
+      <span style="display: flex; flex-direction: column; gap: 4px"><span style="font-family: 'Anybody', sans-serif; font-weight: 650; font-variation-settings: 'wdth' 132; font-size: 14px; letter-spacing: 0.2em">CROQUIS</span><span style="font-family: 'Geist Mono', monospace; font-size: 10px; color: {{t.tx3}}">AXA A2010930 · Ahome, Sin.</span></span>
+    </a>
+    <nav aria-label="Actos del caso" style="width: 660px; display: flex; flex-direction: column; gap: 10px">
+      <div style="display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); font-size: 13px; text-align: center">
+        <a href="Lab-Hecho.dc.html" style="color: {{t.tx3}}">El hecho</a>
+        <a href="Lab-Escena.dc.html" style="color: {{t.tx3}}">La escena</a>
+        <a href="Lab-Reconstruccion.dc.html" style="color: {{t.tx3}}">Reconstrucción</a>
+        <a href="Lab-Analisis.dc.html" style="color: {{t.tx3}}">Análisis</a>
+        <a href="Lab-Contraste.dc.html" style="color: {{t.tx3}}">Contra CESVI</a>
+        <a href="Lab-Dictamen.dc.html" aria-current="step" style="font-weight: 600">Dictamen</a>
+      </div>
+      <div style="position: relative; height: 2px; background: {{t.track}}; border-radius: 2px"><div style="position: absolute; left: 0; top: 0; bottom: 0; width: {{prog}}; background: {{t.tx}}; border-radius: 2px; transform-origin: left; animation: lxGrow 1100ms cubic-bezier(.2,.8,.2,1) both; transition: width 700ms cubic-bezier(.2,.8,.2,1)"></div><div style="position: absolute; left: {{prog}}; top: -3px; width: 8px; height: 8px; margin-left: -4px; border-radius: 999px; background: #FF5A1F; transition: left 700ms cubic-bezier(.2,.8,.2,1)"></div></div>
+    </nav>
+    <div style="display: flex; align-items: center; justify-content: flex-end; gap: 14px; width: 280px">
+      <button type="button" onClick="{{toggle}}" aria-label="{{themeLabel}}" style="width: 40px; height: 40px; border-radius: 10px; border: 1px solid {{t.line2}}; background: transparent; color: {{t.tx}}; display: flex; align-items: center; justify-content: center; cursor: pointer">
+        <sc-if value="{{day}}" hint-placeholder-val="{{true}}"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M20 14.5A8 8 0 0 1 9.5 4a8 8 0 1 0 10.5 10.5z"></path></svg></sc-if>
+        <sc-if value="{{night}}" hint-placeholder-val="{{false}}"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="4"></circle><path d="M12 2v2M12 20v2M2 12h2M20 12h2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"></path></svg></sc-if>
+      </button>
+      <a href="Lab-Presentar.dc.html" style="font-size: 14px">Presentar</a>
+      <button type="button" style="height: 40px; padding: 0 16px; border: 1px solid {{t.tx}}; border-radius: 10px; background: transparent; color: {{t.tx}}; font: 600 14px {{s.ui}}; cursor: pointer">Exportar</button>
+    </div>
+  </header>
+
+  <sc-if value="{{ready}}" hint-placeholder-val="{{true}}">
+  <main style="flex: 1; min-height: 0; display: flex">
+    <section style="flex: 1; min-width: 0; display: flex; justify-content: center; padding: 36px 40px 0; overflow: hidden; background: {{t.desk}}">
+      <div style="position: relative; width: 600px; height: 860px; flex: none; box-sizing: border-box; background: #FCFCFA; color: #14161A; border-radius: 4px; box-shadow: 0 2px 0 rgba(0,0,0,0.04), 0 40px 100px {{t.paperSh}}; padding: 48px 54px; display: flex; flex-direction: column; gap: 16px; animation: lxPaper 1000ms cubic-bezier(.2,.8,.2,1) 100ms both">
+        <sc-if value="{{draft}}" hint-placeholder-val="{{true}}"><div style="position: absolute; right: -40px; top: 170px; transform: rotate(-24deg); font-family: 'Instrument Serif', serif; font-style: italic; font-size: 92px; color: rgba(20,22,26,0.06)">Borrador</div></sc-if>
+        <div style="display: flex; justify-content: space-between; align-items: center; padding-bottom: 14px; border-bottom: 1px solid #14161A">
+          <div style="display: flex; align-items: center; gap: 10px">
+            <svg width="24" height="24" viewBox="0 0 64 64" aria-hidden="true" style="color: #14161A"><path d="M 46.86 45.38 A 20 20 0 1 1 46.86 18.62" fill="none" stroke="currentColor" stroke-width="7"></path><path d="M 44 42 A 14.5 14.5 0 1 1 44 22" fill="none" stroke="currentColor" stroke-width="1.4" opacity="0.45" stroke-dasharray="2.6 2.6"></path><g stroke="#E2460C" fill="none"><circle cx="52" cy="32" r="4.6" stroke-width="2.2"></circle><line x1="52" y1="22.5" x2="52" y2="25.8" stroke-width="2"></line><line x1="52" y1="38.2" x2="52" y2="41.5" stroke-width="2"></line><line x1="58.2" y1="32" x2="61.5" y2="32" stroke-width="2"></line><circle cx="52" cy="32" r="1.5" fill="#E2460C" stroke="none"></circle></g></svg>
+            <span style="font-family: 'Anybody', sans-serif; font-weight: 650; font-variation-settings: 'wdth' 132; font-size: 12px; letter-spacing: 0.2em">CROQUIS</span>
+          </div>
+          <span style="font-family: 'Geist Mono', monospace; font-size: 10px; color: #4A505A">DICTAMEN · AXA A2010930</span>
+        </div>
+        <div style="font-family: {{s.disp}}; font-weight: {{s.headW}}; font-size: 30px; line-height: 1.1; letter-spacing: -0.01em">Dictamen de hecho de tránsito: alcance en la carretera México-Nogales, km 47+800</div>
+        <div style="font-size: 11.5px; color: #4A505A">Ahome, Sinaloa · Perito: {{nameShown}} · [fecha de emisión]</div>
+        <div style="display: flex; flex-direction: column; gap: 6px"><div style="font-size: 10px; font-weight: 700; letter-spacing: 0.12em; color: #4A505A">1 · NARRACIÓN</div><div style="font-size: 12px; line-height: 1.65">Hecho de tránsito en la modalidad de alcance en el arroyo que corre de sur a norte; el vehículo B (Toyota Tacoma) iba detrás del vehículo A (Chevrolet Silverado 2500)…</div></div>
+        <div style="display: flex; gap: 16px">
+          <svg width="170" height="150" viewBox="0 0 170 150" role="img" aria-label="Croquis a escala del hecho" style="flex: none; border: 1px solid #E2DFD6; border-radius: 3px; background: #F6F5F1"><g transform="rotate(-14 85 75)"><rect x="56" y="-20" width="28" height="190" fill="#FFFFFF"></rect><rect x="84" y="-20" width="12" height="190" fill="#ECEBE6"></rect><rect x="96" y="-20" width="28" height="190" fill="#FFFFFF"></rect><path d="M70 -20V170M110 -20V170" stroke="#C9C6BE" stroke-width="0.8" stroke-dasharray="4 4"></path><path d="M66 140V80" stroke="#14161A" stroke-width="1.4"></path><rect x="62" y="22" width="12" height="34" rx="3" fill="#FFFFFF" stroke="#14161A" stroke-width="1"></rect><rect x="60" y="58" width="11" height="28" rx="3" fill="#14161A"></rect><circle cx="67" cy="57" r="4" fill="none" stroke="#E2460C" stroke-width="1.6"></circle></g></svg>
+          <div style="flex: 1; display: flex; flex-direction: column; gap: 6px"><div style="font-size: 10px; font-weight: 700; letter-spacing: 0.12em; color: #4A505A">3 · RESULTADOS</div>
+            <div style="display: flex; justify-content: space-between; font-size: 12px; border-bottom: 1px solid #ECE9E1; padding-bottom: 5px"><span>B al impacto</span><span style="font-family: 'Geist Mono', monospace">34.5 km/h · 26.2–44.0</span></div>
+            <div style="display: flex; justify-content: space-between; font-size: 12px; border-bottom: 1px solid #ECE9E1; padding-bottom: 5px"><span>A al impacto</span><span style="font-family: 'Geist Mono', monospace">0.0 km/h</span></div>
+            <div style="display: flex; justify-content: space-between; font-size: 12px; border-bottom: 1px solid #ECE9E1; padding-bottom: 5px"><span>B por deformación</span><span style="font-family: 'Geist Mono', monospace">63.90 km/h</span></div>
+            <div style="display: flex; justify-content: space-between; font-size: 12px"><span>Contra CESVI</span><span style="font-family: 'Geist Mono', monospace">Δ 1.2 %</span></div>
+          </div>
+        </div>
+        <div style="display: flex; flex-direction: column; gap: 6px"><div style="font-size: 10px; font-weight: 700; letter-spacing: 0.12em; color: #4A505A">5 · CONCLUSIÓN DEL PERITO</div><div style="font-size: 12px; line-height: 1.65; color: #6A6F78; border: 1px dashed #CFCBC0; border-radius: 3px; padding: 10px 12px">Aquí aparece lo que escribas a la derecha.</div></div>
+        <div style="margin-top: 8px; display: flex; align-items: flex-end; gap: 14px">
+          <div style="flex: 1; display: flex; flex-direction: column; gap: 4px"><span style="font-family: 'Instrument Serif', serif; font-style: italic; font-size: 24px; min-height: 30px">{{signature}}</span><span style="height: 1px; background: #14161A"></span><span style="font-size: 10px; color: #4A505A">Firma del perito</span></div>
+          <sc-if value="{{signed}}" hint-placeholder-val="{{false}}"><div style="position: relative; width: 120px; height: 120px; border-radius: 999px; border: 2px solid #E2460C; color: #E2460C; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; animation: lxStamp 600ms cubic-bezier(.3,1.4,.5,1) both"><span style="font-family: 'Anybody', sans-serif; font-weight: 650; font-variation-settings: 'wdth' 132; font-size: 10px; letter-spacing: 0.2em">CROQUIS</span><span style="font-family: 'Instrument Serif', serif; font-style: italic; font-size: 24px">Validado</span><span style="font-family: 'Geist Mono', monospace; font-size: 8px">[huella del archivo]</span><span style="position: absolute; inset: -2px; border-radius: 999px; border: 2px solid #E2460C; animation: cxBurst 900ms ease-out 200ms both"></span></div></sc-if>
+        </div>
+      </div>
+    </section>
+
+    <aside style="width: 470px; flex: none; box-sizing: border-box; padding: 32px 36px 28px; border-left: 1px solid {{t.line}}; background: {{t.surf}}; display: flex; flex-direction: column; gap: 18px">
+      <h1 style="margin: 0; overflow: hidden; font-family: {{s.disp}}; font-weight: {{s.headW}}; font-size: 48px; line-height: 1; letter-spacing: -0.03em"><span style="display: block; animation: lxLine 900ms cubic-bezier(.2,.8,.2,1) 80ms both">Dictamen</span></h1>
+      <label style="display: flex; flex-direction: column; gap: 8px; font-size: 14px; font-weight: 600; animation: lxRise 700ms cubic-bezier(.2,.8,.2,1) 200ms both">Tu conclusión
+        <textarea rows="6" placeholder="Escríbela o díctala. Croquis no la redacta por ti." style="box-sizing: border-box; width: 100%; padding: 14px 16px; border-radius: 14px; border: 1px solid {{t.line2}}; background: {{t.surf2}}; color: {{t.tx}}; font: 400 15px/1.6 {{s.ui}}; resize: none"></textarea>
+      </label>
+      <div style="display: flex; gap: 6px; flex-wrap: wrap; animation: lxRise 700ms cubic-bezier(.2,.8,.2,1) 300ms both">
+        <button type="button" style="height: 34px; padding: 0 12px; border-radius: 10px; border: 1px solid {{t.line2}}; background: transparent; color: {{t.tx}}; font: 13px {{s.ui}}; cursor: pointer">Citar velocidad de B</button>
+        <button type="button" style="height: 34px; padding: 0 12px; border-radius: 10px; border: 1px solid {{t.line2}}; background: transparent; color: {{t.tx}}; font: 13px {{s.ui}}; cursor: pointer">Citar contraste</button>
+        <button type="button" style="height: 34px; padding: 0 12px; border-radius: 10px; border: 1px solid {{t.line2}}; background: transparent; color: {{t.tx}}; font: 13px {{s.ui}}; cursor: pointer">Citar supuestos</button>
+      </div>
+      <div style="display: flex; flex-direction: column; gap: 8px; animation: lxRise 700ms cubic-bezier(.2,.8,.2,1) 400ms both">
+        <span style="font-size: 14px; font-weight: 600">Formato</span>
+        <div role="radiogroup" aria-label="Formato del dictamen" style="display: flex; gap: 2px; padding: 3px; border-radius: 12px; background: {{t.surf2}}">
+          <button type="button" role="radio" aria-checked="true" style="flex: 1; height: 40px; border: 0; border-radius: 9px; background: {{t.surf}}; color: {{t.tx}}; font: 600 13px {{s.ui}}; box-shadow: 0 1px 2px rgba(0,0,0,0.12); cursor: pointer">Estructura de CESVI</button>
+          <button type="button" role="radio" aria-checked="false" style="flex: 1; height: 40px; border: 0; border-radius: 9px; background: transparent; color: {{t.tx2}}; font: 500 13px {{s.ui}}; cursor: pointer">Croquis completo</button>
+        </div>
+      </div>
+      <div style="display: flex; gap: 10px; align-items: flex-end; animation: lxRise 700ms cubic-bezier(.2,.8,.2,1) 500ms both">
+        <label style="flex: 1; display: flex; flex-direction: column; gap: 8px; font-size: 14px; font-weight: 600">Nombre del perito<input type="text" value="{{name}}" onInput="{{typeName}}" placeholder="Como aparecerá en la firma" style="box-sizing: border-box; height: 46px; padding: 0 14px; border-radius: 12px; border: 1px solid {{t.line2}}; background: {{t.surf2}}; color: {{t.tx}}; font: 15px {{s.ui}}"></label>
+        <button type="button" onClick="{{sign}}" style="height: 46px; padding: 0 18px; border-radius: 12px; border: 1px solid {{t.tx}}; background: {{signBg}}; color: {{signFg}}; font: 600 14px {{s.ui}}; cursor: pointer">{{signLabel}}</button>
+      </div>
+      <div style="font-size: 13px; color: {{t.tx3}}">{{signNote}}</div>
+      <div style="margin-top: auto; display: flex; flex-direction: column; gap: 10px">
+        <button type="button" class="cx-go" style="height: 58px; border-radius: 14px; border: 0; background: {{t.pri}}; color: {{t.priTx}}; display: flex; align-items: center; justify-content: space-between; padding: 0 22px; font: 600 16px {{s.ui}}; cursor: pointer">Descargar el PDF<span style="font-family: 'Geist Mono', monospace; font-size: 12px; opacity: 0.7">Ctrl P</span></button>
+        <div style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px">
+          <button type="button" style="height: 44px; border-radius: 12px; border: 1px solid {{t.line2}}; background: transparent; color: {{t.tx}}; font: 500 14px {{s.ui}}; cursor: pointer">Word</button>
+          <button type="button" style="height: 44px; border-radius: 12px; border: 1px solid {{t.line2}}; background: transparent; color: {{t.tx}}; font: 500 14px {{s.ui}}; cursor: pointer">.croquis</button>
+          <button type="button" style="height: 44px; border-radius: 12px; border: 1px solid {{t.line2}}; background: transparent; color: {{t.tx}}; font: 500 14px {{s.ui}}; cursor: pointer">Guardar aquí</button>
+        </div>
+      </div>
+    </aside>
+  </main>
+  </sc-if>
+
+  <sc-if value="{{intro}}" hint-placeholder-val="{{false}}">
+    <div aria-hidden="true" style="position: absolute; inset: 0; z-index: 50; background: {{t.bg}}; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 26px; pointer-events: none; animation: cxOut 560ms cubic-bezier(.7,0,.2,1) 860ms both">
+      <svg width="128" height="128" viewBox="0 0 64 64" style="color: {{t.tx}}; overflow: visible">
+        <g opacity="0.55"><g stroke="currentColor" stroke-width="1.1" style="animation: cxFade 300ms ease 60ms both"><line x1="45.65" y1="55.64" x2="46.80" y2="57.63"></line><line x1="39.07" y1="58.37" x2="39.66" y2="60.59"></line><line x1="32.00" y1="58.20" x2="32.00" y2="61.60"></line><line x1="24.93" y1="58.37" x2="24.34" y2="60.59"></line><line x1="18.35" y1="55.64" x2="17.20" y2="57.63"></line><line x1="13.47" y1="50.53" x2="11.07" y2="52.93"></line><line x1="8.36" y1="45.65" x2="6.37" y2="46.80"></line><line x1="5.63" y1="39.07" x2="3.41" y2="39.66"></line><line x1="5.80" y1="32.00" x2="2.40" y2="32.00"></line><line x1="5.63" y1="24.93" x2="3.41" y2="24.34"></line><line x1="8.36" y1="18.35" x2="6.37" y2="17.20"></line><line x1="13.47" y1="13.47" x2="11.07" y2="11.07"></line><line x1="18.35" y1="8.36" x2="17.20" y2="6.37"></line><line x1="24.93" y1="5.63" x2="24.34" y2="3.41"></line><line x1="32.00" y1="5.80" x2="32.00" y2="2.40"></line><line x1="39.07" y1="5.63" x2="39.66" y2="3.41"></line><line x1="45.65" y1="8.36" x2="46.80" y2="6.37"></line></g></g>
+        <path d="M 46.86 45.38 A 20 20 0 1 1 46.86 18.62" fill="none" stroke="currentColor" stroke-width="6.4" pathLength="1" stroke-dasharray="1" style="animation: cxDraw 620ms cubic-bezier(.65,0,.25,1) 80ms both"></path>
+        <g opacity="0.45"><path d="M 43.14 41.94 A 15 15 0 1 1 43.14 22.06" fill="none" stroke="currentColor" stroke-width="0.9" stroke-dasharray="2.2 2.2" style="animation: cxFade 300ms ease 420ms both"></path></g>
+        <g style="transform-box: fill-box; transform-origin: center; animation: cxPop 420ms cubic-bezier(.3,1.6,.5,1) 600ms both"><g stroke="#FF5A1F" fill="none"><circle cx="52" cy="32" r="4.3" stroke-width="1.7"></circle><line x1="52" y1="23.6" x2="52" y2="26.4" stroke-width="1.3"></line><line x1="52" y1="37.6" x2="52" y2="40.4" stroke-width="1.3"></line><line x1="57.6" y1="32" x2="60.4" y2="32" stroke-width="1.3"></line></g><circle cx="52" cy="32" r="1.2" fill="#FF5A1F"></circle></g>
+        <circle cx="52" cy="32" r="4.3" fill="none" stroke="#FF5A1F" stroke-width="0.8" style="transform-box: fill-box; transform-origin: center; animation: cxRing 700ms ease-out 640ms both"></circle>
+      </svg>
+      <div style="display: flex; align-items: baseline; gap: 16px; overflow: hidden; padding-bottom: 6px"><span style="font-family: 'Geist Mono', monospace; font-size: 14px; color: {{t.tx3}}; animation: cxFade 300ms ease 250ms both">06</span><span style="display: block; font-family: {{s.disp}}; font-weight: {{s.headW}}; font-size: 48px; letter-spacing: -0.02em; animation: cxLine 600ms cubic-bezier(.2,.8,.2,1) 220ms both">El dictamen</span></div>
+    </div>
+  </sc-if>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"tema":{"editor":"enum","options":["Día","Noche"],"default":"Día","section":"Tema"},"pairing":{"editor":"enum","options":["Editorial","Geométrica","Suave"],"default":"Editorial","section":"Tipografía"},"transicion":{"editor":"boolean","default":true,"section":"Movimiento"},"$preview":{"width":1440,"height":900}}'>
+class Component extends DCLogic {
+  constructor(props) { super(props); var rd = typeof window !== 'undefined' && window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches; this.introOn = props.transicion !== false && !rd; this.state = { intro: this.introOn, ready: !this.introOn, night: null, name: '', signed: false }; }
+  componentDidMount() { this.startIntro(); }
+  componentWillUnmount() { clearTimeout(this.ti1); clearTimeout(this.ti2); }
+  startIntro() { if (!this.introOn) return; var self = this; this.ti1 = setTimeout(function () { self.setState({ ready: true }); }, 760); this.ti2 = setTimeout(function () { self.setState({ intro: false }); }, 1500); }
+
+  isNight() { return this.state.night === null ? this.props.tema === 'Noche' : this.state.night; }
+  tokens(n) {
+    if (n) return { bg: '#0A1120', surf: '#111A2C', surf2: '#17223A', head: 'rgba(10,17,32,0.86)', track: '#1E2A44', line: 'rgba(148,170,210,0.16)', line2: 'rgba(148,170,210,0.3)', tx: '#E8EEF8', tx2: '#B4C0D4', tx3: '#8D9BB4', pri: '#E8EEF8', priTx: '#0A1120', desk: 'radial-gradient(70% 60% at 50% 30%, #15223D 0%, #0A1120 70%)', paperSh: 'rgba(0,0,0,0.6)' };
+    return { bg: '#F4F5F7', surf: '#FFFFFF', surf2: '#F4F5F7', head: 'rgba(255,255,255,0.86)', track: '#E1E4E8', line: '#E6E8EC', line2: '#C9CDD4', tx: '#0B0D12', tx2: '#3A3F49', tx3: '#5B616C', pri: '#0B0D12', priTx: '#FFFFFF', desk: 'radial-gradient(70% 60% at 50% 30%, #FFFFFF 0%, #E9EBEF 75%)', paperSh: 'rgba(27,34,48,0.18)' };
+  }
+  pairs(p) {
+    var sets = {
+      'Editorial': { disp: "'Instrument Serif', Georgia, serif", ui: "'Instrument Sans', system-ui, sans-serif", headW: 400 },
+      'Geométrica': { disp: "'Sora', system-ui, sans-serif", ui: "'Sora', system-ui, sans-serif", headW: 300 },
+      'Suave': { disp: "'Manrope', system-ui, sans-serif", ui: "'Manrope', system-ui, sans-serif", headW: 500 }
+    };
+    return sets[p] || sets['Editorial'];
+  }
+  renderVals() {
+    var self = this;
+    var night = this.isNight();
+    var t = this.tokens(night);
+    var signed = this.state.signed;
+    var hasName = this.state.name.trim().length > 0;
+    return {
+      t: t, s: this.pairs(this.props.pairing), night: night, day: !night,
+      intro: this.state.intro, ready: this.state.ready,
+      themeLabel: night ? 'Cambiar a modo día' : 'Cambiar a modo noche',
+      toggle: function () { self.setState({ night: !self.isNight() }); },
+      name: this.state.name,
+      typeName: function (e) { self.setState({ name: e.target.value, signed: false }); },
+      sign: function () { if (self.state.name.trim()) self.setState({ signed: true }); },
+      signed: signed, draft: !signed,
+      nameShown: hasName ? this.state.name : '[nombre del perito]',
+      signature: signed ? this.state.name : '',
+      signLabel: signed ? 'Firmado' : 'Validar y firmar',
+      signBg: signed ? t.tx : 'transparent', signFg: signed ? t.bg : t.tx,
+      signNote: signed ? 'Caso cerrado. El PDF sale sin marca de borrador y con la huella del archivo.' : (hasName ? 'Al firmar, el dictamen deja de ser borrador.' : 'Escribe tu nombre para poder firmar. Mientras tanto sale como borrador.'),
+      prog: signed ? '100%' : '91.67%'
+    };
+  }
+}
+</script>
+</body>
+</html>

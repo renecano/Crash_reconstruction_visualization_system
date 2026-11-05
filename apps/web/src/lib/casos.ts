@@ -65,6 +65,8 @@ export interface CasoExpediente {
   bitacora?: MensajeBitacora[];
   /** La hipótesis que eligió el perito en un caso guardado (ADR 0091). */
   hipotesisElegida?: string | null;
+  /** Los vehículos de los que el perito no sabe dónde quedaron (B). */
+  finalesDesconocidos?: string[];
 }
 
 export const casoNuevo = (): CasoExpediente => ({
@@ -248,6 +250,7 @@ export function abrirGuardado(a: Almacen, id: string): CasoExpediente | null {
     validacion: c.validacion,
     bitacora: c.bitacora,
     hipotesisElegida: c.hipotesisElegida,
+    finalesDesconocidos: c.finalesDesconocidos,
   };
 }
 

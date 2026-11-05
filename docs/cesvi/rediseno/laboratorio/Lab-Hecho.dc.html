@@ -1,0 +1,187 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<title>Croquis · El hecho</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Anybody:wdth,wght@50..150,100..900&amp;family=Geist+Mono:wght@400..600&amp;family=Instrument+Sans:wdth,wght@75..100,400..700&amp;family=Instrument+Serif:ital@0;1&amp;family=Manrope:wght@200..800&amp;family=Sora:wght@100..800&amp;display=swap">
+<style>
+body{margin:0}
+a{color:inherit;text-decoration:none}a:hover{color:inherit}
+@keyframes lxRise{from{opacity:0;transform:translateY(18px);filter:blur(8px)}to{opacity:1;transform:none;filter:blur(0)}}
+@keyframes lxLine{from{transform:translateY(105%)}to{transform:none}}
+@keyframes lxGrow{from{transform:scaleX(0)}to{transform:scaleX(1)}}
+@keyframes lxMark{from{background-size:0% 100%}to{background-size:100% 100%}}
+@keyframes lxFade{from{opacity:0}to{opacity:1}}
+.cx-go svg{transition:transform 300ms cubic-bezier(.2,.8,.2,1)}
+.cx-go:hover svg{transform:translateX(6px)}
+.cx-go{transition:transform 200ms ease}
+.cx-go:hover{transform:translateY(-1px)}
+.cx-btn{transition:background 160ms ease, border-color 160ms ease}
+@keyframes cxDraw{from{stroke-dashoffset:1}to{stroke-dashoffset:0}}
+@keyframes cxFade{from{opacity:0}to{opacity:1}}
+@keyframes cxPop{0%{transform:scale(0);opacity:0}65%{transform:scale(1.25);opacity:1}100%{transform:scale(1);opacity:1}}
+@keyframes cxLine{from{transform:translateY(110%)}to{transform:none}}
+@keyframes cxRing{0%{transform:scale(0.6);opacity:0.9}100%{transform:scale(3.4);opacity:0}}
+@keyframes cxOut{from{clip-path:inset(0 0 0 0)}to{clip-path:inset(0 0 100% 0)}}
+@media (prefers-reduced-motion: reduce){*{animation:none!important;transition:none!important}}
+</style>
+</helmet>
+<div style="width: 1440px; height: 900px; box-sizing: border-box; background: {{t.bg}}; color: {{t.tx}}; font-family: {{s.ui}}; display: flex; flex-direction: column; overflow: hidden; position: relative">
+
+  <header style="height: 72px; flex: none; display: flex; align-items: center; justify-content: space-between; padding: 0 32px; background: {{t.head}}; border-bottom: 1px solid {{t.line}}">
+    <a href="Lab-Casos.dc.html" aria-label="Volver a casos" style="display: flex; align-items: center; gap: 12px; width: 280px">
+      <svg width="32" height="32" viewBox="0 0 64 64" aria-hidden="true" style="color: {{t.tx}}"><path d="M 46.86 45.38 A 20 20 0 1 1 46.86 18.62" fill="none" stroke="currentColor" stroke-width="7"></path><path d="M 44 42 A 14.5 14.5 0 1 1 44 22" fill="none" stroke="currentColor" stroke-width="1.4" opacity="0.45" stroke-dasharray="2.6 2.6"></path><g stroke="#FF5A1F" fill="none"><circle cx="52" cy="32" r="4.6" stroke-width="2.2"></circle><line x1="52" y1="22.5" x2="52" y2="25.8" stroke-width="2"></line><line x1="52" y1="38.2" x2="52" y2="41.5" stroke-width="2"></line><line x1="58.2" y1="32" x2="61.5" y2="32" stroke-width="2"></line><circle cx="52" cy="32" r="1.5" fill="#FF5A1F" stroke="none"></circle></g></svg>
+      <span style="display: flex; flex-direction: column; gap: 4px"><span style="font-family: 'Anybody', sans-serif; font-weight: 650; font-variation-settings: 'wdth' 132; font-size: 14px; letter-spacing: 0.2em">CROQUIS</span><span style="font-family: 'Geist Mono', monospace; font-size: 10px; color: {{t.tx3}}">AXA A2010930 · Ahome, Sin.</span></span>
+    </a>
+    <nav aria-label="Actos del caso" style="width: 660px; display: flex; flex-direction: column; gap: 10px">
+      <div style="display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); font-size: 13px; text-align: center">
+        <a href="Lab-Hecho.dc.html" aria-current="step" style="font-weight: 600">El hecho</a>
+        <a href="Lab-Escena.dc.html" style="color: {{t.tx3}}">La escena</a>
+        <a href="Lab-Reconstruccion.dc.html" style="color: {{t.tx3}}">Reconstrucción</a>
+        <a href="Lab-Analisis.dc.html" style="color: {{t.tx3}}">Análisis</a>
+        <a href="Lab-Contraste.dc.html" style="color: {{t.tx3}}">Contra CESVI</a>
+        <a href="Lab-Dictamen.dc.html" style="color: {{t.tx3}}">Dictamen</a>
+      </div>
+      <div style="position: relative; height: 2px; background: {{t.track}}; border-radius: 2px"><div style="position: absolute; left: 0; top: 0; bottom: 0; width: 8.33%; background: {{t.tx}}; border-radius: 2px; transform-origin: left; animation: lxGrow 900ms cubic-bezier(.2,.8,.2,1) both"></div><div style="position: absolute; left: 8.33%; top: -3px; width: 8px; height: 8px; margin-left: -4px; border-radius: 999px; background: #FF5A1F"></div></div>
+    </nav>
+    <div style="display: flex; align-items: center; justify-content: flex-end; gap: 14px; width: 280px">
+      <button type="button" onClick="{{toggle}}" aria-label="{{themeLabel}}" style="width: 40px; height: 40px; border-radius: 10px; border: 1px solid {{t.line2}}; background: transparent; color: {{t.tx}}; display: flex; align-items: center; justify-content: center; cursor: pointer">
+        <sc-if value="{{day}}" hint-placeholder-val="{{true}}"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M20 14.5A8 8 0 0 1 9.5 4a8 8 0 1 0 10.5 10.5z"></path></svg></sc-if>
+        <sc-if value="{{night}}" hint-placeholder-val="{{false}}"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="4"></circle><path d="M12 2v2M12 20v2M2 12h2M20 12h2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"></path></svg></sc-if>
+      </button>
+      <a href="Lab-Presentar.dc.html" style="font-size: 14px">Presentar</a>
+      <button type="button" style="height: 40px; padding: 0 16px; border: 1px solid {{t.tx}}; border-radius: 10px; background: transparent; color: {{t.tx}}; font: 600 14px {{s.ui}}; cursor: pointer">Exportar</button>
+    </div>
+  </header>
+
+  <sc-if value="{{ready}}" hint-placeholder-val="{{true}}">
+  <main style="flex: 1; min-height: 0; display: flex; gap: 40px; padding: 44px 32px 32px 56px">
+    <section style="flex: 1; min-width: 0; display: flex; flex-direction: column">
+      <h1 style="margin: 0; overflow: hidden; font-family: {{s.disp}}; font-weight: {{s.headW}}; font-size: 60px; line-height: 1; letter-spacing: -0.03em"><span style="display: block; animation: lxLine 900ms cubic-bezier(.2,.8,.2,1) 80ms both">Alcance en la México-Nogales, km 47+800</span></h1>
+      <div style="margin-top: 14px; display: flex; gap: 18px; font-size: 14px; color: {{t.tx2}}; animation: lxRise 700ms cubic-bezier(.2,.8,.2,1) 220ms both"><span>Ahome, Sinaloa</span><span style="color: {{t.tx3}}">·</span><span>Tramo Los Mochis–Navojoa</span><span style="color: {{t.tx3}}">·</span><span>2 vehículos · 1 impacto</span></div>
+
+      <div style="margin-top: 34px; display: flex; align-items: center; gap: 18px; font-size: 13px; color: {{t.tx2}}; animation: lxRise 700ms cubic-bezier(.2,.8,.2,1) 380ms both">
+        <span style="font-weight: 600; color: {{t.tx}}">13 datos leídos</span>
+        <span style="display: flex; align-items: center; gap: 6px"><span style="font-family: 'Geist Mono', monospace; font-size: 10px; font-weight: 600; width: 18px; height: 18px; border-radius: 999px; background: {{t.tx}}; color: {{t.bg}}; display: inline-flex; align-items: center; justify-content: center">A</span>vehículos</span>
+        <span style="text-decoration: underline; text-decoration-color: #FF5A1F; text-decoration-thickness: 2px; text-underline-offset: 4px">daños</span>
+        <span style="padding: 1px 6px; border-radius: 4px; background: {{t.soft}}">lugar y vía</span>
+        <span style="font-family: 'Geist Mono', monospace; border-bottom: 1px dashed {{t.tx2}}">medidas</span>
+      </div>
+
+      <p style="margin: 18px 0 0; font-size: 20px; line-height: 1.78; color: {{t.tx2}}; max-width: 820px; animation: lxRise 800ms cubic-bezier(.2,.8,.2,1) 450ms both">Hecho de tránsito en la modalidad de <span style="color: {{t.tx}}; padding: 1px 4px; border-radius: 4px; background-image: linear-gradient({{t.soft}}, {{t.soft}}); background-repeat: no-repeat; animation: lxMark 500ms ease 900ms both">alcance</span> en el arroyo que corre de sur a norte de la <span style="color: {{t.tx}}; padding: 1px 4px; border-radius: 4px; background-image: linear-gradient({{t.soft}}, {{t.soft}}); background-repeat: no-repeat; animation: lxMark 500ms ease 1000ms both">carretera México-Nogales</span>, a la altura del <span style="color: {{t.tx}}; padding: 1px 4px; border-radius: 4px; background-image: linear-gradient({{t.soft}}, {{t.soft}}); background-repeat: no-repeat; animation: lxMark 500ms ease 1100ms both">km 47+800</span>, tramo <span style="color: {{t.tx}}; padding: 1px 4px; border-radius: 4px; background-image: linear-gradient({{t.soft}}, {{t.soft}}); background-repeat: no-repeat; animation: lxMark 500ms ease 1200ms both">Los Mochis–Navojoa</span>. Los dos vehículos avanzaban hacia Navojoa; el <span onMouseEnter="{{hB}}" onMouseLeave="{{hOff}}" style="color: {{t.tx}}; font-weight: 600; padding: 1px 3px; border-radius: 4px; background: {{mB}}; transition: background 160ms ease; cursor: default">vehículo B (Toyota Tacoma)</span><span style="font-family: 'Geist Mono', monospace; font-size: 10px; font-weight: 600; margin-left: 4px; padding: 2px 5px; border-radius: 999px; background: {{t.tx}}; color: {{t.bg}}; vertical-align: 3px">B</span> iba detrás del <span onMouseEnter="{{hA}}" onMouseLeave="{{hOff}}" style="color: {{t.tx}}; font-weight: 600; padding: 1px 3px; border-radius: 4px; background: {{mA}}; transition: background 160ms ease; cursor: default">vehículo A (Chevrolet Silverado 2500)</span><span style="font-family: 'Geist Mono', monospace; font-size: 10px; font-weight: 600; margin-left: 4px; padding: 2px 5px; border-radius: 999px; background: {{t.tx}}; color: {{t.bg}}; vertical-align: 3px">A</span>. El vehículo A tiene la zona de contacto en la <span style="color: {{t.tx}}; text-decoration: underline; text-decoration-color: #FF5A1F; text-decoration-thickness: 2px; text-underline-offset: 5px">parte posterior, acentuada hacia el lado izquierdo</span>, con el hundimiento concentrado en el vértice posterior izquierdo; la batea quedó desplazada de izquierda a derecha. El vehículo B tiene la zona de contacto en la <span style="color: {{t.tx}}; text-decoration: underline; text-decoration-color: #FF5A1F; text-decoration-thickness: 2px; text-underline-offset: 5px">parte frontal, acentuada hacia el lado derecho</span>. Los restos quedaron sobre el extremo izquierdo, repartidos a lo largo de <span style="font-family: 'Geist Mono', monospace; font-size: 17px; color: {{t.tx}}; border-bottom: 1px dashed {{t.tx2}}">15.89 m</span>. El arroyo tiene <span style="color: {{t.tx}}; padding: 1px 4px; border-radius: 4px; background-image: linear-gradient({{t.soft}}, {{t.soft}}); background-repeat: no-repeat; animation: lxMark 500ms ease 1300ms both">carpeta asfáltica en buen estado</span>, <span style="font-family: 'Geist Mono', monospace; font-size: 17px; color: {{t.tx}}; border-bottom: 1px dashed {{t.tx2}}">6.47 m</span> de ancho y <span style="color: {{t.tx}}; padding: 1px 4px; border-radius: 4px; background-image: linear-gradient({{t.soft}}, {{t.soft}}); background-repeat: no-repeat; animation: lxMark 500ms ease 1400ms both">líneas discontinuas</span>, separado del arroyo contrario por <span style="color: {{t.tx}}; padding: 1px 4px; border-radius: 4px; background-image: linear-gradient({{t.soft}}, {{t.soft}}); background-repeat: no-repeat; animation: lxMark 500ms ease 1500ms both">terracería</span>.</p>
+
+      <div style="margin-top: auto; display: flex; gap: 8px; animation: lxRise 700ms cubic-bezier(.2,.8,.2,1) 700ms both">
+        <button type="button" style="height: 44px; display: flex; align-items: center; gap: 8px; padding: 0 16px; border-radius: 12px; border: 1px solid {{t.line2}}; background: transparent; color: {{t.tx}}; font: 500 14px {{s.ui}}; cursor: pointer"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M4 20h4L19 9l-4-4L4 16z"></path></svg>Editar el relato</button>
+        <button type="button" style="height: 44px; display: flex; align-items: center; gap: 8px; padding: 0 16px; border-radius: 12px; border: 1px solid {{t.line2}}; background: transparent; color: {{t.tx}}; font: 500 14px {{s.ui}}; cursor: pointer"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><rect x="9" y="3" width="6" height="11" rx="3"></rect><path d="M5 11a7 7 0 0 0 14 0M12 18v3"></path></svg>Dictar un dato</button>
+        <button type="button" style="height: 44px; display: flex; align-items: center; gap: 8px; padding: 0 16px; border-radius: 12px; border: 1px solid {{t.line2}}; background: transparent; color: {{t.tx}}; font: 500 14px {{s.ui}}; cursor: pointer"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M6 3h9l4 4v14H6z"></path><path d="M14 3v5h5"></path></svg>Reporte original</button>
+      </div>
+    </section>
+
+    <aside style="width: 500px; flex: none; box-sizing: border-box; border-radius: 22px; background: {{t.surf}}; box-shadow: {{t.sheetSh}}; padding: 28px 30px 24px; display: flex; flex-direction: column; animation: lxRise 900ms cubic-bezier(.2,.8,.2,1) 150ms both">
+      <div style="font-size: 13px; color: {{t.tx2}}">Lo que Croquis leyó</div>
+
+      <div onMouseEnter="{{hA}}" onMouseLeave="{{hOff}}" style="margin: 10px -14px 0; padding: 12px 14px 18px; border-radius: 14px; background: {{cA}}; transition: background 160ms ease; display: flex; gap: 18px; border-bottom: 1px solid {{t.line}}; animation: lxRise 600ms cubic-bezier(.2,.8,.2,1) 600ms both">
+        <svg width="54" height="126" viewBox="0 0 60 140" role="img" aria-label="Vehículo A visto desde arriba, daño posterior izquierdo" style="flex: none; overflow: visible">
+          <defs><filter id="hxA" x="-60%" y="-30%" width="220%" height="160%"><feDropShadow dx="5" dy="8" stdDeviation="6" flood-color="{{t.shadow}}" flood-opacity="{{t.shOp}}"></feDropShadow></filter></defs>
+          <rect x="4" y="4" width="52" height="132" rx="13" fill="{{t.car}}" filter="url(#hxA)"></rect>
+          <rect x="10" y="28" width="40" height="14" rx="4" fill="{{t.carD}}"></rect>
+          <rect x="9" y="42" width="42" height="30" rx="4" fill="{{t.carD2}}"></rect>
+          <rect x="10" y="84" width="40" height="46" rx="4" fill="none" stroke="{{t.carD}}" stroke-width="1.6"></rect>
+          <path d="M4 108 V123 Q4 136 17 136 H30 V108 Z" fill="#FF5A1F" opacity="0.4"></path>
+        </svg>
+        <div style="flex: 1; display: flex; flex-direction: column; gap: 6px">
+          <div style="display: flex; align-items: center; gap: 8px"><span style="font-family: 'Geist Mono', monospace; font-size: 11px; font-weight: 600; width: 20px; height: 20px; border-radius: 999px; background: {{t.tx}}; color: {{t.bg}}; display: inline-flex; align-items: center; justify-content: center">A</span><span style="font-size: 13px; color: {{t.tx3}}">iba adelante</span></div>
+          <div style="font-size: 18px; font-weight: 600">Chevrolet Silverado 2500 · 2007</div>
+          <div style="display: flex; align-items: baseline; gap: 10px"><span style="font-family: {{s.disp}}; font-weight: {{s.numW}}; font-size: 34px; letter-spacing: -0.02em">2,562.1</span><span style="font-size: 14px; color: {{t.tx2}}">kg</span><span style="font-size: 11px; font-weight: 600; padding: 3px 8px; border-radius: 999px; color: #2A2108; background-image: repeating-linear-gradient(135deg, #F5C04A 0 5px, #E8B13A 5px 10px)">supuesto</span></div>
+          <div style="font-size: 13px; color: {{t.tx3}}">Ficha técnica, cuatro puertas: 2,448.5 a 2,675.7 kg</div>
+          <div style="font-size: 14px">Daño posterior, hacia la izquierda</div>
+        </div>
+      </div>
+
+      <div onMouseEnter="{{hB}}" onMouseLeave="{{hOff}}" style="margin: 0 -14px; padding: 18px 14px; border-radius: 14px; background: {{cB}}; transition: background 160ms ease; display: flex; gap: 18px; border-bottom: 1px solid {{t.line}}; animation: lxRise 600ms cubic-bezier(.2,.8,.2,1) 750ms both">
+        <svg width="54" height="126" viewBox="0 0 60 140" role="img" aria-label="Vehículo B visto desde arriba, daño frontal derecho" style="flex: none; overflow: visible">
+          <defs><filter id="hxB" x="-60%" y="-30%" width="220%" height="160%"><feDropShadow dx="5" dy="8" stdDeviation="6" flood-color="{{t.shadow}}" flood-opacity="{{t.shOp}}"></feDropShadow></filter></defs>
+          <rect x="7" y="12" width="46" height="120" rx="12" fill="{{t.car}}" filter="url(#hxB)"></rect>
+          <rect x="12" y="34" width="36" height="13" rx="4" fill="{{t.carD}}"></rect>
+          <rect x="11" y="47" width="38" height="22" rx="4" fill="{{t.carD2}}"></rect>
+          <rect x="12" y="80" width="36" height="46" rx="4" fill="none" stroke="{{t.carD}}" stroke-width="1.6"></rect>
+          <path d="M30 12 H41 Q53 12 53 24 V38 H30 Z" fill="#FF5A1F" opacity="0.4"></path>
+        </svg>
+        <div style="flex: 1; display: flex; flex-direction: column; gap: 6px">
+          <div style="display: flex; align-items: center; gap: 8px"><span style="font-family: 'Geist Mono', monospace; font-size: 11px; font-weight: 600; width: 20px; height: 20px; border-radius: 999px; background: {{t.tx}}; color: {{t.bg}}; display: inline-flex; align-items: center; justify-content: center">B</span><span style="font-size: 13px; color: {{t.tx3}}">iba detrás</span></div>
+          <div style="font-size: 18px; font-weight: 600">Toyota Tacoma · 1997</div>
+          <div style="display: flex; align-items: baseline; gap: 10px"><span style="font-family: {{s.disp}}; font-weight: {{s.numW}}; font-size: 34px; letter-spacing: -0.02em">1,431.083</span><span style="font-size: 14px; color: {{t.tx2}}">kg</span><span style="font-size: 11px; font-weight: 600; padding: 3px 8px; border-radius: 999px; background: {{t.soft}}; color: {{t.tx}}">del reporte</span></div>
+          <div style="font-size: 14px">Daño frontal, hacia la derecha</div>
+        </div>
+      </div>
+
+      <div style="padding: 16px 0; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px 20px; animation: lxRise 600ms cubic-bezier(.2,.8,.2,1) 900ms both">
+        <div><div style="font-family: 'Geist Mono', monospace; font-size: 16px">6.47 m</div><div style="font-size: 12px; color: {{t.tx3}}">ancho del arroyo</div></div>
+        <div><div style="font-family: 'Geist Mono', monospace; font-size: 16px">15.89 m</div><div style="font-size: 12px; color: {{t.tx3}}">restos sobre el extremo izquierdo</div></div>
+        <div><div style="font-size: 15px">Frente de B contra parte posterior de A</div><div style="font-size: 12px; color: {{t.tx3}}">impacto 1</div></div>
+        <div><div style="font-size: 15px">Asfalto en buen estado</div><div style="font-size: 12px; color: {{t.tx3}}">superficie</div></div>
+      </div>
+
+      <div style="margin-top: auto; display: flex; flex-direction: column; gap: 12px">
+        <div style="font-size: 14px; color: {{t.tx2}}">Sin preguntas pendientes</div>
+        <a href="Lab-Escena.dc.html" class="cx-go" style="height: 58px; border-radius: 14px; background: {{t.pri}}; color: {{t.priTx}}; display: flex; align-items: center; justify-content: space-between; padding: 0 22px; font-size: 16px; font-weight: 600">Continuar a la escena<svg width="36" height="14" viewBox="0 0 36 14" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M0 7H34M28 1l6 6-6 6"></path></svg></a>
+      </div>
+    </aside>
+  </main>
+  </sc-if>
+
+  <sc-if value="{{intro}}" hint-placeholder-val="{{false}}">
+    <div aria-hidden="true" style="position: absolute; inset: 0; z-index: 50; background: {{t.bg}}; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 26px; pointer-events: none; animation: cxOut 560ms cubic-bezier(.7,0,.2,1) 860ms both">
+      <svg width="128" height="128" viewBox="0 0 64 64" style="color: {{t.tx}}; overflow: visible">
+        <g opacity="0.55"><g stroke="currentColor" stroke-width="1.1" style="animation: cxFade 300ms ease 60ms both"><line x1="45.65" y1="55.64" x2="46.80" y2="57.63"></line><line x1="39.07" y1="58.37" x2="39.66" y2="60.59"></line><line x1="32.00" y1="58.20" x2="32.00" y2="61.60"></line><line x1="24.93" y1="58.37" x2="24.34" y2="60.59"></line><line x1="18.35" y1="55.64" x2="17.20" y2="57.63"></line><line x1="13.47" y1="50.53" x2="11.07" y2="52.93"></line><line x1="8.36" y1="45.65" x2="6.37" y2="46.80"></line><line x1="5.63" y1="39.07" x2="3.41" y2="39.66"></line><line x1="5.80" y1="32.00" x2="2.40" y2="32.00"></line><line x1="5.63" y1="24.93" x2="3.41" y2="24.34"></line><line x1="8.36" y1="18.35" x2="6.37" y2="17.20"></line><line x1="13.47" y1="13.47" x2="11.07" y2="11.07"></line><line x1="18.35" y1="8.36" x2="17.20" y2="6.37"></line><line x1="24.93" y1="5.63" x2="24.34" y2="3.41"></line><line x1="32.00" y1="5.80" x2="32.00" y2="2.40"></line><line x1="39.07" y1="5.63" x2="39.66" y2="3.41"></line><line x1="45.65" y1="8.36" x2="46.80" y2="6.37"></line></g></g>
+        <path d="M 46.86 45.38 A 20 20 0 1 1 46.86 18.62" fill="none" stroke="currentColor" stroke-width="6.4" pathLength="1" stroke-dasharray="1" style="animation: cxDraw 620ms cubic-bezier(.65,0,.25,1) 80ms both"></path>
+        <g opacity="0.45"><path d="M 43.14 41.94 A 15 15 0 1 1 43.14 22.06" fill="none" stroke="currentColor" stroke-width="0.9" stroke-dasharray="2.2 2.2" style="animation: cxFade 300ms ease 420ms both"></path></g>
+        <g style="transform-box: fill-box; transform-origin: center; animation: cxPop 420ms cubic-bezier(.3,1.6,.5,1) 600ms both"><g stroke="#FF5A1F" fill="none"><circle cx="52" cy="32" r="4.3" stroke-width="1.7"></circle><line x1="52" y1="23.6" x2="52" y2="26.4" stroke-width="1.3"></line><line x1="52" y1="37.6" x2="52" y2="40.4" stroke-width="1.3"></line><line x1="57.6" y1="32" x2="60.4" y2="32" stroke-width="1.3"></line></g><circle cx="52" cy="32" r="1.2" fill="#FF5A1F"></circle></g>
+        <circle cx="52" cy="32" r="4.3" fill="none" stroke="#FF5A1F" stroke-width="0.8" style="transform-box: fill-box; transform-origin: center; animation: cxRing 700ms ease-out 640ms both"></circle>
+      </svg>
+      <div style="display: flex; align-items: baseline; gap: 16px; overflow: hidden; padding-bottom: 6px"><span style="font-family: 'Geist Mono', monospace; font-size: 14px; color: {{t.tx3}}; animation: cxFade 300ms ease 250ms both">01</span><span style="display: block; font-family: {{s.disp}}; font-weight: {{s.headW}}; font-size: 48px; letter-spacing: -0.02em; animation: cxLine 600ms cubic-bezier(.2,.8,.2,1) 220ms both">El hecho</span></div>
+    </div>
+  </sc-if>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"tema":{"editor":"enum","options":["Día","Noche"],"default":"Día","section":"Tema"},"pairing":{"editor":"enum","options":["Editorial","Geométrica","Suave"],"default":"Editorial","section":"Tipografía"},"transicion":{"editor":"boolean","default":true,"section":"Movimiento"},"$preview":{"width":1440,"height":900}}'>
+class Component extends DCLogic {
+  constructor(props) { super(props); var rd = typeof window !== 'undefined' && window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches; this.introOn = props.transicion !== false && !rd; this.state = { intro: this.introOn, ready: !this.introOn, night: null, hl: null }; }
+  componentDidMount() { this.startIntro(); }
+  componentWillUnmount() { clearTimeout(this.ti1); clearTimeout(this.ti2); }
+  startIntro() { if (!this.introOn) return; var self = this; this.ti1 = setTimeout(function () { self.setState({ ready: true }); }, 760); this.ti2 = setTimeout(function () { self.setState({ intro: false }); }, 1500); }
+  isNight() { return this.state.night === null ? this.props.tema === 'Noche' : this.state.night; }
+  tokens(n) {
+    if (n) return { bg: '#0A1120', surf: '#111A2C', surf2: '#17223A', head: 'rgba(10,17,32,0.86)', track: '#1E2A44', line: 'rgba(148,170,210,0.16)', line2: 'rgba(148,170,210,0.3)', tx: '#E8EEF8', tx2: '#B4C0D4', tx3: '#8D9BB4', pri: '#E8EEF8', priTx: '#0A1120', soft: '#1E2B47', car: '#DCE6F5', carD: '#8FA1BF', carD2: '#C3D0E6', shadow: '#000000', shOp: 0.6, sheetSh: '0 1px 0 rgba(148,170,210,0.12), 0 30px 80px rgba(0,0,0,0.5)' };
+    return { bg: '#F4F5F7', surf: '#FFFFFF', surf2: '#F1F2F4', head: 'rgba(255,255,255,0.86)', track: '#E1E4E8', line: '#E6E8EC', line2: '#C9CDD4', tx: '#0B0D12', tx2: '#3A3F49', tx3: '#5B616C', pri: '#0B0D12', priTx: '#FFFFFF', soft: '#E8EAEE', car: '#FFFFFF', carD: '#D7DBE1', carD2: '#F1F2F4', shadow: '#1B2230', shOp: 0.18, sheetSh: '0 1px 0 #E6E8EC, 0 30px 80px rgba(27,34,48,0.12)' };
+  }
+  pairs(p) {
+    var sets = {
+      'Editorial': { disp: "'Instrument Serif', Georgia, serif", ui: "'Instrument Sans', system-ui, sans-serif", headW: 400, numW: 400, accent: 'italic' },
+      'Geométrica': { disp: "'Sora', system-ui, sans-serif", ui: "'Sora', system-ui, sans-serif", headW: 300, numW: 300, accent: 'normal' },
+      'Suave': { disp: "'Manrope', system-ui, sans-serif", ui: "'Manrope', system-ui, sans-serif", headW: 500, numW: 400, accent: 'normal' }
+    };
+    return sets[p] || sets['Editorial'];
+  }
+  renderVals() {
+    var self = this;
+    var night = this.isNight();
+    return {
+      t: this.tokens(night), s: this.pairs(this.props.pairing), night: night, day: !night,
+      intro: this.state.intro, ready: this.state.ready,
+      hA: function () { self.setState({ hl: 'A' }); }, hB: function () { self.setState({ hl: 'B' }); }, hOff: function () { self.setState({ hl: null }); },
+      mA: this.state.hl === 'A' ? this.tokens(night).soft : 'transparent', mB: this.state.hl === 'B' ? this.tokens(night).soft : 'transparent',
+      cA: this.state.hl === 'A' ? this.tokens(night).surf2 : 'transparent', cB: this.state.hl === 'B' ? this.tokens(night).surf2 : 'transparent',
+      themeLabel: night ? 'Cambiar a modo día' : 'Cambiar a modo noche',
+      toggle: function () { self.setState({ night: !self.isNight() }); }
+    };
+  }
+}
+</script>
+</body>
+</html>

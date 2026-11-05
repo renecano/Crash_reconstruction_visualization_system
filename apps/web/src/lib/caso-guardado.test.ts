@@ -10,8 +10,10 @@ import {
 import { describe, expect, it } from "vitest";
 import {
   casoParaGuardar,
+  EXTENSION_CASO,
   huellaDelCaso,
   leerCasoGuardado,
+  nombreArchivoCaso,
   validacionVigente,
   type CasoAbierto,
 } from "./caso-guardado";
@@ -129,6 +131,25 @@ describe("el caso guardado con la validación del perito (ADR 0075)", () => {
     expect((leerCasoGuardado(raro) as CasoAbierto).hipotesisElegida).toBeNull();
   });
 
+  it("guarda «No sé dónde quedó» (B); solo ids de vehículos del expediente", () => {
+    const id = expediente.vehiculos[0]!.id;
+    const g = casoParaGuardar({
+      narracion,
+      escena,
+      expediente,
+      validacion: null,
+      finalesDesconocidos: [id],
+    });
+    expect(g.finales_desconocidos).toEqual([id]);
+    const abierto = leerCasoGuardado(JSON.parse(JSON.stringify(g))) as CasoAbierto;
+    expect(abierto.finalesDesconocidos).toEqual([id]);
+    const raro = { ...g, finales_desconocidos: [id, "V99", 3] };
+    expect((leerCasoGuardado(raro) as CasoAbierto).finalesDesconocidos).toEqual([id]);
+    expect(casoParaGuardar({ narracion, escena, expediente, validacion: null })).not.toHaveProperty(
+      "finales_desconocidos",
+    );
+  });
+
   it("de una bitácora editada a mano se quedan solo los mensajes con forma de mensaje", () => {
     const g = casoParaGuardar({ narracion, escena, expediente, validacion: null });
     const editado = {
@@ -145,5 +166,16 @@ describe("el caso guardado con la validación del perito (ADR 0075)", () => {
       { n: 1, de: "fisico", para: "pizarra", tipo: "escribe", texto: "Reconstrucción hecha." },
     ]);
     expect(leerCasoGuardado({ ...g, bitacora: "no es lista" })).toMatchObject({ bitacora: [] });
+  });
+});
+
+describe("el nombre del archivo del caso (A4)", () => {
+  it("lleva la extensión .croquis y sale del título, sin acentos", () => {
+    expect(nombreArchivoCaso("Reporte de CESVI · AXA A2010930.md")).toBe("axa-a2010930.croquis");
+    expect(nombreArchivoCaso("Choque en Calzada de Tlalpan")).toBe(
+      "choque-en-calzada-de-tlalpan.croquis",
+    );
+    expect(nombreArchivoCaso("")).toBe("caso.croquis");
+    expect(EXTENSION_CASO).toBe(".croquis");
   });
 });

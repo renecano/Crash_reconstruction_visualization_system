@@ -20,6 +20,27 @@ import { huellaEntradas } from "./exportar-cesvi";
 export const FORMATO_CASO = "croquis-caso";
 export const VERSION_CASO = 1;
 
+/**
+ * El archivo del caso lleva su propia extensión (René, 2026-11-04, A4): `.croquis`, con JSON dentro.
+ * Los `.json` de antes se siguen abriendo: lo que se revisa es el contenido, no el nombre.
+ */
+export const EXTENSION_CASO = ".croquis";
+export const ACEPTA_CASO = ".croquis,.json,application/json";
+
+/** «Reporte de CESVI · AXA A2010930.md» → «axa-a2010930.croquis»; sin título, «caso.croquis». */
+export function nombreArchivoCaso(titulo: string): string {
+  const base = titulo
+    .replace(/^.*·\s*/, "")
+    .replace(/\.(md|pdf|txt|json|croquis)$/i, "")
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "")
+    .slice(0, 60);
+  return `${base || "caso"}${EXTENSION_CASO}`;
+}
+
 export interface ValidacionPerito {
   perito: string;
   conclusion: string;
@@ -54,6 +75,8 @@ export interface CasoGuardado {
   bitacora?: MensajeBitacora[];
   /** La hipótesis que eligió el perito (ADR 0091), opcional: los archivos de antes no la traen. */
   hipotesis_elegida?: string;
+  /** Los vehículos de los que el perito no sabe dónde quedaron (B), opcional. */
+  finales_desconocidos?: string[];
 }
 
 export interface CasoAbierto {
@@ -69,6 +92,8 @@ export interface CasoAbierto {
   bitacora: MensajeBitacora[];
   /** La clave de la hipótesis que eligió el perito, o null. */
   hipotesisElegida: string | null;
+  /** Los vehículos sin posición final porque el perito no sabe dónde quedaron. */
+  finalesDesconocidos: string[];
 }
 
 /** El expediente sin su resultado: lo que el perito valida. */
@@ -102,6 +127,7 @@ export function casoParaGuardar(c: {
   ahora?: Date;
   bitacora?: readonly MensajeBitacora[];
   hipotesisElegida?: string | null;
+  finalesDesconocidos?: readonly string[];
 }): CasoGuardado {
   const { posiciones, conteos, problemas, preguntas } = c.escena;
   const base = sinResultado(c.expediente);
@@ -128,6 +154,7 @@ export function casoParaGuardar(c: {
     ...(c.reporte ? { reporte_cesvi: c.reporte } : {}),
     ...(c.bitacora?.length ? { bitacora: [...c.bitacora] } : {}),
     ...(c.hipotesisElegida ? { hipotesis_elegida: c.hipotesisElegida } : {}),
+    ...(c.finalesDesconocidos?.length ? { finales_desconocidos: [...c.finalesDesconocidos] } : {}),
   };
 }
 
@@ -168,5 +195,11 @@ export function leerCasoGuardado(datos: unknown): CasoAbierto | { error: string 
       /^(dano|reposo|evidencia)(-\d+)?$/.test(c.hipotesis_elegida)
         ? c.hipotesis_elegida
         : null,
+    // Solo ids de vehículos del expediente.
+    finalesDesconocidos: Array.isArray(c.finales_desconocidos)
+      ? c.finales_desconocidos.filter(
+          (x): x is string => typeof x === "string" && expediente.vehiculos.some((v) => v.id === x),
+        )
+      : [],
   };
 }

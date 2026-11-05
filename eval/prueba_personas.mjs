@@ -39,6 +39,8 @@ const CAMPOS = new Set([
   "pdf_descargado_s",
   "llego_al_pdf",
   "encontro_el_lugar",
+  "colocar_s",
+  "colocar_sin_ayuda",
   "problemas",
   "al_final",
 ]);
@@ -57,6 +59,8 @@ export function validarHoja(h, nombre = "hoja") {
   else
     for (const k of Object.keys(h.entrada_a_paso_s))
       if (!PASOS.includes(k)) fallas.push(`${nombre}: paso desconocido «${k}»`);
+  if (h.colocar_s !== undefined && h.colocar_s !== null && !(Number(h.colocar_s) >= 0))
+    fallas.push(`${nombre}: colocar_s debe ser segundos o null`);
   if (!Array.isArray(h.problemas)) fallas.push(`${nombre}: problemas debe ser una lista`);
   else
     h.problemas.forEach((p, i) => {
@@ -147,6 +151,14 @@ export function agregar(hojas) {
     problemas,
     tres_mas_frecuentes: problemas.slice(0, 3).map((p) => p.clave),
     seguridad_1_a_5_mediana: mediana(hojas.map((h) => h.al_final?.seguridad_1_a_5)),
+    // La meta de la colocación (René, B): dos vehículos en menos de 1 minuto, sin ayuda.
+    colocar: {
+      mediana_s: mediana(hojas.map((h) => h.colocar_s)),
+      medidas: hojas.filter((h) => typeof h.colocar_s === "number").length,
+      bajo_60_s_sin_ayuda: hojas.filter(
+        (h) => typeof h.colocar_s === "number" && h.colocar_s < 60 && h.colocar_sin_ayuda === true,
+      ).length,
+    },
   };
 }
 

@@ -20,6 +20,7 @@ const T = textos(
     dv: "ΔV",
     ahora: "ahora",
     intervalo: (a: string, b: string) => `(${a}–${b}, 80 %)`,
+    metodo: "Reconstrucción física de Croquis",
   },
   {
     etiqueta: "Readouts for each vehicle",
@@ -28,6 +29,7 @@ const T = textos(
     dv: "ΔV",
     ahora: "now",
     intervalo: (a: string, b: string) => `(${a}–${b}, 80%)`,
+    metodo: "Croquis physical reconstruction",
   },
 );
 
@@ -81,6 +83,10 @@ export function Lecturas({
           </div>
         );
       })}
+      {/* El método junto a la cifra (prompt del rediseño §0.2): no es la velocidad de CESVI. */}
+      <span className="t-nota w-full text-texto-3" data-testid="lecturas-metodo">
+        {t.metodo}
+      </span>
     </section>
   );
 }

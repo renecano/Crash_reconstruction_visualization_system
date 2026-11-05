@@ -27,6 +27,8 @@ import type { GeoJSONSource, Map as MapaMl, Marker } from "maplibre-gl";
 // Sin la hoja de MapLibre los marcadores no quedan en su lugar (no se ven sobre el mapa).
 import "maplibre-gl/dist/maplibre-gl.css";
 import { useEffect, useRef, useState, type ComponentProps } from "react";
+import { contornoVehiculo } from "@/lib/colocar";
+import { interpretarLugar } from "@/lib/lugar-texto";
 import { ESTILO_MAPA, ESTILO_MAPA_CLARO, marcador } from "../mapa-comun";
 import { ColocarMapa } from "./colocar-mapa";
 import type { MarcaImpacto, PosicionMovil } from "./reconstruccion";
@@ -77,6 +79,8 @@ export interface HuellaMapa {
   largo: number;
   ancho: number;
   color: string;
+  /** La clase, para dibujar su silueta (B); sin ella, un rectángulo. */
+  clase?: string;
 }
 
 /** Largo de la flecha del rumbo sobre el mapa (m): se arrastra su punta para girar. */
@@ -102,7 +106,11 @@ function dibujarCroquis(
     properties: { color: h.color, tipo: h.fase === "final" ? "final" : "otra" },
     geometry: {
       type: "Polygon",
-      coordinates: [rectanguloVehiculo([h.punto.lon, h.punto.lat], h.rumbo, h.largo, h.ancho)],
+      coordinates: [
+        h.clase
+          ? contornoVehiculo([h.punto.lon, h.punto.lat], h.rumbo, h.largo, h.ancho, h.clase)
+          : rectanguloVehiculo([h.punto.lon, h.punto.lat], h.rumbo, h.largo, h.ancho),
+      ],
     },
   }));
   if (f)
@@ -171,6 +179,7 @@ export function MapaEscena({
   tema,
   inicio = null,
   lugarTexto = "",
+  lugarZona = {},
   herramienta = "mover",
   pedirLugar = true,
   huellas = [],
@@ -193,6 +202,8 @@ export function MapaEscena({
   inicio?: { lat: number; lon: number } | null;
   /** El lugar en palabras, para buscarlo si el caso no trae coordenadas. */
   lugarTexto?: string;
+  /** El municipio y el estado del caso: la búsqueda de una carretera o una calle se acota a ellos. */
+  lugarZona?: { municipio?: string; estado?: string };
   herramienta?: HerramientaMapa;
   /** Si el mapa pide buscar el lugar cuando el caso no trae coordenadas (en el paso del lugar). */
   pedirLugar?: boolean;
@@ -496,6 +507,7 @@ export function MapaEscena({
       {buscar && pedirLugar ? (
         <BuscarLugar
           inicial={lugarTexto}
+          zona={lugarZona}
           onLugar={(p) => {
             mapa.current?.jumpTo({ center: [p.lon, p.lat], zoom: 17 });
             setBuscar(false);
@@ -520,15 +532,19 @@ export function MapaEscena({
 }
 
 /**
- * Buscar el lugar del hecho en OpenStreetMap (Nominatim, en México y en español). Se busca solo al
- * pedirlo, sin teclear en vivo, como pide la política de uso de Nominatim.
+ * Buscar el lugar del hecho (A1): coordenadas (decimales o grados, minutos y segundos) y links de
+ * Google Maps u OpenStreetMap van directo al punto, sin buscar; lo demás se busca en `/api/lugar`
+ * (Nominatim desde el servidor, con el municipio del caso). Se busca solo al pedirlo, sin teclear
+ * en vivo, como pide la política de uso de Nominatim.
  */
 function BuscarLugar({
   inicial,
+  zona,
   onLugar,
   onCerrar,
 }: {
   inicial: string;
+  zona: { municipio?: string; estado?: string };
   onLugar: (p: { lat: number; lon: number }) => void;
   onCerrar: () => void;
 }) {
@@ -536,21 +552,36 @@ function BuscarLugar({
   const [estado, setEstado] = useState<string | null>(null);
   const [resultados, setResultados] = useState<{ nombre: string; lat: number; lon: number }[]>([]);
   const buscarYa = async () => {
-    if (!q.trim()) return;
+    const texto = q.trim();
+    if (texto.length < 2) {
+      setEstado("Escribe el lugar: la calle y el municipio, coordenadas o un link de mapa.");
+      return;
+    }
+    const punto = interpretarLugar(texto);
+    if (punto.tipo === "punto") {
+      onLugar(punto);
+      return;
+    }
     setEstado("Buscando…");
+    setResultados([]);
+    const params = new URLSearchParams({ q: texto });
+    if (zona.municipio) params.set("municipio", zona.municipio);
+    if (zona.estado) params.set("estado", zona.estado);
     try {
-      const url = `https://nominatim.openstreetmap.org/search?format=jsonv2&limit=5&countrycodes=mx&accept-language=es&q=${encodeURIComponent(q.trim())}`;
-      const r = (await (await fetch(url)).json()) as {
-        display_name: string;
-        lat: string;
-        lon: string;
-      }[];
-      setResultados(
-        r.map((x) => ({ nombre: x.display_name, lat: Number(x.lat), lon: Number(x.lon) })),
-      );
-      setEstado(r.length ? null : "No se encontró. Prueba con la calle y el municipio.");
+      const r = await fetch(`/api/lugar?${params.toString()}`);
+      const d = (await r.json().catch(() => null)) as {
+        resultados?: { nombre: string; lat: number; lon: number }[];
+        aviso?: string | null;
+        error?: string;
+      } | null;
+      if (!r.ok || !d?.resultados) {
+        setEstado(d?.error ?? "No se pudo buscar. Mueve el mapa a mano hasta el lugar.");
+        return;
+      }
+      setResultados(d.resultados);
+      setEstado(d.aviso ?? (d.resultados.length ? null : "No se encontró."));
     } catch {
-      setEstado("No se pudo buscar. Mueve el mapa a mano hasta el lugar.");
+      setEstado("Sin conexión: no se puede buscar. Pega las coordenadas o mueve el mapa a mano.");
     }
   };
   return (
@@ -561,7 +592,10 @@ function BuscarLugar({
       data-testid="dialogo-buscar-lugar"
     >
       <span className="t-interfaz font-semibold">¿Dónde fue el hecho?</span>
-      <span className="t-nota">El caso no trae coordenadas: busca la calle y el municipio.</span>
+      <span className="t-nota">
+        Escribe la calle y el municipio, una carretera con su kilómetro, coordenadas o un link de
+        Google Maps u OpenStreetMap.
+      </span>
       <form
         className="flex gap-2"
         onSubmit={(e) => {
@@ -576,13 +610,17 @@ function BuscarLugar({
           aria-label="Lugar del hecho"
           data-testid="texto-buscar-lugar"
         />
-        <button type="submit" className="boton-principal boton-compacto">
+        <button type="submit" className="boton-principal boton-compacto" data-testid="buscar-ya">
           Buscar
         </button>
       </form>
-      {estado ? <span className="t-nota">{estado}</span> : null}
+      {estado ? (
+        <span className="t-nota" role="status" data-testid="estado-buscar-lugar">
+          {estado}
+        </span>
+      ) : null}
       {resultados.length ? (
-        <ul className="flex max-h-48 flex-col gap-1 overflow-y-auto">
+        <ul className="flex max-h-48 flex-col gap-1 overflow-y-auto" data-testid="resultados-lugar">
           {resultados.map((r) => (
             <li key={`${r.lat},${r.lon}`}>
               <button
@@ -599,7 +637,7 @@ function BuscarLugar({
       <button type="button" className="t-nota self-end underline" onClick={onCerrar}>
         Lo busco moviendo el mapa
       </button>
-      <span className="t-nota text-texto-3">Búsqueda: Nominatim · © OpenStreetMap</span>
+      <span className="t-nota text-texto-3">Búsqueda: Nominatim y Photon · © OpenStreetMap</span>
     </div>
   );
 }

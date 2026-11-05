@@ -1,0 +1,149 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<title>Croquis · Presentar</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Anybody:wdth,wght@50..150,100..900&amp;family=Geist+Mono:wght@400..600&amp;family=Instrument+Sans:wdth,wght@75..100,400..700&amp;family=Instrument+Serif:ital@0;1&amp;family=Manrope:wght@200..800&amp;family=Sora:wght@100..800&amp;display=swap">
+<style>
+body{margin:0}
+a{color:inherit;text-decoration:none}a:hover{color:inherit}
+@keyframes lpRise{from{opacity:0;transform:translateY(22px);filter:blur(10px)}to{opacity:1;transform:none;filter:blur(0)}}
+@keyframes lpLine{from{transform:translateY(105%)}to{transform:none}}
+@keyframes lpDraw{from{stroke-dashoffset:1}to{stroke-dashoffset:0}}
+@keyframes lpFade{from{opacity:0}to{opacity:1}}
+@keyframes lpPulse{0%{transform:scale(0.3);opacity:0.9}100%{transform:scale(4);opacity:0}}
+@keyframes lpFill{from{transform:scaleX(0)}to{transform:scaleX(1)}}
+@media (prefers-reduced-motion: reduce){*{animation:none!important}}
+</style>
+</helmet>
+<div style="width: 1440px; height: 900px; position: relative; overflow: hidden; background: {{t.bg}}; color: {{t.tx}}; font-family: {{s.ui}}">
+
+  <svg width="1440" height="900" viewBox="0 0 1440 900" role="img" aria-label="Reconstrucción del caso vista desde arriba, en grande" style="position: absolute; inset: 0">
+    <defs>
+      <radialGradient id="pLight" cx="0.5" cy="0.45" r="0.8"><stop offset="0" stop-color="{{t.lit0}}"></stop><stop offset="1" stop-color="{{t.lit1}}"></stop></radialGradient>
+      <filter id="pCar" x="-50%" y="-50%" width="200%" height="200%"><feDropShadow dx="12" dy="18" stdDeviation="14" flood-color="{{t.shadow}}" flood-opacity="{{t.shOp}}"></feDropShadow></filter>
+      <pattern id="pDots" width="6" height="6" patternUnits="userSpaceOnUse"><rect width="6" height="6" fill="{{t.median}}"></rect><circle cx="2" cy="2" r="0.8" fill="{{t.medDot}}"></circle></pattern>
+      <linearGradient id="pSpeed" x1="0" y1="1" x2="0" y2="0"><stop offset="0" stop-color="{{t.speed0}}"></stop><stop offset="1" stop-color="#FF5A1F"></stop></linearGradient>
+    </defs>
+    <rect width="1440" height="900" fill="url(#pLight)"></rect>
+    <g transform="translate(820 470) scale(1.7) rotate(-14) translate(-384 -352)">
+      <rect x="326" y="-300" width="114" height="1400" fill="{{t.slab}}"></rect>
+      <rect x="440" y="-300" width="52" height="1400" fill="url(#pDots)"></rect>
+      <rect x="492" y="-300" width="114" height="1400" fill="{{t.slab}}"></rect>
+      <path d="M330 -300V1100M436 -300V1100M496 -300V1100M602 -300V1100" stroke="{{t.edge}}" stroke-width="1.6"></path>
+      <path d="M383 -300V1100M549 -300V1100" stroke="{{t.lane}}" stroke-width="1.6" stroke-dasharray="24 28"></path>
+      <path d="M374.5 760V398" stroke="url(#pSpeed)" stroke-width="4" stroke-linecap="round" pathLength="1" stroke-dasharray="1" style="animation: lpDraw 1800ms cubic-bezier(.6,0,.2,1) 300ms both"></path>
+      <g fill="{{t.ghostFill}}" stroke="{{t.tx}}" stroke-width="0.8">
+        <rect x="360" y="562" width="29" height="84" rx="9" style="opacity: 0.22; animation: lpFade 300ms ease 700ms both"></rect>
+        <rect x="360" y="492" width="29" height="84" rx="9" style="opacity: 0.36; animation: lpFade 300ms ease 1000ms both"></rect>
+        <rect x="360" y="422" width="29" height="84" rx="9" style="opacity: 0.5; animation: lpFade 300ms ease 1300ms both"></rect>
+      </g>
+      <g filter="url(#pCar)"><rect x="376" y="250" width="34" height="102" rx="10" fill="{{t.car}}"></rect><rect x="360" y="352" width="29" height="84" rx="9" fill="{{t.car}}"></rect></g>
+      <rect x="381" y="268" width="24" height="11" rx="3" fill="{{t.carD}}"></rect><rect x="380" y="279" width="26" height="24" rx="4" fill="{{t.carD2}}"></rect><rect x="381" y="308" width="24" height="40" rx="3" fill="none" stroke="{{t.carD}}" stroke-width="1.2"></rect>
+      <rect x="364" y="368" width="21" height="9" rx="3" fill="{{t.carD}}"></rect><rect x="363" y="377" width="23" height="19" rx="4" fill="{{t.carD2}}"></rect><rect x="364" y="400" width="21" height="32" rx="3" fill="none" stroke="{{t.carD}}" stroke-width="1.2"></rect>
+      <path d="M376 332 V342 Q376 352 386 352 H394 V332 Z" fill="#FF5A1F" opacity="0.45"></path>
+      <path d="M372 352 H380 Q389 352 389 361 V368 H372 Z" fill="#FF5A1F" opacity="0.45"></path>
+      <circle cx="384" cy="352" r="12" fill="none" stroke="#FF5A1F" stroke-width="1.2" style="transform-box: fill-box; transform-origin: center; animation: lpPulse 1400ms ease-out 1900ms both"></circle>
+      <g stroke="#FF5A1F" fill="none"><circle cx="384" cy="352" r="7" stroke-width="2"></circle><path d="M384 336V341M384 363V368M368 352H373M395 352H400" stroke-width="1.8"></path></g>
+      <circle cx="384" cy="352" r="2" fill="#FF5A1F"></circle>
+    </g>
+    <rect width="1440" height="900" fill="url(#pLight)" opacity="0"></rect>
+  </svg>
+  <div style="position: absolute; inset: 0; background: {{t.veil}}; pointer-events: none"></div>
+
+  <div style="position: absolute; left: 56px; right: 56px; top: 40px; display: flex; justify-content: space-between; align-items: center">
+    <div style="display: flex; align-items: center; gap: 14px">
+      <svg width="32" height="32" viewBox="0 0 64 64" aria-hidden="true" style="color: {{t.tx}}"><path d="M 46.86 45.38 A 20 20 0 1 1 46.86 18.62" fill="none" stroke="currentColor" stroke-width="7"></path><path d="M 44 42 A 14.5 14.5 0 1 1 44 22" fill="none" stroke="currentColor" stroke-width="1.4" opacity="0.45" stroke-dasharray="2.6 2.6"></path><g stroke="#FF5A1F" fill="none"><circle cx="52" cy="32" r="4.6" stroke-width="2.2"></circle><line x1="52" y1="22.5" x2="52" y2="25.8" stroke-width="2"></line><line x1="52" y1="38.2" x2="52" y2="41.5" stroke-width="2"></line><line x1="58.2" y1="32" x2="61.5" y2="32" stroke-width="2"></line><circle cx="52" cy="32" r="1.5" fill="#FF5A1F" stroke="none"></circle></g></svg>
+      <span style="font-family: 'Geist Mono', monospace; font-size: 12px; color: {{t.tx2}}">AXA A2010930 · MEX-15D km 47+800</span>
+    </div>
+    <div style="display: flex; gap: 10px; align-items: center">
+      <button type="button" onClick="{{toggle}}" aria-label="{{themeLabel}}" style="width: 40px; height: 40px; border-radius: 10px; border: 1px solid {{t.line2}}; background: transparent; color: {{t.tx}}; display: flex; align-items: center; justify-content: center; cursor: pointer">
+        <sc-if value="{{day}}" hint-placeholder-val="{{false}}"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M20 14.5A8 8 0 0 1 9.5 4a8 8 0 1 0 10.5 10.5z"></path></svg></sc-if>
+        <sc-if value="{{night}}" hint-placeholder-val="{{true}}"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="4"></circle><path d="M12 2v2M12 20v2M2 12h2M20 12h2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"></path></svg></sc-if>
+      </button>
+      <a href="Lab-Reconstruccion.dc.html" style="height: 40px; display: flex; align-items: center; padding: 0 16px; border-radius: 10px; border: 1px solid {{t.line2}}; font-size: 14px">Salir · Esc</a>
+    </div>
+  </div>
+
+  <sc-for list="{{chapters}}" as="c" hint-placeholder-count="1">
+    <sc-if value="{{c.active}}" hint-placeholder-val="{{true}}">
+      <div style="position: absolute; left: 56px; top: 150px; width: 520px; display: flex; flex-direction: column; gap: 22px">
+        <span style="font-family: 'Geist Mono', monospace; font-size: 13px; color: {{t.tx2}}; animation: lpRise 600ms cubic-bezier(.2,.8,.2,1) 0ms both">{{c.num}} de 04</span>
+        <h1 style="margin: 0; overflow: hidden; font-family: {{s.disp}}; font-weight: {{s.headW}}; font-size: 104px; line-height: 0.95; letter-spacing: -0.04em"><span style="display: block; animation: lpLine 900ms cubic-bezier(.2,.8,.2,1) 80ms both">{{c.title}}</span></h1>
+        <div style="display: flex; flex-direction: column; gap: 0; margin-top: 14px">
+          <sc-for list="{{c.rows}}" as="r" hint-placeholder-count="3">
+            <div style="display: flex; justify-content: space-between; gap: 20px; padding: 14px 0; border-top: 1px solid {{t.line2}}; animation: lpRise 600ms cubic-bezier(.2,.8,.2,1) {{r.delay}} both"><span style="font-size: 15px; color: {{t.tx2}}">{{r.k}}</span><span style="font-family: {{r.font}}; font-size: {{r.size}}; font-style: {{r.style}}; line-height: 1">{{r.v}}</span></div>
+          </sc-for>
+        </div>
+      </div>
+    </sc-if>
+  </sc-for>
+
+  <div style="position: absolute; left: 56px; right: 56px; bottom: 40px; display: flex; align-items: flex-end; gap: 28px">
+    <div style="flex: 1; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 10px">
+      <sc-for list="{{chapters}}" as="c" hint-placeholder-count="4">
+        <button type="button" onClick="{{c.go}}" aria-current="{{c.cur}}" style="display: flex; flex-direction: column; gap: 10px; padding: 0; border: 0; background: transparent; color: {{c.color}}; font: 500 14px {{s.ui}}; text-align: left; cursor: pointer">
+          <span style="position: relative; display: block; height: 3px; border-radius: 2px; background: {{t.track}}; overflow: hidden"><span style="position: absolute; inset: 0; background: {{c.fill}}; transform-origin: left; animation: {{c.anim}}"></span></span>
+          <span>{{c.num}} · {{c.title}}</span>
+        </button>
+      </sc-for>
+    </div>
+    <div style="display: flex; gap: 8px; font-family: 'Geist Mono', monospace; font-size: 11px; color: {{t.tx3}}"><span>← →</span><span>capítulos</span><span>·</span><span>Espacio</span><span>pausa</span></div>
+  </div>
+  <div style="position: absolute; right: 56px; bottom: 92px; font-size: 12px; color: {{t.tx3}}">Reconstrucción de apoyo · el dictamen es del perito</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"tema":{"editor":"enum","options":["Día","Noche"],"default":"Noche","section":"Tema"},"pairing":{"editor":"enum","options":["Editorial","Geométrica","Suave"],"default":"Editorial","section":"Tipografía"},"$preview":{"width":1440,"height":900}}'>
+class Component extends DCLogic {
+  constructor(props) { super(props); this.state = { night: null, ch: 1 }; }
+  isNight() { return this.state.night === null ? (this.props.tema || 'Noche') === 'Noche' : this.state.night; }
+  tokens(n) {
+    if (n) return { bg: '#070D19', tx: '#E8EEF8', tx2: '#B4C0D4', tx3: '#8D9BB4', line2: 'rgba(148,170,210,0.3)', track: 'rgba(148,170,210,0.22)', lit0: '#15233F', lit1: '#050A14', slab: '#1C2944', median: '#131D33', medDot: '#22304E', edge: '#2C3A57', lane: '#3A4A6A', car: '#DCE6F5', carD: '#8FA1BF', carD2: '#C3D0E6', ghostFill: 'rgba(220,230,245,0.14)', speed0: '#8FB4FF', shadow: '#000000', shOp: 0.65, veil: 'linear-gradient(90deg, rgba(7,13,25,0.94) 0%, rgba(7,13,25,0.6) 38%, rgba(7,13,25,0) 60%)' };
+    return { bg: '#F4F5F7', tx: '#0B0D12', tx2: '#3A3F49', tx3: '#5B616C', line2: '#C9CDD4', track: '#DDE0E5', lit0: '#FFFFFF', lit1: '#E2E5EA', slab: '#FFFFFF', median: '#ECEDEF', medDot: '#D9DBDF', edge: '#D5D8DE', lane: '#CACED5', car: '#FFFFFF', carD: '#D7DBE1', carD2: '#F1F2F4', ghostFill: '#FFFFFF', speed0: '#0B0D12', shadow: '#1B2230', shOp: 0.2, veil: 'linear-gradient(90deg, rgba(244,245,247,0.96) 0%, rgba(244,245,247,0.65) 38%, rgba(244,245,247,0) 60%)' };
+  }
+  pairs(p) {
+    var sets = {
+      'Editorial': { disp: "'Instrument Serif', Georgia, serif", ui: "'Instrument Sans', system-ui, sans-serif", headW: 400, accent: 'italic' },
+      'Geométrica': { disp: "'Sora', system-ui, sans-serif", ui: "'Sora', system-ui, sans-serif", headW: 300, accent: 'normal' },
+      'Suave': { disp: "'Manrope', system-ui, sans-serif", ui: "'Manrope', system-ui, sans-serif", headW: 500, accent: 'normal' }
+    };
+    return sets[p] || sets['Editorial'];
+  }
+  renderVals() {
+    var self = this;
+    var night = this.isNight();
+    var t = this.tokens(night);
+    var s = this.pairs(this.props.pairing);
+    var big = function (k, v, d) { return { k: k, v: v, delay: d, font: s.disp, size: '40px', style: s.accent }; };
+    var mono = function (k, v, d) { return { k: k, v: v, delay: d, font: "'Geist Mono', monospace", size: '15px', style: 'normal' }; };
+    var data = [
+      { title: 'La escena', rows: [mono('Vía', 'MEX-15D · km 47+800', '400ms'), mono('Ancho del arroyo', '6.47 m', '500ms'), mono('Superficie', 'asfalto en buen estado', '600ms')] },
+      { title: 'El impacto', rows: [big('B al impacto', '34.5 km/h', '400ms'), mono('Rango p10–p90', '26.2–44.0', '500ms'), mono('A', 'detenido · 0.0 km/h', '600ms')] },
+      { title: 'Posiciones finales', rows: [mono('A', 'reposo sobre su carril', '400ms'), mono('B', 'reposo detrás de A', '500ms'), mono('Restos', '15.89 m', '600ms')] },
+      { title: 'Contra CESVI', rows: [big('Croquis', '63.90 km/h', '400ms'), big('CESVI', '63.15 km/h', '500ms'), mono('Diferencia', '0.75 km/h · 1.2 %', '600ms')] }
+    ];
+    var ch = this.state.ch;
+    var chapters = data.map(function (d, i) {
+      return {
+        title: d.title, rows: d.rows, num: '0' + (i + 1), active: i === ch, cur: i === ch ? 'step' : 'false',
+        color: i === ch ? t.tx : t.tx3,
+        fill: i < ch ? t.tx2 : (i === ch ? '#FF5A1F' : 'transparent'),
+        anim: i === ch ? 'lpFill 6s linear both' : 'none',
+        go: function () { self.setState({ ch: i }); }
+      };
+    });
+    return {
+      t: t, s: s, night: night, day: !night, chapters: chapters,
+      themeLabel: night ? 'Cambiar a modo día' : 'Cambiar a modo noche',
+      toggle: function () { self.setState({ night: !self.isNight() }); }
+    };
+  }
+}
+</script>
+</body>
+</html>

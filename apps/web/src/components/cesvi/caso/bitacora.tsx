@@ -3,6 +3,7 @@
  * qué a quién, en orden. La misma va en la trazabilidad del dictamen.
  */
 import { mensajeEnPalabras, type MensajeBitacora } from "@croquis/cesvi";
+import { plural } from "@/lib/textos-caso";
 
 export function BitacoraAgentes({ bitacora }: { bitacora: readonly MensajeBitacora[] }) {
   if (!bitacora.length) return null;
@@ -10,7 +11,7 @@ export function BitacoraAgentes({ bitacora }: { bitacora: readonly MensajeBitaco
   return (
     <details className="hundido p-4" data-testid="bitacora-agentes">
       <summary className="t-interfaz cursor-pointer font-medium">
-        Bitácora de los agentes ({bitacora.length} mensajes
+        Bitácora de los agentes ({plural(bitacora.length, "mensaje")}
         {pedidos ? `, ${pedidos} entre agentes` : ""})
       </summary>
       <ol className="t-nota mt-3 flex flex-col gap-1">

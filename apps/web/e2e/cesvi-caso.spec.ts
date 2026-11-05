@@ -1,7 +1,7 @@
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
 import { expect, test } from "@playwright/test";
-import { acercar, irAPaso } from "./ayuda-recorrido";
+import { acercar, escribirRumbo, irAPaso } from "./ayuda-recorrido";
 
 /**
  * La lectura grabada de Claude de la narración de ejemplo (E-R1; CI no llama a la API). Es la misma
@@ -108,6 +108,14 @@ test("@flujo /cesvi: un caso nuevo desde la lista, de la narración al dictamen"
   await page.getByTestId("aceptar-V1").click();
   await expect(page.getByTestId("fantasma-V1")).toHaveCount(0);
   await expect(page.getByTestId("fantasma-V2")).toHaveCount(1);
+  // Colocación rehecha (B): «Paso 2 de 3», por dónde venía cada uno, con la flecha de Croquis
+  // llena; al tocarla, V2 queda confirmado y sigue «Paso 3 de 3» con la pieza fantasma de V1.
+  await expect(page.getByTestId("subpaso-lugar")).toHaveText("Paso 2 de 3");
+  await expect(page.getByTestId("leyenda-colocar")).toBeVisible();
+  await page.getByTestId("direcciones-V2").locator('[data-propuesta="si"]').click();
+  await expect(page.getByTestId("fantasma-V2")).toHaveCount(0);
+  await expect(page.getByTestId("subpaso-lugar")).toHaveText("Paso 3 de 3");
+  await expect(page.getByTestId("pieza-final:V1")).toHaveCount(1);
   await page.getByTestId("listo-elemento").click();
 
   // En «Colocar» el mapa no se arrastra: lo colocado se queda donde estaba en la pantalla.
@@ -125,7 +133,7 @@ test("@flujo /cesvi: un caso nuevo desde la lista, de la narración al dictamen"
   const colocar = async (vehiculo: string, rumbo: string, x: number, y: number) => {
     await expect(page.getByTestId("item-activo")).toHaveAttribute("data-item", `final:${vehiculo}`);
     await mapa.click({ position: { x, y } });
-    await page.getByTestId("rumbo-activo").fill(rumbo);
+    await escribirRumbo(page, rumbo);
     await page.getByTestId("listo-elemento").click();
   };
   await colocar("V1", "315", 330, 170);
@@ -230,7 +238,11 @@ test("@flujo /cesvi: un caso nuevo desde la lista, de la narración al dictamen"
 
   // Los daños que calcula la reconstrucción y, en los números, la verificación CESVI dice qué falta.
   await irAPaso(page, 5);
-  await expect(page.getByTestId("dano-calculado-V1")).toContainText("C1–C6");
+  // Con las velocidades reconstruidas (§0 del rediseño): energía, Δv y el perfil estimado, sin ceros.
+  const danoV1 = page.getByTestId("dano-calculado-V1");
+  await expect(danoV1).toContainText("perfil estimado", { timeout: 60_000 });
+  await expect(danoV1).toContainText("kJ");
+  await expect(danoV1).not.toContainText(" 0.0 kJ");
   await irAPaso(page, 6);
   await expect(page.getByTestId("verificacion-cesvi")).toContainText("Falta:");
 
@@ -305,7 +317,8 @@ test("@flujo /cesvi: un caso nuevo desde la lista, de la narración al dictamen"
   const descarga = page.waitForEvent("download");
   await page.getByTestId("guardar-caso").click();
   const archivo = await descarga;
-  expect(archivo.suggestedFilename()).toBe("caso-croquis.json");
+  // El archivo del caso lleva su extensión (A4); los .json de antes se siguen abriendo.
+  expect(archivo.suggestedFilename()).toMatch(/\.croquis$/);
   const rutaCaso = await archivo.path();
   const d = JSON.parse(readFileSync(rutaCaso, "utf8")) as {
     conclusion_perito: string;
@@ -321,12 +334,11 @@ test("@flujo /cesvi: un caso nuevo desde la lista, de la narración al dictamen"
   expect(d.expediente.impactos[0]!.fuente).toBe("perito");
   const posiciones = d.expediente.versiones[0]!.posiciones;
   expect(posiciones).toHaveLength(4);
-  // Lo que colocó o aceptó el perito es suyo; la pose de impacto de V2 que propuso Croquis y nadie
-  // aceptó sigue como supuesto (punto 3 de René).
+  // Lo que colocó o aceptó el perito es suyo: V1 con «Aceptar» y V2 con la flecha de su carril (B).
   const fuenteDe = (v: string, fase: string) =>
     posiciones.find((p) => p.vehiculo === v && p.fase === fase)!.fuente;
   expect(fuenteDe("V1", "impacto")).toBe("perito");
-  expect(fuenteDe("V2", "impacto")).toBe("supuesto");
+  expect(fuenteDe("V2", "impacto")).toBe("perito");
   expect(fuenteDe("V1", "final")).toBe("perito");
   expect(fuenteDe("V2", "final")).toBe("perito");
   expect(posiciones.find((p) => p.vehiculo === "V1" && p.fase === "final")!.rumbo).toBe(315);
@@ -403,7 +415,7 @@ test("@flujo /cesvi: una carambola, con sus impactos en orden hasta el 3D", asyn
   const tocar = async (item: string, dx: number, rumbo: string) => {
     await expect(page.getByTestId("item-activo")).toHaveAttribute("data-item", item);
     await mapa.click({ position: { x: 300 + dx, y: 260 } });
-    await page.getByTestId("rumbo-activo").fill(rumbo);
+    await escribirRumbo(page, rumbo);
     await page.getByTestId("listo-elemento").click();
   };
   await tocar("impacto:1", -7, "90");

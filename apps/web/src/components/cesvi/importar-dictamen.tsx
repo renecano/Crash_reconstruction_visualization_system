@@ -5,16 +5,10 @@
  * narración con lo que concluyó CESVI). Cada cita se revisa contra el texto. El expediente abre en
  * «Caso nuevo» para colocar a los vehículos y reconstruir, con lo que concluyó CESVI al lado.
  */
-import {
-  importarDictamen,
-  type Conclusiones,
-  resumenTexto,
-  type DictamenImportado,
-  type SalidaCorpus,
-  type SalidaNarracion,
-} from "@croquis/cesvi";
+import { type Conclusiones, resumenTexto, type DictamenImportado } from "@croquis/cesvi";
 import { useState } from "react";
 import ejemplo from "../../../../../data/cesvi/grabaciones/importar/ejemplo.json";
+import { leerReporte, MIN_REPORTE } from "@/lib/lectura-reporte";
 import { MODALIDAD } from "@/lib/nombres-cesvi";
 import { textoDeArchivo, type TextoDictamen } from "@/lib/texto-dictamen";
 
@@ -110,28 +104,14 @@ export function CargaReporte({
   const leer = async () => {
     if (!texto) return;
     setEstado("Leyendo el reporte con Claude (dos lecturas; puede tardar un par de minutos)…");
-    try {
-      const r = await fetch("/api/cesvi/importar", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ texto: texto.texto }),
-      });
-      const d = (await r.json()) as {
-        metodo?: string;
-        motivo?: string;
-        corpus?: SalidaCorpus;
-        narracion?: SalidaNarracion;
-      };
-      if (d.metodo !== "claude" || !d.corpus || !d.narracion) {
-        setEstado(`No se pudo leer con Claude (${d.motivo ?? "sin respuesta"}).`);
-        return;
-      }
-      const nombre = archivo ?? "reporte";
-      onImportado(importarDictamen(texto.texto, d.corpus, d.narracion, nombre), nombre);
-      setEstado(null);
-    } catch {
-      setEstado("No se pudo leer el reporte.");
+    const nombre = archivo ?? "reporte";
+    const r = await leerReporte(texto.texto, nombre);
+    if (!r.ok) {
+      setEstado(r.motivo);
+      return;
     }
+    onImportado(r.importado, nombre);
+    setEstado(null);
   };
 
   const r = texto ? resumenTexto(texto.texto) : null;
@@ -188,7 +168,7 @@ export function CargaReporte({
           type="button"
           className="boton-principal"
           onClick={() => void leer()}
-          disabled={!texto || texto.texto.length < 200}
+          disabled={!texto || texto.texto.length < MIN_REPORTE}
           data-testid="leer-dictamen"
         >
           Leer el reporte

@@ -1,0 +1,206 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<title>Croquis · Contra CESVI</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Anybody:wdth,wght@50..150,100..900&amp;family=Geist+Mono:wght@400..600&amp;family=Instrument+Sans:wdth,wght@75..100,400..700&amp;family=Instrument+Serif:ital@0;1&amp;family=Manrope:wght@200..800&amp;family=Sora:wght@100..800&amp;display=swap">
+<style>
+body{margin:0}
+a{color:inherit;text-decoration:none}a:hover{color:inherit}
+@keyframes lxRise{from{opacity:0;transform:translateY(18px);filter:blur(8px)}to{opacity:1;transform:none;filter:blur(0)}}
+@keyframes lxLine{from{transform:translateY(105%)}to{transform:none}}
+@keyframes lxGrow{from{transform:scaleX(0)}to{transform:scaleX(1)}}
+@keyframes lxSlideL{from{left:0%;opacity:0}to{opacity:1}}
+@keyframes lxFade{from{opacity:0}to{opacity:1}}
+@keyframes lxDraw{from{stroke-dashoffset:1}to{stroke-dashoffset:0}}
+.cx-go svg{transition:transform 300ms cubic-bezier(.2,.8,.2,1)}
+.cx-go:hover svg{transform:translateX(6px)}
+.cx-go{transition:transform 200ms ease}
+.cx-go:hover{transform:translateY(-1px)}
+.cx-lift{transition:transform 220ms cubic-bezier(.2,.8,.2,1), box-shadow 220ms ease}
+.cx-lift:hover{transform:translateY(-3px)}
+@keyframes cxTip{from{opacity:0;transform:translate(-50%, calc(-100% - 4px))}to{opacity:1;transform:translate(-50%, calc(-100% - 12px))}}
+@keyframes cxDraw{from{stroke-dashoffset:1}to{stroke-dashoffset:0}}
+@keyframes cxFade{from{opacity:0}to{opacity:1}}
+@keyframes cxPop{0%{transform:scale(0);opacity:0}65%{transform:scale(1.25);opacity:1}100%{transform:scale(1);opacity:1}}
+@keyframes cxLine{from{transform:translateY(110%)}to{transform:none}}
+@keyframes cxRing{0%{transform:scale(0.6);opacity:0.9}100%{transform:scale(3.4);opacity:0}}
+@keyframes cxOut{from{clip-path:inset(0 0 0 0)}to{clip-path:inset(0 0 100% 0)}}
+@media (prefers-reduced-motion: reduce){*{animation:none!important;transition:none!important}}
+</style>
+</helmet>
+<div style="width: 1440px; height: 1000px; box-sizing: border-box; background: {{t.bg}}; color: {{t.tx}}; font-family: {{s.ui}}; display: flex; flex-direction: column; overflow: hidden; position: relative">
+
+  <header style="height: 72px; flex: none; display: flex; align-items: center; justify-content: space-between; padding: 0 32px; background: {{t.head}}; border-bottom: 1px solid {{t.line}}">
+    <a href="Lab-Casos.dc.html" aria-label="Volver a casos" style="display: flex; align-items: center; gap: 12px; width: 280px">
+      <svg width="32" height="32" viewBox="0 0 64 64" aria-hidden="true" style="color: {{t.tx}}"><path d="M 46.86 45.38 A 20 20 0 1 1 46.86 18.62" fill="none" stroke="currentColor" stroke-width="7"></path><path d="M 44 42 A 14.5 14.5 0 1 1 44 22" fill="none" stroke="currentColor" stroke-width="1.4" opacity="0.45" stroke-dasharray="2.6 2.6"></path><g stroke="#FF5A1F" fill="none"><circle cx="52" cy="32" r="4.6" stroke-width="2.2"></circle><line x1="52" y1="22.5" x2="52" y2="25.8" stroke-width="2"></line><line x1="52" y1="38.2" x2="52" y2="41.5" stroke-width="2"></line><line x1="58.2" y1="32" x2="61.5" y2="32" stroke-width="2"></line><circle cx="52" cy="32" r="1.5" fill="#FF5A1F" stroke="none"></circle></g></svg>
+      <span style="display: flex; flex-direction: column; gap: 4px"><span style="font-family: 'Anybody', sans-serif; font-weight: 650; font-variation-settings: 'wdth' 132; font-size: 14px; letter-spacing: 0.2em">CROQUIS</span><span style="font-family: 'Geist Mono', monospace; font-size: 10px; color: {{t.tx3}}">AXA A2010930 · Ahome, Sin.</span></span>
+    </a>
+    <nav aria-label="Actos del caso" style="width: 660px; display: flex; flex-direction: column; gap: 10px">
+      <div style="display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); font-size: 13px; text-align: center">
+        <a href="Lab-Hecho.dc.html" style="color: {{t.tx3}}">El hecho</a>
+        <a href="Lab-Escena.dc.html" style="color: {{t.tx3}}">La escena</a>
+        <a href="Lab-Reconstruccion.dc.html" style="color: {{t.tx3}}">Reconstrucción</a>
+        <a href="Lab-Analisis.dc.html" style="color: {{t.tx3}}">Análisis</a>
+        <a href="Lab-Contraste.dc.html" aria-current="step" style="font-weight: 600">Contra CESVI</a>
+        <a href="Lab-Dictamen.dc.html" style="color: {{t.tx3}}">Dictamen</a>
+      </div>
+      <div style="position: relative; height: 2px; background: {{t.track}}; border-radius: 2px"><div style="position: absolute; left: 0; top: 0; bottom: 0; width: 75%; background: {{t.tx}}; border-radius: 2px; transform-origin: left; animation: lxGrow 1100ms cubic-bezier(.2,.8,.2,1) both"></div><div style="position: absolute; left: 75%; top: -3px; width: 8px; height: 8px; margin-left: -4px; border-radius: 999px; background: #FF5A1F"></div></div>
+    </nav>
+    <div style="display: flex; align-items: center; justify-content: flex-end; gap: 14px; width: 280px">
+      <button type="button" onClick="{{toggle}}" aria-label="{{themeLabel}}" style="width: 40px; height: 40px; border-radius: 10px; border: 1px solid {{t.line2}}; background: transparent; color: {{t.tx}}; display: flex; align-items: center; justify-content: center; cursor: pointer">
+        <sc-if value="{{day}}" hint-placeholder-val="{{true}}"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M20 14.5A8 8 0 0 1 9.5 4a8 8 0 1 0 10.5 10.5z"></path></svg></sc-if>
+        <sc-if value="{{night}}" hint-placeholder-val="{{false}}"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="4"></circle><path d="M12 2v2M12 20v2M2 12h2M20 12h2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"></path></svg></sc-if>
+      </button>
+      <a href="Lab-Presentar.dc.html" style="font-size: 14px">Presentar</a>
+      <button type="button" style="height: 40px; padding: 0 16px; border: 1px solid {{t.tx}}; border-radius: 10px; background: transparent; color: {{t.tx}}; font: 600 14px {{s.ui}}; cursor: pointer">Exportar</button>
+    </div>
+  </header>
+
+  <sc-if value="{{ready}}" hint-placeholder-val="{{true}}">
+  <main style="flex: 1; min-height: 0; display: flex; flex-direction: column; gap: 22px; padding: 36px 32px 32px 56px">
+    <div style="display: flex; justify-content: space-between; align-items: flex-end">
+      <h1 style="margin: 0; overflow: hidden; font-family: {{s.disp}}; font-weight: {{s.headW}}; font-size: 56px; line-height: 1; letter-spacing: -0.03em"><span style="display: block; animation: lxLine 900ms cubic-bezier(.2,.8,.2,1) 80ms both">Contra el reporte de CESVI</span></h1>
+      <div style="display: flex; gap: 22px; font-size: 14px; color: {{t.tx2}}; animation: lxRise 700ms cubic-bezier(.2,.8,.2,1) 300ms both"><span><span style="font-weight: 600; color: {{t.tx}}">3</span> coinciden</span><span><span style="font-weight: 600; color: {{t.tx}}">0</span> difieren</span><span><span style="font-weight: 600; color: {{t.tx}}">1</span> sin dato</span></div>
+    </div>
+
+    <section style="border-radius: 22px; background: {{t.surf}}; box-shadow: {{t.sheetSh}}; padding: 28px 34px 26px; display: flex; flex-direction: column; gap: 22px; animation: lxRise 800ms cubic-bezier(.2,.8,.2,1) 150ms both">
+      <div style="display: flex; justify-content: space-between; align-items: baseline"><span style="font-size: 15px; font-weight: 600">B · velocidad de impacto por deformación</span><span style="font-size: 13px; color: {{t.tx3}}">método de McHenry · km/h</span></div>
+      <div style="display: flex; align-items: flex-end; gap: 64px">
+        <div style="display: flex; flex-direction: column; gap: 8px"><span style="font-family: {{s.disp}}; font-weight: {{s.numW}}; font-style: {{s.accent}}; font-size: 128px; line-height: 0.82; letter-spacing: -0.04em; font-variant-numeric: tabular-nums">{{numC}}</span><span style="font-size: 14px; color: {{t.tx2}}">Croquis</span></div>
+        <div style="display: flex; flex-direction: column; gap: 8px"><span style="font-family: {{s.disp}}; font-weight: {{s.numW}}; font-style: {{s.accent}}; font-size: 128px; line-height: 0.82; letter-spacing: -0.04em; color: {{t.tx3}}; font-variant-numeric: tabular-nums">{{numR}}</span><span style="font-size: 14px; color: {{t.tx2}}">Reporte de CESVI</span></div>
+        <div style="margin-left: auto; padding-bottom: 26px; display: flex; flex-direction: column; align-items: flex-end; gap: 6px; animation: lxRise 600ms cubic-bezier(.2,.8,.2,1) 1700ms both"><span style="font-family: {{s.disp}}; font-weight: {{s.numW}}; font-style: {{s.accent}}; font-size: 48px; line-height: 1">1.2 %</span><span style="font-size: 14px; color: {{t.tx2}}">diferencia · 0.75 km/h</span></div>
+      </div>
+      <div style="position: relative; height: 46px">
+        <svg width="100%" height="46" viewBox="0 0 1000 46" preserveAspectRatio="none" aria-hidden="true" style="position: absolute; inset: 0">
+          <path d="M0 22H1000" stroke="{{t.line2}}" stroke-width="1"></path>
+          <path d="M0 22V12M125 22V16M250 22V12M375 22V16M500 22V12M625 22V16M750 22V12M875 22V16M1000 22V12" stroke="{{t.tick}}" stroke-width="1"></path>
+        </svg>
+        <div style="position: absolute; left: 39.4%; width: 9.35%; top: 16px; height: 12px; border-radius: 6px; background: {{t.soft}}; transform-origin: left; animation: lxGrow 700ms cubic-bezier(.2,.8,.2,1) 1500ms both"></div>
+        <div onMouseEnter="{{mR}}" onMouseLeave="{{mOff}}" style="position: absolute; left: 39.4%; top: 0; width: 26px; height: 46px; margin-left: -13px; display: flex; justify-content: center; cursor: pointer; animation: lxSlideL 1100ms cubic-bezier(.2,.8,.2,1) 400ms both"><div style="width: {{mRw}}; height: 32px; margin-top: 6px; border-radius: 2px; background: {{t.tx3}}; transition: width 160ms ease"></div></div>
+        <div onMouseEnter="{{mC}}" onMouseLeave="{{mOff}}" style="position: absolute; left: 48.75%; top: 0; width: 26px; height: 46px; margin-left: -13px; display: flex; justify-content: center; cursor: pointer; animation: lxSlideL 1100ms cubic-bezier(.2,.8,.2,1) 500ms both"><div style="width: {{mCw}}; height: 32px; margin-top: 6px; border-radius: 2px; background: {{t.tx}}; transition: width 160ms ease"></div></div>
+        <sc-if value="{{mOn}}" hint-placeholder-val="{{false}}"><div role="tooltip" style="position: absolute; left: {{mt.left}}; top: 0; z-index: 4; padding: 10px 12px; border-radius: 10px; background: {{t.tipBg}}; color: {{t.tipTx}}; white-space: nowrap; pointer-events: none; box-shadow: 0 14px 36px rgba(0,0,0,0.2); animation: cxTip 160ms cubic-bezier(.2,.8,.2,1) both"><div style="font-size: 13px; font-weight: 600">{{mt.title}}</div><div style="font-size: 12px; opacity: 0.75; margin-top: 4px">{{mt.body}}</div></div></sc-if>
+        <div style="position: absolute; left: 0; right: 0; bottom: -4px; display: flex; justify-content: space-between; font-family: 'Geist Mono', monospace; font-size: 10px; color: {{t.tx3}}"><span>60</span><span>62</span><span>64</span><span>66</span><span>68</span></div>
+      </div>
+    </section>
+
+    <div style="flex: 1; min-height: 0; display: flex; gap: 22px">
+      <section style="width: 520px; flex: none; border-radius: 22px; background: {{t.surf}}; box-shadow: {{t.chipSh}}; padding: 22px 28px; display: flex; flex-direction: column; animation: lxRise 800ms cubic-bezier(.2,.8,.2,1) 300ms both">
+        <span style="font-size: 15px; font-weight: 600; padding-bottom: 10px">Criterios</span>
+        <sc-for list="{{crit}}" as="c" hint-placeholder-count="4">
+          <div onMouseEnter="{{c.enter}}" onMouseLeave="{{rowOff}}" style="display: flex; gap: 16px; align-items: center; margin: 0 -12px; padding: 14px 12px; border-radius: 12px; background: {{c.bg}}; transition: background 160ms ease; border-top: 1px solid {{t.line}}; animation: lxRise 500ms cubic-bezier(.2,.8,.2,1) {{c.delay}} both">
+            <sc-if value="{{c.ok}}" hint-placeholder-val="{{true}}"><svg width="24" height="24" viewBox="0 0 24 24" aria-hidden="true" style="flex: none"><circle cx="12" cy="12" r="11" fill="{{t.tx}}"></circle><path d="M7 12.3l3.2 3.2 6.6-7" fill="none" stroke="{{t.surf}}" stroke-width="2" stroke-linecap="round"></path></svg></sc-if>
+            <sc-if value="{{c.nd}}" hint-placeholder-val="{{false}}"><svg width="24" height="24" viewBox="0 0 24 24" aria-hidden="true" style="flex: none"><circle cx="12" cy="12" r="10.5" fill="none" stroke="{{t.tx3}}" stroke-width="1.5" stroke-dasharray="3 3"></circle><path d="M8 12H16" stroke="{{t.tx3}}" stroke-width="1.6"></path></svg></sc-if>
+            <div style="flex: 1"><div style="font-size: 15px; font-weight: 600">{{c.name}}</div><div style="font-size: 13px; color: {{t.tx3}}">{{c.detail}}</div></div>
+            <span style="font-size: 13px; color: {{t.tx2}}">{{c.state}}</span>
+          </div>
+        </sc-for>
+      </section>
+
+      <section style="flex: 1; min-width: 0; border-radius: 22px; background: {{t.surf}}; box-shadow: {{t.chipSh}}; padding: 22px 28px; display: flex; gap: 24px; animation: lxRise 800ms cubic-bezier(.2,.8,.2,1) 400ms both">
+        <div style="display: flex; flex-direction: column; gap: 10px; width: 300px; flex: none">
+          <span style="font-size: 15px; font-weight: 600">Lado a lado</span>
+          <div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px">
+            <div style="display: flex; flex-direction: column; gap: 6px">
+              <svg width="100%" height="210" viewBox="0 0 140 210" role="img" aria-label="Croquis del reporte de CESVI" style="border-radius: 10px; background: #FBFAF6">
+                <g transform="rotate(-14 70 105)"><path d="M40 -20V230M64 -20V230M76 -20V230M100 -20V230" stroke="#2A2F38" stroke-width="1"></path><path d="M52 -20V230M88 -20V230" stroke="#2A2F38" stroke-width="0.8" stroke-dasharray="4 4"></path><rect x="45" y="50" width="12" height="34" rx="2" fill="none" stroke="#2A2F38" stroke-width="1.4"></rect><rect x="46" y="112" width="10" height="28" rx="2" fill="#2A2F38"></rect><path d="M47 88l6 6M53 88l-6 6" stroke="#E2460C" stroke-width="1.6"></path></g>
+              </svg>
+              <span style="font-size: 12px; color: {{t.tx3}}">CESVI · del reporte</span>
+            </div>
+            <div style="display: flex; flex-direction: column; gap: 6px">
+              <svg width="100%" height="210" viewBox="0 0 140 210" role="img" aria-label="Croquis reconstruido por Croquis" style="border-radius: 10px; background: {{t.surf2}}">
+                <g transform="rotate(-14 70 105)"><rect x="40" y="-20" width="24" height="250" fill="{{t.slab}}"></rect><rect x="64" y="-20" width="12" height="250" fill="{{t.median}}"></rect><rect x="76" y="-20" width="24" height="250" fill="{{t.slab}}"></rect><path d="M52 -20V230M88 -20V230" stroke="{{t.lane}}" stroke-width="0.8" stroke-dasharray="4 4"></path><path d="M51 190V114" stroke="{{t.tx}}" stroke-width="1.6" pathLength="1" stroke-dasharray="1" style="animation: lxDraw 1000ms cubic-bezier(.6,0,.2,1) 900ms both"></path><rect x="45" y="52" width="12" height="34" rx="3" fill="{{t.car}}" stroke="{{t.tx}}" stroke-width="1"></rect><rect x="46" y="114" width="10" height="28" rx="3" fill="{{t.tx}}"></rect><circle cx="50" cy="88" r="4" fill="none" stroke="#FF5A1F" stroke-width="1.6"></circle></g>
+              </svg>
+              <span style="font-size: 12px; color: {{t.tx3}}">Croquis · reconstruido</span>
+            </div>
+          </div>
+        </div>
+        <div style="flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 14px">
+          <span style="font-size: 15px; font-weight: 600">De dónde sale cada dato</span>
+          <div style="display: flex; flex-direction: column; gap: 4px; padding-left: 14px; border-left: 2px solid {{t.line2}}"><span style="font-size: 12px; color: {{t.tx3}}">A · parte posterior, izquierda</span><span style="font-family: {{s.disp}}; font-style: {{s.accent}}; font-size: 18px; line-height: 1.35">«daños que presenta el vehículo tipo Silverado en la parte posterior con acentuación hacia el lado izquierdo»</span></div>
+          <div style="display: flex; flex-direction: column; gap: 4px; padding-left: 14px; border-left: 2px solid {{t.line2}}"><span style="font-size: 12px; color: {{t.tx3}}">B · frente, derecha</span><span style="font-family: {{s.disp}}; font-style: {{s.accent}}; font-size: 18px; line-height: 1.35">«los del vehículo tipo Tacoma en la parte frontal con acentuación hacia el lado derecho»</span></div>
+          <a href="Lab-Dictamen.dc.html" class="cx-go" style="margin-top: auto; height: 58px; border-radius: 14px; background: {{t.pri}}; color: {{t.priTx}}; display: flex; align-items: center; justify-content: space-between; padding: 0 22px; font-size: 16px; font-weight: 600">Continuar al dictamen<svg width="36" height="14" viewBox="0 0 36 14" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M0 7H34M28 1l6 6-6 6"></path></svg></a>
+        </div>
+      </section>
+    </div>
+  </main>
+  </sc-if>
+
+  <sc-if value="{{intro}}" hint-placeholder-val="{{false}}">
+    <div aria-hidden="true" style="position: absolute; inset: 0; z-index: 50; background: {{t.bg}}; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 26px; pointer-events: none; animation: cxOut 560ms cubic-bezier(.7,0,.2,1) 860ms both">
+      <svg width="128" height="128" viewBox="0 0 64 64" style="color: {{t.tx}}; overflow: visible">
+        <g opacity="0.55"><g stroke="currentColor" stroke-width="1.1" style="animation: cxFade 300ms ease 60ms both"><line x1="45.65" y1="55.64" x2="46.80" y2="57.63"></line><line x1="39.07" y1="58.37" x2="39.66" y2="60.59"></line><line x1="32.00" y1="58.20" x2="32.00" y2="61.60"></line><line x1="24.93" y1="58.37" x2="24.34" y2="60.59"></line><line x1="18.35" y1="55.64" x2="17.20" y2="57.63"></line><line x1="13.47" y1="50.53" x2="11.07" y2="52.93"></line><line x1="8.36" y1="45.65" x2="6.37" y2="46.80"></line><line x1="5.63" y1="39.07" x2="3.41" y2="39.66"></line><line x1="5.80" y1="32.00" x2="2.40" y2="32.00"></line><line x1="5.63" y1="24.93" x2="3.41" y2="24.34"></line><line x1="8.36" y1="18.35" x2="6.37" y2="17.20"></line><line x1="13.47" y1="13.47" x2="11.07" y2="11.07"></line><line x1="18.35" y1="8.36" x2="17.20" y2="6.37"></line><line x1="24.93" y1="5.63" x2="24.34" y2="3.41"></line><line x1="32.00" y1="5.80" x2="32.00" y2="2.40"></line><line x1="39.07" y1="5.63" x2="39.66" y2="3.41"></line><line x1="45.65" y1="8.36" x2="46.80" y2="6.37"></line></g></g>
+        <path d="M 46.86 45.38 A 20 20 0 1 1 46.86 18.62" fill="none" stroke="currentColor" stroke-width="6.4" pathLength="1" stroke-dasharray="1" style="animation: cxDraw 620ms cubic-bezier(.65,0,.25,1) 80ms both"></path>
+        <g opacity="0.45"><path d="M 43.14 41.94 A 15 15 0 1 1 43.14 22.06" fill="none" stroke="currentColor" stroke-width="0.9" stroke-dasharray="2.2 2.2" style="animation: cxFade 300ms ease 420ms both"></path></g>
+        <g style="transform-box: fill-box; transform-origin: center; animation: cxPop 420ms cubic-bezier(.3,1.6,.5,1) 600ms both"><g stroke="#FF5A1F" fill="none"><circle cx="52" cy="32" r="4.3" stroke-width="1.7"></circle><line x1="52" y1="23.6" x2="52" y2="26.4" stroke-width="1.3"></line><line x1="52" y1="37.6" x2="52" y2="40.4" stroke-width="1.3"></line><line x1="57.6" y1="32" x2="60.4" y2="32" stroke-width="1.3"></line></g><circle cx="52" cy="32" r="1.2" fill="#FF5A1F"></circle></g>
+        <circle cx="52" cy="32" r="4.3" fill="none" stroke="#FF5A1F" stroke-width="0.8" style="transform-box: fill-box; transform-origin: center; animation: cxRing 700ms ease-out 640ms both"></circle>
+      </svg>
+      <div style="display: flex; align-items: baseline; gap: 16px; overflow: hidden; padding-bottom: 6px"><span style="font-family: 'Geist Mono', monospace; font-size: 14px; color: {{t.tx3}}; animation: cxFade 300ms ease 250ms both">05</span><span style="display: block; font-family: {{s.disp}}; font-weight: {{s.headW}}; font-size: 48px; letter-spacing: -0.02em; animation: cxLine 600ms cubic-bezier(.2,.8,.2,1) 220ms both">Contra CESVI</span></div>
+    </div>
+  </sc-if>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"tema":{"editor":"enum","options":["Día","Noche"],"default":"Día","section":"Tema"},"pairing":{"editor":"enum","options":["Editorial","Geométrica","Suave"],"default":"Editorial","section":"Tipografía"},"transicion":{"editor":"boolean","default":true,"section":"Movimiento"},"$preview":{"width":1440,"height":1000}}'>
+class Component extends DCLogic {
+  constructor(props) { super(props); var rd = typeof window !== 'undefined' && window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches; this.introOn = props.transicion !== false && !rd; this.state = { intro: this.introOn, ready: !this.introOn, night: null, p: 0, mk: null, row: null }; }
+  startIntro() { if (!this.introOn) return; var self = this; this.ti1 = setTimeout(function () { self.setState({ ready: true }); }, 760); this.ti2 = setTimeout(function () { self.setState({ intro: false }); }, 1500); }
+  deco(list, t) { var self = this; return list.map(function (c, i) { return Object.assign({}, c, { bg: self.state.row === i ? t.surf2 : 'transparent', enter: function () { self.setState({ row: i }); } }); }); }
+  isNight() { return this.state.night === null ? this.props.tema === 'Noche' : this.state.night; }
+  componentDidMount() {
+    this.startIntro();
+    var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (reduce) { this.setState({ p: 1 }); return; }
+    var self = this;
+    var t0 = performance.now() + (this.introOn ? 1150 : 400);
+    var step = function (t) {
+      var p = Math.max(0, Math.min(1, (t - t0) / 1400));
+      self.setState({ p: 1 - Math.pow(1 - p, 4) });
+      if (p < 1) self.raf = requestAnimationFrame(step);
+    };
+    this.raf = requestAnimationFrame(step);
+  }
+  componentWillUnmount() { cancelAnimationFrame(this.raf); clearTimeout(this.ti1); clearTimeout(this.ti2); }
+  tokens(n) {
+    if (n) return { bg: '#0A1120', surf: '#111A2C', surf2: '#17223A', head: 'rgba(10,17,32,0.86)', track: '#1E2A44', line: 'rgba(148,170,210,0.16)', line2: 'rgba(148,170,210,0.3)', tx: '#E8EEF8', tx2: '#B4C0D4', tx3: '#8D9BB4', pri: '#E8EEF8', priTx: '#0A1120', soft: '#22314F', tick: '#5C6B87', slab: '#1C2944', median: '#131D33', lane: '#3A4A6A', car: '#DCE6F5', sheetSh: '0 1px 0 rgba(148,170,210,0.12), 0 30px 80px rgba(0,0,0,0.5)', chipSh: '0 1px 0 rgba(148,170,210,0.12), 0 10px 30px rgba(0,0,0,0.4)', tipBg: '#E8EEF8', tipTx: '#0A1120' };
+    return { bg: '#F4F5F7', surf: '#FFFFFF', surf2: '#F1F2F4', head: 'rgba(255,255,255,0.86)', track: '#E1E4E8', line: '#ECEEF1', line2: '#C9CDD4', tx: '#0B0D12', tx2: '#3A3F49', tx3: '#5B616C', pri: '#0B0D12', priTx: '#FFFFFF', soft: '#E4E7EB', tick: '#9CA2AC', slab: '#FFFFFF', median: '#E6E7EA', lane: '#CACED5', car: '#FFFFFF', sheetSh: '0 1px 0 #E6E8EC, 0 30px 80px rgba(27,34,48,0.1)', chipSh: '0 1px 0 #E6E8EC, 0 10px 28px rgba(27,34,48,0.07)', tipBg: '#0B0D12', tipTx: '#FFFFFF' };
+  }
+  pairs(p) {
+    var sets = {
+      'Editorial': { disp: "'Instrument Serif', Georgia, serif", ui: "'Instrument Sans', system-ui, sans-serif", headW: 400, numW: 400, accent: 'italic' },
+      'Geométrica': { disp: "'Sora', system-ui, sans-serif", ui: "'Sora', system-ui, sans-serif", headW: 300, numW: 200, accent: 'normal' },
+      'Suave': { disp: "'Manrope', system-ui, sans-serif", ui: "'Manrope', system-ui, sans-serif", headW: 500, numW: 300, accent: 'normal' }
+    };
+    return sets[p] || sets['Editorial'];
+  }
+  renderVals() {
+    var self = this;
+    var night = this.isNight();
+    var p = this.state.p;
+    return {
+      t: this.tokens(night), s: this.pairs(this.props.pairing), night: night, day: !night,
+      intro: this.state.intro, ready: this.state.ready,
+      mOn: this.state.mk !== null,
+      mt: this.state.mk === 'C' ? { left: '48.75%', title: 'Croquis · 63.90 km/h', body: 'McHenry con las medidas de deformación del reporte' } : { left: '39.4%', title: 'CESVI · 63.15 km/h', body: 'Del reporte AXA A2010930' },
+      mR: function () { self.setState({ mk: 'R' }); }, mC: function () { self.setState({ mk: 'C' }); }, mOff: function () { self.setState({ mk: null }); },
+      mRw: this.state.mk === 'R' ? '5px' : '3px', mCw: this.state.mk === 'C' ? '5px' : '3px',
+      rowOff: function () { self.setState({ row: null }); },
+      themeLabel: night ? 'Cambiar a modo día' : 'Cambiar a modo noche',
+      toggle: function () { self.setState({ night: !self.isNight() }); },
+      numC: (63.90 * p).toFixed(2), numR: (63.15 * p).toFixed(2),
+      crit: this.deco([
+        { name: 'Modalidad', detail: 'Alcance en los dos · frente contra parte posterior', state: 'Coincide', ok: true, nd: false, delay: '600ms' },
+        { name: 'Zonas de contacto', detail: '2 de 2 · A posterior izquierda, B frontal derecha', state: 'Coincide', ok: true, nd: false, delay: '700ms' },
+        { name: 'Primer impacto', detail: 'B contra A, un solo impacto', state: 'Coincide', ok: true, nd: false, delay: '800ms' },
+        { name: 'Posiciones finales', detail: 'El reporte no las registra; se usan las que colocaste', state: 'Sin dato', ok: false, nd: true, delay: '900ms' }
+      ], this.tokens(night))
+    };
+  }
+}
+</script>
+</body>
+</html>

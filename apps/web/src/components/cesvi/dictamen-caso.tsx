@@ -181,7 +181,7 @@ export function DictamenCaso({
       data-testid="dictamen-caso"
       data-croquis={croquisUsado ?? undefined}
     >
-      <h2 className="t-subtitulo">Dictamen</h2>
+      {/* Sin título propio: el paso ya dice «El dictamen» (prompt del rediseño §0.5). */}
       <p className="t-nota">
         Lleva tu narración, el croquis sobre las calles del mapa (a escala si no hay mapa), cuadros
         del 3D si lo abriste, los resultados con sus rangos, la verificación con el método de CESVI,
