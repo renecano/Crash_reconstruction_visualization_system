@@ -33,7 +33,12 @@ import { mergeGeometries } from "three/examples/jsm/utils/BufferGeometryUtils.js
 import type { QualityLevel } from "./quality";
 import { axlePositionsFor, buildVehicle, type VehicleDimensions } from "./vehicle-geometry";
 
-export const VEHICLE_MODEL_BASE_URL = "/modelos/vehiculos/";
+/**
+ * En producción los modelos salen de Vercel Blob con la huella de su carpeta (ADR 0107): Next
+ * reemplaza `process.env.CROQUIS_RECURSOS_VEHICULOS` al compilar. En local y en CI, de `public/`.
+ */
+export const VEHICLE_MODEL_BASE_URL =
+  process.env.CROQUIS_RECURSOS_VEHICULOS || "/modelos/vehiculos/";
 /** Draco y Basis, copiados de three en cada build (`apps/web/scripts/decodificadores.mjs`). */
 export const DECODERS_BASE_URL = `/decodificadores/r${REVISION}/`;
 

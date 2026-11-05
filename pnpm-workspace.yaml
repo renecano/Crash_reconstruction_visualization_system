@@ -41,6 +41,7 @@ catalog:
   "@noble/hashes": 2.4.0
   "@upstash/ratelimit": 2.2.0
   "@upstash/redis": 1.39.0
+  "@vercel/blob": 2.8.2
   ajv: 8.20.0
   ajv-formats: 3.0.1
   json-schema-to-zod: 2.8.1

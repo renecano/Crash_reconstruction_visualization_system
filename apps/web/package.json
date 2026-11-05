@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "node scripts/build-worker.mjs && node scripts/maplibre-worker.mjs && node scripts/pdfjs-worker.mjs && node scripts/blender-script.mjs && node scripts/decodificadores.mjs && next dev",
-    "build": "node scripts/build-worker.mjs && node scripts/maplibre-worker.mjs && node scripts/pdfjs-worker.mjs && node scripts/blender-script.mjs && node scripts/decodificadores.mjs && next build && node scripts/css-check.mjs",
+    "build": "node scripts/build-worker.mjs && node scripts/maplibre-worker.mjs && node scripts/pdfjs-worker.mjs && node scripts/blender-script.mjs && node scripts/decodificadores.mjs && node scripts/recursos.mjs preparar && next build && node scripts/css-check.mjs",
     "start": "next start",
     "lint": "eslint",
     "typecheck": "next typegen && tsc --noEmit",
@@ -45,6 +45,7 @@
     "@types/pdfmake": "0.3.3",
     "@types/react": "catalog:",
     "@types/react-dom": "catalog:",
+    "@vercel/blob": "catalog:",
     "@vitejs/plugin-react": "catalog:",
     "chrome-launcher": "1.2.2",
     "esbuild": "0.28.2",
