@@ -188,6 +188,8 @@ function markerBatch(specs: MarkerSpec[], root: Object3D, mats: Material[]): (t:
   mats.push(mat);
   const mesh = new InstancedMesh(new TorusGeometry(1, 0.16, 8, 32), mat, Math.max(1, specs.length));
   mesh.name = "indicadores_contacto";
+  // Marcador de interfaz: fuera de las fotos del dictamen (`sinInterfaz`).
+  mesh.userData.interfaz = true;
   mesh.count = specs.length;
   mesh.frustumCulled = false;
   root.add(mesh);

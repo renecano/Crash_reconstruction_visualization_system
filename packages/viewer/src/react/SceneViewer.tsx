@@ -141,7 +141,7 @@ import {
   type ProceduralSummary,
   type SceneGraph,
 } from "../scene-graph";
-import type { ViewerExportApi } from "../export/capture";
+import type { CaptureOptions, ViewerExportApi } from "../export/capture";
 import { seek } from "../timeline";
 import {
   loadVehicleModels,
@@ -672,6 +672,69 @@ function SceneContent({
       clock.set((st) => ({ ...seek(st, t), playing: false }));
       advance(performance.now(), true);
     };
+    /** Dibuja el instante con la cámara y los marcadores pedidos `cuadros` veces y copia el último. */
+    const capturar = (
+      { t, width, height, camara: camaraFoto, sinInterfaz }: CaptureOptions,
+      cuadros: number,
+    ): HTMLCanvasElement => {
+      const before = clock.get();
+      if (t !== undefined) clock.set((st) => ({ ...seek(st, t), playing: false }));
+      const canvas = gl.domElement;
+      const restore =
+        width !== undefined && height !== undefined ? resizeTo(width, height) : undefined;
+      // Lo que todavía está escondido por el precompilado progresivo (ADR 0104) sale en la foto:
+      // se revela solo para este cuadro (si falta compilar, compila aquí; la foto manda).
+      const escondidos: Object3D[] = [];
+      graph.root.traverse((o) => {
+        if (o.layers.mask === 2 ** CAPA_OCULTA) {
+          escondidos.push(o);
+          o.layers.set(0);
+        }
+      });
+      // Sin marcadores de interfaz (anillo del impacto, visión, indicadores de contacto).
+      const ocultos: Object3D[] = [];
+      if (sinInterfaz) {
+        scene.traverse((o) => {
+          if (o.userData.interfaz === true && o.visible) {
+            ocultos.push(o);
+            o.visible = false;
+          }
+        });
+      }
+      // La cámara de la foto, sin transición; después vuelve la del visor tal como estaba.
+      const eleccionPrevia = lastChoice.current;
+      const transicionPrevia = transition.current;
+      const posePrevia = lastPose.current;
+      if (camaraFoto) {
+        camaraCaptura.current = {
+          modo: camaraFoto,
+          conductor: camaraFoto === "conductor" ? driver?.v.id : undefined,
+        };
+        lastChoice.current = camaraCaptura.current;
+        transition.current = null;
+      }
+      try {
+        for (let k = 0; k < cuadros; k++) advance(performance.now(), true);
+        const out = document.createElement("canvas");
+        out.width = canvas.width;
+        out.height = canvas.height;
+        const ctx = out.getContext("2d");
+        if (!ctx) throw new Error("No hay contexto 2D para copiar el cuadro");
+        ctx.drawImage(canvas, 0, 0);
+        return out;
+      } finally {
+        for (const o of escondidos) o.layers.set(CAPA_OCULTA);
+        for (const o of ocultos) o.visible = true;
+        if (camaraFoto) {
+          camaraCaptura.current = null;
+          lastChoice.current = eleccionPrevia;
+          transition.current = transicionPrevia;
+          lastPose.current = posePrevia;
+        }
+        restore?.();
+        if (t !== undefined) clock.set(() => before);
+      }
+    };
     const api: ViewerExportApi = {
       tStart: resultado.t_inicio,
       tEnd: resultado.t_fin,
@@ -690,35 +753,18 @@ function SceneContent({
           clock.set(() => before);
         }
       },
-      captureFrame({ t, width, height } = {}) {
-        const before = clock.get();
-        if (t !== undefined) clock.set((st) => ({ ...seek(st, t), playing: false }));
-        const canvas = gl.domElement;
-        const restore =
-          width !== undefined && height !== undefined ? resizeTo(width, height) : undefined;
-        // Lo que todavía está escondido por el precompilado progresivo (ADR 0104) sale en la foto:
-        // se revela solo para este cuadro (si falta compilar, compila aquí; la foto manda).
-        const escondidos: Object3D[] = [];
-        graph.root.traverse((o) => {
-          if (o.layers.mask === 2 ** CAPA_OCULTA) {
-            escondidos.push(o);
-            o.layers.set(0);
-          }
-        });
-        try {
-          advance(performance.now(), true);
-          const out = document.createElement("canvas");
-          out.width = canvas.width;
-          out.height = canvas.height;
-          const ctx = out.getContext("2d");
-          if (!ctx) throw new Error("No hay contexto 2D para copiar el cuadro");
-          ctx.drawImage(canvas, 0, 0);
-          return out;
-        } finally {
-          for (const o of escondidos) o.layers.set(CAPA_OCULTA);
-          restore?.();
-          if (t !== undefined) clock.set(() => before);
+      captureFrame({ t, width, height, camara: camaraFoto, sinInterfaz } = {}) {
+        return capturar({ t, width, height, camara: camaraFoto, sinInterfaz }, 1);
+      },
+      async captureFrameReady({ esperaMs = 60_000, ...opts } = {}) {
+        // Listo: grafo precompilado (modelos, texturas, árboles, HDRI, daño y lo que llegó
+        // después). Si tarda más de `esperaMs`, la foto sale con lo que haya.
+        const desde = performance.now();
+        while (window.__croquisGraphReady !== true && performance.now() - desde < esperaMs) {
+          await new Promise((r) => setTimeout(r, 100));
         }
+        // Dos cuadros: el primero pone al día sombras y texturas del instante; el segundo se copia.
+        return capturar(opts, 2);
       },
       // GLTFExporter y SkeletonUtils se cargan solo al exportar (no pesan en la carga del visor).
       exportGlb: async (legend) => {
@@ -1320,6 +1366,8 @@ function SceneContent({
     };
   }, [compiled, graph, resultado]);
   const transition = useRef<{ from: CameraPose; start: number } | null>(null);
+  /** La cámara de una foto en curso (`captureFrame` con `camara`); null fuera de una foto. */
+  const camaraCaptura = useRef<CameraChoice | null>(null);
   /** La última cámara dibujada (modo y conductor): al cambiar empieza la transición. */
   const lastChoice = useRef<CameraChoice | null>(null);
   const settle = (pose: CameraPose): CameraPose => {
@@ -1366,8 +1414,9 @@ function SceneContent({
     }
   });
   /** Coloca la cámara del modo vigente en el instante `t` (también antes del primer cuadro). */
-  /** La cámara que se dibuja: la viva (el clic, en el mismo cuadro) o la de la propiedad. */
+  /** La cámara que se dibuja: la de una foto, la viva (el clic, en el mismo cuadro) o la de la propiedad. */
   const camaraViva = (): CameraChoice =>
+    camaraCaptura.current ??
     cameraLive?.current ?? {
       modo: camera,
       conductor: camera === "conductor" ? driver?.v.id : undefined,

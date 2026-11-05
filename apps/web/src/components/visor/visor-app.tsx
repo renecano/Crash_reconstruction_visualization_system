@@ -497,9 +497,9 @@ export interface VisorEscenaProps {
 }
 
 /** La calidad automática no baja hasta que el grafo lleva este tiempo precompilado. */
-const CALIDAD_ASENTADA_MS = 8000;
-/** ...ni hasta que el reloj lleva este tiempo pausado (nunca a media reproducción). */
-const CALIDAD_PAUSA_MS = 4000;
+const CALIDAD_ASENTADA_MS = 4000;
+/** Cuánto tiempo seguido por debajo de `LOWER_BELOW_FPS` hace bajar un nivel (René: 5 s). */
+const CALIDAD_LENTA_MS = 5000;
 /** Techo de calidad automática de la sesión (una vez bajada, no sube hasta cerrar la pestaña). */
 const TECHO_SESION = "croquis.calidad.techo";
 function leerTechoSesion(): QualityLevel | null {
@@ -766,42 +766,31 @@ export function VisorEscena({
     if (controles.renderer !== "auto") saveBackend(controles.renderer);
   }, [controles.renderer]);
 
-  // Calidad automática conservadora (René, 2026-11-04): el nivel inicial lo da la GPU (Mac e
-  // integradas, media) acotado por el techo de la sesión; en la sesión solo baja, un nivel, y
-  // nunca mientras el visor está abierto: cambiar la calidad vuelve a crear el renderer y
-  // recompilar todo (1 s en la laptop de referencia, 5 s con la CPU limitada ×4), un congelamiento
-  // tan malo como el que se quiere evitar. Con el grafo precompilado desde hace
-  // `CALIDAD_ASENTADA_MS`, el reloj pausado desde hace `CALIDAD_PAUSA_MS` y los fps de los últimos
-  // 3 s por debajo de `LOWER_BELOW_FPS`, el nivel de abajo queda como techo de la sesión
-  // (`sessionStorage`) y se aplica la próxima vez que se abre el 3D. La pérdida del dispositivo
-  // sí baja al instante (`recovery`).
+  // Calidad automática (René, 2026-11-04): el nivel inicial lo da la GPU (Mac e integradas,
+  // media) acotado por el techo de la sesión. Si con el visor a la vista y el grafo listo los fps
+  // se quedan por debajo de `LOWER_BELOW_FPS` (24) durante `CALIDAD_LENTA_MS` (5 s), baja un nivel
+  // en ese momento (hasta baja; volver a preparar el dibujo cuesta un momento, pero se vuelve a
+  // poder ver) y ese nivel queda de techo para la sesión. Nunca sube. Lo dice `?diag=1`.
   useEffect(() => {
-    if (controles.calidad !== "auto" || !clock || !grafoListo) return undefined;
+    if (controles.calidad !== "auto" || !clock || !grafoListo || !activo) return undefined;
     const listoEn = performance.now();
-    let pausadoDesde: number | null = null;
     const id = window.setInterval(() => {
-      if (window.__croquisGraphReady === false || !window.__croquisReady || clock.get().playing) {
-        pausadoDesde = null;
-        return;
-      }
-      const ahora = performance.now();
-      pausadoDesde ??= ahora;
-      if (ahora - listoEn < CALIDAD_ASENTADA_MS || ahora - pausadoDesde < CALIDAD_PAUSA_MS) return;
-      const fps = fpsEnVentana(window.__croquisPerf?.frameMs ?? [], 3000);
+      if (window.__croquisGraphReady === false || !window.__croquisReady) return;
+      // Los primeros segundos tras quedar listo no cuentan (texturas que suben, recolección).
+      if (performance.now() - listoEn < CALIDAD_ASENTADA_MS) return;
+      const fps = fpsEnVentana(window.__croquisPerf?.frameMs ?? [], CALIDAD_LENTA_MS);
       if (!Number.isFinite(fps)) return;
       const abajo = lowerQualityIfSlow(calidad, fps);
-      if (abajo !== calidad && leerTechoSesion() !== abajo) {
-        marcar(
-          `calidad automática: ${abajo} al volver a abrir el 3D (${Math.round(fps)} fps en pausa)`,
-        );
-        guardarTechoSesion(abajo);
-        updateDiagnostico({
-          calidadMotivo: `automática: ${calidad} ahora; ${abajo} al volver a abrir el 3D (${Math.round(fps)} fps en pausa)`,
-        });
-      }
+      if (abajo === calidad) return;
+      const motivo = `automática: bajó de ${calidad} a ${abajo} (${Math.round(fps)} fps durante ${CALIDAD_LENTA_MS / 1000} s); no vuelve a subir en esta sesión`;
+      marcar(`calidad automática: baja a ${abajo} (${Math.round(fps)} fps)`);
+      guardarTechoSesion(abajo);
+      setAutoAjustada(abajo);
+      setRecovery((r) => ({ ...r, techo: abajo }));
+      updateDiagnostico({ calidadMotivo: motivo });
     }, 1000);
     return () => window.clearInterval(id);
-  }, [controles.calidad, clock, grafoListo, calidad]);
+  }, [controles.calidad, clock, grafoListo, activo, calidad]);
 
   const env = useMemo(
     () =>

@@ -1,0 +1,939 @@
+{
+ "name": "t1_ruedas",
+ "descripcion": "Ruedas y carrocería de cada clase con modelo, en el inicio, el impacto y el reposo (marco del vehículo, m): centro x, piso y radio de cada rueda y piso de la carrocería; capturas en docs/cesvi/t1/ruedas/.",
+ "generated_at": "2026-11-05T03:20:29.774Z",
+ "casos": [
+  {
+   "clase": "sedan_compacto",
+   "escena": "interseccion_toluca",
+   "vehiculo": 0,
+   "medidas": {
+    "inicio": {
+     "t": -3,
+     "modelo": "sedan",
+     "ejesReubicados": true,
+     "dims": {
+      "length": 4.5,
+      "width": 1.74,
+      "height": 1.49,
+      "wheelbase": 2.62
+     },
+     "carroceria_piso_y": 0.169,
+     "ruedas": [
+      {
+       "nombre": "wheel_fl",
+       "centro_x": 1.197,
+       "piso_y": 0,
+       "radio": 0.3
+      },
+      {
+       "nombre": "wheel_fr",
+       "centro_x": 1.197,
+       "piso_y": 0,
+       "radio": 0.3
+      },
+      {
+       "nombre": "wheel_rl",
+       "centro_x": -1.423,
+       "piso_y": 0,
+       "radio": 0.3
+      },
+      {
+       "nombre": "wheel_rr",
+       "centro_x": -1.423,
+       "piso_y": 0,
+       "radio": 0.3
+      }
+     ]
+    },
+    "impacto": {
+     "t": 0,
+     "modelo": "sedan",
+     "ejesReubicados": true,
+     "dims": {
+      "length": 4.5,
+      "width": 1.74,
+      "height": 1.49,
+      "wheelbase": 2.62
+     },
+     "carroceria_piso_y": 0.169,
+     "ruedas": [
+      {
+       "nombre": "wheel_fl",
+       "centro_x": 1.197,
+       "piso_y": -0.023,
+       "radio": 0.323
+      },
+      {
+       "nombre": "wheel_fr",
+       "centro_x": 1.197,
+       "piso_y": -0.023,
+       "radio": 0.323
+      },
+      {
+       "nombre": "wheel_rl",
+       "centro_x": -1.423,
+       "piso_y": -0.023,
+       "radio": 0.323
+      },
+      {
+       "nombre": "wheel_rr",
+       "centro_x": -1.423,
+       "piso_y": -0.023,
+       "radio": 0.323
+      }
+     ]
+    },
+    "reposo": {
+     "t": 4.14,
+     "modelo": "sedan",
+     "ejesReubicados": true,
+     "dims": {
+      "length": 4.5,
+      "width": 1.74,
+      "height": 1.49,
+      "wheelbase": 2.62
+     },
+     "carroceria_piso_y": 0.169,
+     "ruedas": [
+      {
+       "nombre": "wheel_fl",
+       "centro_x": 1.197,
+       "piso_y": -0.08,
+       "radio": 0.38
+      },
+      {
+       "nombre": "wheel_fr",
+       "centro_x": 1.197,
+       "piso_y": -0.08,
+       "radio": 0.38
+      },
+      {
+       "nombre": "wheel_rl",
+       "centro_x": -1.423,
+       "piso_y": -0.08,
+       "radio": 0.38
+      },
+      {
+       "nombre": "wheel_rr",
+       "centro_x": -1.423,
+       "piso_y": -0.08,
+       "radio": 0.38
+      }
+     ]
+    }
+   }
+  },
+  {
+   "clase": "hatchback",
+   "escena": "lateral_interseccion",
+   "vehiculo": 0,
+   "medidas": {
+    "inicio": {
+     "t": -3,
+     "modelo": "hatchback",
+     "ejesReubicados": true,
+     "dims": {
+      "length": 3.83,
+      "width": 1.67,
+      "height": 1.53,
+      "wheelbase": 2.45
+     },
+     "carroceria_piso_y": 0.14,
+     "ruedas": [
+      {
+       "nombre": "wheel_fl",
+       "centro_x": 1.115,
+       "piso_y": 0,
+       "radio": 0.357
+      },
+      {
+       "nombre": "wheel_fr",
+       "centro_x": 1.115,
+       "piso_y": 0,
+       "radio": 0.357
+      },
+      {
+       "nombre": "wheel_rl",
+       "centro_x": -1.335,
+       "piso_y": 0,
+       "radio": 0.357
+      },
+      {
+       "nombre": "wheel_rr",
+       "centro_x": -1.335,
+       "piso_y": 0,
+       "radio": 0.357
+      }
+     ]
+    },
+    "impacto": {
+     "t": 0,
+     "modelo": "hatchback",
+     "ejesReubicados": true,
+     "dims": {
+      "length": 3.83,
+      "width": 1.67,
+      "height": 1.53,
+      "wheelbase": 2.45
+     },
+     "carroceria_piso_y": 0.14,
+     "ruedas": [
+      {
+       "nombre": "wheel_fl",
+       "centro_x": 1.115,
+       "piso_y": -0.037,
+       "radio": 0.394
+      },
+      {
+       "nombre": "wheel_fr",
+       "centro_x": 1.115,
+       "piso_y": -0.037,
+       "radio": 0.394
+      },
+      {
+       "nombre": "wheel_rl",
+       "centro_x": -1.335,
+       "piso_y": -0.037,
+       "radio": 0.394
+      },
+      {
+       "nombre": "wheel_rr",
+       "centro_x": -1.335,
+       "piso_y": -0.037,
+       "radio": 0.394
+      }
+     ]
+    },
+    "reposo": {
+     "t": 5.2,
+     "modelo": "hatchback",
+     "ejesReubicados": true,
+     "dims": {
+      "length": 3.83,
+      "width": 1.67,
+      "height": 1.53,
+      "wheelbase": 2.45
+     },
+     "carroceria_piso_y": 0.14,
+     "ruedas": [
+      {
+       "nombre": "wheel_fl",
+       "centro_x": 1.115,
+       "piso_y": -0.14,
+       "radio": 0.497
+      },
+      {
+       "nombre": "wheel_fr",
+       "centro_x": 1.115,
+       "piso_y": -0.14,
+       "radio": 0.497
+      },
+      {
+       "nombre": "wheel_rl",
+       "centro_x": -1.335,
+       "piso_y": -0.14,
+       "radio": 0.497
+      },
+      {
+       "nombre": "wheel_rr",
+       "centro_x": -1.335,
+       "piso_y": -0.14,
+       "radio": 0.497
+      }
+     ]
+    }
+   }
+  },
+  {
+   "clase": "pickup",
+   "escena": "lateral_interseccion",
+   "vehiculo": 1,
+   "medidas": {
+    "inicio": {
+     "t": -3,
+     "modelo": "pickup",
+     "ejesReubicados": true,
+     "dims": {
+      "length": 5.26,
+      "width": 1.85,
+      "height": 1.82,
+      "wheelbase": 3.15
+     },
+     "carroceria_piso_y": 0.277,
+     "ruedas": [
+      {
+       "nombre": "wheel_fl",
+       "centro_x": 1.68,
+       "piso_y": 0,
+       "radio": 0.391
+      },
+      {
+       "nombre": "wheel_fr",
+       "centro_x": 1.681,
+       "piso_y": 0,
+       "radio": 0.391
+      },
+      {
+       "nombre": "wheel_rl",
+       "centro_x": -1.469,
+       "piso_y": 0,
+       "radio": 0.391
+      },
+      {
+       "nombre": "wheel_rr",
+       "centro_x": -1.469,
+       "piso_y": 0,
+       "radio": 0.391
+      }
+     ]
+    },
+    "impacto": {
+     "t": 0,
+     "modelo": "pickup",
+     "ejesReubicados": true,
+     "dims": {
+      "length": 5.26,
+      "width": 1.85,
+      "height": 1.82,
+      "wheelbase": 3.15
+     },
+     "carroceria_piso_y": 0.277,
+     "ruedas": [
+      {
+       "nombre": "wheel_fl",
+       "centro_x": 1.68,
+       "piso_y": -0.112,
+       "radio": 0.503
+      },
+      {
+       "nombre": "wheel_fr",
+       "centro_x": 1.681,
+       "piso_y": -0.112,
+       "radio": 0.503
+      },
+      {
+       "nombre": "wheel_rl",
+       "centro_x": -1.47,
+       "piso_y": -0.112,
+       "radio": 0.503
+      },
+      {
+       "nombre": "wheel_rr",
+       "centro_x": -1.47,
+       "piso_y": -0.112,
+       "radio": 0.503
+      }
+     ]
+    },
+    "reposo": {
+     "t": 5.2,
+     "modelo": "pickup",
+     "ejesReubicados": true,
+     "dims": {
+      "length": 5.26,
+      "width": 1.85,
+      "height": 1.82,
+      "wheelbase": 3.15
+     },
+     "carroceria_piso_y": 0.277,
+     "ruedas": [
+      {
+       "nombre": "wheel_fl",
+       "centro_x": 1.68,
+       "piso_y": -0.001,
+       "radio": 0.392
+      },
+      {
+       "nombre": "wheel_fr",
+       "centro_x": 1.681,
+       "piso_y": -0.001,
+       "radio": 0.392
+      },
+      {
+       "nombre": "wheel_rl",
+       "centro_x": -1.47,
+       "piso_y": -0.001,
+       "radio": 0.392
+      },
+      {
+       "nombre": "wheel_rr",
+       "centro_x": -1.47,
+       "piso_y": -0.001,
+       "radio": 0.392
+      }
+     ]
+    }
+   }
+  },
+  {
+   "clase": "suv_compacta",
+   "escena": "alcance",
+   "vehiculo": 1,
+   "medidas": {
+    "inicio": {
+     "t": -3,
+     "modelo": "suv",
+     "ejesReubicados": true,
+     "dims": {
+      "length": 4.3,
+      "width": 1.76,
+      "height": 1.6,
+      "wheelbase": 2.62
+     },
+     "carroceria_piso_y": 0.209,
+     "ruedas": [
+      {
+       "nombre": "wheel_fl",
+       "centro_x": 1.226,
+       "piso_y": 0,
+       "radio": 0.344
+      },
+      {
+       "nombre": "wheel_fr",
+       "centro_x": 1.226,
+       "piso_y": 0,
+       "radio": 0.344
+      },
+      {
+       "nombre": "wheel_rl",
+       "centro_x": -1.394,
+       "piso_y": 0,
+       "radio": 0.344
+      },
+      {
+       "nombre": "wheel_rr",
+       "centro_x": -1.394,
+       "piso_y": 0,
+       "radio": 0.344
+      }
+     ]
+    },
+    "impacto": {
+     "t": 0,
+     "modelo": "suv",
+     "ejesReubicados": true,
+     "dims": {
+      "length": 4.3,
+      "width": 1.76,
+      "height": 1.6,
+      "wheelbase": 2.62
+     },
+     "carroceria_piso_y": 0.209,
+     "ruedas": [
+      {
+       "nombre": "wheel_fl",
+       "centro_x": 1.226,
+       "piso_y": 0,
+       "radio": 0.344
+      },
+      {
+       "nombre": "wheel_fr",
+       "centro_x": 1.226,
+       "piso_y": 0,
+       "radio": 0.344
+      },
+      {
+       "nombre": "wheel_rl",
+       "centro_x": -1.394,
+       "piso_y": 0,
+       "radio": 0.344
+      },
+      {
+       "nombre": "wheel_rr",
+       "centro_x": -1.394,
+       "piso_y": 0,
+       "radio": 0.344
+      }
+     ]
+    },
+    "reposo": {
+     "t": 5.06,
+     "modelo": "suv",
+     "ejesReubicados": true,
+     "dims": {
+      "length": 4.3,
+      "width": 1.76,
+      "height": 1.6,
+      "wheelbase": 2.62
+     },
+     "carroceria_piso_y": 0.209,
+     "ruedas": [
+      {
+       "nombre": "wheel_fl",
+       "centro_x": 1.226,
+       "piso_y": -0.007,
+       "radio": 0.351
+      },
+      {
+       "nombre": "wheel_fr",
+       "centro_x": 1.226,
+       "piso_y": -0.007,
+       "radio": 0.351
+      },
+      {
+       "nombre": "wheel_rl",
+       "centro_x": -1.394,
+       "piso_y": -0.007,
+       "radio": 0.351
+      },
+      {
+       "nombre": "wheel_rr",
+       "centro_x": -1.394,
+       "piso_y": -0.007,
+       "radio": 0.351
+      }
+     ]
+    }
+   }
+  },
+  {
+   "clase": "van",
+   "escena": "frontal_curva",
+   "vehiculo": 1,
+   "medidas": {
+    "inicio": {
+     "t": -3,
+     "modelo": "van",
+     "ejesReubicados": true,
+     "dims": {
+      "length": 5.23,
+      "width": 1.88,
+      "height": 2.28,
+      "wheelbase": 3.31
+     },
+     "carroceria_piso_y": 0.145,
+     "ruedas": [
+      {
+       "nombre": "wheel_fl",
+       "centro_x": 1.751,
+       "piso_y": 0,
+       "radio": 0.414
+      },
+      {
+       "nombre": "wheel_fr",
+       "centro_x": 1.751,
+       "piso_y": 0,
+       "radio": 0.414
+      },
+      {
+       "nombre": "wheel_rl",
+       "centro_x": -1.559,
+       "piso_y": 0,
+       "radio": 0.414
+      },
+      {
+       "nombre": "wheel_rr",
+       "centro_x": -1.559,
+       "piso_y": 0,
+       "radio": 0.414
+      }
+     ]
+    },
+    "impacto": {
+     "t": 0,
+     "modelo": "van",
+     "ejesReubicados": true,
+     "dims": {
+      "length": 5.23,
+      "width": 1.88,
+      "height": 2.28,
+      "wheelbase": 3.31
+     },
+     "carroceria_piso_y": 0.145,
+     "ruedas": [
+      {
+       "nombre": "wheel_fl",
+       "centro_x": 1.751,
+       "piso_y": -0.05,
+       "radio": 0.465
+      },
+      {
+       "nombre": "wheel_fr",
+       "centro_x": 1.751,
+       "piso_y": -0.05,
+       "radio": 0.465
+      },
+      {
+       "nombre": "wheel_rl",
+       "centro_x": -1.559,
+       "piso_y": -0.05,
+       "radio": 0.465
+      },
+      {
+       "nombre": "wheel_rr",
+       "centro_x": -1.559,
+       "piso_y": -0.05,
+       "radio": 0.465
+      }
+     ]
+    },
+    "reposo": {
+     "t": 2.38,
+     "modelo": "van",
+     "ejesReubicados": true,
+     "dims": {
+      "length": 5.23,
+      "width": 1.88,
+      "height": 2.28,
+      "wheelbase": 3.31
+     },
+     "carroceria_piso_y": 0.145,
+     "ruedas": [
+      {
+       "nombre": "wheel_fl",
+       "centro_x": 1.73,
+       "piso_y": -0.071,
+       "radio": 0.486
+      },
+      {
+       "nombre": "wheel_fr",
+       "centro_x": 1.751,
+       "piso_y": -0.071,
+       "radio": 0.486
+      },
+      {
+       "nombre": "wheel_rl",
+       "centro_x": -1.559,
+       "piso_y": -0.071,
+       "radio": 0.486
+      },
+      {
+       "nombre": "wheel_rr",
+       "centro_x": -1.559,
+       "piso_y": -0.071,
+       "radio": 0.486
+      }
+     ]
+    }
+   }
+  },
+  {
+   "clase": "microbus_combi",
+   "escena": "nocturno_lluvia",
+   "vehiculo": 1,
+   "medidas": {
+    "inicio": {
+     "t": -3,
+     "modelo": "combi",
+     "ejesReubicados": true,
+     "dims": {
+      "length": 5.9,
+      "width": 1.99,
+      "height": 2.6,
+      "wheelbase": 3.67
+     },
+     "carroceria_piso_y": 0.157,
+     "ruedas": [
+      {
+       "nombre": "wheel_fl",
+       "centro_x": 1.946,
+       "piso_y": 0,
+       "radio": 0.432
+      },
+      {
+       "nombre": "wheel_fr",
+       "centro_x": 1.947,
+       "piso_y": 0,
+       "radio": 0.432
+      },
+      {
+       "nombre": "wheel_rl",
+       "centro_x": -1.724,
+       "piso_y": 0,
+       "radio": 0.432
+      },
+      {
+       "nombre": "wheel_rr",
+       "centro_x": -1.723,
+       "piso_y": 0,
+       "radio": 0.432
+      }
+     ]
+    },
+    "impacto": {
+     "t": 0,
+     "modelo": "combi",
+     "ejesReubicados": true,
+     "dims": {
+      "length": 5.9,
+      "width": 1.99,
+      "height": 2.6,
+      "wheelbase": 3.67
+     },
+     "carroceria_piso_y": 0.157,
+     "ruedas": [
+      {
+       "nombre": "wheel_fl",
+       "centro_x": 1.946,
+       "piso_y": -0.128,
+       "radio": 0.56
+      },
+      {
+       "nombre": "wheel_fr",
+       "centro_x": 1.947,
+       "piso_y": -0.128,
+       "radio": 0.56
+      },
+      {
+       "nombre": "wheel_rl",
+       "centro_x": -1.724,
+       "piso_y": -0.128,
+       "radio": 0.56
+      },
+      {
+       "nombre": "wheel_rr",
+       "centro_x": -1.723,
+       "piso_y": -0.128,
+       "radio": 0.56
+      }
+     ]
+    },
+    "reposo": {
+     "t": 5.66,
+     "modelo": "combi",
+     "ejesReubicados": true,
+     "dims": {
+      "length": 5.9,
+      "width": 1.99,
+      "height": 2.6,
+      "wheelbase": 3.67
+     },
+     "carroceria_piso_y": 0.157,
+     "ruedas": [
+      {
+       "nombre": "wheel_fl",
+       "centro_x": 1.946,
+       "piso_y": -0.102,
+       "radio": 0.534
+      },
+      {
+       "nombre": "wheel_fr",
+       "centro_x": 1.947,
+       "piso_y": -0.102,
+       "radio": 0.534
+      },
+      {
+       "nombre": "wheel_rl",
+       "centro_x": -1.723,
+       "piso_y": -0.102,
+       "radio": 0.534
+      },
+      {
+       "nombre": "wheel_rr",
+       "centro_x": -1.723,
+       "piso_y": -0.102,
+       "radio": 0.534
+      }
+     ]
+    }
+   }
+  },
+  {
+   "clase": "suv_grande",
+   "escena": "volcadura",
+   "vehiculo": 0,
+   "medidas": {
+    "inicio": {
+     "t": -3,
+     "modelo": "suv",
+     "ejesReubicados": true,
+     "dims": {
+      "length": 5.35,
+      "width": 2.06,
+      "height": 1.93,
+      "wheelbase": 3.07
+     },
+     "carroceria_piso_y": 0.251,
+     "ruedas": [
+      {
+       "nombre": "wheel_fl",
+       "centro_x": 1.535,
+       "piso_y": 0,
+       "radio": 0.414
+      },
+      {
+       "nombre": "wheel_fr",
+       "centro_x": 1.535,
+       "piso_y": 0,
+       "radio": 0.414
+      },
+      {
+       "nombre": "wheel_rl",
+       "centro_x": -1.535,
+       "piso_y": 0,
+       "radio": 0.414
+      },
+      {
+       "nombre": "wheel_rr",
+       "centro_x": -1.535,
+       "piso_y": 0,
+       "radio": 0.414
+      }
+     ]
+    },
+    "impacto": {
+     "t": 0,
+     "modelo": "suv",
+     "ejesReubicados": true,
+     "dims": {
+      "length": 5.35,
+      "width": 2.06,
+      "height": 1.93,
+      "wheelbase": 3.07
+     },
+     "carroceria_piso_y": 0.251,
+     "ruedas": [
+      {
+       "nombre": "wheel_fl",
+       "centro_x": 1.535,
+       "piso_y": -0.084,
+       "radio": 0.499
+      },
+      {
+       "nombre": "wheel_fr",
+       "centro_x": 1.535,
+       "piso_y": -0.084,
+       "radio": 0.499
+      },
+      {
+       "nombre": "wheel_rl",
+       "centro_x": -1.535,
+       "piso_y": -0.084,
+       "radio": 0.499
+      },
+      {
+       "nombre": "wheel_rr",
+       "centro_x": -1.535,
+       "piso_y": -0.084,
+       "radio": 0.499
+      }
+     ]
+    },
+    "reposo": {
+     "t": 8.54,
+     "modelo": "suv",
+     "ejesReubicados": true,
+     "dims": {
+      "length": 5.35,
+      "width": 2.06,
+      "height": 1.93,
+      "wheelbase": 3.07
+     },
+     "carroceria_piso_y": 0.251,
+     "ruedas": [
+      {
+       "nombre": "wheel_fl",
+       "centro_x": 1.535,
+       "piso_y": -0.007,
+       "radio": 0.422
+      },
+      {
+       "nombre": "wheel_fr",
+       "centro_x": 1.535,
+       "piso_y": -0.007,
+       "radio": 0.422
+      },
+      {
+       "nombre": "wheel_rl",
+       "centro_x": -1.535,
+       "piso_y": -0.007,
+       "radio": 0.422
+      },
+      {
+       "nombre": "wheel_rr",
+       "centro_x": -1.535,
+       "piso_y": -0.007,
+       "radio": 0.422
+      }
+     ]
+    }
+   }
+  },
+  {
+   "clase": "motocicleta",
+   "escena": "motociclista",
+   "vehiculo": 1,
+   "medidas": {
+    "inicio": {
+     "t": -3,
+     "modelo": "moto",
+     "ejesReubicados": false,
+     "dims": {
+      "length": 1.95,
+      "width": 0.75,
+      "height": 1.1,
+      "wheelbase": 1.3
+     },
+     "carroceria_piso_y": -0.042,
+     "ruedas": [
+      {
+       "nombre": "wheel_f",
+       "centro_x": 0.659,
+       "piso_y": -0.013,
+       "radio": 0.274
+      },
+      {
+       "nombre": "wheel_r",
+       "centro_x": -0.659,
+       "piso_y": -0.013,
+       "radio": 0.274
+      }
+     ]
+    },
+    "impacto": {
+     "t": 0,
+     "modelo": "moto",
+     "ejesReubicados": false,
+     "dims": {
+      "length": 1.95,
+      "width": 0.75,
+      "height": 1.1,
+      "wheelbase": 1.3
+     },
+     "carroceria_piso_y": -0.042,
+     "ruedas": [
+      {
+       "nombre": "wheel_f",
+       "centro_x": 0.659,
+       "piso_y": -0.114,
+       "radio": 0.375
+      },
+      {
+       "nombre": "wheel_r",
+       "centro_x": -0.659,
+       "piso_y": -0.114,
+       "radio": 0.375
+      }
+     ]
+    },
+    "reposo": {
+     "t": 4.14,
+     "modelo": "moto",
+     "ejesReubicados": false,
+     "dims": {
+      "length": 1.95,
+      "width": 0.75,
+      "height": 1.1,
+      "wheelbase": 1.3
+     },
+     "carroceria_piso_y": -0.042,
+     "ruedas": [
+      {
+       "nombre": "wheel_f",
+       "centro_x": 0.659,
+       "piso_y": -0.044,
+       "radio": 0.305
+      },
+      {
+       "nombre": "wheel_r",
+       "centro_x": -0.659,
+       "piso_y": -0.044,
+       "radio": 0.305
+      }
+     ]
+    }
+   }
+  }
+ ]
+}
