@@ -58,3 +58,14 @@ describe("quality", () => {
     expect(QUALITY_PROFILES.ultra.screenReflections).toBe(true);
   });
 });
+
+describe("modo automático conservador (2026-11-04)", () => {
+  it("solo baja un nivel con fps sostenidos bajos; nunca sube", async () => {
+    const { lowerQualityIfSlow, LOWER_BELOW_FPS } = await import("./quality");
+    expect(lowerQualityIfSlow("ultra", 20)).toBe("alta");
+    expect(lowerQualityIfSlow("media", LOWER_BELOW_FPS - 1)).toBe("baja");
+    expect(lowerQualityIfSlow("baja", 5)).toBe("baja");
+    expect(lowerQualityIfSlow("media", 200)).toBe("media");
+    expect(lowerQualityIfSlow("alta", LOWER_BELOW_FPS)).toBe("alta");
+  });
+});

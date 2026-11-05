@@ -122,28 +122,82 @@ try {
   await page.waitForFunction(() => window.__croquisGraphReady !== false, null, espera);
   const tCompilado = await page.evaluate(() => performance.now());
   await page.waitForTimeout(2000);
+  // Perfil de CPU durante la medición (René, 2026-11-04): qué funciones llenan las tareas largas.
+  const cdp = await page.context().newCDPSession(page);
+  await cdp.send("Profiler.enable");
+  await cdp.send("Profiler.setSamplingInterval", { interval: 500 });
+  await cdp.send("Profiler.start");
   const muestra = await page.evaluate(
     (seconds) =>
       new Promise((done) => {
         const frames = [];
         const largas = [];
+        const banderas = [];
         const t0 = performance.now();
         let prev = t0;
         new PerformanceObserver((list) => {
           for (const e of list.getEntries())
             largas.push({ inicio_ms: e.startTime - t0, duracion_ms: e.duration });
         }).observe({ type: "longtask" });
+        // Transiciones de las banderas de carga (qué llegó durante la medición).
+        const claves = [
+          "__croquisGraphReady",
+          "__croquisTreesReady",
+          "__croquisSkyReady",
+          "__croquisTexturesReady",
+          "__croquisDebrisReady",
+          "__croquisPeopleReady",
+          "__croquisVehicleModelsReady",
+        ];
+        let previo = Object.fromEntries(claves.map((k) => [k, window[k]]));
+        const poll = setInterval(() => {
+          for (const k of claves) {
+            if (window[k] !== previo[k]) {
+              banderas.push({
+                en_ms: Math.round(performance.now() - t0),
+                bandera: k,
+                valor: window[k],
+              });
+              previo[k] = window[k];
+            }
+          }
+        }, 50);
         const tick = () => {
           const now = performance.now();
           frames.push([now - t0, now - prev, window.__croquisT ?? null]);
           prev = now;
           if (now - t0 < seconds * 1000) requestAnimationFrame(tick);
-          else done({ frames, largas });
+          else {
+            clearInterval(poll);
+            done({ frames, largas, banderas });
+          }
         };
         requestAnimationFrame(tick);
       }),
     SECONDS,
   );
+  const { profile } = await cdp.send("Profiler.stop");
+  // Tiempo propio por función (muestras × intervalo), las 15 que más suman.
+  const porNodo = new Map();
+  const nodos = new Map(profile.nodes.map((n) => [n.id, n]));
+  const dts = profile.timeDeltas ?? [];
+  profile.samples.forEach((id, i) => {
+    porNodo.set(id, (porNodo.get(id) ?? 0) + (dts[i] ?? 0) / 1000);
+  });
+  const funciones = [...porNodo.entries()]
+    .map(([id, ms]) => {
+      const n = nodos.get(id);
+      const f = n?.callFrame ?? {};
+      return {
+        funcion: f.functionName || "(anónima)",
+        archivo:
+          (f.url || "").split("/").slice(-1)[0] + (f.lineNumber >= 0 ? `:${f.lineNumber + 1}` : ""),
+        ms: Math.round(ms),
+      };
+    })
+    .filter((x) => x.ms >= 20)
+    .sort((a, b) => b.ms - a.ms)
+    .slice(0, 15);
   const pipelines = await page.evaluate(() => window.__pipelines ?? []);
   const asincronos = await page.evaluate(() => window.__pipelinesAsync ?? []);
   await browser.close();
@@ -168,6 +222,8 @@ try {
       inicio_ms: Math.round(l.inicio_ms),
       duracion_ms: Math.round(l.duracion_ms),
     })),
+    banderas: muestra.banderas,
+    funciones_mas_pesadas: funciones,
     precompilado_ms: Math.round(tCompilado - tModelos),
     pipelines_asincronos: asincronos.length,
     pipelines_asincronos_ms_max: Math.round(Math.max(0, ...asincronos.map(([, ms]) => ms))),

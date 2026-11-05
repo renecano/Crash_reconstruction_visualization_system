@@ -10,6 +10,21 @@ export * from "./clock";
 export * from "./backend-choice";
 export * from "./cameras";
 export * from "./diagnostics";
+export { preloadRenderer, prefetchVehicleModels } from "./preload";
+export { dprPara, pantallaDe, LIMITE_PANTALLA_MB, TOPE_DPR } from "./dpr";
+export {
+  CAPA_OCULTA,
+  cederHilo,
+  dibujables,
+  esconder,
+  mostrar,
+  ordenarPorEncuadre,
+  ordenDeRevelado,
+  Precompilador,
+  type ContextoRender,
+  type OpcionesTodo,
+  type ProgresoPrecompilado,
+} from "./precompile";
 export * from "./recovery";
 export * from "./environment";
 export {

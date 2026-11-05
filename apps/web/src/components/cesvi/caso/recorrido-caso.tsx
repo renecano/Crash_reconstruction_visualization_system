@@ -38,7 +38,7 @@ import {
   type SalidaCorpus,
 } from "@croquis/cesvi";
 import type { OverpassResponse } from "@croquis/croquis-2d";
-import type { ViewerExportApi } from "@croquis/viewer";
+import { preloadRenderer, type ViewerExportApi } from "@croquis/viewer";
 import type { Map as MapaMl } from "maplibre-gl";
 import { useEffect, useMemo, useRef, useState } from "react";
 import type { Hipotesis } from "@/components/visor/hypothesis-panel";
@@ -117,7 +117,14 @@ const DETALLE: Record<CasoExpediente["origen"], string> = {
     "Un caso real de CESVI que ya analizaron en su reporte: Croquis lo reconstruye y reproduce sus números con su método.",
 };
 
+/** Con el 3D a la vista, los avisos del reloj no mueven el mapa (está desmontado). */
+const IGNORAR_POSICIONES = (): undefined => undefined;
+
 export function RecorridoCaso({ inicial }: { inicial: CasoExpediente }) {
+  // El trozo del renderer 3D se baja al entrar al caso, no al abrir el 3D (René, 2026-11-04).
+  useEffect(() => {
+    void preloadRenderer().catch(() => undefined);
+  }, []);
   // Trabajar para armar un caso; Presentar para un reporte de la reproducción (se consulta).
   const [modo, setModo] = useState<Modo>(inicial.origen === "reporte" ? "presentar" : "trabajar");
   const tema = useTema(modo);
@@ -1066,6 +1073,8 @@ export function RecorridoCaso({ inicial }: { inicial: CasoExpediente }) {
           data-testid="escenario"
           data-expandido={expandido ? "si" : "no"}
         >
+          {/* Bajo el 3D el mapa queda montado pero quieto: no recibe posiciones ni se vuelve a
+              dibujar (ADR 0104); el dictamen toma de aquí la imagen del croquis. */}
           <div className={`absolute inset-0 ${verMapa ? "" : "invisible"}`}>
             <MapaEscena
               tema={tema}
@@ -1092,10 +1101,15 @@ export function RecorridoCaso({ inicial }: { inicial: CasoExpediente }) {
             >
               <Visor3dCaso
                 r={r}
+                activo={!verMapa}
                 contraCesvi={contraCesvi}
                 declarada={declarada}
                 onExportApi={setExportApi}
-                onPosiciones={setMoviles}
+                // Con el 3D a la vista el mapa está desmontado: no hace falta mover sus
+                // marcadores (cada aviso del reloj volvía a dibujar toda la página, ~200 ms en
+                // una laptop; René, 2026-11-04). Al volver al mapa, el reloj se pausa y avisa una
+                // vez con el instante en que quedó.
+                onPosiciones={verMapa ? setMoviles : IGNORAR_POSICIONES}
                 calles={calles}
                 objetos={objetos}
                 expandido={expandido}
