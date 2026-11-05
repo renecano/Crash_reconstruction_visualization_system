@@ -1,7 +1,8 @@
 /**
- * El tema que eligió el perito en cada modo del recorrido de /cesvi (ADR 0057): claro por defecto
- * al trabajar y oscuro al presentar; la elección se recuerda en este navegador. Es una comodidad:
- * si el almacenamiento no está disponible, se usan los de por defecto.
+ * El tema que eligió el perito en cada modo del recorrido de /cesvi (ADR 0057): la primera vez,
+ * al trabajar sigue al sistema (`prefers-color-scheme`, rediseño Laboratorio §3) y al presentar abre
+ * en noche; la elección se recuerda en este navegador. Es una comodidad: si el almacenamiento no está
+ * disponible, se usan los de por defecto.
  */
 import { useSyncExternalStore } from "react";
 
@@ -13,15 +14,29 @@ export const TEMA_POR_DEFECTO: Readonly<Record<Modo, Tema>> = {
   trabajar: "claro",
 };
 
+/** El tema de la primera vez: Presentar abre en noche; Trabajar, como el sistema. */
+export function temaPorDefecto(m: Modo, sistemaOscuro: boolean): Tema {
+  if (m === "presentar") return "oscuro";
+  return sistemaOscuro ? "oscuro" : TEMA_POR_DEFECTO[m];
+}
+
+function sistemaOscuro(): boolean {
+  try {
+    return window.matchMedia("(prefers-color-scheme: dark)").matches;
+  } catch {
+    return false;
+  }
+}
+
 const clave = (m: Modo) => `croquis.cesvi.tema.${m}`;
 const EVENTO = "croquis-cesvi-tema";
 
 function leer(m: Modo): Tema {
   try {
     const v = window.localStorage.getItem(clave(m));
-    return v === "claro" || v === "oscuro" ? v : TEMA_POR_DEFECTO[m];
+    return v === "claro" || v === "oscuro" ? v : temaPorDefecto(m, sistemaOscuro());
   } catch {
-    return TEMA_POR_DEFECTO[m];
+    return temaPorDefecto(m, sistemaOscuro());
   }
 }
 
