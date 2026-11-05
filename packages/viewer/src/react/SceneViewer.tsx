@@ -647,6 +647,8 @@ function SceneContent({
   const { scene, camera: cam, gl } = useThree();
   const advance = useThree((s) => s.advance);
   const setFrameloop = useThree((s) => s.setFrameloop);
+  /** El HDRI de la luz de ambiente, para la exportación a Blender (R11). */
+  const hdriExport = useRef<{ nombre: string; intensidad: number; giro_rad: number } | null>(null);
   const size = useThree((s) => s.size);
 
   // Exportación (F9): dibuja un instante a demanda y copia el cuadro en la misma tarea, antes de
@@ -783,13 +785,16 @@ function SceneContent({
           resultado,
           legend,
           vehicleCredits: graph.vehicleCredits,
-          cameras: exportCameras(resultado, (v) =>
-            driverEye(
-              resultado,
-              resultado.vehiculos.find((x) => x.id === v.id)!,
-            ),
+          cameras: exportCameras(
+            resultado,
+            (v) =>
+              driverEye(
+                resultado,
+                resultado.vehiculos.find((x) => x.id === v.id)!,
+              ),
+            ajusteCine.current,
           ),
-          ambiente: ambienteDe(env),
+          ambiente: { ...ambienteDe(env), hdri: hdriExport.current },
           // La cámara lenta del visor viaja al video (T1.5).
           timeWarp: (t) => impactTimeWarp(t, firstImpactTime(resultado)),
         });
@@ -956,6 +961,9 @@ function SceneContent({
   }, [gl, hdri, ibl]);
   const envIntensity = skyEnv ? environmentIntensityFor(env, skyEnv.meanLuminance) : 1;
   const envRotationY = skyEnv ? hdriRotationY(env.sun.azimuth, skyEnv.sunAzimuthDeg) : 0;
+  // El HDRI con que se ilumina, para que Blender use el mismo (R11): al día en cada dibujo.
+  hdriExport.current =
+    ibl && skyEnv ? { nombre: hdri, intensidad: envIntensity, giro_rad: envRotationY } : null;
   useEffect(() => {
     if (!skyEnv) return undefined;
     if (iblScene) {

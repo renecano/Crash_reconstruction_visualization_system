@@ -125,6 +125,15 @@ describe("exportación glTF", () => {
     expect(classicMaterial(classic)).toBe(classic);
   });
 
+  it("la marca de la textura del entorno pasa al material clásico (extras para Blender, R11)", () => {
+    const node = new MeshStandardNodeMaterial();
+    node.userData.croquisTextura = { nombre: "pasto", mosaico_m: 4, color: "#556b2f" };
+    node.userData.croquisArbol = { especie: "fresno", tarjeta: "frente", diff: "f.webp" };
+    const c = classicMaterial(node);
+    expect(c.userData.croquisTextura).toEqual(node.userData.croquisTextura);
+    expect(c.userData.croquisArbol).toEqual(node.userData.croquisArbol);
+  });
+
   it("volcadura: escena con leyenda, animación de vehículos y restos, y daño", async () => {
     const spec = loadFixture("volcadura");
     const r = await loadResultado("volcadura");

@@ -71,6 +71,11 @@ export interface GltfExportOptions {
  * Son valores visuales, no física.
  */
 export interface GltfAmbiente {
+  /**
+   * El HDRI de la luz de ambiente del visor (T1.1): su nombre en `hdri.json`, la intensidad y el
+   * giro con que se usa. Null en baja (luz de hemisferio).
+   */
+  hdri?: { nombre: string; intensidad: number; giro_rad: number } | null;
   sol: { elevacion_deg: number; azimut_deg: number };
   /** Hacia la luz principal (el sol o, de noche, la luna), unitaria. */
   direccion_luz: [number, number, number];
@@ -400,6 +405,8 @@ export function classicMaterial(m: Material): Material {
   const src = m as unknown as MeshPhysicalMaterial;
   const common = {
     name: m.name,
+    // Las marcas para Blender (texturas en planta, tarjetas de árboles) viajan como extras (R11).
+    userData: { ...m.userData },
     color: src.color?.clone(),
     map: src.map ?? null,
     opacity: m.opacity,

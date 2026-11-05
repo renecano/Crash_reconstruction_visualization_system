@@ -19,7 +19,12 @@ Opciones:
     --muestras N           (64 en eevee, 128 en cycles)
     --gpu                  cycles en la tarjeta de video (OptiX, CUDA, HIP, oneAPI o Metal)
     --desde S, --hasta S   el tramo en segundos de la reconstrucción (por omisión, completa)
-    --cuadros              PNG cuadro por cuadro en vez de MP4
+    --cuadros              PNG cuadro por cuadro en vez de MP4; sin sobrescribir: si se corta, la
+                           siguiente corrida sigue desde el cuadro donde se quedó
+    --plan RUTA            escribe antes de renderizar un JSON con los cuadros (desde, hasta,
+                           total, fps): el botón de la demo lo usa para mostrar el avance
+    --unir CARPETA         junta los PNG de una carpeta (de --cuadros) en el MP4 de --salida, sin
+                           escena: `blender -b -P croquis_render.py -- --unir C --salida V.mp4`
     --blend RUTA           guarda la escena armada para abrirla y ajustarla en Blender
     --solo-armar           arma (y guarda con --blend) sin renderizar
     --modelos RUTA|URL     los vehículos de Sketchfab con sus texturas (R10): por omisión, los del
@@ -51,7 +56,13 @@ MUESTRAS = {"eevee": 64, "cycles": 128}
 # Sin niebla visible por debajo de esta densidad (la del visor con cielo despejado es 0.0015).
 NIEBLA_MINIMA = 0.004
 LEYENDA_POR_OMISION = "Reconstrucción ilustrativa de apoyo: el dictamen es del perito."
-MODELOS_PRODUCCION = "https://croquis-sage.vercel.app/modelos/vehiculos/"
+# Los vehículos se sirven desde Vercel Blob desde el 2026-11-05 (ADR 0107): la ruta lleva la huella
+# de la carpeta, que está en `apps/web/recursos.json`. Esta es la de esa fecha, por si no hay repo.
+MODELOS_PRODUCCION = (
+    "https://fmb6kf9hhoc8c9mk.public.blob.vercel-storage.com/recursos/modelos/vehiculos/"
+    "be5de74b8e245430/"
+)
+SITIO = "https://croquis-sage.vercel.app"
 
 
 @dataclass(frozen=True)
@@ -70,6 +81,7 @@ class Opciones:
     blend: Path | None
     solo_armar: bool
     modelos: str | None = None
+    plan: Path | None = None
 
 
 def leer_opciones(argv: list[str]) -> Opciones:
@@ -77,7 +89,7 @@ def leer_opciones(argv: list[str]) -> Opciones:
     if "--" in argv:
         argv = argv[argv.index("--") + 1 :]
     p = argparse.ArgumentParser(prog="croquis_render.py", description=__doc__.split("\n")[0])
-    p.add_argument("glb", type=Path)
+    p.add_argument("glb", type=Path, nargs="?")
     p.add_argument("--salida", type=Path)
     p.add_argument("--camara")
     p.add_argument("--motor", choices=sorted(MOTORES), default="eevee")
@@ -90,7 +102,10 @@ def leer_opciones(argv: list[str]) -> Opciones:
     p.add_argument("--blend", type=Path)
     p.add_argument("--solo-armar", action="store_true")
     p.add_argument("--modelos")
+    p.add_argument("--plan", type=Path)
     a = p.parse_args(argv)
+    if a.glb is None:
+        p.error("falta la escena (.glb)")
     try:
         ancho, alto = (int(x) for x in a.resolucion.lower().split("x"))
     except ValueError:
@@ -115,7 +130,80 @@ def leer_opciones(argv: list[str]) -> Opciones:
         blend=a.blend,
         solo_armar=a.solo_armar,
         modelos=a.modelos,
+        plan=a.plan,
     )
+
+
+# --- Lo que está en el repositorio: texturas, árboles y HDRI (R11 con el escenario de T1) --------
+
+
+def carpeta_publica(script: Path) -> Path | None:
+    """La carpeta `apps/web/public` del repositorio si el script está en él (la computadora de la
+    demo); si no, None y los archivos se piden al sitio."""
+    partes = script.resolve().parents
+    if len(partes) > 2:
+        publica = partes[2] / "apps" / "web" / "public"
+        if publica.is_dir():
+            return publica
+    return None
+
+
+def origen_publico(script: Path) -> str:
+    """De dónde leer texturas, árboles y HDRI: la carpeta del repositorio o el sitio de Croquis.
+
+    Los HDRI se sirven desde Vercel Blob (ADR 0107): sin repositorio, solo las texturas y los
+    árboles salen del sitio; el HDRI se omite y queda el cielo físico.
+    """
+    publica = carpeta_publica(script)
+    return str(publica) if publica else SITIO
+
+
+def archivo_publico(origen: str, *partes: str) -> str:
+    if origen.startswith(("http://", "https://")):
+        return origen.rstrip("/") + "/" + "/".join(partes)
+    return str(Path(origen, *partes))
+
+
+def archivos_de_textura(manifiesto: dict[str, Any], nombre: str) -> dict[str, str]:
+    """Los tres mapas (color, normal de OpenGL y rugosidad) de una textura de `texturas.json`."""
+    entrada = (manifiesto.get("texturas") or {}).get(nombre)
+    if not entrada:
+        raise KeyError(f"texturas.json no trae «{nombre}»")
+    a = entrada["archivos"]
+    return {
+        "diff": a["diff"]["archivo"],
+        "nor": a["nor_gl"]["archivo"],
+        "rough": a["rough"]["archivo"],
+    }
+
+
+def ganancia_de_color(
+    color: str, media_rgb: list[float] | tuple[float, ...]
+) -> tuple[float, float, float]:
+    """El factor por canal que lleva el promedio de la textura al color calibrado (lineal), como
+    `colorGain` del visor: la textura aporta detalle, no tono."""
+    lin = color_hex(color)  # ya en lineal
+    return (
+        lin[0] / max(media_rgb[0], 1e-6),
+        lin[1] / max(media_rgb[1], 1e-6),
+        lin[2] / max(media_rgb[2], 1e-6),
+    )
+
+
+def cuadros_incompletos(carpeta: Path) -> list[Path]:
+    """Los PNG de una corrida cortada que no sirven: vacíos (el «lugar apartado» del cuadro que se
+    estaba renderizando) o sin el fin de archivo (escritos a medias). Se borran y se rehacen."""
+    malos = []
+    for f in sorted(carpeta.glob("cuadro_*.png")):
+        datos = f.read_bytes()[-12:] if f.stat().st_size >= 12 else b""
+        if f.stat().st_size == 0 or b"IEND" not in datos:
+            malos.append(f)
+    return malos
+
+
+def plan_de_cuadros(a: int, b: int, fps: int, carpeta: Path) -> dict[str, Any]:
+    """Lo que el botón de la demo necesita para mostrar el avance."""
+    return {"desde": a, "hasta": b, "total": b - a + 1, "fps": fps, "carpeta": str(carpeta)}
 
 
 def leer_glb(ruta: Path) -> dict[str, Any]:
@@ -316,8 +404,10 @@ def armar(o: Opciones, gltf: dict[str, Any]) -> tuple[int, int]:  # pragma: no c
 
     piso(escena)
     materiales_de_modelos(escena, o, gltf)
+    entorno_de_t1()
     ambiente = extras.get("ambiente")
     cielo_y_luz(escena, ambiente if isinstance(ambiente, dict) else None)
+    hdri_de_luz(escena, ambiente if isinstance(ambiente, dict) else None)
     niebla(escena, ambiente if isinstance(ambiente, dict) else None)
     motor(escena, o)
     leyenda(escena, texto_leyenda(gltf), o.alto)
@@ -360,6 +450,157 @@ def materiales_de_modelos(
         hechas.append(clase)
     print(f"Vehículos con sus texturas: {', '.join(hechas)} ({origen}).")
     return hechas
+
+
+def entorno_de_t1() -> list[str]:  # pragma: no cover - en Blender
+    """Rearma lo que el glTF lleva como dato (R11 con el escenario de T1): las texturas en planta de
+    la vía, las banquetas y el suelo, y las tarjetas de los árboles con su color y su alfa."""
+    import bpy
+
+    origen = origen_publico(Path(__file__))
+    hechos: list[str] = []
+    manifiesto: dict[str, Any] | None = None
+    imagenes: dict[str, Any] = {}
+
+    def imagen(ruta: str, color: bool) -> Any:
+        if ruta not in imagenes:
+            if ruta.startswith(("http://", "https://")):
+                with urllib.request.urlopen(ruta, timeout=120) as r:
+                    datos = r.read()
+                local = Path(tempfile.gettempdir()) / ("croquis-" + ruta.rsplit("/", 1)[-1])
+                local.write_bytes(datos)
+                ruta_local = str(local)
+            else:
+                ruta_local = ruta
+            im = bpy.data.images.load(ruta_local, check_existing=True)
+            im.colorspace_settings.name = "sRGB" if color else "Non-Color"
+            imagenes[ruta] = im
+        return imagenes[ruta]
+
+    for mat in bpy.data.materials:
+        tex = mat.get("croquisTextura")
+        arbol = mat.get("croquisArbol")
+        if not tex and not arbol:
+            continue
+        mat.use_nodes = True
+        nt = mat.node_tree
+        bsdf = next((n for n in nt.nodes if n.type == "BSDF_PRINCIPLED"), None)
+        if bsdf is None:
+            continue
+        if tex:
+            if manifiesto is None:
+                ruta_m = archivo_publico(origen, "texturas", "texturas.json")
+                if ruta_m.startswith("http"):
+                    with urllib.request.urlopen(ruta_m, timeout=60) as r:
+                        manifiesto = json.loads(r.read().decode("utf-8"))
+                else:
+                    manifiesto = json.loads(Path(ruta_m).read_text(encoding="utf-8"))
+            arch = archivos_de_textura(manifiesto, str(tex["nombre"]))
+            # En planta, como el visor: (x, z) de three son (X, −Y) de Blender, entre el mosaico.
+            geo = nt.nodes.new("ShaderNodeNewGeometry")
+            sep = nt.nodes.new("ShaderNodeSeparateXYZ")
+            comb = nt.nodes.new("ShaderNodeCombineXYZ")
+            neg = nt.nodes.new("ShaderNodeMath")
+            neg.operation = "MULTIPLY"
+            neg.inputs[1].default_value = -1.0
+            esc = nt.nodes.new("ShaderNodeVectorMath")
+            esc.operation = "SCALE"
+            esc.inputs["Scale"].default_value = 1.0 / float(tex["mosaico_m"])
+            nt.links.new(geo.outputs["Position"], sep.inputs[0])
+            nt.links.new(sep.outputs["X"], comb.inputs["X"])
+            nt.links.new(sep.outputs["Y"], neg.inputs[0])
+            nt.links.new(neg.outputs[0], comb.inputs["Y"])
+            nt.links.new(comb.outputs[0], esc.inputs[0])
+            nodos = {}
+            for k, color in (("diff", True), ("nor", False), ("rough", False)):
+                n = nt.nodes.new("ShaderNodeTexImage")
+                n.image = imagen(archivo_publico(origen, "texturas", arch[k]), color)
+                n.extension = "REPEAT"
+                nt.links.new(esc.outputs["Vector"], n.inputs["Vector"])
+                nodos[k] = n
+            gan = nt.nodes.new("ShaderNodeVectorMath")
+            gan.operation = "MULTIPLY"
+            gan.inputs[1].default_value = ganancia_de_color(
+                str(tex["color"]), list(tex["media_rgb"])
+            )
+            nt.links.new(nodos["diff"].outputs["Color"], gan.inputs[0])
+            nt.links.new(gan.outputs["Vector"], bsdf.inputs["Base Color"])
+            rug = nt.nodes.new("ShaderNodeMath")
+            rug.operation = "MULTIPLY"
+            rug.use_clamp = True
+            rug.inputs[1].default_value = float(tex["rugosidad"]) / max(
+                float(tex["media_rugosidad"]), 1e-6
+            )
+            nt.links.new(nodos["rough"].outputs["Color"], rug.inputs[0])
+            nt.links.new(rug.outputs[0], bsdf.inputs["Roughness"])
+            nm = nt.nodes.new("ShaderNodeNormalMap")
+            nt.links.new(nodos["nor"].outputs["Color"], nm.inputs["Color"])
+            nt.links.new(nm.outputs["Normal"], bsdf.inputs["Normal"])
+            hechos.append(f"textura {tex['nombre']}")
+        else:
+            uvn = nt.nodes.new("ShaderNodeUVMap")
+            diff = nt.nodes.new("ShaderNodeTexImage")
+            diff.image = imagen(archivo_publico(origen, "arboles", str(arbol["diff"])), True)
+            nor = nt.nodes.new("ShaderNodeTexImage")
+            nor.image = imagen(archivo_publico(origen, "arboles", str(arbol["nor"])), False)
+            for n in (diff, nor):
+                nt.links.new(uvn.outputs["UV"], n.inputs["Vector"])
+            color_final = diff.outputs["Color"]
+            tinte = arbol.get("tinte")
+            if tinte:
+                mezcla = nt.nodes.new("ShaderNodeMix")
+                mezcla.data_type = "RGBA"
+                mezcla.inputs["Factor"].default_value = 0.35
+                r, g, b = color_hex(str(tinte))
+                mezcla.inputs["B"].default_value = (r, g, b, 1)
+                nt.links.new(diff.outputs["Color"], mezcla.inputs["A"])
+                color_final = mezcla.outputs["Result"]
+            nt.links.new(color_final, bsdf.inputs["Base Color"])
+            nt.links.new(diff.outputs["Alpha"], bsdf.inputs["Alpha"])
+            nm = nt.nodes.new("ShaderNodeNormalMap")
+            nt.links.new(nor.outputs["Color"], nm.inputs["Color"])
+            nt.links.new(nm.outputs["Normal"], bsdf.inputs["Normal"])
+            hechos.append(f"árbol {arbol['especie']} ({arbol['tarjeta']})")
+    if hechos:
+        print(f"Entorno de T1 rearmado: {len(hechos)} materiales ({origen}).")
+    return hechos
+
+
+def hdri_de_luz(escena: Any, ambiente: dict[str, Any] | None) -> bool:  # pragma: no cover
+    """La luz de ambiente con el mismo HDRI que el visor (T1.1): ilumina y se refleja, y la
+    cámara sigue viendo el cielo físico, como en el visor (`Is Camera Ray`)."""
+    import bpy
+
+    hdri = (ambiente or {}).get("hdri")
+    publica = carpeta_publica(Path(__file__))
+    if not hdri or publica is None:
+        return False
+    manifiesto = json.loads((publica / "hdri" / "hdri.json").read_text(encoding="utf-8"))
+    entrada = (manifiesto.get("hdri") or manifiesto).get(str(hdri["nombre"]))
+    archivo = entrada.get("archivo") if isinstance(entrada, dict) else None
+    if not archivo:
+        return False
+    nt = escena.world.node_tree
+    fondo_cielo = nt.nodes["Background"]
+    salida = next(n for n in nt.nodes if n.type == "OUTPUT_WORLD")
+    tex = nt.nodes.new("ShaderNodeTexEnvironment")
+    tex.image = bpy.data.images.load(str(publica / "hdri" / archivo), check_existing=True)
+    mapeo = nt.nodes.new("ShaderNodeMapping")
+    mapeo.inputs["Rotation"].default_value[2] = float(hdri.get("giro_rad", 0.0))
+    coord = nt.nodes.new("ShaderNodeTexCoord")
+    nt.links.new(coord.outputs["Generated"], mapeo.inputs["Vector"])
+    nt.links.new(mapeo.outputs["Vector"], tex.inputs["Vector"])
+    fondo_luz = nt.nodes.new("ShaderNodeBackground")
+    fondo_luz.inputs["Strength"].default_value = float(hdri.get("intensidad", 1.0))
+    nt.links.new(tex.outputs["Color"], fondo_luz.inputs["Color"])
+    camino = nt.nodes.new("ShaderNodeLightPath")
+    mezcla = nt.nodes.new("ShaderNodeMixShader")
+    nt.links.new(camino.outputs["Is Camera Ray"], mezcla.inputs["Fac"])
+    nt.links.new(fondo_luz.outputs["Background"], mezcla.inputs[1])
+    nt.links.new(fondo_cielo.outputs["Background"], mezcla.inputs[2])
+    nt.links.new(mezcla.outputs["Shader"], salida.inputs["Surface"])
+    print(f"Luz de ambiente con el HDRI «{hdri['nombre']}».")
+    return True
 
 
 def piso(escena: Any) -> None:  # pragma: no cover - en Blender
@@ -533,6 +774,10 @@ def salida(escena: Any, o: Opciones) -> None:  # pragma: no cover - en Blender
         f.media_type = "IMAGE"
         f.file_format = "PNG"
         escena.render.filepath = str(o.salida.resolve() / "cuadro_")
+        # Retomable: los cuadros que ya están no se rehacen; el que se está haciendo aparta su
+        # lugar (un archivo vacío) y, si la corrida se corta, `cuadros_incompletos` lo borra.
+        escena.render.use_overwrite = False
+        escena.render.use_placeholder = True
         return
     f.media_type = "VIDEO"
     f.file_format = "FFMPEG"
@@ -544,15 +789,77 @@ def salida(escena: Any, o: Opciones) -> None:  # pragma: no cover - en Blender
     escena.render.filepath = str(o.salida.resolve())
 
 
+def unir_cuadros(carpeta: Path, video: Path, fps: int) -> None:  # pragma: no cover - en Blender
+    """El MP4 de una carpeta de PNG (de `--cuadros`): el secuenciador de Blender, sin escena."""
+    import bpy
+
+    cuadros = sorted(carpeta.glob("cuadro_*.png"))
+    if not cuadros:
+        raise SystemExit(f"No hay cuadros en {carpeta}.")
+    bpy.ops.wm.read_factory_settings(use_empty=True)
+    escena = bpy.context.scene
+    ed = escena.sequence_editor_create()
+    tira_col = getattr(ed, "strips", None) or ed.sequences
+    tira = tira_col.new_image("cuadros", str(cuadros[0]), 1, 1)
+    for c in cuadros[1:]:
+        tira.elements.append(c.name)
+    im = bpy.data.images.load(str(cuadros[0]))
+    escena.render.resolution_x, escena.render.resolution_y = im.size[0], im.size[1]
+    escena.render.resolution_percentage = 100
+    escena.render.fps = fps
+    escena.frame_start, escena.frame_end = 1, len(cuadros)
+    o = Opciones(
+        glb=carpeta,
+        salida=video,
+        camara=None,
+        motor="eevee",
+        ancho=im.size[0],
+        alto=im.size[1],
+        muestras=1,
+        gpu=False,
+        desde=None,
+        hasta=None,
+        cuadros=False,
+        blend=None,
+        solo_armar=False,
+    )
+    salida(escena, o)
+    print(f"Uniendo {len(cuadros)} cuadros en {video}…")
+    bpy.ops.render.render(animation=True)
+    print(f"Listo: {video}")
+
+
 def main(argv: list[str]) -> None:  # pragma: no cover - en Blender
     import bpy
 
+    if "--unir" in argv:
+        args = argv[argv.index("--") + 1 :] if "--" in argv else argv
+        p = argparse.ArgumentParser(prog="croquis_render.py --unir")
+        p.add_argument("--unir", type=Path, required=True)
+        p.add_argument("--salida", type=Path, required=True)
+        p.add_argument("--fps", type=int, default=30)
+        a = p.parse_args(args)
+        plan = a.unir / "plan.json"
+        fps = json.loads(plan.read_text(encoding="utf-8"))["fps"] if plan.exists() else a.fps
+        unir_cuadros(a.unir, a.salida, int(fps))
+        return
     o = leer_opciones(argv)
     gltf = leer_glb(o.glb)
     a, b = armar(o, gltf)
     if o.solo_armar:
         print(f"Escena armada: cuadros {a}–{b}{f', guardada en {o.blend}' if o.blend else ''}.")
         return
+    if o.cuadros:
+        for malo in cuadros_incompletos(o.salida):
+            malo.unlink()
+        fps = bpy.context.scene.render.fps
+        plan = plan_de_cuadros(a, b, fps, o.salida)
+        (o.salida / "plan.json").write_text(json.dumps(plan), encoding="utf-8")
+        if o.plan:
+            o.plan.write_text(json.dumps(plan), encoding="utf-8")
+        hechos = len(list(o.salida.glob("cuadro_*.png")))
+        if hechos:
+            print(f"Se retoma: ya están {hechos} de {b - a + 1} cuadros.")
     print(
         f"Renderizando {b - a + 1} cuadros ({o.motor}, {o.ancho}x{o.alto}, {o.muestras} muestras)…"
     )

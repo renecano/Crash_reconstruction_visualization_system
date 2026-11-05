@@ -239,3 +239,56 @@ def test_la_leyenda_lleva_la_atribucion_de_los_modelos() -> None:
         "Reconstrucción ilustrativa. · Vehículos 3D: «Kiri '10» de Daniel Zhabotinsky "
         "(CC-BY 4.0); «Enduro bike» de Zaborchik (CC-BY 4.0)"
     )
+
+
+# --- R11 con el escenario de T1 y render retomable (René, 2026-11-05) ---------------------------
+
+
+def test_la_carpeta_publica_es_la_del_repositorio() -> None:
+    publica = cr.carpeta_publica(_RUTA)
+    assert publica is not None
+    assert (publica / "texturas" / "texturas.json").is_file()
+    assert cr.origen_publico(_RUTA) == str(publica)
+    assert cr.archivo_publico("https://x.test/", "hdri", "dia.hdr") == "https://x.test/hdri/dia.hdr"
+
+
+def test_los_mapas_de_una_textura_salen_del_manifiesto() -> None:
+    publica = cr.carpeta_publica(_RUTA)
+    assert publica is not None
+    manifiesto = json.loads((publica / "texturas" / "texturas.json").read_text(encoding="utf-8"))
+    arch = cr.archivos_de_textura(manifiesto, "asfalto")
+    assert set(arch) == {"diff", "nor", "rough"}
+    for f in arch.values():
+        assert (publica / "texturas" / f).is_file()
+    with pytest.raises(KeyError):
+        cr.archivos_de_textura(manifiesto, "no-existe")
+
+
+def test_la_ganancia_lleva_el_promedio_al_color_calibrado() -> None:
+    lin = cr.color_hex("#808080")
+    g = cr.ganancia_de_color("#808080", [lin[0] / 2, lin[1] / 2, lin[2] / 2])
+    assert g == pytest.approx((2.0, 2.0, 2.0))
+
+
+def test_los_cuadros_a_medias_se_rehacen(tmp_path: Path) -> None:
+    png_bueno = b"\x89PNG\r\n\x1a\n" + b"x" * 20 + b"\x00\x00\x00\x00IEND\xaeB`\x82"
+    (tmp_path / "cuadro_0001.png").write_bytes(png_bueno)
+    (tmp_path / "cuadro_0002.png").write_bytes(b"")  # el lugar apartado del que se cortó
+    (tmp_path / "cuadro_0003.png").write_bytes(png_bueno[:-15])  # escrito a medias
+    malos = cr.cuadros_incompletos(tmp_path)
+    assert [m.name for m in malos] == ["cuadro_0002.png", "cuadro_0003.png"]
+
+
+def test_el_plan_dice_cuantos_cuadros_van(tmp_path: Path) -> None:
+    plan = cr.plan_de_cuadros(1, 120, 30, tmp_path)
+    assert plan["total"] == 120
+    assert plan["fps"] == 30
+    assert json.loads(json.dumps(plan))["carpeta"] == str(tmp_path)
+
+
+def test_la_escena_es_obligatoria_salvo_al_unir() -> None:
+    with pytest.raises(SystemExit):
+        cr.leer_opciones(["--", "--salida", "x.mp4"])
+    o = cr.leer_opciones(["--", "e.glb", "--cuadros", "--plan", "p.json"])
+    assert o.plan == Path("p.json")
+    assert o.cuadros

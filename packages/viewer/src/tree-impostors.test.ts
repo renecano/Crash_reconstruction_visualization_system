@@ -30,6 +30,12 @@ function impostores(): TreeImpostors {
       copaDesde: 0.3,
       frente: { diff: textura(), nor: textura() },
       planta: { diff: textura(), nor: textura() },
+      archivos: {
+        frente_diff: `${especie}_frente_diff.webp`,
+        frente_nor: `${especie}_frente_nor.webp`,
+        planta_diff: `${especie}_planta_diff.webp`,
+        planta_nor: `${especie}_planta_nor.webp`,
+      },
       autores: "prueba",
       url: "",
     };

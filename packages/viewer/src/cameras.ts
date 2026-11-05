@@ -473,9 +473,15 @@ export interface ExportCamera {
 export function exportCameras(
   scene: CameraScene,
   eyeHeight: (v: CameraVehicle) => number,
+  /** El ajuste de la cinematográfica que usa el visor (sin obstáculos, #162). */
+  cinematica?: CinematicAdjust,
 ): ExportCamera[] {
   const out: ExportCamera[] = [
-    { clave: "cinematica", nombre: "Cinematográfica", pose: (t) => cinematicCamera(scene, t) },
+    {
+      clave: "cinematica",
+      nombre: "Cinematográfica",
+      pose: (t) => cinematicCamera(scene, t, undefined, cinematica),
+    },
     { clave: "cenital", nombre: "Cenital", pose: () => overheadCamera(scene) },
   ];
   if (scene.vehiculos.length > 0) {

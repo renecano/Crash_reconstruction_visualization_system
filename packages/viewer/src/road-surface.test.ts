@@ -51,6 +51,7 @@ describe("grava suelta (ADR 0036)", () => {
     const fake = (): EnvTexture => {
       const tex = new DataTexture(new Uint8Array([128, 128, 128, 255]), 1, 1);
       return {
+        nombre: "grava",
         map: tex,
         normal: tex,
         rough: tex,
