@@ -40,8 +40,16 @@ function descargar(bytes: Uint8Array, nombre: string, tipo: string) {
  * vehículos detenidos, «en el impacto» y «en reposo» salían iguales) y sin marcadores de interfaz
  * (René, 2026-11-04).
  */
+/**
+ * Lo más que esperan las tres fotos, juntas, a que el 3D termine de compilar (ms). Antes cada una
+ * esperaba hasta 60 s: en una máquina lenta el PDF tardaba minutos (CI, 2026-11-05). Pasado el
+ * plazo, la foto sale con lo que el visor ya dibuja.
+ */
+export const PRESUPUESTO_FOTOS_MS = 20_000;
+
 async function cuadros(api: ViewerExportApi | null, resultado: Record<string, unknown>) {
   if (!api) return [];
+  const desde = performance.now();
   const t0 = Number(resultado.t_inicio ?? -1);
   const t1 = Number(resultado.t_fin ?? 1);
   const out: { etiqueta: string; imagen: string }[] = [];
@@ -57,6 +65,7 @@ async function cuadros(api: ViewerExportApi | null, resultado: Record<string, un
         height: 540,
         camara: "cinematica",
         sinInterfaz: true,
+        esperaMs: Math.max(0, PRESUPUESTO_FOTOS_MS - (performance.now() - desde)),
       });
       out.push({ etiqueta, imagen: c.toDataURL("image/png") });
     } catch {

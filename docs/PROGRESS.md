@@ -11,7 +11,7 @@ Reglas de trabajo: `CLAUDE.md`. Especificación: `PLAN.md`.
   - **T6.4 (los agentes respetan el orden de impactos)** quedó a medias en la rama `fix/agentes-orden-impactos` (commit `c8c8a08`, Python y TS cambiados, sin pruebas ni evaluación): se retoma en T6.
   - **Urgente (René, 2026-11-04, tarde): congelamientos del 3D en la MacBook M1**: hecho y en producción (PR #161, ADR 0104; René confirmó en la M1: WebGPU, media, dpr 1.5, 60 fps, precompilado listo). **Luego, cámaras tras el #161** (rama `fix/camaras-vivas`, ADR 0105): Conductor A/B en los ojos del conductor otra vez, la vista siempre cambia con el botón, la cinematográfica esquiva el poste, la línea de visión solo en cenital y libre, y las tareas largas de la carga con nombre y partidas. Pendientes en la sección «Cámaras tras el #161» más abajo.
   - **Después (René, 2026-11-04, tarde; orden fijado por él):** el rediseño «Laboratorio» de /cesvi (`docs/cesvi/entrante/laboratorio/`, a copiar a `docs/cesvi/rediseno/laboratorio/`) con los arreglos de uso A1–A5 (buscar el lugar con coordenadas y links y ruta `/api/lugar`, contador de la narración, reporte pegado → cargar como reporte, botones de inicio y archivo `.croquis`, sin mapa en el paso del hecho) y la colocación de vehículos rehecha (B); se despliega por partes: A1–A4 y B, luego tokens y layout, luego los actos. Antes de eso, T3.2 sigue a medias.
-  - **§0, A1–A5 y B (Laboratorio, René, 2026-11-04)** en la rama `feat/laboratorio-0-a`, listos para desplegar juntos; después, el rediseño: tokens y layout, luego los actos.
+  - **Laboratorio (René, 2026-11-04):** §0, A1–A5 y B en producción (PR #166); tokens, tipografía, barra de actos y transición en `feat/laboratorio-tokens` (ADR 0108). **Siguiente:** rutas por acto y la escena generada (prompt §7), luego las pantallas en orden.
   - **Vercel (René, 2026-11-05), antes de A1** (rama `fix/vercel-produccion`, ADR 0107): verificación de que producción sirve el commit de main, modelos y HDRI en Vercel Blob (35 % menos por despliegue) y 29 despliegues viejos borrados. Deploy Hook guardado por René; el merge del #164 se publicó solo. **Luego:** las llantas del caso de ejemplo del Jetta y el Camaro, y después A1.
   - **Fotos del dictamen (C1–C3) y calidad automática que baja (D)** (rama `fix/fotos-dictamen`, ADR 0106): las fotos esperan al visor, usan la cinematográfica y van sin marcadores de interfaz; los vehículos se apoyan en banquetas y relieve; si los fps quedan < 24 durante 5 s, la calidad baja un nivel y no vuelve a subir. **Siguiente:** A1–A5 y B, luego el rediseño «Laboratorio».
   - **Urgente (René, 2026-11-04), hecho y en producción:** el 3D en blanco en computadoras potentes (PR #158, ADR 0102) y la cámara del conductor en dos pasadas (PR #158 y #159). T1.3c (defectos de T1.3b, ADR 0103) está en la rama `feat/t1-3c`. T3.2 quedó a medias en `feat/t3-2-arrastre` (commit wip: referencias 1–9 regeneradas; faltan 10–13, inversión y agentes); se retoma después de T1.3c, con la nota para el resumen de T3: el rango nuevo de V2 en AXA (68.02–92.81) deja fuera el 63.15 de CESVI y el cálculo pasó de 4.8 s a 11 s (reajustes en paralelo en el worker si se puede sin perder estabilidad).
@@ -1883,6 +1883,42 @@ Rama `fix/fotos-dictamen`. René mandó la captura del dictamen de un caso nuevo
 - **Qué hay ahora:** fotos con la cinematográfica, del instante pedido, sin marcadores; vehículos apoyados en banquetas y relieve; y si el 3D se queda abajo de 24 fps durante 5 s, baja un nivel y lo dice `?diag=1`.
 - **Cómo probarlo:** genera el dictamen de un caso nuevo y compara las tres fotos; y en `docs/cesvi/t1/ruedas/` están las capturas de cerca de cada clase. Si en tu caso las llantas siguen fuera de su hueco, dime la clase del vehículo (o manda el `.json` del caso): en las ocho clases que medí quedan bien.
 
+### Laboratorio: tokens, tipografía, barra de actos y transición (René, 2026-11-04; ADR 0108)
+
+Rama `feat/laboratorio-tokens`. Es la segunda parte del rediseño que se despliega: tokens y layout. Decisiones en `docs/DISENO.md` y en el ADR 0108.
+
+- **Tokens de día y noche** (prompt §3):
+  - Los valores están en `assets/brand/tokens.json` (`lab-dia-*`, `lab-noche-*`, `lab-impacto`) y se asignan a los roles de siempre bajo `data-diseno="laboratorio"`. Lo pone `app/(es)/cesvi/layout.tsx`.
+  - Al trabajar, la primera vez sigue al sistema; Presentar abre en noche.
+  - Los colores cambian en 400 ms; sin movimiento si se pidió menos.
+- **Tipografía** (prompt §2): Instrument Serif en títulos y cifras protagonistas, Instrument Sans en la interfaz y Geist Mono en datos, con `next/font` (`components/cesvi/fuentes-laboratorio.ts`). Registradas en `assets/ASSETS.md`.
+- **Barra del caso de 72 px** (prompt §4):
+  - Los seis actos en una rejilla, con la línea de 2 px hasta el acto actual y el punto naranja.
+  - El caso en mono, Presentar / Trabajar, tema, «Transiciones» (✦) y Exportar.
+  - Los actos agrupan los ocho pasos sin cambiar su lógica (`lib/actos.ts`); la tabla «paso viejo → acto nuevo» está en `docs/DISENO.md`.
+  - El rótulo del panel dice el acto y, si tiene dos partes, cuál.
+- **Acción principal:** «Continuar a…», de 58 px y radio 14; la flecha avanza 6 px al pasar el puntero.
+- **Transición entre actos** (`TransicionActo`, prompt §5):
+  - Cortina, la C que se traza con `clip-path`, el número y el nombre del acto que suben, la mira que golpea con su anillo, y la cortina que sube.
+  - Completa, de unos 1.4 s, al entrar al caso y al presentar; corta, de menos de 500 ms, entre actos al trabajar.
+  - Solo `transform`, `opacity` y `clip-path`. Se apaga con `prefers-reduced-motion` o con «Transiciones».
+  - En la hidratación el hook da el valor del servidor; el efecto lee la preferencia en el momento, para que «Transiciones» apagado también valga al recargar.
+- **Pruebas:**
+  - Unitarias de `actos` (los seis actos cubren los ocho pasos; sin reporte no hay Contra CESVI; «Continuar a…» con «al») y del tema por defecto.
+  - Los tres e2e de `/cesvi` pasan en local.
+- **Capturas** en `docs/cesvi/rediseno/laboratorio/capturas/`: el acto 1 y la transición, de día y de noche.
+- **El e2e del caso nuevo fallaba en CI esperando el PDF**, intermitente desde el #165. Con la traza del reintento (CI ahora reintenta una vez, para que el trabajo termine en menos de 10 min y suba el reporte) se encontraron dos causas reales, que también le pasarían a un perito con una laptop lenta:
+  - **«Comparar lado a lado»** monta un segundo visor que ponía en falso la marca global de «listo». Si se cerraba antes de compilar, el visor principal ya no la devolvía, y cada foto del dictamen esperaba 60 s. Ahora cada visor tiene su propio «listo» (`listoRef`). Además, mientras una foto espera, el visor oculto dibuja para que su precompilado avance.
+  - **Las tres fotos esperaban hasta 60 s cada una.** Ahora comparten 20 s (`PRESUPUESTO_FOTOS_MS`); pasado ese plazo salen con lo que el visor ya dibuja.
+  - Con eso los seis e2e pasan en 2.1 min sin reintentos (antes, 6 a 9 min con reintentos). Los flujos de `/cesvi` corren con movimiento reducido: la cortina es decorativa y en local les quitaba unos 11 s.
+- **Sigue:** rutas por acto, la escena generada (prompt §7), las pantallas en orden (§8), el movimiento y los tooltips, y al final las pruebas pesadas.
+
+#### Resumen para René (tokens, tipografía, barra y transición)
+
+- **Qué quedó:** `/cesvi` con los colores de día y de noche del Laboratorio, Instrument Serif y Sans, la barra de seis actos con su línea y su punto naranja, «Continuar a…» y la transición al entrar a cada acto.
+- **Cómo probarlo:** abre el caso de AXA y cambia de tema con ◐ y de acto desde la barra. ✦ apaga las transiciones.
+- **Qué necesito de ti:** nada para esta parte.
+
 ### Rediseño «Laboratorio»: §0 y arreglos de uso A1–A5 (René, 2026-11-04 y 05)
 
 Rama `feat/laboratorio-0-a`. El prompt y las ocho pantallas quedaron copiados en `docs/cesvi/rediseno/laboratorio/`. Se despliega junto con B (colocación rehecha), como pidió René.
@@ -2048,6 +2084,8 @@ Rama `fix/ruedas-dano-costado`. René vio las llantas fuera de su hueco en un ca
 - **Visto y no arreglado aquí** (en «Endurecimiento pendiente»): un rectángulo gris sobre las ventanas del costado golpeado en el reposo, probablemente el vidrio lateral roto con las cotas del paramétrico.
 
 ### Endurecimiento pendiente
+
+- **Un solo visor 3D por página (René, rediseño Laboratorio):** «Comparar lado a lado» de la reconstrucción todavía monta un segundo visor. Se quita al rehacer el acto de Reconstrucción (prompt §8); mientras, las fotos ya no dependen de él.
 
 - **Vidrio lateral roto en los modelos (visto el 2026-11-05, caso Jetta–Camaro):** en el reposo aparece un rectángulo gris sobre las ventanas del costado golpeado de B (`docs/cesvi/t1/ruedas-ejemplo/veh-b-reposo-derecho.webp`); probablemente el vidrio agrietado se coloca con las cotas del habitáculo del paramétrico y no con las ventanas del modelo.
 

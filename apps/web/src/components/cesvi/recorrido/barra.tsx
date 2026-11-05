@@ -1,14 +1,16 @@
 "use client";
 /**
- * La barra del recorrido, la misma para todo caso de /cesvi (ADR 0079): la marca (vuelve a la lista
- * de casos), los pasos al presentar, Presentar / Trabajar, las acciones propias del caso, el tema y
- * «Exportar» (va al dictamen).
+ * La barra del recorrido, la misma para todo caso de /cesvi (ADR 0079), con el diseño «Laboratorio»
+ * (prompt §4): 72 px, la marca y el caso en mono a la izquierda; al centro los actos en una rejilla
+ * con una línea de 2 px que se llena hasta el acto actual y remata en un punto naranja; a la derecha
+ * Presentar / Trabajar, las acciones del caso, el tema, «Transiciones» y «Exportar».
  */
 import Link from "next/link";
 import type { ReactNode } from "react";
 import { Logotipo } from "@/components/sitio/logo";
 import { RUTAS } from "@/lib/casos";
-import { guardarTema, type Modo } from "@/lib/preferencias-cesvi";
+import type { ActoDelCaso } from "@/lib/actos";
+import { guardarTema, guardarTransiciones, type Modo } from "@/lib/preferencias-cesvi";
 
 /** Los pasos del recorrido, los mismos para todo caso (ADR 0052 y 0079). */
 export const PASOS = [
@@ -36,8 +38,8 @@ export const PASOS_CORTOS = [
 
 export function BarraRecorrido({
   pasos,
-  pasosCortos,
   paso,
+  actos,
   irA,
   modo,
   onModo,
@@ -46,10 +48,12 @@ export function BarraRecorrido({
   acciones,
   onExportar,
   abierto = () => true,
+  transiciones = true,
 }: {
   pasos: readonly string[];
-  pasosCortos: readonly string[];
   paso: number;
+  /** Los actos del caso (prompt §4): agrupan los pasos. */
+  actos: readonly ActoDelCaso[];
   irA: (i: number) => void;
   modo: Modo;
   onModo: (m: Modo) => void;
@@ -61,10 +65,18 @@ export function BarraRecorrido({
   onExportar: () => void;
   /** Si un paso se puede abrir (V2): los futuros esperan a que se complete lo obligatorio. */
   abierto?: (i: number) => boolean;
+  /** «Transiciones» entre actos (prompt §5), que el perito puede apagar. */
+  transiciones?: boolean;
 }) {
+  const actual = Math.max(
+    0,
+    actos.findIndex((a) => a.pasos.includes(paso)),
+  );
+  /** Hasta dónde se llena la línea: el centro de la columna del acto actual. */
+  const lleno = actos.length ? ((actual + 0.5) / actos.length) * 100 : 0;
   return (
     <>
-      <header className="vidrio barra relative z-30 flex h-16 shrink-0 items-center gap-3 px-4 md:px-6">
+      <header className="vidrio barra relative z-30 flex h-[72px] shrink-0 items-center gap-3 px-4 md:px-6">
         <Link
           href={RUTAS.lista}
           aria-label="Todos los casos"
@@ -81,49 +93,65 @@ export function BarraRecorrido({
           ← Casos
         </Link>
         {resumen ? (
-          <span className="hidden max-w-[16rem] truncate text-[0.8125rem] text-texto-3 2xl:inline">
+          <span
+            className="cifras hidden max-w-[16rem] truncate text-[0.75rem] text-texto-3 2xl:inline"
+            data-testid="resumen-caso"
+          >
             {resumen}
           </span>
         ) : null}
-        <nav
-          aria-label="Pasos del recorrido"
-          className="flex min-w-0 flex-1 items-center justify-center-safe gap-0.5 overflow-x-auto"
-        >
-          {pasos.map((nombre, i) => {
-            const actual = paso === i;
-            const hecho = i < paso;
-            const puede = actual || abierto(i);
-            return (
-              <button
-                key={nombre}
-                type="button"
-                aria-label={`Paso ${i + 1}: ${nombre}${puede ? "" : " (completa los pasos anteriores)"}`}
-                aria-current={actual ? "step" : undefined}
-                disabled={!puede}
-                onClick={() => irA(i)}
-                className={`flex h-9 shrink-0 items-center gap-2 rounded-full text-[0.8125rem] transition-colors ${
-                  actual
-                    ? "bg-accion pr-3.5 pl-2 font-semibold text-accion-texto"
-                    : `px-2.5 font-medium ${puede ? "hover:bg-superficie-alta" : "cursor-not-allowed"} ${hecho ? "text-texto-2" : puede ? "text-texto-3" : "text-texto-3 opacity-50"}`
-                }`}
-                data-testid={`paso-${i + 1}`}
-              >
-                {actual ? (
-                  <span
-                    className="grid h-5 w-5 place-items-center rounded-full bg-fondo text-[0.6875rem] text-texto"
-                    aria-hidden="true"
+        <nav aria-label="Actos del recorrido" className="relative min-w-0 flex-1 self-stretch">
+          <ol
+            className="grid h-full items-center"
+            style={{ gridTemplateColumns: `repeat(${actos.length}, minmax(0, 1fr))` }}
+          >
+            {actos.map((a, k) => {
+              const primero = a.pasos[0]!;
+              const esActual = k === actual;
+              const hecho = k < actual;
+              const puede = esActual || abierto(primero);
+              return (
+                <li key={a.clave} className="flex justify-center">
+                  <button
+                    type="button"
+                    aria-label={`Acto ${k + 1}: ${a.nombre}${puede ? "" : " (completa los anteriores)"}`}
+                    aria-current={esActual ? "step" : undefined}
+                    disabled={!puede}
+                    onClick={() => irA(primero)}
+                    className={`flex h-10 min-w-0 items-center gap-1.5 rounded-control px-2 text-[0.8125rem] transition-colors ${
+                      esActual
+                        ? "font-semibold text-texto"
+                        : `font-medium ${puede ? "hover:text-texto" : "cursor-not-allowed opacity-50"} ${hecho ? "text-texto-2" : "text-texto-3"}`
+                    }`}
+                    data-testid={`paso-${primero + 1}`}
+                    data-acto={a.clave}
                   >
-                    {i + 1}
-                  </span>
-                ) : null}
-                <span>
-                  {actual ? "" : hecho ? "✓ " : `${i + 1} `}
-                  {pasosCortos[i]}
-                </span>
-              </button>
-            );
-          })}
+                    <span className="cifras text-[0.6875rem] text-texto-3" aria-hidden="true">
+                      {String(k + 1).padStart(2, "0")}
+                    </span>
+                    <span className="truncate">{a.nombre}</span>
+                  </button>
+                </li>
+              );
+            })}
+          </ol>
+          {/* La línea del avance: se llena hasta el acto actual y remata en el punto naranja. */}
+          <div className="absolute inset-x-0 bottom-0 h-[2px] bg-linea-suave" aria-hidden="true">
+            <div
+              className="absolute inset-y-0 left-0 origin-left bg-texto transition-transform duration-500"
+              style={{ width: "100%", transform: `scaleX(${lleno / 100})` }}
+              data-testid="barra-avance"
+            />
+            <span
+              className="absolute top-1/2 h-2.5 w-2.5 -translate-x-1/2 -translate-y-1/2 rounded-full bg-senal transition-[left] duration-500"
+              style={{ left: `${lleno}%` }}
+            />
+          </div>
         </nav>
+        {/* Para lectores de pantalla: en qué paso de cuál acto se está. */}
+        <span className="sr-only" aria-live="polite">
+          Paso {paso + 1} de {pasos.length}: {pasos[paso]}
+        </span>
         <div className="segmentado shrink-0" role="tablist" aria-label="Modo">
           {(["presentar", "trabajar"] as const).map((m) => (
             <button
@@ -151,19 +179,27 @@ export function BarraRecorrido({
         </button>
         <button
           type="button"
+          className="boton-secundario boton-compacto grid h-9 min-h-9 w-9 shrink-0 place-items-center px-0"
+          onClick={() => guardarTransiciones(!transiciones)}
+          aria-pressed={transiciones}
+          aria-label={
+            transiciones
+              ? "Apagar las transiciones entre actos"
+              : "Encender las transiciones entre actos"
+          }
+          title="Transiciones"
+          data-testid="transiciones"
+        >
+          {transiciones ? "✦" : "✧"}
+        </button>
+        <button
+          type="button"
           className="boton-secundario boton-compacto h-9 min-h-9 shrink-0"
           onClick={onExportar}
         >
           Exportar
         </button>
       </header>
-      <div className="h-[3px] shrink-0 bg-superficie" aria-hidden="true">
-        <div
-          className="h-full bg-texto transition-[width]"
-          style={{ width: `${((paso + 1) / pasos.length) * 100}%` }}
-          data-testid="barra-avance"
-        />
-      </div>
     </>
   );
 }

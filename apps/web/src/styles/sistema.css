@@ -119,6 +119,101 @@
     --ok: #1e8e4f;
   }
 
+  /* Rediseño «Laboratorio» de /cesvi (prompt §3, René 2026-11-04): día y noche con los mismos
+     roles de siempre, para que los componentes no cambien; el naranja queda para el impacto, el
+     daño y «dónde estás» en la barra de actos. Lo pone `app/(es)/cesvi/layout.tsx`. */
+  [data-diseno="laboratorio"][data-tema="claro"],
+  [data-diseno="laboratorio"] [data-tema="claro"] {
+    color-scheme: light;
+    --fondo: var(--marca-lab-dia-bg);
+    --superficie: var(--marca-lab-dia-surf);
+    --superficie-alta: var(--marca-lab-dia-surf2);
+    --linea-suave: var(--marca-lab-dia-line);
+    --linea: var(--marca-lab-dia-line2);
+    --texto: var(--marca-lab-dia-tx);
+    --texto-2: var(--marca-lab-dia-tx2);
+    --texto-3: var(--marca-lab-dia-tx3);
+    --accion: var(--marca-lab-dia-pri);
+    --accion-texto: var(--marca-lab-dia-pri-tx);
+    --senal: var(--marca-lab-impacto);
+    --hundido: var(--marca-lab-dia-surf2);
+    --flotante: var(--marca-lab-dia-surf);
+    --texto-cita: var(--marca-lab-dia-tx);
+    --vidrio-fondo: color-mix(in srgb, var(--marca-lab-dia-surf) 86%, transparent);
+    --barra-fondo: color-mix(in srgb, var(--marca-lab-dia-bg) 82%, transparent);
+    /* Propios del Laboratorio: resaltes, tooltips invertidos, hojas y la escena (§3 y §7). */
+    --suave: var(--marca-lab-dia-soft);
+    --tip-fondo: var(--marca-lab-dia-tip-bg);
+    --tip-texto: var(--marca-lab-dia-tip-tx);
+    --sombra-hoja: var(--efecto-lab-sombra-hoja-dia);
+    --escena-luz: var(--marca-lab-dia-escena-luz);
+    --escena-sombra: var(--marca-lab-dia-escena-sombra);
+    --escena-losa: var(--marca-lab-dia-losa);
+    --escena-camellon: var(--marca-lab-dia-camellon);
+    --escena-orilla: var(--marca-lab-dia-orilla);
+    --escena-carril: var(--marca-lab-dia-carril);
+    --escena-vehiculo: var(--marca-lab-dia-vehiculo);
+    --escena-vehiculo-detalle: var(--marca-lab-dia-vehiculo-detalle);
+    --escena-vehiculo-detalle-2: var(--marca-lab-dia-vehiculo-detalle-2);
+    --velocidad-inicio: var(--marca-lab-dia-velocidad-inicio);
+  }
+
+  [data-diseno="laboratorio"][data-tema="oscuro"],
+  [data-diseno="laboratorio"] [data-tema="oscuro"] {
+    color-scheme: dark;
+    --fondo: var(--marca-lab-noche-bg);
+    --superficie: var(--marca-lab-noche-surf);
+    --superficie-alta: var(--marca-lab-noche-surf2);
+    --linea-suave: var(--marca-lab-noche-line);
+    --linea: var(--marca-lab-noche-line2);
+    --texto: var(--marca-lab-noche-tx);
+    --texto-2: var(--marca-lab-noche-tx2);
+    --texto-3: var(--marca-lab-noche-tx3);
+    --accion: var(--marca-lab-noche-pri);
+    --accion-texto: var(--marca-lab-noche-pri-tx);
+    --senal: var(--marca-lab-impacto);
+    --hundido: var(--marca-lab-noche-surf2);
+    --flotante: var(--marca-lab-noche-surf);
+    --texto-cita: var(--marca-lab-noche-tx);
+    --vidrio-fondo: color-mix(in srgb, var(--marca-lab-noche-surf) 86%, transparent);
+    --barra-fondo: color-mix(in srgb, var(--marca-lab-noche-bg) 82%, transparent);
+    /* Propios del Laboratorio: resaltes, tooltips invertidos, hojas y la escena (§3 y §7). */
+    --suave: var(--marca-lab-noche-soft);
+    --tip-fondo: var(--marca-lab-noche-tip-bg);
+    --tip-texto: var(--marca-lab-noche-tip-tx);
+    --sombra-hoja: var(--efecto-lab-sombra-hoja-noche);
+    --escena-luz: var(--marca-lab-noche-escena-luz);
+    --escena-sombra: var(--marca-lab-noche-escena-sombra);
+    --escena-losa: var(--marca-lab-noche-losa);
+    --escena-camellon: var(--marca-lab-noche-camellon);
+    --escena-orilla: var(--marca-lab-noche-orilla);
+    --escena-carril: var(--marca-lab-noche-carril);
+    --escena-vehiculo: var(--marca-lab-noche-vehiculo);
+    --escena-vehiculo-detalle: var(--marca-lab-noche-vehiculo-detalle);
+    --escena-vehiculo-detalle-2: var(--marca-lab-noche-vehiculo-detalle-2);
+    --velocidad-inicio: var(--marca-lab-noche-velocidad-inicio);
+  }
+
+  /* Tipografía del Laboratorio (prompt §2): Instrument Sans en la interfaz, Instrument Serif en
+     títulos y cifras protagonistas, Geist Mono en datos. El par vive solo aquí. */
+  [data-diseno="laboratorio"] {
+    --fuente:
+      var(--font-instrument-sans), var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
+    --fuente-titulo: var(--font-instrument-serif), Georgia, "Times New Roman", serif;
+    font-family: var(--fuente);
+  }
+  /* Los colores del tema cambian en 400 ms (prompt §3); sin movimiento si se pidió menos. */
+  [data-diseno="laboratorio"] [data-tema] {
+    transition:
+      background-color 400ms ease,
+      color 400ms ease;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    [data-diseno="laboratorio"] [data-tema] {
+      transition: none;
+    }
+  }
+
   /* Tema papel (el parte de tránsito): croquis 2D y exportaciones. Los tonos intermedios se
      mezclan desde papel y tinta; no hay colores nuevos. */
   [data-tema="papel"] {
@@ -922,5 +1017,129 @@
     opacity: 1;
     transform: none;
     transition: none;
+  }
+}
+
+/* Títulos y cifras protagonistas del Laboratorio (prompt §2). */
+@layer components {
+  [data-diseno="laboratorio"] .t-titulo,
+  [data-diseno="laboratorio"] .t-subtitulo,
+  [data-diseno="laboratorio"] .t-panel {
+    font-family: var(--fuente-titulo);
+    font-weight: 400;
+    letter-spacing: -0.01em;
+  }
+  [data-diseno="laboratorio"] .cifra-protagonista {
+    font-family: var(--fuente-titulo);
+    font-style: italic;
+    font-weight: 400;
+    letter-spacing: -0.045em;
+    font-variant-numeric: tabular-nums;
+    line-height: 0.9;
+  }
+}
+
+/* La transición entre actos del Laboratorio (prompt §5; `TransicionActo`): solo transform, opacity
+   y clip-path. Las duraciones llegan como variables desde el componente (completa o corta). */
+@layer components {
+  .transicion-acto {
+    position: fixed;
+    inset: 0;
+    z-index: 60;
+    display: grid;
+    place-items: center;
+    background: var(--fondo);
+    color: var(--texto);
+    pointer-events: none;
+    animation: ta-cortina var(--ta-sube) cubic-bezier(0.7, 0, 0.2, 1) var(--ta-sube-inicio) both;
+  }
+  .transicion-acto .ta-trazo {
+    animation: ta-trazo var(--ta-trazo) cubic-bezier(0.65, 0, 0.25, 1) var(--ta-trazo-inicio) both;
+  }
+  .transicion-acto .ta-titulo {
+    animation: ta-sube var(--ta-titulo) cubic-bezier(0.2, 0.8, 0.2, 1) var(--ta-titulo-inicio) both;
+  }
+  .transicion-acto .ta-nombre {
+    font-family: var(--fuente-titulo, var(--fuente));
+    font-size: 48px;
+    line-height: 1.1;
+  }
+  .transicion-acto .ta-mira {
+    transform-box: fill-box;
+    transform-origin: center;
+    animation: ta-golpe var(--ta-golpe) cubic-bezier(0.2, 0.8, 0.2, 1) var(--ta-golpe-inicio) both;
+  }
+  .transicion-acto .ta-anillo {
+    transform-box: fill-box;
+    transform-origin: center;
+    opacity: 0;
+    animation: ta-anillo var(--ta-anillo) ease-out var(--ta-golpe-inicio) both;
+  }
+  @keyframes ta-cortina {
+    from {
+      clip-path: inset(0 0 0 0);
+    }
+    to {
+      clip-path: inset(0 0 100% 0);
+    }
+  }
+  @keyframes ta-trazo {
+    from {
+      clip-path: inset(0 100% 0 0);
+    }
+    to {
+      clip-path: inset(0 0 0 0);
+    }
+  }
+  @keyframes ta-sube {
+    from {
+      transform: translateY(110%);
+    }
+    to {
+      transform: translateY(0);
+    }
+  }
+  @keyframes ta-golpe {
+    0% {
+      transform: scale(0);
+    }
+    60% {
+      transform: scale(1.25);
+    }
+    100% {
+      transform: scale(1);
+    }
+  }
+  @keyframes ta-anillo {
+    from {
+      transform: scale(0.6);
+      opacity: 0.9;
+    }
+    to {
+      transform: scale(3);
+      opacity: 0;
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .transicion-acto {
+      display: none;
+    }
+  }
+}
+
+/* La acción principal del Laboratorio (prompt §4): barra de 58 px, radio 14, la flecha avanza 6 px. */
+@layer components {
+  [data-diseno="laboratorio"] .boton-continuar {
+    min-height: 58px;
+    border-radius: 14px;
+    padding-inline: 22px;
+    gap: 10px;
+  }
+  .boton-continuar .flecha-continuar {
+    display: inline-block;
+    transition: transform 160ms ease;
+  }
+  .boton-continuar:hover:not(:disabled) .flecha-continuar {
+    transform: translateX(6px);
   }
 }
