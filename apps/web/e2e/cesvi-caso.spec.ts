@@ -3,6 +3,10 @@ import { join } from "node:path";
 import { expect, test } from "@playwright/test";
 import { acercar, escribirRumbo, irAPaso } from "./ayuda-recorrido";
 
+// La transición entre actos (ADR 0108) es decorativa: estos flujos prueban la función, y en CI (render
+// por software) la cortina a pantalla completa compite con el 3D. Con movimiento reducido no se monta.
+test.use({ reducedMotion: "reduce" });
+
 /**
  * La lectura grabada de Claude de la narración de ejemplo (E-R1; CI no llama a la API). Es la misma
  * que trae la página como ejemplo.

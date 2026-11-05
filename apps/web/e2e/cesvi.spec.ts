@@ -2,6 +2,10 @@ import { readFileSync } from "node:fs";
 import { expect, test } from "@playwright/test";
 import { colocarTodo, irAPaso, sinIdentificadoresDeFuente } from "./ayuda-recorrido";
 
+// La transición entre actos (ADR 0108) es decorativa: estos flujos prueban la función, y en CI (render
+// por software) la cortina a pantalla completa compite con el 3D. Con movimiento reducido no se monta.
+test.use({ reducedMotion: "reduce" });
+
 /**
  * El caso de AXA A2010930 en el mismo recorrido que cualquier caso (V2-4, ADR 0080): sus vehículos,
  * su narración, el lugar, la reconstrucción con la declaración del conductor ya escrita, la
