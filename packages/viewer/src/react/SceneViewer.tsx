@@ -39,6 +39,7 @@ import {
   type Light,
   type Texture,
   PerspectiveCamera,
+  Raycaster,
   Scene,
   Vector3,
 } from "three";
@@ -61,7 +62,11 @@ import {
   actionBounds,
   blendPose,
   CAMERA_TRANSITION_MS,
+  chooseCinematicAdjust,
   cinematicCamera,
+  sameCamera,
+  type CameraChoice,
+  type CinematicAdjust,
   damageCamera,
   personCamera,
   driverCamera,
@@ -91,6 +96,7 @@ import { QUALITY_PROFILES, type QualityLevel } from "../quality";
 import { dprPara, pantallaDe } from "../dpr";
 import {
   CAPA_OCULTA,
+  cederHilo,
   Precompilador,
   dibujables,
   esconder,
@@ -112,7 +118,7 @@ import {
 import { recentFps } from "../backend-choice";
 import { attachDebris } from "../debris-scene";
 import { attachRollovers } from "../rollover-scene";
-import { buildVisibilityOverlay } from "../visibility-overlay";
+import { buildVisibilityOverlay, TODOS_LOS_CONDUCTORES } from "../visibility-overlay";
 import { sunShadowFrame } from "../shadow-frame";
 import { BODY_BASE_URL, loadBodies } from "../body-assets";
 import { PostEffects } from "./PostEffects";
@@ -162,7 +168,7 @@ export interface SceneViewerProps {
    * esperar a que `camera` llegue por React (3–5 cuadros por el reconciliador de R3F; René,
    * 2026-11-04: ≤ 100 ms del clic a la respuesta). Vuelve a null cuando `camera` la alcanza.
    */
-  cameraLive?: { current: CameraMode | null };
+  cameraLive?: { current: CameraChoice | null };
   /** Vehículo para la cámara del conductor. */
   driverVehicleId?: string;
   quality: QualityLevel;
@@ -304,6 +310,18 @@ declare global {
     __croquisRendererListo?: number;
     /** El orden en que se revelan los objetos (medición de carga). */
     __croquisOrdenRevelado?: string[];
+    /** Los controles de la cámara libre (capturas de cerca, `eval/t1_ruedas.mjs`). */
+    __croquisOrbit?: OrbitControls | null;
+    /** La escena de three (medición y capturas). */
+    __croquisEscena?: Scene;
+    /** La API de exportación del visor (pruebas: dos capturas en instantes distintos difieren). */
+    __croquisExportApi?: ViewerExportApi | null;
+    /** Lo que tardó cada parte de cada armado del grafo (ms). */
+    __croquisArmados?: Record<string, number>[];
+    /** La cámara, el grafo y el reloj del visor (e2e de cámaras: pose y cabina del conductor). */
+    __croquisCamara3d?: PerspectiveCamera;
+    __croquisGrafo?: SceneGraph;
+    __croquisReloj?: ViewerClock;
     /** La cámara con la que se dibujó el último cuadro (respuesta a los botones de cámara). */
     __croquisCamaraDibujada?: string;
     /**
@@ -392,9 +410,13 @@ function SceneContent({
         }
       })
       .catch((err: unknown) => {
-        // Sin modelos (p. ej. sin red) quedan los vehículos paramétricos.
+        // Sin modelos (p. ej. sin red) quedan los vehículos paramétricos: el grafo se arma sin
+        // ellos (si no, el precompilado los esperaba para siempre).
         console.error("No se pudieron cargar los vehículos", err);
-        if (alive) window.__croquisVehicleModelsReady = true;
+        if (alive) {
+          window.__croquisVehicleModelsReady = true;
+          setLoaded({ key: modelKey, models: new Map() });
+        }
       });
     return () => {
       alive = false;
@@ -422,6 +444,10 @@ function SceneContent({
       quality: profile,
       env,
       vehicleModels,
+      // El provisional nunca se muestra: sin daño ni desgaste. El definitivo arma el daño de cada
+      // vehículo en una tarea aparte (abajo), antes de precompilar.
+      provisional: esperandoModelos,
+      diferirDanos: !esperandoModelos,
       diag: {
         gravaPrevia: typeof window !== "undefined" && window.__croquisDiag?.gravaPrevia === true,
         osmSoloCalzada:
@@ -438,9 +464,43 @@ function SceneContent({
   useEffect(() => {
     if (vehicleModels) window.__croquisVehicleModelsReady = true;
   }, [vehicleModels]);
+  // El daño de los vehículos, un vehículo por tarea (René, 2026-11-04: armarlo junto con el grafo
+  // era una tarea de 0.3–0.6 s «sin marca»). Restos, personas y el precompilado lo esperan.
+  const [danosListos, setDanosListos] = useState<SceneGraph | null>(null);
+  useEffect(() => {
+    if (graph.pasosPendientes === 0) {
+      setDanosListos(graph);
+      return undefined;
+    }
+    let alive = true;
+    void (async () => {
+      while (alive && graph.pasosPendientes > 0) {
+        await cederHilo();
+        if (!alive) return;
+        marcar(`armando: ${graph.siguientePaso ?? ""}`);
+        graph.aplicarPaso();
+      }
+      if (alive) setDanosListos(graph);
+    })();
+    return () => {
+      alive = false;
+    };
+  }, [graph]);
+  const danosPendientes = danosListos !== graph;
   useEffect(() => {
     onProcedural?.(graph.procedural);
   }, [graph, onProcedural]);
+  useEffect(() => {
+    const partes = Object.entries(graph.tiempos).sort((a, b) => b[1] - a[1]);
+    const total = partes.reduce((a, [, ms]) => a + ms, 0);
+    updateDiagnostico({
+      armado: `${total} ms: ${partes
+        .slice(0, 4)
+        .map(([n, ms]) => `${n} ${ms}`)
+        .join(", ")}`,
+    });
+    window.__croquisArmados = [...(window.__croquisArmados ?? []), { ...graph.tiempos }];
+  }, [graph]);
   // Cuántas cosas se agregaron al grafo después de armarlo (restos, personas): cada una pide
   // precompilar de nuevo (ver abajo). Lo nuevo se esconde en el acto: entre llegar y el efecto
   // que lo precompila cabía un cuadro real, que compilaba sus programas en el hilo principal
@@ -478,7 +538,7 @@ function SceneContent({
   // tirado que además retrasaba la llegada de los modelos.
   const modelsPending = variant !== null && loaded?.key !== modelKey;
   useEffect(() => {
-    if (modelsPending) return undefined;
+    if (modelsPending || danosPendientes) return undefined;
     let alive = true;
     window.__croquisDebrisReady = false;
     marcar("horneando los restos");
@@ -497,7 +557,7 @@ function SceneContent({
     return () => {
       alive = false;
     };
-  }, [spec, resultado, graph, modelsPending]);
+  }, [spec, resultado, graph, modelsPending, danosPendientes]);
 
   // Árboles impostores (T1.3b): en media, alta y ultra (baja conserva las copas de pocas caras).
   useEffect(() => {
@@ -557,7 +617,7 @@ function SceneContent({
   // Personas: cuerpos de MakeHuman, ocupantes y ragdolls calibrados (se hornean al cargar), solo
   // sobre el grafo con los modelos (ver los restos).
   useEffect(() => {
-    if (modelsPending) return undefined;
+    if (modelsPending || danosPendientes) return undefined;
     let alive = true;
     window.__croquisPeopleReady = false;
     loadBodies(variantsFor(spec), bodiesBaseUrl ?? BODY_BASE_URL)
@@ -582,7 +642,7 @@ function SceneContent({
     return () => {
       alive = false;
     };
-  }, [spec, resultado, graph, bodiesBaseUrl, onPeople, modelsPending]);
+  }, [spec, resultado, graph, bodiesBaseUrl, onPeople, modelsPending, danosPendientes]);
 
   const { scene, camera: cam, gl } = useThree();
   const advance = useThree((s) => s.advance);
@@ -636,6 +696,15 @@ function SceneContent({
         const canvas = gl.domElement;
         const restore =
           width !== undefined && height !== undefined ? resizeTo(width, height) : undefined;
+        // Lo que todavía está escondido por el precompilado progresivo (ADR 0104) sale en la foto:
+        // se revela solo para este cuadro (si falta compilar, compila aquí; la foto manda).
+        const escondidos: Object3D[] = [];
+        graph.root.traverse((o) => {
+          if (o.layers.mask === 2 ** CAPA_OCULTA) {
+            escondidos.push(o);
+            o.layers.set(0);
+          }
+        });
         try {
           advance(performance.now(), true);
           const out = document.createElement("canvas");
@@ -646,6 +715,7 @@ function SceneContent({
           ctx.drawImage(canvas, 0, 0);
           return out;
         } finally {
+          for (const o of escondidos) o.layers.set(CAPA_OCULTA);
           restore?.();
           if (t !== undefined) clock.set(() => before);
         }
@@ -671,7 +741,15 @@ function SceneContent({
       },
     };
     onExport(api);
-    return () => onExport(null);
+    window.__croquisExportApi = api;
+    window.__croquisEscena = scene;
+    window.__croquisCamara3d = cam as PerspectiveCamera;
+    window.__croquisGrafo = graph;
+    window.__croquisReloj = clock;
+    return () => {
+      onExport(null);
+      window.__croquisExportApi = null;
+    };
   }, [onExport, resultado, clock, cam, gl, advance, size, graph, env]);
 
   // Cielo, niebla y luces.
@@ -870,7 +948,8 @@ function SceneContent({
   // reproducción). Los restos y las personas no se esperan: llegan a una rama escondida y se
   // compilan en segundo plano (abajo).
   const skyPending = ibl && skyEnv === null;
-  const todoPendiente = texturesPending || treesPending || modelsPending || skyPending;
+  const todoPendiente =
+    texturesPending || treesPending || modelsPending || skyPending || danosPendientes;
   const activoRef = useRef(activo);
   activoRef.current = activo;
   /** El grafo que está en pantalla (se monta escondido y se revela objeto por objeto). */
@@ -1075,17 +1154,24 @@ function SceneContent({
     oc.enableDamping = true;
     oc.update();
     controls.current = oc;
+    window.__croquisOrbit = oc;
     return () => {
       oc.dispose();
       controls.current = null;
+      window.__croquisOrbit = null;
     };
   }, [camera, cam, gl, resultado, guiada]);
 
-  const driver = useMemo(() => {
-    const v = resultado.vehiculos.find((x) => x.id === driverVehicleId) ?? resultado.vehiculos[0];
-    if (!v) return undefined;
-    return { v, eye: driverEye(resultado, v) };
-  }, [resultado, driverVehicleId]);
+  const conductores = useMemo(
+    () => new Map(resultado.vehiculos.map((v) => [v.id, { v, eye: driverEye(resultado, v) }])),
+    [resultado],
+  );
+  const driver = useMemo(
+    () =>
+      (driverVehicleId ? conductores.get(driverVehicleId) : undefined) ??
+      conductores.values().next().value,
+    [conductores, driverVehicleId],
+  );
   // Luz de relleno en la cabina (René, 2026-11-04): desde el asiento, tablero, volante y postes
   // salían negros (dentro del vehículo no llega el sol ni el cielo). Un foco puntual de corto
   // alcance en los ojos del conductor, solo con su cámara, los deja en gris oscuro.
@@ -1102,9 +1188,18 @@ function SceneContent({
   // Desde los ojos del conductor no se dibuja su propia cabeza ni la de quien va a bordo de su
   // vehículo (quedarían pegadas a la cámara); se restauran al cambiar de cámara.
   useEffect(() => {
-    marcar(`cambio de cámara → ${camera}`);
+    marcar(`cambio de cámara → ${camera}${camera === "conductor" ? ` ${driver?.v.id ?? ""}` : ""}`);
     // La cámara viva ya no hace falta: la propiedad la alcanzó.
-    if (cameraLive && cameraLive.current === camera) cameraLive.current = null;
+    const vivo = cameraLive?.current;
+    if (
+      cameraLive &&
+      vivo &&
+      sameCamera(vivo, {
+        modo: camera,
+        conductor: camera === "conductor" ? driver?.v.id : undefined,
+      })
+    )
+      cameraLive.current = null;
     if (camera !== "conductor" || !driver) return undefined;
     const ocultos = graph.persons.filter(
       (p) => p.vehicleId === driver.v.id && p.mode === "a_bordo_visible",
@@ -1191,8 +1286,10 @@ function SceneContent({
   const overlay = useMemo(() => buildVisibilityOverlay(resultado, graph), [resultado, graph]);
   useEffect(() => () => overlay.dispose(), [overlay]);
   useEffect(() => {
-    overlay.setObserver(camera === "conductor" ? driver?.v.id : undefined);
-  }, [overlay, camera, driver]);
+    overlay.setObserver(
+      camera === "cenital" || camera === "libre" ? TODOS_LOS_CONDUCTORES : undefined,
+    );
+  }, [overlay, camera]);
 
   const puntoImpacto = useMemo(() => graph.root.getObjectByName("punto_impacto") ?? null, [graph]);
   const tImpacto = useMemo(() => firstImpactTime(resultado), [resultado]);
@@ -1203,17 +1300,28 @@ function SceneContent({
   }, [clock, camera, tImpacto]);
   // Transición suave entre cámaras (T1.5): la pose de donde venimos y cuándo empezó el cambio.
   const lastPose = useRef<CameraPose | null>(null);
-  const transition = useRef<{ from: CameraPose; start: number } | null>(null);
-  const lastMode = useRef<CameraMode>(camera);
+  const driverProp = driver;
+  // Ajuste de la cinematográfica para que nada quede entre ella y el impacto (se calcula una vez,
+  // con el grafo listo; abajo).
+  const ajusteCine = useRef<CinematicAdjust | undefined>(undefined);
   useEffect(() => {
-    if (lastMode.current !== camera) {
-      lastMode.current = camera;
-      transition.current =
-        lastPose.current && camera !== "libre"
-          ? { from: lastPose.current, start: performance.now() }
-          : null;
-    }
-  }, [camera]);
+    if (compiled !== graph) return undefined;
+    let alive = true;
+    void cederHilo().then(() => {
+      if (!alive) return;
+      ajusteCine.current = ajusteSinObstaculos(graph, resultado);
+      const a = ajusteCine.current;
+      marcar(
+        `cinematográfica: ${Math.round((a.dAz * 180) / Math.PI)}° de giro y ${a.dH} m más alta para ver el impacto`,
+      );
+    });
+    return () => {
+      alive = false;
+    };
+  }, [compiled, graph, resultado]);
+  const transition = useRef<{ from: CameraPose; start: number } | null>(null);
+  /** La última cámara dibujada (modo y conductor): al cambiar empieza la transición. */
+  const lastChoice = useRef<CameraChoice | null>(null);
   const settle = (pose: CameraPose): CameraPose => {
     const tr = transition.current;
     if (!tr) {
@@ -1258,9 +1366,32 @@ function SceneContent({
     }
   });
   /** Coloca la cámara del modo vigente en el instante `t` (también antes del primer cuadro). */
-  const camaraViva = (): CameraMode => cameraLive?.current ?? camera;
+  /** La cámara que se dibuja: la viva (el clic, en el mismo cuadro) o la de la propiedad. */
+  const camaraViva = (): CameraChoice =>
+    cameraLive?.current ?? {
+      modo: camera,
+      conductor: camera === "conductor" ? driver?.v.id : undefined,
+    };
   function poseCamara(t: number): void {
-    const camera = camaraViva();
+    const eleccion = camaraViva();
+    const camera = eleccion.modo;
+    const driver =
+      (eleccion.conductor ? conductores.get(eleccion.conductor) : undefined) ?? driverProp;
+    const previa = lastChoice.current;
+    if (!previa || !sameCamera(previa, eleccion)) {
+      lastChoice.current = eleccion;
+      transition.current =
+        previa && lastPose.current && camera !== "libre"
+          ? { from: lastPose.current, start: performance.now() }
+          : null;
+      // El plano cercano de la cámara del conductor va con el cuadro, no con React.
+      const p = cam as PerspectiveCamera;
+      const near = camera === "conductor" ? DRIVER_NEAR_M : 0.1;
+      if (p.near !== near) {
+        p.near = near;
+        p.updateProjectionMatrix();
+      }
+    }
     const persp = cam as PerspectiveCamera;
     if (camera === "libre") {
       controls.current?.update();
@@ -1279,7 +1410,7 @@ function SceneContent({
       // El foco va con los ojos, un poco más arriba y atrás (ilumina tablero y postes de frente).
       cabinLight.position.set(pose.position[0], pose.position[1] + 0.15, pose.position[2]);
     } else if (camera === "cinematica") {
-      const pose = settle(cinematicCamera(resultado, t));
+      const pose = settle(cinematicCamera(resultado, t, undefined, ajusteCine.current));
       applyPose(persp, pose);
       fx.focus = cinematicFocus(pose);
     } else if (camera === "dano") applyPose(persp, settle(damageCamera(resultado, t)));
@@ -1299,7 +1430,8 @@ function SceneContent({
     }
     // El instante que se dibuja, para las evaluaciones (`eval/t1_tirones.mjs`: qué cuadro tarda).
     window.__croquisT = t;
-    window.__croquisCamaraDibujada = camaraViva();
+    const e = camaraViva();
+    window.__croquisCamaraDibujada = e.modo === "conductor" ? `conductor-${e.conductor}` : e.modo;
     const primero = prev === null;
     if (primero) marcar("primer cuadro: update del grafo");
     if (
@@ -1511,6 +1643,48 @@ function adapterName(r: WebGPURenderer): string | null {
  * Lleva el diagnóstico (`?diag=1`): fps cada segundo, memoria estimada cada 4 s, y desecha el
  * renderer al desmontar (R3F no lo hace; con cada cambio de calidad se creaba otro).
  */
+/** Lo que no tapa la vista aunque esté entre la cámara y el impacto (el piso y lo de la acción). */
+const NO_TAPA =
+  /^(suelo|cerros|calzada|rayas|banqueta|guarnicion|marcas|evidencia|perfil_urbano|matas|punto_impacto|restos|vidrios|pieza_|charco|cebo|vista_|objetivo_|oclusor|indicadores)/;
+
+/**
+ * El ajuste de la cámara cinematográfica (giro de la órbita y altura) con la vista despejada al
+ * impacto un segundo antes, en el impacto y un segundo después (René, 2026-11-04: el poste del
+ * semáforo de lateral_interseccion tapaba el impacto). Rayo de la cámara al punto de impacto a
+ * 1 m de altura contra todo lo que no es piso ni parte de la acción.
+ */
+function ajusteSinObstaculos(graph: SceneGraph, resultado: Resultado): CinematicAdjust {
+  const deAccion = new Set<Object3D>();
+  for (const v of graph.vehicles) v.group.traverse((o) => deAccion.add(o));
+  for (const p of graph.persons) p.group.traverse((o) => deAccion.add(o));
+  graph.root.updateMatrixWorld(true);
+  const obstaculos: Object3D[] = [];
+  graph.root.traverse((o) => {
+    if (!(o as Mesh).isMesh || deAccion.has(o) || NO_TAPA.test(o.name) || !o.visible) return;
+    obstaculos.push(o);
+  });
+  const ray = new Raycaster();
+  const desde = new Vector3();
+  const hacia = new Vector3();
+  const objetivo = (t: number, a: CinematicAdjust): Vector3 => {
+    const pi = resultado.punto_impacto;
+    if (pi) return hacia.set(...toThree(pi.x, pi.y, 1.0));
+    return hacia.set(...cinematicCamera(resultado, t, undefined, a).target);
+  };
+  return chooseCinematicAdjust([-1, 0, 1], (a, t) => {
+    const pose = cinematicCamera(resultado, t, undefined, a);
+    desde.set(...pose.position);
+    const dir = objetivo(t, a).clone().sub(desde);
+    const largo = dir.length();
+    if (largo < 1e-3) return true;
+    ray.set(desde, dir.normalize());
+    ray.near = 0;
+    // El último metro es el impacto mismo.
+    ray.far = Math.max(0, largo - 1.0);
+    return ray.intersectObjects(obstaculos, false).length === 0;
+  });
+}
+
 /** Contexto de dibujo directo (sin posproducción): el renderer elige su destino. */
 const SIN_POSPROCESO: ContextoRender = { renderTarget: null, mrt: null };
 

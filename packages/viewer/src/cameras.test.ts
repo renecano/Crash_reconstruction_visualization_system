@@ -185,3 +185,61 @@ describe("cámaras", () => {
     );
   });
 });
+
+describe("botones de cámara y cámara viva (René, 2026-11-04)", () => {
+  it("«conductor-<id>» es la cámara del conductor de ese vehículo; lo demás, su modo", async () => {
+    const { cameraFromButton } = await import("./cameras");
+    expect(cameraFromButton("conductor-veh-a")).toEqual({ modo: "conductor", conductor: "veh-a" });
+    expect(cameraFromButton("conductor-V2")).toEqual({ modo: "conductor", conductor: "V2" });
+    for (const m of ["libre", "cenital", "cinematica", "dano", "persona"] as const)
+      expect(cameraFromButton(m)).toEqual({ modo: m });
+    expect(cameraFromButton("conductor-")).toBeNull();
+    expect(cameraFromButton("otra")).toBeNull();
+  });
+
+  it("dos elecciones son la misma solo con el mismo modo y, en el conductor, el mismo vehículo", async () => {
+    const { sameCamera } = await import("./cameras");
+    expect(sameCamera({ modo: "cenital" }, { modo: "cenital", conductor: "x" })).toBe(true);
+    expect(
+      sameCamera({ modo: "conductor", conductor: "A" }, { modo: "conductor", conductor: "A" }),
+    ).toBe(true);
+    expect(
+      sameCamera({ modo: "conductor", conductor: "A" }, { modo: "conductor", conductor: "B" }),
+    ).toBe(false);
+    expect(sameCamera({ modo: "libre" }, { modo: "cenital" })).toBe(false);
+  });
+});
+
+describe("cinematográfica sin obstáculos (René, 2026-11-04)", () => {
+  it("sin nada en medio no se mueve; con un poste, el menor giro o subida que lo despeja", async () => {
+    const { chooseCinematicAdjust, CINEMATIC_ADJUSTS } = await import("./cameras");
+    expect(chooseCinematicAdjust([-1, 0, 1], () => true)).toEqual({ dAz: 0, dH: 0 });
+    // El poste tapa todo lo que gira menos de 20° a la izquierda sin subir.
+    const despeja = (a: { dAz: number; dH: number }) =>
+      a.dH >= 1.5 || a.dAz <= (-20 * Math.PI) / 180;
+    const a = chooseCinematicAdjust([-1, 0, 1], (x) => despeja(x));
+    expect(despeja(a)).toBe(true);
+    // Es el primero que despeja en el orden de menor a mayor cambio.
+    expect(CINEMATIC_ADJUSTS.find((x) => despeja(x))).toEqual(a);
+  });
+
+  it("si nada despeja todos los instantes, el que despeja más", async () => {
+    const { chooseCinematicAdjust } = await import("./cameras");
+    const a = chooseCinematicAdjust([-1, 0, 1], (x, t) => x.dH === 3 && t !== 1);
+    expect(a.dH).toBe(3);
+  });
+
+  it("el ajuste gira la órbita alrededor del objetivo y sube la cámara", async () => {
+    const { cinematicCamera } = await import("./cameras");
+    const r = await loadResultado("alcance");
+    const base = cinematicCamera(r, 0);
+    const sub = cinematicCamera(r, 0, undefined, { dAz: 0, dH: 2 });
+    expect(sub.position[1] - base.position[1]).toBeCloseTo(2, 6);
+    expect(sub.target).toEqual(base.target);
+    const giro = cinematicCamera(r, 0, undefined, { dAz: Math.PI / 6, dH: 0 });
+    const d = (p: readonly number[], q: readonly number[]) =>
+      Math.hypot(p[0]! - q[0]!, p[2]! - q[2]!);
+    expect(d(giro.position, giro.target)).toBeCloseTo(d(base.position, base.target), 6);
+    expect(d(giro.position, base.position)).toBeGreaterThan(1);
+  });
+});

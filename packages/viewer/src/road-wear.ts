@@ -80,20 +80,37 @@ export function buildWearMap(
   const puddles = valueNoise(Math.trunc(seed) * 11 + 3, 36);
   const polish = valueNoise(Math.trunc(seed) * 13 + 5, 8);
   const texel = windowM / size;
-  for (let j = 0; j < size; j++) {
-    for (let i = 0; i < size; i++) {
-      const x = center.x - windowM / 2 + (i + 0.5) * texel;
-      const y = center.y - windowM / 2 + (j + 0.5) * texel;
-      const u = i / size;
-      const v = j / size;
-      // Rodadas: lo más cerca que queda el punto de alguna rodada de algún carril.
-      let track = 0;
-      for (const l of lanes) {
+  const x0 = center.x - windowM / 2;
+  const y0 = center.y - windowM / 2;
+  // Rodadas: lo más cerca que queda cada texel de alguna rodada de algún carril. Cada carril solo
+  // alcanza los texeles a menos de `WHEEL_TRACK_OFFSET_M + WHEEL_TRACK_WIDTH_M` de su eje: se
+  // recorre solo su caja (antes, cada texel contra cada carril: 0.2–0.3 s; René, 2026-11-04). El
+  // resultado es el mismo (máximo de las mismas cantidades; fuera del alcance vale 0).
+  const tracks = new Float64Array(size * size);
+  const alcance = WHEEL_TRACK_OFFSET_M + WHEEL_TRACK_WIDTH_M;
+  for (const l of lanes) {
+    const i0 = Math.max(0, Math.floor((Math.min(l.a.x, l.b.x) - alcance - x0) / texel - 0.5));
+    const i1 = Math.min(size - 1, Math.ceil((Math.max(l.a.x, l.b.x) + alcance - x0) / texel - 0.5));
+    const j0 = Math.max(0, Math.floor((Math.min(l.a.y, l.b.y) - alcance - y0) / texel - 0.5));
+    const j1 = Math.min(size - 1, Math.ceil((Math.max(l.a.y, l.b.y) + alcance - y0) / texel - 0.5));
+    for (let j = j0; j <= j1; j++) {
+      const y = y0 + (j + 0.5) * texel;
+      for (let i = i0; i <= i1; i++) {
+        const x = x0 + (i + 0.5) * texel;
         const d = distToSegment(x, y, l.a, l.b);
         const dd = Math.abs(d - WHEEL_TRACK_OFFSET_M);
         const k = Math.max(0, 1 - dd / WHEEL_TRACK_WIDTH_M);
-        track = Math.max(track, k * k * (3 - 2 * k));
+        const s = k * k * (3 - 2 * k);
+        const o = j * size + i;
+        if (s > tracks[o]!) tracks[o] = s;
       }
+    }
+  }
+  for (let j = 0; j < size; j++) {
+    for (let i = 0; i < size; i++) {
+      const u = i / size;
+      const v = j / size;
+      const track = tracks[j * size + i]!;
       const wear = Math.min(1, 0.7 * track + 0.3 * polish(u, v));
       const patch = patches(u, v);
       const patchMask = patch > 0.74 ? Math.min(1, (patch - 0.74) / 0.1) : 0;

@@ -46,6 +46,10 @@ import {
   setSpeed,
   step,
   togglePlay,
+  cameraFromButton,
+  SIGHT_BLOCKED,
+  SIGHT_VISIBLE,
+  type CameraChoice,
   type CameraMode,
   type QualityLevel,
   type ViewerClock,
@@ -114,6 +118,8 @@ const T = textos(
     usarMedia: "Usar calidad media",
     preparando: "Preparando el dibujo 3D…",
     preparandoResto: "Preparando la reproducción",
+    lineaVision: "línea de visión: se veía",
+    lineaTapada: "algo la tapaba",
     diagnostico: "Diagnóstico del visor",
     calidad: "Calidad",
     automatica: "Automática",
@@ -162,6 +168,8 @@ const T = textos(
     usarMedia: "Use medium quality",
     preparando: "Preparing the 3D view…",
     preparandoResto: "Preparing playback",
+    lineaVision: "line of sight: visible",
+    lineaTapada: "blocked",
     diagnostico: "Viewer diagnostics",
     calidad: "Quality",
     automatica: "Automatic",
@@ -365,6 +373,7 @@ function DiagnosticoPanel({ titulo }: { titulo: string }): ReactElement {
       {fila("fps", d.fps)}
       {fila("calidad auto", d.calidadMotivo)}
       {fila("precompilado", d.precompilado)}
+      {fila("armado del grafo", d.armado)}
       {fila(
         "tareas largas",
         d.tareasLargas.length
@@ -575,7 +584,7 @@ export function VisorEscena({
   // Se guarda con qué visor (calidad, backend, generación) se vio: al recrearlo vuelve el aviso.
   const [vistoEn, setVistoEn] = useState<string | null>(null);
   // La cámara «viva» (ver `SceneViewerProps.cameraLive`): el botón la escribe en el mismo clic.
-  const camaraViva = useRef<CameraMode | null>(null);
+  const camaraViva = useRef<CameraChoice | null>(null);
   // Backend sin prueba en vivo (René, 2026-11-04): la prueba por medición (ADR 0006) volvía a
   // crear el renderer a media reproducción. Manda lo recordado en este navegador (lo que la
   // persona eligió a mano); si no, WebGL 2 en GPU integrada y WebGPU en las demás.
@@ -953,6 +962,29 @@ export function VisorEscena({
           {dibujo && clock && !error && !rendido && enPantalla && !grafoListo ? (
             <AvancePrecompilado texto={t.preparandoResto} />
           ) : null}
+          {dibujo &&
+          (cameraMode === "cenital" || cameraMode === "libre") &&
+          (dibujo.visibilidad?.length ?? 0) > 0 ? (
+            // Las líneas de visión se dibujan solo en la cenital y la libre, con su leyenda
+            // (René, 2026-11-04: desde el asiento se veían como una raya suelta).
+            <p
+              className="t-nota vidrio pointer-events-none absolute top-3 right-3 flex items-center gap-2 px-3 py-1 text-texto"
+              data-testid="leyenda-vision"
+            >
+              <span
+                aria-hidden
+                className="inline-block h-0.5 w-5"
+                style={{ background: SIGHT_VISIBLE }}
+              />
+              {t.lineaVision}
+              <span
+                aria-hidden
+                className="inline-block h-0.5 w-5"
+                style={{ background: SIGHT_BLOCKED }}
+              />
+              {t.lineaTapada}
+            </p>
+          ) : null}
           {avisoRecuperacion ? (
             <p
               role="status"
@@ -1006,7 +1038,9 @@ export function VisorEscena({
                   aria-checked={sel}
                   title={o.valor === "libre" ? t.camaras.libreAyuda : undefined}
                   onClick={() => {
-                    camaraViva.current = o.valor as CameraMode;
+                    // El siguiente cuadro ya dibuja esta cámara (modo y, en la del conductor, de
+                    // qué vehículo), sin esperar a React.
+                    camaraViva.current = cameraFromButton(o.valor);
                     onControl("camara", o.valor);
                   }}
                   className={`boton-secundario min-h-11 px-4 ${sel ? "border-texto bg-superficie-alta" : ""}`}
