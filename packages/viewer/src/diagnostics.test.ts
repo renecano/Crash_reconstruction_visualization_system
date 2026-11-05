@@ -117,6 +117,14 @@ describe("tareas largas y marcas (René, 2026-11-04)", () => {
     expect(getDiagnostico().tareasLargas.map((x) => x.duracion)).toEqual([180, 120, 120]);
   });
 
+  it("una marca puesta dentro de la tarea (p. ej. al armar el grafo) es su causa", () => {
+    reiniciarDiagnostico();
+    const t0 = performance.now();
+    marcar("armando el grafo");
+    // La tarea empezó 200 ms antes de la marca y duró 450 ms: la marca cae dentro.
+    expect(registrarTareaLarga(450, t0 - 200).causa).toBe("armando el grafo");
+  });
+
   it("conserva solo las últimas doce tareas largas", () => {
     reiniciarDiagnostico();
     for (let i = 0; i < 20; i++) registrarTareaLarga(100 + i, i);

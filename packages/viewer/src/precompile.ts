@@ -33,6 +33,8 @@ import {
   type Scene,
 } from "three";
 
+import { marcar } from "./diagnostics";
+
 /** Capa en la que se esconden las ramas aún sin compilar (la cámara y la sombra no la ven). */
 export const CAPA_OCULTA = 31;
 /** Capa auxiliar del calentamiento de sombras: solo las luces y el cebo están en ella. */
@@ -295,11 +297,8 @@ export class Precompilador {
   }
 
   private async uno(o: Object3D, ctx: ContextoRender): Promise<void> {
-    try {
-      performance.mark(`precompilando: ${o.name || o.type}`);
-    } catch {
-      /* sin User Timing */
-    }
+    // Al diagnóstico (y a la pestaña Performance): una tarea larga aquí dice qué objeto era.
+    marcar(`precompilando: ${o.name || o.type}`);
     const r = this.renderer;
     const rtPrevio = r.getRenderTarget();
     const mrtPrevio = r.getMRT();

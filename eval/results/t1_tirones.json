@@ -1298,7 +1298,7 @@
     "camara_respuesta_max_ms": 39,
     "camara_tarea_larga_max_ms": 0,
     "cumple": false,
-    "tareas_largas_traza_total": 16
+    "tareas_largas_traza_total": 6
    },
    {
     "escenario": "caso",
@@ -3721,7 +3721,7 @@
     "camara_respuesta_max_ms": 247,
     "camara_tarea_larga_max_ms": 180,
     "cumple": false,
-    "tareas_largas_traza_total": 297
+    "tareas_largas_traza_total": 23
    },
    {
     "escenario": "visor",
@@ -5776,7 +5776,7 @@
     "camara_respuesta_max_ms": 102,
     "camara_tarea_larga_max_ms": 114,
     "cumple": false,
-    "tareas_largas_traza_total": 68
+    "tareas_largas_traza_total": 10
    },
    {
     "escenario": "visor",
@@ -7391,7 +7391,7 @@
        "causa": "sin marca (¿carga, recolección de basura, otra pestaña?)"
       }
      ],
-     "pipelines_creados_total": 91,
+     "pipelines_creados_total": 8,
      "tareas_largas_traza": []
     },
     "camaras": [
@@ -8524,7 +8524,7 @@
     "camara_respuesta_max_ms": 298,
     "camara_tarea_larga_max_ms": 4070,
     "cumple": false,
-    "tareas_largas_traza_total": 1268
+    "tareas_largas_traza_total": 40
    },
    {
     "escenario": "caso",
@@ -9219,7 +9219,7 @@
     "camara_respuesta_max_ms": 49,
     "camara_tarea_larga_max_ms": 0,
     "cumple": false,
-    "tareas_largas_traza_total": 46
+    "tareas_largas_traza_total": 9
    }
   ],
   "cumple": false
@@ -9522,7 +9522,7 @@
     "camara_respuesta_max_ms": 402,
     "camara_tarea_larga_max_ms": 0,
     "cumple": false,
-    "tareas_largas_traza_total": 23
+    "tareas_largas_traza_total": 3
    }
   ],
   "cumple": false
@@ -11454,7 +11454,7 @@
     "camara_respuesta_max_ms": 886,
     "camara_tarea_larga_max_ms": 241,
     "cumple": false,
-    "tareas_largas_traza_total": 233
+    "tareas_largas_traza_total": 13
    }
   ],
   "cumple": false
@@ -13116,7 +13116,7 @@
        "causa": "sin marca (¿carga, recolección de basura, otra pestaña?)"
       }
      ],
-     "pipelines_creados_total": 82,
+     "pipelines_creados_total": 8,
      "tareas_largas_traza": []
     },
     "camaras": [
@@ -14082,7 +14082,1682 @@
     "camara_respuesta_max_ms": 109,
     "camara_tarea_larga_max_ms": 102,
     "cumple": false,
-    "tareas_largas_traza_total": 320
+    "tareas_largas_traza_total": 40
+   }
+  ],
+  "cumple": false
+ },
+ "webgpu_sin_marca": {
+  "generated_at": "2026-11-05T01:59:29.455Z",
+  "git_commit": "c6f05ad",
+  "umbral_ms": 100,
+  "corridas": [
+   {
+    "escenario": "visor",
+    "escena": "lateral_interseccion",
+    "dpr_navegador": 1,
+    "calidad_pedida": "auto",
+    "backend_pedido": "webgpu",
+    "cpu": 1,
+    "listo_ms": 16221,
+    "carga_desde_clic_ms": {
+     "primer_cuadro": 4013,
+     "vehiculos_en_pantalla": 14679,
+     "listo": 15334,
+     "banderas": {
+      "renderer": 770,
+      "__croquisSkyReady": 1620,
+      "__croquisTreesReady": 1730,
+      "__croquisTexturesReady": 1842,
+      "__croquisVehicleModelsReady": 2923,
+      "__croquisPeopleReady": 3309,
+      "__croquisReady": 3906,
+      "__croquisDebrisReady": 3906,
+      "primer_cuadro": 4013,
+      "vehiculos_en_pantalla": 14679,
+      "__croquisGraphReady": 15334
+     }
+    },
+    "sombras_calentadas": 73,
+    "orden_revelado": [
+     "suelo_lejano",
+     "cerros",
+     "suelo",
+     "banqueta_sin_sombra",
+     "guarniciones",
+     "calzada_sin_sombra",
+     "persona_adulto",
+     "persona_adulto",
+     "persona_adulto",
+     "rayas_blancas_sin_sombra",
+     "calzada",
+     "banqueta",
+     "rayas_blancas",
+     "muro",
+     "marcas_derrape",
+     "evidencia_evid-vidrios_1",
+     "antenas",
+     "Mesh",
+     "Mesh",
+     "evidencia_evid-vidrios_2",
+     "letreros",
+     "senal_alto",
+     "senal_ceda",
+     "senal_velocidad",
+     "senal_informativa",
+     "indicadores_contacto",
+     "copas",
+     "varillas",
+     "copas",
+     "edificios"
+    ],
+    "pipelines_en_carga": {
+     "total": 137,
+     "ms_total": 6,
+     "mas_lentos": [
+      {
+       "t": null,
+       "material": "/NodeMaterial",
+       "objeto": "",
+       "ms": 1,
+       "sombra": false,
+       "precompilado": null
+      },
+      {
+       "t": -3,
+       "material": "/MeshStandardNodeMaterial",
+       "objeto": "suelo_lejano",
+       "ms": 1,
+       "sombra": false,
+       "precompilado": null
+      },
+      {
+       "t": -3,
+       "material": "/MeshStandardNodeMaterial",
+       "objeto": "persona_adulto",
+       "ms": 1,
+       "sombra": false,
+       "precompilado": null
+      },
+      {
+       "t": -3,
+       "material": "/MeshStandardNodeMaterial",
+       "objeto": "persona_adulto",
+       "ms": 1,
+       "sombra": false,
+       "precompilado": null
+      },
+      {
+       "t": -3,
+       "material": "/MeshStandardNodeMaterial",
+       "objeto": "rayas_blancas_sin_sombra",
+       "ms": 1,
+       "sombra": false,
+       "precompilado": null
+      },
+      {
+       "t": -3,
+       "material": "ShadowMaterial/NodeMaterial",
+       "objeto": "muro",
+       "ms": 1,
+       "sombra": true,
+       "precompilado": "revelado"
+      },
+      {
+       "t": -3,
+       "material": "Background.material/NodeMaterial",
+       "objeto": "Background.mesh",
+       "ms": 0,
+       "sombra": false,
+       "precompilado": null
+      },
+      {
+       "t": -3,
+       "material": "outputColorTransform/NodeMaterial",
+       "objeto": "Output Color Transform",
+       "ms": 0,
+       "sombra": false,
+       "precompilado": null
+      },
+      {
+       "t": -3,
+       "material": "PMREM_equirect/NodeMaterial",
+       "objeto": "",
+       "ms": 0,
+       "sombra": false,
+       "precompilado": null
+      },
+      {
+       "t": -3,
+       "material": "PMREM_ggx/NodeMaterial",
+       "objeto": "",
+       "ms": 0,
+       "sombra": false,
+       "precompilado": null
+      },
+      {
+       "t": -3,
+       "material": "/MeshStandardMaterial",
+       "objeto": "",
+       "ms": 0,
+       "sombra": false,
+       "precompilado": null
+      },
+      {
+       "t": -3,
+       "material": "/MeshStandardMaterial",
+       "objeto": "",
+       "ms": 0,
+       "sombra": false,
+       "precompilado": null
+      }
+     ]
+    },
+    "diag": {
+     "backend": "webgpu",
+     "adaptador": "intel · gen-9",
+     "calidad": "media",
+     "fps": 36,
+     "perdidas": 0,
+     "recuperaciones": 0,
+     "calidad_motivo": "automática: inicial media (GPU integrada)",
+     "dpr": 1.0000000298023224,
+     "lienzo": [
+      1713,
+      670
+     ],
+     "memoria": {
+      "texturasMB": 49.7,
+      "texturas": 39,
+      "texturasRenderer": 75,
+      "geometriasRenderer": 113,
+      "pantallaMB": 35,
+      "sombrasMB": 4,
+      "totalMB": 88.7
+     },
+     "dibujos_por_cuadro": 107,
+     "triangulos_por_cuadro": 214252
+    },
+    "errores_pagina": [],
+    "lienzos_en_danos": 1,
+    "tareas_largas_traza": [
+     {
+      "en_ms": 726,
+      "duracion_ms": 461,
+      "fase": "croquis: montaje del visor (media, webgpu)",
+      "t_escena": null,
+      "funciones": [
+       {
+        "funcion": "(anónima)",
+        "ms": 100
+       },
+       {
+        "funcion": "ob",
+        "ms": 47
+       },
+       {
+        "funcion": "I.x",
+        "ms": 36
+       }
+      ],
+      "eventos": [
+       {
+        "evento": "TimerFire",
+        "ms": 461
+       },
+       {
+        "evento": "FunctionCall ss",
+        "ms": 460
+       },
+       {
+        "evento": "V8.StackGuard",
+        "ms": 31
+       }
+      ]
+     },
+     {
+      "en_ms": 2049,
+      "duracion_ms": 569,
+      "fase": "croquis: llegaron los modelos de los vehículos",
+      "t_escena": null,
+      "funciones": [
+       {
+        "funcion": "(anónima)",
+        "ms": 160
+       },
+       {
+        "funcion": "I.x",
+        "ms": 50
+       },
+       {
+        "funcion": "ob",
+        "ms": 42
+       }
+      ],
+      "eventos": [
+       {
+        "evento": "FunctionCall A",
+        "ms": 568
+       },
+       {
+        "evento": "V8.StackGuard",
+        "ms": 36
+       },
+       {
+        "evento": "V8.HandleInterrupts",
+        "ms": 36
+       }
+      ]
+     }
+    ],
+    "reproduccion": {
+     "segundos": 10,
+     "pipelines_creados": [
+      {
+       "t": -2.407299999997018,
+       "material": "UCB_Lights_and_Glass_Transperent/MeshStandardMaterial",
+       "objeto": "UTLTRUCK90_Glass_Driver_UCB_Lights_and_Glass_Transperent_0_fusion",
+       "ms": 0,
+       "sombra": false,
+       "precompilado": "revelado"
+      },
+      {
+       "t": -2.407299999997018,
+       "material": "UCB_Lights_and_Glass_Transperent/MeshStandardMaterial",
+       "objeto": "UTLTRUCK90_Glass_Driver_UCB_Lights_and_Glass_Transperent_0_fusion",
+       "ms": 0,
+       "sombra": false,
+       "precompilado": "revelado"
+      },
+      {
+       "t": -2.2902999999970177,
+       "material": "UCB_Lights_and_Glass_Transperent/MeshStandardMaterial",
+       "objeto": "windshield",
+       "ms": 0,
+       "sombra": false,
+       "precompilado": "revelado"
+      },
+      {
+       "t": -2.2902999999970177,
+       "material": "UCB_Lights_and_Glass_Transperent/MeshStandardMaterial",
+       "objeto": "windshield",
+       "ms": 0,
+       "sombra": false,
+       "precompilado": "revelado"
+      },
+      {
+       "t": -2.240200000002978,
+       "material": "UCB_Lights_and_Glass_Transperent/MeshStandardMaterial",
+       "objeto": "Sigil08_Glass_Body_UCB_Lights_and_Glass_Transperent_0_fusion",
+       "ms": 0,
+       "sombra": false,
+       "precompilado": "revelado"
+      },
+      {
+       "t": -2.240200000002978,
+       "material": "UCB_Lights_and_Glass_Transperent/MeshStandardMaterial",
+       "objeto": "Sigil08_Glass_Body_UCB_Lights_and_Glass_Transperent_0_fusion",
+       "ms": 0,
+       "sombra": false,
+       "precompilado": "revelado"
+      },
+      {
+       "t": -2.173899999998507,
+       "material": "UCB_Lights_and_Glass_Transperent/MeshStandardMaterial",
+       "objeto": "windshield",
+       "ms": 0,
+       "sombra": false,
+       "precompilado": "revelado"
+      },
+      {
+       "t": -2.173899999998507,
+       "material": "UCB_Lights_and_Glass_Transperent/MeshStandardMaterial",
+       "objeto": "windshield",
+       "ms": 0,
+       "sombra": false,
+       "precompilado": "revelado"
+      }
+     ],
+     "tareas_largas": [],
+     "mas_larga_ms": 0,
+     "mayores_a_100": 0,
+     "causas": [
+      {
+       "duracion_ms": 81,
+       "causa": "sin marca (¿carga, recolección de basura, otra pestaña?)"
+      },
+      {
+       "duracion_ms": 88,
+       "causa": "precompilando: banqueta_sin_sombra"
+      },
+      {
+       "duracion_ms": 95,
+       "causa": "precompilando: tarjetas"
+      },
+      {
+       "duracion_ms": 63,
+       "causa": "precompilando: Mesh"
+      },
+      {
+       "duracion_ms": 53,
+       "causa": "precompilando: headlight_r"
+      },
+      {
+       "duracion_ms": 56,
+       "causa": "precompilando: Sigil08_Interior_UCB_Interiors_2_0"
+      }
+     ],
+     "pipelines_creados_total": 8
+    },
+    "camaras": [
+     {
+      "camara": "Libre",
+      "respuesta_ms": 26,
+      "largas": [],
+      "causas": [
+       {
+        "duracion_ms": 63,
+        "causa": "precompilando: Mesh"
+       },
+       {
+        "duracion_ms": 53,
+        "causa": "precompilando: headlight_r"
+       },
+       {
+        "duracion_ms": 56,
+        "causa": "precompilando: Sigil08_Interior_UCB_Interiors_2_0"
+       }
+      ],
+      "pipelines_creados": [],
+      "react_ms": null,
+      "cuadro_ms": null,
+      "cuadros_ms": [
+       0,
+       16
+      ],
+      "pipelines_creados_total": 0
+     },
+     {
+      "camara": "Cenital",
+      "respuesta_ms": 19,
+      "largas": [],
+      "causas": [
+       {
+        "duracion_ms": 63,
+        "causa": "precompilando: Mesh"
+       },
+       {
+        "duracion_ms": 53,
+        "causa": "precompilando: headlight_r"
+       },
+       {
+        "duracion_ms": 56,
+        "causa": "precompilando: Sigil08_Interior_UCB_Interiors_2_0"
+       }
+      ],
+      "pipelines_creados": [],
+      "react_ms": null,
+      "cuadro_ms": null,
+      "cuadros_ms": [
+       0,
+       14,
+       0
+      ],
+      "pipelines_creados_total": 0
+     },
+     {
+      "camara": "Cinematográfica",
+      "respuesta_ms": 21,
+      "largas": [],
+      "causas": [
+       {
+        "duracion_ms": 63,
+        "causa": "precompilando: Mesh"
+       },
+       {
+        "duracion_ms": 53,
+        "causa": "precompilando: headlight_r"
+       },
+       {
+        "duracion_ms": 56,
+        "causa": "precompilando: Sigil08_Interior_UCB_Interiors_2_0"
+       }
+      ],
+      "pipelines_creados": [],
+      "react_ms": null,
+      "cuadro_ms": null,
+      "cuadros_ms": [
+       0,
+       16,
+       0
+      ],
+      "pipelines_creados_total": 0
+     },
+     {
+      "camara": "Daño",
+      "respuesta_ms": 18,
+      "largas": [],
+      "causas": [
+       {
+        "duracion_ms": 63,
+        "causa": "precompilando: Mesh"
+       },
+       {
+        "duracion_ms": 53,
+        "causa": "precompilando: headlight_r"
+       },
+       {
+        "duracion_ms": 56,
+        "causa": "precompilando: Sigil08_Interior_UCB_Interiors_2_0"
+       }
+      ],
+      "pipelines_creados": [],
+      "react_ms": null,
+      "cuadro_ms": null,
+      "cuadros_ms": [
+       0,
+       14,
+       0
+      ],
+      "pipelines_creados_total": 0
+     },
+     {
+      "camara": "Conductor A",
+      "respuesta_ms": 17,
+      "largas": [],
+      "causas": [
+       {
+        "duracion_ms": 63,
+        "causa": "precompilando: Mesh"
+       },
+       {
+        "duracion_ms": 53,
+        "causa": "precompilando: headlight_r"
+       },
+       {
+        "duracion_ms": 56,
+        "causa": "precompilando: Sigil08_Interior_UCB_Interiors_2_0"
+       }
+      ],
+      "pipelines_creados": [],
+      "react_ms": null,
+      "cuadro_ms": null,
+      "cuadros_ms": [
+       0,
+       12,
+       0
+      ],
+      "pipelines_creados_total": 0
+     },
+     {
+      "camara": "Conductor B",
+      "respuesta_ms": 27,
+      "largas": [],
+      "causas": [
+       {
+        "duracion_ms": 63,
+        "causa": "precompilando: Mesh"
+       },
+       {
+        "duracion_ms": 53,
+        "causa": "precompilando: headlight_r"
+       },
+       {
+        "duracion_ms": 56,
+        "causa": "precompilando: Sigil08_Interior_UCB_Interiors_2_0"
+       }
+      ],
+      "pipelines_creados": [],
+      "react_ms": null,
+      "cuadro_ms": null,
+      "cuadros_ms": [
+       0,
+       22
+      ],
+      "pipelines_creados_total": 0
+     }
+    ],
+    "camara_respuesta_max_ms": 27,
+    "camara_tarea_larga_max_ms": 0,
+    "cumple": true,
+    "tareas_largas_traza_total": 2
+   }
+  ],
+  "cumple": true
+ },
+ "despues_camaras": {
+  "generated_at": "2026-11-05T02:40:45.065Z",
+  "git_commit": "c6f05ad",
+  "umbral_ms": 100,
+  "corridas": [
+   {
+    "escenario": "caso",
+    "escena": "a2010930",
+    "dpr_navegador": 1,
+    "calidad_pedida": "auto",
+    "backend_pedido": "auto",
+    "cpu": 1,
+    "listo_ms": 150390,
+    "carga_desde_clic_ms": {
+     "primer_cuadro": 20057,
+     "vehiculos_en_pantalla": 107498,
+     "listo": 116684,
+     "banderas": {
+      "renderer": 2840,
+      "__croquisSkyReady": 10069,
+      "__croquisTreesReady": 11665,
+      "__croquisTexturesReady": 11790,
+      "__croquisVehicleModelsReady": 17551,
+      "__croquisPeopleReady": 17821,
+      "primer_cuadro": 20057,
+      "__croquisReady": 24286,
+      "__croquisDebrisReady": 24286,
+      "vehiculos_en_pantalla": 107498,
+      "__croquisGraphReady": 116684
+     }
+    },
+    "sombras_calentadas": 51,
+    "orden_revelado": [
+     "suelo_lejano",
+     "cerros",
+     "suelo",
+     "calzada_sin_sombra",
+     "rayas_blancas_sin_sombra",
+     "rayas_amarillas_sin_sombra",
+     "UTLTRUCK90_bottom_UCB_BOTTOM_0_fusion",
+     "UTLTRUCK90_Glass_Driver_UCB_Lights_and_Glass_Transperent_0_fusion",
+     "UTLTRUCK90_Blinkers_UCB_Lights_and_Glass_0_fusion",
+     "UTLTRUCK90_Body_UTLTRUCK90_Bodymat_0",
+     "UTLTRUCK90_Truckbed_UTLTRUCK90_Bodymat_0",
+     "UTLTRUCK90_Interior_UCB_Interiors_1_0",
+     "bumper_front",
+     "UTLTRUCK90_Hood_UTLTRUCK90_Bodymat_0",
+     "windshield",
+     "UTLTRUCK90_Brakelights_UCB_Lights_and_Glass_0",
+     "wheel_rl_rueda",
+     "wheel_rr_rueda",
+     "wheel_fl_rueda",
+     "wheel_fr_rueda",
+     "UTLTRUCK90_Steering_Wheel_UCB_Interiors_1_0",
+     "headlight_l",
+     "headlight_r",
+     "calzada",
+     "rayas_blancas",
+     "rayas_amarillas",
+     "antenas",
+     "letreros",
+     "senal_velocidad",
+     "senal_informativa"
+    ],
+    "pipelines_en_carga": {
+     "total": 114,
+     "ms_total": 7083,
+     "mas_lentos": [
+      {
+       "t": -4.78,
+       "material": "/MeshStandardMaterial",
+       "objeto": "",
+       "ms": 898,
+       "sombra": false,
+       "precompilado": null
+      },
+      {
+       "t": -4.78,
+       "material": "/MeshStandardMaterial",
+       "objeto": "cebo_sombras",
+       "ms": 483,
+       "sombra": false,
+       "precompilado": null
+      },
+      {
+       "t": -4.78,
+       "material": "ShadowMaterial/NodeMaterial",
+       "objeto": "tarjetas",
+       "ms": 288,
+       "sombra": true,
+       "precompilado": "revelado"
+      },
+      {
+       "t": -4.78,
+       "material": "ShadowMaterial/NodeMaterial",
+       "objeto": "tarjetas",
+       "ms": 227,
+       "sombra": true,
+       "precompilado": "revelado"
+      },
+      {
+       "t": -4.78,
+       "material": "ShadowMaterial/NodeMaterial",
+       "objeto": "UTLTRUCK90_bottom_UCB_BOTTOM_0_fusion",
+       "ms": 199,
+       "sombra": true,
+       "precompilado": "revelado"
+      },
+      {
+       "t": -4.78,
+       "material": "ShadowMaterial/NodeMaterial",
+       "objeto": "UTLTRUCK90_Blinkers_UCB_Lights_and_Glass_0_fusion",
+       "ms": 199,
+       "sombra": true,
+       "precompilado": "revelado"
+      },
+      {
+       "t": -4.78,
+       "material": "ShadowMaterial/NodeMaterial",
+       "objeto": "copas",
+       "ms": 198,
+       "sombra": true,
+       "precompilado": "revelado"
+      },
+      {
+       "t": -4.78,
+       "material": "ShadowMaterial/NodeMaterial",
+       "objeto": "copas",
+       "ms": 181,
+       "sombra": true,
+       "precompilado": "revelado"
+      },
+      {
+       "t": -4.78,
+       "material": "ShadowMaterial/NodeMaterial",
+       "objeto": "edificios",
+       "ms": 181,
+       "sombra": true,
+       "precompilado": "revelado"
+      },
+      {
+       "t": -4.78,
+       "material": "ShadowMaterial/NodeMaterial",
+       "objeto": "bumper_front",
+       "ms": 157,
+       "sombra": true,
+       "precompilado": "revelado"
+      },
+      {
+       "t": -4.78,
+       "material": "ShadowMaterial/NodeMaterial",
+       "objeto": "UTLTRUCK90_Truckbed_UTLTRUCK90_Bodymat_0",
+       "ms": 150,
+       "sombra": true,
+       "precompilado": "revelado"
+      },
+      {
+       "t": -4.78,
+       "material": "ShadowMaterial/NodeMaterial",
+       "objeto": "tinacos",
+       "ms": 148,
+       "sombra": true,
+       "precompilado": "revelado"
+      }
+     ]
+    },
+    "diag": {
+     "backend": "webgl2",
+     "adaptador": "ANGLE (Intel, Intel(R) UHD Graphics (0x00009B41) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+     "calidad": "media",
+     "fps": 37,
+     "perdidas": 0,
+     "recuperaciones": 0,
+     "calidad_motivo": "automática: inicial media (GPU integrada), tope media en WebGL",
+     "dpr": 1.0000000298023224,
+     "lienzo": [
+      1359,
+      670
+     ],
+     "memoria": {
+      "texturasMB": 45.8,
+      "texturas": 28,
+      "texturasRenderer": 62,
+      "geometriasRenderer": 77,
+      "pantallaMB": 27.8,
+      "sombrasMB": 4,
+      "totalMB": 77.6
+     },
+     "dibujos_por_cuadro": 71,
+     "triangulos_por_cuadro": 145297
+    },
+    "errores_pagina": [],
+    "lienzos_en_danos": 2,
+    "tareas_largas_traza": [
+     {
+      "en_ms": 0,
+      "duracion_ms": 1625,
+      "fase": null,
+      "t_escena": null,
+      "funciones": [
+       {
+        "funcion": "(program)",
+        "ms": 1611
+       },
+       {
+        "funcion": "isError",
+        "ms": 11
+       }
+      ],
+      "eventos": [
+       {
+        "evento": "V8.StackGuard",
+        "ms": 1610
+       },
+       {
+        "evento": "V8.HandleInterrupts",
+        "ms": 1610
+       },
+       {
+        "evento": "V8.InvokeApiInterruptCallbacks",
+        "ms": 1610
+       }
+      ]
+     },
+     {
+      "en_ms": 1656,
+      "duracion_ms": 325,
+      "fase": "fase:carga",
+      "t_escena": null,
+      "funciones": [
+       {
+        "funcion": "I",
+        "ms": 142
+       },
+       {
+        "funcion": "(program)",
+        "ms": 120
+       },
+       {
+        "funcion": "(anónima)",
+        "ms": 41
+       }
+      ],
+      "eventos": [
+       {
+        "evento": "EvaluateScript",
+        "ms": 311
+       },
+       {
+        "evento": "RunMicrotasks",
+        "ms": 206
+       },
+       {
+        "evento": "v8.compile",
+        "ms": 105
+       }
+      ]
+     },
+     {
+      "en_ms": 2446,
+      "duracion_ms": 2113,
+      "fase": "croquis: montaje del visor (media, webgl)",
+      "t_escena": null,
+      "funciones": [
+       {
+        "funcion": "getProgramParameter",
+        "ms": 833
+       },
+       {
+        "funcion": "(anónima)",
+        "ms": 186
+       },
+       {
+        "funcion": "useMemo",
+        "ms": 54
+       }
+      ],
+      "eventos": [
+       {
+        "evento": "FunctionCall z",
+        "ms": 2101
+       },
+       {
+        "evento": "V8.StackGuard",
+        "ms": 84
+       },
+       {
+        "evento": "V8.HandleInterrupts",
+        "ms": 82
+       }
+      ]
+     },
+     {
+      "en_ms": 4560,
+      "duracion_ms": 453,
+      "fase": "croquis: cambio de cámara → cinematica",
+      "t_escena": null,
+      "funciones": [
+       {
+        "funcion": "getProgramParameter",
+        "ms": 228
+       },
+       {
+        "funcion": "(program)",
+        "ms": 59
+       },
+       {
+        "funcion": "build",
+        "ms": 18
+       }
+      ],
+      "eventos": [
+       {
+        "evento": "FireAnimationFrame",
+        "ms": 417
+       },
+       {
+        "evento": "FunctionCall rv",
+        "ms": 415
+       },
+       {
+        "evento": "FunctionCall fq",
+        "ms": 12
+       }
+      ]
+     },
+     {
+      "en_ms": 5522,
+      "duracion_ms": 4080,
+      "fase": "croquis: primer cuadro: lo demás",
+      "t_escena": null,
+      "funciones": [
+       {
+        "funcion": "getProgramParameter",
+        "ms": 3643
+       },
+       {
+        "funcion": "build",
+        "ms": 54
+       },
+       {
+        "funcion": "texSubImage2D",
+        "ms": 38
+       }
+      ],
+      "eventos": [
+       {
+        "evento": "RunMicrotasks",
+        "ms": 4080
+       },
+       {
+        "evento": "V8.StackGuard",
+        "ms": 23
+       },
+       {
+        "evento": "V8.HandleInterrupts",
+        "ms": 22
+       }
+      ]
+     },
+     {
+      "en_ms": 9680,
+      "duracion_ms": 1220,
+      "fase": "croquis: llegó el HDRI del cielo",
+      "t_escena": null,
+      "funciones": [
+       {
+        "funcion": "getProgramParameter",
+        "ms": 894
+       },
+       {
+        "funcion": "build",
+        "ms": 44
+       },
+       {
+        "funcion": "getDataFromNode",
+        "ms": 22
+       }
+      ],
+      "eventos": [
+       {
+        "evento": "FunctionCall A",
+        "ms": 1220
+       },
+       {
+        "evento": "V8.StackGuard",
+        "ms": 14
+       },
+       {
+        "evento": "V8.HandleInterrupts",
+        "ms": 13
+       }
+      ]
+     },
+     {
+      "en_ms": 13364,
+      "duracion_ms": 1041,
+      "fase": "croquis: llegaron los modelos de los vehículos",
+      "t_escena": null,
+      "funciones": [
+       {
+        "funcion": "(anónima)",
+        "ms": 106
+       },
+       {
+        "funcion": "fromBufferAttribute",
+        "ms": 106
+       },
+       {
+        "funcion": "(anónima)",
+        "ms": 57
+       }
+      ],
+      "eventos": [
+       {
+        "evento": "FunctionCall A",
+        "ms": 1041
+       },
+       {
+        "evento": "V8.StackGuard",
+        "ms": 121
+       },
+       {
+        "evento": "V8.HandleInterrupts",
+        "ms": 117
+       }
+      ]
+     },
+     {
+      "en_ms": 14468,
+      "duracion_ms": 320,
+      "fase": "croquis: armando el grafo (con modelos)",
+      "t_escena": null,
+      "funciones": [
+       {
+        "funcion": "build",
+        "ms": 40
+       },
+       {
+        "funcion": "getProgramParameter",
+        "ms": 29
+       },
+       {
+        "funcion": "getDataFromNode",
+        "ms": 20
+       }
+      ],
+      "eventos": [
+       {
+        "evento": "FunctionCall A",
+        "ms": 318
+       },
+       {
+        "evento": "V8.StackGuard",
+        "ms": 18
+       },
+       {
+        "evento": "V8.HandleInterrupts",
+        "ms": 17
+       }
+      ]
+     },
+     {
+      "en_ms": 15144,
+      "duracion_ms": 1217,
+      "fase": "croquis: armando: desgaste de las rayas",
+      "t_escena": null,
+      "funciones": [
+       {
+        "funcion": "(anónima)",
+        "ms": 386
+       },
+       {
+        "funcion": "ob",
+        "ms": 245
+       },
+       {
+        "funcion": "P",
+        "ms": 132
+       }
+      ],
+      "eventos": [
+       {
+        "evento": "RunMicrotasks",
+        "ms": 1217
+       },
+       {
+        "evento": "V8.StackGuard",
+        "ms": 70
+       },
+       {
+        "evento": "V8.HandleInterrupts",
+        "ms": 69
+       }
+      ]
+     },
+     {
+      "en_ms": 16366,
+      "duracion_ms": 739,
+      "fase": "croquis: armando: daño de veh-a",
+      "t_escena": null,
+      "funciones": [
+       {
+        "funcion": "(anónima)",
+        "ms": 161
+       },
+       {
+        "funcion": "ob",
+        "ms": 135
+       },
+       {
+        "funcion": "(garbage collector)",
+        "ms": 131
+       }
+      ],
+      "eventos": [
+       {
+        "evento": "RunMicrotasks",
+        "ms": 738
+       },
+       {
+        "evento": "V8.StackGuard",
+        "ms": 107
+       },
+       {
+        "evento": "V8.HandleInterrupts",
+        "ms": 106
+       }
+      ]
+     },
+     {
+      "en_ms": 18264,
+      "duracion_ms": 350,
+      "fase": "croquis: aplicando las texturas del entorno",
+      "t_escena": null,
+      "funciones": [
+       {
+        "funcion": "fromBufferAttribute",
+        "ms": 73
+       },
+       {
+        "funcion": "computeBoundingSphere",
+        "ms": 58
+       },
+       {
+        "funcion": "setFromBufferAttribute",
+        "ms": 58
+       }
+      ],
+      "eventos": [
+       {
+        "evento": "RunMicrotasks",
+        "ms": 340
+       },
+       {
+        "evento": "FunctionCall A",
+        "ms": 10
+       },
+       {
+        "evento": "V8.StackGuard",
+        "ms": 10
+       }
+      ]
+     },
+     {
+      "en_ms": 20120,
+      "duracion_ms": 305,
+      "fase": "croquis: precompilando: calzada_sin_sombra",
+      "t_escena": null,
+      "funciones": [
+       {
+        "funcion": "I",
+        "ms": 100
+       },
+       {
+        "funcion": "Cg",
+        "ms": 88
+       },
+       {
+        "funcion": "(anónima)",
+        "ms": 60
+       }
+      ],
+      "eventos": [
+       {
+        "evento": "EvaluateScript",
+        "ms": 304
+       },
+       {
+        "evento": "RunMicrotasks",
+        "ms": 302
+       },
+       {
+        "evento": "V8.BytecodeBudgetInterrupt",
+        "ms": 3
+       }
+      ]
+     },
+     {
+      "en_ms": 20462,
+      "duracion_ms": 642,
+      "fase": "croquis: precompilando: calzada_sin_sombra",
+      "t_escena": null,
+      "funciones": [
+       {
+        "funcion": "wasm-function[302]",
+        "ms": 491
+       },
+       {
+        "funcion": "wasm-function[2683]",
+        "ms": 60
+       },
+       {
+        "funcion": "js-to-wasm",
+        "ms": 13
+       }
+      ],
+      "eventos": [
+       {
+        "evento": "RunMicrotasks",
+        "ms": 641
+       },
+       {
+        "evento": "V8.StackGuard",
+        "ms": 4
+       }
+      ]
+     },
+     {
+      "en_ms": 27793,
+      "duracion_ms": 305,
+      "fase": "croquis: precompilando: UTLTRUCK90_Body_UTLTRUCK90_Bodymat_0",
+      "t_escena": null,
+      "funciones": [
+       {
+        "funcion": "build",
+        "ms": 60
+       },
+       {
+        "funcion": "_getChildren",
+        "ms": 24
+       },
+       {
+        "funcion": "(anónima)",
+        "ms": 24
+       }
+      ],
+      "eventos": [
+       {
+        "evento": "RunMicrotasks",
+        "ms": 305
+       },
+       {
+        "evento": "V8.StackGuard",
+        "ms": 10
+       },
+       {
+        "evento": "V8.HandleInterrupts",
+        "ms": 9
+       }
+      ]
+     },
+     {
+      "en_ms": 30656,
+      "duracion_ms": 331,
+      "fase": "croquis: precompilando: UTLTRUCK90_Truckbed_UTLTRUCK90_Bodymat_0",
+      "t_escena": null,
+      "funciones": [
+       {
+        "funcion": "build",
+        "ms": 53
+       },
+       {
+        "funcion": "_getChildren",
+        "ms": 28
+       },
+       {
+        "funcion": "(anónima)",
+        "ms": 23
+       }
+      ],
+      "eventos": [
+       {
+        "evento": "RunMicrotasks",
+        "ms": 331
+       },
+       {
+        "evento": "V8.StackGuard",
+        "ms": 5
+       },
+       {
+        "evento": "V8.HandleInterrupts",
+        "ms": 5
+       }
+      ]
+     },
+     {
+      "en_ms": 65989,
+      "duracion_ms": 366,
+      "fase": "croquis: precompilando: tarjetas",
+      "t_escena": null,
+      "funciones": [
+       {
+        "funcion": "texSubImage2D",
+        "ms": 356
+       },
+       {
+        "funcion": "getCacheKey",
+        "ms": 3
+       }
+      ],
+      "eventos": [
+       {
+        "evento": "RunMicrotasks",
+        "ms": 366
+       },
+       {
+        "evento": "Decode Image",
+        "ms": 295
+       }
+      ]
+     },
+     {
+      "en_ms": 107064,
+      "duracion_ms": 917,
+      "fase": "croquis: precompilando: bolsa_frontal",
+      "t_escena": null,
+      "funciones": [
+       {
+        "funcion": "getProgramParameter",
+        "ms": 678
+       },
+       {
+        "funcion": "build",
+        "ms": 34
+       },
+       {
+        "funcion": "getDataFromNode",
+        "ms": 13
+       }
+      ],
+      "eventos": [
+       {
+        "evento": "RunMicrotasks",
+        "ms": 916
+       },
+       {
+        "evento": "V8.StackGuard",
+        "ms": 5
+       },
+       {
+        "evento": "V8.HandleInterrupts",
+        "ms": 5
+       }
+      ]
+     },
+     {
+      "en_ms": 111537,
+      "duracion_ms": 345,
+      "fase": "croquis: precompilando: bolsa_frontal",
+      "t_escena": null,
+      "funciones": [
+       {
+        "funcion": "getProgramParameter",
+        "ms": 287
+       },
+       {
+        "funcion": "build",
+        "ms": 6
+       },
+       {
+        "funcion": "getDataFromNode",
+        "ms": 4
+       }
+      ],
+      "eventos": [
+       {
+        "evento": "RunMicrotasks",
+        "ms": 345
+       }
+      ]
+     }
+    ],
+    "reproduccion": {
+     "segundos": 15,
+     "pipelines_creados": [
+      {
+       "t": -4.35659999999404,
+       "material": "/MeshStandardMaterial",
+       "objeto": "restos_plasticos",
+       "ms": 0,
+       "sombra": false,
+       "precompilado": null
+      }
+     ],
+     "tareas_largas": [
+      {
+       "en_ms": 1,
+       "duracion_ms": 51,
+       "t_escena": -3.2542999999970217
+      },
+      {
+       "en_ms": 575,
+       "duracion_ms": 55,
+       "t_escena": -2.6862999999970225
+      },
+      {
+       "en_ms": 908,
+       "duracion_ms": 53,
+       "t_escena": -2.353799999997022
+      },
+      {
+       "en_ms": 1009,
+       "duracion_ms": 59,
+       "t_escena": -2.247999999992552
+      },
+      {
+       "en_ms": 1116,
+       "duracion_ms": 61,
+       "t_escena": -2.2013999999985123
+      },
+      {
+       "en_ms": 1179,
+       "duracion_ms": 56,
+       "t_escena": -2.0818999999985124
+      },
+      {
+       "en_ms": 1236,
+       "duracion_ms": 73,
+       "t_escena": -2.0818999999985124
+      },
+      {
+       "en_ms": 1311,
+       "duracion_ms": 63,
+       "t_escena": -1.9420999999940418
+      },
+      {
+       "en_ms": 1375,
+       "duracion_ms": 56,
+       "t_escena": -1.9420999999940418
+      },
+      {
+       "en_ms": 1433,
+       "duracion_ms": 78,
+       "t_escena": -1.8037999999970222
+      },
+      {
+       "en_ms": 1514,
+       "duracion_ms": 75,
+       "t_escena": -1.8037999999970222
+      },
+      {
+       "en_ms": 1591,
+       "duracion_ms": 75,
+       "t_escena": -1.6482999999970223
+      },
+      {
+       "en_ms": 1668,
+       "duracion_ms": 80,
+       "t_escena": -1.6482999999970223
+      },
+      {
+       "en_ms": 1750,
+       "duracion_ms": 90,
+       "t_escena": -1.5482999999970222
+      },
+      {
+       "en_ms": 1841,
+       "duracion_ms": 61,
+       "t_escena": -1.5482999999970222
+      },
+      {
+       "en_ms": 1952,
+       "duracion_ms": 68,
+       "t_escena": -1.3680000000000023
+      },
+      {
+       "en_ms": 2021,
+       "duracion_ms": 56,
+       "t_escena": -1.3680000000000023
+      },
+      {
+       "en_ms": 2127,
+       "duracion_ms": 58,
+       "t_escena": -1.201899999998512
+      },
+      {
+       "en_ms": 2222,
+       "duracion_ms": 52,
+       "t_escena": -1.1146999999955318
+      },
+      {
+       "en_ms": 2313,
+       "duracion_ms": 62,
+       "t_escena": -1.076799999997022
+      },
+      {
+       "en_ms": 2418,
+       "duracion_ms": 55,
+       "t_escena": -0.9150999999940417
+      },
+      {
+       "en_ms": 2516,
+       "duracion_ms": 58,
+       "t_escena": -0.814399999998512
+      },
+      {
+       "en_ms": 2621,
+       "duracion_ms": 55,
+       "t_escena": -0.7203632731223513
+      },
+      {
+       "en_ms": 2719,
+       "duracion_ms": 63,
+       "t_escena": -0.6337082932753819
+      }
+     ],
+     "mas_larga_ms": 93,
+     "mayores_a_100": 0,
+     "causas": [
+      {
+       "duracion_ms": 53,
+       "causa": "sin marca (¿carga, recolección de basura, otra pestaña?)"
+      },
+      {
+       "duracion_ms": 53,
+       "causa": "sin marca (¿carga, recolección de basura, otra pestaña?)"
+      },
+      {
+       "duracion_ms": 51,
+       "causa": "sin marca (¿carga, recolección de basura, otra pestaña?)"
+      },
+      {
+       "duracion_ms": 54,
+       "causa": "sin marca (¿carga, recolección de basura, otra pestaña?)"
+      },
+      {
+       "duracion_ms": 50,
+       "causa": "sin marca (¿carga, recolección de basura, otra pestaña?)"
+      },
+      {
+       "duracion_ms": 72,
+       "causa": "sin marca (¿carga, recolección de basura, otra pestaña?)"
+      }
+     ],
+     "pipelines_creados_total": 1
+    },
+    "camaras": [
+     {
+      "camara": "Libre",
+      "respuesta_ms": 59,
+      "largas": [
+       {
+        "en_ms": 440,
+        "duracion_ms": 52,
+        "inicio_abs": 167197.70000000298,
+        "t_escena": 4.96
+       }
+      ],
+      "causas": [
+       {
+        "duracion_ms": 50,
+        "causa": "sin marca (¿carga, recolección de basura, otra pestaña?)"
+       },
+       {
+        "duracion_ms": 72,
+        "causa": "sin marca (¿carga, recolección de basura, otra pestaña?)"
+       },
+       {
+        "duracion_ms": 52,
+        "causa": "cambio de cámara → libre"
+       }
+      ],
+      "pipelines_creados": [],
+      "react_ms": 24,
+      "cuadro_ms": 35,
+      "cuadros_ms": [
+       0,
+       20,
+       0
+      ],
+      "pipelines_creados_total": 0
+     },
+     {
+      "camara": "Cenital",
+      "respuesta_ms": 39,
+      "largas": [],
+      "causas": [
+       {
+        "duracion_ms": 50,
+        "causa": "sin marca (¿carga, recolección de basura, otra pestaña?)"
+       },
+       {
+        "duracion_ms": 72,
+        "causa": "sin marca (¿carga, recolección de basura, otra pestaña?)"
+       },
+       {
+        "duracion_ms": 52,
+        "causa": "cambio de cámara → libre"
+       }
+      ],
+      "pipelines_creados": [],
+      "react_ms": 10,
+      "cuadro_ms": 29,
+      "cuadros_ms": [
+       0,
+       19,
+       0
+      ],
+      "pipelines_creados_total": 0
+     },
+     {
+      "camara": "Cinematográfica",
+      "respuesta_ms": 39,
+      "largas": [],
+      "causas": [
+       {
+        "duracion_ms": 50,
+        "causa": "sin marca (¿carga, recolección de basura, otra pestaña?)"
+       },
+       {
+        "duracion_ms": 72,
+        "causa": "sin marca (¿carga, recolección de basura, otra pestaña?)"
+       },
+       {
+        "duracion_ms": 52,
+        "causa": "cambio de cámara → libre"
+       }
+      ],
+      "pipelines_creados": [],
+      "react_ms": 10,
+      "cuadro_ms": 29,
+      "cuadros_ms": [
+       0,
+       20
+      ],
+      "pipelines_creados_total": 0
+     },
+     {
+      "camara": "Daño",
+      "respuesta_ms": 30,
+      "largas": [],
+      "causas": [
+       {
+        "duracion_ms": 50,
+        "causa": "sin marca (¿carga, recolección de basura, otra pestaña?)"
+       },
+       {
+        "duracion_ms": 72,
+        "causa": "sin marca (¿carga, recolección de basura, otra pestaña?)"
+       },
+       {
+        "duracion_ms": 52,
+        "causa": "cambio de cámara → libre"
+       }
+      ],
+      "pipelines_creados": [],
+      "react_ms": 9,
+      "cuadro_ms": 21,
+      "cuadros_ms": [
+       0,
+       16
+      ],
+      "pipelines_creados_total": 0
+     },
+     {
+      "camara": "Conductor A",
+      "respuesta_ms": 50,
+      "largas": [],
+      "causas": [
+       {
+        "duracion_ms": 50,
+        "causa": "sin marca (¿carga, recolección de basura, otra pestaña?)"
+       },
+       {
+        "duracion_ms": 72,
+        "causa": "sin marca (¿carga, recolección de basura, otra pestaña?)"
+       },
+       {
+        "duracion_ms": 52,
+        "causa": "cambio de cámara → libre"
+       }
+      ],
+      "pipelines_creados": [],
+      "react_ms": 12,
+      "cuadro_ms": 38,
+      "cuadros_ms": [
+       0,
+       27,
+       0
+      ],
+      "pipelines_creados_total": 0
+     },
+     {
+      "camara": "Conductor B",
+      "respuesta_ms": 38,
+      "largas": [
+       {
+        "en_ms": 773,
+        "duracion_ms": 52,
+        "inicio_abs": 176332.5,
+        "t_escena": 4.96
+       }
+      ],
+      "causas": [
+       {
+        "duracion_ms": 72,
+        "causa": "sin marca (¿carga, recolección de basura, otra pestaña?)"
+       },
+       {
+        "duracion_ms": 52,
+        "causa": "cambio de cámara → libre"
+       },
+       {
+        "duracion_ms": 52,
+        "causa": "cambio de cámara → conductor veh-b"
+       }
+      ],
+      "pipelines_creados": [],
+      "react_ms": 8,
+      "cuadro_ms": 30,
+      "cuadros_ms": [
+       0,
+       18,
+       0
+      ],
+      "pipelines_creados_total": 0
+     }
+    ],
+    "camara_respuesta_max_ms": 59,
+    "camara_tarea_larga_max_ms": 52,
+    "cumple": false,
+    "tareas_largas_traza_total": 127
    }
   ],
   "cumple": false

@@ -63,6 +63,8 @@ export interface Diagnostico {
   marca: { texto: string; cuando: number } | null;
   /** Avance del precompilado progresivo («visible 12/40», «sombras 3/20», «listo»). */
   precompilado: string | null;
+  /** Lo que tardó cada parte del último armado del grafo (ms), de la más lenta a la más rápida. */
+  armado: string | null;
 }
 
 export interface MemoriaEstimada {
@@ -103,6 +105,7 @@ const inicial = (): Diagnostico => ({
   tareasLargas: [],
   marca: null,
   precompilado: null,
+  armado: null,
 });
 
 let estado: Diagnostico = inicial();
@@ -166,7 +169,13 @@ export function registrarPerdida(info: {
  * Anota qué está haciendo el visor (cambio de cámara, precompilado, llegada de modelos, impacto…):
  * la siguiente tarea larga se atribuye a la marca más reciente dentro de `CAUSA_VENTANA_MS`.
  */
+/** Las últimas marcas (una tarea larga se atribuye a la marca puesta dentro de ella, si la hay). */
+const MARCAS: { texto: string; cuando: number }[] = [];
+const MAX_MARCAS = 40;
+
 export function marcar(texto: string): void {
+  MARCAS.push({ texto, cuando: typeof performance !== "undefined" ? performance.now() : 0 });
+  if (MARCAS.length > MAX_MARCAS) MARCAS.splice(0, MARCAS.length - MAX_MARCAS);
   // También como marca de usuario: se ve en la pestaña Performance de Chrome y en las trazas de
   // `apps/web/e2e/tirones-recorrido.spec.ts` (a cada tarea larga se le atribuye la última marca).
   try {
@@ -181,11 +190,14 @@ export function marcar(texto: string): void {
 
 /** Registra una tarea larga del hilo principal (de `PerformanceObserver`, tipo `longtask`). */
 export function registrarTareaLarga(duracion: number, inicio: number): DiagTareaLarga {
-  const m = estado.marca;
-  const causa =
-    m && inicio - m.cuando >= -50 && inicio - m.cuando <= CAUSA_VENTANA_MS
-      ? m.texto
-      : "sin marca (¿carga, recolección de basura, otra pestaña?)";
+  // La marca puesta dentro de la tarea (p. ej. «armando el grafo», que se marca mientras se
+  // arma) manda; si no hay, la última antes de la tarea, a lo más `CAUSA_VENTANA_MS` antes.
+  const dentro = MARCAS.find((m) => m.cuando >= inicio - 50 && m.cuando <= inicio + duracion);
+  const antes = [...MARCAS]
+    .reverse()
+    .find((m) => m.cuando < inicio - 50 && inicio - m.cuando <= CAUSA_VENTANA_MS);
+  const m = dentro ?? antes;
+  const causa = m ? m.texto : "sin marca (¿carga, recolección de basura, otra pestaña?)";
   const t: DiagTareaLarga = { duracion, cuando: inicio, causa };
   updateDiagnostico({ tareasLargas: [...estado.tareasLargas, t].slice(-MAX_TAREAS) });
   return t;
@@ -193,6 +205,7 @@ export function registrarTareaLarga(duracion: number, inicio: number): DiagTarea
 
 /** Para las pruebas y al cambiar de escena: vuelve al estado inicial (conserva las pérdidas). */
 export function reiniciarDiagnostico(conservar: Partial<Diagnostico> = {}): void {
+  MARCAS.length = 0;
   estado = { ...inicial(), ...conservar };
   publicar();
 }

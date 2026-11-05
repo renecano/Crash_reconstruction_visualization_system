@@ -80,7 +80,7 @@ import {
   postsAlong,
   roadDecorFor,
 } from "./road-decor";
-import { buildWearMap, type LaneAxis } from "./road-wear";
+import { buildWearMap, type LaneAxis, type WearMap } from "./road-wear";
 import {
   planEnvironment,
   corridorsOf,
@@ -158,6 +158,18 @@ export interface SceneGraphOptions {
     Partial<Pick<EnvironmentSettings, "lightDirection" | "surface">>;
   /** Los modelos de Sketchfab por clase (R10, ADR 0086); sin ellos, los vehículos paramétricos. */
   vehicleModels?: ReadonlyMap<ModelClass, VehicleModelTemplate>;
+  /**
+   * Grafo provisional (mientras llegan los modelos de los vehículos): nunca se muestra (el
+   * precompilado espera a los modelos), así que va sin daño ni desgaste de las rayas, que eran
+   * 0.4–0.7 s de hilo principal tirados (René, 2026-11-04).
+   */
+  provisional?: boolean;
+  /**
+   * El daño de los vehículos no se arma aquí: queda pendiente y se aplica con `aplicarDano()`, un
+   * vehículo por llamada (el visor los aplica en tareas separadas antes de precompilar; cada uno
+   * cuesta 100–200 ms en una laptop con GPU integrada).
+   */
+  diferirDanos?: boolean;
 }
 
 export interface VehicleNode {
@@ -198,6 +210,14 @@ export interface SceneGraph {
   root: Group;
   vehicles: VehicleNode[];
   persons: PersonNode[];
+  /** Cuánto tardó cada parte del armado (ms; diagnóstico de tareas largas al cargar). */
+  tiempos: Readonly<Record<string, number>>;
+  /** Cuántos pasos del armado quedan pendientes (`diferirDanos`: desgaste y daño por vehículo). */
+  readonly pasosPendientes: number;
+  /** El nombre del siguiente paso pendiente (para el diagnóstico), o null. */
+  readonly siguientePaso: string | null;
+  /** Aplica el siguiente paso pendiente; devuelve cuántos faltan. */
+  aplicarPaso(): number;
   /** Coloca la escena en el instante t (s, relativo al impacto). */
   update(t: number): void;
   /**
@@ -500,11 +520,57 @@ function cumulativeDistance(tr: VehicleNode["track"]): number[] {
 // Construcción
 // ---------------------------------------------------------------------------------------------
 
+/** Un vehículo sin daño (grafo provisional o daño aún pendiente). */
+function sinDano(): DamageRig {
+  return {
+    damage: null,
+    airbag: { frontal: false, lateral: null, umbralKmh: null, motivo: "" },
+    notas: [],
+    update() {},
+    workingHeadlights: () => 1,
+    materials: [],
+  };
+}
+
+/**
+ * El mapa de desgaste de las rayas, en caché: el grafo se arma varias veces con las mismas vías
+ * (al llegar los modelos, al cambiar la calidad) y el mapa no cambia.
+ */
+const WEAR_CACHE = new Map<string, WearMap>();
+function wearMapCached(
+  seed: number,
+  lanes: readonly LaneAxis[],
+  center: { x: number; y: number },
+): WearMap {
+  const r = (x: number) => Math.round(x * 1000) / 1000;
+  const key = JSON.stringify([
+    seed,
+    r(center.x),
+    r(center.y),
+    lanes.map((l) => [r(l.a.x), r(l.a.y), r(l.b.x), r(l.b.y)]),
+  ]);
+  const hit = WEAR_CACHE.get(key);
+  if (hit) return hit;
+  const m = buildWearMap(seed, lanes, center);
+  WEAR_CACHE.set(key, m);
+  if (WEAR_CACHE.size > 4) WEAR_CACHE.delete(WEAR_CACHE.keys().next().value!);
+  return m;
+}
+
 export function buildSceneGraph(
   spec: EscenaSpec,
   resultado: Resultado,
   opts: SceneGraphOptions,
 ): SceneGraph {
+  // Cuánto tarda cada parte del armado (René, 2026-11-04: tareas largas «sin marca» al cargar).
+  const tiempos: Record<string, number> = {};
+  let tCorte = typeof performance !== "undefined" ? performance.now() : 0;
+  const corte = (nombre: string): void => {
+    if (typeof performance === "undefined") return;
+    const ahora = performance.now();
+    tiempos[nombre] = Math.round((tiempos[nombre] ?? 0) + ahora - tCorte);
+    tCorte = ahora;
+  };
   // Sin estado del piso (pruebas y llamadas antiguas): mojado o seco según `wet`.
   const asphalt = asphaltMaterial(
     opts.env.surface ?? (opts.env.wet ? "mojado" : "seco"),
@@ -533,6 +599,7 @@ export function buildSceneGraph(
     opts.env.streetLights && opts.diag?.sinLuminarias !== true
       ? proceduralPoles(spec, resultado, layout, mapa?.vias)
       : [];
+  corte("vía y red");
   // Ejes de los carriles (entre rayas consecutivas) para las rodadas del desgaste (T1.2).
   const lanes: LaneAxis[] = [];
   const laneCenters = (o: { edges: number[]; center: number[]; dashed: number[] }) => {
@@ -578,23 +645,18 @@ export function buildSceneGraph(
     }
   }
   const action = actionBounds(resultado);
-  const wear = buildWearMap(spec.meta.semilla, lanes, { x: action.cx, y: action.cy });
-  const wearTexture = new DataTexture(
-    wear.data,
-    wear.size,
-    wear.size,
-    RGBAFormat,
-    UnsignedByteType,
-  );
-  // Filtrado lineal: con el vecino más cercano los charcos y parches salían en cuadros.
-  wearTexture.magFilter = LinearFilter;
-  wearTexture.minFilter = LinearFilter;
-  wearTexture.generateMipmaps = false;
-  wearTexture.needsUpdate = true;
-  asphalt.applyWear(wearTexture, { cx: wear.cx, cy: wear.cy, windowM: wear.windowM });
-  // Las rayas se desgastan donde ruedan las llantas: la opacidad baja hasta la mitad con el
-  // canal rojo del mapa, y el tramado evita bandas en el borde.
-  {
+  let wearTexture: DataTexture | null = null;
+  const aplicarDesgaste = (): void => {
+    const wear = wearMapCached(spec.meta.semilla, lanes, { x: action.cx, y: action.cy });
+    wearTexture = new DataTexture(wear.data, wear.size, wear.size, RGBAFormat, UnsignedByteType);
+    // Filtrado lineal: con el vecino más cercano los charcos y parches salían en cuadros.
+    wearTexture.magFilter = LinearFilter;
+    wearTexture.minFilter = LinearFilter;
+    wearTexture.generateMipmaps = false;
+    wearTexture.needsUpdate = true;
+    asphalt.applyWear(wearTexture, { cx: wear.cx, cy: wear.cy, windowM: wear.windowM });
+    // Las rayas se desgastan donde ruedan las llantas: la opacidad baja hasta la mitad con el
+    // canal rojo del mapa, y el tramado evita bandas en el borde.
     const uvWear = vec2(positionWorld.x.sub(wear.cx), positionWorld.z.add(wear.cy))
       .div(wear.windowM)
       .add(0.5);
@@ -603,10 +665,19 @@ export function buildSceneGraph(
       m.transparent = true;
       m.opacityNode = float(1).sub(w.r.mul(0.5));
       if (opts.env.night) m.emissiveNode = ditherNode();
+      m.needsUpdate = true;
     }
+  };
+  // El provisional va sin desgaste; con `diferirDanos`, el desgaste es un paso pendiente más.
+  const pasos: { nombre: string; f: () => void }[] = [];
+  if (!opts.provisional) {
+    if (opts.diferirDanos) pasos.push({ nombre: "desgaste de las rayas", f: aplicarDesgaste });
+    else aplicarDesgaste();
   }
+  corte("rayas y desgaste");
   // Acotamientos y barreras por clase de vía (T1.2).
   const decor = roadDecorFor(lugar, layout, mapa?.vias);
+  corte("acotamientos");
   // Entorno más allá de la vía (T1.3, ADR 0096): plan procedural con la semilla, relieve leve,
   // suelo con parcelas; los árboles declarados cuentan dentro del tope del nivel.
   const declaredTrees = (spec.entorno.objetos ?? []).filter((o) => o.tipo === "arbol").length;
@@ -633,6 +704,7 @@ export function buildSceneGraph(
     opts.diag?.sinEntorno === true || opts.diag?.sinRelieve === true
       ? () => 0
       : terrainHeightAt(spec.meta.semilla, corridorsOf(layout, mapa?.vias), envPlan.zone);
+  corte("plan del entorno");
   // El suelo: 96 × 96 cuadros de 800 m, relieve fuera del corredor de la vía y color por parcela.
   mats.ground.vertexColors = true;
   // Suelo en dos piezas (T1.3b): un parche fino de 320 m alrededor de la acción (celdas de 3.3 m,
@@ -675,6 +747,7 @@ export function buildSceneGraph(
   const dash = dashPatternFor(lugar.tipo_via.valor, limite ? velocidadKmh(limite) : undefined);
   // `osmSoloCalzada` (diagnóstico de E6): la red del mapa como antes de ADR 0039, solo calzada.
   const soloCalzada = opts.diag?.osmSoloCalzada === true;
+  corte("suelo y pasto");
   // Rayas de alto en los accesos que controla un semáforo o un alto (ADR 0044).
   const stops = stopLines(spec, layout, mapa?.vias, crosswalks);
   const road = mapa
@@ -798,6 +871,7 @@ export function buildSceneGraph(
   }
   root.add(roadGroup);
 
+  corte("rayas de alto y guarniciones");
   // Evidencias declaradas en el relato (marcas, restos): trazos oscuros sobre el piso.
   const evGroup = new Group();
   evGroup.name = "evidencias";
@@ -876,6 +950,7 @@ export function buildSceneGraph(
   };
   const headlightSpots: { vehicleId: string; spot: SpotLight }[] = [];
 
+  corte("evidencias y luces");
   // Objetos del entorno.
   const objGroup = new Group();
   objGroup.name = "objetos";
@@ -1017,6 +1092,7 @@ export function buildSceneGraph(
   }
   const envGroup = new Group();
   envGroup.name = "entorno_procedural";
+  corte("objetos");
   // Fachadas a la mexicana (T1.3b): las texturas llegan con `applyTextures`.
   const edificios: BuildingsBuild | null = buildBuildingsMx(
     envPlan.buildings,
@@ -1077,6 +1153,7 @@ export function buildSceneGraph(
   const sphereTrees = objGroup.children.filter((c) => c.name === "troncos" || c.name === "copas");
   root.add(objGroup);
 
+  corte("fachadas y árboles");
   // Dispositivos de tránsito (F8c): semáforos con su fase en el tiempo y una placa por señal.
   const devGroup = new Group();
   devGroup.name = "dispositivos";
@@ -1148,12 +1225,14 @@ export function buildSceneGraph(
     root.add(ring, dot);
   }
 
+  corte("dispositivos, personas a pie e impacto");
   // Vehículos.
   const glyphs = new Map(sceneLayout(spec).vehicles.map((v) => [v.id, v]));
   const specVehicles = new Map(spec.vehiculos.map((v) => [v.id, v]));
   const vehicles: VehicleNode[] = [];
   const usedTemplates: VehicleModelTemplate[] = [];
-  for (const v of resultado.vehiculos) {
+  // El provisional (nunca se muestra) va sin vehículos: armarlos era la mitad de su costo.
+  for (const v of opts.provisional ? [] : resultado.vehiculos) {
     const sv = specVehicles.get(v.id);
     const dims = {
       length: v.dimensiones.largo_m,
@@ -1164,9 +1243,14 @@ export function buildSceneGraph(
     };
     const modelo = MODEL_FOR_CLASS[v.clase];
     const template = modelo ? opts.vehicleModels?.get(modelo) : undefined;
+    const tModelo = typeof performance !== "undefined" ? performance.now() : 0;
     const group = template
       ? buildModelVehicle(template, v.clase, dims)
       : buildVehicle(v.clase, dims);
+    if (typeof performance !== "undefined")
+      tiempos["vehículos: carrocería"] = Math.round(
+        (tiempos["vehículos: carrocería"] ?? 0) + performance.now() - tModelo,
+      );
     if (template) usedTemplates.push(template);
     group.name = `vehiculo_${v.id}`;
     group.userData.id = v.id;
@@ -1201,13 +1285,20 @@ export function buildSceneGraph(
       }
       m.castShadow = opts.quality.shadows && castsShadow(m);
     });
-    const rig = buildDamageRig(group, v, dims, glyphs.get(v.id)?.colorHex ?? "#9aa0a6", {
-      spec,
-      resultado,
-      colorOf: (id) => glyphs.get(id)?.colorHex,
-      seed: Math.trunc(spec.meta.semilla) * 31 + resultado.vehiculos.indexOf(v),
-      estadoPintura,
-    });
+    const armarDano = (): DamageRig =>
+      buildDamageRig(group, v, dims, glyphs.get(v.id)?.colorHex ?? "#9aa0a6", {
+        spec,
+        resultado,
+        colorOf: (id) => glyphs.get(id)?.colorHex,
+        seed: Math.trunc(spec.meta.semilla) * 31 + resultado.vehiculos.indexOf(v),
+        estadoPintura,
+      });
+    const tDano = typeof performance !== "undefined" ? performance.now() : 0;
+    const rig = opts.provisional || opts.diferirDanos ? sinDano() : armarDano();
+    if (typeof performance !== "undefined")
+      tiempos["vehículos: daño"] = Math.round(
+        (tiempos["vehículos: daño"] ?? 0) + performance.now() - tDano,
+      );
     const brake =
       brakeMats.length > 0
         ? {
@@ -1256,7 +1347,7 @@ export function buildSceneGraph(
       headlightSpots.push({ vehicleId: v.id, spot });
     }
     root.add(group);
-    vehicles.push({
+    const node: VehicleNode = {
       id: v.id,
       group,
       wheels,
@@ -1264,9 +1355,25 @@ export function buildSceneGraph(
       track: v.trayectoria,
       rig,
       brake,
-    });
+    };
+    vehicles.push(node);
+    if (opts.diferirDanos && !opts.provisional) {
+      pasos.push({
+        nombre: `daño de ${v.id}`,
+        f: () => {
+          node.rig = armarDano();
+          disposables.push(...node.rig.materials);
+          // Las piezas nuevas del daño (bolsas de aire, mallas subdivididas) proyectan sombra
+          // como las demás.
+          group.traverse((m) => {
+            if (m instanceof Mesh) m.castShadow = opts.quality.shadows && castsShadow(m);
+          });
+        },
+      });
+    }
   }
 
+  corte("vehículos");
   // Marcas en el piso desde las trayectorias del solver.
   const reposo = new Map(
     resultado.eventos.filter((e) => e.tipo === "reposo").map((e) => [e.actores[0], e.t]),
@@ -1326,6 +1433,7 @@ export function buildSceneGraph(
     }
   }
 
+  corte("marcas en el piso");
   // Personas.
   const vehicleById = new Map(resultado.vehiculos.map((v) => [v.id, v]));
   const persons: PersonNode[] = [];
@@ -1454,12 +1562,32 @@ export function buildSceneGraph(
     }
   });
 
+  corte("personas y lo demás");
   return {
     root,
     vehicles,
     persons,
     update,
     vehicleCredits: creditsOf(usedTemplates),
+    tiempos,
+    get pasosPendientes() {
+      return pasos.length;
+    },
+    get siguientePaso() {
+      return pasos[0]?.nombre ?? null;
+    },
+    aplicarPaso() {
+      const p = pasos.shift();
+      if (p) {
+        const t0 = typeof performance !== "undefined" ? performance.now() : 0;
+        p.f();
+        if (typeof performance !== "undefined")
+          tiempos[p.nombre] = Math.round(performance.now() - t0);
+        // Las piezas nuevas quedan en la posición del instante vigente.
+        update(lastT);
+      }
+      return pasos.length;
+    },
     addUpdater(fn: (t: number) => void, o?: { after?: boolean }) {
       (o?.after ? postUpdaters : extraUpdaters).push(fn);
       update(lastT);
@@ -1600,7 +1728,7 @@ export function buildSceneGraph(
       disposables.push(...swaps.values());
     },
     dispose() {
-      wearTexture.dispose();
+      wearTexture?.dispose();
       root.traverse((o) => {
         if (o instanceof Mesh) (o.geometry as BufferGeometry).dispose();
       });

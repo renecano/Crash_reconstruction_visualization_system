@@ -8,6 +8,39 @@ import { samplePerson, sampleVehicle, type PersonTrackData, type VehicleTrack } 
 
 export type CameraMode = "libre" | "cenital" | "conductor" | "cinematica" | "dano" | "persona";
 
+export const CAMERA_MODES: readonly CameraMode[] = [
+  "libre",
+  "cenital",
+  "conductor",
+  "cinematica",
+  "dano",
+  "persona",
+];
+
+/** Una cámara elegida: el modo y, en la del conductor, de qué vehículo. */
+export interface CameraChoice {
+  modo: CameraMode;
+  conductor?: string;
+}
+
+/**
+ * La cámara de un botón del visor: «conductor-<id>» es la del conductor de ese vehículo; lo demás,
+ * el modo con ese nombre. Un valor desconocido da null (René, 2026-11-04: el #161 ponía
+ * «conductor-<id>» tal cual como modo y la cámara del conductor no se movía).
+ */
+export function cameraFromButton(valor: string): CameraChoice | null {
+  if (valor.startsWith("conductor-")) {
+    const id = valor.slice("conductor-".length);
+    return id ? { modo: "conductor", conductor: id } : null;
+  }
+  return (CAMERA_MODES as readonly string[]).includes(valor) ? { modo: valor as CameraMode } : null;
+}
+
+/** Si dos elecciones de cámara son la misma (modo y, en el conductor, vehículo). */
+export function sameCamera(a: CameraChoice, b: CameraChoice): boolean {
+  return a.modo === b.modo && (a.modo !== "conductor" || a.conductor === b.conductor);
+}
+
 export interface CameraPose {
   position: Vec3;
   target: Vec3;
@@ -228,7 +261,62 @@ export const CINEMATIC = {
  * cielo y los cerros), en una órbita lenta alrededor del impacto que sigue al centro de los
  * vehículos involucrados. Cuanto más grande es la acción, más lejos, más alto y más angular.
  */
-export function cinematicCamera(scene: CameraScene, t: number, fov?: number): CameraPose {
+/**
+ * Ajuste de la cámara cinematográfica para que nada (un poste, un semáforo, un árbol) quede entre
+ * ella y el impacto: gira la órbita `dAz` radianes alrededor del objetivo y sube `dH` metros
+ * (René, 2026-11-04: en lateral_interseccion el poste del semáforo tapaba el impacto).
+ */
+export interface CinematicAdjust {
+  dAz: number;
+  dH: number;
+}
+
+/** Los ajustes que se prueban, del más chico al más grande: primero de lado, luego subir. */
+export const CINEMATIC_ADJUSTS: readonly CinematicAdjust[] = (() => {
+  const out: CinematicAdjust[] = [];
+  for (const dH of [0, 1.5, 3]) {
+    for (const deg of [0, 12, -12, 24, -24, 36, -36, 50, -50, 70, -70]) {
+      out.push({ dAz: (deg * Math.PI) / 180, dH });
+    }
+  }
+  // Orden por cuánto cambia el encuadre: un grado de giro pesa como 6 cm de altura.
+  return out.sort(
+    (a, b) =>
+      Math.abs(a.dAz) * (180 / Math.PI) * 0.06 +
+      a.dH -
+      (Math.abs(b.dAz) * (180 / Math.PI) * 0.06 + b.dH),
+  );
+})();
+
+/**
+ * El primer ajuste con la vista despejada en todos los instantes que importan, según `clear`
+ * (que dice si de la cámara al impacto no hay nada en medio). Sin ninguno despejado, el que deja
+ * más instantes despejados; a igualdad, el más chico.
+ */
+export function chooseCinematicAdjust(
+  times: readonly number[],
+  clear: (adjust: CinematicAdjust, t: number) => boolean,
+): CinematicAdjust {
+  let best: CinematicAdjust = { dAz: 0, dH: 0 };
+  let bestClear = -1;
+  for (const a of CINEMATIC_ADJUSTS) {
+    let n = 0;
+    for (const t of times) if (clear(a, t)) n++;
+    if (n === times.length) return a;
+    if (n > bestClear) {
+      bestClear = n;
+      best = a;
+    }
+  }
+  return best;
+}
+
+export function cinematicCamera(
+  scene: CameraScene,
+  t: number,
+  fov?: number,
+  adjust?: CinematicAdjust,
+): CameraPose {
   const b = actionBounds(scene);
   const involved = scene.vehiculos.filter((v) => v.involucrado);
   const vs = involved.length > 0 ? involved : scene.vehiculos;
@@ -252,8 +340,10 @@ export function cinematicCamera(scene: CameraScene, t: number, fov?: number): Ca
   const hfov = 2 * Math.atan(Math.tan((vfov * Math.PI) / 360) * (16 / 9));
   // Más cerca que el encuadre completo: la acción llena el cuadro y lo lejano se recorta.
   const dist = Math.min(CINEMATIC.distMax, Math.max(12, (b.size * 0.5) / Math.tan(hfov / 2)));
-  const height = CINEMATIC.heightMin + k * (CINEMATIC.heightMax - CINEMATIC.heightMin);
-  const az = (-120 * Math.PI) / 180 + CINEMATIC.orbitRadS * (t - scene.t_inicio);
+  const height =
+    CINEMATIC.heightMin + k * (CINEMATIC.heightMax - CINEMATIC.heightMin) + (adjust?.dH ?? 0);
+  const az =
+    (-120 * Math.PI) / 180 + CINEMATIC.orbitRadS * (t - scene.t_inicio) + (adjust?.dAz ?? 0);
   const x = gx + dist * Math.cos(az);
   const y = gy + dist * Math.sin(az);
   return {

@@ -24,6 +24,8 @@ import type { SceneGraph } from "./scene-graph";
 
 export const SIGHT_VISIBLE = "#3fbf7f";
 export const SIGHT_BLOCKED = "#f08a24";
+/** `setObserver(TODOS_LOS_CONDUCTORES)`: las líneas de visión de todos (cenital y libre). */
+export const TODOS_LOS_CONDUCTORES = "*";
 
 type Pair = Resultado["visibilidad"][number];
 
@@ -58,7 +60,11 @@ export function sampleIndex(pair: Pair, t: number): number {
 
 export interface VisibilityOverlay {
   group: Group;
-  /** Muestra las líneas del conductor indicado (o ninguna). */
+  /**
+   * Qué líneas de visión se dibujan: las de todos los conductores («todos»), las de uno, o
+   * ninguna. René (2026-11-04): desde los ojos del conductor la línea se veía como una raya
+   * suelta; se dibuja solo en la cenital y la libre, con su leyenda.
+   */
   setObserver(vehicleId: string | undefined): void;
   dispose(): void;
 }
@@ -98,6 +104,7 @@ export function buildVisibilityOverlay(resultado: Resultado, graph: SceneGraph):
   const vehicles = new Map(resultado.vehiculos.map((v) => [v.id, v]));
   const persons = new Map(resultado.personas.map((p) => [p.id, p]));
   const objects = new Map((resultado.objetos ?? []).map((o) => [o.id, o]));
+  /** Un id de vehículo, o `TODOS_LOS_CONDUCTORES`. */
   let observer: string | undefined;
   const lines = (resultado.visibilidad ?? []).map((pair) => {
     const geo = new BufferGeometry();
@@ -146,7 +153,10 @@ export function buildVisibilityOverlay(resultado: Resultado, graph: SceneGraph):
     (t) => {
       outline.visible = false;
       for (const { pair, line, geo, ring } of lines) {
-        const on = observer !== undefined && pair.observador === observer && t <= 0;
+        const on =
+          observer !== undefined &&
+          (observer === TODOS_LOS_CONDUCTORES || pair.observador === observer) &&
+          t <= 0;
         line.visible = on;
         ring.visible = on;
         if (!on) continue;
