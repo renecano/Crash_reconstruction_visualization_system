@@ -1,70 +1,33 @@
 {
-    "equipo":  "LAPTOP-QG4BMDIJ",
-    "windows":  "Microsoft Windows 11 Home Single Language 10.0.26200",
-    "cpu":  {
-                "hilos":  8,
-                "nombre":  "Intel(R) Core(TM) i5-10210U CPU @ 1.60GHz",
-                "nucleos":  4
-            },
-    "ram_gb":  7.8,
-    "gpu":  [
-                {
-                    "nombre":  "Virtual Display Device",
-                    "controlador":  "1.0.0.9"
-                },
-                {
-                    "nombre":  "Intel(R) UHD Graphics",
-                    "controlador":  "27.20.100.8984"
-                }
-            ],
-    "chrome":  "156.0.8078.80",
-    "blender":  "5.2.3",
-    "git":  "git version 2.47.1.windows.1",
-    "plan_de_energia":  "GUID de plan de energía: 381b4222-f694-41f0-9685-ff5bb260df2e  (Equilibrado)",
-    "commit_del_repositorio":  "f56ed898beb0a87f205a58aca3b4f3ab39cefb01",
     "fecha":  "2026-11-05",
     "prueba":  true,
     "solo_render":  true,
     "solo_medicion":  false,
-    "duracion_de_esta_corrida_s":  145,
-    "ram_usada_al_empezar_pct":  69,
-    "ram_usada_maxima_pct":  88,
+    "duracion_de_esta_corrida_s":  17,
+    "ram_usada_al_empezar_pct":  73,
+    "ram_usada_maxima_pct":  79,
     "limite_ram_pct":  95,
     "pasos":  [
                   {
                       "Paso":  "Revisar Git y Chrome",
                       "Bien":  true,
                       "Segundos":  0,
-                      "RamMaxima":  69,
+                      "RamMaxima":  73,
                       "Nota":  "Git y Chrome encontrados."
                   },
                   {
                       "Paso":  "Blender 5.2.3 (portátil, de blender.org)",
                       "Bien":  true,
                       "Segundos":  0,
-                      "RamMaxima":  69,
+                      "RamMaxima":  72,
                       "Nota":  "Ya estaba en D:\\CroquisDemo; se reutiliza."
                   },
                   {
                       "Paso":  "Video de la escena «axa»",
-                      "Bien":  false,
-                      "Segundos":  138,
-                      "RamMaxima":  88,
-                      "Nota":  "No se pudo armar el video (ver blender-axa-unir.log)."
-                  },
-                  {
-                      "Paso":  "Video de la escena «carambola»",
-                      "Bien":  false,
-                      "Segundos":  4,
-                      "RamMaxima":  70,
-                      "Nota":  "No se encuentra la ruta de acceso \u0027D:\\CroquisDemo\\render-prueba-2026-11-05\\carambola\\plan.json\u0027 porque no existe."
-                  },
-                  {
-                      "Paso":  "Datos de la máquina",
                       "Bien":  true,
-                      "Segundos":  1,
-                      "RamMaxima":  67,
-                      "Nota":  "CPU Intel(R) Core(TM) i5-10210U CPU @ 1.60GHz, 7.8 GB de RAM."
+                      "Segundos":  17,
+                      "RamMaxima":  79,
+                      "Nota":  "0.2 MB, --motor cycles --resolucion 320x180 --muestras 4 --desde 0 --hasta 2"
                   }
               ]
 }

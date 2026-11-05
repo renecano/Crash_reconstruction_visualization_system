@@ -89,3 +89,42 @@ Solo los videos (-SoloRender).
 
 == Datos de la máquina
    Listo (1 s, RAM máxima 67 %). CPU Intel(R) Core(TM) i5-10210U CPU @ 1.60GHz, 7.8 GB de RAM.
+   warning: in the working copy of 'resultados/prueba/2026-11-05/bitacora.txt', CRLF will be replaced by LF the next time Git touches it
+   warning: in the working copy of 'resultados/prueba/2026-11-05/blender-axa-unir.log', CRLF will be replaced by LF the next time Git touches it
+   warning: in the working copy of 'resultados/prueba/2026-11-05/blender-axa.log', CRLF will be replaced by LF the next time Git touches it
+   warning: in the working copy of 'resultados/prueba/2026-11-05/blender-axa.log.err', CRLF will be replaced by LF the next time Git touches it
+   warning: in the working copy of 'resultados/prueba/2026-11-05/blender-carambola.log', CRLF will be replaced by LF the next time Git touches it
+   warning: in the working copy of 'resultados/prueba/2026-11-05/blender-carambola.log.err', CRLF will be replaced by LF the next time Git touches it
+   warning: in the working copy of 'resultados/prueba/2026-11-05/maquina.json', CRLF will be replaced by LF the next time Git touches it
+   To https://github.com/renecano/Crash_reconstruction_visualization_system.git
+      c449167..1dc6f55  1dc6f556f9438226d269819039c459a17a32e321 -> resultados/prueba-2026-11-05
+   Subido a la rama resultados/prueba-2026-11-05 (datos de la máquina).
+
+================ Resumen ================
+[ok]   Revisar Git y Chrome — 0 s, RAM máxima 69 % Git y Chrome encontrados.
+[ok]   Blender 5.2.3 (portátil, de blender.org) — 0 s, RAM máxima 69 % Ya estaba en D:\CroquisDemo; se reutiliza.
+[FALLÓ] Video de la escena «axa» — 138 s, RAM máxima 88 % No se pudo armar el video (ver blender-axa-unir.log).
+[FALLÓ] Video de la escena «carambola» — 4 s, RAM máxima 70 % No se encuentra la ruta de acceso 'D:\CroquisDemo\render-prueba-2026-11-05\carambola\plan.json' porque no existe.
+[ok]   Datos de la máquina — 1 s, RAM máxima 67 % CPU Intel(R) Core(TM) i5-10210U CPU @ 1.60GHz, 7.8 GB de RAM.
+Tiempo de esta corrida: 2 min. RAM usada: 69 % al empezar, 88 % como máximo.
+Fallaron 2 paso(s). Lo que sí se hizo está en D:\Documentos\proyectos\croquis\resultados\prueba\2026-11-05 (y lo que se pudo, ya subido). Si fue un corte, vuelve a abrir el botón hoy: sigue donde se quedó. Si no, avísale a René con una foto de esta ventana.
+
+Croquis en la computadora de la demo — 2026-11-05 (16:46)
+Resultados en: D:\Documentos\proyectos\croquis\resultados\prueba\2026-11-05
+Solo los videos (-SoloRender).
+
+== Revisar Git y Chrome
+   Listo (0 s, RAM máxima 73 %). Git y Chrome encontrados.
+
+== Blender 5.2.3 (portátil, de blender.org)
+   Listo (0 s, RAM máxima 72 %). Ya estaba en D:\CroquisDemo; se reutiliza.
+
+== Video de la escena «axa»
+   Se retoma: ya hay 61 cuadros de una corrida anterior de hoy.
+   ┌──────────────────────────────────────────────────────────────────────┐
+   │  No cierres esta ventana. El render tarda varias horas; en cuanto    │
+   │  terminen los primeros cuadros se calcula cuánto. Si se cierra,      │
+   │  vuelve a abrir el botón hoy mismo: sigue desde donde se quedó.      │
+   └──────────────────────────────────────────────────────────────────────┘
+   Armando el video con los 61 cuadros…
+   Listo (17 s, RAM máxima 79 %). 0.2 MB, --motor cycles --resolucion 320x180 --muestras 4 --desde 0 --hasta 2
