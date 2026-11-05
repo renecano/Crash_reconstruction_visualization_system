@@ -19,10 +19,16 @@ const GRABACION = JSON.parse(
 ) as { salida: unknown };
 const CAPTURAS = join(RAIZ, "docs/cesvi/t1/ruedas-ejemplo");
 const SALIDA = join(RAIZ, "eval/results/t1_ruedas_ejemplo.json");
-/** sharp viene con Next (no es dependencia directa): las capturas van en WebP, ligeras. */
-const sharp = createRequire(require.resolve("next/package.json"))("sharp") as (b: Buffer) => {
-  webp(o: { quality: number }): { toFile(p: string): Promise<unknown> };
-};
+/**
+ * sharp viene con Next (no es dependencia directa): las capturas van en WebP, ligeras. Se carga al
+ * usarse: Playwright importa todos los archivos aunque `--grep @flujo` deje este fuera.
+ */
+const sharp = (b: Buffer) =>
+  (
+    createRequire(require.resolve("next/package.json"))("sharp") as (b: Buffer) => {
+      webp(o: { quality: number }): { toFile(p: string): Promise<unknown> };
+    }
+  )(b);
 
 async function hastaEl3d(page: Page) {
   await page.route("https://tiles.openfreemap.org/**", (r) =>
