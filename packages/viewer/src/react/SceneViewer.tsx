@@ -759,9 +759,18 @@ function SceneContent({
       async captureFrameReady({ esperaMs = 60_000, ...opts } = {}) {
         // Listo: grafo precompilado (modelos, texturas, árboles, HDRI, daño y lo que llegó
         // después). Si tarda más de `esperaMs`, la foto sale con lo que haya.
-        const desde = performance.now();
-        while (window.__croquisGraphReady !== true && performance.now() - desde < esperaMs) {
-          await new Promise((r) => setTimeout(r, 100));
+        // Oculto (el mapa del caso lo tapa), el visor no dibuja y el precompilado, que revela por
+        // lotes entre cuadros, se queda a medias: mientras la foto lo espera, dibuja. En una
+        // máquina lenta el dictamen esperaba así hasta 3 × 60 s (CI, 2026-11-05).
+        const despertar = !activoRef.current && window.__croquisGraphReady !== true;
+        if (despertar) setFrameloop("always");
+        try {
+          const desde = performance.now();
+          while (window.__croquisGraphReady !== true && performance.now() - desde < esperaMs) {
+            await new Promise((r) => setTimeout(r, 100));
+          }
+        } finally {
+          if (despertar && !activoRef.current) setFrameloop("never");
         }
         // Dos cuadros: el primero pone al día sombras y texturas del instante; el segundo se copia.
         return capturar(opts, 2);
