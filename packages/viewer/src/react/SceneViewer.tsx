@@ -762,11 +762,11 @@ function SceneContent({
         // Oculto (el mapa del caso lo tapa), el visor no dibuja y el precompilado, que revela por
         // lotes entre cuadros, se queda a medias: mientras la foto lo espera, dibuja. En una
         // máquina lenta el dictamen esperaba así hasta 3 × 60 s (CI, 2026-11-05).
-        const despertar = !activoRef.current && window.__croquisGraphReady !== true;
+        const despertar = !activoRef.current && !listoRef.current;
         if (despertar) setFrameloop("always");
         try {
           const desde = performance.now();
-          while (window.__croquisGraphReady !== true && performance.now() - desde < esperaMs) {
+          while (!listoRef.current && performance.now() - desde < esperaMs) {
             await new Promise((r) => setTimeout(r, 100));
           }
         } finally {
@@ -1005,6 +1005,12 @@ function SceneContent({
   const skyPending = ibl && skyEnv === null;
   const todoPendiente =
     texturesPending || treesPending || modelsPending || skyPending || danosPendientes;
+  /**
+   * Si este visor ya precompiló su grafo. Las fotos del dictamen esperan esto y no la marca global
+   * `__croquisGraphReady`: un segundo visor (lado a lado) la ponía en falso al montarse y el
+   * principal, que no volvía a compilar, ya no la devolvía a verdadero (cada foto esperaba 60 s).
+   */
+  const listoRef = useRef(false);
   const activoRef = useRef(activo);
   activoRef.current = activo;
   /** El grafo que está en pantalla (se monta escondido y se revela objeto por objeto). */
@@ -1029,6 +1035,7 @@ function SceneContent({
     updateDiagnostico({ precompilado: `${p.etapa} ${p.hechos}/${p.total}` });
   };
   useEffect(() => {
+    listoRef.current = false;
     window.__croquisGraphReady = false;
   }, []);
   // Precompilado progresivo (René, 2026-11-04; `../precompile`): en cuanto están la base del
@@ -1051,6 +1058,7 @@ function SceneContent({
       progreso,
     );
     setCompiled(null);
+    listoRef.current = false;
     window.__croquisGraphReady = false;
     const base = [...graph.root.children];
     const luces = lucesDeEscena();
@@ -1127,6 +1135,7 @@ function SceneContent({
       progreso,
     );
     setCompiled(null);
+    listoRef.current = false;
     window.__croquisGraphReady = false;
     for (const c of nuevas) esconder(c);
     const luces = lucesDeEscena();
@@ -1171,7 +1180,8 @@ function SceneContent({
     if (visibleGraph) onShown?.();
   }, [visibleGraph, onShown]);
   useEffect(() => {
-    window.__croquisGraphReady = compiled === graph;
+    listoRef.current = compiled === graph;
+    window.__croquisGraphReady = listoRef.current;
     onGraphReady?.(compiled === graph);
   }, [compiled, graph, onGraphReady]);
   // Al desmontar se desecha lo que quedó en pantalla (y el grafo nuevo, si era otro).
