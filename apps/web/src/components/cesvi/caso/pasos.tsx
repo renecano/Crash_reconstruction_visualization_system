@@ -33,6 +33,14 @@ import {
   TablaVelocidades,
 } from "./reconstruccion";
 import { ConclusionesCesvi } from "../importar-dictamen";
+import {
+  detectarEnNarracion,
+  MAX_NARRACION,
+  MIN_NARRACION,
+  piezasDetectadas,
+  textoConteo,
+} from "@/lib/narracion-local";
+import { pareceReporteCompleto } from "@/lib/lectura-reporte";
 
 const nombreModalidad = (m: string | null) => (m ? (MODALIDAD[m] ?? m.replaceAll("_", " ")) : "—");
 
@@ -349,6 +357,36 @@ export function PasoCaso({
   );
 }
 
+/**
+ * Debajo de la narración (A2): cuántos caracteres van y lo que Croquis reconoce sin IA, para que el
+ * perito sepa antes de leer si su texto trae lo que la reconstrucción necesita.
+ */
+function LoQueSeVe({ narracion }: { narracion: string }) {
+  const n = narracion.trim().length;
+  const piezas = n >= MIN_NARRACION ? piezasDetectadas(detectarEnNarracion(narracion)) : [];
+  return (
+    <div className="flex flex-col gap-1.5">
+      <span
+        id="conteo-narracion"
+        className={`t-nota cifras ${n < MIN_NARRACION ? "" : "text-texto-3"}`}
+        aria-live="polite"
+        data-testid="conteo-narracion"
+      >
+        {textoConteo(n)}
+      </span>
+      {piezas.length ? (
+        <p className="t-nota" data-testid="detectado-narracion">
+          Croquis ve sin IA: {piezas.join(" · ")}.
+        </p>
+      ) : n >= MIN_NARRACION ? (
+        <p className="t-nota text-texto-3" data-testid="detectado-narracion">
+          Croquis aún no ve vehículos, lugar ni medidas en el texto.
+        </p>
+      ) : null}
+    </div>
+  );
+}
+
 /** Paso 2: el hecho. La narración técnica, su lectura a escena y lo que más cambia el resultado. */
 export function PasoHecho({
   narracion,
@@ -362,6 +400,7 @@ export function PasoHecho({
   onExpediente,
   onNoSe,
   onIrAlMapa,
+  onCargarReporte,
 }: {
   narracion: string;
   /** Un reporte importado o de la reproducción ya viene leído: su texto no se edita. */
@@ -375,7 +414,10 @@ export function PasoHecho({
   onExpediente: (e: Expediente) => void;
   onNoSe: (clave: string) => void;
   onIrAlMapa?: (vehiculo: string) => void;
+  /** Si lo pegado es un reporte completo de CESVI, cargarlo como reporte (A3). */
+  onCargarReporte?: () => void;
 }) {
+  const esReporte = editable && !!onCargarReporte && pareceReporteCompleto(narracion);
   return (
     <div className="flex flex-col gap-5">
       <h2 className="t-subtitulo">El hecho</h2>
@@ -389,16 +431,36 @@ export function PasoHecho({
           <textarea
             className="campo min-h-48"
             value={narracion}
+            maxLength={MAX_NARRACION}
             onChange={(e) => onNarracion(e.target.value)}
             aria-label="Narración técnica del perito"
+            aria-describedby="conteo-narracion"
             data-testid="narracion"
           />
+          <LoQueSeVe narracion={narracion} />
+          {esReporte ? (
+            <div className="hundido flex flex-col gap-2 p-4" data-testid="parece-reporte">
+              <p className="t-nota">
+                Esto parece un reporte completo de CESVI, con su análisis y sus conclusiones.
+                Cárgalo como reporte: Croquis separa la narración de lo que concluyó CESVI y después
+                los compara.
+              </p>
+              <button
+                type="button"
+                className="boton-principal self-start"
+                onClick={onCargarReporte}
+                data-testid="cargar-como-reporte"
+              >
+                Cargarlo como reporte
+              </button>
+            </div>
+          ) : null}
           <div className="flex flex-wrap items-center gap-3">
             <button
               type="button"
               className="boton-principal"
               onClick={onLeer}
-              disabled={narracion.trim().length < 20}
+              disabled={narracion.trim().length < MIN_NARRACION}
               data-testid="leer-narracion"
             >
               Leer la narración

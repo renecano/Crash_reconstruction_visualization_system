@@ -230,7 +230,11 @@ test("@flujo /cesvi: un caso nuevo desde la lista, de la narración al dictamen"
 
   // Los daños que calcula la reconstrucción y, en los números, la verificación CESVI dice qué falta.
   await irAPaso(page, 5);
-  await expect(page.getByTestId("dano-calculado-V1")).toContainText("C1–C6");
+  // Con las velocidades reconstruidas (§0 del rediseño): energía, Δv y el perfil estimado, sin ceros.
+  const danoV1 = page.getByTestId("dano-calculado-V1");
+  await expect(danoV1).toContainText("perfil estimado", { timeout: 60_000 });
+  await expect(danoV1).toContainText("kJ");
+  await expect(danoV1).not.toContainText(" 0.0 kJ");
   await irAPaso(page, 6);
   await expect(page.getByTestId("verificacion-cesvi")).toContainText("Falta:");
 
@@ -305,7 +309,8 @@ test("@flujo /cesvi: un caso nuevo desde la lista, de la narración al dictamen"
   const descarga = page.waitForEvent("download");
   await page.getByTestId("guardar-caso").click();
   const archivo = await descarga;
-  expect(archivo.suggestedFilename()).toBe("caso-croquis.json");
+  // El archivo del caso lleva su extensión (A4); los .json de antes se siguen abriendo.
+  expect(archivo.suggestedFilename()).toMatch(/\.croquis$/);
   const rutaCaso = await archivo.path();
   const d = JSON.parse(readFileSync(rutaCaso, "utf8")) as {
     conclusion_perito: string;

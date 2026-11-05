@@ -20,6 +20,27 @@ import { huellaEntradas } from "./exportar-cesvi";
 export const FORMATO_CASO = "croquis-caso";
 export const VERSION_CASO = 1;
 
+/**
+ * El archivo del caso lleva su propia extensión (René, 2026-11-04, A4): `.croquis`, con JSON dentro.
+ * Los `.json` de antes se siguen abriendo: lo que se revisa es el contenido, no el nombre.
+ */
+export const EXTENSION_CASO = ".croquis";
+export const ACEPTA_CASO = ".croquis,.json,application/json";
+
+/** «Reporte de CESVI · AXA A2010930.md» → «axa-a2010930.croquis»; sin título, «caso.croquis». */
+export function nombreArchivoCaso(titulo: string): string {
+  const base = titulo
+    .replace(/^.*·\s*/, "")
+    .replace(/\.(md|pdf|txt|json|croquis)$/i, "")
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "")
+    .slice(0, 60);
+  return `${base || "caso"}${EXTENSION_CASO}`;
+}
+
 export interface ValidacionPerito {
   perito: string;
   conclusion: string;

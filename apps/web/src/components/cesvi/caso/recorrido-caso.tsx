@@ -43,8 +43,10 @@ import type { Map as MapaMl } from "maplibre-gl";
 import { useEffect, useMemo, useRef, useState } from "react";
 import type { Hipotesis } from "@/components/visor/hypothesis-panel";
 import {
+  ACEPTA_CASO,
   casoParaGuardar,
   leerCasoGuardado,
+  nombreArchivoCaso,
   type ReporteCesvi,
   type ValidacionPerito,
 } from "@/lib/caso-guardado";
@@ -71,6 +73,7 @@ import { Expediente as ExpedienteCesvi } from "../expediente";
 import { ComparacionDeclaracion } from "../comparacion-declaracion";
 import { DictamenCaso } from "../dictamen-caso";
 import { CargaReporte } from "../importar-dictamen";
+import { leerReporte } from "@/lib/lectura-reporte";
 import { BarraRecorrido, PASOS, PASOS_CORTOS } from "../recorrido/barra";
 import { Reproduccion } from "../reproduccion";
 import {
@@ -682,14 +685,19 @@ export function RecorridoCaso({ inicial }: { inicial: CasoExpediente }) {
       />
     ) : inicial.origen === "nuevo" && !leida ? (
       <div className="solo-trabajar flex flex-wrap items-center gap-3">
-        <button type="button" className="boton-principal" onClick={() => irA(1)}>
-          Narrar el hecho
+        <button
+          type="button"
+          className="boton-principal"
+          onClick={() => irA(1)}
+          data-testid="empezar-narracion"
+        >
+          Escribir la narración del hecho
         </button>
         <label className="boton-secundario cursor-pointer">
-          Abrir un archivo de caso
+          Abrir un caso guardado (.croquis)
           <input
             type="file"
-            accept="application/json,.json"
+            accept={ACEPTA_CASO}
             className="sr-only"
             onChange={(e) => {
               const f = e.target.files?.[0];
@@ -699,6 +707,9 @@ export function RecorridoCaso({ inicial }: { inicial: CasoExpediente }) {
             data-testid="abrir-caso"
           />
         </label>
+        <span className="t-nota w-full text-texto-3">
+          Los archivos de caso de antes (.json) también se abren.
+        </span>
       </div>
     ) : null;
 
@@ -743,6 +754,29 @@ export function RecorridoCaso({ inicial }: { inicial: CasoExpediente }) {
           onNarracion={setTexto}
           onLeer={() => void leer()}
           onEjemplo={() => setTexto(ejemplo.narracion)}
+          onCargarReporte={
+            inicial.origen === "nuevo"
+              ? () =>
+                  void (async () => {
+                    // A3: el perito pegó el reporte entero; se lee como en «Cargar un reporte».
+                    const nombre = "reporte pegado en la narración";
+                    setEstado(
+                      "Leyendo el reporte con Claude (dos lecturas; puede tardar un par de minutos)…",
+                    );
+                    const r = await leerReporte(texto, nombre);
+                    if (!r.ok) {
+                      setEstado(r.motivo);
+                      return;
+                    }
+                    abrirEscena(r.importado);
+                    setTexto(r.importado.narracion.descripcion);
+                    setReporte({ nombre, conclusiones: r.importado.narracion.conclusiones });
+                    setTitulo(`Reporte de CESVI · ${nombre}`);
+                    setEstado(null);
+                    setPaso(1);
+                  })()
+              : undefined
+          }
           estado={estado}
           escena={leida}
           preguntas={preguntas}
@@ -918,13 +952,13 @@ export function RecorridoCaso({ inicial }: { inicial: CasoExpediente }) {
                   new TextEncoder().encode(
                     `${JSON.stringify(a, null, 2)}\n`,
                   ) as Uint8Array<ArrayBuffer>,
-                  "caso-croquis.json",
+                  nombreArchivoCaso(titulo),
                   "application/json",
                 );
               }}
               data-testid="guardar-caso"
             >
-              Descargar el archivo del caso
+              Guardar el caso (.croquis)
             </button>
           </div>
           {avisoGuardado ? (
@@ -1067,7 +1101,9 @@ export function RecorridoCaso({ inicial }: { inicial: CasoExpediente }) {
           className={
             expandido
               ? "fixed inset-0 z-40 bg-fondo"
-              : `relative min-h-[50vh] overflow-hidden rounded-panel border border-linea-suave ${grande ? "lg:flex-1" : "lg:h-[460px] lg:w-[420px] lg:shrink-0 lg:self-start"}`
+              : // En el hecho no hay mapa (A5): se queda montado pero oculto, para no volver a
+                // cargarlo al llegar al lugar (MapLibre se ajusta solo al reaparecer).
+                `relative min-h-[50vh] overflow-hidden rounded-panel border border-linea-suave ${grande ? "lg:flex-1" : "lg:h-[460px] lg:w-[420px] lg:shrink-0 lg:self-start"} ${actual === 1 ? "hidden" : ""}`
           }
           aria-label="Mapa"
           data-testid="escenario"
@@ -1085,6 +1121,7 @@ export function RecorridoCaso({ inicial }: { inicial: CasoExpediente }) {
               onClic={colocar}
               inicio={lugar?.coordenadas ?? null}
               lugarTexto={lugarTexto}
+              lugarZona={{ municipio: lugar?.municipio?.valor, estado: lugar?.estado?.valor }}
               herramienta={actual === 2 && modo === "trabajar" ? herramientaMapa : "mover"}
               pedirLugar={actual === 2 || expandido}
               huellas={huellas}

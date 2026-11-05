@@ -11,7 +11,7 @@ Reglas de trabajo: `CLAUDE.md`. Especificación: `PLAN.md`.
   - **T6.4 (los agentes respetan el orden de impactos)** quedó a medias en la rama `fix/agentes-orden-impactos` (commit `c8c8a08`, Python y TS cambiados, sin pruebas ni evaluación): se retoma en T6.
   - **Urgente (René, 2026-11-04, tarde): congelamientos del 3D en la MacBook M1**: hecho y en producción (PR #161, ADR 0104; René confirmó en la M1: WebGPU, media, dpr 1.5, 60 fps, precompilado listo). **Luego, cámaras tras el #161** (rama `fix/camaras-vivas`, ADR 0105): Conductor A/B en los ojos del conductor otra vez, la vista siempre cambia con el botón, la cinematográfica esquiva el poste, la línea de visión solo en cenital y libre, y las tareas largas de la carga con nombre y partidas. Pendientes en la sección «Cámaras tras el #161» más abajo.
   - **Después (René, 2026-11-04, tarde; orden fijado por él):** el rediseño «Laboratorio» de /cesvi (`docs/cesvi/entrante/laboratorio/`, a copiar a `docs/cesvi/rediseno/laboratorio/`) con los arreglos de uso A1–A5 (buscar el lugar con coordenadas y links y ruta `/api/lugar`, contador de la narración, reporte pegado → cargar como reporte, botones de inicio y archivo `.croquis`, sin mapa en el paso del hecho) y la colocación de vehículos rehecha (B); se despliega por partes: A1–A4 y B, luego tokens y layout, luego los actos. Antes de eso, T3.2 sigue a medias.
-  - **Vercel (René, 2026-11-05), antes de A1** (rama `fix/vercel-produccion`, ADR 0107): verificación de que producción sirve el commit de main, modelos y HDRI en Vercel Blob (35 % menos por despliegue) y 29 despliegues viejos borrados. Falta el Deploy Hook (fila en «Bloqueado»). **Luego:** las llantas del caso de ejemplo del Jetta y el Camaro, y después A1.
+  - **Vercel (René, 2026-11-05), antes de A1** (rama `fix/vercel-produccion`, ADR 0107): verificación de que producción sirve el commit de main, modelos y HDRI en Vercel Blob (35 % menos por despliegue) y 29 despliegues viejos borrados. Deploy Hook guardado por René; el merge del #164 se publicó solo. **Luego:** las llantas del caso de ejemplo del Jetta y el Camaro, y después A1.
   - **Fotos del dictamen (C1–C3) y calidad automática que baja (D)** (rama `fix/fotos-dictamen`, ADR 0106): las fotos esperan al visor, usan la cinematográfica y van sin marcadores de interfaz; los vehículos se apoyan en banquetas y relieve; si los fps quedan < 24 durante 5 s, la calidad baja un nivel y no vuelve a subir. **Siguiente:** A1–A5 y B, luego el rediseño «Laboratorio».
   - **Urgente (René, 2026-11-04), hecho y en producción:** el 3D en blanco en computadoras potentes (PR #158, ADR 0102) y la cámara del conductor en dos pasadas (PR #158 y #159). T1.3c (defectos de T1.3b, ADR 0103) está en la rama `feat/t1-3c`. T3.2 quedó a medias en `feat/t3-2-arrastre` (commit wip: referencias 1–9 regeneradas; faltan 10–13, inversión y agentes); se retoma después de T1.3c, con la nota para el resumen de T3: el rango nuevo de V2 en AXA (68.02–92.81) deja fuera el 63.15 de CESVI y el cálculo pasó de 4.8 s a 11 s (reajustes en paralelo en el worker si se puede sin perder estabilidad).
   - **Siguiente paso concreto (antes del pedido urgente):** T3.1 (muestreo estratificado; ver el plan de T3 en «Plan v3 — tramos de cierre») en la rama `feat/t3-numeros`; T1.3b está en `main` y espera la aprobación de René (capturas en `docs/cesvi/t1/t1.3b/`). Lo que pidió René para T1.3b el 2026-11-03 quedó así: árboles impostores (octaedros o tarjetas cruzadas) horneados en Blender de modelos CC0 (Poly Haven o ambientCG), 3–4 especies mexicanas (fresno, jacaranda, pirul, palmera), fuera las esferas sobre palitos; fachadas con textura PBR CC0 y colores de concreto pintado típicos de México, variedad de alturas y anchos, azoteas con tinacos, antenas y varillas, herrería, toldos, cortinas metálicas, letreros sin marca ni texto real; pasto y suelo con manchas, tierra y orillas secas (pasto instanciado cerca de la cámara en alta y ultra); cercas y postes con grosor real; señales de tránsito genéricas en ciudad; noche con más contraste, edificios sólidos y ventanas encendidas que se lean de lejos. Todo con licencia en `assets/ASSETS.md`; media ≥ 60 fps en las 4 escenas; capturas «t1.3b», fps y Playwright al final; «Resumen para René» al cerrar. T1.4 está en `main`; T1.5 en PR (capturas en `docs/cesvi/t1/t1.5/`).
@@ -1882,6 +1882,33 @@ Rama `fix/fotos-dictamen`. René mandó la captura del dictamen de un caso nuevo
 - **Qué hay ahora:** fotos con la cinematográfica, del instante pedido, sin marcadores; vehículos apoyados en banquetas y relieve; y si el 3D se queda abajo de 24 fps durante 5 s, baja un nivel y lo dice `?diag=1`.
 - **Cómo probarlo:** genera el dictamen de un caso nuevo y compara las tres fotos; y en `docs/cesvi/t1/ruedas/` están las capturas de cerca de cada clase. Si en tu caso las llantas siguen fuera de su hueco, dime la clase del vehículo (o manda el `.json` del caso): en las ocho clases que medí quedan bien.
 
+### Rediseño «Laboratorio»: §0 y arreglos de uso A1–A5 (René, 2026-11-04 y 05)
+
+Rama `feat/laboratorio-0-a`. El prompt y las ocho pantallas quedaron copiados en `docs/cesvi/rediseno/laboratorio/`. Se despliega junto con B (colocación rehecha), como pidió René.
+
+- **§0, errores de datos:**
+  - Daños de AXA en 0: el paso usaba el resultado con las velocidades supuestas de la narración, que en AXA no tiene choque. Ahora usa las reconstruidas (`resultadoAjustado`).
+  - Las medidas del reporte salen tal cual (V2: C1–C4 de 96 · 86 · 52 · 20 cm, L 1.69 m) y lo que falta dice «sin dato» con su motivo (`lib/danos-caso.ts`).
+  - Cada velocidad lleva su método: «Reconstrucción física de Croquis» o «Método de CESVI» (`lib/textos-caso.ts`).
+  - «1 mensaje» en vez de «1 mensajes». Sin posiciones en el reporte, «Sin dato en el reporte · no comparable» en vez de «0 de 0». El dictamen ya no repite su título.
+- **A1, buscar el lugar:**
+  - Coordenadas (decimales o grados, minutos y segundos) y links de Google Maps u OpenStreetMap van directo al punto, sin buscar (`lib/lugar-texto.ts`).
+  - Lo demás va a `GET /api/lugar` (`server/lugar.ts`): Nominatim desde el servidor con User-Agent propio, caché de 30 días, límite por cliente y una pausa de 1.1 s entre consultas. Si Nominatim no responde, usa Photon.
+  - Una carretera con kilómetro se busca dentro de la caja del municipio del caso y lo dice: OpenStreetMap casi nunca trae el kilómetro.
+  - Si la descripción completa no aparece, busca la primera calle con el municipio y, si tampoco, el municipio, avisando. Fuentes en `data/SOURCES.md`.
+- **A2, la narración:** debajo del cuadro, «Escribe al menos 20 caracteres (llevas N)» o «N de 12,000 caracteres» (tope de 12 000). También «Croquis ve sin IA»: vehículos con marca, tipo y modelo, lugar, hora, medidas, velocidades, huellas y restos (`lib/narracion-local.ts`).
+- **A3, reporte pegado:**
+  - Si lo pegado parece un reporte completo de CESVI (largo y con tres o más de sus secciones), aparece «Cargarlo como reporte», que lo lee como «Cargar un reporte».
+  - Las fallas dicen su motivo real: Claude sin configurar, demasiadas lecturas, tamaño fuera de rango, el servidor que tardó o falló, o sin conexión (`lib/lectura-reporte.ts`).
+- **A4, inicio y archivo:**
+  - Los botones de inicio son «Escribir la narración del hecho» y «Abrir un caso guardado (.croquis)».
+  - El archivo se guarda con «Guardar el caso (.croquis)» y su nombre sale del título.
+  - Los `.json` de antes se siguen abriendo: se revisa el contenido, no el nombre.
+- **A5:** en el paso del hecho no hay mapa. Se queda montado pero oculto, y MapLibre se ajusta solo al llegar al lugar.
+- **Pruebas:** unitarias de `lugar-texto`, `lugar` (servidor, con fetch falso), `narracion-local`, `lectura-reporte`, `caso-guardado`, `danos-caso` y `textos-caso`.
+  - El e2e del caso nuevo ahora pide energía, Δv y perfil sin ceros en Daños (antes buscaba «C1–C6»).
+  - Los e2e de `/cesvi` pasan en local con Chromium visible. El de la carambola falló una vez con poca memoria y pasó solo al repetirlo.
+
 ### Vercel: producción y almacenamiento (René, 2026-11-05; ADR 0107)
 
 Rama `fix/vercel-produccion`. René mandó la captura del panel: «No Production Deployment», el merge del #163 sin construir y 7.4 de 10 GB de almacenamiento.
@@ -1897,7 +1924,8 @@ Rama `fix/vercel-produccion`. René mandó la captura del panel: «No Production
 - **Verificación:**
   - `/api/version` dice el commit desplegado.
   - El flujo «Producción = main» (`.github/workflows/produccion.yml`) espera hasta 25 min a que croquis-sage.vercel.app sirva el commit de main y, si no, falla en ese commit.
-  - Si existe el secreto `VERCEL_DEPLOY_HOOK_MAIN`, a los 6 min dispara el Deploy Hook. Crearlo lo bloqueó el modo automático: queda en «Bloqueado — necesita a René».
+  - A los 6 min, si producción no lo sirve, dispara el Deploy Hook de main (secreto `VERCEL_DEPLOY_HOOK_MAIN`). René lo creó en el panel y lo guardó en GitHub el 2026-11-05; el modo automático no dejó crearlo por el API.
+- **Resultado del merge (#164, 9f18c37):** Vercel lo construyó solo con la integración de Git (`dpl_GA5GPftjHPgHsG7RmDwtR9QjqRoR`, origen `git`, producción), croquis-sage sirvió el commit unos dos minutos después y el flujo «Producción = main» pasó. En producción, `/hdri/` y `/modelos/vehiculos/` responden 404 y el registro del build dice que salen de Blob.
 - **Peso de un despliegue** (`node eval/despliegue_peso.mjs`, `eval/results/despliegue_peso.json`, sobre el build local):
 
   | Parte                        | MB   |
@@ -1940,9 +1968,7 @@ Rama `fix/vercel-produccion`. René mandó la captura del panel: «No Production
   - Un flujo que falla en el commit de main si producción no lo sirve en 25 min.
   - Los modelos y los HDRI en Vercel Blob: cada despliegue pesa 35 % menos.
   - Solo quedan los 3 despliegues que pediste conservar.
-- **Qué necesito de ti:**
-  - Crear el Deploy Hook de main y guardarlo como secreto en GitHub, para que el flujo republique solo (fila en «Bloqueado»).
-  - Mirar en el panel cuánto marca ahora el almacenamiento.
+- **Qué necesito de ti:** mirar en el panel cuánto marca ahora el almacenamiento. El Deploy Hook ya está.
 
 ### Llantas del caso de ejemplo Jetta–Camaro (René, 2026-11-05)
 
@@ -2111,7 +2137,6 @@ Ordenado por impacto (lo que cierra una fase de PLAN-CESVI primero). Lo resuelto
 
 | Qué                                                                                                                                                                                                                              | Para qué                                                                                                                                                                 | Estado                                                                                                                                                                                                                                                     |
 | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **Deploy Hook de main:** en Vercel, Settings → Git → Deploy Hooks, crear uno de la rama `main`; luego guardar su URL en GitHub como secreto `VERCEL_DEPLOY_HOOK_MAIN` (Settings → Secrets and variables → Actions)               | Que el flujo «Producción = main» republique solo si Vercel vuelve a perder un merge (ADR 0107)                                                                           | El modo automático no dejó crearlo por el API (cambio de cuenta); sin él, el flujo solo avisa con la marca roja                                                                                                                                            |
 | **T2a:** el colaborador corre `EJECUTAR-EN-COMPUTADORA-DEMO.bat -Prueba` desde una terminal en la carpeta del repo (2 min)                                                                                                       | Destapar hoy cualquier falla del script en otra máquina (Git, Chrome, permisos, descarga de Blender) antes del botón completo                                            | Pedido a René el 2026-10-30 (plan v3 §3). El resultado llega en la rama `resultados/prueba-<fecha>`; si falla, Claude Code lo arregla antes de seguir con T1                                                                                               |
 | Correr `EJECUTAR-EN-COMPUTADORA-DEMO.bat` en la computadora de la demo (un colaborador con Git y Chrome)                                                                                                                         | Cierra R11 (el video en calidad completa) y la meta de PLAN §7.8 (≥ 60 fps en alta o ultra, E6). Los resultados llegan en una rama `resultados/computadora-demo-<fecha>` | Listo para correr (2026-10-24, ADR 0087): `git pull` y doble clic; la guía es `LEEME-COMPUTADORA-DEMO.md`. La medición dura unos 44 minutos (132 mediciones de unos 20 s, la cuenta de la página); lo que tarden los videos se mide en esa primera corrida |
 | Aprobar el video de R11 de esa computadora                                                                                                                                                                                       | R11 se cierra con la aprobación de René (PLAN-CESVI R11)                                                                                                                 | Pendiente: depende de la fila anterior                                                                                                                                                                                                                     |

@@ -10,8 +10,10 @@ import {
 import { describe, expect, it } from "vitest";
 import {
   casoParaGuardar,
+  EXTENSION_CASO,
   huellaDelCaso,
   leerCasoGuardado,
+  nombreArchivoCaso,
   validacionVigente,
   type CasoAbierto,
 } from "./caso-guardado";
@@ -145,5 +147,16 @@ describe("el caso guardado con la validación del perito (ADR 0075)", () => {
       { n: 1, de: "fisico", para: "pizarra", tipo: "escribe", texto: "Reconstrucción hecha." },
     ]);
     expect(leerCasoGuardado({ ...g, bitacora: "no es lista" })).toMatchObject({ bitacora: [] });
+  });
+});
+
+describe("el nombre del archivo del caso (A4)", () => {
+  it("lleva la extensión .croquis y sale del título, sin acentos", () => {
+    expect(nombreArchivoCaso("Reporte de CESVI · AXA A2010930.md")).toBe("axa-a2010930.croquis");
+    expect(nombreArchivoCaso("Choque en Calzada de Tlalpan")).toBe(
+      "choque-en-calzada-de-tlalpan.croquis",
+    );
+    expect(nombreArchivoCaso("")).toBe("caso.croquis");
+    expect(EXTENSION_CASO).toBe(".croquis");
   });
 });
