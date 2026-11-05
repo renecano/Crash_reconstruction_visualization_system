@@ -68,3 +68,34 @@ export function useTema(m: Modo): Tema {
     () => TEMA_POR_DEFECTO[m],
   );
 }
+
+// --- «Transiciones» (Laboratorio §5): el perito puede apagar la transición entre actos ------------
+
+const CLAVE_TRANSICIONES = "croquis.cesvi.transiciones";
+const memoriaTransiciones: { v?: boolean } = {};
+
+/**
+ * Si las transiciones están activas, leído en el momento (para efectos: en la hidratación el hook
+ * todavía da el valor del servidor).
+ */
+export function leerTransiciones(): boolean {
+  try {
+    return window.localStorage.getItem(CLAVE_TRANSICIONES) !== "no";
+  } catch {
+    return memoriaTransiciones.v ?? true;
+  }
+}
+
+export function guardarTransiciones(activas: boolean): void {
+  try {
+    window.localStorage.setItem(CLAVE_TRANSICIONES, activas ? "si" : "no");
+  } catch {
+    memoriaTransiciones.v = activas;
+  }
+  window.dispatchEvent(new Event(EVENTO));
+}
+
+/** Si las transiciones entre actos están activas (por omisión, sí). */
+export function useTransiciones(): boolean {
+  return useSyncExternalStore(suscribir, leerTransiciones, () => true);
+}

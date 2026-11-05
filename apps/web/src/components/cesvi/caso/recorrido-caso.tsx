@@ -40,7 +40,7 @@ import {
 import type { OverpassResponse } from "@croquis/croquis-2d";
 import { preloadRenderer, type ViewerExportApi } from "@croquis/viewer";
 import type { Map as MapaMl } from "maplibre-gl";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import type { Hipotesis } from "@/components/visor/hypothesis-panel";
 import {
   ACEPTA_CASO,
@@ -65,7 +65,7 @@ import {
 } from "@/lib/pasos-caso";
 import { MODALIDAD } from "@/lib/nombres-cesvi";
 import { colorDeVehiculo } from "@/lib/vehiculos-cesvi";
-import { useTema, type Modo } from "@/lib/preferencias-cesvi";
+import { leerTransiciones, useTema, useTransiciones, type Modo } from "@/lib/preferencias-cesvi";
 import ejemplo from "../../../../../../data/cesvi/grabaciones/escenas/cesvi-e814f085db.json";
 import { Calculos, type DistanciaRestos } from "../calculos";
 import { Criterios } from "../correspondencia";
@@ -75,7 +75,9 @@ import { DictamenCaso } from "../dictamen-caso";
 import { CargaReporte } from "../importar-dictamen";
 import { subpasoLugar } from "@/lib/colocar";
 import { leerReporte } from "@/lib/lectura-reporte";
-import { BarraRecorrido, PASOS, PASOS_CORTOS } from "../recorrido/barra";
+import { actoDePaso, actosDelCaso, continuarA } from "@/lib/actos";
+import { BarraRecorrido, PASOS } from "../recorrido/barra";
+import { TransicionActo } from "../recorrido/transicion-acto";
 import { Reproduccion } from "../reproduccion";
 import {
   PasoCaso,
@@ -216,9 +218,36 @@ export function RecorridoCaso({ inicial }: { inicial: CasoExpediente }) {
   const editable = reporte === null;
   const narracion = editable ? texto.trim() || null : null;
   const pasos = PASOS.filter((_, i) => i !== 6 || reporte !== null);
-  const cortos = PASOS_CORTOS.filter((_, i) => i !== 6 || reporte !== null);
   const clave = (i: number) => PASOS.indexOf(pasos[i]!);
   const actual = clave(paso);
+  // Los actos del Laboratorio (prompt §4) y la transición al entrar a uno (§5): completa al entrar
+  // al caso y al presentar, corta entre actos al trabajar; nada con «Transiciones» apagado o con
+  // `prefers-reduced-motion`.
+  const actos = actosDelCaso(pasos.map((n) => CLAVES_PASOS[PASOS.indexOf(n)]!));
+  const actoIdx = Math.max(0, actoDePaso(actos, paso));
+  const transicionesActivas = useTransiciones();
+  const [transicion, setTransicion] = useState<{
+    id: number;
+    n: number;
+    nombre: string;
+    larga: boolean;
+  } | null>(null);
+  const actoVisto = useRef<number | null>(null);
+  const claveActo = actos[actoIdx]?.clave;
+  useEffect(() => {
+    const previo = actoVisto.current;
+    actoVisto.current = actoIdx;
+    if (previo === actoIdx || !leerTransiciones()) return undefined;
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return undefined;
+    const larga = previo === null || modo === "presentar";
+    const nombre = actos[actoIdx]?.nombre ?? "";
+    const r = requestAnimationFrame(() =>
+      setTransicion({ id: performance.now(), n: actoIdx + 1, nombre, larga }),
+    );
+    return () => cancelAnimationFrame(r);
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- solo al cambiar de acto
+  }, [claveActo]);
+  const terminarTransicion = useCallback(() => setTransicion(null), []);
   const irA = (i: number) => setPaso(Math.max(0, Math.min(pasos.length - 1, i)));
   // El Redactor escribe cuando el perito abre el dictamen con una reconstrucción (R12b).
   const enDictamen = actual === PASOS.length - 1;
@@ -1112,9 +1141,7 @@ export function RecorridoCaso({ inicial }: { inicial: CasoExpediente }) {
   const lugarTexto = [lugar?.descripcion?.valor, lugar?.municipio?.valor, lugar?.estado?.valor]
     .filter(Boolean)
     .join(", ");
-  const textoSiguiente = siguienteNombre
-    ? `Siguiente: ${siguienteNombre.charAt(0).toLowerCase()}${siguienteNombre.slice(1)} →`
-    : "";
+  const textoSiguiente = siguienteNombre ? continuarA(siguienteNombre) : "";
   return (
     <div
       className="fixed inset-0 flex flex-col bg-fondo text-texto"
@@ -1122,10 +1149,21 @@ export function RecorridoCaso({ inicial }: { inicial: CasoExpediente }) {
       data-modo={modo}
       data-testid="recorrido-caso"
       data-origen={inicial.origen}
+      data-acto={actos[actoIdx]?.clave}
     >
+      {transicion ? (
+        <TransicionActo
+          key={transicion.id}
+          numero={transicion.n}
+          nombre={transicion.nombre}
+          larga={transicion.larga}
+          onFin={terminarTransicion}
+        />
+      ) : null}
       <BarraRecorrido
         pasos={pasos}
-        pasosCortos={cortos}
+        actos={actos}
+        transiciones={transicionesActivas}
         paso={paso}
         irA={(i) => {
           if (i <= paso || abierto(i)) irA(i);
@@ -1148,8 +1186,11 @@ export function RecorridoCaso({ inicial }: { inicial: CasoExpediente }) {
           data-testid="panel-paso"
           data-paso={actual + 1}
         >
-          <p className="t-rotulo">
-            Paso {paso + 1} de {pasos.length} · {pasos[paso]}
+          <p className="t-rotulo" data-testid="rotulo-acto">
+            Acto {actoIdx + 1} de {actos.length} · {actos[actoIdx]?.nombre}
+            {(actos[actoIdx]?.pasos.length ?? 0) > 1
+              ? ` · ${(actos[actoIdx]?.pasos.indexOf(paso) ?? 0) + 1} de ${actos[actoIdx]?.pasos.length}: ${pasos[paso]}`
+              : ""}
           </p>
           {actual === 2 && modo === "trabajar" ? <GuiaColocar /> : null}
           {cuerpo}
@@ -1205,12 +1246,15 @@ export function RecorridoCaso({ inicial }: { inicial: CasoExpediente }) {
               {siguienteNombre ? (
                 <button
                   type="button"
-                  className="boton-principal"
+                  className="boton-principal boton-continuar"
                   onClick={() => irA(paso + 1)}
                   disabled={falta.length > 0}
                   data-testid="siguiente"
                 >
                   {textoSiguiente}
+                  <span className="flecha-continuar" aria-hidden="true">
+                    →
+                  </span>
                 </button>
               ) : null}
             </div>
@@ -1385,6 +1429,9 @@ export function RecorridoCaso({ inicial }: { inicial: CasoExpediente }) {
                     }}
                   >
                     {textoSiguiente}
+                    <span className="flecha-continuar" aria-hidden="true">
+                      →
+                    </span>
                   </button>
                 </div>
               ) : null}
