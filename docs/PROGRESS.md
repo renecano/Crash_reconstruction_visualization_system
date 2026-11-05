@@ -1883,6 +1883,27 @@ Rama `fix/fotos-dictamen`. René mandó la captura del dictamen de un caso nuevo
 - **Qué hay ahora:** fotos con la cinematográfica, del instante pedido, sin marcadores; vehículos apoyados en banquetas y relieve; y si el 3D se queda abajo de 24 fps durante 5 s, baja un nivel y lo dice `?diag=1`.
 - **Cómo probarlo:** genera el dictamen de un caso nuevo y compara las tres fotos; y en `docs/cesvi/t1/ruedas/` están las capturas de cerca de cada clase. Si en tu caso las llantas siguen fuera de su hueco, dime la clase del vehículo (o manda el `.json` del caso): en las ocho clases que medí quedan bien.
 
+### Laboratorio: la maqueta del caso (René, 2026-11-04; prompt §7)
+
+Rama `feat/laboratorio-maqueta-2` (la primera, PR #169, salió de un main sin el #168).
+
+- **La vista:** «Maqueta», junto a «Mapa» y «3D» en Reconstrucción.
+  - Es la escena vista desde arriba que genera el caso, en SVG y en metros. Con la maqueta a la vista, el 3D descansa.
+  - Usa el resultado con las velocidades reconstruidas, calculado en el worker (`MaquetaCaso`).
+- **Qué dibuja** (geometría en `lib/maqueta.ts`):
+  - La vía: las calles del mapa a su ancho. Sin calles del mapa no se inventa una y lo dice. La plantilla de la escena no coincidía con las posiciones reales de AXA.
+  - Las piezas con la silueta de su clase, en el impacto, con sombra y la zona de contacto teñida.
+  - La estela: las poses reales cada 0.4 s antes del impacto.
+  - La trayectoria: más naranja cuanto más rápido.
+  - El reposo punteado, el impacto y las etiquetas con línea guía.
+- **Las cifras:** cada una lleva su método. La de la maqueta («51.3 km/h al impacto» en AXA) es la de la simulación con las velocidades previas ajustadas; la leyenda dice que puede diferir del p50 de la tabla (54.5).
+- **El encuadre:** el impacto, los últimos 2.5 s y el reposo, ajustado al panel.
+- **Pruebas:**
+  - Unitarias de la geometría con el resultado canónico de alcance.
+  - `e2e/maqueta-capturas.spec.ts` (a mano) deja `docs/cesvi/rediseno/laboratorio/capturas/maqueta-{dia,noche}.webp`.
+  - Los tres e2e de `/cesvi` pasan en local.
+- **Sigue:** llevar la maqueta a La escena y a Presentar, con las cotas; luego las pantallas en orden (prompt §8).
+
 ### Laboratorio: rutas por acto (René, 2026-11-04; prompt §4)
 
 Rama `feat/laboratorio-rutas`.
