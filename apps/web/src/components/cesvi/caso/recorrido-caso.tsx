@@ -78,6 +78,7 @@ import { leerReporte } from "@/lib/lectura-reporte";
 import { actoDePaso, actosDelCaso, continuarA, rutaDeActo, type ClaveActo } from "@/lib/actos";
 import { BarraRecorrido, PASOS } from "../recorrido/barra";
 import { TransicionActo } from "../recorrido/transicion-acto";
+import { MaquetaCaso } from "../escena/maqueta-caso";
 import { Reproduccion } from "../reproduccion";
 import {
   PasoCaso,
@@ -170,7 +171,7 @@ export function RecorridoCaso({
   const [medida, setMedida] = useState<number | null>(null);
   const [mapa, setMapa] = useState<MapaMl | null>(null);
   const [moviles, setMoviles] = useState<PosicionMovil[]>([]);
-  const [vista, setVista] = useState<"mapa" | "3d">("mapa");
+  const [vista, setVista] = useState<"mapa" | "3d" | "maqueta">("mapa");
   const [declarada, setDeclarada] = useState<Hipotesis | null>(null);
   const [comparacionDeclarada, setComparacionDeclarada] =
     useState<DatosDictamenCaso["declarada"]>(null);
@@ -1323,11 +1324,11 @@ export function RecorridoCaso({
           </div>
           {r ? (
             <div
-              className={`absolute inset-0 bg-fondo ${verMapa ? "pointer-events-none invisible" : ""}`}
+              className={`absolute inset-0 bg-fondo ${vista === "3d" ? "" : "pointer-events-none invisible"}`}
             >
               <Visor3dCaso
                 r={r}
-                activo={!verMapa}
+                activo={vista === "3d"}
                 contraCesvi={contraCesvi}
                 declarada={declarada}
                 onExportApi={setExportApi}
@@ -1340,6 +1341,21 @@ export function RecorridoCaso({
                 objetos={objetos}
                 expandido={expandido}
                 supuestos={supuestos}
+              />
+            </div>
+          ) : null}
+          {/* La maqueta del caso (Laboratorio §7): la escena desde arriba, generada del resultado. */}
+          {r && vista === "maqueta" ? (
+            <div className="absolute inset-0 bg-fondo p-3 pt-16" data-testid="panel-maqueta">
+              <MaquetaCaso
+                r={r}
+                calles={calles}
+                nombres={Object.fromEntries(
+                  Object.entries(r.ids).map(([resId, id]) => {
+                    const v = expediente?.vehiculos.find((x) => x.id === id);
+                    return [resId, v?.marca?.valor ? `${id} · ${v.marca.valor}` : String(id)];
+                  }),
+                )}
               />
             </div>
           ) : null}
@@ -1393,7 +1409,7 @@ export function RecorridoCaso({
           <div className="absolute top-3 right-3 z-10 flex gap-2">
             {r ? (
               <div className="segmentado" role="tablist" aria-label="Vista">
-                {(["mapa", "3d"] as const).map((v) => (
+                {(["mapa", "maqueta", "3d"] as const).map((v) => (
                   <button
                     key={v}
                     type="button"
@@ -1406,7 +1422,7 @@ export function RecorridoCaso({
                     }}
                     data-testid={`vista-${v}`}
                   >
-                    {v === "mapa" ? "Mapa" : "3D"}
+                    {v === "mapa" ? "Mapa" : v === "maqueta" ? "Maqueta" : "3D"}
                   </button>
                 ))}
               </div>
