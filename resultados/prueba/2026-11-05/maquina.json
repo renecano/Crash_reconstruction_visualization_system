@@ -3,9 +3,9 @@
     "prueba":  true,
     "solo_render":  true,
     "solo_medicion":  false,
-    "duracion_de_esta_corrida_s":  17,
+    "duracion_de_esta_corrida_s":  251,
     "ram_usada_al_empezar_pct":  73,
-    "ram_usada_maxima_pct":  79,
+    "ram_usada_maxima_pct":  90,
     "limite_ram_pct":  95,
     "pasos":  [
                   {
@@ -28,6 +28,13 @@
                       "Segundos":  17,
                       "RamMaxima":  79,
                       "Nota":  "0.2 MB, --motor cycles --resolucion 320x180 --muestras 4 --desde 0 --hasta 2"
+                  },
+                  {
+                      "Paso":  "Video de la escena «carambola»",
+                      "Bien":  true,
+                      "Segundos":  225,
+                      "RamMaxima":  90,
+                      "Nota":  "0.3 MB, --motor cycles --resolucion 320x180 --muestras 4 --desde 0 --hasta 2"
                   }
               ]
 }

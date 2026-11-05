@@ -1,34 +1,342 @@
-16:24:08 | INFO: Data are loaded, start creating Blender stuff
-16:24:08 | INFO: Blender create Mesh node 0
-16:24:09 | INFO: Blender create Mesh node 1
-16:24:09 | INFO: Blender create Mesh node 2
-16:24:09 | INFO: Blender create Mesh node 3
-16:24:09 | INFO: Blender create Mesh node 4
-16:24:09 | INFO: Blender create Mesh node 5
-16:24:09 | INFO: Blender create Mesh node 6
-16:24:09 | INFO: Blender create Mesh node 7
-16:24:09 | INFO: Blender create Mesh node 8
-16:24:09 | INFO: Blender create Mesh node 9
-16:24:09 | INFO: Blender create Mesh node 10
-16:24:09 | INFO: Blender create Mesh node 11
-16:24:09 | INFO: Blender create Mesh node 12
-16:24:09 | INFO: Blender create Mesh node 13
-16:24:09 | INFO: Blender create Mesh node 14
-16:24:09 | INFO: Blender create Mesh node 15
-00:02.125  bpy.rna          | ERROR Python script error in IMPORT_SCENE_OT_gltf.execute
-Error: Python: Traceback (most recent call last):
-  File "D:\CroquisDemo\blender\blender-5.2.3-windows-x64\5.2\scripts\addons_core\io_scene_gltf2\__init__.py", line 2073, in execute
-    return self.import_gltf2(context)
-           ~~~~~~~~~~~~~~~~~^^^^^^^^^
-  File "D:\CroquisDemo\blender\blender-5.2.3-windows-x64\5.2\scripts\addons_core\io_scene_gltf2\__init__.py", line 2105, in import_gltf2
-    return self.unit_import(self.filepath, import_settings)
-           ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "D:\CroquisDemo\blender\blender-5.2.3-windows-x64\5.2\scripts\addons_core\io_scene_gltf2\__init__.py", line 2120, in unit_import
-    BlenderGlTF.create(gltf_importer)
-    ~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^
-  File "D:\CroquisDemo\blender\blender-5.2.3-windows-x64\5.2\scripts\addons_core\io_scene_gltf2\blender\imp\blender_gltf.py", line 41, in create
-    BlenderGlTF._create(gltf)
-    ~~~~~~~~~~~~~~~~~~~^^^^^^
-  File "D:\CroquisDemo\blender\blender-5.2.3-windows-x64\5.2\scripts... truncatedBlender 5.2.3 LTS (hash e13b728c6880 built 2026-10-22 01:37:16)
+16:47:18 | INFO: Data are loaded, start creating Blender stuff
+16:47:18 | INFO: Blender create Mesh node 0
+16:47:18 | INFO: Blender create Mesh node 1
+16:47:18 | INFO: Blender create Mesh node 2
+16:47:18 | INFO: Blender create Mesh node 3
+16:47:18 | INFO: Blender create Mesh node 4
+16:47:18 | INFO: Blender create Mesh node 5
+16:47:18 | INFO: Blender create Mesh node 6
+16:47:18 | INFO: Blender create Mesh node 7
+16:47:18 | INFO: Blender create Mesh node 8
+16:47:18 | INFO: Blender create Mesh node 9
+16:47:18 | INFO: Blender create Mesh node 10
+16:47:18 | INFO: Blender create Mesh node 11
+16:47:18 | INFO: Blender create Mesh node 12
+16:47:18 | INFO: Blender create Mesh node 13
+16:47:18 | INFO: Blender create Mesh node 14
+16:47:18 | INFO: Blender create Mesh node 15
+16:47:19 | INFO: Blender create Mesh node 16
+16:47:19 | INFO: Blender create Mesh node 17
+16:47:19 | INFO: Blender create Mesh node 18
+16:47:19 | INFO: Blender create Mesh node 19
+16:47:19 | INFO: Blender create Mesh node 20
+16:47:19 | INFO: Blender create Mesh node 21
+16:47:19 | INFO: Blender create Mesh node 22
+16:47:19 | INFO: Blender create Mesh node 23
+16:47:19 | INFO: Blender create Mesh node 24
+16:47:19 | INFO: Blender create Mesh node 25
+16:47:19 | INFO: Blender create Mesh node 26
+16:47:19 | INFO: Blender create Mesh node 27
+16:47:19 | INFO: Blender create Mesh node 28
+16:47:19 | INFO: Blender create Mesh node 29
+16:47:19 | INFO: Blender create Mesh node 30
+16:47:19 | INFO: Blender create Mesh node 31
+16:47:19 | INFO: Blender create Mesh node 32
+16:47:19 | INFO: Blender create Mesh node 33
+16:47:19 | INFO: Blender create Mesh node 34
+16:47:19 | INFO: Blender create Mesh node 35
+16:47:19 | INFO: Blender create Mesh node 36
+16:47:19 | INFO: Blender create Mesh node 37
+16:47:19 | INFO: Blender create Mesh node 38
+16:47:19 | INFO: Blender create Mesh node 39
+16:47:19 | INFO: Blender create Mesh node 40
+16:47:19 | INFO: Blender create Mesh node 41
+16:47:19 | INFO: Blender create Mesh node 42
+16:47:19 | INFO: Blender create Mesh node 43
+16:47:19 | INFO: Blender create Mesh node 44
+16:47:19 | INFO: Blender create Mesh node 45
+16:47:19 | INFO: Blender create Mesh node 46
+16:47:19 | INFO: Blender create Mesh node 47
+16:47:19 | INFO: Blender create Mesh node 48
+16:47:19 | INFO: Blender create Mesh node 49
+16:47:19 | INFO: Blender create Mesh node 50
+16:47:19 | INFO: Blender create Mesh node 51
+16:47:19 | INFO: Blender create Mesh node 52
+16:47:19 | INFO: Blender create Mesh node 53
+16:47:19 | INFO: Blender create Mesh node 54
+16:47:19 | INFO: Blender create Mesh node 55
+16:47:19 | INFO: Blender create Mesh node 56
+16:47:19 | INFO: Blender create Mesh node 57
+16:47:19 | INFO: Blender create Mesh node 58
+16:47:19 | INFO: Blender create Mesh node 59
+16:47:19 | INFO: Blender create Mesh node 60
+16:47:19 | INFO: Blender create Mesh node 61
+16:47:20 | INFO: Blender create Mesh node 62
+16:47:20 | INFO: Blender create Mesh node 63
+16:47:20 | INFO: Blender create Mesh node 64
+16:47:20 | INFO: Blender create Mesh node 65
+16:47:20 | INFO: Blender create Mesh node 66
+16:47:20 | INFO: Blender create Mesh node 67
+16:47:21 | INFO: Blender create Mesh node 68
+16:47:21 | INFO: Blender create Mesh node 69
+16:47:21 | INFO: Blender create Mesh node 70
+16:47:21 | INFO: Blender create Mesh node 71
+16:47:21 | INFO: Blender create Mesh node 72
+16:47:21 | INFO: Blender create Mesh node 73
+16:47:21 | INFO: Blender create Mesh node 74
+16:47:21 | INFO: Blender create Mesh node 75
+16:47:21 | INFO: Blender create Mesh node 76
+16:47:21 | INFO: Blender create Mesh node 77
+16:47:21 | INFO: Blender create Mesh node 78
+16:47:22 | INFO: Blender create Mesh node 79
+16:47:22 | INFO: Blender create Mesh node 80
+16:47:22 | INFO: Blender create Mesh node 81
+16:47:22 | INFO: Blender create Mesh node 82
+16:47:22 | INFO: Blender create Mesh node 83
+16:47:22 | INFO: Blender create Mesh node 84
+16:47:22 | INFO: Blender create Mesh node 85
+16:47:22 | INFO: Blender create Mesh node 86
+16:47:22 | INFO: Blender create Mesh node 87
+16:47:22 | INFO: Blender create Mesh node 88
+16:47:22 | INFO: Blender create Mesh node 89
+16:47:22 | INFO: Blender create Mesh node 90
+16:47:22 | INFO: Blender create Mesh node 91
+16:47:22 | INFO: Blender create Mesh node 92
+16:47:22 | INFO: Blender create Mesh node 93
+16:47:22 | INFO: Blender create Mesh node 94
+16:47:22 | INFO: Blender create Mesh node 95
+16:47:22 | INFO: Blender create Mesh node 96
+16:47:22 | INFO: Blender create Mesh node 97
+16:47:22 | INFO: Blender create Mesh node 98
+16:47:22 | INFO: Blender create Mesh node 99
+16:47:22 | INFO: Blender create Mesh node 100
+16:47:22 | INFO: Blender create Mesh node 101
+16:47:22 | INFO: Blender create Mesh node 102
+16:47:22 | INFO: Blender create Mesh node 103
+16:47:22 | INFO: Blender create Mesh node 104
+16:47:22 | INFO: Blender create Mesh node 105
+16:47:22 | INFO: Blender create Mesh node 106
+16:47:22 | INFO: Blender create Mesh node 107
+16:47:22 | INFO: Blender create Mesh node 108
+16:47:22 | INFO: Blender create Mesh node 109
+16:47:22 | INFO: Blender create Mesh node 110
+16:47:23 | INFO: glTF import finished in 5.22s
+16:47:24 | INFO: Data are loaded, start creating Blender stuff
+16:47:24 | INFO: Blender create Mesh node Kiri10_bumper_Front_Kiri10_bodymat_0
+16:47:24 | INFO: Draco Decoder: Decode primitive Kiri10_bumper_Front_Kiri10_bodymat_0
+16:47:24 | INFO: Blender create Mesh node Kiri10_Bumper_Rear_Kiri10_bodymat_0
+16:47:24 | INFO: Draco Decoder: Decode primitive Kiri10_Bumper_Rear_Kiri10_bodymat_0
+16:47:24 | INFO: Blender create Mesh node Kiri10_Headlights_UCB_Lights_and_Glass_0
+16:47:24 | INFO: Draco Decoder: Decode primitive Kiri10_Headlights_UCB_Lights_and_Glass_0
+16:47:24 | INFO: Blender create Mesh node Kiri10_Headlights_UCB_Lights_and_Glass_0.001
+16:47:24 | INFO: Draco Decoder: Decode primitive Kiri10_Headlights_UCB_Lights_and_Glass_0.001
+16:47:24 | INFO: Blender create Mesh node Kiri10_blinkers_UCB_Lights_and_Glass_0
+16:47:24 | INFO: Draco Decoder: Decode primitive Kiri10_blinkers_UCB_Lights_and_Glass_0
+16:47:24 | INFO: Blender create Mesh node Kiri10_body_Kiri10_bodymat_0
+16:47:24 | INFO: Draco Decoder: Decode primitive Kiri10_body_Kiri10_bodymat_0
+16:47:24 | INFO: Blender create Mesh node Kiri10_Bottom_UCB_BOTTOM_LT_0
+16:47:24 | INFO: Draco Decoder: Decode primitive Kiri10_Bottom_UCB_BOTTOM_LT_0
+16:47:24 | INFO: Blender create Mesh node Kiri10_Brakelights_UCB_Lights_and_Glass_0
+16:47:24 | INFO: Draco Decoder: Decode primitive Kiri10_Brakelights_UCB_Lights_and_Glass_0
+16:47:24 | INFO: Blender create Mesh node Kiri10_Bumper_Front_Inner_UCB_BOTTOM_LT_0
+16:47:24 | INFO: Draco Decoder: Decode primitive Kiri10_Bumper_Front_Inner_UCB_BOTTOM_LT_0
+16:47:24 | INFO: Blender create Mesh node Kiri10_Bumper_Rear_Inner_UCB_BOTTOM_LT_0
+16:47:24 | INFO: Draco Decoder: Decode primitive Kiri10_Bumper_Rear_Inner_UCB_BOTTOM_LT_0
+16:47:24 | INFO: Blender create Mesh node Kiri10_glass_Body_UCB_Lights_and_Glass_Transperent_0
+16:47:24 | INFO: Draco Decoder: Decode primitive Kiri10_glass_Body_UCB_Lights_and_Glass_Transperent_0
+16:47:24 | INFO: Blender create Mesh node Kiri10_Glass_Driver_UCB_Lights_and_Glass_Transperent_0
+16:47:24 | INFO: Draco Decoder: Decode primitive Kiri10_Glass_Driver_UCB_Lights_and_Glass_Transperent_0
+16:47:24 | INFO: Blender create Mesh node Kiri10_Glass_Passenger_UCB_Lights_and_Glass_Transperent_0
+16:47:24 | INFO: Draco Decoder: Decode primitive Kiri10_Glass_Passenger_UCB_Lights_and_Glass_Transperent_0
+16:47:24 | INFO: Blender create Mesh node Kiri10_Glass_Rear_UCB_Lights_and_Glass_Transperent_0
+16:47:24 | INFO: Draco Decoder: Decode primitive Kiri10_Glass_Rear_UCB_Lights_and_Glass_Transperent_0
+16:47:24 | INFO: Blender create Mesh node Kiri10_Headlights_Glass_UCB_Lights_and_Glass_Transperent_0
+16:47:24 | INFO: Draco Decoder: Decode primitive Kiri10_Headlights_Glass_UCB_Lights_and_Glass_Transperent_0
+16:47:24 | INFO: Blender create Mesh node Kiri10_Hood_Kiri10_bodymat_0
+16:47:24 | INFO: Draco Decoder: Decode primitive Kiri10_Hood_Kiri10_bodymat_0
+16:47:24 | INFO: Blender create Mesh node Kiri10_interior_UCB_Interiors_2_0
+16:47:24 | INFO: Draco Decoder: Decode primitive Kiri10_interior_UCB_Interiors_2_0
+16:47:24 | INFO: Blender create Mesh node Kiri10_Reverse_UCB_Lights_and_Glass_0
+16:47:24 | INFO: Draco Decoder: Decode primitive Kiri10_Reverse_UCB_Lights_and_Glass_0
+16:47:24 | INFO: Blender create Mesh node Kiri10_Steering_Wheel_UCB_Interiors_2_0
+16:47:24 | INFO: Draco Decoder: Decode primitive Kiri10_Steering_Wheel_UCB_Interiors_2_0
+16:47:24 | INFO: Blender create Mesh node Kiri10_Suspension_UCB_BOTTOM_LT_0
+16:47:24 | INFO: Draco Decoder: Decode primitive Kiri10_Suspension_UCB_BOTTOM_LT_0
+16:47:24 | INFO: Blender create Mesh node Kiri10_Taillights_Glass_UCB_Lights_and_Glass_Transperent_0
+16:47:24 | INFO: Draco Decoder: Decode primitive Kiri10_Taillights_Glass_UCB_Lights_and_Glass_Transperent_0
+16:47:24 | INFO: Blender create Mesh node Kiri10_Trunkdoor_Inner_UCB_BOTTOM_LT_0
+16:47:24 | INFO: Draco Decoder: Decode primitive Kiri10_Trunkdoor_Inner_UCB_BOTTOM_LT_0
+16:47:24 | INFO: Blender create Mesh node Kiri10_Trunkdoor_Kiri10_bodymat_0
+16:47:24 | INFO: Draco Decoder: Decode primitive Kiri10_Trunkdoor_Kiri10_bodymat_0
+16:47:24 | INFO: Blender create Mesh node Kiri10_WheelStock_FL_RB1c_Tire_1k_0
+16:47:24 | INFO: Draco Decoder: Decode primitive Kiri10_WheelStock_FL_RB1c_Tire_1k_0
+16:47:24 | INFO: Blender create Mesh node Kiri10_WheelStock_FR_RB1c_Tire_1k_0
+16:47:24 | INFO: Draco Decoder: Decode primitive Kiri10_WheelStock_FR_RB1c_Tire_1k_0
+16:47:24 | INFO: Blender create Mesh node Kiri10_WheelStock_RL_RB1c_Tire_1k_0
+16:47:24 | INFO: Draco Decoder: Decode primitive Kiri10_WheelStock_RL_RB1c_Tire_1k_0
+16:47:24 | INFO: Blender create Mesh node Kiri10_WheelStock_RR_RB1c_Tire_1k_0
+16:47:24 | INFO: Draco Decoder: Decode primitive Kiri10_WheelStock_RR_RB1c_Tire_1k_0
+16:47:24 | INFO: Blender create Mesh node Kiri10_Windshield_UCB_Lights_and_Glass_Transperent_0
+16:47:24 | INFO: Draco Decoder: Decode primitive Kiri10_Windshield_UCB_Lights_and_Glass_Transperent_0
+16:47:24 | INFO: glTF import finished in 0.60s
+16:47:25 | INFO: Data are loaded, start creating Blender stuff
+16:47:25 | INFO: Blender create Mesh node Urban10_Bumper_Front_Urban10_bodymat_0
+16:47:25 | INFO: Draco Decoder: Decode primitive Urban10_Bumper_Front_Urban10_bodymat_0
+16:47:25 | INFO: Blender create Mesh node Urban10_Bumper_Rear_Urban10_bodymat_0
+16:47:25 | INFO: Draco Decoder: Decode primitive Urban10_Bumper_Rear_Urban10_bodymat_0
+16:47:25 | INFO: Blender create Mesh node Urban10_Headlights_UCB_Lights_and_Glass_0
+16:47:25 | INFO: Draco Decoder: Decode primitive Urban10_Headlights_UCB_Lights_and_Glass_0
+16:47:25 | INFO: Blender create Mesh node Urban10_Headlights_UCB_Lights_and_Glass_0.001
+16:47:25 | INFO: Draco Decoder: Decode primitive Urban10_Headlights_UCB_Lights_and_Glass_0.001
+16:47:25 | INFO: Blender create Mesh node Urban10_blinkers_UCB_Lights_and_Glass_0
+16:47:25 | INFO: Draco Decoder: Decode primitive Urban10_blinkers_UCB_Lights_and_Glass_0
+16:47:25 | INFO: Blender create Mesh node Urban10_Body_Glass_UCB_Lights_and_Glass_Transperent_0
+16:47:25 | INFO: Draco Decoder: Decode primitive Urban10_Body_Glass_UCB_Lights_and_Glass_Transperent_0
+16:47:25 | INFO: Blender create Mesh node Urban10_body_Urban10_bodymat_0
+16:47:25 | INFO: Draco Decoder: Decode primitive Urban10_body_Urban10_bodymat_0
+16:47:25 | INFO: Blender create Mesh node Urban10_Bottom_UCB_BOTTOM_LT_0
+16:47:25 | INFO: Draco Decoder: Decode primitive Urban10_Bottom_UCB_BOTTOM_LT_0
+16:47:25 | INFO: Blender create Mesh node Urban10_Brakelights_UCB_Lights_and_Glass_0
+16:47:25 | INFO: Draco Decoder: Decode primitive Urban10_Brakelights_UCB_Lights_and_Glass_0
+16:47:25 | INFO: Blender create Mesh node Urban10_Bumper_Front_Inner_UCB_BOTTOM_LT_0
+16:47:25 | INFO: Draco Decoder: Decode primitive Urban10_Bumper_Front_Inner_UCB_BOTTOM_LT_0
+16:47:25 | INFO: Blender create Mesh node Urban10_Bumper_Rear_Inner_UCB_BOTTOM_LT_0
+16:47:25 | INFO: Draco Decoder: Decode primitive Urban10_Bumper_Rear_Inner_UCB_BOTTOM_LT_0
+16:47:25 | INFO: Blender create Mesh node Urban10_Glass_Driver_UCB_Lights_and_Glass_Transperent_0
+16:47:25 | INFO: Draco Decoder: Decode primitive Urban10_Glass_Driver_UCB_Lights_and_Glass_Transperent_0
+16:47:25 | INFO: Blender create Mesh node Urban10_Glass_Passenger_UCB_Lights_and_Glass_Transperent_0
+16:47:25 | INFO: Draco Decoder: Decode primitive Urban10_Glass_Passenger_UCB_Lights_and_Glass_Transperent_0
+16:47:25 | INFO: Blender create Mesh node Urban10_Glass_Rear_UCB_Lights_and_Glass_Transperent_0
+16:47:25 | INFO: Draco Decoder: Decode primitive Urban10_Glass_Rear_UCB_Lights_and_Glass_Transperent_0
+16:47:25 | INFO: Blender create Mesh node Urban10_Headlight_Glass_UCB_Lights_and_Glass_Transperent_0
+16:47:25 | INFO: Draco Decoder: Decode primitive Urban10_Headlight_Glass_UCB_Lights_and_Glass_Transperent_0
+16:47:25 | INFO: Blender create Mesh node Urban10_Interior_UCB_Interiors_2_0
+16:47:25 | INFO: Draco Decoder: Decode primitive Urban10_Interior_UCB_Interiors_2_0
+16:47:25 | INFO: Blender create Mesh node Urban10_Reverse_UCB_Lights_and_Glass_0
+16:47:25 | INFO: Draco Decoder: Decode primitive Urban10_Reverse_UCB_Lights_and_Glass_0
+16:47:25 | INFO: Blender create Mesh node Urban10_Steering_Wheel_UCB_Interiors_2_0
+16:47:25 | INFO: Draco Decoder: Decode primitive Urban10_Steering_Wheel_UCB_Interiors_2_0
+16:47:25 | INFO: Blender create Mesh node Urban10_Suspension_UCB_BOTTOM_LT_0
+16:47:25 | INFO: Draco Decoder: Decode primitive Urban10_Suspension_UCB_BOTTOM_LT_0
+16:47:25 | INFO: Blender create Mesh node Urban10_Taillights_Glass_UCB_Lights_and_Glass_Transperent_0
+16:47:25 | INFO: Draco Decoder: Decode primitive Urban10_Taillights_Glass_UCB_Lights_and_Glass_Transperent_0
+16:47:25 | INFO: Blender create Mesh node Urban10_WheelStock_FL_RB1c_Tire_1k_0
+16:47:25 | INFO: Draco Decoder: Decode primitive Urban10_WheelStock_FL_RB1c_Tire_1k_0
+16:47:25 | INFO: Blender create Mesh node Urban10_WheelStock_FR_RB1c_Tire_1k_0
+16:47:25 | INFO: Draco Decoder: Decode primitive Urban10_WheelStock_FR_RB1c_Tire_1k_0
+16:47:25 | INFO: Blender create Mesh node Urban10_WheelStock_RR_RB1c_Tire_1k_0
+16:47:25 | INFO: Draco Decoder: Decode primitive Urban10_WheelStock_RR_RB1c_Tire_1k_0
+16:47:25 | INFO: Blender create Mesh node Urban10_Windshield_UCB_Lights_and_Glass_Transperent_0
+16:47:25 | INFO: Draco Decoder: Decode primitive Urban10_Windshield_UCB_Lights_and_Glass_Transperent_0
+16:47:25 | INFO: glTF import finished in 0.54s
+00:13.265  render           | Saved: 'D:\CroquisDemo\render-prueba-2026-11-05\carambola\cuadro_0090.png'
+00:16.750  render           | Saved: 'D:\CroquisDemo\render-prueba-2026-11-05\carambola\cuadro_0091.png'
+00:20.234  render           | Saved: 'D:\CroquisDemo\render-prueba-2026-11-05\carambola\cuadro_0092.png'
+00:23.687  render           | Saved: 'D:\CroquisDemo\render-prueba-2026-11-05\carambola\cuadro_0093.png'
+00:27.031  render           | Saved: 'D:\CroquisDemo\render-prueba-2026-11-05\carambola\cuadro_0094.png'
+00:30.593  render           | Saved: 'D:\CroquisDemo\render-prueba-2026-11-05\carambola\cuadro_0095.png'
+00:34.093  render           | Saved: 'D:\CroquisDemo\render-prueba-2026-11-05\carambola\cuadro_0096.png'
+00:38.078  render           | Saved: 'D:\CroquisDemo\render-prueba-2026-11-05\carambola\cuadro_0097.png'
+00:41.625  render           | Saved: 'D:\CroquisDemo\render-prueba-2026-11-05\carambola\cuadro_0098.png'
+00:45.078  render           | Saved: 'D:\CroquisDemo\render-prueba-2026-11-05\carambola\cuadro_0099.png'
+00:48.500  render           | Saved: 'D:\CroquisDemo\render-prueba-2026-11-05\carambola\cuadro_0100.png'
+00:51.922  render           | Saved: 'D:\CroquisDemo\render-prueba-2026-11-05\carambola\cuadro_0101.png'
+00:55.281  render           | Saved: 'D:\CroquisDemo\render-prueba-2026-11-05\carambola\cuadro_0102.png'
+00:58.765  render           | Saved: 'D:\CroquisDemo\render-prueba-2026-11-05\carambola\cuadro_0103.png'
+01:02.203  render           | Saved: 'D:\CroquisDemo\render-prueba-2026-11-05\carambola\cuadro_0104.png'
+01:05.578  render           | Saved: 'D:\CroquisDemo\render-prueba-2026-11-05\carambola\cuadro_0105.png'
+01:08.922  render           | Saved: 'D:\CroquisDemo\render-prueba-2026-11-05\carambola\cuadro_0106.png'
+01:12.375  render           | Saved: 'D:\CroquisDemo\render-prueba-2026-11-05\carambola\cuadro_0107.png'
+01:15.812  render           | Saved: 'D:\CroquisDemo\render-prueba-2026-11-05\carambola\cuadro_0108.png'
+01:19.312  render           | Saved: 'D:\CroquisDemo\render-prueba-2026-11-05\carambola\cuadro_0109.png'
+01:22.672  render           | Saved: 'D:\CroquisDemo\render-prueba-2026-11-05\carambola\cuadro_0110.png'
+01:26.047  render           | Saved: 'D:\CroquisDemo\render-prueba-2026-11-05\carambola\cuadro_0111.png'
+01:29.422  render           | Saved: 'D:\CroquisDemo\render-prueba-2026-11-05\carambola\cuadro_0112.png'
+01:32.828  render           | Saved: 'D:\CroquisDemo\render-prueba-2026-11-05\carambola\cuadro_0113.png'
+01:36.203  render           | Saved: 'D:\CroquisDemo\render-prueba-2026-11-05\carambola\cuadro_0114.png'
+01:39.578  render           | Saved: 'D:\CroquisDemo\render-prueba-2026-11-05\carambola\cuadro_0115.png'
+01:43.047  render           | Saved: 'D:\CroquisDemo\render-prueba-2026-11-05\carambola\cuadro_0116.png'
+01:46.468  render           | Saved: 'D:\CroquisDemo\render-prueba-2026-11-05\carambola\cuadro_0117.png'
+01:49.812  render           | Saved: 'D:\CroquisDemo\render-prueba-2026-11-05\carambola\cuadro_0118.png'
+01:53.140  render           | Saved: 'D:\CroquisDemo\render-prueba-2026-11-05\carambola\cuadro_0119.png'
+01:56.500  render           | Saved: 'D:\CroquisDemo\render-prueba-2026-11-05\carambola\cuadro_0120.png'
+01:59.922  render           | Saved: 'D:\CroquisDemo\render-prueba-2026-11-05\carambola\cuadro_0121.png'
+02:03.250  render           | Saved: 'D:\CroquisDemo\render-prueba-2026-11-05\carambola\cuadro_0122.png'
+02:06.687  render           | Saved: 'D:\CroquisDemo\render-prueba-2026-11-05\carambola\cuadro_0123.png'
+02:10.047  render           | Saved: 'D:\CroquisDemo\render-prueba-2026-11-05\carambola\cuadro_0124.png'
+02:13.250  render           | Saved: 'D:\CroquisDemo\render-prueba-2026-11-05\carambola\cuadro_0125.png'
+02:16.547  render           | Saved: 'D:\CroquisDemo\render-prueba-2026-11-05\carambola\cuadro_0126.png'
+02:19.797  render           | Saved: 'D:\CroquisDemo\render-prueba-2026-11-05\carambola\cuadro_0127.png'
+02:23.047  render           | Saved: 'D:\CroquisDemo\render-prueba-2026-11-05\carambola\cuadro_0128.png'
+02:26.328  render           | Saved: 'D:\CroquisDemo\render-prueba-2026-11-05\carambola\cuadro_0129.png'
+02:29.750  render           | Saved: 'D:\CroquisDemo\render-prueba-2026-11-05\carambola\cuadro_0130.png'
+02:33.062  render           | Saved: 'D:\CroquisDemo\render-prueba-2026-11-05\carambola\cuadro_0131.png'
+02:36.328  render           | Saved: 'D:\CroquisDemo\render-prueba-2026-11-05\carambola\cuadro_0132.png'
+02:39.562  render           | Saved: 'D:\CroquisDemo\render-prueba-2026-11-05\carambola\cuadro_0133.png'
+02:42.937  render           | Saved: 'D:\CroquisDemo\render-prueba-2026-11-05\carambola\cuadro_0134.png'
+02:46.265  render           | Saved: 'D:\CroquisDemo\render-prueba-2026-11-05\carambola\cuadro_0135.png'
+02:49.593  render           | Saved: 'D:\CroquisDemo\render-prueba-2026-11-05\carambola\cuadro_0136.png'
+02:55.765  render           | Saved: 'D:\CroquisDemo\render-prueba-2026-11-05\carambola\cuadro_0137.png'
+02:59.906  render           | Saved: 'D:\CroquisDemo\render-prueba-2026-11-05\carambola\cuadro_0138.png'
+03:03.500  render           | Saved: 'D:\CroquisDemo\render-prueba-2026-11-05\carambola\cuadro_0139.png'
+03:07.000  render           | Saved: 'D:\CroquisDemo\render-prueba-2026-11-05\carambola\cuadro_0140.png'
+03:10.609  render           | Saved: 'D:\CroquisDemo\render-prueba-2026-11-05\carambola\cuadro_0141.png'
+03:14.047  render           | Saved: 'D:\CroquisDemo\render-prueba-2026-11-05\carambola\cuadro_0142.png'
+03:17.687  render           | Saved: 'D:\CroquisDemo\render-prueba-2026-11-05\carambola\cuadro_0143.png'
+03:21.156  render           | Saved: 'D:\CroquisDemo\render-prueba-2026-11-05\carambola\cuadro_0144.png'
+03:25.078  render           | Saved: 'D:\CroquisDemo\render-prueba-2026-11-05\carambola\cuadro_0145.png'
+03:28.484  render           | Saved: 'D:\CroquisDemo\render-prueba-2026-11-05\carambola\cuadro_0146.png'
+03:31.906  render           | Saved: 'D:\CroquisDemo\render-prueba-2026-11-05\carambola\cuadro_0147.png'
+03:35.281  render           | Saved: 'D:\CroquisDemo\render-prueba-2026-11-05\carambola\cuadro_0148.png'
+03:38.703  render           | Saved: 'D:\CroquisDemo\render-prueba-2026-11-05\carambola\cuadro_0149.png'
+03:42.093  render           | Saved: 'D:\CroquisDemo\render-prueba-2026-11-05\carambola\cuadro_0150.png'
+Vehículos con sus texturas: sedan, suv (D:\Documentos\proyectos\croquis\apps\web\public\modelos\vehiculos).
+Entorno de T1 rearmado: 7 materiales (D:\Documentos\proyectos\croquis\apps\web\public).
+Luz de ambiente con el HDRI «nublado».
+Renderizando 61 cuadros (cycles, 320x180, 4 muestras)…
+Listo: D:\CroquisDemo\render-prueba-2026-11-05\carambola
+Blender 5.2.3 LTS (hash e13b728c6880 built 2026-10-22 01:37:16)
+DracoDecoder | Decoded 402 vertices, 1428 indices
+DracoDecoder | Decoded 248 vertices, 984 indices
+DracoDecoder | Decoded 37 vertices, 144 indices
+DracoDecoder | Decoded 37 vertices, 144 indices
+DracoDecoder | Decoded 66 vertices, 198 indices
+DracoDecoder | Decoded 1644 vertices, 5556 indices
+DracoDecoder | Decoded 2243 vertices, 6189 indices
+DracoDecoder | Decoded 112 vertices, 348 indices
+DracoDecoder | Decoded 310 vertices, 870 indices
+DracoDecoder | Decoded 313 vertices, 936 indices
+DracoDecoder | Decoded 22 vertices, 54 indices
+DracoDecoder | Decoded 11 vertices, 27 indices
+DracoDecoder | Decoded 11 vertices, 27 indices
+DracoDecoder | Decoded 48 vertices, 180 indices
+DracoDecoder | Decoded 44 vertices, 144 indices
+DracoDecoder | Decoded 247 vertices, 996 indices
+DracoDecoder | Decoded 1313 vertices, 4077 indices
+DracoDecoder | Decoded 118 vertices, 336 indices
+DracoDecoder | Decoded 162 vertices, 516 indices
+DracoDecoder | Decoded 854 vertices, 2442 indices
+DracoDecoder | Decoded 66 vertices, 174 indices
+DracoDecoder | Decoded 295 vertices, 894 indices
+DracoDecoder | Decoded 200 vertices, 732 indices
+DracoDecoder | Decoded 753 vertices, 2715 indices
+DracoDecoder | Decoded 753 vertices, 2715 indices
+DracoDecoder | Decoded 753 vertices, 2715 indices
+DracoDecoder | Decoded 753 vertices, 2715 indices
+DracoDecoder | Decoded 35 vertices, 120 indices
+DracoDecoder | Decoded 466 vertices, 1746 indices
+DracoDecoder | Decoded 666 vertices, 2700 indices
+DracoDecoder | Decoded 25 vertices, 72 indices
+DracoDecoder | Decoded 25 vertices, 72 indices
+DracoDecoder | Decoded 198 vertices, 624 indices
+DracoDecoder | Decoded 82 vertices, 252 indices
+DracoDecoder | Decoded 2891 vertices, 11394 indices
+DracoDecoder | Decoded 3360 vertices, 10272 indices
+DracoDecoder | Decoded 80 vertices, 228 indices
+DracoDecoder | Decoded 553 vertices, 1998 indices
+DracoDecoder | Decoded 268 vertices, 1014 indices
+DracoDecoder | Decoded 33 vertices, 123 indices
+DracoDecoder | Decoded 33 vertices, 123 indices
+DracoDecoder | Decoded 67 vertices, 264 indices
+DracoDecoder | Decoded 78 vertices, 270 indices
+DracoDecoder | Decoded 1485 vertices, 4443 indices
+DracoDecoder | Decoded 44 vertices, 186 indices
+DracoDecoder | Decoded 162 vertices, 516 indices
+DracoDecoder | Decoded 260 vertices, 480 indices
+DracoDecoder | Decoded 342 vertices, 1044 indices
+DracoDecoder | Decoded 753 vertices, 2715 indices
+DracoDecoder | Decoded 753 vertices, 2715 indices
+DracoDecoder | Decoded 753 vertices, 2715 indices
+DracoDecoder | Decoded 62 vertices, 234 indices
 
 Blender quit
