@@ -59,16 +59,27 @@ test("@flujo /cesvi: el caso de AXA desde la lista, del caso al dictamen en PDF"
   await irAPaso(page, 4);
   await page.getByTestId("reconstruir").click();
   await expect(page.getByTestId("velocidades")).toBeVisible({ timeout: 60_000 });
+  // Cada velocidad con su método (prompt del rediseño §0.2).
+  await expect(page.getByTestId("metodo-velocidades")).toContainText(
+    "Reconstrucción física de Croquis",
+  );
   await page.getByTestId("abrir-declaracion").click();
   await expect(page.getByTestId("texto-declaracion")).toHaveValue(/revers/);
 
   // 5. Los daños, con la correspondencia del método de CESVI.
   await irAPaso(page, 5);
   await expect(page.getByTestId("criterios-axa")).toBeVisible();
+  // §0.1: el perfil medido de V2 del reporte; V1 sin medida dice «sin dato»; la energía y el Δv de
+  // la reconstrucción ya no salen en 0.
+  await expect(page.getByTestId("dano-medido-V2")).toContainText("96 · 86 · 52 · 20 cm");
+  await expect(page.getByTestId("dano-medido-V1")).toContainText("sin dato");
+  await expect(page.getByTestId("dano-calculado-V2")).toContainText("kJ", { timeout: 60_000 });
+  await expect(page.getByTestId("dano-calculado-V2")).not.toContainText(" 0.0 kJ");
 
   // 6. Los números: la verificación con las medidas del reporte reproduce la EBS de la Tacoma.
   await irAPaso(page, 6);
   await expect(page.getByTestId("verificacion-cesvi")).toContainText("63.90 km/h");
+  await expect(page.getByTestId("metodo-verificacion")).toContainText("Método de CESVI");
   // Lo que el reporte no trae va como supuesto declarado, con su justificación (ADR 0091).
   await expect(page.getByTestId("supuestos")).toContainText(
     "Ficha técnica de Chevrolet Silverado 2500 2007",
@@ -85,6 +96,10 @@ test("@flujo /cesvi: el caso de AXA desde la lista, del caso al dictamen en PDF"
 
   // 8. El dictamen, en PDF.
   await irAPaso(page, 8);
+  // §0.5: un solo título en el paso del dictamen.
+  await expect(
+    page.getByTestId("panel-paso").getByRole("heading", { name: /dictamen/i }),
+  ).toHaveCount(1);
   const descarga = page.waitForEvent("download");
   await page.getByTestId("descargar-dictamen-pdf").click();
   const archivo = await descarga;

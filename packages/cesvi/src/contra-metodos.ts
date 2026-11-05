@@ -55,6 +55,23 @@ function alSalirDelImpacto(resultado: Json, sid: string): number | null {
   return i < 0 ? null : Math.hypot(tr.vx[i]!, tr.vy[i]!) * KMH;
 }
 
+const AJUSTADOS = new WeakMap<Reconstruccion, Json>();
+
+/**
+ * El resultado del solver con las velocidades que reconstruyó la inversión (el del 3D). El de
+ * `r.resultado` va con las velocidades de partida de la escena (las supuestas de la narración): en
+ * AXA no tenía choque (velocidad de cierre 0) y el daño salía en 0 (René, 2026-11-04). Se calcula
+ * una vez por reconstrucción.
+ */
+export function resultadoAjustado(r: Reconstruccion): Json {
+  let x = AJUSTADOS.get(r);
+  if (!x) {
+    x = reconstructionToDict(reconstruct(especReconstruida(r)));
+    AJUSTADOS.set(r, x);
+  }
+  return x;
+}
+
 /**
  * `ajustada` es la reconstrucción con las velocidades que ajustó la inversión (la del 3D); sin ella,
  * se calcula. Las trayectorias de `r.resultado` van con las velocidades de partida de la escena.
@@ -65,8 +82,7 @@ export function reconstruccionContraCesvi(
   ajustada?: Json,
 ): ContraMetodosCesvi {
   let conAjuste = ajustada;
-  const trayectorias = () =>
-    (conAjuste ??= reconstructionToDict(reconstruct(especReconstruida(r))));
+  const trayectorias = () => (conAjuste ??= resultadoAjustado(r));
   const sid = (id: Id) => Object.entries(r.ids).find(([, x]) => x === id)?.[0];
   const previa = (id: Id) => r.velocidades.find((v) => v.vehiculo === id)?.previa?.mejor ?? null;
   const rango = (id: Id): [number, number] | null => {

@@ -1,0 +1,40 @@
+{
+  "v": 3,
+  "createdOnFiles": {"v": 1, "at": "2026-11-04T21:40:00Z"},
+  "title": "Croquis — Rediseño 2.0",
+  "launch": {"view": "canvas"},
+  "pages": [],
+  "boards": {
+    "Lab-Casos.dc.html": {"x": 0, "y": -6000, "w": 1440, "h": 1180, "title": "Casos", "is_interactive": true},
+    "Lab-Hecho.dc.html": {"x": 1520, "y": -6000, "w": 1440, "h": 900, "title": "1 · El hecho", "is_interactive": true},
+    "Lab-Escena.dc.html": {"x": 3040, "y": -6000, "w": 1440, "h": 900, "title": "2 · La escena", "is_interactive": true},
+    "Lab-Reconstruccion.dc.html": {"x": 0, "y": -4400, "w": 1440, "h": 900, "title": "3 · La reconstrucción", "is_interactive": true},
+    "Lab-Analisis.dc.html": {"x": 1520, "y": -4400, "w": 1440, "h": 1000, "title": "4 · Análisis", "is_interactive": true},
+    "Lab-Contraste.dc.html": {"x": 3040, "y": -4400, "w": 1440, "h": 1000, "title": "5 · Contra CESVI", "is_interactive": true},
+    "Lab-Dictamen.dc.html": {"x": 0, "y": -2980, "w": 1440, "h": 900, "title": "6 · El dictamen", "is_interactive": true},
+    "Lab-Presentar.dc.html": {"x": 1520, "y": -2980, "w": 1440, "h": 900, "title": "Modo Presentar", "is_interactive": true},
+    "DirA-Maqueta.dc.html": {"x": 0, "y": -1500, "w": 1440, "h": 900, "title": "Dirección A · Maqueta"},
+    "DirB-Transmision.dc.html": {"x": 1520, "y": -1500, "w": 1440, "h": 900, "title": "Dirección B · Transmisión"},
+    "DirC-Cobalto.dc.html": {"x": 3040, "y": -1500, "w": 1440, "h": 900, "title": "Dirección C · Cobalto"},
+    "Main.dc.html": {"x": 0, "y": 0, "w": 1440, "h": 1000, "title": "Marca · La huella"},
+    "Casos.dc.html": {"x": 1520, "y": 0, "w": 1440, "h": 1640, "title": "Casos · entrada", "expand": "fill"},
+    "Presentar.dc.html": {"x": 3040, "y": 0, "w": 1440, "h": 900, "title": "Modo Presentar"},
+    "Hecho.dc.html": {"x": 0, "y": 2060, "w": 1440, "h": 1000, "title": "Acto 1 · El hecho", "expand": "fill"},
+    "Escena.dc.html": {"x": 1520, "y": 2060, "w": 1440, "h": 1000, "title": "Acto 2 · La escena", "expand": "fill"},
+    "Reconstruccion.dc.html": {"x": 3040, "y": 2060, "w": 1440, "h": 1000, "title": "Acto 3 · La reconstrucción", "expand": "fill"},
+    "Analisis.dc.html": {"x": 0, "y": 3480, "w": 1440, "h": 1240, "title": "Acto 4 · Daños y supuestos", "expand": "fill"},
+    "Contraste.dc.html": {"x": 1520, "y": 3480, "w": 1440, "h": 1120, "title": "Acto 5 · Contra el reporte de CESVI", "expand": "fill"},
+    "Dictamen.dc.html": {"x": 3040, "y": 3480, "w": 1440, "h": 1060, "title": "Acto 6 · El dictamen", "expand": "fill"}
+  },
+  "order": ["Lab-Casos.dc.html", "Lab-Hecho.dc.html", "Lab-Escena.dc.html", "Lab-Reconstruccion.dc.html", "Lab-Analisis.dc.html", "Lab-Contraste.dc.html", "Lab-Dictamen.dc.html", "Lab-Presentar.dc.html", "DirA-Maqueta.dc.html", "DirB-Transmision.dc.html", "DirC-Cobalto.dc.html", "Main.dc.html", "Casos.dc.html", "Presentar.dc.html", "Hecho.dc.html", "Escena.dc.html", "Reconstruccion.dc.html", "Analisis.dc.html", "Contraste.dc.html", "Dictamen.dc.html"],
+  "notes": {
+    "tL1": {"x": 0, "y": -6300, "text": "Laboratorio · casos y actos 1 a 2", "kind": "title1", "maxW": 4480},
+    "tL2": {"x": 0, "y": -4700, "text": "Laboratorio · actos 3 a 5", "kind": "title1", "maxW": 4480},
+    "tL3": {"x": 0, "y": -3280, "text": "Laboratorio · dictamen y modo Presentar", "kind": "title1", "maxW": 2960},
+    "t0": {"x": 0, "y": -1800, "text": "Exploración anterior · tres direcciones", "kind": "title1", "maxW": 4480},
+    "t1": {"x": 0, "y": -300, "text": "Versión anterior · solo como mapa del flujo", "kind": "title1", "maxW": 4480},
+    "t2": {"x": 0, "y": 1760, "text": "El recorrido del perito · actos 1 a 3", "kind": "title1", "maxW": 4480},
+    "t3": {"x": 0, "y": 3180, "text": "Actos 4 a 6 · análisis, contraste y dictamen", "kind": "title1", "maxW": 4480}
+  },
+  "designSystems": []
+}

@@ -40,6 +40,7 @@ import {
 import type { OverpassResponse } from "@croquis/croquis-2d";
 import { conCallesDelMapa, conObjetosDelMapa } from "@/lib/calles-del-mapa";
 import { reconstruirCompletoEnNavegador } from "@/lib/reconstruct-client";
+import { DEFINICION, METODO } from "@/lib/textos-caso";
 
 const kmh = (x?: number) => (x === undefined ? "—" : x.toFixed(1));
 
@@ -166,11 +167,15 @@ export function PanelReconstruccion({
 export function TablaVelocidades({ r }: { r: Reconstruccion }) {
   return (
     <table className="w-full border-collapse text-sm" data-testid="velocidades">
+      <caption className="t-nota pb-2 text-left" data-testid="metodo-velocidades">
+        {METODO.reconstruccion} ({METODO.reconstruccionDetalle}). {DEFINICION.previa};{" "}
+        {DEFINICION.impacto}.
+      </caption>
       <thead>
         <tr className="text-left text-xs text-texto-3">
           <th className="py-2 font-medium">Vehículo</th>
           <th className="py-2 text-right font-medium">Velocidad previa (km/h)</th>
-          <th className="py-2 text-right font-medium">Al impacto, p10–p50–p90 (km/h)</th>
+          <th className="py-2 text-right font-medium">Al contacto, p10–p50–p90 (km/h)</th>
         </tr>
       </thead>
       <tbody className="cifras">
@@ -406,6 +411,10 @@ export function PanelVerificacion({ verificacion }: { verificacion: Verificacion
   return (
     <div className="flex flex-col gap-4" data-testid="verificacion-cesvi">
       <h2 className="t-subtitulo">Verificación con el método de CESVI</h2>
+      <p className="t-nota" data-testid="metodo-verificacion">
+        {METODO.cesvi}: {METODO.cesviDetalle}, con las medidas del reporte. No es la misma velocidad
+        que la de la {METODO.reconstruccion.toLowerCase()}.
+      </p>
       {verificacion.map((v) => (
         <div key={v.vehiculo} className="flex flex-col gap-2">
           <span className="t-interfaz font-semibold">{v.vehiculo}</span>

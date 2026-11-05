@@ -6,6 +6,7 @@
  */
 import {
   conMasa,
+  especReconstruida,
   type ComparacionDictamen,
   type ContraMetodosCesvi,
   type EscenaNarrada,
@@ -15,7 +16,11 @@ import {
   type SupuestoDeclarado,
   type VerificacionVehiculo,
 } from "@croquis/cesvi";
-import { useState, type ReactNode } from "react";
+import type { EscenaSpec } from "@croquis/scene-schema";
+import { useEffect, useState, type ReactNode } from "react";
+import { filasDano } from "@/lib/danos-caso";
+import { reconstruirEnNavegador } from "@/lib/reconstruct-client";
+import { METODO, textoPosicionesFinales } from "@/lib/textos-caso";
 import type { ReporteCesvi } from "@/lib/caso-guardado";
 import { MODALIDAD } from "@/lib/nombres-cesvi";
 import { colorDeVehiculo } from "@/lib/vehiculos-cesvi";
@@ -727,28 +732,36 @@ export function PasoLugar({
   );
 }
 
-const LADO: Record<string, string> = {
-  F: "frontal",
-  B: "posterior",
-  L: "lateral izquierdo",
-  R: "lateral derecho",
-  T: "techo",
-  U: "inferior",
-};
-
 /** Paso 5: los daños. Los narrados por vehículo y los que calcula la reconstrucción (CDC, C1–C6). */
 export function PasoDanos({ expediente, r }: { expediente: Expediente; r: Reconstruccion | null }) {
-  const calculados = (r?.resultado.vehiculos ?? []) as {
-    id: string;
-    delta_v_kmh?: number;
-    dano?: { perfil_m: number[]; energia_j: number; cdc?: { lado: string } };
-  }[];
+  // El resultado del solver con las velocidades reconstruidas (el del 3D), calculado en el worker:
+  // el de partida va con las velocidades supuestas de la narración y en AXA no tenía choque, así
+  // que el daño salía en 0 (René, 2026-11-04, prompt del rediseño §0.1).
+  const [ajustado, setAjustado] = useState<{
+    r: Reconstruccion;
+    res: Record<string, unknown>;
+  } | null>(null);
+  useEffect(() => {
+    if (!r || ajustado?.r === r) return undefined;
+    let vivo = true;
+    void reconstruirEnNavegador(especReconstruida(r) as unknown as EscenaSpec)
+      .then((res) => {
+        if (vivo) setAjustado({ r, res: res as unknown as Record<string, unknown> });
+      })
+      .catch(() => undefined);
+    return () => {
+      vivo = false;
+    };
+  }, [r, ajustado]);
+  const filas = r
+    ? filasDano(expediente, ajustado?.r === r ? ajustado.res : null, r.ids)
+    : filasDano(expediente, null, {});
   return (
     <div className="flex flex-col gap-4" data-testid="danos-caso">
       <h2 className="t-subtitulo">Los daños</h2>
       {expediente.vehiculos.map((v) => {
         const narrados = (expediente.danos ?? []).filter((d) => d.vehiculo === v.id);
-        const c = calculados.find((x) => r?.ids[x.id] === v.id);
+        const f = filas.find((x) => x.vehiculo === v.id)!;
         return (
           <section key={v.id} className="hundido flex flex-col gap-2 p-4">
             <span className="t-interfaz font-semibold">{v.id}</span>
@@ -766,19 +779,43 @@ export function PasoDanos({ expediente, r }: { expediente: Expediente; r: Recons
             ) : (
               <p className="t-nota">La narración no describe sus daños.</p>
             )}
-            {c?.dano ? (
+            <p className="t-nota" data-testid={`dano-medido-${v.id}`}>
+              Del reporte:{" "}
+              {f.medido.tipo === "medido" ? (
+                <>
+                  {f.medido.cara}; C1–C{f.medido.cCm.length}{" "}
+                  <span className="cifras">{f.medido.cCm.join(" · ")} cm</span>
+                  {f.medido.lM !== null ? (
+                    <>
+                      ; L <span className="cifras">{f.medido.lM.toFixed(2)} m</span>
+                    </>
+                  ) : null}
+                  .
+                </>
+              ) : (
+                <span className="text-texto-3">sin dato ({f.medido.motivo}).</span>
+              )}
+            </p>
+            {r ? (
               <p className="t-nota" data-testid={`dano-calculado-${v.id}`}>
-                Reconstrucción: cara {LADO[c.dano.cdc?.lado ?? ""] ?? "—"}; C1–C6{" "}
-                <span className="cifras">
-                  {c.dano.perfil_m.map((x) => (x * 100).toFixed(0)).join(" · ")} cm
-                </span>
-                ; energía <span className="cifras">{(c.dano.energia_j / 1000).toFixed(1)} kJ</span>
-                {c.delta_v_kmh !== undefined ? (
+                {METODO.reconstruccion}, con las velocidades reconstruidas:{" "}
+                {f.calculado.tipo === "calculado" ? (
                   <>
-                    ; Δv <span className="cifras">{c.delta_v_kmh.toFixed(1)} km/h</span>
+                    energía <span className="cifras">{f.calculado.energiaKj.toFixed(1)} kJ</span>
+                    {f.calculado.deltaVKmh !== null ? (
+                      <>
+                        ; Δv <span className="cifras">{f.calculado.deltaVKmh.toFixed(1)} km/h</span>
+                      </>
+                    ) : null}
+                    ; perfil estimado{" "}
+                    <span className="cifras">{f.calculado.perfilCm.join(" · ")} cm</span> (
+                    {f.calculado.rigidez}).
                   </>
-                ) : null}
-                .
+                ) : ajustado?.r !== r ? (
+                  <span className="text-texto-3">calculando…</span>
+                ) : (
+                  <span className="text-texto-3">sin dato ({f.calculado.motivo}).</span>
+                )}
               </p>
             ) : null}
           </section>
@@ -874,8 +911,8 @@ export function PasoContraReporte({
         </div>
         <div className="hundido flex flex-col gap-1 p-4">
           <dt className="t-nota">Posiciones finales</dt>
-          <dd className="t-interfaz cifras">
-            Croquis tiene {k.posiciones.croquis_las_tiene} de {k.posiciones.cesvi}
+          <dd className="t-interfaz cifras" data-testid="posiciones-finales-contra">
+            {textoPosicionesFinales(k.posiciones)}
           </dd>
         </div>
       </dl>
