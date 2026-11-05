@@ -1907,6 +1907,10 @@ Rama `feat/laboratorio-tokens`. Es la segunda parte del rediseño que se desplie
   - Unitarias de `actos` (los seis actos cubren los ocho pasos; sin reporte no hay Contra CESVI; «Continuar a…» con «al») y del tema por defecto.
   - Los tres e2e de `/cesvi` pasan en local.
 - **Capturas** en `docs/cesvi/rediseno/laboratorio/capturas/`: el acto 1 y la transición, de día y de noche.
+- **El e2e del caso nuevo fallaba en CI esperando el PDF**, intermitente desde el #165. Con la traza del reintento (CI ahora reintenta una vez, para que el trabajo termine en menos de 10 min y suba el reporte) se encontraron dos causas reales, que también le pasarían a un perito con una laptop lenta:
+  - **«Comparar lado a lado»** monta un segundo visor que ponía en falso la marca global de «listo». Si se cerraba antes de compilar, el visor principal ya no la devolvía, y cada foto del dictamen esperaba 60 s. Ahora cada visor tiene su propio «listo» (`listoRef`). Además, mientras una foto espera, el visor oculto dibuja para que su precompilado avance.
+  - **Las tres fotos esperaban hasta 60 s cada una.** Ahora comparten 20 s (`PRESUPUESTO_FOTOS_MS`); pasado ese plazo salen con lo que el visor ya dibuja.
+  - Con eso los seis e2e pasan en 2.1 min sin reintentos (antes, 6 a 9 min con reintentos). Los flujos de `/cesvi` corren con movimiento reducido: la cortina es decorativa y en local les quitaba unos 11 s.
 - **Sigue:** rutas por acto, la escena generada (prompt §7), las pantallas en orden (§8), el movimiento y los tooltips, y al final las pruebas pesadas.
 
 #### Resumen para René (tokens, tipografía, barra y transición)
@@ -2080,6 +2084,8 @@ Rama `fix/ruedas-dano-costado`. René vio las llantas fuera de su hueco en un ca
 - **Visto y no arreglado aquí** (en «Endurecimiento pendiente»): un rectángulo gris sobre las ventanas del costado golpeado en el reposo, probablemente el vidrio lateral roto con las cotas del paramétrico.
 
 ### Endurecimiento pendiente
+
+- **Un solo visor 3D por página (René, rediseño Laboratorio):** «Comparar lado a lado» de la reconstrucción todavía monta un segundo visor. Se quita al rehacer el acto de Reconstrucción (prompt §8); mientras, las fotos ya no dependen de él.
 
 - **Vidrio lateral roto en los modelos (visto el 2026-11-05, caso Jetta–Camaro):** en el reposo aparece un rectángulo gris sobre las ventanas del costado golpeado de B (`docs/cesvi/t1/ruedas-ejemplo/veh-b-reposo-derecho.webp`); probablemente el vidrio agrietado se coloca con las cotas del habitáculo del paramétrico y no con las ventanas del modelo.
 
