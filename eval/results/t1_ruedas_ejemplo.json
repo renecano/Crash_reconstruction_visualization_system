@@ -1,0 +1,479 @@
+{
+  "name": "t1_ruedas_ejemplo",
+  "descripcion": "Caso de ejemplo de /cesvi (Jetta contra Camaro): centro y radio de cada rueda y su cara exterior contra la salpicadera (sale_de_lado_m: positivo, afuera; negativo, adentro), en el inicio, el impacto y el reposo, con el daño de ese instante (marco del vehículo, m). Generado por apps/web/e2e/ruedas-ejemplo.spec.ts.",
+  "generated_at": "2026-11-05T15:02:42.701Z",
+  "vehiculos": [
+    {
+      "inicio": {
+        "izquierdo": {
+          "t": -4.7,
+          "id": "veh-a",
+          "modelo": "sedan",
+          "clase": "sedan_compacto",
+          "dims": {
+            "length": 4.5,
+            "width": 1.74,
+            "height": 1.49,
+            "wheelbase": 2.62
+          },
+          "ruedas": [
+            {
+              "nombre": "wheel_fl",
+              "centro": [1.197, 0.3, -0.713],
+              "radio": 0.3,
+              "sale_de_lado_m": -0.006
+            },
+            {
+              "nombre": "wheel_fr",
+              "centro": [1.197, 0.3, 0.712],
+              "radio": 0.3,
+              "sale_de_lado_m": -0.006
+            },
+            {
+              "nombre": "wheel_rl",
+              "centro": [-1.423, 0.3, -0.713],
+              "radio": 0.3,
+              "sale_de_lado_m": -0.006
+            },
+            {
+              "nombre": "wheel_rr",
+              "centro": [-1.423, 0.3, 0.712],
+              "radio": 0.3,
+              "sale_de_lado_m": -0.006
+            }
+          ]
+        },
+        "derecho": {
+          "t": -4.7,
+          "id": "veh-a",
+          "modelo": "sedan",
+          "clase": "sedan_compacto",
+          "dims": {
+            "length": 4.5,
+            "width": 1.74,
+            "height": 1.49,
+            "wheelbase": 2.62
+          },
+          "ruedas": [
+            {
+              "nombre": "wheel_fl",
+              "centro": [1.197, 0.3, -0.713],
+              "radio": 0.3,
+              "sale_de_lado_m": -0.006
+            },
+            {
+              "nombre": "wheel_fr",
+              "centro": [1.197, 0.3, 0.712],
+              "radio": 0.3,
+              "sale_de_lado_m": -0.006
+            },
+            {
+              "nombre": "wheel_rl",
+              "centro": [-1.423, 0.3, -0.713],
+              "radio": 0.3,
+              "sale_de_lado_m": -0.006
+            },
+            {
+              "nombre": "wheel_rr",
+              "centro": [-1.423, 0.3, 0.712],
+              "radio": 0.3,
+              "sale_de_lado_m": -0.006
+            }
+          ]
+        }
+      },
+      "impacto": {
+        "izquierdo": {
+          "t": 0,
+          "id": "veh-a",
+          "modelo": "sedan",
+          "clase": "sedan_compacto",
+          "dims": {
+            "length": 4.5,
+            "width": 1.74,
+            "height": 1.49,
+            "wheelbase": 2.62
+          },
+          "ruedas": [
+            {
+              "nombre": "wheel_fl",
+              "centro": [1.197, 0.3, -0.713],
+              "radio": 0.3,
+              "sale_de_lado_m": -0.006
+            },
+            {
+              "nombre": "wheel_fr",
+              "centro": [1.197, 0.3, 0.712],
+              "radio": 0.3,
+              "sale_de_lado_m": -0.006
+            },
+            {
+              "nombre": "wheel_rl",
+              "centro": [-1.423, 0.3, -0.713],
+              "radio": 0.3,
+              "sale_de_lado_m": -0.006
+            },
+            {
+              "nombre": "wheel_rr",
+              "centro": [-1.423, 0.3, 0.712],
+              "radio": 0.3,
+              "sale_de_lado_m": -0.006
+            }
+          ]
+        },
+        "derecho": {
+          "t": 0,
+          "id": "veh-a",
+          "modelo": "sedan",
+          "clase": "sedan_compacto",
+          "dims": {
+            "length": 4.5,
+            "width": 1.74,
+            "height": 1.49,
+            "wheelbase": 2.62
+          },
+          "ruedas": [
+            {
+              "nombre": "wheel_fl",
+              "centro": [1.197, 0.3, -0.713],
+              "radio": 0.3,
+              "sale_de_lado_m": -0.006
+            },
+            {
+              "nombre": "wheel_fr",
+              "centro": [1.197, 0.3, 0.712],
+              "radio": 0.3,
+              "sale_de_lado_m": -0.006
+            },
+            {
+              "nombre": "wheel_rl",
+              "centro": [-1.423, 0.3, -0.713],
+              "radio": 0.3,
+              "sale_de_lado_m": -0.006
+            },
+            {
+              "nombre": "wheel_rr",
+              "centro": [-1.423, 0.3, 0.712],
+              "radio": 0.3,
+              "sale_de_lado_m": -0.006
+            }
+          ]
+        }
+      },
+      "reposo": {
+        "izquierdo": {
+          "t": 4.64,
+          "id": "veh-a",
+          "modelo": "sedan",
+          "clase": "sedan_compacto",
+          "dims": {
+            "length": 4.5,
+            "width": 1.74,
+            "height": 1.49,
+            "wheelbase": 2.62
+          },
+          "ruedas": [
+            {
+              "nombre": "wheel_fl",
+              "centro": [1.197, 0.3, -0.713],
+              "radio": 0.3,
+              "sale_de_lado_m": -0.006
+            },
+            {
+              "nombre": "wheel_fr",
+              "centro": [1.197, 0.3, 0.712],
+              "radio": 0.3,
+              "sale_de_lado_m": -0.006
+            },
+            {
+              "nombre": "wheel_rl",
+              "centro": [-1.423, 0.3, -0.713],
+              "radio": 0.3,
+              "sale_de_lado_m": -0.006
+            },
+            {
+              "nombre": "wheel_rr",
+              "centro": [-1.423, 0.3, 0.712],
+              "radio": 0.3,
+              "sale_de_lado_m": -0.006
+            }
+          ]
+        },
+        "derecho": {
+          "t": 4.64,
+          "id": "veh-a",
+          "modelo": "sedan",
+          "clase": "sedan_compacto",
+          "dims": {
+            "length": 4.5,
+            "width": 1.74,
+            "height": 1.49,
+            "wheelbase": 2.62
+          },
+          "ruedas": [
+            {
+              "nombre": "wheel_fl",
+              "centro": [1.197, 0.3, -0.713],
+              "radio": 0.3,
+              "sale_de_lado_m": -0.006
+            },
+            {
+              "nombre": "wheel_fr",
+              "centro": [1.197, 0.3, 0.712],
+              "radio": 0.3,
+              "sale_de_lado_m": -0.006
+            },
+            {
+              "nombre": "wheel_rl",
+              "centro": [-1.423, 0.3, -0.713],
+              "radio": 0.3,
+              "sale_de_lado_m": -0.006
+            },
+            {
+              "nombre": "wheel_rr",
+              "centro": [-1.423, 0.3, 0.712],
+              "radio": 0.3,
+              "sale_de_lado_m": -0.006
+            }
+          ]
+        }
+      }
+    },
+    {
+      "inicio": {
+        "izquierdo": {
+          "t": -4.7,
+          "id": "veh-b",
+          "modelo": "sedan",
+          "clase": "sedan_compacto",
+          "dims": {
+            "length": 4.5,
+            "width": 1.74,
+            "height": 1.49,
+            "wheelbase": 2.62
+          },
+          "ruedas": [
+            {
+              "nombre": "wheel_fl",
+              "centro": [1.197, 0.3, -0.713],
+              "radio": 0.3,
+              "sale_de_lado_m": -0.006
+            },
+            {
+              "nombre": "wheel_fr",
+              "centro": [1.197, 0.3, 0.712],
+              "radio": 0.3,
+              "sale_de_lado_m": -0.006
+            },
+            {
+              "nombre": "wheel_rl",
+              "centro": [-1.423, 0.3, -0.713],
+              "radio": 0.3,
+              "sale_de_lado_m": -0.006
+            },
+            {
+              "nombre": "wheel_rr",
+              "centro": [-1.423, 0.3, 0.712],
+              "radio": 0.3,
+              "sale_de_lado_m": -0.006
+            }
+          ]
+        },
+        "derecho": {
+          "t": -4.7,
+          "id": "veh-b",
+          "modelo": "sedan",
+          "clase": "sedan_compacto",
+          "dims": {
+            "length": 4.5,
+            "width": 1.74,
+            "height": 1.49,
+            "wheelbase": 2.62
+          },
+          "ruedas": [
+            {
+              "nombre": "wheel_fl",
+              "centro": [1.197, 0.3, -0.713],
+              "radio": 0.3,
+              "sale_de_lado_m": -0.006
+            },
+            {
+              "nombre": "wheel_fr",
+              "centro": [1.197, 0.3, 0.712],
+              "radio": 0.3,
+              "sale_de_lado_m": -0.006
+            },
+            {
+              "nombre": "wheel_rl",
+              "centro": [-1.423, 0.3, -0.713],
+              "radio": 0.3,
+              "sale_de_lado_m": -0.006
+            },
+            {
+              "nombre": "wheel_rr",
+              "centro": [-1.423, 0.3, 0.712],
+              "radio": 0.3,
+              "sale_de_lado_m": -0.006
+            }
+          ]
+        }
+      },
+      "impacto": {
+        "izquierdo": {
+          "t": 0,
+          "id": "veh-b",
+          "modelo": "sedan",
+          "clase": "sedan_compacto",
+          "dims": {
+            "length": 4.5,
+            "width": 1.74,
+            "height": 1.49,
+            "wheelbase": 2.62
+          },
+          "ruedas": [
+            {
+              "nombre": "wheel_fl",
+              "centro": [1.197, 0.3, -0.713],
+              "radio": 0.3,
+              "sale_de_lado_m": -0.006
+            },
+            {
+              "nombre": "wheel_fr",
+              "centro": [1.197, 0.3, 0.712],
+              "radio": 0.3,
+              "sale_de_lado_m": -0.006
+            },
+            {
+              "nombre": "wheel_rl",
+              "centro": [-1.423, 0.3, -0.713],
+              "radio": 0.3,
+              "sale_de_lado_m": -0.006
+            },
+            {
+              "nombre": "wheel_rr",
+              "centro": [-1.423, 0.3, 0.712],
+              "radio": 0.3,
+              "sale_de_lado_m": -0.006
+            }
+          ]
+        },
+        "derecho": {
+          "t": 0,
+          "id": "veh-b",
+          "modelo": "sedan",
+          "clase": "sedan_compacto",
+          "dims": {
+            "length": 4.5,
+            "width": 1.74,
+            "height": 1.49,
+            "wheelbase": 2.62
+          },
+          "ruedas": [
+            {
+              "nombre": "wheel_fl",
+              "centro": [1.197, 0.3, -0.713],
+              "radio": 0.3,
+              "sale_de_lado_m": -0.006
+            },
+            {
+              "nombre": "wheel_fr",
+              "centro": [1.197, 0.3, 0.712],
+              "radio": 0.3,
+              "sale_de_lado_m": -0.006
+            },
+            {
+              "nombre": "wheel_rl",
+              "centro": [-1.423, 0.3, -0.713],
+              "radio": 0.3,
+              "sale_de_lado_m": -0.006
+            },
+            {
+              "nombre": "wheel_rr",
+              "centro": [-1.423, 0.3, 0.712],
+              "radio": 0.3,
+              "sale_de_lado_m": -0.006
+            }
+          ]
+        }
+      },
+      "reposo": {
+        "izquierdo": {
+          "t": 4.64,
+          "id": "veh-b",
+          "modelo": "sedan",
+          "clase": "sedan_compacto",
+          "dims": {
+            "length": 4.5,
+            "width": 1.74,
+            "height": 1.49,
+            "wheelbase": 2.62
+          },
+          "ruedas": [
+            {
+              "nombre": "wheel_fl",
+              "centro": [1.197, 0.3, -0.713],
+              "radio": 0.3,
+              "sale_de_lado_m": -0.006
+            },
+            {
+              "nombre": "wheel_fr",
+              "centro": [1.197, 0.3, 0.615],
+              "radio": 0.3,
+              "sale_de_lado_m": 0.001
+            },
+            {
+              "nombre": "wheel_rl",
+              "centro": [-1.423, 0.3, -0.713],
+              "radio": 0.3,
+              "sale_de_lado_m": -0.006
+            },
+            {
+              "nombre": "wheel_rr",
+              "centro": [-1.423, 0.3, 0.685],
+              "radio": 0.3,
+              "sale_de_lado_m": -0.024
+            }
+          ]
+        },
+        "derecho": {
+          "t": 4.64,
+          "id": "veh-b",
+          "modelo": "sedan",
+          "clase": "sedan_compacto",
+          "dims": {
+            "length": 4.5,
+            "width": 1.74,
+            "height": 1.49,
+            "wheelbase": 2.62
+          },
+          "ruedas": [
+            {
+              "nombre": "wheel_fl",
+              "centro": [1.197, 0.3, -0.713],
+              "radio": 0.3,
+              "sale_de_lado_m": -0.006
+            },
+            {
+              "nombre": "wheel_fr",
+              "centro": [1.197, 0.3, 0.615],
+              "radio": 0.3,
+              "sale_de_lado_m": 0.001
+            },
+            {
+              "nombre": "wheel_rl",
+              "centro": [-1.423, 0.3, -0.713],
+              "radio": 0.3,
+              "sale_de_lado_m": -0.006
+            },
+            {
+              "nombre": "wheel_rr",
+              "centro": [-1.423, 0.3, 0.685],
+              "radio": 0.3,
+              "sale_de_lado_m": -0.024
+            }
+          ]
+        }
+      }
+    }
+  ]
+}
