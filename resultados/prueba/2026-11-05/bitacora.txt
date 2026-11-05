@@ -1,0 +1,22 @@
+﻿
+Croquis en la computadora de la demo — 2026-11-05 (16:17)
+Resultados en: D:\Documentos\proyectos\croquis\resultados\prueba\2026-11-05
+Solo los videos (-SoloRender).
+
+== Revisar Git y Chrome
+   Listo (0 s, RAM máxima 67 %). Git y Chrome encontrados.
+
+== Blender 5.2.3 (portátil, de blender.org)
+   Descargando https://download.blender.org/release/Blender5.2/blender-5.2.3-windows-x64.zip (unos 400 MB)…
+   SHA-256 verificado. Descomprimiendo…
+   /usr/bin/tar: Cannot connect to D: resolve failed
+   No se pudo: No se pudo descomprimir Blender.
+
+== Video de la escena «axa»
+   No se pudo: No hay Blender (falló el paso anterior).
+
+== Video de la escena «carambola»
+   No se pudo: No hay Blender (falló el paso anterior).
+
+== Datos de la máquina
+   Listo (2 s, RAM máxima 70 %). CPU Intel(R) Core(TM) i5-10210U CPU @ 1.60GHz, 7.8 GB de RAM.
