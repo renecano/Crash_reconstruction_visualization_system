@@ -60,6 +60,21 @@ describe("Presentar (Laboratorio §8)", () => {
     expect(c.filas[2]).toMatchObject({ etiqueta: "A · Silverado al impacto", valor: "9.1 km/h" });
   });
 
+  it("si las simulaciones no se apartan, el rango se nombra como lineal", () => {
+    const quieta = {
+      ...r,
+      velocidades: [
+        {
+          vehiculo: "V2",
+          previa: { mejor: 41.5, p10: 27.2, p50: 41.5, p90: 55.7 },
+          impacto: { p10: 41.5, p50: 41.5, p90: 41.5 },
+        },
+      ],
+    } as Reconstruccion;
+    const c = capitulos({ ...base, r: quieta, contra: null, conteo: null })[1]!;
+    expect(c.filas[1]).toEqual({ etiqueta: "Rango por aproximación lineal", valor: "27.2–55.7" });
+  });
+
   it("si la evidencia no fija ninguna velocidad, lo dice", () => {
     const sin = { ...r, velocidades: [{ vehiculo: "V1", previa: null, impacto: null }] };
     const c = capitulos({ ...base, r: sin as Reconstruccion, contra: null, conteo: null })[1]!;

@@ -78,6 +78,12 @@ test("@flujo /cesvi: el caso de AXA desde la lista, del caso al dictamen en PDF"
   await page.getByTestId("abrir-declaracion").click();
   await expect(page.getByTestId("texto-declaracion")).toHaveValue(/revers/);
 
+  // Los tooltips también salen con el foco de teclado (§9).
+  await page.getByTestId("percentil-p50").focus();
+  await expect(page.getByTestId("tooltip")).toContainText("La mitad queda abajo");
+  await page.getByTestId("percentil-p50").blur();
+  await expect(page.getByTestId("tooltip")).toHaveCount(0);
+
   // Presentar: a pantalla completa, capítulos con ← →, y Esc regresa a Trabajar.
   await page.getByTestId("modo-presentar").click();
   const presentar = page.getByTestId("presentar-caso");

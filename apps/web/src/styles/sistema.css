@@ -1336,6 +1336,104 @@
     font-size: 0.75rem;
     font-weight: 600;
   }
+  /* Los tooltips (§9): invertidos, 170 ms, 8 px arriba del objeto. */
+  .tooltip-lab {
+    position: fixed;
+    z-index: 70;
+    max-width: 22rem;
+    pointer-events: none;
+    border-radius: 10px;
+    background: var(--tip-fondo, #0b0d12);
+    color: var(--tip-texto, #fff);
+    padding: 8px 12px;
+    font: 500 0.8125rem/1.35 var(--fuente);
+    animation: tooltip-entra 170ms ease-out both;
+  }
+  @keyframes tooltip-entra {
+    from {
+      opacity: 0;
+      transform: translateY(4px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+  /* Lo que se levanta o se resalta al pasar el puntero (§9). */
+  .tarjeta-supuesto {
+    transition: transform 170ms ease;
+  }
+  .tarjeta-supuesto:hover {
+    transform: translateY(-3px);
+  }
+  .fila-resalta {
+    transition: background-color 170ms ease;
+  }
+  .fila-resalta:hover {
+    background: var(--superficie-alta);
+  }
+  .fila-reporte:hover .mini-crece,
+  .fila-reporte:focus-visible .mini-crece {
+    transform: scale(1.08);
+  }
+  .mini-crece {
+    transition: transform 170ms ease;
+  }
+  .fila-reporte:hover .flecha-avanza,
+  .fila-reporte:focus-visible .flecha-avanza {
+    transform: translateX(4px);
+  }
+  .flecha-avanza {
+    display: inline-block;
+    transition: transform 170ms ease;
+  }
+  /* `marker`: lo que Croquis leyó se resalta uno tras otro, una vez. */
+  .relato-marca {
+    background-image: linear-gradient(
+      90deg,
+      transparent 50%,
+      color-mix(in srgb, var(--senal) 26%, transparent) 50%
+    );
+    background-repeat: no-repeat;
+    background-size: 200% 100%;
+    background-position: 0 0;
+    box-decoration-break: clone;
+    -webkit-box-decoration-break: clone;
+    animation: marcador 500ms ease-in-out both;
+    animation-delay: calc(var(--i, 0) * 100ms);
+  }
+  @keyframes marcador {
+    0% {
+      background-position: 0 0;
+    }
+    50% {
+      background-position: 50% 0;
+    }
+    100% {
+      background-position: 100% 0;
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .tooltip-lab,
+    .relato-marca {
+      animation: none;
+    }
+    .relato-marca {
+      background-image: none;
+    }
+    .tarjeta-supuesto,
+    .fila-resalta,
+    .mini-crece,
+    .flecha-avanza {
+      transition: none;
+    }
+    .tarjeta-supuesto:hover,
+    .fila-reporte:hover .mini-crece,
+    .fila-reporte:hover .flecha-avanza {
+      transform: none;
+    }
+  }
+
   /* La hoja de expediente sobre otra: se levanta al pasar el puntero. */
   .hoja-expediente {
     transform: rotate(-1.6deg);
@@ -1376,7 +1474,27 @@
   }
   /* El sello cae al firmar. */
   .sello-validado {
-    animation: sello-cae 420ms cubic-bezier(0.2, 0.9, 0.3, 1.2) both;
+    animation: sello-cae 600ms cubic-bezier(0.2, 0.9, 0.3, 1.2) both;
+  }
+  /* `stamp`: con su estallido de anillo. */
+  .sello-validado::after {
+    content: "";
+    position: absolute;
+    inset: -6px;
+    border: 2px solid var(--senal);
+    border-radius: 10px;
+    animation: sello-anillo 900ms ease-out 420ms both;
+    pointer-events: none;
+  }
+  @keyframes sello-anillo {
+    from {
+      opacity: 0.9;
+      transform: scale(1);
+    }
+    to {
+      opacity: 0;
+      transform: scale(1.5);
+    }
   }
   @keyframes sello-cae {
     from {
@@ -1389,8 +1507,12 @@
     }
   }
   @media (prefers-reduced-motion: reduce) {
-    .sello-validado {
+    .sello-validado,
+    .sello-validado::after {
       animation: none;
+    }
+    .sello-validado::after {
+      display: none;
     }
   }
 

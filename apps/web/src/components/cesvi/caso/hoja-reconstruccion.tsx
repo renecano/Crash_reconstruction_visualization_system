@@ -5,15 +5,18 @@
  * los percentiles con lo que significan y lo que fija el resultado. Toda cifra lleva su método.
  */
 import { evidenciaEnPalabras, type Reconstruccion } from "@croquis/cesvi";
-import { useState, type ReactNode } from "react";
+import type { ReactNode } from "react";
 import {
   frasePercentil,
   histograma,
   marcasDelEje,
   protagonista,
+  rangoDeImpacto,
+  sinDispersion,
   textoBarra,
 } from "@/lib/reconstruccion-lab";
 import { METODO } from "@/lib/textos-caso";
+import { Crece, Cuenta } from "../movimiento";
 
 export function CifraReconstruccion({
   r,
@@ -37,11 +40,12 @@ export function CifraReconstruccion({
   const marcas = marcasDelEje(barras);
   const tope = Math.max(1, ...barras.map((b) => b.n));
   const muestras = i?.valores?.length ?? 0;
-  const [explica, setExplica] = useState<string | null>(null);
   const otras = r.velocidades.filter((x) => x.vehiculo !== v?.vehiculo);
   const n = r.evidencia.length;
+  const quieta = v ? sinDispersion(v) : false;
+  const rango = v ? rangoDeImpacto(v) : null;
   const ini = barras[0]?.desde ?? 0;
-  const rango = barras.length ? barras.length : 1;
+  const anchoEje = barras.length ? barras.length : 1;
   return (
     <section className="flex flex-col gap-3" data-testid="cifra-reconstruccion">
       <div className="flex items-center justify-between gap-3">
@@ -63,12 +67,12 @@ export function CifraReconstruccion({
       {v && i?.p50 !== undefined ? (
         <>
           <p className="flex items-end gap-3">
-            <span
+            <Cuenta
+              valor={i.p50}
+              decimales={1}
               className="cifra-protagonista text-[clamp(6rem,12.8vw,11.5rem)]"
-              data-testid="cifra-impacto"
-            >
-              {i.p50.toFixed(1)}
-            </span>
+              testid="cifra-impacto"
+            />
             <span className="flex flex-col pb-2">
               <span className="text-[1.4rem]">km/h</span>
               <span className="t-nota" data-testid="cifra-de-quien">
@@ -79,27 +83,32 @@ export function CifraReconstruccion({
           <p className="t-nota" data-testid="metodo-cifra">
             {METODO.reconstruccion} · mediana de las simulaciones
           </p>
-          {barras.length ? (
+          {quieta ? (
+            <p className="t-nota" data-testid="sin-dispersion">
+              Las {muestras} simulaciones dan la misma velocidad: el costo tiene un quiebre en esta
+              solución y no dicen cuánto podría variar.
+              {rango?.lineal
+                ? ` Su rango es la aproximación lineal de la velocidad previa: ${rango.p10.toFixed(1)}–${rango.p90.toFixed(1)} km/h.`
+                : " No hay un rango que dar."}
+            </p>
+          ) : barras.length ? (
             <div className="flex flex-col gap-1" data-testid="histograma">
               <span className="t-nota">
                 Distribución de las {muestras} simulaciones · pasa el puntero
               </span>
               <div className="flex h-16 items-end gap-px" role="list" aria-label="Histograma">
-                {barras.map((b) => (
+                {barras.map((b, k) => (
                   <button
                     key={b.desde}
                     type="button"
                     role="listitem"
                     className="h-full min-w-0 flex-1 cursor-default bg-transparent p-0"
                     aria-label={textoBarra(b)}
-                    title={textoBarra(b)}
-                    onMouseEnter={() => setExplica(textoBarra(b))}
-                    onMouseLeave={() => setExplica(null)}
-                    onFocus={() => setExplica(textoBarra(b))}
-                    onBlur={() => setExplica(null)}
+                    data-tip={textoBarra(b)}
                     data-en-rango={b.enRango ? "si" : "no"}
                   >
-                    <span
+                    <Crece
+                      i={k}
                       className={`block w-full ${b.enRango ? "bg-texto" : "bg-linea"}`}
                       style={{
                         height: `${(b.n / tope) * 100}%`,
@@ -114,7 +123,7 @@ export function CifraReconstruccion({
                   <span
                     key={m}
                     className="absolute top-0.5 -translate-x-1/2"
-                    style={{ left: `${((m - ini) / rango) * 100}%` }}
+                    style={{ left: `${((m - ini) / anchoEje) * 100}%` }}
                   >
                     {m}
                   </span>
@@ -122,17 +131,14 @@ export function CifraReconstruccion({
               </div>
             </div>
           ) : null}
-          <div className="grid grid-cols-3 gap-2" data-testid="percentiles">
+          <div className={quieta ? "hidden" : "grid grid-cols-3 gap-2"} data-testid="percentiles">
             {(["p10", "p50", "p90"] as const).map((p) =>
               i[p] !== undefined ? (
                 <button
                   key={p}
                   type="button"
                   className="boton-secundario boton-compacto font-mono"
-                  onMouseEnter={() => setExplica(frasePercentil(p, i[p]!))}
-                  onMouseLeave={() => setExplica(null)}
-                  onFocus={() => setExplica(frasePercentil(p, i[p]!))}
-                  onBlur={() => setExplica(null)}
+                  data-tip={frasePercentil(p, i[p]!)}
                   data-testid={`percentil-${p}`}
                 >
                   {p} · {i[p]!.toFixed(1)}
@@ -140,9 +146,11 @@ export function CifraReconstruccion({
               ) : null,
             )}
           </div>
-          <p className="t-nota min-h-5" role="status" data-testid="explica-cifra">
-            {explica ?? "Pasa el puntero por un percentil para ver qué significa."}
-          </p>
+          {quieta ? null : (
+            <p className="t-nota" data-testid="explica-cifra">
+              Pasa el puntero por un percentil para ver qué significa.
+            </p>
+          )}
         </>
       ) : (
         <p className="t-cuerpo" data-testid="sin-cifra">

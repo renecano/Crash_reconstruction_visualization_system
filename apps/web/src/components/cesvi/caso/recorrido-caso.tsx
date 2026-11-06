@@ -80,7 +80,7 @@ import { ActoDanos } from "./analisis-laboratorio";
 import { ActoContraste } from "./contraste-laboratorio";
 import { HechoLaboratorio } from "./hecho-laboratorio";
 import { CifraReconstruccion, DetalleReconstruccion } from "./hoja-reconstruccion";
-import { protagonista } from "@/lib/reconstruccion-lab";
+import { protagonista, tipImpacto, tipVehiculo } from "@/lib/reconstruccion-lab";
 import { tomarArchivo } from "@/lib/archivo-pendiente";
 import { cifraContraste, conteoCriterios, criteriosContraste } from "@/lib/contraste-lab";
 import { textoDano, tituloDelHecho } from "@/lib/hecho-laboratorio";
@@ -1449,6 +1449,29 @@ export function RecorridoCaso({
                 calles={calles}
                 nombres={Object.fromEntries(
                   Object.entries(r.ids).map(([resId, id]) => [resId, nombreLab(String(id))]),
+                )}
+                tips={Object.fromEntries(
+                  Object.entries(r.ids).map(([resId, id]) => {
+                    const v = expediente?.vehiculos.find((x) => x.id === id);
+                    return [
+                      resId,
+                      tipVehiculo({
+                        nombre: nombreLab(String(id)),
+                        masaKg: v?.masa?.valor ?? null,
+                        masaDe: v?.masa?.fuente ?? null,
+                        impactoKmh:
+                          r.velocidades.find((x) => x.vehiculo === id)?.impacto?.p50 ?? null,
+                        dano: expediente ? textoDano(expediente, String(id)) : null,
+                      }),
+                    ];
+                  }),
+                )}
+                tipDelImpacto={tipImpacto(
+                  Object.values(r.ids)
+                    .map((id) => letraDe(String(id)))
+                    .sort()
+                    .join(" y "),
+                  posiciones.find((p) => p.fase === "impacto")?.fuente ?? null,
                 )}
                 anchoVia={
                   inicial.ejemplo

@@ -27,6 +27,7 @@
     "docx": "9.13.0",
     "geist": "1.8.1",
     "maplibre-gl": "6.15.0",
+    "motion": "^14.9.1",
     "next": "16.4.2",
     "pdfjs-dist": "6.4.299",
     "pdfmake": "0.3.11",

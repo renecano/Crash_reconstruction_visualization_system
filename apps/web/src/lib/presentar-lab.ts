@@ -6,6 +6,7 @@
 import type { Reconstruccion } from "@croquis/cesvi";
 import type { CifraContraste, conteoCriterios } from "./contraste-lab";
 import { poseEn, tImpacto, type ResultadoMaqueta } from "./maqueta";
+import { rangoDeImpacto } from "./reconstruccion-lab";
 
 /** Cuánto dura cada capítulo (s), como en una historia. */
 export const DURACION_CAPITULO_S = 6;
@@ -88,8 +89,12 @@ export function capitulos({
       valor: `${f1(i.p50!)} km/h`,
       grande: k === 0,
     });
-    if (k === 0 && i.p10 !== undefined && i.p90 !== undefined)
-      filasImpacto.push({ etiqueta: "Rango p10–p90", valor: `${f1(i.p10)}–${f1(i.p90)}` });
+    const rango = k === 0 ? rangoDeImpacto(v) : null;
+    if (rango)
+      filasImpacto.push({
+        etiqueta: rango.lineal ? "Rango por aproximación lineal" : "Rango p10–p90",
+        valor: `${f1(rango.p10)}–${f1(rango.p90)}`,
+      });
   });
   if (!filasImpacto.length)
     filasImpacto.push({ etiqueta: "Velocidad al impacto", valor: "la evidencia no la fija" });

@@ -16,6 +16,7 @@ import {
 } from "@/lib/contraste-lab";
 import { METODO } from "@/lib/textos-caso";
 import { MaquetaCaso } from "../escena/maqueta-caso";
+import { Cuenta, Desliza } from "../movimiento";
 import { Reproduccion } from "../reproduccion";
 import { DetalleContraReporte } from "./pasos";
 import { CARA } from "./piezas";
@@ -168,31 +169,32 @@ export function ActoContraste({
           <div className="flex flex-wrap items-end justify-between gap-6">
             <div className="flex flex-wrap gap-14">
               <div className="flex flex-col gap-1">
-                <span
+                <Cuenta
+                  valor={f.croquis}
+                  decimales={2}
                   className="cifra-protagonista text-[clamp(4rem,9vw,8rem)]"
-                  data-testid="cifra-contra-croquis"
-                >
-                  {f.croquis.toFixed(2)}
-                </span>
+                  testid="cifra-contra-croquis"
+                />
                 <span className="t-nota">Croquis, con las medidas del reporte</span>
               </div>
               <div className="flex flex-col gap-1">
-                <span
+                <Cuenta
+                  valor={f.cesvi}
+                  decimales={2}
                   className="cifra-protagonista text-[clamp(4rem,9vw,8rem)] text-texto-2"
-                  data-testid="cifra-contra-cesvi"
-                >
-                  {f.cesvi.toFixed(2)}
-                </span>
+                  testid="cifra-contra-cesvi"
+                />
                 <span className="t-nota">Reporte de CESVI</span>
               </div>
             </div>
             <div className="flex flex-col items-end gap-1">
-              <span
+              <Cuenta
+                valor={f.difPct}
+                decimales={1}
+                sufijo=" %"
                 className="cifra-protagonista text-[3.25rem] leading-none"
-                data-testid="cifra-contra-pct"
-              >
-                {f.difPct.toFixed(1)} %
-              </span>
+                testid="cifra-contra-pct"
+              />
               <span className="t-nota" data-testid="cifra-contra-kmh">
                 diferencia · {f.difKmh.toFixed(2)} km/h
               </span>
@@ -215,15 +217,15 @@ export function ActoContraste({
                 width: `${Math.abs(regla.croquis - regla.cesvi)}%`,
               }}
             />
-            <span
+            <Desliza
+              pos={regla.cesvi}
               className="absolute top-0 h-6 w-0.5 -translate-x-1/2 bg-texto-2"
-              style={{ left: `${regla.cesvi}%` }}
-              title={`Reporte de CESVI: ${f.cesvi.toFixed(2)} km/h`}
+              tip={`Reporte de CESVI: ${f.cesvi.toFixed(2)} km/h, de su conclusión`}
             />
-            <span
+            <Desliza
+              pos={regla.croquis}
               className="absolute top-0 h-6 w-0.5 -translate-x-1/2 bg-texto"
-              style={{ left: `${regla.croquis}%` }}
-              title={`Croquis: ${f.croquis.toFixed(2)} km/h`}
+              tip={`Croquis: ${f.croquis.toFixed(2)} km/h, con las medidas del reporte y el método de CESVI`}
             />
           </div>
         </section>
@@ -241,7 +243,7 @@ export function ActoContraste({
             {criterios.map((c) => (
               <li
                 key={c.clave}
-                className="flex items-center gap-3 py-3"
+                className="fila-resalta flex items-center gap-3 py-3"
                 data-estado={c.estado}
                 data-testid={`eje-${c.clave}`}
               >

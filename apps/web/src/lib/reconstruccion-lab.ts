@@ -15,6 +15,39 @@ export function protagonista(r: Reconstruccion): VelocidadReconstruida | null {
   return fijados.reduce((a, b) => ((b.impacto!.p50 ?? 0) > (a.impacto!.p50 ?? 0) ? b : a));
 }
 
+export interface RangoDeImpacto {
+  p10: number;
+  p90: number;
+  /** Las simulaciones no se apartaron: el rango es la aproximación lineal de la velocidad previa. */
+  lineal: boolean;
+}
+
+/** Por debajo de esto (km/h), el p10–p90 de las simulaciones no dice nada: son la misma velocidad. */
+const SIN_DISPERSION_KMH = 0.05;
+
+/** ¿Las simulaciones dan todas la misma velocidad al impacto? */
+export function sinDispersion(v: VelocidadReconstruida): boolean {
+  const i = v.impacto;
+  if (i?.p10 === undefined || i.p90 === undefined) return false;
+  return i.p90 - i.p10 < SIN_DISPERSION_KMH;
+}
+
+/**
+ * El rango que se puede afirmar de la velocidad al impacto. Si las simulaciones no se apartaron de
+ * la solución (el costo tiene un quiebre ahí, ADR 0091), su p10–p90 tiene ancho cero, lo que parece
+ * una certeza que no existe: vale el de la velocidad previa, que el solver da por aproximación
+ * lineal. null si no hay ninguno que dar.
+ */
+export function rangoDeImpacto(v: VelocidadReconstruida): RangoDeImpacto | null {
+  const i = v.impacto;
+  if (i?.p10 === undefined || i.p90 === undefined) return null;
+  if (!sinDispersion(v)) return { p10: i.p10, p90: i.p90, lineal: false };
+  const p = v.previa;
+  if (p?.p10 === undefined || p.p90 === undefined || p.p90 - p.p10 < SIN_DISPERSION_KMH)
+    return null;
+  return { p10: p.p10, p90: p.p90, lineal: true };
+}
+
 export interface BarraHistograma {
   /** El km/h donde empieza la barra (cada una mide 1 km/h). */
   desde: number;
@@ -65,6 +98,36 @@ export function frasePercentil(cual: "p10" | "p50" | "p90", valor: number): stri
   if (cual === "p10") return `9 de cada 10 simulaciones dan más de ${fmt(valor)} km/h.`;
   if (cual === "p50") return `La mitad queda abajo de ${fmt(valor)} km/h y la mitad arriba.`;
   return `9 de cada 10 simulaciones dan menos de ${fmt(valor)} km/h.`;
+}
+
+/** El tooltip de un vehículo en la escena: modelo, masa con su origen, velocidad al impacto y daño. */
+export function tipVehiculo(d: {
+  nombre: string;
+  masaKg: number | null;
+  masaDe: string | null;
+  impactoKmh: number | null;
+  dano: string | null;
+}): string {
+  const masa =
+    d.masaKg === null
+      ? "masa: sin dato"
+      : `masa ${d.masaKg.toLocaleString("en-US", { maximumFractionDigits: 1 })} kg${d.masaDe ? ` (${d.masaDe})` : ""}`;
+  const v =
+    d.impactoKmh === null
+      ? "la evidencia no fija su velocidad"
+      : `al impacto ${fmt(d.impactoKmh)} km/h`;
+  return [d.nombre, masa, v, d.dano].filter(Boolean).join(" · ");
+}
+
+/** El tooltip del impacto: su instante, quién hace contacto y quién lo colocó. */
+export function tipImpacto(contacto: string, fuente: string | null): string {
+  const quien =
+    fuente === "perito"
+      ? "lo colocó el perito"
+      : fuente === "supuesto"
+        ? "supuesto de Croquis"
+        : null;
+  return ["Impacto · t 0.00 s", contacto, quien].filter(Boolean).join(" · ");
 }
 
 /** La barra del histograma, en palabras (para su etiqueta). */

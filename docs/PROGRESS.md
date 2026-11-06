@@ -1885,6 +1885,24 @@ Rama `fix/fotos-dictamen`. René mandó la captura del dictamen de un caso nuevo
 - **Qué hay ahora:** fotos con la cinematográfica, del instante pedido, sin marcadores; vehículos apoyados en banquetas y relieve; y si el 3D se queda abajo de 24 fps durante 5 s, baja un nivel y lo dice `?diag=1`.
 - **Cómo probarlo:** genera el dictamen de un caso nuevo y compara las tres fotos; y en `docs/cesvi/t1/ruedas/` están las capturas de cerca de cada clase. Si en tu caso las llantas siguen fuera de su hueco, dime la clase del vehículo (o manda el `.json` del caso): en las ocho clases que medí quedan bien.
 
+### Laboratorio: movimiento, tooltips y el rango que no aparenta certeza (René, 2026-11-04; prompt §6 y §9)
+
+Rama `feat/laboratorio-movimiento`.
+
+- **El rango de la velocidad al impacto (arreglo de honestidad, no pedido).** Cuando las simulaciones no se apartan de la solución, porque el costo tiene un quiebre ahí (ADR 0091), su p10–p90 tiene ancho cero: la hoja decía «p10 41.5 · p50 41.5 · p90 41.5» con una sola barra, mientras la velocidad previa decía 27.2–55.7.
+  - Eso aparentaba una certeza que no existe. Ahora se dice que las simulaciones no dan el rango y se muestra el de la velocidad previa, nombrado «aproximación lineal», en la hoja, el dictamen, las citas y Presentar.
+  - El solver no cambió: esto solo cambia cómo se lee. **Pendiente de revisar en el solver:** el rango de `velocidad_impacto` podría salir igual que el de la velocidad previa.
+- **El catálogo de movimiento (§6), con Motion:** `rise`, `line`, `count`, `grow`, `draw`, `pulse` y `marker`; `stamp` es CSS, igual que la transición entre actos. `drop` ya estaba en la escena fácil.
+  - Cada animación corre una vez al aparecer: nada se mueve solo mientras el perito trabaja.
+  - Con `prefers-reduced-motion` todo sale en su estado final.
+  - Las cifras terminan exactamente en el valor del cálculo (`textoContado`, con prueba).
+- **Los tooltips (§9):** invertidos, 170 ms, 8 px arriba del objeto, con puntero y con foco. Una sola capa lee `data-tip` en cualquier elemento, de HTML o de SVG.
+  - Reconstrucción: cada vehículo (modelo, masa con su origen, velocidad al impacto, daño), el impacto, cada silueta de la estela con su t real, cada barra y cada percentil.
+  - Análisis: cada punto C. Contra CESVI: cada marcador de la regla.
+  - Se levantan o resaltan: las tarjetas de supuestos, las filas de criterios y las de Casos (el mini croquis crece 8 % y la flecha avanza).
+- **Dependencia:** `motion` 14.9.1, registrada en `docs/adr/0001-stack.md`.
+- **Pruebas:** unitarias de la cuenta, la posición del tooltip, los textos de los tooltips y el rango. La e2e de AXA abre un tooltip con el foco.
+
 ### Laboratorio: Casos y Presentar (René, 2026-11-04; prompt §8)
 
 Rama `feat/laboratorio-casos-presentar`. Con esto están todas las pantallas del prompt.
@@ -2324,7 +2342,7 @@ Rama `feat/r11-render-retomable`. El colaborador cerró la corrida del 2026-11-0
 
 - **Dictamen (Laboratorio §8), sin dictado:** el diseño dice «Escríbela o díctala»; Croquis no tiene entrada por voz, así que el texto dice «Escríbela tú». Se agrega si René la pide (igual que «Dictar un dato» en El hecho).
 - **Contra CESVI (Laboratorio §8):** el esquema de papel de AXA no es el croquis del reporte, que no está en datos. Si se extrae del PDF, se cambia por el real.
-- **La reconstrucción (Laboratorio §8), el movimiento va con §6:** que la cifra cuente, que el histograma crezca barra por barra y el puntero sobre las siluetas de la maqueta (§9) se hacen con el catálogo de movimiento y los tooltips, no pantalla por pantalla.
+- **Solver, `velocidad_impacto`:** cuando las muestras no se apartan de la solución, los parámetros dan su rango por aproximación lineal (`rango_por: "laplace"`) pero la velocidad al impacto se queda con ancho cero. La interfaz ya lo dice; falta decidir si el solver debe dar ese rango también.
 - **El hecho (Laboratorio §8), dos botones del diseño sin hacer:** «Dictar un dato» (Croquis no tiene entrada por voz) y «Reporte original» (el PDF importado no se guarda en el caso). Se agregan si René los pide.
 
 - **Escena fácil (ADR 0110), código de la colocación B que quedó sin usar:** `colocar-mapa.tsx` (la bandeja, el anillo y los fantasmas que `MapaEscena` aún acepta en su propiedad `colocacion`) y lo de B en `lib/colocar.ts` (`subpasoLugar`, `direccionesCandidatas`). En el recorrido se calculan, pero no se ven. Se quitan junto con sus pruebas al tocar `MapaEscena`.

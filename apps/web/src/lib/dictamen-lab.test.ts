@@ -33,6 +33,20 @@ describe("el dictamen (Laboratorio §8)", () => {
     ]);
   });
 
+  it("sin dispersión de las simulaciones, el rango dice que es lineal", () => {
+    const quieta = {
+      velocidades: [
+        {
+          vehiculo: "V2",
+          previa: { mejor: 41.5, p10: 27.2, p50: 41.5, p90: 55.7 },
+          impacto: { p10: 41.5, p50: 41.5, p90: 41.5 },
+        },
+      ],
+    } as unknown as Reconstruccion;
+    expect(filasDeLaHoja(quieta, letra, null)[0]!.valor).toBe("41.5 km/h · 27.2–55.7 (lineal)");
+    expect(citaVelocidad(quieta, "V2", "B")).toContain("rango por aproximación lineal: 27.2–55.7");
+  });
+
   it("la comparación con CESVI va con su valor y su porcentaje", () => {
     const f = filasDeLaHoja(r, letra, contra);
     expect(f.at(-2)).toEqual({ etiqueta: "B por deformación", valor: "63.90 km/h" });

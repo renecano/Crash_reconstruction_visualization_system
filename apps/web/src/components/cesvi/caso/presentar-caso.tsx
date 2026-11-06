@@ -16,6 +16,7 @@ import { guardarTema, type Tema } from "@/lib/preferencias-cesvi";
 import { capitulos, DURACION_CAPITULO_S, tDelCapitulo } from "@/lib/presentar-lab";
 import { reconstruirEnNavegador } from "@/lib/reconstruct-client";
 import { EscenaMaqueta } from "../escena/maqueta";
+import { Linea, Sube } from "../movimiento";
 
 export function PresentarCaso({
   r,
@@ -176,14 +177,18 @@ export function PresentarCaso({
             className="font-[family-name:var(--fuente-titulo)] text-[clamp(3.5rem,7.2vw,6.5rem)] leading-none font-normal tracking-[-0.03em]"
             data-testid="capitulo-titulo"
           >
-            {c.titulo}
+            <Linea clave={c.clave}>{c.titulo}</Linea>
           </h1>
           <dl
             className="flex flex-col divide-y divide-[var(--linea)] border-t border-linea"
             data-testid="capitulo-datos"
           >
-            {c.filas.map((f) => (
-              <div key={f.etiqueta} className="flex items-baseline justify-between gap-6 py-3">
+            {c.filas.map((f, i) => (
+              <Sube
+                key={`${c.clave}-${f.etiqueta}`}
+                i={i}
+                className="flex items-baseline justify-between gap-6 py-3"
+              >
                 <dt className="text-texto-2">{f.etiqueta}</dt>
                 <dd
                   className={
@@ -194,7 +199,7 @@ export function PresentarCaso({
                 >
                   {f.valor}
                 </dd>
-              </div>
+              </Sube>
             ))}
           </dl>
         </main>

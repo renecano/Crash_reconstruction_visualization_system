@@ -5,6 +5,7 @@
  */
 import type { Reconstruccion, SupuestoDeclarado } from "@croquis/cesvi";
 import type { CifraContraste } from "./contraste-lab";
+import { rangoDeImpacto } from "./reconstruccion-lab";
 
 const f1 = (x: number) => x.toFixed(1);
 
@@ -23,7 +24,8 @@ export function filasDeLaHoja(
     const i = v.impacto;
     const etiqueta = `${letraDe(String(v.vehiculo))} al impacto`;
     if (i?.p50 === undefined) return { etiqueta, valor: "la evidencia no la fija" };
-    const rango = i.p10 !== undefined && i.p90 !== undefined ? ` · ${f1(i.p10)}–${f1(i.p90)}` : "";
+    const r10 = rangoDeImpacto(v);
+    const rango = r10 ? ` · ${f1(r10.p10)}–${f1(r10.p90)}${r10.lineal ? " (lineal)" : ""}` : "";
     return { etiqueta, valor: `${f1(i.p50)} km/h${rango}` };
   });
   if (contra) {
@@ -46,8 +48,12 @@ export function citaVelocidad(r: Reconstruccion, id: string, nombre: string): st
   const v = r.velocidades.find((x) => String(x.vehiculo) === id);
   const i = v?.impacto;
   if (i?.p50 === undefined) return null;
-  const rango =
-    i.p10 !== undefined && i.p90 !== undefined ? ` (p10–p90: ${f1(i.p10)}–${f1(i.p90)})` : "";
+  const r10 = v ? rangoDeImpacto(v) : null;
+  const rango = r10
+    ? r10.lineal
+      ? ` (rango por aproximación lineal: ${f1(r10.p10)}–${f1(r10.p90)})`
+      : ` (p10–p90: ${f1(r10.p10)}–${f1(r10.p90)})`
+    : "";
   return `Velocidad de ${nombre} al impacto: ${f1(i.p50)} km/h${rango}, según la reconstrucción física de Croquis.`;
 }
 
