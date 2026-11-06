@@ -1,4 +1,4 @@
-D:\Documentos\proyectos\croquis\tools\blender\croquis_render.py:485: DeprecationWarning: 'Material.use_nodes' is expected to be removed in Blender 6.0
+D:\Documentos\proyectos\croquis\tools\blender\croquis_render.py:565: DeprecationWarning: 'Material.use_nodes' is expected to be removed in Blender 6.0
   mat.use_nodes = True
-D:\Documentos\proyectos\croquis\tools\blender\croquis_render.py:625: DeprecationWarning: 'World.use_nodes' is expected to be removed in Blender 6.0
+D:\Documentos\proyectos\croquis\tools\blender\croquis_render.py:763: DeprecationWarning: 'World.use_nodes' is expected to be removed in Blender 6.0
   mundo.use_nodes = True
