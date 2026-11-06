@@ -204,3 +204,40 @@ Solo la medición (-SoloMedicion).
 
 == Datos de la máquina
    Listo (1 s, RAM máxima 75 %). CPU Intel(R) Core(TM) i5-10210U CPU @ 1.60GHz, 7.8 GB de RAM.
+   warning: in the working copy of 'resultados/prueba/2026-11-05/bitacora.txt', CRLF will be replaced by LF the next time Git touches it
+   warning: in the working copy of 'resultados/prueba/2026-11-05/blender-axa-unir.log', CRLF will be replaced by LF the next time Git touches it
+   warning: in the working copy of 'resultados/prueba/2026-11-05/blender-axa.log', CRLF will be replaced by LF the next time Git touches it
+   warning: in the working copy of 'resultados/prueba/2026-11-05/blender-axa.log.err', CRLF will be replaced by LF the next time Git touches it
+   warning: in the working copy of 'resultados/prueba/2026-11-05/blender-carambola-unir.log', CRLF will be replaced by LF the next time Git touches it
+   warning: in the working copy of 'resultados/prueba/2026-11-05/blender-carambola.log', CRLF will be replaced by LF the next time Git touches it
+   warning: in the working copy of 'resultados/prueba/2026-11-05/blender-carambola.log.err', CRLF will be replaced by LF the next time Git touches it
+   warning: in the working copy of 'resultados/prueba/2026-11-05/maquina.json', CRLF will be replaced by LF the next time Git touches it
+   To https://github.com/renecano/Crash_reconstruction_visualization_system.git
+      f40d0f9..b562e71  b562e712db806121b95e497dbe913b2ce2437116 -> resultados/prueba-2026-11-05
+   Subido a la rama resultados/prueba-2026-11-05 (datos de la máquina).
+
+================ Resumen ================
+[ok]   Revisar Git y Chrome — 0 s, RAM máxima 74 % Git y Chrome encontrados.
+[ok]   Medición del visor en Chrome (E6: alta y ultra) — 0 s, RAM máxima 75 % Ya estaba (de una corrida de hoy); se salta.
+[ok]   Datos de la máquina — 1 s, RAM máxima 75 % CPU Intel(R) Core(TM) i5-10210U CPU @ 1.60GHz, 7.8 GB de RAM.
+Tiempo de esta corrida: 9 s. RAM usada: 74 % al empezar, 75 % como máximo.
+Todo salió bien. Los resultados están en D:\Documentos\proyectos\croquis\resultados\prueba\2026-11-05 y en la rama resultados/prueba-2026-11-05 de GitHub.
+
+Croquis en la computadora de la demo — 2026-11-05 (19:00)
+Resultados en: D:\Documentos\proyectos\croquis\resultados\prueba\2026-11-05
+Solo los videos (-SoloRender).
+
+== Revisar Git y Chrome
+   Listo (0 s, RAM máxima 74 %). Git y Chrome encontrados.
+
+== Blender 5.2.3 (portátil, de blender.org)
+   Listo (0 s, RAM máxima 74 %). Ya estaba en D:\CroquisDemo; se reutiliza.
+
+== Video de la escena «axa»
+   Listo (0 s, RAM máxima 74 %). Ya estaba completo (de una corrida de hoy); se salta.
+
+== Video de la escena «carambola»
+   Listo (0 s, RAM máxima 74 %). Ya estaba completo (de una corrida de hoy); se salta.
+
+== Datos de la máquina
+   Listo (1 s, RAM máxima 74 %). CPU Intel(R) Core(TM) i5-10210U CPU @ 1.60GHz, 7.8 GB de RAM.
