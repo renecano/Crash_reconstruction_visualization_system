@@ -53,3 +53,34 @@ Resultados en: D:\Documentos\proyectos\croquis\resultados\prueba\2026-11-05
    >> No cierres esta ventana; tarda unos 3 min en total (3.2 s por cuadro; faltan unos 3 min).
    Armando el video con los 61 cuadros…
    Listo (245 s, RAM máxima 91 %). 0.2 MB, --motor cycles --resolucion 320x180 --muestras 4 --desde 0 --hasta 2
+   warning: in the working copy of 'resultados/prueba/2026-11-05/bitacora.txt', CRLF will be replaced by LF the next time Git touches it
+   warning: in the working copy of 'resultados/prueba/2026-11-05/blender-axa-unir.log', CRLF will be replaced by LF the next time Git touches it
+   warning: in the working copy of 'resultados/prueba/2026-11-05/blender-axa.log', CRLF will be replaced by LF the next time Git touches it
+   warning: in the working copy of 'resultados/prueba/2026-11-05/blender-axa.log.err', CRLF will be replaced by LF the next time Git touches it
+   warning: in the working copy of 'resultados/prueba/2026-11-05/blender-carambola-unir.log', CRLF will be replaced by LF the next time Git touches it
+   warning: in the working copy of 'resultados/prueba/2026-11-05/blender-carambola.log', CRLF will be replaced by LF the next time Git touches it
+   warning: in the working copy of 'resultados/prueba/2026-11-05/blender-carambola.log.err', CRLF will be replaced by LF the next time Git touches it
+   warning: in the working copy of 'resultados/prueba/2026-11-05/maquina.json', CRLF will be replaced by LF the next time Git touches it
+   To https://github.com/renecano/Crash_reconstruction_visualization_system.git
+      cd96c1f..3cf2e7f  3cf2e7fe55778cb3b5732d151208b5dcf350874d -> resultados/prueba-2026-11-05
+   Subido a la rama resultados/prueba-2026-11-05 (video de carambola).
+
+== Medición del visor en Chrome (E6: alta y ultra)
+   Chrome abre la medición a pantalla completa. No uses el equipo mientras mide.
+   CORRECTO: el proceso con PID 21208 (proceso secundario de PID 18132)
+   ha sido terminado.
+   CORRECTO: el proceso con PID 18964 (proceso secundario de PID 18132)
+   ha sido terminado.
+   CORRECTO: el proceso con PID 8800 (proceso secundario de PID 18132)
+   ha sido terminado.
+   CORRECTO: el proceso con PID 23096 (proceso secundario de PID 18132)
+   ha sido terminado.
+   CORRECTO: el proceso con PID 22928 (proceso secundario de PID 18132)
+   ha sido terminado.
+   CORRECTO: el proceso con PID 17444 (proceso secundario de PID 18132)
+   ha sido terminado.
+   CORRECTO: el proceso con PID 5084 (proceso secundario de PID 18132)
+   ha sido terminado.
+   CORRECTO: el proceso con PID 18132 (proceso secundario de PID 23512)
+   ha sido terminado.
+   Listo (36 s, RAM máxima 88 %). Resultado guardado (e6-navegador.json).

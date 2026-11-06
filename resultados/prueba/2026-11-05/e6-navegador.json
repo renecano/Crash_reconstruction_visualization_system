@@ -1,0 +1,83 @@
+{
+  "version": 1,
+  "generado_por": "/medicion (apps/web/src/components/medicion/medicion-app.tsx)",
+  "momento": "2026-11-06T00:58:40.965Z",
+  "metodo": "E6 en el navegador: visor a pantalla completa, cámara cinematográfica en movimiento y escena en bucle; calentamiento, ventana de medición, repeticiones en orden alterno con pausa; se reporta la repetición mediana por fps promedio (ADR 0026). A diferencia de E6, el navegador conserva su caché entre escenas: carga_inicial_mb solo mide la carga sin caché en la primera medición.",
+  "equipo": {
+    "agente": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/156.0.0.0 Safari/537.36",
+    "gpu": "ANGLE (Intel, Intel(R) UHD Graphics (0x00009B41) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+    "webgpu": true,
+    "pantalla": {
+      "ancho": 1440,
+      "alto": 960,
+      "escala": 1.5
+    },
+    "ventana": {
+      "ancho": 1440,
+      "alto": 960
+    },
+    "nucleos": 8,
+    "memoria_gb": 8,
+    "frecuencia_hz": 56.2
+  },
+  "config": {
+    "escenas": [
+      "alcance"
+    ],
+    "calidades": [
+      "baja"
+    ],
+    "renderers": [
+      "webgl"
+    ],
+    "repeticiones": 1,
+    "calentamiento_s": 0,
+    "segundos": 2,
+    "pausa_s": 0
+  },
+  "meta_fps": 60,
+  "mediciones": [
+    {
+      "escena": "alcance",
+      "calidad": "baja",
+      "renderer": "webgl",
+      "repeticion": 1,
+      "cuadros": 328,
+      "fps_promedio": 148.6,
+      "fps_mediana": 416.7,
+      "fps_p1_bajo": 10.8,
+      "cuadro_p95_ms": 4.6,
+      "backend": "webgl2",
+      "tareas_largas": 4,
+      "tareas_largas_ms": 1147,
+      "llamadas_dibujo": 18,
+      "triangulos": 123789,
+      "carga_inicial_mb": 0.15,
+      "tiempo_hasta_listo_ms": 1940,
+      "topado": true,
+      "intento": 3
+    }
+  ],
+  "resumen": [
+    {
+      "escena": "alcance",
+      "calidad": "baja",
+      "renderer": "webgl",
+      "repeticion": 1,
+      "cuadros": 328,
+      "fps_promedio": 148.6,
+      "fps_mediana": 416.7,
+      "fps_p1_bajo": 10.8,
+      "cuadro_p95_ms": 4.6,
+      "backend": "webgl2",
+      "tareas_largas": 4,
+      "tareas_largas_ms": 1147,
+      "llamadas_dibujo": 18,
+      "triangulos": 123789,
+      "carga_inicial_mb": 0.15,
+      "tiempo_hasta_listo_ms": 1940,
+      "topado": true,
+      "intento": 3
+    }
+  ]
+}

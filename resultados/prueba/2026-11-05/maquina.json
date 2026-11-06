@@ -3,7 +3,7 @@
     "prueba":  true,
     "solo_render":  false,
     "solo_medicion":  false,
-    "duracion_de_esta_corrida_s":  426,
+    "duracion_de_esta_corrida_s":  467,
     "ram_usada_al_empezar_pct":  62,
     "ram_usada_maxima_pct":  91,
     "limite_ram_pct":  95,
@@ -35,6 +35,13 @@
                       "Segundos":  245,
                       "RamMaxima":  91,
                       "Nota":  "0.2 MB, --motor cycles --resolucion 320x180 --muestras 4 --desde 0 --hasta 2"
+                  },
+                  {
+                      "Paso":  "Medición del visor en Chrome (E6: alta y ultra)",
+                      "Bien":  true,
+                      "Segundos":  36,
+                      "RamMaxima":  88,
+                      "Nota":  "Resultado guardado (e6-navegador.json)."
                   }
               ]
 }
