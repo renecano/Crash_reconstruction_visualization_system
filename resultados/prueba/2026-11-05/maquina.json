@@ -24,10 +24,10 @@
     "commit_del_repositorio":  "fa00c9641bfcadeb8e55f831a2d5f430cf511bd0",
     "fecha":  "2026-11-05",
     "prueba":  true,
-    "solo_render":  true,
-    "solo_medicion":  false,
+    "solo_render":  false,
+    "solo_medicion":  true,
     "duracion_de_esta_corrida_s":  2,
-    "ram_usada_al_empezar_pct":  74,
+    "ram_usada_al_empezar_pct":  73,
     "ram_usada_maxima_pct":  74,
     "limite_ram_pct":  95,
     "pasos":  [
@@ -35,29 +35,15 @@
                       "Paso":  "Revisar Git y Chrome",
                       "Bien":  true,
                       "Segundos":  0,
-                      "RamMaxima":  74,
+                      "RamMaxima":  73,
                       "Nota":  "Git y Chrome encontrados."
                   },
                   {
-                      "Paso":  "Blender 5.2.3 (portátil, de blender.org)",
+                      "Paso":  "Medición del visor en Chrome (E6: alta y ultra)",
                       "Bien":  true,
                       "Segundos":  0,
                       "RamMaxima":  74,
-                      "Nota":  "Ya estaba en D:\\CroquisDemo; se reutiliza."
-                  },
-                  {
-                      "Paso":  "Video de la escena «axa»",
-                      "Bien":  true,
-                      "Segundos":  0,
-                      "RamMaxima":  74,
-                      "Nota":  "Ya estaba completo (de una corrida de hoy); se salta."
-                  },
-                  {
-                      "Paso":  "Video de la escena «carambola»",
-                      "Bien":  true,
-                      "Segundos":  0,
-                      "RamMaxima":  74,
-                      "Nota":  "Ya estaba completo (de una corrida de hoy); se salta."
+                      "Nota":  "Ya estaba (de una corrida de hoy); se salta."
                   },
                   {
                       "Paso":  "Datos de la máquina",
