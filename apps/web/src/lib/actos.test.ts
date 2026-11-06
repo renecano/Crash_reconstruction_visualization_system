@@ -27,6 +27,8 @@ describe("los seis actos del Laboratorio (prompt §4)", () => {
 
   it("«Continuar a…» con la contracción del español", () => {
     expect(continuarA("El hecho")).toBe("Continuar al hecho");
+    expect(continuarA("Análisis")).toBe("Continuar al análisis");
+    expect(continuarA("Dictamen")).toBe("Continuar al dictamen");
     expect(continuarA("La reconstrucción")).toBe("Continuar a la reconstrucción");
     expect(continuarA("Los daños")).toBe("Continuar a los daños");
     expect(continuarA("Croquis contra el reporte de CESVI")).toBe(

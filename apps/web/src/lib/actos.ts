@@ -44,6 +44,8 @@ export function actoDePaso(actos: readonly ActoDelCaso[], i: number): number {
  * «El hecho» → «Continuar al hecho»; «La escena» → «Continuar a la escena».
  */
 export function continuarA(nombre: string): string {
+  const conArticulo = { Análisis: "al análisis", Dictamen: "al dictamen" }[nombre];
+  if (conArticulo) return `Continuar ${conArticulo}`;
   const m = nombre.match(/^(El|La|Los|Las)\s+(.*)$/);
   if (!m) return `Continuar a ${nombre}`;
   const art = m[1]!.toLowerCase();

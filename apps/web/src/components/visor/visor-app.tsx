@@ -5,8 +5,8 @@
  * sus propios controles.
  *
  * Arriba de la escena van las lecturas de cada vehículo y la leyenda, que siempre está visible;
- * debajo, las cámaras predefinidas, la traza de telemetría y los paneles. Con una hipótesis se
- * puede comparar en pantalla dividida.
+ * debajo, las cámaras predefinidas, la traza de telemetría y los paneles. Una hipótesis se ve como
+ * fantasma sobre la escena.
  */
 import {
   FIXTURE_NAMES,
@@ -109,6 +109,7 @@ const T = textos(
       dano: "Daño",
       persona: "Seguir a la persona",
       conductor: (rol: string) => `Conductor ${rol}`,
+      detras: (rol: string) => `Detrás de ${rol}`,
     },
     ajustes: "Ajustes de dibujo",
     recuperando: (n: number) => `El dibujo 3D se perdió (${n}); se vuelve a crear…`,
@@ -132,10 +133,6 @@ const T = textos(
     sinGpu: "Este navegador no pudo iniciar WebGPU ni WebGL 2; el visor 3D no está disponible.",
     calculando:
       "Calculando la incertidumbre (Monte Carlo), la inversión desde la evidencia y la consistencia en este navegador…",
-    dividida: "Comparar lado a lado",
-    unida: "Ver una sola escena",
-    original: "Tu reconstrucción",
-    hipotesis: (titulo: string) => `Hipótesis: ${titulo}`,
   },
   {
     cargandoVisor: "Loading the 3D viewer…",
@@ -159,6 +156,7 @@ const T = textos(
       dano: "Damage",
       persona: "Follow the person",
       conductor: (rol: string) => `Driver ${rol}`,
+      detras: (rol: string) => `Behind ${rol}`,
     },
     ajustes: "Rendering settings",
     recuperando: (n: number) => `The 3D view was lost (${n}); recreating it…`,
@@ -182,10 +180,6 @@ const T = textos(
     sinGpu: "This browser could not start WebGPU or WebGL 2; the 3D viewer is not available.",
     calculando:
       "Computing the uncertainty (Monte Carlo), the inversion from the evidence and the consistency in this browser…",
-    dividida: "Compare side by side",
-    unida: "Show a single scene",
-    original: "Your reconstruction",
-    hipotesis: (titulo: string) => `Hypothesis: ${titulo}`,
   },
 );
 
@@ -702,8 +696,6 @@ export function VisorEscena({
     [hipotesisExternas, propias],
   );
   const ghostResults = useMemo(() => hipotesis.map((h) => h.resultado), [hipotesis]);
-  const [dividida, setDividida] = useState(false);
-  const comparar = dividida && hipotesis.length > 0;
   const clock = useMemo(() => {
     if (!dibujo) return null;
     return createClock(
@@ -805,11 +797,13 @@ export function VisorEscena({
     [spec],
   );
 
-  const [mode, driverId] = controles.camara.startsWith("conductor-")
-    ? (["conductor", controles.camara.slice("conductor-".length)] as const)
-    : ([controles.camara as CameraMode, undefined] as const);
+  const [mode, driverId] = controles.camara.startsWith("detras-")
+    ? (["detras", controles.camara.slice("detras-".length)] as const)
+    : controles.camara.startsWith("conductor-")
+      ? (["conductor", controles.camara.slice("conductor-".length)] as const)
+      : ([controles.camara as CameraMode, undefined] as const);
   const cameraMode: CameraMode = (
-    ["libre", "cenital", "conductor", "cinematica", "dano", "persona"] as const
+    ["libre", "cenital", "conductor", "detras", "cinematica", "dano", "persona"] as const
   ).includes(mode as CameraMode)
     ? (mode as CameraMode)
     : "libre";
@@ -823,6 +817,10 @@ export function VisorEscena({
     ...spec.vehiculos.map((v) => ({
       valor: `conductor-${v.id}`,
       texto: t.camaras.conductor(v.rol),
+    })),
+    ...spec.vehiculos.map((v) => ({
+      valor: `detras-${v.id}`,
+      texto: t.camaras.detras(v.rol),
     })),
   ];
 
@@ -841,7 +839,7 @@ export function VisorEscena({
       />
     </div>
   );
-  const visor = (res: Resultado, principal: boolean) =>
+  const visor = (res: Resultado) =>
     clock ? (
       <SceneViewer
         spec={spec}
@@ -850,20 +848,18 @@ export function VisorEscena({
         camera={cameraMode}
         cameraLive={camaraViva}
         driverVehicleId={driverId}
-        quality={
-          principal ? calidad : calidad === "ultra" || calidad === "alta" ? "media" : calidad
-        }
+        quality={calidad}
         renderer={effectiveRenderer}
-        onRendererInfo={principal ? setInfo : undefined}
-        onPeople={principal ? onPeople : undefined}
-        onProcedural={principal ? setProcedural : undefined}
-        hipotesis={principal && !comparar ? ghostResults : undefined}
-        onExport={principal ? setExportApi : undefined}
+        onRendererInfo={setInfo}
+        onPeople={onPeople}
+        onProcedural={setProcedural}
+        hipotesis={ghostResults}
+        onExport={setExportApi}
         ambiente={ambiente ?? undefined}
         onError={(e) => setError(`${t.sinGpu} ${e.message}`)}
-        onDeviceLost={principal ? onDeviceLost : undefined}
-        onGraphReady={principal ? setGrafoListo : undefined}
-        onShown={principal ? marcarEnPantalla : undefined}
+        onDeviceLost={onDeviceLost}
+        onGraphReady={setGrafoListo}
+        onShown={marcarEnPantalla}
         activo={activo}
         generation={generacion}
         className="h-full w-full"
@@ -901,13 +897,7 @@ export function VisorEscena({
         </p>
       ) : null}
 
-      <div
-        className={
-          controles.completa
-            ? "fixed inset-0 z-50 bg-fondo"
-            : `grid gap-2 ${comparar ? "md:grid-cols-2" : ""}`
-        }
-      >
+      <div className={controles.completa ? "fixed inset-0 z-50 bg-fondo" : "grid gap-2"}>
         <div
           className={
             controles.completa
@@ -935,7 +925,7 @@ export function VisorEscena({
               </div>
             </div>
           ) : dibujo && clock ? (
-            visor(dibujo, true)
+            visor(dibujo)
           ) : (
             <div className="t-nota grid h-full place-items-center">{t.cargando}</div>
           )}
@@ -986,26 +976,8 @@ export function VisorEscena({
           {controles.diag ? <DiagnosticoPanel titulo={t.diagnostico} /> : null}
           {/* Las lecturas toman el resultado completo cuando llega: ΔV con su intervalo. */}
           {dibujo && clock && !error ? <Lecturas clock={clock} resultado={r ?? dibujo} /> : null}
-          {comparar ? (
-            <span className="t-nota vidrio absolute top-3 right-3 px-3 py-1 text-texto">
-              {t.original}
-            </span>
-          ) : null}
           {leyenda}
         </div>
-        {comparar && hipotesis[0] ? (
-          <div
-            className="relative h-[62vh] min-h-[360px] w-full overflow-hidden rounded-panel bg-superficie"
-            data-testid="visor-hipotesis"
-          >
-            {visor(hipotesis[0].resultado, false)}
-            {clock ? <Lecturas clock={clock} resultado={hipotesis[0].resultado} /> : null}
-            <span className="t-nota vidrio absolute top-3 right-3 px-3 py-1 text-texto">
-              {t.hipotesis(hipotesis[0].etiqueta)}
-            </span>
-            {leyenda}
-          </div>
-        ) : null}
       </div>
 
       <div className="flex flex-wrap items-center justify-between gap-4">
@@ -1040,17 +1012,6 @@ export function VisorEscena({
             })}
           </div>
         </fieldset>
-        {hipotesis.length > 0 ? (
-          <button
-            type="button"
-            className="boton-secundario"
-            aria-pressed={comparar}
-            data-testid="comparar-lado-a-lado"
-            onClick={() => setDividida((d) => !d)}
-          >
-            {comparar ? t.unida : t.dividida}
-          </button>
-        ) : null}
       </div>
 
       {clock && dibujo ? <TrazaConReloj clock={clock} resultado={dibujo} /> : null}

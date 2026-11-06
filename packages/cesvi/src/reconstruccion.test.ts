@@ -378,6 +378,13 @@ describe("la escena para el 3D", () => {
       expect(v).toMatchObject({ fuente: "supuesto", unidad: "km/h" });
       expect(v.valor).toBeCloseTo(r.velocidades[0]!.previa!.mejor, 1);
       expect((v.rango as number[])[0]).toBeLessThanOrEqual((v.rango as number[])[1]!);
+
+      // La letra de cada vehículo es la del expediente (V1 es A), aunque el solver lo ponga segundo.
+      const ids = Object.keys(r.ids);
+      const volteada = { ...r, ids: { [ids[0]!]: "V2", [ids[1]!]: "V1" } };
+      const roles = (especReconstruida(volteada) as Json & { vehiculos: Json[] }).vehiculos;
+      expect(roles.find((x) => x.id === ids[0])!.rol).toBe("B");
+      expect(roles.find((x) => x.id === ids[1])!.rol).toBe("A");
     },
   );
 });

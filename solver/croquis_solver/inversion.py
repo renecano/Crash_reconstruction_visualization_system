@@ -1084,6 +1084,8 @@ class Inversion:
     modes: list[Mode] = field(default_factory=lambda: list[Mode]())  # del multiarranque
     # Los otros modos dentro de MODE_MARGIN del mejor, cada uno con su estimación (ADR 0091).
     alternatives: list[Inversion] = field(default_factory=lambda: list[Inversion]())
+    # La velocidad al impacto de cada reestimación: la distribución real, para su histograma.
+    impact_samples: dict[str, list[float]] = field(default_factory=lambda: dict[str, list[float]]())
 
     @property
     def speeds(self) -> dict[str, Distribution]:
@@ -1101,7 +1103,12 @@ class Inversion:
             "evidencia": self.evidence,
             "parametros": [e.to_dict() for e in self.estimates],
             "velocidad_impacto": [
-                {"vehiculo": k, **d.to_dict(2)} for k, d in sorted(self.impact_speeds.items())
+                {
+                    "vehiculo": k,
+                    **d.to_dict(2),
+                    "valores_kmh": [round(x, 2) for x in sorted(self.impact_samples.get(k, []))],
+                }
+                for k, d in sorted(self.impact_speeds.items())
             ],
             "residuos": [
                 {"nombre": k, "sigma": round(v, 3)} for k, v in sorted(self.best.residuals.items())
@@ -1398,6 +1405,7 @@ def _estimate(
         fits=fits,
         seed=seed,
         full=full,
+        impact_samples={k: list(v) for k, v in impacts.items() if v},
     )
 
 

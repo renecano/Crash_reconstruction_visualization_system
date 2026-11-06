@@ -138,7 +138,7 @@ test("@flujo /cesvi: un caso nuevo desde la lista, de la narración al dictamen"
   // 4. La reconstrucción física: las posiciones del perito fijan las velocidades, con percentiles.
   await irAPaso(page, 4);
   await page.getByTestId("reconstruir").click();
-  await expect(page.getByTestId("velocidades")).toBeVisible({ timeout: 60_000 });
+  await expect(page.getByTestId("cifra-reconstruccion")).toBeVisible({ timeout: 60_000 });
   await expect(page.getByTestId("velocidad-V1")).toContainText(/\d+\.\d \(/);
   await expect(page.getByTestId("evidencia-usada")).toContainText("posición final de V1");
   // La bitácora de la pizarra (R12b): el Lector leyó la narración y el Físico reconstruyó.
@@ -147,7 +147,7 @@ test("@flujo /cesvi: un caso nuevo desde la lista, de la narración al dictamen"
   await expect(bitacora.locator('[data-de="fisico"]').first()).toContainText("Reconstrucción");
 
   // El 3D de la reconstrucción (R3): el visor dibuja la escena con las velocidades estimadas.
-  await page.getByTestId("ver-3d").click();
+  await page.getByTestId("vista-3d").click();
   const visor = page.getByTestId("visor-caso");
   await expect(visor).toContainText("supuesto, con su rango");
   await expect(visor.locator("canvas").first()).toBeVisible({ timeout: 60_000 });
@@ -160,6 +160,7 @@ test("@flujo /cesvi: un caso nuevo desde la lista, de la narración al dictamen"
   await expect(visor.locator("canvas").first()).toBeVisible({ timeout: 60_000 });
 
   // R7: la declaración del conductor de V2, leída y simulada, contra la reconstrucción y en el 3D.
+  await page.getByTestId("ver-detalle-reconstruccion").click();
   await page.getByTestId("abrir-declaracion").click();
   await page.getByTestId("texto-declaracion").fill(DECLARACION.declaracion);
   await page.getByTestId("declarante").selectOption("V2");
@@ -180,9 +181,6 @@ test("@flujo /cesvi: un caso nuevo desde la lista, de la narración al dictamen"
       },
     )
     .toBeGreaterThan(0);
-  await page.getByTestId("comparar-lado-a-lado").click();
-  await expect(page.getByTestId("visor-hipotesis")).toContainText("versión declarada (V2)");
-  await page.getByTestId("comparar-lado-a-lado").click();
   // La sugerencia sale solo si el perito la pide, y él la confirma o la descarta.
   await expect(page.getByTestId("sugerencia-declarada")).toHaveCount(0);
   await page.getByTestId("pedir-sugerencia").check();
@@ -404,7 +402,7 @@ test("@flujo /cesvi: una carambola, con sus impactos en orden hasta el 3D", asyn
   // 3. La reconstrucción: el segundo impacto ocurre después del primero, y el mapa marca los dos.
   await irAPaso(page, 4);
   await page.getByTestId("reconstruir").click();
-  await expect(page.getByTestId("velocidades")).toBeVisible({ timeout: 60_000 });
+  await expect(page.getByTestId("cifra-reconstruccion")).toBeVisible({ timeout: 60_000 });
   const impactos = page.getByTestId("impactos-reconstruidos");
   await expect(impactos.locator('[data-impacto="1"]')).toContainText("V1 con V2");
   await expect(impactos.locator('[data-impacto="2"]')).toContainText("V2 con V3");
@@ -414,7 +412,7 @@ test("@flujo /cesvi: una carambola, con sus impactos en orden hasta el 3D", asyn
   await expect(page.getByTestId("limites")).toContainText("V3: solo está en un impacto posterior");
 
   // 4. El 3D de la carambola, con los tres vehículos moviéndose en el mapa.
-  await page.getByTestId("ver-3d").click();
+  await page.getByTestId("vista-3d").click();
   const visor = page.getByTestId("visor-caso");
   await expect(visor.locator("canvas").first()).toBeVisible({ timeout: 60_000 });
   await page.getByTestId("vista-mapa").click();

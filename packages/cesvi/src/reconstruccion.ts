@@ -489,7 +489,13 @@ export interface VelocidadReconstruida {
   vehiculo: Id;
   /** Lo que fija la evidencia: mejor estimación y percentiles (km/h). null si no lo fija. */
   previa: { mejor: number; p10?: number; p50?: number; p90?: number } | null;
-  impacto: { p10?: number; p50?: number; p90?: number } | null;
+  impacto: {
+    p10?: number;
+    p50?: number;
+    p90?: number;
+    /** La velocidad al impacto de cada simulación (km/h), para su histograma. */
+    valores?: number[];
+  } | null;
 }
 
 /** Un impacto reconstruido, en orden: cuándo (s; el primero es 0) y entre qué vehículos. */
@@ -570,7 +576,13 @@ interface Inversion {
     sigma_local?: number;
     estimacion?: { mejor: number; p10?: number; p50?: number; p90?: number };
   }[];
-  velocidad_impacto: { vehiculo: string; p10?: number; p50?: number; p90?: number }[];
+  velocidad_impacto: {
+    vehiculo: string;
+    p10?: number;
+    p50?: number;
+    p90?: number;
+    valores_kmh?: number[];
+  }[];
   residuos: { nombre: string; sigma: number }[];
   ajuste_completo?: {
     valores: { nombre: string; valor: number }[];
@@ -732,7 +744,10 @@ export function interpretarResultado(base: EscenaSolver, resultado: Json): Recon
     return {
       vehiculo: id,
       previa: p?.identificable && p.estimacion ? p.estimacion : null,
-      impacto: inv.evidencia.length && i ? { p10: i.p10, p50: i.p50, p90: i.p90 } : null,
+      impacto:
+        inv.evidencia.length && i
+          ? { p10: i.p10, p50: i.p50, p90: i.p90, valores: i.valores_kmh ?? [] }
+          : null,
     };
   });
   const alterna = resultado.inversion_reposo_supuesto as Inversion | undefined;
@@ -782,7 +797,14 @@ export function reconstruirExpediente(e: Expediente, specId?: string): Reconstru
 export function especReconstruida(r: Reconstruccion): Json {
   const spec = structuredClone(r.spec) as Json & { vehiculos: Json[] };
   const hip = hipotesisVisible(r);
+  // La letra sigue al expediente (V1 es A), aunque la escena del solver ponga primero al que golpea:
+  // la hoja y el 3D dicen «B · Tacoma» los dos.
+  const enOrden = [...new Set(Object.values(r.ids))].sort((a, b) =>
+    String(a).localeCompare(String(b), "en", { numeric: true }),
+  );
   for (const sv of spec.vehiculos) {
+    const k = enOrden.indexOf(r.ids[String(sv.id)]!);
+    if (k >= 0) sv.rol = String.fromCharCode(65 + k);
     const v = r.velocidades.find((x) => x.vehiculo === r.ids[String(sv.id)]);
     // En una hipótesis que la evidencia medida no fija, el 3D muestra su ajuste conjunto, dicho así.
     const sinFijar = hip?.velocidades.find((x) => x.vehiculo === r.ids[String(sv.id)]);

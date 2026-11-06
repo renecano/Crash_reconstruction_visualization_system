@@ -67,6 +67,13 @@ export function poseEn(tr: TrayectoriaResultado, t: number): Pose {
 export const kmhEn = (tr: TrayectoriaResultado, i: number) =>
   Math.hypot(tr.vx[i] ?? 0, tr.vy[i] ?? 0) * 3.6;
 
+/** La rapidez (km/h) justo antes del instante t: la última muestra anterior a él (o la primera). */
+export function kmhAntesDe(tr: TrayectoriaResultado, t: number): number {
+  let i = 0;
+  while (i + 1 < tr.t.length && tr.t[i + 1]! < t) i++;
+  return kmhEn(tr, i);
+}
+
 /**
  * La estela (prompt §7): las poses cada `paso` segundos antes del impacto, de la más vieja a la
  * más reciente, con su opacidad creciente hacia el impacto. Solo si el vehículo se movía.
@@ -169,4 +176,43 @@ export function encuadre(
   if (c - a < minimo) [a, c] = [(a + c) / 2 - minimo / 2, (a + c) / 2 + minimo / 2];
   if (d - b < minimo) [b, d] = [(b + d) / 2 - minimo / 2, (b + d) / 2 + minimo / 2];
   return [a, b, c, d];
+}
+
+/**
+ * La cota del ancho de la vía más cercana a `p`: dos puntos sobre sus orillas, a `adelante` metros
+ * del punto más cercano a lo largo del eje (para no pisar a los vehículos). null sin vías.
+ */
+export function cotaDeVia(
+  vias: readonly { puntos: readonly { x: number; y: number }[]; ancho: number }[],
+  p: { x: number; y: number },
+  adelante = 14,
+  anchoMedido?: number,
+): { a: { x: number; y: number }; b: { x: number; y: number }; ancho: number } | null {
+  let mejor: { d: number; x: number; y: number; ux: number; uy: number; ancho: number } | null =
+    null;
+  for (const v of vias) {
+    for (let i = 0; i + 1 < v.puntos.length; i++) {
+      const a = v.puntos[i]!;
+      const b = v.puntos[i + 1]!;
+      const dx = b.x - a.x;
+      const dy = b.y - a.y;
+      const l = Math.hypot(dx, dy);
+      if (l < 1e-6) continue;
+      const t = Math.max(0, Math.min(1, ((p.x - a.x) * dx + (p.y - a.y) * dy) / (l * l)));
+      const x = a.x + t * dx;
+      const y = a.y + t * dy;
+      const d = Math.hypot(p.x - x, p.y - y);
+      if (!mejor || d < mejor.d) mejor = { d, x, y, ux: dx / l, uy: dy / l, ancho: v.ancho };
+    }
+  }
+  if (!mejor) return null;
+  const cx = mejor.x + mejor.ux * adelante;
+  const cy = mejor.y + mejor.uy * adelante;
+  const ancho = anchoMedido ?? mejor.ancho;
+  const m = ancho / 2;
+  return {
+    a: { x: cx - mejor.uy * m, y: cy + mejor.ux * m },
+    b: { x: cx + mejor.uy * m, y: cy - mejor.ux * m },
+    ancho,
+  };
 }

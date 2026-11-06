@@ -275,6 +275,7 @@ export const VelocidadImpactoInvertida = z.strictObject({
   p50: z.number(),
   p90: z.number(),
   muestras: z.int().min(1).max(1000),
+  valores_kmh: z.array(z.number()).max(1000).optional(),
 });
 export type VelocidadImpactoInvertida = z.infer<typeof VelocidadImpactoInvertida>;
 

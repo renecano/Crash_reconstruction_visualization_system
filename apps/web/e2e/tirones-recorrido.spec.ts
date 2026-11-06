@@ -289,7 +289,7 @@ async function medir(page: Page, cpu: number) {
     await colocarTodo(page);
     await irAPaso(page, 4);
     await page.getByTestId("reconstruir").click();
-    await expect(page.getByTestId("velocidades")).toBeVisible({ timeout: 120_000 });
+    await expect(page.getByTestId("cifra-reconstruccion")).toBeVisible({ timeout: 120_000 });
   } else {
     const q = new URLSearchParams({ escena: ESCENA, diag: "1", auto: "1", camara: "cinematica" });
     if (CALIDAD !== "auto") q.set("calidad", CALIDAD);
@@ -355,7 +355,7 @@ async function medir(page: Page, cpu: number) {
     options: "sampling-frequency=2000",
   });
   await page.evaluate(() => performance.mark("fase:carga"));
-  if (ESCENARIO === "caso") await page.getByTestId("ver-3d").click();
+  if (ESCENARIO === "caso") await page.getByTestId("vista-3d").click();
   // Si el 3D no llega a dibujar en 5 min (la M1 de René en alta con dpr 3), se registra el fallo
   // con el diagnóstico que haya, en vez de perder la corrida.
   let fallo: string | null = null;

@@ -37,7 +37,7 @@ for (const [nombre, esquema] of [
     await colocarTodo(page);
     await irAPaso(page, 4);
     await page.getByTestId("reconstruir").click();
-    await expect(page.getByTestId("velocidades")).toBeVisible({ timeout: 120_000 });
+    await expect(page.getByTestId("cifra-reconstruccion")).toBeVisible({ timeout: 120_000 });
     await page.getByTestId("vista-maqueta").click();
     await expect(page.getByTestId("maqueta")).toBeVisible({ timeout: 60_000 });
     await expect(page.getByTestId("maqueta-impacto")).toHaveCount(1);

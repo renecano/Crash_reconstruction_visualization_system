@@ -169,8 +169,8 @@ for (const backend of BACKENDS) {
     await colocarTodo(page);
     await irAPaso(page, 4);
     await page.getByTestId("reconstruir").click();
-    await expect(page.getByTestId("velocidades")).toBeVisible({ timeout: 120_000 });
-    await page.getByTestId("ver-3d").click();
+    await expect(page.getByTestId("cifra-reconstruccion")).toBeVisible({ timeout: 120_000 });
+    await page.getByTestId("vista-3d").click();
     await probarCamaras(page, "axa", backend);
   });
 }

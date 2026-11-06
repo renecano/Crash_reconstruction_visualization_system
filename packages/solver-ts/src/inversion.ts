@@ -1011,6 +1011,8 @@ export class Inversion {
     readonly assumedAsData = false,
     /** El ajuste conjunto con todo libre, si algo no quedó fijado. */
     readonly full: Fit | null = null,
+    /** La velocidad al impacto de cada reestimación: la distribución real, para su histograma. */
+    readonly impactSamples: Map<string, number[]> = new Map(),
   ) {}
 
   /** Los modos del multiarranque, del menor costo al mayor (ADR 0091). */
@@ -1038,6 +1040,9 @@ export class Inversion {
       velocidad_impacto: byKey(this.impactSpeeds).map(([k, d]) => ({
         vehiculo: k,
         ...d.toDict(2),
+        valores_kmh: [...(this.impactSamples.get(k) ?? [])]
+          .sort((a, b) => a - b)
+          .map((x) => pyRound(x, 2)),
       })),
       residuos: byKey(this.best.residuals).map(([k, v]) => ({ nombre: k, sigma: pyRound(v, 3) })),
       convergio: this.best.success,
@@ -1336,7 +1341,17 @@ function estimate(
   );
   const impactSpeeds = new Map<string, Distribution>();
   for (const [k, v] of impacts) if (v.length) impactSpeeds.set(k, distribution(v));
-  return new Inversion(ev.labels(), estimates, best, impactSpeeds, fits, seed, assumedAsData, full);
+  return new Inversion(
+    ev.labels(),
+    estimates,
+    best,
+    impactSpeeds,
+    fits,
+    seed,
+    assumedAsData,
+    full,
+    impacts,
+  );
 }
 
 /** Termina de bajar el costo desde el mejor ajuste con la cuerda (hasta `POLISH_ROUNDS`). */

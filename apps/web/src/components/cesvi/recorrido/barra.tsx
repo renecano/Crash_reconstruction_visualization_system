@@ -126,10 +126,7 @@ export function BarraRecorrido({
                     data-testid={`paso-${primero + 1}`}
                     data-acto={a.clave}
                   >
-                    <span className="cifras text-[0.6875rem] text-texto-3" aria-hidden="true">
-                      {String(k + 1).padStart(2, "0")}
-                    </span>
-                    <span className="truncate">{a.nombre}</span>
+                    <span className="whitespace-nowrap">{a.nombre}</span>
                   </button>
                 </li>
               );

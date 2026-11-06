@@ -73,7 +73,7 @@ test("@flujo /cesvi: cargar un reporte de CESVI en PDF y abrirlo en el recorrido
   await colocarTodo(page);
   await irAPaso(page, 4);
   await page.getByTestId("reconstruir").click();
-  await expect(page.getByTestId("velocidades")).toBeVisible({ timeout: 60_000 });
+  await expect(page.getByTestId("cifra-reconstruccion")).toBeVisible({ timeout: 60_000 });
   // La verificación CESVI con las medidas del reporte reproduce la EBS de la Tacoma (C1).
   await irAPaso(page, 6);
   await expect(page.getByTestId("verificacion-cesvi")).toContainText("63.90 km/h");

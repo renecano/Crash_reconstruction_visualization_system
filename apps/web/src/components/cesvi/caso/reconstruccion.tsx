@@ -82,15 +82,7 @@ export function useReconstruccion(expediente: Expediente | null): EstadoReconstr
 }
 
 /** Las velocidades con sus percentiles, la evidencia que las fija y lo que no cubre. */
-export function PanelReconstruccion({
-  rec,
-  ver3d,
-  onVer3d,
-}: {
-  rec: EstadoReconstruccion;
-  ver3d: boolean;
-  onVer3d: (v: boolean) => void;
-}) {
+export function PanelReconstruccion({ rec }: { rec: EstadoReconstruccion }) {
   const { r } = rec;
   return (
     <div className="flex flex-col gap-4" data-testid="reconstruccion">
@@ -98,7 +90,7 @@ export function PanelReconstruccion({
         <h2 className="t-subtitulo">Reconstrucción física</h2>
         <button
           type="button"
-          className="boton-principal"
+          className={r ? "boton-secundario" : "boton-principal"}
           onClick={() => void rec.reconstruir()}
           data-testid="reconstruir"
         >
@@ -150,14 +142,6 @@ export function PanelReconstruccion({
               ))}
             </ul>
           ) : null}
-          <button
-            type="button"
-            className="boton-secundario self-start"
-            onClick={() => onVer3d(!ver3d)}
-            data-testid="ver-3d"
-          >
-            {ver3d ? "Ver el mapa" : "Ver la reconstrucción en 3D"}
-          </button>
         </>
       ) : null}
     </div>
@@ -458,8 +442,14 @@ export function Visor3dCaso({
   expandido = false,
   supuestos = [],
   activo = true,
+  camaraPedida = null,
+  aSangre = false,
 }: {
+  /** En la reconstrucción la escena va primero: las notas quedan debajo de los controles. */
+  aSangre?: boolean;
   r: Reconstruccion;
+  /** La cámara que piden las pestañas del acto («libre», «detras-<id>»…); `n` cambia con cada pedido. */
+  camaraPedida?: { camara: string; n: number } | null;
   /** El 3D está a la vista (false: lo tapa el mapa; no dibuja ni corre el reloj). */
   activo?: boolean;
   /** Lo que el caso no trae, como supuesto declarado (ADR 0091). */
@@ -497,6 +487,12 @@ export function Visor3dCaso({
       : {}),
     ...(rendererUrl === "webgl" || rendererUrl === "webgpu" ? { renderer: rendererUrl } : {}),
   });
+  // Un pedido nuevo de las pestañas cambia la cámara; los botones del visor la siguen cambiando.
+  const [pedidoVisto, setPedidoVisto] = useState(0);
+  if (camaraPedida && camaraPedida.n !== pedidoVisto) {
+    setPedidoVisto(camaraPedida.n);
+    setControles((c) => ({ ...c, camara: camaraPedida.camara }));
+  }
   const spec3d = useMemo(() => {
     let s = especReconstruida(r);
     if (r.origen && calles) s = conCallesDelMapa(s, r.origen, calles);
@@ -516,7 +512,7 @@ export function Visor3dCaso({
   const externas = useMemo(() => (declarada ? [declarada] : undefined), [declarada]);
   return (
     <div
-      className={`flex h-full flex-col gap-2 overflow-y-auto p-3 ${expandido ? "pt-40 pb-28" : "pt-16"}`}
+      className={`flex h-full flex-col gap-2 overflow-y-auto p-3 ${expandido ? "pt-40 pb-28" : "pt-16"} ${aSangre ? "[&>p]:order-last" : ""}`}
       data-testid="visor-caso"
     >
       <p className="t-nota">
