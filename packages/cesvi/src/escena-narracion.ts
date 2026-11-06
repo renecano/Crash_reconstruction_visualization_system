@@ -136,8 +136,24 @@ export function masaTipica(clase: string | undefined): { valor: number; fuente: 
   return m ? { valor: m.kg, fuente: m.fuente } : null;
 }
 
+/**
+ * Un dato que Croquis leyó en la narración, con la frase literal de donde sale (para marcarlo en el
+ * relato: El hecho, rediseño «Laboratorio» §8). Solo entran los que tienen su cita en el texto.
+ */
+export interface DatoLeidoEscena {
+  /** «vehiculo», «dano», «lugar» o «medida»: cómo se marca en el relato. */
+  tipo: "vehiculo" | "dano" | "lugar" | "medida";
+  /** El vehículo del dato («V1»…), si es de uno. */
+  vehiculo: string | null;
+  campo: string;
+  valor: string;
+  cita: string;
+}
+
 export interface EscenaNarrada {
   expediente: Expediente;
+  /** Lo que Croquis leyó, con sus citas (opcional: las escenas guardadas antes no lo traen). */
+  lectura?: DatoLeidoEscena[];
   posiciones: PosicionDescrita[];
   conteos: Conteos;
   /** Errores del esquema o del validador semántico (vacío si la escena es válida). */
@@ -220,7 +236,88 @@ const enPalabras = (z: Zona) =>
   [z.cara.replace("_", " "), z.tercio, z.vertice?.replace("_", " ")].filter(Boolean).join(" ");
 
 export function escenaDeNarracion(s: SalidaCorpus, narracion: string): EscenaNarrada {
-  return escenaDeConversion(expedienteDeSalida(s, narracion, "perito"));
+  return {
+    ...escenaDeConversion(expedienteDeSalida(s, narracion, "perito")),
+    lectura: lecturaDeNarracion(s, narracion),
+  };
+}
+
+const CAMPOS_DE_DANO = new Set([
+  "cara",
+  "tercio",
+  "vertice",
+  "zona",
+  "zona_contacto",
+  "acentuacion",
+  "direccion_fuerza",
+  "direccion",
+  "tipo",
+  "tipos",
+]);
+
+/** El tipo de marca de un dato por su sección y su campo. */
+export function tipoDeDato(seccion: string, campo: string): DatoLeidoEscena["tipo"] {
+  if (seccion === "dano" || CAMPOS_DE_DANO.has(campo)) return "dano";
+  if (seccion === "vehiculo") return "vehiculo";
+  if (/longitud|metros|distancia|altura|ancho|masa|velocidad/.test(campo)) return "medida";
+  return "lugar";
+}
+
+/** Los datos de la salida de Claude cuya cita está literal en la narración (sin repetir citas). */
+export function lecturaDeNarracion(s: SalidaCorpus, narracion: string): DatoLeidoEscena[] {
+  const vistas = new Set<string>();
+  const out: DatoLeidoEscena[] = [];
+  for (const d of s.datos) {
+    const cita = d.cita?.trim();
+    if (!cita || !narracion.includes(cita) || vistas.has(`${d.campo}|${cita}`)) continue;
+    vistas.add(`${d.campo}|${cita}`);
+    out.push({
+      tipo: tipoDeDato(d.seccion, d.campo),
+      vehiculo: d.vehiculo === "ninguno" ? null : d.vehiculo,
+      campo: d.campo,
+      valor: d.valor,
+      cita,
+    });
+  }
+  return out;
+}
+
+/** Los datos de una lectura del hecho (la descripción de un caso de CESVI, ADR 0055), con su cita. */
+export function lecturaDeHecho(
+  l: {
+    modalidad: { valor: string; cita: string } | null;
+    vehiculos: Record<string, Record<string, unknown>>;
+    restos: { valor: string; cita: string }[];
+    huellas: { valor: string; cita: string }[];
+    via: { valor: string; cita: string }[];
+  },
+  narracion: string,
+): DatoLeidoEscena[] {
+  const out: DatoLeidoEscena[] = [];
+  const poner = (
+    tipo: DatoLeidoEscena["tipo"],
+    vehiculo: string | null,
+    campo: string,
+    d: unknown,
+  ) => {
+    const x = d as { valor?: string; cita?: string } | null;
+    if (!x?.cita || !narracion.includes(x.cita)) return;
+    out.push({ tipo, vehiculo, campo, valor: String(x.valor ?? ""), cita: x.cita });
+  };
+  poner("lugar", null, "modalidad", l.modalidad);
+  for (const [letra, v] of Object.entries(l.vehiculos)) {
+    const id = `V${letra.charCodeAt(0) - 64}`;
+    for (const [campo, d] of Object.entries(v)) {
+      // Las maniobras no se marcan (el relato las cuenta; el diseño no las resalta).
+      if (Array.isArray(d)) continue;
+      const lugar = campo === "sentido" || campo === "carril" || campo === "posicion_final";
+      poner(lugar ? "lugar" : tipoDeDato("vehiculo", campo), id, campo, d);
+    }
+  }
+  for (const d of l.restos) poner("lugar", null, "restos", d);
+  for (const d of l.huellas) poner("lugar", null, "huella", d);
+  for (const d of l.via) poner("lugar", null, "via", d);
+  return out;
 }
 
 /**

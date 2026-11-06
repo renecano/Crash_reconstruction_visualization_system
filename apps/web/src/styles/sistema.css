@@ -1517,3 +1517,52 @@
     }
   }
 }
+
+/* El relato marcado de El hecho (Laboratorio §8): vehículos en negrita con su insignia, daños con
+   subrayado naranja, lugar y vía con resalte suave, medidas en mono con subrayado punteado. */
+@layer components {
+  .relato-vehiculo {
+    font-weight: 650;
+    color: var(--texto);
+    border-radius: 6px;
+    transition: background 160ms ease;
+  }
+  .relato-dano {
+    color: var(--texto);
+    text-decoration: underline;
+    text-decoration-color: var(--senal);
+    text-decoration-thickness: 2px;
+    text-underline-offset: 5px;
+  }
+  .relato-lugar {
+    color: var(--texto);
+    background: var(--suave);
+    border-radius: 4px;
+    padding: 1px 4px;
+    box-decoration-break: clone;
+    -webkit-box-decoration-break: clone;
+  }
+  .relato-medida {
+    color: var(--texto);
+    font-family: var(--fuente-mono);
+    font-size: 0.92em;
+    text-decoration: underline dotted;
+    text-underline-offset: 5px;
+  }
+  .relato-vehiculo[data-activo="si"],
+  .relato-vehiculo:focus-visible {
+    background: var(--suave);
+    outline: none;
+  }
+  .relato-insignia {
+    display: inline-grid;
+    height: 18px;
+    width: 18px;
+    place-items: center;
+    border-radius: 999px;
+    background: var(--texto);
+    color: var(--superficie);
+    font: 700 0.65rem/1 var(--fuente);
+    vertical-align: 0.15em;
+  }
+}

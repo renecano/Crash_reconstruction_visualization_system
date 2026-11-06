@@ -1885,6 +1885,27 @@ Rama `fix/fotos-dictamen`. René mandó la captura del dictamen de un caso nuevo
 - **Qué hay ahora:** fotos con la cinematográfica, del instante pedido, sin marcadores; vehículos apoyados en banquetas y relieve; y si el 3D se queda abajo de 24 fps durante 5 s, baja un nivel y lo dice `?diag=1`.
 - **Cómo probarlo:** genera el dictamen de un caso nuevo y compara las tres fotos; y en `docs/cesvi/t1/ruedas/` están las capturas de cerca de cada clase. Si en tu caso las llantas siguen fuera de su hueco, dime la clase del vehículo (o manda el `.json` del caso): en las ocho clases que medí quedan bien.
 
+### Laboratorio: El hecho (René, 2026-11-04; prompt §8)
+
+Rama `feat/laboratorio-hecho`. La primera pantalla del orden del prompt; La escena ya la cubre la escena fácil (ADR 0110).
+
+- **El título y su meta:** el título sale del relato, con la modalidad y la vía o el cruce: «Alcance en la carretera México-Nogales, km 47+800» en AXA y «Crucero en calle Azucena y Av. Reforma» en el ejemplo. Debajo, el municipio, el tramo y cuántos vehículos e impactos hay.
+- **El relato marcado:** lo que Croquis leyó, cada dato en su cita literal.
+  - Estilos: vehículos en negrita con su insignia A o B, daños con subrayado naranja, lugar y vía con resalte suave, medidas en mono punteado.
+  - El contador «N datos leídos» cuenta solo lo marcado.
+  - De dónde salen las citas: en los casos nuevos, la lectura de Claude, que ahora se queda en la escena narrada (`lectura`, solo con citas literales del texto). En AXA, la lectura grabada de su descripción (ADR 0055).
+- **La hoja «Lo que Croquis leyó»:**
+  - Cada vehículo con su vista superior y el daño pintado, y su masa en cifra grande con su origen: «supuesto» con su justificación, o «del reporte».
+  - Lo leído del lugar y la vía, y las preguntas pendientes.
+  - Pasar el puntero (o el foco) por una mención ilumina su tarjeta, y al revés.
+- **«Editar el relato»** abre el editor de antes; «Ver lo leído en detalle» guarda el resumen de antes.
+- **«Continuar a…»** nombra el acto siguiente: «Continuar a la escena».
+- **Capturas:** `docs/cesvi/rediseno/laboratorio/capturas/actos/{claro,oscuro}-1-hecho.webp`, de `e2e/laboratorio-actos.spec.ts` (a mano).
+- **Pruebas:**
+  - Unitarias del título, la meta, el relato marcado y el daño en palabras (`lib/hecho-laboratorio.test.ts`).
+  - Unitarias de la lectura con citas (`escena-narracion.test.ts`).
+  - Las e2e del caso nuevo y de AXA miran el relato y el título.
+
 ### La escena, rehecha desde cero (René, 2026-11-05; ADR 0110)
 
 Rama `feat/escena-facil`. Reemplaza la colocación B: en la prueba con personas (T4) nadie la entendió. La meta es que la entienda un niño; la referencia es `docs/cesvi/rediseno/escena-facil/`.
@@ -2221,6 +2242,8 @@ Rama `feat/r11-render-retomable`. El colaborador cerró la corrida del 2026-11-0
 - **Un cambio que verás en el visor:** la grava del acotamiento ahora aparece en los dos lados de autopistas y carreteras.
 
 ### Endurecimiento pendiente
+
+- **El hecho (Laboratorio §8), dos botones del diseño sin hacer:** «Dictar un dato» (Croquis no tiene entrada por voz) y «Reporte original» (el PDF importado no se guarda en el caso). Se agregan si René los pide.
 
 - **Escena fácil (ADR 0110), código de la colocación B que quedó sin usar:** `colocar-mapa.tsx` (la bandeja, el anillo y los fantasmas que `MapaEscena` aún acepta en su propiedad `colocacion`) y lo de B en `lib/colocar.ts` (`subpasoLugar`, `direccionesCandidatas`). En el recorrido se calculan, pero no se ven. Se quitan junto con sus pruebas al tocar `MapaEscena`.
 - **Escena fácil, lectura de la narración:** el sentido y el color salen de reglas sobre el texto. Si Claude los devolviera en la lectura (con su cita), se leerían mejor; eso toca el contrato y el prompt.

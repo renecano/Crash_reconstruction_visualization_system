@@ -10,6 +10,9 @@ import {
   conRestos,
   escenaDeNarracion,
   problemasExpediente,
+  lecturaDeNarracion,
+  lecturaDeHecho,
+  tipoDeDato,
 } from "./escena-narracion";
 
 const GRABACIONES = resolve(
@@ -231,5 +234,68 @@ describe("lo que corrige el perito en la escena", () => {
     expect(e.evidencias!.restos!.longitud).toEqual({ valor: 14, unidad: "m", fuente: "perito" });
     expect(e.impactos![0]!.fuente).toBe("perito");
     expect(problemasExpediente(e)).toEqual([]);
+  });
+});
+
+describe("lo que Croquis leyó, con sus citas (El hecho, Laboratorio §8)", () => {
+  it("de la narración de ejemplo: los datos con su cita literal, marcados por tipo", () => {
+    const g = JSON.parse(readFileSync(join(GRABACIONES, "cesvi-e814f085db.json"), "utf8")) as {
+      narracion: string;
+      salida: SalidaCorpus;
+    };
+    const l = lecturaDeNarracion(g.salida, g.narracion);
+    expect(l.length).toBeGreaterThan(4);
+    for (const d of l) expect(g.narracion).toContain(d.cita);
+    expect(l.some((d) => d.tipo === "vehiculo" && d.vehiculo === "V1")).toBe(true);
+    expect(l.some((d) => d.tipo === "dano")).toBe(true);
+    expect(l.some((d) => d.tipo === "lugar")).toBe(true);
+    // escenaDeNarracion la trae.
+    expect(escenaDeNarracion(g.salida, g.narracion).lectura).toEqual(l);
+    // Una cita que no está en el texto no entra.
+    const otra = lecturaDeNarracion(
+      {
+        datos: [
+          {
+            seccion: "caso",
+            n: 1,
+            vehiculo: "ninguno",
+            campo: "lugar",
+            valor: "x",
+            cita: "no está",
+          },
+        ],
+      },
+      g.narracion,
+    );
+    expect(otra).toEqual([]);
+  });
+
+  it("de la lectura del hecho de un caso de CESVI (A2010930)", () => {
+    const grab = JSON.parse(
+      readFileSync(
+        resolve(
+          dirname(fileURLToPath(import.meta.url)),
+          "../../../data/cesvi/grabaciones/hecho-A2010930.json",
+        ),
+        "utf8",
+      ),
+    ) as {
+      lecturas: { descripcion: { texto: string; lectura: Parameters<typeof lecturaDeHecho>[0] } };
+    };
+    const { texto, lectura } = grab.lecturas.descripcion;
+    const l = lecturaDeHecho(lectura, texto);
+    expect(l.find((d) => d.campo === "modalidad")).toMatchObject({
+      tipo: "lugar",
+      cita: "modalidad de alcance",
+    });
+    expect(l.find((d) => d.campo === "zona_contacto" && d.vehiculo === "V1")?.tipo).toBe("dano");
+    for (const d of l) expect(texto).toContain(d.cita);
+  });
+
+  it("el tipo de cada dato", () => {
+    expect(tipoDeDato("vehiculo", "marca")).toBe("vehiculo");
+    expect(tipoDeDato("dano", "cara")).toBe("dano");
+    expect(tipoDeDato("caso", "lugar")).toBe("lugar");
+    expect(tipoDeDato("evidencia", "longitud_restos")).toBe("medida");
   });
 });

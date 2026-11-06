@@ -14,7 +14,12 @@
  */
 import { agrupar, expedienteDeSalida, type Conversion, type SalidaCorpus } from "./corpus";
 import { comparar, type ComparacionDictamen, type Conclusiones } from "./dictamenes-r4";
-import { escenaDeConversion, type EscenaNarrada, type PreguntaEscena } from "./escena-narracion";
+import {
+  escenaDeConversion,
+  lecturaDeNarracion,
+  type EscenaNarrada,
+  type PreguntaEscena,
+} from "./escena-narracion";
 import { ubicarCita } from "./hecho-lectura";
 import type { Reconstruccion } from "./reconstruccion";
 import { supuestosDeclarados, supuestosEnUnaLinea } from "./supuestos";
@@ -85,6 +90,8 @@ export interface Pizarra {
   pedidoRelectura: { rechazadas: string[]; atendido: boolean } | null;
   lecturaFallida: boolean;
   conversion: Conversion | null;
+  /** La lectura de donde salió `conversion` (sus citas van a `escena.lectura`). */
+  salidaElegida?: SalidaCorpus | null;
   escena: EscenaNarrada | null;
   expediente: Expediente | null;
   preguntas: PreguntaEscena[];
@@ -236,6 +243,7 @@ const verificadorCitas: Agente = {
       ...p,
       verificadas: p.verificadas + 1,
       conversion,
+      salidaElegida: conversion === p.conversion ? p.salidaElegida : s,
       escena: conversion === p.conversion ? p.escena : null,
     };
     const fuera = citasRechazadas(s, p.narracion!);
@@ -259,7 +267,11 @@ const validador: Agente = {
   nombre: "validador",
   quiere: (p) => Boolean(p.conversion) && !p.escena && !pendienteRelectura(p),
   actua(p, _ctx, decir) {
-    const escena = escenaDeConversion(p.conversion!);
+    const convertida = escenaDeConversion(p.conversion!);
+    // Lo leído con sus citas, de la lectura elegida: El hecho lo marca en el relato.
+    const escena = p.salidaElegida
+      ? { ...convertida, lectura: lecturaDeNarracion(p.salidaElegida, p.narracion!) }
+      : convertida;
     const n = escena.expediente.vehiculos.length;
     decir(
       "pizarra",

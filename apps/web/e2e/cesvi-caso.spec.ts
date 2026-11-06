@@ -323,7 +323,8 @@ test("@flujo /cesvi: un caso nuevo desde la lista, de la narración al dictamen"
   await page.getByTestId("abrir-caso").setInputFiles(rutaCaso);
   await expect(page.getByTestId("caso-abierto")).toContainText("Validó Perito de prueba");
   await irAPaso(page, 2);
-  await expect(page.getByTestId("narracion")).not.toHaveValue("");
+  // El hecho, ya leído: el relato marcado (Laboratorio §8).
+  await expect(page.getByTestId("relato")).toContainText("Jetta");
   await irAPaso(page, 3);
   await expect(page.getByTestId("mapa-escena").locator("[data-posicion]")).toHaveCount(4);
   expect(errores).toEqual([]);
