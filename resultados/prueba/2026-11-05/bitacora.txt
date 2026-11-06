@@ -190,3 +190,17 @@ Solo la medición (-SoloMedicion).
 
 == Medición del visor en Chrome (E6: alta y ultra)
    Listo (0 s, RAM máxima 75 %). Ya estaba (de una corrida de hoy); se salta.
+   warning: in the working copy of 'resultados/prueba/2026-11-05/bitacora.txt', CRLF will be replaced by LF the next time Git touches it
+   warning: in the working copy of 'resultados/prueba/2026-11-05/blender-axa-unir.log', CRLF will be replaced by LF the next time Git touches it
+   warning: in the working copy of 'resultados/prueba/2026-11-05/blender-axa.log', CRLF will be replaced by LF the next time Git touches it
+   warning: in the working copy of 'resultados/prueba/2026-11-05/blender-axa.log.err', CRLF will be replaced by LF the next time Git touches it
+   warning: in the working copy of 'resultados/prueba/2026-11-05/blender-carambola-unir.log', CRLF will be replaced by LF the next time Git touches it
+   warning: in the working copy of 'resultados/prueba/2026-11-05/blender-carambola.log', CRLF will be replaced by LF the next time Git touches it
+   warning: in the working copy of 'resultados/prueba/2026-11-05/blender-carambola.log.err', CRLF will be replaced by LF the next time Git touches it
+   warning: in the working copy of 'resultados/prueba/2026-11-05/maquina.json', CRLF will be replaced by LF the next time Git touches it
+   To https://github.com/renecano/Crash_reconstruction_visualization_system.git
+      6c6b878..f40d0f9  f40d0f92efd58ee72b693a89a0441284b8418e56 -> resultados/prueba-2026-11-05
+   Subido a la rama resultados/prueba-2026-11-05 (medición).
+
+== Datos de la máquina
+   Listo (1 s, RAM máxima 75 %). CPU Intel(R) Core(TM) i5-10210U CPU @ 1.60GHz, 7.8 GB de RAM.
