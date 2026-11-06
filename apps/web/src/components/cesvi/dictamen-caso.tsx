@@ -183,6 +183,7 @@ export function DictamenCaso({
       declarada,
       validacion,
       estructuraCesvi,
+      contraDeformacion: contra,
       trazabilidad: {
         metodo: `solver de Croquis ${String(reconstruccion.resultado.version_resultado ?? "")}, lectura ${VERSION_PROMPT_ESCENA}, verificación con el método de CESVI`,
         huella: huellaDelCaso(expediente, narracion),

@@ -2,6 +2,10 @@ import type { ComparacionDictamen } from "@croquis/cesvi";
 import { describe, expect, it } from "vitest";
 import {
   cifraContraste,
+  conLetra,
+  conSigno,
+  lecturaFisica,
+  pctConSigno,
   conteoCriterios,
   criteriosContraste,
   reglaContraste,
@@ -44,18 +48,61 @@ describe("Contra CESVI (Laboratorio §8)", () => {
     expect(conteoCriterios(c)).toEqual({ coinciden: 1, difieren: 3, sinDato: 0 });
   });
 
-  it("la cifra: 63.90 de Croquis contra 63.15 de CESVI, 0.75 km/h y 1.2 %", () => {
+  it("la cifra: 63.90 de Croquis contra 63.15 de CESVI, +0.75 km/h y +1.19 %", () => {
     const f = cifraContraste(axa)!;
     expect(f.croquis.toFixed(2)).toBe("63.90");
     expect(f.cesvi.toFixed(2)).toBe("63.15");
-    expect(f.difKmh.toFixed(2)).toBe("0.75");
-    expect(f.difPct.toFixed(1)).toBe("1.2");
+    expect(conSigno(f.difKmh)).toBe("+0.75");
+    expect(pctConSigno(f.difPct)).toBe("+1.19 %");
+    // Si Croquis queda abajo, el signo lo dice.
+    expect(conSigno(-13.94)).toBe("−13.94");
+    expect(pctConSigno(-22.07)).toBe("−22.07 %");
   });
 
   it("sin una velocidad que Croquis calcule no hay cifra (no se inventa)", () => {
     const fila = { ...axa.velocidades[0]!, croquis_kmh: null, error_kmh: null, error_pct: null };
     expect(cifraContraste({ ...axa, velocidades: [fila] })).toBeNull();
     expect(cifraContraste({ ...axa, velocidades: [] })).toBeNull();
+  });
+
+  const fila = (extra = {}) => ({
+    vehiculo: "V2",
+    metodo: "Deformación (EBS)",
+    cesviQue: "x",
+    cesviKmh: 63.15,
+    croquisQue: "y",
+    croquisKmh: 49.21,
+    croquisRango: [47.32, 49.21] as [number, number],
+    diferenciaKmh: -13.94,
+    diferenciaPct: -22.07,
+    porQue: "con la masa de V2 sola",
+    ...extra,
+  });
+
+  it("la lectura física: la velocidad del solver con su rango contra la misma del reporte", () => {
+    const contra = {
+      filas: [fila({ vehiculo: "V1", metodo: "Restos (desplazamiento)" }), fila()],
+      avisos: [],
+    } as never;
+    expect(lecturaFisica(contra, "V2")).toEqual({
+      vehiculo: "V2",
+      croquis: 49.21,
+      rango: [47.32, 49.21],
+      cesvi: 63.15,
+      difKmh: -13.94,
+      difPct: -22.07,
+      porQue: "con la masa de V2 sola",
+    });
+    // Los restos son otro método: sin una fila por deformación no hay lectura.
+    const soloRestos = { filas: [fila({ metodo: "Restos (desplazamiento)" })], avisos: [] };
+    expect(lecturaFisica(soloRestos as never, "V2")).toBeNull();
+    expect(lecturaFisica(null, "V2")).toBeNull();
+    // Si la evidencia no la fija, se dice: no se inventa una cifra.
+    const sin = { filas: [fila({ croquisKmh: null, diferenciaKmh: null })], avisos: [] };
+    expect(lecturaFisica(sin as never, "V2")!.croquis).toBeNull();
+    expect(conLetra("con la masa de V2 sola; V20 no", "V2", "B")).toBe(
+      "con la masa de B sola; V20 no",
+    );
   });
 
   it("la regla deja los dos valores adentro, en su lugar y en orden", () => {
@@ -68,5 +115,9 @@ describe("Contra CESVI (Laboratorio §8)", () => {
     expect(g.croquis).toBeGreaterThan(0);
     expect(g.cesvi).toBeLessThan(100);
     expect(g.marcas.length).toBeLessThan(15);
+    // También abarca el rango que se le pide.
+    const r2 = reglaContraste(49.21, 63.15, [30, 49.21]);
+    expect(r2.pos(30)).toBeGreaterThanOrEqual(0);
+    expect(r2.pos(30)).toBeLessThan(r2.croquis);
   });
 });

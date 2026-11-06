@@ -60,25 +60,69 @@ describe("Presentar (Laboratorio §8)", () => {
     expect(c.filas[2]).toMatchObject({ etiqueta: "A · Silverado al impacto", valor: "9.1 km/h" });
   });
 
+  it("si las simulaciones no se apartan, el rango se nombra como lineal", () => {
+    const quieta = {
+      ...r,
+      velocidades: [
+        {
+          vehiculo: "V2",
+          previa: { mejor: 41.5, p10: 27.2, p50: 41.5, p90: 55.7 },
+          impacto: { p10: 41.5, p50: 41.5, p90: 41.5 },
+        },
+      ],
+    } as Reconstruccion;
+    const c = capitulos({ ...base, r: quieta, contra: null, conteo: null })[1]!;
+    expect(c.filas[1]).toEqual({ etiqueta: "Rango por aproximación lineal", valor: "27.2–55.7" });
+  });
+
   it("si la evidencia no fija ninguna velocidad, lo dice", () => {
     const sin = { ...r, velocidades: [{ vehiculo: "V1", previa: null, impacto: null }] };
     const c = capitulos({ ...base, r: sin as Reconstruccion, contra: null, conteo: null })[1]!;
     expect(c.filas[0]!.valor).toBe("la evidencia no la fija");
   });
 
-  it("contra CESVI lleva las dos cifras, la diferencia y el conteo", () => {
+  const fisica = {
+    vehiculo: "V2",
+    croquis: 49.21,
+    rango: [47.32, 49.21] as [number, number],
+    cesvi: 63.15,
+    difKmh: -13.94,
+    difPct: -22.07,
+    porQue: "EBS con la masa de V2 sola; Croquis, con el momento de los dos",
+  };
+
+  it("contra CESVI lleva las dos lecturas, cada una con su nombre y el mismo peso", () => {
     const c = capitulos({
       ...base,
       contra,
+      fisica,
+      letraDe: (id) => (id === "V2" ? "B" : "A"),
       conteo: { coinciden: 3, difieren: 0, sinDato: 1 },
     })[3]!;
-    expect(c.filas.map((f) => f.valor)).toEqual([
-      "1.2 %",
-      "63.90 km/h",
-      "63.15 km/h",
-      "0.75 km/h",
-      "3 coinciden · 0 difieren · 1 sin dato",
+    expect(c.filas).toEqual([
+      { etiqueta: "Método de CESVI con los datos del reporte", valor: "+1.19 %", grande: true },
+      { etiqueta: "Croquis contra el reporte", valor: "63.90 contra 63.15 km/h · +0.75 km/h" },
+      { etiqueta: "Reconstrucción física de Croquis", valor: "−22.07 %", grande: true },
+      {
+        etiqueta: "Croquis contra el reporte",
+        valor: "49.21 (47.32–49.21) contra 63.15 km/h · −13.94 km/h",
+      },
+      { etiqueta: "Criterios", valor: "3 coinciden · 0 difieren · 1 sin dato" },
     ]);
+    expect(c.nota).toBe(
+      "Por qué difieren: EBS con la masa de B sola; Croquis, con el momento de los dos",
+    );
+  });
+
+  it("si la evidencia no fija la lectura física, lo dice; no inventa una cifra", () => {
+    const c = capitulos({
+      ...base,
+      contra,
+      fisica: { ...fisica, croquis: null, rango: null, difKmh: null, difPct: null },
+      conteo: null,
+    })[3]!;
+    expect(c.filas[2]).toMatchObject({ valor: "la evidencia no la fija", grande: false });
+    expect(c.filas[3]!.valor).toBe("sin velocidad contra 63.15 km/h");
   });
 
   it("el recorrido tras el impacto sale de la trayectoria", () => {

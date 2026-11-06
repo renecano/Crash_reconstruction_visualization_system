@@ -574,7 +574,13 @@ interface Inversion {
     vehiculo: string;
     identificable: boolean;
     sigma_local?: number;
-    estimacion?: { mejor: number; p10?: number; p50?: number; p90?: number };
+    estimacion?: {
+      mejor: number;
+      p10?: number;
+      p50?: number;
+      p90?: number;
+      rango_por?: string;
+    };
   }[];
   velocidad_impacto: {
     vehiculo: string;

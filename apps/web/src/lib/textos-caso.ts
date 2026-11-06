@@ -27,6 +27,7 @@ export const METODO = {
   reconstruccionDetalle:
     "inversión con las trayectorias, el impulso del choque y la evidencia del perito",
   cesvi: "Método de CESVI",
+  cesviConReporte: "Método de CESVI con los datos del reporte",
   cesviDetalle: "energía de deformación (McHenry) y velocidad equivalente de barrera (EBS)",
 } as const;
 

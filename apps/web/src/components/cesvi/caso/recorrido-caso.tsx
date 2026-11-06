@@ -77,12 +77,17 @@ import { MaquetaCaso } from "../escena/maqueta-caso";
 import { EscenaFacil, ResumenDeLaEscena } from "../escena/escena-facil";
 import { PresentarCaso } from "./presentar-caso";
 import { ActoDanos } from "./analisis-laboratorio";
-import { ActoContraste } from "./contraste-laboratorio";
+import { ActoContraste, filaDeRestos } from "./contraste-laboratorio";
 import { HechoLaboratorio } from "./hecho-laboratorio";
 import { CifraReconstruccion, DetalleReconstruccion } from "./hoja-reconstruccion";
-import { protagonista } from "@/lib/reconstruccion-lab";
+import { protagonista, tipImpacto, tipVehiculo } from "@/lib/reconstruccion-lab";
 import { tomarArchivo } from "@/lib/archivo-pendiente";
-import { cifraContraste, conteoCriterios, criteriosContraste } from "@/lib/contraste-lab";
+import {
+  cifraContraste,
+  conteoCriterios,
+  criteriosContraste,
+  lecturaFisica,
+} from "@/lib/contraste-lab";
 import { textoDano, tituloDelHecho } from "@/lib/hecho-laboratorio";
 import { nombreVehiculo } from "@/lib/escena-facil";
 import { PasoCaso, PasoHecho, PasoNumeros, claveItem, type ItemLugar } from "./pasos";
@@ -1069,6 +1074,8 @@ export function RecorridoCaso({
           r={r}
           calles={calles}
           letraDe={letraDe}
+          contra={contraCesvi}
+          restos={inicial.ejemplo ? filaDeRestos(inicial.ejemplo) : null}
         />
       );
     return r ? (
@@ -1122,6 +1129,9 @@ export function RecorridoCaso({
   const pico = actual === 3 && !expandido;
   // Los daños y Contra CESVI ocupan todo el ancho, sin mapa (Laboratorio §8).
   const hojaAncha = actual === 4 || actual === 6 || actual === 7;
+  // El 3D solo dibuja cuando se ve: oculto seguía a todo ritmo y ahogaba la página (la foto del
+  // dictamen lo despierta si le hace falta).
+  const visorAlaVista = vista === "3d" && !presentando && !hojaAncha && actual !== 1;
   const vPico = r ? protagonista(r) : null;
   const idPico =
     r && vPico ? Object.entries(r.ids).find(([, id]) => id === vPico.vehiculo)?.[0] : null;
@@ -1227,6 +1237,12 @@ export function RecorridoCaso({
               : null
           }
           contra={comparacionReporte ? cifraContraste(comparacionReporte) : null}
+          fisica={
+            comparacionReporte
+              ? lecturaFisica(contraCesvi, cifraContraste(comparacionReporte)?.vehiculo ?? null)
+              : null
+          }
+          letraDe={letraDe}
           conteo={
             comparacionReporte ? conteoCriterios(criteriosContraste(comparacionReporte)) : null
           }
@@ -1420,7 +1436,7 @@ export function RecorridoCaso({
             >
               <Visor3dCaso
                 r={r}
-                activo={vista === "3d" && !presentando}
+                activo={visorAlaVista}
                 camaraPedida={camaraPedida}
                 aSangre={pico}
                 contraCesvi={contraCesvi}
@@ -1449,6 +1465,29 @@ export function RecorridoCaso({
                 calles={calles}
                 nombres={Object.fromEntries(
                   Object.entries(r.ids).map(([resId, id]) => [resId, nombreLab(String(id))]),
+                )}
+                tips={Object.fromEntries(
+                  Object.entries(r.ids).map(([resId, id]) => {
+                    const v = expediente?.vehiculos.find((x) => x.id === id);
+                    return [
+                      resId,
+                      tipVehiculo({
+                        nombre: nombreLab(String(id)),
+                        masaKg: v?.masa?.valor ?? null,
+                        masaDe: v?.masa?.fuente ?? null,
+                        impactoKmh:
+                          r.velocidades.find((x) => x.vehiculo === id)?.impacto?.p50 ?? null,
+                        dano: expediente ? textoDano(expediente, String(id)) : null,
+                      }),
+                    ];
+                  }),
+                )}
+                tipDelImpacto={tipImpacto(
+                  Object.values(r.ids)
+                    .map((id) => letraDe(String(id)))
+                    .sort()
+                    .join(" y "),
+                  posiciones.find((p) => p.fase === "impacto")?.fuente ?? null,
                 )}
                 anchoVia={
                   inicial.ejemplo

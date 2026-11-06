@@ -132,6 +132,21 @@ describe("el dictamen de una reconstrucción (R8)", () => {
   }, 60_000);
 
   it("con la estructura de los reportes de CESVI, cuando el perito la pide", () => {
+    const conContra = texto(
+      datos({
+        verificacion: [{ vehiculo: "V2", pasos: [], falta: [] }] as never,
+        contraDeformacion: {
+          vehiculo: "V2",
+          croquis: 63.9,
+          cesvi: 63.15,
+          difKmh: 0.75,
+          difPct: 1.1876,
+        },
+      }),
+    );
+    expect(conContra).toContain(
+      "Croquis 63.90 km/h y el reporte 63.15 km/h, con las mismas medidas y el mismo método; diferencia de +0.75 km/h (+1.19 %).",
+    );
     const t = texto(datos({ estructuraCesvi: true }));
     enOrden(t, [
       "DICTAMEN TÉCNICO DEL HECHO DE TRÁNSITO",

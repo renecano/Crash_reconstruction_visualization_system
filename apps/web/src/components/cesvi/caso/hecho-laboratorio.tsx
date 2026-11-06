@@ -11,7 +11,8 @@ import {
   type Expediente,
   type PreguntaEscena,
 } from "@croquis/cesvi";
-import { useMemo, useState } from "react";
+import { useMemo, useState, type CSSProperties } from "react";
+import { Linea } from "../movimiento";
 import { siluetaClase } from "@/lib/colocar";
 import { marcarRelato, metaDelHecho, textoDano, tituloDelHecho } from "@/lib/hecho-laboratorio";
 import { ResumenEscena } from "./pasos";
@@ -94,7 +95,7 @@ export function HechoLaboratorio({
           className="font-[family-name:var(--fuente-titulo)] text-[clamp(2.2rem,4.2vw,4rem)] leading-[1.02] font-normal tracking-[-0.035em]"
           data-testid="titulo-hecho"
         >
-          {titulo}
+          <Linea>{titulo}</Linea>
         </h2>
         <p className="flex flex-wrap gap-x-3 gap-y-1 text-[0.95rem] text-texto-2">
           {meta.map((m, k) => (
@@ -131,7 +132,14 @@ export function HechoLaboratorio({
             return (
               <span
                 key={k}
-                className={`relato-${t.tipo}`}
+                className={t.tipo ? `relato-${t.tipo} relato-marca` : undefined}
+                style={
+                  t.tipo
+                    ? ({
+                        "--i": relato.tramos.slice(0, k).filter((x) => x.tipo).length,
+                      } as CSSProperties)
+                    : undefined
+                }
                 data-activo={t.vehiculo && activo === t.vehiculo ? "si" : undefined}
                 {...(t.vehiculo ? { ...marca(t.vehiculo), tabIndex: 0 } : {})}
                 data-vehiculo={t.vehiculo ?? undefined}

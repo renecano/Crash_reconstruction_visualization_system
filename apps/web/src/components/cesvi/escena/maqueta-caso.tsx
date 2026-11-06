@@ -20,7 +20,11 @@ export function MaquetaCaso({
   detalles = {},
   anchoVia = null,
   compacta = false,
+  tips = {},
+  tipDelImpacto = null,
 }: {
+  tips?: Record<string, string>;
+  tipDelImpacto?: string | null;
   /** Solo el croquis, sin línea de tiempo ni leyenda («Lado a lado» de Contra CESVI). */
   compacta?: boolean;
   /** El ancho de la vía si el caso lo trae medido, con su origen. */
@@ -75,6 +79,8 @@ export function MaquetaCaso({
             detalles={detalles}
             anchoVia={anchoVia}
             t={t}
+            tips={tips}
+            tipDelImpacto={tipDelImpacto}
           />
         )}
       </ConLineaDeTiempo>

@@ -8,7 +8,7 @@ import { ListaCasos } from "@/components/cesvi/lista-casos";
 import { MarcoCesvi } from "@/components/cesvi/marco-cesvi";
 import { casoAxa } from "@/lib/caso-axa";
 import { estadoDeReporte } from "@/lib/casos-lab";
-import { cifraContraste } from "@/lib/contraste-lab";
+import { cifraContraste, pctConSigno } from "@/lib/contraste-lab";
 import { tituloDelHecho } from "@/lib/hecho-laboratorio";
 import { MODALIDAD, PAGINA } from "@/lib/reproduccion-dictamenes";
 
@@ -66,7 +66,7 @@ export default function CesviPage() {
           vehiculos: vehiculosAxa,
           croquisKmh: cifra ? cifra.croquis.toFixed(2) : null,
           cesviKmh: cifra ? cifra.cesvi.toFixed(2) : null,
-          difPct: cifra ? `${cifra.difPct.toFixed(1)} %` : null,
+          difPct: cifra ? pctConSigno(cifra.difPct) : null,
           zonas: `${k.zonas.coinciden} de ${k.zonas.cesvi}`,
         }}
         reportes={reportes}

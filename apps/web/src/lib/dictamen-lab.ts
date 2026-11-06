@@ -4,7 +4,8 @@
  * inserta datos con su referencia, y solo al pedirlo el perito.
  */
 import type { Reconstruccion, SupuestoDeclarado } from "@croquis/cesvi";
-import type { CifraContraste } from "./contraste-lab";
+import { conSigno, pctConSigno, type CifraContraste } from "./contraste-lab";
+import { rangoDeImpacto } from "./reconstruccion-lab";
 
 const f1 = (x: number) => x.toFixed(1);
 
@@ -23,7 +24,8 @@ export function filasDeLaHoja(
     const i = v.impacto;
     const etiqueta = `${letraDe(String(v.vehiculo))} al impacto`;
     if (i?.p50 === undefined) return { etiqueta, valor: "la evidencia no la fija" };
-    const rango = i.p10 !== undefined && i.p90 !== undefined ? ` · ${f1(i.p10)}–${f1(i.p90)}` : "";
+    const r10 = rangoDeImpacto(v);
+    const rango = r10 ? ` · ${f1(r10.p10)}–${f1(r10.p90)}${r10.lineal ? " (lineal)" : ""}` : "";
     return { etiqueta, valor: `${f1(i.p50)} km/h${rango}` };
   });
   if (contra) {
@@ -34,7 +36,7 @@ export function filasDeLaHoja(
       },
       {
         etiqueta: "Contra CESVI",
-        valor: `Δ ${f1(contra.difPct)} % · ${contra.difKmh.toFixed(2)} km/h`,
+        valor: `Δ ${pctConSigno(contra.difPct)} · ${conSigno(contra.difKmh)} km/h`,
       },
     );
   }
@@ -46,14 +48,18 @@ export function citaVelocidad(r: Reconstruccion, id: string, nombre: string): st
   const v = r.velocidades.find((x) => String(x.vehiculo) === id);
   const i = v?.impacto;
   if (i?.p50 === undefined) return null;
-  const rango =
-    i.p10 !== undefined && i.p90 !== undefined ? ` (p10–p90: ${f1(i.p10)}–${f1(i.p90)})` : "";
+  const r10 = v ? rangoDeImpacto(v) : null;
+  const rango = r10
+    ? r10.lineal
+      ? ` (rango por aproximación lineal: ${f1(r10.p10)}–${f1(r10.p90)})`
+      : ` (p10–p90: ${f1(r10.p10)}–${f1(r10.p90)})`
+    : "";
   return `Velocidad de ${nombre} al impacto: ${f1(i.p50)} km/h${rango}, según la reconstrucción física de Croquis.`;
 }
 
 /** La cita de la comparación: las dos cifras y la diferencia, con su valor y su porcentaje. */
 export function citaContraste(c: CifraContraste, nombre: string): string {
-  return `Por deformación, ${nombre}: Croquis ${c.croquis.toFixed(2)} km/h con las medidas del reporte y el reporte de CESVI ${c.cesvi.toFixed(2)} km/h; diferencia de ${c.difKmh.toFixed(2)} km/h (${f1(c.difPct)} %).`;
+  return `Por deformación, ${nombre}: Croquis ${c.croquis.toFixed(2)} km/h con las medidas del reporte y el reporte de CESVI ${c.cesvi.toFixed(2)} km/h; diferencia de ${conSigno(c.difKmh)} km/h (${pctConSigno(c.difPct)}).`;
 }
 
 /** La cita de los supuestos que entraron a la reconstrucción. */

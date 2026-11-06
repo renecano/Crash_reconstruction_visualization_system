@@ -32,7 +32,7 @@ test("@flujo /cesvi: el caso de AXA desde la lista, del caso al dictamen en PDF"
   await page.goto("/cesvi");
   // La lista de casos: la línea de estado es real y las cifras de AXA son las de «Contra CESVI».
   await expect(page.getByTestId("estado-casos")).toContainText("7 reportes de CESVI de ejemplo");
-  await expect(page.getByTestId("ultimo-pct")).toHaveText("1.2 %");
+  await expect(page.getByTestId("ultimo-pct")).toHaveText("+1.19 %");
   await expect(page.getByTestId("ultimo-cifras")).toContainText("63.90 contra 63.15 km/h");
   await page.getByTestId("ir-axa").click();
   await expect(page).toHaveURL(/\/cesvi\/casos\/a2010930(\/hecho)?$/);
@@ -78,6 +78,13 @@ test("@flujo /cesvi: el caso de AXA desde la lista, del caso al dictamen en PDF"
   await page.getByTestId("abrir-declaracion").click();
   await expect(page.getByTestId("texto-declaracion")).toHaveValue(/revers/);
 
+  // Los tooltips también salen con el foco de teclado (§9).
+  const impacto = page.getByTestId("maqueta-impacto");
+  await impacto.focus();
+  await expect(page.getByTestId("tooltip")).toContainText("Impacto · t 0.00 s");
+  await impacto.blur();
+  await expect(page.getByTestId("tooltip")).toHaveCount(0);
+
   // Presentar: a pantalla completa, capítulos con ← →, y Esc regresa a Trabajar.
   await page.getByTestId("modo-presentar").click();
   const presentar = page.getByTestId("presentar-caso");
@@ -85,9 +92,16 @@ test("@flujo /cesvi: el caso de AXA desde la lista, del caso al dictamen en PDF"
   await expect(page.getByTestId("aviso-apoyo")).toContainText("el dictamen es del perito");
   await page.getByTestId("capitulo-contra").click();
   await expect(page.getByTestId("capitulo-titulo")).toHaveText("Contra CESVI");
-  await expect(page.getByTestId("capitulo-datos")).toContainText("63.90 km/h");
-  await expect(page.getByTestId("capitulo-datos")).toContainText("63.15 km/h");
-  await expect(page.getByTestId("capitulo-datos")).toContainText("1.2 %");
+  // Las dos lecturas (T3.4), cada una con su nombre, y por qué difieren.
+  const datosContra = page.getByTestId("capitulo-datos");
+  await expect(datosContra).toContainText("Método de CESVI con los datos del reporte");
+  await expect(datosContra).toContainText("+1.19 %");
+  await expect(datosContra).toContainText("63.90 contra 63.15 km/h");
+  await expect(datosContra).toContainText("Reconstrucción física de Croquis");
+  await expect(datosContra).toContainText(
+    /[\d.]+ (\([\d.]+–[\d.]+\) )?contra 63\.15 km\/h · [+−]\d+\.\d\d km\/h/,
+  );
+  await expect(page.getByTestId("capitulo-nota")).toContainText("la masa de B sola");
   await page.keyboard.press("ArrowLeft");
   await expect(page.getByTestId("capitulo-titulo")).toHaveText("Posiciones finales");
   await page.keyboard.press("Escape");
@@ -129,8 +143,23 @@ test("@flujo /cesvi: el caso de AXA desde la lista, del caso al dictamen en PDF"
   await expect(page.getByTestId("eje-modalidad")).toHaveAttribute("data-estado", "coincide");
   await expect(page.getByTestId("cifra-contra-croquis")).toHaveText("63.90");
   await expect(page.getByTestId("cifra-contra-cesvi")).toHaveText("63.15");
-  await expect(page.getByTestId("cifra-contra-pct")).toHaveText("1.2 %");
-  await expect(page.getByTestId("cifra-contra-kmh")).toContainText("0.75 km/h");
+  await expect(page.getByTestId("lectura-cesvi")).toContainText(
+    "Método de CESVI con los datos del reporte",
+  );
+  await expect(page.getByTestId("cifra-contra-pct")).toHaveText("+1.19 %");
+  await expect(page.getByTestId("cifra-contra-kmh")).toContainText("+0.75 km/h");
+  await expect(page.getByTestId("cifra-contra-nota")).toContainText("60.27 contra 60.27 km/h");
+  // La segunda lectura (T3.4): la del solver, con su diferencia, y la misma cifra del reporte.
+  await expect(page.getByTestId("lectura-fisica")).toContainText(
+    "Reconstrucción física de Croquis",
+  );
+  await expect(page.getByTestId("fisica-croquis")).toHaveText(/^\d+\.\d\d$/);
+  await expect(page.getByTestId("fisica-cesvi")).toHaveText("63.15");
+  await expect(page.getByTestId("fisica-kmh")).toContainText(/[+−]\d+\.\d\d km\/h/);
+  await expect(page.getByTestId("fisica-pct")).toHaveText(/^[+−]\d+\.\d\d %$/);
+  const porQue = page.getByTestId("por-que-difieren");
+  await expect(porQue).toContainText("la masa de B sola");
+  await expect(porQue).toContainText("el momento de los dos vehículos");
   await expect(page.getByTestId("eje-posiciones")).toContainText("Sin dato en el reporte");
   await expect(page.getByTestId("citas-contra")).toContainText("«");
   const tabla = page.getByTestId("reproduccion");

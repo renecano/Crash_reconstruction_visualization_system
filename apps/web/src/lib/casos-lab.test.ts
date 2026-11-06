@@ -54,7 +54,7 @@ describe("la lista de casos (Laboratorio §8)", () => {
         },
       ],
     };
-    expect(estadoDeReporte(con)).toBe("Reproducido · Δ 1.2 %");
+    expect(estadoDeReporte(con)).toBe("Reproducido · Δ +1.19 %");
     expect(estadoDeReporte(base)).toBe("Modalidad coincide");
     expect(estadoDeReporte({ ...base, modalidad: { ...base.modalidad, coincide: false } })).toBe(
       "Modalidad distinta",

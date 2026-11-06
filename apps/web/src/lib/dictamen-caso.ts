@@ -14,6 +14,7 @@
  * lugar, consideraciones, conclusiones). Los números salen del solver y del módulo de cálculo; la
  * conclusión la escribe el perito. Sin validación, el documento es un borrador.
  */
+import { conSigno as conSignoContra, pctConSigno } from "./contraste-lab";
 import {
   modalidadInferida,
   reconstruccionContraCesvi,
@@ -55,6 +56,17 @@ export interface DatosDictamenCaso {
     sugerencia: { texto: string; decision: "confirmada" | "descartada" | null } | null;
   } | null;
   validacion: { perito: string; conclusion: string; fecha: string } | null;
+  /**
+   * La velocidad por deformación contra la del reporte (Contra CESVI): con las mismas medidas y el
+   * mismo método, con su diferencia en km/h y en %. No es la de la reconstrucción física.
+   */
+  contraDeformacion?: {
+    vehiculo: string;
+    croquis: number;
+    cesvi: number;
+    difKmh: number;
+    difPct: number;
+  } | null;
   /** Con la estructura de los reportes de CESVI (si el perito la pide). */
   estructuraCesvi: boolean;
   trazabilidad: { metodo: string; huella: string };
@@ -311,6 +323,13 @@ function secciones(d: DatosDictamenCaso) {
       margin: [12, 2, 0, 6],
     })),
     ...(v.falta.length ? [nota(`Falta: ${v.falta.join("; ")}.`)] : []),
+    ...(d.contraDeformacion?.vehiculo === v.vehiculo
+      ? [
+          parrafo(
+            `Método de CESVI con los datos del reporte: Croquis ${d.contraDeformacion.croquis.toFixed(2)} km/h y el reporte ${d.contraDeformacion.cesvi.toFixed(2)} km/h, con las mismas medidas y el mismo método; diferencia de ${conSignoContra(d.contraDeformacion.difKmh)} km/h (${pctConSigno(d.contraDeformacion.difPct)}).`,
+          ),
+        ]
+      : []),
   ]);
   const declarada: Content[] = d.declarada
     ? [

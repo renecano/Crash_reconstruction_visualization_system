@@ -18,11 +18,12 @@ import type { EscenaSpec } from "@croquis/scene-schema";
 import { sceneLayout } from "@croquis/croquis-2d";
 import { useMemo } from "react";
 import { siluetaClase } from "@/lib/colocar";
+import { m, useReducedMotion } from "motion/react";
+import { Anillo } from "../movimiento";
 import {
   cotaDeVia,
   encuadre,
   estela,
-  kmhEn,
   poseEn,
   type Pose,
   type ResultadoMaqueta,
@@ -56,7 +57,12 @@ export function EscenaMaqueta({
   t = null,
   anchoVia = null,
   sinEtiquetas = false,
+  tips = {},
+  tipDelImpacto = null,
 }: {
+  /** Lo que dice cada vehículo al pasar el puntero o con el foco (§9). */
+  tips?: Record<string, string>;
+  tipDelImpacto?: string | null;
   /** Sin etiquetas ni cota, para un croquis chico. */
   sinEtiquetas?: boolean;
   /** El ancho de la vía si el caso lo trae medido, con su origen. */
@@ -83,6 +89,7 @@ export function EscenaMaqueta({
   const impacto = resultado.punto_impacto ?? null;
   const fuente = Math.max(1, Math.min(3, Math.max(W, H) / 40));
   const ahora = t ?? ti;
+  const quieto = useReducedMotion();
   const cota =
     layout.mapa && impacto ? cotaDeVia(layout.mapa.vias, impacto, 14, anchoVia?.m) : null;
   // Las etiquetas van en columna a un lado del impacto: los vehículos arriba y abajo, en el orden en
@@ -196,8 +203,11 @@ export function EscenaMaqueta({
         return (
           <g key={v.id} data-testid={`maqueta-${v.rol}`}>
             {/* La trayectoria hasta el impacto, con su velocidad real como degradado. */}
-            {tramosPorVelocidad(tr, ti).map((s, k) => (
-              <line
+            {tramosPorVelocidad(tr, ti).map((s, k, todos) => (
+              <m.line
+                initial={quieto ? false : { opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ duration: 0.12, delay: (k / todos.length) * 1.2 }}
                 key={k}
                 x1={px(s.x1)}
                 y1={py(s.y1)}
@@ -220,9 +230,8 @@ export function EscenaMaqueta({
                 strokeWidth={1}
                 vectorEffect="non-scaling-stroke"
                 opacity={e.opacidad}
-              >
-                <title>{`${nombres[v.id] ?? v.rol} a t = ${e.t.toFixed(1)} s`}</title>
-              </path>
+                data-tip={`${nombres[v.id] ?? v.rol} · t ${(e.t - ti).toFixed(2)} s`}
+              />
             ))}
             {/* La posición final, punteada, con la línea desde el impacto. */}
             {fin ? (
@@ -252,7 +261,12 @@ export function EscenaMaqueta({
               </>
             ) : null}
             {/* La pieza en el impacto, con sombra y su zona de contacto teñida. */}
-            <g transform={colocar(pa, v)} filter="url(#mq-sombra)">
+            <g
+              transform={colocar(pa, v)}
+              filter="url(#mq-sombra)"
+              data-tip={tips[v.id]}
+              tabIndex={tips[v.id] ? 0 : undefined}
+            >
               <path
                 d={siluetaClase(v.clase)}
                 fill="var(--escena-vehiculo)"
@@ -303,13 +317,17 @@ export function EscenaMaqueta({
                 ) : null}
               </>
             )}
-            <title>{`${nombres[v.id] ?? v.rol}: ${kmhEn(tr, 0).toFixed(1)} km/h al inicio`}</title>
           </g>
         );
       })}
 
       {impacto ? (
-        <g data-testid="maqueta-impacto">
+        <g
+          data-testid="maqueta-impacto"
+          data-tip={tipDelImpacto ?? undefined}
+          tabIndex={tipDelImpacto ? 0 : undefined}
+        >
+          {sinEtiquetas ? null : <Anillo cx={px(impacto.x)} cy={py(impacto.y)} r={1.4} />}
           <circle
             cx={px(impacto.x)}
             cy={py(impacto.y)}

@@ -4,12 +4,15 @@
  * el marco y el recorrido con `data-tema`.
  */
 import type { ReactNode } from "react";
+import { CapaTooltips } from "@/components/cesvi/capa-tooltips";
 import { FUENTES_LABORATORIO } from "@/components/cesvi/fuentes-laboratorio";
+import { Movimiento } from "@/components/cesvi/movimiento";
 
 export default function LayoutCesvi({ children }: { children: ReactNode }) {
   return (
     <div data-diseno="laboratorio" className={FUENTES_LABORATORIO}>
-      {children}
+      <Movimiento>{children}</Movimiento>
+      <CapaTooltips />
     </div>
   );
 }

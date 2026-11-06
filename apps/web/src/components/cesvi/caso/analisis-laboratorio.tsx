@@ -25,6 +25,7 @@ import { filasDano, type FilaDano } from "@/lib/danos-caso";
 import { reconstruirEnNavegador } from "@/lib/reconstruct-client";
 import { METODO } from "@/lib/textos-caso";
 import { Criterios } from "../correspondencia";
+import { Crece, Cuenta, Traza } from "../movimiento";
 import { CARA } from "./piezas";
 
 const CARA_TITULO: Record<string, string> = {
@@ -35,7 +36,7 @@ const CARA_TITULO: Record<string, string> = {
 };
 
 /** El perfil sobre la cara dañada. Es una gráfica de las C, no un dibujo a escala. */
-function PerfilSobreLaCara({ cCm }: { cCm: readonly number[] }) {
+function PerfilSobreLaCara({ cCm, cara }: { cCm: readonly number[]; cara: string }) {
   const CARA_X = { x0: 70, ancho: 580, base: 176, alto: 136 };
   const { d, puntos } = perfilDeformacion(cCm, CARA_X);
   return (
@@ -65,10 +66,12 @@ function PerfilSobreLaCara({ cCm }: { cCm: readonly number[] }) {
         stroke="var(--linea)"
       />
       <rect x={370} y={36} width={230} height={70} rx={12} fill="var(--superficie-alta)" />
-      <path d={d} fill="var(--senal)" />
+      <Traza>
+        <path d={d} fill="var(--senal)" />
+      </Traza>
       <line x1={70} y1={176} x2={650} y2={176} stroke="var(--texto-3)" strokeDasharray="4 4" />
       {puntos.map((p) => (
-        <g key={p.nombre}>
+        <g key={p.nombre} tabIndex={0} data-tip={`${p.nombre}: ${p.cm} cm, ${cara}`}>
           <line x1={p.x} y1={176} x2={p.x} y2={206} stroke="var(--texto-2)" />
           <text
             x={p.x}
@@ -96,13 +99,15 @@ function PerfilSobreLaCara({ cCm }: { cCm: readonly number[] }) {
   );
 }
 
-function Cifra({ valor, unidad, etiqueta }: { valor: string; unidad: string; etiqueta: string }) {
+function Cifra({ valor, unidad, etiqueta }: { valor: number; unidad: string; etiqueta: string }) {
   return (
     <div className="flex flex-col gap-1">
       <span className="flex items-baseline gap-2">
-        <span className="cifra-protagonista font-[family-name:var(--fuente-titulo)] text-[3rem] leading-none">
-          {valor}
-        </span>
+        <Cuenta
+          valor={valor}
+          decimales={1}
+          className="cifra-protagonista font-[family-name:var(--fuente-titulo)] text-[3rem] leading-none"
+        />
         <span className="text-texto-2">{unidad}</span>
       </span>
       <span className="t-nota">{etiqueta}</span>
@@ -152,23 +157,15 @@ function TarjetaDano({
             : "el reporte no trae medidas de la deformación"}
         </span>
       </header>
-      {medido ? <PerfilSobreLaCara cCm={medido.cCm} /> : null}
+      {medido ? <PerfilSobreLaCara cCm={medido.cCm} cara={`de la ${cara}`} /> : null}
       <div className="grid gap-5 border-t border-linea-suave pt-4 md:grid-cols-2">
         <div className="flex flex-col gap-2" data-testid={`dano-calculado-${v}`}>
           {r && c.tipo === "calculado" ? (
             <>
               <div className="flex flex-wrap gap-8">
-                <Cifra
-                  valor={c.energiaKj.toFixed(1)}
-                  unidad="kJ"
-                  etiqueta="energía de deformación"
-                />
+                <Cifra valor={c.energiaKj} unidad="kJ" etiqueta="energía de deformación" />
                 {c.deltaVKmh !== null ? (
-                  <Cifra
-                    valor={c.deltaVKmh.toFixed(1)}
-                    unidad="km/h"
-                    etiqueta="cambio de velocidad (Δv)"
-                  />
+                  <Cifra valor={c.deltaVKmh} unidad="km/h" etiqueta="cambio de velocidad (Δv)" />
                 ) : null}
               </div>
               <p className="t-nota">
@@ -226,7 +223,7 @@ function TarjetaSupuesto({ s }: { s: SupuestoDeclarado }) {
   const b = s.rango ? barraDeRango(s.rango.min, s.rango.max, s.rango.valor) : null;
   return (
     <article
-      className="escena-hoja flex flex-col gap-2 p-5"
+      className="escena-hoja tarjeta-supuesto flex flex-col gap-2 p-5"
       data-clave={s.clave}
       data-testid={`supuesto-${s.clave}`}
     >
@@ -237,7 +234,9 @@ function TarjetaSupuesto({ s }: { s: SupuestoDeclarado }) {
       {b && s.rango ? (
         <div>
           <div className="relative h-2 rounded-full bg-superficie-alta" aria-hidden="true">
-            <span
+            <Crece
+              eje="x"
+              origen={`${((b.marca - b.izq) / b.ancho) * 100}% 50%`}
               className="rango-supuesto absolute inset-y-0 rounded-full"
               style={{ left: `${b.izq}%`, width: `${b.ancho}%` }}
             />
