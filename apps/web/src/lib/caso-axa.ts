@@ -19,6 +19,7 @@ import {
   conMasasDeFicha,
   ejemploHecho,
   importarDictamen,
+  lecturaDeHecho,
   problemasExpediente,
   ubicacionIlustrativa,
   type Expediente,
@@ -27,6 +28,7 @@ import {
 } from "@croquis/cesvi";
 import lecturas from "../../../../data/cesvi/grabaciones/importar/lecturas-a2010930.json";
 import ejemplo from "../../../../data/cesvi/grabaciones/importar/ejemplo.json";
+import grabacionHecho from "../../../../data/cesvi/grabaciones/hecho-A2010930.json";
 import type { CasoExpediente } from "./casos";
 
 export function casoAxa(): CasoExpediente {
@@ -63,6 +65,14 @@ export function casoAxa(): CasoExpediente {
     narracion: ejemploHecho(c.id)?.descripcion ?? null,
     escena: {
       expediente,
+      // Lo que Croquis leyó en la descripción del hecho, con sus citas (la lectura grabada, ADR
+      // 0055): El hecho la marca en el relato.
+      lectura: lecturaDeHecho(
+        grabacionHecho.lecturas.descripcion.lectura as unknown as Parameters<
+          typeof lecturaDeHecho
+        >[0],
+        ejemploHecho(c.id)?.descripcion ?? "",
+      ),
       posiciones: [],
       conteos: leido.conteos,
       problemas: problemasExpediente(expediente),

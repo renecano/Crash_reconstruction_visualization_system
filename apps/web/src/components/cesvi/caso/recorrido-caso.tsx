@@ -75,6 +75,7 @@ import { BarraRecorrido, PASOS } from "../recorrido/barra";
 import { TransicionActo } from "../recorrido/transicion-acto";
 import { MaquetaCaso } from "../escena/maqueta-caso";
 import { EscenaFacil, ResumenDeLaEscena } from "../escena/escena-facil";
+import { HechoLaboratorio } from "./hecho-laboratorio";
 import { nombreVehiculo } from "@/lib/escena-facil";
 import { Reproduccion } from "../reproduccion";
 import {
@@ -148,6 +149,8 @@ export function RecorridoCaso({
   );
   const [validacion, setValidacion] = useState<ValidacionPerito | null>(inicial.validacion);
   const [estado, setEstado] = useState<string | null>(null);
+  // El hecho (Laboratorio §8): leído, se ve el relato marcado; «Editar el relato» abre el editor.
+  const [editandoRelato, setEditandoRelato] = useState(false);
   const [noSe, setNoSe] = useState<Set<string>>(new Set());
   // El paso del lugar (V2): la herramienta del mapa, el elemento elegido de la lista guiada, el
   // punto y el rumbo de cada impacto (para su flecha), lo que se deshace y lo último medido.
@@ -326,6 +329,7 @@ export function RecorridoCaso({
   // La lectura pasa por la pizarra (R12b): el Lector (Claude), el Verificador de citas (que puede
   // pedir una relectura), el Validador y el Preguntador.
   const leer = async () => {
+    setEditandoRelato(false);
     setEstado("Leyendo la narración…");
     let motivo: string | null = null;
     const leerConClaude: ContextoPizarra["leer"] = async (t, rechazadas) => {
@@ -886,6 +890,23 @@ export function RecorridoCaso({
           }
         />
       );
+    if (actual === 1 && leida && !editandoRelato && (!editable || texto.trim()))
+      return (
+        <HechoLaboratorio
+          escena={leida}
+          narracion={texto}
+          editable={editable}
+          preguntas={preguntas}
+          onExpediente={cambiarExpediente}
+          onNoSe={(c) => {
+            setNoSe((s) => new Set([...s, c]));
+            const queda = pizarra.pedidoEvidencia ? supuestoAlNoSaber(c, supuestos) : null;
+            if (queda) setPizarra((p) => delPerito(p, `No sé (${c}). ${queda}`));
+          }}
+          onIrAlMapa={() => irA(2)}
+          onEditar={() => setEditandoRelato(true)}
+        />
+      );
     if (actual === 1)
       return (
         <PasoHecho
@@ -1125,7 +1146,13 @@ export function RecorridoCaso({
   const lugarTexto = [lugar?.descripcion?.valor, lugar?.municipio?.valor, lugar?.estado?.valor]
     .filter(Boolean)
     .join(", ");
-  const textoSiguiente = siguienteNombre ? continuarA(siguienteNombre) : "";
+  // «Continuar a…» nombra el acto siguiente cuando el paso que sigue empieza otro acto (prompt §4).
+  const actoSiguiente = actos[actoDePaso(actos, paso + 1)];
+  const nombreSiguiente =
+    actoSiguiente && actoDePaso(actos, paso + 1) !== actoIdx
+      ? actoSiguiente.nombre
+      : siguienteNombre;
+  const textoSiguiente = nombreSiguiente ? continuarA(nombreSiguiente) : "";
   // Rutas por acto (prompt §4): se abre en el acto de la ruta si ya se puede, y la ruta sigue al acto
   // sin recargar (el estado del recorrido vive aquí).
   const actoDeRutaVisto = useRef(false);

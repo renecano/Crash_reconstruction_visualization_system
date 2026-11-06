@@ -49,7 +49,10 @@ test("@flujo /cesvi: el caso de AXA desde la lista, del caso al dictamen en PDF"
 
   // 2. El hecho: la narración del ejemplo, ya leída (el caso trae su expediente).
   await irAPaso(page, 2);
-  await expect(page.getByTestId("narracion-texto")).not.toBeEmpty();
+  await expect(page.getByTestId("relato")).toContainText("Tacoma");
+  await expect(page.getByTestId("titulo-hecho")).toHaveText(
+    "Alcance en la carretera México-Nogales, km 47+800",
+  );
   await expect(page.getByTestId("vehiculos")).toContainText("Tacoma");
 
   // 3. El lugar: el mapa abre en la ubicación ilustrativa; se coloca lo que pide la lista.
