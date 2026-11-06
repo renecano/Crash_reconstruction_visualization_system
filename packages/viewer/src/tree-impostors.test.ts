@@ -30,6 +30,12 @@ function impostores(): TreeImpostors {
       copaDesde: 0.3,
       frente: { diff: textura(), nor: textura() },
       planta: { diff: textura(), nor: textura() },
+      archivos: {
+        frente_diff: `${especie}_frente_diff.webp`,
+        frente_nor: `${especie}_frente_nor.webp`,
+        planta_diff: `${especie}_planta_diff.webp`,
+        planta_nor: `${especie}_planta_nor.webp`,
+      },
       autores: "prueba",
       url: "",
     };
@@ -74,6 +80,12 @@ describe("árboles impostores (T1.3b)", () => {
       let arbustos = 0;
       g.traverse((o) => {
         if (!(o instanceof InstancedMesh)) return;
+        if (o.name === "tarjetas") {
+          // Lo que necesita Blender para rearmar la tarjeta (R11).
+          const marca = (o.material as { userData: Record<string, unknown> }).userData.croquisArbol;
+          expect(marca).toMatchObject({ tarjeta: "frente", noche: false });
+          expect(String((marca as { diff: string }).diff)).toMatch(/_frente_diff\.webp$/);
+        }
         if (o.name === "tarjetas" || o.name === "troncos") impostores_ += o.count;
         if (o.name === "arbustos") arbustos += o.count;
       });

@@ -23,7 +23,13 @@ import {
 import { ditherNode } from "./dither";
 import { MeshStandardNodeMaterial, type Node } from "three/webgpu";
 import type { SurfaceState } from "./environment";
-import { normalizedColor, normalizedRough, texturedNormal, type EnvTexture } from "./env-textures";
+import {
+  type EnvTexture,
+  marcaTextura,
+  normalizedColor,
+  normalizedRough,
+  texturedNormal,
+} from "./env-textures";
 
 export interface SurfaceLook {
   color: string;
@@ -230,6 +236,9 @@ export function asphaltMaterial(
       const patch = g
         ? { color: normalizedColor(g, p!.color), rough: normalizedRough(g, p!.roughness) }
         : null;
+      // La textura viaja al glTF como dato (R11): Blender la rearma.
+      if (t) m.userData.croquisTextura = marcaTextura(t, look.color, look.roughness);
+      else delete m.userData.croquisTextura;
       if (t === null) {
         paint(rgb(look.color), float(look.roughness), patch);
         m.normalNode = g && k ? mix(normalView, asVec3(texturedNormal(g)), k).normalize() : null;

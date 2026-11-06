@@ -43,6 +43,8 @@ export type EnvTextureName =
   (typeof ENV_TEXTURE_NAMES)[number] | (typeof OPTIONAL_TEXTURE_NAMES)[number];
 
 export interface EnvTexture {
+  /** El nombre en `texturas.json` (para rearmarla fuera del navegador, R11). */
+  nombre: EnvTextureName;
   map: Texture;
   normal: Texture;
   rough: Texture;
@@ -115,6 +117,7 @@ export async function loadEnvTextures(
     normal!.colorSpace = LinearSRGBColorSpace;
     rough!.colorSpace = LinearSRGBColorSpace;
     out[name] = {
+      nombre: name,
       map: map!,
       normal: normal!,
       rough: rough!,
@@ -124,6 +127,31 @@ export async function loadEnvTextures(
     };
   }
   return out;
+}
+
+/**
+ * Lo que necesita Blender para rearmar una textura en planta (R11): el glTF solo lleva el color
+ * plano del material, así que la textura viaja como dato en `userData` (los `extras` del material).
+ */
+export interface MarcaTextura {
+  nombre: EnvTextureName;
+  mosaico_m: number;
+  media_rgb: readonly [number, number, number];
+  media_rugosidad: number;
+  /** Color y rugosidad calibrados (el promedio que debe dar la textura). */
+  color: string;
+  rugosidad: number;
+}
+
+export function marcaTextura(t: EnvTexture, color: string, rugosidad: number): MarcaTextura {
+  return {
+    nombre: t.nombre,
+    mosaico_m: t.tileM,
+    media_rgb: t.meanRgb,
+    media_rugosidad: t.meanRough,
+    color,
+    rugosidad,
+  };
 }
 
 /** Coordenadas de textura en planta (mundo x, z) para un mosaico de `tileM` metros. */
@@ -183,6 +211,7 @@ export function texturedPlanarMaterial(
 ): MeshStandardNodeMaterial {
   // `color` es el color plano que lleva la exportación glTF (R11); el dibujo usa colorNode.
   const m = new MeshStandardNodeMaterial({ metalness: 0, color: opts.color });
+  m.userData.croquisTextura = marcaTextura(t, opts.color, opts.roughness);
   const base = normalizedColor(t, opts.color);
   // La variación de brillo a 23 m sale de la misma textura muestreada a esa escala (una lectura
   // más), no de ruido de gradiente por pixel: el pasto llena la pantalla y en la GPU integrada

@@ -70,6 +70,8 @@ export interface TreeImpostor {
   copaDesde: number;
   frente: { diff: Texture; nor: Texture };
   planta: { diff: Texture; nor: Texture };
+  /** Los archivos de cada tarjeta (para rearmarlas fuera del navegador, R11). */
+  archivos: Record<"frente_diff" | "frente_nor" | "planta_diff" | "planta_nor", string>;
   autores: string;
   url: string;
 }
@@ -121,6 +123,12 @@ export async function loadTreeImpostors(
         copaDesde: Math.min(0.6, Math.max(0.05, e.medidas.copa_desde_m / e.medidas.alto_m)),
         frente: { diff: fd, nor: fn },
         planta: { diff: pd, nor: pn },
+        archivos: {
+          frente_diff: e.archivos.frente_diff!.archivo,
+          frente_nor: e.archivos.frente_nor!.archivo,
+          planta_diff: e.archivos.planta_diff!.archivo,
+          planta_nor: e.archivos.planta_nor!.archivo,
+        },
         autores: e.modelo.autores,
         url: e.modelo.url,
       };
@@ -181,7 +189,13 @@ export interface TreeInstance {
 /** Material de tarjeta: color y alfa horneados, normal en el espacio de la tarjeta y vaivén. */
 function cardMaterial(
   maps: { diff: Texture; nor: Texture },
-  opts: { night: boolean; sway: boolean; tint?: string },
+  opts: {
+    night: boolean;
+    sway: boolean;
+    tint?: string;
+    /** Los archivos de la tarjeta, para Blender (R11). */
+    archivos?: { diff: string; nor: string; especie: string; tarjeta: "frente" | "planta" };
+  },
 ): MeshStandardNodeMaterial {
   const m = new MeshStandardNodeMaterial({
     side: DoubleSide,
@@ -189,6 +203,10 @@ function cardMaterial(
     roughness: 0.92,
     metalness: 0,
   });
+  // El glTF no lleva los nodos: la tarjeta viaja como dato y Blender la rearma (R11).
+  if (opts.archivos) {
+    m.userData.croquisArbol = { ...opts.archivos, tinte: opts.tint ?? null, noche: opts.night };
+  }
   const diff = texture(maps.diff, uv());
   let rgb = diff.rgb;
   // Tono de la especie (la jacaranda, lila) sobre el follaje horneado.
@@ -229,14 +247,34 @@ export function buildTreeImpostors(
   const tint = tree.especie === "jacaranda" ? "#9b7fd4" : undefined;
   const vertical = new InstancedMesh(
     crossedCards(tree.aspecto),
-    cardMaterial(tree.frente, { night: opts.night, sway: true, tint }),
+    cardMaterial(tree.frente, {
+      night: opts.night,
+      sway: true,
+      tint,
+      archivos: {
+        diff: tree.archivos.frente_diff,
+        nor: tree.archivos.frente_nor,
+        especie: tree.especie,
+        tarjeta: "frente",
+      },
+    }),
     instances.length,
   );
   vertical.name = "tarjetas";
   const copaY = (tree.copaDesde + 1) / 2;
   const horizontal = new InstancedMesh(
     crownCard(tree.aspecto, copaY),
-    cardMaterial(tree.planta, { night: opts.night, sway: false, tint }),
+    cardMaterial(tree.planta, {
+      night: opts.night,
+      sway: false,
+      tint,
+      archivos: {
+        diff: tree.archivos.planta_diff,
+        nor: tree.archivos.planta_nor,
+        especie: tree.especie,
+        tarjeta: "planta",
+      },
+    }),
     instances.length,
   );
   horizontal.name = "copas";

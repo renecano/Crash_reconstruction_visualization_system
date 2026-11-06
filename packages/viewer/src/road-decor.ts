@@ -51,7 +51,12 @@ const SHOULDER_TEMPLATES = new Set(["carretera_dos_carriles", "autopista"]);
 function pushQuad(m: Mesh2D, a: Vec2, b: Vec2, c: Vec2, d: Vec2): void {
   const base = m.positions.length / 2;
   m.positions.push(a.x, a.y, b.x, b.y, c.x, c.y, d.x, d.y);
-  m.indices.push(base, base + 1, base + 2, base, base + 2, base + 3);
+  // Siempre en sentido antihorario en planta, que en three es la cara de arriba (como la calzada).
+  // La franja del lado derecho salía al revés: el material de una cara la descartaba en el visor y
+  // Blender la dibujaba negra (R11, AXA, 2026-11-05).
+  const ccw = (b.x - a.x) * (c.y - a.y) - (b.y - a.y) * (c.x - a.x) >= 0;
+  if (ccw) m.indices.push(base, base + 1, base + 2, base, base + 2, base + 3);
+  else m.indices.push(base, base + 2, base + 1, base, base + 3, base + 2);
 }
 
 /** Franja paralela a la polilínea `pts`, entre los desplazamientos laterales `from` y `to`. */
