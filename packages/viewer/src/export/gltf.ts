@@ -110,6 +110,32 @@ export function sinAtributosPorInstancia(geo: BufferGeometry): BufferGeometry | 
   return copia;
 }
 
+/**
+ * Una `InstancedMesh` quieta cuyas instancias traen datos para Blender (`croquisPorInstancia`:
+ * medidas, color y banderas de cada edificio, color de cada toldo) como un grupo de mallas, una por
+ * instancia, con sus datos en los `extras` del nodo: glTF no tiene atributos por instancia que
+ * Blender lea (R11, fachadas de T1.3b). Null si no trae datos o no coinciden con las instancias.
+ */
+export function expandirConDatos(inst: InstancedMesh): Group | null {
+  const datos = inst.userData.croquisPorInstancia as unknown;
+  if (!Array.isArray(datos) || datos.length < inst.count || inst.count === 0) return null;
+  const group = new Group();
+  group.name = inst.name;
+  group.position.copy(inst.position);
+  group.quaternion.copy(inst.quaternion);
+  group.scale.copy(inst.scale);
+  const m4 = new Matrix4();
+  for (let i = 0; i < inst.count; i++) {
+    const mesh = new Mesh(inst.geometry, inst.material);
+    mesh.name = `${inst.name}_${i}`;
+    inst.getMatrixAt(i, m4);
+    m4.decompose(mesh.position, mesh.quaternion, mesh.scale);
+    mesh.userData = { ...(datos[i] as Record<string, unknown>) };
+    group.add(mesh);
+  }
+  return group;
+}
+
 /** El ambiente del visor en la forma que viaja en el glTF. */
 export function ambienteDe(env: EnvironmentSettings): GltfAmbiente {
   return {
@@ -550,6 +576,19 @@ export async function exportSceneGlb(
     tracks.push(...e.tracks);
     averaged.push(...e.materials);
   });
+  // Las instancias quietas con datos para Blender (fachadas, toldos, letreros) pasan a nodos.
+  const conDatos: InstancedMesh[] = [];
+  copy.traverse((o) => {
+    const inst = o as InstancedMesh;
+    if (inst.isInstancedMesh && inst.visible && inst.userData.croquisPorInstancia)
+      conDatos.push(inst);
+  });
+  for (const inst of conDatos) {
+    const g = inst.parent ? expandirConDatos(inst) : null;
+    if (!g) continue;
+    inst.parent!.add(g);
+    inst.visible = false;
+  }
   const { cams, tracks: camTracks } = cameraTracks(opts.cameras ?? [], times, rel);
   tracks.push(...camTracks);
   const clip = new AnimationClip("reconstruccion", video[video.length - 1] ?? 0, tracks);

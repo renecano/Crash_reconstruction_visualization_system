@@ -237,6 +237,10 @@ def texto_leyenda(gltf: dict[str, Any]) -> str:
         texto = " · ".join(str(x) for x in lineas)
     else:
         texto = str(gltf.get("asset", {}).get("copyright") or LEYENDA_POR_OMISION)
+    # La semilla no va en el video (René, 2026-11-05): queda en el glTF, el dictamen y la
+    # trazabilidad.
+    texto = " · ".join(p for p in texto.split(" · ") if not re.match(r"semilla\b", p.strip()))
+    texto = texto or LEYENDA_POR_OMISION
     creditos = extras.get("creditos_modelos")
     if isinstance(creditos, list) and creditos:
         modelos = "; ".join(
@@ -554,11 +558,227 @@ def entorno_de_t1() -> list[str]:  # pragma: no cover - en Blender
         bsdf.inputs["Alpha"].default_value = 1.0
         nt.links.new(recorte.outputs["Shader"], salida.inputs["Surface"])
 
+    texturas_fachada: dict[str, Any] = {}
+
+    def textura_de(nombre: str) -> Any:
+        """La imagen de color de una textura del manifiesto (yeso, tabique, lámina)."""
+        nonlocal manifiesto
+        if nombre not in texturas_fachada:
+            if manifiesto is None:
+                ruta_m = archivo_publico(origen, "texturas", "texturas.json")
+                if ruta_m.startswith("http"):
+                    with urllib.request.urlopen(ruta_m, timeout=60) as r:
+                        manifiesto = json.loads(r.read().decode("utf-8"))
+                else:
+                    manifiesto = json.loads(Path(ruta_m).read_text(encoding="utf-8"))
+            arch = archivos_de_textura(manifiesto, nombre)
+            texturas_fachada[nombre] = imagen(
+                archivo_publico(origen, "texturas", arch["diff"]), True
+            )
+        return texturas_fachada[nombre]
+
+    def fachada(nt: Any, bsdf: Any, noche: bool) -> None:
+        """La fachada de `facades.ts` con la misma cuenta: aplanado teñido o tabique, ventanas con
+        herrería y marco, zócalo, cornisa con su sombra y cortina metálica en la planta baja que
+        da a la calle. Cada edificio es su propio objeto con sus medidas, su color y sus banderas
+        (propiedades `croquis_*` que llegan de los extras del nodo)."""
+        coords = nt.nodes.new("ShaderNodeTexCoord")
+        pos = nt.nodes.new("ShaderNodeSeparateXYZ")
+        nor = nt.nodes.new("ShaderNodeSeparateXYZ")
+        nt.links.new(coords.outputs["Object"], pos.inputs[0])
+        nt.links.new(coords.outputs["Normal"], nor.inputs[0])
+
+        def propiedad(nombre: str) -> Any:
+            a = nt.nodes.new("ShaderNodeAttribute")
+            a.attribute_type = "OBJECT"
+            a.attribute_name = nombre
+            return a.outputs["Vector"]
+
+        def partes(v: Any) -> tuple[Any, Any, Any]:
+            n = nt.nodes.new("ShaderNodeSeparateXYZ")
+            nt.links.new(v, n.inputs[0])
+            return n.outputs["X"], n.outputs["Y"], n.outputs["Z"]
+
+        o = operacion
+        # Los ejes de three: x = X, y = Z, z = −Y de Blender (el importador gira Y arriba a Z).
+        px3, py3 = pos.outputs["X"], pos.outputs["Z"]
+        pz3 = o(nt, "MULTIPLY", pos.outputs["Y"], -1.0)
+        nx3, ny3 = nor.outputs["X"], nor.outputs["Z"]
+        nz3 = o(nt, "MULTIPLY", nor.outputs["Y"], -1.0)
+        dx, dy, dz = partes(propiedad("croquis_dims"))
+        tinte = propiedad("croquis_tinte")
+        # Las banderas son 4: lado del frente, tabique, cortina, ventanas encendidas. Un vector de
+        # Blender lleva 3; la cuarta va en el alfa del atributo.
+        banderas = nt.nodes.new("ShaderNodeAttribute")
+        banderas.attribute_type = "OBJECT"
+        banderas.attribute_name = "croquis_banderas"
+        fx, fy, fz = partes(banderas.outputs["Vector"])
+        fw = banderas.outputs["Alpha"]
+
+        def mezcla(f: Any, a: Any, b: Any) -> Any:
+            """a + f·(b − a) entre números."""
+            return o(nt, "ADD", a, o(nt, "MULTIPLY", f, o(nt, "SUBTRACT", b, a)))
+
+        def paso(borde: Any, x: Any) -> Any:
+            """step(borde, x) de GLSL: 1 si x ≥ borde."""
+            return o(nt, "SUBTRACT", 1.0, o(nt, "LESS_THAN", x, borde))
+
+        def suave(e0: Any, e1: Any, x: Any) -> Any:
+            """smoothstep(e0, e1, x) de GLSL, también con e0 > e1."""
+            t = o(nt, "DIVIDE", o(nt, "SUBTRACT", x, e0), o(nt, "SUBTRACT", e1, e0))
+            t = o(nt, "MINIMUM", o(nt, "MAXIMUM", t, 0.0), 1.0)
+            return o(
+                nt,
+                "MULTIPLY",
+                o(nt, "MULTIPLY", t, t),
+                o(nt, "SUBTRACT", 3.0, o(nt, "MULTIPLY", t, 2.0)),
+            )
+
+        def por(*fs: Any) -> Any:
+            r = fs[0]
+            for f in fs[1:]:
+                r = o(nt, "MULTIPLY", r, f)
+            return r
+
+        def color_mezcla(f: Any, a: Any, b: Any) -> Any:
+            m = nt.nodes.new("ShaderNodeMix")
+            m.data_type = "RGBA"
+            for entrada, v in (("Factor", f), ("A", a), ("B", b)):
+                if isinstance(v, (int, float)):
+                    m.inputs[entrada].default_value = float(v)
+                elif isinstance(v, tuple):
+                    m.inputs[entrada].default_value = (*v, 1.0)
+                else:
+                    nt.links.new(v, m.inputs[entrada])
+            return m.outputs["Result"]
+
+        def color_por(v: Any, k: Any, suma: float = 0.0) -> Any:
+            """v·k + suma, con k número o salida."""
+            m = nt.nodes.new("ShaderNodeVectorMath")
+            m.operation = "MULTIPLY_ADD"
+            nt.links.new(v, m.inputs[0])
+            if isinstance(k, (int, float)):
+                m.inputs[1].default_value = (float(k),) * 3
+            else:
+                nt.links.new(k, m.inputs[1])
+            m.inputs[2].default_value = (suma,) * 3
+            return m.outputs["Vector"]
+
+        def muestra(nombre: str, mosaico: float, u: Any, v: Any) -> Any:
+            c = nt.nodes.new("ShaderNodeCombineXYZ")
+            nt.links.new(o(nt, "DIVIDE", u, mosaico), c.inputs["X"])
+            nt.links.new(o(nt, "DIVIDE", v, mosaico), c.inputs["Y"])
+            t = nt.nodes.new("ShaderNodeTexImage")
+            t.image = textura_de(nombre)
+            t.extension = "REPEAT"
+            nt.links.new(c.outputs[0], t.inputs["Vector"])
+            return t.outputs["Color"]
+
+        lado_x = o(nt, "GREATER_THAN", o(nt, "ABSOLUTE", nx3), 0.5)
+        along = mezcla(lado_x, o(nt, "MULTIPLY", px3, dx), o(nt, "MULTIPLY", pz3, dz))
+        up = o(nt, "MULTIPLY", py3, dy)
+        pared_k = o(nt, "LESS_THAN", o(nt, "ABSOLUTE", ny3), 0.5)
+        frente = por(
+            o(nt, "GREATER_THAN", o(nt, "ABSOLUTE", nz3), 0.5),
+            o(nt, "COMPARE", o(nt, "SIGN", nz3), fx, 0.5),
+        )
+        yeso_t = muestra("yeso", 2.0, along, up)
+        yeso = color_mezcla(0.7, tinte, color_por(color_por(yeso_t, tinte), 2.1))
+        tabique = color_por(muestra("tabique", 2.0, along, up), 1.25)
+        pared = color_mezcla(fy, yeso, tabique)
+        wx = o(nt, "FRACT", o(nt, "ADD", o(nt, "DIVIDE", along, 3.0), 0.5))
+        wy = o(nt, "FRACT", o(nt, "DIVIDE", up, 3.2))
+        bajo_pretil = o(nt, "LESS_THAN", up, o(nt, "SUBTRACT", dy, 0.6))
+        en_ventana = por(
+            paso(0.33, wx), paso(wx, 0.67), paso(0.36, wy), paso(wy, 0.7), bajo_pretil, pared_k
+        )
+        lx = o(nt, "DIVIDE", o(nt, "SUBTRACT", wx, 0.33), 0.34)
+        ly = o(nt, "DIVIDE", o(nt, "SUBTRACT", wy, 0.36), 0.34)
+        barrotes = o(
+            nt,
+            "MAXIMUM",
+            paso(0.88, o(nt, "FRACT", o(nt, "MULTIPLY", lx, 4.0))),
+            paso(0.9, o(nt, "FRACT", o(nt, "MULTIPLY", ly, 2.0))),
+        )
+        vidrio = color_mezcla(barrotes, color_hex("#283240"), color_hex("#1a1a1a"))
+        sx = o(nt, "FRACT", o(nt, "DIVIDE", along, 8.0))
+        cortina = por(paso(0.12, sx), paso(sx, 0.52), paso(up, 2.6), frente, fz)
+        lamina = color_por(muestra("lamina", 2.7, along, up), 0.8)
+        sin_cortina = o(nt, "SUBTRACT", 1.0, cortina)
+        ventana = o(nt, "MULTIPLY", en_ventana, sin_cortina)
+        zocalo = o(nt, "MULTIPLY", suave(1.2, 0.8, up), pared_k)
+        cornisa = o(
+            nt,
+            "MULTIPLY",
+            suave(o(nt, "SUBTRACT", dy, 0.3), o(nt, "SUBTRACT", dy, 0.2), up),
+            pared_k,
+        )
+        sombra = por(
+            suave(o(nt, "SUBTRACT", dy, 0.3), o(nt, "SUBTRACT", dy, 0.45), up),
+            suave(o(nt, "SUBTRACT", dy, 0.7), o(nt, "SUBTRACT", dy, 0.5), up),
+            pared_k,
+        )
+        en_marco = por(
+            paso(0.29, wx), paso(wx, 0.71), paso(0.32, wy), paso(wy, 0.74), bajo_pretil, pared_k
+        )
+        marco = por(en_marco, o(nt, "SUBTRACT", 1.0, en_ventana), sin_cortina)
+        f = color_mezcla(zocalo, pared, color_por(pared, 0.74))
+        f = color_mezcla(sombra, f, color_por(f, 0.82))
+        f = color_mezcla(cornisa, f, color_por(f, 0.35, 0.6))
+        f = color_mezcla(marco, f, color_por(f, 0.3, 0.62))
+        f = color_mezcla(cortina, f, lamina)
+        nt.links.new(color_mezcla(ventana, f, vidrio), bsdf.inputs["Base Color"])
+        nt.links.new(mezcla(ventana, 0.92, 0.35), bsdf.inputs["Roughness"])
+        bsdf.inputs["Metallic"].default_value = 0.0
+        if noche:
+            # Ventanas encendidas en casi la mitad de los edificios, como el visor.
+            luz = por(ventana, fw, o(nt, "SUBTRACT", 1.0, barrotes))
+            bsdf.inputs["Emission Color"].default_value = (1.0, 0.82, 0.5, 1.0)
+            nt.links.new(o(nt, "MULTIPLY", luz, 2.2), bsdf.inputs["Emission Strength"])
+
+    def rotulo(nt: Any, bsdf: Any, tipo: str, noche: bool) -> None:
+        """Toldos con rayas y letreros con su franja blanca (sin texto ni marca), del color de cada
+        uno (`croquis_color` del objeto)."""
+        a = nt.nodes.new("ShaderNodeAttribute")
+        a.attribute_type = "OBJECT"
+        a.attribute_name = "croquis_color"
+        u, v, _ = uv_del_visor(nt)
+        o = operacion
+        if tipo == "letrero":
+            franja = o(
+                nt,
+                "MULTIPLY",
+                o(nt, "SUBTRACT", 1.0, o(nt, "LESS_THAN", v, 0.32)),
+                o(nt, "SUBTRACT", 1.0, o(nt, "LESS_THAN", 0.68, v)),
+            )
+        else:
+            franja = o(
+                nt,
+                "SUBTRACT",
+                1.0,
+                o(nt, "LESS_THAN", o(nt, "FRACT", o(nt, "MULTIPLY", u, 6.0)), 0.5),
+            )
+        m = nt.nodes.new("ShaderNodeMix")
+        m.data_type = "RGBA"
+        nt.links.new(franja, m.inputs["Factor"])
+        nt.links.new(a.outputs["Vector"], m.inputs["A"])
+        m.inputs["B"].default_value = (0.95, 0.95, 0.93, 1.0)
+        nt.links.new(m.outputs["Result"], bsdf.inputs["Base Color"])
+        bsdf.inputs["Roughness"].default_value = 0.8
+        if noche and tipo == "letrero":
+            # La mitad de los letreros, encendidos: al azar por objeto, como el visor por instancia.
+            info = nt.nodes.new("ShaderNodeObjectInfo")
+            nt.links.new(m.outputs["Result"], bsdf.inputs["Emission Color"])
+            encendido = o(nt, "LESS_THAN", info.outputs["Random"], 0.5)
+            nt.links.new(o(nt, "MULTIPLY", encendido, 0.9), bsdf.inputs["Emission Strength"])
+
     for mat in bpy.data.materials:
         tex = mat.get("croquisTextura")
         arbol = mat.get("croquisArbol")
         pasto = mat.get("croquisPasto")
-        if not tex and not arbol and not pasto:
+        edificio = mat.get("croquisFachada")
+        letrero = mat.get("croquisRotulo")
+        if not tex and not arbol and not pasto and not edificio and not letrero:
             continue
         if hasattr(mat, "surface_render_method") and (arbol or pasto):
             mat.surface_render_method = "DITHERED"  # EEVEE: recorte por alfa, como el visor
@@ -566,6 +786,14 @@ def entorno_de_t1() -> list[str]:  # pragma: no cover - en Blender
         nt = mat.node_tree
         bsdf = next((n for n in nt.nodes if n.type == "BSDF_PRINCIPLED"), None)
         if bsdf is None:
+            continue
+        if edificio is not None:
+            fachada(nt, bsdf, bool(edificio.get("noche")))
+            hechos.append("fachadas")
+            continue
+        if letrero is not None:
+            rotulo(nt, bsdf, str(letrero.get("tipo")), bool(letrero.get("noche")))
+            hechos.append(f"{letrero.get('tipo')}s")
             continue
         if tex:
             if manifiesto is None:

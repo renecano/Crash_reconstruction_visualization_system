@@ -121,6 +121,9 @@ export function buildBuildings(
   const tabiqueNode = texture(neutral());
   const laminaNode = texture(neutral());
   const m = new MeshStandardNodeMaterial({ roughness: 0.92, metalness: 0 });
+  // El glTF no lleva los nodos: la fachada viaja como dato y Blender la rearma (R11). Cada edificio
+  // sale como su propio nodo con sus medidas, su color y sus banderas (`croquisPorInstancia`).
+  m.userData.croquisFachada = { noche: night };
   const d = instancedBufferAttribute<"vec3">(dims, "vec3");
   const base = instancedBufferAttribute<"vec3">(tintAttr, "vec3");
   const f = instancedBufferAttribute<"vec4">(flagsAttr, "vec4");
@@ -191,6 +194,11 @@ export function buildBuildings(
   }
   const mesh = new InstancedMesh(geo, m, n);
   mesh.name = "edificios";
+  mesh.userData.croquisPorInstancia = buildings.map((_, i) => ({
+    croquis_dims: Array.from(dimsArr.subarray(3 * i, 3 * i + 3)),
+    croquis_tinte: Array.from(tint.subarray(3 * i, 3 * i + 3)),
+    croquis_banderas: Array.from(flags.subarray(4 * i, 4 * i + 4)),
+  }));
   const m4 = new Matrix4();
   const q = new Quaternion();
   const upAxis = new Vector3(0, 1, 0);
@@ -341,6 +349,8 @@ function props(
     const g2 = geo.clone();
     g2.setAttribute("_col", attr);
     const mat = new MeshStandardNodeMaterial({ roughness: 0.8, metalness: 0 });
+    // Para Blender (R11): el tipo en el material y el color de cada uno en su nodo.
+    mat.userData.croquisRotulo = { tipo: band ? "letrero" : "toldo", noche: night };
     const c = instancedBufferAttribute<"vec3">(attr, "vec3");
     if (band) {
       // Letrero: fondo de color con una franja blanca (sin texto ni marca).
@@ -357,6 +367,7 @@ function props(
     }
     const im = new InstancedMesh(g2, mat, list.length);
     im.name = name;
+    im.userData.croquisPorInstancia = list.map((e) => ({ croquis_color: [e.c.r, e.c.g, e.c.b] }));
     list.forEach((e, k) => im.setMatrixAt(k, e.m));
     im.instanceMatrix.needsUpdate = true;
     im.castShadow = true;

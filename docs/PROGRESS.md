@@ -2156,7 +2156,16 @@ Rama `feat/r11-render-retomable`. El colaborador cerró la corrida del 2026-11-0
   - Visor: unitarias nuevas de la exportación sin marcadores, de las matas de pasto y de las franjas de grava hacia arriba (esta última falla con el código anterior). 49 archivos, 395 pruebas en verde.
   - Blender: `pytest tools/blender/tests`, 22 pruebas en verde, entre ellas la leyenda partida en renglones.
 
+- **Fachadas y leyenda (René, 2026-11-05, noche):**
+  - **Fachadas:** la carambola salía con los edificios como cajas blancas. Ahora cada edificio viaja con sus medidas, su color y sus banderas, y Blender rearma la fachada del visor. Lleva aplanado teñido o tabique, ventanas con herrería y marco, zócalo, cornisa, cortina metálica y, de noche, ventanas encendidas. Toldos y letreros llevan su color.
+  - **Leyenda:** ya no dice «semilla …»; la semilla sigue en el dictamen y en la trazabilidad.
+  - **Evidencia:** `docs/cesvi/r11/blender-t1/carambola-cuadro-135.png` y `carambola-fachadas-1080p.png`.
+  - **Pruebas:** unitarias de la exportación de instancias con datos y de la leyenda sin semilla. Las dos escenas se exportaron de nuevo y se renderizaron en Blender sin errores.
+  - **Sin repetir:** las corridas de `-Prueba` de esta tarde, porque el botón no cambió y el script de Blender se probó directo con `--cuadros`.
+
 #### Resumen para René (R11 retomable)
+
+- **Ya puede correrlo, con las fachadas (2026-11-05, noche):** el colaborador hace `git pull` y doble clic. Las escenas ya llevan las fachadas de T1 y la leyenda sin semilla.
 
 - **El colaborador ya puede correrlo:** `git pull` y doble clic en `EJECUTAR-EN-COMPUTADORA-DEMO.bat`, como antes.
   - La ventana dice en qué cuadro va y cuánto falta.
