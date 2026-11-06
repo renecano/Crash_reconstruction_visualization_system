@@ -75,12 +75,14 @@ import { BarraRecorrido, PASOS } from "../recorrido/barra";
 import { TransicionActo } from "../recorrido/transicion-acto";
 import { MaquetaCaso } from "../escena/maqueta-caso";
 import { EscenaFacil, ResumenDeLaEscena } from "../escena/escena-facil";
+import { PresentarCaso } from "./presentar-caso";
 import { ActoDanos } from "./analisis-laboratorio";
 import { ActoContraste } from "./contraste-laboratorio";
 import { HechoLaboratorio } from "./hecho-laboratorio";
 import { CifraReconstruccion, DetalleReconstruccion } from "./hoja-reconstruccion";
 import { protagonista } from "@/lib/reconstruccion-lab";
-import { cifraContraste } from "@/lib/contraste-lab";
+import { tomarArchivo } from "@/lib/archivo-pendiente";
+import { cifraContraste, conteoCriterios, criteriosContraste } from "@/lib/contraste-lab";
 import { textoDano, tituloDelHecho } from "@/lib/hecho-laboratorio";
 import { nombreVehiculo } from "@/lib/escena-facil";
 import { PasoCaso, PasoHecho, PasoNumeros, claveItem, type ItemLugar } from "./pasos";
@@ -1114,6 +1116,8 @@ export function RecorridoCaso({
   })();
 
   const verMapa = vista === "mapa" || !r;
+  // Presentar a pantalla completa necesita la reconstrucción; sin ella, se consulta el recorrido.
+  const presentando = modo === "presentar" && r !== null && !rec.vieja;
   // La reconstrucción (el pico, Laboratorio §8): la escena a sangre y la hoja encima.
   const pico = actual === 3 && !expandido;
   // Los daños y Contra CESVI ocupan todo el ancho, sin mapa (Laboratorio §8).
@@ -1154,6 +1158,20 @@ export function RecorridoCaso({
       ? actoSiguiente.nombre
       : siguienteNombre;
   const textoSiguiente = nombreSiguiente ? continuarA(nombreSiguiente) : "";
+  // Un .croquis abierto o soltado en la lista de casos.
+  const abrirArchivoRef = useRef(abrirArchivo);
+  useEffect(() => {
+    abrirArchivoRef.current = abrirArchivo;
+  });
+  useEffect(() => {
+    // Se toma dentro del cuadro: en modo estricto el efecto corre dos veces y el primero se cancela.
+    const id = requestAnimationFrame(() => {
+      const f = tomarArchivo("caso");
+      if (f) void abrirArchivoRef.current(f);
+    });
+    return () => cancelAnimationFrame(id);
+  }, []);
+
   // Rutas por acto (prompt §4): se abre en el acto de la ruta si ya se puede, y la ruta sigue al acto
   // sin recargar (el estado del recorrido vive aquí).
   const actoDeRutaVisto = useRef(false);
@@ -1191,6 +1209,31 @@ export function RecorridoCaso({
           onFin={terminarTransicion}
         />
       ) : null}
+      {presentando && r ? (
+        <PresentarCaso
+          r={r}
+          calles={calles}
+          clave={
+            inicial.ejemplo
+              ? `${inicial.ejemplo.aseguradora} ${inicial.ejemplo.id} · km ${inicial.ejemplo.lugar.kilometro.replace(/^km\s*/i, "")}`
+              : titulo
+          }
+          tema={tema}
+          lugar={[lugar?.municipio?.valor, lugar?.estado?.valor].filter(Boolean).join(", ")}
+          modalidad={
+            comparacionReporte?.modalidad.cesvi
+              ? (MODALIDAD[comparacionReporte.modalidad.cesvi] ??
+                comparacionReporte.modalidad.cesvi)
+              : null
+          }
+          contra={comparacionReporte ? cifraContraste(comparacionReporte) : null}
+          conteo={
+            comparacionReporte ? conteoCriterios(criteriosContraste(comparacionReporte)) : null
+          }
+          nombreDe={nombreLab}
+          onSalir={() => setModo("trabajar")}
+        />
+      ) : null}
       <BarraRecorrido
         pasos={pasos}
         actos={actos}
@@ -1207,7 +1250,7 @@ export function RecorridoCaso({
         completo={Boolean(expediente && validacionVigente(validacion, expediente, narracion))}
         onExportar={() => {
           if (!abierto(pasos.length - 1)) return;
-          setModo("presentar");
+          setModo("trabajar");
           irA(pasos.length - 1);
         }}
       />
@@ -1377,7 +1420,7 @@ export function RecorridoCaso({
             >
               <Visor3dCaso
                 r={r}
-                activo={vista === "3d"}
+                activo={vista === "3d" && !presentando}
                 camaraPedida={camaraPedida}
                 aSangre={pico}
                 contraCesvi={contraCesvi}

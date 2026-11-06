@@ -6,8 +6,9 @@
  * «Caso nuevo» para colocar a los vehículos y reconstruir, con lo que concluyó CESVI al lado.
  */
 import { type Conclusiones, resumenTexto, type DictamenImportado } from "@croquis/cesvi";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import ejemplo from "../../../../../data/cesvi/grabaciones/importar/ejemplo.json";
+import { tomarArchivo } from "@/lib/archivo-pendiente";
 import { leerReporte, MIN_REPORTE } from "@/lib/lectura-reporte";
 import { MODALIDAD } from "@/lib/nombres-cesvi";
 import { textoDeArchivo, type TextoDictamen } from "@/lib/texto-dictamen";
@@ -100,6 +101,20 @@ export function CargaReporte({
       setEstado("No se pudo leer el archivo.");
     }
   };
+
+  // Un reporte soltado en la lista de casos.
+  const elegirRef = useRef(elegir);
+  useEffect(() => {
+    elegirRef.current = elegir;
+  });
+  useEffect(() => {
+    // Se toma dentro del cuadro: en modo estricto el efecto corre dos veces y el primero se cancela.
+    const id = requestAnimationFrame(() => {
+      const f = tomarArchivo("reporte");
+      if (f) void elegirRef.current(f);
+    });
+    return () => cancelAnimationFrame(id);
+  }, []);
 
   const leer = async () => {
     if (!texto) return;

@@ -322,8 +322,10 @@ test("@flujo /cesvi: un caso nuevo desde la lista, de la narración al dictamen"
 
   // El archivo del caso, abierto en otra visita: regresan la narración, las posiciones y la
   // validación.
-  await page.goto("/cesvi/casos/nuevo");
-  await page.getByTestId("abrir-caso").setInputFiles(rutaCaso);
+  // Desde la lista de casos, como lo haría el perito.
+  await page.goto("/cesvi");
+  await page.getByTestId("abrir-caso-casos").setInputFiles(rutaCaso);
+  await expect(page).toHaveURL(/\/cesvi\/casos\/nuevo/, { timeout: 30_000 });
   await expect(page.getByTestId("caso-abierto")).toContainText("Validó Perito de prueba");
   await irAPaso(page, 2);
   // El hecho, ya leído: el relato marcado (Laboratorio §8).

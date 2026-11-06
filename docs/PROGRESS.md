@@ -1885,6 +1885,33 @@ Rama `fix/fotos-dictamen`. René mandó la captura del dictamen de un caso nuevo
 - **Qué hay ahora:** fotos con la cinematográfica, del instante pedido, sin marcadores; vehículos apoyados en banquetas y relieve; y si el 3D se queda abajo de 24 fps durante 5 s, baja un nivel y lo dice `?diag=1`.
 - **Cómo probarlo:** genera el dictamen de un caso nuevo y compara las tres fotos; y en `docs/cesvi/t1/ruedas/` están las capturas de cerca de cada clase. Si en tu caso las llantas siguen fuera de su hueco, dime la clase del vehículo (o manda el `.json` del caso): en las ocho clases que medí quedan bien.
 
+### Laboratorio: Casos y Presentar (René, 2026-11-04; prompt §8)
+
+Rama `feat/laboratorio-casos-presentar`. Con esto están todas las pantallas del prompt.
+
+**Casos**
+
+- La línea de estado dice lo que hay: «7 reportes de CESVI de ejemplo · aún no guardas casos propios en este equipo», o cuántos guardaste.
+- Tres acciones: narrar, cargar un reporte y abrir un `.croquis`. Un archivo se puede soltar en toda la página y llega a su pantalla como si se eligiera ahí.
+- La hoja de expediente del caso de AXA, sobre otra, se levanta al pasar el puntero. Sus cifras (1.2 %, 63.90 contra 63.15 km/h, 2 de 2 zonas) salen de la misma comparación de Contra CESVI, calculada en la página. La e2e de AXA las revisa.
+- El índice de reportes con filtros de conteo real y el estado de cada uno, de su comparación medida: «Reproducido · Δ 1.2 %», «Modalidad coincide» o «Modalidad distinta». «Reproducido» solo sale cuando hay una velocidad que comparar.
+- **Diferencia con el diseño, a propósito:**
+  - El diseño dice «Último reproducido»; aquí dice «Caso reproducido», porque Croquis no registra cuál se reprodujo al último.
+  - El mini croquis es un esquema del tipo de choque, generado de la modalidad y el número de vehículos: los reportes no traen posiciones.
+
+**Presentar**
+
+- Con una reconstrucción vigente, Presentar abre a pantalla completa: la maqueta a sangre con velo a la izquierda y la historia en capítulos de 6 s (La escena, El impacto, Posiciones finales, Contra CESVI si hay reporte).
+- Cada capítulo mueve la maqueta en su tramo: la llegada, el impacto y el reposo. Sus filas salen de la reconstrucción y de la comparación.
+- ← → cambian de capítulo, Espacio pausa, Esc regresa a Trabajar. El aviso «Reconstrucción de apoyo · el dictamen es del perito» está siempre a la vista.
+- Con movimiento reducido no avanza sola: se pasa con las flechas.
+- Sin reconstrucción sigue como antes: se consulta el recorrido sin los controles de edición.
+- **Cambio de comportamiento:** «Exportar» ahora lleva al Dictamen en Trabajar (antes cambiaba a Presentar, que ahora cubriría la pantalla).
+
+**Pruebas:** unitarias de `casos-lab`, `archivo-pendiente` y `presentar-lab`. La e2e de AXA recorre Casos y Presentar; la del caso nuevo abre el `.croquis` desde la lista.
+
+**Medición que no concluyó:** en esta laptop, la e2e del caso nuevo pasó de 47 s a unos 160 s durante la sesión, y el tiempo se va en el primer cuadro del 3D del dictamen (unos 50 s; los dos siguientes, 0.2 s). No es de esta rama: `main` tardó igual en la segunda medición. Una primera muestra rápida de `main` (6 s en el PDF) hizo parecer que sí, y también se descartó que fuera el servidor de desarrollo o el cambio de `activo`. Causa sin determinar: la CPU estaba al 76 % de su reloj máximo, sin carga, lo que apunta al calor, pero no se comprobó.
+
 ### Laboratorio: Análisis, Contra CESVI y Dictamen (René, 2026-11-04; prompt §8)
 
 Rama `feat/laboratorio-actos`. Los tres actos que siguen a la reconstrucción.
