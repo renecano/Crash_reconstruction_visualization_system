@@ -34,6 +34,8 @@
    - **Hojas translúcidas:** en Cycles una tarjeta solo recibe el sol por la cara que lo ve, y la otra salía negra. Las hojas suman un BSDF translúcido al de la superficie y se recortan con un BSDF transparente; así quedan cerca del brillo del suelo, como en el visor.
    - **El HDRI de la luz de ambiente:** nombre, intensidad y giro van en `ambiente`. En Blender ilumina y se refleja, mientras la cámara sigue viendo el cielo físico (`Is Camera Ray`), como en el visor.
 6. **La cinematográfica se exporta con el ajuste sin obstáculos** que usa el visor (#162).
+   - **Fachadas de T1.3b y T1.3c (René, 2026-11-05, noche):** cada edificio sale como su propio nodo con sus medidas, su color y sus banderas en los `extras` (`croquis_dims`, `croquis_tinte`, `croquis_banderas`); los toldos y letreros, con su color. Blender lee esos datos como propiedades del objeto y rearma la fachada con la misma cuenta que el visor: aplanado teñido o tabique, ventanas con herrería y marco, zócalo, cornisa con su sombra, cortina metálica en la planta baja y ventanas encendidas de noche. Las cornisas, los balcones y los tinacos ya eran geometría. Antes salían como cajas blancas.
+   - **La leyenda del video ya no lleva la semilla:** queda en el glTF, en el dictamen y en la trazabilidad.
 7. **Lo que se quedó fuera del video, igual que en las fotos del dictamen (ADR 0106):**
    - Los marcadores de interfaz (`userData.interfaz`: el anillo del impacto, las líneas de visión y los indicadores de contacto) salen de la copia que se exporta, con sus pistas de animación.
    - Los atributos por instancia (tintes y medidas de los edificios, colores de los restos) no viajan como atributos de vértice: el importador de Blender se caía con la carambola.

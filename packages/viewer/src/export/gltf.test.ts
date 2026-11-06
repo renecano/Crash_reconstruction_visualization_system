@@ -9,11 +9,14 @@ import {
   BoxGeometry,
   CompressedTexture,
   InstancedBufferAttribute,
-  MeshStandardMaterial,
-  Texture,
+  InstancedMesh,
+  Matrix4,
   Mesh,
+  MeshStandardMaterial,
   type PerspectiveCamera,
+  Quaternion,
   type SkinnedMesh,
+  Texture,
   Vector3,
 } from "three";
 import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
@@ -30,6 +33,7 @@ import { buildSceneGraph } from "../scene-graph";
 import {
   ambienteDe,
   classicMaterial,
+  expandirConDatos,
   exportSceneGlb,
   sampleTimes,
   sinAtributosPorInstancia,
@@ -137,6 +141,31 @@ describe("exportación glTF", () => {
     // La original (la que dibuja el visor) no cambia.
     expect(geo.getAttribute("_tint")).toBeDefined();
     expect(sinAtributosPorInstancia(new BoxGeometry(1, 1, 1))).toBeNull();
+  });
+
+  it("R11: las instancias quietas con datos salen como nodos con sus extras (fachadas)", () => {
+    const geo = new BoxGeometry(1, 1, 1);
+    const inst = new InstancedMesh(geo, new MeshStandardMaterial(), 2);
+    inst.name = "edificios";
+    inst.setMatrixAt(0, new Matrix4().makeTranslation(3, 0, 0));
+    inst.setMatrixAt(
+      1,
+      new Matrix4().compose(new Vector3(0, 0, -5), new Quaternion(), new Vector3(8, 6, 10)),
+    );
+    inst.userData.croquisPorInstancia = [
+      { croquis_dims: [1, 1, 1], croquis_tinte: [0.5, 0.4, 0.3], croquis_banderas: [1, 0, 1, 0] },
+      { croquis_dims: [8, 6, 10], croquis_tinte: [0.2, 0.3, 0.4], croquis_banderas: [-1, 1, 0, 1] },
+    ];
+    const g = expandirConDatos(inst)!;
+    expect(g.children).toHaveLength(2);
+    const [a, b] = g.children as Mesh[];
+    expect(a!.position.x).toBeCloseTo(3, 6);
+    expect(b!.scale.toArray()).toEqual([8, 6, 10]);
+    expect(b!.userData.croquis_banderas).toEqual([-1, 1, 0, 1]);
+    expect(b!.geometry).toBe(geo);
+    // Sin datos (o con menos que instancias) no se expande.
+    inst.userData.croquisPorInstancia = [{}];
+    expect(expandirConDatos(inst)).toBeNull();
   });
 
   it("la marca de la textura del entorno pasa al material clásico (extras para Blender, R11)", () => {

@@ -121,13 +121,17 @@ def test_lee_el_json_del_glb(tmp_path: Path) -> None:
         cr.leer_glb(malo)
 
 
-def test_la_leyenda_va_en_una_linea_y_nunca_falta() -> None:
-    assert cr.texto_leyenda(GLTF) == (
-        "Reconstrucción ilustrativa generada a partir de un relato. · semilla 7"
-    )
+def test_la_leyenda_va_en_una_linea_sin_la_semilla_y_nunca_falta() -> None:
+    # La semilla queda en el glTF y el dictamen, no en el video (René, 2026-11-05).
+    assert cr.texto_leyenda(GLTF) == "Reconstrucción ilustrativa generada a partir de un relato."
     sin_extras = {**GLTF, "scenes": [{}]}
-    assert cr.texto_leyenda(sin_extras) == "Reconstrucción ilustrativa · semilla 7"
+    assert cr.texto_leyenda(sin_extras) == "Reconstrucción ilustrativa"
     assert cr.texto_leyenda({"asset": {}}) == cr.LEYENDA_POR_OMISION
+    solo_semilla = {"asset": {"copyright": "semilla 3"}}
+    assert cr.texto_leyenda(solo_semilla) == cr.LEYENDA_POR_OMISION
+    # «semillas» u otra palabra que empiece igual no se quita.
+    otra = {"asset": {"copyright": "Reconstrucción · semillas de prueba"}}
+    assert cr.texto_leyenda(otra) == "Reconstrucción · semillas de prueba"
 
 
 def test_la_camara_principal_o_la_pedida() -> None:
