@@ -42,6 +42,7 @@ import {
   casoParaGuardar,
   leerCasoGuardado,
   nombreArchivoCaso,
+  validacionVigente,
   type ReporteCesvi,
   type ValidacionPerito,
 } from "@/lib/caso-guardado";
@@ -63,7 +64,6 @@ import { colorDeVehiculo } from "@/lib/vehiculos-cesvi";
 import { leerTransiciones, useTema, useTransiciones, type Modo } from "@/lib/preferencias-cesvi";
 import ejemplo from "../../../../../../data/cesvi/grabaciones/escenas/cesvi-e814f085db.json";
 import { Calculos, type DistanciaRestos } from "../calculos";
-import { Criterios } from "../correspondencia";
 import { Expediente as ExpedienteCesvi } from "../expediente";
 import { ComparacionDeclaracion } from "../comparacion-declaracion";
 import { DictamenCaso } from "../dictamen-caso";
@@ -75,21 +75,15 @@ import { BarraRecorrido, PASOS } from "../recorrido/barra";
 import { TransicionActo } from "../recorrido/transicion-acto";
 import { MaquetaCaso } from "../escena/maqueta-caso";
 import { EscenaFacil, ResumenDeLaEscena } from "../escena/escena-facil";
+import { ActoDanos } from "./analisis-laboratorio";
+import { ActoContraste } from "./contraste-laboratorio";
 import { HechoLaboratorio } from "./hecho-laboratorio";
 import { CifraReconstruccion, DetalleReconstruccion } from "./hoja-reconstruccion";
 import { protagonista } from "@/lib/reconstruccion-lab";
-import { textoDano } from "@/lib/hecho-laboratorio";
+import { cifraContraste } from "@/lib/contraste-lab";
+import { textoDano, tituloDelHecho } from "@/lib/hecho-laboratorio";
 import { nombreVehiculo } from "@/lib/escena-facil";
-import { Reproduccion } from "../reproduccion";
-import {
-  PasoCaso,
-  PasoContraReporte,
-  PasoDanos,
-  PasoHecho,
-  PasoNumeros,
-  claveItem,
-  type ItemLugar,
-} from "./pasos";
+import { PasoCaso, PasoHecho, PasoNumeros, claveItem, type ItemLugar } from "./pasos";
 import { BitacoraAgentes } from "./bitacora";
 import { MapaEscena, type HerramientaMapa, type HuellaMapa } from "./piezas";
 import {
@@ -270,6 +264,10 @@ export function RecorridoCaso({
   }, [claveActo]);
   const terminarTransicion = useCallback(() => setTransicion(null), []);
   const irA = (i: number) => setPaso(Math.max(0, Math.min(pasos.length - 1, i)));
+  const panelPaso = useRef<HTMLElement>(null);
+  useEffect(() => {
+    panelPaso.current?.scrollTo({ top: 0 });
+  }, [paso]);
   // El Redactor escribe cuando el perito abre el dictamen con una reconstrucción (R12b).
   const enDictamen = actual === PASOS.length - 1;
   useEffect(() => {
@@ -1039,34 +1037,22 @@ export function RecorridoCaso({
       );
     if (actual === 4)
       return (
-        <div className="flex flex-col gap-8">
-          <PasoDanos expediente={expediente} r={r} />
-          {inicial.ejemplo ? (
-            <section className="flex flex-col gap-4" data-testid="criterios-axa">
-              <h3 className="t-subtitulo">Correspondencia de los daños (método de CESVI)</h3>
-              {(["A", "B"] as const).map((l) => (
-                <Criterios
-                  key={l}
-                  letra={l}
-                  valores={criterios[l]}
-                  onCambio={(clave, v) =>
-                    setCriterios((c) => ({ ...c, [l]: { ...c[l], [clave]: v } }))
-                  }
-                />
-              ))}
-            </section>
-          ) : null}
-        </div>
+        <ActoDanos
+          expediente={expediente}
+          r={r}
+          supuestos={supuestos}
+          criterios={inicial.ejemplo ? criterios : null}
+          onCriterio={(l, clave, v) =>
+            setCriterios((c) => ({ ...c, [l]: { ...c[l], [clave]: v } }))
+          }
+          letraDe={letraDe}
+          nombreDe={nombreLab}
+        />
       );
     if (actual === 5)
       return (
         <div className="flex flex-col gap-8">
-          <PasoNumeros
-            r={r}
-            verificacion={verificacion}
-            contraCesvi={contraCesvi}
-            supuestos={supuestos}
-          />
+          <PasoNumeros r={r} verificacion={verificacion} contraCesvi={contraCesvi} />
           {inicial.ejemplo ? (
             <Calculos caso={inicial.ejemplo} distancia={distancia} onDistancia={setDistancia} />
           ) : null}
@@ -1074,75 +1060,64 @@ export function RecorridoCaso({
       );
     if (actual === 6 && reporte && comparacionReporte)
       return (
-        <div className="flex flex-col gap-8">
-          <PasoContraReporte reporte={reporte} comparacion={comparacionReporte} />
-          {inicial.ejemplo ? <Reproduccion caso={inicial.ejemplo} /> : null}
-        </div>
+        <ActoContraste
+          reporte={reporte}
+          comparacion={comparacionReporte}
+          caso={inicial.ejemplo ?? null}
+          r={r}
+          calles={calles}
+          letraDe={letraDe}
+        />
       );
-    return (
-      <div className="flex flex-col gap-5">
-        <h2 className="t-subtitulo">El dictamen</h2>
-        {r ? (
-          <DictamenCaso
-            expediente={expediente}
-            narracion={narracion}
-            reconstruccion={r}
-            verificacion={verificacion}
-            declarada={comparacionDeclarada}
-            exportApi={vista === "3d" ? exportApi : null}
-            mapa={mapa}
-            validacion={validacion}
-            onValidacion={setValidacion}
-            tema={tema}
-            bitacora={pizarra.bitacora}
-            supuestos={supuestos}
-          />
-        ) : (
-          <p className="t-nota">Reconstruye en «La reconstrucción» para armar el dictamen.</p>
-        )}
-        <div className="solo-trabajar flex flex-col gap-3 border-t border-linea-suave pt-4">
-          <h3 className="t-interfaz font-semibold">El caso</h3>
-          <div className="flex flex-wrap gap-2">
-            <button
-              type="button"
-              className="boton-secundario"
-              onClick={guardarEnEquipo}
-              data-testid="guardar-en-equipo"
-            >
-              Guardar en este equipo
-            </button>
-            <button
-              type="button"
-              className="boton-secundario"
-              onClick={() => {
-                const a = archivoCaso();
-                if (!a) return;
-                downloadBytes(
-                  new TextEncoder().encode(
-                    `${JSON.stringify(a, null, 2)}\n`,
-                  ) as Uint8Array<ArrayBuffer>,
-                  nombreArchivoCaso(titulo),
-                  "application/json",
-                );
-              }}
-              data-testid="guardar-caso"
-            >
-              Guardar el caso (.croquis)
-            </button>
-          </div>
-          {avisoGuardado ? (
-            <p role="status" className="t-nota" data-testid="aviso-guardado">
-              {avisoGuardado}
-            </p>
-          ) : null}
-        </div>
-      </div>
+    return r ? (
+      <DictamenCaso
+        expediente={expediente}
+        narracion={narracion}
+        reconstruccion={r}
+        verificacion={verificacion}
+        declarada={comparacionDeclarada}
+        exportApi={vista === "3d" ? exportApi : null}
+        mapa={mapa}
+        validacion={validacion}
+        onValidacion={setValidacion}
+        tema={tema}
+        bitacora={pizarra.bitacora}
+        supuestos={supuestos}
+        titulo={tituloDelHecho(expediente, texto.trim() || null)}
+        relato={texto.trim() || null}
+        casoId={inicial.ejemplo ? `${inicial.ejemplo.aseguradora} ${inicial.ejemplo.id}` : null}
+        lugar={[expediente.caso.lugar?.municipio?.valor, expediente.caso.lugar?.estado?.valor]
+          .filter(Boolean)
+          .join(", ")}
+        calles={calles}
+        contra={comparacionReporte ? cifraContraste(comparacionReporte) : null}
+        letraDe={letraDe}
+        acciones={{
+          guardarAqui: guardarEnEquipo,
+          guardarArchivo: () => {
+            const a = archivoCaso();
+            if (!a) return;
+            downloadBytes(
+              new TextEncoder().encode(
+                `${JSON.stringify(a, null, 2)}\n`,
+              ) as Uint8Array<ArrayBuffer>,
+              nombreArchivoCaso(titulo),
+              "application/json",
+            );
+          },
+          aviso: avisoGuardado,
+        }}
+      />
+    ) : (
+      <p className="t-nota">Reconstruye en «La reconstrucción» para armar el dictamen.</p>
     );
   })();
 
   const verMapa = vista === "mapa" || !r;
   // La reconstrucción (el pico, Laboratorio §8): la escena a sangre y la hoja encima.
   const pico = actual === 3 && !expandido;
+  // Los daños y Contra CESVI ocupan todo el ancho, sin mapa (Laboratorio §8).
+  const hojaAncha = actual === 4 || actual === 6 || actual === 7;
   const vPico = r ? protagonista(r) : null;
   const idPico =
     r && vPico ? Object.entries(r.ids).find(([, id]) => id === vPico.vehiculo)?.[0] : null;
@@ -1229,6 +1204,7 @@ export function RecorridoCaso({
         onModo={setModo}
         tema={tema}
         resumen={titulo}
+        completo={Boolean(expediente && validacionVigente(validacion, expediente, narracion))}
         onExportar={() => {
           if (!abierto(pasos.length - 1)) return;
           setModo("presentar");
@@ -1274,12 +1250,13 @@ export function RecorridoCaso({
         className={`relative flex min-h-0 flex-1 flex-col gap-6 overflow-y-auto lg:flex-row lg:overflow-hidden ${pico ? "lg:justify-end lg:p-4" : "p-4 md:p-7"} ${escenaFacil ? "hidden" : ""}`}
       >
         <main
-          className={`flex min-h-0 min-w-0 flex-col gap-5 lg:overflow-y-auto ${pico ? "escena-hoja z-10 gap-3 p-5 lg:w-[456px] lg:shrink-0 lg:px-7 lg:pt-5 lg:pb-7" : grande ? "lg:w-[440px] lg:shrink-0" : "lg:flex-1"}`}
+          ref={panelPaso}
+          className={`flex min-h-0 min-w-0 flex-col gap-5 lg:overflow-y-auto ${pico ? "escena-hoja z-10 gap-3 p-5 lg:w-[456px] lg:shrink-0 lg:px-7 lg:pt-5 lg:pb-7" : grande ? "lg:w-[440px] lg:shrink-0" : "lg:flex-1"} ${hojaAncha ? "lg:-mx-7 lg:-my-7 lg:px-7 lg:py-7" : ""}`}
           aria-label={pasos[paso]}
           data-testid="panel-paso"
           data-paso={actual + 1}
         >
-          <p className={pico ? "sr-only" : "t-rotulo"} data-testid="rotulo-acto">
+          <p className={pico || hojaAncha ? "sr-only" : "t-rotulo"} data-testid="rotulo-acto">
             Acto {actoIdx + 1} de {actos.length} · {actos[actoIdx]?.nombre}
             {(actos[actoIdx]?.pasos.length ?? 0) > 1
               ? ` · ${(actos[actoIdx]?.pasos.indexOf(paso) ?? 0) + 1} de ${actos[actoIdx]?.pasos.length}: ${pasos[paso]}`
@@ -1363,7 +1340,7 @@ export function RecorridoCaso({
                 // cargarlo al llegar al lugar (MapLibre se ajusta solo al reaparecer).
                 pico
                 ? "relative order-first min-h-[60vh] overflow-hidden lg:absolute lg:inset-0 lg:min-h-0"
-                : `relative min-h-[50vh] overflow-hidden rounded-panel border border-linea-suave ${grande ? "lg:flex-1" : "lg:h-[460px] lg:w-[420px] lg:shrink-0 lg:self-start"} ${actual === 1 ? "hidden" : ""}`
+                : `relative min-h-[50vh] overflow-hidden rounded-panel border border-linea-suave ${grande ? "lg:flex-1" : "lg:h-[460px] lg:w-[420px] lg:shrink-0 lg:self-start"} ${actual === 7 ? "pointer-events-none invisible absolute! h-[460px] w-[640px]" : actual === 1 || hojaAncha ? "hidden" : ""}`
           }
           aria-label="Mapa"
           data-testid="escenario"

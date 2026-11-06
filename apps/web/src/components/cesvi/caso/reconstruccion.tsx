@@ -353,43 +353,6 @@ export function ElegirHipotesis({
   );
 }
 
-/**
- * Los supuestos declarados (ADR 0091): lo que el caso no trae entra como supuesto, con su
- * justificación y su incertidumbre en el rango. No es un dato pendiente: no se pide a nadie.
- */
-export function TablaSupuestos({ supuestos }: { supuestos: readonly SupuestoDeclarado[] }) {
-  if (!supuestos.length) return null;
-  return (
-    <div className="flex flex-col gap-2" data-testid="supuestos">
-      <h3 className="t-interfaz font-semibold">Supuestos declarados</h3>
-      <p className="t-nota">
-        Lo que el caso no trae entra como supuesto, con su justificación y su incertidumbre, que ya
-        está en el rango de las velocidades.
-      </p>
-      <table className="w-full border-collapse text-sm">
-        <thead>
-          <tr className="text-left text-texto-3">
-            <th className="py-2 font-medium">Supuesto</th>
-            <th className="py-2 font-medium">Justificación</th>
-            <th className="py-2 font-medium">Incertidumbre</th>
-          </tr>
-        </thead>
-        <tbody>
-          {supuestos.map((s) => (
-            <tr key={s.clave} className="border-t border-linea-suave" data-clave={s.clave}>
-              <td className="py-2 pr-3">
-                <span className="font-medium">{s.que}:</span> {s.valor}
-              </td>
-              <td className="py-2 pr-3">{s.justificacion}</td>
-              <td className="py-2">{s.incertidumbre}</td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
-    </div>
-  );
-}
-
 /** La verificación con los métodos de CESVI, paso por paso (fórmula, sustitución, resultado). */
 export function PanelVerificacion({ verificacion }: { verificacion: VerificacionVehiculo[] }) {
   return (

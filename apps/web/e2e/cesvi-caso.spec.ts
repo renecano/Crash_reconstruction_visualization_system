@@ -205,14 +205,19 @@ test("@flujo /cesvi: un caso nuevo desde la lista, de la narración al dictamen"
   await page.getByTestId("siguiente").click();
   await expect(page.getByTestId("panel-paso")).toHaveAttribute("data-paso", "8");
   const dictamen = page.getByTestId("dictamen-caso");
-  await expect(page.getByTestId("estado-validacion")).toHaveText(
+  await expect(page.getByTestId("estado-validacion")).toContainText(
     "Sin validar: el dictamen sale como borrador.",
   );
+  await expect(page.getByTestId("marca-borrador")).toBeVisible();
   await page.getByTestId("conclusion-perito").fill("Conclusión de prueba del perito.");
   await page.getByTestId("nombre-perito").fill("Perito de prueba");
   await page.getByTestId("validar-dictamen").click();
   await expect(page.getByTestId("estado-validacion")).toContainText("Validó Perito de prueba");
-  await page.getByTestId("estructura-cesvi").check();
+  // Al firmar cae el sello con la huella y se quita la marca de agua.
+  await expect(page.getByTestId("sello-validado")).toContainText("SHA-256");
+  await expect(page.getByTestId("marca-borrador")).toHaveCount(0);
+  await expect(page.getByTestId("firma-hoja")).toHaveText("Perito de prueba");
+  await page.getByTestId("formato-cesvi").click();
   const pdf = page.waitForEvent("download");
   await dictamen.getByTestId("descargar-dictamen-pdf").click();
   const archivoPdf = await pdf;

@@ -55,7 +55,10 @@ export function EscenaMaqueta({
   detalles = {},
   t = null,
   anchoVia = null,
+  sinEtiquetas = false,
 }: {
+  /** Sin etiquetas ni cota, para un croquis chico. */
+  sinEtiquetas?: boolean;
   /** El ancho de la vía si el caso lo trae medido, con su origen. */
   anchoVia?: { m: number; de: string } | null;
   spec: EscenaSpec;
@@ -163,7 +166,7 @@ export function EscenaMaqueta({
       </g>
 
       {/* La cota del ancho de la vía (la que se dibuja, del mapa). */}
-      {cota ? (
+      {cota && !sinEtiquetas ? (
         <g data-testid="maqueta-cota" stroke="var(--texto-2)" strokeWidth={0.1}>
           <line x1={px(cota.a.x)} y1={py(cota.a.y)} x2={px(cota.b.x)} y2={py(cota.b.y)} />
           <text
@@ -270,27 +273,36 @@ export function EscenaMaqueta({
               ) : null}
             </g>
             {/* La etiqueta con su línea guía. */}
-            <polyline
-              points={`${px(pa.x)},${py(pa.y)} ${lx - fuente * 3},${ly} ${lx - fuente * 0.3},${ly}`}
-              fill="none"
-              stroke="var(--texto-3)"
-              strokeWidth={0.08}
-            />
-            <circle cx={px(pa.x)} cy={py(pa.y)} r={fuente * 0.14} fill="var(--texto)" />
-            <text
-              x={lx}
-              y={ly + fuente * 0.2}
-              fontSize={fuente * 0.66}
-              fontWeight={600}
-              fill="var(--texto)"
-            >
-              {nombres[v.id] ?? v.rol}
-            </text>
-            {detalles[v.id] ? (
-              <text x={lx} y={ly + fuente * 1.05} fontSize={fuente * 0.55} fill="var(--texto-2)">
-                {detalles[v.id]}
-              </text>
-            ) : null}
+            {sinEtiquetas ? null : (
+              <>
+                <polyline
+                  points={`${px(pa.x)},${py(pa.y)} ${lx - fuente * 3},${ly} ${lx - fuente * 0.3},${ly}`}
+                  fill="none"
+                  stroke="var(--texto-3)"
+                  strokeWidth={0.08}
+                />
+                <circle cx={px(pa.x)} cy={py(pa.y)} r={fuente * 0.14} fill="var(--texto)" />
+                <text
+                  x={lx}
+                  y={ly + fuente * 0.2}
+                  fontSize={fuente * 0.66}
+                  fontWeight={600}
+                  fill="var(--texto)"
+                >
+                  {nombres[v.id] ?? v.rol}
+                </text>
+                {detalles[v.id] ? (
+                  <text
+                    x={lx}
+                    y={ly + fuente * 1.05}
+                    fontSize={fuente * 0.55}
+                    fill="var(--texto-2)"
+                  >
+                    {detalles[v.id]}
+                  </text>
+                ) : null}
+              </>
+            )}
             <title>{`${nombres[v.id] ?? v.rol}: ${kmhEn(tr, 0).toFixed(1)} km/h al inicio`}</title>
           </g>
         );
@@ -307,23 +319,27 @@ export function EscenaMaqueta({
             strokeWidth={0.15}
           />
           <circle cx={px(impacto.x)} cy={py(impacto.y)} r={0.45} fill="var(--senal)" />
-          <line
-            x1={px(impacto.x)}
-            y1={py(impacto.y)}
-            x2={xEtiquetas - fuente * 0.3}
-            y2={py(impacto.y)}
-            stroke="var(--senal)"
-            strokeWidth={0.08}
-          />
-          <text
-            x={xEtiquetas}
-            y={py(impacto.y) + fuente * 0.2}
-            fontSize={fuente * 0.6}
-            fontWeight={600}
-            fill="var(--senal)"
-          >
-            Impacto
-          </text>
+          {sinEtiquetas ? null : (
+            <>
+              <line
+                x1={px(impacto.x)}
+                y1={py(impacto.y)}
+                x2={xEtiquetas - fuente * 0.3}
+                y2={py(impacto.y)}
+                stroke="var(--senal)"
+                strokeWidth={0.08}
+              />
+              <text
+                x={xEtiquetas}
+                y={py(impacto.y) + fuente * 0.2}
+                fontSize={fuente * 0.6}
+                fontWeight={600}
+                fill="var(--senal)"
+              >
+                Impacto
+              </text>
+            </>
+          )}
         </g>
       ) : null}
     </svg>

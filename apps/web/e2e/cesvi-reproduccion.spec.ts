@@ -45,6 +45,7 @@ test("@flujo /cesvi/reproduccion: la evidencia, y cada reporte abre su caso en e
   });
   await irAPaso(page, 7);
   await expect(page.getByTestId("eje-modalidad")).toContainText("CESVI");
+  await page.getByTestId("ver-detalle-contra").click();
   await expect(page.getByTestId("conclusiones-cesvi")).toBeVisible();
 
   // Las rutas viejas llevan a las nuevas.

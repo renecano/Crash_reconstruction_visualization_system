@@ -6,32 +6,20 @@
  */
 import {
   conMasa,
-  especReconstruida,
   type ComparacionDictamen,
   type ContraMetodosCesvi,
   type EscenaNarrada,
   type Expediente,
   type PreguntaEscena,
   type Reconstruccion,
-  type SupuestoDeclarado,
   type VerificacionVehiculo,
 } from "@croquis/cesvi";
-import type { EscenaSpec } from "@croquis/scene-schema";
-import { useEffect, useState, type ReactNode } from "react";
-import { filasDano } from "@/lib/danos-caso";
-import { reconstruirEnNavegador } from "@/lib/reconstruct-client";
-import { METODO, textoPosicionesFinales } from "@/lib/textos-caso";
+import { useState, type ReactNode } from "react";
 import type { ReporteCesvi } from "@/lib/caso-guardado";
-import { MODALIDAD } from "@/lib/nombres-cesvi";
 import { colorDeVehiculo } from "@/lib/vehiculos-cesvi";
 import { CARA, Fuente, Pregunta } from "./piezas";
 import { ProbarConductores } from "./conductores";
-import {
-  PanelVerificacion,
-  TablaContraCesvi,
-  TablaSupuestos,
-  TablaVelocidades,
-} from "./reconstruccion";
+import { PanelVerificacion, TablaContraCesvi, TablaVelocidades } from "./reconstruccion";
 import { ConclusionesCesvi } from "../importar-dictamen";
 import {
   detectarEnNarracion,
@@ -41,8 +29,6 @@ import {
   textoConteo,
 } from "@/lib/narracion-local";
 import { pareceReporteCompleto } from "@/lib/lectura-reporte";
-
-const nombreModalidad = (m: string | null) => (m ? (MODALIDAD[m] ?? m.replaceAll("_", " ")) : "—");
 
 /** Vehículos, impactos y validez de la escena: lo que Croquis leyó del caso. */
 export function ResumenEscena({ escena }: { escena: EscenaNarrada }) {
@@ -529,112 +515,15 @@ export type ItemLugar =
 export const claveItem = (i: ItemLugar) =>
   i.tipo === "impacto" ? `impacto:${i.orden}` : `${i.tipo}:${i.vehiculo}`;
 
-/** Paso 5: los daños. Los narrados por vehículo y los que calcula la reconstrucción (CDC, C1–C6). */
-export function PasoDanos({ expediente, r }: { expediente: Expediente; r: Reconstruccion | null }) {
-  // El resultado del solver con las velocidades reconstruidas (el del 3D), calculado en el worker:
-  // el de partida va con las velocidades supuestas de la narración y en AXA no tenía choque, así
-  // que el daño salía en 0 (René, 2026-11-04, prompt del rediseño §0.1).
-  const [ajustado, setAjustado] = useState<{
-    r: Reconstruccion;
-    res: Record<string, unknown>;
-  } | null>(null);
-  useEffect(() => {
-    if (!r || ajustado?.r === r) return undefined;
-    let vivo = true;
-    void reconstruirEnNavegador(especReconstruida(r) as unknown as EscenaSpec)
-      .then((res) => {
-        if (vivo) setAjustado({ r, res: res as unknown as Record<string, unknown> });
-      })
-      .catch(() => undefined);
-    return () => {
-      vivo = false;
-    };
-  }, [r, ajustado]);
-  const filas = r
-    ? filasDano(expediente, ajustado?.r === r ? ajustado.res : null, r.ids)
-    : filasDano(expediente, null, {});
-  return (
-    <div className="flex flex-col gap-4" data-testid="danos-caso">
-      <h2 className="t-subtitulo">Los daños</h2>
-      {expediente.vehiculos.map((v) => {
-        const narrados = (expediente.danos ?? []).filter((d) => d.vehiculo === v.id);
-        const f = filas.find((x) => x.vehiculo === v.id)!;
-        return (
-          <section key={v.id} className="hundido flex flex-col gap-2 p-4">
-            <span className="t-interfaz font-semibold">{v.id}</span>
-            {narrados.length ? (
-              <ul className="t-nota flex flex-col gap-1">
-                {narrados.map((d, k) => (
-                  <li key={k}>
-                    {CARA[d.zona.cara] ?? d.zona.cara}
-                    {d.zona.tercio ? ` (${d.zona.tercio})` : ""}
-                    {d.magnitud?.cualitativa ? ` · ${d.magnitud.cualitativa}` : ""}
-                    {d.dano_previo ? " · daño previo" : ""}
-                  </li>
-                ))}
-              </ul>
-            ) : (
-              <p className="t-nota">La narración no describe sus daños.</p>
-            )}
-            <p className="t-nota" data-testid={`dano-medido-${v.id}`}>
-              Del reporte:{" "}
-              {f.medido.tipo === "medido" ? (
-                <>
-                  {f.medido.cara}; C1–C{f.medido.cCm.length}{" "}
-                  <span className="cifras">{f.medido.cCm.join(" · ")} cm</span>
-                  {f.medido.lM !== null ? (
-                    <>
-                      ; L <span className="cifras">{f.medido.lM.toFixed(2)} m</span>
-                    </>
-                  ) : null}
-                  .
-                </>
-              ) : (
-                <span className="text-texto-3">sin dato ({f.medido.motivo}).</span>
-              )}
-            </p>
-            {r ? (
-              <p className="t-nota" data-testid={`dano-calculado-${v.id}`}>
-                {METODO.reconstruccion}, con las velocidades reconstruidas:{" "}
-                {f.calculado.tipo === "calculado" ? (
-                  <>
-                    energía <span className="cifras">{f.calculado.energiaKj.toFixed(1)} kJ</span>
-                    {f.calculado.deltaVKmh !== null ? (
-                      <>
-                        ; Δv <span className="cifras">{f.calculado.deltaVKmh.toFixed(1)} km/h</span>
-                      </>
-                    ) : null}
-                    ; perfil estimado{" "}
-                    <span className="cifras">{f.calculado.perfilCm.join(" · ")} cm</span> (
-                    {f.calculado.rigidez}).
-                  </>
-                ) : ajustado?.r !== r ? (
-                  <span className="text-texto-3">calculando…</span>
-                ) : (
-                  <span className="text-texto-3">sin dato ({f.calculado.motivo}).</span>
-                )}
-              </p>
-            ) : null}
-          </section>
-        );
-      })}
-      {!r ? <p className="t-nota">Reconstruye para ver el daño que calcula Croquis.</p> : null}
-    </div>
-  );
-}
-
 /** Paso 6: los números. Las velocidades de la reconstrucción y la verificación con el método de CESVI. */
 export function PasoNumeros({
   r,
   verificacion,
   contraCesvi = null,
-  supuestos = [],
 }: {
   r: Reconstruccion | null;
   verificacion: VerificacionVehiculo[];
   contraCesvi?: ContraMetodosCesvi | null;
-  /** Lo que el caso no trae, como supuesto declarado (ADR 0091). */
-  supuestos?: readonly SupuestoDeclarado[];
 }) {
   return (
     <div className="flex flex-col gap-5">
@@ -644,7 +533,6 @@ export function PasoNumeros({
       ) : (
         <p className="t-nota">Reconstruye para ver las velocidades con su rango.</p>
       )}
-      {r ? <TablaSupuestos supuestos={supuestos} /> : null}
       {contraCesvi?.filas.length ? <TablaContraCesvi contra={contraCesvi} /> : null}
       {r ? <ProbarConductores r={r} /> : null}
       <PanelVerificacion verificacion={verificacion} />
@@ -652,20 +540,11 @@ export function PasoNumeros({
   );
 }
 
-function Coincide({ ok }: { ok: boolean | null }) {
-  if (ok === null) return <span className="text-texto-3">no se puede comparar</span>;
-  return ok ? (
-    <span className="font-semibold">coincide</span>
-  ) : (
-    <span className="text-senal-texto">no coincide</span>
-  );
-}
-
 /**
- * Paso 7 (solo con reporte): Croquis contra lo que concluyó CESVI, eje por eje (E-R4). Toda
- * diferencia de velocidad va con su valor y su porcentaje.
+ * El detalle de «Contra CESVI»: las velocidades por deformación de CESVI y de Croquis (toda
+ * diferencia con su valor y su porcentaje) y lo que concluyó el reporte, con sus citas.
  */
-export function PasoContraReporte({
+export function DetalleContraReporte({
   reporte,
   comparacion,
 }: {
@@ -674,45 +553,7 @@ export function PasoContraReporte({
 }) {
   const k = comparacion;
   return (
-    <div className="flex flex-col gap-5" data-testid="contra-reporte">
-      <h2 className="t-subtitulo">Croquis contra el reporte de CESVI</h2>
-      <dl className="grid gap-3 sm:grid-cols-2">
-        <div className="hundido flex flex-col gap-1 p-4" data-testid="eje-modalidad">
-          <dt className="t-nota">Modalidad</dt>
-          <dd className="t-interfaz">
-            CESVI: {nombreModalidad(k.modalidad.cesvi)} · Croquis:{" "}
-            {nombreModalidad(k.modalidad.croquis)} · <Coincide ok={k.modalidad.coincide} />
-          </dd>
-          <dd className="t-nota">{k.modalidad.motivo}</dd>
-        </div>
-        <div className="hundido flex flex-col gap-1 p-4">
-          <dt className="t-nota">Zonas de contacto</dt>
-          <dd className="t-interfaz cifras">
-            {k.zonas.coinciden} de {k.zonas.cesvi} coinciden
-            {k.zonas.tercios_comparables
-              ? ` · tercios ${k.zonas.tercios_coinciden} de ${k.zonas.tercios_comparables}`
-              : ""}
-          </dd>
-        </div>
-        <div className="hundido flex flex-col gap-1 p-4">
-          <dt className="t-nota">Primer impacto</dt>
-          <dd className="t-interfaz">
-            <Coincide ok={k.secuencia.primero_coincide} />
-            {k.secuencia.cesvi > 1 ? (
-              <>
-                {" "}
-                · secuencia completa: <Coincide ok={k.secuencia.completa_coincide} />
-              </>
-            ) : null}
-          </dd>
-        </div>
-        <div className="hundido flex flex-col gap-1 p-4">
-          <dt className="t-nota">Posiciones finales</dt>
-          <dd className="t-interfaz cifras" data-testid="posiciones-finales-contra">
-            {textoPosicionesFinales(k.posiciones)}
-          </dd>
-        </div>
-      </dl>
+    <div className="flex flex-col gap-5">
       {k.velocidades.length ? (
         <table className="w-full border-collapse text-sm" data-testid="velocidades-contra">
           <thead>

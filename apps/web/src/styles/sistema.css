@@ -1336,6 +1336,49 @@
     font-size: 0.75rem;
     font-weight: 600;
   }
+  /* La hoja del dictamen: papel, también de noche. */
+  .hoja-papel {
+    --fondo: #fbfaf6;
+    --superficie: #fbfaf6;
+    --superficie-alta: #eeece6;
+    --texto: #16181d;
+    --texto-2: #4b4f58;
+    --texto-3: #6c707b;
+    --linea: #cfccc4;
+    --linea-suave: #e4e1da;
+    background: var(--fondo);
+    color: var(--texto);
+    box-shadow: 0 30px 80px rgba(27, 34, 48, 0.16);
+    transform: rotate(-0.5deg);
+  }
+  /* El sello cae al firmar. */
+  .sello-validado {
+    animation: sello-cae 420ms cubic-bezier(0.2, 0.9, 0.3, 1.2) both;
+  }
+  @keyframes sello-cae {
+    from {
+      opacity: 0;
+      transform: rotate(-8deg) scale(1.6);
+    }
+    to {
+      opacity: 1;
+      transform: rotate(-8deg) scale(1);
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .sello-validado {
+      animation: none;
+    }
+  }
+
+  /* Lo que abarca un supuesto: trama ámbar. */
+  .rango-supuesto {
+    background: repeating-linear-gradient(
+      -45deg,
+      var(--alerta-borde) 0 3px,
+      color-mix(in srgb, var(--alerta-borde) 55%, transparent) 3px 6px
+    );
+  }
   /* En el mapa (marcadores de MapLibre). */
   .escena-etiqueta {
     position: absolute;

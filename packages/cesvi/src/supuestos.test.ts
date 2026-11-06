@@ -61,6 +61,14 @@ describe("los supuestos declarados", () => {
     expect(s.incertidumbre).toBe(
       "La ficha va de 2,448.5 kg a 2,675.7 kg; en el rango de las velocidades, ±5 %.",
     );
+    // Lo que dibuja su barra: el mismo rango de la ficha, con el valor que se usó.
+    expect(s.rango).toEqual({
+      min: 2448.5,
+      max: 2675.7,
+      valor: 2562.1,
+      minTexto: "2,448.5 kg",
+      maxTexto: "2,675.7 kg",
+    });
   });
 
   it("el reposo supuesto: del método de restos de CESVI si el reporte lo usa; si no, del perito; ±10 m", () => {

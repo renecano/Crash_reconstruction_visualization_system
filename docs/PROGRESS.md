@@ -1885,6 +1885,37 @@ Rama `fix/fotos-dictamen`. René mandó la captura del dictamen de un caso nuevo
 - **Qué hay ahora:** fotos con la cinematográfica, del instante pedido, sin marcadores; vehículos apoyados en banquetas y relieve; y si el 3D se queda abajo de 24 fps durante 5 s, baja un nivel y lo dice `?diag=1`.
 - **Cómo probarlo:** genera el dictamen de un caso nuevo y compara las tres fotos; y en `docs/cesvi/t1/ruedas/` están las capturas de cerca de cada clase. Si en tu caso las llantas siguen fuera de su hueco, dime la clase del vehículo (o manda el `.json` del caso): en las ocho clases que medí quedan bien.
 
+### Laboratorio: Análisis, Contra CESVI y Dictamen (René, 2026-11-04; prompt §8)
+
+Rama `feat/laboratorio-actos`. Los tres actos que siguen a la reconstrucción.
+
+**Análisis (daños)**
+
+- Una pestaña por vehículo. Sin mapa: ocupa todo el ancho.
+- **Solo se dibuja lo medido.** El perfil C1–Cn va sobre la cara dañada con las C del reporte (AXA, B: 96 · 86 · 52 · 20 cm). Si el reporte no trae medidas, no se dibuja: el perfil del modelo es uniforme y parecería una forma observada (A dice «sin dato» con su motivo).
+- La energía y el Δv en cifra grande con su método. Si hay medidas, aclara que el perfil estimado «no es la medida del reporte».
+- La correspondencia de CESVI con tres opciones y contador; volver a tocar quita la marca. La nota del perito sigue.
+- Los supuestos como tarjetas con barra de rango en trama ámbar, marca del valor y fuente. Los rangos salen de `supuestosDeclarados`: ficha técnica en la masa, tabla en la fricción, y fracción por fricción en el arrastre. Las posiciones iniciales iguales van en una sola tarjeta.
+
+**Contra CESVI**
+
+- Conteo arriba (coinciden, difieren, sin dato) y las dos cifras con su diferencia en km/h y en %. En AXA, 63.90 contra 63.15, 0.75 km/h y 1.2 %, salidas de la comparación y no escritas a mano. Lo revisa la e2e de AXA.
+- La regla con los dos marcadores, los criterios con ícono lleno o punteado y las citas exactas del reporte (`zonas_contacto[].cita`).
+- **Lado a lado:** el reporte no trae su croquis como datos. A la izquierda va un esquema de papel con lo que sí dice (arroyos y orden del alcance), rotulado «no es su imagen». Un reporte importado dice «sin dato».
+- La tabla con cada número del reporte queda en «Ver cada número…».
+
+**Dictamen**
+
+- La hoja de papel se actualiza mientras se escribe, también de noche. Sin firma lleva la marca «Borrador».
+- Al firmar cae el sello «Validado» con la huella SHA-256 de las entradas (los 12 hexadecimales que ya se usaban), se quita la marca, la firma sale en itálica y la barra de actos llega al 100 %.
+- Citar velocidad, contraste y supuestos inserta el dato donde está el cursor, solo si el perito lo pide. Croquis no redacta la conclusión.
+- **Cambio de comportamiento:** el formato por defecto es ahora la estructura de CESVI (antes, el completo), porque es lo que pide «Para quién y qué tan lejos». El otro sigue a un clic.
+- Ctrl+P descarga el PDF en este acto.
+
+**Arreglo de paso:** la hoja conservaba el desplazamiento del acto anterior y el nuevo aparecía a la mitad. Ahora cada acto empieza arriba.
+
+**Pruebas:** unitarias de `analisis-lab`, `contraste-lab` y `dictamen-lab`, y del rango de los supuestos. Las e2e `@flujo` del caso nuevo, la carambola, AXA, importar y reproducción.
+
 ### Laboratorio: La reconstrucción (René, 2026-11-04; prompt §8)
 
 Rama `feat/laboratorio-reconstruccion`. El pico del recorrido: la escena a sangre y la cifra en la hoja.
@@ -2264,6 +2295,8 @@ Rama `feat/r11-render-retomable`. El colaborador cerró la corrida del 2026-11-0
 
 ### Endurecimiento pendiente
 
+- **Dictamen (Laboratorio §8), sin dictado:** el diseño dice «Escríbela o díctala»; Croquis no tiene entrada por voz, así que el texto dice «Escríbela tú». Se agrega si René la pide (igual que «Dictar un dato» en El hecho).
+- **Contra CESVI (Laboratorio §8):** el esquema de papel de AXA no es el croquis del reporte, que no está en datos. Si se extrae del PDF, se cambia por el real.
 - **La reconstrucción (Laboratorio §8), el movimiento va con §6:** que la cifra cuente, que el histograma crezca barra por barra y el puntero sobre las siluetas de la maqueta (§9) se hacen con el catálogo de movimiento y los tooltips, no pantalla por pantalla.
 - **El hecho (Laboratorio §8), dos botones del diseño sin hacer:** «Dictar un dato» (Croquis no tiene entrada por voz) y «Reporte original» (el PDF importado no se guarda en el caso). Se agregan si René los pide.
 
