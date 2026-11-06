@@ -50,7 +50,7 @@ describe("el dictamen (Laboratorio §8)", () => {
   it("la comparación con CESVI va con su valor y su porcentaje", () => {
     const f = filasDeLaHoja(r, letra, contra);
     expect(f.at(-2)).toEqual({ etiqueta: "B por deformación", valor: "63.90 km/h" });
-    expect(f.at(-1)).toEqual({ etiqueta: "Contra CESVI", valor: "Δ 1.2 % · 0.75 km/h" });
+    expect(f.at(-1)).toEqual({ etiqueta: "Contra CESVI", valor: "Δ +1.19 % · +0.75 km/h" });
   });
 
   it("las citas llevan el dato con su método; sin dato no hay cita", () => {
@@ -59,7 +59,7 @@ describe("el dictamen (Laboratorio §8)", () => {
     );
     expect(citaVelocidad(r, "V1", "A")).toBeNull();
     expect(citaContraste(contra, "B")).toContain("63.90 km/h");
-    expect(citaContraste(contra, "B")).toContain("0.75 km/h (1.2 %)");
+    expect(citaContraste(contra, "B")).toContain("+0.75 km/h (+1.19 %)");
     expect(citaSupuestos([])).toBeNull();
     expect(citaSupuestos([{ que: "Masa de A", valor: "2,562.1 kg" } as SupuestoDeclarado])).toBe(
       "Supuestos declarados: Masa de A: 2,562.1 kg.",

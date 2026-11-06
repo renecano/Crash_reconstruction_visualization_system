@@ -4,9 +4,17 @@
  * comparación con el reporte: si algo no se sabe, el capítulo lo dice.
  */
 import type { Reconstruccion } from "@croquis/cesvi";
-import type { CifraContraste, conteoCriterios } from "./contraste-lab";
+import {
+  conLetra,
+  conSigno,
+  pctConSigno,
+  type CifraContraste,
+  type conteoCriterios,
+  type LecturaFisica,
+} from "./contraste-lab";
 import { poseEn, tImpacto, type ResultadoMaqueta } from "./maqueta";
 import { rangoDeImpacto } from "./reconstruccion-lab";
+import { METODO } from "./textos-caso";
 
 /** Cuánto dura cada capítulo (s), como en una historia. */
 export const DURACION_CAPITULO_S = 6;
@@ -22,6 +30,8 @@ export interface Capitulo {
   clave: "escena" | "impacto" | "finales" | "contra";
   titulo: string;
   filas: FilaCapitulo[];
+  /** Una línea debajo de sus datos (por qué difieren las dos lecturas). */
+  nota?: string;
   /** Instante de la maqueta al empezar y al terminar el capítulo. */
   t0: number;
   t1: number;
@@ -49,8 +59,13 @@ export function capitulos({
   lugar,
   modalidad,
   contra,
+  fisica = null,
+  letraDe = (id) => id,
   conteo,
 }: {
+  /** La lectura de la reconstrucción física contra el reporte. */
+  fisica?: LecturaFisica | null;
+  letraDe?: (id: string) => string;
   r: Reconstruccion;
   res: ResultadoMaqueta;
   /** «B · Tacoma», por id del expediente. */
@@ -121,29 +136,50 @@ export function capitulos({
   };
 
   const salida = [escena, impacto, finales];
-  if (contra) {
+  if (contra || fisica) {
+    const filas: FilaCapitulo[] = [];
+    if (contra) {
+      filas.push(
+        { etiqueta: METODO.cesviConReporte, valor: pctConSigno(contra.difPct), grande: true },
+        {
+          etiqueta: "Croquis contra el reporte",
+          valor: `${contra.croquis.toFixed(2)} contra ${contra.cesvi.toFixed(2)} km/h · ${conSigno(contra.difKmh)} km/h`,
+        },
+      );
+    }
+    if (fisica) {
+      filas.push(
+        {
+          etiqueta: METODO.reconstruccion,
+          valor: fisica.difPct === null ? "la evidencia no la fija" : pctConSigno(fisica.difPct),
+          grande: fisica.difPct !== null,
+        },
+        {
+          etiqueta: "Croquis contra el reporte",
+          valor:
+            fisica.croquis === null
+              ? `sin velocidad contra ${fisica.cesvi.toFixed(2)} km/h`
+              : `${fisica.croquis.toFixed(2)}${fisica.rango ? ` (${fisica.rango[0].toFixed(2)}–${fisica.rango[1].toFixed(2)})` : ""} contra ${fisica.cesvi.toFixed(2)} km/h · ${conSigno(fisica.difKmh ?? 0)} km/h`,
+        },
+      );
+    }
+    if (conteo) {
+      filas.push({
+        etiqueta: "Criterios",
+        valor: `${conteo.coinciden} coinciden · ${conteo.difieren} difieren · ${conteo.sinDato} sin dato`,
+      });
+    }
     salida.push({
       clave: "contra",
       titulo: "Contra CESVI",
       t0: res.t_fin,
       t1: res.t_fin,
-      filas: [
-        { etiqueta: "Diferencia", valor: `${f1(contra.difPct)} %`, grande: true },
-        {
-          etiqueta: "Croquis, con las medidas del reporte",
-          valor: `${contra.croquis.toFixed(2)} km/h`,
-        },
-        { etiqueta: "Reporte de CESVI", valor: `${contra.cesvi.toFixed(2)} km/h` },
-        { etiqueta: "En km/h", valor: `${contra.difKmh.toFixed(2)} km/h` },
-        ...(conteo
-          ? [
-              {
-                etiqueta: "Criterios",
-                valor: `${conteo.coinciden} coinciden · ${conteo.difieren} difieren · ${conteo.sinDato} sin dato`,
-              },
-            ]
-          : []),
-      ],
+      filas,
+      ...(fisica
+        ? {
+            nota: `Por qué difieren: ${conLetra(fisica.porQue, fisica.vehiculo, letraDe(fisica.vehiculo))}`,
+          }
+        : {}),
     });
   }
   return salida;

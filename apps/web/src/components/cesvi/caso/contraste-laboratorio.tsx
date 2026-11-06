@@ -4,13 +4,22 @@
  * diferencia en km/h y en %, la regla con los dos marcadores, los criterios, los dos croquis y las
  * citas exactas del reporte. La tabla con cada número queda en el detalle.
  */
-import type { CasoCesvi, ComparacionDictamen, Reconstruccion } from "@croquis/cesvi";
+import {
+  reproducir,
+  type CasoCesvi,
+  type ComparacionDictamen,
+  type ContraMetodosCesvi,
+  type Reconstruccion,
+} from "@croquis/cesvi";
 import type { OverpassResponse } from "@croquis/croquis-2d";
 import type { ReporteCesvi } from "@/lib/caso-guardado";
 import {
   cifraContraste,
+  conLetra,
+  conSigno,
   conteoCriterios,
   criteriosContraste,
+  lecturaFisica,
   reglaContraste,
   type EstadoCriterio,
 } from "@/lib/contraste-lab";
@@ -117,6 +126,144 @@ function EsquemaDelReporte({ caso }: { caso: CasoCesvi }) {
   );
 }
 
+/** La velocidad por restos del reporte contra la misma cuenta de Croquis (60.27 = 60.27 en AXA). */
+export function filaDeRestos(caso: CasoCesvi): { croquis: number; cesvi: number } | null {
+  const f = reproducir(caso).filas.find((x) => x.clave === "v3_kmh");
+  return f ? { croquis: f.croquis, cesvi: f.reporte } : null;
+}
+
+/**
+ * Una de las dos lecturas: su nombre, Croquis contra el reporte, la diferencia en km/h y en %, y la
+ * regla. Las dos llevan el mismo peso, y nunca se muestra una sin el nombre de su método.
+ */
+function Lectura({
+  nombre,
+  que,
+  etiquetaCroquis,
+  croquis,
+  rango,
+  cesvi,
+  difKmh,
+  difPct,
+  prefijo,
+  testid,
+  nota,
+}: {
+  /** Una línea más de esta lectura. */
+  nota?: string | null;
+  nombre: string;
+  que: string;
+  etiquetaCroquis: string;
+  /** null: la evidencia no la fija. */
+  croquis: number | null;
+  rango: [number, number] | null;
+  cesvi: number;
+  difKmh: number | null;
+  difPct: number | null;
+  prefijo: string;
+  testid: string;
+}) {
+  const regla = croquis === null ? null : reglaContraste(croquis, cesvi, rango ?? []);
+  const cifra = "cifra-protagonista text-[clamp(3.25rem,5.6vw,5.25rem)] leading-none";
+  return (
+    <article className="escena-hoja flex min-w-0 flex-col gap-4 p-7" data-testid={testid}>
+      <header className="flex flex-col gap-0.5">
+        <h3 className="text-[1.05rem] font-semibold">{nombre}</h3>
+        <span className="t-nota">{que} · km/h</span>
+      </header>
+      <div className="flex flex-wrap items-end gap-x-8 gap-y-3">
+        <div className="flex flex-col gap-1">
+          {croquis === null ? (
+            <span className="text-[1.4rem]" data-testid={`${prefijo}-croquis`}>
+              la evidencia no la fija
+            </span>
+          ) : (
+            <Cuenta valor={croquis} decimales={2} className={cifra} testid={`${prefijo}-croquis`} />
+          )}
+          <span className="t-nota">{etiquetaCroquis}</span>
+          {rango ? (
+            <span
+              className="font-mono text-[0.75rem] text-texto-2"
+              data-testid={`${prefijo}-rango`}
+            >
+              rango {rango[0].toFixed(2)}–{rango[1].toFixed(2)}
+            </span>
+          ) : null}
+        </div>
+        <div className="flex flex-col gap-1">
+          <Cuenta
+            valor={cesvi}
+            decimales={2}
+            className={`${cifra} text-texto-2`}
+            testid={`${prefijo}-cesvi`}
+          />
+          <span className="t-nota">Reporte de CESVI</span>
+        </div>
+      </div>
+      {difKmh !== null && difPct !== null ? (
+        <div className="flex items-baseline justify-between gap-4 border-t border-linea-suave pt-3">
+          <span className="t-nota" data-testid={`${prefijo}-kmh`}>
+            diferencia · {conSigno(difKmh)} km/h
+          </span>
+          <Cuenta
+            valor={Math.abs(difPct)}
+            decimales={2}
+            prefijo={difPct >= 0 ? "+" : "−"}
+            sufijo=" %"
+            className="cifra-protagonista text-[2.5rem] leading-none"
+            testid={`${prefijo}-pct`}
+          />
+        </div>
+      ) : null}
+      {nota ? (
+        <p className="t-nota" data-testid={`${prefijo}-nota`}>
+          {nota}
+        </p>
+      ) : null}
+      {regla && croquis !== null ? (
+        <div className="relative h-12" data-testid={`${prefijo}-regla`}>
+          <div className="absolute inset-x-0 top-3 h-px bg-linea" />
+          {regla.marcas.map((m) => (
+            <div key={m.kmh} className="absolute top-0" style={{ left: `${m.pos}%` }}>
+              <span className="absolute top-1 h-2 w-px bg-linea" />
+              <span className="absolute top-6 -translate-x-1/2 font-mono text-[0.6875rem] text-texto-3">
+                {m.kmh}
+              </span>
+            </div>
+          ))}
+          {rango ? (
+            <span
+              className="rango-supuesto absolute top-2 h-2"
+              style={{
+                left: `${regla.pos(rango[0])}%`,
+                width: `${regla.pos(rango[1]) - regla.pos(rango[0])}%`,
+              }}
+            />
+          ) : (
+            <span
+              className="absolute top-2 h-2 bg-superficie-alta"
+              style={{
+                left: `${Math.min(regla.croquis, regla.cesvi)}%`,
+                width: `${Math.abs(regla.croquis - regla.cesvi)}%`,
+              }}
+            />
+          )}
+          <Desliza
+            pos={regla.cesvi}
+            className="absolute top-0 h-6 w-0.5 -translate-x-1/2 bg-texto-2"
+            tip={`Reporte de CESVI: ${cesvi.toFixed(2)} km/h, de su conclusión`}
+          />
+          <Desliza
+            pos={regla.croquis}
+            className="absolute top-0 h-6 w-0.5 -translate-x-1/2 bg-texto"
+            tip={`${nombre}: ${croquis.toFixed(2)} km/h`}
+          />
+        </div>
+      ) : null}
+    </article>
+  );
+}
+
 export function ActoContraste({
   reporte,
   comparacion: k,
@@ -124,7 +271,13 @@ export function ActoContraste({
   r,
   calles,
   letraDe,
+  contra,
+  restos,
 }: {
+  /** La velocidad por restos del reporte, si el caso trae sus datos. */
+  restos: { croquis: number; cesvi: number } | null;
+  /** La reconstrucción contra cada método del reporte; null sin reconstruir. */
+  contra: ContraMetodosCesvi | null;
   reporte: ReporteCesvi;
   comparacion: ComparacionDictamen;
   /** El caso con sus datos del reporte (AXA); los reportes importados no traen geometría. */
@@ -136,7 +289,11 @@ export function ActoContraste({
   const criterios = criteriosContraste(k);
   const n = conteoCriterios(criterios);
   const f = cifraContraste(k);
-  const regla = f ? reglaContraste(f.croquis, f.cesvi) : null;
+  const fisica = lecturaFisica(contra, f?.vehiculo ?? null);
+  const filaRestos = contra?.filas.find((x) => x.metodo.startsWith("Restos"));
+  const porQueRestos = filaRestos
+    ? conLetra(filaRestos.porQue, String(filaRestos.vehiculo), letraDe(String(filaRestos.vehiculo)))
+    : null;
   const citas = reporte.conclusiones.zonas_contacto.filter((z) => z.cita);
   return (
     <div className="flex flex-col gap-5" data-testid="contra-reporte">
@@ -158,83 +315,61 @@ export function ActoContraste({
         </p>
       </header>
 
-      {f && regla ? (
-        <section className="escena-hoja flex flex-col gap-4 p-8" data-testid="cifra-contra">
-          <header className="flex flex-wrap items-baseline justify-between gap-3">
-            <h3 className="font-semibold">
-              {letraDe(f.vehiculo)} · {f.que}
-            </h3>
-            <span className="t-nota">{METODO.cesvi} · km/h</span>
-          </header>
-          <div className="flex flex-wrap items-end justify-between gap-6">
-            <div className="flex flex-wrap gap-14">
-              <div className="flex flex-col gap-1">
-                <Cuenta
-                  valor={f.croquis}
-                  decimales={2}
-                  className="cifra-protagonista text-[clamp(4rem,9vw,8rem)]"
-                  testid="cifra-contra-croquis"
-                />
-                <span className="t-nota">Croquis, con las medidas del reporte</span>
-              </div>
-              <div className="flex flex-col gap-1">
-                <Cuenta
-                  valor={f.cesvi}
-                  decimales={2}
-                  className="cifra-protagonista text-[clamp(4rem,9vw,8rem)] text-texto-2"
-                  testid="cifra-contra-cesvi"
-                />
-                <span className="t-nota">Reporte de CESVI</span>
-              </div>
-            </div>
-            <div className="flex flex-col items-end gap-1">
-              <Cuenta
-                valor={f.difPct}
-                decimales={1}
-                sufijo=" %"
-                className="cifra-protagonista text-[3.25rem] leading-none"
-                testid="cifra-contra-pct"
-              />
-              <span className="t-nota" data-testid="cifra-contra-kmh">
-                diferencia · {f.difKmh.toFixed(2)} km/h
-              </span>
-            </div>
-          </div>
-          <div className="relative mt-2 h-12" data-testid="regla-contra">
-            <div className="absolute inset-x-0 top-3 h-px bg-linea" />
-            {regla.marcas.map((m) => (
-              <div key={m.kmh} className="absolute top-0" style={{ left: `${m.pos}%` }}>
-                <span className="absolute top-1 h-2 w-px bg-linea" />
-                <span className="absolute top-6 -translate-x-1/2 font-mono text-[0.6875rem] text-texto-3">
-                  {m.kmh}
-                </span>
-              </div>
-            ))}
-            <span
-              className="absolute top-2 h-2 bg-superficie-alta"
-              style={{
-                left: `${Math.min(regla.croquis, regla.cesvi)}%`,
-                width: `${Math.abs(regla.croquis - regla.cesvi)}%`,
-              }}
+      <section className="flex flex-col gap-3" data-testid="dos-lecturas">
+        <div className="grid gap-5 lg:grid-cols-2">
+          {f ? (
+            <Lectura
+              nombre={METODO.cesviConReporte}
+              que={`${letraDe(f.vehiculo)} · ${f.que}`}
+              etiquetaCroquis="Croquis, con las medidas del reporte"
+              croquis={f.croquis}
+              rango={null}
+              cesvi={f.cesvi}
+              difKmh={f.difKmh}
+              difPct={f.difPct}
+              prefijo="cifra-contra"
+              testid="lectura-cesvi"
+              nota={
+                restos
+                  ? `Por restos, con los mismos datos: ${restos.croquis.toFixed(2)} contra ${restos.cesvi.toFixed(2)} km/h.`
+                  : null
+              }
             />
-            <Desliza
-              pos={regla.cesvi}
-              className="absolute top-0 h-6 w-0.5 -translate-x-1/2 bg-texto-2"
-              tip={`Reporte de CESVI: ${f.cesvi.toFixed(2)} km/h, de su conclusión`}
+          ) : (
+            <p className="escena-hoja t-nota p-8" data-testid="sin-cifra-contra">
+              {METODO.cesviConReporte}: el reporte no trae una velocidad por deformación que Croquis
+              pueda calcular con sus medidas.
+            </p>
+          )}
+          {fisica ? (
+            <Lectura
+              nombre={METODO.reconstruccion}
+              que={`${letraDe(fisica.vehiculo)} · velocidad antes del impacto`}
+              etiquetaCroquis="Croquis, de las trayectorias y la evidencia"
+              croquis={fisica.croquis}
+              rango={fisica.rango}
+              cesvi={fisica.cesvi}
+              difKmh={fisica.difKmh}
+              difPct={fisica.difPct}
+              prefijo="fisica"
+              testid="lectura-fisica"
             />
-            <Desliza
-              pos={regla.croquis}
-              className="absolute top-0 h-6 w-0.5 -translate-x-1/2 bg-texto"
-              tip={`Croquis: ${f.croquis.toFixed(2)} km/h, con las medidas del reporte y el método de CESVI`}
-            />
-          </div>
-        </section>
-      ) : (
-        <p className="t-nota" data-testid="sin-cifra-contra">
-          El reporte no trae una velocidad por deformación que Croquis pueda calcular con sus
-          medidas: no hay cifra que comparar. Lo demás está abajo.
-        </p>
-      )}
+          ) : (
+            <p className="escena-hoja t-nota p-8" data-testid="sin-lectura-fisica">
+              {METODO.reconstruccion}:{" "}
+              {r
+                ? "el caso no trae una velocidad del reporte por deformación que comparar."
+                : "reconstruye para verla."}
+            </p>
+          )}
+        </div>
+        {fisica ? (
+          <p className="t-nota px-1" data-testid="por-que-difieren">
+            Por qué difieren: {conLetra(fisica.porQue, fisica.vehiculo, letraDe(fisica.vehiculo))}
+            {porQueRestos ? ` ${porQueRestos}` : ""}
+          </p>
+        ) : null}
+      </section>
 
       <div className="grid gap-5 lg:grid-cols-[minmax(0,5fr)_minmax(0,7fr)]">
         <section className="escena-hoja flex flex-col p-7">

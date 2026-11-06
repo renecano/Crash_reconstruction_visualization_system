@@ -10,7 +10,7 @@ import type { EscenaSpec } from "@croquis/scene-schema";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { Logotipo } from "@/components/sitio/logo";
 import { conCallesDelMapa } from "@/lib/calles-del-mapa";
-import type { CifraContraste, conteoCriterios } from "@/lib/contraste-lab";
+import type { CifraContraste, conteoCriterios, LecturaFisica } from "@/lib/contraste-lab";
 import type { ResultadoMaqueta } from "@/lib/maqueta";
 import { guardarTema, type Tema } from "@/lib/preferencias-cesvi";
 import { capitulos, DURACION_CAPITULO_S, tDelCapitulo } from "@/lib/presentar-lab";
@@ -26,10 +26,14 @@ export function PresentarCaso({
   lugar,
   modalidad,
   contra,
+  fisica,
+  letraDe,
   conteo,
   nombreDe,
   onSalir,
 }: {
+  fisica: LecturaFisica | null;
+  letraDe: (id: string) => string;
   r: Reconstruccion;
   calles: OverpassResponse | null;
   /** «AXA · A2010930» o el título del hecho. */
@@ -61,10 +65,11 @@ export function PresentarCaso({
   }, [spec]);
 
   const caps = useMemo(
-    () => (res ? capitulos({ r, res, nombreDe, lugar, modalidad, contra, conteo }) : []),
+    () =>
+      res ? capitulos({ r, res, nombreDe, lugar, modalidad, contra, fisica, letraDe, conteo }) : [],
     // `nombreDe` cambia en cada render del recorrido, pero depende de lo mismo que `r`.
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [r, res, lugar, modalidad, contra, conteo],
+    [r, res, lugar, modalidad, contra, fisica, conteo],
   );
   const [k, setK] = useState(0);
   const [fraccion, setFraccion] = useState(0);
@@ -185,7 +190,7 @@ export function PresentarCaso({
           >
             {c.filas.map((f, i) => (
               <Sube
-                key={`${c.clave}-${f.etiqueta}`}
+                key={`${c.clave}-${i}`}
                 i={i}
                 className="flex items-baseline justify-between gap-6 py-3"
               >
@@ -202,6 +207,11 @@ export function PresentarCaso({
               </Sube>
             ))}
           </dl>
+          {c.nota ? (
+            <p className="max-w-[40rem] text-[0.875rem] text-texto-2" data-testid="capitulo-nota">
+              {c.nota}
+            </p>
+          ) : null}
         </main>
       ) : (
         <p className="t-nota absolute top-1/2 left-14" data-testid="presentar-calculando">

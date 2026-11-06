@@ -1885,6 +1885,21 @@ Rama `fix/fotos-dictamen`. René mandó la captura del dictamen de un caso nuevo
 - **Qué hay ahora:** fotos con la cinematográfica, del instante pedido, sin marcadores; vehículos apoyados en banquetas y relieve; y si el 3D se queda abajo de 24 fps durante 5 s, baja un nivel y lo dice `?diag=1`.
 - **Cómo probarlo:** genera el dictamen de un caso nuevo y compara las tres fotos; y en `docs/cesvi/t1/ruedas/` están las capturas de cerca de cada clase. Si en tu caso las llantas siguen fuera de su hueco, dime la clase del vehículo (o manda el `.json` del caso): en las ocho clases que medí quedan bien.
 
+### AXA con sus dos lecturas en Contra CESVI y Presentar (T3.4, René, 2026-11-06)
+
+René pidió confirmarlo. **Solo estaba la primera lectura con peso:** la segunda vivía en el detalle plegado de Contra CESVI y no aparecía en Presentar. Ahora están las dos, con el mismo peso.
+
+- **«Método de CESVI con los datos del reporte»:** 63.90 contra 63.15, +0.75 km/h, +1.19 %, y por restos 60.27 contra 60.27.
+- **«Reconstrucción física de Croquis»:** la velocidad del solver con su rango contra 63.15, con su diferencia en km/h y %. Sale de `reconstruccionContraCesvi`. Si la evidencia no la fija, lo dice.
+- **Una línea de por qué difieren:** la que ya calculaba `contra-metodos.ts`, con la letra del vehículo: EBS con la masa sola contra velocidad de circulación por momento y trayectorias, y el deslizamiento contra las llantas que ruedan.
+- **La diferencia con signo y dos decimales («+1.19 %»)** en todas las pantallas (Casos, Contra CESVI, Presentar, la hoja, las citas y el PDF), para que no haya dos redondeos del mismo dato.
+- **El PDF** ya lleva la frase de la primera lectura, con su nombre. El §11 pedía las tres cifras también ahí y solo traía dos.
+- **Las e2e de AXA** revisan las dos lecturas en las dos pantallas.
+
+**La cifra física depende de la escena que se conteste.** El plan menciona +13.32 % y rango 56–100 km/h, medidos con otra evidencia. Con lo que contesta la e2e («quedó junto al choque» y lo que Croquis propone) sale otra cifra, por eso la e2e revisa su forma y no un número fijo. Nada se ajusta para coincidir.
+
+**Arreglo de paso (error mío de #176):** al ocultar el escenario en los actos de hoja ancha, el visor 3D seguía dibujando sin verse. Ahora solo dibuja cuando se ve, y la foto del dictamen lo despierta si le hace falta.
+
 ### Laboratorio: movimiento, tooltips y el rango que no aparenta certeza (René, 2026-11-04; prompt §6 y §9)
 
 Rama `feat/laboratorio-movimiento`.

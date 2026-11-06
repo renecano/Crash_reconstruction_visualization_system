@@ -63,18 +63,21 @@ export function Cuenta({
   valor,
   decimales,
   sufijo = "",
+  prefijo = "",
   className,
   testid,
 }: {
   valor: number;
   decimales: number;
   sufijo?: string;
+  /** El signo de una diferencia («+»): `valor` va sin él. */
+  prefijo?: string;
   className?: string;
   testid?: string;
 }) {
   const quieto = useReducedMotion();
   const nodo = useRef<HTMLSpanElement>(null);
-  const final = `${valor.toFixed(decimales)}${sufijo}`;
+  const final = `${prefijo}${valor.toFixed(decimales)}${sufijo}`;
   useEffect(() => {
     const n = nodo.current;
     if (!n) return undefined;
@@ -86,14 +89,14 @@ export function Cuenta({
       duration: 1.45,
       ease: "linear",
       onUpdate: (p) => {
-        n.textContent = `${textoContado(valor, decimales, p)}${sufijo}`;
+        n.textContent = `${prefijo}${textoContado(valor, decimales, p)}${sufijo}`;
       },
     });
     return () => a.stop();
-  }, [valor, decimales, sufijo, final, quieto]);
+  }, [valor, decimales, sufijo, prefijo, final, quieto]);
   return (
     <span ref={nodo} className={className} data-testid={testid}>
-      {quieto ? final : `${textoContado(valor, decimales, 0)}${sufijo}`}
+      {quieto ? final : `${prefijo}${textoContado(valor, decimales, 0)}${sufijo}`}
     </span>
   );
 }

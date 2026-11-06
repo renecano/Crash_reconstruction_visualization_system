@@ -60,13 +60,27 @@ export function HojaDictamen({
           <span className="font-mono text-[0.625rem]">SHA-256 {firma.huella}</span>
         </div>
       ) : (
-        <span
-          className="pointer-events-none absolute top-1/4 left-1/2 -translate-x-1/2 rotate-[-24deg] font-[family-name:var(--fuente-titulo)] text-[6.5rem] leading-none text-[var(--texto)] italic opacity-[0.07] select-none"
+        // Un dibujo, no un texto: es una marca de agua y no se lee como parte del dictamen.
+        <svg
+          className="pointer-events-none absolute inset-x-0 top-1/4 h-40 w-full select-none"
+          viewBox="0 0 600 160"
           aria-hidden="true"
           data-testid="marca-borrador"
         >
-          Borrador
-        </span>
+          <text
+            x={300}
+            y={110}
+            textAnchor="middle"
+            transform="rotate(-20 300 80)"
+            fontSize={104}
+            fontStyle="italic"
+            fontFamily="var(--fuente-titulo)"
+            fill="var(--texto)"
+            opacity={0.07}
+          >
+            Borrador
+          </text>
+        </svg>
       )}
       <header className="flex items-center justify-between border-b border-[var(--texto)] pb-3">
         <Logotipo ancho={104} variante="logotipo-sobre-claro" />

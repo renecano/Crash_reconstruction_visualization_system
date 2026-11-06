@@ -218,12 +218,7 @@ export function ListaCasos({
             </label>
           </Sube>
         </div>
-        <Link
-          href={RUTAS.axa}
-          className="hoja-expediente relative block"
-          aria-label={`Abrir ${axa.titulo}`}
-          data-testid="ir-axa"
-        >
+        <Link href={RUTAS.axa} className="hoja-expediente relative block" data-testid="ir-axa">
           <span className="hoja-expediente-fondo" aria-hidden="true" />
           <article className="escena-hoja relative flex flex-col gap-3 p-6">
             <header className="flex items-baseline justify-between gap-3">
