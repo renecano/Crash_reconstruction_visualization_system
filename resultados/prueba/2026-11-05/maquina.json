@@ -1,77 +1,33 @@
 {
     "fecha":  "2026-11-05",
     "prueba":  true,
-    "solo_render":  false,
+    "solo_render":  true,
     "solo_medicion":  false,
-    "duracion_de_esta_corrida_s":  472,
-    "ram_usada_al_empezar_pct":  62,
-    "ram_usada_maxima_pct":  91,
+    "duracion_de_esta_corrida_s":  1,
+    "ram_usada_al_empezar_pct":  74,
+    "ram_usada_maxima_pct":  75,
     "limite_ram_pct":  95,
     "pasos":  [
                   {
                       "Paso":  "Revisar Git y Chrome",
                       "Bien":  true,
                       "Segundos":  0,
-                      "RamMaxima":  62,
+                      "RamMaxima":  75,
                       "Nota":  "Git y Chrome encontrados."
                   },
                   {
                       "Paso":  "Blender 5.2.3 (portátil, de blender.org)",
                       "Bien":  true,
                       "Segundos":  0,
-                      "RamMaxima":  62,
+                      "RamMaxima":  75,
                       "Nota":  "Ya estaba en D:\\CroquisDemo; se reutiliza."
                   },
                   {
                       "Paso":  "Video de la escena «axa»",
                       "Bien":  true,
-                      "Segundos":  173,
-                      "RamMaxima":  89,
-                      "Nota":  "0.1 MB, --motor cycles --resolucion 320x180 --muestras 4 --desde 0 --hasta 2"
-                  },
-                  {
-                      "Paso":  "Video de la escena «carambola»",
-                      "Bien":  true,
-                      "Segundos":  245,
-                      "RamMaxima":  91,
-                      "Nota":  "0.2 MB, --motor cycles --resolucion 320x180 --muestras 4 --desde 0 --hasta 2"
-                  },
-                  {
-                      "Paso":  "Medición del visor en Chrome (E6: alta y ultra)",
-                      "Bien":  true,
-                      "Segundos":  36,
-                      "RamMaxima":  88,
-                      "Nota":  "Resultado guardado (e6-navegador.json)."
-                  },
-                  {
-                      "Paso":  "Datos de la máquina",
-                      "Bien":  true,
-                      "Segundos":  2,
+                      "Segundos":  0,
                       "RamMaxima":  75,
-                      "Nota":  "CPU Intel(R) Core(TM) i5-10210U CPU @ 1.60GHz, 7.8 GB de RAM."
+                      "Nota":  "Ya estaba completo (de una corrida de hoy); se salta."
                   }
-              ],
-    "equipo":  "LAPTOP-QG4BMDIJ",
-    "windows":  "Microsoft Windows 11 Home Single Language 10.0.26200",
-    "cpu":  {
-                "hilos":  8,
-                "nombre":  "Intel(R) Core(TM) i5-10210U CPU @ 1.60GHz",
-                "nucleos":  4
-            },
-    "ram_gb":  7.8,
-    "gpu":  [
-                {
-                    "nombre":  "Virtual Display Device",
-                    "controlador":  "1.0.0.9"
-                },
-                {
-                    "nombre":  "Intel(R) UHD Graphics",
-                    "controlador":  "27.20.100.8984"
-                }
-            ],
-    "chrome":  "156.0.8078.80",
-    "blender":  "5.2.3",
-    "git":  "git version 2.47.1.windows.1",
-    "plan_de_energia":  "GUID de plan de energía: 381b4222-f694-41f0-9685-ff5bb260df2e  (Equilibrado)",
-    "commit_del_repositorio":  "fa00c9641bfcadeb8e55f831a2d5f430cf511bd0"
+              ]
 }
