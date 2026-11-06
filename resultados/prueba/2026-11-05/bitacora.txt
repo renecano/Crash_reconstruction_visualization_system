@@ -84,3 +84,17 @@ Resultados en: D:\Documentos\proyectos\croquis\resultados\prueba\2026-11-05
    CORRECTO: el proceso con PID 18132 (proceso secundario de PID 23512)
    ha sido terminado.
    Listo (36 s, RAM máxima 88 %). Resultado guardado (e6-navegador.json).
+   warning: in the working copy of 'resultados/prueba/2026-11-05/bitacora.txt', CRLF will be replaced by LF the next time Git touches it
+   warning: in the working copy of 'resultados/prueba/2026-11-05/blender-axa-unir.log', CRLF will be replaced by LF the next time Git touches it
+   warning: in the working copy of 'resultados/prueba/2026-11-05/blender-axa.log', CRLF will be replaced by LF the next time Git touches it
+   warning: in the working copy of 'resultados/prueba/2026-11-05/blender-axa.log.err', CRLF will be replaced by LF the next time Git touches it
+   warning: in the working copy of 'resultados/prueba/2026-11-05/blender-carambola-unir.log', CRLF will be replaced by LF the next time Git touches it
+   warning: in the working copy of 'resultados/prueba/2026-11-05/blender-carambola.log', CRLF will be replaced by LF the next time Git touches it
+   warning: in the working copy of 'resultados/prueba/2026-11-05/blender-carambola.log.err', CRLF will be replaced by LF the next time Git touches it
+   warning: in the working copy of 'resultados/prueba/2026-11-05/maquina.json', CRLF will be replaced by LF the next time Git touches it
+   To https://github.com/renecano/Crash_reconstruction_visualization_system.git
+      3cf2e7f..9f818f5  9f818f5e678c80a38f0c8fe454c8ab735ea866e3 -> resultados/prueba-2026-11-05
+   Subido a la rama resultados/prueba-2026-11-05 (medición).
+
+== Datos de la máquina
+   Listo (2 s, RAM máxima 75 %). CPU Intel(R) Core(TM) i5-10210U CPU @ 1.60GHz, 7.8 GB de RAM.
