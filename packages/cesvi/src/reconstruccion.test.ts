@@ -381,7 +381,7 @@ describe("la escena para el 3D", () => {
 
       // La letra de cada vehículo es la del expediente (V1 es A), aunque el solver lo ponga segundo.
       const ids = Object.keys(r.ids);
-      const volteada = { ...r, ids: { [ids[0]!]: "V2", [ids[1]!]: "V1" } } as typeof r;
+      const volteada = { ...r, ids: { [ids[0]!]: "V2", [ids[1]!]: "V1" } };
       const roles = (especReconstruida(volteada) as Json & { vehiculos: Json[] }).vehiculos;
       expect(roles.find((x) => x.id === ids[0])!.rol).toBe("B");
       expect(roles.find((x) => x.id === ids[1])!.rol).toBe("A");
