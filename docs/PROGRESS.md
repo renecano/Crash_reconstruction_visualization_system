@@ -11,6 +11,7 @@ Reglas de trabajo: `CLAUDE.md`. Especificación: `PLAN.md`.
   - **T6.4 (los agentes respetan el orden de impactos)** quedó a medias en la rama `fix/agentes-orden-impactos` (commit `c8c8a08`, Python y TS cambiados, sin pruebas ni evaluación): se retoma en T6.
   - **Urgente (René, 2026-11-04, tarde): congelamientos del 3D en la MacBook M1**: hecho y en producción (PR #161, ADR 0104; René confirmó en la M1: WebGPU, media, dpr 1.5, 60 fps, precompilado listo). **Luego, cámaras tras el #161** (rama `fix/camaras-vivas`, ADR 0105): Conductor A/B en los ojos del conductor otra vez, la vista siempre cambia con el botón, la cinematográfica esquiva el poste, la línea de visión solo en cenital y libre, y las tareas largas de la carga con nombre y partidas. Pendientes en la sección «Cámaras tras el #161» más abajo.
   - **Después (René, 2026-11-04, tarde; orden fijado por él):** el rediseño «Laboratorio» de /cesvi (`docs/cesvi/entrante/laboratorio/`, a copiar a `docs/cesvi/rediseno/laboratorio/`) con los arreglos de uso A1–A5 (buscar el lugar con coordenadas y links y ruta `/api/lugar`, contador de la narración, reporte pegado → cargar como reporte, botones de inicio y archivo `.croquis`, sin mapa en el paso del hecho) y la colocación de vehículos rehecha (B); se despliega por partes: A1–A4 y B, luego tokens y layout, luego los actos. Antes de eso, T3.2 sigue a medias.
+  - **La escena, rehecha desde cero (René, 2026-11-05; ADR 0110):** una pregunta a la vez, Croquis propone desde la narración y la persona confirma con un toque; reemplaza la colocación B. Rama `feat/escena-facil`. **Siguiente:** el rediseño «Laboratorio» en su orden (prompt §10): la maqueta en Presentar, las pantallas, el movimiento y los tooltips.
   - **R11 retomable (René, 2026-11-05; ADR 0109):** el botón de la computadora de la demo muestra avance, se retoma el mismo día, sube por paso y tiene `-SoloRender` y `-SoloMedicion`; las escenas llevan el escenario de T1 a Blender. Probado con `-Prueba` en la laptop, incluido el corte a la mitad. Listo para el colaborador (sección «R11: render retomable»).
   - **Laboratorio (René, 2026-11-04):** §0, A1–A5 y B en producción (PR #166); tokens, tipografía, barra de actos y transición en `feat/laboratorio-tokens` (ADR 0108). **Siguiente:** la escena generada (prompt §7), luego las pantallas en orden. Rutas por acto en `feat/laboratorio-rutas`.
   - **Vercel (René, 2026-11-05), antes de A1** (rama `fix/vercel-produccion`, ADR 0107): verificación de que producción sirve el commit de main, modelos y HDRI en Vercel Blob (35 % menos por despliegue) y 29 despliegues viejos borrados. Deploy Hook guardado por René; el merge del #164 se publicó solo. **Luego:** las llantas del caso de ejemplo del Jetta y el Camaro, y después A1.
@@ -1884,6 +1885,50 @@ Rama `fix/fotos-dictamen`. René mandó la captura del dictamen de un caso nuevo
 - **Qué hay ahora:** fotos con la cinematográfica, del instante pedido, sin marcadores; vehículos apoyados en banquetas y relieve; y si el 3D se queda abajo de 24 fps durante 5 s, baja un nivel y lo dice `?diag=1`.
 - **Cómo probarlo:** genera el dictamen de un caso nuevo y compara las tres fotos; y en `docs/cesvi/t1/ruedas/` están las capturas de cerca de cada clase. Si en tu caso las llantas siguen fuera de su hueco, dime la clase del vehículo (o manda el `.json` del caso): en las ocho clases que medí quedan bien.
 
+### La escena, rehecha desde cero (René, 2026-11-05; ADR 0110)
+
+Rama `feat/escena-facil`. Reemplaza la colocación B: en la prueba con personas (T4) nadie la entendió. La meta es que la entienda un niño; la referencia es `docs/cesvi/rediseno/escena-facil/`.
+
+- **Qué quedó:**
+  - **Una pregunta a la vez:** «¿Dónde fue el choque?», «¿Por dónde venía el Jetta?» y «¿Dónde quedó después del choque?». La pantalla es un mapa claro a pantalla completa, con la hoja de la pregunta y el avance abajo.
+  - **Croquis propone primero:** el cruce de la narración («Sí, fue en ese cruce»), la flecha que coincide con lo narrado ya resaltada y el color de cada coche. Si una de las calles narradas no está en el mapa, lo dice.
+  - **Tocar en vez de arrastrar:** el choque se ajusta a la calle más cercana y hay una flecha grande por cada calle que llega. «Dónde quedó» tiene tres opciones y dos botones de 15°.
+  - **Mensajes:** de éxito con «Deshacer», alertas con su acción y error solo si no llegan las calles.
+  - **Al final:** la tarjeta «¡La escena está lista!», con los supuestos explicados. Lo avanzado va en «Más herramientas».
+  - **Presentar:** muestra el resumen de la escena.
+  - **Lo que se guarda:** lo mismo de antes; el solver no cambia.
+- **Arreglos que salieron al probar:**
+  - El mapa de antes ahora se encuadra solo en lo colocado; si no, la reconstrucción abría sobre la ciudad entera.
+  - Lo que falta del lugar ya no pide posición final a un vehículo con «No sé dónde quedó» y lo nombra por su modelo, no por «V1».
+- **Evidencia:**
+  - El GIF del recorrido completo: `docs/cesvi/rediseno/escena-facil/recorrido.gif`.
+  - Capturas en día, noche y celular: `docs/cesvi/rediseno/escena-facil/capturas/`.
+  - Las saca `e2e/escena-facil-gif.spec.ts` (a mano, con red), con el caso de ejemplo y las calles reales de OpenStreetMap.
+- **Tiempo de máquina** del recorrido completo (Playwright sin pausas, servidor de desarrollo en la laptop, 2026-11-05):
+
+  | Tamaño            | Segundos |
+  | ----------------- | -------- |
+  | Escritorio, día   | 13.6     |
+  | Escritorio, noche | 13.3     |
+  | Celular           | 12.8     |
+  - Es el piso, no la meta: la meta es con personas.
+
+- **Pruebas:**
+  - Unitarias de cada respuesta → expediente, de la lectura de la narración, de las calles y del resumen (`lib/escena-facil.test.ts`, 15 pruebas).
+  - Unitarias de lo que falta del lugar y del caso guardado.
+  - Web: 48 archivos, 275 pruebas en verde.
+  - Las seis e2e `@flujo` pasan en local en serie, con el caso nuevo, la carambola, AXA, el reporte importado y la reproducción contestando la escena nueva.
+- **La medición con personas:** `docs/cesvi/prueba-personas.md` tiene la prueba corta (caso `E`). La meta es que tres personas que nunca lo han usado completen la escena del caso de ejemplo en menos de 1 minuto sin preguntar nada. `eval/prueba_personas.mjs` la cuenta (`escena.meta_cumplida`).
+
+#### Resumen para René (escena fácil)
+
+- **Qué quedó:** La escena rehecha, una pregunta a la vez, en producción en cuanto pase CI. El recorrido completo está en `docs/cesvi/rediseno/escena-facil/recorrido.gif`.
+- **Cómo probarlo:** en /cesvi, «Caso nuevo», «Usar una narración de ejemplo», «Leer la narración» y luego La escena.
+- **Qué necesito de ti:**
+  - Repetir la prueba corta con tres personas (sección «Meta de la escena fácil» de `docs/cesvi/prueba-personas.md`).
+  - Si quieres satélite, una cuenta con llave (fila en «Bloqueado»).
+- **Un cambio que verás:** en Presentar, La escena ya no muestra la lista de antes, sino el resumen de lo marcado.
+
 ### Laboratorio: la maqueta del caso (René, 2026-11-04; prompt §7)
 
 Rama `feat/laboratorio-maqueta-2` (la primera, PR #169, salió de un main sin el #168).
@@ -2177,6 +2222,9 @@ Rama `feat/r11-render-retomable`. El colaborador cerró la corrida del 2026-11-0
 
 ### Endurecimiento pendiente
 
+- **Escena fácil (ADR 0110), código de la colocación B que quedó sin usar:** `colocar-mapa.tsx` (la bandeja, el anillo y los fantasmas que `MapaEscena` aún acepta en su propiedad `colocacion`) y lo de B en `lib/colocar.ts` (`subpasoLugar`, `direccionesCandidatas`). En el recorrido se calculan, pero no se ven. Se quitan junto con sus pruebas al tocar `MapaEscena`.
+- **Escena fácil, lectura de la narración:** el sentido y el color salen de reglas sobre el texto. Si Claude los devolviera en la lectura (con su cita), se leerían mejor; eso toca el contrato y el prompt.
+
 - **R11, lo que no viaja a Blender (ADR 0109):** la variación de brillo y las manchas del pasto, las rodadas del asfalto, el vaivén de los árboles y el color de la palmera procedural (sale plano). Si René pide más parecido entre el video y el visor, se agregan como dato en el glTF.
 - **R11, una exportación de escenas falló una vez sin repetirse (2026-11-05):** `tools/demo/exportar-escenas.mjs` terminó con un error de Node del que solo quedó el final; la siguiente corrida, igual, salió bien. Si vuelve a pasar, guardar el registro completo.
 
@@ -2322,6 +2370,7 @@ Ordenado por impacto (lo que cierra una fase de PLAN-CESVI primero). Lo resuelto
 | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | **T2a:** el colaborador corre `EJECUTAR-EN-COMPUTADORA-DEMO.bat -Prueba` desde una terminal en la carpeta del repo (2 min)                                                                                                       | Destapar hoy cualquier falla del script en otra máquina (Git, Chrome, permisos, descarga de Blender) antes del botón completo                                            | Pedido a René el 2026-10-30 (plan v3 §3). El resultado llega en la rama `resultados/prueba-<fecha>`; si falla, Claude Code lo arregla antes de seguir con T1                                                                                                                 |
 | Correr `EJECUTAR-EN-COMPUTADORA-DEMO.bat` en la computadora de la demo (un colaborador con Git y Chrome)                                                                                                                         | Cierra R11 (el video en calidad completa) y la meta de PLAN §7.8 (≥ 60 fps en alta o ultra, E6). Los resultados llegan en una rama `resultados/computadora-demo-<fecha>` | Listo para correr otra vez (2026-11-05, ADR 0109): `git pull` y doble clic. La corrida del 2026-11-03 se cerró a la mitad del render de AXA; ahora la ventana muestra el avance, se retoma el mismo día y sube al terminar cada paso. La guía es `LEEME-COMPUTADORA-DEMO.md` |
+| Una cuenta con llave para mosaicos de satélite (Esri, Mapbox o Google; opcional)                                                                                                                                                 | La escena fácil ofrece «Satélite» además del mapa claro (René, 2026-11-05). No hay fuente libre a nivel de calle sin cuenta                                              | Opcional; mientras, la escena usa el mapa claro de OpenStreetMap                                                                                                                                                                                                             |
 | Aprobar el video de R11 de esa computadora                                                                                                                                                                                       | R11 se cierra con la aprobación de René (PLAN-CESVI R11)                                                                                                                 | Pendiente: depende de la fila anterior                                                                                                                                                                                                                                       |
 | Revisar las capturas de R10 en `docs/cesvi/r10/` (antes y después, alta y ultra)                                                                                                                                                 | Aprobación de R10 a ojo de René (PLAN-CESVI)                                                                                                                             | Pendiente: las de los modelos de Sketchfab se agregan con R10                                                                                                                                                                                                                |
 | Comentarios de CESVI tras la demo                                                                                                                                                                                                | C8: lo que diga CESVI define lo que sigue (R9)                                                                                                                           | Pendiente                                                                                                                                                                                                                                                                    |

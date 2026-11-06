@@ -85,6 +85,7 @@ function htmlCoche(c: CocheMapa): string {
 
 export function MapaFacil(p: MapaFacilProps) {
   const contenedor = useRef<HTMLDivElement | null>(null);
+  const raiz = useRef<HTMLDivElement | null>(null);
   const mapa = useRef<MapaMl | null>(null);
   const [listo, setListo] = useState(false);
   const ultimo = useRef(p);
@@ -98,6 +99,7 @@ export function MapaFacil(p: MapaFacilProps) {
   useEffect(() => {
     let vivo = true;
     let instancia: MapaMl | null = null;
+    let observador: ResizeObserver | null = null;
     void import("maplibre-gl").then(({ Map, Marker: M, getVersion, setWorkerUrl }) => {
       if (!vivo || !contenedor.current) return;
       setWorkerUrl(`/maplibre/worker-${getVersion()}.mjs`);
@@ -118,6 +120,17 @@ export function MapaFacil(p: MapaFacilProps) {
       instancia.on("click", (ev) => {
         ultimo.current.onToque?.({ lat: ev.lngLat.lat, lon: ev.lngLat.lng });
       });
+      // El contenedor puede nacer sin tamaño (la pantalla aún se acomoda): el mapa se ajusta solo.
+      const obs = new ResizeObserver(() => instancia?.resize());
+      obs.observe(contenedor.current);
+      observador = obs;
+      // La escala a la vista (para las pruebas: tocar a tantos metros de algo).
+      const escala = () => {
+        const i = instancia;
+        if (!i || !raiz.current) return;
+        raiz.current.dataset.mPorPx = metrosPorPixel(i.getCenter().lat, i.getZoom()).toFixed(5);
+      };
+      instancia.on("moveend", escala);
       instancia.on("load", () => {
         if (!vivo || !instancia) return;
         encuadrar(instancia, ultimo.current.encuadre, false);
@@ -128,6 +141,7 @@ export function MapaFacil(p: MapaFacilProps) {
     });
     return () => {
       vivo = false;
+      observador?.disconnect();
       ultimo.current.onMapa?.(null);
       instancia?.remove();
       mapa.current = null;
@@ -183,7 +197,7 @@ export function MapaFacil(p: MapaFacilProps) {
       el.className = "escena-choque";
       el.dataset.testid = `choque-${c.orden}`;
       el.setAttribute("data-testid", `choque-${c.orden}`);
-      el.innerHTML = `<svg viewBox="-12 -12 24 24" width="44" height="44" aria-hidden="true"><path d="M0 -11 L3 -4 L10 -6 L5 0 L10 6 L3 4 L0 11 L-3 4 L-10 6 L-5 0 L-10 -6 L-3 -4 Z" fill="#FF5A1F" stroke="#fff" stroke-width="1.4"/><circle r="2.2" fill="#fff"/></svg><span class="escena-etiqueta escena-etiqueta-choque">Choque</span>`;
+      el.innerHTML = `<span class="escena-choque-golpe"><svg viewBox="-12 -12 24 24" width="44" height="44" aria-hidden="true"><path d="M0 -11 L3 -4 L10 -6 L5 0 L10 6 L3 4 L0 11 L-3 4 L-10 6 L-5 0 L-10 -6 L-3 -4 Z" fill="#FF5A1F" stroke="#fff" stroke-width="1.4"/><circle r="2.2" fill="#fff"/></svg></span><span class="escena-etiqueta escena-etiqueta-choque">Choque</span>`;
       el.style.pointerEvents = "none";
       agregar(el, c.punto);
     }
@@ -219,6 +233,8 @@ export function MapaFacil(p: MapaFacilProps) {
       el.setAttribute("data-testid", `coche-${c.id}`);
       el.setAttribute("aria-label", c.nombre);
       el.setAttribute("role", "img");
+      // Solo el coche que se coloca toma el puntero (se arrastra); los demás dejan tocar el mapa.
+      el.style.pointerEvents = c.activo ? "auto" : "none";
       const cuerpo = document.createElement("div");
       cuerpo.className = "escena-coche-cuerpo";
       cuerpo.innerHTML = htmlCoche(c);
@@ -242,7 +258,8 @@ export function MapaFacil(p: MapaFacilProps) {
         cuerpo.style.width = `${a * CAJA_COCHE.ancho}px`;
         cuerpo.style.height = `${l * CAJA_COCHE.largo}px`;
         cuerpo.style.transform = `translate(-50%, -50%) rotate(${c.rumbo}deg)`;
-        nombre.style.transform = `translate(${Math.max(a, l) * 0.55 + 6}px, ${-Math.max(a, l) * 0.55}px)`;
+        const lejos = c.activo ? 46 : 6;
+        nombre.style.transform = `translate(${Math.max(a, l) * 0.55 + lejos}px, ${-Math.max(a, l) * 0.55 - (c.activo ? 34 : 0)}px)`;
       };
       ajustar();
       escalar.push(ajustar);
@@ -287,8 +304,14 @@ export function MapaFacil(p: MapaFacilProps) {
   }, [listo, p.choques, p.propuesta, p.flechas, p.coches]);
 
   return (
-    <div className="absolute inset-0" data-testid="mapa-facil" data-listo={listo ? "si" : "no"}>
-      <div ref={contenedor} className="absolute inset-0" />
+    <div
+      ref={raiz}
+      className="absolute inset-0"
+      data-testid="mapa-facil"
+      data-listo={listo ? "si" : "no"}
+    >
+      {/* En línea: la hoja de MapLibre (sin capa) le pone position: relative y le ganaría a la clase. */}
+      <div ref={contenedor} style={{ position: "absolute", inset: 0 }} />
       <div className="absolute top-4 right-4 z-10 flex flex-col gap-2">
         <button
           type="button"
@@ -323,12 +346,28 @@ function escaparHtml(s: string): string {
   );
 }
 
-/** Lleva el mapa a los puntos: uno al centro (zoom 19.5); varios, encuadrados. */
+/**
+ * El margen libre del mapa: a la izquierda va la hoja de la pregunta (en escritorio) y abajo, el
+ * avance; en el celular la hoja va abajo.
+ */
+function margen(m: MapaMl) {
+  const { clientWidth: w, clientHeight: h } = m.getContainer();
+  return w >= 900
+    ? { top: 140, bottom: 150, left: 470, right: 100 }
+    : { top: 60, bottom: Math.round(h * 0.55), left: 30, right: 30 };
+}
+
+/** Lleva el mapa a los puntos: uno al centro (zoom 20.3); varios, encuadrados. */
 function encuadrar(m: MapaMl, puntos: readonly Punto[], animar: boolean) {
   if (!puntos.length) return;
+  const padding = margen(m);
   if (puntos.length === 1) {
     const [p] = puntos as [Punto];
-    const opts = { center: [p.lon, p.lat] as [number, number], zoom: Math.max(m.getZoom(), 19.5) };
+    const opts = {
+      center: [p.lon, p.lat] as [number, number],
+      zoom: Math.max(m.getZoom(), 20.3),
+      padding,
+    };
     if (animar) m.easeTo({ ...opts, duration: 500 });
     else m.jumpTo(opts);
     return;
@@ -340,7 +379,7 @@ function encuadrar(m: MapaMl, puntos: readonly Punto[], animar: boolean) {
       [Math.min(...lons), Math.min(...lats)],
       [Math.max(...lons), Math.max(...lats)],
     ],
-    { padding: { top: 120, bottom: 160, left: 120, right: 120 }, maxZoom: 20.2, animate: animar },
+    { padding, maxZoom: 20.6, animate: animar },
   );
 }
 

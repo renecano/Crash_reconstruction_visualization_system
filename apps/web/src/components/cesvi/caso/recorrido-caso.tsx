@@ -8,15 +8,12 @@
  * Lo que marca el perito lleva fuente «perito»; lo que supone Croquis, «supuesto», hasta que el
  * perito lo confirma. La validación del dictamen se guarda con el caso (ADR 0075).
  */
-import { GuiaColocar } from "./colocar-mapa";
 import { LEGEND_TEXT_CESVI } from "@croquis/scene-schema";
 import {
   comparar,
-  conHuella,
   coordinar,
   criteriosVacios,
   conPosicion,
-  conRestos,
   delPerito,
   medidasDe,
   pizarraDeEscena,
@@ -24,10 +21,8 @@ import {
   posesDeImpacto,
   posicionesEncimadas,
   conHipotesis,
-  conReposoSupuesto,
   preguntaPendiente,
   reconstruccionContraCesvi,
-  reposoSupuesto,
   supuestoAlNoSaber,
   supuestosDeclarados,
   verificacionCesvi,
@@ -79,7 +74,7 @@ import { actoDePaso, actosDelCaso, continuarA, rutaDeActo, type ClaveActo } from
 import { BarraRecorrido, PASOS } from "../recorrido/barra";
 import { TransicionActo } from "../recorrido/transicion-acto";
 import { MaquetaCaso } from "../escena/maqueta-caso";
-import { EscenaFacil } from "../escena/escena-facil";
+import { EscenaFacil, ResumenDeLaEscena } from "../escena/escena-facil";
 import { nombreVehiculo } from "@/lib/escena-facil";
 import { Reproduccion } from "../reproduccion";
 import {
@@ -87,7 +82,6 @@ import {
   PasoContraReporte,
   PasoDanos,
   PasoHecho,
-  PasoLugar,
   PasoNumeros,
   claveItem,
   type ItemLugar,
@@ -178,7 +172,7 @@ export function RecorridoCaso({
   const [historial, setHistorial] = useState<Expediente[]>([]);
   const [calles, setCalles] = useState<OverpassResponse | null>(null);
   const [objetos, setObjetos] = useState<OverpassResponse | null>(null);
-  const [medida, setMedida] = useState<number | null>(null);
+  const [, setMedida] = useState<number | null>(null);
   const [mapa, setMapa] = useState<MapaMl | null>(null);
   const [moviles, setMoviles] = useState<PosicionMovil[]>([]);
   const [vista, setVista] = useState<"mapa" | "3d" | "maqueta">("mapa");
@@ -484,9 +478,6 @@ export function RecorridoCaso({
           .map((v): ItemLugar => ({ tipo: "final", vehiculo: v.id })),
       ]
     : [];
-  const opcionales: ItemLugar[] = expediente
-    ? expediente.vehiculos.map((v): ItemLugar => ({ tipo: "inicial", vehiculo: v.id }))
-    : [];
   const vehiculosDe = (orden: number) => impactos.find((x) => x.orden === orden)?.vehiculos ?? [];
   const colocado = (i: ItemLugar) =>
     i.tipo === "impacto"
@@ -535,13 +526,6 @@ export function RecorridoCaso({
       );
     }
     return poseDe(i.vehiculo, i.tipo)?.rumbo ?? null;
-  };
-  const nombreItem = (i: ItemLugar) => {
-    if (i.tipo === "impacto")
-      return impactos.length > 1 ? `Punto del impacto ${i.orden}` : "Punto de impacto";
-    const v = expediente?.vehiculos.find((x) => x.id === i.vehiculo);
-    const marca = v?.marca?.valor ? ` · ${v.marca.valor}` : "";
-    return `${i.vehiculo}${marca} · ${i.tipo === "final" ? "dónde quedó" : "dónde venía"}`;
   };
   const colorItem = (i: ItemLugar) =>
     i.tipo === "impacto" ? "#FF5B2E" : colorDeVehiculo(i.vehiculo);
@@ -952,51 +936,17 @@ export function RecorridoCaso({
     if (!expediente || !leida) return sinEscena;
     if (actual === 2)
       return (
-        <PasoLugar
-          expediente={expediente}
-          escena={leida}
-          requeridos={requeridos}
-          opcionales={opcionales}
-          colocado={colocado}
-          activo={activo}
-          onActivo={setElegido}
-          rumboActivo={activo ? rumboDeItem(activo) : null}
-          onRumbo={girar}
-          onListo={() => setElegido(null)}
-          subpaso={subpaso}
-          desconocidos={desconocidos}
-          onNoSeFinal={(v) => {
-            setDesconocidos((d) => (d.includes(v) ? d : [...d, v]));
-            setElegido(null);
-            setPizarra((p) =>
-              delPerito(
-                p,
-                `No sé dónde quedó ${v}: la reconstrucción va sin su posición final (no se supone ninguna).`,
-              ),
-            );
+        <ResumenDeLaEscena
+          estado={{
+            expediente,
+            desconocidos,
+            direccionesNoSe,
+            juntoAlChoque,
+            puntos: puntosImpacto,
           }}
-          onColocarDesconocido={(v) => {
-            setDesconocidos((d) => d.filter((x) => x !== v));
-            setElegido({ tipo: "final", vehiculo: v });
-          }}
-          reposoSupuesto={(i) => i.tipo === "final" && reposoSupuesto(expediente, i.vehiculo)}
-          onReposoSupuesto={(i, v) => {
-            if (i.tipo !== "final") return;
-            setHistorial((h) => [...h, expediente]);
-            cambiarExpediente(conReposoSupuesto(expediente, i.vehiculo, v));
-          }}
-          nombreItem={nombreItem}
-          colorItem={colorItem}
-          medida={medida}
-          onUsarMedida={(destino) => {
-            if (medida === null) return;
-            setHistorial((h) => [...h, expediente]);
-            cambiarExpediente(
-              destino === "restos"
-                ? conRestos(expediente, Number(medida.toFixed(2)))
-                : conHuella(expediente, destino.vehiculo, Number(medida.toFixed(2))),
-            );
-          }}
+          impactos={impactos}
+          narracion={texto.trim() || null}
+          calles={calles}
         />
       );
     if (actual === 3)
@@ -1256,6 +1206,7 @@ export function RecorridoCaso({
             calles={calles}
             callesFallaron={callesFallaron}
             lugar={expediente.caso.lugar?.coordenadas ?? null}
+            descripcionLugar={expediente.caso.lugar?.descripcion?.valor ?? null}
             zona={{
               municipio: expediente.caso.lugar?.municipio?.valor,
               estado: expediente.caso.lugar?.estado?.valor,
@@ -1281,7 +1232,6 @@ export function RecorridoCaso({
               ? ` · ${(actos[actoIdx]?.pasos.indexOf(paso) ?? 0) + 1} de ${actos[actoIdx]?.pasos.length}: ${pasos[paso]}`
               : ""}
           </p>
-          {actual === 2 && modo === "trabajar" ? <GuiaColocar /> : null}
           {cuerpo}
           <div className="mt-auto flex flex-col gap-2 pt-4">
             {(actual === 2 || actual === 3) && modo === "trabajar"

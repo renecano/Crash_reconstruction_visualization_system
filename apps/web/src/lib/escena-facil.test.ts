@@ -154,6 +154,12 @@ describe("lo que sale de las calles del mapa", () => {
     expect(cerca(p.punto, C)).toBe(true);
     expect(p.calles).toEqual(expect.arrayContaining(["Calle Azucena", "Avenida Reforma"]));
     expect(p.cita).toContain("Azucena");
+    // Si solo una de las calles está en el mapa, lo dice: no presenta otro cruce como el narrado.
+    const otra = grabada.narracion.replace(/Av\. Reforma/g, "Av. Insurgentes");
+    const u = proponerChoque(calles, otra, C)!;
+    expect(u.segun).toBe("una_calle");
+    expect(u.encontrada).toBe("calle Azucena");
+    expect(u.faltante).toBe("Av. Insurgentes");
     // Sin narración, el cruce más cercano al lugar.
     const q = proponerChoque(calles, null, lugar)!;
     expect(q.segun).toBe("cercania");
@@ -253,7 +259,7 @@ describe("cada respuesta se guarda en el expediente de siempre", () => {
     expect(pasoActual(pasos)).toMatchObject({ tipo: "vehiculo", vehiculo: "V1", direccion: false });
 
     // «Del sur»: el Jetta avanzaba al norte; queda como dato de la persona.
-    e = elegirDireccion(e, impactos, "V1", 0, C);
+    e = elegirDireccion(e, impactos, "V1", 0, () => C);
     expect(poseDe(e, "V1", "impacto")).toMatchObject({ rumbo: 0, fuente: "perito" });
     pasos = pasosEscena(e, impactos, vacio);
     expect(pasoActual(pasos)).toMatchObject({ vehiculo: "V1", direccion: true, final: false });
@@ -268,7 +274,7 @@ describe("cada respuesta se guarda en el expediente de siempre", () => {
     expect(poseDe(e, "V1", "final")!.rumbo).toBe(345);
 
     // El Camaro: «Del este» y «Quedó junto al choque».
-    e = elegirDireccion(e, impactos, "V2", 270, C);
+    e = elegirDireccion(e, impactos, "V2", 270, () => C);
     expect(poseDe(e, "V2", "impacto")).toMatchObject({ rumbo: 270, fuente: "perito" });
     // Girar el choque con el primer vehículo no le quita su dato al segundo.
     expect(poseDe(e, "V1", "impacto")!.fuente).toBe("perito");
@@ -283,10 +289,36 @@ describe("cada respuesta se guarda en el expediente de siempre", () => {
     expect(pasoActual(pasosEscena(e, impactos, vacio))).toBeNull();
   });
 
+  it("en una carambola, la dirección del primero de un choque acomoda a los demás de ese choque", () => {
+    // B es el primero del segundo choque: su dirección orienta a C en ese choque.
+    const imp = [
+      { orden: 1, vehiculos: ["V1", "V2"] },
+      { orden: 2, vehiculos: ["V2", "V3"] },
+    ];
+    const v3 = { ...e0.vehiculos[1]!, id: "V3" as (typeof e0.vehiculos)[number]["id"] };
+    const e3 = {
+      ...e0,
+      vehiculos: [...e0.vehiculos, v3],
+      impactos: [
+        ...(e0.impactos ?? []),
+        { orden: 2, vehiculos: ["V2", "V3"] as never, fuente: "perito" as const },
+      ],
+    };
+    const P2 = { lat: C.lat, lon: C.lon + 0.00005 };
+    const puntos = (o: number) => (o === 1 ? C : P2);
+    let e = marcarChoque(e3, imp, 1, C, 0);
+    e = marcarChoque(e, imp, 2, P2, 0);
+    const antes = poseDe(e, "V3", "impacto")!;
+    e = elegirDireccion(e, imp, "V2", 90, puntos);
+    const despues = poseDe(e, "V3", "impacto")!;
+    expect(despues.rumbo).not.toBe(antes.rumbo);
+    expect(poseDe(e, "V2", "impacto")).toMatchObject({ rumbo: 90, fuente: "perito" });
+  });
+
   it("«No sé por dónde venía» deja la de Croquis como supuesto; «No sé dónde quedó», sin posición", () => {
     let e = marcarChoque(e0, impactos, 1, C, 90);
     const propuesta = poseDe(e, "V1", "impacto")!.rumbo;
-    e = elegirDireccion(e, impactos, "V1", propuesta, C, true);
+    e = elegirDireccion(e, impactos, "V1", propuesta, () => C, true);
     expect(poseDe(e, "V1", "impacto")!.fuente).toBe("supuesto");
     let pasos = pasosEscena(e, impactos, { desconocidos: [], direccionesNoSe: ["V1"] });
     expect(pasoActual(pasos)).toMatchObject({ vehiculo: "V1", direccion: true, final: false });
@@ -300,9 +332,9 @@ describe("cada respuesta se guarda en el expediente de siempre", () => {
 
   it("el resumen dice lo marcado, y los supuestos con su explicación", () => {
     let e = marcarChoque(e0, impactos, 1, C, 0);
-    e = elegirDireccion(e, impactos, "V1", 0, C);
+    e = elegirDireccion(e, impactos, "V1", 0, () => C);
     e = marcarFinal(e, "V1", { lat: C.lat + 0.0001, lon: C.lon + 0.0001 }, 45);
-    e = elegirDireccion(e, impactos, "V2", 90, C);
+    e = elegirDireccion(e, impactos, "V2", 90, () => C);
     const lineas = resumenEscena({
       e,
       impactos,

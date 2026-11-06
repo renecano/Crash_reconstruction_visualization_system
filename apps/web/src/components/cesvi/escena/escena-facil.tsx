@@ -19,10 +19,11 @@ import {
 } from "@croquis/cesvi";
 import type { OverpassResponse } from "@croquis/croquis-2d";
 import type { Map as MapaMl } from "maplibre-gl";
-import { useMemo, useRef, useState, type ReactNode } from "react";
+import { useEffect, useMemo, useRef, useState, type ReactNode } from "react";
 import {
   ajustarACalle,
   callesDe,
+  cruceNarrado,
   callesEn,
   choqueLejosDeCalles,
   coloresVehiculos,
@@ -88,6 +89,7 @@ export function EscenaFacil({
   calles,
   callesFallaron,
   lugar,
+  descripcionLugar = null,
   zona,
   onBuscarCalles,
   onVerReconstruccion,
@@ -104,6 +106,8 @@ export function EscenaFacil({
   /** No llegaron las calles del mapa (sin red o el servicio no respondió). */
   callesFallaron: boolean;
   lugar: Punto | null;
+  /** Cómo describe el lugar el caso («crucero de la calle Azucena esquina con Av. Reforma…»). */
+  descripcionLugar?: string | null;
   zona: { municipio?: string; estado?: string };
   /** Pide las calles alrededor de un punto (el lugar buscado). */
   onBuscarCalles: (p: Punto) => void;
@@ -144,7 +148,7 @@ export function EscenaFacil({
   const [mas, setMas] = useState(false);
   const [herramienta, setHerramienta] = useState<"medir" | { inicial: string } | null>(null);
   const [medicion, setMedicion] = useState<Punto[]>([]);
-  const [busqueda, setBusqueda] = useState("");
+  const [busqueda, setBusqueda] = useState(descripcionLugar ?? "");
   const [resultados, setResultados] = useState<{ nombre: string; lat: number; lon: number }[]>([]);
   const [estadoBusqueda, setEstadoBusqueda] = useState<string | null>(null);
   const mapa = useRef<MapaMl | null>(null);
@@ -185,10 +189,62 @@ export function EscenaFacil({
   };
   const exito = (texto: string): Mensaje => ({ tipo: "exito", texto, deshacer: true });
 
+  // Sin coordenadas en el caso, Croquis busca el lugar que dice la narración (la descripción del
+  // lugar, el cruce o la primera calle, con el municipio) y propone con las calles de ahí.
+  const [lugarNarrado, setLugarNarrado] = useState<Punto | null>(null);
+  const [buscandoNarrado, setBuscandoNarrado] = useState(false);
+  const yaBuscado = useRef(false);
+  // Vivo mientras la escena está montada (en desarrollo React monta los efectos dos veces: la búsqueda
+  // de la primera vuelta debe poder terminar).
+  const montada = useRef(false);
+  useEffect(() => {
+    montada.current = true;
+    return () => {
+      montada.current = false;
+    };
+  }, []);
+  useEffect(() => {
+    if (lugar || yaBuscado.current || estado.puntos[1]) return;
+    const cruce = narracion ? cruceNarrado(narracion) : null;
+    const consultas = [
+      descripcionLugar,
+      cruce ? `${cruce.calles[0]} y ${cruce.calles[1]}` : null,
+      cruce?.calles[0] ?? null,
+    ].filter((x): x is string => Boolean(x?.trim()));
+    if (!consultas.length) return;
+    yaBuscado.current = true;
+    const buscarEn = async () => {
+      setBuscandoNarrado(true);
+      for (const q of consultas) {
+        const params = new URLSearchParams({ q });
+        if (zona.municipio) params.set("municipio", zona.municipio);
+        if (zona.estado) params.set("estado", zona.estado);
+        try {
+          const r = await fetch(`/api/lugar?${params.toString()}`);
+          const d = (await r.json().catch(() => null)) as {
+            resultados?: { lat: number; lon: number }[];
+          } | null;
+          const p = r.ok ? d?.resultados?.[0] : undefined;
+          if (p && montada.current) {
+            setLugarNarrado({ lat: p.lat, lon: p.lon });
+            onBuscarCalles({ lat: p.lat, lon: p.lon });
+            break;
+          }
+        } catch {
+          break;
+        }
+      }
+      if (montada.current) setBuscandoNarrado(false);
+    };
+    void buscarEn();
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- una vez, al abrir la escena
+  }, []);
+  const lugarBase = lugar ?? lugarNarrado;
+
   // Lo que Croquis propone para el primer choque.
   const propuesta = useMemo(
-    () => proponerChoque(callesMapa, narracion, lugar),
-    [callesMapa, narracion, lugar],
+    () => proponerChoque(callesMapa, narracion, lugarBase),
+    [callesMapa, narracion, lugarBase],
   );
   const puntoChoque = (orden: number): Punto | null => {
     if (estado.puntos[orden]) return estado.puntos[orden]!;
@@ -269,7 +325,7 @@ export function EscenaFacil({
     if (!c) return;
     const siguiente: EstadoEscena = {
       ...estado,
-      expediente: elegirDireccion(e, impactos, v, rumbo, c, noSe),
+      expediente: elegirDireccion(e, impactos, v, rumbo, puntoChoque, noSe),
       direccionesNoSe: noSe
         ? [...new Set([...estado.direccionesNoSe, v])]
         : estado.direccionesNoSe.filter((x) => x !== v),
@@ -584,10 +640,10 @@ export function EscenaFacil({
       if (f) ps.push(f.punto);
     }
     if (!ps.length && propuesta) ps.push(propuesta.punto);
-    if (!ps.length && lugar) ps.push(lugar);
+    if (!ps.length && lugarBase) ps.push(lugarBase);
     return ps;
     // eslint-disable-next-line react-hooks/exhaustive-deps -- se reencuadra al cambiar de pregunta
-  }, [actual?.tipo, vehiculoActual, propuesta?.punto.lat, lugar?.lat]);
+  }, [actual?.tipo, vehiculoActual, propuesta?.punto.lat, lugarBase?.lat]);
 
   // --- La hoja de la pregunta --------------------------------------------------------------------
   const nPasos = pasos.length;
@@ -632,6 +688,11 @@ export function EscenaFacil({
           Toca el lugar en el mapa. Puedes moverte arrastrando y acercarte con la rueda del ratón o
           con dos dedos.
         </p>
+        {buscandoNarrado && !conPropuesta ? (
+          <p className="t-nota" role="status" data-testid="buscando-narrado">
+            Buscando en el mapa el lugar que dice la narración…
+          </p>
+        ) : null}
         {conPropuesta ? (
           <div
             className="flex flex-col gap-3 rounded-2xl bg-superficie-alta p-4"
@@ -640,11 +701,20 @@ export function EscenaFacil({
             <span className="text-[0.8125rem] font-semibold text-texto-2">
               {propuesta.segun === "narracion"
                 ? "Croquis lo leyó en la narración"
-                : "Croquis propone el cruce más cercano al lugar del caso"}
+                : propuesta.segun === "una_calle"
+                  ? "La narración dice"
+                  : "Croquis propone el cruce más cercano al lugar del caso"}
             </span>
             {propuesta.cita ? (
               <p className="font-serif text-[1.15rem] italic leading-snug">«{propuesta.cita}»</p>
-            ) : propuesta.calles.length ? (
+            ) : null}
+            {propuesta.segun === "una_calle" ? (
+              <p className="t-nota" data-testid="propuesta-una-calle">
+                En el mapa está {propuesta.encontrada}, pero no {propuesta.faltante}. Croquis te
+                propone su cruce más cercano:{" "}
+                <b className="text-texto">{propuesta.calles.slice(0, 2).join(" y ")}</b>.
+              </p>
+            ) : propuesta.segun === "cercania" && propuesta.calles.length ? (
               <p className="font-semibold">{propuesta.calles.slice(0, 2).join(" y ")}</p>
             ) : null}
             <div className="flex flex-wrap gap-2">
@@ -654,7 +724,9 @@ export function EscenaFacil({
                 onClick={() => ponerChoque(1, propuesta.punto, propuesta.calles.slice(0, 2))}
                 data-testid="aceptar-choque"
               >
-                {propuesta.calles.length >= 2 ? "Sí, fue en ese cruce" : "Sí, fue ahí"}
+                {propuesta.segun === "narracion" && propuesta.calles.length >= 2
+                  ? "Sí, fue en ese cruce"
+                  : "Sí, fue ahí"}
               </button>
               <button
                 type="button"
@@ -906,6 +978,12 @@ export function EscenaFacil({
   }
 
   const visible = alertaAuto ?? mensaje;
+  // Los de éxito se van solos a los 6 s (no tapan el mapa); las alertas esperan su respuesta.
+  useEffect(() => {
+    if (mensaje?.tipo !== "exito") return;
+    const t = setTimeout(() => setMensaje((m) => (m === mensaje ? null : m)), 6000);
+    return () => clearTimeout(t);
+  }, [mensaje]);
 
   // --- La tarjeta final --------------------------------------------------------------------------
   const resumen = resumenEscena({
@@ -1009,7 +1087,7 @@ export function EscenaFacil({
       {/* La hoja de la pregunta: a la izquierda; en el celular, abajo. */}
       {hoja && !(todoListo && !listaVista) ? (
         <section
-          className="escena-hoja absolute right-0 bottom-[84px] left-0 z-10 flex max-h-[58vh] flex-col gap-4 overflow-y-auto rounded-b-none p-5 md:top-6 md:right-auto md:bottom-auto md:left-6 md:max-h-[calc(100%-140px)] md:w-[420px] md:rounded-[22px] md:p-7"
+          className="escena-hoja absolute right-0 bottom-[84px] left-0 z-10 flex max-h-[46vh] flex-col gap-4 overflow-y-auto rounded-b-none p-5 md:top-6 md:right-auto md:bottom-auto md:left-6 md:max-h-[calc(100%-140px)] md:w-[420px] md:rounded-[22px] md:p-7"
           aria-label="La pregunta"
           data-testid="escena-hoja"
         >
@@ -1142,7 +1220,7 @@ export function EscenaFacil({
             data-testid="escena-lista"
           >
             <span
-              className="mx-auto grid h-16 w-16 place-items-center rounded-full bg-[var(--exito)] text-[1.8rem] text-white"
+              className="mx-auto grid h-16 w-16 shrink-0 place-items-center rounded-full bg-[var(--exito)] text-[1.8rem] text-white"
               aria-hidden="true"
             >
               ✓
@@ -1296,5 +1374,94 @@ function IconoCoche({
       />
       <rect x="-0.36" y="-0.27" width="0.72" height="0.13" rx="0.05" fill="rgba(15,23,42,0.55)" />
     </svg>
+  );
+}
+
+/**
+ * La escena al presentar: lo marcado en palabras (el choque y, por vehículo, por dónde venía y dónde
+ * quedó), con los supuestos y su explicación. Lo mismo que la tarjeta «¡La escena está lista!».
+ */
+export function ResumenDeLaEscena({
+  estado,
+  impactos,
+  narracion,
+  calles,
+}: {
+  estado: EstadoEscena;
+  impactos: readonly ImpactoAColocar[];
+  narracion: string | null;
+  calles: OverpassResponse | null;
+}) {
+  const e = estado.expediente;
+  const callesMapa = callesDe(calles);
+  const nombres = Object.fromEntries(
+    e.vehiculos.map((v) => [v.id, nombreVehiculo(v, e.vehiculos)]),
+  );
+  const colores = coloresVehiculos(e.vehiculos, narracion);
+  const puntoDe = (orden: number): Punto | null => {
+    if (estado.puntos[orden]) return estado.puntos[orden]!;
+    const ps = (impactos.find((i) => i.orden === orden)?.vehiculos ?? []).flatMap(
+      (v) => poseDe(e, v, "impacto") ?? [],
+    );
+    if (!ps.length) return null;
+    return {
+      lat: ps.reduce((a, p) => a + p.punto.lat, 0) / ps.length,
+      lon: ps.reduce((a, p) => a + p.punto.lon, 0) / ps.length,
+    };
+  };
+  const choques = impactos.flatMap((i) => {
+    const p = puntoDe(i.orden);
+    return p ? [{ orden: i.orden, punto: p }] : [];
+  });
+  const lineas = resumenEscena({
+    e,
+    impactos,
+    puntos: Object.fromEntries(choques.map((c) => [c.orden, c.punto])),
+    callesChoque: Object.fromEntries(choques.map((c) => [c.orden, callesEn(callesMapa, c.punto)])),
+    nombres,
+    desconocidos: estado.desconocidos,
+    direccionesNoSe: estado.direccionesNoSe,
+    juntoAlChoque: estado.juntoAlChoque,
+  });
+  const falta = pasoActual(pasosEscena(e, impactos, estado)) !== null;
+  return (
+    <section className="flex flex-col gap-4" data-testid="resumen-escena">
+      <h2 className="t-titulo text-[clamp(1.75rem,2.6vw,2.25rem)]">La escena</h2>
+      {falta ? (
+        <p className="t-nota" data-testid="escena-incompleta">
+          Aún falta marcar parte de la escena. Para marcarla, cambia a «Trabajar».
+        </p>
+      ) : null}
+      <ul className="flex flex-col divide-y divide-[var(--linea-suave)]">
+        {lineas.map((l, k) => (
+          <li key={k} className="flex gap-3 py-3">
+            {l.tipo === "choque" ? (
+              <svg viewBox="-12 -12 24 24" width="22" height="22" aria-hidden="true">
+                <path
+                  d="M0 -11 L3 -4 L10 -6 L5 0 L10 6 L3 4 L0 11 L-3 4 L-10 6 L-5 0 L-10 -6 L-3 -4 Z"
+                  fill="var(--senal)"
+                />
+              </svg>
+            ) : (
+              <IconoCoche
+                color={colores[l.vehiculo!]!.css}
+                clase={e.vehiculos.find((x) => x.id === l.vehiculo)?.clase}
+                chico
+              />
+            )}
+            <span className="flex flex-col gap-1">
+              <span className="font-semibold">{l.texto}</span>
+              {l.detalle ? <span className="t-nota">{l.detalle}</span> : null}
+              {l.supuesto ? (
+                <>
+                  <span className="escena-supuesto self-start">Supuesto</span>
+                  <span className="t-nota">{l.supuesto}</span>
+                </>
+              ) : null}
+            </span>
+          </li>
+        ))}
+      </ul>
+    </section>
   );
 }

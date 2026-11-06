@@ -41,6 +41,9 @@ const CAMPOS = new Set([
   "encontro_el_lugar",
   "colocar_s",
   "colocar_sin_ayuda",
+  "escena_s",
+  "escena_sin_preguntar",
+  "primera_vez",
   "problemas",
   "al_final",
 ]);
@@ -53,7 +56,8 @@ export function validarHoja(h, nombre = "hoja") {
     if (!CAMPOS.has(k)) fallas.push(`${nombre}: campo desconocido «${k}»`);
   if (!/^P\d{2}$/.test(String(h.persona ?? "")))
     fallas.push(`${nombre}: persona debe ser P01, P02…`);
-  if (h.caso !== "A" && h.caso !== "B") fallas.push(`${nombre}: caso debe ser A o B`);
+  if (!["A", "B", "E"].includes(h.caso))
+    fallas.push(`${nombre}: caso debe ser A, B o E (la prueba corta de la escena)`);
   if (typeof h.entrada_a_paso_s !== "object" || h.entrada_a_paso_s === null)
     fallas.push(`${nombre}: falta entrada_a_paso_s`);
   else
@@ -61,6 +65,8 @@ export function validarHoja(h, nombre = "hoja") {
       if (!PASOS.includes(k)) fallas.push(`${nombre}: paso desconocido «${k}»`);
   if (h.colocar_s !== undefined && h.colocar_s !== null && !(Number(h.colocar_s) >= 0))
     fallas.push(`${nombre}: colocar_s debe ser segundos o null`);
+  if (h.escena_s !== undefined && h.escena_s !== null && !(Number(h.escena_s) >= 0))
+    fallas.push(`${nombre}: escena_s debe ser segundos o null`);
   if (!Array.isArray(h.problemas)) fallas.push(`${nombre}: problemas debe ser una lista`);
   else
     h.problemas.forEach((p, i) => {
@@ -159,6 +165,20 @@ export function agregar(hojas) {
         (h) => typeof h.colocar_s === "number" && h.colocar_s < 60 && h.colocar_sin_ayuda === true,
       ).length,
     },
+    // La meta de la escena fácil (René, 2026-11-05): tres personas que nunca lo han usado completan
+    // la escena del caso de ejemplo (dos vehículos) en menos de 1 minuto, sin preguntar nada.
+    escena: (() => {
+      const medidas = hojas.filter((h) => typeof h.escena_s === "number");
+      const cumplen = medidas.filter(
+        (h) => h.escena_s < 60 && h.escena_sin_preguntar === true && h.primera_vez === true,
+      );
+      return {
+        mediana_s: mediana(medidas.map((h) => h.escena_s)),
+        medidas: medidas.length,
+        bajo_60_s_sin_preguntar_primera_vez: new Set(cumplen.map((h) => h.persona)).size,
+        meta_cumplida: new Set(cumplen.map((h) => h.persona)).size >= 3,
+      };
+    })(),
   };
 }
 

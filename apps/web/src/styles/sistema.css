@@ -1340,7 +1340,7 @@
     pointer-events: none;
   }
   .escena-etiqueta-choque {
-    transform: translate(18px, -40px);
+    transform: translate(-86px, 30px);
     background: var(--senal);
     color: #fff;
   }
@@ -1351,6 +1351,10 @@
     position: relative;
     width: 44px;
     height: 44px;
+  }
+  /* La animación va dentro: en el marcador pisaría el transform con que MapLibre lo coloca. */
+  .escena-choque-golpe {
+    display: block;
     animation: escena-golpe 600ms cubic-bezier(0.2, 0.8, 0.2, 1) both;
   }
   .escena-propuesta {
@@ -1507,7 +1511,7 @@
   }
   @media (prefers-reduced-motion: reduce) {
     .escena-mensaje,
-    .escena-choque,
+    .escena-choque-golpe,
     .escena-pulso {
       animation: none;
     }

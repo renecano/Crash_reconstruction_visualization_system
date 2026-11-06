@@ -36,20 +36,22 @@ export const COLORES_MAPA = {
 
 const CALLES_GRANDES = ["motorway", "trunk", "primary", "secondary", "tertiary"];
 
-/** El ancho de una calle en pixeles por zoom: crece con el zoom como la calle real. */
-const ancho = (base: number) =>
+/**
+ * El ancho de una calle en pixeles a cada zoom para un ancho real en metros (a la latitud de la
+ * Ciudad de México: 0.0704 m por pixel a zoom 20 con mosaicos de 512 px; se duplica por nivel). Una
+ * sola interpolación por zoom (MapLibre no admite dos), con el ancho de las grandes y el de las demás
+ * en cada parada; nunca menos de 1 px.
+ */
+const PX_POR_M_Z20 = 1 / 0.0704;
+const ancho = (esGrande: unknown, grandeM: number, normalM: number) =>
   [
     "interpolate",
-    ["exponential", 1.6],
+    ["exponential", 2],
     ["zoom"],
-    13,
-    base * 0.35,
-    16,
-    base * 2.2,
-    19,
-    base * 11,
-    21,
-    base * 40,
+    ...[12, 22].flatMap((z) => {
+      const k = PX_POR_M_Z20 * 2 ** (z - 20);
+      return [z, ["case", esGrande, Math.max(1, grandeM * k), Math.max(1, normalM * k)]];
+    }),
   ] as unknown as number;
 
 export function estiloMapaEscena(tema: "claro" | "oscuro"): StyleSpecification {
@@ -125,7 +127,7 @@ export function estiloMapaEscena(tema: "claro" | "oscuro"): StyleSpecification {
         layout: { "line-cap": "round", "line-join": "round" },
         paint: {
           "line-color": c.orilla,
-          "line-width": ["case", esGrande, ancho(1.6), ancho(1.05)] as unknown as number,
+          "line-width": ancho(esGrande, 17, 11.5),
           "line-gap-width": 0,
         },
       },
@@ -138,7 +140,7 @@ export function estiloMapaEscena(tema: "claro" | "oscuro"): StyleSpecification {
         layout: { "line-cap": "round", "line-join": "round" },
         paint: {
           "line-color": c.calle,
-          "line-width": ["case", esGrande, ancho(1.4), ancho(0.9)] as unknown as number,
+          "line-width": ancho(esGrande, 14, 9),
         },
       },
       {

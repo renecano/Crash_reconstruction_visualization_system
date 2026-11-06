@@ -384,9 +384,17 @@ export function crucesDe(calles: readonly Calle[]): Cruce[] {
 /** Lo que Croquis propone para el choque, de dónde sale y la frase de la narración si la hay. */
 export interface PropuestaChoque {
   punto: Punto;
+  /** Las calles del cruce en el mapa. */
   calles: string[];
-  segun: "narracion" | "cercania";
+  /**
+   * «narracion»: el cruce de las dos calles que nombra; «una_calle»: solo una de ellas está en el
+   * mapa y se propone su cruce más cercano; «cercania»: el cruce más cercano al lugar.
+   */
+  segun: "narracion" | "una_calle" | "cercania";
   cita: string | null;
+  /** La calle de la narración que sí está (en «una_calle») y la que no se encontró. */
+  encontrada?: string;
+  faltante?: string;
 }
 
 /**
@@ -415,8 +423,17 @@ export function proponerChoque(
     if (ambas)
       return { punto: ambas.punto, calles: ambas.calles, segun: "narracion", cita: narrado.cita };
     const una = porCercania.find((c) => buscadas.some((b) => tiene(c, b)));
-    if (una)
-      return { punto: una.punto, calles: una.calles, segun: "narracion", cita: narrado.cita };
+    if (una) {
+      const k = buscadas.findIndex((b) => tiene(una, b));
+      return {
+        punto: una.punto,
+        calles: una.calles,
+        segun: "una_calle",
+        cita: narrado.cita,
+        encontrada: narrado.calles[k]!,
+        faltante: narrado.calles[1 - k]!,
+      };
+    }
   }
   const primero = porCercania[0]!;
   if (lugar && cerca(primero) > 150) return null;
@@ -696,7 +713,8 @@ export function elegirDireccion(
   impactos: readonly ImpactoAColocar[],
   vehiculo: string,
   rumbo: number,
-  puntoChoque: Punto,
+  /** El punto de cada choque, por orden. */
+  puntoDe: (orden: number) => Punto | null,
   noSe = false,
 ): Expediente {
   const imp = impactos.find((i) => i.vehiculos.includes(vehiculo));
@@ -704,20 +722,25 @@ export function elegirDireccion(
   if (!imp || !pose) return e;
   let r = e;
   const primero = imp.vehiculos[0] === vehiculo;
-  if (primero) r = marcarChoque(r, impactos, imp.orden, puntoChoque, rumbo);
-  // Los que ya se confirmaron conservan su dato aunque el choque gire.
-  for (const v of imp.vehiculos) {
-    if (v === vehiculo) continue;
-    const previa = poseDe(e, v, "impacto");
-    const nueva = poseDe(r, v, "impacto");
-    if (previa?.fuente === "perito" && nueva)
-      r = conPosicion(r, {
-        vehiculo: v as Id,
-        fase: "impacto",
-        punto: nueva.punto,
-        rumbo: nueva.rumbo,
-        fuente: "perito",
-      });
+  // Gira cada choque donde va primero (en una carambola, B es el primero del segundo choque: su
+  // dirección acomoda a C). Los que ya se confirmaron conservan su dato.
+  for (const i of impactos.filter((x) => x.vehiculos[0] === vehiculo)) {
+    const p = puntoDe(i.orden);
+    if (!p) continue;
+    r = marcarChoque(r, impactos, i.orden, p, rumbo);
+    for (const v of i.vehiculos) {
+      if (v === vehiculo) continue;
+      const previa = poseDe(e, v, "impacto");
+      const nueva = poseDe(r, v, "impacto");
+      if (previa?.fuente === "perito" && nueva)
+        r = conPosicion(r, {
+          vehiculo: v as Id,
+          fase: "impacto",
+          punto: nueva.punto,
+          rumbo: nueva.rumbo,
+          fuente: "perito",
+        });
+    }
   }
   const nueva = poseDe(r, vehiculo, "impacto");
   return conPosicion(r, {
