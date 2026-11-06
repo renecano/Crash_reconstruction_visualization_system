@@ -138,6 +138,8 @@ function Paso([string]$nombre, [scriptblock]$accion) {
   $t0 = Get-Date
   $bien = $true
   $nota = ""
+  # Un paso que ya estaba hecho (de una corrida de hoy) lo marca, y entonces no se sube nada.
+  $script:Saltado = $false
   try {
     $r = & $accion
     if ($r) { $nota = [string]$r }
@@ -362,7 +364,10 @@ function CuadrosListos([string]$carpeta) {
 
 function Renderizar([string]$escena) {
   $video = Join-Path $Salida "video-$escena.mp4"
-  if (Test-Path $video) { return "Ya estaba completo (de una corrida de hoy); se salta." }
+  if (Test-Path $video) {
+    $script:Saltado = $true
+    return "Ya estaba completo (de una corrida de hoy); se salta."
+  }
   if (-not (Test-Path $BlenderExe)) { throw "No hay Blender (falló el paso anterior)." }
   $glb = Join-Path $Repo "demo\escenas-r11\$escena.glb"
   if (-not (Test-Path $glb)) { throw "No está la escena $glb (¿se hizo git pull?)." }
@@ -446,7 +451,8 @@ function Renderizar([string]$escena) {
 
 if (-not $SoloMedicion) {
   foreach ($escena in @("axa", "carambola")) {
-    if (Paso "Video de la escena «$escena»" { Renderizar $escena }) { Subir "video de $escena" }
+    $bien = Paso "Video de la escena «$escena»" { Renderizar $escena }
+    if ($bien -and -not $script:Saltado) { Subir "video de $escena" }
   }
 }
 
@@ -454,7 +460,10 @@ if (-not $SoloMedicion) {
 if (-not $SoloRender) {
   $Medicion = Join-Path $Salida "e6-navegador.json"
   $bien = Paso "Medición del visor en Chrome (E6: alta y ultra)" {
-    if (Test-Path $Medicion) { return "Ya estaba (de una corrida de hoy); se salta." }
+    if (Test-Path $Medicion) {
+      $script:Saltado = $true
+      return "Ya estaba (de una corrida de hoy); se salta."
+    }
     if (-not $Chrome) { throw "No hay Chrome." }
     $perfil = Join-Path $Carpeta "chrome-perfil"
     $descargas = Join-Path $Carpeta "descargas-$Fecha"
@@ -497,7 +506,7 @@ if (-not $SoloRender) {
     Remove-Item -Recurse -Force $descargas
     "Resultado guardado (e6-navegador.json)."
   }
-  if ($bien) { Subir "medición" }
+  if ($bien -and -not $script:Saltado) { Subir "medición" }
 }
 
 # --- 5. Datos de la máquina ------------------------------------------------------------------------
