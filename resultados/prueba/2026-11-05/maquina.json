@@ -3,7 +3,7 @@
     "prueba":  true,
     "solo_render":  true,
     "solo_medicion":  false,
-    "duracion_de_esta_corrida_s":  1,
+    "duracion_de_esta_corrida_s":  5,
     "ram_usada_al_empezar_pct":  74,
     "ram_usada_maxima_pct":  75,
     "limite_ram_pct":  95,
@@ -24,6 +24,13 @@
                   },
                   {
                       "Paso":  "Video de la escena «axa»",
+                      "Bien":  true,
+                      "Segundos":  0,
+                      "RamMaxima":  75,
+                      "Nota":  "Ya estaba completo (de una corrida de hoy); se salta."
+                  },
+                  {
+                      "Paso":  "Video de la escena «carambola»",
                       "Bien":  true,
                       "Segundos":  0,
                       "RamMaxima":  75,

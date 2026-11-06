@@ -132,3 +132,17 @@ Solo los videos (-SoloRender).
 
 == Video de la escena «axa»
    Listo (0 s, RAM máxima 75 %). Ya estaba completo (de una corrida de hoy); se salta.
+   warning: in the working copy of 'resultados/prueba/2026-11-05/bitacora.txt', CRLF will be replaced by LF the next time Git touches it
+   warning: in the working copy of 'resultados/prueba/2026-11-05/blender-axa-unir.log', CRLF will be replaced by LF the next time Git touches it
+   warning: in the working copy of 'resultados/prueba/2026-11-05/blender-axa.log', CRLF will be replaced by LF the next time Git touches it
+   warning: in the working copy of 'resultados/prueba/2026-11-05/blender-axa.log.err', CRLF will be replaced by LF the next time Git touches it
+   warning: in the working copy of 'resultados/prueba/2026-11-05/blender-carambola-unir.log', CRLF will be replaced by LF the next time Git touches it
+   warning: in the working copy of 'resultados/prueba/2026-11-05/blender-carambola.log', CRLF will be replaced by LF the next time Git touches it
+   warning: in the working copy of 'resultados/prueba/2026-11-05/blender-carambola.log.err', CRLF will be replaced by LF the next time Git touches it
+   warning: in the working copy of 'resultados/prueba/2026-11-05/maquina.json', CRLF will be replaced by LF the next time Git touches it
+   To https://github.com/renecano/Crash_reconstruction_visualization_system.git
+      ef14692..76867a1  76867a15096bd994f8128103cecfe616be6df5a3 -> resultados/prueba-2026-11-05
+   Subido a la rama resultados/prueba-2026-11-05 (video de axa).
+
+== Video de la escena «carambola»
+   Listo (0 s, RAM máxima 75 %). Ya estaba completo (de una corrida de hoy); se salta.
