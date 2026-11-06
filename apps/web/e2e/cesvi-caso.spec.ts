@@ -386,9 +386,10 @@ test("@flujo /cesvi: una carambola, con sus impactos en orden hasta el 3D", asyn
     ["V3", 9.8],
   ] as const) {
     await expect(pregunta).toHaveText(/^¿Por dónde venía el /);
-    await (nombre === "V1"
-      ? page.locator('[data-testid^="opcion-flecha-"]', { hasText: "Del oeste" })
-      : page.locator('[data-testid^="opcion-flecha-"][data-propuesta="si"]')
+    await (
+      nombre === "V1"
+        ? page.locator('[data-testid^="opcion-flecha-"]', { hasText: "Del oeste" })
+        : page.locator('[data-testid^="opcion-flecha-"][data-propuesta="si"]')
     ).click();
     await expect(pregunta).toHaveText("¿Dónde quedó después del choque?");
     await tocarEnMetros(page, "choque-1", este, 0);
