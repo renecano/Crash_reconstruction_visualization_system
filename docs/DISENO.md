@@ -36,8 +36,15 @@ Dentro de un acto con dos partes, el rótulo dice cuál («Acto 1 de 6 · El hec
   - Al cambiar de acto, la ruta cambia con `history.replaceState`, sin recargar: el estado del recorrido vive en la página.
   - Las rutas sin acto siguen abriendo, en El hecho.
 
+- **La maqueta del caso** (prompt §7; `components/cesvi/escena/maqueta.tsx`, geometría en `lib/maqueta.ts`): la vista «Maqueta» junto a «Mapa» y «3D» en Reconstrucción.
+  - **La vía:** las calles del mapa a su ancho. Sin calles del mapa no se dibuja una vía inventada, y lo dice.
+  - **Los vehículos:** piezas con la silueta de su clase en el impacto, con sombra y la zona de contacto teñida.
+  - **La estela:** sus poses reales cada 0.4 s antes del impacto.
+  - **La trayectoria:** más naranja cuanto más rápido.
+  - **El reposo** punteado, y etiquetas con líneas guía, cada velocidad con su método.
+
 ## Lo que sigue
 
-1. La escena generada del caso (prompt §7), compartida por Escena, Reconstrucción y Presentar.
+1. Llevar la maqueta a La escena y a Presentar, con las cotas (ancho de la vía, dispersión de restos).
 2. Las pantallas en orden (prompt §8), luego el movimiento (§6) y los tooltips (§9).
 3. Pruebas pesadas al final: axe, Lighthouse y Playwright del caso AXA de día y de noche, con capturas de cada acto.
