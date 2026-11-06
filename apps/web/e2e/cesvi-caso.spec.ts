@@ -1,7 +1,7 @@
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
 import { expect, test } from "@playwright/test";
-import { acercar, escribirRumbo, irAPaso } from "./ayuda-recorrido";
+import { irAPaso, mapaFacil, sinRed, tocarEnMetros } from "./ayuda-recorrido";
 
 // La transición entre actos (ADR 0108) es decorativa: estos flujos prueban la función, y en CI (render
 // por software) la cortina a pantalla completa compite con el 3D. Con movimiento reducido no se monta.
@@ -90,98 +90,50 @@ test("@flujo /cesvi: un caso nuevo desde la lista, de la narración al dictamen"
     .click();
   await expect(page.getByTestId("vehiculos")).toContainText("1450 kg");
 
+  await sinRed(page);
   await irAPaso(page, 3);
-  // 3. El lugar (V2): la lista guiada. Sin lo obligatorio, «Siguiente» no avanza y dice qué falta.
+  // 3. La escena fácil (René, 2026-11-05): una pregunta a la vez. «Ver la reconstrucción» espera a
+  // que todo esté listo.
+  const verReconstruccion = page.getByTestId("avance-ver-reconstruccion");
+  await expect(verReconstruccion).toBeDisabled();
+  const pregunta = page.getByTestId("escena-pregunta");
+  await expect(pregunta).toHaveText("¿Dónde fue el choque?");
+  const mapaEscena = await mapaFacil(page);
+  const caja = (await mapaEscena.boundingBox())!;
+  // El choque, con un toque (sin calles del mapa, se queda donde se tocó).
+  await mapaEscena.click({ position: { x: caja.width * 0.7, y: caja.height * 0.45 } });
+  await expect(page.getByTestId("mensaje-exito")).toContainText("¡Listo! El choque quedó marcado.");
+  await expect(page.getByTestId("choque-1")).toHaveCount(1);
+  // Por dónde venía el Jetta (nunca «V1»): sin calles, cuatro flechas por puntos cardinales, con la
+  // de Croquis resaltada.
+  await expect(pregunta).toHaveText("¿Por dónde venía el Jetta?");
+  await expect(page.locator('[data-testid^="opcion-flecha-"]')).toHaveCount(4);
+  await expect(page.locator('[data-testid^="flecha-"]')).toHaveCount(4);
+  await page.locator('[data-testid^="opcion-flecha-"][data-propuesta="si"]').click();
+  // Dónde quedó: «Listo» espera el toque; el coche va ahí y se gira 15° con su botón.
+  await expect(pregunta).toHaveText("¿Dónde quedó después del choque?");
+  await expect(page.getByTestId("listo-final")).toBeDisabled();
+  await tocarEnMetros(page, "choque-1", 6, 8);
+  await expect(page.getByTestId("coche-V1-final")).toHaveCount(1);
+  await page.getByTestId("girar-derecha").click();
+  await page.getByTestId("listo-final").click();
+  await expect(page.getByTestId("mensaje-exito")).toContainText("dónde quedó el Jetta");
+  // El Camaro: «No sé por dónde venía» (Croquis usa la de los daños, como supuesto) y «Quedó junto
+  // al choque».
+  await expect(pregunta).toHaveText("¿Por dónde venía el Camaro?");
+  await page.getByTestId("no-se-direccion").click();
+  await page.getByTestId("final-junto").click();
+  await page.getByTestId("listo-final").click();
+  // ¡La escena está lista!, con el resumen y el supuesto explicado.
+  await expect(page.getByTestId("escena-lista")).toBeVisible();
+  const resumen = page.getByTestId("escena-resumen");
+  await expect(resumen).toContainText("El Jetta venía del");
+  await expect(resumen).toContainText("donde lo pusiste");
+  await expect(resumen).toContainText("Quedó junto al choque.");
+  await expect(resumen).toContainText("Supuesto");
+  await expect(resumen).toContainText("No sabías por dónde venía");
+  await expect(verReconstruccion).toBeEnabled();
   const mapa = page.getByTestId("mapa-escena");
-  const siguiente = page.getByTestId("siguiente");
-  await expect(siguiente).toBeDisabled();
-  await expect(page.getByTestId("falta-para-seguir")).toContainText("el punto de impacto");
-  await expect(page.getByTestId("falta-para-seguir")).toContainText("V1 y V2, dónde quedaron");
-  await expect(page.getByTestId("paso-4")).toBeDisabled();
-  await acercar(page);
-  await expect(mapa).toHaveAttribute("data-herramienta", "colocar");
-
-  // El punto de impacto: Croquis propone dónde estaba cada uno por sus zonas de contacto.
-  await expect(page.getByTestId("item-activo")).toHaveAttribute("data-item", "impacto:1");
-  await mapa.click({ position: { x: 300, y: 205 } });
-  await expect(mapa.locator('[data-posicion="V1:impacto"]')).toHaveCount(1);
-  await expect(mapa.locator('[data-posicion="V2:impacto"]')).toHaveCount(1);
-  // Lo que propone Croquis se ve como fantasma, con «Aceptar» por vehículo.
-  await expect(page.getByTestId("fantasma-V1")).toHaveCount(1);
-  await expect(page.getByTestId("fantasma-V2")).toHaveCount(1);
-  await page.getByTestId("aceptar-V1").click();
-  await expect(page.getByTestId("fantasma-V1")).toHaveCount(0);
-  await expect(page.getByTestId("fantasma-V2")).toHaveCount(1);
-  // Colocación rehecha (B): «Paso 2 de 3», por dónde venía cada uno, con la flecha de Croquis
-  // llena; al tocarla, V2 queda confirmado y sigue «Paso 3 de 3» con la pieza fantasma de V1.
-  await expect(page.getByTestId("subpaso-lugar")).toHaveText("Paso 2 de 3");
-  await expect(page.getByTestId("leyenda-colocar")).toBeVisible();
-  await page.getByTestId("direcciones-V2").locator('[data-propuesta="si"]').click();
-  await expect(page.getByTestId("fantasma-V2")).toHaveCount(0);
-  await expect(page.getByTestId("subpaso-lugar")).toHaveText("Paso 3 de 3");
-  await expect(page.getByTestId("pieza-final:V1")).toHaveCount(1);
-  await page.getByTestId("listo-elemento").click();
-
-  // En «Colocar» el mapa no se arrastra: lo colocado se queda donde estaba en la pantalla.
-  const antes = (await mapa.locator('[data-posicion="V1:impacto"]').boundingBox())!;
-  const caja = (await mapa.boundingBox())!;
-  await page.mouse.move(caja.x + 120, caja.y + 320);
-  await page.mouse.down();
-  await page.mouse.move(caja.x + 260, caja.y + 360, { steps: 8 });
-  await page.mouse.up();
-  const despues = (await mapa.locator('[data-posicion="V1:impacto"]').boundingBox())!;
-  expect(Math.abs(despues.x - antes.x)).toBeLessThan(2);
-  expect(Math.abs(despues.y - antes.y)).toBeLessThan(2);
-
-  // Dónde quedó cada uno: se toca el mapa y el rumbo se escribe (o se gira la flecha).
-  const colocar = async (vehiculo: string, rumbo: string, x: number, y: number) => {
-    await expect(page.getByTestId("item-activo")).toHaveAttribute("data-item", `final:${vehiculo}`);
-    await mapa.click({ position: { x, y } });
-    await escribirRumbo(page, rumbo);
-    await page.getByTestId("listo-elemento").click();
-  };
-  await colocar("V1", "315", 330, 170);
-  await expect(siguiente).toBeDisabled();
-  await expect(page.getByTestId("falta-para-seguir")).toHaveText(
-    "Para seguir falta: V2, dónde quedó.",
-  );
-  // V2, con el mouse (punto 3 de René): se arrastra su chip de la bandeja al mapa, que dice en vivo a
-  // cuánto queda del impacto, y se gira con el anillo (el asa hacia el este da 90°, con imán).
-  await expect(page.getByTestId("item-activo")).toHaveAttribute("data-item", "final:V2");
-  const chip = (await page.getByTestId("chip-final:V2").boundingBox())!;
-  await page.mouse.move(chip.x + chip.width / 2, chip.y + chip.height / 2);
-  await page.mouse.down();
-  await page.mouse.move(caja.x + 345, caja.y + 185, { steps: 12 });
-  await expect(page.getByTestId("distancia-arrastre")).toContainText("m del impacto");
-  await page.mouse.up();
-  await expect(mapa.locator('[data-posicion="V2:final"]')).toHaveCount(1);
-  const anillo = (await page.getByTestId("anillo-giro").locator("svg").boundingBox())!;
-  const cx = anillo.x + anillo.width / 2;
-  const cy = anillo.y + anillo.height / 2;
-  const radio = anillo.width / 2 - 12;
-  await page.mouse.move(cx, cy - radio);
-  await page.mouse.down();
-  await page.mouse.move(cx + radio * 0.7, cy - radio * 0.7, { steps: 6 });
-  await page.mouse.move(cx + radio, cy, { steps: 6 });
-  await page.mouse.up();
-  await expect(page.getByTestId("rumbo-activo")).toHaveValue("90");
-  await expect(page.getByTestId("rotulo-giro")).toContainText("90°");
-  await page.getByTestId("listo-elemento").click();
-  await expect(mapa.locator("[data-posicion]")).toHaveCount(4);
-  await expect(page.getByTestId("falta-para-seguir")).toHaveCount(0);
-  await expect(siguiente).toBeEnabled();
-  // Cada posición se ve en el mapa, donde el perito la puso (no fuera de él).
-  const cajaMapa = (await mapa.boundingBox())!;
-  const punto = (await page.locator('[data-posicion="V1:final"]').boundingBox())!;
-  expect(Math.abs(punto.x + punto.width / 2 - (cajaMapa.x + 330))).toBeLessThan(4);
-  expect(Math.abs(punto.y + punto.height / 2 - (cajaMapa.y + 170))).toBeLessThan(4);
-
-  // Expandir el mapa a pantalla completa, con lo que falta, y contraerlo con Esc.
-  await page.getByTestId("expandir-mapa").click();
-  await expect(page.getByTestId("escenario")).toHaveAttribute("data-expandido", "si");
-  await expect(page.getByTestId("panel-expandido")).toContainText("Listo: puedes seguir.");
-  await page.keyboard.press("Escape");
-  await expect(page.getByTestId("escenario")).toHaveAttribute("data-expandido", "no");
 
   // 4. La reconstrucción física: las posiciones del perito fijan las velocidades, con percentiles.
   await irAPaso(page, 4);
@@ -338,15 +290,19 @@ test("@flujo /cesvi: un caso nuevo desde la lista, de la narración al dictamen"
   expect(d.expediente.impactos[0]!.fuente).toBe("perito");
   const posiciones = d.expediente.versiones[0]!.posiciones;
   expect(posiciones).toHaveLength(4);
-  // Lo que colocó o aceptó el perito es suyo: V1 con «Aceptar» y V2 con la flecha de su carril (B).
+  // Lo que eligió la persona es suyo; «No sé por dónde venía» deja la de Croquis como supuesto.
   const fuenteDe = (v: string, fase: string) =>
     posiciones.find((p) => p.vehiculo === v && p.fase === fase)!.fuente;
   expect(fuenteDe("V1", "impacto")).toBe("perito");
-  expect(fuenteDe("V2", "impacto")).toBe("perito");
+  expect(fuenteDe("V2", "impacto")).toBe("supuesto");
   expect(fuenteDe("V1", "final")).toBe("perito");
   expect(fuenteDe("V2", "final")).toBe("perito");
-  expect(posiciones.find((p) => p.vehiculo === "V1" && p.fase === "final")!.rumbo).toBe(315);
-  expect(posiciones.find((p) => p.vehiculo === "V2" && p.fase === "final")!.rumbo).toBe(90);
+  // El Jetta quedó con su rumbo de llegada girado 15° (el botón); el Camaro, junto al choque, con el
+  // suyo.
+  const rumboDe = (v: string, fase: string) =>
+    posiciones.find((p) => p.vehiculo === v && p.fase === fase)!.rumbo;
+  expect(rumboDe("V1", "final")).toBe((rumboDe("V1", "impacto") + 15) % 360);
+  expect(rumboDe("V2", "final")).toBe(rumboDe("V2", "impacto"));
   expect(d.expediente.resultado.validado_por).toBe("Perito de prueba");
   expect(d.conclusion_perito).toBe("Conclusión de prueba del perito.");
 
@@ -410,25 +366,39 @@ test("@flujo /cesvi: una carambola, con sus impactos en orden hasta el 3D", asyn
   await page.getByTestId("leer-narracion").click();
   await expect(page.getByTestId("escena")).toContainText("3 vehículos · 2 impactos");
 
+  await sinRed(page);
   await irAPaso(page, 3);
-  // 2. El lugar, a metros (zoom 18, unos 0.28 m por pixel): los tres en fila hacia el oriente, B y
-  // C detenidos en el semáforo; la misma disposición que la escena canónica `carambola`. Cada
-  // impacto tiene su punto; del segundo, Croquis solo propone dónde estaba C.
+  // 2. La escena fácil, a metros: los tres en fila hacia el oriente, B y C detenidos en el semáforo;
+  // la misma disposición que la escena canónica `carambola`. Un paso por choque y por vehículo.
+  const pregunta = page.getByTestId("escena-pregunta");
+  const mapaEscena = await mapaFacil(page);
+  const caja = (await mapaEscena.boundingBox())!;
+  await expect(pregunta).toHaveText("¿Dónde fue el primer choque?");
+  await mapaEscena.click({ position: { x: caja.width * 0.62, y: caja.height * 0.45 } });
+  await expect(pregunta).toHaveText("¿Dónde fue el segundo choque?");
+  await tocarEnMetros(page, "choque-1", 5.6, 0);
+  await expect(page.getByTestId("choque-2")).toHaveCount(1);
+  // A venía del oeste (avanzaba al oriente); de B y C se acepta lo que propone Croquis por sus zonas
+  // de contacto. Cada uno quedó a lo largo de la calle.
+  for (const [nombre, este] of [
+    ["V1", -0.5],
+    ["V2", 5.4],
+    ["V3", 9.8],
+  ] as const) {
+    await expect(pregunta).toHaveText(/^¿Por dónde venía el /);
+    await (
+      nombre === "V1"
+        ? page.locator('[data-testid^="opcion-flecha-"]', { hasText: "Del oeste" })
+        : page.locator('[data-testid^="opcion-flecha-"][data-propuesta="si"]')
+    ).click();
+    await expect(pregunta).toHaveText("¿Dónde quedó después del choque?");
+    await tocarEnMetros(page, "choque-1", este, 0);
+    await expect(page.getByTestId(`coche-${nombre}-final`)).toHaveCount(1);
+    await page.getByTestId("listo-final").click();
+  }
+  await expect(page.getByTestId("escena-lista")).toBeVisible();
+  await expect(page.getByTestId("avance-ver-reconstruccion")).toBeEnabled();
   const mapa = page.getByTestId("mapa-escena");
-  await acercar(page);
-  const tocar = async (item: string, dx: number, rumbo: string) => {
-    await expect(page.getByTestId("item-activo")).toHaveAttribute("data-item", item);
-    await mapa.click({ position: { x: 300 + dx, y: 260 } });
-    await escribirRumbo(page, rumbo);
-    await page.getByTestId("listo-elemento").click();
-  };
-  await tocar("impacto:1", -7, "90");
-  await tocar("impacto:2", 13, "90");
-  await tocar("final:V1", -9, "78");
-  await tocar("final:V2", 12, "85");
-  await tocar("final:V3", 28, "97");
-  await expect(mapa.locator("[data-posicion]")).toHaveCount(6);
-  await expect(page.getByTestId("siguiente")).toBeEnabled();
 
   // 3. La reconstrucción: el segundo impacto ocurre después del primero, y el mapa marca los dos.
   await irAPaso(page, 4);

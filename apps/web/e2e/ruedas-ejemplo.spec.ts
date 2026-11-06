@@ -2,7 +2,7 @@ import { mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { createRequire } from "node:module";
 import { join, resolve } from "node:path";
 import { expect, type Page, test } from "@playwright/test";
-import { acercar, irAPaso } from "./ayuda-recorrido";
+import { irAPaso, mapaFacil, sinRed, tocarEnMetros } from "./ayuda-recorrido";
 
 /**
  * Las llantas del caso de ejemplo (VW Jetta 2002 contra GM Camaro 1995; René, 2026-11-05): el mismo
@@ -62,22 +62,23 @@ async function hastaEl3d(page: Page) {
     .getByTestId("pregunta-masa-V2")
     .getByRole("button", { name: "Usar", exact: true })
     .click();
+  await sinRed(page);
   await irAPaso(page, 3);
-  const mapa = page.getByTestId("mapa-escena");
-  await acercar(page);
-  await mapa.click({ position: { x: 300, y: 205 } });
-  await page.getByTestId("aceptar-V1").click();
-  await page.getByTestId("listo-elemento").click();
-  for (const [v, rumbo, x, y] of [
-    ["V1", "315", 330, 170],
-    ["V2", "90", 345, 185],
+  // La escena fácil: el choque, el Jetta con su flecha y donde quedó (8 m al noreste), el Camaro
+  // con la suya y donde quedó (al oriente).
+  const mapa = await mapaFacil(page);
+  const caja = (await mapa.boundingBox())!;
+  await mapa.click({ position: { x: caja.width * 0.7, y: caja.height * 0.45 } });
+  for (const [v, este, norte] of [
+    ["V1", 2.3, 3.6],
+    ["V2", 6.6, 1.0],
   ] as const) {
-    await expect(page.getByTestId("item-activo")).toHaveAttribute("data-item", `final:${v}`);
-    await mapa.click({ position: { x, y } });
-    await page.getByTestId("rumbo-activo").fill(rumbo);
-    await page.getByTestId("listo-elemento").click();
+    await page.locator('[data-testid^="opcion-flecha-"][data-propuesta="si"]').click();
+    await tocarEnMetros(page, "choque-1", este, norte);
+    await expect(page.getByTestId(`coche-${v}-final`)).toHaveCount(1);
+    await page.getByTestId("listo-final").click();
   }
-  await expect(page.getByTestId("falta-para-seguir")).toHaveCount(0);
+  await expect(page.getByTestId("escena-lista")).toBeVisible();
   await irAPaso(page, 4);
   await page.getByTestId("reconstruir").click();
   await expect(page.getByTestId("velocidades")).toBeVisible({ timeout: 120_000 });

@@ -423,6 +423,32 @@ export function MapaEscena({
       });
     });
   }, [posiciones, listo]);
+  // La escena se marca en la escena fácil, en otro mapa (René, 2026-11-05): este se encuadra solo en
+  // lo colocado, una vez, en cuanto hay posiciones y su contenedor tiene tamaño (puede estar oculto).
+  const encuadrado = useRef(posiciones.length > 0);
+  useEffect(() => {
+    const m = mapa.current;
+    const el = contenedor.current;
+    if (!m || !listo || !el || encuadrado.current || !posiciones.length) return;
+    const encuadrar = () => {
+      if (encuadrado.current || el.clientWidth === 0 || el.clientHeight === 0) return;
+      m.resize();
+      const lons = posiciones.map((p) => p.punto.lon);
+      const lats = posiciones.map((p) => p.punto.lat);
+      m.fitBounds(
+        [
+          [Math.min(...lons), Math.min(...lats)],
+          [Math.max(...lons), Math.max(...lats)],
+        ],
+        { padding: 80, maxZoom: 19, animate: false },
+      );
+      encuadrado.current = true;
+    };
+    encuadrar();
+    const obs = new ResizeObserver(encuadrar);
+    obs.observe(el);
+    return () => obs.disconnect();
+  }, [posiciones, listo]);
   useEffect(() => {
     const m = mapa.current;
     if (!m || !listo) return;
@@ -504,7 +530,7 @@ export function MapaEscena({
           </button>
         </div>
       ) : null}
-      {buscar && pedirLugar ? (
+      {buscar && pedirLugar && posiciones.length === 0 ? (
         <BuscarLugar
           inicial={lugarTexto}
           zona={lugarZona}

@@ -47,7 +47,7 @@ Nombres exactos de los botones, para anotar sin ambigüedad:
 1. **Casos:** la lista con «Caso nuevo», «Cargar un reporte» y los casos de ejemplo. La persona debe elegir **«Caso nuevo»**.
 2. **El caso (paso 1):** pantalla de entrada. Botón «Siguiente: el hecho →».
 3. **El hecho (paso 2):** el cuadro «Narración técnica del perito». Aquí **teclea o dicta la narración impresa** y pulsa **«Leer la narración»**. Después aparecen la escena leída (vehículos, impacto) y las **preguntas** de lo que falta, cada una con su control, un botón «Usar» y un botón «No sé». Hay un botón «Usar una narración de ejemplo»: si lo usa en vez de teclear, se anota como error (la tarea es meter la narración impresa).
-4. **El lugar (paso 3):** el mapa, con la lista «Lo que falta»: el punto de impacto y dónde quedó cada vehículo. Herramientas «Colocar», «Mover mapa» y «Medir»; «⤢ Expandir». Hay que **navegar a mano** hasta el lugar (hoy no hay buscador; eso se mide: cuánto tarda en llegar al lugar o si se da por vencido y coloca el caso en otro lado, lo cual **no es error**: se anota «colocó en otro lugar»). Cada elemento se coloca con un clic en el mapa y se cierra con «Listo».
+4. **La escena (paso 3, rehecha el 2026-11-05):** el mapa claro a pantalla completa y una hoja con **una pregunta a la vez**: «¿Dónde fue el choque?», «¿Por dónde venía el Jetta?» y «¿Dónde quedó después del choque?», una por vehículo. Croquis propone primero lo que lee en la narración: el cruce («Sí, fue en ese cruce») y la flecha resaltada. Abajo, el avance (El choque · Jetta · Camaro) y «Ver la reconstrucción →», que se activa al terminar. Al final aparece la tarjeta «¡La escena está lista!». Si Croquis no encuentra el lugar, hay una caja «¿No aparece el lugar? Búscalo»; si la persona coloca el caso en otro lado, **no es error**: se anota «colocó en otro lugar».
 5. **La reconstrucción (paso 4):** botón **«Reconstruir»**; luego las velocidades con su rango y la bitácora de los agentes. Botón **«Ver en 3D»** (o el que diga el panel) para el visor. El 3D tarda unos segundos en una laptop.
 6. **Los daños (paso 5):** el perfil de aplastamiento calculado por vehículo. Solo se mira.
 7. **Los números (paso 6):** los cálculos del método de CESVI, la verificación de lo que falta y «Probar una hipótesis sobre un conductor». Solo se mira (la hipótesis es opcional; si la prueba, se anota).
@@ -59,8 +59,8 @@ La barra de arriba tiene «Presentar / Trabajar» y el tema claro u oscuro. En �
 
 - En el hecho: «Pega la narración en el cuadro y pulsa “Leer la narración”».
 - En las preguntas: «Si no lo dice la narración, pulsa “No sé”».
-- En el lugar: «Acércate con la rueda del mouse hasta ver las calles; con “Colocar” activo, haz clic donde fue el impacto».
-- En el lugar, si no encuentra el sitio: «Colócalo en cualquier calle parecida; anoto que no se encontró el lugar».
+- En la escena: «Lee la pregunta de la hoja de la izquierda y contesta con un toque».
+- En la escena, si no encuentra el sitio: «Escribe la calle en “Búscalo”, o toca cualquier calle parecida; anoto que no se encontró el lugar».
 - En la reconstrucción: «Pulsa “Reconstruir” y espera».
 - En el dictamen: «Escribe tu nombre, pulsa “Validar” y luego “Descargar el PDF”».
 
@@ -89,14 +89,15 @@ Las dos están escritas en lenguaje técnico de perito, como las de los reportes
 Imprimir o copiar a mano. El código es `P01`, `P02`, `P03`; nunca el nombre.
 
 ```
-Persona: P__     Caso: A (alcance) / B (lateral)     Orden: 1.º / 2.º     Fecha: ____-__-__
+Persona: P__     Caso: A (alcance) / B (lateral) / E (escena)     Orden: 1.º / 2.º     Fecha: ____-__-__
 Computadora: laptop / escritorio     Navegador: Chrome / Edge / otro     ¿Perito?: sí / no
 
 Paso              Hora de entrada   Preguntas (qué dijo)             Errores         Pista
 1 Caso            __:__
 2 Hecho           __:__
 3 Lugar           __:__                                                ¿encontró el lugar? sí / no
-  Colocar         del toque del impacto __:__:__ a «Siguiente» __:__:__  ¿sin ayuda? sí / no
+  Escena (caso E) de «¿Dónde fue el choque?» __:__:__ a «¡La escena está lista!» __:__:__
+                  ¿sin preguntar nada? sí / no     ¿primera vez con Croquis? sí / no
 4 Reconstrucción  __:__
 5 Daños           __:__
 6 Números         __:__
@@ -110,9 +111,20 @@ Al final (preguntar y anotar textual):
 Del 1 al 5, ¿qué tan seguro estás de que el dictamen dice lo que la narración decía? __
 ```
 
-## Meta de la colocación (René, 2026-11-04, B)
+## Meta de la escena fácil (René, 2026-11-05)
 
-**Colocar a los dos vehículos en menos de 1 minuto, sin ayuda.** Se cronometra desde que la persona toca el mapa para marcar el impacto hasta que «Siguiente» queda habilitado (los tres pasos: impacto, por dónde venía cada uno y dónde quedó). Cuenta como ayuda cualquier pista de la lista de arriba. En la hoja va en la fila «Colocar»; en el JSON, `colocar_s` (segundos) y `colocar_sin_ayuda`. `eval/prueba_personas.mjs` da la mediana y cuántos lo hicieron en menos de 60 s sin ayuda.
+**Tres personas que nunca han usado Croquis completan la escena del caso de ejemplo (dos vehículos) en menos de 1 minuto, sin preguntar nada.** Es una prueba corta (caso `E`, unos 5 minutos por persona), antes de los casos A y B:
+
+1. Abrir https://croquis-sage.vercel.app/cesvi, «Caso nuevo». En el hecho, el facilitador pulsa «Usar una narración de ejemplo» y «Leer la narración», y contesta las preguntas con «No sé». Hasta aquí lo hace el facilitador.
+2. Lleva el recorrido a «La escena» y le dice a la persona, solo esto: «Marca en el mapa cómo fue el choque».
+3. **Cronómetro:** desde que la persona ve «¿Dónde fue el choque?» hasta que aparece «¡La escena está lista!».
+4. **Sin preguntar nada:** cualquier pregunta en voz alta o cualquier pista rompe el «sin preguntar»; se anota qué preguntó.
+
+En la hoja va en la fila «Escena (caso E)». En el JSON: `caso: "E"`, `escena_s` (segundos), `escena_sin_preguntar` (sí o no) y `primera_vez` (si nunca había usado Croquis). `node eval/prueba_personas.mjs` da la mediana y cuántas personas la cumplen; `escena.meta_cumplida` es `true` con tres.
+
+**Piso de máquina:** el mismo recorrido, contestado por Playwright sin pausas, tarda unos 10 a 14 s (`e2e/escena-facil-gif.spec.ts`, 2026-11-05, servidor de desarrollo en la laptop de René; varía con lo que tardan el mapa y OpenStreetMap). El resto del minuto es para que la persona lea y decida.
+
+La meta anterior de la colocación B (`colocar_s`, `colocar_sin_ayuda`) se sigue leyendo en las hojas viejas.
 
 ## Qué sale y cómo se agrega
 

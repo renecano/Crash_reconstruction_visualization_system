@@ -67,6 +67,7 @@ export interface CasoExpediente {
   hipotesisElegida?: string | null;
   /** Los vehículos de los que el perito no sabe dónde quedaron (B). */
   finalesDesconocidos?: string[];
+  direccionesSupuestas?: string[];
 }
 
 export const casoNuevo = (): CasoExpediente => ({
@@ -251,6 +252,7 @@ export function abrirGuardado(a: Almacen, id: string): CasoExpediente | null {
     bitacora: c.bitacora,
     hipotesisElegida: c.hipotesisElegida,
     finalesDesconocidos: c.finalesDesconocidos,
+    direccionesSupuestas: c.direccionesSupuestas,
   };
 }
 

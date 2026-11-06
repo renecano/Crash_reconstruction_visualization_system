@@ -21,6 +21,9 @@
   "encontro_el_lugar": false,
   "colocar_s": 48,
   "colocar_sin_ayuda": true,
+  "escena_s": null,
+  "escena_sin_preguntar": null,
+  "primera_vez": true,
   "problemas": [
     {
       "paso": "lugar",
