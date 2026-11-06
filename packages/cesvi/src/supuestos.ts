@@ -26,6 +26,10 @@ export interface SupuestoDeclarado {
   /** Cómo entra en el rango de las velocidades. */
   incertidumbre: string;
   vehiculo?: Id;
+  /** El valor en pocas palabras, para su tarjeta («μ 0.70»); si no, `valor`. */
+  corto?: string;
+  /** Lo que abarca, si es un número: lo que dibuja su barra. */
+  rango?: { min: number; max: number; valor: number; minTexto: string; maxTexto: string };
 }
 
 const kg = (x: number) => `${x.toLocaleString("en-US", { maximumFractionDigits: 1 })} kg`;
@@ -60,6 +64,11 @@ export function supuestosDeclarados(
       que: `Masa de ${v.id}`,
       valor: kg(v.masa.valor),
       vehiculo: v.id,
+      rango: (() => {
+        const min = f ? f.peso_vacio_kg[0]! : v.masa.valor * (1 - MASS_SPREAD);
+        const max = f ? f.peso_vacio_kg[1]! : v.masa.valor * (1 + MASS_SPREAD);
+        return { min, max, valor: v.masa.valor, minTexto: kg(min), maxTexto: kg(max) };
+      })(),
       justificacion: f
         ? `Ficha técnica de ${titulo(`${f.marca} ${f.modelo}`)} ${f.anio}: ${f.regla} (data/SOURCES.md).`
         : tipica && tipica.valor === v.masa.valor
@@ -77,6 +86,7 @@ export function supuestosDeclarados(
       clave: `reposo-${p.vehiculo}`,
       que: `Posición final de ${p.vehiculo}`,
       valor: "la que se colocó en el mapa",
+      corto: `±${SIGMA_REPOSO_SUPUESTO_M} m`,
       vehiculo: p.vehiculo,
       justificacion: justificacionReposo(e),
       incertidumbre: `±${SIGMA_REPOSO_SUPUESTO_M} m: ${PRIORIDAD} veces la de una posición medida, así que la deformación medida pesa más (ADR 0091).`,
@@ -109,6 +119,18 @@ export function supuestosDeclarados(
       clave: "friccion",
       que: "Fricción llanta–pavimento",
       valor: `μ = ${mu.valor}`,
+      corto: `μ ${mu.valor.toFixed(2)}`,
+      ...(mu.rango
+        ? {
+            rango: {
+              min: mu.rango[0],
+              max: mu.rango[1],
+              valor: mu.valor,
+              minTexto: mu.rango[0].toFixed(2),
+              maxTexto: mu.rango[1].toFixed(2),
+            },
+          }
+        : {}),
       justificacion: `Valor de la literatura para la superficie del caso (${mu.fuente ?? "tabla de fricción del solver"}).`,
       incertidumbre: mu.rango
         ? `En el rango de las velocidades, μ de ${mu.rango[0]} a ${mu.rango[1]}.`
@@ -119,6 +141,18 @@ export function supuestosDeclarados(
       clave: "arrastre",
       que: "Después del impacto",
       valor: `las llantas ruedan, con un arrastre de ${arrastre.valor} de la fricción`,
+      corto: `${arrastre.valor} × μ`,
+      ...(mu?.valor !== undefined && mu.rango
+        ? {
+            rango: {
+              min: arrastre.valor * mu.rango[0],
+              max: arrastre.valor * mu.rango[1],
+              valor: arrastre.valor * mu.valor,
+              minTexto: (arrastre.valor * mu.rango[0]).toFixed(2),
+              maxTexto: (arrastre.valor * mu.rango[1]).toFixed(2),
+            },
+          }
+        : {}),
       justificacion:
         "Supuesto del solver: el reporte no trae huellas de arrastre que digan que las llantas deslizaron.",
       incertidumbre: mu?.rango

@@ -1,7 +1,7 @@
 "use client";
 /**
- * Los criterios de correspondencia de CESVI por vehículo (Hito 3, ADR 0051): el perito marca cada
- * uno y escribe una nota. Va en el panel de detalle del paso «Los daños» del recorrido (ADR 0052).
+ * Los criterios de correspondencia de CESVI de un vehículo (Hito 3, ADR 0051): el perito marca cada
+ * uno con tres opciones y puede escribir una nota. Va en los daños del acto de Análisis (ADR 0052).
  */
 import {
   CRITERIOS,
@@ -9,62 +9,66 @@ import {
   type CriterioMarcado,
   type MarcaCriterio,
 } from "@croquis/cesvi";
-import { useId } from "react";
+
+const OPCIONES: readonly { marca: NonNullable<MarcaCriterio>; texto: string }[] = [
+  { marca: "corresponde", texto: "Corresponde" },
+  { marca: "no_corresponde", texto: "No corresponde" },
+  { marca: "no_determinable", texto: "No se puede saber" },
+];
 
 export function Criterios({
   letra,
-  nombre,
   valores,
   onCambio,
 }: {
   letra: "A" | "B";
-  /** «A · Silverado». */
-  nombre?: string;
   valores: Record<ClaveCriterio, CriterioMarcado>;
   onCambio: (clave: ClaveCriterio, v: CriterioMarcado) => void;
 }) {
-  const id = useId();
   return (
-    <fieldset className="flex flex-col gap-3">
-      <legend
-        className={`t-subtitulo mb-2 ${letra === "A" ? "text-vehiculo-a" : "text-vehiculo-b"}`}
-      >
-        {nombre ?? `Vehículo ${letra}`}
-      </legend>
-      {CRITERIOS.map((c) => (
-        <div key={c.clave} className="flex flex-col gap-1 border-b border-linea pb-3">
-          <label htmlFor={`${id}-${c.clave}`} className="t-interfaz">
-            {c.nombre}
-            <span className="t-nota block text-texto-2">{c.descripcion}</span>
-          </label>
-          <div className="flex flex-wrap gap-2">
-            <select
-              id={`${id}-${c.clave}`}
-              className="campo w-56"
-              value={valores[c.clave].marca ?? ""}
-              data-testid={`criterio-${letra}-${c.clave}`}
-              onChange={(e) =>
-                onCambio(c.clave, {
-                  ...valores[c.clave],
-                  marca: (e.target.value || null) as MarcaCriterio,
-                })
-              }
-            >
-              <option value="">Sin marcar</option>
-              <option value="corresponde">Corresponde</option>
-              <option value="no_corresponde">No corresponde</option>
-              <option value="no_determinable">No se puede determinar</option>
-            </select>
+    <div className="flex flex-col divide-y divide-[var(--linea-suave)] border-t border-linea-suave">
+      {CRITERIOS.map((c) => {
+        const v = valores[c.clave];
+        return (
+          <div key={c.clave} className="flex flex-col gap-2 py-3">
+            <div className="flex flex-wrap items-center justify-between gap-3">
+              <div className="min-w-0 flex-1 basis-56">
+                <span className="font-semibold">{c.nombre}</span>
+                <span className="t-nota block">{c.descripcion}</span>
+              </div>
+              <div
+                className="segmentado shrink-0"
+                role="group"
+                aria-label={`${c.nombre}, vehículo ${letra}`}
+                data-testid={`criterio-${letra}-${c.clave}`}
+              >
+                {OPCIONES.map((o) => (
+                  <button
+                    key={o.marca}
+                    type="button"
+                    className="px-3 whitespace-nowrap"
+                    aria-pressed={v.marca === o.marca}
+                    // Volver a tocar la opción marcada la quita.
+                    onClick={() =>
+                      onCambio(c.clave, { ...v, marca: v.marca === o.marca ? null : o.marca })
+                    }
+                    data-marca={o.marca}
+                  >
+                    {o.texto}
+                  </button>
+                ))}
+              </div>
+            </div>
             <input
-              className="campo min-w-0 flex-1"
-              placeholder="Nota del perito"
+              className="campo min-w-0"
+              placeholder="Nota del perito (opcional)"
               aria-label={`Nota: ${c.nombre}, vehículo ${letra}`}
-              value={valores[c.clave].nota}
-              onChange={(e) => onCambio(c.clave, { ...valores[c.clave], nota: e.target.value })}
+              value={v.nota}
+              onChange={(e) => onCambio(c.clave, { ...v, nota: e.target.value })}
             />
           </div>
-        </div>
-      ))}
-    </fieldset>
+        );
+      })}
+    </div>
   );
 }

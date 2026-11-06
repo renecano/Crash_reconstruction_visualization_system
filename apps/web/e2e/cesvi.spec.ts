@@ -83,20 +83,36 @@ test("@flujo /cesvi: el caso de AXA desde la lista, del caso al dictamen en PDF"
   await expect(page.getByTestId("dano-medido-V1")).toContainText("sin dato");
   await expect(page.getByTestId("dano-calculado-V2")).toContainText("kJ", { timeout: 60_000 });
   await expect(page.getByTestId("dano-calculado-V2")).not.toContainText(" 0.0 kJ");
+  // Lo que el reporte no trae va como supuesto declarado, con su justificación (ADR 0091).
+  await expect(page.getByTestId("supuestos")).toContainText(
+    "Ficha técnica de Chevrolet Silverado 2500 2007",
+  );
+  // Los criterios se marcan con tres opciones y se cuentan; volver a tocar quita la marca.
+  await expect(page.getByTestId("contador-criterios")).toContainText("0 de");
+  const forma = page.getByTestId("criterio-A-forma");
+  await forma.getByRole("button", { name: "Corresponde", exact: true }).click();
+  await expect(page.getByTestId("contador-criterios")).toContainText("1 de");
+  // El perfil medido de la Tacoma se ve al cambiar de pestaña.
+  await page.getByTestId("pestana-dano-V2").click();
+  await expect(page.getByTestId("dano-V2").getByTestId("perfil-deformacion")).toBeVisible();
+  // A no trae medidas: no se dibuja un perfil que parezca observado.
+  await expect(page.getByTestId("dano-V1").getByTestId("perfil-deformacion")).toHaveCount(0);
 
   // 6. Los números: la verificación con las medidas del reporte reproduce la EBS de la Tacoma.
   await irAPaso(page, 6);
   await expect(page.getByTestId("verificacion-cesvi")).toContainText("63.90 km/h");
   await expect(page.getByTestId("metodo-verificacion")).toContainText("Método de CESVI");
-  // Lo que el reporte no trae va como supuesto declarado, con su justificación (ADR 0091).
-  await expect(page.getByTestId("supuestos")).toContainText(
-    "Ficha técnica de Chevrolet Silverado 2500 2007",
-  );
 
   // 7. Contra el reporte de CESVI: la misma modalidad y cada número del reporte con el de Croquis,
   // su diferencia y su porcentaje.
   await irAPaso(page, 7);
-  await expect(page.getByTestId("eje-modalidad")).toContainText("coincide");
+  await expect(page.getByTestId("eje-modalidad")).toHaveAttribute("data-estado", "coincide");
+  await expect(page.getByTestId("cifra-contra-croquis")).toHaveText("63.90");
+  await expect(page.getByTestId("cifra-contra-cesvi")).toHaveText("63.15");
+  await expect(page.getByTestId("cifra-contra-pct")).toHaveText("1.2 %");
+  await expect(page.getByTestId("cifra-contra-kmh")).toContainText("0.75 km/h");
+  await expect(page.getByTestId("eje-posiciones")).toContainText("Sin dato en el reporte");
+  await expect(page.getByTestId("citas-contra")).toContainText("«");
   const tabla = page.getByTestId("reproduccion");
   await expect(tabla.locator('[data-fila="ebs_kmh_reporte"]')).toContainText("63.15");
   await expect(tabla.locator('[data-fila="v3_kmh"]')).toContainText("60.27");

@@ -49,6 +49,7 @@ export function BarraRecorrido({
   onExportar,
   abierto = () => true,
   transiciones = true,
+  completo = false,
 }: {
   pasos: readonly string[];
   paso: number;
@@ -67,13 +68,15 @@ export function BarraRecorrido({
   abierto?: (i: number) => boolean;
   /** «Transiciones» entre actos (prompt §5), que el perito puede apagar. */
   transiciones?: boolean;
+  /** El dictamen está firmado: la línea llega al final. */
+  completo?: boolean;
 }) {
   const actual = Math.max(
     0,
     actos.findIndex((a) => a.pasos.includes(paso)),
   );
   /** Hasta dónde se llena la línea: el centro de la columna del acto actual. */
-  const lleno = actos.length ? ((actual + 0.5) / actos.length) * 100 : 0;
+  const lleno = completo ? 100 : actos.length ? ((actual + 0.5) / actos.length) * 100 : 0;
   return (
     <>
       <header className="vidrio barra relative z-30 flex h-[72px] shrink-0 items-center gap-3 px-4 md:px-6">

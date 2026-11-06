@@ -19,7 +19,10 @@ export function MaquetaCaso({
   nombres,
   detalles = {},
   anchoVia = null,
+  compacta = false,
 }: {
+  /** Solo el croquis, sin línea de tiempo ni leyenda («Lado a lado» de Contra CESVI). */
+  compacta?: boolean;
   /** El ancho de la vía si el caso lo trae medido, con su origen. */
   anchoVia?: { m: number; de: string } | null;
   r: Reconstruccion;
@@ -60,6 +63,7 @@ export function MaquetaCaso({
   const veloz = [...listo.res.vehiculos].sort(
     (a, b) => kmhAntesDe(b.trayectoria, ti) - kmhAntesDe(a.trayectoria, ti),
   )[0];
+  if (compacta) return <EscenaMaqueta spec={spec} resultado={listo.res} sinEtiquetas />;
   return (
     <div className="relative h-full w-full">
       <ConLineaDeTiempo resultado={listo.res}>

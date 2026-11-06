@@ -17,12 +17,17 @@ import {
   type VerificacionVehiculo,
 } from "@croquis/cesvi";
 import type { ViewerExportApi } from "@croquis/viewer";
+import type { OverpassResponse } from "@croquis/croquis-2d";
 import type { Map as MapaMl } from "maplibre-gl";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { huellaDelCaso, validacionVigente, type ValidacionPerito } from "@/lib/caso-guardado";
 import { croquisDeReconstruccion } from "@/lib/croquis-caso";
 import { croquisSobreMapa } from "@/lib/croquis-mapa";
+import type { CifraContraste } from "@/lib/contraste-lab";
 import { dictamenCasoPdf, dictamenCasoWord, type DatosDictamenCaso } from "@/lib/dictamen-caso";
+import { citaContraste, citaSupuestos, citaVelocidad, insertarCita } from "@/lib/dictamen-lab";
+import { protagonista } from "@/lib/reconstruccion-lab";
+import { HojaDictamen } from "./caso/hoja-dictamen";
 import { ESTILO_MAPA, ESTILO_MAPA_CLARO } from "./mapa-comun";
 
 function descargar(bytes: Uint8Array, nombre: string, tipo: string) {
@@ -90,7 +95,27 @@ export function DictamenCaso({
   tema,
   bitacora,
   supuestos,
+  titulo,
+  casoId,
+  lugar,
+  relato,
+  calles,
+  contra,
+  letraDe,
+  acciones,
 }: {
+  /** El título del hecho, para la hoja. */
+  titulo: string;
+  /** El relato del caso, para la hoja (el dictamen de un reporte no lleva `narracion`). */
+  relato: string | null;
+  casoId: string | null;
+  lugar: string;
+  calles: OverpassResponse | null;
+  /** La velocidad comparable con el reporte de CESVI, si la hay. */
+  contra: CifraContraste | null;
+  letraDe: (id: string) => string;
+  /** Guardar en el equipo o en un archivo, junto a las descargas. */
+  acciones: { guardarAqui: () => void; guardarArchivo: () => void; aviso: string | null };
   expediente: Expediente;
   narracion: string | null;
   reconstruccion: Reconstruccion;
@@ -110,7 +135,9 @@ export function DictamenCaso({
   /** Lo que el caso no trae, como supuesto declarado (ADR 0091). */
   supuestos?: readonly SupuestoDeclarado[];
 }) {
-  const [estructuraCesvi, setEstructuraCesvi] = useState(false);
+  // El dictamen sale con la estructura de los reportes de CESVI, salvo que el perito pida el otro.
+  const [estructuraCesvi, setEstructuraCesvi] = useState(true);
+  const campoConclusion = useRef<HTMLTextAreaElement>(null);
   const [perito, setPerito] = useState(guardada?.perito ?? "");
   const [conclusion, setConclusion] = useState(guardada?.conclusion ?? "");
   // Solo vale si es de estas mismas entradas; si el perito las cambió, el dictamen es borrador.
@@ -184,100 +211,223 @@ export function DictamenCaso({
     }
   };
 
+  // Ctrl+P descarga el PDF en este acto, como dice el botón.
+  useEffect(() => {
+    const alTeclear = (e: KeyboardEvent) => {
+      if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === "p") {
+        e.preventDefault();
+        void exportar("pdf");
+      }
+    };
+    window.addEventListener("keydown", alTeclear);
+    return () => window.removeEventListener("keydown", alTeclear);
+  });
+
+  /** Inserta una cita donde está el cursor. La escribe Croquis solo si el perito la pide. */
+  const citar = (cita: string) => {
+    const c = campoConclusion.current;
+    const ini = c?.selectionStart ?? conclusion.length;
+    const fin = c?.selectionEnd ?? conclusion.length;
+    const nueva = insertarCita(conclusion, cita, ini, fin);
+    setConclusion(nueva.texto);
+    onValidacion(null);
+    requestAnimationFrame(() => {
+      c?.focus();
+      c?.setSelectionRange(nueva.cursor, nueva.cursor);
+    });
+  };
+  const vPico = protagonista(reconstruccion);
+  const idPico = vPico ? String(vPico.vehiculo) : null;
+  const citaDeVelocidad = idPico ? citaVelocidad(reconstruccion, idPico, letraDe(idPico)) : null;
+  const citaDeSupuestos = citaSupuestos(supuestos ?? []);
+
   return (
     <section
-      className="flex flex-col gap-4"
+      className="grid gap-8 lg:grid-cols-[minmax(0,1fr)_minmax(340px,436px)]"
       data-testid="dictamen-caso"
       data-croquis={croquisUsado ?? undefined}
     >
-      {/* Sin título propio: el paso ya dice «El dictamen» (prompt del rediseño §0.5). */}
-      <p className="t-nota">
-        Lleva tu narración, el croquis sobre las calles del mapa (a escala si no hay mapa), cuadros
-        del 3D si lo abriste, los resultados con sus rangos, la verificación con el método de CESVI,
-        la comparación con la declaración si la usaste y la trazabilidad. La conclusión es tuya; sin
-        validar, sale como borrador.
-      </p>
-      <label className="solo-trabajar flex flex-col gap-1.5">
-        <span className="t-nota">Conclusión del perito</span>
-        <textarea
-          className="campo min-h-[96px]"
-          value={conclusion}
-          onChange={(e) => {
-            setConclusion(e.target.value);
-            onValidacion(null);
-          }}
-          data-testid="conclusion-perito"
+      <div className="flex min-w-0 justify-center">
+        <HojaDictamen
+          titulo={titulo}
+          casoId={casoId}
+          lugar={lugar}
+          narracion={relato}
+          r={reconstruccion}
+          calles={calles}
+          contra={contra}
+          letraDe={letraDe}
+          conclusion={conclusion}
+          perito={perito}
+          firma={
+            validacion && guardada
+              ? { perito: validacion.perito, fecha: validacion.fecha, huella: guardada.huella }
+              : null
+          }
+          formato={estructuraCesvi ? "cesvi" : "completo"}
         />
-      </label>
-      <div className="solo-trabajar flex flex-wrap items-end gap-3">
-        <label className="flex flex-col gap-1.5">
-          <span className="t-nota">Nombre del perito</span>
-          <input
-            className="campo"
-            value={perito}
+      </div>
+      <div className="flex min-w-0 flex-col gap-4">
+        <h2 className="font-[family-name:var(--fuente-titulo)] text-[3.25rem] leading-none font-normal tracking-[-0.03em]">
+          Dictamen
+        </h2>
+        <label className="solo-trabajar flex flex-col gap-1.5">
+          <span className="font-semibold">Tu conclusión</span>
+          <textarea
+            ref={campoConclusion}
+            className="campo min-h-[160px]"
+            placeholder="Escríbela tú. Croquis no la redacta por ti."
+            value={conclusion}
             onChange={(e) => {
-              setPerito(e.target.value);
+              setConclusion(e.target.value);
               onValidacion(null);
             }}
-            data-testid="nombre-perito"
+            data-testid="conclusion-perito"
           />
         </label>
+        <div className="solo-trabajar flex flex-wrap gap-2" data-testid="citas-dictamen">
+          {citaDeVelocidad && idPico ? (
+            <button
+              type="button"
+              className="boton-secundario boton-compacto"
+              onClick={() => citar(citaDeVelocidad)}
+              data-testid="citar-velocidad"
+            >
+              Citar velocidad de {letraDe(idPico)}
+            </button>
+          ) : null}
+          {contra ? (
+            <button
+              type="button"
+              className="boton-secundario boton-compacto"
+              onClick={() => citar(citaContraste(contra, letraDe(contra.vehiculo)))}
+              data-testid="citar-contraste"
+            >
+              Citar contraste
+            </button>
+          ) : null}
+          {citaDeSupuestos ? (
+            <button
+              type="button"
+              className="boton-secundario boton-compacto"
+              onClick={() => citar(citaDeSupuestos)}
+              data-testid="citar-supuestos"
+            >
+              Citar supuestos
+            </button>
+          ) : null}
+        </div>
+        <div className="flex flex-col gap-1.5">
+          <span className="font-semibold">Formato</span>
+          <div className="segmentado" role="group" aria-label="Formato del dictamen">
+            <button
+              type="button"
+              aria-pressed={estructuraCesvi}
+              onClick={() => setEstructuraCesvi(true)}
+              data-testid="formato-cesvi"
+            >
+              Estructura de CESVI
+            </button>
+            <button
+              type="button"
+              aria-pressed={!estructuraCesvi}
+              onClick={() => setEstructuraCesvi(false)}
+              data-testid="formato-completo"
+            >
+              Croquis completo
+            </button>
+          </div>
+        </div>
+        <div className="solo-trabajar flex flex-col gap-1.5">
+          <label className="font-semibold" htmlFor="nombre-perito">
+            Nombre del perito
+          </label>
+          <div className="flex flex-wrap gap-2">
+            <input
+              id="nombre-perito"
+              className="campo min-w-0 flex-1 basis-40"
+              placeholder="Como aparecerá en la firma"
+              value={perito}
+              onChange={(e) => {
+                setPerito(e.target.value);
+                onValidacion(null);
+              }}
+              data-testid="nombre-perito"
+            />
+            <button
+              type="button"
+              className="boton-secundario"
+              disabled={!perito.trim() || !conclusion.trim()}
+              onClick={() =>
+                onValidacion({
+                  perito: perito.trim(),
+                  conclusion: conclusion.trim(),
+                  fecha: new Date().toISOString(),
+                  huella: huellaDelCaso(expediente, narracion),
+                })
+              }
+              data-testid="validar-dictamen"
+            >
+              Validar y firmar
+            </button>
+          </div>
+        </div>
+        <p role="status" className="t-nota" data-testid="estado-validacion">
+          {validacion
+            ? `Validó ${validacion.perito} el ${new Date(validacion.fecha).toLocaleString("es-MX", { dateStyle: "long", timeStyle: "short" })}.`.replace(
+                "..",
+                ".",
+              )
+            : guardada
+              ? `La validación de ${guardada.perito} era de otras entradas: cambiaron la narración o lo que marcaste. Vuelve a validar.`
+              : "Sin validar: el dictamen sale como borrador. Para firmar, escribe tu conclusión y tu nombre."}
+        </p>
         <button
           type="button"
-          className="boton-secundario"
-          disabled={!perito.trim() || !conclusion.trim()}
-          onClick={() =>
-            onValidacion({
-              perito: perito.trim(),
-              conclusion: conclusion.trim(),
-              fecha: new Date().toISOString(),
-              huella: huellaDelCaso(expediente, narracion),
-            })
-          }
-          data-testid="validar-dictamen"
-        >
-          Validar
-        </button>
-      </div>
-      <p role="status" className="t-nota" data-testid="estado-validacion">
-        {validacion
-          ? `Validó ${validacion.perito} el ${new Date(validacion.fecha).toLocaleString("es-MX", { dateStyle: "long", timeStyle: "short" })}.`
-          : guardada
-            ? `La validación de ${guardada.perito} era de otras entradas: cambiaron la narración o lo que marcaste. Vuelve a validar; mientras, el dictamen sale como borrador.`
-            : "Sin validar: el dictamen sale como borrador."}
-      </p>
-      <label className="flex items-center gap-2">
-        <input
-          type="checkbox"
-          checked={estructuraCesvi}
-          onChange={(e) => setEstructuraCesvi(e.target.checked)}
-          data-testid="estructura-cesvi"
-        />
-        <span className="t-interfaz">Con la estructura de los reportes de CESVI</span>
-      </label>
-      <div className="flex flex-wrap gap-2">
-        <button
-          type="button"
-          className="boton-principal"
+          className="boton-principal flex items-center justify-between"
           onClick={() => void exportar("pdf")}
           data-testid="descargar-dictamen-pdf"
         >
           Descargar el PDF
+          <kbd className="font-mono text-[0.6875rem] opacity-70">Ctrl P</kbd>
         </button>
-        <button
-          type="button"
-          className="boton-secundario"
-          onClick={() => void exportar("docx")}
-          data-testid="descargar-dictamen-word"
-        >
-          Descargar el Word
-        </button>
+        <div className="grid grid-cols-3 gap-2">
+          <button
+            type="button"
+            className="boton-secundario boton-compacto"
+            onClick={() => void exportar("docx")}
+            data-testid="descargar-dictamen-word"
+          >
+            Word
+          </button>
+          <button
+            type="button"
+            className="boton-secundario boton-compacto"
+            onClick={acciones.guardarArchivo}
+            data-testid="guardar-caso"
+          >
+            .croquis
+          </button>
+          <button
+            type="button"
+            className="boton-secundario boton-compacto"
+            onClick={acciones.guardarAqui}
+            data-testid="guardar-en-equipo"
+          >
+            Guardar aquí
+          </button>
+        </div>
+        {acciones.aviso ? (
+          <p role="status" className="t-nota" data-testid="aviso-guardado">
+            {acciones.aviso}
+          </p>
+        ) : null}
+        {estado ? (
+          <p role="status" className="t-interfaz">
+            {estado}
+          </p>
+        ) : null}
       </div>
-      {estado ? (
-        <p role="status" className="t-interfaz">
-          {estado}
-        </p>
-      ) : null}
     </section>
   );
 }
