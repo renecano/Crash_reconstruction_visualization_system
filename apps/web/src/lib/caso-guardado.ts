@@ -77,6 +77,8 @@ export interface CasoGuardado {
   hipotesis_elegida?: string;
   /** Los vehículos de los que el perito no sabe dónde quedaron (B), opcional. */
   finales_desconocidos?: string[];
+  /** Los vehículos de los que no sabe por dónde venían (escena fácil), opcional. */
+  direcciones_supuestas?: string[];
 }
 
 export interface CasoAbierto {
@@ -94,6 +96,7 @@ export interface CasoAbierto {
   hipotesisElegida: string | null;
   /** Los vehículos sin posición final porque el perito no sabe dónde quedaron. */
   finalesDesconocidos: string[];
+  direccionesSupuestas: string[];
 }
 
 /** El expediente sin su resultado: lo que el perito valida. */
@@ -128,6 +131,7 @@ export function casoParaGuardar(c: {
   bitacora?: readonly MensajeBitacora[];
   hipotesisElegida?: string | null;
   finalesDesconocidos?: readonly string[];
+  direccionesSupuestas?: readonly string[];
 }): CasoGuardado {
   const { posiciones, conteos, problemas, preguntas } = c.escena;
   const base = sinResultado(c.expediente);
@@ -155,6 +159,9 @@ export function casoParaGuardar(c: {
     ...(c.bitacora?.length ? { bitacora: [...c.bitacora] } : {}),
     ...(c.hipotesisElegida ? { hipotesis_elegida: c.hipotesisElegida } : {}),
     ...(c.finalesDesconocidos?.length ? { finales_desconocidos: [...c.finalesDesconocidos] } : {}),
+    ...(c.direccionesSupuestas?.length
+      ? { direcciones_supuestas: [...c.direccionesSupuestas] }
+      : {}),
   };
 }
 
@@ -198,6 +205,11 @@ export function leerCasoGuardado(datos: unknown): CasoAbierto | { error: string 
     // Solo ids de vehículos del expediente.
     finalesDesconocidos: Array.isArray(c.finales_desconocidos)
       ? c.finales_desconocidos.filter(
+          (x): x is string => typeof x === "string" && expediente.vehiculos.some((v) => v.id === x),
+        )
+      : [],
+    direccionesSupuestas: Array.isArray(c.direcciones_supuestas)
+      ? c.direcciones_supuestas.filter(
           (x): x is string => typeof x === "string" && expediente.vehiculos.some((v) => v.id === x),
         )
       : [],

@@ -1143,3 +1143,373 @@
     transform: translateX(6px);
   }
 }
+
+/* La escena fácil (René, 2026-11-05): una pregunta a la vez sobre un mapa claro. Los mensajes de
+   éxito (verde), alerta (ámbar) y error (rojo); el naranja es solo del choque. Objetivos de 44 px
+   o más y foco visible en todo lo que se toca. */
+@layer components {
+  [data-diseno="laboratorio"] [data-tema="claro"],
+  [data-diseno="laboratorio"][data-tema="claro"] {
+    --exito: #157a43;
+    --exito-fondo: #e8f6ee;
+    --exito-borde: #b7e2c8;
+    --alerta: #8a5a00;
+    --alerta-fondo: #fff7e6;
+    --alerta-borde: #f2d48f;
+    --error: #b42318;
+    --error-fondo: #fef0ee;
+    --error-borde: #f5c2bc;
+    --eleccion: #2563eb;
+    --eleccion-fondo: #eef3ff;
+  }
+  [data-diseno="laboratorio"] [data-tema="oscuro"],
+  [data-diseno="laboratorio"][data-tema="oscuro"] {
+    --exito: #5fd394;
+    --exito-fondo: #10281d;
+    --exito-borde: #1f5a3a;
+    --alerta: #f4c25b;
+    --alerta-fondo: #2a2210;
+    --alerta-borde: #5c4716;
+    --error: #ff8a7a;
+    --error-fondo: #2c1512;
+    --error-borde: #6b2a22;
+    --eleccion: #8fb4ff;
+    --eleccion-fondo: #16244a;
+  }
+  .escena-hoja {
+    background: var(--superficie);
+    border-radius: 22px;
+    box-shadow: var(--sombra-hoja, 0 30px 80px rgba(27, 34, 48, 0.12));
+  }
+  .escena-titulo {
+    font-family: var(--fuente);
+    font-weight: 650;
+    letter-spacing: -0.02em;
+    line-height: 1.08;
+    font-size: clamp(1.6rem, 2.4vw, 2.1rem);
+  }
+  .escena-opcion {
+    display: flex;
+    min-height: 52px;
+    width: 100%;
+    align-items: flex-start;
+    gap: 12px;
+    border: 1.5px solid var(--linea);
+    border-radius: 14px;
+    padding: 12px 16px;
+    text-align: left;
+    background: var(--superficie);
+    transition:
+      border-color 160ms ease,
+      background 160ms ease;
+  }
+  .escena-opcion:hover {
+    border-color: var(--texto-3);
+  }
+  .escena-opcion[aria-checked="true"] {
+    border-color: var(--eleccion);
+    background: var(--eleccion-fondo);
+  }
+  .escena-radio {
+    margin-top: 2px;
+    flex: none;
+    height: 22px;
+    width: 22px;
+    border-radius: 999px;
+    border: 2px solid var(--linea);
+    display: grid;
+    place-items: center;
+    font-size: 0.75rem;
+  }
+  [aria-checked="true"] > .escena-radio {
+    border-color: var(--eleccion);
+    background: var(--eleccion);
+    color: #fff;
+  }
+  .escena-boton {
+    min-height: 48px;
+    border-radius: 12px;
+    padding: 0 20px;
+    font-weight: 600;
+  }
+  .escena-mensaje {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    border-radius: 16px;
+    border: 1px solid;
+    padding: 12px 16px;
+    box-shadow: 0 10px 30px rgba(27, 34, 48, 0.12);
+    animation: escena-entra 260ms cubic-bezier(0.2, 0.8, 0.2, 1) both;
+  }
+  .escena-mensaje[data-tipo="exito"] {
+    background: var(--exito-fondo);
+    border-color: var(--exito-borde);
+    color: var(--texto);
+  }
+  .escena-mensaje[data-tipo="alerta"] {
+    background: var(--alerta-fondo);
+    border-color: var(--alerta-borde);
+    color: var(--texto);
+  }
+  .escena-mensaje[data-tipo="error"] {
+    background: var(--error-fondo);
+    border-color: var(--error-borde);
+    color: var(--texto);
+  }
+  .escena-icono-mensaje {
+    flex: none;
+    height: 28px;
+    width: 28px;
+    border-radius: 999px;
+    display: grid;
+    place-items: center;
+    color: #fff;
+    font-weight: 700;
+  }
+  [data-tipo="exito"] > .escena-icono-mensaje {
+    background: var(--exito);
+  }
+  [data-tipo="alerta"] > .escena-icono-mensaje {
+    background: var(--alerta);
+  }
+  [data-tipo="error"] > .escena-icono-mensaje {
+    background: var(--error);
+  }
+  .escena-avance {
+    background: var(--superficie);
+    border-radius: 18px;
+    box-shadow: 0 10px 30px rgba(27, 34, 48, 0.14);
+  }
+  .escena-chip {
+    display: flex;
+    min-height: 44px;
+    align-items: center;
+    gap: 8px;
+    border-radius: 12px;
+    padding: 0 12px;
+    font-weight: 600;
+    color: var(--texto-2);
+    white-space: nowrap;
+  }
+  .escena-chip[aria-current="step"] {
+    background: var(--superficie-alta);
+    color: var(--texto);
+  }
+  .escena-chip-numero {
+    display: grid;
+    height: 24px;
+    width: 24px;
+    place-items: center;
+    border-radius: 999px;
+    border: 1.5px solid var(--linea);
+    font-size: 0.75rem;
+  }
+  .escena-chip[aria-current="step"] .escena-chip-numero {
+    background: var(--texto);
+    border-color: var(--texto);
+    color: var(--superficie);
+  }
+  .escena-chip[data-hecho="si"] .escena-chip-numero {
+    background: var(--exito);
+    border-color: var(--exito);
+    color: #fff;
+  }
+  .escena-supuesto {
+    display: inline-flex;
+    border-radius: 999px;
+    border: 1px solid var(--alerta-borde);
+    background: var(--alerta-fondo);
+    color: var(--alerta);
+    padding: 1px 10px;
+    font-size: 0.75rem;
+    font-weight: 600;
+  }
+  /* En el mapa (marcadores de MapLibre). */
+  .escena-etiqueta {
+    position: absolute;
+    left: 0;
+    top: 0;
+    white-space: nowrap;
+    border-radius: 999px;
+    background: var(--superficie);
+    color: var(--texto);
+    padding: 4px 12px;
+    font: 600 0.8125rem/1.3 var(--fuente);
+    box-shadow: 0 4px 14px rgba(27, 34, 48, 0.16);
+    pointer-events: none;
+  }
+  .escena-etiqueta-choque {
+    transform: translate(18px, -40px);
+    background: var(--senal);
+    color: #fff;
+  }
+  .escena-etiqueta-coche {
+    border-left: 4px solid var(--color-coche);
+  }
+  .escena-choque {
+    position: relative;
+    width: 44px;
+    height: 44px;
+    animation: escena-golpe 600ms cubic-bezier(0.2, 0.8, 0.2, 1) both;
+  }
+  .escena-propuesta {
+    position: relative;
+    width: 0;
+    height: 0;
+  }
+  .escena-punto,
+  .escena-pulso {
+    position: absolute;
+    left: -9px;
+    top: -9px;
+    width: 18px;
+    height: 18px;
+    border-radius: 999px;
+    background: var(--senal);
+    border: 3px solid #fff;
+    box-shadow: 0 2px 8px rgba(27, 34, 48, 0.3);
+  }
+  .escena-pulso {
+    border: 0;
+    background: color-mix(in srgb, var(--senal) 35%, transparent);
+    animation: escena-pulso 1.6s ease-out infinite;
+  }
+  .escena-globo {
+    position: absolute;
+    left: 24px;
+    top: -58px;
+    white-space: nowrap;
+    border-radius: 12px;
+    background: var(--tip-fondo, #0b0d12);
+    color: var(--tip-texto, #fff);
+    padding: 9px 14px;
+    font: 600 0.875rem/1.3 var(--fuente);
+  }
+  .escena-flecha {
+    position: relative;
+    display: grid;
+    min-height: 64px;
+    min-width: 56px;
+    place-items: center;
+    cursor: pointer;
+    background: none;
+    border: 0;
+  }
+  .escena-flecha svg path {
+    fill: var(--superficie);
+    stroke: var(--texto);
+    stroke-width: 2.4;
+    stroke-linejoin: round;
+  }
+  .escena-flecha-propuesta svg path,
+  .escena-flecha:hover svg path {
+    fill: var(--color-flecha);
+    stroke: #fff;
+  }
+  .escena-flecha .escena-etiqueta {
+    transform: translate(34px, -12px);
+  }
+  .escena-flecha-propuesta .escena-etiqueta {
+    background: var(--color-flecha);
+    color: #fff;
+  }
+  .escena-flecha:focus-visible {
+    outline: 3px solid var(--eleccion);
+    outline-offset: 4px;
+    border-radius: 12px;
+  }
+  .escena-coche {
+    position: relative;
+    width: 0;
+    height: 0;
+  }
+  .escena-coche-cuerpo {
+    position: absolute;
+    left: 0;
+    top: 0;
+  }
+  .escena-coche-activo .escena-coche-cuerpo {
+    cursor: grab;
+  }
+  .escena-coche-tenue {
+    opacity: 0.55;
+  }
+  .escena-giro {
+    position: relative;
+    width: 0;
+    height: 0;
+  }
+  .escena-boton-giro {
+    position: absolute;
+    left: -24px;
+    top: -24px;
+    display: grid;
+    width: 48px;
+    height: 48px;
+    place-items: center;
+    border-radius: 999px;
+    background: var(--superficie);
+    color: var(--texto);
+    border: 1px solid var(--linea);
+    box-shadow: 0 6px 18px rgba(27, 34, 48, 0.2);
+    cursor: pointer;
+  }
+  .escena-boton-giro:focus-visible,
+  .escena-zoom:focus-visible,
+  .escena-opcion:focus-visible,
+  .escena-chip:focus-visible,
+  .escena-boton:focus-visible {
+    outline: 3px solid var(--eleccion);
+    outline-offset: 2px;
+  }
+  .escena-zoom {
+    display: grid;
+    width: 48px;
+    height: 48px;
+    place-items: center;
+    border-radius: 14px;
+    background: var(--superficie);
+    color: var(--texto);
+    font-size: 1.4rem;
+    box-shadow: 0 6px 18px rgba(27, 34, 48, 0.14);
+  }
+  @keyframes escena-entra {
+    from {
+      opacity: 0;
+      transform: translateY(-8px);
+    }
+    to {
+      opacity: 1;
+      transform: none;
+    }
+  }
+  @keyframes escena-golpe {
+    0% {
+      transform: scale(0);
+    }
+    65% {
+      transform: scale(1.25);
+    }
+    100% {
+      transform: scale(1);
+    }
+  }
+  @keyframes escena-pulso {
+    from {
+      transform: scale(1);
+      opacity: 0.9;
+    }
+    to {
+      transform: scale(3.2);
+      opacity: 0;
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .escena-mensaje,
+    .escena-choque,
+    .escena-pulso {
+      animation: none;
+    }
+  }
+}

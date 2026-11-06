@@ -56,6 +56,13 @@ describe("lo obligatorio de cada paso (V2)", () => {
     e = conPosicion(e, { vehiculo: "V2", fase: "impacto", punto: P, rumbo: 90 });
     e = conPosicion(e, { vehiculo: "V1", fase: "final", punto: P, rumbo: 0 });
     expect(faltaEnPaso("lugar", estado({ expediente: e }))).toEqual(["V2, dónde quedó"]);
+    // Con los nombres de pantalla, nunca «V2»; «No sé dónde quedó» no deja nada pendiente.
+    expect(
+      faltaEnPaso("lugar", estado({ expediente: e, nombres: { V1: "Jetta", V2: "Camaro" } })),
+    ).toEqual(["Camaro, dónde quedó"]);
+    expect(faltaEnPaso("lugar", estado({ expediente: e, finalesDesconocidos: ["V2"] }))).toEqual(
+      [],
+    );
     e = conPosicion(e, { vehiculo: "V2", fase: "final", punto: P, rumbo: 0 });
     expect(faltaEnPaso("lugar", estado({ expediente: e }))).toEqual([]);
   });

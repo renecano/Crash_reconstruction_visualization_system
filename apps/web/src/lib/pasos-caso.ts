@@ -24,6 +24,10 @@ export interface EstadoRecorrido {
   esperaReporte: boolean;
   expediente: Expediente | null;
   reconstruido: boolean;
+  /** Los vehículos de los que se dijo «No sé dónde quedó»: no les falta posición final. */
+  finalesDesconocidos?: readonly string[];
+  /** Cómo se llama cada vehículo en pantalla («Jetta»); sin esto, su id. */
+  nombres?: Readonly<Record<string, string>>;
 }
 
 /** Une nombres como se dicen: «V1», «V1 y V2», «V1, V2 y V3». */
@@ -51,15 +55,23 @@ export function impactosAColocar(e: Expediente): { orden: number; vehiculos: str
   return entre.length ? entre : [{ orden: 1, vehiculos: vehiculosDelImpacto(e) }];
 }
 
-/** Lo que falta del lugar: el punto de cada impacto y dónde quedó cada vehículo. */
-export function faltaDelLugar(e: Expediente): { impactos: number[]; finales: string[] } {
+/**
+ * Lo que falta del lugar: el punto de cada impacto y dónde quedó cada vehículo (salvo los de «No sé
+ * dónde quedó»).
+ */
+export function faltaDelLugar(
+  e: Expediente,
+  desconocidos: readonly string[] = [],
+): { impactos: number[]; finales: string[] } {
   const pos = e.versiones?.find((v) => v.tipo === "evidencia")?.posiciones ?? [];
   const tiene = (v: string, fase: string) => pos.some((p) => p.vehiculo === v && p.fase === fase);
   return {
     impactos: impactosAColocar(e)
       .filter((i) => i.vehiculos.some((v) => !tiene(v, "impacto")))
       .map((i) => i.orden),
-    finales: e.vehiculos.map((v) => v.id).filter((v) => !tiene(v, "final")),
+    finales: e.vehiculos
+      .map((v) => v.id)
+      .filter((v) => !tiene(v, "final") && !desconocidos.includes(v)),
   };
 }
 
@@ -73,12 +85,13 @@ export function faltaEnPaso(paso: ClavePaso, s: EstadoRecorrido): string[] {
   if (paso === "hecho") return s.expediente ? [] : ["leer la narración del hecho"];
   if (!s.expediente) return [];
   if (paso === "lugar") {
-    const f = faltaDelLugar(s.expediente);
+    const f = faltaDelLugar(s.expediente, s.finalesDesconocidos);
     const total = impactosAColocar(s.expediente).length;
+    const finales = f.finales.map((v) => s.nombres?.[v] ?? v);
     return [
       ...f.impactos.map((o) => nombrePunto(o, total)),
-      ...(f.finales.length
-        ? [`${enLista(f.finales)}, dónde ${f.finales.length === 1 ? "quedó" : "quedaron"}`]
+      ...(finales.length
+        ? [`${enLista(finales)}, dónde ${finales.length === 1 ? "quedó" : "quedaron"}`]
         : []),
     ];
   }

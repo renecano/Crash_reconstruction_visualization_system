@@ -79,6 +79,8 @@ import { actoDePaso, actosDelCaso, continuarA, rutaDeActo, type ClaveActo } from
 import { BarraRecorrido, PASOS } from "../recorrido/barra";
 import { TransicionActo } from "../recorrido/transicion-acto";
 import { MaquetaCaso } from "../escena/maqueta-caso";
+import { EscenaFacil } from "../escena/escena-facil";
+import { nombreVehiculo } from "@/lib/escena-facil";
 import { Reproduccion } from "../reproduccion";
 import {
   PasoCaso,
@@ -164,6 +166,14 @@ export function RecorridoCaso({
   const [puntosImpacto, setPuntosImpacto] = useState<Record<number, { lat: number; lon: number }>>(
     {},
   );
+  // La escena fácil (René, 2026-11-05): «No sé por dónde venía», «Quedó junto al choque», si no
+  // llegaron las calles del mapa y el lugar que se buscó (para pedir sus calles).
+  const [direccionesNoSe, setDireccionesNoSe] = useState<readonly string[]>(
+    inicial.direccionesSupuestas ?? [],
+  );
+  const [juntoAlChoque, setJuntoAlChoque] = useState<readonly string[]>([]);
+  const [callesFallaron, setCallesFallaron] = useState(false);
+  const [centroBuscado, setCentroBuscado] = useState<{ lat: number; lon: number } | null>(null);
   const [rumbosImpacto, setRumbosImpacto] = useState<Record<number, number>>({});
   const [historial, setHistorial] = useState<Expediente[]>([]);
   const [calles, setCalles] = useState<OverpassResponse | null>(null);
@@ -398,6 +408,7 @@ export function RecorridoCaso({
     setValidacion(c.validacion);
     setHipotesis(c.hipotesisElegida);
     setDesconocidos(c.finalesDesconocidos);
+    setDireccionesNoSe(c.direccionesSupuestas);
     // La bitácora del archivo sigue en la pizarra (R12b): se escribe después de ella.
     setPizarra(
       pizarraDeEscena(c.narracion, c.escena, {
@@ -426,6 +437,7 @@ export function RecorridoCaso({
           bitacora: pizarra.bitacora,
           hipotesisElegida: hipotesis,
           finalesDesconocidos: desconocidos,
+          direccionesSupuestas: direccionesNoSe,
         })
       : null;
   const guardarEnEquipo = () => {
@@ -493,7 +505,9 @@ export function RecorridoCaso({
   };
   // Las calles del lugar para el 3D (R10): se piden en cuanto hay punto de impacto (al marcarlo o al
   // abrir un caso que ya lo tiene) y el 3D las agrega cuando llegan.
-  const origenCalles = puntoDe(1);
+  // Antes de marcar el choque, alrededor del lugar buscado o del lugar del caso: Croquis propone el
+  // cruce y las flechas con ellas.
+  const origenCalles = puntoDe(1) ?? centroBuscado ?? expediente?.caso.lugar?.coordenadas ?? null;
   const claveCalles = origenCalles
     ? `${origenCalles.lon.toFixed(3)},${origenCalles.lat.toFixed(3)}`
     : null;
@@ -502,7 +516,9 @@ export function RecorridoCaso({
     const [lon, lat] = claveCalles.split(",").map(Number) as [number, number];
     let vivo = true;
     void callesCerca([lon, lat]).then((c) => {
-      if (vivo) setCalles(c);
+      if (!vivo) return;
+      setCalles(c);
+      setCallesFallaron(c === null);
     });
     void objetosCerca([lon, lat]).then((o) => {
       if (vivo) setObjetos(o);
@@ -1130,11 +1146,21 @@ export function RecorridoCaso({
   const verMapa = vista === "mapa" || !r;
   // Lo obligatorio de cada paso (V2): «Siguiente» dice qué falta y los pasos futuros esperan.
   const claves = pasos.map((n) => CLAVES_PASOS[PASOS.indexOf(n)]!);
+  const nombresPantalla: Record<string, string> = expediente
+    ? Object.fromEntries(
+        expediente.vehiculos.map((v) => [v.id, nombreVehiculo(v, expediente.vehiculos)]),
+      )
+    : {};
   const estadoPasos = {
     esperaReporte: inicial.origen === "importado" && !leida,
     expediente,
     reconstruido: r !== null && !rec.vieja,
+    finalesDesconocidos: desconocidos,
+    nombres: nombresPantalla,
   };
+  // La escena fácil ocupa todo en «La escena» al trabajar; el mapa de antes queda montado debajo
+  // (el dictamen toma de él la imagen del croquis).
+  const escenaFacil = actual === 2 && modo === "trabajar" && expediente !== null && leida !== null;
   const falta = faltaEnPaso(claves[paso]!, estadoPasos);
   // Posiciones finales encimadas: se avisan con la propuesta para separarlas (comentario de René).
   const encimadas = useMemo(
@@ -1206,7 +1232,43 @@ export function RecorridoCaso({
           irA(pasos.length - 1);
         }}
       />
-      <div className="flex min-h-0 flex-1 flex-col gap-6 overflow-y-auto p-4 md:p-7 lg:flex-row lg:overflow-hidden">
+      {escenaFacil && expediente && leida ? (
+        <div className="relative min-h-0 flex-1" data-testid="escena-fondo">
+          <EscenaFacil
+            tema={tema}
+            estado={{
+              expediente,
+              desconocidos,
+              direccionesNoSe,
+              juntoAlChoque,
+              puntos: puntosImpacto,
+            }}
+            onEstado={(x) => {
+              cambiarExpediente(x.expediente);
+              setDesconocidos(x.desconocidos);
+              setDireccionesNoSe(x.direccionesNoSe);
+              setJuntoAlChoque(x.juntoAlChoque);
+              setPuntosImpacto({ ...x.puntos });
+            }}
+            impactos={impactos}
+            narracion={texto.trim() || null}
+            posicionesNarradas={leida.posiciones}
+            calles={calles}
+            callesFallaron={callesFallaron}
+            lugar={expediente.caso.lugar?.coordenadas ?? null}
+            zona={{
+              municipio: expediente.caso.lugar?.municipio?.valor,
+              estado: expediente.caso.lugar?.estado?.valor,
+            }}
+            onBuscarCalles={setCentroBuscado}
+            onVerReconstruccion={() => irA(paso + 1)}
+            onNota={(t) => setPizarra((x) => delPerito(x, t))}
+          />
+        </div>
+      ) : null}
+      <div
+        className={`flex min-h-0 flex-1 flex-col gap-6 overflow-y-auto p-4 md:p-7 lg:flex-row lg:overflow-hidden ${escenaFacil ? "hidden" : ""}`}
+      >
         <main
           className={`flex min-h-0 min-w-0 flex-col gap-5 lg:overflow-y-auto ${grande ? "lg:w-[440px] lg:shrink-0" : "lg:flex-1"}`}
           aria-label={pasos[paso]}
