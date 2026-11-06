@@ -30,6 +30,10 @@ test("@flujo /cesvi: el caso de AXA desde la lista, del caso al dictamen en PDF"
 
   // El caso de AXA es un caso de ejemplo de la lista (ADR 0079).
   await page.goto("/cesvi");
+  // La lista de casos: la línea de estado es real y las cifras de AXA son las de «Contra CESVI».
+  await expect(page.getByTestId("estado-casos")).toContainText("7 reportes de CESVI de ejemplo");
+  await expect(page.getByTestId("ultimo-pct")).toHaveText("1.2 %");
+  await expect(page.getByTestId("ultimo-cifras")).toContainText("63.90 contra 63.15 km/h");
   await page.getByTestId("ir-axa").click();
   await expect(page).toHaveURL(/\/cesvi\/casos\/a2010930(\/hecho)?$/);
   const recorrido = page.getByTestId("recorrido-caso");
@@ -73,6 +77,22 @@ test("@flujo /cesvi: el caso de AXA desde la lista, del caso al dictamen en PDF"
   await page.getByTestId("ver-detalle-reconstruccion").click();
   await page.getByTestId("abrir-declaracion").click();
   await expect(page.getByTestId("texto-declaracion")).toHaveValue(/revers/);
+
+  // Presentar: a pantalla completa, capítulos con ← →, y Esc regresa a Trabajar.
+  await page.getByTestId("modo-presentar").click();
+  const presentar = page.getByTestId("presentar-caso");
+  await expect(presentar).toBeVisible();
+  await expect(page.getByTestId("aviso-apoyo")).toContainText("el dictamen es del perito");
+  await page.getByTestId("capitulo-contra").click();
+  await expect(page.getByTestId("capitulo-titulo")).toHaveText("Contra CESVI");
+  await expect(page.getByTestId("capitulo-datos")).toContainText("63.90 km/h");
+  await expect(page.getByTestId("capitulo-datos")).toContainText("63.15 km/h");
+  await expect(page.getByTestId("capitulo-datos")).toContainText("1.2 %");
+  await page.keyboard.press("ArrowLeft");
+  await expect(page.getByTestId("capitulo-titulo")).toHaveText("Posiciones finales");
+  await page.keyboard.press("Escape");
+  await expect(presentar).toHaveCount(0);
+  await expect(recorrido).toHaveAttribute("data-modo", "trabajar");
 
   // 5. Los daños, con la correspondencia del método de CESVI.
   await irAPaso(page, 5);
