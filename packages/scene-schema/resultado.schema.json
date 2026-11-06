@@ -1274,6 +1274,14 @@
           "type": "integer",
           "minimum": 1,
           "maximum": 1000
+        },
+        "valores_kmh": {
+          "type": "array",
+          "description": "La velocidad al impacto de cada reestimación con entradas perturbadas (km/h), en orden: la distribución real de donde salen los percentiles.",
+          "items": {
+            "type": "number"
+          },
+          "maxItems": 1000
         }
       }
     },

@@ -575,6 +575,17 @@
     font-weight: 600;
   }
 
+  /* Las pestañas sobre la escena: hoja clara y la elegida en tinta. */
+  .segmentado-tinta {
+    background: var(--superficie);
+    border-color: transparent;
+    box-shadow: 0 10px 30px rgba(27, 34, 48, 0.14);
+  }
+  .segmentado-tinta > button[aria-selected="true"] {
+    background: var(--texto);
+    color: var(--fondo);
+  }
+
   /* Insignias: la fuente de un dato (DECLARACIÓN, PERITO, SUPUESTO…). */
   .insignia {
     display: inline-flex;

@@ -3,8 +3,10 @@ import { join } from "node:path";
 import { describe, expect, it } from "vitest";
 import {
   cajaDe,
+  cotaDeVia,
   encuadre,
   estela,
+  kmhAntesDe,
   poseEn,
   type ResultadoMaqueta,
   tImpacto,
@@ -19,9 +21,45 @@ const r = JSON.parse(
 ) as ResultadoMaqueta;
 
 describe("la maqueta generada del resultado (Laboratorio §7)", () => {
+  it("la cota de la vía va de orilla a orilla de la vía más cercana", () => {
+    const vias = [
+      {
+        puntos: [
+          { x: -50, y: 0 },
+          { x: 50, y: 0 },
+        ],
+        ancho: 8,
+      },
+      {
+        puntos: [
+          { x: -50, y: 40 },
+          { x: 50, y: 40 },
+        ],
+        ancho: 20,
+      },
+    ];
+    const c = cotaDeVia(vias, { x: 0, y: 1 }, 10)!;
+    expect(c.ancho).toBe(8);
+    expect(Math.hypot(c.a.x - c.b.x, c.a.y - c.b.y)).toBeCloseTo(8, 6);
+    expect(c.a.x).toBeCloseTo(10, 6);
+    // Con la medida del reporte, la cota mide eso y no lo que dibuja el mapa.
+    const medida = cotaDeVia(vias, { x: 0, y: 1 }, 10, 6.47)!;
+    expect(medida.ancho).toBe(6.47);
+    expect(Math.hypot(medida.a.x - medida.b.x, medida.a.y - medida.b.y)).toBeCloseTo(6.47, 6);
+    expect(cotaDeVia([], { x: 0, y: 0 })).toBeNull();
+  });
+
   it("el impacto sale de los eventos del solver", () => {
     expect(tImpacto(r)).toBe(0);
     expect(tImpacto({ ...r, eventos: [] })).toBe(0);
+  });
+
+  it("la rapidez antes de un instante es la de la última muestra anterior", () => {
+    const tr = { t: [-2, -1, 0, 1], vx: [10, 10, 5, 0], vy: [0, 0, 0, 0] } as never;
+    expect(kmhAntesDe(tr, 0)).toBeCloseTo(36, 6);
+    expect(kmhAntesDe(tr, -5)).toBeCloseTo(36, 6);
+    expect(kmhAntesDe(tr, 0.5)).toBeCloseTo(18, 6);
+    expect(kmhAntesDe(tr, 9)).toBe(0);
   });
 
   it("la pose se interpola y se queda en los extremos", () => {

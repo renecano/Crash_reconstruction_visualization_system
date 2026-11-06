@@ -65,11 +65,12 @@ test("@flujo /cesvi: el caso de AXA desde la lista, del caso al dictamen en PDF"
   // 4. La reconstrucción, y la declaración del conductor ya escrita para compararla.
   await irAPaso(page, 4);
   await page.getByTestId("reconstruir").click();
-  await expect(page.getByTestId("velocidades")).toBeVisible({ timeout: 60_000 });
+  await expect(page.getByTestId("cifra-reconstruccion")).toBeVisible({ timeout: 60_000 });
   // Cada velocidad con su método (prompt del rediseño §0.2).
   await expect(page.getByTestId("metodo-velocidades")).toContainText(
     "Reconstrucción física de Croquis",
   );
+  await page.getByTestId("ver-detalle-reconstruccion").click();
   await page.getByTestId("abrir-declaracion").click();
   await expect(page.getByTestId("texto-declaracion")).toHaveValue(/revers/);
 

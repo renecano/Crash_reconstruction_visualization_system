@@ -63,6 +63,7 @@ import {
   blendPose,
   CAMERA_TRANSITION_MS,
   chooseCinematicAdjust,
+  chaseCamera,
   cinematicCamera,
   sameCamera,
   type CameraChoice,
@@ -1446,7 +1447,7 @@ function SceneContent({
     camaraCaptura.current ??
     cameraLive?.current ?? {
       modo: camera,
-      conductor: camera === "conductor" ? driver?.v.id : undefined,
+      conductor: camera === "conductor" || camera === "detras" ? driver?.v.id : undefined,
     };
   function poseCamara(t: number): void {
     const eleccion = camaraViva();
@@ -1485,6 +1486,8 @@ function SceneContent({
       applyPose(persp, pose);
       // El foco va con los ojos, un poco más arriba y atrás (ilumina tablero y postes de frente).
       cabinLight.position.set(pose.position[0], pose.position[1] + 0.15, pose.position[2]);
+    } else if (camera === "detras" && driver) {
+      applyPose(persp, settle(chaseCamera(driver.v, t)));
     } else if (camera === "cinematica") {
       const pose = settle(cinematicCamera(resultado, t, undefined, ajusteCine.current));
       applyPose(persp, pose);
@@ -1507,7 +1510,8 @@ function SceneContent({
     // El instante que se dibuja, para las evaluaciones (`eval/t1_tirones.mjs`: qué cuadro tarda).
     window.__croquisT = t;
     const e = camaraViva();
-    window.__croquisCamaraDibujada = e.modo === "conductor" ? `conductor-${e.conductor}` : e.modo;
+    window.__croquisCamaraDibujada =
+      e.modo === "conductor" || e.modo === "detras" ? `${e.modo}-${e.conductor}` : e.modo;
     const primero = prev === null;
     if (primero) marcar("primer cuadro: update del grafo");
     if (

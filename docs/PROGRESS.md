@@ -1885,6 +1885,27 @@ Rama `fix/fotos-dictamen`. René mandó la captura del dictamen de un caso nuevo
 - **Qué hay ahora:** fotos con la cinematográfica, del instante pedido, sin marcadores; vehículos apoyados en banquetas y relieve; y si el 3D se queda abajo de 24 fps durante 5 s, baja un nivel y lo dice `?diag=1`.
 - **Cómo probarlo:** genera el dictamen de un caso nuevo y compara las tres fotos; y en `docs/cesvi/t1/ruedas/` están las capturas de cerca de cada clase. Si en tu caso las llantas siguen fuera de su hueco, dime la clase del vehículo (o manda el `.json` del caso): en las ocho clases que medí quedan bien.
 
+### Laboratorio: La reconstrucción (René, 2026-11-04; prompt §8)
+
+Rama `feat/laboratorio-reconstruccion`. El pico del recorrido: la escena a sangre y la cifra en la hoja.
+
+- **La cifra:** la velocidad al impacto del vehículo más rápido que la evidencia fija, con su nombre y su método al lado. Si la evidencia no fija ninguna, lo dice y no hay número.
+- **El histograma es de simulaciones reales:** una barra por km/h, las de p10–p90 en tinta y el resto en gris.
+  - El solver ahora entrega las velocidades al impacto de cada simulación (`inversion.velocidad_impacto[].valores_kmh`): campo opcional en el esquema, en Python y en el port TS.
+  - Los resultados versionados se regeneraron: los 8 archivos que cambian solo agregan ese campo (verificado quitándolo y comparando contra git). Paridad en verde.
+- **La hoja:** «Solver resuelto · N mensajes» con Repetir, los percentiles con su explicación al pasar el puntero o con el foco, lo que venía cada vehículo, y «Lo fijan · N evidencias · M decisiones de Croquis» (por dónde venía o dónde quedó, cuando el perito contestó «no sé»).
+  - «Continuar» queda siempre a la vista.
+  - La tabla de velocidades, la evidencia, los límites, la bitácora y la declaración van plegadas en «Ver el detalle». Las hipótesis y el aviso de caso cambiado siguen a la vista, porque piden una decisión del perito.
+- **La escena a sangre:** pestañas Cenital, Detrás de B, Conductor B, Órbita 3D y Mapa.
+  - «Detrás de B» es una cámara nueva (`chaseCamera`), que sigue al vehículo en su rumbo. La cinematográfica no servía: orbita en un ángulo fijo y llamarla así habría sido falso.
+  - La maqueta lleva etiquetas con línea guía (vehículo y daño, «Impacto»), la cota de la vía y la línea de tiempo con reproducir, ¼× y 1×. Nada se mueve solo.
+  - La cota usa el ancho del reporte si el caso lo trae (6.47 m en AXA) y el del mapa si no. El origen sale en su etiqueta.
+- **Una sola letra por vehículo:** el 3D decía «Vehículo A» de la Tacoma y la hoja «B · Tacoma», porque el solver pone primero al que golpea. Ahora la letra sigue al expediente en todas las vistas (`especReconstruida`).
+- **Se quitó el segundo visor de «lado a lado»** (pedido de René). La versión declarada se sigue viendo como fantasma sobre la reconstrucción.
+- **La barra de actos:** sin el número, como el diseño; ya no corta «Reconstrucción» a 1440 px.
+- **Sobre la cifra de AXA:** en el diseño dice 34.5 km/h y en esta captura 49.2, porque depende de la escena que se conteste. La prueba contesta con lo que Croquis propone y «quedó junto al choque»; sin distancias de reposo manda la deformación medida. El número es del solver, no del diseño.
+- **Pruebas:** unitarias del histograma, los percentiles, la cota, la rapidez antes del impacto, la cámara de seguimiento y la letra. Las e2e `@flujo` del caso nuevo, la carambola y AXA pasan en local.
+
 ### Laboratorio: El hecho (René, 2026-11-04; prompt §8)
 
 Rama `feat/laboratorio-hecho`. La primera pantalla del orden del prompt; La escena ya la cubre la escena fácil (ADR 0110).
@@ -2243,6 +2264,7 @@ Rama `feat/r11-render-retomable`. El colaborador cerró la corrida del 2026-11-0
 
 ### Endurecimiento pendiente
 
+- **La reconstrucción (Laboratorio §8), el movimiento va con §6:** que la cifra cuente, que el histograma crezca barra por barra y el puntero sobre las siluetas de la maqueta (§9) se hacen con el catálogo de movimiento y los tooltips, no pantalla por pantalla.
 - **El hecho (Laboratorio §8), dos botones del diseño sin hacer:** «Dictar un dato» (Croquis no tiene entrada por voz) y «Reporte original» (el PDF importado no se guarda en el caso). Se agregan si René los pide.
 
 - **Escena fácil (ADR 0110), código de la colocación B que quedó sin usar:** `colocar-mapa.tsx` (la bandeja, el anillo y los fantasmas que `MapaEscena` aún acepta en su propiedad `colocacion`) y lo de B en `lib/colocar.ts` (`subpasoLugar`, `direccionesCandidatas`). En el recorrido se calculan, pero no se ven. Se quitan junto con sus pruebas al tocar `MapaEscena`.

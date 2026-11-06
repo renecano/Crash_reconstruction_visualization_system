@@ -19,6 +19,7 @@ import { sceneLayout } from "@croquis/croquis-2d";
 import { useMemo } from "react";
 import { siluetaClase } from "@/lib/colocar";
 import {
+  cotaDeVia,
   encuadre,
   estela,
   kmhEn,
@@ -51,11 +52,20 @@ export function EscenaMaqueta({
   spec,
   resultado,
   nombres = {},
+  detalles = {},
+  t = null,
+  anchoVia = null,
 }: {
+  /** El ancho de la vía si el caso lo trae medido, con su origen. */
+  anchoVia?: { m: number; de: string } | null;
   spec: EscenaSpec;
   resultado: ResultadoMaqueta;
-  /** El nombre de cada vehículo para su etiqueta («V1 · VW Jetta»), por id del resultado. */
+  /** El nombre de cada vehículo para su etiqueta («A · Silverado 2500»), por id del resultado. */
   nombres?: Record<string, string>;
+  /** La segunda línea de su etiqueta («daño posterior, hacia la izquierda»). */
+  detalles?: Record<string, string>;
+  /** El instante que se dibuja (la línea de tiempo); null: el impacto. */
+  t?: number | null;
 }) {
   const layout = useMemo(() => sceneLayout(spec), [spec]);
   const ti = tImpacto(resultado);
@@ -69,6 +79,21 @@ export function EscenaMaqueta({
     `translate(${px(p.x)} ${py(p.y)}) rotate(${90 - (p.rumbo * 180) / Math.PI}) scale(${v.dimensiones.ancho_m} ${v.dimensiones.largo_m})`;
   const impacto = resultado.punto_impacto ?? null;
   const fuente = Math.max(1, Math.min(3, Math.max(W, H) / 40));
+  const ahora = t ?? ti;
+  const cota =
+    layout.mapa && impacto ? cotaDeVia(layout.mapa.vias, impacto, 14, anchoVia?.m) : null;
+  // Las etiquetas van en columna a un lado del impacto: los vehículos arriba y abajo, en el orden en
+  // que se ven (sin que sus guías se crucen), y «Impacto» en medio.
+  const refX = impacto?.x ?? poseEn(resultado.vehiculos[0]!.trayectoria, ti).x;
+  const refY = impacto?.y ?? poseEn(resultado.vehiculos[0]!.trayectoria, ti).y;
+  const xEtiquetas = px(refX) + fuente * 9;
+  const enOrden = [...resultado.vehiculos].sort(
+    (a, b) => py(poseEn(a.trayectoria, ti).y) - py(poseEn(b.trayectoria, ti).y),
+  );
+  const filaDe = (id: string) => {
+    const j = enOrden.findIndex((v) => v.id === id) - Math.floor(enOrden.length / 2);
+    return (j >= 0 ? j + 1 : j) * fuente * 3.4;
+  };
 
   return (
     <svg
@@ -137,9 +162,32 @@ export function EscenaMaqueta({
           : null}
       </g>
 
+      {/* La cota del ancho de la vía (la que se dibuja, del mapa). */}
+      {cota ? (
+        <g data-testid="maqueta-cota" stroke="var(--texto-2)" strokeWidth={0.1}>
+          <line x1={px(cota.a.x)} y1={py(cota.a.y)} x2={px(cota.b.x)} y2={py(cota.b.y)} />
+          <text
+            x={Math.max(px(cota.a.x), px(cota.b.x)) + fuente * 0.3}
+            y={(px(cota.a.x) > px(cota.b.x) ? py(cota.a.y) : py(cota.b.y)) + fuente * 0.15}
+            fontSize={fuente * 0.5}
+            fill="var(--texto-2)"
+            stroke="none"
+            fontFamily="var(--fuente-mono)"
+          >
+            <title>
+              {anchoVia ? `Ancho de la vía ${anchoVia.de}` : "Ancho de la vía del mapa"}
+            </title>
+            {`${cota.ancho.toFixed(2)} m`}
+          </text>
+        </g>
+      ) : null}
+
       {resultado.vehiculos.map((v) => {
         const tr = v.trayectoria;
         const pi = poseEn(tr, ti);
+        const pa = poseEn(tr, ahora);
+        const lx = xEtiquetas;
+        const ly = py(refY) + filaDe(v.id);
         const fin = v.pose_final;
         const zona = zonaDeContacto(v);
         return (
@@ -201,7 +249,7 @@ export function EscenaMaqueta({
               </>
             ) : null}
             {/* La pieza en el impacto, con sombra y su zona de contacto teñida. */}
-            <g transform={colocar(pi, v)} filter="url(#mq-sombra)">
+            <g transform={colocar(pa, v)} filter="url(#mq-sombra)">
               <path
                 d={siluetaClase(v.clase)}
                 fill="var(--escena-vehiculo)"
@@ -222,23 +270,27 @@ export function EscenaMaqueta({
               ) : null}
             </g>
             {/* La etiqueta con su línea guía. */}
-            <line
-              x1={px(pi.x)}
-              y1={py(pi.y)}
-              x2={px(pi.x) + 3.2}
-              y2={py(pi.y) - 3.2}
+            <polyline
+              points={`${px(pa.x)},${py(pa.y)} ${lx - fuente * 3},${ly} ${lx - fuente * 0.3},${ly}`}
+              fill="none"
               stroke="var(--texto-3)"
               strokeWidth={0.08}
             />
+            <circle cx={px(pa.x)} cy={py(pa.y)} r={fuente * 0.14} fill="var(--texto)" />
             <text
-              x={px(pi.x) + 3.4}
-              y={py(pi.y) - 3.4}
-              fontSize={fuente}
+              x={lx}
+              y={ly + fuente * 0.2}
+              fontSize={fuente * 0.66}
+              fontWeight={600}
               fill="var(--texto)"
-              fontFamily="var(--fuente-mono)"
             >
-              {`${nombres[v.id] ?? v.rol}${v.v_impacto_kmh !== undefined ? ` · ${v.v_impacto_kmh.toFixed(1)} km/h al impacto` : ""}`}
+              {nombres[v.id] ?? v.rol}
             </text>
+            {detalles[v.id] ? (
+              <text x={lx} y={ly + fuente * 1.05} fontSize={fuente * 0.55} fill="var(--texto-2)">
+                {detalles[v.id]}
+              </text>
+            ) : null}
             <title>{`${nombres[v.id] ?? v.rol}: ${kmhEn(tr, 0).toFixed(1)} km/h al inicio`}</title>
           </g>
         );
@@ -255,6 +307,23 @@ export function EscenaMaqueta({
             strokeWidth={0.15}
           />
           <circle cx={px(impacto.x)} cy={py(impacto.y)} r={0.45} fill="var(--senal)" />
+          <line
+            x1={px(impacto.x)}
+            y1={py(impacto.y)}
+            x2={xEtiquetas - fuente * 0.3}
+            y2={py(impacto.y)}
+            stroke="var(--senal)"
+            strokeWidth={0.08}
+          />
+          <text
+            x={xEtiquetas}
+            y={py(impacto.y) + fuente * 0.2}
+            fontSize={fuente * 0.6}
+            fontWeight={600}
+            fill="var(--senal)"
+          >
+            Impacto
+          </text>
         </g>
       ) : null}
     </svg>

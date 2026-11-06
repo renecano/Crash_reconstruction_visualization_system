@@ -3,6 +3,9 @@ import { describe, expect, it } from "vitest";
 import {
   actionBounds,
   blendPose,
+  cameraFromButton,
+  chaseCamera,
+  CHASE,
   CINEMATIC,
   cinematicCamera,
   easeInOut,
@@ -43,6 +46,27 @@ describe("cámaras", () => {
       expect(free.height).toBeGreaterThan(5);
     });
   }
+
+  it("la cámara de seguimiento va detrás del vehículo y mira hacia su rumbo", async () => {
+    const r = await loadResultado("lateral_interseccion");
+    const v = r.vehiculos[0]!;
+    const t = -1;
+    const p = sampleVehicle(v.trayectoria, t);
+    const cam = chaseCamera(v, t);
+    const pos = fromThree(cam.position);
+    const tgt = fromThree(cam.target);
+    expect(Math.hypot(pos.x - p.x, pos.y - p.y)).toBeCloseTo(CHASE.atras, 9);
+    expect(pos.height).toBe(CHASE.alto);
+    // De la cámara al objetivo, en la dirección del rumbo; el vehículo queda en medio.
+    const rumbo = Math.atan2(tgt.y - pos.y, tgt.x - pos.x);
+    expect(Math.cos(rumbo - p.yaw)).toBeCloseTo(1, 9);
+    expect((p.x - pos.x) * Math.cos(p.yaw) + (p.y - pos.y) * Math.sin(p.yaw)).toBeGreaterThan(0);
+  });
+
+  it("el botón «detras-<id>» elige la cámara de seguimiento de ese vehículo", () => {
+    expect(cameraFromButton("detras-v2")).toEqual({ modo: "detras", conductor: "v2" });
+    expect(cameraFromButton("detras-")).toBeNull();
+  });
 
   it("la cámara del conductor va dentro de su vehículo y mira hacia su rumbo", async () => {
     const r = await loadResultado("lateral_interseccion");

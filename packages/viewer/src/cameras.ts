@@ -6,18 +6,20 @@
 import { toThree, type Vec3 } from "./coords";
 import { samplePerson, sampleVehicle, type PersonTrackData, type VehicleTrack } from "./sample";
 
-export type CameraMode = "libre" | "cenital" | "conductor" | "cinematica" | "dano" | "persona";
+export type CameraMode =
+  "libre" | "cenital" | "conductor" | "detras" | "cinematica" | "dano" | "persona";
 
 export const CAMERA_MODES: readonly CameraMode[] = [
   "libre",
   "cenital",
   "conductor",
+  "detras",
   "cinematica",
   "dano",
   "persona",
 ];
 
-/** Una cámara elegida: el modo y, en la del conductor, de qué vehículo. */
+/** Una cámara elegida: el modo y, en la del conductor o la de seguimiento, de qué vehículo. */
 export interface CameraChoice {
   modo: CameraMode;
   conductor?: string;
@@ -33,12 +35,17 @@ export function cameraFromButton(valor: string): CameraChoice | null {
     const id = valor.slice("conductor-".length);
     return id ? { modo: "conductor", conductor: id } : null;
   }
+  if (valor.startsWith("detras-")) {
+    const id = valor.slice("detras-".length);
+    return id ? { modo: "detras", conductor: id } : null;
+  }
   return (CAMERA_MODES as readonly string[]).includes(valor) ? { modo: valor as CameraMode } : null;
 }
 
 /** Si dos elecciones de cámara son la misma (modo y, en el conductor, vehículo). */
 export function sameCamera(a: CameraChoice, b: CameraChoice): boolean {
-  return a.modo === b.modo && (a.modo !== "conductor" || a.conductor === b.conductor);
+  const porVehiculo = a.modo === "conductor" || a.modo === "detras";
+  return a.modo === b.modo && (!porVehiculo || a.conductor === b.conductor);
 }
 
 export interface CameraPose {
@@ -233,6 +240,22 @@ export function driverCamera(
     position: toThree(ex, ey, eyeHeight),
     target: toThree(ex + DRIVER_LOOK_M * c, ey + DRIVER_LOOK_M * s, eyeHeight - drop),
     fov,
+    up: UP_Y,
+  };
+}
+
+/** La cámara de seguimiento: atrás del vehículo y arriba de él, mirando hacia adonde va. */
+export const CHASE = { atras: 9, alto: 3.4, adelante: 10, mira: 1, fov: 50 } as const;
+
+/** Detrás de un vehículo (rediseño «Laboratorio» §7): lo sigue en su rumbo, a lo largo de su recorrido. */
+export function chaseCamera(v: CameraVehicle, t: number): CameraPose {
+  const p = sampleVehicle(v.trayectoria, t);
+  const c = Math.cos(p.yaw);
+  const s = Math.sin(p.yaw);
+  return {
+    position: toThree(p.x - CHASE.atras * c, p.y - CHASE.atras * s, CHASE.alto),
+    target: toThree(p.x + CHASE.adelante * c, p.y + CHASE.adelante * s, CHASE.mira),
+    fov: CHASE.fov,
     up: UP_Y,
   };
 }

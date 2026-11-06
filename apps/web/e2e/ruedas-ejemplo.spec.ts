@@ -81,8 +81,8 @@ async function hastaEl3d(page: Page) {
   await expect(page.getByTestId("escena-lista")).toBeVisible();
   await irAPaso(page, 4);
   await page.getByTestId("reconstruir").click();
-  await expect(page.getByTestId("velocidades")).toBeVisible({ timeout: 120_000 });
-  await page.getByTestId("ver-3d").click();
+  await expect(page.getByTestId("cifra-reconstruccion")).toBeVisible({ timeout: 120_000 });
+  await page.getByTestId("vista-3d").click();
   await page.waitForFunction(() => window.__croquisGraphReady === true, null, {
     timeout: 600_000,
   });

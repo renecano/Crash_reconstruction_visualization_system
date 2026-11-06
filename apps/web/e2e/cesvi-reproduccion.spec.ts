@@ -38,8 +38,8 @@ test("@flujo /cesvi/reproduccion: la evidencia, y cada reporte abre su caso en e
   await colocarTodo(page);
   await irAPaso(page, 4);
   await page.getByTestId("reconstruir").click();
-  await expect(page.getByTestId("velocidades")).toBeVisible({ timeout: 60_000 });
-  await page.getByTestId("ver-3d").click();
+  await expect(page.getByTestId("cifra-reconstruccion")).toBeVisible({ timeout: 60_000 });
+  await page.getByTestId("vista-3d").click();
   await expect(page.getByTestId("visor-caso").locator("canvas").first()).toBeVisible({
     timeout: 60_000,
   });

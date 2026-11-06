@@ -49,7 +49,7 @@ for (const tema of ["claro", "oscuro"] as const) {
     await irAPaso(page, 4);
     const reconstruir = page.getByTestId("reconstruir");
     if (await reconstruir.isVisible()) await reconstruir.click();
-    await expect(page.getByTestId("velocidades")).toBeVisible({ timeout: 120_000 });
+    await expect(page.getByTestId("cifra-reconstruccion")).toBeVisible({ timeout: 120_000 });
     await captura("3-reconstruccion");
     await irAPaso(page, 5);
     await captura("4-analisis");
