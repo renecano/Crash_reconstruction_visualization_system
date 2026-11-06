@@ -204,7 +204,9 @@ function cardMaterial(
     metalness: 0,
   });
   // El glTF no lleva los nodos: la tarjeta viaja como dato y Blender la rearma (R11).
-  if (opts.archivos) m.userData.croquisArbol = { ...opts.archivos, tinte: opts.tint ?? null };
+  if (opts.archivos) {
+    m.userData.croquisArbol = { ...opts.archivos, tinte: opts.tint ?? null, noche: opts.night };
+  }
   const diff = texture(maps.diff, uv());
   let rgb = diff.rgb;
   // Tono de la especie (la jacaranda, lila) sobre el follaje horneado.

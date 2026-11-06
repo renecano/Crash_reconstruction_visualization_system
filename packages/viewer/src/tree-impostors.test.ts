@@ -80,6 +80,12 @@ describe("árboles impostores (T1.3b)", () => {
       let arbustos = 0;
       g.traverse((o) => {
         if (!(o instanceof InstancedMesh)) return;
+        if (o.name === "tarjetas") {
+          // Lo que necesita Blender para rearmar la tarjeta (R11).
+          const marca = (o.material as { userData: Record<string, unknown> }).userData.croquisArbol;
+          expect(marca).toMatchObject({ tarjeta: "frente", noche: false });
+          expect(String((marca as { diff: string }).diff)).toMatch(/_frente_diff\.webp$/);
+        }
         if (o.name === "tarjetas" || o.name === "troncos") impostores_ += o.count;
         if (o.name === "arbustos") arbustos += o.count;
       });

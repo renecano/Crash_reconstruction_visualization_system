@@ -105,7 +105,11 @@ export function buildGrassTufts(opts: GrassOptions): InstancedMesh | null {
     alphaTest: 0.5,
     roughness: 0.95,
     metalness: 0,
+    // El color plano que lleva la exportación glTF; el dibujo usa colorNode.
+    color: opts.groundColor,
   });
+  // El glTF no lleva los nodos: las hojas viajan como dato y Blender las rearma (R11).
+  m.userData.croquisPasto = { color: opts.groundColor, noche: opts.night };
   // Tres hojas por tarjeta: franjas que se estrechan hacia la punta.
   const u = uv();
   const hoja = abs(fract(u.x.mul(3)).sub(0.5)).mul(2);

@@ -15,7 +15,29 @@ const meshArea = (m: { positions: number[]; indices: number[] }): number => {
   return a;
 };
 
+/** ¿Todos los triángulos van en sentido antihorario en planta (la cara de arriba en three)? */
+const allUp = (m: { positions: number[]; indices: number[] }): boolean => {
+  for (let i = 0; i < m.indices.length; i += 3) {
+    const [p, q, r] = [m.indices[i]!, m.indices[i + 1]!, m.indices[i + 2]!].map((k) => ({
+      x: m.positions[2 * k]!,
+      y: m.positions[2 * k + 1]!,
+    }));
+    if ((q!.x - p!.x) * (r!.y - p!.y) - (q!.y - p!.y) * (r!.x - p!.x) <= 0) return false;
+  }
+  return true;
+};
+
 describe("acotamientos y barreras (T1.2)", () => {
+  it("las dos franjas de grava miran hacia arriba (el lado derecho salía volteado)", () => {
+    for (const valor of ["autopista", "carretera_dos_carriles"] as const) {
+      const spec = loadFixture("alcance");
+      const lugar = { ...spec.lugar, tipo_via: { ...spec.lugar.tipo_via, valor } };
+      const d = roadDecorFor(lugar, roadLayout(lugar));
+      expect(d.shoulders.indices.length).toBeGreaterThan(0);
+      expect(allUp(d.shoulders)).toBe(true);
+    }
+  });
+
   it("una calle urbana no lleva ni acotamiento ni barrera", () => {
     const spec = loadFixture("lateral_interseccion");
     const d = roadDecorFor(spec.lugar, roadLayout(spec.lugar));

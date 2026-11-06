@@ -18,6 +18,8 @@
 import { legendLines, legendString, type LegendInfo, type Resultado } from "@croquis/scene-schema";
 import {
   AnimationClip,
+  type BufferGeometry,
+  type InstancedBufferAttribute,
   CompressedTexture,
   Color,
   Group,
@@ -90,6 +92,22 @@ export interface GltfAmbiente {
   precipitacion: string;
   alumbrado: boolean;
   turbidez: number;
+}
+
+/**
+ * Una copia de la geometría sin los atributos por instancia (`InstancedBufferAttribute`: tintes,
+ * medidas, banderas de los edificios y colores de los restos). glTF los escribiría como atributos
+ * de vértice con tantos elementos como instancias, y el importador de Blender se cae (R11,
+ * carambola, 2026-11-05). Devuelve null si no tiene ninguno.
+ */
+export function sinAtributosPorInstancia(geo: BufferGeometry): BufferGeometry | null {
+  const nombres = Object.keys(geo.attributes).filter(
+    (k) => (geo.attributes[k] as InstancedBufferAttribute).isInstancedBufferAttribute,
+  );
+  if (!nombres.length) return null;
+  const copia = geo.clone();
+  for (const k of nombres) copia.deleteAttribute(k);
+  return copia;
 }
 
 /** El ambiente del visor en la forma que viaja en el glTF. */
@@ -462,6 +480,7 @@ export async function exportSceneGlb(
   };
   // Colores por instancia (los restos): glTF no los lleva; la copia usa su color promedio.
   const averaged: Material[] = [];
+  const geometrias: BufferGeometry[] = [];
   copy.traverse((o) => {
     const inst = o as InstancedMesh;
     if (!inst.isInstancedMesh || !inst.instanceColor || inst.count === 0) return;
@@ -481,6 +500,11 @@ export async function exportSceneGlb(
     if (inst.isInstancedMesh && inst.count === 0) o.visible = false;
     const mesh = o as Mesh;
     if (!mesh.isMesh) return;
+    const limpia = sinAtributosPorInstancia(mesh.geometry);
+    if (limpia) {
+      mesh.geometry = limpia;
+      geometrias.push(limpia);
+    }
     mesh.material = Array.isArray(mesh.material)
       ? mesh.material.map(convert)
       : convert(mesh.material);
@@ -503,11 +527,23 @@ export async function exportSceneGlb(
 
   // Los cuadros clave van en el tiempo del video (con la cámara lenta horneada, T1.5).
   const rel = new Float32Array(video);
-  const tracks = sampled.flatMap((s, i) => tracksFor(s, copies[i]!, rel));
+  // Los marcadores de interfaz (anillo del impacto, líneas de visión, indicadores de contacto) no
+  // van al video, como en las fotos del dictamen (ADR 0106): salen de la copia con sus pistas (una
+  // pista de un nodo que no se exporta quedaría sin destino en el glTF).
+  const interfaz: Object3D[] = [];
+  copy.traverse((o) => {
+    if (o.userData.interfaz === true) interfaz.push(o);
+  });
+  const deInterfaz = new Set<string>();
+  for (const o of interfaz) o.traverse((d) => deInterfaz.add(d.uuid));
+  for (const o of interfaz) o.removeFromParent();
+  const tracks = sampled
+    .flatMap((s, i) => tracksFor(s, copies[i]!, rel))
+    .filter((t) => !deInterfaz.has(t.name.slice(0, t.name.indexOf("."))));
   // Las instancias que se mueven (los restos) pasan a mallas animadas, una por instancia.
   sampled.forEach((s, i) => {
     const inst = copies[i] as InstancedMesh;
-    if (!s.inst || !inst.parent) return;
+    if (!s.inst || !inst.parent || deInterfaz.has(inst.uuid)) return;
     const e = expandInstances(inst, s.inst, rel);
     inst.parent.add(e.group);
     inst.visible = false;
@@ -552,5 +588,6 @@ export async function exportSceneGlb(
   } finally {
     for (const [orig, c] of converted) if (c !== orig) c.dispose();
     for (const m of averaged) m.dispose();
+    for (const g of geometrias) g.dispose();
   }
 }

@@ -95,6 +95,13 @@ function AnotarRam {
   return $r
 }
 
+# «unas 2 h 10 min», «unos 35 min», «unos 40 s» (para «tarda…» y «faltan…»).
+function Aprox([double]$segundos) {
+  $s = [int][math]::Round([math]::Max(0, $segundos))
+  if ($s -ge 3600) { return "unas $(Duracion $s)" }
+  return "unos $(Duracion $s)"
+}
+
 # «2 h 10 min», «35 min», «40 s».
 function Duracion([double]$segundos) {
   $s = [int][math]::Round([math]::Max(0, $segundos))
@@ -327,7 +334,14 @@ if (-not $SoloMedicion) {
       if (Test-Path $temporal) { Remove-Item -Recurse -Force $temporal }
       if (Test-Path $final) { Remove-Item -Recurse -Force $final }
       New-Item -ItemType Directory -Force -Path $temporal | Out-Null
-      if ((Nativo "tar.exe" @("-xf", $zip, "-C", $temporal)) -ne 0) { throw "No se pudo descomprimir Blender." }
+      # El tar de Windows (bsdtar, abre ZIP). El de Git (GNU tar, si Git puso sus herramientas en
+      # el PATH) no abre ZIP y lee «D:\…» como un servidor remoto (laptop de René, 2026-11-05).
+      $tar = Join-Path $env:SystemRoot "System32\tar.exe"
+      if (Test-Path $tar) {
+        if ((Nativo $tar @("-xf", $zip, "-C", $temporal)) -ne 0) { throw "No se pudo descomprimir Blender." }
+      } else {
+        Expand-Archive -Path $zip -DestinationPath $temporal -Force
+      }
       Rename-Item -Path $temporal -NewName "blender"
       Remove-Item -Force $zip
       if (-not (Test-Path $BlenderExe)) { throw "No quedó blender.exe donde se esperaba." }
@@ -372,14 +386,15 @@ function Renderizar([string]$escena) {
   Escribir "   │  vuelve a abrir el botón hoy mismo: sigue desde donde se quedó.      │" "Yellow"
   Escribir "   └──────────────────────────────────────────────────────────────────────┘" "Yellow"
   $log = Join-Path $Salida "blender-$escena.log"
-  $argumentos = @("-b", "--factory-startup", "-P", $ScriptBlender, "--", $glb, "--salida", $cuadros, "--cuadros", "--plan", $plan) + $opciones
+  $argumentos = @("-b", "--factory-startup", "--python-exit-code", "1", "-P", $ScriptBlender, "--", $glb, "--salida", $cuadros, "--cuadros", "--plan", $plan) + $opciones
   # Cada argumento entre comillas: Start-Process los une con espacios y una ruta puede tenerlos.
   $citados = $argumentos | ForEach-Object { '"' + $_ + '"' }
   $p = Start-Process -FilePath $BlenderExe -ArgumentList $citados -NoNewWindow -PassThru `
     -RedirectStandardOutput $log -RedirectStandardError "$log.err"
   $null = $p.Handle  # sin esto, PowerShell 5.1 pierde el código de salida
   $t0 = Get-Date
-  $estado = @{ ultimo = [datetime]::MinValue; aviso = $false }
+  # El ritmo se mide desde que la escena quedó armada (aparece el plan), no desde que abrió Blender.
+  $estado = @{ ultimo = [datetime]::MinValue; aviso = $false; tPlan = $null; alPlan = 0 }
   $avance = {
     if (((Get-Date) - $estado.ultimo).TotalSeconds -lt 5) { return }
     $estado.ultimo = Get-Date
@@ -387,16 +402,17 @@ function Renderizar([string]$escena) {
     $total = [int]((Get-Content $plan -Raw | ConvertFrom-Json).total)
     $hechos = CuadrosListos $cuadros
     $lleva = ((Get-Date) - $t0).TotalSeconds
-    $nuevos = $hechos - $previos
+    if ($null -eq $estado.tPlan) { $estado.tPlan = Get-Date; $estado.alPlan = $hechos }
+    $nuevos = $hechos - $estado.alPlan
     $falta = "calculando…"
     if ($nuevos -ge 2) {
-      $porCuadro = $lleva / $nuevos
+      $porCuadro = ((Get-Date) - $estado.tPlan).TotalSeconds / $nuevos
       $restante = ($total - $hechos) * $porCuadro
-      $falta = "faltan unas $(Duracion $restante)"
+      $falta = "faltan $(Aprox $restante)"
       if (-not $estado.aviso) {
         $estado.aviso = $true
         Write-Host ""
-        Escribir "   >> No cierres esta ventana; tarda unas $(Duracion ($total * $porCuadro)) en total ($([math]::Round($porCuadro, 1)) s por cuadro)." "Yellow"
+        Escribir "   >> No cierres esta ventana; tarda $(Aprox ($total * $porCuadro)) en total ($([math]::Round($porCuadro, 1)) s por cuadro; faltan $(Aprox $restante))." "Yellow"
       }
     }
     $linea = "   Cuadro $hechos de $total · lleva $(Duracion $lleva) · $falta"
@@ -408,12 +424,13 @@ function Renderizar([string]$escena) {
     $p.WaitForExit()
     Write-Host ""
     if ($p.ExitCode -ne 0) { throw "Blender terminó con error (ver $log)." }
+    if (-not (Test-Path $plan)) { throw "Blender terminó sin armar la escena (ver $log y $log.err)." }
     $total = [int]((Get-Content $plan -Raw | ConvertFrom-Json).total)
     $hechos = CuadrosListos $cuadros
     if ($hechos -lt $total) { throw "Quedaron $hechos de $total cuadros (ver $log)." }
     Escribir "   Armando el video con los $total cuadros…"
     $temporal = Join-Path $Trabajo "video-$escena.mp4"
-    $codigo = Nativo $BlenderExe @("-b", "--factory-startup", "-P", $ScriptBlender, "--", "--unir", $cuadros, "--salida", $temporal) (Join-Path $Salida "blender-$escena-unir.log")
+    $codigo = Nativo $BlenderExe @("-b", "--factory-startup", "--python-exit-code", "1", "-P", $ScriptBlender, "--", "--unir", $cuadros, "--salida", $temporal) (Join-Path $Salida "blender-$escena-unir.log")
     if ($codigo -ne 0 -or -not (Test-Path $temporal)) { throw "No se pudo armar el video (ver blender-$escena-unir.log)." }
     # El video aparece en la carpeta de resultados solo completo: así «ya estaba» siempre es cierto.
     Move-Item -Force $temporal $video

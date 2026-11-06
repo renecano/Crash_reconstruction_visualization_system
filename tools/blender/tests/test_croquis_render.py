@@ -292,3 +292,30 @@ def test_la_escena_es_obligatoria_salvo_al_unir() -> None:
     o = cr.leer_opciones(["--", "e.glb", "--cuadros", "--plan", "p.json"])
     assert o.plan == Path("p.json")
     assert o.cuadros
+
+
+def test_la_leyenda_se_parte_en_renglones_que_caben_en_el_cuadro() -> None:
+    texto = (
+        "Reconstrucción de apoyo · el dictamen es del perito. · semilla 719300 · Contiene "
+        "información de OpenStreetMap, disponible en openstreetmap.org bajo la Open Database "
+        "License (ODbL) · Vehículos 3D: «Lightbody '90 MD Pickup» de Daniel Zhabotinsky (CC-BY 4.0)"
+    )
+    tamano = cr.tamano_de_leyenda(1080)
+    assert tamano == 22
+    renglones = cr.lineas_de_leyenda(texto, 1920, tamano).split("\n")
+    limite = int(0.96 * 1920 / (cr.ANCHO_DE_LETRA * tamano))
+    assert len(renglones) == 3  # una pieza por renglón: no caben dos juntas en 135 letras
+    assert all(len(r) <= limite for r in renglones)
+
+    # Nada se pierde: las mismas palabras, en el mismo orden.
+    def palabras(x: str) -> list[str]:
+        return [p for p in x.split() if p != "·"]
+
+    assert palabras(" ".join(renglones)) == palabras(texto)
+    # En un cuadro chico caben menos letras por renglón; la atribución sigue completa.
+    chico = cr.lineas_de_leyenda(texto, 320, cr.tamano_de_leyenda(180))
+    assert len(chico.split("\n")) > 2
+    assert "(CC-BY 4.0)" in chico.replace("\n", " ")
+    # Un texto corto queda en un renglón.
+    corto = "Reconstrucción de apoyo · semilla 1"
+    assert cr.lineas_de_leyenda(corto, 1920, 22) == corto

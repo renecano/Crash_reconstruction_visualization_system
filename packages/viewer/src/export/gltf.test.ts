@@ -6,10 +6,12 @@ import { fileURLToPath } from "node:url";
 import { LEGEND_TEXT, legendFor, loadFixture, loadResultado } from "@croquis/scene-schema";
 import {
   AnimationMixer,
+  BoxGeometry,
   CompressedTexture,
-  Texture,
-  type Mesh,
+  InstancedBufferAttribute,
   MeshStandardMaterial,
+  Texture,
+  Mesh,
   type PerspectiveCamera,
   type SkinnedMesh,
   Vector3,
@@ -30,8 +32,9 @@ import {
   classicMaterial,
   exportSceneGlb,
   sampleTimes,
-  withoutCompressedTextures,
+  sinAtributosPorInstancia,
   warpedTimes,
+  withoutCompressedTextures,
 } from "./gltf";
 
 const opts = {
@@ -82,7 +85,7 @@ function glbJson(glb: ArrayBuffer): {
   nodes: { name?: string; camera?: number; mesh?: number }[];
   meshes?: { primitives: { material?: number }[] }[];
   materials?: { pbrMetallicRoughness?: { baseColorFactor?: number[] } }[];
-  animations?: { channels: { target: { path: string } }[] }[];
+  animations?: { channels: { target: { path: string; node?: number } }[] }[];
 } {
   const view = new DataView(glb);
   expect(view.getUint32(0, true)).toBe(0x46546c67); // "glTF"
@@ -123,6 +126,17 @@ describe("exportación glTF", () => {
     expect(c.color.getHexString()).toBe("336699");
     const classic = new MeshStandardMaterial();
     expect(classicMaterial(classic)).toBe(classic);
+  });
+
+  it("los atributos por instancia no viajan como atributos de vértice (Blender se caía, R11)", () => {
+    const geo = new BoxGeometry(1, 1, 1);
+    geo.setAttribute("_tint", new InstancedBufferAttribute(new Float32Array(10 * 3), 3));
+    const limpia = sinAtributosPorInstancia(geo)!;
+    expect(limpia.getAttribute("_tint")).toBeUndefined();
+    expect(limpia.getAttribute("position").count).toBe(geo.getAttribute("position").count);
+    // La original (la que dibuja el visor) no cambia.
+    expect(geo.getAttribute("_tint")).toBeDefined();
+    expect(sinAtributosPorInstancia(new BoxGeometry(1, 1, 1))).toBeNull();
   });
 
   it("la marca de la textura del entorno pasa al material clásico (extras para Blender, R11)", () => {
@@ -199,6 +213,31 @@ describe("exportación glTF", () => {
         expect((mat as { isNodeMaterial?: boolean }).isNodeMaterial).not.toBe(true);
       }
     });
+  });
+
+  it("R11: los marcadores de interfaz no van al video, como en las fotos del dictamen", async () => {
+    const spec = loadFixture("volcadura");
+    const r = await loadResultado("volcadura");
+    const graph = buildSceneGraph(spec, r, opts);
+    await attachDebris(spec, r, graph);
+    const marca = new Mesh(new BoxGeometry(1, 1, 1), new MeshStandardMaterial());
+    marca.name = "marca_de_interfaz";
+    marca.userData.interfaz = true;
+    graph.root.add(marca);
+    graph.update(0);
+
+    const json = glbJson(
+      await exportSceneGlb(graph, { resultado: r, legend: legendFor(spec), fps: 10 }),
+    );
+    const nombres = json.nodes.map((n) => n.name);
+    expect(nombres).not.toContain("marca_de_interfaz");
+    if (r.punto_impacto) expect(nombres).not.toContain("punto_impacto");
+    // Toda pista apunta a un nodo exportado.
+    const canales = json.animations?.[0]?.channels ?? [];
+    expect(canales.length).toBeGreaterThan(0);
+    for (const c of canales) expect(c.target.node).toBeTypeOf("number");
+    // La escena que se dibuja no cambia.
+    expect(graph.root.getObjectByName("marca_de_interfaz")).toBe(marca);
   });
 
   it("peatón: el cuerpo con su esqueleto y la animación de sus huesos (ragdoll)", async () => {
