@@ -34,3 +34,7 @@ crashlytics-build.properties
 !/tests/**/*.csproj
 /tests/**/bin/
 /tests/**/obj/
+
+# Lo escribe ConstruirVisor desde apps/web/recursos.json en cada build.
+/Assets/Resources/recursos_visor.json
+/Assets/Resources/recursos_visor.json.meta
