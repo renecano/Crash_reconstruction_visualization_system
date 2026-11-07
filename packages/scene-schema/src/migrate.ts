@@ -63,6 +63,14 @@ export const MIGRATIONS: Migration[] = [
     // Un bloque nuevo opcional: ninguna escena anterior lo trae.
     aplicar: (doc) => doc,
   },
+  {
+    desde: "2.2.0",
+    hasta: "2.3.0",
+    descripcion:
+      "vehiculos[].puntos_paso, lugar.terreno y objetos 'barrera' y 'guarnicion', opcionales (C1 y C3); los documentos no cambian",
+    // Campos opcionales y tipos nuevos: ninguna escena anterior los trae.
+    aplicar: (doc) => doc,
+  },
 ];
 
 export interface MigrationResult {

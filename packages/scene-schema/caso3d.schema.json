@@ -1,0 +1,111 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://croquis.mx/schemas/caso3d/1.0.0/caso3d.schema.json",
+  "title": "Caso3D",
+  "description": "Paquete caso-3d: la única entrada del visor Unity (plan v4 §2.1). Lleva la escena y el resultado sin copiar sus esquemas, el relieve si lo hay y las convenciones de ejes y unidades. Lo arma `armarCaso3d`.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["version_caso3d", "escena", "resultado", "convenciones"],
+  "properties": {
+    "version_caso3d": { "const": "1.0.0" },
+    "escena": { "$ref": "https://croquis.mx/schemas/escena/1.0.0/escena.schema.json" },
+    "resultado": { "$ref": "https://croquis.local/schema/resultado/1.9.0" },
+    "relieve": { "$ref": "#/$defs/Relieve" },
+    "convenciones": { "$ref": "#/$defs/Convenciones" }
+  },
+  "$defs": {
+    "OrigenRelieve": {
+      "type": "object",
+      "description": "Dónde está la esquina suroeste de la malla: en el mundo y en la escena.",
+      "additionalProperties": false,
+      "required": ["lat", "lon", "x", "y"],
+      "properties": {
+        "lat": { "type": "number", "minimum": -90, "maximum": 90 },
+        "lon": { "type": "number", "minimum": -180, "maximum": 180 },
+        "x": {
+          "type": "number",
+          "description": "Metros hacia el este desde el origen de la escena."
+        },
+        "y": {
+          "type": "number",
+          "description": "Metros hacia el norte desde el origen de la escena."
+        }
+      }
+    },
+    "Relieve": {
+      "type": "object",
+      "description": "Malla regular de alturas. Las filas van de sur a norte y, en cada fila, de oeste a este: alturas_m[fila * ancho + columna].",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "origen",
+        "resolucion_m",
+        "ancho",
+        "alto",
+        "alturas_m",
+        "fuente",
+        "licencia",
+        "resolucion_nativa_m"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 80,
+          "description": "Lo cita `lugar.terreno.relieve.malla_id`."
+        },
+        "origen": { "$ref": "#/$defs/OrigenRelieve" },
+        "resolucion_m": {
+          "type": "number",
+          "exclusiveMinimum": 0,
+          "description": "Metros entre nodos de la malla."
+        },
+        "ancho": {
+          "type": "integer",
+          "minimum": 2,
+          "maximum": 2048,
+          "description": "Nodos de oeste a este."
+        },
+        "alto": {
+          "type": "integer",
+          "minimum": 2,
+          "maximum": 2048,
+          "description": "Nodos de sur a norte."
+        },
+        "alturas_m": {
+          "type": "array",
+          "description": "Alturas en metros, relativas al punto de impacto (allí vale 0).",
+          "items": { "type": "number" },
+          "minItems": 4,
+          "maxItems": 4194304
+        },
+        "fuente": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 120,
+          "description": "De dónde salieron las alturas (p. ej. el modelo de elevación)."
+        },
+        "licencia": { "type": "string", "minLength": 1, "maxLength": 120 },
+        "resolucion_nativa_m": {
+          "type": "number",
+          "exclusiveMinimum": 0,
+          "description": "La resolución real de la fuente: lo que sea más chico que esto no se ve en la malla."
+        }
+      }
+    },
+    "Convenciones": {
+      "type": "object",
+      "description": "Cómo leer los números del paquete. Son fijas en esta versión: se declaran para que quien lo consuma no tenga que adivinarlas.",
+      "additionalProperties": false,
+      "required": ["ejes", "angulos_resultado", "angulos_escena", "tiempo", "longitud", "unity"],
+      "properties": {
+        "ejes": { "const": "x_este_y_norte_z_arriba" },
+        "angulos_resultado": { "const": "radianes_antihorario_desde_x" },
+        "angulos_escena": { "const": "grados_antihorario_desde_x" },
+        "tiempo": { "const": "segundos_t0_impacto_principal" },
+        "longitud": { "const": "metros" },
+        "unity": { "const": "posicion_x_z_y_yaw_90_menos_rumbo_grados" }
+      }
+    }
+  }
+}

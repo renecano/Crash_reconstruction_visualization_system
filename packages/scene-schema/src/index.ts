@@ -35,6 +35,17 @@ export {
   type ValidationResult,
 } from "./validate";
 export { checkExpediente } from "./check-expediente";
+export {
+  armarCaso3d,
+  caso3dErrors,
+  CASO3D_VERSION,
+  CONVENCIONES,
+  erroresDeRelieve,
+  type Caso3D,
+  type Convenciones,
+  type Relieve,
+} from "./caso3d";
+export * from "./visor-puente";
 export { MIGRATIONS, migrateEscena, type Migration, type MigrationResult } from "./migrate";
 /** El contrato tal cual (`escena.schema.json`), para leer sus enumeraciones. */
 export { default as ESCENA_JSON_SCHEMA } from "../escena.schema.json";

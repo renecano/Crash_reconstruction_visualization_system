@@ -2,6 +2,8 @@
  * Genera Zod a partir de los esquemas JSON del paquete:
  *  - `escena.schema.json` → `src/generated/escena.zod.ts` (contrato de entrada, EscenaSpec).
  *  - `resultado.schema.json` → `src/generated/resultado.zod.ts` (salida del solver, ADR 0006).
+ *  - `caso3d.schema.json` → `src/generated/caso3d.zod.ts` (paquete del visor Unity, ADR 0111).
+ * Y también los tipos C# y los paquetes de `fixtures/caso3d/` (`generate-csharp.ts`, `generate-caso3d.ts`).
  *
  * Los esquemas JSON son la fuente de verdad; este archivo NO interpreta todo JSON Schema,
  * solo el subconjunto que usa el contrato (objetos cerrados, arreglos, enums, const, cadenas
@@ -51,7 +53,15 @@ interface Target {
   /** Constante de versión exportada y de dónde se lee en el esquema. */
   versionConst: string;
   version: (schema: Schema) => Json | undefined;
+  /** Lo que importa de los otros esquemas. */
+  imports?: string[];
 }
+
+/** Los `$ref` a otros esquemas y el tipo generado al que corresponden. */
+const EXTERNOS: Record<string, string> = {
+  "https://croquis.mx/schemas/escena/1.0.0/escena.schema.json": "EscenaSpecSchema",
+  "https://croquis.local/schema/resultado/1.9.0": "ResultadoSchema",
+};
 
 export const TARGETS: Target[] = [
   {
@@ -68,16 +78,29 @@ export const TARGETS: Target[] = [
     versionConst: "RESULT_VERSION",
     version: (s) => s.properties?.version_resultado?.const,
   },
+  {
+    schema: resolve(here, "../caso3d.schema.json"),
+    out: resolve(here, "../src/generated/caso3d.zod.ts"),
+    root: "Caso3D",
+    versionConst: "CASO3D_VERSION",
+    version: (s) => s.properties?.version_caso3d?.const,
+    imports: [
+      'import { EscenaSpecSchema } from "./escena.zod";',
+      'import { ResultadoSchema } from "./resultado.zod";',
+    ],
+  },
 ];
 
 function refName(ref: string): string {
+  const externo = EXTERNOS[ref];
+  if (externo) return externo;
   const prefix = "#/$defs/";
   if (!ref.startsWith(prefix)) throw new Error(`Solo se admiten $ref a #/$defs: ${ref}`);
   return ref.slice(prefix.length);
 }
 
 function collectRefs(s: Schema, out: Set<string>): void {
-  if (s.$ref) out.add(refName(s.$ref));
+  if (s.$ref && !EXTERNOS[s.$ref]) out.add(refName(s.$ref));
   if (s.items) collectRefs(s.items, out);
   for (const p of Object.values(s.properties ?? {})) collectRefs(p, out);
 }
@@ -174,6 +197,7 @@ export async function generate(target: Target = TARGETS[0] as Target): Promise<s
     `// Generado por scripts/generate.ts a partir de ${source}. NO EDITAR A MANO.`,
     "// Regenera con `pnpm --filter @croquis/scene-schema generate`.",
     'import { z } from "zod";',
+    ...(target.imports ?? []),
     "",
   ];
   if (target.root === "EscenaSpec") {
@@ -212,6 +236,10 @@ function readCurrent(path: string): string {
 
 async function main(): Promise<void> {
   const check = process.argv.includes("--check");
+  await generarTodo(check);
+}
+
+async function generarTodo(check: boolean): Promise<void> {
   for (const target of TARGETS) {
     const code = await generate(target);
     if (check) {

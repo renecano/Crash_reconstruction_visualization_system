@@ -34,6 +34,8 @@ jobs:
       - run: pnpm lint
       - run: pnpm typecheck
       - run: pnpm test
+      # Zod, los tipos C# y los paquetes caso-3d, al día con los esquemas (ADR 0111).
+      - run: pnpm --filter @croquis/scene-schema generate:check
 
   e2e:
     name: E2E de los flujos principales (Chromium)

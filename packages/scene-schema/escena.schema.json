@@ -524,7 +524,7 @@
       "required": ["id", "version_esquema", "idioma", "semilla", "creado"],
       "properties": {
         "id": { "type": "string", "minLength": 8, "maxLength": 64, "pattern": "^[A-Za-z0-9_-]+$" },
-        "version_esquema": { "type": "string", "const": "2.2.0" },
+        "version_esquema": { "type": "string", "const": "2.3.0" },
         "idioma": { "type": "string", "enum": ["es-MX", "en"] },
         "semilla": {
           "type": "integer",
@@ -669,6 +669,205 @@
         "procedencia": { "$ref": "#/$defs/Procedencia" }
       }
     },
+    "PuntoPaso": {
+      "type": "object",
+      "description": "«El vehículo pasó por aquí» (C1, desde 2.3.0). Es evidencia: entra a la inversión como la distancia mínima de la trayectoria al punto, con su precisión; si trae `t_s`, también la posición en ese instante.",
+      "additionalProperties": false,
+      "required": ["id", "orden", "posicion", "procedencia"],
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/Id"
+        },
+        "orden": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 99
+        },
+        "posicion": {
+          "$ref": "#/$defs/Punto2D"
+        },
+        "precision_m": {
+          "type": "number",
+          "exclusiveMinimum": 0,
+          "description": "Cuánto se puede fiar del punto, en metros. Si falta, vale la incertidumbre de una posición medida del solver."
+        },
+        "t_s": {
+          "type": "number",
+          "description": "Instante en segundos, si se conoce (t = 0 es el impacto principal)."
+        },
+        "rumbo_deg": {
+          "type": "number",
+          "minimum": -360,
+          "maximum": 360
+        },
+        "nota": {
+          "type": "string",
+          "maxLength": 300
+        },
+        "procedencia": {
+          "$ref": "#/$defs/Procedencia"
+        }
+      }
+    },
+    "PoligonoTerreno": {
+      "type": "array",
+      "description": "Vértices del polígono en metros de la escena, sin repetir el primero al final.",
+      "items": {
+        "$ref": "#/$defs/Punto2D"
+      },
+      "minItems": 3,
+      "maxItems": 64
+    },
+    "RelieveTerreno": {
+      "type": "object",
+      "description": "De dónde sale la altura del terreno. La malla no viaja en la escena: va en `relieve` del paquete caso-3d (caso3d.schema.json).",
+      "additionalProperties": false,
+      "required": ["fuente", "procedencia"],
+      "properties": {
+        "fuente": {
+          "type": "string",
+          "enum": ["dem", "declarado", "plano"]
+        },
+        "resolucion_m": {
+          "type": "number",
+          "exclusiveMinimum": 0
+        },
+        "malla_id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 80,
+          "description": "El `id` de la malla en el paquete caso-3d."
+        },
+        "procedencia": {
+          "$ref": "#/$defs/Procedencia"
+        }
+      }
+    },
+    "ZonaSuperficie": {
+      "type": "object",
+      "description": "Una zona con su superficie y su fricción. Fuera de las zonas vale `lugar.superficie`.",
+      "additionalProperties": false,
+      "required": ["id", "tipo", "poligono", "friccion", "procedencia"],
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/Id"
+        },
+        "tipo": {
+          "type": "string",
+          "enum": [
+            "asfalto",
+            "concreto",
+            "adoquin",
+            "empedrado",
+            "terraceria",
+            "grava",
+            "pasto",
+            "tierra",
+            "lodo"
+          ]
+        },
+        "poligono": {
+          "$ref": "#/$defs/PoligonoTerreno"
+        },
+        "friccion": {
+          "$ref": "#/$defs/CampoAdimensional"
+        },
+        "procedencia": {
+          "$ref": "#/$defs/Procedencia"
+        }
+      }
+    },
+    "OndulacionTerreno": {
+      "type": "object",
+      "description": "Una zona ondulada, declarada por amplitud y longitud de onda.",
+      "additionalProperties": false,
+      "required": ["id", "poligono", "amplitud_m", "longitud_onda_m", "rumbo_deg", "procedencia"],
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/Id"
+        },
+        "poligono": {
+          "$ref": "#/$defs/PoligonoTerreno"
+        },
+        "amplitud_m": {
+          "type": "number",
+          "exclusiveMinimum": 0
+        },
+        "longitud_onda_m": {
+          "type": "number",
+          "exclusiveMinimum": 0
+        },
+        "rumbo_deg": {
+          "type": "number",
+          "minimum": -360,
+          "maximum": 360
+        },
+        "procedencia": {
+          "$ref": "#/$defs/Procedencia"
+        }
+      }
+    },
+    "TopeVia": {
+      "type": "object",
+      "description": "Un tope: la línea que cruza la vía y sus medidas.",
+      "additionalProperties": false,
+      "required": ["id", "linea", "alto_m", "largo_m", "procedencia"],
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/Id"
+        },
+        "linea": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/Punto2D"
+          },
+          "minItems": 2,
+          "maxItems": 2
+        },
+        "alto_m": {
+          "type": "number",
+          "exclusiveMinimum": 0
+        },
+        "largo_m": {
+          "type": "number",
+          "exclusiveMinimum": 0
+        },
+        "procedencia": {
+          "$ref": "#/$defs/Procedencia"
+        }
+      }
+    },
+    "Terreno": {
+      "type": "object",
+      "description": "El terreno que afecta la reconstrucción (C3, desde 2.3.0). Sin este bloque, o con todo vacío, el resultado es el de un plano.",
+      "additionalProperties": false,
+      "properties": {
+        "relieve": {
+          "$ref": "#/$defs/RelieveTerreno"
+        },
+        "superficies": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/ZonaSuperficie"
+          },
+          "maxItems": 32
+        },
+        "ondulaciones": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/OndulacionTerreno"
+          },
+          "maxItems": 16
+        },
+        "topes": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/TopeVia"
+          },
+          "maxItems": 32
+        }
+      }
+    },
     "Lugar": {
       "type": "object",
       "additionalProperties": false,
@@ -706,7 +905,8 @@
           "maxItems": 32
         },
         "ubicacion_real": { "$ref": "#/$defs/UbicacionReal" },
-        "red_vial": { "$ref": "#/$defs/RedVial" }
+        "red_vial": { "$ref": "#/$defs/RedVial" },
+        "terreno": { "$ref": "#/$defs/Terreno" }
       }
     },
     "ObjetoEntorno": {
@@ -728,6 +928,8 @@
             "contenedor",
             "senal",
             "parada_autobus",
+            "barrera",
+            "guarnicion",
             "otro"
           ]
         },
@@ -815,6 +1017,14 @@
         "carril": { "$ref": "#/$defs/CampoEntero" },
         "posicion_inicial": { "$ref": "#/$defs/Pose2D" },
         "posicion_final": { "$ref": "#/$defs/Pose2D" },
+        "puntos_paso": {
+          "type": "array",
+          "description": "Puntos por donde se sabe que pasó (C1).",
+          "items": {
+            "$ref": "#/$defs/PuntoPaso"
+          },
+          "maxItems": 32
+        },
         "posicion_final_supuesta": {
           "type": "boolean",
           "description": "La posición final es un supuesto a propósito (el reporte no la da; la supone el perito o un método, p. ej. el de los restos): con procedencia «supuesto», entra a la inversión como evidencia blanda, por debajo de lo medido (ADR 0091). Las posiciones que pone la escena por omisión no la llevan."

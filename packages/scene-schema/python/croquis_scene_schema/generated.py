@@ -581,7 +581,7 @@ class Meta(BaseModel):
         extra="forbid",
     )
     id: Annotated[str, Field(max_length=64, min_length=8, pattern="^[A-Za-z0-9_-]+$")]
-    version_esquema: Literal["2.2.0"]
+    version_esquema: Literal["2.3.0"]
     idioma: Literal["es-MX", "en"]
     semilla: Annotated[int, Field(ge=0, le=4294967295)]
     """
@@ -688,6 +688,135 @@ class UbicacionReal(BaseModel):
     procedencia: Procedencia
 
 
+class PuntoPaso(BaseModel):
+    """
+    «El vehículo pasó por aquí» (C1, desde 2.3.0). Es evidencia: entra a la inversión como la distancia mínima de la trayectoria al punto, con su precisión; si trae `t_s`, también la posición en ese instante.
+    """
+
+    model_config = ConfigDict(
+        extra="forbid",
+    )
+    id: Annotated[str, Field(pattern="^[a-z][a-z0-9_-]{0,31}$")]
+    """
+    Identificador estable dentro de la escena.
+    """
+    orden: Annotated[int, Field(ge=0, le=99)]
+    posicion: Punto2D
+    precision_m: Annotated[float | None, Field(gt=0.0)] = None
+    """
+    Cuánto se puede fiar del punto, en metros. Si falta, vale la incertidumbre de una posición medida del solver.
+    """
+    t_s: float | None = None
+    """
+    Instante en segundos, si se conoce (t = 0 es el impacto principal).
+    """
+    rumbo_deg: Annotated[float | None, Field(ge=-360.0, le=360.0)] = None
+    nota: Annotated[str | None, Field(max_length=300)] = None
+    procedencia: Procedencia
+
+
+class RelieveTerreno(BaseModel):
+    """
+    De dónde sale la altura del terreno. La malla no viaja en la escena: va en `relieve` del paquete caso-3d (caso3d.schema.json).
+    """
+
+    model_config = ConfigDict(
+        extra="forbid",
+    )
+    fuente: Literal["dem", "declarado", "plano"]
+    resolucion_m: Annotated[float | None, Field(gt=0.0)] = None
+    malla_id: Annotated[str | None, Field(max_length=80, min_length=1)] = None
+    """
+    El `id` de la malla en el paquete caso-3d.
+    """
+    procedencia: Procedencia
+
+
+class ZonaSuperficie(BaseModel):
+    """
+    Una zona con su superficie y su fricción. Fuera de las zonas vale `lugar.superficie`.
+    """
+
+    model_config = ConfigDict(
+        extra="forbid",
+    )
+    id: Annotated[str, Field(pattern="^[a-z][a-z0-9_-]{0,31}$")]
+    """
+    Identificador estable dentro de la escena.
+    """
+    tipo: Literal[
+        "asfalto",
+        "concreto",
+        "adoquin",
+        "empedrado",
+        "terraceria",
+        "grava",
+        "pasto",
+        "tierra",
+        "lodo",
+    ]
+    poligono: Annotated[list[Punto2D], Field(max_length=64, min_length=3)]
+    """
+    Vértices del polígono en metros de la escena, sin repetir el primero al final.
+    """
+    friccion: CampoAdimensional
+    procedencia: Procedencia
+
+
+class OndulacionTerreno(BaseModel):
+    """
+    Una zona ondulada, declarada por amplitud y longitud de onda.
+    """
+
+    model_config = ConfigDict(
+        extra="forbid",
+    )
+    id: Annotated[str, Field(pattern="^[a-z][a-z0-9_-]{0,31}$")]
+    """
+    Identificador estable dentro de la escena.
+    """
+    poligono: Annotated[list[Punto2D], Field(max_length=64, min_length=3)]
+    """
+    Vértices del polígono en metros de la escena, sin repetir el primero al final.
+    """
+    amplitud_m: Annotated[float, Field(gt=0.0)]
+    longitud_onda_m: Annotated[float, Field(gt=0.0)]
+    rumbo_deg: Annotated[float, Field(ge=-360.0, le=360.0)]
+    procedencia: Procedencia
+
+
+class TopeVia(BaseModel):
+    """
+    Un tope: la línea que cruza la vía y sus medidas.
+    """
+
+    model_config = ConfigDict(
+        extra="forbid",
+    )
+    id: Annotated[str, Field(pattern="^[a-z][a-z0-9_-]{0,31}$")]
+    """
+    Identificador estable dentro de la escena.
+    """
+    linea: Annotated[list[Punto2D], Field(max_length=2, min_length=2)]
+    alto_m: Annotated[float, Field(gt=0.0)]
+    largo_m: Annotated[float, Field(gt=0.0)]
+    procedencia: Procedencia
+
+
+class Terreno(BaseModel):
+    """
+    El terreno que afecta la reconstrucción (C3, desde 2.3.0). Sin este bloque, o con todo vacío, el resultado es el de un plano.
+    """
+
+    model_config = ConfigDict(
+        extra="forbid",
+    )
+    relieve: RelieveTerreno | None = None
+    superficies: Annotated[list[ZonaSuperficie] | None, Field(max_length=32)] = None
+    ondulaciones: Annotated[list[OndulacionTerreno] | None, Field(max_length=16)] = None
+    topes: Annotated[list[TopeVia] | None, Field(max_length=32)] = None
+
+
 class ObjetoEntorno(BaseModel):
     """
     Objeto fijo o estacionado que puede ser golpeado o tapar la vista.
@@ -710,6 +839,8 @@ class ObjetoEntorno(BaseModel):
         "contenedor",
         "senal",
         "parada_autobus",
+        "barrera",
+        "guarnicion",
         "otro",
     ]
     posicion: Punto2D
@@ -1756,6 +1887,7 @@ class Lugar(BaseModel):
     dispositivos: Annotated[list[Dispositivo] | None, Field(max_length=32)] = None
     ubicacion_real: UbicacionReal | None = None
     red_vial: RedVial | None = None
+    terreno: Terreno | None = None
 
 
 class Conductor(BaseModel):
@@ -1841,6 +1973,10 @@ class Vehiculo(BaseModel):
     carril: CampoEntero | None = None
     posicion_inicial: Pose2D
     posicion_final: Pose2D | None = None
+    puntos_paso: Annotated[list[PuntoPaso] | None, Field(max_length=32)] = None
+    """
+    Puntos por donde se sabe que pasó (C1).
+    """
     posicion_final_supuesta: bool | None = None
     """
     La posición final es un supuesto a propósito (el reporte no la da; la supone el perito o un método, p. ej. el de los restos): con procedencia «supuesto», entra a la inversión como evidencia blanda, por debajo de lo medido (ADR 0091). Las posiciones que pone la escena por omisión no la llevan.
