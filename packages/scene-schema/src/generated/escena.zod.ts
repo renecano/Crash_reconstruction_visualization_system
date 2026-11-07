@@ -3,7 +3,7 @@
 import { z } from "zod";
 
 export const SCHEMA_ID = "https://croquis.mx/schemas/escena/1.0.0/escena.schema.json";
-export const SCHEMA_VERSION = "2.2.0" as const;
+export const SCHEMA_VERSION = "2.3.0" as const;
 
 /** La frase literal de donde sale un dato, y la página si es de un PDF. */
 export const Cita = z.strictObject({
@@ -652,6 +652,8 @@ export const ObjetoEntorno = z.strictObject({
     "contenedor",
     "senal",
     "parada_autobus",
+    "barrera",
+    "guarnicion",
     "otro",
   ]),
   posicion: Punto2D,
@@ -920,6 +922,69 @@ export const RedVial = z.strictObject({
 });
 export type RedVial = z.infer<typeof RedVial>;
 
+/** Vértices del polígono en metros de la escena, sin repetir el primero al final. */
+export const PoligonoTerreno = z.array(Punto2D).min(3).max(64);
+export type PoligonoTerreno = z.infer<typeof PoligonoTerreno>;
+
+/** Una zona ondulada, declarada por amplitud y longitud de onda. */
+export const OndulacionTerreno = z.strictObject({
+  id: Id,
+  poligono: PoligonoTerreno,
+  amplitud_m: z.number().gt(0),
+  longitud_onda_m: z.number().gt(0),
+  rumbo_deg: z.number().min(-360).max(360),
+  procedencia: Procedencia,
+});
+export type OndulacionTerreno = z.infer<typeof OndulacionTerreno>;
+
+/** De dónde sale la altura del terreno. La malla no viaja en la escena: va en `relieve` del paquete caso-3d (caso3d.schema.json). */
+export const RelieveTerreno = z.strictObject({
+  fuente: z.enum(["dem", "declarado", "plano"]),
+  resolucion_m: z.number().gt(0).optional(),
+  malla_id: z.string().min(1).max(80).optional(),
+  procedencia: Procedencia,
+});
+export type RelieveTerreno = z.infer<typeof RelieveTerreno>;
+
+/** Un tope: la línea que cruza la vía y sus medidas. */
+export const TopeVia = z.strictObject({
+  id: Id,
+  linea: z.tuple([Punto2D, Punto2D]),
+  alto_m: z.number().gt(0),
+  largo_m: z.number().gt(0),
+  procedencia: Procedencia,
+});
+export type TopeVia = z.infer<typeof TopeVia>;
+
+/** Una zona con su superficie y su fricción. Fuera de las zonas vale `lugar.superficie`. */
+export const ZonaSuperficie = z.strictObject({
+  id: Id,
+  tipo: z.enum([
+    "asfalto",
+    "concreto",
+    "adoquin",
+    "empedrado",
+    "terraceria",
+    "grava",
+    "pasto",
+    "tierra",
+    "lodo",
+  ]),
+  poligono: PoligonoTerreno,
+  friccion: CampoAdimensional,
+  procedencia: Procedencia,
+});
+export type ZonaSuperficie = z.infer<typeof ZonaSuperficie>;
+
+/** El terreno que afecta la reconstrucción (C3, desde 2.3.0). Sin este bloque, o con todo vacío, el resultado es el de un plano. */
+export const Terreno = z.strictObject({
+  relieve: RelieveTerreno.optional(),
+  superficies: z.array(ZonaSuperficie).max(32).optional(),
+  ondulaciones: z.array(OndulacionTerreno).max(16).optional(),
+  topes: z.array(TopeVia).max(32).optional(),
+});
+export type Terreno = z.infer<typeof Terreno>;
+
 /** Coordenadas opcionales para generar la geometría desde OpenStreetMap (atribución ODbL en pantalla). */
 export const UbicacionReal = z.strictObject({
   lat: z.number().min(-90).max(90),
@@ -953,12 +1018,13 @@ export const Lugar = z.strictObject({
   dispositivos: z.array(Dispositivo).max(32).optional(),
   ubicacion_real: UbicacionReal.optional(),
   red_vial: RedVial.optional(),
+  terreno: Terreno.optional(),
 });
 export type Lugar = z.infer<typeof Lugar>;
 
 export const Meta = z.strictObject({
   id: z.string().min(8).max(64).regex(new RegExp("^[A-Za-z0-9_-]+$")),
-  version_esquema: z.literal("2.2.0"),
+  version_esquema: z.literal("2.3.0"),
   idioma: z.enum(["es-MX", "en"]),
   semilla: z.int().min(0).max(4294967295),
   creado: z.iso.datetime({ offset: true }),
@@ -999,6 +1065,19 @@ export const Persona = z.strictObject({
 });
 export type Persona = z.infer<typeof Persona>;
 
+/** «El vehículo pasó por aquí» (C1, desde 2.3.0). Es evidencia: entra a la inversión como la distancia mínima de la trayectoria al punto, con su precisión; si trae `t_s`, también la posición en ese instante. */
+export const PuntoPaso = z.strictObject({
+  id: Id,
+  orden: z.int().min(0).max(99),
+  posicion: Punto2D,
+  precision_m: z.number().gt(0).optional(),
+  t_s: z.number().optional(),
+  rumbo_deg: z.number().min(-360).max(360).optional(),
+  nota: z.string().max(300).optional(),
+  procedencia: Procedencia,
+});
+export type PuntoPaso = z.infer<typeof PuntoPaso>;
+
 export const Vehiculo = z.strictObject({
   id: Id,
   rol: z.string().regex(new RegExp("^[A-H]$")),
@@ -1024,6 +1103,7 @@ export const Vehiculo = z.strictObject({
   carril: CampoEntero.optional(),
   posicion_inicial: Pose2D,
   posicion_final: Pose2D.optional(),
+  puntos_paso: z.array(PuntoPaso).max(32).optional(),
   posicion_final_supuesta: z.boolean().optional(),
   ocupantes: z.array(Id).max(60).optional(),
   conductor: Conductor.optional(),

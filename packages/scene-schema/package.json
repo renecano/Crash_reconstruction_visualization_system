@@ -12,8 +12,8 @@
     "lint": "eslint .",
     "typecheck": "tsc -p tsconfig.json",
     "test": "vitest run",
-    "generate": "tsx scripts/generate.ts",
-    "generate:check": "tsx scripts/generate.ts --check"
+    "generate": "tsx scripts/generate.ts && tsx scripts/generate-caso3d.ts && tsx scripts/generate-csharp.ts",
+    "generate:check": "tsx scripts/generate.ts --check && tsx scripts/generate-caso3d.ts --check && tsx scripts/generate-csharp.ts --check"
   },
   "dependencies": {
     "ajv": "catalog:",
@@ -25,6 +25,7 @@
     "eslint": "catalog:",
     "fast-check": "catalog:",
     "json-schema-to-zod": "catalog:",
+    "quicktype": "26.0.0",
     "tsx": "catalog:",
     "typescript": "catalog:",
     "vitest": "catalog:"
