@@ -148,9 +148,9 @@ def allowed_values() -> dict[str, tuple[str, ...]]:
         # ``barrera`` y ``guarnicion`` (2.3.0) los coloca el perito: un valor nuevo aquí cambiaría
         # la huella e invalidaría las grabaciones, y un prompt nuevo se mide antes de usarse
         # (ADR 0111).
-        "evento.objeto": [
+        "evento.objeto": tuple(
             t for t in _schema_enum("ObjetoEntorno", "tipo") if t not in ("barrera", "guarnicion")
-        ],
+        ),
         "evidencias.marcas_fase": _schema_enum("EvidenciaFisica", "fase"),
         "vehiculo.clase": (*_schema_enum("CampoClaseVehiculo"), "suv_o_pickup", "camion_o_autobus"),
         "vehiculo.maniobra": (*_schema_enum("CampoManiobra"), "cambio_carril"),
