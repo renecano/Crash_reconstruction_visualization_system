@@ -1,0 +1,148 @@
+<!doctype html>
+<html lang="es-MX">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Medir el visor de Croquis</title>
+    <style>
+      :root {
+        color-scheme: dark;
+        font-family: system-ui, sans-serif;
+      }
+      html,
+      body {
+        margin: 0;
+        height: 100%;
+        background: #101114;
+        color: #e8e8ea;
+      }
+      canvas {
+        display: block;
+        width: 100%;
+        height: 100%;
+      }
+      #panel {
+        position: fixed;
+        top: 16px;
+        left: 16px;
+        max-width: min(420px, calc(100% - 32px));
+        padding: 14px 16px;
+        border-radius: 10px;
+        background: rgba(16, 17, 20, 0.88);
+        font-size: 14px;
+        line-height: 1.5;
+      }
+      #panel h1 {
+        margin: 0 0 6px;
+        font-size: 15px;
+      }
+      #panel pre {
+        margin: 8px 0 0;
+        white-space: pre-wrap;
+        font-size: 12px;
+      }
+      button {
+        margin-top: 8px;
+        font: inherit;
+      }
+    </style>
+  </head>
+  <body>
+    <canvas id="unity-canvas" tabindex="-1"></canvas>
+    <div id="panel">
+      <h1>Medición del visor de Croquis</h1>
+      <div id="estado">Cargando Unity…</div>
+      <pre id="resultado"></pre>
+      <button id="copiar" hidden>Copiar resultado</button>
+    </div>
+    <script>
+      // Mide lo mismo que eval/unity_build.mjs, pero en cualquier navegador: hasta `listo`, hasta
+      // `cargado` con AXA y los fps que reporta Unity durante 15 s. Abre la página con la caché
+      // vacía (ventana privada) para que la carga cuente completa.
+      var BUILD = "__BUILD__";
+      var CASO = "__CASO__";
+      var t0 = performance.now();
+      var r = {
+        build: BUILD,
+        navegador: navigator.userAgent,
+        nucleos: navigator.hardwareConcurrency,
+      };
+      var fps = [];
+      var estado = document.getElementById("estado");
+      function seg(ms) {
+        return Math.round(ms / 100) / 10;
+      }
+      function mostrar(texto) {
+        estado.textContent = texto;
+      }
+      function terminar() {
+        fps.sort(function (a, b) {
+          return a - b;
+        });
+        r.fps_p50 = fps.length ? fps[Math.floor(fps.length / 2)] : null;
+        r.fps_muestras = fps.length;
+        var texto = JSON.stringify(r, null, 2);
+        document.getElementById("resultado").textContent = texto;
+        mostrar("Listo. Copia el resultado y pégalo en la conversación.");
+        var b = document.getElementById("copiar");
+        b.hidden = false;
+        b.onclick = function () {
+          navigator.clipboard.writeText(texto);
+          b.textContent = "Copiado";
+        };
+      }
+      window.croquisVisorMensaje = function (texto) {
+        var m = JSON.parse(texto);
+        var ahora = performance.now();
+        if (m.tipo === "listo") {
+          r.hasta_listo_s = seg(ahora - t0);
+          mostrar("Unity listo en " + r.hasta_listo_s + " s. Cargando AXA…");
+          r._inicioCaso = ahora;
+          fetch(CASO)
+            .then(function (x) {
+              return x.text();
+            })
+            .then(function (json) {
+              window.unityInstance.SendMessage(
+                "VisorPuente",
+                "cargarCaso",
+                JSON.stringify({ json: json }),
+              );
+            });
+        } else if (m.tipo === "cargado") {
+          r.caso_cargado_s = seg(ahora - r._inicioCaso);
+          r.total_s = seg(ahora - t0);
+          delete r._inicioCaso;
+          mostrar("AXA cargado. Midiendo fps 15 s…");
+          window.unityInstance.SendMessage("VisorPuente", "reproducir", "{}");
+          setTimeout(terminar, 16000);
+        } else if (m.tipo === "fps") {
+          fps.push(m.p50);
+        } else if (m.tipo === "error") {
+          r.error = m.codigo + ": " + m.mensaje;
+          mostrar("Error: " + r.error);
+          document.getElementById("resultado").textContent = JSON.stringify(r, null, 2);
+        }
+      };
+    </script>
+    <script src="Build/__LOADER__"></script>
+    <script>
+      createUnityInstance(document.getElementById("unity-canvas"), {
+        dataUrl: "Build/__DATA__",
+        frameworkUrl: "Build/__FRAMEWORK__",
+        codeUrl: "Build/__CODE__",
+        companyName: "Croquis",
+        productName: "Visor de Croquis",
+        productVersion: "1.0",
+      })
+        .then(function (i) {
+          window.unityInstance = i;
+        })
+        .catch(function (e) {
+          window.croquisVisorMensaje(
+            JSON.stringify({ tipo: "error", codigo: "interno", mensaje: String(e) }),
+          );
+        });
+    </script>
+  </body>
+</html>

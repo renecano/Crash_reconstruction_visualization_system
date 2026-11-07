@@ -174,9 +174,15 @@ namespace Croquis.EditorTools
             piso.name = "Piso";
             piso.transform.localScale = new Vector3(60f, 1f, 60f);
             Object.DestroyImmediate(piso.GetComponent<Collider>());
-            var material = new Material(Shader.Find("Universal Render Pipeline/Lit")) { color = new Color(0.32f, 0.33f, 0.34f) };
+            // Se reusa el material si ya existe: así la escena no cambia de GUID en cada build.
             var rutaMaterial = CarpetaRender + "/Piso.mat";
-            AssetDatabase.CreateAsset(material, rutaMaterial);
+            var material = AssetDatabase.LoadAssetAtPath<Material>(rutaMaterial);
+            if (material == null)
+            {
+                material = new Material(Shader.Find("Universal Render Pipeline/Lit")) { color = new Color(0.32f, 0.33f, 0.34f) };
+                AssetDatabase.CreateAsset(material, rutaMaterial);
+            }
+
             piso.GetComponent<MeshRenderer>().sharedMaterial = material;
 
             var puente = new GameObject("VisorPuente");

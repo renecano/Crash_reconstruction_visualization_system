@@ -4,8 +4,8 @@ Plan: `docs/cesvi/PLAN-CESVI.md` §3.3. Reglas: `CLAUDE.md`. ADR del bloque 0110
 
 ## Estado
 
-- **Fase actual:** U1, en pausa. El sistema detuvo el build WebGL por falta de memoria en el paso 323 de 331.
-- **Siguiente paso:** René decide si se repite con el manifiesto recortado o si el build se mueve a otra computadora. Después, medir peso y carga con `eval/unity_build.mjs`.
+- **Fase actual:** U1 terminada en esta laptop, con el PR abierto para René. Falta publicar el build en Blob para medir la carga en la MacBook M1.
+- **Siguiente paso:** U2 (escenario).
 
 ## U-pre (hecho, #181)
 
@@ -20,43 +20,85 @@ AXA abre con su escena colocada, un número por cantidad y Lighthouse medido. El
 
 ## U1
 
-Rama `feat/u1-visor`. La primera mitad (`Croquis.Core` y su job de CI) va en #184.
+La primera mitad, `Croquis.Core` y su job de CI, está en `main` (#184). El resto va en `feat/u1-visor`.
 
-- **`Croquis.Core`:** 13 pruebas `dotnet` en verde en CI, sobre los 20 paquetes.
-- **Dentro de Unity (6000.3.28f1):** el proyecto compila y 3 de 3 pruebas EditMode pasan: posición, rumbo, cabeceo y alabeo en un `Transform` real.
-- **Sin medir todavía:** peso y tiempo de carga (`eval/results/unity_build.json`). No hay ningún build WebGL terminado.
+### Resumen para René
+
+- **Qué quedó:** el visor Unity abre un paquete caso-3d, baja de Blob los mismos modelos del visor web, los ajusta a las medidas y los ejes del caso y reproduce el `Resultado`. D2 corre en CI en cada PR (19 s).
+- **Cifras medidas** (`eval/results/unity_build.json`, Unity 6000.3.28f1, mediana de 3 corridas, navegador nuevo y sin caché, 20 Mbps y 40 ms de latencia):
+
+| Qué                                                  | Cifra                                    |
+| ---------------------------------------------------- | ---------------------------------------- |
+| Peso del build                                       | 41.7 MB, o 10.7 MB con Brotli calidad 9  |
+| El `.wasm`                                           | 33.4 MB, o 8.6 MB con Brotli             |
+| Hasta que Unity arranca                              | 5.4 s                                    |
+| Hasta que AXA se ve, con sus modelos bajados de Blob | 2.2 s más, 7.9 s en total                |
+| fps durante la reproducción                          | 58.8 de mediana: la pantalla limita a 60 |
+
+- **Las tres corridas dieron casi lo mismo:** 7.8 a 7.9 s en total.
+- **Captura:** `eval/results/unity_build.png`. Se ven los dos vehículos de AXA con sus ruedas, sobre un piso liso: el escenario llega en U2. La cámara órbita deja la acción en una esquina: el encuadre llega en U4.
+- **Peso comprimido:** la cifra con Brotli es de referencia, porque no sabemos con qué calidad comprime Blob. La de producción se mide en U6.
+- **Cómo probarlo:** `powershell tools/unity/build-web.ps1` y luego `node eval/unity_build.mjs`.
+- **Lo que necesito de ti:** publicar el build (ver «Medir en la MacBook M1»).
+
+### Medir en la MacBook M1
+
+La liga, cuando el build esté publicado:
+
+https://fmb6kf9hhoc8c9mk.public.blob.vercel-storage.com/recursos/visor-unity/2d5c1a20a446c129/medir.html
+
+Ábrela en una ventana privada, para que la carga cuente completa. La página carga Unity, abre AXA y mide 15 s de reproducción. Al final muestra un JSON con «Copiar resultado» para pegarlo en la conversación.
+
+**Para publicar,** en tu propia terminal de PowerShell y no con `!`, para que el token no pase por el chat:
+
+```
+$env:RECURSOS_READ_WRITE_TOKEN = "<token de escritura del almacén croquis-recursos>"
+node tools/unity/publicar-web.mjs
+```
+
+No pude publicarlo yo:
+
+- **La CLI de Vercel** no tiene credenciales del almacén.
+- **El token OIDC de `.env.local`** venció el 2026-10-16.
+- **La API de Vercel** no me deja leer el token de escritura: responde 403, porque es una variable sensible.
+
+La huella `2d5c1a20a446c129` es la de este build. Si se reconstruye, el script imprime la liga nueva.
 
 ### Memoria en esta laptop (2026-11-07)
 
-8 GB de RAM, Unity solo en modo batch, con el navegador y la otra sesión cerrados. Muestras cada 5 s; las crudas quedaron en `D:\croquis-logs\`, fuera de git.
+8 GB de RAM, Unity solo en modo batch, sin nada más abierto. Muestras cada 5 s; las crudas quedaron en `D:\croquis-logs\`, fuera de git.
 
-| Paso                | Duración              | Pico de Unity y sus procesos | Mínimo libre | Máximo comprometido | Cómo terminó                                  |
-| ------------------- | --------------------- | ---------------------------- | ------------ | ------------------- | --------------------------------------------- |
-| Importación inicial | 6 min                 | 3,136 MB                     | 47 MB        | 12,732 MB           | Bien                                          |
-| Pruebas EditMode    | menos de 1 min        | 2,001 MB                     | 699 MB       | 11,497 MB           | Bien                                          |
-| Build WebGL         | 9.5 min, sin terminar | 2,595 MB                     | 342 MB       | 13,458 MB           | Detenido por el sistema en el paso 323 de 331 |
+| Paso                                              | Duración              | Pico de Unity y sus procesos | Mínimo libre | Máximo comprometido | Cómo terminó                                   |
+| ------------------------------------------------- | --------------------- | ---------------------------- | ------------ | ------------------- | ---------------------------------------------- |
+| Importación inicial                               | 6 min                 | 3,136 MB                     | 47 MB        | 12,732 MB           | Bien                                           |
+| Pruebas EditMode                                  | menos de 1 min        | 2,001 MB                     | 699 MB       | 11,497 MB           | 3 de 3                                         |
+| Build WebGL, con los 40 paquetes de más           | 9.5 min, sin terminar | 2,595 MB                     | 342 MB       | 13,458 MB           | Detenido por Claude Code en el paso 323 de 331 |
+| Importación con el manifiesto recortado           | 1 min                 | 1,855 MB                     | 669 MB       | 11,476 MB           | Bien: Unity registró 31 paquetes en vez de 67  |
+| Build WebGL, manifiesto recortado                 | 7.6 min               | 2,631 MB                     | 632 MB       | 13,041 MB           | Bien                                           |
+| Build WebGL tras corregir las ruedas, incremental | 4.1 min               | 2,813 MB                     | 710 MB       | 12,897 MB           | Bien                                           |
 
-- **Lo detuvo Claude Code, no un error de Unity:** su protección de memoria mata los comandos en segundo plano cuando la sesión está inactiva. El log de Unity no trae ningún error.
-- **Iba en el enlazado final:** `wasm-opt` seguía vivo con 1,006 MB y lo detuve a mano, igual que un `python` de 23 MB. Quedaron 0 procesos de Unity y 3,032 MB libres.
-- **Un primer intento,** con la 6000.4.2f1 en una copia aparte y sin haber cerrado el navegador, se detuvo igual durante las pruebas EditMode, con 398 MB libres.
+- **El build detenido no fue un error de Unity:** lo detuvo la protección de memoria de Claude Code. Desde entonces René abre Claude Code con `CLAUDE_CODE_DISABLE_BG_SHELL_PRESSURE_REAP=1`.
+- **El manifiesto recortado sí ayudó:** la memoria libre no bajó de 632 MB, contra 342 MB antes. No se puede separar cuánto se debe a los paquetes y cuánto a la protección apagada.
+- **Unity agregó 40 paquetes la primera vez:** como el proyecto no tenía `ProjectSettings`, lo trató como nuevo. Ya con `ProjectSettings` no los volvió a agregar.
 
-### Hallazgo: el manifiesto se había inflado
+### Corregido en el camino
 
-Como el proyecto no tenía `ProjectSettings`, Unity lo trató como nuevo y agregó unos 40 paquetes a `Packages/manifest.json`, entre ellos `purchasing`, `analytics`, `timeline`, `ai.navigation`, `collab-proxy` y todos los módulos. También creó `Assets/Resources/BillingMode.json` y dos archivos de pruebas de rendimiento. El visor no usa nada de eso.
-
-Se regresó el manifiesto a lo que el visor necesita y se quitaron esos archivos. **Sin comprobar:** todavía no se corre Unity con el manifiesto recortado, así que no se sabe cuánta memoria ahorra, ni si Unity vuelve a agregar los paquetes.
+- **Ruedas:** cada modelo trae nodos anidados que también empiezan con `wheel_` (la llanta dentro de la rueda). Ahora solo cuentan las ruedas que trae el manifiesto, y si falta alguna, se avisa con `modelo_no_cargo`.
+- **La escena ya no cambia el material del piso en cada build,** así que su GUID se queda fijo.
 
 ### Instalado
 
-- **Unity 6000.3.28f1** en `D:\Unity\Editor`, con WebGL y Windows IL2CPP. Lo instaló el Hub, con René aceptando los permisos.
-- **Unity 6000.4.2f1** sigue instalada: René pidió desinstalarla cuando todo pase con 6.3 LTS.
+- **Unity 6000.3.28f1** en `D:\Unity\Editor`, con WebGL y Windows IL2CPP.
+- **Unity 6000.4.2f1** sigue instalada: la usa el proyecto de prueba de la carpeta del Tec. René decide si se desinstala.
+- **.NET SDK 10.0.403** en `D:\dotnet-sdk`.
 
 ### Pendiente del visor
 
 - **Color del caso:** los modelos marcan sus piezas de pintura en `extras.role`, y glTFast no lo importa por defecto. Por ahora salen con su color de fábrica.
 - **Bicicleta y scooter:** no tienen modelo; son una caja de sus medidas hasta U3.
-- **Sin implementar aún:** `calidad` (U5), `capturar` y `modoEdicion` (U6) y las cámaras que no son cenital u órbita (U4). Hoy contestan con `error`.
+- **Sin implementar aún:** `calidad` (U5), `capturar` y `modoEdicion` (U6), y las cámaras que no son cenital u órbita (U4). Hoy contestan con `error`.
 - **La leyenda ilustrativa** todavía no sale en el visor: llega con el escenario y las cámaras.
+- **La medición en la MacBook M1,** cuando el build esté publicado.
 
 ## Necesito del otro frente
 
@@ -64,4 +106,4 @@ Nada por ahora.
 
 ## Bloqueado
 
-- **Dónde se hacen los builds WebGL:** ver «Memoria en esta laptop». Lo decide René.
+- **Publicar el build en Blob:** necesita el token de escritura del almacén, que solo René tiene. Ver «Medir en la MacBook M1».

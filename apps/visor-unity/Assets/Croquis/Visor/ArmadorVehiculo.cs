@@ -23,13 +23,27 @@ namespace Croquis.Visor
             var sz = m.Ancho / (double)entrada["ancho_m"];
             var aPlantilla = plantilla.worldToLocalMatrix;
 
+            // Solo las ruedas del manifiesto: dentro de cada una hay más nodos que también empiezan con
+            // «wheel_» (la llanta, el rin).
+            var nombres = new HashSet<string>();
+            foreach (var r in (JArray)entrada["ruedas"])
+            {
+                nombres.Add((string)r["nombre"]);
+            }
+
             var ruedas = new List<Transform>();
             foreach (var t in plantilla.GetComponentsInChildren<Transform>(true))
             {
-                if (t.name.StartsWith("wheel_", StringComparison.Ordinal))
+                if (nombres.Contains(t.name))
                 {
                     ruedas.Add(t);
                 }
+            }
+
+            if (ruedas.Count != nombres.Count)
+            {
+                throw new ModeloNoCargo(
+                    "El modelo trae " + ruedas.Count + " de las " + nombres.Count + " ruedas de su manifiesto.");
             }
 
             // Los ejes del modelo, ya escalado al largo del caso, contra los del caso.
