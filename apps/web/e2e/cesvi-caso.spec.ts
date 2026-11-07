@@ -139,7 +139,7 @@ test("@flujo /cesvi: un caso nuevo desde la lista, de la narración al dictamen"
   await irAPaso(page, 4);
   await page.getByTestId("reconstruir").click();
   await expect(page.getByTestId("cifra-reconstruccion")).toBeVisible({ timeout: 60_000 });
-  await expect(page.getByTestId("velocidad-V1")).toContainText(/\d+\.\d \(/);
+  await expect(page.getByTestId("velocidad-V1")).toContainText(/\d+\.\d\d \(/);
   await expect(page.getByTestId("evidencia-usada")).toContainText("posición final de V1");
   // La bitácora de la pizarra (R12b): el Lector leyó la narración y el Físico reconstruyó.
   const bitacora = page.getByTestId("bitacora-agentes");

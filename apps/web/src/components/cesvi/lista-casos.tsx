@@ -12,7 +12,6 @@ import { dejarArchivo } from "@/lib/archivo-pendiente";
 import { nombreCaso, RUTAS } from "@/lib/casos";
 import { filtrar, filtrosDeReportes, lineaDeEstado, miniCroquis } from "@/lib/casos-lab";
 import { borrarDeEsteEquipo, useCasosGuardados } from "@/lib/casos-navegador";
-import { Linea, Sube } from "./movimiento";
 
 export interface EjemploReporte {
   id: string;
@@ -175,15 +174,12 @@ export function ListaCasos({
       <section className="mx-auto grid max-w-[1344px] items-center gap-10 px-4 py-12 md:px-12 lg:grid-cols-[minmax(0,1fr)_minmax(320px,440px)]">
         <div className="flex min-w-0 flex-col gap-5">
           <h1 className="font-[family-name:var(--fuente-titulo)] text-[clamp(4.5rem,9vw,7.5rem)] leading-none font-normal tracking-[-0.03em]">
-            <Linea>Casos</Linea>
+            Casos
           </h1>
           <p className="text-[1.05rem] text-texto-2" data-testid="estado-casos">
             {lineaDeEstado(reportes.length, guardados === null ? null : guardados.length)}
           </p>
-          <Sube
-            i={1}
-            className="mt-3 grid gap-3 sm:grid-cols-[minmax(0,5fr)_minmax(0,3.2fr)_minmax(0,3fr)]"
-          >
+          <div className="sube-css mt-3 grid gap-3 sm:grid-cols-[minmax(0,5fr)_minmax(0,3.2fr)_minmax(0,3fr)]">
             <Link
               href={RUTAS.nuevo}
               className="flex min-h-44 flex-col justify-end gap-1 rounded-[20px] bg-[var(--texto)] p-6 text-[var(--fondo)] transition-transform hover:-translate-y-0.5"
@@ -216,7 +212,7 @@ export function ListaCasos({
                 data-testid="abrir-caso-casos"
               />
             </label>
-          </Sube>
+          </div>
         </div>
         <Link href={RUTAS.axa} className="hoja-expediente relative block" data-testid="ir-axa">
           <span className="hoja-expediente-fondo" aria-hidden="true" />

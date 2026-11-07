@@ -105,7 +105,7 @@ function tabla(encabezados: string[], filas: TableCell[][]): Content {
 }
 
 const enPalabras = (s: string) => s.replaceAll("_", " ");
-const kmh = (x?: number) => (x === undefined ? "—" : x.toFixed(1));
+const kmh = (x?: number) => (x === undefined ? "—" : x.toFixed(2));
 /** «71.56 (62.40–90.00)»: el valor con su p10–p90 alrededor de la solución elegida, si lo hay. */
 const rangoTexto = (kmh: number, rango: [number, number] | null) =>
   rango ? `${kmh.toFixed(2)} (${rango[0].toFixed(2)}–${rango[1].toFixed(2)})` : kmh.toFixed(2);
@@ -258,11 +258,15 @@ function secciones(d: DatosDictamenCaso) {
       "El solver de Croquis ajusta las velocidades para que la simulación reproduzca la evidencia que colocó el perito. Lo que la evidencia no fija se dice así; ningún número se inventa.",
     ),
     tabla(
-      ["Vehículo", "Velocidad previa (km/h)", "Al impacto, p10–p50–p90 (km/h)"],
+      [
+        "Vehículo",
+        "Velocidad previa (km/h)",
+        "Al contacto en las simulaciones, p10–p50–p90 (km/h)",
+      ],
       r.velocidades.map((v) => [
         v.vehiculo,
         v.previa
-          ? `${v.previa.mejor.toFixed(1)} (${kmh(v.previa.p10)}–${kmh(v.previa.p90)})`
+          ? `${v.previa.mejor.toFixed(2)} (${kmh(v.previa.p10)}–${kmh(v.previa.p90)})`
           : "la evidencia no la fija",
         v.impacto ? `${kmh(v.impacto.p10)}–${kmh(v.impacto.p50)}–${kmh(v.impacto.p90)}` : "—",
       ]),

@@ -13,7 +13,7 @@
  */
 import { caso, modalidadInferida, reproducir } from "@croquis/cesvi";
 import corpus from "../../../../eval/results/cesvi_corpus_extraccion.json";
-import { casoAxa } from "./caso-axa";
+import { casoAxa } from "./axa-reconstruccion";
 import { PAGINA, TITULO } from "./reproduccion-dictamenes";
 
 export interface FilaAxa {

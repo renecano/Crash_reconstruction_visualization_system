@@ -1,6 +1,7 @@
 import { readFileSync } from "node:fs";
+import { join, resolve } from "node:path";
 import { expect, test } from "@playwright/test";
-import { colocarTodo, irAPaso, sinIdentificadoresDeFuente } from "./ayuda-recorrido";
+import { irAPaso, sinIdentificadoresDeFuente } from "./ayuda-recorrido";
 
 // La transición entre actos (ADR 0108) es decorativa: estos flujos prueban la función, y en CI (render
 // por software) la cortina a pantalla completa compite con el 3D. Con movimiento reducido no se monta.
@@ -11,6 +12,43 @@ test.use({ reducedMotion: "reduce" });
  * su narración, el lugar, la reconstrucción con la declaración del conductor ya escrita, la
  * verificación y el método de CESVI con los números del reporte, y el dictamen.
  */
+/**
+ * La lectura física de V2 en AXA, leída de `eval/results` (nunca a mano): la escena ya viene colocada
+ * y siempre da lo mismo. La cifra del reporte sale de los datos del caso.
+ */
+const V2 = (() => {
+  const raiz = resolve(__dirname, "../../..");
+  const leer = <T>(ruta: string) => JSON.parse(readFileSync(join(raiz, ruta), "utf8")) as T;
+  const { filas } = leer<{
+    filas: { es_la_de_la_app: boolean; V2: { mejor: number; p10: number; p90: number } }[];
+  }>("eval/results/axa_rango_estable.json");
+  const m = filas.find((f) => f.es_la_de_la_app)!.V2;
+  const cesvi = leer<{
+    calculos: { deformacion_B: { reporte: { ebs_kmh: { valor: number } } } };
+  }>("data/cesvi/casos/A2010930.json").calculos.deformacion_B.reporte.ebs_kmh.valor;
+  const r2 = (x: number) => Math.round(x * 100) / 100;
+  const signo = (x: number) => `${x >= 0 ? "+" : "−"}${Math.abs(x).toFixed(2)}`;
+  return {
+    texto: m.mejor.toFixed(2),
+    rango: `${m.p10.toFixed(2)}–${m.p90.toFixed(2)}`,
+    cesvi: cesvi.toFixed(2),
+    difKmh: signo(r2(m.mejor - cesvi)),
+    difPct: signo(r2((100 * (m.mejor - cesvi)) / cesvi)),
+  };
+})();
+
+async function textoDelPdf(bytes: Buffer): Promise<string> {
+  const pdfjs = await import("pdfjs-dist/legacy/build/pdf.mjs");
+  const doc = await pdfjs.getDocument({ data: new Uint8Array(bytes), useSystemFonts: true })
+    .promise;
+  let t = "";
+  for (let p = 1; p <= doc.numPages; p++) {
+    const c = await (await doc.getPage(p)).getTextContent();
+    t += ` ${c.items.map((i) => ("str" in i ? i.str : "")).join(" ")}`;
+  }
+  return t.replace(/\s+/g, " ");
+}
+
 test("@flujo /cesvi: el caso de AXA desde la lista, del caso al dictamen en PDF", async ({
   page,
 }) => {
@@ -47,9 +85,8 @@ test("@flujo /cesvi: el caso de AXA desde la lista, del caso al dictamen en PDF"
   // La masa sale del reporte y lo dice así, no con el identificador interno de la fuente.
   await expect(page.getByTestId("tarjeta-V2").locator("[data-fuente]")).toHaveText("del reporte");
   await sinIdentificadoresDeFuente(page);
-  await expect(page.getByTestId("avance-caso")).toHaveAttribute("data-avance", "2/4");
-  // Los pasos futuros esperan: el paso 4 no se abre sin el lugar.
-  await expect(page.getByTestId("paso-4")).toBeDisabled();
+  // AXA ya viene con su escena colocada: la reconstrucción se abre sin contestar nada.
+  await expect(page.getByTestId("paso-4")).toBeEnabled();
 
   // 2. El hecho: la narración del ejemplo, ya leída (el caso trae su expediente).
   await irAPaso(page, 2);
@@ -62,8 +99,8 @@ test("@flujo /cesvi: el caso de AXA desde la lista, del caso al dictamen en PDF"
   // 3. El lugar: el mapa abre en la ubicación ilustrativa; se coloca lo que pide la lista.
   await irAPaso(page, 3);
   await expect(page.getByTestId("dialogo-buscar-lugar")).toHaveCount(0);
-  await expect(page.getByTestId("siguiente")).toBeDisabled();
-  await colocarTodo(page);
+  await expect(page.getByTestId("escena-lista")).toBeVisible();
+  await expect(page.getByTestId("siguiente")).toBeEnabled();
   await sinIdentificadoresDeFuente(page);
 
   // 4. La reconstrucción, y la declaración del conductor ya escrita para compararla.
@@ -73,6 +110,16 @@ test("@flujo /cesvi: el caso de AXA desde la lista, del caso al dictamen en PDF"
   // Cada velocidad con su método (prompt del rediseño §0.2).
   await expect(page.getByTestId("metodo-velocidades")).toContainText(
     "Reconstrucción física de Croquis",
+  );
+  // Un número por cantidad: la cifra grande es el mejor ajuste, el de eval/results. La mediana de
+  // las simulaciones va aparte, con su nombre, y el histograma marca dónde cae el mejor ajuste.
+  await expect(page.getByTestId("cifra-reconstruida")).toHaveText(V2.texto);
+  await expect(page.getByTestId("cifra-rango")).toHaveText(`rango ${V2.rango}`);
+  await expect(page.getByTestId("metodo-cifra")).toContainText("mejor ajuste");
+  await expect(page.getByTestId("fila-mediana")).toHaveText(/^\d+\.\d\d km\/h$/);
+  await expect(page.getByTestId("marca-mejor-ajuste")).toHaveAttribute(
+    "data-tip",
+    `Mejor ajuste: ${V2.texto} km/h`,
   );
   await page.getByTestId("ver-detalle-reconstruccion").click();
   await page.getByTestId("abrir-declaracion").click();
@@ -90,6 +137,9 @@ test("@flujo /cesvi: el caso de AXA desde la lista, del caso al dictamen en PDF"
   const presentar = page.getByTestId("presentar-caso");
   await expect(presentar).toBeVisible();
   await expect(page.getByTestId("aviso-apoyo")).toContainText("el dictamen es del perito");
+  await page.getByTestId("capitulo-impacto").click();
+  await expect(page.getByTestId("capitulo-datos")).toContainText(`${V2.texto} km/h`);
+  await expect(page.getByTestId("capitulo-datos")).toContainText(V2.rango);
   await page.getByTestId("capitulo-contra").click();
   await expect(page.getByTestId("capitulo-titulo")).toHaveText("Contra CESVI");
   // Las dos lecturas (T3.4), cada una con su nombre, y por qué difieren.
@@ -99,8 +149,9 @@ test("@flujo /cesvi: el caso de AXA desde la lista, del caso al dictamen en PDF"
   await expect(datosContra).toContainText("63.90 contra 63.15 km/h");
   await expect(datosContra).toContainText("Reconstrucción física de Croquis");
   await expect(datosContra).toContainText(
-    /[\d.]+ (\([\d.]+–[\d.]+\) )?contra 63\.15 km\/h · [+−]\d+\.\d\d km\/h/,
+    `${V2.texto} (${V2.rango}) contra ${V2.cesvi} km/h · ${V2.difKmh} km/h`,
   );
+  await expect(datosContra).toContainText(`${V2.difPct} %`);
   await expect(page.getByTestId("capitulo-nota")).toContainText("la masa de B sola");
   await page.keyboard.press("ArrowLeft");
   await expect(page.getByTestId("capitulo-titulo")).toHaveText("Posiciones finales");
@@ -153,10 +204,12 @@ test("@flujo /cesvi: el caso de AXA desde la lista, del caso al dictamen en PDF"
   await expect(page.getByTestId("lectura-fisica")).toContainText(
     "Reconstrucción física de Croquis",
   );
-  await expect(page.getByTestId("fisica-croquis")).toHaveText(/^\d+\.\d\d$/);
+  // Es exactamente lo que mide la evaluación (la escena de AXA ya viene colocada).
+  await expect(page.getByTestId("fisica-croquis")).toHaveText(V2.texto);
+  await expect(page.getByTestId("fisica-rango")).toHaveText(`rango ${V2.rango}`);
   await expect(page.getByTestId("fisica-cesvi")).toHaveText("63.15");
-  await expect(page.getByTestId("fisica-kmh")).toContainText(/[+−]\d+\.\d\d km\/h/);
-  await expect(page.getByTestId("fisica-pct")).toHaveText(/^[+−]\d+\.\d\d %$/);
+  await expect(page.getByTestId("fisica-kmh")).toContainText(`${V2.difKmh} km/h`);
+  await expect(page.getByTestId("fisica-pct")).toHaveText(`${V2.difPct} %`);
   const porQue = page.getByTestId("por-que-difieren");
   await expect(porQue).toContainText("la masa de B sola");
   await expect(porQue).toContainText("el momento de los dos vehículos");
@@ -177,10 +230,13 @@ test("@flujo /cesvi: el caso de AXA desde la lista, del caso al dictamen en PDF"
   await page.getByTestId("descargar-dictamen-pdf").click();
   const archivo = await descarga;
   expect(archivo.suggestedFilename()).toBe("dictamen-reconstruccion-borrador.pdf");
-  expect(
-    readFileSync(await archivo.path())
-      .subarray(0, 5)
-      .toString(),
-  ).toBe("%PDF-");
+  const bytesPdf = readFileSync(await archivo.path());
+  expect(bytesPdf.subarray(0, 5).toString()).toBe("%PDF-");
+  // En el PDF, las dos lecturas: la misma cifra de la evaluación y la de CESVI con sus datos.
+  const pdf = await textoDelPdf(bytesPdf);
+  expect(pdf).toContain(`${V2.texto} (${V2.rango})`);
+  expect(pdf).toContain(`${V2.difKmh} km/h (${V2.difPct} %)`);
+  expect(pdf).toContain("Método de CESVI con los datos del reporte");
+  expect(pdf).toContain("+1.19 %");
   expect(errores).toEqual([]);
 });

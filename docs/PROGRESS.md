@@ -1885,6 +1885,51 @@ Rama `fix/fotos-dictamen`. René mandó la captura del dictamen de un caso nuevo
 - **Qué hay ahora:** fotos con la cinematográfica, del instante pedido, sin marcadores; vehículos apoyados en banquetas y relieve; y si el 3D se queda abajo de 24 fps durante 5 s, baja un nivel y lo dice `?diag=1`.
 - **Cómo probarlo:** genera el dictamen de un caso nuevo y compara las tres fotos; y en `docs/cesvi/t1/ruedas/` están las capturas de cerca de cada clase. Si en tu caso las llantas siguen fuera de su hueco, dime la clase del vehículo (o manda el `.json` del caso): en las ocho clases que medí quedan bien.
 
+### AXA abre con su escena colocada, y la app coincide con eval/results (René, 2026-11-06)
+
+Rama `feat/axa-escena-colocada`.
+
+- **Lo que estaba mal:** el caso de ejemplo abría sin posiciones y la escena colocada solo existía en `eval/`. La cifra física variaba según lo que se contestara (49.21 o 41.5 en las capturas de la e2e), y no coincidía con lo medido.
+- **El arreglo:** `casoAxa` ahora es `casoAxaSinColocar` más `expedienteAxaReconstruccion`, la misma construcción que usan `eval/` y el video. Se puede seguir cambiando la escena; entonces la cifra cambia, y es lo correcto. Los casos nuevos siguen igual, y la prueba con personas usa «Caso nuevo».
+- **Las pruebas leen la cifra de `eval/results/axa_rango_estable.json`, nunca a mano** (V2 71.56, 68.02–92.81; contra 63.15, +8.41 km/h y +13.32 %):
+  - La unitaria (`axa-lectura-fisica.test.ts`) comprueba que el código da exactamente eso, con las muestras de producción.
+  - La e2e `@flujo` de AXA lo comprueba en Contra CESVI, en Presentar y en el PDF.
+
+**Un número por cantidad (René, 2026-11-06).** La cifra grande de Reconstrucción era la mediana de las simulaciones al contacto (75.2 en AXA) y Contra CESVI decía el mejor ajuste (71.56). Ahora la velocidad de un vehículo es siempre el mejor ajuste, con su rango y dos decimales, en Reconstrucción, Contra CESVI, Presentar, la hoja del dictamen, las citas, los tooltips y el PDF.
+
+- El título de la cifra dice «Velocidad antes del impacto», igual que Contra CESVI: 71.56 es esa cantidad y el diseño decía «al impacto».
+- La mediana queda como dato secundario, en su fila («Mediana de las simulaciones») y al pasar el puntero por p50. El histograma marca dónde cae el mejor ajuste.
+- El protagonista se elige por el mejor ajuste. Si la evidencia no fija la velocidad, no hay cifra aunque haya mediana.
+- **Un límite:** el histograma es de las velocidades al contacto y la marca es la velocidad antes del impacto. En AXA coinciden porque no hay frenado; con frenado, la marca quedaría a la derecha de donde caería ese contacto.
+- La e2e de AXA revisa el mismo número, leído de `eval/results`, en Reconstrucción, Contra CESVI, Presentar y el PDF.
+
+**Cifras de los docs corregidas contra `eval/results` (regla de René, 2026-11-06: las que contradigan `eval/results` se corrigen y se anotan aquí):**
+
+| Documento                                   | Decía                              | Dice ahora                                    | De dónde sale                         |
+| ------------------------------------------- | ---------------------------------- | --------------------------------------------- | ------------------------------------- |
+| `docs/cesvi/PLAN-CESVI.md`, tabla de estado | V2 (56.19–100.49)                  | V2 (68.02–92.81), con nota de T3.1 (ADR 0100) | `eval/results/axa_rango_estable.json` |
+| `docs/cesvi/PLAN-CESVI.md`, diagnóstico 3   | rango 56–100, depende del muestreo | 68.02–92.81, con nota de que T3.1 lo resolvió | el mismo                              |
+
+Las entradas fechadas de este archivo y los ADR que citan 63.19–95.96 no se cambian: eran ciertas en su momento y son historia.
+
+**Las pruebas pesadas del §11, en el build de producción** (`e2e/laboratorio-axa.spec.ts`, resultado en `eval/results/laboratorio_axa.json`):
+
+- El recorrido de AXA de Casos al PDF firmado, de día y de noche, pasa. Cruza los actos con teclado y abre tooltips con el foco.
+- axe (WCAG 2.2 A y AA): sin problemas serios ni críticos en 10 pantallas, en los dos temas. Había tres y se corrigieron: la etiqueta de la hoja de Casos, la marca «Borrador» y la marca del mejor ajuste, que estaba dentro de la lista del histograma.
+- Con movimiento reducido: la cifra sale de inmediato en su valor final y hay 0 animaciones en Contra CESVI.
+- Capturas de cada acto a 1440 px en `docs/cesvi/rediseno/laboratorio/capturas/actos/`. Van al README en U7 (plan v4).
+
+**Lighthouse (§11.3), en celular con red 4G y CPU 4× más lenta, build de producción, corrida mediana de 3** (`eval/f11_portada.mjs`, resultados en `eval/results/f11_portada/cesvi*.json`):
+
+| Página                  | Accesibilidad | Rendimiento | LCP    | TBT    | Carga   |
+| ----------------------- | ------------- | ----------- | ------ | ------ | ------- |
+| `/cesvi`                | 100           | 75          | 1.79 s | 1.22 s | 1.18 MB |
+| `/cesvi/casos/a2010930` | 100           | 59          | 2.12 s | 6.39 s | 2.17 MB |
+
+- **La meta de rendimiento ≥ 90 del §11 no se cumple:** 75 y 59. La de accesibilidad sí. LCP y CLS cumplen las metas del proyecto (2.5 s y 0.1).
+- **Lo que se arregló:** Casos tenía un LCP de 7.5 s y rendimiento 45, porque las acciones entraban con Motion y no se veían hasta hidratar. Ahora entran con CSS.
+- **Lo que queda:** el TBT de la página del caso, que carga el recorrido completo de una vez. Está en «Endurecimiento pendiente»; no se atacó porque el plan v4 rehace el 3D en Unity y esa carga va a cambiar.
+
 ### AXA con sus dos lecturas en Contra CESVI y Presentar (T3.4, René, 2026-11-06)
 
 René pidió confirmarlo. **Solo estaba la primera lectura con peso:** la segunda vivía en el detalle plegado de Contra CESVI y no aparecía en Presentar. Ahora están las dos, con el mismo peso.
@@ -1896,7 +1941,7 @@ René pidió confirmarlo. **Solo estaba la primera lectura con peso:** la segund
 - **El PDF** ya lleva la frase de la primera lectura, con su nombre. El §11 pedía las tres cifras también ahí y solo traía dos.
 - **Las e2e de AXA** revisan las dos lecturas en las dos pantallas.
 
-**La cifra física depende de la escena que se conteste.** El plan menciona +13.32 % y rango 56–100 km/h, medidos con otra evidencia. Con lo que contesta la e2e («quedó junto al choque» y lo que Croquis propone) sale otra cifra, por eso la e2e revisa su forma y no un número fijo. Nada se ajusta para coincidir.
+**La lectura física de AXA ya no depende de lo que se conteste:** ver la sección siguiente («AXA abre con su escena colocada»). En los casos nuevos sí depende, y ahí la e2e revisa solo la forma. Nada se ajusta para coincidir.
 
 **Arreglo de paso (error mío de #176):** al ocultar el escenario en los actos de hoja ancha, el visor 3D seguía dibujando sin verse. Ahora solo dibuja cuando se ve, y la foto del dictamen lo despierta si le hace falta.
 
@@ -2357,6 +2402,7 @@ Rama `feat/r11-render-retomable`. El colaborador cerró la corrida del 2026-11-0
 
 - **Dictamen (Laboratorio §8), sin dictado:** el diseño dice «Escríbela o díctala»; Croquis no tiene entrada por voz, así que el texto dice «Escríbela tú». Se agrega si René la pide (igual que «Dictar un dato» en El hecho).
 - **Contra CESVI (Laboratorio §8):** el esquema de papel de AXA no es el croquis del reporte, que no está en datos. Si se extrae del PDF, se cambia por el real.
+- **Lighthouse de la página del caso (Laboratorio §11):** rendimiento 59 contra la meta de 90 en celular, por el TBT de 6.39 s. Se mide de nuevo cuando el visor de Unity (U6) cambie lo que carga esa página.
 - **Solver, `velocidad_impacto`:** cuando las muestras no se apartan de la solución, los parámetros dan su rango por aproximación lineal (`rango_por: "laplace"`) pero la velocidad al impacto se queda con ancho cero. La interfaz ya lo dice; falta decidir si el solver debe dar ese rango también.
 - **El hecho (Laboratorio §8), dos botones del diseño sin hacer:** «Dictar un dato» (Croquis no tiene entrada por voz) y «Reporte original» (el PDF importado no se guarda en el caso). Se agregan si René los pide.
 

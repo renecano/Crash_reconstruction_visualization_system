@@ -1336,6 +1336,26 @@
     font-size: 0.75rem;
     font-weight: 600;
   }
+  /* `rise` sin JavaScript, para lo que llega ya renderizado: con Motion no se ve hasta hidratar. */
+  .sube-css {
+    animation: sube-css 750ms cubic-bezier(0.2, 0.8, 0.2, 1) both;
+  }
+  @keyframes sube-css {
+    from {
+      opacity: 0.01;
+      transform: translateY(18px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .sube-css {
+      animation: none;
+    }
+  }
+
   /* Los tooltips (§9): invertidos, 170 ms, 8 px arriba del objeto. */
   .tooltip-lab {
     position: fixed;

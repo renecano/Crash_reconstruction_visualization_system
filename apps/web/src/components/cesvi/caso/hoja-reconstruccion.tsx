@@ -11,7 +11,8 @@ import {
   histograma,
   marcasDelEje,
   protagonista,
-  rangoDeImpacto,
+  posEnHistograma,
+  rangoDeVelocidad,
   sinDispersion,
   textoBarra,
 } from "@/lib/reconstruccion-lab";
@@ -36,14 +37,16 @@ export function CifraReconstruccion({
 }) {
   const v = protagonista(r);
   const i = v?.impacto ?? null;
-  const barras = histograma(i?.valores ?? [], i?.p10, i?.p90);
+  const mejor = v?.previa?.mejor;
+  const barras = histograma(i?.valores ?? [], i?.p10, i?.p90, mejor);
+  const posMejor = mejor === undefined ? null : posEnHistograma(barras, mejor);
   const marcas = marcasDelEje(barras);
   const tope = Math.max(1, ...barras.map((b) => b.n));
   const muestras = i?.valores?.length ?? 0;
   const otras = r.velocidades.filter((x) => x.vehiculo !== v?.vehiculo);
   const n = r.evidencia.length;
   const quieta = v ? sinDispersion(v) : false;
-  const rango = v ? rangoDeImpacto(v) : null;
+  const rango = v ? rangoDeVelocidad(v) : null;
   const ini = barras[0]?.desde ?? 0;
   const anchoEje = barras.length ? barras.length : 1;
   return (
@@ -62,61 +65,85 @@ export function CifraReconstruccion({
         </button>
       </div>
       <h2 className="font-[family-name:var(--fuente-titulo)] text-[2.25rem] leading-none font-normal tracking-[-0.03em]">
-        Velocidad al impacto
+        Velocidad antes del impacto
       </h2>
-      {v && i?.p50 !== undefined ? (
+      {v && mejor !== undefined ? (
         <>
           <p className="flex items-end gap-3">
             <Cuenta
-              valor={i.p50}
-              decimales={1}
-              className="cifra-protagonista text-[clamp(6rem,12.8vw,11.5rem)]"
-              testid="cifra-impacto"
+              valor={mejor}
+              decimales={2}
+              className="cifra-protagonista text-[clamp(5rem,10.6vw,9.5rem)]"
+              testid="cifra-reconstruida"
             />
             <span className="flex flex-col pb-2">
               <span className="text-[1.4rem]">km/h</span>
               <span className="t-nota" data-testid="cifra-de-quien">
                 {nombres[v.vehiculo] ?? v.vehiculo}
               </span>
+              {rango ? (
+                <span
+                  className="font-mono text-[0.75rem] whitespace-nowrap text-texto-2"
+                  data-testid="cifra-rango"
+                >
+                  {rango.lineal ? "rango lineal" : "rango"} {rango.p10.toFixed(2)}–
+                  {rango.p90.toFixed(2)}
+                </span>
+              ) : null}
             </span>
           </p>
           <p className="t-nota" data-testid="metodo-cifra">
-            {METODO.reconstruccion} · mediana de las simulaciones
+            {METODO.reconstruccion} · mejor ajuste
           </p>
           {quieta ? (
             <p className="t-nota" data-testid="sin-dispersion">
               Las {muestras} simulaciones dan la misma velocidad: el costo tiene un quiebre en esta
               solución y no dicen cuánto podría variar.
               {rango?.lineal
-                ? ` Su rango es la aproximación lineal de la velocidad previa: ${rango.p10.toFixed(1)}–${rango.p90.toFixed(1)} km/h.`
+                ? " El rango de arriba es la aproximación lineal del solver."
                 : " No hay un rango que dar."}
             </p>
           ) : barras.length ? (
             <div className="flex flex-col gap-1" data-testid="histograma">
-              <span className="t-nota">
-                Distribución de las {muestras} simulaciones · pasa el puntero
+              <span className="t-nota flex items-center gap-1.5">
+                <span>Las {muestras} simulaciones, al contacto ·</span>
+                <span className="inline-block h-3 w-0.5 bg-senal" aria-hidden="true" />
+                <span>mejor ajuste</span>
               </span>
-              <div className="flex h-16 items-end gap-px" role="list" aria-label="Histograma">
-                {barras.map((b, k) => (
-                  <button
-                    key={b.desde}
-                    type="button"
-                    role="listitem"
-                    className="h-full min-w-0 flex-1 cursor-default bg-transparent p-0"
-                    aria-label={textoBarra(b)}
-                    data-tip={textoBarra(b)}
-                    data-en-rango={b.enRango ? "si" : "no"}
+              <div className="relative h-16">
+                <div className="flex h-full items-end gap-px" role="list" aria-label="Histograma">
+                  {barras.map((b, k) => (
+                    <button
+                      key={b.desde}
+                      type="button"
+                      role="listitem"
+                      className="h-full min-w-0 flex-1 cursor-default bg-transparent p-0"
+                      aria-label={textoBarra(b)}
+                      data-tip={textoBarra(b)}
+                      data-en-rango={b.enRango ? "si" : "no"}
+                    >
+                      <Crece
+                        i={k}
+                        className={`block w-full ${b.enRango ? "bg-texto" : "bg-linea"}`}
+                        style={{
+                          height: `${(b.n / tope) * 100}%`,
+                          marginTop: `${(1 - b.n / tope) * 4}rem`,
+                        }}
+                      />
+                    </button>
+                  ))}
+                </div>
+                {posMejor !== null ? (
+                  <span
+                    className="absolute inset-y-0 z-10 flex w-2.5 -translate-x-1/2 justify-center"
+                    style={{ left: `${posMejor}%` }}
+                    tabIndex={0}
+                    data-tip={`Mejor ajuste: ${mejor!.toFixed(2)} km/h`}
+                    data-testid="marca-mejor-ajuste"
                   >
-                    <Crece
-                      i={k}
-                      className={`block w-full ${b.enRango ? "bg-texto" : "bg-linea"}`}
-                      style={{
-                        height: `${(b.n / tope) * 100}%`,
-                        marginTop: `${(1 - b.n / tope) * 4}rem`,
-                      }}
-                    />
-                  </button>
-                ))}
+                    <span className="h-full w-0.5 bg-senal" />
+                  </span>
+                ) : null}
               </div>
               <div className="relative h-4 border-t border-linea font-mono text-[0.6875rem] text-texto-3">
                 {marcas.map((m) => (
@@ -133,15 +160,15 @@ export function CifraReconstruccion({
           ) : null}
           <div className={quieta ? "hidden" : "grid grid-cols-3 gap-2"} data-testid="percentiles">
             {(["p10", "p50", "p90"] as const).map((p) =>
-              i[p] !== undefined ? (
+              i?.[p] !== undefined ? (
                 <button
                   key={p}
                   type="button"
                   className="boton-secundario boton-compacto font-mono"
-                  data-tip={frasePercentil(p, i[p]!)}
+                  data-tip={frasePercentil(p, i[p])}
                   data-testid={`percentil-${p}`}
                 >
-                  {p} · {i[p]!.toFixed(1)}
+                  {p} · {i[p].toFixed(2)}
                 </button>
               ) : null,
             )}
@@ -154,19 +181,16 @@ export function CifraReconstruccion({
         </>
       ) : (
         <p className="t-cuerpo" data-testid="sin-cifra">
-          La evidencia no fija la velocidad al impacto de ningún vehículo. Agrega posiciones finales
-          o medidas de deformación.
+          La evidencia no fija la velocidad de ningún vehículo. Agrega posiciones finales o medidas
+          de deformación.
         </p>
       )}
       <dl className="flex flex-col divide-y divide-[var(--linea-suave)] border-y border-linea-suave">
-        {v?.previa ? (
+        {i?.p50 !== undefined && !quieta ? (
           <div className="flex items-baseline justify-between gap-3 py-2">
-            <dt className="t-nota">{nombres[v.vehiculo] ?? v.vehiculo} venía a</dt>
-            <dd className="font-mono text-[0.875rem]">
-              {v.previa.mejor.toFixed(1)} km/h
-              {v.previa.p10 !== undefined && v.previa.p90 !== undefined
-                ? ` · ${v.previa.p10.toFixed(1)}–${v.previa.p90.toFixed(1)}`
-                : ""}
+            <dt className="t-nota">Mediana de las simulaciones</dt>
+            <dd className="font-mono text-[0.875rem]" data-testid="fila-mediana">
+              {i.p50.toFixed(2)} km/h
             </dd>
           </div>
         ) : null}
@@ -174,7 +198,7 @@ export function CifraReconstruccion({
           <div key={o.vehiculo} className="flex items-baseline justify-between gap-3 py-2">
             <dt className="t-nota">{nombres[o.vehiculo] ?? o.vehiculo}</dt>
             <dd className="font-mono text-[0.875rem]">
-              {o.previa ? `${o.previa.mejor.toFixed(1)} km/h` : "la evidencia no la fija"}
+              {o.previa ? `${o.previa.mejor.toFixed(2)} km/h` : "la evidencia no la fija"}
             </dd>
           </div>
         ))}

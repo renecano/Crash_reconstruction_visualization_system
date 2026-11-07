@@ -8,7 +8,7 @@
  */
 import { writeFileSync } from "node:fs";
 import { expedienteAxaReconstruccion } from "../../apps/web/src/lib/axa-reconstruccion.ts";
-import { casoAxa } from "../../apps/web/src/lib/caso-axa.ts";
+import { casoAxaSinColocar as casoAxa } from "../../apps/web/src/lib/caso-axa.ts";
 import { casoParaGuardar } from "../../apps/web/src/lib/caso-guardado.ts";
 
 const c = casoAxa();

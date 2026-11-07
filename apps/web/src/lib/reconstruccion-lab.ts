@@ -6,19 +6,22 @@
 import type { Reconstruccion, VelocidadReconstruida } from "@croquis/cesvi";
 
 /**
- * El vehículo protagonista: el más rápido al impacto entre los que la evidencia fija (el que llega,
- * en un alcance). null si la evidencia no fija ninguno.
+ * El vehículo protagonista: el más rápido entre los que la evidencia fija (el que llega, en un
+ * alcance). null si la evidencia no fija ninguno.
+ *
+ * Su velocidad es el mejor ajuste (`previa.mejor`): la misma en todas las pantallas y en el PDF. La
+ * mediana de las simulaciones es otra cantidad y se muestra aparte, con su nombre.
  */
 export function protagonista(r: Reconstruccion): VelocidadReconstruida | null {
-  const fijados = r.velocidades.filter((v) => v.impacto?.p50 !== undefined);
+  const fijados = r.velocidades.filter((v) => v.previa);
   if (!fijados.length) return null;
-  return fijados.reduce((a, b) => ((b.impacto!.p50 ?? 0) > (a.impacto!.p50 ?? 0) ? b : a));
+  return fijados.reduce((a, b) => (b.previa!.mejor > a.previa!.mejor ? b : a));
 }
 
-export interface RangoDeImpacto {
+export interface RangoDeVelocidad {
   p10: number;
   p90: number;
-  /** Las simulaciones no se apartaron: el rango es la aproximación lineal de la velocidad previa. */
+  /** Las muestras no se apartaron de la solución: es la aproximación lineal del solver. */
   lineal: boolean;
 }
 
@@ -33,19 +36,14 @@ export function sinDispersion(v: VelocidadReconstruida): boolean {
 }
 
 /**
- * El rango que se puede afirmar de la velocidad al impacto. Si las simulaciones no se apartaron de
- * la solución (el costo tiene un quiebre ahí, ADR 0091), su p10–p90 tiene ancho cero, lo que parece
- * una certeza que no existe: vale el de la velocidad previa, que el solver da por aproximación
- * lineal. null si no hay ninguno que dar.
+ * El rango del mejor ajuste. Si las muestras no se apartaron de la solución (el costo tiene un
+ * quiebre ahí, ADR 0091), el solver lo da por aproximación lineal, y se dice. null si no hay uno.
  */
-export function rangoDeImpacto(v: VelocidadReconstruida): RangoDeImpacto | null {
-  const i = v.impacto;
-  if (i?.p10 === undefined || i.p90 === undefined) return null;
-  if (!sinDispersion(v)) return { p10: i.p10, p90: i.p90, lineal: false };
+export function rangoDeVelocidad(v: VelocidadReconstruida): RangoDeVelocidad | null {
   const p = v.previa;
   if (p?.p10 === undefined || p.p90 === undefined || p.p90 - p.p10 < SIN_DISPERSION_KMH)
     return null;
-  return { p10: p.p10, p90: p.p90, lineal: true };
+  return { p10: p.p10, p90: p.p90, lineal: p.rango_por === "laplace" };
 }
 
 export interface BarraHistograma {
@@ -64,10 +62,13 @@ export function histograma(
   valores: readonly number[],
   p10: number | undefined,
   p90: number | undefined,
+  /** Otro valor que el eje debe abarcar (el mejor ajuste). */
+  abarca?: number,
 ): BarraHistograma[] {
   if (!valores.length) return [];
-  const min = Math.floor(Math.min(...valores));
-  const max = Math.floor(Math.max(...valores));
+  const conMarca = abarca === undefined ? valores : [...valores, abarca];
+  const min = Math.floor(Math.min(...conMarca));
+  const max = Math.floor(Math.max(...conMarca));
   const barras: BarraHistograma[] = [];
   for (let k = min; k <= max; k++) {
     barras.push({
@@ -78,6 +79,14 @@ export function histograma(
   }
   for (const v of valores) barras[Math.floor(v) - min]!.n++;
   return barras;
+}
+
+/** Dónde cae un valor en el eje del histograma, en %; null si queda afuera. */
+export function posEnHistograma(barras: readonly BarraHistograma[], x: number): number | null {
+  if (!barras.length) return null;
+  const ini = barras[0]!.desde;
+  const pos = ((x - ini) / barras.length) * 100;
+  return pos < 0 || pos > 100 ? null : pos;
 }
 
 /** Las marcas del eje del histograma: cada 5 km/h (cada 2 si el rango es angosto). */
@@ -91,21 +100,22 @@ export function marcasDelEje(barras: readonly BarraHistograma[]): number[] {
   return out;
 }
 
-const fmt = (x: number) => x.toFixed(1);
+const fmt = (x: number) => x.toFixed(2);
 
-/** Qué significa cada percentil, en una frase. */
+/** Qué significa cada percentil de las simulaciones, en una frase. */
 export function frasePercentil(cual: "p10" | "p50" | "p90", valor: number): string {
   if (cual === "p10") return `9 de cada 10 simulaciones dan más de ${fmt(valor)} km/h.`;
-  if (cual === "p50") return `La mitad queda abajo de ${fmt(valor)} km/h y la mitad arriba.`;
+  if (cual === "p50")
+    return `La mitad queda abajo de ${fmt(valor)} km/h y la mitad arriba: es la mediana de las simulaciones, no el mejor ajuste.`;
   return `9 de cada 10 simulaciones dan menos de ${fmt(valor)} km/h.`;
 }
 
-/** El tooltip de un vehículo en la escena: modelo, masa con su origen, velocidad al impacto y daño. */
+/** El tooltip de un vehículo en la escena: modelo, masa con su origen, su velocidad y su daño. */
 export function tipVehiculo(d: {
   nombre: string;
   masaKg: number | null;
   masaDe: string | null;
-  impactoKmh: number | null;
+  kmh: number | null;
   dano: string | null;
 }): string {
   const masa =
@@ -113,9 +123,7 @@ export function tipVehiculo(d: {
       ? "masa: sin dato"
       : `masa ${d.masaKg.toLocaleString("en-US", { maximumFractionDigits: 1 })} kg${d.masaDe ? ` (${d.masaDe})` : ""}`;
   const v =
-    d.impactoKmh === null
-      ? "la evidencia no fija su velocidad"
-      : `al impacto ${fmt(d.impactoKmh)} km/h`;
+    d.kmh === null ? "la evidencia no fija su velocidad" : `antes del impacto ${fmt(d.kmh)} km/h`;
   return [d.nombre, masa, v, d.dano].filter(Boolean).join(" · ");
 }
 

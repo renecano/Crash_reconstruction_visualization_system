@@ -3,7 +3,7 @@ import { createRequire } from "node:module";
 import { join, resolve } from "node:path";
 import AxeBuilder from "@axe-core/playwright";
 import { expect, test, type Page } from "@playwright/test";
-import { colocarTodo, irAPaso } from "./ayuda-recorrido";
+import { irAPaso } from "./ayuda-recorrido";
 
 /**
  * Las pruebas pesadas del rediseño «Laboratorio» (prompt §11), a mano, contra el build de producción
@@ -68,6 +68,12 @@ for (const tema of ["claro", "oscuro"] as const) {
     const revisa = async (nombre: string) => {
       // Que terminen las entradas y las cifras (§6) antes de medir y capturar.
       await page.waitForTimeout(2200);
+      await expect(page.getByTestId("maqueta-calculando")).toHaveCount(0, { timeout: 60_000 });
+      await expect(page.getByTestId("presentar-calculando")).toHaveCount(0, { timeout: 60_000 });
+      // Las calles del mapa vienen de la red: si no llegan, la escena lo dice y la prueba sigue.
+      await expect(page.getByTestId("maqueta-sin-calles"))
+        .toHaveCount(0, { timeout: 20_000 })
+        .catch(() => undefined);
       violaciones[nombre] = await axe(page);
       writeFileSync(
         join(CAPTURAS, `${tema}-${nombre}.webp`),
@@ -95,8 +101,7 @@ for (const tema of ["claro", "oscuro"] as const) {
     await revisa("1-hecho");
 
     await irAPaso(page, 3);
-    await revisa("2-escena-pregunta");
-    await colocarTodo(page);
+    await expect(page.getByTestId("escena-lista")).toBeVisible();
     await revisa("2-escena");
     await irAPaso(page, 4);
 
@@ -192,8 +197,6 @@ test.describe("con movimiento reducido", () => {
     await page.goto("/cesvi");
     await page.getByTestId("ir-axa").click();
     await expect(page.getByTestId("recorrido-caso")).toBeVisible();
-    await irAPaso(page, 3);
-    await colocarTodo(page);
     await irAPaso(page, 4);
     await page.getByTestId("reconstruir").click();
     await expect(page.getByTestId("cifra-reconstruccion")).toBeVisible({ timeout: 120_000 });

@@ -1475,8 +1475,7 @@ export function RecorridoCaso({
                         nombre: nombreLab(String(id)),
                         masaKg: v?.masa?.valor ?? null,
                         masaDe: v?.masa?.fuente ?? null,
-                        impactoKmh:
-                          r.velocidades.find((x) => x.vehiculo === id)?.impacto?.p50 ?? null,
+                        kmh: r.velocidades.find((x) => x.vehiculo === id)?.previa?.mejor ?? null,
                         dano: expediente ? textoDano(expediente, String(id)) : null,
                       }),
                     ];

@@ -8,7 +8,7 @@ import type { Metadata } from "next";
 import { CASO_INICIAL } from "@croquis/cesvi";
 import { RecorridoCaso } from "@/components/cesvi/caso/recorrido-caso";
 import { ACTOS, actoDeSegmentos } from "@/lib/actos";
-import { casoAxa } from "@/lib/caso-axa";
+import { casoAxa } from "@/lib/axa-reconstruccion";
 
 export const metadata: Metadata = {
   title: `Caso ${CASO_INICIAL} · Croquis para CESVI`,

@@ -13,7 +13,7 @@ import {
   type LecturaFisica,
 } from "./contraste-lab";
 import { poseEn, tImpacto, type ResultadoMaqueta } from "./maqueta";
-import { rangoDeImpacto } from "./reconstruccion-lab";
+import { rangoDeVelocidad } from "./reconstruccion-lab";
 import { METODO } from "./textos-caso";
 
 /** Cuánto dura cada capítulo (s), como en una historia. */
@@ -93,26 +93,27 @@ export function capitulos({
   };
 
   const filasImpacto: FilaCapitulo[] = [];
-  const conImpacto = r.velocidades
-    .filter((v) => v.impacto?.p50 !== undefined)
-    .sort((a, b) => (b.impacto!.p50 ?? 0) - (a.impacto!.p50 ?? 0));
-  conImpacto.forEach((v, k) => {
-    const i = v.impacto!;
-    const nombre = nombreDe(String(v.vehiculo));
+  const fijadas = r.velocidades
+    .filter((v) => v.previa)
+    .sort((a, b) => b.previa!.mejor - a.previa!.mejor);
+  fijadas.forEach((v, k) => {
     filasImpacto.push({
-      etiqueta: `${nombre} al impacto`,
-      valor: `${f1(i.p50!)} km/h`,
+      etiqueta: `${nombreDe(String(v.vehiculo))} antes del impacto`,
+      valor: `${v.previa!.mejor.toFixed(2)} km/h`,
       grande: k === 0,
     });
-    const rango = k === 0 ? rangoDeImpacto(v) : null;
+    const rango = k === 0 ? rangoDeVelocidad(v) : null;
     if (rango)
       filasImpacto.push({
-        etiqueta: rango.lineal ? "Rango por aproximación lineal" : "Rango p10–p90",
-        valor: `${f1(rango.p10)}–${f1(rango.p90)}`,
+        etiqueta: rango.lineal ? "Rango por aproximación lineal" : "Rango",
+        valor: `${rango.p10.toFixed(2)}–${rango.p90.toFixed(2)}`,
       });
   });
   if (!filasImpacto.length)
-    filasImpacto.push({ etiqueta: "Velocidad al impacto", valor: "la evidencia no la fija" });
+    filasImpacto.push({
+      etiqueta: "Velocidad antes del impacto",
+      valor: "la evidencia no la fija",
+    });
   const impacto: Capitulo = {
     clave: "impacto",
     titulo: "El impacto",

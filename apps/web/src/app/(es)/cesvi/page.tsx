@@ -6,7 +6,7 @@ import type { Metadata } from "next";
 import { caso, CASO_INICIAL, comparar } from "@croquis/cesvi";
 import { ListaCasos } from "@/components/cesvi/lista-casos";
 import { MarcoCesvi } from "@/components/cesvi/marco-cesvi";
-import { casoAxa } from "@/lib/caso-axa";
+import { casoAxa } from "@/lib/axa-reconstruccion";
 import { estadoDeReporte } from "@/lib/casos-lab";
 import { cifraContraste, pctConSigno } from "@/lib/contraste-lab";
 import { tituloDelHecho } from "@/lib/hecho-laboratorio";

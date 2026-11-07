@@ -31,7 +31,7 @@ import ejemplo from "../../../../data/cesvi/grabaciones/importar/ejemplo.json";
 import grabacionHecho from "../../../../data/cesvi/grabaciones/hecho-A2010930.json";
 import type { CasoExpediente } from "./casos";
 
-export function casoAxa(): CasoExpediente {
+export function casoAxaSinColocar(): CasoExpediente {
   const c = casoCesvi(CASO_INICIAL);
   const u = ubicacionIlustrativa(c.id);
   const leido = importarDictamen(
