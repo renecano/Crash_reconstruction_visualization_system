@@ -17,10 +17,33 @@ Croquis es para los **peritos de CESVI México**. El alcance lo define lo que el
   - **CI completo en menos de 10 minutos.** Si tarda más, recorta lo que lo hace lento, no las pruebas de cálculo.
   - **No se hacen por defecto:** Firefox y WebKit, capturas de referencia, Lighthouse y axe, evaluaciones largas (E-series), barridos, Hypothesis en código de interfaz, revisión independiente de diseño, pulido visual fino. Corren solo a mano, cuando René lo pide o antes de una demo con CESVI.
   - **No esperes CI con los brazos cruzados:** si CI tarda, sigue con la siguiente tarea.
-- **El visor 3D se reactiva** (PLAN-CESVI R3) y es central. La portada de lanzamiento y la historia siguen en pausa hasta que René las reactive.
+- **El visor 3D es Unity** (plan v4, por pedido de CESVI) y es central. El visor three.js se queda como respaldo y `packages/viewer` queda congelado. La portada de lanzamiento y la historia siguen en pausa hasta que René las reactive.
 - **Lo que no cambia nunca:** ningún número inventado; toda diferencia con un reporte de CESVI se muestra con su valor y su porcentaje; los reportes de CESVI son de uso libre para este proyecto (CESVI los entregó con ese fin; muchos son casos elaborados por ellos): se pueden usar en fixtures, pruebas, evaluaciones y demos, y los lotes crudos siguen fuera de git solo por tamaño; IA responsable (§10).
 - **Lo que se pospone no se borra:** anótalo en `docs/PROGRESS.md`, sección "Endurecimiento pendiente".
 - Trabaja directo, con commits frecuentes, y despliega a Vercel en cuanto haya algo que mostrar.
+
+## El visor en Unity y los dos frentes (plan v4; ADR 0111)
+
+Trabajan dos Claude Code en paralelo. Antes de tocar algo, revisa de qué frente es: el detalle está en `docs/cesvi/PLAN-CESVI.md` §3.
+
+| Frente | Solo este frente cambia |
+| --- | --- |
+| **U · Visor Unity, contratos e integración** | `apps/visor-unity/**`, `tools/unity/**`, `packages/scene-schema/caso3d*`, `visor-puente.md`, `fixtures/caso3d/**`, `apps/web/public/visor-unity/**`, el componente `<VisorUnity>` y, al final, `README.md`, `docs/ESTADO.md` y `docs/historial/**` |
+| **W · Web y física** | `apps/web/src/app/cesvi/**` y sus componentes (salvo `<VisorUnity>`), `packages/cesvi/**`, `packages/croquis-2d/**`, `packages/extraction/**`, `extraction/**`, `solver/**`, `packages/solver-ts/**`, `eval/**`, `data/**`, `apps/web/src/app/api/relieve/**` y las e2e de la web |
+
+- **Compartidos:** `escena.schema.json`, `resultado.schema.json`, `CLAUDE.md`, `docs/cesvi/PLAN-CESVI.md`, `.github/workflows/**`, `package.json`, `pnpm-lock.yaml` y el índice de `docs/PROGRESS.md`. Se cambian solo con un PR pequeño `contract:` o `chore:`, y el otro frente rebasa. Si `pnpm-lock.yaml` tiene conflicto, se regenera con `pnpm install`.
+- **Ramas:** `feat/u<n>-<tema>` y `feat/w<n>-<tema>`, de vida corta y rebasadas sobre `main` antes del PR.
+- **Fusiones:** solo René fusiona, con CI en verde y con «Create a merge commit». Esto manda sobre lo que diga este archivo de fusionar sin preguntar.
+- **Bitácora:** `docs/progress/U.md` y `docs/progress/W.md`, con plan, evidencia, cifras, pendientes, siguiente paso y «Necesito del otro frente». `docs/PROGRESS.md` queda como índice y «Estado actual»; solo lo actualiza U al integrar.
+- **ADR por bloques:** U del 0110 al 0129; W del 0130 al 0169.
+- **Contratos primero:** nadie consume `caso-3d`, el puente ni los campos 2.3.0 antes de que estén en `main`.
+
+Reglas del visor:
+
+- **Unity solo reproduce.** No usa la física de Unity para el choque ni recalcula: todo movimiento sale del `Resultado` y el daño, de `dano.perfil_m`. Si el perito edita en 3D, Unity manda la edición, la web corre el solver y vuelve a cargar el caso.
+- **Una sola entrada:** el paquete caso-3d (`caso3d.schema.json`, `armarCaso3d`). El puente es `packages/scene-schema/visor-puente.md`.
+- **`Croquis.Core` no depende de Unity** y se prueba con `dotnet test` en CI. Los builds de Unity no corren en CI: necesitan licencia y pasan de 10 minutos.
+- **Nada de binarios pesados en git:** los modelos se cargan de Vercel Blob; el build web va a Blob y el de escritorio, a un release de GitHub.
 
 ## Estándar de calidad
 1. No dejes mocks permanentes ni "lo dejamos para después" sin registrarlo como pendiente en `docs/PROGRESS.md`.
@@ -32,7 +55,7 @@ Croquis es para los **peritos de CESVI México**. El alcance lo define lo que el
 7. Diseño: §11 de `PLAN.md` es el estándar visual. Nada de estilos por defecto de plantillas, nada de video, maquetas ni imágenes de stock: todo lo que se ve lo calcula el sistema. Inspiración en las presentaciones de lanzamiento de primer nivel, sin copiar logotipos ni recursos de ninguna empresa. Tipografías: se permiten las de licencia libre (SIL Open Font License, Google Fonts), registradas en `assets/ASSETS.md`; lo prohibido es copiar fuentes propietarias de una marca (aclaración de René, 2026-10-24).
 
 ## Autonomía
-Trabajas de forma autónoma. **No pidas visto bueno para planes, decisiones técnicas ni para pasar de fase.** Las pruebas son la aprobación: si una fase cumple su criterio de aceptación con todo en verde, haz merge y sigue con la siguiente.
+Trabajas de forma autónoma. **No pidas visto bueno para planes, decisiones técnicas ni para pasar de fase.** Las pruebas son la aprobación: si una fase cumple su criterio de aceptación con todo en verde, abre su PR y sigue con la siguiente. René fusiona y aprueba las capturas de U2, U3 y U5.
 
 - Decisiones técnicas: tómalas tú con buen criterio, regístralas en un ADR (`docs/adr/`) y sigue.
 - Decisiones abiertas de `PLAN.md` §16: usa la opción por defecto marcada ahí y regístrala.
@@ -55,17 +78,17 @@ Si algo está bloqueado por el punto 2, **no te detengas**: anótalo en la secci
 
 ## Flujo por fase
 1. Lee la fase en `PLAN.md` y su criterio de aceptación.
-2. Escribe un plan corto en `docs/PROGRESS.md` (archivos, pruebas, riesgos) y empieza de inmediato.
-3. Implementa en una rama `feat/fN-<tema>` con commits pequeños (Conventional Commits).
+2. Escribe un plan corto en la bitácora de tu frente, `docs/progress/<U o W>.md` (archivos, pruebas, riesgos), y empieza de inmediato.
+3. Implementa en una rama `feat/u<n>-<tema>` o `feat/w<n>-<tema>` con commits pequeños (Conventional Commits).
 4. Escribe solo las pruebas que pide "Para quién y qué tan lejos": unitarias de lógica y cálculos, y una e2e por flujo principal en Chromium.
 5. Corre localmente lint, tipos y esas pruebas (y paridad si tocaste el solver). Las evaluaciones largas solo cuando René las pida.
-6. Actualiza `docs/PROGRESS.md` con: qué se hizo, evidencia (comandos y salidas, capturas), números medidos, pendientes y decisiones.
-7. Con todo en verde y el criterio de aceptación cumplido: merge a `main`, push, y empieza la siguiente fase.
-8. `docs/PROGRESS.md` siempre debe permitir que otra sesión retome el trabajo sin contexto previo: fase actual, siguiente paso concreto y bloqueos.
-9. Al final de cada fase deja un resumen breve para René en `PROGRESS.md`: qué quedó, cómo probarlo y qué necesitas de él.
+6. Actualiza la bitácora de tu frente con: qué se hizo, evidencia (comandos y salidas, capturas), números medidos, pendientes y decisiones.
+7. Con todo en verde y el criterio de aceptación cumplido: abre el PR para que René lo fusione, y empieza la siguiente fase.
+8. La bitácora de tu frente siempre debe permitir que otra sesión retome el trabajo sin contexto previo: fase actual, siguiente paso concreto y bloqueos.
+9. Al final de cada fase deja en ella un «Resumen para René»: qué quedó, cómo probarlo y qué necesitas de él.
 
 ## Reglas técnicas
-- `packages/scene-schema/escena.schema.json` es el único contrato. Zod y Pydantic se **generan**; no se editan a mano.
+- `packages/scene-schema/escena.schema.json`, `resultado.schema.json` y `caso3d.schema.json` son el contrato. Zod, Pydantic y C# se **generan**; no se editan a mano.
 - El solver Python es la referencia. Cualquier cambio en él exige actualizar el port TS y que las pruebas de paridad pasen.
 - El LLM solo produce `EscenaSpec`. Nunca genera geometría, trayectorias ni números físicos finales.
 - Todo lo aleatorio recibe semilla explícita.
