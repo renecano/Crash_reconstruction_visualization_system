@@ -26,6 +26,7 @@
 - **`precision_m` es opcional.** Si falta, vale la incertidumbre de una posición medida del solver. No se fija un número en el contrato.
 - **Los ángulos nuevos del resultado (`cabeceo`, `alabeo`) van en radianes,** como `rumbo`. La escena sigue en grados (`rumbo_deg`). Lo dice `convenciones`.
 - **El evento `cruce_tope` lleva su velocidad en `detalle.velocidad_cruce_kmh`.**
+- **`z` es la altura del piso bajo el vehículo, no la del centro de masa.** §2.1.6 pone el pivote en (x, z, y) y una malla plana debe dar el resultado de hoy (§6), así que en plano `z` vale 0. Es la altura con las llantas en el piso; lo que suba la carrocería al inclinarse lo da la rotación.
 - **Los `$ref` del caso-3d citan el `$id` de cada esquema:** `$id` de la escena `…/escena/1.0.0/…` y del resultado `…/resultado/1.9.0`. Esos números ya no siguen a la versión, que vive en su `const`. No se cambian para no mover referencias.
 - **quicktype, con los tres esquemas unidos.** Hay un reporte de que no resuelve bien los `$ref` a otros archivos, así que `generate-csharp.ts` los junta en memoria antes de llamarlo. Si dos esquemas definen el mismo nombre, se le pone prefijo `Resultado` al del resultado.
 - **Los paquetes de `fixtures/caso3d/` son 20, no 16.** Las 13 escenas canónicas traen su `Resultado` versionado. Las 3 de inversión (entre ellas, AXA) y las 4 de agentes solo guardan su parte, así que el completo se calcula con el solver TS al generar. `--check` no corre el solver, para no gastar tiempo de CI: en esas 7 revisa la escena y la versión.

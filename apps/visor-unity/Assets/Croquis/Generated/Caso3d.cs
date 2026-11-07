@@ -3784,8 +3784,8 @@ namespace Croquis.Generated
         public double[] Y { get; set; }
 
         /// <summary>
-        /// Altura del centro de masa sobre el origen de la escena, en metros (desde 1.14.0; sin
-        /// ella, plano).
+        /// Altura del piso bajo el vehículo sobre el origen de la escena, en metros: la del pivote,
+        /// con las llantas en el piso (desde 1.14.0; sin ella, plano).
         /// </summary>
         [JsonProperty("z", NullValueHandling = NullValueHandling.Ignore)]
         public double[] Z { get; set; }
