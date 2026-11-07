@@ -1,0 +1,14 @@
+{
+  "name": "Croquis.Visor",
+  "rootNamespace": "Croquis.Visor",
+  "references": ["Croquis.Core", "Croquis.Generated", "glTFast"],
+  "includePlatforms": [],
+  "excludePlatforms": [],
+  "allowUnsafeCode": false,
+  "overrideReferences": true,
+  "precompiledReferences": ["Newtonsoft.Json.dll"],
+  "autoReferenced": true,
+  "defineConstraints": [],
+  "versionDefines": [],
+  "noEngineReferences": false
+}

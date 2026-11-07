@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="es-MX">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Visor de Croquis</title>
+    <style>
+      html,
+      body {
+        margin: 0;
+        height: 100%;
+        background: #101114;
+      }
+      canvas {
+        display: block;
+        width: 100%;
+        height: 100%;
+      }
+    </style>
+  </head>
+  <body>
+    <canvas id="unity-canvas" tabindex="-1"></canvas>
+    <script>
+      // Página de prueba del build: junta los mensajes del puente para `eval/unity_build.mjs`. En la
+      // app, los recibe el componente <VisorUnity>.
+      window.croquisVisorRecibidos = [];
+      window.croquisVisorMensaje = function (texto) {
+        var m = JSON.parse(texto);
+        m.ms = performance.now();
+        window.croquisVisorRecibidos.push(m);
+      };
+    </script>
+    <script src="Build/{{{ LOADER_FILENAME }}}"></script>
+    <script>
+      createUnityInstance(document.getElementById("unity-canvas"), {
+        dataUrl: "Build/{{{ DATA_FILENAME }}}",
+        frameworkUrl: "Build/{{{ FRAMEWORK_FILENAME }}}",
+        codeUrl: "Build/{{{ CODE_FILENAME }}}",
+        companyName: "{{{ COMPANY_NAME }}}",
+        productName: "{{{ PRODUCT_NAME }}}",
+        productVersion: "{{{ PRODUCT_VERSION }}}",
+      })
+        .then(function (instancia) {
+          window.unityInstance = instancia;
+        })
+        .catch(function (error) {
+          window.croquisVisorMensaje(
+            JSON.stringify({ tipo: "error", codigo: "interno", mensaje: String(error) }),
+          );
+        });
+    </script>
+  </body>
+</html>
