@@ -5,9 +5,7 @@
  */
 import type { Reconstruccion, SupuestoDeclarado } from "@croquis/cesvi";
 import { conSigno, pctConSigno, type CifraContraste } from "./contraste-lab";
-import { rangoDeImpacto } from "./reconstruccion-lab";
-
-const f1 = (x: number) => x.toFixed(1);
+import { rangoDeVelocidad } from "./reconstruccion-lab";
 
 export interface FilaHoja {
   etiqueta: string;
@@ -21,12 +19,13 @@ export function filasDeLaHoja(
   contra: CifraContraste | null,
 ): FilaHoja[] {
   const filas: FilaHoja[] = r.velocidades.map((v) => {
-    const i = v.impacto;
-    const etiqueta = `${letraDe(String(v.vehiculo))} al impacto`;
-    if (i?.p50 === undefined) return { etiqueta, valor: "la evidencia no la fija" };
-    const r10 = rangoDeImpacto(v);
-    const rango = r10 ? ` · ${f1(r10.p10)}–${f1(r10.p90)}${r10.lineal ? " (lineal)" : ""}` : "";
-    return { etiqueta, valor: `${f1(i.p50)} km/h${rango}` };
+    const etiqueta = `${letraDe(String(v.vehiculo))} antes del impacto`;
+    if (!v.previa) return { etiqueta, valor: "la evidencia no la fija" };
+    const r10 = rangoDeVelocidad(v);
+    const rango = r10
+      ? ` · ${r10.p10.toFixed(2)}–${r10.p90.toFixed(2)}${r10.lineal ? " (lineal)" : ""}`
+      : "";
+    return { etiqueta, valor: `${v.previa.mejor.toFixed(2)} km/h${rango}` };
   });
   if (contra) {
     filas.push(
@@ -43,18 +42,17 @@ export function filasDeLaHoja(
   return filas;
 }
 
-/** La cita de la velocidad al impacto, con su rango y su método. */
+/** La cita de la velocidad de un vehículo: el mejor ajuste, con su rango y su método. */
 export function citaVelocidad(r: Reconstruccion, id: string, nombre: string): string | null {
   const v = r.velocidades.find((x) => String(x.vehiculo) === id);
-  const i = v?.impacto;
-  if (i?.p50 === undefined) return null;
-  const r10 = v ? rangoDeImpacto(v) : null;
+  if (!v?.previa) return null;
+  const r10 = rangoDeVelocidad(v);
   const rango = r10
     ? r10.lineal
-      ? ` (rango por aproximación lineal: ${f1(r10.p10)}–${f1(r10.p90)})`
-      : ` (p10–p90: ${f1(r10.p10)}–${f1(r10.p90)})`
+      ? ` (rango por aproximación lineal: ${r10.p10.toFixed(2)}–${r10.p90.toFixed(2)})`
+      : ` (rango: ${r10.p10.toFixed(2)}–${r10.p90.toFixed(2)})`
     : "";
-  return `Velocidad de ${nombre} al impacto: ${f1(i.p50)} km/h${rango}, según la reconstrucción física de Croquis.`;
+  return `Velocidad de ${nombre} antes del impacto: ${v.previa.mejor.toFixed(2)} km/h${rango}, mejor ajuste de la reconstrucción física de Croquis.`;
 }
 
 /** La cita de la comparación: las dos cifras y la diferencia, con su valor y su porcentaje. */

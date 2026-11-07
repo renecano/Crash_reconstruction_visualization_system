@@ -98,7 +98,7 @@ describe("el dictamen de una reconstrucción (R8)", () => {
     ]);
     expect(t).toContain("vehículo A, marca VW, tipo Jetta");
     const v1 = r.velocidades.find((x) => x.vehiculo === "V1")!.previa!;
-    expect(t).toContain(`${v1.mejor.toFixed(1)} (${v1.p10!.toFixed(1)}–${v1.p90!.toFixed(1)})`);
+    expect(t).toContain(`${v1.mejor.toFixed(2)} (${v1.p10!.toFixed(2)}–${v1.p90!.toFixed(2)})`);
     expect(t).toContain("BORRADOR");
     expect(t).toContain("[el perito debe concluir]");
   }, 60_000);

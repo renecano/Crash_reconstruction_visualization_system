@@ -23,8 +23,8 @@ const res = {
 const r = {
   ids: { "veh-a": "V2", "veh-b": "V1" },
   velocidades: [
-    { vehiculo: "V1", previa: null, impacto: { p10: 6.8, p50: 9.1, p90: 9.1 } },
-    { vehiculo: "V2", previa: null, impacto: { p10: 47.3, p50: 49.2, p90: 49.2 } },
+    { vehiculo: "V1", previa: { mejor: 25.32, p10: 8.83, p90: 26.27 }, impacto: { p50: 20 } },
+    { vehiculo: "V2", previa: { mejor: 71.56, p10: 68.02, p90: 92.81 }, impacto: { p50: 75.2 } },
   ],
 } as unknown as Reconstruccion;
 const nombreDe = (id: string) => (id === "V1" ? "A · Silverado" : "B · Tacoma");
@@ -49,30 +49,36 @@ describe("Presentar (Laboratorio §8)", () => {
     expect(capitulos({ ...base, contra: null, conteo: null })).toHaveLength(3);
   });
 
-  it("el impacto: el más rápido primero y en grande, con su rango", () => {
+  it("el impacto: el mejor ajuste del más rápido, en grande, con su rango; no la mediana", () => {
     const c = capitulos({ ...base, contra: null, conteo: null })[1]!;
     expect(c.filas[0]).toEqual({
-      etiqueta: "B · Tacoma al impacto",
-      valor: "49.2 km/h",
+      etiqueta: "B · Tacoma antes del impacto",
+      valor: "71.56 km/h",
       grande: true,
     });
-    expect(c.filas[1]).toEqual({ etiqueta: "Rango p10–p90", valor: "47.3–49.2" });
-    expect(c.filas[2]).toMatchObject({ etiqueta: "A · Silverado al impacto", valor: "9.1 km/h" });
+    expect(c.filas[1]).toEqual({ etiqueta: "Rango", valor: "68.02–92.81" });
+    expect(c.filas[2]).toMatchObject({
+      etiqueta: "A · Silverado antes del impacto",
+      valor: "25.32 km/h",
+    });
   });
 
-  it("si las simulaciones no se apartan, el rango se nombra como lineal", () => {
+  it("si el rango es lineal, se nombra", () => {
     const quieta = {
       ...r,
       velocidades: [
         {
           vehiculo: "V2",
-          previa: { mejor: 41.5, p10: 27.2, p50: 41.5, p90: 55.7 },
+          previa: { mejor: 41.5, p10: 27.2, p90: 55.7, rango_por: "laplace" },
           impacto: { p10: 41.5, p50: 41.5, p90: 41.5 },
         },
       ],
     } as Reconstruccion;
     const c = capitulos({ ...base, r: quieta, contra: null, conteo: null })[1]!;
-    expect(c.filas[1]).toEqual({ etiqueta: "Rango por aproximación lineal", valor: "27.2–55.7" });
+    expect(c.filas[1]).toEqual({
+      etiqueta: "Rango por aproximación lineal",
+      valor: "27.20–55.70",
+    });
   });
 
   it("si la evidencia no fija ninguna velocidad, lo dice", () => {

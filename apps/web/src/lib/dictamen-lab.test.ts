@@ -12,7 +12,11 @@ import {
 const r = {
   velocidades: [
     { vehiculo: "V1", previa: null, impacto: null },
-    { vehiculo: "V2", previa: null, impacto: { p10: 47.32, p50: 49.21, p90: 49.21 } },
+    {
+      vehiculo: "V2",
+      previa: { mejor: 71.56, p10: 68.02, p90: 92.81 },
+      impacto: { p10: 68.02, p50: 75.2, p90: 92.81 },
+    },
   ],
 } as unknown as Reconstruccion;
 const letra = (id: string) => (id === "V1" ? "A" : "B");
@@ -28,8 +32,8 @@ const contra = {
 describe("el dictamen (Laboratorio §8)", () => {
   it("la hoja lleva cada velocidad con su rango, y lo que la evidencia no fija lo dice", () => {
     expect(filasDeLaHoja(r, letra, null)).toEqual([
-      { etiqueta: "A al impacto", valor: "la evidencia no la fija" },
-      { etiqueta: "B al impacto", valor: "49.2 km/h · 47.3–49.2" },
+      { etiqueta: "A antes del impacto", valor: "la evidencia no la fija" },
+      { etiqueta: "B antes del impacto", valor: "71.56 km/h · 68.02–92.81" },
     ]);
   });
 
@@ -38,13 +42,15 @@ describe("el dictamen (Laboratorio §8)", () => {
       velocidades: [
         {
           vehiculo: "V2",
-          previa: { mejor: 41.5, p10: 27.2, p50: 41.5, p90: 55.7 },
+          previa: { mejor: 41.5, p10: 27.2, p50: 41.5, p90: 55.7, rango_por: "laplace" },
           impacto: { p10: 41.5, p50: 41.5, p90: 41.5 },
         },
       ],
     } as unknown as Reconstruccion;
-    expect(filasDeLaHoja(quieta, letra, null)[0]!.valor).toBe("41.5 km/h · 27.2–55.7 (lineal)");
-    expect(citaVelocidad(quieta, "V2", "B")).toContain("rango por aproximación lineal: 27.2–55.7");
+    expect(filasDeLaHoja(quieta, letra, null)[0]!.valor).toBe("41.50 km/h · 27.20–55.70 (lineal)");
+    expect(citaVelocidad(quieta, "V2", "B")).toContain(
+      "rango por aproximación lineal: 27.20–55.70",
+    );
   });
 
   it("la comparación con CESVI va con su valor y su porcentaje", () => {
@@ -55,7 +61,7 @@ describe("el dictamen (Laboratorio §8)", () => {
 
   it("las citas llevan el dato con su método; sin dato no hay cita", () => {
     expect(citaVelocidad(r, "V2", "B · Tacoma")).toBe(
-      "Velocidad de B · Tacoma al impacto: 49.2 km/h (p10–p90: 47.3–49.2), según la reconstrucción física de Croquis.",
+      "Velocidad de B · Tacoma antes del impacto: 71.56 km/h (rango: 68.02–92.81), mejor ajuste de la reconstrucción física de Croquis.",
     );
     expect(citaVelocidad(r, "V1", "A")).toBeNull();
     expect(citaContraste(contra, "B")).toContain("63.90 km/h");

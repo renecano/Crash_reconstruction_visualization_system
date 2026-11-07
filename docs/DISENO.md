@@ -48,10 +48,11 @@ Los números de todas salen del solver o de la comparación con el reporte. El d
 
 - **La escena** es la escena fácil, no el diseño de `Lab-Escena` (René, 2026-11-05; ADR 0110).
 - **Reconstrucción:**
-  - El histograma es de simulaciones reales: el solver entrega `valores_kmh`.
+  - El histograma es de simulaciones reales (el solver entrega `valores_kmh`) y marca dónde cae el mejor ajuste.
   - «Detrás de B» es una cámara propia (`chaseCamera`), porque la cinematográfica orbita en un ángulo fijo.
   - Lo demás del acto va plegado en «Ver el detalle»; las hipótesis y el aviso de caso cambiado siguen a la vista.
-- **El rango que no aparenta certeza:** si las simulaciones no se apartan de la solución, su p10–p90 tiene ancho cero. No se dibuja como si fuera certeza: se dice, y se da el rango de la velocidad previa, nombrado «aproximación lineal». Vale en la hoja, el dictamen, las citas y Presentar.
+- **Un número por cantidad:** la velocidad de un vehículo es siempre el mejor ajuste, con su rango y dos decimales, en todas las pantallas y en el PDF. La mediana de las simulaciones es otra cantidad: va aparte, con su nombre.
+- **El rango que no aparenta certeza:** si las simulaciones no se apartan de la solución, no se dibuja un histograma de una barra: se dice, y el rango se nombra «aproximación lineal».
 - **Análisis:** solo se dibuja el perfil medido. El del modelo es uniforme y parecería una forma observada, así que va como texto con su método.
 - **Contra CESVI:**
   - Dos lecturas con el mismo peso, cada una con su nombre (T3.4): «Método de CESVI con los datos del reporte» y «Reconstrucción física de Croquis», más una línea de por qué difieren. También en Presentar. Nada se ajusta para coincidir.

@@ -488,7 +488,7 @@ function colocarPosteriores(
 export interface VelocidadReconstruida {
   vehiculo: Id;
   /** Lo que fija la evidencia: mejor estimación y percentiles (km/h). null si no lo fija. */
-  previa: { mejor: number; p10?: number; p50?: number; p90?: number } | null;
+  previa: { mejor: number; p10?: number; p50?: number; p90?: number; rango_por?: string } | null;
   impacto: {
     p10?: number;
     p50?: number;

@@ -3,7 +3,7 @@ import { dirname, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import { escenaDeNarracion, type SalidaCorpus } from "@croquis/cesvi";
 import { describe, expect, it } from "vitest";
-import { casoAxa } from "./caso-axa";
+import { casoAxa } from "./axa-reconstruccion";
 import { marcarRelato, metaDelHecho, textoDano, tituloDelHecho } from "./hecho-laboratorio";
 
 const aqui = dirname(fileURLToPath(import.meta.url));

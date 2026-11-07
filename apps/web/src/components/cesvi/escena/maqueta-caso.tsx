@@ -91,8 +91,8 @@ export function MaquetaCaso({
       >
         {veloz ? (
           <span className="font-mono text-texto" data-testid="maqueta-velocidad">
-            velocidad de {nombres[veloz.id] ?? veloz.rol} · {kmhEn(veloz.trayectoria, 0).toFixed(1)}{" "}
-            → {kmhAntesDe(veloz.trayectoria, ti).toFixed(1)} km/h
+            velocidad de {nombres[veloz.id] ?? veloz.rol} · {kmhEn(veloz.trayectoria, 0).toFixed(2)}{" "}
+            → {kmhAntesDe(veloz.trayectoria, ti).toFixed(2)} km/h
           </span>
         ) : null}
         <span>

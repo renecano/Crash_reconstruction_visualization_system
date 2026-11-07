@@ -4,7 +4,7 @@
  * (`eval/cesvi_axa_diagnostico.mts`) y la medición con semillas (`eval/cesvi_axa_semillas.mts`),
  * para que todos muestren lo mismo que el paso 6.
  *
- * - **El expediente** es el del caso de ejemplo de /cesvi (`casoAxa`): la lectura grabada del
+ * - **El expediente** es el del caso de ejemplo de /cesvi (`casoAxaSinColocar`): la lectura grabada del
  *   reporte, con la masa de V1 de su ficha técnica.
  * - **Las posiciones** son las de la versión de la evidencia (`proponerVersiones`) sobre el tramo de
  *   MEX 15D del caso: A queda a 15.89 m del impacto, donde terminan los restos. El reposo de B no lo
@@ -21,8 +21,9 @@ import {
   ubicacionIlustrativa,
   type Expediente,
 } from "@croquis/cesvi";
-import { casoAxa } from "./caso-axa";
+import { casoAxaSinColocar } from "./caso-axa";
 import { RADIO_CALLES_M } from "./calles-del-mapa";
+import type { CasoExpediente } from "./casos";
 
 /** El identificador de escena con que la app reconstruye un caso (el de `especDeExpediente`). */
 export const SPEC_ID_APP = "caso-nuevo";
@@ -48,7 +49,7 @@ export function viaAxa() {
 
 export function expedienteAxaReconstruccion(o: OpcionesAxa = {}): Expediente {
   const { c, u, via } = viaAxa();
-  const base = casoAxa().escena?.expediente;
+  const base = casoAxaSinColocar().escena?.expediente;
   if (!base) throw new Error("El caso de AXA no trae su expediente");
   const ev = proponerVersiones({
     impacto: [u.lon, u.lat],
@@ -85,4 +86,13 @@ export function expedienteAxaReconstruccion(o: OpcionesAxa = {}): Expediente {
     }),
   );
   return { ...base, versiones: [{ tipo: "evidencia", posiciones }] };
+}
+
+/**
+ * El caso de ejemplo de /cesvi: el de AXA con su escena ya colocada, la misma que miden `eval/` y el
+ * video. Así su lectura física siempre da lo mismo y coincide con `eval/results` (René, 2026-11-06).
+ */
+export function casoAxa(): CasoExpediente {
+  const c = casoAxaSinColocar();
+  return { ...c, escena: { ...c.escena!, expediente: expedienteAxaReconstruccion() } };
 }

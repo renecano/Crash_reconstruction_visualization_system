@@ -1,0 +1,63 @@
+{
+  "lectura_fisica_claro": {
+    "croquis_kmh": "71.56",
+    "rango": "rango 68.02–92.81",
+    "cesvi_kmh": "63.15",
+    "diferencia_kmh": "diferencia · +8.41 km/h",
+    "diferencia_pct": "+13.32 %"
+  },
+  "claro": {
+    "casos": "con CESVI: 63.90 contra 63.15 km/h",
+    "pdf_lleva": [
+      "63.90",
+      "63.15",
+      "+1.19 %"
+    ],
+    "violaciones_serias": {
+      "0-casos": [],
+      "1-hecho": [],
+      "2-escena": [],
+      "3-reconstruccion": [],
+      "presentar": [],
+      "4-analisis": [],
+      "4-numeros": [],
+      "5-contraste": [],
+      "6-dictamen": [],
+      "6-dictamen-firmado": []
+    },
+    "errores_de_pagina": []
+  },
+  "fecha": "2026-11-07",
+  "lectura_fisica_oscuro": {
+    "croquis_kmh": "71.56",
+    "rango": "rango 68.02–92.81",
+    "cesvi_kmh": "63.15",
+    "diferencia_kmh": "diferencia · +8.41 km/h",
+    "diferencia_pct": "+13.32 %"
+  },
+  "oscuro": {
+    "casos": "con CESVI: 63.90 contra 63.15 km/h",
+    "pdf_lleva": [
+      "63.90",
+      "63.15",
+      "+1.19 %"
+    ],
+    "violaciones_serias": {
+      "0-casos": [],
+      "1-hecho": [],
+      "2-escena": [],
+      "3-reconstruccion": [],
+      "presentar": [],
+      "4-analisis": [],
+      "4-numeros": [],
+      "5-contraste": [],
+      "6-dictamen": [],
+      "6-dictamen-firmado": []
+    },
+    "errores_de_pagina": []
+  },
+  "movimiento_reducido": {
+    "cifra_inmediata": "63.90",
+    "animaciones_en_contraste": 0
+  }
+}

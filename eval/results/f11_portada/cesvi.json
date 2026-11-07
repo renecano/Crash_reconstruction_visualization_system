@@ -1,0 +1,204 @@
+{
+  "ruta": "/cesvi",
+  "accesibilidad": 100,
+  "rendimiento": 75,
+  "lcp_ms": 1785,
+  "cls": 0.02,
+  "tbt_ms": 1222,
+  "fcp_ms": 1785,
+  "carga_mb": 1.18,
+  "elemento_lcp": "<h1 class=\"font-[family-name:var(--fuente-titulo)] text-[clamp(4.5rem,9vw,7.5rem)] le…\">",
+  "accesibilidad_fallas": [],
+  "lighthouse": "13.5.0",
+  "benchmark_index": 1275.5,
+  "corriente": "ca",
+  "entorno": {
+    "formFactor": "mobile",
+    "throttlingMethod": "devtools",
+    "throttling": {
+      "rttMs": 150,
+      "throughputKbps": 1638.4,
+      "requestLatencyMs": 562.5,
+      "downloadThroughputKbps": 1474.5600000000002,
+      "uploadThroughputKbps": 675,
+      "cpuSlowdownMultiplier": 4
+    }
+  },
+  "cumple": {
+    "accesibilidad": true,
+    "lcp": true,
+    "cls": true,
+    "carga": true
+  },
+  "lantern": {
+    "lcp_ms": 5778,
+    "fcp_ms": 1149,
+    "tbt_ms": 1230,
+    "cls": 0.019,
+    "rendimiento": 54,
+    "lcp_cumpliria": false
+  },
+  "corridas": {
+    "devtools": [
+      {
+        "accesibilidad": 100,
+        "rendimiento": 75,
+        "lcp_ms": 1785,
+        "cls": 0.02,
+        "tbt_ms": 1222,
+        "fcp_ms": 1785,
+        "carga_mb": 1.18,
+        "elemento_lcp": "<h1 class=\"font-[family-name:var(--fuente-titulo)] text-[clamp(4.5rem,9vw,7.5rem)] le…\">",
+        "accesibilidad_fallas": [],
+        "lighthouse": "13.5.0",
+        "benchmark_index": 1275.5,
+        "corriente": "ca",
+        "entorno": {
+          "formFactor": "mobile",
+          "throttlingMethod": "devtools",
+          "throttling": {
+            "rttMs": 150,
+            "throughputKbps": 1638.4,
+            "requestLatencyMs": 562.5,
+            "downloadThroughputKbps": 1474.5600000000002,
+            "uploadThroughputKbps": 675,
+            "cpuSlowdownMultiplier": 4
+          }
+        }
+      },
+      {
+        "accesibilidad": 100,
+        "rendimiento": 73,
+        "lcp_ms": 1881,
+        "cls": 0.02,
+        "tbt_ms": 1424,
+        "fcp_ms": 1881,
+        "carga_mb": 1.14,
+        "elemento_lcp": "<h1 class=\"font-[family-name:var(--fuente-titulo)] text-[clamp(4.5rem,9vw,7.5rem)] le…\">",
+        "accesibilidad_fallas": [],
+        "lighthouse": "13.5.0",
+        "benchmark_index": 1386,
+        "corriente": "ca",
+        "entorno": {
+          "formFactor": "mobile",
+          "throttlingMethod": "devtools",
+          "throttling": {
+            "rttMs": 150,
+            "throughputKbps": 1638.4,
+            "requestLatencyMs": 562.5,
+            "downloadThroughputKbps": 1474.5600000000002,
+            "uploadThroughputKbps": 675,
+            "cpuSlowdownMultiplier": 4
+          }
+        }
+      },
+      {
+        "accesibilidad": 100,
+        "rendimiento": 78,
+        "lcp_ms": 1329,
+        "cls": 0.02,
+        "tbt_ms": 966,
+        "fcp_ms": 1329,
+        "carga_mb": 1.18,
+        "elemento_lcp": "<h1 class=\"font-[family-name:var(--fuente-titulo)] text-[clamp(4.5rem,9vw,7.5rem)] le…\">",
+        "accesibilidad_fallas": [],
+        "lighthouse": "13.5.0",
+        "benchmark_index": 1154.5,
+        "corriente": "ca",
+        "entorno": {
+          "formFactor": "mobile",
+          "throttlingMethod": "devtools",
+          "throttling": {
+            "rttMs": 150,
+            "throughputKbps": 1638.4,
+            "requestLatencyMs": 562.5,
+            "downloadThroughputKbps": 1474.5600000000002,
+            "uploadThroughputKbps": 675,
+            "cpuSlowdownMultiplier": 4
+          }
+        }
+      }
+    ],
+    "simulate": [
+      {
+        "accesibilidad": 100,
+        "rendimiento": 54,
+        "lcp_ms": 5778,
+        "cls": 0.019,
+        "tbt_ms": 1230,
+        "fcp_ms": 1149,
+        "carga_mb": 1.18,
+        "elemento_lcp": "<h1 class=\"font-[family-name:var(--fuente-titulo)] text-[clamp(4.5rem,9vw,7.5rem)] le…\">",
+        "accesibilidad_fallas": [],
+        "lighthouse": "13.5.0",
+        "benchmark_index": 1005,
+        "corriente": "ca",
+        "entorno": {
+          "formFactor": "mobile",
+          "throttlingMethod": "simulate",
+          "throttling": {
+            "rttMs": 150,
+            "throughputKbps": 1638.4,
+            "requestLatencyMs": 562.5,
+            "downloadThroughputKbps": 1474.5600000000002,
+            "uploadThroughputKbps": 675,
+            "cpuSlowdownMultiplier": 4
+          }
+        }
+      },
+      {
+        "accesibilidad": 100,
+        "rendimiento": 58,
+        "lcp_ms": 5738,
+        "cls": 0,
+        "tbt_ms": 885,
+        "fcp_ms": 986,
+        "carga_mb": 1.18,
+        "elemento_lcp": "<p class=\"text-[1.05rem] text-texto-2\" data-testid=\"estado-casos\">",
+        "accesibilidad_fallas": [],
+        "lighthouse": "13.5.0",
+        "benchmark_index": 1213,
+        "corriente": "ca",
+        "entorno": {
+          "formFactor": "mobile",
+          "throttlingMethod": "simulate",
+          "throttling": {
+            "rttMs": 150,
+            "throughputKbps": 1638.4,
+            "requestLatencyMs": 562.5,
+            "downloadThroughputKbps": 1474.5600000000002,
+            "uploadThroughputKbps": 675,
+            "cpuSlowdownMultiplier": 4
+          }
+        }
+      },
+      {
+        "accesibilidad": 100,
+        "rendimiento": 60,
+        "lcp_ms": 5870,
+        "cls": 0,
+        "tbt_ms": 722,
+        "fcp_ms": 975,
+        "carga_mb": 1.18,
+        "elemento_lcp": "<p class=\"text-[1.05rem] text-texto-2\" data-testid=\"estado-casos\">",
+        "accesibilidad_fallas": [],
+        "lighthouse": "13.5.0",
+        "benchmark_index": 1449,
+        "corriente": "ca",
+        "entorno": {
+          "formFactor": "mobile",
+          "throttlingMethod": "simulate",
+          "throttling": {
+            "rttMs": 150,
+            "throughputKbps": 1638.4,
+            "requestLatencyMs": 562.5,
+            "downloadThroughputKbps": 1474.5600000000002,
+            "uploadThroughputKbps": 675,
+            "cpuSlowdownMultiplier": 4
+          }
+        }
+      }
+    ]
+  },
+  "corridas_fallidas": []
+}

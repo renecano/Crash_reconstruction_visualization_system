@@ -42,7 +42,7 @@ import { conCallesDelMapa, conObjetosDelMapa } from "@/lib/calles-del-mapa";
 import { reconstruirCompletoEnNavegador } from "@/lib/reconstruct-client";
 import { DEFINICION, METODO } from "@/lib/textos-caso";
 
-const kmh = (x?: number) => (x === undefined ? "—" : x.toFixed(1));
+const kmh = (x?: number) => (x === undefined ? "—" : x.toFixed(2));
 
 export type PosicionMovil = ReturnType<typeof posicionesEnTiempo>[number];
 export type MarcaImpacto = ReturnType<typeof impactosEnMapa>[number];
@@ -159,7 +159,9 @@ export function TablaVelocidades({ r }: { r: Reconstruccion }) {
         <tr className="text-left text-xs text-texto-3">
           <th className="py-2 font-medium">Vehículo</th>
           <th className="py-2 text-right font-medium">Velocidad previa (km/h)</th>
-          <th className="py-2 text-right font-medium">Al contacto, p10–p50–p90 (km/h)</th>
+          <th className="py-2 text-right font-medium">
+            Al contacto en las simulaciones, p10–p50–p90 (km/h)
+          </th>
         </tr>
       </thead>
       <tbody className="cifras">
@@ -173,7 +175,7 @@ export function TablaVelocidades({ r }: { r: Reconstruccion }) {
             <td className="py-2.5 text-right">
               {v.previa ? (
                 <>
-                  {v.previa.mejor.toFixed(1)}{" "}
+                  {v.previa.mejor.toFixed(2)}{" "}
                   <span className="text-texto-3">
                     ({kmh(v.previa.p10)}–{kmh(v.previa.p90)})
                   </span>
