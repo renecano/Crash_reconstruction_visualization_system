@@ -57,17 +57,13 @@
     </div>
     <script>
       // Mide lo mismo que eval/unity_build.mjs, pero en cualquier navegador: hasta `listo`, hasta
-      // `cargado` con AXA y los fps que reporta Unity durante 15 s. Abre la página con la caché
-      // vacía (ventana privada) para que la carga cuente completa.
-      var BUILD = "__BUILD__";
-      var CASO = "__CASO__";
+      // `cargado` con AXA y los fps que reporta Unity durante 15 s. El build vive en Vercel Blob;
+      // `manifest.json` dice dónde (tools/unity/publicar-web.mjs). Abre la página en una ventana
+      // privada para que la carga cuente completa.
       var t0 = performance.now();
-      var r = {
-        build: BUILD,
-        navegador: navigator.userAgent,
-        nucleos: navigator.hardwareConcurrency,
-      };
+      var r = { navegador: navigator.userAgent, nucleos: navigator.hardwareConcurrency };
       var fps = [];
+      var caso = null;
       var estado = document.getElementById("estado");
       function seg(ms) {
         return Math.round(ms / 100) / 10;
@@ -91,6 +87,11 @@
           b.textContent = "Copiado";
         };
       }
+      function fallar(texto) {
+        r.error = texto;
+        mostrar("Error: " + texto);
+        document.getElementById("resultado").textContent = JSON.stringify(r, null, 2);
+      }
       window.croquisVisorMensaje = function (texto) {
         var m = JSON.parse(texto);
         var ahora = performance.now();
@@ -98,7 +99,7 @@
           r.hasta_listo_s = seg(ahora - t0);
           mostrar("Unity listo en " + r.hasta_listo_s + " s. Cargando AXA…");
           r._inicioCaso = ahora;
-          fetch(CASO)
+          fetch(caso)
             .then(function (x) {
               return x.text();
             })
@@ -119,29 +120,42 @@
         } else if (m.tipo === "fps") {
           fps.push(m.p50);
         } else if (m.tipo === "error") {
-          r.error = m.codigo + ": " + m.mensaje;
-          mostrar("Error: " + r.error);
-          document.getElementById("resultado").textContent = JSON.stringify(r, null, 2);
+          fallar(m.codigo + ": " + m.mensaje);
         }
       };
-    </script>
-    <script src="Build/__LOADER__"></script>
-    <script>
-      createUnityInstance(document.getElementById("unity-canvas"), {
-        dataUrl: "Build/__DATA__",
-        frameworkUrl: "Build/__FRAMEWORK__",
-        codeUrl: "Build/__CODE__",
-        companyName: "Croquis",
-        productName: "Visor de Croquis",
-        productVersion: "1.0",
-      })
-        .then(function (i) {
-          window.unityInstance = i;
+      fetch("manifest.json", { cache: "no-store" })
+        .then(function (x) {
+          return x.json();
+        })
+        .then(function (man) {
+          var base = man.base + man.prefijo;
+          r.build = man.huella;
+          caso = base + man.caso;
+          var s = document.createElement("script");
+          s.src = base + "Build/" + man.loader;
+          s.onerror = function () {
+            fallar("No se pudo bajar el cargador de Unity.");
+          };
+          s.onload = function () {
+            createUnityInstance(document.getElementById("unity-canvas"), {
+              dataUrl: base + "Build/" + man.data,
+              frameworkUrl: base + "Build/" + man.framework,
+              codeUrl: base + "Build/" + man.code,
+              companyName: "Croquis",
+              productName: "Visor de Croquis",
+              productVersion: "1.0",
+            })
+              .then(function (i) {
+                window.unityInstance = i;
+              })
+              .catch(function (e) {
+                fallar(String(e));
+              });
+          };
+          document.body.appendChild(s);
         })
         .catch(function (e) {
-          window.croquisVisorMensaje(
-            JSON.stringify({ tipo: "error", codigo: "interno", mensaje: String(e) }),
-          );
+          fallar("No se pudo leer manifest.json: " + e);
         });
     </script>
   </body>

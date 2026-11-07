@@ -4,7 +4,7 @@ Plan: `docs/cesvi/PLAN-CESVI.md` §3.3. Reglas: `CLAUDE.md`. ADR del bloque 0110
 
 ## Estado
 
-- **Fase actual:** U1 terminada en esta laptop, con el PR abierto para René. Falta publicar el build en Blob para medir la carga en la MacBook M1.
+- **Fase actual:** U1 terminada en esta laptop, con el PR abierto para René. El build está en Blob; falta la medición en la MacBook M1.
 - **Siguiente paso:** U2 (escenario).
 
 ## U-pre (hecho, #181)
@@ -39,28 +39,21 @@ La primera mitad, `Croquis.Core` y su job de CI, está en `main` (#184). El rest
 - **Captura:** `eval/results/unity_build.png`. Se ven los dos vehículos de AXA con sus ruedas, sobre un piso liso: el escenario llega en U2. La cámara órbita deja la acción en una esquina: el encuadre llega en U4.
 - **Peso comprimido:** la cifra con Brotli es de referencia, porque no sabemos con qué calidad comprime Blob. La de producción se mide en U6.
 - **Cómo probarlo:** `powershell tools/unity/build-web.ps1` y luego `node eval/unity_build.mjs`.
-- **Lo que necesito de ti:** publicar el build (ver «Medir en la MacBook M1»).
+- **Lo que necesito de ti:** abrir la liga de «Medir en la MacBook M1» en la M1 y pegar el resultado.
 
 ### Medir en la MacBook M1
 
-La liga, cuando el build esté publicado:
+La liga, que funciona desde que este PR esté en producción:
 
-https://fmb6kf9hhoc8c9mk.public.blob.vercel-storage.com/recursos/visor-unity/2d5c1a20a446c129/medir.html
+https://croquis-sage.vercel.app/visor-unity/medir.html
 
 Ábrela en una ventana privada, para que la carga cuente completa. La página carga Unity, abre AXA y mide 15 s de reproducción. Al final muestra un JSON con «Copiar resultado» para pegarlo en la conversación.
 
-**Para publicar,** en tu propia terminal de PowerShell y no con `!`, para que el token no pase por el chat:
+**Para publicar:** `node tools/unity/publicar-web.mjs`. Toma `RECURSOS_READ_WRITE_TOKEN` de la terminal o del `.env.local` de la raíz, solo en memoria.
 
-```
-$env:RECURSOS_READ_WRITE_TOKEN = "<token de escritura del almacén croquis-recursos>"
-node tools/unity/publicar-web.mjs
-```
-
-No pude publicarlo yo:
-
-- **La CLI de Vercel** no tiene credenciales del almacén.
-- **El token OIDC de `.env.local`** venció el 2026-10-16.
-- **La API de Vercel** no me deja leer el token de escritura: responde 403, porque es una variable sensible.
+- **El build ya está en Blob** (huella `2d5c1a20a446c129`) y la página lee de `apps/web/public/visor-unity/manifest.json` dónde está.
+- **La página vive en el sitio y no en Blob,** porque Blob entrega el HTML como descarga (ADR 0111).
+- **Probada en local** con el build real de Blob y sin limitar la red: Unity arrancó en 4.1 s y AXA quedó cargado 3 s después, con 58.8 fps. Fue una sola corrida de prueba; las cifras oficiales son las de `eval/results/unity_build.json`.
 
 La huella `2d5c1a20a446c129` es la de este build. Si se reconstruye, el script imprime la liga nueva.
 
@@ -89,7 +82,7 @@ La huella `2d5c1a20a446c129` es la de este build. Si se reconstruye, el script i
 ### Instalado
 
 - **Unity 6000.3.28f1** en `D:\Unity\Editor`, con WebGL y Windows IL2CPP.
-- **Unity 6000.4.2f1** sigue instalada: la usa el proyecto de prueba de la carpeta del Tec. René decide si se desinstala.
+- **Unity 6000.4.2f1** se queda instalada: la usa el proyecto de prueba de la carpeta del Tec, y René decidió dejarla (2026-11-07).
 - **.NET SDK 10.0.403** en `D:\dotnet-sdk`.
 
 ### Pendiente del visor
@@ -98,7 +91,7 @@ La huella `2d5c1a20a446c129` es la de este build. Si se reconstruye, el script i
 - **Bicicleta y scooter:** no tienen modelo; son una caja de sus medidas hasta U3.
 - **Sin implementar aún:** `calidad` (U5), `capturar` y `modoEdicion` (U6), y las cámaras que no son cenital u órbita (U4). Hoy contestan con `error`.
 - **La leyenda ilustrativa** todavía no sale en el visor: llega con el escenario y las cámaras.
-- **La medición en la MacBook M1,** cuando el build esté publicado.
+- **La medición en la MacBook M1:** la corre René con la liga.
 
 ## Necesito del otro frente
 
@@ -106,4 +99,4 @@ Nada por ahora.
 
 ## Bloqueado
 
-- **Publicar el build en Blob:** necesita el token de escritura del almacén, que solo René tiene. Ver «Medir en la MacBook M1».
+Nada por ahora.
