@@ -1,0 +1,5 @@
+<linker>
+  <!-- Newtonsoft llena los tipos generados por reflexión: IL2CPP no debe quitarles nada. -->
+  <assembly fullname="Croquis.Generated" preserve="all" />
+  <assembly fullname="Croquis.Core" preserve="all" />
+</linker>

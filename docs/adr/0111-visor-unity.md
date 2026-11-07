@@ -37,6 +37,7 @@
 ## Límites y pendientes
 
 - **El límite de carga para caer al visor ligero (§2.1.9):** 45 s, de forma provisional. No está medido: se revisa con la medición de U1 (`eval/results/unity_build.json`).
-- **La compresión del build web:** se decide en U6, al verificar qué encabezados sirve Blob.
+- **La compresión del build web (verificado el 2026-11-07, adelanta lo de U6):** el build se hace sin comprimir y Blob lo comprime al servirlo. Con `curl` contra el build publicado, los cuatro archivos llegaron con `Content-Encoding: br` y su tipo correcto (`application/wasm` en el `.wasm`). El `.wasm` bajó 10.4 MB de 33.4 y todo el build, 13.6 MB. Comprimir en Unity obligaría a servir los encabezados a mano y Blob no lo permite, así que no se hace.
+- **Blob entrega el HTML como descarga** (`Content-Disposition: attachment`). Las páginas que cargan el visor viven en el sitio, en `apps/web/public/visor-unity/`, y leen de `manifest.json` dónde está el build en Blob. Los archivos del build sí cargan desde Blob, porque llegan con `fetch` y con `<script>`, que no hacen caso a ese encabezado.
 - **Unity:** la versión exacta se anota en `docs/adr/0001-stack.md` al instalar. El proyecto de prueba de la carpeta del Tec usa 6000.4.2f1, que no es LTS.
 - **El solver no recibe la malla de relieve.** `lugar.terreno.relieve.malla_id` solo la cita, y la malla viaja en el paquete caso-3d. Para W5, el solver necesita las alturas: W decide cómo dárselas y, si cambia el contrato, lo sube en su PR.

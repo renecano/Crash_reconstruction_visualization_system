@@ -1,0 +1,10 @@
+{
+  "huella": "2d5c1a20a446c129",
+  "base": "https://fmb6kf9hhoc8c9mk.public.blob.vercel-storage.com/",
+  "prefijo": "recursos/visor-unity/2d5c1a20a446c129/",
+  "loader": "38a9459f49e54d4b413297a58b7f9e02.loader.js",
+  "data": "20a40c18603966fc2419a0e8d75ce069.data",
+  "framework": "8374d4805ace8548c49377165687fcac.framework.js",
+  "code": "cd01b5ab4b8c927261ace3f2fb100226.wasm",
+  "caso": "axa_alcance.json"
+}
