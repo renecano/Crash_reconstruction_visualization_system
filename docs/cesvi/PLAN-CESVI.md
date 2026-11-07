@@ -1,166 +1,403 @@
-# Croquis para CESVI · plan de cierre (v3)
+# Croquis para CESVI · plan final (v4)
 
-> **v3, 2026-10-30.** René pidió un análisis completo del proyecto y un plan para terminarlo al 100 %. Esta v3 reemplaza a la v2 (2026-10-21) y manda sobre `PLAN.md` y sobre `PROTOTIPO.md` en lo que se contradigan. Las reglas de trabajo siguen en `CLAUDE.md`. Lo que la v2 ya definió (§1 «Qué es Croquis», §3 «Datos», §4 «Principios») sigue valiendo y no se repite aquí.
->
-> **La idea de esta versión:** ya no se agregan fases nuevas. Hay una lista cerrada de siete tramos (T1–T7), cada uno con su «listo cuando» medible, y una definición de terminado que René puede palomear. Cuando los siete estén en verde, Croquis para CESVI está terminado.
+**Fecha:** 2026-11-07. **Sustituye a:** v3 (2026-10-30), que pasa a `docs/historial/`. Lo ya hecho en v3 sigue valiendo.
 
-## 0. Dónde estamos (análisis del 2026-10-30)
+## Por qué hay v4
 
-### 0.1 Lo que ya está y funciona
+1. **CESVI pidió el 3D en Unity.** El visor three.js no les convence y creen que en Unity quedará mucho mejor. Queda sin efecto «three.js con WebGPU; nada de Unity» de v3. El visor three.js se queda como respaldo; no se borra.
+2. **CESVI pidió tres cosas para la escena** (§0.3):
+   - puntos intermedios y el punto inicial del choque;
+   - objetos que se pueden mover;
+   - un terreno que afecta la reconstrucción.
+3. **Las personas que usaron Croquis dejaron cinco observaciones** (§0.2).
 
-| Área | Estado | Evidencia |
-| --- | --- | --- |
-| **Contrato** `escena.schema.json` 2.2.0 (expediente, N vehículos, M impactos, versiones, conductores, perfil de aplastamiento) | Hecho | Zod y Pydantic generados |
-| **Solver** Python de referencia + port TS con paridad: impulso, CRASH3, post-impacto, Monte Carlo, inversión LM con multiarranque determinista, «lo medido pesa más que lo supuesto», orden en alcances, arrastre muestreado, contacto secundario sin traslape, carambolas, conductores como agentes | Hecho | E7 paridad, 16 escenas versionadas, ADR 0091 y 0088 |
-| **Evaluación contra CESVI** (E-R4, prueba congelada de 205 reportes) | Hecho y publicado | modalidad 58.3 % contra 37.2 % de la línea base; carambolas 21 de 31 impactos posteriores ocurren |
-| **Caso AXA** | Hecho | método de CESVI reproducido: restos 60.27 = 60.27; deformación 63.90 contra 63.15 (+1.19 %). Reconstrucción física: V2 71.56 km/h (68.02–92.81) contra 63.15 (+13.32 %); el rango cambió en T3.1 (ADR 0100), antes 56.19–100.49 |
-| **`/cesvi`** (lista de casos, caso nuevo, 8 pasos, mapa con bandeja/anillo/fantasmas, preguntas con control, hipótesis, rangos, conductor, bitácora de agentes, dictamen PDF/Word, cargar reporte, reproducción de reportes, comparación con la declaración) | Hecho y en producción | https://croquis-sage.vercel.app/cesvi |
-| **Visor 3D** WebGPU, 4 niveles, modelos CC-BY de 6 clases sin marcas, daño horneado, calles de OpenStreetMap, efectos de cine en alta/ultra | Hecho en lo que toca a vehículos; **el escenario no** (ver 0.2) | `docs/cesvi/r10/` |
-| **Portada v3** (ES/EN, cifras calculadas al compilar, fondo con la propia reconstrucción) | Hecho y en producción | `docs/cesvi/portada-v3/` |
-| **Video demo** | Entregado a CESVI | `demo/video/` |
-| **Exportar a Blender + botón de la computadora de demo** | Hecho y probado en la laptop con `-Prueba` (1 min 35 s) | **Nunca se ha corrido en la computadora del colaborador** |
-| **Arquitectura multiagente** (R12a conductores, R12b pizarra con 8 agentes) | Hecho, medido, en producción | ADR 0088 y 0093 |
+**Equipo.** Trabajan **dos Claude Code en paralelo**, cada uno en un frente con carpetas propias (§3):
+- **U · visor Unity:** René.
+- **W · web y física:** el compañero.
 
-PLAN-CESVI v2 (R0–R12b) está completo en el sentido de «cada fase cumplió su criterio». Que a René le parezca que «no ha quedado» es correcto por tres razones que la v2 no cubría bien: el escenario 3D, la verificación en hardware real y la prueba con personas. Son los tramos T1, T2 y T4.
+Esta es la recta final: lo que no está aquí no entra en esta versión.
 
-### 0.2 Lo que falta o está flojo (de mayor a menor impacto para CESVI)
+---
 
-1. **El escenario 3D no está a la altura de los vehículos.** En las capturas de `docs/cesvi/r10/` (alta y ultra, cámara cinematográfica) se ve: un plano verde liso, la vía como franjas grises sin textura ni relieve, una barda como caja beige, ningún cielo ni horizonte, ningún edificio, banqueta ni árbol, luz plana sin reflejos del entorno, huellas de frenado como barras negras y la leyenda vieja con «semilla 101». R10 fiaba el entorno a los objetos de OpenStreetMap, y en México casi no están mapeados (AXA: 0; cruce de Toluca: 0). **La meta de R10 («como GTA o Forza») no se cumplió en el escenario** y nadie la midió contra esa meta. Es el tramo T1.
-2. **Nada se ha verificado en hardware real.** Alta y ultra nunca se han medido en una computadora con tarjeta de video (en la laptop, alta se dibuja por software y tarda 30 s en cargar). El video de R11 en calidad completa no existe. El botón del colaborador lleva 6 días listo sin correrse. Tramo T2.
-3. **Los números de AXA tienen dos lecturas y hay que presentarlas sin confusión.** El método de CESVI se reproduce casi exacto (+1.19 %); la reconstrucción física da +13.32 % con V2 a 71.56 km/h y rango 68.02–92.81 (`eval/results/axa_rango_estable.json`). Nota: cuando se escribió este plan el rango era 56–100 km/h y dependía del muestreo (p10 de 59 a 73 según la corrida); T3.1 lo resolvió y ya no se mueve entre 20 semillas (ADR 0100). Además el rumbo inicial de V2 queda pegado al límite de búsqueda (+20°), señal de que algo del arranque está mal orientado. La reversa no se reconstruye (0 de 9 en E-R4). Tramo T3.
-4. **Ningún perito ni ninguna persona ajena ha usado Croquis.** La revisión visual de R9 que se le pidió a René el 2026-10-23 sigue pendiente; CESVI no ha dado comentarios; E9 nunca se hizo. El flujo nos parece claro a nosotros, no sabemos si a un perito. Tramo T4.
-5. **El repositorio no cuenta la historia actual.** `README.md` es del 19 de octubre, anterior al giro a CESVI, y no menciona a CESVI; `docs/PROGRESS.md` pesa 358 KB y su «Estado actual» sigue diciendo «prototipo, Hito 1–3» del 20 de octubre; `PLAN-CESVI.md` quedó en v2 y R12 lo agregó Claude Code por su cuenta. Nadie retoma esto en 10 minutos, que es lo que exige `CLAUDE.md`. Tramo T5.
-6. **Pendientes que un perito sí notaría** (todos anotados en «Endurecimiento pendiente»): buscar el lugar en el mapa en «Caso nuevo» (hoy se navega a mano); la versión declarada no se dibuja en el croquis 2D; los agentes no respetan el orden de impactos de la reconstrucción; en una carambola no se puede declarar a mano el orden de impactos; la moto es de campo y las ruedas no siempre caen en los ejes; las relecturas de R12b no están grabadas. Tramo T6.
-7. **Lo que CESVI tiene que decidir:** cuentas y nube para los casos (hoy «Guardar en este equipo» y archivo), si quieren la estructura exacta de sus reportes en el dictamen, y qué más necesitan. Tramo T7.
+## 0. Dónde estamos
 
-Dos causas de fondo, para no repetirlas: Claude Code solo avanza cuando recibe un prompt (del 28 al 30 de octubre no hizo nada porque nadie le pidió nada), y las fases se cerraron contra su propio criterio y no contra la meta que René tenía en la cabeza. Esta v3 pone la meta de René como criterio.
+### 0.1 Ya hecho
+
+- **Física y evaluación:**
+  - contrato 2.2.0, solver Python + port TS con paridad, multiarranque determinista y rango estable (ADR 0100);
+  - E-R4 publicada: modalidad 58.3 % contra 37.2 % de la línea base.
+- **AXA con sus dos lecturas:**
+  - método de CESVI: 60.27 = 60.27 y 63.90 contra 63.15;
+  - reconstrucción física: 71.56 km/h (68.02–92.81), +13.32 %.
+- **Interfaz:**
+  - rediseño Laboratorio de `/cesvi` (#178);
+  - escena fácil, una pregunta a la vez;
+  - búsqueda de lugar y cámaras del conductor;
+  - fotos del dictamen corregidas.
+- **Infraestructura:** despliegue verificado en Vercel con Blob y botón reanudable de la computadora de demo.
+
+### 0.2 Observaciones de las personas que usaron Croquis
+
+Están en `docs/cesvi/entrante/notas-sugerencias-croquis-cesvi.pdf`, con capturas.
+
+| # | Dónde | Qué pasa | Fase |
+| --- | --- | --- | --- |
+| O1 | El hecho | Acepta cualquier texto («gggg…»), no pregunta y deja avanzar sin información suficiente. | W2 |
+| O2 | Dictamen | «Citar velocidad» y «Citar supuestos» duplican el texto en cada clic. «Descargar el PDF» y «Exportar → Word» no hacen nada; `.croquis` sí funciona. | W1 |
+| O3 | Reconstrucción | No se ve la zona completa ni hay forma de ir a la zona de interés, ni en 2D ni en 3D. | W6 (2D) y U4 (3D) |
+| O4 | Todas | No se ve el relieve. | W5 y U2 |
+| O5 | El hecho | No siempre pone la letra a ambos vehículos. Ejemplo: en «una combi colisiona con un pickup lobo», la combi se queda sin letra. | W2 |
+
+### 0.3 Lo que pidió CESVI para la escena (2026-11-07)
+
+| # | Qué piden | Qué significa en Croquis | Fase |
+| --- | --- | --- | --- |
+| C1 | **Puntos intermedios y punto inicial del choque** | Al colocar los choques, el perito marca:<br>(a) **el punto inicial del choque**, donde fue el primer contacto;<br>(b) **choques intermedios contra objetos** (pared, poste, barrera) en el lugar donde fueron, ligados al objeto y en su orden;<br>(c) **puntos de paso**: «el vehículo pasó por aquí», con hora opcional.<br>Lo que marca el perito es evidencia medida: pesa más que lo supuesto en la inversión, como siempre. | W3 (+ U2 para verlos en 3D) |
+| C2 | **Mover objetos** | En la escena, agregar, mover, girar, cambiar el tamaño y quitar objetos: poste, muro o pared, árbol, barrera, guarnición, señal y vehículo estacionado. La reconstrucción se recalcula. También se pueden arrastrar en el 3D de Unity: la edición pasa por el puente y la web recalcula. | W4 (2D) y U6 (3D) |
+| C3 | **El terreno afecta** | El terreno entra en la física, no solo en lo visual:<br>• **relieve** con altura real del lugar (fuente abierta de elevación) o declarado por el perito;<br>• **superficies por zona**: asfalto, concreto, terracería, grava, pasto, tierra o lodo, cada una con su fricción, su fuente y su rango;<br>• **ondulación**: zona con amplitud y longitud de onda declaradas;<br>• **topes** con su posición y medidas.<br>El solver calcula la altura, el cabeceo y el alabeo del vehículo, y Unity solo los reproduce. | W5 (+ U2) |
+
+### 0.4 Lo que queda de v3
+
+| Qué | Pasa a |
+| --- | --- |
+| T1 escenario 3D en three.js | **Se congela;** se rehace en Unity (U2–U5) |
+| T2b integrar la corrida del colaborador | U7 |
+| T3.2 rumbo inicial de V2 pegado a +20°, T3.3 reversa, T3.5 E-R4 v4 | W8 |
+| T4 prueba con personas | La primera ronda está hecha (O1–O5); la segunda va con la v4 (§4) |
+| T5 README y `ESTADO.md` | U7 |
+| T6.2 versión declarada en el croquis 2D, T6.3 orden de impactos a mano, T6.4 los agentes respetan el orden | W7 |
+| T6.5 y T6.6 relecturas R12b y prompt del corpus (con aprobación de API de René) | W9 |
+| En curso en el Claude Code de René: `feat/axa-escena-colocada`, la cifra grande 71.56, Lighthouse | U-pre |
+
+---
 
 ## 1. Definición de terminado (René palomea)
 
-Croquis para CESVI está al 100 % cuando se cumplen las siete:
+- [ ] **D1 · Visor Unity.** En `/cesvi`, el 3D es el de Unity, en el navegador y en el programa de escritorio de la demo. René aprueba las capturas de las 4 escenas de referencia:
+  - AXA;
+  - `lateral_interseccion`;
+  - `nocturno_lluvia`;
+  - la carambola;
+  - una escena nueva con terracería, ondulación y topes.
 
-- [ ] **T1** René aprueba las capturas del escenario 3D de las 4 escenas de referencia (autopista de día, cruce urbano, noche con lluvia, carambola) en alta en la computadora con tarjeta de video y en media en la laptop, con los fps de §7.8 cumplidos.
-- [ ] **T2** Existen en el repo la medición E6 de alta y ultra en una computadora con tarjeta de video y el video de R11 de AXA y de la carambola en calidad completa, y René los aprobó.
-- [ ] **T3** AXA se presenta con sus dos lecturas sin ambigüedad; el rango de la reconstrucción no depende del muestreo; la reversa se reconstruye; E-R4 v4 está publicada y la portada toma sus cifras.
-- [ ] **T4** Tres personas ajenas al proyecto recorren un caso de principio a fin con el guion de prueba, se midió dónde se atoran y se corrigieron los tres problemas más frecuentes.
-- [ ] **T5** `README.md` y `docs/ESTADO.md` describen Croquis para CESVI al nivel del repo de Helada; cualquiera lo prueba en vivo y en local siguiendo el README; CI completa en menos de 10 minutos.
-- [ ] **T6** La lista cerrada de endurecimiento de §2.6 está hecha o explícitamente descartada por René.
-- [ ] **T7** CESVI vio la demo, sus comentarios están en PROGRESS y lo que pidieron está hecho o planeado con fecha.
+  Se cumplen los fps de §7.8 de `PLAN.md`, medidos en la laptop de 8 GB y en una computadora con tarjeta de video.
+- [ ] **D2 · Fidelidad.** En todos los casos versionados, Unity reproduce la pose de cada vehículo (incluidos la altura, el cabeceo y el alabeo) con menos de 1 cm y 0.1° de diferencia contra el `Resultado`. El daño en la malla cumple la tolerancia de `physics.md` (2 cm o 6 %). Ambas pruebas corren en CI.
+- [ ] **D3 · Pedidos de CESVI.** C1–C3 funcionan de punta a punta: se marcan en 2D, el solver los usa y se ven en 3D. Sus pruebas:
+  - casos analíticos conocidos del terreno: el frenado en pendiente coincide con la fórmula y el cambio de μ en terracería también;
+  - la inversión respeta los puntos de paso dentro de su incertidumbre;
+  - el choque intermedio ocurre contra el objeto marcado;
+  - paridad Python ↔ TS.
+- [ ] **D4 · Observaciones.** O1–O5 están corregidas, cada una con su prueba.
+- [ ] **D5 · Números.** T3.2, T3.3 y T3.5 están en `eval/results/`, y la portada y el README toman de ahí sus cifras.
+- [ ] **D6 · Endurecimiento y repo.**
+  - T6.2–T6.4 están hechos; T6.5 y T6.6 están hechos o descartados por René.
+  - README y `ESTADO.md` cumplen el estándar de Helada.
+  - CI tarda menos de 10 min.
+- [ ] **D7 · Personas y CESVI.**
+  - Segunda ronda con 3 personas, con los 3 problemas más frecuentes corregidos.
+  - Demo con CESVI, con sus comentarios anotados y una decisión para cada uno.
 
-## 2. Los siete tramos
+---
 
-Orden de Claude Code: **T2a → T1 → T3 → T6 → T5 → T2b → T7.** T4 lo hace René en paralelo desde ahora (no depende del 3D). Cada tramo se cierra con su «listo cuando», merge, despliegue y «Resumen para René» en PROGRESS. Pruebas según «Para quién y qué tan lejos» de `CLAUDE.md`: unitarias de cálculos, una e2e por flujo en Chromium; capturas y fps se miden a mano al cerrar el tramo.
+## 2. Decisiones de arquitectura
 
-### T1 · Escenario 3D a nivel de juego actual (el tramo grande)
+Las registra el frente U en un ADR en U0. Si al verificarlas en la documentación oficial alguna no se sostiene, se elige la alternativa más cercana y se anota.
 
-**Meta (René, 2026-10-21 y 2026-10-30):** que la escena completa, no solo los autos, se vea como un juego actual de autos o de mundo abierto. Lo realista es una escena creíble y cuidada, no igualar a un estudio grande. three.js con WebGPU; nada de Unity. Los recursos nuevos son CC0 o CC-BY (Poly Haven, ambientCG, Quaternius, Sketchfab), registrados en `assets/ASSETS.md`, sin marcas (regla 5). Todo lo que se ve lo calcula el sistema: nada de imágenes de fondo ni video.
+### 2.1 Visor Unity
 
-**Las 4 escenas de referencia** (se miden siempre las mismas): AXA (autopista federal de día), `lateral_interseccion` (cruce urbano), `nocturno_lluvia` y la carambola de R11. Capturas con la cámara cinematográfica y la del daño, en alta y ultra (computadora de demo) y media (laptop), antes y después de cada subtramo, en `docs/cesvi/t1/`.
+1. **Unity 6.3 LTS con URP:** una sola canalización para web y escritorio. El parche vigente se verifica y se anota en `docs/adr/0001-stack.md`. Licencia Personal; se desactiva la pantalla «Made with Unity», que en Unity 6 es opcional.
+2. **El proyecto vive en el monorepo**, en `apps/visor-unity/`.
+   - `.gitignore` estándar de Unity.
+   - Los modelos se cargan en tiempo de ejecución desde Vercel Blob con glTFast. Son los mismos glTF CC-BY y sin marcas del visor web, registrados en `assets/ASSETS.md`.
+   - El proyecto de prueba de la carpeta del Tec queda como experimento.
+3. **Una sola entrada: el paquete `caso-3d` v1**, con `escena`, `resultado`, `relieve` (opcional) y `convenciones`.
+   - Su esquema es `packages/scene-schema/caso3d.schema.json`, que referencia a los otros dos sin copiarlos.
+   - Lo arma una función TS: `armarCaso3d(escena, resultado, relieve?)`.
+   - El mismo paquete sirve para el puente, para el botón «Descargar paquete 3D» y para los fixtures en `packages/scene-schema/fixtures/caso3d/`, generados por script.
+4. **Los tipos C# se generan** del esquema (se verifica la herramienta; quicktype es la opción a probar). Van en `apps/visor-unity/Assets/Croquis/Generated/`, no se editan a mano y CI revisa que estén al día.
+5. **Unity solo reproduce.** No usa la física de Unity para el choque.
+   - El movimiento sale de `resultado.*.trayectoria`: x, y, rumbo, más z, cabeceo y alabeo cuando vienen. Se interpola linealmente; el rumbo, por el camino angular más corto.
+   - El daño sale de `dano.perfil_m`, con la regla de `physics.md`.
+   - Vidrios, bolsas de aire, volante y giro de llantas son ilustrativos (ADR 0007).
+6. **El núcleo C# no depende de Unity.** `Croquis.Core` es un asmdef con `noEngineReferences`, con su proyecto de pruebas `dotnet test` en CI (rápido y sin licencia).
+   - Hace la lectura del paquete, la conversión de ejes, la interpolación, el perfil de daño sobre una malla y el encuadre de la zona de interés.
+   - Conversión de ejes: Croquis usa X al este, Y al norte y rumbo antihorario desde +X; en Unity, posición = (x, z, y) y yaw = 90° − rumbo.
+   - Las pruebas EditMode y PlayMode corren solo en local.
+7. **Puente web ↔ Unity.** El contrato vive en `packages/scene-schema/visor-puente.md`, con tipos TS y un número de versión.
+   - **De JS a Unity:** `cargarCaso`, `fijarTiempo`, `reproducir`, `pausar`, `velocidad`, `camara`, `calidad`, `encuadrar`, `capturar` y `modoEdicion(on/off)`.
+   - **De Unity a JS:** `listo`, `cargado`, `tiempo`, `camara`, `captura{vista, png}`, `fps`, `error`, `objetoEditado{id, x, y, rumbo_deg, largo, ancho}` y `puntoMarcado{tipo, vehiculo_id?, objeto_id?, x, y}`.
+   - Unity nunca recalcula. Manda la edición, la web actualiza la `EscenaSpec`, corre el solver y vuelve a cargar el caso.
+8. **Distribución:**
+   - **Web:** build WebGL en Vercel Blob, con un manifiesto versionado en `apps/web/public/visor-unity/manifest.json`. Se guardan solo los 2 últimos builds. La compresión se elige después de verificar qué encabezados sirve Blob.
+   - **Escritorio:** build de Windows como zip en un release de GitHub; abre archivos `caso-3d`.
+9. **Respaldo:** si no hay WebGL2, si se pierde el dispositivo o si la carga pasa del límite que fije el ADR, se abre el visor three.js como «Visor ligero», con un aviso.
+10. **Fotos del dictamen:** se toman desde Unity con `capturar`, con la cámara cinematográfica en el impacto y en el reposo, esperando a que la escena esté lista. La foto de cada conductor sale de su propia cámara.
+11. **Los builds de Unity no corren en CI:** necesitan licencia y tardan más de 10 min. Se hacen con `tools/unity/build-web.ps1` y `tools/unity/build-windows.ps1` (modo batch) en la computadora que asigne René.
+12. **Siempre:** nada de logotipos ni marcas; «procedural» en la leyenda de lo procedural; leyenda ilustrativa en cada vista y captura; ningún número inventado.
 
-**T1.1 · Cielo, luz y aire.**
-- Cielo procedural con sol según la hora y la fecha del hecho (y la latitud del lugar), más un HDRI CC0 para la luz de ambiente y los reflejos; horizonte nunca vacío.
-- Tone mapping de cine (ACES o AgX) con exposición por escena; sombras suaves en cascada; GTAO ya existe, se calibra.
-- Clima: niebla y lluvia con densidad física, no rayitas; de noche, luminarias cada tramo según la clase de vía, con cono de luz real, y faros que iluminan el asfalto.
-- **Listo cuando:** las 4 escenas tienen cielo, horizonte y sombras creíbles en las capturas.
+### 2.2 Contrato 2.3.0 (para C1 y C3)
 
-**T1.2 · Vía y suelo.**
-- Asfalto PBR (albedo, normal, rugosidad) con desgaste y parches; marcas viales como calcomanías con desgaste; juntas y alcantarillas.
-- Guarniciones con altura real, banquetas, acotamientos de grava en carretera, barreras metálicas por clase de vía (la autopista de AXA las lleva), camellones.
-- Mojado cuando llueve: rugosidad y reflejos cambian, charcos en los bajos.
-- Huellas de frenado, de arrastre y restos como calcomanías y partículas con sombra, a escala de lo que dio el perito (ya se calculan; ahora se ven bien).
-- **Listo cuando:** en la cámara del daño el piso y la vía se ven como fotografía de un juego actual en las 4 escenas.
+Lo sube U0 como PR `contract:`. Zod, Pydantic y C# se regeneran, y los fixtures se migran con su script en `fixtures/migrations/`. W lo ajusta con otro PR de contrato si al implementar hace falta.
 
-**T1.3 · Entorno más allá de la vía.**
-- Donde OpenStreetMap trae edificios: extruidos con conjuntos de fachadas procedurales (ventanas, cornisas, colores por zona). Donde no trae nada (la mayoría de México): entorno procedural por tipo de vía y uso de suelo con semilla fija: en carretera, parcelas, cercas, vegetación y postes; en ciudad, lotes con edificios sencillos variados, árboles de banqueta, señales.
-- Vegetación y postes instanciados (modelos CC0), terreno con relieve leve y texturas de suelo; a lo lejos, siluetas de cerros o perfil urbano.
-- Todo con fuente «procedural» en la leyenda, para que nadie lo tome por el lugar real.
-- **Listo cuando:** ninguna cámara ve un plano liso ni un horizonte vacío en las 4 escenas.
+- **C1 · Punto inicial y choques intermedios.** No hacen falta campos nuevos: ya existen `eventos[].punto_impacto`, `orden`, `actores` y `tipo` (`impacto_vehiculo_vehiculo` / `impacto_vehiculo_objeto`). El perito los marca con `procedencia.fuente = "perito"`.
+- **C1 · Puntos de paso.** Campo nuevo: `vehiculos[].puntos_paso[]`, con:
+  - `id`, `orden` y `posicion{x, y}`;
+  - `precision_m`, con valor por defecto y declarado;
+  - `t_s` y `rumbo_deg`, ambos opcionales;
+  - `nota` y `procedencia`.
+- **C3 · `lugar.terreno`.** `lugar.superficie` sigue siendo el valor por defecto fuera de las zonas.
+  - `relieve`: `fuente` («dem», «declarado» o «plano»), resolución y referencia a la malla del paquete.
+  - `superficies[]`: `{id, tipo, poligono[{x, y}], friccion{valor, rango, fuente}, procedencia}`.
+  - `ondulaciones[]`: `{id, poligono, amplitud_m, longitud_onda_m, rumbo_deg, procedencia}`.
+  - `topes[]`: `{id, linea[{x, y}, {x, y}], alto_m, largo_m, procedencia}`.
+- **C2.** Los objetos ya tienen posición, rumbo, medidas y material en `entorno.objetos[]`; solo se agregan los tipos que falten (vehículo estacionado, señal).
+- **Resultado.** `vehiculos[].trayectoria` agrega `z`, `cabeceo` y `alabeo`, opcionales. Se agrega el evento `cruce_tope`, con la velocidad de cruce.
 
-**T1.4 · Vehículos, segunda pasada.**
-- Pintura con capa transparente y hojuelas, reflejos del entorno, cromo y vidrio; luces de freno encendidas cuando el conductor (agente) frena; faros y calaveras de noche; interior tenue.
-- Ruedas en los ejes del caso (pendiente de ADR 0086); moto de trabajo de 125 cc con licencia libre; clases sin modelo (van, combi, autobús, tractocamión) con un modelo cada una si existe con licencia libre, si no, paramétrico mejorado.
-- **Listo cuando:** las capturas del daño de las 4 escenas las aprueba René.
+---
 
-**T1.5 · Cámara y presentación.**
-- Cámara cinematográfica más cerca y más baja (3–6 m, 35–50 mm), órbita lenta al impacto, cámara lenta con desenfoque de movimiento en el contacto, profundidad de campo; transiciones suaves entre la cenital, la del conductor y la cinematográfica.
-- Leyenda limpia: la de CESVI, la atribución CC-BY y nada más (fuera «semilla 101» de la vista para presentar).
-- Lo mismo en el exportador a Blender, para que el video de R11 muestre el mismo escenario.
-- **Listo cuando:** un recorrido de 20 s de AXA en modo Presentar se ve como un clip de juego y René lo aprueba.
+## 3. Los dos frentes
 
-**Niveles §7.8:** ultra y alta usan todo; media baja densidad de vegetación, resolución de texturas (KTX2 512) y quita reflejos en pantalla; baja conserva la función con lo procedural de hoy. La laptop de 8 GB es el piso: en media, ≥ 60 fps mediana en las 4 escenas; alta y ultra se miden en la computadora de demo (T2b). Si media no alcanza, se recorta densidad en media, nunca función (regla de `CLAUDE.md`).
+### 3.1 Quién hace qué
 
-**Medición:** `eval/results/t1_capturas.json` (lista de capturas antes/después por subtramo) y `eval/results/e6_t1_*.json` (fps por nivel y escena). René aprueba a ojo; los fps son de CI manual.
-
-### T2 · Verificación en hardware real
-
-**T2a (ahora, 2 minutos):** el colaborador hace `git pull` y corre `EJECUTAR-EN-COMPUTADORA-DEMO.bat -Prueba` desde una terminal en la carpeta del repo. Sirve para descubrir hoy cualquier problema del script en otra máquina (Git, Chrome, permisos, descarga de Blender). Si falla, Claude Code lo arregla antes de T1.
-
-**T2b (después de T1):** el colaborador corre el botón completo. Claude Code integra la rama `resultados/computadora-demo-<fecha>`: E6 alta y ultra en PROGRESS y README, los videos de R11 en `demo/video/` y las tomas de la portada sustituidas por los renders de Blender (ADR 0092).
-
-- **Listo cuando:** E6 de alta y ultra y los dos videos están en el repo y René los aprobó.
-
-### T3 · Números defendibles
-
-1. **El rango no depende del muestreo:** muestreo estratificado (o cuasialeatorio, Sobol) con más muestras en el Web Worker, medido: el p10 y el p90 de V2 en AXA no deben moverse más de 1 km/h entre corridas. Antes y después en `eval/results/axa_rango_estable.json`.
-2. **El rumbo inicial de V2 en el límite (+20°):** diagnosticar si el límite es corto o la pose inicial supuesta está mal orientada; corregir con fuente; medir AXA y las 16 escenas.
-3. **Reversa:** sentido de marcha separado del rumbo del frente en el contrato y en el solver (Python y TS, paridad); `cesvi-3a0125cb81` reconstruye al que retrocede; E-R4 mide la reversa (hoy 0 de 9).
-4. **AXA con sus dos lecturas, sin confusión:** en el paso 7, el 3D y el dictamen, dos bloques con nombre: «Reproducción del método de CESVI con los datos del reporte» (60.27 = 60.27; 63.90 contra 63.15) y «Reconstrucción física de Croquis» (V2 con su rango contra 63.15, con valor y porcentaje), más una línea en lenguaje de perito de por qué difieren (EBS con la masa sola contra velocidad de circulación por momento y trayectorias; deslizamiento con a = 0.9 contra llantas que ruedan). Nada se ajusta para coincidir.
-5. **E-R4 v4:** se corre completa con todo lo anterior y se publica junto a v1–v3; la portada y el README toman las cifras de v4 al compilar.
-- **Listo cuando:** los cinco puntos están medidos en `eval/results/` y las cifras públicas salen de ahí.
-
-### T4 · Prueba con personas (René, en paralelo desde ya)
-
-- **Guion:** `docs/cesvi/prueba-personas.md` (Claude Code lo escribe al inicio de T1): un caso de alcance y uno lateral, con la narración impresa; la persona debe llegar al dictamen sin ayuda. Se anota el tiempo por paso, dónde pregunta, dónde se equivoca y qué dice al final.
-- **Quiénes:** tres personas ajenas al proyecto (compañeros, el colaborador, un profesor). Si CESVI presta un perito, mejor, pero no se espera a eso.
-- **Qué sale:** `eval/results/prueba_personas.json` con los tiempos y los tres problemas más frecuentes; Claude Code los corrige antes de T7.
-- **También aquí:** la revisión visual de R9 que René tiene pendiente desde el 2026-10-23 (Presentar y Trabajar, tema claro y oscuro).
-- **Listo cuando:** tres recorridos medidos y los tres problemas más frecuentes corregidos.
-
-### T5 · Repositorio al nivel de Helada y documentación que se pueda retomar
-
-- **`README.md` nuevo**, para Croquis para CESVI: el problema y sus fuentes; qué hace y qué no; cómo probarlo en vivo (liga) y en local (comandos exactos para Windows); resultados medidos contra líneas base (E-R4 v4, AXA con sus dos lecturas, carambolas) con liga a `eval/results/`; mapa del repo; datos y recursos con fuente y licencia; IA responsable; límites; siguiente paso. Cada cifra sale de `eval/results/` (regla 3 de `CLAUDE.md`).
-- **`docs/ESTADO.md`** (dos páginas): qué existe, cifras, cómo correrlo, qué falta, qué está bloqueado. Es lo que lee quien retoma el proyecto. PROGRESS sigue siendo la bitácora, pero su «Estado actual» se reescribe (hoy dice «Hito 1–3» del 20 de octubre) y lo anterior al giro a CESVI se mueve a `docs/historial/`.
-- **`PLAN-CESVI.md`** pasa a esta v3; v2 y `PROTOTIPO.md` a `docs/historial/`.
-- **CI** completa en menos de 10 minutos (Python va en 8 con el multiarranque): repartir o acelerar.
-- **«Bloqueado»** se limpia: solo lo que de verdad necesita a René o a CESVI.
-- **Listo cuando:** alguien sin contexto instala y corre Croquis en local siguiendo solo el README, y `ESTADO.md` cabe en dos páginas.
-
-### T6 · Endurecimiento que un perito nota (lista cerrada)
-
-1. Buscar el lugar en «Caso nuevo» (dirección, carretera y kilómetro, o coordenadas) en vez de navegar a mano.
-2. La versión declarada dibujada en el croquis 2D (hoy solo en 3D y tabla).
-3. En una carambola, declarar a mano el orden de impactos cuando la narración no lo dice.
-4. Los agentes respetan el orden de impactos de la reconstrucción (solver, paridad).
-5. Las relecturas de R12b grabadas y medidas (gasta API; se pide a René antes).
-6. El prompt del corpus dice «reporte» en vez de «dictamen» (en la misma regrabación del punto 5).
-7. Varias declaraciones a la vez en R7 (solo si en T4 o T7 alguien lo pide; si no, se descarta).
-- **Listo cuando:** 1–4 hechos con su e2e; 5–6 hechos o descartados por René; 7 decidido.
-
-### T7 · Cierre con CESVI
-
-- Demo con la versión final (T1–T6), guion de 15 minutos: narración → mapa → reconstrucción 3D → dictamen; AXA con sus dos lecturas; la carambola.
-- Se les pregunta lo que solo ellos pueden decidir: cuentas y nube para los casos, estructura exacta de su reporte en el dictamen, qué modalidades les importan más, si quieren el comparador de declaraciones.
-- Lo que pidan se anota en PROGRESS con fecha; lo chico se hace de inmediato, lo grande entra como v4 solo si René lo aprueba.
-- **Listo cuando:** los comentarios de CESVI están en PROGRESS y cada uno tiene decisión.
-
-## 3. Lo que solo René puede hacer (y cuándo)
-
-| Qué | Cuándo | Para qué |
+| Frente | Quién | Solo este frente cambia |
 | --- | --- | --- |
-| Pedirle al colaborador el `-Prueba` (2 min) | Hoy | T2a: destapar fallas del script en otra máquina |
-| Pedirle al colaborador el botón completo (horas) | Cuando Claude Code avise que T1 cerró | T2b |
-| Aprobar capturas de T1 por subtramo | Cada vez que Claude Code lo pida en «Resumen para René» | Cierra T1 |
-| Conseguir tres personas y correr el guion | Esta semana, en paralelo | T4 |
-| Revisión visual de R9 | Junto con T4 | Pendiente desde el 2026-10-23 |
-| Autorizar gasto de API para regrabar relecturas y corpus | Cuando llegue T6.5 | T6 |
-| Agendar la demo con CESVI | Cuando T1–T6 estén en verde | T7 |
+| **U · Visor Unity, contratos e integración** | Claude Code de René (tiene Unity) | `apps/visor-unity/**`, `tools/unity/**`, `packages/scene-schema/caso3d*`, `visor-puente.md`, `fixtures/caso3d/**`, `apps/web/public/visor-unity/**`, el componente `<VisorUnity>` (carpeta propia en `apps/web`) y, al final, `README.md`, `docs/ESTADO.md` y `docs/historial/**` |
+| **W · Web y física** | Claude Code del compañero | `apps/web/src/app/cesvi/**` y sus componentes (salvo `<VisorUnity>`), `packages/cesvi/**`, `packages/croquis-2d/**`, `packages/extraction/**`, `extraction/**`, `solver/**`, `packages/solver-ts/**`, `eval/**`, `data/**`, `apps/web/src/app/api/relieve/**`, las e2e de la web |
 
-## 4. Fuera de esta versión (no se borra)
+**Compartidos:** `escena.schema.json`, `resultado.schema.json`, `CLAUDE.md`, `docs/cesvi/PLAN-CESVI.md`, `.github/workflows/**`, `package.json`, `pnpm-lock.yaml` y el índice de `docs/PROGRESS.md`.
+- Se cambian solo con un PR pequeño de tipo `contract:` o `chore:`, que René fusiona primero; el otro frente rebasa.
+- Si `pnpm-lock.yaml` tiene conflicto, se regenera con `pnpm install`.
+- `packages/viewer` (three.js) queda congelado: solo W lo toca, y solo para arreglar el respaldo.
+- **Puntos de contacto entre frentes:**
+  - Cuando U necesite enganchar `<VisorUnity>` en una pantalla de W (Reconstrucción, Análisis, Presentar, las fotos del dictamen), lo hace en un PR pequeño y lo anota en su bitácora.
+  - Cuando W necesite que el 3D muestre algo nuevo, lo pide en la suya.
 
-Cuentas y nube (hasta que CESVI lo pida en T7), app móvil, dictado por voz, chat «Preguntar», OCR de reportes escaneados, mosaicos de mapa propios, la historia de lanzamiento. Quedan en «Endurecimiento pendiente».
+### 3.2 Reglas para que dos Claude Code no se pisen
 
-## 5. Riesgos
+- **Ramas.** `feat/u<n>-<tema>` y `feat/w<n>-<tema>`, de vida corta: un PR por fase o media fase, a `main` al menos una vez al día, rebasado sobre `main` antes de abrirlo.
+- **Fusiones.** Solo René fusiona, con CI en verde, y con **«Create a merge commit»**. En Vercel Hobby con repo privado, los commits de otro autor pueden quedar bloqueados para desplegar; el commit de fusión de René es el que despliega. Si aun así se bloquea, se usa el Deploy Hook.
+- **Bitácora por frente:** `docs/progress/U.md` y `docs/progress/W.md`, con plan, evidencia, cifras, pendientes, siguiente paso y «Necesito del otro frente». `docs/PROGRESS.md` queda como índice y «Estado actual»; solo lo actualiza U al integrar.
+- **ADR por bloques:** U del 0110 al 0129; W del 0130 al 0169.
+- **Contratos primero.** Nadie consume `caso-3d`, el puente ni los campos 2.3.0 antes de que U0 esté en `main`.
+- **Pruebas** según `CLAUDE.md`: unitarias de cálculo y de lógica, más una e2e por flujo en Chromium. Las pesadas (e2e, capturas, fps) van al final de cada fase.
+- **Secretos.** Cada quien usa su propia llave en su `.env.local`, o ninguna, porque las pruebas usan respuestas grabadas. Nunca pasan por chat ni van a archivos versionados.
 
-- **T1 en una laptop de 8 GB:** las texturas y la vegetación pueden no caber en media. Mitigación: KTX2, instancias, LOD por nivel, medir en cada subtramo, y la computadora de demo para alta y ultra.
-- **Claude Code se detiene sin prompt:** al cerrar cada tramo deja en PROGRESS el siguiente paso concreto y René le manda «sigue con el plan v3» sin más.
-- **El 3D nunca es «suficiente» a ojo:** por eso las 4 escenas fijas y la aprobación por subtramo; cuando René aprueba T1.5, T1 cierra y no se reabre salvo por CESVI.
+### 3.3 Frente U · Visor Unity (Claude Code de René)
+
+**U-pre. Cerrar lo que está en curso.** `feat/axa-escena-colocada`, la cifra grande 71.56 (con la mediana 75.2 como dato secundario), Lighthouse y el «Resumen para René». Se fusiona.
+
+**U0. Contratos y organización.** Desbloquea a W. Medio día.
+- Contrato 2.3.0 de §2.2, con migración de fixtures.
+- `caso3d.schema.json` con la forma de `relieve`:
+  - origen en latitud, longitud y en x, y de la escena;
+  - resolución en metros, ancho y alto de la malla;
+  - alturas en metros relativas al punto de impacto;
+  - fuente, licencia y resolución nativa.
+- `armarCaso3d` con su prueba.
+- Generador de C# y su revisión en CI.
+- `visor-puente.md` con sus tipos.
+- Script de fixtures `caso3d`.
+- El ADR de §2.
+- `docs/progress/{U,W}.md`.
+- `CLAUDE.md` con el visor en Unity, sus reglas y la tabla de frentes.
+- Este plan copiado a `docs/cesvi/PLAN-CESVI.md`; v3 pasa a `docs/historial/`.
+
+**U1. Núcleo y reproducción.**
+- Proyecto en `apps/visor-unity/` con el mismo paquete MCP de Unity del proyecto de prueba (ver su `Packages/manifest.json`), Newtonsoft y glTFast.
+- `Croquis.Core` con sus pruebas `dotnet`.
+- Vehículos con los glTF de Blob según su clase y las llantas en los ejes.
+- Línea de tiempo.
+- **Desde aquí, un build WebGL de prueba,** para medir peso y carga en la laptop. El riesgo más grande se mide al principio.
+- **Listo cuando:** D2 pasa en CI para todos los casos y el peso y el tiempo de carga quedan en `eval/results/unity_build.json`.
+
+**U2. Escenario** (con las reglas de T1.1–T1.3 de v3).
+- **Vías desde `lugar`,** en todas las variantes de `tipo_via`:
+  - recta;
+  - curva con radio;
+  - cruces en X y en T;
+  - glorieta;
+  - autopista con camellón y barreras.
+- **Red vial de OpenStreetMap** cuando hay `ubicacion_real`.
+- **Elementos de la vía:** marcas viales como calcomanías y guarniciones y banquetas con altura real.
+- **Dispositivos y objetos:** semáforos con sus fases en el tiempo y los objetos colocados.
+- **Evidencias** a escala: huellas, vidrios y restos.
+- **Terreno de C3:**
+  - malla de relieve, más la ondulación;
+  - topes con su geometría;
+  - materiales por zona (terracería, grava, pasto…).
+- **Marcadores de C1:** punto inicial, choques intermedios y puntos de paso, visibles y con opción de ocultarlos.
+- **Entorno procedural** con semilla fija y la etiqueta «procedural».
+- **Cielo y luz:** sol según fecha, hora y latitud; noche con luminarias y faros; lluvia con piso mojado.
+- **Listo cuando:** ninguna cámara ve un plano liso ni un horizonte vacío en las 5 escenas de D1, y René aprueba las capturas.
+
+**U3. Daño y personas.**
+- Deformación con `perfil_m` y su prueba en el núcleo.
+- Ocupantes.
+- Peatones y motos con su trayectoria.
+- Volcadura, si el `Resultado` trae el giro; si no, se anota como pendiente.
+- **Listo cuando:** pasa la parte de daño de D2 y René aprueba las capturas.
+
+**U4. Cámaras y encuadre** (resuelve O3 en 3D).
+- **Cámaras:** cenital, cinematográfica, órbita, conductor A y B a la altura del ojo de `visibilidad`, y libre; con ratón y táctil.
+- **Encuadre automático de la zona de interés:** trayectorias, reposo, evidencias, objetos y marcadores de C1. Botones «Ver todo» e «Ir al impacto».
+- **Minimapa.**
+- **Listo cuando:**
+  - prueba en el núcleo: «Ver todo» deja en cuadro las poses finales y el punto de impacto en todos los casos;
+  - e2e de cambio de cámaras.
+
+**U5. Calidad y rendimiento.**
+- **Niveles:** baja, media, alta y ultra.
+- **Calidad automática** con las reglas de la web: nunca sube durante la sesión, y baja un nivel si los fps quedan debajo de 24 durante 5 s. Con tope de dpr.
+- **Panel de diagnóstico.**
+- **Medición:** en la laptop (WebGL en media) y en una computadora con tarjeta de video (escritorio en alta y ultra), guardada en `eval/results/e6_unity_*.json`.
+- **Si no alcanza:** si media no llega a §7.8, se recorta densidad, nunca función. Si el recorte toca alta o ultra, se pregunta a René.
+
+**U6. Puente, builds e integración.**
+- `.jslib` del puente, `<VisorUnity>` en la web (carga diferida, con respaldo three.js), las fotos del dictamen con `capturar` y el botón «Descargar paquete 3D».
+- **Modo edición en 3D (C2 y C1):** arrastrar y girar objetos y marcar puntos. Unity manda la edición, la web recalcula y recarga.
+- Scripts de build y de subida a Blob, y el manifiesto.
+- Build de Windows con un caso de ejemplo.
+- **Listo cuando:** en producción:
+  - `/cesvi` muestra Unity en Reconstrucción, Análisis y Presentar;
+  - mover un poste en 3D recalcula;
+  - las fotos del dictamen salen de Unity;
+  - el respaldo funciona;
+  - pasa la e2e del flujo completo en Chromium.
+
+**U7. Cierre.**
+- T2b: integrar la rama `resultados/computadora-demo-*`. El exportador a Blender queda congelado.
+- T5: README al nivel de Helada, con capturas de Unity y cifras de `eval/results/`, y `docs/ESTADO.md` de dos páginas. Lo anterior a CESVI pasa a `docs/historial/`. CI en menos de 10 min.
+- Ensayo del guion de la demo.
+
+### 3.4 Frente W · Web y física (Claude Code del compañero)
+
+**W1. Dictamen (O2).** Primero, porque rompe el flujo del perito.
+- «Citar velocidad» y «Citar supuestos» deben ser idempotentes: si el bloque ya está, se resalta o se reemplaza; nunca se duplica.
+- «Descargar el PDF» y «Exportar → Word» deben descargar archivos válidos.
+- La causa raíz se anota en la bitácora.
+- **Pruebas:**
+  - unitaria: citar dos veces deja un solo bloque;
+  - e2e en Chromium: el PDF abre y tiene ≥ 1 página; el Word es un zip con `word/document.xml`.
+
+**W2. El hecho (O1 y O5).**
+- **Antes de llamar al modelo:** se revisa que el relato tenga contenido real, no solo longitud (proporción de palabras reconocibles, repetición, letras contra símbolos). Si no pasa, sale un mensaje amable con un ejemplo, no se gasta API y la ruta responde `relato_insuficiente`.
+- **Lo mínimo para reconstruir:** un vehículo y otro actor (vehículo, peatón u objeto), el tipo de impacto o la zona de contacto, y el lugar o su confirmación en el mapa.
+  - **Si no hay nada reconstruible:** «Continuar» se bloquea y se explica por qué.
+  - **Si es parcial:** se puede seguir, con las preguntas pendientes al frente y la lista de supuestos declarados.
+  - Si falta un dato que cambia la reconstrucción, siempre hay preguntas.
+- **O5:**
+  - cada vehículo identificado lleva su letra en la mención y su tarjeta en el panel;
+  - vocabulario mexicano en el mapeo a `vehicle_classes.json`: combi, pesero, micro, microbús, vocho, urvan, torton, rabón, tráiler, pipa, volteo, motoneta, taxi; si no hay clase exacta, la más cercana, como supuesto declarado;
+  - los nombres comerciales («Lobo») van solo en texto.
+- **Pruebas:** unitarias con respuestas grabadas, entre ellas «En el zócalo de la Ciudad de México una combi colisiona con un pickup lobo en su parte trasera derecha» y «gggg…».
+
+**W3. Punto inicial, choques intermedios y puntos de paso (C1).**
+- **En la escena fácil,** después de colocar los vehículos, siempre una pregunta a la vez, con tarjetas y mensajes de éxito y de alerta como el resto:
+  - «¿Dónde fue el primer golpe?»: un toque en el mapa;
+  - «¿Chocó contra algo más?»: se elige o se agrega el objeto y se toca dónde fue;
+  - «¿Sabes por dónde pasó?»: puntos de paso opcionales.
+- **Solver (Python + TS, paridad):**
+  - los puntos de paso entran a la inversión como residuo: la distancia mínima de la trayectoria al punto, con su `precision_m`, y la posición en `t_s` si se dio;
+  - el punto inicial marcado entra como evidencia medida (si hoy no se usa en la inversión, se agrega);
+  - los choques intermedios usan el objeto y el lugar marcados, en su orden.
+- **Pruebas:** casos sintéticos donde la inversión pasa por el punto dentro de su incertidumbre y el choque intermedio ocurre contra el objeto marcado.
+
+**W4. Objetos que se mueven (C2, en 2D).**
+- En la escena: agregar desde una paleta con siluetas claras (poste, pared, árbol, barrera, guarnición, señal, vehículo estacionado), arrastrar, girar, cambiar el tamaño y quitar.
+- Al soltar, se recalcula, con un mensaje de éxito; si el objeto se empalma con un vehículo o con otro objeto, sale una alerta.
+- **Pruebas:** unitaria de la edición sobre la `EscenaSpec`; e2e: mover un poste cambia el resultado.
+
+**W5. Terreno (C3 y O4).**
+- **Relieve real.** Se verifica la licencia y el acceso de la fuente y se registra en `data/SOURCES.md`. En orden de preferencia:
+  1. Continuo de Elevaciones Mexicano de INEGI;
+  2. Copernicus GLO-30 (COG abierto);
+  3. Terrain Tiles de AWS.
+
+  La ruta `/api/relieve` (TS; en producción no hay Python) devuelve la malla con la forma de `caso3d.relieve`, con caché. Se dice con honestidad: una malla de 15–30 m no ve una rampa de 2 m.
+- **En la escena fácil:** «¿Cómo es el terreno?», con opciones visuales: pavimento liso, terracería, grava, pasto u otro, ondulado y con topes. Las zonas se dibujan con unos toques y los topes se colocan como línea. Valores por defecto con fuente: la fricción por superficie sale de `data/friction.json`, y las medidas de los topes de la norma o el manual de dispositivos que se verifique. El perito los puede cambiar.
+- **Solver (Python + TS, paridad, documentado en `physics.md` con fuentes):**
+  - **gravedad:** componente según el gradiente de la altura z(x, y) (relieve + ondulación), que generaliza la `pendiente` actual;
+  - **fricción por zona:** según la superficie bajo el vehículo, con su rango en el Monte Carlo;
+  - **topes:** pérdida parcial de contacto y de energía al cruzarlos, modelada con fuente o como supuesto declarado con rango, más el evento `cruce_tope` con la velocidad;
+  - **pose en el terreno:** z, cabeceo y alabeo calculados por contacto con el terreno, para que Unity solo los reproduzca.
+- **Dónde se ve en la web:**
+  - perfil de elevación en Reconstrucción (altura a lo largo del camino de A y de B);
+  - sombreado o curvas de nivel y las zonas de superficie en el croquis 2D.
+- **Pruebas analíticas:**
+  - el frenado en pendiente constante coincide con la fórmula;
+  - en terracería, la distancia cambia según μ;
+  - malla plana = resultado de hoy (no se rompe nada);
+  - paridad.
+- **Escena de referencia nueva** en `fixtures/`: terracería con ondulación y topes. Es la quinta de D1.
+
+**W6. Encuadre en 2D (O3).**
+- Ajuste automático a trayectorias, poses finales, evidencias y marcadores.
+- Zoom y desplazamiento con ratón, rueda y táctil; botones «Ver todo» e «Ir al impacto».
+- Escala gráfica y flecha del norte.
+- Aplica en Reconstrucción, Análisis y Contra CESVI.
+- **Prueba:** unitaria del encuadre.
+
+**W7. Endurecimiento.**
+- T6.2: la versión declarada se dibuja en el croquis 2D.
+- T6.3: orden de impactos a mano en carambolas, en interfaz y solver.
+- T6.4: los agentes respetan el orden de impactos.
+- Cada uno con su prueba.
+
+**W8. Números.**
+- T3.2: rumbo inicial de V2 pegado a +20°; diagnosticar y corregir con fuente, medido en AXA y en todos los casos.
+- T3.3: reversa, con el sentido de marcha separado del rumbo, en contrato, Python y TS; `cesvi-3a0125cb81` reconstruye al que retrocede.
+- T3.5: E-R4 v4 completa, con C1 y C3 ya dentro.
+
+**W9.** T6.5 y T6.6, con autorización de API de René antes de gastar. Después, los 3 problemas más frecuentes de la segunda ronda con personas.
+
+---
+
+## 4. Orden y tiempos
+
+```
+Día 0     U-pre → U0 (contratos 2.3.0, caso-3d, puente)        W1 (dictamen)
+          ────────────── U0 en main ──────────────────────────────────────────
+Después   U1 → U2 → U3 → U4 → U5 → U6                         W2 → W3 → W4 → W5 → W6 → W7 → W8
+Cierre    segunda ronda con 3 personas (cuando W1–W6 estén en producción) → W9
+          → U7 (README, ESTADO, ensayo) → demo con CESVI
+```
+
+- **Los dos frentes son largos.** El orden de W pone primero lo que rompe el flujo (O2, O1/O5) y lo que pidió CESVI (C1–C3); los números van después.
+- **Si U llega a U2 antes de que W termine C1 o C3,** dibuja lo que ya viene en el paquete y deja preparados los marcadores y el terreno para cuando lleguen.
+- **Estimación,** en sesiones de Claude Code (no está medida; es para planear): U 11–15, W 11–15.
+- **René aprueba** las capturas de U2, U3 y U5, la escena fácil con C1–C3 y los PR de contrato.
+
+---
+
+## 5. Lo que solo René (y el compañero) pueden hacer
+
+| Qué | Cuándo |
+| --- | --- |
+| Agregar al compañero como colaborador del repo; él usa su propia cuenta de Claude. | Hoy |
+| Liberar 15–20 GB de disco en la computadora con Unity (la laptop ya avisó que tiene poco espacio). | Antes de U1 |
+| Instalar Unity Hub y Unity 6.3 LTS (Personal). Decidir qué computadora hace los builds: la de más RAM. | Antes de U1 |
+| Revisar una vez que Vercel despliega los PR del compañero fusionados con «Create a merge commit». | Primer PR de W |
+| Aprobar las capturas de U2, U3 y U5 y la escena fácil con C1–C3. | Cuando lo pidan |
+| Autorizar el gasto de API de W9. | Cuando W lo pida |
+| Segunda ronda con 3 personas. | Cuando W1–W6 estén en producción |
+| Agendar la demo con CESVI. | Cuando D1–D6 estén en verde |
+
+## 6. Riesgos
+
+- **Unity WebGL en la laptop de 8 GB y en el M1.** Se mide desde U1, con niveles y con el respaldo three.js.
+- **El terreno en la física es lo más delicado de W5.** Mitigaciones:
+  - cada efecto con fuente o como supuesto declarado con rango;
+  - pruebas analíticas;
+  - una malla plana debe dar exactamente el resultado de hoy;
+  - nada se ajusta para que «se vea bien».
+- **Conflictos entre los dos Claude Code.** Carpetas propias, PR pequeños diarios, bitácoras separadas, ADR por bloques y contratos primero.
+- **Peso del build y almacenamiento de Blob.** Se guardan 2 builds y se verifica la compresión.
+- **«Verde» sin que René lo vea.** Aprobación por etapa, con capturas.
+
+## 7. Fuera de esta versión (no se borra)
+
+- Lo que ya estaba fuera en v3: cuentas y nube, app móvil, dictado por voz, chat «Preguntar», OCR, mosaicos propios, historia de lanzamiento.
+- T1 en three.js más allá del respaldo.
+- Extender el exportador a Blender.
+
+Todo queda en «Endurecimiento pendiente».
