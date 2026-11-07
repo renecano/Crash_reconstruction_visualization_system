@@ -22,7 +22,7 @@
   ],
   "properties": {
     "version_resultado": {
-      "const": "1.13.0"
+      "const": "1.14.0"
     },
     "escena_id": {
       "$ref": "#/$defs/Id"
@@ -211,6 +211,18 @@
         },
         "vel_angular": {
           "$ref": "#/$defs/Numeros"
+        },
+        "z": {
+          "$ref": "#/$defs/Numeros",
+          "description": "Altura del centro de masa sobre el origen de la escena, en metros (desde 1.14.0; sin ella, plano)."
+        },
+        "cabeceo": {
+          "$ref": "#/$defs/Numeros",
+          "description": "Cabeceo por contacto con el terreno, en radianes; positivo, la nariz hacia arriba (desde 1.14.0)."
+        },
+        "alabeo": {
+          "$ref": "#/$defs/Numeros",
+          "description": "Alabeo por contacto con el terreno, en radianes; positivo, el costado derecho hacia abajo (desde 1.14.0)."
         }
       }
     },
@@ -598,6 +610,10 @@
           },
           "minItems": 2,
           "maxItems": 2
+        },
+        "velocidad_cruce_kmh": {
+          "type": "number",
+          "minimum": 0
         }
       }
     },
@@ -619,6 +635,7 @@
             "impacto_vehiculo_persona",
             "proyeccion",
             "volcadura",
+            "cruce_tope",
             "reposo"
           ]
         },
@@ -1328,7 +1345,7 @@
           "maxItems": 64,
           "items": {
             "type": "string",
-            "pattern": "^(reposo|rumbo_final|marcas_frenado|marcas_despues|proyeccion|dano):[A-Za-z0-9_-]+$"
+            "pattern": "^(reposo|rumbo_final|marcas_frenado|marcas_despues|proyeccion|dano|dano_minimo|reposo_supuesto|rumbo_final_supuesto|orden_alcance):[A-Za-z0-9_-]+$"
           }
         },
         "parametros": {
@@ -1493,7 +1510,7 @@
           "maxItems": 64,
           "items": {
             "type": "string",
-            "pattern": "^(reposo|rumbo_final|marcas_frenado|marcas_despues|proyeccion|dano):[A-Za-z0-9_-]+$"
+            "pattern": "^(reposo|rumbo_final|marcas_frenado|marcas_despues|proyeccion|dano|dano_minimo|reposo_supuesto|rumbo_final_supuesto|orden_alcance):[A-Za-z0-9_-]+$"
           }
         },
         "parametros": {

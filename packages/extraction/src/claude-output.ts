@@ -128,7 +128,11 @@ export function allowedValues(): Record<string, readonly string[]> {
     "entorno.clima": [...schemaEnum("CampoClima"), "lluvia"],
     "entorno.iluminacion": [...schemaEnum("CampoIluminacion"), "noche"],
     "evento.tipo": EVENT_TYPES,
-    "evento.objeto": schemaEnum("ObjetoEntorno", "tipo"),
+    // `barrera` y `guarnicion` (2.3.0) los coloca el perito: un valor nuevo aquí cambiaría la huella
+    // e invalidaría las grabaciones, y un prompt nuevo se mide antes de usarse (ADR 0111).
+    "evento.objeto": schemaEnum("ObjetoEntorno", "tipo").filter(
+      (t) => t !== "barrera" && t !== "guarnicion",
+    ),
     "evidencias.marcas_fase": schemaEnum("EvidenciaFisica", "fase"),
     "vehiculo.clase": [...schemaEnum("CampoClaseVehiculo"), "suv_o_pickup", "camion_o_autobus"],
     "vehiculo.maniobra": [...schemaEnum("CampoManiobra"), "cambio_carril"],

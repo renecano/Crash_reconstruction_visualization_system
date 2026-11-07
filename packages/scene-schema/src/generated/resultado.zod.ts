@@ -3,7 +3,7 @@
 import { z } from "zod";
 
 export const RESULTADO_SCHEMA_ID = "https://croquis.local/schema/resultado/1.9.0";
-export const RESULT_VERSION = "1.13.0" as const;
+export const RESULT_VERSION = "1.14.0" as const;
 
 export const Id = z.string().regex(new RegExp("^[a-z0-9][a-z0-9_-]{0,63}$"));
 export type Id = z.infer<typeof Id>;
@@ -164,6 +164,7 @@ export const DetalleEvento = z.strictObject({
   distancia_proyeccion_m: z.number().min(0).optional(),
   rango_m: z.tuple([z.number().min(0), z.number().min(0)]).optional(),
   punto_m: z.tuple([z.number(), z.number()]).optional(),
+  velocidad_cruce_kmh: z.number().min(0).optional(),
 });
 export type DetalleEvento = z.infer<typeof DetalleEvento>;
 
@@ -196,6 +197,7 @@ export const EventoResultado = z.strictObject({
     "impacto_vehiculo_persona",
     "proyeccion",
     "volcadura",
+    "cruce_tope",
     "reposo",
   ]),
   t: z.number(),
@@ -289,7 +291,7 @@ export const InversionAlternativa = z.strictObject({
         .string()
         .regex(
           new RegExp(
-            "^(reposo|rumbo_final|marcas_frenado|marcas_despues|proyeccion|dano):[A-Za-z0-9_-]+$",
+            "^(reposo|rumbo_final|marcas_frenado|marcas_despues|proyeccion|dano|dano_minimo|reposo_supuesto|rumbo_final_supuesto|orden_alcance):[A-Za-z0-9_-]+$",
           ),
         ),
     )
@@ -331,7 +333,7 @@ export const Inversion = z.strictObject({
         .string()
         .regex(
           new RegExp(
-            "^(reposo|rumbo_final|marcas_frenado|marcas_despues|proyeccion|dano):[A-Za-z0-9_-]+$",
+            "^(reposo|rumbo_final|marcas_frenado|marcas_despues|proyeccion|dano|dano_minimo|reposo_supuesto|rumbo_final_supuesto|orden_alcance):[A-Za-z0-9_-]+$",
           ),
         ),
     )
@@ -512,6 +514,9 @@ export const TrayectoriaVehiculo = z.strictObject({
   vx: Numeros,
   vy: Numeros,
   vel_angular: Numeros,
+  z: Numeros.optional(),
+  cabeceo: Numeros.optional(),
+  alabeo: Numeros.optional(),
 });
 export type TrayectoriaVehiculo = z.infer<typeof TrayectoriaVehiculo>;
 
@@ -572,7 +577,7 @@ export type Visibilidad = z.infer<typeof Visibilidad>;
 
 /** Reconstrucción producida por el solver a partir de una EscenaSpec: trayectorias, impulsos, daños, personas (proyección y ocupantes), visibilidad, objetos del entorno, eventos, banderas, parámetros con su fuente incertidumbre por Monte Carlo (percentiles con semilla), inversión desde la evidencia y banderas de consistencia. Unidades SI; tiempo con t = 0 en el impacto principal; rumbos en radianes antihorario desde +X (salvo los campos que terminan en _deg). */
 export const ResultadoSchema = z.strictObject({
-  version_resultado: z.literal("1.13.0"),
+  version_resultado: z.literal("1.14.0"),
   escena_id: Id,
   semilla: z.int().min(0),
   dt: z.number().max(1).gt(0),
