@@ -1,0 +1,14 @@
+{
+  "name": "Croquis.Core",
+  "rootNamespace": "Croquis.Core",
+  "references": ["Croquis.Generated"],
+  "includePlatforms": [],
+  "excludePlatforms": [],
+  "allowUnsafeCode": false,
+  "overrideReferences": true,
+  "precompiledReferences": ["Newtonsoft.Json.dll"],
+  "autoReferenced": false,
+  "defineConstraints": [],
+  "versionDefines": [],
+  "noEngineReferences": true
+}
