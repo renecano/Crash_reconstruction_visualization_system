@@ -1,0 +1,36 @@
+# Lo que Unity regenera (https://github.com/github/gitignore/blob/main/Unity.gitignore).
+/[Ll]ibrary/
+/[Tt]emp/
+/[Oo]bj/
+/[Bb]uild/
+/[Bb]uilds/
+/[Ll]ogs/
+/[Uu]ser[Ss]ettings/
+/[Mm]emoryCaptures/
+/[Rr]ecordings/
+/Assets/StreamingAssets/aa/
+.vs/
+.vsconfig
+*.csproj
+*.sln
+*.slnx
+*.suo
+*.user
+*.userprefs
+*.pidb
+*.booproj
+*.svd
+*.pdb
+*.mdb
+*.opendb
+*.VC.db
+*.pidb.meta
+*.pdb.meta
+*.mdb.meta
+sysinfo.txt
+crashlytics-build.properties
+
+# El proyecto de pruebas sí se versiona; sus salidas no.
+!/tests/**/*.csproj
+/tests/**/bin/
+/tests/**/obj/
