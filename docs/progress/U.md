@@ -4,8 +4,25 @@ Plan: `docs/cesvi/PLAN-CESVI.md` §3.3. Reglas: `CLAUDE.md`. ADR del bloque 0110
 
 ## Estado
 
-- **Fase actual:** U1 terminada en esta laptop, con el PR abierto para René. El build está en Blob; falta la medición en la MacBook M1.
-- **Siguiente paso:** U2 (escenario).
+- **Fase actual:** U2 (escenario), en `feat/u2-escenario`. El código está escrito y **sin compilar en Unity**: el sistema detuvo la primera pasada de capturas por falta de memoria (2026-11-09).
+- **Siguiente paso:** correr `Capturas.Tomar` (abajo), corregir lo que salga y seguir con dispositivos, objetos, evidencias y marcadores.
+
+## U2 · Escenario (en curso)
+
+La meta está en `docs/cesvi/PLAN-CESVI.md` §3.3. Decisiones: ADR 0112 (el escenario se calcula en TS) y ADR 0113 (recursos y materiales).
+
+- **Hecho, con pruebas:** `escenarioDe` (`apps/web/src/components/visor-unity/escenario.ts`) arma la vía, el suelo, el entorno procedural, el ambiente y las luminarias con las funciones del croquis 2D y del visor web. Cumple el esquema en los 20 casos y es determinista (4 pruebas).
+- **Peso del escenario en el paquete:** 185 a 323 KB sin comprimir en las 4 escenas de D1 (`tools/unity/paquetes-d1.ts`).
+- **Escrito, sin compilar ni ver:**
+  - `tools/unity/recursos.mjs`: trae a `Assets/Croquis/Recursos/` (fuera de git, 45 MB) las texturas PBR a 1k, las tarjetas de árbol y los cielos HDRI.
+  - `PrepararEscenario.cs` e `ImportarRecursos.cs`: materiales como assets, posproceso (ACES, resplandor, viñeta), oclusión ambiental, sombras suaves en 4 cascadas.
+  - `EscenarioVista.cs`, `EntornoVista.cs`, `Mallas.cs` y `Materiales.cs`: vía con asfalto PBR y mojado, guarniciones, barreras de dos ondas, charcos, suelo con parcelas, árboles de tarjetas, palmeras, edificios con fachada (ventanas, cortina, toldo, pretil, tinacos, varillas), postes con cables, cercas, señales, cerros, perfil urbano, luminarias con luz y lluvia.
+  - `Capturas.cs`: capturas desde el editor en modo batch, para no hacer un build WebGL en cada vuelta.
+- **Cómo retomar:**
+  1. `node tools/unity/recursos.mjs` (si falta `Assets/Croquis/Recursos/`).
+  2. `pnpm --filter @croquis/scene-schema exec tsx ../../tools/unity/paquetes-d1.ts` (los paquetes ya están en `apps/visor-unity/Build/casos/`).
+  3. `Unity.exe -batchmode -projectPath apps/visor-unity -buildTarget WebGL -executeMethod Croquis.EditorTools.Capturas.Tomar -casos <Build/casos> -salida <carpeta> -logFile <log>`, en primer plano y sin nada más abierto.
+- **Falta de U2:** dispositivos (semáforos con fases), objetos colocados, evidencias (huellas, vidrios, restos), marcadores de C1, terreno de C3 (llega con W5), faros de noche, medir con `eval/unity_build.mjs` y las capturas del build WebGL para René.
 
 ## U-pre (hecho, #181)
 
@@ -99,4 +116,4 @@ Nada por ahora.
 
 ## Bloqueado
 
-Nada por ahora.
+- **Unity en esta sesión:** Claude Code detuvo la pasada de capturas por memoria. La sesión actual no tiene `CLAUDE_CODE_DISABLE_BG_SHELL_PRESSURE_REAP=1`. René decide si la relanza así o si se corre en primer plano.

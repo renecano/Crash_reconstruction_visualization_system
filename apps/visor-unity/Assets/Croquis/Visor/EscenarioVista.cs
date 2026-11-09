@@ -2,74 +2,43 @@ using System;
 using System.Collections.Generic;
 using Croquis.Generated;
 using UnityEngine;
+using UnityEngine.Rendering;
 using UnityEngine.UI;
 
 namespace Croquis.Visor
 {
     /// <summary>
-    /// Dibuja el escenario que calculó TS (ADR 0112): la vía, el suelo, el entorno procedural, el cielo,
-    /// la luz y la lluvia. No calcula geometría del caso: solo la convierte a mallas de Unity. El marco
-    /// es el de siempre: posición de Unity = (x, z, y).
+    /// Dibuja el escenario que calculó TS (ADR 0112): el cielo y la luz, la vía, el suelo, el entorno
+    /// procedural, las luminarias y la lluvia. No calcula geometría del caso: la convierte a mallas de
+    /// Unity sobre la función de altura del piso (`Terreno`). El marco es el de siempre: (x, z, y).
     /// </summary>
     public static class EscenarioVista
     {
-        private static readonly Color Asfalto = new Color(0.16f, 0.165f, 0.17f);
-        private static readonly Color Concreto = new Color(0.56f, 0.55f, 0.52f);
-        private static readonly Color Blanco = new Color(0.86f, 0.86f, 0.82f);
-        private static readonly Color Amarillo = new Color(0.86f, 0.68f, 0.16f);
-        private static readonly Color Tierra = new Color(0.47f, 0.40f, 0.30f);
-
-        private static Mesh cubo;
-        private static Mesh cilindro;
-        private static Mesh esfera;
-        private static Mesh capsula;
+        private const int LuminariasEncendidasMax = 6;
 
         public static void Construir(Transform raiz, Escenario e, Light sol, Camera camara)
         {
-            Primitivas();
+            // Hoy el piso de la vía es plano; el relieve procedural solo existe fuera de ella y ya viene
+            // en las alturas del suelo. W5 cambia esta función y nada más.
+            var terreno = new Terreno();
             var escenario = new GameObject("escenario").transform;
             escenario.SetParent(raiz, false);
             Ambiente(e.Ambiente, sol, camara);
-            Via(escenario, e.Via, e.Ambiente);
+            Via(escenario, e.Via, e.Ambiente, terreno, e.Semilla);
             foreach (var s in e.Suelo)
             {
                 Suelo(escenario, s, e.Ambiente);
             }
 
-            Entorno(escenario, e.Entorno, e.Ambiente);
+            EntornoVista.Construir(escenario, e.Entorno, e.Ambiente, e.Semilla);
             Luminarias(escenario, e.Luminarias, e.Ambiente);
-            if (e.Ambiente.Precipitacion.StartsWith("lluvia", StringComparison.Ordinal) || e.Ambiente.Precipitacion == "granizo")
+            var p = e.Ambiente.Precipitacion;
+            if (p.StartsWith("lluvia", StringComparison.Ordinal) || p == "granizo")
             {
-                Lluvia(escenario, e.Centro, e.Ambiente.Precipitacion == "lluvia_ligera" ? 2500 : 6000);
+                Lluvia(escenario, e.Centro, p == "lluvia_ligera" ? 2500 : 6000, camara);
             }
 
             Leyenda(escenario);
-        }
-
-        private static void Primitivas()
-        {
-            if (cubo != null)
-            {
-                return;
-            }
-
-            Mesh De(PrimitiveType t)
-            {
-                var go = GameObject.CreatePrimitive(t);
-                var m = go.GetComponent<MeshFilter>().sharedMesh;
-                UnityEngine.Object.Destroy(go);
-                return m;
-            }
-
-            cubo = De(PrimitiveType.Cube);
-            cilindro = De(PrimitiveType.Cylinder);
-            esfera = De(PrimitiveType.Sphere);
-            capsula = De(PrimitiveType.Capsule);
-        }
-
-        private static Vector3 U(double x, double y, double z)
-        {
-            return new Vector3((float)x, (float)z, (float)y);
         }
 
         // ---- Cielo, luz y aire ------------------------------------------------------------------------
@@ -77,156 +46,218 @@ namespace Croquis.Visor
         private static void Ambiente(AmbienteEscenario a, Light sol, Camera camara)
         {
             var d = a.DireccionLuz;
-            var haciaLaLuz = U(d[0], d[1], d[2]).normalized;
+            var haciaLaLuz = new Vector3((float)d[0], (float)d[2], (float)d[1]).normalized;
             sol.transform.rotation = Quaternion.LookRotation(-haciaLaLuz);
-            // Las intensidades vienen del visor web (three.js); en URP una luz direccional de 1 ya es sol
-            // pleno, así que se escalan para el mismo contraste.
-            sol.intensity = (float)a.IntensidadSol * (a.Noche ? 0.35f : 0.5f);
+            var lluvia = a.Precipitacion != "ninguna";
+            var bajo = !a.Noche && a.SolElevacionDeg < 12.0;
+            // Las intensidades del visor web son de three.js; en URP una direccional de 1 ya es sol
+            // pleno. Se conserva su proporción entre día, crepúsculo, nublado y noche.
+            sol.intensity = (float)a.IntensidadSol * (a.Noche ? 0.22f : 0.46f);
             sol.color = a.Noche
-                ? new Color(0.62f, 0.7f, 0.95f)
-                : Color.Lerp(new Color(1f, 0.78f, 0.6f), new Color(1f, 0.97f, 0.92f), Mathf.Clamp01((float)a.SolElevacionDeg / 30f));
+                ? new Color(0.62f, 0.72f, 1f)
+                : Color.Lerp(new Color(1f, 0.74f, 0.52f), new Color(1f, 0.96f, 0.9f), Mathf.Clamp01((float)a.SolElevacionDeg / 28f));
             sol.shadows = LightShadows.Soft;
+            sol.shadowStrength = lluvia ? 0.55f : a.Noche ? 0.7f : 0.92f;
 
-            var cielo = Materiales.Hex(a.ColorCielo, new Color(0.56f, 0.76f, 0.92f));
-            var ambiente = Materiales.Hex(a.ColorAmbiente, cielo);
-            var suelo = Materiales.Hex(a.ColorSuelo, new Color(0.35f, 0.4f, 0.25f));
-            var k = (float)a.IntensidadAmbiente * 0.55f;
-            RenderSettings.ambientMode = UnityEngine.Rendering.AmbientMode.Trilight;
-            RenderSettings.ambientSkyColor = ambiente * k;
-            RenderSettings.ambientEquatorColor = Color.Lerp(ambiente, suelo, 0.5f) * k;
-            RenderSettings.ambientGroundColor = suelo * (k * 0.5f);
-
-            var cieloMat = new Material(Shader.Find("Skybox/Procedural"));
-            cieloMat.SetColor("_SkyTint", cielo);
-            cieloMat.SetColor("_GroundColor", Color.Lerp(suelo, cielo, 0.5f));
-            cieloMat.SetFloat("_AtmosphereThickness", Mathf.Clamp((float)a.Turbidez / 4f, 0.5f, 2.5f));
-            cieloMat.SetFloat("_Exposure", a.Noche ? 0.12f : 1.25f);
-            cieloMat.SetFloat("_SunSize", a.Noche ? 0f : 0.035f);
-            RenderSettings.skybox = cieloMat;
+            // El cielo es un HDRI CC0, girado para que su sol caiga donde va el del hecho.
+            var nombre = a.Noche ? "noche" : lluvia || a.Turbidez > 6.0 ? "nublado" : bajo ? "crepusculo" : "dia";
+            var cielo = Materiales.Cielo(nombre, out var azimutHdri);
+            // En el HDRI el azimut se mide desde su centro; en la escena, desde el norte hacia el este.
+            cielo.SetFloat("_Rotation", Mathf.Repeat(azimutHdri - (float)a.SolAzimutDeg, 360f));
+            cielo.SetFloat("_Exposure", a.Noche ? 0.55f : lluvia ? 0.8f : 1f);
+            RenderSettings.skybox = cielo;
             RenderSettings.sun = sol;
+            RenderSettings.ambientMode = AmbientMode.Skybox;
+            RenderSettings.ambientIntensity = (float)a.IntensidadAmbiente * (a.Noche ? 1.6f : 1.05f);
+            RenderSettings.defaultReflectionMode = DefaultReflectionMode.Skybox;
+            RenderSettings.reflectionIntensity = a.Noche ? 0.6f : 1f;
             camara.clearFlags = CameraClearFlags.Skybox;
-            camara.farClipPlane = 2600f;
+            camara.farClipPlane = 3000f;
 
-            RenderSettings.fog = a.DensidadNiebla > 0;
+            var horizonte = Materiales.Hex(a.ColorCielo, new Color(0.6f, 0.75f, 0.9f));
+            RenderSettings.fog = true;
             RenderSettings.fogMode = FogMode.ExponentialSquared;
-            RenderSettings.fogDensity = (float)a.DensidadNiebla;
-            RenderSettings.fogColor = a.Noche ? new Color(0.05f, 0.06f, 0.09f) : Color.Lerp(cielo, Color.white, 0.35f);
+            // Aun sin niebla declarada hay aire: lo lejano se funde con el horizonte.
+            RenderSettings.fogDensity = Mathf.Max((float)a.DensidadNiebla, 0.0011f);
+            RenderSettings.fogColor = a.Noche
+                ? new Color(0.035f, 0.045f, 0.07f)
+                : Color.Lerp(horizonte, Color.white, lluvia ? 0.25f : 0.4f);
             DynamicGI.UpdateEnvironment();
         }
 
         // ---- Vía --------------------------------------------------------------------------------------
 
-        private static void Via(Transform padre, ViaEscenario v, AmbienteEscenario a)
+        private static void Via(Transform padre, ViaEscenario v, AmbienteEscenario a, Terreno terreno, long semilla)
         {
             var via = new GameObject("via").transform;
             via.SetParent(padre, false);
-            var lisuraAsfalto = a.Mojado ? 0.82f : 0.18f;
+            var sufijo = a.Mojado ? "_mojado" : "";
             foreach (var c in v.Capas)
             {
-                var (color, lisura) = MaterialDeCapa(c.Nombre, lisuraAsfalto);
-                var malla = Planta(c.Posiciones, c.Indices, (float)c.AlturaM);
-                var mat = (c.Nombre == Nombre.RayasBlancas || c.Nombre == Nombre.PasoPeatonal || c.Nombre == Nombre.RayasAmarillas) && a.Noche
-                    ? Materiales.Emisivo(color, color * 0.06f)
-                    : Materiales.Liso(color, lisura);
-                Pieza(via, c.Nombre.ToString(), malla, mat);
+                var m = new Malla();
+                Material mat;
+                var sombra = false;
+                switch (c.Nombre)
+                {
+                    case Nombre.Calzada:
+                        mat = Materiales.Pbr("asfalto" + sufijo);
+                        m.Planta(c.Posiciones, c.Indices, (float)c.AlturaM, terreno, Materiales.Mosaico("asfalto"));
+                        break;
+                    case Nombre.Acotamiento:
+                        mat = Materiales.Pbr("asfalto" + sufijo, new Color(1.5f, 1.45f, 1.38f));
+                        m.Planta(c.Posiciones, c.Indices, (float)c.AlturaM, terreno, Materiales.Mosaico("asfalto") * 0.7f);
+                        break;
+                    case Nombre.Banqueta:
+                    case Nombre.Camellon:
+                        mat = Materiales.Pbr("concreto" + sufijo);
+                        m.Planta(c.Posiciones, c.Indices, (float)c.AlturaM, terreno, Materiales.Mosaico("concreto"));
+                        sombra = true;
+                        break;
+                    case Nombre.RayasAmarillas:
+                        mat = Materiales.Calca(new Color(0.83f, 0.62f, 0.1f, 0.9f));
+                        m.Planta(c.Posiciones, c.Indices, (float)c.AlturaM, terreno, 1f);
+                        break;
+                    default:
+                        mat = Materiales.Calca(new Color(0.86f, 0.86f, 0.82f, 0.9f));
+                        m.Planta(c.Posiciones, c.Indices, (float)c.AlturaM, terreno, 1f);
+                        break;
+                }
+
+                m.Poner(via, c.Nombre.ToString().ToLowerInvariant(), mat, sombra);
             }
 
             if (v.Guarniciones.Length > 0)
             {
-                Pieza(via, "guarniciones", Paredes(v.Guarniciones, 0f, (float)v.AlturaGuarnicionM), Materiales.Liso(Concreto * 0.92f, 0.15f));
-            }
-
-            var metal = Materiales.Liso(new Color(0.62f, 0.64f, 0.66f), 0.55f, 0.8f);
-            foreach (var b in v.Barreras)
-            {
-                for (var i = 0; i + 1 < b.Length; i++)
+                var g = new Malla();
+                var alto = (float)v.AlturaGuarnicionM;
+                foreach (var s in v.Guarniciones)
                 {
-                    Viga(via, "barrera", b[i], b[i + 1], 0.55f, 0.31f, 0.06f, metal);
+                    var p0 = terreno.P(s.Ax, s.Ay);
+                    var p1 = terreno.P(s.Bx, s.By);
+                    g.Cuadro(p0, p1, p1 + Vector3.up * alto, p0 + Vector3.up * alto, 0.5f, true);
                 }
 
-                var resto = 0.0;
+                g.Poner(via, "guarniciones", Materiales.Pbr("concreto" + sufijo, new Color(0.86f, 0.86f, 0.86f)));
+            }
+
+            if (v.Barreras.Length > 0)
+            {
+                Barreras(via, v.Barreras, terreno);
+            }
+
+            if (a.Superficie == "encharcado" || a.Precipitacion == "lluvia_fuerte")
+            {
+                Charcos(via, v, terreno, semilla);
+            }
+        }
+
+        /// <summary>Barrera metálica de dos ondas sobre postes cada 4 m, como en las autopistas.</summary>
+        private static void Barreras(Transform via, PuntoPlano[][] barreras, Terreno terreno)
+        {
+            var viga = new Malla();
+            var postes = new Malla();
+            foreach (var b in barreras)
+            {
+                var recorrido = 0f;
+                var siguiente = 0f;
                 for (var i = 0; i + 1 < b.Length; i++)
                 {
-                    var largo = Math.Sqrt(Math.Pow(b[i + 1].X - b[i].X, 2) + Math.Pow(b[i + 1].Y - b[i].Y, 2));
-                    for (var s = resto; s < largo; s += 4.0)
+                    var p0 = terreno.P(b[i].X, b[i].Y);
+                    var p1 = terreno.P(b[i + 1].X, b[i + 1].Y);
+                    var largo = (p1 - p0).magnitude;
+                    if (largo < 1e-3f)
                     {
-                        var f = s / largo;
-                        var p = U(b[i].X + (b[i + 1].X - b[i].X) * f, b[i].Y + (b[i + 1].Y - b[i].Y) * f, 0.375);
-                        Objeto(via, "poste_barrera", cubo, metal, p, Quaternion.identity, new Vector3(0.08f, 0.75f, 0.08f));
+                        continue;
                     }
 
-                    resto = (resto + Math.Ceiling(largo / 4.0) * 4.0) - largo;
+                    var dir = (p1 - p0) / largo;
+                    var lado = Vector3.Cross(Vector3.up, dir);
+                    // El perfil de dos ondas: tres franjas en zigzag hacia la vía.
+                    var alturas = new[] { 0.42f, 0.5f, 0.58f, 0.66f, 0.73f };
+                    var salientes = new[] { 0f, 0.06f, 0f, 0.06f, 0f };
+                    for (var k = 0; k + 1 < alturas.Length; k++)
+                    {
+                        var a0 = p0 + Vector3.up * alturas[k] + lado * salientes[k];
+                        var a1 = p1 + Vector3.up * alturas[k] + lado * salientes[k];
+                        var b0 = p0 + Vector3.up * alturas[k + 1] + lado * salientes[k + 1];
+                        var b1 = p1 + Vector3.up * alturas[k + 1] + lado * salientes[k + 1];
+                        viga.Cuadro(a0, a1, b1, b0, 1f, true);
+                    }
+
+                    while (siguiente <= recorrido + largo)
+                    {
+                        var p = p0 + dir * (siguiente - recorrido) - lado * 0.06f;
+                        postes.Caja(p, dir, lado, 0.1f, 0.74f, 0.12f);
+                        siguiente += 4f;
+                    }
+
+                    recorrido += largo;
                 }
             }
+
+            var metal = Materiales.Liso(new Color(0.62f, 0.64f, 0.66f), 0.62f, 0.85f);
+            viga.Poner(via, "barrera", metal);
+            postes.Poner(via, "postes_barrera", Materiales.Liso(new Color(0.4f, 0.41f, 0.42f), 0.4f, 0.7f));
         }
 
-        private static (Color, float) MaterialDeCapa(Nombre n, float lisuraAsfalto)
+        /// <summary>Charcos en la calzada: manchas de agua quieta, con semilla, donde el piso es más bajo.</summary>
+        private static void Charcos(Transform via, ViaEscenario v, Terreno terreno, long semilla)
         {
-            switch (n)
+            CapaEscenario calzada = null;
+            foreach (var c in v.Capas)
             {
-                case Nombre.Calzada:
-                    return (Asfalto, lisuraAsfalto);
-                case Nombre.Acotamiento:
-                    return (Asfalto * 1.25f, lisuraAsfalto * 0.8f);
-                case Nombre.Banqueta:
-                case Nombre.Camellon:
-                    return (Concreto, 0.12f);
-                case Nombre.RayasAmarillas:
-                    return (Amarillo, 0.3f);
-                default:
-                    return (Blanco, 0.3f);
-            }
-        }
-
-        /// <summary>Una malla en planta a una altura. Croquis la da antihoraria desde arriba; Unity quiere horaria.</summary>
-        private static Mesh Planta(double[] posiciones, long[] indices, float altura)
-        {
-            var n = posiciones.Length / 2;
-            var v = new Vector3[n];
-            var uv = new Vector2[n];
-            for (var i = 0; i < n; i++)
-            {
-                v[i] = new Vector3((float)posiciones[2 * i], altura, (float)posiciones[2 * i + 1]);
-                uv[i] = new Vector2(v[i].x, v[i].z) * 0.25f;
+                if (c.Nombre == Nombre.Calzada)
+                {
+                    calzada = c;
+                }
             }
 
-            var t = new int[indices.Length];
-            for (var i = 0; i + 2 < indices.Length; i += 3)
+            if (calzada == null || calzada.Indices.Length < 3)
             {
-                t[i] = (int)indices[i];
-                t[i + 1] = (int)indices[i + 2];
-                t[i + 2] = (int)indices[i + 1];
+                return;
             }
 
-            var m = new Mesh { indexFormat = n > 65000 ? UnityEngine.Rendering.IndexFormat.UInt32 : UnityEngine.Rendering.IndexFormat.UInt16 };
-            m.vertices = v;
-            m.uv = uv;
-            m.triangles = t;
-            m.RecalculateNormals();
-            m.RecalculateBounds();
-            return m;
-        }
-
-        /// <summary>Paredes verticales sobre segmentos en planta, visibles por los dos lados.</summary>
-        private static Mesh Paredes(SegmentoPlano[] segmentos, float abajo, float arriba)
-        {
-            var v = new List<Vector3>();
-            var t = new List<int>();
-            foreach (var s in segmentos)
+            var azar = new Azar(semilla + 77);
+            var m = new Malla();
+            var triangulos = calzada.Indices.Length / 3;
+            for (var k = 0; k < 14; k++)
             {
-                var b = v.Count;
-                v.Add(U(s.Ax, s.Ay, abajo));
-                v.Add(U(s.Bx, s.By, abajo));
-                v.Add(U(s.Bx, s.By, arriba));
-                v.Add(U(s.Ax, s.Ay, arriba));
-                t.AddRange(new[] { b, b + 2, b + 1, b, b + 3, b + 2, b, b + 1, b + 2, b, b + 2, b + 3 });
+                var t = (int)(azar.Siguiente() * triangulos) * 3;
+                Vector2 Vert(int i) => new Vector2(
+                    (float)calzada.Posiciones[2 * (int)calzada.Indices[t + i]],
+                    (float)calzada.Posiciones[2 * (int)calzada.Indices[t + i] + 1]);
+                var u = azar.Siguiente();
+                var w = azar.Siguiente();
+                if (u + w > 1f)
+                {
+                    u = 1f - u;
+                    w = 1f - w;
+                }
+
+                var c = Vert(0) + (Vert(1) - Vert(0)) * u + (Vert(2) - Vert(0)) * w;
+                var rx = azar.Entre(0.5f, 1.6f);
+                var ry = azar.Entre(0.3f, 0.9f);
+                var giro = azar.Entre(0f, Mathf.PI);
+                var centro = m.Vertice(terreno.P(c.x, c.y, 0.006f), Vector2.zero);
+                const int Lados = 14;
+                for (var i = 0; i <= Lados; i++)
+                {
+                    var ang = 2f * Mathf.PI * i / Lados;
+                    // Orilla irregular, para que no sea una elipse perfecta.
+                    var r = 1f + 0.18f * Mathf.Sin(3f * ang + k) + 0.1f * Mathf.Sin(5f * ang + 2f * k);
+                    var ox = Mathf.Cos(ang) * rx * r;
+                    var oy = Mathf.Sin(ang) * ry * r;
+                    var x = c.x + ox * Mathf.Cos(giro) - oy * Mathf.Sin(giro);
+                    var y = c.y + ox * Mathf.Sin(giro) + oy * Mathf.Cos(giro);
+                    m.Vertice(terreno.P(x, y, 0.006f), Vector2.zero);
+                    if (i > 0)
+                    {
+                        m.Triangulo(centro, centro + i + 1, centro + i);
+                    }
+                }
             }
 
-            var m = new Mesh { indexFormat = v.Count > 65000 ? UnityEngine.Rendering.IndexFormat.UInt32 : UnityEngine.Rendering.IndexFormat.UInt16 };
-            m.SetVertices(v);
-            m.SetTriangles(t, 0);
-            m.RecalculateNormals();
-            return m;
+            m.Poner(via, "charcos", Materiales.Charco, false);
         }
 
         // ---- Suelo ------------------------------------------------------------------------------------
@@ -237,22 +268,26 @@ namespace Croquis.Visor
             var lado = (float)s.LadoM;
             var x0 = (float)s.Centro.X - lado / 2f;
             var y0 = (float)s.Centro.Y - lado / 2f;
+            var lejano = s.HuecoM.HasValue;
             // El parche fino va 3 cm abajo de la vía y el lejano 5 cm, como en el visor web.
-            var bajo = s.HuecoM.HasValue ? -0.05f : -0.03f;
-            var v = new Vector3[n * n];
-            var uv = new Vector2[n * n];
+            var bajo = lejano ? -0.05f : -0.03f;
+            var mosaico = Materiales.Mosaico("pasto") * (lejano ? 3f : 1f);
+            var pasto = new Malla();
+            var capa = new Malla();
             for (var j = 0; j < n; j++)
             {
                 for (var i = 0; i < n; i++)
                 {
                     var k = j * n + i;
-                    v[k] = new Vector3(x0 + i * lado / (n - 1), (float)s.AlturasM[k] + bajo, y0 + j * lado / (n - 1));
-                    uv[k] = new Vector2(i / (float)(n - 1), j / (float)(n - 1));
+                    var x = x0 + i * lado / (n - 1);
+                    var y = y0 + j * lado / (n - 1);
+                    var h = (float)s.AlturasM[k] + bajo;
+                    pasto.Vertice(new Vector3(x, h, y), new Vector2(x, y) / mosaico);
+                    capa.Vertice(new Vector3(x, h + 0.012f, y), new Vector2((i + 0.5f) / n, (j + 0.5f) / n));
                 }
             }
 
-            var t = new List<int>();
-            var hueco = s.HuecoM.HasValue ? (float)s.HuecoM.Value / 2f : -1f;
+            var hueco = lejano ? (float)s.HuecoM.Value / 2f : -1f;
             for (var j = 0; j + 1 < n; j++)
             {
                 for (var i = 0; i + 1 < n; i++)
@@ -265,305 +300,141 @@ namespace Croquis.Visor
                     }
 
                     var a0 = j * n + i;
-                    t.AddRange(new[] { a0, a0 + n, a0 + 1, a0 + 1, a0 + n, a0 + n + 1 });
+                    pasto.Triangulo(a0, a0 + n, a0 + 1);
+                    pasto.Triangulo(a0 + 1, a0 + n, a0 + n + 1);
+                    capa.Triangulo(a0, a0 + n, a0 + 1);
+                    capa.Triangulo(a0 + 1, a0 + n, a0 + n + 1);
                 }
             }
 
-            var m = new Mesh { indexFormat = UnityEngine.Rendering.IndexFormat.UInt32 };
-            m.vertices = v;
-            m.uv = uv;
-            m.SetTriangles(t, 0);
-            m.RecalculateNormals();
-            m.RecalculateBounds();
+            var tinte = a.Noche ? new Color(0.75f, 0.8f, 0.85f) : Color.white;
+            pasto.Poner(padre, lejano ? "suelo_lejano" : "suelo", Materiales.Pbr("pasto", tinte), false);
 
-            // Las parcelas y la orilla seca se pintan en una textura, un pixel por nodo.
-            var pasto = Materiales.Hex(a.ColorSuelo, new Color(0.33f, 0.42f, 0.22f));
-            var tex = new Texture2D(n, n, TextureFormat.RGBA32, false) { wrapMode = TextureWrapMode.Clamp, filterMode = FilterMode.Bilinear };
+            // Las parcelas (barbecho) y la orilla seca junto a la vía: una capa de tierra cuya
+            // transparencia sale de los tonos de cada nodo, suavizada entre nodos.
+            var tex = new Texture2D(n, n, TextureFormat.RGBA32, true) { wrapMode = TextureWrapMode.Clamp, filterMode = FilterMode.Trilinear };
             var px = new Color32[n * n];
+            var hayAlgo = false;
+            var ocre = new Color(0.52f, 0.42f, 0.27f);
+            var tierra = new Color(0.42f, 0.34f, 0.25f);
             for (var k = 0; k < n * n; k++)
             {
                 var tono = (float)s.Tonos[k];
-                var c = new Color(pasto.r * (1f + 0.35f * tono), pasto.g * (1f + 0.12f * tono), pasto.b * (1f - 0.2f * tono));
-                if (s.Seco != null && s.Seco.Length == n * n)
-                {
-                    c = Color.Lerp(c, Tierra, (float)s.Seco[k] * 0.8f);
-                }
-
+                var seco = s.Seco != null && s.Seco.Length == n * n ? (float)s.Seco[k] : 0f;
+                var alfa = Mathf.Clamp01(Mathf.Max(tono * 0.62f, seco * 0.85f));
+                var c = Color.Lerp(ocre, tierra, seco > tono ? 1f : 0f);
+                c.a = alfa;
                 px[k] = c;
+                hayAlgo |= alfa > 0.02f;
+            }
+
+            if (!hayAlgo)
+            {
+                return;
             }
 
             tex.SetPixels32(px);
-            tex.Apply(false, true);
-            Pieza(padre, s.HuecoM.HasValue ? "suelo_lejano" : "suelo", m, Materiales.ConTextura(tex, a.Mojado ? 0.35f : 0.05f));
-        }
-
-        // ---- Entorno procedural -----------------------------------------------------------------------
-
-        private static void Entorno(Transform padre, EntornoEscenario en, AmbienteEscenario a)
-        {
-            var entorno = new GameObject("entorno_procedural").transform;
-            entorno.SetParent(padre, false);
-            var tronco = Materiales.Liso(new Color(0.3f, 0.24f, 0.18f), 0.1f);
-            foreach (var arbol in en.Arboles)
-            {
-                Arbol(entorno, arbol, tronco);
-            }
-
-            foreach (var b in en.Edificios)
-            {
-                Edificio(entorno, b);
-            }
-
-            var madera = Materiales.Liso(new Color(0.36f, 0.3f, 0.24f), 0.1f);
-            foreach (var p in en.Postes)
-            {
-                Objeto(entorno, "poste", cilindro, madera, U(p.X, p.Y, p.Z + 4.5), Quaternion.identity, new Vector3(0.22f, 4.5f, 0.22f));
-                var r = Quaternion.Euler(0f, 90f - (float)(p.RumboRad * Mathf.Rad2Deg), 0f);
-                Objeto(entorno, "cruceta", cubo, madera, U(p.X, p.Y, p.Z + 8.4), r, new Vector3(1.6f, 0.1f, 0.1f));
-            }
-
-            var alambre = Materiales.Liso(new Color(0.4f, 0.38f, 0.35f), 0.2f);
-            foreach (var c in en.Cercas)
-            {
-                var a0 = new PuntoPlano { X = c.Ax, Y = c.Ay };
-                var b0 = new PuntoPlano { X = c.Bx, Y = c.By };
-                Viga(entorno, "cerca", a0, b0, 1.0f, 0.03f, 0.03f, alambre);
-                Viga(entorno, "cerca", a0, b0, 0.6f, 0.03f, 0.03f, alambre);
-                var largo = Math.Sqrt(Math.Pow(c.Bx - c.Ax, 2) + Math.Pow(c.By - c.Ay, 2));
-                for (var s = 0.0; s <= largo; s += 2.5)
-                {
-                    var f = largo > 0 ? s / largo : 0;
-                    Objeto(entorno, "poste_cerca", cubo, madera, U(c.Ax + (c.Bx - c.Ax) * f, c.Ay + (c.By - c.Ay) * f, 0.6), Quaternion.identity, new Vector3(0.08f, 1.2f, 0.08f));
-                }
-            }
-
-            foreach (var s in en.Senales)
-            {
-                Senal(entorno, s);
-            }
-
-            var lejos = Materiales.Liso(new Color(0.36f, 0.42f, 0.36f), 0.05f);
-            foreach (var c in en.Cerros)
-            {
-                Pieza(entorno, "cerros", Cerro(c), lejos);
-            }
-
-            var urbano = Materiales.Liso(new Color(0.5f, 0.52f, 0.56f), 0.1f);
-            foreach (var s in en.Silueta)
-            {
-                const float Radio = 420f;
-                var ancho = 2f * Radio * Mathf.Sin((float)s.AberturaRad / 2f);
-                var p = new Vector3(Mathf.Cos((float)s.AnguloRad) * Radio, (float)s.AltoM / 2f, Mathf.Sin((float)s.AnguloRad) * Radio);
-                var r = Quaternion.Euler(0f, 90f - (float)(s.AnguloRad * Mathf.Rad2Deg), 0f);
-                Objeto(entorno, "silueta", cubo, urbano, p, r, new Vector3(ancho, (float)s.AltoM, 20f));
-            }
-        }
-
-        private static void Arbol(Transform padre, ArbolEscenario t, Material tronco)
-        {
-            var copa = Materiales.Liso(ColorDeCopa(t.Especie), 0.05f);
-            var p = U(t.X, t.Y, t.Z);
-            var giro = Quaternion.Euler(0f, (float)(t.RumboRad * Mathf.Rad2Deg), 0f);
-            var r = (float)t.CopaM;
-            var h = (float)t.TroncoM;
-            switch (t.Tipo)
-            {
-                case 2: // arbusto
-                    Objeto(padre, "arbusto", esfera, copa, p + Vector3.up * r * 0.6f, giro, new Vector3(2f * r, 1.3f * r, 2f * r));
-                    break;
-                case 1: // alargado: ciprés o eucalipto
-                    Objeto(padre, "tronco", cilindro, tronco, p + Vector3.up * h / 2f, giro, new Vector3(0.25f, h / 2f, 0.25f));
-                    Objeto(padre, "copa", capsula, copa, p + Vector3.up * (h + 1.4f * r), giro, new Vector3(1.6f * r, 1.6f * r, 1.6f * r));
-                    break;
-                default:
-                    if (t.Especie == Especie.Palmera)
-                    {
-                        var alto = t.AlturaM.HasValue ? (float)t.AlturaM.Value : h + 2f * r;
-                        Objeto(padre, "tronco", cilindro, tronco, p + Vector3.up * alto / 2f, giro, new Vector3(0.35f, alto / 2f, 0.35f));
-                        Objeto(padre, "copa", esfera, copa, p + Vector3.up * alto, giro, new Vector3(2.2f * r, 0.7f * r, 2.2f * r));
-                        break;
-                    }
-
-                    Objeto(padre, "tronco", cilindro, tronco, p + Vector3.up * h / 2f, giro, new Vector3(0.3f, h / 2f, 0.3f));
-                    Objeto(padre, "copa", esfera, copa, p + Vector3.up * (h + 0.75f * r), giro, new Vector3(2f * r, 1.7f * r, 2f * r));
-                    break;
-            }
-        }
-
-        private static Color ColorDeCopa(Especie? e)
-        {
-            switch (e)
-            {
-                case Especie.Jacaranda:
-                    return new Color(0.42f, 0.36f, 0.58f);
-                case Especie.Pirul:
-                    return new Color(0.33f, 0.42f, 0.24f);
-                case Especie.Palmera:
-                    return new Color(0.3f, 0.44f, 0.22f);
-                default:
-                    return new Color(0.24f, 0.38f, 0.2f);
-            }
-        }
-
-        private static void Edificio(Transform padre, EdificioEscenario b)
-        {
-            var color = Materiales.Hex(b.Color, new Color(0.85f, 0.82f, 0.76f));
-            if (b.Material == EdificioMaterial.Tabique)
-            {
-                color = new Color(0.62f, 0.38f, 0.28f);
-            }
-
-            var giro = Quaternion.Euler(0f, 90f - (float)(b.RumboRad * Mathf.Rad2Deg), 0f);
-            var alto = (float)b.AltoM;
-            var p = U(b.X, b.Y, b.Z);
-            var cuerpo = Objeto(padre, "edificio", cubo, Materiales.Liso(color, 0.08f), p + Vector3.up * alto / 2f, giro, new Vector3((float)b.FondoM, alto, (float)b.LargoM));
-            // Ventanas: una franja oscura por piso hacia la calle, para que no sea un bloque liso.
-            var vidrio = Materiales.Liso(new Color(0.12f, 0.14f, 0.17f), 0.7f);
-            var frente = new Vector3(Mathf.Cos((float)b.FrenteRad), 0f, Mathf.Sin((float)b.FrenteRad));
-            var pisos = Math.Max(1, (int)b.Pisos);
-            for (var i = 0; i < pisos; i++)
-            {
-                var y = alto * (i + 0.6f) / pisos;
-                var centro = p + Vector3.up * y + frente * ((float)Math.Max(b.FondoM, b.LargoM) * 0.5f + 0.02f);
-                var orient = Quaternion.LookRotation(frente);
-                Objeto(cuerpo.parent, "ventanas", cubo, vidrio, centro, orient, new Vector3((float)Math.Min(b.FondoM, b.LargoM) * 0.7f, alto / pisos * 0.35f, 0.04f));
-            }
-
-            var negro = Materiales.Liso(new Color(0.08f, 0.08f, 0.08f), 0.2f);
-            for (var i = 0; i < b.Tinacos; i++)
-            {
-                var o = new Vector3((i - (b.Tinacos - 1) / 2f) * 1.4f, alto + 0.6f, 0f);
-                Objeto(padre, "tinaco", cilindro, negro, p + giro * o, Quaternion.identity, new Vector3(1.1f, 0.6f, 1.1f));
-            }
-        }
-
-        private static void Senal(Transform padre, SenalEscenario s)
-        {
-            var p = U(s.X, s.Y, s.Z);
-            var gris = Materiales.Liso(new Color(0.55f, 0.56f, 0.58f), 0.4f, 0.6f);
-            Objeto(padre, "poste_senal", cilindro, gris, p + Vector3.up * 1.2f, Quaternion.identity, new Vector3(0.07f, 1.2f, 0.07f));
-            Color c;
-            switch (s.Tipo)
-            {
-                case SenaleTipo.Alto:
-                    c = new Color(0.7f, 0.1f, 0.1f);
-                    break;
-                case SenaleTipo.Ceda:
-                    c = new Color(0.85f, 0.85f, 0.82f);
-                    break;
-                case SenaleTipo.Informativa:
-                    c = new Color(0.1f, 0.4f, 0.22f);
-                    break;
-                default:
-                    c = new Color(0.9f, 0.9f, 0.88f);
-                    break;
-            }
-
-            var giro = Quaternion.Euler(0f, 90f - (float)(s.RumboRad * Mathf.Rad2Deg), 0f);
-            var tam = s.Tipo == SenaleTipo.Informativa ? new Vector3(0.05f, 0.6f, 1.2f) : new Vector3(0.05f, 0.7f, 0.7f);
-            Objeto(padre, "placa_" + s.Tipo, cubo, Materiales.Liso(c, 0.4f), p + Vector3.up * 2.4f, giro, tam);
-        }
-
-        private static Mesh Cerro(CerroEscenario c)
-        {
-            var n = c.AlturasM.Length;
-            var v = new List<Vector3>();
-            var t = new List<int>();
-            var r = (float)c.RadioM;
-            for (var i = 0; i < n; i++)
-            {
-                var ang = (float)(c.DesdeRad + (c.HastaRad - c.DesdeRad) * i / Math.Max(1, n - 1));
-                var x = Mathf.Cos(ang) * r;
-                var z = Mathf.Sin(ang) * r;
-                v.Add(new Vector3(x, -4f, z));
-                v.Add(new Vector3(x, (float)c.AlturasM[i], z));
-                if (i > 0)
-                {
-                    var b = 2 * (i - 1);
-                    t.AddRange(new[] { b, b + 1, b + 2, b + 1, b + 3, b + 2, b, b + 2, b + 1, b + 1, b + 2, b + 3 });
-                }
-            }
-
-            var m = new Mesh();
-            m.SetVertices(v);
-            m.SetTriangles(t, 0);
-            m.RecalculateNormals();
-            return m;
+            tex.Apply(true, true);
+            var mat = new Material(Materiales.Calca(Color.white, 0.04f)) { name = "parcelas" };
+            mat.SetTexture("_BaseMap", tex);
+            capa.Poner(padre, lejano ? "parcelas_lejanas" : "parcelas", mat, false);
         }
 
         // ---- Luminarias -------------------------------------------------------------------------------
 
-        private const int LuminariasEncendidasMax = 8;
-
         private static void Luminarias(Transform padre, LuminariaEscenario[] lista, AmbienteEscenario a)
         {
-            var gris = Materiales.Liso(new Color(0.5f, 0.52f, 0.54f), 0.4f, 0.7f);
-            var foco = a.Noche && a.Luminarias
-                ? Materiales.Emisivo(new Color(1f, 0.92f, 0.75f), new Color(4f, 3.4f, 2.2f))
-                : Materiales.Liso(new Color(0.8f, 0.8f, 0.78f), 0.6f);
-            var encendidas = 0;
+            if (lista.Length == 0)
+            {
+                return;
+            }
+
+            var encendidas = a.Noche && a.Luminarias;
+            var postes = new Malla();
+            var focos = new Malla();
+            var luces = 0;
             foreach (var l in lista)
             {
-                var p = U(l.X, l.Y, l.Z);
+                var p = new Vector3((float)l.X, (float)l.Z, (float)l.Y);
                 var alto = (float)l.AlturaM;
-                Objeto(padre, "luminaria", cilindro, gris, p + Vector3.up * alto / 2f, Quaternion.identity, new Vector3(0.16f, alto / 2f, 0.16f));
-                var dir = new Vector3(Mathf.Cos((float)l.RumboDeg * Mathf.Deg2Rad), 0f, Mathf.Sin((float)l.RumboDeg * Mathf.Deg2Rad));
-                var cabeza = p + Vector3.up * alto + dir * 1.8f;
-                Objeto(padre, "brazo", cubo, gris, p + Vector3.up * alto + dir * 0.9f, Quaternion.LookRotation(dir), new Vector3(0.08f, 0.08f, 1.8f));
-                Objeto(padre, "foco", cubo, foco, cabeza - Vector3.up * 0.08f, Quaternion.LookRotation(dir), new Vector3(0.3f, 0.12f, 0.6f));
-                if (a.Noche && a.Luminarias && encendidas < LuminariasEncendidasMax)
+                var ang = (float)l.RumboDeg * Mathf.Deg2Rad;
+                var dir = new Vector3(Mathf.Cos(ang), 0f, Mathf.Sin(ang));
+                var lado = Vector3.Cross(Vector3.up, dir);
+                // Poste cónico con base, brazo curvo en tres tramos y cabeza tipo cobra.
+                postes.Prisma(p, 0.16f, 0.5f, 10);
+                postes.Prisma(p + Vector3.up * 0.5f, 0.1f, alto - 0.5f, 10, 0.06f);
+                var codo = p + Vector3.up * alto;
+                var tramos = new[] { 0f, 0.5f, 1.15f, 1.9f };
+                var subidas = new[] { 0f, 0.28f, 0.42f, 0.42f };
+                for (var k = 0; k + 1 < tramos.Length; k++)
+                {
+                    var q0 = codo + dir * tramos[k] + Vector3.up * subidas[k];
+                    var q1 = codo + dir * tramos[k + 1] + Vector3.up * subidas[k + 1];
+                    var eje = (q1 - q0).normalized;
+                    postes.Caja(q0 - Vector3.up * 0.03f + eje * ((q1 - q0).magnitude / 2f), lado, eje, 0.06f, 0.06f, (q1 - q0).magnitude);
+                }
+
+                var cabeza = codo + dir * 2.2f + Vector3.up * 0.38f;
+                postes.Caja(cabeza, lado, dir, 0.3f, 0.1f, 0.7f);
+                focos.Caja(cabeza - Vector3.up * 0.025f, lado, dir, 0.22f, 0.03f, 0.5f);
+                if (encendidas && luces < LuminariasEncendidasMax)
                 {
                     var luz = new GameObject("luz_luminaria").AddComponent<Light>();
                     luz.transform.SetParent(padre, false);
                     luz.type = LightType.Spot;
-                    luz.transform.SetPositionAndRotation(cabeza - Vector3.up * 0.2f, Quaternion.LookRotation(Vector3.down));
-                    luz.spotAngle = 120f;
-                    luz.range = alto * 3.2f;
-                    luz.intensity = 6f;
-                    luz.color = new Color(1f, 0.85f, 0.62f);
-                    luz.shadows = LightShadows.None;
-                    encendidas++;
+                    luz.transform.SetPositionAndRotation(cabeza - Vector3.up * 0.1f, Quaternion.LookRotation(Vector3.down + dir * 0.15f));
+                    luz.spotAngle = 128f;
+                    luz.innerSpotAngle = 70f;
+                    luz.range = alto * 3.4f;
+                    luz.intensity = 26f;
+                    luz.color = new Color(1f, 0.82f, 0.56f);
+                    luz.shadows = luces < 2 ? LightShadows.Soft : LightShadows.None;
+                    luces++;
                 }
             }
+
+            postes.Poner(padre, "luminarias", Materiales.Liso(new Color(0.45f, 0.47f, 0.49f), 0.45f, 0.75f));
+            focos.Poner(
+                padre,
+                "focos",
+                encendidas
+                    ? Materiales.Emisivo(new Color(1f, 0.9f, 0.7f), new Color(9f, 7f, 4f))
+                    : Materiales.Liso(new Color(0.85f, 0.85f, 0.82f), 0.7f),
+                false);
         }
 
         // ---- Lluvia -----------------------------------------------------------------------------------
 
-        private static void Lluvia(Transform padre, PuntoPlano centro, int gotas)
+        private static void Lluvia(Transform padre, PuntoPlano centro, int gotas, Camera camara)
         {
             var go = new GameObject("lluvia");
-            go.transform.SetParent(padre, false);
-            go.transform.position = U(centro.X, centro.Y, 25);
+            // La lluvia sigue a la cámara: siempre llueve donde se mira.
+            go.transform.SetParent(camara.transform, false);
+            go.transform.localPosition = Vector3.zero;
+            go.AddComponent<SiempreVertical>().Altura = 16f;
             var ps = go.AddComponent<ParticleSystem>();
             ps.Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear);
             var main = ps.main;
             main.loop = true;
-            main.startLifetime = 1.6f;
-            main.startSpeed = 18f;
-            main.startSize3D = true;
-            main.startSizeX = 0.02f;
-            main.startSizeY = 0.6f;
-            main.startSizeZ = 0.02f;
+            main.prewarm = true;
+            main.startLifetime = 1.1f;
+            main.startSpeed = 19f;
+            main.startSize = new ParticleSystem.MinMaxCurve(0.012f, 0.022f);
             main.maxParticles = gotas;
             main.simulationSpace = ParticleSystemSimulationSpace.World;
-            main.startColor = new Color(0.75f, 0.8f, 0.88f, 0.45f);
+            main.gravityModifier = 0.4f;
             var em = ps.emission;
-            em.rateOverTime = gotas / 1.6f;
+            em.rateOverTime = gotas / 1.1f;
             var forma = ps.shape;
             forma.shapeType = ParticleSystemShapeType.Box;
-            forma.scale = new Vector3(70f, 1f, 70f);
+            forma.scale = new Vector3(46f, 46f, 1f);
             forma.rotation = new Vector3(90f, 0f, 0f);
             var r = go.GetComponent<ParticleSystemRenderer>();
             r.renderMode = ParticleSystemRenderMode.Stretch;
-            r.lengthScale = 1f;
-            r.velocityScale = 0.04f;
-            var mat = new Material(Shader.Find("Universal Render Pipeline/Particles/Unlit"));
-            mat.SetColor("_BaseColor", new Color(0.8f, 0.85f, 0.92f, 0.35f));
-            mat.SetFloat("_Surface", 1f);
-            mat.SetFloat("_Blend", 0f);
-            mat.renderQueue = 3000;
-            mat.EnableKeyword("_SURFACE_TYPE_TRANSPARENT");
-            r.sharedMaterial = mat;
+            r.lengthScale = 22f;
+            r.velocityScale = 0.01f;
+            r.sharedMaterial = Materiales.Lluvia;
+            r.shadowCastingMode = ShadowCastingMode.Off;
             ps.Play();
         }
 
@@ -584,7 +455,7 @@ namespace Croquis.Visor
             texto.transform.SetParent(go.transform, false);
             texto.font = Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf");
             texto.fontSize = 14;
-            texto.color = new Color(1f, 1f, 1f, 0.85f);
+            texto.color = new Color(1f, 1f, 1f, 0.88f);
             texto.alignment = TextAnchor.LowerLeft;
             texto.text = "Reconstrucción ilustrativa · entorno procedural: no es el lugar real";
             var rt = texto.rectTransform;
@@ -594,43 +465,24 @@ namespace Croquis.Visor
             rt.anchoredPosition = new Vector2(16f, 12f);
             rt.sizeDelta = new Vector2(-32f, 24f);
             var sombra = texto.gameObject.AddComponent<Shadow>();
-            sombra.effectColor = new Color(0f, 0f, 0f, 0.6f);
+            sombra.effectColor = new Color(0f, 0f, 0f, 0.65f);
         }
+    }
 
-        // ---- Utilidades -------------------------------------------------------------------------------
+    /// <summary>Mantiene la lluvia sobre la cámara, cayendo derecho aunque la cámara se incline.</summary>
+    public sealed class SiempreVertical : MonoBehaviour
+    {
+        public float Altura { get; set; }
 
-        private static Transform Objeto(Transform padre, string nombre, Mesh malla, Material mat, Vector3 pos, Quaternion rot, Vector3 escala)
+        private void LateUpdate()
         {
-            var go = new GameObject(nombre);
-            go.transform.SetParent(padre, false);
-            go.transform.SetPositionAndRotation(pos, rot);
-            go.transform.localScale = escala;
-            go.AddComponent<MeshFilter>().sharedMesh = malla;
-            go.AddComponent<MeshRenderer>().sharedMaterial = mat;
-            return go.transform;
-        }
-
-        /// <summary>Una viga recta entre dos puntos en planta, a una altura y con su sección.</summary>
-        private static void Viga(Transform padre, string nombre, PuntoPlano a, PuntoPlano b, float altura, float alto, float grueso, Material mat)
-        {
-            var pa = U(a.X, a.Y, altura);
-            var pb = U(b.X, b.Y, altura);
-            var d = pb - pa;
-            if (d.sqrMagnitude < 1e-6f)
+            var padre = transform.parent;
+            if (padre == null)
             {
                 return;
             }
 
-            Objeto(padre, nombre, cubo, mat, (pa + pb) / 2f, Quaternion.LookRotation(d), new Vector3(grueso, alto, d.magnitude));
-        }
-
-        private static void Pieza(Transform padre, string nombre, Mesh malla, Material mat)
-        {
-            var go = new GameObject(nombre);
-            go.transform.SetParent(padre, false);
-            go.AddComponent<MeshFilter>().sharedMesh = malla;
-            var mr = go.AddComponent<MeshRenderer>();
-            mr.sharedMaterial = mat;
+            transform.SetPositionAndRotation(padre.position + padre.forward * 12f + Vector3.up * Altura, Quaternion.identity);
         }
     }
 }

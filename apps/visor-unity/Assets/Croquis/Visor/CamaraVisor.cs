@@ -29,7 +29,7 @@ namespace Croquis.Visor
 
         public bool Cambiar(string nuevo)
         {
-            if (nuevo == "cenital" || nuevo == "orbita")
+            if (nuevo == "cenital" || nuevo == "orbita" || nuevo == "calle")
             {
                 modo = nuevo;
                 return true;
@@ -96,6 +96,17 @@ namespace Croquis.Visor
                         Quaternion.LookRotation(t.forward, Vector3.up) * Quaternion.Euler(4f, 0f, 0f));
                     return;
                 }
+            }
+
+            if (modo == "calle")
+            {
+                // A la altura de los ojos de alguien parado junto a la vía, mirando al impacto.
+                camara.fieldOfView = 50f;
+                var ac = AnguloInicial * Mathf.Deg2Rad;
+                var dc = Mathf.Max(11f, lado * 0.55f);
+                camara.transform.position = centro + new Vector3(Mathf.Cos(ac) * dc, 1.65f, Mathf.Sin(ac) * dc);
+                camara.transform.LookAt(centro + Vector3.up * 1.0f);
+                return;
             }
 
             if (Caso != null && Caso.Reproduciendo)

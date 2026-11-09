@@ -19,7 +19,7 @@ namespace Croquis.EditorTools
     public static class ConstruirVisor
     {
         private const string CarpetaRender = "Assets/Croquis/Render";
-        private const string RutaEscena = "Assets/Croquis/Escenas/Visor.unity";
+        internal const string RutaEscena = "Assets/Croquis/Escenas/Visor.unity";
         private const string RutaRecursos = "Assets/Resources/recursos_visor.json";
 
         [MenuItem("Croquis/Preparar proyecto")]
@@ -36,6 +36,9 @@ namespace Croquis.EditorTools
             AjustesJugador();
             IncluirShadersDeGltf();
             Recursos();
+            PrepararEscenario.Todo(
+                (UniversalRenderPipelineAsset)pipeline,
+                AssetDatabase.LoadAssetAtPath<UniversalRendererData>(CarpetaRender + "/URP_Renderer.asset"));
             Escena();
             AssetDatabase.SaveAssets();
         }
@@ -125,8 +128,7 @@ namespace Croquis.EditorTools
                 .Where(r => !r.Contains("/Built-In/") && !r.Contains("/HDRP/") && !r.Contains("/Export/"))
                 .Select(AssetDatabase.LoadAssetAtPath<Shader>)
                 .Append(Shader.Find("Universal Render Pipeline/Lit"))
-                .Append(Shader.Find("Universal Render Pipeline/Particles/Unlit"))
-                .Append(Shader.Find("Skybox/Procedural"))
+                .Append(Shader.Find("Skybox/Cubemap"))
                 .Where(s => s != null);
             foreach (var s in shaders)
             {
@@ -170,6 +172,7 @@ namespace Croquis.EditorTools
             c.clearFlags = CameraClearFlags.SolidColor;
             c.backgroundColor = new Color(0.56f, 0.65f, 0.74f);
             camara.AddComponent<UniversalAdditionalCameraData>();
+            PrepararEscenario.EnEscena(c);
 
             var sol = new GameObject("Sol").AddComponent<Light>();
             sol.type = LightType.Directional;
