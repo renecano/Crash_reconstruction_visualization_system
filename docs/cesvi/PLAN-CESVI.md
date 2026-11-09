@@ -157,6 +157,20 @@ Lo sube U0 como PR `contract:`. Zod, Pydantic y C# se regeneran, y los fixtures 
 
 ## 3. Los dos frentes
 
+> **Cambio del 2026-11-09 (René).** El compañero no ha subido nada del frente W, así que el Claude Code de René lleva los dos frentes.
+>
+> - **Antes de empezar una fase W:** `git fetch` y revisar si existe una rama o un PR `feat/w<n>` de esa fase. Si existe, no se toma y se sigue con la siguiente.
+> - **Cada fase W que se toma** se anota en `docs/progress/W.md`, para que el Claude Code del compañero la vea.
+> - **Fusiones:** el Claude Code de René fusiona con «Create a merge commit» cuando CI está en verde, sin esperar a René. Al cerrar cada fase deja su «Resumen para René» con capturas y sigue; René revisa cuando puede.
+> - **Orden recomendado** (se puede cambiar con una razón anotada):
+>   1. W1 y W2: errores que rompen el flujo del perito, y rápidos.
+>   2. U2 → U3 → U4: el escenario, el daño y las cámaras, que es lo que CESVI pidió ver.
+>   3. W3 → W4 ampliada → W5 → W6. Al terminar W3 y W5, sus marcadores y su terreno entran en el visor.
+>   4. U5 → U6 → W4b → W7 → W8 → W9 → U7.
+> - **La meta de U2–U5:** que la escena completa, no solo los autos, se vea como un juego actual de autos. El detalle está al inicio de §3.3.
+> - **Dos fases nuevas:** W4 se amplía con «Corregir después» y se agrega W4b, «Menos ruido visual» (§3.4).
+> - **Memoria (8 GB):** un solo proceso pesado a la vez. Unity en modo batch, las pruebas de Python y Playwright nunca corren juntos.
+
 ### 3.1 Quién hace qué
 
 | Frente | Quién | Solo este frente cambia |
@@ -183,6 +197,18 @@ Lo sube U0 como PR `contract:`. Zod, Pydantic y C# se regeneran, y los fixtures 
 - **Secretos.** Cada quien usa su propia llave en su `.env.local`, o ninguna, porque las pruebas usan respuestas grabadas. Nunca pasan por chat ni van a archivos versionados.
 
 ### 3.3 Frente U · Visor Unity (Claude Code de René)
+
+**La meta de U2–U5 (René, 2026-11-09; lo más importante de todo el plan).** CESVI no quedó convencido con el 3D de three.js y por eso pidió Unity. La vara es que la escena completa se vea como un juego actual de autos (GTA, Forza), con la complejidad que haga falta y sin versión mínima:
+
+- **Vías con geometría real:** carriles, curvas con su radio, cruces y glorietas bien resueltos, guarniciones y banquetas con altura, camellones y barreras, marcas viales y desgaste como calcomanías, asfalto PBR y mojado con reflejos cuando llueve.
+- **Entorno sin planos lisos ni horizonte vacío:** edificios y fachadas variados, vegetación, postes, señales, luminarias, terreno con relieve y perfil lejano. Todo procedural con semilla fija y marcado «procedural» en la leyenda.
+- **Luz de cine:** cielo y sol según fecha, hora y latitud, sombras suaves, oclusión ambiental, niebla y lluvia con densidad física. De noche, luminarias y faros que iluminan el asfalto.
+- **Vehículos:** pintura con el color del caso, vidrio, cromo, luces de freno cuando frenan y faros de noche.
+- **Función de altura:** el escenario se diseña desde el inicio sobre z(x, y), hoy plana, para que el relieve, la ondulación y los topes de W5 entren sin rehacer las vías.
+- **WebGL:** todo debe funcionar en el build WebGL. Antes de apoyarse en una función de URP, se verifica en la documentación oficial que exista ahí.
+- **Recursos:** CC0 o CC-BY sin marcas, registrados en `assets/ASSETS.md`, servidos desde Blob y fuera de git. Se mide cuánto ocupa Blob y se conservan solo los 2 últimos builds.
+- **Presupuesto:** después de cada subetapa se miden peso, tiempo de carga y fps con `eval/unity_build.mjs` en la laptop. Si media no cumple §7.8 de `PLAN.md`, se recorta densidad en media, nunca función; alta y ultra conservan todo.
+- **La física no cambia de lugar:** Unity solo reproduce el `Resultado`.
 
 **U-pre. Cerrar lo que está en curso.** `feat/axa-escena-colocada`, la cifra grande 71.56 (con la mediana 75.2 como dato secundario), Lighthouse y el «Resumen para René». Se fusiona.
 
@@ -302,12 +328,22 @@ Lo sube U0 como PR `contract:`. Zod, Pydantic y C# se regeneran, y los fixtures 
   - los choques intermedios usan el objeto y el lugar marcados, en su orden.
 - **Pruebas:** casos sintéticos donde la inversión pasa por el punto dentro de su incertidumbre y el choque intermedio ocurre contra el objeto marcado.
 
-**W4. Objetos que se mueven (C2, en 2D).**
+**W4. Objetos que se mueven (C2, en 2D) y corregir después.**
 - En la escena: agregar desde una paleta con siluetas claras (poste, pared, árbol, barrera, guarnición, señal, vehículo estacionado), arrastrar, girar, cambiar el tamaño y quitar.
 - Al soltar, se recalcula, con un mensaje de éxito; si el objeto se empalma con un vehículo o con otro objeto, sale una alerta.
-- **Pruebas:** unitaria de la edición sobre la `EscenaSpec`; e2e: mover un poste cambia el resultado.
+- **Corregir después (René, 2026-11-09).** Todo lo que el perito coloca en la escena fácil se puede corregir, no solo los objetos: la dirección de cada vehículo (hoy una flecha puesta en diagonal por error ya no se puede arreglar), su posición de reposo, el primer golpe, los choques intermedios y los puntos de paso.
+  - **Tocar algo ya colocado** lo selecciona y muestra controles grandes: arrastrar, girar con manija o con botones de ±15°, «Cambiar» (reabre la pregunta original con su respuesta marcada) y «Quitar».
+  - **En el resumen «¡La escena está lista!»,** cada respuesta lleva «Cambiar», que regresa solo a esa pregunta sin rehacer las demás.
+  - **«Deshacer» y «Rehacer»** siempre visibles.
+  - **Al soltar** se recalcula, con mensaje de éxito; si algo queda empalmado, sale una alerta con «Separarlos / Así está bien».
+- **Pruebas:** unitaria de la edición sobre la `EscenaSpec`; e2e: mover un poste cambia el resultado, y corregir la dirección de un vehículo ya colocado también.
 
-**W5. Terreno (C3 y O4).**
+**W4b. Menos ruido visual (René, 2026-11-09).** Hay demasiados números y elementos que un perito de CESVI no va a leer.
+- **Regla:** a primera vista, cada pantalla muestra solo lo que aparece en un dictamen de CESVI o lo que el perito necesita para decidir ahí. Lo demás va a un «Ver detalle» plegado. Nada se borra y todo sigue disponible para el dictamen.
+- **Un número por cantidad** en toda la app.
+- **Antes de cambiar nada:** inventario por pantalla (qué se queda y qué se pliega), con capturas de antes y después, de día y de noche, para que René corrija lo que no le convenza.
+
+**W5. Terreno (C3 y O4).** Cada efecto del terreno lleva fuente o queda como supuesto declarado con rango, con pruebas analíticas y paridad Python ↔ TS; un terreno plano debe dar exactamente el resultado de hoy.
 - **Relieve real.** Se verifica la licencia y el acceso de la fuente y se registra en `data/SOURCES.md`. En orden de preferencia:
   1. Continuo de Elevaciones Mexicano de INEGI;
   2. Copernicus GLO-30 (COG abierto);
